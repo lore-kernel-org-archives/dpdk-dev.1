@@ -2,167 +2,124 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA972CA0EDC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 13:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8E7CA0EDC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 13:22:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 153D7410E4;
-	Thu, 14 Aug 2025 15:16:47 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 8D492402CA
- for <dev@dpdk.org>; Thu, 14 Aug 2025 15:16:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1755177406; x=1786713406;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=9W8czqPGQSH+ARIdp2cRqAHMhwD30P255qd1cLUKlQs=;
- b=cYzL9qLPaQuckX6+9vRya9VNL89zpT5GFqruXXusejxHYR6uwfbYrka1
- PDzfBsdj3b4d8JqrNeD/Q61kgOk2w89vECBvioq+n76pynzBS1V7iQzL+
- E16ZsvHK9qENVkoXDVeIjptRHM/NW3+P7PPDFFYPHuVeAGYnqnAkuJzwo
- uW8qNKqPhhpHVfjAbChM4WKCH2YMhVLYcxIt/e5p0hO9LHXTGetHU6Y8J
- ItzBVudsjhEixrpLX54pdeR+xnix38Fgqc9qmxG5cW/HpcSC8cDBh1eSy
- iSo6X5A4c1tZ6reHpWnbSKXeObOFz8plMY9Uom067Rd1aHX2NV0b63w4p A==;
-X-CSE-ConnectionGUID: pcb3UGkCRlqFcI315xDdqg==
-X-CSE-MsgGUID: vUev2id1TpW9KT1BzGuAzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="61118469"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; d="scan'208";a="61118469"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Aug 2025 06:16:44 -0700
-X-CSE-ConnectionGUID: /5y0omU1T9ihlmUn7eYT/w==
-X-CSE-MsgGUID: BfAsY+nZS3OT+6RsjzY92A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; d="scan'208";a="171216728"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Aug 2025 06:16:44 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 14 Aug 2025 06:16:43 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 14 Aug 2025 06:16:43 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.68)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 14 Aug 2025 06:16:43 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id ACF77410E4;
+	Thu, 14 Aug 2025 15:22:13 +0200 (CEST)
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com
+ (mail-mw2nam12on2077.outbound.protection.outlook.com [40.107.244.77])
+ by mails.dpdk.org (Postfix) with ESMTP id 6B366402CA;
+ Thu, 14 Aug 2025 15:22:12 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UzTYu1zc4f9gvl6WJDE+xSh/fha7cc1S1D9pIGLU9yQOb1MCDFulQCIJXQqbMnSOIGibRnr9o/GBq41Wj4gJB7X7qEYle6QK25Qaif3vh37dQ4DVKet6N6Iw4SOP8wEIfLRasL6LIWeQqkH6AV5jg6Pz8roKj8moRqZOERWXyEG5e+Ksz6PnxHLytA9opXwHLahMpB0w3Km3mDsXZXtI+J7GEMumLiN1iOqfKOYjTUVjSqvsr83ckk65Rvcsz0yn96vQg0lKE6ZgcJgJa9VAK6QwSU9gUOAJy+vfRHm0W1EP4SGUtNYBYHhgKdd7xG8B7zeKARUJf2pTDmUXqfTEZw==
+ b=zU4GCKCv+tzsELKJjEaNwH61Q7ITq2nmbk1uJCd3PuouEWze0fvrNLnUojOcEL+6jdYahOUYr/YrcX+iuW4ttMiBvpQq/5CG5W6kau9L6ikCmtzC/Qpz5s2+9Wl9lokohhpxqAy+VlrnY8YfJ+O2g0jXnxJ7pFro9o8fbm2bvStwwauyj46PJTUxXSmRCO2o+TQYu7OGCBqUUvuF08e+kzdc/hx5fg+0noyr4ytUX6zz0uGpZxcNVNGXGdL7q6ibFqK+cUwBfZbViSrFuPI2jJala4lWQ7vFmLR2VsiWOT0o3WSNA7nUtzt4C/mdrMj3ulSLrZAOI/rf35HnZQ1EWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=exDl656kLXvWv97gabQH/6axXEP9/8PeJobmDEgPum0=;
- b=opn0UU9lTJZ4fyQJH5nvTKl/EBW9IRw1WFTDjobYz1RH8LWK6O0qKJxZ2fT3BCmqJ5ei3ojIjKAhukpb6BTXyNmRrWv7rokNeO0GDQL04H6vjohTOvKdpkGUMRLFg8pPuFGwoOf8bN60HZ+1zT5XyJalxToiiJMXQCWIddnOyEqLgr0ohNHtzYrgFAkSnr9sbxl2Zx6zqyi3/nPxQKVTuToFbl4koLkLRUfEi0AtCUfr4D1TycCYm9FrSS9arNgg0fWB7dfyBeng9eIMWdJCOgrmzYzVEEVY7fI7Hi5XKE0SttQ26u2jypu+EgS7unVY8da484Z/CIAX4hYtPMpGHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM3PPF7D18F34A1.namprd11.prod.outlook.com
- (2603:10b6:f:fc00::f32) by MN0PR11MB6206.namprd11.prod.outlook.com
- (2603:10b6:208:3c6::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
- 2025 13:16:39 +0000
-Received: from DM3PPF7D18F34A1.namprd11.prod.outlook.com
- ([fe80::e891:61bf:88e7:bd9c]) by DM3PPF7D18F34A1.namprd11.prod.outlook.com
- ([fe80::e891:61bf:88e7:bd9c%7]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
- 13:16:39 +0000
-From: "Loftus, Ciara" <ciara.loftus@intel.com>
-To: "Richardson, Bruce" <bruce.richardson@intel.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v2 06/15] net/ice: use the new common vector capability
- function
-Thread-Topic: [PATCH v2 06/15] net/ice: use the new common vector capability
- function
-Thread-Index: AQHcB5hrZUrXjOcGQ0+M1sPLRCLd97RdS1iAgATgfwA=
-Date: Thu, 14 Aug 2025 13:16:39 +0000
-Message-ID: <DM3PPF7D18F34A15794D13A11F4773270028E35A@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
-References: <20250725124919.3564890-1-ciara.loftus@intel.com>
- <20250807123949.4063416-1-ciara.loftus@intel.com>
- <20250807123949.4063416-7-ciara.loftus@intel.com>
- <aJnKJf1NZ9ih43Fk@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aJnKJf1NZ9ih43Fk@bricha3-mobl1.ger.corp.intel.com>
-Accept-Language: en-IE, en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM3PPF7D18F34A1:EE_|MN0PR11MB6206:EE_
-x-ms-office365-filtering-correlation-id: c3a75387-ba4f-4c9f-1da3-08dddb34ce12
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?WGxyUmcXK3obwmXzbbKsBWUH8OW8ubd5kvaeRMrV51hnjlflAduLaSwE+ZYU?=
- =?us-ascii?Q?oXNVP8ldY6Nu8l9twC0AwrgMI2rqVoRivzb1bub3eTAHVmqWFD+oXsoAbJpf?=
- =?us-ascii?Q?PUCvrUpX8HiHO1gRs76RH4hZBNwWuyLkZWb8BHc4W5e+p2h6kSQkCGh39YD8?=
- =?us-ascii?Q?YK4boyTK2uCAiqYgEC6P6v96wvVLOzMg3MKDmUHOjyO7aPv2ju1PFysEEzJw?=
- =?us-ascii?Q?vGCTbDlnfQ3ghGf+LjF9gXYSh+KwIRGQnSvxOPAC34RUu8+ZDt5vIgseeKB8?=
- =?us-ascii?Q?S3yUDA9kUBUl9jlOxgvFDau5oLx64f8vdb2IGdlVud2xlnryYRN0xzneYq7v?=
- =?us-ascii?Q?e998vI77+SoTn/jzx4npGmf/kOwZYKC5GcvWfjvGjPV2ofcgvA1tKkUdJE5g?=
- =?us-ascii?Q?0cVvn5j7+Px6osYrB5pX6tdtcp5f1hZHy7diQwY6+uqDmTiPTnOdukIuEGE7?=
- =?us-ascii?Q?bZNdKBAbHtXoiY1b+YCgPYCD5FTPwL2otdqvmlxsPji5lMQV7YEkxL4a2huS?=
- =?us-ascii?Q?vKuVcWbLHftri3jGUqn3RM5Pc8SkejoSPtit5iqDiNEZ5nS3u/ySTvAabtud?=
- =?us-ascii?Q?v8hWIxH7j3dHfiSpqF194VV84eovjuvJlc5Wlk8xbkqczMrfWQ7LyhGmZdq4?=
- =?us-ascii?Q?yVZGAr5KZrdt38Lsp7N/zimqTynKTTuuVftgNJjeNajJ5tZYkRrKRVbNNaDI?=
- =?us-ascii?Q?Lhd6J6U65ADY/8u5IuAZl6SUjw0Z6CNzMPtCzRB1esrXSU4aaYmxDo4IQsPE?=
- =?us-ascii?Q?evC//qf73/7Rw3ZbCmD0sehjEbWoxrMVanzQY6dFgS0D6lUn2oZLFc6cGAhk?=
- =?us-ascii?Q?n40YWSa6H73TWIMpZ41CvD8geRTk2FO6IHBUBAKlddM/amf6OC2NM0pGsouP?=
- =?us-ascii?Q?wVq0IuFIJ/cIcwhOSVqpABaCnUxMqNz9JN137O3hb9fTegoFg+1ObNkpRvNs?=
- =?us-ascii?Q?rzP6N6wMQEDrB9alVNziXJpRu5+E6Rw2wUCm+WQXf1SfY7tGoojYygCPs213?=
- =?us-ascii?Q?WbMpgpbkQf9xlApC4Mr5QYiIv78DKPMzqhSfXBTLqZVE8I3yGGxjPQKcSmQo?=
- =?us-ascii?Q?h5dt23hIufjBQitmghoqGyAMZOZaLMHOXEHLyCZlJk9BQeTf+WhdEnmJUdnx?=
- =?us-ascii?Q?QZDXVmUjDt+WMIJZby+jcoTRzjxWtvmo3JfUl23dTKLKX3LQTZ8m9+kr//EU?=
- =?us-ascii?Q?qaUwfJKKFg5e4SGIp38Ubs5N3IDOA7yDocexODJCWhlMu1Smf/ehvwnp1PjR?=
- =?us-ascii?Q?Ah74afIrMyv7Iy9paN9/FIpcJS428TEGl3Aa7uo3VcpoNojp164KUWkLPb9x?=
- =?us-ascii?Q?qQ5MYDiFlvITdSLc4pzHiamfEE1bOpUDkul6/FZer2/amyjFiUXwjyeR4R8/?=
- =?us-ascii?Q?WwmTOVhEEnZzhi/gv0+LI1gTV5YX5QjVk38dgh0SYgUm4i++G01ndIfKeIAl?=
- =?us-ascii?Q?1/MhGoAHA+OUHDEAu2R/X2RIwXtCmWCiN9AXuq1PQCIa89GL83MnyA=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM3PPF7D18F34A1.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(38070700018); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?/kcqjGOczFrvLQa2qx1k48i0ugEwRebdoJNlimCd6AlMEQ6po3U3bdv4EdL9?=
- =?us-ascii?Q?AT8/HR8jXgHwPmYZQ3S8wzeBk/w+kwFEcf6CrJKQjtcNYGbGFTQUigajXlku?=
- =?us-ascii?Q?kTZctcNRF6EvL7xqo9L/J4zUfOFRzRcw9XSNOQw1JbpYg+bQNDkFREi9YZfJ?=
- =?us-ascii?Q?+hFwErOfnlVe9vZtqsqDZka8HOWd4qI22+CxIDAgcacX7dPHSBTlWtUdvP0a?=
- =?us-ascii?Q?C/Nj++dtOTQWGB4AC3jYHOX/5i2xrG17LchZVt943pq6mYQIBNlLTA/Dg+Qk?=
- =?us-ascii?Q?p/G+mj+KVK17nXR9HZynuuvIMO3ltJB8uls12VK9ANPcNNfLQEHSwFgV70+k?=
- =?us-ascii?Q?uPM3kFj84Wrobbh12Bd+UJCSk/7h53y1lhwtSlWDqYnw4Yt/Nfoe0+MjL6Yb?=
- =?us-ascii?Q?SJckttnVkEZ8eJlb86SYOHxW5vLiZn9jfr+yKCP50f5MO1qWJ2aJS5+Ghj4I?=
- =?us-ascii?Q?LOWebwckK16M9ktcFyKYu12lXDJPqBo94sEJKOtjWdDMiyO5DVnHV1YLBMeg?=
- =?us-ascii?Q?e0UuhpnTt/b6aS68gdDpIms9zDEURhB2Lk5aRNupKmjYpSUh0fyTj+nKPi+T?=
- =?us-ascii?Q?8EoUhjuS8HwRWPFv4UldFi8nfU/hE5zXrH/KxI6YMANTmUV0SRK2vhQmJaCz?=
- =?us-ascii?Q?ksWjKYJ4GCyYX4QBuwEHSLwYe9JdZfJHKRV3ASllL8Z1KPDu2jysCueZTrJ2?=
- =?us-ascii?Q?QFyCJiQv5I7mz9Dg3QtVIh2l5cjSFikIgX5LrpySowGUgnp6yGJXBcFiy3Ay?=
- =?us-ascii?Q?YsWJ4uDY39Jjm4OPmlr2ttjqEesAk/vo9pzIbZz70jjIwFPcUeymFgLeARU6?=
- =?us-ascii?Q?yc3YQBQGqCZq/ArvyYIvIjkov+Z0994UuIVvU7+oSaG/KUx44c9rmXlOYUlF?=
- =?us-ascii?Q?QhKUViHIUVLexASL4j8+jmfV5/VG6Tm+9w9PKjtgU90wH3MoqLG1QRRv07Cf?=
- =?us-ascii?Q?mFLfBQBUEeIYIzFSNRWrMcwhW+taotsqfqxK0GCCkE6HiifgmsuwEFmEN6kL?=
- =?us-ascii?Q?hIiasUgJdAfgp/FuPHCdbFERlYdR8YRwqKNymjRQChtNs8k0qp6PiZZC6vrm?=
- =?us-ascii?Q?8UZPgDxzyRgcE5STpweNvWNeah4cxW/NC4TvM162nJ0bfWvsD3QJHLf6OQ7a?=
- =?us-ascii?Q?9DNShLZHuJv9Z+EKJGmTsT7JQnEUMm0Ly7Q+D6cU9wmB1Ez1Y18GxFcNQiBO?=
- =?us-ascii?Q?1VZ8moFN1F50EOtUj9L6cXZcJaOx2YfAclP82k3NexwBCXAPahB1eaXEPHMO?=
- =?us-ascii?Q?hjx+UIBekNmhkULC7s2pYp6oou0uopI2E9+Va7q1AXC4Gc0T15JK7V0DRa4A?=
- =?us-ascii?Q?yepPKTOxqAJPuEJkOdtmtoicYUnMdygo4zIMPBp6emJTpcu2Wf2I/6xyxEW6?=
- =?us-ascii?Q?H6DFsi79NPyKHcG9vkTLysG8WVBCabiC+SdC4vmw1oqHq2mUdyhZeeedCU9X?=
- =?us-ascii?Q?V28+zmCcXjFoNxK/kXJhMRlk+5OoEQPwfsLytYzZoxQfwchUPfn7vhdtU99P?=
- =?us-ascii?Q?mlKoMBZW8KZ5sEM7oWOTqsl7PjjvpxbfrIMzd3k79fCN1WvFC9VIk5tx7WMs?=
- =?us-ascii?Q?adKkwMUBSiLZV9uXRXD1KF6XtGDYQxOZ/VeLPj15?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ bh=RIFgkhleLeGPgpS4zJFEqqPwnEeEI33zZiobS7yRrc4=;
+ b=UNxu7fmuvtBvoZdwa+DKBgDatPMD61UKukeFQR+MQ5EadGEvsTU6Yaygdt9hDCCa+nHUe4Nd8uG/8/tv0axcJTkn0z0s7ws9erCBEdFLrzJY48GiJaWfmVIourN5GRmWMuTpBT+KfdfiTS3Y+ho9Ij3sY8aNNDMOwIzAL1z0De583jXeHyHSvAoqaDmtloyyqdJx6x71vjMv1HZK7QY+ND2W0urg/EkUqdZJ55OdGuglqyG7N/JZhOysaoQonKWv1WxUiClQUz7IHGJu5EEm++vCzenY5E9l8Yo0w3DsX1q9n0i48/zfJsqZwK7xku+7ki1BZWODd8J/OJUMZh3SrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RIFgkhleLeGPgpS4zJFEqqPwnEeEI33zZiobS7yRrc4=;
+ b=HklzsvciHL7zyDK0+U7TsJekTuCc621RPWSqjVAB7znPoXHFZ4GuOz0dZRyBu7ik3D9ka9PL5qQWDrPifF31+5pDssJoK6NKyYlxjavf4JxzC5sLQTu+DWPqJDGuOcAf5H0juEL64KxSa/N1eiIMKQyPJwuSCTZQc2f5eXGrwFHExaEet2VSwa3rNhg2ZYeCAigcICmdliWujJoTZF11mKsLbmSOqbHWE+lKCrZ9Kr3ZjKZTWOwSnrjOxGU27nNxw9tKiCLnBJd7PWbTNKX6URjyZ5g5Xo45ks3LolFgn1Az2i6Y4cDqUm2US81xFkewx1b4ntAaVM8eDgjgYhAc2w==
+Received: from SJ0PR03CA0113.namprd03.prod.outlook.com (2603:10b6:a03:333::28)
+ by PH7PR12MB9203.namprd12.prod.outlook.com (2603:10b6:510:2f2::17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.17; Thu, 14 Aug
+ 2025 13:22:07 +0000
+Received: from BY1PEPF0001AE1B.namprd04.prod.outlook.com
+ (2603:10b6:a03:333:cafe::86) by SJ0PR03CA0113.outlook.office365.com
+ (2603:10b6:a03:333::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.17 via Frontend Transport; Thu,
+ 14 Aug 2025 13:22:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BY1PEPF0001AE1B.mail.protection.outlook.com (10.167.242.103) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.11 via Frontend Transport; Thu, 14 Aug 2025 13:22:07 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 14 Aug
+ 2025 06:21:47 -0700
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 14 Aug
+ 2025 06:21:45 -0700
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Alex Vesker
+ <valex@nvidia.com>, Erez Shitrit <erezsh@nvidia.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>
+Subject: [PATCH] net/mlx5/hws: fix TIR action support in FDB
+Date: Thu, 14 Aug 2025 15:20:02 +0200
+Message-ID: <20250814132002.799724-1-dsosnowski@nvidia.com>
+X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM3PPF7D18F34A1.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3a75387-ba4f-4c9f-1da3-08dddb34ce12
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2025 13:16:39.8268 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kIGCTomuJgYzD5dZrbL2zGWTTwxghywz3jBI8shmO1F9FwxHeegqa9T5ioL/H667UwxMfCHSGxag6gbSojd3uw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6206
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE1B:EE_|PH7PR12MB9203:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e684f0d-0e4a-43a2-64f7-08dddb359140
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|36860700013|82310400026|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?99rzcD6o5z9+W64wL89SsKF+pPK9kBH5loy0l8ALsqJbXm4c1KqvN7UnIxRy?=
+ =?us-ascii?Q?uYrTa1yBn9g4e60gsoQBNxVmc7/awJt6IsgAJti7cWE6hfnFvlbHyNGt4KDy?=
+ =?us-ascii?Q?TqJ6Ji8p6WqAYhlL16KYb2jBcVzvYPCpBTVhXKHX6/swQobL8ZAApWpgYVST?=
+ =?us-ascii?Q?7wyvGHSDEFHik8vGkj3r1iROytMlNcqTsshIKq6bxEUtCrjWAls4mqmmwtOL?=
+ =?us-ascii?Q?kPWLBXmdL/LuUpoxX+lPRaZ39SFQDNCiW+mWHSsKYOsvNUv7+axmcjG0Qaj7?=
+ =?us-ascii?Q?03ItPKl1MNltLmHlYpMaUNYxS1prTGs9E2LRVec4m54ib5XzkCHkDD8otVOE?=
+ =?us-ascii?Q?jrM/chN5o++kOyPA8qDcwKTnDU0r63jz+Jq9EB6jUzbaEjqwOo1a2m4JlSTr?=
+ =?us-ascii?Q?Vfj8A6tyUI773ee21poAFMx4OIur5ndRiQJDEC2WQnnCxz8peHTQl+hvY1pb?=
+ =?us-ascii?Q?/i4k4ZhvA3G+E4dU73oV1ffARvTK+JIHBmN296c1IGtbYo12fIZeL34e4gV0?=
+ =?us-ascii?Q?3vjhk8urxBIF82hy2HDFih1xiOskeRcdaAP98XTO97ZCmKh0JMSOThHT0xhq?=
+ =?us-ascii?Q?TBmuAbs+GWDHH7IGFFYp/BpWxlWaRR91gqdYa6DTqVlRFq95gvpHuzcO690t?=
+ =?us-ascii?Q?C3USQ6EcrTwey7Vdb26dxQK8kp3g3ZF6VZ/GLtIpsHfJhMFPeF7lEOtK4w5F?=
+ =?us-ascii?Q?UyzBVudwX/Xxj6h3euBEfKaSZgfAni8wU63dq9EU/RXGHgifk6AeeBPuE7Qt?=
+ =?us-ascii?Q?rZVElffokAagjyS2O4Ub94tQS5Pj/UZXAf7Fm523gm/zeqjxMsENKaAZcHwU?=
+ =?us-ascii?Q?PrQvDyF5Oe+y1Ts0CEW3NVVf1FMcaGC0I/knmcix1hY1EgS2GM2bpTix7Fzk?=
+ =?us-ascii?Q?i2VNWEZQJU1VAGNvgdFPCCHR9/MXn2jyTSZ8t9aQ/AQxcabALppPXqHrbvIr?=
+ =?us-ascii?Q?I/FdP2hCeJs4oCqFbSHlj8XF7UMWc0OwN2f3MdE88K2x3OquznUh8wlC6DxB?=
+ =?us-ascii?Q?GmCVXOmidMiBIrRwyaqU4lMYBPQH1PLud4rC4Hgm+5iEHzk/qD0YA/R0I397?=
+ =?us-ascii?Q?MGsRxG+j21h+3UX0utvGCPU+dxm1ZCR+gyyK6JmHkeivj8J08I8BxlVNQks0?=
+ =?us-ascii?Q?QKIRTUciXDohENP+P2NrW/NrObOez+gGzy376B+Fp7HWWZbEpnx/VSCm5Nf+?=
+ =?us-ascii?Q?UZ6n3BgWMnZiKTAJg1hZQyxkWHYOJm0/OSNlTKpz8YEVVb94nbKp9NL8jCEC?=
+ =?us-ascii?Q?PuEZHKJ3tlrxBdNHxsPU7rSZlim9bUh4kkICo3shX9nonAU16Ncdc7Wg7Ii8?=
+ =?us-ascii?Q?opPShFGQTzYXKFOyTqqaIJS/xlFr7N/CEFpHbV+BB0s8dUSPkZfjN7AWqZh4?=
+ =?us-ascii?Q?h/lf61fk3+MnVfU3CunyjZ8AnYFedbOYAFlkanCFQlNAaB3+NUl8qrQU/hVn?=
+ =?us-ascii?Q?RcJfZx2BhkoKFyv2YB3fxbAE+8qIPu87PHUC6zWCiCcUlyZpv2r7Tzs3Lid5?=
+ =?us-ascii?Q?taT/wLsOq+aqraG+PXoGCrsaJm5bnbKX5Y55?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 13:22:07.2892 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e684f0d-0e4a-43a2-64f7-08dddb359140
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BY1PEPF0001AE1B.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9203
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -176,247 +133,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
->=20
-> On Thu, Aug 07, 2025 at 12:39:40PM +0000, Ciara Loftus wrote:
-> > Use the new function for determining the maximum simd bitwidth in
-> > the ice driver.
-> >
-> > Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
-> > ---
->=20
-> Couple more comments inline below.
->=20
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
->=20
->=20
-> >  drivers/net/intel/ice/ice_ethdev.h       |  5 +--
-> >  drivers/net/intel/ice/ice_rxtx.c         | 52 ++++++------------------
-> >  drivers/net/intel/ice/ice_rxtx.h         |  1 +
-> >  drivers/net/intel/ice/ice_rxtx_vec_sse.c |  6 +++
-> >  4 files changed, 21 insertions(+), 43 deletions(-)
-> >
-> > diff --git a/drivers/net/intel/ice/ice_ethdev.h
-> b/drivers/net/intel/ice/ice_ethdev.h
-> > index 4505644f87..8d975c23de 100644
-> > --- a/drivers/net/intel/ice/ice_ethdev.h
-> > +++ b/drivers/net/intel/ice/ice_ethdev.h
-> > @@ -11,6 +11,7 @@
-> >
-> >  #include <ethdev_driver.h>
-> >  #include <rte_tm_driver.h>
-> > +#include <rte_vect.h>
-> >
-> >  #include "base/ice_common.h"
-> >  #include "base/ice_adminq_cmd.h"
-> > @@ -674,9 +675,7 @@ struct ice_adapter {
-> >  	/* Set bit if the engine is disabled */
-> >  	unsigned long disabled_engine_mask;
-> >  	struct ice_parser *psr;
-> > -	/* used only on X86, zero on other Archs */
-> > -	bool tx_use_avx2;
-> > -	bool tx_use_avx512;
-> > +	enum rte_vect_max_simd tx_simd_width;
-> >  	bool rx_vec_offload_support;
-> >  };
-> >
-> > diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/i=
-ce_rxtx.c
-> > index 428e136bfe..8c197eefa9 100644
-> > --- a/drivers/net/intel/ice/ice_rxtx.c
-> > +++ b/drivers/net/intel/ice/ice_rxtx.c
-> > @@ -3703,7 +3703,7 @@ ice_set_rx_function(struct rte_eth_dev *dev)
-> >  	struct ci_rx_queue *rxq;
-> >  	int i;
-> >  	int rx_check_ret =3D -1;
-> > -	bool rx_use_avx512 =3D false, rx_use_avx2 =3D false;
-> > +	enum rte_vect_max_simd rx_simd_width =3D
-> RTE_VECT_SIMD_DISABLED;
-> >
-> >  	rx_check_ret =3D ice_rx_vec_dev_check(dev);
-> >  	if (ad->ptp_ena)
-> > @@ -3720,35 +3720,22 @@ ice_set_rx_function(struct rte_eth_dev *dev)
-> >  				break;
-> >  			}
-> >  		}
-> > +		rx_simd_width =3D ice_get_max_simd_bitwidth();
-> >
-> > -		if (rte_vect_get_max_simd_bitwidth() >=3D
-> RTE_VECT_SIMD_512 &&
-> > -
-> 	rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) =3D=3D 1 &&
-> > -
-> 	rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512BW) =3D=3D 1)
-> > -#ifdef CC_AVX512_SUPPORT
-> > -			rx_use_avx512 =3D true;
-> > -#else
-> > -		PMD_DRV_LOG(NOTICE,
-> > -			"AVX512 is not supported in build env");
-> > -#endif
-> > -		if (!rx_use_avx512 &&
-> > -
-> 	(rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) =3D=3D 1 ||
-> > -
-> 	rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) =3D=3D 1) &&
-> > -				rte_vect_get_max_simd_bitwidth() >=3D
-> RTE_VECT_SIMD_256)
-> > -			rx_use_avx2 =3D true;
-> >  	} else {
-> >  		ad->rx_vec_allowed =3D false;
-> >  	}
-> >
-> >  	if (ad->rx_vec_allowed) {
-> >  		if (dev->data->scattered_rx) {
-> > -			if (rx_use_avx512) {
-> > +			if (rx_simd_width =3D=3D RTE_VECT_SIMD_512) {
-> >  #ifdef CC_AVX512_SUPPORT
-> >  				if (ad->rx_vec_offload_support)
-> >  					ad->rx_func_type =3D
-> ICE_RX_AVX512_SCATTERED_OFFLOAD;
-> >  				else
-> >  					ad->rx_func_type =3D
-> ICE_RX_AVX512_SCATTERED;
-> >  #endif
->=20
-> Since without AVX512_SUPPORT, the ice_get_max_simd_bitwidth function
-> will
-> not return RTE_VECT_SIMD_512, I think these ifdef guards are unnecessary.
->=20
-> > -			} else if (rx_use_avx2) {
-> > +			} else if (rx_simd_width =3D=3D RTE_VECT_SIMD_256) {
->=20
-> Minor nit: since we are using "else if" here, rather than another "if" I
-> wonder if it might be better in general across all these to use ">=3D" ra=
-ther
-> than "=3D=3D". If we did need to ifdef out AVX512 support block, that wou=
-ld
-> then allow the 256-bitwidth block to catch those AVX512 return values.
+TIR action was not added as an allowed action in FDB domain.
+This prevented the usage of RSS flow action in transfer flow rules
+with HW Steering flow engine.
 
-I will change these to >=3D however the change won't be long lived as this =
-block is removed in the patch that introduces the new selection logic.
+Fixes: 1f8fc88d4d31 ("net/mlx5/hws: allow jump to TIR over FDB")
+Cc: valex@nvidia.com
+Cc: stable@dpdk.org
 
->=20
-> >  				if (ad->rx_vec_offload_support)
-> >  					ad->rx_func_type =3D
-> ICE_RX_AVX2_SCATTERED_OFFLOAD;
-> >  				else
-> > @@ -3757,14 +3744,14 @@ ice_set_rx_function(struct rte_eth_dev *dev)
-> >  				ad->rx_func_type =3D ICE_RX_SSE_SCATTERED;
-> >  			}
-> >  		} else {
-> > -			if (rx_use_avx512) {
-> > +			if (rx_simd_width =3D=3D RTE_VECT_SIMD_512) {
-> >  #ifdef CC_AVX512_SUPPORT
-> >  				if (ad->rx_vec_offload_support)
-> >  					ad->rx_func_type =3D
-> ICE_RX_AVX512_OFFLOAD;
-> >  				else
-> >  					ad->rx_func_type =3D ICE_RX_AVX512;
-> >  #endif
->=20
-> Same here, as far as I can see.
->=20
-> > -			} else if (rx_use_avx2) {
-> > +			} else if (rx_simd_width =3D=3D RTE_VECT_SIMD_256) {
-> >  				if (ad->rx_vec_offload_support)
-> >  					ad->rx_func_type =3D
-> ICE_RX_AVX2_OFFLOAD;
-> >  				else
-> > @@ -4032,29 +4019,14 @@ ice_set_tx_function(struct rte_eth_dev *dev)
-> >  	int tx_check_ret =3D -1;
-> >
-> >  	if (rte_eal_process_type() =3D=3D RTE_PROC_PRIMARY) {
-> > -		ad->tx_use_avx2 =3D false;
-> > -		ad->tx_use_avx512 =3D false;
-> > +		ad->tx_simd_width =3D RTE_VECT_SIMD_DISABLED;
-> >  		tx_check_ret =3D ice_tx_vec_dev_check(dev);
-> > +		ad->tx_simd_width =3D ice_get_max_simd_bitwidth();
-> >  		if (tx_check_ret >=3D 0 &&
-> >  		    rte_vect_get_max_simd_bitwidth() >=3D
-> RTE_VECT_SIMD_128) {
-> >  			ad->tx_vec_allowed =3D true;
-> >
-> > -			if (rte_vect_get_max_simd_bitwidth() >=3D
-> RTE_VECT_SIMD_512 &&
-> > -			rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F)
-> =3D=3D 1 &&
-> > -
-> 	rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512BW) =3D=3D 1)
-> > -#ifdef CC_AVX512_SUPPORT
-> > -				ad->tx_use_avx512 =3D true;
-> > -#else
-> > -			PMD_DRV_LOG(NOTICE,
-> > -				"AVX512 is not supported in build env");
-> > -#endif
-> > -			if (!ad->tx_use_avx512 &&
-> > -
-> 	(rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) =3D=3D 1 ||
-> > -
-> 	rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) =3D=3D 1) &&
-> > -				rte_vect_get_max_simd_bitwidth() >=3D
-> RTE_VECT_SIMD_256)
-> > -				ad->tx_use_avx2 =3D true;
-> > -
-> > -			if (!ad->tx_use_avx2 && !ad->tx_use_avx512 &&
-> > +			if (ad->tx_simd_width < RTE_VECT_SIMD_256 &&
-> >  				tx_check_ret =3D=3D
-> ICE_VECTOR_OFFLOAD_PATH)
-> >  				ad->tx_vec_allowed =3D false;
-> >
-> > @@ -4074,7 +4046,7 @@ ice_set_tx_function(struct rte_eth_dev *dev)
-> >
-> >  	if (ad->tx_vec_allowed) {
-> >  		dev->tx_pkt_prepare =3D NULL;
-> > -		if (ad->tx_use_avx512) {
-> > +		if (ad->tx_simd_width =3D=3D RTE_VECT_SIMD_512) {
-> >  #ifdef CC_AVX512_SUPPORT
-> >  			if (tx_check_ret =3D=3D ICE_VECTOR_OFFLOAD_PATH) {
-> >  				PMD_DRV_LOG(NOTICE,
-> > @@ -4100,9 +4072,9 @@ ice_set_tx_function(struct rte_eth_dev *dev)
-> >  				dev->tx_pkt_prepare =3D ice_prep_pkts;
-> >  			} else {
-> >  				PMD_DRV_LOG(DEBUG, "Using %sVector Tx
-> (port %d).",
-> > -					    ad->tx_use_avx2 ? "avx2 " : "",
-> > +					    ad->tx_simd_width =3D=3D
-> RTE_VECT_SIMD_256 ? "avx2 " : "",
-> >  					    dev->data->port_id);
-> > -				dev->tx_pkt_burst =3D ad->tx_use_avx2 ?
-> > +				dev->tx_pkt_burst =3D ad->tx_simd_width =3D=3D
-> RTE_VECT_SIMD_256 ?
-> >  						    ice_xmit_pkts_vec_avx2 :
-> >  						    ice_xmit_pkts_vec;
-> >  			}
-> > diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/i=
-ce_rxtx.h
-> > index 0301d05888..8c3d6c413a 100644
-> > --- a/drivers/net/intel/ice/ice_rxtx.h
-> > +++ b/drivers/net/intel/ice/ice_rxtx.h
-> > @@ -261,6 +261,7 @@ uint16_t ice_xmit_pkts_vec_avx512_offload(void
-> *tx_queue,
-> >  int ice_fdir_programming(struct ice_pf *pf, struct ice_fltr_desc *fdir=
-_desc);
-> >  int ice_tx_done_cleanup(void *txq, uint32_t free_cnt);
-> >  int ice_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond
-> *pmc);
-> > +enum rte_vect_max_simd ice_get_max_simd_bitwidth(void);
-> >
-> >  #define FDIR_PARSING_ENABLE_PER_QUEUE(ad, on) do { \
-> >  	int i; \
-> > diff --git a/drivers/net/intel/ice/ice_rxtx_vec_sse.c
-> b/drivers/net/intel/ice/ice_rxtx_vec_sse.c
-> > index d818b3b728..1545bc3b6e 100644
-> > --- a/drivers/net/intel/ice/ice_rxtx_vec_sse.c
-> > +++ b/drivers/net/intel/ice/ice_rxtx_vec_sse.c
-> > @@ -735,3 +735,9 @@ ice_tx_vec_dev_check(struct rte_eth_dev *dev)
-> >  {
-> >  	return ice_tx_vec_dev_check_default(dev);
-> >  }
-> > +
-> > +enum rte_vect_max_simd
-> > +ice_get_max_simd_bitwidth(void)
-> > +{
-> > +	return ci_get_x86_max_simd_bitwidth();
-> > +}
-> > --
-> > 2.34.1
-> >
+Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Acked-by: Bing Zhao <bingz@nvidia.com>
+Acked-by: Suanming Mou <suanmingm@nvidia.com>
+---
+ drivers/net/mlx5/hws/mlx5dr_action.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/mlx5/hws/mlx5dr_action.c b/drivers/net/mlx5/hws/mlx5dr_action.c
+index c1c6d28ac4..d765d57a8f 100644
+--- a/drivers/net/mlx5/hws/mlx5dr_action.c
++++ b/drivers/net/mlx5/hws/mlx5dr_action.c
+@@ -94,6 +94,7 @@ static const uint32_t action_order_arr[MLX5DR_TABLE_TYPE_MAX][MLX5DR_ACTION_TYP_
+ 		BIT(MLX5DR_ACTION_TYP_REFORMAT_L2_TO_TNL_L3),
+ 		BIT(MLX5DR_ACTION_TYP_TBL) |
+ 		BIT(MLX5DR_ACTION_TYP_MISS) |
++		BIT(MLX5DR_ACTION_TYP_TIR) |
+ 		BIT(MLX5DR_ACTION_TYP_VPORT) |
+ 		BIT(MLX5DR_ACTION_TYP_DROP) |
+ 		BIT(MLX5DR_ACTION_TYP_DEST_ROOT) |
+-- 
+2.39.5
+
