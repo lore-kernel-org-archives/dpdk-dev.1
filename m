@@ -2,126 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 290CACA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 11:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58313CA0EDC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 12:53:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AE9A14278E;
-	Thu, 14 Aug 2025 13:45:25 +0200 (CEST)
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com
- (mail-dm3nam02on2057.outbound.protection.outlook.com [40.107.95.57])
- by mails.dpdk.org (Postfix) with ESMTP id F170A402CA;
- Thu, 14 Aug 2025 13:45:24 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pFkpfbnKMp70IIoQv8o8JzmtopW5Nw1GOXPZIBIT/CCjngKvALJN5DCHXtKi9q4gQ3km56p9GnXFeJW1hWqUnh55i+iYkwIGwTK/rM+4eeN2o5nbg26yl9w6rrW2iAbmhVOh3oBKadTYhmxQc8MJCdWBOw5W2OaX8c3iT1KBpUxaX3ADb3kFRKPqi0bQFN3mCbw+kdQpb9eQkg3OuPGvg0WbovFod/SCWah0ZbwYCs7LwAxrLCuzQGcPJu/S6qlpjYTpmlD/8OZz4m9kPnB4Gtdox8fByyBEff0N+rYbT3jQlCXPmp0FJhG9hLi0gUQG0/2VXTlaMvDR6Tzl3c7aLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ejxZnPbkhHIAu6ljc3D6lXwk/Uu3adt4k20ZDgiOSmU=;
- b=OxEXRDBkfGDD7AU8pWxsegrfiegjCY8B2cRNr062RTBkYTmXE4umwpzhvQeyiend4Fbor9yM7OsYqu+dyYh9XZ0vhFH6aCCaai4wPV+rxdo98tk3CYVlN7XKmPm3ofQDN8+iABoYW6io+P1/2FRdJmJ/yfGuclCWq+ZvjwTiu0H2iIShi3fjzG2brcB99mpq08Tqg2iRvxHa9RdRH/YW5IdaXqole1CXs+TQk4pBYPD6aH0udOb5PcHoAyrzyPiVGyyaEbQ1ncwIp9TwXKqs6O/D5gRwmqXHXIOdPX1B5lYg3nSib2FJOigZ7XsPqkbxu9hu+ydYmgcWlXjnLiAy2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=uetpeshawar.edu.pk
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ejxZnPbkhHIAu6ljc3D6lXwk/Uu3adt4k20ZDgiOSmU=;
- b=A4rBf9PndsDgmFjGIPL/6wRdW6oJkLWqwxXJiP0/M0xaZoMRg/+oYYDVVN8ITxeRMlcUXT4zmPrumzLQRA04lEk20Akse7Fc4HZffla0kOG3gva8tmc5YiEMI+JfXlUpPEdfERxuO9wlLLA0eADBtdOnLfAUj1cbsaiXQwHCYQgxZp6VP1zHR1Qt8V9BD+eCb7BOgAMdduoBLLn5rLb6SdrF9AwWDBSNcjl99b2+jXoeCXa9YZZ7Zz5U1j99piy4nKPIqMnLRm3959wJKfL331hdXSEWpqDdBMX8sKuPJC3epS1zfJwkmXLecvywaMlJtfvhU7wTiGEoLiaSM55y5Q==
-Received: from BN0PR03CA0028.namprd03.prod.outlook.com (2603:10b6:408:e6::33)
- by CH3PR12MB8306.namprd12.prod.outlook.com (2603:10b6:610:12c::5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Thu, 14 Aug
- 2025 11:45:21 +0000
-Received: from BN1PEPF00006001.namprd05.prod.outlook.com
- (2603:10b6:408:e6:cafe::28) by BN0PR03CA0028.outlook.office365.com
- (2603:10b6:408:e6::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.15 via Frontend Transport; Thu,
- 14 Aug 2025 11:45:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN1PEPF00006001.mail.protection.outlook.com (10.167.243.233) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.11 via Frontend Transport; Thu, 14 Aug 2025 11:45:19 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 14 Aug
- 2025 04:45:05 -0700
-Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 14 Aug
- 2025 04:45:04 -0700
-Date: Thu, 14 Aug 2025 13:43:40 +0200
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-CC: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
- <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, <dev@dpdk.org>,
- <stable@dpdk.org>
-Subject: Re: [PATCH v4] net/mlx5: fix connection tracking state item validation
-Message-ID: <20250814114340.ln2txcg55ut2q2jz@ds-vm-debian.local>
-References: <20250814085831.3511020-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250814101601.3532391-1-14pwcse1224@uetpeshawar.edu.pk>
+	by mails.dpdk.org (Postfix) with ESMTP id 41DAD410E4;
+	Thu, 14 Aug 2025 14:53:27 +0200 (CEST)
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr
+ [80.12.242.29]) by mails.dpdk.org (Postfix) with ESMTP id CCE0F402CA
+ for <dev@dpdk.org>; Thu, 14 Aug 2025 14:53:25 +0200 (CEST)
+Received: from [192.168.1.64] ([2.14.111.50]) by smtp.orange.fr with ESMTPA
+ id mXSPuWtMLz3scmXSPuiUDA; Thu, 14 Aug 2025 14:53:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=orange.fr;
+ s=t20230301; t=1755176005;
+ bh=pZDGukc57aiAJhdg7dJFpsyKDkwKUfvZ6PGM1FsUgOI=;
+ h=Message-ID:Date:MIME-Version:To:From:Subject;
+ b=dMKepw40F7BXqDMvT1n6box1IZO3Zn2dn/7n5vLAd26X/PH2gymTAaBdrKJkgiZMM
+ mWwnGXVgNQe2jG69FNDSqNZeuCQBaCJ0vEGIukh6Ek9aBGT/Asq0XvFwYGeVPhA/CD
+ 8hSocyJpWVjmevUHoLL5WoN2wGZDbwYUDx1BwwZaroFycwgKhGq76GZB6RFvsX9edv
+ uwkQXrYR244HOrK3apyL31wig08B6Nn4FWEY5XrLRLCVln5kwFs1PXm90IX7OtEHmz
+ hXGySA/cCBIflKv36oBQ9o8RqRpFHiRg0DDUzlkpFys+jQU7eN7oMXyGrWOD/eGEe0
+ BkT9ZXTdkj/Gw==
+X-ME-Helo: [192.168.1.64]
+X-ME-Auth: ZGV2ZWwuZngubGViYWlsQHdhbmFkb28uZnI=
+X-ME-Date: Thu, 14 Aug 2025 14:53:25 +0200
+X-ME-IP: 2.14.111.50
+Message-ID: <be3d5abb-84cd-44de-b7c3-286536f7f994@orange.fr>
+Date: Thu, 14 Aug 2025 14:53:56 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250814101601.3532391-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00006001:EE_|CH3PR12MB8306:EE_
-X-MS-Office365-Filtering-Correlation-Id: ed6bb6ad-5a36-4971-70ad-08dddb280b9b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|1800799024|82310400026|376014|7053199007; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ABbaauWTx/zDUq+Xq9yn8qOWQcrMkBTSmYIqNlTHFTMbO8pDmuc2VHT/75BU?=
- =?us-ascii?Q?zCaQtlMeV0wI6oGH05Nw1GETjkRijocXowkf6i1NljJ8FoutoK2W6FJTEOUB?=
- =?us-ascii?Q?8qlZk9Fw69/tqZMmg3iUw0XEJ61TkI2YKSadzLLF7+GbgbyR9JFS0lTtqgO3?=
- =?us-ascii?Q?EPpqcntpPiktoFdgxpssfpGWJjyxVZZnHMnWzPwcEL+QgjXfIAm4jrXhHGFs?=
- =?us-ascii?Q?9IAB4E2xt5OlIcoKQr2E9ptQzQsi+pYgLYuTa4mDzfeH8vLPF13ajsC2KsrR?=
- =?us-ascii?Q?011SiFakhoZBDGI+5YQOKQaoqb77TWMZFcFTgnSQIbshLdnFef4nt8GFZJZx?=
- =?us-ascii?Q?fPv7zvWfHGlTMRj9I5o6wsLCl5M2PEWSZJoqv8oDV3rwGj4hhdYDNGMDnH6M?=
- =?us-ascii?Q?IpKj13Ax+T0cJLudR6qcUcWn0lFF/cYV0YJ7WbS7wXL4qyL6/ivOp3KVXS+Y?=
- =?us-ascii?Q?AXZhHXPUOgzd/2dHzanv5ju/VhxEeU/+E1K+4YHCTNOhwwSaKIhdhRoBx88H?=
- =?us-ascii?Q?1bPu4GSNrh3aKUknhoD+eqv9LT/J4Kb3XDjYNZRpS4ibcDtusGAtiDcOdeFX?=
- =?us-ascii?Q?ILqs5JqSQuYOUVrGX3Mc6vXQPSZ1PFW3rSPPr+rTl7FjfXXgaggNCcxoY5CH?=
- =?us-ascii?Q?t/N24CzsylEZhp3IxSmi9GE2L6ybznV9QvY4udscLJMfZNV+pur5OTGvxS9N?=
- =?us-ascii?Q?jTffwLBr1be3dHSN9wOSwHs795yhsf9bZWSus9ODMtimGZ0HrwEaXpKqwdp/?=
- =?us-ascii?Q?Y2JQsVZi5hyzvwMy6BEHWcIzvBajAS1AK3BrsRVRwi6aEhDYKnZj2EuGGyL+?=
- =?us-ascii?Q?so8xtHsVgQpFY5EgigWjcSN3S9rTLbFs48gKFG3E2+bJ4GCKkXU0K9rAWIau?=
- =?us-ascii?Q?/bcDkOfVZzOotD658zgQq5J4Ft10S1D4rYwgg7Ucnsx9ABHq9gPlx1rOlWZy?=
- =?us-ascii?Q?RikCxATcZmRctMBFILv+GLQWILq4UidOlYsyvtxpZ2q7GJBm87betdZJ+Qar?=
- =?us-ascii?Q?RoHitQiRezaCvqDCxvKOiCgkvdHPeLgJUawDiEJNxjBHTVmjMMs/6fWkuj0M?=
- =?us-ascii?Q?qQUJ+gewd9wkofr9mas9P1wUeNrE4qsW1JFoagRbWrTJhXEsDWDPjskJOtwU?=
- =?us-ascii?Q?f7YQ1QG19hl4N/+uKMHnhA4r6rWDYM53p8YOUr/+WPTo0Me6reHCokQ/T874?=
- =?us-ascii?Q?YsUG5hYOFTtWPWtJ9n8ZrDIlfeOJPqsTDVQe0qnbfJgrtFK36k19FsptJpsj?=
- =?us-ascii?Q?fiERE23H5vf/Ge8WCNWWXs4HsPd5+dtaixpoxs6NP3BuG5aa+u36NUHdb7a2?=
- =?us-ascii?Q?zgkxtAsQqIBI39EPtoAnDV5E9gYNt0tZ96Q6onBfteXzvfC21yrvQBAUeJ+N?=
- =?us-ascii?Q?zDRqCdOaqCPzS/9p3m8ITFeswM0gVMYFdsYqK/A+Q6O41npAt/mGDdyxb1rm?=
- =?us-ascii?Q?hX8brgc/yrDwfFM/mOWFiTh71ZAKWad89XNLrwRUphudIwzWQyXArFpV7EB5?=
- =?us-ascii?Q?L3CjP9DPGaxhBztevCfLbSHPrqvEYhGWz8DS?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7053199007);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 11:45:19.4513 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed6bb6ad-5a36-4971-70ad-08dddb280b9b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN1PEPF00006001.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8306
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US, fr
+To: dev@dpdk.org
+From: Francois <devel.fx.lebail@orange.fr>
+Subject: Warnings in headers when building libpcap with dpdk and clang
+Autocrypt: addr=devel.fx.lebail@orange.fr; keydata=
+ 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
+ UvQeDHHSvLjDyg==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -135,21 +93,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thank you for the contribution and making the changes.
+Hello,
 
-On Thu, Aug 14, 2025 at 06:16:01AM -0400, Khadem Ullah wrote:
-> This patch validate a connection tracking state when matching
-> 'conntrack is' in rte_flow rules. Since conntrack item flags
-> is a bitmap, then any combination of RTE_FLOW_CONNTRACK_PKT_STATE_*
-> flags is a valid value to match on.
-> 
-> This patch validate the CT state item.
-> Fixes: aca19061e4b96 ("net/mlx5: validate connection tracking item")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+I notice many warnings. To reproduce:
 
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+On Debian bookworm.
 
-Best regards,
-Dariusz Sosnowski
+sudo apt install dpdk-dev
+
+git clone https://git.tcpdump.org/libpcap
+
+# build with clang
+
+$ ./autogen.sh
+
+$ ./configure CC=clang-16 --with-dpdk
+
+$ make
+
+Warning lines:
+/usr/include/dpdk/rte_ring_elem_pvt.h:13:36: warning: 'GCC_VERSION' is not defined, evaluates to 0 [-Wundef]
+/usr/include/dpdk/rte_ring_generic_pvt.h:93:28: warning: possible misuse of comma operator here [-Wcomma]
+/usr/include/dpdk/rte_ring_elem_pvt.h:391:36: warning: 'GCC_VERSION' is not defined, evaluates to 0 [-Wundef]
+/usr/include/dpdk/../x86_64-linux-gnu/dpdk/rte_memcpy.h:25:36: warning: 'GCC_VERSION' is not defined, evaluates to 0 [-Wundef]
+/usr/include/dpdk/../x86_64-linux-gnu/dpdk/rte_memcpy.h:873:36: warning: 'GCC_VERSION' is not defined, evaluates to 0 [-Wundef]
+/usr/include/dpdk/rte_flow.h:176:6: warning: declaration is marked with '@deprecated' command but does not have a deprecation attribute [-Wdocumentation-deprecated-sync]
+/usr/include/dpdk/rte_flow.h:674:5: warning: declaration is marked with '@deprecated' command but does not have a deprecation attribute [-Wdocumentation-deprecated-sync]
+/usr/include/dpdk/rte_flow.h:2223:6: warning: declaration is marked with '@deprecated' command but does not have a deprecation attribute [-Wdocumentation-deprecated-sync]
+/usr/include/dpdk/rte_flow.h:2235:6: warning: declaration is marked with '@deprecated' command but does not have a deprecation attribute [-Wdocumentation-deprecated-sync]
+/usr/include/dpdk/rte_flow.h:2247:6: warning: declaration is marked with '@deprecated' command but does not have a deprecation attribute [-Wdocumentation-deprecated-sync]
+/usr/include/dpdk/rte_flow.h:2656:6: warning: declaration is marked with '@deprecated' command but does not have a deprecation attribute [-Wdocumentation-deprecated-sync]
+/usr/include/dpdk/rte_flow.h:2940:5: warning: declaration is marked with '@deprecated' command but does not have a deprecation attribute [-Wdocumentation-deprecated-sync]
+/usr/include/dpdk/rte_flow.h:2962:5: warning: declaration is marked with '@deprecated' command but does not have a deprecation attribute [-Wdocumentation-deprecated-sync]
+/usr/include/dpdk/rte_flow.h:4218:5: warning: declaration is marked with '@deprecated' command but does not have a deprecation attribute [-Wdocumentation-deprecated-sync]
+/usr/include/dpdk/rte_ethdev.h:3568:10: warning: unrecognized parameter passing direction, valid directions are '[in]', '[out]' and '[in,out]' [-Wdocumentation]
+/usr/include/dpdk/rte_ethdev.h:5375:10: warning: unrecognized parameter passing direction, valid directions are '[in]', '[out]' and '[in,out]' [-Wdocumentation]
+
+What do you think?
+
+-- 
+Francois
