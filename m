@@ -2,75 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 539A0CA0EDC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 08:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2107CA0EDC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 09:04:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F2F0E41101;
-	Thu, 14 Aug 2025 10:58:52 +0200 (CEST)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
- [209.85.210.175])
- by mails.dpdk.org (Postfix) with ESMTP id ABFE6402A8
- for <dev@dpdk.org>; Thu, 14 Aug 2025 10:58:51 +0200 (CEST)
-Received: by mail-pf1-f175.google.com with SMTP id
- d2e1a72fcca58-76e2e8e2d2dso456422b3a.1
- for <dev@dpdk.org>; Thu, 14 Aug 2025 01:58:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1755161930;
- x=1755766730; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=yvx7VWwP7DeJyFiAx2spN8dcIpJt450369G/4v6eoFw=;
- b=jD/9p8i18/6WBkmTTCnTEFhpHap04mue74CWgeCAgNTMwFJ20Ghjr6rGcWppI43Mpi
- y8CtewrCBP2dP7gKJd8YErd2qtw3a3nHkFBHndAYAAg/WYYu7hGWs1FifyuqYpW7SXGc
- yQFS0QZbLjH+eEvxbx4DXhjJfufoZVOWaJTKsHsYQzQySyfuFm/IfEXBl/Gd4o/q3h/T
- nS5jTIQv4hwpdB0VULgTLKLgL7P0oPwastzpAXZjMW5XnJaTPvugfh6P0msU5VFV1Sit
- bcd4HBoGv4/kQ73VAdBD9yiesSxzLYzZy22QEzYgRBsg27y9aFoqN/kPuKoeSagGAiea
- lPSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755161930; x=1755766730;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=yvx7VWwP7DeJyFiAx2spN8dcIpJt450369G/4v6eoFw=;
- b=w+wp9ljR7i+X53H+4RYiIeYhRHLW3RuI83LQERzQUh8NIKbtcxWtMrxrrjXCOA8hW4
- WrAgmOJPJM5TfOwJ31DYBO7xnwuWIPee09vmZ+rWuv6tFyr3BX67LADPqf8Z0jU2aK1D
- deBTSjba6VIfzruHn/+2kVtkaPxX5kkGpAVIohQkDgQVDl2Y2URP7HxzqaxRPNSHwzPH
- +44uh3RVI+r3x88h0vG6ct55K3PVwGvhra0h0V/ty8THBTS0KTRQr+mMu6AwD58wGWbY
- vIMUMRSbtuvp9dhz1t5+PF6GJcXG+Vhf9cwTAKdAQomBFRdcxH8ca8ktqgNqC82P2wjd
- Xyfw==
-X-Gm-Message-State: AOJu0YyQyOn5EPddMDqKawOsUUwNIdb8iAjuOk3A1R5WGndP+D3x0Kys
- fx1xPxMftF3NCnl102zyUbbsGfybJFqCU4cZdgGixUcFgHCb/ltbwHUCUZr8suzQik8=
-X-Gm-Gg: ASbGncvcRpD9nNKNg9gsGI/lAdSRYdMfToxpcWK1LEg+4RqhpRdaNNqiSs7PDVp5zLp
- 99pPFyV7+KN9D6zGlbL+nautiKdGKKZc8MmNXOY2NQa7q3CqDmYs8leo7ocXj4Zik21+bR4+Zp8
- yI+En0eqHqcxAVvki7anRA31NIR+HX49tB/XYS0iLxHnyi//CMA1TqIQxAZO3LOuk4Dmj9+t3KN
- tqk9yjZdM72KTctiKRffSdp7poCgAKsCVdvyvuJpl7c3ZHfm1UaW7fVZpcAxJyHQcd/ffbAGnem
- OPvn9dtxMZq1c0EmdRWppw55otub5tjUXs9adbTe3Xn+E294My+jUXZPX3eGf7iIA+vW1FYV7Om
- xQ3ke62nI2fqFXDndXXNfZDsLLGr8oEO3BjeotohFLK9XY9eO
-X-Google-Smtp-Source: AGHT+IH5R9zW9dO7/J+0rvXgySJ8aMBzJqXMlNIYBGiq41ivK1bSd3lG2i/0Jw0kN9qftTrnTUjA4w==
-X-Received: by 2002:a05:6a00:1708:b0:76b:c5bd:aec7 with SMTP id
- d2e1a72fcca58-76e2f8da93dmr3903902b3a.8.1755161930500; 
- Thu, 14 Aug 2025 01:58:50 -0700 (PDT)
-Received: from localhost.localdomain ([64.62.143.197])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-76bcce6f6eesm34185641b3a.22.2025.08.14.01.58.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 14 Aug 2025 01:58:50 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Cc: dev@dpdk.org, stable@dpdk.org,
- Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Subject: [PATCH v3] net/mlx5: fix connection tracking state item validation
-Date: Thu, 14 Aug 2025 04:58:31 -0400
-Message-ID: <20250814085831.3511020-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250812124630.2916225-1-14pwcse1224@uetpeshawar.edu.pk>
-References: <20250812124630.2916225-1-14pwcse1224@uetpeshawar.edu.pk>
+	by mails.dpdk.org (Postfix) with ESMTP id 0EB13402A8;
+	Thu, 14 Aug 2025 11:04:24 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 7349A4026D
+ for <dev@dpdk.org>; Thu, 14 Aug 2025 11:04:22 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 317A72051E;
+ Thu, 14 Aug 2025 11:04:22 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v4 1/1] ethdev: add support to provide link type
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Thu, 14 Aug 2025 11:04:18 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE35@smartserver.smartshare.dk>
+In-Reply-To: <20250814081215.1904078-1-skori@marvell.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v4 1/1] ethdev: add support to provide link type
+Thread-Index: AdwM8y2gJJFP2yOwTjOYAzysfQqsEgAA26yA
+References: <20250813084508.1446318-1-skori@marvell.com>
+ <20250814081215.1904078-1-skori@marvell.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: <skori@marvell.com>, "Thomas Monjalon" <thomas@monjalon.net>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
+Cc: <dev@dpdk.org>,
+	"Nithin Dabilpuram" <ndabilpuram@marvell.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,96 +49,356 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch validate a connection tracking state when matching
-'conntrack is' in rte_flow rules. Since conntrack item flags
-is a bitmap, then any combination of RTE_FLOW_CONNTRACK_PKT_STATE_*
-flags is a valid value to match on.
+> From: skori@marvell.com [mailto:skori@marvell.com]
+> Sent: Thursday, 14 August 2025 10.10
+>=20
+> Adding link type parameter to provide the type
+> of port like twisted pair, fibre etc.
+>=20
+> Also added an API to convert the RTE_ETH_LINK_TYPE_XXX
+> to a readable string.
 
-This patch validate the CT state item.
-Fixes: aca19061e4b96 ("net/mlx5: validate connection tracking item")
-Cc: stable@dpdk.org
+Please consider if "connector" is a better name than "link type", if =
+this is related to physical interfaces only.
+E.g. is there an "LACP" link type for link aggregates (bonded links)?
 
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
----
- drivers/net/mlx5/mlx5_flow.h    |  6 ++++++
- drivers/net/mlx5/mlx5_flow_dv.c |  8 +++++++-
- drivers/net/mlx5/mlx5_flow_hw.c | 12 ++++++++++++
- 3 files changed, 25 insertions(+), 1 deletion(-)
+Also, should a "virtual" link type (or connector) be added for =
+TAP/Virtio/VMXNET3/ring and similar non-physical interfaces?
 
-diff --git a/drivers/net/mlx5/mlx5_flow.h b/drivers/net/mlx5/mlx5_flow.h
-index e890e732c3..df0f1cf064 100644
---- a/drivers/net/mlx5/mlx5_flow.h
-+++ b/drivers/net/mlx5/mlx5_flow.h
-@@ -100,6 +100,12 @@ enum mlx5_indirect_type {
- #define MLX5_INDIRECT_ACT_CT_GET_IDX(index) \
- 	((index) & ((1 << MLX5_INDIRECT_ACT_CT_OWNER_SHIFT) - 1))
- 
-+#define MLX5_FLOW_CONNTRACK_PKT_STATE_ALL(flags_all) \
-+	(flags_all = (RTE_FLOW_CONNTRACK_PKT_STATE_VALID) | \
-+	RTE_FLOW_CONNTRACK_PKT_STATE_CHANGED | \
-+	RTE_FLOW_CONNTRACK_PKT_STATE_INVALID | \
-+	RTE_FLOW_CONNTRACK_PKT_STATE_DISABLED | \
-+	RTE_FLOW_CONNTRACK_PKT_STATE_BAD)
- /*
-  * When HW steering flow engine is used, the CT action handles are encoded in a following way:
-  * - bits 31:29 - type
-diff --git a/drivers/net/mlx5/mlx5_flow_dv.c b/drivers/net/mlx5/mlx5_flow_dv.c
-index 7b9e5018b8..7f68a4ef10 100644
---- a/drivers/net/mlx5/mlx5_flow_dv.c
-+++ b/drivers/net/mlx5/mlx5_flow_dv.c
-@@ -3271,7 +3271,7 @@ mlx5_flow_dv_validate_item_aso_ct(struct rte_eth_dev *dev,
- {
- 	const struct rte_flow_item_conntrack *spec = item->spec;
- 	const struct rte_flow_item_conntrack *mask = item->mask;
--	uint32_t flags;
-+	uint32_t flags, flags_all;
- 
- 	if (*item_flags & MLX5_FLOW_LAYER_ASO_CT)
- 		return rte_flow_error_set(error, EINVAL,
-@@ -3289,6 +3289,12 @@ mlx5_flow_dv_validate_item_aso_ct(struct rte_eth_dev *dev,
- 						  RTE_FLOW_ERROR_TYPE_ITEM,
- 						  NULL,
- 						  "Conflict status bits");
-+		MLX5_FLOW_CONNTRACK_PKT_STATE_ALL(flags_all);
-+		if (spec->flags & ~flags_all)
-+			return rte_flow_error_set(error, EINVAL,
-+					RTE_FLOW_ERROR_TYPE_ITEM,
-+					NULL,
-+					"Invalid CT item flags");
- 	}
- 	/* State change also needs to be considered. */
- 	*item_flags |= MLX5_FLOW_LAYER_ASO_CT;
-diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
-index 6dc16f80d3..9dd3d7325f 100644
---- a/drivers/net/mlx5/mlx5_flow_hw.c
-+++ b/drivers/net/mlx5/mlx5_flow_hw.c
-@@ -16996,7 +16996,9 @@ flow_hw_validate_rule_pattern(struct rte_eth_dev *dev,
- 		switch (items->type) {
- 		const struct rte_flow_item_ethdev *ethdev;
- 		const struct rte_flow_item_tx_queue *tx_queue;
-+		const struct rte_flow_item_conntrack *spec;
- 		struct mlx5_txq_ctrl *txq;
-+		uint32_t flags_all;
- 
- 		case RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT:
- 			ethdev = items->spec;
-@@ -17016,6 +17018,16 @@ flow_hw_validate_rule_pattern(struct rte_eth_dev *dev,
- 							  RTE_FLOW_ERROR_TYPE_ITEM_SPEC, items,
- 							  "Invalid Tx queue");
- 			mlx5_txq_release(dev, tx_queue->tx_queue);
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_CONNTRACK:
-+			spec = items->spec;
-+			MLX5_FLOW_CONNTRACK_PKT_STATE_ALL(flags_all);
-+			if (spec->flags & ~flags_all)
-+				return rte_flow_error_set(error, EINVAL,
-+						RTE_FLOW_ERROR_TYPE_ITEM,
-+						NULL,
-+						"Invalid CT item flags");
-+			break;
- 		default:
- 			break;
- 		}
--- 
-2.43.0
+More comments inline below.
+
+>=20
+> Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
+> Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
+> ---
+> v3..v4:
+>  - Convert #define into enum.
+>  - Enhance comments for each port link type.
+>  - Fix test failures.
+> v2..v3
+>  - Extend link type list as per suggestion
+>  app/test/test_ethdev_link.c      | 18 +++++++-----
+>  lib/ethdev/ethdev_trace.h        |  7 +++++
+>  lib/ethdev/ethdev_trace_points.c |  3 ++
+>  lib/ethdev/rte_ethdev.c          | 46 ++++++++++++++++++++++++++++--
+>  lib/ethdev/rte_ethdev.h          | 48 =
+++++++++++++++++++++++++++++++++
+>  5 files changed, 113 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/app/test/test_ethdev_link.c b/app/test/test_ethdev_link.c
+> index f063a5fe26..5d1a784208 100644
+> --- a/app/test/test_ethdev_link.c
+> +++ b/app/test/test_ethdev_link.c
+> @@ -17,23 +17,25 @@ test_link_status_up_default(void)
+>  		.link_speed =3D RTE_ETH_SPEED_NUM_2_5G,
+>  		.link_status =3D RTE_ETH_LINK_UP,
+>  		.link_autoneg =3D RTE_ETH_LINK_AUTONEG,
+> -		.link_duplex =3D RTE_ETH_LINK_FULL_DUPLEX
+> +		.link_duplex =3D RTE_ETH_LINK_FULL_DUPLEX,
+> +		.link_type =3D RTE_ETH_LINK_TYPE_NONE
+
+RTE_ETH_LINK_TYPE_UNKNOWN
+
+>  	};
+>  	char text[RTE_ETH_LINK_MAX_STR_LEN];
+>=20
+>  	ret =3D rte_eth_link_to_str(text, sizeof(text), &link_status);
+>  	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+>  	printf("Default link up #1: %s\n", text);
+> -	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 2.5 Gbps FDX Autoneg",
+> +	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 2.5 Gbps FDX Autoneg =
+None",
+
+"Link up at 2.5 Gbps FDX Autoneg Unknown"
+
+>  		text, strlen(text), "Invalid default link status string");
+>=20
+>  	link_status.link_duplex =3D RTE_ETH_LINK_HALF_DUPLEX;
+>  	link_status.link_autoneg =3D RTE_ETH_LINK_FIXED;
+>  	link_status.link_speed =3D RTE_ETH_SPEED_NUM_10M;
+> +	link_status.link_type =3D RTE_ETH_LINK_TYPE_SGMII;
+>  	ret =3D rte_eth_link_to_str(text, sizeof(text), &link_status);
+>  	printf("Default link up #2: %s\n", text);
+>  	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+> -	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 10 Mbps HDX Fixed",
+> +	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 10 Mbps HDX Fixed SGMII",
+>  		text, strlen(text), "Invalid default link status "
+>  		"string with HDX");
+>=20
+> @@ -41,7 +43,7 @@ test_link_status_up_default(void)
+>  	ret =3D rte_eth_link_to_str(text, sizeof(text), &link_status);
+>  	printf("Default link up #3: %s\n", text);
+>  	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+> -	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Unknown HDX Fixed",
+> +	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Unknown HDX Fixed SGMII",
+>  		text, strlen(text), "Invalid default link status "
+>  		"string with HDX");
+>=20
+> @@ -49,7 +51,7 @@ test_link_status_up_default(void)
+>  	ret =3D rte_eth_link_to_str(text, sizeof(text), &link_status);
+>  	printf("Default link up #3: %s\n", text);
+>  	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+> -	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at None HDX Fixed",
+> +	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at None HDX Fixed SGMII",
+>  		text, strlen(text), "Invalid default link status "
+>  		"string with HDX");
+>=20
+> @@ -57,6 +59,7 @@ test_link_status_up_default(void)
+>  	link_status.link_speed =3D RTE_ETH_SPEED_NUM_400G;
+>  	link_status.link_duplex =3D RTE_ETH_LINK_HALF_DUPLEX;
+>  	link_status.link_autoneg =3D RTE_ETH_LINK_AUTONEG;
+> +	link_status.link_type =3D RTE_ETH_LINK_TYPE_GAUI;
+>  	ret =3D rte_eth_link_to_str(text, sizeof(text), &link_status);
+>  	printf("Default link up #4:len =3D %d, %s\n", ret, text);
+>  	RTE_TEST_ASSERT(ret < RTE_ETH_LINK_MAX_STR_LEN,
+> @@ -92,7 +95,8 @@ test_link_status_invalid(void)
+>  		.link_speed =3D 55555,
+>  		.link_status =3D RTE_ETH_LINK_UP,
+>  		.link_autoneg =3D RTE_ETH_LINK_AUTONEG,
+> -		.link_duplex =3D RTE_ETH_LINK_FULL_DUPLEX
+> +		.link_duplex =3D RTE_ETH_LINK_FULL_DUPLEX,
+> +		.link_type =3D RTE_ETH_LINK_TYPE_UNKNOWN
+>  	};
+>  	char text[RTE_ETH_LINK_MAX_STR_LEN];
+>=20
+> @@ -100,7 +104,7 @@ test_link_status_invalid(void)
+>  	RTE_TEST_ASSERT(ret < RTE_ETH_LINK_MAX_STR_LEN,
+>  		"Failed to format invalid string\n");
+>  	printf("invalid link up #1: len=3D%d %s\n", ret, text);
+> -	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Invalid FDX Autoneg",
+> +	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Invalid FDX Autoneg =
+Unknown",
+>  		text, strlen(text), "Incorrect invalid link status string");
+>=20
+>  	return TEST_SUCCESS;
+> diff --git a/lib/ethdev/ethdev_trace.h b/lib/ethdev/ethdev_trace.h
+> index 482befc209..c5cba0edba 100644
+> --- a/lib/ethdev/ethdev_trace.h
+> +++ b/lib/ethdev/ethdev_trace.h
+> @@ -2110,6 +2110,13 @@ RTE_TRACE_POINT_FP(
+>  	rte_trace_point_emit_string(ret);
+>  )
+>=20
+> +RTE_TRACE_POINT_FP(
+> +	rte_eth_trace_link_type_to_str,
+> +	RTE_TRACE_POINT_ARGS(uint8_t link_type, const char *ret),
+> +	rte_trace_point_emit_u8(link_type);
+> +	rte_trace_point_emit_string(ret);
+> +);
+> +
+>  /* Called in loop in examples/bond and examples/ethtool */
+>  RTE_TRACE_POINT_FP(
+>  	rte_eth_trace_macaddr_get,
+> diff --git a/lib/ethdev/ethdev_trace_points.c
+> b/lib/ethdev/ethdev_trace_points.c
+> index 071c508327..706acdf356 100644
+> --- a/lib/ethdev/ethdev_trace_points.c
+> +++ b/lib/ethdev/ethdev_trace_points.c
+> @@ -206,6 +206,9 @@ =
+RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_speed_to_str,
+>  RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_to_str,
+>  	lib.ethdev.link_to_str)
+>=20
+> +RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_type_to_str,
+> +	lib.ethdev.link_type_to_str)
+> +
+>  RTE_TRACE_POINT_REGISTER(rte_eth_trace_stats_get,
+>  	lib.ethdev.stats_get)
+>=20
+> diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+> index dd7c00bc94..db496d70c4 100644
+> --- a/lib/ethdev/rte_ethdev.c
+> +++ b/lib/ethdev/rte_ethdev.c
+> @@ -3285,18 +3285,60 @@ rte_eth_link_to_str(char *str, size_t len, =
+const
+> struct rte_eth_link *eth_link)
+>  	if (eth_link->link_status =3D=3D RTE_ETH_LINK_DOWN)
+>  		ret =3D snprintf(str, len, "Link down");
+>  	else
+> -		ret =3D snprintf(str, len, "Link up at %s %s %s",
+> +		ret =3D snprintf(str, len, "Link up at %s %s %s %s",
+>  			rte_eth_link_speed_to_str(eth_link->link_speed),
+>  			(eth_link->link_duplex =3D=3D RTE_ETH_LINK_FULL_DUPLEX) ?
+>  			"FDX" : "HDX",
+>  			(eth_link->link_autoneg =3D=3D RTE_ETH_LINK_AUTONEG) ?
+> -			"Autoneg" : "Fixed");
+> +			"Autoneg" : "Fixed",
+> +			rte_eth_link_type_to_str(eth_link->link_type));
+>=20
+>  	rte_eth_trace_link_to_str(len, eth_link, str, ret);
+>=20
+>  	return ret;
+>  }
+>=20
+> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_link_type_to_str, 25.11)
+> +const char *
+> +rte_eth_link_type_to_str(enum rte_eth_link_type link_type)
+> +{
+> +	static const char * const link_type_str[] =3D {
+> +		[RTE_ETH_LINK_TYPE_NONE] =3D "None",
+> +		[RTE_ETH_LINK_TYPE_TP] =3D "Twisted Pair",
+> +		[RTE_ETH_LINK_TYPE_AUI] =3D "Attachment Unit Interface",
+> +		[RTE_ETH_LINK_TYPE_MII] =3D "Media Independent Interface",
+> +		[RTE_ETH_LINK_TYPE_FIBER] =3D "Fiber",
+> +		[RTE_ETH_LINK_TYPE_BNC] =3D "BNC",
+> +		[RTE_ETH_LINK_TYPE_DA] =3D "Direct Attach Copper",
+
+RTE_ETH_LINK_TYPE_DAC
+
+> +		[RTE_ETH_LINK_TYPE_SGMII] =3D "SGMII",
+> +		[RTE_ETH_LINK_TYPE_QSGMII] =3D "QSGMII",
+> +		[RTE_ETH_LINK_TYPE_XFI] =3D "XFI",
+> +		[RTE_ETH_LINK_TYPE_SFI] =3D "SFI",
+> +		[RTE_ETH_LINK_TYPE_XLAUI] =3D "XLAUI",
+> +		[RTE_ETH_LINK_TYPE_GAUI] =3D "GAUI",
+> +		[RTE_ETH_LINK_TYPE_XAUI] =3D "XAUI",
+> +		[RTE_ETH_LINK_TYPE_CAUI] =3D "CAUI",
+> +		[RTE_ETH_LINK_TYPE_LAUI] =3D "LAUI",
+> +		[RTE_ETH_LINK_TYPE_SFP] =3D "SFP",
+> +		[RTE_ETH_LINK_TYPE_SFP_DD] =3D "SFP_DD",
+
+"SFP-DD"
+
+> +		[RTE_ETH_LINK_TYPE_SFP_PLUS] =3D "SFP_PLUS",
+
+"SFP+"
+
+> +		[RTE_ETH_LINK_TYPE_SFP28] =3D "SFP28",
+> +		[RTE_ETH_LINK_TYPE_QSFP] =3D "QSFP",
+> +		[RTE_ETH_LINK_TYPE_QSFP_PLUS] =3D "QSFP_PLUS",
+
+"QSFP+"
+
+> +		[RTE_ETH_LINK_TYPE_QSFP28] =3D "QSFP28",
+> +		[RTE_ETH_LINK_TYPE_QSFP56] =3D "QSFP56",
+> +		[RTE_ETH_LINK_TYPE_QSFP_DD] =3D "QSFP_DD",
+
+"QSFP-DD"
+
+> +		[RTE_ETH_LINK_TYPE_UNKNOWN] =3D "Unknown"
+> +	};
+> +	const char *str =3D NULL;
+> +
+> +	if ((link_type < RTE_DIM(link_type_str)) && =
+link_type_str[link_type])
+> +		str =3D link_type_str[link_type];
+> +
+> +	rte_eth_trace_link_type_to_str(link_type, str);
+> +	return str;
+> +}
+> +
+>  RTE_EXPORT_SYMBOL(rte_eth_stats_get)
+>  int
+>  rte_eth_stats_get(uint16_t port_id, struct rte_eth_stats *stats)
+> diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+> index f9fb6ae549..92d1ded51f 100644
+> --- a/lib/ethdev/rte_ethdev.h
+> +++ b/lib/ethdev/rte_ethdev.h
+> @@ -329,6 +329,39 @@ struct rte_eth_stats {
+>  #define RTE_ETH_SPEED_NUM_UNKNOWN UINT32_MAX /**< Unknown */
+>  /**@}*/
+>=20
+> +/**@{@name PORT type
+> + * Ethernet port link type
+> + */
+> +enum rte_eth_link_type {
+> +	RTE_ETH_LINK_TYPE_NONE =3D 0, /**< Not defined */
+> +	RTE_ETH_LINK_TYPE_TP,       /**< Twisted Pair */
+> +	RTE_ETH_LINK_TYPE_AUI,      /**< Attachment Unit Interface */
+> +	RTE_ETH_LINK_TYPE_MII,      /**< Media Independent Interface */
+> +	RTE_ETH_LINK_TYPE_FIBER,    /**< Optical Fiber Link */
+> +	RTE_ETH_LINK_TYPE_BNC,      /**< BNC Link type for RF connection */
+> +	RTE_ETH_LINK_TYPE_DA,       /**< Direct Attach copper */
+> +	RTE_ETH_LINK_TYPE_SGMII,    /**< Serial Gigabit Media Independent
+> Interface */
+> +	RTE_ETH_LINK_TYPE_QSGMII,   /**< Link to multiplex 4 SGMII over one
+> serial link */
+> +	RTE_ETH_LINK_TYPE_XFI,      /**< 10 Gigabit Attachment Unit =
+Interface */
+> +	RTE_ETH_LINK_TYPE_SFI,      /**< 10 Gigabit Serial Interface for =
+optical
+> networking */
+> +	RTE_ETH_LINK_TYPE_XLAUI,    /**< 40 Gigabit Attachment Unit =
+Interface */
+> +	RTE_ETH_LINK_TYPE_GAUI,     /**< Gigabit Interface for bandwidth =
+like
+> 50/100/200 Gbps */
+> +	RTE_ETH_LINK_TYPE_XAUI,     /**< 10 Gigabit Attachment Unit =
+Interface */
+> +	RTE_ETH_LINK_TYPE_CAUI,     /**< 100 Gigabit Attachment Unit =
+Interface
+> */
+> +	RTE_ETH_LINK_TYPE_LAUI,     /**< 50 Gigabit Attachment Unit =
+Interface */
+> +	RTE_ETH_LINK_TYPE_SFP,      /**< Pluggable module for 1 Gigabit */
+> +	RTE_ETH_LINK_TYPE_SFP_PLUS, /**< Pluggable module for 10 Gigabit */
+> +	RTE_ETH_LINK_TYPE_SFP28,    /**< Pluggable module for 25 Gigabit */
+> +	RTE_ETH_LINK_TYPE_SFP_DD,   /**< Pluggable module for 100 Gigabit */
+> +	RTE_ETH_LINK_TYPE_QSFP,     /**< Module to mutiplex 4 SFP i.e. =
+4*1=3D4
+> Gigabit */
+> +	RTE_ETH_LINK_TYPE_QSFP_PLUS,/**< Module to mutiplex 4 SFP_PLUS i.e.
+> 4*10=3D40 Gigabit */
+> +	RTE_ETH_LINK_TYPE_QSFP28,   /**< Module to mutiplex 4 SFP28 i.e.
+> 4*25=3D100 Gigabit */
+> +	RTE_ETH_LINK_TYPE_QSFP56,   /**< Module to mutiplex 4 SFP56 i.e.
+> 4*50=3D200 Gigabit */
+> +	RTE_ETH_LINK_TYPE_QSFP_DD,  /**< Module to mutiplex 4 SFP_DD i.e.
+> 4*100=3D400 Gigabit */
+> +	RTE_ETH_LINK_TYPE_UNKNOWN =3D 31, /**< Unknown Link Type */
+
+For reference, we do have both RTE_ETH_SPEED_NUM_NONE and =
+RTE_ETH_SPEED_NUM_UNKNOWN, where RTE_ETH_SPEED_NUM_NONE represents "link =
+down, zero speed", and RTE_ETH_SPEED_NUM_UNKNOWN represents "link up, =
+unknown speed".
+
+But I doubt we need both RTE_ETH_LINK_TYPE_NONE and =
+RTE_ETH_LINK_TYPE_UNKNOWN...
+I agree that we need a value to represent "connector type unknown", but =
+do we also need a value to represent "connector not present"? When can a =
+port have no connector?
+
+> +};
+> +/**@}*/
+> +
+>  /**
+>   * A structure used to retrieve link-level information of an Ethernet =
+port.
+>   */
+> @@ -341,6 +374,7 @@ struct rte_eth_link {
+>  			uint16_t link_duplex  : 1;  /**<
+> RTE_ETH_LINK_[HALF/FULL]_DUPLEX */
+>  			uint16_t link_autoneg : 1;  /**<
+> RTE_ETH_LINK_[AUTONEG/FIXED] */
+>  			uint16_t link_status  : 1;  /**< RTE_ETH_LINK_[DOWN/UP] */
+> +			uint16_t link_type    : 5;  /**< RTE_ETH_LINK_TYPE_XXX */
+>  		};
+>  	};
+>  };
+> @@ -3116,6 +3150,20 @@ int rte_eth_link_get_nowait(uint16_t port_id, =
+struct
+> rte_eth_link *link)
+>  __rte_experimental
+>  const char *rte_eth_link_speed_to_str(uint32_t link_speed);
+>=20
+> +/**
+> + * @warning
+> + * @b EXPERIMENTAL: this API may change without prior notice.
+> + *
+> + * This function converts an Ethernet link type to a string.
+> + *
+> + * @param link_type
+> + *   The link type to convert.
+> + * @return
+> + *   The string representation of the link type.
+> + */
+> +__rte_experimental
+> +const char *rte_eth_link_type_to_str(enum rte_eth_link_type =
+link_type);
+> +
+>  /**
+>   * @warning
+>   * @b EXPERIMENTAL: this API may change without prior notice.
+> --
+> 2.43.0
 
