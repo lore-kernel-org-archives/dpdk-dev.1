@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4942CA0EE3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 08:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB624CA0EE3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 08:17:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E7E3C4114B;
-	Thu, 14 Aug 2025 10:16:56 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 5169441149
- for <dev@dpdk.org>; Thu, 14 Aug 2025 10:16:55 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DNVXED003231
- for <dev@dpdk.org>; Thu, 14 Aug 2025 01:16:54 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 2DA8442686;
+	Thu, 14 Aug 2025 10:16:59 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id C89AD4161A
+ for <dev@dpdk.org>; Thu, 14 Aug 2025 10:16:57 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E6KlhU014157
+ for <dev@dpdk.org>; Thu, 14 Aug 2025 01:16:57 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=q
- DnhQri5ohPPh0llFBz9K6ps2dCJGscrHZCqfJtv+vw=; b=fQf0tcnkl40Y75a5c
- SbqcWOhH76A+4+E9QWkM8XwnNVwINJqUkyEhngscolRZC9s9J9/EiQTOkwR9A5lJ
- PpXl1XSjHHsq/8y6MA4f5wd1CIAiNFQy0j8r2AtVO+BNH2fHlmfMrktREYGscZbv
- 3X4Ra2ycjs993Vu1U5xi7vt0GREPS3AS+vSMF0ALKaM7yNxazIMH5ULvOHgV5iav
- FFTT07Fl1xymVYZxu1JmAlblCMCQMlZYKF6AWQR0AE35HmLTD5XPkG+RHnyzwOeb
- cR7vzcFkI9oYB5mqFKCC9BolZdY8uQhi0OO73nsX3UmuwTCyvLdtJJCivRq3zWlf
- MI0Pg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48h4f2rv49-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=k
+ c9yY5UIH5APxTtiv2hAJzwxMYJ8u7y38TaZ+cBtGlY=; b=BqsnKETcoXkJKmqFf
+ Uswl/gTjtjkYg22jr/P66AnU+3NOj4GGQ6UtPyoUhaEU+qA27nG8yjdHDUIPZttu
+ fS8TJ+3kPJ3Ko8y7IY3zAaAw82MCDwdiWN+KMBSjbMn3bUYO2qr/Q1SpcCxRs6NC
+ amSKBQWvNit0/wJN9XuMQYgiwRKJiczlL4kq6OFadf01ua8+XWXJGONfrIemiBbr
+ 93tFMaMq2ILgd5N+FHR6a9qa08iNMu5i0dCU2E7F7hLojdP8s8xu+wfyz3wgg5ig
+ i1z+oXRzx3TzOzPS9DarFBbeGAEC5+GOVom8nc8qPvokjim4tW+pFviSJzQ9yo9V
+ L0KEA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 48haep87ag-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 14 Aug 2025 01:16:54 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Thu, 14 Aug 2025 01:16:56 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 14 Aug 2025 01:16:56 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 14 Aug 2025 01:16:56 -0700
+ 15.2.1544.4; Thu, 14 Aug 2025 01:16:59 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 14 Aug 2025 01:16:59 -0700
 Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
- by maili.marvell.com (Postfix) with ESMTP id 38D853F7061;
- Thu, 14 Aug 2025 01:16:49 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id C72A03F7061;
+ Thu, 14 Aug 2025 01:16:52 -0700 (PDT)
 From: <skori@marvell.com>
 To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH v3 5/6] net/cnxk: report link type and status
-Date: Thu, 14 Aug 2025 13:46:30 +0530
-Message-ID: <20250814081637.1905660-5-skori@marvell.com>
+Subject: [PATCH v3 6/6] net/cnxk: report link mode
+Date: Thu, 14 Aug 2025 13:46:31 +0530
+Message-ID: <20250814081637.1905660-6-skori@marvell.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250814081637.1905660-1-skori@marvell.com>
 References: <20250813093101.1492434-6-skori@marvell.com>
@@ -53,19 +53,19 @@ References: <20250813093101.1492434-6-skori@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE0MDA2NyBTYWx0ZWRfXwQSSVPSkp9K9
- qjCqTs7BkpreimT7nNGee4hIg1oWiNDoEFP8I+Hv95S/OcD411gwhukTeJVd7QynXiot6j5rmNs
- 3jyDZ87qGFOtiPS09Y2tHrW4UahSocUFIZ0o27sDbU4SfqMuwj53Ozj6l32eaQyfy7rQhj4NHAM
- Lnhv/38OHEPqluXfCm1rhu7aVfuHCADeraGbA2UtIRsAzmSlwiZUJ1HXzH1JPZ/hYJ+OakGIVu0
- IQeM004T/0a4lXHzu2BmueztpDCf4K+4f65xS733IrYE+SzXv1z7QiKVZbQE/6x1q5Xzrs01r2f
- Miokvv4uR7EpXg4I04RGD0v0JjUHidSF1kSPsigQaG83tDg646QUmP0VelT6AgdmX75VtxsjOk6
- UIEbNNPJ1o77hshN+XzAjJpaeL07M4iq0BiqDTYNWNOwyJdKFUxju/fBj/8Y0zcolNMe+5/k
-X-Authority-Analysis: v=2.4 cv=Fds3xI+6 c=1 sm=1 tr=0 ts=689d9b76 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=Ax6jqZJi9XUBVAB8cagA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE0MDA2NyBTYWx0ZWRfX1Mfsj3GI2U71
+ LQJv6dvl1jUcch9lnaYHzpIGOls7zWSjWMWXSGZ4Tl7PNt3iIlTjwWx98ITcQZGxKmeKCTpXKGI
+ 6CwGZH5djv9xGbRFbbGYSIryM3/F8nB7pyxZ000QiT6+u3YNtNXdraAR0Syn6HPF0ZXv0KlZx0q
+ 5k8puCtLQY0ypvWLibXiFgp+iQIvxpHuk+zjTY60P89odwg8VJKlZswtsIUXsIOQoASSLSwFz59
+ fivyYKJ5RpVPBIBCIUcHRnB8P2/aIJNl1LD8MVjBenpzD6io7tXhI2rEKYL6qOB3juBwJ2rJ7r7
+ 9ZbztgzurgVDqSgmziXt7Ua+OVz++aojWNV7u9PJQzO01XcZyIxye6lj7RigvON4bvfQ5bT2Hk0
+ OoTr/4Nyk760faYrEw2pLWyPm0hbSh6fCZcHs15rWiv/fjN5OkXsaQJ3o+Nckb4aDtVemfvc
+X-Proofpoint-GUID: F84NJm5pqy8IA4IEFPX9bnDXH5_uJJDx
+X-Proofpoint-ORIG-GUID: F84NJm5pqy8IA4IEFPX9bnDXH5_uJJDx
+X-Authority-Analysis: v=2.4 cv=Yaq95xRf c=1 sm=1 tr=0 ts=689d9b78 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=koTAqf3Ast2ZiasxKz8A:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: e_oYxXwODVBa-7zfP2T7-7Uv-cejegzz
-X-Proofpoint-ORIG-GUID: e_oYxXwODVBa-7zfP2T7-7Uv-cejegzz
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
@@ -84,122 +84,36 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Sunil Kumar Kori <skori@marvell.com>
 
-Retrieves type of port i.e. twisted pair, fibre etc
-from firmware and reports the same to user.
-
-Depends-on: patch-35925 ("ethdev: add support to provide link type")
+Reports link mode whether fixed or autonegotiation
 
 Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
 Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
 ---
- drivers/net/cnxk/cnxk_ethdev.c | 19 +++++++++++++++++++
- drivers/net/cnxk/cnxk_ethdev.h |  1 +
- drivers/net/cnxk/cnxk_link.c   | 10 +++++++---
- 3 files changed, 27 insertions(+), 3 deletions(-)
+ drivers/net/cnxk/cnxk_link.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
-index aa120225ba..84608c8bcf 100644
---- a/drivers/net/cnxk/cnxk_ethdev.c
-+++ b/drivers/net/cnxk/cnxk_ethdev.c
-@@ -62,6 +62,17 @@ static const uint32_t cnxk_mac_modes[CGX_MODE_MAX + 1] = {
- 	[ETH_MODE_10G_QXGMII_BIT] = RTE_ETH_LINK_SPEED_10G,
- };
- 
-+static const uint8_t cnxk_port_type[] = {
-+	[CGX_PORT_TP] = RTE_ETH_LINK_TYPE_TP,
-+	[CGX_PORT_AUI] = RTE_ETH_LINK_TYPE_AUI,
-+	[CGX_PORT_MII] = RTE_ETH_LINK_TYPE_MII,
-+	[CGX_PORT_FIBRE] = RTE_ETH_LINK_TYPE_FIBER,
-+	[CGX_PORT_BNC] = RTE_ETH_LINK_TYPE_BNC,
-+	[CGX_PORT_DA] = RTE_ETH_LINK_TYPE_DA,
-+	[CGX_PORT_NONE] = RTE_ETH_LINK_TYPE_NONE,
-+	[CGX_PORT_OTHER] = RTE_ETH_LINK_TYPE_UNKNOWN,
-+};
-+
- cnxk_ethdev_rx_offload_cb_t cnxk_ethdev_rx_offload_cb;
- 
- #define CNXK_NIX_CQ_INL_CLAMP_MAX (64UL * 1024UL)
-@@ -98,6 +109,7 @@ static inline uint32_t
- nix_get_speed_capa(struct cnxk_eth_dev *dev)
- {
- 	struct roc_nix_mac_fwdata fwdata;
-+	struct rte_eth_link link;
- 	uint32_t speed_capa;
- 	uint8_t mode;
- 	int rc;
-@@ -120,6 +132,12 @@ nix_get_speed_capa(struct cnxk_eth_dev *dev)
- 			if (fwdata.supported_link_modes & BIT_ULL(mode))
- 				speed_capa |= cnxk_mac_modes[mode];
- 		}
-+		dev->link_type = cnxk_port_type[(uint8_t)fwdata.port_type];
-+
-+		/* Set link type at init */
-+		memset(&link, 0, sizeof(link));
-+		link.link_type = dev->link_type;
-+		rte_eth_linkstatus_set(dev->eth_dev, &link);
- 	}
- 
- 	return speed_capa;
-@@ -1787,6 +1805,7 @@ cnxk_nix_dev_stop(struct rte_eth_dev *eth_dev)
- 
- 	/* Bring down link status internally */
- 	memset(&link, 0, sizeof(link));
-+	link.link_type = dev->link_type;
- 	rte_eth_linkstatus_set(eth_dev, &link);
- 
- 	return 0;
-diff --git a/drivers/net/cnxk/cnxk_ethdev.h b/drivers/net/cnxk/cnxk_ethdev.h
-index 5a8b43c037..7b928750ca 100644
---- a/drivers/net/cnxk/cnxk_ethdev.h
-+++ b/drivers/net/cnxk/cnxk_ethdev.h
-@@ -370,6 +370,7 @@ struct cnxk_eth_dev {
- 	uint64_t rx_offload_capa;
- 	uint64_t tx_offload_capa;
- 	uint32_t speed_capa;
-+	uint8_t link_type;
- 	/* Configured Rx and Tx offloads */
- 	uint64_t rx_offloads;
- 	uint64_t tx_offloads;
 diff --git a/drivers/net/cnxk/cnxk_link.c b/drivers/net/cnxk/cnxk_link.c
-index 0bc56fbb8c..a074f6f65e 100644
+index a074f6f65e..d2b2372871 100644
 --- a/drivers/net/cnxk/cnxk_link.c
 +++ b/drivers/net/cnxk/cnxk_link.c
-@@ -115,14 +115,16 @@ static void
- nix_link_status_print(struct rte_eth_dev *eth_dev, struct rte_eth_link *link)
- {
- 	if (link && link->link_status)
--		plt_info("Port %d: Link Up - speed %u Mbps - %s",
-+		plt_info("Port %d: Link Up - speed %u Mbps - %s - %s",
- 			 (int)(eth_dev->data->port_id),
- 			 (uint32_t)link->link_speed,
- 			 link->link_duplex == RTE_ETH_LINK_FULL_DUPLEX
- 				 ? "full-duplex"
--				 : "half-duplex");
-+				 : "half-duplex",
-+				 rte_eth_link_type_to_str(link->link_type));
- 	else
--		plt_info("Port %d: Link Down", (int)(eth_dev->data->port_id));
-+		plt_info("Port %d: Link Down - %s", (int)(eth_dev->data->port_id),
-+			 rte_eth_link_type_to_str(link->link_type));
- }
+@@ -171,7 +171,7 @@ cnxk_eth_dev_link_status_cb(struct roc_nix *nix, struct roc_nix_link_info *link)
  
- void
-@@ -171,6 +173,7 @@ cnxk_eth_dev_link_status_cb(struct roc_nix *nix, struct roc_nix_link_info *link)
+ 	eth_link.link_status = link->status;
  	eth_link.link_speed = link->speed;
- 	eth_link.link_autoneg = RTE_ETH_LINK_AUTONEG;
+-	eth_link.link_autoneg = RTE_ETH_LINK_AUTONEG;
++	eth_link.link_autoneg = link->autoneg ? RTE_ETH_LINK_AUTONEG : RTE_ETH_LINK_FIXED;
  	eth_link.link_duplex = link->full_duplex;
-+	eth_link.link_type = dev->link_type;
+ 	eth_link.link_type = dev->link_type;
  
- 	/* Print link info */
- 	nix_link_status_print(eth_dev, &eth_link);
-@@ -210,6 +213,7 @@ cnxk_nix_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete)
- 		link.link_autoneg = RTE_ETH_LINK_AUTONEG;
+@@ -210,7 +210,7 @@ cnxk_nix_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete)
+ 			return rc;
+ 		link.link_status = info.status;
+ 		link.link_speed = info.speed;
+-		link.link_autoneg = RTE_ETH_LINK_AUTONEG;
++		link.link_autoneg = info.autoneg ? RTE_ETH_LINK_AUTONEG : RTE_ETH_LINK_FIXED;
  		if (info.full_duplex)
  			link.link_duplex = info.full_duplex;
-+		link.link_type = dev->link_type;
- 	}
- 
- 	return rte_eth_linkstatus_set(eth_dev, &link);
+ 		link.link_type = dev->link_type;
 -- 
 2.43.0
 
