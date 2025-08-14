@@ -2,76 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3519CA0EDC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 16:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D150ACA0EDC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 20:42:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2493A40E11;
-	Thu, 14 Aug 2025 18:59:08 +0200 (CEST)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 1228440B9C
- for <dev@dpdk.org>; Thu, 14 Aug 2025 18:59:07 +0200 (CEST)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-45a1b0bd237so9028225e9.2
- for <dev@dpdk.org>; Thu, 14 Aug 2025 09:59:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8FD8B4021F;
+	Thu, 14 Aug 2025 22:42:42 +0200 (CEST)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
+ [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id 384274003C
+ for <dev@dpdk.org>; Thu, 14 Aug 2025 22:42:41 +0200 (CEST)
+Received: by mail-qv1-f52.google.com with SMTP id
+ 6a1803df08f44-70a9282f475so12618846d6.1
+ for <dev@dpdk.org>; Thu, 14 Aug 2025 13:42:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755190747;
- x=1755795547; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=o6UdepoTLxmuT2577Wc+Q33lOr28RQeANJvPGE/xJxI=;
- b=Xnjc9DxkoHX8y3RzUFfVEd+0vAYnRXLsImnzEBWnqqeUeaOYR0W5L1bAoghLV2mxmW
- zAJdtuzhG73jmU0HY8W6CM4o+7TfeUgb1Tm224Cr298s6vvog8ISiwPCpmxCT8iOK4Ce
- ayGNcq3hhdzDZjYjh7nt+CK3hkEImdLmzXScKcC5Sm/n5N8P9mWamotRu67/DZKXRFhd
- T7zcb9fgk8WzEvpqz0DYH7YpTTSNSNfewz8Eg9XB940DwvtGP+O6sMHhiFdLWsp/1NQi
- iUdWEOcWFR2BzTlfuAj/ozqf4R1n7wbydb1vWMEhxnGRYtxyOAGAH8GdVEpGzToM7iJ/
- Y4/Q==
+ d=iol.unh.edu; s=unh-iol; t=1755204160; x=1755808960; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=revoyH2mqLk9KAf+n7tXEIuqfOkug62S0VTccRy4lk4=;
+ b=ciCl8lVIDHmbcO08TCx9jlokVFqWaNhkvyRYRi00/QMO3B2GXOU07wYZ4xhP6Vg6ga
+ t9tEcSFQGArYV+NVvTmlrz6IlmMTgn4yn/QNpi4NNVa0SncO+1dSh2uStEEvGho0n0xM
+ Vrnd/OhRWFcf6oCtw8QK3pLbINHWGj/JKPLCU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755190747; x=1755795547;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=o6UdepoTLxmuT2577Wc+Q33lOr28RQeANJvPGE/xJxI=;
- b=ewt9QVryBX4YtDtT1U1/sodgVZp8nLbJMo+xXTgQy3jheS8s0Ks+lRgKa8lyEWDc/l
- TsNvMBkkgVpXo2us6XP6gG5N3vJAemucLtCKN3ud3n2WpUhGwL1vNFP0mLgl2orZOH7S
- A+2DSs8xFvD4a22peqhABDqrN1UzAMtaZ9sT1xpfrz/UWip3eIpQHAM+ewQWPtekIkUg
- ya3ZYz5WmRQYyUNAQYF42nMkBLb1Ift8CF11hD0ELoAmoT1+YU++Gwjb9OKp7lbLDZTQ
- 7idJVALt8ZdFGw5UMg0YJt4aKnz3AY7h3jQRsWgoRwtxBqy/pFxZcIvNYk2QsT7uNE8a
- G+tQ==
+ d=1e100.net; s=20230601; t=1755204160; x=1755808960;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=revoyH2mqLk9KAf+n7tXEIuqfOkug62S0VTccRy4lk4=;
+ b=I6s/PysOw+IQmFwwNm1460/e+ZFoBFfDQVysX5LITqhevU/lfhSQhf7Xi1tgZVg30f
+ kfFX+0db+umWRhOGMcrAjKhuCRDmgNCGXzMtD/PR45mSqs26Cuyyp17a3OCrrVI5Gb/F
+ bkZdVxZSrpPgCeq7Rk32s0MYteyjbu98U0hB1TmHm48796njnWNH2XULve3itYYNgbHr
+ 8lO/Y2v9XvbSnbFjC1z2mtrZKuukGq9fuwMwfgwteZY/cy31IwRFZRbeZHym7n8OUIPg
+ zsvTZyq4xBEnubRgW9CHPtESPR9+zlxtQYN2YEXv2up9wrWiHExBSjc4yr7ls38cfyLs
+ jVqA==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVcIiktu5EhsTQdHuloFR68OC8IpQ/el8dTfUYIKd7tBnuz1G4MrWZDinY+mJet3libPgg=@dpdk.org
-X-Gm-Message-State: AOJu0Yyz/lGd2a4EK/jzUSLXSlFbccK3aRoSIZK33IQ+cQWplsOMyUnW
- N22jw9hqP50wNHNBVW19U3bb7kPQA2yZPLiscldw6fIyTn+deVsgigdi40kfBR6kUEc=
-X-Gm-Gg: ASbGncv3JVbGQSQSEbaaPLa5M03xFcA1X7w7/COwuNt5y4DNaFWpzzfuT4SE8zVZUbu
- He+BvgACHuMbxjLzXIO7i3Z9+R3134V7m+hsykPH4Sbwga1fGS/tqS5dAmHEATn6sIJnUtLodud
- XmgYvOeLfcuTV7jiQ3qtah/CB6U3l5eXBe87M/RpF/Wy/osyiGxm2M7Hyx0smGlMUkA3RxL0AoZ
- YF0FEcrnw3IpER4IGG/gKxv5IzUWCbluHhlJUcPzJEXEBcR04dE+krO+rkaskh/aB1JpmI1dBjY
- R2JOHCWdtO2TJ1TNzSoHpaCRNEpg/B5BURV4ZvEms0MkfiUD/bBrx9zHKz/WmlmLp+r/TBn9Uf+
- WAVYXyGH9lovfbfj1kLpYGqw6vK7x9VK8S3FGSfmuvhilHYFmNC7OI8PuFLG0u/vu5gQs3YLMoZ
- g=
-X-Google-Smtp-Source: AGHT+IEjvwrAmyXMz9TG61+PYD1hOI6noEkHhppMxTh8mCpmebT5Om3Q9DtMA8ZBvq38Vm8nZK2oOQ==
-X-Received: by 2002:a05:6000:18aa:b0:3b7:95fa:ac4 with SMTP id
- ffacd0b85a97d-3b9fc34c36bmr3170117f8f.32.1755190746629; 
- Thu, 14 Aug 2025 09:59:06 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ AJvYcCW2EyRhKU8JhEEboskY4qcw4hnUN0LSNNdBMt2oUPDTf0G5zxV4GWe0ktAzFytuD4u++TQ=@dpdk.org
+X-Gm-Message-State: AOJu0YyCo3jP9rJIaMlztPPU2Xp2Lt87Es8fD2fF53ABTzZKxq9TvzVp
+ /wTf1DOAdxXKM/9bq5qvNRpo0T47d/SJKVUDuFkpBD7vCxnzi7E0rq0k4cNHLnZr+SU=
+X-Gm-Gg: ASbGncv2clIXcERx5PtISEkVY3kHddmFjfA/LAdVBMbTW5qv/LWvzGf8F54mEyB+HQZ
+ dIE+HiSEqjE9pbQIGlfzFBc33QYVTiFuY/LvQ3vGVBAvc3/TjGpVsEqUDvhi74lLnx+1IrWZqlT
+ eYhRTFIjZk28dMfqqanuw9vWdwGfrnxgDU3DQn2T4gJNNqz36MnHJdB4K98z63n6XdqNa8p9Rp+
+ WCl41dG8K9Mk8D1t2985q08Cmqe7A1MftASZkBgGvws37oj8pHpZQgAKFzHYoZhDKPDIK873hoz
+ 3O1L5uZSGrBglS0v8z7EBZRcozLwpc4tPo+mMBzE4/4T7uE94sx8YnnYSIkEvBxi/g/xYdRy3oQ
+ CkHJV8UFIgdEPK69FCp33X95nLvjix/AqFQ==
+X-Google-Smtp-Source: AGHT+IHEsBHECiviUdWZHfUSD30z0lwoi05kMfuvu4sjnl94hwuBOCMGe7qDjp6UsjEPrPfsGd/XCg==
+X-Received: by 2002:a05:6214:c2a:b0:709:eea9:676f with SMTP id
+ 6a1803df08f44-70b98315908mr61470166d6.18.1755204160384; 
+ Thu, 14 Aug 2025 13:42:40 -0700 (PDT)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:a136:b4d:e75:44c4])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3b79c3ac093sm54015477f8f.9.2025.08.14.09.59.05
+ 6a1803df08f44-70af5b80440sm18085896d6.62.2025.08.14.13.42.39
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 14 Aug 2025 09:59:06 -0700 (PDT)
-Date: Thu, 14 Aug 2025 09:59:01 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bingbin Chen <chen.bingbin@zte.com.cn>
-Cc: ivan.malov@arknetworks.am, wang.junlong1@zte.com.cn,
- yang.yonggang@zte.com.cn, dev@dpdk.org
-Subject: Re: [PATCH v5 2/2] net/zxdh: add support flow director ops
-Message-ID: <20250814095901.49018c75@hermes.local>
-In-Reply-To: <20250814025248.2194951-3-chen.bingbin@zte.com.cn>
-References: <20250808071048.1906724-1-wang.junlong1@zte.com.cn>
- <20250814025248.2194951-1-chen.bingbin@zte.com.cn>
- <20250814025248.2194951-3-chen.bingbin@zte.com.cn>
+ Thu, 14 Aug 2025 13:42:39 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: luca.vizzarro@arm.com
+Cc: abailey@iol.unh.edu, dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu
+Subject: [PATCH] dts: enable port binding on the TG
+Date: Thu, 14 Aug 2025 16:38:46 -0400
+Message-ID: <20250814203846.407334-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,37 +74,170 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 14 Aug 2025 10:52:42 +0800
-Bingbin Chen <chen.bingbin@zte.com.cn> wrote:
+Currently, driver binding for all nodes relies on a devbind_script_path
+attribute in the node main sessions. This attribute is being set on the
+SUT node, but not the TG node. Consequently, if the TG node ports are
+not bound to the correct driver before DTS execution, the TG ports will
+fail to bind and DTS will error.
 
-> +		} else {
-> +			entry = calloc(1, sizeof(struct rte_flow));
-> +			entry_flow = calloc(1, sizeof(struct zxdh_flow));
-> +			TAILQ_FOREACH(entry, &hw->dh_flow_list, next) {
-> +				entry_flow = (struct zxdh_flow *)entry->driver_flow;
-> +				offlow_key_dump(&entry_flow->flowentry.fd_flow.key,
-> +						&entry_flow->flowentry.fd_flow.key_mask, file);
-> +				offlow_result_dump(&entry_flow->flowentry.fd_flow.result, file);
-> +			}
-> +			rte_free(entry_flow);
-> +			rte_free(entry)
+relocate prepare devbind script method to topology class to be used by both
+TG and SUT nodes.
 
-Use the right free function!
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 
-==== 20 line log output for Ubuntu 24.04 (dpdk_unit_test): ====
-../drivers/net/zxdh/zxdh_flow.c:641:36: note: returned from 'calloc'
-641 |                         key_mask = calloc(1, sizeof(struct fd_flow_key) * ZXDH_MAX_FLOW_NUM);
-|                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/zxdh/zxdh_flow.c:689:9: error: 'rte_free' called on pointer returned from a mismatched allocation function [-Werror=mismatched-dealloc]
-689 |         rte_free(key);
-|         ^~~~~~~~~~~~~
-../drivers/net/zxdh/zxdh_flow.c:640:31: note: returned from 'calloc'
-640 |                         key = calloc(1, sizeof(struct fd_flow_key) * ZXDH_MAX_FLOW_NUM);
-|                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/net/zxdh/zxdh_flow.c:690:9: error: 'rte_free' called on pointer returned from a mismatched allocation function [-Werror=mismatched-dealloc]
-690 |         rte_free(fd_entry);
-|         ^~~~~~~~~~~~~~~~~~
-../drivers/net/zxdh/zxdh_flow.c:639:36: note: returned from 'calloc'
-639 |                         fd_entry = calloc(1, sizeof(ZXDH_DTB_ACL_ENTRY_INFO_T) * ZXDH_MAX_FLOW_NUM);
-|                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
+done
+---
+ .mailmap                                |  1 +
+ dts/framework/remote_session/dpdk.py    | 36 +----------------------
+ dts/framework/testbed_model/topology.py | 39 +++++++++++++++++++++++++
+ 3 files changed, 41 insertions(+), 35 deletions(-)
+
+diff --git a/.mailmap b/.mailmap
+index 34a99f93a1..df06862d8b 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -104,6 +104,7 @@ Andre Muezerie <andremue@linux.microsoft.com> <andremue@microsoft.com>
+ Andrea Arcangeli <aarcange@redhat.com>
+ Andrea Grandi <andrea.grandi@intel.com>
+ Andre Richter <andre.o.richter@gmail.com>
++Andrew Bailey <abailey@iol.unh.edu>
+ Andrew Boyer <andrew.boyer@amd.com> <aboyer@pensando.io>
+ Andrew Harvey <agh@cisco.com>
+ Andrew Jackson <ajackson@solarflare.com>
+diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
+index 606d6e22fe..d1ab3ae50d 100644
+--- a/dts/framework/remote_session/dpdk.py
++++ b/dts/framework/remote_session/dpdk.py
+@@ -24,12 +24,11 @@
+     RemoteDPDKTarballLocation,
+     RemoteDPDKTreeLocation,
+ )
+-from framework.exception import ConfigurationError, InternalError, RemoteFileNotFoundError
++from framework.exception import ConfigurationError, RemoteFileNotFoundError
+ from framework.logger import DTSLogger, get_dts_logger
+ from framework.params.eal import EalParams
+ from framework.remote_session.remote_session import CommandResult
+ from framework.testbed_model.cpu import LogicalCore, LogicalCoreCount, LogicalCoreList, lcore_filter
+-from framework.testbed_model.linux_session import LinuxSession
+ from framework.testbed_model.node import Node
+ from framework.testbed_model.os_session import OSSession
+ from framework.testbed_model.virtual_device import VirtualDevice
+@@ -358,7 +357,6 @@ def setup(self):
+         """Set up the DPDK runtime on the target node."""
+         if self.build:
+             self.build.setup()
+-        self._prepare_devbind_script()
+ 
+     def teardown(self) -> None:
+         """Reset DPDK variables and bind port driver to the OS driver."""
+@@ -385,38 +383,6 @@ def run_dpdk_app(
+             f"{app_path} {eal_params}", timeout, privileged=True, verify=True
+         )
+ 
+-    def _prepare_devbind_script(self) -> None:
+-        """Prepare the devbind script.
+-
+-        If the environment has a build associated with it, then use the script within that build's
+-        tree. Otherwise, copy the script from the local repository.
+-
+-        This script is only available for Linux, if the detected session is not Linux then do
+-        nothing.
+-
+-        Raises:
+-            InternalError: If dpdk-devbind.py could not be found.
+-        """
+-        if not isinstance(self._node.main_session, LinuxSession):
+-            return
+-
+-        if self.build:
+-            devbind_script_path = self._node.main_session.join_remote_path(
+-                self.build.remote_dpdk_tree_path, "usertools", "dpdk-devbind.py"
+-            )
+-        else:
+-            local_script_path = Path("..", "usertools", "dpdk-devbind.py").resolve()
+-            if not local_script_path.exists():
+-                raise InternalError("Could not find dpdk-devbind.py locally.")
+-
+-            devbind_script_path = self._node.main_session.join_remote_path(
+-                self._node.tmp_dir, local_script_path.name
+-            )
+-
+-            self._node.main_session.copy_to(local_script_path, devbind_script_path)
+-
+-        self._node.main_session.devbind_script_path = devbind_script_path
+-
+     def filter_lcores(
+         self,
+         filter_specifier: LogicalCoreCount | LogicalCoreList,
+diff --git a/dts/framework/testbed_model/topology.py b/dts/framework/testbed_model/topology.py
+index 899ea0ad3a..db96aaf170 100644
+--- a/dts/framework/testbed_model/topology.py
++++ b/dts/framework/testbed_model/topology.py
+@@ -12,11 +12,13 @@
+ from collections.abc import Iterator
+ from dataclasses import dataclass
+ from enum import Enum
++from pathlib import Path
+ from typing import Literal, NamedTuple
+ 
+ from typing_extensions import Self
+ 
+ from framework.exception import ConfigurationError, InternalError
++from framework.testbed_model.linux_session import LinuxSession
+ from framework.testbed_model.node import Node
+ 
+ from .port import DriverKind, Port, PortConfig
+@@ -128,6 +130,7 @@ def setup(self) -> None:
+ 
+         Binds all the ports to the right kernel driver to retrieve MAC addresses and logical names.
+         """
++        self._prepare_devbind_script()
+         self._setup_ports("sut")
+         self._setup_ports("tg")
+ 
+@@ -250,6 +253,42 @@ def _bind_ports_to_drivers(
+         for driver_name, ports in driver_to_ports.items():
+             node.main_session.bind_ports_to_driver(ports, driver_name)
+ 
++    def _prepare_devbind_script(self) -> None:
++        """Prepare the devbind script.
++
++        If the environment has a build associated with it, then use the script within that build's
++        tree. Otherwise, copy the script from the local repository.
++
++        This script is only available for Linux, if the detected session is not Linux then do
++        nothing.
++
++        Raises:
++            InternalError: If dpdk-devbind.py could not be found.
++        """
++        from framework.context import get_ctx
++
++        ctx = get_ctx()
++        tg = ctx.tg_node
++        sut = ctx.sut_node
++
++        def prepare_node(node: Node) -> None:
++            if not isinstance(node.main_session, LinuxSession):
++                return
++
++            local_script_path = Path("..", "usertools", "dpdk-devbind.py").resolve()
++            if not local_script_path.exists():
++                raise InternalError("Could not find dpdk-devbind.py locally.")
++
++            devbind_script_path = node.main_session.join_remote_path(
++                node.tmp_dir, local_script_path.name
++            )
++
++            node.main_session.copy_to(local_script_path, devbind_script_path)
++            node.main_session.devbind_script_path = devbind_script_path
++
++        prepare_node(tg)
++        prepare_node(sut)
++
+     @property
+     def sut_dpdk_ports(self) -> list[Port]:
+         """The DPDK ports for the SUT node."""
+-- 
+2.50.1
+
