@@ -2,56 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7665EC87FCF
-	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 00:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F89CA0EE0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 03:03:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 73790402A8;
-	Thu, 14 Aug 2025 02:44:44 +0200 (CEST)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id 5F5E74026D
- for <dev@dpdk.org>; Thu, 14 Aug 2025 02:44:41 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.252])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c2RHt0F20z13N7H;
- Thu, 14 Aug 2025 08:41:14 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 0BD5E180B5A;
- Thu, 14 Aug 2025 08:44:39 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 14 Aug 2025 08:44:38 +0800
-Message-ID: <758d6a5c-4c1a-4506-a32f-38c4b5543046@huawei.com>
-Date: Thu, 14 Aug 2025 08:44:38 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 7C2E9402EA;
+	Thu, 14 Aug 2025 05:03:35 +0200 (CEST)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+ by mails.dpdk.org (Postfix) with ESMTP id 0576F402A8
+ for <dev@dpdk.org>; Thu, 14 Aug 2025 05:03:32 +0200 (CEST)
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mxct.zte.com.cn (FangMail) with ESMTPS id 4c2VS01lfKz4xNv0;
+ Thu, 14 Aug 2025 11:03:28 +0800 (CST)
+Received: from szxl2zmapp05.zte.com.cn ([10.1.32.37])
+ by mse-fl2.zte.com.cn with SMTP id 57E332rs013815;
+ Thu, 14 Aug 2025 11:03:02 +0800 (+08)
+ (envelope-from chen.bingbin@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Thu, 14 Aug 2025 11:03:03 +0800
+X-Zmail-TransId: 3e81689d51df001-f14e7
+X-Zmail-LocalSMTP: 1
+X-Zmail-RealSender: chen.bingbin@zte.com.cn
+From: Bingbin Chen <chen.bingbin@zte.com.cn>
+To: stephen@networkplumber.org, ivan.malov@arknetworks.am,
+ wang.junlong1@zte.com.cn, yang.yonggang@zte.com.cn
+Cc: dev@dpdk.org, Bingbin Chen <chen.bingbin@zte.com.cn>
+Subject: [PATCH v5 0/2] add support flow director ops
+Date: Thu, 14 Aug 2025 10:52:40 +0800
+Message-ID: <20250814025248.2194951-1-chen.bingbin@zte.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250808071048.1906724-1-wang.junlong1@zte.com.cn>
+References: <20250808071048.1906724-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH v0 1/1] doc: announce inter-device DMA
- capability support in dmadev
-To: Vamsi Krishna Attunuru <vattunuru@marvell.com>, "thomas@monjalon.net"
- <thomas@monjalon.net>
-CC: Jerin Jacob <jerinj@marvell.com>, "dev@dpdk.org" <dev@dpdk.org>, Pavan
- Nikhilesh Bhagavatula <pbhagavatula@marvell.com>, "kevin.laatz@intel.com"
- <kevin.laatz@intel.com>, "bruce.richardson@intel.com"
- <bruce.richardson@intel.com>, Vladimir Medvedkin
- <vladimir.medvedkin@intel.com>, Anatoly Burakov <anatoly.burakov@intel.com>,
- "techboard@dpdk.com" <techboard@dpdk.com>
-References: <20250710085101.1678775-1-vattunuru@marvell.com>
- <01a66ad9-a763-457a-b0b2-c6aae1948f84@huawei.com>
- <SJ4PPFEA6F74CA24501C3384EF778E0B3F6A657A@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
- <2243786a-eb7c-4807-b507-199936764e54@huawei.com>
- <SJ4PPFEA6F74CA2EBA656AF4C3C4CF8790DA656A@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
- <f97b576f-a67f-4752-9576-7ece752d8a56@huawei.com>
- <SJ4PPFEA6F74CA2D1893CA98B40B00BB5E4A650A@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
- <SJ4PPFEA6F74CA23C5196C41F03ED52284CA65AA@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
- <SJ4PPFEA6F74CA25F39BCE20F1AF8F9CD9EA624A@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
- <SJ4PPFEA6F74CA25E46352CC7F3F2F8314EA62AA@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <SJ4PPFEA6F74CA25E46352CC7F3F2F8314EA62AA@SJ4PPFEA6F74CA2.namprd18.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl2.zte.com.cn 57E332rs013815
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: chen.bingbin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Thu, 14 Aug 2025 11:03:28 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 689D5200.000/4c2VS01lfKz4xNv0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,374 +60,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-I agree the feature discussed in TB.
-
-The original scheme is too vague and hard to understand, although after several round of clarification.
 
 
-On 8/14/2025 12:46 AM, Vamsi Krishna Attunuru wrote:
-> Hi Thomas, Feng
-> 
-> Can this feature be discussed in the next techboard meeting and decide on supporting it
-> together with the ABI breaking changes in 25.11, rather than using the versions scheme.
-> Since there are no further comments after we aligned with the Feng's feedback, it would be
-> good to finalize the approach.
-> 
-> Regards
-> Vamsi
-> 
->> -----Original Message-----
->> From: Vamsi Krishna Attunuru <vattunuru@marvell.com>
->> Sent: Wednesday, July 30, 2025 10:07 AM
->> To: fengchengwen <fengchengwen@huawei.com>;
->> bruce.richardson@intel.com; Vladimir Medvedkin
->> <vladimir.medvedkin@intel.com>; Anatoly Burakov
->> <anatoly.burakov@intel.com>
->> Cc: Jerin Jacob <jerinj@marvell.com>; thomas@monjalon.net;
->> dev@dpdk.org; Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>;
->> kevin.laatz@intel.com
->> Subject: RE: [EXTERNAL] Re: [PATCH v0 1/1] doc: announce inter-device DMA
->> capability support in dmadev
->>
->> Gentle reminder to share your feedback. >Hi Bruce, Vladimir, Anatoly >
->>> Regarding inter-device or inter-domain DMA capability, could please clarify if
->>> Intel idxd driver will support this feature. >I believe the changes Feng has
->> ZjQcmQRYFpfptBannerStart Prioritize security for external emails:
->> Confirm sender and content safety before clicking links or opening
->> attachments <https://us-phishalarm-
->> ewt.proofpoint.com/EWT/v1/CRVmXkqW!uq3V-
->> r_YrnsUWi9yeT3UAKXL4FFc4ONZAyvoCMlneUv-fN8An8AKohi4aES-
->> ZG37anFsJG5Rq3NspRNGjPgt5I9U4c9cEVeu_P4sHAEFMopboItEI9hkXOMUrJ
->> m_Pyoic-gg6kRF3p9wjJrTGA$>
->> Report Suspicious
->>
->> ZjQcmQRYFpfptBannerEnd
->> Gentle reminder to share your feedback.
->>
->>> Hi Bruce, Vladimir, Anatoly
->>>
->>> Regarding inter-device or inter-domain DMA capability, could please
->>> clarify if Intel idxd driver will support this feature.
->>> I believe the changes Feng has suggested here are in line with the
->>> earlier "[PATCH v1 0/3] Add support for inter-domain DMA operations"
->>> proposal. We are planning to implement this feature support in version
->> 25.11.
->>>
->>> Your feedback would be appreciated, we are aiming for a more generic
->>> solution.
->>>
->>> Regards
->>> Vamsi
->>>
->>>
->>>>> On 2025/7/16 18:59, Vamsi Krishna Attunuru wrote:
->>>>>>
->>>>>>>
->>>>>>> Thanks for the explanation.
->>>>>>>
->>>>>>> Let me tell you what I understand:
->>>>>>> 1\ Two dmadev (must belong to the same DMA controller?) each
->>>>>>> passthrough to diffent domain (VM or container) 2\ The kernel DMA
->>>>>>> controller driver could config access groups --- there is a secure
->>>>>>> mechanism
->>>>> (like Intel IDPTE)
->>>>>>>   and the two dmadev could communicate if the kernel DMA
->>>>>>> controller driver has put them in the same access groups.
->>>>>>> 3\ Application setup access group and get handle (maybe the new
->>>>> 'dev_idx'
->>>>>>> which you announce in this commit),
->>>>>>>   and then setup one vchan which config the handle.
->>>>>>>   and later launch copy request based on this vchan.
->>>>>>> 4\ The driver will pass the request to dmadev-1 hardware, and
->>>>>>> dmadev-1 hardware will do some verification,
->>>>>>>   and maybe use dmadev-2 stream ID for read/write operations?
->>>>>>>
->>>>>>> A few question about this:
->>>>>>> 1\ What the prototype of 'dev_idx', is it uint16_t?
->>>>>> Yes, it can be uint16_t and use two different dev_idx (src_dev_idx
->>>>>> &
->>>>>> dest_dev_idx) for read & write.
->>>>>>
->>>>>>> 2\ How to implement read/write between two dmadev ?  use two
->>>>>>> different dev_idx? the first for read and the second for write?
->>>>>> Yes, two different dev_idx will be used.
->>>>>>
->>>>>>>
->>>>>>>
->>>>>>> I also re-read the patchset "[PATCH v1 0/3] Add support for
->>>>>>> inter-domain DMA operations", it introduce:
->>>>>>> 1\ One 'int controller-id' in the rte_dma_info. which maybe used
->>>>>>> in
->>>>>>> vendor- specific secure mechanism.
->>>>>>> 2\ Two new OP_flag and two new datapath API.
->>>>>>> The reason why this patch didn't continue (I guess) is whether
->>>>>>> setup one new vchan. Yes, vchan was designed to represents
->>>>>>> different transfer contexts. But each vchan has its own
->>>>>>> enqueue/dequeue/ring, it more act like one logic dmadev, some of
->>>>>>> the hardware can fit this model well, some may not (like Intel in
->>>>>>> this
->>> case).
->>>>>>>
->>>>>>>
->>>>>>> So how about the following scheme:
->>>>>>> 1\ Add inter-domain capability bits, for example:
->>>>>>> RTE_DMA_CAPA_INTER_PROCESS_DOMAIN,
->>>>>>> RTE_DMA_CAPA_INTER_OS_DOMAIN 2\ Add one
->> domain_controller_id
->>>> in
->>>>> the
->>>>>>> rte_dma_info which maybe used in vendor-specific secure
->> mechanism.
->>>>>>> 3\ Add four OP_FLAGs:
->>>>>>> RTE_DMA_OP_FLAG_SRC_INTER_PROCESS_DOMAIN_HANDLE,
->>>>>>> RTE_DMA_OP_FLAG_DST_INTER_PROCESS_DOMAIN_HANDLE
->>>>>>>                      RTE_DMA_OP_FLAG_SRC_INTER_OS_DOMAIN_HANDLE,
->>>>>>> RTE_DMA_OP_FLAG_DST_INTER_OS_DOMAIN_HANDLE
->>>>>>> 4\ Reserved 32bit from flag parameter (which all enqueue API both
->>>>>>> supports) as the src and dst handle.
->>>>>>>   or only reserved 16bit from flag parameter if we restrict don't
->>>>>>> support 3rd transfer.
->>>>>>
->>>>>> Yes, the above approach seems acceptable to me. I believe src & dst
->>>>>> handles require 16-bit values. Reserving 32-bits from flag
->>>>>> parameter would leave 32 flags available, which should be fine.
->>>>>
->>>>> Great
->>>>> tip: there are still 24bit flag reserved after apply this scheme.
->>>>>
->>>>> Would like more comments.
->>>>>
->>>>
->>>> If there are no major comments at this time, can we proceed with
->>>> accepting and merging this notice in this release. Further review can
->>>> continue once the RFC is available next month.
->>>>
->>>> Thanks & Regards
->>>> Vamsi
->>>>
->>>>>>
->>>>>>>
->>>>>>> Thanks
->>>>>>>
->>>>>>> On 2025/7/15 13:35, Vamsi Krishna Attunuru wrote:
->>>>>>>> Hi Feng,
->>>>>>>>
->>>>>>>> Thanks for depicting the feature use case.
->>>>>>>>
->>>>>>>> From the application’s perspective, inter VM/process
->>>>>>>> communication is
->>>>>>> required to exchange the src & dst buffer details, however the
->>>>>>> specifics of this communication mechanism are outside the scope in
->>>>>>> this context. Regarding the address translations, these buffer
->>>>>>> addresses can be either IOVA as PA or IOVA as VA. The DMA hardware
->>>>>>> must use the appropriate IOMMU stream IDs when initiating the DMA
->>>>>>> transfers. For example, in the use case shown in the diagram,
->>>>>>> dmadev-1 and dmadev-2 would join an access group managed by the
->>>>>>> kernel DMA controller driver. This controller driver will
->>>>>>> configure the access group on the DMA hardware, enabling the
->>>>>>> hardware to select the correct stream IDs for read/write
->>>>>>> operations. New rte_dma APIs could be introduced to join or leave
->>>>>>> the access group or to query the access group details.
->>>>>>> Additionally, a secure token mechanism (similar to
->>>>> vfio-pci token) can be implemented to validate any dmadev attempting
->>>>> to join the access group.
->>>>>>>>
->>>>>>>> Regards.
->>>>>>>>
->>>>>>>> From: fengchengwen <fengchengwen@huawei.com>
->>>>>>>> Sent: Tuesday, July 15, 2025 6:29 AM
->>>>>>>> To: Vamsi Krishna Attunuru <vattunuru@marvell.com>;
->>> dev@dpdk.org;
->>>>>>>> Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>;
->>>>>>>> kevin.laatz@intel.com; bruce.richardson@intel.com;
->>>>>>>> mb@smartsharesystems.com
->>>>>>>> Cc: Jerin Jacob <jerinj@marvell.com>; thomas@monjalon.net
->>>>>>>> Subject: [EXTERNAL] Re: [PATCH v0 1/1] doc: announce inter-device
->>>>>>>> DMA capability support in dmadev
->>>>>>>>
->>>>>>>> Hi Vamsi, From the commit log, I guess this commit mainly want to
->>>>>>>> meet following case: --------------- ---------------- | Container
->>>>>>>> |
->>>>>>>> | VirtMachine | | | | | | dmadev-1 | | dmadev2 | ---------------
->>>>>>>> ---------------- |
->>>>>>> | ------------------------------ ZjQcmQRYFpfptBannerStart
->>>>>>> | Prioritize security for
->>>>>>> external emails:
->>>>>>>> Confirm sender and content safety before clicking links or
->>>>>>>> opening
->>>>>>> attachments
->>>>>>>>     Report Suspicious
->>>>>>>> <https://urldefense.proofpoint.com/v2/url?u=https-3A__us-
->>>> 2Dphishala
->>>>>>>> <https://urldefense.proofpoint.com/v2/url?u=https-3A__us-
->>>>>>>>>> 2Dphishala  >>>>>>> r
->>>>>>>> <https://urldefense.proofpoint.com/v2/url?u=https-3A__us-
->>>> 2Dphishala
->>>>>>>> <https://urldefense.proofpoint.com/v2/url?u=https-3A__us-
->>>>>>>>>> 2Dphishala  >>>>>>> r  >>>>> m-
->>>>> 2D&d=DwIDaQ&c=nKjWec2b6R0mOyPaz7xtfQ&r=WllrYaumVkxaWjgKto6
->> E
->>> _r
->>>> t
->>>>> DQsh
->>>>>>>>
->>>>> hIhik2jkvzFyRhW8&m=3uFGFVHxC4YLkjWHNg9s9rNDHd_ozbhLepOYCAki
->> Z
->>> K
->>>> x
->>>>> M0sQ0m
->>>>>>>>
->>>>> 43gqgTQl1cK9koZ&s=3_mvLYuMWu7RbHD3mj21CP65O5JY8L8AK8oVFutdT
->>> W
->>>> U
->>>>> &e=
->>>>>>>
->>>>> ewt.proofpoint.com/EWT/v1/CRVmXkqW!tg3ZldV0Yr_wdSwWmT2aDdK
->> Mi
->>> -
->>>>>>>
->>>>> 4rn2z58vFaxwfOeocS1P19w1BeRdyGs5sjnhV2rU_6m8MOWj4KFbuXKkKJI
->> v
->>> c
->>>> q
->>>>>>> wWD2WEwJW_0$ >
->>>>>>>> ZjQcmQRYFpfptBannerEnd
->>>>>>>>
->>>>>>>> Hi Vamsi,
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> From the commit log, I guess this commit mainly want to meet
->>>>>>>> following
->>>>>>> case:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>>      ---------------             ----------------
->>>>>>>>
->>>>>>>>      |  Container  |             |  VirtMachine |
->>>>>>>>
->>>>>>>>      |             |             |              |
->>>>>>>>
->>>>>>>>      |  dmadev-1   |             |   dmadev2    |
->>>>>>>>
->>>>>>>>      ---------------             ----------------
->>>>>>>>
->>>>>>>>            |                            |
->>>>>>>>
->>>>>>>>            ------------------------------
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> App run in the container could launch DMA transfer from local
->>>>>>>> buffer to the VirtMachine by config
->>>>>>>>
->>>>>>>> dmadev-1/2 (the dmadev-1/2 are passthrough to diffent OS domain).
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> Could you explain how to use it from application perspective (for
->>>>>>>> example address translation) and
->>>>>>>>
->>>>>>>> application & hardware restrictions?
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> BTW: In this case, there are two OS domain communication, and I
->>>>>>>> remember there are also inter-process
->>>>>>>>
->>>>>>>> DMA RFC, so maybe we could design more generic solution if you
->>>>>>>> provide
->>>>>>> more info.
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> Thanks
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> On 2025/7/10 16:51, Vamsi Krishna wrote:
->>>>>>>>
->>>>>>>>> From: Vamsi Attunuru
->>>>>>>>> <vattunuru@marvell.com<mailto:vattunuru@marvell.com>>
->>>>>>>>
->>>>>>>>>
->>>>>>>>
->>>>>>>>> Modern DMA hardware supports data transfer between multiple
->>>>>>>>
->>>>>>>>> DMA devices, enabling data communication across isolated domains
->>>>>>>>> or
->>>>>>>>
->>>>>>>>> containers. To facilitate this, the ``dmadev`` library requires
->>>>>>>>> changes
->>>>>>>>
->>>>>>>>> to allow devices to register with or unregisters from DMA groups
->>>>>>>>> for
->>>>>>>>
->>>>>>>>> inter-device communication. This feature is planned for
->>>>>>>>> inclusion
->>>>>>>>
->>>>>>>>> in DPDK 25.11.
->>>>>>>>
->>>>>>>>>
->>>>>>>>
->>>>>>>>> Signed-off-by: Vamsi Attunuru
->>>>>>>>> <vattunuru@marvell.com<mailto:vattunuru@marvell.com>>
->>>>>>>>
->>>>>>>>> ---
->>>>>>>>
->>>>>>>>>  doc/guides/rel_notes/deprecation.rst | 7 +++++++
->>>>>>>>
->>>>>>>>>  1 file changed, 7 insertions(+)
->>>>>>>>
->>>>>>>>>
->>>>>>>>
->>>>>>>>> diff --git a/doc/guides/rel_notes/deprecation.rst
->>>>>>>>> b/doc/guides/rel_notes/deprecation.rst
->>>>>>>>
->>>>>>>>> index e2d4125308..46836244dd 100644
->>>>>>>>
->>>>>>>>> --- a/doc/guides/rel_notes/deprecation.rst
->>>>>>>>
->>>>>>>>> +++ b/doc/guides/rel_notes/deprecation.rst
->>>>>>>>
->>>>>>>>> @@ -152,3 +152,10 @@ Deprecation Notices
->>>>>>>>
->>>>>>>>>  * bus/vmbus: Starting DPDK 25.11, all the vmbus API defined in
->>>>>>>>
->>>>>>>>>    ``drivers/bus/vmbus/rte_bus_vmbus.h`` will become internal to
->>>> DPDK.
->>>>>>>>
->>>>>>>>>    Those API functions are used internally by DPDK core and
->>>>>>>>> netvsc
->>>> PMD.
->>>>>>>>
->>>>>>>>> +
->>>>>>>>
->>>>>>>>> +* dmadev: a new capability flag ``RTE_DMA_CAPA_INTER_DEV``
->> will
->>>>>>>>> +be added
->>>>>>>>
->>>>>>>>> +  to advertise DMA device's inter-device DMA copy capability.
->>>>>>>>> + To enable
->>>>>>>>
->>>>>>>>> +  this functionality, a few dmadev APIs will be added to
->>>>>>>>> + configure the DMA
->>>>>>>>
->>>>>>>>> +  access groups, facilitating coordinated data communication
->>>>>>>>> + between
->>>>>>> devices.
->>>>>>>>
->>>>>>>>> +  A new ``dev_idx`` field will be added to the ``struct
->>>>>>>>> + rte_dma_vchan_conf``
->>>>>>>>
->>>>>>>>> +  structure to configure a vchan for data transfers between any
->>>>>>>>> + two DMA
->>>>>>> devices.
->>>>>>>>
->>>>>>>>
->>>>>>
-> 
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
+
+
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
+
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+djU6DQogIC0gbW9kaWZ5IHNvbWUgZXJyb3IgbGV2ZWwgcHJpbnRpbmcgaW5mb3JtYXRpb24sDQog
+ICAgYW5kIG90aGVyIGlzc3VlcyBmcm9tIE1haW50YWluZXIncy4NCg0KVjQ6DQogIC0gcmVwbGFj
+ZSBydGVfbWFsbG9jIHdpdGggY2FsbG9jIGluIHRoZSBmbG93X2Rldl9kdW1wIGZ1bmN0aW9uLg0K
+DQpWMzoNCiAgLSBmaXggc2V2ZXJhbCBjaGVja3BhdGNoIHdhcm5pbmdzLg0KDQpWMjoNCiAgLSBy
+ZXNvbHZlIGNvZGUgc3R5bGUgYW5kIGdjYyBjb21waWxhdGlvbiBpc3N1ZS4NCg0KVjE6DQogIC0g
+YWRkIHN1cHBvcnQgZmxvdyBkaXJlY3RvciBvcHMuDQoNCkJpbmdiaW4gQ2hlbiAoMik6DQogIG5l
+dC96eGRoOiBucHNkayBhZGQgZmxvdyBkaXJlY3RvciB0YWJsZSBvcHMNCiAgbmV0L3p4ZGg6IGFk
+ZCBzdXBwb3J0IGZsb3cgZGlyZWN0b3Igb3BzDQoNCiBkb2MvZ3VpZGVzL25pY3MvZmVhdHVyZXMv
+enhkaC5pbmkgIHwgICAxNiArDQogZG9jL2d1aWRlcy9uaWNzL3p4ZGgucnN0ICAgICAgICAgICB8
+ICAgIDEgKw0KIGRyaXZlcnMvbmV0L3p4ZGgvbWVzb24uYnVpbGQgICAgICAgfCAgICAxICsNCiBk
+cml2ZXJzL25ldC96eGRoL3p4ZGhfY29tbW9uLmggICAgIHwgICAgMSArDQogZHJpdmVycy9uZXQv
+enhkaC96eGRoX2V0aGRldi5jICAgICB8ICAgMjYgKw0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9l
+dGhkZXYuaCAgICAgfCAgIDEyICstDQogZHJpdmVycy9uZXQvenhkaC96eGRoX2V0aGRldl9vcHMu
+YyB8ICAgIDIgKy0NCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfZXRoZGV2X29wcy5oIHwgICAgMSAr
+DQogZHJpdmVycy9uZXQvenhkaC96eGRoX2Zsb3cuYyAgICAgICB8IDIwMTcgKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKw0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9mbG93LmggICAgICAgfCAg
+MjQwICsrKysNCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmMgICAgICAgIHwgIDI2NCArKyst
+DQogZHJpdmVycy9uZXQvenhkaC96eGRoX21zZy5oICAgICAgICB8ICAgMzEgKy0NCiBkcml2ZXJz
+L25ldC96eGRoL3p4ZGhfbnAuYyAgICAgICAgIHwgMTYzOCArKysrKysrKysrKysrKysrKysrKysr
+DQogZHJpdmVycy9uZXQvenhkaC96eGRoX25wLmggICAgICAgICB8ICAgMzEgKy0NCiBkcml2ZXJz
+L25ldC96eGRoL3p4ZGhfdGFibGVzLmggICAgIHwgICAxMCArLQ0KIDE1IGZpbGVzIGNoYW5nZWQs
+IDQyMTcgaW5zZXJ0aW9ucygrKSwgNzQgZGVsZXRpb25zKC0pDQogY3JlYXRlIG1vZGUgMTAwNjQ0
+IGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9mbG93LmMNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
+cy9uZXQvenhkaC96eGRoX2Zsb3cuaA0KDQotLSANCjIuMjcuMA==
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+djU6PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO21vZGlmeSZuYnNwO3NvbWUmbmJzcDtlcnJvciZu
+YnNwO2xldmVsJm5ic3A7cHJpbnRpbmcmbmJzcDtpbmZvcm1hdGlvbiw8YnIgLz4mbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDthbmQmbmJzcDtvdGhlciZuYnNwO2lzc3VlcyZuYnNwO2Zyb20mbmJzcDtN
+YWludGFpbmVyJmFwb3M7cy48YnIgLz4NPGJyIC8+VjQ6PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNw
+O3JlcGxhY2UmbmJzcDtydGVfbWFsbG9jJm5ic3A7d2l0aCZuYnNwO2NhbGxvYyZuYnNwO2luJm5i
+c3A7dGhlJm5ic3A7Zmxvd19kZXZfZHVtcCZuYnNwO2Z1bmN0aW9uLjxiciAvPg08YnIgLz5WMzo8
+YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7Zml4Jm5ic3A7c2V2ZXJhbCZuYnNwO2NoZWNrcGF0Y2gm
+bmJzcDt3YXJuaW5ncy48YnIgLz4NPGJyIC8+VjI6PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO3Jl
+c29sdmUmbmJzcDtjb2RlJm5ic3A7c3R5bGUmbmJzcDthbmQmbmJzcDtnY2MmbmJzcDtjb21waWxh
+dGlvbiZuYnNwO2lzc3VlLjxiciAvPg08YnIgLz5WMTo8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7
+YWRkJm5ic3A7c3VwcG9ydCZuYnNwO2Zsb3cmbmJzcDtkaXJlY3RvciZuYnNwO29wcy48YnIgLz4N
+PGJyIC8+QmluZ2JpbiZuYnNwO0NoZW4mbmJzcDsoMik6PGJyIC8+Jm5ic3A7Jm5ic3A7bmV0L3p4
+ZGg6Jm5ic3A7bnBzZGsmbmJzcDthZGQmbmJzcDtmbG93Jm5ic3A7ZGlyZWN0b3ImbmJzcDt0YWJs
+ZSZuYnNwO29wczxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO2FkZCZuYnNwO3N1cHBv
+cnQmbmJzcDtmbG93Jm5ic3A7ZGlyZWN0b3ImbmJzcDtvcHM8YnIgLz4NPGJyIC8+Jm5ic3A7ZG9j
+L2d1aWRlcy9uaWNzL2ZlYXR1cmVzL3p4ZGguaW5pJm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZu
+YnNwOzE2Jm5ic3A7KzxiciAvPiZuYnNwO2RvYy9ndWlkZXMvbmljcy96eGRoLnJzdCZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+O3wmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsxJm5ic3A7KzxiciAvPiZuYnNwO2RyaXZlcnMvbmV0
+L3p4ZGgvbWVzb24uYnVpbGQmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7MSZuYnNwOys8YnIgLz4mbmJzcDtkcml2ZXJzL25l
+dC96eGRoL3p4ZGhfY29tbW9uLmgmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7MSZuYnNwOys8YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4
+ZGhfZXRoZGV2LmMmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7Jm5i
+c3A7MjYmbmJzcDsrPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX2V0aGRldi5oJm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOzEyJm5ic3A7Ky08
+YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfZXRoZGV2X29wcy5jJm5ic3A7fCZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOzImbmJzcDsrLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgv
+enhkaF9ldGhkZXZfb3BzLmgmbmJzcDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7MSZuYnNwOys8
+YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfZmxvdy5jJm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOzIwMTcmbmJzcDsrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX2Zsb3cuaCZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsyNDAmbmJz
+cDsrKysrPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX21zZy5jJm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOzI2NCZuYnNw
+OysrKy08YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfbXNnLmgmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7MzEm
+bmJzcDsrLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9ucC5jJm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOzE2MzgmbmJz
+cDsrKysrKysrKysrKysrKysrKysrKysrPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRo
+X25wLmgmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDt8Jm5ic3A7Jm5ic3A7Jm5ic3A7MzEmbmJzcDsrLTxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4
+ZGgvenhkaF90YWJsZXMuaCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJz
+cDsmbmJzcDsxMCZuYnNwOystPGJyIC8+Jm5ic3A7MTUmbmJzcDtmaWxlcyZuYnNwO2NoYW5nZWQs
+Jm5ic3A7NDIxNyZuYnNwO2luc2VydGlvbnMoKyksJm5ic3A7NzQmbmJzcDtkZWxldGlvbnMoLSk8
+YnIgLz4mbmJzcDtjcmVhdGUmbmJzcDttb2RlJm5ic3A7MTAwNjQ0Jm5ic3A7ZHJpdmVycy9uZXQv
+enhkaC96eGRoX2Zsb3cuYzxiciAvPiZuYnNwO2NyZWF0ZSZuYnNwO21vZGUmbmJzcDsxMDA2NDQm
+bmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfZmxvdy5oPGJyIC8+DTxiciAvPi0tJm5ic3A7DTxi
+ciAvPjIuMjcuMDxiciAvPg==
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
