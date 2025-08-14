@@ -2,28 +2,29 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30522CA0EDC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 21:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C420CA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 21:33:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A32A402D7;
-	Thu, 14 Aug 2025 23:32:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C5B844060F;
+	Thu, 14 Aug 2025 23:32:59 +0200 (CEST)
 Received: from mx2.freebsd.org (mx2.freebsd.org [96.47.72.81])
- by mails.dpdk.org (Postfix) with ESMTP id AF53F400EF
- for <dev@dpdk.org>; Thu, 14 Aug 2025 23:32:55 +0200 (CEST)
-Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
+ by mails.dpdk.org (Postfix) with ESMTP id 1AD43400EF
+ for <dev@dpdk.org>; Thu, 14 Aug 2025 23:32:56 +0200 (CEST)
+Received: from mx1.freebsd.org (mx1.freebsd.org [96.47.72.80])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits)
  client-signature RSA-PSS (4096 bits))
  (Client CN "mx1.freebsd.org", Issuer "R10" (verified OK))
- by mx2.freebsd.org (Postfix) with ESMTPS id 4c2z4736FSz3TBt;
+ by mx2.freebsd.org (Postfix) with ESMTPS id 4c2z475tbtz3TWt;
  Thu, 14 Aug 2025 21:32:55 +0000 (UTC)
  (envelope-from jfree@FreeBSD.org)
-Received: from smtp.freebsd.org (smtp.freebsd.org [96.47.72.83])
+Received: from smtp.freebsd.org (smtp.freebsd.org
+ [IPv6:2610:1c1:1:606c::24b:4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
  client-signature RSA-PSS (4096 bits) client-digest SHA256)
  (Client CN "smtp.freebsd.org", Issuer "R11" (verified OK))
- by mx1.freebsd.org (Postfix) with ESMTPS id 4c2z471RTMz49w8;
+ by mx1.freebsd.org (Postfix) with ESMTPS id 4c2z473C4yz49q8;
  Thu, 14 Aug 2025 21:32:55 +0000 (UTC)
  (envelope-from jfree@FreeBSD.org)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org; s=dkim;
@@ -32,48 +33,48 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org; s=dkim;
  to:to:cc:cc:mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=MmX9RCyNKtGMwBz8nXaad5mBrG1/fHi2Esthf7HMnkE=;
- b=AqEKX8lBDmb0+brbOpbfWMhSvNYgiPkWPhLsxB6B0uveZdz8s0lflS0EKFJfdjGqwPT5Xd
- xoiuPVRcaBranWTfeLhUadaf+MDW9WZYtXW421YVxKtWHUK4tNa8hSZtbNQCyktPADHzaa
- vT0dOeu/df4i+IY3toFEbskoYfAix39KqTHHFB46GHghLm7HJ2AjVdWkjNOx/PXqXhffrV
- yZhvvE9CkJY7WaJQEfC0P+opQIHCMYS7+F4fT6LfmYsyBIrQSOkJe1ULWZX4D949TczaOn
- fmFeIrzc8QDEM/slY0Y8AC/Tr9XUBJB18NPl+uqYb1Dqd1U0ATQg4Sn99S92Xw==
+ bh=d6SNZ/I3BnryEPtvFKCyvuhFsyNOw3QQLj9QRUfzWQg=;
+ b=yg4NeTlmnIhgC84+k+fgn/tt/Q/20P5Uj/lDzVWQ3jvSI28gM3I3bYe57mqolyu16TbeNr
+ 3TGTLnNzPj7tj31m/p0r0vktTju+7z4S59E9jYiQ3vHkWvX2s6FwDXLFBlnPj6l0iWL9pC
+ u3V7C9sSh6vUvc13KvatqWNscIKFlDg/s5TOnHkbJpuM8dnBqAQrFf4CSjfEY346s/fcgn
+ PwSb9VptMlxYHAOtJLi9P+WDFcek84nmrpTiSXpWlNhhF35m1Xso3mgCcnbWMYJejx+rjh
+ s7tSpa9XzOXMh4yhWDF7Q7sRnnxuiyGS62ulLlriJWBLZPG0+j3Z1AXvj96VMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=freebsd.org;
  s=dkim; t=1755207175;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=MmX9RCyNKtGMwBz8nXaad5mBrG1/fHi2Esthf7HMnkE=;
- b=mTA4RFGiaY89OfkJ6MTLaziDF2uogfrWYH/Q5g38eApVowrixL77WC5Btw9FRxIxRjfd11
- 7ZCWB7ykCMxFLbdPtIVp9wxnB7x/tMZPpn3BON2GsqXyukgTm2/i3uonY3OOXSQx8fZWvE
- +nK431sZAzHPFb89dl4nXEV/8jmXwuu9rvxNfIIfzSdx0EUCx2LBCWDf4K4lwGeRCVrLec
- Jl+D0h7tReTLstgxbJq9jor4ycbeBqE/XxnBkkTtqx7OLUKJB4x2o4ZmWjC42hf+fWRI2T
- xsqyVddzvuBEiLYgTRLsSxAEHcF0OfoXZEEqKK5rqPXtvJslhV6/je2QCxLypA==
+ bh=d6SNZ/I3BnryEPtvFKCyvuhFsyNOw3QQLj9QRUfzWQg=;
+ b=kpTynDsAsPsjIJppgaRk40ful3jg9GoeWk8pqkt5seoMsKvoT0O9XJwRF9QuEt6SLnTxlH
+ G26WVtCutB0ct9rqZp81hcU6I7N2AFJZLt5BPWAD/VJgQlXN9cZf9PN8AKI6i7VQybQTlo
+ C4bItCQza/kRPdeWkgiO2zd7h0QF0UHULqeSRDaKqwitNKFAeOcERoMqd31XXol1GMEqgu
+ aLVcBAC9KjSLR7vZguuirIpYmJwcv0GRZzxxc19JHc1YfvwHFiDJAmCg4lfzCopF6Ngzg4
+ kwEVWRM/aGzaB3o7Y5USKvtKesxqzBujK/VSmZro2rUUVZCURQ+OONjk/z0vEA==
 ARC-Authentication-Results: i=1;
 	mx1.freebsd.org;
 	none
 ARC-Seal: i=1; s=dkim; d=freebsd.org; t=1755207175; a=rsa-sha256; cv=none;
- b=Ic9he3V8HajItCrRSMhcW7tp96B2TkGUuYaTMQszLPwgfYVfRE0KFCk9EvaDGN6CX0sD2v
- lwZSufdXu0BnoFQTsZehEZ+vkwgPrjaiMaQOoZTIaJQm1DRClbYB0Am+Usat49kjYYcO/e
- h3IQvwq5jAL4vaFq3O4ZdNo7if+54AXNud4dYStWQUzxWyRlsvJrdkZIAZWaZn4fFgxvet
- bX/3ZZiGZx0WPWQZrss1egGRu8YUUToLLtXtFuXbGnF98SM7ct/iXt9dESQE8DsHkg3WpE
- qjPq9fM/BMLtRzqKzDAyKtprDVduzJZ7w6jmK1X+90gTbrEUtTYXhUEE+dRQ0Q==
+ b=vyYBlAVzU+fD7fsRYi368NkS1owJJHhDlQY0Tby64RI1bev06LxXqqEbgkeKvewEVHnmRR
+ fNV7+jiuKtHcHrnOrPEV31vHerdnQRu1PGbdECsGvwsAODZpjsEzQbG9UTd+nljJpkQ5CO
+ tFDtoJcU05hqwo19A3xT98S+NBqvc7VAHKLBU5DVU7bLhKPax7GLXJ2R69G+tkvbmzTSiM
+ mEhDozQ+zmJ3USa5EHnfgjLa/ykmGRB53SvFxZ7t0qmuot5cPa0J8/CNJwO75feBF0pWv8
+ 0l3bUbR7YjqnGro1CEY4txfvZfNvZ6ZsxLN76xSmAkGF9heHzCTEWtOa8qbY3A==
 Received: from s1.pct.niksun.com (70-59-118-59.mpls.qwest.net [70.59.118.59])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
  (Client did not present a certificate) (Authenticated sender: jfree)
- by smtp.freebsd.org (Postfix) with ESMTPSA id 4c2z4661LXzQnp;
- Thu, 14 Aug 2025 21:32:54 +0000 (UTC)
+ by smtp.freebsd.org (Postfix) with ESMTPSA id 4c2z4711jWzQnq;
+ Thu, 14 Aug 2025 21:32:55 +0000 (UTC)
  (envelope-from jfree@FreeBSD.org)
 From: Jake Freeland <jfree@FreeBSD.org>
 To: Anatoly Burakov <anatoly.burakov@intel.com>,
  Bruce Richardson <bruce.richardson@intel.com>
 Cc: Jake Freeland <jfree@FreeBSD.org>,
 	dev@dpdk.org
-Subject: [PATCH v2 2/3] eal/freebsd: Avoid claiming memseg holes
-Date: Thu, 14 Aug 2025 16:32:44 -0500
-Message-ID: <20250814213246.4141803-3-jfree@FreeBSD.org>
+Subject: [PATCH v2 3/3] eal/linux: Check hugepage access permissions
+Date: Thu, 14 Aug 2025 16:32:45 -0500
+Message-ID: <20250814213246.4141803-4-jfree@FreeBSD.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250814213246.4141803-1-jfree@FreeBSD.org>
 References: <20250814213246.4141803-1-jfree@FreeBSD.org>
@@ -92,57 +93,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When need_hole is false, memseg searches will only be done for a single
-element. If the search starts at beginning of the list, an element that
-was previously reserved as a hole may be wrongly claimed.
-
-To avoid this, begin the search following the last used entry. This way,
-we ignore all pre-existing holes.
+Currently, hugepage mountpoints will be used irrespective of permissions,
+leading to potential EACCES errors during memory allocation. Fix this by
+not using a mountpoint if we do not have read/write permissions on it.
 
 Signed-off-by: Jake Freeland <jfree@FreeBSD.org>
 ---
- lib/eal/freebsd/eal_memory.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ lib/eal/linux/eal_hugepage_info.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/lib/eal/freebsd/eal_memory.c b/lib/eal/freebsd/eal_memory.c
-index be3bde2cb9..b159e9ef4e 100644
---- a/lib/eal/freebsd/eal_memory.c
-+++ b/lib/eal/freebsd/eal_memory.c
-@@ -143,6 +143,7 @@ rte_eal_hugepage_init(void)
+diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
+index d47a19c56a..e2ddd6218b 100644
+--- a/lib/eal/linux/eal_hugepage_info.c
++++ b/lib/eal/linux/eal_hugepage_info.c
+@@ -260,6 +260,13 @@ get_hugepage_dir(uint64_t hugepage_sz, char *hugedir, int len)
+ 				continue;
+ 		}
  
- 			for (msl_idx = 0; msl_idx < RTE_MAX_MEMSEG_LISTS;
- 					msl_idx++) {
-+				int start_idx, num_elems;
- 				bool empty, need_hole;
- 				msl = &mcfg->memsegs[msl_idx];
- 				arr = &msl->memseg_arr;
-@@ -157,10 +158,24 @@ rte_eal_hugepage_init(void)
- 				 * adjacent to current one.
- 				 */
- 				need_hole = !empty && !is_adjacent;
-+				if (need_hole) {
-+					start_idx = 0;
-+					/* we need 1, plus hole */
-+					num_elems = 2;
-+				} else {
-+					/* begin our search after the last used
-+					 * element in the list, skipping over
-+					 * any previously placed holes
-+					 */
-+					start_idx = rte_fbarray_find_prev_n_used(
-+							arr, arr->len - 1, 1) + 1;
-+					if (start_idx < 0)
-+						start_idx = 0;
-+					num_elems = 1;
-+				}
- 
--				/* we need 1, plus hole if not adjacent */
- 				ms_idx = rte_fbarray_find_next_n_free(arr,
--						0, 1 + (need_hole ? 1 : 0));
-+						start_idx, num_elems);
- 
- 				/* memseg list is full? */
- 				if (ms_idx < 0)
++		if (access(splitstr[MOUNTPT], R_OK | W_OK) < 0) {
++			EAL_LOG(NOTICE,
++				"Skipping hugepage dir '%s': missing r/w perms",
++				splitstr[MOUNTPT]);
++			continue;
++		}
++
+ 		/*
+ 		 * If no --huge-dir option has been given, we're done.
+ 		 */
 -- 
 2.47.2
 
