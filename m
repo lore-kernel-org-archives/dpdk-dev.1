@@ -2,130 +2,126 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02942CA0EDC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 10:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59DA4CA0EDC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 14 Aug 2025 10:09:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DEDC74270A;
-	Thu, 14 Aug 2025 12:02:58 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 470874026D
- for <dev@dpdk.org>; Thu, 14 Aug 2025 12:02:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1755165776;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=5e3W3N640g1i/qqa+yM5ZNH04ElEY/JI0BN2kXX2+uI=;
- b=Nq4xcKavy8B21pmDqabspLLMIwA5lf/vcHaKEkF2DiiZqKC406doXE4TZaZiLFcAvthjr0
- BY0JjmtmgomkhbOlUHMQub22Y8lX4YoM+Tu84yM9lQvDnpXOtZQDtX/iGljrrt45BbTr6a
- hMMMCAHlP259zXL9h0M3wU1f7LOXOrQ=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-630-8V3v7hWzOxqbqI4lHdb_Og-1; Thu, 14 Aug 2025 06:02:55 -0400
-X-MC-Unique: 8V3v7hWzOxqbqI4lHdb_Og-1
-X-Mimecast-MFC-AGG-ID: 8V3v7hWzOxqbqI4lHdb_Og_1755165775
-Received: by mail-wr1-f72.google.com with SMTP id
- ffacd0b85a97d-3b916fd2cf3so620592f8f.0
- for <dev@dpdk.org>; Thu, 14 Aug 2025 03:02:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755165774; x=1755770574;
- h=content-transfer-encoding:in-reply-to:autocrypt:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=5e3W3N640g1i/qqa+yM5ZNH04ElEY/JI0BN2kXX2+uI=;
- b=GTA6RDQy9p3DAaKjHfhssY0gbwTAqRu5WzGywD9qXYZgpWF9KiI/tH8Gre2DxzJzvK
- P9k6Elc51q0jCsWiVtv0fjWEizOaJK/aeFoU88ETQwwjrD/b7AX3I29j6BkOOQUCU0em
- y2TdypVpMuIOKGnhG9Mq7V4s80R3z94I2QG8f6a4b22osewLwIAZ+PmnjiJIgX+xRsir
- vqhI1I2eOQT4ZiZiqlzE78g0fH7zv/VXJ+WAGhZNZkSiqVlygtyRJ8DbmC9gYf1fffbe
- J4Ddkqmlwk31ZXx9F1/hb6XBdTsptQp9WS/Wl55b2eg0bfjdoZUsJtBEHCpGx8PVFyXB
- trdA==
-X-Gm-Message-State: AOJu0YzO0V6Hj4GzI9uXDC1SpJJ7EH8dmLO9aMccWbmMm24dA5d22BDF
- BzIzJq1pO5g49Qfd7TzSv3apPiHT3sm/yNICMdL2Ly9E211a5Nz/dsXVOYu0RVrjPkGn8jHGFG9
- vnof4JRo92CBXGSCRVYxKaaqYOIcoUr91TGY+vqVK+qlh
-X-Gm-Gg: ASbGnctaWw1EotrSLvZu1Cr+9+Ia2FUlyFT36Qw4bilZggDTPgtpK6lG+Qb3LDhHMkn
- wp63G7R2sHeGRCUjiNJu5+TYga7tto3ziYTr2KxwEn/7SFBSk5fGlu9bPXkpESkQ3s5NqGXHWGU
- ONoHw0vwHnySn8HjA5naTOZiIiYP4wY+V6LPqGONExF4LOr8LJZgPAJR0hkBhbHnxmb/Vr6szdU
- 9nvQRBpp/1SViMeZDhvH5TUKpM6h8kBdMwMemOkfRv7msTLp4yHJzkeLziY4pUKKQHCuFZKmOyq
- GwZLeo+VuiFi3v9r++VUPHiXtSWmHqbXjXudyILoRw==
-X-Received: by 2002:a05:6000:2302:b0:3b7:8acf:1887 with SMTP id
- ffacd0b85a97d-3ba508ec36amr1744775f8f.13.1755165774532; 
- Thu, 14 Aug 2025 03:02:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhuUNDBIty8rUNCB/RJMkxht7NE+Sm1T78JnhQfbf/jQgKzlMCDA2NSVoPpQ9CWnPbeMH22w==
-X-Received: by 2002:a05:6000:2302:b0:3b7:8acf:1887 with SMTP id
- ffacd0b85a97d-3ba508ec36amr1744742f8f.13.1755165774069; 
- Thu, 14 Aug 2025 03:02:54 -0700 (PDT)
-Received: from [192.168.0.56] ([78.16.130.126])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3b79c453ab0sm50724608f8f.44.2025.08.14.03.02.52
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 14 Aug 2025 03:02:53 -0700 (PDT)
-Message-ID: <14a65539-bc56-4e32-8e30-31460e419466@redhat.com>
-Date: Thu, 14 Aug 2025 11:02:52 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id A390E42707;
+	Thu, 14 Aug 2025 12:09:51 +0200 (CEST)
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com
+ (mail-co1nam11on2052.outbound.protection.outlook.com [40.107.220.52])
+ by mails.dpdk.org (Postfix) with ESMTP id C94F44026D;
+ Thu, 14 Aug 2025 12:09:50 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dg2zQOxOIhfK/yUA3lYjFWCtd8yGdNrmRp1qguVWjGNNevUJwa6QA3ztnYls2096/zeEZ+W+ork0dWmBkJhA8mLrQiPO4AEFCUQQjDQZR1lma9xjz0ZGR9oCsv0SBMPLPftBHfGRsqVEYLG7kjBecFUx2EqpY1BwdIPLJmxhnclgV79cQIWivsfnDnLQxE7Mvo+hZQ1Tl0xTD+ue4HhyVlVkGycKgW1YKVDPsvQyNbBFekKnWCyUc4dBhiIYGTbnSePKXcAZgptYty1RDbRMCCVAdqd142Xf1/XtW9Rn0u7/e4IRvQaNr8ezcoAsHA5kFiH4Xv+jwA9b4NJMLn/cUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vJxyMTlXyJrncss8HhzsXVCM8M9TLd+CfyNsgGun9lw=;
+ b=eySGoC9hl9xutlGTsF15bbbUlDf9wcy8MPe0FcckwKtoBDf8wV+/1CyHO/cgP5m6X01Et6OsIgjVBPSyXip8YMvim5m2WNZcRKhQ/797sqEnCqO2WV78dQi02FtAKXFjJtxXXZ4mDJXCm5OW5/OM2X6p2QSsZUYTBvW2Ui2pF9+0kotC+ytJ/BtQIL229xQmQNdaDrFUx/4J0nf3Qp1c3xO89pvx0krpMrZ1pup42zRoTjSqYQ9A0XZy4UsKMmz9/J4p0KzXJnORngzaA6E88CHdVzf6fcAeQRGzvLBpHz9hhhH+U0fjGTUMm0ZSCpeXHoAxYjxVL+ndRJzts4b9Qw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=monjalon.net smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vJxyMTlXyJrncss8HhzsXVCM8M9TLd+CfyNsgGun9lw=;
+ b=lSqT38kXX7FEjILXAvEC1nzol1BR2GIlFwUEuo6Z1NHzEmpyvBn5Nj8VJyf3OpbCF6oy/q7r9VYi9PAJWvysaOPbDMJrXoy6tLvbBIJSE8sD5ZX3kdeMmzhRZb9DvJ/GjmuFvyLwRedWft0lnOXizP2QN2a7QtT4Lhpdb0ikK9DbLP1De0ywmteYTf+r1cpc4vqZZP+6iSqO8BE3rYI6zq2D36VgDWq21yN8WCM1g2CahdooPluKaunpY86wZNVqaN+J+Enes/PvLjz1wBZbJcdVbA7eiU41CoM3ABlvY9AVNojjtjj1XYymagLHAwe35astrVIyZ3Y9/rr58LgwKw==
+Received: from CH5P223CA0002.NAMP223.PROD.OUTLOOK.COM (2603:10b6:610:1f3::10)
+ by SN7PR12MB7273.namprd12.prod.outlook.com (2603:10b6:806:2ac::21)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Thu, 14 Aug
+ 2025 10:09:46 +0000
+Received: from CH3PEPF00000010.namprd04.prod.outlook.com
+ (2603:10b6:610:1f3:cafe::f8) by CH5P223CA0002.outlook.office365.com
+ (2603:10b6:610:1f3::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.17 via Frontend Transport; Thu,
+ 14 Aug 2025 10:09:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH3PEPF00000010.mail.protection.outlook.com (10.167.244.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.11 via Frontend Transport; Thu, 14 Aug 2025 10:09:44 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 14 Aug
+ 2025 03:09:33 -0700
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 14 Aug
+ 2025 03:09:30 -0700
+From: Gavin Li <gavinl@nvidia.com>
+To: <matan@nvidia.com>, <viacheslavo@nvidia.com>, <orika@nvidia.com>,
+ <thomas@monjalon.net>, Dariusz Sosnowski <dsosnowski@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, "Minggang Li
+ (Gavin)" <gavinl@nvidia.com>
+CC: <dev@dpdk.org>, <rasland@nvidia.com>, <stable@dpdk.org>
+Subject: [PATCH V2] net/mlx5: add support for flows targeting multicast MAC
+ addresses
+Date: Thu, 14 Aug 2025 13:08:15 +0300
+Message-ID: <20250814100815.801132-1-gavinl@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: 24.11.3 patches review and test
-To: "Xu, HailinX" <hailinx.xu@intel.com>, "stable@dpdk.org" <stable@dpdk.org>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Ali Alnubani <alialnu@nvidia.com>,
- "Mcnamara, John" <john.mcnamara@intel.com>, Luca Boccassi
- <bluca@debian.org>, Raslan Darawsheh <rasland@nvidia.com>,
- Thomas Monjalon <thomas@monjalon.net>, shperetz@nvidia.com
-References: <20250724161514.396245-1-ktraynor@redhat.com>
- <SJ5PPF04AA7285FA44F7390FE3113CCC24F9F35A@SJ5PPF04AA7285F.namprd11.prod.outlook.com>
-From: Kevin Traynor <ktraynor@redhat.com>
-Autocrypt: addr=ktraynor@redhat.com; keydata=
- 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
-In-Reply-To: <SJ5PPF04AA7285FA44F7390FE3113CCC24F9F35A@SJ5PPF04AA7285F.namprd11.prod.outlook.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: sMYSSebW_Hi14qdDBg9zYpddFAtzWPWPKqnt603V3yI_1755165775
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF00000010:EE_|SN7PR12MB7273:EE_
+X-MS-Office365-Filtering-Correlation-Id: e853f68b-55c4-4d38-b260-08dddb1ab179
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|36860700013|1800799024|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?JV6rADHsVlXVnKsC2kt4Kuq8vdwNqQ2xQ/+1qT3H/E5NKT86NATgeZ8ggCl6?=
+ =?us-ascii?Q?91sYgIdT3k7eBgP59wVMVeKRXnQgbfSiV86qVksbdhIzW3uJ1KJKxVN2NSON?=
+ =?us-ascii?Q?y3eFGX2uC2xJ8mM5ylWufa/TqUuYkr5XpL/yICljlev/2IR5Sm38xxGxzmrG?=
+ =?us-ascii?Q?Mx0/pCpdIpT6IAUPnMK6SHEowkpzdyj2osq3IDeha0ffSTLGgFyVpYRuGaha?=
+ =?us-ascii?Q?/eNWxK0CBDtpVn02oERUSJoLcys18NliUfcFJARmwf0PG8gh0A53JerMr8pY?=
+ =?us-ascii?Q?sDVcUmuqWwZ8S+zcz4sOz0IKaycaKxhaSlb2XjF+VCH3yzZFdtiRfgWy8EDe?=
+ =?us-ascii?Q?iCMDNYTdAWgi/GwqKpxXfhE+1X3La1U+rbxC8tvdm5YSm/iOv/flod5oBusD?=
+ =?us-ascii?Q?KaeBua2Lc/LqGaxJU5Kl8LEt73cQQGR6SZ694p96AK1ErbWCxEo6czFtiMbX?=
+ =?us-ascii?Q?cpwSHo8U6gRWuTysK+ZDZdBEWXytcvmqmG48XGx8GDMSo9lq79PM491pYJPS?=
+ =?us-ascii?Q?RC5jUnP383Keb1B1QSCmq4KeIryb/VJ18r8Mtp91l5DE6u5Kw61BaGXekGWi?=
+ =?us-ascii?Q?nHzm7y9dicv9Uud98Wyyh3U+gh/ClJMW3st6WvHA5Fvyejvm6uCi8NvlNOnT?=
+ =?us-ascii?Q?AJs/t0pV4/C0j+mVl+v3V5GGp15Yzl9DX4HjJsm8OhGSMj7u1KpusRxU3oKi?=
+ =?us-ascii?Q?3WDDGH90K6mn+Nite3A53RF4JueiqxmEcyefcSU067txR8L37eW1Jn9zWx+X?=
+ =?us-ascii?Q?h2XCOucfoS0z7wD5UpdvXD3mm/UHm1XbKeE/uGF1zCOFaghyOOTt/kGsGiTr?=
+ =?us-ascii?Q?mimsPtONyNUkgdS+dTu1RpQU+v10cyf2iIB/A63VrVADf5SwcQBzBUNVfzBG?=
+ =?us-ascii?Q?xXZ3ByhlLDsw51BDXym4ErcJUdB7QJ4sW6pELBG00cCv+eV8c2YxWJDQLKq6?=
+ =?us-ascii?Q?JbpX+XL0V4CdzSKec/r4lwHEf5ojbNF84J1zc5xQPxiBumZ9QgCPwAWEGTNQ?=
+ =?us-ascii?Q?6iSYgpm4GBASJX9MbCba+hKm3OgaatnWoDbK7EavbCHaDBDKfalrg3SmD1MH?=
+ =?us-ascii?Q?4YFdv/1LQnUNjvk9FPtSV++AoCVHdP/dr5rfjaWyrk0s0B2ybJPwS+NtbDcw?=
+ =?us-ascii?Q?6jtF+lQZ5KSQT68UQZkEso3E9v1eAY0J1XA3ukTODjOnxXMv3Gk8yZIx/qIe?=
+ =?us-ascii?Q?YEx/crG9gC+I9yLBXSYwqbBxfBMPn3CWFOsKr6Pbaaewnp3jTdSH34ICOmNH?=
+ =?us-ascii?Q?5GIxOGG2nSUgXN1uAiMdqwddHOPfrfRSd+HdZdX5FEb2Gd2jq3kLTmJrcu60?=
+ =?us-ascii?Q?0ic3WMBBwpOz9P2wLbw4roxuz6JzF3E61kJ7gdHomspXjr+rtmDc/FEk6dap?=
+ =?us-ascii?Q?COqNyCOf/+k4LnHflBEkh7Jgu1pN2HRVUhHUB9jd965V29+ByZf8yzRZvbK+?=
+ =?us-ascii?Q?iwQyBgTk0ubZBnB6uLr+juxNhK7Cm4jyil5cHx1hTXvv/+T9pfDMqcgDwdwS?=
+ =?us-ascii?Q?YuiVdLj0I+0nvtUXW/V+KvFGYhao2A7hx1v3?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 10:09:44.7949 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e853f68b-55c4-4d38-b260-08dddb1ab179
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CH3PEPF00000010.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7273
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -139,92 +135,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 14/08/2025 07:01, Xu, HailinX wrote:
->> -----Original Message-----
->> From: Kevin Traynor <ktraynor@redhat.com>
->> Sent: Friday, July 25, 2025 12:15 AM
->> To: stable@dpdk.org
->> Cc: dev@dpdk.org; Abhishek Marathe <Abhishek.Marathe@microsoft.com>;
->> Ali Alnubani <alialnu@nvidia.com>; David Christensen
->> <drc@linux.vnet.ibm.com>; Hemant Agrawal <hemant.agrawal@nxp.com>;
->> Jerin Jacob <jerinj@marvell.com>; Mcnamara, John
->> <john.mcnamara@intel.com>; Ju-Hyoung Lee <juhlee@microsoft.com>; Kevin
->> Traynor <ktraynor@redhat.com>; Luca Boccassi <bluca@debian.org>; Pei
->> Zhang <pezhang@redhat.com>; Raslan Darawsheh <rasland@nvidia.com>;
->> Thomas Monjalon <thomas@monjalon.net>; yanghliu@redhat.com
->> Subject: 24.11.3 patches review and test
->>
->> Hi all,
->>
->> Here is a list of patches targeted for stable release 24.11.3.
->>
->> The planned date for the final release is 12th August 2025.
->>
->> Please help with testing and validation of your use cases and report any
->> issues/results with reply-all to this mail. For the final release the fixes and
->> reported validations will be added to the release notes.
->>
->> A release candidate tarball can be found at:
->>
->>     https://dpdk.org/browse/dpdk-stable/tag/?id=v24.11.3-rc1
->>
->> These patches are located at branch 24.11 of dpdk-stable repo:
->>     https://dpdk.org/browse/dpdk-stable/
->>
->> Thanks.
->>
->> Kevin
->>
->> ---
-> Update the test status for Intel part. dpdk24.11.3-rc1 all validation test done. no new issue is found.
-> 
+Rules for multicast MAC addresses are intended to filter multicast traffic
+and are managed through multicast MAC add/remove APIs. In mlx5_dev_spawn
+function, devices (PF, VFs, and SFs) retrieve the netdev-configured MAC
+addresses via netlink and store them in the PMD device data, which
+includes multicast MAC addresses.
 
-Hi Hailin,
+To update multicast MAC address rules, create them within
+mlx5_traffic_enable.
 
-Thanks for the report.
+Fixes: 2d0665a7f771 ("net/mlx5: align PF and VF/SF MAC address handling")
+Cc: stable@dpdk.org
 
-> known issues: fix patch has been merged into main, but they not merged 24.11 LTS, so this issue still exists in 24.11.3-rc1
->   1. Bug 1606 - flow_filtering/flow_filtering_mismatch_rule: Some mismatch rule packets match the rule.
->      - has fix patch: https://patches.dpdk.org/project/dpdk/patch/20250112075200.5020-1-shperetz@nvidia.com/
-> 
+Signed-off-by: Gavin Li <gavinl@nvidia.com>
+---
+ drivers/net/mlx5/linux/mlx5_os.c | 3 +++
+ drivers/net/mlx5/mlx5.h          | 1 +
+ drivers/net/mlx5/mlx5_trigger.c  | 5 ++++-
+ 3 files changed, 8 insertions(+), 1 deletion(-)
 
-This patch is in since 24.11.2 [0]. Anyway, it is example code and not
-critical so don't need to delay the release for it. We can investigate
-more for 24.11.4.
-
-thanks,
-Kevin.
-
-[0]
-https://git.dpdk.org/dpdk-stable/commit/?id=b540e51a864d25b1e254fa8c311b92223e0f4162
-
-> * Build & CFLAG compile: cover the build test with latest GCC/Clang version on the following OS(all passed)
->   - Ubuntu25.04/Ubuntu24.04.2
->   - RHEL9.6/RHEL10
->   - Fedora42
->   - FreeBSD14.2
->   - SUSE15.6
->   - OpenAnolis8.10
->   - AzureLinux3.0
-> 
-> * Function tests: All test done and there are two known issues.
->   - i40E-(XXV710, X722) PF/VF: test scenarios including basic/RTE_FLOW/TSO/Jumboframe/checksum offload/mac_filter/VLAN/VXLAN/RSS, etc. 
->   - IXGBE-(82599, E610) PF/VF: test scenarios including basic/RTE_FLOW/TSO/Jumboframe/checksum offload/mac_filter/VLAN/VXLAN/RSS, etc. 
->   - ICE-(E810, E830, E2100) PF/VF: test scenarios including basic/Switch/Package Management/Flow Director/Advanced Tx/Advanced RSS/ACL/DCF/Flexible Descriptor, etc.
->   - IPsec: test scenarios including ipsec/ipsec-gw/ipsec library basic test - QAT&SW/FIB library, etc.
->   - Virtio: both function and performance test are covered. Such as PVP/Virtio_loopback/virtio-user loopback/virtio-net VM2VM perf testing/VMAWARE ESXI 8.0, etc.
->   - Cryptodev: test scenarios including Cryptodev API testing/CompressDev ISA-L/QAT/ZLIB PMD Testing/FIPS, etc.
->   - DLB: test scenarios including DLB2.0 and DLB2.5
->   - Other: test scenarios including AF_XDP, Power, CBDMA, DSA
-> 
-> * Performance test: All test done and passed
->   - Thoughput Performance
->   - Cryptodev Latency
->   - PF/VF NIC single core
->   - XXV710/E810 NIC Performance
-> 
-> 
-> Regards,
-> Xu, Hailin
-> 
+diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
+index 696a3e12c7..b8d75a97e7 100644
+--- a/drivers/net/mlx5/linux/mlx5_os.c
++++ b/drivers/net/mlx5/linux/mlx5_os.c
+@@ -3216,6 +3216,7 @@ mlx5_os_mac_addr_remove(struct rte_eth_dev *dev, uint32_t index)
+ 		mlx5_nl_mac_addr_remove(priv->nl_socket_route,
+ 					mlx5_ifindex(dev), priv->mac_own,
+ 					&dev->data->mac_addrs[index], index);
++	BITFIELD_RESET(priv->mac_pmd, index);
+ }
+ 
+ /**
+@@ -3243,6 +3244,8 @@ mlx5_os_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *mac,
+ 		ret = mlx5_nl_mac_addr_add(priv->nl_socket_route,
+ 					   mlx5_ifindex(dev), priv->mac_own,
+ 					   mac, index);
++	if (!ret)
++		BITFIELD_SET(priv->mac_pmd, index);
+ 	return ret;
+ }
+ 
+diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
+index c08894cd03..50ed46540c 100644
+--- a/drivers/net/mlx5/mlx5.h
++++ b/drivers/net/mlx5/mlx5.h
+@@ -1976,6 +1976,7 @@ struct mlx5_priv {
+ 	struct rte_pci_device *pci_dev; /* Backend PCI device. */
+ 	struct rte_ether_addr mac[MLX5_MAX_MAC_ADDRESSES]; /* MAC addresses. */
+ 	BITFIELD_DECLARE(mac_own, uint64_t, MLX5_MAX_MAC_ADDRESSES);
++	BITFIELD_DECLARE(mac_pmd, uint64_t, MLX5_MAX_MAC_ADDRESSES);
+ 	/* Bit-field of MAC addresses owned by the PMD. */
+ 	uint16_t vlan_filter[MLX5_MAX_VLAN_IDS]; /* VLAN filters table. */
+ 	unsigned int vlan_filter_n; /* Number of configured VLAN filters. */
+diff --git a/drivers/net/mlx5/mlx5_trigger.c b/drivers/net/mlx5/mlx5_trigger.c
+index 6c6f228afd..cbc91be3b1 100644
+--- a/drivers/net/mlx5/mlx5_trigger.c
++++ b/drivers/net/mlx5/mlx5_trigger.c
+@@ -1813,7 +1813,10 @@ mlx5_traffic_enable(struct rte_eth_dev *dev)
+ 	for (i = 0; i != MLX5_MAX_MAC_ADDRESSES; ++i) {
+ 		struct rte_ether_addr *mac = &dev->data->mac_addrs[i];
+ 
+-		if (!memcmp(mac, &cmp, sizeof(*mac)) || rte_is_multicast_ether_addr(mac))
++		/* Add flows for unicast and multicast mac addresses added by API. */
++		if (!memcmp(mac, &cmp, sizeof(*mac)) ||
++		    !BITFIELD_ISSET(priv->mac_pmd, i) ||
++		    (dev->data->all_multicast && rte_is_multicast_ether_addr(mac)))
+ 			continue;
+ 		memcpy(&unicast.hdr.dst_addr.addr_bytes,
+ 		       mac->addr_bytes,
+-- 
+2.34.1
 
