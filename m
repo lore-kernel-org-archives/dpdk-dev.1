@@ -2,33 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A31CA0EE6
-	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 08:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65171CA0ED1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 11:12:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC28240273;
-	Fri, 15 Aug 2025 10:50:37 +0200 (CEST)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 88C5C4026C
- for <dev@dpdk.org>; Fri, 15 Aug 2025 10:50:36 +0200 (CEST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A62E81063;
- Fri, 15 Aug 2025 01:50:27 -0700 (PDT)
-Received: from [192.168.50.107] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id
- 3E8343F738; Fri, 15 Aug 2025 01:50:35 -0700 (PDT)
-Message-ID: <992dc4bd-a55a-4f48-9be2-5e6d3385e1cd@arm.com>
-Date: Fri, 15 Aug 2025 09:50:33 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id 2C1A24026C;
+	Fri, 15 Aug 2025 13:12:43 +0200 (CEST)
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
+ [209.85.210.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 643B84003C
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 13:12:42 +0200 (CEST)
+Received: by mail-pf1-f171.google.com with SMTP id
+ d2e1a72fcca58-76e2e88c6a6so1773363b3a.1
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 04:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1755256361;
+ x=1755861161; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=HbRlgleKAh4uu7c/8hixA1bURFlifZPILrRRn5bKgYk=;
+ b=z7ZNmTIl/HrOW/59cHiRw2FyyRl9gGwVgJ3s5Go0iTmQtlj3VWykb03pbIOnRmigAD
+ OB0sH3TmqIJrRuTkxKwelbI0+2KlQvzNsM0/n3EvUh0cGg2pu/uvuckcEG390/O6P/0x
+ MqZvfvLI7f17jc3HJ41V0zUpS1lCqAlZTgg15j9gIrMGRp3pdK/ouzb2HKUiHq/M4ZUr
+ TEl/MnSrR4k+fisApyOW3LSWXbbYodFZsfNBCiYKh1pmpIk2zAc9OS8cwR0Ho/gjr648
+ VypKtjNW/Zc59mkwyZRAT+nmpCJNFamuhTgXJkGBKq5Q/tGewPMex2N+Vu810HSO+TUT
+ abww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1755256361; x=1755861161;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=HbRlgleKAh4uu7c/8hixA1bURFlifZPILrRRn5bKgYk=;
+ b=a5DIa/LpanxCv0V60ftLjlnrHQhTlJdOjEkAxa83Y/y7qBNqMFQxKy/dmucsz7QwwO
+ bGEIlcBJ0k4cHQk3l3A4SUXRDwgRgLJq/E6BZzyLYtB+jaD4gxTcbMCkn0h4D08XOboq
+ 2T61MZj+Dbua6dKNxSDpEtEgkQvZPqG9M/aTDk7rCLbuPX9f1B+ncjDq/p/o2HoorQo6
+ zA5FB4Hr3HpGnKpujrPsEOo+aUoHalfY3GCMMTOqJbvTi7RAvQJ8H8ZUguKnqgamRAtx
+ Whww/0tQmQN5NxHyoAN0Jth8TjmYQn3RdkpeVeA/BrUScPE79d4X+svwISi1KzSQ1PFT
+ ULsg==
+X-Gm-Message-State: AOJu0Yw+z89i8LaC0ST+ESa7Yoj2c06MtaO1EGND4KjKZMjKfkO/ZnUf
+ wxTuylCtU75E9x0Tj54yNokHObOKU1R7ZFndQHLKzYjmDX7d4BEQGuhVwpH6Xu8N2lY=
+X-Gm-Gg: ASbGncs5hDBiXFu6OevkzZmX4GzYMYNYEkDy/julcBGY3jSTkDzWywGfQCzgs8lEcCW
+ 2NcLWa5qHnxcukP/sVZlTrCFlq33h+TomTGYpwjmFJywpO0J14nTatwsLclqYs5YArzjqgNU4dX
+ 4rd75IvDyv2z/IiI816QrNQ5/FIRpav9aWT+mkCxkX0CKjHxgVGs6V8/RVqBOk7oJVB2DZJcYel
+ SFQvj+jaWCazOJ5PYY0u9kI5cgUTJm1ivYp7Z3+VbSeRnswAfmrpNe1wtslSB+55yJr1nw6d0TW
+ MPRIsLo+Qve4yGO6MYLlBkQYNu/jrMgjcehLzjIHPrfq1+od5tos2bT2jdc91T1zLiiC/FbYzDr
+ OEtngZ4W/NS7w+rTlilprX0jDLVO2vRxNxtUsjtjDAwHvecbu
+X-Google-Smtp-Source: AGHT+IG6MuoN0tChBHfOuWhFz8UyBc9Hhia3Iw6QZ8e8mWZ4xOR0RF3aJ0/sNA8xObCUidvaePqDvQ==
+X-Received: by 2002:a05:6a00:3c8d:b0:748:323f:ba21 with SMTP id
+ d2e1a72fcca58-76e446a92fbmr1985932b3a.1.1755256360984; 
+ Fri, 15 Aug 2025 04:12:40 -0700 (PDT)
+Received: from localhost.localdomain ([64.62.143.197])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-76e45566fafsm913004b3a.73.2025.08.15.04.12.40
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 15 Aug 2025 04:12:40 -0700 (PDT)
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+To: Aman Singh <aman.deep.singh@intel.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>
+Cc: dev@dpdk.org, stable@dpdk.org,
+ Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Subject: [PATCH] app/testpmd: add contrack state inspect commands commands
+Date: Fri, 15 Aug 2025 07:12:00 -0400
+Message-ID: <20250815111201.3865042-1-14pwcse1224@uetpeshawar.edu.pk>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250814085831.3511020-1-14pwcse1224@uetpeshawar.edu.pk>
+References: <20250814085831.3511020-1-14pwcse1224@uetpeshawar.edu.pk>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dts: enable port binding on the TG
-Content-Language: en-GB
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu
-References: <20250814203846.407334-1-abailey@iol.unh.edu>
-From: Luca Vizzarro <Luca.Vizzarro@arm.com>
-In-Reply-To: <20250814203846.407334-1-abailey@iol.unh.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -42,185 +82,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Andrew,
+Add command in testpmd user guide to inspect conntract CT states.
 
-thank you for the very quick turnaround! I've just noticed that this is 
-not precisely what I had in mind, but in fairness this approach is 
-perfectly good.
+The conntract possible CT states
+are SYN_RECV, ESTABLISHED, FIN_WAIT, CLOSE_WAIT, LAST_ACK and
+TIME_WAIT.
 
-On 14/08/2025 21:38, Andrew Bailey wrote:
-> Currently, driver binding for all nodes relies on a devbind_script_path
-> attribute in the node main sessions. This attribute is being set on the
-> SUT node, but not the TG node. Consequently, if the TG node ports are
-> not bound to the correct driver before DTS execution, the TG ports will
-> fail to bind and DTS will error.
-> 
-> relocate prepare devbind script method to topology class to be used by both
-> TG and SUT nodes.
-nit: missed capitalisation.>
-> Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
-> 
-> done
-> ---
->   .mailmap                                |  1 +
->   dts/framework/remote_session/dpdk.py    | 36 +----------------------
->   dts/framework/testbed_model/topology.py | 39 +++++++++++++++++++++++++
->   3 files changed, 41 insertions(+), 35 deletions(-)
-> 
-> diff --git a/.mailmap b/.mailmap
-> index 34a99f93a1..df06862d8b 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -104,6 +104,7 @@ Andre Muezerie <andremue@linux.microsoft.com> <andremue@microsoft.com>
->   Andrea Arcangeli <aarcange@redhat.com>
->   Andrea Grandi <andrea.grandi@intel.com>
->   Andre Richter <andre.o.richter@gmail.com>
-> +Andrew Bailey <abailey@iol.unh.edu>
->   Andrew Boyer <andrew.boyer@amd.com> <aboyer@pensando.io>
->   Andrew Harvey <agh@cisco.com>
->   Andrew Jackson <ajackson@solarflare.com>
-> diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
-> index 606d6e22fe..d1ab3ae50d 100644
-> --- a/dts/framework/remote_session/dpdk.py
-> +++ b/dts/framework/remote_session/dpdk.py
-> @@ -24,12 +24,11 @@
->       RemoteDPDKTarballLocation,
->       RemoteDPDKTreeLocation,
->   )
-> -from framework.exception import ConfigurationError, InternalError, RemoteFileNotFoundError
-> +from framework.exception import ConfigurationError, RemoteFileNotFoundError
->   from framework.logger import DTSLogger, get_dts_logger
->   from framework.params.eal import EalParams
->   from framework.remote_session.remote_session import CommandResult
->   from framework.testbed_model.cpu import LogicalCore, LogicalCoreCount, LogicalCoreList, lcore_filter
-> -from framework.testbed_model.linux_session import LinuxSession
->   from framework.testbed_model.node import Node
->   from framework.testbed_model.os_session import OSSession
->   from framework.testbed_model.virtual_device import VirtualDevice
-> @@ -358,7 +357,6 @@ def setup(self):
->           """Set up the DPDK runtime on the target node."""
->           if self.build:
->               self.build.setup()
-> -        self._prepare_devbind_script()
->   
->       def teardown(self) -> None:
->           """Reset DPDK variables and bind port driver to the OS driver."""
-> @@ -385,38 +383,6 @@ def run_dpdk_app(
->               f"{app_path} {eal_params}", timeout, privileged=True, verify=True
->           )
->   
-> -    def _prepare_devbind_script(self) -> None:
-> -        """Prepare the devbind script.
-> -
-> -        If the environment has a build associated with it, then use the script within that build's
-> -        tree. Otherwise, copy the script from the local repository.
-> -
-> -        This script is only available for Linux, if the detected session is not Linux then do
-> -        nothing.
-> -
-> -        Raises:
-> -            InternalError: If dpdk-devbind.py could not be found.
-> -        """
-> -        if not isinstance(self._node.main_session, LinuxSession):
-> -            return
-> -
-> -        if self.build:
-> -            devbind_script_path = self._node.main_session.join_remote_path(
-> -                self.build.remote_dpdk_tree_path, "usertools", "dpdk-devbind.py"
-> -            )
-> -        else:
-> -            local_script_path = Path("..", "usertools", "dpdk-devbind.py").resolve()
-> -            if not local_script_path.exists():
-> -                raise InternalError("Could not find dpdk-devbind.py locally.")
-> -
-> -            devbind_script_path = self._node.main_session.join_remote_path(
-> -                self._node.tmp_dir, local_script_path.name
-> -            )
-> -
-> -            self._node.main_session.copy_to(local_script_path, devbind_script_path)
-> -
-> -        self._node.main_session.devbind_script_path = devbind_script_path
-> -
->       def filter_lcores(
->           self,
->           filter_specifier: LogicalCoreCount | LogicalCoreList,
-> diff --git a/dts/framework/testbed_model/topology.py b/dts/framework/testbed_model/topology.py
-> index 899ea0ad3a..db96aaf170 100644
-> --- a/dts/framework/testbed_model/topology.py
-> +++ b/dts/framework/testbed_model/topology.py
-> @@ -12,11 +12,13 @@
->   from collections.abc import Iterator
->   from dataclasses import dataclass
->   from enum import Enum
-> +from pathlib import Path
->   from typing import Literal, NamedTuple
->   
->   from typing_extensions import Self
->   
->   from framework.exception import ConfigurationError, InternalError
-> +from framework.testbed_model.linux_session import LinuxSession
->   from framework.testbed_model.node import Node
->   
->   from .port import DriverKind, Port, PortConfig
-> @@ -128,6 +130,7 @@ def setup(self) -> None:
->   
->           Binds all the ports to the right kernel driver to retrieve MAC addresses and logical names.
->           """
-> +        self._prepare_devbind_script()
->           self._setup_ports("sut")
->           self._setup_ports("tg")
->   
-> @@ -250,6 +253,42 @@ def _bind_ports_to_drivers(
->           for driver_name, ports in driver_to_ports.items():
->               node.main_session.bind_ports_to_driver(ports, driver_name)
->   
-> +    def _prepare_devbind_script(self) -> None:
-> +        """Prepare the devbind script.
-> +
-> +        If the environment has a build associated with it, then use the script within that build's
-> +        tree. Otherwise, copy the script from the local repository.
-This is no longer true as you are now only copying the script.> +
-> +        This script is only available for Linux, if the detected session is not Linux then do
-> +        nothing.
-> +
-> +        Raises:
-> +            InternalError: If dpdk-devbind.py could not be found.
-> +        """
-> +        from framework.context import get_ctx
-> +
-> +        ctx = get_ctx()
-> +        tg = ctx.tg_node
-> +        sut = ctx.sut_node
-Since we are only calling these once there is no need in placing them in 
-their own variables, see below.> +
-> +        def prepare_node(node: Node) -> None:
-> +            if not isinstance(node.main_session, LinuxSession):
-> +                return
-> +
-> +            local_script_path = Path("..", "usertools", "dpdk-devbind.py").resolve()
-> +            if not local_script_path.exists():
-> +                raise InternalError("Could not find dpdk-devbind.py locally.")I guess local_script_path can go outside the inner function. Similarly 
-we can store the result of `not local_script_path.exists()` in a 
-variable in the outer function, but keep the check here as we only want 
-to check if session is LinuxSession of course.> +
-> +            devbind_script_path = node.main_session.join_remote_path(
-> +                node.tmp_dir, local_script_path.name
-> +            )
-> +
-> +            node.main_session.copy_to(local_script_path, devbind_script_path)
-> +            node.main_session.devbind_script_path = devbind_script_path
-> +
-> +        prepare_node(tg)
-> +        prepare_node(sut)
-can just do:
+Fixes: 4d07cbefe3ba0 ("app/testpmd: add commands for conntrack")
+Cc: stable@dpdk.org
 
-   prepare_node(ctx.tg_node)
-   ...
+Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+---
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-and spare 2 redundant lines.> +
->       @property
->       def sut_dpdk_ports(self) -> list[Port]:
->           """The DPDK ports for the SUT node."""
-Thank you!
-Best,
-Luca
+diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
+index 6ad83ae50d..1653fcdbee 100644
+--- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
++++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
+@@ -5392,6 +5392,12 @@ rules like above for the peer port.
+ 
+  testpmd> flow indirect_action 0 update 0 action conntrack_update dir / end
+ 
++Inspect the conntrack action state through the following command:
++
++::
++
++ testpmd> flow indirect_action 0 query <action ID>
++
+ Sample meter with policy rules
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-- 
+2.43.0
+
