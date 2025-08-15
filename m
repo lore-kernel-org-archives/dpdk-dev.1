@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A610CA0ED1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 16:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC66CA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 16:26:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 657E74026A;
-	Fri, 15 Aug 2025 18:15:37 +0200 (CEST)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
- [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id 86953400EF
- for <dev@dpdk.org>; Fri, 15 Aug 2025 18:15:36 +0200 (CEST)
-Received: by mail-wr1-f49.google.com with SMTP id
- ffacd0b85a97d-3b9d41bea3cso1991106f8f.0
- for <dev@dpdk.org>; Fri, 15 Aug 2025 09:15:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 539AF4026A;
+	Fri, 15 Aug 2025 18:26:37 +0200 (CEST)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
+ [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id 8DDE9400EF
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 18:26:35 +0200 (CEST)
+Received: by mail-wr1-f54.google.com with SMTP id
+ ffacd0b85a97d-3b9edf0e4efso1293913f8f.2
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 09:26:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755274536;
- x=1755879336; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755275195;
+ x=1755879995; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Vv6LKKkhHv6GYLPrU1ILDjkHytw/FCOsH7CGwvcAv0c=;
- b=GbV2ZuoAsu0U6W9wE4mveaR5yL5Q/l6A5ttnTu5WoT7ENvsBFJ0t26L3tSvEkdtxYI
- ZIDGVJcuzKkxEUxZoWl8u5/0/Bzz+W/TrD1swzsWIg5WITcRv9W0gGkfcmOkpuru96Yw
- J6PgERz7qSnLg4HX5U2UH7Yhj/Kmrhs0QvKKVAj9tkeAIlySfKXYi9548QulMJrVaWfb
- de0ITlD1i843p0bCXO4yiSFeYT6o1qeSv4cIn2Ahdfe/XTt74wFWG9y02xCvt5+CGLFO
- WL1x7ZObPbZD3vvSY7ORvrNmPYI+SUdUYqJxbdPrCpJkS++BBdLbNv0U5Sd4L2iLCpi0
- 3l8A==
+ bh=37kjJg0/Ml7Bfd32LcxUyJ8/Wwv2uaeIvBWplJTvrlA=;
+ b=wLmv3BRdItDVqeET1K1PVlmK/S+zlvj+pQyqTjiSY5gQxMSre40IkBfzhWPIpQhzln
+ jH8m8Pyn99Mm9usiNDCvbWWjKnTGNhmJlJP7UTHnDdFHRpToasNirhS1PqqjgLdIdMlv
+ y6a6NLt4PXVm4fvmgvNMy1QV6LWcspvCI49ZmQN5LrixOTeNA/4mMDGC+DsHPwACuY9q
+ SyesNjNKs3pdO2IT2UkFCi8UmYhA4ylmDuMj6STtleyiovhajPo1CWO9gQ91+pCCfv5y
+ Y5/13WsNRGX6pfW7TOp66JQGM4rja/qt8r2IeFwutc8cZGzFStI+DRsv3Pc5jz1KwBtt
+ ZViQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755274536; x=1755879336;
+ d=1e100.net; s=20230601; t=1755275195; x=1755879995;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Vv6LKKkhHv6GYLPrU1ILDjkHytw/FCOsH7CGwvcAv0c=;
- b=ZZyILSCVxoHxQNjmcne785HqR8q3yv+V1/o6difkIO4kSw7SG1T3iBKbfyTAqShpJa
- hnXtOQKR7nzLZ+bqHz0FPl2WBjuITb5vXXCuip535lkHi6jbYJl6j85901vMPJ/U+CcD
- O0K3/AW+U8qmOOtiFutIZIShPkGKsQ2FmwvA2HwwTP/af/nvYrCHxNDo9XthOXfB0Frh
- 5Gon5I/9xqRdvZEGViwTmSF5NU3yqGmjFZgov4bXHGU2xRqGvyRN886QwC5KVi+h+CBO
- SHkwygdzb/yf5TcMIzuSpBNALqZxtIp0Ti9cpzT5Xqe5ugIur+Q5Md4SWB0NtGX25izP
- Rv3g==
-X-Gm-Message-State: AOJu0YzksgKe3gkDTeTSKvD551Ea5Snoe0aVj6EHbXmrKMwl1bRncNop
- 5nO626exoebUbHe3KhF0w8dkL4OBD8YfhHVF8S/GXsrGCRhz/1j+ElFrTlQt1lY8w7E=
-X-Gm-Gg: ASbGnctj26QH1KSvbPFcPEUELCZoBhlBKuUgF7NsVJe+u2/HNWbymGJfQINxD7lHKed
- S4VSuKi/skj8Sj+b+cAeEXs3R9dUAYuSqrzBfMKcx9r2wSdqP7nMg9Eue/T0TNJSLyg4fPxIsv4
- JcKmHGju+ljn5bYjkh4HyAh5Tf/jPi4/swAsBYzmwyIILIZmr+hwNfHQYiINOFAHh5S6EMr22a8
- dMF0C0zsF+rQPX0mTX3oIVzgymKZguvnt6x0QS64XEuwK9raxxpBf92LCBp5bCP0hSGe0A84v3W
- S88War0BFRss5dvcNziWqPDg46xxp6C7LxU7RQUFqQJp1MWQi8+Rjk4ppk+a2Etghf6i3TC2M77
- lywU55VYdYouLcZlTZNewZLNpLJDudQzSiEpfJuAoIZtCLLK2iwwQCdLVCzYfX4zOgQMyKbq/eY
- s=
-X-Google-Smtp-Source: AGHT+IEibyS/dqUCYaj/rkh48DStpVVctmNMarz2vM7SoTUA9rIxVX68qAT+EFy9QuvH/nnx+4uQsw==
-X-Received: by 2002:a05:6000:290c:b0:3b7:924a:998f with SMTP id
- ffacd0b85a97d-3bb66a37a11mr2276812f8f.5.1755274535984; 
- Fri, 15 Aug 2025 09:15:35 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=37kjJg0/Ml7Bfd32LcxUyJ8/Wwv2uaeIvBWplJTvrlA=;
+ b=mpkpI5wc9/o8Y9Jhj71n2lGYnZMbWqeanKLSZo3hWaJKa14osMINGZ4fQJrRS8xjhA
+ LMM3tftjapYwadwE4KiPe1zagN+rCc0eUDZ6MHwjmRO7cFZww/XJFvNAHFzw3lmDTrIy
+ PUDoEKA9HufxTB1RREYaUcoJPn4017rmlWp/QDNwWqbsvOCex225XgQ5lMLNl9YEjBqX
+ btzn8Q+sHGT3h8gQExpPtYh7E/1x3UkclIHTz07GRoL7DBLgI8+LIXad23DaLMPNw2gs
+ Zv5Q/9aoStmVa4h/waStK0hjdWp9BSeaPh8UlWMLl/VrX13KYPOs3wvmmtTz0OEg+i3U
+ dRBw==
+X-Gm-Message-State: AOJu0YyWCJF3Az1nP8H+x6pQsw4WytiD1T2KtX9FdNT6EgtXLEV5KX6d
+ k76sHtwh4Usn8Q5GwND9mth0+d3iWHKm9QiHKjCcoKFc/NYV5+5JZ22Fjw80Bo4/pVEVT6vxGpj
+ Yqy1d
+X-Gm-Gg: ASbGncsBss1Jbkz5q/nQxxrTPJAGlgJna62WLOZR/gbLVnOtnXOS9FAN4dYkdie1pCz
+ dy7jbuwy9BwjDHiUyKRIo0LlPqVyTikmLsDbq3BorKI2CN67z4CqkAmw/OfswyeNkN9P+PBpc+q
+ 4R0akNVaS6MCxjzqO4eNZe6KQXnVi56gmFCsZjxFqrtU4npBwhA8OEAEEktMnJAIk4mlgbGLEsF
+ FN33tRe5vFo/m0qW3MVfJVMCIms0eLm5wy3IaKDyetnBHUNe4dAQgdtHqnwtLfhKf1J2jA2Lht2
+ 0tCBz+yuGwNWwrMohSR+Bcj8qY8ptiH3PA5xUnBvPn8k3eeS/AjnrXmkRrxxp2HCFZA+1+1zFTX
+ nM8aITJitCiaTVAzSTKuIjLSWnAow2dlE4J6pIY6dACDBzm2CdfZH9Vav5DrWo0VFM6qyFMtl
+X-Google-Smtp-Source: AGHT+IFR/WxOWLiBQld7O4kRsCONK0AJzwZLnJORmJShQUPWlKp0NMO1V+z8xhi/t7M/pvgsKbL0cg==
+X-Received: by 2002:a05:6000:2902:b0:3b8:eb9f:a756 with SMTP id
+ ffacd0b85a97d-3bb66567decmr1899018f8f.11.1755275195087; 
+ Fri, 15 Aug 2025 09:26:35 -0700 (PDT)
+Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3bb676c9a67sm2470516f8f.35.2025.08.15.09.15.34
+ ffacd0b85a97d-3bb676c9431sm2665278f8f.40.2025.08.15.09.26.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 15 Aug 2025 09:15:35 -0700 (PDT)
-Date: Fri, 15 Aug 2025 09:15:31 -0700
+ Fri, 15 Aug 2025 09:26:34 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: <dev@dpdk.org>
-Subject: Re: [PATCH v2 0/6] Enable warnings about use of comma operator
-Message-ID: <20250815091531.269017ab@hermes.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FE37@smartserver.smartshare.dk>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 0/7] avoid unnecessary use of comma operator
+Date: Fri, 15 Aug 2025 09:26:16 -0700
+Message-ID: <20250815162629.161782-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250312232739.228295-1-stephen@networkplumber.org>
 References: <20250312232739.228295-1-stephen@networkplumber.org>
- <20250814212901.88863-1-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35E9FE37@smartserver.smartshare.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,29 +80,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 15 Aug 2025 08:40:58 +0200
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+Clang has ability to detect suspicious use of comma operator
+where a semicolon would have the same effect.
+Easy enough to fix in DPDK code.
 
-> > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > Sent: Thursday, 14 August 2025 23.29
-> >=20
-> > This series was motivated by recent thread on netdev
-> > about build with -Wcomma in clang. This warning catches code
-> > that uses comma where a semi-colon is a better choice. =20
->=20
-> Overall, I agree that using semicolon is better for consistency is most p=
-laces, but using commas in some loops - e.g. "for (dst=3D,src=3D; condition=
-; dst+=3D, src+=3D)" - might be more readable than the alternative.
+V3 - fix examples as well
 
-The compiler only warns for standalone statements, it handles the case of f=
-or(i=3D0,j=3D0;i < n; i++, j++) with out
-warnings.
+Stephen Hemminger (7):
+  eal: replace unnecessary comma operator
+  ipsec: replace unnecessary comma operator
+  graph: replace unnecessary comma operator
+  test: replace unnecessary comma operators
+  app/testpmd: replace comma operator with bracket
+  examples: remove unnecessary use of comma operator
+  config: enable comma warnings
 
->=20
-> Stephen, I'm interested in the discussion about this, can you please post=
- a link to the thread on the netdev mailing list?
->=20
+ app/test-pmd/cmdline_flow.c                |  6 ++++--
+ app/test-pmd/config.c                      | 10 ++++++----
+ app/test/test_compressdev.c                |  4 ++--
+ app/test/test_link_bonding_rssconf.c       |  2 +-
+ app/test/test_thash.c                      |  2 +-
+ config/meson.build                         |  1 +
+ drivers/meson.build                        |  2 +-
+ examples/l2fwd-event/l2fwd_event_generic.c |  2 +-
+ examples/l3fwd/l3fwd_event_generic.c       |  2 +-
+ lib/eal/common/rte_malloc.c                |  4 ++--
+ lib/eal/linux/eal_alarm.c                  |  6 ++++--
+ lib/graph/graph_stats.c                    |  2 +-
+ lib/ipsec/misc.h                           |  3 ++-
+ 13 files changed, 27 insertions(+), 19 deletions(-)
 
-There is not a single thread, Simon sent patches for Intel and Nvidia drive=
-rs that have been merged.
-https://marc.info/?l=3Dlinux-netdev&m=3D170280627225075&w=3D2
+--
+2.47.2
