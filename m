@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65171CA0ED1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 11:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC80CA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 11:15:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2C1A24026C;
-	Fri, 15 Aug 2025 13:12:43 +0200 (CEST)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
- [209.85.210.171])
- by mails.dpdk.org (Postfix) with ESMTP id 643B84003C
- for <dev@dpdk.org>; Fri, 15 Aug 2025 13:12:42 +0200 (CEST)
-Received: by mail-pf1-f171.google.com with SMTP id
- d2e1a72fcca58-76e2e88c6a6so1773363b3a.1
- for <dev@dpdk.org>; Fri, 15 Aug 2025 04:12:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F9DB4026C;
+	Fri, 15 Aug 2025 13:15:28 +0200 (CEST)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
+ [209.85.214.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 720F14003C
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 13:15:27 +0200 (CEST)
+Received: by mail-pl1-f175.google.com with SMTP id
+ d9443c01a7336-2445806e03cso20138775ad.1
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 04:15:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1755256361;
- x=1755861161; darn=dpdk.org; 
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1755256526;
+ x=1755861326; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
  bh=HbRlgleKAh4uu7c/8hixA1bURFlifZPILrRRn5bKgYk=;
- b=z7ZNmTIl/HrOW/59cHiRw2FyyRl9gGwVgJ3s5Go0iTmQtlj3VWykb03pbIOnRmigAD
- OB0sH3TmqIJrRuTkxKwelbI0+2KlQvzNsM0/n3EvUh0cGg2pu/uvuckcEG390/O6P/0x
- MqZvfvLI7f17jc3HJ41V0zUpS1lCqAlZTgg15j9gIrMGRp3pdK/ouzb2HKUiHq/M4ZUr
- TEl/MnSrR4k+fisApyOW3LSWXbbYodFZsfNBCiYKh1pmpIk2zAc9OS8cwR0Ho/gjr648
- VypKtjNW/Zc59mkwyZRAT+nmpCJNFamuhTgXJkGBKq5Q/tGewPMex2N+Vu810HSO+TUT
- abww==
+ b=A5PP1uky18NVTn6oQfNuCAfH6ZkJhOJGrOT3uswManx5GvBfGWDMtEc6LsVPPF2YUm
+ Z3jIbGARRtJz4zzakqsNuqo9D7bZmqlwG5dyaOt38gNAHu1jSINNB07MniXeB1GrCAu0
+ Vf40LVqIybnbJkuYBxtdp2o5c6w3ZKpCyFvfYTQSZ/QvZ7GD+oDpF84E0VHlr2TQBNKS
+ 9mRpmflRDSwj/k+3jkMuHG0XI3M5N4w1JWaCDp89JVqSm7zIZGH6Lpq1ncNNagtO1ktG
+ Q1n1/cnxSowvlmCXz/93+3VzKBZQwiu9Sxz6iW2FWdX5IYhJrBKQ2XeN7kyV+Wlf71bI
+ zLPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755256361; x=1755861161;
+ d=1e100.net; s=20230601; t=1755256526; x=1755861326;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
  bh=HbRlgleKAh4uu7c/8hixA1bURFlifZPILrRRn5bKgYk=;
- b=a5DIa/LpanxCv0V60ftLjlnrHQhTlJdOjEkAxa83Y/y7qBNqMFQxKy/dmucsz7QwwO
- bGEIlcBJ0k4cHQk3l3A4SUXRDwgRgLJq/E6BZzyLYtB+jaD4gxTcbMCkn0h4D08XOboq
- 2T61MZj+Dbua6dKNxSDpEtEgkQvZPqG9M/aTDk7rCLbuPX9f1B+ncjDq/p/o2HoorQo6
- zA5FB4Hr3HpGnKpujrPsEOo+aUoHalfY3GCMMTOqJbvTi7RAvQJ8H8ZUguKnqgamRAtx
- Whww/0tQmQN5NxHyoAN0Jth8TjmYQn3RdkpeVeA/BrUScPE79d4X+svwISi1KzSQ1PFT
- ULsg==
-X-Gm-Message-State: AOJu0Yw+z89i8LaC0ST+ESa7Yoj2c06MtaO1EGND4KjKZMjKfkO/ZnUf
- wxTuylCtU75E9x0Tj54yNokHObOKU1R7ZFndQHLKzYjmDX7d4BEQGuhVwpH6Xu8N2lY=
-X-Gm-Gg: ASbGncs5hDBiXFu6OevkzZmX4GzYMYNYEkDy/julcBGY3jSTkDzWywGfQCzgs8lEcCW
- 2NcLWa5qHnxcukP/sVZlTrCFlq33h+TomTGYpwjmFJywpO0J14nTatwsLclqYs5YArzjqgNU4dX
- 4rd75IvDyv2z/IiI816QrNQ5/FIRpav9aWT+mkCxkX0CKjHxgVGs6V8/RVqBOk7oJVB2DZJcYel
- SFQvj+jaWCazOJ5PYY0u9kI5cgUTJm1ivYp7Z3+VbSeRnswAfmrpNe1wtslSB+55yJr1nw6d0TW
- MPRIsLo+Qve4yGO6MYLlBkQYNu/jrMgjcehLzjIHPrfq1+od5tos2bT2jdc91T1zLiiC/FbYzDr
- OEtngZ4W/NS7w+rTlilprX0jDLVO2vRxNxtUsjtjDAwHvecbu
-X-Google-Smtp-Source: AGHT+IG6MuoN0tChBHfOuWhFz8UyBc9Hhia3Iw6QZ8e8mWZ4xOR0RF3aJ0/sNA8xObCUidvaePqDvQ==
-X-Received: by 2002:a05:6a00:3c8d:b0:748:323f:ba21 with SMTP id
- d2e1a72fcca58-76e446a92fbmr1985932b3a.1.1755256360984; 
- Fri, 15 Aug 2025 04:12:40 -0700 (PDT)
+ b=bDZPli0tj+H+KP/FQUsO03C5WE/dU8lJpOZg9tetmKLf5T9LbXedeUKHKIHrD4ehC5
+ a50tmfDdemk7aFtTIs9ZyxFjCoBTGPZU80QP3kMGcPP+hlYr54MxrOYvK7Zy3RHHKjYh
+ AvmwbSY5DBLLGZE26JExiOuC9Y1WYpcyK0TVSx/PTiKuBsmo0WSSOsJJiDelei6Em62T
+ f9krPsewpjy1ATVxMkKPBPbLZ9kbWX67r1XOF7ZklxwR97Bxxk8/2KWSs1hvf4RnKfGT
+ ZhM1ezR6GmCjJ+Py28fqi7gW82CpjXPd5jggV6wOrybKeeLozDDFnCt37dXSGW9Bvf+8
+ cmYw==
+X-Gm-Message-State: AOJu0YwNrUvKz8+3lke5xST3ry8dA/OpIZS+H0+2AbceOqLhSsaYez5b
+ 45ryvblUjkx6c+3JeuLAd0Bk4FzOterKkWsMM+w7Uvj+p1Ab5kHGAf5UIeUVPUn5TT0=
+X-Gm-Gg: ASbGnctmYPmMvffiyGuSs0Mt+aridkhvdOD+fPKTsJDuFrrZ6nEl950v2pFcvfCr6E0
+ v02es5pnxbz4IgnanNobOrObyOW4oDeG1L1jrjHd+2rOHNt58LTmk8RpKG1BUtV1qEhRGsdEQQ6
+ G/+S+b58TXIob5sVwRz8JNdpZVqAYJqOWUhCcOzr2XjXHNZ0itnbFO5GfdgXHdnzkVSpCLs2XZo
+ INvOBliUYWuOK3kOHk6zQaArCM+jSrc/tcU83Bc1u5bnet38mN4xbsnsiQ31rrpB6obDUgLaact
+ ql1NNxVC8aS7DDPsw/p+pws2c18RX1f0FRVz5IwK0b5DpZmuVQEWM+fqvEYwQv1D+sZ4X9PS/G+
+ tXW85UVHgL1FqmjhLNg1q5FjSL8HD69CdTSW4BvTpGMUpXUgL
+X-Google-Smtp-Source: AGHT+IEWkLAbSPGkGLGgz/qfAIOAfraBvOfzqoHEJGEgJ91A8A4TxHvcoaSHIgN8HL5Rpt5dfqwXVg==
+X-Received: by 2002:a17:902:d482:b0:242:c66f:9f80 with SMTP id
+ d9443c01a7336-2446da0196cmr25008785ad.53.1755256526399; 
+ Fri, 15 Aug 2025 04:15:26 -0700 (PDT)
 Received: from localhost.localdomain ([64.62.143.197])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-76e45566fafsm913004b3a.73.2025.08.15.04.12.40
+ d9443c01a7336-2446d58b80asm11741285ad.160.2025.08.15.04.15.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 15 Aug 2025 04:12:40 -0700 (PDT)
+ Fri, 15 Aug 2025 04:15:26 -0700 (PDT)
 From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
 To: Aman Singh <aman.deep.singh@intel.com>, Bing Zhao <bingz@nvidia.com>,
  Ori Kam <orika@nvidia.com>
 Cc: dev@dpdk.org, stable@dpdk.org,
  Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Subject: [PATCH] app/testpmd: add contrack state inspect commands commands
-Date: Fri, 15 Aug 2025 07:12:00 -0400
-Message-ID: <20250815111201.3865042-1-14pwcse1224@uetpeshawar.edu.pk>
+Subject: [PATCH] app/testpmd: add contrack CT state inspect commands
+Date: Fri, 15 Aug 2025 07:15:14 -0400
+Message-ID: <20250815111514.3866449-1-14pwcse1224@uetpeshawar.edu.pk>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250814085831.3511020-1-14pwcse1224@uetpeshawar.edu.pk>
 References: <20250814085831.3511020-1-14pwcse1224@uetpeshawar.edu.pk>
