@@ -2,75 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26600CA0ED1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 16:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF526CA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 16:27:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C73D40657;
-	Fri, 15 Aug 2025 18:26:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 859EF4065C;
+	Fri, 15 Aug 2025 18:26:49 +0200 (CEST)
 Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com
- [209.85.221.50]) by mails.dpdk.org (Postfix) with ESMTP id CC67740612
- for <dev@dpdk.org>; Fri, 15 Aug 2025 18:26:45 +0200 (CEST)
+ [209.85.221.50]) by mails.dpdk.org (Postfix) with ESMTP id 13D514065B
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 18:26:48 +0200 (CEST)
 Received: by mail-wr1-f50.google.com with SMTP id
- ffacd0b85a97d-3b9e4148134so1158336f8f.2
- for <dev@dpdk.org>; Fri, 15 Aug 2025 09:26:45 -0700 (PDT)
+ ffacd0b85a97d-3b9dc5c2f0eso1290045f8f.1
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 09:26:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755275205;
- x=1755880005; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755275207;
+ x=1755880007; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=EqU6gsZ2qGV1/dvLmSKUqp0e9BQZky/Nad4kms33qnk=;
- b=mVHExACrlIp1wMJO6APw1R8GDX8/FpnFle1vwpcfwvxwXS69NApHHw5Au9GRc55/Jt
- L3m1668Ij9LzZojSqJmJWXGgql3INOLKdxpwPOH+14wLHE/fRPvbFohKg/m3FzK/jtNz
- NRBzaweDUfuZZVfUPil7TX7c5xy4KGqfa7sAhlOKLSHvJvCyZaJv/l/OpIb+kU58R30A
- 47SS7czvXHMXkwyU0iLEp8k/VUjhRVbnpe2B4M+Mvw2q5GJLnoOUwsvkM4ALu7MGYcGd
- JBfJ6Cigzndo8bM2HYfASGV3c1+aKI2cvOeE0f2r8gNAOoK2HJ8saPoihvvVclvRZwiz
- bx5g==
+ bh=qO1RKIkmmOj2M55phhV7NpOzLei+0VUFkPZ6iPjtjUo=;
+ b=Qof8g0Hko9tMEn1aJ52sVsXUWq9GZm0IIBUJ0zj+LfjeHF0gF0nPXvX5QmMjZGGi35
+ ktuPJOorVJBl03VMgnQw4BlyYHS9Vxms/qtKCs2KUPWbxx2ucfYJ7eFd3N+U44yChVVC
+ dVUpXS7+mJraOQ7xd0FfY1a0uXDMIRFPDMUv+TYHZQRXa2mxp2Lq/M6k1d2VbPTxSScA
+ qlT7V+drSoD2Jwp6qLjSL0riRTjs9A2T1h6gGolWFwWNZfXbTZwqAivnCKbMlxF03waQ
+ N361bc6eQcBr9ST7yoMJnVZCcXfCItNuRKMtCGUZUCEwgbme8tb+ppyJbYnVmUFZtbPg
+ DE0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755275205; x=1755880005;
+ d=1e100.net; s=20230601; t=1755275207; x=1755880007;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=EqU6gsZ2qGV1/dvLmSKUqp0e9BQZky/Nad4kms33qnk=;
- b=DYM0LQDjn4iRV5Rrgf4KMc6GvOl3ZzWuuQPFNzLGhC3kHTsw0iveEKjvAOTnlCUv2N
- zimbpvHqKTjs+cWOPI+Fcd/+su6aRoHOSjejx6UHr4WRWrMy92+SEIVMmukHnXrqmVCE
- LhebxccV5gbhGbaPYxi16V/4xcObNmjU/MeZbGdozYabe0g2hDLhk6WdbPqpEN+cAa5H
- DejXpgKo9h5ViGBK3rC0aQ464azxfjPlN+1a/20rrAKe2SB19OdW0En8ib4ZdMgFrIvY
- kaGWk6Swr4XYIN0K++ntucpD58d9bNam+csxOrcMkb/BBm1u44pm1zykJ+LHduvzmlAI
- pXdQ==
-X-Gm-Message-State: AOJu0YwnuZ7uMp2Ngf4RYfmaovmezB1hogIep9xh2/uVa/3U03KYGxp5
- ivGX+IKi+BHwczWuxYk3rj7cilt9334ZfgUcAHv2nx7IPc0K3VYxFOh/J+a3+E3h5NPPAcz8B4a
- N2RZz
-X-Gm-Gg: ASbGncvy3SgXH63ZI12LcbY2usXPKfl45LCWKf0k1sSlXUijtuAHU7r/svoQWdz3FBG
- wVLqc6rsFtXMGjJlw83Lsw+quTk3UEYhPGCNotgKIdSnod4jqrbTrVpgr4mN5vFmgDpN7pB2Pi7
- JPO6gNAySZiJM3BYoyQbaJAHdrPuF+zaQsLvx0Ufiuf5aNSYPqZa7htPtybuNEfpd/s5Ws+5Gly
- YjgmnMKp6xiTXFaxEpwM3DP7feb1EhkyQayIIkCnJm10nAsfFGapImg0jrYo1bWV/FdtcSIrAc6
- QxZe3GfZ8x7hPYAkThVI/t/fz4hhi1bkh2G3k/bzPZivkV/SdCt4OKGgoFdIWAHD3sKtOP8c2u1
- CVOgvrdIcTjClRiYdNdUPsNbCXA5Yq4POsdRPLl5MTYA58HkEdhG0zFLpi/OwjvyE4t7F90ekMz
- 3vXPlA9xY=
-X-Google-Smtp-Source: AGHT+IGrd8Rm0WO/bPF4MSEXmxp32Hc1Tr3N0HAKz95zEtALc1Sj68Ihfs+moY0g7A+HHYV22m4ILw==
-X-Received: by 2002:a05:6000:1789:b0:3b8:f2f2:e417 with SMTP id
- ffacd0b85a97d-3bb692bd317mr2189023f8f.51.1755275205420; 
- Fri, 15 Aug 2025 09:26:45 -0700 (PDT)
+ bh=qO1RKIkmmOj2M55phhV7NpOzLei+0VUFkPZ6iPjtjUo=;
+ b=vLKNrennT/BayZjveOV6xBBsnk1KfxTxUnsIk5r8XBvStd8A+C+64IdXYWBYbDD8BD
+ mDnzCyjpxWITAnKfXI+3K+mBPYWGQ5shj/GaOKPwHkIJC66DakkOndF7Od0AcKtD98Tw
+ ZzBcjaOiho94BinmDMuRWyA/RE6QcRV3Cpq/WbW9IrL6/dpXkIk+4+kv+e12qHVajiSe
+ YKZSzGC/A5iy2+BUMT5DfBhHfDk/xZY/BbX2roV7Rnya9XiufE+DHMgcMmj8A0vK5s6e
+ MWl2MejeCGTYKuTh+Ds3OWhnEPDFIg0QH452dPBjq8ameAVFwgQ35peP7uuue5L6Lx35
+ mP5Q==
+X-Gm-Message-State: AOJu0Yz2cph5xLFNt4PJupjSnv8L0KBMQ4ScuWf8XYzwMLARgrgvOUTj
+ s+RD9XM+F//E5uAtH3t0nd063HZgLDB5pFKmOjGal93F3nO7ewn1/EBVeUbIGG51mMhSWQVewt1
+ 3vWZu
+X-Gm-Gg: ASbGnctY1EBGlX3k3dnbSiTigjUZYj5aaWdm6um4K97JXMCCYCI/hF0FP1ihjl8AdBs
+ 55BsyNLfMaoyBflCH7DRMqdx0+gdqmFxD9AhTedWEWzyYOI5ZLNLAAsD5NNseXeIUAm/ZeBftIn
+ zP+LLF9BiURyFRTT9pa2838zlGn4/ZyF2Y2qD8fA4nZkkZPRcYbeXLIJvO8CHInJ4egjL0IRMdb
+ OX8NmDsJitiZ4v4hKpRtl0PWfmqfjNcW9mZBjv9jVW5ofEi/7n3Y6tC/3zl+OMjO2CH/LKXXQP1
+ GSAQyUdPkYFZZL+DLfp9tOlqW+hhsqUooqNpQkkbTWXrvUEFXmcvYepznnvxjVndZ4m6Be7F755
+ 4Ox5BrGg85x+Ml78PbitSQ5qCJ3kZPWSvFsQn5jGNQIoEg++/f672TPbWKDnMTsi/Hxxg5426bQ
+ QsFsh+aOk=
+X-Google-Smtp-Source: AGHT+IGIfNaAGAxqShVW6dppqkKbrq4I/ndFLeJdaiGDSiocXX832D90eTYDgG95RDrt0FbWCB7ZwA==
+X-Received: by 2002:a05:6000:2dc2:b0:3b7:8410:22b5 with SMTP id
+ ffacd0b85a97d-3bb66d21b09mr2117540f8f.13.1755275207513; 
+ Fri, 15 Aug 2025 09:26:47 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3bb676c9431sm2665278f8f.40.2025.08.15.09.26.42
+ ffacd0b85a97d-3bb676c9431sm2665278f8f.40.2025.08.15.09.26.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 15 Aug 2025 09:26:45 -0700 (PDT)
+ Fri, 15 Aug 2025 09:26:47 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Chengwen Feng <fengchengwen@huawei.com>,
- Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashishg@marvell.com>,
- Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v3 4/7] test: replace unnecessary comma operators
-Date: Fri, 15 Aug 2025 09:26:20 -0700
-Message-ID: <20250815162629.161782-5-stephen@networkplumber.org>
+ Chengwen Feng <fengchengwen@huawei.com>, Ori Kam <orika@nvidia.com>,
+ Aman Singh <aman.deep.singh@intel.com>
+Subject: [PATCH v3 5/7] app/testpmd: replace comma operator with bracket
+Date: Fri, 15 Aug 2025 09:26:21 -0700
+Message-ID: <20250815162629.161782-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250815162629.161782-1-stephen@networkplumber.org>
 References: <20250312232739.228295-1-stephen@networkplumber.org>
@@ -90,66 +84,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use of comma as statement separator is discouraged and
-reported as warning by clang with -Wcomma
+Use while with brackets in favor of comma operator.
+
+In flow print replace with temporary variable.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test/test_compressdev.c          | 4 ++--
- app/test/test_link_bonding_rssconf.c | 2 +-
- app/test/test_thash.c                | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ app/test-pmd/cmdline_flow.c |  6 ++++--
+ app/test-pmd/config.c       | 10 ++++++----
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/app/test/test_compressdev.c b/app/test/test_compressdev.c
-index c217ad6cda..dcea8e2f30 100644
---- a/app/test/test_compressdev.c
-+++ b/app/test/test_compressdev.c
-@@ -273,7 +273,7 @@ testsuite_setup(void)
+diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
+index 83d398f8ee..a54463f718 100644
+--- a/app/test-pmd/cmdline_flow.c
++++ b/app/test-pmd/cmdline_flow.c
+@@ -8333,8 +8333,10 @@ parse_prefix(struct context *ctx, const struct token *token,
+ 		if (!ctx->object)
+ 			return len;
+ 		extra -= u;
+-		while (u--)
+-			(v <<= 1, v |= 1);
++		while (u--) {
++			v <<= 1;
++			v |= 1;
++		}
+ 		v <<= extra;
+ 		if (!arg_entry_bf_fill(ctx->object, v, arg) ||
+ 		    !arg_entry_bf_fill(ctx->objmask, -1, arg))
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index 0fda8e99f8..14af69bce5 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -1497,7 +1497,7 @@ port_flow_complain(struct rte_flow_error *error)
+ 		[RTE_FLOW_ERROR_TYPE_ACTION] = "specific action",
+ 	};
+ 	const char *errstr;
+-	char buf[32];
++	char cause_buf[32] = "";
+ 	int err = rte_errno;
  
- 	/* Initializes default values for compress/decompress xforms */
- 	ts_params->def_comp_xform->type = RTE_COMP_COMPRESS;
--	ts_params->def_comp_xform->compress.algo = RTE_COMP_ALGO_DEFLATE,
-+	ts_params->def_comp_xform->compress.algo = RTE_COMP_ALGO_DEFLATE;
- 	ts_params->def_comp_xform->compress.deflate.huffman =
- 						RTE_COMP_HUFFMAN_DEFAULT;
- 	ts_params->def_comp_xform->compress.level = RTE_COMP_LEVEL_PMD_DEFAULT;
-@@ -281,7 +281,7 @@ testsuite_setup(void)
- 	ts_params->def_comp_xform->compress.window_size = DEFAULT_WINDOW_SIZE;
+ 	if ((unsigned int)error->type >= RTE_DIM(errstrlist) ||
+@@ -1505,10 +1505,12 @@ port_flow_complain(struct rte_flow_error *error)
+ 		errstr = "unknown type";
+ 	else
+ 		errstr = errstrlist[error->type];
++
++	if (error->cause)
++		snprintf(cause_buf, sizeof(cause_buf), "cause: %p, ", error->cause);
++
+ 	fprintf(stderr, "%s(): Caught PMD error type %d (%s): %s%s: %s\n",
+-		__func__, error->type, errstr,
+-		error->cause ? (snprintf(buf, sizeof(buf), "cause: %p, ",
+-					 error->cause), buf) : "",
++		__func__, error->type, errstr, cause_buf,
+ 		error->message ? error->message : "(no stated reason)",
+ 		rte_strerror(err));
  
- 	ts_params->def_decomp_xform->type = RTE_COMP_DECOMPRESS;
--	ts_params->def_decomp_xform->decompress.algo = RTE_COMP_ALGO_DEFLATE,
-+	ts_params->def_decomp_xform->decompress.algo = RTE_COMP_ALGO_DEFLATE;
- 	ts_params->def_decomp_xform->decompress.chksum = RTE_COMP_CHECKSUM_NONE;
- 	ts_params->def_decomp_xform->decompress.window_size = DEFAULT_WINDOW_SIZE;
- 
-diff --git a/app/test/test_link_bonding_rssconf.c b/app/test/test_link_bonding_rssconf.c
-index 2cb689b1de..693b0ccd12 100644
---- a/app/test/test_link_bonding_rssconf.c
-+++ b/app/test/test_link_bonding_rssconf.c
-@@ -384,7 +384,7 @@ test_propagate(void)
- 		}
- 
- 		memset(bond_rss_key, i, sizeof(bond_rss_key));
--		bond_rss_conf.rss_hf = default_rss_hf,
-+		bond_rss_conf.rss_hf = default_rss_hf;
- 		bond_rss_conf.rss_key = bond_rss_key;
- 		bond_rss_conf.rss_key_len = 40;
- 
-diff --git a/app/test/test_thash.c b/app/test/test_thash.c
-index 33b0c6adac..398db71839 100644
---- a/app/test/test_thash.c
-+++ b/app/test/test_thash.c
-@@ -910,7 +910,7 @@ test_adjust_tuple_mult_reta(void)
- {
- 	uint32_t i, j, np, nt;
- 
--	nt = 0, np = 0;
-+	nt = 0; np = 0;
- 	for (i = 0; i < CHAR_BIT; i++) {
- 		for (j = 6; j <= RTE_THASH_RETA_SZ_MAX - i; j++) {
- 			np += (test_adjust_tuple_mb(j, i) == 0);
 -- 
 2.47.2
 
