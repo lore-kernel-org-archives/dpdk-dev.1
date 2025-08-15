@@ -2,41 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C16CA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 13:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF95DCA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 13:49:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EAAE64026C;
-	Fri, 15 Aug 2025 15:48:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 28C28402D9;
+	Fri, 15 Aug 2025 15:49:22 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 2D4E64003C
- for <dev@dpdk.org>; Fri, 15 Aug 2025 15:48:40 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.186.216])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c3Nfl333lz6L5gS;
- Fri, 15 Aug 2025 21:45:51 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
- by mail.maildlp.com (Postfix) with ESMTPS id B00B31402E9;
- Fri, 15 Aug 2025 21:48:38 +0800 (CST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 937604026C
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 15:49:21 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c3NgY6lXYz6L4xG;
+ Fri, 15 Aug 2025 21:46:33 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+ by mail.maildlp.com (Postfix) with ESMTPS id 44653140279;
+ Fri, 15 Aug 2025 21:49:21 +0800 (CST)
 Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
+ frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 15 Aug 2025 15:48:38 +0200
+ 15.1.2507.39; Fri, 15 Aug 2025 15:49:21 +0200
 Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
  frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Fri, 15 Aug 2025 15:48:38 +0200
+ Fri, 15 Aug 2025 15:49:20 +0200
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
  <dev@dpdk.org>
-CC: Anatoly Burakov <anatoly.burakov@intel.com>, Tyler Retzlaff
- <roretzla@linux.microsoft.com>
-Subject: RE: [PATCH v2 1/6] eal: replace unnecessary comma operator
-Thread-Topic: [PATCH v2 1/6] eal: replace unnecessary comma operator
-Thread-Index: AQHcDWKTAQYClmqoIEyHzP4SCnf75LRju8Cg
-Date: Fri, 15 Aug 2025 13:48:38 +0000
-Message-ID: <50155496cda146edaff68adf40dd102b@huawei.com>
+CC: Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan
+ <yanzhirun_163@163.com>
+Subject: RE: [PATCH v2 3/6] graph: replace unnecessary comma operator
+Thread-Topic: [PATCH v2 3/6] graph: replace unnecessary comma operator
+Thread-Index: AQHcDWKb8CBJqVhskkm7BAb//LShzrRju+Dw
+Date: Fri, 15 Aug 2025 13:49:20 +0000
+Message-ID: <2a6815ac2e1f4fafbe71ee869513d02c@huawei.com>
 References: <20250312232739.228295-1-stephen@networkplumber.org>
  <20250814212901.88863-1-stephen@networkplumber.org>
- <20250814212901.88863-2-stephen@networkplumber.org>
-In-Reply-To: <20250814212901.88863-2-stephen@networkplumber.org>
+ <20250814212901.88863-4-stephen@networkplumber.org>
+In-Reply-To: <20250814212901.88863-4-stephen@networkplumber.org>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -65,49 +66,28 @@ Errors-To: dev-bounces@dpdk.org
 >=20
 > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 > ---
->  lib/eal/common/rte_malloc.c | 4 ++--
->  lib/eal/linux/eal_alarm.c   | 6 ++++--
->  2 files changed, 6 insertions(+), 4 deletions(-)
+>  lib/graph/graph_stats.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> diff --git a/lib/eal/common/rte_malloc.c b/lib/eal/common/rte_malloc.c
-> index 3a86c19490..388e5a63b6 100644
-> --- a/lib/eal/common/rte_malloc.c
-> +++ b/lib/eal/common/rte_malloc.c
-> @@ -202,8 +202,8 @@ rte_realloc_socket(void *ptr, size_t size, unsigned i=
-nt align, int socket)
->  	}
+> diff --git a/lib/graph/graph_stats.c b/lib/graph/graph_stats.c
+> index eac73cbf71..588508b473 100644
+> --- a/lib/graph/graph_stats.c
+> +++ b/lib/graph/graph_stats.c
+> @@ -254,7 +254,7 @@ stats_mem_populate(struct rte_graph_cluster_stats **s=
+tats_in,
+>  	*stats_in =3D NULL;
 >=20
->  	user_size =3D size;
-> -
-> -	size =3D RTE_CACHE_LINE_ROUNDUP(size), align =3D RTE_CACHE_LINE_ROUNDUP=
-(align);
-> +	size =3D RTE_CACHE_LINE_ROUNDUP(size);
-> +	align =3D RTE_CACHE_LINE_ROUNDUP(align);
->=20
->  	/* check requested socket id and alignment matches first, and if ok,
->  	 * see if we can resize block
-> diff --git a/lib/eal/linux/eal_alarm.c b/lib/eal/linux/eal_alarm.c
-> index eb6a21d4f0..a1433eb867 100644
-> --- a/lib/eal/linux/eal_alarm.c
-> +++ b/lib/eal/linux/eal_alarm.c
-> @@ -125,8 +125,10 @@ eal_alarm_callback(void *arg __rte_unused)
->  		atime.it_value.tv_sec =3D ap->time.tv_sec;
->  		atime.it_value.tv_nsec =3D ap->time.tv_usec * NS_PER_US;
->  		/* perform borrow for subtraction if necessary */
-> -		if (now.tv_nsec > (ap->time.tv_usec * NS_PER_US))
-> -			atime.it_value.tv_sec--, atime.it_value.tv_nsec +=3D US_PER_S * NS_PE=
-R_US;
-> +		if (now.tv_nsec > (ap->time.tv_usec * NS_PER_US)) {
-> +			atime.it_value.tv_sec--;
-> +			atime.it_value.tv_nsec +=3D US_PER_S * NS_PER_US;
-> +		}
->=20
->  		atime.it_value.tv_sec -=3D now.tv_sec;
->  		atime.it_value.tv_nsec -=3D now.tv_nsec;
+>  	/* Clear the new struct cluster_node area */
+> -	cluster =3D RTE_PTR_ADD(stats, stats->sz),
+> +	cluster =3D RTE_PTR_ADD(stats, stats->sz);
+>  	memset(cluster, 0, stats->cluster_node_size);
+>  	memcpy(cluster->stat.name, graph_node->node->name, RTE_NODE_NAMESIZE);
+>  	cluster->stat.id =3D graph_node->node->id;
 > --
 
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-=20
+
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>=20
 
 > 2.47.2
+>=20
 
