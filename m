@@ -2,60 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72070CA0ED1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 15:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 630FBCA0ED1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 15:30:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7D2BF4026C;
-	Fri, 15 Aug 2025 17:29:15 +0200 (CEST)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
- [209.85.214.181])
- by mails.dpdk.org (Postfix) with ESMTP id CBD7F4003C
- for <dev@dpdk.org>; Fri, 15 Aug 2025 17:29:14 +0200 (CEST)
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-244582a738dso14042385ad.2
- for <dev@dpdk.org>; Fri, 15 Aug 2025 08:29:14 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B3B914026C;
+	Fri, 15 Aug 2025 17:30:24 +0200 (CEST)
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com
+ [209.85.215.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 5D5434026A
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 17:30:23 +0200 (CEST)
+Received: by mail-pg1-f170.google.com with SMTP id
+ 41be03b00d2f7-b471738daabso1831096a12.1
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 08:30:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1755271754; x=1755876554; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1755271822; x=1755876622; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=7wX5LhLBVKzxgwiQSbQ0AcCrkKWAOSX11tug/an5UxQ=;
- b=C5Q1GJI8jUpyyLeRWNTskoLhKOPJLIhE6s7D7EsKML3snpyDDMepZomawJ2X9av8qk
- LBz20wwctaOFrZwKXNdk4bov2aPNlKWIXxppclaK2PkPeLXjLmjTSzLG+f5/xzO+96YA
- EPJm+xxki7WUvU/Vq5TuXwK78sR4c5ejITNos=
+ bh=Fl+ZiJmD6h+fhOYMGVQScESMxkp/TUTz60h0iOTLBvM=;
+ b=YkKOWt3HN6Hgcfzi/M5CI7qZlvDwo/7Y+uWp9XH5mdSsB/Z5QY/Rf80Uu3o0t8SbEH
+ vpBgxcSLsCR9tbRRbacSdHVy5+dRmslLZYG5PxZ2zR/fruu+1km0uUI1cAg0rQiV5Qqh
+ 1s8v4QX+jfKJ6w3ScplWGA2IH14BQOh9aiCpQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755271754; x=1755876554;
+ d=1e100.net; s=20230601; t=1755271822; x=1755876622;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=7wX5LhLBVKzxgwiQSbQ0AcCrkKWAOSX11tug/an5UxQ=;
- b=n3DRSHIDPoKrppR3eyq5vVXIkPA9wnt9HNG3Y6zO1gifaJwn8uWG88mBTM/hXT4gWC
- kPqGo5BECnKaf4p+QtASkmwGftYK76wIe1ssVBuolhrqeWHYGV8cjwxa8tc/7uV0z9tj
- n9LwZTMntvsFhynIAbU9/DOsSJAScEbEd5y6ThyU7Q2o71NW0FmZls7XHi1Gorqc1pNb
- w7y8QrReNS8zSYz5B+rcrbsWu+s6RALV1VOH48BM9Gxu0ADM00W1OFa7bMuCUrs7nQNO
- 244TF4E63gbQQXKW4/uMU3ujH1R3fJ83AUyBgTmgOt2n135TWfylf6SGV7RVY/TqbLSr
- 00qw==
-X-Gm-Message-State: AOJu0Yw/hUvh1dgjHsnSD5Qv4aVrjzvMdpVew1Jou2/ARt93FQwTz5mY
- 2WMLU4ArdofjuTS//h3qKwnsT9UWF0WuZJ1+h6rx/Z8N0k5N8m1d9EAjlV1sPCxKYrTsIxskIh5
- 8M2nz9V0Qc9briUIBUiZCydavBMSfNwruX7Llzq4cdOP6zE60M/HMbog=
-X-Gm-Gg: ASbGncuhp5NjXeeBfR43MAImwyO3D53oLr+w64etK03xYlgU2T8WpdXXzSZOiYu2+/h
- j/ZMFImg5bGl2fpMxoJZq62Ud4xaErYdrIDPxDNJ27V8zQb3kJ/iX56sjkV6czg7BZ33nU34djD
- mdxof3syWy2bGYvLij/FJnblNK118y3aHYTj8s7JzpOb9qEkXvXHI9uvD2GytbZ8USlxWmnQj2Y
- Zd0Ic5qSqpw2QBHPNt2XgtXqrm8Za65w0MgUk9zOahk+60WuKw=
-X-Google-Smtp-Source: AGHT+IE/wmXJY6zRD+/AoX2OSwfnPeTm+UoE1u2qKsApxJKqLqgNSCSVSy88CuNVbeNfMGVjVrpqcaQIswccMNqbzSU=
-X-Received: by 2002:a17:902:ea08:b0:243:963:2a70 with SMTP id
- d9443c01a7336-2446d71fb9dmr37691135ad.25.1755271753898; Fri, 15 Aug 2025
- 08:29:13 -0700 (PDT)
+ bh=Fl+ZiJmD6h+fhOYMGVQScESMxkp/TUTz60h0iOTLBvM=;
+ b=TCbq1jSzS8/gd1fMqLdtJLayqdPxNDR7lZ+wpfFJ4ZGVMrIivtDD6KJEcIDeocR8l7
+ BRS2Nw/yVrxjCIGh3E1STFmWNANRe4BYwWAwASefC1dZ2LMic3aOQwMbE27CtygC9FCB
+ 27B3BEMpzhSqm62pigHZvMn219xxMpoqA4MP+UrdAwpUz1a2ICbrncvjvozJzxCmWyB1
+ anWtLhhlIocUl+W3NIJ/kOWArDPgxI++qfLT+4WqcTJsirCW9OOzHSf9UuVgTnTzY4Va
+ 7UvCKnrg0SSnVh2/DQ6q4MfJd/LXv/GBXJ9CztDLEAN6E+ezXYuIQBuFGMaS2KscK8zG
+ lghQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVl/PMThoSDeZumq+649u2BuDIjD1LES+88Pw6kGqYw5nFWxqlQcwm7p9ydOzbUNMjADTQ=@dpdk.org
+X-Gm-Message-State: AOJu0YwxfIRjNvXdUtJ3CLkm36Ru51YwrTZ9VffK0bfbIV65gxZRU4b4
+ AcetSd0tnmtbDYw7hglM+0tG0rKR7P4nMtjIGWz3Le1roiWvFEJsfgarXXH7CKYSoNrNcW7aqvv
+ iFKe2feAb6bB5JEyceIDzmGJgfM/eL/XQZWh4bezSkU04DGYHv3P11iE=
+X-Gm-Gg: ASbGncuczZEN2J039krL9PoazsujZ5ez2IZ89sk8mwdhcLLSR09nZ81HH0xPGp/kfxh
+ 3+H1ivjB6Hq9O41hNhSxvY7rSYJ7Fnh93tbaz+HMmyaB8M/b9cQD04daGb6lLT6LDeF4BT9Noub
+ TtFqP/S3GJUNxSxXgost2qysyULzBQ6Idq9eGAHoQFnfLnOQhjQXjtbeaTMYrhV41aojzd1qcl1
+ x8cPSNO+Bod5Oj8nyUhkdRowxcseK6lzHRGzBX+
+X-Google-Smtp-Source: AGHT+IGtTqy00aY9Iysedjyz6cvzPKPcGCsFEe1dX1OG0PZ6bACp+TmbmU2bWOf337KMbYvrxADKlobf3+DaSuCqSFM=
+X-Received: by 2002:a17:903:950:b0:242:9bbc:c775 with SMTP id
+ d9443c01a7336-2446d987fb6mr41196845ad.56.1755271822444; Fri, 15 Aug 2025
+ 08:30:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250813152829.457463-1-thomas@monjalon.net>
-In-Reply-To: <20250813152829.457463-1-thomas@monjalon.net>
+References: <20250808071048.1906724-1-wang.junlong1@zte.com.cn>
+ <20250814025248.2194951-1-chen.bingbin@zte.com.cn>
+In-Reply-To: <20250814025248.2194951-1-chen.bingbin@zte.com.cn>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Fri, 15 Aug 2025 11:22:48 -0400
-X-Gm-Features: Ac12FXzPNw679lf92bc_BxZcY_61Q622YFS4zTlVwSIaD7EgoVRJe497J86aWPo
-Message-ID: <CAJvnSUB1b4wNFpHw5NmBssGTN==9UOFonNVqt7QTbfMphXNVnQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] fix build with MinGW 13
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="00000000000060312d063c690d87"
+Date: Fri, 15 Aug 2025 11:23:56 -0400
+X-Gm-Features: Ac12FXx38-3yxxvNRKEr3BMxtj6jREcyOIIpfBEPAaKnzC_GcZ7zT0YOCplz7vY
+Message-ID: <CAJvnSUDdX8u8AfQ388vAbowmv3DTYES69Hkp6u-dRaDZc5O7-Q@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] add support flow director ops
+To: Bingbin Chen <chen.bingbin@zte.com.cn>
+Cc: stephen@networkplumber.org, ivan.malov@arknetworks.am, 
+ wang.junlong1@zte.com.cn, yang.yonggang@zte.com.cn, dev@dpdk.org
+Content-Type: multipart/alternative; boundary="00000000000076235a063c6911b4"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,68 +73,101 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000060312d063c690d87
+--00000000000076235a063c6911b4
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Sending a CI testing retest for this series because of a suspected false
-failure on the dynamic config testsuite.
+Sending a CI testing retest for the v5 of this series because of a
+suspected false failure on the packet capture testsuite.
 
-On Wed, Aug 13, 2025 at 11:28=E2=80=AFAM Thomas Monjalon <thomas@monjalon.n=
-et>
+On Wed, Aug 13, 2025 at 11:03=E2=80=AFPM Bingbin Chen <chen.bingbin@zte.com=
+.cn>
 wrote:
 
-> After an upgrade to MinGW version 13, some compilation errors appear
-> in PCI, mlx5 and bbdev code.
-> This series fixes them all.
+> v5:
+>   - modify some error level printing information,
+>     and other issues from Maintainer's.
 >
-> Thomas Monjalon (3):
->   bus/pci: fix build with MinGW 13
->   net/mlx5: fix build with MinGW 13
->   bbdev: wrong fix for MinGW 13
+> V4:
+>   - replace rte_malloc with calloc in the flow_dev_dump function.
 >
->  drivers/bus/pci/windows/pci_netuio.c      | 6 ------
->  drivers/bus/pci/windows/pci_netuio.h      | 4 +++-
->  drivers/net/mlx5/windows/mlx5_ethdev_os.c | 2 +-
->  lib/bbdev/rte_bbdev.c                     | 9 +++++++--
->  4 files changed, 11 insertions(+), 10 deletions(-)
+> V3:
+>   - fix several checkpatch warnings.
+>
+> V2:
+>   - resolve code style and gcc compilation issue.
+>
+> V1:
+>   - add support flow director ops.
+>
+> Bingbin Chen (2):
+>   net/zxdh: npsdk add flow director table ops
+>   net/zxdh: add support flow director ops
+>
+>  doc/guides/nics/features/zxdh.ini  |   16 +
+>  doc/guides/nics/zxdh.rst           |    1 +
+>  drivers/net/zxdh/meson.build       |    1 +
+>  drivers/net/zxdh/zxdh_common.h     |    1 +
+>  drivers/net/zxdh/zxdh_ethdev.c     |   26 +
+>  drivers/net/zxdh/zxdh_ethdev.h     |   12 +-
+>  drivers/net/zxdh/zxdh_ethdev_ops.c |    2 +-
+>  drivers/net/zxdh/zxdh_ethdev_ops.h |    1 +
+>  drivers/net/zxdh/zxdh_flow.c       | 2017 ++++++++++++++++++++++++++++
+>  drivers/net/zxdh/zxdh_flow.h       |  240 ++++
+>  drivers/net/zxdh/zxdh_msg.c        |  264 +++-
+>  drivers/net/zxdh/zxdh_msg.h        |   31 +-
+>  drivers/net/zxdh/zxdh_np.c         | 1638 ++++++++++++++++++++++
+>  drivers/net/zxdh/zxdh_np.h         |   31 +-
+>  drivers/net/zxdh/zxdh_tables.h     |   10 +-
+>  15 files changed, 4217 insertions(+), 74 deletions(-)
+>  create mode 100644 drivers/net/zxdh/zxdh_flow.c
+>  create mode 100644 drivers/net/zxdh/zxdh_flow.h
 >
 > --
-> 2.47.1
->
+> 2.27.0
 >
 
---00000000000060312d063c690d87
+--00000000000076235a063c6911b4
 Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 
-<div dir=3D"ltr">Sending a CI testing retest for this series because of a s=
-uspected false failure on the dynamic config testsuite.</div><br><div class=
-=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr=
-">On Wed, Aug 13, 2025 at 11:28=E2=80=AFAM Thomas Monjalon &lt;<a href=3D"m=
-ailto:thomas@monjalon.net">thomas@monjalon.net</a>&gt; wrote:<br></div><blo=
-ckquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left=
-:1px solid rgb(204,204,204);padding-left:1ex">After an upgrade to MinGW ver=
-sion 13, some compilation errors appear<br>
-in PCI, mlx5 and bbdev code.<br>
-This series fixes them all.<br>
-<br>
-Thomas Monjalon (3):<br>
-=C2=A0 bus/pci: fix build with MinGW 13<br>
-=C2=A0 net/mlx5: fix build with MinGW 13<br>
-=C2=A0 bbdev: wrong fix for MinGW 13<br>
-<br>
-=C2=A0drivers/bus/pci/windows/pci_netuio.c=C2=A0 =C2=A0 =C2=A0 | 6 ------<b=
-r>
-=C2=A0drivers/bus/pci/windows/pci_netuio.h=C2=A0 =C2=A0 =C2=A0 | 4 +++-<br>
-=C2=A0drivers/net/mlx5/windows/mlx5_ethdev_os.c | 2 +-<br>
-=C2=A0lib/bbdev/rte_bbdev.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0| 9 +++++++--<br>
-=C2=A04 files changed, 11 insertions(+), 10 deletions(-)<br>
-<br>
--- <br>
-2.47.1<br>
-<br>
-</blockquote></div>
-
---00000000000060312d063c690d87--
+PGRpdiBkaXI9Imx0ciI+U2VuZGluZyBhIENJIHRlc3RpbmcgcmV0ZXN0IGZvciB0aGUgdjUgb2Yg
+dGhpcyBzZXJpZXMgYmVjYXVzZSBvZiBhIHN1c3BlY3RlZCBmYWxzZSBmYWlsdXJlIG9uIHRoZSBw
+YWNrZXQgY2FwdHVyZSB0ZXN0c3VpdGUuPC9kaXY+PGJyPjxkaXYgY2xhc3M9ImdtYWlsX3F1b3Rl
+IGdtYWlsX3F1b3RlX2NvbnRhaW5lciI+PGRpdiBkaXI9Imx0ciIgY2xhc3M9ImdtYWlsX2F0dHIi
+Pk9uIFdlZCwgQXVnIDEzLCAyMDI1IGF0IDExOjAz4oCvUE0gQmluZ2JpbiBDaGVuICZsdDs8YSBo
+cmVmPSJtYWlsdG86Y2hlbi5iaW5nYmluQHp0ZS5jb20uY24iPmNoZW4uYmluZ2JpbkB6dGUuY29t
+LmNuPC9hPiZndDsgd3JvdGU6PGJyPjwvZGl2PjxibG9ja3F1b3RlIGNsYXNzPSJnbWFpbF9xdW90
+ZSIgc3R5bGU9Im1hcmdpbjowcHggMHB4IDBweCAwLjhleDtib3JkZXItbGVmdDoxcHggc29saWQg
+cmdiKDIwNCwyMDQsMjA0KTtwYWRkaW5nLWxlZnQ6MWV4Ij52NTo8YnI+wqDCoC3CoG1vZGlmecKg
+c29tZcKgZXJyb3LCoGxldmVswqBwcmludGluZ8KgaW5mb3JtYXRpb24sPGJyPsKgwqDCoMKgYW5k
+wqBvdGhlcsKgaXNzdWVzwqBmcm9twqBNYWludGFpbmVyJiMzOTtzLjxicj4NCjxicj5WNDo8YnI+
+wqDCoC3CoHJlcGxhY2XCoHJ0ZV9tYWxsb2PCoHdpdGjCoGNhbGxvY8KgaW7CoHRoZcKgZmxvd19k
+ZXZfZHVtcMKgZnVuY3Rpb24uPGJyPg0KPGJyPlYzOjxicj7CoMKgLcKgZml4wqBzZXZlcmFswqBj
+aGVja3BhdGNowqB3YXJuaW5ncy48YnI+DQo8YnI+VjI6PGJyPsKgwqAtwqByZXNvbHZlwqBjb2Rl
+wqBzdHlsZcKgYW5kwqBnY2PCoGNvbXBpbGF0aW9uwqBpc3N1ZS48YnI+DQo8YnI+VjE6PGJyPsKg
+wqAtwqBhZGTCoHN1cHBvcnTCoGZsb3fCoGRpcmVjdG9ywqBvcHMuPGJyPg0KPGJyPkJpbmdiaW7C
+oENoZW7CoCgyKTo8YnI+wqDCoG5ldC96eGRoOsKgbnBzZGvCoGFkZMKgZmxvd8KgZGlyZWN0b3LC
+oHRhYmxlwqBvcHM8YnI+wqDCoG5ldC96eGRoOsKgYWRkwqBzdXBwb3J0wqBmbG93wqBkaXJlY3Rv
+csKgb3BzPGJyPg0KPGJyPsKgZG9jL2d1aWRlcy9uaWNzL2ZlYXR1cmVzL3p4ZGguaW5pwqDCoHzC
+oMKgwqAxNsKgKzxicj7CoGRvYy9ndWlkZXMvbmljcy96eGRoLnJzdMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqB8wqDCoMKgwqAxwqArPGJyPsKgZHJpdmVycy9uZXQvenhkaC9tZXNvbi5idWlsZMKgwqDC
+oMKgwqDCoMKgfMKgwqDCoMKgMcKgKzxicj7CoGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9jb21tb24u
+aMKgwqDCoMKgwqB8wqDCoMKgwqAxwqArPGJyPsKgZHJpdmVycy9uZXQvenhkaC96eGRoX2V0aGRl
+di5jwqDCoMKgwqDCoHzCoMKgwqAyNsKgKzxicj7CoGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9ldGhk
+ZXYuaMKgwqDCoMKgwqB8wqDCoMKgMTLCoCstPGJyPsKgZHJpdmVycy9uZXQvenhkaC96eGRoX2V0
+aGRldl9vcHMuY8KgfMKgwqDCoMKgMsKgKy08YnI+wqBkcml2ZXJzL25ldC96eGRoL3p4ZGhfZXRo
+ZGV2X29wcy5owqB8wqDCoMKgwqAxwqArPGJyPsKgZHJpdmVycy9uZXQvenhkaC96eGRoX2Zsb3cu
+Y8KgwqDCoMKgwqDCoMKgfMKgMjAxN8KgKysrKysrKysrKysrKysrKysrKysrKysrKysrKzxicj7C
+oGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9mbG93LmjCoMKgwqDCoMKgwqDCoHzCoMKgMjQwwqArKysr
+PGJyPsKgZHJpdmVycy9uZXQvenhkaC96eGRoX21zZy5jwqDCoMKgwqDCoMKgwqDCoHzCoMKgMjY0
+wqArKystPGJyPsKgZHJpdmVycy9uZXQvenhkaC96eGRoX21zZy5owqDCoMKgwqDCoMKgwqDCoHzC
+oMKgwqAzMcKgKy08YnI+wqBkcml2ZXJzL25ldC96eGRoL3p4ZGhfbnAuY8KgwqDCoMKgwqDCoMKg
+wqDCoHzCoDE2MzjCoCsrKysrKysrKysrKysrKysrKysrKys8YnI+wqBkcml2ZXJzL25ldC96eGRo
+L3p4ZGhfbnAuaMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgwqAzMcKgKy08YnI+wqBkcml2ZXJzL25l
+dC96eGRoL3p4ZGhfdGFibGVzLmjCoMKgwqDCoMKgfMKgwqDCoDEwwqArLTxicj7CoDE1wqBmaWxl
+c8KgY2hhbmdlZCzCoDQyMTfCoGluc2VydGlvbnMoKykswqA3NMKgZGVsZXRpb25zKC0pPGJyPsKg
+Y3JlYXRlwqBtb2RlwqAxMDA2NDTCoGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9mbG93LmM8YnI+wqBj
+cmVhdGXCoG1vZGXCoDEwMDY0NMKgZHJpdmVycy9uZXQvenhkaC96eGRoX2Zsb3cuaDxicj4NCjxi
+cj4tLcKgDQo8YnI+Mi4yNy4wPGJyPjwvYmxvY2txdW90ZT48L2Rpdj4NCg==
+--00000000000076235a063c6911b4--
