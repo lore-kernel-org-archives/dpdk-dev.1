@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF526CA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 16:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51BBCA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Fri, 15 Aug 2025 16:27:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 859EF4065C;
-	Fri, 15 Aug 2025 18:26:49 +0200 (CEST)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com
- [209.85.221.50]) by mails.dpdk.org (Postfix) with ESMTP id 13D514065B
- for <dev@dpdk.org>; Fri, 15 Aug 2025 18:26:48 +0200 (CEST)
-Received: by mail-wr1-f50.google.com with SMTP id
- ffacd0b85a97d-3b9dc5c2f0eso1290045f8f.1
- for <dev@dpdk.org>; Fri, 15 Aug 2025 09:26:48 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A6FE840662;
+	Fri, 15 Aug 2025 18:26:51 +0200 (CEST)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
+ [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id 05CE04065B
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 18:26:50 +0200 (CEST)
+Received: by mail-wm1-f49.google.com with SMTP id
+ 5b1f17b1804b1-45a1b0d224dso10942825e9.3
+ for <dev@dpdk.org>; Fri, 15 Aug 2025 09:26:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755275207;
- x=1755880007; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755275209;
+ x=1755880009; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qO1RKIkmmOj2M55phhV7NpOzLei+0VUFkPZ6iPjtjUo=;
- b=Qof8g0Hko9tMEn1aJ52sVsXUWq9GZm0IIBUJ0zj+LfjeHF0gF0nPXvX5QmMjZGGi35
- ktuPJOorVJBl03VMgnQw4BlyYHS9Vxms/qtKCs2KUPWbxx2ucfYJ7eFd3N+U44yChVVC
- dVUpXS7+mJraOQ7xd0FfY1a0uXDMIRFPDMUv+TYHZQRXa2mxp2Lq/M6k1d2VbPTxSScA
- qlT7V+drSoD2Jwp6qLjSL0riRTjs9A2T1h6gGolWFwWNZfXbTZwqAivnCKbMlxF03waQ
- N361bc6eQcBr9ST7yoMJnVZCcXfCItNuRKMtCGUZUCEwgbme8tb+ppyJbYnVmUFZtbPg
- DE0g==
+ bh=aPaDuifzsFkB3UHbrzoIuWm8/YQRDpkI4y1Ngd46v1I=;
+ b=k5CuR9LpYiJPMJYkvbNRGDs4jOtsVPp+XqWhH9oqk81zXbKp10/b482DMNyAfgB6Vr
+ FtV9QEb/KYByVCLT0so0JzBE/ollJ6m42vHIIr30hEzy7qM/7Of5b+ZFwG40kPzW3aIY
+ wnr4iVHiVeuawlHGpNkPbThc/vqls/OnWTt7MfwFP4hmAaZ2j3uL0+7dKqzwM5Gd5l6t
+ Q7x680rQjjxJ3Uy3+wKZNQFT5r7wC5Wp4CbrcxKkYsZf24eZiyX1jCysyhgjvW0q5nQP
+ MMMegPOHxezan2nHZa1R4U2Y5jZ+TGERXQMT77foYGesk3Dvh8xLcE766t6EbNvORLuj
+ GivQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755275207; x=1755880007;
+ d=1e100.net; s=20230601; t=1755275209; x=1755880009;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=qO1RKIkmmOj2M55phhV7NpOzLei+0VUFkPZ6iPjtjUo=;
- b=vLKNrennT/BayZjveOV6xBBsnk1KfxTxUnsIk5r8XBvStd8A+C+64IdXYWBYbDD8BD
- mDnzCyjpxWITAnKfXI+3K+mBPYWGQ5shj/GaOKPwHkIJC66DakkOndF7Od0AcKtD98Tw
- ZzBcjaOiho94BinmDMuRWyA/RE6QcRV3Cpq/WbW9IrL6/dpXkIk+4+kv+e12qHVajiSe
- YKZSzGC/A5iy2+BUMT5DfBhHfDk/xZY/BbX2roV7Rnya9XiufE+DHMgcMmj8A0vK5s6e
- MWl2MejeCGTYKuTh+Ds3OWhnEPDFIg0QH452dPBjq8ameAVFwgQ35peP7uuue5L6Lx35
- mP5Q==
-X-Gm-Message-State: AOJu0Yz2cph5xLFNt4PJupjSnv8L0KBMQ4ScuWf8XYzwMLARgrgvOUTj
- s+RD9XM+F//E5uAtH3t0nd063HZgLDB5pFKmOjGal93F3nO7ewn1/EBVeUbIGG51mMhSWQVewt1
- 3vWZu
-X-Gm-Gg: ASbGnctY1EBGlX3k3dnbSiTigjUZYj5aaWdm6um4K97JXMCCYCI/hF0FP1ihjl8AdBs
- 55BsyNLfMaoyBflCH7DRMqdx0+gdqmFxD9AhTedWEWzyYOI5ZLNLAAsD5NNseXeIUAm/ZeBftIn
- zP+LLF9BiURyFRTT9pa2838zlGn4/ZyF2Y2qD8fA4nZkkZPRcYbeXLIJvO8CHInJ4egjL0IRMdb
- OX8NmDsJitiZ4v4hKpRtl0PWfmqfjNcW9mZBjv9jVW5ofEi/7n3Y6tC/3zl+OMjO2CH/LKXXQP1
- GSAQyUdPkYFZZL+DLfp9tOlqW+hhsqUooqNpQkkbTWXrvUEFXmcvYepznnvxjVndZ4m6Be7F755
- 4Ox5BrGg85x+Ml78PbitSQ5qCJ3kZPWSvFsQn5jGNQIoEg++/f672TPbWKDnMTsi/Hxxg5426bQ
- QsFsh+aOk=
-X-Google-Smtp-Source: AGHT+IGIfNaAGAxqShVW6dppqkKbrq4I/ndFLeJdaiGDSiocXX832D90eTYDgG95RDrt0FbWCB7ZwA==
-X-Received: by 2002:a05:6000:2dc2:b0:3b7:8410:22b5 with SMTP id
- ffacd0b85a97d-3bb66d21b09mr2117540f8f.13.1755275207513; 
- Fri, 15 Aug 2025 09:26:47 -0700 (PDT)
+ bh=aPaDuifzsFkB3UHbrzoIuWm8/YQRDpkI4y1Ngd46v1I=;
+ b=Zu15/WbVTuEeEg16InV8RLwM0qt+KIIUJYFuXL2TQ2MlANiKcv6hEnB45HRuiY7xJL
+ CEJzZdc+cREi4KzoeZsIFGYKFj/ARkFFKzVyYOeQ433Wk1hMF+fa7pTTt0UJtXAwXH9J
+ /OQz3pDINuKEPo4+CQ3lnUGhfoIHo/PJ7OWHppzGYkYWV31pJ/9lIG9k3g7FZ1BgCJwY
+ G/WT+vivKYRu0/KuVqXdGbE1K/lqdpuSgwh4Fe8eyVoLeL6PL6LDea1N36QEGCQmOH0g
+ OpQ3woUZt2aC5iFLPzP0r88GmZAadseObTHcQZ6fCbUquPQLy2zO1VXIDFPzYdcB/zIq
+ DzPA==
+X-Gm-Message-State: AOJu0YyZM8qNnjXUVaKPxJkTQTkjT0a4leUSAj61Qz93/Yyu16FmRFqt
+ rvMcAY3QrmcPbbb2FRT+lqYw8+huHsDRuUvbd/j22/D9p20HHTVIFQiqK+rk+SogGADpg9g0EDh
+ pXjig
+X-Gm-Gg: ASbGncsX00V+yHTtyVWZikHjVpGkP13xUNNjQDm/kHmQ4gfPfs5t7zDGP7r5ajSlSAn
+ Q7bAB4CVBisq4SxFRtymie11YzTptqkNz2dsJY9FMebzqgx8TotYd0zefxnJOIrMB41wAM7Saq/
+ hG6i772s4Ioe+/4ncuZrRhmKFjMpNooxuRDprw5dRSSKkxbPkuesslAlivP42aQyBG+24lMuPuO
+ CPEq5fc6pxpVCIh69d9FnvAQWYDIsVQM5dv9TBLYrb/+UmI6I2HJ+CeHrGbA+9IZcujZDmthGX2
+ 8HcprZl8RxYVlJP/IIs44l3QqFcs2miF/QjM3emPp58I6KYPZAKmGA0nr03Nv0GVExHp12N7d3S
+ kLUBW3inp+9o3YYFVOYhEnkjwbWgc81rRo/BzV4M0jSehjeSyjO8BGllfRo+yOShGMDia1N4N2p
+ yYB9VUzrc=
+X-Google-Smtp-Source: AGHT+IGVKjMXKTVpCCN6+zNrgrG1x6h/p/lHX60q5ZiYatOgmAF3cM0xjSIzHVbiP1yzEbK2ETRb3w==
+X-Received: by 2002:a05:6000:1aca:b0:3b9:1457:df79 with SMTP id
+ ffacd0b85a97d-3bb6636cce6mr2438786f8f.5.1755275209624; 
+ Fri, 15 Aug 2025 09:26:49 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3bb676c9431sm2665278f8f.40.2025.08.15.09.26.45
+ ffacd0b85a97d-3bb676c9431sm2665278f8f.40.2025.08.15.09.26.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 15 Aug 2025 09:26:47 -0700 (PDT)
+ Fri, 15 Aug 2025 09:26:49 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Chengwen Feng <fengchengwen@huawei.com>, Ori Kam <orika@nvidia.com>,
- Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v3 5/7] app/testpmd: replace comma operator with bracket
-Date: Fri, 15 Aug 2025 09:26:21 -0700
-Message-ID: <20250815162629.161782-6-stephen@networkplumber.org>
+ Sunil Kumar Kori <skori@marvell.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>,
+ Jerin Jacob <jerinj@marvell.com>
+Subject: [PATCH v3 6/7] examples: remove unnecessary use of comma operator
+Date: Fri, 15 Aug 2025 09:26:22 -0700
+Message-ID: <20250815162629.161782-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250815162629.161782-1-stephen@networkplumber.org>
 References: <20250312232739.228295-1-stephen@networkplumber.org>
@@ -84,63 +85,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use while with brackets in favor of comma operator.
-
-In flow print replace with temporary variable.
+Use of comma as statement separator is discouraged and
+reported as warning by clang with -Wcomma
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test-pmd/cmdline_flow.c |  6 ++++--
- app/test-pmd/config.c       | 10 ++++++----
- 2 files changed, 10 insertions(+), 6 deletions(-)
+ examples/l2fwd-event/l2fwd_event_generic.c | 2 +-
+ examples/l3fwd/l3fwd_event_generic.c       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
-index 83d398f8ee..a54463f718 100644
---- a/app/test-pmd/cmdline_flow.c
-+++ b/app/test-pmd/cmdline_flow.c
-@@ -8333,8 +8333,10 @@ parse_prefix(struct context *ctx, const struct token *token,
- 		if (!ctx->object)
- 			return len;
- 		extra -= u;
--		while (u--)
--			(v <<= 1, v |= 1);
-+		while (u--) {
-+			v <<= 1;
-+			v |= 1;
-+		}
- 		v <<= extra;
- 		if (!arg_entry_bf_fill(ctx->object, v, arg) ||
- 		    !arg_entry_bf_fill(ctx->objmask, -1, arg))
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index 0fda8e99f8..14af69bce5 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -1497,7 +1497,7 @@ port_flow_complain(struct rte_flow_error *error)
- 		[RTE_FLOW_ERROR_TYPE_ACTION] = "specific action",
- 	};
- 	const char *errstr;
--	char buf[32];
-+	char cause_buf[32] = "";
- 	int err = rte_errno;
+diff --git a/examples/l2fwd-event/l2fwd_event_generic.c b/examples/l2fwd-event/l2fwd_event_generic.c
+index d805264744..73a264d8a3 100644
+--- a/examples/l2fwd-event/l2fwd_event_generic.c
++++ b/examples/l2fwd-event/l2fwd_event_generic.c
+@@ -207,7 +207,7 @@ l2fwd_event_queue_setup_generic(struct l2fwd_resources *rsrc,
+ 	}
  
- 	if ((unsigned int)error->type >= RTE_DIM(errstrlist) ||
-@@ -1505,10 +1505,12 @@ port_flow_complain(struct rte_flow_error *error)
- 		errstr = "unknown type";
- 	else
- 		errstr = errstrlist[error->type];
-+
-+	if (error->cause)
-+		snprintf(cause_buf, sizeof(cause_buf), "cause: %p, ", error->cause);
-+
- 	fprintf(stderr, "%s(): Caught PMD error type %d (%s): %s%s: %s\n",
--		__func__, error->type, errstr,
--		error->cause ? (snprintf(buf, sizeof(buf), "cause: %p, ",
--					 error->cause), buf) : "",
-+		__func__, error->type, errstr, cause_buf,
- 		error->message ? error->message : "(no stated reason)",
- 		rte_strerror(err));
+ 	event_q_conf.event_queue_cfg |= RTE_EVENT_QUEUE_CFG_SINGLE_LINK;
+-	event_q_conf.priority = RTE_EVENT_DEV_PRIORITY_HIGHEST,
++	event_q_conf.priority = RTE_EVENT_DEV_PRIORITY_HIGHEST;
+ 	ret = rte_event_queue_setup(event_d_id, event_q_id, &event_q_conf);
+ 	if (ret < 0)
+ 		rte_panic("Error in configuring event queue for Tx adapter\n");
+diff --git a/examples/l3fwd/l3fwd_event_generic.c b/examples/l3fwd/l3fwd_event_generic.c
+index d86439df52..3a18001b74 100644
+--- a/examples/l3fwd/l3fwd_event_generic.c
++++ b/examples/l3fwd/l3fwd_event_generic.c
+@@ -190,7 +190,7 @@ l3fwd_event_queue_setup_generic(uint32_t event_queue_cfg)
+ 	}
  
+ 	event_q_conf.event_queue_cfg |= RTE_EVENT_QUEUE_CFG_SINGLE_LINK;
+-	event_q_conf.priority = RTE_EVENT_DEV_PRIORITY_HIGHEST,
++	event_q_conf.priority = RTE_EVENT_DEV_PRIORITY_HIGHEST;
+ 	ret = rte_event_queue_setup(event_d_id, event_q_id, &event_q_conf);
+ 	if (ret < 0)
+ 		rte_panic("Error in configuring event queue for Tx adapter\n");
 -- 
 2.47.2
 
