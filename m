@@ -2,53 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C7BCA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Sun, 17 Aug 2025 13:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74C5CA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Sun, 17 Aug 2025 21:21:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8678740612;
-	Sun, 17 Aug 2025 15:02:20 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id 68F4740288
- for <dev@dpdk.org>; Sun, 17 Aug 2025 15:02:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1755435724; x=1786971724;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=Wqy5aOrCNnX2px9X5O00uteTfaRPfNJlLe8KXjZ3WgA=;
- b=Fe6//kg15BIgAZ6jD5GrFYS0XwQMABLOej2Ig63U7e4nDaVOj8jwKzDV
- PzzpnvFhSnLkTQElYVmcVGqV2GtsZgPkxNaEY2Tqcp4qKghIlpXIbzCYC
- KsQpa5OY3VdDOKOAipU0n3BPZqUcaJJ1XRr4HVlkyoSACJDPivemXh7aR
- g2+aT36M1Zs/4gDFsgwWUAPvZSWvbw709ioIEG72cTsXr5IA6TFsO9p4s
- zZDNUXXytFPcGGFrfIBYmA55CxNUI444TjgqB+ggxjwS3C9cdBopK6PrW
- bCW5FY7kjuccZ3iea3igDa98jhwIErOFRziMmvqRrLgyGqKDXlnHBDdPo g==;
-X-CSE-ConnectionGUID: Q3i7i35tT1SrrhTo0wg8HQ==
-X-CSE-MsgGUID: qKVSt0+jQ9WS4osEYQd27A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="57756069"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; d="scan'208";a="57756069"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Aug 2025 06:02:03 -0700
-X-CSE-ConnectionGUID: x8/3GsQrQ3eCZnqdk+5y6Q==
-X-CSE-MsgGUID: 1gmkQM2VRaOLUGJ/7a323g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; d="scan'208";a="171581478"
-Received: from silpixa00401176.ir.intel.com (HELO
- silpixa00401176.ger.corp.intel.com) ([10.237.222.172])
- by fmviesa005.fm.intel.com with ESMTP; 17 Aug 2025 06:02:02 -0700
-From: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com,
-	anatoly.burakov@intel.com
-Subject: [PATCH v4 6/6] net/ice: add PFC statistics
-Date: Sun, 17 Aug 2025 13:01:52 +0000
-Message-ID: <20250817130152.682972-7-vladimir.medvedkin@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250817130152.682972-1-vladimir.medvedkin@intel.com>
-References: <20250812173252.507954-1-vladimir.medvedkin@intel.com>
- <20250817130152.682972-1-vladimir.medvedkin@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7F8894013F;
+	Sun, 17 Aug 2025 23:21:24 +0200 (CEST)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com
+ [209.85.208.52]) by mails.dpdk.org (Postfix) with ESMTP id F14674003C
+ for <dev@dpdk.org>; Sun, 17 Aug 2025 23:21:22 +0200 (CEST)
+Received: by mail-ed1-f52.google.com with SMTP id
+ 4fb4d7f45d1cf-619998ac786so2532443a12.1
+ for <dev@dpdk.org>; Sun, 17 Aug 2025 14:21:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1755465682; x=1756070482; darn=dpdk.org;
+ h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=FF9qryTtNDPC7hFYQAAidukNmcsw5NUaPUlx3Dxcz+k=;
+ b=RXGEhHINR8eBC1AmQZ0UzNeBuy8v25GQNYc2KNr7/AA088szGtck2K/aWtJmnjoaxq
+ A3tQgm44fqm4m/RQcKt70kvXSo3qlpdTw1c+/wR4NLe5uUf3OSAP8H04bYquxTCxsAdi
+ jIwVpfgS1stO7H0mJdmKrNs25mBee6k2yw+28fh68fJV1VfGMn/HQA8x9Fvdu7Klk9PT
+ ULv8lxVvwzYNlN/gSqbVk2yz9IZOb9mBhOXh9NL7IF1++qiufJ/sXjRYSe8L2hXWv9SA
+ GKcFw6YGqc/TalOXj0O7sM95hSF0aI8r8PatDxAcDe8pLA9Cg+SzncEQv/8KobjPno5X
+ 7Obw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1755465682; x=1756070482;
+ h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=FF9qryTtNDPC7hFYQAAidukNmcsw5NUaPUlx3Dxcz+k=;
+ b=MfQ0FmRPoaVKJSREHhJovip4/WsD57W9Y0p91SpV3HywaNw/53PjWOGDqegzOJss0L
+ ZB8QvocQ+elQdIJCdOB/n3O+W+CcSoOpTDCeNBmNXH07PPJLSiYu9t8+B/oaEFO8WoJP
+ QcZQQCbZtVOezZpxTGim+/gg35YmSyvXmSPwJ2RLfCAxGHNRrPSDZ4A8KQQLVQ1X9VrA
+ aUjgPGsuvN3xSKfZsT8GrzkBHhQNcXNemr6RIFLWVBkNusB9HeRNkhj6hNqO/eGn1aHz
+ Uzu97ggE2/L5/DvF6qPXfvARwfpLfJWCReKGYDySuYixN5N5ZJa0r9I8mxvN/vlHtYeR
+ tM9w==
+X-Gm-Message-State: AOJu0YxMtjRdlRVRkED8v377UX8tTjYUQrtfzlYoFjn2WqMhx1WK6mj8
+ SCmAc5FfPW1RWGGO2KBINzmElqRkRRFPqd3nmmeypdQ30SE9sYaJCZS4Z9tN7u2JfauZ9Z1IDC4
+ WuxubtAIgNc8kdrogUOIboATBpu1faNEg/qGc
+X-Gm-Gg: ASbGncuppLq8rId95+mBJoVbU9DVYLhbM84Z+27ScVCP/MFSxHSM8Gb02HCCA/g5zru
+ L8VwkL/TTq9rYCdRanzmXxlr3oaRqC5bxYS0twVm32+YZfRvNYeTlQutQPXOmTLHTPnxC+dQsex
+ DX7/H9/caVIO3LlIWsKqkFeN0uIDL2RlCDA/y6Qh4Tbon00BH8PeLRh1U6N1d6w6u5LohblluBG
+ V5lF5MXg+AFa1DT0ug8D4BwFnDREtpnBuFZUtgAUGpvJDcC7LQ=
+X-Google-Smtp-Source: AGHT+IHziKpspmgPJ8DFV5bXwgwdjAGqE9BlrUn3XXLfInRSoaGbvHnDP15fa86NNug1CApqHd4dkjrhnxYMaVs280A=
+X-Received: by 2002:a05:6402:13d3:b0:618:3521:6838 with SMTP id
+ 4fb4d7f45d1cf-618b053231emr8270834a12.13.1755465682447; Sun, 17 Aug 2025
+ 14:21:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Jetse Verschuren <jetseverschuren@gmail.com>
+Date: Sun, 17 Aug 2025 23:21:10 +0200
+X-Gm-Features: Ac12FXyTaH29JUZCboLqgJM0ZJG5wYWKmiWBM6mDSoakiQVJk7105Fgak-m9-LM
+Message-ID: <CAJusU_XQj0csZYLyEZWcDFX96M7uGngpVvsjwHowpo3csLi3RQ@mail.gmail.com>
+Subject: GDRCopy build failing
+To: dev@dpdk.org
+Content-Type: multipart/alternative; boundary="0000000000006af25c063c963469"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,94 +67,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Expose PFC statistics in xstats.
+--0000000000006af25c063c963469
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
----
- drivers/net/intel/ice/ice_ethdev.c | 63 ++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+Hi all,
 
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index 62b7438218..8ab0da3549 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -380,6 +380,46 @@ static const struct ice_xstats_name_off ice_hw_port_strings[] = {
- 	{"rx_xon_packets", offsetof(struct ice_hw_port_stats, link_xon_rx)},
- 	{"tx_xoff_packets", offsetof(struct ice_hw_port_stats, link_xoff_tx)},
- 	{"rx_xoff_packets", offsetof(struct ice_hw_port_stats, link_xoff_rx)},
-+	{"priority_xon_rx_tc0", offsetof(struct ice_hw_port_stats, priority_xon_rx[0])},
-+	{"priority_xon_rx_tc1", offsetof(struct ice_hw_port_stats, priority_xon_rx[1])},
-+	{"priority_xon_rx_tc2", offsetof(struct ice_hw_port_stats, priority_xon_rx[2])},
-+	{"priority_xon_rx_tc3", offsetof(struct ice_hw_port_stats, priority_xon_rx[3])},
-+	{"priority_xon_rx_tc4", offsetof(struct ice_hw_port_stats, priority_xon_rx[4])},
-+	{"priority_xon_rx_tc5", offsetof(struct ice_hw_port_stats, priority_xon_rx[5])},
-+	{"priority_xon_rx_tc6", offsetof(struct ice_hw_port_stats, priority_xon_rx[6])},
-+	{"priority_xon_rx_tc7", offsetof(struct ice_hw_port_stats, priority_xon_rx[7])},
-+	{"priority_xoff_rx_tc0", offsetof(struct ice_hw_port_stats, priority_xoff_rx[0])},
-+	{"priority_xoff_rx_tc1", offsetof(struct ice_hw_port_stats, priority_xoff_rx[1])},
-+	{"priority_xoff_rx_tc2", offsetof(struct ice_hw_port_stats, priority_xoff_rx[2])},
-+	{"priority_xoff_rx_tc3", offsetof(struct ice_hw_port_stats, priority_xoff_rx[3])},
-+	{"priority_xoff_rx_tc4", offsetof(struct ice_hw_port_stats, priority_xoff_rx[4])},
-+	{"priority_xoff_rx_tc5", offsetof(struct ice_hw_port_stats, priority_xoff_rx[5])},
-+	{"priority_xoff_rx_tc6", offsetof(struct ice_hw_port_stats, priority_xoff_rx[6])},
-+	{"priority_xoff_rx_tc7", offsetof(struct ice_hw_port_stats, priority_xoff_rx[7])},
-+	{"priority_xon_tx_tc0", offsetof(struct ice_hw_port_stats, priority_xon_tx[0])},
-+	{"priority_xon_tx_tc1", offsetof(struct ice_hw_port_stats, priority_xon_tx[1])},
-+	{"priority_xon_tx_tc2", offsetof(struct ice_hw_port_stats, priority_xon_tx[2])},
-+	{"priority_xon_tx_tc3", offsetof(struct ice_hw_port_stats, priority_xon_tx[3])},
-+	{"priority_xon_tx_tc4", offsetof(struct ice_hw_port_stats, priority_xon_tx[4])},
-+	{"priority_xon_tx_tc5", offsetof(struct ice_hw_port_stats, priority_xon_tx[5])},
-+	{"priority_xon_tx_tc6", offsetof(struct ice_hw_port_stats, priority_xon_tx[6])},
-+	{"priority_xon_tx_tc7", offsetof(struct ice_hw_port_stats, priority_xon_tx[7])},
-+	{"priority_xoff_tx_tc0", offsetof(struct ice_hw_port_stats, priority_xoff_tx[0])},
-+	{"priority_xoff_tx_tc1", offsetof(struct ice_hw_port_stats, priority_xoff_tx[1])},
-+	{"priority_xoff_tx_tc2", offsetof(struct ice_hw_port_stats, priority_xoff_tx[2])},
-+	{"priority_xoff_tx_tc3", offsetof(struct ice_hw_port_stats, priority_xoff_tx[3])},
-+	{"priority_xoff_tx_tc4", offsetof(struct ice_hw_port_stats, priority_xoff_tx[4])},
-+	{"priority_xoff_tx_tc5", offsetof(struct ice_hw_port_stats, priority_xoff_tx[5])},
-+	{"priority_xoff_tx_tc6", offsetof(struct ice_hw_port_stats, priority_xoff_tx[6])},
-+	{"priority_xoff_tx_tc7", offsetof(struct ice_hw_port_stats, priority_xoff_tx[7])},
-+	{"priority_xon_2_xoff_tc0", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc1", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc2", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc3", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc4", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc5", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc6", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc7", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
- 	{"rx_size_64_packets", offsetof(struct ice_hw_port_stats, rx_size_64)},
- 	{"rx_size_65_to_127_packets", offsetof(struct ice_hw_port_stats,
- 		rx_size_127)},
-@@ -6671,6 +6711,29 @@ ice_read_stats_registers(struct ice_pf *pf, struct ice_hw *hw)
- 	/* GLPRT_MSPDC not supported */
- 	/* GLPRT_XEC not supported */
- 
-+	for (int i = 0; i < ICE_MAX_TRAFFIC_CLASS; i++) {
-+		ice_stat_update_40(hw, GLPRT_PXONRXC_H(hw->port_info->lport, i),
-+			   GLPRT_PXONRXC(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xon_rx[i],
-+			   &ns->priority_xon_rx[i]);
-+		ice_stat_update_40(hw, GLPRT_PXONTXC_H(hw->port_info->lport, i),
-+			   GLPRT_PXONTXC(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xon_tx[i],
-+			   &ns->priority_xon_tx[i]);
-+		ice_stat_update_40(hw, GLPRT_PXOFFRXC_H(hw->port_info->lport, i),
-+			   GLPRT_PXOFFRXC(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xoff_rx[i],
-+			   &ns->priority_xoff_rx[i]);
-+		ice_stat_update_40(hw, GLPRT_PXOFFTXC_H(hw->port_info->lport, i),
-+			   GLPRT_PXOFFTXC(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xoff_tx[i],
-+			   &ns->priority_xoff_tx[i]);
-+		ice_stat_update_40(hw, GLPRT_RXON2OFFCNT_H(hw->port_info->lport, i),
-+			   GLPRT_RXON2OFFCNT(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xon_2_xoff[i],
-+			   &ns->priority_xon_2_xoff[i]);
-+	}
-+
- 	pf->offset_loaded = true;
- 
- 	if (pf->main_vsi)
--- 
-2.43.0
+I'm really new to DPDK, so please excuse me if I'm sending this to the
+wrong list and/or got some details wrong.
 
+I'm trying to compile DPDK release 25.06 from source, with the goal of
+exploring CUDA/DMA for packet processing. Compiling the project worked
+fine, until I realized the GDRCopy feature needs some extra flags to
+actually get enabled, after which my compile broke. I pasted the relevant
+part of it below, that chain was repeating a few times.
+
+../drivers/gpu/cuda/gdrcopy.c: In function =E2=80=98gdrcopy_loader=E2=80=99=
+:
+../lib/log/rte_log.h:364:9: error: static assertion failed: "This log
+format string contains a \\n"
+  364 |         static_assert(!__builtin_strchr(fmt, '\n'), \
+      |         ^~~~~~~~~~~~~
+../lib/log/rte_log.h:387:9: note: in expansion of macro
+=E2=80=98RTE_LOG_CHECK_NO_NEWLINE=E2=80=99
+  387 |         RTE_LOG_CHECK_NO_NEWLINE(RTE_FMT_HEAD(__VA_ARGS__ ,)); \
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/gpu/cuda/common.h:20:9: note: in expansion of macro
+=E2=80=98RTE_LOG_LINE=E2=80=99
+   20 |         RTE_LOG_LINE(level, CUDA, fmt, ##__VA_ARGS__)
+      |         ^~~~~~~~~~~~
+../drivers/gpu/cuda/gdrcopy.c:31:17: note: in expansion of macro
+=E2=80=98rte_cuda_log=E2=80=99
+   31 |                 rte_cuda_log(ERR, "Failed to find GDRCopy library
+%s (GDRCOPY_PATH_L=3D%s)\n",
+      |                 ^~~~~~~~~~~~
+
+When I looked in drivers/gpu/cuda/gdrcopy.c, there were indeed a couple of
+log statements that ended with a newline character. Removing those newlines
+has solved the compilation errors.
+
+I tried to search the email archive for this issue, but have been unable to
+find anything. If it indeed is a new issue, would it be helpful for me to
+submit a patch?
+
+With kind regards,
+Jetse
+
+--0000000000006af25c063c963469
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><div>Hi all,</div><div><br></div><div>I&#=
+39;m really new to <span class=3D"gmail-il"><span class=3D"gmail-il"><span =
+class=3D"gmail-il">DPDK</span></span></span>, so please excuse me if I&#39;=
+m sending this to the wrong list and/or got some details wrong.</div><div><=
+br></div><div>I&#39;m trying to compile <span class=3D"gmail-il"><span clas=
+s=3D"gmail-il"><span class=3D"gmail-il">DPDK</span></span></span>
+ release 25.06 from source, with the goal of exploring CUDA/DMA for=20
+packet processing. Compiling the project worked fine, until I realized the =
+GDRCopy feature needs some extra flags to actually get enabled, after which=
+ my compile broke. I pasted the=20
+relevant part of it below, that chain was repeating a few times.</div><div>=
+<br></div><div>../drivers/gpu/cuda/gdrcopy.c: In function =E2=80=98gdrcopy_=
+loader=E2=80=99:<br>../lib/log/rte_log.h:364:9: error: static assertion fai=
+led: &quot;This log format string contains a \\n&quot;<br>=C2=A0 364 | =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 static_assert(!__builtin_strchr(fmt, &#39;\n&#39;)=
+, \<br>=C2=A0 =C2=A0 =C2=A0 | =C2=A0 =C2=A0 =C2=A0 =C2=A0 ^~~~~~~~~~~~~<br>=
+../lib/log/rte_log.h:387:9: note: in expansion of macro =E2=80=98RTE_LOG_CH=
+ECK_NO_NEWLINE=E2=80=99<br>=C2=A0 387 | =C2=A0 =C2=A0 =C2=A0 =C2=A0 RTE_LOG=
+_CHECK_NO_NEWLINE(RTE_FMT_HEAD(__VA_ARGS__ ,)); \<br>=C2=A0 =C2=A0 =C2=A0 |=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 ^~~~~~~~~~~~~~~~~~~~~~~~<br>../drivers/gpu/cud=
+a/common.h:20:9: note: in expansion of macro =E2=80=98RTE_LOG_LINE=E2=80=99=
+<br>=C2=A0 =C2=A020 | =C2=A0 =C2=A0 =C2=A0 =C2=A0 RTE_LOG_LINE(level, CUDA,=
+ fmt, ##__VA_ARGS__)<br>=C2=A0 =C2=A0 =C2=A0 | =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+^~~~~~~~~~~~<br>../drivers/gpu/cuda/gdrcopy.c:31:17: note: in expansion of =
+macro =E2=80=98rte_cuda_log=E2=80=99<br>=C2=A0 =C2=A031 | =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rte_cuda_log(ERR, &quot;Failed to fi=
+nd GDRCopy library %s (GDRCOPY_PATH_L=3D%s)\n&quot;,<br>=C2=A0 =C2=A0 =C2=
+=A0 | =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ^~~~~~~~~~~~<=
+br></div><div><br></div><div>When
+ I looked in=C2=A0drivers/gpu/cuda/gdrcopy.c, there were indeed a couple of=
+=20
+log statements that ended with a newline character. Removing those=20
+newlines has solved the compilation errors.</div><div><br></div><div>I=20
+tried to search the email archive for this issue, but have been unable=20
+to find anything. If it indeed is a new issue, would it be helpful for=20
+me to submit a patch?</div><div><br></div><div>With kind regards,</div><div=
+>Jetse</div></div><br></div>
+
+--0000000000006af25c063c963469--
