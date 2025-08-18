@@ -2,76 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD3F4CA0ED1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 12:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC656CA0ED1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 13:17:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F35E3402ED;
-	Mon, 18 Aug 2025 14:56:32 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8AA2E40262
- for <dev@dpdk.org>; Mon, 18 Aug 2025 14:56:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1755521790;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=X2g75/fb8wPPQSpZzEDDWs4QPYRv9IS3MW74fdqNrl4=;
- b=TgZE7toRhvS2T1TiQOp2n1A+NcB74bJQOZq2242bpDEUABCdtSMf9jX52nwC/DxrEcWGvs
- /Ub7gG/obmWcq+DDfWnmtxtqu6mqaWLnoiixmohhuzOT2Dsdrgd6kxTyAerw+e04hdSj0L
- GkvIavaHm/KOTbnLHSkjxXrGfiRH9Us=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-608-BUUVcAOtPna36_UVQVi87Q-1; Mon, 18 Aug 2025 08:56:29 -0400
-X-MC-Unique: BUUVcAOtPna36_UVQVi87Q-1
-X-Mimecast-MFC-AGG-ID: BUUVcAOtPna36_UVQVi87Q_1755521787
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-55ce520c261so1766261e87.1
- for <dev@dpdk.org>; Mon, 18 Aug 2025 05:56:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755521787; x=1756126587;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=X2g75/fb8wPPQSpZzEDDWs4QPYRv9IS3MW74fdqNrl4=;
- b=NTNuzOJL9RVBFtZWW3oZHD6LTsQVpQQtpi4IBU40yp2qne32AOQqyQNSYlat/HbBPz
- gKjE/ndCvYAkhlVwE/vc3wpxKRoSd860E7CqG+wfHd0g/vUpwET7KHZPuXuTDQzjCQ71
- htbRkl0tQ3cyXbBOee9VJkhA+uM0poFsWEy4trFg/tXZSzbxKu1rXsqU1P37QwjSej4L
- aqi16ztLLKr39UMAS7gMxp8tNnzuektWDTBaNE4qZDjA4ngOQipit7bAeNTv6spi/6rT
- iiAvjfYameZBL9QxMXtPa/8G734xZvrWsHniTZPKkYOpcuIqmAB6KNeQ8XLPgBR2+KLv
- EMqQ==
-X-Gm-Message-State: AOJu0YyaE98P6Gs5RkeJoIUotTXYzj6FmSvi9vkwiAZ1AhwYsxjefHwO
- 3lMi3Jdqs6S7SkpsEVBiFDn9dCKOl12ZJ6G2NV3YYdFOAOLUq9LMZnoA3AaYjtQUj5nII94E6Yo
- 1FnZ+5fO23eFyrep17NrxLvf9Bl+Jvq6ZWhnszAeMUu3c/1uAhlz9aT3Rj58oh29bVRe35QjtGP
- 5WtkZHWbyqQT4sBeSJprw=
-X-Gm-Gg: ASbGncul3brkZLlfQpYXWgsXLeW/jf2ozM6pBom3CyoN+v8UfuDgJwrpHLiG/L9hOwu
- 1jl4czA8gzQqvN6G2U3p5l4UzlDbSFyQhKgxBAFfSbgXlQaFmekrpoZXxusK3ZdMRVtdGbW8CZV
- 5e1w6EQgkkKwfqaWjdhbex97M=
-X-Received: by 2002:ac2:5687:0:b0:55a:826d:fa31 with SMTP id
- 2adb3069b0e04-55cf2cdcfdemr2477872e87.37.1755521787281; 
- Mon, 18 Aug 2025 05:56:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHX9JoMEFiK7JsIRMBQkL7/qNGWlL9Ls3Pt1oop6OilD0QmvqNUbq/pHbxOlG/AJ1o9LqXAUGi3yPgimyuvRZg=
-X-Received: by 2002:ac2:5687:0:b0:55a:826d:fa31 with SMTP id
- 2adb3069b0e04-55cf2cdcfdemr2477861e87.37.1755521786793; Mon, 18 Aug 2025
- 05:56:26 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D2D8A40267;
+	Mon, 18 Aug 2025 15:17:51 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id DB30640262
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 15:17:50 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c5Cts6tWpz6L5Vh;
+ Mon, 18 Aug 2025 21:17:41 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
+ by mail.maildlp.com (Postfix) with ESMTPS id 923CA1402FE;
+ Mon, 18 Aug 2025 21:17:49 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 18 Aug 2025 15:17:49 +0200
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Mon, 18 Aug 2025 15:17:49 +0200
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Wathsala Vithanage <wathsala.vithanage@arm.com>, "thomas@monjalon.net"
+ <thomas@monjalon.net>, Andre Muezerie <andremue@linux.microsoft.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, David Marchand <david.marchand@redhat.com>, 
+ Bruce Richardson <bruce.richardson@intel.com>, Honnappa Nagarahalli
+ <Honnappa.Nagarahalli@arm.com>, nd <nd@arm.com>
+Subject: RE: [PATCH] rcu: add deprecation notice about limit on defer queue
+ element size
+Thread-Topic: [PATCH] rcu: add deprecation notice about limit on defer queue
+ element size
+Thread-Index: AQHby3J+6csbXQ+lwUObzuOK3rg/V7QdbUoAgA4qsoCAAXD3AIAEl8XwgCZReoCAEPp6MA==
+Date: Mon, 18 Aug 2025 13:17:49 +0000
+Message-ID: <3d00b2eba2a0481dada17c7139c40d2f@huawei.com>
+References: <1747957021-2581-1-git-send-email-andremue@linux.microsoft.com>
+ <4620749.daG60p0z9X@thomas>
+ <20250710143747.GA24344@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <5695570.h0BymrIErR@thomas> <b2f6bd8eda1c4e728caeb5ee918d0068@huawei.com>
+ <PAWPR08MB890987187E300A80DC4FD36B9F2CA@PAWPR08MB8909.eurprd08.prod.outlook.com>
+In-Reply-To: <PAWPR08MB890987187E300A80DC4FD36B9F2CA@PAWPR08MB8909.eurprd08.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.73]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20250805083657.1227817-1-maxime.coquelin@redhat.com>
-In-Reply-To: <20250805083657.1227817-1-maxime.coquelin@redhat.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 18 Aug 2025 14:56:15 +0200
-X-Gm-Features: Ac12FXxlJ_mpToMWbilXyiOr9EEieL1FdEwCrdW5zFomB64aCAsUSEVUqnmFEsQ
-Message-ID: <CAJFAV8xpLpaFUyHMpF4jxpJ335YJw=TuCDWzT9oXy1+PXG4BkA@mail.gmail.com>
-Subject: Re: [PATCH] net/virtio-user: fix used ring address calculation
-To: Maxime Coquelin <maxime.coquelin@redhat.com>
-Cc: dev@dpdk.org, amorenoz@redhat.com, chenbox@nvidia.com, schalla@marvell.com,
- stable@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: bgJP_nhDFZ6Fc4LgKNGxeMROC9tPAlk4owfAPeePML0_1755521787
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,118 +63,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Aug 5, 2025 at 10:37=E2=80=AFAM Maxime Coquelin
-<maxime.coquelin@redhat.com> wrote:
->
-> This patch fixes the used ring address calculation, to
-> avoid Vhost-vDPA backends (such as VDUSE) to fail while
-> trying to translate it.
-
-Maybe update the patch title to reflect that this issue affects
-vhost-vdpa backend?
-
-
->
-> Fixes: 666ef294ddf7 ("net/virtio-user: share descriptor IOVA to backend")
-> Cc: stable@dpdk.org
->
-> Reported-by: Adrian Moreno <amorenoz@redhat.com>
-> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-> ---
->  drivers/net/virtio/virtio_user/virtio_user_dev.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c b/drivers/n=
-et/virtio/virtio_user/virtio_user_dev.c
-> index 187f81b066..7789f337f6 100644
-> --- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
-> +++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
-> @@ -149,7 +149,8 @@ virtio_user_kick_queue(struct virtio_user_dev *dev, u=
-int32_t queue_sel)
->         } else {
->                 desc_addr =3D vring->desc_iova;
->                 avail_addr =3D desc_addr + vring->num * sizeof(struct vri=
-ng_desc);
-> -               used_addr =3D RTE_ALIGN_CEIL((uintptr_t)(&vring->avail->r=
-ing[vring->num]),
-> +               used_addr =3D RTE_ALIGN_CEIL(avail_addr + offsetof(struct=
- vring_avail,
-> +                                               ring[vring->num]),
->                                            VIRTIO_VRING_ALIGN);
-
-The fix looks good to me, but I would go one step further (as a
-followup maybe?).
-
-I see no good reason for computing again the addresses in the kick
-helper, while those addresses should be set once and for all at
-"setup" time.
-Only an offset needs to be applied to account for iova stuff.
-
-What do you think of something like:
-
-diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c
-b/drivers/net/virtio/virtio_user/virtio_user_dev.c
-index 187f81b066..dcb702ace3 100644
---- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
-+++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
-@@ -118,7 +118,7 @@ virtio_user_kick_queue(struct virtio_user_dev
-*dev, uint32_t queue_sel)
-        struct vhost_vring_state state;
-        struct vring *vring =3D &dev->vrings.split[queue_sel];
-        struct vring_packed *pq_vring =3D &dev->vrings.packed[queue_sel];
--       uint64_t desc_addr, avail_addr, used_addr;
-+       uint64_t desc_addr, desc_iova_addr, avail_addr, used_addr;
-        struct vhost_vring_addr addr =3D {
-                .index =3D queue_sel,
-                .log_guest_addr =3D 0,
-@@ -138,25 +138,22 @@ virtio_user_kick_queue(struct virtio_user_dev
-*dev, uint32_t queue_sel)
-        }
-
-        if (dev->features & (1ULL << VIRTIO_F_RING_PACKED)) {
--               desc_addr =3D pq_vring->desc_iova;
--               avail_addr =3D desc_addr + pq_vring->num * sizeof(struct
-vring_packed_desc);
--               used_addr =3D  RTE_ALIGN_CEIL(avail_addr + sizeof(struct
-vring_packed_desc_event),
--                                           VIRTIO_VRING_ALIGN);
--
--               addr.desc_user_addr =3D desc_addr;
--               addr.avail_user_addr =3D avail_addr;
--               addr.used_user_addr =3D used_addr;
-+               desc_iova_addr =3D pq_vring->desc_iova;
-+               desc_addr =3D (uint64_t)(uintptr_t)pq_vring->desc;
-+               avail_addr =3D (uint64_t)(uintptr_t)pq_vring->driver;
-+               used_addr =3D (uint64_t)(uintptr_t)pq_vring->device;
-+
-        } else {
--               desc_addr =3D vring->desc_iova;
--               avail_addr =3D desc_addr + vring->num * sizeof(struct vring=
-_desc);
--               used_addr =3D
-RTE_ALIGN_CEIL((uintptr_t)(&vring->avail->ring[vring->num]),
--                                          VIRTIO_VRING_ALIGN);
--
--               addr.desc_user_addr =3D desc_addr;
--               addr.avail_user_addr =3D avail_addr;
--               addr.used_user_addr =3D used_addr;
-+               desc_iova_addr =3D vring->desc_iova;
-+               desc_addr =3D (uint64_t)(uintptr_t)vring->desc;
-+               avail_addr =3D (uint64_t)(uintptr_t)vring->avail;
-+               used_addr =3D (uint64_t)(uintptr_t)vring->used;
-        }
-
-+       addr.desc_user_addr =3D desc_iova_addr;
-+       addr.avail_user_addr =3D (desc_iova_addr - desc_addr) + avail_addr;
-+       addr.used_user_addr =3D (desc_iova_addr - desc_addr) + used_addr;
-+
-        state.index =3D queue_sel;
-        state.num =3D vring->num;
-        ret =3D dev->ops->set_vring_num(dev, &state);
-
-
-
-
---=20
-David Marchand
-
+DQo+ID4gPg0KPiA+ID4gMTAvMDcvMjAyNSAxNjozNywgQW5kcmUgTXVlemVyaWU6DQo+ID4gPiA+
+IE9uIFR1ZSwgSnVsIDAxLCAyMDI1IGF0IDA0OjE3OjIwUE0gKzAyMDAsIFRob21hcyBNb25qYWxv
+biB3cm90ZToNCj4gPiA+ID4gPiAyMy8wNS8yMDI1IDAxOjM3LCBBbmRyZSBNdWV6ZXJpZToNCj4g
+PiA+ID4gPiA+IFRoZSBmdW5jdGlvbnMgcnRlX3JjdV9xc2JyX2RxX2NyZWF0ZSBhbmQgcnRlX3Jj
+dV9xc2JyX2RxX3JlY2xhaW0NCj4gPiA+ID4gPiA+IGVzdGFibGlzaCBubyBsaW1pdCBvbiB0aGUg
+c2l6ZSBvZiBlYWNoIGVsZW1lbnQgaW4gdGhlIGRlZmVyIHF1ZXVlLg0KPiA+ID4gPiA+DQo+ID4g
+PiA+ID4gVmVyeSBnb29kLCB3ZSBuZWVkIG1vcmUgdW5saW1pdGVkIEFQSSBpbiBEUERLLg0KPiA+
+ID4gPiA+DQo+ID4gPiA+ID4gPiBXaXRoIERQREsgMjUuMTEgYSBoYXJkIGxpbWl0IHdpbGwgYmUg
+c2V0IChgYFJURV9RU0JSX0VTSVpFX01BWGBgKS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IEkgdGhp
+bmsgaXQgaXMgYSBzdGVwIGluIHRoZSB3cm9uZyBkaXJlY3Rpb24uDQo+ID4gPiA+ID4gSSBwcmVm
+ZXIgaGF2aW5nIG5vIGxpbWl0Lg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBUaGlzIHdpbGwgYWxs
+b3cgZml4ZWQgQyBhcnJheXMgdG8gYmUgdXNlZCBpbiB0aGUgZnVuY3Rpb25zJw0KPiA+ID4gPiA+
+ID4gaW1wbGVtZW50YXRpb25zLCBhdm9pZGluZyBWTEFzIGFuZCB1c2Ugb2YgYWxsb2NhKCkuDQo+
+ID4gPiA+ID4NCj4gPiA+ID4gPiBJIGRvbid0IHVuZGVyc3RhbmQgdGhpcyBqdXN0aWZpY2F0aW9u
+Lg0KPiA+ID4gPiA+IFdoeSB0cnlpbmcgdG8gcmVtb3ZlIHRoZSAyIGFsbG9jYSgpIGluIHRoZSBs
+aWIgUkNVPw0KPiA+ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IE9ubHkgYmVjYXVzZSBvdGhlciBk
+ZXZlbG9wZXIgZXhwcmVzc2VkIGNvbmNlcm5zIHRoYXQgdXNpbmcgYWxsb2NhKCkNCj4gPiA+ID4g
+YWxsb3dzIGlsbC1pbnRlbmRlZCBjYWxsZXJzIHRvIGNhdXNlIGEgc3RhY2sgb3ZlcmZsb3cuDQo+
+ID4gPiA+IEkgcGVyc29uYWxseSBhbHNvIHByZWZlciB0byBoYXZlIG5vIGhhcmRjb2RlZCBsaW1p
+dHMuDQo+ID4gPg0KPiA+ID4gWWVzIEkgdm90ZSBmb3Iga2VlcGluZyBhbGxvY2EoKS4NCj4gPiA+
+DQo+ID4NCj4gPiBQcm9iYWJseSBpdCB3YXMgbWUgd2hvIGV4cHJlc3NlZCBzb21lIGNvbmNlcm5z
+LCBzb3JyeSBmb3IgbGF0ZSByZXBseS4NCj4gPiBJIGNhbiBvbmx5IHJlcGVhdCB3aGF0IEkgYWxy
+ZWFkeSByZXBsaWVkIHRvIERhdmlkOg0KPiA+DQo+ID4gRm9yIHRoYXQgcGFydGljdWxhciBjYXNl
+LCBteSByZWFzb25zIGFyZSBtb3N0bHkgY29uY2VwdHVhbDoNCj4gPiB1c2luZyBhbGxvY2EoKSBk
+b2Vzbid0IHJlYWxseSBkaWZmZXIgZnJvbSBzaW1wbHkgdXNpbmcgVkxBLCBpbiBmYWN0IGl0IG1h
+a2VzIGNvZGUNCj4gPiBsb29rcyB1Z2xpZXIuDQo+ID4gSSB1bmRlcnN0YW5kIHRoYXQgd2UgZG8g
+d2FudCBNU1ZDIGVuYWJsZWQsIGFuZCBpbiBtYW55IGNhc2VzIHN1Y2gNCj4gPiBtZWNoYW5pY2Fs
+IHJlcGxhY2VtZW50IGlzIG9rLCBidXQgcHJvYmFibHkgYmV0dGVyIHRvIGF2b2lkICBpdCB3aGVu
+ZXZlcg0KPiA+IHBvc3NpYmxlLg0KPiA+DQo+ID4gIHN1cHBvc2Ugd2UgaGF2ZSAzIG9wdGlvbnM6
+DQo+ID4gMSkgdXNlIHByZWRlZmluZWQgbWF4IHZhbHVlIChpdCBjb3VsZCBiZSBxdWl0ZSBiaWcg
+dG8gZml0IGFueSByZWFzb25hYmxlIHVzYWdlLA0KPiA+IGxldCBzYXkgMUtCIG9yIHNvKS4NCj4g
+PiAyKSB1c2UgYWxsb2NhKCkuDQo+ID4gMykgY29tZS11cCB3aXRoIHNvbWUgc21hcnRlciBhcHBy
+b2FjaC4NCj4gPg0KPiA+IEZvciAzKSAtIEkgZG9uJ3QgaGF2ZSBhbnkgZ29vZCBpZGVhcy4NCj4g
+PiBPbmUgb3B0aW9uIHdvdWxkIGJlIHRvIGNyZWF0ZSB0aGF0IHJpbmcgUklOR19GX01QX0hUU19F
+TlEgIGZsYWdzLCB0aGVuIHdlDQo+ID4gY2FuIHVzZSBwZWVrIEFQSSAgZm9yIGVucXVldWUgcGFy
+dCB0b28gKHJ0ZV9yaW5nX2VucXVldWVfYnVsa19lbGVtX3N0YXJ0KS4NCj4gPiBUaGF0IHdvdWxk
+IHNvbHZlIGFuIGlzc3VlLCBhcyBpbiB0aGF0IGNhc2Ugd2Ugd291bGRuJ3QgbmVlZCB0byBtYWtl
+IHRlbXANCj4gPiBjb3B5IG9mIGRhdGEgb24gdGhlIHN0YWNrLg0KPiA+IE15IHByZWZlcmVuY2Ug
+d291bGQgYmUgZWl0aGVyIDEpIG9yIDMpLCBidXQgSSBjb3VsZCBsZWF2ZSB3aXRoIDIpIHRvbyAt
+IHNwZWNpYWxseQ0KPiA+IHRoYXQgSSBkb24ndCByZWFsbHkgdXNlIHRoYXQgcGFydCBvZiBSQ1Ug
+bGliLg0KPiA+IFdvdWxkIGJlIHJlYWxseSBnb29kIHRvIGhlYXIgb3BpbmlvbiBvZiBSQ1UgbGli
+IG1haW50YWluZXIuDQo+ID4NCj4gPiBLb25zdGFudGluDQo+IA0KPiBKdXN0IG15IDJjIG9uIHRo
+ZSAzIG9wdGlvbnMuDQo+IDEpIFdoYXQncyB0aGUgcmlnaHQgbWF4IHNpemU/IEkgZG9uJ3Qga25v
+dywgc28gSSB3b3VsZCByYXRoZXIgbGVhdmUgdGhpcyBmb3IgdGhlIHVzZXIuDQo+IDIpIEkgcHJl
+ZmVyIHRoaXMgb3B0aW9uIG92ZXIgKDEpIGR1ZSB0byBhYm92ZSByZWFzb24uDQo+IDMpIHJpbmcg
+aXRzZWxmIGlzIHRyaWNreSBzcGVjaWFsbHkgdW5kZXIgcmVsYXhlZCBtZW1vcnksIFJDVSBJcyBh
+bHJlYWR5IGNvbXBsZXguIFNvLCBJIHdvdWxkIHJhdGhlciBrZWVwIHRoZW0gc2VwYXJhdGUuDQoN
+Ck5vdCBzdXJlLCB3aGF0IHlvdSBhcmUgdGFsa2luZyBhYm91dD8NClJpbmcgaXMgYWxyZWFkeSB0
+aGVyZSwgaXQgd2FzIGFkZGVkIGFzIHBhcnQgb2Y6DQpjb21taXQgNzA2ZDMwNmVhMzljOTgyMTkz
+YTBjZWRiMzdmZDRiZjhjYWU4NDk3Mg0KQXV0aG9yOiBIb25uYXBwYSBOYWdhcmFoYWxsaSA8aG9u
+bmFwcGEubmFnYXJhaGFsbGlAYXJtLmNvbT4NCkRhdGU6ICAgVHVlIEFwciAyMSAyMjozMDowMyAy
+MDIwIC0wNTAwDQoNCiAgICByY3U6IGFkZCByZXNvdXJjZSByZWNsYW1hdGlvbiBBUElzDQoNCiAg
+ICBBZGQgcmVzb3VyY2UgcmVjbGFtYXRpb24gdXNpbmcgZGVmZXIgcXVldWVzIHRvIG1ha2UgaXQg
+c2ltcGxlIGZvcg0KICAgIGFwcGxpY2F0aW9ucyBhbmQgbGlicmFyaWVzIHRvIGludGVncmF0ZSBy
+dGVfcmN1IGxpYnJhcnkuDQoNCmNvbW1pdC4NCk15IHN1Z2dlc3Rpb24gd2FzIHRvIGNoYW5nZSBl
+bnEgZmxhZ3MsIHRoYXQgd291bGQgYWxsb3cgdXMgdG8gdXNlIHBlZWsgQVBJLg0KSS5FLjoNCiAg
+ICAgICAvKiBEZWNpZGUgdGhlIGZsYWdzIGZvciB0aGUgcmluZy4NCiAgICAgICAgICogSWYgTVQg
+c2FmZXR5IGlzIHJlcXVlc3RlZCwgdXNlIFJUUyBmb3IgcmluZyBlbnF1ZXVlIGFzIG1vc3QNCiAg
+ICAgICAgICogdXNlIGNhc2VzIGludm9sdmUgZHEtZW5xdWV1ZSBoYXBwZW5pbmcgb24gdGhlIGNv
+bnRyb2wgcGxhbmUuDQogICAgICAgICAqIFJpbmcgZGVxdWV1ZSBpcyBhbHdheXMgSFRTIGR1ZSB0
+byB0aGUgcG9zc2liaWxpdHkgb2YgcmV2ZXJ0Lg0KICAgICAgICAgKi8NCi0gICAgICAgZmxhZ3Mg
+PSBSSU5HX0ZfTVBfUlRTX0VOUTsNCisgICAgICBmbGFncyA9IFJJTkdfRl9NUF9IVFNfRU5ROw0K
+ICAgICAgICBpZiAocGFyYW1zLT5mbGFncyAmIFJURV9SQ1VfUVNCUl9EUV9NVF9VTlNBRkUpDQog
+ICAgICAgICAgICAgICAgZmxhZ3MgPSBSSU5HX0ZfU1BfRU5ROw0KICAgICAgICBmbGFncyB8PSBS
+SU5HX0ZfTUNfSFRTX0RFUTsNCiANCk5vdGUgdGhhdCB3ZSBhbHJlYWR5IHVzaW5nIEhUUyBtb2Rl
+IGZvciBkZXF1ZXVlLg0KDQo+IFNvLCBJIHByZWZlciBhbGxvY2EoKSBvcHRpb24uDQo+IA0KPiBU
+aGFua3MNCj4gDQo+IC0td2F0aHNhbGENCg==
