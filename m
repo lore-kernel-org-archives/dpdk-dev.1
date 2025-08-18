@@ -2,76 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8236CA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 17:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA48CA0ED1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 17:20:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0428E40267;
-	Mon, 18 Aug 2025 19:15:53 +0200 (CEST)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
- [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id AF1CE40262
- for <dev@dpdk.org>; Mon, 18 Aug 2025 19:15:51 +0200 (CEST)
-Received: by mail-wm1-f53.google.com with SMTP id
- 5b1f17b1804b1-45a1b05fe23so26241175e9.1
- for <dev@dpdk.org>; Mon, 18 Aug 2025 10:15:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755537351;
- x=1756142151; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=CkN3PqoMjO2EqQbYcg7Jyupb8kkgoN6Fxf+P8lemTts=;
- b=0VmB+37f+603oSpg0Euvks7BU1kFZkYxucME+ez8vQak53lj7J79svRtZs6TFhsi5j
- sxaSkHDBZRMHtYo95nThzpf8MkCRS54ir+2suEenTpvqB/EvjzGMoOIc43J3NlHtqSbe
- /ek57K0N3zwDFqnXQ0vDxtDgwer+y0cK3keRUf0ojV17vSggLL9MY9B6Hh8J1PHYTMS2
- E4Qsf8LwXY5JC9vZeIKYTKdYW/+pWCU9UOKvSkEB4KrQ8FIRV7UMyeU+PAz0pbMPldd+
- JWyDJm1iouv2VszAnBfl42jHmlgg9dWaxnF/Bot3KNaiYNM4BsArv9MVDOdtfGd/DdW4
- w0mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755537351; x=1756142151;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=CkN3PqoMjO2EqQbYcg7Jyupb8kkgoN6Fxf+P8lemTts=;
- b=nFl58XNDXmO+v1gBvgtfQutzTv2UVh8fRzGhTjt6qHfleiPaMDOlTdUxRoMvXQmu9q
- pFEHp/5C5Hj8KMxfLR6ra/kTbazLOJodeUC7KRbnG89vXfQ8M4E+Dm+ugSqhcLeddzW8
- J98hzs5Jhuh07tPC8OPLGVZ36zhZ188nny4cKmH39+efRbZi02JcOAGYFYQ3Nx3qYSq1
- bHNwJv/8KET51DjpC1IVmhxLBWBllanOBsmkjGim3E8JcfcR0j/qMaznY54wtA3nvQMT
- YbjMXskJH44sh+KMNht4jTVur6JWnb+UtHO7Zgd8OS9yvXqwRRbAFNxa85/sBI7rUMol
- Le1w==
-X-Gm-Message-State: AOJu0YwwgR/ctNlB2EwPjiYZ4hulC5v+/MTk5a4351htQb10MOEKhZxz
- R5Nld5/9h4b+beyj7JgxyAOmTuZiWFXcv6ep6V8mvsrdwu4UzR2B3VFMxIcb/bcQ+mw=
-X-Gm-Gg: ASbGncurHMCtYeuD/poEngUZtto73chr8JXaHeOgT4PbH2gNU2sS/HpIxX1/XtOe73z
- J3WNukDB7gUwtD5WOTFMS5/FkjfCBwg6CwjALc4zbXKRTfL0ORjUQoZx9SRB2kqU19JlWjdpz/z
- K4bAmrPFR44zHKs+SsjrkoTr3uDxXfIYOytQMNOu77KXv5uox03G9x7Q1HFVzoclwAzyUEoPjKH
- msLcimOYfI/npJ3RQa2uFdNRYqjdTzfxIOvkrwM6nLPzRe2fA8qEwYMH3J5FWDqhuQYqHpeDFbt
- E37/VTsSNw5QGerceKALjjaCNgMwwYtZbc7wZzxTKUsPzfz3sBFyeUVDH82Lk7JUm7dKfFd35jl
- eb3g5RWp0UG/pxSiohGI52CojV+g5p/MXgskXofeM/0flykseTPZeaZxGtzKj+OLYN7An3rtEYQ
- U=
-X-Google-Smtp-Source: AGHT+IHU9aYA3s0Goef6eQJXpOFOSkB8YdkqsnOXRNjb4HszY2SlReLOace3bd9YPTA/C0zPqUsYUw==
-X-Received: by 2002:a05:600c:4746:b0:456:2212:46b8 with SMTP id
- 5b1f17b1804b1-45a21868a75mr72579805e9.28.1755537350975; 
- Mon, 18 Aug 2025 10:15:50 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-45a1c6be10esm192510455e9.3.2025.08.18.10.15.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 18 Aug 2025 10:15:50 -0700 (PDT)
-Date: Mon, 18 Aug 2025 10:15:45 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>, Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Chengwen Feng <fengchengwen@huawei.com>, Morten =?UTF-8?B?QnLDuHJ1cA==?=
- <mb@smartsharesystems.com>
-Subject: Re: [PATCH v4 9/9] config: enable comma warnings
-Message-ID: <20250818101545.3f356917@hermes.local>
-In-Reply-To: <aKNWhb3YWogF4iRg@bricha3-mobl1.ger.corp.intel.com>
-References: <20250312232739.228295-1-stephen@networkplumber.org>
- <20250818161815.23611-1-stephen@networkplumber.org>
- <20250818161815.23611-10-stephen@networkplumber.org>
- <aKNWhb3YWogF4iRg@bricha3-mobl1.ger.corp.intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6C52640267;
+	Mon, 18 Aug 2025 19:20:26 +0200 (CEST)
+Received: from fout-a5-smtp.messagingengine.com
+ (fout-a5-smtp.messagingengine.com [103.168.172.148])
+ by mails.dpdk.org (Postfix) with ESMTP id 1FBDA40262;
+ Mon, 18 Aug 2025 19:20:24 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfout.phl.internal (Postfix) with ESMTP id 6DFD8EC070E;
+ Mon, 18 Aug 2025 13:20:23 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-04.internal (MEProxy); Mon, 18 Aug 2025 13:20:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1755537623;
+ x=1755624023; bh=wY9MzhDPBOHeHXC5aj/HmpNF+22NrOT56D8BjcdEC6s=; b=
+ nnljgUdmyQD2X2eIatREPlp/mNnrOwmyq1wr3hI1ab5rggM0h4BcuBc5V8C8RGxW
+ 2SL0KJWuVJmWf/RBszAlbU16kB4WdR9k+bInb+IAvfumKAQbtkmYQqIDSV2WHhUr
+ 4In5D3bf5CQ40T1Yu6mGi6YZHyo70G1sUvlgQ9zQ2gAzbB9yKfIyioQvTXHUwoBP
+ ceIxwexbkKRfMtO5r84VITOKUYEAg9Sc4fN+BLv+IQbTGv5q9nrWYS/jXI6GQJGu
+ I2yuPjn8UAhfeMnEwhjIci5gFWsaprXTvl4xYUJg+QD+54Ic59rplGFqHBHYpsU9
+ nNqt8FQik68je0fmY/1Q2w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755537623; x=
+ 1755624023; bh=wY9MzhDPBOHeHXC5aj/HmpNF+22NrOT56D8BjcdEC6s=; b=T
+ toAlxZ+EmLuOdDT97yhNYpHVcHgrupi6/zcmyDhPjV/ajeBG1ADRfF1lIcjk1/ON
+ g3zdGQXwVUc9Nu/S/5RhZJBFdKeqJPhW2qK+Pa6KkXzUmio+YJdCZagtdOo4blzT
+ WApjpEMsWrpHWyCOxjzWwJMuNeNK1QorrMjZN2i/+x5c0yIqDI1uOJwKOAxmTy/k
+ 7rwiKHSF/yvmW85hZ2xIJ8uLHUqT4PQeg2/TjJe7J+KVBuej59w1VTI3Pf5hVu73
+ ngc2T8YHrgNZviUIQM5iVTuJJtK8rZ1ttBXHFzBmq2ZoR3bUcb41Y4r7edjrPdTj
+ 621cUi4xtnmRoDzEfRKGw==
+X-ME-Sender: <xms:1mCjaHgtRjSwmfeqZhNM95j7PHK_v1cqtQnKYgDwMj9A81C6HmnCEQ>
+ <xme:1mCjaIZlrBE4fjDP8FKpP9TM8M7-exSToIUU6TQ919U0SVSsWCc3u-2h5APsJewh-
+ hfoBwVPJHo1nnS7hA>
+X-ME-Received: <xmr:1mCjaE_b02d4XvLErsm_QPO-IlF-4brUqXAP296_eCVtyY6hzOdw4Y5-Pk3n78wou2BdDx5QRiXqOo62NRPf6FGfPA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduheefudelucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeeuffevtefftdeutdefhffftdduveetffekgeelfeelgffhheejieet
+ tdevjeejveenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuih
+ iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhho
+ nhdrnhgvthdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtph
+ htthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthht
+ oheprghlihgrlhhnuhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepughsohhsnhhofi
+ hskhhisehnvhhiughirgdrtghomhdprhgtphhtthhopedugehpfigtshgvuddvvdegsehu
+ vghtphgvshhhrgifrghrrdgvughurdhpkhdprhgtphhtthhopeguvghvseguphgukhdroh
+ hrghdprhgtphhtthhopehvihgrtghhvghslhgrvhhosehnvhhiughirgdrtghomhdprhgt
+ phhtthhopegsihhnghiisehnvhhiughirgdrtghomhdprhgtphhtthhopehorhhikhgrse
+ hnvhhiughirgdrtghomhdprhgtphhtthhopehsuhgrnhhmihhnghhmsehnvhhiughirgdr
+ tghomh
+X-ME-Proxy: <xmx:1mCjaCPxm4GXYbTu-ByuiYewdet2zCoY8cp9BkhDA583Iy5yOU-E7w>
+ <xmx:1mCjaJHvTRsDxTBix4hdod-tW0bdJa1LYevwa6CKcuLWpTyD2-J9Hg>
+ <xmx:1mCjaIxUsAbyFd-KL6_2weZhkMZi7ubsAKnEb1bDj2sKLGHUD6b2xA>
+ <xmx:1mCjaCpGhPCQBHHSl86Cqeoy-JpaDnNpzoHwV65yE5cXqhcaftJCoA>
+ <xmx:12CjaL4K1xC96B1QH8yBdDDLRyb7vAowtzmkjdPntVNneGWxBap30kYM>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 18 Aug 2025 13:20:20 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: David Marchand <david.marchand@redhat.com>,
+ Ali Alnubani <alialnu@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>
+Cc: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>, dev@dpdk.org,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
+ Matan Azrad <matan@nvidia.com>, dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH v2] net/mlx5: fix connection tracking state item validation
+Date: Mon, 18 Aug 2025 19:20:19 +0200
+Message-ID: <2610138.4XsnlVU6TS@thomas>
+In-Reply-To: <20250813141614.yiwou5lbd4exybnv@ds-vm-debian.local>
+References: <20250805132318.480413-1-14pwcse1224@uetpeshawar.edu.pk>
+ <20250812124630.2916225-1-14pwcse1224@uetpeshawar.edu.pk>
+ <20250813141614.yiwou5lbd4exybnv@ds-vm-debian.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,26 +99,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 18 Aug 2025 17:36:21 +0100
-Bruce Richardson <bruce.richardson@intel.com> wrote:
-
-> > diff --git a/drivers/meson.build b/drivers/meson.build
-> > index b62880db02..4c08a1dd9d 100644
-> > --- a/drivers/meson.build
-> > +++ b/drivers/meson.build
-> > @@ -59,7 +59,7 @@ default_cflags = machine_args
-> >  default_cflags += ['-DALLOW_EXPERIMENTAL_API']
-> >  default_cflags += ['-DALLOW_INTERNAL_API']
-> >  
-> > -warning_disable_cflags = ['-Wno-format-truncation', '-Wno-address-of-packed-member']
-> > +warning_disable_cflags = ['-Wno-format-truncation', '-Wno-address-of-packed-member', '-Wno-comma']  
+13/08/2025 16:16, Dariusz Sosnowski:
+> Hi,
 > 
-> Since this patchset has already fixed some drivers, are we at a point where
-> we can just disable this warning on a driver-by-driver basis rather than
-> globally? That makes it easier to spot where the issues are and easier
-> allows incremental improvement.
+> Thank you for the patch. Please see comments inline.
+> 
+> On Tue, Aug 12, 2025 at 08:46:30AM -0400, Khadem Ullah wrote:
+> > This patch validate a connection tracking state when matching
+> > 'conntrack is' in rte_flow rules. Since conntrack item flags
+> > is a bitmap, then any combination of RTE_FLOW_CONNTRACK_PKT_STATE_*
+> > flags is a valid value to match on.
+> > 
+> > This patch validate the CT state item.
+> > Fixes: aca19061e4b9 ('net/mlx5: validate connection tracking item')
+> 
+> When used locally ./devtool/checkpatches.sh reports the following:
+> 
+> 	WARNING:BAD_FIXES_TAG: Please use correct Fixes: style 'Fixes: <12+ chars of sha1> ("<title line>")' - ie: 'Fixes: aca19061e4b9 ("net/mlx5: validate connection tracking item")'
+> 	#12:
+> 	Fixes: aca19061e4b9 ('net/mlx5: validate connection tracking item')
+> 
+> but it's not reported in "ci/checkpatch" job in Patchwork.
+> This check was added in Linux 6.1: https://github.com/torvalds/linux/commit/bd17e036b495bebbf07a5fc814c868e30e1dc131
+> so it appears that checkpatch.pl version used in CI is older than that.
+> Locally, I have a version from Linux 6.16.
+> 
+> Ali, Thomas, David: What do you think about updating the version of
+> checkpatch.pl used in community CI?
+
+I've updated the checkpatch script used in the CI.
+It's the latest version from Linux minus few non-relevant checks.
 
 
-Would like to get all drivers fixed in final version.
-The issue is that several drivers are open coding FOREACH_SAFE macros
-and there is other series to address that.
