@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C219CCA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAB3CA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:33:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 708BD40670;
-	Tue, 19 Aug 2025 01:32:48 +0200 (CEST)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
- [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id C9E284065B
- for <dev@dpdk.org>; Tue, 19 Aug 2025 01:32:46 +0200 (CEST)
-Received: by mail-wr1-f54.google.com with SMTP id
- ffacd0b85a97d-3b9d41bea3cso5039397f8f.0
- for <dev@dpdk.org>; Mon, 18 Aug 2025 16:32:46 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 934184060B;
+	Tue, 19 Aug 2025 01:32:50 +0200 (CEST)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
+ [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id 3F3E7402E4
+ for <dev@dpdk.org>; Tue, 19 Aug 2025 01:32:49 +0200 (CEST)
+Received: by mail-wm1-f43.google.com with SMTP id
+ 5b1f17b1804b1-45a1b04f8b5so23411305e9.1
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 16:32:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755559966;
- x=1756164766; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755559969;
+ x=1756164769; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ZgscBR5d2uWwO3lPExFnXmZCWoH6LpUG8KTP6ATkSlo=;
- b=NhRdC+DUlXKTzJo4xeAN9xzbvYYaYkAvl6eXWIC3s4Nb0jhHaXHWur3Hm2r0NqdZIK
- uoW/pQGFlpgweXaLLgr7cAtXyHwXlC4+BAIuTTeh/1zsx9+JgqVuTngL9awMZ0ASn/4o
- vwfB6ABDrSsDlETFvZlKxCdhIiDnwMltd066zkEZqKiivKabCJpz/ZnHniMyxpYwopHt
- LMXpVP2e58CWqczD1836s7gYVRE3uWN4B/atzwINsGoCepVA9D9es6rvcTB/NIH6b30g
- 52+s8OKtu5ARQJ/piJnS8X7P7J022tVezwAZCyY2fJHyw4vPLsLglM98IcBHeg+MPpzF
- eSQQ==
+ bh=6wqNwuX6nf9Yw8inVXnG7RymGbbGLmPkUaTnb+0uI2g=;
+ b=RAxKDWZt05Zqw8wSiMzMcYorVPWRDEQkdCdsA4usXQFfWw4+FHDzbzIo4aD1A2kLIN
+ Ze0JCYw/PX2ammrSgHYwCRJAH7cfFhEunzDqSyfqZmpJXw1C6hQLwldELgexEiUacYqu
+ Ypt1HzbAqiasIQpkeHHkAzopkokOYcPXhdCgyu2D/GNbdLIy1nsIloUQ5vuTSrJ0P8rc
+ 15r/p8Nro3XTSr9yGJlsPIBfs9K9zgnvDtVdHZk1d3pld7XDQ8JwNAZ8s3Gaie0IepRs
+ zbtj4py34pr4NVS6nGjQX2g7lgo2nsvAlSClebspxUGF3YVIR7bJSKYRDi8SXd70YppS
+ drOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755559966; x=1756164766;
+ d=1e100.net; s=20230601; t=1755559969; x=1756164769;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ZgscBR5d2uWwO3lPExFnXmZCWoH6LpUG8KTP6ATkSlo=;
- b=dq0drmQBV2JOnPnpVN1EgVChfRkx85mfsXP8q34bG+cGljOgQZv4s0XOnJqO4v6XzU
- 1jq1HaCc4TJHQd0B9Dow/5lBk1loDeYsnYCnKTxi30W3By2RuGNgKq0yfyHCZLqYrRNg
- GR5NOCruZ60jXzZP/lL1/8oti3KeoZyNnfS2ffxhZ0q4gMzmj2uB2MUzKKE9EXENVjz0
- jPVZPMloFuKsaOUkk4o5Dvv66qdGQ0ucEOUakQp+XdxFr57F9iSccdcyUCzLHmnXpHtJ
- 9xx+Zqrkq/zlDUBCEOkaCeQ9QJsixtz+hMLafNBlCOVF1T2//kjLdKZOFEYF2p8ePcMo
- jJqg==
-X-Gm-Message-State: AOJu0YwZSSXnrg7gZWOoSqTWmUBJsY196hMJ71fuk6BaIypJAtcBKCxY
- kahV8DaID85yDRwHD54d0KyTN9SqzSLSuTLpubvIlVe/e3McdmubzHO97mHoPEHH1eDLj5566aS
- SYsOF
-X-Gm-Gg: ASbGncupNRYzOtjzMxjgaC3Pt6GCBisBCG8yTybm6TmFN3ijYINRFoEQ0xKvF7HAqXP
- 3ub9hbY0qXMfAtybwhOM4LUEJf8gQcxDx7AYNhOw/Xh7q13tzi/wCFaYdhaMnYa0qexlzLNfJ7u
- lTcDqEC7c+ySRj/lDiiXINDDNDzMx56wO9c4bHAoVUYn27dgMiB6K+YTQoE5mGLaCqJzI7WjD6X
- VXLLqIIXBGq7ux9dRTdG3+sd6ztfsPgj2rfsbSbQB1sEeV1G5Td44QxGEfJw26EB5FZ1G5B7UgV
- ugMabgmyCKOl7lzH44w61cX2HcA0C6UJdg8TTRKWkoexqtoTIUaovgqBtMe++Y5tHoWeIKKLio7
- 4oGt/qw1/s+4J80YodkY5SiuF959EplTvXMVMQB3cLwx5R0EMbmKGxbWdEIsQvgmK3rzXQiDX
-X-Google-Smtp-Source: AGHT+IELY7a9lrKuuiNrkOCPEUnnjjQ31nKQVZ5DKIWmoIIUHWhkbwpe1z7GP62vnLsdZM9iAYm+5w==
-X-Received: by 2002:a05:6000:178a:b0:3b9:1d32:cf4a with SMTP id
- ffacd0b85a97d-3c0ed1f4912mr279954f8f.44.1755559966305; 
- Mon, 18 Aug 2025 16:32:46 -0700 (PDT)
+ bh=6wqNwuX6nf9Yw8inVXnG7RymGbbGLmPkUaTnb+0uI2g=;
+ b=sGlgHiRsgfA0CSvcgsD4JWQ085zqGmTZOY3GXMAHzoTTWXbeMm+dssYIOdTxXeDE57
+ Rs+twEndJSSkvfd2bNyL29A/3Ah14exWMIaek22jCAw/qlHHIV9cOXn6E1IdwOucdypf
+ O6sAboULyADI5pT9152SkgkD4J5AKpZQr+XtwQorarKpl/qT3sGwqo8RVMQviYoTajpP
+ hXhsPwXWGVhzgAzARmODGNpYIEpbxctYmwqEky6p/z6pdxIvO/BOm7stHuNryxx4JNNx
+ ezqDqwPSgLpa/3S0Jk3MV0xvMwYBE2wIa9XWKyXuAY28oVmLyxAuWeYZPMoU2VGaqtMS
+ UYAw==
+X-Gm-Message-State: AOJu0YzYjCFo5f3zm5WBwxYNM451W/fQkQJakbTUWWoDS03HSXp6PcB6
+ 2LVSYbcytLTFrY/SZ6iAaKaz3ax4shJNTQBYbPyFy479jVtjwp6MB/ZY2riwTfGB4MKYUCST10L
+ IAAvs
+X-Gm-Gg: ASbGncsheWyAi/YvqpT4kM1s0gLG/A17lTiCJ3Nky4hZ9FZeT/vgh5rpGnfa9Cyk+BM
+ d/9mSc8aIur5f0rI1C6cZM2i9I080W4nQGS5Y/5d/DbYFK3/Q9ak289xYtuEyBRPNZwNydlwxNH
+ UZBN6vT3w2yY19PmPLHC1TSZFDcsMge/bFjT1L7B2VlexNLCzjEHWuL/Y64FxUhumM3e74PgTV4
+ +kxS32WOYdP+sQSug+pPB3Dbux2pDUKJoP2qe2Ka8AZlvinf6c4MkblPMw4jTAwqFOfM2updM9W
+ NSxEME2ZPkx5g78yerRMGF9zih/JYIaoUA1CmiVFV38yykJzyapScsCPfK98DbRJ5lAWQ8IWFCf
+ 1prkVGkbBFHCkcUVj1IHu475Y41slWXuotXxGeiA2FOvyehzx8cI4GjDI9PLbrgFnHWKNpt3E
+X-Google-Smtp-Source: AGHT+IGebYusBVdLydeVOzESyl0z1WAIfoNY5fwF/PM7PWW8KMiqkqCR4y5bs/QTcETvkVimXd2a8g==
+X-Received: by 2002:a05:6000:22c5:b0:3b7:970d:a565 with SMTP id
+ ffacd0b85a97d-3c0ecc3210dmr236312f8f.46.1755559968786; 
+ Mon, 18 Aug 2025 16:32:48 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.32.44
+ ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.32.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 18 Aug 2025 16:32:45 -0700 (PDT)
+ Mon, 18 Aug 2025 16:32:47 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Aman Singh <aman.deep.singh@intel.com>
-Subject: [RFC 05/47] testpmd: use bsd_queue.h
-Date: Mon, 18 Aug 2025 16:27:16 -0700
-Message-ID: <20250818233102.180207-6-stephen@networkplumber.org>
+ Reshma Pattan <reshma.pattan@intel.com>
+Subject: [RFC 06/47] dumpcap: use bsd_queue.h
+Date: Mon, 18 Aug 2025 16:27:17 -0700
+Message-ID: <20250818233102.180207-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250818233102.180207-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -81,225 +81,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Only include the definition of LIST, TAILQ, etc where needed.
+Use DPDK not system version.
+Not really a requirement but better to avoid any possible conflict.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test-pmd/5tswap.c     | 2 --
- app/test-pmd/cmdline.c    | 2 +-
- app/test-pmd/config.c     | 2 +-
- app/test-pmd/csumonly.c   | 1 -
- app/test-pmd/flowgen.c    | 1 -
- app/test-pmd/hairpin.c    | 1 -
- app/test-pmd/icmpecho.c   | 1 -
- app/test-pmd/iofwd.c      | 1 -
- app/test-pmd/macfwd.c     | 1 -
- app/test-pmd/macswap.c    | 1 -
- app/test-pmd/noisy_vnf.c  | 1 -
- app/test-pmd/parameters.c | 1 -
- app/test-pmd/rxonly.c     | 1 -
- app/test-pmd/testpmd.c    | 1 -
- app/test-pmd/testpmd.h    | 2 +-
- app/test-pmd/txonly.c     | 1 -
- 16 files changed, 3 insertions(+), 17 deletions(-)
+ app/dumpcap/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/app/test-pmd/5tswap.c b/app/test-pmd/5tswap.c
-index 8e8de2557a..2671fdcd9f 100644
---- a/app/test-pmd/5tswap.c
-+++ b/app/test-pmd/5tswap.c
-@@ -7,8 +7,6 @@
- #include <stdint.h>
- #include <unistd.h>
- #include <inttypes.h>
--
--#include <sys/queue.h>
- #include <sys/stat.h>
- 
- #include <rte_common.h>
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 7b4e27eddf..cf1bfe658b 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -13,8 +13,8 @@
+diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
+index 3d3c0dbc66..f28392d6cd 100644
+--- a/app/dumpcap/main.c
++++ b/app/dumpcap/main.c
+@@ -17,12 +17,12 @@
+ #include <stdio.h>
+ #include <stdlib.h>
  #include <string.h>
- #include <unistd.h>
- #include <inttypes.h>
 -#include <sys/queue.h>
- 
-+#include <bsd_queue.h>
- #include <rte_common.h>
- #include <rte_byteorder.h>
- #include <rte_log.h>
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index 0fda8e99f8..3b21c7e994 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -13,7 +13,7 @@
- #include <stdint.h>
- #include <inttypes.h>
- 
--#include <sys/queue.h>
-+#include <bsd_queue.h>
  #include <sys/types.h>
- #include <sys/stat.h>
- #include <fcntl.h>
-diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
-index d355dbd8c0..babf4e1881 100644
---- a/app/test-pmd/csumonly.c
-+++ b/app/test-pmd/csumonly.c
-@@ -10,7 +10,6 @@
+ #include <sys/utsname.h>
+ #include <time.h>
  #include <unistd.h>
- #include <inttypes.h>
  
--#include <sys/queue.h>
- #include <sys/stat.h>
- 
- #include <rte_common.h>
-diff --git a/app/test-pmd/flowgen.c b/app/test-pmd/flowgen.c
-index 53b5f24f11..dc50f8c94f 100644
---- a/app/test-pmd/flowgen.c
-+++ b/app/test-pmd/flowgen.c
-@@ -10,7 +10,6 @@
- #include <unistd.h>
- #include <inttypes.h>
- 
--#include <sys/queue.h>
- #include <sys/stat.h>
- 
- #include <rte_common.h>
-diff --git a/app/test-pmd/hairpin.c b/app/test-pmd/hairpin.c
-index 5e6b37974e..35d5c06047 100644
---- a/app/test-pmd/hairpin.c
-+++ b/app/test-pmd/hairpin.c
-@@ -8,7 +8,6 @@
- #include <stdbool.h>
- #include <stdint.h>
- 
--#include <sys/queue.h>
- 
- #include "testpmd.h"
- 
-diff --git a/app/test-pmd/icmpecho.c b/app/test-pmd/icmpecho.c
-index c87b7a80df..7b51513070 100644
---- a/app/test-pmd/icmpecho.c
-+++ b/app/test-pmd/icmpecho.c
-@@ -10,7 +10,6 @@
- #include <unistd.h>
- #include <inttypes.h>
- 
--#include <sys/queue.h>
- #include <sys/stat.h>
- 
- #include <rte_common.h>
-diff --git a/app/test-pmd/iofwd.c b/app/test-pmd/iofwd.c
-index ba06fae4a6..26dd787ca1 100644
---- a/app/test-pmd/iofwd.c
-+++ b/app/test-pmd/iofwd.c
-@@ -10,7 +10,6 @@
- #include <unistd.h>
- #include <inttypes.h>
- 
--#include <sys/queue.h>
- #include <sys/stat.h>
- 
- #include <rte_common.h>
-diff --git a/app/test-pmd/macfwd.c b/app/test-pmd/macfwd.c
-index d19ace7395..5ba3549270 100644
---- a/app/test-pmd/macfwd.c
-+++ b/app/test-pmd/macfwd.c
-@@ -10,7 +10,6 @@
- #include <unistd.h>
- #include <inttypes.h>
- 
--#include <sys/queue.h>
- #include <sys/stat.h>
- 
- #include <rte_common.h>
-diff --git a/app/test-pmd/macswap.c b/app/test-pmd/macswap.c
-index 57f77003fe..cc171aed4c 100644
---- a/app/test-pmd/macswap.c
-+++ b/app/test-pmd/macswap.c
-@@ -10,7 +10,6 @@
- #include <unistd.h>
- #include <inttypes.h>
- 
--#include <sys/queue.h>
- #include <sys/stat.h>
- 
- #include <rte_common.h>
-diff --git a/app/test-pmd/noisy_vnf.c b/app/test-pmd/noisy_vnf.c
-index 81d1187cfe..edf1f62b55 100644
---- a/app/test-pmd/noisy_vnf.c
-+++ b/app/test-pmd/noisy_vnf.c
-@@ -12,7 +12,6 @@
- #include <unistd.h>
- #include <inttypes.h>
- 
--#include <sys/queue.h>
- #include <sys/stat.h>
- 
- #include <rte_common.h>
-diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
-index 1132972913..c3e46f97b9 100644
---- a/app/test-pmd/parameters.c
-+++ b/app/test-pmd/parameters.c
-@@ -13,7 +13,6 @@
- #include <fcntl.h>
- #include <sys/types.h>
- 
--#include <sys/queue.h>
- #include <sys/stat.h>
- 
- #include <stdint.h>
-diff --git a/app/test-pmd/rxonly.c b/app/test-pmd/rxonly.c
-index 315f9286cd..c73282e991 100644
---- a/app/test-pmd/rxonly.c
-+++ b/app/test-pmd/rxonly.c
-@@ -10,7 +10,6 @@
- #include <unistd.h>
- #include <inttypes.h>
- 
--#include <sys/queue.h>
- #include <sys/stat.h>
- 
- #include <rte_common.h>
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index bb88555328..b8ad6b6f73 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -16,7 +16,6 @@
- #include <errno.h>
- #include <stdbool.h>
- 
--#include <sys/queue.h>
- #include <sys/stat.h>
- 
- #include <stdint.h>
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index e629edaa02..59e3620f0f 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -21,7 +21,7 @@
- #include <cmdline.h>
- #include <cmdline_parse.h>
- 
--#include <sys/queue.h>
 +#include <bsd_queue.h>
- #ifdef RTE_HAS_JANSSON
- #include <jansson.h>
- #endif
-diff --git a/app/test-pmd/txonly.c b/app/test-pmd/txonly.c
-index bdcf6ea660..2aa8aaa4c5 100644
---- a/app/test-pmd/txonly.c
-+++ b/app/test-pmd/txonly.c
-@@ -10,7 +10,6 @@
- #include <unistd.h>
- #include <inttypes.h>
- 
--#include <sys/queue.h>
- #include <sys/stat.h>
- 
- #include <rte_common.h>
+ #include <rte_alarm.h>
+ #include <rte_bitops.h>
+ #include <rte_bpf.h>
 -- 
 2.47.2
 
