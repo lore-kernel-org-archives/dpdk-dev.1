@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E49CA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F4DCA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:36:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E09CC40E17;
-	Tue, 19 Aug 2025 01:34:07 +0200 (CEST)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
- [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id 0E4D140E15
- for <dev@dpdk.org>; Tue, 19 Aug 2025 01:34:07 +0200 (CEST)
-Received: by mail-wm1-f43.google.com with SMTP id
- 5b1f17b1804b1-45a1b0c8867so38894195e9.3
- for <dev@dpdk.org>; Mon, 18 Aug 2025 16:34:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C0E3C40E1B;
+	Tue, 19 Aug 2025 01:34:10 +0200 (CEST)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
+ [209.85.221.45]) by mails.dpdk.org (Postfix) with ESMTP id 7937040E19
+ for <dev@dpdk.org>; Tue, 19 Aug 2025 01:34:09 +0200 (CEST)
+Received: by mail-wr1-f45.google.com with SMTP id
+ ffacd0b85a97d-3b9d41c1964so3196061f8f.0
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 16:34:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755560047;
- x=1756164847; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755560049;
+ x=1756164849; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=EnATGGGuuNyCq3XA29IRUndEsafBleSf8jku8O9QELU=;
- b=pEzCQBA0cd3SwaHP5uzBMlCeQkAS8FMkA42V91xhhwFWTezpu1NDrYYqek+F2J8P9j
- BP16U1tJrBljzAR3UIqk7nS4FALOoQVgaskrnUn+sDfrY9fQ1FXoPz8PePRbY+ocX77M
- F1LrqgjmEwj5rY924+daMnmM6PGN3u0ZWTm+Nf67QH7hXmgyMD+RBplhZ58ydSAHBrwt
- DCFM3xTB2mVJSsyUeVPLXuDZwednaIYAcbmrW63lfOiuSPO8bqN3NyYOkklLHGmXSBJW
- VU6ofp5ymMLOP4ngQiOzlIbzp57GdfqYrOS0j8QmSgieeWlYx++uByAiTvh8fj9ZYOjv
- 2tUA==
+ bh=cOClCLhni8ddo8l3+5iJhvsTOaG1/WbGbKTebwksevg=;
+ b=eazQ9z8Bb6wAq/cArxuU8kPeKo5EnW9WixSNg1MRsiJcL2cgXNeuxf4w8J09VXflc/
+ CgYePnZm6nGjKe96wFWf3bF2qLVmFI4luyL5NhWLr+HmU0YU2BYU9pLKQwc8/YmFOZK0
+ indXRzAXQaZd/xhMKYq/+FNS62iQe0uKUw358eOguJdLxVNbUx9AG35ORfsxg16AKKCP
+ rIs/BgZGwBvnOSM3fIgWOyai8pAI/2WMrRXPdlXAfw6Sww5UBF0NS6ojSLr01Jhb8jqx
+ llNVQgAQu/ldWnRr9afCjk8RYOCvY3fAEiykNIGUwsmA11DnVoYbY9WSdpClG8DNAxKp
+ VlDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755560047; x=1756164847;
+ d=1e100.net; s=20230601; t=1755560049; x=1756164849;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=EnATGGGuuNyCq3XA29IRUndEsafBleSf8jku8O9QELU=;
- b=t46y//XRfOMbGQ+XO3x9OU4onp6RT68+ozKILSvlklrSgWqfcjHDjvgrHoEDdMBFD6
- UE+ZgxcC5xK/Kd98u+R42QR0VcdkPQ4he+P8abxXwvhtnLV8kRKMUUmEMj/o0JCh0p4p
- xW8P/UesG/nh+uhy7culDPNLQKVNDVXjusEwVQJgqPlGsslj0FeVLIivOYs4Sz67xkv6
- 30od2DA5un0MXj99Fi90XbnQvXCK1nu8RxopQD2N05W5aXxBC/1pkJNxwM/OddQoIriQ
- c/bEsEg8GUM+bFnmovCIJPw5Kr/Vv1zSIJhnalhBC/6Y5q1pbZskHvgAnSgo/dynvS+R
- uKIQ==
-X-Gm-Message-State: AOJu0Yw2oXtPTBcYprIhk75Aq2AS37O3pByg2T5/CKICcigZdZNklEVX
- zS/v5qE6lLyWkYxhzgIajTNw4jFPCQMrMlUMy//wJFYx3w9Ljqs+1E7vEWz4oJOMEbTMN+iKLfC
- h8laN
-X-Gm-Gg: ASbGncsNrHUY0VtDzuRaULYIMZJHvZCnwfiULG0VL48PIiU4sKvNgCDvRosvvWwswlh
- 7Zxz8eWV1CTTM4qHxcWAWPRdd99ksTh4eIeSaa8i5mByr08zx/0KfkHJMooAQvxz7V296vNvc+I
- 06CQkclyc+yrRoTF4Zr8yZ/4jUwZle1j6OtReJT72t2X38BK/1x6DwucOT+9NvAUHVNl5rAlpaO
- ODMYUOkqn8Qi5cI6p62QwciRrzfxguyhBPaxHrpzk+iZLTRG8DMIkMN5+weqEMzLcOo2MmeUT2x
- C5ZdxngvsEjp1mm7eG+kTcBbGkXa34GHAOsOq+dnXESoDjEQ+pkJqCrsDjrrdQjTD8xjgmT5QzE
- xIGL4XkDfnAcqkr/FZJV56xI3K3QywusUqLYlNI5Ca48JknEGJb2Yu9W4f24l2R1d1VESgEF5
-X-Google-Smtp-Source: AGHT+IFoMEA/DGcLEipilIUsIMWHnblMGjgziQv8M1+eP3KvtyJn4weztNRbasT76Q7/llSp3NlCTQ==
-X-Received: by 2002:a05:6000:2409:b0:3b7:7936:e7fb with SMTP id
- ffacd0b85a97d-3c0ecc32100mr283418f8f.30.1755560046628; 
- Mon, 18 Aug 2025 16:34:06 -0700 (PDT)
+ bh=cOClCLhni8ddo8l3+5iJhvsTOaG1/WbGbKTebwksevg=;
+ b=XRqexR7JCTH85TdeCg5eh1weTjEr3LaL+jPC4PGXDGKxJOfBJ94/DOQ/4AQVZyellT
+ P6z31hvX27nQ1ZVDVQ2Vigi4rl7xnmFJ8Be5g8wMJEwRSmfHHk9B+9cbr9L8rsbP+m4C
+ 8C7g72haO/7TC4yY8ouKxHUoTIfygn0Luytijs4dtEXTZvP8wL5R7cZZueS4c8GLk21O
+ tS/n9HSxijaQIkGZ7vejAbwkFPmjDSE2yAEqLGRvqOAktHV4xErYIKHnF/IWroggm/8x
+ GgiNiEAXp4Clv6CKQtxOWtgmSlbWh21UTjAy7KQxd+kg+tOjAX8kthQYWqYiuQYJilXL
+ AqqQ==
+X-Gm-Message-State: AOJu0YzKMQBOG1GQAD6KCvVjC8umjucMatkQagcycM/X/UyCwJHNgRsi
+ aefxfG10lCvDyLXtbqJMf1/lEgcbCf9ooOMvEpAUpnRbAULCnZdqh4ZQMVrNhocRqk46i80KnPW
+ IzFoo
+X-Gm-Gg: ASbGncuyFSgu6Z+ndQipdFIZI9s0altfWDcJB1dqpZ0a4clfcBEjyqGUZNuP9/FYfP/
+ yhR68eXwr7P7oE22BR50sD0bHxRgdctueTt7tVqWHJLs7KoxPRBmquAcC5t+hTfTiwdpAqTDTJr
+ 4XY/QgdKle6vEtsYysDxSTB1OM9ex0jnCihOj+pcvTYNsZM6X8uJ0MKGKNXvaOXakiAEcgvqQVj
+ 6n9frOVjLHQz257dWGVqlhR6TTim3XfS37nBBW+E7J1HS8yWgd1RIhPVbdMyd9aowQjTmkng4mk
+ W+XVAj2Kx0vZ8FgkA/NNeL8S5tGG0w2eb4ORlZ0o/yd0QvrJnMw8WqXV0xuZ0zdj72gbFJV1EG4
+ t5X1YNUYECfUbANH0o/nrh7a/s0+BBM91nI6q5EC/krCFbH5RFDB7Lc4ENNYY/wWuSY8t5Pby
+X-Google-Smtp-Source: AGHT+IG6XFsr6CqgtUah6gxcxC65yv8E5o/HW8tJolT1RnVmuWOdhAWfFV+t8zdYeiklcJiHzSrNTQ==
+X-Received: by 2002:a05:6000:420f:b0:3b7:8154:aa36 with SMTP id
+ ffacd0b85a97d-3c0ea1e2c15mr313232f8f.7.1755560049115; 
+ Mon, 18 Aug 2025 16:34:09 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.34.04
+ ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.34.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 18 Aug 2025 16:34:06 -0700 (PDT)
+ Mon, 18 Aug 2025 16:34:08 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Christian Koue Muf <ckm@napatech.com>,
- Serhii Iliushyk <sil-plv@napatech.com>
-Subject: [RFC 36/47] net/ntnic: replace use of sys/queue.h
-Date: Mon, 18 Aug 2025 16:27:47 -0700
-Message-ID: <20250818233102.180207-37-stephen@networkplumber.org>
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [RFC 37/47] net/sfc: replace use of sys/queue.h
+Date: Mon, 18 Aug 2025 16:27:48 -0700
+Message-ID: <20250818233102.180207-38-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250818233102.180207-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -86,21 +85,35 @@ Replace use of system sys/queue.h with DPDK bsd_queue.h
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/ntnic/ntnic_ethdev.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/sfc/sfc_dp.c | 2 +-
+ drivers/net/sfc/sfc_dp.h | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
-index 79ef9e7e7c..dac1cde891 100644
---- a/drivers/net/ntnic/ntnic_ethdev.c
-+++ b/drivers/net/ntnic/ntnic_ethdev.c
-@@ -16,7 +16,6 @@
- #include <ethdev_pci.h>
- #include <rte_kvargs.h>
+diff --git a/drivers/net/sfc/sfc_dp.c b/drivers/net/sfc/sfc_dp.c
+index 7e2a20e4dc..0dbdc5d6ff 100644
+--- a/drivers/net/sfc/sfc_dp.c
++++ b/drivers/net/sfc/sfc_dp.c
+@@ -7,7 +7,7 @@
+  * for Solarflare) and Solarflare Communications, Inc.
+  */
  
 -#include <sys/queue.h>
++#include <bsd_queue.h>
+ #include <stdalign.h>
+ #include <string.h>
+ #include <errno.h>
+diff --git a/drivers/net/sfc/sfc_dp.h b/drivers/net/sfc/sfc_dp.h
+index 545f0f32bf..6f61b20a0f 100644
+--- a/drivers/net/sfc/sfc_dp.h
++++ b/drivers/net/sfc/sfc_dp.h
+@@ -11,7 +11,6 @@
+ #define _SFC_DP_H
  
- #include "rte_spinlock.h"
- #include "ntlog.h"
+ #include <stdbool.h>
+-#include <sys/queue.h>
+ 
+ #include <rte_pci.h>
+ 
 -- 
 2.47.2
 
