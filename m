@@ -2,167 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4DACA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 16:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 471B2CA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 16:51:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44A4040267;
-	Mon, 18 Aug 2025 18:36:33 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 5F9D540262
- for <dev@dpdk.org>; Mon, 18 Aug 2025 18:36:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1755534991; x=1787070991;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=DBwYa6vgsX5Y4+IalDCnODiWF4ljPMnQQxZsKAlJHCc=;
- b=lJkvZk9MN9+Uhd0rxOgQ/3ODHraoP8xB75qA+Euudsu3amfctfVsI2SG
- msY32gyBVYyzW2FYyqtd1c2OBPsAnMSk690JMFX2S1mM7VbtfIP1OaUFx
- MmDiAIcBCHrETbYzXA356pCy2su5vKx6+oFIHHTQRcGeCyzILkP+K65h3
- S7sWCCtUOjgMciZ1pOODRYFRWuzd0pAh8DxeiL5ne+mftTaLrjuKRgc/H
- 92jkwWdyzs5lmNNr3o0bNOXXeqxiJIpwkt7Hug8zIlJ8Lm4NNHGQmiBDm
- +/jJ/OnMWeP4s8cQFIRt/QyAdocCJvwiH64JVPArj1y+QIXmNgsEWf0Vh Q==;
-X-CSE-ConnectionGUID: YzAPn+JBS32VodTA8IG5Zg==
-X-CSE-MsgGUID: Lhd41bhbQNWje4UdLueqHg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="61600788"
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; d="scan'208";a="61600788"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Aug 2025 09:36:30 -0700
-X-CSE-ConnectionGUID: d44RLpWMTAOtRsAnL7mWxA==
-X-CSE-MsgGUID: EdG9NzCiTJasbNcP9oVGMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; d="scan'208";a="191301788"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Aug 2025 09:36:30 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 18 Aug 2025 09:36:29 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Mon, 18 Aug 2025 09:36:29 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.88) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 18 Aug 2025 09:36:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SclgEenomeKsNQ/mB21rTe2sPDMqtaoy4QvCKy9vJCMWJwXiLB83nDbMfuTtfk8QkshrkMR9fNFb+eTPT0CwOfTRzK+GMHkFsB90LGUP8DI+AxXr18uEeLqD0gRMT+XDmDXnv/3oy1v/ouHwMVg525n0/vJpqvDAeaQq7di+onA4IAbPh4Lq1h8XLNX3bkfci/C9NMo34OcJnP6ZlzhtF2f0H6PkchosxzAmeoka1aujlb4Nylab4l0BYQYNrtdFv8UfOy3dwUXjPCIWSmUYpTBKPd+0UuzICtOqsCGIWv3jzhbShqDvg2g064VyKYTovZpccQrFNDDue4fj9D3jwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U+Jfq7yMkyVi8UjipniolNRWrPQw8L2BBPVdTZJEYNI=;
- b=v2atYWOTzlnFt2sc+GjRGzVieJ5fB9vdnidY325QdeZ3rvbd/6wLEfutiJ2V+b5RX95ngdJ808ZdXa1dVcwkKkAq49ZdpFWnNLSGTgpTKyKstasIwPooG+vqHlvrHqdCs0/g9a3dClt5LN2WTRZk5QLy1+RWNTH3ynQsFlQDoN2XpFIWm04kOk6ZFTY0Zg1dsQX1uYBZZyRaC+rhvCpYDy1lhN2pF1MsObZSHA0ylEALh1eKOsmy1z9vgrU2dmjUXLMkOl6ryQNHhoin0Y1f5H1t90/2b54Rl/OzbXTOLUl+cHPSCecESQsM4z/N0KmREVgUckUTLNeKKXU3q+iYRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DS0PR11MB7411.namprd11.prod.outlook.com (2603:10b6:8:150::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.22; Mon, 18 Aug
- 2025 16:36:26 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9031.023; Mon, 18 Aug 2025
- 16:36:26 +0000
-Date: Mon, 18 Aug 2025 17:36:21 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: <dev@dpdk.org>, Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Chengwen Feng <fengchengwen@huawei.com>, Morten =?iso-8859-1?Q?Br=F8rup?=
- <mb@smartsharesystems.com>
-Subject: Re: [PATCH v4 9/9] config: enable comma warnings
-Message-ID: <aKNWhb3YWogF4iRg@bricha3-mobl1.ger.corp.intel.com>
-References: <20250312232739.228295-1-stephen@networkplumber.org>
- <20250818161815.23611-1-stephen@networkplumber.org>
- <20250818161815.23611-10-stephen@networkplumber.org>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250818161815.23611-10-stephen@networkplumber.org>
-X-ClientProxiedBy: DBBPR09CA0033.eurprd09.prod.outlook.com
- (2603:10a6:10:d4::21) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 9687F40267;
+	Mon, 18 Aug 2025 18:51:27 +0200 (CEST)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com
+ [209.85.222.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 6ABE140262
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 18:51:25 +0200 (CEST)
+Received: by mail-qk1-f172.google.com with SMTP id
+ af79cd13be357-7e87067b15aso538001685a.3
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 09:51:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1755535885; x=1756140685; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=gaKNDeSEkbUVovacyYiO/AjQf6IAVMm5NUCQN5KBbJo=;
+ b=WMCc/myAYW9Iq4uiKcWZrJwAsfrp0iyndGqmOZ3/d8d/ud862E9a/nXtRZ3AcM2wgL
+ Q3sa0RYRSOGvwtMIlR6fcPUq4cb9Jbk4xFB7fkowPCAU4sJgxLtdu0Le+0TP6K8llXB+
+ wiXUngslWFl8pq7NNoSDvGueq1bg4uF6qbqJI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1755535885; x=1756140685;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=gaKNDeSEkbUVovacyYiO/AjQf6IAVMm5NUCQN5KBbJo=;
+ b=nQC/srtc6P541dnmbCDKF89gxzKV+hzdNICOvKV4cN4MQR8W4TwUbUXUIg2+CZ+hxq
+ KKxTJRNYH2vTa1+yE2DlFlCGpzTKvgd50ISuBo7SOUs7a8o977NtvqEL0N01ymTLiSoD
+ QrSVMQB/uDxxmnlfe88KHE9towWcLZdt2hgVgy4IKqLVH1v8y6bF8kLEMmdUdb8I5JiQ
+ Sjofr9M026OXHHZUyRswE74c1OXikIqe57Fg+i8kskmf/Dh5e4F3xD0CphLFjbhljKwq
+ +3gu+hZ/CpvakIXT0Etlhps4M5/1bGOlC7MTye0bfi9GBAqi45xLgoA0B2d04z8dkL3S
+ PrBg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWQ46qoqvLVazQQ2ZOxjHxyq5UIaELBLgElVMk35nDILZU7ZIfUxFUULsh+F8goxtFD4oU=@dpdk.org
+X-Gm-Message-State: AOJu0Yzd5CF85i0VzGojyUEl0jmiZO4exNBh9m6aqhDooeV+ilQi5CAp
+ PtBtRYnQnwQVGjHtWtzhCMwoHCT9RVAZTX4j7klAtzoS/TyjRtHfUfMZfAYEXA4DhbpZYDGcomS
+ ZW3F6
+X-Gm-Gg: ASbGncvF/BB5B3JMviNPcig/eSKOjR1VZ6HeV8UcR7D3XX4YcaVk+1H9bf0MZeHLwEv
+ mLyoWeYfLlpvAoxDn4XZUHIwMJ6vEvXxmdbPKClPKiAdtW5UQWjn93leTWK+ZZTJ104rfkJrksW
+ WJWTNcVmLiBRRJN6Q+8heuC+QP8xPLGFxkaGFhc26EiWRy0bIy/QhGQOUHS5+JC1Ujz1pbX0kv0
+ WJEJwf7U72AHK7YwX42f8uk4Luqa3qa77ratJb/Q6P0lPC55TrtVGOCfdu/0XQQf98/dfTnx9Ej
+ iQtg+D60iAThTHRmURmqUqBpYhtUe3Ql2LndgEUcTW1dX6/9f1E6oJgTfosqDsndifXQujx+baK
+ 3lbjsCJseX9C134GzH6jYU3WaNOzvlgH4jNw=
+X-Google-Smtp-Source: AGHT+IE39czm2hfkGEnQxi95YcKnviAk1bPjX7r5G/o63uPeqb8H+B+WEOo3z0PYv3V/lNi6Vr1QoQ==
+X-Received: by 2002:a05:620a:1a8d:b0:7e6:9753:db16 with SMTP id
+ af79cd13be357-7e87df878bbmr1732439985a.14.1755535884070; 
+ Mon, 18 Aug 2025 09:51:24 -0700 (PDT)
+Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:9fe3:eb14:f850:6555])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-70ba90bcc80sm55450156d6.32.2025.08.18.09.51.22
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 18 Aug 2025 09:51:23 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: luca.vizzarro@arm.com
+Cc: abailey@iol.unh.edu, dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu
+Subject: [PATCH v3] dts: add missing type hints to method signatures
+Date: Mon, 18 Aug 2025 12:50:54 -0400
+Message-ID: <20250818165054.447127-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250806162900.273571-1-abailey@iol.unh.edu>
+References: <20250806162900.273571-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS0PR11MB7411:EE_
-X-MS-Office365-Filtering-Correlation-Id: a57f2a00-343e-4888-a725-08ddde755ff5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?kpeUi2rAmQzj8I/XdkMbKfctLG44ebBz/lFN7xx1jEcccR5GU4Vg7vIAjY?=
- =?iso-8859-1?Q?AgSM7uFidcphpRxZnJYQ9x+Nx0Njq33Jx9btAeSstHVhLbkjtX8sdJOsjt?=
- =?iso-8859-1?Q?q449kIp643XgvjiS0UdwUWFqHFmCBg7eIQPXd2+DJS5DVTbTeHFPdJvHgm?=
- =?iso-8859-1?Q?/QbjN+VjgxbFbvVh3fhh/MgTwRsQ25ccu9f/Ki5kFjN9OqYuKeQii4+bBf?=
- =?iso-8859-1?Q?BtMovhkBPey4odzcLlP5Eyy1eBXfNohikJml8zOWH94+DITKitf5IpSx+E?=
- =?iso-8859-1?Q?S/O5+4ODhH5XDvbOF8oEB0OwfKdoaUelxJvNkns9X9puGWE+nXBtSLyLCI?=
- =?iso-8859-1?Q?rJUig7d7A5vAL44lSQaoOeRDWt+1LN26tjO8mgwCdXjU/2v3WYyz4FtHQ/?=
- =?iso-8859-1?Q?YRNz8dsQip0dkmMiiOCblENXiqLBF/twfwiRmphReMoofaKNDQ/Qdm0Ckv?=
- =?iso-8859-1?Q?9K8+lBVfKMeomUFFuJ7oqa9fwxao5S08HHX+FmYbsQQUHtlmE+oIBhX7lx?=
- =?iso-8859-1?Q?rG38xaUpGDTvad6ku74a0jsKAVLVIZwPjQ3R4whjSl5YJbTkOjvU7UuAdc?=
- =?iso-8859-1?Q?KWQlVS97Cn0/xG6g5K0+u4QADttpKRoBqY0JAQ5M+QZFxGD6TBLb1djicC?=
- =?iso-8859-1?Q?FKKf5tnZCXNt8c/0NhwU2oULJf0qpVxqlwotMs+UfRHtKMdY8U0mLgDS39?=
- =?iso-8859-1?Q?erfTsZ+oTe+7tRId7BlbKd+1beaMOlXs1TOpPVJBQEW0lwvxGxb2TxNCWR?=
- =?iso-8859-1?Q?+o4DaQFWyEkhBGZhpnqoiNrh63Sm3+SDCX9GSPQP5tPbIJf0eZV1sFWW64?=
- =?iso-8859-1?Q?9nGynYSCnagCORe5KG9FesvlaMxzEi2qK9gReMzz6VCYr0gy87JK62quy6?=
- =?iso-8859-1?Q?/DdMyDMqZ1KPbquXymCTPcZYevNhRECMG4Gm3m3PBqMb8M6HXR80mSNJXh?=
- =?iso-8859-1?Q?mfPSBU/IaJpk4HA76Z6jvR9LSJnw89RjUuLTmlOv3sy/SBYkRLRa11QM1y?=
- =?iso-8859-1?Q?/I50ejhJSS2WzxeYAou+wLo5Spf19wJfvmxIc+kKzyNYapbvpA0LgLat4N?=
- =?iso-8859-1?Q?9nbInsBjAtJ/hDIHbT0jy0lgT6R3cU4M9XEP3zztwGJ6DYSTCDKr7phGi9?=
- =?iso-8859-1?Q?k1qlSlhyrieY56Yl2WagaI0l4oHT3hKPRUB4YztRKFeMZZl6BYS763xPW1?=
- =?iso-8859-1?Q?o7knawMvF8ec+I8hEI7TCg9rZ4+SMdT8Q4CzOrvXX01YZ251huQP2C7l9M?=
- =?iso-8859-1?Q?gY60wfLSX3qwSBqQ0zsVQhsrC/6ht9xQjPjIs2tAgjE/b4srUsttT9i4Hp?=
- =?iso-8859-1?Q?YfYt20WKsciU8mnkDktfh3Paqg4LvndFcyuC/gprIO85W+ZZWsM+7U6rkI?=
- =?iso-8859-1?Q?34RRat1Ki0zgpKzp+TAO69fgpSxirEl0ed7Yq6mGEWiGnTTmx663WVLnW7?=
- =?iso-8859-1?Q?5woRyUtsMhi+kU9t9Whc4ma/3eKuuO9In/Ijg6ZDzKUHBafj3PvU+J4IO1?=
- =?iso-8859-1?Q?U=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(7053199007); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?6nbZ/7wYjtw4L0ZzYcOcxDrpP15N+tYnCL6CYulNla7Rc5oSHGzxPDDK42?=
- =?iso-8859-1?Q?xizp8N3bGpx4t4rfUrgtBdyrpFvfolFaz/hfwh+U0HwKVq28EyFVdUsjzQ?=
- =?iso-8859-1?Q?505ooXK2+zQ8z9MHfegTnx5kKCXrNSKaVQmMSTEmPuJGogVJ/x1onl4V3Q?=
- =?iso-8859-1?Q?EJQFDfc7IDFdcX40YeCXI1LopvyLdMHaS7MQ8fE7zGWLmOtku4YCChMRcN?=
- =?iso-8859-1?Q?iey7bVkfB8vV/yTMCBHLXqlNHHY0D99CTitNW8EX1MkealAYZ0zmZsREGC?=
- =?iso-8859-1?Q?Z6io+iUBkvfYDXkCqpuoWWiRxAfTCgBCM8Vbb2mCSz66L+4D5IFDVt9B1s?=
- =?iso-8859-1?Q?4uxTT/BgRb6YUTpqJoVCYr2EOop0B8Jh0PNV14ntzJiCeOPyUEw1MvsfTZ?=
- =?iso-8859-1?Q?MiM8I6hjk9RvD0c+qerjhETB2mnTBkCt9oEixtvWwAblwsu6WiudXjgTIw?=
- =?iso-8859-1?Q?Vs/3ArpHhTtMfXM2XdstiIujcPlsoZc5MsKI3YSsNXkSo3/UVFE61Mo9fy?=
- =?iso-8859-1?Q?L7uufGMIoNq11+mFhmNI28CKTOTC8Li75yUd5XmGfPafKCydZbGil65sqN?=
- =?iso-8859-1?Q?TaGwEbcGtUE5Ilt+wx2+Emc0P2UuwjP5eVGgxGUYRDgYnb/TLu1eRLS0+l?=
- =?iso-8859-1?Q?6H2C22hxNNuQNSZ6jFroV4PrufkwTukcC6bTwbcr4qCXOsj5FvMjqt0Nj2?=
- =?iso-8859-1?Q?/ISsbxZoVj4YZIhlgq2K1If+5YAXoKGNLsxG3fK1OZFS7LrGEVtCoZqdxF?=
- =?iso-8859-1?Q?47ywIC9cXt1EWorjc0ajZi755ZVJIdUuPr2Upp4FHFYh25PJgrWOD5gyTq?=
- =?iso-8859-1?Q?kb1oYjd4Duuo0FyF/1h6SkJeafY4MyDh5EeULU9b3tut6LYiCt93TXprsn?=
- =?iso-8859-1?Q?Y5Mmv4PgpkKXT1+WDuJRa0Y520D8DSWTu2KfdPf87Us8JyNsOHzfKz2cfg?=
- =?iso-8859-1?Q?U6xTWMOske5uGi5CSyGoc5cXVgWOJxSMDd7zCmVBgY40dc191kzQlsyIXn?=
- =?iso-8859-1?Q?LodZUXZJLZracoYVBpEoalSWLsh+SIjyQEL3v1nIeGazwB47P+X43rwXW6?=
- =?iso-8859-1?Q?y+d6plH2/jbwpUao9JgtrcH/b4xyvnRMX0DyZZMlfRrTRhCEwaydFXvbz1?=
- =?iso-8859-1?Q?kLteDnZJCpJMlpoxOHRyywSvqrPzVojUg+gpuPZwONHNoVC3znSF26V++v?=
- =?iso-8859-1?Q?rlOunBRpAk+tqzi+MJZbNMgaggW/Of0Lp4CFjpmNHEOJCtVQUoc3C8/TS1?=
- =?iso-8859-1?Q?+uTevZ2VoLnUWir4+yIceNcvViaWA/HtkvjivQL8wQeH4w/6dwBBCTjAYU?=
- =?iso-8859-1?Q?2wBAA72R993nbAiUbi5f4tqNBVGOBl2h6JCWqSONDbIO+3CJc/78xiIJvM?=
- =?iso-8859-1?Q?CG+/A40z8Z8ezNls3hCltqir2VrSYMquM4BwAhCp+/bMQi5JiblREuUEmt?=
- =?iso-8859-1?Q?NiAPSXHaco2YpiAIkc1kAyMsM3RG++hd22q7lTKGqr8arkc4fnZbA4gmf6?=
- =?iso-8859-1?Q?kKSfzPIlJrJ62ayR4CgKaS7waduHHXeelv2aSZ1taN4hIxYe1SisVdBlTG?=
- =?iso-8859-1?Q?SSecjXMFzizV/87R8/4S5qRu37Aw8ISlk29UrsZr3FPczEF7T/wHDjOesG?=
- =?iso-8859-1?Q?1yuRxy1kgtQw8eP8KWH5BI5BcptFm2bcL/APDjEoDStQK+BFfGxP0tNw?=
- =?iso-8859-1?Q?=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a57f2a00-343e-4888-a725-08ddde755ff5
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2025 16:36:26.1638 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cWVfjUnLT/x9yPw+TzQKPQVsDXdj7oWH6HwWi4UlVGJpmqKrDgwSVsHMNWFlrm647eE4mfWVC2oFknF7jQAhA9fvm0uAKaEh/bBDi58UH2w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7411
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -176,53 +79,1039 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Aug 18, 2025 at 09:18:14AM -0700, Stephen Hemminger wrote:
-> Clang (3.9 or later) has a -Wcomma that emits warnings for questionable
-> uses of the comma operator.
-> 
-> Don't enable it for drivers since many drivers still use
-> comma operator unnecessarily.
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-> Acked-by: Chengwen Feng <fengchengwen@huawei.com>
-> Acked-by: Morten Brørup <mb@smartsharesystems.com>
-> ---
->  config/meson.build  | 1 +
->  drivers/meson.build | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/config/meson.build b/config/meson.build
-> index f31fef216c..d9ff0e31c0 100644
-> --- a/config/meson.build
-> +++ b/config/meson.build
-> @@ -313,6 +313,7 @@ endif
->  global_cflags = [
->          # additional warnings in alphabetical order
->          '-Wcast-qual',
-> +        '-Wcomma',
->          '-Wdeprecated',
->          '-Wformat',
->          '-Wformat-nonliteral',
-> diff --git a/drivers/meson.build b/drivers/meson.build
-> index b62880db02..4c08a1dd9d 100644
-> --- a/drivers/meson.build
-> +++ b/drivers/meson.build
-> @@ -59,7 +59,7 @@ default_cflags = machine_args
->  default_cflags += ['-DALLOW_EXPERIMENTAL_API']
->  default_cflags += ['-DALLOW_INTERNAL_API']
->  
-> -warning_disable_cflags = ['-Wno-format-truncation', '-Wno-address-of-packed-member']
-> +warning_disable_cflags = ['-Wno-format-truncation', '-Wno-address-of-packed-member', '-Wno-comma']
+Mypy does not check functions and methods that are not entirely type
+hinted. This prevents full checks, so they have been added where missing.
+Full checks revealed some typing errors, pattern matching was applied
+where appropriate to ensure these types were handled properly.
+Additionally, the linter raised an error "unable to assign to a method"
+that occurred within a decorator trying to manipulate the str method of
+a given class. This was changed to use the set_attr function to pass the
+linter.
 
-Since this patchset has already fixed some drivers, are we at a point where
-we can just disable this warning on a driver-by-driver basis rather than
-globally? That makes it easier to spot where the issues are and easier
-allows incremental improvement.
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ .mailmap                                      |  1 +
+ dts/framework/context.py                      | 10 +++++---
+ dts/framework/exception.py                    |  8 +++---
+ dts/framework/logger.py                       |  6 ++---
+ dts/framework/params/__init__.py              |  9 ++++---
+ dts/framework/remote_session/dpdk.py          | 12 ++++-----
+ dts/framework/remote_session/dpdk_shell.py    |  9 +++++--
+ .../interactive_remote_session.py             |  2 +-
+ .../remote_session/interactive_shell.py       |  8 +++---
+ dts/framework/remote_session/python_shell.py  |  2 +-
+ .../remote_session/remote_session.py          |  6 ++---
+ dts/framework/remote_session/shell_pool.py    | 12 ++++-----
+ dts/framework/remote_session/testpmd_shell.py | 25 +++++++++++++------
+ dts/framework/runner.py                       |  2 +-
+ dts/framework/settings.py                     | 16 +++++++-----
+ dts/framework/test_result.py                  |  4 +--
+ dts/framework/test_run.py                     | 14 +++++------
+ dts/framework/test_suite.py                   |  4 +--
+ dts/framework/testbed_model/capability.py     | 10 ++++----
+ dts/framework/testbed_model/cpu.py            |  6 ++---
+ dts/framework/testbed_model/node.py           |  2 +-
+ dts/framework/testbed_model/os_session.py     |  2 +-
+ dts/framework/testbed_model/port.py           |  4 +--
+ dts/framework/testbed_model/posix_session.py  |  2 +-
+ .../testbed_model/traffic_generator/scapy.py  | 14 +++++------
+ .../traffic_generator/traffic_generator.py    |  6 ++---
+ dts/framework/testbed_model/virtual_device.py |  2 +-
+ dts/framework/utils.py                        |  6 ++---
+ dts/tests/TestSuite_blocklist.py              |  8 +++---
+ dts/tests/TestSuite_dynamic_queue_conf.py     |  8 +++---
+ ...stSuite_port_restart_config_persistency.py |  2 +-
+ 31 files changed, 121 insertions(+), 101 deletions(-)
 
->  foreach cflag:warning_disable_cflags
->      if cc.has_argument(cflag)
->          default_cflags += cflag
-> -- 
-> 2.47.2
-> 
+diff --git a/.mailmap b/.mailmap
+index 34a99f93a1..df06862d8b 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -104,6 +104,7 @@ Andre Muezerie <andremue@linux.microsoft.com> <andremue@microsoft.com>
+ Andrea Arcangeli <aarcange@redhat.com>
+ Andrea Grandi <andrea.grandi@intel.com>
+ Andre Richter <andre.o.richter@gmail.com>
++Andrew Bailey <abailey@iol.unh.edu>
+ Andrew Boyer <andrew.boyer@amd.com> <aboyer@pensando.io>
+ Andrew Harvey <agh@cisco.com>
+ Andrew Jackson <ajackson@solarflare.com>
+diff --git a/dts/framework/context.py b/dts/framework/context.py
+index 4360bc8699..f98d31d3c1 100644
+--- a/dts/framework/context.py
++++ b/dts/framework/context.py
+@@ -4,8 +4,9 @@
+ """Runtime contexts."""
+ 
+ import functools
++from collections.abc import Callable
+ from dataclasses import MISSING, dataclass, field, fields
+-from typing import TYPE_CHECKING, ParamSpec
++from typing import TYPE_CHECKING, Any, ParamSpec
+ 
+ from framework.exception import InternalError
+ from framework.remote_session.shell_pool import ShellPool
+@@ -16,6 +17,7 @@
+ 
+ if TYPE_CHECKING:
+     from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
++    from framework.testbed_model.capability import TestProtocol
+     from framework.testbed_model.traffic_generator.traffic_generator import TrafficGenerator
+ 
+ P = ParamSpec("P")
+@@ -97,12 +99,12 @@ def init_ctx(ctx: Context) -> None:
+ 
+ def filter_cores(
+     specifier: LogicalCoreCount | LogicalCoreList, ascending_cores: bool | None = None
+-):
++) -> Callable[[type["TestProtocol"]], Callable]:
+     """Decorates functions that require a temporary update to the lcore specifier."""
+ 
+-    def decorator(func):
++    def decorator(func: type["TestProtocol"]) -> Callable:
+         @functools.wraps(func)
+-        def wrapper(*args: P.args, **kwargs: P.kwargs):
++        def wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
+             local_ctx = get_ctx().local
+ 
+             old_specifier = local_ctx.lcore_filter_specifier
+diff --git a/dts/framework/exception.py b/dts/framework/exception.py
+index 47e3fac05c..84d42c7779 100644
+--- a/dts/framework/exception.py
++++ b/dts/framework/exception.py
+@@ -59,7 +59,7 @@ class SSHConnectionError(DTSError):
+     _host: str
+     _errors: list[str]
+ 
+-    def __init__(self, host: str, errors: list[str] | None = None):
++    def __init__(self, host: str, errors: list[str] | None = None) -> None:
+         """Define the meaning of the first two arguments.
+ 
+         Args:
+@@ -88,7 +88,7 @@ class _SSHTimeoutError(DTSError):
+     severity: ClassVar[ErrorSeverity] = ErrorSeverity.SSH_ERR
+     _command: str
+ 
+-    def __init__(self, command: str):
++    def __init__(self, command: str) -> None:
+         """Define the meaning of the first argument.
+ 
+         Args:
+@@ -119,7 +119,7 @@ class _SSHSessionDeadError(DTSError):
+     severity: ClassVar[ErrorSeverity] = ErrorSeverity.SSH_ERR
+     _host: str
+ 
+-    def __init__(self, host: str):
++    def __init__(self, host: str) -> None:
+         """Define the meaning of the first argument.
+ 
+         Args:
+@@ -157,7 +157,7 @@ class RemoteCommandExecutionError(DTSError):
+     _command_stderr: str
+     _command_return_code: int
+ 
+-    def __init__(self, command: str, command_stderr: str, command_return_code: int):
++    def __init__(self, command: str, command_stderr: str, command_return_code: int) -> None:
+         """Define the meaning of the first two arguments.
+ 
+         Args:
+diff --git a/dts/framework/logger.py b/dts/framework/logger.py
+index f43b442bc9..a0c81c3c47 100644
+--- a/dts/framework/logger.py
++++ b/dts/framework/logger.py
+@@ -15,7 +15,7 @@
+ import logging
+ from logging import FileHandler, StreamHandler
+ from pathlib import Path
+-from typing import ClassVar
++from typing import Any, ClassVar
+ 
+ date_fmt = "%Y/%m/%d %H:%M:%S"
+ stream_fmt = "%(asctime)s - %(stage)s - %(name)s - %(levelname)s - %(message)s"
+@@ -36,12 +36,12 @@ class DTSLogger(logging.Logger):
+     _stage: ClassVar[str] = "pre_run"
+     _extra_file_handlers: list[FileHandler] = []
+ 
+-    def __init__(self, *args, **kwargs):
++    def __init__(self, *args: Any, **kwargs: Any) -> None:
+         """Extend the constructor with extra file handlers."""
+         self._extra_file_handlers = []
+         super().__init__(*args, **kwargs)
+ 
+-    def makeRecord(self, *args, **kwargs) -> logging.LogRecord:
++    def makeRecord(self, *args: Any, **kwargs: Any) -> logging.LogRecord:
+         """Generates a record with additional stage information.
+ 
+         This is the default method for the :class:`~logging.Logger` class. We extend it
+diff --git a/dts/framework/params/__init__.py b/dts/framework/params/__init__.py
+index 1ae227d7b4..360f85fbd1 100644
+--- a/dts/framework/params/__init__.py
++++ b/dts/framework/params/__init__.py
+@@ -25,7 +25,7 @@
+ T = TypeVar("T")
+ 
+ #: Type for a function taking one argument.
+-FnPtr = Callable[[Any], Any]
++FnPtr = Callable[[T], T]
+ #: Type for a switch parameter.
+ Switch = Literal[True, None]
+ #: Type for a yes/no switch parameter.
+@@ -44,7 +44,7 @@ def _reduce_functions(funcs: Iterable[FnPtr]) -> FnPtr:
+         FnPtr: A function that calls the given functions from left to right.
+     """
+ 
+-    def reduced_fn(value):
++    def reduced_fn(value: T) -> T:
+         for fn in funcs:
+             value = fn(value)
+         return value
+@@ -75,8 +75,9 @@ class BitMask(enum.Flag):
+         will allow ``BitMask`` to render as a hexadecimal value.
+     """
+ 
+-    def _class_decorator(original_class):
+-        original_class.__str__ = _reduce_functions(funcs)
++    def _class_decorator(original_class: T) -> T:
++        setattr(original_class, "__str__", _reduce_functions(funcs))
++        # original_class.__str__ = _reduce_functions(funcs)
+         return original_class
+ 
+     return _class_decorator
+diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
+index 606d6e22fe..6e7a4c2a01 100644
+--- a/dts/framework/remote_session/dpdk.py
++++ b/dts/framework/remote_session/dpdk.py
+@@ -62,7 +62,7 @@ class DPDKBuildEnvironment:
+ 
+     compiler_version: str | None
+ 
+-    def __init__(self, config: DPDKBuildConfiguration, node: Node):
++    def __init__(self, config: DPDKBuildConfiguration, node: Node) -> None:
+         """DPDK build environment class constructor."""
+         self.config = config
+         self._node = node
+@@ -74,7 +74,7 @@ def __init__(self, config: DPDKBuildConfiguration, node: Node):
+ 
+         self.compiler_version = None
+ 
+-    def setup(self):
++    def setup(self) -> None:
+         """Set up the DPDK build on the target node.
+ 
+         DPDK setup includes setting all internals needed for the build, the copying of DPDK
+@@ -118,7 +118,7 @@ def teardown(self) -> None:
+                 )
+                 self._node.main_session.remove_remote_file(tarball_path)
+ 
+-    def _set_remote_dpdk_tree_path(self, dpdk_tree: PurePath):
++    def _set_remote_dpdk_tree_path(self, dpdk_tree: PurePath) -> None:
+         """Set the path to the remote DPDK source tree based on the provided DPDK location.
+ 
+         Verify DPDK source tree existence on the SUT node, if exists sets the
+@@ -205,7 +205,7 @@ def _prepare_and_extract_dpdk_tarball(self, remote_tarball_path: PurePath) -> No
+             strip_root_dir=True,
+         )
+ 
+-    def _set_remote_dpdk_build_dir(self, build_dir: str):
++    def _set_remote_dpdk_build_dir(self, build_dir: str) -> None:
+         """Set the `remote_dpdk_build_dir` on the SUT.
+ 
+         Check existence on the SUT node and sets the
+@@ -323,7 +323,7 @@ def __init__(
+         config: DPDKRuntimeConfiguration,
+         node: Node,
+         build_env: DPDKBuildEnvironment | None = None,
+-    ):
++    ) -> None:
+         """DPDK environment constructor.
+ 
+         Args:
+@@ -354,7 +354,7 @@ def __init__(
+         self._ports_bound_to_dpdk = False
+         self._kill_session = None
+ 
+-    def setup(self):
++    def setup(self) -> None:
+         """Set up the DPDK runtime on the target node."""
+         if self.build:
+             self.build.setup()
+diff --git a/dts/framework/remote_session/dpdk_shell.py b/dts/framework/remote_session/dpdk_shell.py
+index d4aa02f39b..18ce4e6011 100644
+--- a/dts/framework/remote_session/dpdk_shell.py
++++ b/dts/framework/remote_session/dpdk_shell.py
+@@ -78,9 +78,14 @@ def __init__(
+     def path(self) -> PurePath:
+         """Relative path to the shell executable from the build folder."""
+ 
+-    def _make_real_path(self):
++    def _make_real_path(self) -> PurePath | str:
+         """Overrides :meth:`~.interactive_shell.InteractiveShell._make_real_path`.
+ 
+         Adds the remote DPDK build directory to the path.
+         """
+-        return get_ctx().dpdk_build.remote_dpdk_build_dir.joinpath(self.path)
++        real_path = get_ctx().dpdk_build.remote_dpdk_build_dir
++        match real_path:
++            case PurePath():
++                return real_path.joinpath(self.path)
++            case _:
++                return ""
+diff --git a/dts/framework/remote_session/interactive_remote_session.py b/dts/framework/remote_session/interactive_remote_session.py
+index c8156b4345..fc42e862bc 100644
+--- a/dts/framework/remote_session/interactive_remote_session.py
++++ b/dts/framework/remote_session/interactive_remote_session.py
+@@ -109,7 +109,7 @@ def _connect(self) -> None:
+                 self._logger.debug(traceback.format_exc())
+                 self._logger.warning(e)
+                 self._logger.info(
+-                    f"Retrying interactive session connection: retry number {retry_attempt +1}"
++                    f"Retrying interactive session connection: retry number {retry_attempt + 1}"
+                 )
+             else:
+                 break
+diff --git a/dts/framework/remote_session/interactive_shell.py b/dts/framework/remote_session/interactive_shell.py
+index ba8489eafa..610d1e80c0 100644
+--- a/dts/framework/remote_session/interactive_shell.py
++++ b/dts/framework/remote_session/interactive_shell.py
+@@ -24,7 +24,7 @@
+ from abc import ABC, abstractmethod
+ from collections.abc import Callable
+ from pathlib import PurePath
+-from typing import ClassVar, Concatenate, ParamSpec, TypeAlias, TypeVar
++from typing import Any, ClassVar, Concatenate, ParamSpec, TypeAlias, TypeVar
+ 
+ from paramiko import Channel, channel
+ from typing_extensions import Self
+@@ -126,7 +126,7 @@ def __init__(
+         self._privileged = privileged
+         self._timeout = SETTINGS.timeout
+ 
+-    def _setup_ssh_channel(self):
++    def _setup_ssh_channel(self) -> None:
+         self._ssh_channel = self._node.main_session.interactive_session.session.invoke_shell()
+         self._stdin = self._ssh_channel.makefile_stdin("w")
+         self._stdout = self._ssh_channel.makefile("r")
+@@ -166,7 +166,7 @@ def start_application(self, prompt: str | None = None) -> None:
+                 break
+             except InteractiveSSHTimeoutError:
+                 self._logger.info(
+-                    f"Interactive shell failed to start (attempt {attempt+1} out of "
++                    f"Interactive shell failed to start (attempt {attempt + 1} out of "
+                     f"{self._init_attempts})"
+                 )
+         else:
+@@ -277,7 +277,7 @@ def __enter__(self) -> Self:
+         self.start_application()
+         return self
+ 
+-    def __exit__(self, *_) -> None:
++    def __exit__(self, *_: Any) -> None:
+         """Exit the context block.
+ 
+         Upon exiting a context block with this class, we want to ensure that the instance of the
+diff --git a/dts/framework/remote_session/python_shell.py b/dts/framework/remote_session/python_shell.py
+index 5b380a5c7a..5f39a244d6 100644
+--- a/dts/framework/remote_session/python_shell.py
++++ b/dts/framework/remote_session/python_shell.py
+@@ -33,6 +33,6 @@ def path(self) -> PurePath:
+         return PurePath("python3")
+ 
+     @only_active
+-    def close(self):
++    def close(self) -> None:
+         """Close Python shell."""
+         return super().close()
+diff --git a/dts/framework/remote_session/remote_session.py b/dts/framework/remote_session/remote_session.py
+index 89d4618c41..ba15b3baa3 100644
+--- a/dts/framework/remote_session/remote_session.py
++++ b/dts/framework/remote_session/remote_session.py
+@@ -57,9 +57,7 @@ def __post_init__(self, init_stdout: str, init_stderr: str) -> None:
+     def __str__(self) -> str:
+         """Format the command outputs."""
+         return (
+-            f"stdout: '{self.stdout}'\n"
+-            f"stderr: '{self.stderr}'\n"
+-            f"return_code: '{self.return_code}'"
++            f"stdout: '{self.stdout}'\nstderr: '{self.stderr}'\nreturn_code: '{self.return_code}'"
+         )
+ 
+ 
+@@ -99,7 +97,7 @@ def __init__(
+         node_config: NodeConfiguration,
+         session_name: str,
+         logger: DTSLogger,
+-    ):
++    ) -> None:
+         """Connect to the node during initialization.
+ 
+         Args:
+diff --git a/dts/framework/remote_session/shell_pool.py b/dts/framework/remote_session/shell_pool.py
+index da956950d5..710107c6cb 100644
+--- a/dts/framework/remote_session/shell_pool.py
++++ b/dts/framework/remote_session/shell_pool.py
+@@ -32,7 +32,7 @@ class ShellPool:
+     _logger: DTSLogger
+     _pools: list[set["InteractiveShell"]]
+ 
+-    def __init__(self):
++    def __init__(self) -> None:
+         """Shell pool constructor."""
+         self._logger = get_dts_logger("shell_pool")
+         self._pools = [set()]
+@@ -50,12 +50,12 @@ def _current_pool(self) -> set["InteractiveShell"]:
+         """The pool in use for the current scope."""
+         return self._pools[-1]
+ 
+-    def register_shell(self, shell: "InteractiveShell"):
++    def register_shell(self, shell: "InteractiveShell") -> None:
+         """Register a new shell to the current pool."""
+         self._logger.debug(f"Registering shell {shell} to pool level {self.pool_level}.")
+         self._current_pool.add(shell)
+ 
+-    def unregister_shell(self, shell: "InteractiveShell"):
++    def unregister_shell(self, shell: "InteractiveShell") -> None:
+         """Unregister a shell from any pool."""
+         for level, pool in enumerate(self._pools):
+             try:
+@@ -72,12 +72,12 @@ def unregister_shell(self, shell: "InteractiveShell"):
+             except KeyError:
+                 pass
+ 
+-    def start_new_pool(self):
++    def start_new_pool(self) -> None:
+         """Start a new shell pool."""
+-        self._logger.debug(f"Starting new shell pool and advancing to level {self.pool_level+1}.")
++        self._logger.debug(f"Starting new shell pool and advancing to level {self.pool_level + 1}.")
+         self._pools.append(set())
+ 
+-    def terminate_current_pool(self):
++    def terminate_current_pool(self) -> None:
+         """Terminate all the shells in the current pool, and restore the previous pool if any.
+ 
+         If any failure occurs while closing any shell, this is tolerated allowing the termination
+diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framework/remote_session/testpmd_shell.py
+index ad8cb273dc..7b981111f6 100644
+--- a/dts/framework/remote_session/testpmd_shell.py
++++ b/dts/framework/remote_session/testpmd_shell.py
+@@ -22,7 +22,16 @@
+ from enum import Flag, auto
+ from os import environ
+ from pathlib import PurePath
+-from typing import TYPE_CHECKING, Any, ClassVar, Concatenate, Literal, ParamSpec, Tuple, TypeAlias
++from typing import (
++    TYPE_CHECKING,
++    Any,
++    ClassVar,
++    Concatenate,
++    Literal,
++    ParamSpec,
++    Tuple,
++    TypeAlias,
++)
+ 
+ from framework.context import get_ctx
+ from framework.remote_session.interactive_shell import only_active
+@@ -64,7 +73,7 @@ class TestPmdDevice:
+ 
+     pci_address: str
+ 
+-    def __init__(self, pci_address_line: str):
++    def __init__(self, pci_address_line: str) -> None:
+         """Initialize the device from the testpmd output line string.
+ 
+         Args:
+@@ -90,7 +99,7 @@ class VLANOffloadFlag(Flag):
+     QINQ_STRIP = auto()
+ 
+     @classmethod
+-    def from_str_dict(cls, d):
++    def from_str_dict(cls, d: dict[str, str]) -> Self:
+         """Makes an instance from a dict containing the flag member names with an "on" value.
+ 
+         Args:
+@@ -405,7 +414,7 @@ def make_device_private_info_parser() -> ParserFn:
+             function that parses the device private info from the TestPmd port info output.
+     """
+ 
+-    def _validate(info: str):
++    def _validate(info: str) -> str | None:
+         info = info.strip()
+         if info == "none" or info.startswith("Invalid file") or info.startswith("Failed to dump"):
+             return None
+@@ -1449,7 +1458,7 @@ def requires_stopped_ports(func: TestPmdShellMethod) -> TestPmdShellMethod:
+     """
+ 
+     @functools.wraps(func)
+-    def _wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs):
++    def _wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs) -> Any:
+         if self.ports_started:
+             self._logger.debug("Ports need to be stopped to continue.")
+             self.stop_all_ports()
+@@ -1470,7 +1479,7 @@ def requires_started_ports(func: TestPmdShellMethod) -> TestPmdShellMethod:
+     """
+ 
+     @functools.wraps(func)
+-    def _wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs):
++    def _wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs) -> Any:
+         if not self.ports_started:
+             self._logger.debug("Ports need to be started to continue.")
+             self.start_all_ports()
+@@ -1492,7 +1501,7 @@ def add_remove_mtu(mtu: int = 1500) -> Callable[[TestPmdShellMethod], TestPmdShe
+ 
+     def decorator(func: TestPmdShellMethod) -> TestPmdShellMethod:
+         @functools.wraps(func)
+-        def wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs):
++        def wrapper(self: "TestPmdShell", *args: P.args, **kwargs: P.kwargs) -> Any:
+             original_mtu = self.ports[0].mtu
+             self.set_port_mtu_all(mtu=mtu, verify=False)
+             retval = func(self, *args, **kwargs)
+@@ -1644,7 +1653,7 @@ def wait_link_status_up(self, port_id: int, timeout=SETTINGS.timeout) -> bool:
+             self._logger.error(f"The link for port {port_id} did not come up in the given timeout.")
+         return "Link status: up" in port_info
+ 
+-    def set_forward_mode(self, mode: SimpleForwardingModes, verify: bool = True):
++    def set_forward_mode(self, mode: SimpleForwardingModes, verify: bool = True) -> None:
+         """Set packet forwarding mode.
+ 
+         Args:
+diff --git a/dts/framework/runner.py b/dts/framework/runner.py
+index 0a3d92b0c8..4f2c05bd2f 100644
+--- a/dts/framework/runner.py
++++ b/dts/framework/runner.py
+@@ -31,7 +31,7 @@ class DTSRunner:
+     _logger: DTSLogger
+     _result: TestRunResult
+ 
+-    def __init__(self):
++    def __init__(self) -> None:
+         """Initialize the instance with configuration, logger, result and string constants."""
+         try:
+             self._configuration = load_config(ValidationContext(settings=SETTINGS))
+diff --git a/dts/framework/settings.py b/dts/framework/settings.py
+index 3f21615223..c59b4097d4 100644
+--- a/dts/framework/settings.py
++++ b/dts/framework/settings.py
+@@ -108,7 +108,7 @@
+ from argparse import Action, ArgumentDefaultsHelpFormatter, _get_action_name
+ from dataclasses import dataclass, field
+ from pathlib import Path
+-from typing import Callable
++from typing import Callable, NoReturn
+ 
+ from pydantic import ValidationError
+ 
+@@ -174,7 +174,7 @@ def _make_env_var_name(action: Action, env_var_name: str | None) -> str:
+     return env_var_name
+ 
+ 
+-def _get_env_var_name(action: Action) -> str | None:
++def _get_env_var_name(action: Action | None) -> str | None:
+     """Get the environment variable name of the given action."""
+     return getattr(action, _ENV_VAR_NAME_ATTR, None)
+ 
+@@ -237,13 +237,17 @@ def find_action(
+ 
+         return action
+ 
+-    def error(self, message):
++    def error(self, message) -> NoReturn:
+         """Augments :meth:`~argparse.ArgumentParser.error` with environment variable awareness."""
+         for action in self._actions:
+             if _is_from_env(action):
+                 action_name = _get_action_name(action)
+                 env_var_name = _get_env_var_name(action)
+-                env_var_value = os.environ.get(env_var_name)
++                match env_var_name:
++                    case None:
++                        env_var_value = None
++                    case nonEmpty:
++                        env_var_value = os.environ.get(nonEmpty)
+ 
+                 message = message.replace(
+                     f"argument {action_name}",
+@@ -251,13 +255,13 @@ def error(self, message):
+                 )
+ 
+         print(f"{self.prog}: error: {message}\n", file=sys.stderr)
+-        self.exit(2, "For help and usage, " "run the command with the --help flag.\n")
++        self.exit(2, "For help and usage, run the command with the --help flag.\n")
+ 
+ 
+ class _EnvVarHelpFormatter(ArgumentDefaultsHelpFormatter):
+     """Custom formatter to add environment variables to the help page."""
+ 
+-    def _get_help_string(self, action):
++    def _get_help_string(self, action: Action) -> str | None:
+         """Overrides :meth:`ArgumentDefaultsHelpFormatter._get_help_string`."""
+         help = super()._get_help_string(action)
+ 
+diff --git a/dts/framework/test_result.py b/dts/framework/test_result.py
+index 8ce6cc8fbf..78fd9e5ea4 100644
+--- a/dts/framework/test_result.py
++++ b/dts/framework/test_result.py
+@@ -77,13 +77,13 @@ class ResultLeaf(BaseModel):
+     result: Result
+     reason: DTSError | None = None
+ 
+-    def __lt__(self, other):
++    def __lt__(self, other: object) -> bool:
+         """Compare another instance of the same class by :attr:`~ResultLeaf.result`."""
+         if isinstance(other, ResultLeaf):
+             return self.result < other.result
+         return True
+ 
+-    def __eq__(self, other):
++    def __eq__(self, other: object) -> bool:
+         """Compare equality with compatible classes by :attr:`~ResultLeaf.result`."""
+         match other:
+             case ResultLeaf(result=result):
+diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
+index 4355aeeb4b..4db7de2487 100644
+--- a/dts/framework/test_run.py
++++ b/dts/framework/test_run.py
+@@ -162,7 +162,7 @@ class TestRun:
+     config: TestRunConfiguration
+     logger: DTSLogger
+ 
+-    state: "State"
++    state: "State" | None
+     ctx: Context
+     result: TestRunResult
+     selected_tests: list[TestScenario]
+@@ -178,7 +178,7 @@ def __init__(
+         tests_config: dict[str, BaseConfig],
+         nodes: Iterable[Node],
+         result: TestRunResult,
+-    ):
++    ) -> None:
+         """Test run constructor.
+ 
+         Args:
+@@ -226,7 +226,7 @@ def required_capabilities(self) -> set[Capability]:
+ 
+         return caps
+ 
+-    def spin(self):
++    def spin(self) -> None:
+         """Spin the internal state machine that executes the test run."""
+         self.logger.info(f"Running test run with SUT '{self.ctx.sut_node.name}'.")
+ 
+@@ -235,7 +235,7 @@ def spin(self):
+                 self.state.before()
+                 next_state = self.state.next()
+             except (KeyboardInterrupt, Exception) as e:
+-                next_state = self.state.handle_exception(e)
++                next_state = self.state.handle_exception(Exception(e))
+             finally:
+                 self.state.after()
+             if next_state is not None:
+@@ -258,11 +258,11 @@ class State(Protocol):
+     test_run: TestRun
+     result: TestRunResult | ResultNode
+ 
+-    def before(self):
++    def before(self) -> None:
+         """Hook before the state is processed."""
+         self.logger.set_stage(self.logger_name, self.log_file_path)
+ 
+-    def after(self):
++    def after(self) -> None:
+         """Hook after the state is processed."""
+         return
+ 
+@@ -577,7 +577,7 @@ def on_error(self, ex: Exception) -> State | None:
+         self.result.mark_step_as("teardown", Result.ERROR, ex)
+         return TestRunExecution(self.test_run, self.test_run.result)
+ 
+-    def after(self):
++    def after(self) -> None:
+         """Hook after state is processed."""
+         if (
+             self.result.get_overall_result() in [Result.FAIL, Result.ERROR]
+diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py
+index d4e06a567a..5ee5a039d7 100644
+--- a/dts/framework/test_suite.py
++++ b/dts/framework/test_suite.py
+@@ -92,7 +92,7 @@ class TestSuite(TestProtocol):
+     _tg_ip_address_ingress: Union[IPv4Interface, IPv6Interface]
+     _tg_ip_address_egress: Union[IPv4Interface, IPv6Interface]
+ 
+-    def __init__(self, config: BaseConfig):
++    def __init__(self, config: BaseConfig) -> None:
+         """Initialize the test suite testbed information and basic configuration.
+ 
+         Args:
+@@ -681,7 +681,7 @@ def class_obj(self) -> type[TestSuite]:
+             InternalError: If the test suite class is missing from the module.
+         """
+ 
+-        def is_test_suite(obj) -> bool:
++        def is_test_suite(obj: type) -> bool:
+             """Check whether `obj` is a :class:`TestSuite`.
+ 
+             The `obj` is a subclass of :class:`TestSuite`, but not :class:`TestSuite` itself.
+diff --git a/dts/framework/testbed_model/capability.py b/dts/framework/testbed_model/capability.py
+index f895b22bb3..87be7e6b93 100644
+--- a/dts/framework/testbed_model/capability.py
++++ b/dts/framework/testbed_model/capability.py
+@@ -50,7 +50,7 @@ def test_scatter_mbuf_2048(self):
+ from abc import ABC, abstractmethod
+ from collections.abc import MutableSet
+ from dataclasses import dataclass
+-from typing import TYPE_CHECKING, Callable, ClassVar, Protocol
++from typing import TYPE_CHECKING, Any, Callable, ClassVar, Protocol
+ 
+ from typing_extensions import Self
+ 
+@@ -374,7 +374,7 @@ def set_required(self, test_case_or_suite: type["TestProtocol"]) -> None:
+         else:
+             self.add_to_required(test_case_or_suite)
+ 
+-    def __eq__(self, other) -> bool:
++    def __eq__(self, other: Any) -> bool:
+         """Compare the :attr:`~TopologyCapability.topology_type`s.
+ 
+         Args:
+@@ -385,7 +385,7 @@ def __eq__(self, other) -> bool:
+         """
+         return self.topology_type == other.topology_type
+ 
+-    def __lt__(self, other) -> bool:
++    def __lt__(self, other: Any) -> bool:
+         """Compare the :attr:`~TopologyCapability.topology_type`s.
+ 
+         Args:
+@@ -396,7 +396,7 @@ def __lt__(self, other) -> bool:
+         """
+         return self.topology_type < other.topology_type
+ 
+-    def __gt__(self, other) -> bool:
++    def __gt__(self, other: Any) -> bool:
+         """Compare the :attr:`~TopologyCapability.topology_type`s.
+ 
+         Args:
+@@ -407,7 +407,7 @@ def __gt__(self, other) -> bool:
+         """
+         return other < self
+ 
+-    def __le__(self, other) -> bool:
++    def __le__(self, other: Any) -> bool:
+         """Compare the :attr:`~TopologyCapability.topology_type`s.
+ 
+         Args:
+diff --git a/dts/framework/testbed_model/cpu.py b/dts/framework/testbed_model/cpu.py
+index b8bc601c22..a9471709dd 100644
+--- a/dts/framework/testbed_model/cpu.py
++++ b/dts/framework/testbed_model/cpu.py
+@@ -80,7 +80,7 @@ class LogicalCoreList:
+     _lcore_list: list[int]
+     _lcore_str: str
+ 
+-    def __init__(self, lcore_list: list[int] | list[str] | list[LogicalCore] | str):
++    def __init__(self, lcore_list: list[int] | list[str] | list[LogicalCore] | str) -> None:
+         """Process `lcore_list`, then sort.
+ 
+         There are four supported logical core list formats::
+@@ -105,7 +105,7 @@ def __init__(self, lcore_list: list[int] | list[str] | list[LogicalCore] | str):
+ 
+         # the input lcores may not be sorted
+         self._lcore_list.sort()
+-        self._lcore_str = f'{",".join(self._get_consecutive_lcores_range(self._lcore_list))}'
++        self._lcore_str = f"{','.join(self._get_consecutive_lcores_range(self._lcore_list))}"
+ 
+     @property
+     def lcore_list(self) -> list[int]:
+@@ -169,7 +169,7 @@ def __init__(
+         lcore_list: list[LogicalCore],
+         filter_specifier: LogicalCoreCount | LogicalCoreList,
+         ascending: bool = True,
+-    ):
++    ) -> None:
+         """Filter according to the input filter specifier.
+ 
+         The input `lcore_list` is copied and sorted by physical core before filtering.
+diff --git a/dts/framework/testbed_model/node.py b/dts/framework/testbed_model/node.py
+index 35cf6f1452..4f6150f18c 100644
+--- a/dts/framework/testbed_model/node.py
++++ b/dts/framework/testbed_model/node.py
+@@ -59,7 +59,7 @@ class Node:
+     _compiler_version: str | None
+     _setup: bool
+ 
+-    def __init__(self, node_config: NodeConfiguration):
++    def __init__(self, node_config: NodeConfiguration) -> None:
+         """Connect to the node and gather info during initialization.
+ 
+         Extra gathered information:
+diff --git a/dts/framework/testbed_model/os_session.py b/dts/framework/testbed_model/os_session.py
+index b6e03aa83d..b182c3bde4 100644
+--- a/dts/framework/testbed_model/os_session.py
++++ b/dts/framework/testbed_model/os_session.py
+@@ -115,7 +115,7 @@ def __init__(
+         node_config: NodeConfiguration,
+         name: str,
+         logger: DTSLogger,
+-    ):
++    ) -> None:
+         """Initialize the OS-aware session.
+ 
+         Connect to the node right away and also create an interactive remote session.
+diff --git a/dts/framework/testbed_model/port.py b/dts/framework/testbed_model/port.py
+index fc58e2b993..2c0276971f 100644
+--- a/dts/framework/testbed_model/port.py
++++ b/dts/framework/testbed_model/port.py
+@@ -49,7 +49,7 @@ class Port:
+     config: Final[PortConfig]
+     _original_driver: str | None
+ 
+-    def __init__(self, node: "Node", config: PortConfig):
++    def __init__(self, node: "Node", config: PortConfig) -> None:
+         """Initialize the port from `node` and `config`.
+ 
+         Args:
+@@ -128,7 +128,7 @@ def bound_for_dpdk(self) -> bool:
+         """Is the port bound to the driver for DPDK?"""
+         return self.current_driver == self.config.os_driver_for_dpdk
+ 
+-    def configure_mtu(self, mtu: int):
++    def configure_mtu(self, mtu: int) -> None:
+         """Configure the port's MTU value.
+ 
+         Args:
+diff --git a/dts/framework/testbed_model/posix_session.py b/dts/framework/testbed_model/posix_session.py
+index c71bc93f0b..dec952685a 100644
+--- a/dts/framework/testbed_model/posix_session.py
++++ b/dts/framework/testbed_model/posix_session.py
+@@ -183,7 +183,7 @@ def create_remote_tarball(
+     ) -> PurePosixPath:
+         """Overrides :meth:`~.os_session.OSSession.create_remote_tarball`."""
+ 
+-        def generate_tar_exclude_args(exclude_patterns) -> str:
++        def generate_tar_exclude_args(exclude_patterns: str | list[str] | None) -> str:
+             """Generate args to exclude patterns when creating a tarball.
+ 
+             Args:
+diff --git a/dts/framework/testbed_model/traffic_generator/scapy.py b/dts/framework/testbed_model/traffic_generator/scapy.py
+index e21ba4ed96..a31807e8e4 100644
+--- a/dts/framework/testbed_model/traffic_generator/scapy.py
++++ b/dts/framework/testbed_model/traffic_generator/scapy.py
+@@ -16,7 +16,7 @@
+ from collections.abc import Callable
+ from queue import Empty, SimpleQueue
+ from threading import Event, Thread
+-from typing import ClassVar
++from typing import Any, ClassVar
+ 
+ from scapy.compat import base64_bytes
+ from scapy.data import ETHER_TYPES, IP_PROTOS
+@@ -57,7 +57,7 @@ class ScapyAsyncSniffer(PythonShell):
+ 
+     def __init__(
+         self, node: Node, recv_port: Port, name: str | None = None, privileged: bool = True
+-    ):
++    ) -> None:
+         """Sniffer constructor.
+ 
+         Args:
+@@ -189,7 +189,7 @@ def close(self) -> None:
+         self._sniffer.join()
+         super().close()
+ 
+-    def _sniff(self, recv_port: Port):
++    def _sniff(self, recv_port: Port) -> None:
+         """Sniff packets and use events and queue to communicate with the main thread.
+ 
+         Raises:
+@@ -229,7 +229,7 @@ def _sniff(self, recv_port: Port):
+         self._logger.debug("Stop sniffing.")
+         self.send_command("\x03")  # send Ctrl+C to trigger a KeyboardInterrupt in `sniff`.
+ 
+-    def _set_packet_filter(self, filter_config: PacketFilteringConfig):
++    def _set_packet_filter(self, filter_config: PacketFilteringConfig) -> None:
+         """Make and set a filtering function from `filter_config`.
+ 
+         Args:
+@@ -296,7 +296,7 @@ class also extends :class:`.capturing_traffic_generator.CapturingTrafficGenerato
+     #: Padding to add to the start of a line for python syntax compliance.
+     _python_indentation: ClassVar[str] = " " * 4
+ 
+-    def __init__(self, tg_node: Node, config: ScapyTrafficGeneratorConfig, **kwargs):
++    def __init__(self, tg_node: Node, config: ScapyTrafficGeneratorConfig, **kwargs: Any) -> None:
+         """Extend the constructor with Scapy TG specifics.
+ 
+         Initializes both the traffic generator and the interactive shell used to handle Scapy
+@@ -315,7 +315,7 @@ def __init__(self, tg_node: Node, config: ScapyTrafficGeneratorConfig, **kwargs)
+ 
+         super().__init__(tg_node=tg_node, config=config, **kwargs)
+ 
+-    def setup(self, topology: Topology):
++    def setup(self, topology: Topology) -> None:
+         """Extends :meth:`.traffic_generator.TrafficGenerator.setup`.
+ 
+         Binds the TG node ports to the kernel drivers and starts up the async sniffer.
+@@ -332,7 +332,7 @@ def setup(self, topology: Topology):
+         self._shell.send_command("from scapy.all import *")
+         self._shell.send_command("from scapy.contrib.lldp import *")
+ 
+-    def close(self):
++    def close(self) -> None:
+         """Overrides :meth:`.traffic_generator.TrafficGenerator.close`.
+ 
+         Stops the traffic generator and sniffer shells.
+diff --git a/dts/framework/testbed_model/traffic_generator/traffic_generator.py b/dts/framework/testbed_model/traffic_generator/traffic_generator.py
+index 8f53b07daf..d7e983aabd 100644
+--- a/dts/framework/testbed_model/traffic_generator/traffic_generator.py
++++ b/dts/framework/testbed_model/traffic_generator/traffic_generator.py
+@@ -34,7 +34,7 @@ class TrafficGenerator(ABC):
+     _tg_node: Node
+     _logger: DTSLogger
+ 
+-    def __init__(self, tg_node: Node, config: TrafficGeneratorConfig, **kwargs):
++    def __init__(self, tg_node: Node, config: TrafficGeneratorConfig) -> None:
+         """Initialize the traffic generator.
+ 
+         Additional keyword arguments can be passed through `kwargs` if needed for fulfilling other
+@@ -49,10 +49,10 @@ def __init__(self, tg_node: Node, config: TrafficGeneratorConfig, **kwargs):
+         self._tg_node = tg_node
+         self._logger = get_dts_logger(f"{self._tg_node.name} {self._config.type}")
+ 
+-    def setup(self, topology: Topology):
++    def setup(self, topology: Topology) -> None:
+         """Setup the traffic generator."""
+ 
+-    def teardown(self):
++    def teardown(self) -> None:
+         """Teardown the traffic generator."""
+         self.close()
+ 
+diff --git a/dts/framework/testbed_model/virtual_device.py b/dts/framework/testbed_model/virtual_device.py
+index 569d67b007..1a4794e695 100644
+--- a/dts/framework/testbed_model/virtual_device.py
++++ b/dts/framework/testbed_model/virtual_device.py
+@@ -16,7 +16,7 @@ class VirtualDevice:
+ 
+     name: str
+ 
+-    def __init__(self, name: str):
++    def __init__(self, name: str) -> None:
+         """Initialize the virtual device.
+ 
+         Args:
+diff --git a/dts/framework/utils.py b/dts/framework/utils.py
+index 0c81ab1b95..a70c9c7d95 100644
+--- a/dts/framework/utils.py
++++ b/dts/framework/utils.py
+@@ -147,14 +147,14 @@ class TarCompressionFormat(StrEnum):
+     zstd = "zst"
+ 
+     @property
+-    def extension(self):
++    def extension(self) -> str:
+         """Return the extension associated with the compression format.
+ 
+         If the compression format is 'none', the extension will be in the format 'tar'.
+         For other compression formats, the extension will be in the format
+         'tar.{compression format}'.
+         """
+-        return f"{self.value}" if self == self.none else f"{self.none.value}.{self.value}"
++        return f"{self.value}" if self == self.none else f"{type(self).none.value}.{self.value}"
+ 
+ 
+ def convert_to_list_of_string(value: Any | list[Any]) -> list[str]:
+@@ -213,7 +213,7 @@ def filter_func(tarinfo: tarfile.TarInfo) -> tarfile.TarInfo | None:
+     return target_tarball_path
+ 
+ 
+-def extract_tarball(tar_path: str | Path):
++def extract_tarball(tar_path: str | Path) -> None:
+     """Extract the contents of a tarball.
+ 
+     The tarball will be extracted in the same path as `tar_path` parent path.
+diff --git a/dts/tests/TestSuite_blocklist.py b/dts/tests/TestSuite_blocklist.py
+index ce7da1cc8f..c668bcd86c 100644
+--- a/dts/tests/TestSuite_blocklist.py
++++ b/dts/tests/TestSuite_blocklist.py
+@@ -16,7 +16,7 @@
+ class TestBlocklist(TestSuite):
+     """DPDK device blocklisting test suite."""
+ 
+-    def verify_blocklisted_ports(self, ports_to_block: list[Port]):
++    def verify_blocklisted_ports(self, ports_to_block: list[Port]) -> None:
+         """Runs testpmd with the given ports blocklisted and verifies the ports."""
+         with TestPmdShell(allowed_ports=[], blocked_ports=ports_to_block) as testpmd:
+             allowlisted_ports = {port.device_name for port in testpmd.show_port_info_all()}
+@@ -30,7 +30,7 @@ def verify_blocklisted_ports(self, ports_to_block: list[Port]):
+             self.verify(blocked, "At least one port was not blocklisted")
+ 
+     @func_test
+-    def no_blocklisted(self):
++    def no_blocklisted(self) -> None:
+         """Run testpmd with no blocklisted device.
+ 
+         Steps:
+@@ -41,7 +41,7 @@ def no_blocklisted(self):
+         self.verify_blocklisted_ports([])
+ 
+     @func_test
+-    def one_port_blocklisted(self):
++    def one_port_blocklisted(self) -> None:
+         """Run testpmd with one blocklisted port.
+ 
+         Steps:
+@@ -52,7 +52,7 @@ def one_port_blocklisted(self):
+         self.verify_blocklisted_ports(self.topology.sut_ports[:1])
+ 
+     @func_test
+-    def all_but_one_port_blocklisted(self):
++    def all_but_one_port_blocklisted(self) -> None:
+         """Run testpmd with all but one blocklisted port.
+ 
+         Steps:
+diff --git a/dts/tests/TestSuite_dynamic_queue_conf.py b/dts/tests/TestSuite_dynamic_queue_conf.py
+index f8c7dbfb71..b5077f7d06 100644
+--- a/dts/tests/TestSuite_dynamic_queue_conf.py
++++ b/dts/tests/TestSuite_dynamic_queue_conf.py
+@@ -277,24 +277,24 @@ def stop_queues(
+ 
+     @requires(NicCapability.RUNTIME_RX_QUEUE_SETUP)
+     @func_test
+-    def test_rx_queue_stop(self):
++    def test_rx_queue_stop(self) -> None:
+         """Run method for stopping queues with flag for Rx testing set to :data:`True`."""
+         self.stop_queues(True)
+ 
+     @requires(NicCapability.RUNTIME_RX_QUEUE_SETUP)
+     @func_test
+-    def test_rx_queue_configuration(self):
++    def test_rx_queue_configuration(self) -> None:
+         """Run method for configuring queues with flag for Rx testing set to :data:`True`."""
+         self.modify_ring_size(True)
+ 
+     @requires(NicCapability.RUNTIME_TX_QUEUE_SETUP)
+     @func_test
+-    def test_tx_queue_stop(self):
++    def test_tx_queue_stop(self) -> None:
+         """Run method for stopping queues with flag for Rx testing set to :data:`False`."""
+         self.stop_queues(False)
+ 
+     @requires(NicCapability.RUNTIME_TX_QUEUE_SETUP)
+     @func_test
+-    def test_tx_queue_configuration(self):
++    def test_tx_queue_configuration(self) -> None:
+         """Run method for configuring queues with flag for Rx testing set to :data:`False`."""
+         self.modify_ring_size(False)
+diff --git a/dts/tests/TestSuite_port_restart_config_persistency.py b/dts/tests/TestSuite_port_restart_config_persistency.py
+index 42ea221586..b773bdfade 100644
+--- a/dts/tests/TestSuite_port_restart_config_persistency.py
++++ b/dts/tests/TestSuite_port_restart_config_persistency.py
+@@ -21,7 +21,7 @@
+ class TestPortRestartConfigPersistency(TestSuite):
+     """Port config persistency test suite."""
+ 
+-    def restart_port_and_verify(self, id, testpmd, changed_value) -> None:
++    def restart_port_and_verify(self, id: int, testpmd: TestPmdShell, changed_value: str) -> None:
+         """Fetch port config, restart and verify persistency."""
+         testpmd.start_all_ports()
+         testpmd.wait_link_status_up(port_id=id, timeout=10)
+-- 
+2.50.1
+
