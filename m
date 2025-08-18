@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 873E3CA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3082CA0EF2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:37:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7D66B40E40;
-	Tue, 19 Aug 2025 01:34:29 +0200 (CEST)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 3A3F940B9D
- for <dev@dpdk.org>; Tue, 19 Aug 2025 01:34:28 +0200 (CEST)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-45a1b00a65fso23971315e9.0
- for <dev@dpdk.org>; Mon, 18 Aug 2025 16:34:28 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5176140696;
+	Tue, 19 Aug 2025 01:34:31 +0200 (CEST)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
+ [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id 2084440B9D
+ for <dev@dpdk.org>; Tue, 19 Aug 2025 01:34:30 +0200 (CEST)
+Received: by mail-wr1-f52.google.com with SMTP id
+ ffacd0b85a97d-3b9d41cd38dso3672643f8f.0
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 16:34:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755560068;
- x=1756164868; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755560070;
+ x=1756164870; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ktZjdMskytau1nlXtSANM1bBHwDHBOtVDH2jpdJhIwY=;
- b=W5xC+PhCIXIw7lJBfQ50mLsYeSXVnABddSnCTLfPdnDi3RxdoqZB+GuPMz6EcA8dfH
- Fe2cM3xzdiAKk9+Td2wvCCGEln2i3nw0eKJQGFpvGb/gB6eZrNdoS07anzv23ixAov2t
- s8z9EZ4wmLcHvcladeqMfG9rIu1YGyZwAmM4EiVMibhviWGb3SOEDClrE3qUfnQ4EZU8
- yK8sYfbmlC8YWVEXKNgTsYyBonpu2Q0YZq3Ua92mhpjmuRaeBtha59RdiP5iJ9HAaxFK
- fRZ0Q4SmiJK5bygEtJRoHUH9t4PFPVrtcO2OfXRw735tLhMWgA7PkiIo7wDiz86n3z4I
- 0XhA==
+ bh=N/6cvwORRx7KUvl2otsNEaP70fBEbZ6fhNv+FJZmzwQ=;
+ b=yAwQYVR78JIhPaKH/vSEVpNfLjO3/Pc1tiam58lqKWMDR9J75Os2za8xAFqxv1ZYtA
+ xf3ehFGtURJHpD0LzNzf7NVlEjIrpM3PzmyoGKsFH8KxMtFHnv9y4ntV164oywkNvncy
+ flCNYOySis9k9Eg2Lf1zm7o9GF4X99cRYO3gRpmmgJm1s9TreLxW4RQp79Pf5oH4XRbN
+ otG0GRYtWCgKY21OOY4u/1m2gpyyvybMkHRBQZzY27y5taP//MnSzMrEESDt00UsiN4N
+ hM4kLxhzqsfGR5xlJlUONISmK8DF6YUw1xx36Q650UXHvrV+oC2Fwp0xQonHg7ZibWQa
+ 0EmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755560068; x=1756164868;
+ d=1e100.net; s=20230601; t=1755560070; x=1756164870;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ktZjdMskytau1nlXtSANM1bBHwDHBOtVDH2jpdJhIwY=;
- b=o4csvNsnNF6OaM2bIrqjaoCLPw0u3OhtRASCmz/xvfaFSNkD9oxubBiIr2AaUZOBx3
- gQcXxgl3JIAR92Aj0eQDV/E+jH8t8Ih0HEHlDxOPL/5aGec7A3VRzg0GsXYBT7BjCmKu
- WL+VkoqliKb3meXQSx1ZvcakS6tEnRR+HMddqHvyqWmkPhOpfCWDY2EKPCa9m4lPN8Di
- ReDz79teTWNU/adFcjybY1CxeftBERse9lnhZ2q5egtSQVjEO+kws/CHk3/pjBafILEp
- Rz01dSby5QTCMMtdUsSBQ6Db0jWtZ2L6BbvKSv1NjGHYZj/KV3KL71N+72u8v/m7zRis
- ET6A==
-X-Gm-Message-State: AOJu0YypCk2AS5EeXN/bJyHZ0vKWYyVq8g/m07R7683sXjBPaTT3V7oI
- 7fYhB/atxmhCPh0Hglgk/freWtD4jlMEQsEYEgktEW+li3GEtkSpiNtq4TqQVW+MMsB/cTcTwwj
- aChJI
-X-Gm-Gg: ASbGncuu54o/fOPfUvBHIFtk5uTY3rUr/XaGcDR53yZ5cryOB9opgrYlvQguYptB8qU
- bTHyiyp1+hFRaakyBFPJ8j+QCQshdL7YH8pIBm48c9i05nAnlkQh2sy6o5sf89eVkcxwkGeWLBx
- bcjKkCOTfcEO+pNCbxYcHYJfl2GAZSAZSoUTmxRQMCvZzV+p0ouxP1JQz0o6rJbbJ1ru5Jx9Ysr
- QK3TRHBL6BI5FoluF+AVO95++4vNVCJ0fHbfPOhH3bicCYeb9BNtelZxT/AO0pV2YQd5RUcO+8j
- KphTXP98N8V9uB3S2gqY5KIktgK8lMpZWKxQI3vxd5JFwgdeVqDH1xNXh3/SZ89ZHX3PRXWEZVn
- AeeWk2yfhWPNBIYwmRIybkmCkBP37h7CWVf8rMlgHk9nbLX3b5hSl+n88jkk2YTKKkyWPkFu/
-X-Google-Smtp-Source: AGHT+IEGXOh8hKiPJ5QhqvjzqHfKNXEcuuFzdatvVurUPWapvh5A+WNvS5E5Fx2aZCIQIoO8Xw7cZg==
-X-Received: by 2002:a05:600c:5250:b0:459:94a7:220f with SMTP id
- 5b1f17b1804b1-45b43e0b06fmr2100175e9.26.1755560067884; 
- Mon, 18 Aug 2025 16:34:27 -0700 (PDT)
+ bh=N/6cvwORRx7KUvl2otsNEaP70fBEbZ6fhNv+FJZmzwQ=;
+ b=e8kcAGhFZARzEYKfhbMV1GjT3qNtN46uX4dImM9E2TDdIDaxNKm7REzHAS1REjKTAl
+ 0cVatUAO9d63ambTmIHmWayE0CY49tbjkWPHfs4QOI2U77WsRhOzAKhnykxZImmp57zx
+ 8Wol23viUqVh2eqTYnNkPUP7UMhYZtapgYoBADKoL3Bbi2Ioy3Ydu6VJ3HvIz3e75pyA
+ dz06gLvlr+t2/1CSqmbvdX3cnAwLcMxpzeHTP5yKbi5BNPvhiQavc9uDiGAeucWf5U9e
+ is6Y/0HlvFtcZHMt4wdUjRm+qjTEds50txXICSZP1YnoexFUET29VoCEqds3Wj3FNxdP
+ Hcig==
+X-Gm-Message-State: AOJu0Yw73d9JkyESoZwFEHqJyn6wtP/nPPIA4JE4QOu/wn39FlsQTa4D
+ KM3pby1l2DMd2qVu83jCQLE8YRe81E/r4cJW1ZFn3JidhcjoYmIPVbXZP8Asdeewrj7Yy0ax7xx
+ zaDvR
+X-Gm-Gg: ASbGncuEiZYpEHdhTaYqJXqa2N8dB7OW8RmbK2/iiuMoXghrxHGvxCC/qOrJeZfo8QN
+ hMDHSiBbYiiJ0RvrBIgrX8xWURZ7UupmtwYT557oC0k5C4DBJhnBGJU8ll2f/fizjw6OnlFxntk
+ UIedSIPw8tHM+fksQNi9ZUPTwXcTb8FpIWbplQW+1pxuMfsi1BR3erBs9exy3cL2DvgU6OhqU/L
+ Hal+B4gwPEvQ0CdmXddHYVvF+vtqDP3Ved6RBd2T6GBqBc4WcJKMeLwlzH/pQm5bn0rtOCZhzjn
+ QFQSWTxlpA0vTNHyxH84vccu8T1qtWIiWbxdd+InKkc/s1geNMem7F451zzOouESvE5Glyh5znx
+ Vnlg0k5FW7xpCZjvwEXuVF3VvQRsVJ5iyXpNMhRbPRGLbmdKOzVNCJcuaYkROCzyCElp0qJJLml
+ rqqtZwmxo=
+X-Google-Smtp-Source: AGHT+IFUUFIjT0qBMOT3bFzOTefjG07rhMdkNsBnCkF6k4DI2GAD8oPK650bfRJxG+f8owYwd7Jo/g==
+X-Received: by 2002:a05:6000:2502:b0:3b7:dd87:d730 with SMTP id
+ ffacd0b85a97d-3c0ec756f42mr311057f8f.52.1755560069677; 
+ Mon, 18 Aug 2025 16:34:29 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.34.26
+ ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.34.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 18 Aug 2025 16:34:27 -0700 (PDT)
+ Mon, 18 Aug 2025 16:34:29 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Liron Himi <lironh@marvell.com>
-Subject: [RFC 46/47] net/mvpp2: replace local definition of FOREACH_SAFE
-Date: Mon, 18 Aug 2025 16:27:57 -0700
-Message-ID: <20250818233102.180207-47-stephen@networkplumber.org>
+ Rosen Xu <rosen.xu@altera.com>
+Subject: [RFC 47/47] drivers/raw: replace with TAILQ_FOREACH_SAFE
+Date: Mon, 18 Aug 2025 16:27:58 -0700
+Message-ID: <20250818233102.180207-48-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250818233102.180207-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -81,33 +82,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There is now a standard macro for this.
+There is now a standard macro to safely walk tailq.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/mvpp2/mrvl_mtr.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/raw/ifpga/base/ifpga_enumerate.c  | 6 +++---
+ drivers/raw/ifpga/base/opae_intel_max10.c | 8 +-------
+ 2 files changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/mvpp2/mrvl_mtr.c b/drivers/net/mvpp2/mrvl_mtr.c
-index c07ac95ddc..27596b8c99 100644
---- a/drivers/net/mvpp2/mrvl_mtr.c
-+++ b/drivers/net/mvpp2/mrvl_mtr.c
-@@ -505,13 +505,9 @@ mrvl_mtr_deinit(struct rte_eth_dev *dev)
- 	struct mrvl_mtr_profile *profile, *tmp_profile;
- 	struct mrvl_mtr *mtr, *tmp_mtr;
+diff --git a/drivers/raw/ifpga/base/ifpga_enumerate.c b/drivers/raw/ifpga/base/ifpga_enumerate.c
+index 61eb6601ea..ff0790038c 100644
+--- a/drivers/raw/ifpga/base/ifpga_enumerate.c
++++ b/drivers/raw/ifpga/base/ifpga_enumerate.c
+@@ -6,6 +6,8 @@
+ #include <inttypes.h>
+ #include <unistd.h>
  
--	for (mtr = LIST_FIRST(&priv->mtrs);
--	     mtr && (tmp_mtr = LIST_NEXT(mtr, next), 1);
--	     mtr = tmp_mtr)
-+	LIST_FOREACH_SAFE(mtr, &priv->mtrs, next, tmp_mtr)
- 		mrvl_destroy(dev, mtr->mtr_id, NULL);
++#include <bsd_queue.h>
++
+ #include "opae_hw_api.h"
+ #include "ifpga_api.h"
  
--	for (profile = LIST_FIRST(&priv->profiles);
--	     profile && (tmp_profile = LIST_NEXT(profile, next), 1);
--	     profile = tmp_profile)
-+	LIST_FOREACH_SAFE(profile, &priv_profiles, next, tmp_profile)
- 		mrvl_meter_profile_delete(dev, profile->profile_id, NULL);
- }
+@@ -725,9 +727,7 @@ static void dfl_fpga_enum_info_free(struct dfl_fpga_enum_info *info)
+ 		return;
+ 
+ 	/* remove all device feature lists in the list. */
+-	for (dfl = TAILQ_FIRST(&info->dfls);
+-		dfl && (tmp = TAILQ_NEXT(dfl, node), 1);
+-		dfl = tmp) {
++	TAILQ_FOREACH_SAFE(dfl, &info->dfls, node, tmp) {
+ 		TAILQ_REMOVE(&info->dfls, dfl, node);
+ 		opae_free(dfl);
+ 	}
+diff --git a/drivers/raw/ifpga/base/opae_intel_max10.c b/drivers/raw/ifpga/base/opae_intel_max10.c
+index 58c884a8d8..84e0767b3a 100644
+--- a/drivers/raw/ifpga/base/opae_intel_max10.c
++++ b/drivers/raw/ifpga/base/opae_intel_max10.c
+@@ -4,14 +4,8 @@
+ 
+ #include "opae_intel_max10.h"
+ #include <libfdt.h>
+-#include "opae_osdep.h"
+ 
+-#ifndef TAILQ_FOREACH_SAFE
+-#define TAILQ_FOREACH_SAFE(var, head, field, tvar) \
+-	for ((var) = TAILQ_FIRST((head)); \
+-		(var) && ((tvar) = TAILQ_NEXT((var), field), 1); \
+-	(var) = (tvar))
+-#endif
++#include "opae_osdep.h"
+ 
+ int max10_sys_read(struct intel_max10_device *dev,
+ 	unsigned int offset, unsigned int *val)
 -- 
 2.47.2
 
