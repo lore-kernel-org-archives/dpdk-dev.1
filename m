@@ -2,42 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2377BCA0EC0
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 10:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B487CA0EC6
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 10:59:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6878440279;
-	Mon, 18 Aug 2025 12:58:32 +0200 (CEST)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
- by mails.dpdk.org (Postfix) with ESMTP id 9E95D40279
- for <dev@dpdk.org>; Mon, 18 Aug 2025 12:58:30 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.17])
- by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c58l14gj7z2Dc1W;
- Mon, 18 Aug 2025 18:55:41 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id C943C1A0188;
- Mon, 18 Aug 2025 18:58:27 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 18 Aug 2025 18:58:27 +0800
-Message-ID: <d4859ac6-2119-40b5-9e3b-ae88d56dc690@huawei.com>
-Date: Mon, 18 Aug 2025 18:58:26 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 93BD44014F;
+	Mon, 18 Aug 2025 12:59:32 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id 6DE704013F
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 12:59:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1755514771; x=1787050771;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=5SIlenS668cq1lj/MjGb9UR5aEqm9L+LB0FLb/EYSe4=;
+ b=ksC0dpzKmLs1LDi/Q+dnrF+9xLJHQ/YHEA8vJaFCc2BeFaVZyC/XWDS+
+ rk/eJritu/WLt+PH/e6hUdT2JFpNPNVm9d3J3hzR6s/EvgYYI75V+i20J
+ TgHyhvcptA+I2JyrbLS3nOk6Xu1/WmAAcBj0AS9DWpecaes8th8S9JDdV
+ xQ6lOSni+E6JqHHJ20usKagFVOhqeWvem8AUrrp60io0e8Gm/QoQt1rZn
+ r0pELsceL5k3/vtlQ0DdQcRJIDMSARlyqGWYZ1Zs1GC00CayfuJEFR15S
+ PCy5UIZKBkNXX15h5deeafVBQqnnYrVS/BtzujkM6wJR68rmpXl7PsMxH w==;
+X-CSE-ConnectionGUID: 2t6x4vuaTnSLSsSLj2eQqg==
+X-CSE-MsgGUID: 3LyxGwCXTn2h14/pybhswA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="83165412"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; d="scan'208";a="83165412"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Aug 2025 03:59:29 -0700
+X-CSE-ConnectionGUID: 3nS5auQKSqyuCzTNVmODQA==
+X-CSE-MsgGUID: +jXuDjerRcyi+6wcZ1eMVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; d="scan'208";a="166722916"
+Received: from silpixa00401177.ir.intel.com ([10.237.213.77])
+ by orviesa006.jf.intel.com with ESMTP; 18 Aug 2025 03:59:28 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH v3 00/15] net/intel: rx path selection simplification
+Date: Mon, 18 Aug 2025 10:58:59 +0000
+Message-Id: <20250818105914.169732-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: RFC: Drop support for undersize packet mbufs
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>,
- <thomas@monjalon.net>, <bruce.richardson@intel.com>,
- <stephen@networkplumber.org>, <andrew.rybchenko@oktetlabs.ru>
-CC: <dev@dpdk.org>
-References: <98CBD80474FA8B44BF855DF32C47DC35E9FE42@smartserver.smartshare.dk>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FE42@smartserver.smartshare.dk>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,56 +57,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 8/18/2025 4:11 PM, Morten Brørup wrote:
-> Why does the mbuf library support packet mbufs with smaller data room size than RTE_PKTMBUF_HEADROOM (e.g. [1]), when the Ethdev drivers (e.g. [2]) don't support it?
+This series aims to simplify the process of selecting an Rx burst
+function for the i40e, iavf and ice drivers. Three main simplifications
+are made:
+1. enforcing the same rx burst function for both primary and secondary
+processes.
+2. using a common function for determining the maximum SIMD width based
+on compiler flags, CPU flags and user-defined limits.
+3. using a common function for selecting the rx burst function based on
+maximum SIMD width, function features (flex desc, scattered, bulk alloc)
+and requested rx offloads.
 
-Maybe the pktmbuf which extbuf, which the data-room-size is zero when create pktmbuf.
-After detach from extbuf, the data_off should be zero instead of RTE_PKTMBUF_HEADROOM.
+v3:
+* removed arbitrary defines for features and replaced with new sub structure within features
+  structure
+* removed unnecessary initialisation in the path select function
+* added error log for case when tx simd width is invalid in i40e driver
+* fixed ice vector offload mask to excude QINQ
+* removed unnecessary #ifdef CC_AVX512_SUPPORT in ice and i40e driver
+* changed == RTE_VECT_SIMD_256 to >= RTE_VECT_SIMD_256 in ice driver
 
-> 
-> This goes all the way back to the first public release [3].
-> 
-> It seems crazy exotic, and should be removed for simplicity and a potential performance benefit.
-> What am I missing here?
-> 
-> Instead, the rte_pktmbuf_pool_create() functions should check that data_room_size >= RTE_PKTMBUF_HEADROOM.
-> 
-> 
-> [1]: https://elixir.bootlin.com/dpdk/v25.07/source/lib/mbuf/rte_mbuf.h#L941
-> static inline void rte_pktmbuf_reset_headroom(struct rte_mbuf *m)
-> {
-> 	m->data_off = (uint16_t)RTE_MIN((uint16_t)RTE_PKTMBUF_HEADROOM,
-> 					(uint16_t)m->buf_len);
-> }
-> 
-> [2]: https://elixir.bootlin.com/dpdk/v25.07/source/drivers/net/intel/i40e/i40e_rxtx.c#L609
-> mb->data_off = RTE_PKTMBUF_HEADROOM;
-> 
-> [3]: https://git.dpdk.org/dpdk/commit/lib/librte_mbuf?id=af75078fece3615088e561357c1e97603e43a5fe
-> +static inline void rte_pktmbuf_reset(struct rte_mbuf *m)
-> +{
-> +	uint32_t buf_ofs;
-> +
-> +	m->pkt.next = NULL;
-> +	m->pkt.pkt_len = 0;
-> +	m->pkt.l2_len = 0;
-> +	m->pkt.l3_len = 0;
-> +	m->pkt.vlan_tci = 0;
-> +	m->pkt.nb_segs = 1;
-> +	m->pkt.in_port = 0xff;
-> +
-> +	m->ol_flags = 0;
-> +	buf_ofs = (RTE_PKTMBUF_HEADROOM <= m->buf_len) ?
-> +			RTE_PKTMBUF_HEADROOM : m->buf_len;
-> +	m->pkt.data = (char*) m->buf_addr + buf_ofs;
-> +
-> +	m->pkt.data_len = 0;
-> +	__rte_mbuf_sanity_check(m, RTE_MBUF_PKT, 1);
-> +}
-> 
-> 
-> 
-> Med venlig hilsen / Kind regards,
-> -Morten Brørup
-> 
+Bruce Richardson (1):
+  net/intel: introduce common vector capability function
+
+Ciara Loftus (14):
+  net/ice: use the same Rx path across process types
+  net/iavf: rename Rx/Tx function type variables
+  net/iavf: use the same Rx path across process types
+  net/i40e: use the same Rx path across process types
+  net/ice: use the new common vector capability function
+  net/iavf: use the new common vector capability function
+  net/i40e: use the new common vector capability function
+  net/iavf: remove redundant field from iavf adapter struct
+  net/ice: remove unsupported Rx offload
+  net/iavf: reorder enum of Rx function types
+  net/intel: introduce infrastructure for Rx path selection
+  net/ice: use the common Rx path selection infrastructure
+  net/iavf: use the common Rx path selection infrastructure
+  net/i40e: use the common Rx path selection infrastructure
+
+ drivers/net/intel/common/rx.h                 |  98 ++++
+ drivers/net/intel/common/rx_vec_x86.h         |  22 +
+ drivers/net/intel/i40e/i40e_ethdev.h          |  25 +-
+ drivers/net/intel/i40e/i40e_rxtx.c            | 256 ++++------
+ drivers/net/intel/i40e/i40e_rxtx.h            |  16 +
+ .../net/intel/i40e/i40e_rxtx_vec_altivec.c    |   6 +
+ drivers/net/intel/i40e/i40e_rxtx_vec_common.h |   9 +-
+ drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   |   6 +
+ drivers/net/intel/i40e/i40e_rxtx_vec_sse.c    |   6 +
+ drivers/net/intel/iavf/iavf.h                 |  31 +-
+ drivers/net/intel/iavf/iavf_ethdev.c          |   1 -
+ drivers/net/intel/iavf/iavf_rxtx.c            | 439 ++++++------------
+ drivers/net/intel/iavf/iavf_rxtx.h            |  51 +-
+ drivers/net/intel/iavf/iavf_rxtx_vec_common.h |  14 +-
+ drivers/net/intel/iavf/iavf_rxtx_vec_neon.c   |   6 +
+ drivers/net/intel/iavf/iavf_rxtx_vec_sse.c    |   6 +
+ drivers/net/intel/ice/ice_ethdev.c            |   2 +
+ drivers/net/intel/ice/ice_ethdev.h            |  25 +-
+ drivers/net/intel/ice/ice_rxtx.c              | 270 ++++-------
+ drivers/net/intel/ice/ice_rxtx.h              |  30 ++
+ drivers/net/intel/ice/ice_rxtx_vec_common.h   |  18 +-
+ drivers/net/intel/ice/ice_rxtx_vec_sse.c      |   6 +
+ 22 files changed, 636 insertions(+), 707 deletions(-)
+
+-- 
+2.34.1
 
