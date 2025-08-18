@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A8DCA0EC0
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 11:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 584F3CA0EC0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 11:01:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8CA1540A6C;
-	Mon, 18 Aug 2025 12:59:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 85E0340A72;
+	Mon, 18 Aug 2025 12:59:52 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id 34A1A40693
- for <dev@dpdk.org>; Mon, 18 Aug 2025 12:59:48 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 832B540A67
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 12:59:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1755514788; x=1787050788;
+ t=1755514790; x=1787050790;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=sRExswmT8PSNIUQpPj9H0xw9Ws0jM7P1RvnUrfxMMeg=;
- b=c4fFAZYV5kD0eCCf5ceMxpg1cae/TgMmodshcN2GTku4oBbDkg/l5Z4J
- AP7ggAevrIe2WyIjZ9HrlmW5ciuxauyuH5jtYG1kXZu09VBsarlQ+1wqf
- CTtJhHEmb+AwzW+za6FdFYxZrgyYdl+Th2vvghPAiBZdpOVvbMtc5ffRq
- j896Fo/zpNZgMbilKgQEDlOT9+kWGqfh5qVaqk76tHCfyDqknZz34YerH
- UCgFe7NZhz/0oDcNdTkVIoPHQ9e+TXjq4vpFM76xWh30lMqMnteHBEY4D
- A0uRWlLSPvCjMFT9Ju1jwSwIO/afMJrZFGws63UwMkJ6ztHIj2JMuNQLn Q==;
-X-CSE-ConnectionGUID: vCrHsZacQLKmEbv0sMjz8A==
-X-CSE-MsgGUID: U14hkEkOSvSgIU96AsOi8w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="83165444"
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; d="scan'208";a="83165444"
+ bh=8aW/kiKqkYZxSQHZ2xC/vFFopx9CqPUlVrazDOgWIAQ=;
+ b=CgGJb+IpS7A4GouDkMseAuwsm3GJb67oksxtHPcTeshQsDyhzPPc8aDI
+ R9UV56qHrRLnYrWXVYSzW3uktM9rVDmgS0o4PneLif/qrbEDI6NuWwkvO
+ GBl5qeGpI3rFMWtAxv1h5iuNl4H4cmDlNYvfsE0wLgMHQJOsBxf+rhaZd
+ rnFWMMYJnWuv5ghiHiPRT4C7lYCylQKTzq3bww/o/pbwNCfT8QA/wmvB+
+ Y07oYzQrOsdJhyNWRthJS3VIUKQxPSqWafU1daciSttrE0yQirhC9qH10
+ +X1UIyEdsKrdvkJNhIKdnYoOvXLquBPy56nHFa0HLp+8yzAAo7WG+RUBv Q==;
+X-CSE-ConnectionGUID: m0wC0zdXQ4WkHvmMvjaDuQ==
+X-CSE-MsgGUID: R8yCMOiFSMmlyHH/99sgJQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11524"; a="83165445"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; d="scan'208";a="83165445"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Aug 2025 03:59:48 -0700
-X-CSE-ConnectionGUID: mHK7HcWaQHaadeOeXtW//A==
-X-CSE-MsgGUID: qQOJ93mZQ7WiBrBVlpwZxA==
+ 18 Aug 2025 03:59:49 -0700
+X-CSE-ConnectionGUID: slNDoMz8SsqHVB8D6EMaWg==
+X-CSE-MsgGUID: Hal7Ng9zSGGQy9a9CkTBCg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; d="scan'208";a="166723023"
+X-IronPort-AV: E=Sophos;i="6.17,293,1747724400"; d="scan'208";a="166723037"
 Received: from silpixa00401177.ir.intel.com ([10.237.213.77])
- by orviesa006.jf.intel.com with ESMTP; 18 Aug 2025 03:59:46 -0700
+ by orviesa006.jf.intel.com with ESMTP; 18 Aug 2025 03:59:47 -0700
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
 Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH v3 14/15] net/iavf: use the common Rx path selection
+Subject: [PATCH v3 15/15] net/i40e: use the common Rx path selection
  infrastructure
-Date: Mon, 18 Aug 2025 10:59:13 +0000
-Message-Id: <20250818105914.169732-15-ciara.loftus@intel.com>
+Date: Mon, 18 Aug 2025 10:59:14 +0000
+Message-Id: <20250818105914.169732-16-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250818105914.169732-1-ciara.loftus@intel.com>
 References: <20250818105914.169732-1-ciara.loftus@intel.com>
@@ -60,488 +60,312 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace the existing complicated logic with the use of the common
-function.
+Replace the existing complicated logic with the use of the common function.
 
 Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
-v3:
+v3
 * change burst features to true/false instead of using defines
 * Use new extra features structure to define burst features
 ---
- drivers/net/intel/iavf/iavf_rxtx.c            | 288 +++++++-----------
- drivers/net/intel/iavf/iavf_rxtx.h            |  50 ++-
- drivers/net/intel/iavf/iavf_rxtx_vec_common.h |  14 +-
- drivers/net/intel/iavf/iavf_rxtx_vec_neon.c   |   6 +
- 4 files changed, 158 insertions(+), 200 deletions(-)
+ drivers/net/intel/i40e/i40e_rxtx.c            | 144 +++++++++---------
+ drivers/net/intel/i40e/i40e_rxtx.h            |  15 ++
+ .../net/intel/i40e/i40e_rxtx_vec_altivec.c    |   6 +
+ drivers/net/intel/i40e/i40e_rxtx_vec_common.h |   9 +-
+ drivers/net/intel/i40e/i40e_rxtx_vec_neon.c   |   6 +
+ 5 files changed, 99 insertions(+), 81 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index 367dde89ca..db4ae56fef 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -3690,70 +3690,96 @@ static uint16_t
- iavf_xmit_pkts_no_poll(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				uint16_t nb_pkts);
+diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
+index 76d90be931..86af647205 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx.c
++++ b/drivers/net/intel/i40e/i40e_rxtx.c
+@@ -3284,29 +3284,43 @@ i40e_recycle_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 	}
+ }
  
 -static const struct {
 -	eth_rx_burst_t pkt_burst;
 -	const char *info;
--} iavf_rx_pkt_burst_ops[] = {
--	[IAVF_RX_DISABLED] = {iavf_recv_pkts_no_poll, "Disabled"},
--	[IAVF_RX_DEFAULT] = {iavf_recv_pkts, "Scalar"},
--	[IAVF_RX_FLEX_RXD] = {iavf_recv_pkts_flex_rxd, "Scalar Flex"},
--	[IAVF_RX_BULK_ALLOC] = {iavf_recv_pkts_bulk_alloc,
--		"Scalar Bulk Alloc"},
--	[IAVF_RX_SCATTERED] = {iavf_recv_scattered_pkts,
--		"Scalar Scattered"},
--	[IAVF_RX_SCATTERED_FLEX_RXD] = {iavf_recv_scattered_pkts_flex_rxd,
--		"Scalar Scattered Flex"},
-+static const struct ci_rx_path_info iavf_rx_path_infos[] = {
-+	[IAVF_RX_DISABLED] = {iavf_recv_pkts_no_poll, "Disabled",
-+		{IAVF_RX_NO_OFFLOADS, RTE_VECT_SIMD_DISABLED, {.disabled = true}}},
-+	[IAVF_RX_DEFAULT] = {iavf_recv_pkts, "Scalar",
-+		{IAVF_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_DISABLED}},
-+	[IAVF_RX_SCATTERED] = {iavf_recv_scattered_pkts, "Scalar Scattered",
-+		{IAVF_RX_SCALAR_OFFLOADS | RTE_ETH_RX_OFFLOAD_SCATTER, RTE_VECT_SIMD_DISABLED,
-+			{.scattered = true}}},
-+	[IAVF_RX_FLEX_RXD] = {iavf_recv_pkts_flex_rxd, "Scalar Flex",
-+		{IAVF_RX_SCALAR_FLEX_OFFLOADS, RTE_VECT_SIMD_DISABLED, {.flex_desc = true}}},
-+	[IAVF_RX_SCATTERED_FLEX_RXD] = {iavf_recv_scattered_pkts_flex_rxd, "Scalar Scattered Flex",
-+		{IAVF_RX_SCALAR_FLEX_OFFLOADS | RTE_ETH_RX_OFFLOAD_SCATTER, RTE_VECT_SIMD_DISABLED,
-+				{.scattered = true, .flex_desc = true}}},
-+	[IAVF_RX_BULK_ALLOC] = {iavf_recv_pkts_bulk_alloc, "Scalar Bulk Alloc",
-+		{IAVF_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_DISABLED, {.bulk_alloc = true}}},
+-} i40e_rx_burst_infos[] = {
+-	[I40E_RX_DEFAULT] = { i40e_recv_pkts, "Scalar" },
+-	[I40E_RX_SCATTERED] = { i40e_recv_scattered_pkts, "Scalar Scattered" },
+-	[I40E_RX_BULK_ALLOC] = { i40e_recv_pkts_bulk_alloc, "Scalar Bulk Alloc" },
++static const struct ci_rx_path_info i40e_rx_path_infos[] = {
++	[I40E_RX_DEFAULT] = { i40e_recv_pkts, "Scalar",
++		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_DISABLED}},
++	[I40E_RX_SCATTERED] = { i40e_recv_scattered_pkts, "Scalar Scattered",
++		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_DISABLED, {.scattered = true}}},
++	[I40E_RX_BULK_ALLOC] = { i40e_recv_pkts_bulk_alloc, "Scalar Bulk Alloc",
++		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_DISABLED, {.bulk_alloc = true}}},
  #ifdef RTE_ARCH_X86
--	[IAVF_RX_SSE] = {iavf_recv_pkts_vec, "Vector SSE"},
--	[IAVF_RX_AVX2] = {iavf_recv_pkts_vec_avx2, "Vector AVX2"},
--	[IAVF_RX_AVX2_OFFLOAD] = {iavf_recv_pkts_vec_avx2_offload,
--		"Vector AVX2 Offload"},
--	[IAVF_RX_SSE_FLEX_RXD] = {iavf_recv_pkts_vec_flex_rxd,
--		"Vector Flex SSE"},
--	[IAVF_RX_AVX2_FLEX_RXD] = {iavf_recv_pkts_vec_avx2_flex_rxd,
--		"Vector AVX2 Flex"},
--	[IAVF_RX_AVX2_FLEX_RXD_OFFLOAD] = {
--		iavf_recv_pkts_vec_avx2_flex_rxd_offload,
--			"Vector AVX2 Flex Offload"},
--	[IAVF_RX_SSE_SCATTERED] = {iavf_recv_scattered_pkts_vec,
--		"Vector Scattered SSE"},
--	[IAVF_RX_AVX2_SCATTERED] = {iavf_recv_scattered_pkts_vec_avx2,
--		"Vector Scattered AVX2"},
--	[IAVF_RX_AVX2_SCATTERED_OFFLOAD] = {
--		iavf_recv_scattered_pkts_vec_avx2_offload,
--		"Vector Scattered AVX2 offload"},
-+	[IAVF_RX_SSE] = {iavf_recv_pkts_vec, "Vector SSE",
-+		{IAVF_RX_VECTOR_OFFLOAD_OFFLOADS, RTE_VECT_SIMD_128, {.bulk_alloc = true}}},
-+	[IAVF_RX_SSE_SCATTERED] = {iavf_recv_scattered_pkts_vec, "Vector Scattered SSE",
-+		{IAVF_RX_VECTOR_OFFLOADS | RTE_ETH_RX_OFFLOAD_SCATTER, RTE_VECT_SIMD_128,
+-	[I40E_RX_SSE] = { i40e_recv_pkts_vec, "Vector SSE" },
+-	[I40E_RX_SSE_SCATTERED] = { i40e_recv_scattered_pkts_vec, "Vector SSE Scattered" },
+-	[I40E_RX_AVX2] = { i40e_recv_pkts_vec_avx2, "Vector AVX2" },
+-	[I40E_RX_AVX2_SCATTERED] = { i40e_recv_scattered_pkts_vec_avx2, "Vector AVX2 Scattered" },
++	[I40E_RX_SSE] = { i40e_recv_pkts_vec, "Vector SSE",
++		{I40E_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_128, {.bulk_alloc = true}}},
++	[I40E_RX_SSE_SCATTERED] = { i40e_recv_scattered_pkts_vec, "Vector SSE Scattered",
++		{I40E_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_128,
 +			{.scattered = true, .bulk_alloc = true}}},
-+	[IAVF_RX_SSE_FLEX_RXD] = {iavf_recv_pkts_vec_flex_rxd, "Vector Flex SSE",
-+		{IAVF_RX_VECTOR_OFFLOAD_FLEX_OFFLOADS, RTE_VECT_SIMD_128,
-+			{.flex_desc = true, .bulk_alloc = true}}},
- 	[IAVF_RX_SSE_SCATTERED_FLEX_RXD] = {
--		iavf_recv_scattered_pkts_vec_flex_rxd,
--		"Vector Scattered SSE Flex"},
-+		iavf_recv_scattered_pkts_vec_flex_rxd, "Vector Scattered SSE Flex",
-+		{IAVF_RX_VECTOR_OFFLOAD_FLEX_OFFLOADS | RTE_ETH_RX_OFFLOAD_SCATTER,
-+			RTE_VECT_SIMD_128,
-+			{.scattered = true, .flex_desc = true, .bulk_alloc = true}}},
-+	[IAVF_RX_AVX2] = {iavf_recv_pkts_vec_avx2, "Vector AVX2",
-+		{IAVF_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_256, {.bulk_alloc = true}}},
-+	[IAVF_RX_AVX2_SCATTERED] = {iavf_recv_scattered_pkts_vec_avx2, "Vector Scattered AVX2",
-+		{IAVF_RX_VECTOR_OFFLOADS | RTE_ETH_RX_OFFLOAD_SCATTER, RTE_VECT_SIMD_256,
++	[I40E_RX_AVX2] = { i40e_recv_pkts_vec_avx2, "Vector AVX2",
++		{I40E_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_256, {.bulk_alloc = true}}},
++	[I40E_RX_AVX2_SCATTERED] = { i40e_recv_scattered_pkts_vec_avx2, "Vector AVX2 Scattered",
++		{I40E_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_256,
 +			{.scattered = true, .bulk_alloc = true}}},
-+	[IAVF_RX_AVX2_OFFLOAD] = {iavf_recv_pkts_vec_avx2_offload, "Vector AVX2 Offload",
-+		{IAVF_RX_VECTOR_OFFLOAD_OFFLOADS, RTE_VECT_SIMD_256, {.bulk_alloc = true}}},
-+	[IAVF_RX_AVX2_SCATTERED_OFFLOAD] = {
-+		iavf_recv_scattered_pkts_vec_avx2_offload, "Vector Scattered AVX2 offload",
-+		{IAVF_RX_VECTOR_OFFLOAD_OFFLOADS | RTE_ETH_RX_OFFLOAD_SCATTER, RTE_VECT_SIMD_256,
-+			{.scattered = true, .bulk_alloc = true}}},
-+	[IAVF_RX_AVX2_FLEX_RXD] = {iavf_recv_pkts_vec_avx2_flex_rxd, "Vector AVX2 Flex",
-+		{IAVF_RX_VECTOR_FLEX_OFFLOADS, RTE_VECT_SIMD_256,
-+			{.flex_desc = true, .bulk_alloc = true}}},
- 	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD] = {
--		iavf_recv_scattered_pkts_vec_avx2_flex_rxd,
--		"Vector Scattered AVX2 Flex"},
-+		iavf_recv_scattered_pkts_vec_avx2_flex_rxd, "Vector Scattered AVX2 Flex",
-+		{IAVF_RX_VECTOR_FLEX_OFFLOADS | RTE_ETH_RX_OFFLOAD_SCATTER, RTE_VECT_SIMD_256,
-+			{.scattered = true, .flex_desc = true, .bulk_alloc = true}}},
-+	[IAVF_RX_AVX2_FLEX_RXD_OFFLOAD] = {
-+		iavf_recv_pkts_vec_avx2_flex_rxd_offload, "Vector AVX2 Flex Offload",
-+			{IAVF_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_256,
-+				{.flex_desc = true, .bulk_alloc = true}}},
- 	[IAVF_RX_AVX2_SCATTERED_FLEX_RXD_OFFLOAD] = {
- 		iavf_recv_scattered_pkts_vec_avx2_flex_rxd_offload,
--		"Vector Scattered AVX2 Flex Offload"},
-+		"Vector Scattered AVX2 Flex Offload",
-+		{IAVF_RX_VECTOR_OFFLOAD_FLEX_OFFLOADS | RTE_ETH_RX_OFFLOAD_SCATTER,
-+			RTE_VECT_SIMD_256, {.flex_desc = true, .bulk_alloc = true}}},
  #ifdef CC_AVX512_SUPPORT
--	[IAVF_RX_AVX512] = {iavf_recv_pkts_vec_avx512, "Vector AVX512"},
--	[IAVF_RX_AVX512_OFFLOAD] = {iavf_recv_pkts_vec_avx512_offload,
--		"Vector AVX512 Offload"},
--	[IAVF_RX_AVX512_FLEX_RXD] = {iavf_recv_pkts_vec_avx512_flex_rxd,
--		"Vector AVX512 Flex"},
--	[IAVF_RX_AVX512_FLEX_RXD_OFFLOAD] = {
--		iavf_recv_pkts_vec_avx512_flex_rxd_offload,
--		"Vector AVX512 Flex Offload"},
--	[IAVF_RX_AVX512_SCATTERED] = {iavf_recv_scattered_pkts_vec_avx512,
--		"Vector Scattered AVX512"},
-+	[IAVF_RX_AVX512] = {iavf_recv_pkts_vec_avx512, "Vector AVX512",
-+		{IAVF_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_512, {.bulk_alloc = true}}},
-+	[IAVF_RX_AVX512_SCATTERED] = {
-+		iavf_recv_scattered_pkts_vec_avx512, "Vector Scattered AVX512",
-+		{IAVF_RX_VECTOR_OFFLOADS | RTE_ETH_RX_OFFLOAD_SCATTER, RTE_VECT_SIMD_512,
+-	[I40E_RX_AVX512] = { i40e_recv_pkts_vec_avx512, "Vector AVX512" },
+-	[I40E_RX_AVX512_SCATTERED] = {
+-		i40e_recv_scattered_pkts_vec_avx512, "Vector AVX512 Scattered" },
++	[I40E_RX_AVX512] = { i40e_recv_pkts_vec_avx512, "Vector AVX512",
++		{I40E_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_512, {.bulk_alloc = true}}},
++	[I40E_RX_AVX512_SCATTERED] = { i40e_recv_scattered_pkts_vec_avx512,
++		"Vector AVX512 Scattered", {I40E_RX_VECTOR_OFFLOADS, RTE_VECT_SIMD_512,
 +			{.scattered = true, .bulk_alloc = true}}},
-+	[IAVF_RX_AVX512_OFFLOAD] = {iavf_recv_pkts_vec_avx512_offload, "Vector AVX512 Offload",
-+		{IAVF_RX_VECTOR_OFFLOAD_OFFLOADS, RTE_VECT_SIMD_512, {.bulk_alloc = true}}},
- 	[IAVF_RX_AVX512_SCATTERED_OFFLOAD] = {
--		iavf_recv_scattered_pkts_vec_avx512_offload,
--		"Vector Scattered AVX512 offload"},
-+		iavf_recv_scattered_pkts_vec_avx512_offload, "Vector Scattered AVX512 offload",
-+		{IAVF_RX_VECTOR_OFFLOAD_OFFLOADS | RTE_ETH_RX_OFFLOAD_SCATTER, RTE_VECT_SIMD_512,
-+			{.scattered = true, .bulk_alloc = true}}},
-+	[IAVF_RX_AVX512_FLEX_RXD] = {iavf_recv_pkts_vec_avx512_flex_rxd, "Vector AVX512 Flex",
-+		{IAVF_RX_VECTOR_FLEX_OFFLOADS, RTE_VECT_SIMD_512,
-+			{.flex_desc = true, .bulk_alloc = true}}},
- 	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD] = {
--		iavf_recv_scattered_pkts_vec_avx512_flex_rxd,
--		"Vector Scattered AVX512 Flex"},
-+		iavf_recv_scattered_pkts_vec_avx512_flex_rxd, "Vector Scattered AVX512 Flex",
-+		{IAVF_RX_VECTOR_FLEX_OFFLOADS | RTE_ETH_RX_OFFLOAD_SCATTER, RTE_VECT_SIMD_512,
-+			{.scattered = true, .flex_desc = true, .bulk_alloc = true}}},
-+	[IAVF_RX_AVX512_FLEX_RXD_OFFLOAD] = {
-+		iavf_recv_pkts_vec_avx512_flex_rxd_offload, "Vector AVX512 Flex Offload",
-+		{IAVF_RX_VECTOR_OFFLOAD_FLEX_OFFLOADS, RTE_VECT_SIMD_512,
-+			{.flex_desc = true, .bulk_alloc = true}}},
- 	[IAVF_RX_AVX512_SCATTERED_FLEX_RXD_OFFLOAD] = {
- 		iavf_recv_scattered_pkts_vec_avx512_flex_rxd_offload,
--		"Vector Scattered AVX512 Flex offload"},
-+		"Vector Scattered AVX512 Flex offload",
-+		{IAVF_RX_VECTOR_OFFLOAD_FLEX_OFFLOADS | RTE_ETH_RX_OFFLOAD_SCATTER,
-+			RTE_VECT_SIMD_512,
-+			{.scattered = true, .flex_desc = true, .bulk_alloc = true}}},
  #endif
- #elif defined RTE_ARCH_ARM
--	[IAVF_RX_SSE] = {iavf_recv_pkts_vec, "Vector Neon"},
-+	[IAVF_RX_SSE] = {iavf_recv_pkts_vec, "Vector Neon",
-+		{IAVF_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_128, {.bulk_alloc = true}}},
+ #elif defined(RTE_ARCH_ARM64)
+-	[I40E_RX_NEON] = { i40e_recv_pkts_vec, "Vector Neon" },
+-	[I40E_RX_NEON_SCATTERED] = { i40e_recv_scattered_pkts_vec, "Vector Neon Scattered" },
++	[I40E_RX_NEON] = { i40e_recv_pkts_vec, "Vector Neon",
++		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_128, {.bulk_alloc = true}}},
++	[I40E_RX_NEON_SCATTERED] = { i40e_recv_scattered_pkts_vec, "Vector Neon Scattered",
++		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_128,
++			{.scattered = true, .bulk_alloc = true}}},
+ #elif defined(RTE_ARCH_PPC_64)
+-	[I40E_RX_ALTIVEC] = { i40e_recv_pkts_vec, "Vector AltiVec" },
+-	[I40E_RX_ALTIVEC_SCATTERED] = { i40e_recv_scattered_pkts_vec, "Vector AltiVec Scattered" },
++	[I40E_RX_ALTIVEC] = { i40e_recv_pkts_vec, "Vector AltiVec",
++		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_128, {.bulk_alloc = true}}},
++	[I40E_RX_ALTIVEC_SCATTERED] = { i40e_recv_scattered_pkts_vec, "Vector AltiVec Scattered",
++		{I40E_RX_SCALAR_OFFLOADS, RTE_VECT_SIMD_128,
++			{.scattered = true, .bulk_alloc = true}}},
  #endif
  };
  
-@@ -3765,10 +3791,10 @@ iavf_rx_burst_mode_get(struct rte_eth_dev *dev,
- 	eth_rx_burst_t pkt_burst = dev->rx_pkt_burst;
- 	size_t i;
- 
--	for (i = 0; i < RTE_DIM(iavf_rx_pkt_burst_ops); i++) {
--		if (pkt_burst == iavf_rx_pkt_burst_ops[i].pkt_burst) {
-+	for (i = 0; i < RTE_DIM(iavf_rx_path_infos); i++) {
-+		if (pkt_burst == iavf_rx_path_infos[i].pkt_burst) {
- 			snprintf(mode->info, sizeof(mode->info), "%s",
--				 iavf_rx_pkt_burst_ops[i].info);
-+				 iavf_rx_path_infos[i].info);
- 			return 0;
- 		}
- 	}
-@@ -3831,7 +3857,7 @@ iavf_recv_pkts_no_poll(void *rx_queue, struct rte_mbuf **rx_pkts,
- 
- 	rx_func_type = rxq->iavf_vsi->adapter->rx_func_type;
- 
--	return iavf_rx_pkt_burst_ops[rx_func_type].pkt_burst(rx_queue,
-+	return iavf_rx_path_infos[rx_func_type].pkt_burst(rx_queue,
- 								rx_pkts, nb_pkts);
- }
- 
-@@ -3942,10 +3968,15 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
- 	struct iavf_adapter *adapter =
- 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
-+	enum iavf_rx_func_type default_path = IAVF_RX_DEFAULT;
- 	int no_poll_on_link_down = adapter->devargs.no_poll_on_link_down;
- 	int i;
- 	struct ci_rx_queue *rxq;
- 	bool use_flex = true;
+@@ -3315,7 +3329,12 @@ i40e_set_rx_function(struct rte_eth_dev *dev)
+ {
+ 	struct i40e_adapter *ad =
+ 		I40E_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
 +	struct ci_rx_path_features req_features = {
 +		.rx_offloads = dev->data->dev_conf.rxmode.offloads,
 +		.simd_width = RTE_VECT_SIMD_DISABLED,
 +	};
+ 	uint16_t vector_rx, i;
++	enum rte_vect_max_simd rx_simd_width = i40e_get_max_simd_bitwidth();
  
  	/* The primary process selects the rx path for all processes. */
  	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-@@ -3964,143 +3995,32 @@ iavf_set_rx_function(struct rte_eth_dev *dev)
+@@ -3324,72 +3343,51 @@ i40e_set_rx_function(struct rte_eth_dev *dev)
+ 	/* In order to allow Vector Rx there are a few configuration
+ 	 * conditions to be met and Rx Bulk Allocation should be allowed.
+ 	 */
+-#ifdef RTE_ARCH_X86
+-	enum rte_vect_max_simd rx_simd_width = i40e_get_max_simd_bitwidth();
+-#endif
++
+ 	if (i40e_rx_vec_dev_conf_condition_check(dev) || !ad->rx_bulk_alloc_allowed) {
+ 		PMD_INIT_LOG(DEBUG, "Port[%d] doesn't meet"
+ 				" Vector Rx preconditions",
+ 				dev->data->port_id);
+ 
+-		ad->rx_vec_allowed = false;
++		rx_simd_width = RTE_VECT_SIMD_DISABLED;
+ 	}
+-	if (ad->rx_vec_allowed) {
++	if (rx_simd_width != RTE_VECT_SIMD_DISABLED) {
+ 		for (i = 0; i < dev->data->nb_rx_queues; i++) {
+ 			struct ci_rx_queue *rxq =
+ 				dev->data->rx_queues[i];
+ 
+ 			if (rxq && i40e_rxq_vec_setup(rxq)) {
+-				ad->rx_vec_allowed = false;
++				rx_simd_width = RTE_VECT_SIMD_DISABLED;
+ 				break;
+ 			}
  		}
  	}
  
+-	if (ad->rx_vec_allowed && rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128) {
 -#ifdef RTE_ARCH_X86
--	int check_ret;
--	bool use_avx2 = false;
--	bool use_avx512 = false;
--	enum rte_vect_max_simd rx_simd_path = iavf_get_max_simd_bitwidth();
--
--	check_ret = iavf_rx_vec_dev_check(dev);
--	if (check_ret >= 0 &&
--	    rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128) {
--		use_avx2 = rx_simd_path == RTE_VECT_SIMD_256;
--		use_avx512 = rx_simd_path == RTE_VECT_SIMD_512;
--
--		for (i = 0; i < dev->data->nb_rx_queues; i++) {
--			rxq = dev->data->rx_queues[i];
--			(void)iavf_rxq_vec_setup(rxq);
--		}
--
 -		if (dev->data->scattered_rx) {
--			if (use_flex) {
--				adapter->rx_func_type = IAVF_RX_SSE_SCATTERED_FLEX_RXD;
--				if (use_avx2) {
--					if (check_ret == IAVF_VECTOR_PATH)
--						adapter->rx_func_type =
--							IAVF_RX_AVX2_SCATTERED_FLEX_RXD;
--					else
--						adapter->rx_func_type =
--							IAVF_RX_AVX2_SCATTERED_FLEX_RXD_OFFLOAD;
--				}
--#ifdef CC_AVX512_SUPPORT
--				if (use_avx512) {
--					if (check_ret == IAVF_VECTOR_PATH)
--						adapter->rx_func_type =
--							IAVF_RX_AVX512_SCATTERED_FLEX_RXD;
--					else
--						adapter->rx_func_type =
--							IAVF_RX_AVX512_SCATTERED_FLEX_RXD_OFFLOAD;
--				}
--#endif
+-			if (rx_simd_width == RTE_VECT_SIMD_512) {
+-				ad->rx_func_type = I40E_RX_AVX512_SCATTERED;
 -			} else {
--				adapter->rx_func_type = IAVF_RX_SSE_SCATTERED;
--				if (use_avx2) {
--					if (check_ret == IAVF_VECTOR_PATH)
--						adapter->rx_func_type =
--							IAVF_RX_AVX2_SCATTERED;
--					else
--						adapter->rx_func_type =
--							IAVF_RX_AVX2_SCATTERED_OFFLOAD;
--				}
--#ifdef CC_AVX512_SUPPORT
--				if (use_avx512) {
--					if (check_ret == IAVF_VECTOR_PATH)
--						adapter->rx_func_type =
--							IAVF_RX_AVX512_SCATTERED;
--					else
--						adapter->rx_func_type =
--							IAVF_RX_AVX512_SCATTERED_OFFLOAD;
--				}
--#endif
+-				ad->rx_func_type = (rx_simd_width == RTE_VECT_SIMD_256) ?
+-					I40E_RX_AVX2_SCATTERED :
+-					I40E_RX_SCATTERED;
+-				dev->recycle_rx_descriptors_refill =
+-					i40e_recycle_rx_descriptors_refill_vec;
 -			}
 -		} else {
--			if (use_flex) {
--				adapter->rx_func_type = IAVF_RX_SSE_FLEX_RXD;
--				if (use_avx2) {
--					if (check_ret == IAVF_VECTOR_PATH)
--						adapter->rx_func_type = IAVF_RX_AVX2_FLEX_RXD;
--					else
--						adapter->rx_func_type =
--							IAVF_RX_AVX2_FLEX_RXD_OFFLOAD;
--				}
--#ifdef CC_AVX512_SUPPORT
--				if (use_avx512) {
--					if (check_ret == IAVF_VECTOR_PATH)
--						adapter->rx_func_type = IAVF_RX_AVX512_FLEX_RXD;
--					else
--						adapter->rx_func_type =
--							IAVF_RX_AVX512_FLEX_RXD_OFFLOAD;
--				}
-+	if (use_flex)
-+		req_features.extra.flex_desc = true;
-+	if (dev->data->scattered_rx)
-+		req_features.extra.scattered = true;
-+	if (adapter->rx_bulk_alloc_allowed) {
-+		req_features.extra.bulk_alloc = true;
-+		default_path = IAVF_RX_BULK_ALLOC;
-+#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM)
-+		if (iavf_rx_vec_dev_check(dev) != -1)
-+			req_features.simd_width = iavf_get_max_simd_bitwidth();
- #endif
+-			if (rx_simd_width == RTE_VECT_SIMD_512) {
+-				ad->rx_func_type = I40E_RX_AVX512;
 -			} else {
--				adapter->rx_func_type = IAVF_RX_SSE;
--				if (use_avx2) {
--					if (check_ret == IAVF_VECTOR_PATH)
--						adapter->rx_func_type = IAVF_RX_AVX2;
--					else
--						adapter->rx_func_type = IAVF_RX_AVX2_OFFLOAD;
--				}
--#ifdef CC_AVX512_SUPPORT
--				if (use_avx512) {
--					if (check_ret == IAVF_VECTOR_PATH)
--						adapter->rx_func_type = IAVF_RX_AVX512;
--					else
--						adapter->rx_func_type = IAVF_RX_AVX512_OFFLOAD;
--				}
--#endif
+-				ad->rx_func_type = (rx_simd_width == RTE_VECT_SIMD_256) ?
+-					I40E_RX_AVX2 :
+-					I40E_RX_SSE;
+-				dev->recycle_rx_descriptors_refill =
+-					i40e_recycle_rx_descriptors_refill_vec;
 -			}
 -		}
--		goto out;
- 	}
--#elif defined RTE_ARCH_ARM
--	int check_ret;
--
--	check_ret = iavf_rx_vec_dev_check(dev);
--	if (check_ret >= 0 &&
--	    rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128) {
--		PMD_DRV_LOG(DEBUG, "Using a Vector Rx callback (port=%d).",
--			    dev->data->port_id);
--		for (i = 0; i < dev->data->nb_rx_queues; i++) {
--			rxq = dev->data->rx_queues[i];
--			(void)iavf_rxq_vec_setup(rxq);
--		}
--		adapter->rx_func_type = IAVF_RX_SSE;
- 
--		goto out;
--	}
--#endif
--	if (dev->data->scattered_rx) {
--		if (use_flex)
--			adapter->rx_func_type = IAVF_RX_SCATTERED_FLEX_RXD;
+-#elif defined(RTE_ARCH_ARM64)
++	req_features.simd_width = rx_simd_width;
++	if (dev->data->scattered_rx)
++		req_features.extra.scattered = true;
++	if (ad->rx_bulk_alloc_allowed)
++		req_features.extra.bulk_alloc = true;
++
++	ad->rx_func_type = ci_rx_path_select(req_features,
++						&i40e_rx_path_infos[0],
++						RTE_DIM(i40e_rx_path_infos),
++						I40E_RX_DEFAULT);
++	if (i40e_rx_path_infos[ad->rx_func_type].features.simd_width >= RTE_VECT_SIMD_128)
++		/* Vector function selected. Prepare the rxq accordingly. */
++		for (i = 0; i < dev->data->nb_rx_queues; i++)
++			if (dev->data->rx_queues[i])
++				i40e_rxq_vec_setup(dev->data->rx_queues[i]);
++
++	if (i40e_rx_path_infos[ad->rx_func_type].features.simd_width >= RTE_VECT_SIMD_128 &&
++			i40e_rx_path_infos[ad->rx_func_type].features.simd_width <
++				RTE_VECT_SIMD_512)
+ 		dev->recycle_rx_descriptors_refill = i40e_recycle_rx_descriptors_refill_vec;
+-		if (dev->data->scattered_rx)
+-			ad->rx_func_type = I40E_RX_NEON_SCATTERED;
 -		else
--			adapter->rx_func_type = IAVF_RX_SCATTERED;
--	} else if (adapter->rx_bulk_alloc_allowed) {
--		adapter->rx_func_type = IAVF_RX_BULK_ALLOC;
+-			ad->rx_func_type = I40E_RX_NEON;
+-#elif defined(RTE_ARCH_PPC_64)
+-		dev->recycle_rx_descriptors_refill = i40e_recycle_rx_descriptors_refill_vec;
+-		if (dev->data->scattered_rx)
+-			ad->rx_func_type = I40E_RX_ALTIVEC_SCATTERED;
+-		else
+-			ad->rx_func_type = I40E_RX_ALTIVEC;
+-#endif /* RTE_ARCH_X86 */
+-	} else if (!dev->data->scattered_rx && ad->rx_bulk_alloc_allowed) {
+-		dev->rx_pkt_burst = i40e_recv_pkts_bulk_alloc;
 -	} else {
--		if (use_flex)
--			adapter->rx_func_type = IAVF_RX_FLEX_RXD;
--		else
--			adapter->rx_func_type = IAVF_RX_DEFAULT;
+-		/* Simple Rx Path. */
+-		dev->rx_pkt_burst = dev->data->scattered_rx ?
+-					i40e_recv_scattered_pkts :
+-					i40e_recv_pkts;
 -	}
-+	adapter->rx_func_type = ci_rx_path_select(req_features,
-+						&iavf_rx_path_infos[0],
-+						RTE_DIM(iavf_rx_path_infos),
-+						default_path);
- 
- out:
- 	if (no_poll_on_link_down)
- 		dev->rx_pkt_burst = iavf_recv_pkts_no_poll;
- 	else
--		dev->rx_pkt_burst = iavf_rx_pkt_burst_ops[adapter->rx_func_type].pkt_burst;
-+		dev->rx_pkt_burst = iavf_rx_path_infos[adapter->rx_func_type].pkt_burst;
- 
--	PMD_DRV_LOG(NOTICE, "Using %s Rx burst function (port %d).",
--		iavf_rx_pkt_burst_ops[adapter->rx_func_type].info, dev->data->port_id);
++
++out:
++	dev->rx_pkt_burst = i40e_rx_path_infos[ad->rx_func_type].pkt_burst;
 +	PMD_DRV_LOG(NOTICE, "Using %s (port %d).",
-+		iavf_rx_path_infos[adapter->rx_func_type].info, dev->data->port_id);
++			i40e_rx_path_infos[ad->rx_func_type].info, dev->data->port_id);
+ 
+ 	/* Propagate information about RX function choice through all queues. */
+ 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+@@ -3411,10 +3409,8 @@ i40e_set_rx_function(struct rte_eth_dev *dev)
+ 		}
+ 	}
+ 
+-out:
+-	dev->rx_pkt_burst = i40e_rx_burst_infos[ad->rx_func_type].pkt_burst;
+-	PMD_DRV_LOG(NOTICE, "Using %s Rx burst function (port %d).",
+-		i40e_rx_burst_infos[ad->rx_func_type].info, dev->data->port_id);
++	ad->rx_vec_allowed = i40e_rx_path_infos[ad->rx_func_type].features.simd_width >=
++				RTE_VECT_SIMD_128;
  }
  
- /* choose tx function*/
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-index 36157003e3..2e85348cb2 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx.h
-@@ -56,12 +56,50 @@
- 		RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |	\
- 		RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM)
+ int
+@@ -3425,10 +3421,10 @@ i40e_rx_burst_mode_get(struct rte_eth_dev *dev, __rte_unused uint16_t queue_id,
+ 	int ret = -EINVAL;
+ 	unsigned int i;
  
--#define IAVF_RX_VECTOR_OFFLOAD (				 \
--		RTE_ETH_RX_OFFLOAD_CHECKSUM |		 \
--		RTE_ETH_RX_OFFLOAD_SCTP_CKSUM |		 \
--		RTE_ETH_RX_OFFLOAD_VLAN |		 \
--		RTE_ETH_RX_OFFLOAD_RSS_HASH |    \
--		RTE_ETH_RX_OFFLOAD_TIMESTAMP)
-+#define IAVF_RX_NO_OFFLOADS 0
-+/* basic scalar path */
-+#define IAVF_RX_SCALAR_OFFLOADS (			\
+-	for (i = 0; i < RTE_DIM(i40e_rx_burst_infos); ++i) {
+-		if (pkt_burst == i40e_rx_burst_infos[i].pkt_burst) {
++	for (i = 0; i < RTE_DIM(i40e_rx_path_infos); ++i) {
++		if (pkt_burst == i40e_rx_path_infos[i].pkt_burst) {
+ 			snprintf(mode->info, sizeof(mode->info), "%s",
+-				 i40e_rx_burst_infos[i].info);
++				 i40e_rx_path_infos[i].info);
+ 			ret = 0;
+ 			break;
+ 		}
+diff --git a/drivers/net/intel/i40e/i40e_rxtx.h b/drivers/net/intel/i40e/i40e_rxtx.h
+index b867e18daf..5d5d4e08b0 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx.h
++++ b/drivers/net/intel/i40e/i40e_rxtx.h
+@@ -67,6 +67,21 @@ enum i40e_header_split_mode {
+ 			       I40E_HEADER_SPLIT_UDP_TCP | \
+ 			       I40E_HEADER_SPLIT_SCTP)
+ 
++#define I40E_RX_SCALAR_OFFLOADS (			\
 +		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |		\
 +		RTE_ETH_RX_OFFLOAD_QINQ_STRIP |		\
 +		RTE_ETH_RX_OFFLOAD_IPV4_CKSUM |		\
 +		RTE_ETH_RX_OFFLOAD_UDP_CKSUM |		\
 +		RTE_ETH_RX_OFFLOAD_TCP_CKSUM |		\
 +		RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM |	\
-+		RTE_ETH_RX_OFFLOAD_SCATTER |		\
-+		RTE_ETH_RX_OFFLOAD_VLAN_FILTER |	\
-+		RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |	\
-+		RTE_ETH_RX_OFFLOAD_SCATTER |		\
-+		RTE_ETH_RX_OFFLOAD_RSS_HASH |		\
-+		RTE_ETH_RX_OFFLOAD_OUTER_UDP_CKSUM |	\
-+		RTE_ETH_RX_OFFLOAD_KEEP_CRC)
-+/* scalar path that uses the flex rx desc */
-+#define IAVF_RX_SCALAR_FLEX_OFFLOADS (			\
-+		IAVF_RX_SCALAR_OFFLOADS |		\
-+		RTE_ETH_RX_OFFLOAD_TIMESTAMP |		\
-+		RTE_ETH_RX_OFFLOAD_SECURITY)
-+/* basic vector paths */
-+#define IAVF_RX_VECTOR_OFFLOADS (			\
 +		RTE_ETH_RX_OFFLOAD_KEEP_CRC |		\
-+		RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM |	\
-+		RTE_ETH_RX_OFFLOAD_SCATTER)
-+/* vector paths that use the flex rx desc */
-+#define IAVF_RX_VECTOR_FLEX_OFFLOADS (			\
-+		IAVF_RX_VECTOR_OFFLOADS |		\
-+		RTE_ETH_RX_OFFLOAD_TIMESTAMP |		\
-+		RTE_ETH_RX_OFFLOAD_SECURITY)
-+/* vector offload paths */
-+#define IAVF_RX_VECTOR_OFFLOAD_OFFLOADS (		\
-+		IAVF_RX_VECTOR_OFFLOADS |		\
-+		RTE_ETH_RX_OFFLOAD_CHECKSUM |		\
-+		RTE_ETH_RX_OFFLOAD_SCTP_CKSUM |		\
-+		RTE_ETH_RX_OFFLOAD_VLAN |		\
++		RTE_ETH_RX_OFFLOAD_SCATTER |		\
++		RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |	\
++		RTE_ETH_RX_OFFLOAD_VLAN_FILTER |	\
 +		RTE_ETH_RX_OFFLOAD_RSS_HASH)
-+/* vector offload paths that use the flex rx desc */
-+#define IAVF_RX_VECTOR_OFFLOAD_FLEX_OFFLOADS (		\
-+		IAVF_RX_VECTOR_OFFLOAD_OFFLOADS |	\
-+		RTE_ETH_RX_OFFLOAD_TIMESTAMP |		\
-+		RTE_ETH_RX_OFFLOAD_SECURITY)
 +
- 
- /**
-  * According to the vlan capabilities returned by the driver and FW, the vlan tci
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-index 9b14fc7d12..0d0bde6cb3 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-@@ -67,10 +67,7 @@ iavf_rx_vec_queue_default(struct ci_rx_queue *rxq)
- 	if (rxq->proto_xtr != IAVF_PROTO_XTR_NONE)
- 		return -1;
- 
--	if (rxq->offloads & IAVF_RX_VECTOR_OFFLOAD)
--		return IAVF_VECTOR_OFFLOAD_PATH;
--
--	return IAVF_VECTOR_PATH;
-+	return 0;
- }
- 
- static inline int
-@@ -117,20 +114,17 @@ iavf_rx_vec_dev_check_default(struct rte_eth_dev *dev)
++#define I40E_RX_VECTOR_OFFLOADS I40E_RX_SCALAR_OFFLOADS
++
+ /** Offload features */
+ union i40e_tx_offload {
+ 	uint64_t data;
+diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c b/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
+index 8a4a1a77bf..87a57e7520 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
++++ b/drivers/net/intel/i40e/i40e_rxtx_vec_altivec.c
+@@ -558,3 +558,9 @@ i40e_rx_vec_dev_conf_condition_check(struct rte_eth_dev *dev)
  {
- 	int i;
- 	struct ci_rx_queue *rxq;
--	int ret;
--	int result = 0;
-+	int ret = 0;
- 
- 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
- 		rxq = dev->data->rx_queues[i];
- 		ret = iavf_rx_vec_queue_default(rxq);
- 
- 		if (ret < 0)
--			return -1;
--		if (ret > result)
--			result = ret;
-+			break;
- 	}
- 
--	return result;
-+	return ret;
- }
- 
- static inline int
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_neon.c b/drivers/net/intel/iavf/iavf_rxtx_vec_neon.c
-index 4ed4e9b336..28c90b2a72 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_neon.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_neon.c
-@@ -360,3 +360,9 @@ iavf_rx_vec_dev_check(struct rte_eth_dev *dev)
- {
- 	return iavf_rx_vec_dev_check_default(dev);
+ 	return i40e_rx_vec_dev_conf_condition_check_default(dev);
  }
 +
 +enum rte_vect_max_simd
-+iavf_get_max_simd_bitwidth(void)
++i40e_get_max_simd_bitwidth(void)
 +{
-+	return RTE_MIN(128, rte_vect_get_max_simd_bitwidth());
++	return rte_vect_get_max_simd_bitwidth();
++}
+diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_common.h b/drivers/net/intel/i40e/i40e_rxtx_vec_common.h
+index d19b9e4bf4..e118df9ce0 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx_vec_common.h
++++ b/drivers/net/intel/i40e/i40e_rxtx_vec_common.h
+@@ -54,8 +54,6 @@ static inline int
+ i40e_rx_vec_dev_conf_condition_check_default(struct rte_eth_dev *dev)
+ {
+ #ifndef RTE_LIBRTE_IEEE1588
+-	struct i40e_adapter *ad =
+-		I40E_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+ 	struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
+ 
+ 	/* no QinQ support */
+@@ -66,15 +64,12 @@ i40e_rx_vec_dev_conf_condition_check_default(struct rte_eth_dev *dev)
+ 	 * Vector mode is allowed only when number of Rx queue
+ 	 * descriptor is power of 2.
+ 	 */
+-	ad->rx_vec_allowed = true;
+ 	for (uint16_t i = 0; i < dev->data->nb_rx_queues; i++) {
+ 		struct ci_rx_queue *rxq = dev->data->rx_queues[i];
+ 		if (!rxq)
+ 			continue;
+-		if (!ci_rxq_vec_capable(rxq->nb_rx_desc, rxq->rx_free_thresh, rxq->offloads)) {
+-			ad->rx_vec_allowed = false;
+-			break;
+-		}
++		if (!ci_rxq_vec_capable(rxq->nb_rx_desc, rxq->rx_free_thresh, rxq->offloads))
++			return -1;
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
+index 64ffb2f6df..c9098e4c1a 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
++++ b/drivers/net/intel/i40e/i40e_rxtx_vec_neon.c
+@@ -708,3 +708,9 @@ i40e_rx_vec_dev_conf_condition_check(struct rte_eth_dev *dev)
+ {
+ 	return i40e_rx_vec_dev_conf_condition_check_default(dev);
+ }
++
++enum rte_vect_max_simd
++i40e_get_max_simd_bitwidth(void)
++{
++	return rte_vect_get_max_simd_bitwidth();
 +}
 -- 
 2.34.1
