@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF9BCCA0EF1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 033BACA0EF1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:36:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EA46740E2B;
-	Tue, 19 Aug 2025 01:34:11 +0200 (CEST)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
- [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id 3AB1540E1E
- for <dev@dpdk.org>; Tue, 19 Aug 2025 01:34:11 +0200 (CEST)
-Received: by mail-wr1-f52.google.com with SMTP id
- ffacd0b85a97d-3b9e4106460so3767717f8f.2
- for <dev@dpdk.org>; Mon, 18 Aug 2025 16:34:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 101CB40E24;
+	Tue, 19 Aug 2025 01:34:14 +0200 (CEST)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
+ [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 411E440E27
+ for <dev@dpdk.org>; Tue, 19 Aug 2025 01:34:13 +0200 (CEST)
+Received: by mail-wm1-f52.google.com with SMTP id
+ 5b1f17b1804b1-45a1ac7c066so26747605e9.1
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 16:34:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755560051;
- x=1756164851; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755560053;
+ x=1756164853; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=OXpGrlEX9xqMFN2SQrKUpPz5iwdHl4Wh7S63BZM5WfI=;
- b=dfYH7QDI8luK4ipdtXoYhE48hnpMH4kSJn2PfqzbB3ZYAhiLUgpYhYf9dzyLMhfdhD
- HsxVIFOP82LAERejY7ggSG4l36QPLs01LwduWqFJSMH7UFdVGSkb0vgtSJJvDgesgiht
- 0B2OqR8JPEFntxjI1D/65lHbzkivvpF7dLEIZWR+lvuqAdwKyMGPzx5l3muXOM4P3e21
- WLEdezmVmlYhrzGmjA1afP3JGJQutkW8k4GvKOi/XB0+vLPqz/QuFwGQ/Gee9bQXjrTx
- qYIvshbhNOLlWRxnwXamQfzmWOBja8Fcwb/Qu8zwlo5pKpBkJN8FGzaabdh8B8I8LJVq
- yuYQ==
+ bh=gwxP8i/kPJrtjAwCEBiH4/lF/GlQKQYG6S+3LPfw420=;
+ b=Ip/BHGEzLL1E436fLmEmiSSXHH4dUQjzZcB9+nB0N3QRlLKy5JDcqRnvlcDU4Yiq3E
+ tEC8uiLCMNaxhJGi7h3FxU8MvGERH3hS5V1duuBghpqJd416gsvdgID3zb9apnc4PNNA
+ nRJUGQeczE6GLP5uYIXrUZXeuRzVIPtumsvOminuhbZgxAcBEKJvNNg7FTNpRKA8J0ai
+ c2WL0fde5kZNZ7MKUc+iAOrEUlFw1MqxO2IQabfJbRS/oLEkwc/CxaJGN4czlgbNfoDT
+ lxOL0hl2EZPX12nwQYqNmaY5l9BAkl1SUIsY5UJV3nvuH7pzKA16zjZCOxADoJqX1zV+
+ 0UhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755560051; x=1756164851;
+ d=1e100.net; s=20230601; t=1755560053; x=1756164853;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=OXpGrlEX9xqMFN2SQrKUpPz5iwdHl4Wh7S63BZM5WfI=;
- b=R3WKTkrM3hQGt25MBhWIM3JO+Xc1ixjdU3A/geHjS7IacEUGMnPJFCMchDuuYbcT22
- 0kuUmQ69GlAzgX3L6mwZsEqgkcf18ICER+7LuSQAJN+InwQEHFxOkG+/6RujCpOE1X44
- ALw/ZjAkIEhu9pak5IOvZQH64ntxSNfP20Hlindsh5jgPLHH7Y+fZ6SKIQz5yNXqQLf/
- MvYaXpKDZinE4dwDoJ7j9z/z3ksWCFBBCE0qUcQ5qDpBKV30f0Ixf0De4PZ07ASQ8vqL
- eHMo51/WRZpBEl6L4UAsYzQGTHBABtiYAvSLTDdrD5S1ORVY9m4rjYEO1Eg+5Hg8gX8F
- BdMQ==
-X-Gm-Message-State: AOJu0YyLek/rgJngWFDuCy5R+aP+r2A/0rwl01LCi/4Y1ZlvLTDS/IhR
- P6iZiBHzNFJyZ+mf4scN98hyDEZ815rND5AV+wUt4zt58zf32ltpG8lmD6xBzh6mYCyzJ+sBxBd
- NBKqh
-X-Gm-Gg: ASbGncuiVAqzzva6jOk3Mj90bUW1GAVhAOyx08t9EWXx2kYxcnHjld7KsccMTGruivl
- CThr/GOt3LbN49WI2xmC7K71Jfq+NGehJpfqqyQQ+oV0c1Np7CYp7I0w+CyFMSOOOJeTsFjc1lt
- lvmVXKJoR0Sni6r4f/JZEynjpZni2q9tefJ4EdRJC4M+K+CSEmTRmy+QxyMgQ1jitEdxeVUWhFY
- 3TLOn2qqWpZApAUfhlKuD/UmHIPV+G1NgqYN50Hgs33/V2tjb+LCLNQUvafNbicTzBJZbUAQGzG
- y1z3dv2/x/l4sgOgfWJvxRP/NkY4DTpPtXcGQyw7zbBWIgVQmWUVmNgN+tYABdilQ+LmmXuB9HZ
- Jy+kp1hGJASmB048Puc7NtW6SlAFLTvkcg4RRN9ONeggbKecObmRBl4KdHdRB+KTP1jNx7KcCrb
- 4AQ3mTSCc=
-X-Google-Smtp-Source: AGHT+IHPo4eNQOQ/ePkKwKr4T57pPh5+tW9sjGe/3R7yQsuoRt9VKzUD+BzGDVC1euOmYAdsNPp8BA==
-X-Received: by 2002:a05:6000:178a:b0:3b9:1d32:cf4a with SMTP id
- ffacd0b85a97d-3c0ed1f4912mr281772f8f.44.1755560050866; 
- Mon, 18 Aug 2025 16:34:10 -0700 (PDT)
+ bh=gwxP8i/kPJrtjAwCEBiH4/lF/GlQKQYG6S+3LPfw420=;
+ b=JTkN4ve7z8lWrqxomLdl3lMji2MF638O6gMMMqJgGDaU/rAcDIXWShLEwt3g8+LD50
+ Y7JUxdiCu7ZmR/PrwchlfMm2Yn4P6+Q/5FLBco+MG/FrVUKP3CoBSSgqlGm/7bxupTYL
+ AM+dypRJVKNyMLyY7XLCLH0DOWUn0bbiaHTi1SqOl73Qa8N9o2rmUbqfKmNRtPRtuJjI
+ uvwtBBTUaql3O34RPSKPrrhBdkLgbSgGnUMWGPx2r2YezYSdhc09U4mjINGoVahbRwsq
+ hYNS9u/FFAWRJL56mjTw94RWo6W+8XO3+teDTd7elUe20BhESBpk8AbBJKdZIkY1By1m
+ dCog==
+X-Gm-Message-State: AOJu0Yzyd2GewsPkw2z+5m9JPyjH1NCSrtVrcdw9IzXhnxzM3fzDM80D
+ Ln05+qJ8wKfUB6QaJgt+o6+mMruN0dTLxPCUjHXBIdLhB8YGqzJ255JJ77uq4BUVWCQklLM0j9q
+ ogAd1
+X-Gm-Gg: ASbGncsGCja0pcPUwMdAp5Oox0XJ8q4zvDLeHTGjRL/Ve2t1Eju4cWXzCCE93HroVvv
+ m4aO3nkoufAZQjNBWmIo4vUpOUi52gv9JLFgSzn5YiD6Te1/mmd//PdiHOxL45i+9X7/juANy2y
+ chkEgxld7cgRqtN+tYWQiRsW/+V+ItOvBp7mOtYO6pzvPqaVs56vitdoyxHid4FgSQF1GShaAd5
+ 8Ltih149X5LiGimSffn9DcmCb+QKE1Q0/sJxArUWB0qo1W77AkgHFcl6iU+BoQwmg4PL2PwVzSd
+ +Ey5TLZ9fEIPF03nSN1p5Y6NBVC3hnBwnXNrAmgxf1yqCPJrVaOX/rMzll2NFHNmrBD6ZGEcdf6
+ CC+m1qCU0nayGir7EzaFKRhizS9NDaSIb5z7fMNzI0o7PedXyFG7rA+EjXWCO/PMenw9ys4VG
+X-Google-Smtp-Source: AGHT+IEv08BEY84aaVamHzbtAOKB77rKKVQJ4tzECL+r0t5bFpioowMpTuKTL0iNgHe6udT1vn9vTw==
+X-Received: by 2002:a05:600c:358f:b0:456:1157:59ac with SMTP id
+ 5b1f17b1804b1-45b43f77da0mr1887605e9.7.1755560052828; 
+ Mon, 18 Aug 2025 16:34:12 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.34.09
+ ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.34.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 18 Aug 2025 16:34:10 -0700 (PDT)
+ Mon, 18 Aug 2025 16:34:12 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [RFC 38/47] net/softnic: replace use of sys/queue.h
-Date: Mon, 18 Aug 2025 16:27:49 -0700
-Message-ID: <20250818233102.180207-39-stephen@networkplumber.org>
+ Jerin Jacob <jerinj@marvell.com>, Maciej Czekaj <mczekaj@marvell.com>
+Subject: [RFC 39/47] net/thunderx: replace use of sys/queue.h
+Date: Mon, 18 Aug 2025 16:27:50 -0700
+Message-ID: <20250818233102.180207-40-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250818233102.180207-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -86,21 +85,48 @@ Replace use of system sys/queue.h with DPDK bsd_queue.h
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/softnic/rte_eth_softnic_internals.h | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/thunderx/base/nicvf_bsvf.h | 2 +-
+ drivers/net/thunderx/base/nicvf_plat.h | 1 +
+ drivers/net/thunderx/nicvf_ethdev.c    | 1 -
+ 3 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/softnic/rte_eth_softnic_internals.h b/drivers/net/softnic/rte_eth_softnic_internals.h
-index d3975dad10..5b4361bad0 100644
---- a/drivers/net/softnic/rte_eth_softnic_internals.h
-+++ b/drivers/net/softnic/rte_eth_softnic_internals.h
-@@ -7,7 +7,6 @@
+diff --git a/drivers/net/thunderx/base/nicvf_bsvf.h b/drivers/net/thunderx/base/nicvf_bsvf.h
+index 4c7615ca99..b93201f265 100644
+--- a/drivers/net/thunderx/base/nicvf_bsvf.h
++++ b/drivers/net/thunderx/base/nicvf_bsvf.h
+@@ -5,7 +5,7 @@
+ #ifndef __THUNDERX_NICVF_BSVF_H__
+ #define __THUNDERX_NICVF_BSVF_H__
  
- #include <stddef.h>
- #include <stdint.h>
+-#include <sys/queue.h>
++#include <bsd_queue.h>
+ 
+ struct nicvf;
+ 
+diff --git a/drivers/net/thunderx/base/nicvf_plat.h b/drivers/net/thunderx/base/nicvf_plat.h
+index 8421f57040..34761000b4 100644
+--- a/drivers/net/thunderx/base/nicvf_plat.h
++++ b/drivers/net/thunderx/base/nicvf_plat.h
+@@ -6,6 +6,7 @@
+ #define _THUNDERX_NICVF_H
+ 
+ /* Platform/OS/arch specific abstractions */
++#include <bsd_queue.h>
+ 
+ /* log */
+ #include <rte_log.h>
+diff --git a/drivers/net/thunderx/nicvf_ethdev.c b/drivers/net/thunderx/nicvf_ethdev.c
+index 4441a90bdf..c7b6252cd6 100644
+--- a/drivers/net/thunderx/nicvf_ethdev.c
++++ b/drivers/net/thunderx/nicvf_ethdev.c
+@@ -12,7 +12,6 @@
+ #include <stdarg.h>
+ #include <inttypes.h>
+ #include <netinet/in.h>
 -#include <sys/queue.h>
  
- #include <rte_mempool.h>
- #include <rte_mbuf.h>
+ #include <rte_alarm.h>
+ #include <rte_branch_prediction.h>
 -- 
 2.47.2
 
