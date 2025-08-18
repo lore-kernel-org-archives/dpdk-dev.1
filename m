@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 856EECA0EF1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E67CA0EF1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:36:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 05CEC40E22;
-	Tue, 19 Aug 2025 01:34:19 +0200 (CEST)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
- [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id C3ED340678
- for <dev@dpdk.org>; Tue, 19 Aug 2025 01:34:17 +0200 (CEST)
-Received: by mail-wr1-f47.google.com with SMTP id
- ffacd0b85a97d-3bb2fb3a48aso1751683f8f.1
- for <dev@dpdk.org>; Mon, 18 Aug 2025 16:34:17 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E4CAC40698;
+	Tue, 19 Aug 2025 01:34:20 +0200 (CEST)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com
+ [209.85.221.50]) by mails.dpdk.org (Postfix) with ESMTP id A548F40E2F
+ for <dev@dpdk.org>; Tue, 19 Aug 2025 01:34:19 +0200 (CEST)
+Received: by mail-wr1-f50.google.com with SMTP id
+ ffacd0b85a97d-3b9e418ba08so2631162f8f.3
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 16:34:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755560057;
- x=1756164857; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755560059;
+ x=1756164859; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=1h38YexGHB2RdENaaHVG0Tt5ih04AwJ97XyHORWV6cI=;
- b=BayOXbO6hSEUxTW8UaYyi7wJ7lfczILsnLCAYOV7rGH+ZTwMvQ2SBB/zH3eqzVxZ9Z
- r5lbE/DI1R1I2PYV3+dqc7mF0g5yKJ1KeEgzpBtKWDz0BIP8sHacmHQk4BWClhTqCRbV
- iRS0NPUO+dY9qSJ6PJghGdYd9WYr9SeQJZUZftwFfAyVkeca0MvDxtnd6cSP7GzGfOcz
- rhqXG1JUsp1SJsG+74bJhe+Bhw/F6ufeDTZPqGCye1P6YX3OtJzqPeBiKqlZNb8zdkHg
- Ca136ysJqnJDT0Ky/0qYzmLgmqiJ33fSnO6WF0mLqQJMDFmSAJAnFt3gHqzJARtTK6YV
- zuaQ==
+ bh=mzkcsdR//pyUkm4xvYdsPbZFMS17Fjq5l3zFoZfRKl0=;
+ b=YtBGCt77658mqhTyinmCKpfXqRW4FRdTk0oPfms+afnAwxzJMLTDzrBIlEIT4s+zlq
+ bcDgCYyvGTzL0vSEgKzm0ML+LQRXO/3KclJCAhSk1c0EzazYlveKBVB2f1cZm6ioZ6JI
+ S7ex3TxonpGpX4xCU87nqcBKD/q5RpFZdESwbZlpa1eHm4Gyy+XrdUiIBaf4TUQnzGJz
+ b2EFwChVA/EY6zaip4oWVZMzjNyfoXtuKbwGkifla8N8l7R9UWrGT1qLY753W/2b2lLm
+ NVYl86efKtWyCP7b904mPuDZoOpNNK7obffVDBqSE6rSyZGE8IYf+tot0k0EOpcgmO5l
+ Qfww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755560057; x=1756164857;
+ d=1e100.net; s=20230601; t=1755560059; x=1756164859;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=1h38YexGHB2RdENaaHVG0Tt5ih04AwJ97XyHORWV6cI=;
- b=u7HQ6RmwZTTHaSXr22JSKYqJi29seNrCD/UEB+GiFykuNTsrAmL9GgqOiD0o9jBOOH
- ZB3zwTK+Lt6+OBrKr+akPqTVn0D/CGkxSRyB23VREBjPTuN/SDJX+rGWMqym/LynzSsj
- JPC7WtT7nKh0CkTrehjvJZ0+eIecvqWByEblvPwQDb93iAtpd72uZZ9/cOuYLcx/GBbq
- u9+wSTCN4QbLYwttor8PtPLQsUHTdTYq+vOFlpbYTd6I4rvJfHMjXC5Zo+o2L/8wlALf
- W/lSArGXQzwKc1CCl7ld3/yfxfd9Zo9O5aRDVEqDHHEzwvCnPoUeo4LviahD0B5OIgFP
- yW2A==
-X-Gm-Message-State: AOJu0YzG42FQQQ9SmEMKn4TpmRmBZ7KFX4EhvJvbwMU2PIrrDO+0ufKP
- cyE2iZML9N1bXO6yw2iLEfOAIoth/6QA47kqRR5zKnT+VKGTJSCgMGqJabE6pr7R5Ka67RkXZaA
- /Ouz0
-X-Gm-Gg: ASbGncuQv07tP75o7IZMzsKlHLOhnwE+Fc0Ia4YPvIG6cc2HEyPwEaRVsmmWfNO6/FD
- KWQHNvwB9ML7PJZX10BK4OszkeinSs+9VNWHxH6S7nOIks4KgzatrqQUBgfXzU+iJ0ah3h2+rw6
- L5UjMn2gafImk8x09HERcXUZYrvW/fX2pcUVuRq/AaQ4w15GBBu+DobDFk6V+7iTOmOM9hZkQRC
- iyMS3iGp312il4EfUyPZ5kWVk1RqPHa3ARCNkNak4fMilpEULxQayHwnj1PHBfFkKLScayH/e05
- CYaNXp84FoAtprGiP757kecYaakjiyyOzc2mYfj2rkNQ1n2QFHMrNBLh5FN5jws1vngRJ3hzuh2
- BslWkQ/RBuf4pgu9SFgwXuZa2qquX9UepmODlfVzSU16LAylAxMEcF8JT7Km9HtHU4LPISxo+
-X-Google-Smtp-Source: AGHT+IG2hZbY34Fans6KKWX3HtK9UXlNLg0ixhdoFkG18TYi2itMeeScz1KlCa4Jha323KXlfZJkdw==
-X-Received: by 2002:a05:6000:4027:b0:3b7:895c:1562 with SMTP id
- ffacd0b85a97d-3c0ea2d8421mr350031f8f.11.1755560057451; 
- Mon, 18 Aug 2025 16:34:17 -0700 (PDT)
+ bh=mzkcsdR//pyUkm4xvYdsPbZFMS17Fjq5l3zFoZfRKl0=;
+ b=rqoVURL7Z3zqdJNCLCbcF9scm5VwBT2fIjadVdrVJQHpgOmHRW/Z+RP57/kLOPLkhQ
+ yw73AtW27odhHPphvSR9yMX3y9JR5KlI+nt/IJZsyDZ2rvhHIyY42QJsCnD5dOzFRBHC
+ LwqMlks0zF87z/h2UUGQ+BNwGzltD47WsVKcW5TCXEu2LqIcKu20OgeSx1q/xJ5UjtxB
+ h9UYXw3cy6UyS1S3dJsiacN8GJauudCInkvu3XWbiF8IgwzUeoVhyC6ib+AoFSJ/5mS4
+ SnxM8bW2YJVbScKkq17yfJ93lzrTRU9ebLOijXnF0nqMZiiobYtxHpFzEdiUiCEHv91y
+ ioFg==
+X-Gm-Message-State: AOJu0Yx3wBBoBmuXL780ZBf406ICA6KDJyseP4OeK+kY3PU9j3o4IIGQ
+ WJbYJpdScY+JvaK0SJXoXHchEUooWymBbj8zObyXmuSHFKEUX2IfphkiCOLLSo72z0VRNA5ywCq
+ vI8En
+X-Gm-Gg: ASbGnctMpOxlyJIhvds4+kfuSCF/HEIHphzUUGewNrDSdAJpUhkYbxF9saiC7S870MW
+ 1zOAAwQ9aZ4llvdPOu0CiIpV7Djaann9kp3PPPwjnmvsHf3dbbhUKbPe18pUxFRJBJ7chQx6mWV
+ wEHsTXCvnqU3bUvQlAe2P1eKvPontBFZ/W/x3+nI8qdFQvmmzpObkUnxClMM+zG8oPso6CaQVj2
+ 8Q+w6gTPczdvKQLzOmbJ7vubLPQRE2jTEzkFhMZ5Ch5xO6x0k+LvOe9jIALJjZM2MCVd9AuSgLl
+ 6/DSQ/9LUc/VF4XenlukeMZwxIR9uyZEEeXxdRY+JNYBl7taKT07Xwk16sYFbYBPrc6u+DIjr7i
+ j2/Wm7z34M71B0mmeU73FOzynkS2qLWg8OZ1vHIMlg5pJDqa/KFxhVwyMv/+tFdXOn2ItXiJp
+X-Google-Smtp-Source: AGHT+IH0coxK0fLe6cj/5Bw3PPtMbotelASiOgiS+5UBelGqVXqJMbhH1J9JB0ZbcnJoLgvn4ffTKQ==
+X-Received: by 2002:a05:6000:18a3:b0:3b7:8410:22b5 with SMTP id
+ ffacd0b85a97d-3c0e028d39bmr318246f8f.13.1755560059229; 
+ Mon, 18 Aug 2025 16:34:19 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.34.16
+ ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.34.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 18 Aug 2025 16:34:17 -0700 (PDT)
+ Mon, 18 Aug 2025 16:34:18 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Matan Azrad <matan@nvidia.com>
-Subject: [RFC 41/47] net/vdev_netvsc: replace use of sys/queue.h
-Date: Mon, 18 Aug 2025 16:27:52 -0700
-Message-ID: <20250818233102.180207-42-stephen@networkplumber.org>
+ Jochen Behrens <jochen.behrens@broadcom.com>
+Subject: [RFC 42/47] net/vmxnet3: replace use of sys/queue.h
+Date: Mon, 18 Aug 2025 16:27:53 -0700
+Message-ID: <20250818233102.180207-43-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250818233102.180207-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -85,22 +85,34 @@ Replace use of system sys/queue.h with DPDK bsd_queue.h
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/vdev_netvsc/vdev_netvsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/vmxnet3/vmxnet3_ethdev.c | 1 -
+ drivers/net/vmxnet3/vmxnet3_rxtx.c   | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/drivers/net/vdev_netvsc/vdev_netvsc.c b/drivers/net/vdev_netvsc/vdev_netvsc.c
-index f4a84783ce..e7a05b1aa8 100644
---- a/drivers/net/vdev_netvsc/vdev_netvsc.c
-+++ b/drivers/net/vdev_netvsc/vdev_netvsc.c
-@@ -19,7 +19,7 @@
- #include <stdio.h>
- #include <string.h>
- #include <sys/ioctl.h>
--#include <sys/queue.h>
-+#include <bsd_queue.h>
- #include <sys/socket.h>
- #include <unistd.h>
+diff --git a/drivers/net/vmxnet3/vmxnet3_ethdev.c b/drivers/net/vmxnet3/vmxnet3_ethdev.c
+index 15ca25b187..cc7f540d54 100644
+--- a/drivers/net/vmxnet3/vmxnet3_ethdev.c
++++ b/drivers/net/vmxnet3/vmxnet3_ethdev.c
+@@ -2,7 +2,6 @@
+  * Copyright(c) 2010-2015 Intel Corporation
+  */
  
+-#include <sys/queue.h>
+ #include <stdalign.h>
+ #include <stdio.h>
+ #include <errno.h>
+diff --git a/drivers/net/vmxnet3/vmxnet3_rxtx.c b/drivers/net/vmxnet3/vmxnet3_rxtx.c
+index e226641fdf..51db8d03cb 100644
+--- a/drivers/net/vmxnet3/vmxnet3_rxtx.c
++++ b/drivers/net/vmxnet3/vmxnet3_rxtx.c
+@@ -2,7 +2,6 @@
+  * Copyright(c) 2010-2015 Intel Corporation
+  */
+ 
+-#include <sys/queue.h>
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
 -- 
 2.47.2
 
