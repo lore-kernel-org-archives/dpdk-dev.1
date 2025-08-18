@@ -2,80 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9A9CA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C219CCA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:33:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5AB4A4065E;
-	Tue, 19 Aug 2025 01:32:45 +0200 (CEST)
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
- [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id 7B2714065E
- for <dev@dpdk.org>; Tue, 19 Aug 2025 01:32:44 +0200 (CEST)
-Received: by mail-wm1-f42.google.com with SMTP id
- 5b1f17b1804b1-45a1b004954so34270145e9.0
- for <dev@dpdk.org>; Mon, 18 Aug 2025 16:32:44 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 708BD40670;
+	Tue, 19 Aug 2025 01:32:48 +0200 (CEST)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
+ [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id C9E284065B
+ for <dev@dpdk.org>; Tue, 19 Aug 2025 01:32:46 +0200 (CEST)
+Received: by mail-wr1-f54.google.com with SMTP id
+ ffacd0b85a97d-3b9d41bea3cso5039397f8f.0
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 16:32:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755559964;
- x=1756164764; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755559966;
+ x=1756164766; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=hzRJmwOkI9LB8iWn92EPz+3YfAxJg++1zDWbq8yx5KU=;
- b=yuhK2ul1S9OgP13yQHp0neIIyBf++16hKdXW7+nNbWNdeiCMhJRkvj2IxB0Mujq5t7
- 413+dzuRAvBxp90eumg4Ns0TuZ7KiqMBT48YWX9irDDnsrt5cB0O6d9J5+QRJ8XI0CXs
- Mgdo9LnChtO6iVpzUCLBw2jbxAbVGVXeARcWuOondESbF9OkEg2yzK8OssbMHt65277J
- RhM2/jGtFUZwv5LNBDuPQMo9cPcJVBLf4mvVFDeF/r2pX1Mi5bCrkPSN7TBZ36l389sc
- NMR9fPoGd+ACtNB1YKu7L6uAyYW920EYkuOeOH82epBzaSIL4JUEcQ7+sdXBLEljUY0J
- zH9g==
+ bh=ZgscBR5d2uWwO3lPExFnXmZCWoH6LpUG8KTP6ATkSlo=;
+ b=NhRdC+DUlXKTzJo4xeAN9xzbvYYaYkAvl6eXWIC3s4Nb0jhHaXHWur3Hm2r0NqdZIK
+ uoW/pQGFlpgweXaLLgr7cAtXyHwXlC4+BAIuTTeh/1zsx9+JgqVuTngL9awMZ0ASn/4o
+ vwfB6ABDrSsDlETFvZlKxCdhIiDnwMltd066zkEZqKiivKabCJpz/ZnHniMyxpYwopHt
+ LMXpVP2e58CWqczD1836s7gYVRE3uWN4B/atzwINsGoCepVA9D9es6rvcTB/NIH6b30g
+ 52+s8OKtu5ARQJ/piJnS8X7P7J022tVezwAZCyY2fJHyw4vPLsLglM98IcBHeg+MPpzF
+ eSQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755559964; x=1756164764;
+ d=1e100.net; s=20230601; t=1755559966; x=1756164766;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=hzRJmwOkI9LB8iWn92EPz+3YfAxJg++1zDWbq8yx5KU=;
- b=ZWGA0x0evAAw9Dc8qYrIvdqSMzHJJq4RNjTk1W/VQhA1aMicyrdAEKWpYqUn3BYGU3
- D2g6Xe2ZFnlzHApwC6WjKVMWiqvi7zUcFr4CmRJ9320rOYwutx6ACSw1bSRG83EJmV0G
- Z0pe0T1j+R5XMiPYR92swWE9xKVx0ef1/PHfW+k3O8zqx3xr41fw6n924pRONo4NRiCp
- egi6L2kYpzg6DyJQngYkJAfk0AYjXcO7kCQ/I8qXhUQrdUTDFV6WLZQyaqykmiduv6EC
- XROO5MgyjHEobfl96ShuFtB48O3sCuV0qqxex4GU4FiP2nrNWaWPzfnpWp5yJQ5KdLfm
- E6Vg==
-X-Gm-Message-State: AOJu0YxqAmjO6ZLuwNPstrRtnuDaRk5+2foWrjFwxVT07w8Dv9YOGrlW
- Mv8wHElB0w1y6+2JpcQtocs/+eH3Dx3k3sgWeNpSYkvaO6kC30NcKgqx7tqbakjQmbYMJ9wzVym
- aNcfM
-X-Gm-Gg: ASbGncuUmVomWDj4ms/y0tO5mkZf8i8ht0PHaxExYg3JHDOaivo5QT7m+kxuCVr1LXU
- XST5z7JK0LbIxdDWhJMw1ZSNLxVUg3pJZ3Q3Atar2saSwNFkRTpLFs9jg/rVtb1oOPjuygMJ2jH
- E6LSz4QytUBTe8CZTN8aIyXN2AIVeFXqoOQ6g5fiQz1He6HJransL3uTwWuKqxYBba9oliGLQPh
- avt8W1WeK6/6Fqs6Wcrwpw3I6Aafs7/mDvz6r0j/p5++oPzljSWw5qxbobNjRx/Tt21Lopdz3sL
- c10tjmNttW6+biri8OEKhWX4jv1a+i/slbjov8AOtRcZg5aFdyjRcYvbvvP57wrPhNHBu/Gnd4g
- HZEMqLL3/h61folG9B0qiYfbZcmrM0j3HcMokrhCDPPEXS+qh1JUj0PYZG+zfB7X+dRHNWWMDq7
- ai5f43Tlw=
-X-Google-Smtp-Source: AGHT+IGfPUf2vve1TJvbpy43Z0KIeQpZmqItcnL9YB7CtGeBgpZ9ewqMXFrIloov5tXYPMqzPK/39Q==
-X-Received: by 2002:a05:600c:468d:b0:459:e025:8c40 with SMTP id
- 5b1f17b1804b1-45b43dbbf10mr2468325e9.10.1755559964026; 
- Mon, 18 Aug 2025 16:32:44 -0700 (PDT)
+ bh=ZgscBR5d2uWwO3lPExFnXmZCWoH6LpUG8KTP6ATkSlo=;
+ b=dq0drmQBV2JOnPnpVN1EgVChfRkx85mfsXP8q34bG+cGljOgQZv4s0XOnJqO4v6XzU
+ 1jq1HaCc4TJHQd0B9Dow/5lBk1loDeYsnYCnKTxi30W3By2RuGNgKq0yfyHCZLqYrRNg
+ GR5NOCruZ60jXzZP/lL1/8oti3KeoZyNnfS2ffxhZ0q4gMzmj2uB2MUzKKE9EXENVjz0
+ jPVZPMloFuKsaOUkk4o5Dvv66qdGQ0ucEOUakQp+XdxFr57F9iSccdcyUCzLHmnXpHtJ
+ 9xx+Zqrkq/zlDUBCEOkaCeQ9QJsixtz+hMLafNBlCOVF1T2//kjLdKZOFEYF2p8ePcMo
+ jJqg==
+X-Gm-Message-State: AOJu0YwZSSXnrg7gZWOoSqTWmUBJsY196hMJ71fuk6BaIypJAtcBKCxY
+ kahV8DaID85yDRwHD54d0KyTN9SqzSLSuTLpubvIlVe/e3McdmubzHO97mHoPEHH1eDLj5566aS
+ SYsOF
+X-Gm-Gg: ASbGncupNRYzOtjzMxjgaC3Pt6GCBisBCG8yTybm6TmFN3ijYINRFoEQ0xKvF7HAqXP
+ 3ub9hbY0qXMfAtybwhOM4LUEJf8gQcxDx7AYNhOw/Xh7q13tzi/wCFaYdhaMnYa0qexlzLNfJ7u
+ lTcDqEC7c+ySRj/lDiiXINDDNDzMx56wO9c4bHAoVUYn27dgMiB6K+YTQoE5mGLaCqJzI7WjD6X
+ VXLLqIIXBGq7ux9dRTdG3+sd6ztfsPgj2rfsbSbQB1sEeV1G5Td44QxGEfJw26EB5FZ1G5B7UgV
+ ugMabgmyCKOl7lzH44w61cX2HcA0C6UJdg8TTRKWkoexqtoTIUaovgqBtMe++Y5tHoWeIKKLio7
+ 4oGt/qw1/s+4J80YodkY5SiuF959EplTvXMVMQB3cLwx5R0EMbmKGxbWdEIsQvgmK3rzXQiDX
+X-Google-Smtp-Source: AGHT+IELY7a9lrKuuiNrkOCPEUnnjjQ31nKQVZ5DKIWmoIIUHWhkbwpe1z7GP62vnLsdZM9iAYm+5w==
+X-Received: by 2002:a05:6000:178a:b0:3b9:1d32:cf4a with SMTP id
+ ffacd0b85a97d-3c0ed1f4912mr279954f8f.44.1755559966305; 
+ Mon, 18 Aug 2025 16:32:46 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.32.40
+ ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.32.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 18 Aug 2025 16:32:43 -0700 (PDT)
+ Mon, 18 Aug 2025 16:32:45 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>,
- Jack Bond-Preston <jack.bond-preston@foss.arm.com>,
- Erik Gabriel Carrillo <erik.g.carrillo@intel.com>
-Subject: [RFC 04/47] test: remove unnecessary inclusion of sys/queue.h
-Date: Mon, 18 Aug 2025 16:27:15 -0700
-Message-ID: <20250818233102.180207-5-stephen@networkplumber.org>
+ Aman Singh <aman.deep.singh@intel.com>
+Subject: [RFC 05/47] testpmd: use bsd_queue.h
+Date: Mon, 18 Aug 2025 16:27:16 -0700
+Message-ID: <20250818233102.180207-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250818233102.180207-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -94,378 +81,223 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Those macros are not directly in most of the test code.
+Only include the definition of LIST, TAILQ, etc where needed.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/commands.c                  | 2 +-
- app/test/test.c                      | 1 -
- app/test/test.h                      | 2 +-
- app/test/test_atomic.c               | 1 -
- app/test/test_cmdline_lib.c          | 1 -
- app/test/test_func_reentrancy.c      | 1 -
- app/test/test_hash.c                 | 1 -
- app/test/test_hash_functions.c       | 1 -
- app/test/test_link_bonding.c         | 1 -
- app/test/test_link_bonding_mode4.c   | 1 -
- app/test/test_link_bonding_rssconf.c | 1 -
- app/test/test_logs.c                 | 1 -
- app/test/test_malloc.c               | 1 -
- app/test/test_mbuf.c                 | 1 -
- app/test/test_mcslock.c              | 1 -
- app/test/test_mempool.c              | 1 -
- app/test/test_mempool_perf.c         | 1 -
- app/test/test_memzone.c              | 1 -
- app/test/test_mp_secondary.c         | 1 -
- app/test/test_per_lcore.c            | 1 -
- app/test/test_pflock.c               | 1 -
- app/test/test_ring.c                 | 1 -
- app/test/test_rwlock.c               | 1 -
- app/test/test_soring.c               | 1 -
- app/test/test_spinlock.c             | 1 -
- app/test/test_tailq.c                | 1 -
- app/test/test_ticketlock.c           | 1 -
- app/test/test_timer.c                | 1 -
- 28 files changed, 2 insertions(+), 28 deletions(-)
+ app/test-pmd/5tswap.c     | 2 --
+ app/test-pmd/cmdline.c    | 2 +-
+ app/test-pmd/config.c     | 2 +-
+ app/test-pmd/csumonly.c   | 1 -
+ app/test-pmd/flowgen.c    | 1 -
+ app/test-pmd/hairpin.c    | 1 -
+ app/test-pmd/icmpecho.c   | 1 -
+ app/test-pmd/iofwd.c      | 1 -
+ app/test-pmd/macfwd.c     | 1 -
+ app/test-pmd/macswap.c    | 1 -
+ app/test-pmd/noisy_vnf.c  | 1 -
+ app/test-pmd/parameters.c | 1 -
+ app/test-pmd/rxonly.c     | 1 -
+ app/test-pmd/testpmd.c    | 1 -
+ app/test-pmd/testpmd.h    | 2 +-
+ app/test-pmd/txonly.c     | 1 -
+ 16 files changed, 3 insertions(+), 17 deletions(-)
 
-diff --git a/app/test/commands.c b/app/test/commands.c
-index 497d8e9952..6328ff3ed6 100644
---- a/app/test/commands.c
-+++ b/app/test/commands.c
-@@ -10,8 +10,8 @@
- #include <stdlib.h>
- #include <inttypes.h>
- #include <errno.h>
--#include <sys/queue.h>
- 
-+#include <bsd_queue.h>
- #include <rte_common.h>
- #include <rte_log.h>
- #include <rte_debug.h>
-diff --git a/app/test/test.c b/app/test/test.c
-index fd653cbbfd..b3a15529d9 100644
---- a/app/test/test.c
-+++ b/app/test/test.c
-@@ -9,7 +9,6 @@
- #include <stdlib.h>
- #include <errno.h>
- #include <ctype.h>
--#include <sys/queue.h>
- 
- #include <cmdline_rdline.h>
- #include <cmdline_parse.h>
-diff --git a/app/test/test.h b/app/test/test.h
-index ebc4864bf8..a8a1ac9e76 100644
---- a/app/test/test.h
-+++ b/app/test/test.h
-@@ -8,8 +8,8 @@
- #include <errno.h>
- #include <stddef.h>
- #include <stdlib.h>
--#include <sys/queue.h>
- 
-+#include <bsd_queue.h>
- #include <rte_hexdump.h>
- #include <rte_common.h>
- #include <rte_os_shim.h>
-diff --git a/app/test/test_atomic.c b/app/test/test_atomic.c
-index 3f26ce88d9..d98f7b1d09 100644
---- a/app/test/test_atomic.c
-+++ b/app/test/test_atomic.c
-@@ -7,7 +7,6 @@
+diff --git a/app/test-pmd/5tswap.c b/app/test-pmd/5tswap.c
+index 8e8de2557a..2671fdcd9f 100644
+--- a/app/test-pmd/5tswap.c
++++ b/app/test-pmd/5tswap.c
+@@ -7,8 +7,6 @@
  #include <stdint.h>
+ #include <unistd.h>
+ #include <inttypes.h>
+-
+-#include <sys/queue.h>
+ #include <sys/stat.h>
+ 
+ #include <rte_common.h>
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index 7b4e27eddf..cf1bfe658b 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -13,8 +13,8 @@
+ #include <string.h>
  #include <unistd.h>
  #include <inttypes.h>
 -#include <sys/queue.h>
  
- #include <rte_memory.h>
- #include <rte_per_lcore.h>
-diff --git a/app/test/test_cmdline_lib.c b/app/test/test_cmdline_lib.c
-index 87c1059366..67a2d73137 100644
---- a/app/test/test_cmdline_lib.c
-+++ b/app/test/test_cmdline_lib.c
-@@ -9,7 +9,6 @@
- #include <stdlib.h>
- #include <errno.h>
- #include <ctype.h>
--#include <sys/queue.h>
- 
++#include <bsd_queue.h>
  #include <rte_common.h>
- 
-diff --git a/app/test/test_func_reentrancy.c b/app/test/test_func_reentrancy.c
-index 34d685d493..c7f359e360 100644
---- a/app/test/test_func_reentrancy.c
-+++ b/app/test/test_func_reentrancy.c
-@@ -9,7 +9,6 @@
- #include <inttypes.h>
- #include <stdarg.h>
- #include <errno.h>
--#include <sys/queue.h>
- 
- #include <rte_common.h>
+ #include <rte_byteorder.h>
  #include <rte_log.h>
-diff --git a/app/test/test_hash.c b/app/test/test_hash.c
-index 5791fd7f4c..f538053367 100644
---- a/app/test/test_hash.c
-+++ b/app/test/test_hash.c
-@@ -8,7 +8,6 @@
- #include <stdlib.h>
- #include <stdarg.h>
- #include <errno.h>
--#include <sys/queue.h>
- 
- #include <rte_common.h>
- #include <rte_malloc.h>
-diff --git a/app/test/test_hash_functions.c b/app/test/test_hash_functions.c
-index 70820d1f19..0d9f1dc0f6 100644
---- a/app/test/test_hash_functions.c
-+++ b/app/test/test_hash_functions.c
-@@ -8,7 +8,6 @@
- #include <stdlib.h>
- #include <stdarg.h>
- #include <errno.h>
--#include <sys/queue.h>
- 
- #include <rte_cycles.h>
- #include <rte_random.h>
-diff --git a/app/test/test_link_bonding.c b/app/test/test_link_bonding.c
-index 19b064771a..39541b04b0 100644
---- a/app/test/test_link_bonding.c
-+++ b/app/test/test_link_bonding.c
-@@ -11,7 +11,6 @@
- #include <inttypes.h>
- #include <errno.h>
- #include <pthread.h>
--#include <sys/queue.h>
- #include <sys/time.h>
- 
- #include <rte_cycles.h>
-diff --git a/app/test/test_link_bonding_mode4.c b/app/test/test_link_bonding_mode4.c
-index ff13dbed93..0df83d94d3 100644
---- a/app/test/test_link_bonding_mode4.c
-+++ b/app/test/test_link_bonding_mode4.c
-@@ -10,7 +10,6 @@
- #include <inttypes.h>
- #include <errno.h>
- #include <rte_cycles.h>
--#include <sys/queue.h>
- 
- #include <rte_byteorder.h>
- #include <rte_common.h>
-diff --git a/app/test/test_link_bonding_rssconf.c b/app/test/test_link_bonding_rssconf.c
-index 2cb689b1de..50bdc909f5 100644
---- a/app/test/test_link_bonding_rssconf.c
-+++ b/app/test/test_link_bonding_rssconf.c
-@@ -10,7 +10,6 @@
- #include <inttypes.h>
- #include <errno.h>
- #include <rte_cycles.h>
--#include <sys/queue.h>
- 
- #include <rte_byteorder.h>
- #include <rte_common.h>
-diff --git a/app/test/test_logs.c b/app/test/test_logs.c
-index 43b09704a3..a02e4b7860 100644
---- a/app/test/test_logs.c
-+++ b/app/test/test_logs.c
-@@ -5,7 +5,6 @@
- #include <stdio.h>
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index 0fda8e99f8..3b21c7e994 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -13,7 +13,7 @@
  #include <stdint.h>
- #include <stdarg.h>
--#include <sys/queue.h>
+ #include <inttypes.h>
  
- #include <rte_log.h>
- #include <rte_memory.h>
-diff --git a/app/test/test_malloc.c b/app/test/test_malloc.c
-index ce8fc5dd06..c74ebaad10 100644
---- a/app/test/test_malloc.c
-+++ b/app/test/test_malloc.c
-@@ -13,7 +13,6 @@
- #ifndef RTE_EXEC_ENV_WINDOWS
- #include <sys/mman.h>
- #endif
 -#include <sys/queue.h>
++#include <bsd_queue.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
+index d355dbd8c0..babf4e1881 100644
+--- a/app/test-pmd/csumonly.c
++++ b/app/test-pmd/csumonly.c
+@@ -10,7 +10,6 @@
  #include <unistd.h>
+ #include <inttypes.h>
+ 
+-#include <sys/queue.h>
+ #include <sys/stat.h>
  
  #include <rte_common.h>
-diff --git a/app/test/test_mbuf.c b/app/test/test_mbuf.c
-index 17be977f31..b057ae79b4 100644
---- a/app/test/test_mbuf.c
-+++ b/app/test/test_mbuf.c
+diff --git a/app/test-pmd/flowgen.c b/app/test-pmd/flowgen.c
+index 53b5f24f11..dc50f8c94f 100644
+--- a/app/test-pmd/flowgen.c
++++ b/app/test-pmd/flowgen.c
+@@ -10,7 +10,6 @@
+ #include <unistd.h>
+ #include <inttypes.h>
+ 
+-#include <sys/queue.h>
+ #include <sys/stat.h>
+ 
+ #include <rte_common.h>
+diff --git a/app/test-pmd/hairpin.c b/app/test-pmd/hairpin.c
+index 5e6b37974e..35d5c06047 100644
+--- a/app/test-pmd/hairpin.c
++++ b/app/test-pmd/hairpin.c
+@@ -8,7 +8,6 @@
+ #include <stdbool.h>
+ #include <stdint.h>
+ 
+-#include <sys/queue.h>
+ 
+ #include "testpmd.h"
+ 
+diff --git a/app/test-pmd/icmpecho.c b/app/test-pmd/icmpecho.c
+index c87b7a80df..7b51513070 100644
+--- a/app/test-pmd/icmpecho.c
++++ b/app/test-pmd/icmpecho.c
+@@ -10,7 +10,6 @@
+ #include <unistd.h>
+ #include <inttypes.h>
+ 
+-#include <sys/queue.h>
+ #include <sys/stat.h>
+ 
+ #include <rte_common.h>
+diff --git a/app/test-pmd/iofwd.c b/app/test-pmd/iofwd.c
+index ba06fae4a6..26dd787ca1 100644
+--- a/app/test-pmd/iofwd.c
++++ b/app/test-pmd/iofwd.c
+@@ -10,7 +10,6 @@
+ #include <unistd.h>
+ #include <inttypes.h>
+ 
+-#include <sys/queue.h>
+ #include <sys/stat.h>
+ 
+ #include <rte_common.h>
+diff --git a/app/test-pmd/macfwd.c b/app/test-pmd/macfwd.c
+index d19ace7395..5ba3549270 100644
+--- a/app/test-pmd/macfwd.c
++++ b/app/test-pmd/macfwd.c
+@@ -10,7 +10,6 @@
+ #include <unistd.h>
+ #include <inttypes.h>
+ 
+-#include <sys/queue.h>
+ #include <sys/stat.h>
+ 
+ #include <rte_common.h>
+diff --git a/app/test-pmd/macswap.c b/app/test-pmd/macswap.c
+index 57f77003fe..cc171aed4c 100644
+--- a/app/test-pmd/macswap.c
++++ b/app/test-pmd/macswap.c
+@@ -10,7 +10,6 @@
+ #include <unistd.h>
+ #include <inttypes.h>
+ 
+-#include <sys/queue.h>
+ #include <sys/stat.h>
+ 
+ #include <rte_common.h>
+diff --git a/app/test-pmd/noisy_vnf.c b/app/test-pmd/noisy_vnf.c
+index 81d1187cfe..edf1f62b55 100644
+--- a/app/test-pmd/noisy_vnf.c
++++ b/app/test-pmd/noisy_vnf.c
 @@ -12,7 +12,6 @@
- #include <stdint.h>
- #include <inttypes.h>
- #include <errno.h>
--#include <sys/queue.h>
- 
- #include <rte_common.h>
- #include <rte_errno.h>
-diff --git a/app/test/test_mcslock.c b/app/test/test_mcslock.c
-index 8fcbc11a08..e88da6d8de 100644
---- a/app/test/test_mcslock.c
-+++ b/app/test/test_mcslock.c
-@@ -7,7 +7,6 @@
- #include <inttypes.h>
- #include <string.h>
  #include <unistd.h>
--#include <sys/queue.h>
- 
- #include <rte_common.h>
- #include <rte_memory.h>
-diff --git a/app/test/test_mempool.c b/app/test/test_mempool.c
-index 61385e096e..6e6431e422 100644
---- a/app/test/test_mempool.c
-+++ b/app/test/test_mempool.c
-@@ -9,7 +9,6 @@
  #include <inttypes.h>
- #include <stdarg.h>
- #include <errno.h>
+ 
 -#include <sys/queue.h>
+ #include <sys/stat.h>
  
  #include <rte_common.h>
- #include <rte_eal_paging.h>
-diff --git a/app/test/test_mempool_perf.c b/app/test/test_mempool_perf.c
-index e164eca788..775d61461d 100644
---- a/app/test/test_mempool_perf.c
-+++ b/app/test/test_mempool_perf.c
+diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
+index 1132972913..c3e46f97b9 100644
+--- a/app/test-pmd/parameters.c
++++ b/app/test-pmd/parameters.c
+@@ -13,7 +13,6 @@
+ #include <fcntl.h>
+ #include <sys/types.h>
+ 
+-#include <sys/queue.h>
+ #include <sys/stat.h>
+ 
+ #include <stdint.h>
+diff --git a/app/test-pmd/rxonly.c b/app/test-pmd/rxonly.c
+index 315f9286cd..c73282e991 100644
+--- a/app/test-pmd/rxonly.c
++++ b/app/test-pmd/rxonly.c
 @@ -10,7 +10,6 @@
+ #include <unistd.h>
  #include <inttypes.h>
- #include <stdarg.h>
- #include <errno.h>
+ 
 -#include <sys/queue.h>
+ #include <sys/stat.h>
  
  #include <rte_common.h>
- #include <rte_log.h>
-diff --git a/app/test/test_memzone.c b/app/test/test_memzone.c
-index 506725ea41..8080501a89 100644
---- a/app/test/test_memzone.c
-+++ b/app/test/test_memzone.c
-@@ -6,7 +6,6 @@
- #include <stdint.h>
- #include <string.h>
- #include <inttypes.h>
--#include <sys/queue.h>
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index bb88555328..b8ad6b6f73 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -16,7 +16,6 @@
+ #include <errno.h>
+ #include <stdbool.h>
  
- #include <rte_random.h>
- #include <rte_cycles.h>
-diff --git a/app/test/test_mp_secondary.c b/app/test/test_mp_secondary.c
-index f3694530a8..72a50c92e4 100644
---- a/app/test/test_mp_secondary.c
-+++ b/app/test/test_mp_secondary.c
+-#include <sys/queue.h>
+ #include <sys/stat.h>
+ 
+ #include <stdint.h>
+diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
+index e629edaa02..59e3620f0f 100644
+--- a/app/test-pmd/testpmd.h
++++ b/app/test-pmd/testpmd.h
+@@ -21,7 +21,7 @@
+ #include <cmdline.h>
+ #include <cmdline_parse.h>
+ 
+-#include <sys/queue.h>
++#include <bsd_queue.h>
+ #ifdef RTE_HAS_JANSSON
+ #include <jansson.h>
+ #endif
+diff --git a/app/test-pmd/txonly.c b/app/test-pmd/txonly.c
+index bdcf6ea660..2aa8aaa4c5 100644
+--- a/app/test-pmd/txonly.c
++++ b/app/test-pmd/txonly.c
 @@ -10,7 +10,6 @@
- #include <stdlib.h>
- #include <stdarg.h>
- #include <inttypes.h>
--#include <sys/queue.h>
- #include <errno.h>
- #include <string.h>
  #include <unistd.h>
-diff --git a/app/test/test_per_lcore.c b/app/test/test_per_lcore.c
-index e0674b0e70..a3e56b5c9d 100644
---- a/app/test/test_per_lcore.c
-+++ b/app/test/test_per_lcore.c
-@@ -4,7 +4,6 @@
- 
- #include <stdio.h>
- #include <stdint.h>
--#include <sys/queue.h>
- 
- #include <rte_common.h>
- #include <rte_memory.h>
-diff --git a/app/test/test_pflock.c b/app/test/test_pflock.c
-index 162049201f..5fb7f21d50 100644
---- a/app/test/test_pflock.c
-+++ b/app/test/test_pflock.c
-@@ -6,7 +6,6 @@
- #include <stdint.h>
  #include <inttypes.h>
- #include <unistd.h>
--#include <sys/queue.h>
- #include <string.h>
  
- #include <rte_common.h>
-diff --git a/app/test/test_ring.c b/app/test/test_ring.c
-index ba1fec1de3..1487093bc4 100644
---- a/app/test/test_ring.c
-+++ b/app/test/test_ring.c
-@@ -10,7 +10,6 @@
- #include <stdint.h>
- #include <inttypes.h>
- #include <errno.h>
 -#include <sys/queue.h>
- 
- #include <rte_common.h>
- #include <rte_log.h>
-diff --git a/app/test/test_rwlock.c b/app/test/test_rwlock.c
-index 785317621d..3bbcd8100e 100644
---- a/app/test/test_rwlock.c
-+++ b/app/test/test_rwlock.c
-@@ -6,7 +6,6 @@
- #include <stdint.h>
- #include <inttypes.h>
- #include <unistd.h>
--#include <sys/queue.h>
- #include <string.h>
- 
- #include <rte_common.h>
-diff --git a/app/test/test_soring.c b/app/test/test_soring.c
-index 3c1944424e..d75054d95c 100644
---- a/app/test/test_soring.c
-+++ b/app/test/test_soring.c
-@@ -9,7 +9,6 @@
- #include <stdint.h>
- #include <inttypes.h>
- #include <errno.h>
--#include <sys/queue.h>
- 
- #include <rte_common.h>
- #include <rte_log.h>
-diff --git a/app/test/test_spinlock.c b/app/test/test_spinlock.c
-index 34e0ef9422..5b2064ee9a 100644
---- a/app/test/test_spinlock.c
-+++ b/app/test/test_spinlock.c
-@@ -7,7 +7,6 @@
- #include <inttypes.h>
- #include <string.h>
- #include <unistd.h>
--#include <sys/queue.h>
- 
- #include <rte_common.h>
- #include <rte_memory.h>
-diff --git a/app/test/test_tailq.c b/app/test/test_tailq.c
-index 2ff2877344..edb671a2be 100644
---- a/app/test/test_tailq.c
-+++ b/app/test/test_tailq.c
-@@ -7,7 +7,6 @@
- #include <stdarg.h>
- #include <string.h>
- #include <errno.h>
--#include <sys/queue.h>
- 
- #include <rte_eal.h>
- #include <rte_string_fns.h>
-diff --git a/app/test/test_ticketlock.c b/app/test/test_ticketlock.c
-index 8ac2e90876..2de7cc71c0 100644
---- a/app/test/test_ticketlock.c
-+++ b/app/test/test_ticketlock.c
-@@ -6,7 +6,6 @@
- #include <stdint.h>
- #include <stdio.h>
- #include <string.h>
--#include <sys/queue.h>
- #include <unistd.h>
- 
- #include <rte_common.h>
-diff --git a/app/test/test_timer.c b/app/test/test_timer.c
-index 3411b7fe20..5efcc7e61d 100644
---- a/app/test/test_timer.c
-+++ b/app/test/test_timer.c
-@@ -91,7 +91,6 @@
- #include <stdlib.h>
- #include <stdint.h>
- #include <inttypes.h>
--#include <sys/queue.h>
- #include <math.h>
+ #include <sys/stat.h>
  
  #include <rte_common.h>
 -- 
