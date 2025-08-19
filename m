@@ -2,76 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3503BCA0EE6
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 16:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E3A7CA0EEB
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 16:59:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6D5BB402ED;
-	Tue, 19 Aug 2025 18:29:34 +0200 (CEST)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
- [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id C6B91402E4
- for <dev@dpdk.org>; Tue, 19 Aug 2025 18:29:32 +0200 (CEST)
-Received: by mail-wm1-f54.google.com with SMTP id
- 5b1f17b1804b1-45a1b05a49cso40736655e9.1
- for <dev@dpdk.org>; Tue, 19 Aug 2025 09:29:32 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8690640669;
+	Tue, 19 Aug 2025 18:59:16 +0200 (CEST)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com
+ [209.85.219.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 8B45A402E4;
+ Tue, 19 Aug 2025 18:59:15 +0200 (CEST)
+Received: by mail-yb1-f180.google.com with SMTP id
+ 3f1490d57ef6-e933de387b0so90838276.1; 
+ Tue, 19 Aug 2025 09:59:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755620972;
- x=1756225772; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=kvXhfLDQYvIDDsNRoFuivxQ2nnrzGcUU2MMm9+Rgx9w=;
- b=DYoZC1HLKhOHgEhUncLynNZJ8xh6IiF+JEVDdnB4dkKPm73XbDFLseYJhlO4USj04r
- J8jyZGpIgU0q8JoZIHSJ7fMPVnhBdE/GZuoWn3bjOB8C3SpObno2SJ+K0apY8TYUWScw
- 64k/RO0Ggn0fOXCdXXq1d0hGu9OdJYkepSh2W/xMviDB4EB/KDr+qsY+9L7AQO1LvAl/
- TwKFMQ0RxMrz9+UoJcOckn3l+boNXclES/peh44g5U3uYWZR0EZmJ96866ShEcZoWMxm
- SeWESGQ0uHGVG/zOcIhc4bqTUf1BgzYX+AFOVwnyCGgTdA0Z/+a9WZc3oM17EkQj87+Z
- 762Q==
+ d=gmail.com; s=20230601; t=1755622755; x=1756227555; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=W8Z44QjEyB+RT+e4pPx0+SyYYkbZzA/u1pmhwZ1jlb8=;
+ b=CvE+tr/Ogi2J2udPK0vcdlhDF6/wrhoKLZw+xsdLsQz1Gy8GbNJ2H/YeiW0vWOTzEl
+ ZI3TwXx91FNddiD2pYx0TMMisIT1ZapMh1ESVy8rTc9NltYy8V9PTZBBS8aB8tVJSeqo
+ vzdPMQWxHgtclUksxHL2lzqdWH+wTbHVaVudy6rqa1l8O3VMZI/NkYbxwh+4+Y4segeB
+ tWso+CGtuqc0ih37p8B4UDCQw8yIxxPUBkSEPOjsPKqt1/cqF3PDzTQOyJ+mAC7EQFzG
+ 0ZUD2RWBOm/pFR4lt+XaKJjD35t3wFvQ2y7MZRWo6a+AtTEZukBesSkFZzt/Dy53sinD
+ FeRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755620972; x=1756225772;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=kvXhfLDQYvIDDsNRoFuivxQ2nnrzGcUU2MMm9+Rgx9w=;
- b=qvOqbGT4VKsWlajWhfqi3EfLHppQmCr8hHXGDnoDfLSH702Q0FjjGr3Xqzp+q7AE6O
- CFnf4U1l1h+HozT69deJGxKY5VGMaQR9LEWWRW6XNzXVeYQGHY5woubAmRE20JRrCJVL
- Ihq9m/0JCvcS9tj3KcFB0a3rmnQsMLFvqdr3n78L4b88zTDtMdmcjOn08tTmWJ+fOevg
- fpqL4S1sFDjAI3nCVsrhZmvVf60cgrZqmVLuc786lYGsy15qfSLy7vH5QK4H9bzFr7ZT
- SllacUtdBJixY2KAIA2gejDSwabn95eeXaki/t1LDMPS9m5MtILXm2a+SDQJ8czifRP2
- tj3w==
+ d=1e100.net; s=20230601; t=1755622755; x=1756227555;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=W8Z44QjEyB+RT+e4pPx0+SyYYkbZzA/u1pmhwZ1jlb8=;
+ b=ad8dCHf+2/CrmNcOWr6oGHf+zT0afEt70Vuxg44bz7rXgmNOQju+HejT+uyoTPeveC
+ X7n2ttTAazsFOFqf41gBzm+lWLqBhymepAiZ+OaeI0ECIDl5zQtmDEMyaDDn9rNlTDbS
+ mRN7+fZ5ZYIgU/etTXlBXAo3/tJ5DtPxmtJwIzY3H99bWKMW6nMLkSwDetDmdfpq921W
+ BddflJUrFZOax6KMi+W+Gu2J5ytC0WgI34k6UfS9t4Go8uHHackxk3r8xBjJMpA4DgCs
+ EZT+IC/F7yRf4gS1nBDm4K+JtCQpMhH8R2KFwukovWaDp00WB8S+obTMDIQYU4N8DqP9
+ Y6fQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWjJNLjSVjOBh2MO5svfr2rEkGU8lBCdvwcSXUqe3JhdjI8U+fTV6iUfCqjz6Y0ApjpITM=@dpdk.org
-X-Gm-Message-State: AOJu0Yycsf8Wrjii9RTbyQHHJzpMEsfz485WFVFrOzSrNxeeF4X7tWgc
- untli/ISXup0iQTpBlxcR0O9sLkuuVbrA1+vcD934c0z45n2i+6/2oz7F69jx0tfis0=
-X-Gm-Gg: ASbGncsh6fMPtoyGFPFvW3IpIDfnZrCZfaKzym1k7HIRSA33tJ9mCIDRya2vNUHBdPx
- lIdql5vu1Lnkm49I5YJwNZe6HLoPOIc6jcH+xxHq0J8LHqcOJ0DSIK00D8GOhaGfFG0imEaMsgL
- HtVqjofOppDc5Cj42H3TuLQCZr77NM9xKC5mnsqtNcMNwsvfTu8+vxZuCI9wJjhPbo8bbq89KL7
- J6CZKeH0d4IpqwJbaPtdOqMwNLgBbWrJ8/5oTibMpasQqRuEbKiE2b1qefzM8WEiohlit3J0o6H
- sOKnsoQ8UQI/MqRcsWq82H6MXFb6ixWPu5DaK53yA3D5wX0krxRlPzIlNOiTH371e5WJ+4AWJaD
- VS73JY+9EivADVJtkb+xorhYtZPhPltccYjTyYVV6VoLDLtnPRQMBKjCzNdQr17g+DHVLAjjRvM
- I=
-X-Google-Smtp-Source: AGHT+IFAvXuas+4NZNHbDyYa4fHo66y+gtzapR9+xAgaVmkNuseArDXZyc5CfbVxli1/Jqt8yYPRIw==
-X-Received: by 2002:a05:600c:474f:b0:458:bdd1:b7ef with SMTP id
- 5b1f17b1804b1-45b43e00aabmr31959875e9.19.1755620972275; 
- Tue, 19 Aug 2025 09:29:32 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-45b42a9847fsm46173585e9.26.2025.08.19.09.29.30
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 19 Aug 2025 09:29:31 -0700 (PDT)
-Date: Tue, 19 Aug 2025 09:29:27 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: <skori@marvell.com>
-Cc: Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>, <dev@dpdk.org>, Nithin Dabilpuram
- <ndabilpuram@marvell.com>
-Subject: Re: [PATCH v5 1/1] ethdev: add support to provide link type
-Message-ID: <20250819092927.739f64ec@hermes.local>
-In-Reply-To: <20250819055126.2745262-1-skori@marvell.com>
-References: <20250814081215.1904078-1-skori@marvell.com>
- <20250819055126.2745262-1-skori@marvell.com>
+ AJvYcCVAwsuRAgVTVx5UuS7xwS4k7lasU4+pMgRl+Wyodx/cuRJyEbwQATIVplyF23qlrTJ3+og=@dpdk.org
+X-Gm-Message-State: AOJu0YwBo1rEc2Z0F3wNJDvmwSGce4bJXYxB33vKmcRew6dOQQUpN1r1
+ 55edRml9FJncapHoL0ywCTg2hCysX97mLfdrSg1IUkM64dBtIbw/hMvM9DFTpb5lM7RhTYlI7H0
+ 5Lcc6NURiua6llQPvp9ZExZMKQTiuuBqh1ktf
+X-Gm-Gg: ASbGncsDHaffWZflUOhgnDBBDKs5WBgc7X4ExHv7RXHO3Xka33/El5lJRdwv3GatFpJ
+ ZGE3PcXXDPAzo2q9tRFUKyCw/OyiKMHIxURupNHAIotWaEX/GsBo6P+6lR1CEhuwAEkPG9e8rtQ
+ 8T5eY0Q/wp5Bn0wbhMm66PM+ensJv2gn0HRuUXMZbbi4sjSlSYi6lozJIN85wuYtk4fYhqhYeIm
+ 7ZB4ybJCpsGFUheOHpvmL9aHlRqaOKOqY7WlWv74Sk4QPdUPGQ=
+X-Google-Smtp-Source: AGHT+IGBDN4tJeAi+z/e7sMgj6XHGmTOb55AAKDxyHcNQGmTyG6Uoy7q9mSFG7ZC9RFRln2EnR8/NSNyN1xVwEZNrLQ=
+X-Received: by 2002:a05:6902:120d:b0:e8f:d4b2:c2ce with SMTP id
+ 3f1490d57ef6-e94e79f6da6mr3367652276.24.1755622754763; Tue, 19 Aug 2025
+ 09:59:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250723160822.1686060-1-luca.boccassi@gmail.com>
+ <ac197013-cec0-41cd-ac6e-0755e7dbc806@nvidia.com>
+In-Reply-To: <ac197013-cec0-41cd-ac6e-0755e7dbc806@nvidia.com>
+From: Luca Boccassi <luca.boccassi@gmail.com>
+Date: Tue, 19 Aug 2025 17:59:03 +0100
+X-Gm-Features: Ac12FXzws74qn3sAHZMzdJOoFNfanVUCsMJFwPG-7oM1gdupOsg_6nocox4BY1E
+Message-ID: <CAMw=ZnROFOSiejmGbndtnZ78yAJpDOOSWDrFt-S8JjzPecDogA@mail.gmail.com>
+Subject: Re: 22.11.9 patches review and test
+To: Ali Alnubani <alialnu@nvidia.com>
+Cc: stable@dpdk.org, dev@dpdk.org, Raslan Darawsheh <rasland@nvidia.com>, 
+ Thomas Monjalon <thomas@monjalon.net>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,54 +76,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 19 Aug 2025 11:21:06 +0530
-<skori@marvell.com> wrote:
+On Tue, 19 Aug 2025 at 16:32, Ali Alnubani <alialnu@nvidia.com> wrote:
+>
+> On 7/23/25 7:08 PM, luca.boccassi@gmail.com wrote:
+>
+> > Hi all,
+> >
+> > Here is a list of patches targeted for stable release 22.11.9.
+> >
+> > The planned date for the final release is by the 25th of August 2025.
+> >
+> > Please help with testing and validation of your use cases and report
+> > any issues/results with reply-all to this mail. For the final release
+> > the fixes and reported validations will be added to the release notes.
+> >
+> > A release candidate tarball can be found at:
+> >
+> >      https://dpdk.org/browse/dpdk-stable/tag/?id=v22.11.9-rc1
+> >
+> > These patches are located at branch 22.11 of dpdk-stable repo:
+> >      https://dpdk.org/browse/dpdk-stable/
+> >
+> > Thanks.
+> >
+> > Luca Boccassi
+> >
+> > ---
+>
+> Hello,
+>
+> We ran the following functional tests with Nvidia hardware on v22.11.9-rc1:
+> - Basic functionality:
+>    Send and receive multiple types of traffic.
+> - testpmd xstats counter test.
+> - testpmd timestamp test.
+> - Changing/checking link status through testpmd.
+> - rte_flow tests
+> (https://doc.dpdk.org/guides/nics/mlx5.html#supported-hardware-offloads)
+> - RSS tests.
+> - VLAN filtering, stripping, and insertion tests.
+> - Checksum and TSO tests.
+> - ptype tests.
+> - link_status_interrupt example application tests.
+> - l3fwd-power example application tests.
+> - Multi-process example applications tests.
+> - Hardware LRO tests.
+> - Buffer Split tests.
+> - Tx scheduling tests.
+>
+> Functional tests ran on:
+> - NIC: ConnectX-6 Dx / OS: Ubuntu 22.04 / Driver:
+> MLNX_OFED_LINUX-24.10-2.1.8.0 / Firmware: 22.43.2566
+> - NIC: ConnectX-7 / OS: Ubuntu 22.04 / Driver:
+> MLNX_OFED_LINUX-24.10-2.1.8.0 / Firmware: 28.43.2566
+> - DPU: BlueField-2 / DOCA SW version: 2.5.4 / Firmware: 24.39.5050
+>
+> Additionally, we ran build tests with multiple configurations on the
+> following OS/driver combinations (all passed):
+> - Debian 12 with MLNX_OFED_LINUX-24.10-3.2.5.0.
+> - Ubuntu 22.04 with MLNX_OFED_LINUX-24.10-3.2.5.0.
+> - Ubuntu 24.04 with MLNX_OFED_LINUX-24.10-3.2.5.0.
+> - Ubuntu 22.04 with rdma-core master (091ddb5).
+> - Ubuntu 24.04 with rdma-core v50.0.
+> - Fedora 42 with rdma-core v55.0.
+> - Fedora 43 (Rawhide) with rdma-core v58.0.
+> - OpenSUSE Leap 15.6 with rdma-core v49.1.
+> - Windows Server 2022 with Clang 18.1.8.
+>
+> We did not detect new issues caused by changes in this release.
+>
+> Thanks,
+> Ali
 
-> +/**@{@name PORT type
-> + * Ethernet port link connector type
-> + */
-> +enum rte_eth_link_connector {
-> +	RTE_ETH_LINK_CONNECTOR_NONE = 0,     /**< Not defined */
-> +	RTE_ETH_LINK_CONNECTOR_TP,           /**< Twisted Pair */
-> +	RTE_ETH_LINK_CONNECTOR_AUI,          /**< Attachment Unit Interface */
-> +	RTE_ETH_LINK_CONNECTOR_MII,          /**< Media Independent Interface */
-> +	RTE_ETH_LINK_CONNECTOR_FIBER,        /**< Optical Fiber Link */
-> +	RTE_ETH_LINK_CONNECTOR_BNC,          /**< BNC Link type for RF connection */
-> +	RTE_ETH_LINK_CONNECTOR_DAC,          /**< Direct Attach copper */
-> +	RTE_ETH_LINK_CONNECTOR_SGMII,        /**< Serial Gigabit Media Independent Interface */
-> +	RTE_ETH_LINK_CONNECTOR_QSGMII,       /**< Link to multiplex 4 SGMII over one serial link */
-> +	RTE_ETH_LINK_CONNECTOR_XFI,          /**< 10 Gigabit Attachment Unit Interface */
-> +	RTE_ETH_LINK_CONNECTOR_SFI,          /**< 10 Gigabit Serial Interface for optical network */
-> +	RTE_ETH_LINK_CONNECTOR_XLAUI,        /**< 40 Gigabit Attachment Unit Interface */
-> +	RTE_ETH_LINK_CONNECTOR_GAUI,         /**< Gigabit Interface for 50/100/200 Gbps */
-> +	RTE_ETH_LINK_CONNECTOR_XAUI,         /**< 10 Gigabit Attachment Unit Interface */
-> +	RTE_ETH_LINK_CONNECTOR_CAUI,         /**< 100 Gigabit Attachment Unit Interface */
-> +	RTE_ETH_LINK_CONNECTOR_LAUI,         /**< 50 Gigabit Attachment Unit Interface */
-> +	RTE_ETH_LINK_CONNECTOR_SFP,          /**< Pluggable module for 1 Gigabit */
-> +	RTE_ETH_LINK_CONNECTOR_SFP_PLUS,     /**< Pluggable module for 10 Gigabit */
-> +	RTE_ETH_LINK_CONNECTOR_SFP28,        /**< Pluggable module for 25 Gigabit */
-> +	RTE_ETH_LINK_CONNECTOR_SFP_DD,       /**< Pluggable module for 100 Gigabit */
-> +	RTE_ETH_LINK_CONNECTOR_QSFP,         /**< Module to mutiplex 4 SFP i.e. 4*1=4 Gbps */
-> +	RTE_ETH_LINK_CONNECTOR_QSFP_PLUS,    /**< Module to mutiplex 4 SFP_PLUS i.e. 4*10=40 Gbps */
-> +	RTE_ETH_LINK_CONNECTOR_QSFP28,       /**< Module to mutiplex 4 SFP28 i.e. 4*25=100 Gbps */
-> +	RTE_ETH_LINK_CONNECTOR_QSFP56,       /**< Module to mutiplex 4 SFP56 i.e. 4*50=200 Gbps */
-> +	RTE_ETH_LINK_CONNECTOR_QSFP_DD,      /**< Module to mutiplex 4 SFP_DD i.e. 4*100=400 Gbps */
-> +	RTE_ETH_LINK_CONNECTOR_OTHER = 31,   /**< non-physical interfaces like virtio, ring etc */
-> +};
-> +/**@}*/
-> +
-
-doc build fails when you add this.
-
-Please test.
-
-[30/1996] Generating doxygen-html with a custom command
-FAILED: [code=1] doc/api/html 
-/usr/bin/python3 ../doc/api/generate_doxygen.py doc/api/html /usr/bin/doxygen doc/api/doxy-api-html.conf
-/home/runner/work/dpdk/dpdk/lib/ethdev/rte_ethdev.h:335: error: Member rte_eth_link_connector (enumeration) of file rte_ethdev.h is not documented. (warning treated as error, aborting now)
-Traceback (most recent call last):
-  File "/home/runner/work/dpdk/dpdk/build/../doc/api/generate_doxygen.py", line 13, in <module>
-    subprocess.run(doxygen_command, check=True, stdout=out)
-  File "/usr/lib/python3.10/subprocess.py", line 526, in run
-    raise CalledProcessError(retcode, process.args,
-subprocess.CalledProcessError: Command '['/usr/bin/doxyg
+That's great, thank you
