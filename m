@@ -2,33 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 675AECA0EF5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 00:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95720CA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 01:33:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D6C040277;
-	Tue, 19 Aug 2025 02:24:34 +0200 (CEST)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id BFAE540267
- for <dev@dpdk.org>; Tue, 19 Aug 2025 02:24:32 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1202)
- id BBA552113340; Mon, 18 Aug 2025 17:24:31 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BBA552113340
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
- s=default; t=1755563071;
- bh=gB/HYwRrMmR+3xV8Aet2KCTwHAVibRJ9fUzY1j/AYuQ=;
- h=From:To:Cc:Subject:Date:From;
- b=Ghy4gmlg/P9X/Zb9domjQSGufvTaxRvcMilEQYR44bM4ce8Q+w9dsV1sCt2AD0mQi
- a86mChx31pAetBtj2pAeS33xBO4nBc8RDPv77z0CK1h4YPtNbiBUI0NV508NVGeAgF
- Huy1ekRVu8Sfbxv4cIqspyOhh7qFbErJ9dOwuwMo=
-From: longli@linuxonhyperv.com
-To: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
-Cc: dev@dpdk.org,
-	Long Li <longli@microsoft.com>
-Subject: [PATCH v2] bus/vmbus: add device argument to configure if NUMA
- information on the device should be ignored
-Date: Mon, 18 Aug 2025 17:24:26 -0700
-Message-Id: <1755563066-2592-1-git-send-email-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 1.8.3.1
+	by mails.dpdk.org (Postfix) with ESMTP id 6C88F40430;
+	Tue, 19 Aug 2025 03:33:30 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 85BE6402E4
+ for <dev@dpdk.org>; Tue, 19 Aug 2025 03:33:29 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 61E6746D5F; Tue, 19 Aug 2025 03:33:29 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/cryptodev Bug 1773] Crypto devices should be using constant
+ time memcmp
+Date: Tue, 19 Aug 2025 01:33:28 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: cryptodev
+X-Bugzilla-Version: 25.07
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: stephen@networkplumber.org
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1773-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17555672090.8BbEda.44146
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -42,195 +55,253 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Long Li <longli@microsoft.com>
 
-In most cases, netvsc is used with a VF device. The application generally
-runs with better performance when all the device memory is allocated on
-VF's NUMA node, as the VF device carries most of the data packets.
+--17555672090.8BbEda.44146
+Date: Tue, 19 Aug 2025 03:33:28 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-But sometimes netvsc may run on a different NUMA node than that of the VF.
-This patch adds a device argument "numa" to allow the application to
-configure if this vmbus device (netvsc) should be NUMA aware. The default
-behavior is NUMA aware. Setting "numa=0" specifies this vmbus device is
-not NUMA aware.
+https://bugs.dpdk.org/show_bug.cgi?id=3D1773
 
-The device argument is parsed at the time of vmbus device probe to ensure
-all the following memory allocations are done on the configured NUMA node.
+            Bug ID: 1773
+           Summary: Crypto devices should be using constant time memcmp
+           Product: DPDK
+           Version: 25.07
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: cryptodev
+          Assignee: dev@dpdk.org
+          Reporter: stephen@networkplumber.org
+  Target Milestone: ---
 
-Signed-off-by: Long Li <longli@microsoft.com>
----
-Change log
-v2: move the code for parsing device arguments to vmbus
+To be resistant to timing attacks all cryptodev operations should be using a
+version of memcmp that takes constant time.
 
- doc/guides/nics/netvsc.rst           |  8 ++++
- drivers/bus/vmbus/bus_vmbus_driver.h | 15 +++++++
- drivers/bus/vmbus/linux/vmbus_bus.c  | 64 +++++++++++++++++++++++-----
- drivers/net/netvsc/hn_ethdev.c       | 12 ------
- 4 files changed, 76 insertions(+), 23 deletions(-)
+There is no such function in std libc maybe make a new one?
 
-diff --git a/doc/guides/nics/netvsc.rst b/doc/guides/nics/netvsc.rst
-index 2c0ea6ac9e..e052b31dcc 100644
---- a/doc/guides/nics/netvsc.rst
-+++ b/doc/guides/nics/netvsc.rst
-@@ -141,3 +141,11 @@ The user can specify below argument in devargs.
-     A non-zero value tells netvsc to attach external buffers to mbuf on
-     receiving packets, thus avoid copying memory. Use of external buffers
-     requires the application is able to read data from external mbuf.
-+
-+#. ``numa``:
-+   The numa is used to configure if netvsc driver should be NUMA aware. The
-+   default value is 1 (meaning the netvsc driver is NUMA aware). When used
-+   with a VF device, the VF device's NUMA node may not be the same as netvsc's
-+   NUMA node. The application generally runs with better performance if all the
-+   device queues are allocated on VF's NUMA node, as the VF carries most of the
-+   data packets. Setting this value to 0 makes netvsc driver not NUMA aware.
-diff --git a/drivers/bus/vmbus/bus_vmbus_driver.h b/drivers/bus/vmbus/bus_vmbus_driver.h
-index bc394208de..2b431ac16e 100644
---- a/drivers/bus/vmbus/bus_vmbus_driver.h
-+++ b/drivers/bus/vmbus/bus_vmbus_driver.h
-@@ -17,6 +17,21 @@ extern "C" {
- struct vmbus_channel;
- struct vmbus_mon_page;
- 
-+#define NETVSC_ARG_LATENCY "latency"
-+#define NETVSC_ARG_RXBREAK "rx_copybreak"
-+#define NETVSC_ARG_TXBREAK "tx_copybreak"
-+#define NETVSC_ARG_RX_EXTMBUF_ENABLE "rx_extmbuf_enable"
-+#define NETVSC_ARG_NUMA "numa"
-+
-+static const char * const valid_keys[] = {
-+	NETVSC_ARG_LATENCY,
-+	NETVSC_ARG_RXBREAK,
-+	NETVSC_ARG_TXBREAK,
-+	NETVSC_ARG_RX_EXTMBUF_ENABLE,
-+	NETVSC_ARG_NUMA,
-+	NULL
-+};
-+
- /** Maximum number of VMBUS resources. */
- enum hv_uio_map {
- 	HV_TXRX_RING_MAP = 0,
-diff --git a/drivers/bus/vmbus/linux/vmbus_bus.c b/drivers/bus/vmbus/linux/vmbus_bus.c
-index ed18d4da96..d2fa14a69e 100644
---- a/drivers/bus/vmbus/linux/vmbus_bus.c
-+++ b/drivers/bus/vmbus/linux/vmbus_bus.c
-@@ -18,6 +18,7 @@
- #include <rte_memory.h>
- #include <rte_malloc.h>
- #include <rte_bus_vmbus.h>
-+#include <rte_kvargs.h>
- 
- #include <eal_export.h>
- #include "eal_filesystem.h"
-@@ -231,6 +232,47 @@ rte_vmbus_unmap_device(struct rte_vmbus_device *dev)
- 	vmbus_uio_unmap_resource(dev);
- }
- 
-+/* Check in dev args if numa should be used.
-+ * By default returning true, meaning the device is numa aware
-+ */
-+static bool vmbus_use_numa(struct rte_vmbus_device *dev)
-+{
-+	struct rte_devargs *devargs = dev->device.devargs;
-+	struct rte_kvargs *kvlist;
-+	const struct rte_kvargs_pair *pair;
-+	unsigned long v;
-+	unsigned int i;
-+	char *endp = NULL;
-+	bool ret = true;
-+
-+	if (!devargs)
-+		return ret;
-+
-+	VMBUS_LOG(DEBUG, "device args %s %s", devargs->name, devargs->args);
-+
-+	kvlist = rte_kvargs_parse(devargs->args, valid_keys);
-+	if (!kvlist) {
-+		VMBUS_LOG(ERR, "invalid parameters");
-+		return ret;
-+	}
-+
-+	for (i = 0; i < kvlist->count; i++) {
-+		pair = &kvlist->pairs[i];
-+		if (!strcmp(pair->key, NETVSC_ARG_NUMA)) {
-+			v = strtoul(pair->value, &endp, 0);
-+			if (*pair->value == '\0' || *endp != '\0') {
-+				VMBUS_LOG(ERR, "invalid parameter %s=%s",
-+					  pair->key, pair->value);
-+			}
-+			ret = v ? true : false;
-+		}
-+	}
-+
-+	rte_kvargs_free(kvlist);
-+
-+	return ret;
-+}
-+
- /* Scan one vmbus sysfs entry, and fill the devices list from it. */
- static int
- vmbus_scan_one(const char *name)
-@@ -287,19 +329,19 @@ vmbus_scan_one(const char *name)
- 		goto error;
- 	dev->monitor_id = tmp;
- 
--	/* get numa node (if present) */
--	snprintf(filename, sizeof(filename), "%s/numa_node",
--		 dirname);
-+	dev->device.devargs = vmbus_devargs_lookup(dev);
- 
--	if (access(filename, R_OK) == 0) {
--		if (eal_parse_sysfs_value(filename, &tmp) < 0)
--			goto error;
--		dev->device.numa_node = tmp;
--	} else {
--		dev->device.numa_node = SOCKET_ID_ANY;
--	}
-+	dev->device.numa_node = SOCKET_ID_ANY;
-+	if (vmbus_use_numa(dev)) {
-+		/* get numa node (if present) */
-+		snprintf(filename, sizeof(filename), "%s/numa_node", dirname);
- 
--	dev->device.devargs = vmbus_devargs_lookup(dev);
-+		if (access(filename, R_OK) == 0) {
-+			if (eal_parse_sysfs_value(filename, &tmp) < 0)
-+				goto error;
-+			dev->device.numa_node = tmp;
-+		}
-+	}
- 
- 	/* Allocate interrupt handle instance */
- 	dev->intr_handle =
-diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
-index 0a7ed155d3..e5cd57e4f4 100644
---- a/drivers/net/netvsc/hn_ethdev.c
-+++ b/drivers/net/netvsc/hn_ethdev.c
-@@ -52,11 +52,6 @@
- 			    RTE_ETH_RX_OFFLOAD_VLAN_STRIP | \
- 			    RTE_ETH_RX_OFFLOAD_RSS_HASH)
- 
--#define NETVSC_ARG_LATENCY "latency"
--#define NETVSC_ARG_RXBREAK "rx_copybreak"
--#define NETVSC_ARG_TXBREAK "tx_copybreak"
--#define NETVSC_ARG_RX_EXTMBUF_ENABLE "rx_extmbuf_enable"
--
- /* The max number of retry when hot adding a VF device */
- #define NETVSC_MAX_HOTADD_RETRY 10
- 
-@@ -199,13 +194,6 @@ static int hn_parse_args(const struct rte_eth_dev *dev)
- {
- 	struct hn_data *hv = dev->data->dev_private;
- 	struct rte_devargs *devargs = dev->device->devargs;
--	static const char * const valid_keys[] = {
--		NETVSC_ARG_LATENCY,
--		NETVSC_ARG_RXBREAK,
--		NETVSC_ARG_TXBREAK,
--		NETVSC_ARG_RX_EXTMBUF_ENABLE,
--		NULL
--	};
- 	struct rte_kvargs *kvlist;
- 	int ret;
- 
--- 
-2.34.1
+Examples in current code base:
 
+
+~/.../main/drivers/crypto $ git grep memcmp
+armv8/rte_armv8_pmd.c:          if (memcmp(adst, op->sym->auth.digest.data,
+ccp/ccp_crypto.c:               if (memcmp(dst, op->sym->auth.digest.data,
+ccp/ccp_crypto.c:               if (memcmp(addr + offset, digest_data,
+cnxk/cnxk_ae.h:         if (memcmp(rsa->sign.data, rsa->message.data,
+cnxk/cnxk_se.h: if (memcmp(mac, gen_mac, mac_len))
+ipsec_mb/pmd_aesni_gcm.c:               if (memcmp(tag, digest,
+session->req_digest_length) !=3D 0)
+ipsec_mb/pmd_aesni_gcm.c:       return memcmp(digest, tmpdigest,
+s->req_digest_length) =3D=3D 0 ? 0
+ipsec_mb/pmd_aesni_mb.c:        if (memcmp(job->auth_tag_output, crc,
+RTE_ETHER_CRC_LEN) !=3D 0)
+ipsec_mb/pmd_aesni_mb.c:        if (memcmp(job->auth_tag_output, digest, le=
+n)
+!=3D 0)
+ipsec_mb/pmd_aesni_mb.c:                        if (memcmp(vec->digest[i].v=
+a,
+dgst[i], len) !=3D 0)
+ipsec_mb/pmd_snow3g.c:                  if (memcmp(dst,
+ops[i]->sym->auth.digest.data,
+ipsec_mb/pmd_zuc.c:                     if (memcmp(dst[i],
+ops[i]->sym->auth.digest.data,
+mlx5/mlx5_crypto_dek.c: return memcmp(key, dek->data, xkey_len);
+nitrox/nitrox_sym_reqmgr.c:     if (!memcmp(ctx->salt, addr,
+AES_GCM_SALT_SIZE))
+octeontx/otx_cryptodev_ops.c:           if (memcmp(rsa->sign.data,
+rsa->message.data,
+openssl/rte_openssl_pmd.c:              if (CRYPTO_memcmp(dst,
+op->sym->auth.digest.data,
+openssl/rte_openssl_pmd.c:              if (CRYPTO_memcmp(tmp,
+op->rsa.message.data,
+openssl/rte_openssl_pmd.c:              if ((ret <=3D 0) || (CRYPTO_memcmp(=
+tmp,
+op->rsa.message.data,
+scheduler/rte_cryptodev_scheduler.c:            return
+!memcmp(&sec_cap1->docsis, &sec_cap2->docsis,
+uadk/uadk_crypto_pmd.c:                 if (memcmp(dst,
+op->sym->auth.digest.data,
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17555672090.8BbEda.44146
+Date: Tue, 19 Aug 2025 03:33:29 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - Crypto devices should be using constant time memc=
+mp"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1773">1773</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>Crypto devices should be using constant time memcmp
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>25.07
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>cryptodev
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>stephen&#64;networkplumber.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">To be resistant to timing attacks =
+all cryptodev operations should be using a
+version of memcmp that takes constant time.
+
+There is no such function in std libc maybe make a new one?
+
+Examples in current code base:
+
+
+~/.../main/drivers/crypto $ git grep memcmp
+armv8/rte_armv8_pmd.c:          if (memcmp(adst, op-&gt;sym-&gt;auth.digest=
+.data,
+ccp/ccp_crypto.c:               if (memcmp(dst, op-&gt;sym-&gt;auth.digest.=
+data,
+ccp/ccp_crypto.c:               if (memcmp(addr + offset, digest_data,
+cnxk/cnxk_ae.h:         if (memcmp(rsa-&gt;sign.data, rsa-&gt;message.data,
+cnxk/cnxk_se.h: if (memcmp(mac, gen_mac, mac_len))
+ipsec_mb/pmd_aesni_gcm.c:               if (memcmp(tag, digest,
+session-&gt;req_digest_length) !=3D 0)
+ipsec_mb/pmd_aesni_gcm.c:       return memcmp(digest, tmpdigest,
+s-&gt;req_digest_length) =3D=3D 0 ? 0
+ipsec_mb/pmd_aesni_mb.c:        if (memcmp(job-&gt;auth_tag_output, crc,
+RTE_ETHER_CRC_LEN) !=3D 0)
+ipsec_mb/pmd_aesni_mb.c:        if (memcmp(job-&gt;auth_tag_output, digest,=
+ len)
+!=3D 0)
+ipsec_mb/pmd_aesni_mb.c:                        if (memcmp(vec-&gt;digest[i=
+].va,
+dgst[i], len) !=3D 0)
+ipsec_mb/pmd_snow3g.c:                  if (memcmp(dst,
+ops[i]-&gt;sym-&gt;auth.digest.data,
+ipsec_mb/pmd_zuc.c:                     if (memcmp(dst[i],
+ops[i]-&gt;sym-&gt;auth.digest.data,
+mlx5/mlx5_crypto_dek.c: return memcmp(key, dek-&gt;data, xkey_len);
+nitrox/nitrox_sym_reqmgr.c:     if (!memcmp(ctx-&gt;salt, addr,
+AES_GCM_SALT_SIZE))
+octeontx/otx_cryptodev_ops.c:           if (memcmp(rsa-&gt;sign.data,
+rsa-&gt;message.data,
+openssl/rte_openssl_pmd.c:              if (CRYPTO_memcmp(dst,
+op-&gt;sym-&gt;auth.digest.data,
+openssl/rte_openssl_pmd.c:              if (CRYPTO_memcmp(tmp,
+op-&gt;rsa.message.data,
+openssl/rte_openssl_pmd.c:              if ((ret &lt;=3D 0) || (CRYPTO_memc=
+mp(tmp,
+op-&gt;rsa.message.data,
+scheduler/rte_cryptodev_scheduler.c:            return
+!memcmp(&amp;sec_cap1-&gt;docsis, &amp;sec_cap2-&gt;docsis,
+uadk/uadk_crypto_pmd.c:                 if (memcmp(dst,
+op-&gt;sym-&gt;auth.digest.data,
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1773">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17555672090.8BbEda.44146--
