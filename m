@@ -2,51 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF41CA0EF5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 09:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A493CA0EED
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 10:23:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5B3C940297;
-	Tue, 19 Aug 2025 11:57:46 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 6B57440289
- for <dev@dpdk.org>; Tue, 19 Aug 2025 11:57:45 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 34BD7206AF;
- Tue, 19 Aug 2025 11:57:44 +0200 (CEST)
-Subject: RE: [EXTERNAL] Re: [PATCH v4 1/1] ethdev: add support to provide link
- type
-Date: Tue, 19 Aug 2025 11:57:43 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 0B2D2402D9;
+	Tue, 19 Aug 2025 12:23:10 +0200 (CEST)
+Received: from out28-50.mail.aliyun.com (out28-50.mail.aliyun.com
+ [115.124.28.50]) by mails.dpdk.org (Postfix) with ESMTP id 80A1D40289
+ for <dev@dpdk.org>; Tue, 19 Aug 2025 12:23:06 +0200 (CEST)
+Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
+ fp:SMTPD_---.eJiaSGI_1755598984 cluster:ay29) by smtp.aliyun-inc.com;
+ Tue, 19 Aug 2025 18:23:05 +0800
+From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+To: dimon.zhao@nebula-matrix.com,
+	dev@dpdk.org
+Cc: Thomas Monjalon <thomas@monjalon.net>, Kyo Liu <kyo.liu@nebula-matrix.com>,
+ Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: [PATCH v5 01/17] net/nbl: add doc and minimum nbl build framework
+Date: Tue, 19 Aug 2025 03:22:21 -0700
+Message-Id: <20250819102237.3067518-2-dimon.zhao@nebula-matrix.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250819102237.3067518-1-dimon.zhao@nebula-matrix.com>
+References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
+ <20250819102237.3067518-1-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE49@smartserver.smartshare.dk>
-Content-class: urn:content-classes:message
-In-Reply-To: <5041e328-46d2-4b56-8ec8-c766e7355c14@broadcom.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [EXTERNAL] Re: [PATCH v4 1/1] ethdev: add support to provide
- link type
-Thread-Index: AdwQ1sVUDi6DUQbzS+aP3mvcXT9uuwAFYXRQ
-References: <20250813084508.1446318-1-skori@marvell.com>
- <20250814081215.1904078-1-skori@marvell.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FE35@smartserver.smartshare.dk>
- <20250814091556.6db159d0@hermes.local>
- <CO6PR18MB3860FCC393EF51C8664B364BB431A@CO6PR18MB3860.namprd18.prod.outlook.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FE41@smartserver.smartshare.dk>
- <5041e328-46d2-4b56-8ec8-c766e7355c14@broadcom.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Jochen Behrens" <jochen.behrens@broadcom.com>,
- "Sunil Kumar Kori" <skori@marvell.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Cc: "Thomas Monjalon" <thomas@monjalon.net>,
- "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>, <dev@dpdk.org>,
- "Nithin Kumar Dabilpuram" <ndabilpuram@marvell.com>,
- "Ronak Doshi" <ronak.doshi@broadcom.com>,
- "Ivan Malov" <ivan.malov@arknetworks.am>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,111 +40,299 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBKb2NoZW4gQmVocmVucyBbbWFpbHRvOmpvY2hlbi5iZWhyZW5zQGJyb2FkY29tLmNv
-bV0NCj4gU2VudDogVHVlc2RheSwgMTkgQXVndXN0IDIwMjUgMDAuNDINCj4gDQo+IE9uIDgvMTgv
-MjUgMDA6MjQsIE1vcnRlbiBCcsO4cnVwIHdyb3RlOg0KPiA+PiBGcm9tOiBTdW5pbCBLdW1hciBL
-b3JpIFttYWlsdG86c2tvcmlAbWFydmVsbC5jb21dDQo+ID4+IFNlbnQ6IE1vbmRheSwgMTggQXVn
-dXN0IDIwMjUgMDguMjINCj4gPj4NCj4gPj4+IE9uIFRodSwgMTQgQXVnIDIwMjUgMTE6MDQ6MTgg
-KzAyMDANCj4gPj4+IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+IHdy
-b3RlOg0KPiA+Pj4NCj4gPj4+Pj4gRnJvbTogc2tvcmlAbWFydmVsbC5jb20gW21haWx0bzpza29y
-aUBtYXJ2ZWxsLmNvbV0NCj4gPj4+Pj4gU2VudDogVGh1cnNkYXksIDE0IEF1Z3VzdCAyMDI1IDEw
-LjEwDQo+ID4+Pj4+DQo+ID4+Pj4+IEFkZGluZyBsaW5rIHR5cGUgcGFyYW1ldGVyIHRvIHByb3Zp
-ZGUgdGhlIHR5cGUgb2YgcG9ydCBsaWtlIHR3aXN0ZWQNCj4gPj4+Pj4gcGFpciwgZmlicmUgZXRj
-Lg0KPiA+Pj4+Pg0KPiA+Pj4+PiBBbHNvIGFkZGVkIGFuIEFQSSB0byBjb252ZXJ0IHRoZSBSVEVf
-RVRIX0xJTktfVFlQRV9YWFggdG8gYSByZWFkYWJsZQ0KPiA+Pj4+PiBzdHJpbmcuDQo+ID4+Pj4N
-Cj4gPj4+PiBQbGVhc2UgY29uc2lkZXIgaWYgImNvbm5lY3RvciIgaXMgYSBiZXR0ZXIgbmFtZSB0
-aGFuICJsaW5rIHR5cGUiLCBpZiB0aGlzDQo+ID4+IGlzIHJlbGF0ZWQNCj4gPj4+IHRvIHBoeXNp
-Y2FsIGludGVyZmFjZXMgb25seS4NCj4gPj4+PiBFLmcuIGlzIHRoZXJlIGFuICJMQUNQIiBsaW5r
-IHR5cGUgZm9yIGxpbmsgYWdncmVnYXRlcyAoYm9uZGVkIGxpbmtzKT8NCj4gPj4+Pg0KPiA+Pj4+
-IEFsc28sIHNob3VsZCBhICJ2aXJ0dWFsIiBsaW5rIHR5cGUgKG9yIGNvbm5lY3RvcikgYmUgYWRk
-ZWQgZm9yDQo+ID4+PiBUQVAvVmlydGlvL1ZNWE5FVDMvcmluZyBhbmQgc2ltaWxhciBub24tcGh5
-c2ljYWwgaW50ZXJmYWNlcz8NCj4gPj4+Pg0KPiA+Pj4+IE1vcmUgY29tbWVudHMgaW5saW5lIGJl
-bG93Lg0KPiA+Pj4NCj4gPj4+IE15IHByZWZlcmVuY2UgaXMgdGhhdCBhIG5ldyBmZWF0dXJlIGxp
-a2UgdGhpcyBmb2xsb3cgd2hhdCBvdGhlciBjb21tYW5kcw0KPiBhbmQNCj4gPj4+IHN0YW5kYXJk
-cyBkby4NCj4gPj4+IFRoZXJlIGlzIExpbnV4IGV0aHRvb2wgYXMgdGhlIG1vc3QgY29tbW9uIGV4
-YW1wbGUuDQo+ID4+PiBBbHNvLCB0aGVyZSBpcyBwcm9iYWJseSBzb21ldGhpbmcgSUVFRSBzdGFu
-ZGFyZCBidXQgdGhhdCBpcyBiZWhpbmQgc3R1cGlkDQo+ID4+PiBwYXl3YWxsLg0KPiA+Pj4NCj4g
-Pj4+IEV0aHRvb2wgb24gcmVhbCBOSUMuDQo+ID4+PiAjIGV0aHRvb2wgZW5wODdzMA0KPiA+Pj4g
-U2V0dGluZ3MgZm9yIGVucDg3czA6DQo+ID4+PiAJU3VwcG9ydGVkIHBvcnRzOiBbIFRQIF0NCj4g
-Pj4+IAlTdXBwb3J0ZWQgbGluayBtb2RlczogICAxMGJhc2VUL0hhbGYgMTBiYXNlVC9GdWxsDQo+
-ID4+PiAJICAgICAgICAgICAgICAgICAgICAgICAgMTAwYmFzZVQvSGFsZiAxMDBiYXNlVC9GdWxs
-DQo+ID4+PiAJICAgICAgICAgICAgICAgICAgICAgICAgMTAwMGJhc2VUL0Z1bGwNCj4gPj4+IAkg
-ICAgICAgICAgICAgICAgICAgICAgICAyNTAwYmFzZVQvRnVsbA0KPiA+Pj4gCVN1cHBvcnRlZCBw
-YXVzZSBmcmFtZSB1c2U6IFN5bW1ldHJpYw0KPiA+Pj4gCVN1cHBvcnRzIGF1dG8tbmVnb3RpYXRp
-b246IFllcw0KPiA+Pj4gCVN1cHBvcnRlZCBGRUMgbW9kZXM6IE5vdCByZXBvcnRlZA0KPiA+Pj4g
-CUFkdmVydGlzZWQgbGluayBtb2RlczogIDEwYmFzZVQvSGFsZiAxMGJhc2VUL0Z1bGwNCj4gPj4+
-IAkgICAgICAgICAgICAgICAgICAgICAgICAxMDBiYXNlVC9IYWxmIDEwMGJhc2VUL0Z1bGwNCj4g
-Pj4+IAkgICAgICAgICAgICAgICAgICAgICAgICAxMDAwYmFzZVQvRnVsbA0KPiA+Pj4gCSAgICAg
-ICAgICAgICAgICAgICAgICAgIDI1MDBiYXNlVC9GdWxsDQo+ID4+PiAJQWR2ZXJ0aXNlZCBwYXVz
-ZSBmcmFtZSB1c2U6IFN5bW1ldHJpYw0KPiA+Pj4gCUFkdmVydGlzZWQgYXV0by1uZWdvdGlhdGlv
-bjogWWVzDQo+ID4+PiAJQWR2ZXJ0aXNlZCBGRUMgbW9kZXM6IE5vdCByZXBvcnRlZA0KPiA+Pj4g
-CVNwZWVkOiAyNTAwTWIvcw0KPiA+Pj4gCUR1cGxleDogRnVsbA0KPiA+Pj4gCUF1dG8tbmVnb3Rp
-YXRpb246IG9uDQo+ID4+PiAJUG9ydDogVHdpc3RlZCBQYWlyDQo+ID4+PiAJUEhZQUQ6IDANCj4g
-Pj4+IAlUcmFuc2NlaXZlcjogaW50ZXJuYWwNCj4gPj4+IAlNREktWDogb2ZmIChhdXRvKQ0KPiA+
-Pj4gCVN1cHBvcnRzIFdha2Utb246IHB1bWJnDQo+ID4+PiAJV2FrZS1vbjogZw0KPiA+Pj4gICAg
-ICAgICAgQ3VycmVudCBtZXNzYWdlIGxldmVsOiAweDAwMDAwMDA3ICg3KQ0KPiA+Pj4gICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICBkcnYgcHJvYmUgbGluaw0KPiA+Pj4gCUxpbmsgZGV0
-ZWN0ZWQ6IHllcw0KPiA+Pj4NCj4gPj4+IEFuZCBvbiB2aXJ0aW8NCj4gPj4+ICMgZXRodG9vbCBl
-bnAxczANCj4gPj4+IFNldHRpbmdzIGZvciBlbnAxczA6DQo+ID4+PiAJU3VwcG9ydGVkIHBvcnRz
-OiBbICBdDQo+ID4+PiAJU3VwcG9ydGVkIGxpbmsgbW9kZXM6ICAgTm90IHJlcG9ydGVkDQo+ID4+
-PiAJU3VwcG9ydGVkIHBhdXNlIGZyYW1lIHVzZTogTm8NCj4gPj4+IAlTdXBwb3J0cyBhdXRvLW5l
-Z290aWF0aW9uOiBObw0KPiA+Pj4gCVN1cHBvcnRlZCBGRUMgbW9kZXM6IE5vdCByZXBvcnRlZA0K
-PiA+Pj4gCUFkdmVydGlzZWQgbGluayBtb2RlczogIE5vdCByZXBvcnRlZA0KPiA+Pj4gCUFkdmVy
-dGlzZWQgcGF1c2UgZnJhbWUgdXNlOiBObw0KPiA+Pj4gCUFkdmVydGlzZWQgYXV0by1uZWdvdGlh
-dGlvbjogTm8NCj4gPj4+IAlBZHZlcnRpc2VkIEZFQyBtb2RlczogTm90IHJlcG9ydGVkDQo+ID4+
-PiAJU3BlZWQ6IFVua25vd24hDQo+ID4+PiAJRHVwbGV4OiBVbmtub3duISAoMjU1KQ0KPiA+Pj4g
-CUF1dG8tbmVnb3RpYXRpb246IG9mZg0KPiA+Pj4gCVBvcnQ6IE90aGVyDQo+ID4+PiAJUEhZQUQ6
-IDANCj4gPj4+IAlUcmFuc2NlaXZlcjogaW50ZXJuYWwNCj4gPj4+IAlMaW5rIGRldGVjdGVkOiB5
-ZXMNCj4gPj4NCj4gPj4gQWdyZWVkLCBoZW5jZSBhZGRpbmcgb25lIG1vcmUgdHlwZSBSVEVfRVRI
-X0xJTktfVFlQRV9PVEhFUiB0byBhbGlnbi4NCj4gPg0KPiA+IEV0aHRvb2wgaGFzIGJvdGggTk9O
-RSBhbmQgT1RIRVI6DQo+ID4NCj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL25ldHdv
-cmsvZXRodG9vbC9ldGh0b29sLmdpdC90cmVlL3VhcGkvbGludXgvZXRoDQo+IHRvb2wuaCNuMjI0
-Mg0KPiA+DQo+ID4gRXRodG9vbCBkb2Vzbid0IGhhdmUgYSAzcmQgdmFsdWUgVU5LTk9XTiwgYW5k
-IEkgdGhpbmsgaGF2aW5nIGEgM3JkIHZhbHVlDQo+IGNvbXBsaWNhdGVzIHRoaW5ncyB0b28gbXVj
-aC4NCj4gPg0KPiA+IEkgc3RpbGwgdGhpbmsgd2Ugc2hvdWxkIGNvbnNpZGVyIE9USEVSPT1VTktO
-T1dOLCBhbmQgdGhhdCBOT05FIChoYXZpbmcgbm8NCj4gY29ubmVjdG9yKSBjYW5ub3QgaGFwcGVu
-IGFuZCB0aHVzIHNob3VsZCBiZSBvbWl0dGVkLg0KPiA+IEhhdmluZyBtb3JlIHRoYW4gb25lIG9m
-IHRoZXNlIGFkZHMgY29tcGxleGl0eSwgYW5kIEkgZmFpbCB0byBzZWUgdGhlDQo+IGJlbmVmaXQu
-DQo+ID4NCj4gPiAiQmVjYXVzZSBFdGh0b29sIGFsc28gaGFzIE5PTkUiIGlzIG5vdCBhIGdvb2Qg
-YXJndW1lbnQuIExpbnV4IGhhcyBwbGVudHkgb2YNCj4gb2Jzb2xldGUgc3R1ZmYsIHdoaWNoIHdl
-IGRvbid0IG5lZWQgdG8gY29weSB0byBEUERLLg0KPiA+IEhvd2V2ZXIsIHJlZmVycmluZyB0byB0
-aGUgcmVhc29uIHdoeSBFdGh0b29sIGFsc28gaGFzIE5PTkUgKGluIGFkZGl0aW9uIHRvDQo+IE9U
-SEVSKSBtaWdodCByZXZlYWwgYSB2YWxpZCBhcmd1bWVudCBmb3IgaGF2aW5nIGl0IGluIERQREsg
-dG9vLg0KPiA+DQo+ID4gQW55d2F5LCBpZiB3ZSBoYXZlIG1vcmUgdGhhbiBvbmUgdmFsdWUgKGlu
-IGFkZGl0aW9uIHRvIHRoZSBhY3R1YWwgcGh5c2ljYWwNCj4gY29ubmVjdG9yIHZhbHVlcyksIHRo
-ZXkgbmVlZCBnb29kIGRlc2NyaXB0aW9ucywgc28gaXQgaXMgY3J5c3RhbCBjbGVhciB3aGF0DQo+
-IHRoZSBkaWZmZXJlbmNlIGlzIGJldHdlZW4gTk9ORSBhbmQgT1RIRVIgKGFuZCBVTktOT1dOLCBp
-ZiB3ZSBwcm9jZWVkIHdpdGggdGhpcw0KPiAzcmQgdmFsdWUpLg0KPiA+DQo+IA0KPiBBbGwgdGhh
-dCBiZWluZyBzYWlkLCB2bXhuZXQzIGRvZXMgbWltaWMgYSBwaHlzaWNhbCBkZXZpY2UgKHdpdGgg
-YSBQQ0kNCj4gYWRkcmVzcykuDQo+IA0KPiBFdGh0b29sIG91dHB1dCBpbiBMaW51eCBzaG93cyB0
-aGlzOg0KPiANCj4gIyBldGh0b29sIGV0aDANCj4gU2V0dGluZ3MgZm9yIGV0aDA6DQo+IAlTdXBw
-b3J0ZWQgcG9ydHM6IFsgVFAgXQ0KPiAJU3VwcG9ydGVkIGxpbmsgbW9kZXM6ICAgMTAwMGJhc2VU
-L0Z1bGwNCj4gCSAgICAgICAgICAgICAgICAgICAgICAgIDEwMDAwYmFzZVQvRnVsbA0KPiAJU3Vw
-cG9ydGVkIHBhdXNlIGZyYW1lIHVzZTogTm8NCj4gCVN1cHBvcnRzIGF1dG8tbmVnb3RpYXRpb246
-IE5vDQo+IAlTdXBwb3J0ZWQgRkVDIG1vZGVzOiBOb3QgcmVwb3J0ZWQNCj4gCUFkdmVydGlzZWQg
-bGluayBtb2RlczogIE5vdCByZXBvcnRlZA0KPiAJQWR2ZXJ0aXNlZCBwYXVzZSBmcmFtZSB1c2U6
-IE5vDQo+IAlBZHZlcnRpc2VkIGF1dG8tbmVnb3RpYXRpb246IE5vDQo+IAlBZHZlcnRpc2VkIEZF
-QyBtb2RlczogTm90IHJlcG9ydGVkDQo+IAlTcGVlZDogMTAwMDBNYi9zDQo+IAlEdXBsZXg6IEZ1
-bGwNCj4gCUF1dG8tbmVnb3RpYXRpb246IG9mZg0KPiAJUG9ydDogVHdpc3RlZCBQYWlyDQo+IAlQ
-SFlBRDogMA0KPiAJVHJhbnNjZWl2ZXI6IGludGVybmFsDQo+IAlNREktWDogVW5rbm93bg0KPiAJ
-U3VwcG9ydHMgV2FrZS1vbjogdWFnDQo+IAlXYWtlLW9uOiBkDQo+IAlMaW5rIGRldGVjdGVkOiB5
-ZXMNCj4gDQo+IA0KPiBUaGUgbGluayBzcGVlZCBtYXkgY2hhbmdlIGluIGEgZnV0dXJlIHZlcnNp
-b24uDQoNClZpcnR1YWwgTklDcyBiZWhhdmluZyBsaWtlIHBoeXNpY2FsIE5JQ3MgaXMgZ3JlYXQg
-Zm9yIGJhY2t3YXJkcyBjb21wYXRpYmlsaXR5Lg0KDQpIb3dldmVyOg0KVGhlIHJlcG9ydGVkIGxp
-bmsgc3BlZWQgYWZmZWN0cyB0aGUgdHJhZmZpYyBwYXRoIHNlbGVjdGlvbiBmb3IgZS5nLiBTcGFu
-bmluZyBUcmVlLg0KQW5kIGl0IG1heSBsaW1pdCB0aGUgZWdyZXNzIGJhbmR3aWR0aCBvZiBhIGd1
-ZXN0IHdpdGggYSB0cmFmZmljIHNoYXBlciBhdHRhY2hlZCB0byB0aGUgdk5JQywgaWYgdGhlIHNo
-YXBlciBhZGFwdHMgdG8gdGhlIGxpbmsgc3BlZWQuDQoNCkluIGEgcGVyZmVjdCB3b3JsZCwgdGhl
-IGxpbmsgc3BlZWQgcmVwb3J0ZWQgYnkgdGhlIHZOSUMgZHJpdmVyIChpbiB0aGUgZ3Vlc3QpIHdv
-dWxkIHJlZmxlY3QgdGhlIHNwZWVkIG9mIHRoZSBwaHlzaWNhbCBwb3J0IHRoZSB2TklDIGlzIGNv
-bm5lY3RlZCB0byAoaW4gdGhlIGhvc3Qgc3lzdGVtKS4NCkFuZCB3aGVuIGEgdk5JQyBpcyBjb25u
-ZWN0ZWQgdG8gYSBicmlkZ2UgaW4gdGhlIGhvc3QsIHRoYXQgYnJpZGdlIG1heSBiZSBjb25uZWN0
-ZWQgdG8gZS5nLiBhIExBQ1AgdHJ1bmsgb2YgZS5nLiAyKjEwIEdiaXQvcyBsaW5rcy4gSW4gdGhp
-cyBjYXNlLCB0aGUgdk5JQyBjb3VsZCByZXBvcnQgYSBsaW5rIHNwZWVkIG9mIDIwIEdiaXQvcy4N
-CkJ1dCBpZiB0aGUgYnJpZGdlIGluIHRoZSBob3N0IGlzIG9ubHkgY29ubmVjdGVkIHRvIG90aGVy
-IGd1ZXN0cywgYW5kIG5vIHBoeXNpY2FsIHBvcnQsIHRoZSBpbnRlci1ndWVzdCBiYW5kd2lkdGgg
-c2hvdWxkIG5vdCBiZSBsaW1pdGVkIHRvIDEwIG9yIDIwIEdiaXQvcy4NCkFuZCBpZiB0aGUgYnJp
-ZGdlIGlzIGJvdGggY29ubmVjdGVkIHRvIG90aGVyIGd1ZXN0cyBhbmQgcGh5c2ljYWwgcG9ydHMs
-IGl0IGJlY29tZXMgaW1wb3NzaWJsZSB0byByZXBvcnQgYSBwcm9wZXIgc3BlZWQuDQoNCkluIHNo
-b3J0OiBSZXBvcnRpbmcgdGhlIGxpbmsgc3BlZWQgb2YgYSB2TklDIGlzIG5vdCBzaW1wbGUuDQoN
-Cg==
+add minimum PMD code, doc and build infrastructure for nbl driver.
+
+Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+---
+ .mailmap                                      |  4 +
+ MAINTAINERS                                   |  9 ++
+ doc/guides/nics/features/nbl.ini              |  9 ++
+ doc/guides/nics/index.rst                     |  1 +
+ doc/guides/nics/nbl.rst                       | 87 +++++++++++++++++++
+ doc/guides/rel_notes/release_25_11.rst        |  4 +
+ drivers/net/meson.build                       |  1 +
+ drivers/net/nbl/meson.build                   | 11 +++
+ drivers/net/nbl/nbl_ethdev.c                  |  3 +
+ .../net/nbl/nbl_include/nbl_product_base.h    | 37 ++++++++
+ 10 files changed, 166 insertions(+)
+ create mode 100644 doc/guides/nics/features/nbl.ini
+ create mode 100644 doc/guides/nics/nbl.rst
+ create mode 100644 drivers/net/nbl/meson.build
+ create mode 100644 drivers/net/nbl/nbl_ethdev.c
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
+
+diff --git a/.mailmap b/.mailmap
+index 293ec12da0..c9dc467182 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -375,6 +375,7 @@ Diana Wang <na.wang@corigine.com>
+ Didier Pallard <didier.pallard@6wind.com>
+ Dilshod Urazov <dilshod.urazov@oktetlabs.ru>
+ Dima Ruinskiy <dima.ruinskiy@intel.com>
++Dimon Zhao <dimon.zhao@nebula-matrix.com>
+ Ding Zhi <zhi.ding@6wind.com>
+ Diogo Behrens <diogo.behrens@huawei.com>
+ Dirk-Holger Lenz <dirk.lenz@ng4t.com>
+@@ -857,6 +858,7 @@ Kumar Amber <kumar.amber@intel.com>
+ Kumara Parameshwaran <kumaraparamesh92@gmail.com> <kparameshwar@vmware.com>
+ Kumar Sanghvi <kumaras@chelsio.com>
+ Kyle Larose <klarose@sandvine.com>
++Kyo Liu <kyo.liu@nebula-matrix.com>
+ Lance Richardson <lance.richardson@broadcom.com>
+ Laszlo Ersek <lersek@redhat.com>
+ Laura Stroe <laura.stroe@intel.com>
+@@ -871,6 +873,7 @@ Lei Gong <arei.gonglei@huawei.com>
+ Lei Ji <jilei8@huawei.com>
+ Lei Yao <lei.a.yao@intel.com>
+ Leonid Myravjev <myravjev@amicon.ru>
++Leon Yu <leon.yu@nebula-matrix.com>
+ Leo Xu <yongquanx@nvidia.com>
+ Leszek Zygo <leszek.zygo@intel.com>
+ Levend Sayar <levendsayar@gmail.com>
+@@ -1389,6 +1392,7 @@ Saikrishna Edupuganti <saikrishna.edupuganti@intel.com>
+ Saleh Alsouqi <salehals@nvidia.com> <salehals@mellanox.com>
+ Salem Sol <salems@nvidia.com>
+ Sam Andrew <samandrew@microsoft.com>
++Sam Chen <sam.chen@nebula-matrix.com>
+ Sameh Gobriel <sameh.gobriel@intel.com>
+ Sam Grove <sam.grove@sifive.com>
+ Samik Gupta <samik.gupta@broadcom.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7aca98c537..edc93cdda0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1009,6 +1009,15 @@ F: drivers/net/rnp/
+ F: doc/guides/nics/rnp.rst
+ F: doc/guides/nics/features/rnp.ini
+ 
++Nebulamatrix nbl
++M: Dimon Zhao <dimon.zhao@nebula-matrix.com>
++M: Kyo Liu<kyo.liu@nebula-matrix.com>
++M: Leon Yu <leon.yu@nebula-matrix.com>
++M: Sam Chen <sam.chen@nebula-matrix.com>
++F: drivers/net/nbl
++F: doc/guides/nics/nbl.rst
++F: doc/guides/nics/features/nbl.ini
++
+ Realtek r8169
+ M: Howard Wang <howard_wang@realsil.com.cn>
+ M: Chunhao Lin <hau@realtek.com>
+diff --git a/doc/guides/nics/features/nbl.ini b/doc/guides/nics/features/nbl.ini
+new file mode 100644
+index 0000000000..6daabe6ed3
+--- /dev/null
++++ b/doc/guides/nics/features/nbl.ini
+@@ -0,0 +1,9 @@
++;
++; Supported features of the 'nbl' network poll mode driver.
++;
++; Refer to default.ini for the full list of available PMD features.
++;
++[Features]
++Linux                = Y
++ARMv8                = Y
++x86-64               = Y
+diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
+index 57d161c526..84d4ece101 100644
+--- a/doc/guides/nics/index.rst
++++ b/doc/guides/nics/index.rst
+@@ -50,6 +50,7 @@ Network Interface Controller Drivers
+     mvneta
+     mvpp2
+     netvsc
++    nbl
+     nfb
+     nfp
+     ngbe
+diff --git a/doc/guides/nics/nbl.rst b/doc/guides/nics/nbl.rst
+new file mode 100644
+index 0000000000..fa5dfaecdc
+--- /dev/null
++++ b/doc/guides/nics/nbl.rst
+@@ -0,0 +1,87 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++   Copyright 2025 Nebulamatrix Technology Co., Ltd
++
++NBL Poll Mode Driver
++====================
++
++The NBL PMD (**librte_net_nbl**) provides poll mode driver support for
++10/25/50/100/200 Gbps Nebulamatrix Series Network Adapters.
++
++
++Features
++--------
++
++Features of the NBL PMD are:
++
++- Multiple queues for TX and RX
++- Receiver Side Scaling (RSS). Currently does not support user-configured RSS and only supports packet spraying via RSS.
++- Jumbo frames
++
++
++Supported NICs
++--------------
++
++The following Nebulamatrix device models are supported by the same nbl driver:
++
++  - S1205CQ-A00CHT
++  - S1105AS-A00CHT
++  - S1055AS-A00CHT
++  - S1052AS-A00CHT
++  - S1051AS-A00CHT
++  - S1045XS-A00CHT
++  - S1205CQ-A00CSP
++  - S1055AS-A00CSP
++  - S1052AS-A00CSP
++
++
++Linux Prerequisites
++~~~~~~~~~~~~~~~~~~~
++
++This driver relies on kernel drivers for resources allocations and initialization.
++The following dependencies are not part of DPDK and must be installed separately:
++
++- **Kernel modules**
++
++  They provide low level device drivers that manage actual hardware initialization
++  and resources sharing with user-space processes.
++
++  Unlike most other PMDs, these modules must remain loaded and bound to
++  their devices:
++
++  - ``nbl_core``: hardware driver managing Ethernet kernel network devices.
++
++Because the nbl_core kernel driver code has not been upstreamed to the Linux kernel community, it cannot be provided by standard Linux distributions.
++However, the nbl_core kernel driver has been upstreamed to the openEuler and Anolis communities. You can obtain the nbl_core code from the following links:
++
++openEuler community:
++https://gitee.com/openeuler/kernel/pulls/11667
++
++Anolis community:
++https://gitee.com/anolis/cloud-kernel/pulls/5185
++https://gitee.com/anolis/cloud-kernel/pulls/5059
++
++Alternatively, you can contact us to obtain the nbl_core code and installation package.
++
++
++Prerequisites
++-------------
++
++- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>`
++  to setup the basic DPDK environment.
++
++- Learn about `Nebulamatrix Series NICs
++  <https://www.nebula-matrix.com/main>`_.
++
++
++Multiple Processes
++~~~~~~~~~~~~~~~~~~
++
++The NBL PMD does not support Multiple Processes.
++
++
++Limitations or Known Issues
++---------------------------
++
++32-bit architectures are not supported.
++
++Windows and BSD are not supported yet.
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index 122029b3c8..b8f2f78239 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -64,6 +64,10 @@ New Features
+ 
+   * Enabled software taildrop for ordered queues.
+ 
++* **Added Nebulamatrix nbl net driver.**
++
++    * Added the PMD for Nebulamatrix NICs.
++
+ Removed Items
+ -------------
+ 
+diff --git a/drivers/net/meson.build b/drivers/net/meson.build
+index 61f8cddb30..517e78d18b 100644
+--- a/drivers/net/meson.build
++++ b/drivers/net/meson.build
+@@ -40,6 +40,7 @@ drivers = [
+         'mlx5',
+         'mvneta',
+         'mvpp2',
++        'nbl',
+         'netvsc',
+         'nfb',
+         'nfp',
+diff --git a/drivers/net/nbl/meson.build b/drivers/net/nbl/meson.build
+new file mode 100644
+index 0000000000..68c045a48c
+--- /dev/null
++++ b/drivers/net/nbl/meson.build
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright 2025 NebulaMatrix Technology Co., Ltd.
++
++if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
++    build = false
++    reason = 'only supported on 64bit Linux'
++endif
++
++sources = files(
++        'nbl_ethdev.c',
++)
+diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
+new file mode 100644
+index 0000000000..3ad8e4033a
+--- /dev/null
++++ b/drivers/net/nbl/nbl_ethdev.c
+@@ -0,0 +1,3 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
+diff --git a/drivers/net/nbl/nbl_include/nbl_product_base.h b/drivers/net/nbl/nbl_include/nbl_product_base.h
+new file mode 100644
+index 0000000000..0acc749059
+--- /dev/null
++++ b/drivers/net/nbl/nbl_include/nbl_product_base.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#ifndef _NBL_DEF_PRODUCT_BASE_H_
++#define _NBL_DEF_PRODUCT_BASE_H_
++
++#include "nbl_include.h"
++
++struct nbl_product_core_ops {
++	int (*hw_init)(void *p);
++	void (*hw_remove)(void *p);
++	int (*res_init)(void *p, struct rte_eth_dev *eth_dev);
++	void (*res_remove)(void *p);
++	int (*chan_init)(void *p);
++	void (*chan_remove)(void *p);
++};
++
++struct nbl_product_dev_ops {
++	int (*dev_init)(void *adapter);
++	void (*dev_uninit)(void *adapter);
++	int (*dev_start)(void *adapter);
++	void (*dev_stop)(void *adapter);
++};
++
++struct nbl_product_dispatch_ops {
++	int (*dispatch_init)(void *mgt);
++	int (*dispatch_uninit)(void *mgt);
++};
++
++struct nbl_product_dev_external_ops {
++	int (*external_pf_ops_get)(struct rte_eth_dev *dev, void *arg);
++	int (*external_rep_ops_get)(struct rte_eth_dev *dev, void *arg);
++	int (*external_bond_ops_get)(struct rte_eth_dev *dev, void *arg);
++};
++
++#endif
+-- 
+2.34.1
+
