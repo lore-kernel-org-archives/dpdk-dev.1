@@ -2,65 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D6ACA0EE9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 04:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83952CA0EE9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 05:08:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 08E6F40430;
-	Tue, 19 Aug 2025 06:15:26 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 68CB3402E4
- for <dev@dpdk.org>; Tue, 19 Aug 2025 06:15:24 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57INWJCF004111;
- Mon, 18 Aug 2025 21:15:23 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id BC06240430;
+	Tue, 19 Aug 2025 07:08:56 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 8BB85402E4
+ for <dev@dpdk.org>; Tue, 19 Aug 2025 07:08:55 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J54QFN022853
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 22:08:54 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=VJbLTCf7xuvZLDitIRzZnQE
- a/wATMEGjo6MBhfHUlU0=; b=EQz/G9v4reFalkndiV2X6N1hfO6RYVO+ZfGG77M
- 0cfHwGoGWwebg9GrpH5eAhy1wQ0g+W7bkbtasf3LxX1zIblWFiPHx5GPaR/N27n8
- cQZIHMB/DIk/ar3rjimqDaJfXxvbw4SqRBQJ6VvydQzM4x7dc7M/HOD2cBcMhy5a
- BrXD44h2nYi6q5vkvdVdQUAMqC45K7nnt/l1jAS67LGh6jeLV2SyWcMzQ2VMZ33j
- zvmbqE+9p4WIUvYd0nSUc/nF4a4/hOJRZgJk8L5v/Ip2makAyXuL2RsSdDJCoVSJ
- w41PAt0wPAZlNjKnXbpWTk9RLoHxDDxADsm8Qvs6aJMZH0w==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 48mdx0gesj-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 18 Aug 2025 21:15:23 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=M
+ QRwTEfoBHi0bmaZao/Mz4pwvREWqZGRh1czwD+9MZ8=; b=QFya1344QCBS/8w2h
+ ScAZE3r9Hxg7VJTOfXRjACgR3oHt82CHhmKr2VKXBuzj1JjPye0s42ANky9ydDFh
+ ixRp3hhbmN2Ow9Ip7CgdvaI9c8wQ66BDlfA8ftTYOAyYhXAaqwunfpcZ9utetaYv
+ PLm3p8jBB9Jbl/Iq2xl8spRLIWSj6ttpTpch5Lzlbxq7QV+j/dxd4dBa5lJiOXOL
+ gzJhdsIc0sBGb9G7YiiziQxSybbrkzxHVA97AipiDAFYWZobzaB2B9dTQ8r7rZ2D
+ Mx5Q1ogwpg7ZBZzzh0pEunNF041W6be/1jnH9RLZxzXbVj/hNmRBvM2uTfKRxoPL
+ FsE+Q==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48mjt3g063-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Mon, 18 Aug 2025 22:08:54 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 18 Aug 2025 21:15:26 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 18 Aug 2025 21:15:26 -0700
+ 15.2.1544.25; Mon, 18 Aug 2025 22:08:58 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Mon, 18 Aug 2025 22:08:58 -0700
 Received: from hyd11149.caveonetworks.com (unknown [10.29.44.105])
- by maili.marvell.com (Postfix) with ESMTP id 57B673F707F;
- Mon, 18 Aug 2025 21:15:19 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id BF1713F7077;
+ Mon, 18 Aug 2025 22:08:52 -0700 (PDT)
 From: Rupesh Chiluka <rchiluka@marvell.com>
-To: Kai Ji <kai.ji@intel.com>
-CC: <dev@dpdk.org>, <gakhil@marvell.com>, <anoobj@marvell.com>,
- <ktejasree@marvell.com>, Rupesh Chiluka <rchiluka@marvell.com>
+To: <dev@dpdk.org>
+CC: Rupesh Chiluka <rchiluka@marvell.com>
 Subject: [PATCH] app/crypto-perf: add ECDSA P384 support
-Date: Tue, 19 Aug 2025 09:45:17 +0530
-Message-ID: <20250819041517.1638717-1-rchiluka@marvell.com>
+Date: Tue, 19 Aug 2025 10:38:50 +0530
+Message-ID: <20250819050850.1650503-1-rchiluka@marvell.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250819041517.1638717-1-rchiluka@marvell.com>
+References: <20250819041517.1638717-1-rchiluka@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: YzukXpwC4aWs6r5q-uxBJO6jNQYLuISF
-X-Proofpoint-ORIG-GUID: YzukXpwC4aWs6r5q-uxBJO6jNQYLuISF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDAzNyBTYWx0ZWRfX1y0UDNMakIJU
- dbtp4ay04IFwWZ69WkQs92y7OdMg52dybc01fWooQP1sKNJFQ+QF3wESlWxsPEJt1XrilHP7XYe
- KNM485zIVuoPHplDVEFBBtc8Cb/xTexaKME489MtYjrpod22BCLmD26VoS8by0mzIqPw+nIoqBO
- EVdcppXb1+MM5BJmYFs0NpsUR+60hmIfkEs7wGlAlSRnKCuR86vgvcSUTftFPSJjFZdVFcUtHko
- jWzULB1eyfFuB2dcgCE83kG8iw8n0b2ohRK8GJGECMDvpWgi6NvIAAH8/ySr0GPEJFL0MY+sULr
- 2ZeHMtyWFX56TRviqJQCe5CLYlg5rQn08wf/41T5fH6owjCjrpYUUqB7sQZdJa2fDvEoPGccL7J
- 4hiZuVZ+blDwTqsoVPZPjliIwRdFOI5ThCR0RcapE0DqerloZc4+xEZ0LreSPsGjHA7s3eLU
-X-Authority-Analysis: v=2.4 cv=D4hHKuRj c=1 sm=1 tr=0 ts=68a3fa5b cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+X-Authority-Analysis: v=2.4 cv=EIAG00ZC c=1 sm=1 tr=0 ts=68a406e6 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=UsacpLM7tMdhLN4-fR8A:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: bHwB2-lOu1h2pFSDW_tUjpRokF3jkz1e
+X-Proofpoint-ORIG-GUID: bHwB2-lOu1h2pFSDW_tUjpRokF3jkz1e
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDA0NiBTYWx0ZWRfX6HnWQ3nFU6gU
+ S2smIWCsrk2hZJu9p09+02m4TkNiNyd6PqspeZt9XNhj/3137WTtSqTCKyIUKb5WpHq9jfnuxGS
+ c7G3iLMKxm9n7DLq3LoQ/eIXNcvrD7Eh85P51z3IdI4BoCXktHTUxjFDq6MhEVHcJGuHTCFvRNI
+ BnGBrzWLZN4Voto3Opy5G/ySJdaP5j/ZDRctNiAENl6hxWPVjL+kvc307RHWxr4J/e1I0u729to
+ FE6xJ9wELzAzxATJKwMAGiQKLvQcbPg1tK9rL/qxzfo6xd7Fc2fUCU+wz7omRIvjYbwunk5dofF
+ v0t+mrxq+9IZdXKKWzIwif8ugYUHYZtbVZDAJTCsXXi2iL2rYTvDqcpdi7eIYM7AnZ4YQXMqq/9
+ kMeDJU/BlCxWR1cStPvqhwmGhAtVqDFkrr/241yLhbul/sG6g85fej8HgAEOye3R7SEVjJQm
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
@@ -80,7 +82,6 @@ Errors-To: dev-bounces@dpdk.org
 Add support for ECDSA SECP384R1 curve SIGN and VERIFY operations
 
 Signed-off-by: Rupesh Chiluka <rchiluka@marvell.com>
-Change-Id: I0bde24ad5f93a9f2d37dfe156ba3325d3d151f8f
 ---
  app/test-crypto-perf/cperf_ops.c             | 58 +++++++++---
  app/test-crypto-perf/cperf_options.h         |  2 +
@@ -93,10 +94,10 @@ Change-Id: I0bde24ad5f93a9f2d37dfe156ba3325d3d151f8f
  8 files changed, 165 insertions(+), 14 deletions(-)
 
 diff --git a/app/test-crypto-perf/cperf_ops.c b/app/test-crypto-perf/cperf_ops.c
-index ca4ef2b343..cedf18d628 100644
+index 20fba60426..b2d054a03c 100644
 --- a/app/test-crypto-perf/cperf_ops.c
 +++ b/app/test-crypto-perf/cperf_ops.c
-@@ -101,16 +101,30 @@ cperf_set_ops_asym_ecdsa(struct rte_crypto_op **ops,
+@@ -103,16 +103,30 @@ cperf_set_ops_asym_ecdsa(struct rte_crypto_op **ops,
  		rte_crypto_op_attach_asym_session(ops[i], sess);
  
  		asym_op->ecdsa.op_type = options->asym_op_type;
@@ -136,7 +137,7 @@ index ca4ef2b343..cedf18d628 100644
  	}
  }
  
-@@ -1133,7 +1147,28 @@ cperf_create_session(struct rte_mempool *sess_mp,
+@@ -1137,7 +1151,28 @@ cperf_create_session(struct rte_mempool *sess_mp,
  		ret = rte_cryptodev_asym_session_create(dev_id, &xform,
  				sess_mp, &asym_sess);
  		if (ret < 0) {
@@ -166,7 +167,7 @@ index ca4ef2b343..cedf18d628 100644
  			return NULL;
  		}
  
-@@ -1485,6 +1520,9 @@ cperf_get_op_functions(const struct cperf_options *options,
+@@ -1489,6 +1524,9 @@ cperf_get_op_functions(const struct cperf_options *options,
  	case CPERF_ASYM_SECP256R1:
  		op_fns->populate_ops = cperf_set_ops_asym_ecdsa;
  		break;
@@ -197,7 +198,7 @@ index 028dd2d797..38621e28a0 100644
  	struct cperf_sm2_test_data *sm2_data;
  	enum rte_crypto_asym_op_type asym_op_type;
 diff --git a/app/test-crypto-perf/cperf_options_parsing.c b/app/test-crypto-perf/cperf_options_parsing.c
-index dc36dc0f2d..d1d9c969e7 100644
+index 0e0dc4fd06..8577551b2a 100644
 --- a/app/test-crypto-perf/cperf_options_parsing.c
 +++ b/app/test-crypto-perf/cperf_options_parsing.c
 @@ -39,7 +39,7 @@ usage(char *progname)
@@ -412,7 +413,7 @@ index 2e38c0011d..4f98e0172a 100644
  		}
  
 diff --git a/doc/guides/tools/cryptoperf.rst b/doc/guides/tools/cryptoperf.rst
-index 4bb607645b..5b1c19619e 100644
+index 5924a247ba..c35f39d948 100644
 --- a/doc/guides/tools/cryptoperf.rst
 +++ b/doc/guides/tools/cryptoperf.rst
 @@ -176,6 +176,7 @@ The following are the application command-line options:
