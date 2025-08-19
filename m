@@ -2,73 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3082CA0EF2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 Aug 2025 23:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 675AECA0EF5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 00:24:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5176140696;
-	Tue, 19 Aug 2025 01:34:31 +0200 (CEST)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
- [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id 2084440B9D
- for <dev@dpdk.org>; Tue, 19 Aug 2025 01:34:30 +0200 (CEST)
-Received: by mail-wr1-f52.google.com with SMTP id
- ffacd0b85a97d-3b9d41cd38dso3672643f8f.0
- for <dev@dpdk.org>; Mon, 18 Aug 2025 16:34:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755560070;
- x=1756164870; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=N/6cvwORRx7KUvl2otsNEaP70fBEbZ6fhNv+FJZmzwQ=;
- b=yAwQYVR78JIhPaKH/vSEVpNfLjO3/Pc1tiam58lqKWMDR9J75Os2za8xAFqxv1ZYtA
- xf3ehFGtURJHpD0LzNzf7NVlEjIrpM3PzmyoGKsFH8KxMtFHnv9y4ntV164oywkNvncy
- flCNYOySis9k9Eg2Lf1zm7o9GF4X99cRYO3gRpmmgJm1s9TreLxW4RQp79Pf5oH4XRbN
- otG0GRYtWCgKY21OOY4u/1m2gpyyvybMkHRBQZzY27y5taP//MnSzMrEESDt00UsiN4N
- hM4kLxhzqsfGR5xlJlUONISmK8DF6YUw1xx36Q650UXHvrV+oC2Fwp0xQonHg7ZibWQa
- 0EmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755560070; x=1756164870;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=N/6cvwORRx7KUvl2otsNEaP70fBEbZ6fhNv+FJZmzwQ=;
- b=e8kcAGhFZARzEYKfhbMV1GjT3qNtN46uX4dImM9E2TDdIDaxNKm7REzHAS1REjKTAl
- 0cVatUAO9d63ambTmIHmWayE0CY49tbjkWPHfs4QOI2U77WsRhOzAKhnykxZImmp57zx
- 8Wol23viUqVh2eqTYnNkPUP7UMhYZtapgYoBADKoL3Bbi2Ioy3Ydu6VJ3HvIz3e75pyA
- dz06gLvlr+t2/1CSqmbvdX3cnAwLcMxpzeHTP5yKbi5BNPvhiQavc9uDiGAeucWf5U9e
- is6Y/0HlvFtcZHMt4wdUjRm+qjTEds50txXICSZP1YnoexFUET29VoCEqds3Wj3FNxdP
- Hcig==
-X-Gm-Message-State: AOJu0Yw73d9JkyESoZwFEHqJyn6wtP/nPPIA4JE4QOu/wn39FlsQTa4D
- KM3pby1l2DMd2qVu83jCQLE8YRe81E/r4cJW1ZFn3JidhcjoYmIPVbXZP8Asdeewrj7Yy0ax7xx
- zaDvR
-X-Gm-Gg: ASbGncuEiZYpEHdhTaYqJXqa2N8dB7OW8RmbK2/iiuMoXghrxHGvxCC/qOrJeZfo8QN
- hMDHSiBbYiiJ0RvrBIgrX8xWURZ7UupmtwYT557oC0k5C4DBJhnBGJU8ll2f/fizjw6OnlFxntk
- UIedSIPw8tHM+fksQNi9ZUPTwXcTb8FpIWbplQW+1pxuMfsi1BR3erBs9exy3cL2DvgU6OhqU/L
- Hal+B4gwPEvQ0CdmXddHYVvF+vtqDP3Ved6RBd2T6GBqBc4WcJKMeLwlzH/pQm5bn0rtOCZhzjn
- QFQSWTxlpA0vTNHyxH84vccu8T1qtWIiWbxdd+InKkc/s1geNMem7F451zzOouESvE5Glyh5znx
- Vnlg0k5FW7xpCZjvwEXuVF3VvQRsVJ5iyXpNMhRbPRGLbmdKOzVNCJcuaYkROCzyCElp0qJJLml
- rqqtZwmxo=
-X-Google-Smtp-Source: AGHT+IFUUFIjT0qBMOT3bFzOTefjG07rhMdkNsBnCkF6k4DI2GAD8oPK650bfRJxG+f8owYwd7Jo/g==
-X-Received: by 2002:a05:6000:2502:b0:3b7:dd87:d730 with SMTP id
- ffacd0b85a97d-3c0ec756f42mr311057f8f.52.1755560069677; 
- Mon, 18 Aug 2025 16:34:29 -0700 (PDT)
-Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c074879fe5sm1233063f8f.2.2025.08.18.16.34.28
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 18 Aug 2025 16:34:29 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Rosen Xu <rosen.xu@altera.com>
-Subject: [RFC 47/47] drivers/raw: replace with TAILQ_FOREACH_SAFE
-Date: Mon, 18 Aug 2025 16:27:58 -0700
-Message-ID: <20250818233102.180207-48-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250818233102.180207-1-stephen@networkplumber.org>
-References: <20250818233102.180207-1-stephen@networkplumber.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+	by mails.dpdk.org (Postfix) with ESMTP id 5D6C040277;
+	Tue, 19 Aug 2025 02:24:34 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id BFAE540267
+ for <dev@dpdk.org>; Tue, 19 Aug 2025 02:24:32 +0200 (CEST)
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+ id BBA552113340; Mon, 18 Aug 2025 17:24:31 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BBA552113340
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
+ s=default; t=1755563071;
+ bh=gB/HYwRrMmR+3xV8Aet2KCTwHAVibRJ9fUzY1j/AYuQ=;
+ h=From:To:Cc:Subject:Date:From;
+ b=Ghy4gmlg/P9X/Zb9domjQSGufvTaxRvcMilEQYR44bM4ce8Q+w9dsV1sCt2AD0mQi
+ a86mChx31pAetBtj2pAeS33xBO4nBc8RDPv77z0CK1h4YPtNbiBUI0NV508NVGeAgF
+ Huy1ekRVu8Sfbxv4cIqspyOhh7qFbErJ9dOwuwMo=
+From: longli@linuxonhyperv.com
+To: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
+Cc: dev@dpdk.org,
+	Long Li <longli@microsoft.com>
+Subject: [PATCH v2] bus/vmbus: add device argument to configure if NUMA
+ information on the device should be ignored
+Date: Mon, 18 Aug 2025 17:24:26 -0700
+Message-Id: <1755563066-2592-1-git-send-email-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 1.8.3.1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,58 +42,195 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There is now a standard macro to safely walk tailq.
+From: Long Li <longli@microsoft.com>
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+In most cases, netvsc is used with a VF device. The application generally
+runs with better performance when all the device memory is allocated on
+VF's NUMA node, as the VF device carries most of the data packets.
+
+But sometimes netvsc may run on a different NUMA node than that of the VF.
+This patch adds a device argument "numa" to allow the application to
+configure if this vmbus device (netvsc) should be NUMA aware. The default
+behavior is NUMA aware. Setting "numa=0" specifies this vmbus device is
+not NUMA aware.
+
+The device argument is parsed at the time of vmbus device probe to ensure
+all the following memory allocations are done on the configured NUMA node.
+
+Signed-off-by: Long Li <longli@microsoft.com>
 ---
- drivers/raw/ifpga/base/ifpga_enumerate.c  | 6 +++---
- drivers/raw/ifpga/base/opae_intel_max10.c | 8 +-------
- 2 files changed, 4 insertions(+), 10 deletions(-)
+Change log
+v2: move the code for parsing device arguments to vmbus
 
-diff --git a/drivers/raw/ifpga/base/ifpga_enumerate.c b/drivers/raw/ifpga/base/ifpga_enumerate.c
-index 61eb6601ea..ff0790038c 100644
---- a/drivers/raw/ifpga/base/ifpga_enumerate.c
-+++ b/drivers/raw/ifpga/base/ifpga_enumerate.c
-@@ -6,6 +6,8 @@
- #include <inttypes.h>
- #include <unistd.h>
- 
-+#include <bsd_queue.h>
+ doc/guides/nics/netvsc.rst           |  8 ++++
+ drivers/bus/vmbus/bus_vmbus_driver.h | 15 +++++++
+ drivers/bus/vmbus/linux/vmbus_bus.c  | 64 +++++++++++++++++++++++-----
+ drivers/net/netvsc/hn_ethdev.c       | 12 ------
+ 4 files changed, 76 insertions(+), 23 deletions(-)
+
+diff --git a/doc/guides/nics/netvsc.rst b/doc/guides/nics/netvsc.rst
+index 2c0ea6ac9e..e052b31dcc 100644
+--- a/doc/guides/nics/netvsc.rst
++++ b/doc/guides/nics/netvsc.rst
+@@ -141,3 +141,11 @@ The user can specify below argument in devargs.
+     A non-zero value tells netvsc to attach external buffers to mbuf on
+     receiving packets, thus avoid copying memory. Use of external buffers
+     requires the application is able to read data from external mbuf.
 +
- #include "opae_hw_api.h"
- #include "ifpga_api.h"
++#. ``numa``:
++   The numa is used to configure if netvsc driver should be NUMA aware. The
++   default value is 1 (meaning the netvsc driver is NUMA aware). When used
++   with a VF device, the VF device's NUMA node may not be the same as netvsc's
++   NUMA node. The application generally runs with better performance if all the
++   device queues are allocated on VF's NUMA node, as the VF carries most of the
++   data packets. Setting this value to 0 makes netvsc driver not NUMA aware.
+diff --git a/drivers/bus/vmbus/bus_vmbus_driver.h b/drivers/bus/vmbus/bus_vmbus_driver.h
+index bc394208de..2b431ac16e 100644
+--- a/drivers/bus/vmbus/bus_vmbus_driver.h
++++ b/drivers/bus/vmbus/bus_vmbus_driver.h
+@@ -17,6 +17,21 @@ extern "C" {
+ struct vmbus_channel;
+ struct vmbus_mon_page;
  
-@@ -725,9 +727,7 @@ static void dfl_fpga_enum_info_free(struct dfl_fpga_enum_info *info)
- 		return;
++#define NETVSC_ARG_LATENCY "latency"
++#define NETVSC_ARG_RXBREAK "rx_copybreak"
++#define NETVSC_ARG_TXBREAK "tx_copybreak"
++#define NETVSC_ARG_RX_EXTMBUF_ENABLE "rx_extmbuf_enable"
++#define NETVSC_ARG_NUMA "numa"
++
++static const char * const valid_keys[] = {
++	NETVSC_ARG_LATENCY,
++	NETVSC_ARG_RXBREAK,
++	NETVSC_ARG_TXBREAK,
++	NETVSC_ARG_RX_EXTMBUF_ENABLE,
++	NETVSC_ARG_NUMA,
++	NULL
++};
++
+ /** Maximum number of VMBUS resources. */
+ enum hv_uio_map {
+ 	HV_TXRX_RING_MAP = 0,
+diff --git a/drivers/bus/vmbus/linux/vmbus_bus.c b/drivers/bus/vmbus/linux/vmbus_bus.c
+index ed18d4da96..d2fa14a69e 100644
+--- a/drivers/bus/vmbus/linux/vmbus_bus.c
++++ b/drivers/bus/vmbus/linux/vmbus_bus.c
+@@ -18,6 +18,7 @@
+ #include <rte_memory.h>
+ #include <rte_malloc.h>
+ #include <rte_bus_vmbus.h>
++#include <rte_kvargs.h>
  
- 	/* remove all device feature lists in the list. */
--	for (dfl = TAILQ_FIRST(&info->dfls);
--		dfl && (tmp = TAILQ_NEXT(dfl, node), 1);
--		dfl = tmp) {
-+	TAILQ_FOREACH_SAFE(dfl, &info->dfls, node, tmp) {
- 		TAILQ_REMOVE(&info->dfls, dfl, node);
- 		opae_free(dfl);
- 	}
-diff --git a/drivers/raw/ifpga/base/opae_intel_max10.c b/drivers/raw/ifpga/base/opae_intel_max10.c
-index 58c884a8d8..84e0767b3a 100644
---- a/drivers/raw/ifpga/base/opae_intel_max10.c
-+++ b/drivers/raw/ifpga/base/opae_intel_max10.c
-@@ -4,14 +4,8 @@
+ #include <eal_export.h>
+ #include "eal_filesystem.h"
+@@ -231,6 +232,47 @@ rte_vmbus_unmap_device(struct rte_vmbus_device *dev)
+ 	vmbus_uio_unmap_resource(dev);
+ }
  
- #include "opae_intel_max10.h"
- #include <libfdt.h>
--#include "opae_osdep.h"
++/* Check in dev args if numa should be used.
++ * By default returning true, meaning the device is numa aware
++ */
++static bool vmbus_use_numa(struct rte_vmbus_device *dev)
++{
++	struct rte_devargs *devargs = dev->device.devargs;
++	struct rte_kvargs *kvlist;
++	const struct rte_kvargs_pair *pair;
++	unsigned long v;
++	unsigned int i;
++	char *endp = NULL;
++	bool ret = true;
++
++	if (!devargs)
++		return ret;
++
++	VMBUS_LOG(DEBUG, "device args %s %s", devargs->name, devargs->args);
++
++	kvlist = rte_kvargs_parse(devargs->args, valid_keys);
++	if (!kvlist) {
++		VMBUS_LOG(ERR, "invalid parameters");
++		return ret;
++	}
++
++	for (i = 0; i < kvlist->count; i++) {
++		pair = &kvlist->pairs[i];
++		if (!strcmp(pair->key, NETVSC_ARG_NUMA)) {
++			v = strtoul(pair->value, &endp, 0);
++			if (*pair->value == '\0' || *endp != '\0') {
++				VMBUS_LOG(ERR, "invalid parameter %s=%s",
++					  pair->key, pair->value);
++			}
++			ret = v ? true : false;
++		}
++	}
++
++	rte_kvargs_free(kvlist);
++
++	return ret;
++}
++
+ /* Scan one vmbus sysfs entry, and fill the devices list from it. */
+ static int
+ vmbus_scan_one(const char *name)
+@@ -287,19 +329,19 @@ vmbus_scan_one(const char *name)
+ 		goto error;
+ 	dev->monitor_id = tmp;
  
--#ifndef TAILQ_FOREACH_SAFE
--#define TAILQ_FOREACH_SAFE(var, head, field, tvar) \
--	for ((var) = TAILQ_FIRST((head)); \
--		(var) && ((tvar) = TAILQ_NEXT((var), field), 1); \
--	(var) = (tvar))
--#endif
-+#include "opae_osdep.h"
+-	/* get numa node (if present) */
+-	snprintf(filename, sizeof(filename), "%s/numa_node",
+-		 dirname);
++	dev->device.devargs = vmbus_devargs_lookup(dev);
  
- int max10_sys_read(struct intel_max10_device *dev,
- 	unsigned int offset, unsigned int *val)
+-	if (access(filename, R_OK) == 0) {
+-		if (eal_parse_sysfs_value(filename, &tmp) < 0)
+-			goto error;
+-		dev->device.numa_node = tmp;
+-	} else {
+-		dev->device.numa_node = SOCKET_ID_ANY;
+-	}
++	dev->device.numa_node = SOCKET_ID_ANY;
++	if (vmbus_use_numa(dev)) {
++		/* get numa node (if present) */
++		snprintf(filename, sizeof(filename), "%s/numa_node", dirname);
+ 
+-	dev->device.devargs = vmbus_devargs_lookup(dev);
++		if (access(filename, R_OK) == 0) {
++			if (eal_parse_sysfs_value(filename, &tmp) < 0)
++				goto error;
++			dev->device.numa_node = tmp;
++		}
++	}
+ 
+ 	/* Allocate interrupt handle instance */
+ 	dev->intr_handle =
+diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
+index 0a7ed155d3..e5cd57e4f4 100644
+--- a/drivers/net/netvsc/hn_ethdev.c
++++ b/drivers/net/netvsc/hn_ethdev.c
+@@ -52,11 +52,6 @@
+ 			    RTE_ETH_RX_OFFLOAD_VLAN_STRIP | \
+ 			    RTE_ETH_RX_OFFLOAD_RSS_HASH)
+ 
+-#define NETVSC_ARG_LATENCY "latency"
+-#define NETVSC_ARG_RXBREAK "rx_copybreak"
+-#define NETVSC_ARG_TXBREAK "tx_copybreak"
+-#define NETVSC_ARG_RX_EXTMBUF_ENABLE "rx_extmbuf_enable"
+-
+ /* The max number of retry when hot adding a VF device */
+ #define NETVSC_MAX_HOTADD_RETRY 10
+ 
+@@ -199,13 +194,6 @@ static int hn_parse_args(const struct rte_eth_dev *dev)
+ {
+ 	struct hn_data *hv = dev->data->dev_private;
+ 	struct rte_devargs *devargs = dev->device->devargs;
+-	static const char * const valid_keys[] = {
+-		NETVSC_ARG_LATENCY,
+-		NETVSC_ARG_RXBREAK,
+-		NETVSC_ARG_TXBREAK,
+-		NETVSC_ARG_RX_EXTMBUF_ENABLE,
+-		NULL
+-	};
+ 	struct rte_kvargs *kvlist;
+ 	int ret;
+ 
 -- 
-2.47.2
+2.34.1
 
