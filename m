@@ -2,31 +2,181 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7757DCA0EED
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 10:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C212DCA0EE6
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 11:10:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 98F1440B9B;
-	Tue, 19 Aug 2025 12:23:30 +0200 (CEST)
-Received: from out28-4.mail.aliyun.com (out28-4.mail.aliyun.com [115.124.28.4])
- by mails.dpdk.org (Postfix) with ESMTP id 07C514067A
- for <dev@dpdk.org>; Tue, 19 Aug 2025 12:23:16 +0200 (CEST)
-Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.eJiaSYO_1755598993 cluster:ay29) by smtp.aliyun-inc.com;
- Tue, 19 Aug 2025 18:23:14 +0800
-From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-To: dimon.zhao@nebula-matrix.com,
-	dev@dpdk.org
-Cc: Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>,
- Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v5 16/17] net/nbl: add nbl device xstats and stats
-Date: Tue, 19 Aug 2025 03:22:36 -0700
-Message-Id: <20250819102237.3067518-17-dimon.zhao@nebula-matrix.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250819102237.3067518-1-dimon.zhao@nebula-matrix.com>
-References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
- <20250819102237.3067518-1-dimon.zhao@nebula-matrix.com>
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id 040EB40267;
+	Tue, 19 Aug 2025 13:10:39 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 8996A40144
+ for <dev@dpdk.org>; Tue, 19 Aug 2025 13:10:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1755601837; x=1787137837;
+ h=date:from:to:cc:subject:message-id:references:
+ content-transfer-encoding:in-reply-to:mime-version;
+ bh=zlPXQnRc2ssyfsEN0bKjtCM5pF9vrT2sSnzs+fAFsKo=;
+ b=CmWjg5Qc1gvhVaQI+7ftXkDllguCTEW/B3EqXeX7I/wl2tpyPbkiJPLu
+ Ody6dE626C57eRWNRot2XCg8ckI+GSLAm97XgP174cdtsxZCF366pdw72
+ xg+An2rNFJYxujswBmvgvziMDvCd87srmFSr/5gjrQKodHX4G6Mos8cOp
+ +DIzr0smRLPpD7rB4yTUd3LICy0BOHWuHQIlHHHJstEMb4sxZ3q16qbko
+ +O5g7WcVSJsXbgamKqUnFMQimlKVzLbeG6af8bhvH+Dau9ZpgTf2XLVGC
+ lUgo0fftEJ8j2/m7SxJFW8kaRD7jqlT8GW+HXpMXic6Gr8JyAf6Z4pBQg w==;
+X-CSE-ConnectionGUID: nV2SrsO1RZauxoU7EuLJ7g==
+X-CSE-MsgGUID: csJkvSMLTASSEMzM6LaNZA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11526"; a="57697823"
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; d="scan'208";a="57697823"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Aug 2025 04:10:35 -0700
+X-CSE-ConnectionGUID: KjuJbFVzSUGwMTKfqk17qg==
+X-CSE-MsgGUID: GWBzR+pPRfu1bW4PPbmHRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,300,1747724400"; d="scan'208";a="191514892"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Aug 2025 04:10:35 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 19 Aug 2025 04:10:34 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Tue, 19 Aug 2025 04:10:34 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.80) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Tue, 19 Aug 2025 04:10:34 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kf6rWe+VOEa1kUONRob7qeNG9C8VoJlCPxCUlXRCMTKu5yOhg8WD7A0NdFiM722yf6hAAVoon7JJp4B6SGVB9r8GR1deEF0VWErL4FZZKbMKfgroP6bjgeAtlxdwWlZA7S2Ggl8Ifz1QRkSun+BWqQz+oeW1mB7WR84uFcb+YgYXTo/jqSu9FZV8G+0T90S8PAnzWvbdY5QpDhbyFxOoYFm2HRN/MmYcPFMFiunUH5qvvZPQAo1ptm4q4ogl9SIzl+iIwRhEBmEYKyt9QGvFYI8lHk+q5e9cy3We1ZANwVsZzPm9rLoaL2wCzikkUoWPJr7n9I1CXC/eElM0TqGlLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N1MBvVfs0EFHlmHUr48A+CUrFKynh8cRsDLKPfDR+TY=;
+ b=g2FBXiGtvLOC2Hhtl6TDVBiZODyQ+7pqNY3EtZszVYid7jqbIYEGueAGIf8fZEgg1as6+yEqh1AETh1thtnsKjMkkDADFCIc0SwE13pBynedOdmm7vSZZifdcl4elQ/w0LlqVxJNl7XoNNfm+7iaa91JHWXXzqOsKaKjEdSR//87RXiYAHajhK9ywZO2rcXpEM4MVmLfQFDWhdsgNQSHyghTJ3nqvpczFO27Ux9xJSv81eYhITi3GQRTdIFq8WsFHyf759Bt++yHcG8FL+SvTNwvrgbTfGHfz/Q0Badn+OOYFkwT8glY9qjOm9jDgH9+DUs6PKo0A4U3aCLxNvFjMQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DM6PR11MB4611.namprd11.prod.outlook.com (2603:10b6:5:2a5::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Tue, 19 Aug
+ 2025 11:10:30 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9031.023; Tue, 19 Aug 2025
+ 11:10:30 +0000
+Date: Tue, 19 Aug 2025 12:10:25 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v2] build: remove obsolete compiler checks
+Message-ID: <aKRboWGOkmZpp7zV@bricha3-mobl1.ger.corp.intel.com>
+References: <20250718121402.856265-1-bruce.richardson@intel.com>
+ <20250725160730.18354-1-bruce.richardson@intel.com>
+ <CAJFAV8xObjjfq5zFce_kT_ZhsPhiXzixXEdT+G-Mi8OV77sssw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJFAV8xObjjfq5zFce_kT_ZhsPhiXzixXEdT+G-Mi8OV77sssw@mail.gmail.com>
+X-ClientProxiedBy: DU2PR04CA0251.eurprd04.prod.outlook.com
+ (2603:10a6:10:28e::16) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DM6PR11MB4611:EE_
+X-MS-Office365-Filtering-Correlation-Id: c278745b-7556-4304-a49d-08dddf110244
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?b2s5QmVzRi9wNzJIYWt0Z2dRTTRnVDNtYjBzOG9JcWZrd2FtQXp5bmtQRERW?=
+ =?utf-8?B?ZWFOUXRJblI2djY0MzBwNjhmaHI0Wlc0dFV5bk5sTXZObXI0c1FkbVc4NkxC?=
+ =?utf-8?B?NlVMd0ttclA2cjBvbDVtTlJwbitBM1ROU01vRGZjeUZRSW41UTZSUzdMd2xs?=
+ =?utf-8?B?RFF6OWdYY25VTHpYNmo5Q3pLc2lsRTQ5NHBOWFpGUG8yWjNYa0pDdk5xUURI?=
+ =?utf-8?B?WERWNnNkOXRvazlYdjAzUE5zZDFMZXhhQVg2MjU5ZmZxU3dJMW9OeDNuRDBJ?=
+ =?utf-8?B?L2x5cjFyeHVKbzBHMkxRR29RTWw3ak8raFpKdEFXd3ZxRlNLK3AveXV0QVJ5?=
+ =?utf-8?B?NDRmWk1rTXFxMW1jSTM3dDVhaXVlRDJ1dlcxV1ZUaEtlSldMWGlwdVFLOERX?=
+ =?utf-8?B?YmxjU1JGWWtnemhCQ3Z1TFFrelZPTTcrbEZ0TU0zNU0wVEtiRm9RRkYwQmh0?=
+ =?utf-8?B?OEwyZzNZUW45UDhsYWR2QmZpY1BEaG1McU1aZERwc3RyeFNSNXkxZ0ZoWHRO?=
+ =?utf-8?B?bGFHRzZHWE1VQzJCSklENWV5dzJZOStWVk9mODBueVk2eXBSOVh6Rk15QnBr?=
+ =?utf-8?B?SmVReWpzb0ZXN2FsWWdtdzNmTS82Y1J0eU1kOTlnUWlFRm02c1dKUC9CRkox?=
+ =?utf-8?B?VWNTWlNtbjg4Y3R1bDBhZUdYc3ZoS216YmJpNE5Gd0ZWMVV1Y2lqY2xsdFJ3?=
+ =?utf-8?B?Wk9MeHJWOXdBN3NBcmQ5ZTdLWlAyYWtDQWhrdGJWTWhwVEpWcjZMMUdOOVBZ?=
+ =?utf-8?B?T0lUQnRVWWExQ2ZCQXhqRmcycFJtdjd6N2NDd3JTZ3ByY3JRM2pMZnplWXpF?=
+ =?utf-8?B?UjRoN1JBWFlVUm5jZkVJSUlpckpSdDFnWkdSeitOblh5cUN5c1NPdk01RWRS?=
+ =?utf-8?B?NjZTS3NnYlQrMjZsSEZMcjAwV0RGZndyOUZPaytDb1cxdmdLOFBaOHliRmQy?=
+ =?utf-8?B?ZkpnUzlVMVlYMnBYNW1XWUpZY1h3UWhqTzVJSjh4UmFUSXBkN3NzRzExOWVz?=
+ =?utf-8?B?bFRZSzhpZFdhSlV0VnU4Y2w3NVhiNzREQ1lReWlQc2xlbFg0OWl2dkltTi9r?=
+ =?utf-8?B?SFRXZkU1NzFSaVNBeDR4b1hyNVV3OHVQemJDNFRtcndZSjVDUEl6VXRZZVQw?=
+ =?utf-8?B?ZHB5dnBweVFBdlBaTWNDU3B3UHc4UDFBV2JxbVhXbDJBeThSZWR4SzRPcFpS?=
+ =?utf-8?B?MnNENktqM2FFeS9aSWIyR25xV3BKRHMzbEROd01PY3FlL2VHdnNUR2lJeE9M?=
+ =?utf-8?B?Y2QzT25hOFR3WmlIR011N2JUTmxPdjZwSWlnMUFTZHpsMmtRVVcrMGVWbUlS?=
+ =?utf-8?B?Ny9oNS9xWHB1dGsza1kwaSt0TmFjVTMzL3d2V1E1clhJaFpJd2R5cHY2eko3?=
+ =?utf-8?B?RGU4Y0t5My9BbEE2Z2VQVE1qaElQNHRtM0RBdkQ1VXVNSlcySEw4ditoK3li?=
+ =?utf-8?B?QzBhcytuRGgxS1FtSEdJaTB0b0hVQXd5ZlRyQUJ0NlVhdzdnSzM1TFR3dTRh?=
+ =?utf-8?B?dmNIQklYVjYyN0tiYTNNRjVxZlRaYnNsbnluRzZvUWd0VVZkVC9ZWGdScm1V?=
+ =?utf-8?B?UWRTUFpZY0VYeDR2WFpocXVZZkxWR1FBWGtmdklqemIrbzB5SEJQS1RGRHpn?=
+ =?utf-8?B?Y0pJbnVLcHIrTEZkeVZoWlVsblMySWxIcVFjbnBDaUxzY0xrZDVJWjFtNFdj?=
+ =?utf-8?B?MGtOWkZrTUZmQk5nWEZ6VW1veTQrTUF2d083TmU2b0JMdjRjTW1WSDZEVGdC?=
+ =?utf-8?B?ZWljdTNMR1BFbE9qMDZaY3RkaGpkVGp6TVZmOFpBS2R0NzFzUFpkckRkVzgz?=
+ =?utf-8?B?ZkF2MkJwQ0dQVzFISGR3L3U2MFNlU2pnWkgxRnlyeUVCdC9lTjQ1YW10Z2dW?=
+ =?utf-8?B?WU1ZR0tEays1SnRPTGxwbkJjUHpBcnptN01rL1Fmbi94V0xMOGZMNm5WUElx?=
+ =?utf-8?Q?TxCpLtY7FEE=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bkFQYi8xY1RvYTNqOC9pWFNqdGMvem1NMzNjcW1BWGQwckVlV1ZuK1NNcDRW?=
+ =?utf-8?B?VGVTNnNnUU9OTU1EZmR6aWg5M3lnUUEydkJzcU1JaXl0aHJqR0VMVFQrNlNL?=
+ =?utf-8?B?WnJpWlNxTlBXV0dRUzBiTTdZbWhOU3cwOHU1cXRtZmM1VUJzTnhEQ0lnM2xs?=
+ =?utf-8?B?ZjhlVnRTUzMvQWt4b3dNK1BKbTlSdlBZdU9hblBKR3pMQVh2ZVEzcldDNjYr?=
+ =?utf-8?B?bVJXMHoraXN5eUlmZCtsVjZ0Tm92cGFZeHJyY0xKZ1ZWSXY3Y1NLUFVnakN6?=
+ =?utf-8?B?OCtzUm9GWGlxb3NOUmNORHF6L09tb0JHZFRsRzhFdE0rN29oVmFjM2xOclhS?=
+ =?utf-8?B?SkhqMW9nM1BLR2s0UkVMSFNub3p3NWVLemxZbHoyM0kxSHhZWVVsNjhEZmsy?=
+ =?utf-8?B?OU1JV3Q5L1RYTnVCaE1aNllwOVdudUJhNjM2UDJMNjhlR3A4ZE9jWVJ3SU42?=
+ =?utf-8?B?TFZFelllVStSZFI1WURka3lrTlU4RWJhb1k1MEZ6WkhKNXVvWURoc1FlbDJS?=
+ =?utf-8?B?VzJCYjJ6WGxLeFF2YWd2bEpGSDlSRThRSHFKbVlVazZ0dFNDMWJUWXdtN3o2?=
+ =?utf-8?B?ckpFMTVwZ1ViRGFHdXlFNm43WVJGZkZzcG1Ub01yRzZ1NlBJVG1UQXpzaDBB?=
+ =?utf-8?B?bVBLdzloWE5paTltVkZIY2t4MWpwY0prRjVKajJDWkUxYVRJY3dzSzg2cm9W?=
+ =?utf-8?B?N20zbU5oQndvNEZvQXZNMisvSThzN3NpdVI5MmJOeWt4cityeE5Db1hOOGZ3?=
+ =?utf-8?B?TDBIM1MxazZMNHVPU0h1UlRRaEM3UW1wQ3RLc3QyWWNUdG8vdmVzRUxxcDJX?=
+ =?utf-8?B?L1k1U3hxbURJc1JJd3Bjb2UyVUN4aklLU3VkMkQzcjJOTTFaMld3b3ZNRUVQ?=
+ =?utf-8?B?djRzbmhoWENkbjBMRFBnQzZUcUgrUG12aXJ0RG5yZ3FncU1nNWJScnhRaXZF?=
+ =?utf-8?B?dUQzOVdPRFJHTDlzMGc1OWhWN0tTSkMrYWdyZGdwdzBFWnNGcm9KcXoyMzRG?=
+ =?utf-8?B?amRGbWYrQnhVRXlzYnB0MVZoVWRPYWZOOFNINmZJdkpTdFlzV0hyVjBQMmRa?=
+ =?utf-8?B?K0VHWmxLcmpINW8wNTAzMEoxTFc0bVU3ZkMwVWxLVlRRNjNxWFJyVTJNa1VY?=
+ =?utf-8?B?T1E4OW10aXM3QTdJMkEyWWNBL2NNa1A4U1RGUWd1VURUODJLSTc1UytoQ1No?=
+ =?utf-8?B?V2poelBlTWlqOEhtWmEyMjR2dURxeWZ3djJxK2s5clZ3N09sM1hla2JGVXZM?=
+ =?utf-8?B?cVN1eU9HNFd6d3Z5S21xdVcyK1FhVitXb1dpVXNCOWJyRjFjbG9laXYwLy9n?=
+ =?utf-8?B?czBNSW1oYnArRmFjYkRudnFHTXlteHR6dkZMZy9tSndQZ2E2VC9ZU0w0Qjhy?=
+ =?utf-8?B?eWo3M25iM2ZQNUdlUE9MdFBhR2p1Z1ZvelRmRTU5d2lCWm9KbnFGbW9uY0U3?=
+ =?utf-8?B?RW1EaFY4SVIzaGhxVytIbndIYjNHSml3SFo4MjA1SDU3VGV2T2lOc3VZcStO?=
+ =?utf-8?B?bDdmS0pKb0hXUWRWS1lRaEUxTEpIclZLTStIamFpWFBPbFVPR21aY2hoSFFX?=
+ =?utf-8?B?QTJVSnI3QmRmWUpKYlIrYytNQnNUTk9YTmZHQmdDU1RWNWk0L0NucFBPd21F?=
+ =?utf-8?B?VTRyQW1zZ1JtL0tWbDE0SnpDL2ZrbUpKRmVQYlROQ2hVRE5sM2RWSjdwV21Z?=
+ =?utf-8?B?d3VQZWsxOE84enZHajBDYlpJaTZVRmQwQTYrZkR6OG1Ha2RHVkU4THQ5ZjFs?=
+ =?utf-8?B?WjdFVjdiK3RVOE8ydlNvM21NS2dBMVFlWWlTL0UyYTZTTWRlb0djbVpCeWtj?=
+ =?utf-8?B?Z2hoM1FBSkc1MEo3eWxRdXJTRHNGQVhHTXh6RVhwMzdIQ05mcUU2NzlJenFk?=
+ =?utf-8?B?Z1k0cXJpdEFicWxpNHR3ZXh5cjU4STdmaS9yM1dCRGMwWUtCTmxKUDR5ZzZI?=
+ =?utf-8?B?eWlhU2FpeUloUnpjVy92UXRGZUxhTUZFN3BIUTdmVWJ0UFE4dEtWZEo2cUxj?=
+ =?utf-8?B?TE5lNlI2Z3VYaThtZ3ZNNllSRE16bEsycGsrQnE5Q21xMjZwNWZ1QXd2a0NK?=
+ =?utf-8?B?TTVQMTJVYlNpZHVQYnVOOFBNUUZMRlk0aGFNQW9zNUtzUTBNZTM4NUZIanVP?=
+ =?utf-8?B?cmN6VkV1d08wQi9KTStVWUtNOVljNWh1L2dTUlFPYUhYVkNZS0RkMVpjdGcx?=
+ =?utf-8?B?cmc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c278745b-7556-4304-a49d-08dddf110244
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2025 11:10:30.4051 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7ApAUKs4bl+4Nn5TyPhfYWXhOGR/01gNiCdkLDKQq+N80D2weGMlDQ6gY3wFwz2gCr9jizsLqpgd1Mn0DCQFlsRzOMn93PN0D58WyYOQ77Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4611
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -40,734 +190,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement NBL device xstats and stats functions
+On Tue, Aug 19, 2025 at 10:10:21AM +0200, David Marchand wrote:
+> Hello Bruce,
+> 
+> On Fri, Jul 25, 2025 at 6:07 PM Bruce Richardson
+> <bruce.richardson@intel.com> wrote:
+> > diff --git a/drivers/net/virtio/meson.build b/drivers/net/virtio/meson.build
+> > index d3caa3a3b4..a9ff87e863 100644
+> > --- a/drivers/net/virtio/meson.build
+> > +++ b/drivers/net/virtio/meson.build
+> > @@ -31,7 +31,7 @@ if arch_subdir == 'x86'
+> >          sources_avx512 += files('virtio_rxtx_packed.c')
+> >          if (toolchain == 'gcc' and cc.version().version_compare('>=8.3.0'))
+> >              cflags += '-DVIRTIO_GCC_UNROLL_PRAGMA'
+> > -        elif (toolchain == 'clang' and cc.version().version_compare('>=3.7.0'))
+> > +        elif (toolchain == 'clang')
+> >              cflags += '-DVIRTIO_CLANG_UNROLL_PRAGMA'
+> >          endif
+> >      endif
+> 
+> [snip]
+> 
+> > diff --git a/lib/vhost/meson.build b/lib/vhost/meson.build
+> > index 9c6325aa0e..a74d0cff7c 100644
+> > --- a/lib/vhost/meson.build
+> > +++ b/lib/vhost/meson.build
+> > @@ -8,9 +8,9 @@ endif
+> >  if has_libnuma
+> >      dpdk_conf.set10('RTE_LIBRTE_VHOST_NUMA', true)
+> >  endif
+> > -if (toolchain == 'gcc' and cc.version().version_compare('>=8.3.0'))
+> > +if (toolchain == 'gcc')
+> >      cflags += '-DVHOST_GCC_UNROLL_PRAGMA'
+> > -elif (toolchain == 'clang' and cc.version().version_compare('>=3.7.0'))
+> > +elif (toolchain == 'clang')
+> >      cflags += '-DVHOST_CLANG_UNROLL_PRAGMA'
+> >  endif
+> >  dpdk_conf.set('RTE_LIBRTE_VHOST_POSTCOPY', cc.has_header('linux/userfaultfd.h'))
+> 
+> Sorry, I did not notice in the v1, but lib/vhost and
+> drivers/net/virtio have the same construct, yet only lib/vhost gets
+> updated on the gcc version check in this patch.
+> Is this intentional?
+> 
+> Since GCC 8.0+ is recommended, I would keep the version check in both
+> vhost and net/virtio.
+> 
 
-Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
----
- drivers/net/nbl/nbl_dev/nbl_dev.c             | 141 +++++++++++++++++-
- drivers/net/nbl/nbl_dev/nbl_dev.h             |   8 +
- drivers/net/nbl/nbl_dispatch.c                | 111 ++++++++++++++
- drivers/net/nbl/nbl_ethdev.c                  |   4 +
- .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c | 113 ++++++++++++++
- drivers/net/nbl/nbl_hw/nbl_txrx.c             | 113 +++++++++++++-
- drivers/net/nbl/nbl_include/nbl_def_channel.h |   5 +
- .../net/nbl/nbl_include/nbl_def_dispatch.h    |   9 ++
- .../net/nbl/nbl_include/nbl_def_resource.h    |  12 +-
- drivers/net/nbl/nbl_include/nbl_include.h     |   4 +
- 10 files changed, 514 insertions(+), 6 deletions(-)
+Checking quickly with Godbolt, the pragma seems to be recognised by GCC 8.1
+in the same way as with GCC 8.3. Therefore removing the version check looks
+the correct option to me.
 
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index 68b6d0a318..1ff380d82f 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.c
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -374,6 +374,126 @@ int nbl_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *rte_stats)
- 	return disp_ops->get_stats(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), rte_stats);
- }
- 
-+int nbl_stats_reset(struct rte_eth_dev *eth_dev)
-+{
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
-+
-+	return disp_ops->reset_stats(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt));
-+}
-+
-+static int nbl_dev_update_hw_xstats(struct nbl_dev_mgt *dev_mgt, struct rte_eth_xstat *xstats,
-+				    u16 hw_xstats_cnt, u16 *xstats_cnt)
-+{
-+	struct nbl_common_info *common = NBL_DEV_MGT_TO_COMMON(dev_mgt);
-+	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
-+	u64 *hw_stats;
-+	int i;
-+	u16 count = *xstats_cnt;
-+
-+	hw_stats = calloc(1, hw_xstats_cnt * sizeof(u64));
-+	if (!hw_stats)
-+		return -ENOMEM;
-+
-+	disp_ops->get_private_stat_data(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+					common->eth_id, hw_stats, hw_xstats_cnt * sizeof(u64));
-+	for (i = 0; i < hw_xstats_cnt; i++) {
-+		xstats[count].value = hw_stats[i] - dev_mgt->net_dev->hw_xstats_offset[i];
-+		xstats[count].id = count;
-+		count++;
-+	}
-+
-+	*xstats_cnt = count;
-+	free(hw_stats);
-+	return 0;
-+}
-+
-+int nbl_xstats_get(struct rte_eth_dev *eth_dev, struct rte_eth_xstat *xstats, unsigned int n)
-+{
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_common_info *common = NBL_DEV_MGT_TO_COMMON(dev_mgt);
-+	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
-+	int ret = 0;
-+	u16 txrx_xstats_cnt = 0, hw_xstats_cnt = 0, xstats_cnt = 0;
-+
-+	if (!xstats)
-+		return 0;
-+
-+	ret = disp_ops->get_txrx_xstats_cnt(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), &txrx_xstats_cnt);
-+	if (!common->is_vf)
-+		ret |= disp_ops->get_hw_xstats_cnt(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+						   &hw_xstats_cnt);
-+	if (ret)
-+		return -EIO;
-+
-+	if (n < (txrx_xstats_cnt + hw_xstats_cnt))
-+		return txrx_xstats_cnt + hw_xstats_cnt;
-+
-+	if (txrx_xstats_cnt)
-+		ret = disp_ops->get_txrx_xstats(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+						xstats, &xstats_cnt);
-+	if (hw_xstats_cnt)
-+		ret |= nbl_dev_update_hw_xstats(dev_mgt, xstats, hw_xstats_cnt, &xstats_cnt);
-+
-+	if (ret)
-+		return -EIO;
-+
-+	return xstats_cnt;
-+}
-+
-+int nbl_xstats_get_names(struct rte_eth_dev *eth_dev,
-+			 struct rte_eth_xstat_name *xstats_names,
-+			 __rte_unused unsigned int limit)
-+{
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_common_info *common = NBL_DEV_MGT_TO_COMMON(dev_mgt);
-+	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
-+	u16 txrx_xstats_cnt = 0, hw_xstats_cnt = 0, xstats_cnt = 0;
-+	int ret = 0;
-+
-+	ret = disp_ops->get_txrx_xstats_cnt(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), &txrx_xstats_cnt);
-+	if (!common->is_vf)
-+		ret |= disp_ops->get_hw_xstats_cnt(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+							&hw_xstats_cnt);
-+	if (ret)
-+		return -EIO;
-+
-+	if (!xstats_names)
-+		return txrx_xstats_cnt + hw_xstats_cnt;
-+
-+	if (txrx_xstats_cnt)
-+		ret = disp_ops->get_txrx_xstats_names(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+						      xstats_names, &xstats_cnt);
-+	if (hw_xstats_cnt)
-+		ret |= disp_ops->get_hw_xstats_names(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+						     xstats_names, &xstats_cnt);
-+	if (ret)
-+		return -EIO;
-+
-+	return xstats_cnt;
-+}
-+
-+int nbl_xstats_reset(struct rte_eth_dev *eth_dev)
-+{
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_common_info *common = NBL_DEV_MGT_TO_COMMON(dev_mgt);
-+	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
-+	struct nbl_dev_net_mgt *net_dev = dev_mgt->net_dev;
-+
-+	if (!common->is_vf) {
-+		disp_ops->get_private_stat_data(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+						dev_mgt->common->eth_id,
-+						net_dev->hw_xstats_offset, net_dev->hw_xstats_size);
-+	}
-+
-+	nbl_stats_reset(eth_dev);
-+	return 0;
-+}
-+
- struct nbl_dev_ops dev_ops = {
- };
- 
-@@ -428,6 +548,7 @@ static int nbl_dev_common_start(struct nbl_dev_mgt *dev_mgt)
- 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
- 	u8 *mac;
- 	int ret;
-+	u16 priv_cnt = 0;
- 
- 	board_info = &common->board_info;
- 	disp_ops->get_board_info(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), board_info);
-@@ -470,8 +591,25 @@ static int nbl_dev_common_start(struct nbl_dev_mgt *dev_mgt)
- 			goto add_multi_rule_failed;
- 	}
- 
--	return 0;
-+	net_dev->hw_xstats_offset = NULL;
-+	if (!dev_mgt->common->is_vf)
-+		disp_ops->get_hw_xstats_cnt(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), &priv_cnt);
-+	if (priv_cnt) {
-+		net_dev->hw_xstats_offset = rte_zmalloc("nbl_xstats_cnt",
-+							priv_cnt * sizeof(u64), 0);
-+		net_dev->hw_xstats_size = priv_cnt * sizeof(u64);
-+		if (!net_dev->hw_xstats_offset) {
-+			ret = -ENOMEM;
-+			goto alloc_xstats_offset_failed;
-+		}
-+
-+		disp_ops->get_private_stat_data(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+						dev_mgt->common->eth_id,
-+						net_dev->hw_xstats_offset, net_dev->hw_xstats_size);
-+	}
- 
-+	return 0;
-+alloc_xstats_offset_failed:
- add_multi_rule_failed:
- 	disp_ops->del_macvlan(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), mac, 0, net_dev->vsi_id);
- add_macvlan_failed:
-@@ -750,6 +888,7 @@ int nbl_dev_init(void *p, struct rte_eth_dev *eth_dev)
- 			       eth_dev->data->mac_addrs[0].addr_bytes);
- 
- 	adapter->state = NBL_ETHDEV_INITIALIZED;
-+	eth_dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
- 	disp_ops->get_resource_pt_ops(NBL_DEV_MGT_TO_DISP_PRIV(*dev_mgt),
- 				      &(*dev_mgt)->pt_ops, 0);
- 
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.h b/drivers/net/nbl/nbl_dev/nbl_dev.h
-index 78c36dbeaf..5616c9e9a8 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.h
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.h
-@@ -41,6 +41,8 @@ struct nbl_dev_net_mgt {
- 	const struct rte_eth_dev *eth_dev;
- 	struct nbl_dev_ring_mgt ring_mgt;
- 	struct nbl_eth_link_info eth_link_info;
-+	u64 *hw_xstats_offset;
-+	u32 hw_xstats_size;
- 	u16 vsi_id;
- 	u8 eth_mode;
- 	u8 eth_id;
-@@ -71,5 +73,11 @@ void nbl_rx_queues_release(struct rte_eth_dev *eth_dev, uint16_t queue_id);
- int nbl_dev_infos_get(struct rte_eth_dev *eth_dev, struct rte_eth_dev_info *dev_info);
- int nbl_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete __rte_unused);
- int nbl_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *rte_stats);
-+int nbl_stats_reset(struct rte_eth_dev *eth_dev);
-+int nbl_xstats_get(struct rte_eth_dev *eth_dev, struct rte_eth_xstat *xstats, unsigned int n);
-+int nbl_xstats_get_names(struct rte_eth_dev *eth_dev,
-+			 struct rte_eth_xstat_name *xstats_names,
-+			 __rte_unused unsigned int limit);
-+int nbl_xstats_reset(struct rte_eth_dev *eth_dev);
- 
- #endif
-diff --git a/drivers/net/nbl/nbl_dispatch.c b/drivers/net/nbl/nbl_dispatch.c
-index a5168230b9..c38c2e62d4 100644
---- a/drivers/net/nbl/nbl_dispatch.c
-+++ b/drivers/net/nbl/nbl_dispatch.c
-@@ -805,9 +805,94 @@ static int nbl_disp_get_stats(void *priv, struct rte_eth_stats *rte_stats)
- {
- 	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
- 	struct nbl_resource_ops *res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+
- 	return res_ops->get_stats(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), rte_stats);
- }
- 
-+static int nbl_disp_reset_stats(void *priv)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+
-+	return res_ops->reset_stats(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt));
-+}
-+
-+static int nbl_disp_get_txrx_xstats_cnt(void *priv, u16 *xstats_cnt)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops;
-+
-+	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	return res_ops->get_txrx_xstats_cnt(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), xstats_cnt);
-+}
-+
-+static int nbl_disp_get_txrx_xstats(void *priv, struct rte_eth_xstat *xstats, u16 *xstats_cnt)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops;
-+
-+	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	return res_ops->get_txrx_xstats(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), xstats, xstats_cnt);
-+}
-+
-+static int nbl_disp_get_txrx_xstats_names(void *priv, struct rte_eth_xstat_name *xstats_names,
-+					  u16 *xstats_cnt)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops;
-+
-+	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	return res_ops->get_txrx_xstats_names(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
-+					 xstats_names, xstats_cnt);
-+}
-+
-+static int nbl_disp_get_hw_xstats_cnt(void *priv, u16 *xstats_cnt)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops;
-+
-+	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	return res_ops->get_hw_xstats_cnt(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), xstats_cnt);
-+}
-+
-+static int nbl_disp_get_hw_xstats_names(void *priv, struct rte_eth_xstat_name *xstats_names,
-+					u16 *xstats_cnt)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops;
-+
-+	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	return res_ops->get_hw_xstats_names(NBL_DISP_MGT_TO_RES_PRIV(disp_mgt),
-+					    xstats_names, xstats_cnt);
-+}
-+
-+static void nbl_disp_get_private_stat_data(void *priv, u32 eth_id, u64 *data,
-+					   __rte_unused u32 data_len)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops;
-+
-+	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	NBL_OPS_CALL(res_ops->get_private_stat_data,
-+		     (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), eth_id, data));
-+}
-+
-+static void nbl_disp_get_private_stat_data_req(void *priv, u32 eth_id, u64 *data, u32 data_len)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_channel_ops *chan_ops;
-+	struct nbl_chan_send_info chan_send = {0};
-+	struct nbl_chan_param_get_private_stat_data param = {0};
-+
-+	chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
-+
-+	param.eth_id = eth_id;
-+	param.data_len = data_len;
-+	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_GET_ETH_STATS, &param,
-+		      sizeof(param), data, data_len, 1);
-+	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
-+}
-+
- #define NBL_DISP_OPS_TBL						\
- do {									\
- 	NBL_DISP_SET_OPS(configure_msix_map, nbl_disp_configure_msix_map,			\
-@@ -952,6 +1037,32 @@ do {									\
- 	NBL_DISP_SET_OPS(get_stats, nbl_disp_get_stats,			\
- 			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
- 			 NULL, NULL);					\
-+	NBL_DISP_SET_OPS(reset_stats, nbl_disp_reset_stats,		\
-+			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
-+			 NULL, NULL);					\
-+	NBL_DISP_SET_OPS(get_txrx_xstats_cnt,				\
-+			 nbl_disp_get_txrx_xstats_cnt,			\
-+			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
-+			 NULL, NULL);					\
-+	NBL_DISP_SET_OPS(get_txrx_xstats, nbl_disp_get_txrx_xstats,	\
-+			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
-+			 NULL, NULL);					\
-+	NBL_DISP_SET_OPS(get_txrx_xstats_names,				\
-+			 nbl_disp_get_txrx_xstats_names,		\
-+			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
-+			 NULL, NULL);					\
-+	NBL_DISP_SET_OPS(get_hw_xstats_cnt, nbl_disp_get_hw_xstats_cnt,	\
-+			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
-+			 NULL, NULL);					\
-+	NBL_DISP_SET_OPS(get_hw_xstats_names,				\
-+			 nbl_disp_get_hw_xstats_names,			\
-+			 NBL_DISP_CTRL_LVL_ALWAYS, -1,			\
-+			 NULL, NULL);					\
-+	NBL_DISP_SET_OPS(get_private_stat_data,				\
-+			 nbl_disp_get_private_stat_data,		\
-+			 NBL_DISP_CTRL_LVL_MGT,				\
-+			 NBL_CHAN_MSG_GET_ETH_STATS,			\
-+			 nbl_disp_get_private_stat_data_req, NULL);	\
- } while (0)
- 
- /* Structure starts here, adding an op should not modify anything below */
-diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
-index f30aca2b7f..81b8946acc 100644
---- a/drivers/net/nbl/nbl_ethdev.c
-+++ b/drivers/net/nbl/nbl_ethdev.c
-@@ -41,6 +41,10 @@ const struct eth_dev_ops nbl_eth_dev_ops = {
- 	.dev_infos_get = nbl_dev_infos_get,
- 	.link_update = nbl_link_update,
- 	.stats_get = nbl_stats_get,
-+	.stats_reset = nbl_stats_reset,
-+	.xstats_get = nbl_xstats_get,
-+	.xstats_get_names = nbl_xstats_get_names,
-+	.xstats_reset = nbl_xstats_reset,
- };
- 
- static int nbl_eth_dev_init(struct rte_eth_dev *eth_dev)
-diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
-index 3b5b3831b3..48a935f1ae 100644
---- a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
-+++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
-@@ -4,7 +4,120 @@
- 
- #include "nbl_res_leonis.h"
- 
-+/* store statistics names */
-+struct nbl_xstats_name {
-+	char name[RTE_ETH_XSTATS_NAME_SIZE];
-+};
-+
-+static const struct nbl_xstats_name nbl_stats_strings[] = {
-+	{"eth_frames_tx"},
-+	{"eth_frames_tx_ok"},
-+	{"eth_frames_tx_badfcs"},
-+	{"eth_unicast_frames_tx_ok"},
-+	{"eth_multicast_frames_tx_ok"},
-+	{"eth_broadcast_frames_tx_ok"},
-+	{"eth_macctrl_frames_tx_ok"},
-+	{"eth_fragment_frames_tx"},
-+	{"eth_fragment_frames_tx_ok"},
-+	{"eth_pause_frames_tx"},
-+	{"eth_pause_macctrl_frames_tx"},
-+	{"eth_pfc_frames_tx"},
-+	{"eth_pfc_frames_tx_prio0"},
-+	{"eth_pfc_frames_tx_prio1"},
-+	{"eth_pfc_frames_tx_prio2"},
-+	{"eth_pfc_frames_tx_prio3"},
-+	{"eth_pfc_frames_tx_prio4"},
-+	{"eth_pfc_frames_tx_prio5"},
-+	{"eth_pfc_frames_tx_prio6"},
-+	{"eth_pfc_frames_tx_prio7"},
-+	{"eth_verify_frames_tx"},
-+	{"eth_respond_frames_tx"},
-+	{"eth_frames_tx_64B"},
-+	{"eth_frames_tx_65_to_127B"},
-+	{"eth_frames_tx_128_to_255B"},
-+	{"eth_frames_tx_256_to_511B"},
-+	{"eth_frames_tx_512_to_1023B"},
-+	{"eth_frames_tx_1024_to_1535B"},
-+	{"eth_frames_tx_1536_to_2047B"},
-+	{"eth_frames_tx_2048_to_MAXB"},
-+	{"eth_undersize_frames_tx_goodfcs"},
-+	{"eth_oversize_frames_tx_goodfcs"},
-+	{"eth_undersize_frames_tx_badfcs"},
-+	{"eth_oversize_frames_tx_badfcs"},
-+	{"eth_octets_tx"},
-+	{"eth_octets_tx_ok"},
-+	{"eth_octets_tx_badfcs"},
-+	{"eth_frames_rx"},
-+	{"eth_frames_rx_ok"},
-+	{"eth_frames_rx_badfcs"},
-+	{"eth_undersize_frames_rx_goodfcs"},
-+	{"eth_undersize_frames_rx_badfcs"},
-+	{"eth_oversize_frames_rx_goodfcs"},
-+	{"eth_oversize_frames_rx_badfcs"},
-+	{"eth_frames_rx_misc_error"},
-+	{"eth_frames_rx_misc_dropped"},
-+	{"eth_unicast_frames_rx_ok"},
-+	{"eth_multicast_frames_rx_ok"},
-+	{"eth_broadcast_frames_rx_ok"},
-+	{"eth_pause_frames_rx"},
-+	{"eth_pfc_frames_rx"},
-+	{"eth_pfc_frames_rx_prio0"},
-+	{"eth_pfc_frames_rx_prio1"},
-+	{"eth_pfc_frames_rx_prio2"},
-+	{"eth_pfc_frames_rx_prio3"},
-+	{"eth_pfc_frames_rx_prio4"},
-+	{"eth_pfc_frames_rx_prio5"},
-+	{"eth_pfc_frames_rx_prio6"},
-+	{"eth_pfc_frames_rx_prio7"},
-+	{"eth_macctrl_frames_rx"},
-+	{"eth_verify_frames_rx_ok"},
-+	{"eth_respond_frames_rx_ok"},
-+	{"eth_fragment_frames_rx_ok"},
-+	{"eth_fragment_rx_smdc_nocontext"},
-+	{"eth_fragment_rx_smds_seq_error"},
-+	{"eth_fragment_rx_smdc_seq_error"},
-+	{"eth_fragment_rx_frag_cnt_error"},
-+	{"eth_frames_assembled_ok"},
-+	{"eth_frames_assembled_error"},
-+	{"eth_frames_rx_64B"},
-+	{"eth_frames_rx_65_to_127B"},
-+	{"eth_frames_rx_128_to_255B"},
-+	{"eth_frames_rx_256_to_511B"},
-+	{"eth_frames_rx_512_to_1023B"},
-+	{"eth_frames_rx_1024_to_1535B"},
-+	{"eth_frames_rx_1536_to_2047B"},
-+	{"eth_frames_rx_2048_to_MAXB"},
-+	{"eth_octets_rx"},
-+	{"eth_octets_rx_ok"},
-+	{"eth_octets_rx_badfcs"},
-+	{"eth_octets_rx_dropped"},
-+};
-+
-+static int nbl_get_xstats_cnt(__rte_unused void *priv, u16 *xstats_cnt)
-+{
-+	*xstats_cnt = ARRAY_SIZE(nbl_stats_strings);
-+	return 0;
-+}
-+
-+static int nbl_get_xstats_names(__rte_unused void *priv,
-+				struct rte_eth_xstat_name *xstats_names,
-+				u16 *xstats_cnt)
-+{
-+	u32 i = 0;
-+	u16 count = *xstats_cnt;
-+
-+	for (i = 0; i < ARRAY_SIZE(nbl_stats_strings); i++) {
-+		strlcpy(xstats_names[count].name, nbl_stats_strings[i].name,
-+			sizeof(nbl_stats_strings[count].name));
-+		count++;
-+	}
-+	*xstats_cnt = count;
-+	return 0;
-+}
-+
- static struct nbl_resource_ops res_ops = {
-+	.get_hw_xstats_cnt = nbl_get_xstats_cnt,
-+	.get_hw_xstats_names = nbl_get_xstats_names,
- };
- 
- static bool is_ops_inited;
-diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx.c b/drivers/net/nbl/nbl_hw/nbl_txrx.c
-index 86c027aabc..411a199156 100644
---- a/drivers/net/nbl/nbl_hw/nbl_txrx.c
-+++ b/drivers/net/nbl/nbl_hw/nbl_txrx.c
-@@ -530,6 +530,7 @@ nbl_res_txrx_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, u16 nb_pkts, u
- 			txe->mbuf = tx_pkt;
- 
- 			data_len = tx_pkt->data_len;
-+			txq->txq_stats.tx_bytes += tx_pkt->data_len;
- 			dma_addr = rte_mbuf_data_iova(tx_pkt);
- 			tx_desc->addr = NBL_DMA_ADDRESS_FULL_TRANSLATE(txq, dma_addr) + addr_offset;
- 			tx_desc->len = data_len - addr_offset;
-@@ -609,6 +610,8 @@ nbl_res_txrx_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, u16 nb_pkts)
- 			rx_ext_hdr = (union nbl_rx_extend_head *)((char *)rx_mbuf->buf_addr +
- 								  RTE_PKTMBUF_HEADROOM);
- 			num_sg = rx_ext_hdr->common.num_buffers;
-+			if (num_sg > 1)
-+				rxq->rxq_stats.rx_multi_descs++;
- 
- 			rx_mbuf->nb_segs = num_sg;
- 			rx_mbuf->data_len = rx_desc->len - rxq->exthdr_len;
-@@ -636,15 +639,20 @@ nbl_res_txrx_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, u16 nb_pkts)
- 		if (--num_sg)
- 			continue;
- 		if (drop) {
-+			rxq->rxq_stats.rx_drop_proto++;
- 			rte_pktmbuf_free(rx_mbuf);
- 			continue;
- 		}
- 		rx_pkts[nb_recv_pkts++] = rx_mbuf;
-+		rxq->rxq_stats.rx_bytes += rx_mbuf->pkt_len;
- 	}
- 
- 	/* BUG on duplicate pkt free */
--	if (unlikely(num_sg))
-+	if (unlikely(num_sg)) {
-+		rxq->rxq_stats.rx_ierror++;
- 		rte_pktmbuf_free(rx_mbuf);
-+	}
-+
- 	/* clean memory */
- 	rxq->next_to_clean = desc_index;
- 	fill_num = rxq->vq_free_cnt;
-@@ -715,6 +723,105 @@ static int nbl_res_txrx_get_stats(void *priv, struct rte_eth_stats *rte_stats)
- 	return 0;
- }
- 
-+static int
-+nbl_res_txrx_reset_stats(void *priv)
-+{
-+	struct nbl_resource_mgt *res_mgt = (struct nbl_resource_mgt *)priv;
-+	struct rte_eth_dev *eth_dev = res_mgt->eth_dev;
-+	struct nbl_res_rx_ring *rxq;
-+	struct nbl_rxq_stats *rxq_stats;
-+	struct nbl_res_tx_ring  *txq;
-+	struct nbl_txq_stats *txq_stats;
-+	uint32_t i;
-+
-+	/* Add software counters. */
-+	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
-+		rxq = eth_dev->data->rx_queues[i];
-+		if (unlikely(rxq == NULL))
-+			continue;
-+
-+		rxq_stats = &rxq->rxq_stats;
-+		memset(rxq_stats, 0, sizeof(struct nbl_rxq_stats));
-+	}
-+
-+	for (i = 0; i < eth_dev->data->nb_tx_queues; i++) {
-+		txq = eth_dev->data->tx_queues[i];
-+		if (unlikely(txq == NULL))
-+			continue;
-+
-+		txq_stats = &txq->txq_stats;
-+		memset(txq_stats, 0, sizeof(struct nbl_txq_stats));
-+	}
-+
-+	return 0;
-+}
-+
-+/* store statistics names */
-+struct nbl_txrx_xstats_name {
-+	char name[RTE_ETH_XSTATS_NAME_SIZE];
-+};
-+
-+static const struct nbl_txrx_xstats_name nbl_stats_strings[] = {
-+	{"rx_multidescs_packets"},
-+	{"rx_drop_noport_packets"},
-+	{"rx_drop_proto_packets"},
-+};
-+
-+static int nbl_res_txrx_get_xstats_cnt(__rte_unused void *priv, u16 *xstats_cnt)
-+{
-+	*xstats_cnt = ARRAY_SIZE(nbl_stats_strings);
-+	return 0;
-+}
-+
-+static int nbl_res_txrx_get_xstats(void *priv, struct rte_eth_xstat *xstats, u16 *xstats_cnt)
-+{
-+	struct nbl_resource_mgt *res_mgt = (struct nbl_resource_mgt *)priv;
-+	struct nbl_txrx_mgt *txrx_mgt = NBL_RES_MGT_TO_TXRX_MGT(res_mgt);
-+	struct nbl_res_rx_ring *rxq;
-+	uint64_t rx_multi_descs = 0, rx_drop_noport = 0, rx_drop_proto = 0;
-+	unsigned int i = 0;
-+	u16 count = *xstats_cnt;
-+
-+	/* todo: get eth stats from emp */
-+	for (i = 0; i < txrx_mgt->rx_ring_num; i++) {
-+		rxq = NBL_RES_MGT_TO_RX_RING(res_mgt, i);
-+
-+		if (unlikely(rxq == NULL))
-+			return -EINVAL;
-+
-+		rx_multi_descs += rxq->rxq_stats.rx_multi_descs;
-+		rx_drop_noport += rxq->rxq_stats.rx_drop_noport;
-+		rx_drop_proto += rxq->rxq_stats.rx_drop_proto;
-+	}
-+
-+	xstats[count].value = rx_multi_descs;
-+	xstats[count].id = count;
-+	xstats[count + 1].value = rx_drop_noport;
-+	xstats[count + 1].id = count + 1;
-+	xstats[count + 2].value = rx_drop_proto;
-+	xstats[count + 2].id = count + 2;
-+
-+	*xstats_cnt = count + 3;
-+
-+	return 0;
-+}
-+
-+static int nbl_res_txrx_get_xstats_names(__rte_unused void *priv,
-+					 struct rte_eth_xstat_name *xstats_names,
-+					 u16 *xstats_cnt)
-+{
-+	unsigned int i = 0;
-+	u16 count = *xstats_cnt;
-+
-+	for (i = 0; i < ARRAY_SIZE(nbl_stats_strings); i++) {
-+		strlcpy(xstats_names[count].name, nbl_stats_strings[i].name,
-+			sizeof(nbl_stats_strings[count].name));
-+		count++;
-+	}
-+	*xstats_cnt = count;
-+	return 0;
-+}
-+
- /* NBL_TXRX_SET_OPS(ops_name, func)
-  *
-  * Use X Macros to reduce setup and remove codes.
-@@ -733,6 +840,10 @@ do {										\
- 	NBL_TXRX_SET_OPS(update_rx_ring, nbl_res_txrx_update_rx_ring);		\
- 	NBL_TXRX_SET_OPS(get_resource_pt_ops, nbl_res_get_pt_ops);		\
- 	NBL_TXRX_SET_OPS(get_stats, nbl_res_txrx_get_stats);			\
-+	NBL_TXRX_SET_OPS(reset_stats, nbl_res_txrx_reset_stats);		\
-+	NBL_TXRX_SET_OPS(get_txrx_xstats_cnt, nbl_res_txrx_get_xstats_cnt);	\
-+	NBL_TXRX_SET_OPS(get_txrx_xstats_names, nbl_res_txrx_get_xstats_names);	\
-+	NBL_TXRX_SET_OPS(get_txrx_xstats, nbl_res_txrx_get_xstats);		\
- } while (0)
- 
- /* Structure starts here, adding an op should not modify anything below */
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_channel.h b/drivers/net/nbl/nbl_include/nbl_def_channel.h
-index e43240e05a..f167ca25bd 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_channel.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_channel.h
-@@ -390,6 +390,11 @@ struct nbl_chan_param_get_link_state {
- 	u8 eth_id;
- };
- 
-+struct nbl_chan_param_get_private_stat_data {
-+	u32 eth_id;
-+	u32 data_len;
-+};
-+
- struct nbl_chan_send_info {
- 	uint16_t dstid;
- 	uint16_t msg_type;
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-index 0139b37ad1..f38a10e5f4 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-@@ -74,6 +74,15 @@ struct nbl_dispatch_ops {
- 	void (*get_board_info)(void *priv, struct nbl_board_port_info *board_info);
- 	void (*get_link_state)(void *priv, u8 eth_id, struct nbl_eth_link_info *eth_link_info);
- 	int (*get_stats)(void *priv, struct rte_eth_stats *rte_stats);
-+	int (*reset_stats)(void *priv);
-+	int (*get_txrx_xstats_cnt)(void *priv, u16 *xstats_cnt);
-+	int (*get_txrx_xstats)(void *priv, struct rte_eth_xstat *xstats, u16 *xstats_cnt);
-+	int (*get_txrx_xstats_names)(void *priv, struct rte_eth_xstat_name *xstats_names,
-+				     u16 *xstats_cnt);
-+	int (*get_hw_xstats_cnt)(void *priv, u16 *xstats_cnt);
-+	int (*get_hw_xstats_names)(void *priv, struct rte_eth_xstat_name *xstats_names,
-+				   u16 *xstats_cnt);
-+	void (*get_private_stat_data)(void *priv, u32 eth_id, u64 *data, u32 data_len);
- 
- 	void (*dummy_func)(void *priv);
- };
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_resource.h b/drivers/net/nbl/nbl_include/nbl_def_resource.h
-index c14fdc773e..5b32506be1 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_resource.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_resource.h
-@@ -46,6 +46,14 @@ struct nbl_resource_ops {
- 	void (*release_rx_ring)(void *priv, u16 queue_idx);
- 	int (*get_stats)(void *priv, struct rte_eth_stats *rte_stats);
- 	int (*reset_stats)(void *priv);
-+	int (*get_txrx_xstats_cnt)(void *priv, u16 *xstats_cnt);
-+	int (*get_txrx_xstats)(void *priv, struct rte_eth_xstat *xstats, u16 *xstats_cnt);
-+	int (*get_txrx_xstats_names)(void *priv, struct rte_eth_xstat_name *xstats_names,
-+				     u16 *xstats_cnt);
-+	int (*get_hw_xstats_cnt)(void *priv, u16 *xstats_cnt);
-+	int (*get_hw_xstats_names)(void *priv, struct rte_eth_xstat_name *xstats_names,
-+				   u16 *xstats_cnt);
-+	void (*get_private_stat_data)(void *priv, u32 eth_id, u64 *data);
- 	void (*update_rx_ring)(void *priv, u16 queue_idx);
- 	u16 (*get_tx_ehdr_len)(void *priv);
- 	int (*alloc_txrx_queues)(void *priv, u16 vsi_id, u16 queue_num);
-@@ -58,10 +66,6 @@ struct nbl_resource_ops {
- 	void (*cfg_txrx_vlan)(void *priv, u16 vlan_tci, u16 vlan_proto);
- 	int (*txrx_burst_mode_get)(void *priv, struct rte_eth_dev *dev,
- 				   struct rte_eth_burst_mode *mode, bool is_tx);
--	int (*get_txrx_xstats_cnt)(void *priv, u16 *xstats_cnt);
--	int (*get_txrx_xstats)(void *priv, struct rte_eth_xstat *xstats, u16 *xstats_cnt);
--	int (*get_txrx_xstats_names)(void *priv, struct rte_eth_xstat_name *xstats_names,
--				     u16 *xstats_cnt);
- 	int (*add_macvlan)(void *priv, u8 *mac, u16 vlan_id, u16 vsi_id);
- 	void (*del_macvlan)(void *priv, u8 *mac, u16 vlan_id, u16 vsi_id);
- 	int (*add_multi_rule)(void *priv, u16 vsi_id);
-diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
-index 2fb65283fd..6423ada176 100644
---- a/drivers/net/nbl/nbl_include/nbl_include.h
-+++ b/drivers/net/nbl/nbl_include/nbl_include.h
-@@ -50,6 +50,10 @@ typedef int32_t s32;
- typedef int16_t s16;
- typedef int8_t s8;
- 
-+#ifndef ARRAY_SIZE
-+#define ARRAY_SIZE(arr) RTE_DIM(arr)
-+#endif
-+
- /* Used for macros to pass checkpatch */
- #define NBL_NAME(x)				x
- #define BIT(a)					(1 << (a))
--- 
-2.34.1
+However, a better cleanup is to remove these defines from the meson.build
+file completely, and instead just check for GCC and clang directly in the
+header file.
 
+/Bruce
