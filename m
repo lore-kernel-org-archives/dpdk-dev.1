@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83952CA0EE9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 05:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC350CA0EE6
+	for <dpdk-dev@archiver.kernel.org>; Tue, 19 Aug 2025 05:51:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC06240430;
-	Tue, 19 Aug 2025 07:08:56 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 8BB85402E4
- for <dev@dpdk.org>; Tue, 19 Aug 2025 07:08:55 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57J54QFN022853
- for <dev@dpdk.org>; Mon, 18 Aug 2025 22:08:54 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 9C64940430;
+	Tue, 19 Aug 2025 07:51:35 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 7FDFF402E4
+ for <dev@dpdk.org>; Tue, 19 Aug 2025 07:51:34 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57IMlbf2000350;
+ Mon, 18 Aug 2025 22:51:33 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=M
- QRwTEfoBHi0bmaZao/Mz4pwvREWqZGRh1czwD+9MZ8=; b=QFya1344QCBS/8w2h
- ScAZE3r9Hxg7VJTOfXRjACgR3oHt82CHhmKr2VKXBuzj1JjPye0s42ANky9ydDFh
- ixRp3hhbmN2Ow9Ip7CgdvaI9c8wQ66BDlfA8ftTYOAyYhXAaqwunfpcZ9utetaYv
- PLm3p8jBB9Jbl/Iq2xl8spRLIWSj6ttpTpch5Lzlbxq7QV+j/dxd4dBa5lJiOXOL
- gzJhdsIc0sBGb9G7YiiziQxSybbrkzxHVA97AipiDAFYWZobzaB2B9dTQ8r7rZ2D
- Mx5Q1ogwpg7ZBZzzh0pEunNF041W6be/1jnH9RLZxzXbVj/hNmRBvM2uTfKRxoPL
- FsE+Q==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=u
+ nTmmXJynvNU6B3Noe0Wp5B6bNefITmCY9YcsQvrgp4=; b=NzP4sqU4lmbEKc1Pp
+ b1oNSloGntvxhXfb+fXklJ8D/WlTZ0SjWKnvaoivJgqiR+gtVXG5xizQ49aRlgLt
+ lzFpsltm3x9Q7nhbgyycPCc2ma32xSxZyK3qF7mjU3O9cUGuiW63jgVPY5BSFf5Z
+ XZw7h58qsQQUCtb0JwyueDfjOaz454IEo31+FC7gacQ35M2l5t/hLSqZtafShYsz
+ B158KGSgOHAJijrDxSqX8x4y9vZeRIMS+SCfj2x8WEnHT2uSrl8ebSK0AxX8ppEN
+ M2rQ2lLdUc6ecyQauDx3yz9+Frpag4+r8+jDzkJQm3SYl8twy6fU5f7OKHNchP0q
+ X10/A==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48mjt3g063-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 18 Aug 2025 22:08:54 -0700 (PDT)
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 48md9ggpmn-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Mon, 18 Aug 2025 22:51:33 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 18 Aug 2025 22:08:58 -0700
+ 15.2.1544.25; Mon, 18 Aug 2025 22:51:36 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 18 Aug 2025 22:08:58 -0700
-Received: from hyd11149.caveonetworks.com (unknown [10.29.44.105])
- by maili.marvell.com (Postfix) with ESMTP id BF1713F7077;
- Mon, 18 Aug 2025 22:08:52 -0700 (PDT)
-From: Rupesh Chiluka <rchiluka@marvell.com>
-To: <dev@dpdk.org>
-CC: Rupesh Chiluka <rchiluka@marvell.com>
-Subject: [PATCH] app/crypto-perf: add ECDSA P384 support
-Date: Tue, 19 Aug 2025 10:38:50 +0530
-Message-ID: <20250819050850.1650503-1-rchiluka@marvell.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250819041517.1638717-1-rchiluka@marvell.com>
-References: <20250819041517.1638717-1-rchiluka@marvell.com>
+ Transport; Mon, 18 Aug 2025 22:51:36 -0700
+Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
+ by maili.marvell.com (Postfix) with ESMTP id 26F433F70A7;
+ Mon, 18 Aug 2025 22:51:29 -0700 (PDT)
+From: <skori@marvell.com>
+To: Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>
+CC: <dev@dpdk.org>, Sunil Kumar Kori <skori@marvell.com>, Nithin Dabilpuram
+ <ndabilpuram@marvell.com>
+Subject: [PATCH v5 1/1] ethdev: add support to provide link type
+Date: Tue, 19 Aug 2025 11:21:06 +0530
+Message-ID: <20250819055126.2745262-1-skori@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250814081215.1904078-1-skori@marvell.com>
+References: <20250814081215.1904078-1-skori@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=EIAG00ZC c=1 sm=1 tr=0 ts=68a406e6 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=PN8P+eqC c=1 sm=1 tr=0 ts=68a410e5 cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=UsacpLM7tMdhLN4-fR8A:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: bHwB2-lOu1h2pFSDW_tUjpRokF3jkz1e
-X-Proofpoint-ORIG-GUID: bHwB2-lOu1h2pFSDW_tUjpRokF3jkz1e
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDA0NiBTYWx0ZWRfX6HnWQ3nFU6gU
- S2smIWCsrk2hZJu9p09+02m4TkNiNyd6PqspeZt9XNhj/3137WTtSqTCKyIUKb5WpHq9jfnuxGS
- c7G3iLMKxm9n7DLq3LoQ/eIXNcvrD7Eh85P51z3IdI4BoCXktHTUxjFDq6MhEVHcJGuHTCFvRNI
- BnGBrzWLZN4Voto3Opy5G/ySJdaP5j/ZDRctNiAENl6hxWPVjL+kvc307RHWxr4J/e1I0u729to
- FE6xJ9wELzAzxATJKwMAGiQKLvQcbPg1tK9rL/qxzfo6xd7Fc2fUCU+wz7omRIvjYbwunk5dofF
- v0t+mrxq+9IZdXKKWzIwif8ugYUHYZtbVZDAJTCsXXi2iL2rYTvDqcpdi7eIYM7AnZ4YQXMqq/9
- kMeDJU/BlCxWR1cStPvqhwmGhAtVqDFkrr/241yLhbul/sG6g85fej8HgAEOye3R7SEVjJQm
+ a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=1cRrDpktbWZE8ceIGrAA:9
+ a=WonHw0LWvj4Cx2or:21 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE5MDA1MyBTYWx0ZWRfX4Z3me269+M4X
+ 1qqoaI1QGk99wWEJxghJ3dvcIZAPIvhprVjgsZOLD+abQO8UDuIxkElhH89jed08P6Jod8O1XZi
+ DegTlvMS1YlndVkQqrQbpxz6+gE2//csq44S1KwNoAPGWvEO0R5XwE64LHN4sN/ZqHYwoceOrq8
+ AEVu2Gh/tLJmiNAJoSfM/FNNgOfBOM1KIAoNDLjnNINO+lwaJ0aivAmVyKBXrgeSCsMoXKTJM/7
+ F5xWnWUXpbJppmj6MGsl22XyrnHLaKKf/FH1ZjFbrq2JP6763t1wp0LdWP/4sPUiAXVQMD8xlak
+ 881g/4e8jjxhsPzta8T5cicySFzqUzKzd6A0eVmOfE07d0RkSHlofjSsH03KV0QLVkLPQ5dmsJx
+ uWqxZyBhxURGCuDCOQx3rFFFe+I8MQrTK1x9d/+1+9+nDnII9b2tjbPrAAz7UyLFale5jhMA
+X-Proofpoint-GUID: sgKcI8CScQjCYCZ2yPa47xRxv-5Geu__
+X-Proofpoint-ORIG-GUID: sgKcI8CScQjCYCZ2yPa47xRxv-5Geu__
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-19_01,2025-08-14_01,2025-03-28_01
@@ -79,351 +81,286 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for ECDSA SECP384R1 curve SIGN and VERIFY operations
+From: Sunil Kumar Kori <skori@marvell.com>
 
-Signed-off-by: Rupesh Chiluka <rchiluka@marvell.com>
+Adding link type parameter to provide the type
+of port like twisted pair, fibre etc.
+
+Also added an API to convert the RTE_ETH_LINK_TYPE_XXX
+to a readable string.
+
+Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
+Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
 ---
- app/test-crypto-perf/cperf_ops.c             | 58 +++++++++---
- app/test-crypto-perf/cperf_options.h         |  2 +
- app/test-crypto-perf/cperf_options_parsing.c |  7 +-
- app/test-crypto-perf/cperf_test_common.c     |  1 +
- app/test-crypto-perf/cperf_test_vectors.c    | 95 ++++++++++++++++++++
- app/test-crypto-perf/cperf_test_vectors.h    |  1 +
- app/test-crypto-perf/main.c                  | 14 ++-
- doc/guides/tools/cryptoperf.rst              |  1 +
- 8 files changed, 165 insertions(+), 14 deletions(-)
+v4..v5:                                                                                             
+ - Convert link type to connector.
+ - Fix build error on Windows.
+ - Handle comsmetic review comments.
+v3..v4:
+ - Convert #define into enum.
+ - Enhance comments for each port link type.
+ - Fix test failures.
+v2..v3
+ - Extend link type list as per suggestion
 
-diff --git a/app/test-crypto-perf/cperf_ops.c b/app/test-crypto-perf/cperf_ops.c
-index 20fba60426..b2d054a03c 100644
---- a/app/test-crypto-perf/cperf_ops.c
-+++ b/app/test-crypto-perf/cperf_ops.c
-@@ -103,16 +103,30 @@ cperf_set_ops_asym_ecdsa(struct rte_crypto_op **ops,
- 		rte_crypto_op_attach_asym_session(ops[i], sess);
+ app/test/test_ethdev_link.c      | 18 +++++++-----
+ lib/ethdev/ethdev_trace.h        |  7 +++++
+ lib/ethdev/ethdev_trace_points.c |  3 ++
+ lib/ethdev/rte_ethdev.c          | 47 +++++++++++++++++++++++++++++--
+ lib/ethdev/rte_ethdev.h          | 48 ++++++++++++++++++++++++++++++++
+ 5 files changed, 114 insertions(+), 9 deletions(-)
+
+diff --git a/app/test/test_ethdev_link.c b/app/test/test_ethdev_link.c
+index f063a5fe26..a951d64faa 100644
+--- a/app/test/test_ethdev_link.c
++++ b/app/test/test_ethdev_link.c
+@@ -17,23 +17,25 @@ test_link_status_up_default(void)
+ 		.link_speed = RTE_ETH_SPEED_NUM_2_5G,
+ 		.link_status = RTE_ETH_LINK_UP,
+ 		.link_autoneg = RTE_ETH_LINK_AUTONEG,
+-		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX
++		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
++		.link_type = RTE_ETH_LINK_CONNECTOR_OTHER
+ 	};
+ 	char text[RTE_ETH_LINK_MAX_STR_LEN];
  
- 		asym_op->ecdsa.op_type = options->asym_op_type;
--		asym_op->ecdsa.message.data = options->secp256r1_data->message.data;
--		asym_op->ecdsa.message.length = options->secp256r1_data->message.length;
--
--		asym_op->ecdsa.k.data = options->secp256r1_data->k.data;
--		asym_op->ecdsa.k.length = options->secp256r1_data->k.length;
-+		if (options->op_type == CPERF_ASYM_SECP256R1) {
-+			asym_op->ecdsa.message.data = options->secp256r1_data->message.data;
-+			asym_op->ecdsa.message.length = options->secp256r1_data->message.length;
-+
-+			asym_op->ecdsa.k.data = options->secp256r1_data->k.data;
-+			asym_op->ecdsa.k.length = options->secp256r1_data->k.length;
-+
-+			asym_op->ecdsa.r.data = options->secp256r1_data->sign_r.data;
-+			asym_op->ecdsa.r.length = options->secp256r1_data->sign_r.length;
-+			asym_op->ecdsa.s.data = options->secp256r1_data->sign_s.data;
-+			asym_op->ecdsa.s.length = options->secp256r1_data->sign_s.length;
-+		} else if (options->op_type == CPERF_ASYM_SECP384R1) {
-+			asym_op->ecdsa.message.data = options->secp384r1_data->message.data;
-+			asym_op->ecdsa.message.length = options->secp384r1_data->message.length;
-+
-+			asym_op->ecdsa.k.data = options->secp384r1_data->k.data;
-+			asym_op->ecdsa.k.length = options->secp384r1_data->k.length;
-+
-+			asym_op->ecdsa.r.data = options->secp384r1_data->sign_r.data;
-+			asym_op->ecdsa.r.length = options->secp384r1_data->sign_r.length;
-+			asym_op->ecdsa.s.data = options->secp384r1_data->sign_s.data;
-+			asym_op->ecdsa.s.length = options->secp384r1_data->sign_s.length;
-+		}
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+ 	printf("Default link up #1: %s\n", text);
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 2.5 Gbps FDX Autoneg",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 2.5 Gbps FDX Autoneg Other",
+ 		text, strlen(text), "Invalid default link status string");
  
--		asym_op->ecdsa.r.data = options->secp256r1_data->sign_r.data;
--		asym_op->ecdsa.r.length = options->secp256r1_data->sign_r.length;
--		asym_op->ecdsa.s.data = options->secp256r1_data->sign_s.data;
--		asym_op->ecdsa.s.length = options->secp256r1_data->sign_s.length;
- 	}
+ 	link_status.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
+ 	link_status.link_autoneg = RTE_ETH_LINK_FIXED;
+ 	link_status.link_speed = RTE_ETH_SPEED_NUM_10M;
++	link_status.link_type = RTE_ETH_LINK_CONNECTOR_SGMII;
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	printf("Default link up #2: %s\n", text);
+ 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 10 Mbps HDX Fixed",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 10 Mbps HDX Fixed SGMII",
+ 		text, strlen(text), "Invalid default link status "
+ 		"string with HDX");
+ 
+@@ -41,7 +43,7 @@ test_link_status_up_default(void)
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	printf("Default link up #3: %s\n", text);
+ 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Unknown HDX Fixed",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Unknown HDX Fixed SGMII",
+ 		text, strlen(text), "Invalid default link status "
+ 		"string with HDX");
+ 
+@@ -49,7 +51,7 @@ test_link_status_up_default(void)
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	printf("Default link up #3: %s\n", text);
+ 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at None HDX Fixed",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at None HDX Fixed SGMII",
+ 		text, strlen(text), "Invalid default link status "
+ 		"string with HDX");
+ 
+@@ -57,6 +59,7 @@ test_link_status_up_default(void)
+ 	link_status.link_speed = RTE_ETH_SPEED_NUM_400G;
+ 	link_status.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
+ 	link_status.link_autoneg = RTE_ETH_LINK_AUTONEG;
++	link_status.link_type = RTE_ETH_LINK_CONNECTOR_GAUI;
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	printf("Default link up #4:len = %d, %s\n", ret, text);
+ 	RTE_TEST_ASSERT(ret < RTE_ETH_LINK_MAX_STR_LEN,
+@@ -92,7 +95,8 @@ test_link_status_invalid(void)
+ 		.link_speed = 55555,
+ 		.link_status = RTE_ETH_LINK_UP,
+ 		.link_autoneg = RTE_ETH_LINK_AUTONEG,
+-		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX
++		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
++		.link_type = RTE_ETH_LINK_CONNECTOR_OTHER
+ 	};
+ 	char text[RTE_ETH_LINK_MAX_STR_LEN];
+ 
+@@ -100,7 +104,7 @@ test_link_status_invalid(void)
+ 	RTE_TEST_ASSERT(ret < RTE_ETH_LINK_MAX_STR_LEN,
+ 		"Failed to format invalid string\n");
+ 	printf("invalid link up #1: len=%d %s\n", ret, text);
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Invalid FDX Autoneg",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Invalid FDX Autoneg Other",
+ 		text, strlen(text), "Incorrect invalid link status string");
+ 
+ 	return TEST_SUCCESS;
+diff --git a/lib/ethdev/ethdev_trace.h b/lib/ethdev/ethdev_trace.h
+index 482befc209..c5cba0edba 100644
+--- a/lib/ethdev/ethdev_trace.h
++++ b/lib/ethdev/ethdev_trace.h
+@@ -2110,6 +2110,13 @@ RTE_TRACE_POINT_FP(
+ 	rte_trace_point_emit_string(ret);
+ )
+ 
++RTE_TRACE_POINT_FP(
++	rte_eth_trace_link_type_to_str,
++	RTE_TRACE_POINT_ARGS(uint8_t link_type, const char *ret),
++	rte_trace_point_emit_u8(link_type);
++	rte_trace_point_emit_string(ret);
++);
++
+ /* Called in loop in examples/bond and examples/ethtool */
+ RTE_TRACE_POINT_FP(
+ 	rte_eth_trace_macaddr_get,
+diff --git a/lib/ethdev/ethdev_trace_points.c b/lib/ethdev/ethdev_trace_points.c
+index 071c508327..706acdf356 100644
+--- a/lib/ethdev/ethdev_trace_points.c
++++ b/lib/ethdev/ethdev_trace_points.c
+@@ -206,6 +206,9 @@ RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_speed_to_str,
+ RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_to_str,
+ 	lib.ethdev.link_to_str)
+ 
++RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_type_to_str,
++	lib.ethdev.link_type_to_str)
++
+ RTE_TRACE_POINT_REGISTER(rte_eth_trace_stats_get,
+ 	lib.ethdev.stats_get)
+ 
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index dd7c00bc94..7b267a81a4 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -3285,18 +3285,61 @@ rte_eth_link_to_str(char *str, size_t len, const struct rte_eth_link *eth_link)
+ 	if (eth_link->link_status == RTE_ETH_LINK_DOWN)
+ 		ret = snprintf(str, len, "Link down");
+ 	else
+-		ret = snprintf(str, len, "Link up at %s %s %s",
++		ret = snprintf(str, len, "Link up at %s %s %s %s",
+ 			rte_eth_link_speed_to_str(eth_link->link_speed),
+ 			(eth_link->link_duplex == RTE_ETH_LINK_FULL_DUPLEX) ?
+ 			"FDX" : "HDX",
+ 			(eth_link->link_autoneg == RTE_ETH_LINK_AUTONEG) ?
+-			"Autoneg" : "Fixed");
++			"Autoneg" : "Fixed",
++			rte_eth_link_type_to_str(eth_link->link_type));
+ 
+ 	rte_eth_trace_link_to_str(len, eth_link, str, ret);
+ 
+ 	return ret;
  }
  
-@@ -1137,7 +1151,28 @@ cperf_create_session(struct rte_mempool *sess_mp,
- 		ret = rte_cryptodev_asym_session_create(dev_id, &xform,
- 				sess_mp, &asym_sess);
- 		if (ret < 0) {
--			RTE_LOG(ERR, USER1, "ECDSA Asym session create failed\n");
-+			RTE_LOG(ERR, USER1, "ECDSA P256 Asym session create failed\n");
-+			return NULL;
-+		}
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_link_type_to_str, 25.11)
++const char *
++rte_eth_link_type_to_str(enum rte_eth_link_connector link_type)
++{
++	static const char * const link_type_str[] = {
++		[RTE_ETH_LINK_CONNECTOR_NONE] = "None",
++		[RTE_ETH_LINK_CONNECTOR_TP] = "Twisted Pair",
++		[RTE_ETH_LINK_CONNECTOR_AUI] = "Attachment Unit Interface",
++		[RTE_ETH_LINK_CONNECTOR_MII] = "Media Independent Interface",
++		[RTE_ETH_LINK_CONNECTOR_FIBER] = "Fiber",
++		[RTE_ETH_LINK_CONNECTOR_BNC] = "BNC",
++		[RTE_ETH_LINK_CONNECTOR_DAC] = "Direct Attach Copper",
++		[RTE_ETH_LINK_CONNECTOR_SGMII] = "SGMII",
++		[RTE_ETH_LINK_CONNECTOR_QSGMII] = "QSGMII",
++		[RTE_ETH_LINK_CONNECTOR_XFI] = "XFI",
++		[RTE_ETH_LINK_CONNECTOR_SFI] = "SFI",
++		[RTE_ETH_LINK_CONNECTOR_XLAUI] = "XLAUI",
++		[RTE_ETH_LINK_CONNECTOR_GAUI] = "GAUI",
++		[RTE_ETH_LINK_CONNECTOR_XAUI] = "XAUI",
++		[RTE_ETH_LINK_CONNECTOR_CAUI] = "CAUI",
++		[RTE_ETH_LINK_CONNECTOR_LAUI] = "LAUI",
++		[RTE_ETH_LINK_CONNECTOR_SFP] = "SFP",
++		[RTE_ETH_LINK_CONNECTOR_SFP_DD] = "SFP-DD",
++		[RTE_ETH_LINK_CONNECTOR_SFP_PLUS] = "SFP+",
++		[RTE_ETH_LINK_CONNECTOR_SFP28] = "SFP28",
++		[RTE_ETH_LINK_CONNECTOR_QSFP] = "QSFP",
++		[RTE_ETH_LINK_CONNECTOR_QSFP_PLUS] = "QSFP+",
++		[RTE_ETH_LINK_CONNECTOR_QSFP28] = "QSFP28",
++		[RTE_ETH_LINK_CONNECTOR_QSFP56] = "QSFP56",
++		[RTE_ETH_LINK_CONNECTOR_QSFP_DD] = "QSFP-DD",
++		[RTE_ETH_LINK_CONNECTOR_OTHER] = "Other",
++	};
++	const char *str = NULL;
 +
-+		return asym_sess;
-+	}
++	if ((link_type < ((enum rte_eth_link_connector)RTE_DIM(link_type_str))) &&
++		link_type_str[link_type])
++		str = link_type_str[link_type];
 +
-+	if (options->op_type == CPERF_ASYM_SECP384R1) {
-+		xform.next = NULL;
-+		xform.xform_type = RTE_CRYPTO_ASYM_XFORM_ECDSA;
-+		xform.ec.curve_id = options->secp384r1_data->curve;
-+		xform.ec.pkey.data = options->secp384r1_data->pkey.data;
-+		xform.ec.pkey.length = options->secp384r1_data->pkey.length;
-+		xform.ec.q.x.data = options->secp384r1_data->pubkey_qx.data;
-+		xform.ec.q.x.length = options->secp384r1_data->pubkey_qx.length;
-+		xform.ec.q.y.data = options->secp384r1_data->pubkey_qy.data;
-+		xform.ec.q.y.length = options->secp384r1_data->pubkey_qy.length;
++	rte_eth_trace_link_type_to_str(link_type, str);
++	return str;
++}
 +
-+		ret = rte_cryptodev_asym_session_create(dev_id, &xform,
-+				sess_mp, &asym_sess);
-+		if (ret < 0) {
-+			RTE_LOG(ERR, USER1, "ECDSA P384 Asym session create failed\n");
- 			return NULL;
- 		}
+ RTE_EXPORT_SYMBOL(rte_eth_stats_get)
+ int
+ rte_eth_stats_get(uint16_t port_id, struct rte_eth_stats *stats)
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index f9fb6ae549..f5de272ea8 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -329,6 +329,39 @@ struct rte_eth_stats {
+ #define RTE_ETH_SPEED_NUM_UNKNOWN UINT32_MAX /**< Unknown */
+ /**@}*/
  
-@@ -1489,6 +1524,9 @@ cperf_get_op_functions(const struct cperf_options *options,
- 	case CPERF_ASYM_SECP256R1:
- 		op_fns->populate_ops = cperf_set_ops_asym_ecdsa;
- 		break;
-+	case CPERF_ASYM_SECP384R1:
-+		op_fns->populate_ops = cperf_set_ops_asym_ecdsa;
-+		break;
- 	case CPERF_ASYM_ED25519:
- 		op_fns->populate_ops = cperf_set_ops_asym_eddsa;
- 		break;
-diff --git a/app/test-crypto-perf/cperf_options.h b/app/test-crypto-perf/cperf_options.h
-index 028dd2d797..38621e28a0 100644
---- a/app/test-crypto-perf/cperf_options.h
-+++ b/app/test-crypto-perf/cperf_options.h
-@@ -95,6 +95,7 @@ enum cperf_op_type {
- 	CPERF_ASYM_MODEX,
- 	CPERF_ASYM_RSA,
- 	CPERF_ASYM_SECP256R1,
-+	CPERF_ASYM_SECP384R1,
- 	CPERF_ASYM_ED25519,
- 	CPERF_ASYM_SM2,
- 	CPERF_TLS,
-@@ -177,6 +178,7 @@ struct cperf_options {
- 	struct cperf_modex_test_data *modex_data;
- 	uint16_t modex_len;
- 	struct cperf_ecdsa_test_data *secp256r1_data;
-+	struct cperf_ecdsa_test_data *secp384r1_data;
- 	struct cperf_eddsa_test_data *eddsa_data;
- 	struct cperf_sm2_test_data *sm2_data;
- 	enum rte_crypto_asym_op_type asym_op_type;
-diff --git a/app/test-crypto-perf/cperf_options_parsing.c b/app/test-crypto-perf/cperf_options_parsing.c
-index 0e0dc4fd06..8577551b2a 100644
---- a/app/test-crypto-perf/cperf_options_parsing.c
-+++ b/app/test-crypto-perf/cperf_options_parsing.c
-@@ -39,7 +39,7 @@ usage(char *progname)
- 		" --devtype TYPE: set crypto device type to use\n"
- 		" --low-prio-qp-mask mask: set low priority for queues set in mask(hex)\n"
- 		" --optype cipher-only / auth-only / cipher-then-auth / auth-then-cipher /\n"
--		"        aead / pdcp / docsis / ipsec / modex / rsa / secp256r1 / eddsa / sm2 / tls-record : set operation type\n"
-+		"        aead / pdcp / docsis / ipsec / modex / rsa / secp256r1 / secp384r1 / eddsa / sm2 / tls-record : set operation type\n"
- 		" --sessionless: enable session-less crypto operations\n"
- 		" --shared-session: share 1 session across all queue pairs on crypto device\n"
- 		" --out-of-place: enable out-of-place crypto operations\n"
-@@ -533,6 +533,10 @@ parse_op_type(struct cperf_options *opts, const char *arg)
- 			cperf_op_type_strs[CPERF_ASYM_SECP256R1],
- 			CPERF_ASYM_SECP256R1
- 		},
-+		{
-+			cperf_op_type_strs[CPERF_ASYM_SECP384R1],
-+			CPERF_ASYM_SECP384R1
-+		},
- 		{
- 			cperf_op_type_strs[CPERF_ASYM_ED25519],
- 			CPERF_ASYM_ED25519
-@@ -1150,6 +1154,7 @@ cperf_options_default(struct cperf_options *opts)
- 	opts->rsa_keytype = UINT8_MAX;
- 
- 	opts->secp256r1_data = &secp256r1_perf_data;
-+	opts->secp384r1_data = &secp384r1_perf_data;
- 	opts->eddsa_data = &ed25519_perf_data;
- 	opts->sm2_data = &sm2_perf_data;
- 	opts->asym_op_type = RTE_CRYPTO_ASYM_OP_ENCRYPT;
-diff --git a/app/test-crypto-perf/cperf_test_common.c b/app/test-crypto-perf/cperf_test_common.c
-index 0eea4d133d..da0202a870 100644
---- a/app/test-crypto-perf/cperf_test_common.c
-+++ b/app/test-crypto-perf/cperf_test_common.c
-@@ -308,6 +308,7 @@ cperf_is_asym_test(const struct cperf_options *options)
- 	if (options->op_type == CPERF_ASYM_MODEX ||
- 	    options->op_type == CPERF_ASYM_RSA ||
- 	    options->op_type == CPERF_ASYM_SECP256R1 ||
-+	    options->op_type == CPERF_ASYM_SECP384R1 ||
- 	    options->op_type == CPERF_ASYM_ED25519 ||
- 	    options->op_type == CPERF_ASYM_SM2)
- 		return true;
-diff --git a/app/test-crypto-perf/cperf_test_vectors.c b/app/test-crypto-perf/cperf_test_vectors.c
-index 682988ccff..f1dedcd119 100644
---- a/app/test-crypto-perf/cperf_test_vectors.c
-+++ b/app/test-crypto-perf/cperf_test_vectors.c
-@@ -853,6 +853,67 @@ static uint8_t secp256r1_message[] = {
- 	0xdb, 0xc4, 0xe7, 0xa6, 0xa1, 0x33, 0xec, 0x56
++/**@{@name PORT type
++ * Ethernet port link connector type
++ */
++enum rte_eth_link_connector {
++	RTE_ETH_LINK_CONNECTOR_NONE = 0,     /**< Not defined */
++	RTE_ETH_LINK_CONNECTOR_TP,           /**< Twisted Pair */
++	RTE_ETH_LINK_CONNECTOR_AUI,          /**< Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_MII,          /**< Media Independent Interface */
++	RTE_ETH_LINK_CONNECTOR_FIBER,        /**< Optical Fiber Link */
++	RTE_ETH_LINK_CONNECTOR_BNC,          /**< BNC Link type for RF connection */
++	RTE_ETH_LINK_CONNECTOR_DAC,          /**< Direct Attach copper */
++	RTE_ETH_LINK_CONNECTOR_SGMII,        /**< Serial Gigabit Media Independent Interface */
++	RTE_ETH_LINK_CONNECTOR_QSGMII,       /**< Link to multiplex 4 SGMII over one serial link */
++	RTE_ETH_LINK_CONNECTOR_XFI,          /**< 10 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_SFI,          /**< 10 Gigabit Serial Interface for optical network */
++	RTE_ETH_LINK_CONNECTOR_XLAUI,        /**< 40 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_GAUI,         /**< Gigabit Interface for 50/100/200 Gbps */
++	RTE_ETH_LINK_CONNECTOR_XAUI,         /**< 10 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_CAUI,         /**< 100 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_LAUI,         /**< 50 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_SFP,          /**< Pluggable module for 1 Gigabit */
++	RTE_ETH_LINK_CONNECTOR_SFP_PLUS,     /**< Pluggable module for 10 Gigabit */
++	RTE_ETH_LINK_CONNECTOR_SFP28,        /**< Pluggable module for 25 Gigabit */
++	RTE_ETH_LINK_CONNECTOR_SFP_DD,       /**< Pluggable module for 100 Gigabit */
++	RTE_ETH_LINK_CONNECTOR_QSFP,         /**< Module to mutiplex 4 SFP i.e. 4*1=4 Gbps */
++	RTE_ETH_LINK_CONNECTOR_QSFP_PLUS,    /**< Module to mutiplex 4 SFP_PLUS i.e. 4*10=40 Gbps */
++	RTE_ETH_LINK_CONNECTOR_QSFP28,       /**< Module to mutiplex 4 SFP28 i.e. 4*25=100 Gbps */
++	RTE_ETH_LINK_CONNECTOR_QSFP56,       /**< Module to mutiplex 4 SFP56 i.e. 4*50=200 Gbps */
++	RTE_ETH_LINK_CONNECTOR_QSFP_DD,      /**< Module to mutiplex 4 SFP_DD i.e. 4*100=400 Gbps */
++	RTE_ETH_LINK_CONNECTOR_OTHER = 31,   /**< non-physical interfaces like virtio, ring etc */
++};
++/**@}*/
++
+ /**
+  * A structure used to retrieve link-level information of an Ethernet port.
+  */
+@@ -341,6 +374,7 @@ struct rte_eth_link {
+ 			uint16_t link_duplex  : 1;  /**< RTE_ETH_LINK_[HALF/FULL]_DUPLEX */
+ 			uint16_t link_autoneg : 1;  /**< RTE_ETH_LINK_[AUTONEG/FIXED] */
+ 			uint16_t link_status  : 1;  /**< RTE_ETH_LINK_[DOWN/UP] */
++			uint16_t link_type    : 5;  /**< RTE_ETH_LINK_TYPE_XXX */
+ 		};
+ 	};
  };
+@@ -3116,6 +3150,20 @@ int rte_eth_link_get_nowait(uint16_t port_id, struct rte_eth_link *link)
+ __rte_experimental
+ const char *rte_eth_link_speed_to_str(uint32_t link_speed);
  
-+static uint8_t secp384r1_pkey[] = {
-+	0xc6, 0x02, 0xbc, 0x74, 0xa3, 0x45, 0x92, 0xc3,
-+	0x11, 0xa6, 0x56, 0x96, 0x61, 0xe0, 0x83, 0x2c,
-+	0x84, 0xf7, 0x20, 0x72, 0x74, 0x67, 0x6c, 0xc4,
-+	0x2a, 0x89, 0xf0, 0x58, 0x16, 0x26, 0x30, 0x18,
-+	0x4b, 0x52, 0xf0, 0xd9, 0x9b, 0x85, 0x5a, 0x77,
-+	0x83, 0xc9, 0x87, 0x47, 0x6d, 0x7f, 0x9e, 0x6b
-+};
++/**
++ * @warning
++ * @b EXPERIMENTAL: this API may change without prior notice.
++ *
++ * This function converts an Ethernet link type to a string.
++ *
++ * @param link_type
++ *   The link type to convert.
++ * @return
++ *   The string representation of the link type.
++ */
++__rte_experimental
++const char *rte_eth_link_type_to_str(enum rte_eth_link_connector link_type);
 +
-+static uint8_t secp384r1_qx[] = {
-+	0x04, 0x00, 0x19, 0x3b, 0x21, 0xf0, 0x7c, 0xd0,
-+	0x59, 0x82, 0x6e, 0x94, 0x53, 0xd3, 0xe9, 0x6d,
-+	0xd1, 0x45, 0x04, 0x1c, 0x97, 0xd4, 0x9f, 0xf6,
-+	0xb7, 0x04, 0x7f, 0x86, 0xbb, 0x0b, 0x04, 0x39,
-+	0xe9, 0x09, 0x27, 0x4c, 0xb9, 0xc2, 0x82, 0xbf,
-+	0xab, 0x88, 0x67, 0x4c, 0x07, 0x65, 0xbc, 0x75
-+};
-+
-+static uint8_t secp384r1_qy[] = {
-+	0xf7, 0x0d, 0x89, 0xc5, 0x2a, 0xcb, 0xc7, 0x04,
-+	0x68, 0xd2, 0xc5, 0xae, 0x75, 0xc7, 0x6d, 0x7f,
-+	0x69, 0xb7, 0x6a, 0xf6, 0x2d, 0xcf, 0x95, 0xe9,
-+	0x9e, 0xba, 0x5d, 0xd1, 0x1a, 0xdf, 0x8f, 0x42,
-+	0xec, 0x9a, 0x42, 0x5b, 0x0c, 0x5e, 0xc9, 0x8e,
-+	0x2f, 0x23, 0x4a, 0x92, 0x6b, 0x82, 0xa1, 0x47
-+};
-+
-+static uint8_t secp384r1_k[] = {
-+	0xc1, 0x0b, 0x5c, 0x25, 0xc4, 0x68, 0x3d, 0x0b,
-+	0x78, 0x27, 0xd0, 0xd8, 0x86, 0x97, 0xcd, 0xc0,
-+	0x93, 0x24, 0x96, 0xb5, 0x29, 0x9b, 0x79, 0x8c,
-+	0x0d, 0xd1, 0xe7, 0xaf, 0x6c, 0xc7, 0x57, 0xcc,
-+	0xb3, 0x0f, 0xcd, 0x3d, 0x36, 0xea, 0xd4, 0xa8,
-+	0x04, 0x87, 0x7e, 0x24, 0xf3, 0xa3, 0x24, 0x43
-+};
-+
-+static uint8_t secp384r1_sign_r[] = {
-+	0xb1, 0x1d, 0xb0, 0x0c, 0xda, 0xf5, 0x32, 0x86,
-+	0xd4, 0x48, 0x3f, 0x38, 0xcd, 0x02, 0x78, 0x59,
-+	0x48, 0x47, 0x7e, 0xd7, 0xeb, 0xc2, 0xad, 0x60,
-+	0x90, 0x54, 0x55, 0x1d, 0xa0, 0xab, 0x03, 0x59,
-+	0x97, 0x8c, 0x61, 0x85, 0x17, 0x88, 0xaa, 0x2e,
-+	0xc3, 0x26, 0x79, 0x46, 0xd4, 0x40, 0xe8, 0x78
-+};
-+
-+static uint8_t secp384r1_sign_s[] = {
-+	0x16, 0x00, 0x78, 0x73, 0xc5, 0xb0, 0x60, 0x4c,
-+	0xe6, 0x81, 0x12, 0xa8, 0xfe, 0xe9, 0x73, 0xe8,
-+	0xe2, 0xb6, 0xe3, 0x31, 0x9c, 0x68, 0x3a, 0x76,
-+	0x2f, 0xf5, 0x06, 0x5a, 0x07, 0x65, 0x12, 0xd7,
-+	0xc9, 0x8b, 0x27, 0xe7, 0x4b, 0x78, 0x87, 0x67,
-+	0x10, 0x48, 0xac, 0x02, 0x7d, 0xf8, 0xcb, 0xf2
-+};
-+
-+static uint8_t secp384r1_message[] = {
-+	0xbb, 0xbd, 0x0a, 0x5f, 0x64, 0x5d, 0x3f, 0xda,
-+	0x10, 0xe2, 0x88, 0xd1, 0x72, 0xb2, 0x99, 0x45,
-+	0x5f, 0x9d, 0xff, 0x00, 0xe0, 0xfb, 0xc2, 0x83,
-+	0x3e, 0x18, 0xcd, 0x01, 0x7d, 0x7f, 0x3e, 0xd1
-+};
-+
- static uint8_t ed25519_pkey[] = {
- 	0x4c, 0xcd, 0x08, 0x9b, 0x28, 0xff, 0x96, 0xda,
- 	0x9d, 0xb6, 0xc3, 0x46, 0xec, 0x11, 0x4e, 0x0f,
-@@ -1394,6 +1455,40 @@ cperf_ecdsa_test_data secp256r1_perf_data = {
- 	.curve = RTE_CRYPTO_EC_GROUP_SECP256R1
- };
- 
-+/** ECDSA secp384r1 elliptic curve test params */
-+struct
-+cperf_ecdsa_test_data secp384r1_perf_data = {
-+	.pubkey_qx = {
-+		.data = secp384r1_qx,
-+		.length = sizeof(secp384r1_qx),
-+	},
-+	.pubkey_qy = {
-+		.data = secp384r1_qy,
-+		.length = sizeof(secp384r1_qy),
-+	},
-+	.k = {
-+		.data = secp384r1_k,
-+		.length = sizeof(secp384r1_k),
-+	},
-+	.sign_r = {
-+		.data = secp384r1_sign_r,
-+		.length = sizeof(secp384r1_sign_r),
-+	},
-+	.sign_s = {
-+		.data = secp384r1_sign_s,
-+		.length = sizeof(secp384r1_sign_s),
-+	},
-+	.pkey = {
-+		.data = secp384r1_pkey,
-+		.length = sizeof(secp384r1_pkey),
-+	},
-+	.message = {
-+		.data = secp384r1_message,
-+		.length = sizeof(secp384r1_message),
-+	},
-+	.curve = RTE_CRYPTO_EC_GROUP_SECP384R1
-+};
-+
- /* EdDSA 25519 elliptic curve test params */
- struct
- cperf_eddsa_test_data ed25519_perf_data = {
-diff --git a/app/test-crypto-perf/cperf_test_vectors.h b/app/test-crypto-perf/cperf_test_vectors.h
-index b5e300dc1b..5f2f6ab8af 100644
---- a/app/test-crypto-perf/cperf_test_vectors.h
-+++ b/app/test-crypto-perf/cperf_test_vectors.h
-@@ -178,6 +178,7 @@ extern uint8_t digest[2048];
- 
- extern struct cperf_modex_test_data modex_perf_data[10];
- extern struct cperf_ecdsa_test_data secp256r1_perf_data;
-+extern struct cperf_ecdsa_test_data secp384r1_perf_data;
- extern struct cperf_eddsa_test_data ed25519_perf_data;
- extern struct cperf_sm2_test_data sm2_perf_data;
- extern struct cperf_rsa_test_data rsa_pub_perf_data[4];
-diff --git a/app/test-crypto-perf/main.c b/app/test-crypto-perf/main.c
-index 2e38c0011d..4f98e0172a 100644
---- a/app/test-crypto-perf/main.c
-+++ b/app/test-crypto-perf/main.c
-@@ -47,6 +47,7 @@ const char *cperf_op_type_strs[] = {
- 	[CPERF_ASYM_MODEX] = "modex",
- 	[CPERF_ASYM_RSA] = "rsa",
- 	[CPERF_ASYM_SECP256R1] = "ecdsa_p256r1",
-+	[CPERF_ASYM_SECP384R1] = "ecdsa_p384r1",
- 	[CPERF_ASYM_ED25519] = "eddsa_25519",
- 	[CPERF_ASYM_SM2] = "sm2",
- 	[CPERF_TLS] = "tls-record"
-@@ -234,6 +235,7 @@ cperf_initialize_cryptodev(struct cperf_options *opts, uint8_t *enabled_cdevs)
- 
- 		switch (opts->op_type) {
- 		case CPERF_ASYM_SECP256R1:
-+		case CPERF_ASYM_SECP384R1:
- 		case CPERF_ASYM_ED25519:
- 		case CPERF_ASYM_SM2:
- 		case CPERF_ASYM_RSA:
-@@ -391,7 +393,8 @@ cperf_verify_devices_capabilities(struct cperf_options *opts,
- 
- 		}
- 
--		if (opts->op_type == CPERF_ASYM_SECP256R1) {
-+		if ((opts->op_type == CPERF_ASYM_SECP256R1) ||
-+			(opts->op_type == CPERF_ASYM_SECP384R1)) {
- 			asym_cap_idx.type = RTE_CRYPTO_ASYM_XFORM_ECDSA;
- 			asym_capability = rte_cryptodev_asym_capability_get(cdev_id, &asym_cap_idx);
- 			if (asym_capability == NULL)
-@@ -402,8 +405,13 @@ cperf_verify_devices_capabilities(struct cperf_options *opts,
- 				return -1;
- 
- 			if (asym_capability->internal_rng != 0) {
--				opts->secp256r1_data->k.data = NULL;
--				opts->secp256r1_data->k.length = 0;
-+				if (opts->op_type == CPERF_ASYM_SECP256R1) {
-+					opts->secp256r1_data->k.data = NULL;
-+					opts->secp256r1_data->k.length = 0;
-+				} else {
-+					opts->secp384r1_data->k.data = NULL;
-+					opts->secp384r1_data->k.length = 0;
-+				}
- 			}
- 		}
- 
-diff --git a/doc/guides/tools/cryptoperf.rst b/doc/guides/tools/cryptoperf.rst
-index 5924a247ba..c35f39d948 100644
---- a/doc/guides/tools/cryptoperf.rst
-+++ b/doc/guides/tools/cryptoperf.rst
-@@ -176,6 +176,7 @@ The following are the application command-line options:
-            docsis
-            modex
-            ecdsa_p256r1
-+           ecdsa_p384r1
-            eddsa_25519
-            rsa
-            sm2
+ /**
+  * @warning
+  * @b EXPERIMENTAL: this API may change without prior notice.
 -- 
-2.48.1
+2.43.0
 
