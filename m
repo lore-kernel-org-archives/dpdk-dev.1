@@ -2,76 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08663CA0EDC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 19:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EABB4CA0EF8
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 21:19:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5823540292;
-	Wed, 20 Aug 2025 21:51:35 +0200 (CEST)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
- [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id 1AC494026C
- for <dev@dpdk.org>; Wed, 20 Aug 2025 21:51:34 +0200 (CEST)
-Received: by mail-wm1-f49.google.com with SMTP id
- 5b1f17b1804b1-45a1b0c52f3so1472745e9.3
- for <dev@dpdk.org>; Wed, 20 Aug 2025 12:51:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B588840292;
+	Wed, 20 Aug 2025 23:19:08 +0200 (CEST)
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com
+ [209.85.128.43]) by mails.dpdk.org (Postfix) with ESMTP id E64EC4026C
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 23:19:07 +0200 (CEST)
+Received: by mail-wm1-f43.google.com with SMTP id
+ 5b1f17b1804b1-45a1b0d224dso1610025e9.3
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 14:19:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755719494;
- x=1756324294; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=xfy3xn/4E0YSUT9Uvxulpkv/cBEjdgNzqPTKK/Sp718=;
- b=0sXKpjT1siJwn3f/Q+oOQ45PA5alugv21UNUnwZZvyCfMUmP7VJyn6OAI4JP7q+2Cv
- j9dT0XasFI6hmGHQXTxHsXz2Yn1MXZJK+qA2tslYuUwgUdfK06ouhxjcQgzpAYJRYmpX
- S3RAoZGtcILPpJspjwsr0qEdX8xBTHyX78tIYEtvtALulyowc2wTixPkqEWk9za+9/Mw
- Cz/iiDyFHAFAlBzV2TJL3mPwYQIkGYYo+p3cdFXJuK9iCIESUymQTRwwuz+7BphDHZ1e
- erzad1/l1buTPDmw65oPh5FziGQtlvdfCSA1pgLiCW/t0j3+h+IFF2qQWVLsl6KQ8Qtn
- o+CQ==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755724747;
+ x=1756329547; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=H2B/YtD3ZDAxO0qPdpjRQIFAI7QOg2vGWucfaQRz1Vw=;
+ b=FA64M82hVNS3BoVphWkLtyy1Y+JDk8bmCkEe2CGNKbOmMXdAFDe9pViAe1p9GiqiDD
+ z1v0ojSDSc702NAIn+DUh2RwxLz08Gqm6DRCJoL2Gugc6DmhSb1tvNpBb0Fqmr9jKxyI
+ Y74Wza/pZRyUkDlLF0QyU1j/7xwDY7dBFZL7lMCAhXptLXZU2j9REdUKuCCa+ybYU74e
+ heQxOT4Z0lkCIn9HROYVnZdVaqBIaUzCPxsEYP3vUuylqDO2ZN33dry0a88w/B/DayTo
+ VdvaaIgnyqffkZkC13hLZZ0oKSrX5/zdu7DGASnP40tNDkWctDt7ejgunefLzlnlJuCv
+ v2Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755719494; x=1756324294;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=xfy3xn/4E0YSUT9Uvxulpkv/cBEjdgNzqPTKK/Sp718=;
- b=b04wqp465Av94NQxJAJFFShenW5gZ7VN029IXLDF4Cx3OPsTgub/e9w/JXVaxAqkGR
- gJG1DJ3J07hxPQf8Jc3cx0kCKX3Tz1MCDx9dr4PcLYTOgJXOddQoN1tgb+zK/eAV7Qju
- 6YG3eDp188i5ockDdi2fYRKzJFoa+DinXG1h3gWkXKXACcGsPHB5q2bhyDerf6Pw2Z4C
- yrjEMDW5EZDGxncqlDtOHVWGGAMZPpGMWlWWznl4HCuw/oYkEmWYosJoWK0WAukeSIzT
- ORL/kPLQ3PNSy3JDoeLHp8e6sXyQGhgoO6+4zxbS4d8mWypgAQzVrgEMuZY0zpyXarca
- HIdQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUIYgf4SmXQqSYyn0wfvRpCsXFWxne7Ho6+Y6W9Uc2Y1WFg3mp8fj9oDHr7JaodIhMuFZI=@dpdk.org
-X-Gm-Message-State: AOJu0YzFXK7akOfkHzxPfqZV+u/qNSVjhPsIIgwrzZ9QW0rOSODHbfNh
- +G/4MeXrnUyHjsNApb/WrP9wldbEdnk0RR9ht+fal4P1+55Xmc9DTJhiRonAzQP79HBvIlLpXrD
- eY6n8vzA=
-X-Gm-Gg: ASbGncuuGv0ZZoUr5LnftkW8yMKZET7rocUgquyow6vVSA4xSYAtYlA+XjIzyqQVr47
- pPA+nFewqbDMP+ywBAOcNvRMSATF1/rDT3bjfdIYcbploQCTjMzY5+NyHexEeFxkES/6zH8xzw/
- tJRLXQQXso6yIP9c9+5hHJLxf8fp8BrKdydIaVde0Y60Le77829vN6BidPlaUfsRK76iCNaeAvh
- Pj5bPeoPNH9ZhflTJrFO4eSniwcDWzXKoIHhVyGyEB5Mayd7E2699m0d4opJTussrQbOPtGjngW
- 1KsLyncaqcm6gqFFHkNVGtLXA1RRotNZq8YHlBJoDRsLJgp1Len/egch1JsG9eNjBpcHTaeCay8
- strzcOLqs5bPwQ/zSMWoJCIGzNFhc3Cx+7Gig6TVLfLO31LbgklR+ZEEHeCk+qstQfFgBVXDlgA
- w=
-X-Google-Smtp-Source: AGHT+IHGRCWjv28mdBGkIIuxmWTS8RSj7NQLEyke55hvOjJ2AwziZvgjOP6d9ZQqP5yjCNEPq3TZJQ==
-X-Received: by 2002:a05:600c:3b0c:b0:456:1bae:5470 with SMTP id
- 5b1f17b1804b1-45b479b6ba7mr33240385e9.8.1755719493631; 
- Wed, 20 Aug 2025 12:51:33 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20230601; t=1755724747; x=1756329547;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=H2B/YtD3ZDAxO0qPdpjRQIFAI7QOg2vGWucfaQRz1Vw=;
+ b=M2rAlQVE+fJvREsZf0GWLVNEled6GbD+OY7V1JcLJl9QCS4lbGhhKWcYthHLM5eikY
+ OEC8hAICAqiXqgTvrscsA8UUz0PWUNPQcqhKRAvSBUuoYFLnWGn8zYX19pdgcnNUIrEe
+ Ag5nz5pRQRgMB1RW7fcJZGIj8nSq3I5a1f6HwJOSAA4G86YqeLSJjleihyg05LSbX7fo
+ XbgCtXZITpoyldcM0/Z2PqHUZvEeZSAjO+RBuCcLgMoUzql52sXhbuC9M5izCpa0w5WC
+ NXh6mDNe9LE48dgUjmvO4H6tHyUnpJ/afnuCYXHjc84OJRbEK+eDX6WtDEfqV1mSMxyG
+ vIdg==
+X-Gm-Message-State: AOJu0YxXLLNBfwhbzGLDEdgcJz98F0p8S7Iy2aBCIQXx/y4K89szk7Sa
+ DaWPMnCE96/yZcgIgAbz/OgKiO01McKO4QuFdanPYqhyzUt9D2nmKhLPYsobElbdDIBMcTNgtut
+ ZeOZ14M8=
+X-Gm-Gg: ASbGncuNMeWy5t6USLA0pjlehT6RjOPXhwxlO6PtFTkSMxjSyMwtpMn6uCj4NgksVcD
+ 04h89jupNgjoBXOH9l14GjObGvYO66eT7kuz9HDFxoodOu57uf7hOAY3vCVCRZuluyRAV3bDs4G
+ B1DjiYr9nfecyM7S5cTtcXo2QZ6aZ5q0RTBH76skrlY13v8XDTslQXblOyHmmfnuL/oQT6Pn0AA
+ yslq9CKt5yo9p5wMxml9FLgP6REVx7igXt2zDTt12ekBCihdC8N8B63J9TRLhf7P+zl3rkjsp+r
+ 6zDQe+0Q8k15PyUG2TsWh7u18yn6ELETK6OjusQ94UpeYkmzqlnRJfv7sDvuypWSuUN4RNUIncA
+ JpxHUboevR270jfE0kjq+12eXeoXx1sSpMLLnfZAQscrlrQGNeabxbF2rz/Jtfmi8tuup1k7/
+X-Google-Smtp-Source: AGHT+IEgj8BFmhs1/uas98pbBPiZLCnBYS6/fpLAxifNtcYFJdfNc9kXQFaGON/PNK1C/2IYaMkwkQ==
+X-Received: by 2002:a05:600c:4ec6:b0:459:443e:b177 with SMTP id
+ 5b1f17b1804b1-45b4d84e192mr130045e9.25.1755724747224; 
+ Wed, 20 Aug 2025 14:19:07 -0700 (PDT)
+Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-45b47c30f23sm52522845e9.7.2025.08.20.12.51.32
+ 5b1f17b1804b1-45b47c8e7f2sm52398185e9.12.2025.08.20.14.19.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 20 Aug 2025 12:51:33 -0700 (PDT)
-Date: Wed, 20 Aug 2025 12:51:28 -0700
+ Wed, 20 Aug 2025 14:19:06 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: "dimon.zhao" <dimon.zhao@nebula-matrix.com>
-Cc: kyo.liu@nebula-matrix.com, dev@dpdk.org, Leon Yu
- <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH v3 02/16] net/nbl: add simple probe/remove and log module
-Message-ID: <20250820125128.136bc406@hermes.local>
-In-Reply-To: <20250627014022.4019625-3-dimon.zhao@nebula-matrix.com>
-References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
- <20250627014022.4019625-3-dimon.zhao@nebula-matrix.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Yipeng Wang <yipeng1.wang@intel.com>,
+ Sameh Gobriel <sameh.gobriel@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH] hash: replace zero length array
+Date: Wed, 20 Aug 2025 14:19:01 -0700
+Message-ID: <20250820211901.21986-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,49 +81,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 26 Jun 2025 18:40:08 -0700
-"dimon.zhao" <dimon.zhao@nebula-matrix.com> wrote:
+Zero-length arrays are a GNU C extension and instead use the ISO C99
+flexible array member.
 
-> +
-> +static int nbl_eth_dev_init(struct rte_eth_dev *eth_dev)
-> +{
-> +	const struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-> +	int ret;
-> +
-> +	PMD_INIT_FUNC_TRACE();
-> +	ret = nbl_core_init(adapter, eth_dev);
-> +	if (ret) {
-> +		NBL_LOG(INFO, "core init failed ret %d", ret);
-> +		goto eth_init_failed;
-> +	}
-> +
-> +	ret = nbl_core_start(adapter);
-> +	if (ret) {
-> +		NBL_LOG(INFO, "core start failed ret %d", ret);
-> +		nbl_core_remove(adapter);
-> +		goto eth_init_failed;
-> +	}
-> +
-> +	eth_dev->dev_ops = &nbl_eth_dev_ops;
-> +	return 0;
-> +
-> +eth_init_failed:
-> +	return ret;
-> +}
-> +
-> +/**
-> + * @brief: nbl device pci probe
-> + * @param[in]: {rte_pci_driver} *pci_drv
-> + * @param[in]: {rte_pci_device} *pci_dev
-> + * @return: {0-success,negative-fail}
-> + */
-> +static int nbl_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
-> +			 struct rte_pci_device *pci_dev)
-> +{
-> +	return rte_eth_dev_pci_generic_probe(pci_dev, sizeof(struct nbl_adapter),
-> +					     nbl_eth_dev_init);
-> +}
-> +
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/hash/rte_cuckoo_hash.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Since device doesn't support secondary process, it would make sense to
-detect that in probe handling and return error in secondary.
+diff --git a/lib/hash/rte_cuckoo_hash.h b/lib/hash/rte_cuckoo_hash.h
+index 26a992419a..cf5cd29144 100644
+--- a/lib/hash/rte_cuckoo_hash.h
++++ b/lib/hash/rte_cuckoo_hash.h
+@@ -131,7 +131,7 @@ struct rte_hash_key {
+ 		RTE_ATOMIC(void *) pdata;
+ 	};
+ 	/* Variable key size */
+-	char key[0];
++	char key[];
+ };
+ 
+ /** Bucket structure */
+-- 
+2.47.2
+
