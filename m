@@ -2,74 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBF6CA0EDC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 19:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C27DCCA0EDC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 19:49:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5FCE340292;
-	Wed, 20 Aug 2025 21:46:48 +0200 (CEST)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
- [209.85.221.45]) by mails.dpdk.org (Postfix) with ESMTP id C9AD44026C
- for <dev@dpdk.org>; Wed, 20 Aug 2025 21:46:46 +0200 (CEST)
-Received: by mail-wr1-f45.google.com with SMTP id
- ffacd0b85a97d-3b9edf504e6so201124f8f.3
- for <dev@dpdk.org>; Wed, 20 Aug 2025 12:46:46 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C935D40292;
+	Wed, 20 Aug 2025 21:49:58 +0200 (CEST)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com
+ [209.85.221.50]) by mails.dpdk.org (Postfix) with ESMTP id 38DF54026C
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 21:49:57 +0200 (CEST)
+Received: by mail-wr1-f50.google.com with SMTP id
+ ffacd0b85a97d-3bb2fb3a436so134032f8f.1
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 12:49:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755719206;
- x=1756324006; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755719397;
+ x=1756324197; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=uXgv7kp7v9qR4AvonqUjoh5QmzUnaYfDnGkaICm3FoQ=;
- b=Pf17xH+YlpmXYzzAmGyurw1b4uB0lAIWtK8GAPO9zTi71UsCix2fFlTcYd9KBPwxV+
- 7FEFFcTHKMmtbzA9JpvYxsFvrZrmaNJ0OcHGnP6M5Ne4uvnQHN3CTW92r6hyNty6+aAz
- Bk7ZR+xH2TAePPcLn9ZPV/ENBNtRl3IDSYEBmxuPzhjRJZQXd58Qq1vQv4FPqFCXr2Xk
- gbx7Zcd3nbcitaPajyEuzmkLX+6xgjmX/kE8XAtUBRWzqEGEI7Y02pOtEMP4P3cjhMWr
- oNQoKSPUSPQ6Ra6o29L5xidccgzbPqc/meTXWoBmYmP17PV50IPtieeU62N8fUXZB+T+
- 7LEQ==
+ bh=Sq3FwQYO8+aDP1EoZai0sYw1dHiAkkIBq+hgiLf3JJg=;
+ b=ZuhChT5sWanTeeX+cHsTdyPDrmnBORasB9HT8atNsfs3jB0/xX3t72G0od9pfXeAU/
+ VZvqSnFVkAM+QEB+r6sj3iFXFWQj/98zMuNLJ70W1xK9mwYdTtMvJMz7liN1/9NHdtZ0
+ Bk3fy2h4A5PM562OsaD/tR0CN6wLf3vm3bqILdSYpWwWhDr9Vco1JXLy4E00z1+OaUr6
+ THYRZkWPZzaRobqSv1o3dqUsKptEYvhQyR7wlCVg/NqGjrvPj9JVlPgnvGrr+b+LrXAV
+ KyKLNJ9iF8qF7gU81+Nl1A2USW5jQ8xevGmjSBZ+/DudiEbosJZmHIviPHTYKN30iiOZ
+ wkCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755719206; x=1756324006;
+ d=1e100.net; s=20230601; t=1755719397; x=1756324197;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=uXgv7kp7v9qR4AvonqUjoh5QmzUnaYfDnGkaICm3FoQ=;
- b=t60vUVgic1aofoc/P/YVFUH/PW9HTZAdoLmXNKRn6BsrKEFQ7Q7cP96IA5V0UAcm47
- 8n/062E8MlnsScIDjXChgmjGk1Fm+SzLZ6VBeQ81J7w5mCZwFJWUibwP25PdbeBIURGL
- vWFMeMtr5nfkvnn+9m2PCY7lw3Hfrp3AhAzgBTZUPJ5wmpgVCffIh7TWXNPBulQcaY35
- NxWk2va2XaIcEFTPel8UMoAmRwihG7q2UXkU75GaBBYb6cpS7oi2XSMspzqkgcf/WUGr
- +2ynMGwnfCFpOUh5r69iLzC4OO3hU1RtCN4/NFf+4TJZcZoMEWVgh6g+RV3pDU1gy5wk
- 7hKw==
+ bh=Sq3FwQYO8+aDP1EoZai0sYw1dHiAkkIBq+hgiLf3JJg=;
+ b=dE/+b6eyHBt1am1HyoHrv/JCbYb4i0zS3mNT4oo4rbnWX6AHFIxycCW4z0hz2BZIV1
+ NJNgzamDZuPusEGB1vA2vokZATMslXhx2zZq1np8P2lAbGPVR3wb38rGeh2VvaOLyVdV
+ 0JdcmU/IauxlVz/wzBzPOn2VlvClKeAm93v80OOWekJZOYlKOiPAcly5ZILZG+FuFytx
+ 6xoxCxSzztPSREm8GDJ/SjZx7ynWtJC4BTXqtQ4JopJdtjMZUhVCtwLsSxOCOaJMZDdA
+ idd0YVdRWXJuc28wbJPQP/3v3Pru5SV+4bzjz4FS5kqU75mA7tBBcAInPOs5+hCmN1bL
+ Jecg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVZGmeMJkCBcGAd2WkAhsgR0Sy49XmAoYuyuhTdRmMFJ2ZQgMhK4nYJKPzdQRk83nGg4Ew=@dpdk.org
-X-Gm-Message-State: AOJu0Yzzdf5l6F/e4ew0OblgeBxa2SdgkB/ck+54NOWiI+EGxgwSNPdW
- bCHc9ZmGf7pSQiHsy6FsEIoOjOKVRyeYUgqkcizhckD1ZzM/nJih9lVSzrmbaIMedVxWyVDdj2m
- su0HjsKE=
-X-Gm-Gg: ASbGncvnhwH0e/ACAopoYlPuS3xx+k0tc0AJ2ZqJ2DGEDMCxZ233gu5cOcC0ESQduqR
- VXpjzPCMvmtNERZRE5+bbT+1ncL/jMJsNm59ACfUPzB4g/fwfH3evWn31Dy9hGhF59oLJWrSVuF
- rh3DvLWs4K5Lz+CHg+RXZmGzkx++tZjiiSTBPBpKVjTciUuG9NwHYQoGEpr0uOAiTcyxzsEK/Ks
- 90Wm7LW2nqfxfHZUKBkzwFWBXFLEBFUWOH4Ii29NVcEefa8M6Y4x08lMmb/adk0Mlmzw5NlN7EL
- HPgdLhfo+xFiwt6c4nZesd72Q51Y9S7p7qjQIXp0JAb3V4UL6fjN/5Fa7yJwrS3INTh9FfZ+utp
- sKdAppOgZdoQMy4ctrBN0KrO0dhyFKWoU8ncGPYhvdtD7uYuhdRwJ9Ib2kej35IAnPdR6CIh9ED
- I=
-X-Google-Smtp-Source: AGHT+IGxPnnNe8/WPDDlcuqnv+cNjviSZIeNFWJNh0xhms3G4sqJQAW7bcKgG9lzuMll9Fk5z1NVMw==
-X-Received: by 2002:a05:6000:2c07:b0:3b7:6d94:a032 with SMTP id
- ffacd0b85a97d-3c494fc6289mr50948f8f.3.1755719206269; 
- Wed, 20 Aug 2025 12:46:46 -0700 (PDT)
+ AJvYcCVAxySqC3YqQbmZC9tmZ/eH/8M2BeFeWTyvfoe7rH3ghV95PYqqUgS+4MDdI8Zlr/hsg7g=@dpdk.org
+X-Gm-Message-State: AOJu0YwL95xtoFHMjNo+zkEUvc8voiHdZsdLuc6IzvishWwr7qeneXFJ
+ KiafGrU5XSYqzCBvxV5AoHdUBz8AoVPonvcAZqJg/lR+xb5QhJq1zBbIrPg3iM41RmE=
+X-Gm-Gg: ASbGnctt9fP6OTdvm4ATHN7vr/hdCt84T9jgRlZyagiNm0m7i7CT+NiMT+doX0w4IKi
+ /X2YHGoHHFS+P0AwRGW7YfeTTgwL4pWWIBa1GH4/yYioGlMXoeCIS9MIUSdnJ/fZdwCOrYZnars
+ b7C0tPvGWufjZ+ccPgLWY8EYDQZs0Ha8B57mbefIyN0N491+EzZ11bBlXGGX2L4rae6b/4ebByn
+ 1PCbovWVGEwE3ZKetqWJj/mpw7dXJ+bZNxVYRb0DzuCek9ifsJUNO3ccnKoc4SCqeO41AfmG7n7
+ TxUL8bSY8OBb5KBU0aznSlU9eRE2Z0te8KAn4oDyEKR8DDRrgs/4xlDXfBFuIaki6Ip9uzpmE/J
+ gpFGxaCv50EqqUBYXSTYbnG6HmKHYDZiRfgMCwu4lYbLOmR2H38iMlMumwvKgMNi/mSD5FBCTTn
+ lrvfC9Pzhuvg==
+X-Google-Smtp-Source: AGHT+IGX+/skHTtPWRfmqzozoTW6htYEKmI5Kdx5cAbpnef7IwbVBw/QZ5g/4uTTtsbhztI6E/EJwg==
+X-Received: by 2002:a05:6000:420a:b0:3b7:9564:29c3 with SMTP id
+ ffacd0b85a97d-3c4972748afmr27652f8f.49.1755719396736; 
+ Wed, 20 Aug 2025 12:49:56 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-45b47c33203sm44770765e9.9.2025.08.20.12.46.44
+ ffacd0b85a97d-3c0771c1708sm9049570f8f.38.2025.08.20.12.49.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 20 Aug 2025 12:46:46 -0700 (PDT)
-Date: Wed, 20 Aug 2025 12:46:41 -0700
+ Wed, 20 Aug 2025 12:49:56 -0700 (PDT)
+Date: Wed, 20 Aug 2025 12:49:52 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bingbin Chen <chen.bingbin@zte.com.cn>
-Cc: ivan.malov@arknetworks.am, wang.junlong1@zte.com.cn,
- yang.yonggang@zte.com.cn, dev@dpdk.org
-Subject: Re: [PATCH v6 1/2] net/zxdh: npsdk add flow director table ops
-Message-ID: <20250820124641.152b667c@hermes.local>
-In-Reply-To: <20250815074221.2254545-2-chen.bingbin@zte.com.cn>
-References: <20250814025248.2194951-1-chen.bingbin@zte.com.cn>
- <20250815074221.2254545-1-chen.bingbin@zte.com.cn>
- <20250815074221.2254545-2-chen.bingbin@zte.com.cn>
+To: longli@linuxonhyperv.com
+Cc: Wei Hu <weh@microsoft.com>, dev@dpdk.org, Long Li <longli@microsoft.com>
+Subject: Re: [PATCH v2] bus/vmbus: add device argument to configure if NUMA
+ information on the device should be ignored
+Message-ID: <20250820124952.7cd930cb@hermes.local>
+In-Reply-To: <1755563066-2592-1-git-send-email-longli@linuxonhyperv.com>
+References: <1755563066-2592-1-git-send-email-longli@linuxonhyperv.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -86,53 +83,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 15 Aug 2025 15:42:16 +0800
-Bingbin Chen <chen.bingbin@zte.com.cn> wrote:
+On Mon, 18 Aug 2025 17:24:26 -0700
+longli@linuxonhyperv.com wrote:
 
-> +static uint32_t
-> +zxdh_np_agent_channel_acl_index_request(uint32_t dev_id, uint32_t sdt_no,
-> +			uint32_t vport, uint32_t *p_index)
-> +{
-> +	uint32_t rc = ZXDH_OK;
-> +
-> +	uint32_t rsp_buff[2] = {0};
-> +	uint32_t msg_result = 0;
-> +	uint32_t acl_index = 0;
-> +	ZXDH_AGENT_CHANNEL_ACL_MSG_T msgcfg = {
-> +		.dev_id = 0,
-> +		.type = ZXDH_ACL_MSG,
-> +		.oper = ZXDH_ACL_INDEX_REQUEST,
-> +		.vport = vport,
-> +		.sdt_no = sdt_no,
-> +	};
-> +	ZXDH_AGENT_CHANNEL_MSG_T agent_msg = {
-> +		.msg = (void *)&msgcfg,
-> +		.msg_len = sizeof(ZXDH_AGENT_CHANNEL_ACL_MSG_T),
-> +	};
-> +
-> +	rc = zxdh_np_agent_channel_sync_send(dev_id, &agent_msg, rsp_buff, sizeof(rsp_buff));
+> From: Long Li <longli@microsoft.com>
+> 
+> In most cases, netvsc is used with a VF device. The application generally
+> runs with better performance when all the device memory is allocated on
+> VF's NUMA node, as the VF device carries most of the data packets.
+> 
+> But sometimes netvsc may run on a different NUMA node than that of the VF.
+> This patch adds a device argument "numa" to allow the application to
+> configure if this vmbus device (netvsc) should be NUMA aware. The default
+> behavior is NUMA aware. Setting "numa=0" specifies this vmbus device is
+> not NUMA aware.
+> 
+> The device argument is parsed at the time of vmbus device probe to ensure
+> all the following memory allocations are done on the configured NUMA node.
+> 
+> Signed-off-by: Long Li <longli@microsoft.com>
 
-You were probably taught somewhere to initialize all variables. But that is actually
-outdated recommendation. Modern compilers detect uninitialized variables and therefore bugs
-rather than just getting what was set before.
+Putting all the args in vmbus seems confusing, and not what I meant.
+Was more thing that ethdev and queues should be on same NUMA node.
 
-For example here. The first declaration sets 'rc' but then the first call is then
-setting rc, so the initialization in the declaration is redundent. I see lots of this in this code.
-
-The best way in modern code is to put variable declaration as close
-to where it is first used as possible.
-
-	uint32_t rc = zxdh_np_agent_channel_sync_send(dev_id, &agent_msg, rsp_buff, sizeof(rsp_buff));
-
-> +	dump_depth = dump_depth_128bit - start_index_128bit;
-> +
-> +	dump_data_buff = (uint8_t *)rte_zmalloc(NULL, dump_depth * ZXDH_DTB_LEN_POS_SETP, 0);
-
-Since rte_zmalloc() returns void * cast here is not needed.
-This extra cast is done lots of places.
-
-Also, can this be from heap (malloc) or stack (alloca) instead? 
-Or does it need to be in hugepages for DMA reasons?
-Same for lots of other buffers in the dump code.
-
-
+If NUMA is better why wouldn't it always be on?
+Since netvsc is really a virtual device not sure.
+I suspect 99% of users will be using with VF, that should be the default.
