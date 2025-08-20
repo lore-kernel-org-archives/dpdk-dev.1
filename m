@@ -2,40 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF78CA0EED
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 08:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE41CA0EDC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 08:42:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E081A40292;
-	Wed, 20 Aug 2025 10:12:02 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id D204B4026C
- for <dev@dpdk.org>; Wed, 20 Aug 2025 10:12:01 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A3FF520F9E;
- Wed, 20 Aug 2025 10:12:00 +0200 (CEST)
-Subject: RE: RFC: Drop support for undersize packet mbufs
+	by mails.dpdk.org (Postfix) with ESMTP id 4B1D940292;
+	Wed, 20 Aug 2025 10:42:00 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 0FC0A4026C
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 10:41:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1755679318;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=6Cz4jBjRf35BA3L4SUx+REOHN+Y42/dQLQq3Ydtw6Wc=;
+ b=T/G5twY8RCRQk0L++f/RwzOvankzg7oJHvDgg6mdX2gikQapzJTOTvGJ4CDYITjjZAv/w3
+ qO2bjbbto7TqVEtxWbJawnEJtdtBfQZndXg9J65+bDX41hhdaTaKEPz8Ayu4BerwLqiu5M
+ l4yWsHumvFv9NWNgipYh8hHAr136D1I=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-468-JtUUBWdLMPuw6nZmZ2usNg-1; Wed,
+ 20 Aug 2025 04:41:57 -0400
+X-MC-Unique: JtUUBWdLMPuw6nZmZ2usNg-1
+X-Mimecast-MFC-AGG-ID: JtUUBWdLMPuw6nZmZ2usNg_1755679316
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id B109018003FD; Wed, 20 Aug 2025 08:41:55 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.225.41])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id D7463180028A; Wed, 20 Aug 2025 08:41:53 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: Thomas Monjalon <thomas@monjalon.net>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH] ethdev: hide internal ethtool symbol
+Date: Wed, 20 Aug 2025 10:41:46 +0200
+Message-ID: <20250820084147.1253706-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Date: Wed, 20 Aug 2025 10:11:58 +0200
-Content-class: urn:content-classes:message
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE54@smartserver.smartshare.dk>
-In-Reply-To: <d4859ac6-2119-40b5-9e3b-ae88d56dc690@huawei.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: RFC: Drop support for undersize packet mbufs
-Thread-Index: AdwQLwpWQ/z7fVVPTQiB5OMTzALRMQBdRs4A
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-References: <98CBD80474FA8B44BF855DF32C47DC35E9FE42@smartserver.smartshare.dk>
- <d4859ac6-2119-40b5-9e3b-ae88d56dc690@huawei.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "fengchengwen" <fengchengwen@huawei.com>, <thomas@monjalon.net>,
- <bruce.richardson@intel.com>, <stephen@networkplumber.org>,
- <andrew.rybchenko@oktetlabs.ru>
-Cc: <dev@dpdk.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: xpzgXtq4ppORbon6hPRM0LakB8pG00fLjD7GrB_hGWQ_1755679316
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,61 +64,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBmZW5nY2hlbmd3ZW4gW21haWx0bzpmZW5nY2hlbmd3ZW5AaHVhd2VpLmNvbV0NCj4g
-U2VudDogTW9uZGF5LCAxOCBBdWd1c3QgMjAyNSAxMi41OA0KPiANCj4gT24gOC8xOC8yMDI1IDQ6
-MTEgUE0sIE1vcnRlbiBCcsO4cnVwIHdyb3RlOg0KPiA+IFdoeSBkb2VzIHRoZSBtYnVmIGxpYnJh
-cnkgc3VwcG9ydCBwYWNrZXQgbWJ1ZnMgd2l0aCBzbWFsbGVyIGRhdGEgcm9vbSBzaXplDQo+IHRo
-YW4gUlRFX1BLVE1CVUZfSEVBRFJPT00gKGUuZy4gWzFdKSwgd2hlbiB0aGUgRXRoZGV2IGRyaXZl
-cnMgKGUuZy4gWzJdKSBkb24ndA0KPiBzdXBwb3J0IGl0Pw0KPiANCj4gTWF5YmUgdGhlIHBrdG1i
-dWYgd2hpY2ggZXh0YnVmLCB3aGljaCB0aGUgZGF0YS1yb29tLXNpemUgaXMgemVybyB3aGVuIGNy
-ZWF0ZQ0KPiBwa3RtYnVmLg0KDQpUaGUgZGVzY3JpcHRpb25zIG9mIGFsbCB0aGUgcnRlX3BrdG1i
-dWZfcG9vbF9jcmVhdGUoKSBmdW5jdGlvbnMgLSBpbmNsdWRpbmcgcnRlX3BrdG1idWZfcG9vbF9j
-cmVhdGVfZXh0YnVmKCkgLSBzcGVjaWZ5IHRoYXQgdGhlIGRhdGEtcm9vbS1zaXplIG11c3QgYmUg
-Pj1SVEVfUEtUTUJVRl9IRUFEUk9PTToNCg0KICogQHBhcmFtIGRhdGFfcm9vbV9zaXplDQogKiAg
-IFNpemUgb2YgZGF0YSBidWZmZXIgaW4gZWFjaCBtYnVmLCBpbmNsdWRpbmcgUlRFX1BLVE1CVUZf
-SEVBRFJPT00uDQoNClNvIGl0IG1pZ2h0IGJlIHJlbGF0ZWQgdG8gZHluYW1pY2FsbHkgYXR0YWNo
-ZWQgKG5vbi1waW5uZWQpIGV4dGJ1ZnMgYmVpbmcgc21hbGxlciB0aGFuIFJURV9QS1RNQlVGX0hF
-QURST09NLiBXaGVuIHJlc2V0dGluZyBzdWNoIGEgcGFja2V0IG1idWYsIGl0IHdpbGwgYmUgYWxs
-IGhlYWRyb29tIGFuZCBoYXZlIHplcm8gcm9vbSBmb3IgZGF0YS4NCkhvdyBpcyB0aGlzIHVzZWZ1
-bD8NCkRvIGFueSByZWFsIGFwcGxpY2F0aW9ucyByZWFsbHkgdXNlIHN1Y2ggc21hbGwgbm9uLXBp
-bm5lZCBleHRidWZzPw0KDQo+IEFmdGVyIGRldGFjaCBmcm9tIGV4dGJ1ZiwgdGhlIGRhdGFfb2Zm
-IHNob3VsZCBiZSB6ZXJvIGluc3RlYWQgb2YNCj4gUlRFX1BLVE1CVUZfSEVBRFJPT00uDQoNCklu
-IHRoaXMgY2FzZSwgdGhlIHBrdG1idWYgcG9vbCBtdXN0IGhhdmUgYmVlbiBjcmVhdGVkIHdpdGgg
-dGhlIG1lbXBvb2wgbGlicmFyeSAoYnlwYXNzaW5nIHRoZSBtYnVmIGxpYnJhcnkpLCB3aGljaCBp
-cyBwZXJmZWN0bHkgdmFsaWQgYW5kIGRlc2NyaWJlZCBpbiB0aGUgbWJ1ZiBsaWJyYXJ5IGFzIGFu
-IGFsdGVybmF0aXZlIHdheSBvZiBjcmVhdGluZyBtYnVmIHBvb2xzLg0KU28sIGFmdGVyIGRldGFj
-aGluZyB0aGUgZXh0YnVmLCB0aGUgcGFja2V0IG1idWYgaGFzIGEgdmVyeSBzbWFsbCBkYXRhLXJv
-b20tc2l6ZSAocG9zc2libHkgemVybykuDQpJcyB0aGUgbWJ1ZiBnb2luZyB0byBiZSB1c2VkIGZv
-ciBhbnl0aGluZyBpbiB0aGlzIHN0YXRlPyBJLmUuIGRvZXMgdGhlIGRhdGFfb2ZmIG5lZWQgdG8g
-YmUgdmFsaWQgaW4gdGhpcyBzdGF0ZT8NCg0KPiANCj4gPg0KPiA+IFRoaXMgZ29lcyBhbGwgdGhl
-IHdheSBiYWNrIHRvIHRoZSBmaXJzdCBwdWJsaWMgcmVsZWFzZSBbM10uDQoNCkkgc3VzcGVjdCB0
-aGUgc3VwcG9ydCBmb3IgdW5kZXJzaXplIChpLmUuIHNtYWxsZXIgdGhhbiBSVEVfUEtUTUJVRl9I
-RUFEUk9PTSkgZGF0YS1yb29tLXNpemUgaXMgb2Jzb2xldGUsIGFuZCBtaWdodCBoYXZlIHNvbWV0
-aGluZyB0byBkbyB3aXRoIG1idWZzIG9yaWdpbmFsbHkgYmVpbmcgdXNlZCBmb3Igb3RoZXIgcHVy
-cG9zZXMgdGhhbiBwYWNrZXRzIChlLmcuIG5vbi1wYWNrZXQgbWVzc2FnZXMpLg0KDQo+ID4NCj4g
-PiBJdCBzZWVtcyBjcmF6eSBleG90aWMsIGFuZCBzaG91bGQgYmUgcmVtb3ZlZCBmb3Igc2ltcGxp
-Y2l0eSBhbmQgYSBwb3RlbnRpYWwNCj4gcGVyZm9ybWFuY2UgYmVuZWZpdC4NCj4gPiBXaGF0IGFt
-IEkgbWlzc2luZyBoZXJlPw0KPiA+DQo+ID4gSW5zdGVhZCwgdGhlIHJ0ZV9wa3RtYnVmX3Bvb2xf
-Y3JlYXRlKCkgZnVuY3Rpb25zIHNob3VsZCBjaGVjayB0aGF0DQo+IGRhdGFfcm9vbV9zaXplID49
-IFJURV9QS1RNQlVGX0hFQURST09NLg0KPiA+DQo+ID4NCj4gPiBbMV06IGh0dHBzOi8vZWxpeGly
-LmJvb3RsaW4uY29tL2RwZGsvdjI1LjA3L3NvdXJjZS9saWIvbWJ1Zi9ydGVfbWJ1Zi5oI0w5NDEN
-Cj4gPiBzdGF0aWMgaW5saW5lIHZvaWQgcnRlX3BrdG1idWZfcmVzZXRfaGVhZHJvb20oc3RydWN0
-IHJ0ZV9tYnVmICptKQ0KPiA+IHsNCj4gPiAJbS0+ZGF0YV9vZmYgPSAodWludDE2X3QpUlRFX01J
-TigodWludDE2X3QpUlRFX1BLVE1CVUZfSEVBRFJPT00sDQo+ID4gCQkJCQkodWludDE2X3QpbS0+
-YnVmX2xlbik7DQo+ID4gfQ0KPiA+DQo+ID4gWzJdOg0KPiBodHRwczovL2VsaXhpci5ib290bGlu
-LmNvbS9kcGRrL3YyNS4wNy9zb3VyY2UvZHJpdmVycy9uZXQvaW50ZWwvaTQwZS9pNDBlX3J4dHgN
-Cj4gLmMjTDYwOQ0KPiA+IG1iLT5kYXRhX29mZiA9IFJURV9QS1RNQlVGX0hFQURST09NOw0KPiA+
-DQo+ID4gWzNdOg0KPiBodHRwczovL2dpdC5kcGRrLm9yZy9kcGRrL2NvbW1pdC9saWIvbGlicnRl
-X21idWY/aWQ9YWY3NTA3OGZlY2UzNjE1MDg4ZTU2MTM1N2MNCj4gMWU5NzYwM2U0M2E1ZmUNCj4g
-PiArc3RhdGljIGlubGluZSB2b2lkIHJ0ZV9wa3RtYnVmX3Jlc2V0KHN0cnVjdCBydGVfbWJ1ZiAq
-bSkNCj4gPiArew0KPiA+ICsJdWludDMyX3QgYnVmX29mczsNCj4gPiArDQo+ID4gKwltLT5wa3Qu
-bmV4dCA9IE5VTEw7DQo+ID4gKwltLT5wa3QucGt0X2xlbiA9IDA7DQo+ID4gKwltLT5wa3QubDJf
-bGVuID0gMDsNCj4gPiArCW0tPnBrdC5sM19sZW4gPSAwOw0KPiA+ICsJbS0+cGt0LnZsYW5fdGNp
-ID0gMDsNCj4gPiArCW0tPnBrdC5uYl9zZWdzID0gMTsNCj4gPiArCW0tPnBrdC5pbl9wb3J0ID0g
-MHhmZjsNCj4gPiArDQo+ID4gKwltLT5vbF9mbGFncyA9IDA7DQo+ID4gKwlidWZfb2ZzID0gKFJU
-RV9QS1RNQlVGX0hFQURST09NIDw9IG0tPmJ1Zl9sZW4pID8NCj4gPiArCQkJUlRFX1BLVE1CVUZf
-SEVBRFJPT00gOiBtLT5idWZfbGVuOw0KPiA+ICsJbS0+cGt0LmRhdGEgPSAoY2hhciopIG0tPmJ1
-Zl9hZGRyICsgYnVmX29mczsNCj4gPiArDQo+ID4gKwltLT5wa3QuZGF0YV9sZW4gPSAwOw0KPiA+
-ICsJX19ydGVfbWJ1Zl9zYW5pdHlfY2hlY2sobSwgUlRFX01CVUZfUEtULCAxKTsNCj4gPiArfQ0K
-PiA+DQo+ID4NCj4gPg0KPiA+IE1lZCB2ZW5saWcgaGlsc2VuIC8gS2luZCByZWdhcmRzLA0KPiA+
-IC1Nb3J0ZW4gQnLDuHJ1cA0KPiA+DQoNCg==
+No code call this symbol out of ethdev, remove it from exported symbols
+and rename it.
+
+Note: there is nothing particularly wrong with exporting this symbol.
+It is just unneeded, and this symbol referencing a linux kernel enum
+triggers a abidiff warning in the RHEL CI when this enum gets updated.
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ lib/ethdev/ethdev_linux_ethtool.c | 7 +++----
+ lib/ethdev/ethdev_linux_ethtool.h | 6 ------
+ 2 files changed, 3 insertions(+), 10 deletions(-)
+
+diff --git a/lib/ethdev/ethdev_linux_ethtool.c b/lib/ethdev/ethdev_linux_ethtool.c
+index 5eddda1da3..e989ddfbf2 100644
+--- a/lib/ethdev/ethdev_linux_ethtool.c
++++ b/lib/ethdev/ethdev_linux_ethtool.c
+@@ -133,9 +133,8 @@ static const uint32_t link_modes[] = {
+ 	[120] =  800000, /* ETHTOOL_LINK_MODE_800000baseVR4_Full_BIT */
+ };
+ 
+-RTE_EXPORT_INTERNAL_SYMBOL(rte_eth_link_speed_ethtool)
+-uint32_t
+-rte_eth_link_speed_ethtool(enum ethtool_link_mode_bit_indices bit)
++static uint32_t
++eth_link_speed_ethtool(enum ethtool_link_mode_bit_indices bit)
+ {
+ 	uint32_t speed;
+ 	int duplex;
+@@ -171,7 +170,7 @@ rte_eth_link_speed_glink(const uint32_t *bitmap, int8_t nwords)
+ 		for (bit = 0; bit < 32; bit++) {
+ 			if ((bitmap[word] & RTE_BIT32(bit)) == 0)
+ 				continue;
+-			ethdev_bitmap |= rte_eth_link_speed_ethtool(word * 32 + bit);
++			ethdev_bitmap |= eth_link_speed_ethtool(word * 32 + bit);
+ 		}
+ 	}
+ 
+diff --git a/lib/ethdev/ethdev_linux_ethtool.h b/lib/ethdev/ethdev_linux_ethtool.h
+index de235bd5f4..59fc84dfa0 100644
+--- a/lib/ethdev/ethdev_linux_ethtool.h
++++ b/lib/ethdev/ethdev_linux_ethtool.h
+@@ -14,12 +14,6 @@
+ extern "C" {
+ #endif
+ 
+-/*
+- * Convert bit from ETHTOOL_LINK_MODE_* to RTE_ETH_LINK_SPEED_*
+- */
+-__rte_internal
+-uint32_t rte_eth_link_speed_ethtool(enum ethtool_link_mode_bit_indices bit);
+-
+ /*
+  * Convert bitmap from ETHTOOL_GLINKSETTINGS ethtool_link_settings::link_mode_masks
+  * to bitmap RTE_ETH_LINK_SPEED_*
+-- 
+2.50.1
+
