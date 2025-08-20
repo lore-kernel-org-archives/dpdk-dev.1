@@ -2,76 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AD0CA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 16:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F57CA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 17:52:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C9179402DD;
-	Wed, 20 Aug 2025 18:16:45 +0200 (CEST)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
- [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 4D66E402CC
- for <dev@dpdk.org>; Wed, 20 Aug 2025 18:16:44 +0200 (CEST)
-Received: by mail-wm1-f52.google.com with SMTP id
- 5b1f17b1804b1-45a1b0b6ac4so146345e9.2
- for <dev@dpdk.org>; Wed, 20 Aug 2025 09:16:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755706604;
- x=1756311404; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=gru6yd/O1FoflcQhe5JERSUago08CUAfiT91k+CRZNU=;
- b=iwqc+M2NFpdTXz4hB5H93nNOwOYj4oIAq2dhCyWs5r4s7aG8/ijgI4/BcM2nTXxMlw
- VnSgumeNoxYbi+or/BODOan5Z/Af8pjIaNzsmenyzTFL0Hd/azW5lj+wPK6HzPgS0pkE
- 88x95xR6uwn7wxON0g2W1j2tuiavK1A1QrnK3lheaYYF97hN/x+p9pDu3r+pinDJE4o2
- nYh7+hDS71/JFpfN/5/T8legmR8crsa6tnNLeHjJWeZm/ISH/qmHucGHdpvsGwpj0k9P
- JHvSFccRlFcn8zetYAy7PgHVor0UhGnmwJOm4zneE7Nk/+Uxd8UeNdQsSduI2GUIALas
- o+Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755706604; x=1756311404;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=gru6yd/O1FoflcQhe5JERSUago08CUAfiT91k+CRZNU=;
- b=c7gFF6fW0PrpoglLk2e2oDZr/lU9XNvX0EHrL7nsNnynF8MglTjK12Vjw6fDqM+1CK
- NCp/N5sryh8W9gZGzz5rhqX+bsXZhmRJ90XUMAFuASUIipf5T2LfmBNUthilrWGSDgRJ
- 0hC6JfvWhejQW5hicbtbbDv3wNP4WVqNpSuJlx8nqSVxFTzLZHU3n9PIWokWO3+3u3mc
- wqy2RgmedtzhUGC1dSVu/Y8w06KMub1QEELdc1GFY6UNvuFlUpkksSAWTuCRweXG1v2E
- 3VBb2P8QEasm1BHYpuXENq06dr8Rw8UYU5VKQEg/WGn2F1vFk5cIdYTWCVT1ZmvtYUQD
- HFrg==
-X-Gm-Message-State: AOJu0YzHFC7BEcryLxs63gTkk52nTI48xtD5AaIKGnr2fyJGaPHuglpf
- RABmCwYS63Q2CjXW0eYMr3uD+FPkCZtnCy7zOQ5QIrlCCTZNFOamED14F9LX5NSBuzh1K17yjNo
- DA/fKezU=
-X-Gm-Gg: ASbGncst2bx6oeLR73L6uTxSiNg0YNmQ5BEvJoCR8ryyX0ARIKSMW1hknrKGOy4Lj85
- Gj/mXG3piZd0fxFAK6hNTyos3tVWWPGDikmvzCck1vBkEoheLO5YKVfZnq9Ymudw8ZCAXQvLSda
- adp4AdYOZ+Hb/ID7pdsaBuEG3Qu68jHAJWSlh1W1jYe2NpAit9HM6M7Gpde6BOaegJYxYVPfUpo
- cFsd0UTUPb1nsU8E6HqBcW7TFnooNNYjHXJGJxG19oOLZVxHvIAFR1zBbjX06daFw26Wira94Dr
- oZvO1Uly/afHjTIIQ6wa/gn8WooFyNZS31NBwcVw/5g918XCQtwgvvY61MUxP5tk0r6/cyacNLD
- s9lRvC0ECajNDAmrMIIuuVL0AivSFKIoZk0ClmraT2hv+X6DCMAc6sQT8rY6sZKiOPprsY3sg/8
- Y=
-X-Google-Smtp-Source: AGHT+IENxfproAsRRmYTkgqpK8eUkdkSW8aIYspI3qT6fKrC+sWFwHDfK0ihC8nBMX61Vdyw3tp1Pw==
-X-Received: by 2002:a05:600c:3510:b0:456:f00:4b5d with SMTP id
- 5b1f17b1804b1-45b479e9be8mr25057245e9.22.1755706603682; 
- Wed, 20 Aug 2025 09:16:43 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c074d43956sm8405393f8f.19.2025.08.20.09.16.42
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 20 Aug 2025 09:16:43 -0700 (PDT)
-Date: Wed, 20 Aug 2025 09:16:37 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
- <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH v5 04/17] net/nbl: add Channel layer definitions and
- implementation
-Message-ID: <20250820091637.3388306d@hermes.local>
-In-Reply-To: <20250819102237.3067518-5-dimon.zhao@nebula-matrix.com>
-References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
- <20250819102237.3067518-1-dimon.zhao@nebula-matrix.com>
- <20250819102237.3067518-5-dimon.zhao@nebula-matrix.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9EBCA402DD;
+	Wed, 20 Aug 2025 19:52:35 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 20F59402CC
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 19:52:33 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KHq5HP024613
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 10:52:33 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=b6tH92B6+Pjjm4OqFCpU0yv
+ XBUr6bmiZabtowdaH1+o=; b=P2OFojEgw8FKqeOCJIUcYMXL6ueBvkOnwb/7rRu
+ if3bcuhtBvUfxAJqUvBYSeIXJ5wF2sw8KkNRUUm4txmtr4ojOt6dYpRPO0UrxO2D
+ dxAijr+gwpVczcZTH/TTYdH7G130OZrQK0H9RZFE6kQl5cAQRu0IrH3zMc7/WeWs
+ 1zULdJQWku7DkIdyyk7x2EPgr0gefscO4OZuVzKpciAWx433E1TNA/UbtyV7oQyE
+ xniZd1i1U90yLhBauQ0C8e045Y/J0h2DKuk9DBbfZu9D3yDeg9WhDIN86MbaNHDM
+ o0OwxoNTYmuyGAOzRngTblU/sJrXinPNHtWIxHUf5wFUBRw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48nk4xg024-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 10:52:33 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 20 Aug 2025 10:52:36 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Wed, 20 Aug 2025 10:52:36 -0700
+Received: from ssarananaga.marvell.com (unknown [10.29.57.26])
+ by maili.marvell.com (Postfix) with ESMTP id A95CB5B692A;
+ Wed, 20 Aug 2025 10:52:29 -0700 (PDT)
+From: Sucharitha Sarananaga <ssarananaga@marvell.com>
+To: <dev@dpdk.org>
+CC: <anoobj@marvell.com>, <gakhil@marvell.com>, <ktejasree@marvell.com>,
+ <adwivedi@marvell.com>, Sucharitha Sarananaga <ssarananaga@marvell.com>
+Subject: [PATCH] crypto/cnxk: refactor rsa verification
+Date: Wed, 20 Aug 2025 17:52:18 +0000
+Message-ID: <20250820175218.2963352-1-ssarananaga@marvell.com>
+X-Mailer: git-send-email 2.49.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: ev-PK-mIKEij-he7D4Hk3SycSzEtU5bq
+X-Proofpoint-GUID: ev-PK-mIKEij-he7D4Hk3SycSzEtU5bq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDE1OCBTYWx0ZWRfX+dGwtenYNsgv
+ cH0EW+QAX1EWh8jxeun+8ayzZKBsWsJpJ8mCbgfPH9somtk0xJMmhHNImL7saute/dE6FPCOrbw
+ xcNT1Te95FZjTMa44Llnvkwc72bAEmNZqtdOFWAdwL4QkFnRVV34q5sNQRoDSVLRiDGB/ZM0UgR
+ icbh3JyGk2QLI+GWvQNA6+ghoztlzudaZjs6/idW4AhDAv/u2Bf0w3esiTVkR/Uer/MlWsfobOH
+ CEL+mo/snJRG0qx04ruUSOYLeVwdinvHL1sjxACJmO/megBcqYb24BOnLTJFOj8nOD4YAgSf65a
+ LMcNm2VWro4ZeMhMeE4ZwPS6UgAHXlmTtmA/ndcohqNDx6nGzqp5+fGsXiJaTbr4qHtWT71xMUe
+ knE3ciZfukk7xI/HZY5bWRfBw06Bq98globR/az5DaAEBLvW47oJCbT5HlQdmitHoNTEZ0w5
+X-Authority-Analysis: v=2.4 cv=Z6W13HRA c=1 sm=1 tr=0 ts=68a60b61 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=XWf8bmjYm4pwaHeV5VkA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_04,2025-08-20_03,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,36 +77,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 19 Aug 2025 03:22:24 -0700
-Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
+This patch avoid copying the decrypted message into
+the signature buffer, which is actually an input to the
+verify operation. This prevents overwriting the input
+buffer unnecessarily.
 
-> +
-> +static uint32_t nbl_chan_thread_polling_task(void *param)
-> +{
-> +	struct nbl_channel_mgt *chan_mgt = (struct nbl_channel_mgt *)param;
-> +	union nbl_chan_info *chan_info = NBL_CHAN_MGT_TO_CHAN_INFO(chan_mgt);
-> +	struct timespec time;
-> +	char unused[16];
-> +	ssize_t nr = 0;
-> +
-> +	time.tv_sec = 0;
-> +	time.tv_nsec = 100000;
-> +
-> +	while (true) {
-> +		if (rte_bitmap_get(chan_info->mailbox.state_bmp, NBL_CHAN_INTERRUPT_READY)) {
-> +			nr = read(chan_info->mailbox.fd[0], &unused, sizeof(unused));
-> +			if (nr < 0)
-> +				break;
-> +		}
-> +		nbl_chan_clean_queue(chan_mgt);
-> +		nanosleep(&time, 0);
-> +	}
-> +
-> +	return 0;
-> +}
+Fixes: 6661bedf1605 ("crypto/cnxk: add asymmetric datapath")
 
-This is going to make embedded application developers upset because it uses
-a significant part of a CPU polling.
+Signed-off-by: Sucharitha Sarananaga <ssarananaga@marvell.com>
+---
+ drivers/crypto/cnxk/cnxk_ae.h | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-Since you are reading from mailbox, why not implement select/poll/epoll and
-have the thread block waiting to read mailbox instead.
+diff --git a/drivers/crypto/cnxk/cnxk_ae.h b/drivers/crypto/cnxk/cnxk_ae.h
+index cd66f66e70..26a8f4544d 100644
+--- a/drivers/crypto/cnxk/cnxk_ae.h
++++ b/drivers/crypto/cnxk/cnxk_ae.h
+@@ -1583,20 +1583,18 @@ cnxk_ae_dequeue_rsa_op(struct rte_crypto_op *cop, uint8_t *rptr,
+ 	case RTE_CRYPTO_ASYM_OP_VERIFY:
+ 		if (rsa_ctx->padding.type == RTE_CRYPTO_RSA_PADDING_NONE) {
+ 			rsa->sign.length = rsa_ctx->n.length;
+-			memcpy(rsa->sign.data, rptr, rsa->sign.length);
++			if (memcmp(rptr, rsa->message.data, rsa->message.length))
++				cop->status = RTE_CRYPTO_OP_STATUS_ERROR;
+ 		} else {
+ 			/* Get length of signed output */
+ 			rsa->sign.length =
+ 				rte_cpu_to_be_16(*((uint16_t *)rptr));
+ 			/*
+ 			 * Offset output data pointer by length field
+-			 * (2 bytes) and copy signed data.
++			 * (2 bytes) and compare signed data.
+ 			 */
+-			memcpy(rsa->sign.data, rptr + 2, rsa->sign.length);
+-		}
+-		if (memcmp(rsa->sign.data, rsa->message.data,
+-			   rsa->message.length)) {
+-			cop->status = RTE_CRYPTO_OP_STATUS_ERROR;
++			if (memcmp(rptr + 2, rsa->message.data, rsa->message.length))
++				cop->status = RTE_CRYPTO_OP_STATUS_ERROR;
+ 		}
+ 		break;
+ 	default:
+-- 
+2.49.0
+
