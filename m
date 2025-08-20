@@ -2,63 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94818CA0EDC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 15:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC927CA0EDC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 15:12:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA90B402CC;
-	Wed, 20 Aug 2025 17:11:24 +0200 (CEST)
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com
- [209.85.160.169])
- by mails.dpdk.org (Postfix) with ESMTP id 7FE474027D
- for <dev@dpdk.org>; Wed, 20 Aug 2025 17:11:23 +0200 (CEST)
-Received: by mail-qt1-f169.google.com with SMTP id
- d75a77b69052e-4b133b24ed7so29046331cf.3
- for <dev@dpdk.org>; Wed, 20 Aug 2025 08:11:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E188B402CC;
+	Wed, 20 Aug 2025 17:12:20 +0200 (CEST)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com
+ [209.85.160.172])
+ by mails.dpdk.org (Postfix) with ESMTP id BCE044027D
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 17:12:19 +0200 (CEST)
+Received: by mail-qt1-f172.google.com with SMTP id
+ d75a77b69052e-4b297962525so4805191cf.1
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 08:12:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1755702683; x=1756307483; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1755702739; x=1756307539; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=zFxC/uHiyVg60bIRzj9Q9G5UbpZ2D1mgFS4CFUbxfiY=;
- b=HIyQfAwilET8N52YPRLqP7utHkuHmEGh7sZrzYkeqfqYYmXw1IwQBJ/WpuFgfw0FWt
- IFllEMOXiNLItNs2+67RYUI6/B4ElTC64gt8pVPDalonO98iTzPOdp7ff3KlAFxhBMGV
- Fx9HNDXoKl5xr/QEQ1Tn1bo/K8z95Yna653Is=
+ bh=wdbGNBIPRryhxPDJ5Q4zHPCewgjzES+OlqjB69UjXX0=;
+ b=OVwB3jnollb5hsunjq1cogZmuYEW9cwri0v+dl7PttnOR7SAraSaikLfKGgwkmq3p7
+ TvW2JQN2Kgu4iPNmCPtzRZWOHSh2kvsM5oUe4q+Tl1foxpQZaix7cAiq+Dadio9+gXVp
+ bv9wMHNMcS5vhtkHkTu1z7j14rdqz6fuvT/XU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755702683; x=1756307483;
+ d=1e100.net; s=20230601; t=1755702739; x=1756307539;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=zFxC/uHiyVg60bIRzj9Q9G5UbpZ2D1mgFS4CFUbxfiY=;
- b=Bh+KW0WA6AUI0bdPboPRtJoDat4z6SakJvCdgpwhie9Ybvowv80rfDvaHg6B/+cCts
- 31cmgLWF11NW3cbVMt9WD0ZYpXbdVgiNZTBNdjJ2oEAbJdq+J13qVZBXKc+v8oAGO2g4
- VS+AA/MvznJxS6sjwvncmpXRsqMyk1YZTsEVOYVnzzRhwQrXa/ApNuGd2qB5+LXbOdNI
- tH2qiFlfDBlK8ZY9Ves5qCwEaqJJEKTd+TbNYhMBJBFxi/9NYIkaLhsB8ipleMNkDvfP
- bZpE7yODFOwWX3qT9IBgPdeee5Sm4rwEV3hdtQVS0UqrpA02+zntk8os2iRpAgxeQLaY
- q1ww==
-X-Gm-Message-State: AOJu0YywZpafhkjRZ7YRf8PYd0rSrIzW+CkdWH87knrCPxTRghmsTW++
- //IY28a+aOnX/8hfR1FAWUqmK1bAcFbvfqpi8ylmI1ZbMYvY1J3FBNvg5BVxYNcCI8o=
-X-Gm-Gg: ASbGncvFCT0KikHtoPSnZ9DX3k7/s1C8v0Q9bV0fxE0ISR6hu9lZDnXG3NBKuLRX7ac
- v+vgcbHKWAazFyShmOID0PRsCSD9ZF0wctXeXkxEyx8N+z+Q9HKBPjqgsykOG77UHE4Bnk3RSeL
- OFX3N73drmrsCKQYbnN+tW92g1XpeYNXOvqvMAZzRtXzoUY8To0NuDctGObqGmev2PEcdDo9ovl
- zzLaCyvEKJIzskM3m5wQoqR+cwhwMPuXFK5SzKITeDe5hukigWJa4AK0FyGul91t8CGpm2rOcCu
- 2ArzPEwZ4HzZWwPCDLv725NJoE8MIRQCkBnrlsMz9laAzAymtP9S1VX1h7mZK3VnyGwx9s8cRXW
- OEaz3+5iFisgY/w==
-X-Google-Smtp-Source: AGHT+IFLJCweRr3QLkHchJOnKaZ4xGeRf9oZO4xGsnBrj4jV7/3v35sKFu1yefOg9VK1grq/35vsSQ==
-X-Received: by 2002:a05:622a:1a95:b0:4b0:75d1:5efc with SMTP id
- d75a77b69052e-4b291ae5509mr38621421cf.19.1755702682307; 
- Wed, 20 Aug 2025 08:11:22 -0700 (PDT)
+ bh=wdbGNBIPRryhxPDJ5Q4zHPCewgjzES+OlqjB69UjXX0=;
+ b=flrhfebT8YI0/Ag4l6AW25A0oQvG4k7TDgoy21MKRlPaKrtArl8UjycyWOTScTa1cT
+ jpV/sSzU5vJlCleHoU5W1l0Gg8q/1gYhjOJ5LM5OHInzRRWE60c2MDsOQ+EprL1WqRmD
+ kDDF+oruF5hyP3DbMeVJh4wn3RapY8rZZuFolzYts5xeJsq0vsZ87xUo969Ec+Yz6k0d
+ +D/Nr4pbvVtmMaBd0nbsK4ErG+qUvJ6FJ6M24Dluw7Ij1wLF7o+1NDVFwC6GYL+Kp0P+
+ M6Ngn7rwsstv5PXcrNI86bNEepnZ6a1Z/TmowN7L5RFcyZ14+9tmUkLA2H+pt9S2Txg9
+ stSg==
+X-Gm-Message-State: AOJu0YwpmkchJBCpwoeccY/GoA8FwfgODKUy7i+gH3tSB3Dd8ALzClAQ
+ 0drYK0yLfkP9t797xzvFWS2twyemsoIdHbN7o3SgT9HeL9+orUQ63af5qA1eB5YU4q0=
+X-Gm-Gg: ASbGncvYtU482mD/KovAFRNBHCGoypKyhE5dSBDlD0ljOe78egXzvw1uui4HmXHrk9t
+ xh14rsXvB0TQpowo4AweVY0jP8vmtcRBKM25dPMUH7+4rMGKz03i0ACvfpIXF4/rjl6YLaod5zg
+ C33sto/U3sCdPTEUkgxvkFVJSNVW6sdGtOXsA9ULOUrcDzj+ceDtzxlur9Wsti3KdzYw5I1Yx3y
+ oAy0fDBItFbJLekh7ICmm6OZTHMFsthzXuOodpQytWOxKORpIX0YAYpygKDTKk+glk0a5U9e2kH
+ 6GMrwPqJAzRwU87xcM0eivoVz99sKuC5UzdT0QKPDz8FFcn15XIM8XStsWb2T+f4hdLAUN+AIQV
+ P1Hw9dHpzKvI1Kg==
+X-Google-Smtp-Source: AGHT+IE8FCtsVqyGeUfDdhQm/1CuSH+SWi0y0CivjAzTAnsftLHUNFLBrIY0pUa3lo8uRPwcqYJyzg==
+X-Received: by 2002:a05:622a:2cd:b0:4ab:40d6:ba26 with SMTP id
+ d75a77b69052e-4b29122c2cemr36907121cf.24.1755702738451; 
+ Wed, 20 Aug 2025 08:12:18 -0700 (PDT)
 Received: from d121016.iol.unh.edu ([2606:4100:3880:1210::202])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7e87e0224c1sm970281585a.6.2025.08.20.08.11.21
+ d75a77b69052e-4b12509cdcdsm79298441cf.27.2025.08.20.08.12.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 20 Aug 2025 08:11:21 -0700 (PDT)
+ Wed, 20 Aug 2025 08:12:17 -0700 (PDT)
 From: Dean Marx <dmarx@iol.unh.edu>
 To: probb@iol.unh.edu, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
  Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
 Cc: dev@dpdk.org,
 	Dean Marx <dmarx@iol.unh.edu>
 Subject: [PATCH v1] dts: remove test_ prefix from test case names
-Date: Wed, 20 Aug 2025 11:11:20 -0400
-Message-ID: <20250820151120.47558-1-dmarx@iol.unh.edu>
+Date: Wed, 20 Aug 2025 11:12:15 -0400
+Message-ID: <20250820151215.47742-1-dmarx@iol.unh.edu>
 X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -79,6 +79,8 @@ A majority of test cases in DTS are prepended with 'test_',
 however this is no longer required with the introduction of
 functional/performance test decorators some time ago.
 Remove all of these prefixes from test cases.
+
+Bugzilla ID: 1770
 
 Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
 ---
