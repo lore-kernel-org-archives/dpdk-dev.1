@@ -2,159 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 222F8CA0EFA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 10:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD3BCA0EDC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 11:13:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4BCBD4065E;
-	Wed, 20 Aug 2025 12:36:17 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id C0647402DD
- for <dev@dpdk.org>; Wed, 20 Aug 2025 12:36:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1755686176; x=1787222176;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=EI7c9ftsa7JOuNWf95h6U0i8Cs/GyyGUUUe9ytfX6pI=;
- b=MIMs5KO45YF/iekM8vMcdlJybfgs/G5fMXmdS0fRU2oXWOpZNbz1Sgrz
- yS4bqGvLO1/x+pNCa82vkogXl81Rf5vt/mX4p6QIM+wsxmaiJAsq0Q3Qc
- 5HVe4f3jumS7ogSN0Zw/Q1/jXhKFaAAEEfFQ41HT3RfgrhAO2BCilLlQt
- Rof6fBvMl9fQYpxOQLV5dfd6F4Qck4d920EtBqSq7j3Hf4NFoeKZAE07B
- 2IvplUft1n76sv/+hoBCNXt/PW/bMxP9Ok319ClgwYSF5wwl1V3jox2Tq
- MQdHmv8cB/z/k9yKwHP2kL13cQlgvziGtbXxAxD+n+Dwvj9XI1SUEgxwv A==;
-X-CSE-ConnectionGUID: TCftCOpKTdqdp0JWoSKOpQ==
-X-CSE-MsgGUID: btmhaKDYSwm6VBwkWHhTBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="45522017"
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; d="scan'208";a="45522017"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Aug 2025 03:36:15 -0700
-X-CSE-ConnectionGUID: sm/SiNiyR0SbAH/x/rhE4g==
-X-CSE-MsgGUID: rwvtfFfoQrygQcACyslRfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; d="scan'208";a="173451968"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Aug 2025 03:36:15 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id D61C040292;
+	Wed, 20 Aug 2025 13:13:58 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 0CBF34027D
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 13:13:56 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KABaZ5010264;
+ Wed, 20 Aug 2025 04:13:55 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=x
+ A3O8WxC/cT4CEcJ72UvTKh4+UnRDn/Od4EjQV5iMaY=; b=cDT2p1RRJHrWyEDqx
+ lwJCuRDr6Ilu6QIUxFADCduGyc33+XyE5qT1f4YD+BOmfGZ/PW8C5Nq8P5apP1Qt
+ xO621h7sfr1Uo2CvPB8fVb5wHhYRRx3n/qgBIUhAZmM5YzV7OyZcur6xf/xd4PjM
+ /XlyphMevVMdDr3wOWADJptj1OkkkX3B1GblMv84D3sYGBX+A4owv/UuuGsZhzi/
+ rG79o9+ZTybCCLcahmWBBONC5d0eITyc10Pmfzu0JfQjfTSQcdz7lF4LOcgqQ7Nq
+ w+iAtm0137lFZWi4+Y2hc3xfTyuO6Bf6DguqIXAFE5TJc/EEZxrl8Qmoph+x756a
+ mFc1g==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48nccs83an-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 20 Aug 2025 04:13:55 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 20 Aug 2025 03:36:14 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 20 Aug 2025 03:36:14 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.67)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 20 Aug 2025 03:36:14 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hiAfge+7O14FseIV2j0XWvQMmxAwhjJPyxYM4YOFpZsfwWXV5DUrx2mM2fbodisDrtyTXMVcSWiTvYQBcmT9LtatYYnuwAhT3om6NhtvAAB8BU+3XW0LRFa9gKVoVwL1W9HdVqCDDHhiv6edMDGfRhnnkYNlQN4T9ZTR/HIks+s8Y2RBQ5BbiZg6HU0Ydj+MBDw+Lx68rTjyr783lWN34LFy0dFzPfAR42yBjQdo/kdNkfm6Jnjg8ePmkekaRhbYvEwghYVyXWb77phM9j/7jySPJq5CS2XLUPJnpllinev2LkvqLnuRfgL5jwFZ+iGUiwAha9fjjVJRQelNWzLDGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zcFhFARBPnVtl2JMsbIndOpX9M8WCvg4JutBzPMXSuc=;
- b=n7p4vO52iEkZOlnXL2eFIlI+R7Uu/4phhnohkm5rfHxXd0Jyqx6wK2DNrM1xkzg9COrsj94QLihtAGvp9YJiXQFzm29gu9nc7yC2edMjWOlaVh61UJspuAHjdTnn0WuNZmHMb6GKeSB8bUdXhkar/VK3CI57C9ZGktSMAZ/AzOt672be5ziRnpbLD/dBfmwc+cKHgARnt+dyUySdFZExQq65HYoTA/Aejk7keE5ChL0Xu5lWZP0nO8mQNi0YqccN1PFp7DSYQ8a2FhUNyJRKN1+OuwBal+2VCnU4/+QomQO1yqcnEmmGLwgT/mGyj83n9q0AcGEdObdusqmlHKerkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SA0PR11MB7160.namprd11.prod.outlook.com (2603:10b6:806:24b::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.25; Wed, 20 Aug
- 2025 10:36:12 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9052.013; Wed, 20 Aug 2025
- 10:36:12 +0000
-Date: Wed, 20 Aug 2025 11:35:26 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>
-CC: Thomas Monjalon <thomas@monjalon.net>, <dev@dpdk.org>
-Subject: Re: [PATCH] devtools: ignore new warnings on reported-by tag
-Message-ID: <aKWk7kDCTWbj2MKd@bricha3-mobl1.ger.corp.intel.com>
-References: <20250820095050.1090859-1-dsosnowski@nvidia.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250820095050.1090859-1-dsosnowski@nvidia.com>
-X-ClientProxiedBy: DU7P189CA0004.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:10:552::20) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ 15.2.1544.25; Wed, 20 Aug 2025 04:13:59 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Wed, 20 Aug 2025 04:13:59 -0700
+Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
+ by maili.marvell.com (Postfix) with ESMTP id 226633F7091;
+ Wed, 20 Aug 2025 04:13:52 -0700 (PDT)
+From: <skori@marvell.com>
+To: Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>
+CC: <dev@dpdk.org>, Sunil Kumar Kori <skori@marvell.com>, Nithin Dabilpuram
+ <ndabilpuram@marvell.com>
+Subject: [PATCH v6 1/1] ethdev: add support to provide link type
+Date: Wed, 20 Aug 2025 16:43:11 +0530
+Message-ID: <20250820111350.2992591-1-skori@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250819055126.2745262-1-skori@marvell.com>
+References: <20250819055126.2745262-1-skori@marvell.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA0PR11MB7160:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46ded0e6-cf66-403c-1d2c-08dddfd5620b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?5FuDds+YiqUKT/k1XKbu39O3+mz4DdWuEPjblItceKbYthpJY0JZbG2PmzYa?=
- =?us-ascii?Q?GK4rSM189vDOSjen6qKWkyy12WY5cRTpU53T3Pjd07JsHj67Vp9WidQsHALP?=
- =?us-ascii?Q?WCekaTah0PNihf9AnntxqFsmOFE7zcGJW8XU2ZGjYJyfHNEI1umAEqj1JrEZ?=
- =?us-ascii?Q?KgM9knUdk+LeCm1srqwnxTBU6WgyE0hvAD+fKecjbKTNQ/5tbMbio1tSrCWx?=
- =?us-ascii?Q?f8Wct6pX2e6pwsAemNdt7ja3rSIuuGraG30DFwcLTlVdoSHucMCbcvbjmChR?=
- =?us-ascii?Q?X1C/Lksh8+K2JGWLWOiSJ3mZSUWCcgiTHRbW+uHu3FVqvrsUMvfe1NK6tELm?=
- =?us-ascii?Q?xuQIjuj2JcqroUBk/mNLswUnf8t+WVPW5+Io8UBKOE05xXLpiyCFsUFuoMo/?=
- =?us-ascii?Q?WPLQh8evf7iFKUkzV1uNjBaj6w9B43KBXF07eXI4j2KTvEXA7ukgIhI+ayUt?=
- =?us-ascii?Q?NwEOGZFiWrU1MUAH4YWdNLQ0NO/xaX8aKp/oYhYZm0eyBfRq18VIfToO9ATo?=
- =?us-ascii?Q?JVEXabRoraMjcE5z/wpusSm3uc7IS+fPQpQXhyFBDq6KrapU7pdyt+JlziIb?=
- =?us-ascii?Q?GVoXlOkxlDAO8iCttHD2ePw02ioYNgRp28+S+rMJZtpEx/VByVZRhXrcROfz?=
- =?us-ascii?Q?XY3kTJ0VHjf52OTLyzvZFyej2KVbKE0QxS1lacggyYIU1ElR1SNxKpxKtRqp?=
- =?us-ascii?Q?nmivD086CYA//gyjx3csy5F7qic9ProlAfnBSOgWBS1eoroV2jLvSyMK8CyT?=
- =?us-ascii?Q?V7lZ+F0oEsODKmAxAIN3JbnjrugHIQrfbjUGqUpCWCsBtHzrBa4F44QgA65L?=
- =?us-ascii?Q?hC9c2PzwkTHUdtSf5dNcxa4LvgZqBrV2WFGeRmoyGJL8Wrou2lB6hIjAVu/S?=
- =?us-ascii?Q?2dQ+hxHSCV7blS+JgXE6tvoFTyrW4GJYwEIJFTUaSXffba08KpyFTnkEJ3PG?=
- =?us-ascii?Q?WYaRID8ulNnVITB/sClY0rABSLr52yLlB6S15hVnlEWZheiuaNo1Cve/NnZY?=
- =?us-ascii?Q?N7gC7bBmD0UKtYu1uES7/jlgJXlMfcZ35Q5wlb56SqspGcFUu4Y/vIkQWcVV?=
- =?us-ascii?Q?XST75qpk+CQ3fyoqJ9DgnSmAWWM3LVMnfpKkn9cCVibWtHSAewa+POGZayl3?=
- =?us-ascii?Q?5T5gtW+FcCTywJ307CRQzqhbm1luWcBfunPLe8vbu5yqO7hvjRXjpUutJGL/?=
- =?us-ascii?Q?y2KhNh+sKhcfSwae6s/Jv107avi+YwQZtK8Ol93xFqNMybgqGHrBlmBSXYCZ?=
- =?us-ascii?Q?+2M0C1TqMOVsBZfqGmuBFosYJDFzRh41XrW2UaPgOCSzBxlPS0l6bKVQ6PJ6?=
- =?us-ascii?Q?2bKGknWwOz0A5eQcWv9cnz2WObnL4wwSgQnf9jY9iacVpsoLWFnLgTDJS6xt?=
- =?us-ascii?Q?XWwQ2TsajDIwOgxfIdGikVfs/PEF?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(7053199007); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?JHckriqoPtlm7QqFcwOlzuZQRO7J48hO74Xyl98NYLstuWPHrKIQLYRGNC0f?=
- =?us-ascii?Q?UNrRSxwxgDixS5RgJrY7UgQKEucxbpA/VeUGk32SBLcnCi3I+43Zj86B4Izx?=
- =?us-ascii?Q?Jzie9NekdKLswObH5IiUzskYe9aFp+kC8MS3es0zt6UcO+HqvTlLhTmCFnrZ?=
- =?us-ascii?Q?oM6oSkQ91xeWpxfzI7kB02YLNjyrxkHImYMEOAaedkCFYU28hwbbD1E/sR+K?=
- =?us-ascii?Q?g7gcvnGXh1t0C9sdT1DsjgiZr6elewSPtApgm1XuPgGfWKojuLCBuG/PPbSQ?=
- =?us-ascii?Q?ieTcHOgkuuJLYVzuZiv7WFsqMjDOnXPQ6fkmFIqCLAg/5m2F2Pd354r/fLkt?=
- =?us-ascii?Q?SRuDbnmszdmaswkXu+8bSEdDemJVnyK7JBqm1vKT3/9ve+ea+0fQwXl7SfAo?=
- =?us-ascii?Q?wOx2ZhWlbQFkIJBZf+Mw7CH1ILtfWBXQcIU/pJaIWSexJ9QHQsnSTX5BVfwv?=
- =?us-ascii?Q?VSpCCP4Ilenbhipt6ROztRzof2ojF3TVYPDHKouwmf88mj1ueNlch7D34c9A?=
- =?us-ascii?Q?kMbcBTfThwwFlntJYlgl7KqHEkvmPhlPO4IJMdEr9YUATlNww4DvOW3hmw37?=
- =?us-ascii?Q?MNN6z2rVFZYyH5bPYLo01ElE5A3wje0eoqurrw5Nms5rOXYy8l9O7ZsM6SDM?=
- =?us-ascii?Q?LitP0cnSvZlPd0QI3p8LvoQwtc4yJM5uSepmYvO2VE4ShRWJBeP69w7PItiN?=
- =?us-ascii?Q?TztIEN0qM5aZ3+VwYHuSrM840MOdT0mCSXWzj20vGUtFDb6/eSdJzC6Xug7F?=
- =?us-ascii?Q?Bu5stbWjdtVyhQXDCMpTfPC4W9tz8LG3Bh/x7/6TgsoGpnoj538en0diUs2Z?=
- =?us-ascii?Q?oAGsT8/yvlCD9sZrt3TULUf2jIJyakftNodS3FVIFjWGOed1l5sFe/xothMt?=
- =?us-ascii?Q?bF2I0s6U7Z3fYnuMe0ZlNro7o0LkDlndGCgzrBQnZZzpeK0R+jsC2md0sVui?=
- =?us-ascii?Q?Nl6j31MSLJz+IkAiGnILzAxcHM0hruXp7dLQbmHXFAyVdYrWl+tMkZBQJF5X?=
- =?us-ascii?Q?U1LmeOJp7c0cl/OMTCPPjj1Qm3v+P6xI0E1GX4QEYAIXIvoVjtQ3IYfda0Zi?=
- =?us-ascii?Q?NeWpHQB0DaOgWYXcqW+H+4fE+4bPmEAwIm1ga/6ncgy259JAi+KMt26zpfsb?=
- =?us-ascii?Q?Vw2xKAojOXp3ys1BEh9nimkcn7mh99pGZRhvPmc3bEz9CRTWVQPl0OVB1rNp?=
- =?us-ascii?Q?zlEYD+gx0hTdb0ujM1erAXR7e3AHWg1z024wpVHcr8nWkNfCbwPdFOgYDJoH?=
- =?us-ascii?Q?MSPu27ZdSBytPJnKVZBslyJ3OBCzPSb6DNYZZCLY1f92t286xGegvCUjt8iJ?=
- =?us-ascii?Q?7JteeqJpyINbWqqAs3k5vEHKAD4SYcojRvYoEvAjt7/8cFvGMuSVopwJw0zQ?=
- =?us-ascii?Q?OXEiyBxTGuW2pNJu0nWHa8PvMYWq1BfVgTk1QhvpsTkQ68QkoXuRN7KYpGZz?=
- =?us-ascii?Q?efqidEeC3cAKBnyEM0v/BL3oSVUpyT1nAMWSWngjupcSvb3dGUzdQGuGbmcM?=
- =?us-ascii?Q?/EBUGH9PesXx53uLZjHz3fMRFeUmaunkeYv3Zch02PiQbVQwzqd+9GOunsHA?=
- =?us-ascii?Q?qBxTvzutjkAxOn0vZqgGHsos4zFolGlwKaa/g5zsKBiLaU8miANliXt+CtIx?=
- =?us-ascii?Q?fg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46ded0e6-cf66-403c-1d2c-08dddfd5620b
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 10:36:12.3973 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xy4Fl252LJPZvtXY9QR8DmjyKUqY0cJlMfN9NkIplWt1OvgIgmFiWVWeXEQuYtLE4o2qHYwPaMSDVPOsTIuMKISA4ymI9MbpWV1kjDp8W3w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB7160
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=J6TzLAnS c=1 sm=1 tr=0 ts=68a5adf3 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=1cRrDpktbWZE8ceIGrAA:9
+ a=D7HC5XXFw0fsHaIj:21 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDA5OCBTYWx0ZWRfX8dJTYtfIdZnf
+ +f9v8Qqph9VFWNu0HcYrRMgP9+FAhKMzotuWCuYPrkz+8sUJJxuNv9vvDLZBydloJcqeziVN41M
+ pO0QBIZEg/VE9b6IGQY28m3l+YTk32hyiWgpPIEH9VkRMqKDoiLndAH4omirCwm9qI9VvXt9DIV
+ eWTyKHghbN07WZ9TSsOXPvSiYc79J2XNenxxhS09VMEpp6enTwMXyH26h6k1df6QcDwhW+qfyc6
+ fAY/R71ct/B5+N2RYnLlszm1Jeem/DJPHOX79mqU/s58e0iktW+9GICbldwMUBSrv6b6M+TF9uD
+ xeKgqIHxJcunkEavnkqIegpcEwM/D/vSYMye2Ffjly7/49a1++oo+BQ9sE3i7h1EEa0FwgmXdw3
+ K0ic02yIRGHlOdkCd53qn/L8/+KmbiJpZBrQBZLFfmhZYTsrznm/GFYCNtKdkqfbkPOA9yBM
+X-Proofpoint-GUID: wwTUelpBpH703csczrIdjLsN7s-MgEni
+X-Proofpoint-ORIG-GUID: wwTUelpBpH703csczrIdjLsN7s-MgEni
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_03,2025-08-20_02,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -168,40 +81,290 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Aug 20, 2025 at 11:50:50AM +0200, Dariusz Sosnowski wrote:
-> There were 2 changes introduced in checkpatch.pl script [1][2]
-> which verify if Reported-by tag is followed by Link or Closes tag.
-> Example of the warning output:
-> 
->     WARNING:BAD_REPORTED_BY_LINK:
->       Reported-by: should be immediately followed by Closes:
->       with a URL to the report
-> 
-> Original purpose is to link the patch to the mailing list discussion
-> and/or a bug report.
-> 
-> Since in DPDK these tags are not used, these warnings are false
-> positives and can be ignored in devtools/checkpatches.sh.
-> 
-> [1]: https://github.com/torvalds/linux/commit/d7f1d71e5ef630ab9e15b5821d297a9e1a5fa1da
-> [2]: https://github.com/torvalds/linux/commit/44c31888098a590b8ec5ba37009e5a983f7c4b46
-> 
-> Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
-> ---
->  devtools/checkpatches.sh | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
-> index 35037aa8f1..8c5b5d1380 100755
-> --- a/devtools/checkpatches.sh
-> +++ b/devtools/checkpatches.sh
-> @@ -33,7 +33,7 @@ VOLATILE,PREFER_PACKED,PREFER_ALIGNED,PREFER_PRINTF,STRLCPY,\
->  PREFER_KERNEL_TYPES,PREFER_FALLTHROUGH,BIT_MACRO,CONST_STRUCT,\
->  SPLIT_STRING,LONG_LINE_STRING,C99_COMMENT_TOLERANCE,\
->  LINE_SPACING,PARENTHESIS_ALIGNMENT,NETWORKING_BLOCK_COMMENT_STYLE,\
-> -NEW_TYPEDEFS,COMPARISON_TO_NULL,AVOID_BUG,EXPORT_SYMBOL"
-> +NEW_TYPEDEFS,COMPARISON_TO_NULL,AVOID_BUG,EXPORT_SYMBOL,BAD_REPORTED_BY_LINK"
->  options="$options $DPDK_CHECKPATCH_OPTIONS"
->  
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+From: Sunil Kumar Kori <skori@marvell.com>
+
+Adding link type parameter to provide the type
+of port like twisted pair, fibre etc.
+
+Also added an API to convert the RTE_ETH_LINK_TYPE_XXX
+to a readable string.
+
+Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
+Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
+---
+v5..v6:
+ - Fix doxygen error.
+v4..v5:                                                                                             
+ - Convert link type to connector.
+ - Fix build error on Windows.
+ - Handle comsmetic review comments.
+v3..v4:
+ - Convert #define into enum.
+ - Enhance comments for each port link type.
+ - Fix test failures.
+v2..v3
+ - Extend link type list as per suggestion
+
+ app/test/test_ethdev_link.c      | 18 +++++++-----
+ lib/ethdev/ethdev_trace.h        |  7 +++++
+ lib/ethdev/ethdev_trace_points.c |  3 ++
+ lib/ethdev/rte_ethdev.c          | 47 ++++++++++++++++++++++++++++--
+ lib/ethdev/rte_ethdev.h          | 50 ++++++++++++++++++++++++++++++++
+ 5 files changed, 116 insertions(+), 9 deletions(-)
+
+diff --git a/app/test/test_ethdev_link.c b/app/test/test_ethdev_link.c
+index f063a5fe26..a951d64faa 100644
+--- a/app/test/test_ethdev_link.c
++++ b/app/test/test_ethdev_link.c
+@@ -17,23 +17,25 @@ test_link_status_up_default(void)
+ 		.link_speed = RTE_ETH_SPEED_NUM_2_5G,
+ 		.link_status = RTE_ETH_LINK_UP,
+ 		.link_autoneg = RTE_ETH_LINK_AUTONEG,
+-		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX
++		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
++		.link_type = RTE_ETH_LINK_CONNECTOR_OTHER
+ 	};
+ 	char text[RTE_ETH_LINK_MAX_STR_LEN];
+ 
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+ 	printf("Default link up #1: %s\n", text);
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 2.5 Gbps FDX Autoneg",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 2.5 Gbps FDX Autoneg Other",
+ 		text, strlen(text), "Invalid default link status string");
+ 
+ 	link_status.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
+ 	link_status.link_autoneg = RTE_ETH_LINK_FIXED;
+ 	link_status.link_speed = RTE_ETH_SPEED_NUM_10M;
++	link_status.link_type = RTE_ETH_LINK_CONNECTOR_SGMII;
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	printf("Default link up #2: %s\n", text);
+ 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 10 Mbps HDX Fixed",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 10 Mbps HDX Fixed SGMII",
+ 		text, strlen(text), "Invalid default link status "
+ 		"string with HDX");
+ 
+@@ -41,7 +43,7 @@ test_link_status_up_default(void)
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	printf("Default link up #3: %s\n", text);
+ 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Unknown HDX Fixed",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Unknown HDX Fixed SGMII",
+ 		text, strlen(text), "Invalid default link status "
+ 		"string with HDX");
+ 
+@@ -49,7 +51,7 @@ test_link_status_up_default(void)
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	printf("Default link up #3: %s\n", text);
+ 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at None HDX Fixed",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at None HDX Fixed SGMII",
+ 		text, strlen(text), "Invalid default link status "
+ 		"string with HDX");
+ 
+@@ -57,6 +59,7 @@ test_link_status_up_default(void)
+ 	link_status.link_speed = RTE_ETH_SPEED_NUM_400G;
+ 	link_status.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
+ 	link_status.link_autoneg = RTE_ETH_LINK_AUTONEG;
++	link_status.link_type = RTE_ETH_LINK_CONNECTOR_GAUI;
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	printf("Default link up #4:len = %d, %s\n", ret, text);
+ 	RTE_TEST_ASSERT(ret < RTE_ETH_LINK_MAX_STR_LEN,
+@@ -92,7 +95,8 @@ test_link_status_invalid(void)
+ 		.link_speed = 55555,
+ 		.link_status = RTE_ETH_LINK_UP,
+ 		.link_autoneg = RTE_ETH_LINK_AUTONEG,
+-		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX
++		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
++		.link_type = RTE_ETH_LINK_CONNECTOR_OTHER
+ 	};
+ 	char text[RTE_ETH_LINK_MAX_STR_LEN];
+ 
+@@ -100,7 +104,7 @@ test_link_status_invalid(void)
+ 	RTE_TEST_ASSERT(ret < RTE_ETH_LINK_MAX_STR_LEN,
+ 		"Failed to format invalid string\n");
+ 	printf("invalid link up #1: len=%d %s\n", ret, text);
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Invalid FDX Autoneg",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Invalid FDX Autoneg Other",
+ 		text, strlen(text), "Incorrect invalid link status string");
+ 
+ 	return TEST_SUCCESS;
+diff --git a/lib/ethdev/ethdev_trace.h b/lib/ethdev/ethdev_trace.h
+index 482befc209..c5cba0edba 100644
+--- a/lib/ethdev/ethdev_trace.h
++++ b/lib/ethdev/ethdev_trace.h
+@@ -2110,6 +2110,13 @@ RTE_TRACE_POINT_FP(
+ 	rte_trace_point_emit_string(ret);
+ )
+ 
++RTE_TRACE_POINT_FP(
++	rte_eth_trace_link_type_to_str,
++	RTE_TRACE_POINT_ARGS(uint8_t link_type, const char *ret),
++	rte_trace_point_emit_u8(link_type);
++	rte_trace_point_emit_string(ret);
++);
++
+ /* Called in loop in examples/bond and examples/ethtool */
+ RTE_TRACE_POINT_FP(
+ 	rte_eth_trace_macaddr_get,
+diff --git a/lib/ethdev/ethdev_trace_points.c b/lib/ethdev/ethdev_trace_points.c
+index 071c508327..706acdf356 100644
+--- a/lib/ethdev/ethdev_trace_points.c
++++ b/lib/ethdev/ethdev_trace_points.c
+@@ -206,6 +206,9 @@ RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_speed_to_str,
+ RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_to_str,
+ 	lib.ethdev.link_to_str)
+ 
++RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_type_to_str,
++	lib.ethdev.link_type_to_str)
++
+ RTE_TRACE_POINT_REGISTER(rte_eth_trace_stats_get,
+ 	lib.ethdev.stats_get)
+ 
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index dd7c00bc94..7b267a81a4 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -3285,18 +3285,61 @@ rte_eth_link_to_str(char *str, size_t len, const struct rte_eth_link *eth_link)
+ 	if (eth_link->link_status == RTE_ETH_LINK_DOWN)
+ 		ret = snprintf(str, len, "Link down");
+ 	else
+-		ret = snprintf(str, len, "Link up at %s %s %s",
++		ret = snprintf(str, len, "Link up at %s %s %s %s",
+ 			rte_eth_link_speed_to_str(eth_link->link_speed),
+ 			(eth_link->link_duplex == RTE_ETH_LINK_FULL_DUPLEX) ?
+ 			"FDX" : "HDX",
+ 			(eth_link->link_autoneg == RTE_ETH_LINK_AUTONEG) ?
+-			"Autoneg" : "Fixed");
++			"Autoneg" : "Fixed",
++			rte_eth_link_type_to_str(eth_link->link_type));
+ 
+ 	rte_eth_trace_link_to_str(len, eth_link, str, ret);
+ 
+ 	return ret;
+ }
+ 
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_link_type_to_str, 25.11)
++const char *
++rte_eth_link_type_to_str(enum rte_eth_link_connector link_type)
++{
++	static const char * const link_type_str[] = {
++		[RTE_ETH_LINK_CONNECTOR_NONE] = "None",
++		[RTE_ETH_LINK_CONNECTOR_TP] = "Twisted Pair",
++		[RTE_ETH_LINK_CONNECTOR_AUI] = "Attachment Unit Interface",
++		[RTE_ETH_LINK_CONNECTOR_MII] = "Media Independent Interface",
++		[RTE_ETH_LINK_CONNECTOR_FIBER] = "Fiber",
++		[RTE_ETH_LINK_CONNECTOR_BNC] = "BNC",
++		[RTE_ETH_LINK_CONNECTOR_DAC] = "Direct Attach Copper",
++		[RTE_ETH_LINK_CONNECTOR_SGMII] = "SGMII",
++		[RTE_ETH_LINK_CONNECTOR_QSGMII] = "QSGMII",
++		[RTE_ETH_LINK_CONNECTOR_XFI] = "XFI",
++		[RTE_ETH_LINK_CONNECTOR_SFI] = "SFI",
++		[RTE_ETH_LINK_CONNECTOR_XLAUI] = "XLAUI",
++		[RTE_ETH_LINK_CONNECTOR_GAUI] = "GAUI",
++		[RTE_ETH_LINK_CONNECTOR_XAUI] = "XAUI",
++		[RTE_ETH_LINK_CONNECTOR_CAUI] = "CAUI",
++		[RTE_ETH_LINK_CONNECTOR_LAUI] = "LAUI",
++		[RTE_ETH_LINK_CONNECTOR_SFP] = "SFP",
++		[RTE_ETH_LINK_CONNECTOR_SFP_DD] = "SFP-DD",
++		[RTE_ETH_LINK_CONNECTOR_SFP_PLUS] = "SFP+",
++		[RTE_ETH_LINK_CONNECTOR_SFP28] = "SFP28",
++		[RTE_ETH_LINK_CONNECTOR_QSFP] = "QSFP",
++		[RTE_ETH_LINK_CONNECTOR_QSFP_PLUS] = "QSFP+",
++		[RTE_ETH_LINK_CONNECTOR_QSFP28] = "QSFP28",
++		[RTE_ETH_LINK_CONNECTOR_QSFP56] = "QSFP56",
++		[RTE_ETH_LINK_CONNECTOR_QSFP_DD] = "QSFP-DD",
++		[RTE_ETH_LINK_CONNECTOR_OTHER] = "Other",
++	};
++	const char *str = NULL;
++
++	if ((link_type < ((enum rte_eth_link_connector)RTE_DIM(link_type_str))) &&
++		link_type_str[link_type])
++		str = link_type_str[link_type];
++
++	rte_eth_trace_link_type_to_str(link_type, str);
++	return str;
++}
++
+ RTE_EXPORT_SYMBOL(rte_eth_stats_get)
+ int
+ rte_eth_stats_get(uint16_t port_id, struct rte_eth_stats *stats)
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index f9fb6ae549..4ed7e20d0b 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -329,6 +329,41 @@ struct rte_eth_stats {
+ #define RTE_ETH_SPEED_NUM_UNKNOWN UINT32_MAX /**< Unknown */
+ /**@}*/
+ 
++/**
++ * @enum rte_eth_link_connector
++ * @brief Ethernet port link connector type
++ *
++ * This enum defines the possible types of Ethernet port link connectors.
++ */
++enum rte_eth_link_connector {
++	RTE_ETH_LINK_CONNECTOR_NONE = 0,     /**< Not defined */
++	RTE_ETH_LINK_CONNECTOR_TP,           /**< Twisted Pair */
++	RTE_ETH_LINK_CONNECTOR_AUI,          /**< Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_MII,          /**< Media Independent Interface */
++	RTE_ETH_LINK_CONNECTOR_FIBER,        /**< Optical Fiber Link */
++	RTE_ETH_LINK_CONNECTOR_BNC,          /**< BNC Link type for RF connection */
++	RTE_ETH_LINK_CONNECTOR_DAC,          /**< Direct Attach copper */
++	RTE_ETH_LINK_CONNECTOR_SGMII,        /**< Serial Gigabit Media Independent Interface */
++	RTE_ETH_LINK_CONNECTOR_QSGMII,       /**< Link to multiplex 4 SGMII over one serial link */
++	RTE_ETH_LINK_CONNECTOR_XFI,          /**< 10 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_SFI,          /**< 10 Gigabit Serial Interface for optical network */
++	RTE_ETH_LINK_CONNECTOR_XLAUI,        /**< 40 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_GAUI,         /**< Gigabit Interface for 50/100/200 Gbps */
++	RTE_ETH_LINK_CONNECTOR_XAUI,         /**< 10 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_CAUI,         /**< 100 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_LAUI,         /**< 50 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_SFP,          /**< Pluggable module for 1 Gigabit */
++	RTE_ETH_LINK_CONNECTOR_SFP_PLUS,     /**< Pluggable module for 10 Gigabit */
++	RTE_ETH_LINK_CONNECTOR_SFP28,        /**< Pluggable module for 25 Gigabit */
++	RTE_ETH_LINK_CONNECTOR_SFP_DD,       /**< Pluggable module for 100 Gigabit */
++	RTE_ETH_LINK_CONNECTOR_QSFP,         /**< Module to mutiplex 4 SFP i.e. 4*1=4 Gbps */
++	RTE_ETH_LINK_CONNECTOR_QSFP_PLUS,    /**< Module to mutiplex 4 SFP_PLUS i.e. 4*10=40 Gbps */
++	RTE_ETH_LINK_CONNECTOR_QSFP28,       /**< Module to mutiplex 4 SFP28 i.e. 4*25=100 Gbps */
++	RTE_ETH_LINK_CONNECTOR_QSFP56,       /**< Module to mutiplex 4 SFP56 i.e. 4*50=200 Gbps */
++	RTE_ETH_LINK_CONNECTOR_QSFP_DD,      /**< Module to mutiplex 4 SFP_DD i.e. 4*100=400 Gbps */
++	RTE_ETH_LINK_CONNECTOR_OTHER = 31,   /**< non-physical interfaces like virtio, ring etc */
++};
++
+ /**
+  * A structure used to retrieve link-level information of an Ethernet port.
+  */
+@@ -341,6 +376,7 @@ struct rte_eth_link {
+ 			uint16_t link_duplex  : 1;  /**< RTE_ETH_LINK_[HALF/FULL]_DUPLEX */
+ 			uint16_t link_autoneg : 1;  /**< RTE_ETH_LINK_[AUTONEG/FIXED] */
+ 			uint16_t link_status  : 1;  /**< RTE_ETH_LINK_[DOWN/UP] */
++			uint16_t link_type    : 5;  /**< RTE_ETH_LINK_TYPE_XXX */
+ 		};
+ 	};
+ };
+@@ -3116,6 +3152,20 @@ int rte_eth_link_get_nowait(uint16_t port_id, struct rte_eth_link *link)
+ __rte_experimental
+ const char *rte_eth_link_speed_to_str(uint32_t link_speed);
+ 
++/**
++ * @warning
++ * @b EXPERIMENTAL: this API may change without prior notice.
++ *
++ * This function converts an Ethernet link type to a string.
++ *
++ * @param link_type
++ *   The link type to convert.
++ * @return
++ *   The string representation of the link type.
++ */
++__rte_experimental
++const char *rte_eth_link_type_to_str(enum rte_eth_link_connector link_type);
++
+ /**
+  * @warning
+  * @b EXPERIMENTAL: this API may change without prior notice.
+-- 
+2.43.0
 
