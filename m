@@ -2,41 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2072BCA0EED
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 06:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF78CA0EED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 08:12:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF0784026C;
-	Wed, 20 Aug 2025 08:42:49 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E081A40292;
+	Wed, 20 Aug 2025 10:12:02 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 4792A40151
- for <dev@dpdk.org>; Wed, 20 Aug 2025 08:42:48 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D204B4026C
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 10:12:01 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 1163C20F9E;
- Wed, 20 Aug 2025 08:42:48 +0200 (CEST)
-Subject: RE: [PATCH v3 0/9] introduce common FOREACH_SAFE macros
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A3FF520F9E;
+ Wed, 20 Aug 2025 10:12:00 +0200 (CEST)
+Subject: RE: RFC: Drop support for undersize packet mbufs
 MIME-Version: 1.0
 Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 20 Aug 2025 08:42:45 +0200
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Date: Wed, 20 Aug 2025 10:11:58 +0200
 Content-class: urn:content-classes:message
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE53@smartserver.smartshare.dk>
-In-Reply-To: <20250818093416.057aad97@hermes.local>
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE54@smartserver.smartshare.dk>
+In-Reply-To: <d4859ac6-2119-40b5-9e3b-ae88d56dc690@huawei.com>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v3 0/9] introduce common FOREACH_SAFE macros
-Thread-Index: AdwQXfVBKwVkXAJySdimFK/qY8yFmQBPlDqg
+Thread-Topic: RFC: Drop support for undersize packet mbufs
+Thread-Index: AdwQLwpWQ/z7fVVPTQiB5OMTzALRMQBdRs4A
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-References: <20250127180842.97907-1-stephen@networkplumber.org>
- <20250312231715.222149-1-stephen@networkplumber.org>
- <20250818093416.057aad97@hermes.local>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>, <dev@dpdk.org>,
- "Tyler Retzlaff" <roretzla@microsoft.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>,
- "Thomas Monjalon" <thomas@monjalon.net>
+References: <98CBD80474FA8B44BF855DF32C47DC35E9FE42@smartserver.smartshare.dk>
+ <d4859ac6-2119-40b5-9e3b-ae88d56dc690@huawei.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "fengchengwen" <fengchengwen@huawei.com>, <thomas@monjalon.net>,
+ <bruce.richardson@intel.com>, <stephen@networkplumber.org>,
+ <andrew.rybchenko@oktetlabs.ru>
+Cc: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,45 +49,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> Sent: Monday, 18 August 2025 18.34
->=20
-> On Wed, 12 Mar 2025 16:15:29 -0700
-> Stephen Hemminger <stephen@networkplumber.org> wrote:
->=20
-> > This series adds common macros for safe iteration over lists.
-> > It is a subset copy of the macros from FreeBSD that are
-> > missing from the Linux header sys/queue.h
-> >
-> > Chose this over several other options:
-> >   - let each driver define their own as needed.
-> >     One Intel driver got it wrong, others will as well.
-> >   - rename all the queue macros to RTE_XXX variants.
-> >     Seems like useless renaming and confusion.
-> >   - Several distros have libbsd package with the correct macros.
-> >     But adding yet another dependency to DPDK would be annoying
-> >     for something this basic.
-> >
-> > There are more macros in FreeBSD header that could be useful,
-> > but we can add those later as needed here.
-> >
-> >  lib/eal/include/rte_queue.h              | 174 =
-+++++++++++++++++++++++
->=20
-> Revisiting this and wondering about naming...
-> The file rte_queue.h is not really DPDK (ie not related to runtime
-> environment).
-> Thinking of calling it bsd_queue.h as a compromise
-
-Since it replaces sys/queue.h, then maybe sys_queue.h (or =
-rte_sys_queue.h).
-
-But more importantly:
-It is not really DPDK, and thus shouldn't really be part of the EAL.
-So here's an idea:
-As part of de-bloating the EAL, can we somehow add a new directory =
-structure for independent "libraries" like this?
-And treat this rte_queue.h file as a "header file only" library, and put =
-it there.
-Then, build wise, the EAL could depend on this "library".
-
+PiBGcm9tOiBmZW5nY2hlbmd3ZW4gW21haWx0bzpmZW5nY2hlbmd3ZW5AaHVhd2VpLmNvbV0NCj4g
+U2VudDogTW9uZGF5LCAxOCBBdWd1c3QgMjAyNSAxMi41OA0KPiANCj4gT24gOC8xOC8yMDI1IDQ6
+MTEgUE0sIE1vcnRlbiBCcsO4cnVwIHdyb3RlOg0KPiA+IFdoeSBkb2VzIHRoZSBtYnVmIGxpYnJh
+cnkgc3VwcG9ydCBwYWNrZXQgbWJ1ZnMgd2l0aCBzbWFsbGVyIGRhdGEgcm9vbSBzaXplDQo+IHRo
+YW4gUlRFX1BLVE1CVUZfSEVBRFJPT00gKGUuZy4gWzFdKSwgd2hlbiB0aGUgRXRoZGV2IGRyaXZl
+cnMgKGUuZy4gWzJdKSBkb24ndA0KPiBzdXBwb3J0IGl0Pw0KPiANCj4gTWF5YmUgdGhlIHBrdG1i
+dWYgd2hpY2ggZXh0YnVmLCB3aGljaCB0aGUgZGF0YS1yb29tLXNpemUgaXMgemVybyB3aGVuIGNy
+ZWF0ZQ0KPiBwa3RtYnVmLg0KDQpUaGUgZGVzY3JpcHRpb25zIG9mIGFsbCB0aGUgcnRlX3BrdG1i
+dWZfcG9vbF9jcmVhdGUoKSBmdW5jdGlvbnMgLSBpbmNsdWRpbmcgcnRlX3BrdG1idWZfcG9vbF9j
+cmVhdGVfZXh0YnVmKCkgLSBzcGVjaWZ5IHRoYXQgdGhlIGRhdGEtcm9vbS1zaXplIG11c3QgYmUg
+Pj1SVEVfUEtUTUJVRl9IRUFEUk9PTToNCg0KICogQHBhcmFtIGRhdGFfcm9vbV9zaXplDQogKiAg
+IFNpemUgb2YgZGF0YSBidWZmZXIgaW4gZWFjaCBtYnVmLCBpbmNsdWRpbmcgUlRFX1BLVE1CVUZf
+SEVBRFJPT00uDQoNClNvIGl0IG1pZ2h0IGJlIHJlbGF0ZWQgdG8gZHluYW1pY2FsbHkgYXR0YWNo
+ZWQgKG5vbi1waW5uZWQpIGV4dGJ1ZnMgYmVpbmcgc21hbGxlciB0aGFuIFJURV9QS1RNQlVGX0hF
+QURST09NLiBXaGVuIHJlc2V0dGluZyBzdWNoIGEgcGFja2V0IG1idWYsIGl0IHdpbGwgYmUgYWxs
+IGhlYWRyb29tIGFuZCBoYXZlIHplcm8gcm9vbSBmb3IgZGF0YS4NCkhvdyBpcyB0aGlzIHVzZWZ1
+bD8NCkRvIGFueSByZWFsIGFwcGxpY2F0aW9ucyByZWFsbHkgdXNlIHN1Y2ggc21hbGwgbm9uLXBp
+bm5lZCBleHRidWZzPw0KDQo+IEFmdGVyIGRldGFjaCBmcm9tIGV4dGJ1ZiwgdGhlIGRhdGFfb2Zm
+IHNob3VsZCBiZSB6ZXJvIGluc3RlYWQgb2YNCj4gUlRFX1BLVE1CVUZfSEVBRFJPT00uDQoNCklu
+IHRoaXMgY2FzZSwgdGhlIHBrdG1idWYgcG9vbCBtdXN0IGhhdmUgYmVlbiBjcmVhdGVkIHdpdGgg
+dGhlIG1lbXBvb2wgbGlicmFyeSAoYnlwYXNzaW5nIHRoZSBtYnVmIGxpYnJhcnkpLCB3aGljaCBp
+cyBwZXJmZWN0bHkgdmFsaWQgYW5kIGRlc2NyaWJlZCBpbiB0aGUgbWJ1ZiBsaWJyYXJ5IGFzIGFu
+IGFsdGVybmF0aXZlIHdheSBvZiBjcmVhdGluZyBtYnVmIHBvb2xzLg0KU28sIGFmdGVyIGRldGFj
+aGluZyB0aGUgZXh0YnVmLCB0aGUgcGFja2V0IG1idWYgaGFzIGEgdmVyeSBzbWFsbCBkYXRhLXJv
+b20tc2l6ZSAocG9zc2libHkgemVybykuDQpJcyB0aGUgbWJ1ZiBnb2luZyB0byBiZSB1c2VkIGZv
+ciBhbnl0aGluZyBpbiB0aGlzIHN0YXRlPyBJLmUuIGRvZXMgdGhlIGRhdGFfb2ZmIG5lZWQgdG8g
+YmUgdmFsaWQgaW4gdGhpcyBzdGF0ZT8NCg0KPiANCj4gPg0KPiA+IFRoaXMgZ29lcyBhbGwgdGhl
+IHdheSBiYWNrIHRvIHRoZSBmaXJzdCBwdWJsaWMgcmVsZWFzZSBbM10uDQoNCkkgc3VzcGVjdCB0
+aGUgc3VwcG9ydCBmb3IgdW5kZXJzaXplIChpLmUuIHNtYWxsZXIgdGhhbiBSVEVfUEtUTUJVRl9I
+RUFEUk9PTSkgZGF0YS1yb29tLXNpemUgaXMgb2Jzb2xldGUsIGFuZCBtaWdodCBoYXZlIHNvbWV0
+aGluZyB0byBkbyB3aXRoIG1idWZzIG9yaWdpbmFsbHkgYmVpbmcgdXNlZCBmb3Igb3RoZXIgcHVy
+cG9zZXMgdGhhbiBwYWNrZXRzIChlLmcuIG5vbi1wYWNrZXQgbWVzc2FnZXMpLg0KDQo+ID4NCj4g
+PiBJdCBzZWVtcyBjcmF6eSBleG90aWMsIGFuZCBzaG91bGQgYmUgcmVtb3ZlZCBmb3Igc2ltcGxp
+Y2l0eSBhbmQgYSBwb3RlbnRpYWwNCj4gcGVyZm9ybWFuY2UgYmVuZWZpdC4NCj4gPiBXaGF0IGFt
+IEkgbWlzc2luZyBoZXJlPw0KPiA+DQo+ID4gSW5zdGVhZCwgdGhlIHJ0ZV9wa3RtYnVmX3Bvb2xf
+Y3JlYXRlKCkgZnVuY3Rpb25zIHNob3VsZCBjaGVjayB0aGF0DQo+IGRhdGFfcm9vbV9zaXplID49
+IFJURV9QS1RNQlVGX0hFQURST09NLg0KPiA+DQo+ID4NCj4gPiBbMV06IGh0dHBzOi8vZWxpeGly
+LmJvb3RsaW4uY29tL2RwZGsvdjI1LjA3L3NvdXJjZS9saWIvbWJ1Zi9ydGVfbWJ1Zi5oI0w5NDEN
+Cj4gPiBzdGF0aWMgaW5saW5lIHZvaWQgcnRlX3BrdG1idWZfcmVzZXRfaGVhZHJvb20oc3RydWN0
+IHJ0ZV9tYnVmICptKQ0KPiA+IHsNCj4gPiAJbS0+ZGF0YV9vZmYgPSAodWludDE2X3QpUlRFX01J
+TigodWludDE2X3QpUlRFX1BLVE1CVUZfSEVBRFJPT00sDQo+ID4gCQkJCQkodWludDE2X3QpbS0+
+YnVmX2xlbik7DQo+ID4gfQ0KPiA+DQo+ID4gWzJdOg0KPiBodHRwczovL2VsaXhpci5ib290bGlu
+LmNvbS9kcGRrL3YyNS4wNy9zb3VyY2UvZHJpdmVycy9uZXQvaW50ZWwvaTQwZS9pNDBlX3J4dHgN
+Cj4gLmMjTDYwOQ0KPiA+IG1iLT5kYXRhX29mZiA9IFJURV9QS1RNQlVGX0hFQURST09NOw0KPiA+
+DQo+ID4gWzNdOg0KPiBodHRwczovL2dpdC5kcGRrLm9yZy9kcGRrL2NvbW1pdC9saWIvbGlicnRl
+X21idWY/aWQ9YWY3NTA3OGZlY2UzNjE1MDg4ZTU2MTM1N2MNCj4gMWU5NzYwM2U0M2E1ZmUNCj4g
+PiArc3RhdGljIGlubGluZSB2b2lkIHJ0ZV9wa3RtYnVmX3Jlc2V0KHN0cnVjdCBydGVfbWJ1ZiAq
+bSkNCj4gPiArew0KPiA+ICsJdWludDMyX3QgYnVmX29mczsNCj4gPiArDQo+ID4gKwltLT5wa3Qu
+bmV4dCA9IE5VTEw7DQo+ID4gKwltLT5wa3QucGt0X2xlbiA9IDA7DQo+ID4gKwltLT5wa3QubDJf
+bGVuID0gMDsNCj4gPiArCW0tPnBrdC5sM19sZW4gPSAwOw0KPiA+ICsJbS0+cGt0LnZsYW5fdGNp
+ID0gMDsNCj4gPiArCW0tPnBrdC5uYl9zZWdzID0gMTsNCj4gPiArCW0tPnBrdC5pbl9wb3J0ID0g
+MHhmZjsNCj4gPiArDQo+ID4gKwltLT5vbF9mbGFncyA9IDA7DQo+ID4gKwlidWZfb2ZzID0gKFJU
+RV9QS1RNQlVGX0hFQURST09NIDw9IG0tPmJ1Zl9sZW4pID8NCj4gPiArCQkJUlRFX1BLVE1CVUZf
+SEVBRFJPT00gOiBtLT5idWZfbGVuOw0KPiA+ICsJbS0+cGt0LmRhdGEgPSAoY2hhciopIG0tPmJ1
+Zl9hZGRyICsgYnVmX29mczsNCj4gPiArDQo+ID4gKwltLT5wa3QuZGF0YV9sZW4gPSAwOw0KPiA+
+ICsJX19ydGVfbWJ1Zl9zYW5pdHlfY2hlY2sobSwgUlRFX01CVUZfUEtULCAxKTsNCj4gPiArfQ0K
+PiA+DQo+ID4NCj4gPg0KPiA+IE1lZCB2ZW5saWcgaGlsc2VuIC8gS2luZCByZWdhcmRzLA0KPiA+
+IC1Nb3J0ZW4gQnLDuHJ1cA0KPiA+DQoNCg==
