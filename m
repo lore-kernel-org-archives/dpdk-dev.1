@@ -2,45 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FD5CA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 12:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26485CA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 12:51:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 028A64065C;
-	Wed, 20 Aug 2025 14:23:51 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 7AF18402CC
- for <dev@dpdk.org>; Wed, 20 Aug 2025 14:23:50 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 6306546D7A; Wed, 20 Aug 2025 14:23:50 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/other Bug 1775] rte_hash performs poorly with small key sizes
-Date: Wed, 20 Aug 2025 12:23:50 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: other
-X-Bugzilla-Version: 25.07
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: minor
-X-Bugzilla-Who: mattias.ronnblom@ericsson.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1775-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17556926300.0478A.1313131
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 2B699402CC;
+	Wed, 20 Aug 2025 14:51:18 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id C74614027D
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 14:51:16 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 7E7C020F9E;
+ Wed, 20 Aug 2025 14:51:16 +0200 (CEST)
+Subject: RE: [PATCH v6 1/1] ethdev: add support to provide link type
 MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 20 Aug 2025 14:51:13 +0200
+Content-class: urn:content-classes:message
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE56@smartserver.smartshare.dk>
+In-Reply-To: <20250820111350.2992591-1-skori@marvell.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v6 1/1] ethdev: add support to provide link type
+Thread-Index: AdwRw4gTy+MUBbJ2SgGW0jIoMbuKiAABHDlw
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+References: <20250819055126.2745262-1-skori@marvell.com>
+ <20250820111350.2992591-1-skori@marvell.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: <skori@marvell.com>
+Cc: <dev@dpdk.org>, "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
+ "Thomas Monjalon" <thomas@monjalon.net>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,174 +49,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Search-replace link_type by link_connector in this patch.
+There are still variables, functions and other names using link_type in =
+the patch.
 
---17556926300.0478A.1313131
-Date: Wed, 20 Aug 2025 14:23:50 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+> +/**
+> + * @enum rte_eth_link_connector
+> + * @brief Ethernet port link connector type
+> + *
+> + * This enum defines the possible types of Ethernet port link =
+connectors.
+> + */
+> +enum rte_eth_link_connector {
+> +	RTE_ETH_LINK_CONNECTOR_NONE =3D 0,     /**< Not defined */
+[...]
+> +	RTE_ETH_LINK_CONNECTOR_OTHER =3D 31,   /**< non-physical interfaces =
+like
+> virtio, ring etc */
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1775
+For clarity, please add to the CONNECTOR_OTHER description that it also =
+includes unknown connector types, i.e. physical connectors not yet =
+defined in this list of connector types.
+So CONNECTOR_NONE is only used like a NULL value, and not for any other =
+purposes.
 
-            Bug ID: 1775
-           Summary: rte_hash performs poorly with small key sizes
-           Product: DPDK
-           Version: 25.07
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: minor
-          Priority: Normal
-         Component: other
-          Assignee: dev@dpdk.org
-          Reporter: mattias.ronnblom@ericsson.com
-  Target Milestone: ---
+> +};
+> +
 
-<rte_hash.h> uses memcmp() to compare key sizes < 16 bytes.
-
-memcmp() is often not a compiler intrinsic (e.g., not on GCC), and thus each
-comparison will result in an expensive libc call (both function call overhe=
-ad
-and the byte-scanning required by memcmp).
-
-memcmp() should preferably never be used for a pure boolean comparison.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17556926300.0478A.1313131
-Date: Wed, 20 Aug 2025 14:23:50 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - rte_hash performs poorly with small key sizes"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1775">1775</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>rte_hash performs poorly with small key sizes
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>25.07
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>All
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>minor
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>other
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>mattias.ronnblom&#64;ericsson.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">&lt;rte_hash.h&gt; uses memcmp() t=
-o compare key sizes &lt; 16 bytes.
-
-memcmp() is often not a compiler intrinsic (e.g., not on GCC), and thus each
-comparison will result in an expensive libc call (both function call overhe=
-ad
-and the byte-scanning required by memcmp).
-
-memcmp() should preferably never be used for a pure boolean comparison.
-          </pre>
-        </div>
-      </p>
-
-
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1775">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17556926300.0478A.1313131--
