@@ -2,72 +2,133 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD3BCA0EDC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 11:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E939ECA0EE4
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 12:04:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D61C040292;
-	Wed, 20 Aug 2025 13:13:58 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 0CBF34027D
- for <dev@dpdk.org>; Wed, 20 Aug 2025 13:13:56 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57KABaZ5010264;
- Wed, 20 Aug 2025 04:13:55 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=x
- A3O8WxC/cT4CEcJ72UvTKh4+UnRDn/Od4EjQV5iMaY=; b=cDT2p1RRJHrWyEDqx
- lwJCuRDr6Ilu6QIUxFADCduGyc33+XyE5qT1f4YD+BOmfGZ/PW8C5Nq8P5apP1Qt
- xO621h7sfr1Uo2CvPB8fVb5wHhYRRx3n/qgBIUhAZmM5YzV7OyZcur6xf/xd4PjM
- /XlyphMevVMdDr3wOWADJptj1OkkkX3B1GblMv84D3sYGBX+A4owv/UuuGsZhzi/
- rG79o9+ZTybCCLcahmWBBONC5d0eITyc10Pmfzu0JfQjfTSQcdz7lF4LOcgqQ7Nq
- w+iAtm0137lFZWi4+Y2hc3xfTyuO6Bf6DguqIXAFE5TJc/EEZxrl8Qmoph+x756a
- mFc1g==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48nccs83an-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 20 Aug 2025 04:13:55 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 20 Aug 2025 04:13:59 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 20 Aug 2025 04:13:59 -0700
-Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
- by maili.marvell.com (Postfix) with ESMTP id 226633F7091;
- Wed, 20 Aug 2025 04:13:52 -0700 (PDT)
-From: <skori@marvell.com>
-To: Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>
-CC: <dev@dpdk.org>, Sunil Kumar Kori <skori@marvell.com>, Nithin Dabilpuram
- <ndabilpuram@marvell.com>
-Subject: [PATCH v6 1/1] ethdev: add support to provide link type
-Date: Wed, 20 Aug 2025 16:43:11 +0530
-Message-ID: <20250820111350.2992591-1-skori@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250819055126.2745262-1-skori@marvell.com>
-References: <20250819055126.2745262-1-skori@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 121F840292;
+	Wed, 20 Aug 2025 14:04:14 +0200 (CEST)
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com
+ (mail-mw2nam10on2068.outbound.protection.outlook.com [40.107.94.68])
+ by mails.dpdk.org (Postfix) with ESMTP id B6E294027D
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 14:04:11 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yeBSnhOJNYQ09Z0aE15cXoGRB/DEdU9T8+p1phk3gkgq8hYuZYQSvBfVOwXlgTiv4CVve5mvpv4iiqMptZxjOH8h1z+XddQaRz2HT3mGdKVAEauEa1S5+TX7Z1KxlSRuzkz59SvfTc+w+4ElVj8rqxE06A0FKGHb9lg/S2wGM6xstmYRxbABBfikxTKmr75YfmPByiCcNUs/C0TC5kcbmtxkfJlmH6UgR5vzGwlaN09f/og+F0Tw7TAUC2ikNXxdtT/pVnV25R0CZC160SbHPhMnNRiTBlZA7znYc4J08AeT1PLAofgrHny96PmP25wnRKjwlnvH7e6r4RGdGUPdDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YbVlgE4YSKkB3OKCgTk9ZZNqaF3JWJw9SIKWT9chlkk=;
+ b=pwH6Fz258FNJsCbRqvVeIV03Us+ZcRQOL0NeQM1ymFy8tlWQt4ZIzAMFJ9h6sI2MmNjHpptwt+Slw0xmKHXldku4d2wQRhQWTSWcNd268ahWybzc3OA1bXU+/vxZJ+Wt8R5EgRyABe9bq/dbwaXxr1434jL8jxk1HrX/aJBd6uq9tfFAyZaEyE0X45ppoHH+0T/EWeYgqyK8KkScJcJEkJDXlsKYVpj4HnbSH+GV5Ln4/Hufkt+GNzdqah4ppi1VE+oEcSgDqhkFvWPqnWNDtIl/oMn5gJTy76+4HCZjDQQo/2uLykmUgpQ+GnRM84RJOGbndBfRjjwzPCNgg7tbHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YbVlgE4YSKkB3OKCgTk9ZZNqaF3JWJw9SIKWT9chlkk=;
+ b=byr7g+Gl9yWzMVOYO9yEYHgYVp5Qd0aVFyy5+TQvHm0q32FNmagzBRMj3X8+KNErmb3qtSdc6xoncFwWO5g1/iC0fLSoG0t8Jxb+59HZShtESAauvqjDOAChhHkpf5gWtZAtNXJyHL69Tk7OQMr8JBsyJjps4h8rrLLpMUtdAiG+cuQLe3ryaCtqe20ZU0qLjSJooLQXBxolCb3loCauBdjHVYimWXpVBHZ87htOHoVOPHmtQCGjQfvIV6GRWH+tl4EGDEdIh44NWFESsKzXK4v1+Aq7AUcLWZALn2wVvXiqEC/wsfMGoucTzehmWmFjdsYgw0qtUmm0GrKcfMhPXA==
+Received: from BYAPR11CA0039.namprd11.prod.outlook.com (2603:10b6:a03:80::16)
+ by BL1PR12MB5729.namprd12.prod.outlook.com (2603:10b6:208:384::14)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.24; Wed, 20 Aug
+ 2025 12:04:05 +0000
+Received: from CY4PEPF0000FCBE.namprd03.prod.outlook.com
+ (2603:10b6:a03:80:cafe::aa) by BYAPR11CA0039.outlook.office365.com
+ (2603:10b6:a03:80::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.14 via Frontend Transport; Wed,
+ 20 Aug 2025 12:04:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000FCBE.mail.protection.outlook.com (10.167.242.100) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9052.8 via Frontend Transport; Wed, 20 Aug 2025 12:04:05 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 20 Aug
+ 2025 05:03:49 -0700
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 20 Aug
+ 2025 05:03:48 -0700
+Date: Wed, 20 Aug 2025 14:02:42 +0200
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Joni <canary.overflow@gmail.com>, Viacheslav Ovsiienko
+ <viacheslavo@nvidia.com>
+CC: <dev@dpdk.org>
+Subject: Re: Segmentation fault when running MPRQ on testpmd
+Message-ID: <20250820120242.63zqjpokdzmumrka@ds-vm-debian.local>
+References: <CACGKW7TYR50ehjwexYrkrtCG2qq7-Ayj89K+wyoO5e2a2+F8hA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=J6TzLAnS c=1 sm=1 tr=0 ts=68a5adf3 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=1cRrDpktbWZE8ceIGrAA:9
- a=D7HC5XXFw0fsHaIj:21 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIwMDA5OCBTYWx0ZWRfX8dJTYtfIdZnf
- +f9v8Qqph9VFWNu0HcYrRMgP9+FAhKMzotuWCuYPrkz+8sUJJxuNv9vvDLZBydloJcqeziVN41M
- pO0QBIZEg/VE9b6IGQY28m3l+YTk32hyiWgpPIEH9VkRMqKDoiLndAH4omirCwm9qI9VvXt9DIV
- eWTyKHghbN07WZ9TSsOXPvSiYc79J2XNenxxhS09VMEpp6enTwMXyH26h6k1df6QcDwhW+qfyc6
- fAY/R71ct/B5+N2RYnLlszm1Jeem/DJPHOX79mqU/s58e0iktW+9GICbldwMUBSrv6b6M+TF9uD
- xeKgqIHxJcunkEavnkqIegpcEwM/D/vSYMye2Ffjly7/49a1++oo+BQ9sE3i7h1EEa0FwgmXdw3
- K0ic02yIRGHlOdkCd53qn/L8/+KmbiJpZBrQBZLFfmhZYTsrznm/GFYCNtKdkqfbkPOA9yBM
-X-Proofpoint-GUID: wwTUelpBpH703csczrIdjLsN7s-MgEni
-X-Proofpoint-ORIG-GUID: wwTUelpBpH703csczrIdjLsN7s-MgEni
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-20_03,2025-08-20_02,2025-03-28_01
+In-Reply-To: <CACGKW7TYR50ehjwexYrkrtCG2qq7-Ayj89K+wyoO5e2a2+F8hA@mail.gmail.com>
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBE:EE_|BL1PR12MB5729:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7258bdf8-ece0-4af2-4e65-08dddfe1a904
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|1800799024|82310400026|36860700013|30052699003|13003099007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?SmdxbUU5YmFYOGVlcVdEbGpsM0hVcGFYQUtRa0RsZ08rMlVCSWVrQ2kwa0NC?=
+ =?utf-8?B?Nm01c2FhNzBidnpNTWJuZ3JQdmlldG1kZHIzYzJxWThhUnljWExib3BxNlpZ?=
+ =?utf-8?B?dHZQNW5IWmU5WEVFRWxLOEVNSlBjbzhyRUc3MElKdy93ZWZiMi9vRTZ0YUI4?=
+ =?utf-8?B?d1FzaXlsY1BoUVpucFoySTZSTERIWWhzZEMzelc0ZVR2VXEzZ29MaFVtU3Y3?=
+ =?utf-8?B?SEx6RG1GdU1sajJOVUZGVnU2bVJhSFlBdjIvRFVrQ0ZYc1RZZkFua2lZajR2?=
+ =?utf-8?B?a1BMUllRZmQrTXEzTksyYlRBQXhlWlZ1QjFZK21HRHdmalk4UTVFSFhLMmpy?=
+ =?utf-8?B?T3o3RzRnOTJnYVRGa2d0YlNMUEF1V2pvbU5ueUtReEY2MWhtd3NYMVJzNDdN?=
+ =?utf-8?B?MWlpUnVHdjQxdUx6QUxoczRaakNRZjBoNnRPMnZuV0N5SU5kMXh2b1JUQWdh?=
+ =?utf-8?B?bVNDNzdHTFhnaDlDcWNwbW1DYVRpZnNERko5aXI5N0xpUFRIM1RWQzVuVkM1?=
+ =?utf-8?B?cGo5WFc0dEd2VVUwWTlwUFN1eGQzdE56bi9zWjlWU1ZqSGQyNXhjY2JZbW9r?=
+ =?utf-8?B?RW4ya2EyMzQ3UGhJVmtkRVVPT1hGVHJKUkNyUHIrM0hOSDNxVjd3MmFHNUhH?=
+ =?utf-8?B?OGJqYjk2SmgzZ01uZkxHa1lIaVZxWjlicVlIb0lEdm5EaldIQ0NDa3lrUkgv?=
+ =?utf-8?B?eEhSZXErQ1VZSXB2V1MxUWtpRWFwT0x0d2NOOHBCRE9abkZBazVkV2tMQXlj?=
+ =?utf-8?B?elcrend4d3hPQWU1TkN1Nnd2RDhiY2NkbjBVdlcvVjBnLzlMZVp1ZUtYaEZn?=
+ =?utf-8?B?VzJ2anB1OUxPYWZHUlRvcEMwTHF3VHdMMitPZU9GTUVzOEtvejh0OTZSZ0Vt?=
+ =?utf-8?B?K1I0T05IdnZmZmRvcms5UEFxZDlrVkdCNnc4b3VKUlRSNTJvNSs3V1prZVhI?=
+ =?utf-8?B?TjdKQlNVaWVIcVBFN2cwM3N2NXhqa1Z5N1V4OEdZVlg2a2NFTEFDTzRldHNk?=
+ =?utf-8?B?a1JSSXZVd0FzNHFiSEkwVWlSZW5PRFdhdmpyaUZZZWVTTEVCZW91YnE2N2Vj?=
+ =?utf-8?B?cEM4aU56ak1aQUJHay95MjJjTzJ2UTN4K2ZESVNaOGpjOW9VTlFuRDIrb3JC?=
+ =?utf-8?B?aVN3UDI1azVLbjJIUHB2TFhaZGplK2dLR011eXQwdytMaGRreGlqNzlGdDBy?=
+ =?utf-8?B?OCs0SEJpQVhuVkpWMndlMko2WUdRTzFKSXlEcFdMSG9UMHFuRWRlakVHc0Yv?=
+ =?utf-8?B?VjRIbys3K3ZYdjdxV3MxdndjT3dtT2ZHc1NseXNaWldpeEpOM01XSDkwODN6?=
+ =?utf-8?B?M1pCcCtJU3ZaS3FhS05ZT0hBZFlzMnFLUERKS3V1RUpJVFpyKytvVFk2VTRZ?=
+ =?utf-8?B?N0JUMVdCd2pYS1oxNkwyZ3lQcXIvNkYrUmVZVE9VaEsvOTkzZk13NSsyS3F0?=
+ =?utf-8?B?cXRUZUdtSzB6Z3hZQkNFWDR1VzQvNGxJR0crUXp2RHRYdngxUXZRbzdocVJw?=
+ =?utf-8?B?c1hldDd4UnExRVovcFpibGZjdkppYjJMM1I4bnI5SG9mU3dhNFVQVXZGdDNX?=
+ =?utf-8?B?dDVjbGxnUGN2MDdMaHlCQjNWak5nbWtLTWdJcVNVTSsvZy9GcVc4YjY3Z1Jh?=
+ =?utf-8?B?MFptMW9xbjJKamZnb3ZrMHpqMFlNR1dGZk8xakRzenh3YWlOZW9SSnk0OTFP?=
+ =?utf-8?B?bmpoU2dIeVd3VGpQdnpUQk9oeE5ybWZHbkdSUmxENUdtYk9Ib0ZEZnhLcVl2?=
+ =?utf-8?B?MDQvaGJhSVVwYlU3aGJrNXlnb28rQ3hxZXZXSlJtdEdaamNMMDFCOXRQakZT?=
+ =?utf-8?B?Y2NNaUp5U2V3QU5HN1FHdGtMcWRibGRPUGh1cGJvenNBRTg3VFhHeHpjazNm?=
+ =?utf-8?B?Z0pyQmpkYUg3bE5VTGdWZGYyVDZLZ0RPdHJJSVhNRVlncVhBVnNNNE1rdFZ4?=
+ =?utf-8?B?c3pmMHNLUzloQ3NsZVZCZnY4TmJkZEY3dkNtTTR1RVlOczFHYjgvQXp5T0VP?=
+ =?utf-8?B?bEJtS09QMHB5blV3dUFvaGJscFZHVU1MVEJKSi9XblJ6ZGZCTXZLQTl0cWY2?=
+ =?utf-8?Q?9QCEZN?=
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013)(30052699003)(13003099007);
+ DIR:OUT; SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 12:04:05.1692 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7258bdf8-ece0-4af2-4e65-08dddfe1a904
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000FCBE.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5729
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,290 +142,142 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Sunil Kumar Kori <skori@marvell.com>
+Hi,
 
-Adding link type parameter to provide the type
-of port like twisted pair, fibre etc.
+On Wed, Aug 20, 2025 at 04:40:16PM +0800, Joni wrote:
+> Hi,
+> 
+> I hope this is the correct place to report these issues since it seems to
+> be related to DPDK codes. I've reported this to Nvidia a few days ago but
+> have yet to receive any response from them.
+> 
+> My server is currently using ConnectX5 MT27800 (mlx5_core 5.7-1.0.2) on
+> firmware 16.35.4506 (MT_0000000011). My DPDK library version is 22.11.
+> 
+> I ran the following testpmd command which resulted in segmentation fault (I
+> am currently running on filtered traffic with packets >1000 bytes to
+> increase the odds of hitting the segmentation fault):
+> 
+> dpdk-testpmd -l 1-5 -n 4 -a
+> 0000:1f:00.0,rxq_comp_en=1,rxq_pkt_pad_en=1,rxqs_min_mprq=1,mprq_en=1,mprq_log_stride_num=6,mprq_log_stride_size=9,mprq_max_memcpy_len=64,rx_vec_en=1
+> -- -i --rxd=8192 --max-pkt-len=1700 --rxq=1 --total-num-mbufs=16384
+> --mbuf-size=3000 --enable_drop_en –enable_scatter
+> 
+> This segmentation fault goes away when I disable vectorization
+> (rx_vec_en=0). (Note that the segmentation fault does not occur in
+> forward-mode=rxonly). The segmentation fault also seems to happen with
+> higher chances when there is a rxnombuf.
 
-Also added an API to convert the RTE_ETH_LINK_TYPE_XXX
-to a readable string.
+Thank you for reporting and for the analysis.
 
-Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
-Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
----
-v5..v6:
- - Fix doxygen error.
-v4..v5:                                                                                             
- - Convert link type to connector.
- - Fix build error on Windows.
- - Handle comsmetic review comments.
-v3..v4:
- - Convert #define into enum.
- - Enhance comments for each port link type.
- - Fix test failures.
-v2..v3
- - Extend link type list as per suggestion
+Could you please open a bug on https://bugs.dpdk.org/ with all the
+details?
 
- app/test/test_ethdev_link.c      | 18 +++++++-----
- lib/ethdev/ethdev_trace.h        |  7 +++++
- lib/ethdev/ethdev_trace_points.c |  3 ++
- lib/ethdev/rte_ethdev.c          | 47 ++++++++++++++++++++++++++++--
- lib/ethdev/rte_ethdev.h          | 50 ++++++++++++++++++++++++++++++++
- 5 files changed, 116 insertions(+), 9 deletions(-)
+Do you happen to have a stack trace from the segmentation fault?
 
-diff --git a/app/test/test_ethdev_link.c b/app/test/test_ethdev_link.c
-index f063a5fe26..a951d64faa 100644
---- a/app/test/test_ethdev_link.c
-+++ b/app/test/test_ethdev_link.c
-@@ -17,23 +17,25 @@ test_link_status_up_default(void)
- 		.link_speed = RTE_ETH_SPEED_NUM_2_5G,
- 		.link_status = RTE_ETH_LINK_UP,
- 		.link_autoneg = RTE_ETH_LINK_AUTONEG,
--		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX
-+		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
-+		.link_type = RTE_ETH_LINK_CONNECTOR_OTHER
- 	};
- 	char text[RTE_ETH_LINK_MAX_STR_LEN];
- 
- 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
- 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
- 	printf("Default link up #1: %s\n", text);
--	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 2.5 Gbps FDX Autoneg",
-+	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 2.5 Gbps FDX Autoneg Other",
- 		text, strlen(text), "Invalid default link status string");
- 
- 	link_status.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
- 	link_status.link_autoneg = RTE_ETH_LINK_FIXED;
- 	link_status.link_speed = RTE_ETH_SPEED_NUM_10M;
-+	link_status.link_type = RTE_ETH_LINK_CONNECTOR_SGMII;
- 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
- 	printf("Default link up #2: %s\n", text);
- 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
--	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 10 Mbps HDX Fixed",
-+	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 10 Mbps HDX Fixed SGMII",
- 		text, strlen(text), "Invalid default link status "
- 		"string with HDX");
- 
-@@ -41,7 +43,7 @@ test_link_status_up_default(void)
- 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
- 	printf("Default link up #3: %s\n", text);
- 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
--	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Unknown HDX Fixed",
-+	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Unknown HDX Fixed SGMII",
- 		text, strlen(text), "Invalid default link status "
- 		"string with HDX");
- 
-@@ -49,7 +51,7 @@ test_link_status_up_default(void)
- 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
- 	printf("Default link up #3: %s\n", text);
- 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
--	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at None HDX Fixed",
-+	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at None HDX Fixed SGMII",
- 		text, strlen(text), "Invalid default link status "
- 		"string with HDX");
- 
-@@ -57,6 +59,7 @@ test_link_status_up_default(void)
- 	link_status.link_speed = RTE_ETH_SPEED_NUM_400G;
- 	link_status.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
- 	link_status.link_autoneg = RTE_ETH_LINK_AUTONEG;
-+	link_status.link_type = RTE_ETH_LINK_CONNECTOR_GAUI;
- 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
- 	printf("Default link up #4:len = %d, %s\n", ret, text);
- 	RTE_TEST_ASSERT(ret < RTE_ETH_LINK_MAX_STR_LEN,
-@@ -92,7 +95,8 @@ test_link_status_invalid(void)
- 		.link_speed = 55555,
- 		.link_status = RTE_ETH_LINK_UP,
- 		.link_autoneg = RTE_ETH_LINK_AUTONEG,
--		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX
-+		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
-+		.link_type = RTE_ETH_LINK_CONNECTOR_OTHER
- 	};
- 	char text[RTE_ETH_LINK_MAX_STR_LEN];
- 
-@@ -100,7 +104,7 @@ test_link_status_invalid(void)
- 	RTE_TEST_ASSERT(ret < RTE_ETH_LINK_MAX_STR_LEN,
- 		"Failed to format invalid string\n");
- 	printf("invalid link up #1: len=%d %s\n", ret, text);
--	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Invalid FDX Autoneg",
-+	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Invalid FDX Autoneg Other",
- 		text, strlen(text), "Incorrect invalid link status string");
- 
- 	return TEST_SUCCESS;
-diff --git a/lib/ethdev/ethdev_trace.h b/lib/ethdev/ethdev_trace.h
-index 482befc209..c5cba0edba 100644
---- a/lib/ethdev/ethdev_trace.h
-+++ b/lib/ethdev/ethdev_trace.h
-@@ -2110,6 +2110,13 @@ RTE_TRACE_POINT_FP(
- 	rte_trace_point_emit_string(ret);
- )
- 
-+RTE_TRACE_POINT_FP(
-+	rte_eth_trace_link_type_to_str,
-+	RTE_TRACE_POINT_ARGS(uint8_t link_type, const char *ret),
-+	rte_trace_point_emit_u8(link_type);
-+	rte_trace_point_emit_string(ret);
-+);
-+
- /* Called in loop in examples/bond and examples/ethtool */
- RTE_TRACE_POINT_FP(
- 	rte_eth_trace_macaddr_get,
-diff --git a/lib/ethdev/ethdev_trace_points.c b/lib/ethdev/ethdev_trace_points.c
-index 071c508327..706acdf356 100644
---- a/lib/ethdev/ethdev_trace_points.c
-+++ b/lib/ethdev/ethdev_trace_points.c
-@@ -206,6 +206,9 @@ RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_speed_to_str,
- RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_to_str,
- 	lib.ethdev.link_to_str)
- 
-+RTE_TRACE_POINT_REGISTER(rte_eth_trace_link_type_to_str,
-+	lib.ethdev.link_type_to_str)
-+
- RTE_TRACE_POINT_REGISTER(rte_eth_trace_stats_get,
- 	lib.ethdev.stats_get)
- 
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index dd7c00bc94..7b267a81a4 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -3285,18 +3285,61 @@ rte_eth_link_to_str(char *str, size_t len, const struct rte_eth_link *eth_link)
- 	if (eth_link->link_status == RTE_ETH_LINK_DOWN)
- 		ret = snprintf(str, len, "Link down");
- 	else
--		ret = snprintf(str, len, "Link up at %s %s %s",
-+		ret = snprintf(str, len, "Link up at %s %s %s %s",
- 			rte_eth_link_speed_to_str(eth_link->link_speed),
- 			(eth_link->link_duplex == RTE_ETH_LINK_FULL_DUPLEX) ?
- 			"FDX" : "HDX",
- 			(eth_link->link_autoneg == RTE_ETH_LINK_AUTONEG) ?
--			"Autoneg" : "Fixed");
-+			"Autoneg" : "Fixed",
-+			rte_eth_link_type_to_str(eth_link->link_type));
- 
- 	rte_eth_trace_link_to_str(len, eth_link, str, ret);
- 
- 	return ret;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_link_type_to_str, 25.11)
-+const char *
-+rte_eth_link_type_to_str(enum rte_eth_link_connector link_type)
-+{
-+	static const char * const link_type_str[] = {
-+		[RTE_ETH_LINK_CONNECTOR_NONE] = "None",
-+		[RTE_ETH_LINK_CONNECTOR_TP] = "Twisted Pair",
-+		[RTE_ETH_LINK_CONNECTOR_AUI] = "Attachment Unit Interface",
-+		[RTE_ETH_LINK_CONNECTOR_MII] = "Media Independent Interface",
-+		[RTE_ETH_LINK_CONNECTOR_FIBER] = "Fiber",
-+		[RTE_ETH_LINK_CONNECTOR_BNC] = "BNC",
-+		[RTE_ETH_LINK_CONNECTOR_DAC] = "Direct Attach Copper",
-+		[RTE_ETH_LINK_CONNECTOR_SGMII] = "SGMII",
-+		[RTE_ETH_LINK_CONNECTOR_QSGMII] = "QSGMII",
-+		[RTE_ETH_LINK_CONNECTOR_XFI] = "XFI",
-+		[RTE_ETH_LINK_CONNECTOR_SFI] = "SFI",
-+		[RTE_ETH_LINK_CONNECTOR_XLAUI] = "XLAUI",
-+		[RTE_ETH_LINK_CONNECTOR_GAUI] = "GAUI",
-+		[RTE_ETH_LINK_CONNECTOR_XAUI] = "XAUI",
-+		[RTE_ETH_LINK_CONNECTOR_CAUI] = "CAUI",
-+		[RTE_ETH_LINK_CONNECTOR_LAUI] = "LAUI",
-+		[RTE_ETH_LINK_CONNECTOR_SFP] = "SFP",
-+		[RTE_ETH_LINK_CONNECTOR_SFP_DD] = "SFP-DD",
-+		[RTE_ETH_LINK_CONNECTOR_SFP_PLUS] = "SFP+",
-+		[RTE_ETH_LINK_CONNECTOR_SFP28] = "SFP28",
-+		[RTE_ETH_LINK_CONNECTOR_QSFP] = "QSFP",
-+		[RTE_ETH_LINK_CONNECTOR_QSFP_PLUS] = "QSFP+",
-+		[RTE_ETH_LINK_CONNECTOR_QSFP28] = "QSFP28",
-+		[RTE_ETH_LINK_CONNECTOR_QSFP56] = "QSFP56",
-+		[RTE_ETH_LINK_CONNECTOR_QSFP_DD] = "QSFP-DD",
-+		[RTE_ETH_LINK_CONNECTOR_OTHER] = "Other",
-+	};
-+	const char *str = NULL;
-+
-+	if ((link_type < ((enum rte_eth_link_connector)RTE_DIM(link_type_str))) &&
-+		link_type_str[link_type])
-+		str = link_type_str[link_type];
-+
-+	rte_eth_trace_link_type_to_str(link_type, str);
-+	return str;
-+}
-+
- RTE_EXPORT_SYMBOL(rte_eth_stats_get)
- int
- rte_eth_stats_get(uint16_t port_id, struct rte_eth_stats *stats)
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index f9fb6ae549..4ed7e20d0b 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -329,6 +329,41 @@ struct rte_eth_stats {
- #define RTE_ETH_SPEED_NUM_UNKNOWN UINT32_MAX /**< Unknown */
- /**@}*/
- 
-+/**
-+ * @enum rte_eth_link_connector
-+ * @brief Ethernet port link connector type
-+ *
-+ * This enum defines the possible types of Ethernet port link connectors.
-+ */
-+enum rte_eth_link_connector {
-+	RTE_ETH_LINK_CONNECTOR_NONE = 0,     /**< Not defined */
-+	RTE_ETH_LINK_CONNECTOR_TP,           /**< Twisted Pair */
-+	RTE_ETH_LINK_CONNECTOR_AUI,          /**< Attachment Unit Interface */
-+	RTE_ETH_LINK_CONNECTOR_MII,          /**< Media Independent Interface */
-+	RTE_ETH_LINK_CONNECTOR_FIBER,        /**< Optical Fiber Link */
-+	RTE_ETH_LINK_CONNECTOR_BNC,          /**< BNC Link type for RF connection */
-+	RTE_ETH_LINK_CONNECTOR_DAC,          /**< Direct Attach copper */
-+	RTE_ETH_LINK_CONNECTOR_SGMII,        /**< Serial Gigabit Media Independent Interface */
-+	RTE_ETH_LINK_CONNECTOR_QSGMII,       /**< Link to multiplex 4 SGMII over one serial link */
-+	RTE_ETH_LINK_CONNECTOR_XFI,          /**< 10 Gigabit Attachment Unit Interface */
-+	RTE_ETH_LINK_CONNECTOR_SFI,          /**< 10 Gigabit Serial Interface for optical network */
-+	RTE_ETH_LINK_CONNECTOR_XLAUI,        /**< 40 Gigabit Attachment Unit Interface */
-+	RTE_ETH_LINK_CONNECTOR_GAUI,         /**< Gigabit Interface for 50/100/200 Gbps */
-+	RTE_ETH_LINK_CONNECTOR_XAUI,         /**< 10 Gigabit Attachment Unit Interface */
-+	RTE_ETH_LINK_CONNECTOR_CAUI,         /**< 100 Gigabit Attachment Unit Interface */
-+	RTE_ETH_LINK_CONNECTOR_LAUI,         /**< 50 Gigabit Attachment Unit Interface */
-+	RTE_ETH_LINK_CONNECTOR_SFP,          /**< Pluggable module for 1 Gigabit */
-+	RTE_ETH_LINK_CONNECTOR_SFP_PLUS,     /**< Pluggable module for 10 Gigabit */
-+	RTE_ETH_LINK_CONNECTOR_SFP28,        /**< Pluggable module for 25 Gigabit */
-+	RTE_ETH_LINK_CONNECTOR_SFP_DD,       /**< Pluggable module for 100 Gigabit */
-+	RTE_ETH_LINK_CONNECTOR_QSFP,         /**< Module to mutiplex 4 SFP i.e. 4*1=4 Gbps */
-+	RTE_ETH_LINK_CONNECTOR_QSFP_PLUS,    /**< Module to mutiplex 4 SFP_PLUS i.e. 4*10=40 Gbps */
-+	RTE_ETH_LINK_CONNECTOR_QSFP28,       /**< Module to mutiplex 4 SFP28 i.e. 4*25=100 Gbps */
-+	RTE_ETH_LINK_CONNECTOR_QSFP56,       /**< Module to mutiplex 4 SFP56 i.e. 4*50=200 Gbps */
-+	RTE_ETH_LINK_CONNECTOR_QSFP_DD,      /**< Module to mutiplex 4 SFP_DD i.e. 4*100=400 Gbps */
-+	RTE_ETH_LINK_CONNECTOR_OTHER = 31,   /**< non-physical interfaces like virtio, ring etc */
-+};
-+
- /**
-  * A structure used to retrieve link-level information of an Ethernet port.
-  */
-@@ -341,6 +376,7 @@ struct rte_eth_link {
- 			uint16_t link_duplex  : 1;  /**< RTE_ETH_LINK_[HALF/FULL]_DUPLEX */
- 			uint16_t link_autoneg : 1;  /**< RTE_ETH_LINK_[AUTONEG/FIXED] */
- 			uint16_t link_status  : 1;  /**< RTE_ETH_LINK_[DOWN/UP] */
-+			uint16_t link_type    : 5;  /**< RTE_ETH_LINK_TYPE_XXX */
- 		};
- 	};
- };
-@@ -3116,6 +3152,20 @@ int rte_eth_link_get_nowait(uint16_t port_id, struct rte_eth_link *link)
- __rte_experimental
- const char *rte_eth_link_speed_to_str(uint32_t link_speed);
- 
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * This function converts an Ethernet link type to a string.
-+ *
-+ * @param link_type
-+ *   The link type to convert.
-+ * @return
-+ *   The string representation of the link type.
-+ */
-+__rte_experimental
-+const char *rte_eth_link_type_to_str(enum rte_eth_link_connector link_type);
-+
- /**
-  * @warning
-  * @b EXPERIMENTAL: this API may change without prior notice.
--- 
-2.43.0
+Slava: Could you please take a look at the issue described by Joni in this mail?
 
+> 
+> Upon some investigation, I noticed that in DPDK’s source codes
+> drivers/net/mlx5/mlx5_rxtx_vec.c
+> (function rxq_copy_mprq_mbuf_v()), there is a possibility where the
+> consumed stride exceeds the stride number (64 in this case) which should
+> not be happening. I'm suspecting there's some CQE misalignment here upon
+> encountering rxnombuf.
+> 
+> rxq_copy_mprq_mbuf_v(...) {
+>     ...
+>     if(rxq->consumed_strd == strd_n) {
+>         // replenish WQE
+>     }
+>     ...
+>     strd_cnt = (elts[i]->pkt_len / strd_sz) +
+>                ((elts[i]->pkt_len % strd_sz) ? 1 : 0);
+> 
+>     rxq_code = mprq_buf_to_pkt(rxq, elts[i], elts[i]->pkt_len, buf,
+> rxq->consumed_strd, strd_cnt);
+>     rxq->consumed_strd += strd_cnt;       // encountering cases where
+> rxq->consumed_strd > strd_n
+>     ...
+> }
+> 
+> In addition, there were also cases in mprq_buf_to_pkt() where the allocated
+> seg address is exactly the same as the pkt (elts[i]) address passed in
+> which should not happen.
+> 
+> mprq_buf_to_pkt(...) {
+>     ...
+>     if(hdrm_overlap > 0) {
+>         MLX5_ASSERT(rxq->strd_scatter_en);
+> 
+>         struct rte_mbuf *seg = rte_pktmbuf_alloc(rxq->mp);
+>         if (unlikely(seg == NULL)) return MLX5_RXQ_CODE_NOMBUF;
+>         SET_DATA_OFF(seg, 0);
+> 
+>         // added debug statement
+>         DRV_LOG(DEBUG, "pkt %p seg %p", (void *)pkt, (void *)seg);
+> 
+> rte_memcpy(rte_pktmbuf_mtod(seg, void *), RTE_PTR_ADD(addr, len -
+> hdrm_overlap), hdrm_overlap); ... } }
+> 
+> I have tried upgrading my DPDK version to 24.11 but the segmentation fault
+> still persists.
+> 
+> In addition, there were also a few other issues that I've noticed:
+> 
+>    - max-pkt-len does not seem to work for values < 1500 even though "show
+>    port info X" showed that the MTU was set to the value I've passed in
+>    - In mprq_buf_to_pkt():
+>        - uint32_t seg_len = RTE_MIN(len, (uint32_t)(pkt->buf_len -
+>    RTE_PKTMBUF_HEADROOM)) --> seems unnecessary as to hit this code, len has
+>    to be greater than (uint32_t)(pkt->buf_len - RTE_PKTMBUF_HEADROOM) due to
+>    the if condition
+>        - If the allocation struct rte_mbuf *next =
+>    rte_pktmbuf_alloc(rxq->mp) fails and packet has more than 2 segs, the segs
+>    that were allocated previously do not get freed
+> 
+>     mprq_buf_to_pkt(...) {
+>         ...                } else if (rxq->strd_scatter_en) {
+> 
+> struct rte_mbuf *prev = pkt;
+> 
+> uint32_t seg_len = RTE_MIN(len, (uint32_t)
+> 
+> (pkt->buf_len - RTE_PKTMBUF_HEADROOM));
+> 
+> uint32_t rem_len = len - seg_len;
+> 
+> 
+>       rte_memcpy(rte_pktmbuf_mtod(pkt, void *), addr, seg_len);
+>       DATA_LEN(pkt) = seg_len;
+>       while (rem_len) {
+>          struct rte_mbuf *next = rte_pktmbuf_alloc(rxq->mp);
+> 
+> 
+>             if (unlikely(next == NULL))
+>                 return MLX5_RXQ_CODE_NOMBUF;
+>             ...
+>     - In the external buffer attach case where hdrm_overlap > 0, the code
+> did not decrement the buffer refcnt if allocation struct rte_mbuf *next =
+> rte_pktmbuf_alloc(rxq->mp) fails
+> 
+> mprq_buf_to_pkt(...) {
+>     ...            if (hdrm_overlap > 0) {
+> 
+>         __atomic_add_fetch(&buf->refcnt, 1, __ATOMIC_RELAXED);
+>         ...
+>         MLX5_ASSERT(rxq->strd_scatter_en);
+>         struct rte_mbuf *seg = rte_pktmbuf_alloc(rxq->mp);
+>         if (unlikely(seg == NULL))
+>             return MLX5_RXQ_CODE_NOMBUF;
+>         SET_DATA_OFF(seg, 0);
+>         ...
+> 
+> 
+> Hope to hear from you soon!
+> 
+> With regards,
+> Joni
+
+Best regards,
+Dariusz Sosnowski
