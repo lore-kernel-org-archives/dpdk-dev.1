@@ -2,60 +2,162 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B540CA0EF8
-	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 09:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DFBCA0EFA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 20 Aug 2025 09:47:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 55820402DD;
-	Wed, 20 Aug 2025 11:47:17 +0200 (CEST)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com
- [209.85.208.177])
- by mails.dpdk.org (Postfix) with ESMTP id 92D524026C
- for <dev@dpdk.org>; Wed, 20 Aug 2025 10:40:29 +0200 (CEST)
-Received: by mail-lj1-f177.google.com with SMTP id
- 38308e7fff4ca-333f8f0965dso52442701fa.1
- for <dev@dpdk.org>; Wed, 20 Aug 2025 01:40:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1755679229; x=1756284029; darn=dpdk.org;
- h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
- :date:message-id:reply-to;
- bh=aCOCkATXcCJLMTtk+lffLGYk1pp2ffpWKNFU5rfHG20=;
- b=PYO7Czm1jm9vIHZTGHNkwmPFlNwF+5VV4gcMmSP8R7iM/MMlGxM2BQu7bZJOL0lxZP
- 047Ps9G1XotaGcMvbx1BwwCNTuQVsziVFf9C9UD8UCixxAjDR4ag/jJItnbIiaK6FQ4P
- uiHqXKOmMnVIdcihbytLpbnjBZF3GS9l/wp8NjqxBUttTvjATRT6vz6MbgVwE4JZ1ikX
- opX+FPUOWlv66YoTHfGg11DG6c+8rVHjanxME4TPrlG9qiCAnWIPFzae3TUnt0jyJfl1
- rMZ9R2ParzxoYP2RX2ke0ZuOXjX19dh/cGmuBSe3Hrqd4YN+ioPlHAJ1y49DL9UQFm5T
- /UUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755679229; x=1756284029;
- h=to:subject:message-id:date:from:mime-version:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=aCOCkATXcCJLMTtk+lffLGYk1pp2ffpWKNFU5rfHG20=;
- b=CYmOxVum2vzCZasphMexNCPEyyQxWd8gNw0kpC+6JwAUFAGNicXufe4H3sa/yAV7SM
- qJ2xOSlRW4jcOg/AtRN80WgUxo5045eNj67oHZEzhAKc+CudGPKswfZLbxJuxputb/45
- /W5j1wpGMDQSTStyYZM53PdwH5YrzQvHsR7/Jkkr687akVh+hK8aLZwn/V3e4+igqhnw
- 9r+L0y3icLQ+svpvkQRcQX/+3XDGurLAABttLqST4z1g6F8ZFIYTbxOJqA80Kebe94X9
- n1407evFFlh22XHyNk/WRQ9HDxoZpXCgyPaCE2/fdNfRd/4wk22ck0cQ30EX9cx/lCQ3
- o7Bw==
-X-Gm-Message-State: AOJu0YwhfmTHBubNY0BH7KgHbjnWpQsTULyiC8srSQ0HHEvd7P2r2nXM
- vvjmgHFOeAXpcq/B/oIA2ZVZUbXvy0hiW5btC2AD/J9eG0zgr/n2rq5NuZkCPJRBO9tFArh47fq
- LGVakIbxQTm+JLvMr8jTUFYxS75wr8nh+AtDh
-X-Gm-Gg: ASbGncuagldSnqvANyMu14D+A+tXjN+TK8OAPH79uJl6C52izTGwxZ3GOiW7niOnuev
- hxlDoFLa685VxI/bNnMG5DZsC0hgtV9fzoYXOzvy5YMpEnFUalgbcbpK1E8E+25WtZTL/mu9l7I
- QUTuQOH3BZufkovnuViJSpvG5WXUMAQVBf1Z6hp/twpfWcEXUw+zmOQoCooN3X9njI0wXCNPjXv
- jI/Xp+zCQ==
-X-Google-Smtp-Source: AGHT+IFedZ1J2390Brt+HW350iCOyDdbcmf4WEU1BY2mOtGFt66YQeZ/00Jj0+Dp4QecZze8XJuCviTI7Pwx8/HD0gQ=
-X-Received: by 2002:a05:651c:1118:10b0:32f:3671:4d6d with SMTP id
- 38308e7fff4ca-3353bcced65mr4655411fa.1.1755679228301; Wed, 20 Aug 2025
- 01:40:28 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 69514402DD;
+	Wed, 20 Aug 2025 11:47:41 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 7C0B740292
+ for <dev@dpdk.org>; Wed, 20 Aug 2025 11:47:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1755683260; x=1787219260;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=F/p4+1NASzWjF7uoF5fPvf/xp19FnuMeqursldp86/E=;
+ b=lZaEcf0U64tbVavzrbf7DmZbOhl2oj4wGP8rznc0YJtqsljnS4mjj0of
+ 0b5McBrxkZkDjlTVArszWcaUvazWIdiVF6J+JfaIpp1HVTPzd3yaFHjTB
+ oT5z6/qUKfyJt/LRTdnJlGqxmmTT7lEPkoLCYZ16Rbdmw1wb4qC45CENV
+ b4eAoNg0rXBdd0UeAS1Oa7lDmnwnlyKGLFr8iiK/A9KO4hHYpV84LUmGR
+ ryjC8huEpS3Nl5jEjO8Ly9E5TQdBqsGX51WhQTVYpmhi8ndPmFTgIZrCB
+ 5A6lJ6FSN9ww+5ao4T2jiPSLTTjvNg1G7uJEeetJfstZzOjUnwLeCXZu/ w==;
+X-CSE-ConnectionGUID: LKU4KtTCROOxlVBXO2cyfA==
+X-CSE-MsgGUID: 2PKF8ko8Rj6e4iSXSfmgzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11527"; a="58093592"
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; d="scan'208";a="58093592"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 20 Aug 2025 02:47:38 -0700
+X-CSE-ConnectionGUID: uiwwf0DKTvmj+H/aatDw3g==
+X-CSE-MsgGUID: 0usa4RphQaGY0EjpuHVdwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,302,1747724400"; d="scan'208";a="205243502"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 20 Aug 2025 02:47:38 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 20 Aug 2025 02:47:38 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 20 Aug 2025 02:47:38 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.54)
+ by edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 20 Aug 2025 02:47:37 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FFmWWdd4hW7RIssR9KL8LiVqRoTESF/LXkwqCd8kQ/+QxlZjGSOHyKoydRw1WXN1jakjyybmHZ0UPQDEbC7Pr8I/dF8g6YPKUhw14JXM5KepKv/eqlEXfKhoJBL5xoznMVJp5otpjMSdukF8hrlzgEhh78094cl8/tPCkN/OZI7Jq5f/gozjho0EQR81Pa4w96/3ge8txOd0kE51nZsl2tapeM5n6eYXABEuKBU0onVrYEYHosBpt7DKMauT5FLUw+mYYlUunY2yh6VSlXSmr9TfVFl047Xi63Dfs+K96VOme0fQLlpLbno+4UfNwsvp/QquIwCgLVsUpY8C79Mmcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EEJ57ydGRGcEBXPcgzaFKv99K9IyMjtkruXUyR2LVm4=;
+ b=bL0ZOLw4g9flyJ6ZGN5Ktv/xJgnRHMpClZKbXKXzydZz4jg5xHGR+8eM4kIgMWt9/bRBE2Z/hNIwW1J3QsXlSH14ddzp/AAlyFMjCarzT9cDMjlnCOfNbeuYJxT3ZIucWApMmFeteP74yTW0nI2ehqoYizUWpVCaIVUhsXeiyHFe+OlY7My7snb18u3COHWaU+dtMhIhNFOYE/1kfbmoLw/ruJ2o7gTTGwevu6slwb8ensGhiwvtniT92Wp8OlOx5xIs0i0zPzB/XH4MHOYsr0tnnpl6ZJelnrn6BZvRBR58SEp476wXZhNhDYUcMjMTEN7C4tJiBVqrK/sD5uBKFQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DM4PR11MB5996.namprd11.prod.outlook.com (2603:10b6:8:5f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.13; Wed, 20 Aug
+ 2025 09:47:35 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9052.013; Wed, 20 Aug 2025
+ 09:47:35 +0000
+Date: Wed, 20 Aug 2025 10:47:30 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Ciara Loftus <ciara.loftus@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v3 13/15] net/ice: use the common Rx path selection
+ infrastructure
+Message-ID: <aKWZskp8TOzugdJE@bricha3-mobl1.ger.corp.intel.com>
+References: <20250818105914.169732-1-ciara.loftus@intel.com>
+ <20250818105914.169732-14-ciara.loftus@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250818105914.169732-14-ciara.loftus@intel.com>
+X-ClientProxiedBy: DU6P191CA0062.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:53e::11) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-From: Joni <canary.overflow@gmail.com>
-Date: Wed, 20 Aug 2025 16:40:16 +0800
-X-Gm-Features: Ac12FXxEwZ9YKAHH7DbvEMQwwI3DmCFVYErlQ180igPpW9GrTWSv6kSbWS6sUJY
-Message-ID: <CACGKW7TYR50ehjwexYrkrtCG2qq7-Ayj89K+wyoO5e2a2+F8hA@mail.gmail.com>
-Subject: Segmentation fault when running MPRQ on testpmd
-To: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000be1609063cc7ece4"
-X-Mailman-Approved-At: Wed, 20 Aug 2025 11:47:15 +0200
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DM4PR11MB5996:EE_
+X-MS-Office365-Filtering-Correlation-Id: bb7cc187-fb30-4dce-7623-08dddfce9790
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?pFyqdZrqNq1gAkfdNnSCD54Giq/lF9BPZ0Pv+57anE7wH+bjarqixrj5JQ1M?=
+ =?us-ascii?Q?R8jqMFL0pfpgKDBZ9lbSQxwQejl9qpbSgy8W8t+yp5v8aaFSpXOYzxrcat62?=
+ =?us-ascii?Q?I/X0niG2vV4yXeBE5phdwDDU5b+JU0tejSsq4ZReruBWynbLBQj1vwXT/yQf?=
+ =?us-ascii?Q?VLfIte5JOqp3xKHbfxOkf4kEtMB1MR2KJsX4CN/rd5gpvYibXUsr3rmrfwO5?=
+ =?us-ascii?Q?0Lh1NdMAM2ppznXF09zeaqmit6J4PGrX1PMU1dpZfN4dD3hVKTKLQN1m+HMY?=
+ =?us-ascii?Q?DmVLIGBvabmjtGXYgZnVBXns5m4GgkSTJRX+C2H7sscP3Qt76JFufVzJdkfw?=
+ =?us-ascii?Q?/w5tQ5Y3MX2bzd6UrwhGheT/3XdD7LH6QPl/UciIYj2jvxlog7g+/UM8iPn2?=
+ =?us-ascii?Q?U4JHSN01h71hiWC+KUEL7EB++xgMpfMP26gf8/8gR5ZPw+AjhO2oUDYrhna1?=
+ =?us-ascii?Q?pGjOrCSLPmEf0DrIcvtLAL2SwzGyPdA7mAaXljBuBJupEPw4QSKzfIt2ZE1I?=
+ =?us-ascii?Q?co5BxgI46oMPQpGnsZEF6lQXyN8NTjEMYs+UigBpgiq+NjoHzA6DUBNY5rsO?=
+ =?us-ascii?Q?PJpJDsCnwKxODX1MXrT6tLKbWWjmXChsPNw86nwyB4FMMgxQjKwazDcTo6CK?=
+ =?us-ascii?Q?EPQGjUddgrRZRakFBjWWgJ1Rd0gtFR1DNgpOMYz1omyINBIUwmZO1VSGwLlR?=
+ =?us-ascii?Q?xhM6JmJWEM5TUh7mS0sZ6bfo2FYpn5yMwCVDAR/APSnIwe0gWKSuDzbnAouk?=
+ =?us-ascii?Q?Din0AB9wAdV7w1DJDv6whACtc/9mHK/TtMlcBZJON5eQkfnY8FuW5g+mK9Md?=
+ =?us-ascii?Q?QmRAgByyxhEY4476CFEXyjO8IIUsmULIuSjDGjoiXupInb9wNqnlCYo05xqA?=
+ =?us-ascii?Q?3lD60CRcnguqjd7O7th0I3sE77hSBJ5zAMsU9BT6xw9Zya5hzPUcJKtY7LrJ?=
+ =?us-ascii?Q?CpIeH/8adwbZoMzICmIaJPH1ghzRm/OPxNaEpG0BvlAkT3OhdxwewYCm+I/C?=
+ =?us-ascii?Q?ho56SM+Trim0letpkIwA08ifna46s8FtCrf6CMGvHZ0w/Cb7Rx4We67kM1NS?=
+ =?us-ascii?Q?6paQdqSZxfQwEW1hTDSLc6biuGpY+p4xSJM2SMinRGUEzjmdxDLIhrcqKGwX?=
+ =?us-ascii?Q?IAtkHlRZTHpx53upxDeKNgpPkhKQnw7MbwtOwCzo/cGLLoQIQ+8sbfjQTq0Q?=
+ =?us-ascii?Q?RKosMq3M90SnpV8PEdqSjNKTy0tcJWHv4y7CFvwQrLtVmPKXU599zpgYhh0B?=
+ =?us-ascii?Q?QZW40GGA0hKP7lEaeYX9yk5U7RlUMDCbgnbqZMrYA/3diSQX8QjCM0iAjnsK?=
+ =?us-ascii?Q?3jGlE9V4EmaVXBBSqnPz5rbjmy1Yq42jVFbWRQ/+acRk1oqy+PfHLMxA/JNZ?=
+ =?us-ascii?Q?PdRpB+U5do+ptRah/r6CiWTdg3klR48zykQbXZ/UNkAt0r45Ggj8H2iyRnad?=
+ =?us-ascii?Q?TeOghWh/Tn4=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2kMVNE+r4uIFshauSulrNcdm3ZJhJuBAdmAB25bS5kz1keTsBdgabg6voD3B?=
+ =?us-ascii?Q?zLiEzWUAQFqgj+MU+U9v8eztJlWys2pxyLUW+rb847kzKp5nooyC/CjWxkwU?=
+ =?us-ascii?Q?fcMw/YNjlHszn3T0WXx9cs1grMrUS0ZTLnh4c+R2E/dyBElrSbb9L3rsRQtd?=
+ =?us-ascii?Q?zc7+M9dXVyLS8rIKw/CkV6QIYze9tcWRS0849KAKUt7oUZPTf2LEjnRvv8JF?=
+ =?us-ascii?Q?qivKWaJGkuPTV7L59rvZrI0Vaw1QpYWIek5/tU6uQwWfwoqwb7FXoaGpsoxw?=
+ =?us-ascii?Q?xSt1LwTzi253iRw9usZSmWl4ArPNEdFstPjd+AFHT52I8RQgYubqCXzoPXGv?=
+ =?us-ascii?Q?svFqFEWmgJBkQ6DFYPW4yn9uGKYCexXS1VCt9DhvG01HjXpgRu+gd5b402GK?=
+ =?us-ascii?Q?uxJHexR6kAxU2YJoTzlC8dj5sxtspigxM3cKZcDASZHGd7kT0ecu5hVkRDFZ?=
+ =?us-ascii?Q?+wXuQubRmH/k60N80xgoL/m1JSelYO+z6qVdTXJJeaqoALz8mqyR5c5pq3ee?=
+ =?us-ascii?Q?jAiFBJvJkzIvcBRUy+DjwHgSDnsFvXy+buNT5lISQFgYmPEQN0fd2L0wSyDM?=
+ =?us-ascii?Q?33qVtYxRUFC2pktbfFY183ISIMPgHTspGUmkzuM8TYk7dy47VuwRd49x37PC?=
+ =?us-ascii?Q?p/dLMI/KtjyMD/MzgzmishTDo0kspxUPaOPMQLMV6Ra3WJR1InWtA52Z4xkS?=
+ =?us-ascii?Q?zcKx81c0Z75NyASnEezr//y6Q5PMIiniV8KRlq8bVeereJBl4ljQLx4b/eqQ?=
+ =?us-ascii?Q?eBTl36lGqD4ftOlBydoHTOtKnQFT/qJo5ewfdvm3f7Kc4IqbgJu8ib8fxtPA?=
+ =?us-ascii?Q?RO3pHYATiBWQ6YvX438D8++j2pQhftUhUx/E0Jj7le2O7fb8ouYjCQYk2rjF?=
+ =?us-ascii?Q?DuCdCpGI8mZQotHscno2fxg6c+z4O/bb56IRvatOyg8airyeGEwMQ6JxOZQK?=
+ =?us-ascii?Q?QONkfo1yIg/wuLhPjaoZhhdM7KmVykA44CX1ljL7FyvOy5mIQ5VbTT8gCOmT?=
+ =?us-ascii?Q?0GtBi6KB613PncGd5xeuuS+vOw84i0ynwk1mMcLnkNpQbbLTK5vaiQ4hCIQ4?=
+ =?us-ascii?Q?LcJlTMhwZpaaGumbK1PlwSt4/49so4d4imlXb2cvuIZPWHUQ1x9b1XYxGf2N?=
+ =?us-ascii?Q?nSle95cSCF0F4k0RrQEkr3Xmlv4q8hj0D8zz8c6Tv1955Es777zm87yxJDPc?=
+ =?us-ascii?Q?Na+OUGg9E4TQizAEBn0ju2COtTPRbSEC00nf2ueFAEgyRRsespbc++mWRhZw?=
+ =?us-ascii?Q?bYOWL0j/KOxH836nhPehUjpiM6hvZdOeXiqHbr2DleXtEzU3DIV5KEyep6y/?=
+ =?us-ascii?Q?ZrVAIH82NXb2TlVwv04RIl8AI1s7cjNmBSTIsbpaYwHQm1jFNv/J5t0hlqmz?=
+ =?us-ascii?Q?ywA3YZ/QMB65RS9EViJ14nhd0jxu6Ldb/EHT4Wbul/xDugDd63ptZ9HIl4ep?=
+ =?us-ascii?Q?lMZkopMbwWgzFhK3+ntzo0VoLelTr7TVGLYyA4g4YEp0YEOukyWUkvaC3jIx?=
+ =?us-ascii?Q?QglAeFkD2QX0/RLpnK5r1IaeScAgC65UWOtyBP7b+evzK3gEhYE77tMUaqOM?=
+ =?us-ascii?Q?auX5VBLRAnzbeNG7kLFxUdKCbmfEredBJNH2b3n03o9y9xbjVvZLdgM/7T2z?=
+ =?us-ascii?Q?1Q=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb7cc187-fb30-4dce-7623-08dddfce9790
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2025 09:47:35.7773 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MEGFpml0UFGC9L2JWBahYSyvHe83nnrE7bya8Dm8ffCJInAy/2pphmvlf3wIbUqTP2+1x+iOtXE4kZXKW9R1uoPCezEE+btDLdcOgPUJAs4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB5996
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,247 +171,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000be1609063cc7ece4
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Mon, Aug 18, 2025 at 10:59:12AM +0000, Ciara Loftus wrote:
+> Replace the existing complicated logic with the use of the common
+> function.
+> 
+> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+> ---
+> v3:
+> * Fixed vector offload mask to excude QINQ
+> * Use new extra features structure to define burst features
+> ---
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Hi,
-
-I hope this is the correct place to report these issues since it seems to
-be related to DPDK codes. I've reported this to Nvidia a few days ago but
-have yet to receive any response from them.
-
-My server is currently using ConnectX5 MT27800 (mlx5_core 5.7-1.0.2) on
-firmware 16.35.4506 (MT_0000000011). My DPDK library version is 22.11.
-
-I ran the following testpmd command which resulted in segmentation fault (I
-am currently running on filtered traffic with packets >1000 bytes to
-increase the odds of hitting the segmentation fault):
-
-dpdk-testpmd -l 1-5 -n 4 -a
-0000:1f:00.0,rxq_comp_en=3D1,rxq_pkt_pad_en=3D1,rxqs_min_mprq=3D1,mprq_en=
-=3D1,mprq_log_stride_num=3D6,mprq_log_stride_size=3D9,mprq_max_memcpy_len=
-=3D64,rx_vec_en=3D1
--- -i --rxd=3D8192 --max-pkt-len=3D1700 --rxq=3D1 --total-num-mbufs=3D16384
---mbuf-size=3D3000 --enable_drop_en =E2=80=93enable_scatter
-
-This segmentation fault goes away when I disable vectorization
-(rx_vec_en=3D0). (Note that the segmentation fault does not occur in
-forward-mode=3Drxonly). The segmentation fault also seems to happen with
-higher chances when there is a rxnombuf.
-
-Upon some investigation, I noticed that in DPDK=E2=80=99s source codes
-drivers/net/mlx5/mlx5_rxtx_vec.c
-(function rxq_copy_mprq_mbuf_v()), there is a possibility where the
-consumed stride exceeds the stride number (64 in this case) which should
-not be happening. I'm suspecting there's some CQE misalignment here upon
-encountering rxnombuf.
-
-rxq_copy_mprq_mbuf_v(...) {
-    ...
-    if(rxq->consumed_strd =3D=3D strd_n) {
-        // replenish WQE
-    }
-    ...
-    strd_cnt =3D (elts[i]->pkt_len / strd_sz) +
-               ((elts[i]->pkt_len % strd_sz) ? 1 : 0);
-
-    rxq_code =3D mprq_buf_to_pkt(rxq, elts[i], elts[i]->pkt_len, buf,
-rxq->consumed_strd, strd_cnt);
-    rxq->consumed_strd +=3D strd_cnt;       // encountering cases where
-rxq->consumed_strd > strd_n
-    ...
-}
-
-In addition, there were also cases in mprq_buf_to_pkt() where the allocated
-seg address is exactly the same as the pkt (elts[i]) address passed in
-which should not happen.
-
-mprq_buf_to_pkt(...) {
-    ...
-    if(hdrm_overlap > 0) {
-        MLX5_ASSERT(rxq->strd_scatter_en);
-
-        struct rte_mbuf *seg =3D rte_pktmbuf_alloc(rxq->mp);
-        if (unlikely(seg =3D=3D NULL)) return MLX5_RXQ_CODE_NOMBUF;
-        SET_DATA_OFF(seg, 0);
-
-        // added debug statement
-        DRV_LOG(DEBUG, "pkt %p seg %p", (void *)pkt, (void *)seg);
-
-rte_memcpy(rte_pktmbuf_mtod(seg, void *), RTE_PTR_ADD(addr, len -
-hdrm_overlap), hdrm_overlap); ... } }
-
-I have tried upgrading my DPDK version to 24.11 but the segmentation fault
-still persists.
-
-In addition, there were also a few other issues that I've noticed:
-
-   - max-pkt-len does not seem to work for values < 1500 even though "show
-   port info X" showed that the MTU was set to the value I've passed in
-   - In mprq_buf_to_pkt():
-       - uint32_t seg_len =3D RTE_MIN(len, (uint32_t)(pkt->buf_len -
-   RTE_PKTMBUF_HEADROOM)) --> seems unnecessary as to hit this code, len ha=
-s
-   to be greater than (uint32_t)(pkt->buf_len - RTE_PKTMBUF_HEADROOM) due t=
-o
-   the if condition
-       - If the allocation struct rte_mbuf *next =3D
-   rte_pktmbuf_alloc(rxq->mp) fails and packet has more than 2 segs, the se=
-gs
-   that were allocated previously do not get freed
-
-    mprq_buf_to_pkt(...) {
-        ...                } else if (rxq->strd_scatter_en) {
-
-struct rte_mbuf *prev =3D pkt;
-
-uint32_t seg_len =3D RTE_MIN(len, (uint32_t)
-
-(pkt->buf_len - RTE_PKTMBUF_HEADROOM));
-
-uint32_t rem_len =3D len - seg_len;
-
-
-      rte_memcpy(rte_pktmbuf_mtod(pkt, void *), addr, seg_len);
-      DATA_LEN(pkt) =3D seg_len;
-      while (rem_len) {
-         struct rte_mbuf *next =3D rte_pktmbuf_alloc(rxq->mp);
-
-
-            if (unlikely(next =3D=3D NULL))
-                return MLX5_RXQ_CODE_NOMBUF;
-            ...
-    - In the external buffer attach case where hdrm_overlap > 0, the code
-did not decrement the buffer refcnt if allocation struct rte_mbuf *next =3D
-rte_pktmbuf_alloc(rxq->mp) fails
-
-mprq_buf_to_pkt(...) {
-    ...            if (hdrm_overlap > 0) {
-
-        __atomic_add_fetch(&buf->refcnt, 1, __ATOMIC_RELAXED);
-        ...
-        MLX5_ASSERT(rxq->strd_scatter_en);
-        struct rte_mbuf *seg =3D rte_pktmbuf_alloc(rxq->mp);
-        if (unlikely(seg =3D=3D NULL))
-            return MLX5_RXQ_CODE_NOMBUF;
-        SET_DATA_OFF(seg, 0);
-        ...
-
-
-Hope to hear from you soon!
-
-With regards,
-Joni
-
---000000000000be1609063cc7ece4
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><p>Hi, <br><br>I hope this is the correct=
- place to report these issues since it seems to be related to DPDK codes. I=
-&#39;ve reported this to Nvidia a few days ago but have yet to receive any =
-response from them.<br><br>My server is currently using ConnectX5 MT27800 (=
-mlx5_core 5.7-1.0.2) on firmware 16.35.4506 (MT_0000000011). My DPDK librar=
-y version is 22.11.</p><p>I ran the following testpmd command which resulte=
-d in segmentation fault (I am currently running on filtered traffic with pa=
-ckets &gt;1000 bytes to increase the odds of hitting the segmentation fault=
-):</p><pre><code>dpdk-testpmd -l 1-5 -n 4 -a 0000:1f:00.0,rxq_comp_en=3D1,r=
-xq_pkt_pad_en=3D1,rxqs_min_mprq=3D1,mprq_en=3D1,mprq_log_stride_num=3D6,mpr=
-q_log_stride_size=3D9,mprq_max_memcpy_len=3D64,rx_vec_en=3D1 -- -i --rxd=3D=
-8192 --max-pkt-len=3D1700 --rxq=3D1 --total-num-mbufs=3D16384 --mbuf-size=
-=3D3000 --enable_drop_en =E2=80=93enable_scatter</code></pre><p>This segmen=
-tation fault goes away when I disable vectorization (rx_vec_en=3D0). (Note =
-that the segmentation fault does not occur in forward-mode=3Drxonly). The s=
-egmentation fault also seems to happen with higher chances when there is a =
-rxnombuf.<br><br>Upon some investigation, I noticed that in DPDK=E2=80=99s =
-source codes <code>drivers/net/mlx5/mlx5_rxtx_vec.c (function rxq_copy_mprq=
-_mbuf_v())</code>, there is a possibility where the consumed stride exceeds=
- the stride number (64 in this case) which should not be happening. I&#39;m=
- suspecting there&#39;s some CQE misalignment here upon encountering rxnomb=
-uf.</p><pre><code>rxq_copy_mprq_mbuf_v(...) {
-    ...
-    if(rxq-&gt;consumed_strd =3D=3D strd_n) {  =20
-        // replenish WQE
-    }
-    ...
-    strd_cnt =3D (elts[i]-&gt;pkt_len / strd_sz) +=20
-               ((elts[i]-&gt;pkt_len % strd_sz) ? 1 : 0);
-
-    rxq_code =3D mprq_buf_to_pkt(rxq, elts[i], elts[i]-&gt;pkt_len, buf, rx=
-q-&gt;consumed_strd, strd_cnt);
-    rxq-&gt;consumed_strd +=3D strd_cnt;       // encountering cases where =
-rxq-&gt;consumed_strd &gt; strd_n
-    ...
-}</code></pre><p>In addition, there were also cases in mprq_buf_to_pkt() wh=
-ere the allocated seg address is exactly the same as the pkt (elts[i]) addr=
-ess passed in which should not happen.<br></p><pre><code>mprq_buf_to_pkt(..=
-.) {
-    ...
-    if(hdrm_overlap &gt; 0) {  =20
-        MLX5_ASSERT(rxq-&gt;strd_scatter_en);<pre><code>        struct rte_=
-mbuf *seg =3D rte_pktmbuf_alloc(rxq-&gt;mp);
-        if (unlikely(seg =3D=3D NULL)) return MLX5_RXQ_CODE_NOMBUF;
-        SET_DATA_OFF(seg, 0);
-       =20
-        // added debug statement
-        DRV_LOG(DEBUG, &quot;pkt %p seg %p&quot;, (void *)pkt, (void *)seg)=
-;<br></code></pre>        rte_memcpy(rte_pktmbuf_mtod(seg, void *), RTE_PTR=
-_ADD(addr, len - hdrm_overlap), hdrm_overlap);
-        ...
-    }
-}</code></pre><p>I have tried upgrading my DPDK version to 24.11 but the se=
-gmentation fault still persists.=C2=A0<br><br>In addition, there were also =
-a few other issues that I&#39;ve noticed:<br></p><ul><li>max-pkt-len does n=
-ot seem to work for values &lt; 1500 even though &quot;show port info X&quo=
-t; showed that the MTU was set to the value I&#39;ve passed in<br></li><li>=
-In mprq_buf_to_pkt():<br>=C2=A0 =C2=A0 - uint32_t seg_len =3D RTE_MIN(len, =
-(uint32_t)(pkt-&gt;buf_len - RTE_PKTMBUF_HEADROOM)) --&gt; seems unnecessar=
-y as to hit this code, len has to be greater than=C2=A0(uint32_t)(pkt-&gt;b=
-uf_len - RTE_PKTMBUF_HEADROOM) due to the if condition<br>=C2=A0 =C2=A0 - I=
-f the allocation struct rte_mbuf *next =3D rte_pktmbuf_alloc(rxq-&gt;mp) fa=
-ils and packet has more than 2 segs, the segs that were allocated previousl=
-y do not get freed=C2=A0<br></li></ul><p></p><pre><code>    mprq_buf_to_pkt=
-(...) {
-        ...       =20
-</code>        } else if (rxq-&gt;strd_scatter_en) {</pre></div><blockquote=
- style=3D"margin:0 0 0 40px;border:none;padding:0px"><blockquote style=3D"m=
-argin:0 0 0 40px;border:none;padding:0px"><div><font face=3D"monospace">			=
-struct rte_mbuf *prev =3D pkt;</font></div></blockquote><blockquote style=
-=3D"margin:0 0 0 40px;border:none;padding:0px"><div><font face=3D"monospace=
-">			uint32_t seg_len =3D RTE_MIN(len, (uint32_t)</font></div></blockquote>=
-<blockquote style=3D"margin:0 0 0 40px;border:none;padding:0px"><div><font =
-face=3D"monospace">				(pkt-&gt;buf_len - RTE_PKTMBUF_HEADROOM));</font></d=
-iv></blockquote><blockquote style=3D"margin:0 0 0 40px;border:none;padding:=
-0px"><div><font face=3D"monospace">			uint32_t rem_len =3D len - seg_len;</=
-font></div></blockquote><div><font face=3D"monospace"><br></font></div><div=
-><font face=3D"monospace">=C2=A0 =C2=A0 =C2=A0 rte_memcpy(rte_pktmbuf_mtod(=
-pkt, void *),=C2=A0</font><span style=3D"font-family:monospace">addr, seg_l=
-en);</span></div><div><font face=3D"monospace">=C2=A0 =C2=A0 =C2=A0 DATA_LE=
-N(pkt) =3D seg_len;</font></div><div><font face=3D"monospace">=C2=A0 =C2=A0=
- =C2=A0 while (rem_len) {</font></div><div><font face=3D"monospace">=C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0struct rte_mbuf *next =3D</font><span style=3D"f=
-ont-family:monospace">=C2=A0rte_pktmbuf_alloc(rxq-&gt;mp);</span></div></bl=
-ockquote><div dir=3D"ltr"><font face=3D"monospace"><br>=C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 if (unlikely(next =3D=3D NULL))<br>=C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return MLX5_RXQ_CODE_NOMBUF;<br>=C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ...<br></font>=C2=A0 =C2=A0 - In the=
- external buffer attach case where hdrm_overlap &gt; 0, the code did not de=
-crement the buffer refcnt if allocation struct rte_mbuf *next =3D rte_pktmb=
-uf_alloc(rxq-&gt;mp) fails<br></div><blockquote style=3D"margin:0 0 0 40px;=
-border:none;padding:0px"><div dir=3D"ltr"><div><pre><code>mprq_buf_to_pkt(.=
-..) {
-    ...       =20
-</code>    if (hdrm_overlap &gt; 0) {</pre><pre>        __atomic_add_fetch(=
-&amp;buf-&gt;refcnt, 1, __ATOMIC_RELAXED);
-        ...
-        MLX5_ASSERT(rxq-&gt;strd_scatter_en);
-        struct rte_mbuf *seg =3D=C2=A0rte_pktmbuf_alloc(rxq-&gt;mp);
-        if (unlikely(seg =3D=3D NULL))
-            return MLX5_RXQ_CODE_NOMBUF;
-        SET_DATA_OFF(seg, 0);
-        ...</pre></div></div></blockquote><div dir=3D"ltr"><pre></pre><br>H=
-ope to hear from you soon!<br><br>With regards,<br>Joni</div>
-</div>
-
---000000000000be1609063cc7ece4--
