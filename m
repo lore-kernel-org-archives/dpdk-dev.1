@@ -2,43 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 516CCCA0EED
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 Aug 2025 02:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F76CA0EED
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 Aug 2025 02:31:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2277440292;
-	Thu, 21 Aug 2025 04:14:00 +0200 (CEST)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id F1F354026C
- for <dev@dpdk.org>; Thu, 21 Aug 2025 04:13:57 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.252])
- by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c6mxT44xXz13NSr;
- Thu, 21 Aug 2025 10:10:21 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id AC09D180B68;
- Thu, 21 Aug 2025 10:13:55 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 21 Aug 2025 10:13:55 +0800
-Message-ID: <d8dd6d6a-2111-4107-a352-b29ed859367e@huawei.com>
-Date: Thu, 21 Aug 2025 10:13:54 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [V5 03/18] net/hinic3: add hardware interfaces of BAR operation
-To: Feifei Wang <wff_light@vip.163.com>, <dev@dpdk.org>
-CC: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
- Feifei Wang <wangfeifei40@huawei.com>
-References: <20250418090621.9638-1-wff_light@vip.163.com>
- <20250702020953.599-1-wff_light@vip.163.com>
- <20250702020953.599-4-wff_light@vip.163.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20250702020953.599-4-wff_light@vip.163.com>
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 25EB240292;
+	Thu, 21 Aug 2025 04:31:47 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 1AECA4026C
+ for <dev@dpdk.org>; Thu, 21 Aug 2025 04:31:46 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id EF36546D80; Thu, 21 Aug 2025 04:31:45 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/ethdev Bug 1776] Segmentation fault encountered in MPRQ
+ vectorized mode
+Date: Thu, 21 Aug 2025 02:31:45 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: 22.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: critical
+X-Bugzilla-Who: canary.overflow@gmail.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1776-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17557435050.4b746179.1811489
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,1934 +55,329 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 7/2/2025 10:09 AM, Feifei Wang wrote:
-> From: Yi Chen <chenyi221@huawei.com>
-> 
-> 
-> This patch adds some HW interfaces for bar operatioin interfaces,
-> 
-> including: mapped bar address geeting, HW attributes getting,
-> 
-> msi-x reg operation, function type getting and so on.
-> 
-> 
-> 
-> Signed-off-by: Yi Chen <chenyi221@huawei.com>
-> 
-> Reviewed-by: Xin Wang <wangxin679@h-partners.com>
-> 
-> Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
-> 
-> ---
-> 
->  drivers/net/hinic3/base/hinic3_hwif.c | 779 ++++++++++++++++++++++++++
-> 
->  drivers/net/hinic3/base/hinic3_hwif.h | 142 +++++
 
-Since have c source file, suggest add meson.build, then could compile this drivers.
-And also update the MAINTAINER files (this should do in 02/18 commit).
+--17557435050.4b746179.1811489
+Date: Thu, 21 Aug 2025 04:31:45 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-> 
->  2 files changed, 921 insertions(+)
-> 
->  create mode 100644 drivers/net/hinic3/base/hinic3_hwif.c
-> 
->  create mode 100644 drivers/net/hinic3/base/hinic3_hwif.h
-> 
-> 
-> 
-> diff --git a/drivers/net/hinic3/base/hinic3_hwif.c b/drivers/net/hinic3/base/hinic3_hwif.c
-> 
-> new file mode 100644
-> 
-> index 0000000000..ede4aa311f
-> 
-> --- /dev/null
-> 
-> +++ b/drivers/net/hinic3/base/hinic3_hwif.c
-> 
-> @@ -0,0 +1,779 @@
-> 
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> 
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> 
-> + */
-> 
-> +
-> 
-> +#include <rte_bus_pci.h>
-> 
-> +#include "hinic3_compat.h"
-> 
-> +#include "hinic3_csr.h"
-> 
-> +#include "hinic3_hwdev.h"
-> 
-> +#include "hinic3_hwif.h"
-> 
-> +
-> 
-> +#define WAIT_HWIF_READY_TIMEOUT 10000
-> 
-> +
-> 
-> +#define DB_IDX(db, db_base) \
-> 
-> +	((u32)(((ulong)(db) - (ulong)(db_base)) / HINIC3_DB_PAGE_SIZE))
-> 
-> +
-> 
-> +#define HINIC3_AF0_FUNC_GLOBAL_IDX_SHIFT 0
-> 
-> +#define HINIC3_AF0_P2P_IDX_SHIFT	 12
-> 
-> +#define HINIC3_AF0_PCI_INTF_IDX_SHIFT	 17
-> 
-> +#define HINIC3_AF0_VF_IN_PF_SHIFT	 20
-> 
-> +#define HINIC3_AF0_FUNC_TYPE_SHIFT	 28
-> 
-> +
-> 
-> +#define HINIC3_AF0_FUNC_GLOBAL_IDX_MASK 0xFFF
-> 
-> +#define HINIC3_AF0_P2P_IDX_MASK		0x1F
-> 
-> +#define HINIC3_AF0_PCI_INTF_IDX_MASK	0x7
-> 
-> +#define HINIC3_AF0_VF_IN_PF_MASK	0xFF
-> 
-> +#define HINIC3_AF0_FUNC_TYPE_MASK	0x1
-> 
-> +
-> 
-> +#define HINIC3_AF0_GET(val, member) \
-> 
-> +	(((val) >> HINIC3_AF0_##member##_SHIFT) & HINIC3_AF0_##member##_MASK)
-> 
-> +
-> 
-> +#define HINIC3_AF1_PPF_IDX_SHIFT	  0
-> 
-> +#define HINIC3_AF1_AEQS_PER_FUNC_SHIFT	  8
-> 
-> +#define HINIC3_AF1_MGMT_INIT_STATUS_SHIFT 30
-> 
-> +#define HINIC3_AF1_PF_INIT_STATUS_SHIFT	  31
-> 
-> +
-> 
-> +#define HINIC3_AF1_PPF_IDX_MASK		 0x3F
-> 
-> +#define HINIC3_AF1_AEQS_PER_FUNC_MASK	 0x3
-> 
-> +#define HINIC3_AF1_MGMT_INIT_STATUS_MASK 0x1
-> 
-> +#define HINIC3_AF1_PF_INIT_STATUS_MASK	 0x1
-> 
-> +
-> 
-> +#define HINIC3_AF1_GET(val, member) \
-> 
-> +	(((val) >> HINIC3_AF1_##member##_SHIFT) & HINIC3_AF1_##member##_MASK)
-> 
-> +
-> 
-> +#define HINIC3_AF2_CEQS_PER_FUNC_SHIFT	   0
-> 
-> +#define HINIC3_AF2_DMA_ATTR_PER_FUNC_SHIFT 9
-> 
-> +#define HINIC3_AF2_IRQS_PER_FUNC_SHIFT	   16
-> 
-> +
-> 
-> +#define HINIC3_AF2_CEQS_PER_FUNC_MASK	  0x1FF
-> 
-> +#define HINIC3_AF2_DMA_ATTR_PER_FUNC_MASK 0x7
-> 
-> +#define HINIC3_AF2_IRQS_PER_FUNC_MASK	  0x7FF
-> 
-> +
-> 
-> +#define HINIC3_AF2_GET(val, member) \
-> 
-> +	(((val) >> HINIC3_AF2_##member##_SHIFT) & HINIC3_AF2_##member##_MASK)
-> 
-> +
-> 
-> +#define HINIC3_AF3_GLOBAL_VF_ID_OF_NXT_PF_SHIFT 0
-> 
-> +#define HINIC3_AF3_GLOBAL_VF_ID_OF_PF_SHIFT	16
-> 
-> +
-> 
-> +#define HINIC3_AF3_GLOBAL_VF_ID_OF_NXT_PF_MASK 0xFFF
-> 
-> +#define HINIC3_AF3_GLOBAL_VF_ID_OF_PF_MASK     0xFFF
-> 
-> +
-> 
-> +#define HINIC3_AF3_GET(val, member) \
-> 
-> +	(((val) >> HINIC3_AF3_##member##_SHIFT) & HINIC3_AF3_##member##_MASK)
-> 
-> +
-> 
-> +#define HINIC3_AF4_DOORBELL_CTRL_SHIFT 0
-> 
-> +#define HINIC3_AF4_DOORBELL_CTRL_MASK  0x1
-> 
-> +
-> 
-> +#define HINIC3_AF4_GET(val, member) \
-> 
-> +	(((val) >> HINIC3_AF4_##member##_SHIFT) & HINIC3_AF4_##member##_MASK)
-> 
-> +
-> 
-> +#define HINIC3_AF4_SET(val, member) \
-> 
-> +	(((val) & HINIC3_AF4_##member##_MASK) << HINIC3_AF4_##member##_SHIFT)
-> 
-> +
-> 
-> +#define HINIC3_AF4_CLEAR(val, member) \
-> 
-> +	((val) & (~(HINIC3_AF4_##member##_MASK << HINIC3_AF4_##member##_SHIFT)))
-> 
-> +
-> 
-> +#define HINIC3_AF5_OUTBOUND_CTRL_SHIFT 0
-> 
-> +#define HINIC3_AF5_OUTBOUND_CTRL_MASK  0x1
-> 
-> +
-> 
-> +#define HINIC3_AF5_GET(val, member) \
-> 
-> +	(((val) >> HINIC3_AF5_##member##_SHIFT) & HINIC3_AF5_##member##_MASK)
-> 
-> +
-> 
-> +#define HINIC3_AF5_SET(val, member) \
-> 
-> +	(((val) & HINIC3_AF5_##member##_MASK) << HINIC3_AF5_##member##_SHIFT)
-> 
-> +
-> 
-> +#define HINIC3_AF5_CLEAR(val, member) \
-> 
-> +	((val) & (~(HINIC3_AF5_##member##_MASK << HINIC3_AF5_##member##_SHIFT)))
-> 
-> +
-> 
-> +#define HINIC3_AF6_PF_STATUS_SHIFT 0
-> 
-> +#define HINIC3_AF6_PF_STATUS_MASK  0xFFFF
-> 
-> +
-> 
-> +#define HINIC3_AF6_FUNC_MAX_QUEUE_SHIFT 23
-> 
-> +#define HINIC3_AF6_FUNC_MAX_QUEUE_MASK	0x1FF
-> 
-> +
-> 
-> +#define HINIC3_AF6_MSIX_FLEX_EN_SHIFT 22
-> 
-> +#define HINIC3_AF6_MSIX_FLEX_EN_MASK  0x1
-> 
-> +
-> 
-> +#define HINIC3_AF6_SET(val, member)                  \
-> 
-> +	((((u32)(val)) & HINIC3_AF6_##member##_MASK) \
-> 
-> +	 << HINIC3_AF6_##member##_SHIFT)
-> 
-> +
-> 
-> +#define HINIC3_AF6_GET(val, member) \
-> 
-> +	(((val) >> HINIC3_AF6_##member##_SHIFT) & HINIC3_AF6_##member##_MASK)
-> 
-> +
-> 
-> +#define HINIC3_AF6_CLEAR(val, member) \
-> 
-> +	((val) & (~(HINIC3_AF6_##member##_MASK << HINIC3_AF6_##member##_SHIFT)))
-> 
-> +
-> 
-> +#define HINIC3_PPF_ELECTION_IDX_SHIFT 0
-> 
-> +
-> 
-> +#define HINIC3_PPF_ELECTION_IDX_MASK 0x3F
-> 
-> +
-> 
-> +#define HINIC3_PPF_ELECTION_SET(val, member)           \
-> 
-> +	(((val) & HINIC3_PPF_ELECTION_##member##_MASK) \
-> 
-> +	 << HINIC3_PPF_ELECTION_##member##_SHIFT)
-> 
-> +
-> 
-> +#define HINIC3_PPF_ELECTION_GET(val, member)               \
-> 
-> +	(((val) >> HINIC3_PPF_ELECTION_##member##_SHIFT) & \
-> 
-> +	 HINIC3_PPF_ELECTION_##member##_MASK)
-> 
-> +
-> 
-> +#define HINIC3_PPF_ELECTION_CLEAR(val, member)          \
-> 
-> +	((val) & (~(HINIC3_PPF_ELECTION_##member##_MASK \
-> 
-> +		    << HINIC3_PPF_ELECTION_##member##_SHIFT)))
-> 
-> +
-> 
-> +#define HINIC3_MPF_ELECTION_IDX_SHIFT 0
-> 
-> +
-> 
-> +#define HINIC3_MPF_ELECTION_IDX_MASK 0x1F
-> 
-> +
-> 
-> +#define HINIC3_MPF_ELECTION_SET(val, member)           \
-> 
-> +	(((val) & HINIC3_MPF_ELECTION_##member##_MASK) \
-> 
-> +	 << HINIC3_MPF_ELECTION_##member##_SHIFT)
-> 
-> +
-> 
-> +#define HINIC3_MPF_ELECTION_GET(val, member)               \
-> 
-> +	(((val) >> HINIC3_MPF_ELECTION_##member##_SHIFT) & \
-> 
-> +	 HINIC3_MPF_ELECTION_##member##_MASK)
-> 
-> +
-> 
-> +#define HINIC3_MPF_ELECTION_CLEAR(val, member)          \
-> 
-> +	((val) & (~(HINIC3_MPF_ELECTION_##member##_MASK \
-> 
-> +		    << HINIC3_MPF_ELECTION_##member##_SHIFT)))
-> 
-> +
-> 
-> +#define HINIC3_GET_REG_FLAG(reg) ((reg) & (~(HINIC3_REGS_FLAG_MASK)))
-> 
-> +
-> 
-> +#define HINIC3_GET_REG_ADDR(reg) ((reg) & (HINIC3_REGS_FLAG_MASK))
-> 
-> +
-> 
-> +#define HINIC3_IS_VF_DEV(pdev) ((pdev)->id.device_id == HINIC3_DEV_ID_VF)
-> 
-> +
-> 
-> +u32
-> 
-> +hinic3_hwif_read_reg(struct hinic3_hwif *hwif, u32 reg)
-> 
-> +{
-> 
-> +	if (HINIC3_GET_REG_FLAG(reg) == HINIC3_MGMT_REGS_FLAG)
-> 
-> +		return be32_to_cpu(rte_read32(hwif->mgmt_regs_base +
-> 
-> +					      HINIC3_GET_REG_ADDR(reg)));
-> 
-> +	else
-> 
-> +		return be32_to_cpu(rte_read32(hwif->cfg_regs_base +
-> 
-> +					      HINIC3_GET_REG_ADDR(reg)));
-> 
-> +}
-> 
-> +
-> 
-> +void
-> 
-> +hinic3_hwif_write_reg(struct hinic3_hwif *hwif, u32 reg, u32 val)
-> 
-> +{
-> 
-> +	if (HINIC3_GET_REG_FLAG(reg) == HINIC3_MGMT_REGS_FLAG)
-> 
-> +		rte_write32(cpu_to_be32(val),
-> 
-> +			    hwif->mgmt_regs_base + HINIC3_GET_REG_ADDR(reg));
-> 
-> +	else
-> 
-> +		rte_write32(cpu_to_be32(val),
-> 
-> +			    hwif->cfg_regs_base + HINIC3_GET_REG_ADDR(reg));
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Judge whether HW initialization ok.
-> 
-> + *
-> 
-> + * @param[in] hwdev
-> 
-> + * The pointer to the private hardware device.
-> 
-> + * @return
-> 
-> + * 0 on success, non-zero on failure.
-> 
-> + */
-> 
-> +static int
-> 
-> +hwif_ready(struct hinic3_hwdev *hwdev)
-> 
-> +{
-> 
-> +	u32 addr, attr1;
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_FUNC_ATTR1_ADDR;
-> 
-> +	attr1 = hinic3_hwif_read_reg(hwdev->hwif, addr);
-> 
-> +	if (attr1 == HINIC3_PCIE_LINK_DOWN)
-> 
-> +		return -EBUSY;
-> 
-> +
-> 
-> +	if (!HINIC3_AF1_GET(attr1, MGMT_INIT_STATUS))
-> 
-> +		return -EBUSY;
-> 
-> +
-> 
-> +	return 0;
-> 
-> +}
-> 
-> +
-> 
-> +static int
-> 
-> +wait_hwif_ready(struct hinic3_hwdev *hwdev)
-> 
-> +{
-> 
-> +	ulong timeout = 0;
-> 
-> +
-> 
-> +	do {
-> 
-> +		if (!hwif_ready(hwdev))
-> 
-> +			return 0;
-> 
-> +
-> 
-> +		rte_delay_ms(1);
-> 
-> +		timeout++;
-> 
-> +	} while (timeout <= WAIT_HWIF_READY_TIMEOUT);
-> 
-> +
-> 
-> +	PMD_DRV_LOG(ERR, "Hwif is not ready");
+https://bugs.dpdk.org/show_bug.cgi?id=3D1776
 
-The PMD_DRV_LOG will don't show which device, suggest wrap the PMD_DRV_LOG and pass hwdev as a paramenter.
+            Bug ID: 1776
+           Summary: Segmentation fault encountered in MPRQ vectorized mode
+           Product: DPDK
+           Version: 22.11
+          Hardware: x86
+                OS: Linux
+            Status: UNCONFIRMED
+          Severity: critical
+          Priority: Normal
+         Component: ethdev
+          Assignee: dev@dpdk.org
+          Reporter: canary.overflow@gmail.com
+  Target Milestone: ---
 
-> 
-> +	return -EBUSY;
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Set the attributes as members in hwif.
-> 
-> + *
-> 
-> + * @param[in] hwif
-> 
-> + * The hardware interface of a pci function device.
-> 
-> + * @param[in] attr0
-> 
-> + * The first attribute that was read from the hw.
-> 
-> + * @param[in] attr1
-> 
-> + * The second attribute that was read from the hw.
-> 
-> + * @param[in] attr2
-> 
-> + * The third attribute that was read from the hw.
-> 
-> + * @param[in] attr3
-> 
-> + * The fourth attribute that was read from the hw.
-> 
-> + */
+I have been encountering segmentation fault when running DPDK in MPRQ
+vectorized mode. To reproduce the issue on testpmd, run with the following
+parameters:
 
-It seem the above comment don't provide any usage information.
+dpdk-testpmd -l 1-5 -n 4 -a
+0000:1f:00.0,rxq_comp_en=3D1,rxq_pkt_pad_en=3D1,rxqs_min_mprq=3D1,mprq_en=
+=3D1,mprq_log_stride_num=3D6,mprq_log_stride_size=3D9,mprq_max_memcpy_len=
+=3D64,rx_vec_en=3D1
+-- -i --rxd=3D8192 --max-pkt-len=3D9000 --rxq=3D1 --total-num-mbufs=3D16384
+--mbuf-size=3D3000 --enable-drop-en =E2=80=93-enable-scatter
 
-> 
-> +static void
-> 
-> +set_hwif_attr(struct hinic3_hwif *hwif, u32 attr0, u32 attr1, u32 attr2,
-> 
-> +	      u32 attr3)
-> 
-> +{
-> 
-> +	hwif->attr.func_global_idx = HINIC3_AF0_GET(attr0, FUNC_GLOBAL_IDX);
-> 
-> +	hwif->attr.port_to_port_idx = HINIC3_AF0_GET(attr0, P2P_IDX);
-> 
-> +	hwif->attr.pci_intf_idx = HINIC3_AF0_GET(attr0, PCI_INTF_IDX);
-> 
-> +	hwif->attr.vf_in_pf = HINIC3_AF0_GET(attr0, VF_IN_PF);
-> 
-> +	hwif->attr.func_type = HINIC3_AF0_GET(attr0, FUNC_TYPE);
-> 
-> +
-> 
-> +	hwif->attr.ppf_idx = HINIC3_AF1_GET(attr1, PPF_IDX);
-> 
-> +	hwif->attr.num_aeqs = BIT(HINIC3_AF1_GET(attr1, AEQS_PER_FUNC));
-> 
-> +
-> 
-> +	hwif->attr.num_ceqs = (u8)HINIC3_AF2_GET(attr2, CEQS_PER_FUNC);
-> 
-> +	hwif->attr.num_irqs = HINIC3_AF2_GET(attr2, IRQS_PER_FUNC);
-> 
-> +	hwif->attr.num_dma_attr = BIT(HINIC3_AF2_GET(attr2, DMA_ATTR_PER_FUNC));
-> 
-> +
-> 
-> +	hwif->attr.global_vf_id_of_pf =
-> 
-> +		HINIC3_AF3_GET(attr3, GLOBAL_VF_ID_OF_PF);
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Read and set the attributes as members in hwif.
-> 
-> + *
-> 
-> + * @param[in] hwif
-> 
-> + * The hardware interface of a pci function device.
-> 
-> + */
-> 
-> +static void
-> 
-> +get_hwif_attr(struct hinic3_hwif *hwif)
+This segmentation fault goes away when I disable vectorization (rx_vec_en=
+=3D0).
+(Note that the segmentation fault does not occur in forward-mode=3Drxonly).=
+ The
+segmentation fault also seems to happen with higher chances when there is a
+rxnombuf.
 
-this function do get and set, but the function name don't reflect this.
+The backtrace of the segmentation fault was:
+#0  0x0000000001c34912 in __rte_pktmbuf_free_extbuf ()
+#1  0x0000000001c36a10 in rte_pktmbuf_detach ()
+#2  0x0000000001c4a9ec in rxq_copy_mprq_mbuf_v ()
+#3  0x0000000001c4d63b in rxq_burst_mprq_v ()
+#4  0x0000000001c4d7a7 in mlx5_rx_burst_mprq_vec ()
+#5  0x000000000050be66 in rte_eth_rx_burst ()
+#6  0x000000000050c53d in pkt_burst_io_forward ()
+#7  0x00000000005427b4 in run_pkt_fwd_on_lcore ()
+#8  0x000000000054289b in start_pkt_forward_on_core ()
+#9  0x0000000000a473c9 in eal_thread_loop ()
+#10 0x00007ffff60061ca in start_thread () from /lib64/libpthread.so.0
+#11 0x00007ffff5c72e73 in clone () from /lib64/libc.so.6
 
-> 
-> +{
-> 
-> +	u32 addr, attr0, attr1, attr2, attr3;
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_FUNC_ATTR0_ADDR;
-> 
-> +	attr0 = hinic3_hwif_read_reg(hwif, addr);
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_FUNC_ATTR1_ADDR;
-> 
-> +	attr1 = hinic3_hwif_read_reg(hwif, addr);
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_FUNC_ATTR2_ADDR;
-> 
-> +	attr2 = hinic3_hwif_read_reg(hwif, addr);
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_FUNC_ATTR3_ADDR;
-> 
-> +	attr3 = hinic3_hwif_read_reg(hwif, addr);
-> 
-> +
-> 
-> +	set_hwif_attr(hwif, attr0, attr1, attr2, attr3);
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Update message signaled interrupt information.
-> 
-> + *
-> 
-> + * @param[in] hwif
-> 
-> + * The hardware interface of a pci function device.
-> 
-> + */
-> 
-> +void
-> 
-> +hinic3_update_msix_info(struct hinic3_hwif *hwif)
-> 
-> +{
-> 
-> +	u32 attr6 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR);
-> 
-> +	hwif->attr.num_queue = HINIC3_AF6_GET(attr6, FUNC_MAX_QUEUE);
-> 
-> +	hwif->attr.msix_flex_en = HINIC3_AF6_GET(attr6, MSIX_FLEX_EN);
-> 
-> +	PMD_DRV_LOG(INFO, "msix_flex_en: %u, queue msix: %u",
-> 
-> +		    hwif->attr.msix_flex_en, hwif->attr.num_queue);
-> 
-> +}
-> 
-> +
-> 
-> +void
-> 
-> +hinic3_set_pf_status(struct hinic3_hwif *hwif, enum hinic3_pf_status status)
-> 
-> +{
-> 
-> +	u32 attr6 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR);
-> 
-> +
-> 
-> +	attr6 = HINIC3_AF6_CLEAR(attr6, PF_STATUS);
-> 
-> +	attr6 |= HINIC3_AF6_SET(status, PF_STATUS);
-> 
-> +
-> 
-> +	if (hwif->attr.func_type == TYPE_VF)
-> 
-> +		return;
-> 
-> +
-> 
-> +	hinic3_hwif_write_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR, attr6);
-> 
-> +}
-> 
-> +
-> 
-> +enum hinic3_pf_status
-> 
-> +hinic3_get_pf_status(struct hinic3_hwif *hwif)
-> 
-> +{
-> 
-> +	u32 attr6 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR6_ADDR);
-> 
-> +
-> 
-> +	return HINIC3_AF6_GET(attr6, PF_STATUS);
-> 
-> +}
-> 
-> +
-> 
-> +static enum hinic3_doorbell_ctrl
-> 
-> +hinic3_get_doorbell_ctrl_status(struct hinic3_hwif *hwif)
-> 
-> +{
-> 
-> +	u32 attr4 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR4_ADDR);
-> 
-> +
-> 
-> +	return HINIC3_AF4_GET(attr4, DOORBELL_CTRL);
-> 
-> +}
-> 
-> +
-> 
-> +static enum hinic3_outbound_ctrl
-> 
-> +hinic3_get_outbound_ctrl_status(struct hinic3_hwif *hwif)
-> 
-> +{
-> 
-> +	u32 attr5 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR5_ADDR);
-> 
-> +
-> 
-> +	return HINIC3_AF5_GET(attr5, OUTBOUND_CTRL);
-> 
-> +}
-> 
-> +
-> 
-> +void
-> 
-> +hinic3_enable_doorbell(struct hinic3_hwif *hwif)
-> 
-> +{
-> 
-> +	u32 addr, attr4;
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_FUNC_ATTR4_ADDR;
-> 
-> +	attr4 = hinic3_hwif_read_reg(hwif, addr);
-> 
-> +
-> 
-> +	attr4 = HINIC3_AF4_CLEAR(attr4, DOORBELL_CTRL);
-> 
-> +	attr4 |= HINIC3_AF4_SET(ENABLE_DOORBELL, DOORBELL_CTRL);
-> 
-> +
-> 
-> +	hinic3_hwif_write_reg(hwif, addr, attr4);
-> 
-> +}
-> 
-> +
-> 
-> +void
-> 
-> +hinic3_disable_doorbell(struct hinic3_hwif *hwif)
-> 
-> +{
-> 
-> +	u32 addr, attr4;
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_FUNC_ATTR4_ADDR;
-> 
-> +	attr4 = hinic3_hwif_read_reg(hwif, addr);
-> 
-> +
-> 
-> +	attr4 = HINIC3_AF4_CLEAR(attr4, DOORBELL_CTRL);
-> 
-> +	attr4 |= HINIC3_AF4_SET(DISABLE_DOORBELL, DOORBELL_CTRL);
-> 
-> +
-> 
-> +	hinic3_hwif_write_reg(hwif, addr, attr4);
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Try to set hwif as ppf and set the type of hwif in this case.
-> 
-> + *
-> 
-> + * @param[in] hwif
-> 
-> + * The hardware interface of a pci function device
-> 
-> + */
-> 
-> +static void
-> 
-> +set_ppf(struct hinic3_hwif *hwif)
-> 
-> +{
-> 
-> +	struct hinic3_func_attr *attr = &hwif->attr;
-> 
-> +	u32 addr, val, ppf_election;
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_PPF_ELECTION_ADDR;
-> 
-> +
-> 
-> +	val = hinic3_hwif_read_reg(hwif, addr);
-> 
-> +	val = HINIC3_PPF_ELECTION_CLEAR(val, IDX);
-> 
-> +
-> 
-> +	ppf_election = HINIC3_PPF_ELECTION_SET(attr->func_global_idx, IDX);
-> 
-> +	val |= ppf_election;
-> 
-> +
-> 
-> +	hinic3_hwif_write_reg(hwif, addr, val);
-> 
-> +
-> 
-> +	/* Check PPF. */
-> 
-> +	val = hinic3_hwif_read_reg(hwif, addr);
-> 
-> +
-> 
-> +	attr->ppf_idx = HINIC3_PPF_ELECTION_GET(val, IDX);
-> 
-> +	if (attr->ppf_idx == attr->func_global_idx)
-> 
-> +		attr->func_type = TYPE_PPF;
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Get the mpf index from the hwif.
-> 
-> + *
-> 
-> + * @param[in] hwif
-> 
-> + * The hardware interface of a pci function device.
-> 
-> + */
-> 
-> +static void
-> 
-> +get_mpf(struct hinic3_hwif *hwif)
-> 
-> +{
-> 
-> +	struct hinic3_func_attr *attr = &hwif->attr;
-> 
-> +	u32 mpf_election, addr;
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_GLOBAL_MPF_ELECTION_ADDR;
-> 
-> +
-> 
-> +	mpf_election = hinic3_hwif_read_reg(hwif, addr);
-> 
-> +	attr->mpf_idx = HINIC3_MPF_ELECTION_GET(mpf_election, IDX);
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Try to set hwif as mpf and set the mpf idx in hwif.
-> 
-> + *
-> 
-> + * @param[in] hwif
-> 
-> + * The hardware interface of a pci function device.
-> 
-> + */
-> 
-> +static void
-> 
-> +set_mpf(struct hinic3_hwif *hwif)
-> 
-> +{
-> 
-> +	struct hinic3_func_attr *attr = &hwif->attr;
-> 
-> +	u32 addr, val, mpf_election;
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_GLOBAL_MPF_ELECTION_ADDR;
-> 
-> +
-> 
-> +	val = hinic3_hwif_read_reg(hwif, addr);
-> 
-> +
-> 
-> +	val = HINIC3_MPF_ELECTION_CLEAR(val, IDX);
-> 
-> +	mpf_election = HINIC3_MPF_ELECTION_SET(attr->func_global_idx, IDX);
-> 
-> +
-> 
-> +	val |= mpf_election;
-> 
-> +	hinic3_hwif_write_reg(hwif, addr, val);
-> 
-> +}
-> 
-> +
-> 
-> +int
-> 
-> +hinic3_alloc_db_addr(void *hwdev, void **db_base,
-> 
-> +		     enum hinic3_db_type queue_type)
-> 
-> +{
-> 
-> +	struct hinic3_hwif *hwif = NULL;
-> 
-> +
-> 
-> +	if (!hwdev || !db_base)
-> 
-> +		return -EINVAL;
-> 
-> +
-> 
-> +	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
-> 
-> +	*db_base = hwif->db_base + queue_type * HINIC3_DB_PAGE_SIZE;
-> 
-> +
-> 
-> +	return 0;
-> 
-> +}
-> 
-> +
-> 
-> +void
-> 
-> +hinic3_set_msix_auto_mask_state(void *hwdev, u16 msix_idx,
-> 
-> +				enum hinic3_msix_auto_mask flag)
-> 
-> +{
-> 
-> +	struct hinic3_hwif *hwif = NULL;
-> 
-> +	u32 mask_bits;
-> 
-> +	u32 addr;
-> 
-> +
-> 
-> +	if (!hwdev)
-> 
-> +		return;
-> 
-> +
-> 
-> +	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
-> 
-> +
-> 
-> +	if (flag)
-> 
-> +		mask_bits = HINIC3_MSI_CLR_INDIR_SET(1, AUTO_MSK_SET);
-> 
-> +	else
-> 
-> +		mask_bits = HINIC3_MSI_CLR_INDIR_SET(1, AUTO_MSK_CLR);
-> 
-> +
-> 
-> +	mask_bits = mask_bits |
-> 
-> +		    HINIC3_MSI_CLR_INDIR_SET(msix_idx, SIMPLE_INDIR_IDX);
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_FUNC_MSI_CLR_WR_ADDR;
-> 
-> +	hinic3_hwif_write_reg(hwif, addr, mask_bits);
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Set msix state.
-> 
-> + *
-> 
-> + * @param[in] hwdev
-> 
-> + * The pointer to the private hardware device object.
-> 
-> + * @param[in] msix_idx
-> 
-> + * MSIX(Message Signaled Interrupts) index.
-> 
-> + * @param[in] flag
-> 
-> + * MSIX state flag, 0-enable, 1-disable.
-> 
-> + */
-> 
-> +void
-> 
-> +hinic3_set_msix_state(void *hwdev, u16 msix_idx, enum hinic3_msix_state flag)
-> 
-> +{
-> 
-> +	struct hinic3_hwif *hwif = NULL;
-> 
-> +	u32 mask_bits;
-> 
-> +	u32 addr;
-> 
-> +	u8 int_msk = 1;
-> 
-> +
-> 
-> +	if (!hwdev)
-> 
-> +		return;
-> 
-> +
-> 
-> +	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
-> 
-> +
-> 
-> +	if (flag)
-> 
-> +		mask_bits = HINIC3_MSI_CLR_INDIR_SET(int_msk, INT_MSK_SET);
-> 
-> +	else
-> 
-> +		mask_bits = HINIC3_MSI_CLR_INDIR_SET(int_msk, INT_MSK_CLR);
-> 
-> +	mask_bits = mask_bits |
-> 
-> +		    HINIC3_MSI_CLR_INDIR_SET(msix_idx, SIMPLE_INDIR_IDX);
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_FUNC_MSI_CLR_WR_ADDR;
-> 
-> +	hinic3_hwif_write_reg(hwif, addr, mask_bits);
-> 
-> +}
-> 
-> +
-> 
-> +static void
-> 
-> +disable_all_msix(struct hinic3_hwdev *hwdev)
-> 
-> +{
-> 
-> +	u16 num_irqs = hwdev->hwif->attr.num_irqs;
-> 
-> +	u16 i;
-> 
-> +
-> 
-> +	for (i = 0; i < num_irqs; i++)
-> 
-> +		hinic3_set_msix_state(hwdev, i, HINIC3_MSIX_DISABLE);
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Clear msix resend bit.
-> 
-> + *
-> 
-> + * @param[in] hwdev
-> 
-> + * The pointer to the private hardware device object.
-> 
-> + * @param[in] msix_idx
-> 
-> + * MSIX(Message Signaled Interrupts) index
-> 
-> + * @param[in] clear_resend_en
-> 
-> + * Clear resend en flag, 1-clear.
-> 
-> + */
-> 
-> +void
-> 
-> +hinic3_misx_intr_clear_resend_bit(void *hwdev, u16 msix_idx, u8 clear_resend_en)
-> 
-> +{
-> 
-> +	struct hinic3_hwif *hwif = NULL;
-> 
-> +	u32 msix_ctrl = 0, addr;
-> 
-> +
-> 
-> +	if (!hwdev)
-> 
-> +		return;
-> 
-> +
-> 
-> +	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
-> 
-> +
-> 
-> +	msix_ctrl = HINIC3_MSI_CLR_INDIR_SET(msix_idx, SIMPLE_INDIR_IDX) |
-> 
-> +		    HINIC3_MSI_CLR_INDIR_SET(clear_resend_en, RESEND_TIMER_CLR);
-> 
-> +
-> 
-> +	addr = HINIC3_CSR_FUNC_MSI_CLR_WR_ADDR;
-> 
-> +	hinic3_hwif_write_reg(hwif, addr, msix_ctrl);
-> 
-> +}
-> 
-> +
-> 
-> +#ifdef HINIC3_RELEASE
-> 
-> +static int
-> 
-> +wait_until_doorbell_flush_states(struct hinic3_hwif *hwif,
-> 
-> +				 enum hinic3_doorbell_ctrl states)
-> 
-> +{
-> 
-> +	enum hinic3_doorbell_ctrl db_ctrl;
-> 
-> +	u32 cnt = 0;
-> 
-> +
-> 
-> +	if (!hwif)
-> 
-> +		return -EINVAL;
-> 
-> +
-> 
-> +	while (cnt < HINIC3_WAIT_DOORBELL_AND_OUTBOUND_TIMEOUT) {
-> 
-> +		db_ctrl = hinic3_get_doorbell_ctrl_status(hwif);
-> 
-> +		if (db_ctrl == states)
-> 
-> +			return 0;
-> 
-> +
-> 
-> +		rte_delay_ms(1);
-> 
-> +		cnt++;
-> 
-> +	}
-> 
-> +
-> 
-> +	return -EFAULT;
-> 
-> +}
-> 
-> +#endif
-> 
-> +
-> 
-> +static int
-> 
-> +wait_until_doorbell_and_outbound_enabled(struct hinic3_hwif *hwif)
-> 
-> +{
-> 
-> +	enum hinic3_doorbell_ctrl db_ctrl;
-> 
-> +	enum hinic3_outbound_ctrl outbound_ctrl;
-> 
-> +	u32 cnt = 0;
-> 
-> +
-> 
-> +	while (cnt < HINIC3_WAIT_DOORBELL_AND_OUTBOUND_TIMEOUT) {
-> 
-> +		db_ctrl = hinic3_get_doorbell_ctrl_status(hwif);
-> 
-> +		outbound_ctrl = hinic3_get_outbound_ctrl_status(hwif);
-> 
-> +		if (outbound_ctrl == ENABLE_OUTBOUND &&
-> 
-> +		    db_ctrl == ENABLE_DOORBELL)
-> 
-> +			return 0;
-> 
-> +
-> 
-> +		rte_delay_ms(1);
-> 
-> +		cnt++;
-> 
-> +	}
-> 
-> +
-> 
-> +	return -EFAULT;
-> 
-> +}
-> 
-> +
-> 
-> +static int
-> 
-> +hinic3_get_bar_addr(struct hinic3_hwdev *hwdev)
-> 
-> +{
-> 
-> +	struct rte_pci_device *pci_dev = hwdev->pci_dev;
-> 
-> +	struct hinic3_hwif *hwif = hwdev->hwif;
-> 
-> +	void *cfg_regs_base = NULL;
-> 
-> +	void *mgmt_reg_base = NULL;
-> 
-> +	void *db_base = NULL;
-> 
-> +	int cfg_bar;
-> 
-> +
-> 
-> +	cfg_bar = HINIC3_IS_VF_DEV(pci_dev) ? HINIC3_VF_PCI_CFG_REG_BAR
-> 
-> +					    : HINIC3_PF_PCI_CFG_REG_BAR;
-> 
-> +
-> 
-> +	cfg_regs_base = pci_dev->mem_resource[cfg_bar].addr;
-> 
-> +	if (!HINIC3_IS_VF_DEV(pci_dev)) {
-> 
-> +		mgmt_reg_base =
-> 
-> +			pci_dev->mem_resource[HINIC3_PCI_MGMT_REG_BAR].addr;
-> 
-> +		if (mgmt_reg_base == NULL) {
-> 
-> +			PMD_DRV_LOG(ERR, "mgmt_reg_base addr is null");
-> 
-> +			return -EFAULT;
-> 
-> +		}
-> 
-> +	}
-> 
-> +	db_base = pci_dev->mem_resource[HINIC3_PCI_DB_BAR].addr;
-> 
-> +	if (cfg_regs_base == NULL) {
-> 
-> +		PMD_DRV_LOG(ERR,
-> 
-> +			    "mem_resource addr is null, cfg_regs_base is NULL");
-> 
-> +		return -EFAULT;
+*Note that the addresses may not be exact as I've added some log statements=
+ and
+attempted fixes previously (they were commented out when I obtained this
+backtrace).
 
-This judge should near the assigment of cfg_regs_base
+Upon some investigation, I noticed that in DPDK=E2=80=99s source codes
+drivers/net/mlx5/mlx5_rxtx_vec.c (function rxq_copy_mprq_mbuf_v()), there i=
+s a
+possibility where the consumed stride exceeds the stride number (64 in this
+case) which should not be happening. I'm suspecting that there's some CQE
+misalignment here upon encountering rxnombuf.
 
-> 
-> +	} else if (db_base == NULL) {
-> 
-> +		PMD_DRV_LOG(ERR, "mem_resource addr is null, db_base is NULL");
-> 
-> +		return -EFAULT;
-> 
-> +	}
-> 
-> +
-> 
-> +	/* If function is VF, mgmt_regs_base will be NULL. */
-> 
-> +	if (!mgmt_reg_base)
-> 
-> +		hwif->cfg_regs_base =
-> 
-> +			(u8 *)cfg_regs_base + HINIC3_VF_CFG_REG_OFFSET;
-> 
-> +	else
-> 
-> +		hwif->cfg_regs_base = cfg_regs_base;
-> 
-> +	hwif->mgmt_regs_base = mgmt_reg_base;
-> 
-> +	hwif->db_base = db_base;
-> 
-> +	hwif->db_dwqe_len = pci_dev->mem_resource[HINIC3_PCI_DB_BAR].len;
-> 
-> +
-> 
-> +	return 0;
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Initialize the hw interface.
-> 
-> + *
-> 
-> + * @param[in] hwdev
-> 
-> + * The pointer to the private hardware device object.
-> 
-> + * @return
-> 
-> + * 0 on success, non-zero on failure.
-> 
-> + */
-> 
-> +int
-> 
-> +hinic3_init_hwif(void *dev)
-> 
-> +{
-> 
-> +	struct hinic3_hwdev *hwdev = NULL;
-> 
-> +	struct hinic3_hwif *hwif;
+rxq_copy_mprq_mbuf_v(...) {
+    ...
+    if(rxq->consumed_strd =3D=3D strd_n) {=20=20=20
+        // replenish WQE
+    }
+    ...
+    strd_cnt =3D (elts[i]->pkt_len / strd_sz) +=20
+               ((elts[i]->pkt_len % strd_sz) ? 1 : 0);
 
-Such pointer define has inited to NULL, some don't, suggest keep the same style.
+    rxq_code =3D mprq_buf_to_pkt(rxq, elts[i], elts[i]->pkt_len, buf,
+rxq->consumed_strd, strd_cnt);
+    rxq->consumed_strd +=3D strd_cnt;       // encountering cases where
+rxq->consumed_strd > strd_n
+    ...
+}
 
-> 
-> +	int err;
-> 
-> +	u32 attr4, attr5;
-> 
-> +
-> 
-> +	hwif = rte_zmalloc("hinic_hwif", sizeof(struct hinic3_hwif),
-> 
-> +			   RTE_CACHE_LINE_SIZE);
-> 
-> +	if (!hwif)
+In addition, there were also cases in mprq_buf_to_pkt() where the allocated=
+ seg
+address is exactly the same as the pkt (elts[i]) address passed in which sh=
+ould
+not happen.
 
-Suggest if (hwif == NULL)>
-> +		return -ENOMEM;
-> 
-> +
-> 
-> +	hwdev = (struct hinic3_hwdev *)dev;
-> 
-> +	hwdev->hwif = hwif;
-> 
-> +
-> 
-> +	err = hinic3_get_bar_addr(hwdev);
-> 
-> +	if (err != 0) {
-> 
-> +		PMD_DRV_LOG(ERR, "get bar addr fail");
-> 
-> +		goto hwif_ready_err;
-> 
-> +	}
-> 
-> +
-> 
-> +	err = wait_hwif_ready(hwdev);
-> 
-> +	if (err != 0) {
-> 
-> +		PMD_DRV_LOG(ERR, "Chip status is not ready");
-> 
-> +		goto hwif_ready_err;
-> 
-> +	}
-> 
-> +
-> 
-> +	get_hwif_attr(hwif);
-> 
-> +
-> 
-> +	err = wait_until_doorbell_and_outbound_enabled(hwif);
-> 
-> +	if (err != 0) {
-> 
-> +		attr4 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR4_ADDR);
-> 
-> +		attr5 = hinic3_hwif_read_reg(hwif, HINIC3_CSR_FUNC_ATTR5_ADDR);
-> 
-> +		PMD_DRV_LOG(ERR,
-> 
-> +			    "Hw doorbell/outbound is disabled, attr4 0x%x "
-> 
-> +			    "attr5 0x%x",
+mprq_buf_to_pkt(...) {
+    ...
+    if(hdrm_overlap > 0) {=20=20=20
+        MLX5_ASSERT(rxq->strd_scatter_en);
+        struct rte_mbuf *seg =3D rte_pktmbuf_alloc(rxq->mp);
+        if (unlikely(seg =3D=3D NULL)) return MLX5_RXQ_CODE_NOMBUF;
+        SET_DATA_OFF(seg, 0);
 
-Please keep one line, BTW: current the DPDK support most 100 character one line. and for string it chould more.
+        // added debug statement
+        // saw instances where pkt =3D seg
+        DRV_LOG(DEBUG, "pkt %p seg %p", (void *)pkt, (void *)seg);
+        rte_memcpy(rte_pktmbuf_mtod(seg, void *), RTE_PTR_ADD(addr, len -
+hdrm_overlap), hdrm_overlap);
+        ...
+    }
+}
 
-> 
-> +			    attr4, attr5);
-> 
-> +		goto hwif_ready_err;
-> 
-> +	}
-> 
-> +
-> 
-> +	if (!HINIC3_IS_VF(hwdev)) {
-> 
-> +		set_ppf(hwif);
-> 
-> +
-> 
-> +		if (HINIC3_IS_PPF(hwdev))
-> 
-> +			set_mpf(hwif);
-> 
-> +
-> 
-> +		get_mpf(hwif);
-> 
-> +	}
-> 
-> +
-> 
-> +	disable_all_msix(hwdev);
-> 
-> +	/* Disable mgmt cpu reporting any event. */
-> 
-> +	hinic3_set_pf_status(hwdev->hwif, HINIC3_PF_STATUS_INIT);
-> 
-> +
-> 
-> +	PMD_DRV_LOG(INFO,
-> 
-> +		    "global_func_idx: %d, func_type: %d, host_id: %d, ppf: %d, "
-> 
-> +		    "mpf: %d",
+I have tried upgrading my DPDK version to 24.11 but the segmentation fault
+still persists.
 
-how about append init success.
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
 
-> 
-> +		    hwif->attr.func_global_idx, hwif->attr.func_type,
-> 
-> +		    hwif->attr.pci_intf_idx, hwif->attr.ppf_idx,
-> 
-> +		    hwif->attr.mpf_idx);
-> 
-> +
-> 
-> +	return 0;
-> 
-> +
-> 
-> +hwif_ready_err:
-> 
-> +	rte_free(hwdev->hwif);
-> 
-> +	hwdev->hwif = NULL;
-> 
-> +
-> 
-> +	return err;
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Free the hw interface.
-> 
-> + *
-> 
-> + * @param[in] dev
-> 
-> + * The pointer to the private hardware device.
-> 
-> + */
-> 
-> +void
-> 
-> +hinic3_free_hwif(void *dev)
+--17557435050.4b746179.1811489
+Date: Thu, 21 Aug 2025 04:31:45 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-suggest rename as hinic3_deinit_hwif
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - Segmentation fault encountered in MPRQ vectorized=
+ mode"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1776">1776</a>
+          </td>
+        </tr>
 
-> 
-> +{
-> 
-> +	struct hinic3_hwdev *hwdev = (struct hinic3_hwdev *)dev;
-> 
-> +
+        <tr>
+          <th>Summary</th>
+          <td>Segmentation fault encountered in MPRQ vectorized mode
+          </td>
+        </tr>
 
-maybe should do some configuration to reset hardware?
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
 
-> 
-> +	rte_free(hwdev->hwif);
-> 
-> +}
-> 
-> +
-> 
-> +u16
-> 
-> +hinic3_global_func_id(void *hwdev)
-> 
-> +{
-> 
-> +	struct hinic3_hwif *hwif = NULL;
-> 
-> +
-> 
-> +	if (!hwdev)
-> 
-> +		return 0;
-> 
-> +
-> 
-> +	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
-> 
-> +
-> 
-> +	return hwif->attr.func_global_idx;
-> 
-> +}
-> 
-> +
-> 
-> +u8
-> 
-> +hinic3_pf_id_of_vf(void *hwdev)
-> 
-> +{
-> 
-> +	struct hinic3_hwif *hwif = NULL;
-> 
-> +
-> 
-> +	if (!hwdev)
-> 
-> +		return 0;
-> 
-> +
-> 
-> +	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
-> 
-> +
-> 
-> +	return hwif->attr.port_to_port_idx;
-> 
-> +}
-> 
-> +
-> 
-> +u8
-> 
-> +hinic3_pcie_itf_id(void *hwdev)
-> 
-> +{
-> 
-> +	struct hinic3_hwif *hwif = NULL;
-> 
-> +
-> 
-> +	if (!hwdev)
-> 
-> +		return 0;
-> 
-> +
-> 
-> +	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
-> 
-> +
-> 
-> +	return hwif->attr.pci_intf_idx;
-> 
-> +}
-> 
-> +
-> 
-> +enum func_type
-> 
-> +hinic3_func_type(void *hwdev)
-> 
-> +{
-> 
-> +	struct hinic3_hwif *hwif = NULL;
-> 
-> +
-> 
-> +	if (!hwdev)
-> 
-> +		return 0;
-> 
-> +
-> 
-> +	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
-> 
-> +
-> 
-> +	return hwif->attr.func_type;
-> 
-> +}
-> 
-> +
-> 
-> +u16
-> 
-> +hinic3_glb_pf_vf_offset(void *hwdev)
-> 
-> +{
-> 
-> +	struct hinic3_hwif *hwif = NULL;
-> 
-> +
-> 
-> +	if (!hwdev)
-> 
-> +		return 0;
-> 
-> +
-> 
-> +	hwif = ((struct hinic3_hwdev *)hwdev)->hwif;
-> 
-> +
-> 
-> +	return hwif->attr.global_vf_id_of_pf;
-> 
-> +}
-> 
-> diff --git a/drivers/net/hinic3/base/hinic3_hwif.h b/drivers/net/hinic3/base/hinic3_hwif.h
-> 
-> new file mode 100644
-> 
-> index 0000000000..97d2ed99df
-> 
-> --- /dev/null
-> 
-> +++ b/drivers/net/hinic3/base/hinic3_hwif.h
-> 
-> @@ -0,0 +1,142 @@
-> 
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> 
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> 
-> + */
-> 
-> +
-> 
-> +#ifndef _HINIC3_HWIF_H_
-> 
-> +#define _HINIC3_HWIF_H_
-> 
-> +
-> 
-> +#define HINIC3_WAIT_DOORBELL_AND_OUTBOUND_TIMEOUT 60000
-> 
-> +#define HINIC3_PCIE_LINK_DOWN			  0xFFFFFFFF
-> 
-> +
-> 
-> +/* PCIe bar space. */
-> 
-> +#define HINIC3_VF_PCI_CFG_REG_BAR 0
-> 
-> +#define HINIC3_PF_PCI_CFG_REG_BAR 1
-> 
-> +
-> 
-> +#define HINIC3_PCI_INTR_REG_BAR 2
-> 
-> +#define HINIC3_PCI_MGMT_REG_BAR 3 /**< Only PF has mgmt bar. */
-> 
-> +#define HINIC3_PCI_DB_BAR	4
-> 
-> +
-> 
-> +/* Doorbell or direct wqe page size is 4K. */
-> 
-> +#define HINIC3_DB_PAGE_SIZE 0x00001000ULL
-> 
-> +#define HINIC3_DWQE_OFFSET  0x00000800ULL
-> 
-> +
-> 
-> +enum func_type { TYPE_PF, TYPE_VF, TYPE_PPF, TYPE_UNKNOWN };
-> 
-> +#define MSIX_RESEND_TIMER_CLEAR 1
-> 
-> +
-> 
-> +/* Message signaled interrupt status. */
-> 
-> +enum hinic3_msix_state { HINIC3_MSIX_ENABLE, HINIC3_MSIX_DISABLE };
-> 
-> +
-> 
-> +enum hinic3_msix_auto_mask {
-> 
-> +	HINIC3_CLR_MSIX_AUTO_MASK,
-> 
-> +	HINIC3_SET_MSIX_AUTO_MASK,
-> 
-> +};
-> 
-> +
-> 
-> +struct hinic3_func_attr {
-> 
-> +	u16 func_global_idx;
-> 
-> +	u8 port_to_port_idx;
-> 
-> +	u8 pci_intf_idx;
-> 
-> +	u8 vf_in_pf;
-> 
-> +	enum func_type func_type;
-> 
-> +
-> 
-> +	u8 mpf_idx;
-> 
-> +
-> 
-> +	u8 ppf_idx;
-> 
-> +
-> 
-> +	u16 num_irqs; /**< Max: 2 ^ 15. */
-> 
-> +	u8 num_aeqs;  /**< Max: 2 ^ 3. */
-> 
-> +	u8 num_ceqs;  /**< Max: 2 ^ 7. */
-> 
-> +
-> 
-> +	u16 num_queue;	 /**< Max: 2 ^ 8. */
-> 
-> +	u8 num_dma_attr; /**< Max: 2 ^ 6. */
-> 
-> +	u8 msix_flex_en;
-> 
-> +
-> 
-> +	u16 global_vf_id_of_pf;
-> 
-> +};
-> 
-> +
-> 
-> +/* Structure for hardware interface. */
-> 
-> +struct hinic3_hwif {
-> 
-> +	/* Configure virtual address, PF is bar1, VF is bar0/1. */
-> 
-> +	u8 *cfg_regs_base;
-> 
-> +	/* For PF bar3 virtual address, if function is VF should set NULL. */
-> 
-> +	u8 *mgmt_regs_base;
-> 
-> +	u8 *db_base;
-> 
-> +	u64 db_dwqe_len;
-> 
-> +
-> 
-> +	struct hinic3_func_attr attr;
-> 
-> +
-> 
-> +	void *pdev;
-> 
-> +};
-> 
-> +
-> 
-> +enum hinic3_outbound_ctrl { ENABLE_OUTBOUND = 0x0, DISABLE_OUTBOUND = 0x1 };
-> 
-> +
-> 
-> +enum hinic3_doorbell_ctrl { ENABLE_DOORBELL = 0x0, DISABLE_DOORBELL = 0x1 };
-> 
-> +
-> 
-> +enum hinic3_pf_status {
-> 
-> +	HINIC3_PF_STATUS_INIT = 0x0,
-> 
-> +	HINIC3_PF_STATUS_ACTIVE_FLAG = 0x11,
-> 
-> +	HINIC3_PF_STATUS_FLR_START_FLAG = 0x12,
-> 
-> +	HINIC3_PF_STATUS_FLR_FINISH_FLAG = 0x13
-> 
-> +};
-> 
-> +
-> 
-> +/* Type of doorbell. */
-> 
-> +enum hinic3_db_type {
-> 
-> +	HINIC3_DB_TYPE_CMDQ = 0x0,
-> 
-> +	HINIC3_DB_TYPE_SQ = 0x1,
-> 
-> +	HINIC3_DB_TYPE_RQ = 0x2,
-> 
-> +	HINIC3_DB_TYPE_MAX = 0x3
-> 
-> +};
-> 
-> +
-> 
-> +/* Get the attributes of the hardware interface. */
-> 
-> +#define HINIC3_HWIF_NUM_AEQS(hwif)	   ((hwif)->attr.num_aeqs)
-> 
-> +#define HINIC3_HWIF_NUM_IRQS(hwif)	   ((hwif)->attr.num_irqs)
-> 
-> +#define HINIC3_HWIF_GLOBAL_IDX(hwif)	   ((hwif)->attr.func_global_idx)
-> 
-> +#define HINIC3_HWIF_GLOBAL_VF_OFFSET(hwif) ((hwif)->attr.global_vf_id_of_pf)
-> 
-> +#define HINIC3_HWIF_PPF_IDX(hwif)	   ((hwif)->attr.ppf_idx)
-> 
-> +#define HINIC3_PCI_INTF_IDX(hwif)	   ((hwif)->attr.pci_intf_idx)
-> 
-> +
-> 
-> +/* Func type judgment. */
-> 
-> +#define HINIC3_FUNC_TYPE(dev) ((dev)->hwif->attr.func_type)
-> 
-> +#define HINIC3_IS_PF(dev)     (HINIC3_FUNC_TYPE(dev) == TYPE_PF)
-> 
-> +#define HINIC3_IS_VF(dev)     (HINIC3_FUNC_TYPE(dev) == TYPE_VF)
-> 
-> +#define HINIC3_IS_PPF(dev)    (HINIC3_FUNC_TYPE(dev) == TYPE_PPF)
-> 
-> +
-> 
-> +u32 hinic3_hwif_read_reg(struct hinic3_hwif *hwif, u32 reg);
-> 
-> +
-> 
-> +void hinic3_hwif_write_reg(struct hinic3_hwif *hwif, u32 reg, u32 val);
-> 
-> +
-> 
-> +void hinic3_set_msix_auto_mask_state(void *hwdev, u16 msix_idx,
-> 
-> +				     enum hinic3_msix_auto_mask flag);
-> 
-> +
-> 
-> +void hinic3_set_msix_state(void *hwdev, u16 msix_idx,
-> 
-> +			   enum hinic3_msix_state flag);
-> 
-> +
-> 
-> +void hinic3_misx_intr_clear_resend_bit(void *hwdev, u16 msix_idx,
-> 
-> +				       u8 clear_resend_en);
-> 
-> +
-> 
-> +u16 hinic3_global_func_id(void *hwdev);
-> 
-> +
-> 
-> +u8 hinic3_pf_id_of_vf(void *hwdev);
-> 
-> +
-> 
-> +u8 hinic3_pcie_itf_id(void *hwdev);
-> 
-> +
-> 
-> +enum func_type hinic3_func_type(void *hwdev);
-> 
-> +
-> 
-> +u16 hinic3_glb_pf_vf_offset(void *hwdev);
-> 
-> +void hinic3_update_msix_info(struct hinic3_hwif *hwif);
-> 
-> +void hinic3_set_pf_status(struct hinic3_hwif *hwif,
-> 
-> +			  enum hinic3_pf_status status);
-> 
-> +
-> 
-> +enum hinic3_pf_status hinic3_get_pf_status(struct hinic3_hwif *hwif);
-> 
-> +
-> 
-> +int hinic3_alloc_db_addr(void *hwdev, void **db_base,
-> 
-> +			 enum hinic3_db_type queue_type);
-> 
-> +
-> 
-> +void hinic3_disable_doorbell(struct hinic3_hwif *hwif);
-> 
-> +
-> 
-> +void hinic3_enable_doorbell(struct hinic3_hwif *hwif);
-> 
-> +
-> 
-> +int hinic3_init_hwif(void *dev);
-> 
-> +
-> 
-> +void hinic3_free_hwif(void *dev);
-> 
-> +
-> 
-> +#endif /**< _HINIC3_HWIF_H_ */
-> 
+        <tr>
+          <th>Version</th>
+          <td>22.11
+          </td>
+        </tr>
 
+        <tr>
+          <th>Hardware</th>
+          <td>x86
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>Linux
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>critical
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>ethdev
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>canary.overflow&#64;gmail.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">I have been encountering segmentat=
+ion fault when running DPDK in MPRQ
+vectorized mode. To reproduce the issue on testpmd, run with the following
+parameters:
+
+dpdk-testpmd -l 1-5 -n 4 -a
+0000:1f:00.0,rxq_comp_en=3D1,rxq_pkt_pad_en=3D1,rxqs_min_mprq=3D1,mprq_en=
+=3D1,mprq_log_stride_num=3D6,mprq_log_stride_size=3D9,mprq_max_memcpy_len=
+=3D64,rx_vec_en=3D1
+-- -i --rxd=3D8192 --max-pkt-len=3D9000 --rxq=3D1 --total-num-mbufs=3D16384
+--mbuf-size=3D3000 --enable-drop-en =E2=80=93-enable-scatter
+
+This segmentation fault goes away when I disable vectorization (rx_vec_en=
+=3D0).
+(Note that the segmentation fault does not occur in forward-mode=3Drxonly).=
+ The
+segmentation fault also seems to happen with higher chances when there is a
+rxnombuf.
+
+The backtrace of the segmentation fault was:
+#0  0x0000000001c34912 in __rte_pktmbuf_free_extbuf ()
+#1  0x0000000001c36a10 in rte_pktmbuf_detach ()
+#2  0x0000000001c4a9ec in rxq_copy_mprq_mbuf_v ()
+#3  0x0000000001c4d63b in rxq_burst_mprq_v ()
+#4  0x0000000001c4d7a7 in mlx5_rx_burst_mprq_vec ()
+#5  0x000000000050be66 in rte_eth_rx_burst ()
+#6  0x000000000050c53d in pkt_burst_io_forward ()
+#7  0x00000000005427b4 in run_pkt_fwd_on_lcore ()
+#8  0x000000000054289b in start_pkt_forward_on_core ()
+#9  0x0000000000a473c9 in eal_thread_loop ()
+#10 0x00007ffff60061ca in start_thread () from /lib64/libpthread.so.0
+#11 0x00007ffff5c72e73 in clone () from /lib64/libc.so.6
+
+*Note that the addresses may not be exact as I've added some log statements=
+ and
+attempted fixes previously (they were commented out when I obtained this
+backtrace).
+
+Upon some investigation, I noticed that in DPDK=E2=80=99s source codes
+drivers/net/mlx5/mlx5_rxtx_vec.c (function rxq_copy_mprq_mbuf_v()), there i=
+s a
+possibility where the consumed stride exceeds the stride number (64 in this
+case) which should not be happening. I'm suspecting that there's some CQE
+misalignment here upon encountering rxnombuf.
+
+rxq_copy_mprq_mbuf_v(...) {
+    ...
+    if(rxq-&gt;consumed_strd =3D=3D strd_n) {=20=20=20
+        // replenish WQE
+    }
+    ...
+    strd_cnt =3D (elts[i]-&gt;pkt_len / strd_sz) +=20
+               ((elts[i]-&gt;pkt_len % strd_sz) ? 1 : 0);
+
+    rxq_code =3D mprq_buf_to_pkt(rxq, elts[i], elts[i]-&gt;pkt_len, buf,
+rxq-&gt;consumed_strd, strd_cnt);
+    rxq-&gt;consumed_strd +=3D strd_cnt;       // encountering cases where
+rxq-&gt;consumed_strd &gt; strd_n
+    ...
+}
+
+In addition, there were also cases in mprq_buf_to_pkt() where the allocated=
+ seg
+address is exactly the same as the pkt (elts[i]) address passed in which sh=
+ould
+not happen.
+
+mprq_buf_to_pkt(...) {
+    ...
+    if(hdrm_overlap &gt; 0) {=20=20=20
+        MLX5_ASSERT(rxq-&gt;strd_scatter_en);
+        struct rte_mbuf *seg =3D rte_pktmbuf_alloc(rxq-&gt;mp);
+        if (unlikely(seg =3D=3D NULL)) return MLX5_RXQ_CODE_NOMBUF;
+        SET_DATA_OFF(seg, 0);
+
+        // added debug statement
+        // saw instances where pkt =3D seg
+        DRV_LOG(DEBUG, &quot;pkt %p seg %p&quot;, (void *)pkt, (void *)seg);
+        rte_memcpy(rte_pktmbuf_mtod(seg, void *), RTE_PTR_ADD(addr, len -
+hdrm_overlap), hdrm_overlap);
+        ...
+    }
+}
+
+I have tried upgrading my DPDK version to 24.11 but the segmentation fault
+still persists.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1776">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17557435050.4b746179.1811489--
