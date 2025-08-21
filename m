@@ -2,39 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ECF0CA0EE6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 Aug 2025 03:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A2FCA0EEB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 Aug 2025 03:26:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8F42A40292;
-	Thu, 21 Aug 2025 05:19:24 +0200 (CEST)
-Received: from out28-77.mail.aliyun.com (out28-77.mail.aliyun.com
- [115.124.28.77]) by mails.dpdk.org (Postfix) with ESMTP id 22DAC4026C
- for <dev@dpdk.org>; Thu, 21 Aug 2025 05:19:21 +0200 (CEST)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.073869|-1; CH=green; DM=|CONTINUE|false|;
- DS=CONTINUE|ham_regular_dialog|0.0678886-0.00215515-0.929956;
- FP=9544391034616684174|0|0|0|0|-1|-1|-1; HT=maildocker-contentspam033037006229;
- MF=dimon.zhao@nebula-matrix.com; NM=1; PH=DW; RN=4; RT=4; SR=0;
- TI=W4_0.2.3_2118CB6B_1755746252460_o7001c187s; 
-Received: from WS-web
- (dimon.zhao@nebula-matrix.com[W4_0.2.3_2118CB6B_1755746252460_o7001c187s]
- cluster:ay29) at Thu, 21 Aug 2025 11:19:18 +0800
-Date: Thu, 21 Aug 2025 11:19:18 +0800
-From: "Dimon" <dimon.zhao@nebula-matrix.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: "dev" <dev@dpdk.org>, "Leon" <leon.yu@nebula-matrix.com>,
- "Sam" <sam.chen@nebula-matrix.com>
-Message-ID: <e61b8ddf-98cc-4520-902a-4a478aa68dda.dimon.zhao@nebula-matrix.com>
-Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIHY1IDA0LzE3XSBuZXQvbmJsOiBhZGQgQ2hhbm5lbCBsYXllciBk?=
- =?UTF-8?B?ZWZpbml0aW9ucyBhbmQgaW1wbGVtZW50YXRpb24=?=
-X-Mailer: [Alimail-Mailagent][W4_0.2.3][null][Chrome]
+	by mails.dpdk.org (Postfix) with ESMTP id 90C2640292;
+	Thu, 21 Aug 2025 05:26:03 +0200 (CEST)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+ by mails.dpdk.org (Postfix) with ESMTP id 23F9E4026C
+ for <dev@dpdk.org>; Thu, 21 Aug 2025 05:26:01 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+ by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c6pYT1kM0z2DcCK;
+ Thu, 21 Aug 2025 11:23:09 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id CF4F21400CA;
+ Thu, 21 Aug 2025 11:25:58 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 21 Aug 2025 11:25:58 +0800
+Message-ID: <9940b2eb-f56c-4e8c-8d16-828fea5d8439@huawei.com>
+Date: Thu, 21 Aug 2025 11:25:57 +0800
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>	<20250819102237.3067518-1-dimon.zhao@nebula-matrix.com>	<20250819102237.3067518-5-dimon.zhao@nebula-matrix.com>,
- <20250820091637.3388306d@hermes.local>
-x-aliyun-mail-creator: W4_0.2.3_null_d2lTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEwOC4wLjUzNTkuMTI1IFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoNy43LjAtUmVsZWFzZS4yNTA1MjIwMDIpIE1vam8vMS4wLjAgTmF0aXZlIEFwcFR5cGUocmVsZWFzZSkgQ2hhbm5lbC8yMDEyMDAgQXJjaGl0ZWN0dXJlL3g4Nl82NA==Gs
-In-Reply-To: <20250820091637.3388306d@hermes.local>
-Content-Type: multipart/alternative;
- boundary="----=ALIBOUNDARY_2006_7f80f952b700_68a69036_8c3d6"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [V5 05/18] net/hinic3: add NIC event module
+To: Feifei Wang <wff_light@vip.163.com>, <dev@dpdk.org>
+CC: Xin Wang <wangxin679@h-partners.com>, Yi Chen <chenyi221@huawei.com>,
+ Feifei Wang <wangfeifei40@huawei.com>
+References: <20250418090621.9638-1-wff_light@vip.163.com>
+ <20250702020953.599-1-wff_light@vip.163.com>
+ <20250702020953.599-6-wff_light@vip.163.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20250702020953.599-6-wff_light@vip.163.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,304 +50,1028 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-------=ALIBOUNDARY_2006_7f80f952b700_68a69036_8c3d6
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+On 7/2/2025 10:09 AM, Feifei Wang wrote:
+> From: Xin Wang <wangxin679@h-partners.com>
+> 
+> 
+> Currently, there are two types of events: pf/vf connection status
+> 
+> and port information printing. This patch contains related data
+> 
+> structures and function codes.
+> 
+> 
+> 
+> Signed-off-by: Xin Wang <wangxin679@h-partners.com>
+> 
+> Reviewed-by: Yi Chen <chenyi221@huawei.com>
+> 
+> Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
+> 
+> ---
+> 
+>  drivers/net/hinic3/base/hinic3_nic_event.c | 433 +++++++++++++++++++++
+> 
+>  drivers/net/hinic3/base/hinic3_nic_event.h |  39 ++
+> 
+>  2 files changed, 472 insertions(+)
+> 
+>  create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.c
+> 
+>  create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.h
+> 
+> 
+> 
+> diff --git a/drivers/net/hinic3/base/hinic3_nic_event.c b/drivers/net/hinic3/base/hinic3_nic_event.c
+> 
+> new file mode 100644
+> 
+> index 0000000000..fb779fcf25
+> 
+> --- /dev/null
+> 
+> +++ b/drivers/net/hinic3/base/hinic3_nic_event.c
+> 
+> @@ -0,0 +1,433 @@
+> 
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> 
+> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
+> 
+> + */
+> 
+> +
+> 
+> +#include "hinic3_compat.h"
+> 
+> +#include "hinic3_cmd.h"
+> 
+> +#include "hinic3_hwif.h"
+> 
+> +#include "hinic3_nic_cfg.h"
+> 
+> +#include "hinic3_hwdev.h"
+> 
+> +#include "hinic3_nic_event.h"
+> 
+> +#include "hinic3_ethdev.h"
+> 
+> +
+> 
+> +static const char *g_hw_to_char_fec[HILINK_FEC_MAX_TYPE] = {
+> 
+> +	"not set", "rsfec", "basefec", "nofec", "llrsfec",
+> 
+> +};
+> 
+> +static const char *g_hw_to_speed_info[PORT_SPEED_UNKNOWN] = {
+> 
+> +	"not set", "10MB", "100MB", "1GB",   "10GB",
+> 
+> +	"25GB",	   "40GB", "50GB",  "100GB", "200GB",
+> 
+> +};
+> 
+> +static const char *g_hw_to_an_state_info[PORT_CFG_AN_OFF + 1] = {
+> 
+> +	"not set",
+> 
+> +	"on",
+> 
+> +	"off",
+> 
+> +};
+> 
+> +
+> 
+> +struct port_type_table {
+> 
+> +	u32 port_type;
+> 
+> +	const char *port_type_name;
+> 
+> +};
+> 
+> +
+> 
+> +void
+> 
+> +get_port_info(struct hinic3_hwdev *hwdev, u8 link_state,
+> 
+> +	      struct rte_eth_link *link)
+> 
+> +{
+> 
+> +	uint32_t port_speed[LINK_SPEED_LEVELS] = {
+> 
+> +		RTE_ETH_SPEED_NUM_NONE, RTE_ETH_SPEED_NUM_10M,
+> 
+> +		RTE_ETH_SPEED_NUM_100M, RTE_ETH_SPEED_NUM_1G,
+> 
+> +		RTE_ETH_SPEED_NUM_10G,	RTE_ETH_SPEED_NUM_25G,
+> 
+> +		RTE_ETH_SPEED_NUM_40G,	RTE_ETH_SPEED_NUM_50G,
+> 
+> +		RTE_ETH_SPEED_NUM_100G, RTE_ETH_SPEED_NUM_200G,
+> 
+> +	};
+> 
+> +	struct nic_port_info port_info = {0};
+> 
+> +	int err;
+> 
+> +
+> 
+> +	if (!link_state) {
+> 
+> +		link->link_status = RTE_ETH_LINK_DOWN;
+> 
+> +		link->link_speed = RTE_ETH_SPEED_NUM_NONE;
+> 
+> +		link->link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
+> 
+> +		link->link_autoneg = RTE_ETH_LINK_FIXED;
+> 
+> +	} else {
+> 
+> +		link->link_status = RTE_ETH_LINK_UP;
+> 
+> +
+> 
+> +		err = hinic3_get_port_info(hwdev, &port_info);
+> 
+> +		if (err) {
+> 
+> +			link->link_speed = RTE_ETH_SPEED_NUM_NONE;
+> 
+> +			link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+> 
+> +			link->link_autoneg = RTE_ETH_LINK_FIXED;
+> 
+> +		} else {
+> 
+> +			link->link_speed =
+> 
+> +				port_speed[port_info.speed % LINK_SPEED_LEVELS];
+> 
+> +			link->link_duplex = port_info.duplex;
+> 
+> +			link->link_autoneg = port_info.autoneg_state;
+> 
+> +		}
+> 
+> +	}
+> 
+> +}
+> 
+> +
+> 
+> +static void
+> 
+> +hinic3_link_event_stats(void *dev, u8 link)
+> 
+> +{
+> 
+> +	struct hinic3_hwdev *hwdev = dev;
+> 
+> +
+> 
+> +	if (link)
+> 
+> +		rte_atomic_fetch_add_explicit(&hwdev->hw_stats.link_event_stats.link_up_stats,
+> 
+> +			1, rte_memory_order_seq_cst);
+> 
+> +	else
+> 
+> +		rte_atomic_fetch_add_explicit(&hwdev->hw_stats.link_event_stats.link_down_stats,
+> 
+> +			1, rte_memory_order_seq_cst);
+> 
+> +}
+> 
+> +
+> 
+> +static void
+> 
+> +hinic3_set_vport_state(struct hinic3_hwdev *hwdev,
+> 
+> +		       struct hinic3_cmd_link_state *link_state)
+> 
+> +{
+> 
+> +	struct hinic3_nic_dev *nic_dev = NULL;
+> 
+> +	int err = 0;
+> 
+> +
+> 
+> +	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV((struct rte_eth_dev *)(hwdev->eth_dev));
+> 
+> +
+> 
+> +	if (link_state->state) {
+> 
+> +		if (hinic3_get_bit(HINIC3_DEV_START, &nic_dev->dev_status))
+> 
+> +			err = hinic3_set_vport_enable(hwdev, true);
+> 
+> +	} else {
+> 
+> +		err = hinic3_set_vport_enable(hwdev, false);
+> 
+> +	}
+> 
+> +
+> 
+> +	if (err)
+> 
+> +		PMD_DRV_LOG(ERR, "Set vport status failed");
+> 
+> +}
+> 
+> +
+> 
+> +static void
+> 
+> +link_status_event_handler(void *hwdev, void *buf_in, __rte_unused u16 in_size,
+> 
+> +			  __rte_unused void *buf_out,
+> 
+> +			  __rte_unused u16 *out_size)
+> 
+> +{
+> 
+> +	struct hinic3_cmd_link_state *link_status = NULL;
+> 
+> +	struct rte_eth_link link;
+> 
+> +	struct hinic3_hwdev *dev = hwdev;
+> 
+> +	int err;
+> 
+> +
+> 
+> +	link_status = buf_in;
+> 
+> +	PMD_DRV_LOG(INFO,
+> 
+> +		    "Link status report received, func_id: %d, status: %d(%s)",
+> 
+> +		    hinic3_global_func_id(hwdev), link_status->state,
+> 
+> +		    link_status->state ? "UP" : "DOWN");
+> 
+> +
+> 
+> +	hinic3_link_event_stats(hwdev, link_status->state);
+> 
+> +
+> 
+> +	hinic3_set_vport_state(dev, link_status);
+> 
+> +
+> 
+> +	/* Link event reported only after set vport enable. */
+> 
+> +	get_port_info(dev, link_status->state, &link);
+> 
+> +	err = rte_eth_linkstatus_set((struct rte_eth_dev *)(dev->eth_dev),
+> 
+> +				     &link);
+> 
+> +	if (!err)
+> 
+> +		rte_eth_dev_callback_process(dev->eth_dev,
+> 
+> +					     RTE_ETH_EVENT_INTR_LSC, NULL);
 
-SGkgU3RlcGhlbiwKPiArIHdoaWxlICh0cnVlKSB7Cj4gKyBpZiAocnRlX2JpdG1hcF9nZXQoY2hh
-bl9pbmZvLT5tYWlsYm94LnN0YXRlX2JtcCwgTkJMX0NIQU5fSU5URVJSVVBUX1JFQURZKSkgewo+
-ICsgbnIgPSByZWFkKGNoYW5faW5mby0+bWFpbGJveC5mZFswXSwgJnVudXNlZCwgc2l6ZW9mKHVu
-dXNlZCkpOwo+ICsgaWYgKG5yIDwgMCkKPiArIGJyZWFrOwo+ICsgfQo+ICsgbmJsX2NoYW5fY2xl
-YW5fcXVldWUoY2hhbl9tZ3QpOwo+ICsgbmFub3NsZWVwKCZ0aW1lLCAwKTsKPiArIH0KVGhlIGNo
-YW5faW5mby0+bWFpbGJveC5mZFswXSBpcyB0aGUgcmVhZCBmZCBvZiBldmVudGZkLiBXZSBhcmUg
-dXNpbmcgdGhlIGV2ZW50ZmQgYmxvY2sgd2FpdGluZyB0byByZWFkIG1haWxib3ggbWVzc2FnZS4K
-VGhhbmsgeW91LgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0K5Y+R5Lu25Lq677yaU3RlcGhlbiBIZW1taW5nZXIgPHN0ZXBo
-ZW5AbmV0d29ya3BsdW1iZXIub3JnPgrlj5HpgIHml7bpl7TvvJoyMDI15bm0OOaciDIx5pelKOWR
-qOWbmykgMDA6MTYK5pS25Lu25Lq677yaRGltb248ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNv
-bT4K5oqE44CA6YCB77yaZGV2PGRldkBkcGRrLm9yZz47IEt5byBMaXU8a3lvLmxpdUBuZWJ1bGEt
-bWF0cml4LmNvbT47IExlb248bGVvbi55dUBuZWJ1bGEtbWF0cml4LmNvbT47IFNhbTxzYW0uY2hl
-bkBuZWJ1bGEtbWF0cml4LmNvbT4K5Li744CA6aKY77yaUmU6IFtQQVRDSCB2NSAwNC8xN10gbmV0
-L25ibDogYWRkIENoYW5uZWwgbGF5ZXIgZGVmaW5pdGlvbnMgYW5kIGltcGxlbWVudGF0aW9uCk9u
-IFR1ZSwgMTkgQXVnIDIwMjUgMDM6MjI6MjQgLTA3MDAKRGltb24gWmhhbyA8ZGltb24uemhhb0Bu
-ZWJ1bGEtbWF0cml4LmNvbT4gd3JvdGU6Cj4gKwo+ICtzdGF0aWMgdWludDMyX3QgbmJsX2NoYW5f
-dGhyZWFkX3BvbGxpbmdfdGFzayh2b2lkICpwYXJhbSkKPiArewo+ICsgc3RydWN0IG5ibF9jaGFu
-bmVsX21ndCAqY2hhbl9tZ3QgPSAoc3RydWN0IG5ibF9jaGFubmVsX21ndCAqKXBhcmFtOwo+ICsg
-dW5pb24gbmJsX2NoYW5faW5mbyAqY2hhbl9pbmZvID0gTkJMX0NIQU5fTUdUX1RPX0NIQU5fSU5G
-TyhjaGFuX21ndCk7Cj4gKyBzdHJ1Y3QgdGltZXNwZWMgdGltZTsKPiArIGNoYXIgdW51c2VkWzE2
-XTsKPiArIHNzaXplX3QgbnIgPSAwOwo+ICsKPiArIHRpbWUudHZfc2VjID0gMDsKPiArIHRpbWUu
-dHZfbnNlYyA9IDEwMDAwMDsKPiArCj4gKyB3aGlsZSAodHJ1ZSkgewo+ICsgaWYgKHJ0ZV9iaXRt
-YXBfZ2V0KGNoYW5faW5mby0+bWFpbGJveC5zdGF0ZV9ibXAsIE5CTF9DSEFOX0lOVEVSUlVQVF9S
-RUFEWSkpIHsKPiArIG5yID0gcmVhZChjaGFuX2luZm8tPm1haWxib3guZmRbMF0sICZ1bnVzZWQs
-IHNpemVvZih1bnVzZWQpKTsKPiArIGlmIChuciA8IDApCj4gKyBicmVhazsKPiArIH0KPiArIG5i
-bF9jaGFuX2NsZWFuX3F1ZXVlKGNoYW5fbWd0KTsKPiArIG5hbm9zbGVlcCgmdGltZSwgMCk7Cj4g
-KyB9Cj4gKwo+ICsgcmV0dXJuIDA7Cj4gK30KVGhpcyBpcyBnb2luZyB0byBtYWtlIGVtYmVkZGVk
-IGFwcGxpY2F0aW9uIGRldmVsb3BlcnMgdXBzZXQgYmVjYXVzZSBpdCB1c2VzCmEgc2lnbmlmaWNh
-bnQgcGFydCBvZiBhIENQVSBwb2xsaW5nLgpTaW5jZSB5b3UgYXJlIHJlYWRpbmcgZnJvbSBtYWls
-Ym94LCB3aHkgbm90IGltcGxlbWVudCBzZWxlY3QvcG9sbC9lcG9sbCBhbmQKaGF2ZSB0aGUgdGhy
-ZWFkIGJsb2NrIHdhaXRpbmcgdG8gcmVhZCBtYWlsYm94IGluc3RlYWQuCg==
-------=ALIBOUNDARY_2006_7f80f952b700_68a69036_8c3d6
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Please report lsc event when dev->data->dev_conf.intr_conf.lsc = 1
 
-PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
-bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
-Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
-VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPkhpJm5ic3A7PHNwYW4gIHN0eWxlPSJjb2xvcjogcmdi
-KDAsIDAsIDApOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBm
-b250LXNpemU6IDE0cHg7IGZvbnQtc3R5bGU6IG5vcm1hbDsgZm9udC12YXJpYW50LWxpZ2F0dXJl
-czogbm9ybWFsOyBmb250LXZhcmlhbnQtY2Fwczogbm9ybWFsOyBmb250LXdlaWdodDogNDAwOyBs
-ZXR0ZXItc3BhY2luZzogbm9ybWFsOyB0ZXh0LWFsaWduOiBzdGFydDsgdGV4dC1pbmRlbnQ6IDBw
-eDsgdGV4dC10cmFuc2Zvcm06IG5vbmU7IHdoaXRlLXNwYWNlOiBub3JtYWw7IHdvcmQtc3BhY2lu
-ZzogMHB4OyBiYWNrZ3JvdW5kLWNvbG9yOiByZ2IoMjU1LCAyNTUsIDI1NSk7IHRleHQtZGVjb3Jh
-dGlvbi10aGlja25lc3M6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1zdHlsZTogaW5pdGlhbDsg
-dGV4dC1kZWNvcmF0aW9uLWNvbG9yOiBpbml0aWFsOyBmbG9hdDogbm9uZTsgZGlzcGxheTogaW5s
-aW5lICFpbXBvcnRhbnQ7Ij5TdGVwaGVuLDwvc3Bhbj48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9
-ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0
-LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhl
-aXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxiciA+PC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVh
-cjogYm90aDsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVp
-dGlTQy1MaWdodCwgU2ltU3VuOyBjb2xvcjogcmdiKDAsIDE3NiwgODApOyBmb250LXN0eWxlOiBp
-dGFsaWM7Ij48c3BhbiAgc3R5bGU9ImZvbnQtc3R5bGU6IGl0YWxpYzsgY29sb3I6IHJnYigwLCAx
-NzYsIDgwKTsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9u
-dC1zaXplOiAxNHB4OyBmb250LXZhcmlhbnQtbGlnYXR1cmVzOiBub3JtYWw7IGZvbnQtdmFyaWFu
-dC1jYXBzOiBub3JtYWw7IGZvbnQtd2VpZ2h0OiA0MDA7IGxldHRlci1zcGFjaW5nOiBub3JtYWw7
-IHRleHQtYWxpZ246IHN0YXJ0OyB0ZXh0LWluZGVudDogMHB4OyB0ZXh0LXRyYW5zZm9ybTogbm9u
-ZTsgd2hpdGUtc3BhY2U6IG5vcm1hbDsgd29yZC1zcGFjaW5nOiAwcHg7IGJhY2tncm91bmQtY29s
-b3I6IHJnYigyNTUsIDI1NSwgMjU1KTsgdGV4dC1kZWNvcmF0aW9uLXRoaWNrbmVzczogaW5pdGlh
-bDsgdGV4dC1kZWNvcmF0aW9uLXN0eWxlOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tY29sb3I6
-IGluaXRpYWw7IGZsb2F0OiBub25lOyBkaXNwbGF5OiBpbmxpbmUgIWltcG9ydGFudDsiPiZndDsg
-KyB3aGlsZSAodHJ1ZSkgezwvc3Bhbj48YnIgIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBB
-cmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGZvbnQtdmFyaWFudC1saWdh
-dHVyZXM6IG5vcm1hbDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9udC13ZWlnaHQ6IDQw
-MDsgbGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgb3JwaGFuczogMjsgdGV4dC1hbGlnbjogc3RhcnQ7
-IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3aGl0ZS1zcGFjZTogbm9y
-bWFsOyB3aWRvd3M6IDI7IHdvcmQtc3BhY2luZzogMHB4OyAtd2Via2l0LXRleHQtc3Ryb2tlLXdp
-ZHRoOiAwcHg7IGJhY2tncm91bmQtY29sb3I6IHJnYigyNTUsIDI1NSwgMjU1KTsgdGV4dC1kZWNv
-cmF0aW9uLXRoaWNrbmVzczogaW5pdGlhbDsgdGV4dC1kZWNvcmF0aW9uLXN0eWxlOiBpbml0aWFs
-OyB0ZXh0LWRlY29yYXRpb24tY29sb3I6IGluaXRpYWw7Ij48c3BhbiAgc3R5bGU9ImZvbnQtc3R5
-bGU6IGl0YWxpYzsgY29sb3I6IHJnYigwLCAxNzYsIDgwKTsgZm9udC1mYW1pbHk6IFRhaG9tYSwg
-QXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBmb250LXZhcmlhbnQtbGln
-YXR1cmVzOiBub3JtYWw7IGZvbnQtdmFyaWFudC1jYXBzOiBub3JtYWw7IGZvbnQtd2VpZ2h0OiA0
-MDA7IGxldHRlci1zcGFjaW5nOiBub3JtYWw7IHRleHQtYWxpZ246IHN0YXJ0OyB0ZXh0LWluZGVu
-dDogMHB4OyB0ZXh0LXRyYW5zZm9ybTogbm9uZTsgd2hpdGUtc3BhY2U6IG5vcm1hbDsgd29yZC1z
-cGFjaW5nOiAwcHg7IGJhY2tncm91bmQtY29sb3I6IHJnYigyNTUsIDI1NSwgMjU1KTsgdGV4dC1k
-ZWNvcmF0aW9uLXRoaWNrbmVzczogaW5pdGlhbDsgdGV4dC1kZWNvcmF0aW9uLXN0eWxlOiBpbml0
-aWFsOyB0ZXh0LWRlY29yYXRpb24tY29sb3I6IGluaXRpYWw7IGZsb2F0OiBub25lOyBkaXNwbGF5
-OiBpbmxpbmUgIWltcG9ydGFudDsiPiZndDsgKyZuYnNwOyBpZiAocnRlX2JpdG1hcF9nZXQoY2hh
-bl9pbmZvLSZndDttYWlsYm94LnN0YXRlX2JtcCwgTkJMX0NIQU5fSU5URVJSVVBUX1JFQURZKSkg
-ezwvc3Bhbj48YnIgIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwg
-U2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGZvbnQtdmFyaWFudC1saWdhdHVyZXM6IG5vcm1hbDsg
-Zm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9udC13ZWlnaHQ6IDQwMDsgbGV0dGVyLXNwYWNp
-bmc6IG5vcm1hbDsgb3JwaGFuczogMjsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAw
-cHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3aGl0ZS1zcGFjZTogbm9ybWFsOyB3aWRvd3M6IDI7
-IHdvcmQtc3BhY2luZzogMHB4OyAtd2Via2l0LXRleHQtc3Ryb2tlLXdpZHRoOiAwcHg7IGJhY2tn
-cm91bmQtY29sb3I6IHJnYigyNTUsIDI1NSwgMjU1KTsgdGV4dC1kZWNvcmF0aW9uLXRoaWNrbmVz
-czogaW5pdGlhbDsgdGV4dC1kZWNvcmF0aW9uLXN0eWxlOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRp
-b24tY29sb3I6IGluaXRpYWw7Ij48c3BhbiAgc3R5bGU9ImZvbnQtc3R5bGU6IGl0YWxpYzsgY29s
-b3I6IHJnYigwLCAxNzYsIDgwKTsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGks
-IFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBmb250LXZhcmlhbnQtbGlnYXR1cmVzOiBub3JtYWw7
-IGZvbnQtdmFyaWFudC1jYXBzOiBub3JtYWw7IGZvbnQtd2VpZ2h0OiA0MDA7IGxldHRlci1zcGFj
-aW5nOiBub3JtYWw7IHRleHQtYWxpZ246IHN0YXJ0OyB0ZXh0LWluZGVudDogMHB4OyB0ZXh0LXRy
-YW5zZm9ybTogbm9uZTsgd2hpdGUtc3BhY2U6IG5vcm1hbDsgd29yZC1zcGFjaW5nOiAwcHg7IGJh
-Y2tncm91bmQtY29sb3I6IHJnYigyNTUsIDI1NSwgMjU1KTsgdGV4dC1kZWNvcmF0aW9uLXRoaWNr
-bmVzczogaW5pdGlhbDsgdGV4dC1kZWNvcmF0aW9uLXN0eWxlOiBpbml0aWFsOyB0ZXh0LWRlY29y
-YXRpb24tY29sb3I6IGluaXRpYWw7IGZsb2F0OiBub25lOyBkaXNwbGF5OiBpbmxpbmUgIWltcG9y
-dGFudDsiPiZndDsgKyAmbmJzcDsgbnIgPSA8c3BhbiAgc3R5bGU9ImZvbnQtc3R5bGU6IGl0YWxp
-YzsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXpl
-OiAxNHB4OyBmb250LXZhcmlhbnQtbGlnYXR1cmVzOiBub3JtYWw7IGZvbnQtdmFyaWFudC1jYXBz
-OiBub3JtYWw7IGZvbnQtd2VpZ2h0OiA0MDA7IGxldHRlci1zcGFjaW5nOiBub3JtYWw7IHRleHQt
-YWxpZ246IHN0YXJ0OyB0ZXh0LWluZGVudDogMHB4OyB0ZXh0LXRyYW5zZm9ybTogbm9uZTsgd2hp
-dGUtc3BhY2U6IG5vcm1hbDsgd29yZC1zcGFjaW5nOiAwcHg7IGJhY2tncm91bmQtY29sb3I6IHJn
-YigyNTUsIDI1NSwgMjU1KTsgdGV4dC1kZWNvcmF0aW9uLXRoaWNrbmVzczogaW5pdGlhbDsgdGV4
-dC1kZWNvcmF0aW9uLXN0eWxlOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tY29sb3I6IGluaXRp
-YWw7IGZsb2F0OiBub25lOyBjb2xvcjogcmdiKDI1NSwgMCwgMCk7IGRpc3BsYXk6IGlubGluZSAh
-aW1wb3J0YW50OyI+cmVhZChjaGFuX2luZm8tJmd0O21haWxib3guZmRbMF0sICZhbXA7dW51c2Vk
-LCBzaXplb2YodW51c2VkKSk7PC9zcGFuPjwvc3Bhbj48YnIgIHN0eWxlPSJmb250LWZhbWlseTog
-VGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGZvbnQtdmFy
-aWFudC1saWdhdHVyZXM6IG5vcm1hbDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9udC13
-ZWlnaHQ6IDQwMDsgbGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgb3JwaGFuczogMjsgdGV4dC1hbGln
-bjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3aGl0ZS1z
-cGFjZTogbm9ybWFsOyB3aWRvd3M6IDI7IHdvcmQtc3BhY2luZzogMHB4OyAtd2Via2l0LXRleHQt
-c3Ryb2tlLXdpZHRoOiAwcHg7IGJhY2tncm91bmQtY29sb3I6IHJnYigyNTUsIDI1NSwgMjU1KTsg
-dGV4dC1kZWNvcmF0aW9uLXRoaWNrbmVzczogaW5pdGlhbDsgdGV4dC1kZWNvcmF0aW9uLXN0eWxl
-OiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tY29sb3I6IGluaXRpYWw7Ij48c3BhbiAgc3R5bGU9
-ImZvbnQtc3R5bGU6IGl0YWxpYzsgY29sb3I6IHJnYigwLCAxNzYsIDgwKTsgZm9udC1mYW1pbHk6
-IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBmb250LXZh
-cmlhbnQtbGlnYXR1cmVzOiBub3JtYWw7IGZvbnQtdmFyaWFudC1jYXBzOiBub3JtYWw7IGZvbnQt
-d2VpZ2h0OiA0MDA7IGxldHRlci1zcGFjaW5nOiBub3JtYWw7IHRleHQtYWxpZ246IHN0YXJ0OyB0
-ZXh0LWluZGVudDogMHB4OyB0ZXh0LXRyYW5zZm9ybTogbm9uZTsgd2hpdGUtc3BhY2U6IG5vcm1h
-bDsgd29yZC1zcGFjaW5nOiAwcHg7IGJhY2tncm91bmQtY29sb3I6IHJnYigyNTUsIDI1NSwgMjU1
-KTsgdGV4dC1kZWNvcmF0aW9uLXRoaWNrbmVzczogaW5pdGlhbDsgdGV4dC1kZWNvcmF0aW9uLXN0
-eWxlOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tY29sb3I6IGluaXRpYWw7IGZsb2F0OiBub25l
-OyBkaXNwbGF5OiBpbmxpbmUgIWltcG9ydGFudDsiPiZndDsgKyAmbmJzcDsgaWYgKG5yICZsdDsg
-MCk8L3NwYW4+PGJyICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGks
-IFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBmb250LXZhcmlhbnQtbGlnYXR1cmVzOiBub3JtYWw7
-IGZvbnQtdmFyaWFudC1jYXBzOiBub3JtYWw7IGZvbnQtd2VpZ2h0OiA0MDA7IGxldHRlci1zcGFj
-aW5nOiBub3JtYWw7IG9ycGhhbnM6IDI7IHRleHQtYWxpZ246IHN0YXJ0OyB0ZXh0LWluZGVudDog
-MHB4OyB0ZXh0LXRyYW5zZm9ybTogbm9uZTsgd2hpdGUtc3BhY2U6IG5vcm1hbDsgd2lkb3dzOiAy
-OyB3b3JkLXNwYWNpbmc6IDBweDsgLXdlYmtpdC10ZXh0LXN0cm9rZS13aWR0aDogMHB4OyBiYWNr
-Z3JvdW5kLWNvbG9yOiByZ2IoMjU1LCAyNTUsIDI1NSk7IHRleHQtZGVjb3JhdGlvbi10aGlja25l
-c3M6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1zdHlsZTogaW5pdGlhbDsgdGV4dC1kZWNvcmF0
-aW9uLWNvbG9yOiBpbml0aWFsOyI+PHNwYW4gIHN0eWxlPSJmb250LXN0eWxlOiBpdGFsaWM7IGNv
-bG9yOiByZ2IoMCwgMTc2LCA4MCk7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRp
-LCBTaW1TdW47IGZvbnQtc2l6ZTogMTRweDsgZm9udC12YXJpYW50LWxpZ2F0dXJlczogbm9ybWFs
-OyBmb250LXZhcmlhbnQtY2Fwczogbm9ybWFsOyBmb250LXdlaWdodDogNDAwOyBsZXR0ZXItc3Bh
-Y2luZzogbm9ybWFsOyB0ZXh0LWFsaWduOiBzdGFydDsgdGV4dC1pbmRlbnQ6IDBweDsgdGV4dC10
-cmFuc2Zvcm06IG5vbmU7IHdoaXRlLXNwYWNlOiBub3JtYWw7IHdvcmQtc3BhY2luZzogMHB4OyBi
-YWNrZ3JvdW5kLWNvbG9yOiByZ2IoMjU1LCAyNTUsIDI1NSk7IHRleHQtZGVjb3JhdGlvbi10aGlj
-a25lc3M6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1zdHlsZTogaW5pdGlhbDsgdGV4dC1kZWNv
-cmF0aW9uLWNvbG9yOiBpbml0aWFsOyBmbG9hdDogbm9uZTsgZGlzcGxheTogaW5saW5lICFpbXBv
-cnRhbnQ7Ij4mZ3Q7ICsmbmJzcDsgJm5ic3A7IGJyZWFrOzwvc3Bhbj48YnIgIHN0eWxlPSJmb250
-LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0cHg7
-IGZvbnQtdmFyaWFudC1saWdhdHVyZXM6IG5vcm1hbDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1h
-bDsgZm9udC13ZWlnaHQ6IDQwMDsgbGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgb3JwaGFuczogMjsg
-dGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBub25l
-OyB3aGl0ZS1zcGFjZTogbm9ybWFsOyB3aWRvd3M6IDI7IHdvcmQtc3BhY2luZzogMHB4OyAtd2Vi
-a2l0LXRleHQtc3Ryb2tlLXdpZHRoOiAwcHg7IGJhY2tncm91bmQtY29sb3I6IHJnYigyNTUsIDI1
-NSwgMjU1KTsgdGV4dC1kZWNvcmF0aW9uLXRoaWNrbmVzczogaW5pdGlhbDsgdGV4dC1kZWNvcmF0
-aW9uLXN0eWxlOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tY29sb3I6IGluaXRpYWw7Ij48c3Bh
-biAgc3R5bGU9ImZvbnQtc3R5bGU6IGl0YWxpYzsgY29sb3I6IHJnYigwLCAxNzYsIDgwKTsgZm9u
-dC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4
-OyBmb250LXZhcmlhbnQtbGlnYXR1cmVzOiBub3JtYWw7IGZvbnQtdmFyaWFudC1jYXBzOiBub3Jt
-YWw7IGZvbnQtd2VpZ2h0OiA0MDA7IGxldHRlci1zcGFjaW5nOiBub3JtYWw7IHRleHQtYWxpZ246
-IHN0YXJ0OyB0ZXh0LWluZGVudDogMHB4OyB0ZXh0LXRyYW5zZm9ybTogbm9uZTsgd2hpdGUtc3Bh
-Y2U6IG5vcm1hbDsgd29yZC1zcGFjaW5nOiAwcHg7IGJhY2tncm91bmQtY29sb3I6IHJnYigyNTUs
-IDI1NSwgMjU1KTsgdGV4dC1kZWNvcmF0aW9uLXRoaWNrbmVzczogaW5pdGlhbDsgdGV4dC1kZWNv
-cmF0aW9uLXN0eWxlOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tY29sb3I6IGluaXRpYWw7IGZs
-b2F0OiBub25lOyBkaXNwbGF5OiBpbmxpbmUgIWltcG9ydGFudDsiPiZndDsgKyZuYnNwOyB9PC9z
-cGFuPjxiciAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1T
-dW47IGZvbnQtc2l6ZTogMTRweDsgZm9udC12YXJpYW50LWxpZ2F0dXJlczogbm9ybWFsOyBmb250
-LXZhcmlhbnQtY2Fwczogbm9ybWFsOyBmb250LXdlaWdodDogNDAwOyBsZXR0ZXItc3BhY2luZzog
-bm9ybWFsOyBvcnBoYW5zOiAyOyB0ZXh0LWFsaWduOiBzdGFydDsgdGV4dC1pbmRlbnQ6IDBweDsg
-dGV4dC10cmFuc2Zvcm06IG5vbmU7IHdoaXRlLXNwYWNlOiBub3JtYWw7IHdpZG93czogMjsgd29y
-ZC1zcGFjaW5nOiAwcHg7IC13ZWJraXQtdGV4dC1zdHJva2Utd2lkdGg6IDBweDsgYmFja2dyb3Vu
-ZC1jb2xvcjogcmdiKDI1NSwgMjU1LCAyNTUpOyB0ZXh0LWRlY29yYXRpb24tdGhpY2tuZXNzOiBp
-bml0aWFsOyB0ZXh0LWRlY29yYXRpb24tc3R5bGU6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1j
-b2xvcjogaW5pdGlhbDsiPjxzcGFuICBzdHlsZT0iZm9udC1zdHlsZTogaXRhbGljOyBjb2xvcjog
-cmdiKDAsIDE3NiwgODApOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2lt
-U3VuOyBmb250LXNpemU6IDE0cHg7IGZvbnQtdmFyaWFudC1saWdhdHVyZXM6IG5vcm1hbDsgZm9u
-dC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9udC13ZWlnaHQ6IDQwMDsgbGV0dGVyLXNwYWNpbmc6
-IG5vcm1hbDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNm
-b3JtOiBub25lOyB3aGl0ZS1zcGFjZTogbm9ybWFsOyB3b3JkLXNwYWNpbmc6IDBweDsgYmFja2dy
-b3VuZC1jb2xvcjogcmdiKDI1NSwgMjU1LCAyNTUpOyB0ZXh0LWRlY29yYXRpb24tdGhpY2tuZXNz
-OiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tc3R5bGU6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlv
-bi1jb2xvcjogaW5pdGlhbDsgZmxvYXQ6IG5vbmU7IGRpc3BsYXk6IGlubGluZSAhaW1wb3J0YW50
-OyI+Jmd0OyArJm5ic3A7IG5ibF9jaGFuX2NsZWFuX3F1ZXVlKGNoYW5fbWd0KTs8L3NwYW4+PGJy
-ICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9u
-dC1zaXplOiAxNHB4OyBmb250LXZhcmlhbnQtbGlnYXR1cmVzOiBub3JtYWw7IGZvbnQtdmFyaWFu
-dC1jYXBzOiBub3JtYWw7IGZvbnQtd2VpZ2h0OiA0MDA7IGxldHRlci1zcGFjaW5nOiBub3JtYWw7
-IG9ycGhhbnM6IDI7IHRleHQtYWxpZ246IHN0YXJ0OyB0ZXh0LWluZGVudDogMHB4OyB0ZXh0LXRy
-YW5zZm9ybTogbm9uZTsgd2hpdGUtc3BhY2U6IG5vcm1hbDsgd2lkb3dzOiAyOyB3b3JkLXNwYWNp
-bmc6IDBweDsgLXdlYmtpdC10ZXh0LXN0cm9rZS13aWR0aDogMHB4OyBiYWNrZ3JvdW5kLWNvbG9y
-OiByZ2IoMjU1LCAyNTUsIDI1NSk7IHRleHQtZGVjb3JhdGlvbi10aGlja25lc3M6IGluaXRpYWw7
-IHRleHQtZGVjb3JhdGlvbi1zdHlsZTogaW5pdGlhbDsgdGV4dC1kZWNvcmF0aW9uLWNvbG9yOiBp
-bml0aWFsOyI+PHNwYW4gIHN0eWxlPSJmb250LXN0eWxlOiBpdGFsaWM7IGNvbG9yOiByZ2IoMCwg
-MTc2LCA4MCk7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZv
-bnQtc2l6ZTogMTRweDsgZm9udC12YXJpYW50LWxpZ2F0dXJlczogbm9ybWFsOyBmb250LXZhcmlh
-bnQtY2Fwczogbm9ybWFsOyBmb250LXdlaWdodDogNDAwOyBsZXR0ZXItc3BhY2luZzogbm9ybWFs
-OyB0ZXh0LWFsaWduOiBzdGFydDsgdGV4dC1pbmRlbnQ6IDBweDsgdGV4dC10cmFuc2Zvcm06IG5v
-bmU7IHdoaXRlLXNwYWNlOiBub3JtYWw7IHdvcmQtc3BhY2luZzogMHB4OyBiYWNrZ3JvdW5kLWNv
-bG9yOiByZ2IoMjU1LCAyNTUsIDI1NSk7IHRleHQtZGVjb3JhdGlvbi10aGlja25lc3M6IGluaXRp
-YWw7IHRleHQtZGVjb3JhdGlvbi1zdHlsZTogaW5pdGlhbDsgdGV4dC1kZWNvcmF0aW9uLWNvbG9y
-OiBpbml0aWFsOyBmbG9hdDogbm9uZTsgZGlzcGxheTogaW5saW5lICFpbXBvcnRhbnQ7Ij4mZ3Q7
-ICsmbmJzcDsgbmFub3NsZWVwKCZhbXA7dGltZSwgMCk7PC9zcGFuPjxiciAgc3R5bGU9ImZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZvbnQtc2l6ZTogMTRweDsg
-Zm9udC12YXJpYW50LWxpZ2F0dXJlczogbm9ybWFsOyBmb250LXZhcmlhbnQtY2Fwczogbm9ybWFs
-OyBmb250LXdlaWdodDogNDAwOyBsZXR0ZXItc3BhY2luZzogbm9ybWFsOyBvcnBoYW5zOiAyOyB0
-ZXh0LWFsaWduOiBzdGFydDsgdGV4dC1pbmRlbnQ6IDBweDsgdGV4dC10cmFuc2Zvcm06IG5vbmU7
-IHdoaXRlLXNwYWNlOiBub3JtYWw7IHdpZG93czogMjsgd29yZC1zcGFjaW5nOiAwcHg7IC13ZWJr
-aXQtdGV4dC1zdHJva2Utd2lkdGg6IDBweDsgYmFja2dyb3VuZC1jb2xvcjogcmdiKDI1NSwgMjU1
-LCAyNTUpOyB0ZXh0LWRlY29yYXRpb24tdGhpY2tuZXNzOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRp
-b24tc3R5bGU6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1jb2xvcjogaW5pdGlhbDsiPjxzcGFu
-ICBzdHlsZT0iZm9udC1zdHlsZTogaXRhbGljOyBjb2xvcjogcmdiKDAsIDE3NiwgODApOyBmb250
-LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0cHg7
-IGZvbnQtdmFyaWFudC1saWdhdHVyZXM6IG5vcm1hbDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1h
-bDsgZm9udC13ZWlnaHQ6IDQwMDsgbGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgdGV4dC1hbGlnbjog
-c3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3aGl0ZS1zcGFj
-ZTogbm9ybWFsOyB3b3JkLXNwYWNpbmc6IDBweDsgYmFja2dyb3VuZC1jb2xvcjogcmdiKDI1NSwg
-MjU1LCAyNTUpOyB0ZXh0LWRlY29yYXRpb24tdGhpY2tuZXNzOiBpbml0aWFsOyB0ZXh0LWRlY29y
-YXRpb24tc3R5bGU6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1jb2xvcjogaW5pdGlhbDsgZmxv
-YXQ6IG5vbmU7IGRpc3BsYXk6IGlubGluZSAhaW1wb3J0YW50OyI+Jmd0OyArIH08L3NwYW4+PC9z
-cGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsgZm9udC1mYW1pbHk6IFRhaG9tYSwg
-QXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PHNwYW4gPjxiciA+PC9zcGFuPjwvZGl2
-PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNU
-SGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PHNwYW4gPlRoZSBjaGFuX2luZm8tJmd0O21haWxib3gu
-ZmRbMF0gaXMgdGhlIHJlYWQgZmQgb2YgZXZlbnRmZC4gV2UgYXJlIHVzaW5nIHRoZSBldmVudGZk
-IGJsb2NrIHdhaXRpbmcgdG8gcmVhZCBtYWlsYm94IG1lc3NhZ2UuPC9zcGFuPjwvZGl2PjxkaXYg
-IHN0eWxlPSJjbGVhcjogYm90aDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlT
-Qy1MaWdodCwgU2ltU3VuOyI+PHNwYW4gPjxiciA+PC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJj
-bGVhcjogYm90aDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwg
-U2ltU3VuOyI+PHNwYW4gPlRoYW5rIHlvdS48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFy
-OiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1T
-dW47Ij48c3BhbiA+PGJyID48L3NwYW4+PC9kaXY+PGJsb2NrcXVvdGUgIF9xdW90ZT0iMSIgc3R5
-bGU9Im1hcmdpbi1yaWdodDogMHB4OyBtYXJnaW4tdG9wOiAwcHg7IG1hcmdpbi1ib3R0b206IDBw
-eDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXpl
-OiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGRpdiAgY2xhc3M9ImFsaW1haWwtcXVvdGUi
-PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLTwvZGl2PjxkaXYgIHN0eWxlPSJj
-bGVhcjogYm90aDsiPuWPkeS7tuS6uu+8mlN0ZXBoZW4gSGVtbWluZ2VyICZsdDtzdGVwaGVuQG5l
-dHdvcmtwbHVtYmVyLm9yZyZndDs8L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7lj5Hp
-gIHml7bpl7TvvJoyMDI15bm0OOaciDIx5pelKOWRqOWbmykgMDA6MTY8L2Rpdj48ZGl2ICBzdHls
-ZT0iY2xlYXI6IGJvdGg7Ij7mlLbku7bkurrvvJpEaW1vbiZsdDtkaW1vbi56aGFvQG5lYnVsYS1t
-YXRyaXguY29tJmd0OzwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuaKhOOAgOmAge+8
-mmRldiZsdDtkZXZAZHBkay5vcmcmZ3Q7OyBLeW8gTGl1Jmx0O2t5by5saXVAbmVidWxhLW1hdHJp
-eC5jb20mZ3Q7OyBMZW9uJmx0O2xlb24ueXVAbmVidWxhLW1hdHJpeC5jb20mZ3Q7OyBTYW0mbHQ7
-c2FtLmNoZW5AbmVidWxhLW1hdHJpeC5jb20mZ3Q7PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBi
-b3RoOyI+5Li744CA6aKY77yaUmU6IFtQQVRDSCB2NSAwNC8xN10gbmV0L25ibDogYWRkIENoYW5u
-ZWwgbGF5ZXIgZGVmaW5pdGlvbnMgYW5kIGltcGxlbWVudGF0aW9uPC9kaXY+PGRpdiAgc3R5bGU9
-ImNsZWFyOiBib3RoOyI+PGJyID48L2Rpdj5PbiBUdWUsIDE5IEF1ZyAyMDI1IDAzOjIyOjI0IC0w
-NzAwPGJyID5EaW1vbiBaaGFvICZsdDtkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29tJmd0OyB3
-cm90ZTo8YnIgPjxiciA+Jmd0OyArPGJyID4mZ3Q7ICtzdGF0aWMgdWludDMyX3QgbmJsX2NoYW5f
-dGhyZWFkX3BvbGxpbmdfdGFzayh2b2lkICpwYXJhbSk8YnIgPiZndDsgK3s8YnIgPiZndDsgKyBz
-dHJ1Y3QgbmJsX2NoYW5uZWxfbWd0ICpjaGFuX21ndCA9IChzdHJ1Y3QgbmJsX2NoYW5uZWxfbWd0
-ICopcGFyYW07PGJyID4mZ3Q7ICsgdW5pb24gbmJsX2NoYW5faW5mbyAqY2hhbl9pbmZvID0gTkJM
-X0NIQU5fTUdUX1RPX0NIQU5fSU5GTyhjaGFuX21ndCk7PGJyID4mZ3Q7ICsgc3RydWN0IHRpbWVz
-cGVjIHRpbWU7PGJyID4mZ3Q7ICsgY2hhciB1bnVzZWRbMTZdOzxiciA+Jmd0OyArIHNzaXplX3Qg
-bnIgPSAwOzxiciA+Jmd0OyArPGJyID4mZ3Q7ICsgdGltZS50dl9zZWMgPSAwOzxiciA+Jmd0OyAr
-IHRpbWUudHZfbnNlYyA9IDEwMDAwMDs8YnIgPiZndDsgKzxiciA+Jmd0OyArIHdoaWxlICh0cnVl
-KSB7PGJyID4mZ3Q7ICsmbmJzcDsgaWYgKHJ0ZV9iaXRtYXBfZ2V0KGNoYW5faW5mby0mZ3Q7bWFp
-bGJveC5zdGF0ZV9ibXAsIE5CTF9DSEFOX0lOVEVSUlVQVF9SRUFEWSkpIHs8YnIgPiZndDsgKyAm
-bmJzcDsgbnIgPSByZWFkKGNoYW5faW5mby0mZ3Q7bWFpbGJveC5mZFswXSwgJmFtcDt1bnVzZWQs
-IHNpemVvZih1bnVzZWQpKTs8YnIgPiZndDsgKyAmbmJzcDsgaWYgKG5yICZsdDsgMCk8YnIgPiZn
-dDsgKyZuYnNwOyAmbmJzcDsgYnJlYWs7PGJyID4mZ3Q7ICsmbmJzcDsgfTxiciA+Jmd0OyArJm5i
-c3A7IG5ibF9jaGFuX2NsZWFuX3F1ZXVlKGNoYW5fbWd0KTs8YnIgPiZndDsgKyZuYnNwOyBuYW5v
-c2xlZXAoJmFtcDt0aW1lLCAwKTs8YnIgPiZndDsgKyB9PGJyID4mZ3Q7ICs8YnIgPiZndDsgKyBy
-ZXR1cm4gMDs8YnIgPiZndDsgK308YnIgPjxiciA+VGhpcyBpcyBnb2luZyB0byBtYWtlIGVtYmVk
-ZGVkIGFwcGxpY2F0aW9uIGRldmVsb3BlcnMgdXBzZXQgYmVjYXVzZSBpdCB1c2VzPGJyID5hIHNp
-Z25pZmljYW50IHBhcnQgb2YgYSBDUFUgcG9sbGluZy48YnIgPjxiciA+U2luY2UgeW91IGFyZSBy
-ZWFkaW5nIGZyb20gbWFpbGJveCwgd2h5IG5vdCBpbXBsZW1lbnQgc2VsZWN0L3BvbGwvZXBvbGwg
-YW5kPGJyID5oYXZlIHRoZSB0aHJlYWQgYmxvY2sgd2FpdGluZyB0byByZWFkIG1haWxib3ggaW5z
-dGVhZC48L2Rpdj48L2Jsb2NrcXVvdGU+PGRpdiAgc3R5bGU9ImxpbmUtaGVpZ2h0OiAyMHB4OyBj
-bGVhcjogYm90aDsiPjxiciA+PC9kaXY+PC9kaXY+PC9kaXY+DQo8ZGl2IHN0eWxlPSJjbGVhcjog
-Ym90aDsiPjxzcGFuIHN0eWxlPSJmb250LXNpemU6IDEwcHg7IGNvbG9yOiByZ2IoMjE2LCAyMTYs
-IDIxNik7Ij7mnKzpgq7ku7bmiYDlkKvkv6Hmga/lj4rlhbbku7vkvZXpmYTku7bkuLrkv53lr4bk
-v6Hmga/kuJTlj6/og73lsZ7kuo7kuJPmnInkv6Hmga/jgILku7vkvZXpnZ7mjIflrprmjqXmlLbk
-urrlnYfml6DmnYPorr/pl67mnKzpgq7ku7bjgILlpoLmnpzmgqjkuI3mmK/or6Xpgq7ku7bnmoTm
-jIflrprmjqXmlLbkurrvvIzpgqPkuYjku7vkvZXlr7nmnKzpgq7ku7blhoXlrrnov5vooYzmiqvp
-nLLvvIzlpI3liLbmiJbkvb/nlKjnmoTooYzkuLrlnYfmmK/npoHmraLnmoTjgILlpoLmnpzmgqjk
-uI3mmK/or6Xpgq7ku7bnmoTmjIflrprmjqXmlLbkurrvvIzor7fmgqjnq4vljbPpgJrov4fpgq7k
-u7bpgJrnn6UmbmJzcDtjb21wbGlhbmNlQG5lYnVsYS1tYXRyaXguY29t5bm256uL5Y2z5Yig6Zmk
-5oKo6ZSZ6K+v5o6l5Y+X55qE6YKu5Lu244CCPC9zcGFuPjwvZGl2PjxkaXYgc3R5bGU9ImNsZWFy
-OiBib3RoOyI+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTBweDsgY29sb3I6IHJnYigyMTYsIDIx
-NiwgMjE2KTsiPlRoZSZuYnNwO2luZm9ybWF0aW9uJm5ic3A7aW4mbmJzcDt0aGlzJm5ic3A7bWVz
-c2FnZSZuYnNwO2FuZCZuYnNwO2FueSZuYnNwO2F0dGFjaG1lbnRzJm5ic3A7aXMmbmJzcDtjb25m
-aWRlbnRpYWwmbmJzcDthbmQmbmJzcDttYXkmbmJzcDtiZSZuYnNwO3ByaXZpbGVnZWQuJm5ic3A7
-Jm5ic3A7QWNjZXNzJm5ic3A7dG8mbmJzcDt0aGlzJm5ic3A7ZW1haWwmbmJzcDtieSZuYnNwO2Fu
-eW9uZSZuYnNwO290aGVyJm5ic3A7dGhhbiZuYnNwO3RoZSZuYnNwO2ludGVuZGVkJm5ic3A7cmVj
-aXBpZW50Jm5ic3A7aXMmbmJzcDtub3QmbmJzcDthdXRob3JpemVkLiZuYnNwOyZuYnNwO0lmJm5i
-c3A7eW91Jm5ic3A7YXJlJm5ic3A7bm90Jm5ic3A7dGhlJm5ic3A7aW50ZW5kZWQmbmJzcDtyZWNp
-cGllbnQsJm5ic3A7ZGlzY2xvc3VyZSwmbmJzcDtjb3B5aW5nJm5ic3A7b3ImbmJzcDt1c2UmbmJz
-cDtvZiZuYnNwO3RoZSZuYnNwO2NvbnRlbnRzJm5ic3A7b2YmbmJzcDt0aGlzJm5ic3A7ZW1haWwm
-bmJzcDtpcyZuYnNwO3Byb2hpYml0ZWQuJm5ic3A7Jm5ic3A7SWYmbmJzcDt5b3UmbmJzcDthcmUm
-bmJzcDtub3QmbmJzcDt0aGUmbmJzcDtpbnRlbmRlZCZuYnNwO3JlY2lwaWVudCwmbmJzcDtwbGVh
-c2UmbmJzcDtub3RpZnkmbmJzcDsmbmJzcDtjb21wbGlhbmNlQG5lYnVsYS1tYXRyaXguY29tJm5i
-c3A7aW1tZWRpYXRlbHkmbmJzcDtieSZuYnNwO2VtYWlsLCZuYnNwO2FuZCZuYnNwO3BsZWFzZSZu
-YnNwO2Rlc3Ryb3kmbmJzcDt0aGUmbmJzcDtlbWFpbCZuYnNwO3lvdSZuYnNwO3JlY2VpdmVkJm5i
-c3A7aW4mbmJzcDtlcnJvci48L3NwYW4+PC9kaXY+
-------=ALIBOUNDARY_2006_7f80f952b700_68a69036_8c3d6--
+> 
+> +}
+> 
+> +
+> 
+> +static const char *
+> 
+> +get_port_type_name(u32 type)
+> 
+> +{
+> 
+> +	int i;
+> 
+> +	const struct port_type_table port_optical_type_table_s[] = {
+> 
+> +		{LINK_PORT_UNKNOWN, "UNKNOWN"},
+> 
+> +		{LINK_PORT_OPTICAL_MM, "optical_sr"},
+> 
+> +		{LINK_PORT_OPTICAL_SM, "optical_lr"},
+> 
+> +		{LINK_PORT_PAS_COPPER, "copper"},
+> 
+> +		{LINK_PORT_ACC, "ACC"},
+> 
+> +		{LINK_PORT_BASET, "baset"},
+> 
+> +		{LINK_PORT_AOC, "AOC"},
+> 
+> +		{LINK_PORT_ELECTRIC, "electric"},
+> 
+> +		{LINK_PORT_BACKBOARD_INTERFACE, "interface"},
+> 
+> +	};
+> 
+> +
+> 
+> +	for (i = 0; i < ARRAY_LEN(port_optical_type_table_s); i++) {
+> 
+> +		if (type == port_optical_type_table_s[i].port_type)
+> 
+> +			return port_optical_type_table_s[i].port_type_name;
+> 
+> +	}
+> 
+> +	return "UNKNOWN TYPE";
+> 
+> +}
+> 
+> +
+> 
+> +static void
+> 
+> +get_port_type(struct mag_cmd_event_port_info *port_info, const char **port_type)
+> 
+> +{
+> 
+> +	if (port_info->port_type <= LINK_PORT_BACKBOARD_INTERFACE)
+> 
+> +		*port_type = get_port_type_name(port_info->port_type);
+> 
+> +	else
+> 
+> +		PMD_DRV_LOG(INFO, "Unknown port type: %u",
+> 
+> +			    port_info->port_type);
+
+No need to break the lines. suggest cleanup because too much such case.
+And how about set an default return value for port_type
+
+> 
+> +}
+> 
+> +
+> 
+> +static int
+> 
+> +get_port_temperature_power(struct mag_cmd_event_port_info *info, char *str)
+> 
+> +{
+> 
+> +	char arr[CAP_INFO_MAX_LEN];
+> 
+> +
+> 
+> +	snprintf(arr, CAP_INFO_MAX_LEN - 1, "%s, %s, Temperature: %u", str,
+> 
+> +		 info->sfp_type ? "QSFP" : "SFP", info->cable_temp);
+> 
+> +	if (info->sfp_type)
+> 
+> +		snprintf(str, CAP_INFO_MAX_LEN - 1,
+> 
+> +			 "%s, rx power: %uuw %uuW %uuW %uuW", arr,
+> 
+> +			 info->power[0x0], info->power[0x1], info->power[0x2],
+> 
+> +			 info->power[0x3]);
+> 
+> +	else
+> 
+> +		snprintf(str, CAP_INFO_MAX_LEN - 1,
+> 
+> +			 "%s, rx power: %uuW, tx power: %uuW", arr,
+> 
+> +			 info->power[0x0], info->power[0x1]);
+> 
+> +
+> 
+> +	return 0;
+> 
+> +}
+> 
+> +
+> 
+> +static void
+> 
+> +print_cable_info(struct mag_cmd_event_port_info *port_info)
+> 
+> +{
+> 
+> +	char tmp_str[CAP_INFO_MAX_LEN] = {0};
+> 
+> +	char tmp_vendor[VENDOR_MAX_LEN] = {0};
+
+how about just char str[] and vendor[]
+
+> 
+> +	const char *port_type = "Unknown port type";
+> 
+> +	int i;
+> 
+> +	int err = 0;
+> 
+> +	if (port_info->gpio_insert) {
+> 
+> +		PMD_DRV_LOG(INFO, "Cable unpresent");
+> 
+> +		return;
+> 
+> +	}
+> 
+> +
+> 
+> +	get_port_type(port_info, &port_type);
+> 
+> +
+> 
+> +	for (i = (int)sizeof(port_info->vendor_name) - 1; i >= 0; i--) {
+> 
+> +		if (port_info->vendor_name[i] == ' ')
+> 
+> +			port_info->vendor_name[i] = '\0';
+> 
+> +		else
+> 
+> +			break;
+> 
+> +	}
+
+what the above means? how about set the terminal character when setting port_info->vendor_name?
+
+> 
+> +
+> 
+> +	memcpy(tmp_vendor, port_info->vendor_name,
+> 
+> +	       sizeof(port_info->vendor_name));
+> 
+> +	snprintf(tmp_str, CAP_INFO_MAX_LEN - 1,
+> 
+> +		     "Vendor: %s, %s, length: %um, max_speed: %uGbps",
+> 
+> +		     tmp_vendor, port_type, port_info->cable_length,
+> 
+> +		     port_info->max_speed);
+> 
+> +
+> 
+> +	if (port_info->port_type == LINK_PORT_OPTICAL_MM ||
+> 
+> +	    port_info->port_type == LINK_PORT_AOC) {
+> 
+> +		err = get_port_temperature_power(port_info, tmp_str);
+> 
+> +		if (err)
+> 
+> +			return;
+> 
+> +	}
+> 
+> +
+> 
+> +	PMD_DRV_LOG(INFO, "Cable information: %s", tmp_str);
+> 
+> +}
+> 
+> +
+> 
+> +static void
+> 
+> +print_link_info(struct mag_cmd_event_port_info *port_info)
+> 
+> +{
+> 
+> +	const char *fec = "None";
+> 
+> +	const char *speed = "None";
+> 
+> +	const char *an_state = "None";
+> 
+> +
+> 
+> +	if (port_info->fec < HILINK_FEC_MAX_TYPE)
+> 
+> +		fec = g_hw_to_char_fec[port_info->fec];
+> 
+> +	else
+> 
+> +		PMD_DRV_LOG(INFO, "Unknown fec type: %u", port_info->fec);
+> 
+> +
+> 
+> +	if (port_info->an_state > PORT_CFG_AN_OFF) {
+> 
+> +		PMD_DRV_LOG(INFO, "an_state %u is invalid",
+> 
+> +			    port_info->an_state);
+> 
+> +		return;
+> 
+> +	}
+> 
+> +
+> 
+> +	an_state = g_hw_to_an_state_info[port_info->an_state];
+> 
+> +
+> 
+> +	if (port_info->speed >= PORT_SPEED_UNKNOWN) {
+> 
+> +		PMD_DRV_LOG(INFO, "speed %u is invalid", port_info->speed);
+> 
+> +		return;
+> 
+> +	}
+> 
+> +
+> 
+> +	speed = g_hw_to_speed_info[port_info->speed];
+> 
+> +	PMD_DRV_LOG(INFO, "Link information: speed %s, %s, autoneg %s", speed,
+> 
+> +		    fec, an_state);
+
+there is eth_dump callback, maybe it should in dump API.
+
+> 
+> +}
+> 
+> +
+> 
+> +static void
+> 
+> +print_port_info(void *hwdev, struct mag_cmd_event_port_info *port_info, u8 type)
+> 
+> +{
+> 
+> +	print_cable_info(port_info);
+> 
+> +
+> 
+> +	print_link_info(port_info);
+> 
+> +
+> 
+> +	if (type == RTE_ETH_LINK_UP)
+> 
+> +		return;
+> 
+> +
+> 
+> +	PMD_DRV_LOG(INFO, "Function %d link down msg:",
+> 
+> +		    hinic3_global_func_id(hwdev));
+> 
+> +
+> 
+> +	PMD_DRV_LOG(INFO,
+> 
+> +		    "PMA ctrl: %s, tx %s, rx %s, PMA fifo reg: 0x%x, "
+> 
+> +		    "PMA signal ok reg: 0x%x, RF/LF status reg: 0x%x",
+> 
+> +		    port_info->pma_ctrl == 1 ? "off" : "on",
+> 
+> +		    port_info->tx_enable ? "enable" : "disable",
+> 
+> +		    port_info->rx_enable ? "enable" : "disable",
+> 
+> +		    port_info->pma_fifo_reg, port_info->pma_signal_ok_reg,
+> 
+> +		    port_info->rf_lf);
+> 
+> +	PMD_DRV_LOG(INFO,
+> 
+> +		    "alos: %u, rx_los: %u, PCS 64 66b reg: 0x%x, "
+> 
+> +		    "PCS link: 0x%x, MAC link: 0x%x, PCS_err_cnt: 0x%x",
+> 
+> +		    port_info->alos, port_info->rx_los,
+> 
+> +		    port_info->pcs_64_66b_reg, port_info->pcs_link,
+> 
+> +		    port_info->pcs_mac_link, port_info->pcs_err_cnt);
+> 
+> +	PMD_DRV_LOG(INFO,
+> 
+> +		    "his_link_machine_state = 0x%08x, "
+> 
+> +		    "cur_link_machine_state = 0x%08x",
+> 
+> +		    port_info->his_link_machine_state,
+> 
+> +		    port_info->cur_link_machine_state);
+> 
+> +}
+> 
+> +
+> 
+> +static void
+> 
+> +port_info_event_printf(void *hwdev, void *buf_in, __rte_unused u16 in_size,
+> 
+> +		       __rte_unused void *buf_out, __rte_unused u16 *out_size)
+
+buf_out was used, so no need add unused prefix.
+
+> 
+> +{
+> 
+> +	struct mag_cmd_event_port_info *port_info = buf_in;
+> 
+> +	((struct mag_cmd_event_port_info *)buf_out)->head.status = 0;
+> 
+> +	enum hinic3_nic_event_type type = port_info->event_type;
+> 
+> +	if (type < RTE_ETH_LINK_DOWN || type > RTE_ETH_LINK_UP) {
+> 
+> +		PMD_DRV_LOG(ERR, "Invalid hilink info report, type: %d",
+> 
+> +			    type);
+> 
+> +		return;
+> 
+> +	}
+> 
+> +
+> 
+> +	print_port_info(hwdev, port_info, type);
+> 
+> +}
+> 
+> +
+> 
+> +struct nic_event_handler {
+> 
+> +	u16 cmd;
+> 
+> +	void (*handler)(void *hwdev, void *buf_in, u16 in_size, void *buf_out,
+> 
+> +			u16 *out_size);
+> 
+> +};
+> 
+> +
+> 
+> +static const struct nic_event_handler nic_cmd_handler[] = {};
+> 
+> +
+> 
+> +/**
+> 
+> + * Handle NIC event based on the provided command.
+> 
+> + *
+> 
+> + * @param[in] hwdev
+> 
+> + * Pointer to hardware device structure.
+> 
+> + * @param[in] cmd
+> 
+> + * The command associated with the NIC event to be handled.
+> 
+> + * @param[in] buf_in
+> 
+> + * The input buffer containing the event data.
+> 
+> + * @param[in] in_size
+> 
+> + * The size of the input buffer.
+> 
+> + * @param[out] buf_out
+> 
+> + * The output buffer to store the event response.
+> 
+> + * @param[out] out_size
+> 
+> + * The size of the output data stored in the output buffer.
+> 
+> + */
+> 
+> +static void
+> 
+> +nic_event_handler(void *hwdev, u16 cmd, void *buf_in, u16 in_size,
+> 
+> +		  void *buf_out, u16 *out_size)
+> 
+> +{
+> 
+> +	u32 i, size = ARRAY_LEN(nic_cmd_handler);
+> 
+> +
+> 
+> +	if (!hwdev)
+> 
+> +		return;
+> 
+> +
+> 
+> +	*out_size = 0;
+> 
+> +
+> 
+> +	for (i = 0; i < size; i++) {
+> 
+> +		if (cmd == nic_cmd_handler[i].cmd) {
+> 
+> +			nic_cmd_handler[i].handler(hwdev, buf_in, in_size,
+> 
+> +						   buf_out, out_size);
+> 
+> +			break;
+> 
+> +		}
+> 
+> +	}
+> 
+> +
+> 
+> +	if (i == size)
+> 
+> +		PMD_DRV_LOG(WARNING, "Unsupported nic event cmd(%d) to process",
+> 
+> +			    cmd);
+
+why not ERROR?
+
+> 
+> +}
+> 
+> +
+> 
+> +/*
+> 
+> + * VF handler mbox msg from ppf/pf.
+> 
+> + * VF link change event.
+> 
+> + */
+> 
+> +int
+> 
+> +hinic3_vf_event_handler(void *hwdev, __rte_unused void *pri_handle, u16 cmd,
+> 
+> +			void *buf_in, u16 in_size, void *buf_out, u16 *out_size)
+> 
+> +{
+> 
+> +	nic_event_handler(hwdev, cmd, buf_in, in_size, buf_out, out_size);
+> 
+> +	return 0;
+> 
+> +}
+> 
+> +
+> 
+> +/* NIC event of PF/PPF handler reported by mgmt cpu. */
+> 
+> +void
+> 
+> +hinic3_pf_event_handler(void *hwdev, __rte_unused void *pri_handle, u16 cmd,
+> 
+> +			void *buf_in, u16 in_size, void *buf_out, u16 *out_size)
+> 
+> +{
+> 
+> +	nic_event_handler(hwdev, cmd, buf_in, in_size, buf_out, out_size);
+> 
+> +}
+> 
+> +
+> 
+> +static const struct nic_event_handler mag_cmd_handler[] = {
+> 
+> +	{
+> 
+> +		.cmd = MAG_CMD_GET_LINK_STATUS,
+> 
+> +		.handler = link_status_event_handler,
+> 
+> +	},
+> 
+> +	{
+> 
+> +		.cmd = MAG_CMD_EVENT_PORT_INFO,
+> 
+> +		.handler = port_info_event_printf,
+> 
+> +	},
+> 
+> +};
+> 
+> +
+> 
+> +static int
+> 
+> +hinic3_mag_event_handler(void *hwdev, u16 cmd, void *buf_in, u16 in_size,
+> 
+> +			 void *buf_out, u16 *out_size)
+> 
+> +{
+> 
+> +	u32 size = ARRAY_LEN(mag_cmd_handler);
+> 
+> +	u32 i;
+> 
+> +
+> 
+> +	if (!hwdev)
+> 
+> +		return -EINVAL;
+> 
+> +
+> 
+> +	*out_size = 0;
+> 
+> +	for (i = 0; i < size; i++) {
+> 
+> +		if (cmd == mag_cmd_handler[i].cmd) {
+> 
+> +			mag_cmd_handler[i].handler(hwdev, buf_in, in_size,
+> 
+> +						   buf_out, out_size);
+> 
+> +			break;
+> 
+> +		}
+> 
+> +	}
+> 
+> +
+> 
+> +	/* Can't find this event cmd. */
+> 
+> +	if (i == size)
+> 
+> +		PMD_DRV_LOG(ERR, "Unsupported mag event, cmd: %u", cmd);
+> 
+> +
+> 
+> +	return 0;
+> 
+> +}
+> 
+> +
+> 
+> +int
+> 
+> +hinic3_vf_mag_event_handler(void *hwdev, __rte_unused void *pri_handle, u16 cmd,
+> 
+> +			    void *buf_in, u16 in_size, void *buf_out,
+> 
+> +			    u16 *out_size)
+> 
+> +{
+> 
+> +	return hinic3_mag_event_handler(hwdev, cmd, buf_in, in_size, buf_out,
+> 
+> +					out_size);
+> 
+> +}
+> 
+> +
+> 
+> +/* pf/ppf handler mgmt cpu report hilink event. */
+> 
+> +void
+> 
+> +hinic3_pf_mag_event_handler(void *hwdev, __rte_unused void *pri_handle, u16 cmd,
+> 
+> +			    void *buf_in, u16 in_size, void *buf_out,
+> 
+> +			    u16 *out_size)
+> 
+> +{
+> 
+> +	hinic3_mag_event_handler(hwdev, cmd, buf_in, in_size, buf_out,
+> 
+> +				 out_size);
+> 
+> +}
+> 
+> +
+> 
+> +u8
+> 
+> +hinic3_nic_sw_aeqe_handler(__rte_unused void *hwdev, u8 event, u8 *data)
+> 
+> +{
+> 
+> +	PMD_DRV_LOG(ERR,
+> 
+> +		    "Received nic ucode aeq event type: 0x%x, data: %" PRIu64,
+> 
+> +		    event, *((u64 *)data));
+> 
+> +
+> 
+> +	return 0;
+> 
+> +}
+> 
+> diff --git a/drivers/net/hinic3/base/hinic3_nic_event.h b/drivers/net/hinic3/base/hinic3_nic_event.h
+> 
+> new file mode 100644
+> 
+> index 0000000000..6a792e6af5
+> 
+> --- /dev/null
+> 
+> +++ b/drivers/net/hinic3/base/hinic3_nic_event.h
+> 
+> @@ -0,0 +1,39 @@
+> 
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> 
+> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
+> 
+> + */
+> 
+> +
+> 
+> +#ifndef _HINIC3_NIC_EVENT_H_
+> 
+> +#define _HINIC3_NIC_EVENT_H_
+> 
+> +
+> 
+> +/**
+> 
+> + * Get the Ethernet port link information based on the link state.
+> 
+> + *
+> 
+> + * @param[in] hwdev
+> 
+> + * The hardware device context.
+> 
+> + * @param[in] link_state
+> 
+> + * The current link state (0 = down, non-zero = up).
+> 
+> + * @param[out] link
+> 
+> + * Pointer to the `rte_eth_link` structure.
+> 
+> + */
+> 
+> +void get_port_info(struct hinic3_hwdev *hwdev, u8 link_state,
+> 
+> +		   struct rte_eth_link *link);
+> 
+> +
+> 
+> +int hinic3_vf_event_handler(void *hwdev, __rte_unused void *pri_handle, u16 cmd,
+> 
+> +			    void *buf_in, u16 in_size, void *buf_out,
+> 
+> +			    u16 *out_size);
+> 
+> +
+> 
+> +void hinic3_pf_event_handler(void *hwdev, __rte_unused void *pri_handle,
+> 
+> +			     u16 cmd, void *buf_in, u16 in_size, void *buf_out,
+> 
+> +			     u16 *out_size);
+> 
+> +
+> 
+> +int hinic3_vf_mag_event_handler(void *hwdev, void *pri_handle, u16 cmd,
+> 
+> +				void *buf_in, u16 in_size, void *buf_out,
+> 
+> +				u16 *out_size);
+> 
+> +
+> 
+> +void hinic3_pf_mag_event_handler(void *hwdev, void *pri_handle, u16 cmd,
+> 
+> +				 void *buf_in, u16 in_size, void *buf_out,
+> 
+> +				 u16 *out_size);
+> 
+> +
+> 
+> +u8 hinic3_nic_sw_aeqe_handler(__rte_unused void *hwdev, u8 event, u8 *data);
+> 
+> +
+> 
+> +#endif /* _HINIC3_NIC_EVENT_H_ */
+> 
 
