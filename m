@@ -2,21 +2,21 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D55ACA0EE4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 Aug 2025 03:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19763CA0EEB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 Aug 2025 03:11:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7281940292;
-	Thu, 21 Aug 2025 05:06:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C5BA840292;
+	Thu, 21 Aug 2025 05:11:39 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 473074026C
- for <dev@dpdk.org>; Thu, 21 Aug 2025 05:06:55 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CE7A94026C
+ for <dev@dpdk.org>; Thu, 21 Aug 2025 05:11:37 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 249EB46D80; Thu, 21 Aug 2025 05:06:55 +0200 (CEST)
+ id A571646D80; Thu, 21 Aug 2025 05:11:37 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1778] MPRQ buffer reference was not decremented
- upon MLX5_RXQ_CODE_NOMBUF
-Date: Thu, 21 Aug 2025 03:06:55 +0000
+Subject: [DPDK/ethdev Bug 1779] Packet segments do not get freed in
+ mprq_buf_to_pkt() upon encountering MLX5_RXQ_CODE_NOMBUF
+Date: Thu, 21 Aug 2025 03:11:37 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -35,8 +35,8 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1778-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17557456140.c0CD.1830348
+Message-ID: <bug-1779-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17557458970.c3DfF50.1832711
 Content-Transfer-Encoding: 7bit
 X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
@@ -56,8 +56,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
---17557456140.c0CD.1830348
-Date: Thu, 21 Aug 2025 05:06:54 +0200
+--17557458970.c3DfF50.1832711
+Date: Thu, 21 Aug 2025 05:11:37 +0200
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -65,11 +65,11 @@ X-Bugzilla-URL: https://bugs.dpdk.org/
 Auto-Submitted: auto-generated
 X-Auto-Response-Suppress: All
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1778
+https://bugs.dpdk.org/show_bug.cgi?id=3D1779
 
-            Bug ID: 1778
-           Summary: MPRQ buffer reference was not decremented upon
-                    MLX5_RXQ_CODE_NOMBUF
+            Bug ID: 1779
+           Summary: Packet segments do not get freed in mprq_buf_to_pkt()
+                    upon encountering MLX5_RXQ_CODE_NOMBUF
            Product: DPDK
            Version: 22.11
           Hardware: x86
@@ -84,30 +84,49 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1778
 
 drivers/net/mlx5/mlx5_rx.h mprq_buf_to_pkt(...):
 
-In the external buffer attach case where hdrm_overlap > 0, the code did not
-decrement the buffer refcnt if allocation struct rte_mbuf *next =3D
-rte_pktmbuf_alloc(rxq->mp) fails
+There are 2 issues:=20
 
-mprq_buf_to_pkt(...) {
-    ...=20=20=20=20=20=20=20=20
-    if (hdrm_overlap > 0) {
-        __atomic_add_fetch(&buf->refcnt, 1, __ATOMIC_RELAXED);
-        ...
-        MLX5_ASSERT(rxq->strd_scatter_en);
-        struct rte_mbuf *seg =3D rte_pktmbuf_alloc(rxq->mp);
-        if (unlikely(seg =3D=3D NULL))
-            return MLX5_RXQ_CODE_NOMBUF;
-        SET_DATA_OFF(seg, 0);
+- uint32_t seg_len =3D RTE_MIN(len, (uint32_t)(pkt->buf_len -
+RTE_PKTMBUF_HEADROOM)) seems unnecessary as to hit this code, len has to be
+greater than (uint32_t)(pkt->buf_len - RTE_PKTMBUF_HEADROOM) due to the if
+condition
+
+- If the allocation struct rte_mbuf *next =3D rte_pktmbuf_alloc(rxq->mp) fa=
+ils
+and packet has more than 2 segs, the segs that were allocated previously do=
+ not
+get freed=20
+
+    mprq_buf_to_pkt(...) {
+        ...=20=20=20=20=20=20=20=20
+        } else if (rxq->strd_scatter_en) {
+            struct rte_mbuf *prev =3D pkt;
+            uint32_t seg_len =3D RTE_MIN(len, (uint32_t)
+            (pkt->buf_len - RTE_PKTMBUF_HEADROOM));
+            uint32_t rem_len =3D len - seg_len;
+
+            rte_memcpy(rte_pktmbuf_mtod(pkt, void *), addr, seg_len);
+            DATA_LEN(pkt) =3D seg_len;
+            while (rem_len) {
+                struct rte_mbuf *next =3D rte_pktmbuf_alloc(rxq->mp);
+
+                if (unlikely(next =3D=3D NULL))
+                    return MLX5_RXQ_CODE_NOMBUF;
+                ...
+            }
+            ...
+        }
         ...
     }
-}
+
+Should rte_pktmbuf_free() be used instead?
 
 --=20
 You are receiving this mail because:
 You are the assignee for the bug.=
 
---17557456140.c0CD.1830348
-Date: Thu, 21 Aug 2025 05:06:54 +0200
+--17557458970.c3DfF50.1832711
+Date: Thu, 21 Aug 2025 05:11:37 +0200
 MIME-Version: 1.0
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -125,16 +144,16 @@ bz_new_table">
           <th>Bug ID</th>
           <td><a class=3D"bz_bug_link=20
           bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - MPRQ buffer reference was not decremented upon ML=
-X5_RXQ_CODE_NOMBUF"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1778">1778</a>
+   title=3D"UNCONFIRMED - Packet segments do not get freed in mprq_buf_to_p=
+kt() upon encountering MLX5_RXQ_CODE_NOMBUF"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1779">1779</a>
           </td>
         </tr>
 
         <tr>
           <th>Summary</th>
-          <td>MPRQ buffer reference was not decremented upon MLX5_RXQ_CODE_=
-NOMBUF
+          <td>Packet segments do not get freed in mprq_buf_to_pkt() upon en=
+countering MLX5_RXQ_CODE_NOMBUF
           </td>
         </tr>
 
@@ -208,24 +227,43 @@ NOMBUF
           <pre class=3D"bz_comment_text">drivers/net/mlx5/mlx5_rx.h mprq_bu=
 f_to_pkt(...):
 
-In the external buffer attach case where hdrm_overlap &gt; 0, the code did =
-not
-decrement the buffer refcnt if allocation struct rte_mbuf *next =3D
-rte_pktmbuf_alloc(rxq-&gt;mp) fails
+There are 2 issues:=20
 
-mprq_buf_to_pkt(...) {
-    ...=20=20=20=20=20=20=20=20
-    if (hdrm_overlap &gt; 0) {
-        __atomic_add_fetch(&amp;buf-&gt;refcnt, 1, __ATOMIC_RELAXED);
-        ...
-        MLX5_ASSERT(rxq-&gt;strd_scatter_en);
-        struct rte_mbuf *seg =3D rte_pktmbuf_alloc(rxq-&gt;mp);
-        if (unlikely(seg =3D=3D NULL))
-            return MLX5_RXQ_CODE_NOMBUF;
-        SET_DATA_OFF(seg, 0);
+- uint32_t seg_len =3D RTE_MIN(len, (uint32_t)(pkt-&gt;buf_len -
+RTE_PKTMBUF_HEADROOM)) seems unnecessary as to hit this code, len has to be
+greater than (uint32_t)(pkt-&gt;buf_len - RTE_PKTMBUF_HEADROOM) due to the =
+if
+condition
+
+- If the allocation struct rte_mbuf *next =3D rte_pktmbuf_alloc(rxq-&gt;mp)=
+ fails
+and packet has more than 2 segs, the segs that were allocated previously do=
+ not
+get freed=20
+
+    mprq_buf_to_pkt(...) {
+        ...=20=20=20=20=20=20=20=20
+        } else if (rxq-&gt;strd_scatter_en) {
+            struct rte_mbuf *prev =3D pkt;
+            uint32_t seg_len =3D RTE_MIN(len, (uint32_t)
+            (pkt-&gt;buf_len - RTE_PKTMBUF_HEADROOM));
+            uint32_t rem_len =3D len - seg_len;
+
+            rte_memcpy(rte_pktmbuf_mtod(pkt, void *), addr, seg_len);
+            DATA_LEN(pkt) =3D seg_len;
+            while (rem_len) {
+                struct rte_mbuf *next =3D rte_pktmbuf_alloc(rxq-&gt;mp);
+
+                if (unlikely(next =3D=3D NULL))
+                    return MLX5_RXQ_CODE_NOMBUF;
+                ...
+            }
+            ...
+        }
         ...
     }
-}
+
+Should rte_pktmbuf_free() be used instead?
           </pre>
         </div>
       </p>
@@ -242,7 +280,7 @@ mprq_buf_to_pkt(...) {
 ewAction">
 =20=20=20=20=20=20=20=20=20=20
           <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1778">
+?id=3D1779">
           <meta itemprop=3D"name" content=3D"View bug">
         </div>
         <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
@@ -251,4 +289,4 @@ ication">
     </body>
 </html>=
 
---17557456140.c0CD.1830348--
+--17557458970.c3DfF50.1832711--
