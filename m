@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB3EECA0EE6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 Aug 2025 05:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AA0CA0EEB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 Aug 2025 05:24:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A6C1140292;
-	Thu, 21 Aug 2025 07:10:40 +0200 (CEST)
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com
- [209.85.219.48]) by mails.dpdk.org (Postfix) with ESMTP id B64A44026C
- for <dev@dpdk.org>; Thu, 21 Aug 2025 07:10:39 +0200 (CEST)
-Received: by mail-qv1-f48.google.com with SMTP id
- 6a1803df08f44-70a88ddb1a2so6708686d6.0
- for <dev@dpdk.org>; Wed, 20 Aug 2025 22:10:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1755753039;
- x=1756357839; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=kuBSkJ/1iTFmJoViPU1mtO45nmFiB0b4NLqL1+0JCXY=;
- b=Q+zCEEla+yg0L3wyrScgVw2rkoMSecPizJtZikQ1lQMcROOclHWAxiZovbahI9OSVd
- 7Ff5nAO+uwm6tJowfT48bIc7qET8MQf8pjKNaR9tR9uGVawLNkm1Br9im3hwIJ3TjU+b
- fAPYPFiY9zenD0EqmVTgkUJtJ4bn3yYtxAMcQiyQjIbSBjYBsg2jrgFXw2TCnwYRaNAC
- wQMInoFEptNlLJy/ocZMaDd46aSCbVCOKr6WAQxnH8uZ5JqOsG+7BIyFhM1tjrh/RPNE
- T0EfFzLkxNu2/jEYnH5iSwUe2O/UXGCghsQ1ASTfSDvSdKFg9qVUt3egqziPZ9jVHVRw
- n9fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755753039; x=1756357839;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=kuBSkJ/1iTFmJoViPU1mtO45nmFiB0b4NLqL1+0JCXY=;
- b=AyPfL42vo0z980bN5ZWNFY0ESVTt4HxdCXb+SHvgfxTAbBh8ETVWLDdZJ4jBneDPWQ
- glIUFAXBmW6xwt22qsN6dPbPwQhmuW7XFLD3a1jtcMgOPRL1wXU5hRFHJxO8p1biMfNn
- 7jycKgM+DGgTXUT5mDYRnixJCWkmhbbld8FnqPe/z7o4b4kyyENGZZUMqhZLu5kxzhw0
- A9F+YTO1GWc5Gp2JE1UTCTB3CG3HYWZ6xQn6QtGmr/DFn7MyVZn9cP2TnlzzRg6ei+Mv
- dc2IlFmynI3JdM8Y4+2ILGivIa8P3DDkYbsS1Hy0S8O7dWwN2Szj928tfjrlG32Fqtga
- ZA4g==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUpwLWFY7UvqllCFOtvGGZXmAfPZ+rjC1NaGL3A0rG/E1iJB2p2XtU/YXWwfDODwxvXslM=@dpdk.org
-X-Gm-Message-State: AOJu0YxdUAmfW4ZUbvR4GKXiNbGzCRz0c5zdwXFOo2oyn+07WS0W5m/N
- KUPQ5JI6Hg0GU3a5XZglW/oZpzYNsgEbvMmPvpee3nnGIugxuWMxw5G312HEliAJ9l0fsQjaQAX
- ni9U49EOhDCcYSitZ1aibgh9vcZ8xzMAMHp99iNdQnA==
-X-Gm-Gg: ASbGncsc6sXL9MmrepTldJIbW0JiK4GcS9yGMLKf6P0zQLQ7v2B4Myq7r/VPNV8dKbL
- Amu4t2xrA6codXREg3JWm0b8j/fIFgRMxbywmDYqa/Og2I9kXlLIyW26Vb6Cdt+3EMF/lfdofh3
- DnN4LurAuTYsuqiM26nQNG2avIeOymhnhmWyPVrJusvOnzqbIi3/yNWGacTPder2dd9XOgUBurY
- 5fLoDpz
-X-Google-Smtp-Source: AGHT+IF3nID3BGtR4qmWsdo/oRZkdjifw8Mb9LKL/bSM4aWSnIxLEaYGsxy9QjIv+MazcGbFiUxRk9nMOwdpcgpM0X8=
-X-Received: by 2002:a05:6214:250e:b0:70d:89b3:b9a7 with SMTP id
- 6a1803df08f44-70d89b3be3fmr8073986d6.3.1755753039051; Wed, 20 Aug 2025
- 22:10:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 60B5840292;
+	Thu, 21 Aug 2025 07:24:57 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id CAEF84026C
+ for <dev@dpdk.org>; Thu, 21 Aug 2025 07:24:55 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L0oETf028554;
+ Wed, 20 Aug 2025 22:24:55 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=fmF/kj00Gus+AZPpNSMOcjr
+ pUQvvQDMp2YMz00bL42M=; b=AcpfUJ05l7xvXYPo2N7Q8Tmh+jlw/saxlroFadI
+ 7ufn7gg5J7TlyMf/NdjoOVQOuHvnx8twyuRCSFhQN3yd0uqLOQ4FXG4lxqEDWS35
+ r/d8wcVPaAjdbHez2G3Ki/+rDcz4dlvF7iwwjL5dGPTm0UHdwbXjAibWGr8JfFqy
+ eoha8MW/ljdLv/awT4eTxFyFvuISjCfkTUPSuPFZB38YnxaAAMVi+FFjeZBVb0lq
+ y3GATH2VHNiGtC9zRdKAyYXVeQ7e78HEtQwf4j8sK18M00g1J95XKd0edR/PbyGv
+ NCUM9Y1w4/PpbOcDsUgjYAmkISCwd14kZBzbXryagJNksjg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 48nr2m8kjj-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 20 Aug 2025 22:24:54 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 20 Aug 2025 22:24:52 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Wed, 20 Aug 2025 22:24:52 -0700
+Received: from ssarananaga.marvell.com (unknown [10.29.57.26])
+ by maili.marvell.com (Postfix) with ESMTP id 4573B3F70D1;
+ Wed, 20 Aug 2025 22:24:45 -0700 (PDT)
+From: Sucharitha Sarananaga <ssarananaga@marvell.com>
+To: <dev@dpdk.org>
+CC: <anoobj@marvell.com>, <gakhil@marvell.com>, <kai.ji@intel.com>,
+ "Sucharitha Sarananaga" <ssarananaga@marvell.com>
+Subject: [PATCH 0/2] app/test-crypto-perf: RSA modlen validation and asym ops
+ fix
+Date: Thu, 21 Aug 2025 05:24:38 +0000
+Message-ID: <20250821052440.3213146-1-ssarananaga@marvell.com>
+X-Mailer: git-send-email 2.49.0
 MIME-Version: 1.0
-References: <20250814085831.3511020-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250815111514.3866449-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250820114845.5c18bb6b@hermes.local>
-In-Reply-To: <20250820114845.5c18bb6b@hermes.local>
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Date: Thu, 21 Aug 2025 10:10:27 +0500
-X-Gm-Features: Ac12FXxNooOfy0ydLGVXakCE4HEm3fCiGAAtkA8VgKCjjsvQyPqEO9pHf5ZUgjI
-Message-ID: <CA++2-x5HeL41EpVrZ+gBf45xV4ojtqoxPc6_YKhFnir30j3C2g@mail.gmail.com>
-Subject: Re: [PATCH] app/testpmd: add contrack CT state inspect commands
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Aman Singh <aman.deep.singh@intel.com>, Bing Zhao <bingz@nvidia.com>, 
- Ori Kam <orika@nvidia.com>, dev@dpdk.org, stable@dpdk.org
-Content-Type: multipart/alternative; boundary="00000000000034d179063cd91c35"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIxMDA0MCBTYWx0ZWRfXwlyO2r0FPGwD
+ LtD3LH9T0Gxnqf/+4kktlc1haHqAEHmbuUmdzCrikkeoqUFdQXUCVmKI9ybsbG4funJQZkxRi3d
+ L6cuogP0N7ExGm9GWLylLQeLjwyStuyEUfgRzjesSk4SdiGcOG+A2wPdISxLO4691ZkooJearCt
+ XuQ65Nrimc7WEh/YIbExQi5nUaBAv+GgoQS7bS8n70rJ1PNuyFqnybvnPiXB5wRa2Ae1aHVy6q8
+ Poj2SJZO0GHYahWV+ZqJL7bOjEcKYnSRWRiKGvSdpkYjkDvKFW5cCdKebN8Po+KHp2BkreCdh+X
+ oH3OoYNiPH2ilJlYcith06sQL39ozductBvjsXFA6tyeWjpQl78OdtR9tdnoHgDzs6ycGrh/J3p
+ ++RUfZxQRlz1ntJhhxKUawtAu5LCEjuG9SeF5gOajkTrHZIhzwuUBzd36Q+jSpsduRjIagRT
+X-Proofpoint-GUID: lOp8DI2pft-0gGVV7bFO3cVFFeHR196P
+X-Proofpoint-ORIG-GUID: lOp8DI2pft-0gGVV7bFO3cVFFeHR196P
+X-Authority-Analysis: v=2.4 cv=LOc/gJW9 c=1 sm=1 tr=0 ts=68a6ada7 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=2OwXVqhp2XgA:10 a=t5NRGmGhVjxxedjfy1MA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_06,2025-08-20_03,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,42 +77,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000034d179063cd91c35
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This patch series improves the robustness of the RSA performance tests in the crypto-perf application.
 
-Hi Stephen,
-Thanks for the update.
-Should I correct the spelling in the commit message in the next version of
-the patch ?
+Patch 1 introduces validation for RSA modulus length to ensure only supported sizes are used during testing. This helps prevent invalid test cases and improves test reliability.
 
+Patch 2 builds on the validation logic and fixes the execution flow for other asymmetric operations, ensuring they are correctly handled when RSA modlen validation fails.
 
-On Wed, Aug 20, 2025 at 11:48=E2=80=AFPM Stephen Hemminger <
-stephen@networkplumber.org> wrote:
+Note: Patch 1 has been submitted upstream but is not yet merged. It is included here again to provide full context and allow reviewers to test both patches together.
 
->
-> Queued to next-net after fixing spelling in commit message.
->
+Please review and provide feedback.
 
+Thanks,  
+Sucharitha Sarananaga
 
-Best Regards,
-Khadem
+-- 
+2.49.0
 
---00000000000034d179063cd91c35
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><div><div><div><div>Hi Stephen,=C2=A0<br>=
-</div>Thanks for the update.=C2=A0<br></div>Should I correct the spelling i=
-n the commit message=C2=A0in the next version of the patch ?<br>=C2=A0</div=
-></div></div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=
-=3D"ltr" class=3D"gmail_attr">On Wed, Aug 20, 2025 at 11:48=E2=80=AFPM Step=
-hen Hemminger &lt;<a href=3D"mailto:stephen@networkplumber.org">stephen@net=
-workplumber.org</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" s=
-tyle=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);pad=
-ding-left:1ex"><br>
-Queued to next-net after fixing spelling in commit message.<br>
-</blockquote></div><div><br clear=3D"all"></div><br><div>Best Regards,=C2=
-=A0<br></div>Khadem</div>
-
---00000000000034d179063cd91c35--
