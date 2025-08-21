@@ -2,43 +2,179 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F33CA0EE6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 21 Aug 2025 04:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C86CA0EE6
+	for <dpdk-dev@archiver.kernel.org>; Thu, 21 Aug 2025 04:51:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 030A240292;
-	Thu, 21 Aug 2025 06:06:58 +0200 (CEST)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
- by mails.dpdk.org (Postfix) with ESMTP id BB9C44026C
- for <dev@dpdk.org>; Thu, 21 Aug 2025 06:06:55 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.17])
- by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c6qSf6RJpz2TTHq;
- Thu, 21 Aug 2025 12:04:02 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id EE5F91A0190;
- Thu, 21 Aug 2025 12:06:52 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 21 Aug 2025 12:06:52 +0800
-Message-ID: <04942a6d-b8a0-4e63-b615-b92608ad6753@huawei.com>
-Date: Thu, 21 Aug 2025 12:06:52 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [V5 06/18] net/hinic3: add eq mechanism function code
-To: Feifei Wang <wff_light@vip.163.com>, <dev@dpdk.org>
-CC: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
- Feifei Wang <wangfeifei40@huawei.com>
-References: <20250418090621.9638-1-wff_light@vip.163.com>
- <20250702020953.599-1-wff_light@vip.163.com>
- <20250702020953.599-7-wff_light@vip.163.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 21E6740292;
+	Thu, 21 Aug 2025 06:51:53 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 8C1704026C
+ for <dev@dpdk.org>; Thu, 21 Aug 2025 06:51:51 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57L4d9CQ007874;
+ Wed, 20 Aug 2025 21:51:50 -0700
+Received: from nam10-mw2-obe.outbound.protection.outlook.com
+ (mail-mw2nam10on2106.outbound.protection.outlook.com [40.107.94.106])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48nvm5r0kk-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 20 Aug 2025 21:51:50 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SoMWiEnjtvrSknV3LWRAucSnQeCPm1Eeregi2zqg/XuzJNyLazjOJSVF8TEJ2CAYMFr2bXONDpFDoW4/Z2Fy2dh69ZNeqC+Ibt8K10GU379FYfx4oPiN80Xcf2jGKtH7eG3I7NRASUaer/sedG6p4w6hVFuLsxEy7TbECtt7/3bW/GdeV4WShSZGvuRE1hNA+G807aW18YgPhGB4BduA5PV048yUY+8A8cokDtjipXbjyUmM+x27v3KlUn87OEfgt3xJfpj85xVmaa8VnouAM2NaOzr8DdRMi1i1K6IO7NlvHI96Rq7b6Jef3WnBF+5t7E1A1MiaHNCfAp5SfdhQqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xVeOOX1ujCOFfAWWYN3tjAVkbEmSECzIAFWUVhadsLM=;
+ b=jDKrR+RioRhjk2+oigXKgaSpi13tDhixNjtaNj63hrkz+o/kS4jIKULOflFJ1JqyYxcnX6JtAxWvPGRRxqrrtznOP6epqxPEM78fJ03Mf5l9AHK/XVMW15b4S/xX8WNgYcFtYT5xFmGO/2SJ48jz1juusvnem5e/79zqSBAO8eLYP8H7C19Dso4i2jFmNzvtQNuUlE3WbZog7qCtwaCreQ8ym2+R75AMil6Lyb5FNE4D+xgriDADdyYCyPbSgCyqaUM9X/ywu1d9Xn1D2sA3ncKS2kLSRMTDCtImQqOfegW7rPHu27eLdASpefzwcPorN1l8levC/DQS9Fg0owqzZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xVeOOX1ujCOFfAWWYN3tjAVkbEmSECzIAFWUVhadsLM=;
+ b=ovQ3VwW3nj0wbroxJY5AM9ot4RJput1XiDCJr4EI+3Y4Lzzd87tjEevJoLScXEq+04w0VemTMFiTkZ4mhH9H/8eF5ioBMNTlghtxeKwpnYOIM/cYH24XHCwpzaTN+4KeZYtEYTS9LolxtxnNmf+HoGWrvep5AI/1VFlCrSBlNNc=
+Received: from SN7PR18MB3869.namprd18.prod.outlook.com (2603:10b6:806:101::9)
+ by DM6PR18MB3602.namprd18.prod.outlook.com (2603:10b6:5:2a4::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.14; Thu, 21 Aug
+ 2025 04:51:48 +0000
+Received: from SN7PR18MB3869.namprd18.prod.outlook.com
+ ([fe80::d55a:768f:3d17:7cfa]) by SN7PR18MB3869.namprd18.prod.outlook.com
+ ([fe80::d55a:768f:3d17:7cfa%7]) with mapi id 15.20.9052.013; Thu, 21 Aug 2025
+ 04:51:47 +0000
+From: Sunil Kumar Kori <skori@marvell.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>, "dev@dpdk.org" <dev@dpdk.org>,
+ Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>
+Subject: RE: [EXTERNAL] Re: [PATCH v7 1/1] ethdev: add support to provide link
+ type
+Thread-Topic: [EXTERNAL] Re: [PATCH v7 1/1] ethdev: add support to provide
+ link type
+Thread-Index: AQHcEftTdTR+/QHyaEK5+gbvzWTV97Rr5NEAgAClI8A=
+Date: Thu, 21 Aug 2025 04:51:47 +0000
+Message-ID: <SN7PR18MB386917862951DD1A6ABE715FB432A@SN7PR18MB3869.namprd18.prod.outlook.com>
+References: <20250820111350.2992591-1-skori@marvell.com>
+ <20250820175317.3063659-1-skori@marvell.com>
+ <20250820115818.0a3628ee@hermes.local>
+In-Reply-To: <20250820115818.0a3628ee@hermes.local>
+Accept-Language: en-US
 Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20250702020953.599-7-wff_light@vip.163.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN7PR18MB3869:EE_|DM6PR18MB3602:EE_
+x-ms-office365-filtering-correlation-id: e996e617-2600-4967-dfe9-08dde06e6f88
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?RHJVdXhZbVVvYWRtSVM3MmpRYnJaV2xyOUpPdlVIekRIVEsyQlR4R0d0MG1R?=
+ =?utf-8?B?S3ViRzdvSm0wdjJVUzQ4bkJlMlVhbGlSS1A2VEtPVDFybWhOdWlWb0ZXeFFK?=
+ =?utf-8?B?TXljL0N6SXVkZGxaSU5QbEhPdzlWVTY4TTFZOUJ4Rzl5cEZQOWpVdXFzZFJh?=
+ =?utf-8?B?SnNENjh5ZnJldCtBZW5DVEVYWW5meEc0b0I3OGNJeXlDYmJ0ZHZRazZ3cEsz?=
+ =?utf-8?B?dldyb21mbnplMThoTUx4cjZiS2E2TzB2RWVENmVPekEwQzA5WW8zN0NsN0Vu?=
+ =?utf-8?B?M2tyRnJUaTdmYUoyU3BOdmQzejcrVWJ5b1Y5bVZ2WFQwS3NGZVlhcG0vVENu?=
+ =?utf-8?B?OGpnaVNGUDlLYmtNVEN0OXF5Wm9Ia1d5K0RvSGhiczBxNDhhNUxJSkhNdEFO?=
+ =?utf-8?B?U1VWdjhyR0tMWUhSNHBkRk9XYlB1M2E4Y0E2ZFVBNWNXajBIRDlmNnhYRmdJ?=
+ =?utf-8?B?RkVPb0xrWGxCR2w5ekFVSDBxY2VmbkVCQWxOOFRZKzNjUG4xU1ZOTEQ3RjdT?=
+ =?utf-8?B?Mm10VWNxL0lNMWdGcno5TGJCTE1kWDVBTTJqUldUbFVqOEJvbmlHN0FkTU02?=
+ =?utf-8?B?cVdhS3Y4cHpsT3RCUWRwdjF0QzNOaVJTNWJDY01PNmtNTXloQmI1TG9uMW5Q?=
+ =?utf-8?B?MTB3OEpRcnhtbW9hTnJKeEsvaTQrb0NIQ0FiU01nMUNVQzFodTZCYnFKM3JL?=
+ =?utf-8?B?TXAyQ1E2ci8wNEdMdjBMWndkdFZtVnBlS0FjRjZnaW96cDdxVGxrOFBwT1M5?=
+ =?utf-8?B?UC9FRWliTTNyWDh5NGQ1MGhyVkUwT0F0VWRlU0VoZ21GL1FOOUMwbFZHbUIw?=
+ =?utf-8?B?bHdNSnN5dGVoQnFPN0R2cXRabm82ejZiV1dzSDYyTzlHcEJrV3NTdHZ6VUxY?=
+ =?utf-8?B?TzQ0cDFCUGhPUnR6UTdTeDl5MkgyZWIvQXdvbU5iQjgyc1RnN1JJVXRsZ0Na?=
+ =?utf-8?B?dDBISEpUa1JjaWI0ZW5vemhDUVdvbkJ2RG1iTjBxV2NXSDFzZWxsc1JLOTFX?=
+ =?utf-8?B?OHB4UzMwRkR3TG1ad0RMQUxZWmlDRzBCWVlESElDWWthUXBickEycWpXeHp5?=
+ =?utf-8?B?SWZQdWFvRUhoQkd1cUVwQklpNGpxb0RsQkRqUkxrT3lxQTBTWXNUQ0MvanRu?=
+ =?utf-8?B?SkN0ekg2TmdoNE9zV2pYMDVzMjRnTEZOcDF2dzI5NXhSdTAxZER1dVIyd2VU?=
+ =?utf-8?B?NUtvVnF4TWpTbWZtYU1yOTg3SUsvQ2R4Sm82eVZjNUtVTzNqc0R5cjlEa3cw?=
+ =?utf-8?B?aHFFZEFpYmhvU2hsVGx0NW9HWjRLUzN3L0R0QmZmMXR2Y0FCVGxaRDNiVDFL?=
+ =?utf-8?B?L0VGeTZaZzQ3d00vMkFVTlZ4emxjdmM5OE9BZitBNHNLRCtncG9PelZEWk51?=
+ =?utf-8?B?MkVyd0JNbVVDSjBGcXVKWkc5T29WUnNONi9pRVVBcFVyaXhBQkM0STI4MVgr?=
+ =?utf-8?B?WEdYa0VrZjltSFk1T3UySmVab3I1Ui9iMG52K1dKbEhMVEw3NzJxa0FQcXRQ?=
+ =?utf-8?B?SThrbnBZOUJLNThyTE81cm1nOXNJbTlYaTYySUZOZzVNOGVuSzdSWlhNOXRQ?=
+ =?utf-8?B?bE81eXRzRTVxeFFsTTFXSkdITzBhaDhkRm9WQVhNZUdhcDZNa3FtN2NJZ2Qr?=
+ =?utf-8?B?bHJucWlzcUJxTlBBSzJIanU4UVF0eFMrZTc5NEtOalh0amcyVjgrK0ZBemtm?=
+ =?utf-8?B?YXRMb2NZRWZyUGdlRlBrbWhSclRJTkhjeXVJUUI3NUxQN2VySTVqcnhHT2dQ?=
+ =?utf-8?B?eWgySkoyV1JBaTRoMi9nN2pMMHVRUG5FM2ZNWjVXcTRMemp5WjUzUVc2MXhF?=
+ =?utf-8?B?TUIvT3lEM0hPODVMV1prdGFMZFI5VzRKbHZPcVJ4MlpNUVJldmRoL09maW1B?=
+ =?utf-8?B?U3hNdVVlSjdDZXEvbG5TZ0hxUXR5VDBIcmFOWDVwSGp6WWo5NzNaVmlEbEtl?=
+ =?utf-8?B?akdsWTRBYkttdUg1T3FmVTJGd1NjRCtWOFhzbmtlRURHVUVFem44Nm8zK1k0?=
+ =?utf-8?Q?/YgAXZesavzKzDOAMzVclMc/TwXGvo=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR18MB3869.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(38070700018); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WDRxamZ5TzZrTTdTeEpXMWxBQko2TmY3aUR2cDg2NGt2T0sxZGJwTmptMTVC?=
+ =?utf-8?B?ZFR5cDZKSllWK3ZWRUIyUE1UNTFER3VxZTJUdWZEazllQThYUHF5bmg2Q3R5?=
+ =?utf-8?B?UWo2QmFrRGVQU3BKQVdidEV2LzNVdFI1L2JYSDZpa2UvMDdiT0dLZE53T1l5?=
+ =?utf-8?B?Y2tXYTdMbHB4SWc5Y1RCRmdtcDBodXh0d1BEQWRoendpaWJEOXZ3WjhYdC84?=
+ =?utf-8?B?WktUbzZhaE4vMzNsWWcvMXRoa2tzYzF1ZjBEL3ZEZlM4UGpOcDF4TUtGd0l1?=
+ =?utf-8?B?VE1iVlZhbnJXOEY4UVM3VFRQd0ZPYmk4MDVRd3UvMGlab3dCU3JaVllRRE1S?=
+ =?utf-8?B?M3d1b2xLeUNhZnhFQ3gvb3VmSHRCaXVrMDI3SjJwQTBkVFJCeWNXN1FvQzFx?=
+ =?utf-8?B?OEZ5UFFITDBLNkxkQi9OZ01XbEZ4bWx5Z3Q5cXNjUExERUtwRjlLUFFhc0px?=
+ =?utf-8?B?d2tRS0MvcEppSG4vNzVIZDNQZngyK3FRb1hvYjNha3dqOElQMnJzYjVudm9y?=
+ =?utf-8?B?MXJqa05pRENzTzB2S3loeGZmbFNpNXpZK1NmbDZWRWZCVXZIZ0V1aFdHVUs3?=
+ =?utf-8?B?WVFqdHd1NDZTaWM0MlorN1daSHRNVExIeDRuTmtMZFpsZm1XbXYrUnBMWFBW?=
+ =?utf-8?B?Rk9iZDRjMkZsYnAxOXd3R1JlRjkwT0l6eUYzUmU1ZXFjNGFVYkc1bXdiSDNX?=
+ =?utf-8?B?S1JtbzdIY1RBQjRxdHV5TEErUzNHSlQvNy8rVWpiM1FBZjlETyswL2ROK01q?=
+ =?utf-8?B?TjZBa2Q5VkptVzNiRlFsVEhwVkZiU0VyS3BQNzhmQUdldXgwNzFsRG5QdjJ3?=
+ =?utf-8?B?aVA4dVBLVkVPSWMzb0ZTZ05rMEZPbmVjOVBqSEFLOHd6U0VWdnBvL05RZXg5?=
+ =?utf-8?B?RmZJUkg5Qmk4Vy9PdWZCZnQzR25mV1FKbXNKTDJydzdlakwvdWNVWVNwYzFC?=
+ =?utf-8?B?Sktjd0YwSUdreFVCUGk5aG50aU9iWEFIcGtwU1JvM09lK01wVFBrSnlBWTc1?=
+ =?utf-8?B?Y2dNZ21SRDloMzA5aWZESitacFQ2ejJkdXBZbnlmeUh3Mlo1MFE2Ly9ZdVZX?=
+ =?utf-8?B?SFpxUmlzV0IrcVpLSG5PV0R1VXJSUzJ3WVlmTk5yeXR2SXhIOXFlTEJTbDlB?=
+ =?utf-8?B?MjY2eGtuRWxBYTFacmxrb2JVU2JMSnpibnVCNWkyaXFiVEpvMTRsUXRiUUxJ?=
+ =?utf-8?B?TThiaUVKV1ZhbXFYcVJlNHlsTEx6U0tQRjN4bW56TGVCbzVQUEh0ZUR3TFlp?=
+ =?utf-8?B?VVVpUElUTWVwVkhLNTE2OEpuUW9sVmxIMk5uTWRhS09LczhHRHA5c1E4aGNM?=
+ =?utf-8?B?OHZod0tEdXp6ZEVZSWhaTGxBcEcvY3BxNkR2QlBZcUZyS0M3Y2NPSkhkbDA3?=
+ =?utf-8?B?b3N4SEVXampDeEhiZG5zUFllSlpsMXRabjVFWmlNRVQvb0NFaE1XWVlvQjlv?=
+ =?utf-8?B?dUxWQWIzdUl2VW1Pa0F0aHZ2Zk1SZmMwTnJVUHpJb2szYVIvZ0YwV2VzZkhx?=
+ =?utf-8?B?UWxWY2ZjL0x4MnNTQkF1eTMyZERseVA5K1JXNTdPOEdld3lTOHFjdkpOdk5V?=
+ =?utf-8?B?YlpMaEE5VEJlNktQeEpBSmlxZ05Zcm9CQnh4a1pKVDVLdVRhTVNFWkFJQjJo?=
+ =?utf-8?B?aHN1Ym1Ec0V3aGFGRXZFcFlVOTM2cmY0TnBtRHQ3NWVZY3Vic1o4cUUybS92?=
+ =?utf-8?B?RERZcW1DNUNSMW01WkNaRjlEdHNwbllQQ29jYUxJOUV3NVM1eFJPbmZWU1JZ?=
+ =?utf-8?B?dVJ4WkFETEd0aXZEZkhEdk9KYWFadlRldTg1UVhjSytUKzJNeWwzZE16MkpK?=
+ =?utf-8?B?b2wrWmswUldOcUtISGo4alA2RlMrUXl2QU5KOVRYQU9GSCtpYUlIenl4Mnk4?=
+ =?utf-8?B?cm0wQkFGSXZNL0J2cm84WnhpOG1wK2xnd3Zrb0wyTTdSUlZYL3p0TlpnaERI?=
+ =?utf-8?B?VEoySE5yQkw2bVRuYUE0TUxrcm9scHJSZWpVL0hndkVyb3RFUmQ1RzZSWlIv?=
+ =?utf-8?B?bFFVTi9qd1dzTmtkc1lNbXIvNGNUU3dqOVgveFZoTktkaWlHUkNwYzBoU3pW?=
+ =?utf-8?B?NDRMZjR5TjZRS1h0bnl6QjdlWnpmVzE5MmZTK1d3UTJ0VnMxZmhaS0RzVHNs?=
+ =?utf-8?Q?cerA=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR18MB3869.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e996e617-2600-4967-dfe9-08dde06e6f88
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2025 04:51:47.8275 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GRy10nGxYLfw92FetiKD6fbJE0T+71qt+JX28QwuBdklSLUGVr4+CndThT2aBaQEVQeZdWCMvS+CmeItyYv0ww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR18MB3602
+X-Proofpoint-ORIG-GUID: a7z2ix_RyeKgc04c4utnmLs8ZixsSYkE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODIxMDAzNiBTYWx0ZWRfX+oBwbLOZEKqT
+ 6JirWhED2MIyInkA9SPmglCfpzz6oei+DJ1q3u4frDSzAYvyr+zPxHRyD98yZ5Qgq5Cze5D7eDA
+ O6wiHlPSjf/o0ujD8GGMxmoEfXzhtVmkxfOFmECrMHGYRR3zl5H3YV+nQtP7+d9LAHCyB/A9Mw0
+ uF25Q8lODlEnc07eLbNN83DL25enzHKPvH5tYmCK4dZDFvGSclKw/9v2eJFm9v7dm6N5I2NH/7/
+ je8xuhVNqTixcElPFtaLdlgcm93x1wjmPgt0rPO3ha7T3bB3g8yfKkS3wQVRpq4qbolM2HA3HI3
+ 1mqIi4cA1ItvlYpDfLU71LEvDgXKKyeH7xUqk20G8uo711I4reH0yIqSjZeVqwxKTXQKXZmwge8
+ RuSGZqZ+TV0E/jljX7JoX6Xt0KFExHIchgw+Z9mRwiYXAOT1tStsHPGMeFYrY+twomta0WSV
+X-Authority-Analysis: v=2.4 cv=UMCE3Cfy c=1 sm=1 tr=0 ts=68a6a5e6 cx=c_pps
+ a=GgypNCAcwMqkIBBZWUxeDg==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=-AAbraWEqlQA:10
+ a=M5GUcnROAAAA:8 a=vbm1h1_45zV7ii8As3UA:9 a=QEXdDO2ut3YA:10
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: a7z2ix_RyeKgc04c4utnmLs8ZixsSYkE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-20_06,2025-08-20_03,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,1714 +188,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 7/2/2025 10:09 AM, Feifei Wang wrote:
-> From: Yi Chen <chenyi221@huawei.com>
-> 
-
-the commit header should simply and don't include meaningless descriptor
-suggest: net/hinic3: add eq mechanism
-
-> 
-> Eqs include aeq and ceq. Aeq is a kind of queue for mgmt
-> 
-> asynchronous message and mgmt command response message.
-> 
-> This patch introduces data structures, initialization,
-> 
-> and related interfaces about aeq.
-> 
-> 
-> 
-> Signed-off-by: Yi Chen <chenyi221@huawei.com>
-> 
-> Reviewed-by: Xin Wang <wangxin679@h-partners.com>
-> 
-> Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
-> 
-> ---
-> 
->  drivers/net/hinic3/base/hinic3_eqs.c | 721 +++++++++++++++++++++++++++
-> 
->  drivers/net/hinic3/base/hinic3_eqs.h |  98 ++++
-> 
->  2 files changed, 819 insertions(+)
-> 
->  create mode 100644 drivers/net/hinic3/base/hinic3_eqs.c
-> 
->  create mode 100644 drivers/net/hinic3/base/hinic3_eqs.h
-> 
-> 
-> 
-> diff --git a/drivers/net/hinic3/base/hinic3_eqs.c b/drivers/net/hinic3/base/hinic3_eqs.c
-> 
-> new file mode 100644
-> 
-> index 0000000000..745b1fbad5
-> 
-> --- /dev/null
-> 
-> +++ b/drivers/net/hinic3/base/hinic3_eqs.c
-> 
-> @@ -0,0 +1,721 @@
-> 
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> 
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> 
-> + */
-> 
-> +
-> 
-> +#include <rte_atomic.h>
-> 
-> +#include <rte_memory.h>
-> 
-> +#include <rte_memzone.h>
-> 
-> +#include "hinic3_compat.h"
-> 
-> +#include "hinic3_csr.h"
-> 
-> +#include "hinic3_eqs.h"
-> 
-> +#include "hinic3_hwdev.h"
-> 
-> +#include "hinic3_hwif.h"
-> 
-> +#include "hinic3_mbox.h"
-> 
-> +#include "hinic3_mgmt.h"
-> 
-> +#include "hinic3_nic_event.h"
-> 
-> +
-> 
-> +/* Indicate AEQ_CTRL_0 shift. */
-> 
-> +#define AEQ_CTRL_0_INTR_IDX_SHIFT     0
-> 
-> +#define AEQ_CTRL_0_DMA_ATTR_SHIFT     12
-> 
-> +#define AEQ_CTRL_0_PCI_INTF_IDX_SHIFT 20
-> 
-> +#define AEQ_CTRL_0_INTR_MODE_SHIFT    31
-> 
-> +
-> 
-> +/* Indicate AEQ_CTRL_0 mask. */
-> 
-> +#define AEQ_CTRL_0_INTR_IDX_MASK     0x3FFU
-> 
-> +#define AEQ_CTRL_0_DMA_ATTR_MASK     0x3FU
-> 
-> +#define AEQ_CTRL_0_PCI_INTF_IDX_MASK 0x7U
-> 
-> +#define AEQ_CTRL_0_INTR_MODE_MASK    0x1U
-> 
-> +
-> 
-> +/* Set and clear the AEQ_CTRL_0 bit fields. */
-> 
-> +#define AEQ_CTRL_0_SET(val, member) \
-> 
-> +	(((val) & AEQ_CTRL_0_##member##_MASK) << AEQ_CTRL_0_##member##_SHIFT)
-> 
-> +#define AEQ_CTRL_0_CLEAR(val, member) \
-> 
-> +	((val) & (~(AEQ_CTRL_0_##member##_MASK << AEQ_CTRL_0_##member##_SHIFT)))
-> 
-> +
-> 
-> +/* Indicate AEQ_CTRL_1 shift. */
-> 
-> +#define AEQ_CTRL_1_LEN_SHIFT	   0
-> 
-> +#define AEQ_CTRL_1_ELEM_SIZE_SHIFT 24
-> 
-> +#define AEQ_CTRL_1_PAGE_SIZE_SHIFT 28
-> 
-> +
-> 
-> +/* Indicate AEQ_CTRL_1 mask. */
-> 
-> +#define AEQ_CTRL_1_LEN_MASK	  0x1FFFFFU
-> 
-> +#define AEQ_CTRL_1_ELEM_SIZE_MASK 0x3U
-> 
-> +#define AEQ_CTRL_1_PAGE_SIZE_MASK 0xFU
-> 
-> +
-> 
-> +/* Set and clear the AEQ_CTRL_1 bit fields. */
-> 
-> +#define AEQ_CTRL_1_SET(val, member) \
-> 
-> +	(((val) & AEQ_CTRL_1_##member##_MASK) << AEQ_CTRL_1_##member##_SHIFT)
-> 
-> +#define AEQ_CTRL_1_CLEAR(val, member) \
-> 
-> +	((val) & (~(AEQ_CTRL_1_##member##_MASK << AEQ_CTRL_1_##member##_SHIFT)))
-> 
-> +
-> 
-> +#define HINIC3_EQ_PROD_IDX_MASK	      0xFFFFF
-> 
-> +#define HINIC3_TASK_PROCESS_EQE_LIMIT 1024
-> 
-> +#define HINIC3_EQ_UPDATE_CI_STEP      64
-> 
-> +
-> 
-> +/* Indicate EQ_ELEM_DESC shift. */
-> 
-> +#define EQ_ELEM_DESC_TYPE_SHIFT	   0
-> 
-> +#define EQ_ELEM_DESC_SRC_SHIFT	   7
-> 
-> +#define EQ_ELEM_DESC_SIZE_SHIFT	   8
-> 
-> +#define EQ_ELEM_DESC_WRAPPED_SHIFT 31
-> 
-> +
-> 
-> +/* Indicate EQ_ELEM_DESC mask. */
-> 
-> +#define EQ_ELEM_DESC_TYPE_MASK	  0x7FU
-> 
-> +#define EQ_ELEM_DESC_SRC_MASK	  0x1U
-> 
-> +#define EQ_ELEM_DESC_SIZE_MASK	  0xFFU
-> 
-> +#define EQ_ELEM_DESC_WRAPPED_MASK 0x1U
-> 
-> +
-> 
-> +/* Get the AEQ_CTRL_1 bit fields. */
-> 
-> +#define EQ_ELEM_DESC_GET(val, member)               \
-> 
-> +	(((val) >> EQ_ELEM_DESC_##member##_SHIFT) & \
-> 
-> +	 EQ_ELEM_DESC_##member##_MASK)
-> 
-> +
-> 
-> +/* Indicate EQ_CI_SIMPLE_INDIR shift. */
-> 
-> +#define EQ_CI_SIMPLE_INDIR_CI_SHIFT	 0
-> 
-> +#define EQ_CI_SIMPLE_INDIR_ARMED_SHIFT	 21
-> 
-> +#define EQ_CI_SIMPLE_INDIR_AEQ_IDX_SHIFT 30
-> 
-> +
-> 
-> +/* Indicate EQ_CI_SIMPLE_INDIR mask. */
-> 
-> +#define EQ_CI_SIMPLE_INDIR_CI_MASK	0x1FFFFFU
-> 
-> +#define EQ_CI_SIMPLE_INDIR_ARMED_MASK	0x1U
-> 
-> +#define EQ_CI_SIMPLE_INDIR_AEQ_IDX_MASK 0x3U
-> 
-> +
-> 
-> +/* Set and clear the EQ_CI_SIMPLE_INDIR bit fields. */
-> 
-> +#define EQ_CI_SIMPLE_INDIR_SET(val, member)           \
-> 
-> +	(((val) & EQ_CI_SIMPLE_INDIR_##member##_MASK) \
-> 
-> +	 << EQ_CI_SIMPLE_INDIR_##member##_SHIFT)
-> 
-> +#define EQ_CI_SIMPLE_INDIR_CLEAR(val, member)          \
-> 
-> +	((val) & (~(EQ_CI_SIMPLE_INDIR_##member##_MASK \
-> 
-> +		    << EQ_CI_SIMPLE_INDIR_##member##_SHIFT)))
-> 
-> +
-> 
-> +#define EQ_WRAPPED(eq) ((u32)(eq)->wrapped << EQ_VALID_SHIFT)
-> 
-> +
-> 
-> +#define EQ_CONS_IDX(eq)                                                    \
-> 
-> +	({                                                                 \
-> 
-> +		typeof(eq) __eq = (eq);                                    \
-> 
-> +		__eq->cons_idx | ((u32)__eq->wrapped << EQ_WRAPPED_SHIFT); \
-> 
-> +	})
-> 
-> +#define GET_EQ_NUM_PAGES(eq, size)                                     \
-> 
-> +	({                                                             \
-> 
-> +		typeof(eq) __eq = (eq);                                \
-> 
-> +		typeof(size) __size = (size);                          \
-> 
-> +		(u16)(RTE_ALIGN((u32)(__eq->eq_len * __eq->elem_size), \
-> 
-> +				__size) /                              \
-> 
-> +		      __size);                                         \
-> 
-> +	})
-> 
-> +
-> 
-> +#define GET_EQ_NUM_ELEMS(eq, pg_size) ((pg_size) / (u32)(eq)->elem_size)
-> 
-> +
-> 
-> +#define GET_EQ_ELEMENT(eq, idx)                                         \
-> 
-> +	({                                                              \
-> 
-> +		typeof(eq) __eq = (eq);                                 \
-> 
-> +		typeof(idx) __idx = (idx);                              \
-> 
-> +		((u8 *)__eq->virt_addr[__idx / __eq->num_elem_in_pg]) + \
-> 
-> +			(u32)((__idx & (__eq->num_elem_in_pg - 1)) *    \
-> 
-> +			      __eq->elem_size);                         \
-> 
-> +	})
-> 
-> +
-> 
-> +#define GET_AEQ_ELEM(eq, idx) \
-> 
-> +	((struct hinic3_aeq_elem *)GET_EQ_ELEMENT((eq), (idx)))
-> 
-> +
-> 
-> +#define PAGE_IN_4K(page_size)	    ((page_size) >> 12)
-> 
-> +#define EQ_SET_HW_PAGE_SIZE_VAL(eq) ((u32)ilog2(PAGE_IN_4K((eq)->page_size)))
-> 
-> +
-> 
-> +#define ELEMENT_SIZE_IN_32B(eq)	    (((eq)->elem_size) >> 5)
-> 
-> +#define EQ_SET_HW_ELEM_SIZE_VAL(eq) ((u32)ilog2(ELEMENT_SIZE_IN_32B(eq)))
-> 
-> +
-> 
-> +#define AEQ_DMA_ATTR_DEFAULT 0
-> 
-> +
-> 
-> +#define EQ_WRAPPED_SHIFT 20
-> 
-> +
-> 
-> +#define EQ_VALID_SHIFT 31
-> 
-> +
-> 
-> +#define aeq_to_aeqs(eq)                                                      \
-> 
-> +	({                                                                   \
-> 
-> +		typeof(eq) __eq = (eq);                                      \
-> 
-> +		container_of(__eq - __eq->q_id, struct hinic3_aeqs, aeq[0]); \
-> 
-> +	})
-> 
-> +
-> 
-> +#define AEQ_MSIX_ENTRY_IDX_0 0
-> 
-> +
-> 
-> +/**
-> 
-> + * Write the consumer idx to hw.
-> 
-> + *
-> 
-> + * @param[in] eq
-> 
-> + * The event queue to update the cons idx.
-> 
-> + * @param[in] arm_state
-> 
-> + * Indicate whether report interrupts when generate eq element.
-> 
-> + */
-> 
-> +static void
-> 
-> +set_eq_cons_idx(struct hinic3_eq *eq, u32 arm_state)
-> 
-> +{
-> 
-> +	u32 eq_wrap_ci = 0;
-> 
-> +	u32 val = 0;
-> 
-> +	u32 addr = HINIC3_CSR_AEQ_CI_SIMPLE_INDIR_ADDR;
-> 
-> +
-> 
-> +	eq_wrap_ci = EQ_CONS_IDX(eq);
-> 
-> +
-> 
-> +	/* Dpdk pmd driver only aeq0 use int_arm mode. */
-
-Only aeq0 use int_arm mode.?
-
-> 
-> +	if (eq->q_id != 0)
-> 
-> +		val = EQ_CI_SIMPLE_INDIR_SET(HINIC3_EQ_NOT_ARMED, ARMED);
-> 
-> +	else
-> 
-> +		val = EQ_CI_SIMPLE_INDIR_SET(arm_state, ARMED);
-> 
-> +
-> 
-> +	val = val | EQ_CI_SIMPLE_INDIR_SET(eq_wrap_ci, CI) |
-> 
-> +	      EQ_CI_SIMPLE_INDIR_SET(eq->q_id, AEQ_IDX);
-> 
-> +
-> 
-> +	hinic3_hwif_write_reg(eq->hwdev->hwif, addr, val);
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Set aeq's ctrls registers.
-> 
-> + *
-> 
-> + * @param[in] eq
-> 
-> + * The event queue for setting.
-> 
-> + */
-> 
-> +static void
-> 
-> +set_aeq_ctrls(struct hinic3_eq *eq)
-> 
-> +{
-> 
-> +	struct hinic3_hwif *hwif = eq->hwdev->hwif;
-> 
-> +	struct irq_info *eq_irq = &eq->eq_irq;
-> 
-> +	u32 addr, val, ctrl0, ctrl1, page_size_val, elem_size;
-> 
-> +	u32 pci_intf_idx = HINIC3_PCI_INTF_IDX(hwif);
-> 
-> +
-> 
-> +	/* Set AEQ ctrl0. */
-> 
-> +	addr = HINIC3_CSR_AEQ_CTRL_0_ADDR;
-> 
-> +
-> 
-> +	val = hinic3_hwif_read_reg(hwif, addr);
-> 
-> +
-> 
-> +	val = AEQ_CTRL_0_CLEAR(val, INTR_IDX) &
-> 
-> +	      AEQ_CTRL_0_CLEAR(val, DMA_ATTR) &
-> 
-> +	      AEQ_CTRL_0_CLEAR(val, PCI_INTF_IDX) &
-> 
-> +	      AEQ_CTRL_0_CLEAR(val, INTR_MODE);
-> 
-> +
-> 
-> +	ctrl0 = AEQ_CTRL_0_SET(eq_irq->msix_entry_idx, INTR_IDX) |
-> 
-> +		AEQ_CTRL_0_SET(AEQ_DMA_ATTR_DEFAULT, DMA_ATTR) |
-> 
-> +		AEQ_CTRL_0_SET(pci_intf_idx, PCI_INTF_IDX) |
-> 
-> +		AEQ_CTRL_0_SET(HINIC3_INTR_MODE_ARMED, INTR_MODE);
-> 
-> +
-> 
-> +	val |= ctrl0;
-> 
-> +
-> 
-> +	hinic3_hwif_write_reg(hwif, addr, val);
-> 
-> +
-> 
-> +	/* Set AEQ ctrl1. */
-> 
-> +	addr = HINIC3_CSR_AEQ_CTRL_1_ADDR;
-> 
-> +
-> 
-> +	page_size_val = EQ_SET_HW_PAGE_SIZE_VAL(eq);
-> 
-> +	elem_size = EQ_SET_HW_ELEM_SIZE_VAL(eq);
-> 
-> +
-> 
-> +	ctrl1 = AEQ_CTRL_1_SET(eq->eq_len, LEN) |
-> 
-> +		AEQ_CTRL_1_SET(elem_size, ELEM_SIZE) |
-> 
-> +		AEQ_CTRL_1_SET(page_size_val, PAGE_SIZE);
-> 
-> +
-> 
-> +	hinic3_hwif_write_reg(hwif, addr, ctrl1);
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Initialize all the elements in the aeq.
-> 
-> + *
-> 
-> + * @param[in] eq
-> 
-> + * The event queue.
-> 
-> + * @param[in] init_val
-> 
-> + * Value to init.
-> 
-> + */
-> 
-> +static void
-> 
-> +aeq_elements_init(struct hinic3_eq *eq, u32 init_val)
-> 
-> +{
-> 
-> +	struct hinic3_aeq_elem *aeqe = NULL;
-> 
-> +	u32 i;
-> 
-> +
-> 
-> +	for (i = 0; i < eq->eq_len; i++) {
-> 
-> +		aeqe = GET_AEQ_ELEM(eq, i);
-> 
-> +		aeqe->desc = cpu_to_be32(init_val);
-> 
-> +	}
-> 
-> +
-> 
-> +	rte_atomic_thread_fence(rte_memory_order_release); /**< Write the init values. */
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Set the pages for the event queue.
-> 
-> + *
-> 
-> + * @param[in] eq
-> 
-> + * The event queue.
-> 
-> + * @return
-> 
-> + * 0 on success, non-zero on failure.
-> 
-> + */
-> 
-> +static int
-> 
-> +set_eq_pages(struct hinic3_eq *eq)
-> 
-> +{
-> 
-> +	struct hinic3_hwif *hwif = eq->hwdev->hwif;
-> 
-> +	u32 reg, init_val;
-> 
-> +	u16 pg_num, i;
-> 
-> +	int err;
-> 
-> +
-> 
-> +	for (pg_num = 0; pg_num < eq->num_pages; pg_num++) {
-> 
-> +		/* Allocate memory for each page. */
-> 
-> +		eq->eq_mz[pg_num] = hinic3_dma_zone_reserve(eq->hwdev->eth_dev,
-> 
-> +			"eq_mz", eq->q_id, eq->page_size,
-> 
-> +			eq->page_size, SOCKET_ID_ANY);
-> 
-> +		if (!eq->eq_mz[pg_num]) {
-> 
-> +			err = -ENOMEM;
-> 
-> +			goto dma_alloc_err;
-> 
-> +		}
-> 
-> +
-> 
-> +		/* Write physical memory address and virtual memory address. */
-> 
-> +		eq->dma_addr[pg_num] = eq->eq_mz[pg_num]->iova;
-> 
-> +		eq->virt_addr[pg_num] = eq->eq_mz[pg_num]->addr;
-> 
-> +
-> 
-> +		reg = HINIC3_AEQ_HI_PHYS_ADDR_REG(pg_num);
-> 
-> +		hinic3_hwif_write_reg(hwif, reg,
-> 
-> +				      upper_32_bits(eq->dma_addr[pg_num]));
-> 
-> +
-> 
-> +		reg = HINIC3_AEQ_LO_PHYS_ADDR_REG(pg_num);
-> 
-> +		hinic3_hwif_write_reg(hwif, reg,
-> 
-> +				      lower_32_bits(eq->dma_addr[pg_num]));
-> 
-> +	}
-> 
-> +	/* Calculate the number of elements that can be accommodated. */
-> 
-> +	eq->num_elem_in_pg = GET_EQ_NUM_ELEMS(eq, eq->page_size);
-> 
-> +	if (eq->num_elem_in_pg & (eq->num_elem_in_pg - 1)) {
-> 
-> +		PMD_DRV_LOG(ERR, "Number element in eq page != power of 2");
-> 
-> +		err = -EINVAL;
-> 
-> +		goto dma_alloc_err;
-> 
-> +	}
-> 
-> +	init_val = EQ_WRAPPED(eq);
-> 
-> +
-> 
-> +	/* Initialize elements in the queue. */
-> 
-> +	aeq_elements_init(eq, init_val);
-
-Suggest no blank line between define and usage.
-And the init_val could obtain from eq, why we need to pass another paramter.
-
-> 
-> +
-> 
-> +	return 0;
-> 
-> +
-> 
-> +dma_alloc_err:
-> 
-> +	for (i = 0; i < pg_num; i++)
-> 
-> +		hinic3_memzone_free(eq->eq_mz[i]);
-> 
-> +
-> 
-> +	return err;
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Allocate the pages for the event queue.
-> 
-> + *
-> 
-> + * @param[in] eq
-> 
-> + * The event queue.
-> 
-> + * @return
-> 
-> + * 0 on success, non-zero on failure.
-> 
-> + */
-> 
-> +static int
-> 
-> +alloc_eq_pages(struct hinic3_eq *eq)
-> 
-> +{
-> 
-> +	u64 dma_addr_size, virt_addr_size, eq_mz_size;
-> 
-> +	int err;
-> 
-> +
-> 
-> +	/* Calculate the size of the memory to be allocated. */
-> 
-> +	dma_addr_size = eq->num_pages * sizeof(*eq->dma_addr);
-> 
-> +	virt_addr_size = eq->num_pages * sizeof(*eq->virt_addr);
-> 
-> +	eq_mz_size = eq->num_pages * sizeof(*eq->eq_mz);
-> 
-> +
-> 
-> +	eq->dma_addr = rte_zmalloc("eq_dma", dma_addr_size,
-> 
-> +				   HINIC3_MEM_ALLOC_ALIGN_MIN);
-> 
-> +	if (!eq->dma_addr)
-> 
-> +		return -ENOMEM;
-> 
-> +
-> 
-> +	eq->virt_addr = rte_zmalloc("eq_va", virt_addr_size,
-> 
-> +				    HINIC3_MEM_ALLOC_ALIGN_MIN);
-> 
-> +	if (!eq->virt_addr) {
-> 
-> +		err = -ENOMEM;
-> 
-> +		goto virt_addr_alloc_err;
-> 
-> +	}
-> 
-> +
-> 
-> +	eq->eq_mz =
-> 
-> +		rte_zmalloc("eq_mz", eq_mz_size, HINIC3_MEM_ALLOC_ALIGN_MIN);
-> 
-> +	if (!eq->eq_mz) {
-> 
-> +		err = -ENOMEM;
-> 
-> +		goto eq_mz_alloc_err;
-> 
-> +	}
-> 
-> +	err = set_eq_pages(eq);
-> 
-> +	if (err != 0)
-> 
-> +		goto eq_pages_err;
-> 
-> +
-> 
-> +	return 0;
-> 
-> +
-> 
-> +eq_pages_err:
-> 
-> +	rte_free(eq->eq_mz);
-> 
-> +
-> 
-> +eq_mz_alloc_err:
-> 
-> +	rte_free(eq->virt_addr);
-> 
-> +
-> 
-> +virt_addr_alloc_err:
-> 
-> +	rte_free(eq->dma_addr);
-> 
-> +
-> 
-> +	return err;
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Free the pages of the event queue.
-> 
-> + *
-> 
-> + * @param[in] eq
-> 
-> + * The event queue.
-> 
-> + */
-> 
-> +static void
-> 
-> +free_eq_pages(struct hinic3_eq *eq)
-> 
-> +{
-> 
-> +	u16 pg_num;
-> 
-> +
-> 
-> +	for (pg_num = 0; pg_num < eq->num_pages; pg_num++)
-> 
-> +		hinic3_memzone_free(eq->eq_mz[pg_num]);
-> 
-> +
-> 
-> +	rte_free(eq->eq_mz);
-> 
-> +	rte_free(eq->virt_addr);
-> 
-> +	rte_free(eq->dma_addr);
-> 
-> +}
-> 
-> +
-> 
-> +static u32
-> 
-> +get_page_size(struct hinic3_eq *eq)
-> 
-> +{
-> 
-> +	u32 total_size;
-> 
-> +	u16 count, n = 0;
-> 
-> +
-> 
-> +	/* Total memory size. */
-> 
-> +	total_size = RTE_ALIGN((eq->eq_len * eq->elem_size),
-> 
-> +			       HINIC3_MIN_EQ_PAGE_SIZE);
-> 
-> +	if (total_size <= (HINIC3_EQ_MAX_PAGES * HINIC3_MIN_EQ_PAGE_SIZE))
-> 
-> +		return HINIC3_MIN_EQ_PAGE_SIZE;
-> 
-> +	/* Total number of pages. */
-> 
-> +	count = (u16)(RTE_ALIGN((total_size / HINIC3_EQ_MAX_PAGES),
-> 
-> +				HINIC3_MIN_EQ_PAGE_SIZE) /
-> 
-> +		      HINIC3_MIN_EQ_PAGE_SIZE);
-> 
-> +
-> 
-> +	/* Whether count is a power of 2. */
-> 
-> +	if (!(count & (count - 1)))
-> 
-> +		return HINIC3_MIN_EQ_PAGE_SIZE * count;
-> 
-> +
-> 
-> +	while (count) {
-> 
-> +		count >>= 1;
-> 
-> +		n++;
-> 
-> +	}
-
-could use rte_ctz32() API
-
-> 
-> +
-> 
-> +	return ((u32)HINIC3_MIN_EQ_PAGE_SIZE) << n;
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Initialize AEQ.
-> 
-> + *
-> 
-> + * @param[in] eq
-> 
-> + * The event queue.
-> 
-> + * @param[in] hwdev
-> 
-> + * The pointer to the private hardware device.
-> 
-> + * @param[in] q_id
-> 
-> + * Queue id number.
-> 
-> + * @param[in] q_len
-> 
-> + * The number of EQ elements.
-> 
-> + * @return
-> 
-> + * 0 on success, non-zero on failure.
-> 
-> + */
-> 
-> +static int
-> 
-> +init_aeq(struct hinic3_eq *eq, struct hinic3_hwdev *hwdev, u16 q_id, u32 q_len)
-> 
-> +{
-> 
-> +	int err = 0;
-> 
-> +
-> 
-> +	eq->hwdev = hwdev;
-> 
-> +	eq->q_id = q_id;
-> 
-> +	eq->eq_len = q_len;
-> 
-> +
-> 
-> +	/* Indirect access should set q_id first. */
-> 
-> +	hinic3_hwif_write_reg(hwdev->hwif, HINIC3_AEQ_INDIR_IDX_ADDR, eq->q_id);
-> 
-> +	rte_atomic_thread_fence(rte_memory_order_release); /**< write index before config. */
-> 
-> +
-> 
-> +	/* Clear eq_len to force eqe drop in hardware. */
-> 
-> +	hinic3_hwif_write_reg(eq->hwdev->hwif, HINIC3_CSR_AEQ_CTRL_1_ADDR, 0);
-> 
-> +	rte_atomic_thread_fence(rte_memory_order_release);
-> 
-> +	/* Init aeq pi to 0 before allocating aeq pages. */
-> 
-> +	hinic3_hwif_write_reg(eq->hwdev->hwif, HINIC3_CSR_AEQ_PROD_IDX_ADDR, 0);
-> 
-> +
-> 
-> +	eq->cons_idx = 0;
-> 
-> +	eq->wrapped = 0;
-> 
-> +
-> 
-> +	eq->elem_size = HINIC3_AEQE_SIZE;
-> 
-> +	eq->page_size = get_page_size(eq);
-> 
-> +	eq->orig_page_size = eq->page_size;
-> 
-> +	eq->num_pages = GET_EQ_NUM_PAGES(eq, eq->page_size);
-> 
-> +	if (eq->num_pages > HINIC3_EQ_MAX_PAGES) {
-> 
-> +		PMD_DRV_LOG(ERR, "Too many pages: %d for aeq", eq->num_pages);
-> 
-> +		return -EINVAL;
-> 
-> +	}
-> 
-> +
-> 
-> +	err = alloc_eq_pages(eq);
-> 
-> +	if (err) {
-> 
-> +		PMD_DRV_LOG(ERR, "Allocate pages for eq failed");
-> 
-> +		return err;
-> 
-> +	}
-> 
-> +
-> 
-> +	/* Pmd driver uses AEQ_MSIX_ENTRY_IDX_0. */
-> 
-> +	eq->eq_irq.msix_entry_idx = AEQ_MSIX_ENTRY_IDX_0;
-> 
-> +	set_aeq_ctrls(eq);
-> 
-> +
-> 
-> +	set_eq_cons_idx(eq, HINIC3_EQ_ARMED);
-> 
-> +
-> 
-> +	if (eq->q_id == 0)
-> 
-> +		hinic3_set_msix_state(hwdev, 0, HINIC3_MSIX_ENABLE);
-> 
-> +
-> 
-> +	eq->poll_retry_nr = HINIC3_RETRY_NUM;
-> 
-> +
-> 
-> +	return 0;
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Remove AEQ.
-> 
-> + *
-> 
-> + * @param[in] eq
-> 
-> + * The event queue.
-> 
-> + */
-> 
-> +static void
-> 
-> +remove_aeq(struct hinic3_eq *eq)
-> 
-> +{
-> 
-> +	struct irq_info *entry = &eq->eq_irq;
-> 
-> +
-> 
-> +	if (eq->q_id == 0)
-> 
-> +		hinic3_set_msix_state(eq->hwdev, entry->msix_entry_idx,
-> 
-> +				      HINIC3_MSIX_DISABLE);
-> 
-> +
-> 
-> +	/* Indirect access should set q_id first. */
-> 
-> +	hinic3_hwif_write_reg(eq->hwdev->hwif, HINIC3_AEQ_INDIR_IDX_ADDR,
-> 
-> +			      eq->q_id);
-> 
-> +
-> 
-> +	rte_atomic_thread_fence(rte_memory_order_release); /**< Write index before config. */
-> 
-> +
-> 
-> +	/* Clear eq_len to avoid hw access host memory. */
-> 
-> +	hinic3_hwif_write_reg(eq->hwdev->hwif, HINIC3_CSR_AEQ_CTRL_1_ADDR, 0);
-> 
-> +
-> 
-> +	/* Update cons_idx to avoid invalid interrupt. */
-> 
-> +	eq->cons_idx = hinic3_hwif_read_reg(eq->hwdev->hwif,
-> 
-> +					    HINIC3_CSR_AEQ_PROD_IDX_ADDR);
-> 
-> +	set_eq_cons_idx(eq, HINIC3_EQ_NOT_ARMED);
-> 
-> +
-> 
-> +	free_eq_pages(eq);
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Init all AEQs.
-> 
-> + *
-> 
-> + * @param[in] hwdev
-> 
-> + * The pointer to the private hardware device object
-> 
-> + * @return
-> 
-> + * 0 on success, non-zero on failure.
-> 
-> + */
-> 
-> +int
-> 
-> +hinic3_aeqs_init(struct hinic3_hwdev *hwdev)
-> 
-> +{
-> 
-> +	struct hinic3_aeqs *aeqs = NULL;
-> 
-> +	u16 num_aeqs;
-> 
-> +	int err;
-> 
-> +	u16 i, q_id;
-> 
-> +
-> 
-> +	if (!hwdev)
-> 
-> +		return -EINVAL;
-> 
-> +
-> 
-> +	num_aeqs = HINIC3_HWIF_NUM_AEQS(hwdev->hwif);
-> 
-> +	if (num_aeqs > HINIC3_MAX_AEQS) {
-> 
-> +		PMD_DRV_LOG(INFO, "Adjust aeq num to %d", HINIC3_MAX_AEQS);
-> 
-> +		num_aeqs = HINIC3_MAX_AEQS;
-> 
-> +	} else if (num_aeqs < HINIC3_MIN_AEQS) {
-> 
-> +		PMD_DRV_LOG(ERR, "PMD needs %d AEQs, Chip has %d",
-> 
-> +			    HINIC3_MIN_AEQS, num_aeqs);
-> 
-> +		return -EINVAL;
-> 
-> +	}
-> 
-> +
-> 
-> +	aeqs = rte_zmalloc("hinic3_aeqs", sizeof(*aeqs),
-> 
-> +			   HINIC3_MEM_ALLOC_ALIGN_MIN);
-> 
-> +	if (!aeqs)
-> 
-> +		return -ENOMEM;
-> 
-> +
-> 
-> +	hwdev->aeqs = aeqs;
-> 
-> +	aeqs->hwdev = hwdev;
-> 
-> +	aeqs->num_aeqs = num_aeqs;
-> 
-> +
-> 
-> +	for (q_id = 0; q_id < num_aeqs; q_id++) {
-> 
-> +		err = init_aeq(&aeqs->aeq[q_id], hwdev, q_id,
-> 
-> +			       HINIC3_DEFAULT_AEQ_LEN);
-> 
-> +		if (err) {
-> 
-> +			PMD_DRV_LOG(ERR, "Init aeq %d failed", q_id);
-> 
-> +			goto init_aeq_err;
-> 
-> +		}
-> 
-> +	}
-> 
-> +
-> 
-> +	return 0;
-> 
-> +
-> 
-> +init_aeq_err:
-> 
-> +	for (i = 0; i < q_id; i++)
-> 
-> +		remove_aeq(&aeqs->aeq[i]);
-> 
-> +
-> 
-> +	rte_free(aeqs);
-> 
-> +	return err;
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Free all AEQs.
-> 
-> + *
-> 
-> + * @param[in] hwdev
-> 
-> + * The pointer to the private hardware device.
-> 
-> + */
-> 
-> +void
-> 
-> +hinic3_aeqs_free(struct hinic3_hwdev *hwdev)
-> 
-> +{
-> 
-> +	struct hinic3_aeqs *aeqs = hwdev->aeqs;
-> 
-> +	u16 q_id;
-> 
-> +
-> 
-> +	for (q_id = 0; q_id < aeqs->num_aeqs; q_id++)
-> 
-> +		remove_aeq(&aeqs->aeq[q_id]);
-> 
-> +
-> 
-> +	rte_free(aeqs);
-> 
-> +}
-> 
-> +
-> 
-> +void
-> 
-> +hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev)
-> 
-> +{
-> 
-> +	struct hinic3_aeq_elem *aeqe_pos = NULL;
-> 
-> +	struct hinic3_eq *eq = NULL;
-> 
-> +	u32 addr, ci, pi, ctrl0, idx;
-> 
-> +	int q_id;
-> 
-> +
-> 
-> +	for (q_id = 0; q_id < hwdev->aeqs->num_aeqs; q_id++) {
-> 
-> +		eq = &hwdev->aeqs->aeq[q_id];
-> 
-> +		/* Indirect access should set q_id first. */
-> 
-> +		hinic3_hwif_write_reg(eq->hwdev->hwif,
-> 
-> +				      HINIC3_AEQ_INDIR_IDX_ADDR, eq->q_id);
-> 
-> +		/* Write index before config. */
-> 
-> +		rte_atomic_thread_fence(rte_memory_order_release);
-> 
-> +
-> 
-> +		addr = HINIC3_CSR_AEQ_CTRL_0_ADDR;
-> 
-> +
-> 
-> +		ctrl0 = hinic3_hwif_read_reg(hwdev->hwif, addr);
-> 
-> +
-> 
-> +		idx = hinic3_hwif_read_reg(hwdev->hwif,
-> 
-> +					   HINIC3_AEQ_INDIR_IDX_ADDR);
-> 
-> +
-> 
-> +		addr = HINIC3_CSR_AEQ_CONS_IDX_ADDR;
-> 
-> +		ci = hinic3_hwif_read_reg(hwdev->hwif, addr);
-> 
-> +		addr = HINIC3_CSR_AEQ_PROD_IDX_ADDR;
-> 
-> +		pi = hinic3_hwif_read_reg(hwdev->hwif, addr);
-> 
-> +		aeqe_pos = GET_AEQ_ELEM(eq, eq->cons_idx);
-> 
-> +		PMD_DRV_LOG(ERR,
-> 
-> +			    "Aeq id: %d, idx: %u, ctrl0: 0x%08x, wrap: %d,"
-> 
-> +			    " pi: 0x%x, ci: 0x%08x,  desc: 0x%x",
-> 
-> +			    q_id, idx, ctrl0, eq->wrapped, pi, ci,
-> 
-> +			    be32_to_cpu(aeqe_pos->desc));
-> 
-> +	}
-> 
-> +}
-> 
-> +
-> 
-> +static int
-> 
-> +aeq_elem_handler(struct hinic3_eq *eq, u32 aeqe_desc,
-> 
-> +		 struct hinic3_aeq_elem *aeqe_pos, void *param)
-> 
-> +{
-> 
-> +	enum hinic3_aeq_type event;
-> 
-> +	u8 data[HINIC3_AEQE_DATA_SIZE];
-> 
-> +	u8 size;
-> 
-> +
-> 
-> +	event = EQ_ELEM_DESC_GET(aeqe_desc, TYPE);
-> 
-> +	if (EQ_ELEM_DESC_GET(aeqe_desc, SRC)) {
-> 
-> +		/* SW event uses only the first 8B. */
-> 
-> +		memcpy(data, aeqe_pos->aeqe_data, HINIC3_AEQE_DATA_SIZE);
-> 
-> +		hinic3_be32_to_cpu(data, HINIC3_AEQE_DATA_SIZE);
-> 
-> +		/* Just support HINIC3_STATELESS_EVENT. */
-> 
-> +		return hinic3_nic_sw_aeqe_handler(eq->hwdev, event, data);
-> 
-> +	}
-> 
-> +
-> 
-> +	memcpy(data, aeqe_pos->aeqe_data, HINIC3_AEQE_DATA_SIZE);
-> 
-> +	hinic3_be32_to_cpu(data, HINIC3_AEQE_DATA_SIZE);
-> 
-> +	size = EQ_ELEM_DESC_GET(aeqe_desc, SIZE);
-> 
-> +
-> 
-> +	if (event == HINIC3_MSG_FROM_MGMT_CPU) {
-> 
-> +		return hinic3_mgmt_msg_aeqe_handler(eq->hwdev, data, size,
-> 
-> +						    param);
-> 
-> +	} else if (event == HINIC3_MBX_FROM_FUNC) {
-> 
-> +		return hinic3_mbox_func_aeqe_handler(eq->hwdev, data, size,
-> 
-> +						     param);
-> 
-> +	} else {
-> 
-> +		PMD_DRV_LOG(ERR, "AEQ hw event not support %d", event);
-> 
-> +		return -EINVAL;
-> 
-> +	}
-> 
-> +}
-> 
-> +
-> 
-> +/**
-> 
-> + * Poll one or continue aeqe, and call dedicated process.
-> 
-> + *
-> 
-> + * @param[in] eq
-> 
-> + * Pointer to the event queue.
-> 
-> + * @param[in] timeout
-> 
-> + * equal to 0 - Poll all aeqe in eq, used in interrupt mode.
-> 
-> + * Greater than 0 - Poll aeq until get aeqe with 'last' field set to 1, used in
-> 
-> + * polling mode.
-> 
-> + * @param[in] param
-> 
-> + * Customized parameter.
-> 
-> + * @return
-> 
-> + * 0 on success, non-zero on failure.
-> 
-> + */
-> 
-> +int
-> 
-> +hinic3_aeq_poll_msg(struct hinic3_eq *eq, u32 timeout, void *param)
-> 
-> +{
-> 
-> +	struct hinic3_aeq_elem *aeqe_pos = NULL;
-> 
-> +	u32 aeqe_desc = 0;
-> 
-> +	u32 eqe_cnt = 0;
-> 
-> +	int err = -EFAULT;
-> 
-> +	int done = HINIC3_MSG_HANDLER_RES;
-> 
-> +	unsigned long end;
-> 
-> +	u16 i;
-> 
-> +
-> 
-> +	for (i = 0; ((timeout == 0) && (i < eq->eq_len)) ||
-> 
-> +		    ((timeout > 0) && (done != 0) && (i < eq->eq_len));
-> 
-> +	     i++) {
-> 
-> +		err = -EIO;
-> 
-> +		end = jiffies + msecs_to_jiffies(timeout);
-> 
-> +		do {
-> 
-> +			aeqe_pos = GET_AEQ_ELEM(eq, eq->cons_idx);
-> 
-> +
-> 
-> +			/* Data in HW is in Big endian format. */
-> 
-> +			aeqe_desc = be32_to_cpu(aeqe_pos->desc);
-> 
-> +
-> 
-> +			/*
-> 
-> +			 * HW updates wrapped bit, when it adds eq element
-> 
-> +			 * event.
-> 
-> +			 */
-> 
-> +			if (EQ_ELEM_DESC_GET(aeqe_desc, WRAPPED) !=
-> 
-> +			    eq->wrapped) {
-> 
-> +				err = 0;
-> 
-> +				rte_atomic_thread_fence(rte_memory_order_acquire);
-> 
-> +				break;
-> 
-> +			}
-> 
-> +
-> 
-> +			if (timeout != 0)
-> 
-> +				usleep(HINIC3_AEQE_DESC_SIZE);
-> 
-> +		} while (time_before(jiffies, end));
-> 
-> +
-> 
-> +		if (err != 0) /**< Poll time out. */
-> 
-> +			break;
-> 
-> +		/* Handle the middle element of the event queue. */
-> 
-> +		done = aeq_elem_handler(eq, aeqe_desc, aeqe_pos, param);
-> 
-> +
-> 
-> +		eq->cons_idx++;
-> 
-> +		if (eq->cons_idx == eq->eq_len) {
-> 
-> +			eq->cons_idx = 0;
-> 
-> +			eq->wrapped = !eq->wrapped;
-> 
-> +		}
-> 
-> +
-> 
-> +		if (++eqe_cnt >= HINIC3_EQ_UPDATE_CI_STEP) {
-> 
-> +			eqe_cnt = 0;
-> 
-> +			set_eq_cons_idx(eq, HINIC3_EQ_NOT_ARMED);
-> 
-> +		}
-> 
-> +	}
-> 
-> +	/* Set the consumer index of the event queue. */
-> 
-> +	set_eq_cons_idx(eq, HINIC3_EQ_ARMED);
-> 
-> +
-> 
-> +	return err;
-> 
-> +}
-> 
-> +
-> 
-> +void
-> 
-> +hinic3_dev_handle_aeq_event(struct hinic3_hwdev *hwdev, void *param)
-> 
-> +{
-> 
-> +	struct hinic3_eq *aeq = &hwdev->aeqs->aeq[0];
-> 
-> +
-> 
-> +	/* Clear resend timer cnt register. */
-> 
-> +	hinic3_misx_intr_clear_resend_bit(hwdev, aeq->eq_irq.msix_entry_idx,
-> 
-> +					  MSIX_RESEND_TIMER_CLEAR);
-> 
-> +	hinic3_aeq_poll_msg(aeq, 0, param);
-> 
-> +}
-> 
-> diff --git a/drivers/net/hinic3/base/hinic3_eqs.h b/drivers/net/hinic3/base/hinic3_eqs.h
-> 
-> new file mode 100644
-> 
-> index 0000000000..7617ed9589
-> 
-> --- /dev/null
-> 
-> +++ b/drivers/net/hinic3/base/hinic3_eqs.h
-> 
-> @@ -0,0 +1,98 @@
-> 
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> 
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> 
-> + */
-> 
-> +
-> 
-> +#ifndef _HINIC3_EQS_H_
-> 
-> +#define _HINIC3_EQS_H_
-> 
-> +
-> 
-> +#define HINIC3_MAX_AEQS	    4
-> 
-> +#define HINIC3_MIN_AEQS	    2
-> 
-> +#define HINIC3_EQ_MAX_PAGES 4
-> 
-> +
-> 
-> +#define HINIC3_AEQE_SIZE 64
-> 
-> +
-> 
-> +#define HINIC3_AEQE_DESC_SIZE 4
-> 
-> +#define HINIC3_AEQE_DATA_SIZE (HINIC3_AEQE_SIZE - HINIC3_AEQE_DESC_SIZE)
-> 
-> +
-> 
-> +/* Linux is 1K, dpdk is 64. */
-> 
-> +#define HINIC3_DEFAULT_AEQ_LEN 64
-> 
-> +
-> 
-> +#define HINIC3_MIN_EQ_PAGE_SIZE 0x1000	 /**< Min eq page size 1K Bytes. */
-> 
-> +#define HINIC3_MAX_EQ_PAGE_SIZE 0x400000 /**< Max eq page size 4M Bytes */
-> 
-> +
-> 
-> +#define HINIC3_MIN_AEQ_LEN 64
-> 
-> +#define HINIC3_MAX_AEQ_LEN \
-> 
-> +	((HINIC3_MAX_EQ_PAGE_SIZE / HINIC3_AEQE_SIZE) * HINIC3_EQ_MAX_PAGES)
-> 
-> +
-> 
-> +#define EQ_IRQ_NAME_LEN 64
-> 
-> +
-> 
-> +enum hinic3_eq_intr_mode { HINIC3_INTR_MODE_ARMED, HINIC3_INTR_MODE_ALWAYS };
-> 
-> +
-> 
-> +enum hinic3_eq_ci_arm_state { HINIC3_EQ_NOT_ARMED, HINIC3_EQ_ARMED };
-> 
-> +
-> 
-> +/* Structure for interrupt request information. */
-> 
-> +struct irq_info {
-> 
-> +	u16 msix_entry_idx; /**< IRQ corresponding index number. */
-> 
-> +	u32 irq_id;	    /**< The IRQ number from OS. */
-> 
-> +};
-> 
-> +
-> 
-> +#define HINIC3_RETRY_NUM 10
-> 
-> +
-> 
-> +enum hinic3_aeq_type {
-> 
-> +	HINIC3_HW_INTER_INT = 0,
-> 
-> +	HINIC3_MBX_FROM_FUNC = 1,
-> 
-> +	HINIC3_MSG_FROM_MGMT_CPU = 2,
-> 
-> +	HINIC3_API_RSP = 3,
-> 
-> +	HINIC3_API_CHAIN_STS = 4,
-> 
-> +	HINIC3_MBX_SEND_RSLT = 5,
-> 
-> +	HINIC3_MAX_AEQ_EVENTS
-> 
-> +};
-> 
-> +
-> 
-> +/* Structure for EQ(Event Queue) information. */
-> 
-> +struct hinic3_eq {
-> 
-> +	struct hinic3_hwdev *hwdev;
-> 
-> +	u16 q_id;
-> 
-> +	u32 page_size;
-> 
-> +	u32 orig_page_size;
-> 
-> +	u32 eq_len;
-> 
-> +
-> 
-> +	u32 cons_idx;
-> 
-> +	u16 wrapped;
-> 
-> +
-> 
-> +	u16 elem_size;
-> 
-> +	u16 num_pages;
-> 
-> +	u32 num_elem_in_pg;
-> 
-> +
-> 
-> +	struct irq_info eq_irq;
-> 
-> +
-> 
-> +	const struct rte_memzone **eq_mz;
-> 
-> +	rte_iova_t *dma_addr;
-> 
-> +	u8 **virt_addr;
-> 
-> +
-> 
-> +	u16 poll_retry_nr;
-> 
-> +};
-> 
-> +
-> 
-> +struct hinic3_aeq_elem {
-> 
-> +	u8 aeqe_data[HINIC3_AEQE_DATA_SIZE];
-> 
-> +	u32 desc;
-> 
-> +};
-> 
-> +
-> 
-> +/* Structure for AEQs(Asynchronous Event Queues) information. */
-> 
-> +struct hinic3_aeqs {
-> 
-> +	struct hinic3_hwdev *hwdev;
-> 
-> +
-> 
-> +	struct hinic3_eq aeq[HINIC3_MAX_AEQS];
-> 
-> +	u16 num_aeqs;
-> 
-> +};
-> 
-> +
-> 
-> +int hinic3_aeqs_init(struct hinic3_hwdev *hwdev);
-> 
-> +
-> 
-> +void hinic3_aeqs_free(struct hinic3_hwdev *hwdev);
-> 
-> +
-> 
-> +void hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev);
-> 
-> +
-> 
-> +int hinic3_aeq_poll_msg(struct hinic3_eq *eq, u32 timeout, void *param);
-> 
-> +
-> 
-> +void hinic3_dev_handle_aeq_event(struct hinic3_hwdev *hwdev, void *param);
-> 
-> +
-> 
-> +#endif /**< _HINIC3_EQS_H_ */
-> 
-
+PiBPbiBXZWQsIDIwIEF1ZyAyMDI1IDIzOjIyOjMxICswNTMwDQo+IDxza29yaUBtYXJ2ZWxsLmNv
+bT4gd3JvdGU6DQo+IA0KPiBQYXRjaCBkb2VzIG5vdCBhcHBseSBjbGVhbmx5IHRvIG5leHQtbmV0
+LCB0aGVyZSBpcyBmdXp6Lg0KPiANCg0KQWNrLCBJIHdpbGwgcmViYXNlIGl0IG9uIG5leHQtbmV0
+Lg0KDQo+ID4gZGlmZiAtLWdpdCBhL2xpYi9ldGhkZXYvZXRoZGV2X3RyYWNlLmggYi9saWIvZXRo
+ZGV2L2V0aGRldl90cmFjZS5oDQo+ID4gaW5kZXggNDgyYmVmYzIwOS4uYmM2YzNhNGEwMiAxMDA2
+NDQNCj4gPiAtLS0gYS9saWIvZXRoZGV2L2V0aGRldl90cmFjZS5oDQo+ID4gKysrIGIvbGliL2V0
+aGRldi9ldGhkZXZfdHJhY2UuaA0KPiA+IEBAIC0yMTEwLDYgKzIxMTAsMTMgQEAgUlRFX1RSQUNF
+X1BPSU5UX0ZQKA0KPiA+ICAJcnRlX3RyYWNlX3BvaW50X2VtaXRfc3RyaW5nKHJldCk7DQo+ID4g
+ICkNCj4gPg0KPiA+ICtSVEVfVFJBQ0VfUE9JTlRfRlAoDQo+ID4gKwlydGVfZXRoX3RyYWNlX2xp
+bmtfY29ubmVjdG9yX3RvX3N0ciwNCj4gPiArCVJURV9UUkFDRV9QT0lOVF9BUkdTKHVpbnQ4X3Qg
+bGlua19jb25uZWN0b3IsIGNvbnN0IGNoYXIgKnJldCksDQo+ID4gKwlydGVfdHJhY2VfcG9pbnRf
+ZW1pdF91OChsaW5rX2Nvbm5lY3Rvcik7DQo+ID4gKwlydGVfdHJhY2VfcG9pbnRfZW1pdF9zdHJp
+bmcocmV0KTsNCj4gPiArKTsNCj4gPiArDQo+IA0KPiBJTUhPIGFkZGluZyBhIHRyYWNlIHBvaW50
+IHRvIGEgaGVscGVyIGZ1bmN0aW9uIGxpa2UgdGhpcyBpcyBqdXN0IGV4dHJhIGNsdXR0ZXIsDQo+
+IHJlbW92ZSBpdC4NCj4gDQpBY2ssIEkgd2lsbCBzaGFyZSBhIHNlcGFyYXRlIHBhdGNoIHRvIGFk
+ZCB0cmFjZSBpbiB0aGlzIEFQSS4NCg0KPiA+ICtSVEVfRVhQT1JUX0VYUEVSSU1FTlRBTF9TWU1C
+T0wocnRlX2V0aF9saW5rX2Nvbm5lY3Rvcl90b19zdHIsIDI1LjExKQ0KPiA+ICtjb25zdCBjaGFy
+ICogcnRlX2V0aF9saW5rX2Nvbm5lY3Rvcl90b19zdHIoZW51bQ0KPiA+ICtydGVfZXRoX2xpbmtf
+Y29ubmVjdG9yIGxpbmtfY29ubmVjdG9yKSB7DQo+ID4gKwlzdGF0aWMgY29uc3QgY2hhciAqIGNv
+bnN0IGxpbmtfY29ubmVjdG9yX3N0cltdID0gew0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVD
+VE9SX05PTkVdID0gIk5vbmUiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9SX1RQXSA9
+ICJUd2lzdGVkIFBhaXIiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9SX0FVSV0gPSAi
+QXR0YWNobWVudCBVbml0IEludGVyZmFjZSIsDQo+ID4gKwkJW1JURV9FVEhfTElOS19DT05ORUNU
+T1JfTUlJXSA9ICJNZWRpYSBJbmRlcGVuZGVudA0KPiBJbnRlcmZhY2UiLA0KPiA+ICsJCVtSVEVf
+RVRIX0xJTktfQ09OTkVDVE9SX0ZJQkVSXSA9ICJGaWJlciIsDQo+ID4gKwkJW1JURV9FVEhfTElO
+S19DT05ORUNUT1JfQk5DXSA9ICJCTkMiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9S
+X0RBQ10gPSAiRGlyZWN0IEF0dGFjaCBDb3BwZXIiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09O
+TkVDVE9SX1NHTUlJXSA9ICJTR01JSSIsDQo+ID4gKwkJW1JURV9FVEhfTElOS19DT05ORUNUT1Jf
+UVNHTUlJXSA9ICJRU0dNSUkiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9SX1hGSV0g
+PSAiWEZJIiwNCj4gPiArCQlbUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9TRkldID0gIlNGSSIsDQo+
+ID4gKwkJW1JURV9FVEhfTElOS19DT05ORUNUT1JfWExBVUldID0gIlhMQVVJIiwNCj4gPiArCQlb
+UlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9HQVVJXSA9ICJHQVVJIiwNCj4gPiArCQlbUlRFX0VUSF9M
+SU5LX0NPTk5FQ1RPUl9YQVVJXSA9ICJYQVVJIiwNCj4gPiArCQlbUlRFX0VUSF9MSU5LX0NPTk5F
+Q1RPUl9DQVVJXSA9ICJDQVVJIiwNCj4gPiArCQlbUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9MQVVJ
+XSA9ICJMQVVJIiwNCj4gPiArCQlbUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9TRlBdID0gIlNGUCIs
+DQo+ID4gKwkJW1JURV9FVEhfTElOS19DT05ORUNUT1JfU0ZQX0REXSA9ICJTRlAtREQiLA0KPiA+
+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9SX1NGUF9QTFVTXSA9ICJTRlArIiwNCj4gPiArCQlb
+UlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9TRlAyOF0gPSAiU0ZQMjgiLA0KPiA+ICsJCVtSVEVfRVRI
+X0xJTktfQ09OTkVDVE9SX1FTRlBdID0gIlFTRlAiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09O
+TkVDVE9SX1FTRlBfUExVU10gPSAiUVNGUCsiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVD
+VE9SX1FTRlAyOF0gPSAiUVNGUDI4IiwNCj4gPiArCQlbUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9R
+U0ZQNTZdID0gIlFTRlA1NiIsDQo+ID4gKwkJW1JURV9FVEhfTElOS19DT05ORUNUT1JfUVNGUF9E
+RF0gPSAiUVNGUC1ERCIsDQo+ID4gKwkJW1JURV9FVEhfTElOS19DT05ORUNUT1JfT1RIRVJdID0g
+Ik90aGVyIiwNCj4gPiArCX07DQo+ID4gKwljb25zdCBjaGFyICpzdHIgPSBOVUxMOw0KPiA+ICsN
+Cj4gPiArCWlmICgobGlua19jb25uZWN0b3IgPCAoKGVudW0NCj4gcnRlX2V0aF9saW5rX2Nvbm5l
+Y3RvcilSVEVfRElNKGxpbmtfY29ubmVjdG9yX3N0cikpKSAmJg0KPiA+ICsJCWxpbmtfY29ubmVj
+dG9yX3N0cltsaW5rX2Nvbm5lY3Rvcl0pDQo+ID4gKwkJc3RyID0gbGlua19jb25uZWN0b3Jfc3Ry
+W2xpbmtfY29ubmVjdG9yXTsNCj4gDQo+IFRoaXMgY2FuIGJlIHNpbXBsaWZpZWQgdG86DQo+IAlp
+ZiAobGlua19jb25uZWN0b3IgPCBSVEVfRElNKGxpbmtfY29ubmVjdG9yX3N0cikpDQo+IAkJc3Ry
+ID0gbGlua19jb25uZWN0b3Jfc3RyW2xpbmtfY29ubmVjdG9yXTsNCj4gDQo+IFNpbmNlIGVudW0n
+cyBhY3QgbGlrZSBpbnQgaW4gQywgbm8gbmVlZCBmb3IgYWxsIHRoYXQgY2FzdGluZy4NCj4gDQpD
+b3JyZWN0IGFuZCBJbiBwcmV2aW91cyB2ZXJzaW9uIGl0IHdhcyBsaWtlIHRoaXMgb25seSBidXQg
+b24gV2luZG93cyBtYWNoaW5lLCBpdCB3YXMgdGhyb3dpbmcgZXJyb3IuIEhlbmNlIGFkZGVkIHR5
+cGVjYXN0aW5nLg0KDQo+ID4gKy8qKg0KPiA+ICsgKiBAd2FybmluZw0KPiA+ICsgKiBAYiBFWFBF
+UklNRU5UQUw6IHRoaXMgQVBJIG1heSBjaGFuZ2Ugd2l0aG91dCBwcmlvciBub3RpY2UuDQo+ID4g
+KyAqDQo+ID4gKyAqIFRoaXMgZnVuY3Rpb24gY29udmVydHMgYW4gRXRoZXJuZXQgbGluayB0eXBl
+IHRvIGEgc3RyaW5nLg0KPiA+ICsgKg0KPiA+ICsgKiBAcGFyYW0gbGlua19jb25uZWN0b3INCj4g
+PiArICogICBUaGUgbGluayB0eXBlIHRvIGNvbnZlcnQuDQo+ID4gKyAqIEByZXR1cm4NCj4gPiAr
+ICogICBUaGUgc3RyaW5nIHJlcHJlc2VudGF0aW9uIG9mIHRoZSBsaW5rIHR5cGUuDQo+ID4gKyAq
+Lw0KPiA+ICtfX3J0ZV9leHBlcmltZW50YWwNCj4gPiArY29uc3QgY2hhciAqcnRlX2V0aF9saW5r
+X2Nvbm5lY3Rvcl90b19zdHIoZW51bSBydGVfZXRoX2xpbmtfY29ubmVjdG9yDQo+ID4gK2xpbmtf
+Y29ubmVjdG9yKTsNCj4gDQo+IE5lZWQgdG8gZG9jdW1lbnQgdGhhdCBpdCByZXR1cm5zIE5VTEwg
+Zm9yIGludmFsaWQgbGlua19jb25uZWN0b3IgdmFsdWVzLg0KQWNrLg0KDQo=
