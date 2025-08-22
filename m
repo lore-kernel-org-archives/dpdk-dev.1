@@ -2,75 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D697CA0EEB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 22 Aug 2025 20:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AC8CA0EEB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 22 Aug 2025 23:45:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 090F440A71;
-	Fri, 22 Aug 2025 22:51:11 +0200 (CEST)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
- [209.85.221.45]) by mails.dpdk.org (Postfix) with ESMTP id 603E14025A
- for <dev@dpdk.org>; Fri, 22 Aug 2025 22:51:10 +0200 (CEST)
-Received: by mail-wr1-f45.google.com with SMTP id
- ffacd0b85a97d-3c4e9efb88aso1342395f8f.2
- for <dev@dpdk.org>; Fri, 22 Aug 2025 13:51:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755895870;
- x=1756500670; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=T3hbWWfEX+C9vXtTUcvyDluCP9m5kiyQ3D5v3sYp3QQ=;
- b=YMPoGVNFar5vuV1JUHr1f6W66Cwh/QDbd5FFICnMoNSCkXqbbeMggN08sGsW/ksARF
- tWSrYaqYSaXbhurf9IBidFMkF2UUgGgPujfiEyNJNKCaLCvi2KYNCPKUzfwmQh4Albnm
- ZUeE+1Gxot+1mkOGm0Jvh3ozmpr16MHNRh+k5hr9omSnMnIa/xTLL7TlL1DhvZivJ0z2
- nm1ytk76w64IqOpA4YaP4Siw7KwvHwdfM7iFkanSAB3Ksy1L2aw72P5QacFRDM0TbvHn
- MWvQiYe8yJVVV8Ozyx2LcWELvEY/korc0RwotcvZNWKfgu+ZaIKoq7DnzZbekjyYtJVK
- lxLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755895870; x=1756500670;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=T3hbWWfEX+C9vXtTUcvyDluCP9m5kiyQ3D5v3sYp3QQ=;
- b=VzOmirHzotFizVjKbxSFycJ6XcIpIf9OkSdLCQ4YWcQM7WYSyyCxy63b8L7rS1l4g9
- uejz0oupiEGsJAc6g7ljX7WlMtHeXjCSDHjnVXMTmnl4aPLgdxrZJOsSaoJK7ymzxLnb
- pXKhKtjQwNyhmEV97v6TMIm0IEGCIYDhM8Y4R1jn9SI3XTVu669CX3VK8YP2TqNfNgTn
- XNnQloPFDzPHkzuU4tgzeaqYqRXBobWWScDRJJBWjh1P3Dyy11gjI+cjU9ptBzsKU1mb
- IEpXbrPi6DEZN7tEzhoT7i3JSn5TVECfZG+bekc2n6Kv7bIrOsVhnItGVhmdtOxvrp6I
- rz/w==
-X-Gm-Message-State: AOJu0Yy6ojBWEXHuJYLiogZwfnueFDt9qA74ZSk87TQCW908ZRBRwkBg
- 4dJB8ZlwEnrNxANcy9euP1rKBdSFhZoXFlvyFw33//hEw0s3IbmoVjx1V5AbAS+NzYs=
-X-Gm-Gg: ASbGncu04BoBUJ1WcZTgVgh1NznYX/mqAaNjE/CYnd+0h1moXgAwEnlUWUGNpD80v8f
- M5zUSxlFRyTDFBbehN69+k8shSKRBxM6Rn3+D9Q+0j9vwqIUD+7dCfX5AkxCWUQmg+8BgZRyB6T
- iOmpj9iKzPAwf+LNX+c72UeGLKzrS4OA6J8QdsKaeWkpcYMp2WZ5kxCFvck/BisGwq7cOk/Wx/d
- /YwLArBDYt9MwzCwmtVj5S5R4YpkZDqcr6dYK/LvVegRnpRP7uuql3ixcKYsB86X4xQksnzzeTz
- PjPGyM53Aq8BQ9yv77rEMuLjtvb4IbjMFx0QJUfBiVB/EmsOMKaHXAemwv0HW0xJSehum8FEZzz
- g+5xSw7pvVx6CNBcyJOlNAwoBzc0mEvnShUrjsVWHtvV+EnC/iI63wmOaObMcQiSaYHIAMXzd3C
- s=
-X-Google-Smtp-Source: AGHT+IGc+rlWjbC+F/MAIZqMdBBxbahA7Go0QKDObICEBxLaIFRVAjaUnCBjI5dzQj1X90RxWlDZyQ==
-X-Received: by 2002:a05:6000:2f83:b0:3b5:dd38:3523 with SMTP id
- ffacd0b85a97d-3c5db8aa9b9mr3149353f8f.8.1755895869709; 
- Fri, 22 Aug 2025 13:51:09 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c70e4ba390sm944848f8f.12.2025.08.22.13.51.07
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 22 Aug 2025 13:51:09 -0700 (PDT)
-Date: Fri, 22 Aug 2025 09:50:45 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: <dev@dpdk.org>, "Yipeng Wang" <yipeng1.wang@intel.com>, "Sameh Gobriel"
- <sameh.gobriel@intel.com>, "Bruce Richardson" <bruce.richardson@intel.com>,
- "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>
-Subject: Re: [RFC 1/3] hash: move table of hash compare functions out of header
-Message-ID: <20250822095045.12a04c9f@hermes.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FE5F@smartserver.smartshare.dk>
-References: <20250821203646.133506-1-stephen@networkplumber.org>
- <20250821203646.133506-2-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35E9FE5F@smartserver.smartshare.dk>
+	by mails.dpdk.org (Postfix) with ESMTP id DE0A8402A9;
+	Sat, 23 Aug 2025 01:45:27 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id DA4E94025A
+ for <dev@dpdk.org>; Sat, 23 Aug 2025 01:45:25 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 9770F209AA;
+ Sat, 23 Aug 2025 01:45:25 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Sat, 23 Aug 2025 01:45:22 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Ivan Malov <ivan.malov@arknetworks.am>,
+ Chengwen Feng <fengchengwen@huawei.com>
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH v7 3/3] mbuf: optimize reset of reinitialized mbufs
+Date: Fri, 22 Aug 2025 23:45:15 +0000
+Message-ID: <20250822234515.22518-4-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250822234515.22518-1-mb@smartsharesystems.com>
+References: <20250821150250.16959-1-mb@smartsharesystems.com>
+ <20250822234515.22518-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 22 Aug 2025 23:45:22.0775 (UTC)
+ FILETIME=[D385D670:01DC13BE]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,18 +52,133 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 22 Aug 2025 11:05:06 +0200
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+An optimized function for resetting a bulk of newly allocated
+reinitialized mbufs (a.k.a. raw mbufs) was added.
 
-> Nice trick explicitly indexing these here; it reduces the risk of not mat=
-ching the cmp_jump_table_case.
+Compared to the normal packet mbuf reset function, it takes advantage of
+the following two details:
+1. The 'next' and 'nb_segs' fields are already reset, so resetting them
+has been omitted.
+2. When resetting the mbuf, the 'ol_flags' field must indicate whether the
+mbuf uses an external buffer, and the 'data_off' field must not exceed the
+data room size when resetting the data offset to include the default
+headroom.
+Unlike the normal packet mbuf reset function, which reads the mbuf itself
+to get the information required for resetting these two fields, this
+function gets the information from the mempool.
 
-Yes, there were bugs in other code because of table mismatches.
+This makes the function write-only of the mbuf, unlike the normal packet
+mbuf reset function, which is read-modify-write of the mbuf.
 
->=20
-> Consider adding static_assert() that RTE_DIM(cmp_jump_table) =3D=3D NUM_K=
-EY_CMP_CASES.
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ lib/mbuf/rte_mbuf.h | 74 ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 46 insertions(+), 28 deletions(-)
 
-Since array is explictly sized probably not needed.
-
+diff --git a/lib/mbuf/rte_mbuf.h b/lib/mbuf/rte_mbuf.h
+index 49c93ab356..6f37a2e91e 100644
+--- a/lib/mbuf/rte_mbuf.h
++++ b/lib/mbuf/rte_mbuf.h
+@@ -954,6 +954,50 @@ static inline void rte_pktmbuf_reset_headroom(struct rte_mbuf *m)
+ 					(uint16_t)m->buf_len);
+ }
+ 
++/**
++ * Reset the fields of a bulk of packet mbufs to their default values.
++ *
++ * The caller must ensure that the mbufs come from the specified mempool,
++ * are direct and properly reinitialized (refcnt=1, next=NULL, nb_segs=1),
++ * as done by rte_pktmbuf_prefree_seg().
++ *
++ * This function should be used with care, when optimization is required.
++ * For standard needs, prefer rte_pktmbuf_reset().
++ *
++ * @param mp
++ *   The mempool to which the mbuf belongs.
++ * @param mbufs
++ *   Array of pointers to packet mbufs.
++ *   The array must not contain NULL pointers.
++ * @param count
++ *   Array size.
++ */
++static inline void
++rte_mbuf_raw_reset_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigned int count)
++{
++	uint64_t ol_flags = (rte_pktmbuf_priv_flags(mp) & RTE_PKTMBUF_POOL_F_PINNED_EXT_BUF) ?
++			RTE_MBUF_F_EXTERNAL : 0;
++	uint16_t data_off = RTE_MIN_T(RTE_PKTMBUF_HEADROOM, rte_pktmbuf_data_room_size(mp),
++			uint16_t);
++
++	for (unsigned int idx = 0; idx < count; idx++) {
++		struct rte_mbuf *m = mbufs[idx];
++
++		m->pkt_len = 0;
++		m->tx_offload = 0;
++		m->vlan_tci = 0;
++		m->vlan_tci_outer = 0;
++		m->port = RTE_MBUF_PORT_INVALID;
++
++		m->ol_flags = ol_flags;
++		m->packet_type = 0;
++		m->data_off = data_off;
++
++		m->data_len = 0;
++		__rte_mbuf_sanity_check(m, 1);
++	}
++}
++
+ /**
+  * Reset the fields of a packet mbuf to their default values.
+  *
+@@ -997,7 +1041,7 @@ static inline struct rte_mbuf *rte_pktmbuf_alloc(struct rte_mempool *mp)
+ {
+ 	struct rte_mbuf *m;
+ 	if ((m = rte_mbuf_raw_alloc(mp)) != NULL)
+-		rte_pktmbuf_reset(m);
++		rte_mbuf_raw_reset_bulk(mp, &m, 1);
+ 	return m;
+ }
+ 
+@@ -1018,38 +1062,12 @@ static inline struct rte_mbuf *rte_pktmbuf_alloc(struct rte_mempool *mp)
+ static inline int rte_pktmbuf_alloc_bulk(struct rte_mempool *pool,
+ 	 struct rte_mbuf **mbufs, unsigned count)
+ {
+-	unsigned idx = 0;
+ 	int rc;
+ 
+ 	rc = rte_mbuf_raw_alloc_bulk(pool, (void **)mbufs, count);
+ 	if (unlikely(rc))
+ 		return rc;
+-
+-	/* To understand duff's device on loop unwinding optimization, see
+-	 * https://en.wikipedia.org/wiki/Duff's_device.
+-	 * Here while() loop is used rather than do() while{} to avoid extra
+-	 * check if count is zero.
+-	 */
+-	switch (count % 4) {
+-	case 0:
+-		while (idx != count) {
+-			rte_pktmbuf_reset(mbufs[idx]);
+-			idx++;
+-			/* fall-through */
+-	case 3:
+-			rte_pktmbuf_reset(mbufs[idx]);
+-			idx++;
+-			/* fall-through */
+-	case 2:
+-			rte_pktmbuf_reset(mbufs[idx]);
+-			idx++;
+-			/* fall-through */
+-	case 1:
+-			rte_pktmbuf_reset(mbufs[idx]);
+-			idx++;
+-			/* fall-through */
+-		}
+-	}
++	rte_mbuf_raw_reset_bulk(pool, mbufs, count);
+ 	return 0;
+ }
+ 
+-- 
+2.43.0
 
