@@ -2,44 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C87DCA0EEB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 22 Aug 2025 09:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33CD9CA0FE1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 22 Aug 2025 11:13:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8246740A6B;
-	Fri, 22 Aug 2025 11:50:45 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id CFA9F40695
- for <dev@dpdk.org>; Fri, 22 Aug 2025 11:50:43 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 96AD5209AA;
- Fri, 22 Aug 2025 11:50:43 +0200 (CEST)
-Content-class: urn:content-classes:message
-Subject: RE: [RFC 3/3] hash: add support for common small key sizes
+	by mails.dpdk.org (Postfix) with ESMTP id 0CC9A4029A;
+	Fri, 22 Aug 2025 13:13:18 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id B3AB94028C
+ for <dev@dpdk.org>; Fri, 22 Aug 2025 13:13:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1755861197; x=1787397197;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=/w0j3lwfw9tYk9QtyN2vtr5BJwDS2i1lbztjgO5yfyU=;
+ b=VkEbUPJgJLKcj258N86i3jKERMO68CdrjUyZiolz86od2/5y28IZJxOH
+ MCxfCNl0rRGtoIQr/1n9qt/adsNGB8D/bKk1f5UhPcvrqkZ52TDeQIfFu
+ F7OCG+wG4YfAPoB6GLKYfUauzUCeeMSbKT4TUdq40i+oGPwOF8Q+lpQ3k
+ JWUcEaq4kkJGVOSNoJThRmlr3forQEUfJ5tuXkb3n3hRrIuEANSKzM0Za
+ +5hPPXiZsK0Lt6/OiSswHSbbSR5sG2pT36tkOTA6dzticle9JGTNazkmZ
+ +iTVdxLVy+OzQ0raMQamVz1R/BMhnC1j6gVzHgXbrT/Jykpd6DKIn0nXd Q==;
+X-CSE-ConnectionGUID: IXrk0E2KS3SKi6VT1XnCMg==
+X-CSE-MsgGUID: 6L8OrtFwQcWRy+rzoWg8fQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69267767"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; d="scan'208";a="69267767"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Aug 2025 04:13:16 -0700
+X-CSE-ConnectionGUID: ZnM6Y6a3RHSZ0QKZlpNA1w==
+X-CSE-MsgGUID: H8zv4b0DTISMTaAuZVS9dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; d="scan'208";a="168884137"
+Received: from silpixa00400465.ir.intel.com (HELO
+ silpixa00400465.ger.corp.intel.com) ([10.237.223.221])
+ by orviesa008.jf.intel.com with ESMTP; 22 Aug 2025 04:13:14 -0700
+From: Kai Ji <kai.ji@intel.com>
+To: dev@dpdk.org
+Cc: Kai Ji <kai.ji@intel.com>,
+ Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>,
+ Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>
+Subject: [dpdk-dev v9 1/3] cryptodev: add ec points to sm2 op
+Date: Fri, 22 Aug 2025 11:13:06 +0000
+Message-ID: <20250822111309.2506329-1-kai.ji@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241104093610.20426-2-arkadiuszx.kusztal@intel.com>
+References: <20241104093610.20426-2-arkadiuszx.kusztal@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Date: Fri, 22 Aug 2025 11:50:42 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE61@smartserver.smartshare.dk>
-In-Reply-To: <5427c6f3-4446-4ee3-909e-5f2925d2b286@lysator.liu.se>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC 3/3] hash: add support for common small key sizes
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Thread-Index: AdwTNSW0nuUQ5II4TcaQZ4Bn8yb+lAAEO21A
-References: <20250821203646.133506-1-stephen@networkplumber.org>
- <20250821203646.133506-4-stephen@networkplumber.org>
- <5427c6f3-4446-4ee3-909e-5f2925d2b286@lysator.liu.se>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: =?UTF-8?B?TWF0dGlhcyBSw7ZubmJsb20=?= <hofors@lysator.liu.se>,
- "Stephen Hemminger" <stephen@networkplumber.org>, <dev@dpdk.org>
-Cc: =?UTF-8?B?TWF0dGlhcyBSw7ZubmJsb20=?= <mattias.ronnblom@ericsson.com>,
- "Yipeng Wang" <yipeng1.wang@intel.com>,
- "Sameh Gobriel" <sameh.gobriel@intel.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>,
- "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,93 +62,106 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBNYXR0aWFzIFLDtm5uYmxvbSBbbWFpbHRvOmhvZm9yc0BseXNhdG9yLmxpdS5zZV0N
-Cj4gU2VudDogRnJpZGF5LCAyMiBBdWd1c3QgMjAyNSAwOS4yMA0KPiANCj4gT24gMjAyNS0wOC0y
-MSAyMjozNSwgU3RlcGhlbiBIZW1taW5nZXIgd3JvdGU6DQo+ID4gQWRkIG5ldyBjb21wYXJlIGZ1
-bmN0aW9ucyBmb3IgY29tbW9uIHNtYWxsIGtleSBzaXplcy4NCj4gPg0KPiA+IEJ1Z3ppbGxhIElE
-OiAxNzc1DQo+ID4gU3VnZ2VzdGVkLWJ5OiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFyZXN5
-c3RlbXMuY29tPg0KPiA+IFJlcG9ydGVkLWJ5OiBNYXR0aWFzIFLDtm5uYmxvbSA8bWF0dGlhcy5y
-b25uYmxvbUBlcmljc3Nvbi5jb20+DQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIEhl
-bW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+DQo+ID4gLS0tDQo+ID4gICBsaWIv
-aGFzaC9ydGVfY3Vja29vX2hhc2guYyB8IDU0ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrDQo+ID4gICAxIGZpbGUgY2hhbmdlZCwgNTQgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+
-ID4gZGlmZiAtLWdpdCBhL2xpYi9oYXNoL3J0ZV9jdWNrb29faGFzaC5jIGIvbGliL2hhc2gvcnRl
-X2N1Y2tvb19oYXNoLmMNCj4gPiBpbmRleCAzMjEyNjk1ZDkyLi44MjU4ODljMzIwIDEwMDY0NA0K
-PiA+IC0tLSBhL2xpYi9oYXNoL3J0ZV9jdWNrb29faGFzaC5jDQo+ID4gKysrIGIvbGliL2hhc2gv
-cnRlX2N1Y2tvb19oYXNoLmMNCj4gPiBAQCAtNDksNiArNDksMTEgQEAgUlRFX0xPR19SRUdJU1RF
-Ul9ERUZBVUxUKGhhc2hfbG9ndHlwZSwgSU5GTyk7DQo+ID4gICAgKi8NCj4gPiAgIGVudW0gY21w
-X2p1bXBfdGFibGVfY2FzZSB7DQo+ID4gICAJS0VZX0NVU1RPTSA9IDAsDQo+ID4gKwlLRVlfMl9C
-WVRFUywNCj4gPiArCUtFWV80X0JZVEVTLA0KPiA+ICsJS0VZXzZfQllURVMsDQo+ID4gKwlLRVlf
-OF9CWVRFUywNCj4gPiArCUtFWV8xMl9CWVRFUywNCg0KV2hpbGUgeW91IGFyZSBhdCBpdCwgY29u
-c2lkZXIgYWRkaW5nIGhhbmRsZXJzIGZvciAzLCA1LCAxMCBhbmQgMTQgYnl0ZXMgdG9vLg0KDQo+
-ID4gICAJS0VZXzE2X0JZVEVTLA0KPiA+ICAgCUtFWV8zMl9CWVRFUywNCj4gPiAgIAlLRVlfNDhf
-QllURVMsDQo+ID4gQEAgLTg2LDYgKzkxLDUwIEBAIHJ0ZV9oYXNoX2szMl9jbXBfZXEoY29uc3Qg
-dm9pZCAqa2V5MSwgY29uc3Qgdm9pZCAqa2V5MiwNCj4gc2l6ZV90IGtleV9sZW4pDQo+ID4gICB9
-DQo+ID4gICAjZW5kaWYNCj4gPg0KPiA+ICtzdGF0aWMgaW5saW5lIGludA0KPiA+ICtydGVfaGFz
-aF9rMl9jbXBfZXEoY29uc3Qgdm9pZCAqa2V5MSwgY29uc3Qgdm9pZCAqa2V5Miwgc2l6ZV90IGtl
-eV9sZW4NCj4gX19ydGVfdW51c2VkKQ0KPiA+ICt7DQo+ID4gKwljb25zdCB1aW50MTZfdCAqazEg
-PSBrZXkxOw0KPiA+ICsJY29uc3QgdWludDE2X3QgKmsyID0ga2V5MjsNCj4gPiArDQo+IA0KPiBX
-aGF0IHdlIGRvIG5vdyBpcyB0byByZXF1aXJlIHRoZSBrZXlzIGFyZSAxNi1iaXQgYWxpZ25lZCAo
-d2hpY2ggd2Fzbid0DQo+IHRoZSBjYXNlIGJlZm9yZSkuDQo+IA0KPiBZb3UgY291bGQNCj4gDQo+
-IHVpbnQxNl90IGsxOw0KPiBtZW1jcHkoJmsxLCBrZXkxLCBzaXplb2YodWludDE2X3QpKTsNCj4g
-aW5zdGVhZC4NCj4gDQo+IFdvdWxkIGdlbmVyYXRlIHRoZSBzYW1lIGNvZGUsIGJ1dCBiZSBzYWZl
-IGZyb20gYW55IGZ1dHVyZSBhbGlnbm1lbnQgaXNzdWVzLg0KDQpPciB1c2UgdGhlIHVuYWxpZ25l
-ZCB0eXBlcywgZS5nLjoNCgljb25zdCB1bmFsaWduZWRfdWludDE2X3QgKmsxID0ga2V5MTsNCglj
-b25zdCB1bmFsaWduZWRfdWludDE2X3QgKmsyID0ga2V5MjsNCg0KPiANCj4gQW55d2F5LCBtYXli
-ZSBpdCdzIHNhZmUgdG8gYXNzdW1lIHRoZSBrZXlzIGFyZSBhbGlnbmVkLCBzbyB0aGlzIGlzIG5v
-dA0KPiBhbiBpc3N1ZS4NCg0KTG90cyBvZiBEUERLIGNvZGUgaWdub3JlcyBhbGlnbm1lbnQgaXNz
-dWVzLg0KDQo+IA0KPiA+ICsJcmV0dXJuIGsxWzBdIF4gazJbMF07DQo+ID4gK30NCj4gDQo+IEhh
-dmVuJ3QgeW91IGltcGxlbWVudGVkICJuZXEiIHJhdGhlciB0aGFuICJlcSIgaGVyZT8gSWYgdGhl
-IGtleXMgYXJlDQo+IGVxdWFsLCB0aGUgcmVzdWx0IGlzIDAuIFNob3VsZCBiZSAhPSAwLg0KDQpO
-b3QgYSBidWcuDQpUaGVzZSBoYXNoIGNvbXBhcmUgZnVuY3Rpb25zIGFyZSBpbiBmYWN0ICJuZXEi
-LCBub3QgImVxIi4NCkhhdmluZyAiX2NtcF9lcSIgaW4gdGhlIGZ1bmN0aW9uIG5hbWVzIGlzIGV4
-dHJlbWVseSB1bmZvcnR1bmF0ZSBhbmQgbWlzbGVhZGluZy4NCg0KPiANCj4gV291bGQgaXQgYmUg
-d29ydGggYWRkaW5nIGEgY29tbWVudCBsaWtlICJ1c2UgWE9SIHRvIG1ha2UgdGhpcw0KPiBicmFu
-Y2gtZnJlZSI/IEl0IG1heSBub3QgYmUgb2J2aW91cyB0byBhbGwgcmVhZGVycy4NCj4gDQo+IFRo
-YXQgc2FpZCwgSeKAmW0gbm90IHN1cmUgdGhpcyB0cmljayB3aWxsIGFjdHVhbGx5IGNoYW5nZSB0
-aGUgZ2VuZXJhdGVkDQo+IG9iamVjdCBjb2RlIC0gZXNwZWNpYWxseSBpZiB0aGUgcmVzdWx0IG9m
-IHRoZSBlcSBmdW5jdGlvbiBpcyBzdGlsbCB1c2VkDQo+IGluIGEgY29uZGl0aW9uYWwgYWZ0ZXJ3
-YXJkLiBBbnl3YXksIGtlZXBpbmcgaXQgc2VlbXMgbGlrZSBhIGdvb2QNCj4gY29uc2VydmF0aXZl
-IGFwcHJvYWNoLg0KDQpJIHdvbmRlciBpZiBhbnkgY29tcGlsZXIgaXMgY2xldmVyIGVub3VnaCB0
-byB1c2UgYSBkaWZmZXJlbnQgbWVtY21wIGltcGxlbWVudGF0aW9uIGlmIHdlIGluZm9ybSB0aGUg
-Y29tcGlsZXIgYXQgYnVpbGQgdGltZSB0aGF0IHdlIGRvbid0IGNhcmUgaWYga2V5MSBpcyBsZXNz
-IHRoYW4gb3IgZ3JlYXRlciBrZXkyLCBvbmx5IGlmIHRoZXkgZGlmZmVyIG9yIG5vdC4NCklmIHNv
-LCB0aGUgT1RIRVJfQllURVMgaGFuZGxlciBzaG91bGRuJ3QgY2FsbCBtZW1jbXAoKSBkaXJlY3Rs
-eSwgYnV0IGEgd3JhcHBlciBhcm91bmQgaXQ6DQoNCnJ0ZV9oYXNoX2tfY21wX2VxKGNvbnN0IHZv
-aWQgKmtleTEsIGNvbnN0IHZvaWQgKmtleTIsIHNpemVfdCBrZXlfbGVuIF9fcnRlX3VudXNlZCkN
-CnsNCglyZXR1cm4gbWVtY21wKGtleTEsIGtleTIsIGtleV9sZW4pICE9IDA7DQp9DQoNCj4gDQo+
-ID4gKw0KPiA+ICtzdGF0aWMgaW5saW5lIGludA0KPiA+ICtydGVfaGFzaF9rNF9jbXBfZXEoY29u
-c3Qgdm9pZCAqa2V5MSwgY29uc3Qgdm9pZCAqa2V5Miwgc2l6ZV90IGtleV9sZW4NCj4gX19ydGVf
-dW51c2VkKQ0KPiA+ICt7DQo+ID4gKwljb25zdCB1aW50MzJfdCAqazEgPSBrZXkxOw0KPiA+ICsJ
-Y29uc3QgdWludDMyX3QgKmsyID0ga2V5MjsNCj4gPiArDQo+ID4gKwlyZXR1cm4gazFbMF0gXiBr
-MlswXTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGlubGluZSBpbnQNCj4gPiArcnRlX2hh
-c2hfazZfY21wX2VxKGNvbnN0IHZvaWQgKmtleTEsIGNvbnN0IHZvaWQgKmtleTIsIHNpemVfdCBr
-ZXlfbGVuDQo+IF9fcnRlX3VudXNlZCkNCj4gPiArew0KPiA+ICsJY29uc3QgdWludDE2X3QgKmsx
-ID0ga2V5MTsNCj4gPiArCWNvbnN0IHVpbnQxNl90ICprMiA9IGtleTI7DQo+ID4gKw0KPiA+ICsJ
-cmV0dXJuIChrMVswXSBeIGsyWzBdKSB8IChrMVsxXSBeIGsyWzFdKSB8IChrMVsyXSBeIGsyWzJd
-KTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGlubGluZSBpbnQNCj4gPiArcnRlX2hhc2hf
-azhfY21wX2VxKGNvbnN0IHZvaWQgKmtleTEsIGNvbnN0IHZvaWQgKmtleTIsIHNpemVfdCBrZXlf
-bGVuDQo+IF9fcnRlX3VudXNlZCkNCj4gPiArew0KPiA+ICsJY29uc3QgdWludDY0X3QgKmsxID0g
-a2V5MTsNCj4gPiArCWNvbnN0IHVpbnQ2NF90ICprMiA9IGtleTI7DQo+ID4gKw0KPiA+ICsJcmV0
-dXJuIGsxWzBdIF4gazJbMF07DQoNCkkgdGhpbmsgdGhpcyBoYXMgYSB0cnVuY2F0aW9uIGJ1ZyB3
-aGVuIGNvbnZlcnRpbmcgZnJvbSB1aW50NjRfdCB0byBpbnQgcmV0dXJuIHR5cGUuDQpBbHNvIGNv
-bnNpZGVyIGlmIDMyIGJpdCBhcmNoaXRlY3R1cmUgbmVlZCBhIGRpZmZlcmVudCBpbXBsZW1lbnRh
-dGlvbi4gKERvbid0IGtub3csIGp1c3QgcmFpc2luZyBhIHBvdGVudGlhbCBmbGFnLikNCg0KPiA+
-ICt9DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW5saW5lIGludA0KPiA+ICtydGVfaGFzaF9rMTJfY21w
-X2VxKGNvbnN0IHZvaWQgKmtleTEsIGNvbnN0IHZvaWQgKmtleTIsIHNpemVfdCBrZXlfbGVuDQo+
-IF9fcnRlX3VudXNlZCkNCj4gPiArew0KPiA+ICsJY29uc3QgdWludDMyX3QgKmsxID0ga2V5MTsN
-Cj4gPiArCWNvbnN0IHVpbnQzMl90ICprMiA9IGtleTI7DQo+ID4gKw0KPiA+ICsJcmV0dXJuIChr
-MVswXSBeIGsyWzBdKSB8IChrMVsxXSBeIGsyWzFdKSB8IChrMVsyXSBeIGsyWzJdKTsNCj4gPiAr
-fQ0KPiA+DQo+ID4gICBzdGF0aWMgaW5saW5lIGludA0KPiA+ICAgcnRlX2hhc2hfazQ4X2NtcF9l
-cShjb25zdCB2b2lkICprZXkxLCBjb25zdCB2b2lkICprZXkyLCBzaXplX3Qga2V5X2xlbikNCj4g
-PiBAQCAtMjI4LDYgKzI3NywxMSBAQCB2b2lkIHJ0ZV9oYXNoX3NldF9jbXBfZnVuYyhzdHJ1Y3Qg
-cnRlX2hhc2ggKmgsDQo+IHJ0ZV9oYXNoX2NtcF9lcV90IGZ1bmMpDQo+ID4gICAgKi8NCj4gPiAg
-IHN0YXRpYyBjb25zdCBydGVfaGFzaF9jbXBfZXFfdCBjbXBfanVtcF90YWJsZVtOVU1fS0VZX0NN
-UF9DQVNFU10gPSB7DQo+ID4gICAJW0tFWV9DVVNUT01dID0gTlVMTCwNCj4gPiArCVtLRVlfMl9C
-WVRFU10gPSBydGVfaGFzaF9rMl9jbXBfZXEsDQo+ID4gKwlbS0VZXzRfQllURVNdID0gcnRlX2hh
-c2hfazRfY21wX2VxLA0KPiA+ICsJW0tFWV82X0JZVEVTXSA9IHJ0ZV9oYXNoX2s2X2NtcF9lcSwN
-Cj4gPiArCVtLRVlfOF9CWVRFU10gPSBydGVfaGFzaF9rOF9jbXBfZXEsDQo+ID4gKwlbS0VZXzEy
-X0JZVEVTXSA9IHJ0ZV9oYXNoX2sxMl9jbXBfZXEsDQo+ID4gICAJW0tFWV8xNl9CWVRFU10gPSBy
-dGVfaGFzaF9rMTZfY21wX2VxLA0KPiA+ICAgCVtLRVlfMzJfQllURVNdID0gcnRlX2hhc2hfazMy
-X2NtcF9lcSwNCj4gPiAgIAlbS0VZXzQ4X0JZVEVTXSA9IHJ0ZV9oYXNoX2s0OF9jbXBfZXEsDQoN
-Cg==
+In the case when PMD cannot support the full process of the SM2,
+but elliptic curve computation only, additional fields
+are needed to handle such a case.
+
+Points C1, kP therefore were added to the SM2 crypto operation struct.
+
+Signed-off-by: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
+Signed-off-by: Kai Ji <kai.ji@intel.com>
+---
+ doc/guides/rel_notes/release_25_11.rst |  2 +
+ lib/cryptodev/rte_crypto_asym.h        | 56 +++++++++++++++++++-------
+ 2 files changed, 44 insertions(+), 14 deletions(-)
+
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index ccad6d89ff..b15d2e0e8f 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -100,6 +100,8 @@ ABI Changes
+    Also, make sure to start the actual text at the margin.
+    =======================================================
+ 
++* cryptodev: The ``rte_crypto_sm2_op_param`` struct member to hold ciphertext
++  is changed to union data type. This change is to support partial SM2 calculation.
+ 
+ Known Issues
+ ------------
+diff --git a/lib/cryptodev/rte_crypto_asym.h b/lib/cryptodev/rte_crypto_asym.h
+index 9787b710e7..039dcb85a7 100644
+--- a/lib/cryptodev/rte_crypto_asym.h
++++ b/lib/cryptodev/rte_crypto_asym.h
+@@ -654,6 +654,8 @@ enum rte_crypto_sm2_op_capa {
+ 	/**< Random number generator supported in SM2 ops. */
+ 	RTE_CRYPTO_SM2_PH,
+ 	/**< Prehash message before crypto op. */
++	RTE_CRYPTO_SM2_PARTIAL,
++	/**< Calculate elliptic curve points only. */
+ };
+ 
+ /**
+@@ -681,20 +683,46 @@ struct rte_crypto_sm2_op_param {
+ 	 * will be overwritten by the PMD with the decrypted length.
+ 	 */
+ 
+-	rte_crypto_param cipher;
+-	/**<
+-	 * Pointer to input data
+-	 * - to be decrypted for SM2 private decrypt.
+-	 *
+-	 * Pointer to output data
+-	 * - for SM2 public encrypt.
+-	 * In this case the underlying array should have been allocated
+-	 * with enough memory to hold ciphertext output (at least X bytes
+-	 * for prime field curve of N bytes and for message M bytes,
+-	 * where X = (C1 || C2 || C3) and computed based on SM2 RFC as
+-	 * C1 (1 + N + N), C2 = M, C3 = N. The cipher.length field will
+-	 * be overwritten by the PMD with the encrypted length.
+-	 */
++	union {
++		rte_crypto_param cipher;
++		/**<
++		 * Pointer to input data
++		 * - to be decrypted for SM2 private decrypt.
++		 *
++		 * Pointer to output data
++		 * - for SM2 public encrypt.
++		 * In this case the underlying array should have been allocated
++		 * with enough memory to hold ciphertext output (at least X bytes
++		 * for prime field curve of N bytes and for message M bytes,
++		 * where X = (C1 || C2 || C3) and computed based on SM2 RFC as
++		 * C1 (1 + N + N), C2 = M, C3 = N. The cipher.length field will
++		 * be overwritten by the PMD with the encrypted length.
++		 */
++		struct {
++			struct rte_crypto_ec_point c1;
++			/**<
++			 * This field is used only when PMD does not support the full
++			 * process of the SM2 encryption/decryption, but the elliptic
++			 * curve part only.
++			 *
++			 * In the case of encryption, it is an output - point C1 = (x1,y1).
++			 * In the case of decryption, if is an input - point C1 = (x1,y1).
++			 *
++			 * Must be used along with the RTE_CRYPTO_SM2_PARTIAL flag.
++			 */
++			struct rte_crypto_ec_point kp;
++			/**<
++			 * This field is used only when PMD does not support the full
++			 * process of the SM2 encryption/decryption, but the elliptic
++			 * curve part only.
++			 *
++			 * It is an output in the encryption case, it is a point
++			 * [k]P = (x2,y2).
++			 *
++			 * Must be used along with the RTE_CRYPTO_SM2_PARTIAL flag.
++			 */
++		};
++	};
+ 
+ 	rte_crypto_uint id;
+ 	/**< The SM2 id used by signer and verifier. */
+-- 
+2.43.0
+
