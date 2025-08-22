@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6E6CA0EED
-	for <dpdk-dev@archiver.kernel.org>; Fri, 22 Aug 2025 09:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 718DDCA0EED
+	for <dpdk-dev@archiver.kernel.org>; Fri, 22 Aug 2025 09:05:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AC47340B90;
-	Fri, 22 Aug 2025 11:04:27 +0200 (CEST)
-Received: from out28-197.mail.aliyun.com (out28-197.mail.aliyun.com
- [115.124.28.197])
- by mails.dpdk.org (Postfix) with ESMTP id 93B88406B6
+	by mails.dpdk.org (Postfix) with ESMTP id D858240BA5;
+	Fri, 22 Aug 2025 11:04:28 +0200 (CEST)
+Received: from out28-221.mail.aliyun.com (out28-221.mail.aliyun.com
+ [115.124.28.221])
+ by mails.dpdk.org (Postfix) with ESMTP id C89F0406B7
  for <dev@dpdk.org>; Fri, 22 Aug 2025 11:04:16 +0200 (CEST)
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.eN-JelS_1755853452 cluster:ay29) by smtp.aliyun-inc.com;
- Fri, 22 Aug 2025 17:04:13 +0800
+ fp:SMTPD_---.eN-JeoM_1755853454 cluster:ay29) by smtp.aliyun-inc.com;
+ Fri, 22 Aug 2025 17:04:14 +0800
 From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 To: dimon.zhao@nebula-matrix.com,
 	dev@dpdk.org
 Cc: Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>,
  Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v6 10/17] net/nbl: add nbl coexistence mode for nbl
-Date: Fri, 22 Aug 2025 02:03:52 -0700
-Message-Id: <20250822090359.614551-11-dimon.zhao@nebula-matrix.com>
+Subject: [PATCH v6 13/17] net/nbl: add nbl device start and stop ops
+Date: Fri, 22 Aug 2025 02:03:55 -0700
+Message-Id: <20250822090359.614551-14-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250822090359.614551-1-dimon.zhao@nebula-matrix.com>
 References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
@@ -41,1182 +41,676 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-NBL device support coexistence mode
+Implement NBL device start and stop functions
 
 Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 ---
- drivers/net/nbl/nbl_common/nbl_userdev.c     | 747 ++++++++++++++++++-
- drivers/net/nbl/nbl_common/nbl_userdev.h     |  11 +
- drivers/net/nbl/nbl_core.c                   |   3 +-
- drivers/net/nbl/nbl_core.h                   |   1 -
- drivers/net/nbl/nbl_hw/nbl_channel.c         | 184 ++++-
- drivers/net/nbl/nbl_hw/nbl_channel.h         |  11 +
- drivers/net/nbl/nbl_include/nbl_def_common.h |  63 ++
- drivers/net/nbl/nbl_include/nbl_include.h    |   2 +
- 8 files changed, 1014 insertions(+), 8 deletions(-)
+ drivers/net/nbl/nbl_dev/nbl_dev.c             | 172 +++++++++++++++++-
+ drivers/net/nbl/nbl_dispatch.c                | 121 +++++++++++-
+ drivers/net/nbl/nbl_hw/nbl_txrx.c             |  72 +++++++-
+ drivers/net/nbl/nbl_hw/nbl_txrx.h             |  14 +-
+ drivers/net/nbl/nbl_include/nbl_def_channel.h |  20 ++
+ drivers/net/nbl/nbl_include/nbl_def_common.h  |   6 +-
+ .../net/nbl/nbl_include/nbl_def_dispatch.h    |   2 +-
+ .../net/nbl/nbl_include/nbl_def_resource.h    |   4 +
+ drivers/net/nbl/nbl_include/nbl_include.h     |   9 +-
+ 9 files changed, 389 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/net/nbl/nbl_common/nbl_userdev.c b/drivers/net/nbl/nbl_common/nbl_userdev.c
-index 87b943ccd7..5527b615b4 100644
---- a/drivers/net/nbl/nbl_common/nbl_userdev.c
-+++ b/drivers/net/nbl/nbl_common/nbl_userdev.c
-@@ -3,15 +3,738 @@
-  */
- 
- #include "nbl_userdev.h"
-+#include <rte_vfio.h>
- 
--int nbl_pci_map_device(struct nbl_adapter *adapter)
-+#define NBL_USERDEV_EVENT_CLB_NAME	"nbl_userspace_mem_event_clb"
-+#define NBL_USERDEV_BAR0_SIZE		65536
-+#define NBL_USERDEV_DMA_LIMIT		0xFFFFFFFFFFFF
-+
-+/* Size of the buffer to receive kernel messages */
-+#define NBL_NL_BUF_SIZE (32 * 1024)
-+/* Send buffer size for the Netlink socket */
-+#define NBL_SEND_BUF_SIZE 32768
-+/* Receive buffer size for the Netlink socket */
-+#define NBL_RECV_BUF_SIZE 32768
-+
-+struct nbl_userdev_map_record {
-+	TAILQ_ENTRY(nbl_userdev_map_record) next;
-+	u64 vaddr;
-+	u64 iova;
-+	u64 len;
-+};
-+
-+static int nbl_default_container = -1;
-+static int nbl_group_count;
-+
-+TAILQ_HEAD(nbl_adapter_list_head, nbl_adapter);
-+static struct nbl_adapter_list_head nbl_adapter_list =
-+	TAILQ_HEAD_INITIALIZER(nbl_adapter_list);
-+
-+TAILQ_HEAD(nbl_userdev_map_record_head, nbl_userdev_map_record);
-+static struct nbl_userdev_map_record_head nbl_map_list =
-+	TAILQ_HEAD_INITIALIZER(nbl_map_list);
-+
-+static int
-+nbl_userdev_dma_mem_map(int devfd, uint64_t vaddr, uint64_t iova, uint64_t len)
- {
--	struct rte_pci_device *pci_dev = adapter->pci_dev;
-+	struct nbl_dev_user_dma_map dma_map;
- 	int ret = 0;
- 
--	ret = rte_pci_map_device(pci_dev);
-+	memset(&dma_map, 0, sizeof(dma_map));
-+	dma_map.argsz = sizeof(struct nbl_dev_user_dma_map);
-+	dma_map.vaddr = vaddr;
-+	dma_map.size = len;
-+	dma_map.iova = iova;
-+	dma_map.flags = NBL_DEV_USER_DMA_MAP_FLAG_READ |
-+			NBL_DEV_USER_DMA_MAP_FLAG_WRITE;
-+
-+	ret = ioctl(devfd, NBL_DEV_USER_MAP_DMA, &dma_map);
-+	if (ret) {
-+		/**
-+		 * In case the mapping was already done EEXIST will be
-+		 * returned from kernel.
-+		 */
-+		if (errno == EEXIST) {
-+			NBL_LOG(ERR,
-+				"nbl container Memory segment is already mapped,skipping");
-+			ret = 0;
-+		} else {
-+			NBL_LOG(ERR,
-+				"nbl container cannot set up DMA remapping,error %i (%s), ret %d",
-+				errno, strerror(errno), ret);
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static int
-+nbl_vfio_dma_mem_map(int vfio_container_fd, uint64_t vaddr, uint64_t len, int do_map)
-+{
-+	struct vfio_iommu_type1_dma_map dma_map;
-+	struct vfio_iommu_type1_dma_unmap dma_unmap;
-+	int ret;
-+
-+	if (do_map != 0) {
-+		memset(&dma_map, 0, sizeof(dma_map));
-+		dma_map.argsz = sizeof(struct vfio_iommu_type1_dma_map);
-+		dma_map.vaddr = vaddr;
-+		dma_map.size = len;
-+		dma_map.iova = vaddr;
-+		dma_map.flags = VFIO_DMA_MAP_FLAG_READ |
-+				VFIO_DMA_MAP_FLAG_WRITE;
-+
-+		ret = ioctl(vfio_container_fd, VFIO_IOMMU_MAP_DMA, &dma_map);
-+		if (ret) {
-+			/**
-+			 * In case the mapping was already done EEXIST will be
-+			 * returned from kernel.
-+			 */
-+			if (errno == EEXIST) {
-+				NBL_LOG(ERR,
-+					"Memory segment is already mapped, skipping");
-+			} else {
-+				NBL_LOG(ERR,
-+					"cannot set up DMA remapping,error %i (%s)",
-+					errno, strerror(errno));
-+				return -1;
-+			}
-+		}
-+	} else {
-+		memset(&dma_unmap, 0, sizeof(dma_unmap));
-+		dma_unmap.argsz = sizeof(struct vfio_iommu_type1_dma_unmap);
-+		dma_unmap.size = len;
-+		dma_unmap.iova = vaddr;
-+
-+		ret = ioctl(vfio_container_fd, VFIO_IOMMU_UNMAP_DMA, &dma_unmap);
-+		if (ret) {
-+			NBL_LOG(ERR, "cannot clear DMA remapping, error %i (%s)",
-+				errno, strerror(errno));
-+			return -1;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+vfio_map_contig(const struct rte_memseg_list *msl, const struct rte_memseg *ms,
-+		size_t len, void *arg)
-+{
-+	struct nbl_userdev_map_record *record;
-+	int *vfio_container_fd = arg;
-+	int ret;
-+
-+	if (msl->external)
-+		return 0;
-+
-+	ret = nbl_vfio_dma_mem_map(*vfio_container_fd, ms->addr_64, len, 1);
- 	if (ret)
--		NBL_LOG(ERR, "device %s uio or vfio map failed", pci_dev->device.name);
-+		goto vfio_dma_mem_map_fail;
-+
-+	record = malloc(sizeof(*record));
-+	if (!record) {
-+		ret = -ENOMEM;
-+		goto malloc_fail;
-+	}
-+
-+	record->vaddr = ms->addr_64;
-+	record->iova = ms->iova;
-+	record->len = len;
-+	TAILQ_INSERT_TAIL(&nbl_map_list, record, next);
-+
-+	return 0;
-+
-+malloc_fail:
-+	nbl_vfio_dma_mem_map(*vfio_container_fd, ms->addr_64, len, 0);
-+vfio_dma_mem_map_fail:
-+	return ret;
-+}
-+
-+static int
-+vfio_map(const struct rte_memseg_list *msl, const struct rte_memseg *ms, void *arg)
-+{
-+	struct nbl_userdev_map_record *record;
-+	int *vfio_container_fd = arg;
-+	int ret;
-+
-+	/* skip external memory that isn't a heap */
-+	if (msl->external && !msl->heap)
-+		return 0;
-+
-+	/* skip any segments with invalid IOVA addresses */
-+	if (ms->iova == RTE_BAD_IOVA)
-+		return 0;
-+
-+	/* if IOVA mode is VA, we've already mapped the internal segments */
-+	if (!msl->external && rte_eal_iova_mode() == RTE_IOVA_VA)
-+		return 0;
-+
-+	ret = nbl_vfio_dma_mem_map(*vfio_container_fd, ms->addr_64, ms->len, 1);
-+	if (ret)
-+		goto vfio_dma_mem_map_fail;
-+
-+	record = malloc(sizeof(*record));
-+	if (!record) {
-+		ret = -ENOMEM;
-+		goto malloc_fail;
-+	}
-+
-+	record->vaddr = ms->addr_64;
-+	record->iova = ms->iova;
-+	record->len = ms->len;
-+	TAILQ_INSERT_TAIL(&nbl_map_list, record, next);
-+
-+	return 0;
-+
-+malloc_fail:
-+	nbl_vfio_dma_mem_map(*vfio_container_fd, ms->addr_64, ms->len, 0);
-+vfio_dma_mem_map_fail:
-+	return ret;
-+}
-+
-+static int nbl_userdev_vfio_dma_map(int vfio_container_fd)
-+{
-+	if (rte_eal_iova_mode() == RTE_IOVA_VA) {
-+		/**
-+		 * with IOVA as VA mode, we can get away with mapping contiguous
-+		 * chunks rather than going page-by-page.
-+		 */
-+		int ret = rte_memseg_contig_walk(vfio_map_contig,
-+				&vfio_container_fd);
-+		if (ret)
-+			return ret;
-+		/**
-+		 * we have to continue the walk because we've skipped the
-+		 * external segments during the config walk.
-+		 */
-+	}
-+	return rte_memseg_walk(vfio_map, &vfio_container_fd);
-+}
-+
-+static int nbl_userdev_dma_map(struct nbl_adapter *adapter)
-+{
-+	struct nbl_common_info *common = &adapter->common;
-+	struct nbl_userdev_map_record *record;
-+	rte_iova_t iova;
-+
-+	rte_mcfg_mem_read_lock();
-+	TAILQ_FOREACH(record, &nbl_map_list, next) {
-+		iova = record->iova;
-+		if (common->dma_set_msb)
-+			iova |= (1UL << common->dma_limit_msb);
-+		nbl_userdev_dma_mem_map(common->devfd, record->vaddr, iova, record->len);
-+	}
-+	TAILQ_INSERT_TAIL(&nbl_adapter_list, adapter, next);
-+	rte_mcfg_mem_read_unlock();
-+
-+	return 0;
-+}
-+
-+static void *nbl_userdev_mmap(int devfd, __rte_unused int bar_index, size_t size)
-+{
-+	void *addr;
-+
-+	addr = rte_mem_map(NULL, size, RTE_PROT_READ | RTE_PROT_WRITE,
-+			   RTE_MAP_SHARED, devfd, 0);
-+	if (!addr)
-+		NBL_LOG(ERR, "usermap mmap bar failed");
-+
-+	return addr;
-+}
-+
-+static int nbl_userdev_add_record(u64 vaddr, u64 iova, u64 len)
-+{
-+	struct nbl_userdev_map_record *record;
-+	struct nbl_adapter *adapter;
-+	u64 dma_iova;
-+	int ret;
-+
-+	record = malloc(sizeof(*record));
-+	if (!record)
-+		return -ENOMEM;
-+
-+	ret = nbl_vfio_dma_mem_map(nbl_default_container, vaddr, len, 1);
-+	if (ret) {
-+		free(record);
-+		return ret;
-+	}
-+
-+	record->iova = iova;
-+	record->len = len;
-+	record->vaddr = vaddr;
-+
-+	TAILQ_INSERT_TAIL(&nbl_map_list, record, next);
-+	TAILQ_FOREACH(adapter, &nbl_adapter_list, next) {
-+		dma_iova = record->iova;
-+		if (adapter->common.dma_set_msb)
-+			dma_iova |= (1UL << adapter->common.dma_limit_msb);
-+		nbl_userdev_dma_mem_map(adapter->common.devfd, record->vaddr,
-+					dma_iova, record->len);
-+	}
-+
-+	return 0;
-+}
-+
-+static int nbl_userdev_free_record(u64 vaddr, u64 iova __rte_unused, u64 len __rte_unused)
-+{
-+	struct nbl_userdev_map_record *record, *tmp_record;
-+
-+	RTE_TAILQ_FOREACH_SAFE(record, &nbl_map_list, next, tmp_record) {
-+		if (record->vaddr != vaddr)
-+			continue;
-+		nbl_vfio_dma_mem_map(nbl_default_container, vaddr, record->len, 0);
-+		TAILQ_REMOVE(&nbl_map_list, record, next);
-+		free(record);
-+	}
-+
-+	return 0;
-+}
-+
-+static void nbl_userdev_dma_free(void)
-+{
-+	struct nbl_userdev_map_record *record, *tmp_record;
-+
-+	RTE_TAILQ_FOREACH_SAFE(record, &nbl_map_list, next, tmp_record) {
-+		TAILQ_REMOVE(&nbl_map_list, record, next);
-+		free(record);
-+	}
-+}
-+
-+static void
-+nbl_userdev_mem_event_callback(enum rte_mem_event type, const void *addr, size_t len,
-+			       void *arg __rte_unused)
-+{
-+	rte_iova_t iova_start, iova_expected;
-+	struct rte_memseg_list *msl;
-+	struct rte_memseg *ms;
-+	size_t cur_len = 0;
-+	u64 va_start;
-+	u64 vfio_va;
-+
-+	if (!nbl_group_count)
-+		return;
-+
-+	msl = rte_mem_virt2memseg_list(addr);
-+
-+	/* for IOVA as VA mode, no need to care for IOVA addresses */
-+	if (rte_eal_iova_mode() == RTE_IOVA_VA && msl->external == 0) {
-+		vfio_va = (u64)(uintptr_t)addr;
-+		if (type == RTE_MEM_EVENT_ALLOC)
-+			nbl_userdev_add_record(vfio_va, vfio_va, len);
-+		else
-+			nbl_userdev_free_record(vfio_va, vfio_va, len);
-+		return;
-+	}
-+
-+	/* memsegs are contiguous in memory */
-+	ms = rte_mem_virt2memseg(addr, msl);
-+
-+	/**
-+	 * This memory is not guaranteed to be contiguous, but it still could
-+	 * be, or it could have some small contiguous chunks. Since the number
-+	 * of VFIO mappings is limited, and VFIO appears to not concatenate
-+	 * adjacent mappings, we have to do this ourselves.
-+	 * So, find contiguous chunks, then map them.
-+	 */
-+	va_start = ms->addr_64;
-+	iova_start = ms->iova;
-+	iova_expected = ms->iova;
-+	while (cur_len < len) {
-+		bool new_contig_area = ms->iova != iova_expected;
-+		bool last_seg = (len - cur_len) == ms->len;
-+		bool skip_last = false;
-+
-+		/* only do mappings when current contiguous area ends */
-+		if (new_contig_area) {
-+			if (type == RTE_MEM_EVENT_ALLOC)
-+				nbl_userdev_add_record(va_start, iova_start,
-+						       iova_expected - iova_start);
-+			else
-+				nbl_userdev_free_record(va_start, iova_start,
-+							iova_expected - iova_start);
-+			va_start = ms->addr_64;
-+			iova_start = ms->iova;
-+		}
-+		/* some memory segments may have invalid IOVA */
-+		if (ms->iova == RTE_BAD_IOVA) {
-+			NBL_LOG(INFO, "Memory segment at %p has bad IOVA, skipping",
-+				ms->addr);
-+			skip_last = true;
-+		}
-+		iova_expected = ms->iova + ms->len;
-+		cur_len += ms->len;
-+		++ms;
-+
-+		/**
-+		 * don't count previous segment, and don't attempt to
-+		 * dereference a potentially invalid pointer.
-+		 */
-+		if (skip_last && !last_seg) {
-+			iova_expected = ms->iova;
-+			iova_start = ms->iova;
-+			va_start = ms->addr_64;
-+		} else if (!skip_last && last_seg) {
-+			/* this is the last segment and we're not skipping */
-+			if (type == RTE_MEM_EVENT_ALLOC)
-+				nbl_userdev_add_record(va_start, iova_start,
-+						       iova_expected - iova_start);
-+			else
-+				nbl_userdev_free_record(va_start, iova_start,
-+							iova_expected - iova_start);
-+		}
-+	}
-+}
-+
-+static int nbl_mdev_map_device(struct nbl_adapter *adapter)
-+{
-+	const struct rte_pci_device *pci_dev = adapter->pci_dev;
-+	struct nbl_common_info *common = &adapter->common;
-+	char dev_name[RTE_DEV_NAME_MAX_LEN] = {0};
-+	char pathname[PATH_MAX];
-+	struct vfio_device_info device_info = { .argsz = sizeof(device_info) };
-+	struct vfio_group_status group_status = {
-+			.argsz = sizeof(group_status)
-+	};
-+	u64 dma_limit = NBL_USERDEV_DMA_LIMIT;
-+	int ret, container_create = 0, container_set = 0;
-+	int vfio_group_fd, container = nbl_default_container;
-+
-+	rte_pci_device_name(&pci_dev->addr, dev_name, RTE_DEV_NAME_MAX_LEN);
-+	snprintf(pathname, sizeof(pathname),
-+		 "%s/%s/", rte_pci_get_sysfs_path(), dev_name);
-+
-+	ret = rte_vfio_get_group_num(pathname, dev_name, &common->iommu_group_num);
-+	if (ret <= 0) {
-+		NBL_LOG(ERR, "nbl vfio group number failed");
-+		return -1;
-+	}
-+
-+	NBL_LOG(INFO, "nbl vfio group number %d", common->iommu_group_num);
-+	/* vfio_container */
-+	if (nbl_default_container < 0) {
-+		container = rte_vfio_container_create();
-+		container_create = 1;
-+
-+		if (container < 0) {
-+			NBL_LOG(ERR, "nbl vfio container create failed");
-+			return -1;
-+		}
-+	}
-+
-+	NBL_LOG(INFO, "nbl vfio container %d", container);
-+	vfio_group_fd = rte_vfio_container_group_bind(container, common->iommu_group_num);
-+	if (vfio_group_fd < 0) {
-+		NBL_LOG(ERR, "nbl vfio group bind failed, %d", vfio_group_fd);
-+		goto free_container;
-+	}
-+
-+	/* check if the group is viable */
-+	ret = ioctl(vfio_group_fd, VFIO_GROUP_GET_STATUS, &group_status);
-+	if (ret) {
-+		NBL_LOG(ERR, "%s cannot get group status,error %i (%s)", dev_name,
-+			errno, strerror(errno));
-+		goto free_group;
-+	} else if (!(group_status.flags & VFIO_GROUP_FLAGS_VIABLE)) {
-+		NBL_LOG(ERR, "%s VFIO group is not viable!", dev_name);
-+		goto free_group;
-+	}
-+
-+	if (!(group_status.flags & VFIO_GROUP_FLAGS_CONTAINER_SET)) {
-+		/* add group to a container */
-+		ret = ioctl(vfio_group_fd, VFIO_GROUP_SET_CONTAINER, &container);
-+		if (ret) {
-+			NBL_LOG(ERR, "%s cannot add VFIO group to container, error %i (%s)",
-+				dev_name, errno, strerror(errno));
-+			goto free_group;
-+		}
-+
-+		nbl_group_count++;
-+		container_set = 1;
-+		/* set an IOMMU type for container */
-+
-+		if (container_create || nbl_group_count == 1) {
-+			if (ioctl(container, VFIO_CHECK_EXTENSION, VFIO_TYPE1v2_IOMMU)) {
-+				ret = ioctl(container, VFIO_SET_IOMMU, VFIO_TYPE1v2_IOMMU);
-+				if (ret) {
-+					NBL_LOG(ERR, "Failed to setup VFIO iommu");
-+					goto unset_container;
-+				}
-+			} else {
-+				NBL_LOG(ERR, "No supported IOMMU available");
-+				goto unset_container;
-+			}
-+
-+			rte_mcfg_mem_read_lock();
-+			ret = nbl_userdev_vfio_dma_map(container);
-+			if (ret) {
-+				rte_mcfg_mem_read_unlock();
-+				NBL_LOG(WARNING, "nbl vfio container dma map failed, %d", ret);
-+				goto free_dma_map;
-+			}
-+			ret = rte_mem_event_callback_register(NBL_USERDEV_EVENT_CLB_NAME,
-+							      nbl_userdev_mem_event_callback, NULL);
-+			rte_mcfg_mem_read_unlock();
-+			if (ret && rte_errno != ENOTSUP) {
-+				NBL_LOG(WARNING, "nbl vfio mem event register callback failed, %d",
-+					ret);
-+				goto free_dma_map;
-+			}
-+		}
-+	}
-+
-+	/* get a file descriptor for the device */
-+	common->devfd = ioctl(vfio_group_fd, VFIO_GROUP_GET_DEVICE_FD, dev_name);
-+	if (common->devfd < 0) {
-+		/* if we cannot get a device fd, this implies a problem with
-+		 * the VFIO group or the container not having IOMMU configured.
-+		 */
-+
-+		NBL_LOG(WARNING, "Getting a vfio_dev_fd for %s failed, %d",
-+			dev_name, common->devfd);
-+		goto unregister_mem_event;
-+	}
-+
-+	if (container_create)
-+		nbl_default_container = container;
-+
-+	common->specific_dma = true;
-+	if (rte_eal_iova_mode() == RTE_IOVA_PA)
-+		common->dma_set_msb = true;
-+	ioctl(common->devfd, NBL_DEV_USER_GET_DMA_LIMIT, &dma_limit);
-+	common->dma_limit_msb = rte_fls_u64(dma_limit) - 1;
-+	if (common->dma_limit_msb < 38) {
-+		NBL_LOG(ERR, "iommu dma limit msb %u, low 3-level page table",
-+			common->dma_limit_msb);
-+		goto close_fd;
-+	}
-+
-+	nbl_userdev_dma_map(adapter);
-+
-+	return 0;
-+
-+close_fd:
-+	close(common->devfd);
-+unregister_mem_event:
-+	if (nbl_group_count == 1) {
-+		rte_mcfg_mem_read_lock();
-+		rte_mem_event_callback_unregister(NBL_USERDEV_EVENT_CLB_NAME, NULL);
-+		rte_mcfg_mem_read_unlock();
-+	}
-+free_dma_map:
-+	if (nbl_group_count == 1) {
-+		rte_mcfg_mem_read_lock();
-+		nbl_userdev_dma_free();
-+		rte_mcfg_mem_read_unlock();
-+	}
-+unset_container:
-+	if (container_set) {
-+		ioctl(vfio_group_fd, VFIO_GROUP_UNSET_CONTAINER, &container);
-+		nbl_group_count--;
-+	}
-+free_group:
-+	close(vfio_group_fd);
-+	rte_vfio_clear_group(vfio_group_fd);
-+free_container:
-+	if (container_create)
-+		rte_vfio_container_destroy(container);
-+	return -1;
-+}
-+
-+static int nbl_mdev_unmap_device(struct nbl_adapter *adapter)
-+{
-+	struct nbl_common_info *common = &adapter->common;
-+	int vfio_group_fd, ret;
-+
-+	close(common->devfd);
-+	rte_mcfg_mem_read_lock();
-+	vfio_group_fd = rte_vfio_container_group_bind(nbl_default_container,
-+						      common->iommu_group_num);
-+	NBL_LOG(INFO, "close vfio_group_fd %d", vfio_group_fd);
-+	ret = ioctl(vfio_group_fd, VFIO_GROUP_UNSET_CONTAINER, &nbl_default_container);
-+	if (ret)
-+		NBL_LOG(ERR, "unset container, error %i (%s) %d",
-+			errno, strerror(errno), ret);
-+	nbl_group_count--;
-+	ret = rte_vfio_container_group_unbind(nbl_default_container, common->iommu_group_num);
-+	if (ret)
-+		NBL_LOG(ERR, "vfio container group unbind failed %d", ret);
-+	if (!nbl_group_count) {
-+		rte_mem_event_callback_unregister(NBL_USERDEV_EVENT_CLB_NAME, NULL);
-+		nbl_userdev_dma_free();
-+	}
-+	rte_mcfg_mem_read_unlock();
-+
-+	return 0;
-+}
-+
-+static int nbl_userdev_get_ifindex(int devfd)
-+{
-+	int ifindex = -1, ret;
-+
-+	ret = ioctl(devfd, NBL_DEV_USER_GET_IFINDEX, &ifindex);
-+	if (ret)
-+		NBL_LOG(ERR, "get ifindex failed %d", ret);
-+
-+	NBL_LOG(INFO, "get ifindex %d", ifindex);
-+
-+	return ifindex;
-+}
-+
-+static int nbl_userdev_nl_init(int protocol)
-+{
-+	int fd;
-+	int sndbuf_size = NBL_SEND_BUF_SIZE;
-+	int rcvbuf_size = NBL_RECV_BUF_SIZE;
-+	struct sockaddr_nl local = {
-+		.nl_family = AF_NETLINK,
-+	};
-+	int ret;
-+
-+	fd = socket(AF_NETLINK, SOCK_RAW | SOCK_CLOEXEC, protocol);
-+	if (fd == -1) {
-+		rte_errno = errno;
-+		return -rte_errno;
-+	}
-+	ret = setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &sndbuf_size, sizeof(int));
-+	if (ret == -1) {
-+		rte_errno = errno;
-+		goto error;
-+	}
-+	ret = setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &rcvbuf_size, sizeof(int));
-+	if (ret == -1) {
-+		rte_errno = errno;
-+		goto error;
-+	}
-+	ret = bind(fd, (struct sockaddr *)&local, sizeof(local));
-+	if (ret == -1) {
-+		rte_errno = errno;
-+		goto error;
-+	}
-+	return fd;
-+error:
-+	close(fd);
-+	return -rte_errno;
-+}
-+
-+int nbl_userdev_port_config(struct nbl_adapter *adapter, int start)
-+{
-+	struct nbl_common_info *common = &adapter->common;
-+	int ret;
-+
-+	if (NBL_IS_NOT_COEXISTENCE(common))
-+		return 0;
-+
-+	if (common->isolate)
-+		return 0;
-+
-+	ret = ioctl(common->devfd, NBL_DEV_USER_SWITCH_NETWORK, &start);
-+	if (ret) {
-+		NBL_LOG(ERR, "userspace switch network ret %d", ret);
-+		return ret;
-+	}
-+
-+	common->curr_network = start;
-+	return ret;
-+}
-+
-+int nbl_userdev_port_isolate(struct nbl_adapter *adapter, int set, struct rte_flow_error *error)
-+{
-+	struct nbl_common_info *common = &adapter->common;
-+	int ret = 0, stat = !set;
-+
-+	if (NBL_IS_NOT_COEXISTENCE(common)) {
-+		/* special use for isolate: offload mode ignore isolate when pf is in vfio/uio */
-+		rte_flow_error_set(error, EREMOTEIO,
-+				   RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-+				   "nbl isolate switch failed.");
-+		return -EREMOTEIO;
-+	}
-+
-+	if (common->curr_network != stat)
-+		ret = ioctl(common->devfd, NBL_DEV_USER_SWITCH_NETWORK, &stat);
-+
-+	if (ret) {
-+		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-+				   "nbl isolate switch failed.");
-+		return ret;
-+	}
-+
-+	common->curr_network = !set;
-+	common->isolate = set;
-+
-+	return ret;
-+}
-+
-+int nbl_pci_map_device(struct nbl_adapter *adapter)
-+{
-+	struct rte_pci_device *pci_dev = adapter->pci_dev;
-+	const struct rte_pci_addr *loc = &pci_dev->addr;
-+	struct nbl_common_info *common = &adapter->common;
-+	char pathname[PATH_MAX];
-+	int ret = 0, fd;
-+	enum rte_iova_mode iova_mode;
-+	size_t bar_size = NBL_USERDEV_BAR0_SIZE;
-+
-+	NBL_USERDEV_INIT_COMMON(common);
-+	iova_mode = rte_eal_iova_mode();
-+	if (iova_mode == RTE_IOVA_PA) {
-+		/* check iommu disable */
-+		snprintf(pathname, sizeof(pathname),
-+			 "/dev/nbl_userdev/" PCI_PRI_FMT, loc->domain,
-+			 loc->bus, loc->devid, loc->function);
-+		common->devfd = open(pathname, O_RDWR);
-+		if (common->devfd >= 0)
-+			goto mmap;
-+
-+		NBL_LOG(INFO, "%s char device open failed", pci_dev->device.name);
-+	}
-+
-+	/* check iommu translate mode */
-+	ret = nbl_mdev_map_device(adapter);
-+	if (ret) {
-+		ret = rte_pci_map_device(pci_dev);
-+		if (ret)
-+			NBL_LOG(ERR, "uio/vfio %s map device failed", pci_dev->device.name);
-+		return ret;
-+	}
-+
-+mmap:
-+	fd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
-+	if (fd < 0) {
-+		NBL_LOG(ERR, "nbl userdev get event fd failed");
-+		ret = -1;
-+		goto close_fd;
-+	}
-+
-+	ret = ioctl(common->devfd, NBL_DEV_USER_SET_EVENTFD, &fd);
-+	if (ret) {
-+		NBL_LOG(ERR, "nbl userdev set event fd failed");
-+		goto close_eventfd;
-+	}
-+
-+	common->eventfd = fd;
-+	ioctl(common->devfd, NBL_DEV_USER_GET_BAR_SIZE, &bar_size);
-+
-+	if (!ret) {
-+		pci_dev->mem_resource[0].addr = nbl_userdev_mmap(common->devfd, 0, bar_size);
-+		pci_dev->mem_resource[0].phys_addr = 0;
-+		pci_dev->mem_resource[0].len = bar_size;
-+		pci_dev->mem_resource[2].addr = 0;
-+
-+		common->ifindex = nbl_userdev_get_ifindex(common->devfd);
-+		common->nl_socket_route = nbl_userdev_nl_init(NETLINK_ROUTE);
-+	}
-+
-+	return ret;
-+
-+close_eventfd:
-+	close(fd);
-+close_fd:
-+	if (common->specific_dma)
-+		nbl_mdev_unmap_device(adapter);
-+	else
-+		close(common->devfd);
- 
+diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
+index 8ec1eea9e8..5601cf8c50 100644
+--- a/drivers/net/nbl/nbl_dev/nbl_dev.c
++++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
+@@ -44,21 +44,179 @@ int nbl_dev_configure(struct rte_eth_dev *eth_dev)
  	return ret;
  }
-@@ -19,6 +742,20 @@ int nbl_pci_map_device(struct nbl_adapter *adapter)
- void nbl_pci_unmap_device(struct nbl_adapter *adapter)
- {
- 	struct rte_pci_device *pci_dev = adapter->pci_dev;
-+	struct nbl_common_info *common = &adapter->common;
-+
-+	if (NBL_IS_NOT_COEXISTENCE(common))
-+		return rte_pci_unmap_device(pci_dev);
-+
-+	rte_mem_unmap(pci_dev->mem_resource[0].addr, pci_dev->mem_resource[0].len);
-+	ioctl(common->devfd, NBL_DEV_USER_CLEAR_EVENTFD, 0);
-+	close(common->eventfd);
-+	close(common->nl_socket_route);
-+
-+	if (!common->specific_dma) {
-+		close(common->devfd);
-+		return;
-+	}
  
--	return rte_pci_unmap_device(pci_dev);
-+	nbl_mdev_unmap_device(adapter);
- }
-diff --git a/drivers/net/nbl/nbl_common/nbl_userdev.h b/drivers/net/nbl/nbl_common/nbl_userdev.h
-index 11cc29999c..2221e19c67 100644
---- a/drivers/net/nbl/nbl_common/nbl_userdev.h
-+++ b/drivers/net/nbl/nbl_common/nbl_userdev.h
-@@ -6,5 +6,16 @@
- #define _NBL_USERDEV_H_
- 
- #include "nbl_ethdev.h"
-+#include "nbl_common.h"
-+
-+#define NBL_USERDEV_INIT_COMMON(common) do {		\
-+	typeof(common) _comm = (common);		\
-+	_comm->devfd = -1;				\
-+	_comm->eventfd = -1;				\
-+	_comm->specific_dma = false;			\
-+	_comm->dma_set_msb = false;			\
-+	_comm->ifindex = -1;				\
-+	_comm->nl_socket_route = -1;			\
-+} while (0)
- 
- #endif
-diff --git a/drivers/net/nbl/nbl_core.c b/drivers/net/nbl/nbl_core.c
-index ce6c09769b..2d95a76569 100644
---- a/drivers/net/nbl/nbl_core.c
-+++ b/drivers/net/nbl/nbl_core.c
-@@ -32,11 +32,12 @@ static void nbl_init_func_caps(const struct rte_pci_device *pci_dev, struct nbl_
- 
- int nbl_core_init(struct nbl_adapter *adapter, const struct rte_eth_dev *eth_dev)
- {
--	const struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-+	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
- 	const struct nbl_product_core_ops *product_base_ops = NULL;
- 	struct nbl_common_info *common = NBL_ADAPTER_TO_COMMON(adapter);
- 	int ret = 0;
- 
-+	adapter->pci_dev = pci_dev;
- 	common->eth_dev = eth_dev;
- 	nbl_init_func_caps(pci_dev, &adapter->caps);
- 
-diff --git a/drivers/net/nbl/nbl_core.h b/drivers/net/nbl/nbl_core.h
-index 0ec7148e5a..0db4e77dac 100644
---- a/drivers/net/nbl/nbl_core.h
-+++ b/drivers/net/nbl/nbl_core.h
-@@ -51,7 +51,6 @@
- #define NBL_IS_NOT_COEXISTENCE(common)		({ typeof(common) _common = (common);	\
- 						_common->nl_socket_route < 0 ||		\
- 						_common->ifindex < 0; })
--
- struct nbl_core {
- 	void *hw_mgt;
- 	void *res_mgt;
-diff --git a/drivers/net/nbl/nbl_hw/nbl_channel.c b/drivers/net/nbl/nbl_hw/nbl_channel.c
-index 15efbeba3c..a48baf4994 100644
---- a/drivers/net/nbl/nbl_hw/nbl_channel.c
-+++ b/drivers/net/nbl/nbl_hw/nbl_channel.c
-@@ -652,6 +652,181 @@ static struct nbl_channel_ops chan_ops = {
- 	.notify_interrupt		= nbl_chan_notify_interrupt,
- };
- 
-+static int nbl_chan_userdev_send_msg(void *priv, struct nbl_chan_send_info *chan_send)
++static int nbl_dev_txrx_start(struct rte_eth_dev *eth_dev)
 +{
-+	struct nbl_channel_mgt *chan_mgt = (struct nbl_channel_mgt *)priv;
-+	struct nbl_common_info *common = NBL_CHAN_MGT_TO_COMMON(chan_mgt);
-+	struct nbl_dev_user_channel_msg msg;
-+	uint32_t *result;
-+	int ret;
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
++	struct nbl_dev_ring_mgt *ring_mgt = &dev_mgt->net_dev->ring_mgt;
++	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
++	struct nbl_txrx_queue_param param = {0};
++	struct nbl_dev_ring *ring;
++	int ret = 0;
++	int i;
 +
-+	if (chan_mgt->state)
-+		return -EIO;
++	eth_dev->data->scattered_rx = 0;
++	for (i = 0; i < eth_dev->data->nb_tx_queues; i++) {
++		ring = &ring_mgt->tx_rings[i];
++		param.desc_num = ring->desc_num;
++		param.vsi_id = dev_mgt->net_dev->vsi_id;
++		param.dma = ring->dma;
++		param.local_queue_id = i + ring_mgt->queue_offset;
++		param.intr_en = 0;
++		param.intr_mask = 0;
++		param.extend_header = 1;
++		param.split = 0;
 +
-+	msg.msg_type = chan_send->msg_type;
-+	msg.dst_id = chan_send->dstid;
-+	msg.arg_len = chan_send->arg_len;
-+	msg.ack = chan_send->ack;
-+	msg.ack_length = chan_send->resp_len;
-+	rte_memcpy(&msg.data, chan_send->arg, chan_send->arg_len);
-+
-+	ret = ioctl(common->devfd, NBL_DEV_USER_CHANNEL, &msg);
-+	if (ret) {
-+		NBL_LOG(ERR, "user mailbox failed, type %u, ret %d", msg.msg_type, ret);
-+		return -1;
-+	}
-+
-+	/* 4bytes align */
-+	result = (uint32_t *)RTE_PTR_ALIGN(((unsigned char *)msg.data) + chan_send->arg_len, 4);
-+	rte_memcpy(chan_send->resp, result, RTE_MIN(chan_send->resp_len, msg.ack_length));
-+
-+	return msg.ack_err;
-+}
-+
-+static int nbl_chan_userdev_send_ack(void *priv, struct nbl_chan_ack_info *chan_ack)
-+{
-+	struct nbl_channel_mgt *chan_mgt = (struct nbl_channel_mgt *)priv;
-+	struct nbl_chan_send_info chan_send;
-+	u32 *tmp;
-+	u32 len = 3 * sizeof(u32) + chan_ack->data_len;
-+
-+	tmp = rte_zmalloc("nbl_chan_send_tmp", len, 0);
-+	if (!tmp) {
-+		NBL_LOG(ERR, "Chan send ack data malloc failed");
-+		return -ENOMEM;
-+	}
-+
-+	tmp[0] = chan_ack->msg_type;
-+	tmp[1] = chan_ack->msgid;
-+	tmp[2] = (u32)chan_ack->err;
-+	if (chan_ack->data && chan_ack->data_len)
-+		memcpy(&tmp[3], chan_ack->data, chan_ack->data_len);
-+
-+	NBL_CHAN_SEND(chan_send, chan_ack->dstid, NBL_CHAN_MSG_ACK, tmp, len, NULL, 0, 0);
-+	nbl_chan_userdev_send_msg(chan_mgt, &chan_send);
-+	rte_free(tmp);
-+
-+	return 0;
-+}
-+
-+static void nbl_chan_userdev_eventfd_handler(void *cn_arg)
-+{
-+	size_t page_size = rte_mem_page_size();
-+	char *bak_buf = malloc(page_size);
-+	struct nbl_channel_mgt *chan_mgt = (struct nbl_channel_mgt *)cn_arg;
-+	union nbl_chan_info *chan_info = NBL_CHAN_MGT_TO_CHAN_INFO(chan_mgt);
-+	char *data = (char *)chan_info->userdev.shm_msg_ring + 8;
-+	char *payload;
-+	u64 buf;
-+	int nbytes __rte_unused;
-+	u32 total_len;
-+	u32 *head = (u32 *)chan_info->userdev.shm_msg_ring;
-+	u32 *tail = (u32 *)chan_info->userdev.shm_msg_ring + 1, tmp_tail;
-+	u32 shmmsgbuf_size = page_size - 8;
-+
-+	if (!bak_buf) {
-+		NBL_LOG(ERR, "nbl chan handler malloc failed");
-+		return;
-+	}
-+	tmp_tail = *tail;
-+	nbytes = read(chan_info->userdev.eventfd, &buf, sizeof(buf));
-+
-+	while (*head != tmp_tail) {
-+		total_len = *(u32 *)(data + tmp_tail);
-+		if (tmp_tail + total_len > shmmsgbuf_size) {
-+			u32 copy_len;
-+
-+			copy_len = shmmsgbuf_size - tmp_tail;
-+			memcpy(bak_buf, data + tmp_tail, copy_len);
-+			memcpy(bak_buf + copy_len, data, total_len - copy_len);
-+			payload = bak_buf;
-+
-+		} else {
-+			payload  = (data + tmp_tail);
++		ret = disp_ops->setup_queue(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), &param, true);
++		if (ret) {
++			NBL_LOG(ERR, "setup_tx_queue failed %d", ret);
++			return ret;
 +		}
 +
-+		nbl_chan_recv_msg(chan_mgt, payload + 4);
-+		tmp_tail += total_len;
-+		if (tmp_tail >= shmmsgbuf_size)
-+			tmp_tail -= shmmsgbuf_size;
++		ring->global_queue_id =
++			disp_ops->get_vsi_global_qid(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++						     param.vsi_id, param.local_queue_id);
++		eth_dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
 +	}
 +
-+	free(bak_buf);
-+	*tail = tmp_tail;
-+}
++	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
++		ring = &ring_mgt->rx_rings[i];
++		param.desc_num = ring->desc_num;
++		param.vsi_id = dev_mgt->net_dev->vsi_id;
++		param.dma = ring->dma;
++		param.local_queue_id = i + ring_mgt->queue_offset;
++		param.intr_en = 0;
++		param.intr_mask = 0;
++		param.half_offload_en = 1;
++		param.extend_header = 1;
++		param.split = 0;
++		param.rxcsum = 1;
 +
-+static int nbl_chan_userdev_setup_queue(void *priv)
-+{
-+	size_t page_size = rte_mem_page_size();
-+	struct nbl_channel_mgt *chan_mgt = (struct nbl_channel_mgt *)priv;
-+	union nbl_chan_info *chan_info = NBL_CHAN_MGT_TO_CHAN_INFO(chan_mgt);
-+	struct nbl_common_info *common = NBL_CHAN_MGT_TO_COMMON(chan_mgt);
-+	int ret;
++		ret = disp_ops->setup_queue(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), &param, false);
++		if (ret) {
++			NBL_LOG(ERR, "setup_rx_queue failed %d", ret);
++			return ret;
++		}
 +
-+	if (common->devfd < 0 || common->eventfd < 0)
-+		return -EINVAL;
++		ret = disp_ops->alloc_rx_bufs(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), i);
++		if (ret) {
++			NBL_LOG(ERR, "alloc_rx_bufs failed %d", ret);
++			return ret;
++		}
 +
-+	chan_info->userdev.eventfd = common->eventfd;
-+	chan_info->userdev.intr_handle.fd = common->eventfd;
-+	chan_info->userdev.intr_handle.type = RTE_INTR_HANDLE_EXT;
++		ring->global_queue_id =
++			disp_ops->get_vsi_global_qid(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++						     param.vsi_id, param.local_queue_id);
++		disp_ops->update_rx_ring(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), i);
++		eth_dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
++	}
 +
-+	ret = rte_intr_callback_register(&chan_info->userdev.intr_handle,
-+					 nbl_chan_userdev_eventfd_handler, chan_mgt);
-+
++	ret = disp_ops->cfg_dsch(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), dev_mgt->net_dev->vsi_id, true);
 +	if (ret) {
-+		NBL_LOG(ERR, "channel userdev event handler register failed, %d", ret);
-+		return ret;
++		NBL_LOG(ERR, "cfg_dsch failed %d", ret);
++		goto cfg_dsch_fail;
 +	}
++	ret = disp_ops->setup_cqs(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++				  dev_mgt->net_dev->vsi_id, eth_dev->data->nb_rx_queues, true);
++	if (ret)
++		goto setup_cqs_fail;
 +
-+	chan_info->userdev.shm_msg_ring = rte_mem_map(NULL, page_size,
-+						      RTE_PROT_READ | RTE_PROT_WRITE,
-+						      RTE_MAP_SHARED, common->devfd,
-+						      NBL_DEV_USER_INDEX_TO_OFFSET
-+						      (NBL_DEV_SHM_MSG_RING_INDEX));
-+	if (!chan_info->userdev.shm_msg_ring) {
-+		rte_intr_callback_unregister(&chan_info->userdev.intr_handle,
-+					     nbl_chan_userdev_eventfd_handler, chan_mgt);
-+		return -EINVAL;
-+	}
++	return ret;
 +
-+	return 0;
-+}
-+
-+static int nbl_chan_userdev_teardown_queue(void *priv)
-+{
-+	struct nbl_channel_mgt *chan_mgt = (struct nbl_channel_mgt *)priv;
-+	union nbl_chan_info *chan_info = NBL_CHAN_MGT_TO_CHAN_INFO(chan_mgt);
-+
-+	rte_mem_unmap(chan_info->userdev.shm_msg_ring, rte_mem_page_size());
-+	rte_intr_callback_unregister(&chan_info->userdev.intr_handle,
-+				     nbl_chan_userdev_eventfd_handler, chan_mgt);
-+
-+	return 0;
-+}
-+
-+static int nbl_chan_userdev_register_msg(void *priv, uint16_t msg_type, nbl_chan_resp func,
-+					 void *callback_priv)
-+{
-+	struct nbl_channel_mgt *chan_mgt = (struct nbl_channel_mgt *)priv;
-+	struct nbl_common_info *common = NBL_CHAN_MGT_TO_COMMON(chan_mgt);
-+	int ret, type;
-+
-+	type = msg_type;
-+	nbl_chan_register_msg(priv, msg_type, func, callback_priv);
-+	ret = ioctl(common->devfd, NBL_DEV_USER_SET_LISTENER, &type);
++setup_cqs_fail:
++	disp_ops->cfg_dsch(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), dev_mgt->net_dev->vsi_id, false);
++cfg_dsch_fail:
++	disp_ops->remove_all_queues(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++				    dev_mgt->net_dev->vsi_id);
 +
 +	return ret;
 +}
 +
-+static struct nbl_channel_ops userdev_ops = {
-+	.send_msg			= nbl_chan_userdev_send_msg,
-+	.send_ack			= nbl_chan_userdev_send_ack,
-+	.register_msg			= nbl_chan_userdev_register_msg,
-+	.setup_queue			= nbl_chan_userdev_setup_queue,
-+	.teardown_queue			= nbl_chan_userdev_teardown_queue,
-+	.set_state			= nbl_chan_set_state,
-+};
-+
- static int nbl_chan_init_state_bitmap(void *priv)
+ int nbl_dev_port_start(struct rte_eth_dev *eth_dev)
  {
- 	struct nbl_channel_mgt *chan_mgt = (struct nbl_channel_mgt *)priv;
-@@ -714,6 +889,7 @@ static int nbl_chan_setup_chan_mgt(struct nbl_adapter *adapter,
- 		goto alloc_mailbox_fail;
+-	RTE_SET_USED(eth_dev);
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_common_info *common = NBL_ADAPTER_TO_COMMON(adapter);
++	int ret;
++
++	if (adapter == NULL)
++		return -EINVAL;
++
++	ret = nbl_userdev_port_config(adapter, NBL_USER_NETWORK);
++	if (ret)
++		return ret;
++
++	ret = nbl_dev_txrx_start(eth_dev);
++	if (ret) {
++		NBL_LOG(ERR, "dev_txrx_start failed %d", ret);
++		nbl_userdev_port_config(adapter, NBL_KERNEL_NETWORK);
++		return ret;
++	}
++
++	common->pf_start = 1;
+ 	return 0;
+ }
  
- 	NBL_CHAN_MGT_TO_CHAN_INFO(&(*chan_mgt_leonis)->chan_mgt) = mailbox;
-+	NBL_CHAN_MGT_TO_COMMON(&(*chan_mgt_leonis)->chan_mgt) = &adapter->common;
- 
- 	ret = nbl_chan_init_state_bitmap(*chan_mgt_leonis);
- 	if (ret)
-@@ -745,11 +921,17 @@ static void nbl_chan_remove_ops(struct nbl_channel_ops_tbl **chan_ops_tbl)
- static int nbl_chan_setup_ops(struct nbl_channel_ops_tbl **chan_ops_tbl,
- 			      struct nbl_channel_mgt_leonis *chan_mgt_leonis)
++static void nbl_clear_queues(struct rte_eth_dev *eth_dev)
++{
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
++	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
++	int i;
++
++	for (i = 0; i < eth_dev->data->nb_tx_queues; i++)
++		disp_ops->stop_tx_ring(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), i);
++
++	for (i = 0; i < eth_dev->data->nb_rx_queues; i++)
++		disp_ops->stop_rx_ring(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), i);
++}
++
++static void nbl_dev_txrx_stop(struct rte_eth_dev *eth_dev)
++{
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
++	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
++
++	disp_ops->cfg_dsch(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), dev_mgt->net_dev->vsi_id, false);
++	disp_ops->remove_cqs(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), dev_mgt->net_dev->vsi_id);
++	disp_ops->remove_all_queues(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), dev_mgt->net_dev->vsi_id);
++}
++
+ int nbl_dev_port_stop(struct rte_eth_dev *eth_dev)
  {
-+	struct nbl_common_info *common;
+-	RTE_SET_USED(eth_dev);
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_common_info *common = NBL_ADAPTER_TO_COMMON(adapter);
++	common->pf_start = 0;
++	rte_delay_ms(NBL_SAFE_THREADS_WAIT_TIME);
 +
- 	*chan_ops_tbl = calloc(1, sizeof(struct nbl_channel_ops_tbl));
- 	if (!*chan_ops_tbl)
- 		return -ENOMEM;
++	nbl_clear_queues(eth_dev);
++	nbl_dev_txrx_stop(eth_dev);
++	nbl_userdev_port_config(adapter, NBL_KERNEL_NETWORK);
+ 	return 0;
+ }
  
--	NBL_CHAN_OPS_TBL_TO_OPS(*chan_ops_tbl) = &chan_ops;
-+	common = NBL_CHAN_MGT_TO_COMMON(&chan_mgt_leonis->chan_mgt);
-+	if (NBL_IS_NOT_COEXISTENCE(common))
-+		NBL_CHAN_OPS_TBL_TO_OPS(*chan_ops_tbl) = &chan_ops;
-+	else
-+		NBL_CHAN_OPS_TBL_TO_OPS(*chan_ops_tbl) = &userdev_ops;
- 	NBL_CHAN_OPS_TBL_TO_PRIV(*chan_ops_tbl) = chan_mgt_leonis;
- 
- 	chan_mgt_leonis->chan_mgt.msg_handler[NBL_CHAN_MSG_ACK].func = nbl_chan_recv_ack_msg;
-diff --git a/drivers/net/nbl/nbl_hw/nbl_channel.h b/drivers/net/nbl/nbl_hw/nbl_channel.h
-index ec46412a29..1f7d34461c 100644
---- a/drivers/net/nbl/nbl_hw/nbl_channel.h
-+++ b/drivers/net/nbl/nbl_hw/nbl_channel.h
-@@ -7,6 +7,10 @@
- 
- #include "nbl_ethdev.h"
- 
-+#define NBL_CHAN_MAX_PAGE_SIZE			(64 * 1024)
++static void nbl_release_queues(struct rte_eth_dev *eth_dev)
++{
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
++	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
++	int i;
 +
-+#define NBL_CHAN_MGT_TO_COMMON(chan_mgt)	((chan_mgt)->common)
-+#define NBL_CHAN_MGT_TO_DEV(chan_mgt)		NBL_COMMON_TO_DEV(NBL_CHAN_MGT_TO_COMMON(chan_mgt))
- #define NBL_CHAN_MGT_TO_HW_OPS_TBL(chan_mgt)	((chan_mgt)->hw_ops_tbl)
- #define NBL_CHAN_MGT_TO_HW_OPS(chan_mgt)	(NBL_CHAN_MGT_TO_HW_OPS_TBL(chan_mgt)->ops)
- #define NBL_CHAN_MGT_TO_HW_PRIV(chan_mgt)	(NBL_CHAN_MGT_TO_HW_OPS_TBL(chan_mgt)->priv)
-@@ -94,6 +98,12 @@ union nbl_chan_info {
- 		rte_thread_t tid;
- 		int fd[2];
- 	} mailbox;
++	for (i = 0; i < eth_dev->data->nb_tx_queues; i++)
++		disp_ops->release_tx_ring(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), i);
 +
-+	struct {
-+		struct rte_intr_handle intr_handle;
-+		void *shm_msg_ring;
-+		int eventfd;
-+	} userdev;
++	for (i = 0; i < eth_dev->data->nb_rx_queues; i++)
++		disp_ops->release_rx_ring(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), i);
++}
++
+ int nbl_dev_port_close(struct rte_eth_dev *eth_dev)
+ {
+-	RTE_SET_USED(eth_dev);
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_common_info *common = NBL_ADAPTER_TO_COMMON(adapter);
++
++	/* pf may not start, so no queue need release */
++	if (common->pf_start)
++		nbl_release_queues(eth_dev);
++
+ 	return 0;
+ }
+ 
+@@ -192,7 +350,7 @@ static int nbl_dev_common_start(struct nbl_dev_mgt *dev_mgt)
+ 	u8 *mac;
+ 	int ret;
+ 
+-	board_info = &dev_mgt->common->board_info;
++	board_info = &common->board_info;
+ 	disp_ops->get_board_info(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), board_info);
+ 	mac = net_dev->eth_dev->data->mac_addrs->addr_bytes;
+ 
+@@ -265,9 +423,9 @@ static void nbl_dev_leonis_stop(void *p)
+ {
+ 	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
+ 	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
+-	struct nbl_dev_net_mgt *net_dev = dev_mgt->net_dev;
+-	struct nbl_common_info *common = dev_mgt->common;
+-	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
++	struct nbl_dev_net_mgt *net_dev = NBL_DEV_MGT_TO_NET_DEV(dev_mgt);
++	const struct nbl_common_info *common = NBL_DEV_MGT_TO_COMMON(dev_mgt);
++	const struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
+ 	struct nbl_channel_ops *chan_ops = NBL_DEV_MGT_TO_CHAN_OPS(dev_mgt);
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(net_dev->eth_dev);
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+diff --git a/drivers/net/nbl/nbl_dispatch.c b/drivers/net/nbl/nbl_dispatch.c
+index 4a1108db90..ca80d5f977 100644
+--- a/drivers/net/nbl/nbl_dispatch.c
++++ b/drivers/net/nbl/nbl_dispatch.c
+@@ -416,6 +416,31 @@ static void nbl_disp_chan_get_eth_id_req(void *priv, u16 vsi_id, u8 *eth_mode, u
+ 	*eth_id = result.eth_id;
+ }
+ 
++static u16 nbl_disp_get_vsi_global_qid(void *priv, u16 vsi_id, u16 local_qid)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++
++	return NBL_OPS_CALL(res_ops->get_vsi_global_qid,
++			    (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id, local_qid));
++}
++
++static u16
++nbl_disp_chan_get_vsi_global_qid_req(void *priv, u16 vsi_id, u16 local_qid)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_channel_ops *chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
++	struct nbl_chan_vsi_qid_info param = {0};
++	struct nbl_chan_send_info chan_send;
++
++	param.vsi_id = vsi_id;
++	param.local_qid = local_qid;
++
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_GET_VSI_GLOBAL_QUEUE_ID,
++		      &param, sizeof(param), NULL, 0, 1);
++	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
++}
++
+ static int nbl_disp_chan_setup_q2vsi(void *priv, u16 vsi_id)
+ {
+ 	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
+@@ -569,8 +594,7 @@ static void nbl_disp_chan_clear_flow_req(void *priv, u16 vsi_id)
+ 	struct nbl_channel_ops *chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
+ 	struct nbl_chan_send_info chan_send = {0};
+ 
+-	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_CLEAR_FLOW, &vsi_id, sizeof(vsi_id),
+-		      NULL, 0, 1);
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_CLEAR_FLOW, &vsi_id, sizeof(vsi_id), NULL, 0, 1);
+ 	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
+ }
+ 
+@@ -595,8 +619,7 @@ nbl_disp_chan_add_macvlan_req(void *priv, u8 *mac, u16 vlan_id, u16 vsi_id)
+ 	param.vlan = vlan_id;
+ 	param.vsi = vsi_id;
+ 
+-	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_ADD_MACVLAN,
+-		      &param, sizeof(param), NULL, 0, 1);
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_ADD_MACVLAN, &param, sizeof(param), NULL, 0, 1);
+ 	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
+ }
+ 
+@@ -621,8 +644,7 @@ nbl_disp_chan_del_macvlan_req(void *priv, u8 *mac, u16 vlan_id, u16 vsi_id)
+ 	param.vlan = vlan_id;
+ 	param.vsi = vsi_id;
+ 
+-	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_DEL_MACVLAN,
+-		      &param, sizeof(param), NULL, 0, 1);
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_DEL_MACVLAN, &param, sizeof(param), NULL, 0, 1);
+ 	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
+ }
+ 
+@@ -643,8 +665,7 @@ static int nbl_disp_chan_add_multi_rule_req(void *priv, u16 vsi_id)
+ 
+ 	param.vsi = vsi_id;
+ 
+-	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_ADD_MULTI_RULE,
+-		      &param, sizeof(param), NULL, 0, 1);
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_ADD_MULTI_RULE, &param, sizeof(param), NULL, 0, 1);
+ 	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
+ }
+ 
+@@ -665,8 +686,74 @@ static void nbl_disp_chan_del_multi_rule_req(void *priv, u16 vsi)
+ 
+ 	param.vsi = vsi;
+ 
+-	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_DEL_MULTI_RULE,
+-		      &param, sizeof(param), NULL, 0, 1);
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_DEL_MULTI_RULE, &param, sizeof(param), NULL, 0, 1);
++	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
++}
++
++static int nbl_disp_cfg_dsch(void *priv, u16 vsi_id, bool vld)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++
++	return NBL_OPS_CALL(res_ops->cfg_dsch, (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id, vld));
++}
++
++static int nbl_disp_chan_cfg_dsch_req(void *priv, u16 vsi_id, bool vld)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_channel_ops *chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
++	struct nbl_chan_param_cfg_dsch param = {0};
++	struct nbl_chan_send_info chan_send;
++
++	param.vsi_id = vsi_id;
++	param.vld = vld;
++
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_CFG_DSCH, &param, sizeof(param), NULL, 0, 1);
++	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
++}
++
++static int nbl_disp_setup_cqs(void *priv, u16 vsi_id, u16 real_qps, bool rss_indir_set)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++
++	return NBL_OPS_CALL(res_ops->setup_cqs,
++			    (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id, real_qps, rss_indir_set));
++}
++
++static int nbl_disp_chan_setup_cqs_req(void *priv, u16 vsi_id, u16 real_qps, bool rss_indir_set)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_channel_ops *chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
++	struct nbl_chan_param_setup_cqs param = {0};
++	struct nbl_chan_send_info chan_send;
++
++	param.vsi_id = vsi_id;
++	param.real_qps = real_qps;
++	param.rss_indir_set = rss_indir_set;
++
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_SETUP_CQS, &param, sizeof(param), NULL, 0, 1);
++	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
++}
++
++static void nbl_disp_remove_cqs(void *priv, u16 vsi_id)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++
++	NBL_OPS_CALL(res_ops->remove_cqs, (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id));
++}
++
++static void nbl_disp_chan_remove_cqs_req(void *priv, u16 vsi_id)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_channel_ops *chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
++	struct nbl_chan_param_remove_cqs param = {0};
++	struct nbl_chan_send_info chan_send;
++
++	param.vsi_id = vsi_id;
++
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_REMOVE_CQS, &param, sizeof(param), NULL, 0, 1);
+ 	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
+ }
+ 
+@@ -747,6 +834,11 @@ do {									\
+ 	NBL_DISP_SET_OPS(get_eth_id, nbl_disp_get_eth_id,		\
+ 			 NBL_DISP_CTRL_LVL_MGT, NBL_CHAN_MSG_GET_ETH_ID,\
+ 			 nbl_disp_chan_get_eth_id_req, NULL);		\
++	NBL_DISP_SET_OPS(get_vsi_global_qid,				\
++			 nbl_disp_get_vsi_global_qid,			\
++			 NBL_DISP_CTRL_LVL_MGT,				\
++			 NBL_CHAN_MSG_GET_VSI_GLOBAL_QUEUE_ID,		\
++			 nbl_disp_chan_get_vsi_global_qid_req, NULL);	\
+ 	NBL_DISP_SET_OPS(setup_q2vsi, nbl_disp_chan_setup_q2vsi,	\
+ 			 NBL_DISP_CTRL_LVL_MGT,				\
+ 			 NBL_CHAN_MSG_SETUP_Q2VSI,			\
+@@ -789,6 +881,15 @@ do {									\
+ 			 NBL_DISP_CTRL_LVL_MGT,				\
+ 			 NBL_CHAN_MSG_DEL_MULTI_RULE,			\
+ 			 nbl_disp_chan_del_multi_rule_req, NULL);	\
++	NBL_DISP_SET_OPS(cfg_dsch, nbl_disp_cfg_dsch,			\
++			 NBL_DISP_CTRL_LVL_MGT, NBL_CHAN_MSG_CFG_DSCH,	\
++			 nbl_disp_chan_cfg_dsch_req, NULL);		\
++	NBL_DISP_SET_OPS(setup_cqs, nbl_disp_setup_cqs,			\
++			 NBL_DISP_CTRL_LVL_MGT, NBL_CHAN_MSG_SETUP_CQS,	\
++			 nbl_disp_chan_setup_cqs_req, NULL);		\
++	NBL_DISP_SET_OPS(remove_cqs, nbl_disp_remove_cqs,		\
++			 NBL_DISP_CTRL_LVL_MGT, NBL_CHAN_MSG_REMOVE_CQS,\
++			 nbl_disp_chan_remove_cqs_req, NULL);		\
+ } while (0)
+ 
+ /* Structure starts here, adding an op should not modify anything below */
+diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx.c b/drivers/net/nbl/nbl_hw/nbl_txrx.c
+index 97240d4fcc..a25d493b6d 100644
+--- a/drivers/net/nbl/nbl_hw/nbl_txrx.c
++++ b/drivers/net/nbl/nbl_hw/nbl_txrx.c
+@@ -56,7 +56,7 @@ static void nbl_res_txrx_stop_tx_ring(void *priv, u16 queue_idx)
+ 		tx_ring->desc[i].flags = 0;
+ 	}
+ 
+-	tx_ring->avail_used_flags = BIT(NBL_PACKED_DESC_F_AVAIL);
++	tx_ring->avail_used_flags = NBL_PACKED_DESC_F_AVAIL_BIT;
+ 	tx_ring->used_wrap_counter = 1;
+ 	tx_ring->next_to_clean = NBL_TX_RS_THRESH - 1;
+ 	tx_ring->next_to_use = 0;
+@@ -166,7 +166,7 @@ static int nbl_res_txrx_start_tx_ring(void *priv,
+ 	tx_ring->notify_qid =
+ 		(res_mgt->res_info.base_qid + txrx_mgt->queue_offset + param->queue_idx) * 2 + 1;
+ 	tx_ring->ring_phys_addr = (u64)NBL_DMA_ADDRESS_FULL_TRANSLATE(common, memzone->iova);
+-	tx_ring->avail_used_flags = BIT(NBL_PACKED_DESC_F_AVAIL);
++	tx_ring->avail_used_flags = NBL_PACKED_DESC_F_AVAIL_BIT;
+ 	tx_ring->used_wrap_counter = 1;
+ 	tx_ring->next_to_clean = NBL_TX_RS_THRESH - 1;
+ 	tx_ring->next_to_use = 0;
+@@ -312,8 +312,62 @@ static int nbl_res_txrx_start_rx_ring(void *priv,
+ 
+ static int nbl_res_alloc_rx_bufs(void *priv, u16 queue_idx)
+ {
+-	RTE_SET_USED(priv);
+-	RTE_SET_USED(queue_idx);
++	struct nbl_resource_mgt *res_mgt = (struct nbl_resource_mgt *)priv;
++	struct nbl_res_rx_ring *rxq = NBL_RES_MGT_TO_RX_RING(res_mgt, queue_idx);
++	struct nbl_rx_entry *rx_entry = rxq->rx_entry;
++	volatile struct nbl_packed_desc *rx_desc;
++	struct nbl_rx_entry *rxe;
++	struct rte_mbuf *mbuf;
++	u64 dma_addr;
++	int i;
++	u32 frame_size = rxq->eth_dev->data->mtu + NBL_ETH_OVERHEAD + rxq->exthdr_len;
++	u16 buf_length;
++
++	rxq->avail_used_flags = NBL_PACKED_DESC_F_AVAIL_BIT | NBL_PACKED_DESC_F_WRITE_BIT;
++	rxq->used_wrap_counter = 1;
++
++	for (i = 0; i < rxq->nb_desc; i++) {
++		mbuf = rte_mbuf_raw_alloc(rxq->mempool);
++		if (mbuf == NULL) {
++			NBL_LOG(ERR, "RX mbuf alloc failed for queue %u", rxq->queue_id);
++			return -ENOMEM;
++		}
++		dma_addr = NBL_DMA_ADDRESS_FULL_TRANSLATE(rxq, rte_mbuf_data_iova_default(mbuf));
++		rx_desc = &rxq->desc[i];
++		rxe = &rx_entry[i];
++		rx_desc->addr = dma_addr;
++		rx_desc->len = mbuf->buf_len - RTE_PKTMBUF_HEADROOM;
++		rx_desc->flags = rxq->avail_used_flags;
++		mbuf->data_off = RTE_PKTMBUF_HEADROOM;
++		rxe->mbuf = mbuf;
++	}
++
++	rxq->next_to_clean = 0;
++	rxq->next_to_use = 0;
++	rxq->vq_free_cnt = 0;
++	rxq->avail_used_flags ^= NBL_PACKED_DESC_F_AVAIL_USED;
++
++	buf_length = rte_pktmbuf_data_room_size(rxq->mempool) - RTE_PKTMBUF_HEADROOM;
++	if (buf_length >= NBL_BUF_LEN_16K) {
++		rxq->buf_length = NBL_BUF_LEN_16K;
++	} else if (buf_length >= NBL_BUF_LEN_8K) {
++		rxq->buf_length = NBL_BUF_LEN_8K;
++	} else if (buf_length >= NBL_BUF_LEN_4K) {
++		rxq->buf_length = NBL_BUF_LEN_4K;
++	} else if (buf_length >= NBL_BUF_LEN_2K) {
++		rxq->buf_length = NBL_BUF_LEN_2K;
++	} else {
++		NBL_LOG(ERR, "mempool mbuf length should be at least 2kB, but current value is %u",
++			buf_length);
++		nbl_res_txrx_stop_rx_ring(res_mgt, queue_idx);
++		return -EINVAL;
++	}
++
++	if (frame_size > rxq->buf_length)
++		rxq->eth_dev->data->scattered_rx = 1;
++
++	rxq->buf_length = rxq->buf_length - RTE_PKTMBUF_HEADROOM;
++
+ 	return 0;
+ }
+ 
+@@ -333,8 +387,14 @@ static void nbl_res_txrx_release_rx_ring(void *priv, u16 queue_idx)
+ 
+ static void nbl_res_txrx_update_rx_ring(void *priv, u16 index)
+ {
+-	RTE_SET_USED(priv);
+-	RTE_SET_USED(index);
++	struct nbl_resource_mgt *res_mgt = (struct nbl_resource_mgt *)priv;
++	struct nbl_hw_ops *hw_ops = NBL_RES_MGT_TO_HW_OPS(res_mgt);
++	struct nbl_res_rx_ring *rx_ring = NBL_RES_MGT_TO_RX_RING(res_mgt, index);
++
++	hw_ops->update_tail_ptr(NBL_RES_MGT_TO_HW_PRIV(res_mgt),
++				 rx_ring->notify_qid,
++				 ((!!(rx_ring->avail_used_flags & NBL_PACKED_DESC_F_AVAIL_BIT)) |
++				 rx_ring->next_to_use));
+ }
+ 
+ /* NBL_TXRX_SET_OPS(ops_name, func)
+diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx.h b/drivers/net/nbl/nbl_hw/nbl_txrx.h
+index 197da844ab..9f7bcec5c3 100644
+--- a/drivers/net/nbl/nbl_hw/nbl_txrx.h
++++ b/drivers/net/nbl/nbl_hw/nbl_txrx.h
+@@ -7,15 +7,25 @@
+ 
+ #include "nbl_resource.h"
+ 
++#define NBL_PACKED_DESC_F_NEXT			(0)
++#define NBL_PACKED_DESC_F_WRITE			(1)
+ #define NBL_PACKED_DESC_F_AVAIL			(7)
+ #define NBL_PACKED_DESC_F_USED			(15)
+-#define NBL_VRING_DESC_F_NEXT			(1 << 0)
+-#define NBL_VRING_DESC_F_WRITE			(1 << 1)
++#define NBL_PACKED_DESC_F_NEXT_BIT		(1 << NBL_PACKED_DESC_F_NEXT)
++#define NBL_PACKED_DESC_F_WRITE_BIT		(1 << NBL_PACKED_DESC_F_WRITE)
++#define NBL_PACKED_DESC_F_AVAIL_BIT		(1 << NBL_PACKED_DESC_F_AVAIL)
++#define NBL_PACKED_DESC_F_USED_BIT		(1 << NBL_PACKED_DESC_F_USED)
++#define NBL_PACKED_DESC_F_AVAIL_USED		(NBL_PACKED_DESC_F_AVAIL_BIT | \
++						 NBL_PACKED_DESC_F_USED_BIT)
+ 
+ #define NBL_TX_RS_THRESH			(32)
+ #define NBL_TX_HEADER_LEN			(32)
+ #define NBL_VQ_HDR_NAME_MAXSIZE			(32)
+ 
+ #define NBL_DESC_PER_LOOP_VEC_MAX		(8)
++#define NBL_BUF_LEN_16K				(16384)
++#define NBL_BUF_LEN_8K				(8192)
++#define NBL_BUF_LEN_4K				(4096)
++#define NBL_BUF_LEN_2K				(2048)
+ 
+ #endif
+diff --git a/drivers/net/nbl/nbl_include/nbl_def_channel.h b/drivers/net/nbl/nbl_include/nbl_def_channel.h
+index 0c90a5db18..935e4e66b1 100644
+--- a/drivers/net/nbl/nbl_include/nbl_def_channel.h
++++ b/drivers/net/nbl/nbl_include/nbl_def_channel.h
+@@ -336,6 +336,11 @@ struct nbl_chan_param_get_eth_id {
+ 	u8 logic_eth_id;
  };
  
- struct nbl_chan_msg_handler {
-@@ -103,6 +113,7 @@ struct nbl_chan_msg_handler {
++struct nbl_chan_vsi_qid_info {
++	u16 vsi_id;
++	u16 local_qid;
++};
++
+ struct nbl_chan_param_register_vsi2q {
+ 	u16 vsi_index;
+ 	u16 vsi_id;
+@@ -365,6 +370,21 @@ struct nbl_chan_param_del_multi_rule {
+ 	u16 vsi;
+ };
  
- struct nbl_channel_mgt {
- 	uint32_t mode;
-+	struct nbl_common_info *common;
- 	struct nbl_hw_ops_tbl *hw_ops_tbl;
- 	union nbl_chan_info *chan_info;
- 	struct nbl_chan_msg_handler msg_handler[NBL_CHAN_MSG_MAX];
++struct nbl_chan_param_cfg_dsch {
++	u16 vsi_id;
++	bool vld;
++};
++
++struct nbl_chan_param_setup_cqs {
++	u16 vsi_id;
++	u16 real_qps;
++	bool rss_indir_set;
++};
++
++struct nbl_chan_param_remove_cqs {
++	u16 vsi_id;
++};
++
+ struct nbl_chan_send_info {
+ 	uint16_t dstid;
+ 	uint16_t msg_type;
 diff --git a/drivers/net/nbl/nbl_include/nbl_def_common.h b/drivers/net/nbl/nbl_include/nbl_def_common.h
-index 1ab9295d47..45db1e7413 100644
+index 14823dd998..bd2c844dfa 100644
 --- a/drivers/net/nbl/nbl_include/nbl_def_common.h
 +++ b/drivers/net/nbl/nbl_include/nbl_def_common.h
-@@ -18,6 +18,67 @@
- #define NBL_TWO_ETHERNET_MAX_MAC_NUM		(512)
- #define NBL_FOUR_ETHERNET_MAX_MAC_NUM		(1024)
+@@ -21,11 +21,15 @@
+ #define NBL_DEV_USER_TYPE	('n')
+ #define NBL_DEV_USER_DATA_LEN	(2044)
  
-+#define NBL_DEV_USER_TYPE	('n')
-+#define NBL_DEV_USER_DATA_LEN	(2044)
-+
-+#define NBL_DEV_USER_PCI_OFFSET_SHIFT		40
-+#define NBL_DEV_USER_OFFSET_TO_INDEX(off)	((off) >> NBL_DEV_USER_PCI_OFFSET_SHIFT)
-+#define NBL_DEV_USER_INDEX_TO_OFFSET(index)	((u64)(index) << NBL_DEV_USER_PCI_OFFSET_SHIFT)
-+#define NBL_DEV_SHM_MSG_RING_INDEX		(6)
-+
-+struct nbl_dev_user_channel_msg {
-+	u16 msg_type;
-+	u16 dst_id;
-+	u32 arg_len;
-+	u32 ack_err;
-+	u16 ack_length;
-+	u16 ack;
-+	u32 data[NBL_DEV_USER_DATA_LEN];
-+};
-+
-+#define NBL_DEV_USER_CHANNEL		_IO(NBL_DEV_USER_TYPE, 0)
-+
-+struct nbl_dev_user_dma_map {
-+	uint32_t	argsz;
-+	uint32_t	flags;
-+#define NBL_DEV_USER_DMA_MAP_FLAG_READ (RTE_BIT64(0))		/* readable from device */
-+#define NBL_DEV_USER_DMA_MAP_FLAG_WRITE (RTE_BIT64(1))	/* writable from device */
-+	uint64_t	vaddr;				/* Process virtual address */
-+	uint64_t	iova;				/* IO virtual address */
-+	uint64_t	size;				/* Size of mapping (bytes) */
-+};
-+
-+#define NBL_DEV_USER_MAP_DMA		_IO(NBL_DEV_USER_TYPE, 1)
-+
-+struct nbl_dev_user_dma_unmap {
-+	uint32_t	argsz;
-+	uint32_t	flags;
-+	uint64_t	vaddr;				/* Process virtual address */
-+	uint64_t	iova;				/* IO virtual address */
-+	uint64_t	size;				/* Size of mapping (bytes) */
-+};
-+
-+#define NBL_DEV_USER_UNMAP_DMA		_IO(NBL_DEV_USER_TYPE, 2)
-+
-+#define NBL_KERNEL_NETWORK			0
-+#define NBL_USER_NETWORK			1
-+
-+#define NBL_DEV_USER_SWITCH_NETWORK	_IO(NBL_DEV_USER_TYPE, 3)
-+#define NBL_DEV_USER_GET_IFINDEX	_IO(NBL_DEV_USER_TYPE, 4)
-+
-+struct nbl_dev_user_link_stat {
-+	u8 state;
-+	u8 flush;
-+};
-+
-+#define NBL_DEV_USER_SET_EVENTFD	_IO(NBL_DEV_USER_TYPE, 5)
-+#define NBL_DEV_USER_CLEAR_EVENTFD	_IO(NBL_DEV_USER_TYPE, 6)
-+#define NBL_DEV_USER_SET_LISTENER	_IO(NBL_DEV_USER_TYPE, 7)
-+#define NBL_DEV_USER_GET_BAR_SIZE	_IO(NBL_DEV_USER_TYPE, 8)
-+#define NBL_DEV_USER_GET_DMA_LIMIT	_IO(NBL_DEV_USER_TYPE, 9)
-+#define NBL_DEV_USER_SET_PROMISC_MODE	_IO(NBL_DEV_USER_TYPE, 10)
-+#define NBL_DEV_USER_SET_MCAST_MODE	_IO(NBL_DEV_USER_TYPE, 11)
-+
- struct nbl_dma_mem {
- 	void *va;
- 	uint64_t pa;
-@@ -40,6 +101,8 @@ void *nbl_alloc_dma_mem(struct nbl_dma_mem *mem, uint32_t size);
- void nbl_free_dma_mem(struct nbl_dma_mem *mem);
+-#define NBL_DEV_USER_PCI_OFFSET_SHIFT		40
++#define NBL_DEV_USER_PCI_OFFSET_SHIFT		(40)
+ #define NBL_DEV_USER_OFFSET_TO_INDEX(off)	((off) >> NBL_DEV_USER_PCI_OFFSET_SHIFT)
+ #define NBL_DEV_USER_INDEX_TO_OFFSET(index)	((u64)(index) << NBL_DEV_USER_PCI_OFFSET_SHIFT)
+ #define NBL_DEV_SHM_MSG_RING_INDEX		(6)
  
- struct nbl_adapter;
-+int nbl_userdev_port_config(struct nbl_adapter *adapter, int start);
-+int nbl_userdev_port_isolate(struct nbl_adapter *adapter, int set, struct rte_flow_error *error);
- int nbl_pci_map_device(struct nbl_adapter *adapter);
- void nbl_pci_unmap_device(struct nbl_adapter *adapter);
++#define NBL_VLAN_TAG_SIZE			(4)
++#define NBL_ETH_OVERHEAD \
++	(RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN + NBL_VLAN_TAG_SIZE * 2)
++
+ struct nbl_dev_user_channel_msg {
+ 	u16 msg_type;
+ 	u16 dst_id;
+diff --git a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
+index 3a1139d76a..a6f5ffe585 100644
+--- a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
++++ b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
+@@ -63,7 +63,7 @@ struct nbl_dispatch_ops {
+ 	int (*setup_rss)(void *priv, u16 vsi_id);
+ 	void (*remove_rss)(void *priv, u16 vsi_id);
+ 	int (*cfg_dsch)(void *priv, u16 vsi_id, bool vld);
+-	int (*setup_cqs)(void *priv, u16 vsi_id, u16 real_qps);
++	int (*setup_cqs)(void *priv, u16 vsi_id, u16 real_qps, bool rss_indir_set);
+ 	void (*remove_cqs)(void *priv, u16 vsi_id);
+ 	int (*set_rxfh_indir)(void *priv, u16 vsi_id, u32 *indir, u32 indir_size);
+ 	void (*clear_queues)(void *priv, u16 vsi_id);
+diff --git a/drivers/net/nbl/nbl_include/nbl_def_resource.h b/drivers/net/nbl/nbl_include/nbl_def_resource.h
+index 775f5813ea..8f14c3be72 100644
+--- a/drivers/net/nbl/nbl_include/nbl_def_resource.h
++++ b/drivers/net/nbl/nbl_include/nbl_def_resource.h
+@@ -22,6 +22,7 @@ struct nbl_resource_ops {
+ 	int (*unregister_net)(void *priv);
+ 	u16 (*get_vsi_id)(void *priv);
+ 	void (*get_eth_id)(void *priv, u16 vsi_id, u8 *eth_mode, u8 *eth_id);
++	u16 (*get_vsi_global_qid)(void *priv, u16 vsi_id, u16 local_qid);
+ 	int (*setup_q2vsi)(void *priv, u16 vsi_id);
+ 	void (*remove_q2vsi)(void *priv, u16 vsi_id);
+ 	int (*register_vsi2q)(void *priv, u16 vsi_index, u16 vsi_id,
+@@ -61,6 +62,9 @@ struct nbl_resource_ops {
+ 	void (*del_multi_rule)(void *priv, u16 vsi_id);
+ 	int (*cfg_multi_mcast)(void *priv, u16 vsi_id, u16 enable);
+ 	void (*clear_flow)(void *priv, u16 vsi_id);
++	int (*cfg_dsch)(void *priv, u16 vsi_id, bool vld);
++	int (*setup_cqs)(void *priv, u16 vsi_id, u16 real_qps, bool rss_indir_set);
++	void (*remove_cqs)(void *priv, u16 vsi_id);
+ };
  
+ struct nbl_resource_ops_tbl {
 diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
-index d29d6fe7e6..eb4be89f11 100644
+index 823498d48f..d994347a7f 100644
 --- a/drivers/net/nbl/nbl_include/nbl_include.h
 +++ b/drivers/net/nbl/nbl_include/nbl_include.h
-@@ -36,6 +36,8 @@
- #include <rte_spinlock.h>
- #include <rte_stdatomic.h>
- #include <rte_bitmap.h>
-+#include <rte_eal_paging.h>
-+#include <eal_interrupts.h>
+@@ -51,7 +51,9 @@ typedef int16_t s16;
+ typedef int8_t s8;
  
- #include "nbl_logs.h"
+ /* Used for macros to pass checkpatch */
+-#define NBL_NAME(x)					x
++#define NBL_NAME(x)				x
++#define BIT(a)					(1 << (a))
++#define NBL_SAFE_THREADS_WAIT_TIME		(20)
+ 
+ enum {
+ 	NBL_VSI_DATA = 0,	/* default vsi in kernel or independent dpdk */
+@@ -71,8 +73,6 @@ struct nbl_func_caps {
+ 	u32 rsv:31;
+ };
+ 
+-#define BIT(a)			(1 << (a))
+-
+ struct nbl_start_rx_ring_param {
+ 	u16 queue_idx;
+ 	u16 nb_desc;
+@@ -130,9 +130,10 @@ struct nbl_common_info {
+ 	/* curr_network 0 means kernel network, 1 means user network */
+ 	u8 curr_network:1;
+ 	u8 is_vf:1;
++	u8 pf_start:1;
+ 	u8 specific_dma:1;
+ 	u8 dma_set_msb:1;
+-	u8 rsv:3;
++	u8 rsv:2;
+ 	struct nbl_board_port_info board_info;
+ };
  
 -- 
 2.34.1
