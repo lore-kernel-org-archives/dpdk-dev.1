@@ -2,66 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8E1CA0EFA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 12:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66306CA0FE1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 12:08:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 91BAA402A2;
-	Mon, 25 Aug 2025 14:08:34 +0200 (CEST)
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com
- [209.85.210.174])
- by mails.dpdk.org (Postfix) with ESMTP id C274B40297
- for <dev@dpdk.org>; Fri, 22 Aug 2025 13:51:21 +0200 (CEST)
-Received: by mail-pf1-f174.google.com with SMTP id
- d2e1a72fcca58-76e2e8e2d2dso1452951b3a.1
- for <dev@dpdk.org>; Fri, 22 Aug 2025 04:51:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A0820402E9;
+	Mon, 25 Aug 2025 14:08:36 +0200 (CEST)
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
+ [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id C327940297
+ for <dev@dpdk.org>; Fri, 22 Aug 2025 13:51:27 +0200 (CEST)
+Received: by mail-pj1-f48.google.com with SMTP id
+ 98e67ed59e1d1-32326bd4f4dso1658019a91.1
+ for <dev@dpdk.org>; Fri, 22 Aug 2025 04:51:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wisig-com.20230601.gappssmtp.com; s=20230601; t=1755863480; x=1756468280;
+ d=wisig-com.20230601.gappssmtp.com; s=20230601; t=1755863487; x=1756468287;
  darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
  bh=2QxmzSnIFy+2OzOxcXmAzAFr7Oxn59IWE4tm3/3BRpI=;
- b=dEA3yOXIv4SR+HiqVT3WMdU0B40b8J1dCw8LGVOE4ZMm9uAr0+jM0bqypDoR/juqlU
- WUPpvBIrsQcBTvIxFP6Qzddjuezy9GFQz9V/1903rSoU/AGOocaxLfMwcZPK2f3NOXaD
- pzICY87DU2boNkaRdgVIVBUp27DsFRhgCQ8AqfF4++x+i4qFPyUppFedlwPL1X1B/T5d
- RHCqukiKgJ6QQrYUG2A4NNo11rtcmNcYK4cYomTJv3VInVRxYSZWaDtXH3Ry/Xy3rX+g
- AOag4rDUNGTHY1Rz8ZJUkMGvs2ZQ/qSjP/uLPGkvFArzDJdZCPhyCRKzs2kV/G5VxfpT
- 3nfA==
+ b=pDHIFIRqusvHuWAxYCjoSC4iPoVuOhDKFec18QkSKBSao7nFTsskRHAQIPGNwi/6Vu
+ PVBOneYlnmSiD/bBBwevavKJFkPW3ApvxTeE43nu/A1/BB6CYFt89l9Jel19IjlFUH2x
+ j9PSZSD1H/ZGiA8zmGLuQdrMQit9OIb8TVdb0g1exlCxvtZt7+dyT8saBu93CRO+q9Q5
+ CCJKbixK5AuCLCEoDye0p+FQMKRJg2n+V5Qg5jO0Cxt3Jkb87qv8j6kiGDKmXErVc7LQ
+ xmzVfccAeRh8fSn7N7/gGai1yyLh5AjWac6aq5FfYFcijEYoMNMPEbhrAFcA8fb97oFX
+ ErrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1755863480; x=1756468280;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
+ d=1e100.net; s=20230601; t=1755863487; x=1756468287;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
  bh=2QxmzSnIFy+2OzOxcXmAzAFr7Oxn59IWE4tm3/3BRpI=;
- b=voZ7ReNQaKpYk36b/TKMeSrf/KJtbOw+Owiu5LXXQKeTikVNGGcYwDqNbPAIDPFBM0
- bc+w+JnQqimKu8ur6RhBPhmYo2/aC/96Nm0/UIJlWg5AwNQl9aTx53jtNcHzISeBBBZm
- Ire68Jg3wzDlBh/ot3ULopqTDRCKP3+cprZfW7LgsJwlgkxgxVzS6sxN8VPOL0dzVVOH
- jDmxVHNQN70rnzTM13LX5gSm5cOcXwIzugha1WuEsGIQj8XO6miy45kav/85qn2J+tAe
- +UYt8KvU8eXbnbxkD8rcK5RrMbCXQqk2UwwCdpNqSb0T16YxK2Jfko8cBbgmrSQ/hbab
- oDhw==
-X-Gm-Message-State: AOJu0Yzlzd5u8DQfYVmog3ZwGoawB7pqePC3GtqaPDk6VlCqy5P+jF3i
- 6YZd+3xP/I2gaoOthN2Ly/VqLw7+/UNMudtmOV1iIhLyJmFSNTGj0LyJyrz1M6n7VupZ6GIU8t5
- SWXw5FQ==
-X-Gm-Gg: ASbGncuAkrJB1v0eXpNyuRzRwoWciPicoz0IvwLPBiNjHpHnxeUWO401/6DEEBCO2fJ
- 1RxwtXgNwmykyDmgTyYzZA37Jbx4jCLi0NZHyUaXUyIz+zFCfIyVBCCbzG3rC4bGSoC6Z9s8coa
- sEveK+1V3166IA+WUcP2hXIfzMxBBfxezSY/oP11Db18s27bvXNaO5FeV7JLBNlXy1rZB0bJVMw
- H+rrhk50g+o6xy3sFzPVC4MPTv92qXa67xKGa16yZaUdLK24zc5vRIgTZFAqebOydKl3XQcrM5X
- xbs4N9zIg9fN6hsW7TszInpxZ3R3LIUTz3llW5b5iw7R+mC7dXrwr48M36S6gyxAQYXmojSswMY
- GQbAr/um4/V6eWQ==
-X-Google-Smtp-Source: AGHT+IHxo8+gOO0rQMYjkaMSBdjHVEhlyM0IF3teuVSzSk7bSpooxWl0XyhWNMAjiiNdu8p6ivK+wA==
-X-Received: by 2002:a05:6a00:4614:b0:770:3dfe:89ab with SMTP id
- d2e1a72fcca58-7703dfe9d12mr35940b3a.5.1755863480424; 
- Fri, 22 Aug 2025 04:51:20 -0700 (PDT)
+ b=L6iJOm2/P/kKTCX1Jj4cyoXy/v/pShTn17iBej4CHU39wR8kjmKLZOEC8FRTNce5t2
+ YfjkvuVtD2s2VuGjjvzdr0XuIE5PgGSE2q5C/J0m6tl7KSA+/OTm67vE4tPYB0oIZ+RG
+ Bo3jz3c0weLPN+KdMMwAfB+Ph7+4IjeHjwPIEViIc3KKlDs9AVSTvFE7BK/0IPgC8Gea
+ WybjTtRFPhTANSucrdmrJ7+r67Bojte3uCX++BRwtsgQXijupywrkTboXNJgSvHTaupe
+ Fn2dupvH9+anJ31OwhShn2Y73hO6Ixn6b/Q+M/eqnODxb6+A6fHXHZXxVLKE9oAFOzRR
+ wirA==
+X-Gm-Message-State: AOJu0YxLX7M7pN80Kg2sdLA5+up9ZcPZl6Z9p/jwK8W8kjNNuoq6cN+e
+ Iz9DuGEaQl/SzDuKYdeJ1dVrmZkP9ETA1obng3er1xNmlDsk/Tmu/RCdthk2nK/kAZLoiQBpFBY
+ 1j/I1iw==
+X-Gm-Gg: ASbGnctE37iYsJtZcU25LozZhdbJx3BPIU4ePZSn+d1iuoV/jYIzaa3CDmJ7HhylbIU
+ LhOnET51AI8x66llT+fjnPMH3dVciK7MA22k2MEQ1V/vFon+jnk4T+0nF5jOlC5Ept/e8MBqf1i
+ JpEh7T3c/hFWPoNNbbIY9UHSHUu9xJMyVQGa6sy1IcYvXlSSxGCFUpUzLLG2BLO/gduKAla35uN
+ yFxCV5VayhMF9x4X6YcfskzTkQBsC53/AZ4V05/6fQ/Sg80VJWIKtfxp52Bgz4N2hhdDisbjUyv
+ ilS5uIXpmgAMHxqaiw7WW3vNztKnH0fgiTN5PBBujPGQw+7piaC2xJxJ3epXBqDnGZIOZjkk0NV
+ BeomO1qIlQvC3HA==
+X-Google-Smtp-Source: AGHT+IHE/7jSTx3DhFEwoVEcqwu8fTCxYfpM420bf6V0OeFJAb/o4KHWBXQpbsmFysCQjxCjlmsBOw==
+X-Received: by 2002:a17:90b:58c5:b0:31e:7417:9e86 with SMTP id
+ 98e67ed59e1d1-324eedf1faemr8276795a91.9.1755863485977; 
+ Fri, 22 Aug 2025 04:51:25 -0700 (PDT)
 Received: from ash-wisig ([14.195.146.86]) by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-76e951da867sm6852280b3a.102.2025.08.22.04.51.18
+ d2e1a72fcca58-76e951da867sm6852280b3a.102.2025.08.22.04.51.24
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 22 Aug 2025 04:51:20 -0700 (PDT)
+ Fri, 22 Aug 2025 04:51:25 -0700 (PDT)
 From: Ashwini Sahu <ashwini@wisig.com>
 To: dev@dpdk.org
 Cc: Maxime Coquelin <maxime.coquelin@redhat.com>
 Subject: [PATCH] vduse: fix typo in struct vduse_iova_info comment
-Date: Fri, 22 Aug 2025 17:21:11 +0530
-Message-ID: <20250822115113.1313226-1-ashwini@wisig.com>
+Date: Fri, 22 Aug 2025 17:21:12 +0530
+Message-ID: <20250822115113.1313226-2-ashwini@wisig.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250822115113.1313226-1-ashwini@wisig.com>
+References: <20250822115113.1313226-1-ashwini@wisig.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Mailman-Approved-At: Mon, 25 Aug 2025 14:08:33 +0200
