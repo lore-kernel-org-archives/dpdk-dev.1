@@ -2,42 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD07CA0EED
-	for <dpdk-dev@archiver.kernel.org>; Fri, 22 Aug 2025 14:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4CDCA0EEB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 22 Aug 2025 15:05:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 100384029A;
-	Fri, 22 Aug 2025 16:26:07 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 3BF2740297
- for <dev@dpdk.org>; Fri, 22 Aug 2025 16:26:06 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E334A209AA;
- Fri, 22 Aug 2025 16:26:05 +0200 (CEST)
-Content-class: urn:content-classes:message
-Subject: RE: [PATCH v6 1/3] mbuf: de-inline sanity checking a reinitialized
- mbuf
+	by mails.dpdk.org (Postfix) with ESMTP id 614FB4029A;
+	Fri, 22 Aug 2025 17:05:30 +0200 (CEST)
+Received: from mail.lysator.liu.se (mail.lysator.liu.se [130.236.254.3])
+ by mails.dpdk.org (Postfix) with ESMTP id 76D1740297
+ for <dev@dpdk.org>; Fri, 22 Aug 2025 17:05:29 +0200 (CEST)
+Received: from mail.lysator.liu.se (localhost [127.0.0.1])
+ by mail.lysator.liu.se (Postfix) with ESMTP id 386AF12675
+ for <dev@dpdk.org>; Fri, 22 Aug 2025 17:05:29 +0200 (CEST)
+Received: by mail.lysator.liu.se (Postfix, from userid 1004)
+ id 2899412710; Fri, 22 Aug 2025 17:05:29 +0200 (CEST)
+Received: from [192.168.1.85] (h-62-63-215-114.A163.priv.bahnhof.se
+ [62.63.215.114])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+ (No client certificate requested)
+ by mail.lysator.liu.se (Postfix) with ESMTPSA id 4324B1270F;
+ Fri, 22 Aug 2025 17:05:26 +0200 (CEST)
+Message-ID: <90ad6122-467c-441d-8515-c043146a8a57@lysator.liu.se>
+Date: Fri, 22 Aug 2025 17:05:25 +0200
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Date: Fri, 22 Aug 2025 16:26:04 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE62@smartserver.smartshare.dk>
-In-Reply-To: <20250822124731.20633-2-mb@smartsharesystems.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Thread-Topic: [PATCH v6 1/3] mbuf: de-inline sanity checking a reinitialized
- mbuf
-Thread-Index: AdwTYvGgcW50SbNjRpmkcyNYk/HyUAADYHEw
-References: <20250821150250.16959-1-mb@smartsharesystems.com>
- <20250822124731.20633-1-mb@smartsharesystems.com>
- <20250822124731.20633-2-mb@smartsharesystems.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: <dev@dpdk.org>
-Cc: "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
- "Konstantin Ananyev" <konstantin.ananyev@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 3/3] hash: add support for common small key sizes
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+Cc: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>,
+ Yipeng Wang <yipeng1.wang@intel.com>, Sameh Gobriel
+ <sameh.gobriel@intel.com>, Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+References: <20250821203646.133506-1-stephen@networkplumber.org>
+ <20250821203646.133506-4-stephen@networkplumber.org>
+ <5427c6f3-4446-4ee3-909e-5f2925d2b286@lysator.liu.se>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FE61@smartserver.smartshare.dk>
+Content-Language: en-US
+From: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <hofors@lysator.liu.se>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FE61@smartserver.smartshare.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,7 +56,182 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rm9yZ290IHRvIGFkZCB0aGUgQUNLcyBmcm9tIHByZXZpb3VzIHZlcnNpb24gb2YgdGhpcyBwYXRj
-aDoNCkFja2VkLWJ5OiBBbmRyZXcgUnliY2hlbmtvIDxhbmRyZXcucnliY2hlbmtvQG9rdGV0bGFi
-cy5ydT4NCkFja2VkLWJ5OiBLb25zdGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBo
-dWF3ZWkuY29tPg0KDQotTW9ydGVuDQoNCg==
+On 2025-08-22 11:50, Morten Brørup wrote:
+>> From: Mattias Rönnblom [mailto:hofors@lysator.liu.se]
+>> Sent: Friday, 22 August 2025 09.20
+>>
+>> On 2025-08-21 22:35, Stephen Hemminger wrote:
+>>> Add new compare functions for common small key sizes.
+>>>
+>>> Bugzilla ID: 1775
+>>> Suggested-by: Morten Brørup <mb@smartsharesystems.com>
+>>> Reported-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
+>>>
+>>> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+>>> ---
+>>>    lib/hash/rte_cuckoo_hash.c | 54 ++++++++++++++++++++++++++++++++++++++
+>>>    1 file changed, 54 insertions(+)
+>>>
+>>> diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
+>>> index 3212695d92..825889c320 100644
+>>> --- a/lib/hash/rte_cuckoo_hash.c
+>>> +++ b/lib/hash/rte_cuckoo_hash.c
+>>> @@ -49,6 +49,11 @@ RTE_LOG_REGISTER_DEFAULT(hash_logtype, INFO);
+>>>     */
+>>>    enum cmp_jump_table_case {
+>>>    	KEY_CUSTOM = 0,
+>>> +	KEY_2_BYTES,
+>>> +	KEY_4_BYTES,
+>>> +	KEY_6_BYTES,
+>>> +	KEY_8_BYTES,
+>>> +	KEY_12_BYTES,
+> 
+> While you are at it, consider adding handlers for 3, 5, 10 and 14 bytes too.
+> 
+>>>    	KEY_16_BYTES,
+>>>    	KEY_32_BYTES,
+>>>    	KEY_48_BYTES,
+>>> @@ -86,6 +91,50 @@ rte_hash_k32_cmp_eq(const void *key1, const void *key2,
+>> size_t key_len)
+>>>    }
+>>>    #endif
+>>>
+>>> +static inline int
+>>> +rte_hash_k2_cmp_eq(const void *key1, const void *key2, size_t key_len
+>> __rte_unused)
+>>> +{
+>>> +	const uint16_t *k1 = key1;
+>>> +	const uint16_t *k2 = key2;
+>>> +
+>>
+>> What we do now is to require the keys are 16-bit aligned (which wasn't
+>> the case before).
+>>
+>> You could
+>>
+>> uint16_t k1;
+>> memcpy(&k1, key1, sizeof(uint16_t));
+>> instead.
+>>
+>> Would generate the same code, but be safe from any future alignment issues.
+> 
+> Or use the unaligned types, e.g.:
+> 	const unaligned_uint16_t *k1 = key1;
+> 	const unaligned_uint16_t *k2 = key2;
+> 
+
+Could you explain why that is safe? Doesn't
+__attribute__((__aligned__(1)))
+just say specify the object doesn't have any alignment requirements, 
+without asking the compiler to deal with it?
+
+>>
+>> Anyway, maybe it's safe to assume the keys are aligned, so this is not
+>> an issue.
+> 
+> Lots of DPDK code ignores alignment issues.
+> 
+>>
+>>> +	return k1[0] ^ k2[0];
+>>> +}
+>>
+>> Haven't you implemented "neq" rather than "eq" here? If the keys are
+>> equal, the result is 0. Should be != 0.
+> 
+> Not a bug.
+
+Well, the function body doesn't do what the function name tells it. :)
+
+> These hash compare functions are in fact "neq", not "eq".
+> Having "_cmp_eq" in the function names is extremely unfortunate and misleading.
+> 
+>>
+>> Would it be worth adding a comment like "use XOR to make this
+>> branch-free"? It may not be obvious to all readers.
+>>
+>> That said, I’m not sure this trick will actually change the generated
+>> object code - especially if the result of the eq function is still used
+>> in a conditional afterward. Anyway, keeping it seems like a good
+>> conservative approach.
+> 
+> I wonder if any compiler is clever enough to use a different memcmp implementation if we inform the compiler at build time that we don't care if key1 is less than or greater key2, only if they differ or not.
+
+All what is needed is a constant-size length. (Only tested with the most 
+recent GCC and clang.)
+
+At least GCC will emit a cmp instruction though (so not branch free), if 
+that matters.
+
+> If so, the OTHER_BYTES handler shouldn't call memcmp() directly, but a wrapper around it:
+> 
+> rte_hash_k_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
+> {
+> 	return memcmp(key1, key2, key_len) != 0;
+> }
+> 
+
+Should work. (Remove __rte_unused.)
+
+>>
+>>> +
+>>> +static inline int
+>>> +rte_hash_k4_cmp_eq(const void *key1, const void *key2, size_t key_len
+>> __rte_unused)
+>>> +{
+>>> +	const uint32_t *k1 = key1;
+>>> +	const uint32_t *k2 = key2;
+>>> +
+>>> +	return k1[0] ^ k2[0];
+>>> +}
+>>> +
+>>> +static inline int
+>>> +rte_hash_k6_cmp_eq(const void *key1, const void *key2, size_t key_len
+>> __rte_unused)
+>>> +{
+>>> +	const uint16_t *k1 = key1;
+>>> +	const uint16_t *k2 = key2;
+>>> +
+>>> +	return (k1[0] ^ k2[0]) | (k1[1] ^ k2[1]) | (k1[2] ^ k2[2]);
+>>> +}
+>>> +
+>>> +static inline int
+>>> +rte_hash_k8_cmp_eq(const void *key1, const void *key2, size_t key_len
+>> __rte_unused)
+>>> +{
+>>> +	const uint64_t *k1 = key1;
+>>> +	const uint64_t *k2 = key2;
+>>> +
+>>> +	return k1[0] ^ k2[0];
+> 
+> I think this has a truncation bug when converting from uint64_t to int return type.
+> Also consider if 32 bit architecture need a different implementation. (Don't know, just raising a potential flag.)
+> 
+>>> +}
+>>> +
+>>> +static inline int
+>>> +rte_hash_k12_cmp_eq(const void *key1, const void *key2, size_t key_len
+>> __rte_unused)
+>>> +{
+>>> +	const uint32_t *k1 = key1;
+>>> +	const uint32_t *k2 = key2;
+>>> +
+>>> +	return (k1[0] ^ k2[0]) | (k1[1] ^ k2[1]) | (k1[2] ^ k2[2]);
+>>> +}
+>>>
+>>>    static inline int
+>>>    rte_hash_k48_cmp_eq(const void *key1, const void *key2, size_t key_len)
+>>> @@ -228,6 +277,11 @@ void rte_hash_set_cmp_func(struct rte_hash *h,
+>> rte_hash_cmp_eq_t func)
+>>>     */
+>>>    static const rte_hash_cmp_eq_t cmp_jump_table[NUM_KEY_CMP_CASES] = {
+>>>    	[KEY_CUSTOM] = NULL,
+>>> +	[KEY_2_BYTES] = rte_hash_k2_cmp_eq,
+>>> +	[KEY_4_BYTES] = rte_hash_k4_cmp_eq,
+>>> +	[KEY_6_BYTES] = rte_hash_k6_cmp_eq,
+>>> +	[KEY_8_BYTES] = rte_hash_k8_cmp_eq,
+>>> +	[KEY_12_BYTES] = rte_hash_k12_cmp_eq,
+>>>    	[KEY_16_BYTES] = rte_hash_k16_cmp_eq,
+>>>    	[KEY_32_BYTES] = rte_hash_k32_cmp_eq,
+>>>    	[KEY_48_BYTES] = rte_hash_k48_cmp_eq,
+> 
+
