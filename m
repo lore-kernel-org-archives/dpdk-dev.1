@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5940CA0EEB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 22 Aug 2025 09:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C87DCA0EEB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 22 Aug 2025 09:50:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 04A4040695;
-	Fri, 22 Aug 2025 11:20:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8246740A6B;
+	Fri, 22 Aug 2025 11:50:45 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id EBF274068E
- for <dev@dpdk.org>; Fri, 22 Aug 2025 11:20:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CFA9F40695
+ for <dev@dpdk.org>; Fri, 22 Aug 2025 11:50:43 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BBF64209AA;
- Fri, 22 Aug 2025 11:20:44 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 96AD5209AA;
+ Fri, 22 Aug 2025 11:50:43 +0200 (CEST)
 Content-class: urn:content-classes:message
-Subject: RE: [RFC 2/3] hash: reduce architecture special cases
+Subject: RE: [RFC 3/3] hash: add support for common small key sizes
 MIME-Version: 1.0
 Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 22 Aug 2025 11:20:43 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE60@smartserver.smartshare.dk>
-In-Reply-To: <20250821203646.133506-3-stephen@networkplumber.org>
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Date: Fri, 22 Aug 2025 11:50:42 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE61@smartserver.smartshare.dk>
+In-Reply-To: <5427c6f3-4446-4ee3-909e-5f2925d2b286@lysator.liu.se>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC 2/3] hash: reduce architecture special cases
+Thread-Topic: [RFC 3/3] hash: add support for common small key sizes
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-Thread-Index: AdwS21yjnYGU51bEQfGfR/mkcfd95AAaJNXw
+Thread-Index: AdwTNSW0nuUQ5II4TcaQZ4Bn8yb+lAAEO21A
 References: <20250821203646.133506-1-stephen@networkplumber.org>
- <20250821203646.133506-3-stephen@networkplumber.org>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>,
-	<dev@dpdk.org>
-Cc: "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
+ <20250821203646.133506-4-stephen@networkplumber.org>
+ <5427c6f3-4446-4ee3-909e-5f2925d2b286@lysator.liu.se>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: =?UTF-8?B?TWF0dGlhcyBSw7ZubmJsb20=?= <hofors@lysator.liu.se>,
+ "Stephen Hemminger" <stephen@networkplumber.org>, <dev@dpdk.org>
+Cc: =?UTF-8?B?TWF0dGlhcyBSw7ZubmJsb20=?= <mattias.ronnblom@ericsson.com>,
  "Yipeng Wang" <yipeng1.wang@intel.com>,
  "Sameh Gobriel" <sameh.gobriel@intel.com>,
  "Bruce Richardson" <bruce.richardson@intel.com>,
- "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>,
- =?iso-8859-1?Q?Mattias_R=F6nnblom?= <mattias.ronnblom@ericsson.com>
+ "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,38 +53,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> Sent: Thursday, 21 August 2025 22.35
->=20
-> Make comparison of power of 2 sizes compatible across platforms.
-> Keep the special case code for 16 bytes for x86 and arm64 but
-> also add simple xor for others.
->=20
-> Need to make rte_hash_k32_cmp_eq() exposed because ip_frag
-> code poaches it.
-
-One more argument why these architecture optimized compare functions =
-should be exposed as generic EAL functions, like rte_mov16() etc. for =
-rte_memcpy(), instead of hiding them away in the hash library.
-
-It could be rte_memeq16(const void *, const void *) etc. in =
-/lib/eal/include, with architecture optimized variants, and a generic =
-variant.
-
-And a wrapper calling them in the hash library, such as:
-
-static inline int
-rte_hash_k16_cmp_eq(const void *key1, const void *key2, size_t key_len =
-__rte_unused)
-{
-	return !rte_memeq16(key1, key2);
-}
-
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
-
-With our without suggested feature creep...
-
-Acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
-
+PiBGcm9tOiBNYXR0aWFzIFLDtm5uYmxvbSBbbWFpbHRvOmhvZm9yc0BseXNhdG9yLmxpdS5zZV0N
+Cj4gU2VudDogRnJpZGF5LCAyMiBBdWd1c3QgMjAyNSAwOS4yMA0KPiANCj4gT24gMjAyNS0wOC0y
+MSAyMjozNSwgU3RlcGhlbiBIZW1taW5nZXIgd3JvdGU6DQo+ID4gQWRkIG5ldyBjb21wYXJlIGZ1
+bmN0aW9ucyBmb3IgY29tbW9uIHNtYWxsIGtleSBzaXplcy4NCj4gPg0KPiA+IEJ1Z3ppbGxhIElE
+OiAxNzc1DQo+ID4gU3VnZ2VzdGVkLWJ5OiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFyZXN5
+c3RlbXMuY29tPg0KPiA+IFJlcG9ydGVkLWJ5OiBNYXR0aWFzIFLDtm5uYmxvbSA8bWF0dGlhcy5y
+b25uYmxvbUBlcmljc3Nvbi5jb20+DQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIEhl
+bW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+DQo+ID4gLS0tDQo+ID4gICBsaWIv
+aGFzaC9ydGVfY3Vja29vX2hhc2guYyB8IDU0ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrDQo+ID4gICAxIGZpbGUgY2hhbmdlZCwgNTQgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+
+ID4gZGlmZiAtLWdpdCBhL2xpYi9oYXNoL3J0ZV9jdWNrb29faGFzaC5jIGIvbGliL2hhc2gvcnRl
+X2N1Y2tvb19oYXNoLmMNCj4gPiBpbmRleCAzMjEyNjk1ZDkyLi44MjU4ODljMzIwIDEwMDY0NA0K
+PiA+IC0tLSBhL2xpYi9oYXNoL3J0ZV9jdWNrb29faGFzaC5jDQo+ID4gKysrIGIvbGliL2hhc2gv
+cnRlX2N1Y2tvb19oYXNoLmMNCj4gPiBAQCAtNDksNiArNDksMTEgQEAgUlRFX0xPR19SRUdJU1RF
+Ul9ERUZBVUxUKGhhc2hfbG9ndHlwZSwgSU5GTyk7DQo+ID4gICAgKi8NCj4gPiAgIGVudW0gY21w
+X2p1bXBfdGFibGVfY2FzZSB7DQo+ID4gICAJS0VZX0NVU1RPTSA9IDAsDQo+ID4gKwlLRVlfMl9C
+WVRFUywNCj4gPiArCUtFWV80X0JZVEVTLA0KPiA+ICsJS0VZXzZfQllURVMsDQo+ID4gKwlLRVlf
+OF9CWVRFUywNCj4gPiArCUtFWV8xMl9CWVRFUywNCg0KV2hpbGUgeW91IGFyZSBhdCBpdCwgY29u
+c2lkZXIgYWRkaW5nIGhhbmRsZXJzIGZvciAzLCA1LCAxMCBhbmQgMTQgYnl0ZXMgdG9vLg0KDQo+
+ID4gICAJS0VZXzE2X0JZVEVTLA0KPiA+ICAgCUtFWV8zMl9CWVRFUywNCj4gPiAgIAlLRVlfNDhf
+QllURVMsDQo+ID4gQEAgLTg2LDYgKzkxLDUwIEBAIHJ0ZV9oYXNoX2szMl9jbXBfZXEoY29uc3Qg
+dm9pZCAqa2V5MSwgY29uc3Qgdm9pZCAqa2V5MiwNCj4gc2l6ZV90IGtleV9sZW4pDQo+ID4gICB9
+DQo+ID4gICAjZW5kaWYNCj4gPg0KPiA+ICtzdGF0aWMgaW5saW5lIGludA0KPiA+ICtydGVfaGFz
+aF9rMl9jbXBfZXEoY29uc3Qgdm9pZCAqa2V5MSwgY29uc3Qgdm9pZCAqa2V5Miwgc2l6ZV90IGtl
+eV9sZW4NCj4gX19ydGVfdW51c2VkKQ0KPiA+ICt7DQo+ID4gKwljb25zdCB1aW50MTZfdCAqazEg
+PSBrZXkxOw0KPiA+ICsJY29uc3QgdWludDE2X3QgKmsyID0ga2V5MjsNCj4gPiArDQo+IA0KPiBX
+aGF0IHdlIGRvIG5vdyBpcyB0byByZXF1aXJlIHRoZSBrZXlzIGFyZSAxNi1iaXQgYWxpZ25lZCAo
+d2hpY2ggd2Fzbid0DQo+IHRoZSBjYXNlIGJlZm9yZSkuDQo+IA0KPiBZb3UgY291bGQNCj4gDQo+
+IHVpbnQxNl90IGsxOw0KPiBtZW1jcHkoJmsxLCBrZXkxLCBzaXplb2YodWludDE2X3QpKTsNCj4g
+aW5zdGVhZC4NCj4gDQo+IFdvdWxkIGdlbmVyYXRlIHRoZSBzYW1lIGNvZGUsIGJ1dCBiZSBzYWZl
+IGZyb20gYW55IGZ1dHVyZSBhbGlnbm1lbnQgaXNzdWVzLg0KDQpPciB1c2UgdGhlIHVuYWxpZ25l
+ZCB0eXBlcywgZS5nLjoNCgljb25zdCB1bmFsaWduZWRfdWludDE2X3QgKmsxID0ga2V5MTsNCglj
+b25zdCB1bmFsaWduZWRfdWludDE2X3QgKmsyID0ga2V5MjsNCg0KPiANCj4gQW55d2F5LCBtYXli
+ZSBpdCdzIHNhZmUgdG8gYXNzdW1lIHRoZSBrZXlzIGFyZSBhbGlnbmVkLCBzbyB0aGlzIGlzIG5v
+dA0KPiBhbiBpc3N1ZS4NCg0KTG90cyBvZiBEUERLIGNvZGUgaWdub3JlcyBhbGlnbm1lbnQgaXNz
+dWVzLg0KDQo+IA0KPiA+ICsJcmV0dXJuIGsxWzBdIF4gazJbMF07DQo+ID4gK30NCj4gDQo+IEhh
+dmVuJ3QgeW91IGltcGxlbWVudGVkICJuZXEiIHJhdGhlciB0aGFuICJlcSIgaGVyZT8gSWYgdGhl
+IGtleXMgYXJlDQo+IGVxdWFsLCB0aGUgcmVzdWx0IGlzIDAuIFNob3VsZCBiZSAhPSAwLg0KDQpO
+b3QgYSBidWcuDQpUaGVzZSBoYXNoIGNvbXBhcmUgZnVuY3Rpb25zIGFyZSBpbiBmYWN0ICJuZXEi
+LCBub3QgImVxIi4NCkhhdmluZyAiX2NtcF9lcSIgaW4gdGhlIGZ1bmN0aW9uIG5hbWVzIGlzIGV4
+dHJlbWVseSB1bmZvcnR1bmF0ZSBhbmQgbWlzbGVhZGluZy4NCg0KPiANCj4gV291bGQgaXQgYmUg
+d29ydGggYWRkaW5nIGEgY29tbWVudCBsaWtlICJ1c2UgWE9SIHRvIG1ha2UgdGhpcw0KPiBicmFu
+Y2gtZnJlZSI/IEl0IG1heSBub3QgYmUgb2J2aW91cyB0byBhbGwgcmVhZGVycy4NCj4gDQo+IFRo
+YXQgc2FpZCwgSeKAmW0gbm90IHN1cmUgdGhpcyB0cmljayB3aWxsIGFjdHVhbGx5IGNoYW5nZSB0
+aGUgZ2VuZXJhdGVkDQo+IG9iamVjdCBjb2RlIC0gZXNwZWNpYWxseSBpZiB0aGUgcmVzdWx0IG9m
+IHRoZSBlcSBmdW5jdGlvbiBpcyBzdGlsbCB1c2VkDQo+IGluIGEgY29uZGl0aW9uYWwgYWZ0ZXJ3
+YXJkLiBBbnl3YXksIGtlZXBpbmcgaXQgc2VlbXMgbGlrZSBhIGdvb2QNCj4gY29uc2VydmF0aXZl
+IGFwcHJvYWNoLg0KDQpJIHdvbmRlciBpZiBhbnkgY29tcGlsZXIgaXMgY2xldmVyIGVub3VnaCB0
+byB1c2UgYSBkaWZmZXJlbnQgbWVtY21wIGltcGxlbWVudGF0aW9uIGlmIHdlIGluZm9ybSB0aGUg
+Y29tcGlsZXIgYXQgYnVpbGQgdGltZSB0aGF0IHdlIGRvbid0IGNhcmUgaWYga2V5MSBpcyBsZXNz
+IHRoYW4gb3IgZ3JlYXRlciBrZXkyLCBvbmx5IGlmIHRoZXkgZGlmZmVyIG9yIG5vdC4NCklmIHNv
+LCB0aGUgT1RIRVJfQllURVMgaGFuZGxlciBzaG91bGRuJ3QgY2FsbCBtZW1jbXAoKSBkaXJlY3Rs
+eSwgYnV0IGEgd3JhcHBlciBhcm91bmQgaXQ6DQoNCnJ0ZV9oYXNoX2tfY21wX2VxKGNvbnN0IHZv
+aWQgKmtleTEsIGNvbnN0IHZvaWQgKmtleTIsIHNpemVfdCBrZXlfbGVuIF9fcnRlX3VudXNlZCkN
+CnsNCglyZXR1cm4gbWVtY21wKGtleTEsIGtleTIsIGtleV9sZW4pICE9IDA7DQp9DQoNCj4gDQo+
+ID4gKw0KPiA+ICtzdGF0aWMgaW5saW5lIGludA0KPiA+ICtydGVfaGFzaF9rNF9jbXBfZXEoY29u
+c3Qgdm9pZCAqa2V5MSwgY29uc3Qgdm9pZCAqa2V5Miwgc2l6ZV90IGtleV9sZW4NCj4gX19ydGVf
+dW51c2VkKQ0KPiA+ICt7DQo+ID4gKwljb25zdCB1aW50MzJfdCAqazEgPSBrZXkxOw0KPiA+ICsJ
+Y29uc3QgdWludDMyX3QgKmsyID0ga2V5MjsNCj4gPiArDQo+ID4gKwlyZXR1cm4gazFbMF0gXiBr
+MlswXTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGlubGluZSBpbnQNCj4gPiArcnRlX2hh
+c2hfazZfY21wX2VxKGNvbnN0IHZvaWQgKmtleTEsIGNvbnN0IHZvaWQgKmtleTIsIHNpemVfdCBr
+ZXlfbGVuDQo+IF9fcnRlX3VudXNlZCkNCj4gPiArew0KPiA+ICsJY29uc3QgdWludDE2X3QgKmsx
+ID0ga2V5MTsNCj4gPiArCWNvbnN0IHVpbnQxNl90ICprMiA9IGtleTI7DQo+ID4gKw0KPiA+ICsJ
+cmV0dXJuIChrMVswXSBeIGsyWzBdKSB8IChrMVsxXSBeIGsyWzFdKSB8IChrMVsyXSBeIGsyWzJd
+KTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGlubGluZSBpbnQNCj4gPiArcnRlX2hhc2hf
+azhfY21wX2VxKGNvbnN0IHZvaWQgKmtleTEsIGNvbnN0IHZvaWQgKmtleTIsIHNpemVfdCBrZXlf
+bGVuDQo+IF9fcnRlX3VudXNlZCkNCj4gPiArew0KPiA+ICsJY29uc3QgdWludDY0X3QgKmsxID0g
+a2V5MTsNCj4gPiArCWNvbnN0IHVpbnQ2NF90ICprMiA9IGtleTI7DQo+ID4gKw0KPiA+ICsJcmV0
+dXJuIGsxWzBdIF4gazJbMF07DQoNCkkgdGhpbmsgdGhpcyBoYXMgYSB0cnVuY2F0aW9uIGJ1ZyB3
+aGVuIGNvbnZlcnRpbmcgZnJvbSB1aW50NjRfdCB0byBpbnQgcmV0dXJuIHR5cGUuDQpBbHNvIGNv
+bnNpZGVyIGlmIDMyIGJpdCBhcmNoaXRlY3R1cmUgbmVlZCBhIGRpZmZlcmVudCBpbXBsZW1lbnRh
+dGlvbi4gKERvbid0IGtub3csIGp1c3QgcmFpc2luZyBhIHBvdGVudGlhbCBmbGFnLikNCg0KPiA+
+ICt9DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW5saW5lIGludA0KPiA+ICtydGVfaGFzaF9rMTJfY21w
+X2VxKGNvbnN0IHZvaWQgKmtleTEsIGNvbnN0IHZvaWQgKmtleTIsIHNpemVfdCBrZXlfbGVuDQo+
+IF9fcnRlX3VudXNlZCkNCj4gPiArew0KPiA+ICsJY29uc3QgdWludDMyX3QgKmsxID0ga2V5MTsN
+Cj4gPiArCWNvbnN0IHVpbnQzMl90ICprMiA9IGtleTI7DQo+ID4gKw0KPiA+ICsJcmV0dXJuIChr
+MVswXSBeIGsyWzBdKSB8IChrMVsxXSBeIGsyWzFdKSB8IChrMVsyXSBeIGsyWzJdKTsNCj4gPiAr
+fQ0KPiA+DQo+ID4gICBzdGF0aWMgaW5saW5lIGludA0KPiA+ICAgcnRlX2hhc2hfazQ4X2NtcF9l
+cShjb25zdCB2b2lkICprZXkxLCBjb25zdCB2b2lkICprZXkyLCBzaXplX3Qga2V5X2xlbikNCj4g
+PiBAQCAtMjI4LDYgKzI3NywxMSBAQCB2b2lkIHJ0ZV9oYXNoX3NldF9jbXBfZnVuYyhzdHJ1Y3Qg
+cnRlX2hhc2ggKmgsDQo+IHJ0ZV9oYXNoX2NtcF9lcV90IGZ1bmMpDQo+ID4gICAgKi8NCj4gPiAg
+IHN0YXRpYyBjb25zdCBydGVfaGFzaF9jbXBfZXFfdCBjbXBfanVtcF90YWJsZVtOVU1fS0VZX0NN
+UF9DQVNFU10gPSB7DQo+ID4gICAJW0tFWV9DVVNUT01dID0gTlVMTCwNCj4gPiArCVtLRVlfMl9C
+WVRFU10gPSBydGVfaGFzaF9rMl9jbXBfZXEsDQo+ID4gKwlbS0VZXzRfQllURVNdID0gcnRlX2hh
+c2hfazRfY21wX2VxLA0KPiA+ICsJW0tFWV82X0JZVEVTXSA9IHJ0ZV9oYXNoX2s2X2NtcF9lcSwN
+Cj4gPiArCVtLRVlfOF9CWVRFU10gPSBydGVfaGFzaF9rOF9jbXBfZXEsDQo+ID4gKwlbS0VZXzEy
+X0JZVEVTXSA9IHJ0ZV9oYXNoX2sxMl9jbXBfZXEsDQo+ID4gICAJW0tFWV8xNl9CWVRFU10gPSBy
+dGVfaGFzaF9rMTZfY21wX2VxLA0KPiA+ICAgCVtLRVlfMzJfQllURVNdID0gcnRlX2hhc2hfazMy
+X2NtcF9lcSwNCj4gPiAgIAlbS0VZXzQ4X0JZVEVTXSA9IHJ0ZV9oYXNoX2s0OF9jbXBfZXEsDQoN
+Cg==
