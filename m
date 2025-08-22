@@ -2,46 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCB0CA0FE1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 22 Aug 2025 11:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BFACA0FE1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 22 Aug 2025 11:13:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3DFED40A7D;
-	Fri, 22 Aug 2025 13:13:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 69DDE40A79;
+	Fri, 22 Aug 2025 13:13:22 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id 4BDEA4028C
- for <dev@dpdk.org>; Fri, 22 Aug 2025 13:13:17 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id EFC6E40A87
+ for <dev@dpdk.org>; Fri, 22 Aug 2025 13:13:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1755861198; x=1787397198;
+ t=1755861200; x=1787397200;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=f7Ufve4TCuLUGr5kwWTkUyv1ff5oFrmbz4ncMUqp01o=;
- b=YBrv8me2YSIjZUQ+R5sByVlOndlzertj+WhmzUMjirjDnPsNPAo6ROk2
- 0buAXrdSHagL6mouUyVhmN85Vj+EqgmhUkdXbxs1ohEPy3AWwS7ydaDot
- gqMNWr8T8L6cyf68KFV3HuMgbcZFEKuiNRBHIRCiFYSVtYq25I4Xl4Zky
- 7wwDdsZvDAlwx8pucs4pBeCQcbqFSVgtQELfh7o9Z1K+4WrDV3PFgLvaG
- P4+RadX1o0yE3OJ/rvqyCs9N4NLQ/E9sadjqrsmg3ii5PVVoQPC5ZwhBg
- V4n0Y4Loc9XKDxiYUHvkzvpqH3Rpo6+hV+aIyWeq1lkq5LxxUXl4Mnc4F w==;
-X-CSE-ConnectionGUID: E0nADYyWSyeOPini3478bQ==
-X-CSE-MsgGUID: 4ZKgRYmDQH2/GWrNn6/M9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69267769"
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; d="scan'208";a="69267769"
+ bh=UNK0To8ZFMMTTIOVI5UxV3do1T7pzb+dfDcyiX0VpvE=;
+ b=IWCl9g5p/dpbj3ZJ2bmh9nFxkI4tZ49tZ7umzwcUQETIRihE2O+6Fl3a
+ xC/rOu0B3bGaMUXIfHR+9i3MH8RY7zMgLddr4KePMV7QSJr2pDDwNy5fc
+ 7FYoQn7Cbt6XPSnmrbE7SNsNHKSLyAp4Hu96wy2+qAXLNCetHCEyVlQVl
+ ch15wI4BZsEb0tj/Btyrl/KnFYHvJXj7r39ur9bATg5b2wXJ5HZnX4gmX
+ vyF1bIKhiZbnTL2Jy7C9Z8W6Vc3wSNY8ldA9DiAmmesetas6YyL3HIzWw
+ Nu6Pos9LsjUScFNT4X6DFSZvV3su3+VFbaaPaBi9pNCh4CqHAsYVO7lYy g==;
+X-CSE-ConnectionGUID: zLxcXfEgRDW5Ve8Tr4D66Q==
+X-CSE-MsgGUID: 9TNoGhdxRvas82GCVDFciA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11529"; a="69267770"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; d="scan'208";a="69267770"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Aug 2025 04:13:17 -0700
-X-CSE-ConnectionGUID: A3nKaK2ySBq0A7LkPxG2Fw==
-X-CSE-MsgGUID: tZPSZ380TsSaURfewheRUA==
+ 22 Aug 2025 04:13:19 -0700
+X-CSE-ConnectionGUID: d6x6VuPJTsG72KbMl0oc9g==
+X-CSE-MsgGUID: iEWe1ImET2GOQcl2dY3+qw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; d="scan'208";a="168884144"
+X-IronPort-AV: E=Sophos;i="6.17,309,1747724400"; d="scan'208";a="168884153"
 Received: from silpixa00400465.ir.intel.com (HELO
  silpixa00400465.ger.corp.intel.com) ([10.237.223.221])
- by orviesa008.jf.intel.com with ESMTP; 22 Aug 2025 04:13:16 -0700
+ by orviesa008.jf.intel.com with ESMTP; 22 Aug 2025 04:13:18 -0700
 From: Kai Ji <kai.ji@intel.com>
 To: dev@dpdk.org
-Cc: Kai Ji <kai.ji@intel.com>, Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
-Subject: [dpdk-dev v9 2/3] crypto/qat: add sm2 encryption/decryption function
-Date: Fri, 22 Aug 2025 11:13:07 +0000
-Message-ID: <20250822111309.2506329-2-kai.ji@intel.com>
+Cc: Kai Ji <kai.ji@intel.com>,
+ Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>,
+ Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>
+Subject: [dpdk-dev v9 3/3] app/test: add test sm2 C1/Kp test cases
+Date: Fri, 22 Aug 2025 11:13:08 +0000
+Message-ID: <20250822111309.2506329-3-kai.ji@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250822111309.2506329-1-kai.ji@intel.com>
 References: <20241104093610.20426-2-arkadiuszx.kusztal@intel.com>
@@ -61,361 +63,301 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This commit adds SM2 elliptic curve based asymmetric
-encryption and decryption to the Intel QuickAssist
-Technology PMD.
-
-Depends-on: patch-147900 ("[v2] crypto/qat: fix ecdsa session handling")
+This commit adds tests cases to be used when C1 or kP elliptic
+curve points need to be computed.
 
 Signed-off-by: Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
 Signed-off-by: Kai Ji <kai.ji@intel.com>
 ---
- doc/guides/rel_notes/release_25_11.rst        |   3 +
- .../common/qat/qat_adf/icp_qat_fw_mmp_ids.h   |   3 +
- drivers/common/qat/qat_adf/qat_pke.h          |  20 +++
- drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c  |  72 ++++++++-
- drivers/crypto/qat/qat_asym.c                 | 140 +++++++++++++++++-
- 5 files changed, 231 insertions(+), 7 deletions(-)
+ app/test/test_cryptodev_asym.c             | 134 +++++++++++++++++++++
+ app/test/test_cryptodev_sm2_test_vectors.h | 112 ++++++++++++++++-
+ 2 files changed, 243 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
-index b15d2e0e8f..b31d9c0fb2 100644
---- a/doc/guides/rel_notes/release_25_11.rst
-+++ b/doc/guides/rel_notes/release_25_11.rst
-@@ -55,6 +55,9 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Updated the QuickAssist Technology (QAT) Crypto PMD.**
-+
-+  * Added SM2 encryption and decryption algorithms.
- 
- Removed Items
- -------------
-diff --git a/drivers/common/qat/qat_adf/icp_qat_fw_mmp_ids.h b/drivers/common/qat/qat_adf/icp_qat_fw_mmp_ids.h
-index 630c6e1a9b..aa49612ca1 100644
---- a/drivers/common/qat/qat_adf/icp_qat_fw_mmp_ids.h
-+++ b/drivers/common/qat/qat_adf/icp_qat_fw_mmp_ids.h
-@@ -1542,6 +1542,9 @@ icp_qat_fw_mmp_ecdsa_verify_gfp_521_input::in in @endlink
-  * @li no output parameters
-  */
- 
-+#define PKE_ECSM2_ENCRYPTION 0x25221720
-+#define PKE_ECSM2_DECRYPTION 0x201716e6
-+
- #define PKE_LIVENESS 0x00000001
- /**< Functionality ID for PKE_LIVENESS
-  * @li 0 input parameter(s)
-diff --git a/drivers/common/qat/qat_adf/qat_pke.h b/drivers/common/qat/qat_adf/qat_pke.h
-index f88932a275..ac051e965d 100644
---- a/drivers/common/qat/qat_adf/qat_pke.h
-+++ b/drivers/common/qat/qat_adf/qat_pke.h
-@@ -334,4 +334,24 @@ get_sm2_ecdsa_verify_function(void)
- 	return qat_function;
- }
- 
-+static struct qat_asym_function
-+get_sm2_encryption_function(void)
-+{
-+	struct qat_asym_function qat_function = {
-+		PKE_ECSM2_ENCRYPTION, 32
-+	};
-+
-+	return qat_function;
-+}
-+
-+static struct qat_asym_function
-+get_sm2_decryption_function(void)
-+{
-+	struct qat_asym_function qat_function = {
-+		PKE_ECSM2_DECRYPTION, 32
-+	};
-+
-+	return qat_function;
-+}
-+
- #endif
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c b/drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c
-index 638da1a173..843580af72 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c
-@@ -115,6 +115,38 @@ static struct rte_cryptodev_capabilities qat_sym_crypto_caps_gen4[] = {
- 	RTE_CRYPTODEV_END_OF_CAPABILITIES_LIST()
- };
- 
-+static struct rte_cryptodev_capabilities qat_asym_crypto_caps_gen4[] = {
-+	QAT_ASYM_CAP(MODEX,
-+		0, 1, 512, 1),
-+	QAT_ASYM_CAP(MODINV,
-+		0, 1, 512, 1),
-+	QAT_ASYM_CAP(RSA,
-+			((1 << RTE_CRYPTO_ASYM_OP_SIGN) |
-+			(1 << RTE_CRYPTO_ASYM_OP_VERIFY) |
-+			(1 << RTE_CRYPTO_ASYM_OP_ENCRYPT) |
-+			(1 << RTE_CRYPTO_ASYM_OP_DECRYPT)),
-+			64, 512, 64),
-+	{	/* SM2 */
-+		.op = RTE_CRYPTO_OP_TYPE_ASYMMETRIC,
-+		{.asym = {
-+			.xform_capa = {
-+				.xform_type = RTE_CRYPTO_ASYM_XFORM_SM2,
-+				.op_types =
-+				((1 << RTE_CRYPTO_ASYM_OP_SIGN) |
-+				 (1 << RTE_CRYPTO_ASYM_OP_VERIFY) |
-+				 (1 << RTE_CRYPTO_ASYM_OP_ENCRYPT) |
-+				 (1 << RTE_CRYPTO_ASYM_OP_DECRYPT)),
-+				.op_capa = {
-+					[RTE_CRYPTO_ASYM_OP_ENCRYPT] = (1 << RTE_CRYPTO_SM2_PARTIAL),
-+					[RTE_CRYPTO_ASYM_OP_DECRYPT] = (1 << RTE_CRYPTO_SM2_PARTIAL),
-+				},
-+			},
-+		}
-+		}
-+	},
-+	RTE_CRYPTODEV_END_OF_CAPABILITIES_LIST()
-+};
-+
- static int
- qat_sym_crypto_cap_get_gen4(struct qat_cryptodev_private *internals,
- 			const char *capa_memz_name,
-@@ -157,6 +189,44 @@ qat_sym_crypto_cap_get_gen4(struct qat_cryptodev_private *internals,
+diff --git a/app/test/test_cryptodev_asym.c b/app/test/test_cryptodev_asym.c
+index 20afb5e98b..6014863907 100644
+--- a/app/test/test_cryptodev_asym.c
++++ b/app/test/test_cryptodev_asym.c
+@@ -3924,6 +3924,132 @@ kat_rsa_decrypt_crt(const void *data)
  	return 0;
  }
  
 +static int
-+qat_asym_crypto_cap_get_gen4(struct qat_cryptodev_private *internals,
-+			const char *capa_memz_name,
-+			const uint16_t __rte_unused slice_map)
++test_sm2_partial_encryption(const void *data)
 +{
-+	const uint32_t size = sizeof(qat_asym_crypto_caps_gen4);
-+	uint32_t i;
++	struct rte_crypto_asym_xform xform = { 0 };
++	const uint8_t dev_id = params->valid_devs[0];
++	const struct crypto_testsuite_sm2_params *test_vector = data;
++	uint8_t result_C1_x1[TEST_DATA_SIZE] = { 0 };
++	uint8_t result_C1_y1[TEST_DATA_SIZE] = { 0 };
++	uint8_t result_kP_x1[TEST_DATA_SIZE] = { 0 };
++	uint8_t result_kP_y1[TEST_DATA_SIZE] = { 0 };
++	struct rte_cryptodev_asym_capability_idx idx;
++	const struct rte_cryptodev_asymmetric_xform_capability *capa;
 +
-+	internals->capa_mz = rte_memzone_lookup(capa_memz_name);
-+	if (internals->capa_mz == NULL) {
-+		internals->capa_mz = rte_memzone_reserve(capa_memz_name,
-+				size, rte_socket_id(), 0);
-+		if (internals->capa_mz == NULL) {
-+			QAT_LOG(DEBUG,
-+				"Error allocating memzone for capabilities");
-+			return -1;
-+		}
++	idx.type = RTE_CRYPTO_ASYM_XFORM_SM2;
++	capa = rte_cryptodev_asym_capability_get(dev_id, &idx);
++	if (capa == NULL)
++		return TEST_SKIPPED;
++	if (!rte_cryptodev_asym_xform_capability_check_opcap(capa,
++			RTE_CRYPTO_ASYM_OP_ENCRYPT, RTE_CRYPTO_SM2_PARTIAL)) {
++		return TEST_SKIPPED;
 +	}
 +
-+	struct rte_cryptodev_capabilities *addr =
-+			(struct rte_cryptodev_capabilities *)
-+				internals->capa_mz->addr;
-+	const struct rte_cryptodev_capabilities *capabilities =
-+		qat_asym_crypto_caps_gen4;
-+	const uint32_t capa_num =
-+		size / sizeof(struct rte_cryptodev_capabilities);
-+	uint32_t curr_capa = 0;
-+
-+	for (i = 0; i < capa_num; i++) {
-+		memcpy(addr + curr_capa, capabilities + i,
-+			sizeof(struct rte_cryptodev_capabilities));
-+		curr_capa++;
++	xform.xform_type = RTE_CRYPTO_ASYM_XFORM_SM2;
++	xform.ec.curve_id = RTE_CRYPTO_EC_GROUP_SM2;
++	xform.ec.q = test_vector->pubkey;
++	self->op->asym->sm2.op_type = RTE_CRYPTO_ASYM_OP_ENCRYPT;
++	self->op->asym->sm2.k = test_vector->k;
++	if (rte_cryptodev_asym_session_create(dev_id, &xform,
++			params->session_mpool, &self->sess) < 0) {
++		RTE_LOG(ERR, USER1, "line %u FAILED: Session creation failed",
++			__LINE__);
++		return TEST_FAILED;
 +	}
-+	internals->qat_dev_capabilities = internals->capa_mz->addr;
++	rte_crypto_op_attach_asym_session(self->op, self->sess);
++
++	self->op->asym->sm2.c1.x.data = result_C1_x1;
++	self->op->asym->sm2.c1.y.data = result_C1_y1;
++	self->op->asym->sm2.kp.x.data = result_kP_x1;
++	self->op->asym->sm2.kp.y.data = result_kP_y1;
++	TEST_ASSERT_SUCCESS(send_one(),
++		"Failed to process crypto op");
++
++	debug_hexdump(stdout, "C1[x]", self->op->asym->sm2.c1.x.data,
++		self->op->asym->sm2.c1.x.length);
++	debug_hexdump(stdout, "C1[y]", self->op->asym->sm2.c1.y.data,
++		self->op->asym->sm2.c1.y.length);
++	debug_hexdump(stdout, "kP[x]", self->op->asym->sm2.kp.x.data,
++		self->op->asym->sm2.kp.x.length);
++	debug_hexdump(stdout, "kP[y]", self->op->asym->sm2.kp.y.data,
++		self->op->asym->sm2.kp.y.length);
++
++	TEST_ASSERT_BUFFERS_ARE_EQUAL(test_vector->C1.x.data,
++		self->op->asym->sm2.c1.x.data,
++		test_vector->C1.x.length,
++		"Incorrect value of C1[x]\n");
++	TEST_ASSERT_BUFFERS_ARE_EQUAL(test_vector->C1.y.data,
++		self->op->asym->sm2.c1.y.data,
++		test_vector->C1.y.length,
++		"Incorrect value of C1[y]\n");
++	TEST_ASSERT_BUFFERS_ARE_EQUAL(test_vector->kP.x.data,
++		self->op->asym->sm2.kp.x.data,
++		test_vector->kP.x.length,
++		"Incorrect value of kP[x]\n");
++	TEST_ASSERT_BUFFERS_ARE_EQUAL(test_vector->kP.y.data,
++		self->op->asym->sm2.kp.y.data,
++		test_vector->kP.y.length,
++		"Incorrect value of kP[y]\n");
++
++	return TEST_SUCCESS;
++}
++
++static int
++test_sm2_partial_decryption(const void *data)
++{
++	struct rte_crypto_asym_xform xform = {};
++	const uint8_t dev_id = params->valid_devs[0];
++	const struct crypto_testsuite_sm2_params *test_vector = data;
++	uint8_t result_kP_x1[TEST_DATA_SIZE] = { 0 };
++	uint8_t result_kP_y1[TEST_DATA_SIZE] = { 0 };
++	struct rte_cryptodev_asym_capability_idx idx;
++	const struct rte_cryptodev_asymmetric_xform_capability *capa;
++
++	idx.type = RTE_CRYPTO_ASYM_XFORM_SM2;
++	capa = rte_cryptodev_asym_capability_get(dev_id, &idx);
++	if (capa == NULL)
++		return TEST_SKIPPED;
++	if (!rte_cryptodev_asym_xform_capability_check_opcap(capa,
++			RTE_CRYPTO_ASYM_OP_DECRYPT, RTE_CRYPTO_SM2_PARTIAL)) {
++		return TEST_SKIPPED;
++	}
++
++	xform.xform_type = RTE_CRYPTO_ASYM_XFORM_SM2;
++	xform.ec.pkey = test_vector->pkey;
++	self->op->asym->sm2.op_type = RTE_CRYPTO_ASYM_OP_DECRYPT;
++	self->op->asym->sm2.c1 = test_vector->C1;
++
++	if (rte_cryptodev_asym_session_create(dev_id, &xform,
++			params->session_mpool, &self->sess) < 0) {
++		RTE_LOG(ERR, USER1, "line %u FAILED: Session creation failed",
++			__LINE__);
++		return TEST_FAILED;
++	}
++	rte_crypto_op_attach_asym_session(self->op, self->sess);
++
++	self->op->asym->sm2.kp.x.data = result_kP_x1;
++	self->op->asym->sm2.kp.y.data = result_kP_y1;
++	TEST_ASSERT_SUCCESS(send_one(),
++		"Failed to process crypto op");
++
++	debug_hexdump(stdout, "kP[x]", self->op->asym->sm2.kp.x.data,
++		self->op->asym->sm2.c1.x.length);
++	debug_hexdump(stdout, "kP[y]", self->op->asym->sm2.kp.y.data,
++		self->op->asym->sm2.c1.y.length);
++
++	TEST_ASSERT_BUFFERS_ARE_EQUAL(test_vector->kP.x.data,
++		self->op->asym->sm2.kp.x.data,
++		test_vector->kP.x.length,
++		"Incorrect value of kP[x]\n");
++	TEST_ASSERT_BUFFERS_ARE_EQUAL(test_vector->kP.y.data,
++		self->op->asym->sm2.kp.y.data,
++		test_vector->kP.y.length,
++		"Incorrect value of kP[y]\n");
 +
 +	return 0;
 +}
 +
- static __rte_always_inline void
- enqueue_one_aead_job_gen4(struct qat_sym_session *ctx,
- 	struct icp_qat_fw_la_bulk_req *req,
-@@ -546,7 +616,7 @@ RTE_INIT(qat_asym_crypto_gen4_init)
- 			&qat_asym_crypto_ops_gen1;
- 	qat_asym_gen_dev_ops[QAT_VQAT].get_capabilities =
- 		qat_asym_gen_dev_ops[QAT_GEN4].get_capabilities =
--			qat_asym_crypto_cap_get_gen1;
-+			qat_asym_crypto_cap_get_gen4;
- 	qat_asym_gen_dev_ops[QAT_VQAT].get_feature_flags =
- 		qat_asym_gen_dev_ops[QAT_GEN4].get_feature_flags =
- 			qat_asym_crypto_feature_flags_get_gen1;
-diff --git a/drivers/crypto/qat/qat_asym.c b/drivers/crypto/qat/qat_asym.c
-index d8a1406819..51e461c12f 100644
---- a/drivers/crypto/qat/qat_asym.c
-+++ b/drivers/crypto/qat/qat_asym.c
-@@ -932,6 +932,15 @@ sm2_ecdsa_sign_set_input(struct icp_qat_fw_pke_request *qat_req,
- 	qat_req->input_param_count = 3;
- 	qat_req->output_param_count = 2;
+ static struct unit_test_suite cryptodev_openssl_asym_testsuite  = {
+ 	.suite_name = "Crypto Device OPENSSL ASYM Unit Test Suite",
+ 	.setup = testsuite_setup,
+@@ -3996,6 +4122,14 @@ static struct unit_test_suite cryptodev_qat_asym_testsuite  = {
+ 	.setup = testsuite_setup,
+ 	.teardown = testsuite_teardown,
+ 	.unit_test_cases = {
++		TEST_CASE_NAMED_WITH_DATA(
++			"SM2 encryption - test case 1",
++			ut_setup_asym, ut_teardown_asym,
++			test_sm2_partial_encryption, &sm2_enc_hw_t1),
++		TEST_CASE_NAMED_WITH_DATA(
++			"SM2 decryption - test case 1",
++			ut_setup_asym, ut_teardown_asym,
++			test_sm2_partial_decryption, &sm2_enc_hw_t1),
+ 		TEST_CASE_NAMED_WITH_DATA(
+ 			"Modular Exponentiation (mod=128, base=20, exp=3, res=128)",
+ 			ut_setup_asym, ut_teardown_asym,
+diff --git a/app/test/test_cryptodev_sm2_test_vectors.h b/app/test/test_cryptodev_sm2_test_vectors.h
+index 41f5f7074a..92f7e77671 100644
+--- a/app/test/test_cryptodev_sm2_test_vectors.h
++++ b/app/test/test_cryptodev_sm2_test_vectors.h
+@@ -8,19 +8,125 @@
+ #include "rte_crypto_asym.h"
  
-+	HEXDUMP("SM2 K test", asym_op->sm2.k.data,
-+		cookie->alg_bytesize);
-+	HEXDUMP("SM2 K", cookie->input_array[0],
-+		cookie->alg_bytesize);
-+	HEXDUMP("SM2 msg", cookie->input_array[1],
-+		cookie->alg_bytesize);
-+	HEXDUMP("SM2 pkey", cookie->input_array[2],
-+		cookie->alg_bytesize);
-+
- 	return RTE_CRYPTO_OP_STATUS_SUCCESS;
- }
+ struct crypto_testsuite_sm2_params {
+-	rte_crypto_param pubkey_qx;
+-	rte_crypto_param pubkey_qy;
++	union {
++		struct {
++			rte_crypto_param pubkey_qx;
++			rte_crypto_param pubkey_qy;
++		};
++		struct rte_crypto_ec_point pubkey;
++	};
+ 	rte_crypto_param pkey;
+ 	rte_crypto_param k;
+ 	rte_crypto_param sign_r;
+ 	rte_crypto_param sign_s;
+ 	rte_crypto_param id;
+-	rte_crypto_param cipher;
++	union {
++		rte_crypto_param cipher;
++		struct {
++			struct rte_crypto_ec_point C1;
++			struct rte_crypto_ec_point kP;
++		};
++	};
+ 	rte_crypto_param message;
+ 	rte_crypto_param digest;
+ 	int curve;
+ };
  
-@@ -982,6 +991,114 @@ sm2_ecdsa_sign_collect(struct rte_crypto_asym_op *asym_op,
- 	return RTE_CRYPTO_OP_STATUS_SUCCESS;
- }
- 
-+static int
-+sm2_encryption_set_input(struct icp_qat_fw_pke_request *qat_req,
-+	struct qat_asym_op_cookie *cookie,
-+	const struct rte_crypto_asym_op *asym_op,
-+	const struct rte_crypto_asym_xform *xform)
-+{
-+	const struct qat_asym_function qat_function =
-+		get_sm2_encryption_function();
-+	const uint32_t qat_func_alignsize =
-+		qat_function.bytesize;
++uint8_t sm2_enc_pub_x_t1[] = {
++	0x26, 0xf1, 0xf3, 0xef, 0x12, 0x27, 0x85, 0xd1,
++	0x7d, 0x38, 0x70, 0xc2, 0x43, 0x46, 0x50, 0x36,
++	0x3f, 0xdf, 0x4b, 0x2f, 0x45, 0x0e, 0x8e, 0xd1,
++	0xb6, 0x0f, 0xdc, 0x1f, 0xc6, 0xf0, 0x19, 0xab
++};
++uint8_t sm2_enc_pub_y_t1[] = {
++	0xd9, 0x19, 0x8b, 0xdb, 0xef, 0xa5, 0x84, 0x76,
++	0xec, 0x82, 0x25, 0x12, 0x5b, 0x8c, 0xe3, 0xe1,
++	0x0a, 0x10, 0x0d, 0xc6, 0x97, 0x6c, 0xc1, 0x89,
++	0xd9, 0x6d, 0xa6, 0x88, 0x9e, 0xbc, 0xd3, 0x7a
++};
++uint8_t sm2_k_t1[] = {
++	0x12, 0x34, 0x56, 0x78, 0xB9, 0x6E, 0x5A, 0xF7,
++	0x0B, 0xD4, 0x80, 0xB4, 0x72, 0x40, 0x9A, 0x9A,
++	0x32, 0x72, 0x57, 0xF1, 0xEB, 0xB7, 0x3F, 0x5B,
++	0x07, 0x33, 0x54, 0xB2, 0x48, 0x66, 0x85, 0x63
++};
 +
-+	SET_PKE_LN(asym_op->sm2.k, qat_func_alignsize, 0);
-+	SET_PKE_LN(xform->ec.q.x, qat_func_alignsize, 1);
-+	SET_PKE_LN(xform->ec.q.y, qat_func_alignsize, 2);
++uint8_t sm2_C1_x_t1[] = {
++	0x15, 0xf6, 0xb7, 0x49, 0x00, 0x39, 0x73, 0x9d,
++	0x5b, 0xb3, 0xd3, 0xe9, 0x1d, 0xe4, 0xc8, 0xbd,
++	0x08, 0xe3, 0x6a, 0x22, 0xff, 0x1a, 0xbf, 0xdc,
++	0x75, 0x6b, 0x12, 0x85, 0x81, 0xc5, 0x8b, 0xcf
++};
 +
-+	cookie->alg_bytesize = qat_function.bytesize;
-+	cookie->qat_func_alignsize = qat_function.bytesize;
-+	qat_req->pke_hdr.cd_pars.func_id = qat_function.func_id;
-+	qat_req->input_param_count = 3;
-+	qat_req->output_param_count = 4;
++uint8_t sm2_C1_y_t1[] = {
++	0x6a, 0x92, 0xd4, 0xd8, 0x13, 0xec, 0x8f, 0x9a,
++	0x9d, 0xbe, 0x51, 0x47, 0x6f, 0x54, 0xc5, 0x41,
++	0x98, 0xf5, 0x5f, 0x83, 0xce, 0x1c, 0x18, 0x1a,
++	0x48, 0xbd, 0xeb, 0x38, 0x13, 0x67, 0x0d, 0x06
++};
 +
-+	HEXDUMP("SM2 K", cookie->input_array[0],
-+		qat_func_alignsize);
-+	HEXDUMP("SM2 Q.x", cookie->input_array[1],
-+		qat_func_alignsize);
-+	HEXDUMP("SM2 Q.y", cookie->input_array[2],
-+		qat_func_alignsize);
++uint8_t sm2_kP_x_t1[] = {
++	0x6b, 0xfb, 0x9a, 0xcb, 0xc6, 0xb6, 0x36, 0x31,
++	0x0f, 0xd1, 0xdd, 0x9c, 0x9f, 0x17, 0x5f, 0x3f,
++	0x68, 0x13, 0x96, 0xd2, 0x54, 0x5b, 0xa6, 0x19,
++	0x78, 0x1f, 0x87, 0x3d, 0x81, 0xc3, 0x21, 0x01
++};
 +
-+	return RTE_CRYPTO_OP_STATUS_SUCCESS;
-+}
++uint8_t sm2_kP_y_t1[] = {
++	0xa4, 0x08, 0xf3, 0x74, 0x35, 0x51, 0x8c, 0x81,
++	0x06, 0x4c, 0x8f, 0x31, 0x49, 0xe3, 0x5b, 0x4d,
++	0xfc, 0x3d, 0x19, 0xac, 0x7d, 0x07, 0xd0, 0x9a,
++	0x99, 0x5a, 0x25, 0x16, 0x66, 0xff, 0x41, 0x3c
++};
 +
-+static uint8_t
-+sm2_encryption_collect(struct rte_crypto_asym_op *asym_op,
-+		const struct qat_asym_op_cookie *cookie)
-+{
-+	uint32_t alg_bytesize = cookie->alg_bytesize;
++uint8_t sm2_kP_d_t1[] = {
++	0x6F, 0xCB, 0xA2, 0xEF, 0x9A, 0xE0, 0xAB, 0x90,
++	0x2B, 0xC3, 0xBD, 0xE3, 0xFF, 0x91, 0x5D, 0x44,
++	0xBA, 0x4C, 0xC7, 0x8F, 0x88, 0xE2, 0xF8, 0xE7,
++	0xF8, 0x99, 0x6D, 0x3B, 0x8C, 0xCE, 0xED, 0xEE
++};
 +
-+	rte_memcpy(asym_op->sm2.c1.x.data, cookie->output_array[0], alg_bytesize);
-+	rte_memcpy(asym_op->sm2.c1.y.data, cookie->output_array[1], alg_bytesize);
-+	rte_memcpy(asym_op->sm2.kp.x.data, cookie->output_array[2], alg_bytesize);
-+	rte_memcpy(asym_op->sm2.kp.y.data, cookie->output_array[3], alg_bytesize);
-+	asym_op->sm2.c1.x.length = alg_bytesize;
-+	asym_op->sm2.c1.y.length = alg_bytesize;
-+	asym_op->sm2.kp.x.length = alg_bytesize;
-+	asym_op->sm2.kp.y.length = alg_bytesize;
++struct crypto_testsuite_sm2_params sm2_enc_hw_t1 = {
++	.k = {
++		.data = sm2_k_t1,
++		.length = sizeof(sm2_k_t1)
++	},
++	.pubkey = {
++		.x = {
++			.data = sm2_enc_pub_x_t1,
++			.length = sizeof(sm2_enc_pub_x_t1)
++		},
++		.y = {
++			.data = sm2_enc_pub_y_t1,
++			.length = sizeof(sm2_enc_pub_y_t1)
++		}
++	},
++	.C1 = {
++		.x = {
++			.data = sm2_C1_x_t1,
++			.length = sizeof(sm2_C1_x_t1)
++		},
++		.y = {
++			.data = sm2_C1_y_t1,
++			.length = sizeof(sm2_C1_y_t1)
++		}
++	},
++	.kP = {
++		.x = {
++			.data = sm2_kP_x_t1,
++			.length = sizeof(sm2_kP_x_t1)
++		},
++		.y = {
++			.data = sm2_kP_y_t1,
++			.length = sizeof(sm2_kP_y_t1)
++		}
++	},
++	.pkey = {
++		.data = sm2_kP_d_t1,
++		.length = sizeof(sm2_kP_d_t1)
++	}
++};
 +
-+	HEXDUMP("c1[x1]", cookie->output_array[0],
-+		alg_bytesize);
-+	HEXDUMP("c1[y]", cookie->output_array[1],
-+		alg_bytesize);
-+	HEXDUMP("kp[x]", cookie->output_array[2],
-+		alg_bytesize);
-+	HEXDUMP("kp[y]", cookie->output_array[3],
-+		alg_bytesize);
-+	return RTE_CRYPTO_OP_STATUS_SUCCESS;
-+}
-+
-+
-+static int
-+sm2_decryption_set_input(struct icp_qat_fw_pke_request *qat_req,
-+	struct qat_asym_op_cookie *cookie,
-+	const struct rte_crypto_asym_op *asym_op,
-+	const struct rte_crypto_asym_xform *xform)
-+{
-+	const struct qat_asym_function qat_function =
-+		get_sm2_decryption_function();
-+	const uint32_t qat_func_alignsize =
-+		qat_function.bytesize;
-+
-+	SET_PKE_LN(xform->ec.pkey, qat_func_alignsize, 0);
-+	SET_PKE_LN(asym_op->sm2.c1.x, qat_func_alignsize, 1);
-+	SET_PKE_LN(asym_op->sm2.c1.y, qat_func_alignsize, 2);
-+
-+	cookie->alg_bytesize = qat_function.bytesize;
-+	cookie->qat_func_alignsize = qat_function.bytesize;
-+	qat_req->pke_hdr.cd_pars.func_id = qat_function.func_id;
-+	qat_req->input_param_count = 3;
-+	qat_req->output_param_count = 2;
-+
-+	HEXDUMP("d", cookie->input_array[0],
-+		qat_func_alignsize);
-+	HEXDUMP("c1[x]", cookie->input_array[1],
-+		qat_func_alignsize);
-+	HEXDUMP("c1[y]", cookie->input_array[2],
-+		qat_func_alignsize);
-+
-+	return RTE_CRYPTO_OP_STATUS_SUCCESS;
-+}
-+
-+
-+static uint8_t
-+sm2_decryption_collect(struct rte_crypto_asym_op *asym_op,
-+		const struct qat_asym_op_cookie *cookie)
-+{
-+	uint32_t alg_bytesize = cookie->alg_bytesize;
-+
-+	rte_memcpy(asym_op->sm2.kp.x.data, cookie->output_array[0], alg_bytesize);
-+	rte_memcpy(asym_op->sm2.kp.y.data, cookie->output_array[1], alg_bytesize);
-+	asym_op->sm2.kp.x.length = alg_bytesize;
-+	asym_op->sm2.kp.y.length = alg_bytesize;
-+
-+	HEXDUMP("kp[x]", cookie->output_array[0],
-+		alg_bytesize);
-+	HEXDUMP("kp[y]", cookie->output_array[1],
-+		alg_bytesize);
-+	return RTE_CRYPTO_OP_STATUS_SUCCESS;
-+}
-+
- static int
- asym_set_input(struct icp_qat_fw_pke_request *qat_req,
- 		struct qat_asym_op_cookie *cookie,
-@@ -1014,14 +1131,20 @@ asym_set_input(struct icp_qat_fw_pke_request *qat_req,
- 				asym_op, xform);
- 		}
- 	case RTE_CRYPTO_ASYM_XFORM_SM2:
--		if (asym_op->sm2.op_type ==
--			RTE_CRYPTO_ASYM_OP_VERIFY) {
-+		if (asym_op->sm2.op_type == RTE_CRYPTO_ASYM_OP_ENCRYPT) {
-+			return sm2_encryption_set_input(qat_req, cookie,
-+				asym_op, xform);
-+		} else if (asym_op->sm2.op_type == RTE_CRYPTO_ASYM_OP_DECRYPT) {
-+			return sm2_decryption_set_input(qat_req, cookie,
-+				asym_op, xform);
-+		} else if (asym_op->sm2.op_type == RTE_CRYPTO_ASYM_OP_VERIFY) {
- 			return sm2_ecdsa_verify_set_input(qat_req, cookie,
- 						asym_op, xform);
--		} else {
-+		} else if (asym_op->sm2.op_type == RTE_CRYPTO_ASYM_OP_SIGN) {
- 			return sm2_ecdsa_sign_set_input(qat_req, cookie,
- 					asym_op, xform);
- 		}
-+		break;
- 	default:
- 		QAT_LOG(ERR, "Invalid/unsupported asymmetric crypto xform");
- 		return -EINVAL;
-@@ -1113,7 +1236,13 @@ qat_asym_collect_response(struct rte_crypto_op *op,
- 	case RTE_CRYPTO_ASYM_XFORM_ECDH:
- 		return ecdh_collect(asym_op, cookie);
- 	case RTE_CRYPTO_ASYM_XFORM_SM2:
--		return sm2_ecdsa_sign_collect(asym_op, cookie);
-+		if (asym_op->sm2.op_type == RTE_CRYPTO_ASYM_OP_ENCRYPT)
-+			return sm2_encryption_collect(asym_op, cookie);
-+		else if (asym_op->sm2.op_type == RTE_CRYPTO_ASYM_OP_DECRYPT)
-+			return sm2_decryption_collect(asym_op, cookie);
-+		else
-+			return sm2_ecdsa_sign_collect(asym_op, cookie);
-+
- 	default:
- 		QAT_LOG(ERR, "Not supported xform type");
- 		return  RTE_CRYPTO_OP_STATUS_ERROR;
-@@ -1422,9 +1551,8 @@ qat_asym_session_configure(struct rte_cryptodev *dev __rte_unused,
- 	case RTE_CRYPTO_ASYM_XFORM_ECDSA:
- 	case RTE_CRYPTO_ASYM_XFORM_ECPM:
- 	case RTE_CRYPTO_ASYM_XFORM_ECDH:
--		ret = session_set_ec(qat_session, xform);
--		break;
- 	case RTE_CRYPTO_ASYM_XFORM_SM2:
-+		ret = session_set_ec(qat_session, xform);
- 		break;
- 	default:
- 		ret = -ENOTSUP;
+ static uint8_t fp256_pkey[] = {
+ 	0x77, 0x84, 0x35, 0x65, 0x4c, 0x7a, 0x6d, 0xb1,
+ 	0x1e, 0x63, 0x0b, 0x41, 0x97, 0x36, 0x04, 0xf4,
 -- 
 2.43.0
 
