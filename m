@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70594CA0FE8
-	for <dpdk-dev@archiver.kernel.org>; Sat, 23 Aug 2025 06:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A83CA0FE8
+	for <dpdk-dev@archiver.kernel.org>; Sat, 23 Aug 2025 06:30:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7940A40E2A;
-	Sat, 23 Aug 2025 08:30:13 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B3B5340E3A;
+	Sat, 23 Aug 2025 08:30:14 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 4D73C402DE
+ by mails.dpdk.org (Postfix) with ESMTP id 5CB6F4025A
  for <dev@dpdk.org>; Sat, 23 Aug 2025 08:30:10 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0A68022075;
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 11CEB22076;
  Sat, 23 Aug 2025 08:30:10 +0200 (CEST)
 Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
  smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Sat, 23 Aug 2025 08:30:09 +0200
+ Sat, 23 Aug 2025 08:30:08 +0200
 From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
 To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
  Stephen Hemminger <stephen@networkplumber.org>,
@@ -27,19 +27,17 @@ To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
  Ivan Malov <ivan.malov@arknetworks.am>,
  Chengwen Feng <fengchengwen@huawei.com>
 Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v8 2/3] mbuf: promote raw free and alloc bulk functions as
- stable
-Date: Sat, 23 Aug 2025 06:30:01 +0000
-Message-ID: <20250823063002.24326-3-mb@smartsharesystems.com>
+Subject: [PATCH v8 0/3] mbuf: simplify handling of reinitialized mbufs
+Date: Sat, 23 Aug 2025 06:29:59 +0000
+Message-ID: <20250823063002.24326-1-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250823063002.24326-1-mb@smartsharesystems.com>
+In-Reply-To: <20250821150250.16959-1-mb@smartsharesystems.com>
 References: <20250821150250.16959-1-mb@smartsharesystems.com>
- <20250823063002.24326-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 23 Aug 2025 06:30:09.0219 (UTC)
- FILETIME=[5F5F1930:01DC13F7]
+X-OriginalArrivalTime: 23 Aug 2025 06:30:08.0922 (UTC)
+ FILETIME=[5F31C7A0:01DC13F7]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,90 +51,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-If ethdev drivers should use these APIs for allocating/freeing mbufs
-instead of bypassing the mbuf library and accessing the mempool APIs, they
-cannot be experimental anymore.
+This series contains three changes:
+- sanity checking a reinitialized mbuf (a.k.a. raw mbuf) was de-inlined
+- reinitialized mbuf free and alloc bulk functions were promoted as stable
+- resetting fields of reinitialized mbufs was optimized, making the reset
+  operation write-only of the mbuf, instead of read-modify-write
 
-Also updated the packet mbuf alloc bulk function to use the raw alloc bulk
-function, now that it is stable.
+Morten Brørup (3):
+  mbuf: de-inline sanity checking a reinitialized mbuf
+  mbuf: promote raw free and alloc bulk functions as stable
+  mbuf: optimize reset of reinitialized mbufs
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
- lib/mbuf/rte_mbuf.h | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ lib/mbuf/rte_mbuf.c |  61 +++++++++++++++
+ lib/mbuf/rte_mbuf.h | 176 +++++++++++++++++++++++++-------------------
+ 2 files changed, 162 insertions(+), 75 deletions(-)
 
-diff --git a/lib/mbuf/rte_mbuf.h b/lib/mbuf/rte_mbuf.h
-index 552cda1ae5..49c93ab356 100644
---- a/lib/mbuf/rte_mbuf.h
-+++ b/lib/mbuf/rte_mbuf.h
-@@ -635,9 +635,6 @@ static inline struct rte_mbuf *rte_mbuf_raw_alloc(struct rte_mempool *mp)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-- *
-  * Allocate a bulk of uninitialized mbufs from mempool *mp*.
-  *
-  * This function can be used by PMDs (especially in Rx functions)
-@@ -661,7 +658,6 @@ static inline struct rte_mbuf *rte_mbuf_raw_alloc(struct rte_mempool *mp)
-  *   - 0: Success.
-  *   - -ENOENT: Not enough entries in the mempool; no mbufs are retrieved.
-  */
--__rte_experimental
- static __rte_always_inline int
- rte_mbuf_raw_alloc_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigned int count)
- {
-@@ -694,9 +690,6 @@ rte_mbuf_raw_free(struct rte_mbuf *m)
- }
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-- *
-  * Put a bulk of mbufs allocated from the same mempool back into the mempool.
-  *
-  * The caller must ensure that the mbufs come from the specified mempool,
-@@ -716,7 +709,6 @@ rte_mbuf_raw_free(struct rte_mbuf *m)
-  * @param count
-  *   Array size.
-  */
--__rte_experimental
- static __rte_always_inline void
- rte_mbuf_raw_free_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigned int count)
- {
-@@ -1029,7 +1021,7 @@ static inline int rte_pktmbuf_alloc_bulk(struct rte_mempool *pool,
- 	unsigned idx = 0;
- 	int rc;
- 
--	rc = rte_mempool_get_bulk(pool, (void **)mbufs, count);
-+	rc = rte_mbuf_raw_alloc_bulk(pool, mbufs, count);
- 	if (unlikely(rc))
- 		return rc;
- 
-@@ -1041,22 +1033,18 @@ static inline int rte_pktmbuf_alloc_bulk(struct rte_mempool *pool,
- 	switch (count % 4) {
- 	case 0:
- 		while (idx != count) {
--			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], pool);
- 			rte_pktmbuf_reset(mbufs[idx]);
- 			idx++;
- 			/* fall-through */
- 	case 3:
--			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], pool);
- 			rte_pktmbuf_reset(mbufs[idx]);
- 			idx++;
- 			/* fall-through */
- 	case 2:
--			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], pool);
- 			rte_pktmbuf_reset(mbufs[idx]);
- 			idx++;
- 			/* fall-through */
- 	case 1:
--			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], pool);
- 			rte_pktmbuf_reset(mbufs[idx]);
- 			idx++;
- 			/* fall-through */
 -- 
 2.43.0
 
