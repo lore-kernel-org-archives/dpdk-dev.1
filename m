@@ -2,75 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43670CA0EED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685A4CA0EFA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:45:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3ACC240E17;
-	Mon, 25 Aug 2025 05:43:15 +0200 (CEST)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
- [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id A3D2140E22
- for <dev@dpdk.org>; Mon, 25 Aug 2025 05:43:13 +0200 (CEST)
-Received: by mail-wr1-f47.google.com with SMTP id
- ffacd0b85a97d-3c7edd71bbfso1316521f8f.0
- for <dev@dpdk.org>; Sun, 24 Aug 2025 20:43:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7350440677;
+	Mon, 25 Aug 2025 05:43:17 +0200 (CEST)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
+ [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id B374940E24
+ for <dev@dpdk.org>; Mon, 25 Aug 2025 05:43:15 +0200 (CEST)
+Received: by mail-wr1-f49.google.com with SMTP id
+ ffacd0b85a97d-3c6abcfd142so755433f8f.2
+ for <dev@dpdk.org>; Sun, 24 Aug 2025 20:43:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093393;
- x=1756698193; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093395;
+ x=1756698195; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=SskpvbGb9YAPyXQB1ZeGZ2Rh4vuA5EZJSgULjjNPwF4=;
- b=FxkHBo28zZIckX9Oem0W0/588yy+X7rOwTGCYOaZJjSkxmGH4uuI51zkUDM6DUuDs/
- kVElx18rKAIhagmsl3aoaFm563ePnWx7uTAlHLLf0OsBg4e/VxsjsXL/Q/aL4zqZXr60
- g6cZ2m2G46B1hj3CpB3/x7fU6EGJR5Up3WPNRKtGllNMvIrdnePkHtaMba9yuWvLYOZV
- vIjEYYkWL0IQ9eluAuw8k4oqmlWOUIWyDKYePKmC/1H7LWnIWVN82fkqoUMWAyAMO3rw
- 5URArOHkYmHX/vqtub8BJGXZKqZ55qwSRuqE670A+E1cCult5it78C5HL0kywzqBr50k
- AVcg==
+ bh=IITHbEipPd9L1chou6Do0sBaKEVnfRIYp28S9EGybu4=;
+ b=eqJqkIyoGKrVBVTgwGH0wLWIYAkw8pEt4HLBV/jGpian81LC15Pb/4+2jTMZ4CcUIE
+ dkkOFXr7mk1mBH9IpMAmq9EpEowdn4Vc4sm/la7yvnSLE9fHnB8kno55JuQBEbJXpsz9
+ wzvYnKn8IM3fZXAiAFxpj1ORTFf0GRGZrFSvwycgX+aE7NEHWVe0eJu0IFy+7dDXvag6
+ FPEn+5T7EpfgeDOsurt2aKWySjPMH0GtPyRN9u77Jpm3Nn148TQxajG0GL/XO2wozD4u
+ /i0EyR6zwVpBjRpA0UK3jcyUCk5z3HHKA0VGnwuGhVmYVKKxGN8WUvp/z+2ZJ0maNIPO
+ tcrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756093393; x=1756698193;
+ d=1e100.net; s=20230601; t=1756093395; x=1756698195;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=SskpvbGb9YAPyXQB1ZeGZ2Rh4vuA5EZJSgULjjNPwF4=;
- b=NGQZ0BYO/v5pMxDRTwLoL5BL4to7yUWNsbMBPkbMlug+9iZqx+f37+ZYbBZq3wiC68
- xcmQh5REXjbbzFlfG9k9ZOiRqtVHAP0x/v87yYWQM6uFPHB9s8sBfe+JYHHmkm3XJfVE
- FypFoUWt1S/Qkp01JThBU/tVgL4/3VeDShjlDqnOXDXAhSDWZn62nHGVgWEBkJLsoiTx
- lJ4BPx5B59ognd3Kp3cEipBEdupRQwc0BgicgsZ+Zoleq3CYLr7kTVeoeSkV5qI+Lqgf
- /TxjVVCEEMgVCAjbuSKQyCOZohmctKAxKXfSOIERnIHXcAO9QK6QNlbRf56xpCQAyIep
- 706w==
-X-Gm-Message-State: AOJu0YzLcCR3thV2n20cVOb7nDbfIdg1rHZ2MSzUH/A0IgTl8Lj0Vwdv
- l1ACL/bhaX+4HzPTMnm/BGRgfjBeyFDEw8EhXxZRCPb27axtOQyPC8rncZThiwfhYlilRP4fWTE
- RIylEiNU=
-X-Gm-Gg: ASbGncsgBlCOrlfE1O9P9FIX6yPu12HbEzGSlZaL0OLymB6+vwKOfzHqYaAXXQpBiK8
- A5ZAxohX1VLCBuQdKBzTepK/6JjTvL1zeCcy55uc2bTMNxAFuti2eNsAFFRs7DjPKYLYVULdsXO
- afu9aHvQcEvNGVycXhFWYIaH0kAK31r6T4uswgEIEW2r2lrQAtOlBS3kwY/oxozecaLv3Ix//mK
- iXH0Be2JPPcjxDYmvqZ1XyIslFzT9HyvtbbfV96pfmu+z39/Ezj3TPYHf+0BWKvIgEHoDSvj40p
- wpjUpySxpQJQ/JSxt+hiw1vLwFWKPyLYswga9dKu5se18X6cfLAb6onsRDZ/t0KCN333wc6GISS
- 5kfP6rYFbvAc11QrwNyN0XQNku+yLS+BVj1fYdJ6DYwKhXmsniv2Mj5/zoxUqFxGEjPifFBM7yW
- zuMjyV9v8=
-X-Google-Smtp-Source: AGHT+IHLIGDKMXOu2ApYDljRZV/WAHhHsAFjZew9uvL6RN58R4czaKcso7pUzV55ceA0LMpGhccohA==
-X-Received: by 2002:a05:6000:3101:b0:3c9:b4e7:fd9 with SMTP id
- ffacd0b85a97d-3c9b4e7145emr865996f8f.40.1756093393227; 
- Sun, 24 Aug 2025 20:43:13 -0700 (PDT)
+ bh=IITHbEipPd9L1chou6Do0sBaKEVnfRIYp28S9EGybu4=;
+ b=rHcVLehUoYzn+QchMa5QD91rbjct2R2Rv643jrnW72l16egwHkjiA33gTr7M8FKo3Y
+ N74EhUne8YxVwwd+JWcZsmkgAP4ukZTRbdkpINgguUhFbBRCOqWQ4GCyP+fTvOSxV6SC
+ 2+RkNdmBLLSy+Jn+RFZ4jMCSbK1IvRejXZEFBQkqGT5x+3e2gSd+yKkKFCklNgnKPv0r
+ SBfPjdtJIKgZbFc7rBM3GgAdYPUJ7caOAL3PuW6zxm415rFecpnwLe0ekxb/+CHh0rsh
+ H4vUgUjIM6uNv0qx3PxXmC5D8KeGRF6m1CKoK9PKHwbdEUIsMBNSfMM7XR+Kf1JhoGd4
+ zT5Q==
+X-Gm-Message-State: AOJu0YyLvPwHvVnfXdm6PBYnnGDEbua1dGMRnnD2wkWCO1TtN9+S4CJ0
+ Ox5zkxFoV7AKf8zBHuJUYLTS7Z741tPdNwgz4fwOEWgPNpMtsWixGke6RUlSfcspm8IBmXBhDNb
+ 5VQ4DU+8=
+X-Gm-Gg: ASbGncuGiEipEvS+0chR+tvm1iGAit3HT/6KZjxJsIfMWWGiHoByth3ne7XW290CbtB
+ qMcVp4ryIWNTzcR8kHgNo+D5lYoD1gsI4BZ0zD29PTom6mZQJwH6lnX1tWYWrYPBKdqGHF1lrvN
+ SXRGrRn9l9qX3KgLyMtLuTyFTu+VEXlZmk2eEhUojwg64wtqE50+PpmMDhSdkPKi/rqE0E//2Q2
+ yR+/z/UXzwR4yz5EOHdGoZMzsZeSq3pI1gZTw1uhSmZ/OdyUIkQ6ndeIRAmfanU5lsX0/Kx4UIL
+ I90520tgjCgO9oBgKG2uqP4+/vOriaQG/iyWttEAscd2qF1igSqzgNqoXchhe7vuNQwFwmRWKIF
+ pWL2eTVNTUbAKegTBnk8ppM4v3VG3qrU+iSvLw5Njt1NAbWydE9xBnYkotTNASaV7Hv8cIhem
+X-Google-Smtp-Source: AGHT+IF51viKhdLHlOO1KKG3P01ATi/bSIMm+wGkWBm8s7N2zBE1fIw+IpQa6fYJfshWIF/dhbP2gg==
+X-Received: by 2002:a05:6000:2585:b0:3b9:16a3:cf9b with SMTP id
+ ffacd0b85a97d-3c5da64a8fbmr8770831f8f.5.1756093395385; 
+ Sun, 24 Aug 2025 20:43:15 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.43.10
+ ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.43.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 24 Aug 2025 20:43:12 -0700 (PDT)
+ Sun, 24 Aug 2025 20:43:15 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>,
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH v2 40/43] drivers/common: remove use of sys/queue.h
-Date: Sun, 24 Aug 2025 20:38:53 -0700
-Message-ID: <20250825034126.12046-41-stephen@networkplumber.org>
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Vikas Gupta <vikas.gupta@broadcom.com>,
+ Sunil Uttarwar <sunilprakashrao.uttarwar@amd.com>
+Subject: [PATCH v2 41/43] drivers/crypto: remove use of sys_queue.h
+Date: Sun, 24 Aug 2025 20:38:54 -0700
+Message-ID: <20250825034126.12046-42-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250825034126.12046-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -91,59 +85,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 The system version of queue.h should not be used.
+If necessary use rte_bsd_queue.h
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/common/cnxk/roc_bphy_irq.c   | 3 ++-
- drivers/common/cnxk/roc_npc.h        | 2 --
- drivers/common/mlx5/mlx5_common_mr.h | 3 +--
- 3 files changed, 3 insertions(+), 5 deletions(-)
+ drivers/crypto/bcmfs/bcmfs_device.c | 2 +-
+ drivers/crypto/bcmfs/bcmfs_device.h | 2 --
+ drivers/crypto/ccp/ccp_crypto.c     | 1 -
+ drivers/crypto/ccp/ccp_dev.c        | 2 +-
+ 4 files changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_bphy_irq.c b/drivers/common/cnxk/roc_bphy_irq.c
-index 7b39b61537..0c2dc04517 100644
---- a/drivers/common/cnxk/roc_bphy_irq.c
-+++ b/drivers/common/cnxk/roc_bphy_irq.c
-@@ -5,9 +5,10 @@
- #include <pthread.h>
- #include <sys/ioctl.h>
+diff --git a/drivers/crypto/bcmfs/bcmfs_device.c b/drivers/crypto/bcmfs/bcmfs_device.c
+index 46522970d5..c66e31097e 100644
+--- a/drivers/crypto/bcmfs/bcmfs_device.c
++++ b/drivers/crypto/bcmfs/bcmfs_device.c
+@@ -6,8 +6,8 @@
+ #include <dirent.h>
+ #include <stdbool.h>
+ #include <stdlib.h>
+-#include <sys/queue.h>
+ 
++#include <rte_bsd_queue.h>
+ #include <rte_malloc.h>
+ #include <rte_string_fns.h>
+ 
+diff --git a/drivers/crypto/bcmfs/bcmfs_device.h b/drivers/crypto/bcmfs/bcmfs_device.h
+index 610454dd5e..7e1eafc4de 100644
+--- a/drivers/crypto/bcmfs/bcmfs_device.h
++++ b/drivers/crypto/bcmfs/bcmfs_device.h
+@@ -6,8 +6,6 @@
+ #ifndef _BCMFS_DEVICE_H_
+ #define _BCMFS_DEVICE_H_
+ 
+-#include <sys/queue.h>
+-
+ #include <rte_spinlock.h>
+ #include <bus_vdev_driver.h>
+ 
+diff --git a/drivers/crypto/ccp/ccp_crypto.c b/drivers/crypto/ccp/ccp_crypto.c
+index 5899d83bae..7069265f5d 100644
+--- a/drivers/crypto/ccp/ccp_crypto.c
++++ b/drivers/crypto/ccp/ccp_crypto.c
+@@ -9,7 +9,6 @@
+ #include <stdio.h>
+ #include <string.h>
  #include <sys/mman.h>
 -#include <sys/queue.h>
+ #include <sys/types.h>
+ #include <unistd.h>
+ #include <openssl/sha.h>
+diff --git a/drivers/crypto/ccp/ccp_dev.c b/drivers/crypto/ccp/ccp_dev.c
+index 5088d8ded6..61df5b1d7e 100644
+--- a/drivers/crypto/ccp/ccp_dev.c
++++ b/drivers/crypto/ccp/ccp_dev.c
+@@ -7,11 +7,11 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <sys/mman.h>
+-#include <sys/queue.h>
+ #include <sys/types.h>
+ #include <sys/file.h>
  #include <unistd.h>
  
 +#include <rte_bsd_queue.h>
-+
- #include "roc_api.h"
- #include "roc_bphy_irq.h"
- 
-diff --git a/drivers/common/cnxk/roc_npc.h b/drivers/common/cnxk/roc_npc.h
-index 91c84d7d97..f96c449ae8 100644
---- a/drivers/common/cnxk/roc_npc.h
-+++ b/drivers/common/cnxk/roc_npc.h
-@@ -5,8 +5,6 @@
- #ifndef _ROC_NPC_H_
- #define _ROC_NPC_H_
- 
--#include <sys/queue.h>
--
- enum roc_npc_item_type {
- 	ROC_NPC_ITEM_TYPE_VOID,
- 	ROC_NPC_ITEM_TYPE_ANY,
-diff --git a/drivers/common/mlx5/mlx5_common_mr.h b/drivers/common/mlx5/mlx5_common_mr.h
-index cf7c685e9b..8bcc13f111 100644
---- a/drivers/common/mlx5/mlx5_common_mr.h
-+++ b/drivers/common/mlx5/mlx5_common_mr.h
-@@ -8,10 +8,9 @@
- 
- #include <stddef.h>
- #include <stdint.h>
--#include <sys/queue.h>
--
- 
- #include <rte_compat.h>
-+#include <rte_bsd_queue.h>
- #include <rte_rwlock.h>
- #include <rte_bitmap.h>
- #include <rte_mbuf.h>
+ #include <rte_hexdump.h>
+ #include <rte_memzone.h>
+ #include <rte_malloc.h>
 -- 
 2.47.2
 
