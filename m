@@ -2,70 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 363E1CA0EFA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43670CA0EED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:45:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 104CE40E1C;
-	Mon, 25 Aug 2025 05:43:12 +0200 (CEST)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
- [209.85.221.45]) by mails.dpdk.org (Postfix) with ESMTP id 24B6D40E17
- for <dev@dpdk.org>; Mon, 25 Aug 2025 05:43:10 +0200 (CEST)
-Received: by mail-wr1-f45.google.com with SMTP id
- ffacd0b85a97d-3c68ac7e238so1105139f8f.1
- for <dev@dpdk.org>; Sun, 24 Aug 2025 20:43:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3ACC240E17;
+	Mon, 25 Aug 2025 05:43:15 +0200 (CEST)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
+ [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id A3D2140E22
+ for <dev@dpdk.org>; Mon, 25 Aug 2025 05:43:13 +0200 (CEST)
+Received: by mail-wr1-f47.google.com with SMTP id
+ ffacd0b85a97d-3c7edd71bbfso1316521f8f.0
+ for <dev@dpdk.org>; Sun, 24 Aug 2025 20:43:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093390;
- x=1756698190; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093393;
+ x=1756698193; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=5hEdrxl7nrrT91gQ6oGEDa2efJqk0JcYQNOZ6MJ+22Q=;
- b=lwmQV3WW1Qr4ebOBmvLOr28qrlh3usucGMIRkdJHimdGvIkiPhn8LiJmePS/tIhFq6
- MTqmV2rRCbJWbtcfJaGo5kuJwNvPqLGWCOvgUtf+ThSz1+NiE/4g9HHjFS6U7Aw8jONq
- 2DXbzE2FFxO2nOL3c7Nb5emH95i3Pm/eOP1tG6fW5ciCMV1mWPj1js7gugNqZ8YNfgLA
- hw54IWuZYIZdqRGZLDWmg+KTfO4BNrxCD1BZta5kbfr7DKPUfNrqE4L1R4B/x55fUw2F
- kLadjZfxomtSArty4fnstW7r9GqnMaxP73VHuf+ukm+GyE696MonbTkyUTFoQgS365x7
- R7Qg==
+ bh=SskpvbGb9YAPyXQB1ZeGZ2Rh4vuA5EZJSgULjjNPwF4=;
+ b=FxkHBo28zZIckX9Oem0W0/588yy+X7rOwTGCYOaZJjSkxmGH4uuI51zkUDM6DUuDs/
+ kVElx18rKAIhagmsl3aoaFm563ePnWx7uTAlHLLf0OsBg4e/VxsjsXL/Q/aL4zqZXr60
+ g6cZ2m2G46B1hj3CpB3/x7fU6EGJR5Up3WPNRKtGllNMvIrdnePkHtaMba9yuWvLYOZV
+ vIjEYYkWL0IQ9eluAuw8k4oqmlWOUIWyDKYePKmC/1H7LWnIWVN82fkqoUMWAyAMO3rw
+ 5URArOHkYmHX/vqtub8BJGXZKqZ55qwSRuqE670A+E1cCult5it78C5HL0kywzqBr50k
+ AVcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756093390; x=1756698190;
+ d=1e100.net; s=20230601; t=1756093393; x=1756698193;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=5hEdrxl7nrrT91gQ6oGEDa2efJqk0JcYQNOZ6MJ+22Q=;
- b=mVRZtI2s7WOpbpJt351CPewWTq8frMMFKwwZV/RQBI1n0cKLJ15O2q1dfmodTx+SDY
- Q/Q9kc82X7ZpUznDRhp623oNnq730WTLusQt+t16gARXbxULbuhNt826nUVbkaYC4btb
- rW7m1UtQjnUeTRHm5sg8+pS09Sjjg0pwkGPAwaeQUJ2hqTloEybn6eH5ZyN0kTONtUhS
- aNKEcfahEgDcQjOVN9xYLO4u6d0muOg/nTU9dQQ+K3Xq816f5P+Q24bm2e4/3E7Qekjl
- X0iQHpHkkHGE8uo61yyLyvPab9pwJQEVBsqYQ8K69ieBRa46rQ94VQAMZkwgC79/FIJI
- cI8g==
-X-Gm-Message-State: AOJu0YyVi6vKvMbP9VsYrlP9tgAwgZ1PlQ99R4I6Fc2z/sE3USfnoc/3
- 2EER3bKf7428KDh7TDA+mVFObt//1Ae5VEAtIOJP148mDZy0O+3nXqCeJytWiPFtWQ0ZlnWEfhr
- FLr4R
-X-Gm-Gg: ASbGncsFjK+9lbGcrMk55/Y1aXcxKJbDi6OGVIGMZSU9DTyoSVVpU0KDmc7cEiW29Ax
- heDb8ep9xzUiGITS71ID0dNBH2zo0iHFlvksjCtq89qB/w2s5aQVIQ20OlzUYcGKXvTj7ofw3rI
- EgzE8u+l8NO1p/LL+/Nmqg7l0VvAYh8VYXHePCFJ7IkMZVvXaQpjf/UbSyOFzRlDJhtoUojRHNi
- uf3OpguSjgAQWnjWBBpRzQ5raBkoUKm6KPXgI4QukoaidP6LoxWL1QV4DkmpvGr2yVnv6Mnh+dE
- r1zRXnJ5DlL4PMqOilK0A1+DkQYNvSqY424VgXUAKY+ufOE7nQn673X+nrKqkraaQhPgpUw+F9N
- 2f9DiuW59AMJnL1XPuZx+n7ZEg2O1p9Y3EeN5uVQMU4lhawbPMb+nwaEPBZbtQcfsOam0tyXnb0
- L8BJlLKa8=
-X-Google-Smtp-Source: AGHT+IHyWdPg6++f1NrutI4WbWjB/0IjuFJuAedPxCuW7/+H3bUx0OJszcXt7Spz2m0UtthTNwKZWQ==
-X-Received: by 2002:a05:600c:4689:b0:458:bc3f:6a72 with SMTP id
- 5b1f17b1804b1-45b517954femr87267025e9.4.1756093389773; 
- Sun, 24 Aug 2025 20:43:09 -0700 (PDT)
+ bh=SskpvbGb9YAPyXQB1ZeGZ2Rh4vuA5EZJSgULjjNPwF4=;
+ b=NGQZ0BYO/v5pMxDRTwLoL5BL4to7yUWNsbMBPkbMlug+9iZqx+f37+ZYbBZq3wiC68
+ xcmQh5REXjbbzFlfG9k9ZOiRqtVHAP0x/v87yYWQM6uFPHB9s8sBfe+JYHHmkm3XJfVE
+ FypFoUWt1S/Qkp01JThBU/tVgL4/3VeDShjlDqnOXDXAhSDWZn62nHGVgWEBkJLsoiTx
+ lJ4BPx5B59ognd3Kp3cEipBEdupRQwc0BgicgsZ+Zoleq3CYLr7kTVeoeSkV5qI+Lqgf
+ /TxjVVCEEMgVCAjbuSKQyCOZohmctKAxKXfSOIERnIHXcAO9QK6QNlbRf56xpCQAyIep
+ 706w==
+X-Gm-Message-State: AOJu0YzLcCR3thV2n20cVOb7nDbfIdg1rHZ2MSzUH/A0IgTl8Lj0Vwdv
+ l1ACL/bhaX+4HzPTMnm/BGRgfjBeyFDEw8EhXxZRCPb27axtOQyPC8rncZThiwfhYlilRP4fWTE
+ RIylEiNU=
+X-Gm-Gg: ASbGncsgBlCOrlfE1O9P9FIX6yPu12HbEzGSlZaL0OLymB6+vwKOfzHqYaAXXQpBiK8
+ A5ZAxohX1VLCBuQdKBzTepK/6JjTvL1zeCcy55uc2bTMNxAFuti2eNsAFFRs7DjPKYLYVULdsXO
+ afu9aHvQcEvNGVycXhFWYIaH0kAK31r6T4uswgEIEW2r2lrQAtOlBS3kwY/oxozecaLv3Ix//mK
+ iXH0Be2JPPcjxDYmvqZ1XyIslFzT9HyvtbbfV96pfmu+z39/Ezj3TPYHf+0BWKvIgEHoDSvj40p
+ wpjUpySxpQJQ/JSxt+hiw1vLwFWKPyLYswga9dKu5se18X6cfLAb6onsRDZ/t0KCN333wc6GISS
+ 5kfP6rYFbvAc11QrwNyN0XQNku+yLS+BVj1fYdJ6DYwKhXmsniv2Mj5/zoxUqFxGEjPifFBM7yW
+ zuMjyV9v8=
+X-Google-Smtp-Source: AGHT+IHLIGDKMXOu2ApYDljRZV/WAHhHsAFjZew9uvL6RN58R4czaKcso7pUzV55ceA0LMpGhccohA==
+X-Received: by 2002:a05:6000:3101:b0:3c9:b4e7:fd9 with SMTP id
+ ffacd0b85a97d-3c9b4e7145emr865996f8f.40.1756093393227; 
+ Sun, 24 Aug 2025 20:43:13 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.43.08
+ ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.43.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 24 Aug 2025 20:43:09 -0700 (PDT)
+ Sun, 24 Aug 2025 20:43:12 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Matan Azrad <matan@nvidia.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
  Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Vijay Kumar Srivastava <vsrivast@xilinx.com>
-Subject: [PATCH v2 39/43] drivers/vdpa: replace use of sys/queue.h
-Date: Sun, 24 Aug 2025 20:38:52 -0700
-Message-ID: <20250825034126.12046-40-stephen@networkplumber.org>
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Subject: [PATCH v2 40/43] drivers/common: remove use of sys/queue.h
+Date: Sun, 24 Aug 2025 20:38:53 -0700
+Message-ID: <20250825034126.12046-41-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250825034126.12046-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -85,57 +90,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use rte_bsd_queue.h instead.
+The system version of queue.h should not be used.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/vdpa/mlx5/mlx5_vdpa.h | 3 ++-
- drivers/vdpa/sfc/sfc_vdpa.c   | 2 +-
- drivers/vdpa/sfc/sfc_vdpa.h   | 2 +-
- 3 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/common/cnxk/roc_bphy_irq.c   | 3 ++-
+ drivers/common/cnxk/roc_npc.h        | 2 --
+ drivers/common/mlx5/mlx5_common_mr.h | 3 +--
+ 3 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/vdpa/mlx5/mlx5_vdpa.h b/drivers/vdpa/mlx5/mlx5_vdpa.h
-index a398aa22ce..8071e1a5e0 100644
---- a/drivers/vdpa/mlx5/mlx5_vdpa.h
-+++ b/drivers/vdpa/mlx5/mlx5_vdpa.h
-@@ -6,7 +6,8 @@
- #define RTE_PMD_MLX5_VDPA_H_
- 
- #include <linux/virtio_net.h>
--#include <sys/queue.h>
-+
-+#include <rte_bsd_queue.h>
- 
- #ifdef PEDANTIC
- #pragma GCC diagnostic ignored "-Wpedantic"
-diff --git a/drivers/vdpa/sfc/sfc_vdpa.c b/drivers/vdpa/sfc/sfc_vdpa.c
-index eda111954f..73c75acca2 100644
---- a/drivers/vdpa/sfc/sfc_vdpa.c
-+++ b/drivers/vdpa/sfc/sfc_vdpa.c
-@@ -5,8 +5,8 @@
- #include <stdbool.h>
- #include <stdint.h>
+diff --git a/drivers/common/cnxk/roc_bphy_irq.c b/drivers/common/cnxk/roc_bphy_irq.c
+index 7b39b61537..0c2dc04517 100644
+--- a/drivers/common/cnxk/roc_bphy_irq.c
++++ b/drivers/common/cnxk/roc_bphy_irq.c
+@@ -5,9 +5,10 @@
  #include <pthread.h>
+ #include <sys/ioctl.h>
+ #include <sys/mman.h>
 -#include <sys/queue.h>
+ #include <unistd.h>
  
 +#include <rte_bsd_queue.h>
- #include <rte_common.h>
- #include <rte_devargs.h>
- #include <rte_errno.h>
-diff --git a/drivers/vdpa/sfc/sfc_vdpa.h b/drivers/vdpa/sfc/sfc_vdpa.h
-index 2b843e563d..a240a8be25 100644
---- a/drivers/vdpa/sfc/sfc_vdpa.h
-+++ b/drivers/vdpa/sfc/sfc_vdpa.h
-@@ -6,8 +6,8 @@
- #define _SFC_VDPA_H
++
+ #include "roc_api.h"
+ #include "roc_bphy_irq.h"
  
+diff --git a/drivers/common/cnxk/roc_npc.h b/drivers/common/cnxk/roc_npc.h
+index 91c84d7d97..f96c449ae8 100644
+--- a/drivers/common/cnxk/roc_npc.h
++++ b/drivers/common/cnxk/roc_npc.h
+@@ -5,8 +5,6 @@
+ #ifndef _ROC_NPC_H_
+ #define _ROC_NPC_H_
+ 
+-#include <sys/queue.h>
+-
+ enum roc_npc_item_type {
+ 	ROC_NPC_ITEM_TYPE_VOID,
+ 	ROC_NPC_ITEM_TYPE_ANY,
+diff --git a/drivers/common/mlx5/mlx5_common_mr.h b/drivers/common/mlx5/mlx5_common_mr.h
+index cf7c685e9b..8bcc13f111 100644
+--- a/drivers/common/mlx5/mlx5_common_mr.h
++++ b/drivers/common/mlx5/mlx5_common_mr.h
+@@ -8,10 +8,9 @@
+ 
+ #include <stddef.h>
  #include <stdint.h>
 -#include <sys/queue.h>
+-
  
+ #include <rte_compat.h>
 +#include <rte_bsd_queue.h>
- #include <bus_pci_driver.h>
- 
- #include "sfc_efx.h"
+ #include <rte_rwlock.h>
+ #include <rte_bitmap.h>
+ #include <rte_mbuf.h>
 -- 
 2.47.2
 
