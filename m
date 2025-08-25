@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD6A3CA0EED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C05CA0EED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:44:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5316140A81;
-	Mon, 25 Aug 2025 05:42:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 42F3140A89;
+	Mon, 25 Aug 2025 05:42:48 +0200 (CEST)
 Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com
- [209.85.221.51]) by mails.dpdk.org (Postfix) with ESMTP id D199040676
- for <dev@dpdk.org>; Mon, 25 Aug 2025 05:42:36 +0200 (CEST)
+ [209.85.221.51]) by mails.dpdk.org (Postfix) with ESMTP id C871C406BC
+ for <dev@dpdk.org>; Mon, 25 Aug 2025 05:42:38 +0200 (CEST)
 Received: by mail-wr1-f51.google.com with SMTP id
- ffacd0b85a97d-3c98b309804so340555f8f.1
- for <dev@dpdk.org>; Sun, 24 Aug 2025 20:42:36 -0700 (PDT)
+ ffacd0b85a97d-3c79f0a5b8bso1232445f8f.1
+ for <dev@dpdk.org>; Sun, 24 Aug 2025 20:42:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093356;
- x=1756698156; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093358;
+ x=1756698158; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=b7xBrH9GnuDwKhrQ4JuANFmAB+Bir1ir5hSrVXIcrLc=;
- b=cF8AetdymXKgxuyCYimQWEQwDy5y9IiMQ4QK3xHNTG0RboXuH6XM7oysvwfmeBruPS
- UghtoiFRee8jCs/n1LGdJTtt4/yP/ofeafh9uHAUlcZzrZm5TTtZs5fEXwqagbg8VGTV
- ZVrF6Zwi/xQxqkzblyeLaRm2MbaBm9fykKwWdKzagBjJ7Z99QVbIwz/iMk8BXVNjWCC1
- e8/qbZB97pFicRQNookI1ZU2irNd335ITWafJ8gO77ojGpkmjw95nUHYoSlU7Ahwe+Vj
- WUX5VYPA+lOftqJth4xwNbeHqXe1uY+jnMK0dNd8LsPm1WaCm4qyDUIxTz8EWftXhMkU
- sEaA==
+ bh=LJq/DfnjEgXdDaBJ4ECxioWjiXBMzMF0qNo7WPU1g/I=;
+ b=tfIbuRn9VV4ww9ReF3Hsu7iwPSX0XgXF+i+zUG2oTghD9slp3qmQGDZqy/8X8/3/y6
+ jXrZtl/ET/x5+ExhXg1Poqz5Y5Uz9Lkas77XnzPt5wVN3t1yAZ5lyxdqYARavfSGBIIa
+ hRS3Www3dQx3DhqfTHiYe6gPQvbG4iJl5V1lX6V/MQbW7D9VB7E+oKOf1V4CWWgHHh0K
+ G5oMbfCsopalWTJZdQe7C8AzTgZp5MfiMD6qTnr+Vdq1DheqaHVb+Dy0FYIrHBybk3+L
+ bWrMiuT73x2wsYodq4YZXGBnyjsH0vN4MyWtjiNK93dFsqjA5zvAy5oys85NkthjcB13
+ EIQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756093356; x=1756698156;
+ d=1e100.net; s=20230601; t=1756093358; x=1756698158;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=b7xBrH9GnuDwKhrQ4JuANFmAB+Bir1ir5hSrVXIcrLc=;
- b=Qxbalc5wHB+W2NVEnzVvku5jjc2eQRLjN0FOFe5G7wFH/B6qx3lXdAaQiS7BWdXqXC
- TZ1JggGCHM1uu9Tbfs67+Lr5joVmEIhiXMWyv/0e9gMDCPgn2FT3oiwD+IHWlb9Bcm1p
- 1/jketFFS9FD8NGh6Px4vb1kAkF0w2f7WNQQPScSwQMK1HBe4dc3bi8LC+G0btwyHXju
- rMXNhfPR7VjQFi+0MpQr7euso7BzbPHRfayOZga2kKUyA/+efpPrjPfx29TeKORdB542
- eO3SG5qBarKXyx1YluK/kFDCwbCu+onVdsa1zB4x89ohR/sdHod5dBsnWbz6O8WDr2Fd
- t9kw==
-X-Gm-Message-State: AOJu0Ywb5CG92QwdzXhImmJqYljUtxIExFFu5TaFslYCUnPyM6Mg/+Jo
- sMnP3xY4XPOEvNbZHMzQ8AGKSonzQXeBT/AUTqHvCOJPCWrGrjKHQgyy8XCbWFSPpwQiSOEkMPZ
- CJ1zA
-X-Gm-Gg: ASbGncsZw41Osdq1vMo1D4xPpdMVj3XSQCwZeaQYR400RurEWJi2K32CiKFO6IshlV+
- BfTcioCA0l3rLbUhE11fTnjhobcOmatsY8WD1/EwKJeVmfJUQi2Hqh4E7RILkWfcQhNkj1OONVW
- mdyxtTHY1udasYnvB0eraEhyd5vMYnX4mnDsFNsfD1Hcak5/Zeymkbhfh7phzrqzolMzTqVhnFl
- Ws7DToX8lzwbiFo6oqIeXzyccaIrLOISF9KUidQ+DChpIasIIOjW88zrInlkDlnPGl5ZPhi2JlK
- Vbz4t6p92Exf5Dq6tTky2NFO8QxFSNn6S3ogMjjWlssnTFm4jrF2D+K7X+n5SN7qxY96UuwDniY
- ESgdA1b7RQJhHG1XSgAGdt5paMFAzGWhAN3R8VnoKsrGLyOqAs7K3w/fCMx6RQX/4al3WhIZzvd
- lUj1Zmswk=
-X-Google-Smtp-Source: AGHT+IHMwlC/qwmTMdRU/4gADVX3j9+PtVyzaBXKbTVGuG+yj5Q6JibWsDLaB4fK1rqpAUS0Fu4zYA==
-X-Received: by 2002:a05:6000:2888:b0:3b8:d4c5:686f with SMTP id
- ffacd0b85a97d-3c5dc540a3fmr8397255f8f.39.1756093356473; 
- Sun, 24 Aug 2025 20:42:36 -0700 (PDT)
+ bh=LJq/DfnjEgXdDaBJ4ECxioWjiXBMzMF0qNo7WPU1g/I=;
+ b=u3gl+52yN39pI9+/FwzBIHmy1B8J6AOZrVkskq1txEv3ZbrS7uVKP60XIpu4EG9gun
+ aglzvdZasgENN7fsPQC3wISumjJeaI40ffCUTx7zAxcCIuzvg/lVtDGONfOkj2VKEm9w
+ LW/6ZSIpTg2JNQNtL7AgiFJ5TSIyT7dfr4psq1WD1pewh/n+ex0IFCwqm3rPDXVEfNfi
+ +Mluht93QbcB0LQXqwg6nimB0vpHvyLTXCluWK+9WHxENF2eeN9PcYHlrwj1sJZ0zV5C
+ WGkBuAL6RvGY6/kuk7sRtmrhjSF/Pemz/uc7gEuf0dCYwQ1cO56oj0NxbqbhrQfKuY7s
+ H7Jw==
+X-Gm-Message-State: AOJu0YyqanGb7EnqN0DJpcSjx5BxTUkS1xvtc6IbJcuiWsxrzaGWS6QV
+ 9YZ5yg8oc7sOTzpMA67gVDHnXfctHjhtFsEbStWekWdKbteYtwtGtmdcDObqWY+HXTAjYwRSyuF
+ MlR4l
+X-Gm-Gg: ASbGncsfa2L9+JXVGD1vNZTfOdvkyD3khYzqZiaKsgDu/khDrZe3/mMkY6YSXk+Sf/g
+ MHlY4LsLMvipMQOogt2w5vCNK4H51SdAkr+u4XG1sUttfCcmONCF+VWIHzyE2xIAV8tqlu+FCgu
+ J7P1R0gAxsLxR0HSlGqdXjSRuodBFlK3dkaJvc3VcH+/2fEPLvSdr06mNI7VeKi8AYBrDF07b6u
+ bYBrVMWDNwHMCAx38wuMqQ1G+wgj5CM/v4jz7GwgGRFzmlxKG7zMkaWkAkkCRH7rK/DM/YH5UP9
+ KcubO2pMTDXIH/LCxK319QYcjJ8yabhzkuuxM0MVYl9Eom6Kl5NnXjEUhLP+kxYnhxhQFc7RM0U
+ WV/S5qMhKF9Hspg0opnS/faXmAHyHhz8orATf7Qc6FACPI5ND+9NfiBXCZI7uqIbxfaH8KbsL
+X-Google-Smtp-Source: AGHT+IHMor7oD8XIsRlKF3BKtYJdHUrSsaXn86phn4nwgol+SQq+zy6XegPZGhWELgXDU5UjqHzDbg==
+X-Received: by 2002:a05:6000:381:b0:3b7:89a2:bb8c with SMTP id
+ ffacd0b85a97d-3c5db0eeb6dmr9333491f8f.16.1756093358420; 
+ Sun, 24 Aug 2025 20:42:38 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.42.35
+ ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.42.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 24 Aug 2025 20:42:36 -0700 (PDT)
+ Sun, 24 Aug 2025 20:42:38 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Potnuri Bharat Teja <bharat@chelsio.com>
-Subject: [PATCH v2 23/43] net/cxgbe: replace use of sys/queue.h
-Date: Sun, 24 Aug 2025 20:38:36 -0700
-Message-ID: <20250825034126.12046-24-stephen@networkplumber.org>
+ John Daley <johndale@cisco.com>, Hyong Youb Kim <hyonkim@cisco.com>
+Subject: [PATCH v2 24/43] net/enic: replace use of sys/queue.h
+Date: Sun, 24 Aug 2025 20:38:37 -0700
+Message-ID: <20250825034126.12046-25-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250825034126.12046-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -87,48 +86,21 @@ Replace use of system sys/queue.h with DPDK rte_bsd_queue.h
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/cxgbe/cxgbe_ethdev.c | 2 +-
- drivers/net/cxgbe/cxgbe_main.c   | 1 -
- drivers/net/cxgbe/sge.c          | 1 -
- 3 files changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/enic/enic.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/cxgbe/cxgbe_ethdev.c b/drivers/net/cxgbe/cxgbe_ethdev.c
-index 9b6a3651f9..a91da8d267 100644
---- a/drivers/net/cxgbe/cxgbe_ethdev.c
-+++ b/drivers/net/cxgbe/cxgbe_ethdev.c
-@@ -3,7 +3,7 @@
-  * All rights reserved.
-  */
- 
+diff --git a/drivers/net/enic/enic.h b/drivers/net/enic/enic.h
+index dc1d16f7d5..7c16356a58 100644
+--- a/drivers/net/enic/enic.h
++++ b/drivers/net/enic/enic.h
+@@ -21,7 +21,6 @@
+ #include "enic_res.h"
+ #include "cq_enet_desc.h"
+ #include <stdbool.h>
 -#include <sys/queue.h>
-+#include <rte_bsd_queue.h>
- #include <stdio.h>
- #include <errno.h>
- #include <stdint.h>
-diff --git a/drivers/net/cxgbe/cxgbe_main.c b/drivers/net/cxgbe/cxgbe_main.c
-index 2ed21f2d66..b3d7e1c012 100644
---- a/drivers/net/cxgbe/cxgbe_main.c
-+++ b/drivers/net/cxgbe/cxgbe_main.c
-@@ -3,7 +3,6 @@
-  * All rights reserved.
-  */
+ #include <rte_spinlock.h>
  
--#include <sys/queue.h>
- #include <sys/stat.h>
- #include <stdio.h>
- #include <errno.h>
-diff --git a/drivers/net/cxgbe/sge.c b/drivers/net/cxgbe/sge.c
-index e9d45f24c4..3fa296b1bd 100644
---- a/drivers/net/cxgbe/sge.c
-+++ b/drivers/net/cxgbe/sge.c
-@@ -3,7 +3,6 @@
-  * All rights reserved.
-  */
- 
--#include <sys/queue.h>
- #include <stdio.h>
- #include <errno.h>
- #include <stdint.h>
+ #define DRV_NAME		"enic_pmd"
 -- 
 2.47.2
 
