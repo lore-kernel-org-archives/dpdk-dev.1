@@ -2,146 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7E0CA0EFA
-	for <dpdk-dev@archiver.kernel.org>; Sat, 23 Aug 2025 19:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7440CA0EED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:41:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0935C402A2;
-	Sat, 23 Aug 2025 21:25:06 +0200 (CEST)
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com
- (mail-dm6nam11on2082.outbound.protection.outlook.com [40.107.223.82])
- by mails.dpdk.org (Postfix) with ESMTP id BF8BB4025E;
- Sat, 23 Aug 2025 21:25:04 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZW49Aba9Cu4jMgXgrhH4nScWkMy80928DPIp09oq8JoguhA/WDsmSlxyUsQUDmvk1LPO1jOek8guk/1L4da6cEoypfwgIH+ZVoEYpkQCVHfc9qWs6p1PnSmC3ntEp+bWQarOchr7auPuzO7xeawG7c7Qs2kX0oHNDUxV4vbc4sDGhMYEn9Dv7nUpHjfQoVs0tTZs+gslScgs+e67cG2i3i+IXHyb03b4B+vtf/9TDqcoxs6E5jy1N7bCcwcXTxyM8cpOgcC920/ZiJ0s3pFphp282ET0QhA69/oqCn1Lmvdh18BYqIeHa8PfDNU+GeBxU8UIBpb8xA+PwJHg+Y2NPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+MDgfCDdWGQiTnqqWw2km9ZNqlf18Flhs65bBePk7Mc=;
- b=pHWVTu1j6TFLOJlCHx99tVSe1BNBRVqxGlVlis7yauR+A/EENvEB0KIMMbkfTL4Ht/O39OmIK93XXlCMzhxMXt0zmYqUQW9OhX8cBWa7NG+MGZQoH6i92shlffmBQcgSQcdiaGPaXtE6h12Mv8laKEAMJmmDdn3QMZj2SxIt6TlgXtnPYBgPhrd/SiyB/26NbUR1XJafnz98mFRRzIf8ul3U2DuUncn0baCaprFZpet0GaQq4Y/2VkBM4yP1EceF3qBbSdbgaXSm1XhwdtnAqQH2zv4V3ll7a5sW06yFrj48jKMHkWGuqyv3XOtjdy46jEZOYNJ7jAQJqBJ7iselhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+MDgfCDdWGQiTnqqWw2km9ZNqlf18Flhs65bBePk7Mc=;
- b=LEYmQckVue1K3/r/mXrXk1t7aVjRzi7hlAfX/qz9MLhlKJqzyjlZXfVokfMYLe/udjVohv1zGZcdYhEP4fbG8mjLC79OnvvcHZPdMTHCUOPeVpfVNNlqLL0vW7ai77nqg3pVTxgifBhO20GMRPWoylJwhXDMBKkLmHB8QpJGRcmen/F5+R3spG4PM+s0IeCu34gPE5PW6JypP7XlQ1qRcvnvspDZIOux3naFyaLNO2BmIw/rCr4MKjNstROEtMfZHmzKczxkmAvjha3dwMlMnlJs0d5CemB5CKYVsNeBmz5lO0jWlzCW7OoflGI1Wc/XHaVMP3M3zpdlKvdF8vYDkw==
-Received: from CH3PR12MB8658.namprd12.prod.outlook.com (2603:10b6:610:175::8)
- by PH7PR12MB5830.namprd12.prod.outlook.com (2603:10b6:510:1d5::15)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.19; Sat, 23 Aug
- 2025 19:25:02 +0000
-Received: from CH3PR12MB8658.namprd12.prod.outlook.com
- ([fe80::d5cc:cc84:5e00:2f42]) by CH3PR12MB8658.namprd12.prod.outlook.com
- ([fe80::d5cc:cc84:5e00:2f42%4]) with mapi id 15.20.9052.014; Sat, 23 Aug 2025
- 19:25:01 +0000
-From: Xueming Li <xuemingl@nvidia.com>
-To: Ali Alnubani <alialnu@nvidia.com>, "stable@dpdk.org" <stable@dpdk.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Abhishek Marathe
- <Abhishek.Marathe@microsoft.com>, David Christensen <drc@linux.vnet.ibm.com>, 
- Hemant Agrawal <hemant.agrawal@nxp.com>, Ian Stokes <ian.stokes@intel.com>,
- Jerin Jacob <jerinj@marvell.com>, John McNamara <john.mcnamara@intel.com>,
- Ju-Hyoung Lee <juhlee@microsoft.com>, Kevin Traynor <ktraynor@redhat.com>,
- Luca Boccassi <bluca@debian.org>, Pei Zhang <pezhang@redhat.com>, Raslan
- Darawsheh <rasland@nvidia.com>, "NBU-Contact-Thomas Monjalon (EXTERNAL)"
- <thomas@monjalon.net>, Yanghang Liu <yanghliu@redhat.com>,
- "benjamin.walker@intel.com" <benjamin.walker@intel.com>,
- "qian.q.xu@intel.com" <qian.q.xu@intel.com>, "yuan.peng@intel.com"
- <yuan.peng@intel.com>, "zhaoyan.chen@intel.com" <zhaoyan.chen@intel.com>
-Subject: Re: 23.11.5 patches review and test
-Thread-Topic: 23.11.5 patches review and test
-Thread-Index: AQHcCsXBAV2qxzmDY0WUtvSeMh56KLRqJdIAgAaLtk4=
-Date: Sat, 23 Aug 2025 19:25:01 +0000
-Message-ID: <CH3PR12MB865848892AA41B5EA3E4228EA13CA@CH3PR12MB8658.namprd12.prod.outlook.com>
-References: <20250811134220.45579-1-xuemingl@nvidia.com>
- <8a89c883-e287-4640-80f2-576f6e8a1e71@nvidia.com>
-In-Reply-To: <8a89c883-e287-4640-80f2-576f6e8a1e71@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH3PR12MB8658:EE_|PH7PR12MB5830:EE_
-x-ms-office365-filtering-correlation-id: 57e72af2-eb56-41b6-e415-08dde27ac19e
-x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|7416014|1800799024|366016|38070700018|7053199007|8096899003|13003099007;
-x-microsoft-antispam-message-info: =?us-ascii?Q?zO3ohtneiJoylrN1P3l+2QBZdAlyeJpN0DVO5t3dNH7fC3h+T9CPlQiuwdg7?=
- =?us-ascii?Q?vtmLCJTyGxvCA20/r+6qCN9qLS34N1hwQwZGPSG8is1anTthjL1EMmw7EiWp?=
- =?us-ascii?Q?8yWPcCEauvpNNf20ndF2NijStWezYRqx570RfvK1is3DRPVxbZGF1sLh2oLG?=
- =?us-ascii?Q?UeMe9zZ8hB+d7fvUh7RxmmMzNqFCET24og93pP1ou2aJiz8CUAU81HNrNkrA?=
- =?us-ascii?Q?pxRgxKSrAp1ygeUahMci1qcvDskd+v8pf2APvl0xLxUi2PXNk3yRfwBdCZkO?=
- =?us-ascii?Q?U2oWjYutlhN4kWr4AzH+ayiOMoJqWGHgua7hIvmWtoB6EEItC+NKYtKnhTkH?=
- =?us-ascii?Q?RRU6z843An11NfiZClompZtvYYd19CiYAzFq+3UsKT4Qa7EvzGvhxAJ0+rCy?=
- =?us-ascii?Q?XaM6G0zHHUJjCrYdl63O+PEFNituKTChv+Z6QpsBdqKodseA74LOkbPWrsnN?=
- =?us-ascii?Q?FpiPRtq37e5NvGRXarfkdWUO0eWMrCOiQIpXhBFqJLdDH9w8tsuk8zgCCUKQ?=
- =?us-ascii?Q?is0EzitcWV4XpZBNNtYpY0UrsPAc6krRnkVl0+I2QR02slgwLEeGhf7m481G?=
- =?us-ascii?Q?vLY3YXz7kdfIKSdDzNouH98caSu7xlhuskx7VWMXgGiRzkp/1IrbDptFBZp7?=
- =?us-ascii?Q?Srfkaa5YIXZLnO+sqiQWkI7IIzP0UfQ2ubtQ8pJahS77mFewbFEyJt9Xf5/Q?=
- =?us-ascii?Q?UvJfmSmpo/EtvlwLwrX8DTxaRigzneJhXpK7cCTyLrpoaDWP8CBI2nbkkTah?=
- =?us-ascii?Q?h0IDpPvmx1m+QlMT15Mv5Z7El4D8V7X0eB7jB0xOiJfRibB42ouJvioMsdgU?=
- =?us-ascii?Q?A244mmPyVCePv+8tNroV4otX/qgaMBMIoB1QesvDdSnNLkyC0n2S1YiOFFqI?=
- =?us-ascii?Q?2A0zIO5kWCQaL+q/ybt62YJJPq/yYyTURWbYcBH9FeFUJ5KiddSsB3epPqp2?=
- =?us-ascii?Q?BbSVQhF5ctPLTBLmL1U3nBGs5fxpdQvW0aMWunL0lY6ng6y9kw8C0smuGH1w?=
- =?us-ascii?Q?//47Zi8eSc0i3i6PmmvofYUe3t9eYiRPIczo7+h5aTBHXwZsq6Tg2wiha8b1?=
- =?us-ascii?Q?MgPrFRmQdUBsuZl1eD+JdjQCKwkkUds2sSgACvFufKrpcyeeIgIRVC7hq1Rx?=
- =?us-ascii?Q?Exl1Of2eAAyYRqSwCuaXi89MlMKKCUpDe5+uAL86E9x2TpWu8yGGARb5MN9a?=
- =?us-ascii?Q?EvNk6mJ0CO0mEhhAT14woA9VBPoGcAudI7UxlSEFcIzHLgPjWUDi1Y0bqokX?=
- =?us-ascii?Q?tldjqRVJEcJV8SWYERvNXyhpMXzwUUNDwQ3DWRBBlaaRwAi0jwZQIfApHxxK?=
- =?us-ascii?Q?8NPt4ki/aohxOOKBwZGCOIR9eiM9b6wXhDSOiv3o45gyGIS2fQes5F4sB4rv?=
- =?us-ascii?Q?EYTgtpW5tgECr5dz8KfvFcd0VveVJ3x0Qj9zYoMuv7tKxmzQ000mtPxuknJu?=
- =?us-ascii?Q?peUVxlVuuWSYY8Kc8Ecu9/7ITsdh8FKwbrnUqy0dvJOOusFwlFN/sxTYVuu6?=
- =?us-ascii?Q?fIUhaeGctoeN5mc=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CH3PR12MB8658.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018)(7053199007)(8096899003)(13003099007);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?u1zMyuIDKxmlQtVKJd06CGYBtr9GxEUtA3GYno/LZfEJ3BjdQY6WHUMxnhxR?=
- =?us-ascii?Q?l67l62v9DYSds0KMy3ywutzJzU59sTgseuGLqQBhCdcGUBrqp3vP4SE6NSwg?=
- =?us-ascii?Q?TbzJ5toTI2C4G4+aE5c91pWpz0ALtv+0wD5pIrIP2/lKY2CZtOFSuixe92ZQ?=
- =?us-ascii?Q?9ugrZXi+4OgscTADqNVWCqfh9Rjo8LOgs1wGX8w+1de5m40FloW+qbtkqcV+?=
- =?us-ascii?Q?Jc2TowN3dV0HiNfbiAhkxfyzFm0FvOBZ7SI2PQHCtJbqJ+YNCVLolSECYie0?=
- =?us-ascii?Q?YOOz2wjil9+oVX4M74xIfsfvmm4IvEwoSnT25oOUBqN1g0LRZd8R7UJHjDaM?=
- =?us-ascii?Q?xOi8xD4UV4WuOD4G160WBWhzqSOGNzHSiaKeUJECiDVWZomOXSBDyjtEqDQU?=
- =?us-ascii?Q?BuJKFLZdKI3Tyrs1O0vr75u5roCfmBG9xFz7tpLAjSvgGz4VwEDZ1EJr0gKw?=
- =?us-ascii?Q?K6olJi15BACHp+rVsAV59iZzPA/5XqH8IrJ/gErj4EhVE/L5H+wHjTm7CFY6?=
- =?us-ascii?Q?UW2LGtxD8VGXMkaReXcLcUhVwEzu9T5p9K6Z2NC2GhAWUIESIsGxRjrkQ12k?=
- =?us-ascii?Q?Pc2ZHD7fjAUjiyfmBX/sL60/0sWvZJNasKP0Y/TvMrxSpv9C+U+tU9Qk3IeX?=
- =?us-ascii?Q?TdTZuWvRcKk8Wv4XAXylDuL4w4olnPXRB2BDTAZfa9b1y8TPhMwH3l0fe2GC?=
- =?us-ascii?Q?VewHRcFdBJLCa7yx7q/DLhR+CtGCLAx9zNDs69nqLB2Usrs9lf8xSHEaOyE8?=
- =?us-ascii?Q?Vpr0UWMbwGLghi6gqkmyC3I+SuMHetfUOo7uCmWP1sSXR4EF/tRalEBOTrtX?=
- =?us-ascii?Q?3w6VcP7bp1wRhlsNkPRHFtUCKa6k0tD/KDnU450jLkEh3AUKPrAZaRtK+6vT?=
- =?us-ascii?Q?NHPPdOYCoGDFAbSmB+25qiWWuVKTUByUlPBMLAhHU47R0pSnUmeokUZLkyWe?=
- =?us-ascii?Q?jsKuHf18b/7YzTwZL5+jE/WrZb74k2giTfKJkql++Bp4TSiWye7hXmAc8Rsi?=
- =?us-ascii?Q?Qp3icZDaMqijBXKqCY9Ggs2eu6bYZckc5QL/wYwgVNgtsTW5qgAvGhzVzZlQ?=
- =?us-ascii?Q?MJ6qLPAEiirjMJAmvrh8QNcAo/qHz3BL9c9GIttDd7sbhsMLNY2Lpx5taO8D?=
- =?us-ascii?Q?jr0bvRW+J8AsYso4YnxCZuKvG9oD7gckp0tYvsxZT3NSYOi10mNEmvjE0qIr?=
- =?us-ascii?Q?HBaLhBRqjme+ftsIfHnfLXCqt4V2qiTy0qGJ6ijZ79S1qWjmWYBqwifyDRrk?=
- =?us-ascii?Q?IrjDwxVIZcbEqMRA4W86EQdoR5W3zcLsG/kdwuPCEAVfrNSMxLpd4XU2oTmH?=
- =?us-ascii?Q?V8zcNSGR/vemaQVLo4PnvJTAzpW3s5yUUGGRvvyvW/kGUno0MvqkqDOfQqe2?=
- =?us-ascii?Q?W/vKKPCwkSBAJZfYISBUFP148gu7lgU/5QWCJOWIcLg2vGrB5sqIuJx9qrbh?=
- =?us-ascii?Q?Xq/jGOxs6heCjSd9JRBWU/0gbXDH8n9laNzsZU0uqxXXWzYFQVRvxu/5Ugrx?=
- =?us-ascii?Q?ba8tT+zRKE/VxaIO6CcyL2xszmVHGAQczno6oOcpkfrIKGY4b9ZuKBhJgA1i?=
- =?us-ascii?Q?Z3NrtB/4sFwgmaaC9ckvk0EyfGTD/vro05f6Qoby?=
-Content-Type: multipart/alternative;
- boundary="_000_CH3PR12MB865848892AA41B5EA3E4228EA13CACH3PR12MB8658namp_"
+	by mails.dpdk.org (Postfix) with ESMTP id BB8B540262;
+	Mon, 25 Aug 2025 05:41:34 +0200 (CEST)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com
+ [209.85.221.43]) by mails.dpdk.org (Postfix) with ESMTP id 97DE64021E
+ for <dev@dpdk.org>; Mon, 25 Aug 2025 05:41:32 +0200 (CEST)
+Received: by mail-wr1-f43.google.com with SMTP id
+ ffacd0b85a97d-3b9edf4cf6cso3317174f8f.3
+ for <dev@dpdk.org>; Sun, 24 Aug 2025 20:41:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093292;
+ x=1756698092; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=zfC82sPcQNZAJiuI50TsQItT8AaVK3Liz7Xq7Vsr5/w=;
+ b=F+aTT0FSBsSrG8iCKbqXMPkJFFhOZ4COfwJunYtALcZEf4c7JHlpqin1KvNf5zE4io
+ y4Acrx6ptU0FKemdNbclImgaZDFqz7dwgmwh9PVHvDHY/vQy/eGyp2V56pjYk6IPAEuN
+ IRjIZQlr8V5OFTcy/dZ0Ki8QWFpmQBf5gowPCfOcWby6jXGISVufWnTyOzBXP24TFLzZ
+ RZ5GXg+B5BNM5n5gJyt7ryo3J+IWyDR7Fge26ZkpBOqMy8yxAU8BT97h0lKP38bHQDka
+ Ze0YrmeYBlArvC+bJelVP0v2rgJ5ciWbxuJTUY4XRlDRbiN9wIpDprl3PFAmmmoen1u2
+ Y4IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1756093292; x=1756698092;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=zfC82sPcQNZAJiuI50TsQItT8AaVK3Liz7Xq7Vsr5/w=;
+ b=GFDe6YJk9YqC3ofujdao/V0FZL02IFKBDoWnqnkH8D4NlCnUGAHeeTo5jl0f/gzbCx
+ hhQJw0V3JY9UMuIexJ9knmPaL+YgZioDAKFjygB4SwmBKtcXswUihhjxoqiZGdFExixi
+ ERP/uSvDz6jGN02Plt0slt/7yWlJh0z4YNJK1oJPUeDPgd4NiuWZJlbdpTjo9BopBzum
+ Z0/dzY554hUi36XKrCj7zLiixXlf3OpREle8wFEwqahyy+ZRUMgRKTm+45KXQzuVbexs
+ olOuQOht1UtVKCoxmYIROlYOebqQBmXa+xI6CgtZX8/NlGH6lFT2yuYa1ezBUfmGGKS/
+ ED6Q==
+X-Gm-Message-State: AOJu0YzboFMRMipRW0SsV7lfYBNXfgRXI5m2mIcMCaYpjlsr9tx3rvaL
+ D6RiV/60Fw0BB/VlqCKseY2Kql4gq57thjDhYqcQpMxQVYGNeapENzmE0GXzwzdY3+iwzgfZBpc
+ Ktlc/
+X-Gm-Gg: ASbGncuQkthv2YcEUz4M31JB1WmOKaVR0czY0Bp8SOjouUdHH2RPfdLDnY5GG3KWs6E
+ tR7kdRoET2AvrabwzlrFJhwM0Lic86xdQ2W/GP47VIoSaTd/0RPioXDj24WPmPiFNDVUFCwgR0A
+ aEgyQl758qU4Qupw7T/fnLCOwyzoA/qwjrblZsVzoJ3uRXOyXVtJcRKlUazQuZzrt2VZ1ZTqq40
+ cNKCHdLDD/ytvXUOaAAFuyrI/5nWuuL2actuHyXFy/QHFJRZVmi7UWSU89WxP+tNg00t5bNRvaE
+ 83BXE0RD82qDAcbBjRkb8LQZUt65R7JCjWO3tIhTNlnR+Or3peEZ22kY+zWLn+lPDauF2ttRslT
+ URlIGCq/xov8yHH1tXN1DFDAk0zXwqrP5gF2AURpPvv80xza/6o4h8K14SLfAFF6s0LqEX3d1oF
+ N4KeuMWMY=
+X-Google-Smtp-Source: AGHT+IEdWwlO3gBI5Q5FHKqeaGPRvNmZaR1dXXNt8I+L8OtX7BO2oFhXHpNFrsq7LnvDIaovIpK+cw==
+X-Received: by 2002:a05:6000:4313:b0:3a5:527b:64c6 with SMTP id
+ ffacd0b85a97d-3c5da54ea6bmr7138700f8f.1.1756093291800; 
+ Sun, 24 Aug 2025 20:41:31 -0700 (PDT)
+Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.41.30
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 24 Aug 2025 20:41:31 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 00/43] Introduce more complete queue.h macros
+Date: Sun, 24 Aug 2025 20:38:13 -0700
+Message-ID: <20250825034126.12046-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250818233102.180207-1-stephen@networkplumber.org>
+References: <20250818233102.180207-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8658.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57e72af2-eb56-41b6-e415-08dde27ac19e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2025 19:25:01.8292 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 31swZ5GWXAG2zmVbdWRwZfvZ4H4CToQbSuPCi6MpX5xFLx+DV8rNkxSlghT4bUUtR+z0BiPr7Myozfze35JD8Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5830
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -155,239 +81,371 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_CH3PR12MB865848892AA41B5EA3E4228EA13CACH3PR12MB8658namp_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+This patchset cleans up the queue.h macro problems in DPDK.
+The root cause is that sys/queue.h in Linux is an old version
+from early BSD; my best guess is that it is a BSD GPL license
+issue that it never got updated. The Linux version is missing
+several useful macros which leads to redefiniton, bugs, etc.
 
-Hi Ali,
+The patch starts out by introducing a version of the current
+FreeBSD queue.h named as bsd_queue.h, then uses it across all
+of DPDK. The file sys/queue.h is no longer used.
+Ends up doing one line change on lots of files.
 
-Thanks very much for your help!
+The patch fixes a couple of use after free cases in existing
+drivers. May require some manual effort to backport but
+not that hard.
 
-________________________________
-From: Ali Alnubani <alialnu@nvidia.com>
-Sent: Tuesday, August 19, 2025 11:26 PM
-To: Xueming Li <xuemingl@nvidia.com>; stable@dpdk.org <stable@dpdk.org>
-Cc: dev@dpdk.org <dev@dpdk.org>; Abhishek Marathe <Abhishek.Marathe@microso=
-ft.com>; David Christensen <drc@linux.vnet.ibm.com>; Hemant Agrawal <hemant=
-.agrawal@nxp.com>; Ian Stokes <ian.stokes@intel.com>; Jerin Jacob <jerinj@m=
-arvell.com>; John McNamara <john.mcnamara@intel.com>; Ju-Hyoung Lee <juhlee=
-@microsoft.com>; Kevin Traynor <ktraynor@redhat.com>; Luca Boccassi <bluca@=
-debian.org>; Pei Zhang <pezhang@redhat.com>; Raslan Darawsheh <rasland@nvid=
-ia.com>; NBU-Contact-Thomas Monjalon (EXTERNAL) <thomas@monjalon.net>; Yang=
-hang Liu <yanghliu@redhat.com>; benjamin.walker@intel.com <benjamin.walker@=
-intel.com>; qian.q.xu@intel.com <qian.q.xu@intel.com>; yuan.peng@intel.com =
-<yuan.peng@intel.com>; zhaoyan.chen@intel.com <zhaoyan.chen@intel.com>
-Subject: Re: 23.11.5 patches review and test
+v2 - review feedback
+   - some small combining of related patchs
+   - fix build on Windows
 
-On 8/11/25 4:42 PM, Xueming Li wrote:
+Stephen Hemminger (43):
+  net/nfp: fix use after free
+  eal: add BSD version of queue.h
+  test: remove unnecessary inclusion of sys/queue.h
+  test-pipeline: remove unnecessary use of sys/queue.h
+  test-eventdev: use rte_bsd_queue.h
+  test-bbdev, test-cmdline, test-mldev: don't use sys/queue.h
+  app/testpmd: use rte_bsd_queue.h
+  apps: use rte_bsd_queue.h
+  examples: replace use of sys/queue.h
+  ethdev: replace use of sys/queue.h
+  lib: remove use of sys/queue.h
+  drivers/bus: replace use of sys/queue.h
+  net/nfp: use rte_bsd_queue.h
+  net/qede: use rte_bsd_queue.h
+  net/bnxt: remove use of sys/queue.h
+  net/intel: remove use of sys/queue.h
+  net/mlx5: remove unnecessary include of sys/queue.h
+  net/mlx4: replace use of sys/queue.h
+  net/tap: remove unnecessary include of sys/queue.h
+  net/axgbe: replace use of sys/queue.h
+  net/bnx2x: replace use of sys/queue.h
+  net/bonding: replace use of sys/queue.h
+  net/cxgbe: replace use of sys/queue.h
+  net/enic: replace use of sys/queue.h
+  net/failsafe: replace use of sys/queue.h
+  net/memif: replace use of sys/queue.h
+  net/ngbe: replace use of sys/queue.h
+  net/ntnic: replace use of sys/queue.h
+  net/sfc: replace use of sys/queue.h
+  net/softnic: replace use of sys/queue.h
+  net/thunderx: replace use of sys/queue.h
+  net/txgbe: replace use of sys/queue.h
+  net/vdev_netvsc: replace use of sys/queue.h
+  net/vmxnet3: replace use of sys/queue.h
+  net/zxdh: replace use of sys/queue.h
+  net/dpaa2: replace use of sys/queue.h
+  net/mvpp2: replace local definition of FOREACH_SAFE
+  raw/ifpga: replace with TAILQ_FOREACH_SAFE
+  drivers/vdpa: replace use of sys/queue.h
+  drivers/common: remove use of sys/queue.h
+  drivers/crypto: remove use of sys_queue.h
+  drivers/event: remove include of sys/queue.h
+  eal: remove no longer used windows version of sys/queue.h
 
-> Hi all,
->
-> Here is a list of patches targeted for stable release 23.11.5.
->
-> The planned date for the final release is 15th August.
->
-> Please help with testing and validation of your use cases and report
-> any issues/results with reply-all to this mail. For the final release
-> the fixes and reported validations will be added to the release notes.
->
-> A release candidate tarball can be found at:
->
->      https://dpdk.org/browse/dpdk-stable/tag/?id=3Dv23.11.5-rc1
->
-> These patches are located at branch 23.11 of dpdk-stable repo:
->      https://dpdk.org/browse/dpdk-stable/
->
-> Thanks.
->
-> Xueming Li <xuemingl@nvidia.com>
->
-> ---
+ app/dumpcap/main.c                            |   2 +-
+ app/proc-info/main.c                          |   1 -
+ app/test-bbdev/main.h                         |   1 -
+ app/test-cmdline/cmdline_test.c               |   1 -
+ app/test-eventdev/evt_test.c                  |   2 +-
+ app/test-eventdev/evt_test.h                  |   1 -
+ app/test-mldev/ml_test.h                      |   1 -
+ app/test-pipeline/config.c                    |   1 -
+ app/test-pipeline/init.c                      |   1 -
+ app/test-pipeline/main.c                      |   1 -
+ app/test-pipeline/runtime.c                   |   1 -
+ app/test-pmd/5tswap.c                         |   2 -
+ app/test-pmd/cmdline.c                        |   2 +-
+ app/test-pmd/config.c                         |   2 +-
+ app/test-pmd/csumonly.c                       |   1 -
+ app/test-pmd/flowgen.c                        |   1 -
+ app/test-pmd/hairpin.c                        |   1 -
+ app/test-pmd/icmpecho.c                       |   1 -
+ app/test-pmd/iofwd.c                          |   1 -
+ app/test-pmd/macfwd.c                         |   1 -
+ app/test-pmd/macswap.c                        |   1 -
+ app/test-pmd/noisy_vnf.c                      |   1 -
+ app/test-pmd/parameters.c                     |   1 -
+ app/test-pmd/rxonly.c                         |   1 -
+ app/test-pmd/testpmd.c                        |   1 -
+ app/test-pmd/testpmd.h                        |   2 +-
+ app/test-pmd/txonly.c                         |   1 -
+ app/test/commands.c                           |   2 +-
+ app/test/test.c                               |   1 -
+ app/test/test.h                               |   2 +-
+ app/test/test_atomic.c                        |   1 -
+ app/test/test_cmdline_lib.c                   |   1 -
+ app/test/test_func_reentrancy.c               |   1 -
+ app/test/test_hash.c                          |   1 -
+ app/test/test_hash_functions.c                |   1 -
+ app/test/test_link_bonding.c                  |   1 -
+ app/test/test_link_bonding_mode4.c            |   1 -
+ app/test/test_link_bonding_rssconf.c          |   1 -
+ app/test/test_logs.c                          |   1 -
+ app/test/test_malloc.c                        |   1 -
+ app/test/test_mbuf.c                          |   1 -
+ app/test/test_mcslock.c                       |   1 -
+ app/test/test_mempool.c                       |   1 -
+ app/test/test_mempool_perf.c                  |   1 -
+ app/test/test_memzone.c                       |   1 -
+ app/test/test_mp_secondary.c                  |   1 -
+ app/test/test_per_lcore.c                     |   1 -
+ app/test/test_pflock.c                        |   1 -
+ app/test/test_ring.c                          |   1 -
+ app/test/test_rwlock.c                        |   1 -
+ app/test/test_soring.c                        |   1 -
+ app/test/test_spinlock.c                      |   1 -
+ app/test/test_tailq.c                         |   1 -
+ app/test/test_ticketlock.c                    |   1 -
+ app/test/test_timer.c                         |   1 -
+ doc/guides/contributing/coding_style.rst      |   4 +-
+ doc/guides/rel_notes/release_25_11.rst        |   3 +
+ drivers/bus/auxiliary/auxiliary_common.c      |   2 +-
+ drivers/bus/auxiliary/private.h               |   2 +-
+ drivers/bus/fslmc/bus_fslmc_driver.h          |   1 -
+ drivers/bus/fslmc/fslmc_vfio.c                |   1 +
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |  11 +-
+ drivers/bus/ifpga/ifpga_bus.c                 |   2 +-
+ drivers/bus/pci/bsd/pci.c                     |   2 +-
+ drivers/bus/pci/pci_common.c                  |   1 -
+ drivers/bus/pci/pci_params.c                  |   2 -
+ drivers/bus/pci/windows/pci.c                 |   3 +-
+ drivers/bus/pci/windows/pci_netuio.c          |   2 -
+ drivers/bus/platform/platform.c               |   2 +-
+ drivers/bus/vdev/vdev.c                       |   1 -
+ drivers/bus/vmbus/vmbus_common.c              |   1 -
+ drivers/common/cnxk/roc_bphy_irq.c            |   3 +-
+ drivers/common/cnxk/roc_npc.h                 |   2 -
+ drivers/common/mlx5/mlx5_common_mr.h          |   3 +-
+ drivers/crypto/bcmfs/bcmfs_device.c           |   2 +-
+ drivers/crypto/bcmfs/bcmfs_device.h           |   2 -
+ drivers/crypto/ccp/ccp_crypto.c               |   1 -
+ drivers/crypto/ccp/ccp_dev.c                  |   2 +-
+ drivers/event/dlb2/dlb2_selftest.c            |   1 -
+ drivers/event/opdl/opdl_test.c                |   1 -
+ drivers/event/sw/sw_evdev_selftest.c          |   1 -
+ drivers/net/axgbe/axgbe_common.h              |   1 -
+ drivers/net/bnx2x/bnx2x_ethdev.h              |   1 -
+ drivers/net/bnxt/bnxt.h                       |   1 -
+ drivers/net/bnxt/bnxt_filter.c                |   7 +-
+ drivers/net/bnxt/bnxt_flow.c                  |   1 -
+ drivers/net/bnxt/bnxt_vnic.h                  |   1 -
+ drivers/net/bnxt/tf_ulp/bnxt_ulp.h            |   1 -
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c      |   1 -
+ drivers/net/bonding/eth_bond_private.h        |   1 -
+ drivers/net/bonding/rte_eth_bond_flow.c       |   1 -
+ drivers/net/cxgbe/cxgbe_ethdev.c              |   2 +-
+ drivers/net/cxgbe/cxgbe_main.c                |   1 -
+ drivers/net/cxgbe/sge.c                       |   1 -
+ drivers/net/dpaa2/dpaa2_flow.c                |   1 -
+ drivers/net/dpaa2/dpaa2_mux.c                 |   1 -
+ drivers/net/dpaa2/dpaa2_ptp.c                 |   1 -
+ drivers/net/enic/enic.h                       |   1 -
+ drivers/net/failsafe/failsafe_flow.c          |   1 -
+ drivers/net/failsafe/failsafe_private.h       |   2 +-
+ drivers/net/intel/cpfl/cpfl_flow_engine_fxp.c |   1 -
+ drivers/net/intel/e1000/e1000_ethdev.h        |   1 -
+ drivers/net/intel/e1000/em_ethdev.c           |   1 -
+ drivers/net/intel/e1000/em_rxtx.c             |   1 -
+ drivers/net/intel/e1000/igb_ethdev.c          |   2 +-
+ drivers/net/intel/e1000/igb_flow.c            |   2 +-
+ drivers/net/intel/e1000/igb_rxtx.c            |   1 -
+ drivers/net/intel/i40e/i40e_ethdev.c          |   9 +-
+ drivers/net/intel/i40e/i40e_ethdev.h          |   1 -
+ drivers/net/intel/i40e/i40e_fdir.c            |   2 +-
+ drivers/net/intel/i40e/i40e_flow.c            |   1 -
+ drivers/net/intel/i40e/i40e_hash.c            |   1 -
+ drivers/net/intel/i40e/i40e_pf.c              |   1 -
+ drivers/net/intel/i40e/i40e_rxtx.c            |   1 -
+ drivers/net/intel/iavf/iavf.h                 |   1 -
+ drivers/net/intel/iavf/iavf_ethdev.c          |   1 -
+ drivers/net/intel/iavf/iavf_fdir.c            |   1 -
+ drivers/net/intel/iavf/iavf_fsub.c            |   1 -
+ drivers/net/intel/iavf/iavf_generic_flow.c    |   1 -
+ drivers/net/intel/iavf/iavf_hash.c            |   1 -
+ drivers/net/intel/iavf/iavf_rxtx.c            |   1 -
+ drivers/net/intel/iavf/iavf_vchnl.c           |   7 -
+ drivers/net/intel/ice/base/ice_osdep.h        |   2 +-
+ drivers/net/intel/ice/ice_acl_filter.c        |   1 -
+ drivers/net/intel/ice/ice_dcf.c               |   2 +-
+ drivers/net/intel/ice/ice_dcf_ethdev.c        |   1 -
+ drivers/net/intel/ice/ice_ethdev.c            |   8 +-
+ drivers/net/intel/ice/ice_generic_flow.c      |   1 -
+ drivers/net/intel/ice/ice_hash.c              |   1 -
+ drivers/net/intel/ice/ice_switch_filter.c     |   1 -
+ drivers/net/intel/idpf/base/idpf_osdep.h      |   9 +-
+ drivers/net/intel/ipn3ke/ipn3ke_ethdev.h      |   1 -
+ drivers/net/intel/ipn3ke/ipn3ke_flow.c        |   1 -
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c        |   2 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   1 -
+ drivers/net/intel/ixgbe/ixgbe_fdir.c          |   2 +-
+ drivers/net/intel/ixgbe/ixgbe_flow.c          |   2 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c          |   1 -
+ drivers/net/memif/memif_socket.h              |   1 -
+ drivers/net/memif/rte_eth_memif.h             |   1 -
+ drivers/net/mlx4/mlx4.h                       |   1 -
+ drivers/net/mlx4/mlx4_flow.c                  |   2 +-
+ drivers/net/mlx4/mlx4_flow.h                  |   1 -
+ drivers/net/mlx4/mlx4_mr.h                    |   1 -
+ drivers/net/mlx4/mlx4_rxtx.h                  |   1 -
+ drivers/net/mlx5/hws/mlx5dr_internal.h        |   1 -
+ drivers/net/mlx5/linux/mlx5_verbs.c           |   1 -
+ drivers/net/mlx5/mlx5.h                       |   2 +-
+ drivers/net/mlx5/mlx5_devx.c                  |   1 -
+ drivers/net/mlx5/mlx5_flow.c                  |   2 +-
+ drivers/net/mlx5/mlx5_flow.h                  |   2 +-
+ drivers/net/mlx5/mlx5_flow_dv.c               |   1 -
+ drivers/net/mlx5/mlx5_flow_verbs.c            |   2 +-
+ drivers/net/mlx5/mlx5_rx.h                    |   1 -
+ drivers/net/mlx5/mlx5_rxq.c                   |   2 +-
+ drivers/net/mlx5/mlx5_rxtx.h                  |   1 -
+ drivers/net/mlx5/mlx5_tx.h                    |   1 -
+ drivers/net/mvpp2/mrvl_mtr.c                  |   8 +-
+ drivers/net/nfp/nfp_mtr.c                     |  12 +-
+ drivers/net/nfp/nfp_mtr.h                     |   1 +
+ drivers/net/ngbe/ngbe_ethdev_vf.c             |   1 -
+ drivers/net/ngbe/ngbe_rxtx.c                  |   1 -
+ drivers/net/ntnic/ntnic_ethdev.c              |   3 -
+ drivers/net/qede/qede_ethdev.h                |   3 +-
+ drivers/net/qede/qede_filter.c                |   6 -
+ drivers/net/sfc/sfc_dp.c                      |   2 +-
+ drivers/net/sfc/sfc_dp.h                      |   1 -
+ .../net/softnic/rte_eth_softnic_internals.h   |   1 -
+ drivers/net/tap/rte_eth_tap.h                 |   1 -
+ drivers/net/tap/tap_flow.c                    |   1 -
+ drivers/net/thunderx/base/nicvf_bsvf.h        |   2 +-
+ drivers/net/thunderx/base/nicvf_plat.h        |   1 +
+ drivers/net/thunderx/nicvf_ethdev.c           |   1 -
+ drivers/net/txgbe/txgbe_ethdev_vf.c           |   1 -
+ drivers/net/txgbe/txgbe_fdir.c                |   2 +-
+ drivers/net/txgbe/txgbe_flow.c                |   2 +-
+ drivers/net/txgbe/txgbe_rxtx.c                |   1 -
+ drivers/net/vdev_netvsc/vdev_netvsc.c         |   2 +-
+ drivers/net/vmxnet3/vmxnet3_ethdev.c          |   1 -
+ drivers/net/vmxnet3/vmxnet3_rxtx.c            |   1 -
+ drivers/net/zxdh/zxdh_mtr.h                   |   1 -
+ drivers/raw/ifpga/base/ifpga_enumerate.c      |   6 +-
+ drivers/raw/ifpga/base/opae_hw_api.h          |   1 -
+ drivers/raw/ifpga/base/opae_intel_max10.c     |   8 +-
+ .../raw/ifpga/base/osdep_rte/osdep_generic.h  |   1 +
+ drivers/vdpa/mlx5/mlx5_vdpa.h                 |   3 +-
+ drivers/vdpa/sfc/sfc_vdpa.c                   |   2 +-
+ drivers/vdpa/sfc/sfc_vdpa.h                   |   2 +-
+ examples/bbdev_app/main.c                     |   2 +-
+ examples/bond/main.c                          |   2 +-
+ examples/cmdline/main.c                       |   1 -
+ examples/cmdline/parse_obj_list.h             |   2 +-
+ examples/flow_filtering/main.c                |   1 -
+ examples/helloworld/main.c                    |   2 +-
+ examples/ip_fragmentation/main.c              |   2 +-
+ examples/ip_pipeline/action.h                 |   2 +-
+ examples/ip_pipeline/cryptodev.h              |   2 +-
+ examples/ip_pipeline/link.h                   |   2 +-
+ examples/ip_pipeline/mempool.h                |   2 +-
+ examples/ip_pipeline/pipeline.h               |   2 +-
+ examples/ip_pipeline/swq.h                    |   2 +-
+ examples/ip_pipeline/tap.h                    |   2 +-
+ examples/ip_pipeline/tmgr.h                   |   2 +-
+ examples/ip_reassembly/main.c                 |   2 +-
+ examples/ipsec-secgw/ipsec-secgw.c            |   2 +-
+ examples/ipv4_multicast/main.c                |   2 +-
+ examples/l2fwd-crypto/main.c                  |   2 +-
+ examples/l2fwd-event/l2fwd_common.h           |   1 -
+ examples/l2fwd-keepalive/ka-agent/main.c      |   1 -
+ examples/l2fwd-keepalive/main.c               |   2 +-
+ examples/l2fwd-macsec/main.c                  |   2 +-
+ examples/l2fwd/main.c                         |   2 +-
+ examples/l3fwd-graph/main.c                   |   2 +-
+ examples/l3fwd-power/main.c                   |   2 +-
+ examples/l3fwd/l3fwd_em.c                     |   1 -
+ examples/l3fwd/l3fwd_lpm.c                    |   1 -
+ examples/l3fwd/main.c                         |   2 +-
+ examples/link_status_interrupt/main.c         |   2 +-
+ .../client_server_mp/mp_client/client.c       |   1 -
+ .../client_server_mp/mp_server/init.c         |   1 -
+ .../client_server_mp/mp_server/main.c         |   2 +-
+ examples/multi_process/hotplug_mp/main.c      |   1 -
+ examples/multi_process/simple_mp/main.c       |   2 +-
+ examples/multi_process/symmetric_mp/main.c    |   2 +-
+ examples/server_node_efd/efd_node/node.c      |   1 -
+ examples/server_node_efd/efd_server/init.c    |   1 -
+ examples/server_node_efd/efd_server/main.c    |   1 -
+ examples/service_cores/main.c                 |   1 -
+ examples/timer/main.c                         |   2 +-
+ examples/vhost/main.h                         |   2 +-
+ examples/vm_power_manager/channel_manager.c   |   2 +-
+ examples/vm_power_manager/channel_monitor.c   |   2 +-
+ examples/vm_power_manager/main.c              |   2 +-
+ examples/vmdq/main.c                          |   2 +-
+ examples/vmdq_dcb/main.c                      |   2 +-
+ lib/acl/rte_acl_osdep.h                       |   1 -
+ lib/bbdev/rte_bbdev.c                         |   2 +-
+ lib/bpf/bpf_load_elf.c                        |   1 -
+ lib/bpf/bpf_pkt.c                             |   3 +-
+ lib/cryptodev/cryptodev_pmd.c                 |   1 -
+ lib/cryptodev/rte_cryptodev.c                 |   1 -
+ lib/distributor/rte_distributor.c             |   2 +-
+ lib/distributor/rte_distributor_single.c      |   2 +-
+ lib/eal/common/eal_common_bus.c               |   2 +-
+ lib/eal/common/eal_common_class.c             |   2 +-
+ lib/eal/common/eal_common_dev.c               |   2 +-
+ lib/eal/common/eal_common_tailqs.c            |   2 +-
+ lib/eal/common/eal_common_trace.c             |   2 +-
+ lib/eal/common/eal_private.h                  |   2 +-
+ lib/eal/common/malloc_elem.c                  |   2 +-
+ lib/eal/common/malloc_elem.h                  |   1 +
+ lib/eal/common/malloc_heap.c                  |   2 +-
+ lib/eal/common/malloc_heap.h                  |   2 +-
+ lib/eal/common/rte_malloc.c                   |   2 +-
+ lib/eal/freebsd/eal.c                         |   2 +-
+ lib/eal/freebsd/eal_interrupts.c              |   2 +-
+ lib/eal/freebsd/eal_thread.c                  |   2 +-
+ lib/eal/freebsd/include/rte_os.h              |  10 -
+ lib/eal/include/dev_driver.h                  |   1 +
+ lib/eal/include/meson.build                   |   1 +
+ .../sys/queue.h => include/rte_bsd_queue.h}   | 670 ++++++++++++------
+ lib/eal/include/rte_class.h                   |   1 +
+ lib/eal/include/rte_devargs.h                 |   1 +
+ lib/eal/include/rte_tailq.h                   |  10 +
+ lib/eal/linux/eal_alarm.c                     |   2 +-
+ lib/eal/linux/eal_interrupts.c                |   2 +-
+ lib/eal/linux/include/rte_os.h                |   3 +-
+ lib/eal/windows/eal_alarm.c                   |   2 +-
+ lib/eal/windows/include/rte_os.h              |  27 -
+ lib/efd/rte_efd.c                             |   1 -
+ lib/ethdev/ethdev_private.h                   |   3 +-
+ lib/ethdev/rte_ethdev.c                       |   2 +-
+ lib/fib/rte_fib.c                             |   1 -
+ lib/fib/rte_fib6.c                            |   1 -
+ lib/gpudev/gpudev_driver.h                    |   1 -
+ lib/graph/graph_private.h                     |   1 -
+ lib/hash/rte_cuckoo_hash.c                    |   1 -
+ lib/hash/rte_fbk_hash.c                       |   1 -
+ lib/hash/rte_thash.c                          |   1 -
+ lib/ip_frag/ip_frag_common.h                  |   3 +-
+ lib/log/log.c                                 |   2 +-
+ lib/lpm/rte_lpm.c                             |   1 -
+ lib/lpm/rte_lpm6.c                            |   1 -
+ lib/mbuf/rte_mbuf_dyn.c                       |   1 -
+ lib/mempool/rte_mempool.c                     |   1 -
+ lib/mempool/rte_mempool.h                     |   1 +
+ lib/pipeline/rte_swx_ctl.c                    |   1 -
+ lib/pipeline/rte_swx_pipeline_internal.h      |   3 +-
+ lib/pmu/pmu.c                                 |   1 -
+ lib/reorder/rte_reorder.c                     |   1 -
+ lib/rib/rte_rib.c                             |   1 -
+ lib/rib/rte_rib6.c                            |   1 -
+ lib/ring/rte_ring.c                           |   1 -
+ lib/stack/rte_stack.c                         |   1 -
+ lib/vhost/fd_man.h                            |   1 -
+ lib/vhost/socket.c                            |   2 +-
+ lib/vhost/vdpa.c                              |   2 -
+ lib/vhost/vhost.h                             |   2 +-
+ 298 files changed, 602 insertions(+), 616 deletions(-)
+ rename lib/eal/{windows/include/sys/queue.h => include/rte_bsd_queue.h} (52%)
 
-Hello,
+-- 
+2.47.2
 
-We ran the following functional tests with Nvidia hardware on v23.11.5-rc1:
-- Basic functionality:
-   Send and receive multiple types of traffic.
-- testpmd xstats counter test.
-- testpmd timestamp test.
-- Changing/checking link status through testpmd.
-- rte_flow tests
-(https://doc.dpdk.org/guides/nics/mlx5.html#supported-hardware-offloads)
-- RSS tests.
-- VLAN filtering, stripping, and insertion tests.
-- Checksum and TSO tests.
-- ptype tests.
-- link_status_interrupt example application tests.
-- l3fwd-power example application tests.
-- Multi-process example applications tests.
-- Hardware LRO tests.
-- Buffer Split tests.
-- Tx scheduling tests.
-
-Functional tests ran on:
-- NIC: ConnectX-6 Dx / OS: Ubuntu 22.04 / Driver:
-MLNX_OFED_LINUX-23.10-5.1.4.0 / Firmware: 22.39.5050
-- NIC: ConnectX-7 / OS: Ubuntu 22.04 / Driver:
-MLNX_OFED_LINUX-23.10-5.1.4.0 / Firmware: 28.39.5050
-- DPU: BlueField-2 / DOCA SW version: 2.5.4 / Firmware: 24.39.5050
-
-Additionally, we ran build tests with multiple configurations on the
-following OS/driver combinations (all passed):
-- Debian 12 with MLNX_OFED_LINUX-24.10-3.2.5.0.
-- Ubuntu 22.04 with MLNX_OFED_LINUX-24.10-3.2.5.0.
-- Ubuntu 24.04 with MLNX_OFED_LINUX-24.10-3.2.5.0.
-- Ubuntu 22.04 with rdma-core master (091ddb5).
-- Ubuntu 24.04 with rdma-core v50.0.
-- Fedora 42 with rdma-core v55.0.
-- Fedora 43 (Rawhide) with rdma-core v58.0.
-- OpenSUSE Leap 15.6 with rdma-core v49.1.
-- Windows Server 2022 with Clang 18.1.8.
-
-We don't see new issues caused by the changes in this release.
-
-Thanks,
-Ali
-
-
---_000_CH3PR12MB865848892AA41B5EA3E4228EA13CACH3PR12MB8658namp_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);" clas=
-s=3D"elementToProof">
-Hi Ali,</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);" clas=
-s=3D"elementToProof">
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);" clas=
-s=3D"elementToProof">
-Thanks very much for your help!</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);" clas=
-s=3D"elementToProof">
-<br>
-</div>
-<div id=3D"appendonsend"></div>
-<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
-yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Ali Alnubani &lt;alia=
-lnu@nvidia.com&gt;<br>
-<b>Sent:</b> Tuesday, August 19, 2025 11:26 PM<br>
-<b>To:</b> Xueming Li &lt;xuemingl@nvidia.com&gt;; stable@dpdk.org &lt;stab=
-le@dpdk.org&gt;<br>
-<b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;; Abhishek Marathe &lt;Abhishek=
-.Marathe@microsoft.com&gt;; David Christensen &lt;drc@linux.vnet.ibm.com&gt=
-;; Hemant Agrawal &lt;hemant.agrawal@nxp.com&gt;; Ian Stokes &lt;ian.stokes=
-@intel.com&gt;; Jerin Jacob &lt;jerinj@marvell.com&gt;; John McNamara
- &lt;john.mcnamara@intel.com&gt;; Ju-Hyoung Lee &lt;juhlee@microsoft.com&gt=
-;; Kevin Traynor &lt;ktraynor@redhat.com&gt;; Luca Boccassi &lt;bluca@debia=
-n.org&gt;; Pei Zhang &lt;pezhang@redhat.com&gt;; Raslan Darawsheh &lt;rasla=
-nd@nvidia.com&gt;; NBU-Contact-Thomas Monjalon (EXTERNAL) &lt;thomas@monjal=
-on.net&gt;;
- Yanghang Liu &lt;yanghliu@redhat.com&gt;; benjamin.walker@intel.com &lt;be=
-njamin.walker@intel.com&gt;; qian.q.xu@intel.com &lt;qian.q.xu@intel.com&gt=
-;; yuan.peng@intel.com &lt;yuan.peng@intel.com&gt;; zhaoyan.chen@intel.com =
-&lt;zhaoyan.chen@intel.com&gt;<br>
-<b>Subject:</b> Re: 23.11.5 patches review and test</font>
-<div>&nbsp;</div>
-</div>
-<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
-">
-<div class=3D"PlainText">On 8/11/25 4:42 PM, Xueming Li wrote:<br>
-<br>
-&gt; Hi all,<br>
-&gt;<br>
-&gt; Here is a list of patches targeted for stable release 23.11.5.<br>
-&gt;<br>
-&gt; The planned date for the final release is 15th August.<br>
-&gt;<br>
-&gt; Please help with testing and validation of your use cases and report<b=
-r>
-&gt; any issues/results with reply-all to this mail. For the final release<=
-br>
-&gt; the fixes and reported validations will be added to the release notes.=
-<br>
-&gt;<br>
-&gt; A release candidate tarball can be found at:<br>
-&gt;<br>
-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href=3D"https://dpdk.org/browse/dpdk-=
-stable/tag/?id=3Dv23.11.5-rc1">https://dpdk.org/browse/dpdk-stable/tag/?id=
-=3Dv23.11.5-rc1</a><br>
-&gt;<br>
-&gt; These patches are located at branch 23.11 of dpdk-stable repo:<br>
-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href=3D"https://dpdk.org/browse/dpdk-=
-stable/">https://dpdk.org/browse/dpdk-stable/</a><br>
-&gt;<br>
-&gt; Thanks.<br>
-&gt;<br>
-&gt; Xueming Li &lt;xuemingl@nvidia.com&gt;<br>
-&gt;<br>
-&gt; ---<br>
-<br>
-Hello,<br>
-<br>
-We ran the following functional tests with Nvidia hardware on v23.11.5-rc1:=
-<br>
-- Basic functionality:<br>
-&nbsp;&nbsp; Send and receive multiple types of traffic.<br>
-- testpmd xstats counter test.<br>
-- testpmd timestamp test.<br>
-- Changing/checking link status through testpmd.<br>
-- rte_flow tests <br>
-(<a href=3D"https://doc.dpdk.org/guides/nics/mlx5.html#supported-hardware-o=
-ffloads">https://doc.dpdk.org/guides/nics/mlx5.html#supported-hardware-offl=
-oads</a>)<br>
-- RSS tests.<br>
-- VLAN filtering, stripping, and insertion tests.<br>
-- Checksum and TSO tests.<br>
-- ptype tests.<br>
-- link_status_interrupt example application tests.<br>
-- l3fwd-power example application tests.<br>
-- Multi-process example applications tests.<br>
-- Hardware LRO tests.<br>
-- Buffer Split tests.<br>
-- Tx scheduling tests.<br>
-<br>
-Functional tests ran on:<br>
-- NIC: ConnectX-6 Dx / OS: Ubuntu 22.04 / Driver: <br>
-MLNX_OFED_LINUX-23.10-5.1.4.0 / Firmware: 22.39.5050<br>
-- NIC: ConnectX-7 / OS: Ubuntu 22.04 / Driver: <br>
-MLNX_OFED_LINUX-23.10-5.1.4.0 / Firmware: 28.39.5050<br>
-- DPU: BlueField-2 / DOCA SW version: 2.5.4 / Firmware: 24.39.5050<br>
-<br>
-Additionally, we ran build tests with multiple configurations on the <br>
-following OS/driver combinations (all passed):<br>
-- Debian 12 with MLNX_OFED_LINUX-24.10-3.2.5.0.<br>
-- Ubuntu 22.04 with MLNX_OFED_LINUX-24.10-3.2.5.0.<br>
-- Ubuntu 24.04 with MLNX_OFED_LINUX-24.10-3.2.5.0.<br>
-- Ubuntu 22.04 with rdma-core master (091ddb5).<br>
-- Ubuntu 24.04 with rdma-core v50.0.<br>
-- Fedora 42 with rdma-core v55.0.<br>
-- Fedora 43 (Rawhide) with rdma-core v58.0.<br>
-- OpenSUSE Leap 15.6 with rdma-core v49.1.<br>
-- Windows Server 2022 with Clang 18.1.8.<br>
-<br>
-We don't see new issues caused by the changes in this release.<br>
-<br>
-Thanks,<br>
-Ali<br>
-<br>
-</div>
-</span></font></div>
-</body>
-</html>
-
---_000_CH3PR12MB865848892AA41B5EA3E4228EA13CACH3PR12MB8658namp_--
