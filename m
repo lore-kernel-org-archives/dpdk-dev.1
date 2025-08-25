@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7176CA0EFA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AF5CA0EED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:45:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0B7140A84;
-	Mon, 25 Aug 2025 05:43:07 +0200 (CEST)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
- [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id 3080A40E1C
- for <dev@dpdk.org>; Mon, 25 Aug 2025 05:43:06 +0200 (CEST)
-Received: by mail-wr1-f54.google.com with SMTP id
- ffacd0b85a97d-3c7ba6c2b2cso702361f8f.1
- for <dev@dpdk.org>; Sun, 24 Aug 2025 20:43:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id EB94C40E13;
+	Mon, 25 Aug 2025 05:43:09 +0200 (CEST)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
+ [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id 0E5BC40C35
+ for <dev@dpdk.org>; Mon, 25 Aug 2025 05:43:08 +0200 (CEST)
+Received: by mail-wr1-f44.google.com with SMTP id
+ ffacd0b85a97d-3c6abcfd142so755421f8f.2
+ for <dev@dpdk.org>; Sun, 24 Aug 2025 20:43:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093386;
- x=1756698186; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093388;
+ x=1756698188; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ktZjdMskytau1nlXtSANM1bBHwDHBOtVDH2jpdJhIwY=;
- b=YIvSTa4J08wuglAPiShWUCwOB+CYMISTMdchj9kHJtEudVW7TaUO6D4+FarS/8B8Nj
- E9sGYR7az/q0xzjDDkEu0gyhxmQb8l3v+xHQQD+jU0qiyheVM1djzdYUd+ia89g03KcY
- iICNmOl78bU2dpxbr8Vn3oBvWBMPg7H5Jqu9aefi+j+hEToMUkfUzNnMIQGQCYw4WC8y
- MuiSo94ZIUYh8UsrUoEWi4CwHq0Fsgj9FBnruBZBkdQ9Ty9mnH4BeaujajVi11/H4Org
- eZWGSqYkPrIEm+1+gFrjYuW4eVVs8VnXSQ3k3HiVo1ir/YjEHxyXxw8Fjg15r1PvNX11
- tSjQ==
+ bh=ymvl2/SRa9CX0NNIhqc5W8YKJhsXakmHx00JL09dliY=;
+ b=VPEOSwAzlqrUO9iE3uEKQQolfZbKn8N3TShMNvE6P41BArYv/ukzF1vMd2/yyXrhH6
+ 5KX8A+S5HQmdHZpjyt0SO4NHbeI6ociaMhaauggTAapya/HAf3jHRiD8SN1MrS5IN2cc
+ 5O86VF5iJDDlRZowgxDs6AfztL3VEs/eAYbFMm0mENIfzrn4LD9QcS9//9j5nNAkxU5E
+ Dk7uCig/5Opsjdb4eXIe2C5aSJTanmuIJrjV6xbZkgEUx3KHnclAsNnGWas7k3HY8hpR
+ QZUGyYf9iMstL1ySDB1PjN3/uP/lt9QD5U/Cd73PS8MVpSzawy88f40OwygsspQ2Vc28
+ YhLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756093386; x=1756698186;
+ d=1e100.net; s=20230601; t=1756093388; x=1756698188;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ktZjdMskytau1nlXtSANM1bBHwDHBOtVDH2jpdJhIwY=;
- b=MwjvH2QkxieJJK37RURKgUy3NXJUBAN7Zr3szBkwy7PtKlU97dE9+ji+f39rnrrfhn
- fYgM//aFX9xXbnISj9H0oYVGWpmwz8a/nxgBoqzxV3scSCuakD0hqQ6khWfAKO/nZRuE
- EJt0NcwuNuK/64RPCa4tEsVHQd8bteryuaKRwVbUfmO6FicjXuWG+aSSqQYy30IDW5Tm
- GWo35KNLLUk2uQYXuaf8iOcc5R7GAGgQcYHuWgzY5lX3+D8lICBcjZKYJ5DaGn3U6Lju
- cq8vskWlN+sWVnKroaDKJtthdjM3mq3v7TbPYKKdfihyE/MZ+GsoPFWpAIAKoh3M6dK5
- BNng==
-X-Gm-Message-State: AOJu0YzyHsfwiQBEyAkAFOOvpI3f/gpTaDZquRuR2TXgsPdURMOZcQ8u
- UeSaAmR8lYg+aPpssVL9TBnzbB2uaaf/DFvxqtDHQZKFdlsmyLsLWLjHFrGalYj+b7wSbxMcK4z
- x4Soz
-X-Gm-Gg: ASbGncskxB20uadj6pFMm1Brm57iQaNW/1gWAPbAr680ms/R478olMEmokWD8wveGVN
- Ll+xx7cUvqWSMixQpnTz4IuC/tywD4FM6XVNj1/IIaTApZgcDXVLePd2MDNm/pVdK7nrotr0ST+
- ehsK+p5j/RwpPMwwHi4Oo6vMNyh6/ns1S7K6zUx1Dy7OthoPCGeKN7nzK7PCWERaM/QtVKnRlyi
- e8istuM0AzjFqkG/VgzSRWsEONDjhAzPpo4Ut0zModGuWMpggzFrgoUNqgq2LU4ZdaLaGPCE+pR
- 4TC98e14/yGiXojWSQmptFyDErQX06unDrr+r2/B0d0t9EcqHc5eZx1BAi+mS98+5UEP3pwNFTt
- 0LIoJ4syRN08S2i1SjQxV0vjcC/VASNdVf/dHsuMEUDajks7TF5IdWLEg6BDjJ0s7292OuoCG
-X-Google-Smtp-Source: AGHT+IFU5JIhI1CoPTsbIB49CARYxyqJwoT+9oDE/oomF6PT0wm8R/pC4Rti2oWUJtrOLEhumKQmrQ==
-X-Received: by 2002:a05:6000:2891:b0:3b7:6d94:a032 with SMTP id
- ffacd0b85a97d-3c5da73f498mr7126263f8f.3.1756093385826; 
- Sun, 24 Aug 2025 20:43:05 -0700 (PDT)
+ bh=ymvl2/SRa9CX0NNIhqc5W8YKJhsXakmHx00JL09dliY=;
+ b=wyEzZCmq3Gy17cuw35UsgHq4kQMDRjCtgFGQhYvAHzLxhpsCukluy8Ao8+puAlO7rH
+ gqkndQKS2HAYVk5aa0hH24XhYD1en2+sA2T1jm7NhEAO+aq0Khgo8DXg2ONtcyCFGjaK
+ bYZduPYFkmQX9GbBo2PwZDd9Q4iTYtBa4Mdtu5AJyqs81cgMXWf0GgGK658j3HRiLOd7
+ YYliahEfr6SKHCJkioJdoQBKgdZYF1Sh9GvwTB8wen8kE1o2lQJxIvH2uln9PqKmOEjz
+ abTJf8AALmeA3yiLqBG1gqkKsNG4h4FbWMKQtIGQfw1g1loskAM+DkM6QwpwzfzxGLq+
+ G6Hw==
+X-Gm-Message-State: AOJu0YxarRsZNCpCTrFimi+uilS1UeHiilcHDOxSTkgFTJOWOtV/2sq/
+ +XjSKs2VPdeNd4MRub0Knrg0H4pQiUNYjNy+J70YyfzcEihyiiNDHYKCDdrsfsoixgHMxpwBQpu
+ 7jINX
+X-Gm-Gg: ASbGncvuJHhs3/WJMTzQVxzdg2Y7YHnKBDfHlTz9z1dEhHQEmbCvw570sKpLnqQptQl
+ OvcNWVg1RiC+oF1NIbVxbgnAgybtSeR9i7Ze0M+G47iiwElEcXwWG9atM9TqhjC+lJpBd6sQrsF
+ Zoj23H34AfHoBQQ53OrTRWzR+qcBsc9zS70KlmypEuUvmc3f+tOM9wyJdfAgEgVZ2NB+fq3bgNM
+ 7r88y2ldIg3yinsgW3tYn7aacGm0KO3FxgJCVmnNi5ISvZo96+lRUWpdRxeWWMi4Hh4vIJZ7Jt/
+ qoVO8EAoqU1TU7VHYUziaNuwPf8WXYwMaICWVIgddnF5f2MKQfkixabNpNVoEYf56Ukx1eKKzA5
+ C5TOPr0ktNvV4dNKm7ilDUkKHQPf+qyHtwNayyR6d6QBci99SKBi5LOZgdJWTy0sFUb49Dlfm
+X-Google-Smtp-Source: AGHT+IEc75qoAffp8vtlBvpKta35w/TwoEHLTz6jnlCBWGFKe7MsgalZLqWK0vo6q1CsH1sw1gAepQ==
+X-Received: by 2002:a05:6000:2404:b0:3b7:9b81:73f6 with SMTP id
+ ffacd0b85a97d-3c5dcff3702mr9153887f8f.54.1756093387658; 
+ Sun, 24 Aug 2025 20:43:07 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.43.03
+ ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.43.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 24 Aug 2025 20:43:05 -0700 (PDT)
+ Sun, 24 Aug 2025 20:43:07 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Liron Himi <lironh@marvell.com>
-Subject: [PATCH v2 37/43] net/mvpp2: replace local definition of FOREACH_SAFE
-Date: Sun, 24 Aug 2025 20:38:50 -0700
-Message-ID: <20250825034126.12046-38-stephen@networkplumber.org>
+ Rosen Xu <rosen.xu@altera.com>
+Subject: [PATCH v2 38/43] raw/ifpga: replace with TAILQ_FOREACH_SAFE
+Date: Sun, 24 Aug 2025 20:38:51 -0700
+Message-ID: <20250825034126.12046-39-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250825034126.12046-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -82,33 +82,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There is now a standard macro for this.
+There is now a standard macro to safely walk tailq.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/mvpp2/mrvl_mtr.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/raw/ifpga/base/ifpga_enumerate.c         | 6 +++---
+ drivers/raw/ifpga/base/opae_hw_api.h             | 1 -
+ drivers/raw/ifpga/base/opae_intel_max10.c        | 8 +-------
+ drivers/raw/ifpga/base/osdep_rte/osdep_generic.h | 1 +
+ 4 files changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/mvpp2/mrvl_mtr.c b/drivers/net/mvpp2/mrvl_mtr.c
-index c07ac95ddc..27596b8c99 100644
---- a/drivers/net/mvpp2/mrvl_mtr.c
-+++ b/drivers/net/mvpp2/mrvl_mtr.c
-@@ -505,13 +505,9 @@ mrvl_mtr_deinit(struct rte_eth_dev *dev)
- 	struct mrvl_mtr_profile *profile, *tmp_profile;
- 	struct mrvl_mtr *mtr, *tmp_mtr;
+diff --git a/drivers/raw/ifpga/base/ifpga_enumerate.c b/drivers/raw/ifpga/base/ifpga_enumerate.c
+index 61eb6601ea..f8507fdf46 100644
+--- a/drivers/raw/ifpga/base/ifpga_enumerate.c
++++ b/drivers/raw/ifpga/base/ifpga_enumerate.c
+@@ -6,6 +6,8 @@
+ #include <inttypes.h>
+ #include <unistd.h>
  
--	for (mtr = LIST_FIRST(&priv->mtrs);
--	     mtr && (tmp_mtr = LIST_NEXT(mtr, next), 1);
--	     mtr = tmp_mtr)
-+	LIST_FOREACH_SAFE(mtr, &priv->mtrs, next, tmp_mtr)
- 		mrvl_destroy(dev, mtr->mtr_id, NULL);
++#include <rte_bsd_queue.h>
++
+ #include "opae_hw_api.h"
+ #include "ifpga_api.h"
  
--	for (profile = LIST_FIRST(&priv->profiles);
--	     profile && (tmp_profile = LIST_NEXT(profile, next), 1);
--	     profile = tmp_profile)
-+	LIST_FOREACH_SAFE(profile, &priv_profiles, next, tmp_profile)
- 		mrvl_meter_profile_delete(dev, profile->profile_id, NULL);
- }
+@@ -725,9 +727,7 @@ static void dfl_fpga_enum_info_free(struct dfl_fpga_enum_info *info)
+ 		return;
+ 
+ 	/* remove all device feature lists in the list. */
+-	for (dfl = TAILQ_FIRST(&info->dfls);
+-		dfl && (tmp = TAILQ_NEXT(dfl, node), 1);
+-		dfl = tmp) {
++	TAILQ_FOREACH_SAFE(dfl, &info->dfls, node, tmp) {
+ 		TAILQ_REMOVE(&info->dfls, dfl, node);
+ 		opae_free(dfl);
+ 	}
+diff --git a/drivers/raw/ifpga/base/opae_hw_api.h b/drivers/raw/ifpga/base/opae_hw_api.h
+index 57750022dd..f95bdf35b6 100644
+--- a/drivers/raw/ifpga/base/opae_hw_api.h
++++ b/drivers/raw/ifpga/base/opae_hw_api.h
+@@ -8,7 +8,6 @@
+ #include <stdint.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+-#include <sys/queue.h>
+ 
+ #include "opae_osdep.h"
+ #include "opae_intel_max10.h"
+diff --git a/drivers/raw/ifpga/base/opae_intel_max10.c b/drivers/raw/ifpga/base/opae_intel_max10.c
+index 58c884a8d8..84e0767b3a 100644
+--- a/drivers/raw/ifpga/base/opae_intel_max10.c
++++ b/drivers/raw/ifpga/base/opae_intel_max10.c
+@@ -4,14 +4,8 @@
+ 
+ #include "opae_intel_max10.h"
+ #include <libfdt.h>
+-#include "opae_osdep.h"
+ 
+-#ifndef TAILQ_FOREACH_SAFE
+-#define TAILQ_FOREACH_SAFE(var, head, field, tvar) \
+-	for ((var) = TAILQ_FIRST((head)); \
+-		(var) && ((tvar) = TAILQ_NEXT((var), field), 1); \
+-	(var) = (tvar))
+-#endif
++#include "opae_osdep.h"
+ 
+ int max10_sys_read(struct intel_max10_device *dev,
+ 	unsigned int offset, unsigned int *val)
+diff --git a/drivers/raw/ifpga/base/osdep_rte/osdep_generic.h b/drivers/raw/ifpga/base/osdep_rte/osdep_generic.h
+index d4e634c9d2..0ff2700384 100644
+--- a/drivers/raw/ifpga/base/osdep_rte/osdep_generic.h
++++ b/drivers/raw/ifpga/base/osdep_rte/osdep_generic.h
+@@ -8,6 +8,7 @@
+ #include <stdlib.h>
+ 
+ #include <rte_common.h>
++#include <rte_bsd_queue.h>
+ #include <rte_cycles.h>
+ #include <rte_spinlock.h>
+ #include <rte_log.h>
 -- 
 2.47.2
 
