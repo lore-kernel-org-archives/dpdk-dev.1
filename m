@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 159EECA0EED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F1C1CA0EFA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:42:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EEBF140608;
-	Mon, 25 Aug 2025 05:41:53 +0200 (CEST)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
- [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id D42B5402E7
- for <dev@dpdk.org>; Mon, 25 Aug 2025 05:41:45 +0200 (CEST)
-Received: by mail-wm1-f44.google.com with SMTP id
- 5b1f17b1804b1-45a1b04f8b5so23956195e9.1
- for <dev@dpdk.org>; Sun, 24 Aug 2025 20:41:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 01DD640612;
+	Mon, 25 Aug 2025 05:41:54 +0200 (CEST)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com
+ [209.85.221.41]) by mails.dpdk.org (Postfix) with ESMTP id 0A56A402E8
+ for <dev@dpdk.org>; Mon, 25 Aug 2025 05:41:48 +0200 (CEST)
+Received: by mail-wr1-f41.google.com with SMTP id
+ ffacd0b85a97d-3c8b0f1b699so584930f8f.0
+ for <dev@dpdk.org>; Sun, 24 Aug 2025 20:41:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093305;
- x=1756698105; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093307;
+ x=1756698107; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KfleNHUAX9uYm3Z2nidrTZyWX8Cjkbds8wosyzkFBLE=;
- b=ZgbAlv1k7NusNEuJ3r0/dwseQ9//lQ5p/r11tJZ66YiBkTpKlNPR6Hbwyw/WQ3HXq4
- /tbyCAjX3PbpjrSST4h4EGAgNL+fBBCTQ5ZWvfvLjLj6H4j+XbsUbm7NkqhQYtV+nkSJ
- NL35gkKYl0jYcfXihSMDeVK5D6X5WI3+YY+F2pAFRvMv5vylZOYSl1w5nDu23S9BR2Yn
- b9GdRTUKFC/4N/42sByMG8eH6pKHSKQuIRU8C90F9n74W9SAQUNVafHrqy3bA3v3shCh
- GkUAI4VHGGuTX6cmgluvAF+hfMye9cm2R5J7AUGXYb0sSlTIOvotGlMJUR2H7BnJ8Vve
- nbCA==
+ bh=ZqfpBiVxLDwzQzDXtXn+5vVl7aW3fuHqgVf8Hao+KQA=;
+ b=sE032MLei383aGN0PaSYLVzX68cRVrRENJEVcowFaHrYGlHZNrO4FE6WtacKxElwPv
+ 617S1GJsIk2lGpjKDIQQDPZ8rkEBn3WPQUOv0Lc4Wc4Zh6Hjm2ip9y9DW+2UuPfLG6p/
+ CGJ9Q9kX11lG1XTX8SG2VQYfBYkiZKgZtcA95VAyesghSjHHC+iuxpvy2RucKsy2MyUg
+ P/VLG+J2tKcSlp0aZTwo8wzrNgwzAakD32EYQ++2WS1smVw3HKXOnWhLhLeB1CR/9CEd
+ OhGTwCarv81a0rZ6vQz8PDOlaKe2Or+BZb9nAs2SeqTout4h9WXDVPGT/NkGLGBYRhPH
+ 3DOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756093305; x=1756698105;
+ d=1e100.net; s=20230601; t=1756093307; x=1756698107;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=KfleNHUAX9uYm3Z2nidrTZyWX8Cjkbds8wosyzkFBLE=;
- b=YC7OHqvcyrTXmqcSycafZIWai0BwxX12Ijs40rFCQJZwVixHd4WKUpzSpZ79X7O/T4
- Q/WqAes9X6obi7Hh2dXvX6BKwJ9GsKMRksq+gVV4M69T4U3jDDwjTBXIp3G9d1UlGWJG
- rbmTxnxhiNkuAYxDrceTElkU8KaUctI3s+TAO53cLQPLifNGqqNz9qNdxm6tW2o5RBhi
- p+2Zy5LXB6clQ97uyb5rjg0m+JiCC8Xq8ypoSg0AxrSmo6gr4Za4fTpJGC7hqbNpl/5A
- kZAUqmgiogLwgswyQcOKb6Yf4H4Sze2MSpmHgshbEsjt4g7v7RC/2nuTmg5B+V2z77wj
- qPUQ==
-X-Gm-Message-State: AOJu0Yy6sKnkZX8SzlhkW/nZuxGzPHy0I009aAiu8wvlVODkvt2wOdPL
- cSf7AjjIrznHIDiWa/cqkVRssXhrIXsxB0q1daDj5qcWNUwMfHXw7+TkxkKsljQXMVei9sAxDMd
- o5aWE
-X-Gm-Gg: ASbGnctmZe9PlTmzPIjQPxmjAx54NMBbtV1dx/BIwNJNQmTv3XKBsgOK2+lWGgPS1ba
- m/zRd/lmfdvF8WllhR1WumCaky9YoDzIYUzdQQxKKYtO3g3zu3zfY6HNgwxE4g9NAFda6Z5PVwa
- Ya+mXgU7ew+ALNLdMsnG7SzLT9Dhg54szqr/i7PBh2IREVycPvzUtWk7QC4Dt/VElkJ2MvgQ06x
- /SpRNQcYCgkBzblVYupXrEZgAilnuoyjCmorQwHIUfRKbBv5Kwzqg5ojn9Qj/Ykln6uIaea0YlU
- t+F4ISnqfJsI62YczbRh3X6c8+tRE5ufPAAuUHQQCuJTTLcobCgc1VxFAZVT6/OCaPzItpOZrb4
- V7ij4POi8HiJUte3k8peNY4rBhpVQdVITEUuPoOHnEHkW13iy8pd0hvBY2gWu2fmO/T30XZM6
-X-Google-Smtp-Source: AGHT+IG/+fkzcBvsBQygKei8Nl55B6ky6HwXDRYdI2Qnz5cPjzb0lIo8U/lw8EhjKHdV+c5/3OkRxg==
-X-Received: by 2002:a05:600c:45d0:b0:442:e9eb:1b48 with SMTP id
- 5b1f17b1804b1-45b517ca4camr107872515e9.24.1756093305411; 
- Sun, 24 Aug 2025 20:41:45 -0700 (PDT)
+ bh=ZqfpBiVxLDwzQzDXtXn+5vVl7aW3fuHqgVf8Hao+KQA=;
+ b=YLbOhdWbaLq8EI9qoLR5uNPGJ007mlMLxitcpB8vFxTQKymPrH7bT3Tb1keWqmHiwM
+ WXTakAyZ4A0Z4UiBRN/91w7OB1/oKueyLCr5WRiaCAnzOku8hEaAcvjac/+bNs7cdZub
+ zNhusfuGBUTUc/+i75xZZ4fo3y6ahHY5ixz70oak3Y7piH04bOKi4Uu7IaPNPzfbhGA2
+ 2p65u6I69B1M3KmsKP/UkzSgvWvTsCH/PVVmJifzQonxRNEpwBb0pA+PuN18ZtVsAaKZ
+ g3EfpJqZr4MrzeUgs7mB1LTu31PXdTgGcJib2ARsdR4Lwr5GOHQejER1PnCNC2bTwaLR
+ S9ag==
+X-Gm-Message-State: AOJu0Ywt2qfrEMiO3xPhKMIlhMcBMnFCEONPbQ/6/C9tmfEpxyUTAiS/
+ yupWymx6HqKgHuD/HZbYeI535hoh8HH2drD7wIVLHy7SnXavgsYoOgofVUiOAeiQHEHJOwau2tv
+ 0yKHW
+X-Gm-Gg: ASbGncvzY9M74cHho1sZNQINwyukzqow7pi1UL2rjhjBl3fJLSIpY7j+UN4trxF7RHt
+ P0xYW/cyHN+RkIoMM2nAlWUtbIFSw2Q6yjML5QnGHqvYBYk4KcjDT2SQqd4Qb4K2+x/dI4qHIca
+ Uxupj4ncdPKnc4cjPvtpMniI68R/BRT0g0nYV7Juk5O1kSeunijh0Vr6HA1vp31O1zIUXjxSEYd
+ gWUuFIUIrLpvRJCvARfKePgpzrU5T0Izr/0XPYBgH0wMDrBP+ykMGD5OD4tZeJtHCfK6VggD6m1
+ 5Ga13KkbrZvBQp5aZ94ilCHPaPvZiJo7oLfq3CRH18XGq9b3wG+1ZfqMBwTKIBEdKClUhrGZLLS
+ oEj5GXWXDQllm/lRwSEOrKzoavZJdDyxuuJmFB9TU7nfpswNaR2EtZOy4cMqHSH5AoW2H/lct
+X-Google-Smtp-Source: AGHT+IF8wK+QEZwE5L06Mj/y+HT0UntRfF8FLBr/sd3cygCJRIgjp/a2adCduIXQXKYC161ztzERTg==
+X-Received: by 2002:a5d:5d87:0:b0:3c8:f348:7882 with SMTP id
+ ffacd0b85a97d-3c8f34887d8mr1528387f8f.54.1756093307640; 
+ Sun, 24 Aug 2025 20:41:47 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.41.43
+ ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.41.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 24 Aug 2025 20:41:45 -0700 (PDT)
+ Sun, 24 Aug 2025 20:41:46 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH v2 04/43] test-pipeline: remove unnecessary use of sys/queue.h
-Date: Sun, 24 Aug 2025 20:38:17 -0700
-Message-ID: <20250825034126.12046-5-stephen@networkplumber.org>
+ Jerin Jacob <jerinj@marvell.com>
+Subject: [PATCH v2 05/43] test-eventdev: use rte_bsd_queue.h
+Date: Sun, 24 Aug 2025 20:38:18 -0700
+Message-ID: <20250825034126.12046-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250825034126.12046-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -82,64 +82,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Not used directly here
+Use the replacement rte_bsd_queue.h header instead
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test-pipeline/config.c  | 1 -
- app/test-pipeline/init.c    | 1 -
- app/test-pipeline/main.c    | 1 -
- app/test-pipeline/runtime.c | 1 -
- 4 files changed, 4 deletions(-)
+ app/test-eventdev/evt_test.c | 2 +-
+ app/test-eventdev/evt_test.h | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/app/test-pipeline/config.c b/app/test-pipeline/config.c
-index daf838948b..61cf3a195c 100644
---- a/app/test-pipeline/config.c
-+++ b/app/test-pipeline/config.c
-@@ -8,7 +8,6 @@
- #include <inttypes.h>
- #include <sys/types.h>
- #include <string.h>
+diff --git a/app/test-eventdev/evt_test.c b/app/test-eventdev/evt_test.c
+index 72d6228bc3..04681e1e72 100644
+--- a/app/test-eventdev/evt_test.c
++++ b/app/test-eventdev/evt_test.c
+@@ -4,8 +4,8 @@
+ 
+ #include <stdio.h>
+ #include <unistd.h>
 -#include <sys/queue.h>
- #include <stdarg.h>
- #include <errno.h>
- #include <getopt.h>
-diff --git a/app/test-pipeline/init.c b/app/test-pipeline/init.c
-index 558f0e428d..2ca32db39d 100644
---- a/app/test-pipeline/init.c
-+++ b/app/test-pipeline/init.c
-@@ -8,7 +8,6 @@
- #include <inttypes.h>
- #include <sys/types.h>
+ 
++#include <rte_bsd_queue.h>
+ #include "evt_test.h"
+ 
+ static STAILQ_HEAD(, evt_test_entry) head = STAILQ_HEAD_INITIALIZER(head);
+diff --git a/app/test-eventdev/evt_test.h b/app/test-eventdev/evt_test.h
+index ad3f531dcf..30b248d5db 100644
+--- a/app/test-eventdev/evt_test.h
++++ b/app/test-eventdev/evt_test.h
+@@ -7,7 +7,6 @@
+ 
  #include <string.h>
+ #include <stdbool.h>
 -#include <sys/queue.h>
- #include <stdarg.h>
- #include <errno.h>
- #include <getopt.h>
-diff --git a/app/test-pipeline/main.c b/app/test-pipeline/main.c
-index 4cc098d7ac..dbc1e0d92d 100644
---- a/app/test-pipeline/main.c
-+++ b/app/test-pipeline/main.c
-@@ -8,7 +8,6 @@
- #include <inttypes.h>
- #include <sys/types.h>
- #include <string.h>
--#include <sys/queue.h>
- #include <stdarg.h>
- #include <signal.h>
- #include <errno.h>
-diff --git a/app/test-pipeline/runtime.c b/app/test-pipeline/runtime.c
-index 752f783370..e1d9f8174e 100644
---- a/app/test-pipeline/runtime.c
-+++ b/app/test-pipeline/runtime.c
-@@ -8,7 +8,6 @@
- #include <inttypes.h>
- #include <sys/types.h>
- #include <string.h>
--#include <sys/queue.h>
- #include <stdarg.h>
- #include <errno.h>
- #include <getopt.h>
+ 
+ #include <rte_eal.h>
+ 
 -- 
 2.47.2
 
