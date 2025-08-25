@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F92CA0EED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAA4CA0EED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:44:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0755A40B98;
-	Mon, 25 Aug 2025 05:42:51 +0200 (CEST)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
- [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id AB8A7406A2
- for <dev@dpdk.org>; Mon, 25 Aug 2025 05:42:40 +0200 (CEST)
-Received: by mail-wr1-f49.google.com with SMTP id
- ffacd0b85a97d-3c7aa4ce85dso643578f8f.3
- for <dev@dpdk.org>; Sun, 24 Aug 2025 20:42:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F3C4340B8D;
+	Mon, 25 Aug 2025 05:42:52 +0200 (CEST)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
+ [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id 2707840A6E
+ for <dev@dpdk.org>; Mon, 25 Aug 2025 05:42:43 +0200 (CEST)
+Received: by mail-wm1-f53.google.com with SMTP id
+ 5b1f17b1804b1-45b49f7aaf5so22808615e9.2
+ for <dev@dpdk.org>; Sun, 24 Aug 2025 20:42:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093360;
- x=1756698160; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093363;
+ x=1756698163; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Z9Bfl/nR+3g3V5zNi1mRS29nt+CTLwIXJ00tHOmOcwQ=;
- b=RqYbvxNdWIdlYMZQ5tPFRc8WGYQwZHOYRw9aBWe8Bzjj1NviwqE6pXhOK82i2ecY+m
- Vx5HyrTW6PhLYIMi8y96kd51F5LtvZNAVJHlZVCGdrnK7wqz0t63hY7+qcUxr+2ufDmd
- YEnZGJYVb0aoJAv+74HBW8DExVgrk4Bt1f/dfFN0JqNDb2cYltxPzQxs+H0K6ggVowRG
- nV/46Es8EPeoPpV8xjPj0blA3UpCZ/XyGomBatvQnepc1DvIf0+rHydarQfRj/S6fTX9
- VcJ1gvHnf57yjIBBwUmdVVhkOXt2+NO97cyGiMBXmH4XQeT5vzwfKyqZgUZGw+yuybgQ
- gzpw==
+ bh=ImTNw3aS/PjlUuKc4EwCASjA2TAOgR2vLqVW3Vjrw7s=;
+ b=XbuC2nbK5JidRbloUgWlR21FAc/745twtA3R8Zgkn1/zTDFJ6AOs7qocRTStYva/09
+ mN6TzNc9PnmbUVjooo4bnHnsxrHPk9bJOQ6skvxB4MBypvd3Ys1KpIPshli1VaAWXato
+ mHVzOcYlB8C5SXZXmsFs1cUlGSuzDCvLl/qnOCPOQWiWWXqcpIUqnyD7pnfmbHyKb6vG
+ iNgXz49n3xnAiTauluq3kXR1BY00VYeCd5cVxcWlVQcQeFD5cTugQaIw+8XH3PYsDsBC
+ RXpxYrqhZbN9z3RljoAe0EJ6Q6JRh8s7sW0eIseFVqqHYZ19l168jehrMonOW9fPNpdb
+ bFdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756093360; x=1756698160;
+ d=1e100.net; s=20230601; t=1756093363; x=1756698163;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Z9Bfl/nR+3g3V5zNi1mRS29nt+CTLwIXJ00tHOmOcwQ=;
- b=pXkUflyiVVeCFv6eveRIuG7FAZWes20scHyZ53bJ/3dzojhKflyVQRqhokUlmXH1CY
- adQz9vOfcsZRiq7RSzhiwq4/GWgsAiIh3HGrXCkNjE32vGd9W6bdAb7I9wdNj1e4/PH8
- 0FjVUA2dtnN81JCu7iiKr1AOi5fTyn+WOq+LF6EHjZn7tsJKFSKrIyJN2ChtYTloRwjN
- FrcPzCE7OTZBGzeotyhSHc3P+phpJTk+nquJbUaeHmGZK3nHiPJUotDwoUudfRR/gngo
- LuXnrvYbEWA5WhfYWNQ8zh1j4QJXmz/I2VaXkLueL5ziP+asOyX4oEYtkTvDr1K2lpyS
- CUHw==
-X-Gm-Message-State: AOJu0YwSZDXOMnnF6MAaVmumr0A2PRx01v7hYNq2DP6t+bcggiKlWLN9
- 9rpmLY1aQufmmB6HsHa42hNDypwBVmO7zNs2uBtZ6dtz7xXzRg0LEvXxjNXT/wXVIwssLagLTDL
- OXZBI
-X-Gm-Gg: ASbGncuMuCEXzhFf53QsTxYa1uh+nsCvIKr46/ROM2+I1+DfwD8eIuBPTg5YZ3587ih
- ghroJmcG3vJ4Ne0KW9HJ1xLu+FfRAY50mANzw9cP/yrjOgXQxr1sHbS+3cPf3aeQVR4lr/QHV9s
- OKSHlOkSImK/ZJJw3yk96mpY69ak9Zo+jO1rm5H71+Pjbz4zEHaphZHfAGrMsAxbof2totc/LjY
- XD8j6A+drmn+4QinaBp0SKYHhN9Kn2A15E8VBxhOebhgrBB2hDTkVdK63/6MQys5/QWDrRyZZt+
- XwtNHMIV1DXoYXaugzQUNdonHaBkHrZhOM3BnSZBDzNlDW4+3OZmgS6Qbkl9o/7Ool3pF5qsDVW
- NoytaCcuFjafZoHYuV7/wjiIolohsrPrH+38MmaeegoWLpJwD+wA7Wy3JxB4LLCzaeACTwM60
-X-Google-Smtp-Source: AGHT+IEHst2cy2tglOpBI6Lci5JO3D6q6NrDLMpUYoOXZoh5DESEn+abszmO5rC20OV8EhQLxMPmbg==
-X-Received: by 2002:a05:6000:2481:b0:3c9:b8b7:ea5a with SMTP id
- ffacd0b85a97d-3c9b8b7eba3mr595996f8f.45.1756093360284; 
- Sun, 24 Aug 2025 20:42:40 -0700 (PDT)
+ bh=ImTNw3aS/PjlUuKc4EwCASjA2TAOgR2vLqVW3Vjrw7s=;
+ b=lvgkJuLdA/VFt8FD+4oXpy405p4eRpwHQ5gEcIPHyhTi/+II5/j8HFuzVPZAt2O4J6
+ HL0RFcbO9vY7WQKEkekN2wb2lPydCp5hxr86g8bPAAWi+Q2eWTHiCCmEIFUuAuJtZE2p
+ 5o6PNnSROjdX2vYaHHm0TF0ZjSAYv0f8mQw2dyDExJvvDVe4S9xoRU+kPcNp4FLsGLX1
+ ZmRSmqEslX6U0JlKUKptP6UBRTHyaysfRTBtGm9S4wmaHYX83Cb7AvRonH+a4qgKY/80
+ FeIKss+gdIaAcrmxpRrpzl649sY/JGvtHu//xjBmnQ2iP+Cg2O1x5D+oqwqV7bEukWrS
+ b+Bg==
+X-Gm-Message-State: AOJu0YwUONDW1VYePb43iOSczu6W9N9LGjWYW6wZ0L79I9rR6BTvg6Ix
+ My3AIFUiQsdw/qqCygu+UA0Az5W9AunWcJJXis466HSvtFXxyiGgLUx5c08jegcJMSZdSHrsUaY
+ s/IPo
+X-Gm-Gg: ASbGncuz3+U0ZxP5/AaIOH26CA20YQoqourkYrCUnCopbnzQ7XKN3oGFzqqt2tGHcuH
+ K9WZdETiORJcMB0wFRRWR/fUESUd3+vjc5UG2QkRvpoBtn+c5YNQ+cFJfWtFaAI8UrCMV7/KN4j
+ T0St7ZX1i428uKfCli1DtezpXYrM5z8k3cYc8DtqNqHfn8VC+KmTjrm6k9Zyy3OO5BZi3Z9ST+n
+ beYsQL6wM2DEDAEOsHhOElcsAjoKBSVra3KR7ug+saGYN3LCiifHVnWoQKJc7sOvKfarqMPFZRF
+ ysERusrIBfx5qSUJ57F4j5f/MEIyRQgwBrLvICPKLjVXwbLRX8L+0foOIMm/Ufsn8ij+3cS4PIx
+ UhGKCmkst/ZbaPFp+ecrjyihJBZKDZibs/7BM7l9ucKF1LhIn30jn9rf/+jRBXXAvtx0Apjbu
+X-Google-Smtp-Source: AGHT+IGEf8yTLGXTI1Y+CvTLXZonaUAB/IpqfFASW7L3Q1YisyROUCooKf+CJnls2qjdJNg+ihGXEg==
+X-Received: by 2002:a05:600c:4fd4:b0:459:dde3:1a27 with SMTP id
+ 5b1f17b1804b1-45b517d4160mr83674075e9.26.1756093362738; 
+ Sun, 24 Aug 2025 20:42:42 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.42.38
+ ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.42.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 24 Aug 2025 20:42:39 -0700 (PDT)
+ Sun, 24 Aug 2025 20:42:41 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Gaetan Rivet <grive@u256.net>
-Subject: [PATCH v2 25/43] net/failsafe: replace use of sys/queue.h
-Date: Sun, 24 Aug 2025 20:38:38 -0700
-Message-ID: <20250825034126.12046-26-stephen@networkplumber.org>
+ Jakub Grajciar <jgrajcia@cisco.com>
+Subject: [PATCH v2 26/43] net/memif: replace use of sys/queue.h
+Date: Sun, 24 Aug 2025 20:38:39 -0700
+Message-ID: <20250825034126.12046-27-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250825034126.12046-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -86,35 +86,34 @@ Replace use of system sys/queue.h with DPDK rte_bsd_queue.h
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/failsafe/failsafe_flow.c    | 1 -
- drivers/net/failsafe/failsafe_private.h | 2 +-
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/memif/memif_socket.h  | 1 -
+ drivers/net/memif/rte_eth_memif.h | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/drivers/net/failsafe/failsafe_flow.c b/drivers/net/failsafe/failsafe_flow.c
-index 707e6c63b5..9f620443a4 100644
---- a/drivers/net/failsafe/failsafe_flow.c
-+++ b/drivers/net/failsafe/failsafe_flow.c
+diff --git a/drivers/net/memif/memif_socket.h b/drivers/net/memif/memif_socket.h
+index b0decbb0a2..f95b64fd61 100644
+--- a/drivers/net/memif/memif_socket.h
++++ b/drivers/net/memif/memif_socket.h
 @@ -5,7 +5,6 @@
+ #ifndef _MEMIF_SOCKET_H_
+ #define _MEMIF_SOCKET_H_
  
- #include <stddef.h>
- #include <string.h>
+-#include <sys/queue.h>
+ #include <sys/un.h>
+ 
+ /**
+diff --git a/drivers/net/memif/rte_eth_memif.h b/drivers/net/memif/rte_eth_memif.h
+index 8e45a3ab78..dc6ca8be58 100644
+--- a/drivers/net/memif/rte_eth_memif.h
++++ b/drivers/net/memif/rte_eth_memif.h
+@@ -5,7 +5,6 @@
+ #ifndef _RTE_ETH_MEMIF_H_
+ #define _RTE_ETH_MEMIF_H_
+ 
 -#include <sys/queue.h>
  
- #include <rte_errno.h>
- #include <rte_malloc.h>
-diff --git a/drivers/net/failsafe/failsafe_private.h b/drivers/net/failsafe/failsafe_private.h
-index babea6016e..94533a9a81 100644
---- a/drivers/net/failsafe/failsafe_private.h
-+++ b/drivers/net/failsafe/failsafe_private.h
-@@ -7,7 +7,7 @@
- #define _ETH_FAILSAFE_PRIVATE_H_
- 
- #include <stdint.h>
--#include <sys/queue.h>
-+#include <rte_bsd_queue.h>
- #include <pthread.h>
- 
- #include <rte_atomic.h>
+ #include <ethdev_driver.h>
+ #include <rte_ether.h>
 -- 
 2.47.2
 
