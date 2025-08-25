@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C05CA0EED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F92CA0EED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 25 Aug 2025 03:44:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 42F3140A89;
-	Mon, 25 Aug 2025 05:42:48 +0200 (CEST)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com
- [209.85.221.51]) by mails.dpdk.org (Postfix) with ESMTP id C871C406BC
- for <dev@dpdk.org>; Mon, 25 Aug 2025 05:42:38 +0200 (CEST)
-Received: by mail-wr1-f51.google.com with SMTP id
- ffacd0b85a97d-3c79f0a5b8bso1232445f8f.1
- for <dev@dpdk.org>; Sun, 24 Aug 2025 20:42:38 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0755A40B98;
+	Mon, 25 Aug 2025 05:42:51 +0200 (CEST)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
+ [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id AB8A7406A2
+ for <dev@dpdk.org>; Mon, 25 Aug 2025 05:42:40 +0200 (CEST)
+Received: by mail-wr1-f49.google.com with SMTP id
+ ffacd0b85a97d-3c7aa4ce85dso643578f8f.3
+ for <dev@dpdk.org>; Sun, 24 Aug 2025 20:42:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093358;
- x=1756698158; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756093360;
+ x=1756698160; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=LJq/DfnjEgXdDaBJ4ECxioWjiXBMzMF0qNo7WPU1g/I=;
- b=tfIbuRn9VV4ww9ReF3Hsu7iwPSX0XgXF+i+zUG2oTghD9slp3qmQGDZqy/8X8/3/y6
- jXrZtl/ET/x5+ExhXg1Poqz5Y5Uz9Lkas77XnzPt5wVN3t1yAZ5lyxdqYARavfSGBIIa
- hRS3Www3dQx3DhqfTHiYe6gPQvbG4iJl5V1lX6V/MQbW7D9VB7E+oKOf1V4CWWgHHh0K
- G5oMbfCsopalWTJZdQe7C8AzTgZp5MfiMD6qTnr+Vdq1DheqaHVb+Dy0FYIrHBybk3+L
- bWrMiuT73x2wsYodq4YZXGBnyjsH0vN4MyWtjiNK93dFsqjA5zvAy5oys85NkthjcB13
- EIQg==
+ bh=Z9Bfl/nR+3g3V5zNi1mRS29nt+CTLwIXJ00tHOmOcwQ=;
+ b=RqYbvxNdWIdlYMZQ5tPFRc8WGYQwZHOYRw9aBWe8Bzjj1NviwqE6pXhOK82i2ecY+m
+ Vx5HyrTW6PhLYIMi8y96kd51F5LtvZNAVJHlZVCGdrnK7wqz0t63hY7+qcUxr+2ufDmd
+ YEnZGJYVb0aoJAv+74HBW8DExVgrk4Bt1f/dfFN0JqNDb2cYltxPzQxs+H0K6ggVowRG
+ nV/46Es8EPeoPpV8xjPj0blA3UpCZ/XyGomBatvQnepc1DvIf0+rHydarQfRj/S6fTX9
+ VcJ1gvHnf57yjIBBwUmdVVhkOXt2+NO97cyGiMBXmH4XQeT5vzwfKyqZgUZGw+yuybgQ
+ gzpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756093358; x=1756698158;
+ d=1e100.net; s=20230601; t=1756093360; x=1756698160;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=LJq/DfnjEgXdDaBJ4ECxioWjiXBMzMF0qNo7WPU1g/I=;
- b=u3gl+52yN39pI9+/FwzBIHmy1B8J6AOZrVkskq1txEv3ZbrS7uVKP60XIpu4EG9gun
- aglzvdZasgENN7fsPQC3wISumjJeaI40ffCUTx7zAxcCIuzvg/lVtDGONfOkj2VKEm9w
- LW/6ZSIpTg2JNQNtL7AgiFJ5TSIyT7dfr4psq1WD1pewh/n+ex0IFCwqm3rPDXVEfNfi
- +Mluht93QbcB0LQXqwg6nimB0vpHvyLTXCluWK+9WHxENF2eeN9PcYHlrwj1sJZ0zV5C
- WGkBuAL6RvGY6/kuk7sRtmrhjSF/Pemz/uc7gEuf0dCYwQ1cO56oj0NxbqbhrQfKuY7s
- H7Jw==
-X-Gm-Message-State: AOJu0YyqanGb7EnqN0DJpcSjx5BxTUkS1xvtc6IbJcuiWsxrzaGWS6QV
- 9YZ5yg8oc7sOTzpMA67gVDHnXfctHjhtFsEbStWekWdKbteYtwtGtmdcDObqWY+HXTAjYwRSyuF
- MlR4l
-X-Gm-Gg: ASbGncsfa2L9+JXVGD1vNZTfOdvkyD3khYzqZiaKsgDu/khDrZe3/mMkY6YSXk+Sf/g
- MHlY4LsLMvipMQOogt2w5vCNK4H51SdAkr+u4XG1sUttfCcmONCF+VWIHzyE2xIAV8tqlu+FCgu
- J7P1R0gAxsLxR0HSlGqdXjSRuodBFlK3dkaJvc3VcH+/2fEPLvSdr06mNI7VeKi8AYBrDF07b6u
- bYBrVMWDNwHMCAx38wuMqQ1G+wgj5CM/v4jz7GwgGRFzmlxKG7zMkaWkAkkCRH7rK/DM/YH5UP9
- KcubO2pMTDXIH/LCxK319QYcjJ8yabhzkuuxM0MVYl9Eom6Kl5NnXjEUhLP+kxYnhxhQFc7RM0U
- WV/S5qMhKF9Hspg0opnS/faXmAHyHhz8orATf7Qc6FACPI5ND+9NfiBXCZI7uqIbxfaH8KbsL
-X-Google-Smtp-Source: AGHT+IHMor7oD8XIsRlKF3BKtYJdHUrSsaXn86phn4nwgol+SQq+zy6XegPZGhWELgXDU5UjqHzDbg==
-X-Received: by 2002:a05:6000:381:b0:3b7:89a2:bb8c with SMTP id
- ffacd0b85a97d-3c5db0eeb6dmr9333491f8f.16.1756093358420; 
- Sun, 24 Aug 2025 20:42:38 -0700 (PDT)
+ bh=Z9Bfl/nR+3g3V5zNi1mRS29nt+CTLwIXJ00tHOmOcwQ=;
+ b=pXkUflyiVVeCFv6eveRIuG7FAZWes20scHyZ53bJ/3dzojhKflyVQRqhokUlmXH1CY
+ adQz9vOfcsZRiq7RSzhiwq4/GWgsAiIh3HGrXCkNjE32vGd9W6bdAb7I9wdNj1e4/PH8
+ 0FjVUA2dtnN81JCu7iiKr1AOi5fTyn+WOq+LF6EHjZn7tsJKFSKrIyJN2ChtYTloRwjN
+ FrcPzCE7OTZBGzeotyhSHc3P+phpJTk+nquJbUaeHmGZK3nHiPJUotDwoUudfRR/gngo
+ LuXnrvYbEWA5WhfYWNQ8zh1j4QJXmz/I2VaXkLueL5ziP+asOyX4oEYtkTvDr1K2lpyS
+ CUHw==
+X-Gm-Message-State: AOJu0YwSZDXOMnnF6MAaVmumr0A2PRx01v7hYNq2DP6t+bcggiKlWLN9
+ 9rpmLY1aQufmmB6HsHa42hNDypwBVmO7zNs2uBtZ6dtz7xXzRg0LEvXxjNXT/wXVIwssLagLTDL
+ OXZBI
+X-Gm-Gg: ASbGncuMuCEXzhFf53QsTxYa1uh+nsCvIKr46/ROM2+I1+DfwD8eIuBPTg5YZ3587ih
+ ghroJmcG3vJ4Ne0KW9HJ1xLu+FfRAY50mANzw9cP/yrjOgXQxr1sHbS+3cPf3aeQVR4lr/QHV9s
+ OKSHlOkSImK/ZJJw3yk96mpY69ak9Zo+jO1rm5H71+Pjbz4zEHaphZHfAGrMsAxbof2totc/LjY
+ XD8j6A+drmn+4QinaBp0SKYHhN9Kn2A15E8VBxhOebhgrBB2hDTkVdK63/6MQys5/QWDrRyZZt+
+ XwtNHMIV1DXoYXaugzQUNdonHaBkHrZhOM3BnSZBDzNlDW4+3OZmgS6Qbkl9o/7Ool3pF5qsDVW
+ NoytaCcuFjafZoHYuV7/wjiIolohsrPrH+38MmaeegoWLpJwD+wA7Wy3JxB4LLCzaeACTwM60
+X-Google-Smtp-Source: AGHT+IEHst2cy2tglOpBI6Lci5JO3D6q6NrDLMpUYoOXZoh5DESEn+abszmO5rC20OV8EhQLxMPmbg==
+X-Received: by 2002:a05:6000:2481:b0:3c9:b8b7:ea5a with SMTP id
+ ffacd0b85a97d-3c9b8b7eba3mr595996f8f.45.1756093360284; 
+ Sun, 24 Aug 2025 20:42:40 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.42.36
+ ffacd0b85a97d-3c711f8a0d6sm9609939f8f.66.2025.08.24.20.42.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 24 Aug 2025 20:42:38 -0700 (PDT)
+ Sun, 24 Aug 2025 20:42:39 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- John Daley <johndale@cisco.com>, Hyong Youb Kim <hyonkim@cisco.com>
-Subject: [PATCH v2 24/43] net/enic: replace use of sys/queue.h
-Date: Sun, 24 Aug 2025 20:38:37 -0700
-Message-ID: <20250825034126.12046-25-stephen@networkplumber.org>
+ Gaetan Rivet <grive@u256.net>
+Subject: [PATCH v2 25/43] net/failsafe: replace use of sys/queue.h
+Date: Sun, 24 Aug 2025 20:38:38 -0700
+Message-ID: <20250825034126.12046-26-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250825034126.12046-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -86,21 +86,35 @@ Replace use of system sys/queue.h with DPDK rte_bsd_queue.h
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/enic/enic.h | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/failsafe/failsafe_flow.c    | 1 -
+ drivers/net/failsafe/failsafe_private.h | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/enic/enic.h b/drivers/net/enic/enic.h
-index dc1d16f7d5..7c16356a58 100644
---- a/drivers/net/enic/enic.h
-+++ b/drivers/net/enic/enic.h
-@@ -21,7 +21,6 @@
- #include "enic_res.h"
- #include "cq_enet_desc.h"
- #include <stdbool.h>
--#include <sys/queue.h>
- #include <rte_spinlock.h>
+diff --git a/drivers/net/failsafe/failsafe_flow.c b/drivers/net/failsafe/failsafe_flow.c
+index 707e6c63b5..9f620443a4 100644
+--- a/drivers/net/failsafe/failsafe_flow.c
++++ b/drivers/net/failsafe/failsafe_flow.c
+@@ -5,7 +5,6 @@
  
- #define DRV_NAME		"enic_pmd"
+ #include <stddef.h>
+ #include <string.h>
+-#include <sys/queue.h>
+ 
+ #include <rte_errno.h>
+ #include <rte_malloc.h>
+diff --git a/drivers/net/failsafe/failsafe_private.h b/drivers/net/failsafe/failsafe_private.h
+index babea6016e..94533a9a81 100644
+--- a/drivers/net/failsafe/failsafe_private.h
++++ b/drivers/net/failsafe/failsafe_private.h
+@@ -7,7 +7,7 @@
+ #define _ETH_FAILSAFE_PRIVATE_H_
+ 
+ #include <stdint.h>
+-#include <sys/queue.h>
++#include <rte_bsd_queue.h>
+ #include <pthread.h>
+ 
+ #include <rte_atomic.h>
 -- 
 2.47.2
 
