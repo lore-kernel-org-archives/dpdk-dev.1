@@ -2,49 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCABEDF032
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 04:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AB6EDF032
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 04:53:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9F363402C0;
-	Thu, 12 Feb 2026 05:52:54 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A1EC44042C;
+	Thu, 12 Feb 2026 05:53:00 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 839AE4025F
- for <dev@dpdk.org>; Thu, 12 Feb 2026 05:52:53 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 261DD4025F
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 05:52:54 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1770871974; x=1802407974;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=Xeg3giOGDWge80j0wd4tAXHj3nyx09gzAIOUV5w+RhU=;
- b=ENGm7Mipi8bgXFPGwzrCLHfk4NTBOwaqSEQLRgkXNv+t095L9c/EStxq
- xpsMBXloOIb65Lr+qP17/JD6sRyoEHP28otGaB6xRKtVyohwwFrdO5Y/Y
- P+UpUDc6P/xpu6vcZ3Yao4WkFdH+/wEgR1N6/q3d7N4CqvqYrkDKTLVCu
- 6v3JQmvI4Gxrg11DtrplQU3VtxCNP6OJGe0yq5jMMY8E5m7IW5u7XRNrM
- Hry3iAA/ymxLnHgnsMBASYqtBL1lYGXFfx99Q9ZuaoqTE6frGWM8R6sK2
- 0KeJzApt4sbomTDtvlQp36mq904skRYmHKVA5eALrYVobFZh7levsbEpr Q==;
-X-CSE-ConnectionGUID: 3xJ6cwa7SQqnR8G2U8XQzA==
-X-CSE-MsgGUID: UuzyMQrlQ/iauC94BUucRA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="71940234"
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71940234"
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=A7nDkG2VtWZjSK0gCWJmV/c4Z7US6APo9gd8TMQx7WQ=;
+ b=NNVsUgBahXejRZT6NP2P9/aX2prhVsZMFA6VJ6nyfdXHyk5GUgD4eId2
+ YSQ3E7n/iVcNE1EWFs5H/hcxepezSztJqhh5kZt1dswPuyXvVdoIpeKwr
+ 627Hh5DwZuP7sZgpDs4t4M/cTsZCCpYk4Q5lB1jkW8tDm+fYHtAEAtYSz
+ Xy7DOXFSCSznEl5GYJ6bdMg9GCZjNzS2COVvzbTv+cjUBEDhDJeBWhjWE
+ Z4gQO6xoeUKVTLZdpBRuSa1mF51QObyp8f50O8BD7SE3JJHn8bFntrgOs
+ e+gCIy3gSJ057do0ns4mbA3uncx4zxUpRYffeTsEUQ4ZLkKy8Dwnv73Yk A==;
+X-CSE-ConnectionGUID: 5dWqcsaESkOa2ogML38GjA==
+X-CSE-MsgGUID: Fpn7jea3SzSiTB87DJV9sA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="71940235"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71940235"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 20:52:52 -0800
-X-CSE-ConnectionGUID: iZIO+1uBRr2WqDqAiPistg==
-X-CSE-MsgGUID: Tg/Q3MCDRtq0iblIdCN5ng==
+ 11 Feb 2026 20:52:54 -0800
+X-CSE-ConnectionGUID: dy87M/dRS82J6H+t/KQSAg==
+X-CSE-MsgGUID: h4rDavW7QxGt379XK2hDeA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="216715398"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="216715406"
 Received: from unknown (HELO srv24..) ([10.138.182.231])
- by fmviesa004.fm.intel.com with ESMTP; 11 Feb 2026 20:52:50 -0800
+ by fmviesa004.fm.intel.com with ESMTP; 11 Feb 2026 20:52:52 -0800
 From: Shaiq Wani <shaiq.wani@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
-Subject: [PATCH v3 0/7] Add support for L2TPV2 over UDP to ICE PMD
-Date: Tue, 26 Aug 2025 21:56:57 +0530
-Message-Id: <20250826162704.4636-1-shaiq.wani@intel.com>
+Cc: Song Jiale <songx.jiale@intel.com>
+Subject: [PATCH v4 1/7] net/ice: add L2TPv2 PPP and PPoE data structures
+Date: Tue, 26 Aug 2025 21:56:58 +0530
+Message-Id: <20250826162704.4636-2-shaiq.wani@intel.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260202094244.447966-1-shaiq.wani@intel.com>
+In-Reply-To: <20250826162704.4636-1-shaiq.wani@intel.com>
 References: <20260202094244.447966-1-shaiq.wani@intel.com>
+ <20250826162704.4636-1-shaiq.wani@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -60,35 +62,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset adds L2TPv2 protocol support to the ICE PMD
-enabling RSS and Flow Director capabilities for L2TPv2 over UDP traffic.
+Add data structure definitions for L2TPv2 PPP and
+PPoE protocols to support Flow Director (FDIR) filtering.
 
-v4: Version 3 patchset was incomplete due to a server reboot.
-    V4 includes all patches for review.
+Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
+Tested-by: Song Jiale <songx.jiale@intel.com>
+---
+ drivers/net/intel/ice/base/ice_fdir.h | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-v3: Fixed compilation issues.
-
-v2: Addressed AI generated comments.
-
-Shaiq Wani (7):
-  net/ice: add L2TPv2 PPP and PPoE data structures
-  net/ice: add L2TPv2 tunnel type definition
-  net/ice: add L2TPv2 protocol and field definitions
-  net/ice: add L2TPv2 flow patterns and FDIR support
-  net/ice: add L2TPv2 hardware packet generation
-  net/ice: add L2TPv2 RSS hash support
-  doc: update release notes
-
- doc/guides/rel_notes/release_26_03.rst   |   4 +
- drivers/net/intel/ice/base/ice_fdir.c    |   6 +
- drivers/net/intel/ice/base/ice_fdir.h    |  17 +
- drivers/net/intel/ice/ice_ethdev.h       |   4 +
- drivers/net/intel/ice/ice_fdir_filter.c  | 451 ++++++++++++++++++++---
- drivers/net/intel/ice/ice_generic_flow.c | 177 +++++++++
- drivers/net/intel/ice/ice_generic_flow.h | 129 ++++---
- drivers/net/intel/ice/ice_hash.c         |  25 ++
- 8 files changed, 717 insertions(+), 96 deletions(-)
-
+diff --git a/drivers/net/intel/ice/base/ice_fdir.h b/drivers/net/intel/ice/base/ice_fdir.h
+index 3dd03f93f7..3d3b05da4a 100644
+--- a/drivers/net/intel/ice/base/ice_fdir.h
++++ b/drivers/net/intel/ice/base/ice_fdir.h
+@@ -230,6 +230,20 @@ struct ice_fdir_ecpri {
+ 	__be16 pc_id;
+ };
+ 
++struct ice_fdir_pppoe {
++	u8 rsrvd_ver_type;
++	u8 rsrvd_code;
++	__be16 session_id;
++	__be16 length;
++	__be16 ppp_prot_id; /* control and data only */
++};
++
++struct ice_fdir_ppp {
++	u8 addr;
++	u8 ctrl;
++	__be16 proto_id;
++};
++
+ struct ice_fdir_l2tpv2 {
+ 	__be16 flags_version;
+ 	__be16 length;
+@@ -279,6 +293,9 @@ struct ice_fdir_fltr {
+ 	struct ice_fdir_ecpri ecpri_data;
+ 	struct ice_fdir_ecpri ecpri_mask;
+ 
++	struct ice_fdir_ppp ppp_data;
++	struct ice_fdir_ppp ppp_mask;
++
+ 	struct ice_fdir_l2tpv2 l2tpv2_data;
+ 	struct ice_fdir_l2tpv2 l2tpv2_mask;
+ 
 -- 
 2.34.1
 
