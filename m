@@ -2,58 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 817F9C8303F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 Aug 2025 00:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F8DBC8303F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 Aug 2025 00:03:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 96F694021E;
-	Tue, 26 Aug 2025 02:03:42 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BF468402DE;
+	Tue, 26 Aug 2025 02:03:43 +0200 (CEST)
 Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com
  [209.85.210.201])
- by mails.dpdk.org (Postfix) with ESMTP id 798A340156
- for <dev@dpdk.org>; Tue, 26 Aug 2025 02:03:40 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 50A894021E
+ for <dev@dpdk.org>; Tue, 26 Aug 2025 02:03:42 +0200 (CEST)
 Received: by mail-pf1-f201.google.com with SMTP id
- d2e1a72fcca58-76e2ea9366aso4468479b3a.2
- for <dev@dpdk.org>; Mon, 25 Aug 2025 17:03:40 -0700 (PDT)
+ d2e1a72fcca58-771e331f0fcso1222073b3a.1
+ for <dev@dpdk.org>; Mon, 25 Aug 2025 17:03:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1756166619; x=1756771419; darn=dpdk.org;
- h=cc:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=itV9VgfjI09kCHg01dD/VvnfvsgzHEyWT6Ps5HbHcbc=;
- b=fleWmDeSFDlKBjiZS4tszzk+uIw+7TMQWmROa4cH1TeEqzjPL54p6FrcyR8AHQ04NM
- 7OYstbeZPNzusN7kAxZls2/lqGuuRDQ9JstmP9F1FrjRzL8IUo/lh8qOKerB7cMu3ecf
- ta1jAwmvVYODKD8+/rQA0enxPVPibPDdS7gjKSevuFAcYaZgEDIvsro5ArFPOPPu+a7I
- /AFrlkRduaX+YAzaIewGz2hEh2OiDwjz1qhGnh5Af6d38xRfbPCcYg/TR1OKQyfgtwTo
- Q5t2uS8ZpqkdNDQoikedz/4/VlmIu8SB7HWsFGhUGwFESGO134vjPiIdH+oRa6DwyKTE
- mM0w==
+ d=google.com; s=20230601; t=1756166621; x=1756771421; darn=dpdk.org;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=dudVmx3upkTxURmveJP80DOEUxGRUw1rx4wZdqjzMQk=;
+ b=NZsAyRa13cxR0dBI7AaVfN+NUxBMjgSZ3R+bdw+8UAOUVQNIJo2JB5d0voCe9iRAFc
+ YebQVkrTmhwUaWEaWDSl2Tr3SrkD+fVOVzfD/CKB7H7eQMrGm7WGJ4wF7JDw8+fR04tH
+ 5FmxZae7qZrW0RzQuposopg/zs3Dz4Q/3cMCW4Iz1Jl9rNrFcxF8xqmsz7gEUez4Icl/
+ roHJ2E3DmZxCQnXNCweqdQtPfKqkWSqGIAGxBIUsfYxA9u/Mg4B8QdlDC78XZvGq4PED
+ tyIdforPc1NF1+3ZkC3N2rn925VbEBcOiTWIZJclqBmxwnGTWFLSu/1tZvh9+mnHr+i9
+ lhFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756166619; x=1756771419;
- h=cc:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=itV9VgfjI09kCHg01dD/VvnfvsgzHEyWT6Ps5HbHcbc=;
- b=WPZK/175joxpQOQFYll3MFFA+uc4KXUyojWkJbICdbftUzLyy3HvMxPkfuyWx/6DMR
- Np5QqceDtRjUJ2qiCT/HeSBQhsxJXWaNDmnGdYp0CwEOY6kfrfGCyggFuefQ12lseWxl
- HQxwch8DCI13ARbmCFCdDwJMuUiqgUJc5tMTIb0DdGPrsY2AVBdR4B6UPfDVZIL0K3x1
- 50MV+I9hjqqTnYr3efqCyK0pkIYsRGb8P1c7wfPn46LgFwVY6TNfmA431rkwU2Ve8/+z
- rZ2BPZerOhCp0vlPRIB226Pixr/jbdkTf017rQZC0tk6G59Tq8X/O/ioCGXMgVpEL5DK
- nuJg==
-X-Gm-Message-State: AOJu0Yzc0o8Dt1tWgmiZIO9Be+zQ1LAB8aKWffdO+3jm7F/R0PBJ9lwp
- Dg4fdZm30EVJC03SIMSMXTDHmbx6W4owCKlq4M1woEIs6Y5SSK9DY6HKORfDqSv4JD5nR0ZNZ+n
- 7+DJ6AuSEJqCB/euFMOStHBD+O5Bma+ueun+UTTLYprCfReoB5NjVI6ZEfb+Kp22SA3ld11O86I
- UlT1BECjbKFZ/qr+Nuhf/OHycHvf667p4DAw==
-X-Google-Smtp-Source: AGHT+IGSQbjHWpGAA0bxY+msX894ymX2ZtgSdtaYMRNYsBNOsz5B2Au+rypnZugT8jEoF067CqwQ14f2BiF/Xw==
-X-Received: from pfbmy8-n1.prod.google.com
- ([2002:a05:6a00:6d48:10b0:76b:f0d4:ac71])
+ d=1e100.net; s=20230601; t=1756166621; x=1756771421;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=dudVmx3upkTxURmveJP80DOEUxGRUw1rx4wZdqjzMQk=;
+ b=XgAxZy0KSjaEQBLLUOk2GZirFCKOzAdhu1xyqvtvKkilX4dpu/faQLIi7Pi8afjWpp
+ a1IjYahsxrkVda+GAM8/pLDM3vXTqNcr7ZPoJ6Hhdp70k5F0c8pkJTkxD3q86lXmhO+B
+ wuXICf4s/V/PlGflNq3BgjEzKzeh2xd0MTw8pqUyZ7SxJgehXbL5GfR0i4T+Fu7Kallu
+ Hm1YG9FTofWvkWq1cr5mEn64MADMd7Qnk4cc0ONUXlmz8Twlr8v+OQvNJJ8kg+W81jke
+ S2zsDx4qbzBx8SLk6F2L2VlU0zoDyOCnTJDw+Dd6SDjF6HmB/ozOs3bwxDuSEvSMZNxk
+ jbQA==
+X-Gm-Message-State: AOJu0Yw+Pg5VWCBMwIbM1WgdKBsnzsPTTogleQuBdj44ZrizDO+jkldf
+ MTo1pykhDHwGo2u5CFf1YWeby4E9JLUHYiDni2n8LaM0awLCwpjwSfooTPQyMz9KRMHcDDjVy51
+ kn7xeWFPEVc161A==
+X-Google-Smtp-Source: AGHT+IGmDxAekIKTNbFyICG6O7LiRzhivIR3nCv/QFafPZh6VAsCHVgxcJy9kujSEJ2hVlrdnmW4lJ4vR+yihQ==
+X-Received: from pfoo6.prod.google.com ([2002:a05:6a00:1a06:b0:770:5229:752e])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:3283:b0:240:21e1:cbc1 with SMTP id
- adf61e73a8af0-24340d721a3mr17497686637.41.1756166619384; 
- Mon, 25 Aug 2025 17:03:39 -0700 (PDT)
-Date: Mon, 25 Aug 2025 17:03:33 -0700
+ 2002:a05:6a00:3e01:b0:76e:885a:c33a with SMTP id
+ d2e1a72fcca58-7702fc28b0cmr19210365b3a.32.1756166621387; 
+ Mon, 25 Aug 2025 17:03:41 -0700 (PDT)
+Date: Mon, 25 Aug 2025 17:03:34 -0700
+In-Reply-To: <20250826000337.3922883-1-joshwash@google.com>
 Mime-Version: 1.0
+References: <20250826000337.3922883-1-joshwash@google.com>
 X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
-Message-ID: <20250826000337.3922883-1-joshwash@google.com>
-Subject: [PATCH 0/4] net/gve: out of order completion processing for DQO
+Message-ID: <20250826000337.3922883-2-joshwash@google.com>
+Subject: [PATCH 1/4] net/gve: free Rx mbufs if allocation fails on ring setup
 From: Joshua Washington <joshwash@google.com>
-Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>
+To: Jeroen de Borst <jeroendb@google.com>,
+ Joshua Washington <joshwash@google.com>, 
+ Rushil Gupta <rushilg@google.com>,
+ Praveen Kaligineedi <pkaligineedi@google.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Ankit Garg <nktgrg@google.com>, 
+ Ziwei Xiao <ziweixiao@google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -68,26 +73,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Both RX and TX processing on DQ were originally implemented with the
-asusmption that descriptor completions will be written by the hardware
-in the order that they are posted. In certain cases, such as RSC on RX
-and double completions on TX, this will not necessarily be the case.
+When creating new RX rings, one less than the number of buffers in the
+ring need to be allocated. It is possible that only a part of the
+allocation is successful, resulting in a failure to create the rings.
+In this case, the driver should free the buffers which were successfully
+allocated to avoid a memory leak in case the application does not
+automatically exit.
 
-Depends-on: series-35656 ("net/gve: Tx datapath fixes for GVE DQO")
+Fixes: 265daac8a53a ("net/gve: fix mbuf allocation memory leak for DQ Rx")
+Cc: stable@dpdk.org
+Signed-off-by: Joshua Washington <joshwash@google.com>
+Reviewed-by: Ankit Garg <nktgrg@google.com>
+Reviewed-by: Ziwei Xiao <ziweixiao@google.com>
+---
+ drivers/net/gve/gve_rx_dqo.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-Joshua Washington (4):
-  net/gve: free Rx mbufs if allocation fails on ring setup
-  net/gve: add datapath-specific logging for gve
-  net/gve: support for out of order completions on DQ Tx
-  net/gve: support for out of order completions on DQ Rx
-
- drivers/net/gve/base/gve_adminq.c |   2 +-
- drivers/net/gve/gve_ethdev.h      |  20 ++-
- drivers/net/gve/gve_logs.h        |   3 +
- drivers/net/gve/gve_rx_dqo.c      | 135 +++++++++++-----
- drivers/net/gve/gve_tx_dqo.c      | 250 ++++++++++++++++++------------
- 5 files changed, 267 insertions(+), 143 deletions(-)
-
+diff --git a/drivers/net/gve/gve_rx_dqo.c b/drivers/net/gve/gve_rx_dqo.c
+index 0103add985..cd85d90bb6 100644
+--- a/drivers/net/gve/gve_rx_dqo.c
++++ b/drivers/net/gve/gve_rx_dqo.c
+@@ -376,14 +376,13 @@ gve_rxq_mbufs_alloc_dqo(struct gve_rx_queue *rxq)
+ 		rxq->stats.no_mbufs_bulk++;
+ 		for (i = 0; i < rx_mask; i++) {
+ 			nmb = rte_pktmbuf_alloc(rxq->mpool);
+-			if (!nmb)
+-				break;
++			if (!nmb) {
++				rxq->stats.no_mbufs++;
++				gve_release_rxq_mbufs_dqo(rxq);
++				return -ENOMEM;
++			}
+ 			rxq->sw_ring[i] = nmb;
+ 		}
+-		if (i < rxq->nb_rx_desc - 1) {
+-			rxq->stats.no_mbufs += rx_mask - i;
+-			return -ENOMEM;
+-		}
+ 	}
+ 
+ 	for (i = 0; i < rx_mask; i++) {
 -- 
 2.51.0.rc1.167.g924127e9c0-goog
 
