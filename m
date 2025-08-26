@@ -2,72 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E89D0CA0FE7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 Aug 2025 14:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F33EECA0FE7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 Aug 2025 14:13:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4802F4064C;
-	Tue, 26 Aug 2025 16:04:02 +0200 (CEST)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
- [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id 4EBBA402D4
- for <dev@dpdk.org>; Tue, 26 Aug 2025 16:04:01 +0200 (CEST)
-Received: by mail-wr1-f52.google.com with SMTP id
- ffacd0b85a97d-3c8fe6bd038so1198415f8f.1
- for <dev@dpdk.org>; Tue, 26 Aug 2025 07:04:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756217041;
- x=1756821841; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Lvp7u5AUeLfitEsxT0yzArJa/CwMTLPmaUn7S154DME=;
- b=Tq/N/68JEPWbZ52h9DdGtknjARqkv5DT07+A43/yDSbz6lZwK83vNRabI9X4JZrZNv
- V2oLPYVOwFfCv2PvmDkaWoq3DdBtuvkA2VA3ev57D+RGAW2oPu0bs99JegqUhEKZDbpQ
- bB2E6DX/uT/IZex3QkQiwdaUiwf0sMAb3juDtDnKqSD8MHYNtgFsd3zPTmKdwH9CdoFU
- R9oA8ejT1UM8sMiDFP+DbE7xumZCQ2XBfQDuZiWDXISl3QnT+/QPRlpJW158RsIueTMh
- afTKqAGJA0bih0YsdoQV4t2orvtHP/J47Rm3uHGAwatS0yiRv7vcJxL9CKGIjVUY6meH
- hvqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756217041; x=1756821841;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=Lvp7u5AUeLfitEsxT0yzArJa/CwMTLPmaUn7S154DME=;
- b=GXc0oAhs9pzKaTNqfFGoNVkb4PgcGZISz2tRzZWqUdP/ajyg3XUlYxzrLwd5vlFcB/
- r61KY6L/j1Ti2IMHdnAVCSw5abEge9cvMAruDHUi5RYa3qehJNH7WOLqAFK5jA+UbYHe
- ZPbFAAZp69Zn7+bOp1U20lMzjM1nHVg+zoNrVVeWVY0fs/2uLu3PvlRUxyJvRipwE63J
- evUzIYQV/kz7H3lX2xm/xLt4c1QYniWGxOPmul3eu8wtbGFSA/l7lmLFbhimN6ir3ekm
- 79PR2OmKqAeIYZ3DFDWP30W8XQy1JYypuYaGTtWLunWUtA9FL235lm6LhzExum/a0wRJ
- uAQQ==
-X-Gm-Message-State: AOJu0Yw8DUxIl7xjqJChyMfhSEX7BLBYCOzIVfvafe5QpY8bY/iyBwPB
- zqDDCUWg6S5XqFFxJ2Zeuxgj7x8fIOn9tSocDESVTuRylI28GiSRWAi2T/4/GPPRzX0xsT+SfGj
- PCK8R
-X-Gm-Gg: ASbGncvlkNLgqPREteh5oAEAv08xkiPa3Kpibr21xsdAEE2bpTdrOQhjpxQ0TghFJKx
- Pgi4f/jaKqIQcmf4TRvnD4wBH7R6SHB2+e7iKgimv2cLjLUikKWz3orvc7c1ov+a/cCzRQ/K3/C
- OFyeIUsG7AKGkQwqQZVcLAtPFWRXuBmrjyPp1QyMdC+sW5mI0VM62csCeyAUFfGS7oD1DeAQRfb
- EuRqGKcdFMIgHxzhW70orrnFn8d5hvrN5YIkDAu7KFnUwGvEYO5JDK8WpSsg3HyS+l0K1QAGZyA
- BT1O0zThMEPwy/P0H9oLwNCLOhDTzmSebbp+unYm+VBUvuuCW5Ey1T2wXD7c3q99NbF6GkKVcd8
- MTTqvYHc81rF/22UbhSoEewBbi2kTQZnTT0Ldi2AzqXpS0N4HBz8ijpPqFHPcCfefw3Z8LX0Ixh
- A=
-X-Google-Smtp-Source: AGHT+IGe6ZXe7OnRc+gz/YzOLcDABp/XCRU/4qFowtIVhV9b1fv7FRE+dr4FP4N6Vd2iuC1LO6a25w==
-X-Received: by 2002:a05:6000:4383:b0:3c5:9e0f:7607 with SMTP id
- ffacd0b85a97d-3c5dc734286mr11621969f8f.33.1756217040679; 
- Tue, 26 Aug 2025 07:04:00 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c70e4b9e1fsm17820621f8f.14.2025.08.26.07.03.59
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 26 Aug 2025 07:04:00 -0700 (PDT)
-Date: Tue, 26 Aug 2025 07:03:56 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Junlong Wang <wang.junlong1@zte.com.cn>, Lijie Shan <shan.lijie@zte.com.cn>
-Subject: Re: [PATCH] net/zxdh: replace zero length array
-Message-ID: <20250826070356.14da72da@hermes.local>
-In-Reply-To: <20250821152536.5934-1-stephen@networkplumber.org>
-References: <20250821152536.5934-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 1EF6B402E9;
+	Tue, 26 Aug 2025 16:13:32 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 70275402D4
+ for <dev@dpdk.org>; Tue, 26 Aug 2025 16:13:31 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 4173E22D5C;
+ Tue, 26 Aug 2025 16:13:31 +0200 (CEST)
+Subject: RE: [PATCH v2 3/4] hash: reduce architecture special cases
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Date: Tue, 26 Aug 2025 16:13:29 +0200
+Content-class: urn:content-classes:message
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE73@smartserver.smartshare.dk>
+In-Reply-To: <20250826064149.25787722@hermes.local>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v2 3/4] hash: reduce architecture special cases
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Thread-Index: AdwWjzBD/TQC0KK7RsaLb3svTHcvKAAAK7LQ
+References: <20250821203646.133506-1-stephen@networkplumber.org><20250822182110.27599-1-stephen@networkplumber.org><20250822182110.27599-4-stephen@networkplumber.org><98CBD80474FA8B44BF855DF32C47DC35E9FE6C@smartserver.smartshare.dk>
+ <20250826064149.25787722@hermes.local>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>, "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
+ "Yipeng Wang" <yipeng1.wang@intel.com>,
+ "Sameh Gobriel" <sameh.gobriel@intel.com>,
+ "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>,
+ =?UTF-8?B?TWF0dGlhcyBSw7ZubmJsb20=?= <mattias.ronnblom@ericsson.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,12 +52,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 21 Aug 2025 08:25:35 -0700
-Stephen Hemminger <stephen@networkplumber.org> wrote:
-
-> Zero length arrays are a GNU C extension, the better way to
-> get the same effect is to use ISO C99 flexible array.
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-
-Queued to next-net
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
+b3JnXQ0KPiBTZW50OiBUdWVzZGF5LCAyNiBBdWd1c3QgMjAyNSAxNS40Mg0KPiANCj4gT24gVHVl
+LCAyNiBBdWcgMjAyNSAwODo1NToyMyArMDIwMA0KPiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRz
+aGFyZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gDQo+ID4gPiArc3RhdGljIGludA0KPiA+ID4gK3J0
+ZV9oYXNoX2s2NF9jbXBfZXEoY29uc3Qgdm9pZCAqa2V5MSwgY29uc3Qgdm9pZCAqa2V5Miwgc2l6
+ZV90DQo+IGtleV9sZW4pDQo+ID4gPiArew0KPiA+ID4gKwlyZXR1cm4gcnRlX2hhc2hfazMyX2Nt
+cF9lcShrZXkxLCBrZXkyLCBrZXlfbGVuKSB8DQo+ID4NCj4gPiBJcyB0aGUgInwiIGluc3RlYWQg
+b2YgInx8IiwgdG8gY29tcGFyZSBpbiBibG9ja3Mgb2YgNjQgYnl0ZXMgaW5zdGVhZA0KPiBvZiAz
+MiwgaW50ZW50aW9uYWw/DQo+IA0KPiBUaGUgY29zdCBvZiB0aGUgY29uZGl0aW9uYWwgYnJhbmNo
+IGlzIHVzdWFsbHkgaGlnaGVyIHRoYW4gdGhlIGNvc3Qgb2YNCj4gZG9pbmcNCj4gYSBmZXcgbW9y
+ZSBpbnN0cnVjdGlvbnMgb24gY2FjaGVkIGRhdGEuDQoNCkkgYWdyZWUgdGhlIGtleSBiZWluZyBs
+b29rZWQgdXAgaXMgdmVyeSBsaWtlbHkgY2FjaGVkLg0KDQpCdXQgdGhlIGtleSBpbiB0aGUgaGFz
+aCB0YWJsZSBtaWdodCBub3QgYmUsIGFuZCB0aGUgNjQgYnl0ZSBjb21wYXJpc29uIG1pZ2h0IGNy
+b3NzIGEgY2FjaGUgbGluZS4NCkkgdGhpbmsgdXNpbmcgaGFsZiBhIGNhY2hlIGxpbmUgYXMgdGhl
+IGJyZWFrcG9pbnQgKGZvciB1c2luZyBjb25kaXRpb25hbCBicmFuY2ggaW5zdGVhZCBvZiB1bmNv
+bmRpdGlvbmFsIGxvYWQgYW5kIGNvbXBhcmUpIHNlZW1zIGxpa2UgYSBiZXR0ZXIgdHJhZGVvZmYg
+dGhhbiBhIGZ1bGwgY2FjaGUgbGluZS4gSSBoYXZlIG5vIGRhdGEgdG8gYmFjayB0aGlzIHVwLCBq
+dXN0IGEgaHVuY2guDQpJbiByZWFsaXR5LCBpdCBkZXBlbmRzIG9uIHRoZSB1c2UgY2FzZS4gSWYg
+YSBjYWNoZSBoaXQgaXMgbW9yZSBsaWtlbHkgdGhhbiBhIGNhY2hlIG1pc3MsIHRoZW4gdGhlIHVu
+Y29uZGl0aW9uYWwgY29tcGFyaXNvbiBpcyBwcmVmZXJhYmxlLg0KTm8gc3Ryb25nIG9waW5pb24u
+IEkgbWFpbmx5IHdhbnRlZCB0byBlbnN1cmUgdGhpcyB3YXMgaW50ZW50aW9uYWwuDQoNCg0KV2hp
+bGUgbG9va2luZyBpbnRvIHRoaXMsIEkgbm90aWNlZCBhIGZldyBpbnN0YW5jZXMgd2hlcmUgeW91
+ciBhc3N1bXB0aW9uIGFib3V0IGtleTEgYmVpbmcgYWxpZ25lZCBpcyB3cm9uZywgYW5kIHRoZSBr
+ZXkxL2tleTIgcGFyYW1ldGVycyBzaG91bGQgYmUgc3dhcHBlZDoNCmh0dHBzOi8vZWxpeGlyLmJv
+b3RsaW4uY29tL2RwZGsvdjI1LjA3L3NvdXJjZS9saWIvaGFzaC9ydGVfY3Vja29vX2hhc2guYyNM
+NzYzDQpodHRwczovL2VsaXhpci5ib290bGluLmNvbS9kcGRrL3YyNS4wNy9zb3VyY2UvbGliL2hh
+c2gvcnRlX2N1Y2tvb19oYXNoLmMjTDEzMTkNCmh0dHBzOi8vZWxpeGlyLmJvb3RsaW4uY29tL2Rw
+ZGsvdjI1LjA3L3NvdXJjZS9saWIvaGFzaC9ydGVfY3Vja29vX2hhc2guYyNMMTM1Nw0KRS5nLiB3
+aGVuIGNhbGxpbmcgcnRlX2hhc2hfYWRkX2tleV93aXRoX2hhc2goKSwgdGhlIGtleSBwYXJhbWV0
+ZXIgY2FuIGJlIHVuYWxpZ25lZCwgYW5kIGl0IHJpcHBsZXMgZG93biBhbmQgYmVjb21lcyBrZXkx
+Og0KaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vZHBkay92MjUuMDcvc291cmNlL2xpYi9oYXNo
+L3J0ZV9jdWNrb29faGFzaC5jI0wxMjU5DQoNCg==
