@@ -2,63 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F8DBC8303F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 Aug 2025 00:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA22CA0FE7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 Aug 2025 00:03:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BF468402DE;
-	Tue, 26 Aug 2025 02:03:43 +0200 (CEST)
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com
- [209.85.210.201])
- by mails.dpdk.org (Postfix) with ESMTP id 50A894021E
- for <dev@dpdk.org>; Tue, 26 Aug 2025 02:03:42 +0200 (CEST)
-Received: by mail-pf1-f201.google.com with SMTP id
- d2e1a72fcca58-771e331f0fcso1222073b3a.1
- for <dev@dpdk.org>; Mon, 25 Aug 2025 17:03:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DC1664060C;
+	Tue, 26 Aug 2025 02:03:45 +0200 (CEST)
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com
+ [209.85.214.202])
+ by mails.dpdk.org (Postfix) with ESMTP id 19B48402E9
+ for <dev@dpdk.org>; Tue, 26 Aug 2025 02:03:44 +0200 (CEST)
+Received: by mail-pl1-f202.google.com with SMTP id
+ d9443c01a7336-244581c62faso61333945ad.2
+ for <dev@dpdk.org>; Mon, 25 Aug 2025 17:03:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1756166621; x=1756771421; darn=dpdk.org;
+ d=google.com; s=20230601; t=1756166623; x=1756771423; darn=dpdk.org;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:from:to:cc:subject:date:message-id:reply-to;
- bh=dudVmx3upkTxURmveJP80DOEUxGRUw1rx4wZdqjzMQk=;
- b=NZsAyRa13cxR0dBI7AaVfN+NUxBMjgSZ3R+bdw+8UAOUVQNIJo2JB5d0voCe9iRAFc
- YebQVkrTmhwUaWEaWDSl2Tr3SrkD+fVOVzfD/CKB7H7eQMrGm7WGJ4wF7JDw8+fR04tH
- 5FmxZae7qZrW0RzQuposopg/zs3Dz4Q/3cMCW4Iz1Jl9rNrFcxF8xqmsz7gEUez4Icl/
- roHJ2E3DmZxCQnXNCweqdQtPfKqkWSqGIAGxBIUsfYxA9u/Mg4B8QdlDC78XZvGq4PED
- tyIdforPc1NF1+3ZkC3N2rn925VbEBcOiTWIZJclqBmxwnGTWFLSu/1tZvh9+mnHr+i9
- lhFw==
+ bh=w3WSfuWxb5ekEZDsKDNtXdRxOozhH//HrP84oD7qg9c=;
+ b=aEy6c+WxSv5ExuXCNeVjKSm56Q8kvT9QDcWczFVJzhT5cnT8BNggbjFiqav0DEDxT7
+ QsbaeHEGv6+65Hsh7NPnw2j4ACxO9YQcUCuhaRHViagj7Hchj0vFSO9vFH3Eqb06yxw1
+ ea3Pc9ifk3F1fr1Wv6dPi7G0z8b90YTp+P9Kkwe1RZAoAp9T+AvQc3RVB6x4aWnPn86r
+ so+ZylAaqiup8+JRpE4z5BsWs3lPsGvHN00hmr+wrR/UHOBAa5ww9UseZtBCONPYToJE
+ lGybSG57rMHnf+Hf60eyDuXeoIfTjfZO8wwgKaF0bjCbvkNoAgGR7hOFs7IzCHPEkl9D
+ xeuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756166621; x=1756771421;
+ d=1e100.net; s=20230601; t=1756166623; x=1756771423;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=dudVmx3upkTxURmveJP80DOEUxGRUw1rx4wZdqjzMQk=;
- b=XgAxZy0KSjaEQBLLUOk2GZirFCKOzAdhu1xyqvtvKkilX4dpu/faQLIi7Pi8afjWpp
- a1IjYahsxrkVda+GAM8/pLDM3vXTqNcr7ZPoJ6Hhdp70k5F0c8pkJTkxD3q86lXmhO+B
- wuXICf4s/V/PlGflNq3BgjEzKzeh2xd0MTw8pqUyZ7SxJgehXbL5GfR0i4T+Fu7Kallu
- Hm1YG9FTofWvkWq1cr5mEn64MADMd7Qnk4cc0ONUXlmz8Twlr8v+OQvNJJ8kg+W81jke
- S2zsDx4qbzBx8SLk6F2L2VlU0zoDyOCnTJDw+Dd6SDjF6HmB/ozOs3bwxDuSEvSMZNxk
- jbQA==
-X-Gm-Message-State: AOJu0Yw+Pg5VWCBMwIbM1WgdKBsnzsPTTogleQuBdj44ZrizDO+jkldf
- MTo1pykhDHwGo2u5CFf1YWeby4E9JLUHYiDni2n8LaM0awLCwpjwSfooTPQyMz9KRMHcDDjVy51
- kn7xeWFPEVc161A==
-X-Google-Smtp-Source: AGHT+IGmDxAekIKTNbFyICG6O7LiRzhivIR3nCv/QFafPZh6VAsCHVgxcJy9kujSEJ2hVlrdnmW4lJ4vR+yihQ==
-X-Received: from pfoo6.prod.google.com ([2002:a05:6a00:1a06:b0:770:5229:752e])
+ bh=w3WSfuWxb5ekEZDsKDNtXdRxOozhH//HrP84oD7qg9c=;
+ b=DIIYsSmHRPT4X+j5AmFag6v2KCQfPIlCHIdo/dNqCClYIaLweVsrif0Qjqtx/z0c6r
+ Jqjy5s/zCIBX8Z9vQPqNpu7/7RJbNMZGT0UKR8gAtH+JraTPOiULPVRmA3AGbMIxzdyT
+ 0UKxh9qHjGKmHBpQO+YR27muuGeEsLqy7WIBFpvkF4Tg/xYutsAzri6V7YpzwOeM0uvJ
+ 4SM0dzoEI6PDbtOTKY9aQ4sNRXDa3q8+xjdJgxToo8mQDp91BTP6BS2pjj3oLC1CswYE
+ m3QjaB5cbeXaMKL+BP2td9LzZOFyPNQlNGOc3F37BksEwJvUXqODM3GN6Y3GkfJClg9R
+ cDtA==
+X-Gm-Message-State: AOJu0YxYDed/2B84kZ0wvB9vioGWrSxVk9igL8jYF5/QJFlEJwwStxgF
+ D4CjS/OHemENJSS8GuKFRMK38tx5PRpB9im180qajpCAsy1Jkw7EjDiLzMgcwgevH1NeKuSqt22
+ fT1V6al/qmVvbhA==
+X-Google-Smtp-Source: AGHT+IEtIO8CN68eDfootNjspZR5hyE+shTtQRx4ZdlFnrrCRcHgY+b0B9KPmzioWAQGLy93OlW7uc3G7LiN7A==
+X-Received: from plka6.prod.google.com ([2002:a17:903:f86:b0:242:fffc:a2ca])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:3e01:b0:76e:885a:c33a with SMTP id
- d2e1a72fcca58-7702fc28b0cmr19210365b3a.32.1756166621387; 
- Mon, 25 Aug 2025 17:03:41 -0700 (PDT)
-Date: Mon, 25 Aug 2025 17:03:34 -0700
+ 2002:a17:902:ec87:b0:246:6a8b:8473 with SMTP id
+ d9443c01a7336-2466a8b8672mr130068915ad.45.1756166623176; 
+ Mon, 25 Aug 2025 17:03:43 -0700 (PDT)
+Date: Mon, 25 Aug 2025 17:03:35 -0700
 In-Reply-To: <20250826000337.3922883-1-joshwash@google.com>
 Mime-Version: 1.0
 References: <20250826000337.3922883-1-joshwash@google.com>
 X-Mailer: git-send-email 2.51.0.261.g7ce5a0a67e-goog
-Message-ID: <20250826000337.3922883-2-joshwash@google.com>
-Subject: [PATCH 1/4] net/gve: free Rx mbufs if allocation fails on ring setup
+Message-ID: <20250826000337.3922883-3-joshwash@google.com>
+Subject: [PATCH 2/4] net/gve: add datapath-specific logging for gve
 From: Joshua Washington <joshwash@google.com>
 To: Jeroen de Borst <jeroendb@google.com>,
- Joshua Washington <joshwash@google.com>, 
- Rushil Gupta <rushilg@google.com>,
- Praveen Kaligineedi <pkaligineedi@google.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Ankit Garg <nktgrg@google.com>, 
- Ziwei Xiao <ziweixiao@google.com>
+ Joshua Washington <joshwash@google.com>
+Cc: dev@dpdk.org, Ankit Garg <nktgrg@google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -73,46 +70,90 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When creating new RX rings, one less than the number of buffers in the
-ring need to be allocated. It is possible that only a part of the
-allocation is successful, resulting in a failure to create the rings.
-In this case, the driver should free the buffers which were successfully
-allocated to avoid a memory leak in case the application does not
-automatically exit.
+This would allow for separate control of datapath-related logs vs
+non-datapath logs.
 
-Fixes: 265daac8a53a ("net/gve: fix mbuf allocation memory leak for DQ Rx")
-Cc: stable@dpdk.org
 Signed-off-by: Joshua Washington <joshwash@google.com>
 Reviewed-by: Ankit Garg <nktgrg@google.com>
-Reviewed-by: Ziwei Xiao <ziweixiao@google.com>
 ---
- drivers/net/gve/gve_rx_dqo.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/net/gve/gve_logs.h   |  3 +++
+ drivers/net/gve/gve_rx_dqo.c |  5 +++--
+ drivers/net/gve/gve_tx_dqo.c | 11 ++++++-----
+ 3 files changed, 12 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/net/gve/gve_logs.h b/drivers/net/gve/gve_logs.h
+index a3d50fa45c..beada20e02 100644
+--- a/drivers/net/gve/gve_logs.h
++++ b/drivers/net/gve/gve_logs.h
+@@ -11,4 +11,7 @@ extern int gve_logtype_driver;
+ #define PMD_DRV_LOG(level, ...) \
+ 	RTE_LOG_LINE_PREFIX(level, GVE_DRIVER, "%s(): ", __func__, __VA_ARGS__)
+ 
++#define PMD_DRV_DP_LOG(level, ...) \
++	RTE_LOG_DP_LINE_PREFIX(level, GVE_DRIVER, "%s(): ", __func__,  __VA_ARGS__)
++
+ #endif
 diff --git a/drivers/net/gve/gve_rx_dqo.c b/drivers/net/gve/gve_rx_dqo.c
-index 0103add985..cd85d90bb6 100644
+index cd85d90bb6..ccaca1b0ea 100644
 --- a/drivers/net/gve/gve_rx_dqo.c
 +++ b/drivers/net/gve/gve_rx_dqo.c
-@@ -376,14 +376,13 @@ gve_rxq_mbufs_alloc_dqo(struct gve_rx_queue *rxq)
- 		rxq->stats.no_mbufs_bulk++;
- 		for (i = 0; i < rx_mask; i++) {
- 			nmb = rte_pktmbuf_alloc(rxq->mpool);
--			if (!nmb)
--				break;
-+			if (!nmb) {
-+				rxq->stats.no_mbufs++;
-+				gve_release_rxq_mbufs_dqo(rxq);
-+				return -ENOMEM;
-+			}
- 			rxq->sw_ring[i] = nmb;
- 		}
--		if (i < rxq->nb_rx_desc - 1) {
--			rxq->stats.no_mbufs += rx_mask - i;
--			return -ENOMEM;
--		}
+@@ -27,8 +27,9 @@ gve_rx_refill_dqo(struct gve_rx_queue *rxq)
+ 		rxq->stats.no_mbufs += nb_refill;
+ 		dev = &rte_eth_devices[rxq->port_id];
+ 		dev->data->rx_mbuf_alloc_failed += nb_refill;
+-		PMD_DRV_LOG(DEBUG, "RX mbuf alloc failed port_id=%u queue_id=%u",
+-			    rxq->port_id, rxq->queue_id);
++		PMD_DRV_DP_LOG(DEBUG,
++			       "RX mbuf alloc failed port_id=%u queue_id=%u",
++			       rxq->port_id, rxq->queue_id);
+ 		return;
  	}
  
- 	for (i = 0; i < rx_mask; i++) {
+diff --git a/drivers/net/gve/gve_tx_dqo.c b/drivers/net/gve/gve_tx_dqo.c
+index c36c215b94..10ef645802 100644
+--- a/drivers/net/gve/gve_tx_dqo.c
++++ b/drivers/net/gve/gve_tx_dqo.c
+@@ -42,7 +42,7 @@ gve_tx_clean_dqo(struct gve_tx_queue *txq)
+ 		aim_txq->last_desc_cleaned = compl_tag;
+ 		break;
+ 	case GVE_COMPL_TYPE_DQO_REINJECTION:
+-		PMD_DRV_LOG(DEBUG, "GVE_COMPL_TYPE_DQO_REINJECTION !!!");
++		PMD_DRV_DP_LOG(DEBUG, "GVE_COMPL_TYPE_DQO_REINJECTION !!!");
+ 		/* FALLTHROUGH */
+ 	case GVE_COMPL_TYPE_DQO_PKT:
+ 		/* free all segments. */
+@@ -58,10 +58,10 @@ gve_tx_clean_dqo(struct gve_tx_queue *txq)
+ 		break;
+ 	case GVE_COMPL_TYPE_DQO_MISS:
+ 		rte_delay_us_sleep(1);
+-		PMD_DRV_LOG(DEBUG, "GVE_COMPL_TYPE_DQO_MISS ignored !!!");
++		PMD_DRV_DP_LOG(DEBUG, "GVE_COMPL_TYPE_DQO_MISS ignored !!!");
+ 		break;
+ 	default:
+-		PMD_DRV_LOG(ERR, "unknown completion type.");
++		PMD_DRV_DP_LOG(ERR, "unknown completion type.");
+ 		return;
+ 	}
+ 
+@@ -206,7 +206,7 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 
+ 
+ 		if (rte_mbuf_check(tx_pkt, true, &reason)) {
+-			PMD_DRV_LOG(DEBUG, "Invalid mbuf: %s", reason);
++			PMD_DRV_DP_LOG(DEBUG, "Invalid mbuf: %s", reason);
+ 			break;
+ 		}
+ 
+@@ -243,7 +243,8 @@ gve_tx_burst_dqo(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 
+ 		do {
+ 			if (sw_ring[sw_id] != NULL)
+-				PMD_DRV_LOG(DEBUG, "Overwriting an entry in sw_ring");
++				PMD_DRV_DP_LOG(DEBUG,
++					       "Overwriting an entry in sw_ring");
+ 
+ 			/* Skip writing descriptor if mbuf has no data. */
+ 			if (!tx_pkt->data_len)
 -- 
 2.51.0.rc1.167.g924127e9c0-goog
 
