@@ -2,73 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBD7CA0FE9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 Aug 2025 12:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC600CA0FF0
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 Aug 2025 13:41:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DBFB3402A3;
-	Tue, 26 Aug 2025 14:38:56 +0200 (CEST)
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com
- [209.85.219.42]) by mails.dpdk.org (Postfix) with ESMTP id 1E0224021E
- for <dev@dpdk.org>; Tue, 26 Aug 2025 14:38:55 +0200 (CEST)
-Received: by mail-qv1-f42.google.com with SMTP id
- 6a1803df08f44-70dbcf43dbfso28111306d6.3
- for <dev@dpdk.org>; Tue, 26 Aug 2025 05:38:55 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id EC252402A3;
+	Tue, 26 Aug 2025 15:41:56 +0200 (CEST)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com
+ [209.85.221.43]) by mails.dpdk.org (Postfix) with ESMTP id 9F1264021E
+ for <dev@dpdk.org>; Tue, 26 Aug 2025 15:41:55 +0200 (CEST)
+Received: by mail-wr1-f43.google.com with SMTP id
+ ffacd0b85a97d-3c51f015a1cso2759182f8f.1
+ for <dev@dpdk.org>; Tue, 26 Aug 2025 06:41:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1756211934;
- x=1756816734; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=LMggkssp1BbX8gF1vJd/h74/tpyJzP3sWGlHJZIckAM=;
- b=EKT6bPZ5fJu3AXUmTFJ2adSvBgZm/ylpZ2ljie+BzXUc8N+3jz3CkXeWOJsSwKcdE/
- tYnuYKvRaRLgbnLG40IxJzxJrb8C5I6G8o6WVxBMpYPDVefZKpnELGgOehVvn4H8QOLi
- GVoYSv2IWAVzC6htVifg7HB7fyqUPeBz8uAru/zO3Zm9cj5btQnyIbMp2x0RYUhWC3O/
- pwewm3GmrgapgOCBIpBp5yUnfyK2CEUngGhJa54kRdRt2/3gicQcH1LC/tnCJnBoROh5
- i1EZCxPUygjD4PPBWfU6Gj7lFXHkFzBX7NaGJPwsvPgOBDu9sPUaCItNDt4eKnR0jyOm
- qpVQ==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756215715;
+ x=1756820515; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=8i5r5lnn4itcX/F8TTsx+bM+TJpXzWo7OKEZn9sWybI=;
+ b=orwOHPB1aRM8904OszMLvn00gF2MMb8VHw4+xp3o/M7QiKnrUm67bbgwk+UfUZ9B60
+ wU7ihIhxKP/QMPdD86ZFVJQU+G3+m8eqE7yav1pqOxHBN2/Cl82Sxl/eTfcmrHOeCxxd
+ zChfdJPsn4oMNRDAUNjA5U3yv5SohehFYVYpJRPE6GNg93wYpVT3maaD6BgkjDML7kmp
+ PdbvR3HLb2Qp0augvlnNXfCppmVU351g+G6qcHgEpw1Uv8S9+wudkBWEXTnyIFUgwm6T
+ J5fQiKjAEak+kpNVf+DxD2lGFDS4d3hPOo+fEl/MFGRsE3jfPo1wHRVULkhClYAgCdvG
+ 5kCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756211934; x=1756816734;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=LMggkssp1BbX8gF1vJd/h74/tpyJzP3sWGlHJZIckAM=;
- b=uqr8CF2GvSZrSGbqvPP3YUMAyzy267ZH1kAYn0UuHqJgTAnADP3eZYFn0aQtY3D051
- 8aPS+GVcybYcbKcistJZgBhyOKqsclm1Jgr3c4m+VslaScs2qcW5Xyb8Lpy1hbsaK5oa
- Ae4gUj1IwmagvrIGjMNkSe7IFPJhNfcgTuzlnGnJbZacUTVEjw8rM1fNGx5ogOgcTL0n
- 38rnvigcn3/CDQ0x0we93WJOvQ3JVb4/gw306t82yOSEIiEKMif8xziINB6aKUH1b+TC
- ZUIBbg8k8XzO1QbyjP1OcVYv3a+UAUPW1Z44V0wDdHYQHPtwMJHV6iPlhdhqHPWGQvHQ
- BCYQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWDKt82G7FKXCnex3TodVhCJDZIH/EIOUEj8kNYKV/c/GVlkA02wBsy5bJSBnxgA9pB9wQ=@dpdk.org
-X-Gm-Message-State: AOJu0YwOozH4jA8i1JERj4fi7lSl2V2w+zRocT/Wq9tIDYjyt4RLUWhj
- tbWPvWuUxLlQSWHuAIEcHCPDsQcSmvs+YWsDymvyZOtgHjSeHAEHO+rH+JoWUC4SFX4OoM08rWj
- Jq/JyOh4sCLj5azec1guEGc74fnKLk5kgNWwpb5HPmne8RQaULEDy
-X-Gm-Gg: ASbGncu/cSCcVmKvQXPR59nYZZYDy/VCB5Itvrzr2wYJHUm4jbNwHahTkfuRzw0xW5+
- +tVf4FChTBOMA0wW/YusCPNG6maRnEFCSf+HoVpCdlXv/S7UO+zhOq6rNbuhUpmVCnQi7OQCGyS
- tIXi1E/1WU2DOkunhHXyO7DCUTPbftYnI6A6IZS5rsxwN65wwbZFTBVPe6ApbHBbFncmiA6KPhc
- S/UAGxVP2U6xbBDk75QKhvza1wbq6aJ5Sr9dqzgdwunumXDijGSQZZOxR9udiwdpWgkICIwDUvy
- wNrMnpFk/g==
-X-Google-Smtp-Source: AGHT+IHpbbM95Re2B4FeQHrCAR/ETkEbXo4zXSL0rQXO4dJEV7i/KgNjfUh3gkdI7IB7JSUmy3Zon0SVR4p7ZmaaSAA=
-X-Received: by 2002:a05:6214:21ee:b0:70d:a712:617e with SMTP id
- 6a1803df08f44-70da7126252mr134388826d6.66.1756211934198; Tue, 26 Aug 2025
- 05:38:54 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1756215715; x=1756820515;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=8i5r5lnn4itcX/F8TTsx+bM+TJpXzWo7OKEZn9sWybI=;
+ b=vIBy21K2gocGBBT9gHSOAalZsFwhyxQe4HdGuNsXd2qvQ11sw85Mt+M5Npe6Ndbpr7
+ 4rbsJRjkBkmAUIO0vyc5Xu/NUQeOlIOjK2qhnRYRgKCg6K4jnFqudCbWsaP3A4F3c5LA
+ pd3zI+jhr1rda8eDvD7dr2rH9nqMdoOL3B7SHib4gqNGPQxSWu8E5ArcNyO0OMxyMrTg
+ YFWONbcSbJY6/nPIw9UlnBB2Kj56i+sd24yjhrv96E/Z6Yx2Fm2Ds93i81kXrjRPg6ff
+ cIYUIaJXO8vBbXa+uzn5t8+qjVTwFYnD0ECfC+cxp+LB5dSoW7kS8D5uZEk0qxp8hdXT
+ FtDw==
+X-Gm-Message-State: AOJu0YzjTjLoVHmuiQBaF/80aa1xceIHgbR+ofD/mCXrCldBtVLoqRqz
+ CtaJkcMqiewgATvmaKLAs+hcgNDuta94HknZOVIJsWxJAxMsO236IISQmQdHB/TCe2s=
+X-Gm-Gg: ASbGncu01f8kIAWvNx9w9mqYkw7Rmv/XwF8yzUhseI1GGZYlFr7ovPRAbqKc0L8QXI/
+ hdSG3bVkjXP42K+2wCcvst6WLs2eC6Q5gkCgmeJUIPiSf9DOhZHxH0UrsZJwlLZ5dx3qFZgkGgx
+ XShs2bA2UVrUdm5Xl3LgY/5g6w6JsF4N50fHIjctPKoVESg8MftwZdX8sHb6Zihpnq0Q39steHC
+ k9dxTMtcHwg6HP3qBRYBNBKxSqLboAY8j1sF8J25XJHeguH03IeuL6Zf65hvZwjP2iCE2R7L3IV
+ PFQtg0V+1nBrs6GxZd3JrEI7trwLQZjWQry/KGuXvaPePk8p2G9VYKMH2tXN53ydLl80MhnRQB/
+ hSUoueOro7CeS67GmA/z0Eohn+WEf+J1L7dsmnpb1IBPKApQ3TvdRuIkc/GKqGeW/9vTHolbFpQ
+ 4=
+X-Google-Smtp-Source: AGHT+IGm6wADaCJFpbY5b3HsBrP6wlo2X3Ukrdwu7pn9y+Mzy617/4KLopF4mASGzPdyW2nFxAMTiw==
+X-Received: by 2002:a05:6000:288a:b0:3b9:1109:7064 with SMTP id
+ ffacd0b85a97d-3c5daefc5ffmr12464504f8f.15.1756215715173; 
+ Tue, 26 Aug 2025 06:41:55 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-3c9c9324dc9sm7895442f8f.3.2025.08.26.06.41.53
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 26 Aug 2025 06:41:54 -0700 (PDT)
+Date: Tue, 26 Aug 2025 06:41:49 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: <dev@dpdk.org>, "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
+ "Yipeng Wang" <yipeng1.wang@intel.com>, "Sameh Gobriel"
+ <sameh.gobriel@intel.com>, "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>, Mattias
+ =?UTF-8?B?UsO2bm5ibG9t?= <mattias.ronnblom@ericsson.com>
+Subject: Re: [PATCH v2 3/4] hash: reduce architecture special cases
+Message-ID: <20250826064149.25787722@hermes.local>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FE6C@smartserver.smartshare.dk>
+References: <20250821203646.133506-1-stephen@networkplumber.org>
+ <20250822182110.27599-1-stephen@networkplumber.org>
+ <20250822182110.27599-4-stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35E9FE6C@smartserver.smartshare.dk>
 MIME-Version: 1.0
-References: <20250825123548.1177090-1-ciara.loftus@intel.com>
- <20250825123548.1177090-4-ciara.loftus@intel.com>
- <CA++2-x4mGrxvu7vxRgvQLbtGkS3bMBnLt+1NLpqa9P-GQobsAA@mail.gmail.com>
- <aK1oNgPbHGeJdgUp@bricha3-mobl1.ger.corp.intel.com>
- <CA++2-x5j0hH3XweLL+=O7-GJOnGSuN8zoFURs13mgFiVh1MD3Q@mail.gmail.com>
- <aK2Rajd8rypPr7lT@bricha3-mobl1.ger.corp.intel.com>
- <CA++2-x4kcTQwBRKKvhqwjqMBQ2OAmiGtuagqSQ+6Tw74PRGRbg@mail.gmail.com>
- <aK2jBtI5qY4tnKEO@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aK2jBtI5qY4tnKEO@bricha3-mobl1.ger.corp.intel.com>
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Date: Tue, 26 Aug 2025 17:38:43 +0500
-X-Gm-Features: Ac12FXweuypXimUWPUeJYVNxsPP-rPt5c_ZBVFsg_700xH0fYupaKpgVfltvhOA
-Message-ID: <CA++2-x66ttTz6ZMSkPRgdfSo1dzzWR__T3Z1ETDGEiRZNusRQg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] net/ice: remove SSE vector path
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: Ciara Loftus <ciara.loftus@intel.com>, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000007d15fe063d43f4eb"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,56 +87,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000007d15fe063d43f4eb
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Tue, 26 Aug 2025 08:55:23 +0200
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-On Tue, Aug 26, 2025 at 5:05=E2=80=AFPM Bruce Richardson <bruce.richardson@=
-intel.com>
-wrote:
+> > +static int
+> > +rte_hash_k64_cmp_eq(const void *key1, const void *key2, size_t key_len)
+> > +{
+> > +	return rte_hash_k32_cmp_eq(key1, key2, key_len) | =20
+>=20
+> Is the "|" instead of "||", to compare in blocks of 64 bytes instead of 3=
+2, intentional?
 
->
-> Yes, AXV2 and AVX-512 code paths have far higher performance than the
-> scalar paths. However, that performance comes at the cost of not supporti=
-ng
-> all features. What the drivers then do at initialization time, is they
-> check the offloads requested by the app, and then select the highest
-> performance code path that can support those requested offloads.
-> The whole process should be transparent to the user - they just get the
-> best performance possible for their running conditions...
->
-> /Bruce
->
-
-
-Got it!
-Thanks for the help.
-
-Regards,
-Khadem
-
---0000000000007d15fe063d43f4eb
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div><div><div><div><div dir=3D"ltr"><br></div><br><div cl=
-ass=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_a=
-ttr">On Tue, Aug 26, 2025 at 5:05=E2=80=AFPM Bruce Richardson &lt;<a href=
-=3D"mailto:bruce.richardson@intel.com">bruce.richardson@intel.com</a>&gt; w=
-rote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0p=
-x 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><br>
-Yes, AXV2 and AVX-512 code paths have far higher performance than the<br>
-scalar paths. However, that performance comes at the cost of not supporting=
-<br>
-all features. What the drivers then do at initialization time, is they<br>
-check the offloads requested by the app, and then select the highest<br>
-performance code path that can support those requested offloads.<br>
-The whole process should be transparent to the user - they just get the<br>
-best performance possible for their running conditions...<br>
-<br>
-/Bruce<br>
-</blockquote></div><div><br clear=3D"all"></div><br></div>Got it!=C2=A0<br>=
-</div>Thanks for the help.=C2=A0<br><br></div>Regards,=C2=A0<br></div>Khade=
-m</div>
-
---0000000000007d15fe063d43f4eb--
+The cost of the conditional branch is usually higher than the cost of doing
+a few more instructions on cached data.
