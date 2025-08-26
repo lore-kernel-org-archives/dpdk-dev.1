@@ -2,35 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E48ADCA0FE7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 Aug 2025 14:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 694D9CA0FE7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 Aug 2025 14:20:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 36B32402E4;
-	Tue, 26 Aug 2025 16:15:07 +0200 (CEST)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 2F988402D4
- for <dev@dpdk.org>; Tue, 26 Aug 2025 16:15:05 +0200 (CEST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B3051F91;
- Tue, 26 Aug 2025 07:14:56 -0700 (PDT)
-Received: from [10.1.194.29] (unknown [10.1.194.29])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A8B273F694;
- Tue, 26 Aug 2025 07:15:03 -0700 (PDT)
-Message-ID: <babd6b69-c205-4451-b72f-7a2c9525386f@arm.com>
-Date: Tue, 26 Aug 2025 15:15:02 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] doc: add test case docstring example to dts rst
-Content-Language: en-GB
-To: Dean Marx <dmarx@iol.unh.edu>, probb@iol.unh.edu,
- yoan.picchi@foss.arm.com, Honnappa.Nagarahalli@arm.com,
- paul.szczepanek@arm.com
+	by mails.dpdk.org (Postfix) with ESMTP id 6CAFC402E4;
+	Tue, 26 Aug 2025 16:20:08 +0200 (CEST)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com
+ [209.85.221.41]) by mails.dpdk.org (Postfix) with ESMTP id CA666402D4
+ for <dev@dpdk.org>; Tue, 26 Aug 2025 16:20:06 +0200 (CEST)
+Received: by mail-wr1-f41.google.com with SMTP id
+ ffacd0b85a97d-3c46686d1e6so3590372f8f.3
+ for <dev@dpdk.org>; Tue, 26 Aug 2025 07:20:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756218006;
+ x=1756822806; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=VZBphX/LfhXul8g3re/cB9HHr/Q1uQKQs7QGhBcSTIk=;
+ b=tCeJzVp+TU4mLqrIv3bdqMu/rtmnQvcCRr5fSeXhYHQBJw4dr1vT3aKzOPScj3EH5r
+ OWvjTJBqVfLTo2vyzF6Df9hfn3a4qT+mfFJsD46J4TNsrIYbDi6+v5DdbHkHIMhyElt7
+ 0jI7/4x4gLCDCHviNHBsPfknWbc+pUfzE+6MmdXC+frwt1r+g5PgIxfAPg4IIOauv3bF
+ JKaAE1AF2HLi0JBa2rups3Hjp3K8ih8mJNdBxhgeJyd/w0fCEfC0urt64AYSU57swa9M
+ tfS0JShCQZ/tzbzvtb2P2Kg7jSMibXKsMqzepylmiIUHzqsIxeFdTiC06fWSZYw2n0C0
+ FznA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1756218006; x=1756822806;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=VZBphX/LfhXul8g3re/cB9HHr/Q1uQKQs7QGhBcSTIk=;
+ b=C/S8//FvKQlJQj7ylgzQkm8IXOExh5ztdTA3KuRRkqrhpglbt8eyeIQXxMw7hHakgc
+ JJLC+eM0HyZ793+x4Dk7gFJ+zmFo2XE8/eYRJMpTEvlnwSp1Iz2ct4xFQRabNdrlaXt2
+ 1WucNsqPnY2swHXDkedzo3Iqbcoz1zh8Kns3NyaXFS9I40c79F6BqqNxL8RFyLen2obH
+ /D4r++fuXu/SUzN/VI67ZJ/Q7jTB4MIqdh/jbDXlb9fOEXAWs/pniOWWLdfN5i3SVqVp
+ Y+XmcXu7EYQnL6DgC/wiJkcwx0m8ncqBDuueY+moyHfH77qdpYbjDML9JAKLtpKMfMA1
+ wGhg==
+X-Gm-Message-State: AOJu0Yxef+4ocg6SxN2eOUL4feO/X10vUFY+PFJI4UuYfNgPzeAwoRaO
+ /EqcWY3TOf4aXBibtu9DqKWjnq2BG2X7r5Yh4PkHB9cvl3FP1ZJPKUzJZCFvFTsSEZs=
+X-Gm-Gg: ASbGncsqXoJ88fKHIDSHTlwxDCPWZdMMfY51D/9XFxOVUuPtbtY6wCVjJ29NHzSZN1x
+ w0vjhjttr0Siv+RjuRCE41qb6TM3ZYujaA7vEmQtFJEqOXWwHXIDFi5jNq9HHfrMRo1QcjnpFw0
+ iTtT5mcq4HrxbN90h2QRjj10mgnFoDVfCRzSnjMhq3WUieqEH3TAzwBpS8mMWL/JVUZdkSb5Iol
+ gurvk1WGHaI783kFYVwI+NtXcz5ptpueg85CWYqonEV/ERO+oHm6ennrnc79aar5HyVYYVYLwfh
+ /SKMWzkfMewA5wxS1/Q8GnNdccOS+JDqdEiTjPp4R3w/Kjt8MKg3ZeBVAZW7HA1Uev7VKYcAzor
+ tZjolnpvBMlrv86X/wYQPW/W9GK6vGD+uIo4KzHoEx2hAIJ6uoedpqxMhuRxMymk/YY2mRkcjCF
+ lCcqfUxNb2ng==
+X-Google-Smtp-Source: AGHT+IHCEYrvD+FjPL6gic9gIOmf5wr4YFoGU9bgfB7C1lROv0UNbCdaxGLlbgQz7NwLBCdH/GNjbQ==
+X-Received: by 2002:a05:6000:4308:b0:3c8:443:4053 with SMTP id
+ ffacd0b85a97d-3c804434626mr6561122f8f.1.1756218006302; 
+ Tue, 26 Aug 2025 07:20:06 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-45b6300da81sm71276775e9.23.2025.08.26.07.20.05
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 26 Aug 2025 07:20:06 -0700 (PDT)
+Date: Tue, 26 Aug 2025 07:20:02 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Joshua Washington <joshwash@google.com>
 Cc: dev@dpdk.org
-References: <20250807145002.297452-1-dmarx@iol.unh.edu>
- <20250820143922.42596-1-dmarx@iol.unh.edu>
-From: Luca Vizzarro <Luca.Vizzarro@arm.com>
-In-Reply-To: <20250820143922.42596-1-dmarx@iol.unh.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 0/4] net/gve: out of order completion processing for DQO
+Message-ID: <20250826072002.449ce90c@hermes.local>
+In-Reply-To: <20250826000337.3922883-1-joshwash@google.com>
+References: <20250826000337.3922883-1-joshwash@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -45,34 +80,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Looks good, just one minor problem.
+On Mon, 25 Aug 2025 17:03:33 -0700
+Joshua Washington <joshwash@google.com> wrote:
 
-On 20/08/2025 15:39, Dean Marx wrote:
-> diff --git a/doc/guides/tools/dts.rst b/doc/guides/tools/dts.rst
-> index 3837b398cf..31eceb6c43 100644
-> --- a/doc/guides/tools/dts.rst
-> +++ b/doc/guides/tools/dts.rst
-> @@ -414,6 +414,22 @@ Test Cases
->      A test suite may include any number of functional and/or performance test cases.
->      Each suite should focus on testing a single feature (one feature = one test suite).
->   
-> +   Test case docstrings must include a Steps and Verify section. For example:
-> +
-> +   Example::
-> +
-> +      @func_test
-> +      def test_basic_link(self):
-> +      """Tests basic link status.
-> +
-> +      Steps:
-> +         * Launch testpmd.
-> +         * Check port info.
-> +
-> +      Verify:
-> +         * Port info shows link status is up.
-> +      """
-the docstring should be indented further.> +
->   Setup and Teardown Hooks
->   
->      Setup and teardown methods can be defined at both the suite and test case levels.
+> Both RX and TX processing on DQ were originally implemented with the
+> asusmption that descriptor completions will be written by the hardware
+> in the order that they are posted. In certain cases, such as RSC on RX
+> and double completions on TX, this will not necessarily be the case.
+> 
+> Depends-on: series-35656 ("net/gve: Tx datapath fixes for GVE DQO")
+> 
+> Joshua Washington (4):
+>   net/gve: free Rx mbufs if allocation fails on ring setup
+>   net/gve: add datapath-specific logging for gve
+>   net/gve: support for out of order completions on DQ Tx
+>   net/gve: support for out of order completions on DQ Rx
+> 
+>  drivers/net/gve/base/gve_adminq.c |   2 +-
+>  drivers/net/gve/gve_ethdev.h      |  20 ++-
+>  drivers/net/gve/gve_logs.h        |   3 +
+>  drivers/net/gve/gve_rx_dqo.c      | 135 +++++++++++-----
+>  drivers/net/gve/gve_tx_dqo.c      | 250 ++++++++++++++++++------------
+>  5 files changed, 267 insertions(+), 143 deletions(-)
+> 
 
+Queued to next-net
