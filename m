@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C72CA0EFA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 26 Aug 2025 11:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4289BCA0EFA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 26 Aug 2025 11:46:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BD1584021E;
-	Tue, 26 Aug 2025 13:46:38 +0200 (CEST)
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com
- (mail-dm6nam11on2066.outbound.protection.outlook.com [40.107.223.66])
- by mails.dpdk.org (Postfix) with ESMTP id 4C39E40156
- for <dev@dpdk.org>; Tue, 26 Aug 2025 13:46:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BF025402DA;
+	Tue, 26 Aug 2025 13:46:42 +0200 (CEST)
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com
+ (mail-bn8nam12on2041.outbound.protection.outlook.com [40.107.237.41])
+ by mails.dpdk.org (Postfix) with ESMTP id 43F36402DA
+ for <dev@dpdk.org>; Tue, 26 Aug 2025 13:46:41 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rXq1xZzySIHmH5i2kOlECgd0Q+C+XxLEyAvhViglyGvsfIvAup6+YUihtHWyhuXLnEgPcohZ1JawhyuWrk1kT/vup+yn2XKjBBhQb00jyyvsJlxGfkGo6rHawn05dGXlRm999DJuv4cnVJ5RzM5EHzUm1t3a/IThou9XbXg5PDkDDEiekgQIrGk5h9EIQYKTVWSsUUoZyi/U1VJqgXALr6PsLnAhOUF7joXdgap183e2FDTNgEz8jHSMRvKdaWeQa18JkcR+DNhaHH2npG0WM0mJIA6KnZxFiwtoJ7cFPkAmEMPsNOQDwRYkKiwQGBrdkA0PTouWvdGKkVd24XLqRA==
+ b=BCWY/HXYmqMCZj7HvW3wvsF6wrBtPPnf+C+A/okCCri3MkhN4TQ2RSuaQ560vEhC8QgdlK4ChS3Fx0X16VSm+Dqk9+cnDHdziSbunMc6phIUTt75O7eMkwXBgxRWv0DRiwDlvPjI8R18bSi5p3bHNp6YyYYcRO2OCjg/NrX25tZczD1P3dHdbwmsR2s/E4E40TR0Y1pKuhMqzpbgP2LQluz/u+1B4FQgBOwybiNSUzFNbLsd80KZYqAmlEYhp2vX64u4HxsY+sIEXTmjR7M+gAq5LqFgT9Rp+FrghvJpFHjzmfY3y+sdPvOup0yXXhjj36AV4J7abO2Xp/MuZEDGGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lggoeDwaHWE8yuinaGyFjhkpfJqmnH2Cqom+Lxsw2lY=;
- b=ETxvcUj+xxJ/JicbwpRuXN8xzQZVAFoJ86/jYzN/F8/Gv6FQxqPwd4WRjnaou9TD9GXU03bp1cryzNpA2fRQzcjIvAkynXTZ3lQuzMOpt/aDrQ6ntR1COaNXyLYwK9zw7Hd3eHBe+nFStJ4NpTZxP8aGNGRsczR7Ad0ZvhVLG5t/ogjxXdBUBYrT9U1ekzPah8D0C+XhGHQfDDqR9QHh2SPnzA55qikNIpWWB+R8MWDNog1buLz27sp5+YTrVC8P4qBf3EI+d9thGkCcrPnJPN5HS3tuF95d8cZb9DGHNg6yPR55IhDA01APihi8D3HNEwN4IHP1MCwjG2yqzX9iCA==
+ bh=6lNE2qq7Y2K+dkKBb+yp79cQLqD19AceaQ0MFx9xRK8=;
+ b=NAEXFVGhacw+lF9Kp+uLUpfs2fnByrHFHd0yRKPzdQv/08aZLn5bnIC8Yr5w14I6iEezRceWWlQmWnaAJc6piqT7BsiCPZkKCUIinrfelu5vusH5lopeGzffhgMNGXsOCn0pQ1Lmad0jvqgxTZGSh60YIlbZqWpiigU2RI+IpR1DpuDrp0yyfg5c0WmAS3/YtW2DuDPUU9HqIDkSepysopKwO38Jom8mxIzJOVzZP6gBevErfxGX1GUhU8uy7W8z9uAWFXmiEIImxYKzaR17n+qGdErm5LYpJlEejmhOhN/dSRhikLVx5ndKbsm94S+mQmIfbmcKPj7x3UJMUImKzw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.118.232) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lggoeDwaHWE8yuinaGyFjhkpfJqmnH2Cqom+Lxsw2lY=;
- b=b+63mpzYD4JrZUUK9M+l8wm4JefBh3Td0D5Ds/1HGV1zMCDQFahbAv/Go4AOVPlLOI8omae8HIjgijabACobGcb4HOUmV1QQkBzi5TKEDtPMVYgbaD5aTFseyByA8k8p2ImDqlrPhFW1dAQcc9jBVLIolhQxgkIEREhdj9lm0BlmSA5GADv/3rXniD5JHCyIZiBQLiOx/YO3sNeEeE97op/FqQWH2rTq/1NKaLaWnMxdH5+GhwYHCWYDraJXNQLQH6ge+9lYmVlU30tEvkOs3PpTObdggxOOPFFPKtDQq3rU0HCKRS/19hiK6RxuADrbsUVwnHMBYIWJC11YaWt77Q==
-Received: from PH7PR03CA0022.namprd03.prod.outlook.com (2603:10b6:510:339::6)
- by DM4PR12MB7552.namprd12.prod.outlook.com (2603:10b6:8:10c::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.20; Tue, 26 Aug
- 2025 11:46:33 +0000
-Received: from SJ1PEPF000023D5.namprd21.prod.outlook.com
- (2603:10b6:510:339:cafe::87) by PH7PR03CA0022.outlook.office365.com
- (2603:10b6:510:339::6) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.13 via Frontend Transport; Tue,
- 26 Aug 2025 11:46:32 +0000
+ bh=6lNE2qq7Y2K+dkKBb+yp79cQLqD19AceaQ0MFx9xRK8=;
+ b=sz0iZGCDP2PWSgaUCby8imro9ttA16NCU8GB/zq7LfVAXkvqCxvoDNtxOZQKaO7vLHwMfgbLb/EkXU5g/BACqTyY+rKH0+8FOZ3js+ySReI+OQ9PtVo49V45MdTAvfTQW8d+HE8U3pmCcTaBDAygfdRCYOE9A3E3AIevaXdpeuEbJyyqXqD5lq/5PwFpLTdvo7/L4HRsxpbJt67YeTEIwbX/DMZ6Lfpj93PREWaN4eZEIERw+tyUYmanJt6KoH/bZI4Sd+wyECP7HzT+uIyGa0QbnwlHMEAJtGfxw/FJ7T3LOPgE5QGp2dzsYAqFXKzLnkBKIAc/lbZm1kEvLQXy1Q==
+Received: from BY5PR20CA0002.namprd20.prod.outlook.com (2603:10b6:a03:1f4::15)
+ by LV9PR12MB9807.namprd12.prod.outlook.com (2603:10b6:408:2eb::14)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Tue, 26 Aug
+ 2025 11:46:39 +0000
+Received: from SJ1PEPF000023D7.namprd21.prod.outlook.com
+ (2603:10b6:a03:1f4:cafe::8d) by BY5PR20CA0002.outlook.office365.com
+ (2603:10b6:a03:1f4::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.22 via Frontend Transport; Tue,
+ 26 Aug 2025 11:46:39 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
@@ -45,81 +45,85 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.118.232 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.118.232) by
- SJ1PEPF000023D5.mail.protection.outlook.com (10.167.244.70) with Microsoft
+ SJ1PEPF000023D7.mail.protection.outlook.com (10.167.244.72) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.0 via Frontend Transport; Tue, 26 Aug 2025 11:46:32 +0000
+ 15.20.9094.0 via Frontend Transport; Tue, 26 Aug 2025 11:46:39 +0000
 Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
  (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 26 Aug
- 2025 04:46:19 -0700
+ 2025 04:46:30 -0700
 Received: from drhqmail202.nvidia.com (10.126.190.181) by
  drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Tue, 26 Aug 2025 04:46:18 -0700
+ 15.2.1544.14; Tue, 26 Aug 2025 04:46:29 -0700
 Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.126.190.181)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Tue, 26 Aug 2025 04:46:17 -0700
+ Transport; Tue, 26 Aug 2025 04:46:27 -0700
 From: Maayan Kashani <mkashani@nvidia.com>
 To: <dev@dpdk.org>
-CC: <mkashani@nvidia.com>, <dsosnowski@nvidia.com>, <rasland@nvidia.com>
-Subject: [PATCH 0/4] [25.11] net/mlx5: add driver event and steering toggle
- APIs
-Date: Tue, 26 Aug 2025 14:45:51 +0300
-Message-ID: <20250826114556.10068-1-mkashani@nvidia.com>
+CC: <mkashani@nvidia.com>, <dsosnowski@nvidia.com>, <rasland@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>
+Subject: [PATCH 2/4] net/mlx5: move eCPRI release function to flex
+Date: Tue, 26 Aug 2025 14:45:53 +0300
+Message-ID: <20250826114556.10068-3-mkashani@nvidia.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20250826114556.10068-1-mkashani@nvidia.com>
+References: <20250826114556.10068-1-mkashani@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D5:EE_|DM4PR12MB7552:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e0e590d-800a-4714-d917-08dde4963405
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D7:EE_|LV9PR12MB9807:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4139f158-3e03-4c05-85c2-08dde49637f4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|1800799024|36860700013|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7usCvb6du2FmXztmX7PwShT0JzvUuDsY69C0UwsXFF0BocMvZgB+r0JHuOkI?=
- =?us-ascii?Q?a+WjCSLL9JwTgGb9XsmAdx+7vmyyUqzx5lrphRXeEHiDrdhCSbxhFFJd0wg4?=
- =?us-ascii?Q?ja3Kg3YMPr5O1ePcyBIEMxj7l48JVpZfDMVVqvnbov8y9CJrLCjy1tCDO6JX?=
- =?us-ascii?Q?ic44HSoz9w7WAL2wLuS5NPjL958HcQyVDosF30BQ0+0Yp+GUEUMD4gQX263a?=
- =?us-ascii?Q?kylzrLVHycV8ty86QowVXRedovTAt9Nvim9BG8axaZVXBs0y2nPNKcITuJNP?=
- =?us-ascii?Q?7tmUeOOp3gMDPxRXVEZrgTHoS0IQRYkd4hBg8Pf/rFWNDubeMSQ18QHPp9oL?=
- =?us-ascii?Q?uY+/pEGQ+YjYhPI3nwEPnCGbXXMv9mquayZd0INpyaz02/VgJcqps7oR6yjV?=
- =?us-ascii?Q?QxFp2m6b1dYma8xCUNBbwLeJG3zzplggpUXWsmBElueE6YOwZouPF2ybE0nY?=
- =?us-ascii?Q?8UyWnLciIR579GRduK0BKxrmrBE8I9hD35Gtv50+mDSGLo83xUr+7GZVGrMY?=
- =?us-ascii?Q?6Pk6XRyBAKeSGfdYvfsGS5tmdQ4L1x9y4jg+tLCiZeOgRw/Ziv9MNpPrK29I?=
- =?us-ascii?Q?/45uDUYQC10RGdVFuvxDGsJfURlPxLadJpYEiyvN/mR9/xlvskk3JaiCYGfH?=
- =?us-ascii?Q?KRdqpwgA5401nI9aG5u2dSoUrlF01UNjSSPiGXTj9DsXI6kU87xyI1h+2nHj?=
- =?us-ascii?Q?acZ9eFlXb7H4entIsgq/GTUhE2+s8IjK5x/Szylkh2d6ExwJPT27K0p4wRS1?=
- =?us-ascii?Q?JlStbLEcFr367e4aQiQSeIePwoSVhOyt5oiSmb4Pyj7X80Ytgbb3S+z8Suu3?=
- =?us-ascii?Q?vsfVKWFlaPJ8iy+sNm5bq9AJR49lcOULYkotv+2tEmxxTCDmgsFioKl4LRk0?=
- =?us-ascii?Q?2sHX68N10pPprobqxx6rvyLL8z+nNHSJlcvc5sfHZ/+FKLWm5+v/RGXEnUf/?=
- =?us-ascii?Q?QKvpOUMf9fCPD50wd02cinrt50Rv6Cqlhc1Gi7xPb2fC6Pd0ny6TnSZFNIZZ?=
- =?us-ascii?Q?NmnKWvakjf3oDTUA4IBAuzxnRqeisiOL/xDWPCmgOasAct1wFDLdkVX7DHOx?=
- =?us-ascii?Q?ws83WBgB1d5kFX/IF54znkZvusYgtxiUqxXUNRXkqNu7PRMDafhHdP6ajuO7?=
- =?us-ascii?Q?tFuHLRHq6REr++tG9XVDmVs15Bn8qYGO2nXy6ycL9ayBkZCjunNiZqgtfJp2?=
- =?us-ascii?Q?aiPq8D5QKggE6gWjPAjgejFWFGNv0cp0yDnzLMfNBFTRt0yc3tmQ/on+FGrf?=
- =?us-ascii?Q?w6tv4VvrJpH6nIfSDgqO3DjpjIjpdujxQyyS0AgdSttQyY7SNxY3dSecKFwC?=
- =?us-ascii?Q?MZmMMs1ZH3mPMhJqPc9p4jA/P5ZGj/GuoF8QEIIm+t15MtKbGU6Dn7w+a24w?=
- =?us-ascii?Q?/hmlSqfV69t2QfF34Wv9yGdCu8wB+QY0N8Ki7QHF1yJHFU86bj1sMXCV7Ojq?=
- =?us-ascii?Q?yPHkZiRFGjvrFthFbzJDmHyYxQoQJVeHXu0TTChbaXqsJ1f1BTGgfXZm59hu?=
- =?us-ascii?Q?+s0c6DwIsR72PAqwipGH3ocbNHfrDFT73GOy?=
+ ARA:13230040|376014|1800799024|36860700013|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?USnwOVkby8j3Yt1cCiOLCUL3fHAGEhgXo8p5W2oNpqGPGxpsloNeVv767BbV?=
+ =?us-ascii?Q?rVcq8pJ6psGKgLvi2xVRc73uOUhAUsq6F/0q91Uv4FFG7SfOdS5JinKJsBIm?=
+ =?us-ascii?Q?M38Hn+Q5F2SGl7N2Mp9VBapUmuZAQz64ICPdqDNj/7+w7hI6H3ukwrdHtjBi?=
+ =?us-ascii?Q?homuTXIoOzH0RpJtjpsaDueBNLjiC45WY7AahPgQyI75tN+rN+YRuixVJot4?=
+ =?us-ascii?Q?MAH6PDL9u+XQX9stJOzLKyJT+6eiWIvFMr5N1nMvVJiPEa92MXRlyhbR/Y4S?=
+ =?us-ascii?Q?NNcl7gRyxUM9h1eV3Ha9+TrrpdrvJKzWrQtxkDH7nRzLNb7o9eOxvlzM8+pU?=
+ =?us-ascii?Q?l3i6GfRnLKNt8e76GWhKnwhJuAb0AaeSBxmE01+thofQVbPtfdIEAElvK1vm?=
+ =?us-ascii?Q?ECRm3FVnYvzh8tlL3qTuvMLICT4Ysz8pUbaSs7laD4moQqY8fXVbziqjDUBl?=
+ =?us-ascii?Q?QCwsB71iXkRUHMNOJqlAPsa1Pt631KdufVtL8xydo6QrHvH0EZE7XCFKbW0T?=
+ =?us-ascii?Q?27LFV2U1v/F7h0ATAlSWTZVxdtZ9ge+wWzmduVU0Bp+76ogCeVWEc1WG8ucF?=
+ =?us-ascii?Q?SmTDALGepRhNf50I5TGh5bHvzmXGKPrASvc6d8d879YNuVcYuSu+7HByMzZQ?=
+ =?us-ascii?Q?3fw/WNJcjz9+OF/9+U6cSXl7S1hm9qseMz94FtPGFXEgkMrZoj7xnB7+8SiY?=
+ =?us-ascii?Q?zb1cFWlwxMf8FrW8wpzkUePj4Ww759rAR4tFCd+iDgsJMEiiJFYRNLGU9Jjs?=
+ =?us-ascii?Q?BpfdqVvmLwd/OJ2S1cjF4hDvFcywvDiQ5lIfvdJbVuhKe2cESZw7zOKvNgQC?=
+ =?us-ascii?Q?jVCnz9Jz8AR2K9wISoPihU/Vfs2QLtllSZ9RNjas50y7ANimNqAvQ1IInvSZ?=
+ =?us-ascii?Q?M924WUwpfx8HQ2eVDXw/bCwCdDermw4ygYC2RYdeaDj88s402ki4dtbG6k+H?=
+ =?us-ascii?Q?lx5dQcDBs5mor1CeIICMHjEFsh8+LiqsNrhUayCBY6M+REph9FRIHJOLTsFu?=
+ =?us-ascii?Q?Pn1Fr1dHy8W1N3AXA4EAHhmB1UOpYhGhMDJcCdRsTJJL2vVsVoJMsy3/dyhv?=
+ =?us-ascii?Q?c5klPuZCnLuniwxhvDTGCLpd/+iMvfY5Bhl4Vmp5qiLhvvYqeA2DdpWY8Dvn?=
+ =?us-ascii?Q?qNiM5O2trb+4s1g5co7hQulIQviXJLX15VrTn3i0xg1vZgpMtXZO7YHe2C/K?=
+ =?us-ascii?Q?0QCG5Ym4DQCWnep5wnKuUpFRf25d5Qrte7N7vWXpElqTiREgsw0ez49yQSUB?=
+ =?us-ascii?Q?+jT1zYv2c63d7cGVm63XAhqzFuD7vjfd9tgLNtk6/y4Cam5KABA6yn4eznku?=
+ =?us-ascii?Q?37I7qbLL5Nei8hWyS1QzKFWJGo3gOteQLo4R1j53dIpc0ORgVAV9NssX0lbK?=
+ =?us-ascii?Q?czqDZ8fWSZSP2/9V4blOQvM4HyH2Qf0g5kPXJ5cI7ViklESCwB/nIdycGsWf?=
+ =?us-ascii?Q?hQpiMIJb5oNLPWZuXdaZeKG4i43tMthGmMYzbkuSFjWWOTJT7csph3SEn98I?=
+ =?us-ascii?Q?TDOrPCojTUnuKcqDnVblOPZY0Fxt30xd9/DJ?=
 X-Forefront-Antispam-Report: CIP:216.228.118.232; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc7edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014); DIR:OUT;
+ SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026); DIR:OUT;
  SFP:1101; 
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 11:46:32.5318 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e0e590d-800a-4714-d917-08dde4963405
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2025 11:46:39.0843 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4139f158-3e03-4c05-85c2-08dde49637f4
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.118.232];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF000023D5.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF000023D7.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7552
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV9PR12MB9807
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -133,77 +137,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-mlx5 PMD is a bifurcated driver, which means that instead of communicating with HW directly
-using UIO or VFIO, the driver uses existing kernel and userspace APIs for that purpose.
-mlx5 PMD requires that `mlx5_core`, `mlx5_ib` and `ib_uverbs` kernel modules are loaded,
-and that NIC is bound to `mlx5_core` driver.
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
 
-Kernel bypass is achieved through rdma-core library
-which exposes required functionalities e.g.,
-mapping memory to the device, FW access for setting up Rx and Tx queues
-(through mlx5dv_devx_* interfaces) and flow rule offloading.
+Move mlx5_flex_parser_ecpri_release() from main source file
+to the file dedicated for flex parser logic.
+Also, make the function non-static so the function can be used
+in flow steering clean up introduced in follow up patches.
 
-One benefit of such architecture is that it allows libraries and applications
-to build additional features on top of DPDK, utilizing rdma-core directly.
-For example it is possible to implement additional flow rule offloads.
-This can be achieved by creating an IBV (IB Verbs) context and PD (protection domain)
-through rdma-core and sharing it with mlx5 PMD through `cmd_fd` and `pd_handle` device arguments
-provided during probing [1].
-mlx5 PMD will then create all necessary resources for DPDK using imported context and PD.
+Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+---
+ drivers/net/mlx5/mlx5.c           | 18 ------------------
+ drivers/net/mlx5/mlx5.h           |  1 +
+ drivers/net/mlx5/mlx5_flow_flex.c | 18 ++++++++++++++++++
+ 3 files changed, 19 insertions(+), 18 deletions(-)
 
-What is missing for that approach to work, is that
-external libraries and applications are not aware of HW identifiers of Rx and Tx queues
-(returned from mlx5dv_devx_* APIs) created by DPDK through imported context and PD.
-Knowledge of these identifiers is crucial for correct flow rule offload.
-
-This patchset proposes the introduction of the following private PMD APIs
-to address the above use case:
-
-1. mlx5 PMD driver events
-2. mlx5 PMD steering toggle
-
-mlx5 PMD driver events, exposed through `rte_pmd_mlx5_driver_event_cb_register/unregister()` functions,
-allow libraries and applications to register a custom callback.
-This callback will be called whenever mlx5 PMD creates or destroys an Rx/Tx queue.
-All necessary HW identifiers along with corresponding DPDK port and queue
-indexes will be passed as parameters.
-
-mlx5 PMD steering toggle, exposed through `rte_pmd_mlx5_driver_disable/enable_steering()` functions,
-allow libraries and applications to disable/enable flow rule offloading provided by mlx5 PMD.
-This is added to support use cases where library/application needs full control of flow rule offloading.
-Library/application will use data provided through driver events API to configure flow rules by itself.
-When flow rule offloading is disabled, DPDK flow API will return ENOSYS for mlx5 PMD.
-
-Patches:
-
-- Patch 1 - Add mlx5 PMD driver events private API
-- Patches 2-3 - Minor clean ups in mlx5 PMD which make introduction of
-  steering toggle private API easier.
-- Patch 4 - Add mlx5 PMD steering toggle private API
-
-[1]: https://doc.dpdk.org/guides/platform/mlx5.html#device-arguments
-
-Dariusz Sosnowski (4):
-  net/mlx5: add driver event callbacks
-  net/mlx5: move eCPRI release function to flex
-  net/mlx5: rework Rx queue mark flag functions
-  net/mlx5: add steering toggle API
-
- drivers/net/mlx5/meson.build         |   1 +
- drivers/net/mlx5/mlx5.c              |  18 --
- drivers/net/mlx5/mlx5.h              |   1 +
- drivers/net/mlx5/mlx5_devx.c         |  17 ++
- drivers/net/mlx5/mlx5_driver_event.c | 300 +++++++++++++++++++++++++++
- drivers/net/mlx5/mlx5_driver_event.h |  18 ++
- drivers/net/mlx5/mlx5_flow.c         | 199 +++++++++++++++++-
- drivers/net/mlx5/mlx5_flow.h         |   7 +-
- drivers/net/mlx5/mlx5_flow_flex.c    |  18 ++
- drivers/net/mlx5/mlx5_trigger.c      |  30 +++
- drivers/net/mlx5/rte_pmd_mlx5.h      | 192 +++++++++++++++++
- 11 files changed, 772 insertions(+), 29 deletions(-)
- create mode 100644 drivers/net/mlx5/mlx5_driver_event.c
- create mode 100644 drivers/net/mlx5/mlx5_driver_event.h
-
+diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
+index 1321be779bb..ece29fb2164 100644
+--- a/drivers/net/mlx5/mlx5.c
++++ b/drivers/net/mlx5/mlx5.c
+@@ -1044,24 +1044,6 @@ mlx5_flex_parser_ecpri_alloc(struct rte_eth_dev *dev)
+ 	return (rte_errno == 0) ? -ENODEV : -rte_errno;
+ }
+ 
+-/*
+- * Destroy the flex parser node, including the parser itself, input / output
+- * arcs and DW samples. Resources could be reused then.
+- *
+- * @param dev
+- *   Pointer to Ethernet device structure.
+- */
+-static void
+-mlx5_flex_parser_ecpri_release(struct rte_eth_dev *dev)
+-{
+-	struct mlx5_priv *priv = dev->data->dev_private;
+-	struct mlx5_ecpri_parser_profile *prf = &priv->sh->ecpri_parser;
+-
+-	if (prf->obj)
+-		mlx5_devx_cmd_destroy(prf->obj);
+-	prf->obj = NULL;
+-}
+-
+ /*
+  * Allocation of a flex parser for srh. Once refcnt is zero, the resources held
+  * by this parser will be freed.
+diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
+index 53f0a27445a..32f98f969ce 100644
+--- a/drivers/net/mlx5/mlx5.h
++++ b/drivers/net/mlx5/mlx5.h
+@@ -2735,6 +2735,7 @@ int mlx5_flex_acquire_index(struct rte_eth_dev *dev,
+ 			    struct rte_flow_item_flex_handle *handle,
+ 			    bool acquire);
+ int mlx5_flex_release_index(struct rte_eth_dev *dev, int index);
++void mlx5_flex_parser_ecpri_release(struct rte_eth_dev *dev);
+ 
+ /* Flex parser list callbacks. */
+ struct mlx5_list_entry *mlx5_flex_parser_create_cb(void *list_ctx, void *ctx);
+diff --git a/drivers/net/mlx5/mlx5_flow_flex.c b/drivers/net/mlx5/mlx5_flow_flex.c
+index afed16985ac..b1174fe0eda 100644
+--- a/drivers/net/mlx5/mlx5_flow_flex.c
++++ b/drivers/net/mlx5/mlx5_flow_flex.c
+@@ -1557,3 +1557,21 @@ mlx5_flex_parser_clone_free_cb(void *list_ctx, struct mlx5_list_entry *entry)
+ 	RTE_SET_USED(list_ctx);
+ 	mlx5_free(fp);
+ }
++
++/*
++ * Destroy the flex parser node, including the parser itself, input / output
++ * arcs and DW samples. Resources could be reused then.
++ *
++ * @param dev
++ *   Pointer to Ethernet device structure.
++ */
++void
++mlx5_flex_parser_ecpri_release(struct rte_eth_dev *dev)
++{
++	struct mlx5_priv *priv = dev->data->dev_private;
++	struct mlx5_ecpri_parser_profile *prf = &priv->sh->ecpri_parser;
++
++	if (prf->obj)
++		mlx5_devx_cmd_destroy(prf->obj);
++	prf->obj = NULL;
++}
 -- 
 2.21.0
 
