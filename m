@@ -2,74 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D62ECD6FC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 00:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCABEDF032
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 04:52:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 77BC940655;
-	Thu, 12 Feb 2026 01:23:56 +0100 (CET)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
- [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id EC12B40616
- for <dev@dpdk.org>; Thu, 12 Feb 2026 01:23:54 +0100 (CET)
-Received: by mail-wm1-f48.google.com with SMTP id
- 5b1f17b1804b1-47ee3a63300so30460725e9.2
- for <dev@dpdk.org>; Wed, 11 Feb 2026 16:23:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1770855834;
- x=1771460634; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=9YEQ2DYuQdWYwik9djSVg+M2yiTS1ZT0+4cqmtOl6NI=;
- b=q6ea8xffqQQy8Zc/sxNZZU0mXuO9qs2xz7INaYBbqE35ghP52IxjmDPF3lNegcmSHO
- 96rFEDl6hulagfJN5roFoBqZOvqO07rQYmS/0mZoAnXaHoye70a3bLlm0dx6nXQ0jeKK
- hIiTxpzOaO9Q4laGPeD97qUKCoN+ORuGMz8CmbUTTr6v59mSw8gKDG32PgHblMbwcGbY
- z63ywt3sH7nhgZVGtXz/jdbUZV5eHu4zy3yUW3JfqTzpZoiigwlb4/u1T8W2ijWjZ/ZV
- HUIcmrjOZm5kE2FYRzixPcTEFuPyoODb6pNOyaXPqcajCIe/JI8cJ5PTG2F1zQzzOy2G
- tidA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1770855834; x=1771460634;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=9YEQ2DYuQdWYwik9djSVg+M2yiTS1ZT0+4cqmtOl6NI=;
- b=vzQfsGOU1MmiSgRtEItI/ci8JQejBDSTWmAGtFSgp++5ZJdsCqdrPZ+F96hjChuuo8
- WA1dNPo30NEswSuKfrfTMD3QjaU6ITV1fckJxV2OUlyIO41wxgU9f/y9DpiQNm7/FC+G
- 9JDt5HupgBzzJrJurfws03qqEPm7PTEcDJ5fubO2juU8ci1VEYv/53T8ckVpMIs+MqFf
- LNFnttSp14rqFysCQIgJGt+Bt5M18qrZwNiZD1vM8EvDrS45hGKEYhOh9DKfGPVvFPrs
- zSVIferEuNvOZAQy7ocqT6GkdZS2w/PZQ4s6Dw7Y8m2kVSnX/JOEBoa9b/zJXZt3UBB/
- pQcw==
-X-Gm-Message-State: AOJu0YxGEuj5aML3nkQBFooKSqJdEVhiPnImY8WEUma2PEDUe0djAqu8
- OQ4mhJO3ULeJ5Q3tZX9mKNc/uMAs77BiS4hXSCiDBmr4XPcGjoNOTJVkSDiBrFHL1QvGV8jh7z7
- ogCGT
-X-Gm-Gg: AZuq6aJuK9xi6HBhtM+OJqED9vNkW1OJCv9f72McWkszQwsrfJyTvLgt7uBisWCAdfg
- SEJF0cxdDqf/Qcc+zTph9tberOzHyWsSa0AOuCtvoPmxLhAfoSXNQBd8IU1wK/fvmCAmeC7+BAZ
- oSfuTorkgRxlUGt8s4qZJs8KAGtsGLCSV4jm5WCkrT2HYUlwoV8n7ih1PsY2LWIkqxEKdMp4HKO
- UZ1+gLp1KkplU6+ons2xhwMTDGvaiX0Je/uaqHZ+OjZtnRFqZ+nuQva3oITEjYFw0MWPtmSJO1G
- 79thOpyEZHyM+fSjI0jbLnQi/fB/iyxfzrMXF2f3DWIw8Na2q1h9Od6jiXxsYXds+1zyEs2vUF7
- wDiWvU4tI7eNbOYLtrAbyl4QRPU/lrxTBS+6k/yFLn+LJINKrn3YTdaZpvafdarNpdmRhZ8C5ld
- 27JBzhBr4cgP0LJQF+n21rcNgdIiMQTTlF5wGLEniiNpP0XuWN5wDz4JlG/V1oEyTlS1bqm+j/K
- ag=
-X-Received: by 2002:a05:600c:310a:b0:477:79c7:8994 with SMTP id
- 5b1f17b1804b1-4836716ac08mr4522715e9.30.1770855834441; 
- Wed, 11 Feb 2026 16:23:54 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4835d989165sm98309365e9.2.2026.02.11.16.23.53
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 11 Feb 2026 16:23:54 -0800 (PST)
-Date: Wed, 11 Feb 2026 13:42:35 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Howard Wang <howard_wang@realsil.com.cn>
-Cc: <dev@dpdk.org>, <pro_nic_dpdk@realtek.com>
-Subject: Re: [PATCH v2 01/12] net/r8169: fix NULL pointer dereference in
- rtl8168fp_ops
-Message-ID: <20260211134235.258f347c@phoenix.local>
-In-Reply-To: <20260210055511.62382-2-howard_wang@realsil.com.cn>
-References: <20260210055511.62382-1-howard_wang@realsil.com.cn>
- <20260210055511.62382-2-howard_wang@realsil.com.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 9F363402C0;
+	Thu, 12 Feb 2026 05:52:54 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 839AE4025F
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 05:52:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1770871974; x=1802407974;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=Xeg3giOGDWge80j0wd4tAXHj3nyx09gzAIOUV5w+RhU=;
+ b=ENGm7Mipi8bgXFPGwzrCLHfk4NTBOwaqSEQLRgkXNv+t095L9c/EStxq
+ xpsMBXloOIb65Lr+qP17/JD6sRyoEHP28otGaB6xRKtVyohwwFrdO5Y/Y
+ P+UpUDc6P/xpu6vcZ3Yao4WkFdH+/wEgR1N6/q3d7N4CqvqYrkDKTLVCu
+ 6v3JQmvI4Gxrg11DtrplQU3VtxCNP6OJGe0yq5jMMY8E5m7IW5u7XRNrM
+ Hry3iAA/ymxLnHgnsMBASYqtBL1lYGXFfx99Q9ZuaoqTE6frGWM8R6sK2
+ 0KeJzApt4sbomTDtvlQp36mq904skRYmHKVA5eALrYVobFZh7levsbEpr Q==;
+X-CSE-ConnectionGUID: 3xJ6cwa7SQqnR8G2U8XQzA==
+X-CSE-MsgGUID: UuzyMQrlQ/iauC94BUucRA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="71940234"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71940234"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Feb 2026 20:52:52 -0800
+X-CSE-ConnectionGUID: iZIO+1uBRr2WqDqAiPistg==
+X-CSE-MsgGUID: Tg/Q3MCDRtq0iblIdCN5ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="216715398"
+Received: from unknown (HELO srv24..) ([10.138.182.231])
+ by fmviesa004.fm.intel.com with ESMTP; 11 Feb 2026 20:52:50 -0800
+From: Shaiq Wani <shaiq.wani@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com,
+	aman.deep.singh@intel.com
+Subject: [PATCH v3 0/7] Add support for L2TPV2 over UDP to ICE PMD
+Date: Tue, 26 Aug 2025 21:56:57 +0530
+Message-Id: <20250826162704.4636-1-shaiq.wani@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260202094244.447966-1-shaiq.wani@intel.com>
+References: <20260202094244.447966-1-shaiq.wani@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,29 +60,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 10 Feb 2026 13:55:00 +0800
-Howard Wang <howard_wang@realsil.com.cn> wrote:
+This patchset adds L2TPv2 protocol support to the ICE PMD
+enabling RSS and Flow Director capabilities for L2TPv2 over UDP traffic.
 
-> Fixes: d9ee71b5f1bc ("net/r8169: support RTL8168 series")
-> 
-> Signed-off-by: Howard Wang <howard_wang@realsil.com.cn>
-> ---
+v4: Version 3 patchset was incomplete due to a server reboot.
+    V4 includes all patches for review.
 
-That is much to short a message for a critical fix.
-How about this (AI generated) message. Can I add that during
-merge?
+v3: Fixed compilation issues.
 
-Subject: [PATCH v2 01/12] net/r8169: fix crash in RTL8168FP init
+v2: Addressed AI generated comments.
 
-The rtl8168fp_ops structure was missing the hw_phy_mcu_config
-function pointer, causing a NULL pointer dereference during
-device initialization when the driver attempts to configure
-the PHY microcontroller.
+Shaiq Wani (7):
+  net/ice: add L2TPv2 PPP and PPoE data structures
+  net/ice: add L2TPv2 tunnel type definition
+  net/ice: add L2TPv2 protocol and field definitions
+  net/ice: add L2TPv2 flow patterns and FDIR support
+  net/ice: add L2TPv2 hardware packet generation
+  net/ice: add L2TPv2 RSS hash support
+  doc: update release notes
 
-Add hw_phy_mcu_config_8168fp() as a no-op function since the
-RTL8168FP does not require PHY MCU configuration. This matches
-the pattern used by other chip variants that don't need PHY
-MCU updates.
+ doc/guides/rel_notes/release_26_03.rst   |   4 +
+ drivers/net/intel/ice/base/ice_fdir.c    |   6 +
+ drivers/net/intel/ice/base/ice_fdir.h    |  17 +
+ drivers/net/intel/ice/ice_ethdev.h       |   4 +
+ drivers/net/intel/ice/ice_fdir_filter.c  | 451 ++++++++++++++++++++---
+ drivers/net/intel/ice/ice_generic_flow.c | 177 +++++++++
+ drivers/net/intel/ice/ice_generic_flow.h | 129 ++++---
+ drivers/net/intel/ice/ice_hash.c         |  25 ++
+ 8 files changed, 717 insertions(+), 96 deletions(-)
 
-Fixes: d9ee71b5f1bc ("net/r8169: support RTL8168 series")
+-- 
+2.34.1
 
