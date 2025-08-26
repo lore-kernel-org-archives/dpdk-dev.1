@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65912EDF032
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 04:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B36EDEDF032
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 04:53:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8DB314060C;
-	Thu, 12 Feb 2026 05:53:01 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 03EE940649;
+	Thu, 12 Feb 2026 05:53:03 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id EADF4402E2
- for <dev@dpdk.org>; Thu, 12 Feb 2026 05:52:55 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 1BF2C402E2
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 05:52:56 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770871976; x=1802407976;
+ t=1770871977; x=1802407977;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=doigNYn8mbt3BmpE6ZNueFYuJUchwJAOFVYgb9kAbFI=;
- b=eY+sgTJfgJEGcey5hzc7YTWUVqjFWGjAU7pqg9BQQB7VBD6AiRhSbEAY
- 5bXwq4FoDZ/fvevYZ8IrIYqoZ3jWeYdFW4Lr71hfn3ymoeMAE6xNCveFb
- E3y4kbo0wv6Ao0XlWJw0NLsvL7cPbAO0ufm3RAXHv9+bTpek8wbAKHtXB
- oMrVNCO+Xb3249B56CvioFFtHNK4OoufDW/97M/XlHrmrEKhlQGcznnxs
- BTe5JTunINzuFZVvtJnGgcWL+QAdtHEs/XkQDYb5Nx/flaMPlTcS7T6KI
- sXBOxFjHB5KORt2haJrLXzmB9UG8WByUmvOPzQmz4FoTu3asaFJ6I7PUM g==;
-X-CSE-ConnectionGUID: EyRPGnx0Q4m9Ankqxad5IA==
-X-CSE-MsgGUID: bu57pQ8uSmOXj9GsZMCPnw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="71940237"
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71940237"
+ bh=6A+JqoeYJOFwfW7cLefrLc64AijPyfEa7mZkqN8Kp94=;
+ b=lVY29/rsbp+K/MNvHoBlbt4AiAfCV5LJgwzZmNZXMp7XAVbLl8vRCoYM
+ 80yrgr6FpjxNv3q7D8UNqGwEGr+meAPIlOnJ/ptSdKH5y6rz1mWX/8y9d
+ DfaNE+xdyyMA6YDuDsp3XE1sK/a3P6KkFUKRvkeswlNloUPxbbffPvK8e
+ qxRjJ0aW5AuVWcG2ORNdx3Rh6nHZHt/ZuJKZNjxwFgRWJev5MvIdVHGBf
+ 9g96VsqTxt674riLCHQr/u5HhmrCp6uBCHi7Rc4oYOlz3P70Njtfxb0pQ
+ kwEIt5DHU675YIRPmXaN03mnFDHSDGH/ddRneGnAH/+++4XyfoS31isV8 g==;
+X-CSE-ConnectionGUID: CQuaNf/xSjCHvTdcFcBVlQ==
+X-CSE-MsgGUID: hU07xYCtTN2QdFLpIf4FgA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="71940240"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71940240"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 20:52:55 -0800
-X-CSE-ConnectionGUID: tJn3yBjwSdiHZyqLC7/unQ==
-X-CSE-MsgGUID: xpWEUo+cSsiribN8xQztBQ==
+ 11 Feb 2026 20:52:57 -0800
+X-CSE-ConnectionGUID: fj+yomjjQLCyCJ2BJ/bOSw==
+X-CSE-MsgGUID: iaCXi3RlQ8amPP0BMPs3TA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="216715410"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="216715415"
 Received: from unknown (HELO srv24..) ([10.138.182.231])
- by fmviesa004.fm.intel.com with ESMTP; 11 Feb 2026 20:52:53 -0800
+ by fmviesa004.fm.intel.com with ESMTP; 11 Feb 2026 20:52:55 -0800
 From: Shaiq Wani <shaiq.wani@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
 Cc: Song Jiale <songx.jiale@intel.com>
-Subject: [PATCH v4 2/7] net/ice: add L2TPv2 tunnel type definition
-Date: Tue, 26 Aug 2025 21:56:59 +0530
-Message-Id: <20250826162704.4636-3-shaiq.wani@intel.com>
+Subject: [PATCH v4 3/7] net/ice: add L2TPv2 protocol and field definitions
+Date: Tue, 26 Aug 2025 21:57:00 +0530
+Message-Id: <20250826162704.4636-4-shaiq.wani@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250826162704.4636-1-shaiq.wani@intel.com>
 References: <20260202094244.447966-1-shaiq.wani@intel.com>
@@ -62,38 +62,193 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add ICE_FDIR_TUNNEL_TYPE_L2TPV2 to the tunnel type enum and
-extend ice_fdir_fltr_pattern structure to include L2TPv2 data and
-mask fields.
+Add L2TPv2 protocol identifier (ICE_PROT_L2TPV2OIP) and session ID
+field definition (ICE_L2TPV2OIP_SESSION_ID) to the generic flow header.
 
 Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
 Tested-by: Song Jiale <songx.jiale@intel.com>
 ---
- drivers/net/intel/ice/ice_ethdev.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/intel/ice/ice_generic_flow.h | 129 ++++++++++++++++-------
+ 1 file changed, 88 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index 9562b2b8f1..4b3718f715 100644
---- a/drivers/net/intel/ice/ice_ethdev.h
-+++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -369,6 +369,7 @@ enum ice_fdir_tunnel_type {
- 	ICE_FDIR_TUNNEL_TYPE_VXLAN,
- 	ICE_FDIR_TUNNEL_TYPE_GTPU,
- 	ICE_FDIR_TUNNEL_TYPE_GTPU_EH,
-+	ICE_FDIR_TUNNEL_TYPE_L2TPV2,
- };
+diff --git a/drivers/net/intel/ice/ice_generic_flow.h b/drivers/net/intel/ice/ice_generic_flow.h
+index 54bbb47398..deaf7b66e5 100644
+--- a/drivers/net/intel/ice/ice_generic_flow.h
++++ b/drivers/net/intel/ice/ice_generic_flow.h
+@@ -9,15 +9,15 @@
  
- struct rte_flow;
-@@ -405,6 +406,9 @@ struct ice_fdir_fltr_pattern {
- 	struct ice_fdir_udp_gtp gtpu_data;
- 	struct ice_fdir_udp_gtp gtpu_mask;
+ /* protocol */
  
-+	struct ice_fdir_l2tpv2 l2tpv2_data;
-+	struct ice_fdir_l2tpv2 l2tpv2_mask;
+-#define ICE_PROT_MAC			BIT_ULL(1)
+-#define ICE_PROT_VLAN			BIT_ULL(2)
+-#define ICE_PROT_IPV4			BIT_ULL(3)
+-#define ICE_PROT_IPV6			BIT_ULL(4)
+-#define ICE_PROT_TCP			BIT_ULL(5)
+-#define ICE_PROT_UDP			BIT_ULL(6)
+-#define ICE_PROT_SCTP			BIT_ULL(7)
+-#define ICE_PROT_ICMP4			BIT_ULL(8)
+-#define ICE_PROT_ICMP6			BIT_ULL(9)
++#define ICE_PROT_MAC_OUTER		BIT_ULL(1)
++#define ICE_PROT_VLAN_OUTER		BIT_ULL(2)
++#define ICE_PROT_IPV4_OUTER		BIT_ULL(3)
++#define ICE_PROT_IPV6_OUTER		BIT_ULL(4)
++#define ICE_PROT_TCP_OUTER		BIT_ULL(5)
++#define ICE_PROT_UDP_OUTER		BIT_ULL(6)
++#define ICE_PROT_SCTP_OUTER		BIT_ULL(7)
++#define ICE_PROT_ICMP4_OUTER		BIT_ULL(8)
++#define ICE_PROT_ICMP6_OUTER		BIT_ULL(9)
+ #define ICE_PROT_VXLAN			BIT_ULL(10)
+ #define ICE_PROT_NVGRE			BIT_ULL(11)
+ #define ICE_PROT_GTPU			BIT_ULL(12)
+@@ -27,6 +27,16 @@
+ #define ICE_PROT_L2TPV3OIP		BIT_ULL(16)
+ #define ICE_PROT_PFCP			BIT_ULL(17)
+ #define ICE_PROT_NAT_T_ESP		BIT_ULL(18)
++#define ICE_PROT_L2TPV2OIP		BIT_ULL(19)
++#define ICE_PROT_MAC_INNER		BIT_ULL(20)
++#define ICE_PROT_VLAN_INNER		BIT_ULL(21)
++#define ICE_PROT_IPV4_INNER		BIT_ULL(22)
++#define ICE_PROT_IPV6_INNER		BIT_ULL(23)
++#define ICE_PROT_TCP_INNER		BIT_ULL(24)
++#define ICE_PROT_UDP_INNER		BIT_ULL(25)
++#define ICE_PROT_SCTP_INNER		BIT_ULL(26)
++#define ICE_PROT_ICMP4_INNER		BIT_ULL(27)
++#define ICE_PROT_ICMP6_INNER		BIT_ULL(28)
+ 
+ /* field */
+ 
+@@ -53,8 +63,9 @@
+ #define ICE_L2TPV3OIP_SESSION_ID	BIT_ULL(43)
+ #define ICE_PFCP_SEID			BIT_ULL(42)
+ #define ICE_PFCP_S_FIELD		BIT_ULL(41)
+-#define ICE_IP_PK_ID		    BIT_ULL(40)
++#define ICE_IP_PK_ID			BIT_ULL(40)
+ #define ICE_IP_FRAG_OFS			BIT_ULL(39)
++#define ICE_L2TPV2OIP_SESSION_ID	BIT_ULL(38)
+ 
+ /* input set */
+ 
+@@ -62,39 +73,39 @@
+ 
+ #define ICE_INSET_SMAC			(ICE_SMAC)
+ #define ICE_INSET_DMAC			(ICE_DMAC)
+-#define ICE_INSET_VLAN			(ICE_PROT_VLAN)
+-#define ICE_INSET_VLAN_INNER		(ICE_PROT_VLAN)
+-#define ICE_INSET_VLAN_OUTER		(ICE_PROT_VLAN)
++#define ICE_INSET_VLAN			(ICE_PROT_VLAN_OUTER)
++#define ICE_INSET_VLAN_INNER		(ICE_PROT_VLAN_OUTER)
++#define ICE_INSET_VLAN_OUTER		(ICE_PROT_VLAN_OUTER)
+ #define ICE_INSET_ETHERTYPE		(ICE_ETHERTYPE)
+ 
+-#define ICE_INSET_IPV4_SRC		(ICE_PROT_IPV4 | ICE_IP_SRC)
+-#define ICE_INSET_IPV4_DST		(ICE_PROT_IPV4 | ICE_IP_DST)
+-#define ICE_INSET_IPV4_TOS		(ICE_PROT_IPV4 | ICE_IP_TOS)
+-#define ICE_INSET_IPV4_PROTO		(ICE_PROT_IPV4 | ICE_IP_PROTO)
+-#define ICE_INSET_IPV4_TTL		(ICE_PROT_IPV4 | ICE_IP_TTL)
+-#define ICE_INSET_IPV4_PKID		(ICE_PROT_IPV4 | ICE_IP_PK_ID)
+-#define ICE_INSET_IPV4_FRAG_OFS	(ICE_PROT_IPV4 | ICE_IP_FRAG_OFS)
+-#define ICE_INSET_IPV6_SRC		(ICE_PROT_IPV6 | ICE_IP_SRC)
+-#define ICE_INSET_IPV6_DST		(ICE_PROT_IPV6 | ICE_IP_DST)
+-#define ICE_INSET_IPV6_NEXT_HDR		(ICE_PROT_IPV6 | ICE_IP_PROTO)
+-#define ICE_INSET_IPV6_HOP_LIMIT	(ICE_PROT_IPV6 | ICE_IP_TTL)
+-#define ICE_INSET_IPV6_TC		(ICE_PROT_IPV6 | ICE_IP_TOS)
+-#define ICE_INSET_IPV6_PKID		(ICE_PROT_IPV6 | ICE_IP_PK_ID)
+-
+-#define ICE_INSET_TCP_SRC_PORT		(ICE_PROT_TCP | ICE_SPORT)
+-#define ICE_INSET_TCP_DST_PORT		(ICE_PROT_TCP | ICE_DPORT)
+-#define ICE_INSET_UDP_SRC_PORT		(ICE_PROT_UDP | ICE_SPORT)
+-#define ICE_INSET_UDP_DST_PORT		(ICE_PROT_UDP | ICE_DPORT)
+-#define ICE_INSET_SCTP_SRC_PORT		(ICE_PROT_SCTP | ICE_SPORT)
+-#define ICE_INSET_SCTP_DST_PORT		(ICE_PROT_SCTP | ICE_DPORT)
+-#define ICE_INSET_ICMP4_SRC_PORT	(ICE_PROT_ICMP4 | ICE_SPORT)
+-#define ICE_INSET_ICMP4_DST_PORT	(ICE_PROT_ICMP4 | ICE_DPORT)
+-#define ICE_INSET_ICMP6_SRC_PORT	(ICE_PROT_ICMP6 | ICE_SPORT)
+-#define ICE_INSET_ICMP6_DST_PORT	(ICE_PROT_ICMP6 | ICE_DPORT)
+-#define ICE_INSET_ICMP4_TYPE		(ICE_PROT_ICMP4 | ICE_ICMP_TYPE)
+-#define ICE_INSET_ICMP4_CODE		(ICE_PROT_ICMP4 | ICE_ICMP_CODE)
+-#define ICE_INSET_ICMP6_TYPE		(ICE_PROT_ICMP6 | ICE_ICMP_TYPE)
+-#define ICE_INSET_ICMP6_CODE		(ICE_PROT_ICMP6 | ICE_ICMP_CODE)
++#define ICE_INSET_IPV4_SRC		(ICE_PROT_IPV4_OUTER | ICE_IP_SRC)
++#define ICE_INSET_IPV4_DST		(ICE_PROT_IPV4_OUTER | ICE_IP_DST)
++#define ICE_INSET_IPV4_TOS		(ICE_PROT_IPV4_OUTER | ICE_IP_TOS)
++#define ICE_INSET_IPV4_PROTO		(ICE_PROT_IPV4_OUTER | ICE_IP_PROTO)
++#define ICE_INSET_IPV4_TTL		(ICE_PROT_IPV4_OUTER | ICE_IP_TTL)
++#define ICE_INSET_IPV4_PKID		(ICE_PROT_IPV4_OUTER | ICE_IP_PK_ID)
++#define ICE_INSET_IPV4_FRAG_OFS	(ICE_PROT_IPV4_OUTER | ICE_IP_FRAG_OFS)
++#define ICE_INSET_IPV6_SRC		(ICE_PROT_IPV6_OUTER | ICE_IP_SRC)
++#define ICE_INSET_IPV6_DST		(ICE_PROT_IPV6_OUTER | ICE_IP_DST)
++#define ICE_INSET_IPV6_NEXT_HDR		(ICE_PROT_IPV6_OUTER | ICE_IP_PROTO)
++#define ICE_INSET_IPV6_HOP_LIMIT	(ICE_PROT_IPV6_OUTER | ICE_IP_TTL)
++#define ICE_INSET_IPV6_TC		(ICE_PROT_IPV6_OUTER | ICE_IP_TOS)
++#define ICE_INSET_IPV6_PKID		(ICE_PROT_IPV6_OUTER | ICE_IP_PK_ID)
 +
- 	struct ice_fdir_extra ext_data;
- 	struct ice_fdir_extra ext_mask;
++#define ICE_INSET_TCP_SRC_PORT		(ICE_PROT_TCP_OUTER | ICE_SPORT)
++#define ICE_INSET_TCP_DST_PORT		(ICE_PROT_TCP_OUTER | ICE_DPORT)
++#define ICE_INSET_UDP_SRC_PORT		(ICE_PROT_UDP_OUTER | ICE_SPORT)
++#define ICE_INSET_UDP_DST_PORT		(ICE_PROT_UDP_OUTER | ICE_DPORT)
++#define ICE_INSET_SCTP_SRC_PORT		(ICE_PROT_SCTP_OUTER | ICE_SPORT)
++#define ICE_INSET_SCTP_DST_PORT		(ICE_PROT_SCTP_OUTER | ICE_DPORT)
++#define ICE_INSET_ICMP4_SRC_PORT	(ICE_PROT_ICMP4_OUTER | ICE_SPORT)
++#define ICE_INSET_ICMP4_DST_PORT	(ICE_PROT_ICMP4_OUTER | ICE_DPORT)
++#define ICE_INSET_ICMP6_SRC_PORT	(ICE_PROT_ICMP6_OUTER | ICE_SPORT)
++#define ICE_INSET_ICMP6_DST_PORT	(ICE_PROT_ICMP6_OUTER | ICE_DPORT)
++#define ICE_INSET_ICMP4_TYPE		(ICE_PROT_ICMP4_OUTER | ICE_ICMP_TYPE)
++#define ICE_INSET_ICMP4_CODE		(ICE_PROT_ICMP4_OUTER | ICE_ICMP_CODE)
++#define ICE_INSET_ICMP6_TYPE		(ICE_PROT_ICMP6_OUTER | ICE_ICMP_TYPE)
++#define ICE_INSET_ICMP6_CODE		(ICE_PROT_ICMP6_OUTER | ICE_ICMP_CODE)
  
+ /* tunnel */
+ 
+@@ -122,6 +133,24 @@
+ 	(ICE_PROT_PFCP | ICE_PFCP_S_FIELD | ICE_PFCP_SEID)
+ #define ICE_INSET_NAT_T_ESP_SPI \
+ 	(ICE_PROT_NAT_T_ESP | ICE_ESP_SPI)
++#define ICE_INSET_L2TPV2OIP_SESSION_ID \
++	(ICE_PROT_L2TPV2OIP | ICE_L2TPV2OIP_SESSION_ID)
++#define ICE_INSET_TUN_IPV4_SRC \
++	(ICE_PROT_IPV4_INNER | ICE_IP_SRC)
++#define ICE_INSET_TUN_IPV4_DST \
++	(ICE_PROT_IPV4_INNER | ICE_IP_DST)
++#define ICE_INSET_TUN_UDP_SRC_PORT \
++	(ICE_PROT_UDP_INNER | ICE_SPORT)
++#define ICE_INSET_TUN_UDP_DST_PORT \
++	(ICE_PROT_UDP_INNER | ICE_DPORT)
++#define ICE_INSET_TUN_TCP_SRC_PORT \
++	(ICE_PROT_TCP_INNER | ICE_SPORT)
++#define ICE_INSET_TUN_TCP_DST_PORT \
++	(ICE_PROT_TCP_INNER | ICE_DPORT)
++#define ICE_INSET_TUN_IPV6_SRC \
++	(ICE_PROT_IPV6_INNER | ICE_IP_SRC)
++#define ICE_INSET_TUN_IPV6_DST \
++	(ICE_PROT_IPV6_INNER | ICE_IP_DST)
+ 
+ /* empty pattern */
+ extern enum rte_flow_item_type pattern_empty[];
+@@ -400,6 +429,24 @@ extern enum rte_flow_item_type pattern_eth_ipv6_udp_ah[];
+ /* L2TP */
+ extern enum rte_flow_item_type pattern_eth_ipv4_l2tp[];
+ extern enum rte_flow_item_type pattern_eth_ipv6_l2tp[];
++extern enum rte_flow_item_type pattern_eth_ipv4_l2tpv2[];
++extern enum rte_flow_item_type pattern_eth_ipv6_l2tpv2[];
++extern enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2[];
++extern enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp[];
++extern enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2[];
++extern enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp[];
++extern enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4[];
++extern enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4_udp[];
++extern enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4_tcp[];
++extern enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4[];
++extern enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4_udp[];
++extern enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4_tcp[];
++extern enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6[];
++extern enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6_udp[];
++extern enum rte_flow_item_type pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6_tcp[];
++extern enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6[];
++extern enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_udp[];
++extern enum rte_flow_item_type pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_tcp[];
+ 
+ /* PFCP */
+ extern enum rte_flow_item_type pattern_eth_ipv4_pfcp[];
 -- 
 2.34.1
 
