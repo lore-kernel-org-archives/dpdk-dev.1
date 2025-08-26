@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AB6EDF032
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 04:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65912EDF032
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Feb 2026 04:53:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A1EC44042C;
-	Thu, 12 Feb 2026 05:53:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8DB314060C;
+	Thu, 12 Feb 2026 05:53:01 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 261DD4025F
- for <dev@dpdk.org>; Thu, 12 Feb 2026 05:52:54 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id EADF4402E2
+ for <dev@dpdk.org>; Thu, 12 Feb 2026 05:52:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1770871974; x=1802407974;
+ t=1770871976; x=1802407976;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=A7nDkG2VtWZjSK0gCWJmV/c4Z7US6APo9gd8TMQx7WQ=;
- b=NNVsUgBahXejRZT6NP2P9/aX2prhVsZMFA6VJ6nyfdXHyk5GUgD4eId2
- YSQ3E7n/iVcNE1EWFs5H/hcxepezSztJqhh5kZt1dswPuyXvVdoIpeKwr
- 627Hh5DwZuP7sZgpDs4t4M/cTsZCCpYk4Q5lB1jkW8tDm+fYHtAEAtYSz
- Xy7DOXFSCSznEl5GYJ6bdMg9GCZjNzS2COVvzbTv+cjUBEDhDJeBWhjWE
- Z4gQO6xoeUKVTLZdpBRuSa1mF51QObyp8f50O8BD7SE3JJHn8bFntrgOs
- e+gCIy3gSJ057do0ns4mbA3uncx4zxUpRYffeTsEUQ4ZLkKy8Dwnv73Yk A==;
-X-CSE-ConnectionGUID: 5dWqcsaESkOa2ogML38GjA==
-X-CSE-MsgGUID: Fpn7jea3SzSiTB87DJV9sA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="71940235"
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71940235"
+ bh=doigNYn8mbt3BmpE6ZNueFYuJUchwJAOFVYgb9kAbFI=;
+ b=eY+sgTJfgJEGcey5hzc7YTWUVqjFWGjAU7pqg9BQQB7VBD6AiRhSbEAY
+ 5bXwq4FoDZ/fvevYZ8IrIYqoZ3jWeYdFW4Lr71hfn3ymoeMAE6xNCveFb
+ E3y4kbo0wv6Ao0XlWJw0NLsvL7cPbAO0ufm3RAXHv9+bTpek8wbAKHtXB
+ oMrVNCO+Xb3249B56CvioFFtHNK4OoufDW/97M/XlHrmrEKhlQGcznnxs
+ BTe5JTunINzuFZVvtJnGgcWL+QAdtHEs/XkQDYb5Nx/flaMPlTcS7T6KI
+ sXBOxFjHB5KORt2haJrLXzmB9UG8WByUmvOPzQmz4FoTu3asaFJ6I7PUM g==;
+X-CSE-ConnectionGUID: EyRPGnx0Q4m9Ankqxad5IA==
+X-CSE-MsgGUID: bu57pQ8uSmOXj9GsZMCPnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11698"; a="71940237"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="71940237"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 11 Feb 2026 20:52:54 -0800
-X-CSE-ConnectionGUID: dy87M/dRS82J6H+t/KQSAg==
-X-CSE-MsgGUID: h4rDavW7QxGt379XK2hDeA==
+ 11 Feb 2026 20:52:55 -0800
+X-CSE-ConnectionGUID: tJn3yBjwSdiHZyqLC7/unQ==
+X-CSE-MsgGUID: xpWEUo+cSsiribN8xQztBQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="216715406"
+X-IronPort-AV: E=Sophos;i="6.21,286,1763452800"; d="scan'208";a="216715410"
 Received: from unknown (HELO srv24..) ([10.138.182.231])
- by fmviesa004.fm.intel.com with ESMTP; 11 Feb 2026 20:52:52 -0800
+ by fmviesa004.fm.intel.com with ESMTP; 11 Feb 2026 20:52:53 -0800
 From: Shaiq Wani <shaiq.wani@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
 Cc: Song Jiale <songx.jiale@intel.com>
-Subject: [PATCH v4 1/7] net/ice: add L2TPv2 PPP and PPoE data structures
-Date: Tue, 26 Aug 2025 21:56:58 +0530
-Message-Id: <20250826162704.4636-2-shaiq.wani@intel.com>
+Subject: [PATCH v4 2/7] net/ice: add L2TPv2 tunnel type definition
+Date: Tue, 26 Aug 2025 21:56:59 +0530
+Message-Id: <20250826162704.4636-3-shaiq.wani@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250826162704.4636-1-shaiq.wani@intel.com>
 References: <20260202094244.447966-1-shaiq.wani@intel.com>
@@ -62,49 +62,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add data structure definitions for L2TPv2 PPP and
-PPoE protocols to support Flow Director (FDIR) filtering.
+Add ICE_FDIR_TUNNEL_TYPE_L2TPV2 to the tunnel type enum and
+extend ice_fdir_fltr_pattern structure to include L2TPv2 data and
+mask fields.
 
 Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
 Tested-by: Song Jiale <songx.jiale@intel.com>
 ---
- drivers/net/intel/ice/base/ice_fdir.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/net/intel/ice/ice_ethdev.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/intel/ice/base/ice_fdir.h b/drivers/net/intel/ice/base/ice_fdir.h
-index 3dd03f93f7..3d3b05da4a 100644
---- a/drivers/net/intel/ice/base/ice_fdir.h
-+++ b/drivers/net/intel/ice/base/ice_fdir.h
-@@ -230,6 +230,20 @@ struct ice_fdir_ecpri {
- 	__be16 pc_id;
+diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
+index 9562b2b8f1..4b3718f715 100644
+--- a/drivers/net/intel/ice/ice_ethdev.h
++++ b/drivers/net/intel/ice/ice_ethdev.h
+@@ -369,6 +369,7 @@ enum ice_fdir_tunnel_type {
+ 	ICE_FDIR_TUNNEL_TYPE_VXLAN,
+ 	ICE_FDIR_TUNNEL_TYPE_GTPU,
+ 	ICE_FDIR_TUNNEL_TYPE_GTPU_EH,
++	ICE_FDIR_TUNNEL_TYPE_L2TPV2,
  };
  
-+struct ice_fdir_pppoe {
-+	u8 rsrvd_ver_type;
-+	u8 rsrvd_code;
-+	__be16 session_id;
-+	__be16 length;
-+	__be16 ppp_prot_id; /* control and data only */
-+};
-+
-+struct ice_fdir_ppp {
-+	u8 addr;
-+	u8 ctrl;
-+	__be16 proto_id;
-+};
-+
- struct ice_fdir_l2tpv2 {
- 	__be16 flags_version;
- 	__be16 length;
-@@ -279,6 +293,9 @@ struct ice_fdir_fltr {
- 	struct ice_fdir_ecpri ecpri_data;
- 	struct ice_fdir_ecpri ecpri_mask;
+ struct rte_flow;
+@@ -405,6 +406,9 @@ struct ice_fdir_fltr_pattern {
+ 	struct ice_fdir_udp_gtp gtpu_data;
+ 	struct ice_fdir_udp_gtp gtpu_mask;
  
-+	struct ice_fdir_ppp ppp_data;
-+	struct ice_fdir_ppp ppp_mask;
++	struct ice_fdir_l2tpv2 l2tpv2_data;
++	struct ice_fdir_l2tpv2 l2tpv2_mask;
 +
- 	struct ice_fdir_l2tpv2 l2tpv2_data;
- 	struct ice_fdir_l2tpv2 l2tpv2_mask;
+ 	struct ice_fdir_extra ext_data;
+ 	struct ice_fdir_extra ext_mask;
  
 -- 
 2.34.1
