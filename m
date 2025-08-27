@@ -2,85 +2,94 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE8FCA0FED
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 15:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B32A9CA0FED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 15:39:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A86B64066C;
-	Wed, 27 Aug 2025 17:18:16 +0200 (CEST)
-Received: from fout-a1-smtp.messagingengine.com
- (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id 646B840671;
- Wed, 27 Aug 2025 17:18:14 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id 18E1EEC00CA;
- Wed, 27 Aug 2025 11:18:14 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Wed, 27 Aug 2025 11:18:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm1; t=1756307894; x=
- 1756394294; bh=sPZODINQ5BaNQr1D1ZhIdJV48nsavBGoL84X55uqAn4=; b=v
- +iOmpcXoMUEurj3bg5fepboiEss8L8dEALcPPsYB3opOdA8sTLAme8ss7m753PWv
- okJA97A/jYHKliLJSipiUl7ozwljG7OTXYjcSr8QaZh9IOblb/Qu/sCsr4Xzck3z
- IZwSM5DXYXj+xbhybXMY1GswqpMYndr4TSNT05pH6npQBmMIH1XCOus3TO2YvUpi
- boMCk7jJuM4adPLkPCCKGg1c9UP2Ldnd2ShepcBhJAbhaUPTG2sGUqJnkmkVpR/0
- di2FnLUFiuW5OSGsHIb460BaL4QyN9OjQ7SQlLRb7fUBhc+tVC99AekgRz5kPQas
- cH5ZhWQWySK+uOrfBxJkQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm1; t=1756307894; x=1756394294; bh=s
- PZODINQ5BaNQr1D1ZhIdJV48nsavBGoL84X55uqAn4=; b=i1MpBljL1Y3f2mF8O
- +MOLf8WQtIuhl59T+ofzfde5MnJXSKPOTaLcgxKs8PkEhM9tzClmqt8+Bj9x2Ydv
- ZQDiwPUOnGy2CstibXSut9WYktvnLRoH9gQLD58IXpdm8qDaFnxKXgiUApSxh2Pb
- yHr36+pI8FRDgghx2FQoUyFnEaY7JsyhzxcO4UZswIOlxU1npn0cevmfQCbfO5fb
- /3OAfQRF0L133owOkzJ3ccH1bgUhdBQN65f+vR1MvURb78jrYGMIFZXnrh/7xKGE
- k/2u0BtcygUGUSSO6BbPrPe+phARJ6ULm9UrS/x6z7cRagX1gb+6P9qm98XtmFpt
- oIofw==
-X-ME-Sender: <xms:tSGvaKRDHRMRiSJ3OJTYzi3ql5NcYtq_2y262rzsLZYE50F-sqCWsw>
- <xme:tSGvaNtspFenw0-PZSAv5265l-hCx_6hkVIk0cEWA2QDrzy-0BJNYWoQEnZJ7TEFA
- caQxCJ_iQIjkxAUaQ>
-X-ME-Received: <xmr:tSGvaKJcJEZ-HnRtjnkpox9XVZURFdOdmfbe7cpLyMleBuG67aoUyhT3mjtDnnviEqHDGEg-KaZZF6jjgrjVz_dgRYb-dTU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeekgeelucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
- hfeilefhtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
- htthhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphht
- thhopehsthgrsghlvgesughpughkrdhorhhgpdhrtghpthhtohepnhhitgholhgrshdrtg
- hhrghuthhruhesihhnthgvlhdrtghomhdprhgtphhtthhopehmrgigihhmvgdrtghoqhhu
- vghlihhnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehhvghmrghnthdrrghgrhgrfi
- grlhesnhigphdrtghomh
-X-ME-Proxy: <xmx:tSGvaKlX0LJosknwTFH2A0OA-uuNZA_2JykQkOEPAWUruuFo4amQ5w>
- <xmx:tSGvaLKYMJMIH3ITvlhIJ0RUOAv5EJs6yocwDRG-d0r0Yf-IMXS9QA>
- <xmx:tSGvaP6-btu4w0I7VXxvFon_WdGbxlGIUK7vANLAWLhlZW8DqkCRBw>
- <xmx:tSGvaP2kF9MoCyerKSCs46qXC1BorTXfVXdutnnneiEZwfPZpfGqRw>
- <xmx:tiGvaJTgKe0NKmHlAZr4oDNcakLjjXxlezc9nPkziWbELw510vAHVQsA>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Aug 2025 11:18:12 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, stable@dpdk.org,
- Nicolas Chautru <nicolas.chautru@intel.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: [PATCH v2 3/3] bbdev: wrong fix for MinGW 13
-Date: Wed, 27 Aug 2025 17:16:43 +0200
-Message-ID: <20250827151759.1448018-4-thomas@monjalon.net>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250827151759.1448018-1-thomas@monjalon.net>
-References: <20250813152829.457463-1-thomas@monjalon.net>
- <20250827151759.1448018-1-thomas@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id CBF1D4029E;
+	Wed, 27 Aug 2025 17:39:09 +0200 (CEST)
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com
+ [205.220.180.131])
+ by mails.dpdk.org (Postfix) with ESMTP id DCD0840292
+ for <dev@dpdk.org>; Wed, 27 Aug 2025 17:39:08 +0200 (CEST)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+ by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57R6kCiw015828;
+ Wed, 27 Aug 2025 15:38:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+ cc:content-transfer-encoding:date:from:message-id:mime-version
+ :subject:to; s=qcppdkim1; bh=5uIOtX5hk1m712zA7+jk5W3Y4HZSF97z4/W
+ niX2+k2Y=; b=aiDuWWzHp3CBvJbV0q9ePa8gF/QlmpdacZTlLFxwqTKy3DW0XLo
+ 6cEjT7gGTmIjzs29FbURO7zQcVnjYdLsZ4WWhdxolrg6Dxvd42F4jDZ4ZwIJNnCO
+ QvwXA5LopAM0EuO7kHC2yj3sqKVrR09kije4y43oLLYhdIxggQBHirnVP7srLTay
+ DuuHjqqJeE7WHrq56ywDEfDmjetz99Oow8CKQSocrey1oYESRk+otjHxeeDBjsqm
+ DoA50PNNIWNpsIfb0SILqpCJfMU1fGeODxkvzF+zd/Vyjuz/6wuyfofIfYvjeUmI
+ vjvVmaNoNWMWBDKgXitMlv0Ic2L8vCsNQ+Q==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com
+ [199.106.103.254])
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48rtpeyddf-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 27 Aug 2025 15:38:56 +0000 (GMT)
+Received: from pps.filterd (NASANPPMTA02.qualcomm.com [127.0.0.1])
+ by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57RFctIW021265; 
+ Wed, 27 Aug 2025 15:38:55 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+ by NASANPPMTA02.qualcomm.com (PPS) with ESMTPS id 48t2j8sp25-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 27 Aug 2025 15:38:55 +0000
+Received: from NASANPPMTA02.qualcomm.com (NASANPPMTA02.qualcomm.com
+ [127.0.0.1])
+ by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57RFcs08021260;
+ Wed, 27 Aug 2025 15:38:54 GMT
+Received: from tbs-5gnr-mt-30 (tbs-5gnr-mt-30.qualcomm.com [10.239.80.165])
+ by NASANPPMTA02.qualcomm.com (PPS) with ESMTPS id 57RFcsYg021257
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 27 Aug 2025 15:38:54 +0000
+Received: by tbs-5gnr-mt-30 (Postfix, from userid 2342227)
+ id 368EF40092; Wed, 27 Aug 2025 09:38:54 -0600 (MDT)
+From: Schneide <schneide@qti.qualcomm.com>
+To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ Reshma Pattan <reshma.pattan@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>
+Cc: Dylan Schneider <schneide@qti.qualcomm.com>
+Subject: [PATCH v1] pcapng: allow any protocol link type for the interface
+ block
+Date: Wed, 27 Aug 2025 09:38:52 -0600
+Message-Id: <20250827153852.1066521-1-schneide@qti.qualcomm.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
+ signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
+ signatures=585085
+X-Proofpoint-GUID: q2sGN7FSnpdALsz6tZHw9LBEVoN7j99o
+X-Proofpoint-ORIG-GUID: q2sGN7FSnpdALsz6tZHw9LBEVoN7j99o
+X-Authority-Analysis: v=2.4 cv=Hd8UTjE8 c=1 sm=1 tr=0 ts=68af2690 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=jZVsG21pAAAA:8 a=QyXUC8HyAAAA:8
+ a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8 a=GRf2JX_IAAAA:8 a=VYDjIKVHAAAA:8
+ a=_gsV02HDAAAA:8 a=eh1Yez-EAAAA:8 a=Gs6VmGGY5-lVXBz7osoA:9
+ a=3Sh2lD0sZASs_lUdrUhf:22 a=uRw8vnb707Rr89TYUhP5:22 a=-sS9_DeNG7cEylvMdImQ:22
+ a=GzKgaEE0kT068tgm3IUS:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODI1MDE0MiBTYWx0ZWRfX+bSb4CG9qqNF
+ jt9BQISreAHmFWYYMxnTV48UDDgNmlqo4bbqV8kXmaTCMym9jXDRv0QJZOSbfUZ1cM48RJxuyzW
+ kgPKGzKoqxFQxbHeEPaBUZHxQ1RikIGspx2pzdYPW/2A3t/xZcR5Gb8ikUDCfALunIfWVdjYXDt
+ VbcV0IUDXoPYuNMgA4IIwEj7dmRJ7FZCc4UHuLXWsDuyWVIzBLyaOcVDIL2EnGUlj43EfqtrB/E
+ ADAGXOBDyqQuTz8atsYXrQRZFvxSKvc4xyh6R+rI9Avj2iy3lG1l9lUtftwOA9S28az66dRlc7F
+ 46vbNSmapKS3st12MLOAWeX9KTbR1PMWGRiaCDu8S7S1HG+WF1FP2X/OdB+GbCvqFhSl2qNL0kr
+ ZEq/P7L9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-27_04,2025-08-26_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ adultscore=0 clxscore=1015 impostorscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508250142
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -94,52 +103,215 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-After an upgrade to MinGW version 13, compilation breaks:
+From: Dylan Schneider <schneide@qti.qualcomm.com>
 
-In function 'rte_bbdev_queue_ops_dump':
-lib/bbdev/rte_bbdev.c:1269:63: error:
-	'%s' directive argument is null [-Werror=format-overflow=]
-	fprintf(f, "  Enqueue Status Counters %s %" PRIu64 "\n",
+Allow the user to specify protocol link type when creating pcapng files.
+This change is needed to specify the protocol type in the pcapng file,
+DLT_EN10MB specifies ethernet packets only. This will allow dissectors
+for other protocols to be used on files generated by pcapng.
 
-The enqueue status string may be null if the index is too high,
-because RTE_BBDEV_ENQ_STATUS_SIZE_MAX is defined to include
-padding for future enum insertion.
-This padding case must be checked
-to avoid printing a dump of a non-existing status.
+Includes a breaking change to rte_pcapng_add_interface to add link_type
+parameter. Existing calls to the function have been updated to pass
+DLT_EN10MB for the link type argument.
 
-Fixes: 353e3639d458 ("bbdev: add queue debug dump")
-Cc: stable@dpdk.org
-
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Fixes: d1da6d0d04c7 ("pcapng: require per-interface information")
+Signed-off-by: Dylan Schneider <schneide@qti.qualcomm.com>
+Cc: stephen@networkplumber.org
 ---
-v2: make status_str variable local
----
- lib/bbdev/rte_bbdev.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ .mailmap                               |  1 +
+ app/dumpcap/main.c                     |  5 +++--
+ app/test/test_pcapng.c                 |  8 ++++----
+ doc/guides/rel_notes/release_25_11.rst |  4 ++++
+ lib/graph/graph_pcap.c                 |  2 +-
+ lib/pcapng/meson.build                 |  2 ++
+ lib/pcapng/rte_pcapng.c                | 21 +++++++++++++++------
+ lib/pcapng/rte_pcapng.h                |  7 ++++++-
+ 8 files changed, 36 insertions(+), 14 deletions(-)
 
-diff --git a/lib/bbdev/rte_bbdev.c b/lib/bbdev/rte_bbdev.c
-index e0f8c8eb0d..e76124532d 100644
---- a/lib/bbdev/rte_bbdev.c
-+++ b/lib/bbdev/rte_bbdev.c
-@@ -1264,11 +1264,15 @@ rte_bbdev_queue_ops_dump(uint16_t dev_id, uint16_t queue_id, FILE *f)
- 			dev->data->name, queue_id);
- 	fprintf(f, "  Last Enqueue Status %s\n",
- 			rte_bbdev_enqueue_status_str(q_data->enqueue_status));
--	for (i = 0; i < RTE_BBDEV_ENQ_STATUS_SIZE_MAX; i++)
-+	for (i = 0; i < RTE_BBDEV_ENQ_STATUS_SIZE_MAX; i++) {
-+		const char *status_str = rte_bbdev_enqueue_status_str(i);
-+		if (status_str == NULL)
-+			continue;
- 		if (q_data->queue_stats.enqueue_status_count[i] > 0)
- 			fprintf(f, "  Enqueue Status Counters %s %" PRIu64 "\n",
--					rte_bbdev_enqueue_status_str(i),
-+					status_str,
- 					q_data->queue_stats.enqueue_status_count[i]);
-+	}
- 	stats = &dev->data->queues[queue_id].queue_stats;
+diff --git a/.mailmap b/.mailmap
+index 34a99f93a1..1a003778b2 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -402,6 +402,7 @@ Dukai Yuan <dukaix.yuan@intel.com>
+ Dumitru Ceara <dceara@redhat.com> <dumitru.ceara@gmail.com>
+ Duncan Bellamy <dunk@denkimushi.com>
+ Dustin Lundquist <dustin@null-ptr.net>
++Dylan Schneider <schneide@qti.qualcomm.com>
+ Dzmitry Sautsa <dzmitryx.sautsa@intel.com>
+ Ed Czeck <ed.czeck@atomicrules.com>
+ Eduard Serra <eserra@vmware.com>
+diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
+index 3d3c0dbc66..e5ba36350b 100644
+--- a/app/dumpcap/main.c
++++ b/app/dumpcap/main.c
+@@ -800,8 +800,9 @@ static dumpcap_out_t create_output(void)
+ 		free(os);
  
- 	fprintf(f, "  Enqueue Count %" PRIu64 " Warning %" PRIu64 " Error %" PRIu64 "\n",
+ 		TAILQ_FOREACH(intf, &interfaces, next) {
+-			if (rte_pcapng_add_interface(ret.pcapng, intf->port, intf->ifname,
+-						     intf->ifdescr, intf->opts.filter) < 0)
++			if (rte_pcapng_add_interface(ret.pcapng, intf->port, DLT_EN10MB,
++						     intf->ifname, intf->ifdescr,
++						     intf->opts.filter) < 0)
+ 				rte_exit(EXIT_FAILURE, "rte_pcapng_add_interface %u failed\n",
+ 					intf->port);
+ 		}
+diff --git a/app/test/test_pcapng.c b/app/test/test_pcapng.c
+index 8f2cff36c3..bcf99724fa 100644
+--- a/app/test/test_pcapng.c
++++ b/app/test/test_pcapng.c
+@@ -345,7 +345,7 @@ test_add_interface(void)
+ 	}
+ 
+ 	/* Add interface to the file */
+-	ret = rte_pcapng_add_interface(pcapng, port_id,
++	ret = rte_pcapng_add_interface(pcapng, port_id, DLT_EN10MB,
+ 				       NULL, NULL, NULL);
+ 	if (ret < 0) {
+ 		fprintf(stderr, "can not add port %u\n", port_id);
+@@ -353,7 +353,7 @@ test_add_interface(void)
+ 	}
+ 
+ 	/* Add interface with ifname and ifdescr */
+-	ret = rte_pcapng_add_interface(pcapng, port_id,
++	ret = rte_pcapng_add_interface(pcapng, port_id, DLT_EN10MB,
+ 				       "myeth", "Some long description", NULL);
+ 	if (ret < 0) {
+ 		fprintf(stderr, "can not add port %u with ifname\n", port_id);
+@@ -361,7 +361,7 @@ test_add_interface(void)
+ 	}
+ 
+ 	/* Add interface with filter */
+-	ret = rte_pcapng_add_interface(pcapng, port_id,
++	ret = rte_pcapng_add_interface(pcapng, port_id, DLT_EN10MB,
+ 				       NULL, NULL, "tcp port 8080");
+ 	if (ret < 0) {
+ 		fprintf(stderr, "can not add port %u with filter\n", port_id);
+@@ -406,7 +406,7 @@ test_write_packets(void)
+ 	}
+ 
+ 	/* Add interface to the file */
+-	ret = rte_pcapng_add_interface(pcapng, port_id,
++	ret = rte_pcapng_add_interface(pcapng, port_id, DLT_EN10MB,
+ 				       NULL, NULL, NULL);
+ 	if (ret < 0) {
+ 		fprintf(stderr, "can not add port %u\n", port_id);
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index ccad6d89ff..b1f75a489c 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -84,6 +84,10 @@ API Changes
+    Also, make sure to start the actual text at the margin.
+    =======================================================
+ 
++* pcapng: Changed the API for adding interfaces to include a link type argument.
++  The link type was previously hardcoded to the ethernet link type in the API.
++  This argument is added to ``rte_pcapng_add_interface``.
++  These functions are versioned to retain binary compatibility until the next LTS release.
+ 
+ ABI Changes
+ -----------
+diff --git a/lib/graph/graph_pcap.c b/lib/graph/graph_pcap.c
+index 89525f1220..08dcda0d28 100644
+--- a/lib/graph/graph_pcap.c
++++ b/lib/graph/graph_pcap.c
+@@ -117,7 +117,7 @@ graph_pcap_file_open(const char *filename)
+ 
+ 	/* Add the configured interfaces as possible capture ports */
+ 	RTE_ETH_FOREACH_DEV(portid) {
+-		ret = rte_pcapng_add_interface(pcapng_fd, portid,
++		ret = rte_pcapng_add_interface(pcapng_fd, portid, DLT_EN10MB,
+ 					       NULL, NULL, NULL);
+ 		if (ret < 0) {
+ 			graph_err("Graph rte_pcapng_add_interface port %u failed: %d",
+diff --git a/lib/pcapng/meson.build b/lib/pcapng/meson.build
+index 4549925d41..3aa7ba5155 100644
+--- a/lib/pcapng/meson.build
++++ b/lib/pcapng/meson.build
+@@ -5,3 +5,5 @@ sources = files('rte_pcapng.c')
+ headers = files('rte_pcapng.h')
+ 
+ deps += ['ethdev']
++
++use_function_versioning = true
+diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
+index 2a07b4c1f5..1ff8d14d08 100644
+--- a/lib/pcapng/rte_pcapng.c
++++ b/lib/pcapng/rte_pcapng.c
+@@ -200,11 +200,10 @@ pcapng_section_block(rte_pcapng_t *self,
+ }
+ 
+ /* Write an interface block for a DPDK port */
+-RTE_EXPORT_SYMBOL(rte_pcapng_add_interface)
+-int
+-rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port,
+-			 const char *ifname, const char *ifdescr,
+-			 const char *filter)
++RTE_DEFAULT_SYMBOL(27, int, rte_pcapng_add_interface,
++		   (rte_pcapng_t *self, uint16_t port, uint16_t link_type,
++		   const char *ifname, const char *ifdescr,
++		   const char *filter))
+ {
+ 	struct pcapng_interface_block *hdr;
+ 	struct rte_eth_dev_info dev_info;
+@@ -274,7 +273,7 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port,
+ 	hdr = (struct pcapng_interface_block *)buf;
+ 	*hdr = (struct pcapng_interface_block) {
+ 		.block_type = PCAPNG_INTERFACE_BLOCK,
+-		.link_type = 1,		/* DLT_EN10MB - Ethernet */
++		.link_type = link_type,
+ 		.block_length = len,
+ 	};
+ 
+@@ -319,6 +318,16 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port,
+ 	return write(self->outfd, buf, len);
+ }
+ 
++RTE_VERSION_SYMBOL(26, int, rte_pcapng_add_interface,
++		   (rte_pcapng_t *self, uint16_t port,
++		   const char *ifname, const char *ifdescr,
++		   const char *filter))
++{
++	/* Call the new version with a default link_type (Ethernet) */
++	return rte_pcapng_add_interface(self, port, DLT_EN10MB,
++					ifname, ifdescr, filter);
++}
++
+ /*
+  * Write an Interface statistics block at the end of capture.
+  */
+diff --git a/lib/pcapng/rte_pcapng.h b/lib/pcapng/rte_pcapng.h
+index 48f2b57564..1b3f9b9464 100644
+--- a/lib/pcapng/rte_pcapng.h
++++ b/lib/pcapng/rte_pcapng.h
+@@ -28,6 +28,9 @@
+ extern "C" {
+ #endif
+ 
++/* default link type for ethernet traffic */
++#define DLT_EN10MB 1
++
+ /* Opaque handle used for functions in this library. */
+ typedef struct rte_pcapng rte_pcapng_t;
+ 
+@@ -71,6 +74,8 @@ rte_pcapng_close(rte_pcapng_t *self);
+  *  The handle to the packet capture file
+  * @param port
+  *  The Ethernet port to report stats on.
++ * @param link_type
++ *  The link type (e.g., DLT_EN10MB).
+  * @param ifname (optional)
+  *  Interface name to record in the file.
+  *  If not specified, name will be constructed from port
+@@ -84,7 +89,7 @@ rte_pcapng_close(rte_pcapng_t *self);
+  * must be added.
+  */
+ int
+-rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port,
++rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port, uint16_t link_type,
+ 			 const char *ifname, const char *ifdescr,
+ 			 const char *filter);
+ 
 -- 
-2.47.1
+2.27.0
 
