@@ -2,83 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55384CA0FED
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 15:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE8FCA0FED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 15:18:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2AA2D4065F;
-	Wed, 27 Aug 2025 17:18:13 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A86B64066C;
+	Wed, 27 Aug 2025 17:18:16 +0200 (CEST)
 Received: from fout-a1-smtp.messagingengine.com
  (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id 37F1F4065B;
- Wed, 27 Aug 2025 17:18:12 +0200 (CEST)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
- by mailfout.phl.internal (Postfix) with ESMTP id CBA54EC00BD;
- Wed, 27 Aug 2025 11:18:11 -0400 (EDT)
+ by mails.dpdk.org (Postfix) with ESMTP id 646B840671;
+ Wed, 27 Aug 2025 17:18:14 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.phl.internal (Postfix) with ESMTP id 18E1EEC00CA;
+ Wed, 27 Aug 2025 11:18:14 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-09.internal (MEProxy); Wed, 27 Aug 2025 11:18:11 -0400
+ by phl-compute-01.internal (MEProxy); Wed, 27 Aug 2025 11:18:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm1; t=1756307891; x=
- 1756394291; bh=JkuNee7NpO7ImVqhez+BzIGYcvNwQXX5P65D+/3m+m8=; b=d
- r/xgR5kucGY6UiijlyIlmFygS21j7LNjQov/IKd2fGuS2sbuMyq6A5ziFNUxDUhW
- 6krTF3RbpuKCuYnL4UyVukFF79u3YzlnsDDwGZZAgg07gEXU9IioDo1Tfb1F5NRs
- kLSU0TlZJlmM6KyRl6OFl+aQ0dXVtkF76z9+XOlwrgzW8yXq4JjjyahrEG1iD1WW
- ScrrrUlYUmtKKwo0HS+U1fqiCta4loSJDE+GBQ197bHvFhW/s0UNqHhJ019LIh1u
- dlB0lpLF6vBm71HxWIxvhNG/mk+cpR26+FXpY87GBLRbXnhcXSDRaS4VEsczAWSY
- Zj74EbO3pZCFK150fZB7Q==
+ :reply-to:subject:subject:to:to; s=fm1; t=1756307894; x=
+ 1756394294; bh=sPZODINQ5BaNQr1D1ZhIdJV48nsavBGoL84X55uqAn4=; b=v
+ +iOmpcXoMUEurj3bg5fepboiEss8L8dEALcPPsYB3opOdA8sTLAme8ss7m753PWv
+ okJA97A/jYHKliLJSipiUl7ozwljG7OTXYjcSr8QaZh9IOblb/Qu/sCsr4Xzck3z
+ IZwSM5DXYXj+xbhybXMY1GswqpMYndr4TSNT05pH6npQBmMIH1XCOus3TO2YvUpi
+ boMCk7jJuM4adPLkPCCKGg1c9UP2Ldnd2ShepcBhJAbhaUPTG2sGUqJnkmkVpR/0
+ di2FnLUFiuW5OSGsHIb460BaL4QyN9OjQ7SQlLRb7fUBhc+tVC99AekgRz5kPQas
+ cH5ZhWQWySK+uOrfBxJkQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm1; t=1756307891; x=1756394291; bh=J
- kuNee7NpO7ImVqhez+BzIGYcvNwQXX5P65D+/3m+m8=; b=K0QZBNMlgfr12ZqLY
- pnpK5+5UqfDJvyQ8j+m4OVyhSw9d+4RAfoAtZetJz+uxHjw62rVSwCELO2yFrcAA
- QI4utySTu3TFQmTnqSn0xRgbn5AXXSVEamyqfr/HKO0R6HiZlEwoSrAdiNxaJ7Ic
- G42G4/gPHf0fv59IDl8YWXyLzekhBbzgTOtvTSfyZFlEwYzzTzt8gbcML3YAA85N
- tAIfH9VIYHGOsFyNBzhMkTIdcsFk81EFttjnDpmdpbqE6UQEowH9LY7E9l26WfN9
- 8tf2Q4+YoxoLpQd2eWjz9eEIncae0vZuki2PFrRzqczN6jlJF1VwHqJ5arthD2Ok
- IKFOg==
-X-ME-Sender: <xms:syGvaH2bVZzQB_iSTcdESRLi40g4kw1SyhHAf8VieL2pAdoU4BclJA>
- <xme:syGvaHp-aABSCZMIXAlN86o0YlJTEbwROHvZTg0PnpoLi-OKz3bY0foRqIKN0ctf-
- Xmh2iOxbdfz80LmCA>
-X-ME-Received: <xmr:syGvaONcY-rWrQv2r9dRmlFXC7GZCSUOhG5UT73OkLzF9jTJ-6KCEIGdmBInOd8-Ahn-MM9HGqLBL6YIUFw1Nw1BQSuUoF0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeekgeekucetufdoteggodetrf
+ :x-me-sender:x-sasl-enc; s=fm1; t=1756307894; x=1756394294; bh=s
+ PZODINQ5BaNQr1D1ZhIdJV48nsavBGoL84X55uqAn4=; b=i1MpBljL1Y3f2mF8O
+ +MOLf8WQtIuhl59T+ofzfde5MnJXSKPOTaLcgxKs8PkEhM9tzClmqt8+Bj9x2Ydv
+ ZQDiwPUOnGy2CstibXSut9WYktvnLRoH9gQLD58IXpdm8qDaFnxKXgiUApSxh2Pb
+ yHr36+pI8FRDgghx2FQoUyFnEaY7JsyhzxcO4UZswIOlxU1npn0cevmfQCbfO5fb
+ /3OAfQRF0L133owOkzJ3ccH1bgUhdBQN65f+vR1MvURb78jrYGMIFZXnrh/7xKGE
+ k/2u0BtcygUGUSSO6BbPrPe+phARJ6ULm9UrS/x6z7cRagX1gb+6P9qm98XtmFpt
+ oIofw==
+X-ME-Sender: <xms:tSGvaKRDHRMRiSJ3OJTYzi3ql5NcYtq_2y262rzsLZYE50F-sqCWsw>
+ <xme:tSGvaNtspFenw0-PZSAv5265l-hCx_6hkVIk0cEWA2QDrzy-0BJNYWoQEnZJ7TEFA
+ caQxCJ_iQIjkxAUaQ>
+X-ME-Received: <xmr:tSGvaKJcJEZ-HnRtjnkpox9XVZURFdOdmfbe7cpLyMleBuG67aoUyhT3mjtDnnviEqHDGEg-KaZZF6jjgrjVz_dgRYb-dTU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeekgeelucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
  hfeilefhtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedutddp
- mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtg
- hpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghp
- thhtohepshhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopegushhoshhnohifsh
- hkihesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggthhgvshhlrghvohesnhhv
- ihguihgrrdgtohhmpdhrtghpthhtohepsghinhhgiiesnhhvihguihgrrdgtohhmpdhrtg
- hpthhtohepohhrihhkrgesnhhvihguihgrrdgtohhmpdhrtghpthhtohepshhurghnmhhi
- nhhgmhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepmhgrthgrnhesnhhvihguihgrrd
- gtohhm
-X-ME-Proxy: <xmx:syGvaIq3rAASy6PJPp5RkpddtIZxYVV6-KDGtTvLR9Pn6xQ5raxWkQ>
- <xmx:syGvaBsjHYaA6eE-rrV2a_pEb_bBpfi_c-jDvQ4fPCgneGMWcp3-fw>
- <xmx:syGvaH0M9Gp3JuU-TWfRdtdbF7zNHnok1K5BDvkNoxsOIgBF-znQuQ>
- <xmx:syGvaMEWYI-J9slmz_XarRguI77sHVmckTxaT-VJf6UL2R0EkNIh1Q>
- <xmx:syGvaPlE5AncSTAz33hMnphUag8OH3rNG3luSy89QnPuvZpRhEdm2ICF>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
+ htthhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphht
+ thhopehsthgrsghlvgesughpughkrdhorhhgpdhrtghpthhtohepnhhitgholhgrshdrtg
+ hhrghuthhruhesihhnthgvlhdrtghomhdprhgtphhtthhopehmrgigihhmvgdrtghoqhhu
+ vghlihhnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehhvghmrghnthdrrghgrhgrfi
+ grlhesnhigphdrtghomh
+X-ME-Proxy: <xmx:tSGvaKlX0LJosknwTFH2A0OA-uuNZA_2JykQkOEPAWUruuFo4amQ5w>
+ <xmx:tSGvaLKYMJMIH3ITvlhIJ0RUOAv5EJs6yocwDRG-d0r0Yf-IMXS9QA>
+ <xmx:tSGvaP6-btu4w0I7VXxvFon_WdGbxlGIUK7vANLAWLhlZW8DqkCRBw>
+ <xmx:tSGvaP2kF9MoCyerKSCs46qXC1BorTXfVXdutnnneiEZwfPZpfGqRw>
+ <xmx:tiGvaJTgKe0NKmHlAZr4oDNcakLjjXxlezc9nPkziWbELw510vAHVQsA>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Aug 2025 11:18:10 -0400 (EDT)
+ 27 Aug 2025 11:18:12 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, stable@dpdk.org,
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
- Tal Shnaiderman <talshn@nvidia.com>
-Subject: [PATCH v2 2/3] net/mlx5: fix build with MinGW 13
-Date: Wed, 27 Aug 2025 17:16:42 +0200
-Message-ID: <20250827151759.1448018-3-thomas@monjalon.net>
+ Nicolas Chautru <nicolas.chautru@intel.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: [PATCH v2 3/3] bbdev: wrong fix for MinGW 13
+Date: Wed, 27 Aug 2025 17:16:43 +0200
+Message-ID: <20250827151759.1448018-4-thomas@monjalon.net>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250827151759.1448018-1-thomas@monjalon.net>
 References: <20250813152829.457463-1-thomas@monjalon.net>
@@ -100,41 +96,50 @@ Errors-To: dev-bounces@dpdk.org
 
 After an upgrade to MinGW version 13, compilation breaks:
 
-drivers/net/mlx5/windows/mlx5_ethdev_os.c:285:69: error:
-	'dev_link.<U1000>.<Uaf00>.link_autoneg' may be used uninitialized
+In function 'rte_bbdev_queue_ops_dump':
+lib/bbdev/rte_bbdev.c:1269:63: error:
+	'%s' directive argument is null [-Werror=format-overflow=]
+	fprintf(f, "  Enqueue Status Counters %s %" PRIu64 "\n",
 
-This is because link_autoneg is never set in mlx5_link_update().
-It can be set to the previous value (no change).
-Also it does not make sense to check this value to return the update status
-as it does not change.
+The enqueue status string may be null if the index is too high,
+because RTE_BBDEV_ENQ_STATUS_SIZE_MAX is defined to include
+padding for future enum insertion.
+This padding case must be checked
+to avoid printing a dump of a non-existing status.
 
-Fixes: 6fbd73709ee4 ("net/mlx5: support link update on Windows")
+Fixes: 353e3639d458 ("bbdev: add queue debug dump")
 Cc: stable@dpdk.org
 
 Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/mlx5/windows/mlx5_ethdev_os.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: make status_str variable local
+---
+ lib/bbdev/rte_bbdev.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/mlx5/windows/mlx5_ethdev_os.c b/drivers/net/mlx5/windows/mlx5_ethdev_os.c
-index 49f750be68..c82ce6cbda 100644
---- a/drivers/net/mlx5/windows/mlx5_ethdev_os.c
-+++ b/drivers/net/mlx5/windows/mlx5_ethdev_os.c
-@@ -283,11 +283,11 @@ mlx5_link_update(struct rte_eth_dev *dev, int wait_to_complete)
- 	dev_link.link_duplex = 1;
- 	if (dev->data->dev_link.link_speed != dev_link.link_speed ||
- 	    dev->data->dev_link.link_duplex != dev_link.link_duplex ||
--	    dev->data->dev_link.link_autoneg != dev_link.link_autoneg ||
- 	    dev->data->dev_link.link_status != dev_link.link_status)
- 		ret = 1;
- 	else
- 		ret = 0;
-+	dev_link.link_autoneg = dev->data->dev_link.link_autoneg;
- 	dev->data->dev_link = dev_link;
- 	return ret;
- }
+diff --git a/lib/bbdev/rte_bbdev.c b/lib/bbdev/rte_bbdev.c
+index e0f8c8eb0d..e76124532d 100644
+--- a/lib/bbdev/rte_bbdev.c
++++ b/lib/bbdev/rte_bbdev.c
+@@ -1264,11 +1264,15 @@ rte_bbdev_queue_ops_dump(uint16_t dev_id, uint16_t queue_id, FILE *f)
+ 			dev->data->name, queue_id);
+ 	fprintf(f, "  Last Enqueue Status %s\n",
+ 			rte_bbdev_enqueue_status_str(q_data->enqueue_status));
+-	for (i = 0; i < RTE_BBDEV_ENQ_STATUS_SIZE_MAX; i++)
++	for (i = 0; i < RTE_BBDEV_ENQ_STATUS_SIZE_MAX; i++) {
++		const char *status_str = rte_bbdev_enqueue_status_str(i);
++		if (status_str == NULL)
++			continue;
+ 		if (q_data->queue_stats.enqueue_status_count[i] > 0)
+ 			fprintf(f, "  Enqueue Status Counters %s %" PRIu64 "\n",
+-					rte_bbdev_enqueue_status_str(i),
++					status_str,
+ 					q_data->queue_stats.enqueue_status_count[i]);
++	}
+ 	stats = &dev->data->queues[queue_id].queue_stats;
+ 
+ 	fprintf(f, "  Enqueue Count %" PRIu64 " Warning %" PRIu64 " Error %" PRIu64 "\n",
 -- 
 2.47.1
 
