@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 995D5CA0EFF
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 16:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E8BCA0FED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 16:27:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C3B744029E;
-	Wed, 27 Aug 2025 18:15:14 +0200 (CEST)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
- [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id 3581540292
- for <dev@dpdk.org>; Wed, 27 Aug 2025 18:15:13 +0200 (CEST)
-Received: by mail-wm1-f53.google.com with SMTP id
- 5b1f17b1804b1-45b618e067eso7626145e9.1
- for <dev@dpdk.org>; Wed, 27 Aug 2025 09:15:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D5DAF4029E;
+	Wed, 27 Aug 2025 18:27:39 +0200 (CEST)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
+ [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id 886E040292
+ for <dev@dpdk.org>; Wed, 27 Aug 2025 18:27:39 +0200 (CEST)
+Received: by mail-wr1-f49.google.com with SMTP id
+ ffacd0b85a97d-3c7aa4ce85dso2407406f8f.3
+ for <dev@dpdk.org>; Wed, 27 Aug 2025 09:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756311313;
- x=1756916113; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756312059;
+ x=1756916859; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=CEmT/vFn4FvkidipENOaMqjLmWq3xR7MsO7/0ojaqGw=;
- b=X/5hPmiMVfTBc+YNrWd1eYPwX2SdJDjVORn14MAEo9q1JJVEH0hWPPHjnG0KZfAtsh
- hWTPHVDsYZAVmdeEiXUV9zPgvabMZZKBTvqkSuH77jdLR64Ezy3QNDtXXnUOJNwW90+P
- r4VhULvni0nC/a1VKjitedRHiUTQslQK9VLoU3ZdJIqUAW2GlVlG4k4u87BzHJp1Obkw
- 45D1TxrZOrKNFPf6kfwJnS4HNuj6pFzFD0swZilpIIS8cXAq20Q5KKGkKTPwU32qcg+e
- C/NqOgOk36qXVc/65wk7SyFvRlYsNc3xgki7bQTv9I3OhVq4u7hVk57L/b+SfQVLraFj
- Iz8g==
+ bh=dIIHOYjoxkKKmjuWxyXZE3u1jUUiLiRzRLwJEu57/gM=;
+ b=KRBdl6BNWDSHlnFwWGS20uQATy3ieqp7JyW56L+HRd1x1xY9cs4Z9vqFa5dvCo50bF
+ M/7jawcLfGVzHsRnJ8Kau/7IWzSDJhoWNz+Z1IkPULzv4Txkt94SOG5uxvHtbSXUjCmx
+ k7AUhKjz18MAtoNmp27yuca46Hy/VaIjNXqxg/IgM0bx533J4Qgr+EPUzrQekA+/qOr2
+ eiC0pGxrAbn7V7irCQV1sOcSrGHQkkOa3v3DrV474c6jt16lSCSJBohJYmK7Gz6tAvH/
+ lA1pVEoHlLNoMBxwE1KbKbUpUT8S6zpF8PPg74RpFou0nFNMW0CeLTius2tUWJUFhCAU
+ kPOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756311313; x=1756916113;
+ d=1e100.net; s=20230601; t=1756312059; x=1756916859;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=CEmT/vFn4FvkidipENOaMqjLmWq3xR7MsO7/0ojaqGw=;
- b=ez14TIAk3aO6zYRyujz4unyJaO5QcvRvN9XbjXXdCF0XiVVrD+dpRtnG6WQmKs5Pid
- e0Yo358LKbk+E23PwDAfh13Mg64quHS/tT0TSeuIe9aU6sDoS1/kBOLORSqah5tx4j1l
- 7L7HroPQqY1LnL9fkbWzgwao4eVK7a6073yqamiDD/kBc9ZiNPQt6PnNE44bGQ8adW+f
- C8Mcl8dpGyZYGAUGaB4DoFvT7bEu1qYTKR0zFeehpbH12VfX+4V/2Li0ysSwapg4naY6
- 5u7YzIJ8AR0PvePVqL2LVvAcw8AhHbqXOQaqmrnCYM0k2M+UsFjkC6a0W4cfa5VrtImW
- 7ETw==
-X-Gm-Message-State: AOJu0Yy6kf1xnszPcDFAJt+/ULqfJvO2iXgNps2NSBPabf7khLqUV+ej
- XktQjtphE1B6L0kYYHNu6uXZczXQpSsfg+iq7Q+oKIiVnUpjAPpPU8AYk40418a5fDk=
-X-Gm-Gg: ASbGnctgAg3qHmxAXdK2zSHI+WUrQ+IKqXl1GTujjZcUy2J4C7/ymVZDQ8ZbK6wZvCF
- opBCoAyYrVrGYP9zzw9S5CblH4p/gUp7aGh1yjdiOwcxNCXLOCFwAWkOblSsoi9TLQfJYRfB3b7
- rrI7i4OqFsepzz2vWyPD14OoRmV2zf+TWrjVuzqtSwEF3L7gNNBdCm6eAsAPXMSFJDLFK710X0l
- 7adU/l8ScgOkzgZHbnbFEORxl1MPAKZxnO3Z3bI/9rf2bVXjIrIDkrHjNfuBUZmSFtICxJnI/Z4
- uKRyooX/soyNB9X8YKHIjBB993nCexeuqzlvI7C//lp730nPFrISrwSXV7ngXpR3WD+Q0slGUc8
- jJyc+lw6q0M0PP4xxFDR1pYL/Dw3dzNst5vNrmaCJF0RMEZFYyXhh4OGsO5mxn+Pce27ulrz6v6
- w=
-X-Google-Smtp-Source: AGHT+IFdn/Jr8is2yWdWdSyIB45VFruqPLsBAO80PnteoBH4ZA2r9oPgTrzxoh7O47sr+supryKS8Q==
-X-Received: by 2002:a05:6000:21c9:b0:3cc:bb5c:e82a with SMTP id
- ffacd0b85a97d-3ccbb5cf788mr1430735f8f.3.1756311312621; 
- Wed, 27 Aug 2025 09:15:12 -0700 (PDT)
+ bh=dIIHOYjoxkKKmjuWxyXZE3u1jUUiLiRzRLwJEu57/gM=;
+ b=T1UtwBgg9AaBDScLCEL95s1320b5aWedvcMxdbqyV3XSbuzvRo8aKyQrbt+Zl5nSII
+ OEy13k8KitDaYjZ4c0vNrJH9pdVhpaLHK4Bz3fbtdQB1x+jyJ0uEOAcHys6NknWWU9uI
+ 9C/r8BHgbI/VTavZB8EQWkkGwH9QODeINQ0F/UGTBmcHaQzIVDOOs06tCJLindvT/g6p
+ aLP6WlUWehga8L67ps5uHNu3nRnpbu06oy6PFJ53Zd2m8KUTl+0q8f1Q/y0j/8NFpK40
+ l6BObYPLx7YMvQ17CQWBYRptfD6x2xMEOBNQpdYDxfQu7UJ2w8ObGOwnn7bqSxgJxdVQ
+ XVqA==
+X-Gm-Message-State: AOJu0YxUBwsslLttOssvIitX3sXurL82cvAsB5FBz+B7r2BRoYa0+r0V
+ eFLSsqAGoKtItVKx46z8ws570QeEvKjFAZ68+sVpjcSXXsbRh/Xi5FOMQ06GEk/GbeU=
+X-Gm-Gg: ASbGncs+XWDPvbplCbKEKXqF1zTHtUACPrsVaiBtiMaect56YeNA+l/CkzSXKUjymnH
+ lYRylrHUW88RDbzbVsFlxGo0bc1fjOahtsaSzDAARzISTSRTgkzRnAKkU2t97TPc7EAXiPtUzbN
+ LgYaVetwgrUOHd6n3x9LSpmcD+7P9hIJ7LDhsY4S9INAzSY1NR+uexPmftKRMQS3xWvOzf3xXYQ
+ 6yWH8E+9lmK4BArD1aeXNr1nMfGezVwP318nxnLjLT295LoZsmMZkC5PqB/zrH4d+q74jkaxgNf
+ 8Z24v/simjfCl/YObB3IuceNMPz0o08s0xHyga2hvTtgu/h9U1iGk5/o1Rcx5scN6gYEsqEX8dN
+ GHB/fojMt1T4TDqfYKOd7+pjCXYeO9mpPT7ZGl4iG/K/gjdOci5q3OXiFVhAdFCA+H5Fi32UKTS
+ Y=
+X-Google-Smtp-Source: AGHT+IGJIw7xc3GT1LGTAUqHNqs1KEa8umtCVAjjJ3yhChmrsmbX+atendMEac9N7ZpfMqdtLbNVCg==
+X-Received: by 2002:a05:6000:2403:b0:3c9:1433:f8c0 with SMTP id
+ ffacd0b85a97d-3c91433ff3fmr9562763f8f.7.1756312058976; 
+ Wed, 27 Aug 2025 09:27:38 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3cad431ea49sm9973703f8f.42.2025.08.27.09.15.10
+ ffacd0b85a97d-3c70e4b9e1fsm23159934f8f.14.2025.08.27.09.27.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 27 Aug 2025 09:15:12 -0700 (PDT)
-Date: Wed, 27 Aug 2025 09:06:39 -0700
+ Wed, 27 Aug 2025 09:27:38 -0700 (PDT)
+Date: Wed, 27 Aug 2025 09:27:34 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Schneide <schneide@qti.qualcomm.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, Reshma Pattan
- <reshma.pattan@intel.com>, Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>
-Subject: Re: [PATCH v1] pcapng: allow any protocol link type for the
- interface block
-Message-ID: <20250827090627.390cf4c3@hermes.local>
-In-Reply-To: <20250827153852.1066521-1-schneide@qti.qualcomm.com>
-References: <20250827153852.1066521-1-schneide@qti.qualcomm.com>
+To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, Kyo Liu
+ <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen
+ <sam.chen@nebula-matrix.com>
+Subject: Re: [PATCH v6 01/17] net/nbl: add doc and minimum nbl build framework
+Message-ID: <20250827092734.03fb2729@hermes.local>
+In-Reply-To: <20250822090359.614551-2-dimon.zhao@nebula-matrix.com>
+References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
+ <20250822090359.614551-1-dimon.zhao@nebula-matrix.com>
+ <20250822090359.614551-2-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,53 +84,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 27 Aug 2025 09:38:52 -0600
-Schneide <schneide@qti.qualcomm.com> wrote:
+This code looks like it was part of something bigger (and/or written
+by a object oriented programmer).
 
-> +use_function_versioning = true
-> diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
-> index 2a07b4c1f5..1ff8d14d08 100644
-> --- a/lib/pcapng/rte_pcapng.c
-> +++ b/lib/pcapng/rte_pcapng.c
-> @@ -200,11 +200,10 @@ pcapng_section_block(rte_pcapng_t *self,
->  }
->  
->  /* Write an interface block for a DPDK port */
-> -RTE_EXPORT_SYMBOL(rte_pcapng_add_interface)
-> -int
-> -rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port,
-> -			 const char *ifname, const char *ifdescr,
-> -			 const char *filter)
-> +RTE_DEFAULT_SYMBOL(27, int, rte_pcapng_add_interface,
-> +		   (rte_pcapng_t *self, uint16_t port, uint16_t link_type,
-> +		   const char *ifname, const char *ifdescr,
-> +		   const char *filter))
->  {
->  	struct pcapng_interface_block *hdr;
->  	struct rte_eth_dev_info dev_info;
-> @@ -274,7 +273,7 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port,
->  	hdr = (struct pcapng_interface_block *)buf;
->  	*hdr = (struct pcapng_interface_block) {
->  		.block_type = PCAPNG_INTERFACE_BLOCK,
-> -		.link_type = 1,		/* DLT_EN10MB - Ethernet */
-> +		.link_type = link_type,
->  		.block_length = len,
->  	};
->  
-> @@ -319,6 +318,16 @@ rte_pcapng_add_interface(rte_pcapng_t *self, uint16_t port,
->  	return write(self->outfd, buf, len);
->  }
->  
-> +RTE_VERSION_SYMBOL(26, int, rte_pcapng_add_interface,
-> +		   (rte_pcapng_t *self, uint16_t port,
-> +		   const char *ifname, const char *ifdescr,
-> +		   const char *filter))
-> +{
-> +	/* Call the new version with a default link_type (Ethernet) */
-> +	return rte_pcapng_add_interface(self, port, DLT_EN10MB,
-> +					ifname, ifdescr, filter);
-> +}
+Lots of indirection tables and most never have multiple implementations.
+Function indirection is slower and risks SPECTRE type attacks.
+
+> +struct nbl_product_core_ops {
+> +	int (*hw_init)(void *p);
+> +	void (*hw_remove)(void *p);
+> +	int (*res_init)(void *p, struct rte_eth_dev *eth_dev);
+> +	void (*res_remove)(void *p);
+> +	int (*chan_init)(void *p);
+> +	void (*chan_remove)(void *p);
+> +};
+
+
+
+
+> +struct nbl_product_dev_ops {
+> +	int (*dev_init)(void *adapter);
+> +	void (*dev_uninit)(void *adapter);
+> +	int (*dev_start)(void *adapter);
+> +	void (*dev_stop)(void *adapter);
+> +};
 > +
+> +struct nbl_product_dispatch_ops {
+> +	int (*dispatch_init)(void *mgt);
+> +	int (*dispatch_uninit)(void *mgt);
+> +};
 
-No symbol versioning needed for 25.11 release since it is major release.
-The release note is enough.
+
+
+> +struct nbl_product_dev_external_ops {
+> +	int (*external_pf_ops_get)(struct rte_eth_dev *dev, void *arg);
+> +	int (*external_rep_ops_get)(struct rte_eth_dev *dev, void *arg);
+> +	int (*external_bond_ops_get)(struct rte_eth_dev *dev, void *arg);
+> +};
+
+These are defined but never used.
+
+
+> +#endif
+
