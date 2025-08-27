@@ -2,72 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E94CA0EFF
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 23:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F21D4CA0FED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 23:19:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ED2594060C;
-	Thu, 28 Aug 2025 01:17:34 +0200 (CEST)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
- [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id 11EB040298
- for <dev@dpdk.org>; Thu, 28 Aug 2025 01:17:33 +0200 (CEST)
-Received: by mail-wr1-f44.google.com with SMTP id
- ffacd0b85a97d-3c84925055aso251041f8f.2
- for <dev@dpdk.org>; Wed, 27 Aug 2025 16:17:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 490D84029E;
+	Thu, 28 Aug 2025 01:19:45 +0200 (CEST)
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
+ [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 7CE7240298
+ for <dev@dpdk.org>; Thu, 28 Aug 2025 01:19:44 +0200 (CEST)
+Received: by mail-wm1-f47.google.com with SMTP id
+ 5b1f17b1804b1-45a1b05a59fso2474805e9.1
+ for <dev@dpdk.org>; Wed, 27 Aug 2025 16:19:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756336653;
- x=1756941453; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756336784;
+ x=1756941584; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=EeASw9nLdLsCJoOK1hV6qeCTVEVyVN6BurNkxviERls=;
- b=qme70wwO+CIW02bMsVhOSDLamocZqxVvYNUm1xYWV9nixYbjT5i6D+0y4lIW13IYJ8
- gzdApTcqo14dXfMFZXEqVLMuirS/rah1wgBRRB8WF9CeVJTRdzXQHWzrzBLQwYvcV+4+
- yn1Q3D8xfnV7a/KzIwnElwnZ8pdplD+i1pjPhggs1Fp8KAGvuyvn/SB8eb5Vrp61SCHX
- 7STr2RVtB6dgPrA0TXXmhYeEoZ6HlIfQkVGNa5VDHlGSdnOzFzKlMxEuPe4+0T+ahdep
- JOvTqlp8M6AuD+DF1u/m0usNWqM7+XRfh0yWAPJpfS8VaI2/wpO2xwANMm8gamQvDHav
- StZQ==
+ bh=klYCu4af32A1kHUohkD5HECNl+MnzbIRkUTcbVFIH0s=;
+ b=cAA3QwVbz1pHax5NsFm2w/hG4jjn9ZAf8OD8ASbDcxpN7jSuwiYpTne707KWKDKjEb
+ 9XqM4k3uXaheVrz2dwaK3Sh7I79mybiLgsgXGfRnvsvHR3MdEJVfJ/4efKIvuvzQyE3V
+ Apq6/SjKHf08L+vFQ5lePGKN9REzv2UqK2WtNzME5Yh3xStXTIMkjoPJBJDAII6PKKkD
+ T9s/7QDuIkTDMFx0d0YTx1WgMswrfn2ZJOu/LslytssvDSx46052l+5RMyo8KkldN+nT
+ DB725A6LmHglxT4II7GwuEOzf9vWkE5JgBjHtt/91lPlcnd3pE4AoAXUerQGRiPeyhBB
+ F6aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756336653; x=1756941453;
+ d=1e100.net; s=20230601; t=1756336784; x=1756941584;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=EeASw9nLdLsCJoOK1hV6qeCTVEVyVN6BurNkxviERls=;
- b=sTuQc3kzyZb7eWGCM4CKSaBC3cjM0WECZ7Nrj8DqhJySiob3b1keWSi56rbm/o7Yi3
- xiU6NcYISQCwaiAfQKSD1QkSzYld6VIHCA0+EA+fzMhDRtvDv/sjgx6tmH1Gtr+sh4yg
- niijwkX1qop3NHruiGgtu/gc9u06j/4napXjAf8aTRAGNoPB/Y5ChdZZDVNl39/VAG+9
- HoWK7ZuJeE3b1HcfkQvwJJ9yPZ8PijJLyS9JjYnOvWsx64ORXGn0uB03f6ijKD4/8WC4
- xR/tPfjMBwiMSTsBZ7mB0sVdldm5okBCTEUpsDrE64ZID/PtnVVs2e7yq1RYD8ssCP3j
- knwA==
-X-Gm-Message-State: AOJu0Yyqm+vlOdjyL/I0SW15OcbF2Aja0FLImuJUseK//escG3YMWcAS
- OjLUAGQO/asD6EMFsZQ4AhLsT0HXTXWXzoBiR/rU4/GXvL72Fc64UNuUOzvHbRkYkpE+b2CFuwl
- hXtwr
-X-Gm-Gg: ASbGnct57M0pmbe5msD8wBp55mSaur9c1W+9njdwu60pCe4yIo+BARzq170eAutdXwc
- eOv04iT7FNRTVWcgwTeqv4TlB1HGnNvOZW3pWWnC/sCXrB3HbfgtRUjHWfafbO+xj/GXdK+7qdH
- 8B9F4clIACO/xJUD+XzkfOj2ebCT7G3EbSA0QKjAKKFAwnSZqL/tb7Ogo7P4IiRFSUahqTOxzts
- lSkiTdixEFcbXJHopQxMtvmUWvfomanaU8TUOs6ZdEvW8K6Qjmr3We1DEA00ExEpt9Vk3Lnmgub
- bcEF6d1nCdhSgWcKdekBITS5Bjt+3+Uu9G3t4uzf3Y8gM/NYTxIpsqzYFrLnY4kwdDDBQxVT2Wf
- b1A1cYeO0Mc82IcltFeUt01YD+oahbjPe2SRoMcoNabpDKZAr2L8NGaBlgaMO8J3zFn4+GSB8md
- E=
-X-Google-Smtp-Source: AGHT+IE8pxU+jAX20mB+max7RFhsw1nhl7D6fayzOdWwxKk8JlVc3Bx1eqinuc5r/6zvNueabbWYEw==
-X-Received: by 2002:a05:6000:4313:b0:3a5:527b:64c6 with SMTP id
- ffacd0b85a97d-3c5da54ea6bmr14500402f8f.1.1756336652666; 
- Wed, 27 Aug 2025 16:17:32 -0700 (PDT)
+ bh=klYCu4af32A1kHUohkD5HECNl+MnzbIRkUTcbVFIH0s=;
+ b=QJPK4c57cs318ahIi4A5OdcL2/gjT/ai33sZGR7K5IqQIqxOrkfwZDMQlLrxyL1rjX
+ wwnzVbasvqeDVXI4nWPKvMOR8AjWTA30xia89naTCmuUrbiSe1TriruQP3c+HBNWbL9j
+ hFkRMAIOmFVz642aOy5rcYkMPXfA1jPiY7j7Qk+3UIZASlMnTngUWYBqlXD5S6Fssqcp
+ s609pFnIEJtDKe4Zhe1WVIjpjvps/CUwSfy0DOo411NHUnVxovmVSoodgik9gQciNlQ4
+ WJE9BB3ErlxCch+eY4yDq1CcyQvHvewVTikdrd/e8Gj8Atn0Ev1CvqbI5xgZjEHwZ4kU
+ TDVg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCV9xH3Kfk+yqWkSuAIzXqu84FQ3AZVm62T1RlOMLj6HA+WRl8BeODAZoWgVizZSoO6cJk8=@dpdk.org
+X-Gm-Message-State: AOJu0Yyoe9lLR06L4CrfLvb1LUXLdz6f4461eiYGMHkHscQL6PNTygxb
+ twepvQL0XJA6DUsKVl9lJuGgHS0FoPmYqPS9btWELkhjM+HyEW5DU/H7FO89nKCs27piL2yCw0L
+ Biwgn
+X-Gm-Gg: ASbGncs/ilwMOZCB1Ic81vHFdi43lJjkxaXKC4bsGbbExao+3xwkDxePOq7EDhkPlDV
+ H4eKm1dagtxVXlgN5XpGsJjzLGFepDFNTki5kv/bVDwLB5gMsc1JE2IleCxJqC/l8qOu12iThQE
+ Z0E+20KLul+Z4kXnYc7QjPd5qEmj+vHNSTgTZ7tXV3Jgxwodb3yW6V15l1GD2ivXYEfeIB1CQGH
+ JbC6casYjt/XZb6dJXsSo2KpDOYccECSCqPYAWCDXOM7Y9s83hsmciOCkE4vLNE/VRjEDw7j6wP
+ +tmCMS3qOq6f+7Y5Uoa5yrkQI6MfPtsrTrINmvjAA7nafK1/P7LdTS+LDspgk1D/AryvlvGcEI7
+ /rzD6oFzHe8D0NZO+kk7eQpJP20IQoMvkkuWlBdsUdNdBRH1zaQ68B3K2p5Gwx3ktttbK6A03z6
+ 6rr8OCo/WC9Q==
+X-Google-Smtp-Source: AGHT+IFMiz0vFxw1aZ46wL/3cx7ViZswhMmVxCuDiochRxOyEk0li+FxoNbUSIR+WGDHl/anfrSvbw==
+X-Received: by 2002:a05:600c:4511:b0:456:1156:e5f5 with SMTP id
+ 5b1f17b1804b1-45b517d27f6mr215504105e9.31.1756336784123; 
+ Wed, 27 Aug 2025 16:19:44 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3c711211cc8sm22146987f8f.36.2025.08.27.16.17.30
+ 5b1f17b1804b1-45b66b6985bsm47362455e9.2.2025.08.27.16.19.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 27 Aug 2025 16:17:31 -0700 (PDT)
-Date: Wed, 27 Aug 2025 16:17:26 -0700
+ Wed, 27 Aug 2025 16:19:43 -0700 (PDT)
+Date: Wed, 27 Aug 2025 16:19:39 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] mbuf: optimize segment prefree
-Message-ID: <20250827161726.24cebd9c@hermes.local>
-In-Reply-To: <20250827213535.21602-1-mb@smartsharesystems.com>
-References: <20250827213535.21602-1-mb@smartsharesystems.com>
+To: Bingbin Chen <chen.bingbin@zte.com.cn>
+Cc: ivan.malov@arknetworks.am, wang.junlong1@zte.com.cn,
+ yang.yonggang@zte.com.cn, dev@dpdk.org
+Subject: Re: [PATCH v7 2/2] net/zxdh: add support flow director ops
+Message-ID: <20250827161939.1f20eb71@hermes.local>
+In-Reply-To: <20250827083909.2849389-3-chen.bingbin@zte.com.cn>
+References: <20250815074221.2254545-1-chen.bingbin@zte.com.cn>
+ <20250827083909.2849389-1-chen.bingbin@zte.com.cn>
+ <20250827083909.2849389-3-chen.bingbin@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,19 +86,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 27 Aug 2025 21:35:34 +0000
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+On Wed, 27 Aug 2025 16:39:05 +0800
+Bingbin Chen <chen.bingbin@zte.com.cn> wrote:
 
-> =20
-> +/* GCC only optimizes single-bit MSB tests this way, so do it by hand wi=
-th multi-bit. */
-> +#if defined(RTE_TOOLCHAIN_GCC) && defined(RTE_ARCH_X86)
-> +#undef RTE_MBUF_DIRECT
-> +#define RTE_MBUF_DIRECT(mb) \
-> +	(!(((const uint8_t *)(mb))[offsetof(struct rte_mbuf, ol_flags) + 7] & \
-> +	(uint8_t)((RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL) >> 56)))
-> +#endif
+> Provide support for ETH, VLAN, IPv4/IPv6, TCP/UDP, VXLAN,
+> and mask matching, supporting multiple actions
+> include drop/count/mark/queue/rss,and vxlan decap/encap.
+> 
+> Signed-off-by: Bingbin Chen <chen.bingbin@zte.com.cn>
 
-Complex enough expression that I would prefer this be an inline function
-with some more temporary variables and more comments.
-Like the magic 7 for mask??
+Both patches queued to next-net
