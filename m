@@ -2,44 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F2FCA0EFF
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 15:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 311CDCA0EFF
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 16:05:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 134C94029E;
-	Wed, 27 Aug 2025 17:56:29 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 7C7BC40292
- for <dev@dpdk.org>; Wed, 27 Aug 2025 17:56:27 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 5DF8320A24;
- Wed, 27 Aug 2025 17:56:27 +0200 (CEST)
-Subject: RE: [PATCH v3 0/9] introduce common FOREACH_SAFE macros
+	by mails.dpdk.org (Postfix) with ESMTP id EBC354064E;
+	Wed, 27 Aug 2025 18:05:11 +0200 (CEST)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
+ [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id 5F3ED4029E
+ for <dev@dpdk.org>; Wed, 27 Aug 2025 18:05:10 +0200 (CEST)
+Received: by mail-wr1-f52.google.com with SMTP id
+ ffacd0b85a97d-3c68ac7e238so2520156f8f.1
+ for <dev@dpdk.org>; Wed, 27 Aug 2025 09:05:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756310710;
+ x=1756915510; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=CEYaTKka0GgDbxqKpusAkjSGfSdhE40AttuYMerJzdo=;
+ b=0YA4vGToPzpaVZFcwRs/dr0Big76QYh55kQ6R99fwUcCjZiSZ1rH0Wz9UAaT6rJ5CK
+ hRF5okVOoM1rGz4xYwu9g4nuaZLoeL/iqrqNSTkAvi5yeltpz1D5/8+RLdnf9aVUhDos
+ I8m3qPRZmjxjFEegEYgShc8t10v2o/XiPKYb2gkugI/aIPdk16Fe0j/EqW/+MQqQf0RG
+ vckB0PHZSmZgqyNRes3GGh69FscrjtQFLbRfVoQ2WbFdyUK6qaAfJWeCX9KeOn7s5QbN
+ Tam7EgUMMfqULPgDwihoJLE4Z0zFHZqXdXJzSA6MwyD/w3W6A/kFVcQru7XOCVBsZV37
+ HmDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1756310710; x=1756915510;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=CEYaTKka0GgDbxqKpusAkjSGfSdhE40AttuYMerJzdo=;
+ b=sirgMhjQxolYlfBgE2ZZR/z2Qpam+MNhGNZxxQ3jff34O/rjeIwVCs/u5L5OcqY6X9
+ lBQapU17dPWz0lMoy+WS99eludffNa++bpcFBF7pEwUsW4tfTzp9d/U8qH17Tedj8VX3
+ UxmQ0AU+3UKpHVUzGF7Qy6zrv3u/lZKpZpGH7YFnFr5VHlNnfCZPL96Pk0Pl/saVYPrm
+ tKvLKeLMoTE5rECmZh/TtcoMgkGCbq+oEVgYhwcviJwffrW/DDiYvU8MKnmB7Haft9Ho
+ IRsTSwtb2NFw33LGZImlgmnoSW0Ja8+6UA9ktnK437oIw1Z/vTtWae44AOq4bMGf/HoG
+ BpTA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXlTyRJzsRx2XCSHNhaQoskc+Lm5S0aXFk0RlgmVKtOZrb65aalLyZKctOWtdnt8IND0CI=@dpdk.org
+X-Gm-Message-State: AOJu0YySYVSejNWBtmSlhrfqb6tfBrXX8TU7rrB/yeIIeTaufD27uQv3
+ bNRPBdHysV7y+NqXydhM8X7y1djC4e62v6s+z9yb9QanXDadUqndq9sQC8wenYJaeaE=
+X-Gm-Gg: ASbGncuWsBk7gh2na5ObyKJYbwa/k6IL8DnpWd6p8uXzzMz7CClyAW6G+GFcvE+RrLD
+ 438SjTmppJp11CU4WSxudoFMShEFWqY92XcUgIZH6qptouuxBT3ska1qBQhpGTinpTiiP7bmQAG
+ KAP18uVQPIf4XEhAguLSdakHxZiNCJ0kpqP4OJ0+Wi2ND5+Bj5VA8Fd5kgF6QUiK+EZtHpgQ9dR
+ yB6IiVbITmDpctdyYGCqttCUmfk0H4e8qMp5MjGxeKV8yQbi0I9t8QoFYf0LgIG6y6RNb8/pHfR
+ aLcLGwLFSVQZYjmc5KSBe6xUGfHWgy0ijEpGgIf1h3kjSdBjUh2v+9l7A/3kU20yXrHJx7Dv+du
+ FsT8OW0OkzwJkMq6ACgc5JaIXW9XfY2BlTRIQXmOc6oJC78RkUyGRYmw/aWXrrY2IR5vc2jXEZG
+ +snZyke5E62Q==
+X-Google-Smtp-Source: AGHT+IFLvxbAIOAmPE3AR+dQqw9HEqb7rPQ33mG+5WtMXmqHvWl/FTG5ffyqDEzYoZC25B14cefSYw==
+X-Received: by 2002:a05:6000:2586:b0:3b7:8146:4640 with SMTP id
+ ffacd0b85a97d-3c5de34953emr13745045f8f.56.1756310709670; 
+ Wed, 27 Aug 2025 09:05:09 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-3cd0acafd09sm2443537f8f.31.2025.08.27.09.05.07
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 27 Aug 2025 09:05:09 -0700 (PDT)
+Date: Wed, 27 Aug 2025 09:05:04 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Cc: Cristian Dumitrescu <cristian.dumitrescu@intel.com>, Aman Singh
+ <aman.deep.singh@intel.com>, Sunil Kumar Kori <skori@marvell.com>,
+ dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH v2] app/testpmd: validate dscp and vlan table entries
+ for meter creation
+Message-ID: <20250827090504.7ae3b66a@hermes.local>
+In-Reply-To: <20250827111837.3882892-1-14pwcse1224@uetpeshawar.edu.pk>
+References: <20250822121430.2228507-1-14pwcse1224@uetpeshawar.edu.pk>
+ <20250827111837.3882892-1-14pwcse1224@uetpeshawar.edu.pk>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Date: Wed, 27 Aug 2025 17:56:24 +0200
-Content-class: urn:content-classes:message
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE7B@smartserver.smartshare.dk>
-In-Reply-To: <2404222.ECZNHGQPT7@thomas>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Thread-Topic: [PATCH v3 0/9] introduce common FOREACH_SAFE macros
-Thread-Index: AdwXZOPQoRWznWQdTz64RaR2rR2DBQABKNgw
-References: <20250127180842.97907-1-stephen@networkplumber.org>
- <e9017361-f29b-45da-a1b0-cc745b8c906f@intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FE79@smartserver.smartshare.dk>
- <2404222.ECZNHGQPT7@thomas>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Thomas Monjalon" <thomas@monjalon.net>,
- "Burakov, Anatoly" <anatoly.burakov@intel.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>,
- "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>,
-	"Tyler Retzlaff" <roretzla@microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,63 +86,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBUaG9tYXMgTW9uamFsb24gW21haWx0bzp0aG9tYXNAbW9uamFsb24ubmV0XQ0KPiBT
-ZW50OiBXZWRuZXNkYXksIDI3IEF1Z3VzdCAyMDI1IDE3LjEyDQo+IA0KPiAyNy8wOC8yMDI1IDE3
-OjA4LCBNb3J0ZW4gQnLDuHJ1cDoNCj4gPiA+IEZyb206IEJ1cmFrb3YsIEFuYXRvbHkgW21haWx0
-bzphbmF0b2x5LmJ1cmFrb3ZAaW50ZWwuY29tXQ0KPiA+ID4gU2VudDogV2VkbmVzZGF5LCAyNyBB
-dWd1c3QgMjAyNSAxNi4xNA0KPiA+ID4NCj4gPiA+IE9uIDgvMjAvMjAyNSA4OjQyIEFNLCBNb3J0
-ZW4gQnLDuHJ1cCB3cm90ZToNCj4gPiA+ID4+IEZyb206IFN0ZXBoZW4gSGVtbWluZ2VyIFttYWls
-dG86c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmddDQo+ID4gPiA+PiBTZW50OiBNb25kYXksIDE4
-IEF1Z3VzdCAyMDI1IDE4LjM0DQo+ID4gPiA+Pg0KPiA+ID4gPj4gT24gV2VkLCAxMiBNYXIgMjAy
-NSAxNjoxNToyOSAtMDcwMA0KPiA+ID4gPj4gU3RlcGhlbiBIZW1taW5nZXIgPHN0ZXBoZW5AbmV0
-d29ya3BsdW1iZXIub3JnPiB3cm90ZToNCj4gPiA+ID4+DQo+ID4gPiA+Pj4gVGhpcyBzZXJpZXMg
-YWRkcyBjb21tb24gbWFjcm9zIGZvciBzYWZlIGl0ZXJhdGlvbiBvdmVyIGxpc3RzLg0KPiA+ID4g
-Pj4+IEl0IGlzIGEgc3Vic2V0IGNvcHkgb2YgdGhlIG1hY3JvcyBmcm9tIEZyZWVCU0QgdGhhdCBh
-cmUNCj4gPiA+ID4+PiBtaXNzaW5nIGZyb20gdGhlIExpbnV4IGhlYWRlciBzeXMvcXVldWUuaA0K
-PiA+ID4gPj4+DQo+ID4gPiA+Pj4gQ2hvc2UgdGhpcyBvdmVyIHNldmVyYWwgb3RoZXIgb3B0aW9u
-czoNCj4gPiA+ID4+PiAgICAtIGxldCBlYWNoIGRyaXZlciBkZWZpbmUgdGhlaXIgb3duIGFzIG5l
-ZWRlZC4NCj4gPiA+ID4+PiAgICAgIE9uZSBJbnRlbCBkcml2ZXIgZ290IGl0IHdyb25nLCBvdGhl
-cnMgd2lsbCBhcyB3ZWxsLg0KPiA+ID4gPj4+ICAgIC0gcmVuYW1lIGFsbCB0aGUgcXVldWUgbWFj
-cm9zIHRvIFJURV9YWFggdmFyaWFudHMuDQo+ID4gPiA+Pj4gICAgICBTZWVtcyBsaWtlIHVzZWxl
-c3MgcmVuYW1pbmcgYW5kIGNvbmZ1c2lvbi4NCj4gPiA+ID4+PiAgICAtIFNldmVyYWwgZGlzdHJv
-cyBoYXZlIGxpYmJzZCBwYWNrYWdlIHdpdGggdGhlIGNvcnJlY3QgbWFjcm9zLg0KPiA+ID4gPj4+
-ICAgICAgQnV0IGFkZGluZyB5ZXQgYW5vdGhlciBkZXBlbmRlbmN5IHRvIERQREsgd291bGQgYmUg
-YW5ub3lpbmcNCj4gPiA+ID4+PiAgICAgIGZvciBzb21ldGhpbmcgdGhpcyBiYXNpYy4NCj4gPiA+
-ID4+Pg0KPiA+ID4gPj4+IFRoZXJlIGFyZSBtb3JlIG1hY3JvcyBpbiBGcmVlQlNEIGhlYWRlciB0
-aGF0IGNvdWxkIGJlIHVzZWZ1bCwNCj4gPiA+ID4+PiBidXQgd2UgY2FuIGFkZCB0aG9zZSBsYXRl
-ciBhcyBuZWVkZWQgaGVyZS4NCj4gPiA+ID4+Pg0KPiA+ID4gPj4+ICAgbGliL2VhbC9pbmNsdWRl
-L3J0ZV9xdWV1ZS5oICAgICAgICAgICAgICB8IDE3NA0KPiArKysrKysrKysrKysrKysrKysrKysr
-Kw0KPiA+ID4gPj4NCj4gPiA+ID4+IFJldmlzaXRpbmcgdGhpcyBhbmQgd29uZGVyaW5nIGFib3V0
-IG5hbWluZy4uLg0KPiA+ID4gPj4gVGhlIGZpbGUgcnRlX3F1ZXVlLmggaXMgbm90IHJlYWxseSBE
-UERLIChpZSBub3QgcmVsYXRlZCB0byBydW50aW1lDQo+ID4gPiA+PiBlbnZpcm9ubWVudCkuDQo+
-ID4gPiA+PiBUaGlua2luZyBvZiBjYWxsaW5nIGl0IGJzZF9xdWV1ZS5oIGFzIGEgY29tcHJvbWlz
-ZQ0KPiA+ID4gPg0KPiA+ID4gPiBTaW5jZSBpdCByZXBsYWNlcyBzeXMvcXVldWUuaCwgdGhlbiBt
-YXliZSBzeXNfcXVldWUuaCAob3INCj4gcnRlX3N5c19xdWV1ZS5oKS4NCj4gPiA+ID4NCj4gPiA+
-ID4gQnV0IG1vcmUgaW1wb3J0YW50bHk6DQo+ID4gPiA+IEl0IGlzIG5vdCByZWFsbHkgRFBESywg
-YW5kIHRodXMgc2hvdWxkbid0IHJlYWxseSBiZSBwYXJ0IG9mIHRoZSBFQUwuDQo+ID4gPiA+IFNv
-IGhlcmUncyBhbiBpZGVhOg0KPiA+ID4gPiBBcyBwYXJ0IG9mIGRlLWJsb2F0aW5nIHRoZSBFQUws
-IGNhbiB3ZSBzb21laG93IGFkZCBhIG5ldyBkaXJlY3RvcnkNCj4gc3RydWN0dXJlDQo+ID4gPiBm
-b3IgaW5kZXBlbmRlbnQgImxpYnJhcmllcyIgbGlrZSB0aGlzPw0KPiA+ID4gPiBBbmQgdHJlYXQg
-dGhpcyBydGVfcXVldWUuaCBmaWxlIGFzIGEgImhlYWRlciBmaWxlIG9ubHkiIGxpYnJhcnksIGFu
-ZCBwdXQNCj4gaXQNCj4gPiA+IHRoZXJlLg0KPiA+ID4gPiBUaGVuLCBidWlsZCB3aXNlLCB0aGUg
-RUFMIGNvdWxkIGRlcGVuZCBvbiB0aGlzICJsaWJyYXJ5Ii4NCj4gPiA+ID4NCj4gPiA+DQo+ID4g
-PiBJTU8gaXQgZGVwZW5kcyBvbiB3aGF0IHlvdSBtZWFuIGJ5ICJFQUwiLiBFQUwgaXMgZW52aXJv
-bm1lbnQgYWJzdHJhY3Rpb24NCj4gPiA+IGxheWVyLCBhbmQgdGhpcyBoZWFkZXIgYWJzdHJhY3Rz
-IE9TLCB0aGVyZWJ5IG1lZXRpbmcgZGVzY3JpcHRpb24gb2YgYW4NCj4gPiA+ICJlbnZpcm9ubWVu
-dCBhYnN0cmFjdGlvbiBsYXllciI/DQo+ID4NCj4gPiBUaGlzIGxpYnJhcnkgKGhlYWRlciBmaWxl
-KSBpcyBnZW5lcmljLCBhbmQgaGFzIHplcm8gaW50ZXJhY3Rpb24gd2l0aCB0aGUNCj4gaGFyZHdh
-cmUgYW5kIE9TLCBzbyBpdCdzIG5vdCBhbiBlbnZpcm9ubWVudCBhYnN0cmFjdGlvbi4NCj4gDQo+
-IEkgZGlzYWdyZWUgaGVyZSwgaXQgaXMgc29tZXRoaW5nIGR1ZSBieSB0aGUgT1MgbGliYywNCj4g
-YnV0IG5vdCByZWxpYWJseSBhdmFpbGFibGUgZXZlcnl3aGVyZS4NCj4gDQo+ID4gVGhlIEVBTCBo
-YXMgYmVjb21lIGEgZHVtcCBmb3IgImV2ZXJ5dGhpbmcgZWxzZSIgdGhhdCBpc24ndCBhbiBpbmRp
-dmlkdWFsDQo+IGxpYnJhcnkgd2l0aCBpdHMgb3duIHN1YmRpcmVjdG9yeSBvZiB0aGUgL2xpYiBk
-aXJlY3RvcnkuDQo+ID4gSU1PLCBpdCB3b3VsZCBiZSBuaWNlIGlmIHdlIGNvdWxkIHNlcGFyYXRl
-IGdlbmVyaWMgdXRpbGl0eSBsaWJyYXJpZXMgZnJvbQ0KPiB0aGUgRUFMLg0KPiANCj4gSSBhZ3Jl
-ZSB3aXRoIHRoZSBnb2FsIG9mIGhhdmluZyBhIHRoaW5uZXIgRUFMLg0KPiANCj4gSSdtIG5vdCBz
-dXJlIGFib3V0IHRoaXMgb25lLg0KDQpJIHRob3VnaHQgdGhpcyBmaWxlIG1pZ2h0IGJlIGEgZ29v
-ZCBwbGFjZSB0byBzdGFydCBzZXBhcmF0aW5nIHV0aWxpdGllcyBmcm9tIGFic3RyYWN0aW9uLg0K
-SG93ZXZlciwgYSB3ZWxsIGRlc2lnbmVkIHJvYWRtYXAgdG8gcmUtb3JnYW5pemUgdGhlIEVBTCBp
-cyBwcm9iYWJseSBiZXR0ZXIgdGhhbiBzdGFydGluZyB3aXRoIHRoaXMgc3BlY2lmaWMgbGlicmFy
-eS4NCg0KU29ycnkgKG5vdCBzb3JyeSkgYWJvdXQgdGhlIG5vaXNlLiBJIHdpbGwga2VlcCByZW1p
-bmRpbmcgdGhlIGNvbW11bml0eSBhYm91dCB0aGUgYmxvYXRlZCBFQUwgZnJvbSB0aW1lIHRvIHRp
-bWUuIDotKQ0KDQo=
+On Wed, 27 Aug 2025 07:18:37 -0400
+Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
+
+> =20
+> +static int
+> +validate_input_color_table_entries(char *str)
+> +{
+> +	char *token =3D strtok_r(str, PARSE_DELIMITER, &str);
+> +	for (int i =3D 0; token !=3D NULL; i++) {
+> +		if (i > ((MAX_DSCP_TABLE_ENTRIES + MAX_VLAN_TABLE_ENTRIES) - 1))
+> +			return -1;
+> +		token =3D strtok_r(str, PARSE_DELIMITER, &str);
+> +	}
+> +	return 0;
+> +}
+
+The loop doesn't look right, it is looking form next deliminator at
+the start of the list? Normally strtok_r is used with a different pointer
+as the "saveptr".
+
+=46rom man page.
+
+       The  strtok_r()  function  is  a  reentrant  version of strtok().  T=
+he saveptr argument is a
+       pointer to a char * variable that is used internally by strtok_r() i=
+n order to maintain con=E2=80=90
+       text between successive calls that parse the same string.
+
+       On the first call to strtok_r(), str should point to the string to b=
+e parsed, and the  value
+       of  *saveptr  is  ignored  (but see VERSIONS).  In subsequent calls,=
+ str should be NULL, and
+       saveptr (and the buffer that it points to) should be unchanged since=
+ the previous call.
