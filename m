@@ -2,69 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE7DCA0EFF
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 08:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40ACCA0EFF
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 08:24:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 410C740292;
-	Wed, 27 Aug 2025 10:24:31 +0200 (CEST)
-Received: from fhigh-b8-smtp.messagingengine.com
- (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
- by mails.dpdk.org (Postfix) with ESMTP id E0C354028E
- for <dev@dpdk.org>; Wed, 27 Aug 2025 10:24:29 +0200 (CEST)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 14D497A0073;
- Wed, 27 Aug 2025 04:24:29 -0400 (EDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4DC294042E;
+	Wed, 27 Aug 2025 10:24:35 +0200 (CEST)
+Received: from fout-b5-smtp.messagingengine.com
+ (fout-b5-smtp.messagingengine.com [202.12.124.148])
+ by mails.dpdk.org (Postfix) with ESMTP id CE83B402EA
+ for <dev@dpdk.org>; Wed, 27 Aug 2025 10:24:33 +0200 (CEST)
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+ by mailfout.stl.internal (Postfix) with ESMTP id 130541D0005E;
+ Wed, 27 Aug 2025 04:24:33 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-09.internal (MEProxy); Wed, 27 Aug 2025 04:24:29 -0400
+ by phl-compute-10.internal (MEProxy); Wed, 27 Aug 2025 04:24:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm1; t=1756283068; x=1756369468; bh=dJK2+j3uRmeExPIraWwjZ
- Hnn2Rrsjxabb6Y3hU70hUQ=; b=rz/rwU8rtYryYqvsve/5RVZRCksqbRdwdSKZQ
- 0cwb6MlTMM106PtPNioOqYDmsHkQDm4LLY9gpk9msEnrQ1/Kg4vep7v5b5SMpBWy
- g/Nqb+b9IAvd5fyksgDLtdBe1ALREpAMAxdKnZUhJ6fE5m+kRZ4rDZaCR/llF0a6
- Tw27eRRb503WYkQB+l745ND73iASF3g8r+LUKBNKHXzMdcTb4a2oZQE4+fWdtBAW
- ePEdUcW75YH22qN6txWGdJ/QKqV1OUIwl6MhEaZ75PbYLpBch1w7xwgOsZHxwUgt
- bdv7KDzv36qMB/EP/ATMrIPc1eAWiJ8Dn3gLqf7f+AGAp48Ag==
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to; s=fm1; t=1756283072; x=
+ 1756369472; bh=Byxktb7u1r80/wllqJRfirNcz4kr/231xlsKLDyfa2o=; b=F
+ QHnJ2Cq9Sv3eXMw9PG8s0QQfwkjKr1jWMAjMzky1SFPIIAeOqNNc6p7U0jN1uvLJ
+ /zC0it5+MyxpDtN1kNGCxFV6yWQfPHOi+VZ3LSuZRfm1z42YjlsaKD10SShu70Et
+ cU+c+hFneyagOyD27em484SmqBRktV2eCCnKXgWoLI5foFvMqB4i9AcFu2V49O08
+ te1W27A2sAjeWU1NvjAipzU66tLuFzWQMmTI0hz2lzx5AFwdILum6f37NbtP+lLr
+ 5dcOcqZGu6pTH7YJOOAI64sHNthndoknn5AphSj9c1ui8TCunUTUz6pA+qFFA5Ck
+ 7QmLgeW6/KsKXDH2ep4tg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:content-transfer-encoding:content-type
- :date:date:feedback-id:feedback-id:from:from:in-reply-to
- :message-id:mime-version:reply-to:subject:subject:to:to
- :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
- 1756283068; x=1756369468; bh=dJK2+j3uRmeExPIraWwjZHnn2Rrsjxabb6Y
- 3hU70hUQ=; b=gmcbEjmzCDQlk6xbyE6fpv3G0tdzRFIwVfXYgBYzSIr3zY6bAs/
- 4fUzhqF9GSKS5b1LDdScc00eZ99IWDrG6e44dBO16pyO8buXVjcPOHBHZwKFcHqQ
- Gc0c8+Wg3982oMEu9/lMu8XpxWII7K00WVQJOjUlplVo0RcpK4xn6bDrZkx8gsqc
- xJN3wNsv0jSujX7fytIMBGqWen5S+vQ1Zg6kcN38huDRb6RQHB6H2r6m1DseIEUY
- HoE5CEHnpsR616etrMySFztqLISUxKVxkHvQXSdXIR2zun4cXdLZ9cRmeU9TzlMI
- hTnkh7pgopae3Ssn1KY6E0yMBpmjgmIOHMA==
-X-ME-Sender: <xms:vMCuaO4uyFB85hX9dCxuwOMX6ZR0jdCkZ9z-Rl9NYq2S202RGBi-iA>
- <xme:vMCuaDKcfu-MP4mSv4rRu6jdIJ3v9g0tpWvBYss3qV2bMVJpgVO5seRKcuib7NXg5
- Jft5_9O4kPbubfVpQ>
-X-ME-Received: <xmr:vMCuaOGB9bnKEnVjfrK4-IKdXvCgowmqKLdCGz2mxZn_67P-OFMLpZQ8D9kxJxFOYdzgK0YHG05TBFePDKbvIV0430HinLM>
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+ :x-me-sender:x-sasl-enc; s=fm1; t=1756283072; x=1756369472; bh=B
+ yxktb7u1r80/wllqJRfirNcz4kr/231xlsKLDyfa2o=; b=PGVcD6By3yCGF52yi
+ f5moVLxxXuaX5J0bAaHPu3PLf6QoePQ8ePOxDFdgB0T/9RdPCoojIfrJczHQebZl
+ NWSj19iRkI2PY5pe+cg8PzIQDbIXpT45FIWQvzyUI0cpn7E0qqA0wp6mfklXt4rB
+ pw38xgp72lzlgwjENRerKgx8g0FpAUzGY+nUKm+xkD1ozWyZvzUywt9jmUSP3kLf
+ wHIXKSJL8gcMTr32EI72aySL4ntEGJfhwS4T35bhGVpzJ4t2pO7bRejprpyYkwlg
+ gBAxRkD13U0sEYVDrpYRbDAdPCEuXr9n/lf6h4Azso4hQXmKV9MLdlPqubR5BwAa
+ /pQ2w==
+X-ME-Sender: <xms:wMCuaD62II0Jwm-aiBjbr1xtBAdEO_clW5jsn8Zx1N4nPcQV8PXUfA>
+ <xme:wMCuaOJV0E4rTgv-_WzuPsEf-1bIUgcXCr9OxKTN7ONdKG6euB-LmlF6NjipIV6Wn
+ YjmKgSQTfWZH_ZS8A>
+X-ME-Received: <xmr:wMCuaMI8ybyp2Ih0NWGVusvdf80NMk3q8uaqf3sVZg-C90PmeA8APU70ZjIoSuibGby76ddbkkJ_hAj3uyhg6BdF4uYTHOM>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeejieeiucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkofgggfestdekredtredttd
- enucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhj
- rghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpedvledvudehvdduudevuedvveehge
- duleegiefgjeehudehtddtgeduffejiefhgfenucevlhhushhtvghrufhiiigvpedtnecu
- rfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpd
- hnsggprhgtphhtthhopedupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghv
- seguphgukhdrohhrgh
-X-ME-Proxy: <xmx:vMCuaBXexhVInqj8oY5imlvox6Swn6B8qESuRmuGhZOS9a_sPwd4Iw>
- <xmx:vMCuaBjuBEuUXvtCw3boha3Cn8mp0YF7mfpl6yxxJ11lgxWAoPMfEg>
- <xmx:vMCuaKTlR04bHdkMrKcBerBk2n2qGo0A0o3pDVWUng51Y5yRGAqu8A>
- <xmx:vMCuaMELyZnJbXRNkr6d52AzOQNgjg80FEfhxmw2AwZ28iAuQr9dgQ>
- <xmx:vMCuaHJoci1GCSdPVxPY9iPR0sqldDDP98UBBwhcZwq6SX-YjbObDocx>
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
+ hfeilefhtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
+ htthhopehmrgigihhmvgdrtghoqhhuvghlihhnsehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:wMCuaMUgZqEo6HCDOfzKj01SwMxpCsL3RI7ZTkVAO7a973Z43p1MRA>
+ <xmx:wMCuaOg6Y63Jd0cYWbPEnB4B55KiFp7wtlQQdfn_r5XxTSYYZ83A2Q>
+ <xmx:wMCuaH8C02F5VCipXKAju8DUfaF8noBnivBRRKuR3sXD7lqH11EOjA>
+ <xmx:wMCuaIAVwkeYFxdhNdfFrHb9VLUUaJrjuO1ltPPMp-OQxaqth9nnbg>
+ <xmx:wMCuaFnzy5GZmf-BFtil5MA2qbNMLEPVqF79m8yK-lGqKOoko51byzTz>
 Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA for <dev@dpdk.org>; 
- Wed, 27 Aug 2025 04:24:28 -0400 (EDT)
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 27 Aug 2025 04:24:31 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Subject: [PATCH 0/6] devtools: improve Linux uAPI script
-Date: Wed, 27 Aug 2025 10:21:43 +0200
-Message-ID: <20250827082413.1417226-1-thomas@monjalon.net>
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>
+Subject: [PATCH 1/6] devtools: remove superfluous curly braces in uAPI script
+Date: Wed, 27 Aug 2025 10:21:44 +0200
+Message-ID: <20250827082413.1417226-2-thomas@monjalon.net>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250827082413.1417226-1-thomas@monjalon.net>
+References: <20250827082413.1417226-1-thomas@monjalon.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,20 +86,102 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The main goal of this series is to check Linux uAPI headers quietly.
-While doing so, few minor improvements are done.
+The use of curly braces for variables is inconsistent
+in the Linux uAPI script.
+It is chosen to remove all of them if not required.
 
-Thomas Monjalon (6):
-  devtools: remove superfluous curly braces in uAPI script
-  devtools: remove superfluous fallbacks in uAPI script
-  devtools: move uAPI processing into functions
-  devtools: remove unused variables in uAPI script
-  devtools: make uAPI check exclusive to other options
-  devtools: add quiet mode in uAPI script
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+---
+ devtools/linux-uapi.sh | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
- devtools/linux-uapi.sh | 146 ++++++++++++++++++++++-------------------
- 1 file changed, 80 insertions(+), 66 deletions(-)
-
+diff --git a/devtools/linux-uapi.sh b/devtools/linux-uapi.sh
+index ccd8b6816e..2000152607 100755
+--- a/devtools/linux-uapi.sh
++++ b/devtools/linux-uapi.sh
+@@ -30,7 +30,7 @@ download_header()
+ 	local header=$1
+ 	local path=$2
+ 
+-	local url="${base_url}${header}?h=${version}"
++	local url="$base_url$header?h=$version"
+ 
+ 	if ! curl -s -f --create-dirs -o $path $url; then
+ 		echo "Failed to download $url"
+@@ -61,12 +61,12 @@ import_header()
+ 	local import
+ 	local header=$1
+ 
+-	local path="${base_path}${header}"
++	local path="$base_path$header"
+ 
+ 	download_header $header $path || return 1
+ 
+ 	for include in $(sed -ne 's/^#include <\(.*\)>$/\1/p' $path); do
+-		if [ ! -f "${base_path}${include}" ]; then
++		if [ ! -f "$base_path$include" ]; then
+ 			read -p "Import $include (y/n): " import && [ "$import" = 'y' ] || continue
+ 			echo "Importing $include for $path"
+ 			import_header "$include" || return 1
+@@ -85,8 +85,8 @@ fixup_includes()
+ 
+ 	# Prepend include path with "uapi/" if the header is imported
+ 	for include in $(sed -ne 's/^#include <\(.*\)>$/\1/p' $path); do
+-		if [ -f "${base_path}${include}" ]; then
+-			sed -i "s|${include}|uapi/${include}|g" $path
++		if [ -f "$base_path$include" ]; then
++			sed -i "s|$include|uapi/$include|g" $path
+ 		fi
+ 	done
+ }
+@@ -106,7 +106,7 @@ check_header() {
+ }
+ 
+ while getopts i:u:ch opt ; do
+-	case ${opt} in
++	case $opt in
+ 		i ) file=$OPTARG ;;
+ 		u ) version=$OPTARG ;;
+ 		c ) check_headers=1 ;;
+@@ -123,9 +123,9 @@ fi
+ 
+ cd $(dirname $0)/..
+ 
+-current_version=$(< ${base_path}/version)
++current_version=$(< $base_path/version)
+ 
+-if [ -n "${version}" ]; then
++if [ -n "$version" ]; then
+ 	if version_older_than "$version" "$current_version"; then
+ 		echo "Headers already up to date ($current_version >= $version)"
+ 		version=$current_version
+@@ -137,7 +137,7 @@ else
+ 	version=$current_version
+ fi
+ 
+-if [ -n "${file}" ]; then
++if [ -n "$file" ]; then
+ 	import_header $file || exit 1
+ fi
+ 
+@@ -145,7 +145,7 @@ for filename in $(find $base_path -name "*.h" -type f); do
+ 	fixup_includes $filename || exit 1
+ done
+ 
+-echo $version > ${base_path}/version
++echo $version > $base_path/version
+ 
+ if [ $check_headers -eq 0 ]; then
+ 	exit 0
+@@ -154,7 +154,7 @@ fi
+ tmpheader="$(mktemp -t dpdk.checkuapi.XXXXXX)"
+ trap "rm -f '$tmpheader'" INT
+ 
+-echo "Checking imported headers for version ${version}"
++echo "Checking imported headers for version $version"
+ 
+ for filename in $(find $base_path -name "*.h" -type f); do
+ 	header=${filename#$base_path}
 -- 
 2.47.1
 
