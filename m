@@ -2,86 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 743C6CA0FED
-	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 15:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC50CA0FED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 27 Aug 2025 15:18:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 876784029E;
-	Wed, 27 Aug 2025 17:11:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 882EE4029E;
+	Wed, 27 Aug 2025 17:18:08 +0200 (CEST)
 Received: from fhigh-a7-smtp.messagingengine.com
  (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
- by mails.dpdk.org (Postfix) with ESMTP id 02F3340292
- for <dev@dpdk.org>; Wed, 27 Aug 2025 17:11:39 +0200 (CEST)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 73E151400157;
- Wed, 27 Aug 2025 11:11:38 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-10.internal (MEProxy); Wed, 27 Aug 2025 11:11:38 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 2355640292
+ for <dev@dpdk.org>; Wed, 27 Aug 2025 17:18:06 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id B50E71400163;
+ Wed, 27 Aug 2025 11:18:05 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-04.internal (MEProxy); Wed, 27 Aug 2025 11:18:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1756307498;
- x=1756393898; bh=rNzajDAdY2aXGposkMwGvQsvhOAaAtNhSkacSd/th5w=; b=
- kwTzXj18YSGvAczuKk4Eirfau5ZhxHSelopNveeIaiqe6eufJGTkv69hePqdT1wx
- lXM1ayz+4R8TjZ4t2Obc2TFGmr9U8jBepqohEe/8EIVQJ/0eln5OUCKAfWUmvlrR
- 0LRoeFd14kEw4pWTYQVnQeX5Zowfo49qVOO0Rtjj341A0j4AopVIT4wyQc+/OeT3
- P7C/bf7fmhGB/c3TF2TF5+96bQ4KWcN0AsX2sbZs4cENa/3dMUHkb1gZZ/mryzG6
- 4qmu8pDEqNxJDu9FA43swUS4lpDGE6jXFiaj/sL6JE5nmavVI7wg8Zaod5/J2Sv2
- ADohGhX0HoN5lszVDRpELA==
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to; s=fm1; t=1756307885; x=
+ 1756394285; bh=J3EJFkx1BfD5X1wMoW9+hpeRmX2WTrO4tZJ3BsETtRk=; b=n
+ wiOELEWvtiq0WLYfc46cG/wULD3GOSzg5ej8RzbHeUFBqumNpMUmIXEzOqrsyIQD
+ 7pVuzjcGyfTkaVHO3RYBMwGntStEn6+l4262W2XIcXehFkK6xca7Qad28N0O9vmr
+ mTZIVlxfhAOWVpe+2sHMlpxdeRTki3Uwh6X9/WA3khAQcdKZidpf7MxYsg8Y5jXh
+ IaiV+z4EkSHhk2YUL3P/+BnwswJhuVteok+MRzd22BOVSJwyYIMJD7Rt/LY0WQjD
+ wMttvJP9f0fLC1fzINYUicuLz8tgGSxw9YOFF1nz1uPfy22wmtP/XogcA8rchwyA
+ Gj8D722W2P8pvJdZatjTA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756307498; x=
- 1756393898; bh=rNzajDAdY2aXGposkMwGvQsvhOAaAtNhSkacSd/th5w=; b=J
- ybwlhxfWQ4lcqDMXt3V64tEQGTfz+89F5mZR30o9TjpgHnZSgHLRgqW+O0hgrQIw
- zws4W3LfsCah7hTqYa2PN0dodsyjXJ110MwMdwa6Mu8j66Ouah/Aknxs1sDVs19X
- 7OPJfUfKF4fYYaYhb7cgjUZjgs6oY3TJai/LZpPw+snT1K/BCVMgpRGF+ILTR5fv
- R5Fk2MF8PZgbyQp4eTEskBf3vi/o2JToqA7dl7VPtzU7vjasB7tFeQmbcb+bPRgS
- 5vU5FdQT5U9XL6+sjUBwAib5lzZlydpusaKdzAbxGEe1EJh95qfN3Qs1I26Hcq4y
- VPpCxAS/w2r6hSCm1an2g==
-X-ME-Sender: <xms:KSCvaFRU17MzkuB-4yD3IxvmRN5NW9eV9fHnH4aL5HX8on4liRiJVQ>
- <xme:KSCvaMunG_TeoTwMypLABt6spBANaV6V66qziEkPChrKL2IZU-N1xPT9QWxtQQwYa
- 6ali85QpM-i4VTtQw>
-X-ME-Received: <xmr:KSCvaNIUHHnXnpVukf9SOoiKpeXu-tDs7VbWZxfnX5rkTuLZ5RWKGAAIYSh5QDmeS6iJtSY2-O3bRO3lG80KA7nQ4g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeekgeejucetufdoteggodetrf
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+ :x-me-sender:x-sasl-enc; s=fm1; t=1756307885; x=1756394285; bh=J
+ 3EJFkx1BfD5X1wMoW9+hpeRmX2WTrO4tZJ3BsETtRk=; b=Ndz1TVFVN00NEAZJu
+ gkVHK/jGy6G1l1VTDu2yaWYbgua+UVIdipEZcYi0j+7sNrL/cCkZZbZc7GnT7Iaw
+ tuW77FI6t6W4+UJZL/t8kitPgbievz2hcE6Rwlkj2oZz75cLatKU/TXkQ2r2essS
+ zSVOV2gi7Va6VU21wcevaU1v0vhRasSAcoatO+y8n+Odvviafh8H52CNz93YW6J3
+ tICP7kkUSaXAEyWPR81f8lrdKtaCIBE5aAhCe4KQcobA6S6ssF0srEK6KKmFsHPy
+ 6GLVLnrAkGA31fUVUI6m+KKe+5sezB/N+YFwMQmeaL4o4/X+Cqz0TKqe8VljIy8C
+ KnvBQ==
+X-ME-Sender: <xms:rSGvaOwvV1qwVSyZ6b9CYANYl8PWFKnvOaeb0QMfQ0rjR2G1HeixxQ>
+ <xme:rSGvaPh4vLDzmO6KeibF-FxwmMKoAo8L4-5YNVVRHhu60hSj3t3NMXE7TOBy8xCnl
+ UmQjsopVhWGMZ1dnA>
+X-ME-Received: <xmr:rSGvaCDxIQIDtG-USVnocgtF00Ss7W8sGQ_ZhUGkP5oCRVhwjHFAF50d8dSrScPkhGx5mU6KA4TrkOhX8jZKiakMHoZ1bAI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddujeekgeelucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
- leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhgrthholhihrdgsuhhrrghkohhvse
- hinhhtvghlrdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhrkhhplhhu
- mhgsvghrrdhorhhgpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehinh
- htvghlrdgtohhmpdhrtghpthhtohepmhgssehsmhgrrhhtshhhrghrvghshihsthgvmhhs
- rdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtoheprhhorh
- gvthiilhgrsehmihgtrhhoshhofhhtrdgtohhm
-X-ME-Proxy: <xmx:KSCvaBnkBGIAVmy69YlhS5LV2fQcSWDzc47vZ_zIlBnRMwTN7SBxlA>
- <xmx:KSCvaGIE_flqJ8Vb2Z1uaFnEyY75psX7BB35vyI80TZzs3Glok3OuA>
- <xmx:KSCvaO64eC8M22kxWJ76E6xDRJs97ts9PDcknuzDVwFx2NugcHAKRQ>
- <xmx:KSCvaC2wJBvvVten3hs6s9J4M2iUNY0XS-T--87LPiMS3A4j_TKT7g>
- <xmx:KiCvaJu-AYE34LxMHW5oDbwzzIHnKSbVf7OD7Hsi7GT7ueSikiJThSXa>
+ rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertd
+ ertddtnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
+ ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepvdejhfdugeehvddtieejie
+ egteeuudfgjeeukeeiledthfetveekhefhieelhfdtnecuvehluhhsthgvrhfuihiivgep
+ tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
+ gvthdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+ uggvvhesughpughkrdhorhhgpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsoh
+ hnsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:rSGvaMtg36RoFBt6bKOZpWLI-xUGhErxA77G4NZylGyO7dY3Ucfzhg>
+ <xmx:rSGvaHbhEFEKeVUwO7UuOWcYzGqZ9l8a6T_bNaTcyL61eALEakZeDA>
+ <xmx:rSGvaPWATsWBzwuf19ppvYmhr0W5k5jei3qZOW9q0iriLoWFziUlDA>
+ <xmx:rSGvaL7xvH_88buQDQNyvxN7G3PHx2D8nZiU4l5FB7ILGl7ikkEAFg>
+ <xmx:rSGvaNwiuRVTz9UxeMnQpaRYodkGoGJYctK7ZxwJKMS8fxm5YxQULRol>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 27 Aug 2025 11:11:36 -0400 (EDT)
+ 27 Aug 2025 11:18:04 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: "Burakov, Anatoly" <anatoly.burakov@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, Tyler Retzlaff <roretzla@microsoft.com>
-Subject: Re: [PATCH v3 0/9] introduce common FOREACH_SAFE macros
-Date: Wed, 27 Aug 2025 17:11:34 +0200
-Message-ID: <2404222.ECZNHGQPT7@thomas>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FE79@smartserver.smartshare.dk>
-References: <20250127180842.97907-1-stephen@networkplumber.org>
- <e9017361-f29b-45da-a1b0-cc745b8c906f@intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FE79@smartserver.smartshare.dk>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com
+Subject: [PATCH v2 0/3] fix build with MinGW 13
+Date: Wed, 27 Aug 2025 17:16:40 +0200
+Message-ID: <20250827151759.1448018-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250813152829.457463-1-thomas@monjalon.net>
+References: <20250813152829.457463-1-thomas@monjalon.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,73 +86,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-27/08/2025 17:08, Morten Br=C3=B8rup:
-> > From: Burakov, Anatoly [mailto:anatoly.burakov@intel.com]
-> > Sent: Wednesday, 27 August 2025 16.14
-> >=20
-> > On 8/20/2025 8:42 AM, Morten Br=C3=B8rup wrote:
-> > >> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > >> Sent: Monday, 18 August 2025 18.34
-> > >>
-> > >> On Wed, 12 Mar 2025 16:15:29 -0700
-> > >> Stephen Hemminger <stephen@networkplumber.org> wrote:
-> > >>
-> > >>> This series adds common macros for safe iteration over lists.
-> > >>> It is a subset copy of the macros from FreeBSD that are
-> > >>> missing from the Linux header sys/queue.h
-> > >>>
-> > >>> Chose this over several other options:
-> > >>>    - let each driver define their own as needed.
-> > >>>      One Intel driver got it wrong, others will as well.
-> > >>>    - rename all the queue macros to RTE_XXX variants.
-> > >>>      Seems like useless renaming and confusion.
-> > >>>    - Several distros have libbsd package with the correct macros.
-> > >>>      But adding yet another dependency to DPDK would be annoying
-> > >>>      for something this basic.
-> > >>>
-> > >>> There are more macros in FreeBSD header that could be useful,
-> > >>> but we can add those later as needed here.
-> > >>>
-> > >>>   lib/eal/include/rte_queue.h              | 174 ++++++++++++++++++=
-+++++
-> > >>
-> > >> Revisiting this and wondering about naming...
-> > >> The file rte_queue.h is not really DPDK (ie not related to runtime
-> > >> environment).
-> > >> Thinking of calling it bsd_queue.h as a compromise
-> > >
-> > > Since it replaces sys/queue.h, then maybe sys_queue.h (or rte_sys_que=
-ue.h).
-> > >
-> > > But more importantly:
-> > > It is not really DPDK, and thus shouldn't really be part of the EAL.
-> > > So here's an idea:
-> > > As part of de-bloating the EAL, can we somehow add a new directory st=
-ructure
-> > for independent "libraries" like this?
-> > > And treat this rte_queue.h file as a "header file only" library, and =
-put it
-> > there.
-> > > Then, build wise, the EAL could depend on this "library".
-> > >
-> >=20
-> > IMO it depends on what you mean by "EAL". EAL is environment abstraction
-> > layer, and this header abstracts OS, thereby meeting description of an
-> > "environment abstraction layer"?
->=20
-> This library (header file) is generic, and has zero interaction with the =
-hardware and OS, so it's not an environment abstraction.
+After an upgrade to MinGW version 13 on Arch Linux,
+some compilation errors appear in PCI, mlx5 and bbdev code.
+This series fixes them all.
 
-I disagree here, it is something due by the OS libc,
-but not reliably available everywhere.
+Bruce doesn't see them with MinGW 13.2 on OpenSUSE Tumbleweed,
+but perhaps just missing some dependencies.
 
-> The EAL has become a dump for "everything else" that isn't an individual =
-library with its own subdirectory of the /lib directory.
-> IMO, it would be nice if we could separate generic utility libraries from=
- the EAL.
+Thomas Monjalon (3):
+  bus/pci: fix build with MinGW 13
+  net/mlx5: fix build with MinGW 13
+  bbdev: wrong fix for MinGW 13
 
-I agree with the goal of having a thinner EAL.
+v2: make status_str variable local in bbdev patch
 
-I'm not sure about this one.
+ drivers/bus/pci/windows/pci_netuio.c      | 6 ------
+ drivers/bus/pci/windows/pci_netuio.h      | 4 +++-
+ drivers/net/mlx5/windows/mlx5_ethdev_os.c | 2 +-
+ lib/bbdev/rte_bbdev.c                     | 8 ++++++--
+ 4 files changed, 10 insertions(+), 10 deletions(-)
 
+-- 
+2.47.1
 
