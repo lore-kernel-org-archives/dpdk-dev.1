@@ -2,159 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 644CAC8303F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 10:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75293CA0EED
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 12:38:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4E3DD402DC;
-	Thu, 28 Aug 2025 12:35:44 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 942ED4025A
- for <dev@dpdk.org>; Thu, 28 Aug 2025 12:35:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1756377343; x=1787913343;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=dUDQYXHIqrLApFKPNAH65ZwKM3/k/fbxy+/BxQ5JwcI=;
- b=gbPkBcmkiBIOh1YGM3fT+TfnGnbkEXX2tHHGf9gLRwaV6KFWP+J1x+Ro
- vAfbZ0uSIPaxQztTdm6U8QGLxbNNswm6T2rqyzuEpBa0jArhEcKI8Pzv/
- l8Wh4ACFgYeZ/m5BlW9IonEOIM+lZnkLZ233YVXQJYcXKqQFdHiM+5RIX
- wHenIlzzMfIravVqkWSfnmO6R+ZgAQR+119LWtEv6GewSnmMNGiEdDBNC
- u1vYkeX505VxMViykRAbQR6ZSz44aaz4JVcaSrrxInG/yyv1lHCBJE93b
- UI175qdNghWjBbnKz7ruXna+9xIeFgQwZO7Ykjwt2xprELJjNy8IVqiJz Q==;
-X-CSE-ConnectionGUID: 9odVmtvVQaCEbwlqwCk47w==
-X-CSE-MsgGUID: M26krJ4XQeK/q9rAzLbq6A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11535"; a="76242732"
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; d="scan'208";a="76242732"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Aug 2025 03:35:40 -0700
-X-CSE-ConnectionGUID: gqLiU/8tT3eOuq5MRNSAXA==
-X-CSE-MsgGUID: GUHAZyFnR3O3Tlx/gK2YPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,217,1751266800"; d="scan'208";a="193742006"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Aug 2025 03:35:35 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 28 Aug 2025 03:35:33 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 28 Aug 2025 03:35:33 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.71)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 28 Aug 2025 03:35:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FilOSy/2V2KJ5TR23w/pw/GhzenWUer7LZ+FS3Lp0oAnnPb3wUO6QwVUEbnEMv6s5YSn15F+KtPwGN33R6AMG/DMwSyG+v3HMKg9d/cBp9RxrkPBwPlCgxBALFi3OeuVmJDTSoUYEa7nnD7bc4qbMHQ87WPt8JlmZ8TYw0bqMVfY+7fvN8kY/pu4GnO8O74Pez0qtTOXJoHAh1+t1jJ2JYlSlvdFeByY/02n0bs9MsS+HaASQad7s2FvuGRGk9dimMU14zs5/ZP61WEVqdU+v0YhlD8w0Hs1dSQxEmWpz+rnh2ppQxR4OJBtxDBKTPJSFvSDNgOs1qoXrM9AiN+4vQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fhy1GQrV0T46Gt34xtw4ELgAk/n7lLz9mJjX3N93mOg=;
- b=iQPOs/GfQ5DK/xUiG5IPu1kXuH0D159VTmmu8UtLVmbqjHP/WnPhEpC5RwoO93cKGPZPDgi0n9rarg5Bj6bavt7W7YRhhgtO8O/0hi57Bk/L2NxdF5MW70GsFTbSday15upbh9H8F3dz9Etuaj2B5p8deAjkGK/6vdxvBj1uF/TA8FbxjWzCOER+3Qj1MNUz7BI/sP4GkVbZlDZewhI+AV17XH8EE8mGLDd1Hw9pUodHffo45YQ8b45ksRxtE679TnC9o6wHkgJqHaCPvTaTcqUrRaRWnQDsxdtJ+Z+k59yT5741s75bVVY4uoFlGtG3quGXcfjHmdk6QT6AQ5G/6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by BY1PR11MB7981.namprd11.prod.outlook.com (2603:10b6:a03:52f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.13; Thu, 28 Aug
- 2025 10:35:29 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9052.019; Thu, 28 Aug 2025
- 10:35:29 +0000
-Date: Thu, 28 Aug 2025 11:35:24 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Ciara Loftus <ciara.loftus@intel.com>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH] net/ice: make link state configurable on device stop
-Message-ID: <aLAw7JMyHARI_1Z4@bricha3-mobl1.ger.corp.intel.com>
-References: <20250828102305.1522036-1-ciara.loftus@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250828102305.1522036-1-ciara.loftus@intel.com>
-X-ClientProxiedBy: DUZPR01CA0138.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bc::14) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 6780D4025A;
+	Thu, 28 Aug 2025 14:38:31 +0200 (CEST)
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com
+ [209.85.219.49]) by mails.dpdk.org (Postfix) with ESMTP id D3ABE400D6
+ for <dev@dpdk.org>; Thu, 28 Aug 2025 14:38:29 +0200 (CEST)
+Received: by mail-qv1-f49.google.com with SMTP id
+ 6a1803df08f44-70dfa0a9701so3848026d6.2
+ for <dev@dpdk.org>; Thu, 28 Aug 2025 05:38:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1756384709; x=1756989509; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=kCLbSqoGuQS+JljYG3C1Cp6P+XqS/8EQPLt5t9NzMJg=;
+ b=Z1cLFaroFTf7j3JOrrlWH5hpzDEKyQlImuAFmtbLyzW/OMNxE3Pp07pdxlD3NpIrrJ
+ fNBYMdFhFRCJABHuiSDCs1K55XFAnZXQ837WyZptKYDq2+EWpkjeGkVrikYf+A0xoory
+ uZdznS88kkfasH/GQehIwWbK3v0VUYLlKexCw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1756384709; x=1756989509;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=kCLbSqoGuQS+JljYG3C1Cp6P+XqS/8EQPLt5t9NzMJg=;
+ b=WTw/GEOv9mAis2liiITbJgFcgVP/uDZe+ZpBguHWlf1sdClCoRKNKfB5IbbLbs1ME5
+ jPTN+rj/PHiksCtS9CJCOtJklFz1auBiSELrMByACotZHo0lBrvLa4T0SKxrFMTKW3NY
+ TTfMfgth/aeUaDHA98S4T+siU3UJS8ejenDmef4eoL5Iq2uhUxxO6Qj6O1F/dvXy4f2/
+ ZGVJ7rGop8Iw9olKJLFdePR1g60riZ6+G7BL09OA8Z00HP1xXJsikafT408M7V3HKC0t
+ bKPia/LI6RAZ4HucOdfo9deHth/MMUfkw4tCXCzFAy7iLcwqIAa3WXqOMMQ6YSKFVAxm
+ 7PYw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUHYvt2cFmTiMwVH3znQ0tGr0/DynIC2cstngPpkXbnC3/sjKW5KonTIzaQSA4Fz/7STUA=@dpdk.org
+X-Gm-Message-State: AOJu0Yw/1NwMHp9rcWU9pZX77bqLbldG2i2WvpqzWTuO2P0eNrgcUv3s
+ AofM2vM32Nk7Mccgb+63RUWh2cvIVnHUTQyWTPB7U6c37KKkj3UHxgsbTEkWvwM7Tcw=
+X-Gm-Gg: ASbGncvIU9H7p5gAkU4iWNSCBYAWSk8r0KdSieGFF7PuBKkLYM+DpkhBS5hqo00rb8h
+ V/G8+rJTP4REG4Mf+FkpC0VvvGGHgtAZTCTEleHz/U4UBxTQZUmRa7k172Yl/TgjYHB6K396zI4
+ CPWBkPTzdbgh3eYgM2XHyFuQIRYyJTaSPQrKgHrN5lTiP5szk1x+rv8G0tOo8EXb24io2TWDQJR
+ D6rVDsEL1ZISh4ogOT9VpCfkf0L7gFNIkQ9eNeBEUtF8xkIuFbOD1jXYQCAYq0ZwtN8Gy0+6O/I
+ bmyIT3zcfPUeWMdThAXAQi91K11wPI1lY7HM+UxZ/5L7AbK8cdTKiOht/YtD81AI1KW4PzdOgHF
+ WHIaO8BEm7qCYrvuc2VNOBwFp0CruTy7cro6ci5TqJM5QTQ==
+X-Google-Smtp-Source: AGHT+IGhj3zxFcawSAzM/ny75qy3mVt6VYl1ZdIhEmz2X+93TXw65VM6BrYFqw6PNVpe3OpiVUHejg==
+X-Received: by 2002:a05:6214:29ee:b0:70d:cbbc:ad02 with SMTP id
+ 6a1803df08f44-70dcbbcb087mr132627736d6.3.1756384708907; 
+ Thu, 28 Aug 2025 05:38:28 -0700 (PDT)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-70da72872bbsm104805726d6.49.2025.08.28.05.38.27
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 28 Aug 2025 05:38:28 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: luca.vizzarro@arm.com
+Cc: abailey@iol.unh.edu, dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu
+Subject: [PATCH v3] dts: enable port binding on the TG
+Date: Thu, 28 Aug 2025 08:37:58 -0400
+Message-ID: <20250828123758.20451-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250808182152.356879-2-abailey@iol.unh.edu>
+References: <20250808182152.356879-2-abailey@iol.unh.edu>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|BY1PR11MB7981:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4bc1b67c-0755-4b7f-041a-08dde61e9b9c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Bok6chXcLAvtWJg3RHCxrh9nOl7c9kEIBGyT/A0kNqZf5aVgbRY8R1OVkcGE?=
- =?us-ascii?Q?P5JLK80p/I5nnz97ghCQmhHswqT8B6j2TonuZ9nRl4C/DS+qZzCTuovPzm3F?=
- =?us-ascii?Q?VN5PsuRrz6BXTmwVIx6Ot0ZFWLfbrL2fJpSopr0M5JlxzTDGtGyhI/WGOUVe?=
- =?us-ascii?Q?E707kYIAfdaWFs9cPqyJcSAJ0ouVuuL0NzuVC911/9ng0Q6h1rDu8REyqu9+?=
- =?us-ascii?Q?NvUpG8r2VAnG2fcsyqTBX5UUdOe03jkjJ7hyqbPM1wbYt0xWRg/AodZVKFqu?=
- =?us-ascii?Q?Br3UjiJELvPkmqHuzoYk0xT6FitUqNr7ZLMB8Xx33PUhcxaFy6j2Cns8iNEn?=
- =?us-ascii?Q?oyyZserj0+w7/Pz6xtIGfAHLbbWHm6mcrInEjU0g50Ofrp1D2rlF567mYd6O?=
- =?us-ascii?Q?xDLAgIxeZjqZZNCj2xOFsYA6IOWqllpdz6kKQLfuuNtQsHSQe5VGH9Lf9ji5?=
- =?us-ascii?Q?TsnGf1GKINyUtYQShJveD3yAn2saSss6gAzrlOFrc3yBLY26mT5z9a7Btol0?=
- =?us-ascii?Q?JwC1xFniAqYXbYI17VXXo8X76h1OIx5/+BmSQeai8/FacyjHS/+lFUhQQkWM?=
- =?us-ascii?Q?T06TPu2gPFZ98yEkCyi7fhERJR7S1fWY5RkuXxXOMGxyVbIOAdGuxsUsOMr0?=
- =?us-ascii?Q?EyUA0ROH/CMkpXoAncxyV+zPfcBaQ+9WiYPIOoho9UaHwmJ2IzirnkIec7sa?=
- =?us-ascii?Q?zXZCG5WCEIGmiP7KbCdHlxk780ayvUBokwGQmXctPHbY9GgOCdxwFM/0cGsc?=
- =?us-ascii?Q?phbqaxaEwEuyxJSs7Fe7Va+NBGoGTuyz8+AtFPUWjTxiKbmGiglMGHftPUbb?=
- =?us-ascii?Q?hfiSMUxDXoVgco1dGc3RaIF6WxaJvYD3288NkTOGEBfDwKdXmmOBVMSgKGBz?=
- =?us-ascii?Q?dP1wi4sUpMmfvMxaAjPnFpgdX00LT9wFnojn9h4oK+abdJ8CM9uQPZhuYC79?=
- =?us-ascii?Q?XMaIXGIFNWaS5M8TCa+KQUgUQnYA7Fglxw0IsX0NOmumnwl49syERxf858iC?=
- =?us-ascii?Q?IQnQUOOcPzdMZOvOEPhHk5GIBa6knnuQuwylzFIPSc7OjUGtWp5YlXvGPQ4R?=
- =?us-ascii?Q?fEl8w1lyYI1h4EaKiTCHbUn4NX0nABDM98KyTQhYAFCByU1yygc53gbl17yE?=
- =?us-ascii?Q?gCjlVV+0smC6xxxOJJ+b3qEoFEvsHzIUSSkybEe73f5whumu3UBNTNktXznH?=
- =?us-ascii?Q?dN0PdOYUt9A1jMle5FUf5YmKzrvOMshO/tMqig/Qg0rvLX2pzIhBbLqjOuK9?=
- =?us-ascii?Q?aYUwY2RpNVpCUPflAbJnXFppGmpTPcu+760/XwSr9GsBLjuDTJ/hTntccHjQ?=
- =?us-ascii?Q?nChJ1rM8NxujydKCRGOBd6rudllpnTd2V/pbZmPDOkA6HUYnvny2mXl+ZpD+?=
- =?us-ascii?Q?U5bjoZ3Do5yLC98ryA8UxGxD8H4AKO9FldwXkuoChQVc2NqR4w=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1I3b6HdRQPo2pOzyaFh+wlzVzxKk+f7b7nbLVxkCtzmRjv8gHQV7cwCzkqxK?=
- =?us-ascii?Q?a/alXIZlFsh+m+t11QDY0mikTi0mPBtM7AiCaXczv4PbI5lYVpGseoS+UBb1?=
- =?us-ascii?Q?FQn2eutyldzsyxFB72obbcwTC5UOrzoGjMhJel9Mv+rT+fPo1UKZcYkMWzRE?=
- =?us-ascii?Q?67QWmGhXEk6ZdfL4TAWAsPwsMF5aGsdDy7/kA9r3H913pY3ZrT/jCiZap9aE?=
- =?us-ascii?Q?QS9OAHO/+RnvoEkIDWMFzXGJATDqSlBjJ7lX8n4Al/BPjE/JphATNRi9rHBK?=
- =?us-ascii?Q?t0sczGld83XFQrJJdKxBOdnlu2UIHugF7W6k7RmMxVimllYWSf9yRmEREHlc?=
- =?us-ascii?Q?o5ST7w2KVdtldXwl1y3KoJuCXsl0YGYohN9J0052qtP2H8STu7iHKdu4MZAQ?=
- =?us-ascii?Q?LMJpNr79rP4ZgoondO20oAbKsjPrmLKjT8lPkii+m4skasa3n3CPbrWNEeCy?=
- =?us-ascii?Q?/4X4pl/pYqb14sv5Bi7sLVZU3NOP4hu1b3kM0nA3aUpbRy3G/b+VKpI8Y48h?=
- =?us-ascii?Q?u1fYDNHYbXuHpRSTEKiWqQhYTimB1aroem+QemOx9DAIKUy70I2psUbOScB7?=
- =?us-ascii?Q?VZUOXWaE3CJBIGlsbZIdVM7lwWkQDhXOnpP0ORge9x4pC7YLGPS2Rmb1cwf8?=
- =?us-ascii?Q?yiPY2Uxlg8AVGYHERoJqWSbS/l2diRV86/PhPvB0NzAPYjZGF9CZCwe9Ih4F?=
- =?us-ascii?Q?ip5gKD+puhmxUa69Hv5JG4eAnA0oLD3oeeCrZ7QV1+u1LZoqg1QpU4Ezk87C?=
- =?us-ascii?Q?20974I6EuIglozpn8zbN/V1yq4CgRAq2dNPt4qghVSmJWf6MPJqC4DFhLP0y?=
- =?us-ascii?Q?BqobfJcuLrUxyThMB0j+/vsIhB/NHf/XqiO2HFv4BDD6/mIfpxhCfvhRk3JJ?=
- =?us-ascii?Q?mYyf7fHWGG7sV+0E/Qowh8mRh5gkWNEq9OkZeX9C5j8YkGKVIvhWY/kvIvox?=
- =?us-ascii?Q?fjq8pYHmM1TuvDBCT2GlXyQ6oSWggCHSd8xn4oDs0QRb4IR/wDUcGineWYIF?=
- =?us-ascii?Q?VSd4TGhNiyDiRmw8IaiSa8/r1Q1pYu3A5d/BNeHDzzWpIS30wDCm2Gv+fBjq?=
- =?us-ascii?Q?gWpeH5MtVtdlaaN/tjMdxJrCjtXmaKyfZ8g7LmUPyWlX4pb0dpdsJtWPUulS?=
- =?us-ascii?Q?qvrIof4CbQzwneArMa68M4YL2pzbEZkdJQUFHz74xgw5i7UhiQ+r6qfqYv2/?=
- =?us-ascii?Q?QDo/MnBwNR/QnrtPqDt1MKE6sFJUo09uBBovxcQ5OS+bvyca2aWLJdQp+TO1?=
- =?us-ascii?Q?VNkLeDIIehlLBwmv4HgmvfQm+aSFjXoHO+QruDzeTbCCWxvT93X7ugp2uckl?=
- =?us-ascii?Q?EOWIYLZjepe470CLbLGzwm/9SJX6UxCh+L6Z4pZ1c6LUFlpZK7R78wtWfyMV?=
- =?us-ascii?Q?GvaUUHKk76MB1Z2QySHlpzI9I67EFSg5nYiaMidpysKdYAkITyWmnfElj3Xl?=
- =?us-ascii?Q?qn7Av5dRPFhorqyFmyOwvcPvKFyK2Ez3WuZBgGurlRUseLdV7+uAc0w9ibWj?=
- =?us-ascii?Q?+BeJrHDFwdKf7Ib/W9ybzu1MAWLdkHXnljbU9bBd9uyO6TnCd8w2SB5fnJBs?=
- =?us-ascii?Q?m03ESns/PCnZaWI4ZzwVX1h38EShReRf/BrGt9AnfqEXRVpQpgy0C/k05Ykk?=
- =?us-ascii?Q?1g=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4bc1b67c-0755-4b7f-041a-08dde61e9b9c
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 10:35:29.3043 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EkwbUndX89rf+zzlR/TfmF5ZBO5edhQoxyudQB5YqA2xEEuH4Ob+F24lx2PpGc6IkpA9A3Pg61OKKcJFr6x1tTtAUfamGtKC85dgHipo5dM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB7981
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -168,48 +77,176 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Aug 28, 2025 at 10:23:05AM +0000, Ciara Loftus wrote:
-> Introduce the boolean restore_link_state devarg for the ice driver. When
-> set, when the ice port is stopped, the physical link will be restored to
-> the state it was in when the device was started.
-> 
-> Prior to this patch the default behaviour was to always restore the link
-> to its original state. The new default behaiour is to always bring the
-> link down, which is in keeping with most other drivers.
-> 
-> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
-> ---
->  doc/guides/nics/ice.rst            | 12 ++++++++++++
->  drivers/net/intel/ice/ice_ethdev.c | 10 ++++++++--
->  drivers/net/intel/ice/ice_ethdev.h |  1 +
->  3 files changed, 21 insertions(+), 2 deletions(-)
-> 
-> diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
-> index 2c0f41c56c..9007b79471 100644
-> --- a/doc/guides/nics/ice.rst
-> +++ b/doc/guides/nics/ice.rst
-> @@ -322,6 +322,18 @@ Runtime Configuration
->  
->      -a af:00.0,pps_out='[pin:0]'
->  
-> +- ``Restore initial link state`` (default ``0``)
-> +
-> +  The user can request that the link be restored to its original state when
-> +  the device is stopped.
-> +
-> +    -a af:00.0,restore_link_state=1
-> +
-> +  The default behaviour is to bring the link down when the device is stopped,
-> +  however if restore_link_state is set and if the link state was up when the
-> +  device was started, then it will be restored to the up state when the
-> +  device is stopped.
-> +
->  - ``Low Rx latency`` (default ``0``)
->  
-I think that control over this is a good thing to have. However, I'm also
-wondering if we also need a way to force the link to always be up on close,
-therefore requiring a tri-state option, rather than just two as here
-(previous or down). How about renaming the option to maybe:
-"link_state_on_close" with 3 options of "up", "down", "initial"?
+Currently, ports on the TG are not bound to the correct drivers prior to
+running DTS. This causes DTS to crash if they are not initially bound to
+the intended drivers. Binding the TG ports to the proper driver caused
+DTS to fail when the OS and DPDK drivers were the same, due to the port
+link not being up. Changing the bound_for_dpdk method for a port to
+return false when the OS driver and DPDK driver were shared on a TG
+node allowed the TG ports to enter the logic to be brought up in the
+configure_ports method within the topology class.
 
-/Bruce
+Leverage TG runtime environment to bind TG ports to correct drivers
+before and after running DTS.
+
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ dts/framework/remote_session/dpdk.py    | 36 +----------------------
+ dts/framework/testbed_model/port.py     |  7 ++++-
+ dts/framework/testbed_model/topology.py | 38 +++++++++++++++++++++++++
+ 3 files changed, 45 insertions(+), 36 deletions(-)
+
+diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
+index 606d6e22fe..d1ab3ae50d 100644
+--- a/dts/framework/remote_session/dpdk.py
++++ b/dts/framework/remote_session/dpdk.py
+@@ -24,12 +24,11 @@
+     RemoteDPDKTarballLocation,
+     RemoteDPDKTreeLocation,
+ )
+-from framework.exception import ConfigurationError, InternalError, RemoteFileNotFoundError
++from framework.exception import ConfigurationError, RemoteFileNotFoundError
+ from framework.logger import DTSLogger, get_dts_logger
+ from framework.params.eal import EalParams
+ from framework.remote_session.remote_session import CommandResult
+ from framework.testbed_model.cpu import LogicalCore, LogicalCoreCount, LogicalCoreList, lcore_filter
+-from framework.testbed_model.linux_session import LinuxSession
+ from framework.testbed_model.node import Node
+ from framework.testbed_model.os_session import OSSession
+ from framework.testbed_model.virtual_device import VirtualDevice
+@@ -358,7 +357,6 @@ def setup(self):
+         """Set up the DPDK runtime on the target node."""
+         if self.build:
+             self.build.setup()
+-        self._prepare_devbind_script()
+ 
+     def teardown(self) -> None:
+         """Reset DPDK variables and bind port driver to the OS driver."""
+@@ -385,38 +383,6 @@ def run_dpdk_app(
+             f"{app_path} {eal_params}", timeout, privileged=True, verify=True
+         )
+ 
+-    def _prepare_devbind_script(self) -> None:
+-        """Prepare the devbind script.
+-
+-        If the environment has a build associated with it, then use the script within that build's
+-        tree. Otherwise, copy the script from the local repository.
+-
+-        This script is only available for Linux, if the detected session is not Linux then do
+-        nothing.
+-
+-        Raises:
+-            InternalError: If dpdk-devbind.py could not be found.
+-        """
+-        if not isinstance(self._node.main_session, LinuxSession):
+-            return
+-
+-        if self.build:
+-            devbind_script_path = self._node.main_session.join_remote_path(
+-                self.build.remote_dpdk_tree_path, "usertools", "dpdk-devbind.py"
+-            )
+-        else:
+-            local_script_path = Path("..", "usertools", "dpdk-devbind.py").resolve()
+-            if not local_script_path.exists():
+-                raise InternalError("Could not find dpdk-devbind.py locally.")
+-
+-            devbind_script_path = self._node.main_session.join_remote_path(
+-                self._node.tmp_dir, local_script_path.name
+-            )
+-
+-            self._node.main_session.copy_to(local_script_path, devbind_script_path)
+-
+-        self._node.main_session.devbind_script_path = devbind_script_path
+-
+     def filter_lcores(
+         self,
+         filter_specifier: LogicalCoreCount | LogicalCoreList,
+diff --git a/dts/framework/testbed_model/port.py b/dts/framework/testbed_model/port.py
+index fc58e2b993..e9ad145f97 100644
+--- a/dts/framework/testbed_model/port.py
++++ b/dts/framework/testbed_model/port.py
+@@ -126,7 +126,12 @@ def original_driver(self) -> str | None:
+     @property
+     def bound_for_dpdk(self) -> bool:
+         """Is the port bound to the driver for DPDK?"""
+-        return self.current_driver == self.config.os_driver_for_dpdk
++        dpdk_driver = self.config.os_driver_for_dpdk
++
++        if "TG" in self.node.name:
++            return self.current_driver == dpdk_driver and dpdk_driver != self.config.os_driver
++
++        return self.current_driver == dpdk_driver
+ 
+     def configure_mtu(self, mtu: int):
+         """Configure the port's MTU value.
+diff --git a/dts/framework/testbed_model/topology.py b/dts/framework/testbed_model/topology.py
+index 899ea0ad3a..b35a519719 100644
+--- a/dts/framework/testbed_model/topology.py
++++ b/dts/framework/testbed_model/topology.py
+@@ -12,11 +12,13 @@
+ from collections.abc import Iterator
+ from dataclasses import dataclass
+ from enum import Enum
++from pathlib import Path
+ from typing import Literal, NamedTuple
+ 
+ from typing_extensions import Self
+ 
+ from framework.exception import ConfigurationError, InternalError
++from framework.testbed_model.linux_session import LinuxSession
+ from framework.testbed_model.node import Node
+ 
+ from .port import DriverKind, Port, PortConfig
+@@ -128,6 +130,7 @@ def setup(self) -> None:
+ 
+         Binds all the ports to the right kernel driver to retrieve MAC addresses and logical names.
+         """
++        self._prepare_devbind_script()
+         self._setup_ports("sut")
+         self._setup_ports("tg")
+ 
+@@ -250,6 +253,41 @@ def _bind_ports_to_drivers(
+         for driver_name, ports in driver_to_ports.items():
+             node.main_session.bind_ports_to_driver(ports, driver_name)
+ 
++    def _prepare_devbind_script(self) -> None:
++        """Prepare the devbind script.
++
++        Copy devbind script from local repository.
++
++        This script is only available for Linux, if the detected session is not Linux then do
++        nothing.
++
++        Raises:
++            InternalError: If dpdk-devbind.py could not be found.
++        """
++        from framework.context import get_ctx
++
++        local_script_path = Path("..", "usertools", "dpdk-devbind.py").resolve()
++        valid_script_path = local_script_path.exists()
++
++        def prepare_node(node: Node) -> None:
++            if not isinstance(node.main_session, LinuxSession):
++                return
++
++            if not valid_script_path:
++                raise InternalError("Could not find dpdk-devbind.py locally.")
++
++            devbind_script_path = node.main_session.join_remote_path(
++                node.tmp_dir, local_script_path.name
++            )
++
++            node.main_session.copy_to(local_script_path, devbind_script_path)
++            node.main_session.devbind_script_path = devbind_script_path
++
++        ctx = get_ctx()
++        prepare_node(ctx.tg_node)
++        prepare_node(ctx.sut_node)
++        # ctx.tg_node.main_session.bring_up_link(self.sut_ports)
++
+     @property
+     def sut_dpdk_ports(self) -> list[Port]:
+         """The DPDK ports for the SUT node."""
+-- 
+2.50.1
+
