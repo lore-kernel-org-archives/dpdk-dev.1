@@ -2,63 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD153CA0EED
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 13:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA28FCA0EED
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 13:38:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0866E4025A;
-	Thu, 28 Aug 2025 15:01:08 +0200 (CEST)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
- [209.85.214.173])
- by mails.dpdk.org (Postfix) with ESMTP id C35BF400D6
- for <dev@dpdk.org>; Thu, 28 Aug 2025 15:01:06 +0200 (CEST)
-Received: by mail-pl1-f173.google.com with SMTP id
- d9443c01a7336-244580523a0so9317015ad.1
- for <dev@dpdk.org>; Thu, 28 Aug 2025 06:01:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1756386066; x=1756990866; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=9sSbKufXiPH2FZtt7/QUe5glHx8N4ShneS5UL0UeQHA=;
- b=WhmQV+RWOZU4MWZzE5L6B8xRrGF0W/SGWtP4A0jMmSelhQyMcwQ/RZLz6ViJiHwdK5
- ziODFsT9UwkF17Y5tVIZT3RJfOi7fu8MEfJwzEbrQ7MRuvRwvRRVJuKDhrjIXdb1prWt
- t7nkF6PH7HZ41rGIe1Hgd082kArCgUGu7S/+M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756386066; x=1756990866;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=9sSbKufXiPH2FZtt7/QUe5glHx8N4ShneS5UL0UeQHA=;
- b=d1DgGIK7C6vBNq/DNwc6q1xUQUSVbCt7nEpSUOK+NLVmuq8f6ZKgd0FnrdqWGD7dgY
- I0lD5Oqwfep0cPNgYVjhdv4mrS0B7VYOoi9yRi+9GUfw1aAsqECoXuNX8R2a7ckqrcVi
- 4xibUBUxMrCUVwOgdzL/La3480FvzHjLm4hkmIMqw5SnXzp2m4fWrXXFFyuYfCIyRhgi
- yeKCe5IAgXlv4vTk8+Q08dEadX7rpsAs148+YeeHr5T48sOB+Z2qgl+irGiAcpAYDrnU
- B2VdKUfLXDE3QjspjMbzUeTVcouh3ztfaWKe91qsBzFFW6q65it3j1ChM2RP1kS8ULDh
- keLw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWdjjLtEEc/OV9qggYxnfViYP9qhZpPUUL9ng4+tR9L/R/C+lKqxr2f0Ir2lyk7npaZSDQ=@dpdk.org
-X-Gm-Message-State: AOJu0YxKjgq/QjKjAY/Z3dNmYbSZeVvUCUbnt4HJbR7rY+EYNI2y6U4h
- Xj0uY5Cum4O3decMmeoFfndcKW1AqrWZZmcq0dkYEsAUvXU5ub6brli87HvI5zRZZ48ev4EnzYA
- bZ4lLiinC88s6NA7FGIoIrIabePh5rcYp9wdDLizKRA==
-X-Gm-Gg: ASbGncvkt35HU6pK3CAqWirIPdoT4xYVrn8hct0j6C5BKc+RgzR/HtPYj1FCyBfE3F/
- T5Oh0GGJM4eJuqpy5QRIffcvXUXRdamnCM12qMh2HDLwA+gVEt4GQckEoGammsrj9uEJy/HdPHz
- 4ZwIyR4qapPVBKYUP4Nu8mZDq4jpN4f0Je8LrS4ySOTbK38VIBkygDoHO0KBtd2wKStruelTWqs
- sUacpewHfsrWABB2uA5Bt3S18mpuBtTr7dyeX3U5GJVxCcezrGsaPbhIv47
-X-Google-Smtp-Source: AGHT+IHFLUXS3vXi4+oQhOf7OfOUfjrxn8k1kwlKWUJc7Oqfnj8a7KBY1FC+PIVXnZxMecwD5fF3X3Eeg7oau5tpoq4=
-X-Received: by 2002:a17:903:15ce:b0:246:c7dd:8da7 with SMTP id
- d9443c01a7336-246c7dd91f6mr178327925ad.32.1756386065340; Thu, 28 Aug 2025
- 06:01:05 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D081E4025A;
+	Thu, 28 Aug 2025 15:38:04 +0200 (CEST)
+Received: from fout-b6-smtp.messagingengine.com
+ (fout-b6-smtp.messagingengine.com [202.12.124.149])
+ by mails.dpdk.org (Postfix) with ESMTP id 2EE5E400D6;
+ Thu, 28 Aug 2025 15:38:04 +0200 (CEST)
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+ by mailfout.stl.internal (Postfix) with ESMTP id 453161D0024A;
+ Thu, 28 Aug 2025 09:38:03 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-09.internal (MEProxy); Thu, 28 Aug 2025 09:38:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1756388283;
+ x=1756474683; bh=7l4+8PpylRc14sX+m5HHrMVGLo4UWAbZ5AdOw1uPQ4s=; b=
+ OFuKTAvgngiQR9P11+zl6SHuRdoO9m8X2bG8kvjsNz6VgVPxivH85H5nnPu+GbrD
+ htWdxCFwpy8ZMnr245s8fJOK6B/g+rOUQazA/RxyKq8SpLJqwYVjfoH2ERnxHEnQ
+ oFWJrLzGIUF+d8+txSqkzCMafNOFQi00w9DRIxZ4NHRXqzdugtKFcv+ZCUOn6qDL
+ fm4pQw8W0lR31yCsGrVjRuzMxg+QblP97bq9B/XSnOZH5Ppk/uK45qGH0VWSJNG+
+ gwP3wZw2RxZR5w9VKC7PFxfofOY5Z5Dosp7QjT070jKlthYp62B8+24m8YadIIYw
+ 9WZjGdHVIB+QGKehlQtjWQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1756388283; x=
+ 1756474683; bh=7l4+8PpylRc14sX+m5HHrMVGLo4UWAbZ5AdOw1uPQ4s=; b=l
+ +cVT70mm5/AxzjSw/7ZtRnlsKm16XQzj7j4t+W3CtD4KlQ5kjf9inPsv5fOe5n11
+ XwcAAXaEvu/2D27800BaUUr2N1LWo2G4ZwZK7kPYFpG/LcZ6Hqt9X3sPqose9NCn
+ Z16LY/TeGHcm/XtIv4Yus7+oH1wvTsZrq+Y3x76RDjV+MBHqiP8uGWZ+VyxVal/2
+ zcE6Sa6NNYjLsD1LB+mYg8r6qE0IeCqJLRkALMtM7lRBsTxcDs6D5ffILg3i4Ef2
+ WgXvCb6VgPVo6Kk8r79QQ6apsAwYsm1coZ7o8hrdIfBYOwvfFfrjLXeFoN5/Ai0H
+ 5AcNAwhiZnJJtyXvIYzuQ==
+X-ME-Sender: <xms:uluwaNLvKAkHpbpp_GcQHfIKCOKqP3iPZrALj-I0a8-zVQetnXWfLw>
+ <xme:uluwaKvEg6j5bWgyBbOoVoNqtNcM3JaIvWTKlwqdiZXlhEWO4sUE3B-m6r-4aXlag
+ 5sIoM1KOjIO0eU48g>
+X-ME-Received: <xmr:uluwaMBFPDLuKXCAZbtc2UmLqGTWAjtUb0vvk1t3_jaz77LwoSn7j9M-D-yE4iLGcRQGeJ_d21E6Czv5fi-Rja5xJQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddukeduudeiucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedutddp
+ mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhonhhgfigvihhlsehnvhhiughirg
+ drtghomhdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdr
+ ohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehmrghtrg
+ hnsehnvhhiughirgdrtghomhdprhgtphhtthhopehvihgrtghhvghslhgrvhhosehnvhhi
+ ughirgdrtghomhdprhgtphhtthhopehorhhikhgrsehnvhhiughirgdrtghomhdprhgtph
+ htthhopehsuhgrnhhmihhnghhmsehnvhhiughirgdrtghomhdprhgtphhtthhopehsthgr
+ sghlvgesughpughkrdhorhhgpdhrtghpthhtohepughsohhsnhhofihskhhisehnvhhiug
+ hirgdrtghomh
+X-ME-Proxy: <xmx:uluwaKNr-sp-unHQwx5VAtrudyTUhXqKPi0PScY-pk392PBB2ZVA0Q>
+ <xmx:uluwaMBHDS5QxS4i8sWmvnEIc4AfOk8TaSqm-GZ65ZXjQg1Hmg7A7A>
+ <xmx:uluwaL7kO4sF7rZTsgP56-xddyZCaz2reVjR1hjs0kRkPQIAiT2zJA>
+ <xmx:uluwaG6QLZTrXQ3mHYCslZzaXxe6deDUWhTzFiUAjdeRKslAhnSZVA>
+ <xmx:u1uwaKHJs5ylQLSiyXokNXLhx9zmfbhR-YAxWvtSrKkvK7ldgGZNwOhx>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 28 Aug 2025 09:38:01 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: rongwei liu <rongweil@nvidia.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org,
+ matan@nvidia.com, viacheslavo@nvidia.com, orika@nvidia.com,
+ suanmingm@nvidia.com, stable@dpdk.org,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>, Bing Zhao <bingz@nvidia.com>
+Subject: Re: [PATCH v1] net/mlx5: fix probe optimization race condition
+Date: Thu, 28 Aug 2025 15:37:59 +0200
+Message-ID: <23111985.hxa6pUQ8Du@thomas>
+In-Reply-To: <e30c6a96-d536-4454-b7b2-c98c4a24a3e4@nvidia.com>
+References: <20250828032134.167999-1-rongweil@nvidia.com>
+ <20250827214044.16f9baaa@hermes.local>
+ <e30c6a96-d536-4454-b7b2-c98c4a24a3e4@nvidia.com>
 MIME-Version: 1.0
-References: <20250808182152.356879-2-abailey@iol.unh.edu>
- <20250828123758.20451-1-abailey@iol.unh.edu>
-In-Reply-To: <20250828123758.20451-1-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 28 Aug 2025 08:54:26 -0400
-X-Gm-Features: Ac12FXyC-iWKvBvlXFOybiVT5mDugAbYlm4DvaT5IO9qr3D1c3JLBZKL8iUxUUk
-Message-ID: <CAJvnSUDGvKb-bP3Zpk8=vciAf_9V4WP9S3UpSgGVKYJy1oOm0Q@mail.gmail.com>
-Subject: Re: [PATCH v3] dts: enable port binding on the TG
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, dev@dpdk.org, dmarx@iol.unh.edu
-Content-Type: multipart/alternative; boundary="000000000000837ee5063d6c7fd6"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,65 +97,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000837ee5063d6c7fd6
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+28/08/2025 06:49, rongwei liu:
+> 
+> On 2025/8/28 12:40, Stephen Hemminger wrote:
+> > On Thu, 28 Aug 2025 06:21:34 +0300
+> > Rongwei Liu <rongweil@nvidia.com> wrote:
+> > 
+> >> With dedicated RDMA link monitor, there are two threads
+> >> which can update the IB device port information.
+> >>
+> >> Add a new flag to avoid the race condition. Update should
+> >> go through RDMA link monitor once ready.
+> >>
+> >> Fixes: 51fb5c40c826 ("net/mlx5: optimize device probing")
+> >> Cc: rongweil@nvidia.com
+> >> Cc: stable@dpdk.org
+> >> Signed-off-by: Rongwei Liu <rongweil@nvidia.com>
+> >> Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+> >> ---
+> > 
+> > If variable is modified (with out locking) on two threads it
+> > needs to atomic or volatile.
+> Exactly. Before this patch, it' user responsebility to seperate probe probing and sf manipualtion.
+> Obviously, customer didn't follow this very well.
+> Now logic change to:
+> 1. Update all port information in probing thread.
+> 2. Probe thread initiate the dedicated rdma monitor thread. Once ready, all port update will go to this thread.
+> 3. Next port probing won't trigger PMD port information update.
+> 
+> No lock is required then.
 
-Thanks Luca for the patch submission best practices advice. :)
-
-Andrew we can chat more about the bound_for_dpdk() at the DTS meeting.
-
-On Thu, Aug 28, 2025 at 8:38=E2=80=AFAM Andrew Bailey <abailey@iol.unh.edu>=
- wrote:
-
->
-> +        ctx =3D get_ctx()
-> +        prepare_node(ctx.tg_node)
-> +        prepare_node(ctx.sut_node)
-> +        # ctx.tg_node.main_session.bring_up_link(self.sut_ports)
->
-
-Make sure to drop these commented out function calls and such when you
-submit.
+This is the kind of info we need in a commit log.
+Please make a v2, thanks.
 
 
-> +
->      @property
->      def sut_dpdk_ports(self) -> list[Port]:
->          """The DPDK ports for the SUT node."""
-> --
-> 2.50.1
->
->
-Thanks Andrew.
-
---000000000000837ee5063d6c7fd6
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr">Thanks Luca for the patch submission best=
- practices advice. :)<div><br></div><div>Andrew we can chat more about the =
-bound_for_dpdk() at the DTS meeting.</div></div><br><div class=3D"gmail_quo=
-te gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Aug=
- 28, 2025 at 8:38=E2=80=AFAM Andrew Bailey &lt;<a href=3D"mailto:abailey@io=
-l.unh.edu">abailey@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D=
-"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(2=
-04,204,204);padding-left:1ex"><br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 ctx =3D get_ctx()<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 prepare_node(ctx.tg_node)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 prepare_node(ctx.sut_node)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 # ctx.tg_node.main_session.bring_up_link(self.=
-sut_ports)<br></blockquote><div><br></div><div>Make sure to drop these comm=
-ented out function calls and such when you submit.</div><div>=C2=A0</div><b=
-lockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-le=
-ft:1px solid rgb(204,204,204);padding-left:1ex">
-+<br>
-=C2=A0 =C2=A0 =C2=A0@property<br>
-=C2=A0 =C2=A0 =C2=A0def sut_dpdk_ports(self) -&gt; list[Port]:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;The DPDK ports for the =
-SUT node.&quot;&quot;&quot;<br>
--- <br>
-2.50.1<br>
-<br></blockquote><div><br></div><div>Thanks Andrew.=C2=A0</div></div></div>
-
---000000000000837ee5063d6c7fd6--
