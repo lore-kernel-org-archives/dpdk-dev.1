@@ -1,29 +1,29 @@
 Return-Path: <dev-bounces@dpdk.org>
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53225C8303F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 12:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD55C8303F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 12:10:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3833940A75;
-	Thu, 28 Aug 2025 14:10:02 +0200 (CEST)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
- by mails.dpdk.org (Postfix) with ESMTP id 7AF8640263
- for <dev@dpdk.org>; Thu, 28 Aug 2025 04:46:36 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.44])
- by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4cC5RJ2J7Rz27hwG;
- Thu, 28 Aug 2025 10:47:40 +0800 (CST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7C24840A84;
+	Thu, 28 Aug 2025 14:10:03 +0200 (CEST)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id BFA7740263
+ for <dev@dpdk.org>; Thu, 28 Aug 2025 05:00:02 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cC5hQ2FYmztTKN;
+ Thu, 28 Aug 2025 10:59:02 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 4A03C140123;
- Thu, 28 Aug 2025 10:46:33 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 8BEDF1402DF;
+ Thu, 28 Aug 2025 10:59:59 +0800 (CST)
 Received: from localhost.localdomain (10.50.165.33) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 28 Aug 2025 10:46:31 +0800
+ 15.2.1544.11; Thu, 28 Aug 2025 10:59:57 +0800
 From: Chengwen Feng <fengchengwen@huawei.com>
 To: <thomas@monjalon.net>, <david.marchand@redhat.com>
 CC: <dev@dpdk.org>
 Subject: [PATCH] dpdk: support quick jump to API definition
-Date: Thu, 28 Aug 2025 10:46:31 +0800
-Message-ID: <20250828024631.30759-1-fengchengwen@huawei.com>
+Date: Thu, 28 Aug 2025 10:59:57 +0800
+Message-ID: <20250828025957.30917-1-fengchengwen@huawei.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
