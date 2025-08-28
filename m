@@ -2,73 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38120C8303F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 14:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F77C8303F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 14:55:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C1894025A;
-	Thu, 28 Aug 2025 16:55:15 +0200 (CEST)
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
- [209.85.221.45]) by mails.dpdk.org (Postfix) with ESMTP id B526F400D6
- for <dev@dpdk.org>; Thu, 28 Aug 2025 16:55:13 +0200 (CEST)
-Received: by mail-wr1-f45.google.com with SMTP id
- ffacd0b85a97d-3c68ac7e238so522861f8f.1
- for <dev@dpdk.org>; Thu, 28 Aug 2025 07:55:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9F5954025A;
+	Thu, 28 Aug 2025 16:55:53 +0200 (CEST)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
+ [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 9F57F4025A
+ for <dev@dpdk.org>; Thu, 28 Aug 2025 16:55:51 +0200 (CEST)
+Received: by mail-wr1-f48.google.com with SMTP id
+ ffacd0b85a97d-3c79f0a606fso656115f8f.0
+ for <dev@dpdk.org>; Thu, 28 Aug 2025 07:55:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1756392913; x=1756997713; darn=dpdk.org;
- h=content-transfer-encoding:in-reply-to:from:content-language
- :references:cc:to:subject:user-agent:mime-version:date:message-id
- :from:to:cc:subject:date:message-id:reply-to;
- bh=fMtMN8zMMi3jaVIONpn6Kr95DCWc8wPqwihVZ01JuIo=;
- b=EDwD4VLM7GFnTy9l+aiHD8B+gDpL0FNVJGMz94biyBjvxUzLzNEBGKdVgoiWN6676w
- XhVPryWOzO50cLp94bqJVfq2CuQGirC5lfd/l9XS81/WzVm+LJomEXopdAL9VdAo776S
- /LmKA49iRbTKGH/ZmMLAjzqrrx5HdohfmiN3buVC4A0hIZV4rl9qcsNj23RwpvT2P0jO
- IXtiZvUdYakdMwP/f3goFUqGUSkBunlbHZLtBhw9mhQl5ZE7kn8/jU8ADU3G3vbZaxED
- 7GE55R0ZJHSzVC3ZOGXWMLgXqLMnmLcmJRWUu0z5rb71T87lpSUpWA8pzXF+jorZv+Gh
- OhXA==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756392951;
+ x=1756997751; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=miPatUMO+zIUidoi6IziVs0yjVkquK7EIxNiZlG0CXs=;
+ b=mWpcs7fI6RBmuPkLIN5yJCVnvAkFkcLQTEsLG+kKgnTB2zPksim45f9VJSubOcakpG
+ zCLeL5dY0ARmkdj+nDjuEbO7wX3EJCRr0mfgvsIK0XgSqywWpSNa0dd16I4QWqKKde89
+ DCtQDoJEdtoDn0lObZx03Nib2SSvtsSm5xATAj2s2nvO0cwdPf2/EGRDR0R6LY3yA5XL
+ vsC7DIa2FD0rCULIrxujpKXJYFCadAEBS8xl1vOLq0En0kDiz8v46TySyxNzU0xOpNiI
+ fOtiZGOdXqQLFXMYN5KaliKhazsVgYmZXaP1zWUbH9J7Wti59lHALu6XLFcOgzaofjkJ
+ 5RjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756392913; x=1756997713;
- h=content-transfer-encoding:in-reply-to:from:content-language
- :references:cc:to:subject:user-agent:mime-version:date:message-id
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=fMtMN8zMMi3jaVIONpn6Kr95DCWc8wPqwihVZ01JuIo=;
- b=Jje6KuD3QgywHYZuwMKGqHQERqDHQ35lBOrrbbCfPq57bKbJ9S8LKsZe0aJU0ErvQ0
- Dk3qUZXoI45jzLR4q16J1yC1qNyLiSLJnTXIFUQbXmIa/uare5mo9TzHtBScC6BVOn1O
- fqifeh4SqGuXmjQqskCVwCO/ctEVReqJwOLGptKD7gZLyvU0Fur6UhCNcpHwIsdYiKDc
- 2NtnpTNdsCUOmHGpOsFC5NttHML4ctuOcUx4bpN03vXdnmMyUtsNtw1i/toQa//eDv2L
- boYsAdVVa+e36F4coPYaNrkmQ8e2foBB4rWWlJdnEyqYi49B94Y/gJ+Zzoyc4ceQ2SYN
- oLqQ==
-X-Gm-Message-State: AOJu0YyY/LEqsXB1DxnJWYrBPD2GZ6i5X4FioJNfmj+Ej7IMcKsXB/Xp
- djS/GM9gUmtVku0570zdGDx4OPFWv8y+SEhvsCfZTnwlWNxQcvLaC8ODisIiePqe+g==
-X-Gm-Gg: ASbGnctIPppRF5ufJpu+D4kn7JNv4b6cM26pu6UqJzG1hPIBeulr8rC+tJ0WisKQoC8
- tKjl49Wf/n5wEDAb4jyTipmZC+QRkutu6/nKJvhItDuM+eEjEuCMhXu4IagBP8UpW1bo3maQhi/
- GVg4giuuhX7pH8mUHoV2ISaz6BOiJXjrsXasBHHahx/K2Gdwn3CLiFVYAv0IpaWgVTSckAYePoo
- t0gV61pNlBaS1mgdiPllpTvqXoGe9BYMzS1PS3fYVtadKIlAL0+W1zrL27U3kZR2PwMad0jQa9P
- lAQ1QmXHolVa2XxzVHPJH1kxZZ9U49EpGu/lmbOkQGY4qT7ilxcewaN1ZHnUgvhc+H+kBhs4PK7
- 90AalkEGslZtwdMLzQyT5e4su9mssgQKgQk9z08Wz2hzGVkggvP3Fe/uSoUE=
-X-Google-Smtp-Source: AGHT+IG6N9AbaByy5CZpdkwxw+wp7C6RGOihU1Hz+3l+6rYVxjhRRq1QYdihmBmU4l4MjEfMzoSXoQ==
-X-Received: by 2002:a05:6000:2f83:b0:3b5:dd38:3523 with SMTP id
- ffacd0b85a97d-3c5db8aa9b9mr15694098f8f.8.1756392913179; 
- Thu, 28 Aug 2025 07:55:13 -0700 (PDT)
-Received: from [10.17.1.39] ([185.13.181.2]) by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3cbc6a5da6dsm10678094f8f.63.2025.08.28.07.55.12
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 28 Aug 2025 07:55:12 -0700 (PDT)
-Message-ID: <c2e83bd1-4a5f-447c-8ee5-261a0f886349@6wind.com>
-Date: Thu, 28 Aug 2025 16:55:11 +0200
+ d=1e100.net; s=20230601; t=1756392951; x=1756997751;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=miPatUMO+zIUidoi6IziVs0yjVkquK7EIxNiZlG0CXs=;
+ b=IYbk+40kEQpXfge9RQkGAQuUUzUcuqKTezkAmAtNKN9GALXXDBenTbaY0zjuuTS5g6
+ rtX7TeNARvO9uAa0W9hx2A/Wq2TMq3UiXrTs9kIlTM5mx6LEXslLmagQ8E5P5qJoOcMF
+ wkeqMJ/9gTJHoVgwaPSCavTBu9i4YpeZ6sZ3rO3wyAbUGJByndZX04gM9mFUrMIZ9cS6
+ WdR1MOzTr0eNWvPeZ1rekEhrUozh8Nvz2dWlqf/MylvC991qokqeWuDLIyp0Rwk2E0aj
+ Z+h6EEmEFz2/keAz/EqOEeb0CMaUZTiI2hjQ6/ND3IS/PAx2p8IsrID03y3lYU7tIPFT
+ 6Fmw==
+X-Gm-Message-State: AOJu0YyP4JcVYF7qtdLOF6K47B9t//E4JLcvF3jLuuj0Qv2PYYDOBsSi
+ zoFbSRq7wIbwO/3iIiZMYZZs0ywklAT8iSVOWfYGDn92XCh8q24GTJImpc/WzlkC77Y=
+X-Gm-Gg: ASbGncuLO+8foeS3ebvFKt3Dpodic0jvLiv6a/KI6xFS8BFX16oz/kfKy12Glqfd4mZ
+ 0xOvxcPHWS0iiz0fKYacxW5jCsqlagou9sy/23edIwlpveez1KiGT3B+w9mRVwu+iafNkLanxlo
+ urJyyBIp+CKmCcn22uI/5tOJ7Xr4FSqk6nr7+ZRA0ilGltSXABtdyfYwo8ovSfJEa20gcCCDlJy
+ T8+lRdTtQqf02qhYExSvTkE3Kvw4srKn3ND7eum2CBwIEaEwwaKKdhnPZPlIND+v6nlyWKjs9SU
+ B6IBYh/kXqyv+nV0UXT5vAy2HgdUupxD1XpTE76BeLTrto9vNMVMfwWJ81J24mBl7J1popTgFH0
+ Ur/0Ofa+QfILlD7jY8NJo73o1nVPCbpNhJWYCNs4lck/Fp7tHzF1LhiNSBXYoqOMcYu4cx2ibvc
+ dnrf22wgdMSg==
+X-Google-Smtp-Source: AGHT+IGKo0T0X/GF2qFQfeXQrPwVGTrZV1DCcUdqQyB4J3e2pMnY2rG6Bub+6Yu8Pd490Rvea5vOLw==
+X-Received: by 2002:a05:6000:2408:b0:3ca:8b32:e43d with SMTP id
+ ffacd0b85a97d-3ca8b32e8c6mr8924681f8f.1.1756392951167; 
+ Thu, 28 Aug 2025 07:55:51 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-45b66c383b1sm59405935e9.3.2025.08.28.07.55.50
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 28 Aug 2025 07:55:50 -0700 (PDT)
+Date: Thu, 28 Aug 2025 07:55:47 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Ciara Loftus <ciara.loftus@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] net/ice: make link state configurable on device stop
+Message-ID: <20250828075547.1fe99122@hermes.local>
+In-Reply-To: <20250828102305.1522036-1-ciara.loftus@intel.com>
+References: <20250828102305.1522036-1-ciara.loftus@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND] net/qede: workaround for operation in Ubuntu-24.04
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Olivier Matz <olivier.matz@6wind.com>,
- dsinghrawat@marvell.com, palok@marvell.com, jerinj@marvell.com,
- Laurent Hardy <laurent.hardy@6wind.com>,
- Edwin Brossette <edwin.brossette@6wind.com>
-References: <3bbf5e67-8acd-47f1-90ea-405f62cbbc4c@6wind.com>
- <20250828075135.77381013@hermes.local>
-Content-Language: en-US
-From: Thierry Herbelot <thierry.herbelot@6wind.com>
-In-Reply-To: <20250828075135.77381013@hermes.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -83,37 +80,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 8/28/25 16:51, Stephen Hemminger wrote:
-> On Thu, 28 Aug 2025 10:09:35 +0200
-> Thierry Herbelot <thierry.herbelot@6wind.com> wrote:
+On Thu, 28 Aug 2025 10:23:05 +0000
+Ciara Loftus <ciara.loftus@intel.com> wrote:
+
+> Introduce the boolean restore_link_state devarg for the ice driver. When
+> set, when the ice port is stopped, the physical link will be restored to
+> the state it was in when the device was started.
 > 
->> Hello,
->>
->> [resend because the original diff was for the 24.11 branch]
->>
->> qede stopped working with recent distributions, as explained in this bug
->> report:
->> https://bugs.dpdk.org/show_bug.cgi?id=1379
->>
->> For reference, one workaround is to disable all optimizations when
->> compiling the qede PMD with gcc-13, as seen in main branch:
+> Prior to this patch the default behaviour was to always restore the link
+> to its original state. The new default behaiour is to always bring the
+> link down, which is in keeping with most other drivers.
 > 
-> 
-> Using O0 is pretty drastic and can have bad performance and doing it for
-> every distro will cause performance drop.
+> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+> ---
 
-Hello Stephen
-
-I absolutely agree: -O0 brings a big performance drop.
-I am investigating if the qede PMD compiled with -O1 or -O2 optimization 
-levels and gcc-13 is still working.
-
-	Regards
-
-	Thierry
-
-> 
-> All patches must have Signed-off-by, so this patch will be dropped.
-
--- 
-Thierry Herbelot
+Device specific devargs should be discouraged. Seems like the same
+issue occurs across multiple drivers.
