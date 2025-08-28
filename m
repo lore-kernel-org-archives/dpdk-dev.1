@@ -2,41 +2,124 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2E9CA0EFF
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 03:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E11EACA0FF2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 03:23:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 332C04027D;
-	Thu, 28 Aug 2025 05:06:32 +0200 (CEST)
-Received: from out28-171.mail.aliyun.com (out28-171.mail.aliyun.com
- [115.124.28.171])
- by mails.dpdk.org (Postfix) with ESMTP id 9F35240263
- for <dev@dpdk.org>; Thu, 28 Aug 2025 05:06:29 +0200 (CEST)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.07387804|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_enroll_verification|0.0168098-0.00639542-0.976795;
- FP=16021402849087330244|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam033037006238; MF=dimon.zhao@nebula-matrix.com; NM=1;
- PH=DW; RN=5; RT=5; SR=0; TI=W4_0.2.3_21251D87_1756350147113_o7001c156g; 
-Received: from WS-web
- (dimon.zhao@nebula-matrix.com[W4_0.2.3_21251D87_1756350147113_o7001c156g]
- cluster:ay29) at Thu, 28 Aug 2025 11:06:26 +0800
-Date: Thu, 28 Aug 2025 11:06:26 +0800
-From: "Dimon" <dimon.zhao@nebula-matrix.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: "dev" <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
- "Leon" <leon.yu@nebula-matrix.com>, "Sam" <sam.chen@nebula-matrix.com>
-Message-ID: <be355e2f-fa0e-4eef-8256-0de529145b27.dimon.zhao@nebula-matrix.com>
-Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIHY2IDAxLzE3XSBuZXQvbmJsOiBhZGQgZG9jIGFuZCBtaW5pbXVt?=
- =?UTF-8?B?IG5ibCBidWlsZCBmcmFtZXdvcms=?=
-X-Mailer: [Alimail-Mailagent][W4_0.2.3][null][Chrome]
+	by mails.dpdk.org (Postfix) with ESMTP id DFB7E4027D;
+	Thu, 28 Aug 2025 05:23:12 +0200 (CEST)
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com
+ (mail-dm6nam12on2089.outbound.protection.outlook.com [40.107.243.89])
+ by mails.dpdk.org (Postfix) with ESMTP id CE87440263;
+ Thu, 28 Aug 2025 05:23:11 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KJouGDMbnZnLLbxfN4N5YKDsuWFsh3JDS1ZaulwZ+iheA0DJze7HQOQGd6MFOqbSU/ZeDHd1OqFiRUBa7xzUe5UnOhIkEV0wIMR/4za8I2X7zkDwGPDUbmAQqIWZpnSkg/7RWM32VZYBwzpCg64a4jFvflqqS+JimRA5yRoSxZ7cbGsSx+LYaRBYmDDUFu8xkGfljzNHVLXinRp4PYEICKVVVQfudWwUqTq9Uq8VysitBcv95pzuR2qhcjz/Tq2rrPY2Vos53/VwTFfHPtObfk8T0YeJwAXiK0nO9kuHJyw0Bh5N1dpcewqqfuIDYiw2Oi0ZtlivtZzRXeQY1PtTaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zhTOcTDDDIB8KmBQU5C3qmrd3YKdXOT5Bp13BbjeacY=;
+ b=PAUSKrOwMKloTg8Zomr0BMNxSUTM7veA7BbL1Y0Tj48l31pEC80NO+oEpBmhualB3wHQyPwOOnqHOhMErrZey1MRIzaEFc48TtonEAcdDhXYtDvKEdUJF9rgEQpEFe88tkKVtvPvEcVuJMAL+BD39sK0GAAJrNycZDgg+Rn9B5qeyXpie3Nvaa02Wdu9Iw66y6fag+xkqC8h2xi9cVRYRTjcjXxPflMCBeYh/ToRALdPZs8g+B7aVdfEW855WgoHPXkDEMCBPNF044R2LQr3zt9gR0v7mzvh17bbR97wBjEm5Al+R7b+UgOUpuKHjdx3mq2WCd64a4D5EpRmC6InZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zhTOcTDDDIB8KmBQU5C3qmrd3YKdXOT5Bp13BbjeacY=;
+ b=ceX0iJcDnG2Dx45uRVAfA1dx43tPuOcEPSw4J59u2kBFOq7F3lr518y3sQlzvo/iItfw1zXumb0btx0aCGMAiFDuzExe7Dy9Ts9xp/dwkJ1SxHhGVJhnHNJNGmzvAttzMsCmV8YtwQPjSDEzGv53NYEFQoSc2Yf2weGsg9QfjHQHkiQGkk45EvP98wWKR2zZBqD82pUzDJlBZpTTqQSeJ+C9j+t1M3v/ywpWkdigWaXyy0FRQuK8QDYcNEmI+S/DAgyMVlceepZEPcqmeByx/NvOyHDHDhetLOehbeDaMqU9kokBdzYL36QqqMgGtQsbPg/be7Fd1VSZOW/u4Yu+Bg==
+Received: from DM6PR08CA0061.namprd08.prod.outlook.com (2603:10b6:5:1e0::35)
+ by LV2PR12MB5992.namprd12.prod.outlook.com (2603:10b6:408:14e::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9052.21; Thu, 28 Aug
+ 2025 03:23:06 +0000
+Received: from DS2PEPF00003448.namprd04.prod.outlook.com
+ (2603:10b6:5:1e0:cafe::a6) by DM6PR08CA0061.outlook.office365.com
+ (2603:10b6:5:1e0::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9073.15 via Frontend Transport; Thu,
+ 28 Aug 2025 03:23:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS2PEPF00003448.mail.protection.outlook.com (10.167.17.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9073.11 via Frontend Transport; Thu, 28 Aug 2025 03:23:05 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 27 Aug
+ 2025 20:22:52 -0700
+Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 27 Aug
+ 2025 20:22:49 -0700
+From: Rongwei Liu <rongweil@nvidia.com>
+To: <dev@dpdk.org>, <matan@nvidia.com>, <viacheslavo@nvidia.com>,
+ <orika@nvidia.com>, <suanmingm@nvidia.com>, <thomas@monjalon.net>
+CC: <rongweil@nvidia.com>, <stable@dpdk.org>, Dariusz Sosnowski
+ <dsosnowski@nvidia.com>, Bing Zhao <bingz@nvidia.com>
+Subject: [PATCH v1] net/mlx5: fix probe optimization race condition
+Date: Thu, 28 Aug 2025 06:21:34 +0300
+Message-ID: <20250828032134.167999-1-rongweil@nvidia.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>	<20250822090359.614551-1-dimon.zhao@nebula-matrix.com>	<20250822090359.614551-2-dimon.zhao@nebula-matrix.com>,
- <20250827092734.03fb2729@hermes.local>
-x-aliyun-mail-creator: W4_0.2.3_null_d2lTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEwOC4wLjUzNTkuMTI1IFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoNy43LjAtUmVsZWFzZS4yNTA1MjIwMDIpIE1vam8vMS4wLjAgTmF0aXZlIEFwcFR5cGUocmVsZWFzZSkgQ2hhbm5lbC8yMDEyMDAgQXJjaGl0ZWN0dXJlL3g4Nl82NA==Gs
-In-Reply-To: <20250827092734.03fb2729@hermes.local>
-Content-Type: multipart/alternative;
- boundary="----=ALIBOUNDARY_1178_7f632427e700_68afc7b2_1af1df"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003448:EE_|LV2PR12MB5992:EE_
+X-MS-Office365-Filtering-Correlation-Id: 01060643-7458-4c3c-e309-08dde5e23422
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|36860700013|1800799024|82310400026|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?oGNtavB8kigW+ZtYBa32kwEuxcMPZZOUfyn5BYR89rL763aoUFBptxkzlyUf?=
+ =?us-ascii?Q?pUFtFcjALTdlZmWekViLFpTxaL5AcI6/7zd4BzjA7nsOiP8sB6ymqY3lC7Sp?=
+ =?us-ascii?Q?SrZUK3H48vJmM8nVm/KfB7+yqq908x1dELzF6f3zbfWIDO8WESxC1Mb/rS+z?=
+ =?us-ascii?Q?SAKUThyv6Uxp4WbZLXiwSK5Shf0HOrp9DrU7JwFbFHSa4Fnm2sL+QfYWca/+?=
+ =?us-ascii?Q?U1ioQU4pkZjcXXWnooXgieGH5pyC3dlIAwxMMQLLZ1qWzVQ8xdnIuBuXWkaF?=
+ =?us-ascii?Q?L9JHEaury+pXtnhk4W1MsDZV3TwzM2SDEUPiCm3lzAK2asmmEKDCVxz7A9AE?=
+ =?us-ascii?Q?PgIaTt0l1VjakEK2BRwVso5FFXtqBeFr8bo+uIJByZDF4zHW4nnTkNi4darJ?=
+ =?us-ascii?Q?pFYgeHEYmzeFe7bhKRhkmtVLI1lAdYHpFUBFVyWvgCP1XxrKlp2v6DX/eUo0?=
+ =?us-ascii?Q?u6ihzrNRl3/pHo/dthIThmA0bBmCxfHSDTdGex7cRryH8R6rG6C1h3aNF4Gj?=
+ =?us-ascii?Q?qrn1hiOZaag3nrUkdt77LxiaK4e8B8BJoWadeNJnxlZe8Z5n+1UIqLm5EKhS?=
+ =?us-ascii?Q?CsRCnbFPwLWHv2cRZabgJ+hA70AFMKTw/EUjOn+MSdm7y7LEXG2RY7XpmCal?=
+ =?us-ascii?Q?dbysiIML8t+U6I5k5xvZqnJJXYYUl/0GEhfjWPbg+rSCN8Tv4XZBK+PCX0Z4?=
+ =?us-ascii?Q?0P8vUOEXS4D7A9LDqJqpLNrOoMDJc4gfcZ6YnMgGbLO2d11kIu04+/1HoLyf?=
+ =?us-ascii?Q?3r9xc3PbvkVI3KNPn+/yekB5F7pqK6Bc7AU6Cn+RxPWVJLrram3RLLh6WQ0z?=
+ =?us-ascii?Q?B0csAKidqEPK+ZmhjBHBKav/rD+wSE/mlUE8mDsNpPuC9YngV0e+SYGWKf81?=
+ =?us-ascii?Q?88V5t4YRWezFgjzgrIFVoQCGZ6oF21JIbDB3VvSC4rfNLaFXXalc80KChxro?=
+ =?us-ascii?Q?kOiVWATIOj2EATwbn6hPTsTKk6S1eafvFL5IhAXrNIoqrf9/jCxmtNRUgF+J?=
+ =?us-ascii?Q?P4rcvh3hO94S7SU5uLQPySJRflq/ri69CcpvlmQglFYkPLqUIV3hIAA3W6gQ?=
+ =?us-ascii?Q?+6eLARTuPtC0RztdL/vxj3owTpJBQjx6/ys7IxnjmrspazPBHmUWwJePie1T?=
+ =?us-ascii?Q?yOaPbdikOi/ZlWagICSUlWLLDf0M7xaTGLhiLwqVf6zfRShjoi2avsg+TlF2?=
+ =?us-ascii?Q?NYiRRTuGEw+nTXJ2xO3+//GrNf8kae7poyjKfqzNjngKXpRoK1a3UhQP+t33?=
+ =?us-ascii?Q?30ST/5GgKucMlHtL8vsO/SOQxOgE75HTUr6Aeq//vj5ofQJFaIDdiA7yIHfs?=
+ =?us-ascii?Q?9Vt6ObNRcaCCE6MG9RB7KRqu/eRtMP0yN2JfMgqeUdi05e1UNw1zs4gEItA7?=
+ =?us-ascii?Q?9vtMV0hwEvWbSSHcaDCdxRd14tUWg2guSj0r7VuLfeQAclLDtKGht1b/H5Zp?=
+ =?us-ascii?Q?UOQnNjOQ7DninW++TlZdDTW5pQc1ONQiODU0LuUM1c8ky47Gu4NTc4m1NOOR?=
+ =?us-ascii?Q?hgyMeoLG33kiEU0zUj2SeoREGfi223SJ4ulw?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2025 03:23:05.4784 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01060643-7458-4c3c-e309-08dde5e23422
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DS2PEPF00003448.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5992
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,161 +131,196 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-------=ALIBOUNDARY_1178_7f632427e700_68afc7b2_1af1df
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+With dedicated RDMA link monitor, there are two threads
+which can update the IB device port information.
 
-SGkgU3RlcGhlbu+8jApPdXIgZHJpdmVyIGFyY2hpdGVjdHVyZSBpcyBkZXNpZ25lZCB0byBzdXBw
-b3J0IG11bHRpcGxlIGNoaXAgdmFyaWFudHMsIGVhY2ggd2l0aCBkaXN0aW5jdCBoYXJkd2FyZS1z
-b2Z0d2FyZSBpbnRlcmFjdGlvbnMsIHdoaWNoIGNvbnRyaWJ1dGVzIHRvIGl0cyByZWxhdGl2ZSBj
-b21wbGV4aXR5LgpUbyBlbnN1cmUgYnJvYWQgY29tcGF0aWJpbGl0eSBhbmQgbW9kdWxhcml0eSwg
-dGhlIGFyY2hpdGVjdHVyZSBpcyBvcmdhbml6ZWQgaW50byB0aGUgZm9sbG93aW5nIGxheWVyczoK
-MS4gRGV2IExheWVyIChEZXZpY2UgTGF5ZXIpCjIuIERpc3BhdGNoIExheWVyCjMuIFJlc291cmNl
-IExheWVyCjQuIENoYW5uZWwgTGF5ZXIKNS4gSFcgTGF5ZXIgKEhhcmR3YXJlIExheWVyKQpFYWNo
-IGNoaXAgdmFyaWFudCBoYXMgaXRzIG93biBpbml0IGFuZCByZW1vdmUgZnVuY3Rpb25zIGZvciB0
-aGVzZSBsYXllcnMuCkFzIHlvdSBjb3JyZWN0bHkgcG9pbnRlZCBvdXQsIHRoZXJlIGFyZSBtYW55
-IGluZGlyZWN0aW9uIHRhYmxlcyBpbnZvbHZlZC4gClRoaXMgcGF0Y2ggc2VyaWVzIGltcGxlbWVu
-dHMgdGhlIHRhYmxlcyBmb3Igb25lIGNoaXAsIGFuZCBzdWJzZXF1ZW50IHBhdGNoZXMgd2lsbCBh
-ZGQgc3VwcG9ydCBmb3IgbW9yZSBjaGlwIHZhcmlhbnRzLgpUaGFuayB5b3UuCi0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQrl
-j5Hku7bkurrvvJpTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+
-CuWPkemAgeaXtumXtO+8mjIwMjXlubQ45pyIMjjml6Uo5ZGo5ZubKSAwMDoyNwrmlLbku7bkurrv
-vJpEaW1vbjxkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29tPgrmioTjgIDpgIHvvJpkZXY8ZGV2
-QGRwZGsub3JnPjsgVGhvbWFzIE1vbmphbG9uPHRob21hc0Btb25qYWxvbi5uZXQ+OyBLeW8gTGl1
-PGt5by5saXVAbmVidWxhLW1hdHJpeC5jb20+OyBMZW9uPGxlb24ueXVAbmVidWxhLW1hdHJpeC5j
-b20+OyBTYW08c2FtLmNoZW5AbmVidWxhLW1hdHJpeC5jb20+CuS4u+OAgOmimO+8mlJlOiBbUEFU
-Q0ggdjYgMDEvMTddIG5ldC9uYmw6IGFkZCBkb2MgYW5kIG1pbmltdW0gbmJsIGJ1aWxkIGZyYW1l
-d29yawpUaGlzIGNvZGUgbG9va3MgbGlrZSBpdCB3YXMgcGFydCBvZiBzb21ldGhpbmcgYmlnZ2Vy
-IChhbmQvb3Igd3JpdHRlbgpieSBhIG9iamVjdCBvcmllbnRlZCBwcm9ncmFtbWVyKS4KTG90cyBv
-ZiBpbmRpcmVjdGlvbiB0YWJsZXMgYW5kIG1vc3QgbmV2ZXIgaGF2ZSBtdWx0aXBsZSBpbXBsZW1l
-bnRhdGlvbnMuCkZ1bmN0aW9uIGluZGlyZWN0aW9uIGlzIHNsb3dlciBhbmQgcmlza3MgU1BFQ1RS
-RSB0eXBlIGF0dGFja3MuCj4gK3N0cnVjdCBuYmxfcHJvZHVjdF9jb3JlX29wcyB7Cj4gKyBpbnQg
-KCpod19pbml0KSh2b2lkICpwKTsKPiArIHZvaWQgKCpod19yZW1vdmUpKHZvaWQgKnApOwo+ICsg
-aW50ICgqcmVzX2luaXQpKHZvaWQgKnAsIHN0cnVjdCBydGVfZXRoX2RldiAqZXRoX2Rldik7Cj4g
-KyB2b2lkICgqcmVzX3JlbW92ZSkodm9pZCAqcCk7Cj4gKyBpbnQgKCpjaGFuX2luaXQpKHZvaWQg
-KnApOwo+ICsgdm9pZCAoKmNoYW5fcmVtb3ZlKSh2b2lkICpwKTsKPiArfTsKPiArc3RydWN0IG5i
-bF9wcm9kdWN0X2Rldl9vcHMgewo+ICsgaW50ICgqZGV2X2luaXQpKHZvaWQgKmFkYXB0ZXIpOwo+
-ICsgdm9pZCAoKmRldl91bmluaXQpKHZvaWQgKmFkYXB0ZXIpOwo+ICsgaW50ICgqZGV2X3N0YXJ0
-KSh2b2lkICphZGFwdGVyKTsKPiArIHZvaWQgKCpkZXZfc3RvcCkodm9pZCAqYWRhcHRlcik7Cj4g
-K307Cj4gKwo+ICtzdHJ1Y3QgbmJsX3Byb2R1Y3RfZGlzcGF0Y2hfb3BzIHsKPiArIGludCAoKmRp
-c3BhdGNoX2luaXQpKHZvaWQgKm1ndCk7Cj4gKyBpbnQgKCpkaXNwYXRjaF91bmluaXQpKHZvaWQg
-Km1ndCk7Cj4gK307Cj4gK3N0cnVjdCBuYmxfcHJvZHVjdF9kZXZfZXh0ZXJuYWxfb3BzIHsKPiAr
-IGludCAoKmV4dGVybmFsX3BmX29wc19nZXQpKHN0cnVjdCBydGVfZXRoX2RldiAqZGV2LCB2b2lk
-ICphcmcpOwo+ICsgaW50ICgqZXh0ZXJuYWxfcmVwX29wc19nZXQpKHN0cnVjdCBydGVfZXRoX2Rl
-diAqZGV2LCB2b2lkICphcmcpOwo+ICsgaW50ICgqZXh0ZXJuYWxfYm9uZF9vcHNfZ2V0KShzdHJ1
-Y3QgcnRlX2V0aF9kZXYgKmRldiwgdm9pZCAqYXJnKTsKPiArfTsKVGhlc2UgYXJlIGRlZmluZWQg
-YnV0IG5ldmVyIHVzZWQuCj4gKyNlbmRpZgo=
-------=ALIBOUNDARY_1178_7f632427e700_68afc7b2_1af1df
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Add a new flag to avoid the race condition. Update should
+go through RDMA link monitor once ready.
 
-PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
-bGU9ImNsZWFyOiBib3RoOyI+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlh
-bCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij5IaSZuYnNwOzxzcGFuICBzdHlsZT0iY29sb3I6
-IHJnYigwLCAwLCAwKTsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1
-bjsgZm9udC1zaXplOiAxNHB4OyBmb250LXN0eWxlOiBub3JtYWw7IGZvbnQtdmFyaWFudC1saWdh
-dHVyZXM6IG5vcm1hbDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9udC13ZWlnaHQ6IDQw
-MDsgbGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50
-OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3aGl0ZS1zcGFjZTogbm9ybWFsOyB3b3JkLXNw
-YWNpbmc6IDBweDsgYmFja2dyb3VuZC1jb2xvcjogcmdiKDI1NSwgMjU1LCAyNTUpOyB0ZXh0LWRl
-Y29yYXRpb24tdGhpY2tuZXNzOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tc3R5bGU6IGluaXRp
-YWw7IHRleHQtZGVjb3JhdGlvbi1jb2xvcjogaW5pdGlhbDsgZmxvYXQ6IG5vbmU7IGRpc3BsYXk6
-IGlubGluZSAhaW1wb3J0YW50OyI+U3RlcGhlbu+8jDwvc3Bhbj48L3NwYW4+PC9kaXY+PGRpdiAg
-c3R5bGU9ImNsZWFyOiBib3RoOyI+PGJyID48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7
-Ij48c3BhbiA+T3VyIGRyaXZlciBhcmNoaXRlY3R1cmUgaXMgZGVzaWduZWQgdG8gc3VwcG9ydCBt
-dWx0aXBsZSBjaGlwIHZhcmlhbnRzLCBlYWNoIHdpdGggZGlzdGluY3QgaGFyZHdhcmUtc29mdHdh
-cmUgaW50ZXJhY3Rpb25zLCB3aGljaCBjb250cmlidXRlcyB0byBpdHMgcmVsYXRpdmUgY29tcGxl
-eGl0eS48YnIgPjwvc3Bhbj48c3BhbiA+VG8gZW5zdXJlIGJyb2FkIGNvbXBhdGliaWxpdHkgYW5k
-IG1vZHVsYXJpdHksIHRoZSBhcmNoaXRlY3R1cmUgaXMgb3JnYW5pemVkIGludG8gdGhlIGZvbGxv
-d2luZyBsYXllcnM6PC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxkaXYg
-IHN0eWxlPSJjbGVhcjogYm90aDsiPjEuIERldiBMYXllciAoRGV2aWNlIExheWVyKTxiciA+PC9k
-aXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+Mi4gRGlzcGF0Y2ggTGF5ZXI8YnIgPjwvZGl2
-PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjMuIFJlc291cmNlIExheWVyPGJyID48L2Rpdj48
-ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij40LiBDaGFubmVsIExheWVyPGJyID48L2Rpdj48ZGl2
-ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij41LiBIVyBMYXllciAoSGFyZHdhcmUgTGF5ZXIpPGJyID48
-L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij48YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJj
-bGVhcjogYm90aDsiPkVhY2ggY2hpcCB2YXJpYW50IGhhcyBpdHMgb3duIGluaXQgYW5kIHJlbW92
-ZSBmdW5jdGlvbnMgZm9yIHRoZXNlIGxheWVycy48YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVh
-cjogYm90aDsiPkFzIHlvdSBjb3JyZWN0bHkgcG9pbnRlZCBvdXQsIHRoZXJlIGFyZSBtYW55IGlu
-ZGlyZWN0aW9uIHRhYmxlcyBpbnZvbHZlZC4mbmJzcDs8L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6
-IGJvdGg7Ij5UaGlzIHBhdGNoIHNlcmllcyBpbXBsZW1lbnRzIHRoZSB0YWJsZXMgZm9yIG9uZSBj
-aGlwLCBhbmQgc3Vic2VxdWVudCBwYXRjaGVzIHdpbGwgYWRkIHN1cHBvcnQgZm9yIG1vcmUgY2hp
-cCB2YXJpYW50cy48YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxiciA+PC9k
-aXY+PGRpdiA+PHNwYW4gPlRoYW5rIHlvdS48L3NwYW4+PC9kaXY+PHAgIGNsYXNzPSIiPjxiciA+
-PC9wPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxzcGFuICBzdHlsZT0iZm9udC1m
-YW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PGJyID48L3Nw
-YW4+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+PHNwYW4gIHN0eWxlPSJmb250LWZh
-bWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48YnIgPjwvc3Bh
-bj48L2Rpdj48YmxvY2txdW90ZSAgX3F1b3RlPSIxIiBzdHlsZT0ibWFyZ2luLXJpZ2h0OiAwcHg7
-IG1hcmdpbi10b3A6IDBweDsgbWFyZ2luLWJvdHRvbTogMHB4OyBmb250LWZhbWlseTogVGFob21h
-LCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwg
-MCwgMCk7Ij48ZGl2ICBjbGFzcz0iYWxpbWFpbC1xdW90ZSI+PGRpdiAgc3R5bGU9ImNsZWFyOiBi
-b3RoOyI+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tPC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+5Y+R5Lu25Lq6
-77yaU3RlcGhlbiBIZW1taW5nZXIgJmx0O3N0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnJmd0Ozwv
-ZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuWPkemAgeaXtumXtO+8mjIwMjXlubQ45pyI
-Mjjml6Uo5ZGo5ZubKSAwMDoyNzwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuaUtuS7
-tuS6uu+8mkRpbW9uJmx0O2RpbW9uLnpoYW9AbmVidWxhLW1hdHJpeC5jb20mZ3Q7PC9kaXY+PGRp
-diAgc3R5bGU9ImNsZWFyOiBib3RoOyI+5oqE44CA6YCB77yaZGV2Jmx0O2RldkBkcGRrLm9yZyZn
-dDs7IFRob21hcyBNb25qYWxvbiZsdDt0aG9tYXNAbW9uamFsb24ubmV0Jmd0OzsgS3lvIExpdSZs
-dDtreW8ubGl1QG5lYnVsYS1tYXRyaXguY29tJmd0OzsgTGVvbiZsdDtsZW9uLnl1QG5lYnVsYS1t
-YXRyaXguY29tJmd0OzsgU2FtJmx0O3NhbS5jaGVuQG5lYnVsYS1tYXRyaXguY29tJmd0OzwvZGl2
-PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuS4u+OAgOmimO+8mlJlOiBbUEFUQ0ggdjYgMDEv
-MTddIG5ldC9uYmw6IGFkZCBkb2MgYW5kIG1pbmltdW0gbmJsIGJ1aWxkIGZyYW1ld29yazwvZGl2
-PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxiciA+PC9kaXY+VGhpcyBjb2RlIGxvb2tzIGxp
-a2UgaXQgd2FzIHBhcnQgb2Ygc29tZXRoaW5nIGJpZ2dlciAoYW5kL29yIHdyaXR0ZW48YnIgPmJ5
-IGEgb2JqZWN0IG9yaWVudGVkIHByb2dyYW1tZXIpLjxiciA+PGJyID5Mb3RzIG9mIGluZGlyZWN0
-aW9uIHRhYmxlcyBhbmQgbW9zdCBuZXZlciBoYXZlIG11bHRpcGxlIGltcGxlbWVudGF0aW9ucy48
-YnIgPkZ1bmN0aW9uIGluZGlyZWN0aW9uIGlzIHNsb3dlciBhbmQgcmlza3MgU1BFQ1RSRSB0eXBl
-IGF0dGFja3MuPGJyID48YnIgPiZndDsgK3N0cnVjdCBuYmxfcHJvZHVjdF9jb3JlX29wcyB7PGJy
-ID4mZ3Q7ICsgaW50ICgqaHdfaW5pdCkodm9pZCAqcCk7PGJyID4mZ3Q7ICsgdm9pZCAoKmh3X3Jl
-bW92ZSkodm9pZCAqcCk7PGJyID4mZ3Q7ICsgaW50ICgqcmVzX2luaXQpKHZvaWQgKnAsIHN0cnVj
-dCBydGVfZXRoX2RldiAqZXRoX2Rldik7PGJyID4mZ3Q7ICsgdm9pZCAoKnJlc19yZW1vdmUpKHZv
-aWQgKnApOzxiciA+Jmd0OyArIGludCAoKmNoYW5faW5pdCkodm9pZCAqcCk7PGJyID4mZ3Q7ICsg
-dm9pZCAoKmNoYW5fcmVtb3ZlKSh2b2lkICpwKTs8YnIgPiZndDsgK307PGJyID48YnIgPjxiciA+
-PGJyID48YnIgPiZndDsgK3N0cnVjdCBuYmxfcHJvZHVjdF9kZXZfb3BzIHs8YnIgPiZndDsgKyBp
-bnQgKCpkZXZfaW5pdCkodm9pZCAqYWRhcHRlcik7PGJyID4mZ3Q7ICsgdm9pZCAoKmRldl91bmlu
-aXQpKHZvaWQgKmFkYXB0ZXIpOzxiciA+Jmd0OyArIGludCAoKmRldl9zdGFydCkodm9pZCAqYWRh
-cHRlcik7PGJyID4mZ3Q7ICsgdm9pZCAoKmRldl9zdG9wKSh2b2lkICphZGFwdGVyKTs8YnIgPiZn
-dDsgK307PGJyID4mZ3Q7ICs8YnIgPiZndDsgK3N0cnVjdCBuYmxfcHJvZHVjdF9kaXNwYXRjaF9v
-cHMgezxiciA+Jmd0OyArIGludCAoKmRpc3BhdGNoX2luaXQpKHZvaWQgKm1ndCk7PGJyID4mZ3Q7
-ICsgaW50ICgqZGlzcGF0Y2hfdW5pbml0KSh2b2lkICptZ3QpOzxiciA+Jmd0OyArfTs8YnIgPjxi
-ciA+PGJyID48YnIgPiZndDsgK3N0cnVjdCBuYmxfcHJvZHVjdF9kZXZfZXh0ZXJuYWxfb3BzIHs8
-YnIgPiZndDsgKyBpbnQgKCpleHRlcm5hbF9wZl9vcHNfZ2V0KShzdHJ1Y3QgcnRlX2V0aF9kZXYg
-KmRldiwgdm9pZCAqYXJnKTs8YnIgPiZndDsgKyBpbnQgKCpleHRlcm5hbF9yZXBfb3BzX2dldCko
-c3RydWN0IHJ0ZV9ldGhfZGV2ICpkZXYsIHZvaWQgKmFyZyk7PGJyID4mZ3Q7ICsgaW50ICgqZXh0
-ZXJuYWxfYm9uZF9vcHNfZ2V0KShzdHJ1Y3QgcnRlX2V0aF9kZXYgKmRldiwgdm9pZCAqYXJnKTs8
-YnIgPiZndDsgK307PGJyID48YnIgPlRoZXNlIGFyZSBkZWZpbmVkIGJ1dCBuZXZlciB1c2VkLjxi
-ciA+PGJyID48YnIgPiZndDsgKyNlbmRpZjwvZGl2PjwvYmxvY2txdW90ZT48ZGl2ICBzdHlsZT0i
-bGluZS1oZWlnaHQ6IDIwcHg7IGNsZWFyOiBib3RoOyI+PGJyID48L2Rpdj48L2Rpdj48L2Rpdj4N
-CjxkaXYgc3R5bGU9ImNsZWFyOiBib3RoOyI+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTBweDsg
-Y29sb3I6IHJnYigyMTYsIDIxNiwgMjE2KTsiPuacrOmCruS7tuaJgOWQq+S/oeaBr+WPiuWFtuS7
-u+S9lemZhOS7tuS4uuS/neWvhuS/oeaBr+S4lOWPr+iDveWxnuS6juS4k+acieS/oeaBr+OAguS7
-u+S9lemdnuaMh+WumuaOpeaUtuS6uuWdh+aXoOadg+iuv+mXruacrOmCruS7tuOAguWmguaenOaC
-qOS4jeaYr+ivpemCruS7tueahOaMh+WumuaOpeaUtuS6uu+8jOmCo+S5iOS7u+S9leWvueacrOmC
-ruS7tuWGheWuuei/m+ihjOaKq+mcsu+8jOWkjeWItuaIluS9v+eUqOeahOihjOS4uuWdh+aYr+em
-geatoueahOOAguWmguaenOaCqOS4jeaYr+ivpemCruS7tueahOaMh+WumuaOpeaUtuS6uu+8jOiv
-t+aCqOeri+WNs+mAmui/h+mCruS7tumAmuefpSZuYnNwO2NvbXBsaWFuY2VAbmVidWxhLW1hdHJp
-eC5jb23lubbnq4vljbPliKDpmaTmgqjplJnor6/mjqXlj5fnmoTpgq7ku7bjgII8L3NwYW4+PC9k
-aXY+PGRpdiBzdHlsZT0iY2xlYXI6IGJvdGg7Ij48c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMHB4
-OyBjb2xvcjogcmdiKDIxNiwgMjE2LCAyMTYpOyI+VGhlJm5ic3A7aW5mb3JtYXRpb24mbmJzcDtp
-biZuYnNwO3RoaXMmbmJzcDttZXNzYWdlJm5ic3A7YW5kJm5ic3A7YW55Jm5ic3A7YXR0YWNobWVu
-dHMmbmJzcDtpcyZuYnNwO2NvbmZpZGVudGlhbCZuYnNwO2FuZCZuYnNwO21heSZuYnNwO2JlJm5i
-c3A7cHJpdmlsZWdlZC4mbmJzcDsmbmJzcDtBY2Nlc3MmbmJzcDt0byZuYnNwO3RoaXMmbmJzcDtl
-bWFpbCZuYnNwO2J5Jm5ic3A7YW55b25lJm5ic3A7b3RoZXImbmJzcDt0aGFuJm5ic3A7dGhlJm5i
-c3A7aW50ZW5kZWQmbmJzcDtyZWNpcGllbnQmbmJzcDtpcyZuYnNwO25vdCZuYnNwO2F1dGhvcml6
-ZWQuJm5ic3A7Jm5ic3A7SWYmbmJzcDt5b3UmbmJzcDthcmUmbmJzcDtub3QmbmJzcDt0aGUmbmJz
-cDtpbnRlbmRlZCZuYnNwO3JlY2lwaWVudCwmbmJzcDtkaXNjbG9zdXJlLCZuYnNwO2NvcHlpbmcm
-bmJzcDtvciZuYnNwO3VzZSZuYnNwO29mJm5ic3A7dGhlJm5ic3A7Y29udGVudHMmbmJzcDtvZiZu
-YnNwO3RoaXMmbmJzcDtlbWFpbCZuYnNwO2lzJm5ic3A7cHJvaGliaXRlZC4mbmJzcDsmbmJzcDtJ
-ZiZuYnNwO3lvdSZuYnNwO2FyZSZuYnNwO25vdCZuYnNwO3RoZSZuYnNwO2ludGVuZGVkJm5ic3A7
-cmVjaXBpZW50LCZuYnNwO3BsZWFzZSZuYnNwO25vdGlmeSZuYnNwOyZuYnNwO2NvbXBsaWFuY2VA
-bmVidWxhLW1hdHJpeC5jb20mbmJzcDtpbW1lZGlhdGVseSZuYnNwO2J5Jm5ic3A7ZW1haWwsJm5i
-c3A7YW5kJm5ic3A7cGxlYXNlJm5ic3A7ZGVzdHJveSZuYnNwO3RoZSZuYnNwO2VtYWlsJm5ic3A7
-eW91Jm5ic3A7cmVjZWl2ZWQmbmJzcDtpbiZuYnNwO2Vycm9yLjwvc3Bhbj48L2Rpdj4=
-------=ALIBOUNDARY_1178_7f632427e700_68afc7b2_1af1df--
+Fixes: 51fb5c40c826 ("net/mlx5: optimize device probing")
+Cc: rongweil@nvidia.com
+Cc: stable@dpdk.org
+Signed-off-by: Rongwei Liu <rongweil@nvidia.com>
+Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+---
+ drivers/common/mlx5/linux/mlx5_nl.c     |  7 ++-
+ drivers/common/mlx5/mlx5_common.h       |  1 +
+ drivers/net/mlx5/linux/mlx5_ethdev_os.c | 69 ++++---------------------
+ drivers/net/mlx5/linux/mlx5_os.c        |  9 +++-
+ 4 files changed, 25 insertions(+), 61 deletions(-)
+
+diff --git a/drivers/common/mlx5/linux/mlx5_nl.c b/drivers/common/mlx5/linux/mlx5_nl.c
+index dd69e229e3..84c12efdc7 100644
+--- a/drivers/common/mlx5/linux/mlx5_nl.c
++++ b/drivers/common/mlx5/linux/mlx5_nl.c
+@@ -1171,8 +1171,12 @@ mlx5_nl_ifindex(int nl, const char *name, uint32_t pindex, struct mlx5_dev_info
+ 			data.ibindex = dev_info->ibindex;
+ 	}
+ 
++	/* Update should be done via monitor thread to avoid race condition */
++	if (dev_info->async_mon_ready) {
++		rte_errno = ENODEV;
++		return 0;
++	}
+ 	ret = mlx5_nl_port_info(nl, pindex, &data);
+-
+ 	if (dev_info->probe_opt && !strcmp(dev_info->ibname, name)) {
+ 		if ((!ret || ret == -ENODEV) && dev_info->port_info &&
+ 		    pindex <= dev_info->port_num) {
+@@ -1182,7 +1186,6 @@ mlx5_nl_ifindex(int nl, const char *name, uint32_t pindex, struct mlx5_dev_info
+ 			dev_info->port_info[pindex].valid = 1;
+ 		}
+ 	}
+-
+ 	return ret ? 0 : data.ifindex;
+ }
+ 
+diff --git a/drivers/common/mlx5/mlx5_common.h b/drivers/common/mlx5/mlx5_common.h
+index bea1382911..b49f0c850e 100644
+--- a/drivers/common/mlx5/mlx5_common.h
++++ b/drivers/common/mlx5/mlx5_common.h
+@@ -185,6 +185,7 @@ struct mlx5_dev_info {
+ 	uint32_t ibindex;
+ 	char ibname[MLX5_FS_NAME_MAX];
+ 	uint8_t probe_opt;
++	uint8_t async_mon_ready;
+ 	struct mlx5_port_nl_info *port_info;
+ };
+ 
+diff --git a/drivers/net/mlx5/linux/mlx5_ethdev_os.c b/drivers/net/mlx5/linux/mlx5_ethdev_os.c
+index a371c2c747..180fd60f3a 100644
+--- a/drivers/net/mlx5/linux/mlx5_ethdev_os.c
++++ b/drivers/net/mlx5/linux/mlx5_ethdev_os.c
+@@ -704,59 +704,6 @@ mlx5_link_update_bond(struct rte_eth_dev *dev)
+ 		((ifr.ifr_flags & IFF_UP) && (ifr.ifr_flags & IFF_RUNNING));
+ }
+ 
+-static void
+-mlx5_handle_port_info_update(struct mlx5_dev_info *dev_info, uint32_t if_index,
+-			     uint16_t msg_type)
+-{
+-	struct mlx5_switch_info info = {
+-		.master = 0,
+-		.representor = 0,
+-		.name_type = MLX5_PHYS_PORT_NAME_TYPE_NOTSET,
+-		.port_name = 0,
+-		.switch_id = 0,
+-	};
+-	uint32_t i;
+-	int nl_route;
+-
+-	if (dev_info->port_num <= 1 || dev_info->port_info == NULL)
+-		return;
+-
+-	DRV_LOG(DEBUG, "IB device %s ifindex %u received netlink event %u",
+-			dev_info->ibname, if_index, msg_type);
+-	for (i = 1; i <= dev_info->port_num; i++) {
+-		if (!dev_info->port_info[i].valid)
+-			continue;
+-		if (dev_info->port_info[i].ifindex == if_index)
+-			break;
+-	}
+-	if (msg_type == RTM_NEWLINK && i > dev_info->port_num) {
+-		nl_route = mlx5_nl_init(NETLINK_ROUTE, 0);
+-		if  (nl_route < 0)
+-			goto flush_all;
+-
+-		if (mlx5_nl_switch_info(nl_route, if_index, &info)) {
+-			if (mlx5_sysfs_switch_info(if_index, &info))
+-				goto flush_all;
+-		}
+-
+-		if (info.name_type == MLX5_PHYS_PORT_NAME_TYPE_PFSF ||
+-		    info.name_type == MLX5_PHYS_PORT_NAME_TYPE_PFVF)
+-			goto flush_all;
+-		close(nl_route);
+-	} else if (msg_type == RTM_DELLINK && i <= dev_info->port_num) {
+-		memset(dev_info->port_info + i, 0, sizeof(struct mlx5_port_nl_info));
+-	}
+-
+-	return;
+-flush_all:
+-	if (nl_route >= 0)
+-		close(nl_route);
+-	for (i = 1; i <= dev_info->port_num; i++) {
+-		if (!dev_info->port_info[i].ifindex)
+-			dev_info->port_info[i].valid = 0;
+-	}
+-}
+-
+ static void
+ mlx5_dev_interrupt_nl_cb(struct nlmsghdr *hdr, void *cb_arg)
+ {
+@@ -766,8 +713,6 @@ mlx5_dev_interrupt_nl_cb(struct nlmsghdr *hdr, void *cb_arg)
+ 
+ 	if (mlx5_nl_parse_link_status_update(hdr, &if_index) < 0)
+ 		return;
+-	if (sh->cdev->config.probe_opt && sh->cdev->dev_info.port_num > 1 && !sh->rdma_monitor_supp)
+-		mlx5_handle_port_info_update(&sh->cdev->dev_info, if_index, hdr->nlmsg_type);
+ 
+ 	for (i = 0; i < sh->max_port; i++) {
+ 		struct mlx5_dev_shared_port *port = &sh->port[i];
+@@ -970,10 +915,18 @@ mlx5_dev_interrupt_handler_ib(void *arg)
+ 		return;
+ 
+ 	if (data.event_type == MLX5_NL_RDMA_NETDEV_ATTACH_EVENT &&
+-	    !(data.flags & MLX5_NL_CMD_GET_NET_INDEX))
++	    !(data.flags & MLX5_NL_CMD_GET_NET_INDEX)) {
++		DRV_LOG(WARNING, "Incomplete RDMA ATTACH event for ibdev[%d]",
++			dev_info->ibindex);
++		if (data.flags & MLX5_NL_CMD_GET_PORT_INDEX)
++			memset(dev_info->port_info + data.portnum, 0,
++			       sizeof(struct mlx5_port_nl_info));
++		else
++			goto flush_all;
+ 		return;
++	}
+ 
+-	DRV_LOG(DEBUG, "Event info: type %d, ibindex %d, ifindex %d, portnum %d,",
++	DRV_LOG(INFO, "Event info: type %d, ibindex %d, ifindex %d, portnum %d,",
+ 		data.event_type, data.ibindex, data.ifindex, data.portnum);
+ 
+ 	/* Changes found in number of SF/VF ports. All information is likely unreliable. */
+@@ -992,7 +945,7 @@ mlx5_dev_interrupt_handler_ib(void *arg)
+ 				goto flush_all;
+ 		}
+ 	} else if (data.event_type == MLX5_NL_RDMA_NETDEV_DETACH_EVENT) {
+-		memset(dev_info->port_info + data.portnum, 0, sizeof(struct mlx5_port_nl_info));
++		dev_info->port_info[data.portnum].ifindex = 0;
+ 	}
+ 	return;
+ 
+diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
+index 85b3fabaf5..edfe61ea55 100644
+--- a/drivers/net/mlx5/linux/mlx5_os.c
++++ b/drivers/net/mlx5/linux/mlx5_os.c
+@@ -3051,7 +3051,7 @@ mlx5_os_dev_shared_handler_install(struct mlx5_dev_ctx_shared *sh)
+ 		DRV_LOG(ERR, "Failed to allocate intr_handle.");
+ 		return;
+ 	}
+-	if (sh->cdev->config.probe_opt &&
++	if (sh->cdev->dev_info.probe_opt &&
+ 	    sh->cdev->dev_info.port_num > 1 &&
+ 	    !sh->rdma_monitor_supp) {
+ 		nlsk_fd = mlx5_nl_rdma_monitor_init();
+@@ -3076,8 +3076,15 @@ mlx5_os_dev_shared_handler_install(struct mlx5_dev_ctx_shared *sh)
+ 				close(nlsk_fd);
+ 				return;
+ 			}
++			sh->cdev->dev_info.async_mon_ready = 1;
+ 		} else {
+ 			close(nlsk_fd);
++			if (sh->cdev->dev_info.probe_opt) {
++				DRV_LOG(INFO, "Failed to create rdma link monitor, disable probe optimization");
++				sh->cdev->dev_info.probe_opt = 0;
++				mlx5_free(sh->cdev->dev_info.port_info);
++				sh->cdev->dev_info.port_info = NULL;
++			}
+ 		}
+ 	}
+ 	nlsk_fd = mlx5_nl_init(NETLINK_ROUTE, RTMGRP_LINK);
+-- 
+2.27.0
 
