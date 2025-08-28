@@ -2,71 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F77C8303F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 14:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7566ECA0EED
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 15:18:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9F5954025A;
-	Thu, 28 Aug 2025 16:55:53 +0200 (CEST)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
- [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 9F57F4025A
- for <dev@dpdk.org>; Thu, 28 Aug 2025 16:55:51 +0200 (CEST)
-Received: by mail-wr1-f48.google.com with SMTP id
- ffacd0b85a97d-3c79f0a606fso656115f8f.0
- for <dev@dpdk.org>; Thu, 28 Aug 2025 07:55:51 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 84C9B4025A;
+	Thu, 28 Aug 2025 17:18:08 +0200 (CEST)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com
+ [209.85.208.46]) by mails.dpdk.org (Postfix) with ESMTP id A5490400D6
+ for <dev@dpdk.org>; Thu, 28 Aug 2025 17:18:06 +0200 (CEST)
+Received: by mail-ed1-f46.google.com with SMTP id
+ 4fb4d7f45d1cf-619487c8865so4217061a12.1
+ for <dev@dpdk.org>; Thu, 28 Aug 2025 08:18:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756392951;
- x=1756997751; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=miPatUMO+zIUidoi6IziVs0yjVkquK7EIxNiZlG0CXs=;
- b=mWpcs7fI6RBmuPkLIN5yJCVnvAkFkcLQTEsLG+kKgnTB2zPksim45f9VJSubOcakpG
- zCLeL5dY0ARmkdj+nDjuEbO7wX3EJCRr0mfgvsIK0XgSqywWpSNa0dd16I4QWqKKde89
- DCtQDoJEdtoDn0lObZx03Nib2SSvtsSm5xATAj2s2nvO0cwdPf2/EGRDR0R6LY3yA5XL
- vsC7DIa2FD0rCULIrxujpKXJYFCadAEBS8xl1vOLq0En0kDiz8v46TySyxNzU0xOpNiI
- fOtiZGOdXqQLFXMYN5KaliKhazsVgYmZXaP1zWUbH9J7Wti59lHALu6XLFcOgzaofjkJ
- 5RjQ==
+ d=iol.unh.edu; s=unh-iol; t=1756394286; x=1756999086; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=MAPs6Rhevapyk+NwRYx85qvTAPj3CCSbcGh4/TLLhUY=;
+ b=bjkGiEh6jVS5anubrse0kq28wqcUW64Tws/H8Kw7TESomm7hEKeQPkFPrc/sb9zU82
+ GTF59XBYvCgzomvoSCzEcCSuFX+UkLRaIrUK+kRztBJz1hj7VgfcmTEii3S3vWrRNfnK
+ YvDItBp3JrL2MY6iCkqaLqwcuWtb99neQX8+M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756392951; x=1756997751;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=miPatUMO+zIUidoi6IziVs0yjVkquK7EIxNiZlG0CXs=;
- b=IYbk+40kEQpXfge9RQkGAQuUUzUcuqKTezkAmAtNKN9GALXXDBenTbaY0zjuuTS5g6
- rtX7TeNARvO9uAa0W9hx2A/Wq2TMq3UiXrTs9kIlTM5mx6LEXslLmagQ8E5P5qJoOcMF
- wkeqMJ/9gTJHoVgwaPSCavTBu9i4YpeZ6sZ3rO3wyAbUGJByndZX04gM9mFUrMIZ9cS6
- WdR1MOzTr0eNWvPeZ1rekEhrUozh8Nvz2dWlqf/MylvC991qokqeWuDLIyp0Rwk2E0aj
- Z+h6EEmEFz2/keAz/EqOEeb0CMaUZTiI2hjQ6/ND3IS/PAx2p8IsrID03y3lYU7tIPFT
- 6Fmw==
-X-Gm-Message-State: AOJu0YyP4JcVYF7qtdLOF6K47B9t//E4JLcvF3jLuuj0Qv2PYYDOBsSi
- zoFbSRq7wIbwO/3iIiZMYZZs0ywklAT8iSVOWfYGDn92XCh8q24GTJImpc/WzlkC77Y=
-X-Gm-Gg: ASbGncuLO+8foeS3ebvFKt3Dpodic0jvLiv6a/KI6xFS8BFX16oz/kfKy12Glqfd4mZ
- 0xOvxcPHWS0iiz0fKYacxW5jCsqlagou9sy/23edIwlpveez1KiGT3B+w9mRVwu+iafNkLanxlo
- urJyyBIp+CKmCcn22uI/5tOJ7Xr4FSqk6nr7+ZRA0ilGltSXABtdyfYwo8ovSfJEa20gcCCDlJy
- T8+lRdTtQqf02qhYExSvTkE3Kvw4srKn3ND7eum2CBwIEaEwwaKKdhnPZPlIND+v6nlyWKjs9SU
- B6IBYh/kXqyv+nV0UXT5vAy2HgdUupxD1XpTE76BeLTrto9vNMVMfwWJ81J24mBl7J1popTgFH0
- Ur/0Ofa+QfILlD7jY8NJo73o1nVPCbpNhJWYCNs4lck/Fp7tHzF1LhiNSBXYoqOMcYu4cx2ibvc
- dnrf22wgdMSg==
-X-Google-Smtp-Source: AGHT+IGKo0T0X/GF2qFQfeXQrPwVGTrZV1DCcUdqQyB4J3e2pMnY2rG6Bub+6Yu8Pd490Rvea5vOLw==
-X-Received: by 2002:a05:6000:2408:b0:3ca:8b32:e43d with SMTP id
- ffacd0b85a97d-3ca8b32e8c6mr8924681f8f.1.1756392951167; 
- Thu, 28 Aug 2025 07:55:51 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-45b66c383b1sm59405935e9.3.2025.08.28.07.55.50
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 28 Aug 2025 07:55:50 -0700 (PDT)
-Date: Thu, 28 Aug 2025 07:55:47 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ciara Loftus <ciara.loftus@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] net/ice: make link state configurable on device stop
-Message-ID: <20250828075547.1fe99122@hermes.local>
-In-Reply-To: <20250828102305.1522036-1-ciara.loftus@intel.com>
-References: <20250828102305.1522036-1-ciara.loftus@intel.com>
+ d=1e100.net; s=20230601; t=1756394286; x=1756999086;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=MAPs6Rhevapyk+NwRYx85qvTAPj3CCSbcGh4/TLLhUY=;
+ b=fZtmtoIOeNR85gkYozGoiRu2taNuPvzmUgKEMcb9Zt8chWRC5S1WWldg17Xu0zyafb
+ wcbaYtJkHpEQU9TDrNqMrva827r+WntbMMADSBV39xUyRv8mRoIIEHRTxsyyYOe0VuuI
+ Npkl4Ql0960hmMpJOAU5u1w9KVsO1TNwvOFCyZaLfZJ0HV1yyqqCpkQO4yMYBjJlpsjb
+ 0V+VaA1WgD43rqS9x5gKIrLYzdcTMNVyTlM3tm7LzjwJGj9ZST9K0ByxATzk4gntXzIf
+ 436jGGwl6YTFo9VSIfnjjVyXmMpV74DDuK3y2ObkMobiHP7EDXubNMp6tKW32KbUWlyG
+ m4gw==
+X-Gm-Message-State: AOJu0Yy+BgWs9GC4tdpCsFSh//3VTjdm8OZObd+wR7limmCEiwRaw0l3
+ nPq1b5PhreFjSUWC66K4HBG1qUbdfabV0pFFmP6CE5HOF07jwfOYxTsytvw+g0rAT0USo34wChk
+ /r0zp6urXyV+QNfd55mRvjS60IBdQCIGIA42r1FUZQA==
+X-Gm-Gg: ASbGnctk3GjMSPZ+IZi4K2BXyklPMNf9V/nNqHXhtldmlqFKa23HlrRgPDVmJOd1NmS
+ YODbi75rBa8i414xr0K5AxYbbCDttIDa7n2ULrBvYGjdk1srHDcJmrzmB6LHjSDwqLtLNTSvT1P
+ lDPPcEMXtPyfM+DxK+Bu+R3qmhEv8zv+YHcBU5NFLRAgyUOmLKLKErXJoCHKJanxECCxoqttUrR
+ mT0V8/s
+X-Google-Smtp-Source: AGHT+IGycJqsf2NH593kN2FtynWV8Vu84ph6lgkQ03YKKzDAs8JMLqQ2Pvmkvjj3XgTdHU98nduYEp0b7XUeoQ8K6n8=
+X-Received: by 2002:a05:6402:90e:b0:61c:931d:ccce with SMTP id
+ 4fb4d7f45d1cf-61c983b81d2mr7450374a12.13.1756394286205; Thu, 28 Aug 2025
+ 08:18:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250808182152.356879-2-abailey@iol.unh.edu>
+ <20250828123758.20451-1-abailey@iol.unh.edu>
+ <175638514815.25987.9964104140534837687.luca.vizzarro@arm.com>
+In-Reply-To: <175638514815.25987.9964104140534837687.luca.vizzarro@arm.com>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Thu, 28 Aug 2025 11:17:55 -0400
+X-Gm-Features: Ac12FXz2aCoKYS-bkyKJW5_XUgzYOQXq9Ch9_IOvuIaG1wymrW8uvVNJ6oL51pQ
+Message-ID: <CABJ3N2UY2N3dGL-Zj97RX5Vqs8pNcCHugUbCG=QmQeT_52CU=g@mail.gmail.com>
+Subject: Re: [PATCH v3] dts: enable port binding on the TG
+To: Luca Vizzarro <luca.vizzarro@arm.com>
+Cc: dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu
+Content-Type: multipart/alternative; boundary="00000000000083e5ae063d6e6979"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,19 +70,83 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 28 Aug 2025 10:23:05 +0000
-Ciara Loftus <ciara.loftus@intel.com> wrote:
+--00000000000083e5ae063d6e6979
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Introduce the boolean restore_link_state devarg for the ice driver. When
-> set, when the ice port is stopped, the physical link will be restored to
-> the state it was in when the device was started.
-> 
-> Prior to this patch the default behaviour was to always restore the link
-> to its original state. The new default behaiour is to always bring the
-> link down, which is in keeping with most other drivers.
-> 
-> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
-> ---
+Thank you Luca for the feedback,
 
-Device specific devargs should be discouraged. Seems like the same
-issue occurs across multiple drivers.
+Future version patches will be in-reply-to the v1. From v2, the only thing
+that has changed is the body of the method is_bound_for_dpdk in ports.py.
+Before, it would check if the current driver was the same as the dpdk
+driver which is inaccurate for the TG node using mellanox cards. This patch
+adds coverage for TG's using mellanox cards in this method.
+
+On Thu, Aug 28, 2025 at 8:50=E2=80=AFAM Luca Vizzarro <luca.vizzarro@arm.co=
+m> wrote:
+
+> Hi Andrew,
+>
+> I see you've made a bit of a mess with the versioning. v2 was detached
+> from the thread, so this is confusing me. Can you make sure that (as per
+> contributing guidelines):
+> - you always reply with new patches to the very beginning of the thread
+>   (usually the cover letter of v1 =E2=80=93 if it was a single patch, the=
+n a
+>   reply to that patch)
+> - you add a cover letter to your patch series explaining your changes
+>   across versions. You can check other emails in the mailing list to
+>   gather an understanding of this. Of course, if you are sending a
+>   single patch, a cover letter is not necessary, but you'll need to
+>   annotate your patch (the contributing guidelines who how this is done)
+>
+> Finally, I cannot tell easily tell what changed from v2. Can you please
+> give a summary of the changes?
+>
+> Best,
+> Luca
+>
+
+--00000000000083e5ae063d6e6979
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto">Thank you Luca for the feedback,</div><div dir=3D"auto"><=
+br></div><div dir=3D"auto">Future version patches will be in-reply-to the v=
+1. From v2, the only thing that has changed is the body of the method is_bo=
+und_for_dpdk=C2=A0in ports.py. Before,=C2=A0it would check if the current d=
+river was the same as the dpdk driver which is inaccurate for the TG node u=
+sing mellanox cards. This patch adds coverage for TG&#39;s using mellanox c=
+ards in this method.</div><div><br><div class=3D"gmail_quote gmail_quote_co=
+ntainer"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Aug 28, 2025 at 8:50=
+=E2=80=AFAM Luca Vizzarro &lt;<a href=3D"mailto:luca.vizzarro@arm.com">luca=
+.vizzarro@arm.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote"=
+ style=3D"margin:0px 0px 0px 0.8ex;border-left-width:1px;border-left-style:=
+solid;padding-left:1ex;border-left-color:rgb(204,204,204)">Hi Andrew,<br>
+<br>
+I see you&#39;ve made a bit of a mess with the versioning. v2 was detached<=
+br>
+from the thread, so this is confusing me. Can you make sure that (as per<br=
+>
+contributing guidelines):<br>
+- you always reply with new patches to the very beginning of the thread<br>
+=C2=A0 (usually the cover letter of v1 =E2=80=93 if it was a single patch, =
+then a<br>
+=C2=A0 reply to that patch)<br>
+- you add a cover letter to your patch series explaining your changes<br>
+=C2=A0 across versions. You can check other emails in the mailing list to<b=
+r>
+=C2=A0 gather an understanding of this. Of course, if you are sending a<br>
+=C2=A0 single patch, a cover letter is not necessary, but you&#39;ll need t=
+o<br>
+=C2=A0 annotate your patch (the contributing guidelines who how this is don=
+e)<br>
+<br>
+Finally, I cannot tell easily tell what changed from v2. Can you please<br>
+give a summary of the changes?<br>
+<br>
+Best,<br>
+Luca<br>
+</blockquote></div></div>
+
+--00000000000083e5ae063d6e6979--
