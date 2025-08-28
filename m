@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8E6CA0FF2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 06:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80FCBCA0FF2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 28 Aug 2025 06:46:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 693F74027D;
-	Thu, 28 Aug 2025 08:44:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BF77A4027D;
+	Thu, 28 Aug 2025 08:46:27 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 7C14340263
- for <dev@dpdk.org>; Thu, 28 Aug 2025 08:44:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7861840263
+ for <dev@dpdk.org>; Thu, 28 Aug 2025 08:46:26 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2988C20A24;
- Thu, 28 Aug 2025 08:44:37 +0200 (CEST)
-Subject: RE: Ubuntu 20.04 EOL
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 3E57A20A24;
+ Thu, 28 Aug 2025 08:46:26 +0200 (CEST)
+Subject: Recall: Ubuntu 20.04 EOL
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 28 Aug 2025 08:44:35 +0200
-Content-class: urn:content-classes:message
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE7C@smartserver.smartshare.dk>
-In-Reply-To: <20250827213430.41806a48@hermes.local>
+Content-Type: multipart/alternative;
+ boundary="----_=_NextPart_001_01DC17E7.79B53069"
+Date: Thu, 28 Aug 2025 08:46:24 +0200
+Content-class: urn:content-classes:recallmessage
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35E9FE7D@smartserver.smartshare.dk>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-X-MimeOLE: Produced By Microsoft Exchange V6.5
 Thread-Topic: Ubuntu 20.04 EOL
-Thread-Index: AdwX1RF4ghbr01s4RLCOg8fpRv8eLwAEHa/w
-References: <20250827213430.41806a48@hermes.local>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Thread-Index: AdwX53m1iAsPdjInTd23PgpmHpjxyQ==
+Priority: Urgent
+Expiry-Date: Sat, 30 Aug 2025 08:46:23 +0200
 From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
 To: "Stephen Hemminger" <stephen@networkplumber.org>
 Cc: <dev@dpdk.org>
@@ -46,31 +45,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> Sent: Thursday, 28 August 2025 06.35
->=20
-> Looks like Ubuntu 20.04 LTS (Focal Fossa) reached the end of standard =
-support.
+This is a multi-part message in MIME format.
 
-Paid support is available until May 2030:
-https://ubuntu.com/blog/ubuntu-20-04-lts-end-of-life-standard-support-is-=
-coming-to-an-end-heres-how-to-prepare
+------_=_NextPart_001_01DC17E7.79B53069
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-> Should we drop it for DTS?
->=20
-> Asking because the recent patch to handle shadow warnings doesn't work =
-on
-> compilers like Gcc 9.4 which don't know what -Wshadow is.
+Morten Br=F8rup would like to recall the message, "Ubuntu 20.04 EOL".
 
-Our current minimum GCC compiler requirement is version 8.0:
-https://git.dpdk.org/dpdk/tree/doc/guides/linux_gsg/sys_reqs.rst#n32
+------_=_NextPart_001_01DC17E7.79B53069
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Which GCC version is required to support -Wshadow, and which GCC =
-versions are included in relevant distros?
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Recall: Ubuntu 20.04 EOL</TITLE>
+</HEAD>
+<BODY>
+<!-- Converted from text/plain format -->
 
-Maybe the -Wshadow can be added conditionally, depending on compiler =
-version.
-Shadow variables will not be caught locally, if using an old compiler =
-version. But the CI will catch them in the tests running on recent =
-compiler versions.
+<P><FONT SIZE=3D2>Morten Br=F8rup would like to recall the message, =
+&quot;Ubuntu 20.04 EOL&quot;.</FONT>
+</P>
 
+</BODY>
+</HTML>
+------_=_NextPart_001_01DC17E7.79B53069--
