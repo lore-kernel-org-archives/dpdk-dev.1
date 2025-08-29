@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB5FC8303F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 08:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DE2CA0FF7
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 08:25:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7809A4068A;
-	Fri, 29 Aug 2025 10:24:47 +0200 (CEST)
-Received: from lf-2-34.ptr.blmpb.com (lf-2-34.ptr.blmpb.com [101.36.218.34])
- by mails.dpdk.org (Postfix) with ESMTP id DC93240674
- for <dev@dpdk.org>; Fri, 29 Aug 2025 10:24:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B28744042C;
+	Fri, 29 Aug 2025 10:24:49 +0200 (CEST)
+Received: from lf-2-35.ptr.blmpb.com (lf-2-35.ptr.blmpb.com [101.36.218.35])
+ by mails.dpdk.org (Postfix) with ESMTP id 18FC440666
+ for <dev@dpdk.org>; Fri, 29 Aug 2025 10:24:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=feishu2403070942; d=yunsilicon.com; t=1756455880; h=from:subject:
+ s=feishu2403070942; d=yunsilicon.com; t=1756455882; h=from:subject:
  mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
  mime-version:in-reply-to:message-id;
- bh=cTYlZ5fjQ0WXCejfwwCNaUUEmk+CS2DdQB2IH1nRzLE=;
- b=HtNpwjpK6bWLUGsRiDVcb5ygC11MWABBkbJH0fIRtesBbYkR49/U7CS4xUKTMmBO+uSKKG
- RV0/tpOFk1JxjXSLNKvckmGlDxnw4Fz0hF0vkonjr6tFpqz6zZUTDqxCogJbJympFMamxJ
- ov4IG6g947w45wDLUDurw0prDbzveQ5L3/Kp37CYfcAZdIk74Fgux32YSDP9KGNbYvlGOb
- mqStwrlQGNm39KreJD66XmbzKle/rLTi6hHOHphl+nscB7cFnrsysM17tXlWcjWQ13KB9S
- Q1MO311a+c/PKX3xvccgFkzSJNVjM7sgg3I0103/4PuJAQ8IYxSNA62+ouadBw==
-References: <20250829082406.24369-1-wanry@yunsilicon.com>
-Received: from ubuntu-liun.yunsilicon.com ([58.34.192.114]) by smtp.feishu.cn
- with ESMTPS; Fri, 29 Aug 2025 16:24:37 +0800
-X-Lms-Return-Path: <lba+268b163c6+7da947+dpdk.org+wanry@yunsilicon.com>
+ bh=/rrJtLoKTXuf5iF8VQLwv6eKfc1E7WYPpQnVciM1+kM=;
+ b=RAoZ2pehJHK1GR4vHKOatzbwvdtTek3r++69SGtoL1nKIpFiFfUgKkzMRoJM2ZEqxpf3Gh
+ xTCvmoRrDHg1Jg+1tioW7fLgB/xEtZ+nkkWpFEYYWHcEl0/WR9/FPeFA/KBZQuKNPkmgVQ
+ 7VEkZDOp535JQTwuWwXro7qkvBGbWFdpifAFidz1177mmkeVLojugbdAN5NY5PF/9U3wt9
+ dGKsxJ2yjypkFkY/Z8/6ylJaDFn66V798evoX4p/2UUVdgHg0rX/Phl+URt1HUSA0MStfd
+ RldnJhk0/PXBRfONsR3Wyo3qqe9I5OWTrxLGO2fcH/kVmy41/j66qhnmCuG+Kg==
 Content-Transfer-Encoding: 7bit
+From: "Renyong Wan" <wanry@yunsilicon.com>
+Date: Fri, 29 Aug 2025 16:24:40 +0800
+Message-Id: <20250829082438.24369-15-wanry@yunsilicon.com>
+Mime-Version: 1.0
+X-Lms-Return-Path: <lba+268b163c8+e92c80+dpdk.org+wanry@yunsilicon.com>
+To: <dev@dpdk.org>
 Cc: <thomas@monjalon.net>, <stephen@networkplumber.org>, 
  <qianr@yunsilicon.com>, <nana@yunsilicon.com>, <zhangxx@yunsilicon.com>, 
  <xudw@yunsilicon.com>, <jacky@yunsilicon.com>, <weihg@yunsilicon.com>, 
  <zhenghy@yunsilicon.com>
-From: "Renyong Wan" <wanry@yunsilicon.com>
-In-Reply-To: <20250829082406.24369-1-wanry@yunsilicon.com>
-Date: Fri, 29 Aug 2025 16:24:37 +0800
-Message-Id: <20250829082436.24369-14-wanry@yunsilicon.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-To: <dev@dpdk.org>
-Subject: [PATCH 13/14] net/xsc: fix uninitialized value
+Subject: [PATCH 14/14] net/xsc: update release notes for xsc PMD
+Received: from ubuntu-liun.yunsilicon.com ([58.34.192.114]) by smtp.feishu.cn
+ with ESMTPS; Fri, 29 Aug 2025 16:24:40 +0800
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250829082406.24369-1-wanry@yunsilicon.com>
 X-Original-From: Renyong Wan <wanry@yunsilicon.com>
+References: <20250829082406.24369-1-wanry@yunsilicon.com>
+Content-Type: text/plain; charset=UTF-8
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,30 +52,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Coverity reported this issue: Using uninitialized value mac when calling
-xsc_ethdev_mac_addr_add.
+Add recent updates of xsc PMD to 25.11 release notes.
 
-Coverity issue: 456592
-Fixes: 0b0f9c161e ("net/xsc: initialize representors")
-
-Signed-off-by: Rong Qian <qianr@yunsilicon.com>
 Signed-off-by: Renyong Wan <wanry@yunsilicon.com>
 ---
- drivers/net/xsc/xsc_ethdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ doc/guides/rel_notes/release_25_11.rst | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/net/xsc/xsc_ethdev.c b/drivers/net/xsc/xsc_ethdev.c
-index 6102c158e8..988d734b5b 100644
---- a/drivers/net/xsc/xsc_ethdev.c
-+++ b/drivers/net/xsc/xsc_ethdev.c
-@@ -886,7 +886,7 @@ xsc_ethdev_init_one_representor(struct rte_eth_dev *eth_dev, void *init_params)
- 	struct xsc_repr_port *repr_port = (struct xsc_repr_port *)init_params;
- 	struct xsc_ethdev_priv *priv = TO_XSC_ETHDEV_PRIV(eth_dev);
- 	struct xsc_dev_config *config = &priv->config;
--	struct rte_ether_addr mac;
-+	struct rte_ether_addr mac = priv->mac[0];
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index 122029b3c8..f1cb435689 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -64,6 +64,19 @@ New Features
  
- 	priv->repr_port = repr_port;
- 	repr_port->drv_data = eth_dev;
+   * Enabled software taildrop for ordered queues.
+ 
++* **Updated Yunsilicon xsc ethernet driver.**
++
++  * Add FW version get
++  * Add TSO support
++  * Add module EEPROM dump
++  * Promiscuous mode support
++  * Link status support
++  * Link event support
++  * Add FEC get and set
++  * support per port for multi-process
++  * Code optimizations
++  * Coverity issue fix
++
+ Removed Items
+ -------------
+ 
 -- 
 2.25.1
