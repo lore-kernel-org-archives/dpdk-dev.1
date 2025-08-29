@@ -2,50 +2,159 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3AACA0FF9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 14:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EA3CA0FF0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 14:39:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CB7640670;
-	Fri, 29 Aug 2025 16:02:49 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id 20D794025A
- for <dev@dpdk.org>; Fri, 29 Aug 2025 16:02:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id F147C4025A;
+	Fri, 29 Aug 2025 16:39:36 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 24DC140150
+ for <dev@dpdk.org>; Fri, 29 Aug 2025 16:39:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1756476164; x=1788012164;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=oehPLbEheFyUCp1cK8JCdjulyfd5pGk7b29cOEXfrrw=;
- b=Esfk4/ZH7U/VOG25u2f7d7fvER++cWc2QBFFcDw+m0K2Hn2hlXVkn6L+
- /z71If1PanyfEooaNL7Bs8ViN/h+eEG+PaUBfVPIIgIbx7ZF52rMTS4H+
- IYNpu4khYTnEAHx4t04hWbWlLd7CTf7KKD7x8BXVMnLvYL+BpwM6z3Hn2
- 2ZXdV0OJNId6+H+QiDUvgtDp1X23gMQP4yLa7i6nNKCzXjmssynezEfSG
- L9DHHMYzl+cpxff81H6eW5f/qGT5sIz5/zmjQjvSAkZ54q/4hAj1tv4SC
- BxwivKRXGSDdtE3ertaF3AbpPc3SGH95ozPaAC9JNgQmhfMApJ7zt8fbe Q==;
-X-CSE-ConnectionGUID: TPa/lPLeS2SzQ3p6BCzTtA==
-X-CSE-MsgGUID: GR3/PQQaSQGT0FZaUYtS1A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="84166958"
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; d="scan'208";a="84166958"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Aug 2025 07:02:43 -0700
-X-CSE-ConnectionGUID: g0/HeXXsSs6TzKsF0EM0Wg==
-X-CSE-MsgGUID: bDQMynAgRrezFmNXCwDFtA==
+ t=1756478376; x=1788014376;
+ h=date:from:to:subject:message-id:references:in-reply-to:
+ mime-version; bh=4BpD7TvBDQ7amwXxB5G5YOM7cMJbU7KPHla03yNd6WM=;
+ b=FNV1meDQgK7gD+mmXsC/3H7RnH/Nsl0/fgoj+mHUGVIl/+sa3+bKKpA4
+ L7ZQUtR8rCjkWQdnmocmDpBAZoAwUDeCEfU8cuBdG1XEOy3slFIuOZ8kX
+ Qbdr/B89M4qmkhDhFmLLhuxH9UEM4IojQFRFKHHtdC/gw+5fjTt1U2Vfq
+ SqKjy8cWSYUFYaKLQlhBNlWaY5E0YzdrH2q1UIItJVqZvbM9BqShkLLX/
+ k5bqcgQJ2UEayET/RxOTxCNIahpx6dUzz7WlOu+upaF0KSM9Q00n3pL4O
+ BUXpaNHJKKTl0dPUdPp8zlYQbVPoHwdtbdA3SLg/1n0Gg5kQmGsBVzXJC g==;
+X-CSE-ConnectionGUID: gfipMpLyRbydcZpuLF6Efg==
+X-CSE-MsgGUID: GadyIbOrSfiv80H5eE4xew==
+X-IronPort-AV: E=McAfee;i="6800,10657,11537"; a="58618022"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; d="scan'208";a="58618022"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Aug 2025 07:39:35 -0700
+X-CSE-ConnectionGUID: 8L2Ve6YrSlWbOhDfJqy2sQ==
+X-CSE-MsgGUID: wjTFAOoQRO+F/Z9BdXO2yw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; d="scan'208";a="170295682"
-Received: from silpixa00401177.ir.intel.com ([10.237.213.77])
- by fmviesa006.fm.intel.com with ESMTP; 29 Aug 2025 07:02:42 -0700
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [RFC PATCH 3/3] app/testpmd: support link state on close ethdev API
-Date: Fri, 29 Aug 2025 14:02:24 +0000
-Message-Id: <20250829140224.1748255-4-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250829140224.1748255-1-ciara.loftus@intel.com>
-References: <20250829140224.1748255-1-ciara.loftus@intel.com>
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; d="scan'208";a="169968762"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Aug 2025 07:39:34 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 29 Aug 2025 07:39:33 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Fri, 29 Aug 2025 07:39:33 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.47) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 29 Aug 2025 07:39:33 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p6fAJSiZ+sA3DTOzs/Y90kdiLnHa+Vh/PsapOxlauLim2pHJXiTzDkFD0XIgxe6krDbrlRx0KglBTXv4vLRP4Ai/oFqDtDJlwSE7UQaAq7uaeFhltqpdThQneYjCBeCepHgBpIMujdpW84KnTqUjDA8zc4g5VKZfmrzCn8UkwYdjgV++uh6DEMAVM1VTNh9gDkM0o3DJ+uZYxf1NAzJ0VoHBxBND4Z9mXuhpfUA17/4x7CxsO2rv1kOEWKr2iwMhV5Q7RhRgFXmgtNAUc51ynl5ICg064/fj/FWv97InV0GsMH11VZTKS2lzr6p+yfh0Uv9HW6HEHH7W4fQQf6RqoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lxOpuBUMau5vq03ShaLwYt/M5OQ3WAYKGe0ETu3C+Ks=;
+ b=lVsq0tmpUtC2q2aUKLH09kclAr+UqMx+D94xfDXjt4TfyKz4K9VnrIYikncjBCWpwM3PpxiDfcEjGwJFXF1ZrosHvgA9cZZKrGAO1/IHwypWXd6Imh8l5n1MualUv9kh3oQ8Mbmi8YO0+2+jp33KLxfyZR+3PSmM0/2ceEUjEFNVG2iCUHltPS9XABTE5QTQg8NU6abWsg3Tgiq94XyuLagaVu1OJVsr97VL0WbRYksK6BmKOrB9e5Bessq2wopi1tS5wEV7Asrt+7Izl0eCycyak2QghhT4ryu6op1eVmHsS8W/7aNese5XSye97xYyjFREHONizbuVXLtC7R974w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY8PR11MB7290.namprd11.prod.outlook.com (2603:10b6:930:9a::6)
+ by DM6PR11MB4563.namprd11.prod.outlook.com (2603:10b6:5:28e::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.21; Fri, 29 Aug
+ 2025 14:39:25 +0000
+Received: from CY8PR11MB7290.namprd11.prod.outlook.com
+ ([fe80::2fa:a105:f81e:5971]) by CY8PR11MB7290.namprd11.prod.outlook.com
+ ([fe80::2fa:a105:f81e:5971%6]) with mapi id 15.20.9052.019; Fri, 29 Aug 2025
+ 14:39:25 +0000
+Date: Fri, 29 Aug 2025 15:39:19 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: <dev@dpdk.org>
+Subject: Re: [PATCH v7 00/13] Simplify running with high-numbered CPUs
+Message-ID: <aLG7l8g67JGgSVVI@bricha3-mobl1.ger.corp.intel.com>
+References: <20250520164025.2055721-1-bruce.richardson@intel.com>
+ <20250723162013.2392-1-bruce.richardson@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250723162013.2392-1-bruce.richardson@intel.com>
+X-ClientProxiedBy: DUZPR01CA0081.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46a::6) To CY8PR11MB7290.namprd11.prod.outlook.com
+ (2603:10b6:930:9a::6)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY8PR11MB7290:EE_|DM6PR11MB4563:EE_
+X-MS-Office365-Filtering-Correlation-Id: d8a1d039-06e9-44b9-6da8-08dde709d970
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?F4snB8LbDAgk0iz8RE6AoLSM/cKi0amy70mJiQbdm8tXk1WAKu4S+VsB6TKQ?=
+ =?us-ascii?Q?cV2dWbvZoENfe2DiHL5ApO5MLtOZ1INFH5YGrxa03du1a6C14aFT3LSZX7l0?=
+ =?us-ascii?Q?KXbh3ay3S7a/EhfadyO5ItgUzahLe4t4c0i8gcTgNrEtFxF0DjkLZO3l/CAE?=
+ =?us-ascii?Q?pHsPnYl7m8dvenn4dL74QN5r+e7LvVkj2ph7HVXYEBBtz1R8AKDKhBcQepXw?=
+ =?us-ascii?Q?p+vreqTLJEvskCWbt/9K4tl1cJ36Mx15/s5a+gb4Ysw8vc10vU4n7ReHkMD1?=
+ =?us-ascii?Q?JKi7kOzehHW+VMrL701KFZefudUgi+Qcx/zqKQykGyIPSGGH5Zr1X0G4zbSk?=
+ =?us-ascii?Q?MMSrXe1c3HEyIF4LFL+H+xgF3oDwJAf79Prk8xrottYHvqsjNoapdYt9Ts9q?=
+ =?us-ascii?Q?bCLh48N/VD0UIyGT/+DRdfn5bSlMQgSsnC0vQ94HCHg1Lts8gJrGSPkv3FD8?=
+ =?us-ascii?Q?DQLcKzF5Griespi3nIi8F1unSosRfU6uDBcqK0Ooi+KNe5TYBZh6UH1zdOxC?=
+ =?us-ascii?Q?n0zlu9e0ttb3CMRt69MmgcSA/HeDxB1iwSSIH334SDZpXFlFttXkYNahaYQC?=
+ =?us-ascii?Q?lkqFb/hg0aVBaeCnRed/fY/yyw5Pf8FzGRXXgdF9/mtzKzQWMt4l6cB3tnt1?=
+ =?us-ascii?Q?Ijr8+DK4BCYA5BA5FSylPgWosCo3CPS8nDgwjrlXu6JjEWy171bZ+fDHsQi+?=
+ =?us-ascii?Q?l+PBxLxJ/q7+R8cjM2AGTG+lPQepy4CIfaBeprgCCh7Qe411nakCvA4ZMDZh?=
+ =?us-ascii?Q?4DMLzPiJTZta6buEi3LmGww/k9VIBOQ8LK+TSlx+ylBlwAKv004UPnBbLxuR?=
+ =?us-ascii?Q?1jvM98/WoDO332oaTikrjR0UQSWi5eus3zmur8YrkmfmLd+B/53YMXCQfhmA?=
+ =?us-ascii?Q?XKbN1Ld4p89KPo/CP9yUN/2RQ+xRZY5Ht/3DFjFEnkS6sUjXzsRVcYU9l/40?=
+ =?us-ascii?Q?E7zXLJEtxdvJlE4uOuS/aPU8OxKNI3R4YvqxKPC9z5GCgSnZp6NV/FVRbJzq?=
+ =?us-ascii?Q?Ikn/o1O5vfACXTOLWbmtKNqpuDL6w1I5wwRHbd5j7EkyyMTQtfdbOXycX9jg?=
+ =?us-ascii?Q?ZpKZN9VCZUO8wM5i6mQdKx1pYZ60lnjGpGRXR5exHEoFnHK9+9SPc4euUb16?=
+ =?us-ascii?Q?k5lMEeuKobdmO2CrpcBYfYQpKuCgwoeExmUpPhFyw6vDXVPF2sF1fRnAQHil?=
+ =?us-ascii?Q?qrMwh2JecCGgYgid6FxEzuR96GcDs4MHWi8jIzNCj3f8HHFNdZHle3TRjjXq?=
+ =?us-ascii?Q?9foXrgCB9N1k5J5qzl6902TuMCwUCh0DwcsorbhOvNrXQk5DmqpcCATd/BWn?=
+ =?us-ascii?Q?TOWWf/wRTVLO0zwuiDXzc4Z67ZRfRQlz2CVfsiS9g/8srlnSWGejCHT3DxqK?=
+ =?us-ascii?Q?VliuU2ASTyl6qUx8k8ZtXdjKctyJKMPXM1SPrDTRQSL1oA7H9k5XhgTG0yYb?=
+ =?us-ascii?Q?vRJtPfbMxwM=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CY8PR11MB7290.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?aXYfgeowa54evWHPE81EksifcUwYWfX3EZbK0mcwZfy0GgZWcIlJ5Sv8ekU+?=
+ =?us-ascii?Q?LUqdl1mp+KVuNzyi+bH9/CXaWaopJlrLJHJ2yUU1/8Q2V5wjEoXu1dZVKbS3?=
+ =?us-ascii?Q?V82KcfHSkOELpjplfCbu/3PYJP5eR06W9n8yTB9BWSxDaFIVY8drnaqU1pha?=
+ =?us-ascii?Q?gYz8w4lf5qnWRMTPTMSf0D7l1/aNnQKt+nAyIy9AHqa6aMnGQVMhH7ca6gAb?=
+ =?us-ascii?Q?yOS3z7Cc211NqdgcsCk32DTy8dSpFgKJ6+hV1KdiG/mlqz+ZMFG6uuCuYy+o?=
+ =?us-ascii?Q?ssMf4j9BJ8KhCGMxfSg5rOup78x9OBNgBZz3ms4mL46FWqmlAV1Gocg84+HX?=
+ =?us-ascii?Q?dQKewWhbFw08GJUJg0D2QxkODXThHXe0X11O+MTHdZsIMW01wOp9xQ2C6aqJ?=
+ =?us-ascii?Q?6LHByRmfqNMICi4eBRuOhtkUNHqtYjD6RQzwxeaio67uURT+sHJB/i6/wz0w?=
+ =?us-ascii?Q?X3psxOprs1tDbjwSKkjJGQNyuWsmID+SC8dAMw31/jiFuOTgw75fDIzkILkE?=
+ =?us-ascii?Q?aX0nzmMRCi5eC6oc01qu32hQJJfcUpKWePR32qPA0zy0o4+L30FZkyo1SBAI?=
+ =?us-ascii?Q?05VrvcJ9L18oOickQS0AV0WY8pEaUlUEJkRIDEdg+Q1WIq0u2s+YdxDtMLwy?=
+ =?us-ascii?Q?1+YtFloPJfdvY/MyKakUYa2JM6cVXmYZEpLZd3ZfLdIcQ54KH0pv/084Jj5r?=
+ =?us-ascii?Q?kPf5pv1Bfjg6Wja4jSbQ9AYAGJ4MHtoOuDHPCLIUSFYJWYUgiBKU98kbuRi4?=
+ =?us-ascii?Q?27XodYG5Qzw8jxLKaE6db+RUcKU+bcSgcnS2qGWlZ/rKxpJVITJkVDOzc3pV?=
+ =?us-ascii?Q?lMiJhA/qT9Ai/VBtjyHi/2fiFpmAISjnEQt98g4iGZ7mMfk4xOwXut44okzn?=
+ =?us-ascii?Q?aTj5L15kgD+ObYleyer2T0+Qf3BBlQ0PSGwFhFJK0qN8xEQxvTSLYdyndli/?=
+ =?us-ascii?Q?5aSoxcsLnCD9RU92+NYqXMct0+4+wbmg0QSSnS3YtQrjDhQQhEU+Nyd59hu/?=
+ =?us-ascii?Q?fI+L0fLa/Y+JM+zTUE9f9hSGecQEO+x73rhFAcjkHy71u3Wk60mLWUYBhzi8?=
+ =?us-ascii?Q?bzu4zFCLWICYRqRQkd5KAwjCZrj2y6MTNY9pCVIPsJ8xx2qgrDC/3YKgxZC0?=
+ =?us-ascii?Q?hlqz2zTWWU5pacqW+yPm4t0YJjkTH4kD/PbfKR/csaZWByGveLzN8ASnU9qU?=
+ =?us-ascii?Q?l3UfuY8E+uMaViurdqhqgReBNvHpPHVa8aQbYPqZkW/sCMN4mmQRLAPT22+b?=
+ =?us-ascii?Q?FM6DO0HD0xGF55x8coApN77xlNEbHz9WLvNR+SBMLbiHWX7/lgtoVFvTLjvC?=
+ =?us-ascii?Q?1XDF2EbKiLQ66eo6M7kIcUlO8yd4BOclj8rrvlQPfS3y6k5ep/khEl64emNU?=
+ =?us-ascii?Q?xFq51CfEr0035wjkOm4DnQ6xjiSzv1oWkACJZ7EHWV9B/18Nl+lSxD35cNta?=
+ =?us-ascii?Q?/H7JGtmmM0G+E2qSrROAo0BUeDGhIX7/CguGf4YIiX/aILpjOOb58Tc/LSCS?=
+ =?us-ascii?Q?CyjVn4tE3tfezQFsaNlRMDNx1vkSSWDINwHZDacLjv4+m5Wh2rLm7QHOTip7?=
+ =?us-ascii?Q?pRQTsTmp/qbM+AYKc+1UVvrMJw5Yh1iXYNdtrjAsIN0SFEZfqcaiBvF299dg?=
+ =?us-ascii?Q?+g=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8a1d039-06e9-44b9-6da8-08dde709d970
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7290.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 14:39:24.8584 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: p6gKiK7+fJ53iBW3Ob1sHwzbimbXYd/k9CHz6RXkzzvEXM4VZf+Mr2TSlW1O+McLGegQwHTrae4whMKoehsdLRky5rohOCRCePkm8VK48EY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4563
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,263 +168,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Allow the user to configure link state on close behaviour via the
-link_state_on_close argument. Three options are allowed:
-1. down: bring (or keep) the link down
-2. up: bring (or keep) the link up
-3. initial: restore the link to the state it was in when the device was
-started.
-
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
----
- app/test-pmd/cmdline.c                      | 56 +++++++++++++++++++++
- app/test-pmd/config.c                       | 17 +++++++
- app/test-pmd/parameters.c                   | 26 ++++++++++
- app/test-pmd/testpmd.c                      | 16 ++++++
- app/test-pmd/testpmd.h                      |  3 ++
- doc/guides/testpmd_app_ug/testpmd_funcs.rst |  7 +++
- 6 files changed, 125 insertions(+)
-
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 7b4e27eddf..79afcca60c 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -679,6 +679,9 @@ static void cmd_help_long_parsed(void *parsed_result,
- 			"    Set a controllable LED associated with a certain"
- 			" port on or off.\n\n"
- 
-+			"set port (port_id) link_state_on_close (down|up|initial)\n"
-+			"    Set link state on close to down, up or initial for a port\n\n"
-+
- 			, list_pkt_forwarding_modes()
- 		);
- 	}
-@@ -13857,6 +13860,58 @@ static cmdline_parse_inst_t cmd_set_dev_led = {
- 	},
- };
- 
-+/* *** SET LINK STATE ON CLOSE FOR A CERTAIN PORT *** */
-+struct cmd_link_state_on_close_result {
-+	cmdline_fixed_string_t set;
-+	cmdline_fixed_string_t port;
-+	portid_t port_id;
-+	cmdline_fixed_string_t link_state_on_close;
-+	cmdline_fixed_string_t state;
-+};
-+
-+static void
-+cmd_set_link_state_on_close_parsed(void *parsed_result,
-+		__rte_unused struct cmdline *cl,
-+		__rte_unused void *data)
-+{
-+	struct cmd_link_state_on_close_result *res = parsed_result;
-+
-+	if (strcmp(res->state, "down") == 0)
-+		set_link_state_on_close(res->port_id, RTE_ETH_LINK_STATE_ON_CLOSE_DOWN);
-+	else if (strcmp(res->state, "up") == 0)
-+		set_link_state_on_close(res->port_id, RTE_ETH_LINK_STATE_ON_CLOSE_UP);
-+	else if (strcmp(res->state, "initial") == 0)
-+		set_link_state_on_close(res->port_id, RTE_ETH_LINK_STATE_ON_CLOSE_INITIAL);
-+	else
-+		printf("Invalid state: %s\n", res->state);
-+}
-+
-+static cmdline_parse_token_string_t cmd_link_state_on_close_set =
-+	TOKEN_STRING_INITIALIZER(struct cmd_link_state_on_close_result, set, "set");
-+static cmdline_parse_token_string_t cmd_link_state_on_close_port =
-+	TOKEN_STRING_INITIALIZER(struct cmd_link_state_on_close_result, port, "port");
-+static cmdline_parse_token_num_t cmd_link_state_on_close_port_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_link_state_on_close_result, port_id, RTE_UINT16);
-+static cmdline_parse_token_string_t cmd_link_state_on_close =
-+	TOKEN_STRING_INITIALIZER(struct cmd_link_state_on_close_result, link_state_on_close,
-+		"link_state_on_close");
-+static cmdline_parse_token_string_t cmd_link_state_on_close_state =
-+	TOKEN_STRING_INITIALIZER(struct cmd_link_state_on_close_result, state, "down#up#initial");
-+
-+static cmdline_parse_inst_t cmd_set_link_state_on_close = {
-+	.f = cmd_set_link_state_on_close_parsed,
-+	.data = NULL,
-+	.help_str = "set port <port_id> link_state_on_close <down/up/initial>",
-+	.tokens = {
-+		(void *)&cmd_link_state_on_close_set,
-+		(void *)&cmd_link_state_on_close_port,
-+		(void *)&cmd_link_state_on_close_port_id,
-+		(void *)&cmd_link_state_on_close,
-+		(void *)&cmd_link_state_on_close_state,
-+		NULL,
-+	},
-+};
-+
- /* ******************************************************************************** */
- 
- /* list of instructions */
-@@ -14105,6 +14160,7 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
- 	&cmd_set_port_cman_config,
- 	&cmd_config_tx_affinity_map,
- 	&cmd_set_dev_led,
-+	&cmd_set_link_state_on_close,
- 	NULL,
- };
- 
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index 0fda8e99f8..c5c5e23b4b 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -5429,6 +5429,23 @@ set_dev_led(portid_t port_id, bool active)
- 			port_id, rte_strerror(-ret));
- }
- 
-+void
-+set_link_state_on_close(portid_t port_id, enum rte_eth_link_state_on_close state)
-+{
-+	int ret;
-+
-+	if (!rte_eth_dev_is_valid_port(port_id)) {
-+		fprintf(stderr, "Error: Invalid port number %u\n", port_id);
-+		return;
-+	}
-+
-+	ret = rte_eth_dev_set_link_state_on_close(port_id, state);
-+
-+	if (ret < 0)
-+		fprintf(stderr, "Error: Unable to set link state on close for port %u: %s\n",
-+			port_id, rte_strerror(-ret));
-+}
-+
- int
- set_fwd_lcores_list(unsigned int *lcorelist, unsigned int nb_lc)
- {
-diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
-index 1132972913..83c077f651 100644
---- a/app/test-pmd/parameters.c
-+++ b/app/test-pmd/parameters.c
-@@ -253,6 +253,8 @@ enum {
- 	TESTPMD_OPT_NUM_PROCS_NUM,
- #define TESTPMD_OPT_PROC_ID "proc-id"
- 	TESTPMD_OPT_PROC_ID_NUM,
-+#define TESTPMD_OPT_LINK_STATE_ON_CLOSE "link_state_on_close"
-+	TESTPMD_OPT_LINK_STATE_ON_CLOSE_NUM,
- 
- 	TESTPMD_OPT_LONG_MAX_NUM
- };
-@@ -378,6 +380,7 @@ static const struct option long_options[] = {
- 	NO_ARG(TESTPMD_OPT_RECORD_BURST_STATS),
- 	REQUIRED_ARG(TESTPMD_OPT_NUM_PROCS),
- 	REQUIRED_ARG(TESTPMD_OPT_PROC_ID),
-+	REQUIRED_ARG(TESTPMD_OPT_LINK_STATE_ON_CLOSE),
- 	{ 0, 0, NULL, 0 }
- };
- #undef NO_ARG
-@@ -930,6 +933,23 @@ parse_link_speed(int n)
- 	return speed;
- }
- 
-+static int
-+parse_link_state_on_close(const char *optarg)
-+{
-+	if (!strcmp(optarg, "down")) {
-+		close_state = RTE_ETH_LINK_STATE_ON_CLOSE_DOWN;
-+	} else if (!strcmp(optarg, "up")) {
-+		close_state = RTE_ETH_LINK_STATE_ON_CLOSE_UP;
-+	} else if (!strcmp(optarg, "initial")) {
-+		close_state = RTE_ETH_LINK_STATE_ON_CLOSE_INITIAL;
-+	} else {
-+		fprintf(stderr, "Invalid state: %s\n", optarg);
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
- void
- launch_args_parse(int argc, char** argv)
- {
-@@ -1733,6 +1753,12 @@ launch_args_parse(int argc, char** argv)
- 		case TESTPMD_OPT_PROC_ID_NUM:
- 			proc_id = atoi(optarg);
- 			break;
-+		case TESTPMD_OPT_LINK_STATE_ON_CLOSE_NUM:
-+			if (parse_link_state_on_close(optarg)) {
-+				rte_exit(EXIT_FAILURE,
-+					"invalid link_state_on_close argument\n");
-+			}
-+			break;
- 		default:
- 			usage(argv[0]);
- 			fprintf(stderr, "Invalid option: %s\n", argv[optind - 1]);
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index bb88555328..4ffa1113cd 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -557,6 +557,11 @@ uint32_t eth_link_speed;
-  */
- int proc_id;
- 
-+/*
-+ * Link state on close.
-+ */
-+enum rte_eth_link_state_on_close close_state;
-+
- /*
-  * Number of processes in multi-process, used to
-  * configure the queues to be polled.
-@@ -3103,6 +3108,17 @@ start_port(portid_t pid)
- 		p_pi = pi;
- 		cnt_pi++;
- 
-+		/* Configure link state on close */
-+		if (close_state) {
-+			diag = rte_eth_dev_set_link_state_on_close(pi, close_state);
-+			if (diag < 0)
-+				fprintf(stderr,
-+					"Port %d: Failed to configure link state on close\n",
-+					pi);
-+			else
-+				printf("Link state on close configured for port %i\n", pi);
-+		}
-+
- 		/* start port */
- 		diag = eth_dev_start_mp(pi);
- 		if (diag < 0) {
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index e629edaa02..9e39bfea5b 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -821,6 +821,8 @@ extern struct rte_flow_action_conntrack conntrack_context;
- extern int proc_id;
- extern unsigned int num_procs;
- 
-+extern enum rte_eth_link_state_on_close close_state;
-+
- static inline bool
- is_proc_primary(void)
- {
-@@ -959,6 +961,7 @@ void update_fwd_ports(portid_t new_pid);
- 
- void set_fwd_eth_peer(portid_t port_id, char *peer_addr);
- void set_dev_led(portid_t port_id, bool active);
-+void set_link_state_on_close(portid_t port_id, enum rte_eth_link_state_on_close state);
- 
- void port_mtu_set(portid_t port_id, uint16_t mtu);
- int port_action_handle_create(portid_t port_id, uint32_t id, bool indirect_list,
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index 6ad83ae50d..96a7dd5470 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -1863,6 +1863,13 @@ Set a controllable LED associated with a certain port on or off::
- 
-    testpmd> set port (port_id) led (on|off)
- 
-+set port link_state_on_close
-+~~~~~~~~~~~~
-+
-+Set the link state on close for a certain port::
-+
-+   testpmd> set port (port_id) link_state_on_close (down|up|initial)
-+
- Port Functions
- --------------
- 
--- 
-2.34.1
-
+On Wed, Jul 23, 2025 at 05:19:58PM +0100, Bruce Richardson wrote:
+> The ultimate of this patchset is to make it easier to run on systems
+> with large numbers of cores, by simplifying the process of using core
+> numbers >RTE_MAX_LCORE. The new EAL args "--lcores-remapped", also
+> shortened to just "-L", and "--lcoreid-base", are added to DPDK to
+> support this. However, in order to enable the addition of these new
+> flags, the first 10 patches of this set do cleanups, for reasons
+> explained below.
+> 
+> When processing cmdline arguments in DPDK, we always do so with very
+> little context. So, for example, when processing the "-l" flag, we have
+> no idea whether there will be later a --proc-type=secondary flag. We
+> have all sorts of post-arg-processing checks in place to try and catch
+> these scenarios.
+> 
+> To improve this situation, this patchset tries to simplify the handling
+> of argument processing, by explicitly doing an initial pass to collate
+> all arguments into a structure. Thereafter, the actual arg parsing is
+> done in a fixed order, meaning that e.g. when processing the
+> --main-lcore flag, we have already processed the service core flags. We
+> also can far quicker and easier check for conflicting options, since
+> they can all be checked for NULL/non-NULL in the arg structure
+> immediately after the struct has been populated.
+> 
+> To do the initial argument gathering, this RFC uses the existing
+> argparse library in DPDK. With recent changes, and a few additional
+> patches at the start of this set, this library now meets our needs for
+> EAL argument parsing and allows us to not need to do direct getopt
+> argument processing inside EAL at all.
+> 
+> An additional benefit of this work is that the argument parsing for EAL
+> is much more centralised into common options and the options list file.
+> This single list with ifdefs makes it clear to the viewer what options
+> are common across OS's, vs what are unix-only or linux-only.
+> 
+> Once the cleanup and rework is done, adding the new options for
+> remapping cores becomes a lot simpler, since we can very easily check
+> for scenarios like multi-process and handle those appropriately.
+> 
+> V7:
+> * expand the scope of the patchset beyond just cleanup to add in the
+>   extra 3 patches for -L and --lcoreid-base option.
+> 
+Recheck-request: rebase=main, iol-abi-testing
