@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 305BACA0FF7
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 08:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8164CA0FF7
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 08:25:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 38EFC40671;
-	Fri, 29 Aug 2025 10:24:39 +0200 (CEST)
-Received: from lf-2-35.ptr.blmpb.com (lf-2-35.ptr.blmpb.com [101.36.218.35])
- by mails.dpdk.org (Postfix) with ESMTP id 5929440671
- for <dev@dpdk.org>; Fri, 29 Aug 2025 10:24:36 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4989440676;
+	Fri, 29 Aug 2025 10:24:40 +0200 (CEST)
+Received: from lf-1-19.ptr.blmpb.com (lf-1-19.ptr.blmpb.com [103.149.242.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 6D6B540608
+ for <dev@dpdk.org>; Fri, 29 Aug 2025 10:24:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=feishu2403070942; d=yunsilicon.com; t=1756455871; h=from:subject:
+ s=feishu2403070942; d=yunsilicon.com; t=1756455873; h=from:subject:
  mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
  mime-version:in-reply-to:message-id;
- bh=wkECfK+Oi6ysMrFWVaQ6v4xmKkPJAwMsH3yZk730c8o=;
- b=iJrqJfi3wN6ysPhr/N7TNJAF+3REQ8K2vK/hsL4W8kmNQ85TllDHOzfBED4i/gC74rs72v
- vUY9ZOMlAVquR2e2QNI+ryoSannHY99zVmrKXt283+AaNgM1Th8ZtfgYojqodK1yAyUpw/
- ooQifBvPyiqCHn/RVFpj8AOM11IK+HJo/0oJ4ecQIk9IYJztCHQaRuqIoyGNpwF+Bp3Y5k
- vQClRxNXlX8vzYPOj/z8lz+ooWnrWu7FROZHglRFLf7U35P4v8I877bYP1pcvG60VHJZ9U
- 6xILqJRChYncW9gHzme1905kB/y1095AjT/vnLQAG50CBW/Ivl38hTw3/0rVTQ==
+ bh=JA1kIVZHu3iVFrUZJO+aM5WvjMGz9naOiF4bJnF+Pts=;
+ b=N6aFpzCcLDWOP99BX5NEo+T9DeITriqSjiDC3sL6UOjRKYsNhwtPBDz8Wm17p9CYiK3uGE
+ I0StZ4qcx3Lz/mGtQu10vLIvc0gxgUsgmr/OMk7Sh1UQrunT6N1YAGD0+pX/9isLpjFkVl
+ I8D3D1ki/EBK6dB9pEIfIB8Y2p5VrZEMMiAKk7Q28cSPg/uVgCTD9kH5chA/rL4ORZIbMD
+ 68r0hYDk+I3V7+7/x4P+MxBe5IphoiP/Uu5U4sBo4Yb21xpguQnnww52zfIM2VgXa/ELAF
+ J9tJ2m5UFa61ZF65eubIacymGAg8u8cdiEZsVpuAK8TRH5vMYz6w5gEJbLS4Ag==
+Content-Type: text/plain; charset=UTF-8
 In-Reply-To: <20250829082406.24369-1-wanry@yunsilicon.com>
-Date: Fri, 29 Aug 2025 16:24:28 +0800
-Message-Id: <20250829082427.24369-11-wanry@yunsilicon.com>
-X-Lms-Return-Path: <lba+268b163bd+56bc05+dpdk.org+wanry@yunsilicon.com>
-References: <20250829082406.24369-1-wanry@yunsilicon.com>
-Content-Transfer-Encoding: 7bit
 To: <dev@dpdk.org>
 Cc: <thomas@monjalon.net>, <stephen@networkplumber.org>, 
  <qianr@yunsilicon.com>, <nana@yunsilicon.com>, <zhangxx@yunsilicon.com>, 
  <xudw@yunsilicon.com>, <jacky@yunsilicon.com>, <weihg@yunsilicon.com>, 
  <zhenghy@yunsilicon.com>
+Date: Fri, 29 Aug 2025 16:24:31 +0800
+Mime-Version: 1.0
+Received: from ubuntu-liun.yunsilicon.com ([58.34.192.114]) by smtp.feishu.cn
+ with ESMTPS; Fri, 29 Aug 2025 16:24:31 +0800
+X-Lms-Return-Path: <lba+268b163bf+887483+dpdk.org+wanry@yunsilicon.com>
+Message-Id: <20250829082430.24369-12-wanry@yunsilicon.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 7bit
 X-Original-From: Renyong Wan <wanry@yunsilicon.com>
 From: "Renyong Wan" <wanry@yunsilicon.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Subject: [PATCH 10/14] net/xsc: optimize Rx path
-Received: from ubuntu-liun.yunsilicon.com ([58.34.192.114]) by smtp.feishu.cn
- with ESMTPS; Fri, 29 Aug 2025 16:24:28 +0800
-X-Mailer: git-send-email 2.25.1
+Subject: [PATCH 11/14] net/xsc: optimize stop and close
+References: <20250829082406.24369-1-wanry@yunsilicon.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,104 +52,217 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-CQEs are not cache line aligned, which can cause cache conflicts when
-polling Rx CQs under high-PPS load.
+Refactor the stop and close paths for xsc PMD.
 
-This patch checks CQ producer/consumer indices before processing packets,
-reducing cache conflicts. The added MMIO read overhead is minor
-compared to the latency caused by cache conflicts, improving observed
-small-packet performance.
+Previously, stopping or closing queues could leave partially freed
+resources and relied on flags to track queue initialization.
+This patch ensures all queue resources are properly released, improves
+code clarity, and makes stop/close operations safer and more predictable.
 
 Signed-off-by: Rong Qian <qianr@yunsilicon.com>
 Signed-off-by: Renyong Wan <wanry@yunsilicon.com>
 ---
- drivers/net/xsc/xsc_defs.h |  2 ++
- drivers/net/xsc/xsc_rx.c   | 18 ++++++++++++++++--
- drivers/net/xsc/xsc_rx.h   |  1 +
- drivers/net/xsc/xsc_vfio.c |  2 +-
- 4 files changed, 20 insertions(+), 3 deletions(-)
+ drivers/net/xsc/xsc_ethdev.c | 68 +++++++++++++++---------------------
+ drivers/net/xsc/xsc_ethdev.h |  4 ---
+ 2 files changed, 28 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/net/xsc/xsc_defs.h b/drivers/net/xsc/xsc_defs.h
-index 4b95a0521d..73941901e7 100644
---- a/drivers/net/xsc/xsc_defs.h
-+++ b/drivers/net/xsc/xsc_defs.h
-@@ -46,10 +46,12 @@
- #define XSC_PF_TX_DB_ADDR		0x4802000
- #define XSC_PF_RX_DB_ADDR		0x4804000
- #define XSC_PF_CQ_DB_ADDR		0x2120000
-+#define XSC_PF_CQ_PID_START_ADDR	0x2080000
+diff --git a/drivers/net/xsc/xsc_ethdev.c b/drivers/net/xsc/xsc_ethdev.c
+index fc88caa9a2..70417b2d5b 100644
+--- a/drivers/net/xsc/xsc_ethdev.c
++++ b/drivers/net/xsc/xsc_ethdev.c
+@@ -94,8 +94,9 @@ xsc_ethdev_txq_release(struct rte_eth_dev *dev, uint16_t idx)
+ {
+ 	struct xsc_ethdev_priv *priv = TO_XSC_ETHDEV_PRIV(dev);
+ 	struct xsc_txq_data *txq_data = xsc_txq_get(priv, idx);
++	uint8_t txq_state = dev->data->tx_queue_state[idx];
  
- #define XSC_VF_RX_DB_ADDR		0x8d4
- #define XSC_VF_TX_DB_ADDR		0x8d0
- #define XSC_VF_CQ_DB_ADDR		0x8c4
-+#define XSC_VF_CQ_PID_START_ADDR	0x60000
+-	if (txq_data == NULL)
++	if (txq_data == NULL || txq_state == RTE_ETH_QUEUE_STATE_STOPPED)
+ 		return;
  
- #define XSC_HIF_CMDQM_VECTOR_ID_MEM_ADDR	0x1034000
+ 	xsc_dev_set_qpsetid(priv->xdev, txq_data->qpn, 0);
+@@ -103,10 +104,7 @@ xsc_ethdev_txq_release(struct rte_eth_dev *dev, uint16_t idx)
+ 	rte_free(txq_data->fcqs);
+ 	txq_data->fcqs = NULL;
+ 	xsc_txq_elts_free(txq_data);
+-	rte_free(txq_data);
+-	(*priv->txqs)[idx] = NULL;
  
-diff --git a/drivers/net/xsc/xsc_rx.c b/drivers/net/xsc/xsc_rx.c
-index 332ceb9606..5f8003a1f6 100644
---- a/drivers/net/xsc/xsc_rx.c
-+++ b/drivers/net/xsc/xsc_rx.c
-@@ -83,6 +83,16 @@ xsc_rx_burst(void *dpdk_rxq, struct rte_mbuf **pkts, uint16_t pkts_n)
- 	int cqe_msg_len = 0;
- 	volatile struct xsc_cqe_u64 *cqe_u64 = NULL;
- 	struct rte_mbuf *rep;
-+	uint16_t cq_pi;
-+	uint16_t cqe_pkts_n = 0;
+-	dev->data->tx_queues[idx] = NULL;
+ 	dev->data->tx_queue_state[idx] = RTE_ETH_QUEUE_STATE_STOPPED;
+ }
+ 
+@@ -115,15 +113,14 @@ xsc_ethdev_rxq_release(struct rte_eth_dev *dev, uint16_t idx)
+ {
+ 	struct xsc_ethdev_priv *priv = TO_XSC_ETHDEV_PRIV(dev);
+ 	struct xsc_rxq_data *rxq_data = xsc_rxq_get(priv, idx);
++	uint8_t rxq_state = dev->data->rx_queue_state[idx];
+ 
+-	if (rxq_data == NULL)
++	if (rxq_data == NULL || rxq_state == RTE_ETH_QUEUE_STATE_STOPPED)
+ 		return;
 +
-+	if (rxq->cq_pi != NULL) {
-+		cq_pi = (*(volatile uint32_t *)(rxq->cq_pi)) & 0xFFFF;
-+		if (cq_pi == rxq->cq_ci)
-+			return 0;
-+		cqe_pkts_n = (uint16_t)((cq_pi - rxq->cq_ci) & 0xFFFF);
-+		pkts_n = pkts_n < cqe_pkts_n ? pkts_n : cqe_pkts_n;
-+	}
+ 	xsc_rxq_rss_obj_release(priv->xdev, rxq_data);
+ 	xsc_rxq_elts_free(rxq_data);
+-	rte_free(rxq_data);
+-	(*priv->rxqs)[idx] = NULL;
  
- 	while (pkts_n) {
- 		uint32_t idx = rq_ci & wqe_m;
-@@ -463,12 +473,16 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
+-	dev->data->rx_queues[idx] = NULL;
+ 	dev->data->rx_queue_state[idx] = RTE_ETH_QUEUE_STATE_STOPPED;
+ }
+ 
+@@ -207,8 +204,6 @@ xsc_rxq_stop(struct rte_eth_dev *dev)
+ 
+ 	for (i = 0; i != priv->num_rq; ++i)
+ 		xsc_ethdev_rxq_release(dev, i);
+-	priv->rxqs = NULL;
+-	priv->flags &= ~XSC_FLAG_RX_QUEUE_INIT;
+ }
+ 
+ static void
+@@ -219,8 +214,6 @@ xsc_txq_stop(struct rte_eth_dev *dev)
+ 
+ 	for (i = 0; i != priv->num_sq; ++i)
+ 		xsc_ethdev_txq_release(dev, i);
+-	priv->txqs = NULL;
+-	priv->flags &= ~XSC_FLAG_TX_QUEUE_INIT;
+ }
+ 
+ static int
+@@ -232,12 +225,6 @@ xsc_txq_start(struct xsc_ethdev_priv *priv)
+ 	int ret;
+ 	size_t size;
+ 
+-	if (priv->flags & XSC_FLAG_TX_QUEUE_INIT) {
+-		for (i = 0; i != priv->num_sq; ++i)
+-			dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
+-		return 0;
+-	}
+-
+ 	for (i = 0; i != priv->num_sq; ++i) {
+ 		txq_data = xsc_txq_get(priv, i);
+ 		if (txq_data == NULL)
+@@ -259,7 +246,6 @@ xsc_txq_start(struct xsc_ethdev_priv *priv)
  		}
+ 	}
  
- 		rxq_data->wqes = rxq_data->rq_pas->addr;
--		if (!xsc_dev_is_vf(xdev))
-+		if (!xsc_dev_is_vf(xdev)) {
- 			rxq_data->rq_db = (uint32_t *)((uint8_t *)xdev->bar_addr +
- 					  XSC_PF_RX_DB_ADDR);
--		else
-+			rxq_data->cq_pi = (uint32_t *)((uint8_t *)xdev->bar_addr +
-+					  XSC_PF_CQ_PID_START_ADDR + rxq_data->cqn * 4);
-+		} else {
- 			rxq_data->rq_db = (uint32_t *)((uint8_t *)xdev->bar_addr +
- 					  XSC_VF_RX_DB_ADDR);
-+			rxq_data->cq_pi = NULL;
-+		}
+-	priv->flags |= XSC_FLAG_TX_QUEUE_INIT;
+ 	return 0;
  
- 		rxq_data->qpn = rqn_base + i;
- 		xsc_dev_modify_qp_status(xdev, rxq_data->qpn, 1, XSC_CMD_OP_RTR2RTS_QP);
-diff --git a/drivers/net/xsc/xsc_rx.h b/drivers/net/xsc/xsc_rx.h
-index 90fbb89197..59cbbb5141 100644
---- a/drivers/net/xsc/xsc_rx.h
-+++ b/drivers/net/xsc/xsc_rx.h
-@@ -31,6 +31,7 @@ struct __rte_cache_aligned xsc_rxq_data {
- 	uint16_t rsv0:4;
- 	volatile uint32_t *rq_db;
- 	volatile uint32_t *cq_db;
-+	volatile uint32_t *cq_pi;
- 	uint32_t rq_ci;
- 	uint32_t rq_pi;
- 	uint16_t cq_ci;
-diff --git a/drivers/net/xsc/xsc_vfio.c b/drivers/net/xsc/xsc_vfio.c
-index 1650a3ab2b..c233728c5f 100644
---- a/drivers/net/xsc/xsc_vfio.c
-+++ b/drivers/net/xsc/xsc_vfio.c
-@@ -562,7 +562,7 @@ xsc_vfio_rx_cq_create(struct xsc_dev *xdev, struct xsc_rx_cq_params *cq_params,
- 		PMD_DRV_LOG(WARNING, "Port %u rxq %u: cq numa_node=%u, device numa_node=%u",
- 			    port_id, idx, cq_params->socket_id, numa_node);
+ error:
+@@ -271,25 +257,16 @@ static int
+ xsc_rxq_start(struct xsc_ethdev_priv *priv)
+ {
+ 	struct xsc_rxq_data *rxq_data;
+-	struct rte_eth_dev *dev = priv->eth_dev;
+ 	uint16_t i;
+ 	int ret;
  
--	cqe_n = cq_params->wqe_s;
-+	cqe_n = cq_params->wqe_s * 2;
- 	log_cq_sz = rte_log2_u32(cqe_n);
- 	cqe_total_sz = cqe_n * sizeof(struct xsc_cqe);
- 	pa_num = (cqe_total_sz + XSC_PAGE_SIZE - 1) / XSC_PAGE_SIZE;
+-	if (priv->flags & XSC_FLAG_RX_QUEUE_INIT) {
+-		for (i = 0; i != priv->num_sq; ++i)
+-			dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
+-		return 0;
+-	}
+-
+ 	for (i = 0; i != priv->num_rq; ++i) {
+ 		rxq_data = xsc_rxq_get(priv, i);
+ 		if (rxq_data == NULL)
+ 			goto error;
+-		if (dev->data->rx_queue_state[i] != RTE_ETH_QUEUE_STATE_STARTED) {
+-			ret = xsc_rxq_elts_alloc(rxq_data);
+-			if (ret != 0)
+-				goto error;
+-		}
++		ret = xsc_rxq_elts_alloc(rxq_data);
++		if (ret != 0)
++			goto error;
+ 	}
+ 
+ 	ret = xsc_rxq_rss_obj_new(priv, priv->dev_data->port_id);
+@@ -299,7 +276,6 @@ xsc_rxq_start(struct xsc_ethdev_priv *priv)
+ 	for (i = 0; i != priv->num_rq; ++i)
+ 		priv->dev_data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
+ 
+-	priv->flags |= XSC_FLAG_RX_QUEUE_INIT;
+ 	return 0;
+ error:
+ 	/* Queue resources are released by xsc_ethdev_start calling the stop interface */
+@@ -350,20 +326,14 @@ xsc_ethdev_start(struct rte_eth_dev *dev)
+ static int
+ xsc_ethdev_stop(struct rte_eth_dev *dev)
+ {
+-	struct xsc_ethdev_priv *priv = TO_XSC_ETHDEV_PRIV(dev);
+-	uint16_t i;
+-
+ 	PMD_DRV_LOG(DEBUG, "Port %u stopping", dev->data->port_id);
+ 	dev->data->dev_started = 0;
+ 	dev->rx_pkt_burst = rte_eth_pkt_burst_dummy;
+ 	dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
+ 	rte_wmb();
+ 
+-	rte_delay_us_sleep(1000 * priv->num_rq);
+-	for (i = 0; i < priv->num_rq; ++i)
+-		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
+-	for (i = 0; i < priv->num_sq; ++i)
+-		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
++	xsc_txq_stop(dev);
++	xsc_rxq_stop(dev);
+ 
+ 	return 0;
+ }
+@@ -371,6 +341,9 @@ xsc_ethdev_stop(struct rte_eth_dev *dev)
+ static int
+ xsc_ethdev_close(struct rte_eth_dev *dev)
+ {
++	int idx;
++	struct xsc_rxq_data *rxq_data;
++	struct xsc_txq_data *txq_data;
+ 	struct xsc_ethdev_priv *priv = TO_XSC_ETHDEV_PRIV(dev);
+ 
+ 	PMD_DRV_LOG(DEBUG, "Port %u closing", dev->data->port_id);
+@@ -381,6 +354,21 @@ xsc_ethdev_close(struct rte_eth_dev *dev)
+ 	xsc_txq_stop(dev);
+ 	xsc_rxq_stop(dev);
+ 
++	for (idx = 0; idx < priv->num_rq; idx++) {
++		rxq_data = xsc_rxq_get(priv, idx);
++		rte_free(rxq_data);
++		dev->data->rx_queues[idx] = NULL;
++	}
++
++	for (idx = 0; idx < priv->num_sq; idx++) {
++		txq_data = xsc_txq_get(priv, idx);
++		rte_free(txq_data);
++		dev->data->tx_queues[idx] = NULL;
++	}
++
++	priv->rxqs = NULL;
++	priv->txqs = NULL;
++
+ 	rte_free(priv->rss_conf.rss_key);
+ 	if (!xsc_dev_is_vf(priv->xdev))
+ 		xsc_dev_intr_handler_uninstall(priv->xdev);
+diff --git a/drivers/net/xsc/xsc_ethdev.h b/drivers/net/xsc/xsc_ethdev.h
+index 0b307c2828..ed7d4ee60f 100644
+--- a/drivers/net/xsc/xsc_ethdev.h
++++ b/drivers/net/xsc/xsc_ethdev.h
+@@ -7,9 +7,6 @@
+ 
+ #include "xsc_dev.h"
+ 
+-#define XSC_FLAG_RX_QUEUE_INIT		0x1
+-#define XSC_FLAG_TX_QUEUE_INIT		0x2
+-
+ struct xsc_ethdev_priv {
+ 	struct rte_eth_dev *eth_dev;
+ 	struct rte_pci_device *pci_dev;
+@@ -37,7 +34,6 @@ struct xsc_ethdev_priv {
+ 	uint16_t num_sq;
+ 	uint16_t num_rq;
+ 
+-	uint16_t flags;
+ 	struct xsc_txq_data *(*txqs)[];
+ 	struct xsc_rxq_data *(*rxqs)[];
+ };
 -- 
 2.25.1
