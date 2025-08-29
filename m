@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B1CCA0FF9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 14:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78125CA0FF9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 14:50:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E4CE04025A;
-	Fri, 29 Aug 2025 16:50:10 +0200 (CEST)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
- [209.85.214.173])
- by mails.dpdk.org (Postfix) with ESMTP id AD6EB40150
- for <dev@dpdk.org>; Fri, 29 Aug 2025 16:50:09 +0200 (CEST)
-Received: by mail-pl1-f173.google.com with SMTP id
- d9443c01a7336-24457fe9704so23196505ad.0
- for <dev@dpdk.org>; Fri, 29 Aug 2025 07:50:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DBB0440651;
+	Fri, 29 Aug 2025 16:50:11 +0200 (CEST)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 303514042C
+ for <dev@dpdk.org>; Fri, 29 Aug 2025 16:50:11 +0200 (CEST)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-244582738b5so19657065ad.3
+ for <dev@dpdk.org>; Fri, 29 Aug 2025 07:50:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1756479008; x=1757083808; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1756479010; x=1757083810; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=ZYrVeCO69t5fsp41im52Va7KZh62mQDFqDvKPjux/fw=;
- b=MkRBtWKlSNPiriTyityDC0RXk8s+Lk1fW1oFXGqboUm+0m44AxSdLa7KHNxHXsPBpn
- 8812tnHenwRAgWmOPd06zLPjV7aDY51x4IxC/BK+mou2l1gnrccnhbK/u7MWhBxxIRgN
- CnC86HbsYwTWMFj7PLrKn3CYyEihakT85RCMgNeETOMp3d3e6NNMN/IPPWtBHEFG3GrP
- zW7Wp5AYryZE00NnwWTstdrpJhU0+QQNd7XQZtXcYwjYhDKFkKcmk6yH0A0rsLa5p+Xw
- GWwP2E/YyJPVuoxkur3EUDoQdOCzITOaV1r/uTNoIRCuNcq0I3UobRcc4oIw60EppsC2
- XM8Q==
+ :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+ :reply-to; bh=0WiZKuFv2yHMjM9vanz5jGs3Rv2MYxGf/96u97IfqL8=;
+ b=fyzmAwII1gVBlCXW9OHyiD1kHjj2ILNr8s4c6N5thHpiQ0YQnV4yqgrbh4ZxIqIPAy
+ h/vVSPSvnH8sDVINtd7iNIbzOGw6JIEqsofn7lfRjK++xIkqWfdmwRseiIPSsZfKAEky
+ eTAkHMsMCfdpdoN1JO2fyWPwIU0jyZtsw4ku9ElZN3FF21GH5SYH7ZuQaMyPn7QhPAmD
+ N7L7nbbB9eBoqRAeZiF0cI6bKD0hstjBDF867ZWC7mnjhTYFuq8DNMJAj1nv02dAvkZ7
+ 96JoiqG0vlzqiMLxgG0fdYbenwL1oezJdhN/Qa06r+JhFBN+fvFB1jnaIhTxV7Yo8p9Q
+ xhlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756479008; x=1757083808;
+ d=1e100.net; s=20230601; t=1756479010; x=1757083810;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ZYrVeCO69t5fsp41im52Va7KZh62mQDFqDvKPjux/fw=;
- b=LbqKuBDXFBDtOaNKnfwSR+Hl4KyOP7W3mUXYY+3y6zpvCrxDoiO8MJ1SA4MGeTL9s0
- SkEunuBMr8cRhVhuRjp7LP6QtjNPE+iaB+yLZDPt0PTISWQ3FfDX8KojiLBd+q6NK9km
- i7LgEjHGXzDMDVal98XtzyyhQdQbtLin+LBtAZOINb+9YQqNrjELCBWYzbwI7Ez6YDkG
- hGh1M5ZC0ZV7l3strmy5BYPrW7Zzv5SP4jstS/AhaXyMfMSkEZPIBWSQR7+MRrS9/09k
- RDHJ1mIBnkxZ216o3HsA5UL/71Jz5FMO5c1rTOij2KGokuZR0uJOPjusxQqM28vk/dJ+
- 0Ntw==
-X-Gm-Message-State: AOJu0YwMsypz67+mDLrjVnjcBA3xKKUPN7DhCZPdj5c0N/mDiSfc5RB7
- iK0Jcf/28b8yPSnTPqTZxVLz3ylnLcsoG0RzlfDWcPE1k4YoFcFfUccS7PZH4Iuc
-X-Gm-Gg: ASbGncurZlK+SMuFYKPHalVEDt48hXZRme7AKYeKMf6lvDjV4PTrZyoGgPED7XHnDoo
- 79RA7RFj3hClcIfPu6AZXr001qdHz9s3Tjl38VfD55gQ9oGso2I+x4IrjnJJTpiVIdrz61brkZM
- hH1gVZRHBN1FGZszIumf2YAUJ3hh+Ur71abVAd4DQ5GqboBmVsso4xavs+MqBwYIZgAo4CUyPMC
- g24H3RK40eqt/QG6fRfrJVhKlMrDslpvMQqbSUpOW1EPSNBm0MMjTrudZmyTf/+WXEKjWQ4Syt7
- EAuwCQEf1oDxYa4dyogseFKoGIYG7OPK+d/0AjMkcGJHkFNFDVGFHI/SOeS+QD0GOMh8fqKCAhN
- uqJ6eibu6IXmsiOQvCPq8QQCCFdGm2tIWJaviRQfmzH3dRykz4vm2scQFv43YSGZ2
-X-Google-Smtp-Source: AGHT+IH0BC7EkinWO11PISDsuxNmZALrh1e3j6IsPMwdEFteq8gg7KdXbONulQv9l1nObxmJx/vftA==
-X-Received: by 2002:a17:903:3bc6:b0:246:e1b6:f9b0 with SMTP id
- d9443c01a7336-246e1b6fad8mr245572145ad.18.1756479008412; 
- Fri, 29 Aug 2025 07:50:08 -0700 (PDT)
+ bh=0WiZKuFv2yHMjM9vanz5jGs3Rv2MYxGf/96u97IfqL8=;
+ b=HjR6+3kMpRtxkiPobj66Mv/SftYdvFlijxIl80xcPERjoGDr4kLXUtrQ7IDqKbLX+0
+ LHCnK8CC7uwsROlISxzl788VeOmYYdSGvnkePoGDBDgu0lisVLpnYcoB7nHJA5okms9a
+ KsoKjGQ2PWbT6ww04Qb38/obsBmoCtJFaIQLvD3M6TS76UoZWlderCMoDlAktzSNvPwe
+ rg+WPpbTw/IMokGrDdEOfr7uEiPQnYG4J3GjBvP8POFKduiGopnTTCIKfL/haRw7iJpd
+ 9LBFaoyX0JldjSVmGVADc06DElKEmwKWOCsy6ZCpp0J/GPvUafANdsnHC+Zi4KM3q82s
+ N2Ow==
+X-Gm-Message-State: AOJu0YxnnPozhdURWkY84brHOxanB5m8UGh0B+fqRuZDUUr82c7rLefk
+ gXT8EJ33lPy6rr5AYntn1jO78T4FeXlkb0Qfyjr/MLomzzIHn352B6JZ4XuBSoxn
+X-Gm-Gg: ASbGnctF/z16mNXKLHAodEO14eepjeUcfYuFqv/PYqUMuOm5VFeuqr14mq+lfxRNGaC
+ zCw7WxKrBCfhXlPgi2sfuD65I9WuudeV8ZzU2QkBnqTauR/yLWraYczQgNTCkj2epK84KwJKTo4
+ t84EoyRxCXAZNUj1VTEuMFvWglXrVRz9BMeIs/t/+dCOLhCjIQN9KpQWWfFXLhHptUNXNkUdTaY
+ xYBlzMq5dCs66vPbzq/YFSOt+1WlnqS8HpNA76kUGLeesE/vX+stmybm7vA1sozjzExa7tXNrsY
+ 5MW1wqkZo9592sYLCy6h4EINv03zwOPDChoq9J3cj5cz6nauVEsyStMf8rbcuj3owd/zwOXDYQG
+ wbPj76nWANfSYB8Pa09SIckSuTb1eIXTZXGqndXt8eJeIYx7o5osqqxVH75QNmVRm
+X-Google-Smtp-Source: AGHT+IGQVxeW+r0PkD4jxsbLXsbnNSo5A+GwFyOOlML28/6o7QBf9O8PJErlXKWk9GrsuV0MuUrJJg==
+X-Received: by 2002:a17:903:1a8e:b0:246:620:a0b9 with SMTP id
+ d9443c01a7336-2462efcaaa3mr335697175ad.61.1756479009945; 
+ Fri, 29 Aug 2025 07:50:09 -0700 (PDT)
 Received: from localhost.localdomain ([125.120.234.137])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-249065ad5b7sm27510985ad.128.2025.08.29.07.50.06
+ d9443c01a7336-249065ad5b7sm27510985ad.128.2025.08.29.07.50.08
+ for <dev@dpdk.org>
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 29 Aug 2025 07:50:08 -0700 (PDT)
+ Fri, 29 Aug 2025 07:50:09 -0700 (PDT)
 From: Yang Ming <mosesyyoung@gmail.com>
 To: dev@dpdk.org
-Cc: Dariusz Sosnowski <dsosnowski@nvidia.com>
-Subject: [PATCH v3 1/2] net/mlx5: improve socket file path handling
-Date: Fri, 29 Aug 2025 22:49:52 +0800
-Message-ID: <20250829144954.2576-1-mosesyyoung@gmail.com>
+Subject: [PATCH v3 2/2] net/mlx5: improve debug dump file path handling
+Date: Fri, 29 Aug 2025 22:49:53 +0800
+Message-ID: <20250829144954.2576-2-mosesyyoung@gmail.com>
 X-Mailer: git-send-email 2.49.0.windows.1
-In-Reply-To: <20250321132750.4237-1-ming.1.yang@nokia-sbell.com>
+In-Reply-To: <20250829144954.2576-1-mosesyyoung@gmail.com>
 References: <20250321132750.4237-1-ming.1.yang@nokia-sbell.com>
+ <20250829144954.2576-1-mosesyyoung@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -79,73 +79,181 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The current implementation hardcodes the socket file path to
-/var/tmp, which has two issues:
+The current implementation always tries to open debug dump files
+under /var/log, which may not be writable in containerized or
+restricted environments (e.g. when the filesystem is mounted as
+read-only).
 
-1. Hardcoding absolute paths is not good practice.
-2. /var/tmp may not be writable in containerized or restricted
-   environments (e.g. when the filesystem is mounted read-only).
+This patch introduces an OS-specific helper function
+mlx5_os_debug_dump_file_open() to unify the logic:
 
-This patch replaces the hardcoded path with a socket file name
-(MLX5_SOCKET_FNAME) located in the DPDK runtime directory
-returned by rte_eal_get_runtime_dir(). This ensures the socket
-file can be created in both normal and containerized
-environments, while maintaining uniqueness by appending the
-process ID.
+* On Linux:
+  1. Try /var/log if it is writable (kept for backward
+     compatibility).
+  2. Fallback to the DPDK runtime directory.
+  3. Finally, use the current working directory.
 
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+* On Windows:
+  1. Use the DPDK runtime directory.
+  2. Fallback to the current working directory.
+
+This preserves the previous directory preference while ensuring
+debug dumps can still be written in restricted environments such
+as containers. The structure of the open logic is kept unchanged
+so that test cases and expected logs remain valid.
 
 Signed-off-by: Yang Ming <mosesyyoung@gmail.com>
 ---
- drivers/net/mlx5/linux/mlx5_socket.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ drivers/net/mlx5/linux/mlx5_os.c   | 44 ++++++++++++++++++++++++++++++
+ drivers/net/mlx5/mlx5.h            |  1 +
+ drivers/net/mlx5/mlx5_rxtx.c       | 16 ++---------
+ drivers/net/mlx5/windows/mlx5_os.c | 30 ++++++++++++++++++++
+ 4 files changed, 78 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/mlx5/linux/mlx5_socket.c b/drivers/net/mlx5/linux/mlx5_socket.c
-index 6ce0e59643..270a105f1d 100644
---- a/drivers/net/mlx5/linux/mlx5_socket.c
-+++ b/drivers/net/mlx5/linux/mlx5_socket.c
-@@ -20,7 +20,8 @@
- 
- /* PMD socket service for tools. */
- 
--#define MLX5_SOCKET_PATH "/var/tmp/dpdk_net_mlx5_%d"
-+#define MLX5_SOCKET_DPATH "/var/tmp"
-+#define MLX5_SOCKET_FNAME "dpdk_net_mlx5"
- #define MLX5_ALL_PORT_IDS 0xffff
- 
- int server_socket = -1; /* Unix socket for primary process. */
-@@ -177,8 +178,13 @@ mlx5_pmd_socket_init(void)
- 	ret = fcntl(server_socket, F_SETFL, flags | O_NONBLOCK);
- 	if (ret < 0)
- 		goto close;
--	snprintf(sun.sun_path, sizeof(sun.sun_path), MLX5_SOCKET_PATH,
--		 getpid());
-+
-+	if (access(MLX5_SOCKET_DPATH, W_OK) == 0)
-+		snprintf(sun.sun_path, sizeof(sun.sun_path), "%s/%s_%d",
-+			 MLX5_SOCKET_DPATH, MLX5_SOCKET_FNAME, getpid());
-+	else
-+		snprintf(sun.sun_path, sizeof(sun.sun_path), "%s/%s_%d",
-+			 rte_eal_get_runtime_dir(), MLX5_SOCKET_FNAME, getpid());
- 	remove(sun.sun_path);
- 	ret = bind(server_socket, (const struct sockaddr *)&sun, sizeof(sun));
- 	if (ret < 0) {
-@@ -223,6 +229,13 @@ mlx5_pmd_socket_uninit(void)
- 					  mlx5_pmd_socket_handle, NULL);
- 	claim_zero(close(server_socket));
- 	server_socket = -1;
--	MKSTR(path, MLX5_SOCKET_PATH, getpid());
--	claim_zero(remove(path));
-+	if (access(MLX5_SOCKET_DPATH, W_OK) == 0) {
-+		MKSTR(path, "%s/%s_%d", MLX5_SOCKET_DPATH, MLX5_SOCKET_FNAME,
-+		      getpid());
-+		claim_zero(remove(path));
-+	} else {
-+		MKSTR(path2, "%s/%s_%d", rte_eal_get_runtime_dir(), MLX5_SOCKET_FNAME,
-+		      getpid());
-+		claim_zero(remove(path2));
-+	}
+diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
+index 696a3e12c7..fdb2102cd5 100644
+--- a/drivers/net/mlx5/linux/mlx5_os.c
++++ b/drivers/net/mlx5/linux/mlx5_os.c
+@@ -3020,6 +3020,50 @@ mlx5_os_net_cleanup(void)
+ 	mlx5_pmd_socket_uninit();
  }
+ 
++/* Default system log directory on Linux. */
++#define MLX5_SYSTEM_LOG_DIR "/var/log"
++
++/*
++ * Open a debug dump file on Linux.
++ *
++ * The function attempts to create/open the file in the following order:
++ * 1. /var/log (if writable),
++ * 2. EAL runtime directory,
++ * 3. current working directory ("./").
++ */
++FILE *
++mlx5_os_debug_dump_file_open(const char *fname)
++{
++	FILE *fd = NULL;
++
++	if (access(MLX5_SYSTEM_LOG_DIR, W_OK) == 0) {
++		MKSTR(path, "%s/%s", MLX5_SYSTEM_LOG_DIR, fname);
++		fd = fopen(path, "a+");
++		if (fd) {
++			DRV_LOG(INFO, "New debug dump in file %s", path);
++			return fd;
++		}
++		DRV_LOG(WARNING, "cannot open %s for debug dump", path);
++	}
++
++	MKSTR(path2, "%s/%s", rte_eal_get_runtime_dir(), fname);
++	fd = fopen(path2, "a+");
++	if (fd) {
++		DRV_LOG(INFO, "New debug dump in file %s", path2);
++		return fd;
++	}
++	DRV_LOG(WARNING, "cannot open %s for debug dump", path2);
++
++	MKSTR(path3, "./%s", fname);
++	fd = fopen(path3, "a+");
++	if (fd)
++		DRV_LOG(INFO, "New debug dump in file %s", path3);
++	else
++		DRV_LOG(ERR, "cannot open %s for debug dump", path3);
++
++	return fd;
++}
++
+ /**
+  * Install shared asynchronous device events handler.
+  * This function is implemented to support event sharing
+diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
+index c08894cd03..fc7ac08039 100644
+--- a/drivers/net/mlx5/mlx5.h
++++ b/drivers/net/mlx5/mlx5.h
+@@ -2597,6 +2597,7 @@ int mlx5_os_capabilities_prepare(struct mlx5_dev_ctx_shared *sh);
+ void mlx5_os_free_shared_dr(struct mlx5_priv *priv);
+ int mlx5_os_net_probe(struct mlx5_common_device *cdev,
+ 		      struct mlx5_kvargs_ctrl *mkvlist);
++FILE *mlx5_os_debug_dump_file_open(const char *name);
+ void mlx5_os_dev_shared_handler_install(struct mlx5_dev_ctx_shared *sh);
+ void mlx5_os_dev_shared_handler_uninstall(struct mlx5_dev_ctx_shared *sh);
+ void mlx5_os_mac_addr_remove(struct rte_eth_dev *dev, uint32_t index);
+diff --git a/drivers/net/mlx5/mlx5_rxtx.c b/drivers/net/mlx5/mlx5_rxtx.c
+index 82c5481ad7..b35365ffd3 100644
+--- a/drivers/net/mlx5/mlx5_rxtx.c
++++ b/drivers/net/mlx5/mlx5_rxtx.c
+@@ -391,7 +391,6 @@ mlx5_set_swp_types_table(void)
+ 	}
+ }
+ 
+-#define MLX5_SYSTEM_LOG_DIR "/var/log"
+ /**
+  * Dump debug information to log file.
+  *
+@@ -411,20 +410,11 @@ mlx5_dump_debug_information(const char *fname, const char *hex_title,
+ {
+ 	FILE *fd;
+ 
+-	MKSTR(path, "%s/%s", MLX5_SYSTEM_LOG_DIR, fname);
+-	fd = fopen(path, "a+");
++	fd = mlx5_os_debug_dump_file_open(fname);
+ 	if (!fd) {
+-		DRV_LOG(WARNING, "cannot open %s for debug dump", path);
+-		MKSTR(path2, "./%s", fname);
+-		fd = fopen(path2, "a+");
+-		if (!fd) {
+-			DRV_LOG(ERR, "cannot open %s for debug dump", path2);
+-			return;
+-		}
+-		DRV_LOG(INFO, "New debug dump in file %s", path2);
+-	} else {
+-		DRV_LOG(INFO, "New debug dump in file %s", path);
++		return;
+ 	}
++
+ 	if (hex_title)
+ 		rte_hexdump(fd, hex_title, buf, hex_len);
+ 	else
+diff --git a/drivers/net/mlx5/windows/mlx5_os.c b/drivers/net/mlx5/windows/mlx5_os.c
+index d583730066..734b71e3f7 100644
+--- a/drivers/net/mlx5/windows/mlx5_os.c
++++ b/drivers/net/mlx5/windows/mlx5_os.c
+@@ -629,6 +629,36 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
+ 	return NULL;
+ }
+ 
++/*
++ * Open a debug dump file on Windows.
++ *
++ * The function attempts to create/open the file in the following order:
++ * 1. EAL runtime directory,
++ * 2. current working directory ("./").
++ */
++FILE *
++mlx5_os_debug_dump_file_open(const char *fname)
++{
++	FILE *fd = NULL;
++
++	MKSTR(path, "%s/%s", rte_eal_get_runtime_dir(), fname);
++	fd = fopen(path, "a+");
++	if (fd) {
++		DRV_LOG(INFO, "New debug dump in file %s", path);
++		return fd;
++	}
++	DRV_LOG(WARNING, "cannot open %s for debug dump", path);
++
++	MKSTR(path2, "./%s", fname);
++	fd = fopen(path2, "a+");
++	if (fd)
++		DRV_LOG(INFO, "New debug dump in file %s", path2);
++	else
++		DRV_LOG(ERR, "cannot open %s for debug dump", path2);
++
++	return fd;
++}
++
+ /**
+  * This function should share events between multiple ports of single IB
+  * device.  Currently it has no support under Windows.
 -- 
 2.49.0.windows.1
 
