@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B045CA0FF7
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 08:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3156FCA0FF7
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 08:25:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E6784065A;
-	Fri, 29 Aug 2025 10:24:33 +0200 (CEST)
-Received: from lf-2-37.ptr.blmpb.com (lf-2-37.ptr.blmpb.com [101.36.218.37])
- by mails.dpdk.org (Postfix) with ESMTP id 2BC2F40667
- for <dev@dpdk.org>; Fri, 29 Aug 2025 10:24:30 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5EC3D40667;
+	Fri, 29 Aug 2025 10:24:34 +0200 (CEST)
+Received: from lf-2-36.ptr.blmpb.com (lf-2-36.ptr.blmpb.com [101.36.218.36])
+ by mails.dpdk.org (Postfix) with ESMTP id 15DCB4065A
+ for <dev@dpdk.org>; Fri, 29 Aug 2025 10:24:31 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=feishu2403070942; d=yunsilicon.com; t=1756455864; h=from:subject:
+ s=feishu2403070942; d=yunsilicon.com; t=1756455866; h=from:subject:
  mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
  mime-version:in-reply-to:message-id;
- bh=kYxB7suvbKEwYIYFLzj/74upsVooWCCJ3liVZRjG4cE=;
- b=g3QLRjHs63/vKrfa+GOV9qZ9hjxLUq4R8KX5yA11wKavai2WCMqbLZW5KzMcxLQ92lQJbX
- chmsDaJX/dPIb9mRwv5ofC54BewWG4KxPbE6Z6e+RIAGznfwAhWXXUTg8CcCPoNk/rWCSt
- wwXbzJGBVzkImQDEX9QovpvqxxZa6dtglDNRSGDFkeCPUD9Qz/mHvbzEjtnyVXamSScQ9G
- WxYMqZVvDdF06gfH9pCj3UTWzaloOGK9ti4Hu3LfiBXDuBBkcgZMF3TzB+MuSmgEA6RRqA
- awE8E2W3l+CRIlMGfqZqDkLuRX7xcBw/GxYk2ZDd6HvjCEbt/5eDPkZzDAS3Hw==
-Date: Fri, 29 Aug 2025 16:24:22 +0800
-Mime-Version: 1.0
+ bh=nT76aYNmJjJhQo9QqwzH76junu3c9AlPPJiMQ/n5Oi8=;
+ b=adsBo2+w7fupbEL9YFWEUHFVejx+2WwoHBBUBmASWBL39EElDjgHnvHaYNSDV5R9bA3Y4z
+ ppG2oR/unQSkyYm4wH1Ycvo3QzJ5YfLL0sQt6MEdfuMu2sytCJ3J+zxymJmvBvNVnCzmSC
+ yQ1KH9JvWFZ8o1vUztdr8Q7rSN90/gz8K86iIRj1R3oGAyQs00zCMuFFcSdNy8FNaSpltD
+ 6vxHwIqmCsz30Z3ZT+1UdcYrVdVSyISwtDw9hHKtaTq3ASPG18ddAJT8t+JByIfHCYqwLD
+ rMoQn5yFatSxCj/gqKqEPIUCFja7+OBmIVIwvNLpJMAY7hkeaA2mCAcCWVSSRw==
+Subject: [PATCH 08/14] net/xsc: optimize RSS queue creation
+Message-Id: <20250829082423.24369-9-wanry@yunsilicon.com>
 X-Original-From: Renyong Wan <wanry@yunsilicon.com>
-Subject: [PATCH 07/14] net/xsc: add FEC get and set support
-Message-Id: <20250829082420.24369-8-wanry@yunsilicon.com>
-To: <dev@dpdk.org>
-References: <20250829082406.24369-1-wanry@yunsilicon.com>
-Received: from ubuntu-liun.yunsilicon.com ([58.34.192.114]) by smtp.feishu.cn
- with ESMTPS; Fri, 29 Aug 2025 16:24:21 +0800
 X-Mailer: git-send-email 2.25.1
-X-Lms-Return-Path: <lba+268b163b6+6186e1+dpdk.org+wanry@yunsilicon.com>
+Received: from ubuntu-liun.yunsilicon.com ([58.34.192.114]) by smtp.feishu.cn
+ with ESMTPS; Fri, 29 Aug 2025 16:24:24 +0800
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Cc: <thomas@monjalon.net>, <stephen@networkplumber.org>, 
  <qianr@yunsilicon.com>, <nana@yunsilicon.com>, <zhangxx@yunsilicon.com>, 
  <xudw@yunsilicon.com>, <jacky@yunsilicon.com>, <weihg@yunsilicon.com>, 
  <zhenghy@yunsilicon.com>
+X-Lms-Return-Path: <lba+268b163b8+35c7b9+dpdk.org+wanry@yunsilicon.com>
+Mime-Version: 1.0
 From: "Renyong Wan" <wanry@yunsilicon.com>
 In-Reply-To: <20250829082406.24369-1-wanry@yunsilicon.com>
+Content-Transfer-Encoding: 7bit
+To: <dev@dpdk.org>
+References: <20250829082406.24369-1-wanry@yunsilicon.com>
+Date: Fri, 29 Aug 2025 16:24:24 +0800
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,221 +52,389 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add functions to get and set FEC mode for xsc PMD.
+Refactor RSS RX queue creation for the XSC PMD.
+
+This patch introduces proper QPN allocation and per-QP info setup,
+improving memory management and error handling. It makes RSS
+queue creation more robust, avoiding partial resource leaks in
+case of failures.
 
 Signed-off-by: Rong Qian <qianr@yunsilicon.com>
 Signed-off-by: Renyong Wan <wanry@yunsilicon.com>
 ---
- doc/guides/nics/features/xsc.ini |  1 +
- drivers/net/xsc/xsc_cmd.h        | 24 ++++++++++
- drivers/net/xsc/xsc_dev.c        | 75 ++++++++++++++++++++++++++++++++
- drivers/net/xsc/xsc_dev.h        | 16 +++++++
- drivers/net/xsc/xsc_ethdev.c     | 18 ++++++++
- 5 files changed, 134 insertions(+)
+ drivers/net/xsc/xsc_cmd.h    |  47 ++++++++
+ drivers/net/xsc/xsc_ethdev.c |   3 +
+ drivers/net/xsc/xsc_rx.c     | 219 ++++++++++++++++++++++++++---------
+ 3 files changed, 216 insertions(+), 53 deletions(-)
 
-diff --git a/doc/guides/nics/features/xsc.ini b/doc/guides/nics/features/xsc.ini
-index d4498ed0a0..c6243c18df 100644
---- a/doc/guides/nics/features/xsc.ini
-+++ b/doc/guides/nics/features/xsc.ini
-@@ -12,6 +12,7 @@ Promiscuous mode     = Y
- RSS hash             = Y
- RSS key update       = Y
- RSS reta update      = Y
-+FEC                  = Y
- L3 checksum offload  = Y
- L4 checksum offload  = Y
- Inner L3 checksum    = Y
 diff --git a/drivers/net/xsc/xsc_cmd.h b/drivers/net/xsc/xsc_cmd.h
-index 777de1ce4a..2746131cf1 100644
+index 2746131cf1..abf9d06197 100644
 --- a/drivers/net/xsc/xsc_cmd.h
 +++ b/drivers/net/xsc/xsc_cmd.h
-@@ -28,6 +28,8 @@ enum xsc_cmd_opcode {
+@@ -23,6 +23,10 @@ enum xsc_cmd_opcode {
+ 	XSC_CMD_OP_RTR2RTS_QP			= 0x504,
+ 	XSC_CMD_OP_QP_2RST			= 0x50A,
+ 	XSC_CMD_OP_CREATE_MULTI_QP		= 0x515,
++	XSC_CMD_OP_ALLOC_QPN			= 0x519,
++	XSC_CMD_OP_FREE_QPN			= 0x520,
++	XSC_CMD_OP_SET_QP_INFO			= 0x521,
++	XSC_CMD_QP_UNSET_QP_INFO		= 0x522,
+ 	XSC_CMD_OP_ACCESS_REG			= 0x805,
+ 	XSC_CMD_OP_MODIFY_NIC_HCA		= 0x812,
  	XSC_CMD_OP_MODIFY_RAW_QP		= 0x81f,
- 	XSC_CMD_OP_QUERY_EVENT_TYPE		= 0x831,
- 	XSC_CMD_OP_QUERY_LINK_INFO		= 0x832,
-+	XSC_CMD_OP_QUERY_FEC_PARAM		= 0x835,
-+	XSC_CMD_OP_MODIFY_FEC_PARAM		= 0x836,
- 	XSC_CMD_OP_ENABLE_MSIX			= 0x850,
- 	XSC_CMD_OP_EXEC_NP			= 0x900,
- 	XSC_CMD_OP_SET_MTU			= 0x1100,
-@@ -473,4 +475,26 @@ struct xsc_cmd_msix_table_info_mbox_out {
- 	uint32_t data;
+@@ -497,4 +501,47 @@ struct xsc_cmd_modify_fecparam_mbox_out {
+ 	uint32_t status;
  };
  
-+struct xsc_cmd_query_fecparam_mbox_in {
++struct xsc_cmd_alloc_qpn_mbox_in {
 +	struct xsc_cmd_inbox_hdr hdr;
-+	uint8_t rsvd[2];
++	rte_be16_t qp_cnt;
++	uint8_t qp_type;
++	uint8_t rsvd[5];
 +};
 +
-+struct xsc_cmd_query_fecparam_mbox_out {
++struct xsc_cmd_alloc_qpn_mbox_out {
 +	struct xsc_cmd_outbox_hdr hdr;
-+	uint32_t active_fec;
-+	uint32_t fec_cfg;
-+	uint32_t status;
++	rte_be16_t qpn_base;
 +};
 +
-+struct xsc_cmd_modify_fecparam_mbox_in {
++struct xsc_cmd_free_qpn_mbox_in {
 +	struct xsc_cmd_inbox_hdr hdr;
-+	uint32_t fec;
++	rte_be16_t qpn_base;
++	rte_be16_t qp_cnt;
++	uint8_t qp_type;
++	uint8_t rsvd[3];
 +};
 +
-+struct xsc_cmd_modify_fecparam_mbox_out {
++struct xsc_cmd_free_qpn_mbox_out {
 +	struct xsc_cmd_outbox_hdr hdr;
-+	uint32_t status;
++};
++
++struct xsc_cmd_set_qp_info_in {
++	struct xsc_cmd_inbox_hdr hdr;
++	struct xsc_cmd_create_qp_request qp_info;
++};
++
++struct xsc_cmd_set_qp_info_out {
++	struct xsc_cmd_outbox_hdr hdr;
++};
++
++struct xsc_cmd_unset_qp_info_in {
++	struct xsc_cmd_inbox_hdr hdr;
++	rte_be16_t qpn;
++	uint8_t rsvd[6];
++};
++
++struct xsc_cmd_unset_qp_info_out {
++	struct xsc_cmd_outbox_hdr hdr;
 +};
 +
  #endif /* _XSC_CMD_H_ */
-diff --git a/drivers/net/xsc/xsc_dev.c b/drivers/net/xsc/xsc_dev.c
-index 815b67d7da..6b24ea98d0 100644
---- a/drivers/net/xsc/xsc_dev.c
-+++ b/drivers/net/xsc/xsc_dev.c
-@@ -614,3 +614,78 @@ xsc_dev_intr_handler_uninstall(struct xsc_dev *xdev)
- 
- 	return xdev->dev_ops->intr_handler_uninstall(xdev);
- }
-+
-+int
-+xsc_dev_fec_get(struct xsc_dev *xdev, uint32_t *fec_capa)
-+{
-+	struct xsc_cmd_query_fecparam_mbox_in in = { };
-+	struct xsc_cmd_query_fecparam_mbox_out out = { };
-+	int ret = 0, fec;
-+
-+	in.hdr.opcode = rte_cpu_to_be_16(XSC_CMD_OP_QUERY_FEC_PARAM);
-+	ret = xsc_dev_mailbox_exec(xdev, &in, sizeof(in), &out, sizeof(out));
-+	if (ret != 0 || out.hdr.status != 0) {
-+		PMD_DRV_LOG(ERR, "Failed to get fec, ret=%d, status=%u",
-+			    ret, out.hdr.status);
-+		rte_errno = ENOEXEC;
-+		return -rte_errno;
-+	}
-+
-+	fec = rte_be_to_cpu_32(out.active_fec);
-+	switch (fec) {
-+	case XSC_DEV_FEC_OFF:
-+		fec = RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC);
-+		break;
-+	case XSC_DEV_FEC_BASER:
-+		fec = RTE_ETH_FEC_MODE_CAPA_MASK(BASER);
-+		break;
-+	case XSC_DEV_FEC_RS:
-+		fec = RTE_ETH_FEC_MODE_CAPA_MASK(RS);
-+		break;
-+	default:
-+		fec = RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC);
-+		break;
-+	}
-+
-+	*fec_capa = fec;
-+
-+	return 0;
-+}
-+
-+int
-+xsc_dev_fec_set(struct xsc_dev *xdev, uint32_t mode)
-+{
-+	struct xsc_cmd_modify_fecparam_mbox_in in = { };
-+	struct xsc_cmd_modify_fecparam_mbox_out out = { };
-+	int ret = 0;
-+
-+	in.hdr.opcode = rte_cpu_to_be_16(XSC_CMD_OP_MODIFY_FEC_PARAM);
-+	switch (mode) {
-+	case RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC):
-+		mode = XSC_DEV_FEC_OFF;
-+		break;
-+	case RTE_ETH_FEC_MODE_CAPA_MASK(AUTO):
-+		mode = XSC_DEV_FEC_AUTO;
-+		break;
-+	case RTE_ETH_FEC_MODE_CAPA_MASK(BASER):
-+		mode = XSC_DEV_FEC_BASER;
-+		break;
-+	case RTE_ETH_FEC_MODE_CAPA_MASK(RS):
-+		mode = XSC_DEV_FEC_RS;
-+		break;
-+	default:
-+		PMD_DRV_LOG(ERR, "Failed to set fec, fec mode %u not support", mode);
-+		return 0;
-+	}
-+
-+	in.fec = rte_cpu_to_be_32(mode);
-+	ret = xsc_dev_mailbox_exec(xdev, &in, sizeof(in), &out, sizeof(out));
-+	if (ret != 0 || out.hdr.status != 0) {
-+		PMD_DRV_LOG(ERR, "Failed to set fec param, ret=%d, status=%u",
-+			    ret, out.hdr.status);
-+		rte_errno = ENOEXEC;
-+		return -rte_errno;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/net/xsc/xsc_dev.h b/drivers/net/xsc/xsc_dev.h
-index 86a0eee22e..e058ffdc21 100644
---- a/drivers/net/xsc/xsc_dev.h
-+++ b/drivers/net/xsc/xsc_dev.h
-@@ -35,6 +35,20 @@
- #define XSC_EEPROM_HIGH_PAGE_LENGTH	128
- #define XSC_EEPROM_MAX_BYTES		32
- 
-+enum xsc_dev_fec_config_bits {
-+	XSC_DEV_FEC_NONE_BIT,
-+	XSC_DEV_FEC_AUTO_BIT,
-+	XSC_DEV_FEC_OFF_BIT,
-+	XSC_DEV_FEC_RS_BIT,
-+	XSC_DEV_FEC_BASER_BIT,
-+};
-+
-+#define XSC_DEV_FEC_NONE	(1 << XSC_DEV_FEC_NONE_BIT)
-+#define XSC_DEV_FEC_AUTO	(1 << XSC_DEV_FEC_AUTO_BIT)
-+#define XSC_DEV_FEC_OFF		(1 << XSC_DEV_FEC_OFF_BIT)
-+#define XSC_DEV_FEC_RS		(1 << XSC_DEV_FEC_RS_BIT)
-+#define XSC_DEV_FEC_BASER	(1 << XSC_DEV_FEC_BASER_BIT)
-+
- enum xsc_queue_type {
- 	XSC_QUEUE_TYPE_RDMA_RC		= 0,
- 	XSC_QUEUE_TYPE_RDMA_MAD		= 1,
-@@ -262,5 +276,7 @@ int xsc_dev_query_module_eeprom(struct xsc_dev *xdev, uint16_t offset,
- int xsc_dev_intr_event_get(struct xsc_dev *xdev);
- int xsc_dev_intr_handler_install(struct xsc_dev *xdev, rte_intr_callback_fn cb, void *cb_arg);
- int xsc_dev_intr_handler_uninstall(struct xsc_dev *xdev);
-+int xsc_dev_fec_get(struct xsc_dev *xdev, uint32_t *fec_capa);
-+int xsc_dev_fec_set(struct xsc_dev *xdev, uint32_t mode);
- 
- #endif /* _XSC_DEV_H_ */
 diff --git a/drivers/net/xsc/xsc_ethdev.c b/drivers/net/xsc/xsc_ethdev.c
-index 0884894a9b..261b49cff4 100644
+index 261b49cff4..fc88caa9a2 100644
 --- a/drivers/net/xsc/xsc_ethdev.c
 +++ b/drivers/net/xsc/xsc_ethdev.c
-@@ -845,6 +845,22 @@ xsc_ethdev_get_module_eeprom(struct rte_eth_dev *dev,
+@@ -296,6 +296,9 @@ xsc_rxq_start(struct xsc_ethdev_priv *priv)
+ 	if (ret != 0)
+ 		goto error;
+ 
++	for (i = 0; i != priv->num_rq; ++i)
++		priv->dev_data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
++
+ 	priv->flags |= XSC_FLAG_RX_QUEUE_INIT;
  	return 0;
+ error:
+diff --git a/drivers/net/xsc/xsc_rx.c b/drivers/net/xsc/xsc_rx.c
+index 65d63b94de..c65afab51d 100644
+--- a/drivers/net/xsc/xsc_rx.c
++++ b/drivers/net/xsc/xsc_rx.c
+@@ -256,31 +256,139 @@ xsc_rxq_initialize(struct xsc_dev *xdev, struct xsc_rxq_data *rxq_data)
+ 	rte_write32(rte_cpu_to_le_32(recv_db.recv_data), rxq_data->rq_db);
  }
  
 +static int
-+xsc_ethdev_fec_get(struct rte_eth_dev *dev, uint32_t *fec_capa)
++xsc_alloc_qpn(struct xsc_dev *xdev, uint16_t *qpn_base, uint16_t qp_cnt)
 +{
-+	struct xsc_ethdev_priv *priv = TO_XSC_ETHDEV_PRIV(dev);
++	int ret;
++	struct xsc_cmd_alloc_qpn_mbox_in in = { };
++	struct xsc_cmd_alloc_qpn_mbox_out out = { };
 +
-+	return xsc_dev_fec_get(priv->xdev, fec_capa);
++	in.hdr.opcode = rte_cpu_to_be_16(XSC_CMD_OP_ALLOC_QPN);
++	in.qp_cnt = rte_cpu_to_be_16(qp_cnt);
++	in.qp_type = XSC_QUEUE_TYPE_RAW;
++
++	ret = xsc_dev_mailbox_exec(xdev, &in, sizeof(in), &out, sizeof(out));
++	if (ret != 0 || out.hdr.status != 0) {
++		PMD_DRV_LOG(ERR,
++			    "Failed to allocate qpn, port id=%d, qp num=%d, "
++			    "ret=%d, out.status=%u",
++			    xdev->port_id, qp_cnt, ret, out.hdr.status);
++		rte_errno = ENOEXEC;
++		goto error;
++	}
++
++	*qpn_base = rte_be_to_cpu_16(out.qpn_base);
++	return 0;
++
++error:
++	return -rte_errno;
 +}
 +
 +static int
-+xsc_ethdev_fec_set(struct rte_eth_dev *dev, uint32_t mode)
++xsc_free_qpn(struct xsc_dev *xdev, uint16_t qpn_base, uint16_t qp_cnt)
 +{
-+	struct xsc_ethdev_priv *priv = TO_XSC_ETHDEV_PRIV(dev);
++	int ret;
++	struct xsc_cmd_free_qpn_mbox_in in = { };
++	struct xsc_cmd_free_qpn_mbox_out out = { };
 +
-+	return xsc_dev_fec_set(priv->xdev, mode);
++	in.hdr.opcode = rte_cpu_to_be_16(XSC_CMD_OP_FREE_QPN);
++	in.qpn_base = rte_cpu_to_be_16(qpn_base);
++	in.qp_cnt = rte_cpu_to_be_16(qp_cnt);
++	in.qp_type = XSC_QUEUE_TYPE_RAW;
++
++	ret = xsc_dev_mailbox_exec(xdev, &in, sizeof(in), &out, sizeof(out));
++	if (ret != 0 || out.hdr.status != 0) {
++		PMD_DRV_LOG(ERR,
++			    "Failed to free qpn, port id=%d, qpn base=%u, qp num=%d, "
++			    "ret=%d, out.status=%u",
++			    xdev->port_id, qpn_base, qp_cnt, ret, out.hdr.status);
++		rte_errno = ENOEXEC;
++		return -rte_errno;
++	}
++
++	return 0;
 +}
 +
- const struct eth_dev_ops xsc_eth_dev_ops = {
- 	.dev_configure = xsc_ethdev_configure,
- 	.dev_start = xsc_ethdev_start,
-@@ -868,6 +884,8 @@ const struct eth_dev_ops xsc_eth_dev_ops = {
- 	.fw_version_get = xsc_ethdev_fw_version_get,
- 	.get_module_info = xsc_ethdev_get_module_info,
- 	.get_module_eeprom = xsc_ethdev_get_module_eeprom,
-+	.fec_get = xsc_ethdev_fec_get,
-+	.fec_set = xsc_ethdev_fec_set,
- };
- 
++static int
++xsc_set_qp_info(struct xsc_dev *xdev, struct xsc_cmd_create_qp_request *qp_info, size_t pas_size)
++{
++	int ret;
++	size_t in_size;
++	struct xsc_cmd_set_qp_info_in *in;
++	struct xsc_cmd_set_qp_info_out out = { };
++
++	in_size = sizeof(*in) + pas_size;
++	in = malloc(in_size);
++	if (in == NULL) {
++		rte_errno = ENOMEM;
++		PMD_DRV_LOG(ERR, "Failed to allocate memory for setting qp info");
++		return -rte_errno;
++	}
++
++	in->hdr.opcode = rte_cpu_to_be_16(XSC_CMD_OP_SET_QP_INFO);
++	memcpy(&in->qp_info, qp_info, sizeof(*qp_info) + pas_size);
++	ret = xsc_dev_mailbox_exec(xdev, in, in_size, &out, sizeof(out));
++	if (ret != 0 || out.hdr.status != 0) {
++		PMD_DRV_LOG(ERR,
++			    "Failed to set qp info, port id=%d, ret=%d, out.status=%u",
++			    xdev->port_id, ret, out.hdr.status);
++		rte_errno = ENOEXEC;
++		goto error;
++	}
++
++	free(in);
++	return 0;
++error:
++	free(in);
++	return -rte_errno;
++}
++
++static int
++xsc_unset_qp_info(struct xsc_dev *xdev, uint16_t qpn)
++{
++	int ret;
++	struct xsc_cmd_unset_qp_info_in in = { };
++	struct xsc_cmd_unset_qp_info_out out = { };
++
++	in.hdr.opcode = rte_cpu_to_be_16(XSC_CMD_QP_UNSET_QP_INFO);
++	in.qpn = rte_cpu_to_be_16(qpn);
++
++	ret = xsc_dev_mailbox_exec(xdev, &in, sizeof(in), &out, sizeof(out));
++	if (ret != 0 || out.hdr.status != 0) {
++		PMD_DRV_LOG(ERR,
++			    "Failed to unset qp info, port id=%d, ret=%d, out.status=%u",
++			    xdev->port_id, ret, out.hdr.status);
++		rte_errno = ENOEXEC;
++		return -rte_errno;
++	}
++
++	return 0;
++}
++
  static int
+ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
+ {
+-	struct xsc_cmd_create_multiqp_mbox_in *in;
+-	struct xsc_cmd_create_qp_request *req;
+-	struct xsc_cmd_create_multiqp_mbox_out *out;
+-	uint8_t log_ele;
+-	uint64_t iova;
++	int ret;
+ 	int wqe_n;
+-	int in_len, out_len, cmd_len;
+ 	int entry_total_len, entry_len;
+-	uint8_t log_rq_sz, log_sq_sz = 0;
+ 	uint32_t wqe_total_len;
+-	int j, ret;
+-	uint16_t i, pa_num;
+-	int rqn_base;
++	uint16_t rqn_base, pa_num;
++	uint16_t i, j;
++	uint16_t set_last_no = 0;
++	uint8_t log_ele, log_rq_sz, log_sq_sz = 0;
++	uint64_t iova;
++	size_t pas_size;
+ 	struct xsc_rxq_data *rxq_data;
+ 	struct xsc_dev *xdev = priv->xdev;
++	struct xsc_cmd_create_qp_request *req, *info;
+ 	struct xsc_hwinfo *hwinfo = &xdev->hwinfo;
+ 	char name[RTE_ETH_NAME_MAX_LEN] = { 0 };
+-	void *cmd_buf;
+ 
+ 	rxq_data = xsc_rxq_get(priv, 0);
+-	if (rxq_data == NULL)
+-		return -EINVAL;
++	if (rxq_data == NULL) {
++		rte_errno = EINVAL;
++		return -rte_errno;
++	}
+ 
+ 	log_ele = rte_log2_u32(sizeof(struct xsc_wqe_data_seg));
+ 	wqe_n = rxq_data->wqe_s;
+@@ -291,37 +399,32 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
+ 	entry_len = sizeof(struct xsc_cmd_create_qp_request) + sizeof(uint64_t) * pa_num;
+ 	entry_total_len = entry_len * priv->num_rq;
+ 
+-	in_len = sizeof(struct xsc_cmd_create_multiqp_mbox_in) + entry_total_len;
+-	out_len = sizeof(struct xsc_cmd_create_multiqp_mbox_out) + entry_total_len;
+-	cmd_len = RTE_MAX(in_len, out_len);
+-	cmd_buf = malloc(cmd_len);
+-	if (cmd_buf == NULL) {
++	req = malloc(entry_total_len);
++	if (req == NULL) {
+ 		rte_errno = ENOMEM;
+-		PMD_DRV_LOG(ERR, "Alloc rss qp create cmd memory failed");
+-		goto error;
++		PMD_DRV_LOG(ERR, "Failed to alloc create qp request cmd memory");
++		return -rte_errno;
+ 	}
+ 
+-	in = cmd_buf;
+-	memset(in, 0, cmd_len);
+-	in->qp_num = rte_cpu_to_be_16((uint16_t)priv->num_rq);
+-	in->qp_type = XSC_QUEUE_TYPE_RAW;
+-	in->req_len = rte_cpu_to_be_32(cmd_len);
++	ret = xsc_alloc_qpn(xdev, &rqn_base, priv->num_rq);
++	if (ret != 0)
++		goto alloc_qpn_fail;
+ 
+ 	for (i = 0; i < priv->num_rq; i++) {
+ 		rxq_data = xsc_rxq_get(priv, i);
+ 		if (rxq_data == NULL) {
+ 			rte_errno = EINVAL;
+-			goto error;
++			goto set_qp_fail;
+ 		}
+ 
+-		req = (struct xsc_cmd_create_qp_request *)(&in->data[0] + entry_len * i);
+-		req->input_qpn = rte_cpu_to_be_16(0); /* useless for eth */
+-		req->pa_num = rte_cpu_to_be_16(pa_num);
+-		req->qp_type = XSC_QUEUE_TYPE_RAW;
+-		req->log_rq_sz = log_rq_sz;
+-		req->cqn_recv = rte_cpu_to_be_16((uint16_t)rxq_data->cqn);
+-		req->cqn_send = req->cqn_recv;
+-		req->glb_funcid = rte_cpu_to_be_16((uint16_t)hwinfo->func_id);
++		info = (struct xsc_cmd_create_qp_request *)((uint8_t *)req + entry_len * i);
++		info->input_qpn = rte_cpu_to_be_16(rqn_base + i);
++		info->pa_num = rte_cpu_to_be_16(pa_num);
++		info->qp_type = XSC_QUEUE_TYPE_RAW;
++		info->log_rq_sz = log_rq_sz;
++		info->cqn_recv = rte_cpu_to_be_16((uint16_t)rxq_data->cqn);
++		info->cqn_send = info->cqn_recv;
++		info->glb_funcid = rte_cpu_to_be_16((uint16_t)hwinfo->func_id);
+ 		/* Alloc pas addr */
+ 		snprintf(name, sizeof(name), "wqe_mem_rx_%d_%d", port_id, i);
+ 		rxq_data->rq_pas = rte_memzone_reserve_aligned(name,
+@@ -330,32 +433,27 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
+ 							       0, XSC_PAGE_SIZE);
+ 		if (rxq_data->rq_pas == NULL) {
+ 			rte_errno = ENOMEM;
+-			PMD_DRV_LOG(ERR, "Alloc rxq pas memory failed");
+-			goto error;
++			PMD_DRV_LOG(ERR, "Failed to alloc rxq pas memory");
++			goto set_qp_fail;
+ 		}
+ 
+ 		iova = rxq_data->rq_pas->iova;
+ 		for (j = 0; j < pa_num; j++)
+-			req->pas[j] = rte_cpu_to_be_64(iova + j * XSC_PAGE_SIZE);
+-	}
++			info->pas[j] = rte_cpu_to_be_64(iova + j * XSC_PAGE_SIZE);
+ 
+-	in->hdr.opcode = rte_cpu_to_be_16(XSC_CMD_OP_CREATE_MULTI_QP);
+-	out = cmd_buf;
+-	ret = xsc_dev_mailbox_exec(xdev, in, in_len, out, out_len);
+-	if (ret != 0 || out->hdr.status != 0) {
+-		PMD_DRV_LOG(ERR,
+-			    "Create rss rq failed, port id=%d, qp_num=%d, ret=%d, out.status=%u",
+-			    port_id, priv->num_rq, ret, out->hdr.status);
+-		rte_errno = ENOEXEC;
+-		goto error;
++		pas_size = pa_num * sizeof(uint64_t);
++		ret = xsc_set_qp_info(xdev, info, pas_size);
++		if (ret != 0)
++			goto set_qp_fail;
++
++		set_last_no++;
+ 	}
+-	rqn_base = rte_be_to_cpu_32(out->qpn_base) & 0xffffff;
+ 
+ 	for (i = 0; i < priv->num_rq; i++) {
+ 		rxq_data = xsc_rxq_get(priv, i);
+ 		if (rxq_data == NULL) {
+ 			rte_errno = EINVAL;
+-			goto error;
++			goto set_qp_fail;
+ 		}
+ 
+ 		rxq_data->wqes = rxq_data->rq_pas->addr;
+@@ -370,18 +468,33 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
+ 		xsc_dev_modify_qp_status(xdev, rxq_data->qpn, 1, XSC_CMD_OP_RTR2RTS_QP);
+ 		xsc_rxq_initialize(xdev, rxq_data);
+ 		rxq_data->cq_ci = 0;
+-		priv->dev_data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
+ 		PMD_DRV_LOG(INFO, "Port %d create rx qp, wqe_s:%d, wqe_n:%d, qp_db=%p, qpn:%u",
+ 			    port_id,
+ 			    rxq_data->wqe_s, rxq_data->wqe_n,
+ 			    rxq_data->rq_db, rxq_data->qpn);
+ 	}
+ 
+-	free(cmd_buf);
++	free(req);
+ 	return 0;
+ 
+-error:
+-	free(cmd_buf);
++set_qp_fail:
++	free(req);
++	for (i = 0; i < set_last_no; i++) {
++		xsc_unset_qp_info(xdev, rqn_base + i);
++		rxq_data = xsc_rxq_get(priv, i);
++		if (rxq_data == NULL) {
++			rte_errno = EINVAL;
++			goto set_qp_fail;
++		}
++		rte_memzone_free(rxq_data->rq_pas);
++		rxq_data->rq_pas = NULL;
++	}
++
++	xsc_free_qpn(xdev, rqn_base, priv->num_rq);
++	return -rte_errno;
++
++alloc_qpn_fail:
++	free(req);
+ 	return -rte_errno;
+ }
+ 
 -- 
 2.25.1
