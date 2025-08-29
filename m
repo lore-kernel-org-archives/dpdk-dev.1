@@ -2,112 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59DC7C8303F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 09:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D381CA0FF7
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 09:45:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 70FB640263;
-	Fri, 29 Aug 2025 11:18:02 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id BE8EF4025A
- for <dev@dpdk.org>; Fri, 29 Aug 2025 11:18:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1756459080;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=C2EAZ+d8lVxd6uVfmFKDjN3TPYJhjyvSvtgPT3R49SE=;
- b=FliuWMmkvR/O63e1PGST1excsZDgWeE6gDGUGG7+y+jpraJnKonzApGbgZ8l/moeu9scrn
- lK6aZvPAVzZRV/OaJp4RFcLE/pUhDw2enCB8RJqvczydMNoBSeaLSuXnVbzP52iNYpStOt
- 50qJbd1eynfryksPJW9uoCmnI+JJ6Jc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-615-EKKQ4izfMt6qVZe5zVTv6A-1; Fri,
- 29 Aug 2025 05:17:57 -0400
-X-MC-Unique: EKKQ4izfMt6qVZe5zVTv6A-1
-X-Mimecast-MFC-AGG-ID: EKKQ4izfMt6qVZe5zVTv6A_1756459075
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 7D0C6195608B; Fri, 29 Aug 2025 09:17:55 +0000 (UTC)
-Received: from [10.45.242.23] (unknown [10.45.242.23])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 3E6D818004A3; Fri, 29 Aug 2025 09:17:51 +0000 (UTC)
-Message-ID: <ab711389-82ca-4aa4-9796-55106d5fc00b@redhat.com>
-Date: Fri, 29 Aug 2025 11:17:48 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 8EA5A40263;
+	Fri, 29 Aug 2025 11:45:55 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 960134025A
+ for <dev@dpdk.org>; Fri, 29 Aug 2025 11:45:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1756460754; x=1787996754;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=fEMz9hY/lTwsH+t9d9JV0ShOtpvs2hTBs/3VERk+39g=;
+ b=WF3KljvXQ055Ls/C8RwoE+7bEyA3BPOz+Qk3lyuTatSopP3MxfKi7y0B
+ 5uIKBqJ6uqFf70aOTLEJRCHQJyG+giqYfAWcQjeX4mZAPXF9y7zFRBOx/
+ qT/1OOZSGnZmKjhxWCcxG58Mh9ijyvMnGG43BUj9j8sOzuI6mMNGsPx7S
+ u4XNDUikxFYN2Azw3pZd+VKqc6jeq3deVOzomRW/D8gxqILXwkiqd6B/X
+ WO7tHg24aFpBSS6HPTeDekdXJsFqBWk4/0/TKOiVH+i4MOoSa3ElTyIeI
+ HxxbsMExGBQK++97Vh+Ea/jcw/A3IHyiuxV4/tWkBa0D9aM0CdBxlRvUc Q==;
+X-CSE-ConnectionGUID: N8co6GUhSSKKK/3OvbomnA==
+X-CSE-MsgGUID: BGbESIdRRASGyALjK/0AOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11536"; a="70113514"
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; d="scan'208";a="70113514"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Aug 2025 02:45:53 -0700
+X-CSE-ConnectionGUID: bjTmBUzlQwSwObNtAR+IUA==
+X-CSE-MsgGUID: OZUdIvDjQBallpc740OhDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,221,1751266800"; d="scan'208";a="170240649"
+Received: from silpixa00401177.ir.intel.com ([10.237.213.77])
+ by orviesa007.jf.intel.com with ESMTP; 29 Aug 2025 02:45:51 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH v2] net/ice: make link state configurable on device close
+Date: Fri, 29 Aug 2025 09:45:23 +0000
+Message-Id: <20250829094523.1582102-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250828102305.1522036-1-ciara.loftus@intel.com>
+References: <20250828102305.1522036-1-ciara.loftus@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] vhost_user: configure memory slots
-To: "Bathija, Pravin" <Pravin.Bathija@dell.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- David Marchand <david.marchand@redhat.com>, Chenbo Xia <chenbox@nvidia.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>,
- "pravin.m.bathija.dev@gmail.com" <pravin.m.bathija.dev@gmail.com>,
- Thomas Monjalon <thomas@monjalon.net>
-References: <20250812023358.2400020-1-pravin.bathija@dell.com>
- <15537925.JCcGWNJJiE@thomas>
- <SJ0PR19MB4606D8D898219FE2296C7FB4F53DA@SJ0PR19MB4606.namprd19.prod.outlook.com>
- <SJ0PR19MB46063FDCC149084AFBD7C4E1F53DA@SJ0PR19MB4606.namprd19.prod.outlook.com>
- <8391ac53-0b5c-468c-ae38-341842f5c492@redhat.com>
- <SJ0PR19MB46063A880B831758A7455613F539A@SJ0PR19MB4606.namprd19.prod.outlook.com>
- <SJ0PR19MB460649E8A3D39B224CFB4469F53AA@SJ0PR19MB4606.namprd19.prod.outlook.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <SJ0PR19MB460649E8A3D39B224CFB4469F53AA@SJ0PR19MB4606.namprd19.prod.outlook.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 4UaN-CW9lQKsyfe7nW67xRdj3DlrRcXqArsuuQvIoD4_1756459075
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -121,166 +59,158 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Pravin,
+Introduce the device argument link_state_on_close for the ice driver.
+When the device is stopped or closed, the link state will be configured
+as follows for each of the three options:
+1. down: bring (or keep) the link down
+2. up: bring (or keep) the link up
+3. initial: restore the link to the state it was in when the device
+started.
 
-On 8/29/25 11:11 AM, Bathija, Pravin wrote:
-> Dear Maxime, Bruce, David, Chenbo,
-> 
-> Could you please help review the code ? The goal is to merge the changes before September 18 when the merge window closes for SPDK v25.09.
+Prior to this commit the default behaviour was to always restore the
+link to its initial state. The new default behaiour is to always bring
+the link down, which is in keeping with most other drivers.
 
-I will help review the code, but there are no guarantee it will be
-merged in main branch before September 18th.
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+---
+v2:
+* Changed devarg name and made it tri-state instead of boolean
+---
+ doc/guides/nics/ice.rst            | 13 ++++++++++
+ drivers/net/intel/ice/ice_ethdev.c | 41 ++++++++++++++++++++++++++++--
+ drivers/net/intel/ice/ice_ethdev.h |  1 +
+ 3 files changed, 53 insertions(+), 2 deletions(-)
 
-Can you elaborate about the tests you have run?
-Have you ensured it is still working properly with Vhsot-user/Virtio-net?
-
-Maxime
-
-> Regards,
-> Pravin
-> 
-> 
-> Internal Use - Confidential
->> -----Original Message-----
->> From: Bathija, Pravin
->> Sent: Tuesday, August 26, 2025 11:47 AM
->> To: Maxime Coquelin <maxime.coquelin@redhat.com>; Bruce Richardson
->> <bruce.richardson@intel.com>; David Marchand
->> <david.marchand@redhat.com>; Chenbo Xia <chenbox@nvidia.com>
->> Cc: dev@dpdk.org; pravin.m.bathija.dev@gmail.com; Thomas Monjalon
->> <thomas@monjalon.net>
->> Subject: RE: [PATCH 0/3] vhost_user: configure memory slots
->>
->> Answers inline.
->>
->>> -----Original Message-----
->>> From: Maxime Coquelin <maxime.coquelin@redhat.com>
->>> Sent: Monday, August 25, 2025 1:49 AM
->>> To: Bathija, Pravin <Pravin.Bathija@dell.com>; Bruce Richardson
->>> <bruce.richardson@intel.com>; David Marchand
->>> <david.marchand@redhat.com>; Chenbo Xia <chenbox@nvidia.com>
->>> Cc: dev@dpdk.org; pravin.m.bathija.dev@gmail.com; Thomas Monjalon
->>> <thomas@monjalon.net>
->>> Subject: Re: [PATCH 0/3] vhost_user: configure memory slots
->>>
->>>
->>> [EXTERNAL EMAIL]
->>>
->>> Hi,
->>>
->>> Please try to fix your email client so that we can follow the replies inlined.
->>
->> Thank you for the input. I have made the necessary adjustments. Please let me
->> know if there is anything missing.
->>
->>>
->>> On 8/22/25 9:33 AM, Bathija, Pravin wrote:
->>>> Dear Maxime, Bruce, David, Chenbo,
->>>>
->>>> I would like to follow up on the status of the patches and when we
->>>> should
->>> expect these to be merged into the mainline.
->>>>
->>>> Please let me know if I can help answer any questions you might have.
->>>>
->>>> Regards,
->>>> Pravin
->>>>
->>>>
->>>> Internal Use - Confidential
->>>> -----Original Message-----
->>>> From: Bathija, Pravin
->>>> Sent: Thursday, August 21, 2025 7:48 PM
->>>> To: Thomas Monjalon <thomas@monjalon.net>
->>>> Cc: dev@dpdk.org; pravin.m.bathija.dev@gmail.com; Maxime Coquelin
->>>> <maxime.coquelin@redhat.com>; Chenbo Xia <chenbox@nvidia.com>;
->> David
->>>> Marchand <david.marchand@redhat.com>; Bruce Richardson
->>>> <bruce.richardson@intel.com>
->>>> Subject: RE: [PATCH 0/3] vhost_user: configure memory slots
->>>>
->>>> Comments inline:
->>>>
->>>> -----Original Message-----
->>>> From: Thomas Monjalon <thomas@monjalon.net>
->>>> Sent: Tuesday, August 19, 2025 4:36 AM
->>>> To: Bathija, Pravin <Pravin.Bathija@dell.com>
->>>> Cc: dev@dpdk.org; pravin.m.bathija.dev@gmail.com; Maxime Coquelin
->>>> <maxime.coquelin@redhat.com>; Chenbo Xia <chenbox@nvidia.com>;
->> David
->>>> Marchand <david.marchand@redhat.com>; Bruce Richardson
->>>> <bruce.richardson@intel.com>
->>>> Subject: Re: [PATCH 0/3] vhost_user: configure memory slots
->>>>
->>>>
->>>> [EXTERNAL EMAIL]
->>>>
->>>> Comments inline
->>>>
->>>> 12/08/2025 04:33, Pravin M Bathija:
->>>>> - add protocol feature support add and removal of memory
->>>>> regions/slots dynamically.
->>>>> - this patch set has been tested with multiple instances of fio
->>>>
->>>> What is "fio"?
->>>> Fio is an open-source tool to test I/O workloads on disks and file systems.
->>>>
->>>>> connected via libblkio to spdk target backed unix domain socket.
->>>>> - please apply this this patch-set to dpdk mainline as well as
->>>>> version 25.03.0.
->>>>
->>>> As mentionned previously, we don't plan to maintain 25.03.
->>>> I understand you need it for SPDK,
->>>> but I think SPDK should rely only on LTS branches.
->>>> Is there a specific reason why 25.03 is required in SPDK?
->>>>
->>>> When we do sub-module init on spdk master, it uses dpdk version
->>>> 25.03 from
->>> it's own sub-repo.
->>>> Our changes for vhost have already been pushed to spdk master. We
->>>> have also pushed the same dpdk changes in the spdk sub-repo "dpdk"
->>>> which is version 25.03. I was just ensuring that there is uniformity
->>>> in the 25.03
->>> codebase, whether it is on the spdk sub-repo or 25.03 within dpdk repo.
->>>
->>> Ok, still, it would be better for SPDK to uses LTS as we have no plans
->>> to add extra stable branches.
->>>
->>> Also, your series may be considered as a feature and not a bug fix, so
->>> even if
->>> 25.03 would be a stable branch (which it is not), it would not be
->>> backported against it.
->>
->> Understood. I would request that we merge my changes into DPDK mainline
->> before September 18 when the merge window closes for SPDK v25.09.
->>
->>>
->>>>
->>>>
->>>>> v2:
->>>>> - fixed warnings with e-mail address
->>>>> - fixed warnings with typos
->>>>> - there is a warning about __rte_packed_begin not being in pair
->>>>> with __rte_packed_end which on reading the code turns out to be
->>>>> false. It is an anomaly of how git-format generates the patch and
->>>>> how check-patch checks it.
->>>>
->>>> When sending a v2, please use -v2 so it is reflected in the email subject.
->>>> I will remember this for next time. Thank you for pointing that out.
->>>>
->>>>> Pravin M Bathija (3):
->>>>>     mailmap: add user
->>>>>     vhost_user: configure memory slots
->>>>>     vhost_user: support for memory regions
->>>>>
->>>>>    .mailmap               |   1 +
->>>>>    lib/vhost/rte_vhost.h  |   4 +
->>>>>    lib/vhost/vhost_user.c | 325
->>>>> +++++++++++++++++++++++++++++++++++------
->>>>>    lib/vhost/vhost_user.h |  10 ++
->>>>>    4 files changed, 296 insertions(+), 44 deletions(-)
->>>>
->>>>
->>>>
-> 
+diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
+index 2c0f41c56c..3802db8120 100644
+--- a/doc/guides/nics/ice.rst
++++ b/doc/guides/nics/ice.rst
+@@ -322,6 +322,19 @@ Runtime Configuration
+ 
+     -a af:00.0,pps_out='[pin:0]'
+ 
++- ``Link state on close`` (default ``down``)
++
++  The user can request that the link be set to up or down or restored to its
++  original state when the device is closed.
++
++    -a af:00.0,link_state_on_close=<state>
++
++  Supported values for the ``<state>`` parameter:
++
++  * ``down``: Leave the link in the down state.
++  * ``up``: Leave the link in the up state.
++  * ``initial``: Restore the link to the state it was in when the device started.
++
+ - ``Low Rx latency`` (default ``0``)
+ 
+   vRAN workloads require low latency DPDK interface for the front haul
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index 513777e372..a93b0fe202 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -41,6 +41,7 @@
+ #define ICE_DDP_FILENAME_ARG      "ddp_pkg_file"
+ #define ICE_DDP_LOAD_SCHED_ARG    "ddp_load_sched_topo"
+ #define ICE_TM_LEVELS_ARG         "tm_sched_levels"
++#define ICE_LINK_STATE_ON_CLOSE   "link_state_on_close"
+ 
+ #define ICE_CYCLECOUNTER_MASK  0xffffffffffffffffULL
+ 
+@@ -57,6 +58,7 @@ static const char * const ice_valid_args[] = {
+ 	ICE_DDP_FILENAME_ARG,
+ 	ICE_DDP_LOAD_SCHED_ARG,
+ 	ICE_TM_LEVELS_ARG,
++	ICE_LINK_STATE_ON_CLOSE,
+ 	NULL
+ };
+ 
+@@ -95,6 +97,12 @@ static struct proto_xtr_ol_flag ice_proto_xtr_ol_flag_params[] = {
+ 		.param = { .name = "intel_pmd_dynflag_proto_xtr_ip_offset" }}
+ };
+ 
++enum ice_link_state_on_close {
++	ICE_LINK_DOWN,
++	ICE_LINK_UP,
++	ICE_LINK_INITIAL,
++};
++
+ #define ICE_OS_DEFAULT_PKG_NAME		"ICE OS Default Package"
+ #define ICE_COMMS_PKG_NAME			"ICE COMMS Package"
+ #define ICE_MAX_RES_DESC_NUM        1024
+@@ -2116,6 +2124,29 @@ parse_tx_sched_levels(const char *key, const char *value, void *args)
+ 	return 0;
+ }
+ 
++static int
++parse_link_state_on_close(const char *key, const char *value, void *args)
++{
++	int *state = args, ret = 0;
++
++	if (value == NULL || state == NULL)
++		return -EINVAL;
++
++	if (strcmp(value, "down") == 0) {
++		*state = ICE_LINK_DOWN;
++	} else if (strcmp(value, "up") == 0) {
++		*state = ICE_LINK_UP;
++	} else if (strcmp(value, "initial") == 0) {
++		*state = ICE_LINK_INITIAL;
++	} else {
++		ret = -EINVAL;
++		PMD_DRV_LOG(WARNING, "%s: Invalid value \"%s\", "
++				"should be \"down\" \"up\" or \"initial\"", key, value);
++	}
++
++	return ret;
++}
++
+ static int
+ lookup_pps_type(const char *pps_name)
+ {
+@@ -2368,6 +2399,9 @@ static int ice_parse_devargs(struct rte_eth_dev *dev)
+ 	if (ret)
+ 		goto bail;
+ 
++	ret = rte_kvargs_process(kvlist, ICE_LINK_STATE_ON_CLOSE,
++				 &parse_link_state_on_close, &ad->devargs.link_state_on_close);
++
+ bail:
+ 	rte_kvargs_free(kvlist);
+ 	return ret;
+@@ -2811,7 +2845,9 @@ ice_dev_stop(struct rte_eth_dev *dev)
+ 	/* disable all queue interrupts */
+ 	ice_vsi_disable_queues_intr(main_vsi);
+ 
+-	if (pf->init_link_up)
++	if (pf->adapter->devargs.link_state_on_close == ICE_LINK_UP ||
++			(pf->adapter->devargs.link_state_on_close == ICE_LINK_INITIAL &&
++				pf->init_link_up))
+ 		ice_dev_set_link_up(dev);
+ 	else
+ 		ice_dev_set_link_down(dev);
+@@ -7320,7 +7356,8 @@ RTE_PMD_REGISTER_PARAM_STRING(net_ice,
+ 			      ICE_DDP_FILENAME_ARG "=</path/to/file>"
+ 			      ICE_DDP_LOAD_SCHED_ARG "=<0|1>"
+ 			      ICE_TM_LEVELS_ARG "=<N>"
+-			      ICE_RX_LOW_LATENCY_ARG "=<0|1>");
++			      ICE_RX_LOW_LATENCY_ARG "=<0|1>"
++			      ICE_LINK_STATE_ON_CLOSE "=<down|up|initial>");
+ 
+ RTE_LOG_REGISTER_SUFFIX(ice_logtype_init, init, NOTICE);
+ RTE_LOG_REGISTER_SUFFIX(ice_logtype_driver, driver, NOTICE);
+diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
+index 8e5799f8b4..23014f4f72 100644
+--- a/drivers/net/intel/ice/ice_ethdev.h
++++ b/drivers/net/intel/ice/ice_ethdev.h
+@@ -597,6 +597,7 @@ struct ice_devargs {
+ 	uint8_t pps_out_ena;
+ 	uint8_t ddp_load_sched;
+ 	uint8_t tm_exposed_levels;
++	int link_state_on_close;
+ 	int xtr_field_offs;
+ 	uint8_t xtr_flag_offs[PROTO_XTR_MAX];
+ 	/* Name of the field. */
+-- 
+2.34.1
 
