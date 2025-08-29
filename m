@@ -2,51 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A492CA0FF0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 11:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 201C8CA0FF0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 12:01:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 644CB40263;
-	Fri, 29 Aug 2025 13:59:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 21E9340263;
+	Fri, 29 Aug 2025 14:01:32 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 23B914025A
- for <dev@dpdk.org>; Fri, 29 Aug 2025 13:59:51 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0ECA34025A
+ for <dev@dpdk.org>; Fri, 29 Aug 2025 14:01:30 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1756468790;
+ s=mimecast20190719; t=1756468890;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=9zeSNt4shJKSwjrPrRFkEE+hPU5bsxp0jT32q3FHvNc=;
- b=ALRxzQR30l+eUPlQ5fPC/LDI5k8degCw6U76hahHgyCnolAAr+y0kTrwg7cJz2y/h3XO73
- G6wOZzrjpuKqDq9Wl27bAfeu7R5MYzhACd/ULi8OekP8UOpHqRPG+JadFPm/09y7O8A9YP
- ScTTMb5q/2wgTUByacLe9xn6KOII6jE=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ bh=SKg1ld5amvn45+W0uStKq6icoQRyCUg4iXdXyKsjlK0=;
+ b=Vu5Ch/rrrv5fi6MXFGmEjd7kGnSKfxmeDCfibRJ+f1mUiNdFe8/r2bY6md8hFDh7gXQZVr
+ L2CWB1KlYM4nACwzzZ0nY+760hypIX8aS6zooQSBK+q1fYetzCoyO9izsVJ08lWgDhtIu5
+ INrKK8Cc7mCMbQOmMlNgPbge4K8TfwQ=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-88-B8jQZ8YTMtGel1_vFDCRUA-1; Fri,
- 29 Aug 2025 07:59:47 -0400
-X-MC-Unique: B8jQZ8YTMtGel1_vFDCRUA-1
-X-Mimecast-MFC-AGG-ID: B8jQZ8YTMtGel1_vFDCRUA_1756468786
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-576-epar8UnQMyufCkYUYApNvQ-1; Fri,
+ 29 Aug 2025 08:01:27 -0400
+X-MC-Unique: epar8UnQMyufCkYUYApNvQ-1
+X-Mimecast-MFC-AGG-ID: epar8UnQMyufCkYUYApNvQ_1756468885
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id E73DA1956089; Fri, 29 Aug 2025 11:59:45 +0000 (UTC)
+ by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 68E4D1955D48; Fri, 29 Aug 2025 12:01:25 +0000 (UTC)
 Received: from [10.45.242.23] (unknown [10.45.242.23])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 360871800291; Fri, 29 Aug 2025 11:59:43 +0000 (UTC)
-Message-ID: <e0ce893c-89a4-417f-88f5-46c60c6f9ded@redhat.com>
-Date: Fri, 29 Aug 2025 13:59:40 +0200
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 7A6E330001B5; Fri, 29 Aug 2025 12:01:21 +0000 (UTC)
+Message-ID: <51a55a38-3ca6-4a68-9869-478a2fa8e500@redhat.com>
+Date: Fri, 29 Aug 2025 14:01:17 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] vhost_user: support for memory regions
-To: Pravin M Bathija <pravin.bathija@dell.com>, dev@dpdk.org
-Cc: pravin.m.bathija.dev@gmail.com
+Subject: Re: [PATCH 0/3] vhost_user: configure memory slots
+To: "Bathija, Pravin" <Pravin.Bathija@dell.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ David Marchand <david.marchand@redhat.com>, Chenbo Xia <chenbox@nvidia.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>,
+ "pravin.m.bathija.dev@gmail.com" <pravin.m.bathija.dev@gmail.com>,
+ Thomas Monjalon <thomas@monjalon.net>
 References: <20250812023358.2400020-1-pravin.bathija@dell.com>
- <20250812023358.2400020-4-pravin.bathija@dell.com>
+ <15537925.JCcGWNJJiE@thomas>
+ <SJ0PR19MB4606D8D898219FE2296C7FB4F53DA@SJ0PR19MB4606.namprd19.prod.outlook.com>
+ <SJ0PR19MB46063FDCC149084AFBD7C4E1F53DA@SJ0PR19MB4606.namprd19.prod.outlook.com>
+ <8391ac53-0b5c-468c-ae38-341842f5c492@redhat.com>
+ <SJ0PR19MB46063A880B831758A7455613F539A@SJ0PR19MB4606.namprd19.prod.outlook.com>
+ <SJ0PR19MB460649E8A3D39B224CFB4469F53AA@SJ0PR19MB4606.namprd19.prod.outlook.com>
+ <ab711389-82ca-4aa4-9796-55106d5fc00b@redhat.com>
+ <SJ0PR19MB4606EEE4D44D487ABBD8FCC1F53AA@SJ0PR19MB4606.namprd19.prod.outlook.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -91,10 +102,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250812023358.2400020-4-pravin.bathija@dell.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <SJ0PR19MB4606EEE4D44D487ABBD8FCC1F53AA@SJ0PR19MB4606.namprd19.prod.outlook.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: mGhFfovPoMRLMGQjBIhUwFshN6SvH_313ZgvTWDfz0o_1756468786
+X-Mimecast-MFC-PROC-ID: 8Fn-ZLxyjcQHJEZi6ZRPzr7Zp9HDHnhzr03WWioTwm0_1756468885
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -112,553 +123,204 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The title is not consistent with other commits in this library.
 
-On 8/12/25 4:33 AM, Pravin M Bathija wrote:
-> - modify data structures and add functions to support
->    add and remove memory regions/slots
-> - define VHOST_MEMORY_MAX_NREGIONS & modify function
->    vhost_user_set_mem_table accordingly
-> - dynamically add new memory slots via vhost_user_add_mem_reg
-> - remove unused memory slots via vhost_user_rem_mem_reg
-> - define data structure VhostUserSingleMemReg for single
->    memory region
-> - modify data structures VhostUserRequest & VhostUserMsg
+
+On 8/29/25 12:26 PM, Bathija, Pravin wrote:
+> Answers inline.
 > 
-
-Please write full sentences, explaining the purpose of this change and 
-not just listing the changes themselves.
-
-> Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
-> ---
->   lib/vhost/vhost_user.c | 325 +++++++++++++++++++++++++++++++++++------
->   lib/vhost/vhost_user.h |  10 ++
->   2 files changed, 291 insertions(+), 44 deletions(-)
 > 
-> diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
-> index b73dec6a22..6367f54b97 100644
-> --- a/lib/vhost/vhost_user.c
-> +++ b/lib/vhost/vhost_user.c
-> @@ -74,6 +74,9 @@ VHOST_MESSAGE_HANDLER(VHOST_USER_SET_FEATURES, vhost_user_set_features, false, t
->   VHOST_MESSAGE_HANDLER(VHOST_USER_SET_OWNER, vhost_user_set_owner, false, true) \
->   VHOST_MESSAGE_HANDLER(VHOST_USER_RESET_OWNER, vhost_user_reset_owner, false, false) \
->   VHOST_MESSAGE_HANDLER(VHOST_USER_SET_MEM_TABLE, vhost_user_set_mem_table, true, true) \
-> +VHOST_MESSAGE_HANDLER(VHOST_USER_GET_MAX_MEM_SLOTS, vhost_user_get_max_mem_slots, false, false) \
-> +VHOST_MESSAGE_HANDLER(VHOST_USER_ADD_MEM_REG, vhost_user_add_mem_reg, true, true) \
-> +VHOST_MESSAGE_HANDLER(VHOST_USER_REM_MEM_REG, vhost_user_rem_mem_reg, true, true) \
+> Internal Use - Confidential
+>> -----Original Message-----
+>> From: Maxime Coquelin <maxime.coquelin@redhat.com>
+>> Sent: Friday, August 29, 2025 2:18 AM
+>> To: Bathija, Pravin <Pravin.Bathija@dell.com>; Bruce Richardson
+>> <bruce.richardson@intel.com>; David Marchand
+>> <david.marchand@redhat.com>; Chenbo Xia <chenbox@nvidia.com>
+>> Cc: dev@dpdk.org; pravin.m.bathija.dev@gmail.com; Thomas Monjalon
+>> <thomas@monjalon.net>
+>> Subject: Re: [PATCH 0/3] vhost_user: configure memory slots
+>>
+>>
+>> [EXTERNAL EMAIL]
+>>
+>> Hi Pravin,
+>>
+>> On 8/29/25 11:11 AM, Bathija, Pravin wrote:
+>>> Dear Maxime, Bruce, David, Chenbo,
+>>>
+>>> Could you please help review the code ? The goal is to merge the changes
+>> before September 18 when the merge window closes for SPDK v25.09.
+>>
+>> I will help review the code, but there are no guarantee it will be merged in main
+>> branch before September 18th.
+> Thank you for your consideration.
+> 
+>>
+>> Can you elaborate about the tests you have run?
+> - Run I/O tests using fio and libblkio engine to SPDK vhost user block targets with multiple targets and different block sizes
+> - Custom system tests defined within SPDK framework
+> https://review.spdk.io/c/spdk/spdk/+/26395
+> - QEMU bring up with SPDK Virtio block device
+> 
+>> Have you ensured it is still working properly with Vhsot-user/Virtio-net?
+> Yes tests have been run to ensure this as listed above
 
-Shouldn't it be:
-VHOST_MESSAGE_HANDLER(VHOST_USER_REM_MEM_REG, vhost_user_rem_mem_reg, 
-false, true)
+You have only run storage tests, not networking test.
+So the DPDK Vhost datapath has not been exercised, neither the IOMMU AFAICT.
 
-And if not, aren't you not leaking FDs in vhost_user_rem_mem_reg?
+Maxime
 
->   VHOST_MESSAGE_HANDLER(VHOST_USER_SET_LOG_BASE, vhost_user_set_log_base, true, true) \
->   VHOST_MESSAGE_HANDLER(VHOST_USER_SET_LOG_FD, vhost_user_set_log_fd, true, true) \
->   VHOST_MESSAGE_HANDLER(VHOST_USER_SET_VRING_NUM, vhost_user_set_vring_num, false, true) \
-> @@ -228,7 +231,17 @@ async_dma_map(struct virtio_net *dev, bool do_map)
->   }
->   
->   static void
-> -free_mem_region(struct virtio_net *dev)
-> +free_mem_region(struct rte_vhost_mem_region *reg)
-> +{
-> +	if (reg != NULL && reg->host_user_addr) {
-> +		munmap(reg->mmap_addr, reg->mmap_size);
-> +		close(reg->fd);
-> +		memset(reg, 0, sizeof(struct rte_vhost_mem_region));
-> +	}
-> +}
-> +
-> +static void
-> +free_all_mem_regions(struct virtio_net *dev)
->   {
->   	uint32_t i;
->   	struct rte_vhost_mem_region *reg;
-> @@ -239,12 +252,10 @@ free_mem_region(struct virtio_net *dev)
->   	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
->   		async_dma_map(dev, false);
->   
-> -	for (i = 0; i < dev->mem->nregions; i++) {
-> +	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
->   		reg = &dev->mem->regions[i];
-> -		if (reg->host_user_addr) {
-> -			munmap(reg->mmap_addr, reg->mmap_size);
-> -			close(reg->fd);
-> -		}
-> +		if (reg->mmap_addr)
-> +			free_mem_region(reg);
-
-Please split this patch in multiple ones.
-Do the refactorings in dedicated patches.
-
->   	}
->   }
->   
-> @@ -258,7 +269,7 @@ vhost_backend_cleanup(struct virtio_net *dev)
->   		vdpa_dev->ops->dev_cleanup(dev->vid);
->   
->   	if (dev->mem) {
-> -		free_mem_region(dev);
-> +		free_all_mem_regions(dev);
->   		rte_free(dev->mem);
->   		dev->mem = NULL;
->   	}
-> @@ -707,7 +718,7 @@ numa_realloc(struct virtio_net **pdev, struct vhost_virtqueue **pvq)
->   	vhost_devices[dev->vid] = dev;
->   
->   	mem_size = sizeof(struct rte_vhost_memory) +
-> -		sizeof(struct rte_vhost_mem_region) * dev->mem->nregions;
-> +		sizeof(struct rte_vhost_mem_region) * VHOST_MEMORY_MAX_NREGIONS;
->   	mem = rte_realloc_socket(dev->mem, mem_size, 0, node);
->   	if (!mem) {
->   		VHOST_CONFIG_LOG(dev->ifname, ERR,
-> @@ -811,8 +822,10 @@ hua_to_alignment(struct rte_vhost_memory *mem, void *ptr)
->   	uint32_t i;
->   	uintptr_t hua = (uintptr_t)ptr;
->   
-> -	for (i = 0; i < mem->nregions; i++) {
-> +	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
->   		r = &mem->regions[i];
-> +		if (r->host_user_addr == 0)
-> +			continue;
->   		if (hua >= r->host_user_addr &&
->   			hua < r->host_user_addr + r->size) {
->   			return get_blk_size(r->fd);
-> @@ -1250,9 +1263,13 @@ vhost_user_postcopy_register(struct virtio_net *dev, int main_fd,
->   	 * retrieve the region offset when handling userfaults.
->   	 */
->   	memory = &ctx->msg.payload.memory;
-> -	for (i = 0; i < memory->nregions; i++) {
-> +	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
-> +		int reg_msg_index = 0;
->   		reg = &dev->mem->regions[i];
-> -		memory->regions[i].userspace_addr = reg->host_user_addr;
-> +		if (reg->host_user_addr == 0)
-> +			continue;
-> +		memory->regions[reg_msg_index].userspace_addr = reg->host_user_addr;
-> +		reg_msg_index++;
->   	}
->   
->   	/* Send the addresses back to qemu */
-> @@ -1279,8 +1296,10 @@ vhost_user_postcopy_register(struct virtio_net *dev, int main_fd,
->   	}
->   
->   	/* Now userfault register and we can use the memory */
-> -	for (i = 0; i < memory->nregions; i++) {
-> +	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
->   		reg = &dev->mem->regions[i];
-> +		if (reg->host_user_addr == 0)
-> +			continue;
->   		if (vhost_user_postcopy_region_register(dev, reg) < 0)
->   			return -1;
->   	}
-> @@ -1385,6 +1404,46 @@ vhost_user_mmap_region(struct virtio_net *dev,
->   	return 0;
->   }
->   
-> +static int
-> +vhost_user_initialize_memory(struct virtio_net **pdev)
-> +{
-> +	struct virtio_net *dev = *pdev;
-> +	int numa_node = SOCKET_ID_ANY;
-> +
-> +	/*
-> +	 * If VQ 0 has already been allocated, try to allocate on the same
-> +	 * NUMA node. It can be reallocated later in numa_realloc().
-> +	 */
-> +	if (dev->nr_vring > 0)
-> +		numa_node = dev->virtqueue[0]->numa_node;
-> +
-> +	dev->nr_guest_pages = 0;
-> +	if (dev->guest_pages == NULL) {
-> +		dev->max_guest_pages = 8;
-> +		dev->guest_pages = rte_zmalloc_socket(NULL,
-> +					dev->max_guest_pages *
-> +					sizeof(struct guest_page),
-> +					RTE_CACHE_LINE_SIZE,
-> +					numa_node);
-> +		if (dev->guest_pages == NULL) {
-> +			VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +				"failed to allocate memory for dev->guest_pages");
-> +			return -1;
-> +		}
-> +	}
-> +
-> +	dev->mem = rte_zmalloc_socket("vhost-mem-table", sizeof(struct rte_vhost_memory) +
-> +		sizeof(struct rte_vhost_mem_region) * VHOST_MEMORY_MAX_NREGIONS, 0, numa_node);
-> +	if (dev->mem == NULL) {
-> +		VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to allocate memory for dev->mem");
-> +		rte_free(dev->guest_pages);
-> +		dev->guest_pages = NULL;
-> +		return -1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static int
->   vhost_user_set_mem_table(struct virtio_net **pdev,
->   			struct vhu_msg_context *ctx,
-> @@ -1393,7 +1452,6 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
->   	struct virtio_net *dev = *pdev;
->   	struct VhostUserMemory *memory = &ctx->msg.payload.memory;
->   	struct rte_vhost_mem_region *reg;
-> -	int numa_node = SOCKET_ID_ANY;
->   	uint64_t mmap_offset;
->   	uint32_t i;
->   	bool async_notify = false;
-> @@ -1438,39 +1496,13 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
->   		if (dev->features & (1ULL << VIRTIO_F_IOMMU_PLATFORM))
->   			vhost_user_iotlb_flush_all(dev);
->   
-> -		free_mem_region(dev);
-> +		free_all_mem_regions(dev);
->   		rte_free(dev->mem);
->   		dev->mem = NULL;
->   	}
->   
-> -	/*
-> -	 * If VQ 0 has already been allocated, try to allocate on the same
-> -	 * NUMA node. It can be reallocated later in numa_realloc().
-> -	 */
-> -	if (dev->nr_vring > 0)
-> -		numa_node = dev->virtqueue[0]->numa_node;
-> -
-> -	dev->nr_guest_pages = 0;
-> -	if (dev->guest_pages == NULL) {
-> -		dev->max_guest_pages = 8;
-> -		dev->guest_pages = rte_zmalloc_socket(NULL,
-> -					dev->max_guest_pages *
-> -					sizeof(struct guest_page),
-> -					RTE_CACHE_LINE_SIZE,
-> -					numa_node);
-> -		if (dev->guest_pages == NULL) {
-> -			VHOST_CONFIG_LOG(dev->ifname, ERR,
-> -				"failed to allocate memory for dev->guest_pages");
-> -			goto close_msg_fds;
-> -		}
-> -	}
-> -
-> -	dev->mem = rte_zmalloc_socket("vhost-mem-table", sizeof(struct rte_vhost_memory) +
-> -		sizeof(struct rte_vhost_mem_region) * memory->nregions, 0, numa_node);
-> -	if (dev->mem == NULL) {
-> -		VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to allocate memory for dev->mem");
-> -		goto free_guest_pages;
-> -	}
-> +	if (vhost_user_initialize_memory(pdev) < 0)
-> +		goto close_msg_fds;
-
-This part should be refactored into a dedicated preliminary patch.
-
->   
->   	for (i = 0; i < memory->nregions; i++) {
->   		reg = &dev->mem->regions[i];
-> @@ -1534,11 +1566,182 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
->   	return RTE_VHOST_MSG_RESULT_OK;
->   
->   free_mem_table:
-> -	free_mem_region(dev);
-> +	free_all_mem_regions(dev);
->   	rte_free(dev->mem);
->   	dev->mem = NULL;
-> +	rte_free(dev->guest_pages);
-> +	dev->guest_pages = NULL;
-> +close_msg_fds:
-> +	close_msg_fds(ctx);
-> +	return RTE_VHOST_MSG_RESULT_ERR;
-> +}
-> +
-> +
-> +static int
-> +vhost_user_get_max_mem_slots(struct virtio_net **pdev __rte_unused,
-> +			struct vhu_msg_context *ctx,
-> +			int main_fd __rte_unused)
-> +{
-> +	uint32_t max_mem_slots = VHOST_MEMORY_MAX_NREGIONS;
-
-This VHOST_MEMORY_MAX_NREGIONS value was hardcoded when only
-VHOST_USER_SET_MEM_TABLE was introduced.
-
-With this new features, my understanding is that we can get rid off this
-limit, right?
-
-The good news is increasing it should not break the DPDK ABI.
-
-Would it make sense to increase it?
-> +
-> +	ctx->msg.payload.u64 = (uint64_t)max_mem_slots;
-> +	ctx->msg.size = sizeof(ctx->msg.payload.u64);
-> +	ctx->fd_num = 0;
->   
-> -free_guest_pages:
-> +	return RTE_VHOST_MSG_RESULT_REPLY;
-> +}
-> +
-> +static int
-> +vhost_user_add_mem_reg(struct virtio_net **pdev,
-> +			struct vhu_msg_context *ctx,
-> +			int main_fd __rte_unused)
-> +{
-> +	struct virtio_net *dev = *pdev;
-> +	struct VhostUserMemoryRegion *region = &ctx->msg.payload.memory_single.region;
-> +	uint32_t i;
-> +
-> +	/* make sure new region will fit */
-> +	if (dev->mem != NULL && dev->mem->nregions >= VHOST_MEMORY_MAX_NREGIONS) {
-> +		VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +			"too many memory regions already (%u)",
-> +			dev->mem->nregions);
-> +		goto close_msg_fds;
-> +	}
-> +
-> +	/* make sure supplied memory fd present */
-> +	if (ctx->fd_num != 1) {
-> +		VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +			"fd count makes no sense (%u)",
-> +			ctx->fd_num);
-> +		goto close_msg_fds;
-> +	}
-
-There is a lack of support for vDPA devices.
-My understanding here is that the vDPA device does not get the new table 
-entry.
-
-In set_mem_table, we call its close callback, but that might be a bit 
-too much for simple memory hotplug. we might need another mechanism.
-
-> +
-> +	/* Make sure no overlap in guest virtual address space */
-> +	if (dev->mem != NULL && dev->mem->nregions > 0)	{
-> +		for (uint32_t i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
-> +			struct rte_vhost_mem_region *current_region = &dev->mem->regions[i];
-> +
-> +			if (current_region->mmap_size == 0)
-> +				continue;
-> +
-> +			uint64_t current_region_guest_start = current_region->guest_user_addr;
-> +			uint64_t current_region_guest_end = current_region_guest_start
-> +								+ current_region->mmap_size - 1;
-
-Shouldn't it use size instead of mmap_size to check for overlaps?
-
-> +			uint64_t proposed_region_guest_start = region->userspace_addr;
-> +			uint64_t proposed_region_guest_end = proposed_region_guest_start
-> +								+ region->memory_size - 1;
-> +			bool overlap = false;
-> +
-> +			bool current_region_guest_start_overlap =
-> +				current_region_guest_start >= proposed_region_guest_start
-> +				&& current_region_guest_start <= proposed_region_guest_end;
-> +			bool current_region_guest_end_overlap =
-> +				current_region_guest_end >= proposed_region_guest_start
-> +				&& current_region_guest_end <= proposed_region_guest_end;
-> +			bool proposed_region_guest_start_overlap =
-> +				proposed_region_guest_start >= current_region_guest_start
-> +				&& proposed_region_guest_start <= current_region_guest_end;
-> +			bool proposed_region_guest_end_overlap =
-> +				proposed_region_guest_end >= current_region_guest_start
-> +				&& proposed_region_guest_end <= current_region_guest_end;
-> +
-> +			overlap = current_region_guest_start_overlap
-> +				|| current_region_guest_end_overlap
-> +				|| proposed_region_guest_start_overlap
-> +				|| proposed_region_guest_end_overlap;
-> +
-> +			if (overlap) {
-> +				VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +					"requested memory region overlaps with another region");
-> +				VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +					"\tRequested region address:0x%" PRIx64,
-> +					region->userspace_addr);
-> +				VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +					"\tRequested region size:0x%" PRIx64,
-> +					region->memory_size);
-> +				VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +					"\tOverlapping region address:0x%" PRIx64,
-> +					current_region->guest_user_addr);
-> +				VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +					"\tOverlapping region size:0x%" PRIx64,
-> +					current_region->mmap_size);
-> +				goto close_msg_fds;
-> +			}
-> +
-> +		}
-> +	}
-> +
-> +	/* convert first region add to normal memory table set */
-> +	if (dev->mem == NULL) {
-> +		if (vhost_user_initialize_memory(pdev) < 0)
-> +			goto close_msg_fds;
-> +	}
-> +
-> +	/* find a new region and set it like memory table set does */
-> +	struct rte_vhost_mem_region *reg = NULL;
-> +	uint64_t mmap_offset;
-> +
-> +	for (uint32_t i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
-> +		if (dev->mem->regions[i].guest_user_addr == 0) {
-> +			reg = &dev->mem->regions[i];
-> +			break;
-> +		}
-> +	}
-> +	if (reg == NULL) {
-> +		VHOST_CONFIG_LOG(dev->ifname, ERR, "no free memory region");
-> +		goto close_msg_fds;
-> +	}
-> +
-> +	reg->guest_phys_addr = region->guest_phys_addr;
-> +	reg->guest_user_addr = region->userspace_addr;
-> +	reg->size            = region->memory_size;
-> +	reg->fd              = ctx->fds[0];
-> +
-> +	mmap_offset = region->mmap_offset;
-> +
-> +	if (vhost_user_mmap_region(dev, reg, mmap_offset) < 0) {
-> +		VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to mmap region");
-> +		goto close_msg_fds;
-> +	}
-> +
-> +	dev->mem->nregions++;
-> +
-> +	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
-> +		async_dma_map(dev, true);
-> +
-> +	if (vhost_user_postcopy_register(dev, main_fd, ctx) < 0)
-> +		goto free_mem_table;
-> +
-> +	for (i = 0; i < dev->nr_vring; i++) {
-> +		struct vhost_virtqueue *vq = dev->virtqueue[i];
-> +
-> +		if (!vq)
-> +			continue;
-> +
-> +		if (vq->desc || vq->avail || vq->used) {
-> +			/* vhost_user_lock_all_queue_pairs locked all qps */
-> +			VHOST_USER_ASSERT_LOCK(dev, vq, VHOST_USER_SET_MEM_TABLE);
-
-VHOST_USER_ASSERT_LOCK(dev, vq, VHOST_USER_ADD_MEM_REG); ?
-
-> +
-> +			/*
-> +			 * If the memory table got updated, the ring addresses
-> +			 * need to be translated again as virtual addresses have
-> +			 * changed.
-> +			 */
-> +			vring_invalidate(dev, vq);
-> +
-> +			translate_ring_addresses(&dev, &vq);
-> +			*pdev = dev;
-> +		}
-> +	}
-> +
-> +	dump_guest_pages(dev);
-> +
-> +	return RTE_VHOST_MSG_RESULT_OK;
-> +
-> +free_mem_table:
-> +	free_all_mem_regions(dev);
-> +	rte_free(dev->mem);
-> +	dev->mem = NULL;
->   	rte_free(dev->guest_pages);
->   	dev->guest_pages = NULL;
->   close_msg_fds:
-> @@ -1546,6 +1749,40 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
->   	return RTE_VHOST_MSG_RESULT_ERR;
->   }
->   
-> +static int
-> +vhost_user_rem_mem_reg(struct virtio_net **pdev __rte_unused,
-> +			struct vhu_msg_context *ctx __rte_unused,
-> +			int main_fd __rte_unused)
-> +{
-> +	struct virtio_net *dev = *pdev;
-> +	struct VhostUserMemoryRegion *region = &ctx->msg.payload.memory_single.region;
-> +
-
-It lacks support for vDPA devices.
-In set_mem_table, we call the vDPA close cb to ensure it is not actively 
-accessing memoring being unmapped.
-
-We need something similar here, otherwise the vDPA device is not aware 
-of the memory being unplugged.
-
-> +	if (dev->mem != NULL && dev->mem->nregions > 0) {
-> +		for (uint32_t i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
-> +			struct rte_vhost_mem_region *current_region = &dev->mem->regions[i];
-> +
-> +			if (current_region->guest_user_addr == 0)
-> +				continue;
-> +
-> +			/*
-> +			 * According to the vhost-user specification:
-> +			 * The memory region to be removed is identified by its guest address,
-> +			 * user address and size. The mmap offset is ignored.
-> +			 */
-> +			if (region->userspace_addr == current_region->guest_user_addr
-> +				&& region->guest_phys_addr == current_region->guest_phys_addr
-> +				&& region->memory_size == current_region->size) {
-> +				free_mem_region(current_region);
-> +				dev->mem->nregions--;
-> +				return RTE_VHOST_MSG_RESULT_OK;
-> +			}
-
-There is a lack of IOTLB entries invalidation here, as IOTLB entries in
-the cache could point to memory being unmapped in this function.
-
-Same comment for vring invalidation, as the vring adresses are not re-
-translated at each burst.
-
-> +		}
-> +	}
-> +
-> +	VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to find region");
-> +	return RTE_VHOST_MSG_RESULT_ERR;
-> +}
-> +
->   static bool
->   vq_is_ready(struct virtio_net *dev, struct vhost_virtqueue *vq)
->   {
-> diff --git a/lib/vhost/vhost_user.h b/lib/vhost/vhost_user.h
-> index ef486545ba..5a0e747b58 100644
-> --- a/lib/vhost/vhost_user.h
-> +++ b/lib/vhost/vhost_user.h
-> @@ -32,6 +32,7 @@
->   					 (1ULL << VHOST_USER_PROTOCOL_F_BACKEND_SEND_FD) | \
->   					 (1ULL << VHOST_USER_PROTOCOL_F_HOST_NOTIFIER) | \
->   					 (1ULL << VHOST_USER_PROTOCOL_F_PAGEFAULT) | \
-> +					 (1ULL << VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS) | \
->   					 (1ULL << VHOST_USER_PROTOCOL_F_STATUS))
->   
->   typedef enum VhostUserRequest {
-> @@ -67,6 +68,9 @@ typedef enum VhostUserRequest {
->   	VHOST_USER_POSTCOPY_END = 30,
->   	VHOST_USER_GET_INFLIGHT_FD = 31,
->   	VHOST_USER_SET_INFLIGHT_FD = 32,
-> +	VHOST_USER_GET_MAX_MEM_SLOTS = 36,
-> +	VHOST_USER_ADD_MEM_REG = 37,
-> +	VHOST_USER_REM_MEM_REG = 38,
->   	VHOST_USER_SET_STATUS = 39,
->   	VHOST_USER_GET_STATUS = 40,
->   } VhostUserRequest;
-> @@ -91,6 +95,11 @@ typedef struct VhostUserMemory {
->   	VhostUserMemoryRegion regions[VHOST_MEMORY_MAX_NREGIONS];
->   } VhostUserMemory;
->   
-> +typedef struct VhostUserSingleMemReg {
-> +	uint64_t padding;
-> +	VhostUserMemoryRegion region;
-> +} VhostUserSingleMemReg;
-> +
->   typedef struct VhostUserLog {
->   	uint64_t mmap_size;
->   	uint64_t mmap_offset;
-> @@ -186,6 +195,7 @@ typedef struct __rte_packed_begin VhostUserMsg {
->   		struct vhost_vring_state state;
->   		struct vhost_vring_addr addr;
->   		VhostUserMemory memory;
-> +		VhostUserSingleMemReg memory_single;
->   		VhostUserLog    log;
->   		struct vhost_iotlb_msg iotlb;
->   		VhostUserCryptoSessionParam crypto_session;
+> 
+>>
+>> Maxime
+>>
+>>> Regards,
+>>> Pravin
+>>>
+>>>
+>>> Internal Use - Confidential
+>>>> -----Original Message-----
+>>>> From: Bathija, Pravin
+>>>> Sent: Tuesday, August 26, 2025 11:47 AM
+>>>> To: Maxime Coquelin <maxime.coquelin@redhat.com>; Bruce Richardson
+>>>> <bruce.richardson@intel.com>; David Marchand
+>>>> <david.marchand@redhat.com>; Chenbo Xia <chenbox@nvidia.com>
+>>>> Cc: dev@dpdk.org; pravin.m.bathija.dev@gmail.com; Thomas Monjalon
+>>>> <thomas@monjalon.net>
+>>>> Subject: RE: [PATCH 0/3] vhost_user: configure memory slots
+>>>>
+>>>> Answers inline.
+>>>>
+>>>>> -----Original Message-----
+>>>>> From: Maxime Coquelin <maxime.coquelin@redhat.com>
+>>>>> Sent: Monday, August 25, 2025 1:49 AM
+>>>>> To: Bathija, Pravin <Pravin.Bathija@dell.com>; Bruce Richardson
+>>>>> <bruce.richardson@intel.com>; David Marchand
+>>>>> <david.marchand@redhat.com>; Chenbo Xia <chenbox@nvidia.com>
+>>>>> Cc: dev@dpdk.org; pravin.m.bathija.dev@gmail.com; Thomas Monjalon
+>>>>> <thomas@monjalon.net>
+>>>>> Subject: Re: [PATCH 0/3] vhost_user: configure memory slots
+>>>>>
+>>>>>
+>>>>> [EXTERNAL EMAIL]
+>>>>>
+>>>>> Hi,
+>>>>>
+>>>>> Please try to fix your email client so that we can follow the replies inlined.
+>>>>
+>>>> Thank you for the input. I have made the necessary adjustments.
+>>>> Please let me know if there is anything missing.
+>>>>
+>>>>>
+>>>>> On 8/22/25 9:33 AM, Bathija, Pravin wrote:
+>>>>>> Dear Maxime, Bruce, David, Chenbo,
+>>>>>>
+>>>>>> I would like to follow up on the status of the patches and when we
+>>>>>> should
+>>>>> expect these to be merged into the mainline.
+>>>>>>
+>>>>>> Please let me know if I can help answer any questions you might have.
+>>>>>>
+>>>>>> Regards,
+>>>>>> Pravin
+>>>>>>
+>>>>>>
+>>>>>> Internal Use - Confidential
+>>>>>> -----Original Message-----
+>>>>>> From: Bathija, Pravin
+>>>>>> Sent: Thursday, August 21, 2025 7:48 PM
+>>>>>> To: Thomas Monjalon <thomas@monjalon.net>
+>>>>>> Cc: dev@dpdk.org; pravin.m.bathija.dev@gmail.com; Maxime Coquelin
+>>>>>> <maxime.coquelin@redhat.com>; Chenbo Xia <chenbox@nvidia.com>;
+>>>> David
+>>>>>> Marchand <david.marchand@redhat.com>; Bruce Richardson
+>>>>>> <bruce.richardson@intel.com>
+>>>>>> Subject: RE: [PATCH 0/3] vhost_user: configure memory slots
+>>>>>>
+>>>>>> Comments inline:
+>>>>>>
+>>>>>> -----Original Message-----
+>>>>>> From: Thomas Monjalon <thomas@monjalon.net>
+>>>>>> Sent: Tuesday, August 19, 2025 4:36 AM
+>>>>>> To: Bathija, Pravin <Pravin.Bathija@dell.com>
+>>>>>> Cc: dev@dpdk.org; pravin.m.bathija.dev@gmail.com; Maxime Coquelin
+>>>>>> <maxime.coquelin@redhat.com>; Chenbo Xia <chenbox@nvidia.com>;
+>>>> David
+>>>>>> Marchand <david.marchand@redhat.com>; Bruce Richardson
+>>>>>> <bruce.richardson@intel.com>
+>>>>>> Subject: Re: [PATCH 0/3] vhost_user: configure memory slots
+>>>>>>
+>>>>>>
+>>>>>> [EXTERNAL EMAIL]
+>>>>>>
+>>>>>> Comments inline
+>>>>>>
+>>>>>> 12/08/2025 04:33, Pravin M Bathija:
+>>>>>>> - add protocol feature support add and removal of memory
+>>>>>>> regions/slots dynamically.
+>>>>>>> - this patch set has been tested with multiple instances of fio
+>>>>>>
+>>>>>> What is "fio"?
+>>>>>> Fio is an open-source tool to test I/O workloads on disks and file systems.
+>>>>>>
+>>>>>>> connected via libblkio to spdk target backed unix domain socket.
+>>>>>>> - please apply this this patch-set to dpdk mainline as well as
+>>>>>>> version 25.03.0.
+>>>>>>
+>>>>>> As mentionned previously, we don't plan to maintain 25.03.
+>>>>>> I understand you need it for SPDK,
+>>>>>> but I think SPDK should rely only on LTS branches.
+>>>>>> Is there a specific reason why 25.03 is required in SPDK?
+>>>>>>
+>>>>>> When we do sub-module init on spdk master, it uses dpdk version
+>>>>>> 25.03 from
+>>>>> it's own sub-repo.
+>>>>>> Our changes for vhost have already been pushed to spdk master. We
+>>>>>> have also pushed the same dpdk changes in the spdk sub-repo "dpdk"
+>>>>>> which is version 25.03. I was just ensuring that there is
+>>>>>> uniformity in the 25.03
+>>>>> codebase, whether it is on the spdk sub-repo or 25.03 within dpdk repo.
+>>>>>
+>>>>> Ok, still, it would be better for SPDK to uses LTS as we have no
+>>>>> plans to add extra stable branches.
+>>>>>
+>>>>> Also, your series may be considered as a feature and not a bug fix,
+>>>>> so even if
+>>>>> 25.03 would be a stable branch (which it is not), it would not be
+>>>>> backported against it.
+>>>>
+>>>> Understood. I would request that we merge my changes into DPDK
+>>>> mainline before September 18 when the merge window closes for SPDK
+>> v25.09.
+>>>>
+>>>>>
+>>>>>>
+>>>>>>
+>>>>>>> v2:
+>>>>>>> - fixed warnings with e-mail address
+>>>>>>> - fixed warnings with typos
+>>>>>>> - there is a warning about __rte_packed_begin not being in pair
+>>>>>>> with __rte_packed_end which on reading the code turns out to be
+>>>>>>> false. It is an anomaly of how git-format generates the patch and
+>>>>>>> how check-patch checks it.
+>>>>>>
+>>>>>> When sending a v2, please use -v2 so it is reflected in the email subject.
+>>>>>> I will remember this for next time. Thank you for pointing that out.
+>>>>>>
+>>>>>>> Pravin M Bathija (3):
+>>>>>>>      mailmap: add user
+>>>>>>>      vhost_user: configure memory slots
+>>>>>>>      vhost_user: support for memory regions
+>>>>>>>
+>>>>>>>     .mailmap               |   1 +
+>>>>>>>     lib/vhost/rte_vhost.h  |   4 +
+>>>>>>>     lib/vhost/vhost_user.c | 325
+>>>>>>> +++++++++++++++++++++++++++++++++++------
+>>>>>>>     lib/vhost/vhost_user.h |  10 ++
+>>>>>>>     4 files changed, 296 insertions(+), 44 deletions(-)
+>>>>>>
+>>>>>>
+>>>>>>
+>>>
+> 
 
