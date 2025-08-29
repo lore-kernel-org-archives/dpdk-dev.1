@@ -2,32 +2,150 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6145FC8303F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 03:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EECC8303F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 05:08:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 980EF4065A;
-	Fri, 29 Aug 2025 05:28:52 +0200 (CEST)
-Received: from out28-145.mail.aliyun.com (out28-145.mail.aliyun.com
- [115.124.28.145])
- by mails.dpdk.org (Postfix) with ESMTP id 093F44065D
- for <dev@dpdk.org>; Fri, 29 Aug 2025 05:28:39 +0200 (CEST)
-Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.eScIZro_1756438117 cluster:ay29) by smtp.aliyun-inc.com;
- Fri, 29 Aug 2025 11:28:37 +0800
-From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-To: dev@dpdk.org
-Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>,
- Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>,
- Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v7 17/17] net/nbl: nbl device support set MTU and promisc
-Date: Thu, 28 Aug 2025 20:28:05 -0700
-Message-Id: <20250829032805.2955351-18-dimon.zhao@nebula-matrix.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250829032805.2955351-1-dimon.zhao@nebula-matrix.com>
-References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
- <20250829032805.2955351-1-dimon.zhao@nebula-matrix.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0FF7A40276;
+	Fri, 29 Aug 2025 07:08:17 +0200 (CEST)
+Received: from AM0PR02CU008.outbound.protection.outlook.com
+ (mail-westeuropeazon11013060.outbound.protection.outlook.com [52.101.72.60])
+ by mails.dpdk.org (Postfix) with ESMTP id F069140263
+ for <dev@dpdk.org>; Fri, 29 Aug 2025 07:08:14 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IVpqf70YUcMaXKP42qKySs4Iv5ccxn5WyXqLYBOEJzswhG2Lna4G3ghzl4UYySdBq3QOcfpKTBGwQuxcK8eZysoazL4cbQ/36s8ZPfroq0+OSBsD4CkQ3vT8LdsGCV2MKaf/jwiSrL9oT1ybfPJTszGsGxKazOblWiShoWzRiBXRJMuumrh8ZLtowB7lu5LulAnxQ4Z6cgPQ/hdmDOoMt7rIdWag9DQ30ZugeRq65gwNY+hafLUbPSu86dN69A1ty5I+zVi1O8pH+s+EffIVU2OIUiQJvj313UlArcLPLyUu7apw6NF1H3A53JO3+qZkaBXYzyJxpI/MMAIJUaf7ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Lw0aDn8X+8Nl1rITUODJg/3lC7xB8rbNV4Lvd3CBJe0=;
+ b=uO//hf9xrnLjEcoQGcjlrF91rNg0g0lRSYy8mDNnAfxKEOMzcEuBdlzgh0rSuBfz+jK9tIKZ7XxIY9F6MGBpt/cEuhoz8H3t/q1d4GAmHMi3VSdNkHUkZj+k/s9hJeIakWQ2iKhER9J8wH6+evaSPMW9xJVYzbcjVjCX2qfiOF4cQytKLP0WK4Wgu1CaLHxIae0U07CoXx7oAhTZCA7Zi5O+o03/3IFA+jHbEA8kalHjFXuwHbMfta1SE4X5elCro53TBOkGGLhD3xgCaJy2A1D70OqLZ4qokY0i9SbdHsPL1bl1wNHMIdSOICgK3OvIw3L8THFLrRwxjAf6LXk7KA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com; 
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lw0aDn8X+8Nl1rITUODJg/3lC7xB8rbNV4Lvd3CBJe0=;
+ b=qVxZUZ21tX6nywa5qx1TWbUztNR3+HXOh11sBJVclKzBpFnoiHlpU/DqNJaJ+IwUYo4tcfbHYtvZTUkz3EQP4UFSl26OCMAyJAsEw/J/wA1oGWl8FHN/F1Oq92ddFKaRZrWfbhjN+Pym7uK/GaBsJFMQ04wGKZYh4xsarvkxgqXMYqrcA8OVyIPqAv9QZQuMGi9L6P2K3JVV9zzDoEArda2LVTJFLev1+D4hDpXE32tlJUYi7Dk5Dh1mnbizFGkGcbxO07/KYohTx6JB7Mx+eNRK9SPdONm8Zk6UpQBsjMAzR1UT7n6zG/0s6jDO5Yr53VOfJqXHIlZBm9YSgaYl9A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB9328.eurprd04.prod.outlook.com (2603:10a6:102:2b6::15)
+ by AM8PR04MB7394.eurprd04.prod.outlook.com (2603:10a6:20b:1d1::10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.9; Fri, 29 Aug
+ 2025 05:08:12 +0000
+Received: from PAXPR04MB9328.eurprd04.prod.outlook.com
+ ([fe80::367:d59:375:fb87]) by PAXPR04MB9328.eurprd04.prod.outlook.com
+ ([fe80::367:d59:375:fb87%4]) with mapi id 15.20.9073.010; Fri, 29 Aug 2025
+ 05:08:12 +0000
+Message-ID: <edc47274-feee-4177-b973-704ce84d11e2@oss.nxp.com>
+Date: Fri, 29 Aug 2025 10:38:06 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/2] doc: bbdev clarifications
+To: Nicolas Chautru <nicolas.chautru@intel.com>, dev@dpdk.org,
+ maxime.coquelin@redhat.com
+Cc: hemant.agrawal@nxp.com, hernan.vargas@intel.com
+References: <20250826194324.95284-1-nicolas.chautru@intel.com>
+Content-Language: en-US
+From: Hemant Agrawal <hemant.agrawal@oss.nxp.com>
+In-Reply-To: <20250826194324.95284-1-nicolas.chautru@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA0PR01CA0035.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:81::6) To PAXPR04MB9328.eurprd04.prod.outlook.com
+ (2603:10a6:102:2b6::15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9328:EE_|AM8PR04MB7394:EE_
+X-MS-Office365-Filtering-Correlation-Id: f92b7bdb-3ffd-4aba-9baf-08dde6ba0d86
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0; ARA:13230040|19092799006|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?QmtzK0RnZUFLNnZ5TEhDM3pkTG9QUFlVNStCaVNUMlc1UlJZRmwySXhQemtv?=
+ =?utf-8?B?dUhlenNDVVFEMHZoU1doY0lhRlUvMXFKWUtNRUJOV3lKTW5GN2hHbGszK3RQ?=
+ =?utf-8?B?enNWMEhoZ3NOUXA1OGIxaFc3aFdYNld5M2xlaGJXeE03VlNOVUNmb3N4M1kr?=
+ =?utf-8?B?djRlYWkwNkhnUXlWek5Cb1dNV2hVWWZmSkU5TFQxUk9ZeUZ6K1VCTEtlTjJC?=
+ =?utf-8?B?cFp6aFFIeEpHMDVXdlp4V045aWptLzBtSkhPSTdCcUxxdXVWbHF3UkJLa29F?=
+ =?utf-8?B?Z2Z0OVE3NEZxclJFWGN6MjVOU1pzMG1JYzFsNnJFWkg0bzQ1TFJUQTk3eFlQ?=
+ =?utf-8?B?WU5VaWRML0ZIVFdtWHc5b3dRdHJva01DaE1OSkNpRFAwdlJvam81WVFScld4?=
+ =?utf-8?B?bmwyeEZSV2NLZ0pvV2hlRjhDbTRweEJ5ZVY1MFNrcEd1UzVOdVpmWUhsQmpU?=
+ =?utf-8?B?RnFBWE1ITXdxTEpaUEw5ZmJHdHNKWDNJeFloVnVXcDdzb0EyL1ptMnBQTzlY?=
+ =?utf-8?B?RHpkZjRrbnFWMEZGMmE4Z1dqVlRSZm9zQ3pMdkJBNVNoRlJXOTBRVWxBb1FU?=
+ =?utf-8?B?Vm9GcTg2T200cjhZdkdjTGx1MXkrRm04V1hvTDNiRm5rUTgwMmZ4U0tMZnFr?=
+ =?utf-8?B?T0p2M05jbVdDZU83OE1iREtoZnpVZ2J0WkxpVmp1ZWdFMWs5bnpRUCtTRmRO?=
+ =?utf-8?B?V0RjT0JvY05EMXI2UHFvOW11UUs1NmFRMmx6MEpVT3R2U3pZOWJGRXE5VTVD?=
+ =?utf-8?B?UnRsMWV2N3VMN2w4L1dUTElmZkFhdHRUcVpOZlJZSUZNRm5UcStJMnRpbjg2?=
+ =?utf-8?B?OThkY0IzRzl3SmRCVG16TG5yTUhwcEJoZ3hUVHlxRk1yaFhSeFpVNnFsTFpa?=
+ =?utf-8?B?NUFXZVVTcldack9QTVZPV0lNbnFKaG0yMlo0Qy9uR3ptZDQ5R1prUkVIL0xL?=
+ =?utf-8?B?SjBnOENLeDN1UjlkMnk1RnlPSGpKMGRuZlhMR2hmZ20vMG8vSDBVaGJEcFBn?=
+ =?utf-8?B?ekttTWplbDdXSG0rSG0xNVVrd1oyS2xmdTZYQ25ScGI4bzcwdTNpUFBIbS9H?=
+ =?utf-8?B?RUR1aGhmV1FXdE9XcDZCVmI2V2NoaEJXblFoKzNWUzAyTGh0RHE1bW13bHZJ?=
+ =?utf-8?B?TlNVUjVCbUpxWTZYZzI1OFovTm1Xakp2Uy9vWnBrd25CcjRzVWlpalNPNXB6?=
+ =?utf-8?B?bjhheFNOKzEzenh5YkxvOU1qR2NVQ1crT2V1YWlkK2pWQmZpOG5ZOVpONHox?=
+ =?utf-8?B?eVZKYy9ZSlMyYnp4OTdKMTJTa3Z2Q3NHQXV6NDZ2NUoxMXJjQ0xsbk9xMmhz?=
+ =?utf-8?B?TVBKbzUwa2FPRklOZmhaVlAwSXlWWXdndWJoMzZsRmxJaU1hOXZJSTBKZEpm?=
+ =?utf-8?B?d3lLSWJYTWZaOHFjY3BFZk16SjhNMlM3WUlkaFpVdUJQVGdEdzk0cDIyRnBp?=
+ =?utf-8?B?bzNHcVFEakIwSHRpWmE3dXhVSkVkeGhDbzg5NGl6MFRKOTN2R21RbG5INC93?=
+ =?utf-8?B?cTlOUUNkNE5JR0hPYytNTmRnSXdDWHlYQUZMK1V1MmNxM2ZsTWdudUQyNEth?=
+ =?utf-8?B?Y3B5Y0lXc0NHcHEzOVN0aUtCV1EyeEx2SXFpQ1J6ZDVCdStoTW1FVnpoUnpJ?=
+ =?utf-8?B?eDNqd1ViK2p3QkNYTW0yTVdab3AwMWZUb0JveVpkNGJIL2xuRlRrQ0xlSENQ?=
+ =?utf-8?B?ZHdJVlhoYlJUK213Q3kzTzlCQ1Y3eTBPenhuTVNvN1NvQzN5YzNZOWdrV0kx?=
+ =?utf-8?B?eFlpY1pHdUlwa0lyVjFSY1hkRk0raWR1TkxYTFBoZDBJMHBBQlhOVVhhejZW?=
+ =?utf-8?B?RFMxY3RtOW9WbzAvNDRyMTEzSy9qa2RNc2RMM3pYYjB5anVlOWNCbzZ0cmE1?=
+ =?utf-8?B?eVJ2MVVFcDJqa0R5K2NHV3NVVS81cFowTEIwRmdDdXgxeEtNSXFrS3dsTnVh?=
+ =?utf-8?Q?9bEaEdhtnTw=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PAXPR04MB9328.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(19092799006)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dUM0UFdvRTVqVXZTSUdqQjA0clVSVDF5SVU2WjhqVlVRaVgxdk5hUnZOcDBs?=
+ =?utf-8?B?VlJ1R2Rjdll2YzBIbEg3a2lOeDZGOGFuSGR2eUgxSG92UVlqYzV2NmFvUmtX?=
+ =?utf-8?B?SUxWNytzcnVnSVZvOGt0ckZ4UENvOHR4Vmd0UVBnR25DdWhpWGxwVjFsL2hP?=
+ =?utf-8?B?M2s4a0RTMlpBNDVHTkc3eGYwVnA2QVEzazVvWEtyTHZIS05ndlg4bHVqZTJR?=
+ =?utf-8?B?Q2Y4NVVlNU1DS1dIZjZEUnVjbmVBNVZBaHRyRlRhYWdqdHEzeGFJVi9DL0tV?=
+ =?utf-8?B?eEw3NVRNSmJBazZOdXlNVWY1eDA0VnNXRmRjbXZmbm5qV3J1OWZBZzM4bVZD?=
+ =?utf-8?B?RVk5VXZCT2p2aVVDd3J0TXNlVXlkaUhBbDl4UmZLdzN1MUd1VzZyUlpDbTlX?=
+ =?utf-8?B?c00ybkZrRlA3NXo4Z3FoQjhVRzgxNzNPVTdCUmo5TXBmNk1qOXE4M2cwWWIz?=
+ =?utf-8?B?YlVSYk96blFMM1ZiTWViMmRyUGJZSHhhOHBXWUNZTlpFWldEZ0lMM1paWDdZ?=
+ =?utf-8?B?amZmOHptcHE1WllKbFBaTkcvRlpyVnp3a0RWbEZJZkpHbjZXNUY0bjAzYklU?=
+ =?utf-8?B?K2lLenBMYkNsdFQ3NXA3YzdBbjdMZHlRVjYvWW1nZFJmQXA4SWpnYzEyQVJC?=
+ =?utf-8?B?K2FyL2daaVI5RlRaY3RBNEkwUnhjUGJFZ05aMzJWc1pGaWo4VWJhZ0VJd2pz?=
+ =?utf-8?B?aGdKR3RjR0JvRlJmSWpCTFNyczlwMXdyRmxwVmFJUVNpMmVzSEU4YkorMW1H?=
+ =?utf-8?B?dGxUaldIUXY1ZkpJMHZPbFZhNGNmSmhQWS9CTHhnUUswc3U4OUFSSnpGZEpo?=
+ =?utf-8?B?YnVUVTB4dk5idWhJaXB2amxvQ2lqckx0UUtmakEzUnptY2I5MDJZakplcXY1?=
+ =?utf-8?B?YzY4Z0xJekU3REUzbkMxNDl0NzNrdlRyaGZHc1dtV1Z1bm9OdGV0Q3YzMjZj?=
+ =?utf-8?B?QkFQWEE4SzNsYjVRc00wU3orYmRCRXVZcEhjMFc2bG5oVlZyc2JscTNnV2lC?=
+ =?utf-8?B?d01zbytILzczN09XRUZyWDkrU0JIck51bjArc2xNS3lpWTEyRE1MUndZMXlk?=
+ =?utf-8?B?UDBEU0MvVnhUMEhRWVB2N1JNaXlReUZDdVJGU1JMdHVSbWV4SzZ3dmo0cFhv?=
+ =?utf-8?B?cmhqdjdNRlZndWF5bVczd3FPam9IOFJLSGpwbTlwNURpVW1VUEhud0k5Z3hL?=
+ =?utf-8?B?V2JkbXRLbWxBZHNxRGI5Umx5WGpXRFg1dTAybkR2TTNNdHpBQTk1NW1aWVlD?=
+ =?utf-8?B?NmZ2cTU4RVhvR0tGVExPRGk3MktlZ2YvWU03c2Nra0U2REU1RExzTVNSblhT?=
+ =?utf-8?B?RC9UVkVpVjc0Smw5eEFKbDV4Q1FDNDlzWFVGRlI0bkJtdTFhK2swRitCekdx?=
+ =?utf-8?B?QlpFMkp2VEdDQTU3RHBZVlZqVkwxMlkwcUlTMCtWVmlUYU5mNVFCejRGTzk5?=
+ =?utf-8?B?RnFxYnlCZzFXWmlzcmJIV1BYcHBONDdoMm9ON0gzNTA3OENTRW91Mm51d3RR?=
+ =?utf-8?B?a2lJQUR4RWwwVUVPT0JLeHJIVGMzWStVYlVMeW5zclJGbVNBOEtHMnU3ek16?=
+ =?utf-8?B?N0FLbndvNXl0bzArZXpiNUxobzRnT240SUs5dzVpVTU1SVA4S2FSNW8vTGQv?=
+ =?utf-8?B?Vmc0cFlBL1czbW8yZnUzNEtndWxRTEZiSXl4TlNhUGJvMTNEVHB3cDNlVFJT?=
+ =?utf-8?B?ZlpnL3N3N1YxVnZFSTNzdzZwWFd4R29Hczh2Y2h6cjVQdjVIRlk5VUJncnVz?=
+ =?utf-8?B?cEFydVMrUjRNcG40NUlkM3dVOWZLQ0tpM2N5eTVKeVpQOGNCNkNBc0ZPQU9r?=
+ =?utf-8?B?cWV0bWNMSHRWcThIelhNZkVWaGZ2bDFxVU5DclZ6cURROEc5SXhHYmdIRk9P?=
+ =?utf-8?B?R3N0OHFkU0hYam52NlVXMENwenhmSnRibzIwd25laEp0bDNob2dacDVZQkdz?=
+ =?utf-8?B?UnE2Nk9Nd1JWS2ZlMEZjdWlONU84dUNaeGFJUWtKSnZBYnVZL2Ztck9CMlZh?=
+ =?utf-8?B?Z1J5eE96QSt2Mml5b3ZyNFhZWVJ3MUNSaGpncGphM3NWV3hWbFdsbUt6QUQ5?=
+ =?utf-8?B?TW5jS1lmd3JMTkZadGRyZ0RkVXk0cHpQNWNscUNFS29vVmN6dkdnZGc1aGE0?=
+ =?utf-8?B?VklCOUh5MlI0a05UU1JPQmJmV01wOXZRSUdVQ0VCZGpNeVZwcmxoSXN1cWNI?=
+ =?utf-8?B?alE9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f92b7bdb-3ffd-4aba-9baf-08dde6ba0d86
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9328.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2025 05:08:12.5509 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kWQ2cnh1xJfViYCSLjP2QABhdi0L2g8F43aE/8Nk9ud8ajWIyWlKDPYovS5ojwOLpptVBbeudYB7FtZ7sv3Hzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7394
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -41,312 +159,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement NBL device set MTU and promisc functions
+Series-
 
-Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
----
- drivers/net/nbl/nbl_core.h                    |  2 +
- drivers/net/nbl/nbl_dev/nbl_dev.c             | 63 +++++++++++++++
- drivers/net/nbl/nbl_dev/nbl_dev.h             |  7 +-
- drivers/net/nbl/nbl_dispatch.c                | 77 +++++++++++++++++++
- drivers/net/nbl/nbl_dispatch.h                |  2 +
- drivers/net/nbl/nbl_ethdev.c                  |  3 +
- drivers/net/nbl/nbl_include/nbl_def_channel.h | 10 +++
- .../net/nbl/nbl_include/nbl_def_dispatch.h    |  1 +
- .../net/nbl/nbl_include/nbl_def_resource.h    |  2 +
- 9 files changed, 166 insertions(+), 1 deletion(-)
+Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 
-diff --git a/drivers/net/nbl/nbl_core.h b/drivers/net/nbl/nbl_core.h
-index 729fd64124..0c58b4cc05 100644
---- a/drivers/net/nbl/nbl_core.h
-+++ b/drivers/net/nbl/nbl_core.h
-@@ -51,6 +51,8 @@
- #define NBL_IS_NOT_COEXISTENCE(common)		({ typeof(common) _common = (common);	\
- 						_common->nl_socket_route < 0 ||		\
- 						_common->ifindex < 0; })
-+#define NBL_IS_COEXISTENCE(common)		((common)->devfd != -1)
-+
- struct nbl_core {
- 	void *hw_mgt;
- 	void *res_mgt;
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index 79f971a1e1..76e165640e 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.c
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -489,6 +489,69 @@ int nbl_xstats_reset(struct rte_eth_dev *eth_dev)
- 	return 0;
- }
- 
-+int nbl_mtu_set(struct rte_eth_dev *eth_dev, uint16_t mtu)
-+{
-+	struct rte_eth_dev_data *dev_data = eth_dev->data;
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
-+	uint32_t frame_size = mtu + NBL_ETH_OVERHEAD;
-+	int ret;
-+
-+	/* check if mtu is within the allowed range */
-+	if (mtu < RTE_ETHER_MIN_MTU || frame_size > NBL_FRAME_SIZE_MAX)
-+		return -EINVAL;
-+
-+	/* mtu setting is forbidden if port is start */
-+	if (dev_data->dev_started) {
-+		NBL_LOG(ERR, "port %d must be stopped before configuration", dev_data->port_id);
-+		return -EBUSY;
-+	}
-+
-+	dev_data->dev_conf.rxmode.mtu = frame_size;
-+	ret = disp_ops->set_mtu(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), dev_mgt->net_dev->vsi_id, mtu);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+int nbl_promiscuous_enable(struct rte_eth_dev *eth_dev)
-+{
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
-+	struct nbl_common_info *common = &adapter->common;
-+
-+	if (!common->is_vf) {
-+		disp_ops->set_promisc_mode(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+					   dev_mgt->net_dev->vsi_id, 1);
-+		dev_mgt->net_dev->promisc = 1;
-+	} else {
-+		return -ENOTSUP;
-+	}
-+
-+	return 0;
-+}
-+
-+int nbl_promiscuous_disable(struct rte_eth_dev *eth_dev)
-+{
-+	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
-+	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
-+	struct nbl_common_info *common = &adapter->common;
-+
-+	if (!common->is_vf) {
-+		disp_ops->set_promisc_mode(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
-+					   dev_mgt->net_dev->vsi_id, 0);
-+		dev_mgt->net_dev->promisc = 0;
-+	} else {
-+		return -ENOTSUP;
-+	}
-+
-+	return 0;
-+}
-+
- struct nbl_dev_ops dev_ops = {
- };
- 
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.h b/drivers/net/nbl/nbl_dev/nbl_dev.h
-index 3146abd3ee..b00069a150 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.h
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.h
-@@ -48,7 +48,9 @@ struct nbl_dev_net_mgt {
- 	u8 eth_mode;
- 	u8 eth_id;
- 	u16 max_mac_num;
--	bool trust;
-+	u8 trust:1;
-+	u8 promisc:1;
-+	u8 rsv:6;
- };
- 
- struct nbl_dev_mgt {
-@@ -80,5 +82,8 @@ int nbl_xstats_get_names(struct rte_eth_dev *eth_dev,
- 			 struct rte_eth_xstat_name *xstats_names,
- 			 __rte_unused unsigned int limit);
- int nbl_xstats_reset(struct rte_eth_dev *eth_dev);
-+int nbl_mtu_set(struct rte_eth_dev *eth_dev, uint16_t mtu);
-+int nbl_promiscuous_enable(struct rte_eth_dev *eth_dev);
-+int nbl_promiscuous_disable(struct rte_eth_dev *eth_dev);
- 
- #endif
-diff --git a/drivers/net/nbl/nbl_dispatch.c b/drivers/net/nbl/nbl_dispatch.c
-index 32e608110c..aa45a3840a 100644
---- a/drivers/net/nbl/nbl_dispatch.c
-+++ b/drivers/net/nbl/nbl_dispatch.c
-@@ -893,6 +893,74 @@ static void nbl_disp_get_private_stat_data_req(void *priv, u32 eth_id, u64 *data
- 	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
- }
- 
-+static int nbl_disp_set_mtu(void *priv, u16 vsi_id, u16 mtu)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops;
-+	int ret = 0;
-+
-+	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	ret = NBL_OPS_CALL(res_ops->set_mtu, (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id, mtu));
-+	return ret;
-+}
-+
-+static int nbl_disp_chan_set_mtu_req(void *priv, u16 vsi_id, u16 mtu)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_channel_ops *chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
-+	struct nbl_chan_send_info chan_send = {0};
-+	struct nbl_chan_param_set_mtu param = {0};
-+
-+	param.mtu = mtu;
-+	param.vsi_id = vsi_id;
-+
-+	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_MTU_SET,
-+		      &param, sizeof(param), NULL, 0, 1);
-+	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt),
-+				  &chan_send);
-+}
-+
-+static int nbl_disp_set_promisc_mode(void *priv, u16 vsi_id, u16 mode)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_resource_ops *res_ops;
-+	int ret = 0;
-+
-+	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
-+	ret = NBL_OPS_CALL(res_ops->set_promisc_mode,
-+			   (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id, mode));
-+	return ret;
-+}
-+
-+static int nbl_disp_chan_set_promisc_mode_req(void *priv, u16 vsi_id, u16 mode)
-+{
-+	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
-+	struct nbl_common_info *common;
-+	struct nbl_channel_ops *chan_ops;
-+	struct nbl_chan_param_set_promisc_mode param = {0};
-+	struct nbl_chan_send_info chan_send = {0};
-+	int ret = 0;
-+
-+	common = NBL_DISP_MGT_TO_COMMON(disp_mgt);
-+	if (NBL_IS_COEXISTENCE(common)) {
-+		ret = ioctl(common->devfd, NBL_DEV_USER_SET_PROMISC_MODE, &mode);
-+		if (ret) {
-+			NBL_LOG(ERR, "userspace send set_promisc_mode ioctl msg failed ret %d",
-+				ret);
-+			return ret;
-+		}
-+		return 0;
-+	}
-+
-+	chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
-+	param.vsi_id = vsi_id;
-+	param.mode = mode;
-+	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_SET_PROSISC_MODE,
-+		      &param, sizeof(param), NULL, 0, 1);
-+	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt),
-+				  &chan_send);
-+}
-+
- #define NBL_DISP_OPS_TBL						\
- do {									\
- 	NBL_DISP_SET_OPS(configure_msix_map, nbl_disp_configure_msix_map,			\
-@@ -1063,6 +1131,14 @@ do {									\
- 			 NBL_DISP_CTRL_LVL_MGT,				\
- 			 NBL_CHAN_MSG_GET_ETH_STATS,			\
- 			 nbl_disp_get_private_stat_data_req, NULL);	\
-+	NBL_DISP_SET_OPS(set_promisc_mode, nbl_disp_set_promisc_mode,	\
-+			 NBL_DISP_CTRL_LVL_MGT,				\
-+			 NBL_CHAN_MSG_SET_PROSISC_MODE,			\
-+			 nbl_disp_chan_set_promisc_mode_req, NULL);	\
-+	NBL_DISP_SET_OPS(set_mtu, nbl_disp_set_mtu,			\
-+			 NBL_DISP_CTRL_LVL_MGT,	NBL_CHAN_MSG_MTU_SET,	\
-+			 nbl_disp_chan_set_mtu_req,			\
-+			 NULL);						\
- } while (0)
- 
- /* Structure starts here, adding an op should not modify anything below */
-@@ -1184,6 +1260,7 @@ int nbl_disp_init(void *p)
- 	NBL_DISP_MGT_TO_RES_OPS_TBL(*disp_mgt) = res_ops_tbl;
- 	NBL_DISP_MGT_TO_CHAN_OPS_TBL(*disp_mgt) = chan_ops_tbl;
- 	NBL_DISP_MGT_TO_DISP_OPS_TBL(*disp_mgt) = *disp_ops_tbl;
-+	NBL_DISP_MGT_TO_COMMON(*disp_mgt) = NBL_ADAPTER_TO_COMMON(adapter);
- 
- 	if (disp_product_ops->dispatch_init) {
- 		ret = disp_product_ops->dispatch_init(*disp_mgt);
-diff --git a/drivers/net/nbl/nbl_dispatch.h b/drivers/net/nbl/nbl_dispatch.h
-index dcdf87576a..d1572769fe 100644
---- a/drivers/net/nbl/nbl_dispatch.h
-+++ b/drivers/net/nbl/nbl_dispatch.h
-@@ -16,11 +16,13 @@
- #define NBL_DISP_MGT_TO_DISP_OPS_TBL(disp_mgt)	((disp_mgt)->disp_ops_tbl)
- #define NBL_DISP_MGT_TO_DISP_OPS(disp_mgt)	(NBL_DISP_MGT_TO_DISP_OPS_TBL(disp_mgt)->ops)
- #define NBL_DISP_MGT_TO_DISP_PRIV(disp_mgt)	(NBL_DISP_MGT_TO_DISP_OPS_TBL(disp_mgt)->priv)
-+#define NBL_DISP_MGT_TO_COMMON(disp_mgt)	((disp_mgt)->common)
- 
- struct nbl_dispatch_mgt {
- 	struct nbl_resource_ops_tbl *res_ops_tbl;
- 	struct nbl_channel_ops_tbl *chan_ops_tbl;
- 	struct nbl_dispatch_ops_tbl *disp_ops_tbl;
-+	struct nbl_common_info *common;
- 	uint32_t ctrl_lvl;
- };
- 
-diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
-index 02cac655d0..467b29cc1c 100644
---- a/drivers/net/nbl/nbl_ethdev.c
-+++ b/drivers/net/nbl/nbl_ethdev.c
-@@ -45,6 +45,9 @@ const struct eth_dev_ops nbl_eth_dev_ops = {
- 	.xstats_get = nbl_xstats_get,
- 	.xstats_get_names = nbl_xstats_get_names,
- 	.xstats_reset = nbl_xstats_reset,
-+	.mtu_set = nbl_mtu_set,
-+	.promiscuous_enable = nbl_promiscuous_enable,
-+	.promiscuous_disable = nbl_promiscuous_disable,
- };
- 
- static int nbl_eth_dev_init(struct rte_eth_dev *eth_dev)
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_channel.h b/drivers/net/nbl/nbl_include/nbl_def_channel.h
-index 4cc5b4f492..f9d4cd6e1b 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_channel.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_channel.h
-@@ -426,6 +426,16 @@ enum nbl_chan_queue_state {
- 	NBL_CHAN_STATE_NBITS
- };
- 
-+struct nbl_chan_param_set_promisc_mode {
-+	u16 vsi_id;
-+	u16 mode;
-+};
-+
-+struct nbl_chan_param_set_mtu {
-+	u16 vsi_id;
-+	u16 mtu;
-+};
-+
- struct nbl_channel_ops {
- 	int (*send_msg)(void *priv, struct nbl_chan_send_info *chan_send);
- 	int (*send_ack)(void *priv, struct nbl_chan_ack_info *chan_ack);
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-index f38a10e5f4..717b92ac8f 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
-@@ -37,6 +37,7 @@ struct nbl_dispatch_ops {
- 	void (*clear_flow)(void *priv, u16 vsi_id);
- 	void (*get_firmware_version)(void *priv, char *firmware_version, u8 max_len);
- 	int (*set_promisc_mode)(void *priv, u16 vsi_id, u16 mode);
-+	int (*set_mtu)(void *priv, u16 vsi_id, u16 mtu);
- 	int (*alloc_txrx_queues)(void *priv, u16 vsi_id, u16 queue_num);
- 	void (*free_txrx_queues)(void *priv, u16 vsi_id);
- 	u16 (*get_vsi_id)(void *priv);
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_resource.h b/drivers/net/nbl/nbl_include/nbl_def_resource.h
-index 5b32506be1..a7794f314c 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_resource.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_resource.h
-@@ -76,6 +76,8 @@ struct nbl_resource_ops {
- 	int (*setup_cqs)(void *priv, u16 vsi_id, u16 real_qps, bool rss_indir_set);
- 	void (*remove_cqs)(void *priv, u16 vsi_id);
- 	void (*get_link_state)(void *priv, u8 eth_id, struct nbl_eth_link_info *eth_link_info);
-+	int (*set_promisc_mode)(void *priv, u16 vsi_id, u16 mode);
-+	int (*set_mtu)(void *priv, u16 vsi_id, u16 mtu);
- };
- 
- struct nbl_resource_ops_tbl {
--- 
-2.34.1
-
+On 27-08-2025 01:13, Nicolas Chautru wrote:
+> Hi,
+> Some minor clarifications to document based on
+> feedback from users.
+> Thanks
+> Nic
+>
+> Nicolas Chautru (2):
+>    doc: clarify CB vs TB level device support
+>    doc: clarify the window index usage in bbdev
+>
+>   doc/guides/bbdevs/acc100.rst        | 1 +
+>   doc/guides/bbdevs/fpga_5gnr_fec.rst | 1 +
+>   doc/guides/bbdevs/fpga_lte_fec.rst  | 1 +
+>   doc/guides/bbdevs/vrb1.rst          | 1 +
+>   doc/guides/bbdevs/vrb2.rst          | 2 ++
+>   doc/guides/prog_guide/bbdev.rst     | 7 +++++--
+>   6 files changed, 11 insertions(+), 2 deletions(-)
+>
