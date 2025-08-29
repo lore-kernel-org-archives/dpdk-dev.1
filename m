@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3156FCA0FF7
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 08:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F197BC8303F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 08:25:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5EC3D40667;
-	Fri, 29 Aug 2025 10:24:34 +0200 (CEST)
-Received: from lf-2-36.ptr.blmpb.com (lf-2-36.ptr.blmpb.com [101.36.218.36])
- by mails.dpdk.org (Postfix) with ESMTP id 15DCB4065A
- for <dev@dpdk.org>; Fri, 29 Aug 2025 10:24:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 76EF04066E;
+	Fri, 29 Aug 2025 10:24:35 +0200 (CEST)
+Received: from lf-2-38.ptr.blmpb.com (lf-2-38.ptr.blmpb.com [101.36.218.38])
+ by mails.dpdk.org (Postfix) with ESMTP id 9459A4065C
+ for <dev@dpdk.org>; Fri, 29 Aug 2025 10:24:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=feishu2403070942; d=yunsilicon.com; t=1756455866; h=from:subject:
+ s=feishu2403070942; d=yunsilicon.com; t=1756455869; h=from:subject:
  mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
  mime-version:in-reply-to:message-id;
- bh=nT76aYNmJjJhQo9QqwzH76junu3c9AlPPJiMQ/n5Oi8=;
- b=adsBo2+w7fupbEL9YFWEUHFVejx+2WwoHBBUBmASWBL39EElDjgHnvHaYNSDV5R9bA3Y4z
- ppG2oR/unQSkyYm4wH1Ycvo3QzJ5YfLL0sQt6MEdfuMu2sytCJ3J+zxymJmvBvNVnCzmSC
- yQ1KH9JvWFZ8o1vUztdr8Q7rSN90/gz8K86iIRj1R3oGAyQs00zCMuFFcSdNy8FNaSpltD
- 6vxHwIqmCsz30Z3ZT+1UdcYrVdVSyISwtDw9hHKtaTq3ASPG18ddAJT8t+JByIfHCYqwLD
- rMoQn5yFatSxCj/gqKqEPIUCFja7+OBmIVIwvNLpJMAY7hkeaA2mCAcCWVSSRw==
-Subject: [PATCH 08/14] net/xsc: optimize RSS queue creation
-Message-Id: <20250829082423.24369-9-wanry@yunsilicon.com>
-X-Original-From: Renyong Wan <wanry@yunsilicon.com>
+ bh=M9X+O3OkSlBw98wyxacXrKdZHOEg155gD3wIOuUEU3w=;
+ b=B8WTLyDN7TJjA7cgQTTI30i8vNIkWc+ZTGCzbE1V33HcQmL4+ywLDx50XnI8JK3MYeUHUC
+ Dp+qzZrhQoFMyvdGumhsPzWaO74XUcGDTCBWSKCQbvW+RVLpPBFy8FkABHHtCOFsT38mD6
+ tkLWLilE6BvTsX4qiABDky36Y2a7Qlw/1y3L/I9bG32Hn/LvsxL4tUBjIJPR2+CNvcJCcL
+ sOJv+NXcMgf94g2omEQRzm1vZEosLeMXsk2AeY5XPukxH3d0cZTbFRGsGlic75ckjCEH1q
+ FEvKYBh4cmuUTSMocLrgEsaEjHCSflpT+JcLMCYN0gkmGu0Uh0Ad+Hcjj+UPRw==
+X-Lms-Return-Path: <lba+268b163ba+bae027+dpdk.org+wanry@yunsilicon.com>
+Content-Transfer-Encoding: 7bit
 X-Mailer: git-send-email 2.25.1
-Received: from ubuntu-liun.yunsilicon.com ([58.34.192.114]) by smtp.feishu.cn
- with ESMTPS; Fri, 29 Aug 2025 16:24:24 +0800
 Content-Type: text/plain; charset=UTF-8
+X-Original-From: Renyong Wan <wanry@yunsilicon.com>
 Cc: <thomas@monjalon.net>, <stephen@networkplumber.org>, 
  <qianr@yunsilicon.com>, <nana@yunsilicon.com>, <zhangxx@yunsilicon.com>, 
  <xudw@yunsilicon.com>, <jacky@yunsilicon.com>, <weihg@yunsilicon.com>, 
  <zhenghy@yunsilicon.com>
-X-Lms-Return-Path: <lba+268b163b8+35c7b9+dpdk.org+wanry@yunsilicon.com>
 Mime-Version: 1.0
-From: "Renyong Wan" <wanry@yunsilicon.com>
 In-Reply-To: <20250829082406.24369-1-wanry@yunsilicon.com>
-Content-Transfer-Encoding: 7bit
-To: <dev@dpdk.org>
+Received: from ubuntu-liun.yunsilicon.com ([58.34.192.114]) by smtp.feishu.cn
+ with ESMTPS; Fri, 29 Aug 2025 16:24:26 +0800
 References: <20250829082406.24369-1-wanry@yunsilicon.com>
-Date: Fri, 29 Aug 2025 16:24:24 +0800
+Subject: [PATCH 09/14] net/xsc: optimize QP and CQ memory allocation
+Date: Fri, 29 Aug 2025 16:24:26 +0800
+Message-Id: <20250829082425.24369-10-wanry@yunsilicon.com>
+To: <dev@dpdk.org>
+From: "Renyong Wan" <wanry@yunsilicon.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,389 +52,188 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Refactor RSS RX queue creation for the XSC PMD.
-
-This patch introduces proper QPN allocation and per-QP info setup,
-improving memory management and error handling. It makes RSS
-queue creation more robust, avoiding partial resource leaks in
-case of failures.
+Refactor memory allocation for XSC QP and CQ to use the local NUMA node.
+Previously, allocations used SOCKET_ID_ANY, which could lead to remote
+memory accesses. This patch ensures PAS and CQE memory are allocated
+on the same NUMA node as the device, improving locality and performance.
 
 Signed-off-by: Rong Qian <qianr@yunsilicon.com>
 Signed-off-by: Renyong Wan <wanry@yunsilicon.com>
 ---
- drivers/net/xsc/xsc_cmd.h    |  47 ++++++++
- drivers/net/xsc/xsc_ethdev.c |   3 +
- drivers/net/xsc/xsc_rx.c     | 219 ++++++++++++++++++++++++++---------
- 3 files changed, 216 insertions(+), 53 deletions(-)
+ drivers/net/xsc/xsc_rx.c   | 11 +++++++++--
+ drivers/net/xsc/xsc_rxtx.h |  3 +++
+ drivers/net/xsc/xsc_tx.c   |  2 ++
+ drivers/net/xsc/xsc_vfio.c | 32 ++++++++++++++++++++++++++------
+ 4 files changed, 40 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/xsc/xsc_cmd.h b/drivers/net/xsc/xsc_cmd.h
-index 2746131cf1..abf9d06197 100644
---- a/drivers/net/xsc/xsc_cmd.h
-+++ b/drivers/net/xsc/xsc_cmd.h
-@@ -23,6 +23,10 @@ enum xsc_cmd_opcode {
- 	XSC_CMD_OP_RTR2RTS_QP			= 0x504,
- 	XSC_CMD_OP_QP_2RST			= 0x50A,
- 	XSC_CMD_OP_CREATE_MULTI_QP		= 0x515,
-+	XSC_CMD_OP_ALLOC_QPN			= 0x519,
-+	XSC_CMD_OP_FREE_QPN			= 0x520,
-+	XSC_CMD_OP_SET_QP_INFO			= 0x521,
-+	XSC_CMD_QP_UNSET_QP_INFO		= 0x522,
- 	XSC_CMD_OP_ACCESS_REG			= 0x805,
- 	XSC_CMD_OP_MODIFY_NIC_HCA		= 0x812,
- 	XSC_CMD_OP_MODIFY_RAW_QP		= 0x81f,
-@@ -497,4 +501,47 @@ struct xsc_cmd_modify_fecparam_mbox_out {
- 	uint32_t status;
- };
- 
-+struct xsc_cmd_alloc_qpn_mbox_in {
-+	struct xsc_cmd_inbox_hdr hdr;
-+	rte_be16_t qp_cnt;
-+	uint8_t qp_type;
-+	uint8_t rsvd[5];
-+};
-+
-+struct xsc_cmd_alloc_qpn_mbox_out {
-+	struct xsc_cmd_outbox_hdr hdr;
-+	rte_be16_t qpn_base;
-+};
-+
-+struct xsc_cmd_free_qpn_mbox_in {
-+	struct xsc_cmd_inbox_hdr hdr;
-+	rte_be16_t qpn_base;
-+	rte_be16_t qp_cnt;
-+	uint8_t qp_type;
-+	uint8_t rsvd[3];
-+};
-+
-+struct xsc_cmd_free_qpn_mbox_out {
-+	struct xsc_cmd_outbox_hdr hdr;
-+};
-+
-+struct xsc_cmd_set_qp_info_in {
-+	struct xsc_cmd_inbox_hdr hdr;
-+	struct xsc_cmd_create_qp_request qp_info;
-+};
-+
-+struct xsc_cmd_set_qp_info_out {
-+	struct xsc_cmd_outbox_hdr hdr;
-+};
-+
-+struct xsc_cmd_unset_qp_info_in {
-+	struct xsc_cmd_inbox_hdr hdr;
-+	rte_be16_t qpn;
-+	uint8_t rsvd[6];
-+};
-+
-+struct xsc_cmd_unset_qp_info_out {
-+	struct xsc_cmd_outbox_hdr hdr;
-+};
-+
- #endif /* _XSC_CMD_H_ */
-diff --git a/drivers/net/xsc/xsc_ethdev.c b/drivers/net/xsc/xsc_ethdev.c
-index 261b49cff4..fc88caa9a2 100644
---- a/drivers/net/xsc/xsc_ethdev.c
-+++ b/drivers/net/xsc/xsc_ethdev.c
-@@ -296,6 +296,9 @@ xsc_rxq_start(struct xsc_ethdev_priv *priv)
- 	if (ret != 0)
- 		goto error;
- 
-+	for (i = 0; i != priv->num_rq; ++i)
-+		priv->dev_data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
-+
- 	priv->flags |= XSC_FLAG_RX_QUEUE_INIT;
- 	return 0;
- error:
 diff --git a/drivers/net/xsc/xsc_rx.c b/drivers/net/xsc/xsc_rx.c
-index 65d63b94de..c65afab51d 100644
+index c65afab51d..332ceb9606 100644
 --- a/drivers/net/xsc/xsc_rx.c
 +++ b/drivers/net/xsc/xsc_rx.c
-@@ -256,31 +256,139 @@ xsc_rxq_initialize(struct xsc_dev *xdev, struct xsc_rxq_data *rxq_data)
- 	rte_write32(rte_cpu_to_le_32(recv_db.recv_data), rxq_data->rq_db);
- }
- 
-+static int
-+xsc_alloc_qpn(struct xsc_dev *xdev, uint16_t *qpn_base, uint16_t qp_cnt)
-+{
-+	int ret;
-+	struct xsc_cmd_alloc_qpn_mbox_in in = { };
-+	struct xsc_cmd_alloc_qpn_mbox_out out = { };
-+
-+	in.hdr.opcode = rte_cpu_to_be_16(XSC_CMD_OP_ALLOC_QPN);
-+	in.qp_cnt = rte_cpu_to_be_16(qp_cnt);
-+	in.qp_type = XSC_QUEUE_TYPE_RAW;
-+
-+	ret = xsc_dev_mailbox_exec(xdev, &in, sizeof(in), &out, sizeof(out));
-+	if (ret != 0 || out.hdr.status != 0) {
-+		PMD_DRV_LOG(ERR,
-+			    "Failed to allocate qpn, port id=%d, qp num=%d, "
-+			    "ret=%d, out.status=%u",
-+			    xdev->port_id, qp_cnt, ret, out.hdr.status);
-+		rte_errno = ENOEXEC;
-+		goto error;
-+	}
-+
-+	*qpn_base = rte_be_to_cpu_16(out.qpn_base);
-+	return 0;
-+
-+error:
-+	return -rte_errno;
-+}
-+
-+static int
-+xsc_free_qpn(struct xsc_dev *xdev, uint16_t qpn_base, uint16_t qp_cnt)
-+{
-+	int ret;
-+	struct xsc_cmd_free_qpn_mbox_in in = { };
-+	struct xsc_cmd_free_qpn_mbox_out out = { };
-+
-+	in.hdr.opcode = rte_cpu_to_be_16(XSC_CMD_OP_FREE_QPN);
-+	in.qpn_base = rte_cpu_to_be_16(qpn_base);
-+	in.qp_cnt = rte_cpu_to_be_16(qp_cnt);
-+	in.qp_type = XSC_QUEUE_TYPE_RAW;
-+
-+	ret = xsc_dev_mailbox_exec(xdev, &in, sizeof(in), &out, sizeof(out));
-+	if (ret != 0 || out.hdr.status != 0) {
-+		PMD_DRV_LOG(ERR,
-+			    "Failed to free qpn, port id=%d, qpn base=%u, qp num=%d, "
-+			    "ret=%d, out.status=%u",
-+			    xdev->port_id, qpn_base, qp_cnt, ret, out.hdr.status);
-+		rte_errno = ENOEXEC;
-+		return -rte_errno;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+xsc_set_qp_info(struct xsc_dev *xdev, struct xsc_cmd_create_qp_request *qp_info, size_t pas_size)
-+{
-+	int ret;
-+	size_t in_size;
-+	struct xsc_cmd_set_qp_info_in *in;
-+	struct xsc_cmd_set_qp_info_out out = { };
-+
-+	in_size = sizeof(*in) + pas_size;
-+	in = malloc(in_size);
-+	if (in == NULL) {
-+		rte_errno = ENOMEM;
-+		PMD_DRV_LOG(ERR, "Failed to allocate memory for setting qp info");
-+		return -rte_errno;
-+	}
-+
-+	in->hdr.opcode = rte_cpu_to_be_16(XSC_CMD_OP_SET_QP_INFO);
-+	memcpy(&in->qp_info, qp_info, sizeof(*qp_info) + pas_size);
-+	ret = xsc_dev_mailbox_exec(xdev, in, in_size, &out, sizeof(out));
-+	if (ret != 0 || out.hdr.status != 0) {
-+		PMD_DRV_LOG(ERR,
-+			    "Failed to set qp info, port id=%d, ret=%d, out.status=%u",
-+			    xdev->port_id, ret, out.hdr.status);
-+		rte_errno = ENOEXEC;
-+		goto error;
-+	}
-+
-+	free(in);
-+	return 0;
-+error:
-+	free(in);
-+	return -rte_errno;
-+}
-+
-+static int
-+xsc_unset_qp_info(struct xsc_dev *xdev, uint16_t qpn)
-+{
-+	int ret;
-+	struct xsc_cmd_unset_qp_info_in in = { };
-+	struct xsc_cmd_unset_qp_info_out out = { };
-+
-+	in.hdr.opcode = rte_cpu_to_be_16(XSC_CMD_QP_UNSET_QP_INFO);
-+	in.qpn = rte_cpu_to_be_16(qpn);
-+
-+	ret = xsc_dev_mailbox_exec(xdev, &in, sizeof(in), &out, sizeof(out));
-+	if (ret != 0 || out.hdr.status != 0) {
-+		PMD_DRV_LOG(ERR,
-+			    "Failed to unset qp info, port id=%d, ret=%d, out.status=%u",
-+			    xdev->port_id, ret, out.hdr.status);
-+		rte_errno = ENOEXEC;
-+		return -rte_errno;
-+	}
-+
-+	return 0;
-+}
-+
- static int
- xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
- {
--	struct xsc_cmd_create_multiqp_mbox_in *in;
--	struct xsc_cmd_create_qp_request *req;
--	struct xsc_cmd_create_multiqp_mbox_out *out;
--	uint8_t log_ele;
--	uint64_t iova;
-+	int ret;
- 	int wqe_n;
--	int in_len, out_len, cmd_len;
- 	int entry_total_len, entry_len;
--	uint8_t log_rq_sz, log_sq_sz = 0;
- 	uint32_t wqe_total_len;
--	int j, ret;
--	uint16_t i, pa_num;
--	int rqn_base;
-+	uint16_t rqn_base, pa_num;
-+	uint16_t i, j;
-+	uint16_t set_last_no = 0;
-+	uint8_t log_ele, log_rq_sz, log_sq_sz = 0;
-+	uint64_t iova;
-+	size_t pas_size;
- 	struct xsc_rxq_data *rxq_data;
- 	struct xsc_dev *xdev = priv->xdev;
-+	struct xsc_cmd_create_qp_request *req, *info;
+@@ -383,6 +383,7 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
+ 	struct xsc_cmd_create_qp_request *req, *info;
  	struct xsc_hwinfo *hwinfo = &xdev->hwinfo;
  	char name[RTE_ETH_NAME_MAX_LEN] = { 0 };
--	void *cmd_buf;
++	uint32_t numa_node = priv->eth_dev->device->numa_node;
  
  	rxq_data = xsc_rxq_get(priv, 0);
--	if (rxq_data == NULL)
--		return -EINVAL;
-+	if (rxq_data == NULL) {
-+		rte_errno = EINVAL;
-+		return -rte_errno;
-+	}
+ 	if (rxq_data == NULL) {
+@@ -390,6 +391,10 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
+ 		return -rte_errno;
+ 	}
  
++	if (numa_node != rxq_data->socket)
++		PMD_DRV_LOG(WARNING, "Port %u: rxq numa_node=%u, device numa_node=%u",
++			    port_id, rxq_data->socket, numa_node);
++
  	log_ele = rte_log2_u32(sizeof(struct xsc_wqe_data_seg));
  	wqe_n = rxq_data->wqe_s;
-@@ -291,37 +399,32 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
- 	entry_len = sizeof(struct xsc_cmd_create_qp_request) + sizeof(uint64_t) * pa_num;
- 	entry_total_len = entry_len * priv->num_rq;
- 
--	in_len = sizeof(struct xsc_cmd_create_multiqp_mbox_in) + entry_total_len;
--	out_len = sizeof(struct xsc_cmd_create_multiqp_mbox_out) + entry_total_len;
--	cmd_len = RTE_MAX(in_len, out_len);
--	cmd_buf = malloc(cmd_len);
--	if (cmd_buf == NULL) {
-+	req = malloc(entry_total_len);
-+	if (req == NULL) {
- 		rte_errno = ENOMEM;
--		PMD_DRV_LOG(ERR, "Alloc rss qp create cmd memory failed");
--		goto error;
-+		PMD_DRV_LOG(ERR, "Failed to alloc create qp request cmd memory");
-+		return -rte_errno;
- 	}
- 
--	in = cmd_buf;
--	memset(in, 0, cmd_len);
--	in->qp_num = rte_cpu_to_be_16((uint16_t)priv->num_rq);
--	in->qp_type = XSC_QUEUE_TYPE_RAW;
--	in->req_len = rte_cpu_to_be_32(cmd_len);
-+	ret = xsc_alloc_qpn(xdev, &rqn_base, priv->num_rq);
-+	if (ret != 0)
-+		goto alloc_qpn_fail;
- 
- 	for (i = 0; i < priv->num_rq; i++) {
- 		rxq_data = xsc_rxq_get(priv, i);
- 		if (rxq_data == NULL) {
- 			rte_errno = EINVAL;
--			goto error;
-+			goto set_qp_fail;
- 		}
- 
--		req = (struct xsc_cmd_create_qp_request *)(&in->data[0] + entry_len * i);
--		req->input_qpn = rte_cpu_to_be_16(0); /* useless for eth */
--		req->pa_num = rte_cpu_to_be_16(pa_num);
--		req->qp_type = XSC_QUEUE_TYPE_RAW;
--		req->log_rq_sz = log_rq_sz;
--		req->cqn_recv = rte_cpu_to_be_16((uint16_t)rxq_data->cqn);
--		req->cqn_send = req->cqn_recv;
--		req->glb_funcid = rte_cpu_to_be_16((uint16_t)hwinfo->func_id);
-+		info = (struct xsc_cmd_create_qp_request *)((uint8_t *)req + entry_len * i);
-+		info->input_qpn = rte_cpu_to_be_16(rqn_base + i);
-+		info->pa_num = rte_cpu_to_be_16(pa_num);
-+		info->qp_type = XSC_QUEUE_TYPE_RAW;
-+		info->log_rq_sz = log_rq_sz;
-+		info->cqn_recv = rte_cpu_to_be_16((uint16_t)rxq_data->cqn);
-+		info->cqn_send = info->cqn_recv;
-+		info->glb_funcid = rte_cpu_to_be_16((uint16_t)hwinfo->func_id);
- 		/* Alloc pas addr */
+ 	log_rq_sz = rte_log2_u32(wqe_n * hwinfo->recv_seg_num);
+@@ -429,8 +434,9 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
  		snprintf(name, sizeof(name), "wqe_mem_rx_%d_%d", port_id, i);
  		rxq_data->rq_pas = rte_memzone_reserve_aligned(name,
-@@ -330,32 +433,27 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
- 							       0, XSC_PAGE_SIZE);
+ 							       (XSC_PAGE_SIZE * pa_num),
+-							       SOCKET_ID_ANY,
+-							       0, XSC_PAGE_SIZE);
++							       rxq_data->socket,
++							       RTE_MEMZONE_IOVA_CONTIG,
++							       XSC_PAGE_SIZE);
  		if (rxq_data->rq_pas == NULL) {
  			rte_errno = ENOMEM;
--			PMD_DRV_LOG(ERR, "Alloc rxq pas memory failed");
--			goto error;
-+			PMD_DRV_LOG(ERR, "Failed to alloc rxq pas memory");
-+			goto set_qp_fail;
- 		}
+ 			PMD_DRV_LOG(ERR, "Failed to alloc rxq pas memory");
+@@ -519,6 +525,7 @@ xsc_rxq_rss_obj_new(struct xsc_ethdev_priv *priv, uint16_t port_id)
+ 		cq_params.port_id = rxq_data->port_id;
+ 		cq_params.qp_id = rxq_data->idx;
+ 		cq_params.wqe_s = rxq_data->wqe_s;
++		cq_params.socket_id = rxq_data->socket;
  
- 		iova = rxq_data->rq_pas->iova;
- 		for (j = 0; j < pa_num; j++)
--			req->pas[j] = rte_cpu_to_be_64(iova + j * XSC_PAGE_SIZE);
--	}
-+			info->pas[j] = rte_cpu_to_be_64(iova + j * XSC_PAGE_SIZE);
+ 		ret = xsc_dev_rx_cq_create(xdev, &cq_params, &cq_info);
+ 		if (ret) {
+diff --git a/drivers/net/xsc/xsc_rxtx.h b/drivers/net/xsc/xsc_rxtx.h
+index 3606c151e6..129bbd2fa4 100644
+--- a/drivers/net/xsc/xsc_rxtx.h
++++ b/drivers/net/xsc/xsc_rxtx.h
+@@ -124,6 +124,7 @@ struct xsc_tx_cq_params {
+ 	uint16_t port_id;
+ 	uint16_t qp_id;
+ 	uint16_t elts_n;
++	int socket_id;
+ };
  
--	in->hdr.opcode = rte_cpu_to_be_16(XSC_CMD_OP_CREATE_MULTI_QP);
--	out = cmd_buf;
--	ret = xsc_dev_mailbox_exec(xdev, in, in_len, out, out_len);
--	if (ret != 0 || out->hdr.status != 0) {
--		PMD_DRV_LOG(ERR,
--			    "Create rss rq failed, port id=%d, qp_num=%d, ret=%d, out.status=%u",
--			    port_id, priv->num_rq, ret, out->hdr.status);
--		rte_errno = ENOEXEC;
--		goto error;
-+		pas_size = pa_num * sizeof(uint64_t);
-+		ret = xsc_set_qp_info(xdev, info, pas_size);
-+		if (ret != 0)
-+			goto set_qp_fail;
+ struct xsc_tx_cq_info {
+@@ -141,6 +142,7 @@ struct xsc_tx_qp_params {
+ 	uint16_t port_id;
+ 	uint16_t qp_id;
+ 	uint16_t elts_n;
++	int socket_id;
+ };
+ 
+ struct xsc_tx_qp_info {
+@@ -165,6 +167,7 @@ struct xsc_rx_cq_params {
+ 	uint16_t port_id;
+ 	uint16_t qp_id;
+ 	uint16_t wqe_s;
++	int socket_id;
+ };
+ 
+ struct xsc_rx_cq_info {
+diff --git a/drivers/net/xsc/xsc_tx.c b/drivers/net/xsc/xsc_tx.c
+index 07888a5641..265439fec0 100644
+--- a/drivers/net/xsc/xsc_tx.c
++++ b/drivers/net/xsc/xsc_tx.c
+@@ -37,6 +37,7 @@ xsc_txq_obj_new(struct xsc_dev *xdev, struct xsc_txq_data *txq_data, uint16_t id
+ 	cq_params.port_id = txq_data->port_id;
+ 	cq_params.qp_id = txq_data->idx;
+ 	cq_params.elts_n = txq_data->elts_n;
++	cq_params.socket_id = txq_data->socket;
+ 	ret = xsc_dev_tx_cq_create(xdev, &cq_params, &cq_info);
+ 	if (ret) {
+ 		rte_errno = errno;
+@@ -60,6 +61,7 @@ xsc_txq_obj_new(struct xsc_dev *xdev, struct xsc_txq_data *txq_data, uint16_t id
+ 	qp_params.port_id = txq_data->port_id;
+ 	qp_params.qp_id = idx;
+ 	qp_params.elts_n = txq_data->elts_n;
++	qp_params.socket_id = txq_data->socket;
+ 	ret = xsc_dev_tx_qp_create(xdev, &qp_params, &qp_info);
+ 
+ 	if (ret != 0) {
+diff --git a/drivers/net/xsc/xsc_vfio.c b/drivers/net/xsc/xsc_vfio.c
+index 34b2a4c58b..1650a3ab2b 100644
+--- a/drivers/net/xsc/xsc_vfio.c
++++ b/drivers/net/xsc/xsc_vfio.c
+@@ -556,6 +556,11 @@ xsc_vfio_rx_cq_create(struct xsc_dev *xdev, struct xsc_rx_cq_params *cq_params,
+ 	struct xsc_cmd_create_cq_mbox_in *in = NULL;
+ 	struct xsc_cmd_create_cq_mbox_out *out = NULL;
+ 	void *cmd_buf;
++	int numa_node = xdev->pci_dev->device.numa_node;
 +
-+		set_last_no++;
- 	}
--	rqn_base = rte_be_to_cpu_32(out->qpn_base) & 0xffffff;
++	if (numa_node != cq_params->socket_id)
++		PMD_DRV_LOG(WARNING, "Port %u rxq %u: cq numa_node=%u, device numa_node=%u",
++			    port_id, idx, cq_params->socket_id, numa_node);
  
- 	for (i = 0; i < priv->num_rq; i++) {
- 		rxq_data = xsc_rxq_get(priv, i);
- 		if (rxq_data == NULL) {
- 			rte_errno = EINVAL;
--			goto error;
-+			goto set_qp_fail;
- 		}
- 
- 		rxq_data->wqes = rxq_data->rq_pas->addr;
-@@ -370,18 +468,33 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
- 		xsc_dev_modify_qp_status(xdev, rxq_data->qpn, 1, XSC_CMD_OP_RTR2RTS_QP);
- 		xsc_rxq_initialize(xdev, rxq_data);
- 		rxq_data->cq_ci = 0;
--		priv->dev_data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
- 		PMD_DRV_LOG(INFO, "Port %d create rx qp, wqe_s:%d, wqe_n:%d, qp_db=%p, qpn:%u",
- 			    port_id,
- 			    rxq_data->wqe_s, rxq_data->wqe_n,
- 			    rxq_data->rq_db, rxq_data->qpn);
- 	}
- 
--	free(cmd_buf);
-+	free(req);
- 	return 0;
- 
--error:
--	free(cmd_buf);
-+set_qp_fail:
-+	free(req);
-+	for (i = 0; i < set_last_no; i++) {
-+		xsc_unset_qp_info(xdev, rqn_base + i);
-+		rxq_data = xsc_rxq_get(priv, i);
-+		if (rxq_data == NULL) {
-+			rte_errno = EINVAL;
-+			goto set_qp_fail;
-+		}
-+		rte_memzone_free(rxq_data->rq_pas);
-+		rxq_data->rq_pas = NULL;
-+	}
+ 	cqe_n = cq_params->wqe_s;
+ 	log_cq_sz = rte_log2_u32(cqe_n);
+@@ -592,8 +597,9 @@ xsc_vfio_rx_cq_create(struct xsc_dev *xdev, struct xsc_rx_cq_params *cq_params,
+ 	snprintf(name, sizeof(name), "mz_cqe_mem_rx_%u_%u", port_id, idx);
+ 	cq_pas = rte_memzone_reserve_aligned(name,
+ 					     (XSC_PAGE_SIZE * pa_num),
+-					     SOCKET_ID_ANY,
+-					     0, XSC_PAGE_SIZE);
++					     cq_params->socket_id,
++					     RTE_MEMZONE_IOVA_CONTIG,
++					     XSC_PAGE_SIZE);
+ 	if (cq_pas == NULL) {
+ 		rte_errno = ENOMEM;
+ 		PMD_DRV_LOG(ERR, "Failed to alloc rx cq pas memory");
+@@ -658,6 +664,12 @@ xsc_vfio_tx_cq_create(struct xsc_dev *xdev, struct xsc_tx_cq_params *cq_params,
+ 	uint64_t iova;
+ 	int i;
+ 	void *cmd_buf = NULL;
++	int numa_node = xdev->pci_dev->device.numa_node;
 +
-+	xsc_free_qpn(xdev, rqn_base, priv->num_rq);
-+	return -rte_errno;
-+
-+alloc_qpn_fail:
-+	free(req);
- 	return -rte_errno;
- }
++	if (numa_node != cq_params->socket_id)
++		PMD_DRV_LOG(WARNING, "Port %u txq %u: cq numa_node=%u, device numa_node=%u",
++			    cq_params->port_id, cq_params->qp_id,
++			    cq_params->socket_id, numa_node);
  
+ 	cq = rte_zmalloc(NULL, sizeof(struct xsc_vfio_cq), 0);
+ 	if (cq == NULL) {
+@@ -672,8 +684,9 @@ xsc_vfio_tx_cq_create(struct xsc_dev *xdev, struct xsc_tx_cq_params *cq_params,
+ 	snprintf(name, sizeof(name), "mz_cqe_mem_tx_%u_%u", cq_params->port_id, cq_params->qp_id);
+ 	cq_pas = rte_memzone_reserve_aligned(name,
+ 					     (XSC_PAGE_SIZE * pa_num),
+-					     SOCKET_ID_ANY,
+-					     0, XSC_PAGE_SIZE);
++					     cq_params->socket_id,
++					     RTE_MEMZONE_IOVA_CONTIG,
++					     XSC_PAGE_SIZE);
+ 	if (cq_pas == NULL) {
+ 		rte_errno = ENOMEM;
+ 		PMD_DRV_LOG(ERR, "Failed to alloc tx cq pas memory");
+@@ -762,6 +775,12 @@ xsc_vfio_tx_qp_create(struct xsc_dev *xdev, struct xsc_tx_qp_params *qp_params,
+ 	char name[RTE_ETH_NAME_MAX_LEN] = {0};
+ 	void *cmd_buf = NULL;
+ 	bool tso_en = !!(qp_params->tx_offloads & RTE_ETH_TX_OFFLOAD_TCP_TSO);
++	int numa_node = xdev->pci_dev->device.numa_node;
++
++	if (numa_node != qp_params->socket_id)
++		PMD_DRV_LOG(WARNING, "Port %u: txq %u numa_node=%u, device numa_node=%u",
++			    qp_params->port_id, qp_params->qp_id,
++			    qp_params->socket_id, numa_node);
+ 
+ 	qp = rte_zmalloc(NULL, sizeof(struct xsc_vfio_qp), 0);
+ 	if (qp == NULL) {
+@@ -777,8 +796,9 @@ xsc_vfio_tx_qp_create(struct xsc_dev *xdev, struct xsc_tx_qp_params *qp_params,
+ 	snprintf(name, sizeof(name), "mz_wqe_mem_tx_%u_%u", qp_params->port_id, qp_params->qp_id);
+ 	qp_pas = rte_memzone_reserve_aligned(name,
+ 					     (XSC_PAGE_SIZE * pa_num),
+-					     SOCKET_ID_ANY,
+-					     0, XSC_PAGE_SIZE);
++					     qp_params->socket_id,
++					     RTE_MEMZONE_IOVA_CONTIG,
++					     XSC_PAGE_SIZE);
+ 	if (qp_pas == NULL) {
+ 		rte_errno = ENOMEM;
+ 		PMD_DRV_LOG(ERR, "Failed to alloc tx qp pas memory");
 -- 
 2.25.1
