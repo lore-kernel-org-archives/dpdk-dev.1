@@ -2,78 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14DC3CA0FF0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 29 Aug 2025 20:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F12CA0FF9
+	for <dpdk-dev@archiver.kernel.org>; Sat, 30 Aug 2025 00:23:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D37EE40292;
-	Fri, 29 Aug 2025 22:33:32 +0200 (CEST)
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com
- [209.85.222.173])
- by mails.dpdk.org (Postfix) with ESMTP id 262074027D
- for <dev@dpdk.org>; Fri, 29 Aug 2025 22:33:31 +0200 (CEST)
-Received: by mail-qk1-f173.google.com with SMTP id
- af79cd13be357-7f04816589bso234451885a.3
- for <dev@dpdk.org>; Fri, 29 Aug 2025 13:33:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756499610;
- x=1757104410; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=V74tsM37iBOh6m8FmotlOd/iSOHYqK3aN+YMO5zTsuQ=;
- b=bO1nJ0/liMkVz6gmN+lJXS5MJHNtoBT3vQQ2xjyvI+aHfguaa5W7zeJcmx8m6aIfiV
- 0O7Ms2YNw9lATjhSD6xYG/GMiowxUlnhJTOt2M0lpVvuM3eZRuY3BtF+nufhyH5QUNmu
- tFwduCegDQzXLGnOAXSWrbK9vm7/DvdFcf/a+W9pUI5zNJLRNc1Tw030B/+0d5sOePPz
- ofbbFJD9teMZfQGp/t5IqnX2r2evYlwzDqBIT80Zx4i69LruDjpvbJcrAGCakXXWxrca
- 7ZgGep9hHrkX+uW761beHZdPDp6O72Ig36ZYAhDBmAlP6ONOinM7vtfxeuaISZ6FBtki
- 6sbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756499610; x=1757104410;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=V74tsM37iBOh6m8FmotlOd/iSOHYqK3aN+YMO5zTsuQ=;
- b=SxzwCvcxwDo99E2drXyLP6J1GMejUhEuAsQEk955KB9EHOc75/DpVCnwsUe0t1n7Pz
- EiTzeNUFRYLTrHaiiG17yRWFqhlEC6qGSgklOPaWAJB5E6PuNAd0x/+QRHmV877AuCIO
- o39TvOunFB/e2XfGymqogMeC51q3idOg89GCH3rH+MzyrwCTGfwFS60uCIxqEnzJDXws
- tTdfl8vx8iGHaQjF9BUa//+yuDWTmyWxFWQIHz4qMtpoUWusdxe66+YfSdRentSVodzl
- iQyhLx5L9kffvPty38f2R4foAH+lN3/2R2WIIcm8XhO/lyHtByun6YEe5gCyaWIfCjR1
- RpLA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVx/PX97JVESmPw4NQav0wXTl3laYwE0Dq+QxxOCugigOG5dFsu1QTu6WDUTsoHfdNEa+0=@dpdk.org
-X-Gm-Message-State: AOJu0YzYGPj8Ao8IVK4uKzQgrcef+KQbTKSy6+F3T6SrmR/NYoHzjN1X
- lMdNhkw0OZdqMpjZ3pNUJMr2eJK3kiACujEFq3BbmIVXTR70sNoFNgwm3iKMX+5IqJGAq08lDo1
- Aafo3
-X-Gm-Gg: ASbGncu1cPvBLHM8kPj/DAC1ZBdMhfF4fFfh//gTc/2sKxJ5IvRuMIsooZ0IPvpa5u4
- +Um+6SOX3wmzFt/pk9jT8tKd5IQ9mu1UOamz01IKYEwuTukwI4MFmb+8UfC2aH5BFyqFIlD0h8W
- pObaefrrjDRwiCXNzGPo5s+XLSzoTobSanRFgLhuC1FgK351CfL6gO4wgYU/j55JbtRUW7unPUK
- 9JKferh08jUV6v8rUJZSOnzCvaW39Lou7nd7zdy0qR0q8NbKc785thxjsdc7xudcd6DHhGWXIAR
- 64lmp0XrsJYRGlljidTYy8uW/AyFHfEYg9lxOsRGyTcU0IsUJ3SrB6/6F3Q3QjFSLYmy2kQvZPy
- tcAayf7f12k/poZksgRNA/HLGNQdcfO3Rzg8mS/CG/96pQVG/JoFh5gORbRx05xEKDED5E6XZV8
- A=
-X-Google-Smtp-Source: AGHT+IHMZ8u72A4RvhCGgjbd6pSqpzWpbZLIUW7o7Ib3EvqriBcaVP3AS0yZkHEVdBTUGOkgPwTuKw==
-X-Received: by 2002:a05:620a:6cce:b0:7e9:f820:2b91 with SMTP id
- af79cd13be357-7ea110ba0d7mr3002839485a.82.1756499610339; 
- Fri, 29 Aug 2025 13:33:30 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-7fc1643ac5esm237779485a.68.2025.08.29.13.33.29
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 29 Aug 2025 13:33:30 -0700 (PDT)
-Date: Fri, 29 Aug 2025 13:33:27 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: <skori@marvell.com>
-Cc: Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>, <dev@dpdk.org>, Nithin Dabilpuram
- <ndabilpuram@marvell.com>
-Subject: Re: [PATCH v8 1/1] ethdev: add support to provide link type
-Message-ID: <20250829133327.67ee8d48@hermes.local>
-In-Reply-To: <20250821053425.3227866-1-skori@marvell.com>
-References: <20250820175317.3063659-1-skori@marvell.com>
- <20250821053425.3227866-1-skori@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C83D240280;
+	Sat, 30 Aug 2025 02:23:35 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 738DC4027D
+ for <dev@dpdk.org>; Sat, 30 Aug 2025 02:23:34 +0200 (CEST)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 85D812116281; Fri, 29 Aug 2025 17:23:33 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 85D812116281
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1756513413;
+ bh=X0PF9qr7qj5kZQBKlHnNvzifpK4eU6AJ/O6PcbcFyWc=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=bzMJLYfFskN0iw4G96rnwtwf+rYDFWGL1kiznSIm/UtfGnQnW7HcrHq+SPfRKfdR5
+ i0ywlY2oEryrSORjsttf/jxXor796Uj4G50vgEP3GB2iVPSQR9clLeU+WEWEOXvWQI
+ KOKIScoRhupMhzp5G23Xi4J6JjSVfNnb3foURMXY=
+Date: Fri, 29 Aug 2025 17:23:33 -0700
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: Wisam Jaddo <wisamm@nvidia.com>, dev@dpdk.org,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: Re: [PATCH] test-flow-perf: Enable to build on Windows
+Message-ID: <20250830002333.GA6088@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1754423992-24652-1-git-send-email-andremue@linux.microsoft.com>
+ <CAJFAV8y5C3-TZ-m-xECRZi3=tMqUE1BUahpE=-UfTxPWaXWRdQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJFAV8y5C3-TZ-m-xECRZi3=tMqUE1BUahpE=-UfTxPWaXWRdQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,26 +47,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 21 Aug 2025 11:02:33 +0530
-<skori@marvell.com> wrote:
-
-> From: Sunil Kumar Kori <skori@marvell.com>
+On Fri, Aug 29, 2025 at 03:04:10PM +0200, David Marchand wrote:
+> Hello,
 > 
-> Adding link type parameter to provide the type
-> of port like twisted pair, fibre etc.
+> On Tue, 5 Aug 2025 at 22:00, Andre Muezerie
+> <andremue@linux.microsoft.com> wrote:
+> >
+> > This patch fixes some issues which were preventing this test to be
+> > built on Windows:
+> >
+> > - Remove VLAs (not supported by msvc).
+> > - Replace strsep() (which is not natively available on Windows)
+> >   with strtok_r().
+> > - Remove the "thousands" separator from printf() calls as it is
+> >   not available on Windows.
 > 
-> Also added an API to convert the RTE_ETH_LINK_CONNECTOR_XXX
-> to a readable string.
+> Can we use rte_size_to_str() instead?
 > 
-> Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
-> Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
 
-Looks good now. Would prefer that you settle on one
-term connector rather than mixing 'link type' and 'link connnector'
-in commit description and comments. Do you want me to
-make it consistent?
+I considered doing that, but I thought that since the app is printing deltas it
+could be better to print the exact numbers instead of some approximation like
+"1.02 k" which could possibly make debugging harder.
 
-Please also provide release note with short concise summary
-and what user should expect as default until/unless drivers
-change it.
+If you strongly believe that rte_size_to_str() should indeed be used here I can
+make the change.
 
+What are your thoughts about this?
+
+Andre Muezerie
+
+> > - Include the test in the Windows build.
+> >
+> > Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+> 
+> Otherwise it lgtm.
+> 
+> 
+> -- 
+> David Marchand
