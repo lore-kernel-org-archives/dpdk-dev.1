@@ -2,48 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7F5CA0FFF
-	for <dpdk-dev@archiver.kernel.org>; Sat, 30 Aug 2025 17:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD41CA0EFF
+	for <dpdk-dev@archiver.kernel.org>; Sat, 30 Aug 2025 17:17:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F57D402E3;
-	Sat, 30 Aug 2025 19:17:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 237C040651;
+	Sat, 30 Aug 2025 19:17:16 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 54EC640276
+ by mails.dpdk.org (Postfix) with ESMTP id 3A65C40276
  for <dev@dpdk.org>; Sat, 30 Aug 2025 19:17:13 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1756574234; x=1788110234;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=4gdRw6nqo0L4AD5ISdNRnteLzv9rtQIe2mLc+fmC8NY=;
- b=dZNJZOME9M0vcZmAzrgm6LKWHo9D3TNBBnZXpn3i+O1v5IaMfehT7vmd
- rLyG680fG/OzP3r6Hs+CtdVV6+yt4Q/cJj2/XzxOyzHmy5oRT1OanAlKa
- K50Gm+9OkBywL/gNlxGUYkYxelYAlhdFkR67rryvx2NDvMojJYZZsJnKb
- /al61F3LeXO2ql+DMwOS1Me6J03Qew9SoW8zCcLJnwqb+N3nLRKSXbCjN
- UKRKlC1WTxduyWjxj2s9Ug9JuwbnRJ2qV/DMqaHmcAR6D+XCetOTbk8KK
- BAltVGFkfZ5OaC2Za5bgl9mPIfIFbH2IQBHVqRPebUmDEz2+GK9yzzK/t A==;
-X-CSE-ConnectionGUID: Fb50pW4iRtaDHwbMIHKW0A==
-X-CSE-MsgGUID: lNzEzggfQqO6aHSfGRLT1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58781185"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="58781185"
+ t=1756574235; x=1788110235;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=ikZrCkz8e73H7a8qASfDsGsHNNn9uFoYaf4gn13NGTo=;
+ b=ZsFfDUjeZv6hbZH2REsGe3aqaZ3k6Iz6+p+gTsvMMwyRhObDbN+e4vuS
+ MESiZeYI/IOlHvnTYaMdrbEaI97c7+ecv/ysEduigZZhIpmnVH5oRC6rC
+ 5sKfpymfcvM2moTNz+l1Ht6yWiNhycPW+6mmqwZIjLy9wJd+7ie2tkIJo
+ y+BwMWgdz4eIJbXlwKyNaRm1rJIyZNdF3TCRA81h9NLDvmiqO97I1Mn3/
+ 9RnFj9hxtVWeFhQeMbAfRmGkk7bVbvRhg1digrvDHdtwm+7bPaF2xaByT
+ qR/ArkxcUJxgJwKnrTqrLn25MiR3oeGr3CahBb5OR9QfA/mch/7xI5DAt A==;
+X-CSE-ConnectionGUID: GxgJ7RpcSCOeLxre7NDTEg==
+X-CSE-MsgGUID: YY3684+LQqqM5N+GTqR0tw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="58781186"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="58781186"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Aug 2025 10:17:12 -0700
-X-CSE-ConnectionGUID: YwTPuTpuSlmfR5715HhsjA==
-X-CSE-MsgGUID: TBY3cRpqTYmPz4bbP7qnaw==
+ 30 Aug 2025 10:17:14 -0700
+X-CSE-ConnectionGUID: 6T1tUwLBTYemc7BK3BZuOQ==
+X-CSE-MsgGUID: onCkHHQfRB254YhnDtF70Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; d="scan'208";a="174966866"
+X-IronPort-AV: E=Sophos;i="6.18,225,1751266800"; d="scan'208";a="174966873"
 Received: from silpixa00401176.ir.intel.com (HELO
  silpixa00401176.ger.corp.intel.com) ([10.237.222.172])
- by fmviesa005.fm.intel.com with ESMTP; 30 Aug 2025 10:17:10 -0700
+ by fmviesa005.fm.intel.com with ESMTP; 30 Aug 2025 10:17:12 -0700
 From: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com, thomas@monjalon.net,
  andrew.rybchenko@oktetlabs.ru, stephen@networkplumber.org
-Subject: [RFC PATCH 0/6] ethdev: refactor and extend DCB configuration API
-Date: Sat, 30 Aug 2025 17:17:00 +0000
-Message-ID: <20250830171706.428977-1-vladimir.medvedkin@intel.com>
+Subject: [RFC PATCH 1/6] ethdev: extend and refactor DCB configuration
+Date: Sat, 30 Aug 2025 17:17:01 +0000
+Message-ID: <20250830171706.428977-2-vladimir.medvedkin@intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250830171706.428977-1-vladimir.medvedkin@intel.com>
+References: <20250830171706.428977-1-vladimir.medvedkin@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -59,96 +61,267 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi all,
+Currently there are two structutes defined for DCB configuration, one for
+RX and one for TX. They do have slight semantic difference, but in terms
+of their structure they are identical. Refactor DCB configuration API to
+use common structute for both TX and RX.
 
-This series reworks the ethdev API related to advanced queueing configuration,
-specifically Data Center Bridging (DCB) and Virtual Machine Device Queues
-(VMDq). The existing API was designed years ago around ixgbe hardware
-assumptions, which makes it difficult to properly support modern NICs and their
-more flexible capabilities.
+Additionally, current structure do not reflect everything that is
+required by the DCB specification, such as per Traffic Class bandwidth
+allocation and Traffic Selection Algorithm (TSA). Extend rte_eth_dcb_conf
+with additional DCB settings
 
-The main goals of this refactoring are:
+Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+---
+ app/test-pmd/testpmd.c             | 19 ++++++-
+ drivers/net/intel/ice/ice_ethdev.c | 80 ++++++++++++++++++++----------
+ lib/ethdev/rte_ethdev.h            | 25 ++++++----
+ 3 files changed, 85 insertions(+), 39 deletions(-)
 
-Unify duplicated DCB configuration structures for Tx and Rx.
-
-Extend the API to better align with the DCB specification (e.g., TSA, per-TC
-bandwidth allocation).
-
-Decouple VMDq and DCB configuration so they can be used independently.
-
-Enable explicit configuration of queue mappings instead of relying on
-driver-specific behavior.
-
-Clean up legacy or redundant fields that were artifacts of early
-implementations.
-
-Place multi-queue mode settings in a more consistent location within the
-configuration API.
-
-Overall, this makes the API more expressive, more consistent, and more
-future-proof for modern hardware, while simplifying driver implementations.
-
-Patch summary:
-
-ethdev: extend and refactor DCB configuration
-Introduce a common structure for Rx/Tx DCB configuration and extend it with missing DCB spec features.
-
-ethdev: remove nb_tcs from rte_eth_dcb_conf structure
-Drop legacy traffic class count field which drivers can derive from config.
-
-ethdev: decouple VMDq and DCB configuration
-Remove unnecessary coupling and redundant structures
-
-ethdev: extend VMDq/DCB configuration with queue mapping
-Allow explicit queue mapping configuration in API.
-
-ethdev: remove dcb_capability_en from rte_eth_conf
-Drop unused or misused DCB capability flags in favor of per-TC PFC API.
-
-ethdev: move mq_mode to [r,t]x_adv_conf
-Relocate mq_mode to advanced config, and make it a flag field.
-
-This is an API-breaking series, but it is expected to make the interface cleaner
-and more aligned with modern NIC capabilities. Feedback on both the design
-direction and implementation details is very welcome.
-
-Note: This RFC series reflects changes only for ice PMD and testpmd app
-(no other drivers or examples apps was changed) and depends on:
-https://patches.dpdk.org/project/dpdk/list/?series=35948
-thus configure your build like:
-meson setup -Denable_drivers=net/intel/ice
-
-Vladimir Medvedkin (6):
-  ethdev: extend and refactor DCB configuration
-  ethdev: remove nb_tcs from rte_eth_dcb_conf structure
-  ethdev: decouple VMDq and DCB cofiguration
-  ethdev: extend VMDq/DCB configuration with queue mapping
-  ethdev: remove dcb_capability_en from rte_eth_conf
-  ethdev: move mq_mode to [r,t]x_adv_conf
-
- app/graph/ethdev.c                       |   6 +-
- app/test-eventdev/test_perf_common.c     |   4 +-
- app/test-eventdev/test_pipeline_common.c |   4 +-
- app/test-pipeline/init.c                 |   2 +-
- app/test-pmd/cmdline.c                   |  27 +---
- app/test-pmd/parameters.c                |   4 +-
- app/test-pmd/testpmd.c                   | 153 +++++++++++---------
- app/test-pmd/testpmd.h                   |   5 +-
- app/test/test_event_eth_rx_adapter.c     |   4 +-
- app/test/test_link_bonding.c             |   4 +-
- app/test/test_link_bonding_rssconf.c     |   8 +-
- app/test/test_pmd_perf.c                 |   4 +-
- app/test/test_security_inline_macsec.c   |  12 +-
- app/test/test_security_inline_proto.c    |  12 +-
- drivers/net/intel/ice/ice_dcf.c          |   2 +-
- drivers/net/intel/ice/ice_dcf_ethdev.c   |   2 +-
- drivers/net/intel/ice/ice_ethdev.c       | 137 ++++++++++--------
- drivers/net/intel/ice/ice_rxtx.c         |  27 ++--
- lib/ethdev/ethdev_trace.h                |   4 +-
- lib/ethdev/rte_ethdev.c                  |  10 +-
- lib/ethdev/rte_ethdev.h                  | 169 ++++++++---------------
- 21 files changed, 294 insertions(+), 306 deletions(-)
-
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index bb88555328..d64a7dcac5 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -4134,9 +4134,9 @@ get_eth_dcb_conf(struct rte_eth_conf *eth_conf, enum dcb_mode_enable dcb_mode,
+ 					(rx_mq_mode & RTE_ETH_MQ_RX_VMDQ_DCB);
+ 		eth_conf->txmode.mq_mode = RTE_ETH_MQ_TX_VMDQ_DCB;
+ 	} else {
+-		struct rte_eth_dcb_rx_conf *rx_conf =
++		struct rte_eth_dcb_conf *rx_conf =
+ 				&eth_conf->rx_adv_conf.dcb_rx_conf;
+-		struct rte_eth_dcb_tx_conf *tx_conf =
++		struct rte_eth_dcb_conf *tx_conf =
+ 				&eth_conf->tx_adv_conf.dcb_tx_conf;
+ 
+ 		rx_conf->nb_tcs = num_tcs;
+@@ -4148,6 +4148,21 @@ get_eth_dcb_conf(struct rte_eth_conf *eth_conf, enum dcb_mode_enable dcb_mode,
+ 			tx_conf->dcb_tc[i] = dcb_tc_val;
+ 		}
+ 
++		const int bw_share_percent = 100 / num_tcs;
++		const int bw_share_left = 100 - bw_share_percent * num_tcs;
++		for (i = 0; i < num_tcs; i++) {
++			rx_conf->dcb_tc_bw[i] = bw_share_percent;
++			tx_conf->dcb_tc_bw[i] = bw_share_percent;
++
++			rx_conf->dcb_tsa[i] = RTE_ETH_DCB_TSA_ETS;
++			tx_conf->dcb_tsa[i] = RTE_ETH_DCB_TSA_ETS;
++		}
++
++		for (i = 0; i < bw_share_left; i++) {
++			rx_conf->dcb_tc_bw[i]++;
++			tx_conf->dcb_tc_bw[i]++;
++		}
++
+ 		eth_conf->rxmode.mq_mode =
+ 				(enum rte_eth_rx_mq_mode)
+ 					(rx_mq_mode & RTE_ETH_MQ_RX_DCB_RSS);
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index 8ab0da3549..7ba25049d7 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -3760,10 +3760,13 @@ static int ice_init_rss(struct ice_pf *pf)
+ }
+ 
+ static int
+-check_dcb_conf(int is_8_ports, struct rte_eth_dcb_rx_conf *dcb_conf)
++check_dcb_conf(int is_8_ports, struct rte_eth_dcb_conf *dcb_conf)
+ {
+ 	uint32_t tc_map = 0;
+ 	int i;
++	int total_bw_allocated = 0;
++	bool ets_seen = false;
++	int nb_tc_used;
+ 
+ 	enum rte_eth_nb_tcs nb_tcs = dcb_conf->nb_tcs;
+ 	if (nb_tcs != RTE_ETH_4_TCS && is_8_ports) {
+@@ -3784,7 +3787,31 @@ check_dcb_conf(int is_8_ports, struct rte_eth_dcb_rx_conf *dcb_conf)
+ 		return -1;
+ 	}
+ 
+-	return rte_popcount32(tc_map);
++	nb_tc_used = rte_popcount32(tc_map);
++
++	/* calculate total ETS Bandwidth allocation */
++	for (i = 0; i < nb_tc_used; i++) {
++		if (dcb_conf->dcb_tsa[i] == RTE_ETH_DCB_TSA_ETS) {
++			if (dcb_conf->dcb_tc_bw[i] == 0) {
++				PMD_DRV_LOG(ERR,
++					"Bad ETS BW configuration, can not allocate 0%%");
++				return -1;
++			}
++			total_bw_allocated += dcb_conf->dcb_tc_bw[i];
++			ets_seen = true;
++		} else if (dcb_conf->dcb_tsa[i] != RTE_ETH_DCB_TSA_STRICT) {
++			PMD_DRV_LOG(ERR, "Invalid TC TSA setting - only Strict and ETS are supported");
++			return -1;
++		}
++	}
++
++	/* total ETS BW allocation must add up to 100% */
++	if (ets_seen && total_bw_allocated != 100) {
++		PMD_DRV_LOG(ERR, "Invalid TC Bandwidth allocation configuration");
++		return -1;
++	}
++
++	return nb_tc_used;
+ }
+ 
+ static int
+@@ -3819,15 +3846,22 @@ ice_dev_configure(struct rte_eth_dev *dev)
+ 		struct ice_qos_cfg *qos_cfg = &port_info->qos_cfg;
+ 		struct ice_dcbx_cfg *local_dcb_conf = &qos_cfg->local_dcbx_cfg;
+ 		struct ice_vsi_ctx ctxt;
+-		struct rte_eth_dcb_rx_conf *dcb_conf = &dev->data->dev_conf.rx_adv_conf.dcb_rx_conf;
++		struct rte_eth_dcb_conf *rx_dcb_conf =
++			&dev->data->dev_conf.rx_adv_conf.dcb_rx_conf;
++		struct rte_eth_dcb_conf *tx_dcb_conf =
++			&dev->data->dev_conf.tx_adv_conf.dcb_tx_conf;
+ 		int i;
+-		enum rte_eth_nb_tcs nb_tcs = dcb_conf->nb_tcs;
+-		int nb_tc_used, queues_per_tc;
++		enum rte_eth_nb_tcs nb_tcs = rx_dcb_conf->nb_tcs;
++		int nb_tc_used_rx, nb_tc_used_tx, queues_per_tc;
+ 		uint16_t total_q_nb;
+ 
+-		nb_tc_used = check_dcb_conf(ice_get_port_max_cgd(hw) == ICE_4_CGD_PER_PORT,
+-			dcb_conf);
+-		if (nb_tc_used < 0)
++		nb_tc_used_rx = check_dcb_conf(ice_get_port_max_cgd(hw) == ICE_4_CGD_PER_PORT,
++			rx_dcb_conf);
++		if (nb_tc_used_rx < 0)
++			return -EINVAL;
++		nb_tc_used_tx = check_dcb_conf(ice_get_port_max_cgd(hw) == ICE_4_CGD_PER_PORT,
++			tx_dcb_conf);
++		if (nb_tc_used_tx < 0)
+ 			return -EINVAL;
+ 
+ 		ctxt.info = vsi->info;
+@@ -3837,8 +3871,8 @@ ice_dev_configure(struct rte_eth_dev *dev)
+ 		}
+ 
+ 		total_q_nb = dev->data->nb_rx_queues;
+-		queues_per_tc = total_q_nb / nb_tc_used;
+-		if (total_q_nb % nb_tc_used != 0) {
++		queues_per_tc = total_q_nb / nb_tc_used_rx;
++		if (total_q_nb % nb_tc_used_rx != 0) {
+ 			PMD_DRV_LOG(ERR, "For DCB, number of queues must be evenly divisble by number of used TCs");
+ 			return -EINVAL;
+ 		} else if (!rte_is_power_of_2(queues_per_tc)) {
+@@ -3846,7 +3880,7 @@ ice_dev_configure(struct rte_eth_dev *dev)
+ 			return -EINVAL;
+ 		}
+ 
+-		for (i = 0; i < nb_tc_used; i++) {
++		for (i = 0; i < nb_tc_used_rx; i++) {
+ 			ctxt.info.tc_mapping[i] =
+ 				rte_cpu_to_le_16(((i * queues_per_tc) << ICE_AQ_VSI_TC_Q_OFFSET_S) |
+ 					(rte_log2_u32(queues_per_tc) << ICE_AQ_VSI_TC_Q_NUM_S));
+@@ -3858,29 +3892,21 @@ ice_dev_configure(struct rte_eth_dev *dev)
+ 
+ 		/* Associate each VLAN UP with particular TC */
+ 		for (i = 0; i < ICE_MAX_TRAFFIC_CLASS; i++) {
+-			local_dcb_conf->etscfg.prio_table[i] = dcb_conf->dcb_tc[i];
+-			local_dcb_conf->etsrec.prio_table[i] = dcb_conf->dcb_tc[i];
++			local_dcb_conf->etscfg.prio_table[i] = rx_dcb_conf->dcb_tc[i];
++			local_dcb_conf->etsrec.prio_table[i] = tx_dcb_conf->dcb_tc[i];
+ 		}
+ 
+-		/*
+-		 * Since current API does not support setting ETS BW Share and Scheduler
+-		 * configure all TC as ETS and evenly share load across all existing TC
+-		 **/
+-		const int bw_share_percent = 100 / nb_tc_used;
+-		const int bw_share_left = 100 - bw_share_percent * nb_tc_used;
+-		for (i = 0; i < nb_tc_used; i++) {
++		for (i = 0; i < nb_tc_used_rx; i++) {
+ 			/* Per TC bandwidth table (all valued must add up to 100%), valid on ETS */
+-			local_dcb_conf->etscfg.tcbwtable[i] = bw_share_percent;
+-			local_dcb_conf->etsrec.tcbwtable[i] = bw_share_percent;
++			local_dcb_conf->etscfg.tcbwtable[i] = rx_dcb_conf->dcb_tc_bw[i];
+ 
+ 			/**< Transmission Selection Algorithm. 0 - Strict prio, 2 - ETS */
+-			local_dcb_conf->etscfg.tsatable[i] = 2;
+-			local_dcb_conf->etsrec.tsatable[i] = 2;
++			local_dcb_conf->etscfg.tsatable[i] = rx_dcb_conf->dcb_tsa[i];
+ 		}
+ 
+-		for (i = 0; i < bw_share_left; i++) {
+-			local_dcb_conf->etscfg.tcbwtable[i]++;
+-			local_dcb_conf->etsrec.tcbwtable[i]++;
++		for (i = 0; i < nb_tc_used_tx; i++) {
++			local_dcb_conf->etsrec.tcbwtable[i] = tx_dcb_conf->dcb_tc_bw[i];
++			local_dcb_conf->etsrec.tsatable[i] = tx_dcb_conf->dcb_tsa[i];
+ 		}
+ 
+ 		local_dcb_conf->pfc.pfccap = nb_tcs;
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index f9fb6ae549..13b1a41d3b 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -853,6 +853,7 @@ rte_eth_rss_hf_refine(uint64_t rss_hf)
+ /**@{@name VMDq and DCB maximums */
+ #define RTE_ETH_VMDQ_MAX_VLAN_FILTERS   64 /**< Maximum nb. of VMDq VLAN filters. */
+ #define RTE_ETH_DCB_NUM_USER_PRIORITIES 8  /**< Maximum nb. of DCB priorities. */
++#define RTE_ETH_DCB_NUM_TCS	 8 /**< Maximum nb. of DCB traffic classes. */
+ #define RTE_ETH_VMDQ_DCB_NUM_QUEUES     128 /**< Maximum nb. of VMDq DCB queues. */
+ #define RTE_ETH_DCB_NUM_QUEUES          128 /**< Maximum nb. of DCB queues. */
+ /**@}*/
+@@ -929,11 +930,21 @@ enum rte_eth_nb_pools {
+ 	RTE_ETH_64_POOLS = 64   /**< 64 VMDq pools. */
+ };
+ 
++#define RTE_ETH_DCB_TSA_STRICT	0
++#define RTE_ETH_DCB_TSA_ETS	2
++
+ /* This structure may be extended in future. */
+-struct rte_eth_dcb_rx_conf {
++struct rte_eth_dcb_conf {
+ 	enum rte_eth_nb_tcs nb_tcs; /**< Possible DCB TCs, 4 or 8 TCs */
+-	/** Traffic class each UP mapped to. */
++	/** Traffic class each UP mapped to.
++	 *  Rx packets VLAN UP for Rx configuration
++	 *  Rx PFC Pause frames UP for Tx configuration
++	 */
+ 	uint8_t dcb_tc[RTE_ETH_DCB_NUM_USER_PRIORITIES];
++	/** Traffic class selector algorithm */
++	uint8_t dcb_tsa[RTE_ETH_DCB_NUM_TCS];
++	/** Traffic class relative bandwidth in percents */
++	uint8_t dcb_tc_bw[RTE_ETH_DCB_NUM_TCS];
+ };
+ 
+ struct rte_eth_vmdq_dcb_tx_conf {
+@@ -942,12 +953,6 @@ struct rte_eth_vmdq_dcb_tx_conf {
+ 	uint8_t dcb_tc[RTE_ETH_DCB_NUM_USER_PRIORITIES];
+ };
+ 
+-struct rte_eth_dcb_tx_conf {
+-	enum rte_eth_nb_tcs nb_tcs; /**< Possible DCB TCs, 4 or 8 TCs. */
+-	/** Traffic class each UP mapped to. */
+-	uint8_t dcb_tc[RTE_ETH_DCB_NUM_USER_PRIORITIES];
+-};
+-
+ struct rte_eth_vmdq_tx_conf {
+ 	enum rte_eth_nb_pools nb_queue_pools; /**< VMDq mode, 64 pools. */
+ };
+@@ -1531,7 +1536,7 @@ struct rte_eth_conf {
+ 		/** Port VMDq+DCB configuration. */
+ 		struct rte_eth_vmdq_dcb_conf vmdq_dcb_conf;
+ 		/** Port DCB Rx configuration. */
+-		struct rte_eth_dcb_rx_conf dcb_rx_conf;
++		struct rte_eth_dcb_conf dcb_rx_conf;
+ 		/** Port VMDq Rx configuration. */
+ 		struct rte_eth_vmdq_rx_conf vmdq_rx_conf;
+ 	} rx_adv_conf; /**< Port Rx filtering configuration. */
+@@ -1539,7 +1544,7 @@ struct rte_eth_conf {
+ 		/** Port VMDq+DCB Tx configuration. */
+ 		struct rte_eth_vmdq_dcb_tx_conf vmdq_dcb_tx_conf;
+ 		/** Port DCB Tx configuration. */
+-		struct rte_eth_dcb_tx_conf dcb_tx_conf;
++		struct rte_eth_dcb_conf dcb_tx_conf;
+ 		/** Port VMDq Tx configuration. */
+ 		struct rte_eth_vmdq_tx_conf vmdq_tx_conf;
+ 	} tx_adv_conf; /**< Port Tx DCB configuration (union). */
 -- 
 2.43.0
 
