@@ -2,43 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8ABBCA0EFF
-	for <dpdk-dev@archiver.kernel.org>; Sat, 30 Aug 2025 12:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E273ECA0FFF
+	for <dpdk-dev@archiver.kernel.org>; Sat, 30 Aug 2025 15:38:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6503140E41;
-	Sat, 30 Aug 2025 14:45:08 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.3])
- by mails.dpdk.org (Postfix) with ESMTP id AA61840DCF
- for <dev@dpdk.org>; Sat, 30 Aug 2025 14:45:00 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A3424402E3;
+	Sat, 30 Aug 2025 17:38:32 +0200 (CEST)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com
+ [209.85.160.182])
+ by mails.dpdk.org (Postfix) with ESMTP id AB5E640275
+ for <dev@dpdk.org>; Sat, 30 Aug 2025 17:38:31 +0200 (CEST)
+Received: by mail-qt1-f182.google.com with SMTP id
+ d75a77b69052e-4b320c1353dso6965741cf.1
+ for <dev@dpdk.org>; Sat, 30 Aug 2025 08:38:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=gfPesTjPzJUyFDZCoglUIaW0EF6NLxSf4MKGbs3x2J8=;
- b=jStw00nU5Md2AXg6OCz9Y2plU8Wi7/AKRNRpFbOqLikc4Xf4A2oVsnAsB4reT/
- rvVxqNFm8pb9AZKyeeHKnNZZ6DedV0xzP/li5qKx7wwSXWY0RKl98LyPM29XH8tk
- y+bdpaoGgj/VdrXTOYGLvpa0EVx55f0VHIucwjGBelKS4=
-Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp2 (Coremail) with SMTP id As8vCgDHz+YN8rJogy_MAg--.2603S21;
- Sat, 30 Aug 2025 20:44:59 +0800 (CST)
-From: Feifei Wang <wff_light@vip.163.com>
-To: dev@dpdk.org
-Cc: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
- Feifei Wang <wangfeifei40@huawei.com>
-Subject: [V6 17/17] drivers/net: add hinic3 PMD build and doc files
-Date: Sat, 30 Aug 2025 20:43:21 +0800
-Message-ID: <20250830124332.5351-18-wff_light@vip.163.com>
-X-Mailer: git-send-email 2.47.0.windows.2
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1756568311;
+ x=1757173111; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=zrdrTRhwJq6dnJAEesb/4KutG83y4/k2uGHdFnopEdo=;
+ b=lRU/wu/kCxOsds3W4zDwiUCZbxa9ujh6FY4P6MCOtrDws5sU7PC1309x50JNlON+MQ
+ aSCjdUSmPM+7SNjKW8VZaz6gmkwH43TzN2owjHc4QP2pgd05g6hj6KxtzuTuOWGSFk2U
+ HVzppZ8xbQvmdAH7o5oOSSIloVS/DpuFKFoMKuqpPZmyzw+OfvVndd60GoP8Mg0upaRc
+ /FW9Aq/JnBwiX2QhAOjSqAVsNSpDSgcx1vLAPAec7YO8j4zQ+8mOMiIeJjdGH43fJh16
+ sMeBJSOII4KBETlzZQw2xp3cdWNnO7lqSJ5iaHt0mblLnt6Yaozv0KWfAujcgRLsx+uQ
+ zR6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1756568311; x=1757173111;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=zrdrTRhwJq6dnJAEesb/4KutG83y4/k2uGHdFnopEdo=;
+ b=n4IqrsFQIeZzErSJtRZyHR/1O9CXr4IZjrmxhwMDnlyoFht3XwgeC+eaZLwjsbanBW
+ RYdd7XflCYKw1fS3+kEyj8CNwniL49ykMRvi/Rh9/nEnT/qqZz/eF2+nHLcbdQb93tVQ
+ 5BqlaTt/OVhjlr6XhAOtgPNk5gKkLEP69VOYbWn/vQ8J6PsBvP9Kiffu4KZ7FByRz5Ol
+ Dztd5sElGgmlu2M+VG0qps36Mmi11h4wbmEhv3gbG2qf8AJKLuO53zFca1kNXgD6Bv5t
+ 3i83I3+KEXo8n4FNGMfCgPAv6fxgu2LPL6bPqQPjrwNacCbblQvhteKJLAGT25J80Ucl
+ Ozuw==
+X-Gm-Message-State: AOJu0Yyjl4OzhKfxzmSv1kgYuYLouIOCpr+Jwg6QUC+O/dxci/SGbof0
+ jHg5COrYwdA2Ke1bUxEVzo1rfavFCdiNOlRxzf5zC11YZO/1RxLqh/8skA6QCmaHuL8=
+X-Gm-Gg: ASbGncughY0v+6HZ171DraY9KIB+/6UJak0OdHTndGKzpDaZOR56r8bXtyQQda95qJw
+ 7TZywENap3o8s7Zqli4tFAeIK5G2cr0W9zP7dDbXKveYHRMgvrz2JXnSkzkv5ro6ouGdQlDv31O
+ zXGU/UXYLMtNaqLIX8Qu67B1M2kkfOhZpO2Q+5Q+mFuvTYRVBPfoAemh7DkQiJVL3pNUPi1f+Y8
+ 1antHIrb8QkRUTc5+cy/6zIa+wZdtkkPyXF/luy51qsv7L9Pomg2Du7nANuoLSO2MrHybS+AZ7o
+ P76+cdUpr3S4lPdNSubMP0XQ4WOIsDOBpSIXwiSVTlgFkYFFvW8GLba9cdw6NhWspULXdpOuJC7
+ EOGt4h2/OId4NDuqv12qy4ZznH3RCYyysaGJeIoWNm9DRQutjhWxMyDWTtgigqvjxmXftECEiMo
+ 0=
+X-Google-Smtp-Source: AGHT+IFQgTFvN7yGSfYS58bF4rPT+gY6afg17+VJFpmttz+cnC7EZV0bqqEXiNvnuieOB0dGg3Emfg==
+X-Received: by 2002:a05:622a:199f:b0:4b2:8ac5:27c5 with SMTP id
+ d75a77b69052e-4b31dd82934mr27220681cf.80.1756568310619; 
+ Sat, 30 Aug 2025 08:38:30 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-4b30b599c52sm34331801cf.23.2025.08.30.08.38.29
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 30 Aug 2025 08:38:30 -0700 (PDT)
+Date: Sat, 30 Aug 2025 08:38:27 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Feifei Wang <wff_light@vip.163.com>
+Cc: dev@dpdk.org
+Subject: Re: [V6 00/17] add-hinic3-PMD-driver
+Message-ID: <20250830083827.12244c60@hermes.local>
 In-Reply-To: <20250830124332.5351-1-wff_light@vip.163.com>
 References: <20250418090621.9638-1-wff_light@vip.163.com>
  <20250830124332.5351-1-wff_light@vip.163.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDHz+YN8rJogy_MAg--.2603S21
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KF4xGw18trW7tw1Dtw4DCFg_yoW5JrW3pa
- 1UC3yFkryxGr47XwnxtF17ArZ5Jw4vkayUu39rCa4YyF98Gr1UZw4jyay0vrZrJ34IvFyS
- 9F1Svr9Ikr1jqwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j089tUUUUU=
-X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiBgi5Cmiyd2bAAgAAs0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,110 +82,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Yi Chen <chenyi221@huawei.com>
+On Sat, 30 Aug 2025 20:43:04 +0800
+Feifei Wang <wff_light@vip.163.com> wrote:
 
-The hinic3.ini file is added to this patch.
+> *** BLURB HERE ***
+> 
 
-Signed-off-by: Yi Chen <chenyi221@huawei.com>
-Reviewed-by: Xin Wang <wangxin679@h-partners.com>
-Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
----
- MAINTAINERS                         |  1 +
- doc/guides/nics/features/hinic3.ini | 60 +++++++++++++++++++++++++++++
- drivers/net/meson.build             |  1 +
- 3 files changed, 62 insertions(+)
- create mode 100644 doc/guides/nics/features/hinic3.ini
+You are supposed to replace this text "*** BLURB HERE ***" with a
+short concise description of the patch series.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9b7c1fc813..06816a2c2d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -783,6 +783,7 @@ Huawei hinic3
- M: Feifei Wang <wangfeifei40@huawei.com>
- F: drivers/net/hinic3/
- F: doc/guides/nics/hinic3.rst
-+F: doc/guides/nics/features/hinic3.ini
- 
- Intel Network Common Code
- M: Bruce Richardson <bruce.richardson@intel.com>
-diff --git a/doc/guides/nics/features/hinic3.ini b/doc/guides/nics/features/hinic3.ini
-new file mode 100644
-index 0000000000..50012ca696
---- /dev/null
-+++ b/doc/guides/nics/features/hinic3.ini
-@@ -0,0 +1,60 @@
-+;
-+; Supported features of the 'hinic3' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Speed capabilities   = Y
-+Link speed configuration = Y
-+Link status          = Y
-+Link status event    = Y
-+Rx interrupt         = Y
-+Queue start/stop     = Y
-+Runtime Rx queue setup = Y
-+Runtime Tx queue setup = Y
-+Burst mode info      = Y
-+Fast mbuf free       = Y
-+Free Tx mbuf on demand = Y
-+MTU update           = Y
-+Scattered Rx         = Y
-+TSO                  = Y
-+LRO                  = Y
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+Multicast MAC filter = Y
-+RSS hash             = Y
-+RSS key update       = Y
-+RSS reta update      = Y
-+VLAN filter          = Y
-+Flow control         = Y
-+Traffic manager      = Y
-+CRC offload          = Y
-+FEC                  = Y
-+L3 checksum offload  = Y
-+L4 checksum offload  = Y
-+Inner L3 checksum    = Y
-+Inner L4 checksum    = Y
-+Packet type parsing  = Y
-+Basic stats          = Y
-+Extended stats       = Y
-+Stats per queue      = Y
-+FW version           = Y
-+Registers dump       = Y
-+Timesync             = Y
-+Multiprocess aware   = Y
-+Linux                = Y
-+x86-64               = Y
-+ARMv8                = Y
-+
-+[rte_flow items]
-+any                  = Y
-+eth                  = Y
-+icmp                 = Y
-+ipv4                 = Y
-+ipv6                 = Y
-+tcp                  = Y
-+udp                  = Y
-+vxlan                = Y
-+[rte_flow actions]
-+queue                = Y
-diff --git a/drivers/net/meson.build b/drivers/net/meson.build
-index 61f8cddb30..2d32068ed2 100644
---- a/drivers/net/meson.build
-+++ b/drivers/net/meson.build
-@@ -23,6 +23,7 @@ drivers = [
-         'failsafe',
-         'gve',
-         'hinic',
-+        'hinic3',
-         'hns3',
-         'intel/e1000',
-         'intel/fm10k',
--- 
-2.47.0.windows.2
+> Feifei Wang (2):
+>   net/hinic3: add dev ops
+>   net/hinic3: add Rx/Tx functions
+> 
+> Xin Wang (6):
+>   net/hinic3: add basic header files
+>   net/hinic3: add support for cmdq mechanism
+>   net/hinic3: add NIC event module
+>   net/hinic3: add context and work queue support
+>   net/hinic3: add device initialization
+>   net/hinic3: add RSS promiscuous ops
+> 
+> Yi Chen (9):
+>   doc: add hinic3 driver
+>   net/hinic3: add hardware interfaces of BAR operation
+>   net/hinic3: add eq mechanism
+>   net/hinic3: add mgmt module function code
+>   net/hinic3: add module about hardware operation
+>   net/hinic3: add a NIC business configuration module
+>   net/hinic3: add a mailbox communication module
+>   net/hinic3: add flow control and FDIR module
+>   drivers/net: add hinic3 PMD build and doc files
+> 
+>  .mailmap                                   |    4 +-
+>  MAINTAINERS                                |    6 +
+>  doc/guides/nics/features/hinic3.ini        |   60 +
+>  doc/guides/nics/hinic3.rst                 |   47 +
+>  doc/guides/nics/index.rst                  |    1 +
+>  doc/guides/rel_notes/release_25_07.rst     |    4 +
 
+25.07 is released. new patches should be targeting 25.11
