@@ -2,41 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97113CA0FFD
-	for <dpdk-dev@archiver.kernel.org>; Sat, 30 Aug 2025 12:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC7CCA0FFD
+	for <dpdk-dev@archiver.kernel.org>; Sat, 30 Aug 2025 12:40:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9452640262;
-	Sat, 30 Aug 2025 14:40:22 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.4])
- by mails.dpdk.org (Postfix) with ESMTP id 2F19740151
- for <dev@dpdk.org>; Sat, 30 Aug 2025 14:40:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A83F8402DC;
+	Sat, 30 Aug 2025 14:40:51 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
+ by mails.dpdk.org (Postfix) with ESMTP id 6A40740151
+ for <dev@dpdk.org>; Sat, 30 Aug 2025 14:40:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=1B4PoYYy1TYzYydDIYtdc2uAgpjyWkzM6eGQhxyXw5c=;
- b=EtMoG9A9I088FJ09JVtB20ul2Xi7NF6Yjhg57Gu49QlYgQUHsmrqmOQdR50png
- HtEHM01cQdkuRsWglgeCZiaLyPoKR2HTSODrHxvsutzIUjJ7Kqn9cUUXDsK1+WnA
- Ykv9b/XPvRdw0ZI8q9NxBgYWnCzBnlFJdEKJYuUtqaX3Q=
+ MIME-Version; bh=TNvkyLCUgEMYkS5R5MRJEvAOth4KBI7c000ebASU0tw=;
+ b=BrvEG/iVJsYtWKeS6K9zOUm0S71t5iWFSOXN+35ccZp2PRgfT6koIdrJNERePU
+ 3leFr0iPFTxKgwe7w4m57eWC2AenqJAh+Xhl+LMTLz3wMYb1q/cXmi3Ya+YslLwV
+ l/kWQ3ztiYHbRRlTdQq+xgMyX6tpuem1mU4pPI6emCP9U=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp2 (Coremail) with SMTP id As8vCgDHT8sf8bJohyfMAg--.4754S4;
- Sat, 30 Aug 2025 20:40:16 +0800 (CST)
+ by gzsmtp2 (Coremail) with SMTP id As8vCgDHT8sf8bJohyfMAg--.4754S5;
+ Sat, 30 Aug 2025 20:40:46 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
-Cc: Yi Chen <chenyi221@huawei.com>
-Subject: [V5 00/18] add hinic3 pmd driver
-Date: Sat, 30 Aug 2025 20:39:12 +0800
-Message-ID: <20250830123942.5037-1-wff_light@vip.163.com>
+Cc: Yi Chen <chenyi221@huawei.com>, Feifei Wang <wangfeifei40@huawei.com>,
+ Xin Wang <wangxin679@h-partners.com>
+Subject: [V5 01/18] doc: add some basic files to describe the hinic3 driver.
+Date: Sat, 30 Aug 2025 20:39:13 +0800
+Message-ID: <20250830123942.5037-2-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
-In-Reply-To: <20250418090621.9638-1-wff_light@vip.163.com>
+In-Reply-To: <20250830123942.5037-1-wff_light@vip.163.com>
 References: <20250418090621.9638-1-wff_light@vip.163.com>
+ <20250830123942.5037-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID: As8vCgDHT8sf8bJohyfMAg--.4754S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKw1fAr48Kw43JFy3ur1Utrb_yoW3WryxpF
- 4UC3y3Ar4DKrW7tw1kJw4xAa45X3WxG345K3W3Z3ZYvr97ZFy5A34UGFW8Ar9xtr17JF12
- vFs09r4qg3W5tw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UQYFZUUUUU=
+X-CM-TRANSID: As8vCgDHT8sf8bJohyfMAg--.4754S5
+X-Coremail-Antispam: 1Uf129KBjvJXoWxArWUur47CF4rtr1kZF1DZFb_yoW7JF1fpw
+ 43CryfGF98Gw1xurnIy3W7Ar15A3Z5C3yUuay8tFyrZFnxAr10gw48KFWIy39rGFyY9a4f
+ Zr1jgrySk3WjqrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jYOJnUUUUU=
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiHh+5CmiyJ8GTfAABsg
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiAQ65CmiydD3FygAAsg
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,166 +54,154 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Yi Chen <chenyi221@huawei.com>=0D
 
-The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support=0D
-for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.=0D
+This patch adds some basic files to describe the hinic3 driver.=0D
 =0D
-v5:=0D
-- solve hinic3.ini unknown feature issue=0D
-=0D
-V4:=0D
-- solve patch application conflict issue=0D
-=0D
-V3:=0D
-- Fix checkpatchs error issue=0D
-=0D
-v2:=0D
-- modify CI compile errors=0D
-=0D
-V1:=0D
-- modify community comments and compile issues=0D
-- remove the compilation flags in the meson build=0D
-- remove (void) cast=0D
-- remove "BLURE HERE ***" in cover letter=0D
-=0D
-RFC:=0D
-- add hinic3 pmd driver code, modify the driver code to adapt to Huawei SPx=
- series network cards.=0D
-=0D
-Feifei Wang (2):=0D
-  net/hinic3: add dev ops=0D
-  net/hinic3: add Rx/Tx functions=0D
-=0D
-Xin Wang (7):=0D
-  net/hinic3: add basic header files=0D
-  net/hinic3: add support for cmdq mechanism=0D
-  net/hinic3: add NIC event module=0D
-  net/hinic3: add context and work queue support=0D
-  net/hinic3: add device initialization=0D
-  net/hinic3: add MML and EEPROM access feature=0D
-  net/hinic3: add RSS promiscuous ops=0D
-=0D
-Yi Chen (9):=0D
-  add some basic files to describe the hinic3 driver.=0D
-  net/hinic3: add hardware interfaces of BAR operation=0D
-  net/hinic3: add eq mechanism function code=0D
-  net/hinic3: add mgmt module function code=0D
-  net/hinic3: add module about hardware operation=0D
-  net/hinic3: add a NIC business configuration module=0D
-  net/hinic3: add a mailbox communication module=0D
-  net/hinic3: add FDIR flow control module=0D
-  drivers/net: add hinic3 PMD build and doc files=0D
-=0D
- .mailmap                                   |    4 +-=0D
- MAINTAINERS                                |    6 +=0D
- doc/guides/nics/features/hinic3.ini        |   61 +=0D
- doc/guides/nics/hinic3.rst                 |   51 +=0D
- doc/guides/nics/index.rst                  |    1 +=0D
- doc/guides/rel_notes/release_25_07.rst     |    4 +=0D
- drivers/net/hinic3/base/hinic3_cmd.h       |  231 ++=0D
- drivers/net/hinic3/base/hinic3_cmdq.c      |  978 +++++=0D
- drivers/net/hinic3/base/hinic3_cmdq.h      |  230 ++=0D
- drivers/net/hinic3/base/hinic3_compat.h    |  266 ++=0D
- drivers/net/hinic3/base/hinic3_csr.h       |  108 +=0D
- drivers/net/hinic3/base/hinic3_eqs.c       |  721 ++++=0D
- drivers/net/hinic3/base/hinic3_eqs.h       |   98 +=0D
- drivers/net/hinic3/base/hinic3_hw_cfg.c    |  240 ++=0D
- drivers/net/hinic3/base/hinic3_hw_cfg.h    |  121 +=0D
- drivers/net/hinic3/base/hinic3_hw_comm.c   |  452 +++=0D
- drivers/net/hinic3/base/hinic3_hw_comm.h   |  366 ++=0D
- drivers/net/hinic3/base/hinic3_hwdev.c     |  573 +++=0D
- drivers/net/hinic3/base/hinic3_hwdev.h     |  177 +=0D
- drivers/net/hinic3/base/hinic3_hwif.c      |  779 ++++=0D
- drivers/net/hinic3/base/hinic3_hwif.h      |  142 +=0D
- drivers/net/hinic3/base/hinic3_mbox.c      | 1399 +++++++=0D
- drivers/net/hinic3/base/hinic3_mbox.h      |  199 +=0D
- drivers/net/hinic3/base/hinic3_mgmt.c      |  392 ++=0D
- drivers/net/hinic3/base/hinic3_mgmt.h      |  121 +=0D
- drivers/net/hinic3/base/hinic3_nic_cfg.c   | 1828 +++++++++=0D
- drivers/net/hinic3/base/hinic3_nic_cfg.h   | 1527 ++++++++=0D
- drivers/net/hinic3/base/hinic3_nic_event.c |  433 +++=0D
- drivers/net/hinic3/base/hinic3_nic_event.h |   39 +=0D
- drivers/net/hinic3/base/hinic3_wq.c        |  148 +=0D
- drivers/net/hinic3/base/hinic3_wq.h        |  109 +=0D
- drivers/net/hinic3/base/meson.build        |   50 +=0D
- drivers/net/hinic3/hinic3_ethdev.c         | 3866 ++++++++++++++++++++=0D
- drivers/net/hinic3/hinic3_ethdev.h         |  167 +=0D
- drivers/net/hinic3/hinic3_fdir.c           | 1394 +++++++=0D
- drivers/net/hinic3/hinic3_fdir.h           |  398 ++=0D
- drivers/net/hinic3/hinic3_flow.c           | 1700 +++++++++=0D
- drivers/net/hinic3/hinic3_flow.h           |   42 +=0D
- drivers/net/hinic3/hinic3_nic_io.c         |  828 +++++=0D
- drivers/net/hinic3/hinic3_nic_io.h         |  169 +=0D
- drivers/net/hinic3/hinic3_rx.c             | 1099 ++++++=0D
- drivers/net/hinic3/hinic3_rx.h             |  356 ++=0D
- drivers/net/hinic3/hinic3_tx.c             | 1028 ++++++=0D
- drivers/net/hinic3/hinic3_tx.h             |  315 ++=0D
- drivers/net/hinic3/meson.build             |   33 +=0D
- drivers/net/hinic3/mml/hinic3_dbg.c        |  171 +=0D
- drivers/net/hinic3/mml/hinic3_dbg.h        |  160 +=0D
- drivers/net/hinic3/mml/hinic3_mml_cmd.c    |  375 ++=0D
- drivers/net/hinic3/mml/hinic3_mml_cmd.h    |  131 +=0D
- drivers/net/hinic3/mml/hinic3_mml_ioctl.c  |  215 ++=0D
- drivers/net/hinic3/mml/hinic3_mml_lib.c    |  136 +=0D
- drivers/net/hinic3/mml/hinic3_mml_lib.h    |  276 ++=0D
- drivers/net/hinic3/mml/hinic3_mml_main.c   |  167 +=0D
- drivers/net/hinic3/mml/hinic3_mml_queue.c  |  745 ++++=0D
- drivers/net/hinic3/mml/hinic3_mml_queue.h  |  256 ++=0D
- drivers/net/hinic3/mml/meson.build         |   45 +=0D
- drivers/net/meson.build                    |    1 +=0D
- 57 files changed, 25926 insertions(+), 1 deletion(-)=0D
- create mode 100644 doc/guides/nics/features/hinic3.ini=0D
+Signed-off-by: Feifei Wang <wangfeifei40@huawei.com>=0D
+Signed-off-by: Yi Chen <chenyi221@huawei.com>=0D
+Reviewed-by: Xin Wang <wangxin679@h-partners.com>=0D
+---=0D
+ .mailmap                               |  4 +-=0D
+ MAINTAINERS                            |  6 +++=0D
+ doc/guides/nics/hinic3.rst             | 51 ++++++++++++++++++++++++++=0D
+ doc/guides/nics/index.rst              |  1 +=0D
+ doc/guides/rel_notes/release_25_07.rst |  4 ++=0D
+ 5 files changed, 65 insertions(+), 1 deletion(-)=0D
  create mode 100644 doc/guides/nics/hinic3.rst=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_cmd.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_compat.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_csr.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_eqs.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_eqs.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_hwif.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_hwif.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_mbox.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_mbox.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.h=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_wq.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_wq.h=0D
- create mode 100644 drivers/net/hinic3/base/meson.build=0D
- create mode 100644 drivers/net/hinic3/hinic3_ethdev.c=0D
- create mode 100644 drivers/net/hinic3/hinic3_ethdev.h=0D
- create mode 100644 drivers/net/hinic3/hinic3_fdir.c=0D
- create mode 100644 drivers/net/hinic3/hinic3_fdir.h=0D
- create mode 100644 drivers/net/hinic3/hinic3_flow.c=0D
- create mode 100644 drivers/net/hinic3/hinic3_flow.h=0D
- create mode 100644 drivers/net/hinic3/hinic3_nic_io.c=0D
- create mode 100644 drivers/net/hinic3/hinic3_nic_io.h=0D
- create mode 100644 drivers/net/hinic3/hinic3_rx.c=0D
- create mode 100644 drivers/net/hinic3/hinic3_rx.h=0D
- create mode 100644 drivers/net/hinic3/hinic3_tx.c=0D
- create mode 100644 drivers/net/hinic3/hinic3_tx.h=0D
- create mode 100644 drivers/net/hinic3/meson.build=0D
- create mode 100644 drivers/net/hinic3/mml/hinic3_dbg.c=0D
- create mode 100644 drivers/net/hinic3/mml/hinic3_dbg.h=0D
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_cmd.c=0D
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_cmd.h=0D
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_ioctl.c=0D
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_lib.c=0D
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_lib.h=0D
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_main.c=0D
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_queue.c=0D
- create mode 100644 drivers/net/hinic3/mml/hinic3_mml_queue.h=0D
- create mode 100644 drivers/net/hinic3/mml/meson.build=0D
 =0D
+diff --git a/.mailmap b/.mailmap=0D
+index 8e898e303e..ecd7fe5805 100644=0D
+--- a/.mailmap=0D
++++ b/.mailmap=0D
+@@ -434,7 +434,7 @@ Fang TongHao <fangtonghao@sangfor.com.cn>=0D
+ Fan Zhang <fanzhang.oss@gmail.com> <roy.fan.zhang@intel.com>=0D
+ Farah Smith <farah.smith@broadcom.com>=0D
+ Fei Chen <chenwei.0515@bytedance.com>=0D
+-Feifei Wang <feifei.wang2@arm.com> <feifei.wang@arm.com>=0D
++Feifei Wang <wangfeifei40@huawei.com> <feifei.wang1218@gmail.com> <feifei.=
+wang2@arm.com> <feifei.wang@arm.com> <wff_light@vip.163.com>=0D
+ Fei Qin <fei.qin@corigine.com>=0D
+ Fengjiang Liu <liufengjiang.0426@bytedance.com>=0D
+ Fengnan Chang <changfengnan@bytedance.com>=0D
+@@ -1735,6 +1735,7 @@ Xingguang He <xingguang.he@intel.com>=0D
+ Xingyou Chen <niatlantice@gmail.com>=0D
+ Xing Wang <xing_wang@realsil.com.cn>=0D
+ Xinying Yu <xinying.yu@corigine.com>=0D
++Xin Wang <wangxin679@h-partners.com>=0D
+ Xin Long <longxin.xl@alibaba-inc.com>=0D
+ Xi Zhang <xix.zhang@intel.com>=0D
+ Xuan Ding <xuan.ding@intel.com>=0D
+@@ -1769,6 +1770,7 @@ Yelena Krivosheev <yelena@marvell.com>=0D
+ Yerden Zhumabekov <e_zhumabekov@sts.kz> <yerden.zhumabekov@sts.kz>=0D
+ Yevgeny Kliteynik <kliteyn@nvidia.com>=0D
+ Yicai Lu <luyicai@huawei.com>=0D
++Yi Chen <chenyi221@huawei.com>=0D
+ Yiding Zhou <yidingx.zhou@intel.com>=0D
+ Yi Li <liyi1@chinatelecom.cn>=0D
+ Yi Liu <yi.liu@nxp.com>=0D
+diff --git a/MAINTAINERS b/MAINTAINERS=0D
+index 0e9357f3a3..eeb735679e 100644=0D
+--- a/MAINTAINERS=0D
++++ b/MAINTAINERS=0D
+@@ -780,6 +780,12 @@ F: drivers/net/hinic/=0D
+ F: doc/guides/nics/hinic.rst=0D
+ F: doc/guides/nics/features/hinic.ini=0D
+ =0D
++Huawei hinic3=0D
++M: Feifei Wang <wangfeifei40@huawei.com>=0D
++F: drivers/net/hinic3/=0D
++F: doc/guides/nics/hinic3.rst=0D
++F: doc/guides/nics/features/hinic3.ini=0D
++=0D
+ Intel Network Common Code=0D
+ M: Bruce Richardson <bruce.richardson@intel.com>=0D
+ T: git://dpdk.org/next/dpdk-next-net-intel=0D
+diff --git a/doc/guides/nics/hinic3.rst b/doc/guides/nics/hinic3.rst=0D
+new file mode 100644=0D
+index 0000000000..c9e49a2be2=0D
+--- /dev/null=0D
++++ b/doc/guides/nics/hinic3.rst=0D
+@@ -0,0 +1,51 @@=0D
++..  SPDX-License-Identifier: BSD-3-Clause=0D
++    Copyright(c) 2025 Huawei Technologies Co., Ltd=0D
++=0D
++HINIC Poll Mode Driver=0D
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=0D
++=0D
++The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support=0D
++for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.=0D
++=0D
++Features=0D
++--------=0D
++=0D
++- Multi arch support: x86_64, ARMv8.=0D
++- Multiple queues for TX and RX=0D
++- Receiver Side Scaling (RSS)=0D
++- flow filtering=0D
++- Checksum offload=0D
++- TSO offload=0D
++- Promiscuous mode=0D
++- Port hardware statistics=0D
++- Link state information=0D
++- Link flow control=0D
++- Scattered and gather for TX and RX=0D
++- Allmulticast mode=0D
++- MTU update=0D
++- Multicast MAC filter=0D
++- Flow API=0D
++- Set Link down or up=0D
++- VLAN filter and VLAN offload=0D
++- SR-IOV - Partially supported at this point, VFIO only=0D
++- FW version=0D
++- LRO=0D
++=0D
++Prerequisites=0D
++-------------=0D
++=0D
++- Learning about Huawei Hi1823 Series Intelligent NICs using=0D
++  `<https://www.hikunpeng.com/compute/component/nic>`_.=0D
++=0D
++- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>` to se=
+tup the basic DPDK environment.=0D
++=0D
++=0D
++Driver compilation and testing=0D
++------------------------------=0D
++=0D
++Refer to the document :ref:`compiling and testing a PMD for a NIC <pmd_bui=
+ld_and_test>`=0D
++for details.=0D
++=0D
++Limitations or Known issues=0D
++---------------------------=0D
++X86-32, Windows, and BSD are not supported yet.=0D
+diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst=0D
+index 57d161c526..1a1e3a6825 100644=0D
+--- a/doc/guides/nics/index.rst=0D
++++ b/doc/guides/nics/index.rst=0D
+@@ -33,6 +33,7 @@ Network Interface Controller Drivers=0D
+     fm10k=0D
+     gve=0D
+     hinic=0D
++    hinic3=0D
+     hns3=0D
+     i40e=0D
+     ice=0D
+diff --git a/doc/guides/rel_notes/release_25_07.rst b/doc/guides/rel_notes/=
+release_25_07.rst=0D
+index b75405edf6..0821ca8b63 100644=0D
+--- a/doc/guides/rel_notes/release_25_07.rst=0D
++++ b/doc/guides/rel_notes/release_25_07.rst=0D
+@@ -160,6 +160,10 @@ New Features=0D
+   (including out-of-tree nodes).=0D
+   This minimizes footprint of node specific mbuf dynamic field.=0D
+ =0D
++* **Added Huawei hinic3 net driver.**=0D
++=0D
++  * Added network driver for the Huawei SPx series Network Adapters.=0D
++=0D
+ =0D
+ Removed Items=0D
+ -------------=0D
 -- =0D
 2.45.1.windows.1=0D
 =0D
