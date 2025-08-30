@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 522B1CA0EFF
-	for <dpdk-dev@archiver.kernel.org>; Sat, 30 Aug 2025 12:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3E0CA0FFD
+	for <dpdk-dev@archiver.kernel.org>; Sat, 30 Aug 2025 12:45:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5CA0340691;
-	Sat, 30 Aug 2025 14:44:52 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
- by mails.dpdk.org (Postfix) with ESMTP id 0BBAC4065C
- for <dev@dpdk.org>; Sat, 30 Aug 2025 14:44:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 41F17406FF;
+	Sat, 30 Aug 2025 14:44:54 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.220])
+ by mails.dpdk.org (Postfix) with ESMTP id 0A71C4065C
+ for <dev@dpdk.org>; Sat, 30 Aug 2025 14:44:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=AwbRq6MVX5cuMa9eTcHKYF1ULJq+JZfcJWTobDTzRkU=;
- b=FPPwCiamkVIju4gi++ONWS5EfYt+paNhmv4IzAotc6OGZhwjbBAFkyO+z0+6Kt
- qwLRwPa0fPYXJffsMWnECsuHtDLUXFcZT+MBUcE9kiJGHnHtJgayfz6+UNHnPuJP
- wBeY/3IzuHURxKER6+ildWh8yxaWVgr2rZmt6mJ63ZHMk=
+ MIME-Version; bh=SaXYWkTnVWFo8Jr9OedmfNiudZ63z1cMXAfvZul9F3I=;
+ b=K8/ofnYvTThOVZeMkpD4cVESIdwIeqqv1MUNO00l4LCupKZxKPgGnL3YfEGcc7
+ 6OZ69WAbxKsk/sch7fp0w8d9SPICYMmD9CXCm8Bt9dwxier0W9obQXr5Kiw8XRAE
+ 4Gvds0P7h5AWYcSczMcW9iV3YtMRhRtPS1QGRm9lwRdBQ=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp2 (Coremail) with SMTP id As8vCgDHz+YN8rJogy_MAg--.2603S9;
- Sat, 30 Aug 2025 20:44:45 +0800 (CST)
+ by gzsmtp2 (Coremail) with SMTP id As8vCgDHz+YN8rJogy_MAg--.2603S10;
+ Sat, 30 Aug 2025 20:44:46 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
-Cc: Xin Wang <wangxin679@h-partners.com>, Yi Chen <chenyi221@huawei.com>,
+Cc: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
  Feifei Wang <wangfeifei40@huawei.com>
-Subject: [V6 05/17] net/hinic3: add NIC event module
-Date: Sat, 30 Aug 2025 20:43:09 +0800
-Message-ID: <20250830124332.5351-6-wff_light@vip.163.com>
+Subject: [V6 06/17] net/hinic3: add eq mechanism
+Date: Sat, 30 Aug 2025 20:43:10 +0800
+Message-ID: <20250830124332.5351-7-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
 In-Reply-To: <20250830124332.5351-1-wff_light@vip.163.com>
 References: <20250418090621.9638-1-wff_light@vip.163.com>
  <20250830124332.5351-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDHz+YN8rJogy_MAg--.2603S9
-X-Coremail-Antispam: 1Uf129KBjvAXoW3KFykGr1UZr47Zw1kGw4xCrg_yoW8XryDJo
- Waqr4Ygr1Fqr4xCay7tFn7CFs7ZrWDWFZ5Jw4YkFW3W3ZrX34YqayfXr4Yy3W8Wr45CrW3
- A3WkX34xtanrXw48n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUrD73DUUUU
+X-CM-TRANSID: As8vCgDHz+YN8rJogy_MAg--.2603S10
+X-Coremail-Antispam: 1Uf129KBjvAXoWfur4xXFWkAw4DWFW5CF13CFg_yoW8KF4xGo
+ W3GF43tw4rtr1xA3Wvvrs2yFyqyFs09rn8Jay3Gas7Zay2qr15Ga17GF4Sqa1SqrWqyFy8
+ CFWfKwnayw47u3s3n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUrq2MDUUUU
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiBAK5CmiyePi8TQAAse
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiHh65Cmiy3cEjqgAAs8
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,492 +52,856 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Xin Wang <wangxin679@h-partners.com>
+From: Yi Chen <chenyi221@huawei.com>
 
-Currently, there are two types of events: pf/vf connection status
-and port information printing. This patch contains related data
-structures and function codes.
+Eqs include aeq and ceq. Aeq is a kind of queue for mgmt
+asynchronous message and mgmt command response message.
+This patch introduces data structures, initialization,
+and related interfaces about aeq.
 
-Signed-off-by: Xin Wang <wangxin679@h-partners.com>
-Reviewed-by: Yi Chen <chenyi221@huawei.com>
+Signed-off-by: Yi Chen <chenyi221@huawei.com>
+Reviewed-by: Xin Wang <wangxin679@h-partners.com>
 Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
 ---
- drivers/net/hinic3/base/hinic3_nic_event.c | 407 +++++++++++++++++++++
- drivers/net/hinic3/base/hinic3_nic_event.h |  38 ++
- drivers/net/hinic3/base/meson.build        |   1 +
- 3 files changed, 446 insertions(+)
- create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.c
- create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.h
+ drivers/net/hinic3/base/hinic3_eqs.c | 710 +++++++++++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_eqs.h |  98 ++++
+ drivers/net/hinic3/base/meson.build  |   1 +
+ 3 files changed, 809 insertions(+)
+ create mode 100644 drivers/net/hinic3/base/hinic3_eqs.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_eqs.h
 
-diff --git a/drivers/net/hinic3/base/hinic3_nic_event.c b/drivers/net/hinic3/base/hinic3_nic_event.c
+diff --git a/drivers/net/hinic3/base/hinic3_eqs.c b/drivers/net/hinic3/base/hinic3_eqs.c
 new file mode 100644
-index 0000000000..716744d69e
+index 0000000000..a6720de974
 --- /dev/null
-+++ b/drivers/net/hinic3/base/hinic3_nic_event.c
-@@ -0,0 +1,407 @@
++++ b/drivers/net/hinic3/base/hinic3_eqs.c
+@@ -0,0 +1,710 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2025 Huawei Technologies Co., Ltd
 + */
-+
++#include <unistd.h>
 +#include "hinic3_compat.h"
-+#include "hinic3_cmd.h"
++#include "hinic3_csr.h"
++#include "hinic3_eqs.h"
++#include "hinic3_hwdev.h"
 +#include "hinic3_hwif.h"
-+#include "hinic3_nic_cfg.h"
++#include "hinic3_mbox.h"
++#include "hinic3_mgmt.h"
 +#include "hinic3_nic_event.h"
-+#include "hinic3_ethdev.h"
 +
-+static const char *g_hw_to_char_fec[HILINK_FEC_MAX_TYPE] = {
-+	"not set", "rsfec", "basefec", "nofec", "llrsfec",
-+};
-+static const char *g_hw_to_speed_info[PORT_SPEED_UNKNOWN] = {
-+	"not set", "10MB", "100MB", "1GB",   "10GB",
-+	"25GB",	   "40GB", "50GB",  "100GB", "200GB",
-+};
-+static const char *g_hw_to_an_state_info[PORT_CFG_AN_OFF + 1] = {
-+	"not set",
-+	"on",
-+	"off",
-+};
++/* Indicate AEQ_CTRL_0 shift. */
++#define AEQ_CTRL_0_INTR_IDX_SHIFT     0
++#define AEQ_CTRL_0_DMA_ATTR_SHIFT     12
++#define AEQ_CTRL_0_PCI_INTF_IDX_SHIFT 20
++#define AEQ_CTRL_0_INTR_MODE_SHIFT    31
 +
-+struct port_type_table {
-+	uint32_t port_type;
-+	const char *port_type_name;
-+};
++/* Indicate AEQ_CTRL_0 mask. */
++#define AEQ_CTRL_0_INTR_IDX_MASK     0x3FFU
++#define AEQ_CTRL_0_DMA_ATTR_MASK     0x3FU
++#define AEQ_CTRL_0_PCI_INTF_IDX_MASK 0x7U
++#define AEQ_CTRL_0_INTR_MODE_MASK    0x1U
 +
-+void
-+get_port_info(struct hinic3_hwdev *hwdev, uint8_t link_state,
-+	      struct rte_eth_link *link)
-+{
-+	uint32_t port_speed[LINK_SPEED_LEVELS] = {
-+		RTE_ETH_SPEED_NUM_NONE, RTE_ETH_SPEED_NUM_10M,
-+		RTE_ETH_SPEED_NUM_100M, RTE_ETH_SPEED_NUM_1G,
-+		RTE_ETH_SPEED_NUM_10G,	RTE_ETH_SPEED_NUM_25G,
-+		RTE_ETH_SPEED_NUM_40G,	RTE_ETH_SPEED_NUM_50G,
-+		RTE_ETH_SPEED_NUM_100G, RTE_ETH_SPEED_NUM_200G,
-+	};
-+	struct nic_port_info port_info = {0};
-+	int err;
++/* Set and clear the AEQ_CTRL_0 bit fields. */
++#define AEQ_CTRL_0_SET(val, member) \
++	(((val) & AEQ_CTRL_0_##member##_MASK) << AEQ_CTRL_0_##member##_SHIFT)
++#define AEQ_CTRL_0_CLEAR(val, member) \
++	((val) & (~(AEQ_CTRL_0_##member##_MASK << AEQ_CTRL_0_##member##_SHIFT)))
 +
-+	if (!link_state) {
-+		link->link_status = RTE_ETH_LINK_DOWN;
-+		link->link_speed = RTE_ETH_SPEED_NUM_NONE;
-+		link->link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
-+		link->link_autoneg = RTE_ETH_LINK_FIXED;
-+	} else {
-+		link->link_status = RTE_ETH_LINK_UP;
++/* Indicate AEQ_CTRL_1 shift. */
++#define AEQ_CTRL_1_LEN_SHIFT	   0
++#define AEQ_CTRL_1_ELEM_SIZE_SHIFT 24
++#define AEQ_CTRL_1_PAGE_SIZE_SHIFT 28
 +
-+		err = hinic3_get_port_info(hwdev, &port_info);
-+		if (err) {
-+			link->link_speed = RTE_ETH_SPEED_NUM_NONE;
-+			link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
-+			link->link_autoneg = RTE_ETH_LINK_FIXED;
-+		} else {
-+			link->link_speed =
-+				port_speed[port_info.speed % LINK_SPEED_LEVELS];
-+			link->link_duplex = port_info.duplex;
-+			link->link_autoneg = port_info.autoneg_state;
-+		}
-+	}
-+}
++/* Indicate AEQ_CTRL_1 mask. */
++#define AEQ_CTRL_1_LEN_MASK	  0x1FFFFFU
++#define AEQ_CTRL_1_ELEM_SIZE_MASK 0x3U
++#define AEQ_CTRL_1_PAGE_SIZE_MASK 0xFU
 +
-+static void
-+hinic3_link_event_stats(struct hinic3_hwdev *hwdev, uint8_t link)
-+{
-+	if (link)
-+		rte_atomic_fetch_add_explicit(&hwdev->hw_stats.link_event_stats.link_up_stats,
-+			1, rte_memory_order_seq_cst);
-+	else
-+		rte_atomic_fetch_add_explicit(&hwdev->hw_stats.link_event_stats.link_down_stats,
-+			1, rte_memory_order_seq_cst);
-+}
++/* Set and clear the AEQ_CTRL_1 bit fields. */
++#define AEQ_CTRL_1_SET(val, member) \
++	(((val) & AEQ_CTRL_1_##member##_MASK) << AEQ_CTRL_1_##member##_SHIFT)
++#define AEQ_CTRL_1_CLEAR(val, member) \
++	((val) & (~(AEQ_CTRL_1_##member##_MASK << AEQ_CTRL_1_##member##_SHIFT)))
 +
-+static void
-+hinic3_set_vport_state(struct hinic3_hwdev *hwdev,
-+		       struct hinic3_cmd_link_state *link_state)
-+{
-+	struct hinic3_nic_dev *nic_dev = NULL;
-+	int err = 0;
++#define HINIC3_EQ_PROD_IDX_MASK	      0xFFFFF
++#define HINIC3_TASK_PROCESS_EQE_LIMIT 1024
++#define HINIC3_EQ_UPDATE_CI_STEP      64
 +
-+	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(hwdev->eth_dev);
++/* Indicate EQ_ELEM_DESC shift. */
++#define EQ_ELEM_DESC_TYPE_SHIFT	   0
++#define EQ_ELEM_DESC_SRC_SHIFT	   7
++#define EQ_ELEM_DESC_SIZE_SHIFT	   8
++#define EQ_ELEM_DESC_WRAPPED_SHIFT 31
 +
-+	if (link_state->state) {
-+		if (hinic3_get_bit(HINIC3_DEV_START, &nic_dev->dev_status))
-+			err = hinic3_set_vport_enable(hwdev, true);
-+	} else {
-+		err = hinic3_set_vport_enable(hwdev, false);
-+	}
++/* Indicate EQ_ELEM_DESC mask. */
++#define EQ_ELEM_DESC_TYPE_MASK	  0x7FU
++#define EQ_ELEM_DESC_SRC_MASK	  0x1U
++#define EQ_ELEM_DESC_SIZE_MASK	  0xFFU
++#define EQ_ELEM_DESC_WRAPPED_MASK 0x1U
 +
-+	if (err)
-+		PMD_DRV_LOG(ERR, "Set vport status failed");
-+}
++/* Get the AEQ_CTRL_1 bit fields. */
++#define EQ_ELEM_DESC_GET(val, member)               \
++	(((val) >> EQ_ELEM_DESC_##member##_SHIFT) & \
++	 EQ_ELEM_DESC_##member##_MASK)
 +
-+static void
-+link_status_event_handler(struct hinic3_hwdev *hwdev, struct hinic3_handler_info *handler_info)
-+{
-+	struct hinic3_cmd_link_state *link_status = NULL;
-+	struct rte_eth_link link;
-+	int err;
++/* Indicate EQ_CI_SIMPLE_INDIR shift. */
++#define EQ_CI_SIMPLE_INDIR_CI_SHIFT	 0
++#define EQ_CI_SIMPLE_INDIR_ARMED_SHIFT	 21
++#define EQ_CI_SIMPLE_INDIR_AEQ_IDX_SHIFT 30
 +
-+	link_status = handler_info->buf_in;
-+	PMD_DRV_LOG(INFO,
-+		    "Link status report received, func_id: %d, status: %d(%s)",
-+		    hinic3_global_func_id(hwdev), link_status->state,
-+		    link_status->state ? "UP" : "DOWN");
++/* Indicate EQ_CI_SIMPLE_INDIR mask. */
++#define EQ_CI_SIMPLE_INDIR_CI_MASK	0x1FFFFFU
++#define EQ_CI_SIMPLE_INDIR_ARMED_MASK	0x1U
++#define EQ_CI_SIMPLE_INDIR_AEQ_IDX_MASK 0x3U
 +
-+	hinic3_link_event_stats(hwdev, link_status->state);
++/* Set and clear the EQ_CI_SIMPLE_INDIR bit fields. */
++#define EQ_CI_SIMPLE_INDIR_SET(val, member)           \
++	(((val) & EQ_CI_SIMPLE_INDIR_##member##_MASK) \
++	 << EQ_CI_SIMPLE_INDIR_##member##_SHIFT)
++#define EQ_CI_SIMPLE_INDIR_CLEAR(val, member)          \
++	((val) & (~(EQ_CI_SIMPLE_INDIR_##member##_MASK \
++		    << EQ_CI_SIMPLE_INDIR_##member##_SHIFT)))
 +
-+	hinic3_set_vport_state(hwdev, link_status);
++#define EQ_WRAPPED(eq) ((uint32_t)(eq)->wrapped << EQ_VALID_SHIFT)
 +
-+	/* Link event reported only after set vport enable. */
-+	get_port_info(hwdev, link_status->state, &link);
-+	err = rte_eth_linkstatus_set(hwdev->eth_dev,
-+				     &link);
-+	if (!err && hwdev->eth_dev->data->dev_conf.intr_conf.lsc != 0)
-+		rte_eth_dev_callback_process(hwdev->eth_dev,
-+					    RTE_ETH_EVENT_INTR_LSC, NULL);
-+}
++#define EQ_CONS_IDX(eq)                                                    \
++	({                                                                 \
++		typeof(eq) __eq = (eq);                                    \
++		__eq->cons_idx | ((uint32_t)__eq->wrapped << EQ_WRAPPED_SHIFT); \
++	})
++#define GET_EQ_NUM_PAGES(eq, size)                                     \
++	({                                                             \
++		typeof(eq) __eq = (eq);                                \
++		typeof(size) __size = (size);                          \
++		(uint16_t)(RTE_ALIGN((uint32_t)(__eq->eq_len * __eq->elem_size), \
++				__size) /                              \
++		      __size);                                         \
++	})
 +
-+static const char *
-+get_port_type_name(uint32_t type)
-+{
-+	uint32_t i;
-+	const struct port_type_table port_optical_type_table_s[] = {
-+		{LINK_PORT_UNKNOWN, "UNKNOWN"},
-+		{LINK_PORT_OPTICAL_MM, "optical_sr"},
-+		{LINK_PORT_OPTICAL_SM, "optical_lr"},
-+		{LINK_PORT_PAS_COPPER, "copper"},
-+		{LINK_PORT_ACC, "ACC"},
-+		{LINK_PORT_BASET, "baset"},
-+		{LINK_PORT_AOC, "AOC"},
-+		{LINK_PORT_ELECTRIC, "electric"},
-+		{LINK_PORT_BACKBOARD_INTERFACE, "interface"},
-+	};
++#define GET_EQ_NUM_ELEMS(eq, pg_size) ((pg_size) / (uint32_t)(eq)->elem_size)
 +
-+	for (i = 0; i < RTE_DIM(port_optical_type_table_s); i++) {
-+		if (type == port_optical_type_table_s[i].port_type)
-+			return port_optical_type_table_s[i].port_type_name;
-+	}
-+	return "UNKNOWN TYPE";
-+}
++#define GET_EQ_ELEMENT(eq, idx)                                         \
++	({                                                              \
++		typeof(eq) __eq = (eq);                                 \
++		typeof(idx) __idx = (idx);                              \
++		((uint8_t *)__eq->virt_addr[__idx / __eq->num_elem_in_pg]) + \
++			(uint32_t)((__idx & (__eq->num_elem_in_pg - 1)) *    \
++			      __eq->elem_size);                         \
++	})
 +
-+static void
-+get_port_type(struct mag_cmd_event_port_info *port_info, const char **port_type)
-+{
-+	if (port_info->port_type <= LINK_PORT_BACKBOARD_INTERFACE)
-+		*port_type = get_port_type_name(port_info->port_type);
-+	else
-+		PMD_DRV_LOG(INFO, "Unknown port type: %u", port_info->port_type);
-+}
++#define GET_AEQ_ELEM(eq, idx) \
++	((struct hinic3_aeq_elem *)GET_EQ_ELEMENT((eq), (idx)))
 +
-+static int
-+get_port_temperature_power(struct mag_cmd_event_port_info *info, char *str)
-+{
-+	char arr[CAP_INFO_MAX_LEN];
++#define PAGE_IN_4K(page_size)	    ((page_size) >> 12)
++#define EQ_SET_HW_PAGE_SIZE_VAL(eq) ((uint32_t)rte_log2_u32(PAGE_IN_4K((eq)->page_size)))
 +
-+	snprintf(arr, CAP_INFO_MAX_LEN - 1, "%s, %s, Temperature: %u", str,
-+		 info->sfp_type ? "QSFP" : "SFP", info->cable_temp);
-+	if (info->sfp_type)
-+		snprintf(str, CAP_INFO_MAX_LEN - 1,
-+			 "%s, rx power: %uuw %uuW %uuW %uuW", arr,
-+			 info->power[0x0], info->power[0x1], info->power[0x2],
-+			 info->power[0x3]);
-+	else
-+		snprintf(str, CAP_INFO_MAX_LEN - 1,
-+			 "%s, rx power: %uuW, tx power: %uuW", arr,
-+			 info->power[0x0], info->power[0x1]);
++#define ELEMENT_SIZE_IN_32B(eq)	    (((eq)->elem_size) >> 5)
++#define EQ_SET_HW_ELEM_SIZE_VAL(eq) ((uint32_t)rte_log2_u32(ELEMENT_SIZE_IN_32B(eq)))
 +
-+	return 0;
-+}
++#define AEQ_DMA_ATTR_DEFAULT 0
 +
-+static void
-+print_cable_info(struct mag_cmd_event_port_info *port_info)
-+{
-+	char str[CAP_INFO_MAX_LEN] = {0};
-+	char vendor[VENDOR_MAX_LEN] = {0};
-+	const char *port_type = "Unknown port type";
-+	int i;
-+	int err = 0;
-+	if (port_info->gpio_insert) {
-+		PMD_DRV_LOG(INFO, "Cable unpresent");
-+		return;
-+	}
++#define EQ_WRAPPED_SHIFT 20
 +
-+	get_port_type(port_info, &port_type);
++#define EQ_VALID_SHIFT 31
 +
-+	for (i = (int)sizeof(port_info->vendor_name) - 1; i >= 0; i--) {
-+		if (port_info->vendor_name[i] == ' ')
-+			port_info->vendor_name[i] = '\0';
-+		else
-+			break;
-+	}
++#define aeq_to_aeqs(eq)                                                      \
++	({                                                                   \
++		typeof(eq) __eq = (eq);                                      \
++		container_of(__eq - __eq->q_id, struct hinic3_aeqs, aeq[0]); \
++	})
 +
-+	memcpy(vendor, port_info->vendor_name,
-+	       sizeof(port_info->vendor_name));
-+	snprintf(str, CAP_INFO_MAX_LEN - 1,
-+		     "Vendor: %s, %s, length: %um, max_speed: %uGbps",
-+		     vendor, port_type, port_info->cable_length,
-+		     port_info->max_speed);
-+
-+	if (port_info->port_type == LINK_PORT_OPTICAL_MM ||
-+	    port_info->port_type == LINK_PORT_AOC) {
-+		err = get_port_temperature_power(port_info, str);
-+		if (err)
-+			return;
-+	}
-+
-+	PMD_DRV_LOG(INFO, "Cable information: %s", str);
-+}
-+
-+static void
-+print_link_info(struct mag_cmd_event_port_info *port_info)
-+{
-+	const char *fec = "None";
-+	const char *speed = "None";
-+	const char *an_state = "None";
-+
-+	if (port_info->fec < HILINK_FEC_MAX_TYPE)
-+		fec = g_hw_to_char_fec[port_info->fec];
-+	else
-+		PMD_DRV_LOG(INFO, "Unknown fec type: %u", port_info->fec);
-+
-+	if (port_info->an_state > PORT_CFG_AN_OFF) {
-+		PMD_DRV_LOG(INFO, "an_state %u is invalid",
-+			    port_info->an_state);
-+		return;
-+	}
-+
-+	an_state = g_hw_to_an_state_info[port_info->an_state];
-+
-+	if (port_info->speed >= PORT_SPEED_UNKNOWN) {
-+		PMD_DRV_LOG(INFO, "speed %u is invalid", port_info->speed);
-+		return;
-+	}
-+
-+	speed = g_hw_to_speed_info[port_info->speed];
-+	PMD_DRV_LOG(INFO, "Link information: speed %s, %s, autoneg %s", speed,
-+		    fec, an_state);
-+}
-+
-+static void
-+print_port_info(struct hinic3_hwdev *hwdev, struct mag_cmd_event_port_info *port_info, uint8_t type)
-+{
-+	print_cable_info(port_info);
-+
-+	print_link_info(port_info);
-+
-+	if (type == RTE_ETH_LINK_UP)
-+		return;
-+
-+	PMD_DRV_LOG(INFO, "Function %d link down msg:",
-+		    hinic3_global_func_id(hwdev));
-+
-+	PMD_DRV_LOG(INFO,
-+		    "PMA ctrl: %s, tx %s, rx %s, PMA fifo reg: 0x%x, "
-+		    "PMA signal ok reg: 0x%x, RF/LF status reg: 0x%x",
-+		    port_info->pma_ctrl == 1 ? "off" : "on",
-+		    port_info->tx_enable ? "enable" : "disable",
-+		    port_info->rx_enable ? "enable" : "disable",
-+		    port_info->pma_fifo_reg, port_info->pma_signal_ok_reg,
-+		    port_info->rf_lf);
-+	PMD_DRV_LOG(INFO,
-+		    "alos: %u, rx_los: %u, PCS 64 66b reg: 0x%x, "
-+		    "PCS link: 0x%x, MAC link: 0x%x, PCS_err_cnt: 0x%x",
-+		    port_info->alos, port_info->rx_los,
-+		    port_info->pcs_64_66b_reg, port_info->pcs_link,
-+		    port_info->pcs_mac_link, port_info->pcs_err_cnt);
-+	PMD_DRV_LOG(INFO,
-+		    "his_link_machine_state = 0x%08x, "
-+		    "cur_link_machine_state = 0x%08x",
-+		    port_info->his_link_machine_state,
-+		    port_info->cur_link_machine_state);
-+}
-+
-+static void
-+port_info_event_printf(struct hinic3_hwdev *hwdev, struct hinic3_handler_info *handler_info)
-+{
-+	struct mag_cmd_event_port_info *port_info = handler_info->buf_in;
-+	((struct mag_cmd_event_port_info *)(handler_info->buf_out))->head.status = 0;
-+	enum hinic3_nic_event_type type = port_info->event_type;
-+	if (type < RTE_ETH_LINK_DOWN || type > RTE_ETH_LINK_UP) {
-+		PMD_DRV_LOG(ERR, "Invalid hilink info report, type: %d",
-+			    type);
-+		return;
-+	}
-+
-+	print_port_info(hwdev, port_info, type);
-+}
-+
-+struct nic_event_handler {
-+	uint16_t cmd;
-+	void (*handler)(struct hinic3_hwdev *hwdev, struct hinic3_handler_info *handler_info);
-+};
-+
-+static const struct nic_event_handler nic_cmd_handler[] = {};
++#define AEQ_MSIX_ENTRY_IDX_0 0
 +
 +/**
-+ * Handle NIC event based on the provided command.
++ * Write the consumer idx to hw.
 + *
-+ * @param[in] hwdev
-+ * Pointer to hardware device structure.
-+ * @param[in] handler_info
-+ * Pointer to handler info structure
++ * @param[in] eq
++ * The event queue to update the cons idx.
++ * @param[in] arm_state
++ * Indicate whether report interrupts when generate eq element.
 + */
 +static void
-+nic_event_handler(struct hinic3_hwdev *hwdev, struct hinic3_handler_info *handler_info)
++set_eq_cons_idx(struct hinic3_eq *eq, uint32_t arm_state)
 +{
-+	uint32_t i, size = RTE_DIM(nic_cmd_handler);
++	uint32_t eq_wrap_ci = 0;
++	uint32_t val = 0;
++	uint32_t addr = HINIC3_CSR_AEQ_CI_SIMPLE_INDIR_ADDR;
 +
-+	if (!hwdev)
-+		return;
++	eq_wrap_ci = EQ_CONS_IDX(eq);
 +
-+	*handler_info->out_size = 0;
++	if (eq->q_id != 0)
++		val = EQ_CI_SIMPLE_INDIR_SET(HINIC3_EQ_NOT_ARMED, ARMED);
++	else
++		val = EQ_CI_SIMPLE_INDIR_SET(arm_state, ARMED);
 +
-+	for (i = 0; i < size; i++) {
-+		if (handler_info->cmd == nic_cmd_handler[i].cmd) {
-+			nic_cmd_handler[i].handler(hwdev, handler_info);
-+			break;
-+		}
-+	}
++	val = val | EQ_CI_SIMPLE_INDIR_SET(eq_wrap_ci, CI) |
++	      EQ_CI_SIMPLE_INDIR_SET(eq->q_id, AEQ_IDX);
 +
-+	if (i == size)
-+		PMD_DRV_LOG(ERR, "Unsupported nic event cmd(%d) to process", handler_info->cmd);
++	hinic3_hwif_write_reg(eq->hwdev->hwif, addr, val);
 +}
 +
-+/*
-+ * VF handler mbox msg from ppf/pf.
-+ * VF link change event.
++/**
++ * Set aeq's ctrls registers.
++ *
++ * @param[in] eq
++ * The event queue for setting.
 + */
-+int
-+hinic3_vf_event_handler(struct hinic3_hwdev *hwdev, __rte_unused void *pri_handle,
-+				struct hinic3_handler_info *handler_info)
++static void
++set_aeq_ctrls(struct hinic3_eq *eq)
 +{
-+	nic_event_handler(hwdev, handler_info);
++	struct hinic3_hwif *hwif = eq->hwdev->hwif;
++	struct irq_info *eq_irq = &eq->eq_irq;
++	uint32_t addr, val, ctrl0, ctrl1, page_size_val, elem_size;
++	uint32_t pci_intf_idx = HINIC3_PCI_INTF_IDX(hwif);
++
++	/* Set AEQ ctrl0. */
++	addr = HINIC3_CSR_AEQ_CTRL_0_ADDR;
++
++	val = hinic3_hwif_read_reg(hwif, addr);
++
++	val = AEQ_CTRL_0_CLEAR(val, INTR_IDX) &
++	      AEQ_CTRL_0_CLEAR(val, DMA_ATTR) &
++	      AEQ_CTRL_0_CLEAR(val, PCI_INTF_IDX) &
++	      AEQ_CTRL_0_CLEAR(val, INTR_MODE);
++
++	ctrl0 = AEQ_CTRL_0_SET(eq_irq->msix_entry_idx, INTR_IDX) |
++		AEQ_CTRL_0_SET(AEQ_DMA_ATTR_DEFAULT, DMA_ATTR) |
++		AEQ_CTRL_0_SET(pci_intf_idx, PCI_INTF_IDX) |
++		AEQ_CTRL_0_SET(HINIC3_INTR_MODE_ARMED, INTR_MODE);
++
++	val |= ctrl0;
++
++	hinic3_hwif_write_reg(hwif, addr, val);
++
++	/* Set AEQ ctrl1. */
++	addr = HINIC3_CSR_AEQ_CTRL_1_ADDR;
++
++	page_size_val = EQ_SET_HW_PAGE_SIZE_VAL(eq);
++	elem_size = EQ_SET_HW_ELEM_SIZE_VAL(eq);
++
++	ctrl1 = AEQ_CTRL_1_SET(eq->eq_len, LEN) |
++		AEQ_CTRL_1_SET(elem_size, ELEM_SIZE) |
++		AEQ_CTRL_1_SET(page_size_val, PAGE_SIZE);
++
++	hinic3_hwif_write_reg(hwif, addr, ctrl1);
++}
++
++/**
++ * Initialize all the elements in the aeq.
++ *
++ * @param[in] eq
++ * The event queue.
++ * @param[in] init_val
++ * Value to init.
++ */
++static void
++aeq_elements_init(struct hinic3_eq *eq)
++{
++	struct hinic3_aeq_elem *aeqe = NULL;
++	uint32_t i;
++
++	for (i = 0; i < eq->eq_len; i++) {
++		aeqe = GET_AEQ_ELEM(eq, i);
++		aeqe->desc = rte_cpu_to_be_32(EQ_WRAPPED(eq));
++	}
++
++	rte_atomic_thread_fence(rte_memory_order_release); /**< Write the init values. */
++}
++
++/**
++ * Set the pages for the event queue.
++ *
++ * @param[in] eq
++ * The event queue.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++set_eq_pages(struct hinic3_eq *eq)
++{
++	struct hinic3_hwif *hwif = eq->hwdev->hwif;
++	uint32_t reg;
++	uint16_t pg_num, i;
++	int err;
++
++	for (pg_num = 0; pg_num < eq->num_pages; pg_num++) {
++		/* Allocate memory for each page. */
++		eq->eq_mz[pg_num] = hinic3_dma_zone_reserve(eq->hwdev->eth_dev,
++			"eq_mz", eq->q_id, eq->page_size,
++			eq->page_size, SOCKET_ID_ANY);
++		if (!eq->eq_mz[pg_num]) {
++			err = -ENOMEM;
++			goto dma_alloc_err;
++		}
++
++		/* Write physical memory address and virtual memory address. */
++		eq->dma_addr[pg_num] = eq->eq_mz[pg_num]->iova;
++		eq->virt_addr[pg_num] = eq->eq_mz[pg_num]->addr;
++
++		reg = HINIC3_AEQ_HI_PHYS_ADDR_REG(pg_num);
++		hinic3_hwif_write_reg(hwif, reg,
++				      upper_32_bits(eq->dma_addr[pg_num]));
++
++		reg = HINIC3_AEQ_LO_PHYS_ADDR_REG(pg_num);
++		hinic3_hwif_write_reg(hwif, reg,
++				      lower_32_bits(eq->dma_addr[pg_num]));
++	}
++	/* Calculate the number of elements that can be accommodated. */
++	eq->num_elem_in_pg = GET_EQ_NUM_ELEMS(eq, eq->page_size);
++	if (eq->num_elem_in_pg & (eq->num_elem_in_pg - 1)) {
++		PMD_DRV_LOG(ERR, "Number element in eq page != power of 2");
++		err = -EINVAL;
++		goto dma_alloc_err;
++	}
++	/* Initialize elements in the queue. */
++	aeq_elements_init(eq);
++
++	return 0;
++
++dma_alloc_err:
++	for (i = 0; i < pg_num; i++)
++		hinic3_memzone_free(eq->eq_mz[i]);
++
++	return err;
++}
++
++/**
++ * Allocate the pages for the event queue.
++ *
++ * @param[in] eq
++ * The event queue.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++alloc_eq_pages(struct hinic3_eq *eq)
++{
++	uint64_t dma_addr_size, virt_addr_size, eq_mz_size;
++	int err;
++
++	/* Calculate the size of the memory to be allocated. */
++	dma_addr_size = eq->num_pages * sizeof(*eq->dma_addr);
++	virt_addr_size = eq->num_pages * sizeof(*eq->virt_addr);
++	eq_mz_size = eq->num_pages * sizeof(*eq->eq_mz);
++
++	eq->dma_addr = rte_zmalloc("eq_dma", dma_addr_size,
++				   HINIC3_MEM_ALLOC_ALIGN_MIN);
++	if (!eq->dma_addr)
++		return -ENOMEM;
++
++	eq->virt_addr = rte_zmalloc("eq_va", virt_addr_size,
++				    HINIC3_MEM_ALLOC_ALIGN_MIN);
++	if (!eq->virt_addr) {
++		err = -ENOMEM;
++		goto virt_addr_alloc_err;
++	}
++
++	eq->eq_mz =
++		rte_zmalloc("eq_mz", eq_mz_size, HINIC3_MEM_ALLOC_ALIGN_MIN);
++	if (!eq->eq_mz) {
++		err = -ENOMEM;
++		goto eq_mz_alloc_err;
++	}
++	err = set_eq_pages(eq);
++	if (err)
++		goto eq_pages_err;
++
++	return 0;
++
++eq_pages_err:
++	rte_free(eq->eq_mz);
++
++eq_mz_alloc_err:
++	rte_free(eq->virt_addr);
++
++virt_addr_alloc_err:
++	rte_free(eq->dma_addr);
++
++	return err;
++}
++
++/**
++ * Free the pages of the event queue.
++ *
++ * @param[in] eq
++ * The event queue.
++ */
++static void
++free_eq_pages(struct hinic3_eq *eq)
++{
++	uint16_t pg_num;
++
++	for (pg_num = 0; pg_num < eq->num_pages; pg_num++)
++		hinic3_memzone_free(eq->eq_mz[pg_num]);
++
++	rte_free(eq->eq_mz);
++	rte_free(eq->virt_addr);
++	rte_free(eq->dma_addr);
++}
++
++static uint32_t
++get_page_size(struct hinic3_eq *eq)
++{
++	uint32_t total_size;
++	uint16_t count;
++
++	/* Total memory size. */
++	total_size = RTE_ALIGN((eq->eq_len * eq->elem_size),
++			       HINIC3_MIN_EQ_PAGE_SIZE);
++	if (total_size <= (HINIC3_EQ_MAX_PAGES * HINIC3_MIN_EQ_PAGE_SIZE))
++		return HINIC3_MIN_EQ_PAGE_SIZE;
++	/* Total number of pages. */
++	count = (uint16_t)(RTE_ALIGN((total_size / HINIC3_EQ_MAX_PAGES),
++				HINIC3_MIN_EQ_PAGE_SIZE) /
++		      HINIC3_MIN_EQ_PAGE_SIZE);
++
++	/* Whether count is a power of 2. */
++	if (!(count & (count - 1)))
++		return HINIC3_MIN_EQ_PAGE_SIZE * count;
++
++	return ((uint32_t)HINIC3_MIN_EQ_PAGE_SIZE) << rte_ctz32(count);
++}
++
++/**
++ * Initialize AEQ.
++ *
++ * @param[in] eq
++ * The event queue.
++ * @param[in] hwdev
++ * The pointer to the private hardware device.
++ * @param[in] q_id
++ * Queue id number.
++ * @param[in] q_len
++ * The number of EQ elements.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++init_aeq(struct hinic3_eq *eq, struct hinic3_hwdev *hwdev, uint16_t q_id, uint32_t q_len)
++{
++	int err = 0;
++
++	eq->hwdev = hwdev;
++	eq->q_id = q_id;
++	eq->eq_len = q_len;
++
++	/* Indirect access should set q_id first. */
++	hinic3_hwif_write_reg(hwdev->hwif, HINIC3_AEQ_INDIR_IDX_ADDR, eq->q_id);
++	rte_atomic_thread_fence(rte_memory_order_release); /**< write index before config. */
++
++	/* Clear eq_len to force eqe drop in hardware. */
++	hinic3_hwif_write_reg(eq->hwdev->hwif, HINIC3_CSR_AEQ_CTRL_1_ADDR, 0);
++	rte_atomic_thread_fence(rte_memory_order_release);
++	/* Init aeq pi to 0 before allocating aeq pages. */
++	hinic3_hwif_write_reg(eq->hwdev->hwif, HINIC3_CSR_AEQ_PROD_IDX_ADDR, 0);
++
++	eq->cons_idx = 0;
++	eq->wrapped = 0;
++
++	eq->elem_size = HINIC3_AEQE_SIZE;
++	eq->page_size = get_page_size(eq);
++	eq->orig_page_size = eq->page_size;
++	eq->num_pages = GET_EQ_NUM_PAGES(eq, eq->page_size);
++	if (eq->num_pages > HINIC3_EQ_MAX_PAGES) {
++		PMD_DRV_LOG(ERR, "Too many pages: %d for aeq", eq->num_pages);
++		return -EINVAL;
++	}
++
++	err = alloc_eq_pages(eq);
++	if (err) {
++		PMD_DRV_LOG(ERR, "Allocate pages for eq failed");
++		return err;
++	}
++
++	/* Pmd driver uses AEQ_MSIX_ENTRY_IDX_0. */
++	eq->eq_irq.msix_entry_idx = AEQ_MSIX_ENTRY_IDX_0;
++	set_aeq_ctrls(eq);
++
++	set_eq_cons_idx(eq, HINIC3_EQ_ARMED);
++
++	if (eq->q_id == 0)
++		hinic3_set_msix_state(hwdev, 0, HINIC3_MSIX_ENABLE);
++
++	eq->poll_retry_nr = HINIC3_RETRY_NUM;
++
 +	return 0;
 +}
 +
-+/* NIC event of PF/PPF handler reported by mgmt cpu. */
-+void
-+hinic3_pf_event_handler(struct hinic3_hwdev *hwdev, __rte_unused void *pri_handle,
-+				struct hinic3_handler_info *handler_info)
++/**
++ * Remove AEQ.
++ *
++ * @param[in] eq
++ * The event queue.
++ */
++static void
++remove_aeq(struct hinic3_eq *eq)
 +{
-+	nic_event_handler(hwdev, handler_info);
++	struct irq_info *entry = &eq->eq_irq;
++
++	if (eq->q_id == 0)
++		hinic3_set_msix_state(eq->hwdev, entry->msix_entry_idx,
++				      HINIC3_MSIX_DISABLE);
++
++	/* Indirect access should set q_id first. */
++	hinic3_hwif_write_reg(eq->hwdev->hwif, HINIC3_AEQ_INDIR_IDX_ADDR,
++			      eq->q_id);
++
++	rte_atomic_thread_fence(rte_memory_order_release); /**< Write index before config. */
++
++	/* Clear eq_len to avoid hw access host memory. */
++	hinic3_hwif_write_reg(eq->hwdev->hwif, HINIC3_CSR_AEQ_CTRL_1_ADDR, 0);
++
++	/* Update cons_idx to avoid invalid interrupt. */
++	eq->cons_idx = hinic3_hwif_read_reg(eq->hwdev->hwif,
++					    HINIC3_CSR_AEQ_PROD_IDX_ADDR);
++	set_eq_cons_idx(eq, HINIC3_EQ_NOT_ARMED);
++
++	free_eq_pages(eq);
 +}
 +
-+static const struct nic_event_handler mag_cmd_handler[] = {
-+	{
-+		.cmd = MAG_CMD_GET_LINK_STATUS,
-+		.handler = link_status_event_handler,
-+	},
-+	{
-+		.cmd = MAG_CMD_EVENT_PORT_INFO,
-+		.handler = port_info_event_printf,
-+	},
-+};
-+
-+static int
-+hinic3_mag_event_handler(struct hinic3_hwdev *hwdev, struct hinic3_handler_info *handler_info)
++/**
++ * Init all AEQs.
++ *
++ * @param[in] hwdev
++ * The pointer to the private hardware device object
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++int
++hinic3_aeqs_init(struct hinic3_hwdev *hwdev)
 +{
-+	uint32_t size = RTE_DIM(mag_cmd_handler);
-+	uint32_t i;
++	struct hinic3_aeqs *aeqs = NULL;
++	uint16_t num_aeqs;
++	int err;
++	uint16_t i, q_id;
 +
 +	if (!hwdev)
 +		return -EINVAL;
 +
-+	*handler_info->out_size = 0;
-+	for (i = 0; i < size; i++) {
-+		if (handler_info->cmd == mag_cmd_handler[i].cmd) {
-+			mag_cmd_handler[i].handler(hwdev, handler_info);
-+			break;
++	num_aeqs = HINIC3_HWIF_NUM_AEQS(hwdev->hwif);
++	if (num_aeqs > HINIC3_MAX_AEQS) {
++		PMD_DRV_LOG(INFO, "Adjust aeq num to %d", HINIC3_MAX_AEQS);
++		num_aeqs = HINIC3_MAX_AEQS;
++	} else if (num_aeqs < HINIC3_MIN_AEQS) {
++		PMD_DRV_LOG(ERR, "PMD needs %d AEQs, Chip has %d",
++			    HINIC3_MIN_AEQS, num_aeqs);
++		return -EINVAL;
++	}
++
++	aeqs = rte_zmalloc("hinic3_aeqs", sizeof(*aeqs),
++			   HINIC3_MEM_ALLOC_ALIGN_MIN);
++	if (!aeqs)
++		return -ENOMEM;
++
++	hwdev->aeqs = aeqs;
++	aeqs->hwdev = hwdev;
++	aeqs->num_aeqs = num_aeqs;
++
++	for (q_id = 0; q_id < num_aeqs; q_id++) {
++		err = init_aeq(&aeqs->aeq[q_id], hwdev, q_id,
++			       HINIC3_DEFAULT_AEQ_LEN);
++		if (err) {
++			PMD_DRV_LOG(ERR, "Init aeq %d failed", q_id);
++			goto init_aeq_err;
 +		}
 +	}
 +
-+	/* Can't find this event cmd. */
-+	if (i == size)
-+		PMD_DRV_LOG(ERR, "Unsupported mag event, cmd: %u", handler_info->cmd);
-+
 +	return 0;
++
++init_aeq_err:
++	for (i = 0; i < q_id; i++)
++		remove_aeq(&aeqs->aeq[i]);
++
++	rte_free(aeqs);
++	return err;
 +}
 +
-+int
-+hinic3_vf_mag_event_handler(struct hinic3_hwdev *hwdev, __rte_unused void *pri_handle,
-+				struct hinic3_handler_info *handler_info)
-+{
-+	return hinic3_mag_event_handler(hwdev, handler_info);
-+}
-+
-+/* pf/ppf handler mgmt cpu report hilink event. */
++/**
++ * Free all AEQs.
++ *
++ * @param[in] hwdev
++ * The pointer to the private hardware device.
++ */
 +void
-+hinic3_pf_mag_event_handler(struct hinic3_hwdev *hwdev, __rte_unused void *pri_handle,
-+				struct hinic3_handler_info *handler_info)
++hinic3_aeqs_free(struct hinic3_hwdev *hwdev)
 +{
-+	hinic3_mag_event_handler(hwdev, handler_info);
++	struct hinic3_aeqs *aeqs = hwdev->aeqs;
++	uint16_t q_id;
++
++	for (q_id = 0; q_id < aeqs->num_aeqs; q_id++)
++		remove_aeq(&aeqs->aeq[q_id]);
++
++	rte_free(aeqs);
 +}
 +
-+uint8_t
-+hinic3_nic_sw_aeqe_handler(__rte_unused struct hinic3_hwdev *hwdev, uint8_t event, uint8_t *data)
++void
++hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev)
 +{
-+	PMD_DRV_LOG(ERR,
-+		    "Received nic ucode aeq event type: 0x%x, data: %" PRIu64,
-+		    event, *((uint64_t *)data));
++	struct hinic3_aeq_elem *aeqe_pos = NULL;
++	struct hinic3_eq *eq = NULL;
++	uint32_t addr, ci, pi, ctrl0, idx;
++	int q_id;
 +
-+	return 0;
++	for (q_id = 0; q_id < hwdev->aeqs->num_aeqs; q_id++) {
++		eq = &hwdev->aeqs->aeq[q_id];
++		/* Indirect access should set q_id first. */
++		hinic3_hwif_write_reg(eq->hwdev->hwif,
++				      HINIC3_AEQ_INDIR_IDX_ADDR, eq->q_id);
++		/* Write index before config. */
++		rte_atomic_thread_fence(rte_memory_order_release);
++
++		addr = HINIC3_CSR_AEQ_CTRL_0_ADDR;
++
++		ctrl0 = hinic3_hwif_read_reg(hwdev->hwif, addr);
++
++		idx = hinic3_hwif_read_reg(hwdev->hwif,
++					   HINIC3_AEQ_INDIR_IDX_ADDR);
++
++		addr = HINIC3_CSR_AEQ_CONS_IDX_ADDR;
++		ci = hinic3_hwif_read_reg(hwdev->hwif, addr);
++		addr = HINIC3_CSR_AEQ_PROD_IDX_ADDR;
++		pi = hinic3_hwif_read_reg(hwdev->hwif, addr);
++		aeqe_pos = GET_AEQ_ELEM(eq, eq->cons_idx);
++		PMD_DRV_LOG(ERR,
++			    "Aeq id: %d, idx: %u, ctrl0: 0x%08x, wrap: %d,"
++			    " pi: 0x%x, ci: 0x%08x,  desc: 0x%x",
++			    q_id, idx, ctrl0, eq->wrapped, pi, ci,
++			    rte_be_to_cpu_32(aeqe_pos->desc));
++	}
 +}
-diff --git a/drivers/net/hinic3/base/hinic3_nic_event.h b/drivers/net/hinic3/base/hinic3_nic_event.h
++
++static int
++aeq_elem_handler(struct hinic3_eq *eq, uint32_t aeqe_desc,
++		 struct hinic3_aeq_elem *aeqe_pos, void *param)
++{
++	enum hinic3_aeq_type event;
++	uint8_t data[HINIC3_AEQE_DATA_SIZE];
++	uint8_t size;
++
++	event = EQ_ELEM_DESC_GET(aeqe_desc, TYPE);
++	if (EQ_ELEM_DESC_GET(aeqe_desc, SRC)) {
++		/* SW event uses only the first 8B. */
++		memcpy(data, aeqe_pos->aeqe_data, HINIC3_AEQE_DATA_SIZE);
++		hinic3_be32_to_cpu(data, HINIC3_AEQE_DATA_SIZE);
++		/* Just support HINIC3_STATELESS_EVENT. */
++		return hinic3_nic_sw_aeqe_handler(eq->hwdev, event, data);
++	}
++
++	memcpy(data, aeqe_pos->aeqe_data, HINIC3_AEQE_DATA_SIZE);
++	hinic3_be32_to_cpu(data, HINIC3_AEQE_DATA_SIZE);
++	size = EQ_ELEM_DESC_GET(aeqe_desc, SIZE);
++
++	if (event == HINIC3_MSG_FROM_MGMT_CPU) {
++		return hinic3_mgmt_msg_aeqe_handler(eq->hwdev, data, size,
++						    param);
++	} else if (event == HINIC3_MBX_FROM_FUNC) {
++		return hinic3_mbox_func_aeqe_handler(eq->hwdev, data, size,
++						     param);
++	} else {
++		PMD_DRV_LOG(ERR, "AEQ hw event not support %d", event);
++		return -EINVAL;
++	}
++}
++
++/**
++ * Poll one or continue aeqe, and call dedicated process.
++ *
++ * @param[in] eq
++ * Pointer to the event queue.
++ * @param[in] timeout
++ * equal to 0 - Poll all aeqe in eq, used in interrupt mode.
++ * Greater than 0 - Poll aeq until get aeqe with 'last' field set to 1, used in
++ * polling mode.
++ * @param[in] param
++ * Customized parameter.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++int
++hinic3_aeq_poll_msg(struct hinic3_eq *eq, uint32_t timeout, void *param)
++{
++	struct hinic3_aeq_elem *aeqe_pos = NULL;
++	uint32_t aeqe_desc = 0;
++	uint32_t eqe_cnt = 0;
++	int err = -EFAULT;
++	int done = HINIC3_MSG_HANDLER_RES;
++	uint64_t end;
++	uint16_t i;
++
++	for (i = 0; ((timeout == 0) && (i < eq->eq_len)) ||
++		    ((timeout > 0) && (done != 0) && (i < eq->eq_len));
++	     i++) {
++		err = -EIO;
++		end = cycles + msecs_to_cycles(timeout);
++		do {
++			aeqe_pos = GET_AEQ_ELEM(eq, eq->cons_idx);
++
++			/* Data in HW is in Big endian format. */
++			aeqe_desc = rte_be_to_cpu_32(aeqe_pos->desc);
++
++			/*
++			 * HW updates wrapped bit, when it adds eq element
++			 * event.
++			 */
++			if (EQ_ELEM_DESC_GET(aeqe_desc, WRAPPED) !=
++			    eq->wrapped) {
++				err = 0;
++				rte_atomic_thread_fence(rte_memory_order_acquire);
++				break;
++			}
++
++			if (timeout != 0)
++				usleep(HINIC3_AEQE_DESC_SIZE);
++		} while (time_before(cycles, end));
++
++		if (err) /**< Poll time out. */
++			break;
++		/* Handle the middle element of the event queue. */
++		done = aeq_elem_handler(eq, aeqe_desc, aeqe_pos, param);
++
++		eq->cons_idx++;
++		if (eq->cons_idx == eq->eq_len) {
++			eq->cons_idx = 0;
++			eq->wrapped = !eq->wrapped;
++		}
++
++		if (++eqe_cnt >= HINIC3_EQ_UPDATE_CI_STEP) {
++			eqe_cnt = 0;
++			set_eq_cons_idx(eq, HINIC3_EQ_NOT_ARMED);
++		}
++	}
++	/* Set the consumer index of the event queue. */
++	set_eq_cons_idx(eq, HINIC3_EQ_ARMED);
++
++	return err;
++}
++
++void
++hinic3_dev_handle_aeq_event(struct hinic3_hwdev *hwdev, void *param)
++{
++	struct hinic3_eq *aeq = &hwdev->aeqs->aeq[0];
++
++	/* Clear resend timer cnt register. */
++	hinic3_misx_intr_clear_resend_bit(hwdev, aeq->eq_irq.msix_entry_idx,
++					  MSIX_RESEND_TIMER_CLEAR);
++	hinic3_aeq_poll_msg(aeq, 0, param);
++}
+diff --git a/drivers/net/hinic3/base/hinic3_eqs.h b/drivers/net/hinic3/base/hinic3_eqs.h
 new file mode 100644
-index 0000000000..42cdafbf5a
+index 0000000000..4c93ff4b17
 --- /dev/null
-+++ b/drivers/net/hinic3/base/hinic3_nic_event.h
-@@ -0,0 +1,38 @@
++++ b/drivers/net/hinic3/base/hinic3_eqs.h
+@@ -0,0 +1,98 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2025 Huawei Technologies Co., Ltd
 + */
 +
-+#ifndef _HINIC3_NIC_EVENT_H_
-+#define _HINIC3_NIC_EVENT_H_
++#ifndef _HINIC3_EQS_H_
++#define _HINIC3_EQS_H_
 +
-+#include "hinic3_hwdev.h"
++#define HINIC3_MAX_AEQS	    4
++#define HINIC3_MIN_AEQS	    2
++#define HINIC3_EQ_MAX_PAGES 4
 +
-+/**
-+ * Get the Ethernet port link information based on the link state.
-+ *
-+ * @param[in] hwdev
-+ * The hardware device context.
-+ * @param[in] link_state
-+ * The current link state (0 = down, non-zero = up).
-+ * @param[out] link
-+ * Pointer to the `rte_eth_link` structure.
-+ */
-+void get_port_info(struct hinic3_hwdev *hwdev, uint8_t link_state,
-+		   struct rte_eth_link *link);
++#define HINIC3_AEQE_SIZE 64
 +
-+int hinic3_vf_event_handler(struct hinic3_hwdev *hwdev, __rte_unused void *pri_handle,
-+				struct hinic3_handler_info *handler_info);
++#define HINIC3_AEQE_DESC_SIZE 4
++#define HINIC3_AEQE_DATA_SIZE (HINIC3_AEQE_SIZE - HINIC3_AEQE_DESC_SIZE)
 +
-+void hinic3_pf_event_handler(struct hinic3_hwdev *hwdev, __rte_unused void *pri_handle,
-+			    struct hinic3_handler_info *handler_info);
++/* Linux is 1K, dpdk is 64. */
++#define HINIC3_DEFAULT_AEQ_LEN 64
 +
-+int hinic3_vf_mag_event_handler(struct hinic3_hwdev *hwdev, void *pri_handle,
-+				struct hinic3_handler_info *handler_info);
++#define HINIC3_MIN_EQ_PAGE_SIZE 0x1000	 /**< Min eq page size 1K Bytes. */
++#define HINIC3_MAX_EQ_PAGE_SIZE 0x400000 /**< Max eq page size 4M Bytes */
 +
-+void hinic3_pf_mag_event_handler(struct hinic3_hwdev *hwdev, void *pri_handle,
-+				struct hinic3_handler_info *handler_info);
++#define HINIC3_MIN_AEQ_LEN 64
++#define HINIC3_MAX_AEQ_LEN \
++	((HINIC3_MAX_EQ_PAGE_SIZE / HINIC3_AEQE_SIZE) * HINIC3_EQ_MAX_PAGES)
 +
-+uint8_t hinic3_nic_sw_aeqe_handler(__rte_unused struct hinic3_hwdev *hwdev,
-+				uint8_t event, uint8_t *data);
++#define EQ_IRQ_NAME_LEN 64
 +
-+#endif /* _HINIC3_NIC_EVENT_H_ */
++enum hinic3_eq_intr_mode { HINIC3_INTR_MODE_ARMED, HINIC3_INTR_MODE_ALWAYS };
++
++enum hinic3_eq_ci_arm_state { HINIC3_EQ_NOT_ARMED, HINIC3_EQ_ARMED };
++
++/* Structure for interrupt request information. */
++struct irq_info {
++	uint16_t msix_entry_idx; /**< IRQ corresponding index number. */
++	uint32_t irq_id;	    /**< The IRQ number from OS. */
++};
++
++#define HINIC3_RETRY_NUM 10
++
++enum hinic3_aeq_type {
++	HINIC3_HW_INTER_INT = 0,
++	HINIC3_MBX_FROM_FUNC = 1,
++	HINIC3_MSG_FROM_MGMT_CPU = 2,
++	HINIC3_API_RSP = 3,
++	HINIC3_API_CHAIN_STS = 4,
++	HINIC3_MBX_SEND_RSLT = 5,
++	HINIC3_MAX_AEQ_EVENTS
++};
++
++/* Structure for EQ(Event Queue) information. */
++struct hinic3_eq {
++	struct hinic3_hwdev *hwdev;
++	uint16_t q_id;
++	uint32_t page_size;
++	uint32_t orig_page_size;
++	uint32_t eq_len;
++
++	uint32_t cons_idx;
++	uint16_t wrapped;
++
++	uint16_t elem_size;
++	uint16_t num_pages;
++	uint32_t num_elem_in_pg;
++
++	struct irq_info eq_irq;
++
++	const struct rte_memzone **eq_mz;
++	rte_iova_t *dma_addr;
++	uint8_t **virt_addr;
++
++	uint16_t poll_retry_nr;
++};
++
++struct hinic3_aeq_elem {
++	uint8_t aeqe_data[HINIC3_AEQE_DATA_SIZE];
++	uint32_t desc;
++};
++
++/* Structure for AEQs(Asynchronous Event Queues) information. */
++struct hinic3_aeqs {
++	struct hinic3_hwdev *hwdev;
++
++	struct hinic3_eq aeq[HINIC3_MAX_AEQS];
++	uint16_t num_aeqs;
++};
++
++int hinic3_aeqs_init(struct hinic3_hwdev *hwdev);
++
++void hinic3_aeqs_free(struct hinic3_hwdev *hwdev);
++
++void hinic3_dump_aeq_info(struct hinic3_hwdev *hwdev);
++
++int hinic3_aeq_poll_msg(struct hinic3_eq *eq, uint32_t timeout, void *param);
++
++void hinic3_dev_handle_aeq_event(struct hinic3_hwdev *hwdev, void *param);
++
++#endif /**< _HINIC3_EQS_H_ */
 diff --git a/drivers/net/hinic3/base/meson.build b/drivers/net/hinic3/base/meson.build
-index 4f57baa904..2226f8fb75 100644
+index 2226f8fb75..d622972b77 100644
 --- a/drivers/net/hinic3/base/meson.build
 +++ b/drivers/net/hinic3/base/meson.build
-@@ -4,6 +4,7 @@
+@@ -3,6 +3,7 @@
+ 
  sources = files(
          'hinic3_cmdq.c',
++        'hinic3_eqs.c',
          'hinic3_hwif.c',
-+        'hinic3_nic_event.c',
+         'hinic3_nic_event.c',
  )
- 
- extra_flags = []
 -- 
 2.47.0.windows.2
 
