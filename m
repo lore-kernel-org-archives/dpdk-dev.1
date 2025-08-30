@@ -2,44 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5857CA0EFF
-	for <dpdk-dev@archiver.kernel.org>; Sat, 30 Aug 2025 12:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E22CA0FFD
+	for <dpdk-dev@archiver.kernel.org>; Sat, 30 Aug 2025 12:46:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C8C3640DD6;
-	Sat, 30 Aug 2025 14:45:00 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
- by mails.dpdk.org (Postfix) with ESMTP id 62AD940A77
+	by mails.dpdk.org (Postfix) with ESMTP id DBB5240658;
+	Sat, 30 Aug 2025 14:45:01 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
+ by mails.dpdk.org (Postfix) with ESMTP id D9CE540A82
  for <dev@dpdk.org>; Sat, 30 Aug 2025 14:44:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=sXXANM9SvCNiDlz/wL2ocoGgJ3gDZ3mN5grwMHIYRLw=;
- b=d3Jb5i3TlZp7gwH+xAVVogJ6HxhNAV1XyR71MqKg5B2AY5RrCJiU959TFVSzML
- p6/jE5k6mSZ0myVm+YlzKy2OBernsMij21PnoR4Ri0y0aoRzIf2Ex9MbzmhiQFcC
- M6MwJW4+MnaiRkM9tvzg056huXX9LVdd8VjeIftJqwm+4=
+ MIME-Version; bh=Xyb2aVU6xZ8xkCOEWSq5d2yzfBQtvvwnqDmb9TeEWfQ=;
+ b=bHfeMPGMY1XLDYHYLs7N8SkoI7WIUx1BoRazjNHDdK8Knd1j8I92ystXIXCTHd
+ uW+gYDg5U1ZrdgxHJmejQZ+Jzw47bu2fL5GIjVP5OFvewueAFQjOolqMGGjcc41s
+ SCM87R0cDy/QdxIOe+gPke3EkwtjCohhMsW55Om2EJN4U=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp2 (Coremail) with SMTP id As8vCgDHz+YN8rJogy_MAg--.2603S16;
- Sat, 30 Aug 2025 20:44:53 +0800 (CST)
+ by gzsmtp2 (Coremail) with SMTP id As8vCgDHz+YN8rJogy_MAg--.2603S15;
+ Sat, 30 Aug 2025 20:44:51 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
-Cc: Xin Wang <wangxin679@h-partners.com>,
- Feifei Wang <wangfeifei40@huawei.com>, Yi Chen <chenyi221@huawei.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [V6 12/17] net/hinic3: add device initialization
-Date: Sat, 30 Aug 2025 20:43:16 +0800
-Message-ID: <20250830124332.5351-13-wff_light@vip.163.com>
+Cc: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
+ Feifei Wang <wangfeifei40@huawei.com>
+Subject: [V6 11/17] net/hinic3: add a mailbox communication module
+Date: Sat, 30 Aug 2025 20:43:15 +0800
+Message-ID: <20250830124332.5351-12-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
 In-Reply-To: <20250830124332.5351-1-wff_light@vip.163.com>
 References: <20250418090621.9638-1-wff_light@vip.163.com>
  <20250830124332.5351-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgDHz+YN8rJogy_MAg--.2603S16
-X-Coremail-Antispam: 1Uf129KBjvAXoW3CFWkXw45Jw4Uur13Ar13Arb_yoW8Zr4rJo
- WfXrZIgw1Syr18AF1vgws7XFy3XrykZas8Jws0ga1xXayxGFyrKa45Cw1xtF1Fg3sYvr97
- AFyxtFs5tayUt397n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUcbyCDUUUU
+X-CM-TRANSID: As8vCgDHz+YN8rJogy_MAg--.2603S15
+X-Coremail-Antispam: 1Uf129KBjvAXoWDGr1rGryDAryruF4Duw48Zwb_yoWrtry7Jo
+ WxXFy5trW8Zrn7AryYvas7Xay8Zrs09F13KrWruw4fXayxGryFg3W3GrnxXasaqr4UCF1U
+ JF90gr9YywnrJwn8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU22YLUUUUU
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiBBu5CmiyePi8VwAAsd
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiHg+5Cmiy3cEjsgAAs1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,662 +52,1485 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Xin Wang <wangxin679@h-partners.com>
+From: Yi Chen <chenyi221@huawei.com>
 
-This patch contains data structures and function codes
-related to device initialization.
+This patch adds support for mailbox of hinic3 PMD driver,
+mailbox is used for communication between PF/VF driver and MPU.
+This patch provides mailbox-related data structures and functional
+code.
 
-Signed-off-by: Xin Wang <wangxin679@h-partners.com>
+Signed-off-by: Yi Chen <chenyi221@huawei.com>
+Reviewed-by: Xin Wang <wangxin679@h-partners.com>
 Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
-Reviewed-by: Yi Chen <chenyi221@huawei.com>
 ---
- drivers/net/hinic3/base/meson.build |   2 +-
- drivers/net/hinic3/hinic3_ethdev.c  | 464 ++++++++++++++++++++++++++++
- drivers/net/hinic3/hinic3_ethdev.h  | 118 +++++++
- drivers/net/hinic3/meson.build      |  26 ++
- 4 files changed, 609 insertions(+), 1 deletion(-)
- create mode 100644 drivers/net/hinic3/hinic3_ethdev.c
- create mode 100644 drivers/net/hinic3/hinic3_ethdev.h
- create mode 100644 drivers/net/hinic3/meson.build
+ drivers/net/hinic3/base/hinic3_mbox.c | 1253 +++++++++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_mbox.h |  184 ++++
+ drivers/net/hinic3/base/meson.build   |    1 +
+ 3 files changed, 1438 insertions(+)
+ create mode 100644 drivers/net/hinic3/base/hinic3_mbox.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_mbox.h
 
-diff --git a/drivers/net/hinic3/base/meson.build b/drivers/net/hinic3/base/meson.build
-index b6a3a6cfe7..7ccd897c3d 100644
---- a/drivers/net/hinic3/base/meson.build
-+++ b/drivers/net/hinic3/base/meson.build
-@@ -47,4 +47,4 @@ base_lib = static_library(
-     include_directories: includes,
-     c_args: c_args,
- )
--base_objs = base_lib.extract_all_objects()
-+base_objs = base_lib.extract_all_objects()
-\ No newline at end of file
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
+diff --git a/drivers/net/hinic3/base/hinic3_mbox.c b/drivers/net/hinic3/base/hinic3_mbox.c
 new file mode 100644
-index 0000000000..1949260d3d
+index 0000000000..ed587a9539
 --- /dev/null
-+++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -0,0 +1,464 @@
++++ b/drivers/net/hinic3/base/hinic3_mbox.c
+@@ -0,0 +1,1253 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2025 Huawei Technologies Co., Ltd
 + */
-+#include <ethdev_pci.h>
-+#include <eal_interrupts.h>
 +
-+#include "base/hinic3_compat.h"
-+#include "base/hinic3_csr.h"
-+#include "base/hinic3_wq.h"
-+#include "base/hinic3_eqs.h"
-+#include "base/hinic3_cmdq.h"
-+#include "base/hinic3_hwdev.h"
-+#include "base/hinic3_hwif.h"
-+#include "base/hinic3_hw_cfg.h"
-+#include "base/hinic3_hw_comm.h"
-+#include "base/hinic3_nic_cfg.h"
-+#include "base/hinic3_nic_event.h"
-+#include "hinic3_ethdev.h"
++#include "hinic3_compat.h"
++#include "hinic3_csr.h"
++#include "hinic3_eqs.h"
++#include "hinic3_hw_cfg.h"
++#include "hinic3_hwdev.h"
++#include "hinic3_hwif.h"
++#include "hinic3_mbox.h"
++#include "hinic3_nic_event.h"
++
++#define HINIC3_MBOX_INT_DST_FUNC_SHIFT	    0
++#define HINIC3_MBOX_INT_DST_AEQN_SHIFT	    10
++#define HINIC3_MBOX_INT_SRC_RESP_AEQN_SHIFT 12
++#define HINIC3_MBOX_INT_STAT_DMA_SHIFT	    14
++/* The size of data to be send (unit of 4 bytes). */
++#define HINIC3_MBOX_INT_TX_SIZE_SHIFT 20
++/* SO_RO(strong order, relax order). */
++#define HINIC3_MBOX_INT_STAT_DMA_SO_RO_SHIFT 25
++#define HINIC3_MBOX_INT_WB_EN_SHIFT	     28
++
++#define HINIC3_MBOX_INT_DST_AEQN_MASK	    0x3
++#define HINIC3_MBOX_INT_SRC_RESP_AEQN_MASK  0x3
++#define HINIC3_MBOX_INT_STAT_DMA_MASK	    0x3F
++#define HINIC3_MBOX_INT_TX_SIZE_MASK	    0x1F
++#define HINIC3_MBOX_INT_STAT_DMA_SO_RO_MASK 0x3
++#define HINIC3_MBOX_INT_WB_EN_MASK	    0x1
++
++#define HINIC3_MBOX_INT_SET(val, field)           \
++	(((val) & HINIC3_MBOX_INT_##field##_MASK) \
++	 << HINIC3_MBOX_INT_##field##_SHIFT)
++
++enum hinic3_mbox_tx_status {
++	TX_NOT_DONE = 1,
++};
++
++#define HINIC3_MBOX_CTRL_TRIGGER_AEQE_SHIFT 0
++
++/*
++ * Specifies the issue request for the message data.
++ * 0 - Tx request is done;
++ * 1 - Tx request is in process.
++ */
++#define HINIC3_MBOX_CTRL_TX_STATUS_SHIFT 1
++#define HINIC3_MBOX_CTRL_DST_FUNC_SHIFT	 16
++
++#define HINIC3_MBOX_CTRL_TRIGGER_AEQE_MASK 0x1
++#define HINIC3_MBOX_CTRL_TX_STATUS_MASK	   0x1
++#define HINIC3_MBOX_CTRL_DST_FUNC_MASK	   0x1FFF
++
++#define HINIC3_MBOX_CTRL_SET(val, field)           \
++	(((val) & HINIC3_MBOX_CTRL_##field##_MASK) \
++	 << HINIC3_MBOX_CTRL_##field##_SHIFT)
++
++#define MBOX_SEGLEN_MASK \
++	HINIC3_MSG_HEADER_SET(HINIC3_MSG_HEADER_SEG_LEN_MASK, SEG_LEN)
++
++#define MBOX_MSG_POLLING_TIMEOUT 500000 /* Unit is 10us. */
++#define HINIC3_MBOX_COMP_TIME	 40000U	 /* Unit is 1ms. */
++
++#define MBOX_MAX_BUF_SZ	      2048UL
++#define MBOX_HEADER_SZ	      8
++#define HINIC3_MBOX_DATA_SIZE (MBOX_MAX_BUF_SZ - MBOX_HEADER_SZ)
++
++#define MBOX_TLP_HEADER_SZ 16
++
++/* Mbox size is 64B, 8B for mbox_header, 8B reserved. */
++#define MBOX_SEG_LEN	   48
++#define MBOX_SEG_LEN_ALIGN 4
++#define MBOX_WB_STATUS_LEN 16UL
++
++/* Mbox write back status is 16B, only first 4B is used. */
++#define MBOX_WB_STATUS_ERRCODE_MASK	 0xFFFF
++#define MBOX_WB_STATUS_MASK		 0xFF
++#define MBOX_WB_ERROR_CODE_MASK		 0xFF00
++#define MBOX_WB_STATUS_FINISHED_SUCCESS	 0xFF
++#define MBOX_WB_STATUS_FINISHED_WITH_ERR 0xFE
++#define MBOX_WB_STATUS_NOT_FINISHED	 0x00
++
++/* Determine the write back status. */
++#define MBOX_STATUS_FINISHED(wb) \
++	(((wb) & MBOX_WB_STATUS_MASK) != MBOX_WB_STATUS_NOT_FINISHED)
++#define MBOX_STATUS_SUCCESS(wb) \
++	(((wb) & MBOX_WB_STATUS_MASK) == MBOX_WB_STATUS_FINISHED_SUCCESS)
++#define MBOX_STATUS_ERRCODE(wb) ((wb) & MBOX_WB_ERROR_CODE_MASK)
++
++/* Indicate the value related to the sequence ID. */
++#define SEQ_ID_START_VAL 0
++#define SEQ_ID_MAX_VAL	 42
++
++#define DST_AEQ_IDX_DEFAULT_VAL 0
++#define SRC_AEQ_IDX_DEFAULT_VAL 0
++#define NO_DMA_ATTRIBUTE_VAL	0
++
++#define MBOX_MSG_NO_DATA_LEN 1
++
++/* Obtain the specified content of the mailbox. */
++#define MBOX_BODY_FROM_HDR(header) ((uint8_t *)(header) + MBOX_HEADER_SZ)
++#define MBOX_AREA(hwif) \
++	((hwif)->cfg_regs_base + HINIC3_FUNC_CSR_MAILBOX_DATA_OFF)
++
++#define IS_PF_OR_PPF_SRC(src_func_idx) ((src_func_idx) < HINIC3_MAX_PF_FUNCS)
++
++#define MBOX_RESPONSE_ERROR	  0x1
++#define MBOX_MSG_ID_MASK	  0xF
++#define MBOX_MSG_ID(func_to_func) ((func_to_func)->send_msg_id)
++#define MBOX_MSG_ID_INC(func_to_func)                             \
++	({                                                        \
++		typeof(func_to_func) __func = (func_to_func);     \
++		MBOX_MSG_ID(__func) = (MBOX_MSG_ID(__func) + 1) & \
++				      MBOX_MSG_ID_MASK;           \
++	})
++
++/* Max message counter waits to process for one function. */
++#define HINIC3_MAX_MSG_CNT_TO_PROCESS 10
++
++enum mbox_ordering_type {
++	STRONG_ORDER,
++};
++
++enum mbox_write_back_type {
++	WRITE_BACK = 1,
++};
++
++enum mbox_aeq_trig_type {
++	NOT_TRIGGER,
++	TRIGGER,
++};
++
++static int send_mbox_to_func(struct hinic3_mbox *func_to_func,
++			     enum hinic3_mod_type mod, uint16_t cmd, void *msg,
++			     uint16_t msg_len, uint16_t dst_func,
++			     enum hinic3_msg_direction_type direction,
++			     enum hinic3_msg_ack_type ack_type,
++			     struct mbox_msg_info *msg_info);
++static int send_tlp_mbox_to_func(struct hinic3_mbox *func_to_func,
++				 enum hinic3_mod_type mod, uint16_t cmd, void *msg,
++				 uint16_t msg_len, uint16_t dst_func,
++				 enum hinic3_msg_direction_type direction,
++				 enum hinic3_msg_ack_type ack_type,
++				 struct mbox_msg_info *msg_info);
++
++static int
++recv_vf_mbox_handler(struct hinic3_mbox *func_to_func,
++		     struct hinic3_recv_mbox *recv_mbox, void *buf_out,
++		     uint16_t *out_size, __rte_unused void *param)
++{
++	int err = 0;
++	struct hinic3_handler_info handler_info;
++	handler_info.cmd =  recv_mbox->cmd;
++	handler_info.buf_in =  recv_mbox->mbox;
++	handler_info.in_size = recv_mbox->mbox_len;
++	handler_info.buf_out = buf_out;
++	handler_info.out_size = out_size;
++
++	/*
++	 * Invoke the corresponding processing function according to the type of
++	 * the received mailbox.
++	 */
++	switch (recv_mbox->mod) {
++	case HINIC3_MOD_COMM:
++		err = vf_handle_pf_comm_mbox(func_to_func->hwdev,
++			func_to_func, &handler_info);
++		break;
++	case HINIC3_MOD_CFGM:
++		err = cfg_mbx_vf_proc_msg(func_to_func->hwdev,
++			func_to_func->hwdev->cfg_mgmt, &handler_info);
++		break;
++	case HINIC3_MOD_L2NIC:
++		err = hinic3_vf_event_handler(func_to_func->hwdev,
++			func_to_func->hwdev->cfg_mgmt, &handler_info);
++		break;
++	case HINIC3_MOD_HILINK:
++		err = hinic3_vf_mag_event_handler(func_to_func->hwdev,
++			func_to_func->hwdev->cfg_mgmt, &handler_info);
++		break;
++	default:
++		PMD_DRV_LOG(ERR, "No handler, mod: %d", recv_mbox->mod);
++		err = HINIC3_MBOX_VF_CMD_ERROR;
++		break;
++	}
++
++	return err;
++}
 +
 +/**
-+ * Init mac_vlan table in hardwares.
++ * Respond to the accept packet, construct a response message, and send it.
 + *
-+ * @param[in] eth_dev
-+ * Pointer to ethernet device structure.
++ * @param[in] func_to_func
++ * Context for inter-function communication.
++ * @param[in] recv_mbox
++ * Pointer to the received inter-function mailbox structure.
++ * @param[in] err
++ * Error Code.
++ * @param[in] out_size
++ * Output Size.
++ * @param[in] src_func_idx
++ * Index of the source function.
++ */
++static void
++response_for_recv_func_mbox(struct hinic3_mbox *func_to_func,
++			    struct hinic3_recv_mbox *recv_mbox, int err,
++			    uint16_t out_size, uint16_t src_func_idx)
++{
++	struct mbox_msg_info msg_info = {0};
++
++	if (recv_mbox->ack_type == HINIC3_MSG_ACK) {
++		msg_info.msg_id = recv_mbox->msg_info.msg_id;
++		if (err)
++			msg_info.status = HINIC3_MBOX_PF_SEND_ERR;
++
++		/* Select the sending function based on the packet type. */
++		if (IS_TLP_MBX(src_func_idx))
++			send_tlp_mbox_to_func(func_to_func, recv_mbox->mod,
++					      recv_mbox->cmd,
++					      recv_mbox->buf_out, out_size,
++					      src_func_idx, HINIC3_MSG_RESPONSE,
++					      HINIC3_MSG_NO_ACK, &msg_info);
++		else
++			send_mbox_to_func(func_to_func, recv_mbox->mod,
++					  recv_mbox->cmd, recv_mbox->buf_out,
++					  out_size, src_func_idx,
++					  HINIC3_MSG_RESPONSE,
++					  HINIC3_MSG_NO_ACK, &msg_info);
++	}
++}
++
++static bool
++check_func_mbox_ack_first(uint8_t mod)
++{
++	return mod == HINIC3_MOD_HILINK;
++}
++
++static void
++recv_func_mbox_handler(struct hinic3_mbox *func_to_func,
++		       struct hinic3_recv_mbox *recv_mbox, uint16_t src_func_idx,
++		       void *param)
++{
++	struct hinic3_hwdev *hwdev = func_to_func->hwdev;
++	void *buf_out = recv_mbox->buf_out;
++	bool ack_first = false;
++	uint16_t out_size = MBOX_MAX_BUF_SZ;
++	int err = 0;
++	/* Check whether the response is the first ACK message. */
++	ack_first = check_func_mbox_ack_first(recv_mbox->mod);
++	if (ack_first && recv_mbox->ack_type == HINIC3_MSG_ACK) {
++		response_for_recv_func_mbox(func_to_func, recv_mbox, err,
++					    out_size, src_func_idx);
++	}
++
++	/* Processe mailbox information in the VF. */
++	if (HINIC3_IS_VF(hwdev)) {
++		err = recv_vf_mbox_handler(func_to_func, recv_mbox, buf_out,
++					   &out_size, param);
++	} else {
++		err = -EINVAL;
++		PMD_DRV_LOG(ERR,
++			"PMD doesn't support non-VF handle mailbox message");
++	}
++
++	if (!out_size || err)
++		out_size = MBOX_MSG_NO_DATA_LEN;
++
++	if (!ack_first && recv_mbox->ack_type == HINIC3_MSG_ACK) {
++		response_for_recv_func_mbox(func_to_func, recv_mbox, err,
++					    out_size, src_func_idx);
++	}
++}
++
++/**
++ * Processe mailbox responses from functions.
 + *
++ * @param[in] func_to_func
++ * Mailbox for inter-function communication.
++ * @param[in] recv_mbox
++ * Received mailbox message.
 + * @return
 + * 0 on success, non-zero on failure.
 + */
 +static int
-+hinic3_init_mac_table(struct rte_eth_dev *eth_dev)
++resp_mbox_handler(struct hinic3_mbox *func_to_func,
++		  struct hinic3_recv_mbox *recv_mbox)
 +{
-+	struct hinic3_nic_dev *nic_dev =
-+		HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
-+	uint8_t addr_bytes[RTE_ETHER_ADDR_LEN];
-+	uint16_t func_id = 0;
-+	int err = 0;
-+
-+	err = hinic3_get_default_mac(nic_dev->hwdev, addr_bytes,
-+				     RTE_ETHER_ADDR_LEN);
-+	if (err)
-+		return err;
-+
-+	rte_ether_addr_copy((struct rte_ether_addr *)addr_bytes,
-+			    &eth_dev->data->mac_addrs[0]);
-+	if (rte_is_zero_ether_addr(&eth_dev->data->mac_addrs[0]))
-+		rte_eth_random_addr(eth_dev->data->mac_addrs[0].addr_bytes);
-+
-+	func_id = hinic3_global_func_id(nic_dev->hwdev);
-+	err = hinic3_set_mac(nic_dev->hwdev,
-+			     eth_dev->data->mac_addrs[0].addr_bytes, 0,
-+			     func_id);
-+	if (err && err != HINIC3_PF_SET_VF_ALREADY)
-+		return err;
-+
-+	rte_ether_addr_copy(&eth_dev->data->mac_addrs[0],
-+			    &nic_dev->default_addr);
-+
-+	return 0;
++	int ret;
++	rte_spinlock_lock(&func_to_func->mbox_lock);
++	if (recv_mbox->msg_info.msg_id == func_to_func->send_msg_id &&
++	    func_to_func->event_flag == EVENT_START) {
++		func_to_func->event_flag = EVENT_SUCCESS;
++		ret = 0;
++	} else {
++		PMD_DRV_LOG(ERR,
++			    "Mbox response timeout, current send msg id(0x%x), "
++			    "recv msg id(0x%x), status(0x%x)",
++			    func_to_func->send_msg_id,
++			    recv_mbox->msg_info.msg_id,
++			    recv_mbox->msg_info.status);
++		ret = HINIC3_MSG_HANDLER_RES;
++	}
++	rte_spinlock_unlock(&func_to_func->mbox_lock);
++	return ret;
 +}
 +
 +/**
-+ * Deinit mac_vlan table in hardware.
++ * Check whether the received mailbox message segment is valid.
 + *
-+ * @param[in] eth_dev
-+ * Pointer to ethernet device structure.
++ * @param[out] recv_mbox
++ * Received mailbox message.
++ * @param[in] mbox_header
++ * Mailbox header.
++ * @return
++ * The value true indicates valid, and the value false indicates invalid.
 + */
-+static void
-+hinic3_deinit_mac_addr(struct rte_eth_dev *eth_dev)
++static bool
++check_mbox_segment(struct hinic3_recv_mbox *recv_mbox, uint64_t mbox_header)
 +{
-+	struct hinic3_nic_dev *nic_dev =
-+		HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
-+	uint16_t func_id = 0;
-+	int err;
-+	int i;
++	uint8_t seq_id, seg_len, msg_id, mod;
++	uint16_t src_func_idx, cmd;
 +
-+	func_id = hinic3_global_func_id(nic_dev->hwdev);
++	/* Get info from the mailbox header. */
++	seq_id = HINIC3_MSG_HEADER_GET(mbox_header, SEQID);
++	seg_len = HINIC3_MSG_HEADER_GET(mbox_header, SEG_LEN);
++	src_func_idx = HINIC3_MSG_HEADER_GET(mbox_header, SRC_GLB_FUNC_IDX);
++	msg_id = HINIC3_MSG_HEADER_GET(mbox_header, MSG_ID);
++	mod = HINIC3_MSG_HEADER_GET(mbox_header, MODULE);
++	cmd = HINIC3_MSG_HEADER_GET(mbox_header, CMD);
 +
-+	for (i = 0; i < HINIC3_MAX_UC_MAC_ADDRS; i++) {
-+		if (rte_is_zero_ether_addr(&eth_dev->data->mac_addrs[i]))
-+			continue;
++	if (seq_id > SEQ_ID_MAX_VAL || seg_len > MBOX_SEG_LEN)
++		goto seg_err;
 +
-+		err = hinic3_del_mac(nic_dev->hwdev,
-+				     eth_dev->data->mac_addrs[i].addr_bytes, 0,
-+				     func_id);
-+		if (err && err != HINIC3_PF_SET_VF_ALREADY)
-+			PMD_DRV_LOG(ERR,
-+				    "Delete mac table failed, dev_name: %s",
-+				    eth_dev->data->name);
++	/* New message segment, which saves its information to recv_mbox. */
++	if (seq_id == 0) {
++		recv_mbox->seq_id = seq_id;
++		recv_mbox->msg_info.msg_id = msg_id;
++		recv_mbox->mod = mod;
++		recv_mbox->cmd = cmd;
++	} else {
++		if ((seq_id != recv_mbox->seq_id + 1) ||
++		    msg_id != recv_mbox->msg_info.msg_id ||
++		    mod != recv_mbox->mod || cmd != recv_mbox->cmd)
++			goto seg_err;
 +
-+		memset(&eth_dev->data->mac_addrs[i], 0,
-+		       sizeof(struct rte_ether_addr));
++		recv_mbox->seq_id = seq_id;
 +	}
 +
-+	/* Delete multicast mac addrs. */
-+	hinic3_delete_mc_addr_list(nic_dev);
++	return true;
++
++seg_err:
++	PMD_DRV_LOG(ERR,
++		    "Mailbox segment check failed, src func id: 0x%x, "
++		    "front seg info: seq id: 0x%x, msg id: 0x%x, mod: 0x%x, "
++		    "cmd: 0x%x",
++		    src_func_idx, recv_mbox->seq_id, recv_mbox->msg_info.msg_id,
++		    recv_mbox->mod, recv_mbox->cmd);
++	PMD_DRV_LOG(ERR,
++		    "Current seg info: seg len: 0x%x, seq id: 0x%x, "
++		    "msg id: 0x%x, mod: 0x%x, cmd: 0x%x",
++		    seg_len, seq_id, msg_id, mod, cmd);
++
++	return false;
++}
++
++static int
++recv_mbox_handler(struct hinic3_mbox *func_to_func, void *header,
++		  struct hinic3_recv_mbox *recv_mbox, void *param)
++{
++	uint64_t mbox_header = *((uint64_t *)header);
++	void *mbox_body = MBOX_BODY_FROM_HDR(header);
++	uint16_t src_func_idx;
++	int pos;
++	uint8_t seq_id;
++	/* Obtain information from the mailbox header. */
++	seq_id = HINIC3_MSG_HEADER_GET(mbox_header, SEQID);
++	src_func_idx = HINIC3_MSG_HEADER_GET(mbox_header, SRC_GLB_FUNC_IDX);
++
++	if (!check_mbox_segment(recv_mbox, mbox_header)) {
++		recv_mbox->seq_id = SEQ_ID_MAX_VAL;
++		return HINIC3_MSG_HANDLER_RES;
++	}
++
++	pos = seq_id * MBOX_SEG_LEN;
++	memcpy((void *)((uint8_t *)recv_mbox->mbox + pos), (void *)mbox_body,
++	       (size_t)HINIC3_MSG_HEADER_GET(mbox_header, SEG_LEN));
++
++	if (!HINIC3_MSG_HEADER_GET(mbox_header, LAST))
++		return HINIC3_MSG_HANDLER_RES;
++	/* Setting the information about the recv mailbox. */
++	recv_mbox->cmd = HINIC3_MSG_HEADER_GET(mbox_header, CMD);
++	recv_mbox->mod = HINIC3_MSG_HEADER_GET(mbox_header, MODULE);
++	recv_mbox->mbox_len = HINIC3_MSG_HEADER_GET(mbox_header, MSG_LEN);
++	recv_mbox->ack_type = HINIC3_MSG_HEADER_GET(mbox_header, NO_ACK);
++	recv_mbox->msg_info.msg_id = HINIC3_MSG_HEADER_GET(mbox_header, MSG_ID);
++	recv_mbox->msg_info.status = HINIC3_MSG_HEADER_GET(mbox_header, STATUS);
++	recv_mbox->seq_id = SEQ_ID_MAX_VAL;
++
++	/*
++	 * If the received message is a response message, call the mbox response
++	 * processing function.
++	 */
++	if (HINIC3_MSG_HEADER_GET(mbox_header, DIRECTION) ==
++	    HINIC3_MSG_RESPONSE) {
++		return resp_mbox_handler(func_to_func, recv_mbox);
++	}
++
++	recv_func_mbox_handler(func_to_func, recv_mbox, src_func_idx, param);
++	return HINIC3_MSG_HANDLER_RES;
++}
++
++static inline int
++hinic3_mbox_get_index(int func)
++{
++	return (func == HINIC3_MGMT_SRC_ID) ? HINIC3_MBOX_MPU_INDEX
++					    : HINIC3_MBOX_PF_INDEX;
++}
++
++int
++hinic3_mbox_func_aeqe_handler(struct hinic3_hwdev *hwdev,
++				uint8_t *header, __rte_unused uint8_t size, void *param)
++{
++	struct hinic3_mbox *func_to_func = NULL;
++	struct hinic3_recv_mbox *recv_mbox = NULL;
++	uint64_t mbox_header = *((uint64_t *)header);
++	uint64_t src, dir;
++	/* Obtain the mailbox for communication between functions. */
++	func_to_func = hwdev->func_to_func;
++
++	dir = HINIC3_MSG_HEADER_GET(mbox_header, DIRECTION);
++	src = HINIC3_MSG_HEADER_GET(mbox_header, SRC_GLB_FUNC_IDX);
++
++	src = hinic3_mbox_get_index((int)src);
++	recv_mbox = (dir == HINIC3_MSG_DIRECT_SEND)
++			    ? &func_to_func->mbox_send[src]
++			    : &func_to_func->mbox_resp[src];
++	/* Processing Received Mailbox info. */
++	return recv_mbox_handler(func_to_func, (uint64_t *)header, recv_mbox, param);
++}
++
++static void
++clear_mbox_status(struct hinic3_send_mbox *mbox)
++{
++	*mbox->wb_status = 0;
++
++	/* Clear mailbox write back status. */
++	rte_atomic_thread_fence(rte_memory_order_release);
++}
++
++static void
++mbox_copy_header(struct hinic3_send_mbox *mbox, uint64_t *header)
++{
++	uint32_t *data = (uint32_t *)header;
++	uint32_t i, idx_max = MBOX_HEADER_SZ / sizeof(uint32_t);
++
++	for (i = 0; i < idx_max; i++) {
++		rte_write32(rte_cpu_to_be_32(*(data + i)),
++			    mbox->data + i * sizeof(uint32_t));
++	}
++}
++
++#define MBOX_DMA_MSG_INIT_XOR_VAL 0x5a5a5a5a
++static uint32_t
++mbox_dma_msg_xor(uint32_t *data, uint16_t msg_len)
++{
++	uint32_t xor = MBOX_DMA_MSG_INIT_XOR_VAL;
++	uint16_t dw_len = msg_len / sizeof(uint32_t);
++	uint16_t i;
++
++	for (i = 0; i < dw_len; i++)
++		xor ^= data[i];
++
++	return xor;
++}
++
++static void
++mbox_copy_send_data_addr(struct hinic3_send_mbox *mbox, uint16_t seg_len)
++{
++	uint32_t addr_h, addr_l, xor;
++
++	xor = mbox_dma_msg_xor(mbox->sbuff_vaddr, seg_len);
++	addr_h = upper_32_bits(mbox->sbuff_paddr);
++	addr_l = lower_32_bits(mbox->sbuff_paddr);
++
++	rte_write32(rte_cpu_to_be_32(xor), mbox->data + MBOX_HEADER_SZ);
++	rte_write32(rte_cpu_to_be_32(addr_h),
++		    mbox->data + MBOX_HEADER_SZ + sizeof(uint32_t));
++	rte_write32(rte_cpu_to_be_32(addr_l),
++		    mbox->data + MBOX_HEADER_SZ + 0x2 * sizeof(uint32_t));
++	rte_write32(rte_cpu_to_be_32((uint32_t)seg_len),
++		    mbox->data + MBOX_HEADER_SZ + 0x3 * sizeof(uint32_t));
++	/* Reserved field. */
++	rte_write32(0, mbox->data + MBOX_HEADER_SZ + 0x4 * sizeof(uint32_t));
++	rte_write32(0, mbox->data + MBOX_HEADER_SZ + 0x5 * sizeof(uint32_t));
++}
++
++static void
++mbox_copy_send_data(struct hinic3_send_mbox *mbox, void *seg, uint16_t seg_len)
++{
++	uint32_t *data = seg;
++	uint32_t data_len, chk_sz = sizeof(uint32_t);
++	uint32_t i, idx_max;
++	uint8_t mbox_max_buf[MBOX_SEG_LEN] = {0};
++
++	/* The mbox message should be aligned in 4 bytes. */
++	if (seg_len % chk_sz) {
++		if (seg_len <= sizeof(mbox_max_buf)) {
++			memcpy(mbox_max_buf, seg, seg_len);
++			data = (uint32_t *)mbox_max_buf;
++		} else {
++			PMD_DRV_LOG(ERR, "mbox_max_buf overflow: seg_len=%u.", seg_len);
++			return;
++		}
++	}
++
++	data_len = seg_len;
++	idx_max = RTE_ALIGN(data_len, chk_sz) / chk_sz;
++
++	for (i = 0; i < idx_max; i++) {
++		rte_write32(rte_cpu_to_be_32(*(data + i)),
++			    mbox->data + MBOX_HEADER_SZ + i * sizeof(uint32_t));
++	}
++}
++
++static void
++write_mbox_msg_attr(struct hinic3_mbox *func_to_func, uint16_t dst_func,
++		    uint16_t dst_aeqn, uint16_t seg_len)
++{
++	uint32_t mbox_int, mbox_ctrl;
++
++	/* If VF, function ids must self-learning by HW(PPF=1 PF=0). */
++	if (HINIC3_IS_VF(func_to_func->hwdev) &&
++	    dst_func != HINIC3_MGMT_SRC_ID) {
++		if (dst_func == HINIC3_HWIF_PPF_IDX(func_to_func->hwdev->hwif))
++			dst_func = 1;
++		else
++			dst_func = 0;
++	}
++	/* Set the interrupt attribute of the mailbox. */
++	mbox_int = HINIC3_MBOX_INT_SET(dst_aeqn, DST_AEQN) |
++		   HINIC3_MBOX_INT_SET(0, SRC_RESP_AEQN) |
++		   HINIC3_MBOX_INT_SET(NO_DMA_ATTRIBUTE_VAL, STAT_DMA) |
++		   HINIC3_MBOX_INT_SET(RTE_ALIGN(seg_len + MBOX_HEADER_SZ,
++						 MBOX_SEG_LEN_ALIGN) >>
++					       2,
++				       TX_SIZE) |
++		   HINIC3_MBOX_INT_SET(STRONG_ORDER, STAT_DMA_SO_RO) |
++		   HINIC3_MBOX_INT_SET(WRITE_BACK, WB_EN);
++
++	/* The interrupt attribute is written to the interrupt register. */
++	hinic3_hwif_write_reg(func_to_func->hwdev->hwif,
++			      HINIC3_FUNC_CSR_MAILBOX_INT_OFFSET_OFF, mbox_int);
++
++	rte_atomic_thread_fence(rte_memory_order_release); /**< Writing the mbox intr attributes */
++
++	/* Set the control attributes of the mailbox and write to register. */
++	mbox_ctrl = HINIC3_MBOX_CTRL_SET(TX_NOT_DONE, TX_STATUS);
++	mbox_ctrl |= HINIC3_MBOX_CTRL_SET(NOT_TRIGGER, TRIGGER_AEQE);
++	mbox_ctrl |= HINIC3_MBOX_CTRL_SET(dst_func, DST_FUNC);
++	hinic3_hwif_write_reg(func_to_func->hwdev->hwif,
++			      HINIC3_FUNC_CSR_MAILBOX_CONTROL_OFF, mbox_ctrl);
 +}
 +
 +/**
-+ * Check the valid CoS bitmap to determine the available CoS IDs and set
-+ * the default CoS ID to the highest valid one.
++ * Read the value of the mailbox register of the hardware device.
 + *
 + * @param[in] hwdev
 + * Pointer to hardware device structure.
-+ * @param[out] cos_id
-+ * Pointer to store the default CoS ID.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
 + */
-+static int
-+hinic3_pf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
++static void
++dump_mbox_reg(struct hinic3_hwdev *hwdev)
 +{
-+	uint8_t default_cos = 0;
-+	uint8_t valid_cos_bitmap;
-+	uint8_t i;
-+
-+	valid_cos_bitmap = hwdev->cfg_mgmt->svc_cap.cos_valid_bitmap;
-+	if (!valid_cos_bitmap) {
-+		PMD_DRV_LOG(ERR, "PF has none cos to support");
-+		return -EFAULT;
-+	}
-+
-+	for (i = 0; i < HINIC3_COS_NUM_MAX; i++) {
-+		if (valid_cos_bitmap & RTE_BIT32(i))
-+			/* Find max cos id as default cos. */
-+			default_cos = i;
-+	}
-+
-+	*cos_id = default_cos;
-+
-+	return 0;
++	uint32_t val;
++	/* Read the value of the MBOX control register. */
++	val = hinic3_hwif_read_reg(hwdev->hwif,
++				   HINIC3_FUNC_CSR_MAILBOX_CONTROL_OFF);
++	PMD_DRV_LOG(ERR, "Mailbox control reg: 0x%x", val);
++	/* Read the value of the MBOX interrupt offset register. */
++	val = hinic3_hwif_read_reg(hwdev->hwif,
++				   HINIC3_FUNC_CSR_MAILBOX_INT_OFFSET_OFF);
++	PMD_DRV_LOG(ERR, "Mailbox interrupt offset: 0x%x", val);
 +}
 +
-+static int
-+hinic3_init_default_cos(struct hinic3_nic_dev *nic_dev)
++static uint16_t
++get_mbox_status(struct hinic3_send_mbox *mbox)
 +{
-+	uint8_t cos_id = 0;
-+	int err;
++	/* Write back is 16B, but only use first 4B. */
++	uint64_t wb_val = rte_be_to_cpu_64(*mbox->wb_status);
 +
-+	if (!HINIC3_IS_VF(nic_dev->hwdev)) {
-+		err = hinic3_pf_get_default_cos(nic_dev->hwdev, &cos_id);
-+		if (err) {
-+			PMD_DRV_LOG(ERR, "Get PF default cos failed, err: %d",
-+				    err);
-+			return err;
-+		}
-+	} else {
-+		err = hinic3_vf_get_default_cos(nic_dev->hwdev, &cos_id);
-+		if (err) {
-+			PMD_DRV_LOG(ERR, "Get VF default cos failed, err: %d",
-+				    err);
-+			return err;
-+		}
-+	}
++	rte_atomic_thread_fence(rte_memory_order_acquire); /**< Verify reading before check. */
 +
-+	nic_dev->default_cos = cos_id;
-+	PMD_DRV_LOG(INFO, "Default cos %d", nic_dev->default_cos);
-+	return 0;
++	return (uint16_t)(wb_val & MBOX_WB_STATUS_ERRCODE_MASK);
 +}
 +
 +/**
-+ * Initialize Class of Service (CoS). For PF devices, it also sync the link
-+ * status with the physical port.
++ * Sending Mailbox Message Segment.
 + *
-+ * @param[in] nic_dev
-+ * Pointer to NIC device structure.
-+ *
++ * @param[in] func_to_func
++ * Mailbox for inter-function communication.
++ * @param[in] header
++ * Mailbox header.
++ * @param[in] dst_func
++ * Indicate destination func.
++ * @param[in] seg
++ * Segment data to be sent.
++ * @param[in] seg_len
++ * Length of the segment to be sent.
++ * @param[in] msg_info
++ * Indicate the message information.
 + * @return
 + * 0 on success, non-zero on failure.
 + */
 +static int
-+hinic3_set_default_hw_feature(struct hinic3_nic_dev *nic_dev)
++send_mbox_seg(struct hinic3_mbox *func_to_func, uint64_t header, uint16_t dst_func,
++	      void *seg, uint16_t seg_len, __rte_unused void *msg_info)
 +{
-+	int err;
++	struct hinic3_send_mbox *send_mbox = &func_to_func->send_mbox;
++	struct hinic3_hwdev *hwdev = func_to_func->hwdev;
++	uint8_t num_aeqs = hwdev->hwif->attr.num_aeqs;
++	uint16_t dst_aeqn, wb_status = 0, errcode;
++	uint16_t seq_dir = HINIC3_MSG_HEADER_GET(header, DIRECTION);
++	uint32_t cnt = 0;
 +
-+	err = hinic3_init_default_cos(nic_dev);
-+	if (err)
-+		return err;
++	/* Mbox to mgmt cpu, hardware doesn't care dst aeq id. */
++	if (num_aeqs >= 2)
++		dst_aeqn = (seq_dir == HINIC3_MSG_DIRECT_SEND)
++				   ? HINIC3_ASYNC_MSG_AEQ
++				   : HINIC3_MBOX_RSP_MSG_AEQ;
++	else
++		dst_aeqn = 0;
 +
-+	if (hinic3_func_type(nic_dev->hwdev) == TYPE_VF)
-+		return 0;
++	clear_mbox_status(send_mbox);
++	mbox_copy_header(send_mbox, &header);
++	mbox_copy_send_data(send_mbox, seg, seg_len);
 +
-+	err = hinic3_set_link_status_follow(nic_dev->hwdev,
-+					    HINIC3_LINK_FOLLOW_PORT);
-+	if (err == HINIC3_MGMT_CMD_UNSUPPORTED)
-+		PMD_DRV_LOG(WARNING, "Don't support to set link status follow "
-+				     "phy port status");
-+	else if (err)
-+		return err;
++	/* Set mailbox msg seg len. */
++	write_mbox_msg_attr(func_to_func, dst_func, dst_aeqn, seg_len);
++	rte_atomic_thread_fence(rte_memory_order_release); /**< Writing the mbox msg attributes. */
 +
-+	return 0;
-+}
++	/* Wait until the status of the mailbox changes to Complete. */
++	while (cnt < MBOX_MSG_POLLING_TIMEOUT) {
++		wb_status = get_mbox_status(send_mbox);
++		if (MBOX_STATUS_FINISHED(wb_status))
++			break;
 +
-+/**
-+ * Initialize the network function, including hardware configuration, memory
-+ * allocation for data structures, MAC address setup, and interrupt enabling.
-+ * It also registers interrupt callbacks and sets default hardware features.
-+ * If any step fails, appropriate cleanup is performed.
-+ *
-+ * @param[out] eth_dev
-+ * Pointer to ethernet device structure.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ */
-+static int
-+hinic3_func_init(struct rte_eth_dev *eth_dev)
-+{
-+	struct hinic3_tcam_info *tcam_info = NULL;
-+	struct hinic3_nic_dev *nic_dev = NULL;
-+	struct rte_pci_device *pci_dev = NULL;
-+	int err;
-+
-+	pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-+
-+	/* EAL is secondary and eth_dev is already created. */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
-+		PMD_DRV_LOG(INFO, "Initialize %s in secondary process",
-+			    eth_dev->data->name);
-+
-+		return 0;
++		rte_delay_us(10);
++		cnt++;
 +	}
 +
-+	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
-+	memset(nic_dev, 0, sizeof(*nic_dev));
-+	snprintf(nic_dev->dev_name, sizeof(nic_dev->dev_name),
-+		     "dbdf-%.4x:%.2x:%.2x.%x", pci_dev->addr.domain,
-+		     pci_dev->addr.bus, pci_dev->addr.devid,
-+		     pci_dev->addr.function);
-+
-+	/* Alloc mac_addrs. */
-+	eth_dev->data->mac_addrs = rte_zmalloc("hinic3_mac",
-+		HINIC3_MAX_UC_MAC_ADDRS * sizeof(struct rte_ether_addr), 0);
-+	if (!eth_dev->data->mac_addrs) {
-+		PMD_DRV_LOG(ERR, "Allocate  MAC addresses failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		err = -ENOMEM;
-+		goto alloc_eth_addr_fail;
-+	}
-+
-+	nic_dev->mc_list = rte_zmalloc("hinic3_mc",
-+		HINIC3_MAX_MC_MAC_ADDRS * sizeof(struct rte_ether_addr), 0);
-+	if (!nic_dev->mc_list) {
-+		PMD_DRV_LOG(ERR, "Allocate  MAC addresses failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		err = -ENOMEM;
-+		goto alloc_mc_list_fail;
-+	}
-+
-+	/* Create hardware device. */
-+	nic_dev->hwdev = rte_zmalloc("hinic3_hwdev", sizeof(*nic_dev->hwdev),
-+				     RTE_CACHE_LINE_SIZE);
-+	if (!nic_dev->hwdev) {
-+		PMD_DRV_LOG(ERR, "Allocate hwdev memory failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		err = -ENOMEM;
-+		goto alloc_hwdev_mem_fail;
-+	}
-+	nic_dev->hwdev->pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-+	nic_dev->hwdev->dev_handle = nic_dev;
-+	nic_dev->hwdev->eth_dev = eth_dev;
-+	nic_dev->hwdev->port_id = eth_dev->data->port_id;
-+
-+	err = hinic3_init_hwdev(nic_dev->hwdev);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Init chip hwdev failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto init_hwdev_fail;
-+	}
-+
-+	nic_dev->max_sqs = hinic3_func_max_sqs(nic_dev->hwdev);
-+	nic_dev->max_rqs = hinic3_func_max_rqs(nic_dev->hwdev);
-+
-+	err = hinic3_init_nic_hwdev(nic_dev->hwdev);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Init nic hwdev failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto init_nic_hwdev_fail;
-+	}
-+
-+	err = hinic3_get_feature_from_hw(nic_dev->hwdev, &nic_dev->feature_cap,
-+					 1);
-+	if (err) {
++	if (cnt == MBOX_MSG_POLLING_TIMEOUT) {
 +		PMD_DRV_LOG(ERR,
-+			"Get nic feature from hardware failed, dev_name: %s",
-+			eth_dev->data->name);
-+		goto get_cap_fail;
++			    "Send mailbox segment timeout, wb status: 0x%x",
++			    wb_status);
++		dump_mbox_reg(hwdev);
++		return -ETIMEDOUT;
 +	}
 +
-+	err = hinic3_init_sw_rxtxqs(nic_dev);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Init sw rxqs or txqs failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto init_sw_rxtxqs_fail;
++	if (!MBOX_STATUS_SUCCESS(wb_status)) {
++		PMD_DRV_LOG(ERR,
++			    "Send mailbox segment to function %d error, wb "
++			    "status: 0x%x",
++			    dst_func, wb_status);
++		errcode = MBOX_STATUS_ERRCODE(wb_status);
++		return errcode ? errcode : -EFAULT;
 +	}
-+
-+	err = hinic3_init_mac_table(eth_dev);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Init mac table failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto init_mac_table_fail;
-+	}
-+
-+	/* Set hardware feature to default status. */
-+	err = hinic3_set_default_hw_feature(nic_dev);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Set hw default features failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto set_default_feature_fail;
-+	}
-+
-+	/* Register callback func to eal lib. */
-+	err = rte_intr_callback_register(PCI_DEV_TO_INTR_HANDLE(pci_dev),
-+					 hinic3_dev_interrupt_handler,
-+					 (void *)eth_dev);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Register intr callback failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto reg_intr_cb_fail;
-+	}
-+
-+	/* Enable uio/vfio intr/eventfd mapping. */
-+	err = rte_intr_enable(PCI_DEV_TO_INTR_HANDLE(pci_dev));
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Enable rte interrupt failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto enable_intr_fail;
-+	}
-+	tcam_info = &nic_dev->tcam;
-+	memset(tcam_info, 0, sizeof(struct hinic3_tcam_info));
-+	TAILQ_INIT(&tcam_info->tcam_list);
-+	TAILQ_INIT(&tcam_info->tcam_dynamic_info.tcam_dynamic_list);
-+	TAILQ_INIT(&nic_dev->filter_ethertype_list);
-+	TAILQ_INIT(&nic_dev->filter_fdir_rule_list);
-+
-+	hinic3_set_bit(HINIC3_DEV_INTR_EN, &nic_dev->dev_status);
-+
-+	hinic3_set_bit(HINIC3_DEV_INIT, &nic_dev->dev_status);
-+	PMD_DRV_LOG(INFO, "Initialize %s in primary succeed",
-+		    eth_dev->data->name);
-+
-+	/**
-+	 * Queue xstats filled automatically by ethdev layer.
-+	 */
-+	eth_dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
 +
 +	return 0;
++}
 +
-+enable_intr_fail:
-+	rte_intr_callback_unregister(PCI_DEV_TO_INTR_HANDLE(pci_dev),
-+					hinic3_dev_interrupt_handler,
-+					(void *)eth_dev);
++static int
++send_tlp_mbox_seg(struct hinic3_mbox *func_to_func, uint64_t header, uint16_t dst_func,
++		  void *seg, uint16_t seg_len, __rte_unused void *msg_info)
++{
++	struct hinic3_send_mbox *send_mbox = &func_to_func->send_mbox;
++	struct hinic3_hwdev *hwdev = func_to_func->hwdev;
++	uint8_t num_aeqs = hwdev->hwif->attr.num_aeqs;
++	uint16_t dst_aeqn, errcode, wb_status = 0;
++	uint16_t seq_dir = HINIC3_MSG_HEADER_GET(header, DIRECTION);
++	uint32_t cnt = 0;
 +
-+reg_intr_cb_fail:
-+set_default_feature_fail:
-+	hinic3_deinit_mac_addr(eth_dev);
++	/* Mbox to mgmt cpu, hardware doesn't care dst aeq id. */
++	if (num_aeqs >= 2)
++		dst_aeqn = (seq_dir == HINIC3_MSG_DIRECT_SEND)
++				   ? HINIC3_ASYNC_MSG_AEQ
++				   : HINIC3_MBOX_RSP_MSG_AEQ;
++	else
++		dst_aeqn = 0;
 +
-+init_mac_table_fail:
-+	hinic3_deinit_sw_rxtxqs(nic_dev);
++	clear_mbox_status(send_mbox);
++	mbox_copy_header(send_mbox, &header);
 +
-+init_sw_rxtxqs_fail:
-+	hinic3_free_nic_hwdev(nic_dev->hwdev);
++	/* Copy data to DMA buffer. */
++	memcpy((void *)send_mbox->sbuff_vaddr, (void *)seg, (size_t)seg_len);
 +
-+get_cap_fail:
-+init_nic_hwdev_fail:
-+	hinic3_free_hwdev(nic_dev->hwdev);
-+	eth_dev->dev_ops = NULL;
-+	eth_dev->rx_queue_count = NULL;
-+	eth_dev->rx_descriptor_status = NULL;
-+	eth_dev->tx_descriptor_status = NULL;
++	/*
++	 * Copy data address to mailbox ctrl CSR(Control and Status Register).
++	 */
++	mbox_copy_send_data_addr(send_mbox, seg_len);
 +
-+init_hwdev_fail:
-+	rte_free(nic_dev->hwdev);
-+	nic_dev->hwdev = NULL;
++	/* Set mailbox msg header size. */
++	write_mbox_msg_attr(func_to_func, dst_func, dst_aeqn,
++			    MBOX_TLP_HEADER_SZ);
 +
-+alloc_hwdev_mem_fail:
-+	rte_free(nic_dev->mc_list);
-+	nic_dev->mc_list = NULL;
++	rte_atomic_thread_fence(rte_memory_order_release); /**< Writing the mbox msg attributes. */
 +
-+alloc_mc_list_fail:
-+	rte_free(eth_dev->data->mac_addrs);
-+	eth_dev->data->mac_addrs = NULL;
++	/* Wait until the status of the mailbox changes to Complete. */
++	while (cnt < MBOX_MSG_POLLING_TIMEOUT) {
++		wb_status = get_mbox_status(send_mbox);
++		if (MBOX_STATUS_FINISHED(wb_status))
++			break;
 +
-+alloc_eth_addr_fail:
-+	PMD_DRV_LOG(ERR, "Initialize %s in primary failed",
-+		    eth_dev->data->name);
++		rte_delay_us(10);
++		cnt++;
++	}
++
++	if (cnt == MBOX_MSG_POLLING_TIMEOUT) {
++		PMD_DRV_LOG(ERR,
++			    "Send mailbox segment timeout, wb status: 0x%x",
++			    wb_status);
++		dump_mbox_reg(hwdev);
++		return -ETIMEDOUT;
++	}
++
++	if (!MBOX_STATUS_SUCCESS(wb_status)) {
++		PMD_DRV_LOG(ERR,
++			    "Send mailbox segment to function %d error, wb "
++			    "status: 0x%x",
++			    dst_func, wb_status);
++		errcode = MBOX_STATUS_ERRCODE(wb_status);
++		return errcode ? errcode : -EFAULT;
++	}
++
++	return 0;
++}
++
++static int
++send_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
++		  uint16_t cmd, void *msg, uint16_t msg_len, uint16_t dst_func,
++		  enum hinic3_msg_direction_type direction,
++		  enum hinic3_msg_ack_type ack_type,
++		  struct mbox_msg_info *msg_info)
++{
++	int err = 0;
++	uint32_t seq_id = 0;
++	uint16_t seg_len = MBOX_SEG_LEN;
++	uint16_t rsp_aeq_id, left = msg_len;
++	uint8_t *msg_seg = (uint8_t *)msg;
++	uint64_t header = 0;
++
++	rsp_aeq_id = HINIC3_MBOX_RSP_MSG_AEQ;
++
++	/* Set the header message. */
++	header = HINIC3_MSG_HEADER_SET(msg_len, MSG_LEN) |
++		 HINIC3_MSG_HEADER_SET(mod, MODULE) |
++		 HINIC3_MSG_HEADER_SET(seg_len, SEG_LEN) |
++		 HINIC3_MSG_HEADER_SET(ack_type, NO_ACK) |
++		 HINIC3_MSG_HEADER_SET(HINIC3_DATA_INLINE, DATA_TYPE) |
++		 HINIC3_MSG_HEADER_SET(SEQ_ID_START_VAL, SEQID) |
++		 HINIC3_MSG_HEADER_SET(NOT_LAST_SEGMENT, LAST) |
++		 HINIC3_MSG_HEADER_SET(direction, DIRECTION) |
++		 HINIC3_MSG_HEADER_SET(cmd, CMD) |
++		 /* The VF's offset to it's associated PF. */
++		 HINIC3_MSG_HEADER_SET(msg_info->msg_id, MSG_ID) |
++		 HINIC3_MSG_HEADER_SET(rsp_aeq_id, AEQ_ID) |
++		 HINIC3_MSG_HEADER_SET(HINIC3_MSG_FROM_MBOX, SOURCE) |
++		 HINIC3_MSG_HEADER_SET(!!msg_info->status, STATUS);
++	/* Loop until all messages are sent. */
++	while (!(HINIC3_MSG_HEADER_GET(header, LAST))) {
++		if (left <= MBOX_SEG_LEN) {
++			header &= ~MBOX_SEGLEN_MASK;
++			header |= HINIC3_MSG_HEADER_SET(left, SEG_LEN);
++			header |= HINIC3_MSG_HEADER_SET(LAST_SEGMENT, LAST);
++
++			seg_len = left;
++		}
++
++		err = send_mbox_seg(func_to_func, header, dst_func, msg_seg,
++				    seg_len, msg_info);
++		if (err) {
++			PMD_DRV_LOG(ERR,
++				    "Send mbox seg failed, seq_id: 0x%" PRIx64,
++				    HINIC3_MSG_HEADER_GET(header, SEQID));
++
++			goto send_err;
++		}
++
++		left -= MBOX_SEG_LEN;
++		msg_seg += MBOX_SEG_LEN;
++
++		seq_id++;
++		header &= ~(HINIC3_MSG_HEADER_SET(HINIC3_MSG_HEADER_SEQID_MASK,
++						  SEQID));
++		header |= HINIC3_MSG_HEADER_SET(seq_id, SEQID);
++	}
++send_err:
 +	return err;
 +}
 +
 +static int
-+hinic3_dev_init(struct rte_eth_dev *eth_dev)
++send_tlp_mbox_to_func(struct hinic3_mbox *func_to_func,
++		      enum hinic3_mod_type mod, uint16_t cmd, void *msg, uint16_t msg_len,
++		      uint16_t dst_func, enum hinic3_msg_direction_type direction,
++		      enum hinic3_msg_ack_type ack_type,
++		      struct mbox_msg_info *msg_info)
 +{
-+	struct rte_pci_device *pci_dev;
++	struct hinic3_hwdev *hwdev = func_to_func->hwdev;
++	uint8_t *msg_seg = (uint8_t *)msg;
++	int err = 0;
++	uint16_t rsp_aeq_id;
++	uint64_t header = 0;
 +
-+	pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
++	rsp_aeq_id = HINIC3_MBOX_RSP_MSG_AEQ;
 +
-+	PMD_DRV_LOG(INFO, "Initializing %.4x:%.2x:%.2x.%x in %s process",
-+		    pci_dev->addr.domain, pci_dev->addr.bus,
-+		    pci_dev->addr.devid, pci_dev->addr.function,
-+		    (rte_eal_process_type() == RTE_PROC_PRIMARY) ? "primary"
-+								 : "secondary");
++	/* Set the header message. */
++	header = HINIC3_MSG_HEADER_SET(MBOX_TLP_HEADER_SZ, MSG_LEN) |
++		 HINIC3_MSG_HEADER_SET(MBOX_TLP_HEADER_SZ, SEG_LEN) |
++		 HINIC3_MSG_HEADER_SET(mod, MODULE) |
++		 HINIC3_MSG_HEADER_SET(LAST_SEGMENT, LAST) |
++		 HINIC3_MSG_HEADER_SET(ack_type, NO_ACK) |
++		 HINIC3_MSG_HEADER_SET(HINIC3_DATA_DMA, DATA_TYPE) |
++		 HINIC3_MSG_HEADER_SET(SEQ_ID_START_VAL, SEQID) |
++		 HINIC3_MSG_HEADER_SET(direction, DIRECTION) |
++		 HINIC3_MSG_HEADER_SET(cmd, CMD) |
++		 /* The VF's offset to it's associated PF. */
++		 HINIC3_MSG_HEADER_SET(msg_info->msg_id, MSG_ID) |
++		 HINIC3_MSG_HEADER_SET(rsp_aeq_id, AEQ_ID) |
++		 HINIC3_MSG_HEADER_SET(HINIC3_MSG_FROM_MBOX, SOURCE) |
++		 HINIC3_MSG_HEADER_SET(!!msg_info->status, STATUS) |
++		 HINIC3_MSG_HEADER_SET(hinic3_global_func_id(hwdev),
++				       SRC_GLB_FUNC_IDX);
 +
-+	PMD_DRV_LOG(INFO, "Network Interface pmd driver version: %s",
-+		    HINIC3_PMD_DRV_VERSION);
++	/* Send a message. */
++	err = send_tlp_mbox_seg(func_to_func, header, dst_func, msg_seg,
++				msg_len, msg_info);
++	if (err) {
++		PMD_DRV_LOG(ERR, "Send mbox seg failed, seq_id: 0x%" PRIx64,
++			    HINIC3_MSG_HEADER_GET(header, SEQID));
++	}
 +
-+	return hinic3_func_init(eth_dev);
++	return err;
++}
++
++/**
++ * Set mailbox F2F(Function to Function) event status.
++ *
++ * @param[out] func_to_func
++ * Context for inter-function communication.
++ * @param[in] event_flag
++ * Event status enumerated value.
++ */
++static void
++set_mbox_to_func_event(struct hinic3_mbox *func_to_func,
++		       enum mbox_event_state event_flag)
++{
++	rte_spinlock_lock(&func_to_func->mbox_lock);
++	func_to_func->event_flag = event_flag;
++	rte_spinlock_unlock(&func_to_func->mbox_lock);
++}
++
++/**
++ * Send data from one function to another and receive responses.
++ *
++ * @param[in] func_to_func
++ * Context for inter-function communication.
++ * @param[in] mod
++ * Command queue module type.
++ * @param[in] cmd
++ * Indicate the command to be executed.
++  the command to be executed.
++ * @param[in] dst_func
++ * Indicate destination func.
++ * @param[in] buf_in
++ * Pointer to the input buffer.
++ * @param[in] in_size
++ * Input buffer size.
++ * @param[out] buf_out
++ * Pointer to the output buffer.
++ * @param[out] out_size
++ * Output buffer size.
++ * @param[in] timeout
++ * Timeout interval for waiting for a response.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++hinic3_mbox_to_func(struct hinic3_mbox *func_to_func, enum hinic3_mod_type mod,
++		    uint16_t cmd, uint16_t dst_func, void *buf_in, uint16_t in_size,
++		    void *buf_out, uint16_t *out_size, uint32_t timeout)
++{
++	/* Use mbox_resp to hole data which responded from other function. */
++	struct hinic3_recv_mbox *mbox_for_resp = NULL;
++	struct mbox_msg_info msg_info = {0};
++	struct hinic3_eq *aeq = NULL;
++	uint16_t mbox_rsp_idx;
++	uint32_t time;
++	int err;
++
++	mbox_rsp_idx = (uint16_t)hinic3_mbox_get_index(dst_func);
++	mbox_for_resp = &func_to_func->mbox_resp[mbox_rsp_idx];
++
++	/* Set message ID and start event. */
++	msg_info.msg_id = MBOX_MSG_ID_INC(func_to_func);
++	set_mbox_to_func_event(func_to_func, EVENT_START);
++
++	/* Select a function to send messages based on the dst_func type. */
++	if (IS_TLP_MBX(dst_func))
++		err = send_tlp_mbox_to_func(func_to_func,
++			mod, cmd, buf_in, in_size, dst_func,
++			HINIC3_MSG_DIRECT_SEND, HINIC3_MSG_ACK, &msg_info);
++	else
++		err = send_mbox_to_func(func_to_func, mod, cmd, buf_in, in_size,
++					dst_func, HINIC3_MSG_DIRECT_SEND,
++					HINIC3_MSG_ACK, &msg_info);
++
++	if (err) {
++		PMD_DRV_LOG(ERR, "Send mailbox failed, msg_id: %d",
++			    msg_info.msg_id);
++		set_mbox_to_func_event(func_to_func, EVENT_FAIL);
++		goto send_err;
++	}
++
++	/* Wait for the response message. */
++	time = timeout ? timeout : HINIC3_MBOX_COMP_TIME;
++	aeq = &func_to_func->hwdev->aeqs->aeq[HINIC3_MBOX_RSP_MSG_AEQ];
++	err = hinic3_aeq_poll_msg(aeq, time, NULL);
++	if (err) {
++		set_mbox_to_func_event(func_to_func, EVENT_TIMEOUT);
++		PMD_DRV_LOG(ERR, "Send mailbox message time out");
++		err = -ETIMEDOUT;
++		goto send_err;
++	}
++
++	/* Check whether mod and command of the rsp message match the sent message. */
++	if (mod != mbox_for_resp->mod || cmd != mbox_for_resp->cmd) {
++		PMD_DRV_LOG(ERR,
++			    "Invalid response mbox message, mod: 0x%x, cmd: "
++			    "0x%x, expect mod: 0x%x, cmd: 0x%x",
++			    mbox_for_resp->mod, mbox_for_resp->cmd, mod, cmd);
++		err = -EFAULT;
++		goto send_err;
++	}
++
++	/* Check the response status. */
++	if (mbox_for_resp->msg_info.status) {
++		err = mbox_for_resp->msg_info.status;
++		goto send_err;
++	}
++
++	/* Check whether the length of the response message is valid. */
++	if (buf_out && out_size) {
++		if (*out_size < mbox_for_resp->mbox_len) {
++			PMD_DRV_LOG(ERR,
++				"Invalid response mbox message length: %d for "
++				"mod: %d cmd: %d, should less than: %d",
++				mbox_for_resp->mbox_len, mod, cmd, *out_size);
++			err = -EFAULT;
++			goto send_err;
++		}
++
++		if (mbox_for_resp->mbox_len)
++			memcpy(buf_out, mbox_for_resp->mbox,
++			       (size_t)(mbox_for_resp->mbox_len));
++
++		*out_size = mbox_for_resp->mbox_len;
++	}
++send_err:
++	return err;
 +}
 +
 +static int
-+hinic3_dev_uninit(struct rte_eth_dev *dev)
++mbox_func_params_valid(__rte_unused struct hinic3_mbox *func_to_func,
++		       void *buf_in, uint16_t in_size)
 +{
-+	struct hinic3_nic_dev *nic_dev;
++	if (!buf_in || !in_size)
++		return -EINVAL;
 +
-+	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+	hinic3_clear_bit(HINIC3_DEV_INIT, &nic_dev->dev_status);
++	if (in_size > HINIC3_MBOX_DATA_SIZE) {
++		PMD_DRV_LOG(ERR, "Mbox msg len(%d) exceed limit(%" PRIu64 ")",
++			    in_size, HINIC3_MBOX_DATA_SIZE);
++		return -EINVAL;
++	}
 +
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return 0;
-+
-+	return hinic3_dev_close(dev);
++	return 0;
 +}
 +
-+static const struct rte_pci_id pci_id_hinic3_map[] = {
-+#ifdef CONFIG_SP_VID_DID
-+	{RTE_PCI_DEVICE(PCI_VENDOR_ID_SPNIC, HINIC3_DEV_ID_STANDARD)},
-+	{RTE_PCI_DEVICE(PCI_VENDOR_ID_SPNIC, HINIC3_DEV_ID_VF)},
-+#else
-+	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_STANDARD)},
-+	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF)},
-+#endif
++int
++hinic3_send_mbox_to_mgmt(struct hinic3_hwdev *hwdev, enum hinic3_mod_type mod,
++			 uint16_t cmd, uint16_t dst_func, void *buf_in, uint16_t in_size,
++			 void *buf_out, uint16_t *out_size, uint32_t timeout)
++{
++	struct hinic3_mbox *func_to_func = hwdev->func_to_func;
++	int err;
++	/* Verify the validity of the input parameters. */
++	err = mbox_func_params_valid(func_to_func, buf_in, in_size);
++	if (err)
++		return err;
 +
-+	{.vendor_id = 0},
-+};
++	return hinic3_mbox_to_func(func_to_func, mod, cmd, dst_func,
++				   buf_in, in_size, buf_out, out_size, timeout);
++}
++
++void
++hinic3_response_mbox_to_mgmt(struct hinic3_hwdev *hwdev,
++			     enum hinic3_mod_type mod, uint16_t cmd, void *buf_in,
++			     uint16_t in_size, uint16_t msg_id)
++{
++	struct mbox_msg_info msg_info;
++	uint16_t dst_func;
++
++	msg_info.msg_id = (uint8_t)msg_id;
++	msg_info.status = 0;
++	dst_func = HINIC3_MGMT_SRC_ID;
++
++	if (IS_TLP_MBX(dst_func))
++		send_tlp_mbox_to_func(hwdev->func_to_func, mod, cmd, buf_in,
++				      in_size, HINIC3_MGMT_SRC_ID,
++				      HINIC3_MSG_RESPONSE, HINIC3_MSG_NO_ACK,
++				      &msg_info);
++	else
++		send_mbox_to_func(hwdev->func_to_func, mod, cmd, buf_in,
++				  in_size, HINIC3_MGMT_SRC_ID,
++				  HINIC3_MSG_RESPONSE, HINIC3_MSG_NO_ACK,
++				  &msg_info);
++}
 +
 +static int
-+hinic3_pci_probe(__rte_unused struct rte_pci_driver *pci_drv,
-+		 struct rte_pci_device *pci_dev)
++init_mbox_info(struct hinic3_recv_mbox *mbox_info, int mbox_max_buf_sz)
 +{
-+	return rte_eth_dev_pci_generic_probe(pci_dev,
-+		sizeof(struct hinic3_nic_dev), hinic3_dev_init);
++	int err;
++
++	mbox_info->seq_id = SEQ_ID_MAX_VAL;
++
++	mbox_info->mbox =
++		rte_zmalloc("mbox", (size_t)mbox_max_buf_sz, 1); /*lint !e571*/
++	if (!mbox_info->mbox)
++		return -ENOMEM;
++
++	mbox_info->buf_out = rte_zmalloc("mbox_buf_out",
++		(size_t)mbox_max_buf_sz, 1); /*lint !e571*/
++	if (!mbox_info->buf_out) {
++		err = -ENOMEM;
++		goto alloc_buf_out_err;
++	}
++
++	return 0;
++
++alloc_buf_out_err:
++	rte_free(mbox_info->mbox);
++
++	return err;
++}
++
++static void
++clean_mbox_info(struct hinic3_recv_mbox *mbox_info)
++{
++	rte_free(mbox_info->buf_out);
++	rte_free(mbox_info->mbox);
 +}
 +
 +static int
-+hinic3_pci_remove(struct rte_pci_device *pci_dev)
++alloc_mbox_info(struct hinic3_recv_mbox *mbox_info, int mbox_max_buf_sz)
 +{
-+	return rte_eth_dev_pci_generic_remove(pci_dev, hinic3_dev_uninit);
++	uint16_t func_idx, i;
++	int err;
++
++	for (func_idx = 0; func_idx < HINIC3_MAX_FUNCTIONS + 1; func_idx++) {
++		err = init_mbox_info(&mbox_info[func_idx], mbox_max_buf_sz);
++		if (err) {
++			PMD_DRV_LOG(ERR, "Init mbox info failed");
++			goto init_mbox_info_err;
++		}
++	}
++
++	return 0;
++
++init_mbox_info_err:
++	for (i = 0; i < func_idx; i++)
++		clean_mbox_info(&mbox_info[i]);
++
++	return err;
 +}
 +
-+static struct rte_pci_driver rte_hinic3_pmd = {
-+	.id_table = pci_id_hinic3_map,
-+	.drv_flags = RTE_PCI_DRV_NEED_MAPPING | RTE_PCI_DRV_INTR_LSC,
-+	.probe = hinic3_pci_probe,
-+	.remove = hinic3_pci_remove,
-+};
-+
-+RTE_PMD_REGISTER_PCI(net_hinic3, rte_hinic3_pmd);
-+RTE_PMD_REGISTER_PCI_TABLE(net_hinic3, pci_id_hinic3_map);
-+
-+RTE_INIT(hinic3_init_log)
++static void
++free_mbox_info(struct hinic3_recv_mbox *mbox_info)
 +{
-+	hinic3_logtype = rte_log_register("pmd.net.hinic3");
-+	if (hinic3_logtype >= 0)
-+		rte_log_set_level(hinic3_logtype, RTE_LOG_INFO);
++	uint16_t func_idx;
++
++	for (func_idx = 0; func_idx < HINIC3_MAX_FUNCTIONS + 1; func_idx++)
++		clean_mbox_info(&mbox_info[func_idx]);
 +}
-diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
++
++static void
++prepare_send_mbox(struct hinic3_mbox *func_to_func)
++{
++	struct hinic3_send_mbox *send_mbox = &func_to_func->send_mbox;
++
++	send_mbox->data = MBOX_AREA(func_to_func->hwdev->hwif);
++}
++
++/**
++ * Allocate memory for the write-back state of the mailbox and write to
++ * register.
++ *
++ * @param[in] func_to_func
++ * Context for inter-function communication.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++static int
++alloc_mbox_wb_status(struct hinic3_mbox *func_to_func)
++{
++	struct hinic3_send_mbox *send_mbox = &func_to_func->send_mbox;
++	struct hinic3_hwdev *hwdev = func_to_func->hwdev;
++	uint32_t addr_h, addr_l;
++
++	/* Reserved DMA area. */
++	send_mbox->wb_mz = hinic3_dma_zone_reserve(hwdev->eth_dev,
++		"wb_mz", 0, MBOX_WB_STATUS_LEN,
++		RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
++	if (!send_mbox->wb_mz)
++		return -ENOMEM;
++
++	send_mbox->wb_vaddr = send_mbox->wb_mz->addr;
++	send_mbox->wb_paddr = send_mbox->wb_mz->iova;
++	send_mbox->wb_status = send_mbox->wb_vaddr;
++
++	addr_h = upper_32_bits(send_mbox->wb_paddr);
++	addr_l = lower_32_bits(send_mbox->wb_paddr);
++
++	/* Write info to the register. */
++	hinic3_hwif_write_reg(hwdev->hwif, HINIC3_FUNC_CSR_MAILBOX_RESULT_H_OFF,
++			      addr_h);
++	hinic3_hwif_write_reg(hwdev->hwif, HINIC3_FUNC_CSR_MAILBOX_RESULT_L_OFF,
++			      addr_l);
++
++	return 0;
++}
++
++static void
++free_mbox_wb_status(struct hinic3_mbox *func_to_func)
++{
++	struct hinic3_send_mbox *send_mbox = &func_to_func->send_mbox;
++	struct hinic3_hwdev *hwdev = func_to_func->hwdev;
++
++	hinic3_hwif_write_reg(hwdev->hwif, HINIC3_FUNC_CSR_MAILBOX_RESULT_H_OFF,
++			      0);
++	hinic3_hwif_write_reg(hwdev->hwif, HINIC3_FUNC_CSR_MAILBOX_RESULT_L_OFF,
++			      0);
++
++	hinic3_memzone_free(send_mbox->wb_mz);
++}
++
++static int
++alloc_mbox_tlp_buffer(struct hinic3_mbox *func_to_func)
++{
++	struct hinic3_send_mbox *send_mbox = &func_to_func->send_mbox;
++	struct hinic3_hwdev *hwdev = func_to_func->hwdev;
++
++	send_mbox->sbuff_mz = hinic3_dma_zone_reserve(hwdev->eth_dev,
++		"sbuff_mz", 0, MBOX_MAX_BUF_SZ, MBOX_MAX_BUF_SZ,
++		SOCKET_ID_ANY);
++	if (!send_mbox->sbuff_mz)
++		return -ENOMEM;
++
++	send_mbox->sbuff_vaddr = send_mbox->sbuff_mz->addr;
++	send_mbox->sbuff_paddr = send_mbox->sbuff_mz->iova;
++
++	return 0;
++}
++
++static void
++free_mbox_tlp_buffer(struct hinic3_mbox *func_to_func)
++{
++	struct hinic3_send_mbox *send_mbox = &func_to_func->send_mbox;
++
++	hinic3_memzone_free(send_mbox->sbuff_mz);
++}
++
++/**
++ * Initialize function to function communication.
++ *
++ * @param[in] hwdev
++ * Pointer to hardware device structure.
++ * @return
++ * 0 on success, non-zero on failure.
++ */
++int
++hinic3_func_to_func_init(struct hinic3_hwdev *hwdev)
++{
++	struct hinic3_mbox *func_to_func;
++	int err;
++
++	func_to_func = rte_zmalloc("func_to_func", sizeof(*func_to_func), 1);
++	if (!func_to_func)
++		return -ENOMEM;
++
++	hwdev->func_to_func = func_to_func;
++	func_to_func->hwdev = hwdev;
++	rte_spinlock_init(&func_to_func->mbox_lock);
++
++	/* Alloc the memory required by the mailbox. */
++	err = alloc_mbox_info(func_to_func->mbox_send, MBOX_MAX_BUF_SZ);
++	if (err) {
++		PMD_DRV_LOG(ERR, "Alloc mem for mbox_active failed");
++		goto alloc_mbox_for_send_err;
++	}
++
++	err = alloc_mbox_info(func_to_func->mbox_resp, MBOX_MAX_BUF_SZ);
++	if (err) {
++		PMD_DRV_LOG(ERR, "Alloc mem for mbox_passive failed");
++		goto alloc_mbox_for_resp_err;
++	}
++
++	err = alloc_mbox_tlp_buffer(func_to_func);
++	if (err) {
++		PMD_DRV_LOG(ERR, "Alloc mbox send buffer failed");
++		goto alloc_tlp_buffer_err;
++	}
++
++	err = alloc_mbox_wb_status(func_to_func);
++	if (err) {
++		PMD_DRV_LOG(ERR, "Alloc mbox write back status failed");
++		goto alloc_wb_status_err;
++	}
++
++	prepare_send_mbox(func_to_func);
++
++	return 0;
++
++alloc_wb_status_err:
++	free_mbox_tlp_buffer(func_to_func);
++
++alloc_tlp_buffer_err:
++	free_mbox_info(func_to_func->mbox_resp);
++
++alloc_mbox_for_resp_err:
++	free_mbox_info(func_to_func->mbox_send);
++
++alloc_mbox_for_send_err:
++	rte_free(func_to_func);
++
++	return err;
++}
++
++void
++hinic3_func_to_func_free(struct hinic3_hwdev *hwdev)
++{
++	struct hinic3_mbox *func_to_func = hwdev->func_to_func;
++
++	free_mbox_wb_status(func_to_func);
++	free_mbox_tlp_buffer(func_to_func);
++	free_mbox_info(func_to_func->mbox_resp);
++	free_mbox_info(func_to_func->mbox_send);
++	rte_free(func_to_func);
++}
+diff --git a/drivers/net/hinic3/base/hinic3_mbox.h b/drivers/net/hinic3/base/hinic3_mbox.h
 new file mode 100644
-index 0000000000..fbefed10a2
+index 0000000000..6050e96457
 --- /dev/null
-+++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -0,0 +1,118 @@
++++ b/drivers/net/hinic3/base/hinic3_mbox.h
+@@ -0,0 +1,184 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2025 Huawei Technologies Co., Ltd
 + */
 +
-+#ifndef _HINIC3_ETHDEV_H_
-+#define _HINIC3_ETHDEV_H_
++#ifndef _HINIC3_MBOX_H_
++#define _HINIC3_MBOX_H_
 +
-+#include <rte_ethdev.h>
-+#include <rte_ethdev_core.h>
++#include "hinic3_mgmt.h"
 +
-+#define HINIC3_PMD_DRV_VERSION "B106"
++#define HINIC3_MBOX_PF_SEND_ERR	      0x1
++#define HINIC3_MBOX_PF_BUSY_ACTIVE_FW 0x2
++#define HINIC3_MBOX_VF_CMD_ERROR      0x3
 +
-+#define PCI_DEV_TO_INTR_HANDLE(pci_dev) ((pci_dev)->intr_handle)
++#define HINIC3_MGMT_SRC_ID 0x1FFF
 +
-+#define HINIC3_PKT_RX_L4_CKSUM_BAD     RTE_MBUF_F_RX_L4_CKSUM_BAD
-+#define HINIC3_PKT_RX_IP_CKSUM_BAD     RTE_MBUF_F_RX_IP_CKSUM_BAD
-+#define HINIC3_PKT_RX_IP_CKSUM_UNKNOWN RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN
-+#define HINIC3_PKT_RX_L4_CKSUM_GOOD    RTE_MBUF_F_RX_L4_CKSUM_GOOD
-+#define HINIC3_PKT_RX_IP_CKSUM_GOOD    RTE_MBUF_F_RX_IP_CKSUM_GOOD
-+#define HINIC3_PKT_TX_TCP_SEG	       RTE_MBUF_F_TX_TCP_SEG
-+#define HINIC3_PKT_TX_UDP_CKSUM	       RTE_MBUF_F_TX_UDP_CKSUM
-+#define HINIC3_PKT_TX_TCP_CKSUM	       RTE_MBUF_F_TX_TCP_CKSUM
-+#define HINIC3_PKT_TX_IP_CKSUM	       RTE_MBUF_F_TX_IP_CKSUM
-+#define HINIC3_PKT_TX_VLAN_PKT	       RTE_MBUF_F_TX_VLAN
-+#define HINIC3_PKT_TX_L4_MASK	       RTE_MBUF_F_TX_L4_MASK
-+#define HINIC3_PKT_TX_SCTP_CKSUM       RTE_MBUF_F_TX_SCTP_CKSUM
-+#define HINIC3_PKT_TX_IPV6	       RTE_MBUF_F_TX_IPV6
-+#define HINIC3_PKT_TX_IPV4	       RTE_MBUF_F_TX_IPV4
-+#define HINIC3_PKT_RX_VLAN	       RTE_MBUF_F_RX_VLAN
-+#define HINIC3_PKT_RX_VLAN_STRIPPED    RTE_MBUF_F_RX_VLAN_STRIPPED
-+#define HINIC3_PKT_RX_RSS_HASH	       RTE_MBUF_F_RX_RSS_HASH
-+#define HINIC3_PKT_TX_TUNNEL_MASK      RTE_MBUF_F_TX_TUNNEL_MASK
-+#define HINIC3_PKT_TX_TUNNEL_VXLAN     RTE_MBUF_F_TX_TUNNEL_VXLAN
-+#define HINIC3_PKT_TX_OUTER_IP_CKSUM   RTE_MBUF_F_TX_OUTER_IP_CKSUM
-+#define HINIC3_PKT_TX_OUTER_IPV6       RTE_MBUF_F_TX_OUTER_IPV6
-+#define HINIC3_PKT_RX_LRO	       RTE_MBUF_F_RX_LRO
-+#define HINIC3_PKT_TX_L4_NO_CKSUM      RTE_MBUF_F_TX_L4_NO_CKSUM
++#define HINIC3_MAX_PF_FUNCS 32
 +
-+#define HINCI3_CPY_MEMPOOL_NAME "cpy_mempool"
-+/* Mbuf pool for copy invalid mbuf segs. */
-+#define HINIC3_COPY_MEMPOOL_DEPTH 1024
-+#define HINIC3_COPY_MEMPOOL_CACHE 128
-+#define HINIC3_COPY_MBUF_SIZE	  4096
++/* Message header define. */
++#define HINIC3_MSG_HEADER_SRC_GLB_FUNC_IDX_SHIFT 0
++#define HINIC3_MSG_HEADER_STATUS_SHIFT		 13
++#define HINIC3_MSG_HEADER_SOURCE_SHIFT		 15
++#define HINIC3_MSG_HEADER_AEQ_ID_SHIFT		 16
++#define HINIC3_MSG_HEADER_MSG_ID_SHIFT		 18
++#define HINIC3_MSG_HEADER_CMD_SHIFT		 22
 +
-+#define HINIC3_DEV_NAME_LEN 32
-+#define DEV_STOP_DELAY_MS   100
-+#define DEV_START_DELAY_MS  100
-+#define HINIC3_FLUSH_QUEUE_TIMEOUT 3000
++#define HINIC3_MSG_HEADER_MSG_LEN_SHIFT	  32
++#define HINIC3_MSG_HEADER_MODULE_SHIFT	  43
++#define HINIC3_MSG_HEADER_SEG_LEN_SHIFT	  48
++#define HINIC3_MSG_HEADER_NO_ACK_SHIFT	  54
++#define HINIC3_MSG_HEADER_DATA_TYPE_SHIFT 55
++#define HINIC3_MSG_HEADER_SEQID_SHIFT	  56
++#define HINIC3_MSG_HEADER_LAST_SHIFT	  62
++#define HINIC3_MSG_HEADER_DIRECTION_SHIFT 63
 +
-+#define HINIC3_UINT32_BIT_SIZE (CHAR_BIT * sizeof(uint32_t))
-+#define HINIC3_VFTA_SIZE       (4096 / HINIC3_UINT32_BIT_SIZE)
-+#define HINIC3_MAX_QUEUE_NUM   64
++#define HINIC3_MSG_HEADER_CMD_MASK		0x3FF
++#define HINIC3_MSG_HEADER_MSG_ID_MASK		0xF
++#define HINIC3_MSG_HEADER_AEQ_ID_MASK		0x3
++#define HINIC3_MSG_HEADER_SOURCE_MASK		0x1
++#define HINIC3_MSG_HEADER_STATUS_MASK		0x1
++#define HINIC3_MSG_HEADER_SRC_GLB_FUNC_IDX_MASK 0x1FFF
 +
-+#define HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev) \
-+	((struct hinic3_nic_dev *)(dev)->data->dev_private)
++#define HINIC3_MSG_HEADER_MSG_LEN_MASK	 0x7FF
++#define HINIC3_MSG_HEADER_MODULE_MASK	 0x1F
++#define HINIC3_MSG_HEADER_SEG_LEN_MASK	 0x3F
++#define HINIC3_MSG_HEADER_NO_ACK_MASK	 0x1
++#define HINIC3_MSG_HEADER_DATA_TYPE_MASK 0x1
++#define HINIC3_MSG_HEADER_SEQID_MASK	 0x3F
++#define HINIC3_MSG_HEADER_LAST_MASK	 0x1
++#define HINIC3_MSG_HEADER_DIRECTION_MASK 0x1
 +
-+enum hinic3_dev_status {
-+	HINIC3_DEV_INIT,
-+	HINIC3_DEV_CLOSE,
-+	HINIC3_DEV_START,
-+	HINIC3_DEV_INTR_EN
++#define HINIC3_MSG_HEADER_GET(val, field)               \
++	(((val) >> HINIC3_MSG_HEADER_##field##_SHIFT) & \
++	 HINIC3_MSG_HEADER_##field##_MASK)
++#define HINIC3_MSG_HEADER_SET(val, field)                       \
++	((uint64_t)(((uint64_t)(val)) & HINIC3_MSG_HEADER_##field##_MASK) \
++	 << HINIC3_MSG_HEADER_##field##_SHIFT)
++
++#define IS_TLP_MBX(dst_func) ((dst_func) == HINIC3_MGMT_SRC_ID)
++
++enum hinic3_msg_direction_type {
++	HINIC3_MSG_DIRECT_SEND = 0,
++	HINIC3_MSG_RESPONSE = 1
 +};
 +
-+enum hinic3_tx_cvlan_type {
-+	HINIC3_TX_TPID0,
++enum hinic3_msg_segment_type { NOT_LAST_SEGMENT = 0, LAST_SEGMENT = 1 };
++
++enum hinic3_msg_ack_type { HINIC3_MSG_ACK, HINIC3_MSG_NO_ACK };
++
++enum hinic3_data_type { HINIC3_DATA_INLINE = 0, HINIC3_DATA_DMA = 1 };
++
++enum hinic3_msg_src_type { HINIC3_MSG_FROM_MGMT = 0, HINIC3_MSG_FROM_MBOX = 1 };
++
++enum hinic3_msg_aeq_type {
++	HINIC3_ASYNC_MSG_AEQ = 0,
++	/* Indicate dst_func or mgmt cpu which aeq to response mbox message. */
++	HINIC3_MBOX_RSP_MSG_AEQ = 1,
++	/* Indicate mgmt cpu which aeq to response api cmd message. */
++	HINIC3_MGMT_RSP_MSG_AEQ = 2
 +};
 +
-+enum nic_feature_cap {
-+	NIC_F_CSUM = RTE_BIT32(0),
-+	NIC_F_SCTP_CRC = RTE_BIT32(1),
-+	NIC_F_TSO = RTE_BIT32(2),
-+	NIC_F_LRO = RTE_BIT32(3),
-+	NIC_F_UFO = RTE_BIT32(4),
-+	NIC_F_RSS = RTE_BIT32(5),
-+	NIC_F_RX_VLAN_FILTER = RTE_BIT32(6),
-+	NIC_F_RX_VLAN_STRIP = RTE_BIT32(7),
-+	NIC_F_TX_VLAN_INSERT = RTE_BIT32(8),
-+	NIC_F_VXLAN_OFFLOAD = RTE_BIT32(9),
-+	NIC_F_IPSEC_OFFLOAD = RTE_BIT32(10),
-+	NIC_F_FDIR = RTE_BIT32(11),
-+	NIC_F_PROMISC = RTE_BIT32(12),
-+	NIC_F_ALLMULTI = RTE_BIT32(13),
++enum hinic3_mbox_seg_errcode {
++	MBOX_ERRCODE_NO_ERRORS = 0,
++	/* VF sends the mailbox data to the wrong destination functions. */
++	MBOX_ERRCODE_VF_TO_WRONG_FUNC = 0x100,
++	/* PPF sends the mailbox data to the wrong destination functions. */
++	MBOX_ERRCODE_PPF_TO_WRONG_FUNC = 0x200,
++	/* PF sends the mailbox data to the wrong destination functions. */
++	MBOX_ERRCODE_PF_TO_WRONG_FUNC = 0x300,
++	/* The mailbox data size is set to all zero. */
++	MBOX_ERRCODE_ZERO_DATA_SIZE = 0x400,
++	/* The sender func attribute has not been learned by CPI hardware. */
++	MBOX_ERRCODE_UNKNOWN_SRC_FUNC = 0x500,
++	/* The receiver func attr has not been learned by CPI hardware. */
++	MBOX_ERRCODE_UNKNOWN_DES_FUNC = 0x600
 +};
 +
-+#define DEFAULT_DRV_FEATURE 0x3FFF
-+
-+struct hinic3_nic_dev {
-+	struct hinic3_hwdev *hwdev; /**< Hardware device. */
-+	struct hinic3_txq **txqs;
-+	struct hinic3_rxq **rxqs;
-+	struct rte_mempool *cpy_mpool;
-+
-+	uint16_t num_sqs;
-+	uint16_t num_rqs;
-+	uint16_t max_sqs;
-+	uint16_t max_rqs;
-+
-+	uint16_t rx_buff_len;
-+	uint16_t mtu_size;
-+
-+	uint32_t rx_mode;
-+	uint8_t rx_queue_list[HINIC3_MAX_QUEUE_NUM];
-+	rte_spinlock_t queue_list_lock;
-+
-+	uint32_t default_cos;
-+	uint32_t rx_csum_en;
-+
-+	RTE_ATOMIC(uint64_t)dev_status;
-+
-+	struct rte_ether_addr default_addr;
-+	struct rte_ether_addr *mc_list;
-+
-+	char dev_name[HINIC3_DEV_NAME_LEN];
-+	uint64_t feature_cap;
-+	uint32_t vfta[HINIC3_VFTA_SIZE]; /**< VLAN bitmap. */
++enum hinic3_mbox_func_index {
++	HINIC3_MBOX_MPU_INDEX = 0,
++	HINIC3_MBOX_PF_INDEX = 1,
++	HINIC3_MAX_FUNCTIONS = 2,
 +};
 +
-+#endif /* _HINIC3_ETHDEV_H_ */
-diff --git a/drivers/net/hinic3/meson.build b/drivers/net/hinic3/meson.build
-new file mode 100644
-index 0000000000..e945f20ed5
---- /dev/null
-+++ b/drivers/net/hinic3/meson.build
-@@ -0,0 +1,26 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 Huawei Technologies Co., Ltd
++struct mbox_msg_info {
++	uint8_t msg_id;
++	uint8_t status; /**< Can only use 3 bit. */
++};
 +
-+if not is_linux
-+    build = false
-+    reason = 'only supported on Linux'
-+    subdir_done()
-+endif
++struct hinic3_recv_mbox {
++	void *mbox;
++	uint16_t cmd;
++	enum hinic3_mod_type mod;
++	uint16_t mbox_len;
++	void *buf_out;
++	enum hinic3_msg_ack_type ack_type;
++	struct mbox_msg_info msg_info;
++	uint8_t seq_id;
++	RTE_ATOMIC(int32_t)msg_cnt;
++};
 +
-+if (arch_subdir != 'x86' and arch_subdir != 'arm'
-+        or not dpdk_conf.get('RTE_ARCH_64'))
-+    build = false
-+    reason = 'only supported on x86_64 and aarch64'
-+    subdir_done()
-+endif
++struct hinic3_send_mbox {
++	uint8_t *data;
++	uint64_t *wb_status; /**< Write back status. */
 +
-+cflags += ['-DHW_CONVERT_ENDIAN']
++	const struct rte_memzone *wb_mz;
++	void *wb_vaddr;	     /**< Write back virtual address. */
++	rte_iova_t wb_paddr; /**< Write back physical address. */
 +
-+subdir('base')
-+objs = [base_objs]
++	const struct rte_memzone *sbuff_mz;
++	void *sbuff_vaddr;
++	rte_iova_t sbuff_paddr;
++};
 +
-+sources = files(
-+        'hinic3_ethdev.c',
-+)
++enum mbox_event_state {
++	EVENT_START = 0,
++	EVENT_FAIL,
++	EVENT_SUCCESS,
++	EVENT_TIMEOUT,
++	EVENT_END
++};
 +
-+includes += include_directories('base')
-\ No newline at end of file
++/* Execution status of the callback function. */
++enum hinic3_mbox_cb_state {
++	HINIC3_VF_MBOX_CB_REG = 0,
++	HINIC3_VF_MBOX_CB_RUNNING,
++	HINIC3_PF_MBOX_CB_REG,
++	HINIC3_PF_MBOX_CB_RUNNING,
++	HINIC3_PPF_MBOX_CB_REG,
++	HINIC3_PPF_MBOX_CB_RUNNING,
++	HINIC3_PPF_TO_PF_MBOX_CB_REG,
++	HINIC3_PPF_TO_PF_MBOX_CB_RUNNING
++};
++
++struct hinic3_mbox {
++	struct hinic3_hwdev *hwdev;
++
++	struct hinic3_send_mbox send_mbox;
++
++	/* Last element for mgmt. */
++	struct hinic3_recv_mbox mbox_resp[HINIC3_MAX_FUNCTIONS + 1];
++	struct hinic3_recv_mbox mbox_send[HINIC3_MAX_FUNCTIONS + 1];
++
++	uint8_t send_msg_id;
++	enum mbox_event_state event_flag;
++	/* Lock for mbox event flag. */
++	rte_spinlock_t mbox_lock;
++};
++
++int hinic3_mbox_func_aeqe_handler(struct hinic3_hwdev *hwdev, uint8_t *header,
++				  __rte_unused uint8_t size, void *param);
++
++int hinic3_func_to_func_init(struct hinic3_hwdev *hwdev);
++
++void hinic3_func_to_func_free(struct hinic3_hwdev *hwdev);
++
++int hinic3_send_mbox_to_mgmt(struct hinic3_hwdev *hwdev,
++			     enum hinic3_mod_type mod, uint16_t cmd, uint16_t dst_func,
++				 void *buf_in, uint16_t in_size, void *buf_out,
++				 uint16_t *out_size, uint32_t timeout);
++
++void hinic3_response_mbox_to_mgmt(struct hinic3_hwdev *hwdev,
++				  enum hinic3_mod_type mod, uint16_t cmd,
++				  void *buf_in, uint16_t in_size, uint16_t msg_id);
++
++#endif /**< _HINIC3_MBOX_H_ */
+diff --git a/drivers/net/hinic3/base/meson.build b/drivers/net/hinic3/base/meson.build
+index dcdd50f0ba..b6a3a6cfe7 100644
+--- a/drivers/net/hinic3/base/meson.build
++++ b/drivers/net/hinic3/base/meson.build
+@@ -8,6 +8,7 @@ sources = files(
+         'hinic3_hw_comm.c',
+         'hinic3_hwdev.c',
+         'hinic3_hwif.c',
++        'hinic3_mbox.c',
+         'hinic3_mgmt.c',
+         'hinic3_nic_cfg.c',
+         'hinic3_nic_event.c',
 -- 
 2.47.0.windows.2
 
