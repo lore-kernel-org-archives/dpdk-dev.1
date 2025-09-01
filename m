@@ -2,44 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B37CA0FFD
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Sep 2025 11:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26B29CA0FFD
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Sep 2025 11:13:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 284F0402EF;
-	Mon,  1 Sep 2025 13:12:28 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
- by mails.dpdk.org (Postfix) with ESMTP id 4AE6D409FA
- for <dev@dpdk.org>; Mon,  1 Sep 2025 13:12:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 62ADD40B8D;
+	Mon,  1 Sep 2025 13:12:29 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
+ by mails.dpdk.org (Postfix) with ESMTP id BCAF140A70
+ for <dev@dpdk.org>; Mon,  1 Sep 2025 13:12:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=sXXANM9SvCNiDlz/wL2ocoGgJ3gDZ3mN5grwMHIYRLw=;
- b=G0tBdUUcgwJ0YCYrACX9vxetK2JVIC1De3EdOhzv56zPjzUdNNTrpqC9Rs1w6Z
- m1FzCYDyO2ILyzScdS3QS1x5yUa7EKicMz1WZbY8KfUTzPQDg1WZjbd5hrRO6ssi
- ADsRQzz8XfiCmkH0u/vXnJKR57iSPyMcEF1CNf4g7wCS4=
+ MIME-Version; bh=+9ST2t4O2JDyBxtKPcXRHtY93rghJ7F/P+ji146Qu34=;
+ b=amd5LC+tbNXSE+6XDJpZFzJv1TjEdf9lVi1w2kO5IfBZNK4u8Zz5fF+gboh0z3
+ f8cdcDJsaJU1VeNS35Le0+WIb6N1+P4cOsHybkDca+ZmpboHvXwvTgg9KIjBrahz
+ 4DUjxxRo/ANHRImjqzViBg+V8LctkrCY7SEbp643GDhMM=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp1 (Coremail) with SMTP id Ac8vCgDnT6lXf7Vo9Y1rAQ--.56050S16;
- Mon, 01 Sep 2025 19:12:20 +0800 (CST)
+ by gzsmtp1 (Coremail) with SMTP id Ac8vCgDnT6lXf7Vo9Y1rAQ--.56050S18;
+ Mon, 01 Sep 2025 19:12:23 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
-Cc: Xin Wang <wangxin679@h-partners.com>,
- Feifei Wang <wangfeifei40@huawei.com>, Yi Chen <chenyi221@huawei.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [V7 12/17] net/hinic3: add device initialization
-Date: Mon,  1 Sep 2025 19:10:45 +0800
-Message-ID: <20250901111102.9280-13-wff_light@vip.163.com>
+Cc: Feifei Wang <wangfeifei40@huawei.com>, Yi Chen <chenyi221@huawei.com>,
+ Xin Wang <wangxin679@h-partners.com>
+Subject: [V7 14/17] net/hinic3: add Rx/Tx functions
+Date: Mon,  1 Sep 2025 19:10:47 +0800
+Message-ID: <20250901111102.9280-15-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
 In-Reply-To: <20250901111102.9280-1-wff_light@vip.163.com>
 References: <20250418090621.9638-1-wff_light@vip.163.com>
  <20250901111102.9280-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgDnT6lXf7Vo9Y1rAQ--.56050S16
-X-Coremail-Antispam: 1Uf129KBjvAXoW3CFWkXw45Jw4Uur13Ar13Arb_yoW8Zr4rJo
- WfXrZIgw1Syr18AF1vgws7XFy3XrykZas8Jws0ga1xXayxGFyrKa45Cw1xtF1Fg3sYvr97
- AFyxtFs5tayUt397n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU4eT5DUUUU
+X-CM-TRANSID: Ac8vCgDnT6lXf7Vo9Y1rAQ--.56050S18
+X-Coremail-Antispam: 1Uf129KBjvAXoWfCF45Zr1ftr47GF4DJF17GFg_yoW5Cw4UGo
+ WfXr1ayrnYqryxCrWj9w4kuFn2qws0vFW5Jw4Fyr42vF18CryYga9xJw1rta48XrW5Ca1x
+ Aa43JwnFy39xJay5n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUz9a9DUUUU
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiAgS7Cmi1RUv--wAAsk
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiBBW7Cmi1RQT+GgAAsY
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,662 +52,1119 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Xin Wang <wangxin679@h-partners.com>
+From: Feifei Wang <wangfeifei40@huawei.com>
 
-This patch contains data structures and function codes
-related to device initialization.
+This patch add package sending and receiving function codes.
 
-Signed-off-by: Xin Wang <wangxin679@h-partners.com>
-Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
-Reviewed-by: Yi Chen <chenyi221@huawei.com>
+Signed-off-by: Feifei Wang <wangfeifei40@huawei.com>
+Signed-off-by: Yi Chen <chenyi221@huawei.com>
+Reviewed-by: Xin Wang <wangxin679@h-partners.com>
 ---
- drivers/net/hinic3/base/meson.build |   2 +-
- drivers/net/hinic3/hinic3_ethdev.c  | 464 ++++++++++++++++++++++++++++
- drivers/net/hinic3/hinic3_ethdev.h  | 118 +++++++
- drivers/net/hinic3/meson.build      |  26 ++
- 4 files changed, 609 insertions(+), 1 deletion(-)
- create mode 100644 drivers/net/hinic3/hinic3_ethdev.c
- create mode 100644 drivers/net/hinic3/hinic3_ethdev.h
- create mode 100644 drivers/net/hinic3/meson.build
+ drivers/net/hinic3/hinic3_ethdev.c |   4 +-
+ drivers/net/hinic3/hinic3_rx.c     | 285 +++++++++++
+ drivers/net/hinic3/hinic3_tx.c     | 754 +++++++++++++++++++++++++++++
+ drivers/net/hinic3/hinic3_tx.h     |   1 +
+ 4 files changed, 1043 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/hinic3/base/meson.build b/drivers/net/hinic3/base/meson.build
-index b6a3a6cfe7..7ccd897c3d 100644
---- a/drivers/net/hinic3/base/meson.build
-+++ b/drivers/net/hinic3/base/meson.build
-@@ -47,4 +47,4 @@ base_lib = static_library(
-     include_directories: includes,
-     c_args: c_args,
- )
--base_objs = base_lib.extract_all_objects()
-+base_objs = base_lib.extract_all_objects()
-\ No newline at end of file
 diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-new file mode 100644
-index 0000000000..1949260d3d
---- /dev/null
+index 71c5b4f3b4..0bca2c930f 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.c
 +++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -0,0 +1,464 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Huawei Technologies Co., Ltd
-+ */
-+#include <ethdev_pci.h>
-+#include <eal_interrupts.h>
+@@ -1521,7 +1521,6 @@ hinic3_init_rxq_msix_attr(void *hwdev, uint16_t msix_index)
+ 	info.pending_limt = HINIC3_TXRX_MSIX_PENDING_LIMIT;
+ 	info.coalesce_timer_cfg = HINIC3_TXRX_MSIX_COALESCE_TIMER;
+ 	info.resend_timer_cfg = HINIC3_TXRX_MSIX_RESEND_TIMER_CFG;
+-
+ 	info.msix_index = msix_index;
+ 	err = hinic3_set_interrupt_cfg(hwdev, info);
+ 	if (err) {
+@@ -3296,6 +3295,9 @@ hinic3_dev_init(struct rte_eth_dev *eth_dev)
+ 	PMD_DRV_LOG(INFO, "Network Interface pmd driver version: %s",
+ 		    HINIC3_PMD_DRV_VERSION);
+ 
++	eth_dev->rx_pkt_burst = hinic3_recv_pkts;
++	eth_dev->tx_pkt_burst = hinic3_xmit_pkts;
 +
-+#include "base/hinic3_compat.h"
-+#include "base/hinic3_csr.h"
-+#include "base/hinic3_wq.h"
-+#include "base/hinic3_eqs.h"
-+#include "base/hinic3_cmdq.h"
-+#include "base/hinic3_hwdev.h"
-+#include "base/hinic3_hwif.h"
-+#include "base/hinic3_hw_cfg.h"
-+#include "base/hinic3_hw_comm.h"
-+#include "base/hinic3_nic_cfg.h"
-+#include "base/hinic3_nic_event.h"
-+#include "hinic3_ethdev.h"
+ 	return hinic3_func_init(eth_dev);
+ }
+ 
+diff --git a/drivers/net/hinic3/hinic3_rx.c b/drivers/net/hinic3/hinic3_rx.c
+index 2acef269e6..085662afbf 100644
+--- a/drivers/net/hinic3/hinic3_rx.c
++++ b/drivers/net/hinic3/hinic3_rx.c
+@@ -780,3 +780,288 @@ hinic3_start_rq(struct rte_eth_dev *eth_dev, struct hinic3_rxq *rxq)
+ 
+ 	return err;
+ }
 +
-+/**
-+ * Init mac_vlan table in hardwares.
-+ *
-+ * @param[in] eth_dev
-+ * Pointer to ethernet device structure.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ */
-+static int
-+hinic3_init_mac_table(struct rte_eth_dev *eth_dev)
++
++static inline uint64_t
++hinic3_rx_vlan(uint32_t offload_type, uint32_t vlan_len, uint16_t *vlan_tci)
 +{
-+	struct hinic3_nic_dev *nic_dev =
-+		HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
-+	uint8_t addr_bytes[RTE_ETHER_ADDR_LEN];
-+	uint16_t func_id = 0;
-+	int err = 0;
++	uint16_t vlan_tag;
 +
-+	err = hinic3_get_default_mac(nic_dev->hwdev, addr_bytes,
-+				     RTE_ETHER_ADDR_LEN);
-+	if (err)
-+		return err;
++	vlan_tag = HINIC3_GET_RX_VLAN_TAG(vlan_len);
++	if (!HINIC3_GET_RX_VLAN_OFFLOAD_EN(offload_type) || vlan_tag == 0) {
++		*vlan_tci = 0;
++		return 0;
++	}
 +
-+	rte_ether_addr_copy((struct rte_ether_addr *)addr_bytes,
-+			    &eth_dev->data->mac_addrs[0]);
-+	if (rte_is_zero_ether_addr(&eth_dev->data->mac_addrs[0]))
-+		rte_eth_random_addr(eth_dev->data->mac_addrs[0].addr_bytes);
++	*vlan_tci = vlan_tag;
 +
-+	func_id = hinic3_global_func_id(nic_dev->hwdev);
-+	err = hinic3_set_mac(nic_dev->hwdev,
-+			     eth_dev->data->mac_addrs[0].addr_bytes, 0,
-+			     func_id);
-+	if (err && err != HINIC3_PF_SET_VF_ALREADY)
-+		return err;
++	return HINIC3_PKT_RX_VLAN | HINIC3_PKT_RX_VLAN_STRIPPED;
++}
 +
-+	rte_ether_addr_copy(&eth_dev->data->mac_addrs[0],
-+			    &nic_dev->default_addr);
++static inline uint64_t
++hinic3_rx_csum(uint32_t status, struct hinic3_rxq *rxq)
++{
++	struct hinic3_nic_dev *nic_dev = rxq->nic_dev;
++	uint32_t csum_err;
++	uint64_t flags;
++
++	if (unlikely(!(nic_dev->rx_csum_en & HINIC3_DEFAULT_RX_CSUM_OFFLOAD)))
++		return HINIC3_PKT_RX_IP_CKSUM_UNKNOWN;
++
++	csum_err = HINIC3_GET_RX_CSUM_ERR(status);
++	if (likely(csum_err == 0))
++		return (HINIC3_PKT_RX_IP_CKSUM_GOOD |
++			HINIC3_PKT_RX_L4_CKSUM_GOOD);
++
++	/*
++	 * If bypass bit is set, all other err status indications should be
++	 * ignored.
++	 */
++	if (unlikely(csum_err & HINIC3_RX_CSUM_HW_CHECK_NONE))
++		return HINIC3_PKT_RX_IP_CKSUM_UNKNOWN;
++
++	flags = 0;
++
++	/* IP checksum error. */
++	if (csum_err & HINIC3_RX_CSUM_IP_CSUM_ERR) {
++		flags |= HINIC3_PKT_RX_IP_CKSUM_BAD;
++		rxq->rxq_stats.csum_errors++;
++	}
++
++	/* L4 checksum error. */
++	if ((csum_err & HINIC3_RX_CSUM_TCP_CSUM_ERR) ||
++	    (csum_err & HINIC3_RX_CSUM_UDP_CSUM_ERR) ||
++	    (csum_err & HINIC3_RX_CSUM_SCTP_CRC_ERR)) {
++		flags |= HINIC3_PKT_RX_L4_CKSUM_BAD;
++		rxq->rxq_stats.csum_errors++;
++	}
++
++	if (unlikely(csum_err == HINIC3_RX_CSUM_IPSU_OTHER_ERR))
++		rxq->rxq_stats.other_errors++;
++
++	return flags;
++}
++
++static inline uint64_t
++hinic3_rx_rss_hash(uint32_t offload_type, uint32_t rss_hash_value, uint32_t *rss_hash)
++{
++	uint32_t rss_type;
++
++	rss_type = HINIC3_GET_RSS_TYPES(offload_type);
++	if (likely(rss_type != 0)) {
++		*rss_hash = rss_hash_value;
++		return HINIC3_PKT_RX_RSS_HASH;
++	}
 +
 +	return 0;
 +}
 +
-+/**
-+ * Deinit mac_vlan table in hardware.
-+ *
-+ * @param[in] eth_dev
-+ * Pointer to ethernet device structure.
-+ */
 +static void
-+hinic3_deinit_mac_addr(struct rte_eth_dev *eth_dev)
++hinic3_recv_jumbo_pkt(struct hinic3_rxq *rxq, struct rte_mbuf *head_mbuf,
++		      uint32_t remain_pkt_len)
 +{
-+	struct hinic3_nic_dev *nic_dev =
-+		HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
-+	uint16_t func_id = 0;
-+	int err;
++	struct rte_mbuf *cur_mbuf = NULL;
++	struct rte_mbuf *rxm = NULL;
++	struct hinic3_rx_info *rx_info = NULL;
++	uint16_t sw_ci, rx_buf_len = rxq->buf_len;
++	uint32_t pkt_len;
++
++	while (remain_pkt_len > 0) {
++		sw_ci = hinic3_get_rq_local_ci(rxq);
++		rx_info = &rxq->rx_info[sw_ci];
++
++		hinic3_update_rq_local_ci(rxq, 1);
++
++		pkt_len = remain_pkt_len > rx_buf_len ? rx_buf_len
++						      : remain_pkt_len;
++		remain_pkt_len -= pkt_len;
++
++		cur_mbuf = rx_info->mbuf;
++		cur_mbuf->data_len = (uint16_t)pkt_len;
++		cur_mbuf->next = NULL;
++
++		head_mbuf->pkt_len += cur_mbuf->data_len;
++		head_mbuf->nb_segs++;
++#ifdef HINIC3_XSTAT_MBUF_USE
++		rxq->rxq_stats.rx_free_mbuf_bytes++;
++#endif
++		if (!rxm)
++			head_mbuf->next = cur_mbuf;
++		else
++			rxm->next = cur_mbuf;
++
++		rxm = cur_mbuf;
++	}
++}
++
++int
++hinic3_start_all_rqs(struct rte_eth_dev *eth_dev)
++{
++	struct hinic3_nic_dev *nic_dev = NULL;
++	struct hinic3_rxq *rxq = NULL;
++	int err = 0;
 +	int i;
 +
-+	func_id = hinic3_global_func_id(nic_dev->hwdev);
-+
-+	for (i = 0; i < HINIC3_MAX_UC_MAC_ADDRS; i++) {
-+		if (rte_is_zero_ether_addr(&eth_dev->data->mac_addrs[i]))
-+			continue;
-+
-+		err = hinic3_del_mac(nic_dev->hwdev,
-+				     eth_dev->data->mac_addrs[i].addr_bytes, 0,
-+				     func_id);
-+		if (err && err != HINIC3_PF_SET_VF_ALREADY)
-+			PMD_DRV_LOG(ERR,
-+				    "Delete mac table failed, dev_name: %s",
-+				    eth_dev->data->name);
-+
-+		memset(&eth_dev->data->mac_addrs[i], 0,
-+		       sizeof(struct rte_ether_addr));
-+	}
-+
-+	/* Delete multicast mac addrs. */
-+	hinic3_delete_mc_addr_list(nic_dev);
-+}
-+
-+/**
-+ * Check the valid CoS bitmap to determine the available CoS IDs and set
-+ * the default CoS ID to the highest valid one.
-+ *
-+ * @param[in] hwdev
-+ * Pointer to hardware device structure.
-+ * @param[out] cos_id
-+ * Pointer to store the default CoS ID.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ */
-+static int
-+hinic3_pf_get_default_cos(struct hinic3_hwdev *hwdev, uint8_t *cos_id)
-+{
-+	uint8_t default_cos = 0;
-+	uint8_t valid_cos_bitmap;
-+	uint8_t i;
-+
-+	valid_cos_bitmap = hwdev->cfg_mgmt->svc_cap.cos_valid_bitmap;
-+	if (!valid_cos_bitmap) {
-+		PMD_DRV_LOG(ERR, "PF has none cos to support");
-+		return -EFAULT;
-+	}
-+
-+	for (i = 0; i < HINIC3_COS_NUM_MAX; i++) {
-+		if (valid_cos_bitmap & RTE_BIT32(i))
-+			/* Find max cos id as default cos. */
-+			default_cos = i;
-+	}
-+
-+	*cos_id = default_cos;
-+
-+	return 0;
-+}
-+
-+static int
-+hinic3_init_default_cos(struct hinic3_nic_dev *nic_dev)
-+{
-+	uint8_t cos_id = 0;
-+	int err;
-+
-+	if (!HINIC3_IS_VF(nic_dev->hwdev)) {
-+		err = hinic3_pf_get_default_cos(nic_dev->hwdev, &cos_id);
-+		if (err) {
-+			PMD_DRV_LOG(ERR, "Get PF default cos failed, err: %d",
-+				    err);
-+			return err;
-+		}
-+	} else {
-+		err = hinic3_vf_get_default_cos(nic_dev->hwdev, &cos_id);
-+		if (err) {
-+			PMD_DRV_LOG(ERR, "Get VF default cos failed, err: %d",
-+				    err);
-+			return err;
-+		}
-+	}
-+
-+	nic_dev->default_cos = cos_id;
-+	PMD_DRV_LOG(INFO, "Default cos %d", nic_dev->default_cos);
-+	return 0;
-+}
-+
-+/**
-+ * Initialize Class of Service (CoS). For PF devices, it also sync the link
-+ * status with the physical port.
-+ *
-+ * @param[in] nic_dev
-+ * Pointer to NIC device structure.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ */
-+static int
-+hinic3_set_default_hw_feature(struct hinic3_nic_dev *nic_dev)
-+{
-+	int err;
-+
-+	err = hinic3_init_default_cos(nic_dev);
-+	if (err)
-+		return err;
-+
-+	if (hinic3_func_type(nic_dev->hwdev) == TYPE_VF)
-+		return 0;
-+
-+	err = hinic3_set_link_status_follow(nic_dev->hwdev,
-+					    HINIC3_LINK_FOLLOW_PORT);
-+	if (err == HINIC3_MGMT_CMD_UNSUPPORTED)
-+		PMD_DRV_LOG(WARNING, "Don't support to set link status follow "
-+				     "phy port status");
-+	else if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+/**
-+ * Initialize the network function, including hardware configuration, memory
-+ * allocation for data structures, MAC address setup, and interrupt enabling.
-+ * It also registers interrupt callbacks and sets default hardware features.
-+ * If any step fails, appropriate cleanup is performed.
-+ *
-+ * @param[out] eth_dev
-+ * Pointer to ethernet device structure.
-+ *
-+ * @return
-+ * 0 on success, non-zero on failure.
-+ */
-+static int
-+hinic3_func_init(struct rte_eth_dev *eth_dev)
-+{
-+	struct hinic3_tcam_info *tcam_info = NULL;
-+	struct hinic3_nic_dev *nic_dev = NULL;
-+	struct rte_pci_device *pci_dev = NULL;
-+	int err;
-+
-+	pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-+
-+	/* EAL is secondary and eth_dev is already created. */
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
-+		PMD_DRV_LOG(INFO, "Initialize %s in secondary process",
-+			    eth_dev->data->name);
-+
-+		return 0;
-+	}
-+
 +	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(eth_dev);
-+	memset(nic_dev, 0, sizeof(*nic_dev));
-+	snprintf(nic_dev->dev_name, sizeof(nic_dev->dev_name),
-+		     "dbdf-%.4x:%.2x:%.2x.%x", pci_dev->addr.domain,
-+		     pci_dev->addr.bus, pci_dev->addr.devid,
-+		     pci_dev->addr.function);
 +
-+	/* Alloc mac_addrs. */
-+	eth_dev->data->mac_addrs = rte_zmalloc("hinic3_mac",
-+		HINIC3_MAX_UC_MAC_ADDRS * sizeof(struct rte_ether_addr), 0);
-+	if (!eth_dev->data->mac_addrs) {
-+		PMD_DRV_LOG(ERR, "Allocate  MAC addresses failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		err = -ENOMEM;
-+		goto alloc_eth_addr_fail;
++	for (i = 0; i < nic_dev->num_rqs; i++) {
++		rxq = eth_dev->data->rx_queues[i];
++		hinic3_add_rq_to_rx_queue_list(nic_dev, rxq->q_id);
++		err = hinic3_rearm_rxq_mbuf(rxq);
++		if (err) {
++			PMD_DRV_LOG(ERR,
++				    "Fail to alloc mbuf for Rx queue %d, "
++				    "qid = %u, need_mbuf: %d",
++				    i, rxq->q_id, rxq->q_depth);
++			goto out;
++		}
++		hinic3_dev_rx_queue_intr_enable(eth_dev, rxq->q_id);
++		eth_dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
 +	}
 +
-+	nic_dev->mc_list = rte_zmalloc("hinic3_mc",
-+		HINIC3_MAX_MC_MAC_ADDRS * sizeof(struct rte_ether_addr), 0);
-+	if (!nic_dev->mc_list) {
-+		PMD_DRV_LOG(ERR, "Allocate  MAC addresses failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		err = -ENOMEM;
-+		goto alloc_mc_list_fail;
++	if (nic_dev->rss_state == HINIC3_RSS_ENABLE) {
++		err = hinic3_refill_indir_rqid(rxq);
++		if (err) {
++			PMD_DRV_LOG(ERR,
++				    "Refill rq to indirect table failed, "
++				    "eth_dev:%s, queue_idx:%d, err:%d",
++				    rxq->nic_dev->dev_name, rxq->q_id, err);
++			goto out;
++		}
 +	}
-+
-+	/* Create hardware device. */
-+	nic_dev->hwdev = rte_zmalloc("hinic3_hwdev", sizeof(*nic_dev->hwdev),
-+				     RTE_CACHE_LINE_SIZE);
-+	if (!nic_dev->hwdev) {
-+		PMD_DRV_LOG(ERR, "Allocate hwdev memory failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		err = -ENOMEM;
-+		goto alloc_hwdev_mem_fail;
-+	}
-+	nic_dev->hwdev->pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-+	nic_dev->hwdev->dev_handle = nic_dev;
-+	nic_dev->hwdev->eth_dev = eth_dev;
-+	nic_dev->hwdev->port_id = eth_dev->data->port_id;
-+
-+	err = hinic3_init_hwdev(nic_dev->hwdev);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Init chip hwdev failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto init_hwdev_fail;
-+	}
-+
-+	nic_dev->max_sqs = hinic3_func_max_sqs(nic_dev->hwdev);
-+	nic_dev->max_rqs = hinic3_func_max_rqs(nic_dev->hwdev);
-+
-+	err = hinic3_init_nic_hwdev(nic_dev->hwdev);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Init nic hwdev failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto init_nic_hwdev_fail;
-+	}
-+
-+	err = hinic3_get_feature_from_hw(nic_dev->hwdev, &nic_dev->feature_cap,
-+					 1);
-+	if (err) {
-+		PMD_DRV_LOG(ERR,
-+			"Get nic feature from hardware failed, dev_name: %s",
-+			eth_dev->data->name);
-+		goto get_cap_fail;
-+	}
-+
-+	err = hinic3_init_sw_rxtxqs(nic_dev);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Init sw rxqs or txqs failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto init_sw_rxtxqs_fail;
-+	}
-+
-+	err = hinic3_init_mac_table(eth_dev);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Init mac table failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto init_mac_table_fail;
-+	}
-+
-+	/* Set hardware feature to default status. */
-+	err = hinic3_set_default_hw_feature(nic_dev);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Set hw default features failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto set_default_feature_fail;
-+	}
-+
-+	/* Register callback func to eal lib. */
-+	err = rte_intr_callback_register(PCI_DEV_TO_INTR_HANDLE(pci_dev),
-+					 hinic3_dev_interrupt_handler,
-+					 (void *)eth_dev);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Register intr callback failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto reg_intr_cb_fail;
-+	}
-+
-+	/* Enable uio/vfio intr/eventfd mapping. */
-+	err = rte_intr_enable(PCI_DEV_TO_INTR_HANDLE(pci_dev));
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Enable rte interrupt failed, dev_name: %s",
-+			    eth_dev->data->name);
-+		goto enable_intr_fail;
-+	}
-+	tcam_info = &nic_dev->tcam;
-+	memset(tcam_info, 0, sizeof(struct hinic3_tcam_info));
-+	TAILQ_INIT(&tcam_info->tcam_list);
-+	TAILQ_INIT(&tcam_info->tcam_dynamic_info.tcam_dynamic_list);
-+	TAILQ_INIT(&nic_dev->filter_ethertype_list);
-+	TAILQ_INIT(&nic_dev->filter_fdir_rule_list);
-+
-+	hinic3_set_bit(HINIC3_DEV_INTR_EN, &nic_dev->dev_status);
-+
-+	hinic3_set_bit(HINIC3_DEV_INIT, &nic_dev->dev_status);
-+	PMD_DRV_LOG(INFO, "Initialize %s in primary succeed",
-+		    eth_dev->data->name);
-+
-+	/**
-+	 * Queue xstats filled automatically by ethdev layer.
-+	 */
-+	eth_dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
 +
 +	return 0;
-+
-+enable_intr_fail:
-+	rte_intr_callback_unregister(PCI_DEV_TO_INTR_HANDLE(pci_dev),
-+					hinic3_dev_interrupt_handler,
-+					(void *)eth_dev);
-+
-+reg_intr_cb_fail:
-+set_default_feature_fail:
-+	hinic3_deinit_mac_addr(eth_dev);
-+
-+init_mac_table_fail:
-+	hinic3_deinit_sw_rxtxqs(nic_dev);
-+
-+init_sw_rxtxqs_fail:
-+	hinic3_free_nic_hwdev(nic_dev->hwdev);
-+
-+get_cap_fail:
-+init_nic_hwdev_fail:
-+	hinic3_free_hwdev(nic_dev->hwdev);
-+	eth_dev->dev_ops = NULL;
-+	eth_dev->rx_queue_count = NULL;
-+	eth_dev->rx_descriptor_status = NULL;
-+	eth_dev->tx_descriptor_status = NULL;
-+
-+init_hwdev_fail:
-+	rte_free(nic_dev->hwdev);
-+	nic_dev->hwdev = NULL;
-+
-+alloc_hwdev_mem_fail:
-+	rte_free(nic_dev->mc_list);
-+	nic_dev->mc_list = NULL;
-+
-+alloc_mc_list_fail:
-+	rte_free(eth_dev->data->mac_addrs);
-+	eth_dev->data->mac_addrs = NULL;
-+
-+alloc_eth_addr_fail:
-+	PMD_DRV_LOG(ERR, "Initialize %s in primary failed",
-+		    eth_dev->data->name);
++out:
++	for (i = 0; i < nic_dev->num_rqs; i++) {
++		rxq = eth_dev->data->rx_queues[i];
++		hinic3_remove_rq_from_rx_queue_list(nic_dev, rxq->q_id);
++		hinic3_free_rxq_mbufs(rxq);
++		hinic3_dev_rx_queue_intr_disable(eth_dev, rxq->q_id);
++		eth_dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
++	}
 +	return err;
 +}
 +
-+static int
-+hinic3_dev_init(struct rte_eth_dev *eth_dev)
++#define HINIC3_RX_EMPTY_THRESHOLD 3
++uint16_t
++hinic3_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
 +{
-+	struct rte_pci_device *pci_dev;
++	struct hinic3_rxq *rxq = rx_queue;
++	struct hinic3_rx_info *rx_info = NULL;
++	volatile struct hinic3_rq_cqe *rx_cqe = NULL;
++	struct rte_mbuf *rxm = NULL;
++	uint16_t sw_ci, rx_buf_len, wqebb_cnt = 0, pkts = 0;
++	uint32_t status, pkt_len, vlan_len, offload_type, lro_num;
++	uint64_t rx_bytes = 0;
++	uint32_t hash_value;
 +
-+	pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
++#ifdef HINIC3_XSTAT_PROF_RX
++	uint64_t t1 = rte_get_tsc_cycles();
++	uint64_t t2;
++#endif
++	if (((rte_get_timer_cycles() - rxq->rxq_stats.tsc) < rxq->wait_time_cycle) &&
++	    rxq->rxq_stats.empty >= HINIC3_RX_EMPTY_THRESHOLD)
++		goto out;
 +
-+	PMD_DRV_LOG(INFO, "Initializing %.4x:%.2x:%.2x.%x in %s process",
-+		    pci_dev->addr.domain, pci_dev->addr.bus,
-+		    pci_dev->addr.devid, pci_dev->addr.function,
-+		    (rte_eal_process_type() == RTE_PROC_PRIMARY) ? "primary"
-+								 : "secondary");
++	sw_ci = hinic3_get_rq_local_ci(rxq);
++	rx_buf_len = rxq->buf_len;
 +
-+	PMD_DRV_LOG(INFO, "Network Interface pmd driver version: %s",
-+		    HINIC3_PMD_DRV_VERSION);
++	while (pkts < nb_pkts) {
++		rx_cqe = &rxq->rx_cqe[sw_ci];
++		status = hinic3_hw_cpu32((uint32_t)(rte_atomic_load_explicit(&rx_cqe->status,
++			rte_memory_order_acquire)));
++		if (!HINIC3_GET_RX_DONE(status)) {
++			rxq->rxq_stats.empty++;
++			break;
++		}
 +
-+	return hinic3_func_init(eth_dev);
-+}
++		vlan_len = hinic3_hw_cpu32(rx_cqe->vlan_len);
 +
-+static int
-+hinic3_dev_uninit(struct rte_eth_dev *dev)
-+{
-+	struct hinic3_nic_dev *nic_dev;
++		pkt_len = HINIC3_GET_RX_PKT_LEN(vlan_len);
 +
-+	nic_dev = HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev);
-+	hinic3_clear_bit(HINIC3_DEV_INIT, &nic_dev->dev_status);
++		rx_info = &rxq->rx_info[sw_ci];
++		rxm = rx_info->mbuf;
 +
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return 0;
++		/* 1. Next ci point and prefetch. */
++		sw_ci++;
++		sw_ci &= rxq->q_mask;
 +
-+	return hinic3_dev_close(dev);
-+}
++		/* 2. Prefetch next mbuf first 64B. */
++		rte_prefetch0(rxq->rx_info[sw_ci].mbuf);
 +
-+static const struct rte_pci_id pci_id_hinic3_map[] = {
-+#ifdef CONFIG_SP_VID_DID
-+	{RTE_PCI_DEVICE(PCI_VENDOR_ID_SPNIC, HINIC3_DEV_ID_STANDARD)},
-+	{RTE_PCI_DEVICE(PCI_VENDOR_ID_SPNIC, HINIC3_DEV_ID_VF)},
-+#else
-+	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_STANDARD)},
-+	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF)},
++		/* 3. Jumbo frame process. */
++		if (likely(pkt_len <= (uint32_t)rx_buf_len)) {
++			rxm->data_len = (uint16_t)pkt_len;
++			rxm->pkt_len = pkt_len;
++			wqebb_cnt++;
++		} else {
++			rxm->data_len = rx_buf_len;
++			rxm->pkt_len = rx_buf_len;
++
++			/*
++			 * If receive jumbo, updating ci will be done by
++			 * hinic3_recv_jumbo_pkt function.
++			 */
++			hinic3_update_rq_local_ci(rxq, wqebb_cnt + 1);
++			wqebb_cnt = 0;
++			hinic3_recv_jumbo_pkt(rxq, rxm, pkt_len - rx_buf_len);
++			sw_ci = hinic3_get_rq_local_ci(rxq);
++		}
++
++		rxm->data_off = RTE_PKTMBUF_HEADROOM;
++		rxm->port = rxq->port_id;
++
++		/* 4. Rx checksum offload. */
++		rxm->ol_flags |= hinic3_rx_csum(status, rxq);
++
++		/* 5. Vlan offload. */
++		offload_type = hinic3_hw_cpu32(rx_cqe->offload_type);
++
++		rxm->ol_flags |=
++			hinic3_rx_vlan(offload_type, vlan_len, &rxm->vlan_tci);
++
++		/* 6. RSS. */
++		hash_value = hinic3_hw_cpu32(rx_cqe->hash_val);
++		rxm->ol_flags |= hinic3_rx_rss_hash(offload_type, hash_value,
++						    &rxm->hash.rss);
++		/* 8. LRO. */
++		lro_num = HINIC3_GET_RX_NUM_LRO(status);
++		if (unlikely(lro_num != 0)) {
++			rxm->ol_flags |= HINIC3_PKT_RX_LRO;
++			rxm->tso_segsz = pkt_len / lro_num;
++		}
++
++		rx_cqe->status = 0;
++
++		rx_bytes += pkt_len;
++		rx_pkts[pkts++] = rxm;
++	}
++
++	if (pkts) {
++		/* 9. Update local ci. */
++		hinic3_update_rq_local_ci(rxq, wqebb_cnt);
++
++		/* Update packet stats. */
++		rxq->rxq_stats.packets += pkts;
++		rxq->rxq_stats.bytes += rx_bytes;
++		rxq->rxq_stats.empty = 0;
++#ifdef HINIC3_XSTAT_MBUF_USE
++		rxq->rxq_stats.rx_free_mbuf_bytes += pkts;
++#endif
++	}
++	rxq->rxq_stats.burst_pkts = pkts;
++	rxq->rxq_stats.tsc = rte_get_timer_cycles();
++out:
++	/* 10. Rearm mbuf to rxq. */
++	hinic3_rearm_rxq_mbuf(rxq);
++
++#ifdef HINIC3_XSTAT_PROF_RX
++	/* Do profiling stats. */
++	t2 = rte_get_tsc_cycles();
++	rxq->rxq_stats.app_tsc = t1 - rxq->prof_rx_end_tsc;
++	rxq->prof_rx_end_tsc = t2;
++	rxq->rxq_stats.pmd_tsc = t2 - t1;
 +#endif
 +
-+	{.vendor_id = 0},
-+};
-+
-+static int
-+hinic3_pci_probe(__rte_unused struct rte_pci_driver *pci_drv,
-+		 struct rte_pci_device *pci_dev)
++	return pkts;
++}
+diff --git a/drivers/net/hinic3/hinic3_tx.c b/drivers/net/hinic3/hinic3_tx.c
+index b16baa92ac..c883b999f5 100644
+--- a/drivers/net/hinic3/hinic3_tx.c
++++ b/drivers/net/hinic3/hinic3_tx.c
+@@ -56,6 +56,98 @@ hinic3_get_sq_hw_ci(struct hinic3_txq *sq)
+ 	return MASKED_QUEUE_IDX(sq, hinic3_hw_cpu16(*sq->ci_vaddr_base));
+ }
+ 
++static void *
++hinic3_get_sq_wqe(struct hinic3_txq *sq, struct hinic3_wqe_info *wqe_info)
 +{
-+	return rte_eth_dev_pci_generic_probe(pci_dev,
-+		sizeof(struct hinic3_nic_dev), hinic3_dev_init);
++	uint16_t cur_pi = MASKED_QUEUE_IDX(sq, sq->prod_idx);
++	uint32_t end_pi;
++
++	end_pi = cur_pi + wqe_info->wqebb_cnt;
++	sq->prod_idx += wqe_info->wqebb_cnt;
++
++	wqe_info->owner = (uint8_t)(sq->owner);
++	wqe_info->pi = cur_pi;
++	wqe_info->wrapped = 0;
++
++	if (unlikely(end_pi >= sq->q_depth)) {
++		sq->owner = !sq->owner;
++
++		if (likely(end_pi > sq->q_depth))
++			wqe_info->wrapped = (uint8_t)(sq->q_depth - cur_pi);
++	}
++
++	return NIC_WQE_ADDR(sq, cur_pi);
 +}
 +
-+static int
-+hinic3_pci_remove(struct rte_pci_device *pci_dev)
++static inline void
++hinic3_put_sq_wqe(struct hinic3_txq *sq, struct hinic3_wqe_info *wqe_info)
 +{
-+	return rte_eth_dev_pci_generic_remove(pci_dev, hinic3_dev_uninit);
++	if (wqe_info->owner != sq->owner)
++		sq->owner = wqe_info->owner;
++
++	sq->prod_idx -= wqe_info->wqebb_cnt;
 +}
 +
-+static struct rte_pci_driver rte_hinic3_pmd = {
-+	.id_table = pci_id_hinic3_map,
-+	.drv_flags = RTE_PCI_DRV_NEED_MAPPING | RTE_PCI_DRV_INTR_LSC,
-+	.probe = hinic3_pci_probe,
-+	.remove = hinic3_pci_remove,
-+};
-+
-+RTE_PMD_REGISTER_PCI(net_hinic3, rte_hinic3_pmd);
-+RTE_PMD_REGISTER_PCI_TABLE(net_hinic3, pci_id_hinic3_map);
-+
-+RTE_INIT(hinic3_init_log)
-+{
-+	hinic3_logtype = rte_log_register("pmd.net.hinic3");
-+	if (hinic3_logtype >= 0)
-+		rte_log_set_level(hinic3_logtype, RTE_LOG_INFO);
-+}
-diff --git a/drivers/net/hinic3/hinic3_ethdev.h b/drivers/net/hinic3/hinic3_ethdev.h
-new file mode 100644
-index 0000000000..fbefed10a2
---- /dev/null
-+++ b/drivers/net/hinic3/hinic3_ethdev.h
-@@ -0,0 +1,118 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Huawei Technologies Co., Ltd
++/**
++ * Sets the WQE combination information in the transmit queue (SQ).
++ *
++ * @param[in] txq
++ * Point to send queue.
++ * @param[out] wqe_combo
++ * Point to wqe_combo of send queue(SQ).
++ * @param[in] wqe
++ * Point to wqe of send queue(SQ).
++ * @param[in] wqe_info
++ * Point to wqe_info of send queue(SQ).
 + */
++static void
++hinic3_set_wqe_combo(struct hinic3_txq *txq,
++		     struct hinic3_sq_wqe_combo *wqe_combo,
++		     struct hinic3_sq_wqe *wqe,
++		     struct hinic3_wqe_info *wqe_info)
++{
++	wqe_combo->hdr = &wqe->compact_wqe.wqe_desc;
 +
-+#ifndef _HINIC3_ETHDEV_H_
-+#define _HINIC3_ETHDEV_H_
++	if (wqe_info->offload) {
++		if (wqe_info->wrapped == HINIC3_TX_TASK_WRAPPED) {
++			wqe_combo->task = (struct hinic3_sq_task *)
++				(void *)txq->sq_head_addr;
++			wqe_combo->bds_head = (struct hinic3_sq_bufdesc *)
++				(void *)(txq->sq_head_addr + txq->wqebb_size);
++		} else if (wqe_info->wrapped == HINIC3_TX_BD_DESC_WRAPPED) {
++			wqe_combo->task = &wqe->extend_wqe.task;
++			wqe_combo->bds_head = (struct hinic3_sq_bufdesc *)
++				(void *)(txq->sq_head_addr);
++		} else {
++			wqe_combo->task = &wqe->extend_wqe.task;
++			wqe_combo->bds_head = wqe->extend_wqe.buf_desc;
++		}
 +
-+#include <rte_ethdev.h>
-+#include <rte_ethdev_core.h>
++		wqe_combo->wqe_type = SQ_WQE_EXTENDED_TYPE;
++		wqe_combo->task_type = SQ_WQE_TASKSECT_16BYTES;
 +
-+#define HINIC3_PMD_DRV_VERSION "B106"
++		return;
++	}
 +
-+#define PCI_DEV_TO_INTR_HANDLE(pci_dev) ((pci_dev)->intr_handle)
++	if (wqe_info->wrapped == HINIC3_TX_TASK_WRAPPED) {
++		wqe_combo->bds_head = (struct hinic3_sq_bufdesc *)
++			(void *)(txq->sq_head_addr);
++	} else {
++		wqe_combo->bds_head =
++			(struct hinic3_sq_bufdesc *)(&wqe->extend_wqe.task);
++	}
 +
-+#define HINIC3_PKT_RX_L4_CKSUM_BAD     RTE_MBUF_F_RX_L4_CKSUM_BAD
-+#define HINIC3_PKT_RX_IP_CKSUM_BAD     RTE_MBUF_F_RX_IP_CKSUM_BAD
-+#define HINIC3_PKT_RX_IP_CKSUM_UNKNOWN RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN
-+#define HINIC3_PKT_RX_L4_CKSUM_GOOD    RTE_MBUF_F_RX_L4_CKSUM_GOOD
-+#define HINIC3_PKT_RX_IP_CKSUM_GOOD    RTE_MBUF_F_RX_IP_CKSUM_GOOD
-+#define HINIC3_PKT_TX_TCP_SEG	       RTE_MBUF_F_TX_TCP_SEG
-+#define HINIC3_PKT_TX_UDP_CKSUM	       RTE_MBUF_F_TX_UDP_CKSUM
-+#define HINIC3_PKT_TX_TCP_CKSUM	       RTE_MBUF_F_TX_TCP_CKSUM
-+#define HINIC3_PKT_TX_IP_CKSUM	       RTE_MBUF_F_TX_IP_CKSUM
-+#define HINIC3_PKT_TX_VLAN_PKT	       RTE_MBUF_F_TX_VLAN
-+#define HINIC3_PKT_TX_L4_MASK	       RTE_MBUF_F_TX_L4_MASK
-+#define HINIC3_PKT_TX_SCTP_CKSUM       RTE_MBUF_F_TX_SCTP_CKSUM
-+#define HINIC3_PKT_TX_IPV6	       RTE_MBUF_F_TX_IPV6
-+#define HINIC3_PKT_TX_IPV4	       RTE_MBUF_F_TX_IPV4
-+#define HINIC3_PKT_RX_VLAN	       RTE_MBUF_F_RX_VLAN
-+#define HINIC3_PKT_RX_VLAN_STRIPPED    RTE_MBUF_F_RX_VLAN_STRIPPED
-+#define HINIC3_PKT_RX_RSS_HASH	       RTE_MBUF_F_RX_RSS_HASH
-+#define HINIC3_PKT_TX_TUNNEL_MASK      RTE_MBUF_F_TX_TUNNEL_MASK
-+#define HINIC3_PKT_TX_TUNNEL_VXLAN     RTE_MBUF_F_TX_TUNNEL_VXLAN
-+#define HINIC3_PKT_TX_OUTER_IP_CKSUM   RTE_MBUF_F_TX_OUTER_IP_CKSUM
-+#define HINIC3_PKT_TX_OUTER_IPV6       RTE_MBUF_F_TX_OUTER_IPV6
-+#define HINIC3_PKT_RX_LRO	       RTE_MBUF_F_RX_LRO
-+#define HINIC3_PKT_TX_L4_NO_CKSUM      RTE_MBUF_F_TX_L4_NO_CKSUM
++	if (wqe_info->wqebb_cnt > 1) {
++		wqe_combo->wqe_type = SQ_WQE_EXTENDED_TYPE;
++		wqe_combo->task_type = SQ_WQE_TASKSECT_46BITS;
 +
-+#define HINCI3_CPY_MEMPOOL_NAME "cpy_mempool"
-+/* Mbuf pool for copy invalid mbuf segs. */
-+#define HINIC3_COPY_MEMPOOL_DEPTH 1024
-+#define HINIC3_COPY_MEMPOOL_CACHE 128
-+#define HINIC3_COPY_MBUF_SIZE	  4096
++		/* This section used as vlan insert, needs to clear. */
++		wqe_combo->bds_head->rsvd = 0;
++	} else {
++		wqe_combo->wqe_type = SQ_WQE_COMPACT_TYPE;
++	}
++}
 +
-+#define HINIC3_DEV_NAME_LEN 32
-+#define DEV_STOP_DELAY_MS   100
-+#define DEV_START_DELAY_MS  100
-+#define HINIC3_FLUSH_QUEUE_TIMEOUT 3000
+ int
+ hinic3_start_all_sqs(struct rte_eth_dev *eth_dev)
+ {
+@@ -216,6 +308,668 @@ hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt)
+ 	return hinic3_xmit_mbuf_cleanup(tx_queue, try_free_cnt);
+ }
+ 
++/**
++ * Prepare the data packet to be sent and calculate the internal L3 offset.
++ *
++ * @param[in] mbuf
++ * Point to the mbuf to be processed.
++ * @param[out] inner_l3_offset
++ * Inner(IP Layer) L3 layer offset.
++ * @return
++ * 0 as success, -EINVAL as failure.
++ */
++static int
++hinic3_tx_offload_pkt_prepare(struct rte_mbuf *mbuf, uint16_t *inner_l3_offset)
++{
++	uint64_t ol_flags = mbuf->ol_flags;
 +
-+#define HINIC3_UINT32_BIT_SIZE (CHAR_BIT * sizeof(uint32_t))
-+#define HINIC3_VFTA_SIZE       (4096 / HINIC3_UINT32_BIT_SIZE)
-+#define HINIC3_MAX_QUEUE_NUM   64
++	/* Only support vxlan offload. */
++	if ((ol_flags & HINIC3_PKT_TX_TUNNEL_MASK) &&
++	    (!(ol_flags & HINIC3_PKT_TX_TUNNEL_VXLAN)))
++		return -EINVAL;
 +
-+#define HINIC3_ETH_DEV_TO_PRIVATE_NIC_DEV(dev) \
-+	((struct hinic3_nic_dev *)(dev)->data->dev_private)
++#ifdef RTE_LIBRTE_ETHDEV_DEBUG
++	if (rte_validate_tx_offload(mbuf) != 0)
++		return -EINVAL;
++#endif
++	/* Support tunnel. */
++	if ((ol_flags & HINIC3_PKT_TX_TUNNEL_MASK)) {
++		if ((ol_flags & HINIC3_PKT_TX_OUTER_IP_CKSUM) ||
++		    (ol_flags & HINIC3_PKT_TX_OUTER_IPV6) ||
++		    (ol_flags & HINIC3_PKT_TX_TCP_SEG)) {
++			/*
++			 * For this senmatic, l2_len of mbuf means
++			 * len(out_udp + vxlan + in_eth).
++			 */
++			*inner_l3_offset = mbuf->l2_len + mbuf->outer_l2_len +
++					   mbuf->outer_l3_len;
++		} else {
++			/*
++			 * For this senmatic, l2_len of mbuf means
++			 * len(out_eth + out_ip + out_udp + vxlan + in_eth).
++			 */
++			*inner_l3_offset = mbuf->l2_len;
++		}
++	} else {
++		/* For non-tunnel type pkts. */
++		*inner_l3_offset = mbuf->l2_len;
++	}
 +
-+enum hinic3_dev_status {
-+	HINIC3_DEV_INIT,
-+	HINIC3_DEV_CLOSE,
-+	HINIC3_DEV_START,
-+	HINIC3_DEV_INTR_EN
-+};
++	return 0;
++}
 +
-+enum hinic3_tx_cvlan_type {
-+	HINIC3_TX_TPID0,
-+};
++static inline void
++hinic3_set_vlan_tx_offload(struct hinic3_sq_task *task, uint16_t vlan_tag,
++			   uint8_t vlan_type)
++{
++	task->vlan_offload = SQ_TASK_INFO3_SET(vlan_tag, VLAN_TAG) |
++			     SQ_TASK_INFO3_SET(vlan_type, VLAN_TYPE) |
++			     SQ_TASK_INFO3_SET(1U, VLAN_TAG_VALID);
++}
 +
-+enum nic_feature_cap {
-+	NIC_F_CSUM = RTE_BIT32(0),
-+	NIC_F_SCTP_CRC = RTE_BIT32(1),
-+	NIC_F_TSO = RTE_BIT32(2),
-+	NIC_F_LRO = RTE_BIT32(3),
-+	NIC_F_UFO = RTE_BIT32(4),
-+	NIC_F_RSS = RTE_BIT32(5),
-+	NIC_F_RX_VLAN_FILTER = RTE_BIT32(6),
-+	NIC_F_RX_VLAN_STRIP = RTE_BIT32(7),
-+	NIC_F_TX_VLAN_INSERT = RTE_BIT32(8),
-+	NIC_F_VXLAN_OFFLOAD = RTE_BIT32(9),
-+	NIC_F_IPSEC_OFFLOAD = RTE_BIT32(10),
-+	NIC_F_FDIR = RTE_BIT32(11),
-+	NIC_F_PROMISC = RTE_BIT32(12),
-+	NIC_F_ALLMULTI = RTE_BIT32(13),
-+};
++/**
++ * Set the corresponding offload information based on ol_flags of the mbuf.
++ *
++ * @param[in] mbuf
++ * Point to the mbuf for which offload needs to be set in the sending queue.
++ * @param[out] task
++ * Point to task of send queue(SQ).
++ * @param[out] wqe_info
++ * Point to wqe_info of send queue(SQ).
++ * @return
++ * 0 as success, -EINVAL as failure.
++ */
++static int
++hinic3_set_tx_offload(struct rte_mbuf *mbuf, struct hinic3_sq_task *task,
++		      struct hinic3_wqe_info *wqe_info)
++{
++	uint64_t ol_flags = mbuf->ol_flags;
++	uint16_t pld_offset = 0;
++	uint32_t queue_info = 0;
++	uint16_t vlan_tag;
 +
-+#define DEFAULT_DRV_FEATURE 0x3FFF
++	task->pkt_info0 = 0;
++	task->ip_identify = 0;
++	task->pkt_info2 = 0;
++	task->vlan_offload = 0;
 +
-+struct hinic3_nic_dev {
-+	struct hinic3_hwdev *hwdev; /**< Hardware device. */
-+	struct hinic3_txq **txqs;
-+	struct hinic3_rxq **rxqs;
-+	struct rte_mempool *cpy_mpool;
++	/* Vlan offload. */
++	if (unlikely(ol_flags & HINIC3_PKT_TX_VLAN_PKT)) {
++		vlan_tag = mbuf->vlan_tci;
++		hinic3_set_vlan_tx_offload(task, vlan_tag, HINIC3_TX_TPID0);
++		task->vlan_offload = hinic3_hw_be32(task->vlan_offload);
++	}
++	/* Cksum offload. */
++	if (!(ol_flags & HINIC3_TX_CKSUM_OFFLOAD_MASK))
++		return 0;
 +
-+	uint16_t num_sqs;
-+	uint16_t num_rqs;
-+	uint16_t max_sqs;
-+	uint16_t max_rqs;
++	/* Tso offload. */
++	if (ol_flags & HINIC3_PKT_TX_TCP_SEG) {
++		pld_offset = wqe_info->payload_offset;
++		if ((pld_offset >> 1) > MAX_PAYLOAD_OFFSET)
++			return -EINVAL;
 +
-+	uint16_t rx_buff_len;
-+	uint16_t mtu_size;
++		task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, INNER_L4_EN);
++		task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, INNER_L3_EN);
 +
-+	uint32_t rx_mode;
-+	uint8_t rx_queue_list[HINIC3_MAX_QUEUE_NUM];
-+	rte_spinlock_t queue_list_lock;
++		queue_info |= SQ_CTRL_QUEUE_INFO_SET(1U, TSO);
++		queue_info |= SQ_CTRL_QUEUE_INFO_SET(pld_offset >> 1, PLDOFF);
 +
-+	uint32_t default_cos;
-+	uint32_t rx_csum_en;
++		/* Set MSS value. */
++		queue_info = SQ_CTRL_QUEUE_INFO_CLEAR(queue_info, MSS);
++		queue_info |= SQ_CTRL_QUEUE_INFO_SET(mbuf->tso_segsz, MSS);
++	} else {
++		if (ol_flags & HINIC3_PKT_TX_IP_CKSUM)
++			task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, INNER_L3_EN);
 +
-+	RTE_ATOMIC(uint64_t)dev_status;
++		switch (ol_flags & HINIC3_PKT_TX_L4_MASK) {
++		case HINIC3_PKT_TX_TCP_CKSUM:
++		case HINIC3_PKT_TX_UDP_CKSUM:
++		case HINIC3_PKT_TX_SCTP_CKSUM:
++			task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, INNER_L4_EN);
++			break;
 +
-+	struct rte_ether_addr default_addr;
-+	struct rte_ether_addr *mc_list;
++		case HINIC3_PKT_TX_L4_NO_CKSUM:
++			break;
 +
-+	char dev_name[HINIC3_DEV_NAME_LEN];
-+	uint64_t feature_cap;
-+	uint32_t vfta[HINIC3_VFTA_SIZE]; /**< VLAN bitmap. */
-+};
++		default:
++			PMD_DRV_LOG(INFO, "not support pkt type");
++			return -EINVAL;
++		}
++	}
 +
-+#endif /* _HINIC3_ETHDEV_H_ */
-diff --git a/drivers/net/hinic3/meson.build b/drivers/net/hinic3/meson.build
-new file mode 100644
-index 0000000000..e945f20ed5
---- /dev/null
-+++ b/drivers/net/hinic3/meson.build
-@@ -0,0 +1,26 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 Huawei Technologies Co., Ltd
++	/* For vxlan, also can support PKT_TX_TUNNEL_GRE, etc. */
++	switch (ol_flags & HINIC3_PKT_TX_TUNNEL_MASK) {
++	case HINIC3_PKT_TX_TUNNEL_VXLAN:
++		task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, TUNNEL_FLAG);
++		break;
 +
-+if not is_linux
-+    build = false
-+    reason = 'only supported on Linux'
-+    subdir_done()
-+endif
++	case 0:
++		break;
 +
-+if (arch_subdir != 'x86' and arch_subdir != 'arm'
-+        or not dpdk_conf.get('RTE_ARCH_64'))
-+    build = false
-+    reason = 'only supported on x86_64 and aarch64'
-+    subdir_done()
-+endif
++	default:
++		/* For non UDP/GRE tunneling, drop the tunnel packet. */
++		PMD_DRV_LOG(INFO, "not support tunnel pkt type");
++		return -EINVAL;
++	}
 +
-+cflags += ['-DHW_CONVERT_ENDIAN']
++	if (ol_flags & HINIC3_PKT_TX_OUTER_IP_CKSUM)
++		task->pkt_info0 |= SQ_TASK_INFO0_SET(1U, OUT_L3_EN);
 +
-+subdir('base')
-+objs = [base_objs]
++	task->pkt_info0 = hinic3_hw_be32(task->pkt_info0);
++	task->pkt_info2 = hinic3_hw_be32(task->pkt_info2);
++	wqe_info->queue_info = queue_info;
 +
-+sources = files(
-+        'hinic3_ethdev.c',
-+)
++	return 0;
++}
 +
-+includes += include_directories('base')
-\ No newline at end of file
++/**
++ * Check whether the number of segments in the mbuf is valid.
++ *
++ * @param[in] mbuf
++ * Point to the mbuf to be verified.
++ * @param[in] wqe_info
++ * Point to wqe_info of send queue(SQ).
++ * @return
++ * true as valid, false as invalid.
++ */
++static bool
++hinic3_is_tso_sge_valid(struct rte_mbuf *mbuf, struct hinic3_wqe_info *wqe_info)
++{
++	uint32_t total_len, limit_len, checked_len, left_len, adjust_mss;
++	uint32_t i, max_sges, left_sges, first_len;
++	struct rte_mbuf *mbuf_head, *mbuf_first;
++	struct rte_mbuf *mbuf_pre = mbuf;
++
++	left_sges = mbuf->nb_segs;
++	mbuf_head = mbuf;
++	mbuf_first = mbuf;
++
++	/* Tso sge number validation. */
++	if (unlikely(left_sges >= HINIC3_NONTSO_PKT_MAX_SGE)) {
++		checked_len = 0;
++		total_len = 0;
++		first_len = 0;
++		adjust_mss = mbuf->tso_segsz >= TX_MSS_MIN ? mbuf->tso_segsz
++							   : TX_MSS_MIN;
++		max_sges = HINIC3_NONTSO_PKT_MAX_SGE - 1;
++		limit_len = adjust_mss + wqe_info->payload_offset;
++
++		for (i = 0; (i < max_sges) && (total_len < limit_len); i++) {
++			total_len += mbuf->data_len;
++			mbuf_pre = mbuf;
++			mbuf = mbuf->next;
++		}
++
++		/* Each continues 38 mbufs segmust do one check. */
++		while (left_sges >= HINIC3_NONTSO_PKT_MAX_SGE) {
++			if (total_len >= limit_len) {
++				/* Update the limit len. */
++				limit_len = adjust_mss;
++				/* Update checked len. */
++				checked_len += first_len;
++				/* Record the first len. */
++				first_len = mbuf_first->data_len;
++				/* First mbuf move to the next. */
++				mbuf_first = mbuf_first->next;
++				/* Update total len. */
++				total_len -= first_len;
++				left_sges--;
++				i--;
++				for (;
++				     (i < max_sges) && (total_len < limit_len);
++				     i++) {
++					total_len += mbuf->data_len;
++					mbuf_pre = mbuf;
++					mbuf = mbuf->next;
++				}
++			} else {
++				/* Try to copy if not valid. */
++				checked_len += (total_len - mbuf_pre->data_len);
++
++				left_len = mbuf_head->pkt_len - checked_len;
++				if (left_len > HINIC3_COPY_MBUF_SIZE)
++					return false;
++				wqe_info->sge_cnt = (uint16_t)(mbuf_head->nb_segs +
++							  i - left_sges);
++				wqe_info->cpy_mbuf_cnt = 1;
++
++				return true;
++			}
++		} /**< End of while. */
++	}
++
++	wqe_info->sge_cnt = mbuf_head->nb_segs;
++
++	return true;
++}
++
++/**
++ * Checks and processes transport offload information for data packets.
++ *
++ * @param[in] mbuf
++ * Point to the mbuf to send.
++ * @param[in] wqe_info
++ * Point to wqe_info of send queue(SQ).
++ * @return
++ * 0 as success, -EINVAL as failure.
++ */
++static int
++hinic3_get_tx_offload(struct rte_mbuf *mbuf, struct hinic3_wqe_info *wqe_info)
++{
++	uint64_t ol_flags = mbuf->ol_flags;
++	uint16_t i, total_len, inner_l3_offset = 0;
++	int err;
++	struct rte_mbuf *mbuf_pkt = NULL;
++
++	wqe_info->sge_cnt = mbuf->nb_segs;
++	/* Check if the packet set available offload flags. */
++	if (!(ol_flags & HINIC3_TX_OFFLOAD_MASK)) {
++		wqe_info->offload = 0;
++		return 0;
++	}
++
++	wqe_info->offload = 1;
++	err = hinic3_tx_offload_pkt_prepare(mbuf, &inner_l3_offset);
++	if (err)
++		return err;
++
++	/* Non tso mbuf only check sge num. */
++	if (likely(!(mbuf->ol_flags & HINIC3_PKT_TX_TCP_SEG))) {
++		if (unlikely(mbuf->pkt_len > MAX_SINGLE_SGE_SIZE))
++			/* Non tso packet len must less than 64KB. */
++			return -EINVAL;
++
++		if (likely(HINIC3_NONTSO_SEG_NUM_VALID(mbuf->nb_segs)))
++			/* Valid non-tso mbuf. */
++			return 0;
++
++		/*
++		 * The number of non-tso packet fragments must be less than 38,
++		 * and mbuf segs greater than 38 must be copied to other
++		 * buffers.
++		 */
++		total_len = 0;
++		mbuf_pkt = mbuf;
++		for (i = 0; i < (HINIC3_NONTSO_PKT_MAX_SGE - 1); i++) {
++			total_len += mbuf_pkt->data_len;
++			mbuf_pkt = mbuf_pkt->next;
++		}
++
++		/* Default support copy total 4k mbuf segs. */
++		if ((uint32_t)(total_len + (uint16_t)HINIC3_COPY_MBUF_SIZE) <
++		    mbuf->pkt_len)
++			return -EINVAL;
++
++		wqe_info->sge_cnt = HINIC3_NONTSO_PKT_MAX_SGE;
++		wqe_info->cpy_mbuf_cnt = 1;
++
++		return 0;
++	}
++
++	/* Tso mbuf. */
++	wqe_info->payload_offset =
++		inner_l3_offset + mbuf->l3_len + mbuf->l4_len;
++
++	/* Too many mbuf segs. */
++	if (unlikely(HINIC3_TSO_SEG_NUM_INVALID(mbuf->nb_segs)))
++		return -EINVAL;
++
++	/* Check whether can cover all tso mbuf segs or not. */
++	if (unlikely(!hinic3_is_tso_sge_valid(mbuf, wqe_info)))
++		return -EINVAL;
++
++	return 0;
++}
++
++static inline void
++hinic3_set_buf_desc(struct hinic3_sq_bufdesc *buf_descs, rte_iova_t addr,
++		    uint32_t len)
++{
++	buf_descs->hi_addr = hinic3_hw_be32(upper_32_bits(addr));
++	buf_descs->lo_addr = hinic3_hw_be32(lower_32_bits(addr));
++	buf_descs->len = hinic3_hw_be32(len);
++}
++
++static inline struct rte_mbuf *
++hinic3_alloc_cpy_mbuf(struct hinic3_nic_dev *nic_dev)
++{
++	return rte_pktmbuf_alloc(nic_dev->cpy_mpool);
++}
++
++/**
++ * Copy packets in the send queue(SQ).
++ *
++ * @param[in] nic_dev
++ * Point to nic device.
++ * @param[in] mbuf
++ * Point to the source mbuf.
++ * @param[in] seg_cnt
++ * Number of mbuf segments to be copied.
++ * @result
++ * The address of the copied mbuf.
++ */
++static void *
++hinic3_copy_tx_mbuf(struct hinic3_nic_dev *nic_dev, struct rte_mbuf *mbuf,
++		    uint16_t sge_cnt)
++{
++	struct rte_mbuf *dst_mbuf;
++	uint32_t offset = 0;
++	uint16_t i;
++
++	if (unlikely(!nic_dev->cpy_mpool))
++		return NULL;
++
++	dst_mbuf = hinic3_alloc_cpy_mbuf(nic_dev);
++	if (unlikely(!dst_mbuf))
++		return NULL;
++
++	dst_mbuf->data_off = 0;
++	dst_mbuf->data_len = 0;
++	for (i = 0; i < sge_cnt; i++) {
++		rte_memcpy((uint8_t *)dst_mbuf->buf_addr + offset,
++			   (uint8_t *)mbuf->buf_addr + mbuf->data_off,
++			   mbuf->data_len);
++		dst_mbuf->data_len += mbuf->data_len;
++		offset += mbuf->data_len;
++		mbuf = mbuf->next;
++	}
++	dst_mbuf->pkt_len = dst_mbuf->data_len;
++
++	return dst_mbuf;
++}
++
++/**
++ * Map the TX mbuf to the DMA address space and set related information for
++ * subsequent DMA transmission.
++ *
++ * @param[in] txq
++ * Point to send queue.
++ * @param[in] mbuf
++ * Point to the tx mbuf.
++ * @param[out] wqe_combo
++ * Point to send queue wqe_combo.
++ * @param[in] wqe_info
++ * Point to wqe_info of send queue(SQ).
++ * @result
++ * 0 as success, -EINVAL as failure.
++ */
++static int
++hinic3_mbuf_dma_map_sge(struct hinic3_txq *txq, struct rte_mbuf *mbuf,
++			struct hinic3_sq_wqe_combo *wqe_combo,
++			struct hinic3_wqe_info *wqe_info)
++{
++	struct hinic3_sq_wqe_desc *wqe_desc = wqe_combo->hdr;
++	struct hinic3_sq_bufdesc *buf_desc = wqe_combo->bds_head;
++
++	uint16_t nb_segs = wqe_info->sge_cnt - wqe_info->cpy_mbuf_cnt;
++	uint16_t real_segs = mbuf->nb_segs;
++	rte_iova_t dma_addr;
++	uint32_t i;
++
++	for (i = 0; i < nb_segs; i++) {
++		if (unlikely(mbuf == NULL)) {
++			txq->txq_stats.mbuf_null++;
++			return -EINVAL;
++		}
++
++		if (unlikely(mbuf->data_len == 0)) {
++			txq->txq_stats.sge_len0++;
++			return -EINVAL;
++		}
++
++		dma_addr = rte_mbuf_data_iova(mbuf);
++		if (i == 0) {
++			if (wqe_combo->wqe_type == SQ_WQE_COMPACT_TYPE &&
++			    mbuf->data_len > COMPACT_WQE_MAX_CTRL_LEN) {
++				txq->txq_stats.sge_len_too_large++;
++				return -EINVAL;
++			}
++
++			wqe_desc->hi_addr =
++				hinic3_hw_be32(upper_32_bits(dma_addr));
++			wqe_desc->lo_addr =
++				hinic3_hw_be32(lower_32_bits(dma_addr));
++			wqe_desc->ctrl_len = mbuf->data_len;
++		} else {
++			/*
++			 * Parts of wqe is in sq bottom while parts
++			 * of wqe is in sq head.
++			 */
++			if (unlikely(wqe_info->wrapped &&
++				     (uint64_t)buf_desc == txq->sq_bot_sge_addr))
++				buf_desc = (struct hinic3_sq_bufdesc *)
++					   (void *)txq->sq_head_addr;
++
++			hinic3_set_buf_desc(buf_desc, dma_addr, mbuf->data_len);
++			buf_desc++;
++		}
++		mbuf = mbuf->next;
++	}
++
++	/* For now: support over 38 sge, copy the last 2 mbuf. */
++	if (unlikely(wqe_info->cpy_mbuf_cnt != 0)) {
++		/*
++		 * Copy invalid mbuf segs to a valid buffer, lost performance.
++		 */
++		txq->txq_stats.cpy_pkts += 1;
++		mbuf = hinic3_copy_tx_mbuf(txq->nic_dev, mbuf,
++					   real_segs - nb_segs);
++		if (unlikely(!mbuf))
++			return -EINVAL;
++
++		txq->tx_info[wqe_info->pi].cpy_mbuf = mbuf;
++
++		/* Deal with the last mbuf. */
++		dma_addr = rte_mbuf_data_iova(mbuf);
++		if (unlikely(mbuf->data_len == 0)) {
++			txq->txq_stats.sge_len0++;
++			return -EINVAL;
++		}
++		/*
++		 * Parts of wqe is in sq bottom while parts
++		 * of wqe is in sq head.
++		 */
++		if (i == 0) {
++			wqe_desc->hi_addr =
++				hinic3_hw_be32(upper_32_bits(dma_addr));
++			wqe_desc->lo_addr =
++				hinic3_hw_be32(lower_32_bits(dma_addr));
++			wqe_desc->ctrl_len = mbuf->data_len;
++		} else {
++			if (unlikely(wqe_info->wrapped &&
++				     ((uint64_t)buf_desc == txq->sq_bot_sge_addr)))
++				buf_desc = (struct hinic3_sq_bufdesc *)
++						   txq->sq_head_addr;
++
++			hinic3_set_buf_desc(buf_desc, dma_addr, mbuf->data_len);
++		}
++	}
++
++	return 0;
++}
++
++/**
++ * Sets and configures fields in the transmit queue control descriptor based on
++ * the WQE type.
++ *
++ * @param[out] wqe_combo
++ * Point to wqe_combo of send queue.
++ * @param[in] wqe_info
++ * Point to wqe_info of send queue.
++ */
++static void
++hinic3_prepare_sq_ctrl(struct hinic3_sq_wqe_combo *wqe_combo,
++		       struct hinic3_wqe_info *wqe_info)
++{
++	struct hinic3_sq_wqe_desc *wqe_desc = wqe_combo->hdr;
++
++	if (wqe_combo->wqe_type == SQ_WQE_COMPACT_TYPE) {
++		wqe_desc->ctrl_len |=
++			SQ_CTRL_SET(SQ_NORMAL_WQE, DATA_FORMAT) |
++			SQ_CTRL_SET(wqe_combo->wqe_type, EXTENDED) |
++			SQ_CTRL_SET(wqe_info->owner, OWNER);
++		wqe_desc->ctrl_len = hinic3_hw_be32(wqe_desc->ctrl_len);
++
++		/* Compact wqe queue_info will transfer to ucode. */
++		wqe_desc->queue_info = 0;
++
++		return;
++	}
++
++	wqe_desc->ctrl_len |= SQ_CTRL_SET(wqe_info->sge_cnt, BUFDESC_NUM) |
++			      SQ_CTRL_SET(wqe_combo->task_type, TASKSECT_LEN) |
++			      SQ_CTRL_SET(SQ_NORMAL_WQE, DATA_FORMAT) |
++			      SQ_CTRL_SET(wqe_combo->wqe_type, EXTENDED) |
++			      SQ_CTRL_SET(wqe_info->owner, OWNER);
++
++	wqe_desc->ctrl_len = hinic3_hw_be32(wqe_desc->ctrl_len);
++
++	wqe_desc->queue_info = wqe_info->queue_info;
++	wqe_desc->queue_info |= SQ_CTRL_QUEUE_INFO_SET(1U, UC);
++
++	if (!SQ_CTRL_QUEUE_INFO_GET(wqe_desc->queue_info, MSS)) {
++		wqe_desc->queue_info |=
++			SQ_CTRL_QUEUE_INFO_SET(TX_MSS_DEFAULT, MSS);
++	} else if (SQ_CTRL_QUEUE_INFO_GET(wqe_desc->queue_info, MSS) <
++		   TX_MSS_MIN) {
++		/* Mss should not less than 80. */
++		wqe_desc->queue_info =
++			SQ_CTRL_QUEUE_INFO_CLEAR(wqe_desc->queue_info, MSS);
++		wqe_desc->queue_info |= SQ_CTRL_QUEUE_INFO_SET(TX_MSS_MIN, MSS);
++	}
++
++	wqe_desc->queue_info = hinic3_hw_be32(wqe_desc->queue_info);
++}
++
++/**
++ * It is responsible for sending data packets.
++ *
++ * @param[in] tx_queue
++ * Point to send queue.
++ * @param[in] tx_pkts
++ * Pointer to the array of data packets to be sent.
++ * @param[in] nb_pkts
++ * Number of sent packets.
++ * @return
++ * Number of actually sent packets.
++ */
++uint16_t
++hinic3_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
++{
++	struct hinic3_txq *txq = tx_queue;
++	struct hinic3_tx_info *tx_info = NULL;
++	struct rte_mbuf *mbuf_pkt = NULL;
++	struct hinic3_sq_wqe_combo wqe_combo = {0};
++	struct hinic3_sq_wqe *sq_wqe = NULL;
++	struct hinic3_wqe_info wqe_info = {0};
++
++	uint32_t offload_err, free_cnt;
++	uint64_t tx_bytes = 0;
++	uint16_t free_wqebb_cnt, nb_tx;
++	int err;
++
++#ifdef HINIC3_XSTAT_PROF_TX
++	uint64_t t1, t2;
++	t1 = rte_get_tsc_cycles();
++#endif
++
++	if (unlikely(!HINIC3_TXQ_IS_STARTED(txq)))
++		return 0;
++
++	free_cnt = txq->tx_free_thresh;
++	/* Reclaim tx mbuf before xmit new packets. */
++	if (hinic3_get_sq_free_wqebbs(txq) < txq->tx_free_thresh)
++		hinic3_xmit_mbuf_cleanup(txq, free_cnt);
++
++	/* Tx loop routine. */
++	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
++		mbuf_pkt = *tx_pkts++;
++		if (unlikely(hinic3_get_tx_offload(mbuf_pkt, &wqe_info))) {
++			txq->txq_stats.offload_errors++;
++			break;
++		}
++
++		if (!wqe_info.offload)
++			wqe_info.wqebb_cnt = wqe_info.sge_cnt;
++		else
++			/* Use extended sq wqe with normal TS. */
++			wqe_info.wqebb_cnt = wqe_info.sge_cnt + 1;
++
++		free_wqebb_cnt = hinic3_get_sq_free_wqebbs(txq);
++		if (unlikely(wqe_info.wqebb_cnt > free_wqebb_cnt)) {
++			/* Reclaim again. */
++			hinic3_xmit_mbuf_cleanup(txq, free_cnt);
++			free_wqebb_cnt = hinic3_get_sq_free_wqebbs(txq);
++			if (unlikely(wqe_info.wqebb_cnt > free_wqebb_cnt)) {
++				txq->txq_stats.tx_busy += (nb_pkts - nb_tx);
++				break;
++			}
++		}
++
++		/* Get sq wqe address from wqe_page. */
++		sq_wqe = hinic3_get_sq_wqe(txq, &wqe_info);
++		if (unlikely(!sq_wqe)) {
++			txq->txq_stats.tx_busy++;
++			break;
++		}
++
++		/* Task or bd section maybe wrapped for one wqe. */
++		hinic3_set_wqe_combo(txq, &wqe_combo, sq_wqe, &wqe_info);
++
++		wqe_info.queue_info = 0;
++		/* Fill tx packet offload into qsf and task field. */
++		if (wqe_info.offload) {
++			offload_err = hinic3_set_tx_offload(mbuf_pkt,
++							    wqe_combo.task,
++							    &wqe_info);
++			if (unlikely(offload_err)) {
++				hinic3_put_sq_wqe(txq, &wqe_info);
++				txq->txq_stats.offload_errors++;
++				break;
++			}
++		}
++
++		/* Fill sq_wqe buf_desc and bd_desc. */
++		err = hinic3_mbuf_dma_map_sge(txq, mbuf_pkt, &wqe_combo,
++					      &wqe_info);
++		if (err) {
++			hinic3_put_sq_wqe(txq, &wqe_info);
++			txq->txq_stats.offload_errors++;
++			break;
++		}
++
++		/* Record tx info. */
++		tx_info = &txq->tx_info[wqe_info.pi];
++		tx_info->mbuf = mbuf_pkt;
++		tx_info->wqebb_cnt = wqe_info.wqebb_cnt;
++
++		hinic3_prepare_sq_ctrl(&wqe_combo, &wqe_info);
++
++		tx_bytes += mbuf_pkt->pkt_len;
++	}
++
++	/* Update txq stats. */
++	if (nb_tx) {
++		hinic3_write_db(txq->db_addr, txq->q_id, (int)(txq->cos),
++				SQ_CFLAG_DP,
++				MASKED_QUEUE_IDX(txq, txq->prod_idx));
++		txq->txq_stats.packets += nb_tx;
++		txq->txq_stats.bytes += tx_bytes;
++	}
++	txq->txq_stats.burst_pkts = nb_tx;
++
++#ifdef HINIC3_XSTAT_PROF_TX
++	t2 = rte_get_tsc_cycles();
++	txq->txq_stats.app_tsc = t1 - txq->prof_tx_end_tsc;
++	txq->prof_tx_end_tsc = t2;
++	txq->txq_stats.pmd_tsc = t2 - t1;
++	txq->txq_stats.burst_pkts = nb_tx;
++#endif
++
++	return nb_tx;
++}
++
+ int
+ hinic3_stop_sq(struct hinic3_txq *txq)
+ {
+diff --git a/drivers/net/hinic3/hinic3_tx.h b/drivers/net/hinic3/hinic3_tx.h
+index fcf07ece79..21b61dbb75 100644
+--- a/drivers/net/hinic3/hinic3_tx.h
++++ b/drivers/net/hinic3/hinic3_tx.h
+@@ -306,6 +306,7 @@ struct __rte_cache_aligned hinic3_txq {
+ void hinic3_flush_txqs(struct hinic3_nic_dev *nic_dev);
+ void hinic3_free_txq_mbufs(struct hinic3_txq *txq);
+ void hinic3_free_all_txq_mbufs(struct hinic3_nic_dev *nic_dev);
++uint16_t hinic3_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
+ int hinic3_stop_sq(struct hinic3_txq *txq);
+ int hinic3_start_all_sqs(struct rte_eth_dev *eth_dev);
+ int hinic3_tx_done_cleanup(void *txq, uint32_t free_cnt);
 -- 
 2.47.0.windows.2
 
