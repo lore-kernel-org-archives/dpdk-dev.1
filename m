@@ -2,47 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AABCA0FE8
-	for <dpdk-dev@archiver.kernel.org>; Sun, 31 Aug 2025 15:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A394CA0FF2
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Sep 2025 01:21:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D2EB340262;
-	Sun, 31 Aug 2025 17:57:41 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 86C034021E
- for <dev@dpdk.org>; Sun, 31 Aug 2025 17:57:40 +0200 (CEST)
-Received: from debian (unknown [78.109.76.116])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 88DC7E06DD;
- Sun, 31 Aug 2025 19:57:39 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 88DC7E06DD
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1756655860;
- bh=2T5Wfa11T6S1IqVmHh1Qlmy7ouILgab+n9S0hF0GRmQ=;
- h=Date:From:To:cc:Subject:In-Reply-To:References:From;
- b=1uSI/HKI6Wg6lxq2Usn7wyWTgjDSAWCwm2GWr7JMfmPrxYyd015LPFoCjQQVukRZi
- XOtlAs/JtyFbHH6k4H5JJhCFjVwu95p5qEy9hnZpm48wnaODqZ2ddwJdsu5H4pTShA
- tezbaGQsjgyfK5jFd0lhghMfRnsGbmoUrM8eFbfg/IHCNNuxIO1mMN29dESuoGeNYu
- x+QSV1+eDJsIRKNv3oi/gsc5Vi4HFoNOBm+ce+IGrYA5sczkSeZDmF92GHDKh+et+X
- M8uAlwpO0YwWOCoOWPIb2tVTMdFqtSHkoAtZi40uGdA1KbTxFVUF7q/br2gah9J4Rp
- +azayFF0JGBnQ==
-Date: Sun, 31 Aug 2025 19:57:30 +0400 (+04)
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: Vladimir Medvedkin <medvedkinv@gmail.com>
-cc: Vladimir Medvedkin <vladimir.medvedkin@intel.com>, dev@dpdk.org, 
- bruce.richardson@intel.com, anatoly.burakov@intel.com, thomas@monjalon.net, 
- andrew.rybchenko@oktetlabs.ru, stephen@networkplumber.org
-Subject: Re: [RFC PATCH 4/6] ethdev: extend VMDq/DCB configuration with queue
- mapping
-In-Reply-To: <CANDrEHkrO_GEe1_95grSq2jTc7wM8jjBpqUEnNNdnscasRjybQ@mail.gmail.com>
-Message-ID: <ef7d0a5a-0574-3b14-802b-61975a4a52aa@arknetworks.am>
-References: <20250830171706.428977-1-vladimir.medvedkin@intel.com>
- <20250830171706.428977-5-vladimir.medvedkin@intel.com>
- <e9910cf9-ebc7-861a-2f30-791309416011@arknetworks.am>
- <CANDrEHkrO_GEe1_95grSq2jTc7wM8jjBpqUEnNNdnscasRjybQ@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id CC124402E4;
+	Mon,  1 Sep 2025 03:21:54 +0200 (CEST)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id AD6874028B
+ for <dev@dpdk.org>; Mon,  1 Sep 2025 03:21:52 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cFWF55qJXzPqRG;
+ Mon,  1 Sep 2025 09:17:13 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 3B19E180490;
+ Mon,  1 Sep 2025 09:21:50 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 1 Sep 2025 09:21:49 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>, <david.marchand@redhat.com>,
+ <stephen@networkplumber.org>
+CC: <dev@dpdk.org>
+Subject: [PATCH v3 0/5] add semicolon when export any symbol
+Date: Mon, 1 Sep 2025 09:21:44 +0800
+Message-ID: <20250901012149.47887-1-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250828025957.30917-1-fengchengwen@huawei.com>
+References: <20250828025957.30917-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-444589899-1756655860=:7325"
+Content-Type: text/plain
+X-Originating-IP: [10.50.165.33]
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,389 +48,433 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Currently, the RTE_EXPORT_INTERNAL_SYMBOL, RTE_EXPORT_SYMBOL and
+RTE_EXPORT_EXPERIMENTAL_SYMBOL are placed at the beginning of APIs,
+but don't end with a semicolon. As a result, some IDEs cannot identify
+the APIs and cannot quickly jump to the definition.
 
---8323328-444589899-1756655860=:7325
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
+A semicolon is added to the end of above RTE_EXPORT_XXX_SYMBOL in this
+commit.
 
-Hi Vladimir,
+Chengwen Feng (5):
+  lib: add semicolon when export symbol
+  lib: add semicolon when export experimental symbol
+  lib: add semicolon when export internal symbol
+  drivers: add semicolon when export any symbol
+  doc: update ABI versioning guide
 
-Thanks for the response. Please see below.
+---
+v3:
+1. split the lib commit to three commits.
+2. rebase (try to fix CI error: apply rte_cfgfile.c failed).
+v2: 
+1. drop the gen-version-map.py change make sure it will not compile
+   error with on-going code. 
+2. fix CI error: two semicolon for rte_node_mbuf_dynfield_register.
+   and mlx5-glue.c error (by keep no change)
+3. split to three commit.
 
-On Sun, 31 Aug 2025, Vladimir Medvedkin wrote:
+ doc/guides/contributing/abi_versioning.rst    |   10 +-
+ drivers/baseband/acc/rte_acc100_pmd.c         |    2 +-
+ .../fpga_5gnr_fec/rte_fpga_5gnr_fec.c         |    2 +-
+ drivers/baseband/fpga_lte_fec/fpga_lte_fec.c  |    2 +-
+ drivers/bus/auxiliary/auxiliary_common.c      |    4 +-
+ drivers/bus/cdx/cdx.c                         |    8 +-
+ drivers/bus/cdx/cdx_vfio.c                    |    8 +-
+ drivers/bus/dpaa/dpaa_bus.c                   |   18 +-
+ drivers/bus/dpaa/dpaa_bus_base_symbols.c      |  186 +--
+ drivers/bus/fslmc/fslmc_bus.c                 |    8 +-
+ drivers/bus/fslmc/fslmc_vfio.c                |   24 +-
+ drivers/bus/fslmc/mc/dpbp.c                   |   12 +-
+ drivers/bus/fslmc/mc/dpci.c                   |    6 +-
+ drivers/bus/fslmc/mc/dpcon.c                  |   12 +-
+ drivers/bus/fslmc/mc/dpdmai.c                 |   16 +-
+ drivers/bus/fslmc/mc/dpio.c                   |   26 +-
+ drivers/bus/fslmc/mc/dpmng.c                  |    4 +-
+ drivers/bus/fslmc/mc/mc_sys.c                 |    2 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c      |    6 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpci.c      |    4 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |   22 +-
+ drivers/bus/fslmc/qbman/qbman_debug.c         |    4 +-
+ drivers/bus/fslmc/qbman/qbman_portal.c        |   82 +-
+ drivers/bus/ifpga/ifpga_bus.c                 |    6 +-
+ drivers/bus/pci/bsd/pci.c                     |   20 +-
+ drivers/bus/pci/linux/pci.c                   |   20 +-
+ drivers/bus/pci/pci_common.c                  |   20 +-
+ drivers/bus/pci/windows/pci.c                 |   20 +-
+ drivers/bus/platform/platform.c               |    4 +-
+ drivers/bus/uacce/uacce.c                     |   18 +-
+ drivers/bus/vdev/vdev.c                       |   12 +-
+ drivers/bus/vmbus/linux/vmbus_bus.c           |   12 +-
+ drivers/bus/vmbus/vmbus_channel.c             |   26 +-
+ drivers/bus/vmbus/vmbus_common.c              |    6 +-
+ drivers/common/cnxk/cnxk_security.c           |   24 +-
+ drivers/common/cnxk/cnxk_utils.c              |    2 +-
+ drivers/common/cnxk/roc_platform.c            |   36 +-
+ .../common/cnxk/roc_platform_base_symbols.c   | 1084 ++++++++---------
+ drivers/common/cpt/cpt_fpm_tables.c           |    4 +-
+ drivers/common/cpt/cpt_pmd_ops_helper.c       |    6 +-
+ drivers/common/dpaax/caamflib.c               |    2 +-
+ drivers/common/dpaax/dpaa_of.c                |   24 +-
+ drivers/common/dpaax/dpaax_iova_table.c       |   12 +-
+ drivers/common/ionic/ionic_common_uio.c       |    8 +-
+ .../common/mlx5/linux/mlx5_common_auxiliary.c |    2 +-
+ drivers/common/mlx5/linux/mlx5_common_os.c    |   20 +-
+ drivers/common/mlx5/linux/mlx5_common_verbs.c |    6 +-
+ drivers/common/mlx5/linux/mlx5_glue.c         |    2 +-
+ drivers/common/mlx5/linux/mlx5_nl.c           |   42 +-
+ drivers/common/mlx5/mlx5_common.c             |   18 +-
+ drivers/common/mlx5/mlx5_common_devx.c        |   18 +-
+ drivers/common/mlx5/mlx5_common_mp.c          |   16 +-
+ drivers/common/mlx5/mlx5_common_mr.c          |   22 +-
+ drivers/common/mlx5/mlx5_common_pci.c         |    4 +-
+ drivers/common/mlx5/mlx5_common_utils.c       |   22 +-
+ drivers/common/mlx5/mlx5_devx_cmds.c          |  102 +-
+ drivers/common/mlx5/mlx5_malloc.c             |    8 +-
+ drivers/common/mlx5/windows/mlx5_common_os.c  |   12 +-
+ drivers/common/mlx5/windows/mlx5_glue.c       |    2 +-
+ drivers/common/mvep/mvep_common.c             |    4 +-
+ drivers/common/nfp/nfp_common.c               |   14 +-
+ drivers/common/nfp/nfp_common_pci.c           |    2 +-
+ drivers/common/nfp/nfp_dev.c                  |    2 +-
+ drivers/common/nitrox/nitrox_device.c         |    2 +-
+ drivers/common/nitrox/nitrox_logs.c           |    2 +-
+ drivers/common/nitrox/nitrox_qp.c             |    4 +-
+ drivers/common/octeontx/octeontx_mbox.c       |   12 +-
+ drivers/common/sfc_efx/sfc_base_symbols.c     |  542 ++++-----
+ drivers/common/sfc_efx/sfc_efx.c              |    4 +-
+ drivers/common/sfc_efx/sfc_efx_mcdi.c         |    4 +-
+ drivers/crypto/cnxk/cn10k_cryptodev_ops.c     |   14 +-
+ drivers/crypto/cnxk/cn20k_cryptodev_ops.c     |   12 +-
+ drivers/crypto/cnxk/cn9k_cryptodev_ops.c      |    4 +-
+ drivers/crypto/cnxk/cnxk_cryptodev_ops.c      |   14 +-
+ drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c   |    4 +-
+ drivers/crypto/dpaa_sec/dpaa_sec.c            |    4 +-
+ drivers/crypto/octeontx/otx_cryptodev_ops.c   |    4 +-
+ .../scheduler/rte_cryptodev_scheduler.c       |   20 +-
+ drivers/dma/cnxk/cnxk_dmadev_fp.c             |    8 +-
+ drivers/event/cnxk/cnxk_worker.c              |    4 +-
+ drivers/event/dlb2/rte_pmd_dlb2.c             |    4 +-
+ drivers/mempool/cnxk/cn10k_hwpool_ops.c       |    6 +-
+ drivers/mempool/dpaa/dpaa_mempool.c           |    4 +-
+ drivers/mempool/dpaa2/dpaa2_hw_mempool.c      |   12 +-
+ drivers/net/atlantic/rte_pmd_atlantic.c       |   12 +-
+ drivers/net/bnxt/rte_pmd_bnxt.c               |   32 +-
+ drivers/net/bonding/rte_eth_bond_8023ad.c     |   24 +-
+ drivers/net/bonding/rte_eth_bond_api.c        |   30 +-
+ drivers/net/cnxk/cnxk_ethdev.c                |    6 +-
+ drivers/net/cnxk/cnxk_ethdev_sec.c            |   18 +-
+ drivers/net/dpaa/dpaa_ethdev.c                |    6 +-
+ drivers/net/dpaa2/base/dpaa2_hw_dpni.c        |    2 +-
+ drivers/net/dpaa2/base/dpaa2_tlu_hash.c       |    2 +-
+ drivers/net/dpaa2/dpaa2_ethdev.c              |   14 +-
+ drivers/net/dpaa2/dpaa2_mux.c                 |    6 +-
+ drivers/net/dpaa2/dpaa2_rxtx.c                |    2 +-
+ drivers/net/intel/i40e/rte_pmd_i40e.c         |   78 +-
+ drivers/net/intel/iavf/iavf_base_symbols.c    |   14 +-
+ drivers/net/intel/iavf/iavf_rxtx.c            |   16 +-
+ drivers/net/intel/ice/ice_diagnose.c          |    6 +-
+ drivers/net/intel/idpf/idpf_common_device.c   |   20 +-
+ drivers/net/intel/idpf/idpf_common_rxtx.c     |   46 +-
+ .../net/intel/idpf/idpf_common_rxtx_avx2.c    |    4 +-
+ .../net/intel/idpf/idpf_common_rxtx_avx512.c  |   10 +-
+ drivers/net/intel/idpf/idpf_common_virtchnl.c |   58 +-
+ drivers/net/intel/ipn3ke/ipn3ke_ethdev.c      |    2 +-
+ drivers/net/intel/ixgbe/rte_pmd_ixgbe.c       |   74 +-
+ drivers/net/mlx5/mlx5.c                       |    2 +-
+ drivers/net/mlx5/mlx5_flow.c                  |    8 +-
+ drivers/net/mlx5/mlx5_rx.c                    |    4 +-
+ drivers/net/mlx5/mlx5_rxq.c                   |    4 +-
+ drivers/net/mlx5/mlx5_tx.c                    |    2 +-
+ drivers/net/mlx5/mlx5_txq.c                   |    6 +-
+ drivers/net/octeontx/octeontx_ethdev.c        |    2 +-
+ drivers/net/ring/rte_eth_ring.c               |    4 +-
+ drivers/net/softnic/rte_eth_softnic.c         |    2 +-
+ drivers/net/softnic/rte_eth_softnic_thread.c  |    2 +-
+ drivers/net/vhost/rte_eth_vhost.c             |    4 +-
+ drivers/power/kvm_vm/guest_channel.c          |    4 +-
+ drivers/raw/cnxk_rvu_lf/cnxk_rvu_lf.c         |   20 +-
+ drivers/raw/ifpga/rte_pmd_ifpga.c             |   22 +-
+ lib/acl/acl_bld.c                             |    2 +-
+ lib/acl/acl_run_scalar.c                      |    2 +-
+ lib/acl/rte_acl.c                             |   22 +-
+ lib/argparse/rte_argparse.c                   |    4 +-
+ lib/bbdev/bbdev_trace_points.c                |    4 +-
+ lib/bbdev/rte_bbdev.c                         |   62 +-
+ lib/bitratestats/rte_bitrate.c                |    8 +-
+ lib/bpf/bpf.c                                 |    4 +-
+ lib/bpf/bpf_convert.c                         |    2 +-
+ lib/bpf/bpf_dump.c                            |    2 +-
+ lib/bpf/bpf_exec.c                            |    4 +-
+ lib/bpf/bpf_load.c                            |    2 +-
+ lib/bpf/bpf_load_elf.c                        |    2 +-
+ lib/bpf/bpf_pkt.c                             |    8 +-
+ lib/bpf/bpf_stub.c                            |    4 +-
+ lib/cfgfile/rte_cfgfile.c                     |   34 +-
+ lib/cmdline/cmdline.c                         |   18 +-
+ lib/cmdline/cmdline_cirbuf.c                  |   38 +-
+ lib/cmdline/cmdline_parse.c                   |    8 +-
+ lib/cmdline/cmdline_parse_bool.c              |    2 +-
+ lib/cmdline/cmdline_parse_etheraddr.c         |    6 +-
+ lib/cmdline/cmdline_parse_ipaddr.c            |    6 +-
+ lib/cmdline/cmdline_parse_num.c               |    6 +-
+ lib/cmdline/cmdline_parse_portlist.c          |    6 +-
+ lib/cmdline/cmdline_parse_string.c            |   10 +-
+ lib/cmdline/cmdline_rdline.c                  |   30 +-
+ lib/cmdline/cmdline_socket.c                  |    6 +-
+ lib/cmdline/cmdline_vt100.c                   |    4 +-
+ lib/compressdev/rte_comp.c                    |   12 +-
+ lib/compressdev/rte_compressdev.c             |   50 +-
+ lib/compressdev/rte_compressdev_pmd.c         |    6 +-
+ lib/cryptodev/cryptodev_pmd.c                 |   14 +-
+ lib/cryptodev/cryptodev_trace_points.c        |    6 +-
+ lib/cryptodev/rte_cryptodev.c                 |  166 +--
+ lib/dispatcher/rte_dispatcher.c               |   26 +-
+ lib/distributor/rte_distributor.c             |   18 +-
+ lib/dmadev/rte_dmadev.c                       |   38 +-
+ lib/dmadev/rte_dmadev_trace_points.c          |   14 +-
+ lib/eal/arm/rte_cpuflags.c                    |    6 +-
+ lib/eal/arm/rte_hypervisor.c                  |    2 +-
+ lib/eal/arm/rte_power_intrinsics.c            |    8 +-
+ lib/eal/common/eal_common_bus.c               |   20 +-
+ lib/eal/common/eal_common_class.c             |    8 +-
+ lib/eal/common/eal_common_config.c            |   14 +-
+ lib/eal/common/eal_common_cpuflags.c          |    2 +-
+ lib/eal/common/eal_common_debug.c             |    4 +-
+ lib/eal/common/eal_common_dev.c               |   38 +-
+ lib/eal/common/eal_common_devargs.c           |   18 +-
+ lib/eal/common/eal_common_errno.c             |    4 +-
+ lib/eal/common/eal_common_fbarray.c           |   52 +-
+ lib/eal/common/eal_common_hexdump.c           |    4 +-
+ lib/eal/common/eal_common_hypervisor.c        |    2 +-
+ lib/eal/common/eal_common_interrupts.c        |   54 +-
+ lib/eal/common/eal_common_launch.c            |   10 +-
+ lib/eal/common/eal_common_lcore.c             |   34 +-
+ lib/eal/common/eal_common_lcore_var.c         |    2 +-
+ lib/eal/common/eal_common_mcfg.c              |   40 +-
+ lib/eal/common/eal_common_memory.c            |   60 +-
+ lib/eal/common/eal_common_memzone.c           |   18 +-
+ lib/eal/common/eal_common_options.c           |    8 +-
+ lib/eal/common/eal_common_proc.c              |   16 +-
+ lib/eal/common/eal_common_string_fns.c        |    8 +-
+ lib/eal/common/eal_common_tailqs.c            |    6 +-
+ lib/eal/common/eal_common_thread.c            |   28 +-
+ lib/eal/common/eal_common_timer.c             |    8 +-
+ lib/eal/common/eal_common_trace.c             |   30 +-
+ lib/eal/common/eal_common_trace_ctf.c         |    2 +-
+ lib/eal/common/eal_common_trace_points.c      |   36 +-
+ lib/eal/common/eal_common_trace_utils.c       |    2 +-
+ lib/eal/common/eal_common_uuid.c              |    8 +-
+ lib/eal/common/rte_bitset.c                   |    2 +-
+ lib/eal/common/rte_keepalive.c                |   12 +-
+ lib/eal/common/rte_malloc.c                   |   46 +-
+ lib/eal/common/rte_random.c                   |    8 +-
+ lib/eal/common/rte_reciprocal.c               |    4 +-
+ lib/eal/common/rte_service.c                  |   62 +-
+ lib/eal/common/rte_version.c                  |   14 +-
+ lib/eal/freebsd/eal.c                         |   44 +-
+ lib/eal/freebsd/eal_alarm.c                   |    4 +-
+ lib/eal/freebsd/eal_dev.c                     |    8 +-
+ lib/eal/freebsd/eal_interrupts.c              |   38 +-
+ lib/eal/freebsd/eal_memory.c                  |    6 +-
+ lib/eal/freebsd/eal_thread.c                  |    4 +-
+ lib/eal/freebsd/eal_timer.c                   |    2 +-
+ lib/eal/linux/eal.c                           |   14 +-
+ lib/eal/linux/eal_alarm.c                     |    4 +-
+ lib/eal/linux/eal_dev.c                       |    8 +-
+ lib/eal/linux/eal_interrupts.c                |   38 +-
+ lib/eal/linux/eal_memory.c                    |    6 +-
+ lib/eal/linux/eal_thread.c                    |    4 +-
+ lib/eal/linux/eal_timer.c                     |    8 +-
+ lib/eal/linux/eal_vfio.c                      |   32 +-
+ lib/eal/loongarch/rte_cpuflags.c              |    6 +-
+ lib/eal/loongarch/rte_hypervisor.c            |    2 +-
+ lib/eal/loongarch/rte_power_intrinsics.c      |    8 +-
+ lib/eal/ppc/rte_cpuflags.c                    |    6 +-
+ lib/eal/ppc/rte_hypervisor.c                  |    2 +-
+ lib/eal/ppc/rte_power_intrinsics.c            |    8 +-
+ lib/eal/riscv/rte_cpuflags.c                  |    6 +-
+ lib/eal/riscv/rte_hypervisor.c                |    2 +-
+ lib/eal/riscv/rte_power_intrinsics.c          |    8 +-
+ lib/eal/unix/eal_debug.c                      |    4 +-
+ lib/eal/unix/eal_filesystem.c                 |    2 +-
+ lib/eal/unix/eal_firmware.c                   |    2 +-
+ lib/eal/unix/eal_unix_memory.c                |    8 +-
+ lib/eal/unix/eal_unix_timer.c                 |    2 +-
+ lib/eal/unix/rte_thread.c                     |   26 +-
+ lib/eal/windows/eal.c                         |   22 +-
+ lib/eal/windows/eal_alarm.c                   |    4 +-
+ lib/eal/windows/eal_debug.c                   |    2 +-
+ lib/eal/windows/eal_dev.c                     |    8 +-
+ lib/eal/windows/eal_interrupts.c              |   38 +-
+ lib/eal/windows/eal_memory.c                  |   14 +-
+ lib/eal/windows/eal_mp.c                      |   12 +-
+ lib/eal/windows/eal_thread.c                  |    2 +-
+ lib/eal/windows/eal_timer.c                   |    2 +-
+ lib/eal/windows/rte_thread.c                  |   28 +-
+ lib/eal/x86/rte_cpuflags.c                    |    6 +-
+ lib/eal/x86/rte_hypervisor.c                  |    2 +-
+ lib/eal/x86/rte_power_intrinsics.c            |    8 +-
+ lib/eal/x86/rte_spinlock.c                    |    2 +-
+ lib/efd/rte_efd.c                             |   14 +-
+ lib/ethdev/ethdev_driver.c                    |   48 +-
+ lib/ethdev/ethdev_linux_ethtool.c             |    6 +-
+ lib/ethdev/ethdev_private.c                   |    4 +-
+ lib/ethdev/ethdev_trace_points.c              |   12 +-
+ lib/ethdev/rte_ethdev.c                       |  336 ++---
+ lib/ethdev/rte_ethdev_cman.c                  |    8 +-
+ lib/ethdev/rte_flow.c                         |  128 +-
+ lib/ethdev/rte_mtr.c                          |   42 +-
+ lib/ethdev/rte_tm.c                           |   62 +-
+ lib/eventdev/eventdev_private.c               |    4 +-
+ lib/eventdev/eventdev_trace_points.c          |   22 +-
+ lib/eventdev/rte_event_crypto_adapter.c       |   30 +-
+ lib/eventdev/rte_event_dma_adapter.c          |   30 +-
+ lib/eventdev/rte_event_eth_rx_adapter.c       |   46 +-
+ lib/eventdev/rte_event_eth_tx_adapter.c       |   34 +-
+ lib/eventdev/rte_event_ring.c                 |    8 +-
+ lib/eventdev/rte_event_timer_adapter.c        |   22 +-
+ lib/eventdev/rte_event_vector_adapter.c       |   20 +-
+ lib/eventdev/rte_eventdev.c                   |   94 +-
+ lib/fib/rte_fib.c                             |   20 +-
+ lib/fib/rte_fib6.c                            |   18 +-
+ lib/gpudev/gpudev.c                           |   64 +-
+ lib/graph/graph.c                             |   32 +-
+ lib/graph/graph_debug.c                       |    2 +-
+ lib/graph/graph_feature_arc.c                 |   34 +-
+ lib/graph/graph_stats.c                       |    8 +-
+ lib/graph/node.c                              |   24 +-
+ lib/graph/rte_graph_model_mcore_dispatch.c    |    6 +-
+ lib/graph/rte_graph_worker.c                  |    6 +-
+ lib/gro/rte_gro.c                             |   12 +-
+ lib/gso/rte_gso.c                             |    2 +-
+ lib/hash/rte_cuckoo_hash.c                    |   54 +-
+ lib/hash/rte_fbk_hash.c                       |    6 +-
+ lib/hash/rte_hash_crc.c                       |    4 +-
+ lib/hash/rte_thash.c                          |   24 +-
+ lib/hash/rte_thash_gf2_poly_math.c            |    2 +-
+ lib/hash/rte_thash_gfni.c                     |    4 +-
+ lib/ip_frag/rte_ip_frag_common.c              |   10 +-
+ lib/ip_frag/rte_ipv4_fragmentation.c          |    4 +-
+ lib/ip_frag/rte_ipv4_reassembly.c             |    2 +-
+ lib/ip_frag/rte_ipv6_fragmentation.c          |    2 +-
+ lib/ip_frag/rte_ipv6_reassembly.c             |    2 +-
+ lib/ipsec/ipsec_sad.c                         |   12 +-
+ lib/ipsec/ipsec_telemetry.c                   |    4 +-
+ lib/ipsec/sa.c                                |    8 +-
+ lib/ipsec/ses.c                               |    2 +-
+ lib/jobstats/rte_jobstats.c                   |   28 +-
+ lib/kvargs/rte_kvargs.c                       |   16 +-
+ lib/latencystats/rte_latencystats.c           |   10 +-
+ lib/log/log.c                                 |   44 +-
+ lib/log/log_color.c                           |    2 +-
+ lib/log/log_syslog.c                          |    2 +-
+ lib/log/log_timestamp.c                       |    2 +-
+ lib/lpm/rte_lpm.c                             |   16 +-
+ lib/lpm/rte_lpm6.c                            |   20 +-
+ lib/mbuf/rte_mbuf.c                           |   34 +-
+ lib/mbuf/rte_mbuf_dyn.c                       |   18 +-
+ lib/mbuf/rte_mbuf_pool_ops.c                  |   10 +-
+ lib/mbuf/rte_mbuf_ptype.c                     |   16 +-
+ lib/member/rte_member.c                       |   26 +-
+ lib/mempool/mempool_trace_points.c            |   20 +-
+ lib/mempool/rte_mempool.c                     |   54 +-
+ lib/mempool/rte_mempool_ops.c                 |    8 +-
+ lib/mempool/rte_mempool_ops_default.c         |    8 +-
+ lib/meter/rte_meter.c                         |   12 +-
+ lib/metrics/rte_metrics.c                     |   16 +-
+ lib/metrics/rte_metrics_telemetry.c           |   22 +-
+ lib/mldev/mldev_utils.c                       |    4 +-
+ lib/mldev/mldev_utils_neon.c                  |   36 +-
+ lib/mldev/mldev_utils_neon_bfloat16.c         |    4 +-
+ lib/mldev/mldev_utils_scalar.c                |   36 +-
+ lib/mldev/mldev_utils_scalar_bfloat16.c       |    4 +-
+ lib/mldev/rte_mldev.c                         |   74 +-
+ lib/mldev/rte_mldev_pmd.c                     |    4 +-
+ lib/net/rte_arp.c                             |    2 +-
+ lib/net/rte_ether.c                           |    6 +-
+ lib/net/rte_net.c                             |    4 +-
+ lib/net/rte_net_crc.c                         |    6 +-
+ lib/node/ethdev_ctrl.c                        |    4 +-
+ lib/node/ip4_lookup.c                         |    2 +-
+ lib/node/ip4_lookup_fib.c                     |    4 +-
+ lib/node/ip4_reassembly.c                     |    2 +-
+ lib/node/ip4_rewrite.c                        |    2 +-
+ lib/node/ip6_lookup.c                         |    2 +-
+ lib/node/ip6_lookup_fib.c                     |    4 +-
+ lib/node/ip6_rewrite.c                        |    2 +-
+ lib/node/udp4_input.c                         |    4 +-
+ lib/pcapng/rte_pcapng.c                       |   14 +-
+ lib/pci/rte_pci.c                             |    6 +-
+ lib/pdcp/rte_pdcp.c                           |   10 +-
+ lib/pdump/rte_pdump.c                         |   18 +-
+ lib/pipeline/rte_pipeline.c                   |   46 +-
+ lib/pipeline/rte_port_in_action.c             |   16 +-
+ lib/pipeline/rte_swx_ctl.c                    |   34 +-
+ lib/pipeline/rte_swx_ipsec.c                  |   14 +-
+ lib/pipeline/rte_swx_pipeline.c               |  146 +--
+ lib/pipeline/rte_table_action.c               |   32 +-
+ lib/pmu/pmu.c                                 |   10 +-
+ lib/port/rte_port_ethdev.c                    |    6 +-
+ lib/port/rte_port_eventdev.c                  |    6 +-
+ lib/port/rte_port_fd.c                        |    6 +-
+ lib/port/rte_port_frag.c                      |    4 +-
+ lib/port/rte_port_ras.c                       |    4 +-
+ lib/port/rte_port_ring.c                      |   12 +-
+ lib/port/rte_port_sched.c                     |    4 +-
+ lib/port/rte_port_source_sink.c               |    4 +-
+ lib/port/rte_port_sym_crypto.c                |    6 +-
+ lib/port/rte_swx_port_ethdev.c                |    4 +-
+ lib/port/rte_swx_port_fd.c                    |    4 +-
+ lib/port/rte_swx_port_ring.c                  |    4 +-
+ lib/port/rte_swx_port_source_sink.c           |    6 +-
+ lib/power/power_common.c                      |   16 +-
+ lib/power/rte_power_cpufreq.c                 |   36 +-
+ lib/power/rte_power_pmd_mgmt.c                |   20 +-
+ lib/power/rte_power_qos.c                     |    4 +-
+ lib/power/rte_power_uncore.c                  |   28 +-
+ lib/rawdev/rte_rawdev.c                       |   60 +-
+ lib/rcu/rte_rcu_qsbr.c                        |   22 +-
+ lib/regexdev/rte_regexdev.c                   |   52 +-
+ lib/reorder/rte_reorder.c                     |   22 +-
+ lib/rib/rte_rib.c                             |   28 +-
+ lib/rib/rte_rib6.c                            |   28 +-
+ lib/ring/rte_ring.c                           |   22 +-
+ lib/ring/rte_soring.c                         |    6 +-
+ lib/ring/soring.c                             |   32 +-
+ lib/sched/rte_approx.c                        |    2 +-
+ lib/sched/rte_pie.c                           |    4 +-
+ lib/sched/rte_red.c                           |   12 +-
+ lib/sched/rte_sched.c                         |   30 +-
+ lib/security/rte_security.c                   |   40 +-
+ lib/stack/rte_stack.c                         |    6 +-
+ lib/table/rte_swx_table_em.c                  |    4 +-
+ lib/table/rte_swx_table_learner.c             |   20 +-
+ lib/table/rte_swx_table_selector.c            |   12 +-
+ lib/table/rte_swx_table_wm.c                  |    2 +-
+ lib/table/rte_table_acl.c                     |    2 +-
+ lib/table/rte_table_array.c                   |    2 +-
+ lib/table/rte_table_hash_cuckoo.c             |    2 +-
+ lib/table/rte_table_hash_ext.c                |    2 +-
+ lib/table/rte_table_hash_key16.c              |    4 +-
+ lib/table/rte_table_hash_key32.c              |    4 +-
+ lib/table/rte_table_hash_key8.c               |    4 +-
+ lib/table/rte_table_hash_lru.c                |    2 +-
+ lib/table/rte_table_lpm.c                     |    2 +-
+ lib/table/rte_table_lpm_ipv6.c                |    2 +-
+ lib/table/rte_table_stub.c                    |    2 +-
+ lib/telemetry/telemetry.c                     |    6 +-
+ lib/telemetry/telemetry_data.c                |   34 +-
+ lib/telemetry/telemetry_legacy.c              |    2 +-
+ lib/timer/rte_timer.c                         |   36 +-
+ lib/vhost/socket.c                            |   32 +-
+ lib/vhost/vdpa.c                              |   22 +-
+ lib/vhost/vhost.c                             |   82 +-
+ lib/vhost/vhost_crypto.c                      |   12 +-
+ lib/vhost/vhost_user.c                        |    4 +-
+ lib/vhost/virtio_net.c                        |   14 +-
+ 399 files changed, 4173 insertions(+), 4173 deletions(-)
 
-> 
-> 
-> сб, 30 авг. 2025 г. в 21:54, Ivan Malov <ivan.malov@arknetworks.am>:
->       Hi Vladimir,
->
->       On Sat, 30 Aug 2025, Vladimir Medvedkin wrote:
->
->       > Currently DCB Traffic Class queue mapping is only used when calling get
->       > DCB info API, while setting up queue mappings is up to each individual
->       > driver. Use the tc queue mapping structure to enable setting up custom
->       > mapping explicitly.
->       >
->       > Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
->       > ---
->       > app/test-pmd/testpmd.c             | 57 ++++++++++++++++++------------
->       > drivers/net/intel/ice/ice_ethdev.c | 39 ++++++++++----------
->       > drivers/net/intel/ice/ice_rxtx.c   | 27 +++++++-------
->       > lib/ethdev/rte_ethdev.h            | 43 +++++++++++-----------
->       > 4 files changed, 92 insertions(+), 74 deletions(-)
->       >
->       > diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
->       > index b5a7e7b3ee..3a55434d44 100644
->       > --- a/app/test-pmd/testpmd.c
->       > +++ b/app/test-pmd/testpmd.c
->       > @@ -4158,6 +4158,16 @@ get_eth_dcb_conf(struct rte_eth_conf *eth_conf, enum dcb_mode_enable dcb_mode,
->       >               struct rte_eth_dcb_conf *tx_conf =
->       >                               &eth_conf->tx_adv_conf.dcb_tx_conf;
->       >
->       > +             struct rte_eth_dcb_tc_queue_mapping *q_map = &eth_conf->q_map;
->       > +             memset(q_map, 0, sizeof(*q_map));
->       > +             int queues_per_tc = nb_rxq / num_tcs;
->       > +             for (i = 0; i < num_tcs; i++) {
->       > +                     q_map->tc_rxq[0][i].base = i * queues_per_tc;
->       > +                     q_map->tc_txq[0][i].base = i * queues_per_tc;
->       > +                     q_map->tc_rxq[0][i].nb_queue = queues_per_tc;
->       > +                     q_map->tc_txq[0][i].nb_queue = queues_per_tc;
->       > +             }
->       > +
->       >               for (i = 0; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++) {
->       >                       dcb_tc_val = prio_tc_en ? prio_tc[i] : i % num_tcs;
->       >                       rx_conf->dcb_tc[i] = dcb_tc_val;
->       > @@ -4231,6 +4241,30 @@ init_port_dcb_config(portid_t pid,
->       >       /* retain the original device configuration. */
->       >       memcpy(&port_conf, &rte_port->dev_conf, sizeof(struct rte_eth_conf));
->       >
->       > +     if (num_tcs > 1 && keep_qnum == 0) {
->       > +             /* Assume the ports in testpmd have the same dcb capability
->       > +              * and has the same number of rxq and txq in dcb mode
->       > +              */
->       > +             if (dcb_mode == DCB_VT_ENABLED) {
->       > +                     if (rte_port->dev_info.max_vfs > 0) {
->       > +                             nb_rxq = rte_port->dev_info.nb_rx_queues;
->       > +                             nb_txq = rte_port->dev_info.nb_tx_queues;
->       > +                     } else {
->       > +                             nb_rxq = rte_port->dev_info.max_rx_queues;
->       > +                             nb_txq = rte_port->dev_info.max_tx_queues;
->       > +                     }
->       > +             } else {
->       > +                     /*if vt is disabled, use all pf queues */
->
->       Missing space between '/*' and 'if'.
->
->       > +                     if (rte_port->dev_info.vmdq_pool_base == 0) {
->       > +                             nb_rxq = rte_port->dev_info.max_rx_queues;
->       > +                             nb_txq = rte_port->dev_info.max_tx_queues;
->       > +                     } else {
->       > +                             nb_rxq = (queueid_t)num_tcs;
->       > +                             nb_txq = (queueid_t)num_tcs;
->       > +                     }
->       > +             }
->       > +     }
->       > +
->       >       if (num_tcs > 1) {
->       >               /* set configuration of DCB in vt mode and DCB in non-vt mode */
->       >               get_eth_dcb_conf(&port_conf, dcb_mode, num_tcs, pfc_en, prio_tc, prio_tc_en);
->       > @@ -4267,29 +4301,6 @@ init_port_dcb_config(portid_t pid,
->       >               return -1;
->       >       }
->       >
->       > -     if (num_tcs > 1 && keep_qnum == 0) {
->       > -             /* Assume the ports in testpmd have the same dcb capability
->       > -              * and has the same number of rxq and txq in dcb mode
->       > -              */
->       > -             if (dcb_mode == DCB_VT_ENABLED) {
->       > -                     if (rte_port->dev_info.max_vfs > 0) {
->       > -                             nb_rxq = rte_port->dev_info.nb_rx_queues;
->       > -                             nb_txq = rte_port->dev_info.nb_tx_queues;
->       > -                     } else {
->       > -                             nb_rxq = rte_port->dev_info.max_rx_queues;
->       > -                             nb_txq = rte_port->dev_info.max_tx_queues;
->       > -                     }
->       > -             } else {
->       > -                     /*if vt is disabled, use all pf queues */
->       > -                     if (rte_port->dev_info.vmdq_pool_base == 0) {
->       > -                             nb_rxq = rte_port->dev_info.max_rx_queues;
->       > -                             nb_txq = rte_port->dev_info.max_tx_queues;
->       > -                     } else {
->       > -                             nb_rxq = (queueid_t)num_tcs;
->       > -                             nb_txq = (queueid_t)num_tcs;
->       > -                     }
->       > -             }
->       > -     }
->       >       rx_free_thresh = 64;
->       >
->       >       memcpy(&rte_port->dev_conf, &port_conf, sizeof(struct rte_eth_conf));
->       > diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
->       > index ecde00182f..27559bbe18 100644
->       > --- a/drivers/net/intel/ice/ice_ethdev.c
->       > +++ b/drivers/net/intel/ice/ice_ethdev.c
->       > @@ -3846,7 +3846,7 @@ ice_dev_configure(struct rte_eth_dev *dev)
->       >               struct rte_eth_dcb_conf *tx_dcb_conf =
->       >                       &dev->data->dev_conf.tx_adv_conf.dcb_tx_conf;
->       >               int i;
->       > -             int nb_tc_used_rx, nb_tc_used_tx, queues_per_tc;
->       > +             int nb_tc_used_rx, nb_tc_used_tx;
->       >               uint16_t total_q_nb;
->       >
->       >               nb_tc_used_rx = check_dcb_conf(ice_get_port_max_cgd(hw) == ICE_4_CGD_PER_PORT,
->       > @@ -3865,19 +3865,23 @@ ice_dev_configure(struct rte_eth_dev *dev)
->       >               }
->       >
->       >               total_q_nb = dev->data->nb_rx_queues;
->       > -             queues_per_tc = total_q_nb / nb_tc_used_rx;
->       > -             if (total_q_nb % nb_tc_used_rx != 0) {
->       > -                     PMD_DRV_LOG(ERR, "For DCB, number of queues must be evenly divisble by number of used TCs");
->       > -                     return -EINVAL;
->       > -             } else if (!rte_is_power_of_2(queues_per_tc)) {
->       > -                     PMD_DRV_LOG(ERR, "For DCB, number of queues per TC must be a power of 2");
->       > -                     return -EINVAL;
->       > -             }
->       > -
->       > +             struct rte_eth_dcb_tc_queue_mapping *q_map = &dev->data->dev_conf.q_map;
->       >               for (i = 0; i < nb_tc_used_rx; i++) {
->       > +                     if (q_map->tc_rxq[0][i].nb_queue != 0 &&
->
->       How is 'nb_queue == 0' case handled here and below? Should some driver-default
->       fill-in be used, similar to code being deleted above?
->
->       Or is '(0 << ICE_AQ_VSI_TC_Q_OFFSET_S) | (0 << ICE_AQ_VSI_TC_Q_NUM_S)' legit?
-> 
-> 
-> Yes, this is legit. In this case packets arriving to the corresponding TC will be sent to the default queue (i.e. the first queue).
->  
->
->       > +                                     !rte_is_power_of_2(q_map->tc_rxq[0][i].nb_queue)) {
->       > +                             PMD_DRV_LOG(ERR, "For DCB, number of queues per TC must be a power of 2");
->       > +                             return -EINVAL;
->       > +                     }
->       > +                     if ((q_map->tc_rxq[0][i].base + q_map->tc_rxq[0][i].nb_queue) > total_q_nb) {
->       > +                             PMD_DRV_LOG(ERR, "Queue range for TC %d exceeds total number of queues",
->       > +                                     i);
->       > +                             return -EINVAL;
->       > +                     }
->       >                       ctxt.info.tc_mapping[i] =
->       > -                             rte_cpu_to_le_16(((i * queues_per_tc) << ICE_AQ_VSI_TC_Q_OFFSET_S) |
->       > -                                     (rte_log2_u32(queues_per_tc) << ICE_AQ_VSI_TC_Q_NUM_S));
->       > +                             rte_cpu_to_le_16((q_map->tc_rxq[0][i].base <<
->       > +                                     ICE_AQ_VSI_TC_Q_OFFSET_S) |
->       > +                                     (rte_log2_u32(q_map->tc_rxq[0][i].nb_queue) <<
->       > +                                     ICE_AQ_VSI_TC_Q_NUM_S));
->
->       This seems to always use pool [0] but does not seem to check if 'nb_queue' in,
->       say, pool [1] is non-zero, to return an error or something. Or is this unneeded?
-> 
-> 
-> Yes, this is unneeded. DCB with VMDq is not supported in ice PMD. In more detail, we do not support VMDq1, where per-VM queue ranges are "exposed" like in older ixgbe HW. Instead we
-> support VMDq2, where each per-VM queue range is covered under VSI (think of it as a virtual interface) abstraction layer.
+-- 
+2.17.1
 
-If this lack of support for VMDq1 is somehow expressed via device capabilities,
-then OK. At first I thought that if the rogue application filled in tc_rxq[1..63]
-in disregard of capability report, then the driver could check and reject that.
-
-> For queue mapping I reuse the existing structure, which is used with rte_eth_dev_get_dcb_info() API. Maybe it is better to create a dedicated queue mapping structure without all
-> VMDq-related stuff?
-
-May be it is better to reuse the existing structure, but I don't have a strong
-opinion. Perhaps other vendors can express their thoughts.
-
->  
->
->       >               }
->       >
->       >               memset(local_dcb_conf, 0, sizeof(*local_dcb_conf));
->       > @@ -3941,6 +3945,7 @@ ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info)
->       >       struct ice_dcbx_cfg *dcb_conf = &qos_cfg->local_dcbx_cfg;
->       >       struct ice_vsi *vsi = pf->main_vsi;
->       >       struct ice_vsi_ctx ctxt = { 0 };
->       > +     struct rte_eth_dcb_tc_queue_mapping *q_map = &dev->data->dev_conf.q_map;
->       >
->       >       ctxt.info = vsi->info;
->       >       if (rte_le_to_cpu_16(ctxt.info.mapping_flags) == ICE_AQ_VSI_Q_MAP_NONCONTIG) {
->       > @@ -3953,13 +3958,11 @@ ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info)
->       >               dcb_info->prio_tc[i] = dcb_conf->etscfg.prio_table[i];
->       >               dcb_info->tc_bws[i] = dcb_conf->etscfg.tcbwtable[i];
->       >               /* Using VMDQ pool zero since DCB+VMDQ is not supported */
->       > -             uint16_t tc_rx_q_map = rte_le_to_cpu_16(ctxt.info.tc_mapping[i]);
->       > -             dcb_info->tc_queue.tc_rxq[0][i].base = tc_rx_q_map & ICE_AQ_VSI_TC_Q_OFFSET_M;
->       > -             dcb_info->tc_queue.tc_rxq[0][i].nb_queue =
->       > -                     1 << ((tc_rx_q_map & ICE_AQ_VSI_TC_Q_NUM_M) >> ICE_AQ_VSI_TC_Q_NUM_S);
->       > +             dcb_info->tc_queue.tc_rxq[0][i].base = q_map->tc_rxq[0][i].base;
->       > +             dcb_info->tc_queue.tc_rxq[0][i].nb_queue = q_map->tc_rxq[0][i].nb_queue;
->       >
->       > -             dcb_info->tc_queue.tc_txq[0][i].base = dcb_info->tc_queue.tc_rxq[0][i].base;
->       > -             dcb_info->tc_queue.tc_txq[0][i].nb_queue = dcb_info->tc_queue.tc_rxq[0][i].nb_queue;
->       > +             dcb_info->tc_queue.tc_txq[0][i].base = q_map->tc_txq[0][i].base;
->       > +             dcb_info->tc_queue.tc_txq[0][i].nb_queue = q_map->tc_txq[0][i].nb_queue;
->       >       }
->       >
->       >       return 0;
->       > diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
->       > index 451816affd..55424e7a23 100644
->       > --- a/drivers/net/intel/ice/ice_rxtx.c
->       > +++ b/drivers/net/intel/ice/ice_rxtx.c
->       > @@ -796,6 +796,7 @@ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
->       >       int buf_len;
->       >       struct ice_adapter *ad = ICE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
->       >       u16 q_base, q_range, cgd_idx = 0;
->       > +     struct rte_eth_dcb_tc_queue_mapping *q_map = &dev->data->dev_conf.q_map;
->       >
->       >       PMD_INIT_FUNC_TRACE();
->       >
->       > @@ -840,22 +841,22 @@ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
->       >       tx_ctx.legacy_int = 1; /* Legacy or Advanced Host Interface */
->       >       tx_ctx.tsyn_ena = 1;
->       >
->       > -     /* Mirror RXQ<->CGD association to TXQ<->CDG */
->       > -     for (int i = 0; i < ICE_MAX_TRAFFIC_CLASS; i++) {
->       > -             q_base = rte_le_to_cpu_16(vsi->info.tc_mapping[i]) & ICE_AQ_VSI_TC_Q_OFFSET_M;
->       > -             q_range = 1 << ((rte_le_to_cpu_16(vsi->info.tc_mapping[i]) &
->       > -                     ICE_AQ_VSI_TC_Q_NUM_M) >> ICE_AQ_VSI_TC_Q_NUM_S);
->       > +     if (dev->data->dev_conf.txmode.mq_mode == RTE_ETH_MQ_TX_DCB) {
->       > +             for (int i = 0; i < ICE_MAX_TRAFFIC_CLASS; i++) {
->       > +                     q_base = q_map->tc_txq[0][i].base;
->       > +                     q_range = q_map->tc_txq[0][i].nb_queue;
->       >
->       > -             if (q_base <= tx_queue_id && tx_queue_id < q_base + q_range)
->       > -                     break;
->       > +                     if (q_base <= tx_queue_id && tx_queue_id < q_base + q_range)
->       > +                             break;
->       >
->       > -             cgd_idx++;
->       > -     }
->       > +                     cgd_idx++;
->       > +             }
->       >
->       > -     if (cgd_idx >= ICE_MAX_TRAFFIC_CLASS) {
->       > -             PMD_DRV_LOG(ERR, "Bad queue mapping configuration");
->       > -             rte_free(txq_elem);
->       > -             return -EINVAL;
->       > +             if (cgd_idx >= ICE_MAX_TRAFFIC_CLASS) {
->       > +                     PMD_DRV_LOG(ERR, "Bad queue mapping configuration");
->       > +                     rte_free(txq_elem);
->       > +                     return -EINVAL;
->       > +             }
->       >       }
->       >
->       >       tx_ctx.cgd_num = cgd_idx;
->       > diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
->       > index c220760043..0bd86e1e7d 100644
->       > --- a/lib/ethdev/rte_ethdev.h
->       > +++ b/lib/ethdev/rte_ethdev.h
->       > @@ -1472,6 +1472,26 @@ struct rte_eth_intr_conf {
->       >
->       > #define rte_intr_conf rte_eth_intr_conf
->       >
->       > +#define RTE_ETH_DCB_NUM_TCS    8
->       > +#define RTE_ETH_MAX_VMDQ_POOL  64
->       > +
->       > +/**
->       > + * A structure used to get the information of queue and
->       > + * TC mapping on both Tx and Rx paths.
->       > + */
->       > +struct rte_eth_dcb_tc_queue_mapping {
->       > +     /** Rx queues assigned to tc per Pool */
->       > +     struct {
->       > +             uint16_t base;
->       > +             uint16_t nb_queue;
->       > +     } tc_rxq[RTE_ETH_MAX_VMDQ_POOL][RTE_ETH_DCB_NUM_TCS];
->       > +     /** Rx queues assigned to tc per Pool */
->       > +     struct {
->       > +             uint16_t base;
->       > +             uint16_t nb_queue;
->       > +     } tc_txq[RTE_ETH_MAX_VMDQ_POOL][RTE_ETH_DCB_NUM_TCS];
->       > +};
->       > +
->       > /**
->       >  * A structure used to configure an Ethernet port.
->       >  * Depending upon the Rx multi-queue mode, extra advanced
->       > @@ -1492,18 +1512,21 @@ struct rte_eth_conf {
->       >                                Read the datasheet of given Ethernet controller
->       >                                for details. The possible values of this field
->       >                                are defined in implementation of each driver. */
->       > +     struct rte_eth_dcb_tc_queue_mapping q_map;
->
->       Is the driver supposed to tell 'q_map' is valid by looking at [0][0] 'nb_queue'?
-> 
-> 
-> Could you please clarify what validity criteria for the [0][0] 'nb_queue' do you mean?
-
-I mean the hypothetical situation where the vendor does not allow the user to
-customise the queue pools and thus has to check whether the user has tried to
-use this structure in 'adv_rx_conf' and reject that. Or is that pointless?
-
-Thank you.
-
->  
->
->       >       struct {
->       >               struct rte_eth_rss_conf rss_conf; /**< Port RSS configuration */
->       >               /** Port DCB Rx configuration. */
->       >               struct rte_eth_dcb_conf dcb_rx_conf;
->       >               /** Port VMDq Rx configuration. */
->       >               struct rte_eth_vmdq_rx_conf vmdq_rx_conf;
->       > +             /* VMDQ and DCB Rx queue mapping configuration. */
->
->       Perhaps it's better to have just one such comment right before 'q_map'.
-> 
-> 
-> Oh, my bad, last minute rework, thanks!
->  
->
->       Thank you.
->
->       >       } rx_adv_conf; /**< Port Rx filtering configuration. */
->       >       struct {
->       >               /** Port DCB Tx configuration. */
->       >               struct rte_eth_dcb_conf dcb_tx_conf;
->       >               /** Port VMDq Tx configuration. */
->       >               struct rte_eth_vmdq_tx_conf vmdq_tx_conf;
->       > +             /* VMDQ and DCB Tx queue mapping configuration. */
->       >       } tx_adv_conf; /**< Port Tx DCB configuration (union). */
->       >       /** Currently,Priority Flow Control(PFC) are supported,if DCB with PFC
->       >           is needed,and the variable must be set RTE_ETH_DCB_PFC_SUPPORT. */
->       > @@ -1930,26 +1953,6 @@ struct rte_eth_xstat_name {
->       >       char name[RTE_ETH_XSTATS_NAME_SIZE]; /**< The statistic name. */
->       > };
->       >
->       > -#define RTE_ETH_DCB_NUM_TCS    8
->       > -#define RTE_ETH_MAX_VMDQ_POOL  64
->       > -
->       > -/**
->       > - * A structure used to get the information of queue and
->       > - * TC mapping on both Tx and Rx paths.
->       > - */
->       > -struct rte_eth_dcb_tc_queue_mapping {
->       > -     /** Rx queues assigned to tc per Pool */
->       > -     struct {
->       > -             uint16_t base;
->       > -             uint16_t nb_queue;
->       > -     } tc_rxq[RTE_ETH_MAX_VMDQ_POOL][RTE_ETH_DCB_NUM_TCS];
->       > -     /** Rx queues assigned to tc per Pool */
->       > -     struct {
->       > -             uint16_t base;
->       > -             uint16_t nb_queue;
->       > -     } tc_txq[RTE_ETH_MAX_VMDQ_POOL][RTE_ETH_DCB_NUM_TCS];
->       > -};
->       > -
->       > /**
->       >  * A structure used to get the information of DCB.
->       >  * It includes TC UP mapping and queue TC mapping.
->       > --
->       > 2.43.0
->       >
->       >
-> 
-> 
-> 
-> --
-> Regards,
-> Vladimir
-> 
->
---8323328-444589899-1756655860=:7325--
