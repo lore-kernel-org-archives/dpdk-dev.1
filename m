@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DD2CA0FFD
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Sep 2025 07:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 060C9CA0FF0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Sep 2025 07:31:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 20B0B402DC;
-	Mon,  1 Sep 2025 09:31:40 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 040F94060F
- for <dev@dpdk.org>; Mon,  1 Sep 2025 09:31:37 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5817VRLp013921
- for <dev@dpdk.org>; Mon, 1 Sep 2025 00:31:37 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 9091E40613;
+	Mon,  1 Sep 2025 09:31:43 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 7D09440658
+ for <dev@dpdk.org>; Mon,  1 Sep 2025 09:31:41 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5813t8M2001238
+ for <dev@dpdk.org>; Mon, 1 Sep 2025 00:31:40 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=s
- /34CNJR8x7swOTHZI4GB3GB5OjRcX7OU76un3LazLU=; b=PJTd8lUWkmXWTNIM7
- a/JWcBnAl6WU8MQSzCtCMB67THDMLhMgGl0y8FhTMTsWuvIzFrrjLPG8SUE1hKBB
- faBdItkEmfR66BCgG7zKrEjS7gbJQZ+fZU0nDXuSKI7dObtAJ9lya1ZkD3wfEXvo
- jbbhh/wmO6sPN/0WZksfjtltJHZwYbzeh1ZjAlzKPgTog/LCfs88bZi4nm9+IN0i
- EROXCZG17KvT4lanihBNvZ88K76RcZQQCEd3bAck6jzh21NjbJ+oXcA0V6PEEidm
- YQMc2AdAi4Os+y9bJupEIpNs//1MukzpLxmcpknKhFUM/YTMwISL0qj+8V03jk2Z
- ihaPw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48w75y8033-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=b
+ R3McQJCpyX4j3ySHhooD4161/T+zeLx/67SQ4r67dc=; b=Y7slR5A/5DxSZ1GFo
+ /uCoypoNOHIp/VvbKU80+84pBBqV4vipUkrJ+nGlT3FugzIrfQQGlekjmkLaMEKs
+ mn8Ezo8b/3d4rzcnau6yLjCEYb+gn+IA6BLNJFrzyCWqdijIsmtnOFn411GamZuB
+ GW/UCeB/grzPeBEIdQ7eDwCCeyVhGBHIdon3GDVNP1779zO3AIj+bc+ewdL6CEXv
+ nWYI/gI6DEI0UzZfkS2ftKbksHRDJ/ePFWqG1UpAfYWvd8550L4uiA0EtCXJnIT1
+ lwhcCZ7sK4VpVy+fxwtE3IUFXV5HjYBkn72uM02g6FNRiZ1qbKLENCtNLOE5PTpY
+ nAHnQ==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 48vj28hd9j-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 01 Sep 2025 00:31:37 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Mon, 01 Sep 2025 00:31:40 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 1 Sep 2025 00:31:36 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 1 Sep 2025 00:31:36 -0700
+ 15.2.1544.25; Mon, 1 Sep 2025 00:31:39 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Mon, 1 Sep 2025 00:31:39 -0700
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id B2CD53F70AD;
- Mon,  1 Sep 2025 00:31:33 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 493533F70AC;
+ Mon,  1 Sep 2025 00:31:37 -0700 (PDT)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <jerinj@marvell.com>, <dev@dpdk.org>, Monendra Singh Kushwaha
- <kmonendra@marvell.com>
-Subject: [PATCH 05/19] common/cnxk: fix inline device API
-Date: Mon, 1 Sep 2025 13:00:21 +0530
-Message-ID: <20250901073036.1381560-5-ndabilpuram@marvell.com>
+CC: <jerinj@marvell.com>, <dev@dpdk.org>
+Subject: [PATCH 06/19] common/cnxk: add new mailbox to configure LSO alt flags
+Date: Mon, 1 Sep 2025 13:00:22 +0530
+Message-ID: <20250901073036.1381560-6-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250901073036.1381560-1-ndabilpuram@marvell.com>
 References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTAxMDA3OSBTYWx0ZWRfX4aGByrEqfCDs
- //Tes8IGY323l1W3Yl6uDQYuhN9s2iwqWendL8MJDqb1+UBHlO6tEJ8OujsZQ8kN3qFp45OoLd9
- tQAwKOz+mQk3bQ9dTa5s1lEgFTRyeET/2Jzb5kmPa9Qx80ats8Ws6wW6m99g1qBZ9A5qf5qfIkm
- WkbhlGZ+x0TH4FbR8qMiTxu539Vl+KDeL7chBAc+6Ve+AlaTz7vXG15F7mPrvxHvprr5QwWuAth
- KGTuX91Aj1Hjb1QiDVvAS0y1UeiWRLSctgpYM+xZGT4eb393PI5OWkeyoMrzdKsUQaSMDSGEjJI
- qjSkFtegUvmS7ZID7MxEiURn7oW93plvpZr8HcXAQw1NrJXe28UhBTt//B4KhPwPUiVYYUljzLZ
- jl4fmdKf
-X-Proofpoint-GUID: lVPkqVLk_jwDzVOVzIWswpKxkib1451o
-X-Authority-Analysis: v=2.4 cv=D9BHKuRj c=1 sm=1 tr=0 ts=68b54bd9 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=yJojWOMRYYMA:10 a=M5GUcnROAAAA:8 a=5jKgjrcBzDdf451F3XwA:9
+X-Proofpoint-ORIG-GUID: jfhRn0c-RBvax-3Q3QeCLEgga8tt26vY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMxMDA3NyBTYWx0ZWRfX88vFNtqibIep
+ aL3JYEvj2Z8kf9WQ3yHEZW+SQsS72NXQlcE/RmkWxtWbXZUJOOMnZjSuko5zDr1gZpoM1iOzOK0
+ JM8HjAmXIM1PJJvC2tv118fMxepWeQ3HSQZ5xgDtcxp0mfU0SKFMMhrLur1MKv6wpwaWY+pjFhH
+ Ua5IWpESr5O5XFnqdkpcPxm/p8jyt01j7lKwl265REnwDHnFcN/HL2/rSQtFJfHQmddhelXcjZd
+ IPlGDP1Zq0MwkEkVEYAQ5lScz2jpvdKyQwaGJR8x1F/jlbSgLZQQb1zpRJFZJOkbVTco2Mw02bG
+ vKCbVgYh4fVB9296aqc6MgtitzQwfV/fCxJVNb2HR5WIdI4gpnyHJ0Y83hfCg6O5rMOpn0r7iek
+ 98liu4eN
+X-Authority-Analysis: v=2.4 cv=OZGYDgTY c=1 sm=1 tr=0 ts=68b54bdc cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=yJojWOMRYYMA:10 a=M5GUcnROAAAA:8 a=CU7E9oUV1pDfIwHBpYMA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: lVPkqVLk_jwDzVOVzIWswpKxkib1451o
+X-Proofpoint-GUID: jfhRn0c-RBvax-3Q3QeCLEgga8tt26vY
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-01_03,2025-08-28_01,2025-03-28_01
@@ -82,31 +81,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Monendra Singh Kushwaha <kmonendra@marvell.com>
+From: Satha Rao <skoteshwar@marvell.com>
 
-This patch fixes the inline device functions to work
-when roc_nix is NULL.
+LSO enahanced to support flags modification. Added new mbox to enable
+this feature.
 
-Fixes: f81ee7133b48 ("common/cnxk: support inline SA context invalidate")
-
-Signed-off-by: Monendra Singh Kushwaha <kmonendra@marvell.com>
+Signed-off-by: Satha Rao <skoteshwar@marvell.com>
 ---
- drivers/common/cnxk/roc_nix_inl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/common/cnxk/hw/nix.h | 46 ++++++++++++++++++++++++++++--------
+ 1 file changed, 36 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index c7637ddbdc..a5fc33b5c9 100644
---- a/drivers/common/cnxk/roc_nix_inl.c
-+++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -2324,7 +2324,7 @@ roc_nix_inl_ctx_write(struct roc_nix *roc_nix, void *sa_dptr, void *sa_cptr,
- 	if (outb_lf == NULL)
- 		goto exit;
+diff --git a/drivers/common/cnxk/hw/nix.h b/drivers/common/cnxk/hw/nix.h
+index d16fa3b3ec..f5811ee1ab 100644
+--- a/drivers/common/cnxk/hw/nix.h
++++ b/drivers/common/cnxk/hw/nix.h
+@@ -2508,18 +2508,44 @@ struct nix_lso_format {
+ 	uint64_t sizem1 : 2;
+ 	uint64_t rsvd_14_15 : 2;
+ 	uint64_t alg : 3;
+-	uint64_t rsvd_19_63 : 45;
++	uint64_t alt_flags : 1;
++	uint64_t alt_flags_index : 2;
++	uint64_t shift : 3;
++	uint64_t rsvd_25_63 : 39;
+ };
  
--	if (roc_model_is_cn10k() || roc_nix->use_write_sa) {
-+	if (roc_model_is_cn10k() || (roc_nix && roc_nix->use_write_sa)) {
- 		rbase = outb_lf->rbase;
- 		flush.u = 0;
+-#define NIX_LSO_FIELD_MAX      (8)
+-#define NIX_LSO_FIELD_ALG_MASK GENMASK(18, 16)
+-#define NIX_LSO_FIELD_SZ_MASK  GENMASK(13, 12)
+-#define NIX_LSO_FIELD_LY_MASK  GENMASK(9, 8)
+-#define NIX_LSO_FIELD_OFF_MASK GENMASK(7, 0)
+-
+-#define NIX_LSO_FIELD_MASK                                                     \
+-	(NIX_LSO_FIELD_OFF_MASK | NIX_LSO_FIELD_LY_MASK |                      \
+-	 NIX_LSO_FIELD_SZ_MASK | NIX_LSO_FIELD_ALG_MASK)
++/* NIX LSO ALT_FLAGS field structure */
++typedef union nix_lso_alt_flg_format {
++	uint64_t u[2];
++
++	struct nix_lso_alt_flg_cfg {
++		/* NIX_AF_LSO_ALT_FLAGS_CFG */
++		uint64_t alt_msf_set : 16;
++		uint64_t alt_msf_mask : 16;
++		uint64_t alt_fsf_set : 16;
++		uint64_t alt_fsf_mask : 16;
++
++		/* NIX_AF_LSO_ALT_FLAGS_CFG1 */
++		uint64_t alt_lsf_set : 16;
++		uint64_t alt_lsf_mask : 16;
++		uint64_t alt_ssf_set : 16;
++		uint64_t alt_ssf_mask : 16;
++	} s;
++} nix_lso_alt_flg_format_t;
++
++#define NIX_LSO_FIELD_MAX	       (8)
++#define NIX_LSO_FIELD_SHIFT_MASK       GENMASK(24, 22)
++#define NIX_LSO_FIELD_ALT_FLG_IDX_MASK GENMASK(21, 20)
++#define NIX_LSO_FIELD_ALT_FLG_MASK     BIT_ULL(19)
++#define NIX_LSO_FIELD_ALG_MASK	       GENMASK(18, 16)
++#define NIX_LSO_FIELD_SZ_MASK	       GENMASK(13, 12)
++#define NIX_LSO_FIELD_LY_MASK	       GENMASK(9, 8)
++#define NIX_LSO_FIELD_OFF_MASK	       GENMASK(7, 0)
++
++#define NIX_LSO_FIELD_MASK                                                                         \
++	(NIX_LSO_FIELD_OFF_MASK | NIX_LSO_FIELD_LY_MASK | NIX_LSO_FIELD_SZ_MASK |                  \
++	 NIX_LSO_FIELD_ALG_MASK | NIX_LSO_FIELD_ALT_FLG_MASK | NIX_LSO_FIELD_ALT_FLG_IDX_MASK |    \
++	 NIX_LSO_FIELD_SHIFT_MASK)
  
+ #define NIX_CN9K_MAX_HW_FRS 9212UL
+ #define NIX_LBK_MAX_HW_FRS  65535UL
 -- 
 2.34.1
 
