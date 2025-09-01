@@ -2,179 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ECC5CA0FF0
-	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Sep 2025 05:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C11CA0FF0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  1 Sep 2025 05:46:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D0244029C;
-	Mon,  1 Sep 2025 07:05:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F0C44029C;
+	Mon,  1 Sep 2025 07:46:01 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 57D554028B
- for <dev@dpdk.org>; Mon,  1 Sep 2025 07:05:50 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5810vdNw022526;
- Sun, 31 Aug 2025 22:05:49 -0700
-Received: from nam12-bn8-obe.outbound.protection.outlook.com
- (mail-bn8nam12on2124.outbound.protection.outlook.com [40.107.237.124])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 48v0tha5v7-1
+ by mails.dpdk.org (Postfix) with ESMTP id 69A274028B
+ for <dev@dpdk.org>; Mon,  1 Sep 2025 07:46:00 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5812xP1r011791;
+ Sun, 31 Aug 2025 22:45:59 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=U
+ hcXzyx1T3AU9fEvUei2IACAZt85oTvKqPn7BoIzreQ=; b=Dj1m8MyhQ+7OoOKhN
+ LniQ1PqfqXXQ1rXAWGipvCCGGLcM1zCrZtowg5zBxJeUPOH648zM6Gqe9vB8xOMD
+ xBz8K/qipSGpLj+MHUp9XCdexfukYQlz6emchPFFWRzhTKvEMBUXLccyZdqrq3sV
+ 1fSnQ2UDUmXxrWCgcF60DTz/07C7xq5600pyC7QQ0zmSxFgzuJ3HmwDa7xHWme1g
+ hhX4qXuw0lHLogDy/y3cHEIpyko06RU/i0idE/RB+G3ivpncHAy0N+MMkk3sDiNa
+ bEScnbd1RY+9DOxkrxtwE3I5HdvmWqezdV1skerFJnSOy/pKzc5TD0kV3Pd+KPik
+ Bu++A==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 48vj28h7hg-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 31 Aug 2025 22:05:49 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M1PypunMnmZ0MxfDL8Du8pa6JV84Cj9aGVojM6HctDgmjuBI53vJzKAu+z0v8gywcO5sEwCUWxtHlTKMke8b8vmESq9JlZQn38rXYbavYpF9YoF9S3eT02nLZMrJ/deMB9M/l4faRpCoI5LopwmGN4reAVMHFsHmbNMKQby9Z7e+74Yg7+jlX0Mr2zYDnCjRHoSQ6lnBuM+RIY332YZVflb46s8/OBgixdnaqwnAC6nT+9zDUQ2VUwwei4+RPW30kWmucM9dfNhRlehHXY2z8FLbodG4ycMT+RoFRmbkuNLKOx9FXn2O7LPR0ks2KCgVDuhiANBdt+4DRryHVvIWDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gj93A/EV8I4+pcjZqhXnGgBzT7g3E7wKeT+5RXjtUps=;
- b=pec51iNvm6YEZ2ojQINbmEpepGWqwwJU3TIwGdXTpjz3zjut52LiC23JfhxTlu60edFTaGy4yj0WysPEdzSkIos8gajnEWrG1G0TlbiMPdTn3cYayQucEeCrA/zTWj5ocCBO+VhVNlKY+BcMbzHnwBSvPPb95ocELsYUW7Ku63lTwj6FAo1dNCq4too8yKl/WHQaZB5wIaeNd4QHhbEM/hRqZkS858kI1mGbJqadDgkpm4edfyshmL77tV7Jh9eiIs8CUkhdIU5uhOqR3n0ku3dH3lI5fO86c76Wc7DLM1Sit+xD0QFs9Q4y51GbygStU6f3kxr01/0YbjyX7Hzb+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gj93A/EV8I4+pcjZqhXnGgBzT7g3E7wKeT+5RXjtUps=;
- b=fG5g9Nw9g2GVqMV4j94RoY0Rc8Rtldph1kw6jZmkLG1esUxWnobNLO+RW7gIdPDjmSvfiJReYPJJJatt50xxemIhJ3HFS/+i8AuOSctJBMYm7VGl8lYBce8u2fMsuZ9bmMZk46ZOrlubeLKQvUI3BpAYZRZPRtQezKkQAGeym1c=
-Received: from SN7PR18MB3869.namprd18.prod.outlook.com (2603:10b6:806:101::9)
- by DS0PR18MB5269.namprd18.prod.outlook.com (2603:10b6:8:120::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9073.26; Mon, 1 Sep
- 2025 05:05:47 +0000
-Received: from SN7PR18MB3869.namprd18.prod.outlook.com
- ([fe80::d55a:768f:3d17:7cfa]) by SN7PR18MB3869.namprd18.prod.outlook.com
- ([fe80::d55a:768f:3d17:7cfa%7]) with mapi id 15.20.9073.026; Mon, 1 Sep 2025
- 05:05:47 +0000
-From: Sunil Kumar Kori <skori@marvell.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>, "dev@dpdk.org" <dev@dpdk.org>,
- Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>
-Subject: RE: [EXTERNAL] Re: [PATCH v8 1/1] ethdev: add support to provide link
- type
-Thread-Topic: [EXTERNAL] Re: [PATCH v8 1/1] ethdev: add support to provide
- link type
-Thread-Index: AQHcEl1IYZBEfr+HU0yxdVF03oDORrR6I56AgAOzI3A=
-Date: Mon, 1 Sep 2025 05:05:46 +0000
-Message-ID: <SN7PR18MB3869329D468C2785DC14F8ECB407A@SN7PR18MB3869.namprd18.prod.outlook.com>
-References: <20250820175317.3063659-1-skori@marvell.com>
- <20250821053425.3227866-1-skori@marvell.com>
- <20250829133327.67ee8d48@hermes.local>
-In-Reply-To: <20250829133327.67ee8d48@hermes.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN7PR18MB3869:EE_|DS0PR18MB5269:EE_
-x-ms-office365-filtering-correlation-id: 1820bd5c-be8a-491f-f4e8-08dde9153638
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?UjJmMnM3L0QwdWtBU1BtMFhzRUdNaXIxRjg3dkxWYmwvMzBCb3k5TEtER1Nr?=
- =?utf-8?B?emJhWGJFaEJjSkZjSWJ0d1F6NTZEUnkvWjk0VlZMU0hqZExWdzBTS244THpq?=
- =?utf-8?B?d3hoeW5BaUtaVDZQaDVydlAyOXZia2prYytqQkFvMU9vQlpvMkNxUG5xVlRZ?=
- =?utf-8?B?MjlTWDgrQWNqTFNjR1BwRDRBY256VXdrZ0xvUkRtQWRTaGxqVzVpMEJNTkxy?=
- =?utf-8?B?MCtNNTF3a2M2QWE1L2N0d1hSQnN1cmM1M1NrV3JyeHFpZlR0ZDJKanl1cXh0?=
- =?utf-8?B?eldpUmRQVDZhRUtWMTVZaDFaS1JWVFF0M0JIWmliS25scFh2bDJ5VWczVWVV?=
- =?utf-8?B?WXd0K2QyVS9McjFzUkwxQlZzeGNmWjZydDNWSjc5clBpRkNiKytObGMxWFg0?=
- =?utf-8?B?NnZHcVJycUlNd3l5c0tnMnByNCtsZ1QxcFhNckROZDZyRFdocW14M1ZmaHVD?=
- =?utf-8?B?V2drT05GSnA1cnZJZExDVHg5d0dyeVVOSWNuQ0NjeFBBTURjUllGd0g4NHZz?=
- =?utf-8?B?ZTNCTlhxb1Ftc3crU0RQSndyQlN2Qmt1VGQ4T0ZNY0FacHVWS3pxaUZkM0Ru?=
- =?utf-8?B?aDlxakFFTEpieG80TStxZGd2dVpkMFVXYi94SjMrTkFuUTkzNXU4WTBaaVlU?=
- =?utf-8?B?ajg0NXphYldKajBBbzlrR3IwTjh5Mmcvek9KVHpFRkhBUlNGM0Y5SnpDMXdk?=
- =?utf-8?B?SXloUDN6ZXYzTWhWeWJXSGtMYjRCNDJRSSt5a2pqREZLb3lPZ085RVNZYkdj?=
- =?utf-8?B?bnQ0K3d4amdlVWwzR0RIdzFVK0FFQ2owZWRRdjlyMkZNRW1rWlBsTjNNVlpo?=
- =?utf-8?B?VDE0T1lGTG5LYUhaVW1aS1dzdU5OTE5ldHNuOWd5QmY4OVlkbE55RXJOYzB4?=
- =?utf-8?B?MTVKOWt5cW1lWkoxQkJ5dnNZRkJZc0VFdEpzUE0xeXRFNzhiTDRBSFQ1L2dr?=
- =?utf-8?B?c2F0U2QrcHdGYXp3ZkI3RzNwbmQ3dUVPWkcyM3VDOVgwenRzbkg1N3dXbzFC?=
- =?utf-8?B?YmVUUUZ1V3dENW9WL3orSmx0ZUpKTWFmVExCTldvc3M2ZmZKSWozNE1yeU42?=
- =?utf-8?B?b0RDMXZLR3o4bmNVWXFKQzJjOEJaSWtYRXdxOS9ialhwaVBiTHpmS3ZRK0lS?=
- =?utf-8?B?U1pEWnQwZVVuYUo2UjJYZU5vdDlyVTMzbmRZK1R0RnR5NmRLRE50RzlxUWFT?=
- =?utf-8?B?NktsdlJxaW5RKzYrenhGaWcyVDBhQ1c0bjFEWGpQMWt6a3lUcXlHeXpNVDlu?=
- =?utf-8?B?S3pKYkNlakhzYnl3THl3dUh4Y045SzBrZEVQTDRNTHNqaWFkaWw4WEJpOE96?=
- =?utf-8?B?NFNTMkxENGx1RzIyOHVObjc1YlhyazZJVFBqK3NDTDZDNzhxUlp4aC9aRUNY?=
- =?utf-8?B?WktGc0prWU8wQWgvTFZiNWFwSmxnazVLRDRvRjJpNzV6WGR4MEFYYldzcmVG?=
- =?utf-8?B?NEw4WHpOQmI0NEZ2UW5Kc3N5bHgwb2RScDBzYzJMY0hBUFpEWWk1eGphMHh3?=
- =?utf-8?B?QUtDN0tyY2xpUkltbWZzVlVwZlhvSXZwNk1lb2tnV2hZdDd3eTQvSmh6Z2pH?=
- =?utf-8?B?WG5WQzMzYmZIc1hHbWpwOVdmSGtiSWJMMW5DcUVmQXB5aTZCS3dLSTlOWjRI?=
- =?utf-8?B?VHd6U1BwNzZXd1NNemJraERRQW95THNQUG5KM2QxWGNZNk1ZcC9zc2szUTdi?=
- =?utf-8?B?dmxxeWpaUXhwY3Rzb0hPR1pvM25BRzY4MFRuZTFoV2ZBU09Jd1NEd3BIYVJ6?=
- =?utf-8?B?bFZHS09YODVYM25QNi9IcHFpRnNJMVlKaENnVnBEMGdxemN5QkxOa1k5cDc5?=
- =?utf-8?B?ekNTYVBQeHY3bDU3azFwd0thTTBBMHpyTEdiVU5NWS9oY0t3eEt1VU9QK29s?=
- =?utf-8?B?R2tEUmNBb1FqZk1SQXIzRVJ4RjJzY3dUZWRFaU5JUWltYTRwWmMwWkpIZGc4?=
- =?utf-8?B?d1NFYmJFeFFKS1hYaVluRlhqMEFhZWRSWGZYSUFjOHRRWGFtUnVqeHBXeTVs?=
- =?utf-8?B?NElObGF4bHNBPT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR18MB3869.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(38070700018); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MWZpWFozdmNNNHgvZVA3cVVoOEEwaHJabFRMblNhb2xoZEI4bW5oSUc0eDJY?=
- =?utf-8?B?VFFmdnJyaU0yUnIrM2dsOW55N2xUKzdSSm9mSjFnK0RQVFZES1N3R1hDeHRx?=
- =?utf-8?B?MEl6ZFo0aXFvaHEvdkFFVm8rMXFpYktqbkZtM25jdWxsR1ZzWGxQOG9zRTZn?=
- =?utf-8?B?UlBDSUd1TC93TmNWZm1UU3B5NmRwZVRxY3VYZmEvTW5INWoyc1o2dGJYNHJF?=
- =?utf-8?B?akcvWUVpM0wwM3VGRDgwOWxzTkN2Qk11aVUvNVN4MDlWZWZQU1Y4c3hDT0pU?=
- =?utf-8?B?MWpmRzllRGk1OGx1THBvTFFDVUo1L2FZT3U5UndPRGUxWlo3TWd3K1B2SVkz?=
- =?utf-8?B?cEhYRDUyOTczSUlOWWtSMC9nWnZsN1J0MFZudkxpQzM2M2dlYVBzRDZROEl4?=
- =?utf-8?B?UXdPQTIrN05zZVJHbEowd3VEdWtrRWJvTG8wSlZieDdWRys4S2U3UThlMnN6?=
- =?utf-8?B?THgwVVJmRTdReWJaWEZOejlVVlV3cGVpMS94cmVxNlRkNW1wcTQ0NFVWeFVS?=
- =?utf-8?B?b1l3clZYeGMwVmxxeWEwWWdlN3BPeUoyWlVHWlJjeWpyY2NzMERtd1NJV29n?=
- =?utf-8?B?d1ZLZ2VsdXpBWk9EcXpaYnp0WXZCK3ZsSGg5NEYvRU1keVpIb2svZy9uam1y?=
- =?utf-8?B?M0FiUFhrTERUZWdCeXEyd1Z3VXMyM3ovRFJYbXFVdDRCWTRTRlIzL2pWR0FH?=
- =?utf-8?B?MVhrN090ZkZrT1ZKdVN3VEQ0bVlDRmdRb256M1g3dWViTlJac2VDeHMvTkZs?=
- =?utf-8?B?WGNLTERzejhCNXR3bHRKVjRaaFJ5bDdmQzdXQTBxZWNpU3JxTWVxM3dqUGVj?=
- =?utf-8?B?cmFEY2tDcGdtSy9vMS90MW4vZDhOUmFPcHNROFAwaHlUUldtdWJjRnVlQkpC?=
- =?utf-8?B?Ny9HRHlrMFVBWWpFVnhIaHNZd3ZkMy9od2JBZUYyWFAvU0JnT1RXN01kMHlu?=
- =?utf-8?B?M08yRUtTa1VSa2VMWjNIaVpBd2l6aFlKVWRDeXk4UXhjRVhvczdqTERMYm5H?=
- =?utf-8?B?UVNlOUJDSWhNRzlDWTRzL01SMGMvdmVYZlY5QkE5MG5HNVJHSmNGY2Vva1Rh?=
- =?utf-8?B?cGRtdWh3MlRIbXFGRWQ3ZWVlOHdDVEFyeDBndjQxZEo3VGEwazlQNSsyMzFC?=
- =?utf-8?B?N2lCSm1JZ2d1NkpPOTZwbFRqdUVzYjVVSzUvTmJSMXEwcUdaYytHWGQ1MVpm?=
- =?utf-8?B?Y21BbGJqejRqdkVhcWdiTkY3UjlVNTA3QXZmcE9uaFF5S0c5U2lZWThLSmJh?=
- =?utf-8?B?WURyVDJQQTYrU1RrTCtUb2xSKy9JSWhNSFRPWmxGRGdsVGx1Tm1WNE1KYTVB?=
- =?utf-8?B?eWhlc3lIT1h5M2Z4OExWQjJBNkNSVS9VaG51WGxyTFp6TUI1amdIT2tUR3B5?=
- =?utf-8?B?amJnUUY3YWdETHZ4VGRPeW15Nzh3QXFBVEoxK1d4Q1FrRXVRMXc1WVoybmtz?=
- =?utf-8?B?MzN6YWg2SWEzMTR5MlYxOFdhSXQvMkpiblRtY2NVeDdkRi9ISEM1MVFENlhz?=
- =?utf-8?B?Z2JBNG44MU1oRlZKVWpPSnErZDBCOWw2bWpYNk5rbWxiSk1heDdlYlg2aFZr?=
- =?utf-8?B?TmFoQ3g1ZFBobFhkeGVmZmUxcTgrTVBLQkRlamUxZFR1LzBSM2J6VGZOZjRJ?=
- =?utf-8?B?anFnRENVVndJalM4ZzNuQVRFU3J1aFJhVnFPYm53UGZqWjhzNC9Jem42TUg1?=
- =?utf-8?B?azhGVVZTR0Y1cytVZkxVdmViRWpodkMwSXVoZFFldlRma0tTTFlCOFpwTS9O?=
- =?utf-8?B?eFJQRDY2aWd5OXpXV1dTTVVVSzlobWdxcWdaYU05RytHcENkM0tQSUNRbll3?=
- =?utf-8?B?YXFWS0hFZDl4bzk5RmgyVWd0NGJDeTB3YzV1ZlFJM3dKa2YrOU9yY1JKN2Zv?=
- =?utf-8?B?bkNsSTVsd2lXQzlDM0NnOEFUOFlENk92c0Z1TXJmMHdLbXBVcG9PZG1UNmRm?=
- =?utf-8?B?bk9EZDd6cFd3OEpwWm5OSFE3dm1zZml3eHY0d3JrMzNwTS9BNVNsZXlXRG85?=
- =?utf-8?B?aTRIaEhGQTFUdmNobzlidXpDZEk4RnNycWV3VjdoTXBWL3VWVk1QU1JlM29R?=
- =?utf-8?B?NVY1ZnFGVlFzOVZjbUF1MXo3d2xsZzhQYkl3R2tLTzFWY0lBUkNhRXl5cGxQ?=
- =?utf-8?Q?zoHM=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ Sun, 31 Aug 2025 22:45:59 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Sun, 31 Aug 2025 22:45:58 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Sun, 31 Aug 2025 22:45:58 -0700
+Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
+ by maili.marvell.com (Postfix) with ESMTP id 8411F3F70B1;
+ Sun, 31 Aug 2025 22:45:56 -0700 (PDT)
+From: <skori@marvell.com>
+To: Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>
+CC: <dev@dpdk.org>, Sunil Kumar Kori <skori@marvell.com>, Nithin Dabilpuram
+ <ndabilpuram@marvell.com>
+Subject: [PATCH v9 1/1] ethdev: add support to provide link type
+Date: Mon, 1 Sep 2025 11:14:34 +0530
+Message-ID: <20250901054552.813195-1-skori@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250821053425.3227866-1-skori@marvell.com>
+References: <20250821053425.3227866-1-skori@marvell.com>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR18MB3869.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1820bd5c-be8a-491f-f4e8-08dde9153638
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Sep 2025 05:05:46.9468 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4v7Y/7a/AF7FFkrgoQelJBIcsDcTzH+SusB1Qeo2HY2BKF6fR+wihe9lgs3XGavKvta5USMlc0KcOzb454ZTUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR18MB5269
-X-Proofpoint-GUID: 3gYbVCscjSW8S5dBiCIQjF4CJ82xeTTX
-X-Proofpoint-ORIG-GUID: 3gYbVCscjSW8S5dBiCIQjF4CJ82xeTTX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMwMDEyMCBTYWx0ZWRfX9p5f/hETXHcZ
- 4Q2DBQ31IsiTbtaEwCybE+30rBMY7Nk8E0/cdSRbe0hvMhe2hF14hFT6jOkqxuCIEJ9XFBRlmcT
- M5q3wGOEUvG2xO0OJ5fRr5jogUY5ml52VqgqcipBkcC5bMnWAQ9BFXk5PxvGx8RFWWOlwTql15G
- x7FZ7+6CAEcsyJbN4wko1fn0TOUu6iQxBvefd9tM0gIwlH8VyXeC65DQuLUCWV21zw7kJnPGfkF
- FtlIqulLYomjCHziLT80DNrdkFu5S/MlxQXTjS5QPMd/vAlAsnitjS4LlC3q2I7TbHkYyHFL6CH
- nV3w4OHMwieu+L8pydp2gGlhZ3xMSCTRrZIz/sRuWWQzEPCSwRqq99alJ02AttQlmrQrSChhXOu
- gli7v7u9
-X-Authority-Analysis: v=2.4 cv=N44pF39B c=1 sm=1 tr=0 ts=68b529ad cx=c_pps
- a=Bx4JecnaPChsX23rVfvkjQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=-AAbraWEqlQA:10
- a=M5GUcnROAAAA:8 a=ePXPjcMqR0n9aLrdoBIA:9 a=QEXdDO2ut3YA:10
- a=OBjm3rFKGHvpk9ecZwUJ:22
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: ZtaLWJ5EhXGpVC-pT5Bw_I_rm9rxtPeG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODMxMDA3NyBTYWx0ZWRfX4HoAXWwVPiHz
+ gRdZB527F3eAb/ZsaoxtaV07XRFgDPtUM5J8WEP1qOPG9oZ9MmwT7UFvq5rk7kgQatrHnWjrgTa
+ Zh5DKcEAVIB86H2Fm88mE2UOuYwPJxJdjMwMjdnkmSo8XHxwaFTooHkPJ4FLyIj1UiCMqvKpvsX
+ c7wpJldrvu35hthsOlF53/NZPZ9RjyeiHW2cKlHfm7Ui5L3ZKXkdDgBXzTnCP4QrJrTgIN0w7Ys
+ ByqUuFupwlA5BiCPKV2aVskYHiD6dVa4uNN8wEUJmm22CnDHHSCq1YaGdJlRo3t28zb5/LDWhwP
+ JAjUuM6Bx6ir1AzYP8wIg4AkFg0dEGcxgjnsDrkaHWscIz3xUJgewPnZKjJwnsMuMfDe4HKB7oH
+ PjRYqqJW
+X-Authority-Analysis: v=2.4 cv=OZGYDgTY c=1 sm=1 tr=0 ts=68b53317 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=vh40eeHyigHPgL4MBTQA:9
+ a=AaYajHnSZj5aYCXJ:21 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: ZtaLWJ5EhXGpVC-pT5Bw_I_rm9rxtPeG
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-01_02,2025-08-28_01,2025-03-28_01
+ definitions=2025-09-01_03,2025-08-28_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -188,21 +81,295 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBPbiBUaHUsIDIxIEF1ZyAyMDI1IDExOjAyOjMzICswNTMwDQo+IDxza29yaUBtYXJ2ZWxsLmNv
-bT4gd3JvdGU6DQo+IA0KPiA+IEZyb206IFN1bmlsIEt1bWFyIEtvcmkgPHNrb3JpQG1hcnZlbGwu
-Y29tPg0KPiA+DQo+ID4gQWRkaW5nIGxpbmsgdHlwZSBwYXJhbWV0ZXIgdG8gcHJvdmlkZSB0aGUg
-dHlwZSBvZiBwb3J0IGxpa2UgdHdpc3RlZA0KPiA+IHBhaXIsIGZpYnJlIGV0Yy4NCj4gPg0KPiA+
-IEFsc28gYWRkZWQgYW4gQVBJIHRvIGNvbnZlcnQgdGhlIFJURV9FVEhfTElOS19DT05ORUNUT1Jf
-WFhYIHRvIGENCj4gPiByZWFkYWJsZSBzdHJpbmcuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBO
-aXRoaW4gRGFiaWxwdXJhbSA8bmRhYmlscHVyYW1AbWFydmVsbC5jb20+DQo+ID4gU2lnbmVkLW9m
-Zi1ieTogU3VuaWwgS3VtYXIgS29yaSA8c2tvcmlAbWFydmVsbC5jb20+DQo+IA0KPiBMb29rcyBn
-b29kIG5vdy4gV291bGQgcHJlZmVyIHRoYXQgeW91IHNldHRsZSBvbiBvbmUgdGVybSBjb25uZWN0
-b3IgcmF0aGVyIHRoYW4NCj4gbWl4aW5nICdsaW5rIHR5cGUnIGFuZCAnbGluayBjb25ubmVjdG9y
-Jw0KPiBpbiBjb21taXQgZGVzY3JpcHRpb24gYW5kIGNvbW1lbnRzLiBEbyB5b3Ugd2FudCBtZSB0
-byBtYWtlIGl0IGNvbnNpc3RlbnQ/DQo+IA0KSSByZXBsYWNlZCAibGluayB0eXBlIiB3aXRoIGNv
-bm5lY3RvciBhdCBhbGwgdGhlIHBsYWNlcyBhcyBwZXIga25vd2xlZGdlLiBJZiB5b3Ugc3RpbGwg
-c2VlIGFueSByZWZlcmVuY2Ugb2Ygc3RyaW5nICJsaW5rX3R5cGUiDQpUaGVuIHBsZWFzZSByZXBs
-YWNlIGl0IHdpdGggImNvbm5lY3RvciIuIA0KDQo+IFBsZWFzZSBhbHNvIHByb3ZpZGUgcmVsZWFz
-ZSBub3RlIHdpdGggc2hvcnQgY29uY2lzZSBzdW1tYXJ5IGFuZCB3aGF0IHVzZXINCj4gc2hvdWxk
-IGV4cGVjdCBhcyBkZWZhdWx0IHVudGlsL3VubGVzcyBkcml2ZXJzIGNoYW5nZSBpdC4NCkkgd2ls
-bCBzdWJtaXQgbmV4dCB2ZXJzaW9uIGFkZGluZyByZWxlYXNlIG5vdGUuDQoNCg==
+From: Sunil Kumar Kori <skori@marvell.com>
+
+Adding link type parameter to provide the type
+of port like twisted pair, fibre etc.
+
+Also added an API to convert the RTE_ETH_LINK_CONNECTOR_XXX
+to a readable string.
+
+Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
+Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
+---
+v8..v9:
+ - Adds 25.11 release notes.
+v7..v8:
+ - Add documentation for invalid link type.
+ - Remove trace point from API.
+ - Rebase on next-net.
+v6..v7:
+ - Replace link_type to link_connector.
+ - Update comments.
+v5..v6:
+ - Fix doxygen error.
+v4..v5:                                                                                             
+ - Convert link type to connector.
+ - Fix build error on Windows.
+ - Handle comsmetic review comments.
+v3..v4:
+ - Convert #define into enum.
+ - Enhance comments for each port link type.
+ - Fix test failures.
+v2..v3
+ - Extend link type list as per suggestion.
+
+ app/test/test_ethdev_link.c            | 18 +++++----
+ doc/guides/rel_notes/release_25_11.rst |  9 +++++
+ lib/ethdev/rte_ethdev.c                | 45 ++++++++++++++++++++-
+ lib/ethdev/rte_ethdev.h                | 54 ++++++++++++++++++++++++++
+ 4 files changed, 117 insertions(+), 9 deletions(-)
+
+diff --git a/app/test/test_ethdev_link.c b/app/test/test_ethdev_link.c
+index f063a5fe26..0e543228b0 100644
+--- a/app/test/test_ethdev_link.c
++++ b/app/test/test_ethdev_link.c
+@@ -17,23 +17,25 @@ test_link_status_up_default(void)
+ 		.link_speed = RTE_ETH_SPEED_NUM_2_5G,
+ 		.link_status = RTE_ETH_LINK_UP,
+ 		.link_autoneg = RTE_ETH_LINK_AUTONEG,
+-		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX
++		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
++		.link_connector = RTE_ETH_LINK_CONNECTOR_OTHER
+ 	};
+ 	char text[RTE_ETH_LINK_MAX_STR_LEN];
+ 
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+ 	printf("Default link up #1: %s\n", text);
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 2.5 Gbps FDX Autoneg",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 2.5 Gbps FDX Autoneg Other",
+ 		text, strlen(text), "Invalid default link status string");
+ 
+ 	link_status.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
+ 	link_status.link_autoneg = RTE_ETH_LINK_FIXED;
+ 	link_status.link_speed = RTE_ETH_SPEED_NUM_10M;
++	link_status.link_connector = RTE_ETH_LINK_CONNECTOR_SGMII;
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	printf("Default link up #2: %s\n", text);
+ 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 10 Mbps HDX Fixed",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at 10 Mbps HDX Fixed SGMII",
+ 		text, strlen(text), "Invalid default link status "
+ 		"string with HDX");
+ 
+@@ -41,7 +43,7 @@ test_link_status_up_default(void)
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	printf("Default link up #3: %s\n", text);
+ 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Unknown HDX Fixed",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Unknown HDX Fixed SGMII",
+ 		text, strlen(text), "Invalid default link status "
+ 		"string with HDX");
+ 
+@@ -49,7 +51,7 @@ test_link_status_up_default(void)
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	printf("Default link up #3: %s\n", text);
+ 	RTE_TEST_ASSERT(ret > 0, "Failed to format default string\n");
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at None HDX Fixed",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at None HDX Fixed SGMII",
+ 		text, strlen(text), "Invalid default link status "
+ 		"string with HDX");
+ 
+@@ -57,6 +59,7 @@ test_link_status_up_default(void)
+ 	link_status.link_speed = RTE_ETH_SPEED_NUM_400G;
+ 	link_status.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
+ 	link_status.link_autoneg = RTE_ETH_LINK_AUTONEG;
++	link_status.link_connector = RTE_ETH_LINK_CONNECTOR_GAUI;
+ 	ret = rte_eth_link_to_str(text, sizeof(text), &link_status);
+ 	printf("Default link up #4:len = %d, %s\n", ret, text);
+ 	RTE_TEST_ASSERT(ret < RTE_ETH_LINK_MAX_STR_LEN,
+@@ -92,7 +95,8 @@ test_link_status_invalid(void)
+ 		.link_speed = 55555,
+ 		.link_status = RTE_ETH_LINK_UP,
+ 		.link_autoneg = RTE_ETH_LINK_AUTONEG,
+-		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX
++		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
++		.link_connector = RTE_ETH_LINK_CONNECTOR_OTHER
+ 	};
+ 	char text[RTE_ETH_LINK_MAX_STR_LEN];
+ 
+@@ -100,7 +104,7 @@ test_link_status_invalid(void)
+ 	RTE_TEST_ASSERT(ret < RTE_ETH_LINK_MAX_STR_LEN,
+ 		"Failed to format invalid string\n");
+ 	printf("invalid link up #1: len=%d %s\n", ret, text);
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Invalid FDX Autoneg",
++	TEST_ASSERT_BUFFERS_ARE_EQUAL("Link up at Invalid FDX Autoneg Other",
+ 		text, strlen(text), "Incorrect invalid link status string");
+ 
+ 	return TEST_SUCCESS;
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index e81ba33907..4e8b4d18b1 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -59,6 +59,12 @@ New Features
+ 
+   * Enabled software taildrop for ordered queues.
+ 
++* **Added ethdev API in library.**
++
++  * Added API to report type of link connection for a port.
++    By default, it reports ``RTE_ETH_LINK_CONNECTOR_NONE``
++    unless driver specifies it.
++
+ Removed Items
+ -------------
+ 
+@@ -103,6 +109,9 @@ ABI Changes
+    Also, make sure to start the actual text at the margin.
+    =======================================================
+ 
++* ethdev: Added ``link_connector`` field to ``rte_eth_link`` structure
++  to report type of link connection a port.
++
+ 
+ Known Issues
+ ------------
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index 4148c33807..1c4a758a03 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -3324,18 +3324,59 @@ rte_eth_link_to_str(char *str, size_t len, const struct rte_eth_link *eth_link)
+ 	if (eth_link->link_status == RTE_ETH_LINK_DOWN)
+ 		ret = snprintf(str, len, "Link down");
+ 	else
+-		ret = snprintf(str, len, "Link up at %s %s %s",
++		ret = snprintf(str, len, "Link up at %s %s %s %s",
+ 			rte_eth_link_speed_to_str(eth_link->link_speed),
+ 			(eth_link->link_duplex == RTE_ETH_LINK_FULL_DUPLEX) ?
+ 			"FDX" : "HDX",
+ 			(eth_link->link_autoneg == RTE_ETH_LINK_AUTONEG) ?
+-			"Autoneg" : "Fixed");
++			"Autoneg" : "Fixed",
++			rte_eth_link_connector_to_str(eth_link->link_connector));
+ 
+ 	rte_eth_trace_link_to_str(len, eth_link, str, ret);
+ 
+ 	return ret;
+ }
+ 
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_link_connector_to_str, 25.11)
++const char *
++rte_eth_link_connector_to_str(enum rte_eth_link_connector link_connector)
++{
++	static const char * const link_connector_str[] = {
++		[RTE_ETH_LINK_CONNECTOR_NONE] = "None",
++		[RTE_ETH_LINK_CONNECTOR_TP] = "Twisted Pair",
++		[RTE_ETH_LINK_CONNECTOR_AUI] = "Attachment Unit Interface",
++		[RTE_ETH_LINK_CONNECTOR_MII] = "Media Independent Interface",
++		[RTE_ETH_LINK_CONNECTOR_FIBER] = "Fiber",
++		[RTE_ETH_LINK_CONNECTOR_BNC] = "BNC",
++		[RTE_ETH_LINK_CONNECTOR_DAC] = "Direct Attach Copper",
++		[RTE_ETH_LINK_CONNECTOR_SGMII] = "SGMII",
++		[RTE_ETH_LINK_CONNECTOR_QSGMII] = "QSGMII",
++		[RTE_ETH_LINK_CONNECTOR_XFI] = "XFI",
++		[RTE_ETH_LINK_CONNECTOR_SFI] = "SFI",
++		[RTE_ETH_LINK_CONNECTOR_XLAUI] = "XLAUI",
++		[RTE_ETH_LINK_CONNECTOR_GAUI] = "GAUI",
++		[RTE_ETH_LINK_CONNECTOR_XAUI] = "XAUI",
++		[RTE_ETH_LINK_CONNECTOR_CAUI] = "CAUI",
++		[RTE_ETH_LINK_CONNECTOR_LAUI] = "LAUI",
++		[RTE_ETH_LINK_CONNECTOR_SFP] = "SFP",
++		[RTE_ETH_LINK_CONNECTOR_SFP_DD] = "SFP-DD",
++		[RTE_ETH_LINK_CONNECTOR_SFP_PLUS] = "SFP+",
++		[RTE_ETH_LINK_CONNECTOR_SFP28] = "SFP28",
++		[RTE_ETH_LINK_CONNECTOR_QSFP] = "QSFP",
++		[RTE_ETH_LINK_CONNECTOR_QSFP_PLUS] = "QSFP+",
++		[RTE_ETH_LINK_CONNECTOR_QSFP28] = "QSFP28",
++		[RTE_ETH_LINK_CONNECTOR_QSFP56] = "QSFP56",
++		[RTE_ETH_LINK_CONNECTOR_QSFP_DD] = "QSFP-DD",
++		[RTE_ETH_LINK_CONNECTOR_OTHER] = "Other",
++	};
++	const char *str = NULL;
++
++	if (link_connector < ((enum rte_eth_link_connector)RTE_DIM(link_connector_str)))
++		str = link_connector_str[link_connector];
++
++	return str;
++}
++
+ RTE_EXPORT_SYMBOL(rte_eth_stats_get)
+ int
+ rte_eth_stats_get(uint16_t port_id, struct rte_eth_stats *stats)
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index 5d7fc5ee9d..0c7366b53e 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -329,6 +329,45 @@ struct rte_eth_stats {
+ #define RTE_ETH_SPEED_NUM_UNKNOWN UINT32_MAX /**< Unknown */
+ /**@}*/
+ 
++/**
++ * @enum rte_eth_link_connector
++ * @brief Ethernet port link connector type
++ *
++ * This enum defines the possible types of Ethernet port link connectors.
++ */
++enum rte_eth_link_connector {
++	RTE_ETH_LINK_CONNECTOR_NONE = 0,     /**< Not defined */
++	RTE_ETH_LINK_CONNECTOR_TP,           /**< Twisted Pair */
++	RTE_ETH_LINK_CONNECTOR_AUI,          /**< Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_MII,          /**< Media Independent Interface */
++	RTE_ETH_LINK_CONNECTOR_FIBER,        /**< Optical Fiber Link */
++	RTE_ETH_LINK_CONNECTOR_BNC,          /**< BNC Link type for RF connection */
++	RTE_ETH_LINK_CONNECTOR_DAC,          /**< Direct Attach copper */
++	RTE_ETH_LINK_CONNECTOR_SGMII,        /**< Serial Gigabit Media Independent Interface */
++	RTE_ETH_LINK_CONNECTOR_QSGMII,       /**< Link to multiplex 4 SGMII over one serial link */
++	RTE_ETH_LINK_CONNECTOR_XFI,          /**< 10 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_SFI,          /**< 10 Gigabit Serial Interface for optical network */
++	RTE_ETH_LINK_CONNECTOR_XLAUI,        /**< 40 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_GAUI,         /**< Gigabit Interface for 50/100/200 Gbps */
++	RTE_ETH_LINK_CONNECTOR_XAUI,         /**< 10 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_CAUI,         /**< 100 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_LAUI,         /**< 50 Gigabit Attachment Unit Interface */
++	RTE_ETH_LINK_CONNECTOR_SFP,          /**< Pluggable module for 1 Gigabit */
++	RTE_ETH_LINK_CONNECTOR_SFP_PLUS,     /**< Pluggable module for 10 Gigabit */
++	RTE_ETH_LINK_CONNECTOR_SFP28,        /**< Pluggable module for 25 Gigabit */
++	RTE_ETH_LINK_CONNECTOR_SFP_DD,       /**< Pluggable module for 100 Gigabit */
++	RTE_ETH_LINK_CONNECTOR_QSFP,         /**< Module to mutiplex 4 SFP i.e. 4*1=4 Gbps */
++	RTE_ETH_LINK_CONNECTOR_QSFP_PLUS,    /**< Module to mutiplex 4 SFP_PLUS i.e. 4*10=40 Gbps */
++	RTE_ETH_LINK_CONNECTOR_QSFP28,       /**< Module to mutiplex 4 SFP28 i.e. 4*25=100 Gbps */
++	RTE_ETH_LINK_CONNECTOR_QSFP56,       /**< Module to mutiplex 4 SFP56 i.e. 4*50=200 Gbps */
++	RTE_ETH_LINK_CONNECTOR_QSFP_DD,      /**< Module to mutiplex 4 SFP_DD i.e. 4*100=400 Gbps */
++	RTE_ETH_LINK_CONNECTOR_OTHER = 31,   /**< non-physical interfaces like virtio, ring etc.
++					       * It also includes unknown connector types,
++					       * i.e. physical connectors not yet defined in this
++					       * list of connector types.
++					       */
++};
++
+ /**
+  * A structure used to retrieve link-level information of an Ethernet port.
+  */
+@@ -341,6 +380,7 @@ struct rte_eth_link {
+ 			uint16_t link_duplex  : 1;  /**< RTE_ETH_LINK_[HALF/FULL]_DUPLEX */
+ 			uint16_t link_autoneg : 1;  /**< RTE_ETH_LINK_[AUTONEG/FIXED] */
+ 			uint16_t link_status  : 1;  /**< RTE_ETH_LINK_[DOWN/UP] */
++			uint16_t link_connector : 5;  /**< RTE_ETH_LINK_CONNECTOR_XXX */
+ 		};
+ 	};
+ };
+@@ -3116,6 +3156,20 @@ int rte_eth_link_get_nowait(uint16_t port_id, struct rte_eth_link *link)
+ __rte_experimental
+ const char *rte_eth_link_speed_to_str(uint32_t link_speed);
+ 
++/**
++ * @warning
++ * @b EXPERIMENTAL: this API may change without prior notice.
++ *
++ * This function converts an Ethernet link type to a string.
++ *
++ * @param link_connector
++ *   The link type to convert.
++ * @return
++ *   NULL for invalid link connector values otherwise the string representation of the link type.
++ */
++__rte_experimental
++const char *rte_eth_link_connector_to_str(enum rte_eth_link_connector link_connector);
++
+ /**
+  * @warning
+  * @b EXPERIMENTAL: this API may change without prior notice.
+-- 
+2.43.0
+
