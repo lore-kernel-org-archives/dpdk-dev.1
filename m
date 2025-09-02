@@ -2,63 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A83CA1005
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 14:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CA2CA0FFE
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 14:28:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 777B24065A;
-	Tue,  2 Sep 2025 16:28:08 +0200 (CEST)
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com
- [209.85.219.44]) by mails.dpdk.org (Postfix) with ESMTP id 2F6134064F
- for <dev@dpdk.org>; Tue,  2 Sep 2025 16:28:07 +0200 (CEST)
-Received: by mail-qv1-f44.google.com with SMTP id
- 6a1803df08f44-70df91bdc53so45335986d6.3
- for <dev@dpdk.org>; Tue, 02 Sep 2025 07:28:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 82C7D4065F;
+	Tue,  2 Sep 2025 16:28:10 +0200 (CEST)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com
+ [209.85.219.51]) by mails.dpdk.org (Postfix) with ESMTP id 6C8944065E
+ for <dev@dpdk.org>; Tue,  2 Sep 2025 16:28:09 +0200 (CEST)
+Received: by mail-qv1-f51.google.com with SMTP id
+ 6a1803df08f44-70ddab8117cso43773336d6.0
+ for <dev@dpdk.org>; Tue, 02 Sep 2025 07:28:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1756823286; x=1757428086; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1756823289; x=1757428089; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=hhjZTcXEVY73Z20FbDwCZERbkFZTOmY0sussZcSGeGg=;
- b=bC3P2NC9G59/+TwGMyUBadQJrspwoWrXhtcqDqpzfhn263RD4ZAQ025EoGP0W6mWUC
- SExUYoayPN8MJo0jeApo3rYWbqP4ju6IRDWx1FZY6pmxrkd5iUcaEyhJ67M9kVtMoVNG
- q66vEMT2hUPik7J8oN5e1gPw1OkeW28lrJ7IE=
+ bh=B+r/+i69Xn8S2462hu4wOa5GIVjtTPnUodSLkRmrUR8=;
+ b=Lln/7X8nPHRvXHmKt5qTc6FshavtLsBduxzTlZvamVqS1salx6mhs+5H1IWU0Bepo2
+ ToCCkziM6DgIX+tOd2i1Q+J8IYiO6yK2KYM6uEWBPFhQQwY763G5U3Z21FmXnm2AVglg
+ PQxR9FJlmVpACq/lxt38G4XpCc8s4qe7qIPp4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756823286; x=1757428086;
+ d=1e100.net; s=20230601; t=1756823289; x=1757428089;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=hhjZTcXEVY73Z20FbDwCZERbkFZTOmY0sussZcSGeGg=;
- b=DrMG44QeV8CJ1jIXJ+OAt28KtXDOEgh6x8yWSSYi/EkPVdE7Xs9wyHg569DCOI3/1h
- oOX0HrOJDDcW6aRciSbxjC32q6N5ZxPmq2AWkfVFyLrqvwGzUFWh7Hzcb0FO63Cj+/vH
- UQ/zmgbD6aeBzlLHNJcDKgPE+nnkJhYP5dgMG3QQa2h8Ev6lkwOKjMtks11gLFywEMhc
- 9zUdNeBIBUfYKXSzrPO6bkvw/YddaNmMVEsOJZFvLj66G5JPWhX7g1nuGLY9CgFsZiXf
- Kk4cm0AE2G82h/Zl24XBtNr09AygwCpDwA42IMrAO0SBsyRx+dgIXdEybu3SeVdAnaAr
- 5Zsw==
+ bh=B+r/+i69Xn8S2462hu4wOa5GIVjtTPnUodSLkRmrUR8=;
+ b=UL0g3NroVGQcpYon7UYthTyADZKbQWYN1osdf6GuyrGmI7Nxk1tx4HcxJXhZVghIA8
+ QVIQxjRRhqqCbjhnl6EQcl0jxfLjuKu6ZtZr8Yskz98+J5cb4KPRlgZ5dWegkTpM2qwU
+ 1Pn5YydAsHoelGEWNP4hJXFRExTc5vondcKj/XDq2b8gp7Qx/R9TATlU46iRjsVyd3Sx
+ kP5gNfEuQ8u34YK9CnKkFUtmc/wrqcxK6+Oxi9QlT1ywmKhseoQPB6zmYDe+PvnyESrD
+ hxp1KJyHyZLG+uaVDQ20QQnRB/GxAVLjT9g4df3iXEgHzk4Igj0R0jnLd60AH8kJize8
+ kfcw==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUDa6nC5jrD8bEW2b9Mo+Yz3q21eR4E2zZ3fF5z4skLdaE3o2Fd8kFjuaX3Pa1B44cKt4Q=@dpdk.org
-X-Gm-Message-State: AOJu0YxJKrXhIAyd/QuMwBb+60eKq2mt7403qzPX618AOd6i1b7DrZVu
- 6wMJclOwC5uFliaOy5jO6UxtrtVBrBdhL8yHKKRO3KXQiCgiI8ix75nVabx6oGNOD3I=
-X-Gm-Gg: ASbGncsYS69+QxDuD4tGLWzm74LfKmKz2f3lyRayEFSRPkKKFpDtu4KMgjwC1UG/5ij
- Uy+/FoeN3oBlpmX2rgzIhWQ1GhwS1DCRkeYa87Jukfv7rcObsEXFUfhbnUdhrk9RHYpVGxGgH/7
- JzSmrENU4XsHc9feSzQiqxn53IqhFkXmQNjSjQdWXpYg4x0qLlnR29RjikF4fy/DK+Sj34q+729
- LUrbOGNlesX7OnrwWNcJZESX0gUy7iqomNi8aMKBmwBCf/sq52+v8ztCOZAMg/MEkqs2tidx0Zy
- 8jbIZ1vzvFIpWoGOTAws6rU2hnL5OP/M/+HTsffaYt2sitEH/YSEGcY0OCRwoJ05D/gy+LfIcVl
- k3nHd9GIVlDeN1WEmcTduYEs0KKRGt1GxxZo=
-X-Google-Smtp-Source: AGHT+IH1IqBmIkrRdnoA6bGeAqw0vyq+jexoKCUmevF7f/8GFxAXZoHJSoSSf0+RzpkR6SBH2JnZJA==
-X-Received: by 2002:a05:6214:2a8b:b0:70d:c0fa:bc20 with SMTP id
- 6a1803df08f44-70fac6fdcefmr126848966d6.12.1756823286359; 
- Tue, 02 Sep 2025 07:28:06 -0700 (PDT)
+ AJvYcCU9L/R5JYJ+Nk/X5owe+u/WyanYZ8j29Bqbg/5hFPdNwmNghMqm/fqxeBvGKpL/K/YAmuo=@dpdk.org
+X-Gm-Message-State: AOJu0Yw/PjoUURyFQtMAyTUljSvLj+XEGjcqrKTaT/8BPhq3wSbcssVk
+ VrOEtD/FemcVMbu7jncZ8P9tRswMXpNUM+DxsTdPT41NeDISmwFMu+M3TxNY6vEZheU=
+X-Gm-Gg: ASbGncsE6UgXfx5Y11D9FCKjvAcKGBdX87bWaYOcLrMKLZkqSAPFSaEfxVXXxlv9vDf
+ OV6rtuo7O9tnOGtfRGUUogzDpXtOdOG0FKwQZRqDsj9fxVk9iXAhghiLejY2IOwW+0+nff/NpgY
+ DLlXQCbOZCsiVi4yWWuG6INOptLEbijnSOin1TDpbaCoIHCC4h1v7P76vi3wdqPPjtO6XkwaG+1
+ VWjMZd0GNZI5bFZ6bTbp0+NFBO9hsIP18bsk1Y2RrCvlqj4SSnVfxW2ZrYSXh5siHnNlulNO6Sa
+ Zrfe2WbxKx23Vux1PYt5EXSmhL78nHUY1pPRQt0wi4GeQ0XXiIb9PtQ0DGlK3AXXug1pSzxfQRr
+ ty61aGgpBcxyrp0s7waA1YpU+vf7Hr/rUhfIpSvIAEvEmIw==
+X-Google-Smtp-Source: AGHT+IEGxgXt3/6p1t42Yh1WjYIG3NfIrr+68EjIGNQWLTz2Tfc+fZP4tWHptpzmhBPdnZ5OZpVPNw==
+X-Received: by 2002:a05:6214:e88:b0:715:71d9:e430 with SMTP id
+ 6a1803df08f44-71571d9e59emr77008916d6.5.1756823288441; 
+ Tue, 02 Sep 2025 07:28:08 -0700 (PDT)
 Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-720b57c2893sm12346186d6.53.2025.09.02.07.28.05
+ 6a1803df08f44-720b57c2893sm12346186d6.53.2025.09.02.07.28.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 02 Sep 2025 07:28:05 -0700 (PDT)
+ Tue, 02 Sep 2025 07:28:07 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: luca.vizzarro@arm.com
 Cc: abailey@iol.unh.edu, dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu
-Subject: [PATCH v1 1/3] dts: allow mbuf_fast_free to be set with testpmd shell
-Date: Tue,  2 Sep 2025 10:27:23 -0400
-Message-ID: <20250902142725.56736-2-abailey@iol.unh.edu>
+Subject: [PATCH v1 2/3] dts: add TX offload capabilities to NIC capabilities
+Date: Tue,  2 Sep 2025 10:27:24 -0400
+Message-ID: <20250902142725.56736-3-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250902142725.56736-1-abailey@iol.unh.edu>
 References: <20250902142725.56736-1-abailey@iol.unh.edu>
@@ -77,181 +77,246 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, there is no way in the testpmd shell class to set the mbuf
-fast free offload configuration for RX or TX ports. This prohibits any
-test suites to be written utilizing this offload configuration. Additionally,
-the NIC capabilities for the TX offload are not gathered. This prevents future
-test suites from being skipped if they do not support a TX offload capability.
-Introduce methods that support calls to testpmd in order to allow the
-configuration of mbuf fast free and to gather TX offload capabilities.
+Currently, there is support for tracking the RX offload capabilities of
+a NIC, but not for TX offload capabilities. This is an issue if a test
+suite is written requiring one of these capabilities, since there is no
+way currently to verify that the NIC in use meets the requirements. Add
+TX capabilities to the NIC capabiltiies at beginning of dts so
+requirements can be verified.
 
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- dts/framework/remote_session/testpmd_shell.py | 137 +++++++++++++++++-
- 1 file changed, 136 insertions(+), 1 deletion(-)
+ dts/framework/remote_session/testpmd_shell.py | 203 ++++++++++++++++++
+ 1 file changed, 203 insertions(+)
 
 diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framework/remote_session/testpmd_shell.py
-index 786714d1c5..91642efec5 100644
+index ad8cb273dc..786714d1c5 100644
 --- a/dts/framework/remote_session/testpmd_shell.py
 +++ b/dts/framework/remote_session/testpmd_shell.py
-@@ -19,7 +19,7 @@
- import time
- from collections.abc import Callable, MutableSet
- from dataclasses import dataclass, field
--from enum import Flag, auto
-+from enum import Enum, Flag, auto
- from os import environ
- from pathlib import PurePath
- from typing import TYPE_CHECKING, Any, ClassVar, Concatenate, Literal, ParamSpec, Tuple, TypeAlias
-@@ -344,6 +344,13 @@ def make_parser(cls) -> ParserFn:
-         )
+@@ -1278,6 +1278,99 @@ class TestPmdVerbosePacket(TextParser):
+     )
 
 
-+class RxTxArgFlag(Enum):
-+    """Enum representing receiving or transmitting ports."""
++class TxOffloadCapability(Flag):
++    """TX offload capabilities of a device.
 +
-+    TX = "tx"
-+    RX = "rx"
++    The flags are taken from ``lib/ethdev/rte_ethdev.h``.
++    They're prefixed with ``RTE_ETH_TX_OFFLOAD`` in ``lib/ethdev/rte_ethdev.h``
++    instead of ``TX_OFFLOAD``, which is what testpmd changes the prefix to.
++    The values are not contiguous, so the correspondence is preserved
++    by specifying concrete values interspersed between auto() values.
 +
++    The ``TX_OFFLOAD`` prefix has been preserved so that the same flag names can be used
++    in :class:`NicCapability`. The prefix is needed in :class:`NicCapability` since there's
++    no other qualifier which would sufficiently distinguish it from other capabilities.
 +
- class DeviceCapabilitiesFlag(Flag):
-     """Flag representing the device capabilities."""
-
-@@ -2787,6 +2794,134 @@ def get_capabilities_physical_function(
-         else:
-             unsupported_capabilities.add(NicCapability.PHYSICAL_FUNCTION)
-
-+    @requires_started_ports
-+    def get_rxtx_offload_config(
-+        self,
-+        rxtx: RxTxArgFlag,
-+        verify: bool,
-+        port_id: int = 0,
-+        num_queues: int = 0,
-+    ) -> dict[int | str, str]:
-+        """Get the RX or TX offload configuration of the queues from the given port.
++    References:
++        DPDK lib: ``lib/ethdev/rte_ethdev.h``
++        testpmd display function: ``app/test-pmd/cmdline.c:print_rx_offloads()``
++    """
++
++    TX_OFFLOAD_VLAN_INSERT = auto()
++    TX_OFFLOAD_IPV4_CKSUM = auto()
++    TX_OFFLOAD_UDP_CKSUM = auto()
++    TX_OFFLOAD_TCP_CKSUM = auto()
++    TX_OFFLOAD_SCTP_CKSUM = auto()
++    TX_OFFLOAD_TCP_TSO = auto()
++    TX_OFFLOAD_UDP_TSO = auto()
++    TX_OFFLOAD_OUTER_IPV4_CKSUM = auto()
++    TX_OFFLOAD_QINQ_INSERT = auto()
++    TX_OFFLOAD_VXLAN_TNL_TSO = auto()
++    TX_OFFLOAD_GRE_TNL_TSO = auto()
++    TX_OFFLOAD_IPIP_TNL_TSO = auto()
++    TX_OFFLOAD_GENEVE_TNL_TSO = auto()
++    TX_OFFLOAD_MACSEC_INSERT = auto()
++    TX_OFFLOAD_MT_LOCKFREE = auto()
++    TX_OFFLOAD_MULTI_SEGS = auto()
++    TX_OFFLOAD_MBUF_FAST_FREE = auto()
++    TX_OFFLOAD_SECURITY = auto()
++    TX_OFFLOAD_UDP_TNL_TSO = auto()
++    TX_OFFLOAD_IP_TNL_TSO = auto()
++    TX_OFFLOAD_OUTER_UDP_CKSUM = auto()
++    TX_OFFLOAD_SEND_ON_TIMESTAMP = auto()
++
++    @classmethod
++    def from_string(cls, line: str) -> Self:
++        """Make an instance from a string containing the flag names separated with a space.
 +
 +        Args:
-+            rxtx: Whether to get the RX or TX configuration of the given queues.
-+            verify: If :data:'True' the output of the command will be scanned in an attempt to
-+                verify that the offload configuration was retrieved successfully on all queues.
-+            num_queues: The number of queues to get the offload configuration for.
-+            port_id: The port ID that contains the desired queues.
++            line: The line to parse.
 +
 +        Returns:
-+            A dict containing port info at key 'port' and queue info keyed by the appropriate queue
-+                id.
-+
-+        Raises:
-+            InteractiveCommandExecutionError: If all queue offload configurations could not be
-+                retrieved.
-+
++            A new instance containing all found flags.
 +        """
-+        returnDict: dict[int | str, str] = {}
++        flag = cls(0)
++        for flag_name in line.split():
++            flag |= cls[f"TX_OFFLOAD_{flag_name}"]
++        return flag
 +
-+        config_output = self.send_command(f"show port {port_id} {rxtx.value}_offload configuration")
-+        if verify:
-+            if (
-+                f"Rx Offloading Configuration of port {port_id}" not in config_output
-+                and f"Tx Offloading Configuration of port {port_id}" not in config_output
-+            ):
-+                self._logger.debug(f"Get port offload config error\n{config_output}")
-+                raise InteractiveCommandExecutionError(
-+                    f"""Failed to get offload config on port {port_id}:\n{config_output}"""
-+                )
-+        # Actual output data starts on the thrid line
-+        tempList: list[str] = config_output.splitlines()[3::]
-+        returnDict["port"] = tempList[0]
-+        for i in range(0, num_queues):
-+            returnDict[i] = tempList[i + 1]
-+        return returnDict
-+
-+    @requires_stopped_ports
-+    def set_port_rxtx_mbuf_fast_free(
-+        self, rxtx: RxTxArgFlag, on: bool, verify: bool, port_id: int = 0
-+    ) -> None:
-+        """Sets the mbuf_fast_free configuration for the RX or TX offload for a given port.
++    @classmethod
++    def make_parser(cls, per_port: bool) -> ParserFn:
++        """Make a parser function.
 +
 +        Args:
-+            rxtx: Whether to set the mbuf_fast_free on the RX or TX port.
-+            on: If :data:'True' mbuf_fast_free will be enabled, disable it otherwise.
-+            verify: If :data:'True' the output of the command will be scanned in an attempt to
-+                verify that the mbuf_fast_free was set successfully.
-+            port_id: The port number to enable or disable mbuf_fast_free on.
++            per_port: If :data:`True`, will return capabilities per port. If :data:`False`,
++                will return capabilities per queue.
 +
-+        Raises:
-+            InteractiveCommandExecutionError: If mbuf_fast_free could not be set successfully
++        Returns:
++            ParserFn: A dictionary for the `dataclasses.field` metadata argument containing a
++                parser function that makes an instance of this flag from text.
 +        """
-+        mbuf_output = self.send_command(
-+            f"port config {port_id} {rxtx.value}_offload mbuf_fast_free {"on" if on else "off"}"
++        granularity = "Port" if per_port else "Queue"
++        return TextParser.wrap(
++            TextParser.find(rf"Per {granularity}\s+:(.*)$", re.MULTILINE),
++            cls.from_string,
 +        )
 +
-+        if "error" in mbuf_output and verify:
-+            raise InteractiveCommandExecutionError(
-+                f"""Unable to set mbuf_fast_free config on port {port_id}:\n{mbuf_output}"""
-+            )
 +
-+    @requires_stopped_ports
-+    def set_queue_rxtx_mbuf_fast_free(
-+        self,
-+        rxtx: RxTxArgFlag,
-+        on: bool,
-+        verify: bool,
-+        port_id: int = 0,
-+        queue_id: int = 0,
-+    ) -> None:
-+        """Sets RX or TX mbuf_fast_free configuration of the specified queue on a given port.
++@dataclass
++class TxOffloadCapabilities(TextParser):
++    """The result of testpmd's ``show port <port_id> tx_offload capabilities`` command.
 +
-+        Args:
-+            rxtx: Whether to set mbuf_fast_free for the RX or TX offload configuration on the
-+                given queues.
-+            on: If :data:'True' the mbuf_fast_free configuration will be enabled, otherwise
-+                disabled.
-+            verify: If :data:'True' the output of the command will be scanned in an attempt to
-+                verify that mbuf_fast_free was set successfully on all ports.
-+            queue_id: The queue to disable mbuf_fast_free on.
-+            port_id: The ID of the port containing the queues.
++    References:
++        testpmd command function: ``app/test-pmd/cmdline.c:cmd_tx_offload_get_capa()``
++        testpmd display function: ``app/test-pmd/cmdline.c:cmd_tx_offload_get_capa_parsed()``
++    """
 +
-+        Raises:
-+            InteractiveCommandExecutionError: If all queues could not be set successfully.
-+        """
-+        toggle = "on" if on else "off"
-+        output = self.send_command(
-+            f"port {port_id} {rxtx.value}q {queue_id} {rxtx.value}_offload mbuf_fast_free {toggle}"
-+        )
-+        if verify:
-+            if "Error" in output:
-+                self._logger.debug(f"Set queue offload config error\n{output}")
-+                raise InteractiveCommandExecutionError(
-+                    f"Failed to get offload config on port {port_id}, queue {queue_id}:\n{output}"
-+                )
++    port_id: int = field(
++        metadata=TextParser.find_int(r"Tx Offloading Capabilities of port (\d+) :")
++    )
++    #: Per-queue Tx offload capabilities.
++    per_queue: TxOffloadCapability = field(metadata=TxOffloadCapability.make_parser(False))
++    #: Capabilities other than per-queue Tx offload capabilities.
++    per_port: TxOffloadCapability = field(metadata=TxOffloadCapability.make_parser(True))
 +
-+    def set_all_queues_rxtx_mbuf_fast_free(
-+        self,
-+        rxtx: RxTxArgFlag,
-+        on: bool,
-+        verify: bool,
-+        port_id=0,
-+        num_queues: int = 0,
-+    ) -> None:
-+        """Sets mbuf_fast_free configuration for the RX or TX offload of all queues on a given port.
 +
-+        Args:
-+            rxtx: Whether to set mbuf_fast_free for the RX or TX offload configuration on the
-+                given queues.
-+            on: If :data:'True' the mbuf fast_free_configuration will be enabled, otherwise
-+                disabled.
-+            verify: If :data:'True' the output of the command will be scanned in an attempt to
-+                verify that mbuf_fast_free was set successfully on all ports.
-+            port_id: The ID of the port containing the queues.
-+            num_queues: The queue to disable mbuf_fast_free on.
-+        """
-+        for i in range(0, num_queues):
-+            self.set_queue_rxtx_mbuf_fast_free(rxtx, on, verify, port_id=port_id, queue_id=i)
-+
+ class RxOffloadCapability(Flag):
+     """Rx offload capabilities of a device.
 
- class NicCapability(NoAliasEnum):
-     """A mapping between capability names and the associated :class:`TestPmdShell` methods.
+@@ -2390,6 +2483,28 @@ def close(self) -> None:
+     ====== Capability retrieval methods ======
+     """
+
++    def get_capabilities_tx_offload(
++        self,
++        supported_capabilities: MutableSet["NicCapability"],
++        unsupported_capabilities: MutableSet["NicCapability"],
++    ) -> None:
++        """Get all TX offload capabilities and divide them into supported and unsupported.
++
++        Args:
++            supported_capabilities: Supported capabilities will be added to this set.
++            unsupported_capabilities: Unsupported capabilities will be added to this set.
++        """
++        self._logger.debug("Getting TX offload capabilities.")
++        command = f"show port {self.ports[0].id} tx_offload capabilities"
++        tx_offload_capabilities_out = self.send_command(command)
++        tx_offload_capabilities = TxOffloadCapabilities.parse(tx_offload_capabilities_out)
++        self._update_capabilities_from_flag(
++            supported_capabilities,
++            unsupported_capabilities,
++            TxOffloadCapability,
++            tx_offload_capabilities.per_port | tx_offload_capabilities.per_queue,
++        )
++
+     def get_capabilities_rx_offload(
+         self,
+         supported_capabilities: MutableSet["NicCapability"],
+@@ -2698,6 +2813,94 @@ class NicCapability(NoAliasEnum):
+     we don't go looking for it again if a different test case also needs it.
+     """
+
++    TX_OFFLOAD_VLAN_INSERT: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_IPV4_CKSUM: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_UDP_CKSUM: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_TCP_CKSUM: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_SCTP_CKSUM: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_TCP_TSO: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_UDP_TSO: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_OUTER_IPV4_CKSUM: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_QINQ_INSERT: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_VXLAN_TNL_TSO: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_GRE_TNL_TSO: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_IPIP_TNL_TSO: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_GENEVE_TNL_TSO: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_MACSEC_INSERT: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_MT_LOCKFREE: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_MULTI_SEGS: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_MBUF_FAST_FREE: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_SECURITY: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_UDP_TNL_TSO: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_IP_TNL_TSO: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_OUTER_UDP_CKSUM: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
++    TX_OFFLOAD_SEND_ON_TIMESTAMP: TestPmdShellNicCapability = (
++        TestPmdShell.get_capabilities_tx_offload,
++        None,
++    )
+     #: Scattered packets Rx enabled
+     SCATTERED_RX_ENABLED: TestPmdShellNicCapability = (
+         TestPmdShell.get_capabilities_rxq_info,
 --
 2.50.1
 
