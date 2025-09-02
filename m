@@ -2,71 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68748CA1005
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 08:08:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4FCCA1005
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 08:11:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61307402BD;
-	Tue,  2 Sep 2025 10:08:33 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A21F0402BD;
+	Tue,  2 Sep 2025 10:11:22 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id A6430402B2
- for <dev@dpdk.org>; Tue,  2 Sep 2025 10:08:31 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 5331F402B2
+ for <dev@dpdk.org>; Tue,  2 Sep 2025 10:11:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1756800511;
+ s=mimecast20190719; t=1756800680;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=INef1m/58wHnz9vNOtgKh6qxZY2RWvCqVU6ei+s40qc=;
- b=LHEUQZ0wWyxoGRj0qU4fWijPmKggBreN50lp5uPfMbXfpOTgdRYw0zclXBqvZwNA2fSZ+A
- SeXP31AyCFYi5OsXQW7r65k6r1gK/zP3KCegDHcn8dw9QsnuutMjNCxIXgy9wRd7e9byXW
- uAoc6/0DzeAU45PYYljcDaDHYP+O0Ek=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=MjoCcHma7WuCudyvwm7YDBfFQUvVFAbaRlD6/YAFKx4=;
+ b=dwDrWklaqaLeG7LtUVd7b5KgHUe3SnnU3WGbFOv8U8YgNOQQq2jJJ4YHjaFCAGj6TsPDv5
+ c5b4dqkUB6ziDAbtNsp6jOm7zhLsWy+LxCgmfHEowOMfNraFRc0gR26oFzvrm9p5TBmCnL
+ p+IhZ0fK+VaIz3/PTK7L/iKO2uXEIMI=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-682-EdIIbcNmNMeqNuKKZt3hYA-1; Tue, 02 Sep 2025 04:08:29 -0400
-X-MC-Unique: EdIIbcNmNMeqNuKKZt3hYA-1
-X-Mimecast-MFC-AGG-ID: EdIIbcNmNMeqNuKKZt3hYA_1756800508
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-55f5fc7d258so2801965e87.0
- for <dev@dpdk.org>; Tue, 02 Sep 2025 01:08:29 -0700 (PDT)
+ us-mta-671-KOLvRJJUOPyemymjSfhNnw-1; Tue, 02 Sep 2025 04:11:19 -0400
+X-MC-Unique: KOLvRJJUOPyemymjSfhNnw-1
+X-Mimecast-MFC-AGG-ID: KOLvRJJUOPyemymjSfhNnw_1756800678
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-55f70a5c9e3so1995389e87.1
+ for <dev@dpdk.org>; Tue, 02 Sep 2025 01:11:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756800508; x=1757405308;
+ d=1e100.net; s=20230601; t=1756800678; x=1757405478;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=INef1m/58wHnz9vNOtgKh6qxZY2RWvCqVU6ei+s40qc=;
- b=XEqxLCwnc9AJ+glZ6Llqc3s9uC1jBre+PkKuNqnXP6dLSt0dkNgvYXy03t3PE5iYj5
- yMnP7K6G0DYlu8bSeQ7ESqDsGbZ/WfdmqOMOt6CoOK6OmPdn3ZnW/uzvogr/XF5WY9dk
- 1jTSJSSfHEXe0JkjKPUXLiBYg7lSQ16y+ADhmaaSrGOBfmJP41jC2fG42QaoYed0ikdC
- jfg0MFPNCnRYwsYUgBtWOC0Ihu0l5GduWjtp+ENENHzq1jOHOUyVZ3S7ErIsDvSnh9Ga
- wB0giSa2A/5LQicwvgCjTnKh5Cegw5YCKaRiFUsjg1XhuessZ3MFXMM8aGmX7TWSdcEL
- zvAA==
-X-Gm-Message-State: AOJu0YzsLYe6aVFaeIpOQVB0lvlAHWE3vmcbqhYG13OfHpaFkxFhsELh
- sJs6DrsQC0O+4kNiZ9iu75ygs7j1KJTEeszX7OBpjWgrpy0HitVYtVfE2/IdjjVsjyT40hYQyvl
- NhdUKSdJ+4627GeOGhqpKZ7S4V+pG9EtM/z5mz1v+EYSTELUdCVcxV4eFpcU6DhOBMVHZoGQuoe
- ILNeZ6tvop46iTqepQ+bE=
-X-Gm-Gg: ASbGnctMP5WcCVjWiuNKLvVnwNSyI87Pt+NOCdyWRhplpa8dAVNPLm6alNp7V35v/ly
- dyrYNKVvdaYmYoLT0/Pyv48KenU54oIgud0iHRp7+zshNmwN2hAJMHDEpmWF3xWlNsU/6DL6eqQ
- dvMsISzQIgYYWy3w+HAZeG6yU=
-X-Received: by 2002:a05:6512:689:b0:55f:5685:b5ef with SMTP id
- 2adb3069b0e04-55f708f1922mr3737003e87.29.1756800507830; 
- Tue, 02 Sep 2025 01:08:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJ1Hh57B3fr0R5Ovo18WoeRrfVDoAPLAH4vqeYVJPuxdl2BxYaL3v4zJTmFq9LI1qeazBQ/G6MNLM7dMB7KWA=
-X-Received: by 2002:a05:6512:689:b0:55f:5685:b5ef with SMTP id
- 2adb3069b0e04-55f708f1922mr3736986e87.29.1756800507214; Tue, 02 Sep 2025
- 01:08:27 -0700 (PDT)
+ bh=MjoCcHma7WuCudyvwm7YDBfFQUvVFAbaRlD6/YAFKx4=;
+ b=i/rfT4aQ919Fefh8DWcqRO46SB+Tt6WK/3Tqvxui9rLVDW9SmDNZDaBL2Pj4yeiFCw
+ vMYvPSsNwZ0AsgpD95/ygRH0zdv7YPOg5V2Esb2eaGbb2/ICGMUW80sW81j2jvnhDHJQ
+ OP7VmYXCcz1VT/VuHn7JoePPh1Xwv+mnWHK306LJ7/EyqGTBk7aTsTC3tgXHRfPLRLJs
+ 8FPc9kZer347VhOm4H4HcO/sacIrPWIqrcxCnH58nsk6zJyd4J5ZRLjqzIzsJ2YoFVEh
+ T1XE1B5tDvIXLcM+kbmd9C1K6/jz7WbiCRkOII0IE8eHRVXc9QUWkrWwhMZIvLtTv693
+ mwDA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXReA4Y1x3dipU8yZOPQF7+G+9OaD8xfwMopdR4x/okcWZSMYtUQPW+qPWfuGZaLxneyPw=@dpdk.org
+X-Gm-Message-State: AOJu0YxhqZUfnEGT6EsSrvJn8Q/uvAaNzSlvfpWaKXfo5NZwsu+cSg6a
+ YtwRLz9rnd2j6r1UFVz/qzgGAvXGynZnyHEOgU/9jbXSyBzLqxhbIUfMT2ngltybxjKMviLUBd9
+ Nry1sM5gFs4dyakJa8FIIeamq5RdOlVcWxtJkjamLiT5qzRVS1Ld7r4p216F6+rnUmZG0Z5Ii/h
+ sXDPHMXm58HaPc0+87970=
+X-Gm-Gg: ASbGncu9fFGJKZpmH7Nvhvx+GuJD/GdHr+lsY9DCpdfu2hkVF3ey22ADvR0oDgxnNdZ
+ mlA/t6Nd9pYOg24133gmnAKs8R7rXaAelZKG5t764NPouGMnhsEOtjqfZHV3C/7URtzYAOP6h6A
+ /SuAZfPIA6ar9RwQ48AJJI+RQ=
+X-Received: by 2002:a05:6512:3985:b0:55f:4760:ffeb with SMTP id
+ 2adb3069b0e04-55f709c845amr2631690e87.49.1756800677745; 
+ Tue, 02 Sep 2025 01:11:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE69y2vrySymey9U+TI2c+liG2tYzYbjsQmv5XOEdJbKfSDBkUkU09az+24IxgiQGNcq1fo5d1Q2dmZENQI6vE=
+X-Received: by 2002:a05:6512:3985:b0:55f:4760:ffeb with SMTP id
+ 2adb3069b0e04-55f709c845amr2631682e87.49.1756800677032; Tue, 02 Sep 2025
+ 01:11:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250901095953.1858938-1-ciara.loftus@intel.com>
-In-Reply-To: <20250901095953.1858938-1-ciara.loftus@intel.com>
+References: <1754423992-24652-1-git-send-email-andremue@linux.microsoft.com>
+ <CAJFAV8y5C3-TZ-m-xECRZi3=tMqUE1BUahpE=-UfTxPWaXWRdQ@mail.gmail.com>
+ <20250830002333.GA6088@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+In-Reply-To: <20250830002333.GA6088@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 2 Sep 2025 10:08:14 +0200
-X-Gm-Features: Ac12FXxHfwYAfKL2vyJOWXE0ArPNitrQ-OnK0t7c37Ev70G6vpf3GXYFbhiGPo8
-Message-ID: <CAJFAV8woLUsk=B14RKG+cvOrbdXvGdKaTU59m_A-r_Wkb8KZ6g@mail.gmail.com>
-Subject: Re: [PATCH] net/i40e: fix supported offloads for Rx vector path
-To: Ciara Loftus <ciara.loftus@intel.com>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
+Date: Tue, 2 Sep 2025 10:11:05 +0200
+X-Gm-Features: Ac12FXztlhPjyWiV_AAbz7A_V7HdCjlIiiml_fp59HpIbymNI3AD-7Xf0lqX4HE
+Message-ID: <CAJFAV8yhjevtCqORT=baHT+sSX1sPALhzYoEB9DVo67WnZjx7Q@mail.gmail.com>
+Subject: Re: [PATCH] test-flow-perf: Enable to build on Windows
+To: Andre Muezerie <andremue@linux.microsoft.com>
+Cc: Wisam Jaddo <wisamm@nvidia.com>, dev@dpdk.org,
+ Thomas Monjalon <thomas@monjalon.net>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: FY6u3o6UCB-bNqzDhel_v73IXyriL_7DDwsyD9J6J28_1756800508
+X-Mimecast-MFC-PROC-ID: axTM7G8aC1EJsCVt7c7-eUW_R6McGKtd-ye1CGuSe2A_1756800678
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -84,50 +89,40 @@ Errors-To: dev-bounces@dpdk.org
 
 Hello,
 
-On Mon, 1 Sept 2025 at 12:00, Ciara Loftus <ciara.loftus@intel.com> wrote:
+On Sat, 30 Aug 2025 at 02:23, Andre Muezerie
+<andremue@linux.microsoft.com> wrote:
 >
-> The set of supported Rx offloads in the vector path had been defined as
-> those supported by the scalar path. This was incorrect so define a new
-> list of supported offloads for the vector path. The list is the same
-> as the scalar path except it excludes vlan extend and qinq strip.
+> On Fri, Aug 29, 2025 at 03:04:10PM +0200, David Marchand wrote:
+> > Hello,
+> >
+> > On Tue, 5 Aug 2025 at 22:00, Andre Muezerie
+> > <andremue@linux.microsoft.com> wrote:
+> > >
+> > > This patch fixes some issues which were preventing this test to be
+> > > built on Windows:
+> > >
+> > > - Remove VLAs (not supported by msvc).
+> > > - Replace strsep() (which is not natively available on Windows)
+> > >   with strtok_r().
+> > > - Remove the "thousands" separator from printf() calls as it is
+> > >   not available on Windows.
+> >
+> > Can we use rte_size_to_str() instead?
+> >
 >
-> Fixes: 052ae311091c ("net/i40e: use the common Rx path selection infrastructure")
+> I considered doing that, but I thought that since the app is printing deltas it
+> could be better to print the exact numbers instead of some approximation like
+> "1.02 k" which could possibly make debugging harder.
 >
-> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
-> ---
->  drivers/net/intel/i40e/i40e_rxtx.h | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+> If you strongly believe that rte_size_to_str() should indeed be used here I can
+> make the change.
 >
-> diff --git a/drivers/net/intel/i40e/i40e_rxtx.h b/drivers/net/intel/i40e/i40e_rxtx.h
-> index 5d5d4e08b0..1f210dfdff 100644
-> --- a/drivers/net/intel/i40e/i40e_rxtx.h
-> +++ b/drivers/net/intel/i40e/i40e_rxtx.h
-> @@ -80,7 +80,16 @@ enum i40e_header_split_mode {
->                 RTE_ETH_RX_OFFLOAD_VLAN_FILTER |        \
->                 RTE_ETH_RX_OFFLOAD_RSS_HASH)
->
-> -#define I40E_RX_VECTOR_OFFLOADS I40E_RX_SCALAR_OFFLOADS
-> +#define I40E_RX_VECTOR_OFFLOADS (                      \
-> +               RTE_ETH_RX_OFFLOAD_VLAN_STRIP |         \
-> +               RTE_ETH_RX_OFFLOAD_IPV4_CKSUM |         \
-> +               RTE_ETH_RX_OFFLOAD_UDP_CKSUM |          \
-> +               RTE_ETH_RX_OFFLOAD_TCP_CKSUM |          \
-> +               RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM |   \
-> +               RTE_ETH_RX_OFFLOAD_KEEP_CRC |           \
-> +               RTE_ETH_RX_OFFLOAD_SCATTER |            \
-> +               RTE_ETH_RX_OFFLOAD_VLAN_FILTER |        \
-> +               RTE_ETH_RX_OFFLOAD_RSS_HASH)
+> What are your thoughts about this?
 
-I was curious about this fix so I have been trying to understand the
-list of supported offloads, and I have a few interrogations.
-
-How does this new code articulate with function
-i40e_rx_vec_dev_conf_condition_check_default() (that seems to have a
-build check on RTE_LIBRTE_IEEE1588).
-This seems like redundant logic to me.
-
-Should the dev_info->rx_offload_capa field be filled with the common
-set of flags of the scalar handler?
+No strong opinion: just that we introduced this rte_size_to_str() for
+this "thousands" separator stuff.
+I don't mind merging as is, and I did not hear from Wisam, so I guess
+this is fine.
 
 
 -- 
