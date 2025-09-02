@@ -2,49 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC159CA1007
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 17:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1A6CA1007
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 17:27:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 93C2F4065A;
-	Tue,  2 Sep 2025 19:27:26 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E0D3C40674;
+	Tue,  2 Sep 2025 19:27:28 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id DAB174065E;
- Tue,  2 Sep 2025 19:27:24 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C1DBD4065E;
+ Tue,  2 Sep 2025 19:27:25 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1756834045; x=1788370045;
+ t=1756834046; x=1788370046;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ZUpN69ddPVlaJVtZZJtNK/aMWEdNHurHh5mjZJsrdVQ=;
- b=WILjoP1X2WlZ9aJlyA6J4BSHeYUemt5kaJfOdBlbRp3GZTxQt9AVPz7D
- JYP0tbdxAmVG2cNO2q12K5BFCbllfBI4NERJZ0FA95Ujz5Y0KRWVnPv+d
- oiJi51enQCfcg4/KI7xRQ1xIy0oXu0+bi1VIY5PK03Izzws8wy4+C6RiY
- heFDpXqGjyXTV9fZkVcimh/Hjpirpqf7ofp82b+lVFXozlz5TYmveuMHL
- 8ndJbjUCZRcaEZdJw4iXkgvv6eZZzi/x/FlfqC/pFI5IZioAClZJ6qOkK
- M5imci3tzgcf4RXMkcyq8DapiDjVts5DSCcEqUu0HicySFIlLFeuNo0mB g==;
-X-CSE-ConnectionGUID: bVraGjGbTOe4SiIVK8uX7w==
-X-CSE-MsgGUID: z3bPLNpnSby8oDdzC8+k9A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69731974"
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="69731974"
+ bh=k0AqkMqkBtO38R79+jnP1R9TwbDwRCxGpyMUGF6RZmk=;
+ b=LJ20VyJmE4BfEAp94eDeB8Xt03mzDJye1+KtCbADqYqKRaX1aho4bly3
+ YXcxUdQgWqGE+PUG5ybTSslvKmasnUzx62RyVT9N8dTg1go72harCdIut
+ NpSQ+rlBUKajZehGc2VYrctXHPhwoW12dqtMfTxzlH/5VW3NHjK5kcK+4
+ FJ/7pbFQUFFqU3sY7iKsP42Fr3anS/fbke31GSkjPAuQmAO56urkpfspo
+ TNeGXevvwsNBznIPNZVLS8f362w0UYPhRft7AQ9pFwMQYkjHkJCBVc8Wo
+ jm2/prw/O7ZZv6aj0pr3pFrGZvFaYW22h7HZZ0xNGlC8VT4iZgEBYC3uG Q==;
+X-CSE-ConnectionGUID: I52qJ03BSPGxVtLq0ogCuA==
+X-CSE-MsgGUID: zeSVSCNfRNaWA2lf2WNw6A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69731981"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="69731981"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Sep 2025 10:27:14 -0700
-X-CSE-ConnectionGUID: QIdtIL8ASPqI5TZOuSeYvA==
-X-CSE-MsgGUID: jrYwHTbQSTGlXMEPsJY5zQ==
+ 02 Sep 2025 10:27:16 -0700
+X-CSE-ConnectionGUID: zRinVAN9QwKJQLpqX/h01g==
+X-CSE-MsgGUID: Cjd+2M0pRii1tQqyGblmdQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="171229106"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="171229110"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa007.jf.intel.com with ESMTP; 02 Sep 2025 10:27:13 -0700
+ by orviesa007.jf.intel.com with ESMTP; 02 Sep 2025 10:27:16 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Wojciech Drewek <wojciech.drewek@intel.com>,
- Qi Zhang <qi.z.zhang@intel.com>,
- Sergey Temerkhanov <sergey.temerkhanov@intel.com>,
- Dan Nowlin <dan.nowlin@intel.com>, Qiming Yang <qiming.yang@intel.com>
+ Qi Zhang <qi.z.zhang@intel.com>, Junfeng Guo <junfengg@nvidia.com>
 Cc: stable@dpdk.org
-Subject: [PATCH v1 02/12] net/ice/base: fix adding special words
-Date: Tue,  2 Sep 2025 18:26:52 +0100
-Message-ID: <6e919683011310f00dcdb60ffbb66c8f721547c7.1756833701.git.anatoly.burakov@intel.com>
+Subject: [PATCH v1 03/12] net/ice/base: fix memory leak in HW profile handling
+Date: Tue,  2 Sep 2025 18:26:53 +0100
+Message-ID: <33597cac6faf31548d3a3e0a07eeb020b000479a.1756833701.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1756833701.git.anatoly.burakov@intel.com>
 References: 
@@ -63,54 +60,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Shaiq Wani <shaiq.wani@intel.com>
+From: Jacob Keller <jacob.e.keller@intel.com>
 
-The function ice_add_special_words() is meant to add special words (such
-as traffic direction) to the rule. The function that
-interprets/translates these additional words is ice_get_sw_fv_list().
+The ice_flow_set_hw_prof() function allocates a params structure with
+ice_malloc. It uses this structure to hold some data temporarily while
+processing the hardware profile to set.
 
-However, the ice_get_sw_fv_list() is called *before*
-ice_add_special_words(), so the "special" words weren't added at that
-point yet, hence they're not translated. This results in the driver
-ignoring whatever special words that were added. The fix is to call
-ice_get_sw_fv_list() *after* ice_add_special_words().
+Static analysis indicated that this memory is not released. Fix this
+function to free the memory upon exit.
 
-Fixes: ed3066a3b1b0 ("net/ice/base: refactor DDP code")
+Fixes: 8ebb93942b2c ("net/ice/base: add function to set HW profile for raw flow")
 Cc: stable@dpdk.org
 
-Signed-off-by: Jeff Shaw <jeffrey.b.shaw@intel.com>
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ice/base/ice_switch.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/intel/ice/base/ice_flow.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/net/intel/ice/base/ice_switch.c b/drivers/net/intel/ice/base/ice_switch.c
-index 54cc2e1c07..f16bec044c 100644
---- a/drivers/net/intel/ice/base/ice_switch.c
-+++ b/drivers/net/intel/ice/base/ice_switch.c
-@@ -8287,10 +8287,6 @@ ice_add_adv_recipe(struct ice_hw *hw, struct ice_adv_lkup_elem *lkups,
- 	 */
- 	ice_get_compat_fv_bitmap(hw, rinfo, fv_bitmap);
+diff --git a/drivers/net/intel/ice/base/ice_flow.c b/drivers/net/intel/ice/base/ice_flow.c
+index cdc9ee26c5..7b0ecd54df 100644
+--- a/drivers/net/intel/ice/base/ice_flow.c
++++ b/drivers/net/intel/ice/base/ice_flow.c
+@@ -2632,10 +2632,6 @@ ice_flow_set_hw_prof(struct ice_hw *hw, u16 dest_vsi_handle,
  
--	status = ice_get_sw_fv_list(hw, lkup_exts, fv_bitmap, &rm->fv_list);
+ 	status = ice_flow_assoc_hw_prof(hw, blk, dest_vsi_handle,
+ 					fdir_vsi_handle, id);
 -	if (status)
--		goto err_unroll;
+-		goto free_params;
 -
- 	/* Create any special protocol/offset pairs, such as looking at tunnel
- 	 * bits by extracting metadata
- 	 */
-@@ -8298,6 +8294,10 @@ ice_add_adv_recipe(struct ice_hw *hw, struct ice_adv_lkup_elem *lkups,
- 	if (status)
- 		goto err_free_lkup_exts;
+-	return 0;
  
-+	status = ice_get_sw_fv_list(hw, lkup_exts, fv_bitmap, &rm->fv_list);
-+	if (status)
-+		goto err_unroll;
-+
- 	/* Group match words into recipes using preferred recipe grouping
- 	 * criteria.
- 	 */
+ free_params:
+ 	ice_free(hw, params);
 -- 
 2.47.3
 
