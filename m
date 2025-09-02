@@ -2,32 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D364BCA1005
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 16:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB64CA1007
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 17:27:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 83CA24042C;
-	Tue,  2 Sep 2025 18:52:48 +0200 (CEST)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 77C6F402E6
- for <dev@dpdk.org>; Tue,  2 Sep 2025 18:52:47 +0200 (CEST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D96226BE;
- Tue,  2 Sep 2025 09:52:38 -0700 (PDT)
-Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A6CDB3F694;
- Tue,  2 Sep 2025 09:52:45 -0700 (PDT)
-Date: Tue, 2 Sep 2025 17:52:33 +0100
-From: Luca Vizzarro <luca.vizzarro@arm.com>
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu
-Subject: Re: [PATCH v3] dts: enable port binding on the TG
-Message-ID: <175683053809.93271.2049800112988455963.luca.vizzarro@arm.com>
-References: <20250808182152.356879-2-abailey@iol.unh.edu>
- <20250828123758.20451-1-abailey@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id 45A0840647;
+	Tue,  2 Sep 2025 19:27:23 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id B9F594042C
+ for <dev@dpdk.org>; Tue,  2 Sep 2025 19:27:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1756834042; x=1788370042;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=DE7ojjokBAqrnpl5sOOOjT1bXKuGCFuEPbfV8m8Xk1E=;
+ b=OwE6bf36AvvkOAdaHu/dASNYrvKT5Hs5FhBb2KrXsboaGkzbmzO4CyuR
+ 0Y1Z7qob9DSZHAVBqFsjFWxZuqVm5RDhGhZdyUApxQ6NaBnujifGwLR6m
+ ho9qsnnXdUmSt+iyn9J92XOXNz55j5vBR4jNtPYE7984772x2QgmgqTqc
+ sp5lxOY+HDp6eGsc2NQNpz58uYmm10HrzC1ejCX2QHxeq8/nKxzuOE3RO
+ IP254m0Ms7jsYzqTV9Oof8yst4YKdRCRn6Y6BaKn+nLriKZLbDvUbCKg8
+ b7jrs1V87+NRLPujd8mEaj0wl8ZuCtKHtifPYvF/Iu3y1PHiXle0g6Ugg w==;
+X-CSE-ConnectionGUID: 5uJTI50PTviDQxYHRRQNOA==
+X-CSE-MsgGUID: g4LXQM14RCyw3nKFIYkUTA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69731921"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="69731921"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Sep 2025 10:27:11 -0700
+X-CSE-ConnectionGUID: 1mIYRYSZTYqZuPHgpOYNhw==
+X-CSE-MsgGUID: FvBBSPHhT+WqyKBAVIpRCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="171229099"
+Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
+ by orviesa007.jf.intel.com with ESMTP; 02 Sep 2025 10:27:11 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com
+Subject: [PATCH v1 00/12] net/ice: update to latest version
+Date: Tue,  2 Sep 2025 18:26:50 +0100
+Message-ID: <cover.1756833701.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250828123758.20451-1-abailey@iol.unh.edu>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -41,51 +57,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Andrew,
+This patch adds an assortment of fixes and updates for net/ice driver,
+bringing it up to date with latest shared code.
 
-Thank you for clarifying. It makes more sense now.
+This patchset includes fixes submitted by Shaiq Wani [1], with a small change of
+dropping a direction lookup flag as it's not necessary.
 
-On Thu, Aug 28, 2025 at 08:37:58AM +0000, Andrew Bailey wrote:
-> diff --git a/dts/framework/testbed_model/port.py b/dts/framework/testbed_model/port.py
-> index fc58e2b993..e9ad145f97 100644
-> --- a/dts/framework/testbed_model/port.py
-> +++ b/dts/framework/testbed_model/port.py
-> @@ -126,7 +126,12 @@ def original_driver(self) -> str | None:
->      @property
->      def bound_for_dpdk(self) -> bool:
->          """Is the port bound to the driver for DPDK?"""
-> -        return self.current_driver == self.config.os_driver_for_dpdk
-> +        dpdk_driver = self.config.os_driver_for_dpdk
-> +
-> +        if "TG" in self.node.name:
-> +            return self.current_driver == dpdk_driver and dpdk_driver != self.config.os_driver
+[1] https://patches.dpdk.org/project/dpdk/cover/20250731044132.110174-1-shaiq.wani@intel.com/
 
-The `node.name` is an arbitrary name that is chosen by the user.
-Unfortunately this is not a reliable approach.
+Anatoly Burakov (2):
+  net/ice/base: add E835 device ID's
+  net/ice: update README
 
-Another issue is that this logic doesn't really make a lot of sense in
-the context of this property. I'd much rather have a `bound_for_kernel`
-property, and then fix the checks appropriately where these are called.
+Jacob Keller (2):
+  net/ice/base: fix memory leak in HW profile handling
+  net/ice/base: improve global config lock behavior
 
-From my understanding of the commit body this is due to the condition in
-the list comprehension in ports_to_bring_up not covering this corner
-case. If this is right, then this condition should be updated
-accordingly.
+Jaroslaw Ilgiewicz (1):
+  net/ice/base: add 40G speed
 
-> +
-> +        return self.current_driver == dpdk_driver
->  
->      def configure_mtu(self, mtu: int):
->          """Configure the port's MTU value.
-> diff --git a/dts/framework/testbed_model/topology.py b/dts/framework/testbed_model/topology.py
-> index 899ea0ad3a..b35a519719 100644
-> --- a/dts/framework/testbed_model/topology.py
-> +++ b/dts/framework/testbed_model/topology.py
-> @@ -250,6 +253,41 @@ def _bind_ports_to_drivers(
-> <snip>
-> +        ctx = get_ctx()
-> +        prepare_node(ctx.tg_node)
-> +        prepare_node(ctx.sut_node)
-> +        # ctx.tg_node.main_session.bring_up_link(self.sut_ports)
+Marcin Szycik (1):
+  net/ice/base: add direction metadata
 
-Like Patrick said, this should be removed.
+Pandi Kumar Maharajan (2):
+  net/ice/base: fix memory leak in recipe handling
+  net/ice/base: allow overriding recipe ID
+
+Przemek Kitszel (1):
+  net/ice/base: clean up RSS LUT selection
+
+Shaiq Wani (2):
+  net/ice/base: fix adding special words
+  net/ice: count drop-all filter stats in Rx stats
+
+Stefan Wegrzyn (1):
+  net/ice/base: add missing health status defines
+
+ drivers/net/intel/ice/base/README             |   4 +-
+ drivers/net/intel/ice/base/ice_adminq_cmd.h   |  21 ++-
+ drivers/net/intel/ice/base/ice_common.c       | 133 ++++++++++--------
+ drivers/net/intel/ice/base/ice_ddp.c          |  34 +++--
+ drivers/net/intel/ice/base/ice_devids.h       |  18 +++
+ drivers/net/intel/ice/base/ice_flow.c         |   4 -
+ .../net/intel/ice/base/ice_protocol_type.h    |   1 +
+ drivers/net/intel/ice/base/ice_switch.c       |  38 ++++-
+ drivers/net/intel/ice/base/ice_switch.h       |   4 +
+ drivers/net/intel/ice/ice_ethdev.c            |  12 +-
+ 10 files changed, 184 insertions(+), 85 deletions(-)
+
+-- 
+2.47.3
+
