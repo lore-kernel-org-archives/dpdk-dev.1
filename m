@@ -2,44 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD33CA1005
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 19:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9783CA1007
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 20:53:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92F1D40655;
-	Tue,  2 Sep 2025 21:48:16 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 689D84042C
- for <dev@dpdk.org>; Tue,  2 Sep 2025 21:48:15 +0200 (CEST)
-Received: from debian (unknown [78.109.66.112])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 7E051E0709;
- Tue,  2 Sep 2025 23:48:14 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 7E051E0709
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1756842494;
- bh=vjKnIWfgHQSHHmt5rVhyFZiF2POSomhBlLfrxxhb3rY=;
- h=Date:From:To:cc:Subject:In-Reply-To:References:From;
- b=nHx9bXGFr3ijKWcXZtLtbnZK7jg9qsm7gT/rkwCAJLoP7JnkgrkacJ/uVNypcNXb0
- rwd02D/x+mgYA7JzgMVvYMOEvIpxPrK4b8HMZrq/sWfDdW8FLYZYH18RX5Oo8pumrj
- kI+27DitlGhdpv2ypQxUhfHgLgJZhCAKANi3nvVM5I1VlavBSPelu0PEyG9RaxTFxa
- ub6J4Izopah15QeU8fhReXraV8/EVims/ThfZCT0Fjt+/Sq5w1qlUWoR8YfaJVwkPd
- qPWimq9qckFlNqA/K5uiJLYRVhwv7iYb/H7LIf/McbTh1XqqlWCon8SxNbaIsqab6Z
- GDr+q2FTVv6hw==
-Date: Tue, 2 Sep 2025 23:48:13 +0400 (+04)
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: Andrew Bailey <abailey@iol.unh.edu>
-cc: luca.vizzarro@arm.com, dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu
-Subject: Re: [PATCH v1 1/3] dts: allow mbuf_fast_free to be set with testpmd
- shell
-In-Reply-To: <3505d755-ddbc-d6f5-ff47-0ea2216c8993@arknetworks.am>
-Message-ID: <a666c751-3890-07b8-b2a1-96001f7ace08@arknetworks.am>
-References: <20250902142725.56736-1-abailey@iol.unh.edu>
- <20250902142725.56736-2-abailey@iol.unh.edu>
- <3505d755-ddbc-d6f5-ff47-0ea2216c8993@arknetworks.am>
+	by mails.dpdk.org (Postfix) with ESMTP id 8295A4042C;
+	Tue,  2 Sep 2025 22:53:44 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 01B6F402DC
+ for <dev@dpdk.org>; Tue,  2 Sep 2025 22:53:42 +0200 (CEST)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id E495F211828B; Tue,  2 Sep 2025 13:53:41 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E495F211828B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1756846421;
+ bh=7XTjnByxM3FgEtgtwnguqd7I24Z2fbKQE9lj7fMmqUU=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=pRT9MKrKdnmcfFxMlts4rm/LGpeFB1sX7MySOJwHRHaaPzc06C2+B+fOAM9H0ASEl
+ 1L6zuo/8cN+5sHws1jFDjRkqNYPP6qg7V+O19qS3HDwMQyHrfzxO7rXhj/ZpynmNIQ
+ ho1mbqj2gtQklH29dlyHUmZm+wvuW02XRHLJk75o=
+Date: Tue, 2 Sep 2025 13:53:41 -0700
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: Wisam Jaddo <wisamm@nvidia.com>, dev@dpdk.org,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: Re: [PATCH] test-flow-perf: Enable to build on Windows
+Message-ID: <20250902205341.GA16501@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1754423992-24652-1-git-send-email-andremue@linux.microsoft.com>
+ <CAJFAV8y5C3-TZ-m-xECRZi3=tMqUE1BUahpE=-UfTxPWaXWRdQ@mail.gmail.com>
+ <20250830002333.GA6088@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CAJFAV8yhjevtCqORT=baHT+sSX1sPALhzYoEB9DVo67WnZjx7Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJFAV8yhjevtCqORT=baHT+sSX1sPALhzYoEB9DVo67WnZjx7Q@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,19 +49,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 2 Sep 2025, Ivan Malov wrote:
+On Tue, Sep 02, 2025 at 10:11:05AM +0200, David Marchand wrote:
+> Hello,
+> 
+> On Sat, 30 Aug 2025 at 02:23, Andre Muezerie
+> <andremue@linux.microsoft.com> wrote:
+> >
+> > On Fri, Aug 29, 2025 at 03:04:10PM +0200, David Marchand wrote:
+> > > Hello,
+> > >
+> > > On Tue, 5 Aug 2025 at 22:00, Andre Muezerie
+> > > <andremue@linux.microsoft.com> wrote:
+> > > >
+> > > > This patch fixes some issues which were preventing this test to be
+> > > > built on Windows:
+> > > >
+> > > > - Remove VLAs (not supported by msvc).
+> > > > - Replace strsep() (which is not natively available on Windows)
+> > > >   with strtok_r().
+> > > > - Remove the "thousands" separator from printf() calls as it is
+> > > >   not available on Windows.
+> > >
+> > > Can we use rte_size_to_str() instead?
+> > >
+> >
+> > I considered doing that, but I thought that since the app is printing deltas it
+> > could be better to print the exact numbers instead of some approximation like
+> > "1.02 k" which could possibly make debugging harder.
+> >
+> > If you strongly believe that rte_size_to_str() should indeed be used here I can
+> > make the change.
+> >
+> > What are your thoughts about this?
+> 
+> No strong opinion: just that we introduced this rte_size_to_str() for
+> this "thousands" separator stuff.
+> I don't mind merging as is, and I did not hear from Wisam, so I guess
+> this is fine.
+> 
+> 
+> -- 
+> David Marchand
 
-<snip>
+I don't have a strong opinion on this either, but I remember that
+when rte_size_to_str() got introduced one of the reviewers mentioned
+that while the new API would be nice for # of bytes or # of packets
+transmitted, they would prefer to see the exact number of bytes for
+the deltas. That's the reason I took this approach. I'm assuming
+others are fine with this too if we don't hear back.
 
->> +            port_id: The ID of the port containing the queues.
->> +            num_queues: The queue to disable mbuf_fast_free on.
->
-> While I'm not well-versed in DTS style in general and cannot push to choose
-> some specific naming, I'd say, to me, 'queue_ids' would read less ambiguous.
->
-
-Sorry, I now see this is not a queue ID array but the total number of queues. If
-so, the description should be corrected to say so. Right now it reads like this
-is a specific queue index.
-
-Thank you.
+Andre Muezerie
