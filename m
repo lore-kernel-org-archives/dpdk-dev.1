@@ -2,46 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB64CA1007
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 17:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B26CA1007
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 17:27:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45A0840647;
-	Tue,  2 Sep 2025 19:27:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5CBC04065B;
+	Tue,  2 Sep 2025 19:27:24 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id B9F594042C
- for <dev@dpdk.org>; Tue,  2 Sep 2025 19:27:21 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 969B24042C
+ for <dev@dpdk.org>; Tue,  2 Sep 2025 19:27:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1756834042; x=1788370042;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=DE7ojjokBAqrnpl5sOOOjT1bXKuGCFuEPbfV8m8Xk1E=;
- b=OwE6bf36AvvkOAdaHu/dASNYrvKT5Hs5FhBb2KrXsboaGkzbmzO4CyuR
- 0Y1Z7qob9DSZHAVBqFsjFWxZuqVm5RDhGhZdyUApxQ6NaBnujifGwLR6m
- ho9qsnnXdUmSt+iyn9J92XOXNz55j5vBR4jNtPYE7984772x2QgmgqTqc
- sp5lxOY+HDp6eGsc2NQNpz58uYmm10HrzC1ejCX2QHxeq8/nKxzuOE3RO
- IP254m0Ms7jsYzqTV9Oof8yst4YKdRCRn6Y6BaKn+nLriKZLbDvUbCKg8
- b7jrs1V87+NRLPujd8mEaj0wl8ZuCtKHtifPYvF/Iu3y1PHiXle0g6Ugg w==;
-X-CSE-ConnectionGUID: 5uJTI50PTviDQxYHRRQNOA==
-X-CSE-MsgGUID: g4LXQM14RCyw3nKFIYkUTA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69731921"
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="69731921"
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=HHhaU/lrp6gtCMByKVGp3lfnDqWCEztLuvF0a4M9g3A=;
+ b=DPFiKbFQPFl2/Q/Txk2sVtsNvQLf/cpT7Dp1JTuxGMpGbwfkXtTy5SVk
+ jLxzwI0Ga+gljTHX3RdbuiNTePa9gdiSrISsf0+iI4Y/KbcFGS5VLz2cS
+ eTFfRWWWVbEbHxz92vCynOBlWRZvNDrVcwG/sNCm3W7nUEaRrXtCtwykt
+ PF8YbgZC2YMYxaSGTV2gIsSMCYOP9DPhT71nEIA7VVaMaryfYd2apphOb
+ GvS0O+aEqH9+IvVzHgJA5rBY568PGVmyuMsO4U6JjT+nTlVIU75sH+VfP
+ HQHv6cVAAQX5hVWUL3DNCuTrEVAmWtm682KvhyZ8MbN2DigPzdXg0nbdg g==;
+X-CSE-ConnectionGUID: T4D1E7deSb2rEzqLp0RK+A==
+X-CSE-MsgGUID: X+tKgo68Q+mg24KY7qEWrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69731946"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="69731946"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Sep 2025 10:27:11 -0700
-X-CSE-ConnectionGUID: 1mIYRYSZTYqZuPHgpOYNhw==
-X-CSE-MsgGUID: FvBBSPHhT+WqyKBAVIpRCw==
+ 02 Sep 2025 10:27:12 -0700
+X-CSE-ConnectionGUID: /8bYQ+B+T1qoZyFImBmhlw==
+X-CSE-MsgGUID: sL3RIVTRSc+JKT6/h4mo5g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="171229099"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="171229103"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa007.jf.intel.com with ESMTP; 02 Sep 2025 10:27:11 -0700
+ by orviesa007.jf.intel.com with ESMTP; 02 Sep 2025 10:27:12 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com
-Subject: [PATCH v1 00/12] net/ice: update to latest version
-Date: Tue,  2 Sep 2025 18:26:50 +0100
-Message-ID: <cover.1756833701.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v1 01/12] net/ice/base: add direction metadata
+Date: Tue,  2 Sep 2025 18:26:51 +0100
+Message-ID: <cd2a7623f02e88a0aff0200a41ad8f4de7543f57.1756833701.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1756833701.git.anatoly.burakov@intel.com>
+References: 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -57,54 +59,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch adds an assortment of fixes and updates for net/ice driver,
-bringing it up to date with latest shared code.
+From: Marcin Szycik <marcin.szycik@intel.com>
 
-This patchset includes fixes submitted by Shaiq Wani [1], with a small change of
-dropping a direction lookup flag as it's not necessary.
+Currently it is possible to create a rule which might break Tx traffic,
+because by default all switch rules apply to both Rx and Tx traffic. In
+order to avoid situations where Tx traffic accidentally matches Rx rule,
+always add direction metadata to all switch rules.
 
-[1] https://patches.dpdk.org/project/dpdk/cover/20250731044132.110174-1-shaiq.wani@intel.com/
+However, because we're adding a new piece of metadata to all rules, some
+rules might get too big and be rejected because they were already maxing
+out rule capacity. To avoid that, we will only add direction metadata to
+rules that are big enough to store it, on the assumption that if a rule
+is already big enough to max out the capacity, the rule is therefore so
+hyper-specific that it is highly unlikely to match both Rx and Tx
+traffic, and so the direction is implied by the fact that the rule is so
+specific.
 
-Anatoly Burakov (2):
-  net/ice/base: add E835 device ID's
-  net/ice: update README
+Signed-off-by: Marcin Szycik <marcin.szycik@intel.com>
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ drivers/net/intel/ice/base/ice_protocol_type.h |  1 +
+ drivers/net/intel/ice/base/ice_switch.c        | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
 
-Jacob Keller (2):
-  net/ice/base: fix memory leak in HW profile handling
-  net/ice/base: improve global config lock behavior
-
-Jaroslaw Ilgiewicz (1):
-  net/ice/base: add 40G speed
-
-Marcin Szycik (1):
-  net/ice/base: add direction metadata
-
-Pandi Kumar Maharajan (2):
-  net/ice/base: fix memory leak in recipe handling
-  net/ice/base: allow overriding recipe ID
-
-Przemek Kitszel (1):
-  net/ice/base: clean up RSS LUT selection
-
-Shaiq Wani (2):
-  net/ice/base: fix adding special words
-  net/ice: count drop-all filter stats in Rx stats
-
-Stefan Wegrzyn (1):
-  net/ice/base: add missing health status defines
-
- drivers/net/intel/ice/base/README             |   4 +-
- drivers/net/intel/ice/base/ice_adminq_cmd.h   |  21 ++-
- drivers/net/intel/ice/base/ice_common.c       | 133 ++++++++++--------
- drivers/net/intel/ice/base/ice_ddp.c          |  34 +++--
- drivers/net/intel/ice/base/ice_devids.h       |  18 +++
- drivers/net/intel/ice/base/ice_flow.c         |   4 -
- .../net/intel/ice/base/ice_protocol_type.h    |   1 +
- drivers/net/intel/ice/base/ice_switch.c       |  38 ++++-
- drivers/net/intel/ice/base/ice_switch.h       |   4 +
- drivers/net/intel/ice/ice_ethdev.c            |  12 +-
- 10 files changed, 184 insertions(+), 85 deletions(-)
-
+diff --git a/drivers/net/intel/ice/base/ice_protocol_type.h b/drivers/net/intel/ice/base/ice_protocol_type.h
+index de960d7d1b..789f0d7ca5 100644
+--- a/drivers/net/intel/ice/base/ice_protocol_type.h
++++ b/drivers/net/intel/ice/base/ice_protocol_type.h
+@@ -226,6 +226,7 @@ enum ice_prot_id {
+ #define ICE_TUN_FLAG_MDID_OFF(word) \
+ 	(ICE_MDID_SIZE * (ICE_TUN_FLAG_MDID + (word)))
+ #define ICE_TUN_FLAG_MASK 0xFF
++#define ICE_FROM_NETWORK_FLAG_MASK 0x8
+ #define ICE_DIR_FLAG_MASK 0x10
+ #define ICE_TUN_FLAG_IN_VLAN_MASK 0x80 /* VLAN inside tunneled header */
+ #define ICE_TUN_FLAG_VLAN_MASK 0x01
+diff --git a/drivers/net/intel/ice/base/ice_switch.c b/drivers/net/intel/ice/base/ice_switch.c
+index 777fc88d01..54cc2e1c07 100644
+--- a/drivers/net/intel/ice/base/ice_switch.c
++++ b/drivers/net/intel/ice/base/ice_switch.c
+@@ -7925,6 +7925,20 @@ ice_add_special_words(struct ice_adv_rule_info *rinfo,
+ 	u16 mask;
+ 	u16 off;
+ 
++	/*
++	 * Failing to add direction metadata is not considered an error, because
++	 * the kinds of rules which would trigger this error are already so
++	 * highly specific that they're unlikely to match both Rx and Tx traffic
++	 * at the same time.
++	 */
++	if (lkup_exts->n_val_words < ICE_MAX_CHAIN_WORDS) {
++		u8 word = lkup_exts->n_val_words++;
++
++		lkup_exts->fv_words[word].prot_id = ICE_META_DATA_ID_HW;
++		lkup_exts->fv_words[word].off = ICE_TUN_FLAG_MDID_OFF(0);
++		lkup_exts->field_mask[word] = ICE_FROM_NETWORK_FLAG_MASK;
++	}
++
+ 	/* If this is a tunneled packet, then add recipe index to match the
+ 	 * tunnel bit in the packet metadata flags. If this is a tun_and_non_tun
+ 	 * packet, then add recipe index to match the direction bit in the flag.
 -- 
 2.47.3
 
