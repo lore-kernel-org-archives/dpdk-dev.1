@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA75ACA1007
-	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 17:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58253CA1005
+	for <dpdk-dev@archiver.kernel.org>; Tue,  2 Sep 2025 17:28:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6EA5140687;
-	Tue,  2 Sep 2025 19:27:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 99A6B406A2;
+	Tue,  2 Sep 2025 19:27:32 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id AE5B74066E
+ by mails.dpdk.org (Postfix) with ESMTP id F366E4066F
  for <dev@dpdk.org>; Tue,  2 Sep 2025 19:27:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1756834047; x=1788370047;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=ujKfZLD92n7WnNyG+kb5+50c+q+BmBCUOB5Enj3QXRY=;
- b=A5ejI/Ux6rBjJTiTagxz5WgCxQrNiDj7tn81LjoO6grv0LI8in24umBM
- +wh1JALGN69l5JZj9YZ/ev1Zzakg0MLhgAOEAk7OUCFfBYau6X4Evp0v7
- 3yxpfGMh7lKAg4RjDiogyoSERr9A0Km1SqRn2sNKMEbBkT62BZMm282ub
- P1FRGiBuo+b9FJTK0Gg8RV0retFhPQKDP17apzk0lnvbtElVLoe+8eXz3
- DiIs1eoLRYO/fEAJUjMZ1hHUPYoSHKpXr6UCchMb1QPB1wpbiAp8D55s6
- T6CIIHfdGV0ZxkKHZmZnWFwX6kAzPCZW2KZoDh7KqHGoBIdLXBDZKlIwc Q==;
-X-CSE-ConnectionGUID: /xL/LabCR9G6BTbBw4TwZQ==
-X-CSE-MsgGUID: UXLXXCijTUCZ1JlG3cxPmw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69731995"
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="69731995"
+ bh=kVOW3sF2y3Ep0vMbQwTLrDUMPGIDII5v+5Qr2+J10jE=;
+ b=A1GWPVc9vVOfuF1mUYdHR9XozCRryzDYMEP1THv5bYJ6OfktVX4otK23
+ o0CA/DycxECbSJqh5iN7nBl1opvq7xDw3oRkSmxFsNePiJX6AsLVv3NEe
+ WIY7pg1PSXT9vqnMdHzY8eHdck7VXXUaea5c9yLGAikbYpSkgS8v5ZhwE
+ kSAWtybMv23SuLAVzEaaKI2sk0ZQOfef3be16dTaYTxaACy1ZQEaDjPVF
+ l/y7yOZFds4sAF5GffDAacAhf48u3VoTTWr0c1NeHAyC9saSyWbi4Td3c
+ YYDFDWVf1uHu6SJE1H8r7DLZYDA7MjgbyA9UeuLTBc0jyGMbIvTd1gjhp Q==;
+X-CSE-ConnectionGUID: OZjjSovfSNOAjCFvXurBBg==
+X-CSE-MsgGUID: Ns+TrlVTS4SYaFbLZvq8VA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11541"; a="69732004"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="69732004"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Sep 2025 10:27:22 -0700
-X-CSE-ConnectionGUID: p8Jxn4sBQfWMIVRGSGKFsA==
-X-CSE-MsgGUID: 0YE616+BTHuTkX4yEiSUWQ==
+ 02 Sep 2025 10:27:23 -0700
+X-CSE-ConnectionGUID: c7VUoXFNRwCHsWbw4Mfokg==
+X-CSE-MsgGUID: Uk+20sljS8WP6V6T98ngmQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="171229120"
+X-IronPort-AV: E=Sophos;i="6.18,233,1751266800"; d="scan'208";a="171229123"
 Received: from silpixa00401119.ir.intel.com ([10.55.129.167])
- by orviesa007.jf.intel.com with ESMTP; 02 Sep 2025 10:27:22 -0700
+ by orviesa007.jf.intel.com with ESMTP; 02 Sep 2025 10:27:23 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v1 06/12] net/ice/base: add 40G speed
-Date: Tue,  2 Sep 2025 18:26:56 +0100
-Message-ID: <b5b3a1611701074aa4d14b12e0024f498f5e9432.1756833701.git.anatoly.burakov@intel.com>
+Subject: [PATCH v1 07/12] net/ice/base: allow overriding recipe ID
+Date: Tue,  2 Sep 2025 18:26:57 +0100
+Message-ID: <ac3baaf70490565b39dafd2aaf488e63df76174c.1756833701.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1756833701.git.anatoly.burakov@intel.com>
 References: 
@@ -59,28 +59,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jaroslaw Ilgiewicz <jaroslaw.ilgiewicz@intel.com>
+From: Pandi Kumar Maharajan <pandi.maharajan@intel.com>
 
-Added 40G speed for port options
+With the addition of double VLAN mode on the device, the MAC VLAN filter
+add rule was previously matching only the inner VLAN, rather than the
+intended outer VLAN. This patch resolves the issue by introducing a new
+software recipe ID as part of ice_fltr_info, allowing the base code to
+send the newly created recipe ID. This ensures that the filter correctly
+matches the outer VLAN when processing packets. Issue is observed in ESXi
+environment but this patch introduces a generic solution for all
+operating systems by adding a rid_override flag. If the base driver needs
+to use a recipe ID different from the shared code default, it can set the
+rid variable and enable the rid_override flag. This instructs the shared
+code to use the specified rid instead of the default value.
 
-Signed-off-by: Jaroslaw Ilgiewicz <jaroslaw.ilgiewicz@intel.com>
+Signed-off-by: Pandi Kumar Maharajan <pandi.maharajan@intel.com>
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ice/base/ice_adminq_cmd.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/intel/ice/base/ice_switch.c | 6 +++++-
+ drivers/net/intel/ice/base/ice_switch.h | 4 ++++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/ice/base/ice_adminq_cmd.h b/drivers/net/intel/ice/base/ice_adminq_cmd.h
-index a5817daca9..34b008f5fd 100644
---- a/drivers/net/intel/ice/base/ice_adminq_cmd.h
-+++ b/drivers/net/intel/ice/base/ice_adminq_cmd.h
-@@ -1917,6 +1917,7 @@ struct ice_aqc_get_port_options_elem {
- #define ICE_AQC_PORT_OPT_MAX_LANE_50G	6
- #define ICE_AQC_PORT_OPT_MAX_LANE_100G	7
- #define ICE_AQC_PORT_OPT_MAX_LANE_200G	8
-+#define ICE_AQC_PORT_OPT_MAX_LANE_40G	9
- 	u8 global_scid[2];
- 	u8 phy_scid[2];
- 	u8 pf2port_cid[2];
+diff --git a/drivers/net/intel/ice/base/ice_switch.c b/drivers/net/intel/ice/base/ice_switch.c
+index 628473f100..fff61b89d7 100644
+--- a/drivers/net/intel/ice/base/ice_switch.c
++++ b/drivers/net/intel/ice/base/ice_switch.c
+@@ -4113,7 +4113,11 @@ ice_fill_sw_rule(struct ice_hw *hw, struct ice_fltr_info *f_info,
+ 		CPU_TO_LE16(ICE_AQC_SW_RULES_T_LKUP_TX);
+ 
+ 	/* Recipe set depending on lookup type */
+-	s_rule->recipe_id = CPU_TO_LE16(f_info->lkup_type);
++	if (f_info->rid_override) {
++		s_rule->recipe_id = CPU_TO_LE16(f_info->rid);
++	} else {
++		s_rule->recipe_id = CPU_TO_LE16(f_info->lkup_type);
++	}
+ 	s_rule->src = CPU_TO_LE16(f_info->src);
+ 	s_rule->act = CPU_TO_LE32(act);
+ 
+diff --git a/drivers/net/intel/ice/base/ice_switch.h b/drivers/net/intel/ice/base/ice_switch.h
+index 8eac7739fb..73452cc4c7 100644
+--- a/drivers/net/intel/ice/base/ice_switch.h
++++ b/drivers/net/intel/ice/base/ice_switch.h
+@@ -195,6 +195,10 @@ struct ice_fltr_info {
+ 	u8 lb_en;	/* Indicate if packet can be looped back */
+ 	u8 lan_en;	/* Indicate if packet can be forwarded to the uplink */
+ 	u8 fltVeb_en;   /* Indicate if VSI is connected to floating VEB */
++
++	/* Override default Recipe ID */
++	u16 rid;
++	bool rid_override;
+ };
+ 
+ struct ice_update_recipe_lkup_idx_params {
 -- 
 2.47.3
 
