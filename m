@@ -2,69 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B431ACA1012
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Sep 2025 21:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C05CA1010
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Sep 2025 21:29:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DDC040609;
-	Wed,  3 Sep 2025 23:28:53 +0200 (CEST)
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com
- [209.85.160.175])
- by mails.dpdk.org (Postfix) with ESMTP id 2BBCD40281
- for <dev@dpdk.org>; Wed,  3 Sep 2025 23:28:52 +0200 (CEST)
-Received: by mail-qt1-f175.google.com with SMTP id
- d75a77b69052e-4b109c4af9eso4379221cf.3
- for <dev@dpdk.org>; Wed, 03 Sep 2025 14:28:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5283340EDF;
+	Wed,  3 Sep 2025 23:28:55 +0200 (CEST)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com
+ [209.85.222.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 2673640609
+ for <dev@dpdk.org>; Wed,  3 Sep 2025 23:28:53 +0200 (CEST)
+Received: by mail-qk1-f169.google.com with SMTP id
+ af79cd13be357-7f7742e71c6so41430785a.1
+ for <dev@dpdk.org>; Wed, 03 Sep 2025 14:28:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=atomicrules-com.20230601.gappssmtp.com; s=20230601; t=1756934931;
- x=1757539731; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=7TvqMIRpEhmvIQEF4ROCJxPOAAO2h1SXNkXdCshOlew=;
- b=PkXFnvzhMAlSEQFh8oxtXsvShKhK3QTkWk2plhjwO/qPuSRAL1XfHKFRN3mgVrV+Ri
- QkoI69zkhK6QYjFHktdwN2AiE+4QX+vD0DA/KTtrJIK9pj/eP/2BxcagASPJX6WZyV0c
- ko6WVcSlTXNfXV7ng3BKkpCAUD4xjXV6LUwrOfg3+onedoP/+5oIcEw6wFqfbSoJNjKJ
- rpykttghmuS4rmdfAD3+FukBBR6eXkSGnj0lQ7snc+EvzlRUAikNxdBMPM7W6rSjT7pl
- y/kJPlHtN/lP4UPS9Zr9hVD9LTc3kt5zj5M6/Er8zw9Y3HNKxenCj1lJM9y2EJ3ypXqe
- q4Cw==
+ d=atomicrules-com.20230601.gappssmtp.com; s=20230601; t=1756934932;
+ x=1757539732; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=O5CLORycxzUzZGXTs+kr7fOTjhEEdeMYtMIL+2jLHH8=;
+ b=VAtcyRZy0KBhg/BzWTDXwsYcwz1pWoNgx04P3USjmtPqdi2PnoIQWCN+O3M8RQY27I
+ oUaXQeGRB6uDuVr5P5mtd2WuFajcGHd12DZ+nVxQ9AqiJ9RD8RPW8DfAIllmSDI65+T2
+ iP85mOqfiehY4LjVqhz4yphD8fI2+Oj/y/TE1bpT2RvCJ59fKRvz8LO/awqESrc5IPA+
+ WrCG0cYOtTwid0p3LPvGvOWCQJ9IkB5M+DAjruXH6t1XS8b5S4NMX7bYVM9WpCxuah8j
+ csUs2T9k6eVIsf8zB7hnmBu1o8YFqFBhT+BLyzXUZM0HSq4zWZRcCHLKG/UkgoIqtl38
+ LKEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756934931; x=1757539731;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=7TvqMIRpEhmvIQEF4ROCJxPOAAO2h1SXNkXdCshOlew=;
- b=Uxtnw9nScodsJ4Rq+286kYpIuGqwyHDGnGxhIx3bRk28VG0pWAnSYAF7N6DZQWRkoi
- 2FHjkJwcpvlaRFSwpPDwmnCTopAfE9wfK39/EEFAzXy/+/51pPBwP2h2TUdWFtgfivaa
- vWwsTIhEtn4yNim1CLgiASBJDM4fDdpS6Zns1L3cbog2OIYnv24qQCYA+E2fE/2dDr0G
- 9R0SJDOY+tJpyjzA6Vg2mSNZIzd8ZTlwPq3Ry5zMSYvEWAGzy4gPz1jOo7v4vv7wOcD1
- qsY815zHppYqAbRleqqGZx+P63keMCto8VHYm7Fc0PHD20NRGb7Z/oj74luNBoAzyYHo
- 6srA==
-X-Gm-Message-State: AOJu0Ywb//RhElGcwzEx5ne1ubvORfSa144kfoSErbdykW50ULNVy7uf
- 6rWcc9E/NZW+ooFFmuNrFsx6vkRNdgsSJOVdtJA+5ZnmJ9bhQaUlYJaYOihabtvqu2wsFEMlM9J
- WbPA=
-X-Gm-Gg: ASbGnct0MsXKrt7Xdq5Db7cNoYecXn6505z5EjwqwdtcY9sKM6+j+gtw8x1nNpB82Dy
- AuPZDHL6F/rdmEO+MabhVnDZuECqh53kxm/UMfZXRXoORgHACfseptidPb0H77YJXj4kLCPezRN
- L/wbKE4H8OOaH2WnLAS0WxG5akxBo46j3RMm/itQGjiNjaLCJRBC9FvKZ52U3qmSiiEjX4mvEtK
- Jnd7eolyoqQ65chGBi1LE0T8/R0dcMiXSo1M3dt/tMwNXzeXAABYKLhKRQafib+dFITxF+bLB6s
- 56tjYgNcO5Qze3fHcJKs8uElXuI6tIYw9xrPnSfRKO+BUP4lC/0OB/Iu4AHa0Kh2sJaXBQC7oHc
- 1Y3NSa7mS4lg2KrKqlqPNp7AXFcmN8x+0s0iMy+9ZFWM8YBC5pLYFjyRkTo/XFcHio99FrgT358
- qSZzKapAzZFNWO8LzxImw=
-X-Google-Smtp-Source: AGHT+IHKmFh5h32o1mHRPG+OTPGTFIoMr1joTK8yeChbfE9peg0EO1N9XYwNZYHB7uCW9qknPTJzwQ==
-X-Received: by 2002:ac8:7dc4:0:b0:4af:2305:2c37 with SMTP id
- d75a77b69052e-4b31d8229a0mr218411281cf.21.1756934930846; 
- Wed, 03 Sep 2025 14:28:50 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1756934932; x=1757539732;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=O5CLORycxzUzZGXTs+kr7fOTjhEEdeMYtMIL+2jLHH8=;
+ b=bhd3utxXnxE/84ArnRjyU+hqX2xqNWtpqdi/Zi70QmSd9zNGJBGZaz+b8e0riwCNW/
+ BvIGPlG8alUOrRQxf12qpY5dIr5HYUx5tJ7vnvmzexYFjcWCurUKsMp0AwhJ+3kpgZ70
+ q7ChzaFkl/IyscTB2AwC0ZYxui4DcJiJkve2OqJG5ZxE/GERwvF3eXuPwoh5sExvtdkJ
+ P/sEe334aWRLk/ogjUeiSKMXabXIeNE3xI3NZ6cuFcfFzlpWBpHF56/w7iqsG3R9/WKZ
+ 6FSR0U75Pk4D9HZdy5pVbFmRamj41/av06s63OlVW1FDqE8i9oE1SwjtBXqz6VsygkwQ
+ va5A==
+X-Gm-Message-State: AOJu0YynVGqjQ56WOrrnH1siNGrURSgr1aoTFwSZizicOpfIa7ZIgSZZ
+ ISg/4ZRY+iFznJykjl/bDfdwhtVe6npHViUyAMdSGdTVBgIi1wLH7mDGeuBmEN7fESk8UDUAaHD
+ 7gqA=
+X-Gm-Gg: ASbGncuYclj8yRqmdYORNyA0a5/IUZ5W1gVw0wxA6kwcVNEt8CJhysYARakBOp2ZBlx
+ I47zuFzUTs4+UorvNx6zXqqy/N+t5BBwNw6GMX8i6BsPumM8PbkquJ2puDG5Kd5oiqljFKiBO6N
+ dJsUoqZ/vd2BpQow459IMWY6N17xfSYWE2KK3KkKFRN62Z2DV3ur2xx98LNE3cYdDTECfCB87/Y
+ kcH8EYywYklhIEtsUVKa1n+qyM1uNQh+h5gnbD4PNAR0h2xUb5ujfzfRzS++UAp4sRdj5GBWg1I
+ k8qIIPtQ0TA2dxVFLsZfppBJsoxrCBqRGtq3qhysHT+s23WvaffYVfzPl297M3FTS2g9Jgm9rfl
+ VSFNbz1NCBleVH5Emo4dO9n3ac5QIRABh4v5SliaCidXuZ2yR0wR+PKrzXZ1XEWoJSQNdT9LJ/z
+ vY/vWlwSFP9vdNeI9x7jg2kBniXk/d7g==
+X-Google-Smtp-Source: AGHT+IHpL1rQBSdIy7Vc8N47e7hdKR+lFWAwwCWqnLfH14ASGFV9yYS8ILkPRBnYIjF5y4DUbmfSSw==
+X-Received: by 2002:a05:620a:2587:b0:80e:6ada:db21 with SMTP id
+ af79cd13be357-80e6adade6fmr58826385a.71.1756934932069; 
+ Wed, 03 Sep 2025 14:28:52 -0700 (PDT)
 Received: from z690.czeck.local (pool-108-20-194-239.bstnma.fios.verizon.net.
  [108.20.194.239]) by smtp.gmail.com with ESMTPSA id
- af79cd13be357-80aaaa1d6f4sm175929385a.42.2025.09.03.14.28.50
+ af79cd13be357-80aaaa1d6f4sm175929385a.42.2025.09.03.14.28.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 03 Sep 2025 14:28:50 -0700 (PDT)
+ Wed, 03 Sep 2025 14:28:51 -0700 (PDT)
 From: Ed Czeck <ed.czeck@atomicrules.com>
 To: dev@dpdk.org
-Cc: Shepard Siegel <shepard.siegel@atomicrules.com>,
- John Miller <john.miller@atomicrules.com>
-Subject: [PATCH 1/4] net/ark: add PCIe IDS for newly supported devices
-Date: Wed,  3 Sep 2025 17:28:42 -0400
-Message-Id: <20250903212846.268492-1-ed.czeck@atomicrules.com>
+Cc: John Miller <john.miller@atomicrules.com>, stable@dpdk.org,
+ Shepard Siegel <shepard.siegel@atomicrules.com>
+Subject: [PATCH 2/4] net/ark: remove double mbuf frees
+Date: Wed,  3 Sep 2025 17:28:43 -0400
+Message-Id: <20250903212846.268492-2-ed.czeck@atomicrules.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250903212846.268492-1-ed.czeck@atomicrules.com>
+References: <20250903212846.268492-1-ed.czeck@atomicrules.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,52 +83,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update documentation and release notes
+From: John Miller <john.miller@atomicrules.com>
 
-Signed-off-by: Ed Czeck <ed.czeck@atomicrules.com>
+Fixes: 8b154b690266 ("net/ark: add Rx initial version")
+Cc: stable@dpdk.org
+
+Signed-off-by: John Miller <john.miller@atomicrules.com>
 ---
- doc/guides/nics/ark.rst      | 5 +++++
- drivers/net/ark/ark_ethdev.c | 4 ++++
- 2 files changed, 9 insertions(+)
+ drivers/net/ark/ark_ethdev_rx.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/doc/guides/nics/ark.rst b/doc/guides/nics/ark.rst
-index 6aabde2ed5..1977f67e73 100644
---- a/doc/guides/nics/ark.rst
-+++ b/doc/guides/nics/ark.rst
-@@ -310,6 +310,10 @@ ARK PMD supports the following Arkville RTL PCIe instances including:
- * ``1d6c:1024`` - AR-TK242 [2x100GbE Packet Capture Device]
- * ``1d6c:1025`` - AR-TK242-FX2 [2x100GbE Gen5 Packet Capture Device]
- * ``1d6c:1026`` - AR-TK242-FX2 [1x200GbE Gen5 Packet Capture Device]
-+* ``1d6c:102a`` - AR-TK242-FX2 [4x100GbE Gen5 Packet Capture Device]
-+* ``1d6c:102b`` - AR-ARKV-FX1 [Arkville 128B DPDK Data Mover for Versal/CPM5]
-+* ``1d6c:102c`` - AR-TK242-V80 [Gen5 PCAP Processor]
-+* ``1d6c:102d`` - AR-TK242-FX2 [8x10GbE Gen5 Packet Capture-Replay Device]
+diff --git a/drivers/net/ark/ark_ethdev_rx.c b/drivers/net/ark/ark_ethdev_rx.c
+index 80e431f1ae..6077d98ae0 100644
+--- a/drivers/net/ark/ark_ethdev_rx.c
++++ b/drivers/net/ark/ark_ethdev_rx.c
+@@ -538,7 +538,6 @@ void
+ eth_ark_dev_rx_queue_release(void *vqueue)
+ {
+ 	struct ark_rx_queue *queue;
+-	uint32_t i;
  
- Arkville RTL Core Configurations
- --------------------------------
-@@ -322,6 +326,7 @@ stream interfaces for both AMD/Xilinx and Intel FPGAs.
+ 	queue = (struct ark_rx_queue *)vqueue;
+ 	if (queue == 0)
+@@ -551,9 +550,6 @@ eth_ark_dev_rx_queue_release(void *vqueue)
+ 	/* Need to clear out mbufs here, dropping packets along the way */
+ 	eth_ark_rx_queue_drain(queue);
  
- * ARK-FX0 - 256-bit 32B datapath (PCIe Gen3, Gen4)
- * ARK-FX1 - 512-bit 64B datapath (PCIe Gen3, Gen4, Gen5)
-+* ARKV-FX1 - 1024-bit 128B datapath (AMD PCIe Versal, Gen5 )
- * ARK-FX2 - 1024-bit 128B datapath (PCIe Gen5x16 Only)
- 
- DPDK and Arkville Firmware Versioning
-diff --git a/drivers/net/ark/ark_ethdev.c b/drivers/net/ark/ark_ethdev.c
-index c029dc46b3..d3fd76eec1 100644
---- a/drivers/net/ark/ark_ethdev.c
-+++ b/drivers/net/ark/ark_ethdev.c
-@@ -102,6 +102,10 @@ static const struct rte_pci_id pci_id_ark_map[] = {
- 	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x1024)},
- 	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x1025)},
- 	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x1026)},
-+	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102a)},
-+	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102b)},
-+	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102c)},
-+	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102d)},
- 	{.vendor_id = 0, /* sentinel */ },
- };
- 
+-	for (i = 0; i < queue->queue_size; ++i)
+-		rte_pktmbuf_free(queue->reserve_q[i]);
+-
+ 	rte_free(queue->reserve_q);
+ 	rte_free(queue->paddress_q);
+ 	rte_free(queue);
 -- 
 2.34.1
 
