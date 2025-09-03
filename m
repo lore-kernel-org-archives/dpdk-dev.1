@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF14CA0FF2
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Sep 2025 13:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E116CA0FF2
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Sep 2025 13:52:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4BAD7402BD;
-	Wed,  3 Sep 2025 15:50:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 787CD402BD;
+	Wed,  3 Sep 2025 15:52:28 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8816640281
- for <dev@dpdk.org>; Wed,  3 Sep 2025 15:50:54 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4163940281
+ for <dev@dpdk.org>; Wed,  3 Sep 2025 15:52:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1756907454;
+ s=mimecast20190719; t=1756907546;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=Rbi+wzbFmG8NIqbUMnkxRdrf54dNo5y3HU+rKyZafCI=;
- b=DGtafhtPzWvvaD+yHNCWDd2tq3Z3WbjqJBZCSRfS8ZmQGrrMDTSO4jR/MbKFR2VFEE6VZ3
- SAkdEpBE/6PH166J1fVMJki+N2t+14R4npxprrqcuhXKl+vkR55Wz1S+p/FNuGK6qneR/J
- nHcF7razDs9QA2jtkLdeVFHTcgWW3eU=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=tTw7dgnN/Z/j6QEVQZASqsBrspDwOniOnbdL4DUn7vA=;
+ b=azpRQa7tr3FWrqvekTb9FzRWjKDB0lrFTqBLPAEAtByT/Iw2Om6FaQl2jBOTdEOXU/RLpK
+ //jzSQ/pDz9X24gMsuUnSdxyuHID/mVChzN2cCTonFr4UCjvkBQBhuq3DEDy68syQYhPyM
+ NEWsAgeGHjAs1dPXH5bYt4jwXJROGg0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-66-TQaNkwJ5OQWzAYX2oKUZAA-1; Wed,
- 03 Sep 2025 09:50:51 -0400
-X-MC-Unique: TQaNkwJ5OQWzAYX2oKUZAA-1
-X-Mimecast-MFC-AGG-ID: TQaNkwJ5OQWzAYX2oKUZAA_1756907449
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-oRqbzYa1PSifFb4wzD5olQ-1; Wed,
+ 03 Sep 2025 09:52:23 -0400
+X-MC-Unique: oRqbzYa1PSifFb4wzD5olQ-1
+X-Mimecast-MFC-AGG-ID: oRqbzYa1PSifFb4wzD5olQ_1756907543
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id B11F119560B7; Wed,  3 Sep 2025 13:50:49 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D9AFA18002CA; Wed,  3 Sep 2025 13:52:22 +0000 (UTC)
 Received: from [10.45.242.20] (unknown [10.45.242.20])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 8F884180044F; Wed,  3 Sep 2025 13:50:48 +0000 (UTC)
-Message-ID: <0307940f-d00b-4cd1-8695-b3ec3f6f9e91@redhat.com>
-Date: Wed, 3 Sep 2025 15:50:45 +0200
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 9787F1800451; Wed,  3 Sep 2025 13:52:21 +0000 (UTC)
+Message-ID: <68594e6e-c261-4d86-b57f-5fd9eeaa8c18@redhat.com>
+Date: Wed, 3 Sep 2025 15:52:18 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] devtools: remove unused variables in uAPI script
+Subject: Re: [PATCH 5/6] devtools: make uAPI check exclusive to other options
 To: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org
 References: <20250827082413.1417226-1-thomas@monjalon.net>
- <20250827082413.1417226-5-thomas@monjalon.net>
+ <20250827082413.1417226-6-thomas@monjalon.net>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -90,10 +90,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250827082413.1417226-5-thomas@monjalon.net>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250827082413.1417226-6-thomas@monjalon.net>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: nZNpKJSRQqCxXv716G7FgEm4-UEMOxNhZZCwu2H0SwY_1756907449
+X-Mimecast-MFC-PROC-ID: M0AkO2-tlWqzTblUes3n74OD9iYUcKrOJBXxqn6x4U4_1756907543
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -114,14 +114,26 @@ Errors-To: dev-bounces@dpdk.org
 
 
 On 8/27/25 10:21 AM, Thomas Monjalon wrote:
-> Some local variables were not used in the function update_headers()
-> of the Linux uAPI script.
+> When doing a check of Linux uAPI headers,
+> it is better to not fix them before.
+> Also, it does not make sense to check just after doing an update,
+> as the check would just repeat the same update process.
+> That's why a check is now run alone without any update.
+> 
+> The current version has to be retrieved in all cases,
+> so it is moved at the beginning of any processing.
+> 
+> If the check option (-c) is used with an import (-i) or an upgrade (-u),
+> an error is raised.
 > 
 > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 > ---
->   devtools/linux-uapi.sh | 2 --
->   1 file changed, 2 deletions(-)
+>   devtools/linux-uapi.sh | 22 ++++++++++++----------
+>   1 file changed, 12 insertions(+), 10 deletions(-)
 > 
+
+As discussed off-list, I agree it did not made sense to make possible
+both check and import/update at the same time.
 
 Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
