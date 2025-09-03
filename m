@@ -2,102 +2,180 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76348CA0FF2
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Sep 2025 13:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8203CA1009
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Sep 2025 14:16:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B23F2402BD;
-	Wed,  3 Sep 2025 15:54:17 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 9B90D40281
- for <dev@dpdk.org>; Wed,  3 Sep 2025 15:54:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1756907654;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=kGgdoGRaf2jQR9zKqOT/kv/lb2lgQEr79G84UjMTU+U=;
- b=GxW1SE51LjbFpm/5E7GGgglk0jk4fesew4SgwztUcnn3VwnYS9QMhw0Zok5+JOlVYirc+4
- iwJ78ZdJu2EIkR5SOI39oM1o6w4PO+ytuTWgkjcJ6NLseJG9rtzVQWo9/zYixvNoBGSYI6
- dUCg+Vhmxz+oi1fMAtE6lXMz8n47aSQ=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-379-U2x0KT4wPu-2kPiBT7CrZQ-1; Wed,
- 03 Sep 2025 09:54:11 -0400
-X-MC-Unique: U2x0KT4wPu-2kPiBT7CrZQ-1
-X-Mimecast-MFC-AGG-ID: U2x0KT4wPu-2kPiBT7CrZQ_1756907650
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 650F91800371; Wed,  3 Sep 2025 13:54:10 +0000 (UTC)
-Received: from [10.45.242.20] (unknown [10.45.242.20])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 0EEA01800451; Wed,  3 Sep 2025 13:54:08 +0000 (UTC)
-Message-ID: <d7b7fff5-8f0c-424b-ba7c-837a16e6d4ce@redhat.com>
-Date: Wed, 3 Sep 2025 15:54:06 +0200
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id C6036402BD;
+	Wed,  3 Sep 2025 16:16:57 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+ by mails.dpdk.org (Postfix) with ESMTP id DB71940281;
+ Wed,  3 Sep 2025 16:16:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1756909016; x=1788445016;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=Wxpwei1Z2E9CtbQnjaMk7c/wrfZlO3uvcd0SQ6vS3pI=;
+ b=n8QGivpXI/pzg2b9HBC0Xw1Zl3ZX6Cs2StWq5En1W4uT4WsNn8uEwi15
+ Uj4AT8CJS9gEMRfiBX323BivVZtwr0alUE0KXkvT6txXOSLV58ao9Nvuj
+ LKLnnA1m2BMRgnB4DYCt9rvPLZDRCl8fev90Mmft5spPoab2L4SJrp0mU
+ XoKz2jSyeBhkd//hSvg/7TmQ9FbfcaVSf1e3iqiksXAnT9KXZiiAAUO6g
+ fFBMHp6qoXYRUnGwbz4k25x6Gmkp6GIC3BcfeImxhot3rZkwvJY2ccEAn
+ 8A6NPJgrzpQy1/NJ65Lg/TU1bCHqx+APJYfNuRdnPDZ/JyMvBUJHsPVyf g==;
+X-CSE-ConnectionGUID: fRtBG5m1TIus9R1/RXg9iw==
+X-CSE-MsgGUID: LfmVDh8BQDK1qIJbRZRuSA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59292832"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="59292832"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Sep 2025 07:16:54 -0700
+X-CSE-ConnectionGUID: 8r/yoQfITVOPGLYiTqe7vw==
+X-CSE-MsgGUID: +gW7XqzmRLCWp0HmnqHvrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,236,1751266800"; d="scan'208";a="176846482"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Sep 2025 07:16:53 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 3 Sep 2025 07:16:52 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 3 Sep 2025 07:16:52 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.66)
+ by edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 3 Sep 2025 07:16:52 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dLusCAYbgTfV9KynmCANtamGmIts90UHoussIDpGuJoMxmePfhkAfkERtoK8qR+8M97cj2gYrppqTMa3BlbV0osxTQppS3HAebsD7SzQxSPspnVpw63Kpp1Z/WEFEbHMyogzlPUmoH7Tqy6FfPzXQ+ltxUyGRfNJinF8YBJLRTfKEgD4DyUOFgllj9nHpWm5D9xz4T3unTnt/aARnRjE7vN72WtPRqwGfvi1Azt0ctoTzu9+4tJzioWSfJmE5daFS963xa3N3uq95P/f+Gj/MZ82SLuQSQFxByek4oQqYvp7zoJh7YvTfqkDKA8F6ZoaULasFgvnfBLFZjQ8VOkToQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CIincmwyj282QdagJ4u753lW6/UoDyC6zScpoiKqeYs=;
+ b=lT7Cpgo2D5Jo5Evda47XQteLR1N6zXZsVxnUH+rQLATlOpDXLOb2lEn3EKk9yc82728DW9U0SKdo4NGTAZkJnAq1zZWj8izyxXq+49ygZeKvmdQxOcKW7Kk7CPOsAIGYOSvUahPwAmxgyyyYxCkUa2tRq8+Cvnh+8UPDx8ceKxpgEw+Y3mTsacpt8nmgKI49MelkCih/byOwii/dY9WswTeWugLckRCpqikD01soKBZs6K9FwxG35OgKOpg3ydiMIsuXDMDZXrtK3Wz2cp8vymE8qeSIEmiZk1cVaN9AtYvyc1SFB/AWYMHQMoxhNnJVBXJXLZeeOWKjr8Ji7uoDSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ DM4PR11MB7206.namprd11.prod.outlook.com (2603:10b6:8:112::21) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.17; Wed, 3 Sep 2025 14:16:50 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::21e4:2d98:c498:2d7a]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::21e4:2d98:c498:2d7a%2]) with mapi id 15.20.9073.026; Wed, 3 Sep 2025
+ 14:16:50 +0000
+Message-ID: <7175fd56-407a-4e65-a858-faa9b1f4e89a@intel.com>
+Date: Wed, 3 Sep 2025 16:16:45 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] devtools: add quiet mode in uAPI script
-To: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org
-References: <20250827082413.1417226-1-thomas@monjalon.net>
- <20250827082413.1417226-7-thomas@monjalon.net>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20250827082413.1417226-7-thomas@monjalon.net>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: V-gFXgy4CQNXjXP9w_6MM7v1yzgN2lXbwlnds_PoLkc_1756907650
-X-Mimecast-Originator: redhat.com
+Subject: Re: [PATCH] pci: pci_vfio: Retry vfio setup device reset, if device
+ is busy
+To: Thanushree Sreerama <thanushree.sreerama@nokia.com>, <dev@dpdk.org>
+CC: <stable@dpdk.org>
+References: <20250903111723.5111-1-thanushree.sreerama@nokia.com>
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20250903111723.5111-1-thanushree.sreerama@nokia.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DUZPR01CA0025.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46b::13) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|DM4PR11MB7206:EE_
+X-MS-Office365-Filtering-Correlation-Id: e6753c55-3b13-4365-a4d8-08ddeaf48636
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?V2VQZU1Qdlo3TWhNdXZ3SmlabktPWHRtZkc1anJrS0FTbGMxT1pMZTBPQlVt?=
+ =?utf-8?B?NEhabzRLeE9jdWNDSW5IZjF3UzlrQ0VvUjQzRVJPcU1rdlBpRHU0aDFkWkN3?=
+ =?utf-8?B?UjhRdUczSTNZWEVScC9Nd0FCT2J1L2dIU3lGeisreVJKbVBucWxKNG1rZFMw?=
+ =?utf-8?B?Z1NVNDRpdkczcVhJZGVPN09ad2RyeEJrcXlRK0pTdG4yeFVWRzI5dW9ZVXJO?=
+ =?utf-8?B?c0RJVE1Sc3Q4dGljMUlRdWFpUGNQb3d5eXRkZXpwOFM0TDNSNE1JcHlJdE1D?=
+ =?utf-8?B?K1pYdXBJZXJWNEl6UUdnSytndis3OXA1OVB2cHR3S3JKNjkyRXN0TDhuSnJD?=
+ =?utf-8?B?VUdhak1KUmZHSm5PeHlOQVR2eUJDeERFWmpkK3VOZTl6QTFtZ01NQU03eElq?=
+ =?utf-8?B?SHlFbFkwWnRCME5uRFBZdmp3N2FhY0NNcXhTWlpIcFNUN1RVMlg1ZkdqbldT?=
+ =?utf-8?B?NDNRV1lza0J3M1VKQXVSalVPcC9YMWs5QVJ5cHp4dEhqMTk1VUpvR25kWER4?=
+ =?utf-8?B?TTNwemU5dkhtTW4razJsYVJTOXBYamxvTnQxWm9Ca0kzU0NBNUpLRnR2ZHQ3?=
+ =?utf-8?B?NXUyR2lRaXR4ZWFEZW4rWkVTMFlpUWFlcUgzdVpwWFYvcHovZWNGMnlYbGEx?=
+ =?utf-8?B?Q2xRdytUbEJoYm1sZzdjaGZlTGhKdUNsOWpjKzdkVDNkRU5oUDYwTzQ1ZzFR?=
+ =?utf-8?B?dlU2bzFxZmRRWi9RT09KRXdYQU9QNU5HdzR4UnplWWtEUjNMTnFmYUZQa2FG?=
+ =?utf-8?B?N1BUWTg4UEprcmFiRVBWZkMyYkV0cVRXZXpYYndKcHY5aEpaVXdZTXRDaTdZ?=
+ =?utf-8?B?QjlzcHRQS29yUGQ1OHVwL05Xb3FiQ0tQYUluN1A1SmVrcGRzSTREdzFuRE1I?=
+ =?utf-8?B?dUJ6ekJTNXFxK1M0ZTh3eDdyaFNCTWEyV0RvWUtmNkMwZTM2azVEQkNLOHJm?=
+ =?utf-8?B?UmF5MEtkbTNNZ0hvUjBxay9jblE1V0toZy9FOWdkTEVZWHZwNFNMUUhOMHhR?=
+ =?utf-8?B?SytQZHlIZU40T1QyeDFCNktldWhEdk9MMCs3bXMzY3R5MTkyRldnTzlDR1Rn?=
+ =?utf-8?B?UzdrYngwYmY4ZFYvelhhV0w1ZDg3SFU4RjhZLzFwVzdTWDl4YlRuakZESTRK?=
+ =?utf-8?B?dzhiSEMvR214YlRoeUQ5aVZLQ3Z1Tmo3NGRoQUx4K0NwcXh5bysvNW1mbGFR?=
+ =?utf-8?B?cDNMcmU5d2pqaXN5T2I4N055Unpvc2haNStvbkR3MlhLbHdmZGl2Mk9ya212?=
+ =?utf-8?B?aFhrcFdoaHFQVE5EVkFFUDNZRUUrcGlQNk9BSWZxWGdGSGVWL2UzMHFVU2hY?=
+ =?utf-8?B?SWhocUhxcU1hQ2tEbDRsR2c4S0tmdzNKRzl3QWs5WEFNU0VJa1JHNyswS2dG?=
+ =?utf-8?B?WnZhVHFQd0F5Q2VYZW9RRzR5VVFxb0g0MUh0VS9HOFJPd0wzVTdSZ01CZVJx?=
+ =?utf-8?B?dGdUZkF1Mm5pM0hiMEo2bWtqWkkxbVNwNVJWZTEyMHV4Z0xjYWVwZC9KZU5x?=
+ =?utf-8?B?ZkFuSEIvbXFVUFhqNW5ub3E4bUc4aFNnd2k1SFFCQ1BQRGFia1FDaGQzRWVz?=
+ =?utf-8?B?VUF5dkROYzdjVEs4b1A1VFZHdlpjUG9JYWUwR05pVXpxcnJLb1RhWWlMZ2JH?=
+ =?utf-8?B?NnQ1STJzYTZWYjAyRGVJMEVVNmhsaHEvVkU4UmNxblJ6SzVvZWIzR0hyTEZN?=
+ =?utf-8?B?MmtNYmdCZ0d2Vm85M09pRytZdS9aaDQwRE1ES3JGQ1NlNnBEcE9QSmsyMU1T?=
+ =?utf-8?B?bWJJMzR4Q2QwV2lPNFFPQ0MxNEJnc0pnL0dpb05JM0ZJTHZQYXMyR3Z4MFBs?=
+ =?utf-8?B?cWJNVWJVcGlacDNwR3k4REVjQVh6UktBL3pHMXNNZHRGQkt4cEJGN0NCdlJW?=
+ =?utf-8?B?Qi9WektyS1dhUVZtY1dXdDF6NEV2ZWxNM0R4NlVxZWcwVU1iWWQ1clZpTXZG?=
+ =?utf-8?Q?xEkHc5A+tXc=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?djBnYXlVd3E3MDBKSktiN1FjN091M2pEVk5SY2ZiQnlicWoxUlFFRVJ4c2hT?=
+ =?utf-8?B?Q2VMa2ZNeGc4N2t6Mnc3eEZHaDBQZml6RnJMa1JPMWFTUHNuVUhtcU0zZmk1?=
+ =?utf-8?B?dm9Lb1FHTWZNdmRnajJsMGp5cDZlVEMyRzVZN2txdmdQeC9yQldKNUtBTld0?=
+ =?utf-8?B?TkUzY0Q5RXgrQkttSWRHZlg4eWJDT0FEaDlqM2xUR1NLNmRZZnV6WGJrRzIw?=
+ =?utf-8?B?VjRmcXp0NWlkd2luNUZ1RGNINElZcW9JeEJaOGJsNlpWdjk2aVRTTTJmcUxR?=
+ =?utf-8?B?NFpvb2dENitza2Q5OG5GTkg1S2hsUnhXK1dqNi9kbEd2c01vT2REOFZPMDgx?=
+ =?utf-8?B?OEtGMXg0a2JxempWaGR1NHN6WmZ2RTBFUFd1UkpWT09HR016Q1B3a210OXFp?=
+ =?utf-8?B?V04rUjI2UFpqMjdzV214MkxSUFI1bmdaMHNNT3hnVmlYWDM5bDhMMDRZWHZD?=
+ =?utf-8?B?VkFYZ0xzYitCek40dGpNTlVJYjN6Njh2QlJRN0JiL3RQN1p4RkFIYVBaaEZN?=
+ =?utf-8?B?dzV1SWtGMUlGR0owdlc5eGVoMG1Ld05hdkMxMDlaczZ4aTFTMnJpY1EvdHY3?=
+ =?utf-8?B?K2I5TnhUZGQ1ZUVhWDRRRUpRRlB3KzF1SmRSZXF1bmVQUVRvdmM3SzFoaDRi?=
+ =?utf-8?B?bWh3ZHJnd3ovdWlDNUJjZG5FMkhxb1BmaHF1LzIyQkp0eHFLOGRjWnFtSW5I?=
+ =?utf-8?B?dk5lS1ZRdWcxNUMvQ1Zzc3p2dnRtQlJaMW1FNUIzbkxxM0F6Wi9tNVNVNXox?=
+ =?utf-8?B?YlB1Znh3SFNPemdIVU1BbXMvUHR6MGFqekNRMElMQ2EzOGdWeTJqQm5GVk9x?=
+ =?utf-8?B?WXVNMG4waW9idUVhTndwSnRZZ1NtelRwengzWEgwMTQycDVIM2NyT1U4cEp2?=
+ =?utf-8?B?TzNzMTVCSXYzSlN5WjIyWEo5K1VwQ3hQQzUwNzB3WkNaOHZuTzRoSkVtSlB1?=
+ =?utf-8?B?a2RQMVZNYnJ4MVZvY3hYQmpqTVJqenFXWjBSbEZBRmw1VkhKQUJvaFAzUDZN?=
+ =?utf-8?B?VVJvNW12M2lyVzNKSTkrQ05peHVjT1o2SzkvY3hlbnRiSHBFcTRILzNQVk9C?=
+ =?utf-8?B?V2dXQjZBK2EySDRBS2NMNldvZFNjZGFSVFZPZHZxOGo3TDlqWEFYeE02dUVo?=
+ =?utf-8?B?MkdaQlZBRmRIdVlqRnhYbWFxSU1rMlRGaWtKL0o1NWhzUEZCNVZXLzc3czFq?=
+ =?utf-8?B?Mk9NaGJPMVJMaC9WZXFTaEprVkhjRTNWY1JHaDlHRWVxeEdKOWpmUTJWMERz?=
+ =?utf-8?B?MC9TczNZVE1MaDBkdnYwVUlIY2hVTUxObG1vKzlBSlVhdDZoenpYb1RrQnJk?=
+ =?utf-8?B?NlFiakVaamMxWXk1c2YxR1F6eG9vUjV6VTZ5RjVUbExnYk9NUmlBNWtCWTJX?=
+ =?utf-8?B?cmlXUTJQc3UzYmxjNXhmeXl4bnM3RGwzZkZFc2Y3YTdSTjAreVloSEgramVH?=
+ =?utf-8?B?SExTaVBaTzlyeURLam1jaVFUeDZGLzVZNVl3VDBNNjhkWlZmUk1ubUlPc1dY?=
+ =?utf-8?B?Um9UWHVyZ0YxMnhYV2htUy82cjd4MjJ5RWtpaUpqVkQvNTFiZCtsRlpqekxz?=
+ =?utf-8?B?eEhQU3dXb0g1QjFLTWw5TFVFRXN0ejhFOGloRkp0czh6Y295TVJrZFI5Mm5T?=
+ =?utf-8?B?TDNveWl0bXVHSjJ1a205TTRxbStaQmNHZzl6SnJMYWRMTHRna0ZkalI0QjBX?=
+ =?utf-8?B?YjdGUVVqUlY0Skw4UEVwMzErU3p2S0RxbXVRT2xpcGlLb2FiclBKanM1Q1dm?=
+ =?utf-8?B?WENBM1g1dTQvTFhFcFh2NWk1bFJjWERCUHhXNjJpbnRtdDRUZzFsbHRNTzV0?=
+ =?utf-8?B?azJIQnNvTTFhS3hJZ1Q1QmJIWUFRMmhwU0RBdThmVDVuckxRSVJzWVo3ODF6?=
+ =?utf-8?B?VldOV0NYQnpDWDhjSzR0YjRSdmZDYlNLYkZyUVNKSzJOMGhtc3d4RHFKcHR0?=
+ =?utf-8?B?Y0ZtczhER1JFK01LdHFQWndRekNhNnF1bjVScnQ4WXNXWC9yeWIxc213bjVN?=
+ =?utf-8?B?NEpmbkNzaVRiekVEWFY2eHJKdTcvYmFMUmNycEJYZmw3UCs3RWpCWEFNMUxk?=
+ =?utf-8?B?Z1g5UU1VeXZybUIxNEQxQ1lQRG1DRkliYW04bHczTnlsUCtURXUwZnQ3b0xn?=
+ =?utf-8?B?WWpwamM0Yk1OMkFpalZkM0x5Rk9EOXVxM2l1dVhDdFVwQUNSUVlnbE9ZKzJu?=
+ =?utf-8?B?alE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6753c55-3b13-4365-a4d8-08ddeaf48636
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2025 14:16:50.3492 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vgd5oueR1cO4yWpkvClIRzJEry4T6v1xK2/HKqZl2/OI7uLAvrEjQSMrLB8dEZuzvF0hBzKNRQUdD0XXhqtAHSUe2YI36MqkZ1f8G1Dp9uQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7206
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,25 +189,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-
-On 8/27/25 10:21 AM, Thomas Monjalon wrote:
-> Most messages from the Linux uAPI script are not useful
-> when running the script in a regular fashion.
-> The quiet mode (option -q) is added to output only error messages if any.
+On 9/3/2025 1:17 PM, Thanushree Sreerama wrote:
+> From: "Thanushree.Sreerama" <thanushree.sreerama@nokia.com>
 > 
-> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> Add proper EAGAIN handling for the device setup by retrying the device reset
+> 
+> Issue:
+> asc-0a Disp_0[18237]: EAL: Unable to reset device! Error: 11 (Resource temporarily unavailable)
+> asc-0a Disp_0[18237]: EAL: 0000:f4:02.3 setup device failed
+> asc-0a Disp_0[18237]: EAL: Requested device 0000:f4:02.3 cannot be used
+> 
+> Caused due to:
+> 92d847a35e1 ("Revert "driver core: Fix uevent_show() vs driver detach race"")
+> Cc: stable@dpdk.org
+> 
+> Change-Id: Ic3ae8701fccdbf1e8e2a575d48e707b4c58e939a
+> Signed-off-by: Thanushree Sreerama <thanushree.sreerama@nokia.com>
 > ---
->   devtools/linux-uapi.sh | 26 +++++++++++++++-----------
->   1 file changed, 15 insertions(+), 11 deletions(-)
+>   drivers/bus/pci/linux/pci_vfio.c | 16 +++++++++++++++-
+>   1 file changed, 15 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
+> index fab3483d9f..20e212c9f1 100644
+> --- a/drivers/bus/pci/linux/pci_vfio.c
+> +++ b/drivers/bus/pci/linux/pci_vfio.c
+> @@ -478,6 +478,8 @@ pci_vfio_is_ioport_bar(int vfio_dev_fd, int bar_index)
+>   static int
+>   pci_rte_vfio_setup_device(struct rte_pci_device *dev, int vfio_dev_fd)
+>   {
+> +	int i, ret = 0, max_retries = 5, retry_delay_ms = 20;
+> +
+>   	if (pci_vfio_setup_interrupts(dev, vfio_dev_fd) != 0) {
+>   		RTE_LOG(ERR, EAL, "Error setting up interrupts!\n");
+>   		return -1;
+> @@ -498,7 +500,19 @@ pci_rte_vfio_setup_device(struct rte_pci_device *dev, int vfio_dev_fd)
+>   	 * Reset the device. If the device is not capable of resetting,
+>   	 * then it updates errno as EINVAL.
+>   	 */
+> -	if (ioctl(vfio_dev_fd, VFIO_DEVICE_RESET) && errno != EINVAL) {
+> +	for (i = 0; i < max_retries; i++) {
+> +		errno = 0;
+> +		ret = ioctl(vfio_dev_fd, VFIO_DEVICE_RESET);
+> +		if (!ret || errno == EINVAL)
+> +			break;
+> +
+> +		if (errno == EAGAIN) {
+> +			RTE_LOG(DEBUG, EAL, "Device busy, sleep %d ms and retry to reset %d of %d times\n",
+> +				retry_delay_ms, i + 1, max_retries);
+> +			usleep(retry_delay_ms * 1000);
+
+Perhaps use one of the rte_delay_* functions for portability?
+
+> +			continue;
+> +		}
+> +
+>   		RTE_LOG(ERR, EAL, "Unable to reset device! Error: %d (%s)\n",
+>   				errno, strerror(errno));
+>   		return -1;
 
 
-You forgot to update print_usage().
-
-With this fixed:
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-
+-- 
 Thanks,
-Maxime
-
+Anatoly
