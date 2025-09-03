@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E116CA0FF2
-	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Sep 2025 13:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76348CA0FF2
+	for <dpdk-dev@archiver.kernel.org>; Wed,  3 Sep 2025 13:54:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 787CD402BD;
-	Wed,  3 Sep 2025 15:52:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B23F2402BD;
+	Wed,  3 Sep 2025 15:54:17 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 4163940281
- for <dev@dpdk.org>; Wed,  3 Sep 2025 15:52:27 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 9B90D40281
+ for <dev@dpdk.org>; Wed,  3 Sep 2025 15:54:15 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1756907546;
+ s=mimecast20190719; t=1756907654;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=tTw7dgnN/Z/j6QEVQZASqsBrspDwOniOnbdL4DUn7vA=;
- b=azpRQa7tr3FWrqvekTb9FzRWjKDB0lrFTqBLPAEAtByT/Iw2Om6FaQl2jBOTdEOXU/RLpK
- //jzSQ/pDz9X24gMsuUnSdxyuHID/mVChzN2cCTonFr4UCjvkBQBhuq3DEDy68syQYhPyM
- NEWsAgeGHjAs1dPXH5bYt4jwXJROGg0=
+ bh=kGgdoGRaf2jQR9zKqOT/kv/lb2lgQEr79G84UjMTU+U=;
+ b=GxW1SE51LjbFpm/5E7GGgglk0jk4fesew4SgwztUcnn3VwnYS9QMhw0Zok5+JOlVYirc+4
+ iwJ78ZdJu2EIkR5SOI39oM1o6w4PO+ytuTWgkjcJ6NLseJG9rtzVQWo9/zYixvNoBGSYI6
+ dUCg+Vhmxz+oi1fMAtE6lXMz8n47aSQ=
 Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-oRqbzYa1PSifFb4wzD5olQ-1; Wed,
- 03 Sep 2025 09:52:23 -0400
-X-MC-Unique: oRqbzYa1PSifFb4wzD5olQ-1
-X-Mimecast-MFC-AGG-ID: oRqbzYa1PSifFb4wzD5olQ_1756907543
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-379-U2x0KT4wPu-2kPiBT7CrZQ-1; Wed,
+ 03 Sep 2025 09:54:11 -0400
+X-MC-Unique: U2x0KT4wPu-2kPiBT7CrZQ-1
+X-Mimecast-MFC-AGG-ID: U2x0KT4wPu-2kPiBT7CrZQ_1756907650
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id D9AFA18002CA; Wed,  3 Sep 2025 13:52:22 +0000 (UTC)
+ id 650F91800371; Wed,  3 Sep 2025 13:54:10 +0000 (UTC)
 Received: from [10.45.242.20] (unknown [10.45.242.20])
  by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 9787F1800451; Wed,  3 Sep 2025 13:52:21 +0000 (UTC)
-Message-ID: <68594e6e-c261-4d86-b57f-5fd9eeaa8c18@redhat.com>
-Date: Wed, 3 Sep 2025 15:52:18 +0200
+ id 0EEA01800451; Wed,  3 Sep 2025 13:54:08 +0000 (UTC)
+Message-ID: <d7b7fff5-8f0c-424b-ba7c-837a16e6d4ce@redhat.com>
+Date: Wed, 3 Sep 2025 15:54:06 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] devtools: make uAPI check exclusive to other options
+Subject: Re: [PATCH 6/6] devtools: add quiet mode in uAPI script
 To: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org
 References: <20250827082413.1417226-1-thomas@monjalon.net>
- <20250827082413.1417226-6-thomas@monjalon.net>
+ <20250827082413.1417226-7-thomas@monjalon.net>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -90,10 +90,10 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <20250827082413.1417226-6-thomas@monjalon.net>
+In-Reply-To: <20250827082413.1417226-7-thomas@monjalon.net>
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: M0AkO2-tlWqzTblUes3n74OD9iYUcKrOJBXxqn6x4U4_1756907543
+X-Mimecast-MFC-PROC-ID: V-gFXgy4CQNXjXP9w_6MM7v1yzgN2lXbwlnds_PoLkc_1756907650
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
@@ -114,27 +114,20 @@ Errors-To: dev-bounces@dpdk.org
 
 
 On 8/27/25 10:21 AM, Thomas Monjalon wrote:
-> When doing a check of Linux uAPI headers,
-> it is better to not fix them before.
-> Also, it does not make sense to check just after doing an update,
-> as the check would just repeat the same update process.
-> That's why a check is now run alone without any update.
-> 
-> The current version has to be retrieved in all cases,
-> so it is moved at the beginning of any processing.
-> 
-> If the check option (-c) is used with an import (-i) or an upgrade (-u),
-> an error is raised.
+> Most messages from the Linux uAPI script are not useful
+> when running the script in a regular fashion.
+> The quiet mode (option -q) is added to output only error messages if any.
 > 
 > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 > ---
->   devtools/linux-uapi.sh | 22 ++++++++++++----------
->   1 file changed, 12 insertions(+), 10 deletions(-)
+>   devtools/linux-uapi.sh | 26 +++++++++++++++-----------
+>   1 file changed, 15 insertions(+), 11 deletions(-)
 > 
 
-As discussed off-list, I agree it did not made sense to make possible
-both check and import/update at the same time.
 
+You forgot to update print_usage().
+
+With this fixed:
 Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
 Thanks,
