@@ -2,35 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D18CA1015
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Sep 2025 14:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29190CA1002
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Sep 2025 14:49:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 31A864279E;
-	Thu,  4 Sep 2025 16:47:50 +0200 (CEST)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 04CB14275D
- for <dev@dpdk.org>; Thu,  4 Sep 2025 16:47:49 +0200 (CEST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D172B1596;
- Thu,  4 Sep 2025 07:47:39 -0700 (PDT)
-Received: from arm.com (unknown [10.57.57.136])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EFCE3F63F;
- Thu,  4 Sep 2025 07:47:47 -0700 (PDT)
-Date: Thu, 4 Sep 2025 15:47:44 +0100
-From: Luca Vizzarro <luca.vizzarro@arm.com>
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, ivan.malov@arknetworks.am, 
- probb@iol.unh.edu
-Subject: Re: [PATCH v2 2/3] dts: add TX offload capabilities to NIC
- capabilities
-Message-ID: <175699721629.86089.8162277951767695455.luca.vizzarro@arm.com>
-References: <20250902142725.56736-1-abailey@iol.unh.edu>
- <20250903180414.83001-1-abailey@iol.unh.edu>
- <20250903180414.83001-3-abailey@iol.unh.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250903180414.83001-3-abailey@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id 6F17F427A2;
+	Thu,  4 Sep 2025 16:49:21 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id A6C594279E
+ for <dev@dpdk.org>; Thu,  4 Sep 2025 16:49:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1756997360;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=62xuJpprAO7E6EkVVc8e61U/qlj4w+vsMKseUidY8dY=;
+ b=PUmPWzo+sl/FdpfThFa0aZ2X7px/XCDcIePH4C0mlujrY2D45qi62tdwUyd0Hi6FvV26lB
+ bkTrLXsaUc1vvaTVN8yHtuLSHde9Y3/OpxqR/NxYot2Hxd2IPwJOn3xCO/3fXMMnEk5C0D
+ i/d2Aq3VhyfUheB4QmQhQ4FbOEUYN8U=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-534-oEw7nOleOI-YH9HDKQKtQQ-1; Thu, 04 Sep 2025 10:49:19 -0400
+X-MC-Unique: oEw7nOleOI-YH9HDKQKtQQ-1
+X-Mimecast-MFC-AGG-ID: oEw7nOleOI-YH9HDKQKtQQ_1756997358
+Received: by mail-wr1-f71.google.com with SMTP id
+ ffacd0b85a97d-3dabec38299so693412f8f.2
+ for <dev@dpdk.org>; Thu, 04 Sep 2025 07:49:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1756997358; x=1757602158;
+ h=in-reply-to:references:user-agent:to:from:subject:message-id:date
+ :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+ :cc:subject:date:message-id:reply-to;
+ bh=62xuJpprAO7E6EkVVc8e61U/qlj4w+vsMKseUidY8dY=;
+ b=lc/PB33jTp8xX8rn/LGHiIBx2RmVSX/5EXMBqCtrkvj7HXaGlqLLJswSJtRF39HVa3
+ /NGihK8tLow0+N8SXiiIZvmhbwhEgex3tbWoyGmdzcfrxFduF+vmE5k8PrFPp1oXiE4L
+ XtrR53RdEk3VSP/ItPQOsuOCQv3opRdVnZN64p+5guFTHMOxkxyCXdAx1EScjvmwOUZU
+ 5uwUj1cmh5BM/Gib7YnVMUIgwsvlUFYuX2sTQjMfcVE2kHyAvTp4i2vivWQUOwOyd9qE
+ BWQNRw7lbRl7lw6JMNZfnZxmYUl7vXPLSs1XkYoLssUQue1LQqS8YyMZCb+czpMQHirh
+ OUCA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWBoqVtUpmCQSTdJgimOnAbCO+Y2Nq3SXQdZqCv4CVRbd2M4MZX8ZYdqCAgv+oYIec+BUk=@dpdk.org
+X-Gm-Message-State: AOJu0YwC6t4tpdPmiO0ZyCcXgoWqbr+lPA3GrNAXIMWojuIoyPfvWEVU
+ rzonX1r3iTb5Ck7x+zJrJ8CbLaAvC8h9xNk9WsWGpP7uWa8Vt0Rsfg0Q0cylfTIqcgvR7xZ0NDn
+ e3HXUn5hfdpi6WgzQQa/l9y2Q7tFh2HPg9vLmdSN/GauhVby81B4o
+X-Gm-Gg: ASbGncvHlwt7jreM6ENZR7z25ea9gce0JUUNcg1gFacBkdnWMxzZjnsrLEXvJXF7mfn
+ QZGGwQEl9maOH8psWvdtylUsoEzaiym6G+7nXhN+IFsoY9FFatSm5Fc8L5bZTjioD6sX+FU1f4T
+ oTBOcJYeg9ONa0qgkbhi8W7TSfexWZig/bQClndNbWpHN4MqYEPOClT5Z0uZr3li6iJ+byapp9j
+ 3OMr9Zvei6YDe9Qj0qoU5F/arm7fGckcm3E7F2Iz2Tl2VYEp7JkSHlKgFACE+0tBppaVzhqEgQB
+ L95GnxMYa2x/DOY4TId25KFB+PQgsRwe7SiIB3EBhC1X3996Wp/MNAkBw8FKgOQ1q/QBzTHXfzU
+ E8ihKUqVarkYQoye9sNnopA==
+X-Received: by 2002:a05:6000:1449:b0:3da:37de:a3c6 with SMTP id
+ ffacd0b85a97d-3da37dea762mr7307578f8f.59.1756997357665; 
+ Thu, 04 Sep 2025 07:49:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFPG1AU7M32HZJdj84EP+Eq/TzfAWx3zY1zorebvCwFBw+bN/NmUOXFGDpbaSiyMS2/09Uj9Q==
+X-Received: by 2002:a05:6000:1449:b0:3da:37de:a3c6 with SMTP id
+ ffacd0b85a97d-3da37dea762mr7307555f8f.59.1756997357104; 
+ Thu, 04 Sep 2025 07:49:17 -0700 (PDT)
+Received: from localhost (2a01cb00021ec0002e23edbec21b0e73.ipv6.abo.wanadoo.fr.
+ [2a01:cb00:21e:c000:2e23:edbe:c21b:e73])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-3d701622b92sm16687155f8f.58.2025.09.04.07.49.16
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Thu, 04 Sep 2025 07:49:16 -0700 (PDT)
+Mime-Version: 1.0
+Date: Thu, 04 Sep 2025 16:49:15 +0200
+Message-Id: <DCK3KYFOL7EF.1CBE546ZJUS04@redhat.com>
+Subject: Re: Error with --no-huge when compiled with -fsanitize=address from
+ gcc 15
+From: "Robin Jarry" <rjarry@redhat.com>
+To: "Burakov, Anatoly" <anatoly.burakov@intel.com>, <dev@dpdk.org>
+User-Agent: aerc/0.20.1-134-gd0eef4107798
+References: <D9WNYZDZHISG.3091PEP8Y34QL@redhat.com>
+ <DAIPCY7NIG04.2Z0S17M8BPQUH@redhat.com>
+ <9d2e0536-98af-4532-aa57-dd1605d6e070@intel.com>
+In-Reply-To: <9d2e0536-98af-4532-aa57-dd1605d6e070@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: _vx4Kirf-dzyp6ZtxaQwrtQrHaolCJikLFEevj5HX7Y_1756997358
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,98 +96,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Copying reply from v1.
+Hey Anatoly,
 
-On Wed, Sep 03, 2025 at 02:04:13PM +0000, Andrew Bailey wrote:
-> diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framework/remote_session/testpmd_shell.py
-> index 4d9caceb37..dfd83ebdb3 100644
-> --- a/dts/framework/remote_session/testpmd_shell.py
-> +++ b/dts/framework/remote_session/testpmd_shell.py
-> @@ -1285,6 +1285,99 @@ class TestPmdVerbosePacket(TextParser):
->      )
->  
->  
-> +class TxOffloadCapability(Flag):
-> +    """TX offload capabilities of a device.
-> +
-> +    The flags are taken from ``lib/ethdev/rte_ethdev.h``.
-> +    They're prefixed with ``RTE_ETH_TX_OFFLOAD`` in ``lib/ethdev/rte_ethdev.h``
-> +    instead of ``TX_OFFLOAD``, which is what testpmd changes the prefix to.
-> +    The values are not contiguous, so the correspondence is preserved
-> +    by specifying concrete values interspersed between auto() values.
-> +
-> +    The ``TX_OFFLOAD`` prefix has been preserved so that the same flag names can be used
-> +    in :class:`NicCapability`. The prefix is needed in :class:`NicCapability` since there's
-> +    no other qualifier which would sufficiently distinguish it from other capabilities.
-> +
-> +    References:
-> +        DPDK lib: ``lib/ethdev/rte_ethdev.h``
-> +        testpmd display function: ``app/test-pmd/cmdline.c:print_rx_offloads()``
-> +    """
-> +
-> +    TX_OFFLOAD_VLAN_INSERT = auto()
-> +    TX_OFFLOAD_IPV4_CKSUM = auto()
-> +    TX_OFFLOAD_UDP_CKSUM = auto()
-> +    TX_OFFLOAD_TCP_CKSUM = auto()
-> +    TX_OFFLOAD_SCTP_CKSUM = auto()
-> +    TX_OFFLOAD_TCP_TSO = auto()
-> +    TX_OFFLOAD_UDP_TSO = auto()
-> +    TX_OFFLOAD_OUTER_IPV4_CKSUM = auto()
-> +    TX_OFFLOAD_QINQ_INSERT = auto()
-> +    TX_OFFLOAD_VXLAN_TNL_TSO = auto()
-> +    TX_OFFLOAD_GRE_TNL_TSO = auto()
-> +    TX_OFFLOAD_IPIP_TNL_TSO = auto()
-> +    TX_OFFLOAD_GENEVE_TNL_TSO = auto()
-> +    TX_OFFLOAD_MACSEC_INSERT = auto()
-> +    TX_OFFLOAD_MT_LOCKFREE = auto()
-> +    TX_OFFLOAD_MULTI_SEGS = auto()
-> +    TX_OFFLOAD_MBUF_FAST_FREE = auto()
-> +    TX_OFFLOAD_SECURITY = auto()
-> +    TX_OFFLOAD_UDP_TNL_TSO = auto()
-> +    TX_OFFLOAD_IP_TNL_TSO = auto()
-> +    TX_OFFLOAD_OUTER_UDP_CKSUM = auto()
-> +    TX_OFFLOAD_SEND_ON_TIMESTAMP = auto()
-> +
-> +    @classmethod
-> +    def from_string(cls, line: str) -> Self:
-> +        """Make an instance from a string containing the flag names separated with a space.
-> +
-> +        Args:
-> +            line: The line to parse.
-> +
-> +        Returns:
-> +            A new instance containing all found flags.
-> +        """
-> +        flag = cls(0)
-> +        for flag_name in line.split():
-> +            flag |= cls[f"TX_OFFLOAD_{flag_name}"]
-> +        return flag
-> +
-> +    @classmethod
-> +    def make_parser(cls, per_port: bool) -> ParserFn:
-> +        """Make a parser function.
-> +
-> +        Args:
-> +            per_port: If :data:`True`, will return capabilities per port. If :data:`False`,
-> +                will return capabilities per queue.
-> +
-> +        Returns:
-> +            ParserFn: A dictionary for the `dataclasses.field` metadata argument containing a
-> +                parser function that makes an instance of this flag from text.
-> +        """
-> +        granularity = "Port" if per_port else "Queue"
-> +        return TextParser.wrap(
-> +            TextParser.find(rf"Per {granularity}\s+:(.*)$", re.MULTILINE),
-> +            cls.from_string,
-> +        )
+Burakov, Anatoly, Sep 04, 2025 at 16:35:
+> I have been trying to reproduce this but I'm unable to. I run some old=20
+> CentOS so I built GCC15 manually and tried reproducing with that. The=20
+> version I'm using is 15.2, could you please retest with latest GCC15 and=
+=20
+> see if it was fixed?
 
-The above is creating a lot of duplication. I'd personally implement the
-functions in a class that the flags RxOffload and TxOffload can inherit
-from. You can deal with `cls[f"TX_OFFLOAD_{flag_name}"]` by introducing
-a "PREFIX" ClassVar for all the classes where you can specify it:
+I am running on Fedora 42 that has GCC 15.2.1 and the problem persists.
 
-    PREFIX: ClassVar[str] = "TX_OFFLOAD_"
+> (if not, I'll try to get a more recent distro and reproduce again)
+>
+> The DMA mask checking you're referring to is there for cases where e.g.=
+=20
+> in a VM the emulated IOMMU will not have full address width (39 bits was=
+=20
+> common at the time), and thus we couldn't use the full VA space for IOVA=
+=20
+> addressing, and had to resort to using real physical addresses (because=
+=20
+> kernel ensure those are to be within support range of IOMMU). Were you=20
+> running this test in a VM, by any chance?
 
-    ...
+No I am running on a physical machine. I tested again without --no-huge
+and 2M/1G huge pages, and the issue persists as well.
 
-    cls[f"{cls.PREFIX}{flag_name}"]
+I tried both as root, and as a regular user.
+
+--=20
+Robin
+
+> Formatted to fit your screen.
+
