@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B46CA1002
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Sep 2025 11:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D21CA1015
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Sep 2025 11:47:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 510F741148;
-	Thu,  4 Sep 2025 13:47:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6BB6642670;
+	Thu,  4 Sep 2025 13:47:22 +0200 (CEST)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id E6615410FA
- for <dev@dpdk.org>; Thu,  4 Sep 2025 13:47:17 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BB2F241140
+ for <dev@dpdk.org>; Thu,  4 Sep 2025 13:47:18 +0200 (CEST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3CC92E98;
- Thu,  4 Sep 2025 04:47:08 -0700 (PDT)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D53571756;
+ Thu,  4 Sep 2025 04:47:09 -0700 (PDT)
 Received: from localhost.localdomain (unknown [10.57.57.136])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B689B3F6A8;
- Thu,  4 Sep 2025 04:47:16 -0700 (PDT)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 985513F6A8;
+ Thu,  4 Sep 2025 04:47:17 -0700 (PDT)
 From: Luca Vizzarro <luca.vizzarro@arm.com>
 To: dev@dpdk.org
 Cc: Luca Vizzarro <luca.vizzarro@arm.com>,
  Paul Szczepanek <paul.szczepanek@arm.com>, Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH v2 5/7] dts: make log files into artifacts
-Date: Thu,  4 Sep 2025 12:45:05 +0100
-Message-ID: <20250904114653.199080-6-luca.vizzarro@arm.com>
+Subject: [PATCH v2 6/7] dts: use artifacts in packet capture and softnic
+Date: Thu,  4 Sep 2025 12:45:06 +0100
+Message-ID: <20250904114653.199080-7-luca.vizzarro@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250904114653.199080-1-luca.vizzarro@arm.com>
 References: <20250725151503.87374-1-luca.vizzarro@arm.com>
@@ -42,355 +42,280 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Make log files behave like artifacts as dictated by the Artifact class.
-Implicitly, this will automatically place all the logs in a structured
-manner.
+Use the newly added artifact/file manager in the packet capture and
+softnic test suites.
 
 Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
 Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
 ---
- dts/framework/logger.py   | 126 ++++++++++++++++++++++----------------
- dts/framework/runner.py   |   5 +-
- dts/framework/test_run.py |  33 +++-------
- 3 files changed, 83 insertions(+), 81 deletions(-)
+ dts/tests/TestSuite_packet_capture.py | 73 ++++++++++----------
+ dts/tests/TestSuite_softnic.py        | 95 +++++++++++----------------
+ 2 files changed, 74 insertions(+), 94 deletions(-)
 
-diff --git a/dts/framework/logger.py b/dts/framework/logger.py
-index f43b442bc9..f69020f20b 100644
---- a/dts/framework/logger.py
-+++ b/dts/framework/logger.py
-@@ -2,43 +2,54 @@
- # Copyright(c) 2010-2014 Intel Corporation
- # Copyright(c) 2022-2023 PANTHEON.tech s.r.o.
- # Copyright(c) 2022-2023 University of New Hampshire
-+# Copyright(c) 2025 Arm Limited
- 
- """DTS logger module.
- 
- The module provides several additional features:
- 
-     * The storage of DTS execution stages,
--    * Logging to console, a human-readable log file and a machine-readable log file,
--    * Optional log files for specific stages.
-+    * Logging to console, a human-readable log artifact and a machine-readable log artifact,
-+    * Optional log artifacts for specific stages.
+diff --git a/dts/tests/TestSuite_packet_capture.py b/dts/tests/TestSuite_packet_capture.py
+index ea710454ca..e492d4d1f2 100644
+--- a/dts/tests/TestSuite_packet_capture.py
++++ b/dts/tests/TestSuite_packet_capture.py
+@@ -7,7 +7,7 @@
  """
  
- import logging
--from logging import FileHandler, StreamHandler
--from pathlib import Path
--from typing import ClassVar
-+from logging import StreamHandler
-+from typing import TYPE_CHECKING, ClassVar, NamedTuple
-+
-+if TYPE_CHECKING:
-+    from framework.testbed_model.artifact import Artifact
+ from dataclasses import dataclass, field
+-from pathlib import Path, PurePath
++from pathlib import PurePath
  
- date_fmt = "%Y/%m/%d %H:%M:%S"
- stream_fmt = "%(asctime)s - %(stage)s - %(name)s - %(levelname)s - %(message)s"
- dts_root_logger_name = "dts"
+ from scapy.contrib.lldp import (
+     LLDPDUChassisID,
+@@ -29,11 +29,10 @@
+ from framework.remote_session.blocking_app import BlockingApp
+ from framework.remote_session.dpdk_shell import compute_eal_params
+ from framework.remote_session.testpmd_shell import TestPmdShell
+-from framework.settings import SETTINGS
+ from framework.test_suite import TestSuite, func_test
++from framework.testbed_model.artifact import Artifact
+ from framework.testbed_model.capability import requires
+ from framework.testbed_model.cpu import LogicalCoreList
+-from framework.testbed_model.os_session import FilePermissions
+ from framework.testbed_model.topology import TopologyType
+ from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
+     PacketFilteringConfig,
+@@ -65,13 +64,13 @@ class TestPacketCapture(TestSuite):
  
- 
-+class ArtifactHandler(NamedTuple):
-+    """A logger handler with an associated artifact."""
-+
-+    artifact: "Artifact"
-+    handler: StreamHandler
-+
-+
- class DTSLogger(logging.Logger):
-     """The DTS logger class.
- 
-     The class extends the :class:`~logging.Logger` class to add the DTS execution stage information
-     to log records. The stage is common to all loggers, so it's stored in a class variable.
- 
--    Any time we switch to a new stage, we have the ability to log to an additional log file along
--    with a supplementary log file with machine-readable format. These two log files are used until
--    a new stage switch occurs. This is useful mainly for logging per test suite.
-+    Any time we switch to a new stage, we have the ability to log to an additional log artifact
-+    along with a supplementary log artifact with machine-readable format. These two log artifacts
-+    are used until a new stage switch occurs. This is useful mainly for logging per test suite.
+     Attributes:
+         packets: List of packets to send for testing dumpcap.
+-        rx_pcap_path: The remote path where to create the Rx packets pcap with dumpcap.
+-        tx_pcap_path: The remote path where to create the Tx packets pcap with dumpcap.
++        rx_pcap: The artifact associated with the Rx packets pcap created by dumpcap.
++        tx_pcap: The artifact associated with the Tx packets pcap created by dumpcap.
      """
  
-     _stage: ClassVar[str] = "pre_run"
--    _extra_file_handlers: list[FileHandler] = []
-+    _root_artifact_handlers: list[ArtifactHandler] = []
-+    _extra_artifact_handlers: list[ArtifactHandler] = []
+     packets: list[Packet]
+-    rx_pcap_path: PurePath
+-    tx_pcap_path: PurePath
++    rx_pcap: Artifact
++    tx_pcap: Artifact
  
-     def __init__(self, *args, **kwargs):
--        """Extend the constructor with extra file handlers."""
--        self._extra_file_handlers = []
-+        """Extend the constructor with extra artifact handlers."""
-+        self._extra_artifact_handlers = []
-         super().__init__(*args, **kwargs)
+     def _run_dumpcap(self, params: DumpcapParams) -> BlockingApp:
+         eal_params = compute_eal_params()
+@@ -108,29 +107,32 @@ def set_up_suite(self) -> None:
+             / LLDPDUSystemCapabilities()
+             / LLDPDUEndOfLLDPDU(),
+         ]
+-        self.tx_pcap_path = self._ctx.sut_node.tmp_dir.joinpath("tx.pcapng")
+-        self.rx_pcap_path = self._ctx.sut_node.tmp_dir.joinpath("rx.pcapng")
  
-     def makeRecord(self, *args, **kwargs) -> logging.LogRecord:
-@@ -56,7 +67,7 @@ def makeRecord(self, *args, **kwargs) -> logging.LogRecord:
-         record.stage = DTSLogger._stage
-         return record
- 
--    def add_dts_root_logger_handlers(self, verbose: bool, output_dir: str) -> None:
-+    def add_dts_root_logger_handlers(self, verbose: bool) -> None:
-         """Add logger handlers to the DTS root logger.
- 
-         This method should be called only on the DTS root logger.
-@@ -65,18 +76,16 @@ def add_dts_root_logger_handlers(self, verbose: bool, output_dir: str) -> None:
-         Three handlers are added:
- 
-             * A console handler,
--            * A file handler,
--            * A supplementary file handler with machine-readable logs
-+            * An artifact handler,
-+            * A supplementary artifact handler with machine-readable logs
-               containing more debug information.
- 
--        All log messages will be logged to files. The log level of the console handler
-+        All log messages will be logged to artifacts. The log level of the console handler
-         is configurable with `verbose`.
- 
-         Args:
-             verbose: If :data:`True`, log all messages to the console.
-                 If :data:`False`, log to console with the :data:`logging.INFO` level.
--            output_dir: The directory where the log files will be located.
--                The names of the log files correspond to the name of the logger instance.
-         """
-         self.setLevel(1)
- 
-@@ -86,70 +95,81 @@ def add_dts_root_logger_handlers(self, verbose: bool, output_dir: str) -> None:
-             sh.setLevel(logging.INFO)
-         self.addHandler(sh)
- 
--        self._add_file_handlers(Path(output_dir, self.name))
-+        self._root_artifact_handlers = self._add_artifact_handlers(self.name)
- 
--    def set_stage(self, stage: str, log_file_path: Path | None = None) -> None:
--        """Set the DTS execution stage and optionally log to files.
--
--        Set the DTS execution stage of the DTSLog class and optionally add
--        file handlers to the instance if the log file name is provided.
--
--        The file handlers log all messages. One is a regular human-readable log file and
--        the other one is a machine-readable log file with extra debug information.
-+    def set_stage(self, stage: str) -> None:
-+        """Set the DTS execution stage.
- 
-         Args:
-             stage: The DTS stage to set.
--            log_file_path: An optional path of the log file to use. This should be a full path
--                (either relative or absolute) without suffix (which will be appended).
-         """
--        self._remove_extra_file_handlers()
--
-         if DTSLogger._stage != stage:
-             self.info(f"Moving from stage '{DTSLogger._stage}' to stage '{stage}'.")
-             DTSLogger._stage = stage
- 
--        if log_file_path:
--            self._extra_file_handlers.extend(self._add_file_handlers(log_file_path))
-+    def set_custom_log_file(self, log_file_name: str | None) -> None:
-+        """Set a custom log file.
- 
--    def _add_file_handlers(self, log_file_path: Path) -> list[FileHandler]:
--        """Add file handlers to the DTS root logger.
-+        Add artifact handlers to the instance if the log artifact file name is provided. Otherwise,
-+        stop logging to any custom log file.
- 
--        Add two type of file handlers:
-+        The artifact handlers log all messages. One is a regular human-readable log artifact and
-+        the other one is a machine-readable log artifact with extra debug information.
- 
--            * A regular file handler with suffix ".log",
--            * A machine-readable file handler with suffix ".verbose.log".
-+        Args:
-+            log_file_name: An optional name of the log artifact file to use. This should be without
-+                suffix (which will be appended).
+-    def _load_pcap_packets(self, remote_pcap_path: PurePath) -> list[Packet]:
+-        local_pcap_path = Path(SETTINGS.output_dir).joinpath(remote_pcap_path.name)
+-        self._ctx.sut_node.main_session.copy_from(remote_pcap_path, local_pcap_path)
+-        return list(rdpcap(str(local_pcap_path)))
++    def set_up_test_case(self):
++        """Test case setup.
++
++        Prepare the artifacts for the Rx and Tx pcap files.
 +        """
-+        self._remove_extra_artifact_handlers()
-+
-+        if log_file_name:
-+            self._extra_artifact_handlers.extend(self._add_artifact_handlers(log_file_name))
-+
-+    def _add_artifact_handlers(self, log_file_name: str) -> list[ArtifactHandler]:
-+        """Add artifact handlers to the DTS root logger.
-+
-+        Add two type of artifact handlers:
-+
-+            * A regular artifact handler with suffix ".log",
-+            * A machine-readable artifact handler with suffix ".verbose.log".
-               This format provides extensive information for debugging and detailed analysis.
++        self.tx_pcap = Artifact("sut", "tx.pcapng")
++        self.rx_pcap = Artifact("sut", "rx.pcapng")
  
-         Args:
--            log_file_path: The full path to the log file without suffix.
-+            log_file_name: The name of the artifact log file without suffix.
- 
-         Returns:
--            The newly created file handlers.
--
-+            The newly created artifact handlers.
-         """
--        fh = FileHandler(f"{log_file_path}.log")
--        fh.setFormatter(logging.Formatter(stream_fmt, date_fmt))
--        self.addHandler(fh)
-+        from framework.testbed_model.artifact import Artifact
-+
-+        log_artifact = Artifact("local", f"{log_file_name}.log")
-+        handler = StreamHandler(log_artifact.open("w"))
-+        handler.setFormatter(logging.Formatter(stream_fmt, date_fmt))
-+        self.addHandler(handler)
- 
--        verbose_fh = FileHandler(f"{log_file_path}.verbose.log")
--        verbose_fh.setFormatter(
-+        verbose_log_artifact = Artifact("local", f"{log_file_name}.verbose.log")
-+        verbose_handler = StreamHandler(verbose_log_artifact.open("w"))
-+        verbose_handler.setFormatter(
-             logging.Formatter(
-                 "%(asctime)s|%(stage)s|%(name)s|%(levelname)s|%(pathname)s|%(lineno)d|"
-                 "%(funcName)s|%(process)d|%(thread)d|%(threadName)s|%(message)s",
-                 datefmt=date_fmt,
+     def _send_and_dump(
+         self, packet_filter: str | None = None, rx_only: bool = False
+     ) -> list[Packet]:
++        self.rx_pcap.touch()
+         dumpcap_rx = self._run_dumpcap(
+             DumpcapParams(
+                 interface=self.topology.sut_port_ingress.pci,
+-                output_pcap_path=self.rx_pcap_path,
++                output_pcap_path=self.rx_pcap.path,
+                 packet_filter=packet_filter,
              )
          )
--        self.addHandler(verbose_fh)
-+        self.addHandler(verbose_handler)
+         if not rx_only:
++            self.tx_pcap.touch()
+             dumpcap_tx = self._run_dumpcap(
+                 DumpcapParams(
+                     interface=self.topology.sut_port_egress.pci,
+-                    output_pcap_path=self.tx_pcap_path,
++                    output_pcap_path=self.tx_pcap.path,
+                     packet_filter=packet_filter,
+                 )
+             )
+@@ -140,14 +142,8 @@ def _send_and_dump(
+         )
  
--        return [fh, verbose_fh]
-+        return [
-+            ArtifactHandler(log_artifact, handler),
-+            ArtifactHandler(verbose_log_artifact, verbose_handler),
-+        ]
+         dumpcap_rx.close()
+-        self._ctx.sut_node.main_session.change_permissions(
+-            self.rx_pcap_path, FilePermissions(0o644)
+-        )
+         if not rx_only:
+             dumpcap_tx.close()
+-            self._ctx.sut_node.main_session.change_permissions(
+-                self.tx_pcap_path, FilePermissions(0o644)
+-            )
  
--    def _remove_extra_file_handlers(self) -> None:
--        """Remove any extra file handlers that have been added to the logger."""
--        if self._extra_file_handlers:
--            for extra_file_handler in self._extra_file_handlers:
--                self.removeHandler(extra_file_handler)
-+    def _remove_extra_artifact_handlers(self) -> None:
-+        """Remove any extra artifact handlers that have been added to the logger."""
-+        if self._extra_artifact_handlers:
-+            for extra_artifact_handler in self._extra_artifact_handlers:
-+                self.removeHandler(extra_artifact_handler.handler)
+         return received_packets
  
--            self._extra_file_handlers = []
-+            self._extra_artifact_handlers = []
+@@ -169,17 +165,19 @@ def dumpcap(self) -> None:
+             received_packets = self._send_and_dump()
  
+             expected_packets = self.get_expected_packets(self.packets, sent_from_tg=True)
+-            rx_pcap_packets = self._load_pcap_packets(self.rx_pcap_path)
+-            self.verify(
+-                self.match_all_packets(expected_packets, rx_pcap_packets, verify=False),
+-                "Rx packets from dumpcap weren't the same as the expected packets.",
+-            )
++            with self.rx_pcap.open() as fd:
++                rx_pcap_packets = list(rdpcap(fd))
++                self.verify(
++                    self.match_all_packets(expected_packets, rx_pcap_packets, verify=False),
++                    "Rx packets from dumpcap weren't the same as the expected packets.",
++                )
  
- def get_dts_logger(name: str | None = None) -> DTSLogger:
-diff --git a/dts/framework/runner.py b/dts/framework/runner.py
-index 0a3d92b0c8..ae5ac014e2 100644
---- a/dts/framework/runner.py
-+++ b/dts/framework/runner.py
-@@ -9,7 +9,6 @@
- The module is responsible for preparing DTS and running the test run.
+-            tx_pcap_packets = self._load_pcap_packets(self.tx_pcap_path)
+-            self.verify(
+-                self.match_all_packets(tx_pcap_packets, received_packets, verify=False),
+-                "Tx packets from dumpcap weren't the same as the packets received by Scapy.",
+-            )
++            with self.tx_pcap.open() as fd:
++                tx_pcap_packets = list(rdpcap(fd))
++                self.verify(
++                    self.match_all_packets(tx_pcap_packets, received_packets, verify=False),
++                    "Tx packets from dumpcap weren't the same as the packets received by Scapy.",
++                )
+ 
+     @func_test
+     def dumpcap_filter(self) -> None:
+@@ -202,9 +200,10 @@ def dumpcap_filter(self) -> None:
+                 if not p.haslayer(TCP)
+             ]
+ 
+-            rx_pcap_packets = [raw(p) for p in self._load_pcap_packets(self.rx_pcap_path)]
+-            for filtered_packet in filtered_packets:
+-                self.verify(
+-                    filtered_packet not in rx_pcap_packets,
+-                    "Found a packet in the pcap that was meant to be filtered out.",
+-                )
++            with self.rx_pcap.open() as fd:
++                rx_pcap_packets = [raw(p) for p in rdpcap(fd)]
++                for filtered_packet in filtered_packets:
++                    self.verify(
++                        filtered_packet not in rx_pcap_packets,
++                        "Found a packet in the pcap that was meant to be filtered out.",
++                    )
+diff --git a/dts/tests/TestSuite_softnic.py b/dts/tests/TestSuite_softnic.py
+index 27754c08e7..edeca55f32 100644
+--- a/dts/tests/TestSuite_softnic.py
++++ b/dts/tests/TestSuite_softnic.py
+@@ -6,11 +6,10 @@
+ Create a softnic virtual device and verify it successfully forwards packets.
  """
  
--import os
- import sys
- import textwrap
- 
-@@ -45,9 +44,7 @@ def __init__(self):
-             sys.exit(e.severity)
- 
-         self._logger = get_dts_logger()
--        if not os.path.exists(SETTINGS.output_dir):
--            os.makedirs(SETTINGS.output_dir)
--        self._logger.add_dts_root_logger_handlers(SETTINGS.verbose, SETTINGS.output_dir)
-+        self._logger.add_dts_root_logger_handlers(SETTINGS.verbose)
- 
-         test_suites_result = ResultNode(label="test_suites")
-         self._result = TestRunResult(test_suites=test_suites_result)
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index f70580f8fd..3b7e99b4b0 100644
---- a/dts/framework/test_run.py
-+++ b/dts/framework/test_run.py
-@@ -103,7 +103,6 @@
- from collections.abc import Iterable
- from dataclasses import dataclass
- from functools import cached_property
--from pathlib import Path
- from types import MethodType
- from typing import ClassVar, Protocol, Union
- 
-@@ -115,7 +114,6 @@
- from framework.settings import SETTINGS
- from framework.test_result import Result, ResultNode, TestRunResult
- from framework.test_suite import BaseConfig, TestCase, TestSuite
--from framework.testbed_model.artifact import Artifact
- from framework.testbed_model.capability import (
-     Capability,
-     get_supported_capabilities,
-@@ -259,11 +257,11 @@ class State(Protocol):
-     test_run: TestRun
-     result: TestRunResult | ResultNode
- 
--    def before(self):
-+    def before(self) -> None:
-         """Hook before the state is processed."""
--        self.logger.set_stage(self.logger_name, self.log_file_path)
-+        self.logger.set_stage(self.logger_name)
- 
--    def after(self):
-+    def after(self) -> None:
-         """Hook after the state is processed."""
-         return
- 
-@@ -276,17 +274,6 @@ def logger(self) -> DTSLogger:
-         """A reference to the root logger."""
-         return get_dts_logger()
- 
--    def get_log_file_name(self) -> str | None:
--        """Name of the log file for this state."""
--        return None
+-from pathlib import Path, PurePath
 -
--    @property
--    def log_file_path(self) -> Path | None:
--        """Path to the log file for this state."""
--        if file_name := self.get_log_file_name():
--            return Path(SETTINGS.output_dir, file_name)
--        return None
+ from framework.params.testpmd import EthPeer
+ from framework.remote_session.testpmd_shell import NicCapability, TestPmdShell
+ from framework.test_suite import TestSuite, func_test
++from framework.testbed_model.artifact import Artifact
+ from framework.testbed_model.capability import requires
+ from framework.testbed_model.topology import TopologyType
+ from framework.testbed_model.virtual_device import VirtualDevice
+@@ -35,62 +34,44 @@ def set_up_suite(self) -> None:
+         """
+         self.sut_node = self._ctx.sut_node  # FIXME: accessing the context should be forbidden
+         self.packets = generate_random_packets(self.NUMBER_OF_PACKETS_TO_SEND, self.PAYLOAD_SIZE)
+-        self.cli_file = self.prepare_softnic_files()
 -
-     def next(self) -> Union["State", None]:
-         """Next state."""
- 
-@@ -463,10 +450,6 @@ class TestSuiteState(State):
-     test_suite: TestSuite
-     result: ResultNode
- 
--    def get_log_file_name(self) -> str | None:
--        """Get the log file name."""
--        return self.test_suite.name
+-    def prepare_softnic_files(self) -> PurePath:
+-        """Creates the config files that are required for the creation of the softnic.
 -
+-        The config files are created at runtime to accommodate paths and device addresses.
+-        """
+-        # paths of files needed by softnic
+-        cli_file = Path("rx_tx.cli")
+-        spec_file = Path("rx_tx.spec")
+-        rx_tx_1_file = Path("rx_tx_1.io")
+-        rx_tx_2_file = Path("rx_tx_2.io")
+-        path_sut = self._ctx.sut_node.tmp_dir
+-        cli_file_sut = self.sut_node.main_session.join_remote_path(path_sut, cli_file)
+-        spec_file_sut = self.sut_node.main_session.join_remote_path(path_sut, spec_file)
+-        rx_tx_1_file_sut = self.sut_node.main_session.join_remote_path(path_sut, rx_tx_1_file)
+-        rx_tx_2_file_sut = self.sut_node.main_session.join_remote_path(path_sut, rx_tx_2_file)
+-        firmware_c_file_sut = self.sut_node.main_session.join_remote_path(path_sut, "firmware.c")
+-        firmware_so_file_sut = self.sut_node.main_session.join_remote_path(path_sut, "firmware.so")
+-
+-        # write correct remote paths to local files
+-        with open(cli_file, "w+") as fh:
+-            fh.write(f"pipeline codegen {spec_file_sut} {firmware_c_file_sut}\n")
+-            fh.write(f"pipeline libbuild {firmware_c_file_sut} {firmware_so_file_sut}\n")
+-            fh.write(f"pipeline RX build lib {firmware_so_file_sut} io {rx_tx_1_file_sut} numa 0\n")
+-            fh.write(f"pipeline TX build lib {firmware_so_file_sut} io {rx_tx_2_file_sut} numa 0\n")
+-            fh.write("thread 2 pipeline RX enable\n")
+-            fh.write("thread 2 pipeline TX enable\n")
+-        with open(spec_file, "w+") as fh:
+-            fh.write("struct metadata_t {{\n")
+-            fh.write("	bit<32> port\n")
+-            fh.write("}}\n")
+-            fh.write("metadata instanceof metadata_t\n")
+-            fh.write("apply {{\n")
+-            fh.write("	rx m.port\n")
+-            fh.write("	tx m.port\n")
+-            fh.write("}}\n")
+-        with open(rx_tx_1_file, "w+") as fh:
+-            fh.write(f"port in 0 ethdev {self.sut_node.config.ports[0].pci} rxq 0 bsz 32\n")
+-            fh.write("port out 0 ring RXQ0 bsz 32\n")
+-        with open(rx_tx_2_file, "w+") as fh:
+-            fh.write("port in 0 ring TXQ0 bsz 32\n")
+-            fh.write(f"port out 1 ethdev {self.sut_node.config.ports[1].pci} txq 0 bsz 32\n")
+-
+-        # copy files over to SUT
+-        self.sut_node.main_session.copy_to(cli_file, cli_file_sut)
+-        self.sut_node.main_session.copy_to(spec_file, spec_file_sut)
+-        self.sut_node.main_session.copy_to(rx_tx_1_file, rx_tx_1_file_sut)
+-        self.sut_node.main_session.copy_to(rx_tx_2_file, rx_tx_2_file_sut)
+-        # and cleanup local files
+-        cli_file.unlink()
+-        spec_file.unlink()
+-        rx_tx_1_file.unlink()
+-        rx_tx_2_file.unlink()
  
- @dataclass
- class TestSuiteSetup(TestSuiteState):
-@@ -474,6 +457,11 @@ class TestSuiteSetup(TestSuiteState):
- 
-     logger_name: ClassVar[str] = "test_suite_setup"
- 
-+    def before(self) -> None:
-+        """Hook before the state is processed."""
-+        super().before()
-+        self.logger.set_custom_log_file(self.test_suite.name)
+-        return cli_file_sut
++        self.cli_file = Artifact("sut", "rx_tx.cli")
++        self.spec_file = Artifact("sut", "rx_tx.spec")
++        self.rx_tx_1_file = Artifact("sut", "rx_tx_1.io")
++        self.rx_tx_2_file = Artifact("sut", "rx_tx_2.io")
++        self.firmware_c_file = Artifact("sut", "firmware.c")
++        self.firmware_so_file = Artifact("sut", "firmware.so")
 +
-     @property
-     def description(self) -> str:
-         """State description."""
-@@ -591,6 +579,7 @@ def after(self) -> None:
-                 "The remaining test suites will be skipped."
-             )
-             self.test_run.blocked = True
-+        self.logger.set_custom_log_file(None)
++        with self.cli_file.open("w+") as fh:
++            fh.write(
++                f"pipeline codegen {self.spec_file} {self.firmware_c_file}\n"
++                f"pipeline libbuild {self.firmware_c_file} {self.firmware_so_file}\n"
++                f"pipeline RX build lib {self.firmware_so_file} io {self.rx_tx_1_file} numa 0\n"
++                f"pipeline TX build lib {self.firmware_so_file} io {self.rx_tx_2_file} numa 0\n"
++                "thread 2 pipeline RX enable\n"
++                "thread 2 pipeline TX enable\n"
++            )
++        with self.spec_file.open("w+") as fh:
++            fh.write(
++                "struct metadata_t {\n"
++                "	bit<32> port\n"
++                "}\n"
++                "metadata instanceof metadata_t\n"
++                "apply {\n"
++                "	rx m.port\n"
++                "	tx m.port\n"
++                "}\n"
++            )
++        with self.rx_tx_1_file.open("w+") as fh:
++            fh.write(
++                f"port in 0 ethdev {self.sut_node.config.ports[0].pci} rxq 0 bsz 32\n"
++                "port out 0 ring RXQ0 bsz 32\n"
++            )
++        with self.rx_tx_2_file.open("w+") as fh:
++            fh.write(
++                "port in 0 ring TXQ0 bsz 32\n"
++                f"port out 1 ethdev {self.sut_node.config.ports[1].pci} txq 0 bsz 32\n"
++            )
  
- 
- @dataclass
-@@ -602,10 +591,6 @@ class TestCaseState(State):
-     test_case: type[TestCase]
-     result: ResultNode
- 
--    def get_log_file_name(self) -> str | None:
--        """Get the log file name."""
--        return self.test_suite.name
--
- 
- @dataclass
- class TestCaseSetup(TestCaseState):
+     @func_test
+     def softnic(self) -> None:
 -- 
 2.43.0
 
