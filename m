@@ -2,33 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D60CA1015
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Sep 2025 11:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B46CA1002
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Sep 2025 11:47:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B9A6F4114B;
-	Thu,  4 Sep 2025 13:47:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 510F741148;
+	Thu,  4 Sep 2025 13:47:21 +0200 (CEST)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 260B4410FA
+ by mails.dpdk.org (Postfix) with ESMTP id E6615410FA
  for <dev@dpdk.org>; Thu,  4 Sep 2025 13:47:17 +0200 (CEST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1FB111756;
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3CC92E98;
  Thu,  4 Sep 2025 04:47:08 -0700 (PDT)
 Received: from localhost.localdomain (unknown [10.57.57.136])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D28C13F6A8;
- Thu,  4 Sep 2025 04:47:15 -0700 (PDT)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B689B3F6A8;
+ Thu,  4 Sep 2025 04:47:16 -0700 (PDT)
 From: Luca Vizzarro <luca.vizzarro@arm.com>
 To: dev@dpdk.org
 Cc: Luca Vizzarro <luca.vizzarro@arm.com>,
  Paul Szczepanek <paul.szczepanek@arm.com>, Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH v2 4/7] dts: add artifact module
-Date: Thu,  4 Sep 2025 12:45:04 +0100
-Message-ID: <20250904114653.199080-5-luca.vizzarro@arm.com>
+Subject: [PATCH v2 5/7] dts: make log files into artifacts
+Date: Thu,  4 Sep 2025 12:45:05 +0100
+Message-ID: <20250904114653.199080-6-luca.vizzarro@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250904114653.199080-1-luca.vizzarro@arm.com>
 References: <20250725151503.87374-1-luca.vizzarro@arm.com>
  <20250904114653.199080-1-luca.vizzarro@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -43,713 +42,355 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a new artifact module which provides DTS with remote and local file
-management capabilities. A new Artifact class is provided which acts as
-an abstract representation of a file that is present in any node in the
-testbed model. The same provides several helper file management
-functions, including open, which returns an ArtifactFile class which
-behaves like a standard Python file object for easy interoperability.
-
-Moreover, add a novel directory tree structure for both the remote
-temporary and local output directories. This structure would represent
-the test suites and test cases in structured folders as appropriate,
-where each artifact will be stored. The location of the artifact is
-determined by the time when it was first defined. If an artifact was
-defined during a test case stage, this will be placed in the test case's
-own folder.
+Make log files behave like artifacts as dictated by the Artifact class.
+Implicitly, this will automatically place all the logs in a structured
+manner.
 
 Signed-off-by: Luca Vizzarro <luca.vizzarro@arm.com>
 Reviewed-by: Paul Szczepanek <paul.szczepanek@arm.com>
 ---
- .../dts/framework.testbed_model.artifact.rst  |   8 +
- doc/api/dts/framework.testbed_model.rst       |   1 +
- dts/framework/test_run.py                     |   3 +-
- dts/framework/testbed_model/artifact.py       | 628 ++++++++++++++++++
- 4 files changed, 639 insertions(+), 1 deletion(-)
- create mode 100644 doc/api/dts/framework.testbed_model.artifact.rst
- create mode 100644 dts/framework/testbed_model/artifact.py
+ dts/framework/logger.py   | 126 ++++++++++++++++++++++----------------
+ dts/framework/runner.py   |   5 +-
+ dts/framework/test_run.py |  33 +++-------
+ 3 files changed, 83 insertions(+), 81 deletions(-)
 
-diff --git a/doc/api/dts/framework.testbed_model.artifact.rst b/doc/api/dts/framework.testbed_model.artifact.rst
-new file mode 100644
-index 0000000000..1b941b9a95
---- /dev/null
-+++ b/doc/api/dts/framework.testbed_model.artifact.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+artifact - File Management
-+==========================
-+
-+.. automodule:: framework.testbed_model.artifact
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.rst b/doc/api/dts/framework.testbed_model.rst
-index f283178f6a..59429e5cd9 100644
---- a/doc/api/dts/framework.testbed_model.rst
-+++ b/doc/api/dts/framework.testbed_model.rst
-@@ -17,6 +17,7 @@ testbed\_model - Testbed Modelling Package
-    :hidden:
-    :maxdepth: 1
+diff --git a/dts/framework/logger.py b/dts/framework/logger.py
+index f43b442bc9..f69020f20b 100644
+--- a/dts/framework/logger.py
++++ b/dts/framework/logger.py
+@@ -2,43 +2,54 @@
+ # Copyright(c) 2010-2014 Intel Corporation
+ # Copyright(c) 2022-2023 PANTHEON.tech s.r.o.
+ # Copyright(c) 2022-2023 University of New Hampshire
++# Copyright(c) 2025 Arm Limited
  
-+   framework.testbed_model.artifact
-    framework.testbed_model.os_session
-    framework.testbed_model.linux_session
-    framework.testbed_model.posix_session
+ """DTS logger module.
+ 
+ The module provides several additional features:
+ 
+     * The storage of DTS execution stages,
+-    * Logging to console, a human-readable log file and a machine-readable log file,
+-    * Optional log files for specific stages.
++    * Logging to console, a human-readable log artifact and a machine-readable log artifact,
++    * Optional log artifacts for specific stages.
+ """
+ 
+ import logging
+-from logging import FileHandler, StreamHandler
+-from pathlib import Path
+-from typing import ClassVar
++from logging import StreamHandler
++from typing import TYPE_CHECKING, ClassVar, NamedTuple
++
++if TYPE_CHECKING:
++    from framework.testbed_model.artifact import Artifact
+ 
+ date_fmt = "%Y/%m/%d %H:%M:%S"
+ stream_fmt = "%(asctime)s - %(stage)s - %(name)s - %(levelname)s - %(message)s"
+ dts_root_logger_name = "dts"
+ 
+ 
++class ArtifactHandler(NamedTuple):
++    """A logger handler with an associated artifact."""
++
++    artifact: "Artifact"
++    handler: StreamHandler
++
++
+ class DTSLogger(logging.Logger):
+     """The DTS logger class.
+ 
+     The class extends the :class:`~logging.Logger` class to add the DTS execution stage information
+     to log records. The stage is common to all loggers, so it's stored in a class variable.
+ 
+-    Any time we switch to a new stage, we have the ability to log to an additional log file along
+-    with a supplementary log file with machine-readable format. These two log files are used until
+-    a new stage switch occurs. This is useful mainly for logging per test suite.
++    Any time we switch to a new stage, we have the ability to log to an additional log artifact
++    along with a supplementary log artifact with machine-readable format. These two log artifacts
++    are used until a new stage switch occurs. This is useful mainly for logging per test suite.
+     """
+ 
+     _stage: ClassVar[str] = "pre_run"
+-    _extra_file_handlers: list[FileHandler] = []
++    _root_artifact_handlers: list[ArtifactHandler] = []
++    _extra_artifact_handlers: list[ArtifactHandler] = []
+ 
+     def __init__(self, *args, **kwargs):
+-        """Extend the constructor with extra file handlers."""
+-        self._extra_file_handlers = []
++        """Extend the constructor with extra artifact handlers."""
++        self._extra_artifact_handlers = []
+         super().__init__(*args, **kwargs)
+ 
+     def makeRecord(self, *args, **kwargs) -> logging.LogRecord:
+@@ -56,7 +67,7 @@ def makeRecord(self, *args, **kwargs) -> logging.LogRecord:
+         record.stage = DTSLogger._stage
+         return record
+ 
+-    def add_dts_root_logger_handlers(self, verbose: bool, output_dir: str) -> None:
++    def add_dts_root_logger_handlers(self, verbose: bool) -> None:
+         """Add logger handlers to the DTS root logger.
+ 
+         This method should be called only on the DTS root logger.
+@@ -65,18 +76,16 @@ def add_dts_root_logger_handlers(self, verbose: bool, output_dir: str) -> None:
+         Three handlers are added:
+ 
+             * A console handler,
+-            * A file handler,
+-            * A supplementary file handler with machine-readable logs
++            * An artifact handler,
++            * A supplementary artifact handler with machine-readable logs
+               containing more debug information.
+ 
+-        All log messages will be logged to files. The log level of the console handler
++        All log messages will be logged to artifacts. The log level of the console handler
+         is configurable with `verbose`.
+ 
+         Args:
+             verbose: If :data:`True`, log all messages to the console.
+                 If :data:`False`, log to console with the :data:`logging.INFO` level.
+-            output_dir: The directory where the log files will be located.
+-                The names of the log files correspond to the name of the logger instance.
+         """
+         self.setLevel(1)
+ 
+@@ -86,70 +95,81 @@ def add_dts_root_logger_handlers(self, verbose: bool, output_dir: str) -> None:
+             sh.setLevel(logging.INFO)
+         self.addHandler(sh)
+ 
+-        self._add_file_handlers(Path(output_dir, self.name))
++        self._root_artifact_handlers = self._add_artifact_handlers(self.name)
+ 
+-    def set_stage(self, stage: str, log_file_path: Path | None = None) -> None:
+-        """Set the DTS execution stage and optionally log to files.
+-
+-        Set the DTS execution stage of the DTSLog class and optionally add
+-        file handlers to the instance if the log file name is provided.
+-
+-        The file handlers log all messages. One is a regular human-readable log file and
+-        the other one is a machine-readable log file with extra debug information.
++    def set_stage(self, stage: str) -> None:
++        """Set the DTS execution stage.
+ 
+         Args:
+             stage: The DTS stage to set.
+-            log_file_path: An optional path of the log file to use. This should be a full path
+-                (either relative or absolute) without suffix (which will be appended).
+         """
+-        self._remove_extra_file_handlers()
+-
+         if DTSLogger._stage != stage:
+             self.info(f"Moving from stage '{DTSLogger._stage}' to stage '{stage}'.")
+             DTSLogger._stage = stage
+ 
+-        if log_file_path:
+-            self._extra_file_handlers.extend(self._add_file_handlers(log_file_path))
++    def set_custom_log_file(self, log_file_name: str | None) -> None:
++        """Set a custom log file.
+ 
+-    def _add_file_handlers(self, log_file_path: Path) -> list[FileHandler]:
+-        """Add file handlers to the DTS root logger.
++        Add artifact handlers to the instance if the log artifact file name is provided. Otherwise,
++        stop logging to any custom log file.
+ 
+-        Add two type of file handlers:
++        The artifact handlers log all messages. One is a regular human-readable log artifact and
++        the other one is a machine-readable log artifact with extra debug information.
+ 
+-            * A regular file handler with suffix ".log",
+-            * A machine-readable file handler with suffix ".verbose.log".
++        Args:
++            log_file_name: An optional name of the log artifact file to use. This should be without
++                suffix (which will be appended).
++        """
++        self._remove_extra_artifact_handlers()
++
++        if log_file_name:
++            self._extra_artifact_handlers.extend(self._add_artifact_handlers(log_file_name))
++
++    def _add_artifact_handlers(self, log_file_name: str) -> list[ArtifactHandler]:
++        """Add artifact handlers to the DTS root logger.
++
++        Add two type of artifact handlers:
++
++            * A regular artifact handler with suffix ".log",
++            * A machine-readable artifact handler with suffix ".verbose.log".
+               This format provides extensive information for debugging and detailed analysis.
+ 
+         Args:
+-            log_file_path: The full path to the log file without suffix.
++            log_file_name: The name of the artifact log file without suffix.
+ 
+         Returns:
+-            The newly created file handlers.
+-
++            The newly created artifact handlers.
+         """
+-        fh = FileHandler(f"{log_file_path}.log")
+-        fh.setFormatter(logging.Formatter(stream_fmt, date_fmt))
+-        self.addHandler(fh)
++        from framework.testbed_model.artifact import Artifact
++
++        log_artifact = Artifact("local", f"{log_file_name}.log")
++        handler = StreamHandler(log_artifact.open("w"))
++        handler.setFormatter(logging.Formatter(stream_fmt, date_fmt))
++        self.addHandler(handler)
+ 
+-        verbose_fh = FileHandler(f"{log_file_path}.verbose.log")
+-        verbose_fh.setFormatter(
++        verbose_log_artifact = Artifact("local", f"{log_file_name}.verbose.log")
++        verbose_handler = StreamHandler(verbose_log_artifact.open("w"))
++        verbose_handler.setFormatter(
+             logging.Formatter(
+                 "%(asctime)s|%(stage)s|%(name)s|%(levelname)s|%(pathname)s|%(lineno)d|"
+                 "%(funcName)s|%(process)d|%(thread)d|%(threadName)s|%(message)s",
+                 datefmt=date_fmt,
+             )
+         )
+-        self.addHandler(verbose_fh)
++        self.addHandler(verbose_handler)
+ 
+-        return [fh, verbose_fh]
++        return [
++            ArtifactHandler(log_artifact, handler),
++            ArtifactHandler(verbose_log_artifact, verbose_handler),
++        ]
+ 
+-    def _remove_extra_file_handlers(self) -> None:
+-        """Remove any extra file handlers that have been added to the logger."""
+-        if self._extra_file_handlers:
+-            for extra_file_handler in self._extra_file_handlers:
+-                self.removeHandler(extra_file_handler)
++    def _remove_extra_artifact_handlers(self) -> None:
++        """Remove any extra artifact handlers that have been added to the logger."""
++        if self._extra_artifact_handlers:
++            for extra_artifact_handler in self._extra_artifact_handlers:
++                self.removeHandler(extra_artifact_handler.handler)
+ 
+-            self._extra_file_handlers = []
++            self._extra_artifact_handlers = []
+ 
+ 
+ def get_dts_logger(name: str | None = None) -> DTSLogger:
+diff --git a/dts/framework/runner.py b/dts/framework/runner.py
+index 0a3d92b0c8..ae5ac014e2 100644
+--- a/dts/framework/runner.py
++++ b/dts/framework/runner.py
+@@ -9,7 +9,6 @@
+ The module is responsible for preparing DTS and running the test run.
+ """
+ 
+-import os
+ import sys
+ import textwrap
+ 
+@@ -45,9 +44,7 @@ def __init__(self):
+             sys.exit(e.severity)
+ 
+         self._logger = get_dts_logger()
+-        if not os.path.exists(SETTINGS.output_dir):
+-            os.makedirs(SETTINGS.output_dir)
+-        self._logger.add_dts_root_logger_handlers(SETTINGS.verbose, SETTINGS.output_dir)
++        self._logger.add_dts_root_logger_handlers(SETTINGS.verbose)
+ 
+         test_suites_result = ResultNode(label="test_suites")
+         self._result = TestRunResult(test_suites=test_suites_result)
 diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index 614022e2b6..f70580f8fd 100644
+index f70580f8fd..3b7e99b4b0 100644
 --- a/dts/framework/test_run.py
 +++ b/dts/framework/test_run.py
-@@ -115,6 +115,7 @@
+@@ -103,7 +103,6 @@
+ from collections.abc import Iterable
+ from dataclasses import dataclass
+ from functools import cached_property
+-from pathlib import Path
+ from types import MethodType
+ from typing import ClassVar, Protocol, Union
+ 
+@@ -115,7 +114,6 @@
  from framework.settings import SETTINGS
  from framework.test_result import Result, ResultNode, TestRunResult
  from framework.test_suite import BaseConfig, TestCase, TestSuite
-+from framework.testbed_model.artifact import Artifact
+-from framework.testbed_model.artifact import Artifact
  from framework.testbed_model.capability import (
      Capability,
      get_supported_capabilities,
-@@ -579,7 +580,7 @@ def on_error(self, ex: Exception) -> State | None:
-         self.result.mark_step_as("teardown", Result.ERROR, ex)
-         return TestRunExecution(self.test_run, self.test_run.result)
+@@ -259,11 +257,11 @@ class State(Protocol):
+     test_run: TestRun
+     result: TestRunResult | ResultNode
+ 
+-    def before(self):
++    def before(self) -> None:
+         """Hook before the state is processed."""
+-        self.logger.set_stage(self.logger_name, self.log_file_path)
++        self.logger.set_stage(self.logger_name)
  
 -    def after(self):
 +    def after(self) -> None:
-         """Hook after state is processed."""
-         if (
-             self.result.get_overall_result() in [Result.FAIL, Result.ERROR]
-diff --git a/dts/framework/testbed_model/artifact.py b/dts/framework/testbed_model/artifact.py
-new file mode 100644
-index 0000000000..9b4caacae2
---- /dev/null
-+++ b/dts/framework/testbed_model/artifact.py
-@@ -0,0 +1,628 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 Arm Limited
-+
-+"""Artifact module.
-+
-+This module provides the :class:`Artifact` class, which represents a file artifact that can be or is
-+stored on a remote node or locally.
-+
-+Example usage of the :class:`Artifact` class:
-+
-+    .. code:: python
-+
-+        from framework.testbed_model.artifact import Artifact
-+
-+        # Create an artifact on a remote node
-+        artifact = Artifact(node="sut", file_name="example.txt")
-+        # Open the artifact file in write mode
-+        with artifact.open("w") as f:
-+            f.write("Hello, World!")
-+        # Pull the artifact to the local output directory
-+        artifact.save_locally() # This is also done automatically on object deletion
-+                                # if save_local_copy is set to True
-+        # Check if the artifact exists
-+        if artifact.exists():
-+            print(f"Artifact exists at {artifact.path}")
-+        # Delete the artifact
-+        artifact.delete()
-+
-+        # Create an artifact from a local file
-+        local_artifact = Artifact.create_from(
-+            original_file="local_file.txt",
-+            node="sut",
-+            file_name="copied_file.txt",
-+        )
-+        # Copy the content of the local artifact to another artifact
-+        another_artifact = Artifact("sut", "another_file.txt")
-+        another_artifact.copy_contents_from(local_artifact)
-+"""
-+
-+import shutil
-+import uuid
-+from collections.abc import Iterable
-+from io import SEEK_SET, RawIOBase, TextIOWrapper
-+from pathlib import Path, PurePath
-+from typing import BinaryIO, ClassVar, Literal, TypeAlias, Union, cast, overload
-+
-+from paramiko import SFTPClient, SFTPFile
-+from typing_extensions import Buffer
-+
-+from framework.exception import InternalError
-+from framework.logger import DTSLogger, get_dts_logger
-+from framework.settings import SETTINGS
-+from framework.testbed_model.node import Node, NodeIdentifier, get_node
-+
-+TextMode: TypeAlias = (
-+    Literal["r", "r+", "w", "w+", "a", "a+", "x", "x+"]
-+    | Literal["rt", "r+t", "wt", "w+t", "at", "a+t", "xt", "x+t"]
-+)
-+"""Open text mode for artifacts."""
-+BinaryMode: TypeAlias = Literal["rb", "r+b", "wb", "w+b", "ab", "a+b", "xb", "x+b"]
-+"""Open binary mode for artifacts."""
-+OpenMode: TypeAlias = TextMode | BinaryMode
-+"""Open mode for artifacts, can be either text or binary mode."""
-+
-+
-+@overload
-+def make_file_path(node: Node, file_name: str, custom_path: PurePath | None = None) -> PurePath: ...
-+
-+
-+@overload
-+def make_file_path(node: None, file_name: str, custom_path: PurePath | None = None) -> Path: ...
-+
-+
-+def make_file_path(
-+    node: Node | None, file_name: str, custom_path: PurePath | None = None
-+) -> Path | PurePath:
-+    """Make a file path for the artifact."""
-+    if node is None:
-+        path: Path | PurePath = Path(SETTINGS.output_dir).resolve()
-+    else:
-+        path = node.tmp_dir
-+
-+    if custom_path is not None:
-+        if custom_path.is_absolute():
-+            return custom_path / file_name
-+
-+        path /= custom_path
-+    else:
-+        from framework.context import get_ctx
-+
-+        try:
-+            ctx = get_ctx()
-+            if ctx.local.current_test_suite is not None:
-+                path /= ctx.local.current_test_suite.name
-+            if ctx.local.current_test_case is not None:
-+                path /= ctx.local.current_test_case.name
-+        except InternalError:
-+            # If the context is not available, use the root path.
-+            pass
-+
-+    return path / file_name
-+
-+
-+def make_unique_file_name() -> str:
-+    """Generate a unique filename for the artifact."""
-+    return f"{uuid.uuid4().hex}.dat"
-+
-+
-+class Artifact:
-+    """Artifact class.
-+
-+    Represents a file artifact that can be or is stored on a remote node or locally. It provides
-+    methods to open, read, write, and manage the artifact file, in the same familiar Python API. It
-+    also provides functionality to save a local copy of the artifact if it is remote – saved in the
-+    test run output directory. It can be used to manage files that are part of the test run, such as
-+    logs, reports, or any other files that need to be stored for later analysis.
-+
-+    By default, the artifact is created in the temporary directory of the node, following the tree
-+    directory structure defined by :class:`DirectoryTree` and managed by the test run states.
-+
-+    The artifact file is not created automatically upon instantiation. The methods :meth:`open` –
-+    with either `w` or `a` modes – and :meth:`touch` can be used to create it.
-+
-+    If `save_local_copy` is :data:`True` and there already exist a local file with the same name, it
-+    will be overwritten. If this is undesired, make sure to give distinct names to the artifacts.
-+
-+    Attributes:
-+        save_local_copy: If :data:`True`, a local copy of the artifact will be saved at the end of
-+            the lifetime of the object automatically.
-+    """
-+
-+    DIRECTORY_PERMISSIONS: ClassVar[int] = 0o755
-+    """Permission mode for directories created by the artifact."""
-+    TEXT_MODE_ENCODING: ClassVar[str] = "utf-8"
-+    """Encoding used for text mode artifacts."""
-+    TEXT_MODE_NEWLINE: ClassVar[str] = "\n"
-+    """Newline character used for text mode artifacts."""
-+
-+    _logger: DTSLogger
-+    _node: Node | None = None
-+    _sftp: Union[SFTPClient, None] = None
-+    _fd: Union["ArtifactFile", None] = None
-+    _file_path: PurePath
-+    _local_path: Path
-+    _file_was_saved: bool = False
-+    _directories_created: bool = False
-+    save_local_copy: bool
-+
-+    def __init__(
-+        self,
-+        node: NodeIdentifier,
-+        file_name: str = "",
-+        save_local_copy: bool = True,
-+        custom_path: PurePath | None = None,
-+    ):
-+        """Constructor for an artifact.
-+
-+        Args:
-+            node: The node identifier on which the file is.
-+            file_name: The name of the file. If not provided, a unique filename will be generated.
-+            save_local_copy: If :data:`True`, makes a local copy of the artifact in the output
-+                directory. Applies only to remote artifacts.
-+            custom_path: A custom path to save the artifact. If :data:`None`, the default path will
-+                be used based on the node identifier. If a relative path is provided, it will be
-+                relative to the remote temporary directory (for remote artifacts) and local output
-+                directory (for local artifacts and copies).
-+        """
-+        self._logger = get_dts_logger(f"{node}_artifact")
-+
-+        self._node = get_node(node)
-+        self.save_local_copy = save_local_copy
-+
-+        if not file_name:
-+            file_name = make_unique_file_name()
-+
-+        if self._node is not None:
-+            self._sftp = self._node.main_session.remote_session.session.sftp()
-+
-+            if custom_path is not None and not custom_path.is_absolute():
-+                relative_custom_path = custom_path
-+            else:
-+                relative_custom_path = None
-+
-+            self._file_path = make_file_path(self._node, file_name, custom_path)
-+            self._local_path = make_file_path(
-+                node=None, file_name=file_name, custom_path=relative_custom_path
-+            )
-+        else:
-+            self._local_path = self._file_path = make_file_path(self._node, file_name, custom_path)
-+
-+    @overload
-+    def open(
-+        self,
-+        file_mode: BinaryMode = "rb",
-+        buffering: int = -1,
-+    ) -> "ArtifactFile": ...
-+
-+    @overload
-+    def open(
-+        self,
-+        file_mode: TextMode = "r",
-+        buffering: int = -1,
-+    ) -> TextIOWrapper: ...
-+
-+    def open(
-+        self, file_mode: BinaryMode | TextMode = "rb", buffering: int = -1
-+    ) -> Union["ArtifactFile", TextIOWrapper]:
-+        """Open the artifact file.
-+
-+        Args:
-+            file_mode: The mode of file opening.
-+            buffering: The size of the buffer to use. If -1, the default buffer size is used.
-+
-+        Returns:
-+            An instance of :class:`ArtifactFile` or :class:`TextIOWrapper`.
-+        """
-+        if self._fd is not None and not self._fd.closed:
-+            self._logger.warning(
-+                f"Artifact {self.path} is already open. Closing the previous file descriptor."
-+            )
-+            self._fd.close()
-+        elif not self._directories_created:
-+            self.mkdir()
-+
-+        # SFTPFile does not support text mode, therefore everything needs to be handled as binary.
-+        if "t" in file_mode:
-+            actual_mode = cast(BinaryMode, cast(str, file_mode).replace("t", "") + "b")
-+        elif "b" not in file_mode:
-+            actual_mode = cast(BinaryMode, file_mode + "b")
-+        else:
-+            actual_mode = cast(BinaryMode, file_mode)
-+
-+        self._logger.debug(f"Opening file at {self.path} with mode {file_mode}.")
-+        if self._sftp is None:
-+            fd: BinaryIO | SFTPFile = open(str(self.path), mode=actual_mode, buffering=buffering)
-+        else:
-+            fd = self._sftp.open(str(self.path), mode=actual_mode, bufsize=buffering)
-+
-+        self._fd = ArtifactFile(fd, self.path, file_mode)
-+
-+        if "b" in file_mode:
-+            return self._fd
-+        else:
-+            return TextIOWrapper(
-+                self._fd,
-+                encoding=self.TEXT_MODE_ENCODING,
-+                newline=self.TEXT_MODE_NEWLINE,
-+                write_through=True,
-+            )
-+
-+    @classmethod
-+    def create_from(
-+        cls,
-+        original_file: Union[Path, "Artifact"],
-+        node: NodeIdentifier,
-+        /,
-+        new_file_name: str = "",
-+        save_local_copy: bool = False,
-+        custom_path: PurePath | None = None,
-+    ) -> "Artifact":
-+        """Create a new artifact from a local file or another artifact.
-+
-+        Args:
-+            node: The node identifier on which the file is.
-+            original_file: The local file or artifact to copy.
-+            new_file_name: The name of the new file. If not provided, the name of the original file
-+                will be used.
-+            save_local_copy: Makes a local copy of the artifact if :data:`True`. Applies only to
-+                remote files.
-+            custom_path: A custom path to save the artifact. If :data:`None`, the default path will
-+                be used based on the node identifier.
-+
-+        Returns:
-+            An instance of :class:`Artifact`.
-+        """
-+        if not new_file_name:
-+            if isinstance(original_file, Artifact):
-+                new_file_name = original_file.local_path.name
-+            else:
-+                new_file_name = original_file.name
-+
-+        artifact = cls(node, new_file_name, save_local_copy, custom_path)
-+        artifact.copy_contents_from(original_file)
-+        return artifact
-+
-+    def copy_contents_from(self, original_file: Union[Path, "Artifact"]) -> None:
-+        """Copy the content of another file or artifact into this artifact.
-+
-+        This action will close the file descriptor associated with `self` or `original_file` if
-+        open.
-+
-+        Args:
-+            original_file: The local file or artifact to copy.
-+
-+        Raises:
-+            InternalError: If the provided `original_file` does not exist.
-+        """
-+        if isinstance(original_file, Path) and not original_file.exists():
-+            raise InternalError(f"The provided file '{original_file}' does not exist.")
-+
-+        self.open("wb").close()  # Close any prior fd and truncate file.
-+
-+        self._logger.debug(f"Copying content from {original_file} to {self}.")
-+        match (original_file, self._sftp):
-+            case (Path(), None):  # local file to local artifact
-+                # Use syscalls to copy
-+                shutil.copyfile(original_file, self.path)
-+            case (Artifact(_sftp=None), None):  # local artifact to local artifact
-+                # Use syscalls to copy
-+                shutil.copyfile(original_file.local_path, self.path)
-+            case (Artifact(), None):  # remote artifact to local artifact
-+                # Use built-in chunked transfer copy
-+                with original_file.open("rb") as original_fd:
-+                    with self.open("wb") as copy_fd:
-+                        shutil.copyfileobj(original_fd, copy_fd)
-+            case (_, SFTPClient()):  # remote artifact to remote artifact
-+                # Use SFTPClient's buffered file copy
-+                with original_file.open("rb") as original_fd:
-+                    self._sftp.putfo(original_fd, str(self.path))
-+
-+    @property
-+    def path(self) -> PurePath:
-+        """Return the actual path of the artifact."""
-+        return self._file_path
-+
-+    @property
-+    def local_path(self) -> Path:
-+        """Return the local path of the artifact."""
-+        return self._local_path
-+
-+    def save_locally(self) -> None:
-+        """Copy remote artifact file and save it locally. Does nothing on local artifacts.
-+
-+        If there already exist a local file with the same name, it will be overwritten. If this is
-+        undesired, make sure to give distinct names to the artifacts.
-+        """
-+        if self._sftp is not None:
-+            if not self.exists():
-+                self._logger.debug(f"File {self.path} was never created, skipping save.")
-+                return
-+
-+            self._logger.debug(f"Pulling artifact {self.path} to {self.local_path}.")
-+
-+            if not self._file_was_saved and self.local_path.exists():
-+                self._logger.warning(
-+                    f"While saving a remote artifact: local file {self.local_path} already exists, "
-+                    "overwriting it. Please use distinct file names."
-+                )
-+                self._file_was_saved = True
-+
-+            self._sftp.get(str(self.path), str(self.local_path))
-+
-+    def delete(self, remove_local_copy: bool = True) -> None:
-+        """Delete the artifact file. It also prevents a local copy from being saved.
-+
-+        Args:
-+            remove_local_copy: If :data:`True`, the local copy of the artifact will be deleted if
-+                it already exists.
-+        """
-+        self._logger.debug(f"Deleting artifact {self.path}.")
-+
-+        if self._fd is not None and not self._fd.closed:
-+            self._fd.close()
-+            self._fd = None
-+
-+        if self._sftp is not None:
-+            self._sftp.remove(str(self._file_path))
-+
-+        if self._sftp is None or remove_local_copy:
-+            self.local_path.unlink(missing_ok=True)
-+
-+    def touch(self, mode: int = 0o644) -> None:
-+        """Touch the artifact file, creating it if it does not exist.
-+
-+        Args:
-+            mode: The permission mode to set for the artifact file, if just created.
-+        """
-+        if not self._directories_created:
-+            self.mkdir()
-+
-+        self._logger.debug(f"Touching artifact {self.path} with mode {oct(mode)}.")
-+        if self._sftp is not None:
-+            file_path = str(self._file_path)
-+            try:
-+                self._sftp.stat(file_path)
-+            except FileNotFoundError:
-+                self._sftp.open(file_path, "w").close()
-+                self._sftp.chmod(file_path, mode)
-+        else:
-+            Path(self._file_path).touch(mode=mode)
-+
-+    def chmod(self, mode: int = 0o644) -> None:
-+        """Change the permissions of the artifact file.
-+
-+        Args:
-+            mode: The permission mode to set for the artifact file.
-+        """
-+        self._logger.debug(f"Changing permissions of {self.path} to {oct(mode)}.")
-+        if self._sftp is not None:
-+            self._sftp.chmod(str(self._file_path), mode)
-+        else:
-+            Path(self._file_path).chmod(mode)
-+
-+    def exists(self) -> bool:
-+        """Check if the artifact file exists.
-+
-+        Returns:
-+            :data:`True` if the artifact file exists, :data:`False` otherwise.
-+        """
-+        if self._sftp is not None:
-+            try:
-+                self._sftp.stat(str(self._file_path))
-+                return True
-+            except FileNotFoundError:
-+                return False
-+        else:
-+            return self._local_path.exists()
-+
-+    def mkdir(self) -> None:
-+        """Create all the intermediate file path directories."""
-+        if self._sftp is not None:
-+            parts = self._file_path.parts[:-1]
-+            paths = (PurePath(*parts[:tree_depth]) for tree_depth in range(1, len(parts) + 1))
-+            for path in paths:
-+                try:
-+                    self._sftp.stat(str(path))
-+                except FileNotFoundError:
-+                    self._logger.debug(f"Creating directories {path}.")
-+                    self._sftp.mkdir(str(path), mode=self.DIRECTORY_PERMISSIONS)
-+
-+        if self._sftp is None or self.save_local_copy:
-+            self._logger.debug(f"Creating directories {self.local_path.parent} locally.")
-+            self.local_path.parent.mkdir(
-+                mode=self.DIRECTORY_PERMISSIONS, parents=True, exist_ok=True
-+            )
-+
-+        self._directories_created = True
-+
-+    def __del__(self):
-+        """Close the file descriptor if it is open and save it if requested."""
-+        if self._fd is not None and not self._fd.closed:
-+            self._fd.close()
-+            self._fd = None
-+
-+        if self.save_local_copy:
-+            self.save_locally()
-+
-+    def __str__(self):
-+        """Return path of the artifact."""
-+        return str(self.path)
-+
-+
-+class ArtifactFile(RawIOBase, BinaryIO):
-+    """Artifact file wrapper class.
-+
-+    Provides a single interface for either local or remote files.
-+    This class implements the :class:`~io.RawIOBase` interface, allowing it to be used
-+    interchangeably with standard file objects.
-+    """
-+
-+    _fd: Union[BinaryIO, SFTPFile]
-+    _path: PurePath
-+    _mode: OpenMode
-+
-+    def __init__(self, fd: Union[BinaryIO, SFTPFile], path: PurePath, mode: OpenMode):
-+        """Initialize the artifact file wrapper.
-+
-+        Args:
-+            fd: The file descriptor of the artifact.
-+            path: The path of the artifact file.
-+            mode: The mode in which the artifact file was opened.
-+        """
-+        super().__init__()
-+        self._fd = fd
-+        self._path = path
-+        self._mode = mode
-+
-+    def close(self) -> None:
-+        """Close artifact file.
-+
-+        This method implements :meth:`~io.RawIOBase.close()`.
-+        """
-+        self._fd.close()
-+
-+    def read(self, size: int | None = -1) -> bytes:
-+        """Read bytes from the artifact file.
-+
-+        This method implements :meth:`~io.RawIOBase.read()`.
-+        """
-+        return self._fd.read(size if size is not None else -1)
-+
-+    def readline(self, size: int | None = -1) -> bytes:
-+        """Read line from the artifact file.
-+
-+        This method implements :meth:`~io.RawIOBase.readline()`.
-+        """
-+        if size is None:
-+            size = -1  # Turning None to -1 due to abstract type mismatch.
-+        return self._fd.readline(size)
-+
-+    def readlines(self, hint: int = -1) -> list[bytes]:
-+        """Read lines from the artifact file.
-+
-+        This method implements :meth:`~io.RawIOBase.readlines()`.
-+        """
-+        return self._fd.readlines(hint)
-+
-+    def write(self, data: Buffer) -> int:
-+        """Write bytes to the artifact file.
-+
-+        Returns the number of bytes written if available, otherwise -1.
-+
-+        This method implements :meth:`~io.RawIOBase.write()`.
-+        """
-+        return self._fd.write(data) or -1
-+
-+    def writelines(self, lines: Iterable[Buffer]):
-+        """Write lines to the artifact file.
-+
-+        This method implements :meth:`~io.RawIOBase.writelines()`.
-+        """
-+        return self._fd.writelines(lines)
-+
-+    def flush(self) -> None:
-+        """Flush the write buffers to the artifact file if applicable.
-+
-+        This method implements :meth:`~io.RawIOBase.flush()`.
-+        """
-+        self._fd.flush()
-+
-+    def seek(self, offset: int, whence: int = SEEK_SET) -> int:
-+        """Change the file position to the given byte offset.
-+
-+        This method implements :meth:`~io.RawIOBase.seek()`.
-+        """
-+        pos = self._fd.seek(offset, whence)
-+        if pos is None:
-+            return self._fd.tell()
-+        return pos
-+
-+    def tell(self) -> int:
-+        """Return the current absolute file position.
-+
-+        This method implements :meth:`~io.RawIOBase.tell()`.
-+        """
-+        return self._fd.tell()
-+
-+    def truncate(self, size: int | None = None) -> int:
-+        """Change the size of the file to `size` or to the current position.
-+
-+        This method implements :meth:`~io.RawIOBase.truncate()`.
-+        """
-+        if size is None:
-+            size = self._fd.tell()
-+        new_size = self._fd.truncate(size)
-+        if new_size is None:
-+            return size
-+        return new_size
-+
-+    @property
-+    def name(self) -> str:
-+        """Return the name of the artifact file.
-+
-+        This method implements :meth:`~io.RawIOBase.name()`.
-+        """
-+        return str(self._path)
-+
-+    @property
-+    def mode(self) -> str:
-+        """Return the mode in which the artifact file was opened.
-+
-+        This method implements :meth:`~io.RawIOBase.mode()`.
-+        """
-+        return self._mode
-+
-+    @property
-+    def closed(self) -> bool:
-+        """:data:`True` if the file is closed."""
-+        return self._fd.closed
-+
-+    def fileno(self) -> int:
-+        """Return the underlying file descriptor.
-+
-+        This method implements :meth:`~io.RawIOBase.fileno()`.
-+        """
-+        return self._fd.fileno() if hasattr(self._fd, "fileno") else -1
-+
-+    def isatty(self) -> bool:
-+        """Return :data:`True` if the file is connected to a terminal device.
-+
-+        This method implements :meth:`~io.RawIOBase.isatty()`.
-+        """
-+        return self._fd.isatty() if hasattr(self._fd, "isatty") else False
-+
-+    def readable(self) -> bool:
-+        """Return :data:`True` if the file is readable.
-+
-+        This method implements :meth:`~io.RawIOBase.readable()`.
-+        """
-+        return self._fd.readable()
-+
-+    def writable(self) -> bool:
-+        """Return :data:`True` if the file is writable.
-+
-+        This method implements :meth:`~io.RawIOBase.writable()`.
-+        """
-+        return self._fd.writable()
-+
-+    def seekable(self) -> bool:
-+        """Return :data:`True` if the file is seekable.
-+
-+        This method implements :meth:`~io.RawIOBase.seekable()`.
-+        """
-+        return self._fd.seekable()
-+
-+    def __enter__(self) -> "ArtifactFile":
-+        """Enter the runtime context related to this object.
-+
-+        This method implements :meth:`~io.RawIOBase.__enter__()`.
-+        """
-+        return self
-+
-+    def __exit__(self, *args) -> None:
-+        """Exit the runtime context related to this object.
-+
-+        This method implements :meth:`~io.RawIOBase.__exit__()`.
-+        """
-+        self.close()
+         """Hook after the state is processed."""
+         return
+ 
+@@ -276,17 +274,6 @@ def logger(self) -> DTSLogger:
+         """A reference to the root logger."""
+         return get_dts_logger()
+ 
+-    def get_log_file_name(self) -> str | None:
+-        """Name of the log file for this state."""
+-        return None
+-
+-    @property
+-    def log_file_path(self) -> Path | None:
+-        """Path to the log file for this state."""
+-        if file_name := self.get_log_file_name():
+-            return Path(SETTINGS.output_dir, file_name)
+-        return None
+-
+     def next(self) -> Union["State", None]:
+         """Next state."""
+ 
+@@ -463,10 +450,6 @@ class TestSuiteState(State):
+     test_suite: TestSuite
+     result: ResultNode
+ 
+-    def get_log_file_name(self) -> str | None:
+-        """Get the log file name."""
+-        return self.test_suite.name
+-
+ 
+ @dataclass
+ class TestSuiteSetup(TestSuiteState):
+@@ -474,6 +457,11 @@ class TestSuiteSetup(TestSuiteState):
+ 
+     logger_name: ClassVar[str] = "test_suite_setup"
+ 
++    def before(self) -> None:
++        """Hook before the state is processed."""
++        super().before()
++        self.logger.set_custom_log_file(self.test_suite.name)
++
+     @property
+     def description(self) -> str:
+         """State description."""
+@@ -591,6 +579,7 @@ def after(self) -> None:
+                 "The remaining test suites will be skipped."
+             )
+             self.test_run.blocked = True
++        self.logger.set_custom_log_file(None)
+ 
+ 
+ @dataclass
+@@ -602,10 +591,6 @@ class TestCaseState(State):
+     test_case: type[TestCase]
+     result: ResultNode
+ 
+-    def get_log_file_name(self) -> str | None:
+-        """Get the log file name."""
+-        return self.test_suite.name
+-
+ 
+ @dataclass
+ class TestCaseSetup(TestCaseState):
 -- 
 2.43.0
 
