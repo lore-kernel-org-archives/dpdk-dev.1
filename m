@@ -2,48 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D08ECA1002
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Sep 2025 10:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F697CA1015
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Sep 2025 11:47:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B532C410EA;
-	Thu,  4 Sep 2025 12:44:53 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 194974027D
- for <dev@dpdk.org>; Thu,  4 Sep 2025 12:44:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1756982690; x=1788518690;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=PkKpCHPgdxKXSCk2rBuGVLYQkDCgfZhNeo6if0zYSf4=;
- b=fQ7CO6YFhEf+7c1jvA8njMSKOeX+AwoeoFTtBy8vP6V8zWaVdClMqjWn
- uyD2kxrVnEtDrOVcCtZmVwJFIC2Uuf1LAjp4vdbLWa37jAWly5Oawy7yf
- 9y/4xYn7JEErBAyh6Mxwc6mrnA8JitHbJdLk6Ug9CwwEV4uh9EqyAkPhA
- LW8ali1mjjUfp3jlFvL3AfT6iCH84GKOTLgjlpCWlqoLbgXxekD5RiUFy
- 8BgT+T55zzXcOXB1TyFNFDB9LeS37J5g9zC+ACHraE3kTAqzX0uzOPuTP
- RJ9prm+UM5XDftW7Ii1gR3pqDePr0/8flUOvwxjiHVgzpE/+PMZjYQz68 w==;
-X-CSE-ConnectionGUID: To7dNa2yQqGnZgslwjXaaw==
-X-CSE-MsgGUID: hnp1uayvRXWdqEkq2AU1NQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11542"; a="59463071"
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; d="scan'208";a="59463071"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Sep 2025 03:44:49 -0700
-X-CSE-ConnectionGUID: y41anw0WSqCSUu5abrtGPA==
-X-CSE-MsgGUID: FTcuFWLDSnSuNN61vdYRjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,238,1751266800"; d="scan'208";a="195512090"
-Received: from silpixa00401177.ir.intel.com ([10.237.213.77])
- by fmviesa002.fm.intel.com with ESMTP; 04 Sep 2025 03:44:48 -0700
-From: Ciara Loftus <ciara.loftus@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0A19A40697;
+	Thu,  4 Sep 2025 13:47:11 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 27F8640280
+ for <dev@dpdk.org>; Thu,  4 Sep 2025 13:47:10 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 332491756;
+ Thu,  4 Sep 2025 04:47:01 -0700 (PDT)
+Received: from localhost.localdomain (unknown [10.57.57.136])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1761D3F6A8;
+ Thu,  4 Sep 2025 04:47:08 -0700 (PDT)
+From: Luca Vizzarro <luca.vizzarro@arm.com>
 To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH 3/3] net/iavf: fix Tx path selection for VLAN offload
-Date: Thu,  4 Sep 2025 10:44:40 +0000
-Message-Id: <20250904104440.2167205-4-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250904104440.2167205-1-ciara.loftus@intel.com>
-References: <20250904104440.2167205-1-ciara.loftus@intel.com>
+Cc: Luca Vizzarro <luca.vizzarro@arm.com>,
+	Patrick Robb <probb@iol.unh.edu>
+Subject: [PATCH v2 0/7] dts: add file manager
+Date: Thu,  4 Sep 2025 12:45:00 +0100
+Message-ID: <20250904114653.199080-1-luca.vizzarro@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250725151503.87374-1-luca.vizzarro@arm.com>
+References: <20250725151503.87374-1-luca.vizzarro@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -59,80 +41,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-For the vlan insert offload a different tx vector offload path is
-required depending on where the tag must be placed in the descriptor
-which can vary from one VF to another. Some VFs use the L2TAG2 field
-which requires the use of a context descriptor. Adjust the logic for
-selecting the tx path so that the correct path is used for each vlan tag
-location. Before this fix, if the tag was to be put in the L2TAG1 field,
-the scalar path was always used which was incorrect, because the AVX-512
-vector path also supports this offload.
+Hi there,
 
-Fixes: abca31f780e1 ("net/iavf: support VLAN insertion for the AVX-512 path")
+sending v2 for the file manager:
 
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
----
- drivers/net/intel/iavf/iavf_rxtx.h            |  1 -
- drivers/net/intel/iavf/iavf_rxtx_vec_common.h | 23 +++++++++++--------
- 2 files changed, 13 insertions(+), 11 deletions(-)
+v2:
+- resolved log splitting by explicitly set the custom log files in the
+  test run states
+- updated CaptureTrafficGenerator to use Artifacts to store the received
+  packets
 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-index 723c30d05b..a499141049 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx.h
-@@ -53,7 +53,6 @@
- #define IAVF_TX_VECTOR_OFFLOAD_CTX (			\
- 		RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |	\
- 		RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM |	\
--		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |	\
- 		RTE_ETH_TX_OFFLOAD_QINQ_INSERT)
- 
- #define IAVF_RX_NO_OFFLOADS 0
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-index a3688baf4b..f513777663 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-@@ -73,6 +73,8 @@ iavf_rx_vec_queue_default(struct ci_rx_queue *rxq)
- static inline int
- iavf_tx_vec_queue_default(struct ci_tx_queue *txq)
- {
-+	bool vlan_offload = false, vlan_needs_ctx = false;
-+
- 	if (!txq)
- 		return -1;
- 
-@@ -88,20 +90,21 @@ iavf_tx_vec_queue_default(struct ci_tx_queue *txq)
- 		return IAVF_VECTOR_CTX_PATH;
- 	}
- 
-+	/* Vlan tci needs to be inserted via ctx desc, if the vlan_flag is L2TAG2. */
-+	if (txq->offloads & RTE_ETH_TX_OFFLOAD_VLAN_INSERT) {
-+		vlan_offload = true;
-+		if (txq->vlan_flag == IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2)
-+			vlan_needs_ctx = true;
-+	}
-+
- 	/**
--	 * Vlan tci needs to be inserted via ctx desc, if the vlan_flag is L2TAG2.
- 	 * Tunneling parameters and other fields need be configured in ctx desc
- 	 * if the outer checksum offload is enabled.
- 	 */
--	if (txq->offloads & (IAVF_TX_VECTOR_OFFLOAD | IAVF_TX_VECTOR_OFFLOAD_CTX)) {
--		if (txq->offloads & IAVF_TX_VECTOR_OFFLOAD_CTX) {
--			if (txq->vlan_flag == IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ||
--					txq->offloads & RTE_ETH_TX_OFFLOAD_QINQ_INSERT) {
--				txq->use_ctx = 1;
--				return IAVF_VECTOR_CTX_OFFLOAD_PATH;
--			} else {
--				return -1;
--			}
-+	if (txq->offloads & (IAVF_TX_VECTOR_OFFLOAD | IAVF_TX_VECTOR_OFFLOAD_CTX) || vlan_offload) {
-+		if (txq->offloads & IAVF_TX_VECTOR_OFFLOAD_CTX || vlan_needs_ctx) {
-+			txq->use_ctx = 1;
-+			return IAVF_VECTOR_CTX_OFFLOAD_PATH;
- 		} else {
- 			return IAVF_VECTOR_OFFLOAD_PATH;
- 		}
+Best,
+Luca
+
+Luca Vizzarro (7):
+  dts: merge RemoteSession class
+  dts: add node retriever by identifier
+  dts: add current test suite and cases to context
+  dts: add artifact module
+  dts: make log files into artifacts
+  dts: use artifacts in packet capture and softnic
+  dts: save received packets with artifacts
+
+ doc/api/dts/framework.remote_session.rst      |   1 -
+ .../framework.remote_session.ssh_session.rst  |   8 -
+ .../dts/framework.testbed_model.artifact.rst  |   8 +
+ doc/api/dts/framework.testbed_model.rst       |   1 +
+ dts/framework/context.py                      |   7 +-
+ dts/framework/logger.py                       | 126 ++--
+ dts/framework/remote_session/__init__.py      |   3 +-
+ .../remote_session/remote_session.py          | 110 ++-
+ dts/framework/remote_session/ssh_session.py   | 116 ----
+ dts/framework/runner.py                       |   5 +-
+ dts/framework/test_run.py                     |  36 +-
+ dts/framework/testbed_model/artifact.py       | 628 ++++++++++++++++++
+ dts/framework/testbed_model/node.py           |  38 ++
+ dts/framework/testbed_model/topology.py       |   8 +-
+ .../capturing_traffic_generator.py            |   9 +-
+ dts/tests/TestSuite_packet_capture.py         |  73 +-
+ dts/tests/TestSuite_softnic.py                |  95 ++-
+ 17 files changed, 927 insertions(+), 345 deletions(-)
+ delete mode 100644 doc/api/dts/framework.remote_session.ssh_session.rst
+ create mode 100644 doc/api/dts/framework.testbed_model.artifact.rst
+ delete mode 100644 dts/framework/remote_session/ssh_session.py
+ create mode 100644 dts/framework/testbed_model/artifact.py
+
 -- 
-2.34.1
+2.43.0
 
