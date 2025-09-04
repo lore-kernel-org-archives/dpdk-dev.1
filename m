@@ -2,63 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4D2CA1015
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Sep 2025 11:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02FDBCA1015
+	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Sep 2025 12:09:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E241240697;
-	Thu,  4 Sep 2025 13:52:24 +0200 (CEST)
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com
- [209.85.210.176])
- by mails.dpdk.org (Postfix) with ESMTP id 95DF040280
- for <dev@dpdk.org>; Thu,  4 Sep 2025 13:52:23 +0200 (CEST)
-Received: by mail-pf1-f176.google.com with SMTP id
- d2e1a72fcca58-772301f8ae2so812329b3a.0
- for <dev@dpdk.org>; Thu, 04 Sep 2025 04:52:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1756986743; x=1757591543; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=OBVXqo1pQ8/iX7/UgFmyvxoMK+hANrIhRCSsPVH1B1s=;
- b=HxLQYA2GHlGnQn53UycE89VGnT25K/RFYRJha2VunngSjn4+ogzxWGoErMQzdizDKe
- gXAAOQTDjkU2/nkVoXL3Pzr1UPBb6zHvEzM3hPofIn6J3kCTZf92U1cRyxmPvXeCYaHH
- GjBQpRjTQAdG/BNcz37f78C8nlFzG/jKpkZ3U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1756986743; x=1757591543;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=OBVXqo1pQ8/iX7/UgFmyvxoMK+hANrIhRCSsPVH1B1s=;
- b=p3dNR4HmpRh1fZxNrG1pji2MYPleOuc9P05dwSHLe6uxTkfiJnhXMOtYixFgwkAdTO
- 5xv2Wbr9CUMeYZDmSPtmwWnyBWhf+JrQNbuxq5M9Di3iCMdPicOsrb36Duiyigra/gOY
- fqddD9cTbibZGynxKgkpfKqs2YQZkZPmUdOQA8/nBV+1lU7tciD+mcs7xuxMtl4XHJv8
- A4FFQD7brS/EvENbzYa9GfvXlZLUA5KoUbTD51jQ1PtQUEkYsTsv6BjPZWGZa9Fiz+0o
- EVXnkFXIhp8joR9C7vsFvpxMU4174nFm2h7a59QJk42lN6XADMg3A3gCiprA6jaJr3gi
- /4MQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWAiD8xs3NZPTGvHS+Y/j0le/HLeZ0jTYoBpEaUDsSEWi+jWsFbcBHOGsY2bStq49HWkBk=@dpdk.org
-X-Gm-Message-State: AOJu0YwKpPMYpdEjqJ0aB85+wVwai/oYLLPayMH3xC0u7U8b4/lEKvHZ
- CvfsgjHvd0vv/XFypvqhdaLVjxUcRaEUraoUByE8/BznDS1WDj6TgwNIZBbTZMfX2BWYZpLpCq1
- rDITpKo8PTEM2eecdYcpCFGzygCe9XcY+74pr0aKnsw==
-X-Gm-Gg: ASbGncuc0VLSvLISHvFRNdLOXP1XPfArtxC1/lQTmZ/s0ILUnJO5Hn7irzDo0vfsxjG
- i/QF/GEant47QlsTvL6VP7n/LS0x0/snq3nxfjQ9g7PT6a5gp1rPFZotylbksPfuuPTnWMhZal3
- YoADO9LCk4Y7lvJlW2Q6Rg4P2GNuk80YO6ztXz2HkQi+GRifnzp1CxvZrBGR+iJUnCYyhBjhCm5
- ooby9h6wnWbTEXlQrpfkQ8LSuLbBTD4tlO3oz6mrjgWwlHiRDj/u0yG2Ygr
-X-Google-Smtp-Source: AGHT+IHKS7Q+wzVvzIxE67n5KfITRBtvSXVyKIY9Eb/hb0YFgKZNa23TKtIeQZpCKMGcOHTRO73ThvpYUN4FQoRUQbA=
-X-Received: by 2002:a17:902:d4cb:b0:249:3049:9748 with SMTP id
- d9443c01a7336-24944a98207mr237686655ad.35.1756986742659; Thu, 04 Sep 2025
- 04:52:22 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 47A4140E68;
+	Thu,  4 Sep 2025 14:09:47 +0200 (CEST)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+ by mails.dpdk.org (Postfix) with ESMTP id EE8A540E68
+ for <dev@dpdk.org>; Thu,  4 Sep 2025 14:09:45 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+ by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cHdYW3FgXztTY2;
+ Thu,  4 Sep 2025 20:08:47 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 9D7A2180080;
+ Thu,  4 Sep 2025 20:09:43 +0800 (CST)
+Received: from localhost.localdomain (10.50.165.33) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 4 Sep 2025 20:09:43 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>
+CC: <dev@dpdk.org>
+Subject: [PATCH] mempool: hide zero value items when dump cache
+Date: Thu, 4 Sep 2025 20:09:42 +0800
+Message-ID: <20250904120942.51729-1-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20250818165054.447127-1-abailey@iol.unh.edu>
- <20250820151850.484576-1-abailey@iol.unh.edu>
-In-Reply-To: <20250820151850.484576-1-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 4 Sep 2025 07:45:35 -0400
-X-Gm-Features: Ac12FXz-ecVJzcTxaDbj7ix66NUcD9WGeqDGmHK170Z_RYzvTvzSjUfxawcE6qU
-Message-ID: <CAJvnSUCFvbPqbRqY2SfAByNDiA-W5epkZeR_7Mni=RQKJ_4=Cg@mail.gmail.com>
-Subject: Re: [PATCH v4] dts: add missing type hints to method signatures
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, dev@dpdk.org, dmarx@iol.unh.edu
-Content-Type: multipart/alternative; boundary="000000000000abfb8e063df85a61"
+Content-Type: text/plain
+X-Originating-IP: [10.50.165.33]
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,16 +45,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000abfb8e063df85a61
-Content-Type: text/plain; charset="UTF-8"
+Hide zero value items when dump mempool cache.
 
-Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+---
+ lib/mempool/rte_mempool.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applying to next-dts with Luca's suggested fixup.
+diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
+index 1021ede0c2..3042d94c14 100644
+--- a/lib/mempool/rte_mempool.c
++++ b/lib/mempool/rte_mempool.c
+@@ -1057,7 +1057,7 @@ rte_mempool_dump_cache(FILE *f, const struct rte_mempool *mp)
+ 	unsigned count = 0;
+ 	unsigned cache_count;
+ 
+-	fprintf(f, "  internal cache infos:\n");
++	fprintf(f, "  internal cache infos (hide zero value items):\n");
+ 	fprintf(f, "    cache_size=%"PRIu32"\n", mp->cache_size);
+ 
+ 	if (mp->cache_size == 0)
+@@ -1065,6 +1065,8 @@ rte_mempool_dump_cache(FILE *f, const struct rte_mempool *mp)
+ 
+ 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
+ 		cache_count = mp->local_cache[lcore_id].len;
++		if (cache_count == 0)
++			continue;
+ 		fprintf(f, "    cache_count[%u]=%"PRIu32"\n",
+ 			lcore_id, cache_count);
+ 		count += cache_count;
+-- 
+2.17.1
 
---000000000000abfb8e063df85a61
-Content-Type: text/html; charset="UTF-8"
-
-<div dir="ltr">Reviewed-by: Patrick Robb &lt;<a href="mailto:probb@iol.unh.edu">probb@iol.unh.edu</a>&gt;<div><br></div><div>Applying to next-dts with Luca&#39;s suggested fixup.</div></div>
-
---000000000000abfb8e063df85a61--
