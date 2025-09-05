@@ -2,67 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05480CA1012
-	for <dpdk-dev@archiver.kernel.org>; Thu,  4 Sep 2025 21:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 564CECA1002
+	for <dpdk-dev@archiver.kernel.org>; Fri,  5 Sep 2025 02:50:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B73B427DD;
-	Thu,  4 Sep 2025 23:25:43 +0200 (CEST)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
- [209.85.214.173])
- by mails.dpdk.org (Postfix) with ESMTP id 64E27427D1
- for <dev@dpdk.org>; Thu,  4 Sep 2025 23:25:42 +0200 (CEST)
-Received: by mail-pl1-f173.google.com with SMTP id
- d9443c01a7336-24b1622788dso11608295ad.2
- for <dev@dpdk.org>; Thu, 04 Sep 2025 14:25:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1757021141; x=1757625941; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=4bfLKEMWfi0qIClFga0Ei8km5kd1UqunakPvgwE69VY=;
- b=LG+KHSDf8+XiVCGQBI7pHUd0m2+7gTKuRGskDreWyPem5+5P+yluXU5WrKoL95datp
- lS05ekapN9jF5wt9lNSPz4roVwpqsP5jw94v3BaZyx/cAb4ylMshyyjKawtgFUb5ZI4b
- +RC09cOIA8tDZBpBblK9dgp7z6X7P70A+jTpA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1757021141; x=1757625941;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=4bfLKEMWfi0qIClFga0Ei8km5kd1UqunakPvgwE69VY=;
- b=P2UIl5WKuRuhwTX0wVt3PJN9eIB0a/qUDYmdlndXT0wELVhyg/0maeGmfSo4tG+Nc4
- ohIuhRTBLIEsDqJFJzw0dHu5low6ZYvIedt8mA1C/J9ONVEl9UAZ0IbFsb7V1wZwq0+m
- ypidXm8jDcjdw9Ca2SlJC4ua6BQrI1cnNKZtpzzVSSm8stKP+6ZPUHTGEKnR0R1baO2P
- alA4jd9rzJu89qKcDVV2a37JkFqYZ8v0Qmc34XtYk+5/h5JLj7v8z2T/2AVjoxDela8G
- yKeZ9HCRpIgkoM1EUQ11IpIKc7Hkd0jttPLT/+urzTgyeJaJo50EuIgh8m7llw0E+0xo
- 9bug==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVP2Ghb68mXZY8sbhFfgrV8ApVx50hc9xYSqF3iG4DTwr/kbLeEgmGpne0eeD7kuVmecQY=@dpdk.org
-X-Gm-Message-State: AOJu0YxN7gcaRwvvrwvQrBKFBfx6RPrNNMSMuS+DLpzKp2xVRBcEbAuw
- OT/BnUEGLDVlLRDQBxqtHDxnZFKi5mRmWX7feOA9j821W8nunLUpLuI4/VB/J3phnwFPrqEWgjG
- E5Dru/dJ0aoAHshSYQoSW6lygD+PKM2o0wJFlDzN2FA==
-X-Gm-Gg: ASbGnctPXRwxDoYwt3AVv69jyKhqL1UPtciySJAftMUsY+4msWIy3Za3hXP1L0+nLfH
- bn3yR0PvVPY42x3EbhqK0lcdBN5v/1kHmPVNsGN2ta3ve515h+uD6hJ7ua6bjNGcllTZ44Nxtng
- dweCoKfP5qdN/yJGoZZqAhULgAZf7C2JOwntDsrBHOlAPRyuhKH662QWVj1ZxqwPSqkWapvqSlt
- KfVGBJNTgLW3vr15my4CY2exfHCjRl2+JJW0kQShRbQvCWzIy4=
-X-Google-Smtp-Source: AGHT+IEZOOmkGEDZEhpx5/o6cRVeh6jUrOkx6pZ9UHKpY/v96Cv9O2hdVuGlw7TCdT+wKCmSTWHnRI/hRzCG2/d9LXg=
-X-Received: by 2002:a17:903:98f:b0:24c:cb6b:105b with SMTP id
- d9443c01a7336-24ccb6b138cmr43386695ad.25.1757021141478; Thu, 04 Sep 2025
- 14:25:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 36C8B40150;
+	Fri,  5 Sep 2025 04:50:33 +0200 (CEST)
+Received: from cstnet.cn (smtp83.cstnet.cn [159.226.251.83])
+ by mails.dpdk.org (Postfix) with ESMTP id 02FD2400D5
+ for <dev@dpdk.org>; Fri,  5 Sep 2025 04:50:30 +0200 (CEST)
+Received: from sunyuechi$iscas.ac.cn ( [42.177.177.196] ) by
+ ajax-webmail-APP-09 (Coremail) ; Fri, 5 Sep 2025 10:50:26 +0800 (GMT+08:00)
+X-Originating-IP: [42.177.177.196]
+Date: Fri, 5 Sep 2025 10:50:26 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?5a2Z6LaK5rGg?= <sunyuechi@iscas.ac.cn>
+To: =?UTF-8?Q?Stanis=C5=82aw_Kardach?= <stanislaw.kardach@gmail.com>
+Cc: uk7b@foxmail.com, dev@dpdk.org, "Thomas Monjalon" <thomas@monjalon.net>, 
+ "Bruce Richardson" <bruce.richardson@intel.com>
+Subject: Re: Re: [PATCH v2 1/5] config/riscv: detect V extension
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
+ 20240627(e6c6db66) Copyright (c) 2002-2025 www.mailtech.cn cnic.cn
+In-Reply-To: <CAJcPQBoWE2quf_xWMcmRVazRrj9okV_BJsM4pFt30EP9FbyFsA@mail.gmail.com>
+References: <20250701182033.642384-1-uk7b@foxmail.com>
+ <tencent_512AC2D478AA548B2D4487968A1FE662B109@qq.com>
+ <CAJcPQBoWE2quf_xWMcmRVazRrj9okV_BJsM4pFt30EP9FbyFsA@mail.gmail.com>
+Content-Type: multipart/alternative; 
+ boundary="----=_Part_104905_2026829290.1757040626195"
 MIME-Version: 1.0
-References: <20250902142725.56736-1-abailey@iol.unh.edu>
- <20250903180414.83001-1-abailey@iol.unh.edu>
- <20250903180414.83001-2-abailey@iol.unh.edu>
- <175699757148.86363.18113785073209751856.luca.vizzarro@arm.com>
-In-Reply-To: <175699757148.86363.18113785073209751856.luca.vizzarro@arm.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 4 Sep 2025 17:18:52 -0400
-X-Gm-Features: Ac12FXzeNcOKTtTud46vGIJpmMboVe2qHGQsb4JEXRWlyrhif7bm3UxTsf1tWEQ
-Message-ID: <CAJvnSUAZbF6JmGqMVo7dgOwxv=TOPKuZSix-9n4phHZ=vr9Chg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dts: allow mbuf_fast_free to be set with testpmd
- shell
-To: Luca Vizzarro <luca.vizzarro@arm.com>
-Cc: Andrew Bailey <abailey@iol.unh.edu>, dev@dpdk.org, dmarx@iol.unh.edu, 
- ivan.malov@arknetworks.am
-Content-Type: multipart/alternative; boundary="00000000000000419f063e005dc6"
+Message-ID: <2df5681.76ff.19917c84a14.Coremail.sunyuechi@iscas.ac.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: swCowAD3a1XzT7poffIAAA--.10657W
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiCREPAmi5qlXERgABs4
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+ CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+ daVFxhVjvjDU=
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,80 +50,196 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000000419f063e005dc6
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+------=_Part_104905_2026829290.1757040626195
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Thu, Sep 4, 2025 at 11:16=E2=80=AFAM Luca Vizzarro <luca.vizzarro@arm.co=
-m> wrote:
+SGksCkp1c3QgY2hlY2tpbmcgaWYgdGhpcyBwYXRjaCBtaWdodCBiZSBtZXJnZWQgc29vbiwKc2lu
+Y2UgdGhlcmUgaGF2ZW7igJl0IGJlZW4gYW55IGNoYW5nZSByZXF1ZXN0cyBmb3IgYSB3aGlsZS4K
+CgotLS0tLeWOn+Wni+mCruS7ti0tLS0tCuWPkeS7tuS6ujoiU3RhbmlzxYJhdyBLYXJkYWNoIiA8
+c3RhbmlzbGF3LmthcmRhY2hAZ21haWwuY29tPgrlj5HpgIHml7bpl7Q6MjAyNS0wOC0xMiAxNzoy
+MTo1MyAo5pif5pyf5LqMKQrmlLbku7bkuro6IHVrN2JAZm94bWFpbC5jb20K5oqE6YCBOiBkZXZA
+ZHBkay5vcmcsICJTdW4gWXVlY2hpIiA8c3VueXVlY2hpQGlzY2FzLmFjLmNuPiwgIlRob21hcyBN
+b25qYWxvbiIgPHRob21hc0Btb25qYWxvbi5uZXQ+LCAiQnJ1Y2UgUmljaGFyZHNvbiIgPGJydWNl
+LnJpY2hhcmRzb25AaW50ZWwuY29tPgrkuLvpopg6IFJlOiBbUEFUQ0ggdjIgMS81XSBjb25maWcv
+cmlzY3Y6IGRldGVjdCBWIGV4dGVuc2lvbgoKCgoKCk9uIFR1ZSwgMSBKdWwgMjAyNSwgMjA6MjEg
+LCA8dWs3YkBmb3htYWlsLmNvbT4gd3JvdGU6CgpGcm9tOiBTdW4gWXVlY2hpIDxzdW55dWVjaGlA
+aXNjYXMuYWMuY24+CgpUaGlzIHBhdGNoIGlzIGRlcml2ZWQgZnJvbSAiY29uZmlnL3Jpc2N2OiBk
+ZXRlY3QgcHJlc2VuY2Ugb2YgWmJjCmV4dGVuc2lvbiB3aXRoIG1vZGlmaWNhdGlvbnMiLgoKVGhl
+IFJJU0MtViBDIGFwaSBkZWZpbmVzIGFyY2hpdGVjdHVyZSBleHRlbnNpb24gdGVzdCBtYWNyb3MK
+VGhlc2UgbGV0IHVzIGRldGVjdCB3aGV0aGVyIHRoZSBWIGV4dGVuc2lvbiBpcyBzdXBwb3J0ZWQg
+b24gdGhlCmNvbXBpbGVyIGFuZCAtbWFyY2ggd2UncmUgYnVpbGRpbmcgd2l0aC4gVGhlIEMgYXBp
+IGFsc28gZGVmaW5lcyBWCmludHJpbnNpY3Mgd2UgY2FuIHVzZSByYXRoZXIgdGhhbiBpbmxpbmUg
+YXNzZW1ibHkgb24gbmV3ZXIgdmVyc2lvbnMgb2YKR0NDICgxNC4xLjArKSBhbmQgQ2xhbmcgKDE4
+LjEuMCspLgoKSWYgdGhlIFYgZXh0ZW5zaW9uIGFuZCBpbnRyaW5zaWNzIGFyZSBib3RoIHByZXNl
+bnQgYW5kIHdlIGNhbiBkZXRlY3QKdGhlIFYgZXh0ZW5zaW9uIGF0IHJ1bnRpbWUsIHdlIGRlZmlu
+ZSBhIGZsYWcsIFJURV9SSVNDVl9GRUFUVVJFX1YuCgpTaWduZWQtb2ZmLWJ5OiBTdW4gWXVlY2hp
+IDxzdW55dWVjaGlAaXNjYXMuYWMuY24+CgpSZXZpZXdlZC1ieTogU3RhbmlzxYJhdyBLYXJkYWNo
+IDxzdGFuaXNsYXcua2FyZGFjaEBnbWFpbC5jb20+Ci0tLQogLm1haWxtYXAgICAgICAgICAgICAg
+ICAgICAgICAgICAgfCAgMSArCiBjb25maWcvcmlzY3YvbWVzb24uYnVpbGQgICAgICAgICB8IDI1
+ICsrKysrKysrKysrKysrKysrKysrKysrKysKIGxpYi9lYWwvcmlzY3YvaW5jbHVkZS9ydGVfdmVj
+dC5oIHwgIDQgKysrKwogMyBmaWxlcyBjaGFuZ2VkLCAzMCBpbnNlcnRpb25zKCspCgpkaWZmIC0t
+Z2l0IGEvLm1haWxtYXAgYi8ubWFpbG1hcAppbmRleCA4NDgzZDk2ZWM1Li4yMWY1ZDdmYjVlIDEw
+MDY0NAotLS0gYS8ubWFpbG1hcAorKysgYi8ubWFpbG1hcApAQCAtMTUxMyw2ICsxNTEzLDcgQEAg
+U3VuaWwgS3VtYXIgS29yaSA8c2tvcmlAbWFydmVsbC5jb20+IDxza29yaUBtYXZlbGwuY29tPiA8
+c3VuaWwua29yaUBueHAuY29tPgogU3VuaWwgUGFpIEcgPHN1bmlsLnBhaS5nQGludGVsLmNvbT4K
+IFN1bmlsIFV0dGFyd2FyIDxzdW5pbHByYWthc2hyYW8udXR0YXJ3YXJAYW1kLmNvbT4KIFN1biBK
+aWFqaWEgPHN1bnguamlhamlhQGludGVsLmNvbT4KK1N1biBZdWVjaGkgPHN1bnl1ZWNoaUBpc2Nh
+cy5hYy5jbj4gPHVrN2JAZm94bWFpbC5jb20+CiBTdW55YW5nIFd1IDxzdW55YW5nLnd1QGphZ3Vh
+cm1pY3JvLmNvbT4KIFN1cmFiaGkgQm9vYiA8c3VyYWJoaS5ib29iQGludGVsLmNvbT4KIFN1eWFu
+ZyBKdSA8c2p1QHBhbG9hbHRvbmV0d29ya3MuY29tPgpkaWZmIC0tZ2l0IGEvY29uZmlnL3Jpc2N2
+L21lc29uLmJ1aWxkIGIvY29uZmlnL3Jpc2N2L21lc29uLmJ1aWxkCmluZGV4IDc1NjJjNmNiOTku
+LmUzNjk0Y2YyZTYgMTAwNjQ0Ci0tLSBhL2NvbmZpZy9yaXNjdi9tZXNvbi5idWlsZAorKysgYi9j
+b25maWcvcmlzY3YvbWVzb24uYnVpbGQKQEAgLTExOSw2ICsxMTksMzEgQEAgZm9yZWFjaCBmbGFn
+OiBhcmNoX2NvbmZpZ1snbWFjaGluZV9hcmdzJ10KICAgICBlbmRpZgogZW5kZm9yZWFjaAoKKyMg
+Y2hlY2sgaWYgd2UgY2FuIGRvIGJ1aWxkdGltZSBkZXRlY3Rpb24gb2YgZXh0ZW5zaW9ucyBzdXBw
+b3J0ZWQgYnkgdGhlIHRhcmdldAorcmlzY3ZfZXh0ZW5zaW9uX21hY3JvcyA9IGZhbHNlCitpZiAo
+Y2MuZ2V0X2RlZmluZSgnX19yaXNjdl9hcmNoX3Rlc3QnLCBhcmdzOiBtYWNoaW5lX2FyZ3MpID09
+ICcxJykKKyAgbWVzc2FnZSgnRGV0ZWN0ZWQgYXJjaGl0ZWN0dXJlIGV4dGVuc2lvbiB0ZXN0IG1h
+Y3JvcycpCisgIHJpc2N2X2V4dGVuc2lvbl9tYWNyb3MgPSB0cnVlCitlbHNlCisgIHdhcm5pbmco
+J1JJU0MtViBhcmNoaXRlY3R1cmUgZXh0ZW5zaW9uIHRlc3QgbWFjcm9zIG5vdCBhdmFpbGFibGUu
+IEJ1aWxkLXRpbWUgZGV0ZWN0aW9uIG9mIGV4dGVuc2lvbnMgbm90IHBvc3NpYmxlJykKK2VuZGlm
+CisKKyMgZGV0ZWN0IGV4dGVuc2lvbnMKKyMgUmVxdWlyZXMgaW50cmluc2ljcyBhdmFpbGFibGUg
+aW4gR0NDIDE0LjEuMCsgYW5kIENsYW5nIDE4LjEuMCsKK2lmIChyaXNjdl9leHRlbnNpb25fbWFj
+cm9zIGFuZAorICAgIChjYy5nZXRfZGVmaW5lKCdfX3Jpc2N2X3ZlY3RvcicsIGFyZ3M6IG1hY2hp
+bmVfYXJncykgIT0gJycpKQorICBpZiAoKGNjLmdldF9pZCgpID09ICdnY2MnIGFuZCBjYy52ZXJz
+aW9uKCkudmVyc2lvbl9jb21wYXJlKCc+PTE0LjEuMCcpKQorICAgICAgb3IgKGNjLmdldF9pZCgp
+ID09ICdjbGFuZycgYW5kIGNjLnZlcnNpb24oKS52ZXJzaW9uX2NvbXBhcmUoJz49MTguMS4wJykp
+KQorICAgIGlmIChjYy5jb21waWxlcygnJycjaW5jbHVkZSA8cmlzY3ZfdmVjdG9yLmg+CisgICAg
+ICAgIGludCBtYWluKHZvaWQpIHsgc2l6ZV90IHZsID0gX19yaXNjdl92c2V0dmxfZTMybTEoMSk7
+IH0nJycsIGFyZ3M6IG1hY2hpbmVfYXJncykpCisgICAgICBtZXNzYWdlKCdDb21waWxpbmcgd2l0
+aCB0aGUgViBleHRlbnNpb24nKQorICAgICAgbWFjaGluZV9hcmdzICs9IFsnLURSVEVfUklTQ1Zf
+RkVBVFVSRV9WJ10KKyAgICBlbmRpZgorICBlbHNlCisgICAgd2FybmluZygnRGV0ZWN0ZWQgViBl
+eHRlbnNpb24gYnV0IGNhbm5vdCB1c2UgYmVjYXVzZSBpbnRyaW5zaWNzIGFyZSBub3QgYXZhaWxh
+YmxlIChwcmVzZW50IGluIEdDQyAxNC4xLjArIGFuZCBDbGFuZyAxOC4xLjArKScpCisgIGVuZGlm
+CitlbmRpZgorCiAjIGFwcGx5IGZsYWdzCiBmb3JlYWNoIGZsYWc6IGRwZGtfZmxhZ3MKICAgICBp
+ZiBmbGFnLmxlbmd0aCgpID4gMApkaWZmIC0tZ2l0IGEvbGliL2VhbC9yaXNjdi9pbmNsdWRlL3J0
+ZV92ZWN0LmggYi9saWIvZWFsL3Jpc2N2L2luY2x1ZGUvcnRlX3ZlY3QuaAppbmRleCA2ZGYxMGZh
+OGVlLi5hNDM1N2UyNjZhIDEwMDY0NAotLS0gYS9saWIvZWFsL3Jpc2N2L2luY2x1ZGUvcnRlX3Zl
+Y3QuaAorKysgYi9saWIvZWFsL3Jpc2N2L2luY2x1ZGUvcnRlX3ZlY3QuaApAQCAtMTEsNiArMTEs
+MTAgQEAKICNpbmNsdWRlICJnZW5lcmljL3J0ZV92ZWN0LmgiCiAjaW5jbHVkZSAicnRlX2NvbW1v
+bi5oIgoKKyNpZmRlZiBSVEVfUklTQ1ZfRkVBVFVSRV9WCisjaW5jbHVkZSA8cmlzY3ZfdmVjdG9y
+Lmg+CisjZW5kaWYKKwogI2lmZGVmIF9fY3BsdXNwbHVzCiBleHRlcm4gIkMiIHsKICNlbmRpZgot
+LQoyLjUwLjAKCg==
+------=_Part_104905_2026829290.1757040626195
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-> On Wed, Sep 03, 2025 at 02:04:12PM +0000, Andrew Bailey wrote:
-> > diff --git a/dts/framework/remote_session/testpmd_shell.py
-> b/dts/framework/remote_session/testpmd_shell.py
-> > index ad8cb273dc..4d9caceb37 100644
-> > --- a/dts/framework/remote_session/testpmd_shell.py
-> > +++ b/dts/framework/remote_session/testpmd_shell.py
-> > @@ -19,7 +19,7 @@
-> >  import time
-> >  from collections.abc import Callable, MutableSet
-> >  from dataclasses import dataclass, field
-> > -from enum import Flag, auto
-> > +from enum import Enum, Flag, auto
-> >  from os import environ
-> >  from pathlib import PurePath
-> >  from typing import TYPE_CHECKING, Any, ClassVar, Concatenate, Literal,
-> ParamSpec, Tuple, TypeAlias
-> > @@ -344,6 +344,13 @@ def make_parser(cls) -> ParserFn:
-> >          )
-> >
-> >
-> > +class RxTxArgFlag(Enum):
->
-> this could be StrEnum given the values used. Moreover, is it a
-> flag? Looks like a regular enum to me.
->
+SGksPGJyPgpKdXN0IGNoZWNraW5nIGlmIHRoaXMgcGF0Y2ggbWlnaHQgYmUgbWVyZ2VkIHNvb24s
+PGJyPgpzaW5jZSB0aGVyZSBoYXZlbuKAmXQgYmVlbiBhbnkgY2hhbmdlIHJlcXVlc3RzIGZvciBh
+IHdoaWxlLjxicj4KPGJyPgo8YnI+CjxibG9ja3F1b3RlIG5hbWU9InJlcGx5Q29udGVudCIgY2xh
+c3M9IlJlZmVyZW5jZVF1b3RlIiBzdHlsZT0icGFkZGluZy1sZWZ0OjVweDttYXJnaW4tbGVmdDo1
+cHg7Ym9yZGVyLWxlZnQ6I2I2YjZiNiAycHggc29saWQ7bWFyZ2luLXJpZ2h0OjA7Ij4KCS0tLS0t
+5Y6f5aeL6YKu5Lu2LS0tLS08YnI+CjxiPuWPkeS7tuS6ujo8L2I+PHNwYW4gaWQ9InJjX2Zyb20i
+PiJTdGFuaXPFgmF3IEthcmRhY2giICZsdDtzdGFuaXNsYXcua2FyZGFjaEBnbWFpbC5jb20mZ3Q7
+PC9zcGFuPjxicj4KPGI+5Y+R6YCB5pe26Ze0OjwvYj48c3BhbiBpZD0icmNfc2VudHRpbWUiPjIw
+MjUtMDgtMTIgMTc6MjE6NTMgKOaYn+acn+S6jCk8L3NwYW4+PGJyPgo8Yj7mlLbku7bkuro6PC9i
+PiB1azdiQGZveG1haWwuY29tPGJyPgo8Yj7mioTpgIE6PC9iPiBkZXZAZHBkay5vcmcsICJTdW4g
+WXVlY2hpIiAmbHQ7c3VueXVlY2hpQGlzY2FzLmFjLmNuJmd0OywgIlRob21hcyBNb25qYWxvbiIg
+Jmx0O3Rob21hc0Btb25qYWxvbi5uZXQmZ3Q7LCAiQnJ1Y2UgUmljaGFyZHNvbiIgJmx0O2JydWNl
+LnJpY2hhcmRzb25AaW50ZWwuY29tJmd0Ozxicj4KPGI+5Li76aKYOjwvYj4gUmU6IFtQQVRDSCB2
+MiAxLzVdIGNvbmZpZy9yaXNjdjogZGV0ZWN0IFYgZXh0ZW5zaW9uPGJyPgo8YnI+Cgk8ZGl2IGRp
+cj0iYXV0byI+CgkJPGRpdj4KCQkJPGJyPgo8YnI+CgkJCTxkaXYgY2xhc3M9ImdtYWlsX3F1b3Rl
+IGdtYWlsX3F1b3RlX2NvbnRhaW5lciI+CgkJCQk8ZGl2IGRpcj0ibHRyIiBjbGFzcz0iZ21haWxf
+YXR0ciI+CgkJCQkJT24gVHVlLCAxIEp1bCAyMDI1LCAyMDoyMSAsICZsdDs8YSBocmVmPSJtYWls
+dG86dWs3YkBmb3htYWlsLmNvbSI+dWs3YkBmb3htYWlsLmNvbTwvYT4mZ3Q7IHdyb3RlOjxicj4K
+CQkJCTwvZGl2PgoJCQkJPGJsb2NrcXVvdGUgY2xhc3M9ImdtYWlsX3F1b3RlIiBzdHlsZT0ibWFy
+Z2luOjBweCAwcHggMHB4IDAuOGV4O2JvcmRlci1sZWZ0OjFweCBzb2xpZCAjQ0NDQ0NDO3BhZGRp
+bmctbGVmdDoxZXg7Ij4KCQkJCQlGcm9tOiBTdW4gWXVlY2hpICZsdDs8YSBocmVmPSJtYWlsdG86
+c3VueXVlY2hpQGlzY2FzLmFjLmNuIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub3JlZmVycmVyIj5z
+dW55dWVjaGlAaXNjYXMuYWMuY248L2E+Jmd0Ozxicj4KPGJyPgpUaGlzIHBhdGNoIGlzIGRlcml2
+ZWQgZnJvbSAiY29uZmlnL3Jpc2N2OiBkZXRlY3QgcHJlc2VuY2Ugb2YgWmJjPGJyPgpleHRlbnNp
+b24gd2l0aCBtb2RpZmljYXRpb25zIi48YnI+Cjxicj4KVGhlIFJJU0MtViBDIGFwaSBkZWZpbmVz
+IGFyY2hpdGVjdHVyZSBleHRlbnNpb24gdGVzdCBtYWNyb3M8YnI+ClRoZXNlIGxldCB1cyBkZXRl
+Y3Qgd2hldGhlciB0aGUgViBleHRlbnNpb24gaXMgc3VwcG9ydGVkIG9uIHRoZTxicj4KY29tcGls
+ZXIgYW5kIC1tYXJjaCB3ZSdyZSBidWlsZGluZyB3aXRoLiBUaGUgQyBhcGkgYWxzbyBkZWZpbmVz
+IFY8YnI+CmludHJpbnNpY3Mgd2UgY2FuIHVzZSByYXRoZXIgdGhhbiBpbmxpbmUgYXNzZW1ibHkg
+b24gbmV3ZXIgdmVyc2lvbnMgb2Y8YnI+CkdDQyAoMTQuMS4wKykgYW5kIENsYW5nICgxOC4xLjAr
+KS48YnI+Cjxicj4KSWYgdGhlIFYgZXh0ZW5zaW9uIGFuZCBpbnRyaW5zaWNzIGFyZSBib3RoIHBy
+ZXNlbnQgYW5kIHdlIGNhbiBkZXRlY3Q8YnI+CnRoZSBWIGV4dGVuc2lvbiBhdCBydW50aW1lLCB3
+ZSBkZWZpbmUgYSBmbGFnLCBSVEVfUklTQ1ZfRkVBVFVSRV9WLjxicj4KPGJyPgpTaWduZWQtb2Zm
+LWJ5OiBTdW4gWXVlY2hpICZsdDs8YSBocmVmPSJtYWlsdG86c3VueXVlY2hpQGlzY2FzLmFjLmNu
+IiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub3JlZmVycmVyIj5zdW55dWVjaGlAaXNjYXMuYWMuY248
+L2E+Jmd0Ozxicj4KCQkJCTwvYmxvY2txdW90ZT4KCQkJPC9kaXY+CgkJPC9kaXY+CgkJPGRpdiBk
+aXI9ImF1dG8iPgoJCQlSZXZpZXdlZC1ieTogU3RhbmlzxYJhdyBLYXJkYWNoICZsdDs8YSBocmVm
+PSJtYWlsdG86c3RhbmlzbGF3LmthcmRhY2hAZ21haWwuY29tIj5zdGFuaXNsYXcua2FyZGFjaEBn
+bWFpbC5jb208L2E+Jmd0OwoJCTwvZGl2PgoJCTxkaXYgZGlyPSJhdXRvIj4KCQkJPGRpdiBjbGFz
+cz0iZ21haWxfcXVvdGUgZ21haWxfcXVvdGVfY29udGFpbmVyIj4KCQkJCTxibG9ja3F1b3RlIGNs
+YXNzPSJnbWFpbF9xdW90ZSIgc3R5bGU9Im1hcmdpbjowcHggMHB4IDBweCAwLjhleDtib3JkZXIt
+bGVmdDoxcHggc29saWQgI0NDQ0NDQztwYWRkaW5nLWxlZnQ6MWV4OyI+CgkJCQkJLS0tPGJyPgom
+bmJzcDsubWFpbG1hcCZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZu
+YnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwO3wmbmJzcDsgMSAr
+PGJyPgombmJzcDtjb25maWcvcmlzY3YvbWVzb24uYnVpbGQmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
+bmJzcDsgJm5ic3A7fCAyNSArKysrKysrKysrKysrKysrKysrKysrKysrPGJyPgombmJzcDtsaWIv
+ZWFsL3Jpc2N2L2luY2x1ZGUvcnRlX3ZlY3QuaCB8Jm5ic3A7IDQgKysrKzxicj4KJm5ic3A7MyBm
+aWxlcyBjaGFuZ2VkLCAzMCBpbnNlcnRpb25zKCspPGJyPgo8YnI+CmRpZmYgLS1naXQgYS8ubWFp
+bG1hcCBiLy5tYWlsbWFwPGJyPgppbmRleCA4NDgzZDk2ZWM1Li4yMWY1ZDdmYjVlIDEwMDY0NDxi
+cj4KLS0tIGEvLm1haWxtYXA8YnI+CisrKyBiLy5tYWlsbWFwPGJyPgpAQCAtMTUxMyw2ICsxNTEz
+LDcgQEAgU3VuaWwgS3VtYXIgS29yaSAmbHQ7PGEgaHJlZj0ibWFpbHRvOnNrb3JpQG1hcnZlbGwu
+Y29tIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub3JlZmVycmVyIj5za29yaUBtYXJ2ZWxsLmNvbTwv
+YT4mZ3Q7ICZsdDs8YSBocmVmPSJtYWlsdG86c2tvcmlAbWF2ZWxsLmNvbSIgdGFyZ2V0PSJfYmxh
+bmsiIHJlbD0ibm9yZWZlcnJlciI+c2tvcmlAbWF2ZWxsLmNvbTwvYT4mZ3Q7ICZsdDs8YSBocmVm
+PSJtYWlsdG86c3VuaWwua29yaUBueHAuY29tIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub3JlZmVy
+cmVyIj5zdW5pbC5rb3JpQG54cC5jb208L2E+Jmd0Ozxicj4KJm5ic3A7U3VuaWwgUGFpIEcgJmx0
+OzxhIGhyZWY9Im1haWx0bzpzdW5pbC5wYWkuZ0BpbnRlbC5jb20iIHRhcmdldD0iX2JsYW5rIiBy
+ZWw9Im5vcmVmZXJyZXIiPnN1bmlsLnBhaS5nQGludGVsLmNvbTwvYT4mZ3Q7PGJyPgombmJzcDtT
+dW5pbCBVdHRhcndhciAmbHQ7PGEgaHJlZj0ibWFpbHRvOnN1bmlscHJha2FzaHJhby51dHRhcndh
+ckBhbWQuY29tIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub3JlZmVycmVyIj5zdW5pbHByYWthc2hy
+YW8udXR0YXJ3YXJAYW1kLmNvbTwvYT4mZ3Q7PGJyPgombmJzcDtTdW4gSmlhamlhICZsdDs8YSBo
+cmVmPSJtYWlsdG86c3VueC5qaWFqaWFAaW50ZWwuY29tIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJu
+b3JlZmVycmVyIj5zdW54LmppYWppYUBpbnRlbC5jb208L2E+Jmd0Ozxicj4KK1N1biBZdWVjaGkg
+Jmx0OzxhIGhyZWY9Im1haWx0bzpzdW55dWVjaGlAaXNjYXMuYWMuY24iIHRhcmdldD0iX2JsYW5r
+IiByZWw9Im5vcmVmZXJyZXIiPnN1bnl1ZWNoaUBpc2Nhcy5hYy5jbjwvYT4mZ3Q7ICZsdDs8YSBo
+cmVmPSJtYWlsdG86dWs3YkBmb3htYWlsLmNvbSIgdGFyZ2V0PSJfYmxhbmsiIHJlbD0ibm9yZWZl
+cnJlciI+dWs3YkBmb3htYWlsLmNvbTwvYT4mZ3Q7PGJyPgombmJzcDtTdW55YW5nIFd1ICZsdDs8
+YSBocmVmPSJtYWlsdG86c3VueWFuZy53dUBqYWd1YXJtaWNyby5jb20iIHRhcmdldD0iX2JsYW5r
+IiByZWw9Im5vcmVmZXJyZXIiPnN1bnlhbmcud3VAamFndWFybWljcm8uY29tPC9hPiZndDs8YnI+
+CiZuYnNwO1N1cmFiaGkgQm9vYiAmbHQ7PGEgaHJlZj0ibWFpbHRvOnN1cmFiaGkuYm9vYkBpbnRl
+bC5jb20iIHRhcmdldD0iX2JsYW5rIiByZWw9Im5vcmVmZXJyZXIiPnN1cmFiaGkuYm9vYkBpbnRl
+bC5jb208L2E+Jmd0Ozxicj4KJm5ic3A7U3V5YW5nIEp1ICZsdDs8YSBocmVmPSJtYWlsdG86c2p1
+QHBhbG9hbHRvbmV0d29ya3MuY29tIiB0YXJnZXQ9Il9ibGFuayIgcmVsPSJub3JlZmVycmVyIj5z
+anVAcGFsb2FsdG9uZXR3b3Jrcy5jb208L2E+Jmd0Ozxicj4KZGlmZiAtLWdpdCBhL2NvbmZpZy9y
+aXNjdi9tZXNvbi5idWlsZCBiL2NvbmZpZy9yaXNjdi9tZXNvbi5idWlsZDxicj4KaW5kZXggNzU2
+MmM2Y2I5OS4uZTM2OTRjZjJlNiAxMDA2NDQ8YnI+Ci0tLSBhL2NvbmZpZy9yaXNjdi9tZXNvbi5i
+dWlsZDxicj4KKysrIGIvY29uZmlnL3Jpc2N2L21lc29uLmJ1aWxkPGJyPgpAQCAtMTE5LDYgKzEx
+OSwzMSBAQCBmb3JlYWNoIGZsYWc6IGFyY2hfY29uZmlnWydtYWNoaW5lX2FyZ3MnXTxicj4KJm5i
+c3A7ICZuYnNwOyAmbmJzcDtlbmRpZjxicj4KJm5ic3A7ZW5kZm9yZWFjaDxicj4KPGJyPgorIyBj
+aGVjayBpZiB3ZSBjYW4gZG8gYnVpbGR0aW1lIGRldGVjdGlvbiBvZiBleHRlbnNpb25zIHN1cHBv
+cnRlZCBieSB0aGUgdGFyZ2V0PGJyPgorcmlzY3ZfZXh0ZW5zaW9uX21hY3JvcyA9IGZhbHNlPGJy
+PgoraWYgKGNjLmdldF9kZWZpbmUoJ19fcmlzY3ZfYXJjaF90ZXN0JywgYXJnczogbWFjaGluZV9h
+cmdzKSA9PSAnMScpPGJyPgorJm5ic3A7IG1lc3NhZ2UoJ0RldGVjdGVkIGFyY2hpdGVjdHVyZSBl
+eHRlbnNpb24gdGVzdCBtYWNyb3MnKTxicj4KKyZuYnNwOyByaXNjdl9leHRlbnNpb25fbWFjcm9z
+ID0gdHJ1ZTxicj4KK2Vsc2U8YnI+CismbmJzcDsgd2FybmluZygnUklTQy1WIGFyY2hpdGVjdHVy
+ZSBleHRlbnNpb24gdGVzdCBtYWNyb3Mgbm90IGF2YWlsYWJsZS4gQnVpbGQtdGltZSBkZXRlY3Rp
+b24gb2YgZXh0ZW5zaW9ucyBub3QgcG9zc2libGUnKTxicj4KK2VuZGlmPGJyPgorPGJyPgorIyBk
+ZXRlY3QgZXh0ZW5zaW9uczxicj4KKyMgUmVxdWlyZXMgaW50cmluc2ljcyBhdmFpbGFibGUgaW4g
+R0NDIDE0LjEuMCsgYW5kIENsYW5nIDE4LjEuMCs8YnI+CitpZiAocmlzY3ZfZXh0ZW5zaW9uX21h
+Y3JvcyBhbmQ8YnI+CismbmJzcDsgJm5ic3A7IChjYy5nZXRfZGVmaW5lKCdfX3Jpc2N2X3ZlY3Rv
+cicsIGFyZ3M6IG1hY2hpbmVfYXJncykgIT0gJycpKTxicj4KKyZuYnNwOyBpZiAoKGNjLmdldF9p
+ZCgpID09ICdnY2MnIGFuZCBjYy52ZXJzaW9uKCkudmVyc2lvbl9jb21wYXJlKCcmZ3Q7PTE0LjEu
+MCcpKTxicj4KKyZuYnNwOyAmbmJzcDsgJm5ic3A7IG9yIChjYy5nZXRfaWQoKSA9PSAnY2xhbmcn
+IGFuZCBjYy52ZXJzaW9uKCkudmVyc2lvbl9jb21wYXJlKCcmZ3Q7PTE4LjEuMCcpKSk8YnI+Cism
+bmJzcDsgJm5ic3A7IGlmIChjYy5jb21waWxlcygnJycjaW5jbHVkZSAmbHQ7cmlzY3ZfdmVjdG9y
+LmgmZ3Q7PGJyPgorJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IGludCBtYWluKHZvaWQpIHsg
+c2l6ZV90IHZsID0gX19yaXNjdl92c2V0dmxfZTMybTEoMSk7IH0nJycsIGFyZ3M6IG1hY2hpbmVf
+YXJncykpPGJyPgorJm5ic3A7ICZuYnNwOyAmbmJzcDsgbWVzc2FnZSgnQ29tcGlsaW5nIHdpdGgg
+dGhlIFYgZXh0ZW5zaW9uJyk8YnI+CismbmJzcDsgJm5ic3A7ICZuYnNwOyBtYWNoaW5lX2FyZ3Mg
+Kz0gWyctRFJURV9SSVNDVl9GRUFUVVJFX1YnXTxicj4KKyZuYnNwOyAmbmJzcDsgZW5kaWY8YnI+
+CismbmJzcDsgZWxzZTxicj4KKyZuYnNwOyAmbmJzcDsgd2FybmluZygnRGV0ZWN0ZWQgViBleHRl
+bnNpb24gYnV0IGNhbm5vdCB1c2UgYmVjYXVzZSBpbnRyaW5zaWNzIGFyZSBub3QgYXZhaWxhYmxl
+IChwcmVzZW50IGluIEdDQyAxNC4xLjArIGFuZCBDbGFuZyAxOC4xLjArKScpPGJyPgorJm5ic3A7
+IGVuZGlmPGJyPgorZW5kaWY8YnI+Cis8YnI+CiZuYnNwOyMgYXBwbHkgZmxhZ3M8YnI+CiZuYnNw
+O2ZvcmVhY2ggZmxhZzogZHBka19mbGFnczxicj4KJm5ic3A7ICZuYnNwOyAmbmJzcDtpZiBmbGFn
+Lmxlbmd0aCgpICZndDsgMDxicj4KZGlmZiAtLWdpdCBhL2xpYi9lYWwvcmlzY3YvaW5jbHVkZS9y
+dGVfdmVjdC5oIGIvbGliL2VhbC9yaXNjdi9pbmNsdWRlL3J0ZV92ZWN0Lmg8YnI+CmluZGV4IDZk
+ZjEwZmE4ZWUuLmE0MzU3ZTI2NmEgMTAwNjQ0PGJyPgotLS0gYS9saWIvZWFsL3Jpc2N2L2luY2x1
+ZGUvcnRlX3ZlY3QuaDxicj4KKysrIGIvbGliL2VhbC9yaXNjdi9pbmNsdWRlL3J0ZV92ZWN0Lmg8
+YnI+CkBAIC0xMSw2ICsxMSwxMCBAQDxicj4KJm5ic3A7I2luY2x1ZGUgImdlbmVyaWMvcnRlX3Zl
+Y3QuaCI8YnI+CiZuYnNwOyNpbmNsdWRlICJydGVfY29tbW9uLmgiPGJyPgo8YnI+CisjaWZkZWYg
+UlRFX1JJU0NWX0ZFQVRVUkVfVjxicj4KKyNpbmNsdWRlICZsdDtyaXNjdl92ZWN0b3IuaCZndDs8
+YnI+CisjZW5kaWY8YnI+Cis8YnI+CiZuYnNwOyNpZmRlZiBfX2NwbHVzcGx1czxicj4KJm5ic3A7
+ZXh0ZXJuICJDIiB7PGJyPgombmJzcDsjZW5kaWY8YnI+Ci0tIDxicj4KMi41MC4wPGJyPgo8YnI+
+CgkJCQk8L2Jsb2NrcXVvdGU+CgkJCTwvZGl2PgoJCTwvZGl2PgoJPC9kaXY+CjwvYmxvY2txdW90
+ZT4=
+------=_Part_104905_2026829290.1757040626195--
 
-I was wondering the same but no, by my understanding it's currently an enum
-or StrEnum and I can't see us adding additional attributes in the future so
-that won't be changing.
-
---00000000000000419f063e005dc6
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Sep 4, =
-2025 at 11:16=E2=80=AFAM Luca Vizzarro &lt;<a href=3D"mailto:luca.vizzarro@=
-arm.com">luca.vizzarro@arm.com</a>&gt; wrote:<br></div><blockquote class=3D=
-"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(2=
-04,204,204);padding-left:1ex">On Wed, Sep 03, 2025 at 02:04:12PM +0000, And=
-rew Bailey wrote:<br>
-&gt; diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/frame=
-work/remote_session/testpmd_shell.py<br>
-&gt; index ad8cb273dc..4d9caceb37 100644<br>
-&gt; --- a/dts/framework/remote_session/testpmd_shell.py<br>
-&gt; +++ b/dts/framework/remote_session/testpmd_shell.py<br>
-&gt; @@ -19,7 +19,7 @@<br>
-&gt;=C2=A0 import time<br>
-&gt;=C2=A0 from collections.abc import Callable, MutableSet<br>
-&gt;=C2=A0 from dataclasses import dataclass, field<br>
-&gt; -from enum import Flag, auto<br>
-&gt; +from enum import Enum, Flag, auto<br>
-&gt;=C2=A0 from os import environ<br>
-&gt;=C2=A0 from pathlib import PurePath<br>
-&gt;=C2=A0 from typing import TYPE_CHECKING, Any, ClassVar, Concatenate, Li=
-teral, ParamSpec, Tuple, TypeAlias<br>
-&gt; @@ -344,6 +344,13 @@ def make_parser(cls) -&gt; ParserFn:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-&gt;=C2=A0 <br>
-&gt;=C2=A0 <br>
-&gt; +class RxTxArgFlag(Enum):<br>
-<br>
-this could be StrEnum given the values used. Moreover, is it a<br>
-flag? Looks like a regular enum to me.<br></blockquote><div><br></div><div>=
-I was wondering the same but no, by my understanding it&#39;s currently an =
-enum or StrEnum=C2=A0and I can&#39;t see us adding additional attributes in=
- the future so that won&#39;t be changing.</div><div>=C2=A0</div></div></di=
-v>
-
---00000000000000419f063e005dc6--
