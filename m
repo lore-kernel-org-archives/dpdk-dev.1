@@ -2,72 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4530CCA1012
-	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Sep 2025 17:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 990AACA1002
+	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Sep 2025 17:37:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A07540269;
-	Sat,  6 Sep 2025 19:30:21 +0200 (CEST)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
- [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 4F37140261
- for <dev@dpdk.org>; Sat,  6 Sep 2025 19:30:19 +0200 (CEST)
-Received: by mail-wm1-f41.google.com with SMTP id
- 5b1f17b1804b1-45de1084868so1524315e9.2
- for <dev@dpdk.org>; Sat, 06 Sep 2025 10:30:19 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8366440269;
+	Sat,  6 Sep 2025 19:37:14 +0200 (CEST)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
+ [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id CC4DE40261
+ for <dev@dpdk.org>; Sat,  6 Sep 2025 19:37:12 +0200 (CEST)
+Received: by mail-wm1-f54.google.com with SMTP id
+ 5b1f17b1804b1-45ddc7d5731so7157805e9.1
+ for <dev@dpdk.org>; Sat, 06 Sep 2025 10:37:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1757179819;
- x=1757784619; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1757180232;
+ x=1757785032; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=R2utwB9KLKR4CbQ5HfkrHSm+UX4fxw8H27CG46M3R/Y=;
- b=lypKFEWjiEuSUYQv5rgRqH6RJFjcA8Olfsfiv7MJJ/uNNNv3XRpX3djz5g9lVEsS70
- n5PN7XpTcGhrEdR2LEyCLD5RPjfRKHMyleOv3p+egxlSq6TfdeVjDUy5Yr3GCg18IAjA
- NaHjteghm6rdlK2qiKuBJKnHdRikBNg3SA7wA0OgVDGxU60x1AWvmjqk1sFdr/cBiEKT
- aHMlcsFbYBc8VLGTJYONgdWGsbTnlhhUMAjPszF73tq5DcUhYfv2cKosKdsyPEL32DF+
- WuoSHQAvxPBrYbZEXZmfw4MijdcqJC3sjhNWajcbHT8zArFt9AySxYuFtPBglIoWa3c3
- PyaQ==
+ bh=wend+4fMW7DTTxPy5ubS2PGRxUwk4xgaLSz8TsPiSss=;
+ b=DQSPBlFA0BLSkLdT3cHCHpdTc+rSzcamyR1hvEnveLtr5NUE5e8o2sBegBbL/9zyer
+ 8mbYyr5lEYXFbTkPfJk1LRUOpM4+4L+31JT6hhnJeZGtRrh2+x9ccTJnPoHXqa0pvpKp
+ nQtHbJEY8GdOrPfGI5KlApmhT5dFnrSBDVJ6Sti2jQ/JETi2LR/KNvnydxUaPscvZ6x4
+ P8k9VagF2durSWri/dem5SIgkcQDJXwd97aPB8ANlqg+yrdfDo7pPVqrhGLlm7snrbHw
+ qUG/+EWAdJWZGkchdR048qg8jbOaG+GoD/L7BZIbtWVldZcVbKFVIlEom8zwKQ077mog
+ luFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1757179819; x=1757784619;
+ d=1e100.net; s=20230601; t=1757180232; x=1757785032;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=R2utwB9KLKR4CbQ5HfkrHSm+UX4fxw8H27CG46M3R/Y=;
- b=ovu8SGLGhMGFnUEoPTSTNRg7XbEzznH4ZrLmxILjYT2nviE7WBlhnLYbC39POqMUC8
- 6hSntkOKyM5LINl9QCQUQYasuMqUIro9tZH17QVrUSxtMUq3cIK/K+LYEYDS6g5LHF+l
- y72lYq/b1+BbLGfzwhCelmAJ1lB/8vvbdnna6gvyKLUin66iHPG3NnnrP5hgDzTkrSv2
- DYLHjAZcyzXpIGGlqJ8hThJsvdt2SuEB/395+K+T53j7ci9VFK8fjkZdfNUWappmBMzm
- mA6pZX29rlrBImy7Yh6nfHq0bCUdCixX86pw2qgZgPQ1n5JED8gS2oWwnYAyUZjc/KcO
- hMXA==
-X-Gm-Message-State: AOJu0Yxol1kNHxhq7RFtdEnDCbbchXoRzNEaASXmqSZvH8sOpwhC0pR6
- VgV+Eot6/lbX/4QfGt1/eJ3VYxPqlcQVTKpNX//XYCdXz7168hcI4CUp7y6OQNnfrhw=
-X-Gm-Gg: ASbGnctlkUa/Kb0XEUanYI56tkUyi+U6ZGxMU6JN/7FQWV06Yczdr3Rq8GjYQYbjifN
- aXBbmVM9bYBUGErmUG32D/HbKvf2rcxK9ipEmbSv+ifI6LMjcrQiyujKZyoUpAM6X6jZSqRt+wh
- BMsXB5Bx4pi2ZZw771dIyK9soLssZFuCrrc1vQ/QurR0mgFoc+WF5uJ0+bzkoCK6gUA1bVbgDKg
- cgvEzpP/Xt3qDHfCeU1CwXqpzvECIbkUaNB9UQaztCtDi4mWsZVK2Y/aGUWbOGFBJ3dtNjK5QZq
- e3ZOVwA4IkoIGOK+T4MTyysTRaC+PE8MYvg0CjAX8v5/j/YsxmUwuNZ9pmUnL7bHQd0dB5nMwDH
- 9JZSi3+godFtrs8SO9kp3NRzdlWYCydZPTkZvXVcaWsBZORGX9qIUc4I5cwGW+wAvPxmpmff/6Z
- w=
-X-Google-Smtp-Source: AGHT+IEJ99VEeQ5QS72Jk3DO/7dJp+vgbhpTbMmTUIfAe9LygMe8pV0FXyi8RG1pllzBbhU6GW4AAw==
-X-Received: by 2002:a05:600c:5254:b0:456:1a69:94fa with SMTP id
- 5b1f17b1804b1-45ddde8be3bmr18795045e9.13.1757179818745; 
- Sat, 06 Sep 2025 10:30:18 -0700 (PDT)
+ bh=wend+4fMW7DTTxPy5ubS2PGRxUwk4xgaLSz8TsPiSss=;
+ b=KtwV24XTDFz4gukyOjDamXXjn026Mmtf/2yjDudWMtUow9WvktrchSJ1oN0Gpoo5Fn
+ gXNz7IP+wFM2MOGGxGUaIcNgTAX19YKdMJd8I71kG858zzZdYGvmvtonVSd6zmQa796o
+ aCRu4VZqdPyNCBi96vcF0U+M0zhS7bnWfcw+1WSjf0o4kL4NInCUxHxkwDdpIOFjDp+m
+ o6XplElx0sQolTpOrIpd9X+gDwyCbHUhzRJDLyAjgJyRncjfRMa78Ha29dsxEt5rfzTq
+ P6C66e4zwo6jj/C90O4aoyTXGT5U1W+w6Kmr8R3ERIbjQiayf5WhJELqSzoHH0Ho9c8s
+ HIqw==
+X-Gm-Message-State: AOJu0YzOeh6J3LSd57bsSyJwre3SHeIxxzpYiGcYU3LeMMkbR03bZjNW
+ bHON33a6gEDPweqcxbPO8JhPtPB+ML7m6ZbLHYuhv32oGdnEMESD7oGM/ul00omGRgk=
+X-Gm-Gg: ASbGnctOgs78xYMDLI67XI875Olfze9osok10/78qc2vnH3nOh/ErAICK6IOu4iKdM1
+ JQHqry4d3gKIQaj2iwVcGC+9b9WJO3NI0uje+MoSYN19wJ9e03xPDgADkslL+kCUgf8KR8u4EIS
+ ZiMcJiGhgxqfLtihDKtShMPlifn9E0aaVY7cYXRVhhnxCCBDlnsDR9bcqpFbKgVW7GSI6j9mtOh
+ 3utgc+rJkdyHHH8DlzRskkPOby0RlzthOaSDKKX+MBUWivziPRzHGf+qZPKHBjhUKslDf33o4kf
+ hp44SQJd+GVTI/3p6iWZS9PkMuqqcseq8B3PD4z/1OzhjRXeagy1fXB7Y7XbSvrv+1ZmdmnnuX8
+ tPbVM17VhWr3fgpHiEXPvSQbyB+afljvg7aOYRBTtczoiFZToeaiLHsyGWp020TLl/fl1sFAVh8
+ akZZUOx/zgBQ==
+X-Google-Smtp-Source: AGHT+IHOIk0UETSG4DdC2n1jtZZUlDiP7HaI9896AU0xu5azl4R3ukxS3uK0Vei2dthwHtmLoCGICw==
+X-Received: by 2002:a05:600c:314b:b0:45d:e111:de7e with SMTP id
+ 5b1f17b1804b1-45de111df85mr14079955e9.19.1757180232145; 
+ Sat, 06 Sep 2025 10:37:12 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-45dd4affb6bsm93036885e9.1.2025.09.06.10.30.16
+ ffacd0b85a97d-3cf33fb9db4sm35496647f8f.47.2025.09.06.10.37.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 06 Sep 2025 10:30:18 -0700 (PDT)
-Date: Sat, 6 Sep 2025 10:30:11 -0700
+ Sat, 06 Sep 2025 10:37:11 -0700 (PDT)
+Date: Sat, 6 Sep 2025 10:37:06 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ivan Malov <ivan.malov@arknetworks.am>
-Cc: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, Andy
- Moreton <andy.moreton@amd.com>, Pieter Jansen Van Vuuren
- <pieter.jansen-van-vuuren@amd.com>, Viacheslav Galaktionov
- <viacheslav.galaktionov@arknetworks.am>
-Subject: Re: [PATCH 0/4] common/sfc_efx/base: link stability improvements
- for X4 NICs
-Message-ID: <20250906103011.6401e9c6@hermes.local>
-In-Reply-To: <20250905144514.11698-1-ivan.malov@arknetworks.am>
-References: <20250905144514.11698-1-ivan.malov@arknetworks.am>
+To: luca.boccassi@gmail.com
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] net/zxdh: fix building check for arm64
+Message-ID: <20250906103706.6c68b63c@hermes.local>
+In-Reply-To: <20250904141059.54626-1-luca.boccassi@gmail.com>
+References: <20250904141059.54626-1-luca.boccassi@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,26 +80,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri,  5 Sep 2025 18:45:10 +0400
-Ivan Malov <ivan.malov@arknetworks.am> wrote:
+On Thu,  4 Sep 2025 15:10:44 +0100
+luca.boccassi@gmail.com wrote:
 
-> As announced in [1], this series provides three fixes for link bring-up on
-> X4 adaptors and an improvement to have link up faster in typical use cases.
+> From: Luca Boccassi <luca.boccassi@gmail.com>
 > 
-> [1] https://mails.dpdk.org/archives/dev/2025-August/323545.html
+> The comment and docs say this should be built on x86_64 and aarch64,
+> but RTE_ARCH_64 is not aarch64, that's RTE_ARCH_ARM64, so fix it.
 > 
-> Ivan Malov (4):
->   common/sfc_efx/base: fix autoneg detection with netport MCDI
->   common/sfc_efx/base: default to auto fcntl with netport MCDI
->   common/sfc_efx/base: fix auto FEC selection for netport MCDI
->   common/sfc_efx/base: use saved netport FEC choice by default
+> Also the check makes the build skip unless RTE_ARCH_X86_64 is true,
+> so switch it to an 'and' instead of an 'or', to build on both arm64
+> and x86_64, and skip elsewhere.
 > 
->  drivers/common/sfc_efx/base/efx_impl.h     |  6 +++
->  drivers/common/sfc_efx/base/efx_np.c       | 56 +++++++++++++++++-----
->  drivers/common/sfc_efx/base/efx_phy.c      |  4 ++
->  drivers/common/sfc_efx/base/efx_port.c     |  1 +
->  drivers/common/sfc_efx/base/medford4_phy.c |  1 +
->  5 files changed, 57 insertions(+), 11 deletions(-)
+> Fixes: 29e89288ff14 ("net/zxdh: add driver skeleton")
+> Cc: stable@dpdk.org
 > 
+> Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
 
-Queued in next-net
+There already was a patch submitted and queued in next-net.
+Your version is more succinct, it would be better to have one way of doing this
+for all drivers.
+
+commit 4916569f552ee881adbd54bf5446f1c06a607289
+Author: Junlong Wang <wang.junlong1@zte.com.cn>
+Date:   Thu Jul 10 18:56:38 2025 +0800
+
+    net/zxdh: fix meson.build issues in compilation
+    
+    fix meson.build issues in compilation, which
+    caused the inability to compile in the arm64 environment.
+    
+    Fixes: 29e89288ff14 ("net/zxdh: add driver skeleton")
+    Cc: stable@dpdk.org
+    
+    Signed-off-by: Junlong Wang <wang.junlong1@zte.com.cn>
