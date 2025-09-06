@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1531CCA1002
-	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Sep 2025 04:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E40ACA1002
+	for <dpdk-dev@archiver.kernel.org>; Sat,  6 Sep 2025 04:51:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3103E402AF;
-	Sat,  6 Sep 2025 06:14:59 +0200 (CEST)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
- [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id BFF4B40156
- for <dev@dpdk.org>; Sat,  6 Sep 2025 06:14:57 +0200 (CEST)
-Received: by mail-wm1-f44.google.com with SMTP id
- 5b1f17b1804b1-45dd513f4ecso14222225e9.3
- for <dev@dpdk.org>; Fri, 05 Sep 2025 21:14:57 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 96721402AF;
+	Sat,  6 Sep 2025 06:51:09 +0200 (CEST)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com
+ [209.85.221.43]) by mails.dpdk.org (Postfix) with ESMTP id 1610F40156
+ for <dev@dpdk.org>; Sat,  6 Sep 2025 06:51:07 +0200 (CEST)
+Received: by mail-wr1-f43.google.com with SMTP id
+ ffacd0b85a97d-3dea538b826so2224845f8f.2
+ for <dev@dpdk.org>; Fri, 05 Sep 2025 21:51:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1757132097;
- x=1757736897; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1757134267;
+ x=1757739067; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=BxkegPg9RVlZ5jc+CPIMWbqaNLB1bRVuKTSsevj5pE8=;
- b=ygod0nPtqMt+pzmr57mVCzFD1fFEhsIC8jcK7kLHAhGC6eFQ15U32aNYPCNqjyAbz9
- lAMJ1atyUL9NAtT3mTUEDM8A5s0vd++V+KMt/3dvtvCyMPAGZr0/Q6ctPTtbro/wcBT6
- KnJNAWfPWvJEamVERU45/F7uqFTgnyd4ER0cupAYNIDis1VznLfZmfUEKO/1ctWvwLrZ
- +ewHzy+xzwpkNSFprr1r7HLQC8vxDCqzRIzimFxiY6gLT304e8BJEfwrmd3twM/BlCJH
- hK7dLaUB8lRaX9ZYRMryB8cep29gDVyEzRk/RoNPdHXTdv+WSEOXuDN9hBB/BaNWnRQJ
- ZEZQ==
+ bh=Jla8FZjsfLzOmf6IRLJNmspeGjrWKz+qujNkjiq+iiw=;
+ b=x+0IouoTYouwQw+s6Rzgbyyz+owwqYZdL75Zwx0MzZaAShrULLmwidahSeNYAZOISL
+ G+KZll//W3qrOo+Bnnxl7gQuvdxkz+I4zsxuSKR925qaywjnG4RcTIGMHsd5CLSQ1coZ
+ BnLFRZKw3aOTaoV4/ZAogogegzng4EgR0k0Gp4fVlHpVYsrsSitiyb6R2E5aHZoHdTFh
+ IzRNfb9gDcj/mwegrvJ1szitehMRuh6jIWWopBmKb78ZBt2rStlBzoNogA2IQx56/A0D
+ t6wthdtTvRqS21OsRpO8QJm5u292PZemiF4z79j6xHAkhiuPc/clrwmCzO8qTVNZvpcN
+ ul9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1757132097; x=1757736897;
+ d=1e100.net; s=20230601; t=1757134267; x=1757739067;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=BxkegPg9RVlZ5jc+CPIMWbqaNLB1bRVuKTSsevj5pE8=;
- b=phHppnn0A1Uj1nHX5tZQjS4IbbEXRNpFxUJMOIcHbuMbAeDlax7RdJWC5PmFqiEqac
- Oops4wWDeYETgrStoURCPJLc6vHVWncXpcQbQxkf1LNdFdrKk+AsgLHBEfucm8FRLC64
- OLLEroZHtSSlMOi4P4VWX1A8+rqAv76Dhe0Rdd3f9TcfAU5PGalNdBvWxj4o7Qfk0FdF
- QO4sbP7bAAgnivJ2nwYuIlF4vS3R4en0DEgIWo1rLGLKk4s+x5XWncwA1xzin2hD2ATw
- AynE9e7SM9aR5F+XoL8fI0N8acSk9yc4d3lGPNuJcfRXKNEz7ezqwt7mRieGoLqrj86U
- mZ2A==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUDIFKsi0NGkfNR5ALs4qH67iiw0O30FAGrO0NEG8fArrLvcZJGKMb5Cnrd2cThDLLwcEA=@dpdk.org
-X-Gm-Message-State: AOJu0Yy/TE5rRwazxREE75oNtoJhBWaDF6oI003F/em4OQ3tz3fi1lpC
- BbKQYZ17w9ZTsIu9G5ahw1jX/1DNqukEgHM+AE7Xu/LS02IVrLFC68o0SJ3OC8EB9S4=
-X-Gm-Gg: ASbGncsNFSJPLxMcK+ejXqvJ3Tz/gNlZW6CW07DAtDFxo5mTiXl5EfuHMJcgU3WU1pk
- XAuIVUNia82FAL2aJh2sp/mTT84LHzXK5k4cr4izVDNZrZHFe1JYA5YnYSd4Zx3XnVHOFyLLunT
- J4xuQiNaHtwnk7StOvkLW2XXH3PkmOCgEmy6+/rTFhE6g0sj3yidIJ3ux6OFVO/QPFFlvC5S9mX
- to8t5M/lCLrTAS0Iu53fDFpa2RIUuRtf9MYaZcWEAXU2H0lNdAxipD2bnp8lrvRbRREOxwRfbN3
- W5sC8cNh+DdUtvkT8FMhWJY1/xxbS3Nk5/KbZQGavQ/hIrvB1pBnx+0bStLREY/61esoI1Ue+8s
- k2Y2OKjPjbqsZWyc/3HXFWsmrNPPrzAbDcs6EIO2pzRBwXZtTWijMbju/9YycHq1JzoLohr4QMN
- I=
-X-Google-Smtp-Source: AGHT+IGjHSuRxvzoZV+h3eLovC3Nfm0WppKy7fXYKKczi2zAsBvxpAUSq6DdwjsIpsv11kubJfjPyA==
-X-Received: by 2002:a05:600c:4f42:b0:458:bc3f:6a7b with SMTP id
- 5b1f17b1804b1-45dddecdac1mr7634905e9.18.1757132097409; 
- Fri, 05 Sep 2025 21:14:57 -0700 (PDT)
+ bh=Jla8FZjsfLzOmf6IRLJNmspeGjrWKz+qujNkjiq+iiw=;
+ b=lTczY5/FgTIjgf+O5dhCsfiA54Dch2+XF1dwx4bDh5tHqlOik/R+B2EbeI8qBbDzxo
+ 2vYtoMkhVYDRezwBZFgKDZWRpHFS/JuwIgLw6iCJrWhDFdVRFQAtl+nNFAKQqfi3Imn+
+ LIVaYWFdYIlZTftI19WmlAGKea8HFnAdNaiQZO1a2yuqnzxbS8RIzkRcrR/IRpSyMbLM
+ yK80gNi0yYo1EYnq4+UhkFZBxXqdgi3paGLQfEYqr/Is4NHgaL3ZtB1mrthF+e9t1nap
+ D9O9rs1vnrntTfZBCzgGsgt+rVBLuEbv3QzbLlwF0Q16Xyn1z37rkXgvgY4Va1liwXLQ
+ IKPA==
+X-Gm-Message-State: AOJu0YzfqaUioOACZ63MkUKUU1AEAiDZzUYanmCoOYaT1Hc45kUN5ppD
+ sEfnxDKqrDRw8S8hhjRO/Qd6bBm7Qq26rCckip/e+aMotZTfgkiMR+0Y/tG1yb2YlWA=
+X-Gm-Gg: ASbGncsg5aoxg1qxgzhgSnXIHOcHGXVAdZtezBrOj7qZl+omJxlOe/dalaLNh60YF8u
+ 6QwPz/qw6xDQ6bDp1srmZRy6YtkN37eGlVcedFePLQyDNSCnK3+4MgLWCy58BG9PJq4y5lo94/O
+ Ytx5uAc+XIoSrPpbvoElimvoqGKnuDlnLb7Ub9OVN4/f5MA23W/GJ9fbK8VbW+nyW58mkQN/MK+
+ SN4Q7E9iFRTTK8aMeAD2rmEvxi3BHZ83q39vUyeL6WNPCH2FGXnX1be+8vKoyL0Kuc/K4e30mk1
+ eb8qASL2qkB4UNMdKb4Ug7Izv0dQtKNJCr6S5vfm0LEbbBD5qYdfMQPO/94UsJqPa50glQ2opwF
+ ibpUk304Q6EiFE0yzCJWDsgDotzPdrgvsbbBJMFdU4DB4V3WfQ7Op+6arPg4+J0pW9aYV3PhThn
+ 4=
+X-Google-Smtp-Source: AGHT+IFYc+721q3NvoufofNgb65xOm+3YGQu4OTZU8uYowaJNgyxc7vn56a8extnOlfQQE+7T8aseg==
+X-Received: by 2002:a05:600c:3b23:b0:45d:d3f4:a640 with SMTP id
+ 5b1f17b1804b1-45ddde82751mr7820315e9.15.1757134267455; 
+ Fri, 05 Sep 2025 21:51:07 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-45c6faad9cfsm169988155e9.0.2025.09.05.21.14.55
+ 5b1f17b1804b1-45dd0350e80sm101923825e9.22.2025.09.05.21.51.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 05 Sep 2025 21:14:57 -0700 (PDT)
-Date: Fri, 5 Sep 2025 21:14:52 -0700
+ Fri, 05 Sep 2025 21:51:07 -0700 (PDT)
+Date: Fri, 5 Sep 2025 21:51:00 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Chengwen Feng <fengchengwen@huawei.com>
-Cc: <thomas@monjalon.net>, <david.marchand@redhat.com>, <dev@dpdk.org>
-Subject: Re: [PATCH v3 2/5] lib: add semicolon when export experimental symbol
-Message-ID: <20250905211452.13ef8796@hermes.local>
-In-Reply-To: <20250901012149.47887-3-fengchengwen@huawei.com>
-References: <20250828025957.30917-1-fengchengwen@huawei.com>
- <20250901012149.47887-1-fengchengwen@huawei.com>
- <20250901012149.47887-3-fengchengwen@huawei.com>
+To: Ed Czeck <ed.czeck@atomicrules.com>
+Cc: dev@dpdk.org, Shepard Siegel <shepard.siegel@atomicrules.com>, John
+ Miller <john.miller@atomicrules.com>
+Subject: Re: [PATCH 4/4] net/ark: improve Rx queue recovery after mbuf
+ exhaustion
+Message-ID: <20250905215100.27c9574e@hermes.local>
+In-Reply-To: <20250903212846.268492-4-ed.czeck@atomicrules.com>
+References: <20250903212846.268492-1-ed.czeck@atomicrules.com>
+ <20250903212846.268492-4-ed.czeck@atomicrules.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,18 +83,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 1 Sep 2025 09:21:46 +0800
-Chengwen Feng <fengchengwen@huawei.com> wrote:
+On Wed,  3 Sep 2025 17:28:45 -0400
+Ed Czeck <ed.czeck@atomicrules.com> wrote:
 
-> Currently, the RTE_EXPORT_EXPERIMENTAL_SYMBOL was placed at the
-> beginning of APIs, but doesn't end with a semicolon. As a result, some
-> IDEs cannot identify the APIs and cannot quickly jump to the definition.
-> 
-> A semicolon is added to the end of above RTE_EXPORT_EXPERIMENTAL_SYMBOL
-> in this commit.
-> 
-> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-> ---
+> +		if (queue->starvation == 0) {
+> +			ARK_PMD_LOG(NOTICE,
+> +				       "Could not allocate %u mbufs from pool"
+> +				       " for RX queue %u;"
+> +				       " %u free buffers remaining in queue\n",
+> +				       ARK_RX_MPU_CHUNK, queue->queue_index,
+> +				       queue->seed_index - queue->cons_index);
 
-This seems like a big change just to workaround some mis-feature of an IDE
-which few users use.
+Keep messages to one source line and succinct as possible.
+Assume messages in production are going to a log manager such as journald.
