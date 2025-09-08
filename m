@@ -2,181 +2,163 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E769FCAC581
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 08:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 817B7CAC581
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 09:00:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DF4AC40264;
-	Mon,  8 Sep 2025 10:54:56 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 74D3E400EF
- for <dev@dpdk.org>; Mon,  8 Sep 2025 10:54:55 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5887erYa023802;
- Mon, 8 Sep 2025 01:54:54 -0700
-Received: from nam11-bn8-obe.outbound.protection.outlook.com
- (mail-bn8nam11on2105.outbound.protection.outlook.com [40.107.236.105])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 491tye04qb-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 08 Sep 2025 01:54:54 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9D04940264;
+	Mon,  8 Sep 2025 11:00:38 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 9E7C4400EF
+ for <dev@dpdk.org>; Mon,  8 Sep 2025 11:00:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1757322037; x=1788858037;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=8S+ZWE3fTxAyNQQhRR7jFOp3tX5G6mguyJ1MQwAr9p8=;
+ b=kGrqPoGPkQQQb3nCN4pqIFEK3V4E5lat+lIIllTJwpHiRq6Kj27ZreMg
+ Znif8iKzculK8lL5rI6WQUl9/c1YxwTq1Lj3iRtwymXm3dllkflDNyR5N
+ NKtwJws6m33I37z7DR8HKkCvyWDdqkNEGHip6Ntu4SRZQi+MtYUUcEQl4
+ twtm/kLGc2DqUZPwnzc0VwOvW8gPlYEL0G5/WJr0ZY29Ec+oGvgMNUmbF
+ wqJ2uc6CxNvg+FS7i5dANyChNRKswhdUN7HEDERtNiECuad6BKuHWxxw+
+ +2hAuCsm2OVTkFVOg/H8ZleItZoTuPnIsyCTxiqxsaJ8SxIZyxwdgdZIb A==;
+X-CSE-ConnectionGUID: cjfWgtidTzeFjQ7da39akw==
+X-CSE-MsgGUID: NkMFg4dFT5yWneZwxoDjlA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59526698"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="59526698"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 08 Sep 2025 02:00:35 -0700
+X-CSE-ConnectionGUID: cIWFBGCmSVKWZfWSz6kacA==
+X-CSE-MsgGUID: gYCqcwKdR6u89pFVwRDsMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; d="scan'208";a="173528431"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 08 Sep 2025 02:00:35 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 8 Sep 2025 02:00:34 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Mon, 8 Sep 2025 02:00:34 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (40.107.95.55) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 8 Sep 2025 02:00:34 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=htZJCR4X01aDYNhM6qmj2AJSCx8EDA2iDkal7lztvft1LtYz5hiT8iOd3O9u8QDeLZXiBiYA+p2wE4AfI8gDFMnSaeLo5WX+VwkiWCa1kBPj6h7JBcIHjmlXjW2Jr8koaW+JBQ4Y4v7rippva4Z6NTxJw9X8SymCQFZF01lAa00XghGEbNih0Mb+IDXCJYlXbhCF30wU9FGPMaV2EPryFrvddSAPOvQBqBP/34wZlApYsn8QJBxymNoVDe1uR4eFTAzNsaeyf17uCHITuBlfK1K1rq7IN4SUh8sVvnijx0i5pv0JdAcQnK+5sCRoaTJV1QdeNtx03uwUiWPUB/ekmg==
+ b=yFi9PdnAyab6lpgkPxNIqnWfT2KveNtDe3/fbjg9Ob//fxXAYQP4JCaiYV4Jpz8iic+q+F3bcDbIrTOfNnxVH+rE0Jaom9fUtSBqX6i+r7pr+ngTdiTqWLynTltw/TDB7YaA8DFjIW0OetRyjf8oVrIR1tE/w1Jub/BieuHtu/kNKjfTzS6tttu2qOxzFFOtsMQaSL3Sg37ZygI2eLSkZtXAz7ADHW749HJKNGPH11dsa7U5EwCe/vbqVyjJk8wuOa4LRh1vQ/LBS9ub2epTZ6dSEAszi5wl9S5oEwxr+zBg3g/fz/vUTSRFKN4NECUbcG8wJ6iOUaV4rjAVcnRKCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GDOajtJdjNeh9ZZdVSbgD0W9SwjimUTrhSRxM6k9kvQ=;
- b=ilA1w0TWIxscWjrU1z8uCUWiLiny1HGutzha4E7GECXvDjuBOdHHRbBwd7WBKCviq4euQe3P3jERp9UC30LY6hDQlpL0sPM9XUm3H2DNOR5xfvGChX3fxqBOxNHqTVdPNiD0hq4+qDuCyk1SdEq3BN1dkdBxvdtekYTm4m88leH4mSebPkXRFutZqLFnmCroDUm/4W2xe/7TMi4G1nC2xKY9Pg7zo5cuOJ/SXqCZK3UhMsDJ6QL9dfGoJvJkHkP83S+6pPQkJp2G/D6/p0ODTTQ/02Bo2czvIMkEDbwO7C8Xp0TjrcbuY04uWXYqfjBp8s3wltwHQ6r4HSxdzi6Dbg==
+ bh=5xfH+sF8j3/GSLjG1/uSRBJV/SmjNfYxJ5q/RuayIGY=;
+ b=K3k/EDL8HUH7gtvB1Mh1AquL5nnBHVGrpu+NKyWLZL7cSdhqvXDtJL9YScyA7cz0knqelEG1r8NRa6B10smwCB50GqPVHCz1SaZngu7fmcFzofwXoDLVHYaxNvGnforJQAbT8ywA1P2X/Zl0qpHnglYt9VMC9ne4Ad+7VLInVkgbd3VsAoWG2uBJtDISuE8gCzcGcvDYGlKWDwM2jWP6TqRkraXCF7ip6tSIb6nmCL2a6VG60s6z6Mu7AGwN+Adv63qyyWjVo1jfXJuz5jrElV8p8Kw5UpSccIfSyZ/ZfQKruj63y0fL4Mri1c+v1ILbPMloOfhfxhJJLSBj2lTK4g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GDOajtJdjNeh9ZZdVSbgD0W9SwjimUTrhSRxM6k9kvQ=;
- b=jRxVEtbrxn3d/kwUYi7DosZ4Gnx8mnR55XpPcnAen0UoY4nLcCJSYGYNsamg25ZPhbtfBKa7WQZF4LwHfof1C7yIvGHOPF6+oHyDGoO89SuGHpZHt/KheBvQAtRdCrnR0vC86MU+4GeYwVdJR2BHg5zIsVwCRdCYzX6U5RpPJmM=
-Received: from CO6PR18MB3860.namprd18.prod.outlook.com (2603:10b6:5:34d::12)
- by BY1PR18MB6089.namprd18.prod.outlook.com (2603:10b6:a03:4a7::15) with
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by PH3PPFE1E3F709D.namprd11.prod.outlook.com (2603:10b6:518:1::d56) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
- 2025 08:54:50 +0000
-Received: from CO6PR18MB3860.namprd18.prod.outlook.com
- ([fe80::de98:ceac:f841:3fdc]) by CO6PR18MB3860.namprd18.prod.outlook.com
- ([fe80::de98:ceac:f841:3fdc%5]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
- 08:54:49 +0000
-From: Sunil Kumar Kori <skori@marvell.com>
-To: Sunil Kumar Kori <skori@marvell.com>, Stephen Hemminger
- <stephen@networkplumber.org>
-CC: Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>, "dev@dpdk.org" <dev@dpdk.org>,
- Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>
-Subject: RE: [EXTERNAL] Re: [PATCH v9 1/1] ethdev: add support to provide link
- type
-Thread-Topic: [EXTERNAL] Re: [PATCH v9 1/1] ethdev: add support to provide
- link type
-Thread-Index: AQHcGwO/FZOKTPgtzESKg+7BGsIq87SGd6cAgAJjn5CAACsCAA==
-Date: Mon, 8 Sep 2025 08:54:49 +0000
-Message-ID: <CO6PR18MB386085C28B3A605CFC5C6EB0B40CA@CO6PR18MB3860.namprd18.prod.outlook.com>
-References: <20250821053425.3227866-1-skori@marvell.com>
- <20250901054552.813195-1-skori@marvell.com>
- <20250906105116.427529e9@hermes.local>
- <CO6PR18MB38603CA5F647B375807604B1B40CA@CO6PR18MB3860.namprd18.prod.outlook.com>
-In-Reply-To: <CO6PR18MB38603CA5F647B375807604B1B40CA@CO6PR18MB3860.namprd18.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB3860:EE_|BY1PR18MB6089:EE_
-x-ms-office365-filtering-correlation-id: 2cd3991a-45ac-471f-d646-08ddeeb55e81
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?V0lObEJ3Z1ZpZ2lucXZBa2NRdDY5MjAwd0dISU1UcU5GbGNOUmxaeC93bURj?=
- =?utf-8?B?WVVLNG81QU1IVUZPZWdKTXlFV1NFOU12azJwRy80VjFpZHltc0h4WlVIKzVX?=
- =?utf-8?B?d08vN2V5eU1ENno2SjhIaXRVTjR0UUVEaUpzcHk5dWE0RFJoWkFKMEg5eFFG?=
- =?utf-8?B?T2N1TVdqdFpJWVdsbUxZc1RNM0NvellzTGNIVTBpcjRRR0JRM0YzTXVlQlBR?=
- =?utf-8?B?dkJnRFZxVGJRbzFLY3VPcmhUVTV1VVYrOVZkemNsdU1XNHBISTI5WG5oclVl?=
- =?utf-8?B?U0hlbHZPTGdhYlRTR3l0eDM3TUxqeWVCWGhxYnpMYk41TFBYUFp3bkVwQ0Z1?=
- =?utf-8?B?a1plMkVxSmRMOTJ2TitJQURBSy9OMU4zZGVSS0VBeG5qOWxLRy9ER0JPMTRM?=
- =?utf-8?B?UmNSWk1UMUk1a3hObG80MTBaK25nRnppSWg3aG11M0RHRjBtejR4VlVyQ3RD?=
- =?utf-8?B?akpHWFVZMGxQdHlSYXJ3cGhkL0RoYzczNnZRdHY3NjdNYVd4c3k1QlFGQmR5?=
- =?utf-8?B?ZXRMUzJIcU85YkFlZWpqK3RzWE81VVZGR21QMEwxVFROMlpZMGl3b1JsRk1i?=
- =?utf-8?B?NmM1c1crSUd3KzNUWnhqQnU0VWN2aFc3N01pakczeVl5MzZnZ1lZUDdobEhi?=
- =?utf-8?B?ZUlUMVlmNEQ1VUlET2g4R1l0WWtUOS8xTXgwejBlME1LMytIZFhLYkdHUDgx?=
- =?utf-8?B?cWcyMkVvYmppNGI5WkRVZ1Y5b1gwZXdHSWFJN2daTHF5cVF2dGNvUTRpZjVG?=
- =?utf-8?B?aVQ2SkowZVZINjdsaXJqWk5XWElXMXVva0V6R3V1Wlg2d1lpeTBwZE9pK3Jh?=
- =?utf-8?B?MXI0Ync3UkVxRmxoeFNvajZnOEhuc2NBd1JzcDhya2kvOE5VSWNpdzlMMHM1?=
- =?utf-8?B?aTBaWnUwb01td0lmelNPSmhCS0ZhSEEyMGFzS2RGYjB4TUxic0ZlOHVTV2s3?=
- =?utf-8?B?RlgwNVEwMVY4elBnSnhmYXpHZ3VUNGRQZURMZWRBME94dXlPbGp6M0t0V1BT?=
- =?utf-8?B?V0JnVGVSM3hicXJ4ZUVKU1hxaTVnN3VwdTMwbVhCb0E5OU5JT3M4NUlXQjZu?=
- =?utf-8?B?UnRDWHR5SEFyT2N3UVRXaTRmampGaDdjbzdncG00N2U5ZCs3VXp5VVlqaEtn?=
- =?utf-8?B?L050UHBvR1hRSjlFb1VEc0tvQVEwWU80VFI5citYVXVxQ293VGJyVTNxdzNZ?=
- =?utf-8?B?aittbEVFbDlIbUxuaVJEMmpHZ29tSk9qd0ZId0VzUURwejNjbmM4TTdsTmVn?=
- =?utf-8?B?OUg0eXh4MVJnK0Y0SEoyd3VGbkZqOERpRk8xWS9VMFI3M0dnSngrdCsrVXY1?=
- =?utf-8?B?SDVHN1FxaWNBWHNteStHTEltOTFUSSttbnVjNzdveXlGZ0tkblpBOVQ3VGkv?=
- =?utf-8?B?Q3crZkEvdFNtMDdYREtBbzhwV1A4RlRLZm0wNGRpNXZDTGd4YVQ2SStVdnd0?=
- =?utf-8?B?amh3SW0rODg1MUFvb0psODVNaUZrZHFEUTBTVUFaVHg4K2kyakx6c2VHUDc4?=
- =?utf-8?B?ZVNoWDNyaXNiWGxxU1NZVDhqSjhVWFlhMEdaclZybGg1ZlFMd2tUTDg1Z3ZS?=
- =?utf-8?B?VHZnWjdveHNqczVSaURQb1A0UHNCcWFVT1YzbFdaNFAzNEwraDJBbTZweXl1?=
- =?utf-8?B?R05HSmJoL2hPK1creUpHM1ZBY1NVdXovalZxZjZnVDFwWnBGdGdFRlJoZDM2?=
- =?utf-8?B?U3BmYzAwelRRcDE0N09OR1RteVoyRmcxeW81U3R0MkkyaCtNZWgyTzRJY3Bs?=
- =?utf-8?B?djlPeWNyd3VseC9zS1ZlWFAzNHJYWUhkWlJ4OCszNVFzRFBzY0liWXh6SDlz?=
- =?utf-8?B?Qk9wSzQydXFGSXVSNm55WVhsMWFCaVBjemg1bkl2UkoyQnFWRXR5UXFOdW5M?=
- =?utf-8?B?cUhnSzVYY3A5dlFBdVBqMFpWZmRMeXpDTEhsS3BKNThIU0drbDl4bHgzbUJ5?=
- =?utf-8?B?TW9JOGlXYlFheXNaSEh3Z1Urakx4azd4RzByeUZHb29mVkMzYi8yUFhzTzFP?=
- =?utf-8?Q?+DBVYuSOPD873vbssKclTZrDrF+plU=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CO6PR18MB3860.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(38070700018); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZUdITktjUGJEOHltYVNjYlR5d0dEcThhSUczN0RnV3RTNnIraTZRWnBKZGtX?=
- =?utf-8?B?bWQrRnpVZ2liVTVONGNITVppOWhaeVFZNkt6VWFkWmtTNVB5dFp5WGc3WWJZ?=
- =?utf-8?B?MlBzbysxK0NCNm9VeU56ZnpUajRybGlZMjRwTUxhZTBqS0lqQWxxVXM2U3F2?=
- =?utf-8?B?ME5Ydi80aWo3bWs1RE9KVTBDbkpxdWJZMzM3TDRwSWNSclpBYmVsWldyQndr?=
- =?utf-8?B?TVNScXRydjVUMVJFVzNvekY2cmZyMTl1MktScnN3MndpMVhoY2ZHY3NkNFRI?=
- =?utf-8?B?ZUk5cm1Wd09SY05rRDQ5NExSTlVKcjZoV25qTGpJeTBMNVZPaVllekZXODhU?=
- =?utf-8?B?aXN1U3AvVFQ1ZTlVVDEvUmk1L2g5WnNHa2NENWFrdVRYYkhsK3hiK1dKSEIw?=
- =?utf-8?B?dExYZFZ4ZG1jcWdpcGZpK25FRTBVaS9INmxtYkN4SCswQUJ5Snl3c1VjM3pD?=
- =?utf-8?B?T1Y2Q2lTaThsWUk3YzZteTlWcXFzcHZ3RkhwYlpLNkFmaFUxNUNYUVY1Nmdm?=
- =?utf-8?B?MVFQc1VtQmpmRlo3b3JvVDJURFowWHFBS25EOE56M3ZQaGlYeHVHT3VUZ0xP?=
- =?utf-8?B?Nmg0VGRyT3BpN3k0QmNHUll3L082clIzenFHbjlFaDJxMXJPRmNxVmFsOUpJ?=
- =?utf-8?B?b1pKRjdUbEk4STBrdXhKNFVidkRmdGlvOENRK3hneFB6Y3VtTTVQY3AvK1JV?=
- =?utf-8?B?OFJvKzZWT0lVVXZKS29jUkcyNlRpOXI2OHdvR0FQL3ZKaVA4OWJKNEpkVFVr?=
- =?utf-8?B?TmRvQUwxeGJWNk4xYnVheXRnYWUwRGVFa21VZHYyL3BhcGRsSi9FamMwTFEv?=
- =?utf-8?B?TmphQ2JpblZ6MzNvaTJoSVF4cVl2OVVCTEhZQ1lVTVpEdXFEZld5d1ZHQWN5?=
- =?utf-8?B?TE5JZi93eW40c25iRWVoNDNtSzNPVnFCUDVaSFdBako3eUU5bmpkck1rSFox?=
- =?utf-8?B?NWVuUzBkRU9PTVZSS1BYa3Z5Wlk0SHZkWk5aWkIreEF5TnBRdWhTZllqSnU4?=
- =?utf-8?B?ODQ0cXlmU0t2SzRsK0Y2U2p1MGFhZ016SmxwN3pSRjllenZHeDZxY1k5YmlE?=
- =?utf-8?B?NUlSS3RhL0tKVTVVVWp0aVhQL3QrVDA3QlpVa2tHdmRPMGZuMVZBVVJpWDhm?=
- =?utf-8?B?ZCthNnB0M093NUNpenJaOWx5YWtqRmtnVllNK1IybDBYc1hGWjdPRE0xcUtR?=
- =?utf-8?B?c2FuUDhwQXJJcHdGbDlFcUdHR0tCU1EyaHRSam52VVgxVXRkV1JMUFZHTy9r?=
- =?utf-8?B?TGQ5bEQ1Q3lMRmY0M3J3cEp3dTJqTmZVU0Ryd09iYTNjYjgvdmFVQXo1d2lF?=
- =?utf-8?B?ZlVGdlgyVWpWQlM3aXFrRGIzV04yTXJYSUdHcHhFcGJuYkNHRTdjZWdwS0d1?=
- =?utf-8?B?Y2RObno5bnBZaWhCZTBsZytBaWp5UTU1VlJiUGZBV0U2cm40UzAyN0tYR3hl?=
- =?utf-8?B?aHhIQTlndWZub0ZGVDRHQ0lQM2xoVVMzQVdrL0htdjVFYVV3NVF2MVk4dy9D?=
- =?utf-8?B?Y1V2ZzFuYmZmSFFobXNlWTdwRFBRa2tCb2NTNTQwRTczVTBVRnl3Y1JHdUxD?=
- =?utf-8?B?UHFPZ1VsL014QlRjQnhkaGRseEVnUGNXNTgzamQ5akJKWGE4Z3N0cDZ3K0RF?=
- =?utf-8?B?eWRuUG9rRUphSllpdUtZMlJ6Vk9DVE9NVTBoTkJtNnNKSzJteWR2UnR0RWU5?=
- =?utf-8?B?dWlhU040VWVydHN4TitBT3BzeTNuZU9oRlJwQ0hkcnhBcG81NXpZVGJBN2Jm?=
- =?utf-8?B?Sy9GQ0hJVVlvYUxabGdjQ3JkTTg2Z2ZmUEIrVzQydS91dlBxc3RmS25JWWN2?=
- =?utf-8?B?L3UxYU00UUhtUmNBeXkrSkNSNlJQa294VHh0cmtScDRNaVpLc0VXTUJkc000?=
- =?utf-8?B?Nkp1VStXTFZ0a2IrTVF2WlJ0ZThnVFRNZmZ0NWpnOGNwSXpLRzlYVm8wWVBn?=
- =?utf-8?B?WjdxNHU3WXRNb2dmWjNsZkxBUzR1YktqUFRucGM2ckk5bC9Eb0hvMkMxT3pl?=
- =?utf-8?B?UUdLMWU0WTNnQnJkeGpMOUJQalRFZnpobkdyR2t1SElmOUhOWGwwaGZBdUU0?=
- =?utf-8?B?blo4cTUwWFdJcmFtNDZyYmxDUFFvM1QwNVZraWY1cUxxTk8xZFJ5NUZMOE9G?=
- =?utf-8?Q?90Xw=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Mon, 8 Sep
+ 2025 09:00:32 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
+ 09:00:32 +0000
+Date: Mon, 8 Sep 2025 10:00:27 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Jacob Keller <jacob.e.keller@intel.com>
+CC: Anatoly Burakov <anatoly.burakov@intel.com>, <dev@dpdk.org>
+Subject: Re: [PATCH v1 09/12] net/ice/base: improve global config lock behavior
+Message-ID: <aL6bKzJd2sk05wlP@bricha3-mobl1.ger.corp.intel.com>
+References: <cover.1756833701.git.anatoly.burakov@intel.com>
+ <890cfe97d9f716a7a65c028578bd1fc90ff04c4b.1756833701.git.anatoly.burakov@intel.com>
+ <aLsCf6Of94EA3aP6@bricha3-mobl1.ger.corp.intel.com>
+ <f2bd7403-b79f-4f7f-9979-d7cbe442c2fe@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <f2bd7403-b79f-4f7f-9979-d7cbe442c2fe@intel.com>
+X-ClientProxiedBy: DU2PR04CA0338.eurprd04.prod.outlook.com
+ (2603:10a6:10:2b4::8) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH3PPFE1E3F709D:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f6e2990-0c88-4a80-2b3b-08ddeeb62a3f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VvDgR+qhUlvhYtqpOqeiwBSzafOGkDNQ2O98mnujeLPyy/kCM5Tbhs+3Er6t?=
+ =?us-ascii?Q?SlOxz15yowC4ZkY1EiLOWlAN74suZ821xcMRSI01lXURAVKhf401iClqiufe?=
+ =?us-ascii?Q?ySrQDku89cg+vLTaAlLQcRoysRcaiBVDrglxp4b66bpTQlgnZiuqjSLFOkcT?=
+ =?us-ascii?Q?fmpiA1CljCg1gFbI/uOF2eN1CEE/QQ/a37PzPSGGjYXRQNr0jNb4A4F+hEAs?=
+ =?us-ascii?Q?Gy+C+0VJWgY/kVXFJkjaM4EjXwNpEL2QLiuBP0eCsgvsCv9xXh24VzxHreoU?=
+ =?us-ascii?Q?H2oYtJPaVRz24IRQnhjR/tULYdfjSEwmJIDKIFSkqN3lqrVJAjVuaHVPXZ/i?=
+ =?us-ascii?Q?fBM1lGwNGRxsDHlAX6FyAyQJlB70LthPW0Z8Hqb5a//6BM0mZ/9/7FKr0suX?=
+ =?us-ascii?Q?TiYQaFM4gcBV2IlXDWI13RMar+dxZvndkdxB6AZ0FYdfjV0hbMdqZcyKwkpD?=
+ =?us-ascii?Q?tzyWeJX69B3VT1pvUFsTqhDgTNZj1d+UH7ZmYhgJJASLdPA0JaCiLF3v1zJn?=
+ =?us-ascii?Q?/C+ZOBMy810KxW+yZxSDaa7Pm6z7HXpgG5hCivm/VPQ87su7n1+1qTEoxosQ?=
+ =?us-ascii?Q?T1f3fkL0Op/IAz0bI1vsrBRSeTgA2gpdFvQhrYIqb9vLK9bg8am45vUAFQ1y?=
+ =?us-ascii?Q?WtWmn+bXzoWv2aF5tiBXwQzYv9r9YRznUIbQwVV4e9kDhj6iglMII5oWkyVD?=
+ =?us-ascii?Q?qr8EM9H2d73E5x7sRGvJwwb1n0xPDzx76F1DfDPLCVdIHTLAF4JFWHI6tYkG?=
+ =?us-ascii?Q?WVSaAz7HPIIJX9CM5D1Q0rh5KZ5nywHI0WL0Z2bY5mKQg5WcxaRpOgjF6OBF?=
+ =?us-ascii?Q?fpncEGzizdYycFYzrpd1im3o3JYc2XDQIbr8CxmuK9Gelh/EjeSwQGn/PkTR?=
+ =?us-ascii?Q?U5j3WBICVX7QVO9lVM8W/NjtzlYvjU+rSFf6SuzUAgrnTdur1987st7TJAFx?=
+ =?us-ascii?Q?WW4t9W1HFYoO4TgTNfehAeQiikjWi/x8bZDZzOofa0f4cQKT2RD2gGEMMIG+?=
+ =?us-ascii?Q?pPOVcfz0m4HzynUDJIsVg+jM2zFrY2a8fv9zVPfnTgbARw77kMhvKAEef/Qu?=
+ =?us-ascii?Q?kw7vdU1+VcKjAqdGCnt7tVz8C1yTWfY1Eyrk+Y6KjDxlujQHEu20Eg8SOOJQ?=
+ =?us-ascii?Q?nk59rgBGu5w3SLZCTsFo2qKrkfJ+ZFeQgU5tFQEBrXqOoF5ioICMfPAbT6pn?=
+ =?us-ascii?Q?SnIPod0+z/lweJ0wNQsW8LtXABrKDhZqsoW1gRDXqBDYMz05g68oa248j1vs?=
+ =?us-ascii?Q?R7RQyrUv408JfW4QWFzsDSSd6BPAsivDMcj+7evqgy9NaJpKr67u1oMv9yMA?=
+ =?us-ascii?Q?rjCrVESd6AvQOQ0EfOWVOOh7k73OkCg9qj2h+u2Wes4pZT/fIk1WmETE2Pqn?=
+ =?us-ascii?Q?FMVaCT7Xb0ksx+0x3EEF+bkModokwMyiiIMQqk95mMJzZithss4pOOfe66MI?=
+ =?us-ascii?Q?0UjEMtcanww=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?X1azCWuyU5oUZOd9ZZwrMJbi1q6dyyskDL5UL/wRprmjfOGBhKId9iRG5FYI?=
+ =?us-ascii?Q?fOlDd+FeUEx90CMnRpOb2qtq8aw73jFiRtOeHYpEb5DzYh2enr2ZSP7qQRYI?=
+ =?us-ascii?Q?hBo7Gy3MIeVj59WErw6mZmJfg8k/q+mG6zLIA4tS/vmcIGkqqa9nmZq45cMY?=
+ =?us-ascii?Q?CVAMLCmI255c+025o8LYoVw1zGacC/pIEq/NZRFxf0W9SbdohOcMDMBHcjGW?=
+ =?us-ascii?Q?jCfKDd5OaO1Or4RL+CvHkvx/aCkdPHNuXOtnkrGFMSOjX3ohuY/fnODzMCQH?=
+ =?us-ascii?Q?QxudvfyvE9s6iSczR6IQojooQVrgF1+xLf6BRySni4G0/WfU6aTvox44IZgz?=
+ =?us-ascii?Q?3+0SJ9dPIr08uVMAv50onoK/u94DQmdPRfmBbGZjkHb4SzuacebkiMjDpXax?=
+ =?us-ascii?Q?mX6QkbZEXCk5ySh7WEZJmIg/GvkD1sQJSPoA2vfA5yu+BI67APn+3i7SV50F?=
+ =?us-ascii?Q?XoosgwtFTNKSfuIrXQZ/TEALfeYtAp8LKrtuDEvlxVh9glvTANmwA1CSzSES?=
+ =?us-ascii?Q?rnT2HY004MFfh7cl1KDOTGeZ0KCnIfKALCOJs27RGrsfu5E3MCbNLjxka8/y?=
+ =?us-ascii?Q?wEUZqG1ODMUtx6S50bnWFQFKLeIpbbzxGQHym2uALOLc5+eIsqCRQvJDpNUQ?=
+ =?us-ascii?Q?6unr4Wwrlzjqn1FeBnMpiYBmb1cJu8ncKggRRgYHF6jBCUvEkvxcYMAfhWiN?=
+ =?us-ascii?Q?uK8o//RvpS9xu7CSw6SIt7HleHh54VtPzl5woTeO018A2cWQM4hh42TZO7If?=
+ =?us-ascii?Q?4Jg3hOnOoVO+eNbXG1/U5y4yCNlc6OXwmJ5Jbi5XpO4xfym5VUKlBQl41LyU?=
+ =?us-ascii?Q?8jbwysoHv6YDT4h2Rks/a+LPWznAx+9n4hCX0n/lryhokCEfFUgYISVs7kAB?=
+ =?us-ascii?Q?AxxUM0qxD+BL46yxnH5ytN89rmYgef2l+HSLlP0xYaf6uqC7P71Mf97wo4xX?=
+ =?us-ascii?Q?tey48EbfnR2fKIOTQRPDf+c8zG4028V7xiyaK9fx4voKQ7PY9FDkLursDEtz?=
+ =?us-ascii?Q?/uSG1ZY+nG6dmkhccIzmLyU0t4V7nYqOpcoO3UyPzqrTJJ0/C6lntU9VCPJs?=
+ =?us-ascii?Q?ZcwviDr7Sr5wFf3004Liwf529XCYX6pHxCB+QQV08N/WEKxkYo9zAtR6UGLC?=
+ =?us-ascii?Q?IOlb5dgAD6Zph3UF7doIw+Fg8eoBvMgZkp74OnFo8oP4ShDONM+d+Wm367dU?=
+ =?us-ascii?Q?OBsHWXH1dUb5nGWTyO/qdSVH/lMKXaXcUZ9x/Bdpf17qoAsjaL15DUwB/P19?=
+ =?us-ascii?Q?jZFtf+udejXP1VExWjM8MfvoSVCwcU5OrLT7Rwb8jTwewnCndDUH5QmV9Hqo?=
+ =?us-ascii?Q?zbZ07+m3k41K8Ud6AJx1Ie9D+0W0Ya0omQJ4f+Pb5ZP3mAf+Ddwjl/imipFV?=
+ =?us-ascii?Q?1qQMQOWgkQOH9Maie9HYLcrWXLf86pku+6+5hfMT0ocj5YRE6wgjQqEOmmVJ?=
+ =?us-ascii?Q?1O3uyzdXDYKMI+OhyyAicw962bj6RZiF8+ZamPc6nIIXMBu4eEJ893xvxGi8?=
+ =?us-ascii?Q?5dmeHDdzo00anpJXfxExO1bOPT484i+psJBbE2NTONrRVV+c67CZjNKz0R6A?=
+ =?us-ascii?Q?h5Cnv0K/E2KxM3gsxIWUyydVrLr1rsW5ZdfYS/oOy9fkze6jdRu9tCDbcxQv?=
+ =?us-ascii?Q?zQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f6e2990-0c88-4a80-2b3b-08ddeeb62a3f
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB3860.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cd3991a-45ac-471f-d646-08ddeeb55e81
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Sep 2025 08:54:49.8097 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KATAnUe97mMw4kHnmGe50XizB18rTsywKriGtiY7dUHy34GiStC8PVXcFjqx+6ISIgk2GRPuhqaLPM3P/73ubw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR18MB6089
-X-Authority-Analysis: v=2.4 cv=ArLu3P9P c=1 sm=1 tr=0 ts=68be99de cx=c_pps
- a=m2tzK+5tEFzy8O583httjg==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=-AAbraWEqlQA:10
- a=M5GUcnROAAAA:8 a=6kNuK2YmLRr4-mn7wb8A:9 a=QEXdDO2ut3YA:10
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDA3NyBTYWx0ZWRfXyfIImUqbmco5
- XrvKO7JuJUxGnU+DHO0J+OHO6ypsrv/VDmPvMNq/GPXFT0rc6tyGO6UxhMOprWVpe64HTKxWnoP
- +sEfnnr9HRvVICfuIc0ATJ4hIyQM9BjhGBtVQAMMYEtqlLJMSf807zSiaKHTpzWnPNmzgvwmlfS
- /4bnXs1xz5R2uJuRyeb07dc9zzE1KfqdSlABUUzaVLthSEXkv4/CPXRSYAKpRKBnTBTUkuDL87l
- NAdrVb1slpRTO+tupWmBTjf3DgAUPZkuiWyADE4q/kCFRhIZpjEh7DHMKQAcWqDdF0IJ86y4KB1
- GTE7J3hccZXV+8e0jKEAuK+5CEaj71m2JgvMAr/eD6T2vfwjjT18x0TJ1uJO/5CA8uPQv/qUlG0
- K8CXavWU
-X-Proofpoint-GUID: AGaSs9Hy9VzKF-OjXe-3kl4s0w9kqDCo
-X-Proofpoint-ORIG-GUID: AGaSs9Hy9VzKF-OjXe-3kl4s0w9kqDCo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-08_03,2025-09-08_01,2025-03-28_01
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 09:00:32.1591 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wtkfu3OVDJVSq8UUP1OxqWOf2zowbdMVCtmq5B/d4zwAyVhkD/WzLWsW9RDieVBSdf1wnSHepItmoFaX4Y4sbocWcHPng70FZ0zWMOfLq+s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPFE1E3F709D
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -190,15 +172,172 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiA+IE9uIE1vbiwgMSBTZXAgMjAyNSAxMToxNDozNCArMDUzMA0KPiA+IDxza29yaUBtYXJ2ZWxs
-LmNvbT4gd3JvdGU6DQo+ID4NCj4gPiA+IEZyb206IFN1bmlsIEt1bWFyIEtvcmkgPHNrb3JpQG1h
-cnZlbGwuY29tPg0KPiA+ID4NCj4gPiA+IEFkZGluZyBsaW5rIHR5cGUgcGFyYW1ldGVyIHRvIHBy
-b3ZpZGUgdGhlIHR5cGUgb2YgcG9ydCBsaWtlIHR3aXN0ZWQNCj4gPiA+IHBhaXIsIGZpYnJlIGV0
-Yy4NCj4gPiA+DQo+ID4gPiBBbHNvIGFkZGVkIGFuIEFQSSB0byBjb252ZXJ0IHRoZSBSVEVfRVRI
-X0xJTktfQ09OTkVDVE9SX1hYWCB0byBhDQo+ID4gPiByZWFkYWJsZSBzdHJpbmcuDQo+ID4gPg0K
-PiA+ID4gU2lnbmVkLW9mZi1ieTogTml0aGluIERhYmlscHVyYW0gPG5kYWJpbHB1cmFtQG1hcnZl
-bGwuY29tPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTogU3VuaWwgS3VtYXIgS29yaSA8c2tvcmlAbWFy
-dmVsbC5jb20+DQo+ID4NCj4gPiBUaGlzIHZlcnNpb24gZG9lcyBub3QgYXBwbHkgY2xlYW5seSB0
-byBuZXh0LW5ldCBvciBtYWluIGJyYW5jaC4NCj4gPiBQbGVhc2UgcmViYXNlLg0KPiANCj4gSSB3
-aWxsIHJlYmFzZSBpdCBvbiBuZXh0LW5ldCBhbmQgc2VuZCBuZXh0IHZlcnNpb24uDQpQYXRjaCBp
-cyByZWJhc2VkIG9uIHRvcCBvZiBuZXh0LW5ldDptYWluIGJyYW5jaC4NCg==
+On Fri, Sep 05, 2025 at 04:25:19PM -0700, Jacob Keller wrote:
+> 
+> 
+> On 9/5/2025 8:32 AM, Bruce Richardson wrote:
+> > On Tue, Sep 02, 2025 at 06:26:59PM +0100, Anatoly Burakov wrote:
+> >> From: Jacob Keller <jacob.e.keller@intel.com>
+> >>
+> >> The ice_cfg_tx_topo function attempts to apply Tx scheduler topology
+> >> configuration based on NVM parameters, selecting either a 5 or 9 layer
+> >> topology.
+> >>
+> >> As part of this flow, the driver acquires the "Global Configuration
+> >> Lock", which is a hardware resource associated with programming the DDP
+> >> package to the device. This "lock" is implemented by firmware as a way to
+> >> guarantee that only one PF can program the DDP for a device. Unlike a
+> >> traditional lock, once a PF has acquired this lock, no other PF will be
+> >> able to acquire it again (including that PF) until a core reset of the
+> >> device. Future requests to acquire the lock report that global
+> >> configuration has already completed.
+> >>
+> >> The following flow is used to program the Tx topology:
+> >>
+> >>  * Read the DDP package for scheduler configuration data
+> >>  * Acquire the global configuration lock
+> >>  * Program Tx scheduler topology according to DDP package data
+> >>  * Trigger a core reset which clears the global configuration lock
+> >>
+> >> This is followed by the flow for programming the DDP package:
+> >>
+> >>  * Acquire the global configuration lock (again)
+> >>  * Download the DDP package to the device
+> >>  * Release the global configuration lock.
+> >>
+> >> However, if configuration of the Tx topology fails, (i.e.
+> >> ice_get_set_tx_topo() returns an error code), the driver exits
+> >> ice_cfg_tx_topo() immediately, and fails to trigger core reset.
+> >>
+> >> While the global configuration lock is held, the firmware rejects most
+> >> AdminQ commands, as it is waiting for the DDP package download (or Tx
+> >> scheduler topology programming) to occur.
+> >>
+> >> The current driver flows assume that the global configuration lock has
+> >> been reset after programming the Tx topology. Thus, the same PF attempts
+> >> to acquire the global lock again, and fails. This results in the driver
+> >> reporting "an unknown error occurred when loading the DDP package". It
+> >> then attempts to enter safe mode, but ultimately fails to finish
+> >> ice_probe() since nearly all AdminQ command report error codes, and the
+> >> driver stops loading the device at some point during its initialization.
+> >>
+> >> We cannot simply release the global lock after a failed call to
+> >> ice_get_set_tx_topo(). Releasing the lock indicates to firmware that
+> >> global configuration (downloading of the DDP) has completed. Future
+> >> attempts by this or other PFs to load the DDP will fail with a report
+> >> that the DDP package has already been downloaded. Then, PFs will enter
+> >> safe mode as they realize that the package on the device does not meet
+> >> the minimum version requirement to load. The reported error messages are
+> >> confusing, as they indicate the version of the default "safe mode"
+> >> package in the NVM, rather than the version of the DDP package loaded
+> >> from the filesystem.
+> >>
+> >> Instead, we need to trigger core reset to clear global configuration.
+> >> This is the lowest level of hardware reset which clears the global
+> >> configuration lock and related state. It also clears any already
+> >> downloaded DDP. Crucially, it does *not* clear the Tx scheduler topology
+> >> configuration.
+> >>
+> >> Refactor ice_cfg_tx_topo() to always trigger a core reset after acquiring
+> >> the global lock, regardless of success or failure of the topology
+> >> configuration.
+> >>
+> >> We need to re-initialize the HW structure when we trigger the core reset.
+> >> Previously, this was the responsibility of the core driver to cleanup
+> >> after the core reset. Instead, make it the responsibility of this
+> >> function. This avoids needless re-initialization for the cases where no
+> >> reset occurred.
+> >>
+> >> Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+> >> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> >> ---
+> >>  drivers/net/intel/ice/base/ice_ddp.c | 34 ++++++++++++++++++----------
+> >>  1 file changed, 22 insertions(+), 12 deletions(-)
+> >>
+> > 
+> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> > 
+> > See one comment inline below.
+> > 
+> > 
+> >> diff --git a/drivers/net/intel/ice/base/ice_ddp.c b/drivers/net/intel/ice/base/ice_ddp.c
+> >> index 850c722a3f..68e75be4d2 100644
+> >> --- a/drivers/net/intel/ice/base/ice_ddp.c
+> >> +++ b/drivers/net/intel/ice/base/ice_ddp.c
+> >> @@ -2370,7 +2370,7 @@ int ice_cfg_tx_topo(struct ice_hw *hw, u8 *buf, u32 len)
+> >>  	struct ice_buf_hdr *section;
+> >>  	struct ice_pkg_hdr *pkg_hdr;
+> >>  	enum ice_ddp_state state;
+> >> -	u16 i, size = 0, offset;
+> >> +	u16 size = 0, offset;
+> >>  	u32 reg = 0;
+> >>  	int status;
+> >>  	u8 flags;
+> >> @@ -2457,25 +2457,35 @@ int ice_cfg_tx_topo(struct ice_hw *hw, u8 *buf, u32 len)
+> >>  	/* check reset was triggered already or not */
+> >>  	reg = rd32(hw, GLGEN_RSTAT);
+> >>  	if (reg & GLGEN_RSTAT_DEVSTATE_M) {
+> >> -		/* Reset is in progress, re-init the hw again */
+> >>  		ice_debug(hw, ICE_DBG_INIT, "Reset is in progress. layer topology might be applied already\n");
+> >>  		ice_check_reset(hw);
+> >> -		return 0;
+> >> +		/* Reset is in progress, re-init the hw again */
+> >> +		goto reinit_hw;
+> >>  	}
+> >>  
+> >>  	/* set new topology */
+> >>  	status = ice_get_set_tx_topo(hw, new_topo, size, NULL, NULL, true);
+> >>  	if (status) {
+> >> -		ice_debug(hw, ICE_DBG_INIT, "Set tx topology is failed\n");
+> >> -		return status;
+> >> +		ice_debug(hw, ICE_DBG_INIT, "Failed setting Tx topology, status %d\n",
+> >> +			  status);
+> >> +		status = ICE_ERR_CFG;
+> >>  	}
+> >>  
+> >> -	/* new topology is updated, delay 1 second before issuing the CORRER */
+> >> -	for (i = 0; i < 10; i++)
+> >> -		ice_msec_delay(100, true);
+> >> +	/* Even if Tx topology config failed, we need to CORE reset here to
+> >> +	 * clear the global configuration lock. Delay 1 second to allow
+> >> +	 * hardware to settle then issue a CORER
+> >> +	 */
+> >> +	ice_msec_delay(1000, true);
+> >>  	ice_reset(hw, ICE_RESET_CORER);
+> >> -	/* CORER will clear the global lock, so no explicit call
+> >> -	 * required for release
+> >> -	 */
+> >> -	return 0;
+> >> +	ice_check_reset(hw);
+> >> +
+> >> +reinit_hw:
+> >> +	/* Since we triggered a CORER, re-initialize hardware */
+> >> +	ice_deinit_hw(hw);
+> >> +	if (ice_init_hw(hw)) {
+> >> +		ice_debug(hw, ICE_DBG_INIT, "Failed to re-init hardware after setting Tx topology\n");
+> >> +		return ICE_ERR_RESET_FAILED;
+> >> +	}
+> >> +
+> >> +	return status;
+> >>  }
+> > 
+> > There is a similer deinit + init combo in ice_init_pkg in the same file,
+> > which is the only use of this function (in DPDK anyway). Therefore, I
+> > believe that that code can be removed now that the reinit is handled by the
+> > cfg_tx_topo() function.
+> 
+> I am not sure we can do that. We program Tx topology by taking the
+> global configuration lock, then programming the topology, and then
+> performing a CORE reset. We can't simply release the global config lock,
+> because then DDP won't be able to download at all. We can't avoid this
+> re-init, because after a CORE reset, the drivers AQ setup will be hosed
+> and thus we need a re-init.
+> 
+> ice_init_pkg should be called after Tx topology is executed. If another
+> reset occurs there, I think you may still need to do that re-init too.
+> There could possibly be a complete refactor that removed the need for a
+> double reset, but I am not certain.
+
+Ok, thanks for the analysis and explanation. Taking this patch as-is.
+
+/Bruce
