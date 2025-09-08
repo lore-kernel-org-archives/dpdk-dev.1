@@ -2,61 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BED1CAC581
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 13:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53833CAC581
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 13:53:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 127BC40156;
-	Mon,  8 Sep 2025 15:28:08 +0200 (CEST)
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com
- [209.85.215.174])
- by mails.dpdk.org (Postfix) with ESMTP id 5AC9840156
- for <dev@dpdk.org>; Mon,  8 Sep 2025 15:28:06 +0200 (CEST)
-Received: by mail-pg1-f174.google.com with SMTP id
- 41be03b00d2f7-b4c53892a56so3937091a12.2
- for <dev@dpdk.org>; Mon, 08 Sep 2025 06:28:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5D84E402E3;
+	Mon,  8 Sep 2025 15:53:30 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
+ by mails.dpdk.org (Postfix) with ESMTP id 1098A4003C
+ for <dev@dpdk.org>; Mon,  8 Sep 2025 15:53:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1757338085; x=1757942885; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=+17T9wDTG4tWQNt3S6oTVg9lvDlOSmIy6aiPHwahHlM=;
- b=Ekec/N3n8wbtbi73x6Tl/DwECAYx2Swaa2XgBoLyKpIM+h0Dg3rBg+/ofypQJ6s3EX
- 1xL/cSgGzjeoqcaK9rBSMBgRIfPsRc+M08saEe6EehD0w8D6BrSKM7dw5LrOCjmHNMn8
- 3Gm24WPRz5gfftn5vhLfpetaPoRSEW0V3EkPg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1757338085; x=1757942885;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=+17T9wDTG4tWQNt3S6oTVg9lvDlOSmIy6aiPHwahHlM=;
- b=WGV2EGB0fbSLUIMcWSba+NZlb4zLnOkJIFJIIJFutyuCbRt3TTHUA2jaqUroQN3E5j
- QB2fMu0NEJYPEqgNGyomXsozwNSzyA7g3998VHh9Yjr3ZpifSF6K4u7+oox7mumY1GYf
- 0ivgTJfPOBdY7gh3FrpKyhRfPfK4f78dmYypNF1d1BoIIa3bDLv9+Qpm0DZTGJSole8l
- 8t6SyGmqpHHJuZGl2dYKWzMIgZyAYCMAzGxue+jmqkwT0xj1fOq0lA61bF8xdxlkO3Uh
- tccVZaGAUVJ8fG7ltptoEkMkBSu/W26aey9dN46SfuPL2+VzI+yoDs38D0QxnacO5PM5
- Omig==
-X-Gm-Message-State: AOJu0YxXen2NdUTnJHfpMxsl/ecOE3pE9sbrX8FyaIGVGWfDCuwIgal9
- bTabQGUV2f4vfRztCwg83SaJYAz5KnkE/rkKmMYvdkWIbYtl/2tbdy/PR0gmNTDGNfslvwBmLvE
- RQE+LZsl7fOXjqp72vkz/8ta11GBhXGrnnxBt/xHa4A==
-X-Gm-Gg: ASbGncsbKyU1z+pFoA6B+tdqk8zGRW1uixWxykOcExwmEu+DrBZ/peXsyNG120FKOVG
- db3o+pzgZgTD8+Hts/8/+08EmdnZnKXYR5tJWTJsL8ZJvN4tqRqzv/w1bt+Zf4t1TjuV3SA6rzX
- Ksgtzn/0EBDmZbPPGHZPHpG3SfbPs9KEXWx4pY/9mglcuIGa5OjvI+OimoXoVJRw/MwuaD0D2gh
- 1pO3Ufjxs872dzz9wx9U9SSbbE8VtYV2OmNfHI=
-X-Google-Smtp-Source: AGHT+IHdXv6bJPZXd8htYomREP3M7UcBMInmz/mIJFiuDJSmQacLbEqWQBdvWMOQIWS/xMrSvwiHqPt6oO7ZKAxZyFY=
-X-Received: by 2002:a17:902:db0a:b0:24e:49ea:1c6b with SMTP id
- d9443c01a7336-251751e5cbdmr120420405ad.46.1757338085293; Mon, 08 Sep 2025
- 06:28:05 -0700 (PDT)
+ d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
+ MIME-Version; bh=kEYPMASo1wIzVPFEsZ/A/y7XSCgXZbqwvijqN9u40VY=;
+ b=Uctd8yGmA/nNc7oQVbgXMtUgk9wrEI8wL4qKLmMtfxtCqmMa4IsYsLwQyZDugC
+ NwYlLplPvDXdORzbkBz8Y8ClfCl9/mLTBPBKsea5FMGFW5KyKL1gCNZYBHxIkx+9
+ AdLUhuzgCzyE33BUUxqpuEQO8s9fT+l0kUoVgYAO3RHuY=
+Received: from localhost.localdomain (unknown [114.116.198.59])
+ by gzsmtp2 (Coremail) with SMTP id As8vCgDXbbu9375oixA8Aw--.20503S6;
+ Mon, 08 Sep 2025 21:53:24 +0800 (CST)
+From: Feifei Wang <wff_light@vip.163.com>
+To: dev@dpdk.org
+Cc: Xin Wang <wangxin679@h-partners.com>, Yi Chen <chenyi221@huawei.com>,
+ Feifei Wang <wangfeifei40@huawei.com>
+Subject: [V8 02/17] net/hinic3: add basic header files
+Date: Mon,  8 Sep 2025 21:52:10 +0800
+Message-ID: <20250908135236.11873-3-wff_light@vip.163.com>
+X-Mailer: git-send-email 2.47.0.windows.2
+In-Reply-To: <20250908135236.11873-1-wff_light@vip.163.com>
+References: <20250418090621.9638-1-wff_light@vip.163.com>
+ <20250908135236.11873-1-wff_light@vip.163.com>
 MIME-Version: 1.0
-References: <20250908014154.82938-1-probb@iol.unh.edu>
- <77838cba-0bf4-4764-8094-664265162081@arm.com>
-In-Reply-To: <77838cba-0bf4-4764-8094-664265162081@arm.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Mon, 8 Sep 2025 09:21:12 -0400
-X-Gm-Features: Ac12FXxNlhs12b6TN6dHTXx9axt7ERKIh2qSIr_MxhTagbcEevKjeeqaIP3Tuto
-Message-ID: <CAJvnSUBGaTkbtd7GanHJH9DbOsdFo-imG5joMv61bEpRH=00Xw@mail.gmail.com>
-Subject: Re: [PATCH] dts: add dpdk shell warm up period
-To: Luca Vizzarro <Luca.Vizzarro@arm.com>
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, abailey@iol.unh.edu
-Content-Type: multipart/alternative; boundary="000000000000531a1c063e4a2828"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: As8vCgDXbbu9375oixA8Aw--.20503S6
+X-Coremail-Antispam: 1Uf129KBjvAXoWfJw4DAryrZr43Ww18ZrW5Jrb_yoW8XF1xCo
+ W5uF4ftw4rXryIka1q9392qFWrZrs5Zr15t3yrCayIvFsrKry8G3y3Jw17XrWFq3yDWry5
+ Cry5AF4Du3yYyr1Dn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUcNtxUUUUU
+X-Originating-IP: [114.116.198.59]
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiARjCCmi+saF+UQAAs4
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,78 +52,463 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000531a1c063e4a2828
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Xin Wang <wangxin679@h-partners.com>
 
-On Mon, Sep 8, 2025 at 6:03=E2=80=AFAM Luca Vizzarro <Luca.Vizzarro@arm.com=
-> wrote:
+Add HW registers definition header file for SP series NIC.
+Add some headers that define commands and basic defines for
+use in the code.
 
-> Hi Patrick,
->
-> Perfectly understand the situation, I am just afraid that adding a whole
-> 5 seconds every time an InteractiveShell is spawned may slow down
-> everything by a lot. These are spawned a lot of times, so it will stack
-> up. Is there no other way to test for readiness?
->
+Signed-off-by: Xin Wang <wangxin679@h-partners.com>
+Reviewed-by: Yi Chen <chenyi221@huawei.com>
+Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
+---
+ MAINTAINERS                             |   1 +
+ drivers/net/hinic3/base/hinic3_cmd.h    | 156 ++++++++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_compat.h | 144 ++++++++++++++++++++++
+ drivers/net/hinic3/base/hinic3_csr.h    | 108 ++++++++++++++++
+ 4 files changed, 409 insertions(+)
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmd.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_compat.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_csr.h
 
-Yeah. I was guessing at the math before and thought it was like +25%
-execution time, but now I see it's more like +90%. Definitely not ideal.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ea71eac351..be7c815f11 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -781,6 +781,7 @@ F: doc/guides/nics/features/hinic.ini
+ 
+ Huawei hinic3
+ M: Feifei Wang <wangfeifei40@huawei.com>
++F: drivers/net/hinic3/
+ F: doc/guides/nics/hinic3.rst
+ 
+ Intel Network Common Code
+diff --git a/drivers/net/hinic3/base/hinic3_cmd.h b/drivers/net/hinic3/base/hinic3_cmd.h
+new file mode 100644
+index 0000000000..76f0a2b391
+--- /dev/null
++++ b/drivers/net/hinic3/base/hinic3_cmd.h
+@@ -0,0 +1,156 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
++ */
++
++#ifndef _HINIC3_CMD_H_
++#define _HINIC3_CMD_H_
++
++#define NIC_RSS_TEMP_ID_TO_CTX_LT_IDX(tmp_id)	(tmp_id)
++/* Begin of one temp tbl. */
++#define NIC_RSS_TEMP_ID_TO_INDIR_LT_IDX(tmp_id)	((tmp_id) << 4)
++/* 4 ctx in one entry. */
++#define NIC_RSS_CTX_TBL_ENTRY_SIZE		0x10
++/* Entry size = 16B, 16 entry/template. */
++#define NIC_RSS_INDIR_TBL_ENTRY_SIZE		0x10
++/* Entry size = 16B, so entry_num = 256B/16B. */
++#define NIC_RSS_INDIR_TBL_ENTRY_NUM		0x10
++
++#define NIC_UP_RSS_INVALID_TEMP_ID		0xFF
++#define NIC_UP_RSS_INVALID_FUNC_ID		0xFFFF
++#define NIC_UP_RSS_INVALID			0x00
++#define NIC_UP_RSS_EN				0x01
++#define NIC_UP_RSS_INVALID_GROUP_ID		0x7F
++
++#define NIC_RSS_CMD_TEMP_ALLOC			0x01
++#define NIC_RSS_CMD_TEMP_FREE			0x02
++
++#define HINIC3_RSS_TYPE_VALID_SHIFT		23
++#define HINIC3_RSS_TYPE_TCP_IPV6_EXT_SHIFT	24
++#define HINIC3_RSS_TYPE_IPV6_EXT_SHIFT		25
++#define HINIC3_RSS_TYPE_TCP_IPV6_SHIFT		26
++#define HINIC3_RSS_TYPE_IPV6_SHIFT		27
++#define HINIC3_RSS_TYPE_TCP_IPV4_SHIFT		28
++#define HINIC3_RSS_TYPE_IPV4_SHIFT		29
++#define HINIC3_RSS_TYPE_UDP_IPV6_SHIFT		30
++#define HINIC3_RSS_TYPE_UDP_IPV4_SHIFT		31
++#define HINIC3_RSS_TYPE_SET(val, member)	\
++	(((uint32_t)(val) & 0x1) << HINIC3_RSS_TYPE_##member##_SHIFT)
++
++#define HINIC3_RSS_TYPE_GET(val, member)	\
++	(((uint32_t)(val) >> HINIC3_RSS_TYPE_##member##_SHIFT) & 0x1)
++
++/* NIC CMDQ MODE. */
++enum hinic3_ucode_cmd {
++	HINIC3_UCODE_CMD_MODIFY_QUEUE_CTX = 0,
++	HINIC3_UCODE_CMD_CLEAN_QUEUE_CONTEXT,
++	HINIC3_UCODE_CMD_ARM_SQ,
++	HINIC3_UCODE_CMD_ARM_RQ,
++	HINIC3_UCODE_CMD_SET_RSS_INDIR_TABLE,
++	HINIC3_UCODE_CMD_SET_RSS_CONTEXT_TABLE,
++	HINIC3_UCODE_CMD_GET_RSS_INDIR_TABLE,
++	HINIC3_UCODE_CMD_GET_RSS_CONTEXT_TABLE,
++	HINIC3_UCODE_CMD_SET_IQ_ENABLE,
++	HINIC3_UCODE_CMD_SET_RQ_FLUSH = 10,
++	HINIC3_UCODE_CMD_MODIFY_VLAN_CTX,
++};
++
++/* Commands between NIC to MPU. */
++enum hinic3_nic_cmd {
++	/* Only for PFD and VFD. */
++	HINIC3_NIC_CMD_VF_REGISTER = 0,
++
++	/* FUNC CFG */
++	HINIC3_NIC_CMD_SET_FUNC_TBL = 5,
++	HINIC3_NIC_CMD_SET_VPORT_ENABLE = 6,
++	HINIC3_NIC_CMD_SET_RX_MODE = 7,
++	HINIC3_NIC_CMD_SQ_CI_ATTR_SET = 8,
++	HINIC3_NIC_CMD_GET_VPORT_STAT = 9,
++	HINIC3_NIC_CMD_CLEAN_VPORT_STAT = 10,
++	HINIC3_NIC_CMD_CLEAR_QP_RESOURCE = 11,
++	HINIC3_NIC_CMD_CFG_FLEX_QUEUE = 12,
++	/* LRO CFG */
++	HINIC3_NIC_CMD_CFG_RX_LRO = 13,
++	HINIC3_NIC_CMD_CFG_LRO_TIMER = 14,
++	HINIC3_NIC_CMD_FEATURE_NEGO = 15,
++	/* MAC & VLAN CFG */
++	HINIC3_NIC_CMD_GET_MAC = 20,
++	HINIC3_NIC_CMD_SET_MAC = 21,
++	HINIC3_NIC_CMD_DEL_MAC = 22,
++	HINIC3_NIC_CMD_UPDATE_MAC = 23,
++	HINIC3_NIC_CMD_CFG_FUNC_VLAN = 25,
++	HINIC3_NIC_CMD_SET_VLAN_FILTER_EN = 26,
++	HINIC3_NIC_CMD_SET_RX_VLAN_OFFLOAD = 27,
++	/* RSS CFG */
++	HINIC3_NIC_CMD_RSS_CFG = 60,
++	HINIC3_NIC_CMD_RSS_TEMP_MGR = 61,
++	HINIC3_NIC_CMD_GET_RSS_CTX_TBL = 62,
++	HINIC3_NIC_CMD_CFG_RSS_HASH_KEY = 63,
++	HINIC3_NIC_CMD_CFG_RSS_HASH_ENGINE = 64,
++	HINIC3_NIC_CMD_SET_RSS_CTX_TBL_INTO_FUNC = 65,
++	/* FDIR */
++	HINIC3_NIC_CMD_ADD_TC_FLOW = 80,
++	HINIC3_NIC_CMD_DEL_TC_FLOW = 81,
++	HINIC3_NIC_CMD_FLUSH_TCAM = 83,
++	HINIC3_NIC_CMD_CFG_TCAM_BLOCK = 84,
++	HINIC3_NIC_CMD_ENABLE_TCAM = 85,
++
++	HINIC3_NIC_CMD_SET_FDIR_STATUS = 91,
++	/* PORT CFG */
++	HINIC3_NIC_CMD_CFG_PAUSE_INFO = 101,
++	HINIC3_NIC_CMD_VF_COS = 104,
++};
++
++/* COMM commands between driver to MPU. */
++enum hinic3_mgmt_cmd {
++	HINIC3_MGMT_CMD_FUNC_RESET = 0,
++	HINIC3_MGMT_CMD_FEATURE_NEGO = 1,
++	HINIC3_MGMT_CMD_SET_FUNC_SVC_USED_STATE = 7,
++	HINIC3_MGMT_CMD_SET_CMDQ_CTXT = 20,
++	HINIC3_MGMT_CMD_SET_VAT = 21,
++	HINIC3_MGMT_CMD_CFG_PAGESIZE = 22,
++	HINIC3_MGMT_CMD_CFG_MSIX_CTRL_REG = 23,
++	HINIC3_MGMT_CMD_SET_DMA_ATTR = 25,
++	HINIC3_MGMT_CMD_GET_MQM_FIX_INFO = 40,
++	HINIC3_MGMT_CMD_GET_FW_VERSION = 60,
++	HINIC3_MGMT_CMD_GET_BOARD_INFO = 61,
++	HINIC3_MGMT_CMD_FAULT_REPORT = 100,
++	HINIC3_MGMT_CMD_FFM_SET = 103,
++};
++
++enum mag_cmd {
++	SERDES_CMD_PROCESS = 0,
++
++	MAG_CMD_SET_PORT_CFG      = 1,
++	MAG_CMD_SET_PORT_ADAPT    = 2,
++	MAG_CMD_CFG_LOOPBACK_MODE = 3,
++
++	MAG_CMD_GET_PORT_ENABLE   = 5,
++	MAG_CMD_SET_PORT_ENABLE   = 6,
++	MAG_CMD_GET_LINK_STATUS   = 7,
++	MAG_CMD_SET_LINK_FOLLOW   = 8,
++	MAG_CMD_SET_PMA_ENABLE    = 9,
++	MAG_CMD_CFG_FEC_MODE      = 10,
++
++	/* PHY */
++	MAG_CMD_GET_XSFP_INFO        = 60,
++	MAG_CMD_SET_XSFP_ENABLE      = 61,
++	MAG_CMD_GET_XSFP_PRESENT     = 62,
++	/* sfp/qsfp single byte read/write, for equipment test. */
++	MAG_CMD_SET_XSFP_RW          = 63,
++	MAG_CMD_CFG_XSFP_TEMPERATURE = 64,
++
++	MAG_CMD_WIRE_EVENT        = 100,
++	MAG_CMD_LINK_ERR_EVENT    = 101,
++
++	MAG_CMD_EVENT_PORT_INFO   = 150,
++	MAG_CMD_GET_PORT_STAT     = 151,
++	MAG_CMD_CLR_PORT_STAT     = 152,
++	MAG_CMD_GET_PORT_INFO     = 153,
++	MAG_CMD_GET_PCS_ERR_CNT   = 154,
++	MAG_CMD_GET_MAG_CNT       = 155,
++	MAG_CMD_DUMP_ANTRAIN_INFO = 156,
++
++	MAG_CMD_MAX = 0xFF
++};
++
++#endif /* _HINIC3_CMD_H_ */
+diff --git a/drivers/net/hinic3/base/hinic3_compat.h b/drivers/net/hinic3/base/hinic3_compat.h
+new file mode 100644
+index 0000000000..8356996d40
+--- /dev/null
++++ b/drivers/net/hinic3/base/hinic3_compat.h
+@@ -0,0 +1,144 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
++ */
++
++#ifndef _HINIC3_COMPAT_H_
++#define _HINIC3_COMPAT_H_
++
++#include <rte_ethdev.h>
++#include <rte_io.h>
++#include <rte_log.h>
++
++#define upper_32_bits(n) ((uint32_t)((n) >> 32))
++#define lower_32_bits(n) ((uint32_t)(n))
++
++#define HINIC3_MEM_ALLOC_ALIGN_MIN 1
++
++extern int hinic3_logtype;
++#define RTE_LOGTYPE_HINIC3_DRIVER hinic3_logtype
++
++#define PMD_DRV_LOG(level, ...) \
++	RTE_LOG_LINE_PREFIX(level, HINIC3_DRIVER, "%s(): ", __func__, __VA_ARGS__)
++
++#ifdef HW_CONVERT_ENDIAN
++/* If csrs to enable endianness converting are configured, hw will do the
++ * endianness converting for stateless SQ ci, the fields less than 4B for
++ * doorbell, the fields less than 4B in the CQE data.
++ */
++#define hinic3_hw_be32(val)  (val)
++#define hinic3_hw_cpu32(val) (val)
++#define hinic3_hw_cpu16(val) (val)
++#else
++#define hinic3_hw_be32(val)  rte_cpu_to_be_32(val)
++#define hinic3_hw_cpu32(val) rte_be_to_cpu_32(val)
++#define hinic3_hw_cpu16(val) rte_be_to_cpu_16(val)
++#endif
++
++static inline void
++hinic3_cpu_to_hw(void *data, uint32_t len)
++{
++	uint32_t i, seg = len / sizeof(uint32_t);
++	uint32_t *mem = data;
++
++	for (i = 0; i < seg; i++) {
++		*mem = hinic3_hw_be32(*mem);
++		mem++;
++	}
++}
++
++static inline int
++hinic3_get_bit(int nr, volatile RTE_ATOMIC(uint64_t) *addr)
++{
++	RTE_ASSERT(nr < 0x20);
++
++	uint32_t mask = UINT32_C(1) << nr;
++	return (*addr) & mask;
++}
++
++static inline void
++hinic3_set_bit(unsigned int nr, volatile RTE_ATOMIC(uint64_t) *addr)
++{
++	rte_atomic_fetch_or_explicit(addr, (1UL << nr),
++				     rte_memory_order_seq_cst);
++}
++
++static inline void
++hinic3_clear_bit(int nr, volatile RTE_ATOMIC(uint64_t) *addr)
++{
++	rte_atomic_fetch_and_explicit(addr, ~(1UL << nr),
++				      rte_memory_order_seq_cst);
++}
++
++static inline int
++hinic3_test_and_clear_bit(int nr, volatile RTE_ATOMIC(uint64_t) *addr)
++{
++	unsigned long mask = (1UL << nr);
++
++	return (int)(rte_atomic_fetch_and_explicit(addr, ~mask,
++						   rte_memory_order_seq_cst) &
++		     mask);
++}
++
++static inline int
++hinic3_test_and_set_bit(int nr, volatile RTE_ATOMIC(uint64_t) *addr)
++{
++	unsigned long mask = (1UL << nr);
++
++	return (int)(rte_atomic_fetch_or_explicit(addr, mask,
++						  rte_memory_order_seq_cst) &
++		     mask);
++}
++
++#ifdef CLOCK_MONOTONIC_RAW /**< Defined in glibc bits/time.h . */
++#define CLOCK_TYPE CLOCK_MONOTONIC_RAW
++#else
++#define CLOCK_TYPE CLOCK_MONOTONIC
++#endif
++
++#define HINIC3_S_TO_MS_UNIT  1000
++#define HINIC3_S_TO_NS_UNIT  1000000
++
++#define cycles		      rte_get_timer_cycles()
++#define msecs_to_cycles(ms)  ((ms) * rte_get_timer_hz() / HINIC3_S_TO_MS_UNIT)
++#define time_before(now, end) ((now) < (end))
++
++/**
++ * Convert data to big endian 32 bit format.
++ *
++ * @param data
++ * The data to convert.
++ * @param len
++ * Length of data to convert, must be Multiple of 4B.
++ */
++static inline void
++hinic3_cpu_to_be32(void *data, uint32_t len)
++{
++	uint32_t i, seg = len / sizeof(uint32_t);
++	uint32_t *mem = data;
++
++	for (i = 0; i < seg; i++) {
++		*mem = rte_cpu_to_be_32(*mem);
++		mem++;
++	}
++}
++
++/**
++ * Convert data from big endian 32 bit format.
++ *
++ * @param data
++ * The data to convert.
++ * @param len
++ * Length of data to convert, must be Multiple of 4B.
++ */
++static inline void
++hinic3_be32_to_cpu(void *data, uint32_t len)
++{
++	uint32_t i, seg = len / sizeof(uint32_t);
++	uint32_t *mem = data;
++
++	for (i = 0; i < seg; i++) {
++		*mem = rte_be_to_cpu_32(*mem);
++		mem++;
++	}
++}
++#endif /* _HINIC3_COMPAT_H_ */
+diff --git a/drivers/net/hinic3/base/hinic3_csr.h b/drivers/net/hinic3/base/hinic3_csr.h
+new file mode 100644
+index 0000000000..f0dd690bf8
+--- /dev/null
++++ b/drivers/net/hinic3/base/hinic3_csr.h
+@@ -0,0 +1,108 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
++ */
++
++#ifndef _HINIC3_CSR_H_
++#define _HINIC3_CSR_H_
++
++#ifdef CONFIG_SP_VID_DID
++#define PCI_VENDOR_ID_SPNIC    0x1F3F
++#define HINIC3_DEV_ID_STANDARD 0x9020
++#define HINIC3_DEV_ID_VF       0x9001
++#else
++#define PCI_VENDOR_ID_HUAWEI   0x19e5
++#define HINIC3_DEV_ID_STANDARD 0x0222
++#define HINIC3_DEV_ID_VF       0x375F
++#endif
++
++/*
++ * Bit30/bit31 for bar index flag.
++ * 00: bar0
++ * 01: bar1
++ * 10: bar2
++ * 11: bar3
++ */
++#define HINIC3_CFG_REGS_FLAG 0x40000000
++
++#define HINIC3_MGMT_REGS_FLAG 0xC0000000
++
++#define HINIC3_REGS_FLAG_MASK 0x3FFFFFFF
++
++#define HINIC3_VF_CFG_REG_OFFSET 0x2000
++
++#define HINIC3_HOST_CSR_BASE_ADDR   (HINIC3_MGMT_REGS_FLAG + 0x6000)
++#define HINIC3_CSR_GLOBAL_BASE_ADDR (HINIC3_MGMT_REGS_FLAG + 0x6400)
++
++/* HW interface registers. */
++#define HINIC3_CSR_FUNC_ATTR0_ADDR (HINIC3_CFG_REGS_FLAG + 0x0)
++#define HINIC3_CSR_FUNC_ATTR1_ADDR (HINIC3_CFG_REGS_FLAG + 0x4)
++#define HINIC3_CSR_FUNC_ATTR2_ADDR (HINIC3_CFG_REGS_FLAG + 0x8)
++#define HINIC3_CSR_FUNC_ATTR3_ADDR (HINIC3_CFG_REGS_FLAG + 0xC)
++#define HINIC3_CSR_FUNC_ATTR4_ADDR (HINIC3_CFG_REGS_FLAG + 0x10)
++#define HINIC3_CSR_FUNC_ATTR5_ADDR (HINIC3_CFG_REGS_FLAG + 0x14)
++#define HINIC3_CSR_FUNC_ATTR6_ADDR (HINIC3_CFG_REGS_FLAG + 0x18)
++
++#define HINIC3_FUNC_CSR_MAILBOX_DATA_OFF       0x80
++#define HINIC3_FUNC_CSR_MAILBOX_CONTROL_OFF    (HINIC3_CFG_REGS_FLAG + 0x0100)
++#define HINIC3_FUNC_CSR_MAILBOX_INT_OFFSET_OFF (HINIC3_CFG_REGS_FLAG + 0x0104)
++#define HINIC3_FUNC_CSR_MAILBOX_RESULT_H_OFF   (HINIC3_CFG_REGS_FLAG + 0x0108)
++#define HINIC3_FUNC_CSR_MAILBOX_RESULT_L_OFF   (HINIC3_CFG_REGS_FLAG + 0x010C)
++
++#define HINIC3_PPF_ELECTION_OFFSET 0x0
++#define HINIC3_MPF_ELECTION_OFFSET 0x20
++
++#define HINIC3_CSR_PPF_ELECTION_ADDR \
++	(HINIC3_HOST_CSR_BASE_ADDR + HINIC3_PPF_ELECTION_OFFSET)
++
++#define HINIC3_CSR_GLOBAL_MPF_ELECTION_ADDR \
++	(HINIC3_HOST_CSR_BASE_ADDR + HINIC3_MPF_ELECTION_OFFSET)
++
++#define HINIC3_CSR_DMA_ATTR_TBL_ADDR	   (HINIC3_CFG_REGS_FLAG + 0x380)
++#define HINIC3_CSR_DMA_ATTR_INDIR_IDX_ADDR (HINIC3_CFG_REGS_FLAG + 0x390)
++
++/* MSI-X registers. */
++#define HINIC3_CSR_MSIX_INDIR_IDX_ADDR	(HINIC3_CFG_REGS_FLAG + 0x310)
++#define HINIC3_CSR_MSIX_CTRL_ADDR	(HINIC3_CFG_REGS_FLAG + 0x300)
++#define HINIC3_CSR_MSIX_CNT_ADDR	(HINIC3_CFG_REGS_FLAG + 0x304)
++#define HINIC3_CSR_FUNC_MSI_CLR_WR_ADDR (HINIC3_CFG_REGS_FLAG + 0x58)
++
++#define HINIC3_MSI_CLR_INDIR_RESEND_TIMER_CLR_SHIFT 0
++#define HINIC3_MSI_CLR_INDIR_INT_MSK_SET_SHIFT	    1
++#define HINIC3_MSI_CLR_INDIR_INT_MSK_CLR_SHIFT	    2
++#define HINIC3_MSI_CLR_INDIR_AUTO_MSK_SET_SHIFT	    3
++#define HINIC3_MSI_CLR_INDIR_AUTO_MSK_CLR_SHIFT	    4
++#define HINIC3_MSI_CLR_INDIR_SIMPLE_INDIR_IDX_SHIFT 22
++
++#define HINIC3_MSI_CLR_INDIR_RESEND_TIMER_CLR_MASK 0x1U
++#define HINIC3_MSI_CLR_INDIR_INT_MSK_SET_MASK	   0x1U
++#define HINIC3_MSI_CLR_INDIR_INT_MSK_CLR_MASK	   0x1U
++#define HINIC3_MSI_CLR_INDIR_AUTO_MSK_SET_MASK	   0x1U
++#define HINIC3_MSI_CLR_INDIR_AUTO_MSK_CLR_MASK	   0x1U
++#define HINIC3_MSI_CLR_INDIR_SIMPLE_INDIR_IDX_MASK 0x3FFU
++
++#define HINIC3_MSI_CLR_INDIR_SET(val, member)           \
++	(((val) & HINIC3_MSI_CLR_INDIR_##member##_MASK) \
++	 << HINIC3_MSI_CLR_INDIR_##member##_SHIFT)
++
++/* EQ registers. */
++#define HINIC3_AEQ_INDIR_IDX_ADDR (HINIC3_CFG_REGS_FLAG + 0x210)
++
++#define HINIC3_AEQ_MTT_OFF_BASE_ADDR (HINIC3_CFG_REGS_FLAG + 0x240)
++
++#define HINIC3_CSR_EQ_PAGE_OFF_STRIDE 8
++
++#define HINIC3_AEQ_HI_PHYS_ADDR_REG(pg_num) \
++	(HINIC3_AEQ_MTT_OFF_BASE_ADDR +     \
++	 (pg_num) * HINIC3_CSR_EQ_PAGE_OFF_STRIDE)
++
++#define HINIC3_AEQ_LO_PHYS_ADDR_REG(pg_num) \
++	(HINIC3_AEQ_MTT_OFF_BASE_ADDR +     \
++	 (pg_num) * HINIC3_CSR_EQ_PAGE_OFF_STRIDE + 4)
++
++#define HINIC3_CSR_AEQ_CTRL_0_ADDR	    (HINIC3_CFG_REGS_FLAG + 0x200)
++#define HINIC3_CSR_AEQ_CTRL_1_ADDR	    (HINIC3_CFG_REGS_FLAG + 0x204)
++#define HINIC3_CSR_AEQ_CONS_IDX_ADDR	    (HINIC3_CFG_REGS_FLAG + 0x208)
++#define HINIC3_CSR_AEQ_PROD_IDX_ADDR	    (HINIC3_CFG_REGS_FLAG + 0x20C)
++#define HINIC3_CSR_AEQ_CI_SIMPLE_INDIR_ADDR (HINIC3_CFG_REGS_FLAG + 0x50)
++
++#endif /* _HINIC3_CSR_H_ */
+-- 
+2.47.0.windows.2
 
-I wasn't able to come up with any other readiness checks but maybe there
-is. Anyhow let's discuss all this at the Thursday meeting as it's not
-urgent.
-
-
->
-> Also I think we are providing the ability to run shells outside the
-> context manager as well for some scenarios where it's needed, so this
-> approach won't cover that case unfortunately.
->
-
-Good point I'll take another look.
-
-
->
-> Best,
-> Luca
->
-
---000000000000531a1c063e4a2828
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Sep 8, =
-2025 at 6:03=E2=80=AFAM Luca Vizzarro &lt;<a href=3D"mailto:Luca.Vizzarro@a=
-rm.com">Luca.Vizzarro@arm.com</a>&gt; wrote:<br></div><blockquote class=3D"=
-gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(20=
-4,204,204);padding-left:1ex">Hi Patrick,<br>
-<br>
-Perfectly understand the situation, I am just afraid that adding a whole <b=
-r>
-5 seconds every time an InteractiveShell is spawned may slow down <br>
-everything by a lot. These are spawned a lot of times, so it will stack <br=
->
-up. Is there no other way to test for readiness?<br></blockquote><div><br><=
-/div><div>Yeah. I was guessing at the math before and thought it was like=
-=C2=A0+25% execution time, but now I see it&#39;s more like=C2=A0+90%. Defi=
-nitely not ideal.</div><div><br></div><div>I wasn&#39;t able to come up wit=
-h any other readiness checks but maybe there is. Anyhow let&#39;s discuss a=
-ll this at the Thursday meeting as it&#39;s not urgent.</div><div>=C2=A0</d=
-iv><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;bord=
-er-left:1px solid rgb(204,204,204);padding-left:1ex">
-<br>
-Also I think we are providing the ability to run shells outside the <br>
-context manager as well for some scenarios where it&#39;s needed, so this <=
-br>
-approach won&#39;t cover that case unfortunately.<br></blockquote><div><br>=
-</div><div>Good point I&#39;ll take another look.</div><div>=C2=A0</div><bl=
-ockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-lef=
-t:1px solid rgb(204,204,204);padding-left:1ex">
-<br>
-Best,<br>
-Luca<br>
-</blockquote></div></div>
-
---000000000000531a1c063e4a2828--
