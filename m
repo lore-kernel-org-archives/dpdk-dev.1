@@ -2,72 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E2C0CAC582
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 20:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11BACA1016
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 20:20:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DCA6F402D3;
-	Mon,  8 Sep 2025 22:08:16 +0200 (CEST)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
- [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 11D4E40264
- for <dev@dpdk.org>; Mon,  8 Sep 2025 22:08:15 +0200 (CEST)
-Received: by mail-wm1-f45.google.com with SMTP id
- 5b1f17b1804b1-45deccb2c1eso1781845e9.1
- for <dev@dpdk.org>; Mon, 08 Sep 2025 13:08:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1757362094;
- x=1757966894; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=46SXlrEuzfvc5GxrIrtxmJ9yOO3faAZJs8Eis2uhsn8=;
- b=dMuJTRrcfmubdX7Q1S8OFkXRzZtS4resJyHlDJp7Qdm577edn10UBal4CXfggvCLgT
- 8QA4vfYrfXt+TtV7V/RZn9i4Yg4tEYe5iNWWqo0TeE/rVv+f5gW+1Pm9rgEnxb7KqsQW
- cSQs6mYxD7ZAl1N0lrZSB7iWTiWvOQlLV/bIyG4TZDl6bKqI+Fu48BAkebBIqVh6vWPw
- 5yO25wFmUqy8wVGZrhuWMmtJtLlhzi4NkMMfldu654rXh3hBHgnlxaFLqAMtx8pXk93D
- 27Juw4ICUlQdVq4z+zoTFqIkGO8EX0aE/KZyfC0vO9mKrpRddyEdSz9v9PghJBhP+7tY
- ihWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1757362094; x=1757966894;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=46SXlrEuzfvc5GxrIrtxmJ9yOO3faAZJs8Eis2uhsn8=;
- b=JRCey5YxJQgAUCL4vQ1un7NewcckgAnDBTmoNZUhSRWu0ZypgsRj+Ka8hKLJ8qKmOB
- YbZvbe7UVvKWw9UTm7LgCc1rPWBckRE/2+sEcwkGtHa631lGqywhik5LFQpc2xJSmMX6
- SuNw3D66Od9wC0CmkLSXXl1by4+MlFlgbIwMcT58JjqPAPm7BBWET3+ofN1Zp07ofd8p
- O5ykaR8Jw7PhbDKBwYmtE0D/yp8FZ0cfFZ0EXW3AUabzhCWN069ZeBMNa3N87hsmnMIc
- 0bsXa9sjM4AUcvT8BzrOTB9hWzYV2JbaGEDxAox8P/p1etyzwROz5yiNaYlXF/yQtQ2k
- HA4Q==
-X-Gm-Message-State: AOJu0Yx0UHeP+kFgyKC9hYb/Pjrs7nMtqoHDsRYdTfC1UNkO6V5DFIHu
- mh+qgqHy0DzM0WSICzMpe28qvMEi1zXXPJAjQeA0Z+aOFK6JLawDPApbwS2Wz025WIy9y5OQ6hb
- N+RHr
-X-Gm-Gg: ASbGncuVi9rCBS5nk84tdFZWMtCE+MkkvErwCCk1v3hj5b5ifETVoHJCMVqGiVQ/SUm
- xg3HXLRPYonzgOPEKidT5scdiLi1nohe++R7WoDgR4cPvy89Q5DmnjD2gfQpxYg0XA9KzEBckrs
- rAMa2+2mTeB31Sd5fO9VH7wFF93qOIeWtlSIFOATtxQW/r63pqnDYqNYtHKOiRQAZbPI64z1KAr
- 9KOuDX/qUmwaX8hMUpk8g40OsKWr+CD/jyLnIRuZnvU2srnxNuXclQ/1lx3z0Ua0+5WSLirPKJK
- 7SC6MTUSAF/WgwkNCkgvrO5hj8iJUgteFtXuMQ07SO9D87ayBR51HeLpU86o85Y9DdjEI/9YRBD
- IdmGsXPE4zcgnsuAPE+ilpKXcHiKKu8LKSFFR7hIUAl2FTdRYx18VDueD49JdjUeT3/qLFfPrif
- k=
-X-Google-Smtp-Source: AGHT+IHOcYAkOXjRpZ22bLBUALMfpi2I32sKUzKd/SIBgw7iwqmpyQHcOi9J1TeXvgpC762zjMnnWg==
-X-Received: by 2002:a05:600c:4513:b0:45b:9afe:ad48 with SMTP id
- 5b1f17b1804b1-45dddec3661mr96364025e9.16.1757362094344; 
- Mon, 08 Sep 2025 13:08:14 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-3cf276d204asm43075986f8f.24.2025.09.08.13.08.12
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 08 Sep 2025 13:08:14 -0700 (PDT)
-Date: Mon, 8 Sep 2025 13:08:09 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Serhii Iliushyk <sil-plv@napatech.com>
-Cc: dev@dpdk.org, mko-plv@napatech.com, ckm@napatech.com
-Subject: Re: [PATCH v1 0/7] migrate threads to DPDK service framework
-Message-ID: <20250908130809.2266b0d3@hermes.local>
-In-Reply-To: <20250908110446.1071964-1-sil-plv@napatech.com>
-References: <20250908110446.1071964-1-sil-plv@napatech.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E2763402D3;
+	Mon,  8 Sep 2025 22:20:54 +0200 (CEST)
+Received: from fout-a6-smtp.messagingengine.com
+ (fout-a6-smtp.messagingengine.com [103.168.172.149])
+ by mails.dpdk.org (Postfix) with ESMTP id D678F40264
+ for <dev@dpdk.org>; Mon,  8 Sep 2025 22:20:52 +0200 (CEST)
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+ by mailfout.phl.internal (Postfix) with ESMTP id 576F0EC021B;
+ Mon,  8 Sep 2025 16:20:52 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-07.internal (MEProxy); Mon, 08 Sep 2025 16:20:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1757362852;
+ x=1757449252; bh=PkhkiB3DkIeRDE6D6A4c9d9usYxe5HIbEkYV5BytT1I=; b=
+ FGP7HVKph7U0wxSr0CC3u1lsnwZZppjrXeCKR1tDaczcs5uv1E3zeEJ8rJrDMrYl
+ Q6zeuvO1G9ZQrpoyEZNc1KvallxKCZAcWAG8EQCRvw/ruwJFI14z79cA2HfLDcMC
+ l7jOQYgQL4fw80yrzYowAxY4lcs1sZtnxYWOYgsAr0AJT3JPNFFNe/vt7eghdvT+
+ GjRU+RJmZDFIfHgXWBBllu2NizHcecpkT+8ugxY1zIRx00vvC+NbHy8G7z01A7tY
+ a9a8TT/hEbxPTVo6RIFSDWztfm2Y9eJ1c4fA1glUApjShv59KrFR0t684d26WUnY
+ ql+90zXoK3znXFrljfnEpw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757362852; x=
+ 1757449252; bh=PkhkiB3DkIeRDE6D6A4c9d9usYxe5HIbEkYV5BytT1I=; b=k
+ 7Nk1lddu/49k1uh/OXxgc2yUukqcrkl1gzsX1z4bQBhypOI8lFPDh01tcExianBO
+ p2QNZ2LpMqfFeKIKJ1feADPwrYaclVRXmvW+7orEuWs+ZfKGplZba+jyVIKY91V4
+ 3M+wwstBtIYOIPvqqg/taWolLCGKTQv5GTg4wnm/pZ7S7352p+4p3QZl/4gir9IY
+ z5QdJDB8zoxwLKLup0ASZ99u6ZoBkErjP2FAUkhN291jMc/JV8fjega22SP9KcHz
+ x0oAvTtW8vF0sm3sAiPlQiS6830a7nKojl9hfgJHPo0Sz06dIbBsUo1mdGS4tLPv
+ 74e1RpOs7KjoJTViKzilQ==
+X-ME-Sender: <xms:ozq_aBMVw3p3hZJ84ao49EjB71sXKyUYbRL86bRcTJFJ39BeOTS6nQ>
+ <xme:ozq_aB5TvMc4yLJGxB3aeK5jX5CjzSGrU3odd3kI2VbPfXB7ndtzLqrhfPbYSbm62
+ v5GEbPIbKyclpNVMQ>
+X-ME-Received: <xmr:ozq_aCmZ9dhV5UDwQh030R6n75OwDsq99NQuxLD6KNnCJuv3DsK-EBw23HUBPxfAtQVM1lYScNL_9eqEJFjR9iC89Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeegjecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepiedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhrkhhplh
+ humhgsvghrrdhorhhgpdhrtghpthhtohephhhurghnghguvghnghguuhhisehhuhgrfigv
+ ihdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehlih
+ hhuhhishhonhhgsehhuhgrfigvihdrtghomhdprhgtphhtthhopehfvghnghgthhgvnhhg
+ figvnheshhhurgifvghirdgtohhmpdhrtghpthhtoheplhhiuhihohhnghhlohhngheshh
+ hurgifvghirdgtohhm
+X-ME-Proxy: <xmx:ozq_aCRnvBCovbGHotKkqCOEQeCqgwmEIEXKmuANeY_L7hWzf7tvsg>
+ <xmx:ozq_aBGy_5XPPb9SkCpvJ4Czjpi59rnoqoFrafYH3SA9KhTDi4OZVw>
+ <xmx:ozq_aHHm--P037uh7GQz3LhNXBq0FcFYei1KkDNV5kYD6ib3MZ-Cyw>
+ <xmx:ozq_aPTCpmBFp_ywfbJLHg_06fJILBcNRjiPSrWr1yFiTEWObAT77g>
+ <xmx:pDq_aLEZ4OnP4zUi_IcP4V6QTpDAuKSIDy7BNo9ZNY-iMVZEA6bKmvvH>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 8 Sep 2025 16:20:50 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Dengdui Huang <huangdengdui@huawei.com>, dev@dpdk.org,
+ lihuisong@huawei.com, fengchengwen@huawei.com, liuyonglong@huawei.com
+Subject: Re: [PATCH 1/3] net/hns3: fix inconsistent lock
+Date: Mon, 08 Sep 2025 22:20:49 +0200
+Message-ID: <9500985.CDJkKcVGEf@thomas>
+In-Reply-To: <20250908125815.3dbbfaa0@hermes.local>
+References: <20250813073317.1352274-1-huangdengdui@huawei.com>
+ <3368264.aeNJFYEL58@thomas> <20250908125815.3dbbfaa0@hermes.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,47 +92,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  8 Sep 2025 13:04:38 +0200
-Serhii Iliushyk <sil-plv@napatech.com> wrote:
-
-> This modification provides better resource (CPU) management for NTNIC PMD.
+08/09/2025 21:58, Stephen Hemminger:
+> On Mon, 08 Sep 2025 13:53:38 +0200
+> Thomas Monjalon <thomas@monjalon.net> wrote:
 > 
-> The following threads are migrated:
->         * FLM update thread
->         * Statistic thread
->         * Port event thread
->         * Adapter monitoring thread
-> Additionally, a warning is added to inform users about the importance of
-> dedicating lcores to the DPDK service framework when using the NTNIC PMD.
-> The code is also cleaned up to use pthreads and rte_thread APIs.
+> > 13/08/2025 23:06, Stephen Hemminger:
+> > > On Wed, 13 Aug 2025 15:33:15 +0800
+> > > Dengdui Huang <huangdengdui@huawei.com> wrote:
+> > >   
+> > > > The hns3 driver supports configuring RSS through both ops API and
+> > > > rte_flow API. The ops API uses spink lock, while the rte_flow API uses
+> > > > pthread mutex lock. When concurrent calls occur, issues may arise.
+> > > > This patch replaces the lock in the flow API with spink lock.
+> > > > 
+> > > > Fixes: 1bdcca8006e4 ("net/hns3: fix flow director lock")
+> > > > Cc: stable@dpdk.org
+> > > > 
+> > > > Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
+> > > > ---  
+> > > 
+> > > With that mutex removed, you can also go farther and remove all references to pthread.  
+> > 
+> > This patch was (probably by mistake) in the next-net/for-main branch.
+> > I've dropped it when pulling in main.
+> > 
 > 
-> After this patch series, an each application using NTNIC PMD should
-> dedicate at least five(5) cores for DPDK service framework to ensure
-> proper operation of the NTNIC PMD.
+> I went ahead and fixed the original patch to drop pthread references
+> and fix wording in commit message; and put it back in next-net.
 
-I was concerned with excessive control thread usage before, and this
-seems to be worse not better.
+There are 2 other patches to consider in this series.
+We should not break series if no urgency.
 
-There are conflicting use cases here:
-  1. The original DPDK goal was to make effective use of multiple cores
-     with no locking. Intel customers often had idle lcore's and some CPU's
-     had lots of inactive lcores that could be used to get more work done.
-     Dedicating some to service tasks etc was a natural outcome.
 
-  2. DPDK applications (OVS, Grout, VPP) usually want to know about lcores
-     at least in the documentation and examples. They don't cover the case
-     of service lcores.
-
-  3. Dedicated low core count smart NIC's using DPDK. In this case it
-     makes sense to be frugal with lcores since the point of the smart NIC
-     is to be able to run other control services. For example, the MS
-     NIC had hard limit on the DPDK part (via cgroups) of only 4 + main
-     lcores.
-
-Granted NTNIC is likely only being used for a specific application on
-a specific set of hardware.
-
-The ideal would be to have better control event management in EAL.
-Something like "libevent" style API. This would reduce control core
-needs, and avoid any potential resource conflict overlap between control
-threads.
