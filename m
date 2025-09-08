@@ -2,75 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FD4CAC581
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 09:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7CBCAC581
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 09:41:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D82A40264;
-	Mon,  8 Sep 2025 11:35:05 +0200 (CEST)
-Received: from fhigh-b8-smtp.messagingengine.com
- (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
- by mails.dpdk.org (Postfix) with ESMTP id E03CC400EF
- for <dev@dpdk.org>; Mon,  8 Sep 2025 11:35:03 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6DC9340264;
+	Mon,  8 Sep 2025 11:41:22 +0200 (CEST)
+Received: from fout-b5-smtp.messagingengine.com
+ (fout-b5-smtp.messagingengine.com [202.12.124.148])
+ by mails.dpdk.org (Postfix) with ESMTP id 38809400EF
+ for <dev@dpdk.org>; Mon,  8 Sep 2025 11:41:21 +0200 (CEST)
 Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 222237A0085;
- Mon,  8 Sep 2025 05:35:03 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Mon, 08 Sep 2025 05:35:03 -0400
+ by mailfout.stl.internal (Postfix) with ESMTP id 5A6AE1D00117;
+ Mon,  8 Sep 2025 05:41:20 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Mon, 08 Sep 2025 05:41:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1757324102;
- x=1757410502; bh=KNeXO3TJe5SbZ1OtB3zt7b3qb8f1tyUndkoYsFnjRa8=; b=
- Z1p9VHJyCZe5QgaUFibofd6kDFfGJVQ5N2ktIX0t4dfQDjIuizXDN8cyg7FeHZFY
- ZGd/7DbQgSdFqVSKTYD+X+7VFonv0ZMAhvBYPEfZnn1NfpTzO/pHfEXbp5yiVxvU
- mzyK0rt6b9iZtNLpHmakw0cKYePb86K71oKdLXXQ/r8GseUKpj82dD9Y2GUWnK9z
- eb2t9UxwlA9D2MtB071peAAXSFSgiAcZ+vuP3sHnlSYdZdsNCkFIg19gGYO7T2EA
- yBeaT3CwlOeIzdGgGmuKWaMgAuDhSxVkD0W8iTOeckjQxSkVI0k8AS9ETAz7DlQF
- OBFZSpdzCAy0KD7XSNMzug==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1757324480;
+ x=1757410880; bh=W0lB3GitWUwqiM4urR7EV6Yiz5Az5nlqwzR/Adh283U=; b=
+ t08FE3lI1tTiaQViBzkfnbLI7gwKPA8s/KbJs1MOSbn3t1AHb/OifGhtP2dDzkVy
+ KzRLtbDoll9oe6nB5ZQxuhDs73YcGr4oT6fchr52aIj3MAWVxVTqqFa4U7UKUOIa
+ 8yCc5iQ5RG/xxHgGX7cF/vJiUuLEfMnH3wIOcs9FaQXuGrlhx0pLzhNWk9gTbDm/
+ kzkN15gzGfITjhN5H/uBRgJVqiOlEuCBqps6NUFpZPWdgFgtCIOprFhLZ9CFddzm
+ 5byds04HhqGuqmos2B4C3v/IZ+u9o1vxeHkeloNR8xY+pPbngA0Mmds2Y3M1FSP3
+ B/dYAalGMVce26UOs038gA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757324102; x=
- 1757410502; bh=KNeXO3TJe5SbZ1OtB3zt7b3qb8f1tyUndkoYsFnjRa8=; b=T
- 8UrdUb96CXoKtWMs5z3hPm9UVW+h/NwywAhyd/rw4WV8Pc9jw7kXK26RAmQvj/b1
- CkjkD2ignAkpAIWokw3kfcpFnUy5Ic9BDEMd8H8aFjvNaXO9NB7hchHpDwosl20T
- 6kh+N4BXyjPMkLoppJNRWPEVkS/xNSNqQR38uVSQjNxzSpbmqbXUDPWIVgE8kqBy
- W0u4E54qpjKz0ewr5jHdc+DisQ4Gu5LxBY/exPMl/f6uEXoBVQdR+raYT6v1+Xi9
- 0ot18VZi8PCtAbLRCvYocJXhMbQPggcwnVIkKw3N7r5kTpIhqOlZndkc/luHXRI4
- JUmOYu+vQ76MeAzIIk5ig==
-X-ME-Sender: <xms:RqO-aC12fMyzHDe6uzOX5aePxCB358WNp6wY3cCcvU3WFm_SD02Ezg>
- <xme:RqO-aKXIpemmNFmn1cbVerHuwIb3SLp-_GIRbvh4UTxEXXVrCJ36FytmHLZ-sa9d3
- YbcAUPf4JTB6tuLcQ>
-X-ME-Received: <xmr:RqO-aMlLilQHVaOOmlx-CDfIUXUWXDGLLYA1qSWVwoVdgp_ixqjJetXndLr4_UfTQZFSoL4OZQi1DfVh2tubhePb6Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujedukecutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757324480; x=
+ 1757410880; bh=W0lB3GitWUwqiM4urR7EV6Yiz5Az5nlqwzR/Adh283U=; b=I
+ VID/HYGMXVN1mK8nCOZKCbVNdO2OahB84RSyebruj+fNxt4KzTOHkqCGyY5oYadk
+ PLnbFHHgUTeMg9P0ll+rtsmq2IiS+m0TIhDGKsPlqWFQ9RkdmI4BinLPGiZK7ELp
+ 4aaS1okN9QPdqDSUo5zoav9V4BsV6dKrixqAWMmMUSwb8kgg2zM61p+5VTlAqb43
+ K0JPSWCUjGvs2l1nkTy/OZ5G21VnSkze6xz5ivmYbWaDWJKsdQbT2w9lF7g2sQas
+ OsEHDHj9puQTS3p8XOqlOXlOv4WY+OUv3n8Vs0gvJBw/XGcCxTDjmlaqs8Iw3ruq
+ A1WmoE7j6A5EQRFmSoRgg==
+X-ME-Sender: <xms:v6S-aLGFqwc6YAVz501fwTCnp0MZj_blf9dEUMZvLW85p73cnLb6Rw>
+ <xme:v6S-aNn7TyqMZPBAezgSbE8_4PtiKnmPAxLjqcqqOnV5-zypSH4FfbzQ144EhQJJw
+ Vvs2n-PYrfOwLjxlw>
+X-ME-Received: <xmr:v6S-aO3Q8hJoq9AK74cJxrYYzwAH_czuS2VRMuECjTNcOZGnbbN9oCyGknXCwrz0W4hoCPnM9U_aERiJTQkJrJ-b8w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujedvtdcutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkjghfggfgtgesthfuredttd
- dtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhho
- nhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgf
- dtgeekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedt
- necurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvg
- htpdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegu
- vghvseguphgukhdrohhrghdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
- esihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:RqO-aMDQjZ6tAw7L8SSv3vffnDg2qujPiIuPueNdjkcXhbfvw27LPA>
- <xmx:RqO-aMeqyAQa_N0KKQ0uQmhSrpNCRpROA9b-lbmtc4K6Y3yQidfKHg>
- <xmx:RqO-aHL-GT73ifYXUS0Vd40V9axmEKtWRfnA2KpXESsg4OkGliSOzg>
- <xmx:RqO-aPetW9ajNmbrnJPKGDJ3tyGBpElWedTJWWLaqOc4D4k-YnXzgw>
- <xmx:RqO-aOUNNDUPvxEZr0UHC2Av38SVg-F57bw2RDkMy31GnuSWSaKQ6iR3>
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepvddpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrgihimhgvrdgtohhquhgvlhhinhesrh
+ gvughhrghtrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:v6S-aBTZ3I3oRj7Q2dsd6bc923RJBJ5HMLt85m63_f4xs9NDq_nQ8g>
+ <xmx:v6S-aIuuWnDA5x3fmVayRjoVSzvSFMmIvrrKNEGPpkZgm9t42vqj-A>
+ <xmx:v6S-aOawV6vqOWdhvUmjrug3bCyiauMtuNFQGtPI-0llVTGctiQe0Q>
+ <xmx:v6S-aFvh5OIWKrnTh2sfjAcF7EgxmOMRDLOspbgiQghMCbNh_iAc3g>
+ <xmx:wKS-aFTE88TVNceZWSwBPmYjPookrBevZRZE1Ol5le8tPayjtlRF9k86>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Sep 2025 05:35:01 -0400 (EDT)
+ 8 Sep 2025 05:41:19 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com
-Subject: Re: [PATCH v2 0/3] fix build with MinGW 13
-Date: Mon, 08 Sep 2025 11:35:00 +0200
-Message-ID: <2379702.ElGaqSPkdT@thomas>
-In-Reply-To: <20250827151759.1448018-1-thomas@monjalon.net>
-References: <20250813152829.457463-1-thomas@monjalon.net>
- <20250827151759.1448018-1-thomas@monjalon.net>
+To: Maxime Coquelin <maxime.coquelin@redhat.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 6/6] devtools: add quiet mode in uAPI script
+Date: Mon, 08 Sep 2025 11:41:18 +0200
+Message-ID: <1930733.tdWV9SEqCh@thomas>
+In-Reply-To: <d7b7fff5-8f0c-424b-ba7c-837a16e6d4ce@redhat.com>
+References: <20250827082413.1417226-1-thomas@monjalon.net>
+ <20250827082413.1417226-7-thomas@monjalon.net>
+ <d7b7fff5-8f0c-424b-ba7c-837a16e6d4ce@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,23 +88,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-27/08/2025 17:16, Thomas Monjalon:
-> After an upgrade to MinGW version 13 on Arch Linux,
-> some compilation errors appear in PCI, mlx5 and bbdev code.
-> This series fixes them all.
+03/09/2025 15:54, Maxime Coquelin:
+> On 8/27/25 10:21 AM, Thomas Monjalon wrote:
+> > Most messages from the Linux uAPI script are not useful
+> > when running the script in a regular fashion.
+> > The quiet mode (option -q) is added to output only error messages if any.
+> > 
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> > ---
+> >   devtools/linux-uapi.sh | 26 +++++++++++++++-----------
+> >   1 file changed, 15 insertions(+), 11 deletions(-)
+> > 
 > 
-> Bruce doesn't see them with MinGW 13.2 on OpenSUSE Tumbleweed,
-> but perhaps just missing some dependencies.
 > 
-> Thomas Monjalon (3):
->   bus/pci: fix build with MinGW 13
->   net/mlx5: fix build with MinGW 13
->   bbdev: wrong fix for MinGW 13
-> 
-> v2: make status_str variable local in bbdev patch
+> You forgot to update print_usage().
 
-The patch for bbdev appears to be OK,
-so change the title to "bbdev: fix build with MinGW 13",
-and apply.
+Oops, I'm adding this:
+
+ print_usage()
+ {
+-       echo "Usage: $(basename $0) [-h] [-i FILE] [-u VERSION] [-c]"
++       echo "Usage: $(basename $0) [-h] [-i FILE] [-u VERSION] [-c] [-q]"
+        echo "-i FILE      import Linux header file. E.g. linux/vfio.h"
+        echo "-u VERSION   update imported list of Linux headers to a given version. E.g. v6.10"
+        echo "-c           check headers are valid"
++       echo "-q           quiet mode"
+ }
 
 
