@@ -2,166 +2,128 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B094CAC581
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 15:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 500BDCA1016
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 16:35:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 130D94060C;
-	Mon,  8 Sep 2025 17:11:01 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 9CAE1402EB
- for <dev@dpdk.org>; Mon,  8 Sep 2025 17:10:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1757344259; x=1788880259;
- h=from:to:subject:date:message-id:references:in-reply-to:
- mime-version; bh=Y2lI3GhpuC6SWjfM7AiRlr4qfLHed2zLRQJl1+yBt68=;
- b=HXz/XzngGpVl8gOQQ7qTJiEhx73Ql4gj+mICv32Sh/qwVV6Tq//TmrF8
- QBIZ3kZZldMQuQZyxIVmraNIk7PLj21/rvJus+83k1v1QBRCV/P8iJs2Z
- 9NgECI17Ng4/dqo5UxrVWgiK9csFtwC6n2eWgPrz6ksTirU1rLsNrnUa0
- l4gI4lcdwpt19bAjV+7BGTnKbNkhfJVpgrpEvJwuvMjEUd9KBOkYr7DKW
- BW1NjKqMwGB0OEomixibfEMgOfJvo1hER6aUAKz16gtNSh22fVUdNk32U
- fbeMVpebbLcEY8im4jPpSceHBY9Oq0nXOj2xMsTP8L4OH2DpDLs619AgW w==;
-X-CSE-ConnectionGUID: JmQKQBXdTGGiCvdi1rruig==
-X-CSE-MsgGUID: wO+eEPK6QaKNwjBGItepPw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11547"; a="70224987"
-X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; d="scan'208,217";a="70224987"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Sep 2025 08:10:58 -0700
-X-CSE-ConnectionGUID: t6ljcdKCTlqJpPpl+9p44w==
-X-CSE-MsgGUID: do9SekzQR9C5fvcTC7/m1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,248,1751266800"; 
- d="scan'208,217";a="178031792"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Sep 2025 08:10:58 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 8 Sep 2025 08:10:56 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Mon, 8 Sep 2025 08:10:56 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.44)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 8 Sep 2025 08:10:55 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 57F7840615;
+	Mon,  8 Sep 2025 18:35:53 +0200 (CEST)
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com
+ (mail-bn8nam04on2043.outbound.protection.outlook.com [40.107.100.43])
+ by mails.dpdk.org (Postfix) with ESMTP id E941340608;
+ Mon,  8 Sep 2025 18:35:51 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D1qZXCJ49HwwxfTzQj/NMmtriUY6c2YFnPs3s2WLk/wPze9phcIEHYziNquVQFvrRcDNFWvHpNNq/2hg/GzVTso0Avq1MoVraa13X4/cp5PN3bMYs6BU8eXxK8NiNwD41L5WIMCpwRHafVE+pjgbArikc0G7Hb6qsJ3hcfx/zEH+he9GsTTBGH2Jup8DjPEzrkpXd9JQO6j+McWwFY+pEd5eG/e0I42WQqzCphTUIMFJrA9Ti6WWF/6CRTXoBQewjLlZC3ju+VXyquIm9lAU5ZF/k0zLUH0WeT2njnmG3woMS382/HluwliJi4HFj+b/67T+BQ8/j6LC7wnc7Ubv3g==
+ b=RGn9uKxc/Wrautifu12O9J6xP99Os92UsjFDwd7upwwfbbZh5OnEoB18bqdI2L+4rE7TzVRyverrTtK1ZRny4gBI9ibee1tBEgBuSLefThiNwpFNgpeu2rR6ecLKdVoy2ikysUoQcPk3gd08zJlrAqKatWeTKGTw73BIz/5dpPK0d/FjB/Nvfsqr4zxBLhiKJJyYHLrSaEj9190f+2cji8Uph1a81GdA0bDSuK886Q+TS0wGZLF6tJzdswa9x4RTn096PZ3vGCLcm9A/4g6FBQLQgcsUI0f5EEPnFAWgjGV9CTwhwNQUKA846JrBiLBrD0RSbd2V8mqAW8EFuMUmGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bQcX3lXrc3ICnUHmhsTxG2G34W3lOLlM1VdFJ+mUjQ0=;
- b=O8d153fPxHTlDETTOR2QyoPZFgi38b/uExNAFNA3hKpe++XPmMiTtb74rQyl74h6UqiJEE6Yz9mv6fVyiyIJDOZ/P/02cg6Kb3xaSwWSsGvzysIZ/QLOPVc4xoWZZrPafLVby/a8l/+KV2443Usx8NWXNb+BFQT09KjYgrr44GhddCQqShx0bvbn3uLYsqMzqGRB94SqinkCeKP9B88h00Fx+bM2YJCM7QJUsyVACY1y6xLrvoh9w+qoMmlko6d5/FcrxrhI8OC026AecG9g1d5LohPuIrFUjFsXUdC2Vj0WU0O+EY8XNBnJvTVYFEPiR1YIw3TRZjhH/SwA3+u9Yw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DS0PR11MB7458.namprd11.prod.outlook.com (2603:10b6:8:145::13)
- by SJ0PR11MB5022.namprd11.prod.outlook.com (2603:10b6:a03:2d7::17) with
+ bh=LPQXRcaHHz33ltCkVvUpQpedvEFIcK7WRt+gYWDknTM=;
+ b=HNgCDgJeP4qhXcmh6lM5xPL875FTre0T9bUtDwnkfSP/NzO8cNhzO7UuHukwoExVMYS6/5jDPM7Di96oL57MDj6XPSe4X2EOsiRhpyKT67JSFdHVex3e/P34QcV5Z8ntgGynKMTyOrMmz653vxIwCGWJpwyWELaSGIUDcL3b5ArCmJSfQc6JjSoxnFF53CaMBbI2wx0oauNg6RcF5YTuTJPJYqgCz9AYltv6Ae1pSPytiuspUTkBUX3gPII5rCPAbMlCw/xnUTNSp40wzUub83xYwLHV54gkI+UjD0NpOAbSCNwCABNKQaVZQJbHBMVUgC0HFFCELvkbbkPx2P1lPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LPQXRcaHHz33ltCkVvUpQpedvEFIcK7WRt+gYWDknTM=;
+ b=pNBcJDrbjFFamhDtRSAC+wklyROgdJ5eqAyr56V/h61cP3pOLy762r9wMOL4FE4YnnYtTemN0b9HWBX/RrNlUCjurgnPrZ//nZLXYXRU/bONsXUQLyG9b/2OiDC12+N8AFx5UJkVVldyknTsK4fvzzqt9up+k2azTeJd+7q7pzcLCcT+xauQkni4xBTA9/ZETfJJElHbaGmu5N1I++S6J6xIgR2mQnK/pfpr0Ww9pJovgTLlWaqq4vIEW57aniLNh0xye12u/es6dSDSbmGm3p8eOZxgKjG32JX8R+HvOhaokljCwZemLFYLmam5GI4nLF90FqZsteQWxQ33jGQTeg==
+Received: from MW4PR04CA0270.namprd04.prod.outlook.com (2603:10b6:303:88::35)
+ by DS7PR12MB6008.namprd12.prod.outlook.com (2603:10b6:8:7f::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Mon, 8 Sep
- 2025 15:10:52 +0000
-Received: from DS0PR11MB7458.namprd11.prod.outlook.com
- ([fe80::6d78:37d8:c835:540]) by DS0PR11MB7458.namprd11.prod.outlook.com
- ([fe80::6d78:37d8:c835:540%5]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
- 15:10:52 +0000
-From: "Ji, Kai" <kai.ji@intel.com>
-To: "Nicolau, Radu" <radu.nicolau@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [PATCH 1/3] crypto/qat: Add ECDH, ECDSA and ECPM capabilities
-Thread-Topic: [PATCH 1/3] crypto/qat: Add ECDH, ECDSA and ECPM capabilities
-Thread-Index: AQHcFzRcwJu0Qa2h2UKYzS+UZPMkQLSJdvlt
-Date: Mon, 8 Sep 2025 15:10:52 +0000
-Message-ID: <DS0PR11MB74587E99182F8B15032133AD810CA@DS0PR11MB7458.namprd11.prod.outlook.com>
-References: <20250827092358.765222-1-radu.nicolau@intel.com>
-In-Reply-To: <20250827092358.765222-1-radu.nicolau@intel.com>
-Accept-Language: en-GB, en-US, en-IE
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS0PR11MB7458:EE_|SJ0PR11MB5022:EE_
-x-ms-office365-filtering-correlation-id: 54d43bfe-ee49-4b9c-55da-08ddeee9e6ec
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|42112799006|38070700018|8096899003|7053199007;
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?7TanMbj0itPDhJEMEOk6GnBubcCxE9sNWnDxbo1UZ8HNHXqC4EwnYy0W05?=
- =?iso-8859-1?Q?qlYHYC7WgnNoNvR+YP4m89g+c8fgQAN51worcMsYJ9iys8EfGHiYCARErU?=
- =?iso-8859-1?Q?FWYa9YKFqUx7iFfLvmMu9mhVhV/HZkvD4ICA8jFfaKentl18K17aE0HCRl?=
- =?iso-8859-1?Q?DtVtzSGKPlmEzYbhSyshjNlfTb9m03vBAc7WA3gftELQPtS8BNxw+WV5+3?=
- =?iso-8859-1?Q?BCV0GcPX7SSQxcKC5Xx3yi4DxVaemLXTYpDj1bsEswIPJLrePPofeKEijz?=
- =?iso-8859-1?Q?uwZq6zWKCLRNwYAvs2sl671menjVoKEaLpPzJhhJF/60HDKCBEF9vqSEED?=
- =?iso-8859-1?Q?1IJ7QuvBBwA9lEc3JJ0bbBPVSC8aTA8y5COCB28FZgqxDyDBMUC7Ieds91?=
- =?iso-8859-1?Q?7CdOo+6E11OBQF3HnVXOrD0XWjIHoHr1LFf363y+YZB1L6jfBEUMnLwqBO?=
- =?iso-8859-1?Q?E9YG1vLy4NRpckmCv4X4eDPl+fb6hu/ugoT6T8C9/3Up/dE6Ug1nHE923s?=
- =?iso-8859-1?Q?kh2/bGC7jKSA0Ua0znSgJKk/ge4ppgkEupsYkpUSD1U+p2dxtirvGrNZFo?=
- =?iso-8859-1?Q?ToHwZNxe75avUZtsxf959M+65DI+rL9FxKam0544HDqqRyD07Z+kSQgZXn?=
- =?iso-8859-1?Q?1T6kXdhDVrrEH7cAcMF5xeoDWHGDnWolTCK8WH2ST0M8yp0v1YcHs1Ku8S?=
- =?iso-8859-1?Q?lxsXjUZRwPTpSwoxVdT0xyLHuDOl0NMq6avHj5oFmvZf/8iE8aF4nYDXQF?=
- =?iso-8859-1?Q?sRRvErfmx5US8yi3n+SJ4QJaiY+n0FniRzCIqSgUIC6W4JTdwYFP7iY1l2?=
- =?iso-8859-1?Q?d3n9BJ4EmBm0swVaY1wnYFwgAARWZ0/CaEZm2IktoX9acGSX4nq9tTYrSr?=
- =?iso-8859-1?Q?kPf4nQj1kwcvvtVxU6Y4WFgcs/GFumInyUw+IMSjpG3nV07NQOu2UFnvIX?=
- =?iso-8859-1?Q?eKbpNJ4FI5TSCD4Sf1b16pVKyxzmPlEjlp2GFrwCpPyrvgNXRbYZzOzDaO?=
- =?iso-8859-1?Q?TSPdSwYYb33cfGuY3ODoszQbTZh6A/3JzvMffPAcg57T4AY15dPcVGQ/p5?=
- =?iso-8859-1?Q?HHEANp60SHZN6UIvAlvXFJVpHJOReHvuUAjvRypk9FZq5EKxud9N0UqUtH?=
- =?iso-8859-1?Q?dlh1cT71C/QR486vf5dMY0QkqKs2S62VfFwshTRCatof0ZfSrL0zXQP+4B?=
- =?iso-8859-1?Q?ezgt9plLX8j/zZsqR8eFBwcUJN2EoMHuqvy7dLTfrZEuKN3ylXDOU4oVBl?=
- =?iso-8859-1?Q?yrToM8CvxAfGy3OkS8nrnvvoRUhSnjMPiphw6V7W0w1QBl28OogVa79ndo?=
- =?iso-8859-1?Q?WxDL5TVtHbj03QydyLBvnjlOz0pvGr16Emrr00Q3oSdTnEtX6R0hKbhdoo?=
- =?iso-8859-1?Q?AhrbPiagLb1Euh9dTOn3XYQ8XMumqQnYdFHc+v1E3IP/mwBcoZXmG/aCHU?=
- =?iso-8859-1?Q?CDCQYsPDPKj9dt0qj6uzpFj2dq3R3w6o3v3xTgkqNpdoYzPfxQssPJtV6q?=
- =?iso-8859-1?Q?jrhquBkRkOcA3XKJA3ulOLdFbyli64xnjr6gH/T4+VFA=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7458.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(42112799006)(38070700018)(8096899003)(7053199007);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?z3Ztfc+NdL1C5i9Xr6ngQz7C7hsIxycWFRKPykbD19hFQOJsX9Gv9+hNu4?=
- =?iso-8859-1?Q?urQshGBF8VtVPNoEl8NIHOT59IqxchbOuSsek0hkoKRDEJnluGZzPw/9TS?=
- =?iso-8859-1?Q?wK7TpKaO8RoVRTPpYtOuw0BE+A5YK2ygXOAJchs7KCTb0wVh2eafQB8cOP?=
- =?iso-8859-1?Q?UfFaWRQWQLxAAFadqt+OuA54mkeu93UcDEQ7UC6uoMoGZbh83NWeWr8/lC?=
- =?iso-8859-1?Q?7pc4s8aPxITdIwloAlnPQOeqqqrfKY2161pepvmInXT2PJrBXKuy+XoyWL?=
- =?iso-8859-1?Q?Fb+p1Io4+zxY65Beb/mHcomoWaU/IRPfCBUbjwAMeLeK8PxaU2xBGrGjSG?=
- =?iso-8859-1?Q?kqK4X/rtBaps52lpcYy2kk0ilqwbDqYy3XT2PZpq6mc5hYRWqH2yaCmMNZ?=
- =?iso-8859-1?Q?ICvahDrGDzEek8svpUVVvLSpCP9xdVvzb4b624qfa74z2plZsl9cBAHssH?=
- =?iso-8859-1?Q?9vpbPyyOkewT9pOwNNoVidRHDveZ22QljxqyyDeGbFF8epZLCDK+k2t5RB?=
- =?iso-8859-1?Q?j2anSWg2EkiMB1ag/9BOuPLzpbsLP4KfeKexxmIVoxUGrcpg32yhDJQINY?=
- =?iso-8859-1?Q?v++2f1v/jpSVl8AVArI6yZAFKz55O9LvFI5k07DxXW8rgWmGEWd7wFPntH?=
- =?iso-8859-1?Q?TluDXwDoqFbwtOkoEQ/iATQFmjE7R8Fh21mTBD/5lcyvBkY4e9mxdZzpqd?=
- =?iso-8859-1?Q?Ro9T6IdvIefcPovab1dVkKjjwGdgbSMXIXYVCwGhp8FniZFCrBJl0PDcQo?=
- =?iso-8859-1?Q?6Lsp5Rj800NhqaQpMeHmTAUu/F5MBYLpIvbrPN+oO2lSDomvmsRiA3ehEE?=
- =?iso-8859-1?Q?LX7n9XJc6M/LLLWEv/4tKFV6u58DGsqyUo3vwan14dnFTI6SCS88Yl6Vvz?=
- =?iso-8859-1?Q?Z5mAW3YZRefVA/CNtuVnMBG23mHPEbxAQxciDM0bDIecUNFBvEVeZjVL7Y?=
- =?iso-8859-1?Q?G7l3dBjaiGQFZ8aRVNuDeoavTVX0b3GG9C5HH3lmjDrWz8hfeeNe3GOJWm?=
- =?iso-8859-1?Q?Z2vJjQKIW7PZTpB+6RNDBvd38nuKCqHhSypvYwwOiSpEmJTi9Lu0fVhmzs?=
- =?iso-8859-1?Q?saNzDdoiNwFGPiH7nXMQwKQCq1Mi/DscYkK9dlFX5v3Mfj487wDYfgcqT0?=
- =?iso-8859-1?Q?pKj4Gh7So9819Zjw72OGE0VKCAGSuLfo/s75whj5zspfKj/49SRA5MyQ6Q?=
- =?iso-8859-1?Q?e/WODygglo94ljJIm4fSvdVicNUNwuQeEQ+q4U258Ytyx1ORh1WqpX1XLz?=
- =?iso-8859-1?Q?hBY20pCrbScK13y6yojl+ndrZyitvr342NH4hYl5fkHSNGpECoiwDsZE6c?=
- =?iso-8859-1?Q?2b9eXDfRJqaHHVtCE/XWBMKde7lEVQ71flJBblleizZkh8UxnFJa3YMoV2?=
- =?iso-8859-1?Q?rN8YIn/tZc6hguMTiJi4uWfaS2rt47xzUoRLAEPTKhI1/2G5l7hsqHQR2y?=
- =?iso-8859-1?Q?keu1NVrPrUdGEhBpSBVbxKDHLeQjOCLTdo9Hu5jJ6ySGfoJB1XJClITyKI?=
- =?iso-8859-1?Q?AoSVFYCiA8Lwv6uJIht9WdYHrqvHuYAY3ExSPRD/cVVgLzD/DXLU8hiEaj?=
- =?iso-8859-1?Q?qjEqDrUcKqMB6bdReAiFHq6w5YeU6C3AhjA2i7DOaHSADmBsVG9CHwehb7?=
- =?iso-8859-1?Q?cat3uufYxKPLY=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_DS0PR11MB74587E99182F8B15032133AD810CADS0PR11MB7458namp_"
+ 2025 16:35:41 +0000
+Received: from CO1PEPF000075EF.namprd03.prod.outlook.com
+ (2603:10b6:303:88:cafe::53) by MW4PR04CA0270.outlook.office365.com
+ (2603:10b6:303:88::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.22 via Frontend Transport; Mon,
+ 8 Sep 2025 16:35:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF000075EF.mail.protection.outlook.com (10.167.249.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Mon, 8 Sep 2025 16:35:36 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 8 Sep
+ 2025 09:35:06 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 8 Sep
+ 2025 09:35:02 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Mon, 8 Sep 2025 09:35:00 -0700
+From: Shani Peretz <shperetz@nvidia.com>
+To: <dev@dpdk.org>
+CC: <thomas@monjalon.net>, Shani Peretz <shperetz@nvidia.com>,
+ <stable@dpdk.org>, Bruce Richardson <bruce.richardson@intel.com>, "Dmitry
+ Kozlyuk" <dmitry.kozliuk@gmail.com>, Tyler Retzlaff
+ <roretzla@linux.microsoft.com>, Alejandro Lucero
+ <alejandro.lucero@netronome.com>
+Subject: [PATCH] eal: fix DMA mask validation inconsistency in IOVA VA
+Date: Mon, 8 Sep 2025 19:34:55 +0300
+Message-ID: <20250908163456.420268-1-shperetz@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7458.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54d43bfe-ee49-4b9c-55da-08ddeee9e6ec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Sep 2025 15:10:52.5453 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mMDgOoxISe2HNMRv37mYSBf9YoZZFs6O1Mp2fSDZGpB0o6diET3nGZhBHJmOgA06nhNxS/Q9vnio3Pf0E+k9og==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5022
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075EF:EE_|DS7PR12MB6008:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9d1054c7-aa3e-4ae8-b8a0-08ddeef5bdf9
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|1800799024|376014|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?y5DQY7vvHW1AQ8wPQU6QT0LC9/cV4oTu5UnEFoZBfiteQVF18gE920z0wQDy?=
+ =?us-ascii?Q?M4rDSSGoymJu+roKIqAIqffMWHutmT6vY+mMW31Ed8aUSdXqEvHBnnmKHgTw?=
+ =?us-ascii?Q?Stdn8TxWRCzi4v/CmmQbXJ8JOdPoNcfdj3ieGC5Oso1mHhfAoEdDLxS3YEyB?=
+ =?us-ascii?Q?+mSk50vVK8ByTVJYKEK0SkVUdZ4H7uircQyuXAsw3x5NuIVbxmjyVa8nbr9x?=
+ =?us-ascii?Q?psdyf7MlsY3Laf1coV0YFbxTyOKZKBp4IQ4jc1Ckp1BMwx17cxZmOkphtcNc?=
+ =?us-ascii?Q?/ZIDMhZZIdo+7aEAPeS96oqRwmYSINvGCV2Qo8s5xljJ+qeoZK2bDqew4ZpO?=
+ =?us-ascii?Q?36qSat/vB9snJkM6GvhWci6lYCzL9UkcPsTUqJbinPoUNQ0XDN37qCZDMPUg?=
+ =?us-ascii?Q?npfHpy5T1tjBeo0Pz9klAaH6YmBHyHi6Dafpan6NnLRn87CdBPJyyecFGJdQ?=
+ =?us-ascii?Q?v1UwdKhjBVM349caUdAdJYks7zdguvUAJpSdI4P+An+oiaPFL1oUHSjjkzjW?=
+ =?us-ascii?Q?uSwcU2OkTVdqB+YSsQ9iQVcbUYU5lkzeH7Foa4JzP8N/e058jQX7B6kEUd6J?=
+ =?us-ascii?Q?v74bEUe38CAiw1HpjpqbppjHXyjtA7BiD79MF50I+M0PWilCED27hfc0kzVm?=
+ =?us-ascii?Q?E+0vt9JYapbrb3OyhFdeDTHxTOc/t2FtZdU5BcAl9VvPYPxCKF5omOOfB7ls?=
+ =?us-ascii?Q?eN1ouAJr5IVy/XFPHmDwzabbkxy/A/zVsAVAabBZE3i4R48v6pTFeJ9fTLUH?=
+ =?us-ascii?Q?4GmrUoy+NsgfND3EbiEOWojGR91PNWLNaTNHVqCLhiD5BBpkr8LDSGXv+VSc?=
+ =?us-ascii?Q?Hu0ql/HGbQa0LiB9DNV3kvt98ltqvTn2pVykZRW73I8PXFwRG4yJ42S/1Jow?=
+ =?us-ascii?Q?9Flt88odL5bq56YzJHzlZCQFoXCjRUx1j3hbCtF54BN/5ZriHen3Wl9iO1na?=
+ =?us-ascii?Q?L+LQLucbSeGxbSO5irGow3hfrs3wj73rYUfWS42iPo7PH5Z3KuHNEHUw+mL+?=
+ =?us-ascii?Q?fXe8HvNIIOZAMAzxnORox0i3tnNIPTuQM4a8gIUDnNNPEMlkLWvSiRWlfQg2?=
+ =?us-ascii?Q?Ct62+m9lwMDE58Fv0765d6S+O87Av6cTaFdiuGYxdpKSTEkiyxCm73QHFYpm?=
+ =?us-ascii?Q?mx5cQDN0shrG0ygxAKlnacDddts9ynjViThGjP+59T+yYcsJ06AB2RfLrovD?=
+ =?us-ascii?Q?a+dXlXB6cFz7HU/F0i1vta8/1/zuSkasu/4w8D5ncbcYq9bxk7n805ao5WwT?=
+ =?us-ascii?Q?PH/8JrYsd4CyOpTgpyy4U3W0E1dQaAFZBCqR4lyUpNYhDOK3biKiI7sFId8/?=
+ =?us-ascii?Q?vfxBK4fzvbybl3UpN2eScMryDjfUWYLIYeLAkyYJ87WK+xHk0A4Mo5Mg8VOR?=
+ =?us-ascii?Q?7/EKHvHF/YWT/1dw2MoqPFsAfQT8qkeHIcrnTS+930P7e/TenRNntvTSj6Yp?=
+ =?us-ascii?Q?q9sC5uiEmMnyJ/UCkaBbZYIbVflI566ogoJZs4xfL41qyCmYM9niUbFCyGqp?=
+ =?us-ascii?Q?1EqG3Y5QymzzaZ8JliDTIm8n1DIcV38/smge?=
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2025 16:35:36.4091 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d1054c7-aa3e-4ae8-b8a0-08ddeef5bdf9
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000075EF.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6008
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -175,274 +137,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_DS0PR11MB74587E99182F8B15032133AD810CADS0PR11MB7458namp_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+When --iova-mode is explicitly specified in command line, DMA mask
+constraints were not being validated, leading to potential runtime
+failures when device DMA capabilities are exceeded.
 
-Series-acked-by: Kai Ji <kai.ji@intel.com>
+The issue occurred because rte_bus_get_iommu_class() was only called
+during IOVA mode auto-detection, but this function has the important
+side effect of triggering DMA mask detection (e.g., Intel IOMMU
+address width checking via pci_device_iommu_support_va()).
 
+This created an inconsistency, when choosing explicit mode,
+the DMA checks are bypassed, but when choosing auto-detection mode,
+the constraints are checked and enforced.
 
+The fix moves rte_bus_get_iommu_class() outside the conditional logic
+to ensure it's always called during EAL initialization.
 
-________________________________
-From: Nicolau, Radu <radu.nicolau@intel.com>
-Sent: Wednesday, August 27, 2025 10:23
-To: dev@dpdk.org <dev@dpdk.org>
-Cc: Nicolau, Radu <radu.nicolau@intel.com>; Ji, Kai <kai.ji@intel.com>
-Subject: [PATCH 1/3] crypto/qat: Add ECDH, ECDSA and ECPM capabilities
+Fixes: 4374ebc24bc1 ("malloc: modify error message for DMA mask check")
+Cc: stable@dpdk.org
 
-Add missing eliptic curves capabilities.
-Small fixes on ECDH implementation.
-
-Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
+Signed-off-by: Shani Peretz <shperetz@nvidia.com>
 ---
- drivers/crypto/qat/dev/qat_asym_pmd_gen1.c | 13 +++++++++++++
- drivers/crypto/qat/qat_asym.c              |  9 +++++++--
- 2 files changed, 20 insertions(+), 2 deletions(-)
+ lib/eal/freebsd/eal.c | 6 +++++-
+ lib/eal/linux/eal.c   | 5 ++++-
+ lib/eal/windows/eal.c | 5 ++++-
+ 3 files changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/qat/dev/qat_asym_pmd_gen1.c b/drivers/crypto/qa=
-t/dev/qat_asym_pmd_gen1.c
-index 67b1892c32..20001bd1cc 100644
---- a/drivers/crypto/qat/dev/qat_asym_pmd_gen1.c
-+++ b/drivers/crypto/qat/dev/qat_asym_pmd_gen1.c
-@@ -38,6 +38,19 @@ static struct rte_cryptodev_capabilities qat_asym_crypto=
-_caps_gen1[] =3D {
-                         (1 << RTE_CRYPTO_ASYM_OP_ENCRYPT) |
-                         (1 << RTE_CRYPTO_ASYM_OP_DECRYPT)),
-                         64, 512, 64),
-+       QAT_ASYM_CAP(ECDH,
-+                       ((1 << RTE_CRYPTO_ASYM_KE_PUB_KEY_GENERATE) |
-+                       (1 << RTE_CRYPTO_ASYM_KE_SHARED_SECRET_COMPUTE) |
-+                       (1 << RTE_CRYPTO_ASYM_KE_PUB_KEY_VERIFY)),
-+                       64, 512, 64),
-+       QAT_ASYM_CAP(ECDSA,
-+                       ((1 << RTE_CRYPTO_ASYM_OP_SIGN) |
-+                       (1 << RTE_CRYPTO_ASYM_OP_VERIFY)),
-+                       64, 512, 64),
-+       QAT_ASYM_CAP(ECPM,
-+                       ((1 << RTE_CRYPTO_ASYM_OP_SIGN) |
-+                       (1 << RTE_CRYPTO_ASYM_OP_VERIFY)),
-+                       64, 512, 64),
-         RTE_CRYPTODEV_END_OF_CAPABILITIES_LIST()
- };
-
-diff --git a/drivers/crypto/qat/qat_asym.c b/drivers/crypto/qat/qat_asym.c
-index d8a1406819..bd22fc0a6f 100644
---- a/drivers/crypto/qat/qat_asym.c
-+++ b/drivers/crypto/qat/qat_asym.c
-@@ -801,11 +801,14 @@ ecdh_set_input(struct icp_qat_fw_pke_request *qat_req=
-,
-                 SET_PKE_LN(asym_op->ecdh.priv_key, qat_func_alignsize, 0);
-                 SET_PKE_LN_EC(curve[curve_id], x, 1);
-                 SET_PKE_LN_EC(curve[curve_id], y, 2);
--       } else {
-+       } else if (asym_op->ecdh.ke_type =3D=3D RTE_CRYPTO_ASYM_KE_SHARED_S=
-ECRET_COMPUTE) {
-                 SET_PKE_LN(asym_op->ecdh.priv_key, qat_func_alignsize, 0);
-                 SET_PKE_LN(asym_op->ecdh.pub_key.x, qat_func_alignsize, 1)=
-;
-                 SET_PKE_LN(asym_op->ecdh.pub_key.y, qat_func_alignsize, 2)=
-;
-+       } else {
-+               return -EINVAL;
-         }
+diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
+index c1ab8d86d2..0f957919d3 100644
+--- a/lib/eal/freebsd/eal.c
++++ b/lib/eal/freebsd/eal.c
+@@ -670,12 +670,16 @@ rte_eal_init(int argc, char **argv)
+ 	 * with a message describing the cause.
+ 	 */
+ 	has_phys_addr = internal_conf->no_hugetlbfs == 0;
 +
-         SET_PKE_LN_EC(curve[curve_id], a, 3);
-         SET_PKE_LN_EC(curve[curve_id], b, 4);
-         SET_PKE_LN_EC(curve[curve_id], p, 5);
-@@ -894,11 +897,13 @@ ecdh_collect(struct rte_crypto_asym_op *asym_op,
-                 asym_op->ecdh.pub_key.y.length =3D alg_bytesize;
-                 x =3D asym_op->ecdh.pub_key.x.data;
-                 y =3D asym_op->ecdh.pub_key.y.data;
--       } else {
-+       } else if (asym_op->ecdh.ke_type =3D=3D RTE_CRYPTO_ASYM_KE_SHARED_S=
-ECRET_COMPUTE) {
-                 asym_op->ecdh.shared_secret.x.length =3D alg_bytesize;
-                 asym_op->ecdh.shared_secret.y.length =3D alg_bytesize;
-                 x =3D asym_op->ecdh.shared_secret.x.data;
-                 y =3D asym_op->ecdh.shared_secret.y.data;
-+       } else {
-+               return -EINVAL;
-         }
++	/* Always call rte_bus_get_iommu_class() to trigger DMA mask detection and validation */
++	enum rte_iova_mode bus_iova_mode = rte_bus_get_iommu_class();
++
+ 	iova_mode = internal_conf->iova_mode;
+ 	if (iova_mode == RTE_IOVA_DC) {
+ 		EAL_LOG(DEBUG, "Specific IOVA mode is not requested, autodetecting");
+ 		if (has_phys_addr) {
+ 			EAL_LOG(DEBUG, "Selecting IOVA mode according to bus requests");
+-			iova_mode = rte_bus_get_iommu_class();
++			iova_mode = bus_iova_mode;
+ 			if (iova_mode == RTE_IOVA_DC) {
+ 				if (!RTE_IOVA_IN_MBUF) {
+ 					iova_mode = RTE_IOVA_VA;
+diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+index 52efb8626b..3a0c9c9db6 100644
+--- a/lib/eal/linux/eal.c
++++ b/lib/eal/linux/eal.c
+@@ -1042,10 +1042,13 @@ rte_eal_init(int argc, char **argv)
+ 
+ 	phys_addrs = rte_eal_using_phys_addrs() != 0;
+ 
++	/* Always call rte_bus_get_iommu_class() to trigger DMA mask detection and validation */
++	enum rte_iova_mode bus_iova_mode = rte_bus_get_iommu_class();
++
+ 	/* if no EAL option "--iova-mode=<pa|va>", use bus IOVA scheme */
+ 	if (internal_conf->iova_mode == RTE_IOVA_DC) {
+ 		/* autodetect the IOVA mapping mode */
+-		enum rte_iova_mode iova_mode = rte_bus_get_iommu_class();
++		enum rte_iova_mode iova_mode = bus_iova_mode;
+ 
+ 		if (iova_mode == RTE_IOVA_DC) {
+ 			EAL_LOG(DEBUG, "Buses did not request a specific IOVA mode.");
+diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
+index 4f0a164d9b..2502ec3c3d 100644
+--- a/lib/eal/windows/eal.c
++++ b/lib/eal/windows/eal.c
+@@ -348,12 +348,15 @@ rte_eal_init(int argc, char **argv)
+ 		has_phys_addr = false;
+ 	}
+ 
++	/* Always call rte_bus_get_iommu_class() to trigger DMA mask detection and validation */
++	enum rte_iova_mode bus_iova_mode = rte_bus_get_iommu_class();
++
+ 	iova_mode = internal_conf->iova_mode;
+ 	if (iova_mode == RTE_IOVA_DC) {
+ 		EAL_LOG(DEBUG, "Specific IOVA mode is not requested, autodetecting");
+ 		if (has_phys_addr) {
+ 			EAL_LOG(DEBUG, "Selecting IOVA mode according to bus requests");
+-			iova_mode = rte_bus_get_iommu_class();
++			iova_mode = bus_iova_mode;
+ 			if (iova_mode == RTE_IOVA_DC) {
+ 				if (!RTE_IOVA_IN_MBUF) {
+ 					iova_mode = RTE_IOVA_VA;
+-- 
+2.34.1
 
-         rte_memcpy(x, &cookie->output_array[0][ltrim], alg_bytesize);
---
-2.50.1
-
-
---_000_DS0PR11MB74587E99182F8B15032133AD810CADS0PR11MB7458namp_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
-r: rgb(0, 0, 0);" class=3D"elementToProof">
-Series-acked-by: Kai Ji &lt;kai.ji@intel.com&gt;</div>
-<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
-r: rgb(0, 0, 0);" class=3D"elementToProof">
-<br>
-</div>
-<div id=3D"appendonsend"></div>
-<div><br>
-</div>
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);" class=3D"elementToProof">
-<br>
-</div>
-<hr style=3D"display: inline-block; width: 98%;">
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<b>From:</b>&nbsp;Nicolau, Radu &lt;radu.nicolau@intel.com&gt;<br>
-<b>Sent:</b>&nbsp;Wednesday, August 27, 2025 10:23<br>
-<b>To:</b>&nbsp;dev@dpdk.org &lt;dev@dpdk.org&gt;<br>
-<b>Cc:</b>&nbsp;Nicolau, Radu &lt;radu.nicolau@intel.com&gt;; Ji, Kai &lt;k=
-ai.ji@intel.com&gt;<br>
-<b>Subject:</b>&nbsp;[PATCH 1/3] crypto/qat: Add ECDH, ECDSA and ECPM capab=
-ilities </div>
-<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
-: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div style=3D"font-size: 11pt;">Add missing eliptic curves capabilities.<br=
->
-Small fixes on ECDH implementation.<br>
-<br>
-Signed-off-by: Radu Nicolau &lt;radu.nicolau@intel.com&gt;<br>
----<br>
-&nbsp;drivers/crypto/qat/dev/qat_asym_pmd_gen1.c | 13 +++++++++++++<br>
-&nbsp;drivers/crypto/qat/qat_asym.c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
-p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp; 9 +++++++--<br>
-&nbsp;2 files changed, 20 insertions(+), 2 deletions(-)<br>
-<br>
-diff --git a/drivers/crypto/qat/dev/qat_asym_pmd_gen1.c b/drivers/crypto/qa=
-t/dev/qat_asym_pmd_gen1.c<br>
-index 67b1892c32..20001bd1cc 100644<br>
---- a/drivers/crypto/qat/dev/qat_asym_pmd_gen1.c<br>
-+++ b/drivers/crypto/qat/dev/qat_asym_pmd_gen1.c<br>
-@@ -38,6 +38,19 @@ static struct rte_cryptodev_capabilities qat_asym_crypto=
-_caps_gen1[] =3D {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (1 &l=
-t;&lt; RTE_CRYPTO_ASYM_OP_ENCRYPT) |<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (1 &l=
-t;&lt; RTE_CRYPTO_ASYM_OP_DECRYPT)),<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 64, 5=
-12, 64),<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; QAT_ASYM_CAP(ECDH,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ((1 &lt;&lt; RTE=
-_CRYPTO_ASYM_KE_PUB_KEY_GENERATE) |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (1 &lt;&lt; RTE_=
-CRYPTO_ASYM_KE_SHARED_SECRET_COMPUTE) |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (1 &lt;&lt; RTE_=
-CRYPTO_ASYM_KE_PUB_KEY_VERIFY)),<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 64, 512, 64),<br=
->
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; QAT_ASYM_CAP(ECDSA,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ((1 &lt;&lt; RTE=
-_CRYPTO_ASYM_OP_SIGN) |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (1 &lt;&lt; RTE_=
-CRYPTO_ASYM_OP_VERIFY)),<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 64, 512, 64),<br=
->
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; QAT_ASYM_CAP(ECPM,<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ((1 &lt;&lt; RTE=
-_CRYPTO_ASYM_OP_SIGN) |<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (1 &lt;&lt; RTE_=
-CRYPTO_ASYM_OP_VERIFY)),<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 64, 512, 64),<br=
->
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_CRYPTODEV_END_OF_CAPAB=
-ILITIES_LIST()<br>
-&nbsp;};<br>
-&nbsp;<br>
-diff --git a/drivers/crypto/qat/qat_asym.c b/drivers/crypto/qat/qat_asym.c<=
-br>
-index d8a1406819..bd22fc0a6f 100644<br>
---- a/drivers/crypto/qat/qat_asym.c<br>
-+++ b/drivers/crypto/qat/qat_asym.c<br>
-@@ -801,11 +801,14 @@ ecdh_set_input(struct icp_qat_fw_pke_request *qat_req=
-,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; SET_PKE_LN(asym_op-&gt;ecdh.priv_key, qat_func_aligns=
-ize, 0);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; SET_PKE_LN_EC(curve[curve_id], x, 1);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; SET_PKE_LN_EC(curve[curve_id], y, 2);<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else if (asym_op-&gt;ecdh.ke_type =
-=3D=3D RTE_CRYPTO_ASYM_KE_SHARED_SECRET_COMPUTE) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; SET_PKE_LN(asym_op-&gt;ecdh.priv_key, qat_func_aligns=
-ize, 0);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; SET_PKE_LN(asym_op-&gt;ecdh.pub_key.x, qat_func_align=
-size, 1);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; SET_PKE_LN(asym_op-&gt;ecdh.pub_key.y, qat_func_align=
-size, 2);<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; return -EINVAL;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-+<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SET_PKE_LN_EC(curve[curve_=
-id], a, 3);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SET_PKE_LN_EC(curve[curve_=
-id], b, 4);<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SET_PKE_LN_EC(curve[curve_=
-id], p, 5);<br>
-@@ -894,11 +897,13 @@ ecdh_collect(struct rte_crypto_asym_op *asym_op,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; asym_op-&gt;ecdh.pub_key.y.length =3D alg_bytesize;<b=
-r>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; x =3D asym_op-&gt;ecdh.pub_key.x.data;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; y =3D asym_op-&gt;ecdh.pub_key.y.data;<br>
--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else if (asym_op-&gt;ecdh.ke_type =
-=3D=3D RTE_CRYPTO_ASYM_KE_SHARED_SECRET_COMPUTE) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; asym_op-&gt;ecdh.shared_secret.x.length =3D alg_bytes=
-ize;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; asym_op-&gt;ecdh.shared_secret.y.length =3D alg_bytes=
-ize;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; x =3D asym_op-&gt;ecdh.shared_secret.x.data;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; y =3D asym_op-&gt;ecdh.shared_secret.y.data;<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
-bsp;&nbsp; return -EINVAL;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_memcpy(x, &amp;cookie-=
-&gt;output_array[0][ltrim], alg_bytesize);<br>
---<br>
-2.50.1<br>
-<br>
-</div>
-</body>
-</html>
-
---_000_DS0PR11MB74587E99182F8B15032133AD810CADS0PR11MB7458namp_--
