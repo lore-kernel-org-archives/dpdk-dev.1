@@ -2,139 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC44CA1016
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 06:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 854B2CA1016
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 07:04:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A44BF40264;
-	Mon,  8 Sep 2025 08:36:56 +0200 (CEST)
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com
- (mail-dm6nam11on2045.outbound.protection.outlook.com [40.107.223.45])
- by mails.dpdk.org (Postfix) with ESMTP id 4B538400EF
- for <dev@dpdk.org>; Mon,  8 Sep 2025 08:36:54 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L7ntIGsBoUTSuBMMfS8yqVoAxkzY+OzaX36kmu4DfBRpYLEy372PoheUymfIo0e46dkUZKYStd5fcBV2adt0YSaPAeDXRpE0Usiw+uFXrZxzW1nTos8yUHRqwwl3cKzZNu1FKbpamaYNWXOPO26XrrUSbd3REcuaT8mUOePu+FzwZXiKJ2MUsYazZI9+WfjRZDfQgjHwkHLagFRtrn64mtSa3eAhXbGyYKZGWf7fdLP3YRrNRFOYaeGgOqQYC4iJGwBPzFEn9dUHCKu2c6azm+1JsYxdUT9Oz6daCNkJnCR4cf5nzxxJS0u9vCXzWxj4WqrnLtspeQd6pwMZ/kEtDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dnmQS8wVah9LUiw44uNK1WIoBqHYG4ftKtjSo34tCTQ=;
- b=k3+Bu3txa+wnIVUSUywG2gB+RE83jVDbr4uFoP/BTAJPiv4FZODOD/W0rZJXHBRkz8IIni7FQS+kt4y5sKUIjj6pipdGXAXm8DEJiwDMxTZ6qXO8kIgjjGYzxTUt9UNry0iBaieFgGu5AXT2Bxcj3hNbfLp78susJHt2j57ibOhBlUo3qWI5Nr7DfOEznOYkw7W7xPBQYKIfX8+dRGMRjKm7x9P1G5EI/y7pA9vzxjPCbiUZARFu4ZXdpFpgYwKo4LeUa5HpkDWj6o1RmjcWOuVAZ42QfNOBXX80+n6jmdHw5CIJauTMhZjylg9eboxxPmOL8IGQnYZjOML1PccR6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dnmQS8wVah9LUiw44uNK1WIoBqHYG4ftKtjSo34tCTQ=;
- b=Nor0MLX7fkY/ryfGspXLPdouBHBKZNFptUMpDCVAR880NenwoNBY3/qfH/NNEZ19uVAg2JGvnuNkqrjsrCg3xIQiFBQh0TSk6SX4tnR9Xn83aerFuoxiTEsdFEWJRvB5aYyB6/9Edb62wTn1OJ2w4dot3zV+yqFNJgpedHwA1Lq9OV6zOHw46MCwsA/Lxq1Ryb1PtkFYyfxLVl9zR3sKmf9WZzIPBGYh5VWBim855olXzR6Zcyl6HC6HKJfgsgJq82kBBumAES3KyJOWS/62uYKgmGA7/SD/bii4CmRsnFV3Nw8bkh+ZlE2wjo1cu7DUQRQIDdlTdpcQSCZDyyOf5g==
-Received: from DS0PR12MB8561.namprd12.prod.outlook.com (2603:10b6:8:166::8) by
- DS7PR12MB8083.namprd12.prod.outlook.com (2603:10b6:8:e4::21) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.19; Mon, 8 Sep 2025 06:36:51 +0000
-Received: from DS0PR12MB8561.namprd12.prod.outlook.com
- ([fe80::9b96:73cf:f78:e41f]) by DS0PR12MB8561.namprd12.prod.outlook.com
- ([fe80::9b96:73cf:f78:e41f%5]) with mapi id 15.20.9094.018; Mon, 8 Sep 2025
- 06:36:51 +0000
-From: Slava Ovsiienko <viacheslavo@nvidia.com>
-To: "Minggang(Gavin) Li" <gavinl@nvidia.com>, Matan Azrad <matan@nvidia.com>, 
- Ori Kam <orika@nvidia.com>, "NBU-Contact-Thomas Monjalon (EXTERNAL)"
- <thomas@monjalon.net>, Dariusz Sosnowski <dsosnowski@nvidia.com>, Bing Zhao
- <bingz@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Raslan Darawsheh <rasland@nvidia.com>
-Subject: RE: [PATCH V4 1/2] net/mlx5: update how MAC address bit-fields are
- used
-Thread-Topic: [PATCH V4 1/2] net/mlx5: update how MAC address bit-fields are
- used
-Thread-Index: AQHcGMS78GgrTmUnSUWkH6MuiERjgLSI5EkQ
-Date: Mon, 8 Sep 2025 06:36:51 +0000
-Message-ID: <DS0PR12MB85613A5B9168391873AD79BFDF0CA@DS0PR12MB8561.namprd12.prod.outlook.com>
-References: <20250825141322.974335-3-gavinl@nvidia.com>
- <20250829090830.1049176-1-gavinl@nvidia.com>
- <20250829090830.1049176-2-gavinl@nvidia.com>
-In-Reply-To: <20250829090830.1049176-2-gavinl@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS0PR12MB8561:EE_|DS7PR12MB8083:EE_
-x-ms-office365-filtering-correlation-id: 252f53c1-e875-4e29-9c63-08ddeea2183a
-x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?KlF9RBYTV/s8nhmsRTgOuvUHdsfzRgcZq08VOsLO7OxHUjgYE/47i0ECIxdP?=
- =?us-ascii?Q?utuQI1ljG+6YQr93cGjINRTbap8GiN7/7kEI7PJDs94fWW/m+0njKTsuDR+8?=
- =?us-ascii?Q?D/dD0V+B4Km0lN/bwmCg6Gv58aRqP+DP/5DJEeAn5nw03zy6Oat2wdu2zFWe?=
- =?us-ascii?Q?+VfqN2I5+0p24TaDb0P5bNRN/YNrVkTvzu8qFzyKLENpBBB/s428QWwFF1SV?=
- =?us-ascii?Q?RY4INu+R738wMCz/Xw1AXUp3YcfX0MB0S6Aw+UuyBFk00XhLr5RKLDNwBste?=
- =?us-ascii?Q?moSO91WJTpAU+7/W1i5v0verUSXEOA2x/yFRmr61f3cyicYrPGoUNy/HD64T?=
- =?us-ascii?Q?E66GXhedTKVI6auVAmKeEBVwm5CGK5UDBD+SCyQgZDbkvjhsCSCFUaeGRVxD?=
- =?us-ascii?Q?s5Lr7EsowqMvImc9pALvvWLcgeFxZbb6be/uPJwb6EuaC93X71FnjgyR6v+S?=
- =?us-ascii?Q?0XeQym4HibKF3++Jphq0WIF5imokq8yRzDu3nBUwh2mz82eqD9TIpwtS03wP?=
- =?us-ascii?Q?za4thZ5jea+T6o5Fh5B/r37XDH6nm2690cwUja28zT7ju5C+5pAiWy+b7e3p?=
- =?us-ascii?Q?fozsZ2dS8j13jZpCp2nuAvJAc7ZqK2MKYg4MjZvNdoLYIc3owXAzcS8tkItM?=
- =?us-ascii?Q?8DWk4y8/bvIFZp1YRMMhCXVaGjQAnWUomMxag5ds0U+qgmfNEHGw6dkJehUQ?=
- =?us-ascii?Q?nmxr/o6IZ2qVt2fp/ZHx6XDqWgBKxhG7LCSWnPu4WHRchWP77xAMuHBKUgbr?=
- =?us-ascii?Q?YmboxhXWP4FoeEXIwAzatwJQEKp8o+z3Endjw9ewQTeVCVPmHut8oNB5ikln?=
- =?us-ascii?Q?9hq4er8pLU0uhEdrl+XQttbI8xm5kOJzhXmeo9sATWp7bBKcuGvgwGzIia/1?=
- =?us-ascii?Q?YP0RZPX1itU4JHkkiucryFLcLOcghYDgsbUrAMHqRPb/oq+bCnxgQ4L2i+FL?=
- =?us-ascii?Q?99p+plMAWATIfd/KSOgB16yomffZ/QmX4XYkYEgV5QSs+HQMM0kOkmZxUmS6?=
- =?us-ascii?Q?rulIWI5U+sndKOWzfcnKFWITdEVj4sAT5Tc4IhmqDlht1ec2C8xzyJR/fBUW?=
- =?us-ascii?Q?8UORpgF85Yd+yjwH9VLfoy99A+aYEGawnI+wRTWFk0KLkHMOoz5WVzC8MzLk?=
- =?us-ascii?Q?M/JQAXK63r/o4BSr+Okx5CJyMWg2pDMNi1vSzswxVs/qqeZvALmQizuFIuKA?=
- =?us-ascii?Q?JToQ0dh4Ch+d3oc8Q4SnZDWR84nllpPCcT3/qfhaPPibsPwHHZbQN/Lkr1IR?=
- =?us-ascii?Q?DiDp9Q9mZR93LxsWSHJeOc7YZnmhREr4TTTgrPPfTK+hKnaCWMCrUh2ilfRg?=
- =?us-ascii?Q?3VPoFvuGqamqnz2E4Ltd2hrZ9i+hf4umApJ0SNhqem35jbWnPiD7W/JPp0Yk?=
- =?us-ascii?Q?6MZj2MFCrfRbeofzxpAp31Jon7uFjYlNJ6AYlSHLqK1D6NAHuF8qo5TM/gYs?=
- =?us-ascii?Q?+5F1WQwa+DIUbpxb0N596Nc91mpZzCoDb4/yeNnBUuA1r4KKKE4vEOzIl84h?=
- =?us-ascii?Q?ZtlOmYWUaCeBDsY=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR12MB8561.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(38070700018); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0wcgCF85TMVNhRtyXIQUgM8mN2fQoTGPZLj5fWcAo1mijhLOwfuJlwo5ljIn?=
- =?us-ascii?Q?f/AJMElvAaIbAaS7YxT1bG7ln0vFnr+pskfBT4QI5YQl5k0QX/47+1GnJFVs?=
- =?us-ascii?Q?eQzNLlDdowH8SlsMgySpM25cubNWgC6yi5VMvmWV7BKD8nYMjYM8O4p0n+gA?=
- =?us-ascii?Q?DdLHVvNVrtCT1jwBGr4KeaU8IECHSUSefd6SIprkESepl0q9oRxGVybH4Ifo?=
- =?us-ascii?Q?YWfzzVCyI1aBSln0Ui+qDi+kCqx2JElVMrjnTh+UnjlfHVSb+D2aq8tkQ5Fw?=
- =?us-ascii?Q?3xwydlNhqYuxRBMPFgNYnQa/HxUmX53HtCB1no1AkxOky9T6R7AENVDHZibZ?=
- =?us-ascii?Q?03FVJIZfsjq4v3qFxjPPSs0kpDw5agPR4DkAQ28Z3p9I3z5YyLXuwCm4i366?=
- =?us-ascii?Q?zHBZfVYdhW0wy1P11Pbk3aYIZqhrYPhOBwCBknDeK46pi38iGPp5gM2BcbRa?=
- =?us-ascii?Q?sDq7T0EZoskSmUrj87uI9spATT5NT//37kzK1hBFnSMLT1IwgvDvOCTyGc2J?=
- =?us-ascii?Q?/1nCRhoI1hbpIu0BNiTTzm5NPFjjW1JfqtW0qXWKW3oEcW++7JIyAqYnnbmj?=
- =?us-ascii?Q?VB//RU1Yc90UjyudPpT4tehy+ABTPl7il/rJJ5Nh1AY4OsCMQXf/8aPl2UhY?=
- =?us-ascii?Q?dmhzmASJ9eTXoxuoDcf7YIFKZPt9g1+WuD16pO8OVzLzwCYdl4OAh1Yp8L7R?=
- =?us-ascii?Q?Dsm8QDDtfFFA89T9hos8O4NcH3VlrYkn74wlbzWWEuPBkziGG4tnFJdZvWA5?=
- =?us-ascii?Q?YlyWDPtenAe5F66nmFtEH98iCskNZ2qtd+kNpYjCPqY6sg0JhYQ0NLgJp72P?=
- =?us-ascii?Q?V0s3g+Ic13zDI1YlkWQFXpCijXIBd7y6Nlik/NjPzR+m5T/j+rReTVuO/cUb?=
- =?us-ascii?Q?y0W2Go2S1mlqKt8bKLTNyc7oCHWcRP51Igj/rMs3Uf00J0S+rW3uc6qRp9TF?=
- =?us-ascii?Q?ytGjIAcUL+bNo7k1HYtAf35fPCk4zZOrTRkgZWLcBhXp5FK7x6O52Q2dCMPA?=
- =?us-ascii?Q?twI+S5g8lheCO23a0uC4osHfUb/sW9e9lG9sUwQzkoPBfDtI8MvH8QyZOrCx?=
- =?us-ascii?Q?3DEeMQ3x2b+hZ3/oWdra1CnIFj13/IzcE7jkltyhlv0K8GFYb5agHVpoWabh?=
- =?us-ascii?Q?n1bjgBCtkGO/dvIiBZ3N+oWoKN0qBDR1Shy7YUMwaJ4HBbRW9JpigpWKfO1h?=
- =?us-ascii?Q?zhBZe70VJydHp7TG+ObqMaIoh720s2Z9Fx5NGVskKrArTKWKigQKFjHSh/aJ?=
- =?us-ascii?Q?U/p2AVWQ+FXdh0mBKr2hF0/qi4IiBLnI7ht/sAiHZwzjFCX7ZleZk72aW9SM?=
- =?us-ascii?Q?pStNGjOOn1gi9UgrfWlwptFBMZxWmR9MStJ+Q5LYnIEz3NDkPfOzcc9qSBnO?=
- =?us-ascii?Q?HuHLN7dCeE0qSywHB4Y95HbHYMmGucOxglCBkCasDgy1GAbHmTmTer10dSln?=
- =?us-ascii?Q?vjxbvB98a7NkmSGXkAdIft7rg1n+fVsLg/bS+0bwX1LzvUfZKWIA1OjRFmsf?=
- =?us-ascii?Q?bram2YXFv3Sd2RYa6Oq+yV9mk02WISkiDBpGP69HxgUTKEviL49tPV6lXlXi?=
- =?us-ascii?Q?qDamxJP69oTLxnGfxuJK5jSPM6YeqBgAqWE/X1Ho?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id B00CB40264;
+	Mon,  8 Sep 2025 09:04:47 +0200 (CEST)
+Received: from mail-lf1-f99.google.com (mail-lf1-f99.google.com
+ [209.85.167.99]) by mails.dpdk.org (Postfix) with ESMTP id A1E2040264
+ for <dev@dpdk.org>; Mon,  8 Sep 2025 09:04:42 +0200 (CEST)
+Received: by mail-lf1-f99.google.com with SMTP id
+ 2adb3069b0e04-55f6507bd53so4230982e87.3
+ for <dev@dpdk.org>; Mon, 08 Sep 2025 00:04:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=6wind.com; s=google; t=1757315082; x=1757919882; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=n70Ie4ymQB70BDng/k/l/99LdGND+8LCStHLPAGa/9w=;
+ b=jCCTg0qQkkVJjzkc87Kxx6OjS8q5ykD1FoxJf2uElksn+rJNKwbbbH6pNwdmCuPT2T
+ KDciALtozwpKPoDjK54wFBMQpSOitLCu2zLol5sx3yu3tosaC+FE87Eu+Czqn8/4eZ7h
+ lfoXTMA9zQubhZwXg9KvScblm/Hy2cyBmv2hkKTNDtKbNBkLqXPZMe2Z64G05Dh77B8d
+ eA8/Jnqnkd4h0ORawoUYCfCsyBfkuPYlLPnvlYCb8qELb4azMdv+KIQ5uAQpRWIlyl6/
+ yvvGxlXUCtlOPg0/9KUv/H1DK6jSJZPog0/nngv2IwNSMLuC7Mgzd2M58ZrZhZeFOazZ
+ qrKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1757315082; x=1757919882;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=n70Ie4ymQB70BDng/k/l/99LdGND+8LCStHLPAGa/9w=;
+ b=tk1KChdvN6vMfP5jKSObmOfdB1ozIBZ1d6vCbrpczYjysR5yUh1nxeXchaPLA6yJfZ
+ kA4AnfSK1ObXNqTmHcrk+XuTyeDKIug/iDLTdMuFk3YCbyvtjC6NohCcHPReDr8YzrUE
+ fpnTEKnsGcxo6YrIXij8/DMLlL5NUNCZLmpXb4wspQ5eoL4p7up2sPzvQ6CfMxILMTNC
+ lXK8/M4tRg3P/NCUsY2L8uLCE4JT19cpnWLRUdeZKVFCtHDTHNgf94Xq3lu+rid3dBS9
+ ekQ42GRL9r3hM+f3Q8FUAdMMjNbMMN3qdm+L8yK0fu3+8PM+07Mypn17yGo5IrpYBced
+ 0JJA==
+X-Gm-Message-State: AOJu0YzG508fLv4bOWSJ4z+zMlppk3VxGjEfSmyKKMVwlVCdpWXqvl7D
+ 64iEykUn5VQ9apwti++nDlqGrDYv3SdLFFI5/JxFU6zCka21CPNoZrrUuWAbmkAlMi0zM3Zo9lb
+ jkPSdOl/I83g06PHX+nPJH+fY/8TLHEQ6YnlUBVvWSN0=
+X-Gm-Gg: ASbGncuIxy1KSIGUw56MFTIU1YUWHimznf/zFO1dldKfB455puKeMGy+4b/ycjmKsEb
+ F3I5nV+RPhIUtjQ/pbTqN7iZzmnD/wC59gV4WwJe/zZnJmu5RJ/PI7vj0RJwupCU1HVlArAt23w
+ nYfjjv0uS0ZttDIZyM8BgE9AaqvpjSFB13EBjTyyTldpKNmpv97eyKZg/OZWeYyGcwU7XQ4Cu1T
+ e3TCO6IUfubx22Izjmf0NwVmb4PFj0dK7vbzQaJAfnOAcQUkUH1B+5vVTC6vI9fxY3bPZtE9KeJ
+ rN1L/sZFJAxqCPxLkx5ayqjiZPCWMyRVKQnvd2PcsQhms1KwaySBwm53FVhSO0Z7guTJSv5zARd
+ FceiO0ftgLEaUz21fRwo=
+X-Google-Smtp-Source: AGHT+IEFSc4ja0o43ZVsKcvU38o9Z8hdjmyzV1XZln/xXmQxvq2YXjT/zx/b5zZ5/qvNwYS8qncCYjEe6FiT
+X-Received: by 2002:a05:6512:3b0c:b0:55f:63ef:b2bc with SMTP id
+ 2adb3069b0e04-562603a1050mr1893390e87.8.1757315081637; 
+ Mon, 08 Sep 2025 00:04:41 -0700 (PDT)
+Received: from smtpservice.6wind.com ([185.13.181.2])
+ by smtp-relay.gmail.com with ESMTP id
+ 2adb3069b0e04-5618ea86404sm2705455e87.36.2025.09.08.00.04.41; 
+ Mon, 08 Sep 2025 00:04:41 -0700 (PDT)
+X-Relaying-Domain: 6wind.com
+Received: from localhost (vader.dev.6wind.com [10.17.1.39])
+ by smtpservice.6wind.com (Postfix) with ESMTP id E7EF23420D;
+ Mon,  8 Sep 2025 09:04:40 +0200 (CEST)
+From: Thierry Herbelot <thierry.herbelot@6wind.com>
+To: dev@dpdk.org
+Cc: Thierry Herbelot <thierry.herbelot@6wind.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Devendra Singh Rawat <dsinghrawat@marvell.com>,
+ Alok Prasad <palok@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
+ Olivier Matz <olivier.matz@6wind.com>,
+ Edwin Brossette <edwin.brossette@6wind.com>, stable@dpdk.org
+Subject: [V2] net/qede: reduce the optimization level for gcc > 11
+Date: Mon,  8 Sep 2025 09:04:13 +0200
+Message-Id: <20250908070414.1297844-1-thierry.herbelot@6wind.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20250903113252.2496087-1-thierry.herbelot@6wind.com>
+References: <20250903113252.2496087-1-thierry.herbelot@6wind.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB8561.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 252f53c1-e875-4e29-9c63-08ddeea2183a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Sep 2025 06:36:51.4465 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8aHlGBN0H7qBYLXqgm+HTWXQRTv0zvtPEJQPvr/6CeDgTNogwNFvfso3xV13gWjGR23Vk+ydhS+hHmxXJSqdew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8083
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -148,30 +87,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: Minggang(Gavin) Li <gavinl@nvidia.com>
-> Sent: Friday, August 29, 2025 12:08 PM
-> To: Matan Azrad <matan@nvidia.com>; Slava Ovsiienko
-> <viacheslavo@nvidia.com>; Ori Kam <orika@nvidia.com>; NBU-Contact-
-> Thomas Monjalon (EXTERNAL) <thomas@monjalon.net>; Dariusz Sosnowski
-> <dsosnowski@nvidia.com>; Bing Zhao <bingz@nvidia.com>; Suanming Mou
-> <suanmingm@nvidia.com>
-> Cc: dev@dpdk.org; Raslan Darawsheh <rasland@nvidia.com>
-> Subject: [PATCH V4 1/2] net/mlx5: update how MAC address bit-fields are
-> used
->=20
-> Previously, mac_own was a bit-field indicating the MAC addresses owned by
-> the PMD, specifically marking those added to VFs by the PMD and allowing
-> them to be flushed during exit.
->=20
-> With this commit, the bit-field now applies to all MAC addresses added by=
- the
-> PMD, including those for PF, VF, and SFs.
->=20
-> This patch does not introduce any changes in behavior; it continues to fl=
-ush
-> only the MAC added for VF, just as before. It serves as preparation for
-> addressing the multicast MAC address issue.
->=20
-> Signed-off-by: Gavin Li <gavinl@nvidia.com>
-Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+The qede PMD stopped working under Ubuntu-24.04 (using gcc-13) when
+compiled with -O3 (default level for all DPDK code). A bug is opened
+for this issue (see Link). The same issue is also seen with gcc-12
+and gcc-14.
+
+A first workaround is to just disable all optimizations (-O0), which
+restores packet Rx with Qlogic NICs. However, the performance impact
+is not acceptable (around 50% drop).
+
+A better compromise is to use -O1 for the qede PMD:
+- there is some perf impact,
+- but the PMD is working as expected (packets are correctly received).
+
+When compiling with both -O2 and -O3 and gcc > 11, there is no packet
+reception when using the qede PMD. The root cause could be missing
+'volatile' keywords or missing memory barriers in the qede PMD code.
+
+Link: https://bugs.dpdk.org/show_bug.cgi?id=1379
+Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
+---
+V2: be more precise when dropping optimization level (only for gcc > 11)
+---
+ drivers/net/qede/base/meson.build | 4 ++++
+ drivers/net/qede/meson.build      | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/drivers/net/qede/base/meson.build b/drivers/net/qede/base/meson.build
+index a6dad3ec7bcc..130835cc31b1 100644
+--- a/drivers/net/qede/base/meson.build
++++ b/drivers/net/qede/base/meson.build
+@@ -55,3 +55,7 @@ foreach flag: error_cflags
+         base_cflags += flag
+     endif
+ endforeach
++# no packet Rx with gcc > 11 with compiling with default -O3 or -O2
++if (cc.get_id() == 'gcc' and cc.version().version_compare('>11.0'))
++    base_cflags += '-O1'
++endif
+diff --git a/drivers/net/qede/meson.build b/drivers/net/qede/meson.build
+index e1b21d6ff5cd..e4268883ff93 100644
+--- a/drivers/net/qede/meson.build
++++ b/drivers/net/qede/meson.build
+@@ -22,3 +22,7 @@ sources = files(
+ if cc.has_argument('-Wno-format-nonliteral')
+     cflags += '-Wno-format-nonliteral'
+ endif
++# no packet Rx with gcc > 11 with compiling with default -O3 or -O2
++if (cc.get_id() == 'gcc' and cc.version().version_compare('>11.0'))
++    cflags += '-O1'
++endif
+-- 
+2.39.2
+
