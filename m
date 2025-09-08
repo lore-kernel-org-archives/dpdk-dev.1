@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7CBCAC581
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 09:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E72CA1013
+	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Sep 2025 09:42:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6DC9340264;
-	Mon,  8 Sep 2025 11:41:22 +0200 (CEST)
-Received: from fout-b5-smtp.messagingengine.com
- (fout-b5-smtp.messagingengine.com [202.12.124.148])
- by mails.dpdk.org (Postfix) with ESMTP id 38809400EF
- for <dev@dpdk.org>; Mon,  8 Sep 2025 11:41:21 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.stl.internal (Postfix) with ESMTP id 5A6AE1D00117;
- Mon,  8 Sep 2025 05:41:20 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Mon, 08 Sep 2025 05:41:20 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 9045940264;
+	Mon,  8 Sep 2025 11:42:30 +0200 (CEST)
+Received: from fhigh-b8-smtp.messagingengine.com
+ (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+ by mails.dpdk.org (Postfix) with ESMTP id BE0A8400EF
+ for <dev@dpdk.org>; Mon,  8 Sep 2025 11:42:29 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 39B717A0069;
+ Mon,  8 Sep 2025 05:42:29 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-04.internal (MEProxy); Mon, 08 Sep 2025 05:42:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1757324480;
- x=1757410880; bh=W0lB3GitWUwqiM4urR7EV6Yiz5Az5nlqwzR/Adh283U=; b=
- t08FE3lI1tTiaQViBzkfnbLI7gwKPA8s/KbJs1MOSbn3t1AHb/OifGhtP2dDzkVy
- KzRLtbDoll9oe6nB5ZQxuhDs73YcGr4oT6fchr52aIj3MAWVxVTqqFa4U7UKUOIa
- 8yCc5iQ5RG/xxHgGX7cF/vJiUuLEfMnH3wIOcs9FaQXuGrlhx0pLzhNWk9gTbDm/
- kzkN15gzGfITjhN5H/uBRgJVqiOlEuCBqps6NUFpZPWdgFgtCIOprFhLZ9CFddzm
- 5byds04HhqGuqmos2B4C3v/IZ+u9o1vxeHkeloNR8xY+pPbngA0Mmds2Y3M1FSP3
- B/dYAalGMVce26UOs038gA==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1757324549;
+ x=1757410949; bh=CH9kSFaD3aPIidfRKVlQC0RsEszQPWKpEHVanU/voqA=; b=
+ dNdKE1/72zIx1Hr/WKW+IKMEtB+mLYV62oy39Zl1M4KQAVE4QP0qudrX2bu+8SLL
+ wN8uvhxNvHPOlQxIRFJsGOe4G8dNWkQ/aSXhAdrd0KyUUSovUuchVOnksMIToLGV
+ 8+UrjsLA/hxlml0mSbGk4w4CAQQzdFyJaImBZnUMaZkY86Oq78tJTPgYkWhAykVh
+ DLETYFG4UZzQfR8DXeXVFSkCAcvBAHa2hEXHMBRAXAFAZ0aFzLFDG4POkHZljwAz
+ +RCc7n/UMiLbKIVp/yTbwPuqIJWwRYkZAb/HoplNcG6AqyHqLEOFY32c33pT9m04
+ j9ZmyQTRt1WBbpRSCDFMuA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757324480; x=
- 1757410880; bh=W0lB3GitWUwqiM4urR7EV6Yiz5Az5nlqwzR/Adh283U=; b=I
- VID/HYGMXVN1mK8nCOZKCbVNdO2OahB84RSyebruj+fNxt4KzTOHkqCGyY5oYadk
- PLnbFHHgUTeMg9P0ll+rtsmq2IiS+m0TIhDGKsPlqWFQ9RkdmI4BinLPGiZK7ELp
- 4aaS1okN9QPdqDSUo5zoav9V4BsV6dKrixqAWMmMUSwb8kgg2zM61p+5VTlAqb43
- K0JPSWCUjGvs2l1nkTy/OZ5G21VnSkze6xz5ivmYbWaDWJKsdQbT2w9lF7g2sQas
- OsEHDHj9puQTS3p8XOqlOXlOv4WY+OUv3n8Vs0gvJBw/XGcCxTDjmlaqs8Iw3ruq
- A1WmoE7j6A5EQRFmSoRgg==
-X-ME-Sender: <xms:v6S-aLGFqwc6YAVz501fwTCnp0MZj_blf9dEUMZvLW85p73cnLb6Rw>
- <xme:v6S-aNn7TyqMZPBAezgSbE8_4PtiKnmPAxLjqcqqOnV5-zypSH4FfbzQ144EhQJJw
- Vvs2n-PYrfOwLjxlw>
-X-ME-Received: <xmr:v6S-aO3Q8hJoq9AK74cJxrYYzwAH_czuS2VRMuECjTNcOZGnbbN9oCyGknXCwrz0W4hoCPnM9U_aERiJTQkJrJ-b8w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujedvtdcutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757324549; x=
+ 1757410949; bh=CH9kSFaD3aPIidfRKVlQC0RsEszQPWKpEHVanU/voqA=; b=N
+ YRd3TcrU7CMGCRDw3SCkIatqfa144292KZEwuhrs2yYOa7o6PBUaj2x29kJrrV3U
+ 73MqQF624PNzjtazmkhqGH+WWGfGQcfGQArBDCh2mOWgo71PSbfk5kilcl+Ak/PU
+ kRkVQjsZefo1jShXoPpnmOXPQozD6q0sMSRMc1yh4g2fVn4R80IyMlXAjmBC8lRB
+ n8TkhEzXyUqQ9t+jXAzl9LIUwz+/p+0PvOpnxRVSPDtS2bQb556en0jkRGQFrgVU
+ /yIjWGPvNrUp4WGLAnsZherBoqTPNzVJxONc8f+4LQJ694ZfCNvsY9XoQCRtPd8Y
+ V3vIWUAs6zyk9ThC34pYA==
+X-ME-Sender: <xms:BKW-aD1rM7p4-bW0owf9z9GCuK9rW-LGaI2QZq2seZeVOcc9qxgKuA>
+ <xme:BKW-aHWAeEu-P2tgZ2oqwpjKfWi0KYjvvfkTcmfLMqP47ZkBfGxr0QvCZ5SBbbzHC
+ TWdYuMIaHwUecmM6Q>
+X-ME-Received: <xmr:BKW-aFlvJyDjo1PNh0ap1qQ7JS02411is2bVBWNKdouh8HtuZYQiNh9GOlRi3FZDbZTpJlWJc7rHC5fazqOFKE_k2w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujedulecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
  hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
@@ -52,26 +52,24 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujedvtdcutefuodetgg
  grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
  gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
  epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepvddpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrgihimhgvrdgtohhquhgvlhhinhesrh
- gvughhrghtrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
-X-ME-Proxy: <xmx:v6S-aBTZ3I3oRj7Q2dsd6bc923RJBJ5HMLt85m63_f4xs9NDq_nQ8g>
- <xmx:v6S-aIuuWnDA5x3fmVayRjoVSzvSFMmIvrrKNEGPpkZgm9t42vqj-A>
- <xmx:v6S-aOawV6vqOWdhvUmjrug3bCyiauMtuNFQGtPI-0llVTGctiQe0Q>
- <xmx:v6S-aFvh5OIWKrnTh2sfjAcF7EgxmOMRDLOspbgiQghMCbNh_iAc3g>
- <xmx:wKS-aFTE88TVNceZWSwBPmYjPookrBevZRZE1Ol5le8tPayjtlRF9k86>
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpth
+ htohepmhgrgihimhgvrdgtohhquhgvlhhinhesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:BKW-aBBVKSdVsjynwDwIsQ2BOgY9XtOprwYX8m-BxbZxJXYoStMJsA>
+ <xmx:BKW-aNfgn0G_0Hh2v8NSIgPt4aE4Dj0oCuhUPc8QLlCs3N6sZMzpHg>
+ <xmx:BKW-aEJjDje2n8SwBHJfJkLuU0R59KrTkkTWZ-2whdy2AvRLcmBQ1g>
+ <xmx:BKW-aId6vbglXscsLj7oxM5GUL8_eWZorPz3Syiw1P1RzzWZ8135Vw>
+ <xmx:BaW-aADa9_hB3iJ0wgzk5UY-XHP-qltaPaLi1GXkL5cAcz7jXWpxBMyn>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Sep 2025 05:41:19 -0400 (EDT)
+ 8 Sep 2025 05:42:28 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Maxime Coquelin <maxime.coquelin@redhat.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH 6/6] devtools: add quiet mode in uAPI script
-Date: Mon, 08 Sep 2025 11:41:18 +0200
-Message-ID: <1930733.tdWV9SEqCh@thomas>
-In-Reply-To: <d7b7fff5-8f0c-424b-ba7c-837a16e6d4ce@redhat.com>
+To: dev@dpdk.org
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>
+Subject: Re: [PATCH 0/6] devtools: improve Linux uAPI script
+Date: Mon, 08 Sep 2025 11:42:27 +0200
+Message-ID: <13838928.uLZWGnKmhe@thomas>
+In-Reply-To: <20250827082413.1417226-1-thomas@monjalon.net>
 References: <20250827082413.1417226-1-thomas@monjalon.net>
- <20250827082413.1417226-7-thomas@monjalon.net>
- <d7b7fff5-8f0c-424b-ba7c-837a16e6d4ce@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -88,31 +86,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-03/09/2025 15:54, Maxime Coquelin:
-> On 8/27/25 10:21 AM, Thomas Monjalon wrote:
-> > Most messages from the Linux uAPI script are not useful
-> > when running the script in a regular fashion.
-> > The quiet mode (option -q) is added to output only error messages if any.
-> > 
-> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> > ---
-> >   devtools/linux-uapi.sh | 26 +++++++++++++++-----------
-> >   1 file changed, 15 insertions(+), 11 deletions(-)
-> > 
+27/08/2025 10:21, Thomas Monjalon:
+> The main goal of this series is to check Linux uAPI headers quietly.
+> While doing so, few minor improvements are done.
 > 
+> Thomas Monjalon (6):
+>   devtools: remove superfluous curly braces in uAPI script
+>   devtools: remove superfluous fallbacks in uAPI script
+>   devtools: move uAPI processing into functions
+>   devtools: remove unused variables in uAPI script
+>   devtools: make uAPI check exclusive to other options
+>   devtools: add quiet mode in uAPI script
 > 
-> You forgot to update print_usage().
+>  devtools/linux-uapi.sh | 146 ++++++++++++++++++++++-------------------
+>  1 file changed, 80 insertions(+), 66 deletions(-)
 
-Oops, I'm adding this:
+Applied
 
- print_usage()
- {
--       echo "Usage: $(basename $0) [-h] [-i FILE] [-u VERSION] [-c]"
-+       echo "Usage: $(basename $0) [-h] [-i FILE] [-u VERSION] [-c] [-q]"
-        echo "-i FILE      import Linux header file. E.g. linux/vfio.h"
-        echo "-u VERSION   update imported list of Linux headers to a given version. E.g. v6.10"
-        echo "-c           check headers are valid"
-+       echo "-q           quiet mode"
- }
 
 
