@@ -2,75 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD998CAC583
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Sep 2025 16:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0E9CA0FED
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Sep 2025 20:02:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A13240649;
-	Tue,  9 Sep 2025 18:17:33 +0200 (CEST)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com
- [209.85.221.41]) by mails.dpdk.org (Postfix) with ESMTP id 48D8940281
- for <dev@dpdk.org>; Tue,  9 Sep 2025 18:17:32 +0200 (CEST)
-Received: by mail-wr1-f41.google.com with SMTP id
- ffacd0b85a97d-3dea538b826so4990068f8f.2
- for <dev@dpdk.org>; Tue, 09 Sep 2025 09:17:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1757434652;
- x=1758039452; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=pC1rLhUqkQ8WYd1JJ8zuldIQ4OqE6neQrDusL+z/eII=;
- b=otY5SmfGG2Cl66MCNVMwMy5UCpovYK1P0aAmrDpf+V7HMqZNrHbwTeFEmQmuA/vp+s
- FFQEd/02+0J4EuBtTzZeH1vaVNY1LvLjidM00Rw8zDQizLkD/mtICG0VjYbkza6OatvW
- EMgLtYXIUPnfZFRP0C5U2nMEJ4BFWhMeDB9sv2w65j8yh6PV7IHzfROQ2Ap6XfRVhQWZ
- JWVtYqNI3fUzg5p1VS6YcLmhVXUF+ZJ5ZivwM8b8eQy60Tr7HNk+e22d4/ksODfbSWUc
- Ij1dvg6UdAeoiIYgcXEJMSyiz3UHnbAyc4RLRv8UjxHRgoNIQz/8UIdjA8gVgsjFKosk
- rTtA==
+	by mails.dpdk.org (Postfix) with ESMTP id 845BE40285;
+	Tue,  9 Sep 2025 22:02:48 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id E655340281
+ for <dev@dpdk.org>; Tue,  9 Sep 2025 22:02:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1757448166;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=HQVG65TJhRwGGPdlto7843w4+qjVeJB3RZqmzGwipZQ=;
+ b=KXFcezBqFsCDDrKIghQaFP4oIt431IpkXj1OQq5EDPrM9gsySQWK3daSn76qJvFlPpx+9A
+ DHrgluZH/hYvnYCDinCb+eXyEK2U5v8hLGUob4tvARNCZFinqokSBqzYVcmxFqwxvpkKZ7
+ n6GVge8+qz+WzYsFfJ+20Ar95fhVJRo=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-250-539cJ-2_MVOjD5hPKETiXw-1; Tue, 09 Sep 2025 16:02:44 -0400
+X-MC-Unique: 539cJ-2_MVOjD5hPKETiXw-1
+X-Mimecast-MFC-AGG-ID: 539cJ-2_MVOjD5hPKETiXw_1757448163
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-55f70a5c9fbso3574034e87.2
+ for <dev@dpdk.org>; Tue, 09 Sep 2025 13:02:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1757434652; x=1758039452;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=pC1rLhUqkQ8WYd1JJ8zuldIQ4OqE6neQrDusL+z/eII=;
- b=ZRvZthhXotZ9pIjlK7dJ68RVCX5TmlZpPCgvVQmjnsSLHMYTCSXvBykQRKasTYANbj
- BGwG6Lb5DRT2LmNE/xLcq8qnUAZTxxxXqiYVmDD69WykkIjJqAxRRr/4XZY2A2Pd+2MQ
- E8uVy6r01GqjQK2rgja2p7KjM4Kc7eyFPUsucQmP1rDnzy2Bn6eiBHMjRmEA8hgODpHh
- 5wjDTLMpgFibexWFS0aHaWlzxGmhiyo5GAFYiatCH9cyF3AfHezZu8T8tP/wpYDm32rF
- KuXf4p6e+etzs4/P1NwCym83SU4nZFjQW0RKwWK1NOoWbG4DMx894kGWRm4p3iBXq1ja
- 7Llw==
-X-Gm-Message-State: AOJu0YwrdTyvwxK/HQ5oEN12E4OGhuH4Jfq6uiv3xUSAtHWYWx6p8Lkw
- iLLG56nOuLhoz5Xce/lYahZ+fpsIHAIkgtTlnM08XR2gVtQf315FgRhgtfkUput+Ogg=
-X-Gm-Gg: ASbGncs1BrPRzNDnDUqVwlfvezJ1qWZmb146qJyUm+t8Dn4x0TEDMnwAMYjP/NqD4l4
- WnFeGy5eE4W0GGuM9qAmRxr67fott7Jopllm4fYu5lmb5voO673WGmyeeqds5o5Q1AdXWPDf6B6
- QpyEnLC0jD0oBK5U21IZ9OmIMbGCDfPkVtH1grvVrWybkQLVGrc98Bs+9uVGHMNBuoCFuwzZ4/m
- mO0EOnl0EfK62K7e3fI7yBbiaHF8JIqTK1QOx2rP7w2cfJhqPDoBkkkjxAo7TCktjBRu1xh+W3d
- waYS0Lin8Y5HkUnLqLWUg64I/VFxMRc4mRIot2+qzqyLRYFh4XfS35spIg6Sxt+5jsYaAfOTIQG
- rFZ7akm+MQW7R9U2m2iVgZR5OVUADajdpEQlq3f01F87kJTxsOM63Z0iBjPrGIM1zogUJ71Wf7o
- Y=
-X-Google-Smtp-Source: AGHT+IEVAt6BDyvK7o7sZlfUpi2tk8e44aBbAZdAc8n0DKGnYXo4ftQF0BKi91Oz3JnRzbzepXjImQ==
-X-Received: by 2002:a05:6000:2c05:b0:3de:293c:9377 with SMTP id
- ffacd0b85a97d-3e64ca76b1fmr10065563f8f.63.1757434651658; 
- Tue, 09 Sep 2025 09:17:31 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-45dda4f2a0dsm191559295e9.2.2025.09.09.09.17.29
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 09 Sep 2025 09:17:31 -0700 (PDT)
-Date: Tue, 9 Sep 2025 09:17:24 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Thierry Herbelot <thierry.herbelot@6wind.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, Devendra Singh
- Rawat <dsinghrawat@marvell.com>, Alok Prasad <palok@marvell.com>, Jerin
- Jacob <jerinj@marvell.com>, Olivier Matz <olivier.matz@6wind.com>, Edwin
- Brossette <edwin.brossette@6wind.com>, stable@dpdk.org
-Subject: Re: [V3] net/qede: reduce the optimization level for gcc > 11
-Message-ID: <20250909091724.2ea0615e@hermes.local>
-In-Reply-To: <20250909054023.3263401-1-thierry.herbelot@6wind.com>
-References: <20250908070414.1297844-1-thierry.herbelot@6wind.com>
- <20250909054023.3263401-1-thierry.herbelot@6wind.com>
+ d=1e100.net; s=20230601; t=1757448163; x=1758052963;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=HQVG65TJhRwGGPdlto7843w4+qjVeJB3RZqmzGwipZQ=;
+ b=tepHXRzoZMb6Q4qBFo74AZQT4hmS3/mv17MR2Idp7a3bnzlVAV93Jt0oHtiwxE/MTn
+ UXQVdmq5tddtimnc/3ygazK2ArP7RcPRHH5T0cLjI/F2Eaa5/MfAFhE+xOJ9g/rjjZ49
+ /34QsGJOsQKfOhlU6xtVrVwiGc7NOL47cvZDVliZPY6LAOBDwXuvAN6vvRn9LzC8177B
+ VTkMx3F2PfcbVhEX4OIyDZE9pmEooRSMkRFX/KfW2NnBVzFELVzqI1qyTYQB51P5/f3+
+ 15dd1Lh+3HgcckVPYxasWbgPpWgLNVPMBGvxMOpe4effkW0ETOfeIbsEzl0dvxA3xgHS
+ 03QQ==
+X-Gm-Message-State: AOJu0YwoyCxGsl1wcJm3dHLmgC8Qt9wVqkLIemBqq3Y3UgJRIWV+PuD6
+ X8Nm0yPQK5/KTM6sxCUjoGnbcBoViqlQ2qEy/kfGWOettum3YAA0USVsmXMusctIQvWerTzz6t+
+ WROVxIqJE5G6iF+SrD1Hek8VaQiA3sNzrK+m/rArPB68SqSGlJS5bK9zE5hpE/mfJKDC4igast/
+ f67s86+wglcIbYn2eBxSg=
+X-Gm-Gg: ASbGncsnJss3c9hlzR3lRTKMQTIqAADSQNS5vu7l28MdC7sBqNKf9a0OfkKV315p9OH
+ tIL4rrE4/kkqGFtzlo+NPlgauhCRR6wk5TwdOMWygGk/8X0cvZRM0ks5VuyQrAaQaEOCYo3m5SZ
+ iroJ1RnMgluXMjKotfLyE0e/M=
+X-Received: by 2002:a05:6512:1544:10b0:567:b11e:1d95 with SMTP id
+ 2adb3069b0e04-567b11e1fc2mr1370333e87.41.1757448162996; 
+ Tue, 09 Sep 2025 13:02:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxpinKtw0lKFgr9J9drMe7tota6lM26uoH5MmUeg1QmhSbvMXAc7PNpwpUeKR1RclSe6A6bOF9ScMDaTtv0T8=
+X-Received: by 2002:a05:6512:1544:10b0:567:b11e:1d95 with SMTP id
+ 2adb3069b0e04-567b11e1fc2mr1370315e87.41.1757448162509; Tue, 09 Sep 2025
+ 13:02:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1735243903-26857-1-git-send-email-andremue@linux.microsoft.com>
+ <1757433048-18537-1-git-send-email-andremue@linux.microsoft.com>
+In-Reply-To: <1757433048-18537-1-git-send-email-andremue@linux.microsoft.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 9 Sep 2025 22:02:30 +0200
+X-Gm-Features: Ac12FXwyTpR2p_VzOI_ltLYNT9qk-Z__dsR5z__d9a2y4JrSJmOuDj3u8NttSp4
+Message-ID: <CAJFAV8xSDBK2h-7xD2X6pS5MjSMhFE_f_1zWkRMjv4t4aWo6+Q@mail.gmail.com>
+Subject: Re: [PATCH v6 0/3] enable drivers to be compiled with MSVC
+To: Andre Muezerie <andremue@linux.microsoft.com>
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: hqbh6AAblODgTN3l1Ypvm93_FDbHxY_2grMXoGJCSR4_1757448163
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,48 +83,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue,  9 Sep 2025 07:40:23 +0200
-Thierry Herbelot <thierry.herbelot@6wind.com> wrote:
+On Tue, 9 Sept 2025 at 17:51, Andre Muezerie
+<andremue@linux.microsoft.com> wrote:
+>
+> This patchset solves the last issues preventing drivers from being
+> compiled with MSVC and enables drivers to be built with it.
+>
+> -v6:
+> - Remove temporary workaround for bug
+> (https://bugs.dpdk.org/show_bug.cgi?id=1758)
+> introduced in an earlier iteration.
+>
+> v5:
+> - Remove unnecessary parentheses from macros
+>
+> v4:
+> - Add explicit casts to avoid warnings in mlx5 driver
+> (https://bugs.dpdk.org/show_bug.cgi?id=1758).
+> - Add cast to drivers\net\mlx5\mlx5_rx.c to avoid warnings
+> about signed/unsigned comparison.
+>
+> v3:
+> - Add a patch to enable drivers to be compiled with MSVC.
+>
+> v2:
+> - Rebase on top of latest main.
+>
+> Andre Muezerie (3):
+>   app/test: remove use of non-standard array range initialization
+>   drivers/net: make code compatible with MSVC
+>   drivers: enable drivers to be compiled with MSVC
+>
+>  app/test/test_cryptodev_zuc_test_vectors.h | 156 ++++++++++++++++++++-
+>  drivers/common/mlx5/mlx5_malloc.h          |   4 +-
+>  drivers/meson.build                        |   4 -
+>  drivers/net/mlx5/mlx5_rx.c                 |   4 +-
+>  drivers/net/mlx5/mlx5_utils.c              |   4 +-
+>  drivers/net/octeon_ep/otx_ep_mbox.c        |  24 +++-
+>  6 files changed, 179 insertions(+), 17 deletions(-)
 
-> The qede PMD stopped working under Ubuntu-24.04 (using gcc-13) when
-> compiled with -O3 (default level for all DPDK code). A bug is opened
-> for this issue (see Link). The same issue is also seen with gcc-12
-> and gcc-14. The issue is not seen with clang-20.
-> 
-> A first workaround is to just disable all optimizations (-O0), which
-> restores packet Rx with Qlogic NICs. However, the performance impact
-> is not acceptable (around 50% drop).
-> 
-> A better compromise is to use -O1 for the qede PMD:
-> - there is some perf impact,
-> - but the PMD is working as expected (packets are correctly received).
-> 
-> When compiling with both -O2 and -O3 and gcc > 11, there is no packet
-> reception when using the qede PMD. The root cause could be missing
-> 'volatile' keywords or missing memory barriers in the qede PMD code.
-> 
-> Link: https://bugs.dpdk.org/show_bug.cgi?id=1379
-> Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
-
-Which rx_burst gets used on that hardware?
-
-Is there any indication of errors (like rx_mbuf_alloc_failed) in the stats.
-
-The driver does not appear to have any write barrier after updating the consumed packets.
-
-Would this help?
-diff --git a/drivers/net/qede/qede_rxtx.c b/drivers/net/qede/qede_rxtx.c
-index 25e28fd9f6..1b5109d966 100644
---- a/drivers/net/qede/qede_rxtx.c
-+++ b/drivers/net/qede/qede_rxtx.c
-@@ -1295,6 +1295,8 @@ static inline void qede_rx_bd_ring_consume(struct qede_rx_queue *rxq)
- {
-        ecore_chain_consume(&rxq->rx_bd_ring);
-        rxq->sw_rx_cons++;
-+
-+       rte_wmb();
- }
- 
+Series applied.
+Thanks Andre.
 
 
+
+-- 
+David Marchand
 
