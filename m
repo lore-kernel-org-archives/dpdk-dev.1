@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BA9CAC58C
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Sep 2025 07:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E27DFCA0FED
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Sep 2025 08:08:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C4FC40BA6;
-	Tue,  9 Sep 2025 09:33:21 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.221])
- by mails.dpdk.org (Postfix) with ESMTP id 198F940B8F
- for <dev@dpdk.org>; Tue,  9 Sep 2025 09:33:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=V81enEQVn1SrallO5bV83rrg68JXoxx4FoGYxFq//ps=;
- b=aQwoRX6vL/NZyAhVr1Wvp1Y/YNTNIDlEAqDHSDQHWVgGPkucuExMLWxzNqHFeX
- vlO/ajDfCdywDpwekCpBsNKcEYAbQp/Kr+qNkj1D8LWEXeNXL9C/7L21QG/ZOvyR
- s/sONFqC1e6Yv+IAP7vuRrWaNaGdRkTesshgk2RQmVrkk=
-Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp1 (Coremail) with SMTP id Ac8vCgAXb4cZ2L9oEBzOAQ--.47637S21;
- Tue, 09 Sep 2025 15:33:11 +0800 (CST)
-From: Feifei Wang <wff_light@vip.163.com>
-To: dev@dpdk.org
-Cc: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
- Feifei Wang <wangfeifei40@huawei.com>
-Subject: [V9 17/17] drivers/net: add hinic3 PMD build and doc files
-Date: Tue,  9 Sep 2025 15:31:45 +0800
-Message-ID: <20250909073157.14968-18-wff_light@vip.163.com>
-X-Mailer: git-send-email 2.47.0.windows.2
-In-Reply-To: <20250909073157.14968-1-wff_light@vip.163.com>
-References: <20250418090621.9638-1-wff_light@vip.163.com>
- <20250909073157.14968-1-wff_light@vip.163.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgAXb4cZ2L9oEBzOAQ--.47637S21
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAFWxKryDCFWrAF1UGrWDXFb_yoWrWF4Upw
- 43A34fKr9rG3y2qwnxtw1UAr4rXw4vkFWUu397GFyruF98Cr10vw4Utay0v39rJ345ZFyf
- ZF1YvryakF1jqwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j8189UUUUU=
-X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiHh7DCmi-l37gpwAAsw
+	by mails.dpdk.org (Postfix) with ESMTP id 08BB5402D3;
+	Tue,  9 Sep 2025 10:08:27 +0200 (CEST)
+Received: from lf-1-15.ptr.blmpb.com (lf-1-15.ptr.blmpb.com [103.149.242.15])
+ by mails.dpdk.org (Postfix) with ESMTP id 28AD840281
+ for <dev@dpdk.org>; Tue,  9 Sep 2025 10:08:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=feishu2403070942; d=yunsilicon.com; t=1757405299; h=from:subject:
+ mime-version:from:date:message-id:subject:to:cc:reply-to:content-type:
+ mime-version:in-reply-to:message-id;
+ bh=y6h8s/4rr8Qan9c0BlM2q1cdn6K0M+XV3ImfmWfOIpw=;
+ b=arUvWk5bQG71PSyBF23mLDYP+GqKOpF06r3t1RZWXVe/KxbcFdkHYdXOoZS6qmuuGKiiuy
+ o2ByZcFw+lNv+WqslkI4BiemfNYOzSKvQqp6bbj0jeUl4Ej40b/SUrXfKaYNZdQgHODK5x
+ RTRt18zxQxfFt25TEokbMviqLGL+MRKCS81+OEvDeCx0qKA2BB0Pc4nMlKXabpnrjPy6eA
+ 5nj25zM75yebMinEYZqsukWrJ+isRRCFkTm05OUo3zUGJgdG2K4RS8TDEkjPLZ9InkLre4
+ XbA5yRoE43QTskjfMb8hncrltPoTUYBR/NU9n2hPRqgB+ov1PwTeFtOosH4tDQ==
+Message-Id: <f50263c8-895e-4878-962e-f888f599bd90@yunsilicon.com>
+User-Agent: Mozilla Thunderbird
+In-Reply-To: <20250909070427.2711048-1-david.marchand@redhat.com>
+Received: from [127.0.0.1] ([58.34.192.114]) by smtp.feishu.cn with ESMTPS;
+ Tue, 09 Sep 2025 16:08:15 +0800
+Content-Type: text/plain; charset=UTF-8
+X-Lms-Return-Path: <lba+268bfe071+5ed429+dpdk.org+wanry@yunsilicon.com>
+Cc: <thomas@monjalon.net>, "Na Na" <nana@yunsilicon.com>, 
+ "Rong Qian" <qianr@yunsilicon.com>, 
+ "Xiaoxiong Zhang" <zhangxx@yunsilicon.com>, 
+ "Dongwei Xu" <xudw@yunsilicon.com>
+From: "Renyong Wan" <wanry@yunsilicon.com>
+Subject: Re: [PATCH] net/xsc: fix use after free in some RXQ cleanup
+Date: Tue, 9 Sep 2025 16:08:14 +0800
+To: "David Marchand" <david.marchand@redhat.com>, <dev@dpdk.org>
+X-Original-From: Renyong Wan <wanry@yunsilicon.com>
+Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250909070427.2711048-1-david.marchand@redhat.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,165 +52,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Yi Chen <chenyi221@huawei.com>
+Thanks David for catching this issue.
+We'll address it in the 25.11 release.
 
-The hinic3.ini file and hinic3.rst file are added to this patch.
+On 2025/9/9 15:04, David Marchand wrote:
+> Debian 12 gcc complains about a use after free in this cleanup section.
+>
+> [7/11] Compiling C object drivers/libtmp_rte_net_xsc.a.p/net_xsc_xsc_rx.c.o
+> In function 'xsc_rss_qp_create',
+>      inlined from 'xsc_rxq_rss_obj_new' at ../drivers/net/xsc/xsc_rx.c:565:8:
+> ../drivers/net/xsc/xsc_rx.c:501:9: warning: pointer 'req' may be used after
+> 	'free' [-Wuse-after-free]
+>    501 |         free(req);
+>        |         ^~~~~~~~~
+> ../drivers/net/xsc/xsc_rx.c:501:9: note: call to 'free' here
+>
+> Indeed, req may be free'd twice, as an error in the cleanup loop may
+> jump back to the set_qp_fail label.
+>
+> Instead, skip the erroneous rxq and don't touch errno since all the code
+> jumping to set_qp_fail already sets it.
+>
+> Fixes: 3991c890fb4c ("net/xsc: optimize RSS queue creation")
+>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
+>   drivers/net/xsc/xsc_rx.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/net/xsc/xsc_rx.c b/drivers/net/xsc/xsc_rx.c
+> index 5f8003a1f6..5ff3f818c2 100644
+> --- a/drivers/net/xsc/xsc_rx.c
+> +++ b/drivers/net/xsc/xsc_rx.c
+> @@ -502,10 +502,8 @@ xsc_rss_qp_create(struct xsc_ethdev_priv *priv, int port_id)
+>   	for (i = 0; i < set_last_no; i++) {
+>   		xsc_unset_qp_info(xdev, rqn_base + i);
+>   		rxq_data = xsc_rxq_get(priv, i);
+> -		if (rxq_data == NULL) {
+> -			rte_errno = EINVAL;
+> -			goto set_qp_fail;
+> -		}
+> +		if (rxq_data == NULL)
+> +			continue;
+>   		rte_memzone_free(rxq_data->rq_pas);
+>   		rxq_data->rq_pas = NULL;
+>   	}
 
-Signed-off-by: Yi Chen <chenyi221@huawei.com>
-Reviewed-by: Xin Wang <wangxin679@h-partners.com>
-Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
----
- MAINTAINERS                         |  1 +
- doc/guides/nics/features/hinic3.ini | 60 +++++++++++++++++++++++++++++
- doc/guides/nics/hinic3.rst          | 47 ++++++++++++++++++++++
- drivers/net/meson.build             |  1 +
- 4 files changed, 109 insertions(+)
- create mode 100644 doc/guides/nics/features/hinic3.ini
- create mode 100644 doc/guides/nics/hinic3.rst
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index be7c815f11..80c43e8465 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -783,6 +783,7 @@ Huawei hinic3
- M: Feifei Wang <wangfeifei40@huawei.com>
- F: drivers/net/hinic3/
- F: doc/guides/nics/hinic3.rst
-+F: doc/guides/nics/features/hinic3.ini
- 
- Intel Network Common Code
- M: Bruce Richardson <bruce.richardson@intel.com>
-diff --git a/doc/guides/nics/features/hinic3.ini b/doc/guides/nics/features/hinic3.ini
-new file mode 100644
-index 0000000000..50012ca696
---- /dev/null
-+++ b/doc/guides/nics/features/hinic3.ini
-@@ -0,0 +1,60 @@
-+;
-+; Supported features of the 'hinic3' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Speed capabilities   = Y
-+Link speed configuration = Y
-+Link status          = Y
-+Link status event    = Y
-+Rx interrupt         = Y
-+Queue start/stop     = Y
-+Runtime Rx queue setup = Y
-+Runtime Tx queue setup = Y
-+Burst mode info      = Y
-+Fast mbuf free       = Y
-+Free Tx mbuf on demand = Y
-+MTU update           = Y
-+Scattered Rx         = Y
-+TSO                  = Y
-+LRO                  = Y
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+Multicast MAC filter = Y
-+RSS hash             = Y
-+RSS key update       = Y
-+RSS reta update      = Y
-+VLAN filter          = Y
-+Flow control         = Y
-+Traffic manager      = Y
-+CRC offload          = Y
-+FEC                  = Y
-+L3 checksum offload  = Y
-+L4 checksum offload  = Y
-+Inner L3 checksum    = Y
-+Inner L4 checksum    = Y
-+Packet type parsing  = Y
-+Basic stats          = Y
-+Extended stats       = Y
-+Stats per queue      = Y
-+FW version           = Y
-+Registers dump       = Y
-+Timesync             = Y
-+Multiprocess aware   = Y
-+Linux                = Y
-+x86-64               = Y
-+ARMv8                = Y
-+
-+[rte_flow items]
-+any                  = Y
-+eth                  = Y
-+icmp                 = Y
-+ipv4                 = Y
-+ipv6                 = Y
-+tcp                  = Y
-+udp                  = Y
-+vxlan                = Y
-+[rte_flow actions]
-+queue                = Y
-diff --git a/doc/guides/nics/hinic3.rst b/doc/guides/nics/hinic3.rst
-new file mode 100644
-index 0000000000..0eebcf0723
---- /dev/null
-+++ b/doc/guides/nics/hinic3.rst
-@@ -0,0 +1,47 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright(c) 2025 Huawei Technologies Co., Ltd
-+
-+HINIC3 Poll Mode Driver
-+=======================
-+
-+The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
-+for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.
-+
-+Features
-+--------
-+
-+- Multi arch support: x86_64, ARMv8.
-+- Multiple queues for TX and RX
-+- Receiver Side Scaling (RSS)
-+- flow filtering
-+- Checksum offload
-+- TSO offload
-+- Promiscuous mode
-+- Port hardware statistics
-+- Link state information
-+- Link flow control
-+- Scattered and gather for TX and RX
-+- Allmulticast mode
-+- MTU update
-+- Multicast MAC filter
-+- Flow API
-+- Set Link down or up
-+- VLAN filter and VLAN offload
-+- SR-IOV - Partially supported at this point, VFIO only
-+- FW version
-+- LRO
-+
-+Prerequisites
-+-------------
-+
-+- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>` to setup the basic DPDK environment.
-+
-+Driver compilation and testing
-+------------------------------
-+
-+Refer to the document :ref:`compiling and testing a PMD for a NIC <pmd_build_and_test>`
-+for details.
-+
-+Limitations or Known issues
-+---------------------------
-+X86-32, Windows, and BSD are not supported yet.
-diff --git a/drivers/net/meson.build b/drivers/net/meson.build
-index 61f8cddb30..2d32068ed2 100644
---- a/drivers/net/meson.build
-+++ b/drivers/net/meson.build
-@@ -23,6 +23,7 @@ drivers = [
-         'failsafe',
-         'gve',
-         'hinic',
-+        'hinic3',
-         'hns3',
-         'intel/e1000',
-         'intel/fm10k',
 -- 
-2.47.0.windows.2
-
+Best regards,
+Renyong Wan
