@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DC5CA0FED
-	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Sep 2025 06:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F68ECAC587
+	for <dpdk-dev@archiver.kernel.org>; Tue,  9 Sep 2025 06:29:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E839340281;
-	Tue,  9 Sep 2025 08:29:28 +0200 (CEST)
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com
- (mail-mw2nam10on2065.outbound.protection.outlook.com [40.107.94.65])
- by mails.dpdk.org (Postfix) with ESMTP id 22E0340270;
- Tue,  9 Sep 2025 08:29:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2302E402F1;
+	Tue,  9 Sep 2025 08:29:39 +0200 (CEST)
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com
+ (mail-bn8nam11on2070.outbound.protection.outlook.com [40.107.236.70])
+ by mails.dpdk.org (Postfix) with ESMTP id 871D640270;
+ Tue,  9 Sep 2025 08:29:37 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Dbqv+OSUZliq5bXLWuxY+lGkJ/u6TOg9gQn3oP+Ib9JdRq5o7RK+STDR6T1cCK/jMpOwq4xJIlln1xiRuKOiU1njdTFMXDW6e/8YNv84i4hOhNNEDfew2HOBi9mxFDJBLiDky9TcvvZn19zby2gITi3/KQIZR/EE41tvWdYLgzqI72ZSjfJWUzWPdeO81b7h81HsWZ1k9Olj/kES4Q14xWA+UEq+vJgOriVf9PE8JeplUbPWoSOTxCqr0/NcaoubX9f2Ws60zZEMAuW5eO82RYlS9ILWUUnmgMjdCxc/eFxT/LEInv1lrwzbrKOSroor2OCd4oHeb0r8/wFCEKsz+Q==
+ b=wqs/HljDdWb4TnbLeSn8cWizpI9MfuvZCYF8/rkks2iGQQWdimfB98lm9ZN+2wB8UYc4Pebe6PjI/LOBk8Z5Id30LT1GpHauQ5xDLkGBx1pr5nowOj8r/IWs8GEwiDhgZXc54FEKlO5Bxt5sd4S+UDCslqps6xjIGfzGUcwuK+Ezn6cycte5+m3aO3R+zXS2jmlhQ3jUAG+/iivTnscJJEddgVWMDk2c8RLfDfFY8QE94Vz33K6c9fIs/YYsV2HDJtX8+uYwNxwhnIAtEI1IzDWvn2sAt/gL8GL5QkMBXXniHa8VyRuyYAI1fQQcsaMvXnbVe35DTnkkcswKCFfTvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Cg+l6/GNTzaVywYqIK7Kun9K3EXlJ7rLOHCt8+zZdJg=;
- b=EGepe7qmVxGkBrra7VthPTLDKmxjBqL2KWPAn5qOWxDpCoyNq9rbuI0cso5CyhJgvB/azVvkaQsuaj+48k1NHGftxQT8ewdkd2vYb8cTIS1PQpC+wulEPf6ko6mZOgzSjEJav7kgh50M/6L0P68PQBvgXg3144x7mXeWEVao0jowPOh9ZuqexJOhuxrEEJr9gRUxos/uHAx53X2nQUbQM83aY4ml7aNBJrSj2UFYpkFfWr1ffGUZy8Oj74kg6R0DhJf1crZetldaqcSGoWqhBjNM2Qw6fPn4q+AKjT3VcmgEoyN3g71wA/PcSxB72JeYuoDDkxCap/R3acZXrtMzdw==
+ bh=BT9kQCosz/6SsX9YuJVvUXjDvJrwswaIbLEGITNIyRE=;
+ b=ETIdLvXywadGoymIo1n9RTRDVCuhwCKU64bDMS0Gdx4Xtrcgam1kq3e0JU6QKxJEilBr4dNa/fEkUWntd5ZuvCE0ZPaO2ROpw9Y/GDy+xAU9dzmrDVz3/8GqaLHAv11j6zIfRnPy4ZlFQfbX048tJWjgUA4vhk0W7uRuAo48IerewleNnYBnjlqkFtpwUUar6qOCvIz0iDQYfOvQJ3Dq8v2uCwxPbJVBut9ekE1YyeDsfmoQTMDpwhv/ZsSVZ98jzxOTfC9taTxdGQLA7dE6xuMhzXIzvQ2rpQFOLml/oUrycUEDXvE7z2tW5RoLkooro8CNeFdeO/7NjGMnM/M17A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Cg+l6/GNTzaVywYqIK7Kun9K3EXlJ7rLOHCt8+zZdJg=;
- b=cWnbtWZb+3a9coGyqfZXmTZmIgiGpFJSTEVca06TJV/qfpgbNEQUBV2HpOt6qYpX3piT0wj0XMZkaNQXfbAemD/uFcLh/M87mKlaTvz3JOPQVN9MldUQ2JN/ZggGszTmjt8xaEgw3FOIE2Mb+RtqF3LF4JIUy5Duggr7jMy/hyeSjoBu76tdyGS+OVCZyN6ea/zg4dTBaBaV4U6fTetCObScYNjCe6ScoLY3EK4Gcqzao/FFzYrDmzCmDFc3k6f3LoI0TLVifUw6obJA661mLchmSy0fgIbjfGrYD8T+DxWHWaL0rZW4Hb29qV1lo8xGKOhdmY9SyAdIitm9RFMU6Q==
-Received: from BY3PR04CA0019.namprd04.prod.outlook.com (2603:10b6:a03:217::24)
- by SA1PR12MB8967.namprd12.prod.outlook.com (2603:10b6:806:38b::11)
+ bh=BT9kQCosz/6SsX9YuJVvUXjDvJrwswaIbLEGITNIyRE=;
+ b=mNiyw6RTDclncNL2eybKQbfNgSmJcthdFJSIlK6Gu76FhfzsJK4Uml8ypZI1AAg7UidLWnFNB7X+5BfCCQ76HkHi0RqWz922k/zNw5QCEQPyaj51lA3cp0F16cJlqAghZCx0O+6UDNiArQSvStowiOucf+N+/zWo/KsxJV24knK2GscVIq2qaP28oljYSa/Pi2uDmSGZ9RcFKAtpw/68s02QKNlUadhFOAbceP0FJl6/zfM5ZAFvieTEPNHyY2sjinauB2jTZMVRdfGeY0rKyKtCEblJhCs1sELpxUH6M+s3D4IA/qJ/+HllpPrZkw6mZj16vIxQ1C61OkrJwDwmNQ==
+Received: from SJ0PR13CA0035.namprd13.prod.outlook.com (2603:10b6:a03:2c2::10)
+ by IA1PR12MB6305.namprd12.prod.outlook.com (2603:10b6:208:3e7::16)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 9 Sep
- 2025 06:29:24 +0000
-Received: from SJ5PEPF000001CD.namprd05.prod.outlook.com
- (2603:10b6:a03:217:cafe::50) by BY3PR04CA0019.outlook.office365.com
- (2603:10b6:a03:217::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.22 via Frontend Transport; Tue,
- 9 Sep 2025 06:29:23 +0000
+ 2025 06:29:32 +0000
+Received: from SJ5PEPF000001CA.namprd05.prod.outlook.com
+ (2603:10b6:a03:2c2:cafe::ed) by SJ0PR13CA0035.outlook.office365.com
+ (2603:10b6:a03:2c2::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.13 via Frontend Transport; Tue,
+ 9 Sep 2025 06:29:29 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
@@ -45,85 +45,86 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- SJ5PEPF000001CD.mail.protection.outlook.com (10.167.242.42) with Microsoft
+ SJ5PEPF000001CA.mail.protection.outlook.com (10.167.242.39) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Tue, 9 Sep 2025 06:29:23 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ 15.20.9115.13 via Frontend Transport; Tue, 9 Sep 2025 06:29:31 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 8 Sep
- 2025 23:29:02 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 23:29:08 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 8 Sep
- 2025 23:29:01 -0700
+ 2025 23:29:07 -0700
 Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Mon, 8 Sep 2025 23:28:57 -0700
+ Transport; Mon, 8 Sep 2025 23:29:04 -0700
 From: Maayan Kashani <mkashani@nvidia.com>
 To: <dev@dpdk.org>
 CC: <mkashani@nvidia.com>, <dsosnowski@nvidia.com>, <rasland@nvidia.com>,
  Viacheslav Ovsiienko <viacheslavo@nvidia.com>, <stable@dpdk.org>, Matan Azrad
  <matan@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, 
- Suanming Mou <suanmingm@nvidia.com>, Hamdan Igbaria <hamdani@nvidia.com>
-Subject: [PATCH v2 1/3] net/mlx5: fix ESP header match in strict mode
-Date: Tue, 9 Sep 2025 09:28:51 +0300
-Message-ID: <20250909062853.60592-1-mkashani@nvidia.com>
+ Suanming Mou <suanmingm@nvidia.com>, Raja Zidane <rzidane@nvidia.com>
+Subject: [PATCH v2 2/3] net/mlx5: fix ESP item validation to match on seqnum
+Date: Tue, 9 Sep 2025 09:28:52 +0300
+Message-ID: <20250909062853.60592-2-mkashani@nvidia.com>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20250804050514.244896-1-viacheslavo@nvidia.com>
+In-Reply-To: <20250909062853.60592-1-mkashani@nvidia.com>
 References: <20250804050514.244896-1-viacheslavo@nvidia.com>
+ <20250909062853.60592-1-mkashani@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CD:EE_|SA1PR12MB8967:EE_
-X-MS-Office365-Filtering-Correlation-Id: bd4237e3-7807-4e51-abf0-08ddef6a37c5
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CA:EE_|IA1PR12MB6305:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54cbbc53-260d-45df-1319-08ddef6a3c68
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|1800799024|376014|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Kxx/TBsN8/r25cGbzQKkev5Q2LzuOQ3cbIM16ga6Dj2SEHH7z05LlEYJBeGy?=
- =?us-ascii?Q?/0NpKkYXdwZIyQtqYL+UBSodINidVYm7RW/O7Za66XKRq45hBaL5UhlEiggr?=
- =?us-ascii?Q?5tcZhI7d8ph7Q2HsyTuQr899eo1I7l+UDwkv3u2hjp53HkH81dZQgX/jPqwP?=
- =?us-ascii?Q?tg3H+anWtM+wvf6QsUYQItFdANpc1ZNhf3sWmSLa+AOpLjtILEbRuGryOrSN?=
- =?us-ascii?Q?S2byo20AVjemSDLcRZrT1a67dGPM2VMo14KwD2RQz+mYZcCKiVx/wAlY3Um4?=
- =?us-ascii?Q?QzCphRJnfOr9aKSVSFyWTxC3HFCO1mm4HECqB49rVBgCr10ubYxo55GEj4Qc?=
- =?us-ascii?Q?UVNkceDfSvOGXAJ8ZwWVtmdSTs0AgeC6yODTUOvci16x8M7gvt5O7rz9S5ui?=
- =?us-ascii?Q?qIo1B0BbiMuMhWIzpYOMkFFuylA9gkNuMETXp2PLt78rhxa9RPKnSrbiKLb4?=
- =?us-ascii?Q?TyeMD4n6I5bn2gune5SiahTH2ncnQSmTNnAVraGGA+WFC8wd5N3nMKlvc7ar?=
- =?us-ascii?Q?LZnh6hpDy/FEdC5jp0twkHlKCzou4wjJyhvrWlc/rTvwKo6wsUxQKhOOQnaD?=
- =?us-ascii?Q?9HXNZaqu8ghV84aMtkexhbE8npApDRgKuqUM1GKhK2Ay70OEcJGQrdXbjcQG?=
- =?us-ascii?Q?FzkgGAcBdWWTykfd2gvBLp4RsBYcwOeXHGciQ8bJ2biowmAdtzTi1TLHhkdx?=
- =?us-ascii?Q?rL2HkV1TwyPO5sXUAj75N7IoEmUsZiXVUQwFOBThvN349bZ8VS+3HDpP6ou9?=
- =?us-ascii?Q?KsCtHHnv8DjIevuFS/EtdeHSf5KrNO3OOoOuHVMqVmlJRxyhBCz0+eqnKn5k?=
- =?us-ascii?Q?2wN/ASE39PIM0p29UaBDWzn99QIQ73NeVqaWikb5gV3wcqHouzKTuhuoP54G?=
- =?us-ascii?Q?6yMIoxUJMPtnG1efEBicHXB7N4ZgymX3/UOfcsulUknNcdDmdafgRv5oK0gO?=
- =?us-ascii?Q?gUum4FRXx3WWankXuvhNsm60GAxLkIF8U/XmeQxIc+BDR97gLqThMs7Ped+V?=
- =?us-ascii?Q?nF6PuANT6/meiaewklCeo760hfto+tlknCeD8kd0fUnbx/S0posusd0gH2Pq?=
- =?us-ascii?Q?htAxrGwq80fvINHC5oQ7HetvviAbkxHYlyIHTDNs9umoyEDry6o6P6/9DB7F?=
- =?us-ascii?Q?xi6Bkaztkyp6snh9VPlFtqCiacEiEsao+Ty4o74CtWL0fr0Pncz68Iy+Qox3?=
- =?us-ascii?Q?yjAks6h93bLTlQckJkbh3QX2oO+DWzcH6+tQxEUy1l/CxX7I+a12gIQZOYFO?=
- =?us-ascii?Q?dO/xKWsWIolGWSp4Tu48Z/OibSzSsl9sxAMS+uYHjHuu0hHxpO22VPRgxYMk?=
- =?us-ascii?Q?9lKm0FECIZr7CL1Gl5R7Dx1qMAfWsWnNiJk5C1bxUrKCQwLk9az4/vLDKEjK?=
- =?us-ascii?Q?2a7s1SZJhV3sRZBYKvVdgq+bgY28pglGzd1P/UNv+vPOdQ/UiY+/mhDyvsvs?=
- =?us-ascii?Q?5eUloNXnbyraLAmJS3Z9mFKjgr70s7WTkk9NR905h+1R8iMWanWPPc+Elvwd?=
- =?us-ascii?Q?5/eLFEU3LbOFJp2+cdVpgVQLHFn7HeWbp+tp?=
+ ARA:13230040|1800799024|36860700013|82310400026|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VAOZLmu3hdyUmsz3XD6zbVAdiOu5id93J1NhDUDPdFJ2luoWVerIfWd6Paq4?=
+ =?us-ascii?Q?h5EuLmYuL7amCjesVtEbqk0tIzdv/OHvzXSVgeGwzi+2YPkRIABaX3vuZjDs?=
+ =?us-ascii?Q?7vR05Eb1N4XJ/bvmnWK0OsbiZR6MZDddufHaZNRKOa02d8tamkbvgr1zAM1c?=
+ =?us-ascii?Q?Up7k7f7Gwt67yjk19j60nbD3Kh7u79hLeLBtRnWJKfMyVtLx5+Va97SBmYQ9?=
+ =?us-ascii?Q?wGNjiocKXAlGf3bgp+VQYGpX3HmN2YAgpBT8O66BPD609toI+KIJXZCj9xnv?=
+ =?us-ascii?Q?3QD4M+jK/9kmRP8O96dWqS4ryAwMkEsETJE4q7AbKDB72HCNhHCAIE2s4S2L?=
+ =?us-ascii?Q?HLNZcrIxvBkA9cXRCy10/RUiowrwp0Nxi2xl35yAwcd56a8XSyjDslp65h4C?=
+ =?us-ascii?Q?prwk7BeHyAr1nw3QzWBR1o8mjpNS1P2R+IfDEjh3x8IsWkc9bsSMmWE7btYb?=
+ =?us-ascii?Q?Kwu4Q4lvpGzGnaJhBRbdeJ+//8QcWi18hFr0fy1cUD8QvHIuUolaaMrv/wMQ?=
+ =?us-ascii?Q?RV9ajx+wg44ciOIURtSPdxHapCY0px8+nu7ifocFbe+1umoojUwRBkGG1xi8?=
+ =?us-ascii?Q?8JeahkLL3yFxD1uaLEvNWfwxcFC8KHT7Wk0Wwpd/qwkDMTKWEoHDSuODfXR7?=
+ =?us-ascii?Q?7CFGshrBCmb+ZuGlrfO/YvsCWbYMpZacLbq4btHBQzIkEjIte7MX3Bzljrzi?=
+ =?us-ascii?Q?w0qIQa0uV84jS2iG3MBxi2mCqnPQ+W9prQjEl9weVftWnZt3KAEyw870wE2h?=
+ =?us-ascii?Q?lJhcNbO31l0l08VaM4ZMV3APYYrGicKlCGVFOuMgNZI7FJgXz6M0gS80Tsn3?=
+ =?us-ascii?Q?Gn0MaAez2RBMFN+ngPXIKTMY8wp9+taJ5UpblWLxnMqMIAiJGi1V3MpQeaAY?=
+ =?us-ascii?Q?z6DFJGJ1Oj1+AJSRfWbgI7inqTybAW2Q79z84XadNDe+lBVlKEzX5PeFQZ8/?=
+ =?us-ascii?Q?m9hAEyOG0PwAwhd57PWElZRBls3774a5/oHAg+fX5/5lBUPrVq2eBOAtSKea?=
+ =?us-ascii?Q?idcEhviHZtQKc8cCKMC9Hf30Tt+GD00H+W4TqWFCfsiz2XgiuO9sKhj4zlC2?=
+ =?us-ascii?Q?lPN8UgZ/Y3UdFOUOjjPXhQMzZixWPp4wmnB9VLPTGTaIM1NFyGq3mWGeBMoi?=
+ =?us-ascii?Q?/+sTV6Rs0CFMkbL/UIs52nuM06Sfupx04++DCEBhOxswMaJ7LWVMfYe2pGP2?=
+ =?us-ascii?Q?8QRl5f8S7e+NqnpTozS7tAvqE9vbwC/NhIT4oDiAmTw7dnLIjYFw+HMYIVIo?=
+ =?us-ascii?Q?/F1UsmD7kVjWDDOv11a79aHUIbyLohyXQOAjqHrvDNMwSt6pekU57x6ljXul?=
+ =?us-ascii?Q?r8zAOXZXZYVb65pXVG5Uqzf5XUP4r114pQxOukHmGnfOCfd54+KD236HRTJ9?=
+ =?us-ascii?Q?Phr4vebp68StFnncsSg5CFVdm0K53LmiXSVhDXWEKUQlZAjF8XSmoFyb7HmJ?=
+ =?us-ascii?Q?1ysu+42VbWHysx05yXr/ggecyVb0qDBgVRpmf0XfWwWnvuioUNYfC3oQP4DL?=
+ =?us-ascii?Q?f7ZKmYUsOdF6ZPAr5vtgR06FsKygoDubM49a?=
 X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013); DIR:OUT;
+ SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014); DIR:OUT;
  SFP:1101; 
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 06:29:23.5674 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd4237e3-7807-4e51-abf0-08ddef6a37c5
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2025 06:29:31.4433 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54cbbc53-260d-45df-1319-08ddef6a3c68
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF000001CD.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF000001CA.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8967
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6305
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -139,77 +140,190 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
 
-The pattern like "eth / ipv6 / esp / end" matched on any IPv6
-packet in strict mode, because there was no implicit match on the
-IP.proto forced.
+The match on ESP sequence number is supported by hardware
+steering implementation but was rejected in validation
+routine shared by all steering engines.
 
-This patch adds the implicit match on IP.proto with value 50 (ESP)
-and adds implicit match on UDP.dport with value 4500 for the case
-ESP over UDP.
+This patch allows validation to pass with requested match on
+ESP sequence number for hardware steering engine.
 
-Fixes: 81cf20a25abf ("net/mlx5/hws: support match on ESP item")
+Fixes: fb96caa56aab ("net/mlx5: support ESP item on Windows")
 Cc: stable@dpdk.org
 
 Signed-off-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
 Acked-by: Matan Azrad <matan@nvidia.com>
 ---
- drivers/net/mlx5/hws/mlx5dr_definer.c | 29 +++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ drivers/net/mlx5/linux/mlx5_flow_os.c   | 10 +++++++++-
+ drivers/net/mlx5/linux/mlx5_flow_os.h   |  3 +++
+ drivers/net/mlx5/mlx5_flow_dv.c         |  6 ++----
+ drivers/net/mlx5/mlx5_flow_hw.c         |  5 ++---
+ drivers/net/mlx5/mlx5_flow_verbs.c      |  6 ++----
+ drivers/net/mlx5/windows/mlx5_flow_os.c | 10 +++++++++-
+ drivers/net/mlx5/windows/mlx5_flow_os.h |  3 +++
+ 7 files changed, 30 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/mlx5/hws/mlx5dr_definer.c b/drivers/net/mlx5/hws/mlx5dr_definer.c
-index 7464d953739..02eba861bc5 100644
---- a/drivers/net/mlx5/hws/mlx5dr_definer.c
-+++ b/drivers/net/mlx5/hws/mlx5dr_definer.c
-@@ -14,6 +14,7 @@
- #define UDP_VXLAN_PORT	4789
- #define UDP_VXLAN_GPE_PORT	4790
- #define UDP_GTPU_PORT	2152
-+#define UDP_ESP_PORT	4500
- #define UDP_PORT_MPLS	6635
- #define UDP_GENEVE_PORT 6081
- #define UDP_ROCEV2_PORT	4791
-@@ -231,6 +232,8 @@ struct mlx5dr_definer_conv_data {
- 	X(SET_BE16,	nvgre_protocol,		v->protocol,		rte_flow_item_nvgre) \
- 	X(SET_BE32P,	nvgre_dw1,		&v->tni[0],		rte_flow_item_nvgre) \
- 	X(SET,		meter_color,		rte_col_2_mlx5_col(v->color),	rte_flow_item_meter_color) \
-+	X(SET,		ipsec_protocol,		IPPROTO_ESP,		rte_flow_item_esp) \
-+	X(SET,		ipsec_udp_port,		UDP_ESP_PORT,		rte_flow_item_esp) \
- 	X(SET_BE32,     ipsec_spi,              v->hdr.spi,             rte_flow_item_esp) \
- 	X(SET_BE32,     ipsec_sequence_number,  v->hdr.seq,             rte_flow_item_esp) \
- 	X(SET,		ib_l4_udp_port,		UDP_ROCEV2_PORT,	rte_flow_item_ib_bth) \
-@@ -2930,6 +2933,32 @@ mlx5dr_definer_conv_item_esp(struct mlx5dr_definer_conv_data *cd,
- 	const struct rte_flow_item_esp *m = item->mask;
- 	struct mlx5dr_definer_fc *fc;
+diff --git a/drivers/net/mlx5/linux/mlx5_flow_os.c b/drivers/net/mlx5/linux/mlx5_flow_os.c
+index af8c02c38b8..777125e9a87 100644
+--- a/drivers/net/mlx5/linux/mlx5_flow_os.c
++++ b/drivers/net/mlx5/linux/mlx5_flow_os.c
+@@ -18,6 +18,7 @@ mlx5_flow_os_validate_item_esp(const struct rte_eth_dev *dev,
+ 			       const struct rte_flow_item *item,
+ 			       uint64_t item_flags,
+ 			       uint8_t target_protocol,
++			       bool allow_seq,
+ 			       struct rte_flow_error *error)
+ {
+ 	const struct rte_flow_item_esp *mask = item->mask;
+@@ -26,6 +27,12 @@ mlx5_flow_os_validate_item_esp(const struct rte_eth_dev *dev,
+ 				      MLX5_FLOW_LAYER_OUTER_L3;
+ 	const uint64_t l4m = tunnel ? MLX5_FLOW_LAYER_INNER_L4 :
+ 				      MLX5_FLOW_LAYER_OUTER_L4;
++	static const struct rte_flow_item_esp mlx5_flow_item_esp_mask = {
++		.hdr = {
++			.spi = RTE_BE32(0xffffffff),
++			.seq = RTE_BE32(0xffffffff),
++		},
++	};
+ 	int ret;
  
-+	/* To match on ESP we must match on ip_protocol and optionally on l4_dport */
-+	if (!cd->relaxed) {
-+		bool over_udp;
-+
-+		fc = &cd->fc[DR_CALC_FNAME(IP_PROTOCOL, false)];
-+		over_udp = fc->tag_set == &mlx5dr_definer_udp_protocol_set;
-+
-+		if (over_udp) {
-+			fc = &cd->fc[DR_CALC_FNAME(L4_DPORT, false)];
-+			if (!fc->tag_set) {
-+				fc->item_idx = item_idx;
-+				fc->tag_mask_set = &mlx5dr_definer_ones_set;
-+				fc->tag_set = &mlx5dr_definer_ipsec_udp_port_set;
-+				DR_CALC_SET(fc, eth_l4, destination_port, false);
-+			}
-+		} else {
-+			fc = &cd->fc[DR_CALC_FNAME(IP_PROTOCOL, false)];
-+			if (!fc->tag_set) {
-+				fc->item_idx = item_idx;
-+				fc->tag_set = &mlx5dr_definer_ipsec_protocol_set;
-+				fc->tag_mask_set = &mlx5dr_definer_ones_set;
-+				DR_CALC_SET(fc, eth_l3, protocol_next_header, false);
-+			}
-+		}
-+	}
-+
- 	if (!m)
- 		return 0;
- 	if (m->hdr.spi) {
+ 	if (!mlx5_hws_active(dev)) {
+@@ -47,7 +54,8 @@ mlx5_flow_os_validate_item_esp(const struct rte_eth_dev *dev,
+ 		mask = &rte_flow_item_esp_mask;
+ 	ret = mlx5_flow_item_acceptable
+ 		(dev, item, (const uint8_t *)mask,
+-		 (const uint8_t *)&rte_flow_item_esp_mask,
++		 allow_seq ? (const uint8_t *)&mlx5_flow_item_esp_mask :
++			     (const uint8_t *)&rte_flow_item_esp_mask,
+ 		 sizeof(struct rte_flow_item_esp), MLX5_ITEM_RANGE_NOT_ACCEPTED,
+ 		 error);
+ 	if (ret < 0)
+diff --git a/drivers/net/mlx5/linux/mlx5_flow_os.h b/drivers/net/mlx5/linux/mlx5_flow_os.h
+index 35b5871ab91..21a2ed5bec0 100644
+--- a/drivers/net/mlx5/linux/mlx5_flow_os.h
++++ b/drivers/net/mlx5/linux/mlx5_flow_os.h
+@@ -514,6 +514,8 @@ mlx5_os_flow_dr_sync_domain(void *domain, uint32_t flags)
+  *   Bit-fields that holds the items detected until now.
+  * @param[in] target_protocol
+  *   The next protocol in the previous item.
++ * @param[in] allow_seq
++ *   The match on sequence number is supported.
+  * @param[out] error
+  *   Pointer to error structure.
+  *
+@@ -525,6 +527,7 @@ mlx5_flow_os_validate_item_esp(const struct rte_eth_dev *dev,
+ 			       const struct rte_flow_item *item,
+ 			       uint64_t item_flags,
+ 			       uint8_t target_protocol,
++			       bool allow_seq,
+ 			       struct rte_flow_error *error);
+ 
+ /**
+diff --git a/drivers/net/mlx5/mlx5_flow_dv.c b/drivers/net/mlx5/mlx5_flow_dv.c
+index abfd54da1a9..18d0d293770 100644
+--- a/drivers/net/mlx5/mlx5_flow_dv.c
++++ b/drivers/net/mlx5/mlx5_flow_dv.c
+@@ -7859,10 +7859,8 @@ flow_dv_validate(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
+ 		case RTE_FLOW_ITEM_TYPE_VOID:
+ 			break;
+ 		case RTE_FLOW_ITEM_TYPE_ESP:
+-			ret = mlx5_flow_os_validate_item_esp(dev, items,
+-							     item_flags,
+-							     next_protocol,
+-							     error);
++			ret = mlx5_flow_os_validate_item_esp(dev, items, item_flags,
++							     next_protocol, false, error);
+ 			if (ret < 0)
+ 				return ret;
+ 			last_item = MLX5_FLOW_ITEM_ESP;
+diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
+index c84ae726a74..2ca40b41465 100644
+--- a/drivers/net/mlx5/mlx5_flow_hw.c
++++ b/drivers/net/mlx5/mlx5_flow_hw.c
+@@ -8818,9 +8818,8 @@ __flow_hw_pattern_validate(struct rte_eth_dev *dev,
+ 			last_item = MLX5_FLOW_ITEM_QUOTA;
+ 			break;
+ 		case RTE_FLOW_ITEM_TYPE_ESP:
+-			ret = mlx5_flow_os_validate_item_esp(dev, item,
+-							     *item_flags, 0xff,
+-							     error);
++			ret = mlx5_flow_os_validate_item_esp(dev, item, *item_flags,
++							     0xff, true, error);
+ 			if (ret < 0)
+ 				return ret;
+ 			last_item = MLX5_FLOW_ITEM_ESP;
+diff --git a/drivers/net/mlx5/mlx5_flow_verbs.c b/drivers/net/mlx5/mlx5_flow_verbs.c
+index 5b4a4eda3bb..67d199ce15e 100644
+--- a/drivers/net/mlx5/mlx5_flow_verbs.c
++++ b/drivers/net/mlx5/mlx5_flow_verbs.c
+@@ -1332,10 +1332,8 @@ flow_verbs_validate(struct rte_eth_dev *dev,
+ 		switch (items->type) {
+ #ifdef HAVE_IBV_FLOW_SPEC_ESP
+ 		case RTE_FLOW_ITEM_TYPE_ESP:
+-			ret = mlx5_flow_os_validate_item_esp(dev, items,
+-							     item_flags,
+-							     next_protocol,
+-							     error);
++			ret = mlx5_flow_os_validate_item_esp(dev, items, item_flags,
++							     next_protocol, false, error);
+ 			if (ret < 0)
+ 				return ret;
+ 			last_item = MLX5_FLOW_ITEM_ESP;
+diff --git a/drivers/net/mlx5/windows/mlx5_flow_os.c b/drivers/net/mlx5/windows/mlx5_flow_os.c
+index bf93da9f1e1..7a625fb880a 100644
+--- a/drivers/net/mlx5/windows/mlx5_flow_os.c
++++ b/drivers/net/mlx5/windows/mlx5_flow_os.c
+@@ -428,6 +428,7 @@ mlx5_flow_os_validate_item_esp(const struct rte_eth_dev *dev,
+ 			    const struct rte_flow_item *item,
+ 			    uint64_t item_flags,
+ 			    uint8_t target_protocol,
++			    bool allow_seq,
+ 			    struct rte_flow_error *error)
+ {
+ 	const struct rte_flow_item_esp *mask = item->mask;
+@@ -437,6 +438,12 @@ mlx5_flow_os_validate_item_esp(const struct rte_eth_dev *dev,
+ 				      MLX5_FLOW_LAYER_OUTER_L3;
+ 	const uint64_t l4m = tunnel ? MLX5_FLOW_LAYER_INNER_L4 :
+ 				      MLX5_FLOW_LAYER_OUTER_L4;
++	static const struct rte_flow_item_esp mlx5_flow_item_esp_mask = {
++		.hdr = {
++			.spi = RTE_BE32(0xffffffff),
++			.seq = RTE_BE32(0xffffffff),
++		},
++	};
+ 	int ret;
+ 
+ 	if (!(item_flags & l3m))
+@@ -461,7 +468,8 @@ mlx5_flow_os_validate_item_esp(const struct rte_eth_dev *dev,
+ 					  " supported on Windows");
+ 	ret = mlx5_flow_item_acceptable
+ 		(dev, item, (const uint8_t *)mask,
+-		 (const uint8_t *)&rte_flow_item_esp_mask,
++		 allow_seq ? (const uint8_t *)&mlx5_flow_item_esp_mask :
++			     (const uint8_t *)&rte_flow_item_esp_mask,
+ 		 sizeof(struct rte_flow_item_esp), MLX5_ITEM_RANGE_NOT_ACCEPTED,
+ 		 error);
+ 	if (ret < 0)
+diff --git a/drivers/net/mlx5/windows/mlx5_flow_os.h b/drivers/net/mlx5/windows/mlx5_flow_os.h
+index 36edc3d5328..2cd4e953256 100644
+--- a/drivers/net/mlx5/windows/mlx5_flow_os.h
++++ b/drivers/net/mlx5/windows/mlx5_flow_os.h
+@@ -461,6 +461,8 @@ int mlx5_flow_os_destroy_flow(void *drv_flow_ptr);
+  *   Bit-fields that holds the items detected until now.
+  * @param[in] target_protocol
+  *   The next protocol in the previous item.
++ * @param[in] allow_seq
++ *   The match on sequence number is supported.
+  * @param[out] error
+  *   Pointer to error structure.
+  *
+@@ -472,6 +474,7 @@ mlx5_flow_os_validate_item_esp(const struct rte_eth_dev *dev,
+ 			       const struct rte_flow_item *item,
+ 			       uint64_t item_flags,
+ 			       uint8_t target_protocol,
++			       bool allow_seq,
+ 			       struct rte_flow_error *error);
+ 
+ /**
 -- 
 2.21.0
 
