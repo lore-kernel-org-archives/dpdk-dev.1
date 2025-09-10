@@ -2,43 +2,29 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8E0CA101F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Sep 2025 13:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E57CA0FED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Sep 2025 15:21:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 80A2B40B9B;
-	Wed, 10 Sep 2025 15:46:04 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
- by mails.dpdk.org (Postfix) with ESMTP id D690940A89
- for <dev@dpdk.org>; Wed, 10 Sep 2025 15:45:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=V81enEQVn1SrallO5bV83rrg68JXoxx4FoGYxFq//ps=;
- b=p6AGi9U/kbIN0TlkfXa6gKrZJ0WMZqPyJClluKACiqYM51D6sRSUJiDaMzSovp
- vpVOtVmluiQlccb41qCPl0J3LR9bAZvt8W7wSvwCSKZNuyrj3AqAgfK/0PXHiHfY
- mC1wHcPErmKIUEspo7AuysqISbLHWrI2r0Ir5DtMTZqaQ=
-Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp1 (Coremail) with SMTP id Ac8vCgDH_4j6gMFoC+LcAQ--.10160S21;
- Wed, 10 Sep 2025 21:45:55 +0800 (CST)
-From: Feifei Wang <wff_light@vip.163.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 017F240649;
+	Wed, 10 Sep 2025 17:21:12 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id CF9BD402C2
+ for <dev@dpdk.org>; Wed, 10 Sep 2025 17:21:09 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA90B16F2;
+ Wed, 10 Sep 2025 08:21:00 -0700 (PDT)
+Received: from paul-pc.localdomain (unknown [10.57.66.49])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 923A03F694;
+ Wed, 10 Sep 2025 08:21:08 -0700 (PDT)
+From: Paul Szczepanek <paul.szczepanek@arm.com>
 To: dev@dpdk.org
-Cc: Yi Chen <chenyi221@huawei.com>, Xin Wang <wangxin679@h-partners.com>,
- Feifei Wang <wangfeifei40@huawei.com>
-Subject: [V10 17/17] drivers/net: add hinic3 PMD build and doc files
-Date: Wed, 10 Sep 2025 21:44:39 +0800
-Message-ID: <20250910134451.15769-18-wff_light@vip.163.com>
-X-Mailer: git-send-email 2.47.0.windows.2
-In-Reply-To: <20250910134451.15769-1-wff_light@vip.163.com>
-References: <20250418090621.9638-1-wff_light@vip.163.com>
- <20250910134451.15769-1-wff_light@vip.163.com>
+Cc: Paul Szczepanek <paul.szczepanek@arm.com>
+Subject: [PATCH v1 0/2]  Split DTS framework and public API
+Date: Wed, 10 Sep 2025 16:21:01 +0100
+Message-Id: <20250910152103.976383-1-paul.szczepanek@arm.com>
+X-Mailer: git-send-email 2.39.5
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgDH_4j6gMFoC+LcAQ--.10160S21
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAFWxKryDCFWrAF1UGrWDXFb_yoWrWF4Upw
- 43A34fKr9rG3y2qwnxtw1UAr4rXw4vkFWUu397GFyruF98Cr10vw4Utay0v39rJ345ZFyf
- ZF1YvryakF1jqwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07URnQUUUUUU=
-X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiBBXECmjBU8BwNQAAsg
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,165 +38,89 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Yi Chen <chenyi221@huawei.com>
+Split up framework and public API. All calls in the tests
+should go through the public API. This will allow us to change the
+framework internals without breaking the tests and also to provide a
+stable and smaller API for test writers.
 
-The hinic3.ini file and hinic3.rst file are added to this patch.
+More importantly this will make it easier to non DTS developers to write
+tests by being able to more easily find the relevant functionality.
 
-Signed-off-by: Yi Chen <chenyi221@huawei.com>
-Reviewed-by: Xin Wang <wangxin679@h-partners.com>
-Reviewed-by: Feifei Wang <wangfeifei40@huawei.com>
----
- MAINTAINERS                         |  1 +
- doc/guides/nics/features/hinic3.ini | 60 +++++++++++++++++++++++++++++
- doc/guides/nics/hinic3.rst          | 47 ++++++++++++++++++++++
- drivers/net/meson.build             |  1 +
- 4 files changed, 109 insertions(+)
- create mode 100644 doc/guides/nics/features/hinic3.ini
- create mode 100644 doc/guides/nics/hinic3.rst
+The first patch moves TestPmd related code to the public API. The second
+patch updates all tests to use the new API. Further patches will move
+more functionality to the public API.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index be7c815f11..80c43e8465 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -783,6 +783,7 @@ Huawei hinic3
- M: Feifei Wang <wangfeifei40@huawei.com>
- F: drivers/net/hinic3/
- F: doc/guides/nics/hinic3.rst
-+F: doc/guides/nics/features/hinic3.ini
- 
- Intel Network Common Code
- M: Bruce Richardson <bruce.richardson@intel.com>
-diff --git a/doc/guides/nics/features/hinic3.ini b/doc/guides/nics/features/hinic3.ini
-new file mode 100644
-index 0000000000..50012ca696
---- /dev/null
-+++ b/doc/guides/nics/features/hinic3.ini
-@@ -0,0 +1,60 @@
-+;
-+; Supported features of the 'hinic3' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Speed capabilities   = Y
-+Link speed configuration = Y
-+Link status          = Y
-+Link status event    = Y
-+Rx interrupt         = Y
-+Queue start/stop     = Y
-+Runtime Rx queue setup = Y
-+Runtime Tx queue setup = Y
-+Burst mode info      = Y
-+Fast mbuf free       = Y
-+Free Tx mbuf on demand = Y
-+MTU update           = Y
-+Scattered Rx         = Y
-+TSO                  = Y
-+LRO                  = Y
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+Multicast MAC filter = Y
-+RSS hash             = Y
-+RSS key update       = Y
-+RSS reta update      = Y
-+VLAN filter          = Y
-+Flow control         = Y
-+Traffic manager      = Y
-+CRC offload          = Y
-+FEC                  = Y
-+L3 checksum offload  = Y
-+L4 checksum offload  = Y
-+Inner L3 checksum    = Y
-+Inner L4 checksum    = Y
-+Packet type parsing  = Y
-+Basic stats          = Y
-+Extended stats       = Y
-+Stats per queue      = Y
-+FW version           = Y
-+Registers dump       = Y
-+Timesync             = Y
-+Multiprocess aware   = Y
-+Linux                = Y
-+x86-64               = Y
-+ARMv8                = Y
-+
-+[rte_flow items]
-+any                  = Y
-+eth                  = Y
-+icmp                 = Y
-+ipv4                 = Y
-+ipv6                 = Y
-+tcp                  = Y
-+udp                  = Y
-+vxlan                = Y
-+[rte_flow actions]
-+queue                = Y
-diff --git a/doc/guides/nics/hinic3.rst b/doc/guides/nics/hinic3.rst
-new file mode 100644
-index 0000000000..0eebcf0723
---- /dev/null
-+++ b/doc/guides/nics/hinic3.rst
-@@ -0,0 +1,47 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright(c) 2025 Huawei Technologies Co., Ltd
-+
-+HINIC3 Poll Mode Driver
-+=======================
-+
-+The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
-+for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.
-+
-+Features
-+--------
-+
-+- Multi arch support: x86_64, ARMv8.
-+- Multiple queues for TX and RX
-+- Receiver Side Scaling (RSS)
-+- flow filtering
-+- Checksum offload
-+- TSO offload
-+- Promiscuous mode
-+- Port hardware statistics
-+- Link state information
-+- Link flow control
-+- Scattered and gather for TX and RX
-+- Allmulticast mode
-+- MTU update
-+- Multicast MAC filter
-+- Flow API
-+- Set Link down or up
-+- VLAN filter and VLAN offload
-+- SR-IOV - Partially supported at this point, VFIO only
-+- FW version
-+- LRO
-+
-+Prerequisites
-+-------------
-+
-+- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>` to setup the basic DPDK environment.
-+
-+Driver compilation and testing
-+------------------------------
-+
-+Refer to the document :ref:`compiling and testing a PMD for a NIC <pmd_build_and_test>`
-+for details.
-+
-+Limitations or Known issues
-+---------------------------
-+X86-32, Windows, and BSD are not supported yet.
-diff --git a/drivers/net/meson.build b/drivers/net/meson.build
-index 61f8cddb30..2d32068ed2 100644
---- a/drivers/net/meson.build
-+++ b/drivers/net/meson.build
-@@ -23,6 +23,7 @@ drivers = [
-         'failsafe',
-         'gve',
-         'hinic',
-+        'hinic3',
-         'hns3',
-         'intel/e1000',
-         'intel/fm10k',
--- 
-2.47.0.windows.2
+Moving code required fixing some circular dependencies in the framework
+and simplifying the capabilities code to allow selection through a
+vanilla enum.
+
+The functionality is otherwise unchanged.
+
+Paul Szczepanek (2):
+  dts: move testpmd into API
+  dts: update tests to use new API
+
+ doc/api/dts/api.capabilities.rst              |    8 +
+ doc/api/dts/api.rst                           |   20 +
+ doc/api/dts/api.testpmd.config.rst            |    8 +
+ doc/api/dts/api.testpmd.rst                   |   15 +
+ doc/api/dts/api.testpmd.types.rst             |    8 +
+ doc/api/dts/framework.params.rst              |    1 -
+ doc/api/dts/framework.params.testpmd.rst      |    8 -
+ doc/api/dts/framework.remote_session.rst      |    1 -
+ ...framework.remote_session.testpmd_shell.rst |    8 -
+ doc/api/dts/index.rst                         |    1 +
+ doc/guides/tools/dts.rst                      |    4 +-
+ dts/api/__init__.py                           |   14 +
+ dts/api/capabilities.py                       |  180 ++
+ dts/api/testpmd/__init__.py                   | 1294 ++++++++
+ .../testpmd.py => api/testpmd/config.py}      |    9 +-
+ dts/api/testpmd/types.py                      | 1406 ++++++++
+ dts/framework/config/__init__.py              |    3 +-
+ dts/framework/params/eal.py                   |   12 +-
+ dts/framework/params/types.py                 |    4 +-
+ dts/framework/remote_session/__init__.py      |   43 -
+ dts/framework/remote_session/testpmd_shell.py | 2844 -----------------
+ dts/framework/testbed_model/capability.py     |  174 +-
+ dts/framework/testbed_model/linux_session.py  |    2 +-
+ dts/framework/testbed_model/os_session.py     |   13 +-
+ dts/framework/testbed_model/topology.py       |   30 +-
+ dts/tests/TestSuite_blocklist.py              |   11 +-
+ dts/tests/TestSuite_checksum_offload.py       |   44 +-
+ dts/tests/TestSuite_dual_vlan.py              |   12 +-
+ dts/tests/TestSuite_dynamic_config.py         |   27 +-
+ dts/tests/TestSuite_dynamic_queue_conf.py     |   29 +-
+ dts/tests/TestSuite_hello_world.py            |    4 +-
+ dts/tests/TestSuite_l2fwd.py                  |   18 +-
+ dts/tests/TestSuite_mac_filter.py             |   17 +-
+ dts/tests/TestSuite_mtu.py                    |   19 +-
+ dts/tests/TestSuite_packet_capture.py         |   14 +-
+ dts/tests/TestSuite_pmd_buffer_scatter.py     |   19 +-
+ dts/tests/TestSuite_port_control.py           |   21 +-
+ ...stSuite_port_restart_config_persistency.py |   16 +-
+ dts/tests/TestSuite_port_stats.py             |   21 +-
+ dts/tests/TestSuite_promisc_support.py        |   11 +-
+ dts/tests/TestSuite_queue_start_stop.py       |   24 +-
+ dts/tests/TestSuite_rte_flow.py               |   36 +-
+ dts/tests/TestSuite_smoke_tests.py            |   11 +-
+ dts/tests/TestSuite_softnic.py                |   18 +-
+ dts/tests/TestSuite_uni_pkt.py                |   35 +-
+ dts/tests/TestSuite_vlan.py                   |   26 +-
+ 46 files changed, 3371 insertions(+), 3172 deletions(-)
+ create mode 100644 doc/api/dts/api.capabilities.rst
+ create mode 100644 doc/api/dts/api.rst
+ create mode 100644 doc/api/dts/api.testpmd.config.rst
+ create mode 100644 doc/api/dts/api.testpmd.rst
+ create mode 100644 doc/api/dts/api.testpmd.types.rst
+ delete mode 100644 doc/api/dts/framework.params.testpmd.rst
+ delete mode 100644 doc/api/dts/framework.remote_session.testpmd_shell.rst
+ create mode 100644 dts/api/__init__.py
+ create mode 100644 dts/api/capabilities.py
+ create mode 100644 dts/api/testpmd/__init__.py
+ rename dts/{framework/params/testpmd.py => api/testpmd/config.py} (98%)
+ create mode 100644 dts/api/testpmd/types.py
+ delete mode 100644 dts/framework/remote_session/testpmd_shell.py
+
+--
+2.39.5
 
