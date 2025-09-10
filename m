@@ -2,40 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9ADBCA0FED
-	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Sep 2025 13:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E39BCA0FED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Sep 2025 13:45:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 93410402C2;
-	Wed, 10 Sep 2025 15:45:42 +0200 (CEST)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.3])
- by mails.dpdk.org (Postfix) with ESMTP id CDB8540270
+	by mails.dpdk.org (Postfix) with ESMTP id AA9B340653;
+	Wed, 10 Sep 2025 15:45:43 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
+ by mails.dpdk.org (Postfix) with ESMTP id A9D3140285
  for <dev@dpdk.org>; Wed, 10 Sep 2025 15:45:39 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=tJ5FmlDvIlp03D8cWVH/R1w5e0UI0z9l1xXWrN4ts4Y=;
- b=cfjv5YOR5PUO6OV4mBYeJbkOlIKAHq4Nf9AvbqJrsPH/8B3CmrnGrD6tChHk1D
- X3MJYPsi9mj1811WJPw7XpXX7zAdWmeynRYgxSLf/nODSJIqz9GgZmIcsefFu9ry
- 7PBOnXdcY1hwua0UBq2HiuXTkCFOf5bCUPyAZ85ibtdyU=
+ MIME-Version; bh=KyUVrdRcIccAKao15H6FcfvrOkX1xwyNT4+W+5QV24g=;
+ b=mWglh1o/P0ac+bZTkl9gJErFZAjLpCN5Xkb0QO20ESRsZvuawaDBn+fVOOnyCk
+ 68AORQAOYzAhIMc4TMYs3KmhnQT6bKiQlhr6LISBd7ig4qNYNFNK9SQQdczvdl/i
+ uqsIhHb4DAdTUMy+jrmsMMl/mYFredgCkHWGFs4M8A8bg=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp1 (Coremail) with SMTP id Ac8vCgDH_4j6gMFoC+LcAQ--.10160S4;
- Wed, 10 Sep 2025 21:45:36 +0800 (CST)
+ by gzsmtp1 (Coremail) with SMTP id Ac8vCgDH_4j6gMFoC+LcAQ--.10160S5;
+ Wed, 10 Sep 2025 21:45:37 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
-Subject: [V10 00/17] add-hinic3-PMD-driver
-Date: Wed, 10 Sep 2025 21:44:22 +0800
-Message-ID: <20250910134451.15769-1-wff_light@vip.163.com>
+Cc: Yi Chen <chenyi221@huawei.com>, Feifei Wang <wangfeifei40@huawei.com>,
+ Xin Wang <wangxin679@h-partners.com>
+Subject: [V10 01/17] doc: add hinic3 driver
+Date: Wed, 10 Sep 2025 21:44:23 +0800
+Message-ID: <20250910134451.15769-2-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
-In-Reply-To: <20250418090621.9638-1-wff_light@vip.163.com>
+In-Reply-To: <20250910134451.15769-1-wff_light@vip.163.com>
 References: <20250418090621.9638-1-wff_light@vip.163.com>
+ <20250910134451.15769-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Ac8vCgDH_4j6gMFoC+LcAQ--.10160S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW3WrWfKFyUXF45JrWxJFW7CFg_yoWxCrWrpF
- 4UC3y3Ar1DKrW7tw1kJw1xAas8J3WxG345Kw13Za4Fvr97ZFy5A34UGFW8Ar9xtw17JF12
- vFs09rWDKwn8tw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UHwZcUUUUU=
+X-CM-TRANSID: Ac8vCgDH_4j6gMFoC+LcAQ--.10160S5
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGrW5uw43Cr1DJF1UWw4kWFg_yoW5Crykpw
+ 4DCryrCFykGw1rurnIy3W7ur1UCa4kuay8uFW8ta4rXFnxCr4jgw4rKw42kayDJF4F9ay3
+ Zr1jgryIk3Wj9rDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07URxRDUUUUU=
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiHhTECmjBXkNTSQAAsq
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiHhTECmjBXkNTSQABsr
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,167 +52,91 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
-for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.
+From: Yi Chen <chenyi221@huawei.com>
 
-v10:
--add prefix to some functions
--use memcpy instead of rte_memcpy for simple fixed copies
--modify LOG messege format
--modify meson.build files
--remove unused check in queue_start/stop/intr
--remove unused function 
--remove function that stubbed out
--modify some api log level
--remove features unsuppurted
--modify some casts
--change xstats_cal_num return type
--modify stats get function 
+This patch adds document for hinic3 driver.
 
-v9:
--resolve type conflict issue
+Signed-off-by: Feifei Wang <wangfeifei40@huawei.com>
+Signed-off-by: Yi Chen <chenyi221@huawei.com>
+Reviewed-by: Xin Wang <wangxin679@h-partners.com>
+---
+ .mailmap                               | 4 +++-
+ MAINTAINERS                            | 4 ++++
+ doc/guides/nics/index.rst              | 1 +
+ doc/guides/rel_notes/release_25_11.rst | 4 ++++
+ 4 files changed, 12 insertions(+), 1 deletion(-)
 
-v8:
--resolve CI compile error
--modify mbox section
-
-v7:
--remove unused-functions
-
-v6:
--modify based on community comments
--remove mml files
-
-v5:
--fix build err
-
-v4: 
--solve patch application conflict issue 
-
-v3:
--fix checkpatchs errors issue
-
-v2:
--modify CI compile errors
-
-v1:
--modify community comments and compile issues
--remove the compilation flags in the meson build
--remove (void) cur_link_machine_state
--remove '*** BLURE HERE ***' in cover letter
-
-Feifei Wang (2):
-  net/hinic3: add dev ops
-  net/hinic3: add Rx/Tx functions
-
-Xin Wang (6):
-  net/hinic3: add basic header files
-  net/hinic3: add support for cmdq mechanism
-  net/hinic3: add NIC event module
-  net/hinic3: add context and work queue support
-  net/hinic3: add device initialization
-  net/hinic3: add RSS promiscuous ops
-
-Yi Chen (9):
-  doc: add hinic3 driver
-  net/hinic3: add hardware interfaces of BAR operation
-  net/hinic3: add eq mechanism
-  net/hinic3: add mgmt module function code
-  net/hinic3: add module about hardware operation
-  net/hinic3: add a NIC business configuration module
-  net/hinic3: add a mailbox communication module
-  net/hinic3: add flow control and FDIR module
-  drivers/net: add hinic3 PMD build and doc files
-
- .mailmap                                   |    4 +-
- MAINTAINERS                                |    6 +
- doc/guides/nics/features/hinic3.ini        |   60 +
- doc/guides/nics/hinic3.rst                 |   47 +
- doc/guides/nics/index.rst                  |    1 +
- doc/guides/rel_notes/release_25_11.rst     |    4 +
- drivers/net/hinic3/base/hinic3_cmd.h       |  156 +
- drivers/net/hinic3/base/hinic3_cmdq.c      |  970 ++++++
- drivers/net/hinic3/base/hinic3_cmdq.h      |  230 ++
- drivers/net/hinic3/base/hinic3_compat.h    |  144 +
- drivers/net/hinic3/base/hinic3_csr.h       |  108 +
- drivers/net/hinic3/base/hinic3_eqs.c       |  709 ++++
- drivers/net/hinic3/base/hinic3_eqs.h       |   98 +
- drivers/net/hinic3/base/hinic3_hw_cfg.c    |  190 +
- drivers/net/hinic3/base/hinic3_hw_cfg.h    |  114 +
- drivers/net/hinic3/base/hinic3_hw_comm.c   |  438 +++
- drivers/net/hinic3/base/hinic3_hw_comm.h   |  365 ++
- drivers/net/hinic3/base/hinic3_hwdev.c     |  555 +++
- drivers/net/hinic3/base/hinic3_hwdev.h     |  183 +
- drivers/net/hinic3/base/hinic3_hwif.c      |  740 ++++
- drivers/net/hinic3/base/hinic3_hwif.h      |  144 +
- drivers/net/hinic3/base/hinic3_mbox.c      | 1218 +++++++
- drivers/net/hinic3/base/hinic3_mbox.h      |  181 +
- drivers/net/hinic3/base/hinic3_mgmt.c      |  351 ++
- drivers/net/hinic3/base/hinic3_mgmt.h      |  112 +
- drivers/net/hinic3/base/hinic3_nic_cfg.c   | 1757 ++++++++++
- drivers/net/hinic3/base/hinic3_nic_cfg.h   | 1530 ++++++++
- drivers/net/hinic3/base/hinic3_nic_event.c |  404 +++
- drivers/net/hinic3/base/hinic3_nic_event.h |   38 +
- drivers/net/hinic3/base/hinic3_wq.c        |  140 +
- drivers/net/hinic3/base/hinic3_wq.h        |  109 +
- drivers/net/hinic3/base/meson.build        |   16 +
- drivers/net/hinic3/hinic3_ethdev.c         | 3668 ++++++++++++++++++++
- drivers/net/hinic3/hinic3_ethdev.h         |  164 +
- drivers/net/hinic3/hinic3_fdir.c           | 1370 ++++++++
- drivers/net/hinic3/hinic3_fdir.h           |  398 +++
- drivers/net/hinic3/hinic3_flow.c           | 1481 ++++++++
- drivers/net/hinic3/hinic3_flow.h           |  196 ++
- drivers/net/hinic3/hinic3_nic_io.c         |  802 +++++
- drivers/net/hinic3/hinic3_nic_io.h         |  171 +
- drivers/net/hinic3/hinic3_rx.c             | 1061 ++++++
- drivers/net/hinic3/hinic3_rx.h             |  353 ++
- drivers/net/hinic3/hinic3_tx.c             | 1025 ++++++
- drivers/net/hinic3/hinic3_tx.h             |  313 ++
- drivers/net/hinic3/meson.build             |   30 +
- drivers/net/meson.build                    |    1 +
- 46 files changed, 22154 insertions(+), 1 deletion(-)
- create mode 100644 doc/guides/nics/features/hinic3.ini
- create mode 100644 doc/guides/nics/hinic3.rst
- create mode 100644 drivers/net/hinic3/base/hinic3_cmd.h
- create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.c
- create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.h
- create mode 100644 drivers/net/hinic3/base/hinic3_compat.h
- create mode 100644 drivers/net/hinic3/base/hinic3_csr.h
- create mode 100644 drivers/net/hinic3/base/hinic3_eqs.c
- create mode 100644 drivers/net/hinic3/base/hinic3_eqs.h
- create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.c
- create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.h
- create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.c
- create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.h
- create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.c
- create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.h
- create mode 100644 drivers/net/hinic3/base/hinic3_hwif.c
- create mode 100644 drivers/net/hinic3/base/hinic3_hwif.h
- create mode 100644 drivers/net/hinic3/base/hinic3_mbox.c
- create mode 100644 drivers/net/hinic3/base/hinic3_mbox.h
- create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.c
- create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.h
- create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.c
- create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.h
- create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.c
- create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.h
- create mode 100644 drivers/net/hinic3/base/hinic3_wq.c
- create mode 100644 drivers/net/hinic3/base/hinic3_wq.h
- create mode 100644 drivers/net/hinic3/base/meson.build
- create mode 100644 drivers/net/hinic3/hinic3_ethdev.c
- create mode 100644 drivers/net/hinic3/hinic3_ethdev.h
- create mode 100644 drivers/net/hinic3/hinic3_fdir.c
- create mode 100644 drivers/net/hinic3/hinic3_fdir.h
- create mode 100644 drivers/net/hinic3/hinic3_flow.c
- create mode 100644 drivers/net/hinic3/hinic3_flow.h
- create mode 100644 drivers/net/hinic3/hinic3_nic_io.c
- create mode 100644 drivers/net/hinic3/hinic3_nic_io.h
- create mode 100644 drivers/net/hinic3/hinic3_rx.c
- create mode 100644 drivers/net/hinic3/hinic3_rx.h
- create mode 100644 drivers/net/hinic3/hinic3_tx.c
- create mode 100644 drivers/net/hinic3/hinic3_tx.h
- create mode 100644 drivers/net/hinic3/meson.build
-
+diff --git a/.mailmap b/.mailmap
+index 73d573e400..0b27accd1b 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -445,7 +445,7 @@ Fang TongHao <fangtonghao@sangfor.com.cn>
+ Fan Zhang <fanzhang.oss@gmail.com> <roy.fan.zhang@intel.com>
+ Farah Smith <farah.smith@broadcom.com>
+ Fei Chen <chenwei.0515@bytedance.com>
+-Feifei Wang <feifei.wang2@arm.com> <feifei.wang@arm.com>
++Feifei Wang <wangfeifei40@huawei.com> <feifei.wang1218@gmail.com> <feifei.wang2@arm.com> <feifei.wang@arm.com> <wff_light@vip.163.com>
+ Fei Qin <fei.qin@corigine.com>
+ Fengjiang Liu <liufengjiang.0426@bytedance.com>
+ Fengnan Chang <changfengnan@bytedance.com>
+@@ -1774,6 +1774,7 @@ Xingguang He <xingguang.he@intel.com>
+ Xingyou Chen <niatlantice@gmail.com>
+ Xing Wang <xing_wang@realsil.com.cn>
+ Xinying Yu <xinying.yu@corigine.com>
++Xin Wang <wangxin679@h-partners.com>
+ Xin Long <longxin.xl@alibaba-inc.com>
+ Xi Zhang <xix.zhang@intel.com>
+ Xuan Ding <xuan.ding@intel.com>
+@@ -1808,6 +1809,7 @@ Yelena Krivosheev <yelena@marvell.com>
+ Yerden Zhumabekov <e_zhumabekov@sts.kz> <yerden.zhumabekov@sts.kz>
+ Yevgeny Kliteynik <kliteyn@nvidia.com>
+ Yicai Lu <luyicai@huawei.com>
++Yi Chen <chenyi221@huawei.com>
+ Yiding Zhou <yidingx.zhou@intel.com>
+ Yi Li <liyi1@chinatelecom.cn>
+ Yi Liu <yi.liu@nxp.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7aca98c537..ea71eac351 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -779,6 +779,10 @@ F: drivers/net/hinic/
+ F: doc/guides/nics/hinic.rst
+ F: doc/guides/nics/features/hinic.ini
+ 
++Huawei hinic3
++M: Feifei Wang <wangfeifei40@huawei.com>
++F: doc/guides/nics/hinic3.rst
++
+ Intel Network Common Code
+ M: Bruce Richardson <bruce.richardson@intel.com>
+ T: git://dpdk.org/next/dpdk-next-net-intel
+diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
+index 57d161c526..1a1e3a6825 100644
+--- a/doc/guides/nics/index.rst
++++ b/doc/guides/nics/index.rst
+@@ -33,6 +33,7 @@ Network Interface Controller Drivers
+     fm10k
+     gve
+     hinic
++    hinic3
+     hns3
+     i40e
+     ice
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index efb88bbbb0..19048f9cbc 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -76,6 +76,10 @@ New Features
+   * Added multi-process per port.
+   * Optimized code.
+ 
++* **Added Huawei hinic3 net driver.**
++
++  * Added network driver for the Huawei SPx series Network Adapters.
++
+ 
+ Removed Items
+ -------------
 -- 
 2.47.0.windows.2
 
