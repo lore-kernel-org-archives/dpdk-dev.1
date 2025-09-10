@@ -2,73 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D26CACA0FED
-	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Sep 2025 18:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23983CA0FED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Sep 2025 19:04:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 09FD040673;
-	Wed, 10 Sep 2025 20:57:37 +0200 (CEST)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
- [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id EC50140672
- for <dev@dpdk.org>; Wed, 10 Sep 2025 20:57:34 +0200 (CEST)
-Received: by mail-qv1-f54.google.com with SMTP id
- 6a1803df08f44-72226768824so60251046d6.2
- for <dev@dpdk.org>; Wed, 10 Sep 2025 11:57:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1BF5A4065D;
+	Wed, 10 Sep 2025 21:04:49 +0200 (CEST)
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com
+ [209.85.219.50]) by mails.dpdk.org (Postfix) with ESMTP id C834A4042E
+ for <dev@dpdk.org>; Wed, 10 Sep 2025 21:04:47 +0200 (CEST)
+Received: by mail-qv1-f50.google.com with SMTP id
+ 6a1803df08f44-729c1074875so52521706d6.0
+ for <dev@dpdk.org>; Wed, 10 Sep 2025 12:04:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=atomicrules-com.20230601.gappssmtp.com; s=20230601; t=1757530654;
- x=1758135454; darn=dpdk.org; 
+ d=atomicrules-com.20230601.gappssmtp.com; s=20230601; t=1757531087;
+ x=1758135887; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=0KBt0RzKHwp3LRKKEvLmEQ7WqFMBfzJDm+bTkqJqpec=;
- b=PPmkmXu9CCWbmuMFaFNvi1LBeAkxjwsVwqbbLT9x9x7F9dKIR8NMynE2TtUWpRrhP+
- F8aAZub/HPRSa26hp6VWKYLSy9r6eaQIk7+RKTuKcFbXrAe85qkgFdbw/z5Pl8NFa9LC
- YwxvAks1NSYjXklOe6zBgMAx2gRxVSkgni1EtedAwQg8DAPETfwziXwOD0qEdHy+msj6
- aLtsYDVEVSTP4mgEzFezHtnlS+tc4Rt7ouxnU7rZ/WM5ExzCauhcywhv1+q3QGJeQmQT
- 6QUx1fxo2JI3700yx89Af1fjZ7xqK3+ilJehTJVf9EKhGd4UhKUBTGnLQglFB4op/alW
- tdMw==
+ bh=DiOe3DsGkPpuJjCiId51FazWRCcWlEP+HKY0kMpZ/Ro=;
+ b=SlH3l9zr8tThDeI1sQzwxENxO1omfhOjex6xtplR+y+zgzWbVD7UVpbWZ8xnTfGsmO
+ 2jGHb9v56ShkSGDqCMZtIsqh6Ep+SdAK56U3FNu+qqDRb51cEbplhuhU+5DzG3os0Rpk
+ W/4Rlbg4rh6bTXRdQ3qJMgGLUJVnD6a2p+B4vV7eUdLsHzEBumcp1NXpwh9O+cbCqnyw
+ qo7hMCGHUJQfvqcbQQZGdKuIfSUQ01r0iSr2c7Z5zgRdTVMtqzoARw+pJKvRpLZ3Bgza
+ rQjzl3EbJDGrBevkj7KF6LLvMPW80fYjRo9rYIvUoPLwEsdiVPRU5OWZSsqMCaD7qo7+
+ Z/uA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1757530654; x=1758135454;
+ d=1e100.net; s=20230601; t=1757531087; x=1758135887;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=0KBt0RzKHwp3LRKKEvLmEQ7WqFMBfzJDm+bTkqJqpec=;
- b=wQ/mOT4e2uk/VH+Bvsjs6+vTss0oHSuHBj/7T1WpmeewKmTghsBmCk/C4LrIdZWaBm
- lQEGP3fRgSwjW2S53NxxY75DPyDAJ0pofDdJpgrMolxgKXhf1U0HkJxN08YIZ3eL4/Jf
- Mb2vIzOl8kf6I3POUC7BwTstiEMvcZtk5VFYmrKKnYuUqbGIafd8qaS1pu2g76yoBmRC
- 0DpxKCtfsAu+AiQi3YduK/opTprkMJp4Ow77v65c+TU6UpokEAl0lJ+eZdBA6PT/d4yb
- luQVVxWMFLEfD6zKbbqD6yjhme/ihjPmUlBS2yA49okqvD44wyiuqNU46fT0RNFD6TxL
- ryjA==
-X-Gm-Message-State: AOJu0YypYidIlC/Lz36Te4MCf52L8joHAn2BLxDCJjYdHBTqLQYaaIVX
- U1VGsXFL+JhFf8Th6XIuzHPtstxEQ7Kd0Ti3gVTRLzbvRu9BXFWcbuEfC+At6PhDRB/aBQ8zMwe
- 568U=
-X-Gm-Gg: ASbGncunDdR9UztMzRMLY6OjPhRboP0dlzY2LOErmDP3NFeToeBh2AyIxiO26NuUdqj
- g8SKPSC0KBWvvarxnycqKUxPvLM3mmn4hRFsSJmNHl8S9cKohaMJC2yMinOFa5462G58rwFV9aT
- /PIHKfd05o73RdCXmcNBSKZPyOAn3x6gBCG+dG8C0xSXLa668ayVC1PmJO4EpmIhL5gWo8MQibO
- 5cwtwL/blwE/nsnpc8ko2Nmf0m58ArZ4a9HveJFXdhKFRxproRbIx4iRzz9d5YHr9ZtxfM9z/Ot
- EwuBpzRVKo0uiesm93kjRDPXQ3aGyCxtXr9AoAKSDnQPBlf3nphsObpd0klsrtNEKjR+o1E+72V
- TewzdfcwK/16DpRvo0mL9EN2eDHbKsnPOxscXerL5KBEP76yTsyo9v+dsC2baNhwC6kYIS5yUGP
- JZflSyxsTz
-X-Google-Smtp-Source: AGHT+IEla3Xob6mnB4nRAMrAdFm4xpAWKYiqnMaao/9FwCdjZv9h3/W3xksFLKzbqloyYCwK+IgsIQ==
-X-Received: by 2002:a05:6214:5bc6:b0:73a:b556:43a8 with SMTP id
- 6a1803df08f44-73ab55643e5mr146133946d6.24.1757530653778; 
- Wed, 10 Sep 2025 11:57:33 -0700 (PDT)
+ bh=DiOe3DsGkPpuJjCiId51FazWRCcWlEP+HKY0kMpZ/Ro=;
+ b=G/1g2TCPkxkVlRgh7qm5qLJJA+0txh76jAgPCqK0Lsvanbo/zPvi1tfRE8XhEKPCjJ
+ QCUD4wqFAKaTVyNZk6noUo0S5xt3H0z7h+2IA1sZ/+T9pGrU35zMXVgW8gpCU4lDAyMs
+ DxlD+3TZ8gLEMTiZhdJLH/Z22OQdkD+GxuGpjPCyh8jbE/xkL3Ayi8fNwYPxiYMEaI9B
+ tFiZafj01jCartJ92VW+jujK3D0vnY7/ONOdDV+2PK4RQnPbD5qOM5EnSLxvEKZ7pPY/
+ xG+6QZzNS9HkorTRJba1FcgqlHcw4sgXsY9DclSqm4ddaI/f6K5RCY4ZlSRZVvmy90Ue
+ 1vbQ==
+X-Gm-Message-State: AOJu0YxT5xji0TOHY+apQdP/4KueF5x71eDs0ZjXstsBjfxJqxl9qAQc
+ hiWR0D+NxX6NXrdclipg8NTAZUUnlE4DSd5xuf1oobrjPpri+dXSde4J+xhERvincE7jVWRcK/H
+ XwkU=
+X-Gm-Gg: ASbGncvg8U/S5/QS6dbfIhTUMNMYUTXvQXhAPuMrnw1aVQa7tSZq+DZmrQl2Dy5V8vZ
+ oDgEQjznsOTvM7jbFwrujkBT7rbKjqHGBADva2J6xCFpnnCMu5Ud3QIbq3iiVNjKHm6jdmcgVAB
+ +XTQ9uR1FoxW8cx7dKG7OENtVzZmYXyqe3fzz0CtCrF5XaQWdCUHAvGGRiNmioOUiWrUTHKq+rO
+ RrRGFatP3Ak7e0nurg5CtwyVM0IcMHuC+qHs27PdDylkqINux1II3auPRzCOnbbUvWt8PtDrUrc
+ cryujXQmmV7Le3mqEpMZamV/vuXnT6D6Dfd7DwvdOf3CDUuJYb74w/CyeLD/IgU4fAwGo27C3we
+ qKL1CNaQznWI8S39kGoOx5ZC9Eb3hM1l99iEGT/NVFJRbPQN2+AmoKIvk3cAXqGBjuzkhy8gOD8
+ KF8D+yp3Z+dObYEwVA9q4=
+X-Google-Smtp-Source: AGHT+IFggmBqw/h8xgEt6Js1Fqmh/AVgrF1WWgF6V6RWQxLPysuD36BO5tE3MYsaG50XvJ6cPoTRsw==
+X-Received: by 2002:a05:6214:d07:b0:72b:7a6b:686a with SMTP id
+ 6a1803df08f44-7393d42b4f3mr183472336d6.31.1757531086521; 
+ Wed, 10 Sep 2025 12:04:46 -0700 (PDT)
 Received: from z690.czeck.local (pool-108-20-194-239.bstnma.fios.verizon.net.
  [108.20.194.239]) by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-762c955968csm376176d6.73.2025.09.10.11.57.32
+ 6a1803df08f44-762c81319e1sm488856d6.61.2025.09.10.12.04.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 10 Sep 2025 11:57:33 -0700 (PDT)
+ Wed, 10 Sep 2025 12:04:46 -0700 (PDT)
 From: Ed Czeck <ed.czeck@atomicrules.com>
 To: dev@dpdk.org,
 	stephen@networkplumber.org
 Cc: Shepard Siegel <shepard.siegel@atomicrules.com>,
  John Miller <john.miller@atomicrules.com>
-Subject: [PATCH v2 4/4] net/ark: improve Rx queue recovery after mbuf
- exhaustion
-Date: Wed, 10 Sep 2025 14:57:20 -0400
-Message-Id: <20250910185720.995300-4-ed.czeck@atomicrules.com>
+Subject: [PATCH v2 1/4] net/ark: add PCIe IDS for newly supported devices
+Date: Wed, 10 Sep 2025 15:04:33 -0400
+Message-Id: <20250910190436.995899-1-ed.czeck@atomicrules.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250910185720.995300-1-ed.czeck@atomicrules.com>
-References: <20250910185720.995300-1-ed.czeck@atomicrules.com>
+In-Reply-To: <20250903212846.268492-1-ed.czeck@atomicrules.com>
+References: <20250903212846.268492-1-ed.czeck@atomicrules.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -84,114 +83,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-use 4-K page aligned buffers to reduce PCIe requests
-reduce message spew
-attempt to allocate smaller chunks of buffers during starvation
+Update documentation and release notes
+update link speed capabilities for 200G and 400G
 
 Signed-off-by: Ed Czeck <ed.czeck@atomicrules.com>
 ---
 v2:
-- reduced message to single line.
-- Added comments on buffer alignment.  PCIe devices deal with page
-size of 4096 bytes.  By aligning this buffer to a 4K boundary, we
-will reduce the number of PCIe read requests.
+- included 2 more device id
+- updated link speeds
 ---
- drivers/net/ark/ark_ethdev_rx.c | 34 ++++++++++++++++++++++-----------
- 1 file changed, 23 insertions(+), 11 deletions(-)
+ doc/guides/nics/ark.rst      |  7 +++++++
+ drivers/net/ark/ark_ethdev.c | 10 +++++++++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ark/ark_ethdev_rx.c b/drivers/net/ark/ark_ethdev_rx.c
-index 1b5c4b64a4..74f6d70d1e 100644
---- a/drivers/net/ark/ark_ethdev_rx.c
-+++ b/drivers/net/ark/ark_ethdev_rx.c
-@@ -42,6 +42,7 @@ struct __rte_cache_aligned ark_rx_queue {
- 	rx_user_meta_hook_fn rx_user_meta_hook;
- 	void *ext_user_data;
+diff --git a/doc/guides/nics/ark.rst b/doc/guides/nics/ark.rst
+index 6aabde2ed5..c8ed57289b 100644
+--- a/doc/guides/nics/ark.rst
++++ b/doc/guides/nics/ark.rst
+@@ -310,6 +310,12 @@ ARK PMD supports the following Arkville RTL PCIe instances including:
+ * ``1d6c:1024`` - AR-TK242 [2x100GbE Packet Capture Device]
+ * ``1d6c:1025`` - AR-TK242-FX2 [2x100GbE Gen5 Packet Capture Device]
+ * ``1d6c:1026`` - AR-TK242-FX2 [1x200GbE Gen5 Packet Capture Device]
++* ``1d6c:102a`` - AR-TK242-FX2 [4x100GbE Gen5 Packet Capture Device]
++* ``1d6c:102b`` - AR-ARKV-FX1 [Arkville 128B DPDK Data Mover for Versal/CPM5]
++* ``1d6c:102c`` - AR-TK242-V80 [Gen5 PCAP Processor]
++* ``1d6c:102d`` - AR-TK242-FX2 [8x10GbE Gen5 Packet Capture-Replay Device]
++* ``1d6c:102e`` - AR-TK242-FX2 [8x25GbE Gen5 Packet Capture-Replay Device]
++* ``1d6c:102f`` - AR-TK242-FX2 [1x400GbE Gen5 Packet Capture-Replay Device]
  
-+	uint32_t starvation;
- 	uint32_t dataroom;
- 	uint32_t headroom;
+ Arkville RTL Core Configurations
+ --------------------------------
+@@ -322,6 +328,7 @@ stream interfaces for both AMD/Xilinx and Intel FPGAs.
  
-@@ -57,8 +58,6 @@ struct __rte_cache_aligned ark_rx_queue {
- 	/* The queue Index is used within the dpdk device structures */
- 	uint16_t queue_index;
+ * ARK-FX0 - 256-bit 32B datapath (PCIe Gen3, Gen4)
+ * ARK-FX1 - 512-bit 64B datapath (PCIe Gen3, Gen4, Gen5)
++* ARKV-FX1 - 1024-bit 128B datapath (AMD PCIe Versal, Gen5 )
+ * ARK-FX2 - 1024-bit 128B datapath (PCIe Gen5x16 Only)
  
--	uint32_t unused;
--
- 	/* next cache line - fields written by device */
- 	alignas(RTE_CACHE_LINE_MIN_SIZE) RTE_MARKER cacheline1;
+ DPDK and Arkville Firmware Versioning
+diff --git a/drivers/net/ark/ark_ethdev.c b/drivers/net/ark/ark_ethdev.c
+index c029dc46b3..8d3c0a1b02 100644
+--- a/drivers/net/ark/ark_ethdev.c
++++ b/drivers/net/ark/ark_ethdev.c
+@@ -102,6 +102,12 @@ static const struct rte_pci_id pci_id_ark_map[] = {
+ 	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x1024)},
+ 	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x1025)},
+ 	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x1026)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102a)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102b)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102c)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102d)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102e)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102f)},
+ 	{.vendor_id = 0, /* sentinel */ },
+ };
  
-@@ -187,10 +186,11 @@ eth_ark_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 				   nb_desc * sizeof(struct rte_mbuf *),
- 				   512,
- 				   socket_id);
-+	/* Align buffer to PCIe's page size of 4K to reduce upstream read requests from FPGA */
- 	queue->paddress_q =
- 		rte_zmalloc_socket("Ark_rx_queue paddr",
- 				   nb_desc * sizeof(rte_iova_t),
--				   512,
-+				   4096,
- 				   socket_id);
+@@ -733,7 +739,9 @@ eth_ark_dev_info_get(struct rte_eth_dev *dev,
+ 				RTE_ETH_LINK_SPEED_25G |
+ 				RTE_ETH_LINK_SPEED_40G |
+ 				RTE_ETH_LINK_SPEED_50G |
+-				RTE_ETH_LINK_SPEED_100G);
++				RTE_ETH_LINK_SPEED_100G |
++				RTE_ETH_LINK_SPEED_200G |
++				RTE_ETH_LINK_SPEED_400G);
  
- 	if (queue->reserve_q == 0 || queue->paddress_q == 0) {
-@@ -265,6 +265,9 @@ eth_ark_recv_pkts(void *rx_queue,
- 		return 0;
- 	if (unlikely(nb_pkts == 0))
- 		return 0;
-+	if (unlikely(queue->starvation))
-+		eth_ark_rx_seed_mbufs(queue);
-+
- 	prod_index = queue->prod_index;
- 	cons_index = queue->cons_index;
- 	if (prod_index == cons_index)
-@@ -453,7 +456,7 @@ eth_ark_rx_stop_queue(struct rte_eth_dev *dev, uint16_t queue_id)
- static inline int
- eth_ark_rx_seed_mbufs(struct ark_rx_queue *queue)
- {
--	uint32_t limit = (queue->cons_index & ~(ARK_RX_MPU_CHUNK - 1)) +
-+	uint32_t limit = RTE_ALIGN_FLOOR(queue->cons_index, ARK_RX_MPU_CHUNK) +
- 		queue->queue_size;
- 	uint32_t seed_index = queue->seed_index;
+ 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_TIMESTAMP;
  
-@@ -461,23 +464,32 @@ eth_ark_rx_seed_mbufs(struct ark_rx_queue *queue)
- 	uint32_t seed_m = queue->seed_index & queue->queue_mask;
- 
- 	uint32_t nb = limit - seed_index;
-+	int status;
- 
- 	/* Handle wrap around -- remainder is filled on the next call */
- 	if (unlikely(seed_m + nb > queue->queue_size))
- 		nb = queue->queue_size - seed_m;
- 
- 	struct rte_mbuf **mbufs = &queue->reserve_q[seed_m];
--	int status = rte_pktmbuf_alloc_bulk(queue->mb_pool, mbufs, nb);
-+	do {
-+		status = rte_pktmbuf_alloc_bulk(queue->mb_pool, mbufs, nb);
-+		if (status == 0)
-+			break;
-+		/* Try again with a smaller request, keeping aligned with chunk size */
-+		nb = RTE_ALIGN_FLOOR(nb / 2, ARK_RX_MPU_CHUNK);
-+	} while (nb >= ARK_RX_MPU_CHUNK);
- 
- 	if (unlikely(status != 0)) {
--		ARK_PMD_LOG(NOTICE,
--			    "Could not allocate %u mbufs from pool"
--			    " for RX queue %u;"
--			    " %u free buffers remaining in queue\n",
--			    nb, queue->queue_index,
--			    queue->seed_index - queue->cons_index);
-+		if (queue->starvation == 0) {
-+			ARK_PMD_LOG(NOTICE,
-+				    "Could not allocate %u mbufs from pool for RX queue %u; %u free buffers remaining\n",
-+				    ARK_RX_MPU_CHUNK, queue->queue_index,
-+				    queue->seed_index - queue->cons_index);
-+			queue->starvation = 1;
-+		}
- 		return -1;
- 	}
-+	queue->starvation = 0;
- 
- 	if (ARK_DEBUG_CORE) {		/* DEBUG */
- 		while (count != nb) {
 -- 
 2.34.1
 
