@@ -2,73 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BEECA101F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Sep 2025 18:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F22CCA0FED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Sep 2025 18:57:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 330B540615;
-	Wed, 10 Sep 2025 20:16:32 +0200 (CEST)
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com
- [209.85.219.42]) by mails.dpdk.org (Postfix) with ESMTP id 0B514402C9
- for <dev@dpdk.org>; Wed, 10 Sep 2025 20:16:30 +0200 (CEST)
-Received: by mail-qv1-f42.google.com with SMTP id
- 6a1803df08f44-726dec342bbso64786066d6.1
- for <dev@dpdk.org>; Wed, 10 Sep 2025 11:16:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 83B9840615;
+	Wed, 10 Sep 2025 20:57:32 +0200 (CEST)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com
+ [209.85.222.180])
+ by mails.dpdk.org (Postfix) with ESMTP id E97D34042E
+ for <dev@dpdk.org>; Wed, 10 Sep 2025 20:57:31 +0200 (CEST)
+Received: by mail-qk1-f180.google.com with SMTP id
+ af79cd13be357-80e2c52703bso617018985a.1
+ for <dev@dpdk.org>; Wed, 10 Sep 2025 11:57:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1757528189;
- x=1758132989; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=PINVGoBgswdxOdMRCYJCvVp9AGblEE8Gol/kLsLjiNA=;
- b=JPgBg5acNRGd8HKxiHnT/BM927Hkiqb5xMycfKka/TDYnEGBPR1rseUKPYCKszxR2J
- YaNFajxgnReSCViV2y5d2xFncEjgKmU8zeNy3shSRhZA80+Z6sKECUE/b4oeemfHcWiu
- MPk7dwa2SVSq4oLF+2fp2dEknHCltj7Tw41Hn7kfUqiVL5Bw+HRXt70onh9irpGKuW0M
- dyofDOCR/HGp03hcNM1/hgqOjvg1YQWYwBRlH+KP/7mHpTC/n7oGHC1Wst7IHQLVPh8T
- FkId4Ym/a8dMp0TDFSlVuA8ZIQWZbfwIU6J4uqkxHlsHl/RU/w1DL8IAJvwY7szJ2Xzr
- V3fQ==
+ d=atomicrules-com.20230601.gappssmtp.com; s=20230601; t=1757530651;
+ x=1758135451; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=DiOe3DsGkPpuJjCiId51FazWRCcWlEP+HKY0kMpZ/Ro=;
+ b=nz8j2NMM8Fakq86Xm4ETaH4yk23vJVX++I5ZTti8V0NN+DyjvTVSJ7+YyahZIKhvB9
+ qBNFsuAwcRjGa54pQdMwxijDMHIAgBbFdr3RFhHWY+/Ncgps+gWFnYgbkbOQQIVcSAjb
+ 1mkzV13+vgIXw3/wmYtoV7NRyjxqY50LOK+YABow9WugtiEAd9qWIUuu66R6XbMJpLUH
+ gln7Wdbsk7jgrzbzDqcs6YXflLN93FRSNbYr89xwW7Tdikp5a0YyOaBKR+LsVAy1hh9Q
+ Z0XI17sVrJyu2mQEVsbnsDAGsAKmP3Ij6kk5gaqP6kWUsYkFU5Jrb3u37W5sdJjj27DP
+ ZHEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1757528189; x=1758132989;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ d=1e100.net; s=20230601; t=1757530651; x=1758135451;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=PINVGoBgswdxOdMRCYJCvVp9AGblEE8Gol/kLsLjiNA=;
- b=iRmyYUr4gENszxUfeO9cim9eZGvSYU94gT8/WTpdCUlsG+gsKx8J+2HT0ewWboS3Po
- IsTCg8ygetFpN/pqiIr8IikoIOgLNo1XzwfERwpe6TnF/BdpGBjoIQLSaN3G16WCg8LR
- pP1NXxAxAm4I3dncrS+Dt5VrNwL2eLGYNuAEDYjuOkgsw7hv1b7QacplH3Oxss6Fa/25
- X4RGiLDJ1thFBSbQcLrMGxXXwNaH0rYeYRUMLOgIiGvRnt3ndgfLI6TftuqMBvDTSWae
- 6VZbZvB+t6SsylBsJY7RF1BOHFDPYBvXx8sugechz7L6uvvy05T/DUr83B3vdgXEKDyq
- mPXw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCU+3D4NeTF3I35r6Tof+GXNHzn1Ljugbm5NZuzQmSWLHJ+Ul1GLiz5WMydFcqNwpI7ubdM=@dpdk.org
-X-Gm-Message-State: AOJu0YyiXud2HR8NERjVskwIPr2JjmQ5tDiKw3AXSab27K/drRDvywNA
- +dkscRZpH43fMs/EUL6q42vzw1SJi3CavCbHO+cxHWcrYeAK2yUGkcMn+8lGXTDDJoQi3m0KKKQ
- FHWSnkP039/6r1lT4UQFbDHTfuGL6xgUbEq6SctQH2w==
-X-Gm-Gg: ASbGncu6MRR/DBpbXKbgonOJ4lZR9TCvEpggH9A+r18qOOfGlnH8HMncx+hDnXFnyTu
- xdmEiX4LSPpM1FNUGpj+PM3SQ0gT/n46NvbSFGF9bvf92LLSlF49b9ih7ElsJwbvvIK9QZvStjE
- dDUp1Ndx2lWEfAeQJsVlMTa6lMh7k3EtBGYWQedjRPPh3R1A4PtFnu3pp3iBcfjGDiiqQ1VT9V5
- ht2mVDWd8pAcYf8/WsUCXMCaTZMPPuG4AzNtz/mNBxgxNlmPmbpXN6C6WH+dy5hm5ktTAS/UJpP
- wffZdGUr/LEqkZFxPpWa2iXxA+OgrRRP7bsF4Cp93OyiP6FoGT6X9x7UtZ6I9oZ8Dxyb/Q==
-X-Google-Smtp-Source: AGHT+IGIlTPyzuSPeD/hHFMFCWpJz3pacneFB7RGJmyJ3iKeBbrrEWSRMBi4IpOUThdWi27ThTo7WYkWQR0gkpOX4iw=
-X-Received: by 2002:ad4:5a4f:0:b0:742:e50f:22a4 with SMTP id
- 6a1803df08f44-742e50f3784mr119549426d6.27.1757528189344; Wed, 10 Sep 2025
- 11:16:29 -0700 (PDT)
+ bh=DiOe3DsGkPpuJjCiId51FazWRCcWlEP+HKY0kMpZ/Ro=;
+ b=fXg0yzNzXRy4FpIIV7HYeGrmHre3b5MWkMXlMb+Rns170E0pXEt7LRByqx521vYuvl
+ cycXA9k7EOySFKKtr4dCc3s+w5wLAvf7bN5r4cawpJdMYr8/0HoluXCxXao8NH5FkHcW
+ 7kVIKCqGr1gCI+AUoHg7DWHxxhz1ZPES6l2MWfa8H3XA9qCmXRqdvzoWjg4bZ1mI3Uen
+ MTUbvtHD20vW7lef98WNLYNMc0BBN2B28STozlf4g3ioO+AV+zUu2AeQFs9N/y+XjJXW
+ fLTHwB0LtBQ4igb6/kMJH/wGFukGyQVOHtWNCpH4Z1Q73BckNEE/VIWd0LUp6KyhsVXJ
+ GWrA==
+X-Gm-Message-State: AOJu0Yw/H9NpaufVCA558tsD8HsH46xP0jwrWyUFk+XSP4VtmskXpUAz
+ DC2KpRmjidEBamRWWZkylltyzFoJc87/HfWBH4d1FvwJSuGowN7oRbXL002+U95IRxdlvKKNpmr
+ 0Jno=
+X-Gm-Gg: ASbGnctMXtMpcFfh+F9GWKAGRikSIeTCQf44Jr867ngRsdVaCHiy+tJmtgJ8SfkLHHZ
+ s09+Orbmkf8VOaqMB5juV4gYdtwouTF9msqS5180+duxAjdYIZEm17VfznNz8H5hCbmFWRfwPaf
+ 7OzjGYAq6x6CYAF8AOJrE6HkzT8dE87C635DSQZJnD1ZwLCtoA6l3fbr4uBWljkDSfwr9R7ZY5K
+ iCBLw3TpRL+qRjsWidxF+QpUllK1vv9yVenwhp4fXSRSZrWtsRz7zpLEIJWe+hAkn9m0io3rEQC
+ hLsYxWeYob2hdLF8OEsFSQwO9H5MBdK0tICC/I8K9B9I3WIL1nVrsO+RID4eI1eVC03E5llRSva
+ ckmeBqmQcqJD7uk2iyZKqq5S2Ts/vdo/fevhobGQF7YTz9rmzyc+uoBuJ18fo5RUYkZuaqCGKsP
+ UGnEGJFJRS
+X-Google-Smtp-Source: AGHT+IG05J7cwpiJDchGqlGRgmulPLApWMHoVYy5j2f9RAzVaK5v1dRklgRbsoXN697Q7Ad+J/v0LQ==
+X-Received: by 2002:a05:620a:4483:b0:7fc:8b95:524a with SMTP id
+ af79cd13be357-813c660b296mr1550954485a.63.1757530650664; 
+ Wed, 10 Sep 2025 11:57:30 -0700 (PDT)
+Received: from z690.czeck.local (pool-108-20-194-239.bstnma.fios.verizon.net.
+ [108.20.194.239]) by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-762c955968csm376176d6.73.2025.09.10.11.57.29
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 10 Sep 2025 11:57:30 -0700 (PDT)
+From: Ed Czeck <ed.czeck@atomicrules.com>
+To: dev@dpdk.org,
+	stephen@networkplumber.org
+Cc: Shepard Siegel <shepard.siegel@atomicrules.com>,
+ John Miller <john.miller@atomicrules.com>
+Subject: [PATCH v2 1/4] net/ark: add PCIe IDS for newly supported devices
+Date: Wed, 10 Sep 2025 14:57:17 -0400
+Message-Id: <20250910185720.995300-1-ed.czeck@atomicrules.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20250910110237.460825-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250910103406.3be5eac1@hermes.local>
-In-Reply-To: <20250910103406.3be5eac1@hermes.local>
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Date: Wed, 10 Sep 2025 23:16:16 +0500
-X-Gm-Features: AS18NWCtG_VT4SaNH9OONPVUQ9UW9tK7_xUnlqWwShiumj1-FZn9IuDsCrxGqTU
-Message-ID: <CA++2-x6ozxMD=yH7VZ4VROH7QFbXqiTSx+S8os7M-aAopesvPA@mail.gmail.com>
-Subject: Re: [PATCH] app/testpmd: stop secondary process fwd_lcores during
- primary teardown
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Aman Singh <aman.deep.singh@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>, 
- Ferruh Yigit <ferruh.yigit@amd.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
- Ajit Khaparde <ajit.khaparde@broadcom.com>, Xiaoyun Li <xiaoyun.li@intel.com>,
- dev@dpdk.org, dpdk stable <stable@dpdk.org>
-Content-Type: multipart/alternative; boundary="00000000000068af02063e766b60"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,57 +81,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000068af02063e766b60
-Content-Type: text/plain; charset="UTF-8"
+Update documentation and release notes
+update link speed capabilities for 200G and 400G
 
-Hi Stephen,
+Signed-off-by: Ed Czeck <ed.czeck@atomicrules.com>
+---
+v2:
+- included 2 more device id
+- updated link speeds
+---
+ doc/guides/nics/ark.rst      |  7 +++++++
+ drivers/net/ark/ark_ethdev.c | 10 +++++++++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
-On Wed, Sep 10, 2025, 22:34 Stephen Hemminger <stephen@networkplumber.org>
-wrote:
+diff --git a/doc/guides/nics/ark.rst b/doc/guides/nics/ark.rst
+index 6aabde2ed5..c8ed57289b 100644
+--- a/doc/guides/nics/ark.rst
++++ b/doc/guides/nics/ark.rst
+@@ -310,6 +310,12 @@ ARK PMD supports the following Arkville RTL PCIe instances including:
+ * ``1d6c:1024`` - AR-TK242 [2x100GbE Packet Capture Device]
+ * ``1d6c:1025`` - AR-TK242-FX2 [2x100GbE Gen5 Packet Capture Device]
+ * ``1d6c:1026`` - AR-TK242-FX2 [1x200GbE Gen5 Packet Capture Device]
++* ``1d6c:102a`` - AR-TK242-FX2 [4x100GbE Gen5 Packet Capture Device]
++* ``1d6c:102b`` - AR-ARKV-FX1 [Arkville 128B DPDK Data Mover for Versal/CPM5]
++* ``1d6c:102c`` - AR-TK242-V80 [Gen5 PCAP Processor]
++* ``1d6c:102d`` - AR-TK242-FX2 [8x10GbE Gen5 Packet Capture-Replay Device]
++* ``1d6c:102e`` - AR-TK242-FX2 [8x25GbE Gen5 Packet Capture-Replay Device]
++* ``1d6c:102f`` - AR-TK242-FX2 [1x400GbE Gen5 Packet Capture-Replay Device]
+ 
+ Arkville RTL Core Configurations
+ --------------------------------
+@@ -322,6 +328,7 @@ stream interfaces for both AMD/Xilinx and Intel FPGAs.
+ 
+ * ARK-FX0 - 256-bit 32B datapath (PCIe Gen3, Gen4)
+ * ARK-FX1 - 512-bit 64B datapath (PCIe Gen3, Gen4, Gen5)
++* ARKV-FX1 - 1024-bit 128B datapath (AMD PCIe Versal, Gen5 )
+ * ARK-FX2 - 1024-bit 128B datapath (PCIe Gen5x16 Only)
+ 
+ DPDK and Arkville Firmware Versioning
+diff --git a/drivers/net/ark/ark_ethdev.c b/drivers/net/ark/ark_ethdev.c
+index c029dc46b3..8d3c0a1b02 100644
+--- a/drivers/net/ark/ark_ethdev.c
++++ b/drivers/net/ark/ark_ethdev.c
+@@ -102,6 +102,12 @@ static const struct rte_pci_id pci_id_ark_map[] = {
+ 	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x1024)},
+ 	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x1025)},
+ 	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x1026)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102a)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102b)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102c)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102d)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102e)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102f)},
+ 	{.vendor_id = 0, /* sentinel */ },
+ };
+ 
+@@ -733,7 +739,9 @@ eth_ark_dev_info_get(struct rte_eth_dev *dev,
+ 				RTE_ETH_LINK_SPEED_25G |
+ 				RTE_ETH_LINK_SPEED_40G |
+ 				RTE_ETH_LINK_SPEED_50G |
+-				RTE_ETH_LINK_SPEED_100G);
++				RTE_ETH_LINK_SPEED_100G |
++				RTE_ETH_LINK_SPEED_200G |
++				RTE_ETH_LINK_SPEED_400G);
+ 
+ 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_TIMESTAMP;
+ 
+-- 
+2.34.1
 
->
-> > +#ifndef RTE_EXEC_ENV_WINDOWS
-> > +
->
-> Windows doesn't support secondary processes, not sure how you tested this.
-> When Windows supports secondary processes it should the existing EAL API's,
-> not fixing every service.
->
-Yeah, I have tested on Linux only, the code is under the macro
-#ifndef RTE_EXEC_ENV_WINDOWS
-#endif
-
-Best regards,
-Khadem
-
->
-
---00000000000068af02063e766b60
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"auto"><div dir=3D"auto">Hi Stephen,</div><br><div class=3D"gmai=
-l_quote gmail_quote_container" dir=3D"auto"><div dir=3D"ltr" class=3D"gmail=
-_attr">On Wed, Sep 10, 2025, 22:34 Stephen Hemminger &lt;<a href=3D"mailto:=
-stephen@networkplumber.org">stephen@networkplumber.org</a>&gt; wrote:</div>=
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex">
-<br>
-&gt; +#ifndef RTE_EXEC_ENV_WINDOWS<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
-=C2=A0<br>
-<br>
-Windows doesn&#39;t support secondary processes, not sure how you tested th=
-is.<br>
-When Windows supports secondary processes it should the existing EAL API&#3=
-9;s,<br>
-not fixing every service.<br></blockquote></div><div dir=3D"auto">Yeah, I h=
-ave tested on Linux only, the code is under the macro=C2=A0</div><div dir=
-=3D"auto">#ifndef RTE_EXEC_ENV_WINDOWS</div><div dir=3D"auto">#endif=C2=A0<=
-/div><div dir=3D"auto"><br></div><div dir=3D"auto">Best regards,=C2=A0</div=
-><div dir=3D"auto">Khadem=C2=A0</div><div class=3D"gmail_quote gmail_quote_=
-container" dir=3D"auto"><blockquote class=3D"gmail_quote" style=3D"margin:0=
- 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
-</blockquote></div></div>
-
---00000000000068af02063e766b60--
