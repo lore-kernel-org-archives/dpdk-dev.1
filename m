@@ -2,163 +2,182 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B219CA101F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Sep 2025 12:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F28CA0FED
+	for <dpdk-dev@archiver.kernel.org>; Wed, 10 Sep 2025 12:16:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 42EF740270;
-	Wed, 10 Sep 2025 14:14:04 +0200 (CEST)
-Received: from egress-ip11b.ess.de.barracuda.com
- (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
- by mails.dpdk.org (Postfix) with ESMTP id AE934400D5
- for <dev@dpdk.org>; Wed, 10 Sep 2025 14:14:02 +0200 (CEST)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com
- (mail-northeuropeazon11020115.outbound.protection.outlook.com
- [52.101.84.115]) by mx-outbound17-45.eu-central-1b.ess.aws.cudaops.com
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Wed, 10 Sep 2025 12:14:00 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id B85C740270;
+	Wed, 10 Sep 2025 14:16:04 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id B93D2400D5
+ for <dev@dpdk.org>; Wed, 10 Sep 2025 14:16:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1757506563; x=1789042563;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=GRq6aFFQ8Ra+37XqMlXhiYYH5f7n/p/AHyrnt/VeQlA=;
+ b=ZLThAJIDoZjOhTtiv2C9e3pogLnGx3NfYf50JEkIKu8+/IUHGnW8WkJE
+ yJ3CjcXegf2xj+NZUpluoh7Ffpmh1KSwsCI8xwx/Jgd8cVcdwpdRQuNAq
+ 77fiqvkAnaKMs0bp5ookC3R82qNSDFD68NCh5Pr+yc/Jz3Z9cXjYVUrPt
+ qUJSBgnmLLt49NPjhZBRsYy454BnrJom61MHBzHmw9YNjhLzfyZ7rqPB/
+ Alz+JDtsgp9R2RNhID5BbvypnYP7+HKL0z9ZaPBNPkbum+4AFq4LTnXl3
+ nDmSdSh533lnO3XePuzuLh8ukAJxVGJwqIgcHXhZk46aElkrN5ZFaOAN1 A==;
+X-CSE-ConnectionGUID: OYKCMMfSTdWTNQuV/7AsFQ==
+X-CSE-MsgGUID: 3YqZXNvHS7KI7aU9YLFhhw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11548"; a="59889028"
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; d="scan'208";a="59889028"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Sep 2025 05:16:02 -0700
+X-CSE-ConnectionGUID: SBl9lUNAQF+cQa9xSKnliA==
+X-CSE-MsgGUID: 7tUkrj3rRtOGsGVGh5glTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,254,1751266800"; d="scan'208";a="178579025"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Sep 2025 05:16:01 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 10 Sep 2025 05:16:00 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 10 Sep 2025 05:16:00 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.68) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 10 Sep 2025 05:15:58 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yVJJbmXNiBPNgDRTXEmQL/We1AV4/QIIsv/X3UIA1IItzTo9c/VYKp09MBZoqpGO0sjx5hixZ8OSNXFfYJ6znTVNxuu3Cx9FyaFB5vb7o+7pXkOfqV2j9hemU9iwv3lyg38h+vy7gKlQr4wmjH3ieRMN22Dv1Re/oCNWPd/kNPV32wRQl8onisDliNOY4eU8bx0KUzcHOxKTk2EEI0DDS9SCuy+ZCfEMd2IhVINvF/bBSlhconvQH+jQNg53oH2hB4Sg4DaLH2SuE6loYO6L5zcm4GzBBjOYC+JmQZm9Lq2iv4fsytHqNR99rSdaoItOd866UNYoHX/t3me7SWcjUw==
+ b=y5EucecpCe2lr7q17V9R61hlGwUCgGMFo2Uo41C+VUr2XUj3IyiaWM00PQJooCpw2Xs0ttPJreaDDENLpxu4S06Is4wnpCKl44E1MXDM33/cN5Y45sqtembovXzUc9uFiwBLy10Tv+klonl+Wdmu/t9PPSFLzebvyfdY/4hLQ3MrZdi9i5CmIniqbHyb72bwUKictI+J1nlCLqQMseRKFW50D/5NFx9XVO4n4X99IeLP3ON+ASNbAk0UbQ7nKk4djvhxJ8zUlUrfE92mmRni0PxB1VnaFeuLp92KWRXlvCYFLkbsb4NGN1/NsJ3ZJNH2qBxbXM2FYL8cOQOtJDcKxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WdKl3VqjUMfqcPUgl/hIbnejxBvkEuCPlIAWttmnuaM=;
- b=uyjixAeIAcA+T66dBqaZ/by0o4OtU0g1+uCe59NS5t/yJxjUwYj3KU+CrHU2wbR8XMxSkVSD/9IUv/Y2CF9Tg85msRvaqOlnYTrZqFfS/fAqUwiKeIsI8sFpgnko1SG36VG+Bc9obda+tUmyMrSuaAzdA5io8m9d+oolgB5fY3dxnfMWRC9A8L0uev0owQFu3/Smdo1b9vXQA7Bh2hrG4E6u1rW8Cta5t8xJQyM59kyArrA2ruITVoWsiPHEzHFHZBaDB508xo+7B/quYzW8RI+XC3JvYuDzghPsLwD5d1zSv8gmtC9j0X/oRthMl5iLUywLxtDKyOiy8/RoaEo57w==
+ bh=2pTC0K0hpfCp79xYgfICztP2ZrzAFFGXx5hfVvPS6UE=;
+ b=h7I/N0MGsg0IQyyK0RlBTfjIyOqO2/iSWoRG72srvKPlmt8f3yu/msIBJalSB8s7MBcHjDHrQm2Gqolc/c5hdgabOBvx/EAEEZWzIgu0g2sVyEpVtxa++haZZ7B/qDTC8T8ECdDcSj0q4vj3T04DEWGA5DsAOpsRAhngUECo+nWcHpWUzcZTz5g888UkyLl8Yc/VDT3JpwC6qKEkDiNLjY9LXc51Kj0GPQWkunfYjfk5Fy5kxHljxKsmQ69ADXsxMsG3hkPzSQGz3zY34wRyXl1kkwrF4pVJIF6zRICckvjAssCXWtF28TIaSBZwU/SI657xSIl51vuQPE+esTH5SA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=napatech.com; dmarc=pass action=none header.from=napatech.com;
- dkim=pass header.d=napatech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WdKl3VqjUMfqcPUgl/hIbnejxBvkEuCPlIAWttmnuaM=;
- b=ioAglTwt/2kko0vcKBZDruGPmDVSFGjiUfYL3/7ynFgM/ZexIhu9P7E4gKfmFs1FLF7aRhhUjxSlXTKLwcN+Yb2zdHQJBCZsUMS94IHz9XId8O8s+kykAY1de9Pzx80rzxmL88crf6cMCofAJ8Y5ZSyck/vV6JsLFLHBBdKeE7o=
-Received: from VE1P190MB0830.EURP190.PROD.OUTLOOK.COM (2603:10a6:800:1a9::5)
- by PRAP190MB1786.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:29a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Wed, 10 Sep
- 2025 12:13:59 +0000
-Received: from VE1P190MB0830.EURP190.PROD.OUTLOOK.COM
- ([fe80::fb19:d808:3eac:2ea3]) by VE1P190MB0830.EURP190.PROD.OUTLOOK.COM
- ([fe80::fb19:d808:3eac:2ea3%5]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
- 12:13:58 +0000
-From: Serhii Iliushyk <sil-plv@napatech.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Mykola Kostenok <mko-plv@napatech.com>,
- Christian Koue Muf <ckm@napatech.com>
-Subject: Re: [PATCH v1 0/7] migrate threads to DPDK service framework
-Thread-Topic: [PATCH v1 0/7] migrate threads to DPDK service framework
-Thread-Index: AQHcILBxVAT6D64AdUmBYJieJ8JPsbSJtzaAgAKeP84=
-Date: Wed, 10 Sep 2025 12:13:58 +0000
-Message-ID: <VE1P190MB0830BD7C560B3369EE83CE14800EA@VE1P190MB0830.EURP190.PROD.OUTLOOK.COM>
-References: <20250908110446.1071964-1-sil-plv@napatech.com>
- <20250908130809.2266b0d3@hermes.local>
-In-Reply-To: <20250908130809.2266b0d3@hermes.local>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=napatech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: VE1P190MB0830:EE_|PRAP190MB1786:EE_
-x-ms-office365-filtering-correlation-id: 0cbd8154-1af1-408f-1670-08ddf0638525
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|8096899003|38070700021|7053199007; 
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?n3Dt/udZnY/zZpO1/SS/iBerxU3yKjFuXll40qQKRDJa2MhyY3Kj4K+maZ?=
- =?iso-8859-1?Q?wrcbfDvQwdaFpmgYIPQIcrNHzw5uLaEhCLIPVhJ1UdtF+vh/zBz3FKx9hk?=
- =?iso-8859-1?Q?sGmNnBCtcSYOeyCkPcgSVXLlqp16t7mirojxSsRfVSQhPbycQ472oqisV9?=
- =?iso-8859-1?Q?zhqV2JuJFVAbsx+1I26ZxBtR9tFgeNpxxktcQIe0ap9Qn+UYX4TOVB2JSu?=
- =?iso-8859-1?Q?7KJK7xvm+HMuH6o3pALYHBRhGAznSI62JeGXKuY1q95iNCH+m43Fr9hd39?=
- =?iso-8859-1?Q?Ok8Ol0UsRCSMf7c8oRNqpU4BRzfmqHgTkq/Z+Y2+aqg5C/bnIT9yj6rXRH?=
- =?iso-8859-1?Q?O0M++GflB3udr5KC2Z8wOmGhhUWchAOB0eDeksjZEFTKcSyc8iJz99LJ2M?=
- =?iso-8859-1?Q?5iGPHo6Gg654GvkzR0GSI32DuWoFbKgp/A/dlwz+5R38Ma7kNMDdY41Z24?=
- =?iso-8859-1?Q?kmyXqOuJvHgEFGP1V8tszbqO/G6qQ3Iw8jjTF5TOqjwaBdVU9ja5AKGJ+A?=
- =?iso-8859-1?Q?UDTAtooJQxvjgifC2xXkRHyWt8/R8KBrxYVYPbdAvX1zEazIrpUuAz8b9U?=
- =?iso-8859-1?Q?o1Fv8BzO+bPVd6znvwZjDg4sbQFTBtWQBAD2EBGD8B7QehKvplbBWzsJOu?=
- =?iso-8859-1?Q?1IK1hql1tJ7T2VlNGQFKsMze+P0OQirhDZlwQrLNgT5YDUnm20JqMNGWgN?=
- =?iso-8859-1?Q?YlgM9BOkAiBNPCaAbSC5B6A7HJFaS9xwaZ+QCEbmlopRC1ZzT3LVvDzcYb?=
- =?iso-8859-1?Q?VU5jIiUdKfPHwfLDRKAsO9lKRrfaQsqxgmEYVzLhDltVZiJvAWa5NKaL0f?=
- =?iso-8859-1?Q?ySpWJ71xnHQql+2fVZoY4AvN+Cpccx2DmBNJ5HncSoe7WLGcgAdnt5dmaZ?=
- =?iso-8859-1?Q?x2ggOCwPqdIDioTawbJv8DrYP/V0B9XwWy4AeCCowd7dZ/LdwRnes5nKn8?=
- =?iso-8859-1?Q?3r/lfhBkyOWdTJ7WMw1UeYV8FuWldmYuxy1T8GMgL3a8ZQqTui6jgwHnAQ?=
- =?iso-8859-1?Q?OXgYEko6tXY9IN107cgAmt9+0CnrBmc2HCLCn1lXSVUzm3WTJecgG82RPS?=
- =?iso-8859-1?Q?kVoIPMlUyQXheS74cUvwSMh86Ow2jZqCDaQci8BLPR2RwdiUpVVrz5DdRE?=
- =?iso-8859-1?Q?bNA0WR6ChgCd16z6d2x35fvHBSOJlrjGrn2uh5wGlIO5IvzzE476tb2hX+?=
- =?iso-8859-1?Q?exDt80B4Q5TPlxEoCaRkz5/DYUnR0ATEpVdmk+a1LFK83MPDLQBQkj5UBv?=
- =?iso-8859-1?Q?nfhnbnM2VyFXQEsL6SdeoNbAUfhwPDvytFhv7v6ItTvYn9ZZ7wk7JcdIC/?=
- =?iso-8859-1?Q?0YRYLmcUWzF5bIt+4suufF9Yuha6Q1i+dC5379dP6Ybbpn43WeH/i47NzE?=
- =?iso-8859-1?Q?XyRX36/XlKOxKUePunUfSZ2owqr4+64XYFvZmfBt1EnFELv9ecSE6gP7c+?=
- =?iso-8859-1?Q?P57hksPwhdMLYFMajjIz4gb6lwu3jbxKhH2uM3J9iEw9CNUWep4ze2J1Z7?=
- =?iso-8859-1?Q?g4QjdOk6LOxVp8/gPbQ7FJDOQbCdaw09ujQy8SwWVb/VFvWp654OwzhMOg?=
- =?iso-8859-1?Q?Cvibq2k=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:VE1P190MB0830.EURP190.PROD.OUTLOOK.COM; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(8096899003)(38070700021)(7053199007);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?Qo173bhQSqlYFz/lrBgI+lKYA84UuRwpG3sbu9/93ueJUQB4O7pdQq96VK?=
- =?iso-8859-1?Q?Xug2JSRrDCGR+qRnu0N65ZINMqXxaIGJ40c4juke+LUaNay/gUuU4N0PtS?=
- =?iso-8859-1?Q?Hib0pW2UAnASs2hgFZL6VNsHhmoGfLom3btpJEVr3n4tKSG5Ohjtwexlgm?=
- =?iso-8859-1?Q?NAkGVu4J0uJl2pCGYfedCL2GAtTxlFoYeFNgAvVPFjUZaGGKNZTvHSv7yY?=
- =?iso-8859-1?Q?TuL6pPLF3isRw/RoXN29wsjRWb2XIS41iKOVleE2Pe0Ny5uwrRQlnLXgAM?=
- =?iso-8859-1?Q?vtZHiJL4c5dVnM7bBmztBTG3HTq+c6ediojiFfbxCWf6xrqU6ewGHmT14W?=
- =?iso-8859-1?Q?LlF/fEXqlw8J50p3ilaHezbhNCIok3zIIQYYuV1QnyIFyQyDQCKa++ri/B?=
- =?iso-8859-1?Q?DBbtQtcBegDN/GX8e3ck2Gpce576ukJe/CIAS6ufrSiHxXWrJzHmHT0Qq4?=
- =?iso-8859-1?Q?m6EW7XkKLp3aJb87W9YLfpQA5hKBNxascXBgj2iobpRJzz7Y6uwVRMv5DQ?=
- =?iso-8859-1?Q?GDH8MlmhMO6lRQZgJyVXIMlZFznbU4GBvoK/D4/VYjVAtjkA7O1jRsUc8B?=
- =?iso-8859-1?Q?yzYrbdh8l9wayeDHK7l50Tko1D9miZgmpd/qyPhuQ6LPtyoTS7W5P9FFfG?=
- =?iso-8859-1?Q?MOvFoJxmGVJb8MQhmO87Swkp/+rwMhqvkh+9oh3FeCE6oi1iyiNPdawul1?=
- =?iso-8859-1?Q?uGWitH4tjv27BFcwZjn6yCBmoZ3OrkA86MQCSpBrFQD7pbYhh+2oN9H2sX?=
- =?iso-8859-1?Q?SjPhSTzME7n0q3EUsmd0lpHwqypoG1on46tPQrzljemNTEbYHZZHQ85HvI?=
- =?iso-8859-1?Q?9hS9XaK9kiM9jcgYkWTBd/0MbqFTIoTlXhjO154ErDDnJHBighrcfIS770?=
- =?iso-8859-1?Q?VvLsmJw7EgWasTNsIN5ILSt1W101l4BFe/lDdR9lpysbxB4ldrMf4RyaGn?=
- =?iso-8859-1?Q?v40C6etiIpU8/ZmriUQXe/ItxNUJETffFGpHDowHGQ7+xbicbJIsk9uRMI?=
- =?iso-8859-1?Q?qQdQghV8h7VQLJ++kHT2aIuJJzU1uTg/W5I5aXnixz5E+oxa92HsLKKca7?=
- =?iso-8859-1?Q?88Akro7SIfK/Cge9vdngjin/xaBrU1RzXhGfPJ/FeW5iO4pbraZv6YAiTL?=
- =?iso-8859-1?Q?tWUkalvH5ZWbJ6B46Vh4yMALAn2Y+E53JJBA7iH6rdDu2ZFgPgP03AV6H3?=
- =?iso-8859-1?Q?GC2MSdgAYiZQNPuWJPmtS/5tvOCzZbS8fQr0L1vtTQxW8AynHfgvIljRgh?=
- =?iso-8859-1?Q?re9tvSAVCE3uNsXz+bhxcnQsvV+46OwaiFRvBsmiqQ62bnAT7EXvsI75yO?=
- =?iso-8859-1?Q?D2ooZMrn5e/Y37F6Inp2g68WFz/7/pLS3mrTpD7Ve0CYk9uJ5VA4dKg34v?=
- =?iso-8859-1?Q?ud73Cg8T0NhUN1D46jY1X0l99rZmApSCxNMdYQdLiBhiOJrnvgjJd9aiXW?=
- =?iso-8859-1?Q?DMjBR/eUbRvAhC21TQq4qUyorE2loV/KuJMbUbwOwHEKIK+0xuUXFr6V3C?=
- =?iso-8859-1?Q?IzRRlniWFP049FEb+fm4IFyRc+6ludOtTzJphtTKoZQEQ7xOc3Z4XvU5yq?=
- =?iso-8859-1?Q?1yR7gP5MJgxa/fSTWxMxmKwUQuawpNAKmqy2dkP6YfYlqrVLITyXFh+vXj?=
- =?iso-8859-1?Q?SzVwLno/cx+ano0Nv94IhRruS44mpeIcoC?=
-Content-Type: multipart/alternative;
- boundary="_000_VE1P190MB0830BD7C560B3369EE83CE14800EAVE1P190MB0830EURP_"
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ SA2PR11MB4826.namprd11.prod.outlook.com (2603:10b6:806:11c::8) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.22; Wed, 10 Sep 2025 12:15:39 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::21e4:2d98:c498:2d7a]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::21e4:2d98:c498:2d7a%2]) with mapi id 15.20.9094.021; Wed, 10 Sep 2025
+ 12:15:39 +0000
+Message-ID: <a003d3ae-79d7-4d9f-b703-70427f78654d@intel.com>
+Date: Wed, 10 Sep 2025 14:15:34 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 5/9] eal/linux: remove more internal VFIO macros
+To: David Marchand <david.marchand@redhat.com>, <dev@dpdk.org>
+CC: <thomas@monjalon.net>, <maxime.coquelin@redhat.com>
+References: <20250903072826.1727004-1-david.marchand@redhat.com>
+ <20250903151800.1965006-1-david.marchand@redhat.com>
+ <20250903151800.1965006-6-david.marchand@redhat.com>
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250903151800.1965006-6-david.marchand@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DUZPR01CA0051.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::15) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: DejbeMw5cZ9+5w/9ZboFG11FbSy+WmLu3sGOc/BjZsBgkaPUnLnUQJ5ChGYnyQS/hrL/2277mJq5/nHFsKIoOWwsIsVYtJwbwxw7jWIaBRBU1VPiuuTQ9JLZ28dOFA4SX4PexZRiGHfxa+G2yDvq44ZAufnb0dEpUvB1iasCd+Q5EkvDbCRWK02RC5SmgfmcOJXAnGgkkpVQsiyiwan6AVYNJhSmH7b22u+jnFJB96ewhVgdqe5lnyIQ1b64hOI8ODCjWTgUljjPD2o8dKuEJr7MaJd9WsqAoUJAmFTeXRsN0LxWotnoJFyNo17JzizFi9EeTQBC4bduWllZ/Nz8ByuFzee1X233Puh8Kvn0ORosb0Y3NUbHY8X0U8BFMfradkcyeiNlHgYXdd0+m5mCC/854x4RrS7UnsdIVQr0ApID0vyuowIOTdlXMlybZqxE8LH6EP4zm0nTg9c+axZc87M8e3kpXcyxqNxVQM6xUVWQR8vuG6od2/BVPrBWO6ygjK5r/yuHW+GowpyuhfBBYiQ+jJl9zJltml4p9IO0+XZ6LkxceAMamIBh/CKLCk0sFZokQWQ+j9a+4nNkaD1DOQIH06Pehrki1O1lvIfCZnQdgYACn3TtdK7b5zXgnwZZHrrsmHd0cpct7s/pavBwLRtrKhMRrjs8AwBEA5rUhog=
-X-OriginatorOrg: napatech.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|SA2PR11MB4826:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3f7e5fed-6fb4-4f69-579f-08ddf063c165
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?eEIzSXA1Qk1qVUxxNXlFL1RRUURzZnBSbDJ2REJ5S1QxZ3ZPbURHcGR5cnNV?=
+ =?utf-8?B?ZDR5MGhNMDhvaXRMYU9TVkVBeU1udnBKcHVWN2tGbGp4dklrUHZpSUpFM3lJ?=
+ =?utf-8?B?NDJadG9ZV1ZXRWJqRmk1d01HQWxUN1NYQ3l0dDBrcVlFOFdJcVROdFpISzg0?=
+ =?utf-8?B?Z0JRTUsraW1NSnp6bURYdkpDWDJGTlF3akR4QVV5aGxmWkoyZHhCTVB5R3hw?=
+ =?utf-8?B?QjJaclpDSDZjekI2TThKTTNJNUVUODBoNEdDeVJtczRFWnlNSlBoNEN2d3Ar?=
+ =?utf-8?B?N0tnajVJWWRUNHU1NStQTWZld0hIM3ZZaGtYR21TWkdYV2k1eCt6WElMbkJ4?=
+ =?utf-8?B?YzNUcS9MS21QbUFHUkcvcm5jQ0RvNVo4MHZPNXhpWDVTakw3WENsdnlBcTA0?=
+ =?utf-8?B?b0puOFFnTzNMZXRrSWRpMEN3QmNIWkNCZTUyZ004c1l5Q09NMEJXMjA3N3FG?=
+ =?utf-8?B?bGJUbTBwT05HOEpmTTZFU0s0SUR1bGlpZnJyelR1YVRadHZ2N0gvNzJ3cXFT?=
+ =?utf-8?B?VG9RT05hMHJLMlE5SlRQM0l1SVMwcTRoOEtwd21rVWhlSWhscXd5bHpVSkRR?=
+ =?utf-8?B?VGUyOWlrL2F0Nk5JbG1BamRETXJKdEtWSlp6bjc0ZG9ydno4NzFMTm9DZ0cx?=
+ =?utf-8?B?RlR4MEVVLzZMdzF1TW5IdWFPRnVqVVVPVTVoNVNmV3JvYWRvNHkyV0NaNjFs?=
+ =?utf-8?B?SnN4SDZIbDFNbSs0TkJYL0xWczltUjVXWVlPR1c3Zml0UDRzNlZMSEZwSFV1?=
+ =?utf-8?B?QXVnVlBoaW5pcXhkZlRWWjR0S1JpTlNlTVU5MmZUbVhvaDQyLzRkZ0k5bExZ?=
+ =?utf-8?B?TUkxWjZndngvbitkOUVWR0dKb3ZrWDR4NnprQkk5NzVldWZNSG5nMjRxWVMv?=
+ =?utf-8?B?UitLM3h1YUdPVk5kb3hWeUxRd0o4aHI3eEJyUngzZFl4dnpQQTlOeTErTEtK?=
+ =?utf-8?B?aTRUMjNjRkRjaFFabkw0dnh5eXVITEVVV2s2RkRpbG9oSU9udUdYWENJeHpB?=
+ =?utf-8?B?UEs3TXZXQVBoV296VVl2ME11a2FJMFJsRndlbDA3SWVZR3l0aTRIblhoM05O?=
+ =?utf-8?B?Y29RNXdPL01KY0dlUUxhc0Y5aXptME9pYzVsL2Y0azJwRXI0RFZib25HMnY0?=
+ =?utf-8?B?Mm9QUWZ6VVh1ZFhPam1ZOTNON3YzTlJlRHdQUTIwSjViY0lSUklQR0VOR1FX?=
+ =?utf-8?B?MXlKZ0hyeFVQOEV6YURWL1poVlg0RVdSL0E4ZFA0ZmhObnZvU2RzZFJtRlc5?=
+ =?utf-8?B?OUJNblpHSlVvaXVBdkNyZmtyL0VLQkhycUM5R2Q3c0IwZC82MWhnQnZtdlVt?=
+ =?utf-8?B?WDJTTWRraVYrekV5SDFwUmtuU05WM0Q1YVFqeEZKQ1R5K0xRcURTZXBVVWxC?=
+ =?utf-8?B?NmhlV1dKTUZUTUd4V01zM1IyYUFKeW5NdkdQVENjbzVvZFZuWFZBWmlyTnZH?=
+ =?utf-8?B?b2VSUHVyK2paZHRiZ2tmTGV1cDA4aUxYaTMxblhXZmZ6OEtkdzFMd3VhYjRB?=
+ =?utf-8?B?ejBhL3VORXlxM1NhTzVreVNGNGJJN1ZYYVlGTDE3dEhNamI1RDRxUzU2Z21G?=
+ =?utf-8?B?R0c0ME51elRlREdMeGd4MzlPZmxJUkhBMkZpZUJXTk84TjBTYkgwdGdKOUk1?=
+ =?utf-8?B?YStJQVU3SmNLa0lBbFJEbi9kNkdWeWN1c0VBUmJnczRQVDAxaFd3SklHR2xR?=
+ =?utf-8?B?eXhabmUrcis3akJ4dzJ1WElrOG9PNEZXV2tha292aFR4V3hmaThRaUZJYVpl?=
+ =?utf-8?B?TTNmekhLQS9OSVdnWWprVWw2OXJjV3J1TS9tblpvaDZIL2NsMnVzcStqdFZI?=
+ =?utf-8?B?aWk2elBubFJhanNCRytkK2pQRHI5R0dvaGtjaGRtei84dnJJUWh4MHJJUExJ?=
+ =?utf-8?B?TkJWekV2V3R5NG9IWDVVTVZjOUR0Nk4vazgxWnY2NmdTNnJrNXhEbVRQdXRJ?=
+ =?utf-8?Q?XuMcilYbY54=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NksyZXVIUzgwMk1VR1FYZmwvVk5qRzcrYy9wakNFQ2oxclRLOU8zUnUzWVdl?=
+ =?utf-8?B?TXJ2V2NlRHFmNUR1WWtRU1l4dGxQMXBDbEVGSXk1L3EwYkxicVBraEhlS0kv?=
+ =?utf-8?B?Q2FjSUptMCtaZ2hOdGM5SU1MNTNRSjhxczZZc0l6SlpiT3EwR2cwRkVrT1dF?=
+ =?utf-8?B?YThKQlFKc3VoaGlhbUN1bzVZUm9OTFc2dDBVTTJKNzdtQ05OTFZKZXczdG56?=
+ =?utf-8?B?WHp5R1FTQ2hLMGc4ZmdjRTE4OGl6eERBcUlRNnZpallXUEdPSk9IL0NGbVY0?=
+ =?utf-8?B?a0pDQlN0TVo2QWtIb3h2Q21pNWxMeExDTHJ2aHhqYnBwcWVzaTNZNnNTdkx6?=
+ =?utf-8?B?Unoza1pUZElIdW0yM0UwYmIwVllidXRiRUNzL3ExMWdlWmRMNjdUcnJQT01X?=
+ =?utf-8?B?MFlNS1RkdlYzNk4vYnZ3SUpEMHZzcEpoVlluS3dna0pzUlV0SWFMMXlRTVhm?=
+ =?utf-8?B?Lzc4MUJ4dW9RYUVDaURucWhzMDhGcE9kcEFBTlpYM3JVdzhFcWx2NmY0enB5?=
+ =?utf-8?B?ckFaWlo1LzRYZlUrVVVOTjFiTU5EUXF5b3NwYU0yRVIveUJ4bHlZODRNZnZQ?=
+ =?utf-8?B?S0FGVXZtWnpDdjU1MUp3c0lzU0NkSUNkUzZmQ0gwS2tydWFuUDZIc3hwdXFD?=
+ =?utf-8?B?c09YbVJFRFdmRjAyZTQ3TXRlcm5seVl2ZnloQ25xbGFmVkxoc1p6bzE0djF1?=
+ =?utf-8?B?TVdvNnZmYUJJME5FYmZuZ05EMVRVUU1pTjhaZVc1eXhDV2JmanlvZVA3RU9B?=
+ =?utf-8?B?WTBNRG4yNVlNUkpNQytrM1paNDhxTU5UQm9FNUpKSmlEa2l2MkIyL3pmRklr?=
+ =?utf-8?B?NkNLalQrekFIcUc4SnJVcFIxaW5pK1ppM2x1YzRCTFZxVTBlc29scm11Y1Ba?=
+ =?utf-8?B?NXFzaXRGZndNdUxUaHNHMngxcnJ4VEI2YkRtQW1kbWkvRGV5N0ZEaFRROC8r?=
+ =?utf-8?B?RWptNGJWZGRGVXUyZXRzdHVKbHFFb094M2k2L1hwNnRFNjdqR3d0aGdEa1Rp?=
+ =?utf-8?B?aEU3bEdYMGhhd2NPbFQvSm1mUVpsUlE2WUY5RE9zd1Y2MjZyNlZHTEsrdzYx?=
+ =?utf-8?B?d1VLVURHdHV6blFIZHFyTnZtaWdNT2NSYnhnZ3JQN3A3M0VMdkFianNEekk2?=
+ =?utf-8?B?cXhGUXBzVjlNU0xhUnN1dW8yeHp2RHJsbnNhRFkycndCNUQxWFJUelZvRFNV?=
+ =?utf-8?B?TFMyNkFTWlU0aU5OMFdiVkFzd3gwYW5LMitvNVNmWmFKbit5OEhPazBPb1kv?=
+ =?utf-8?B?VjZuZFBoK01FY1RwQ2p1N2t1OHdUMXFsWnNnNXdJc1ZSRWFrMlpHWHUrMjVH?=
+ =?utf-8?B?VEt2N2FhS0dMTEh5LzcrNkNjZG1Ha2VVYXNQZzdMYmJPY0c1d3c1eVcvUVh6?=
+ =?utf-8?B?M0hPTy8ydG42RUVjbGRLT29WK2Frczc3eGt6bCs1Tm56SmxUTVBPK1pxdTY0?=
+ =?utf-8?B?TmtKY3cxdTdzSXU2MEJQSSt1SkFtZ3lrWklsWlh6SEZhVkJ2eS9paHNEREhT?=
+ =?utf-8?B?V2k4VTJpa011d21iSjVIT1cyaFNHTzlNVmZnOVl2ck9sUlZwMmQxQ3JhUis3?=
+ =?utf-8?B?R3pSWlk2enFhUEI0T2ZFdXJzZzgrNXZvZHRyUGswVldaeVU5T2luTmc2KzdJ?=
+ =?utf-8?B?VkFMdkpOenY4ZnU1MHlKbnRxMzJtQjhON3lCWTJUQUpWbmZ2TE9lUFkxc3BC?=
+ =?utf-8?B?WGRiejRGbGZmeFhMWjY3bzRDdFJkM1ZsRDVPbGpXQzJKWW13WlpGdzA4cC9I?=
+ =?utf-8?B?T0VtekQyUmRpT3kzL2J2cFM5dzlxS2VCQmlVYUxPQnBIdWNwMFVZOW1jaHVO?=
+ =?utf-8?B?TjhhNVZmN0dKT3FGV3VHMXdYaEEvSGZrMGt1RE41Nk9sem56ZlA0Mm53NEJU?=
+ =?utf-8?B?SVlNR1lEWGFUdjQvVzZDeHdRQStyQ2I1NmhaRjB6QUs1aHdpMlI2MFlDWHgr?=
+ =?utf-8?B?c3VQVW9WOWEyNnR3VG93K20zN282YzNKeEhsNGNZVFA4TWliNkZZR2pzSnRw?=
+ =?utf-8?B?citNTEpOcHo0Q1l3cUJ1MGhrZDNwdzkrb0daVVBXTXA1K3lHQnkzVEozell2?=
+ =?utf-8?B?aDlPa2NBejVPSFliZ3BpSmJXRjhEMVNkUjBwOVhpNThSUkhzRjVma05tUFBU?=
+ =?utf-8?B?NlZ1bkJiZ1ZBUGFmTlkrdUJibCt0Rkc0TFJmWjh2aVNFQWI5TVhwM1daTGEy?=
+ =?utf-8?B?Smc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f7e5fed-6fb4-4f69-579f-08ddf063c165
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: VE1P190MB0830.EURP190.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cbd8154-1af1-408f-1670-08ddf0638525
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2025 12:13:58.2224 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6635FQJtx9uC6SGUj6P3mYb0DQGgyC4OTaG+sqIDRBW+JENyo3oCsAcAxYK7nq7XZO2xkL5Rfh2J1B0iTRLJJg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PRAP190MB1786
-X-BESS-ID: 1757506440-304397-7716-10-1
-X-BESS-VER: 2019.1_20250904.2304
-X-BESS-Apparent-Source-IP: 52.101.84.115
-X-BESS-Parts: H4sIAAAAAAACAzXLOw6DQAxF0b24ppixx5+wlSgFxLZoIgqmiBSx90wBzdPVk8
- 7zB/HtMEMfO8F+wExsNGobJyqXJQgpyZvrQqguIVmUUx5rwDndfuufy6tgvfyKxUmaiA
- dXYwurHpkatTV7a4Hz9QeWgtEbgQAAAA==
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2,
- rules version 3.2.2.267381 [from 
- cloudscan19-119.eu-central-1b.ess.aws.cudaops.com]
- Rule breakdown below
- pts rule name              description
- ---- ---------------------- --------------------------------
- 0.00 HTML_MESSAGE           BODY: HTML included in message 
- 0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS113687 scores of
- KILL_LEVEL=7.0 tests=HTML_MESSAGE, BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2025 12:15:39.6229 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3IH9VDTZIB3NZfI1qHx4SiNWVrigDsTXh3vVOa9Hp8UUT5AqK/P4GSzapfuBlkN2WxWrsJJugJXsPfohWsRTQXKkK+nIUgvl5KBhDwt+qeI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4826
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -172,275 +191,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_VE1P190MB0830BD7C560B3369EE83CE14800EAVE1P190MB0830EURP_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+On 9/3/2025 5:17 PM, David Marchand wrote:
+> No need to redefine some VFIO_* macros that look like a define coming
+> from standard linux/vfio.h header.
+> Use RTE_DIM() and remove unneeded checks (like in get_vfio_group_idx()
+> where j can't be >= RTE_DIM(vfio_cfg->vfio_groups)).
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
 
-From: Stephen Hemminger <stephen@networkplumber.org>
-Sent: 08 September 2025 23:08
-To: Serhii Iliushyk <sil-plv@napatech.com>
-Cc: dev@dpdk.org <dev@dpdk.org>; Mykola Kostenok <mko-plv@napatech.com>; Ch=
-ristian Koue Muf <ckm@napatech.com>
-Subject: Re: [PATCH v1 0/7] migrate threads to DPDK service framework
+Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
-On Mon,  8 Sep 2025 13:04:38 +0200
-Serhii Iliushyk <sil-plv@napatech.com> wrote:
-
-> This modification provides better resource (CPU) management for NTNIC PMD=
-.
->
-> The following threads are migrated:
->         * FLM update thread
->         * Statistic thread
->         * Port event thread
->         * Adapter monitoring thread
-> Additionally, a warning is added to inform users about the importance of
-> dedicating lcores to the DPDK service framework when using the NTNIC PMD.
-> The code is also cleaned up to use pthreads and rte_thread APIs.
->
-> After this patch series, an each application using NTNIC PMD should
-> dedicate at least five(5) cores for DPDK service framework to ensure
-> proper operation of the NTNIC PMD.
-
-I was concerned with excessive control thread usage before, and this
-seems to be worse not better.
-
-There are conflicting use cases here:
-  1. The original DPDK goal was to make effective use of multiple cores
-     with no locking. Intel customers often had idle lcore's and some CPU's
-     had lots of inactive lcores that could be used to get more work done.
-     Dedicating some to service tasks etc was a natural outcome.
-
-  2. DPDK applications (OVS, Grout, VPP) usually want to know about lcores
-     at least in the documentation and examples. They don't cover the case
-     of service lcores.
-
-  3. Dedicated low core count smart NIC's using DPDK. In this case it
-     makes sense to be frugal with lcores since the point of the smart NIC
-     is to be able to run other control services. For example, the MS
-     NIC had hard limit on the DPDK part (via cgroups) of only 4 + main
-     lcores.
-
-Granted NTNIC is likely only being used for a specific application on
-a specific set of hardware.
-
-The ideal would be to have better control event management in EAL.
-Something like "libevent" style API. This would reduce control core
-needs, and avoid any potential resource conflict overlap between control
-threads.
-
-
-Hi Stephen!
-
-Thanks for the detailed feedback.
-
-The migration of the rte_service actually improves the performance of the n=
-tnic. That is an obvious result, since we dedicate the entire core to a sin=
-gle service when the default (1-to-1) mapping is used.
-A similar performance and stability can be achieved by using threads and mu=
-texes (The rte_spinlocks introduce instability when used with threads)
-
-The ntnic service API provided with this patch series enables users to map =
-NTNIC services to lcores as necessary.
-
-All NTNIC services can be mapped to separate lcores or to a single lcore; h=
-owever, this approach has a significant impact on performance.
-
-The mapping of all services to a single lcore is similar to a "libevent" st=
-yle API. However, there are no events; instead, there are continuous callin=
-g services in a predefined order.
-
-The one core cannot process all the services due to a negative performance =
-impact. Following this approach, we have to spawn a thread (or start the se=
-rvice by looking for a free lcore) every time an event occurs. If you have =
-any other vision about it, please share your opinion.
-
-In the scope of complex DPDK-based applications  (OVS, Grout, VPP), we stil=
-l have options to use (1-to-1) mapping by passing raw EAL options -(s SERVI=
-CE COREMASK or -S SERVICE CORELIST).
-
+-- 
 Thanks,
-Serhii
-
-
-
-
-
-
---_000_VE1P190MB0830BD7C560B3369EE83CE14800EAVE1P190MB0830EURP_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div id=3D"divRplyFwdMsg">
-<div style=3D"direction: ltr; font-family: Calibri, sans-serif; font-size: =
-11pt; color: rgb(0, 0, 0);" class=3D"elementToProof">
-<b>From:</b>&nbsp;Stephen Hemminger &lt;stephen@networkplumber.org&gt;</div=
->
-<div style=3D"direction: ltr; font-family: Calibri, sans-serif; font-size: =
-11pt; color: rgb(0, 0, 0);">
-<b>Sent:</b>&nbsp;08 September 2025 23:08<br>
-<b>To:</b>&nbsp;Serhii Iliushyk &lt;sil-plv@napatech.com&gt;<br>
-<b>Cc:</b>&nbsp;dev@dpdk.org &lt;dev@dpdk.org&gt;; Mykola Kostenok &lt;mko-=
-plv@napatech.com&gt;; Christian Koue Muf &lt;ckm@napatech.com&gt;<br>
-<b>Subject:</b>&nbsp;Re: [PATCH v1 0/7] migrate threads to DPDK service fra=
-mework</div>
-<div style=3D"direction: ltr;">&nbsp;</div>
-</div>
-<div style=3D"font-size: 11pt;" class=3D"elementToProof">On Mon,&nbsp; 8 Se=
-p 2025 13:04:38 +0200<br>
-Serhii Iliushyk &lt;sil-plv@napatech.com&gt; wrote:<br>
-<br>
-&gt; This modification provides better resource (CPU) management for NTNIC =
-PMD.<br>
-&gt;<br>
-&gt; The following threads are migrated:<br>
-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * FLM update thread<br=
->
-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * Statistic thread<br>
-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * Port event thread<br=
->
-&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * Adapter monitoring t=
-hread<br>
-&gt; Additionally, a warning is added to inform users about the importance =
-of<br>
-&gt; dedicating lcores to the DPDK service framework when using the NTNIC P=
-MD.<br>
-&gt; The code is also cleaned up to use pthreads and rte_thread APIs.<br>
-&gt;<br>
-&gt; After this patch series, an each application using NTNIC PMD should<br=
->
-&gt; dedicate at least five(5) cores for DPDK service framework to ensure<b=
-r>
-&gt; proper operation of the NTNIC PMD.<br>
-<br>
-I was concerned with excessive control thread usage before, and this<br>
-seems to be worse not better.<br>
-<br>
-There are conflicting use cases here:<br>
-&nbsp; 1. The original DPDK goal was to make effective use of multiple core=
-s<br>
-&nbsp;&nbsp;&nbsp;&nbsp; with no locking. Intel customers often had idle lc=
-ore's and some CPU's<br>
-&nbsp;&nbsp;&nbsp;&nbsp; had lots of inactive lcores that could be used to =
-get more work done.<br>
-&nbsp;&nbsp;&nbsp;&nbsp; Dedicating some to service tasks etc was a natural=
- outcome.<br>
-<br>
-&nbsp; 2. DPDK applications (OVS, Grout, VPP) usually want to know about lc=
-ores<br>
-&nbsp;&nbsp;&nbsp;&nbsp; at least in the documentation and examples. They d=
-on't cover the case<br>
-&nbsp;&nbsp;&nbsp;&nbsp; of service lcores.<br>
-<br>
-&nbsp; 3. Dedicated low core count smart NIC's using DPDK. In this case it<=
-br>
-&nbsp;&nbsp;&nbsp;&nbsp; makes sense to be frugal with lcores since the poi=
-nt of the smart NIC<br>
-&nbsp;&nbsp;&nbsp;&nbsp; is to be able to run other control services. For e=
-xample, the MS<br>
-&nbsp;&nbsp;&nbsp;&nbsp; NIC had hard limit on the DPDK part (via cgroups) =
-of only 4 + main<br>
-&nbsp;&nbsp;&nbsp;&nbsp; lcores.<br>
-<br>
-Granted NTNIC is likely only being used for a specific application on<br>
-a specific set of hardware.<br>
-<br>
-The ideal would be to have better control event management in EAL.<br>
-Something like &quot;libevent&quot; style API. This would reduce control co=
-re<br>
-needs, and avoid any potential resource conflict overlap between control<br=
->
-threads.&nbsp;</div>
-<div style=3D"font-size: 11pt;" class=3D"elementToProof"><br>
-</div>
-<p style=3D"text-align: left; text-indent: 0px; background-color: rgb(255, =
-255, 255); margin: 0cm 0cm 12pt;" class=3D"elementToProof">
-<span style=3D"font-family: Aptos, sans-serif; font-size: 11pt; color: blac=
-k;">Hi Stephen!</span></p>
-<div style=3D"background-color: rgb(255, 255, 255); margin: 12pt 0px;" clas=
-s=3D"elementToProof">
-<p style=3D"text-align: left; text-indent: 0px; margin: 0cm; font-family: A=
-ptos, sans-serif; font-size: 12pt;" class=3D"elementToProof">
-<span style=3D"font-size: 11pt; color: black;">Thanks for the detailed feed=
-back.</span></p>
-</div>
-<div style=3D"background-color: rgb(255, 255, 255); margin: 12pt 0px;" clas=
-s=3D"elementToProof">
-<p style=3D"text-align: left; text-indent: 0px; margin: 0cm; font-family: A=
-ptos, sans-serif; font-size: 12pt;" class=3D"elementToProof">
-<span style=3D"font-size: 11pt; color: black;">The migration of the rte_ser=
-vice actually improves the performance of the ntnic. That is an obvious res=
-ult, since we dedicate the entire core to a single service when the default=
- (1-to-1) mapping is used.&nbsp;<br>
-A similar performance and stability can be achieved by using threads and mu=
-texes (The rte_spinlocks introduce instability when used with threads)</spa=
-n></p>
-</div>
-<div style=3D"background-color: rgb(255, 255, 255); margin: 12pt 0px;" clas=
-s=3D"elementToProof">
-<p style=3D"text-align: left; text-indent: 0px; margin: 0cm; font-family: A=
-ptos, sans-serif; font-size: 12pt;" class=3D"elementToProof">
-<span style=3D"font-size: 11pt; color: black;">The ntnic service API provid=
-ed with this patch series enables users to map NTNIC services to lcores as =
-necessary.</span></p>
-<p style=3D"text-align: left; text-indent: 0px; margin: 0cm; font-family: A=
-ptos, sans-serif; font-size: 12pt;" class=3D"elementToProof">
-<span style=3D"font-size: 11pt; color: black;">All NTNIC services can be ma=
-pped to separate lcores or to a single lcore; however, this approach has a =
-significant impact on performance.&nbsp;</span></p>
-<p style=3D"text-align: left; text-indent: 0px; margin: 0cm; font-family: A=
-ptos, sans-serif; font-size: 12pt;" class=3D"elementToProof">
-<span style=3D"font-size: 11pt; color: black;">The mapping of all services =
-to a single lcore is similar to a &quot;libevent&quot; style API. However, =
-there are no events; instead, there are continuous calling services in a pr=
-edefined order.&nbsp;</span></p>
-<p style=3D"text-align: left; text-indent: 0px; margin: 0cm; font-family: A=
-ptos, sans-serif; font-size: 12pt;" class=3D"elementToProof">
-<span style=3D"font-size: 11pt; color: black;">The one core cannot process =
-all the services due to a negative performance impact. Following this appro=
-ach, we have to spawn a thread (or start the service by looking for a free =
-lcore) every time an event occurs.
- If you have any other vision about it, please share your opinion.</span></=
-p>
-</div>
-<div style=3D"background-color: rgb(255, 255, 255); margin: 12pt 0px;" clas=
-s=3D"elementToProof">
-<p style=3D"text-align: left; text-indent: 0px; margin: 0cm; font-family: A=
-ptos, sans-serif; font-size: 12pt;" class=3D"elementToProof">
-<span style=3D"font-size: 11pt; color: black;">In the scope of complex DPDK=
--based applications&nbsp; (OVS, Grout, VPP), we still have options to use (=
-1-to-1) mapping by passing raw EAL options -(s SERVICE COREMASK or -S SERVI=
-CE CORELIST).</span></p>
-</div>
-<div style=3D"background-color: rgb(255, 255, 255); margin: 12pt 0px;" clas=
-s=3D"elementToProof">
-</div>
-<div style=3D"background-color: rgb(255, 255, 255); margin: 12pt 0px;" clas=
-s=3D"elementToProof">
-<p style=3D"text-align: left; text-indent: 0px; margin: 0cm; font-family: A=
-ptos, sans-serif; font-size: 12pt;" class=3D"elementToProof">
-<span style=3D"font-size: 11pt; color: black;">Thanks,&nbsp;<br>
-Serhii</span></p>
-</div>
-<div style=3D"font-size: 11pt;" class=3D"elementToProof"><br>
-</div>
-<div style=3D"font-size: 11pt;" class=3D"elementToProof"><br>
-</div>
-<div style=3D"font-size: 11pt;" class=3D"elementToProof"><br>
-</div>
-<div style=3D"font-size: 11pt;" class=3D"elementToProof"><br>
-</div>
-<div style=3D"font-size: 11pt;" class=3D"elementToProof"><br>
-</div>
-</body>
-</html>
-
---_000_VE1P190MB0830BD7C560B3369EE83CE14800EAVE1P190MB0830EURP_--
+Anatoly
