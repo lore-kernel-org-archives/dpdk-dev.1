@@ -2,179 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13D4CAC587
-	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Sep 2025 08:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AD4CAC587
+	for <dpdk-dev@archiver.kernel.org>; Thu, 11 Sep 2025 08:36:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B1060402D4;
-	Thu, 11 Sep 2025 10:12:16 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 4E9AB402D3
- for <dev@dpdk.org>; Thu, 11 Sep 2025 10:12:15 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58B7LxEN000942;
- Thu, 11 Sep 2025 01:12:14 -0700
-Received: from nam12-dm6-obe.outbound.protection.outlook.com
- (mail-dm6nam12on2110.outbound.protection.outlook.com [40.107.243.110])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 493sxv82wy-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 11 Sep 2025 01:12:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yjwGal7jpgCu2fg1kHnfAMBff7qHFpxQ5hOOXd6VCybej8LX2cYlJ67RNc4BXRItCkUM0jp1ZL1W5FM5hQCo2lsWiwIPL6IvDvffpLulwwqNksbDaydlQZSgrUBYDhDc0HRiYymHc58JmNT3UfCfQKnAPp2/kWvfxBM4Y/fBOkldCO2oJjXEV/KnXeiNVdhzZYAdAKGXy+rUT4tXZSDQCaI4XhDZOa2OaxgcyVbrt/XoyvNjtg6g6wVePl/1LosO05X5jpE92c218XSI9eWgv08vm3Q22dOlBWRuewxo0HpH1FQ6lMDBDiP0/zLCkRxRi5tbMNy6W4gLZ+1HG7NThg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cmnNrJRXJvnsZeen/KYJwatj71jqU/WI81FsETmtfNA=;
- b=ih2f3Au7ZMBHTn7JU8z6aJoQq46Jktxsyb3oJsaWAZoKnDbJ+0F2R98xdQbp6vs474O4YpwZMj0kkXDrAU2tBatG9Q/58TJuW74tJszqUa94Otf0FWBFyAft0JfQ0RmmX8L9qujQlMDC2r2ghPQJ0hPMPEri3ncAlW81t/X2hySG0weqSPyBqtl4LbIFyGjMkQAEdH3yhYpQVRZbY0NuOM53gNfA0zhB3VO0KammELRffgBwhFO4tSQGIr6eV+Y01Km/RKouY//x/P8srhESR6/BLgcgijO2gw6oGtUXCuKki6/XUOR4vDPaWr2tJkzwtmd1trgJDoYLeg+MGP/C9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cmnNrJRXJvnsZeen/KYJwatj71jqU/WI81FsETmtfNA=;
- b=bJB+w9by9MxnXNzUkalzpYKkZ2GEgFGaa7LvBarl7p9HcLvQd7GjhqmzoOJFG+/9NDR9LgmGQ7T4raqJLbf4CtqArv5d512w3V10BF1oLAUEpMWPhbCEp6UHNzduGWr4FrUM4WHhMEqOjQWcykohFo65ks5GbjwxEbvpPohzsxs=
-Received: from CO6PR18MB3860.namprd18.prod.outlook.com (2603:10b6:5:34d::12)
- by DM4PR18MB5193.namprd18.prod.outlook.com (2603:10b6:8:41::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 08:12:11 +0000
-Received: from CO6PR18MB3860.namprd18.prod.outlook.com
- ([fe80::de98:ceac:f841:3fdc]) by CO6PR18MB3860.namprd18.prod.outlook.com
- ([fe80::de98:ceac:f841:3fdc%5]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 08:12:11 +0000
-From: Sunil Kumar Kori <skori@marvell.com>
-To: Thomas Monjalon <thomas@monjalon.net>
-CC: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, "dev@dpdk.org"
- <dev@dpdk.org>, Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>, Stephen
- Hemminger <stephen@networkplumber.org>, David Marchand
- <david.marchand@redhat.com>
-Subject: RE: [EXTERNAL] Re: [PATCH v10 1/1] ethdev: add support to provide
- link type
-Thread-Topic: [EXTERNAL] Re: [PATCH v10 1/1] ethdev: add support to provide
- link type
-Thread-Index: AQHcIJ4DYm01cTQTyEuyeDjyWmcdPrSJAyOAgASVuiA=
-Date: Thu, 11 Sep 2025 08:12:11 +0000
-Message-ID: <CO6PR18MB38602A3DDF92E0C8A904B440B409A@CO6PR18MB3860.namprd18.prod.outlook.com>
-References: <20250821053425.3227866-1-skori@marvell.com>
- <20250908085256.1866407-1-skori@marvell.com> <5037037.31r3eYUQgx@thomas>
-In-Reply-To: <5037037.31r3eYUQgx@thomas>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB3860:EE_|DM4PR18MB5193:EE_
-x-ms-office365-filtering-correlation-id: 5c9b2e63-0611-42f0-24b5-08ddf10ae8bc
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|366016|376014|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?c1pnYlFRK0I5YUVpLy9nVWxqalVoY09LeW5Lck5nVDhlNTJwcy9ZMGV0R3NR?=
- =?utf-8?B?Zk5hRSt6SmZpNHdWMXpxam9LQ09RZEl6K080WXhFcHR4SmhHQzAzQXlWLzFS?=
- =?utf-8?B?WDZFdHJSZHhCOGk1Y2ZrKytiZWN0UHZBczBQQnRodUJFVWZwYm9mYklUOStR?=
- =?utf-8?B?Z21Kc3k1dHVSc0cxbGRkVENPL3ZZMFB2cjUrbEIzR21FcXhLTXA0by92UWdH?=
- =?utf-8?B?dTVRMTAvVlM5b3M0anJlWFhlUlc5cEUzQmx3OVIrd3FFNUVmaGRZdUh4elNG?=
- =?utf-8?B?STg4TlAxNmxGR01BQnk3RlFZTkVSd1BhYTBXc1p6K2Q3OGprVmJSQURIdzFG?=
- =?utf-8?B?VlUvdHlFODdBU2I2cEMrcGwyWHg2blVFUmhtUlM0OWg2cjMyLzBrYkxIYjBx?=
- =?utf-8?B?ZXdySTJiVy83OTA4T1R1WHlPNmhEa0xPeElrN2YrcEpMN25hazZ0d00zb1hB?=
- =?utf-8?B?UUNSVm42bEdxM25sajBqZlIzNnhFdTJuWnlHNHVFSzZWNTR0NFhFSXJkdnAx?=
- =?utf-8?B?UDZkeENEZ1hySHNqL0pyVE5XM1V3YmdPbi9LOXpZL1E2cjJZanU4UFpSS0RE?=
- =?utf-8?B?T3pFeFhMZmZ4aVYya293SW1LWGtZV3BlNDVvTGFVamlVZG1heXN6Yi9qWTJ6?=
- =?utf-8?B?aFpjVXd1c1VLM2dTME5Ub29aa04vYXFKNjJtQ0pia0hqczRHT0orVUQzWUtP?=
- =?utf-8?B?d2NrakFvZk9WYnlaY21MSTFkZm5SUlZCUUlTeUkxKzFQZUpKNnJnRlcxYVhP?=
- =?utf-8?B?OG5ZUkt0YXNTYzRURmg2VmFieXFiM0lFeFlTQW1zcnNSYW5pNW9sL3NFRW0v?=
- =?utf-8?B?dGxXVXo4Q0dLRnRGVTB0UTNEb1NxZzVra2tYYWRVTzdWUFhOaGtRUXZGTHhX?=
- =?utf-8?B?Q0xwaFpwN2NHdjdGZmo3T3lJWXZscDBPanVwVVlsaW5QNkJod1BRSHo2NzhL?=
- =?utf-8?B?djF1UXdVaDRhRVpkcFJoZGp1ZHV3MURNY29ES0F2WHloc1FWR1dTWlUydWs1?=
- =?utf-8?B?UWZTOU5mWkNselFXVC83b0t1OHJqVVBzRER5THgrSVpoK0MybXZPRkdPN0Ux?=
- =?utf-8?B?NzRqWlNUTkUwdTdEVmUwYUM4V0dnT3hnL3lwbEtLK2lTaVlHTi90TEplMjVB?=
- =?utf-8?B?Ujd0aCtkMmtoK1VIT2ROTFlVT2QrbWd1OHFQck8xejJUYi8yeWM5L2dHSSt6?=
- =?utf-8?B?aklOVWZuZ2s4RHVJWmplOHJySUQ3Z2N4RlBJaksyNkU0U01TWEo4TDhBL0RC?=
- =?utf-8?B?K1Y2NWlFckJ6YkhQRzJQMmMxN290REdmVWVVYWlvVUVLaSswa0FnZFZmMVI5?=
- =?utf-8?B?TUMwbU9lVWJYejBWYmp2c1Y1alo3VEc0Q0daanhMY2pGSWNHVTluRmttblFH?=
- =?utf-8?B?cU1HY3M4RUJwWTZwM1VDOW1IWU9YS1ZwTTN4dkFiZFhvSTRrRm5yUFhidUhv?=
- =?utf-8?B?eHdPclVaR01NenMwSXF6dGl1dHdMSHpIS0cyNmNvYWo0eG5jc3BYak01cVpC?=
- =?utf-8?B?anAvZWMzaTQ3VEpDaEF5ZGlFK2FrUGdhSi9rL0VlbHVkajBQWldQMUpzb1J6?=
- =?utf-8?B?cnJMclh2ckdkVnRib0V5OVFQZVJTZ3IzVDhvMGdSTlROWEtyY3lqOWwxU1VD?=
- =?utf-8?B?QktRbkhBVGFNdTVlY0FoYWpxcmZ6RFN0MUlONlJFeWNwNnkxR2FraWo5S3M2?=
- =?utf-8?B?RHcxZEdmS1c1UVI3SDUwS3NteVRLQjdBUUltUEkxSkVuVzdyM2dSRC91TXlQ?=
- =?utf-8?B?YVczRkFVVS8xcVMvK1BiRjZIOWl4VzJCYTQ3bkh6bGNrNUR6aXNNSW12Yi9S?=
- =?utf-8?B?VkY2UU5ZTWlJOW5NWW9RUG1nb3k0NmZGWExyM1VOQWJGV2V6K3gxWFhVTE1r?=
- =?utf-8?B?c1BNUElKeWpxbk1HOE5YUFR1VnRBT29KTE9ocmhjK3VlZ0hNUTRpMEFFL3ZB?=
- =?utf-8?B?eFhhRElDVWFzeWNEMEhYNUJlMGY0U3M5Y0tLb0NkZktuaE1weWVENDVKbDhQ?=
- =?utf-8?B?eVg4U1BjU0NBPT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CO6PR18MB3860.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(38070700021); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OXN4bTN1Rk1kdGZieXNTc2U5RTEvNEFPcVpWNXJwQU9UOEdRSFA4TEhyYVFN?=
- =?utf-8?B?dUF6emI5Vm9FZmhsTVhQY1R0eDRmL3pwTVk1dDNUWW1tV1Nna3pYNVdXS2VB?=
- =?utf-8?B?dUU0OU44QWc1a2hLa25zSkZZR3FkcmlUcVBGVGRrcmo0NlpoY1d6ai9SSHdP?=
- =?utf-8?B?SHBwVVJKTy9pckVUSmU3SHZVSlFObkRwTXRFWi9uME5rWU0xOUpRYTNSeUhK?=
- =?utf-8?B?YXFqNTU4ZlZTOUU3QUJmNHluT3kvNmFYc1M0Nk1PR2psbU9Sc0xORmhhQVJq?=
- =?utf-8?B?SlFVNHhWWUN0T2pUR3ZzTFBCN3J4bWFxbTZRRmFVbXg1cUxXbzFDT3J1Rlo2?=
- =?utf-8?B?Q3VodlkyaHBKR3lwVkNIa0J2WkwwcGNnQm1uaEdjaFVRUnVGblhZVi80L0lN?=
- =?utf-8?B?Q1FnQmxtOFMvYXNJNlBlN3hxU1dqWU4zbFJpY0UrN254eTZZNkFMZTRJSkFl?=
- =?utf-8?B?UlpkMWplbXRJd0pPVjMxUlRkcWRMK3J3Y3FlZXBnVzFVT2ZuSHRoOG1Uc0ts?=
- =?utf-8?B?ZmR0WHQwdmxXb2ZQV29aYnZpWUF2NW1oeXBaQ3BGNy9abGtqVEJWNWx1VmVK?=
- =?utf-8?B?RWMwdi9najJkZy9WMnlodStPY08rNTNCTDA4cUtUUkNoQjk4QW1NSnFoRkh1?=
- =?utf-8?B?cDlERktOUHBCSlhWOTBlQjRNVXcxYk8zOWp4SUdkWm9mN29yM004L3lSL2ZF?=
- =?utf-8?B?UVNnTzYrb1k4QXpCdm5iRUt4WVdjd0V2ZFdxMTJBMHVvdmZ4VVVqa0g0dm5I?=
- =?utf-8?B?T0dIZWUrQ1EzMXdGYWpIRXJBdEhPLzZXZDhJV1ZFNjdTbmZSd2U4TGNra01K?=
- =?utf-8?B?cXIxczdSVllPalFBMXBOMHQ0QkhXZW93RENtYm02N09zcUlNVE1SUlZjWUph?=
- =?utf-8?B?emZmMlltbkhjRGhDU0xibmMxaTRpd0xqT3lKM01ZWkZGcXlmdU5QeG9Cdlpj?=
- =?utf-8?B?TWxqV1c1QzNQdjBXUVdIWUxZOStnaDJYT0VwSUYvNjV3OUhHTDVzUjNHdStB?=
- =?utf-8?B?Wm1rYlRSbHVNUEJrdGg2czNlakRQbk5SajdWUm9veW1HRGpjZnlndGtMNFRx?=
- =?utf-8?B?U3lOaHBMYmE4bG9KL3RENEJycHY3NkFKc2haUWFSK2NYSmsyTFhOWW1zOGxK?=
- =?utf-8?B?WkRVTzRtMWMwZzZLUTgzMys1WC9EU1RYZGpMMXBPRlE1WUhnTjFqMUZMQzI2?=
- =?utf-8?B?UnkyMEdQUklMeWhwVWFZZlc4eG5VRXkyNE4xcjZ2VXNyN0VmM3FFVGgwdFAw?=
- =?utf-8?B?ZTJhbTcwak9jcStEZFZvM012Z2lWYlhUbS9RZnVnS09KdTFHdkxpMzdsRzJC?=
- =?utf-8?B?ZXgxTDQvZ2RwWlJkajNjR3JtcEo0STFta1JzUGxGL0pqYjZxcnZVWFlsODJ0?=
- =?utf-8?B?MEM0ZmZJY3V0M2QyaGhIdTVVbEQwdUtlaGM4d3lkR3hyNGN2S3BiaEY2WUgw?=
- =?utf-8?B?YTZxenRJMTV3UUVTcW90UkNnODVxQXN2bUVXM3dsV2huNUtJSldUVXJDakZH?=
- =?utf-8?B?d1pidXlkMUIvSzJodXZjaHpsQnBaT0plWTJGOXZKQjBBVnFORng2QUpyRlRs?=
- =?utf-8?B?N25jNmI2OFh1REtPSC9FMGNidnR6aDU5Mm81bnlXbHNXM1hTNlJZcm9JTFVz?=
- =?utf-8?B?eC82MmhEUGh2OW5ZSXBxZ2Myb05UbDI5VXZXTmlDTW1iblhTK0d2WkJLQ1M5?=
- =?utf-8?B?WmFscVk5NEdGbHFnaEptQXZRQ3RVRDVGOHpnOCtnbENtYzJMai84Q0VVVmFn?=
- =?utf-8?B?K09QaGNCcU80TklvNTVuSXE0TCt0S1hsUXBuU05rUWpETzB0d21QRmI4d1lV?=
- =?utf-8?B?K3pwSE53MHJ0WVFPWmdNdXp1Z0VocTJaS3BPakdpK0Rua1l0ckxGd1dpMElH?=
- =?utf-8?B?bUFwajg0aGtJc3pHZURiOU9SbGVkbTdWWXdIcEtTRkJXeG9sY2hMMTJMeHhE?=
- =?utf-8?B?amVVTTZWb0VKaXA5cDlHVEhKOUdiZXVacEtpQ2NSYytQRFBvd3ByeWJrcUVo?=
- =?utf-8?B?TUltd1BubndQKytEUWVpYWRQVk5aWGRlTzZxamx1V3JtSXY0SDY3aHdLR0ZU?=
- =?utf-8?B?VkhzMTVldGdYNFprUFhVSkJtU0ExZU1WS1BEVFVxc0lIR2ZUMzU4UjEvQVBj?=
- =?utf-8?Q?3Z9I=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id DA14B402E8;
+	Thu, 11 Sep 2025 10:36:21 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 1FA2A402E8
+ for <dev@dpdk.org>; Thu, 11 Sep 2025 10:36:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1757579779;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=fPGg+nqAxE7lnZdGE4QjzDCqmVn286aybWd2qRyAxQE=;
+ b=NTpcXgWGvga1cKBVcvDeM/8EN2lhooBt6sx6QlviXcmSSb0lt1y5dE+Bu0JbcMexXllZTe
+ 06b3/a49WXUnoI/cD7Z3GE8420PZmVdIMvsQANwJZynIEbNewo+mLonqmf3/m9hACuGPGq
+ OEtqCzYCmtAbDiwVTvZaNi5EV0G43qA=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-574-qI0QoLxfPcuxo4GZkWr5qQ-1; Thu,
+ 11 Sep 2025 04:36:16 -0400
+X-MC-Unique: qI0QoLxfPcuxo4GZkWr5qQ-1
+X-Mimecast-MFC-AGG-ID: qI0QoLxfPcuxo4GZkWr5qQ_1757579775
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 3AFC91944F03; Thu, 11 Sep 2025 08:36:15 +0000 (UTC)
+Received: from max-p1.redhat.com (unknown [10.44.22.34])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 0D4D41800452; Thu, 11 Sep 2025 08:36:11 +0000 (UTC)
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+To: dev@dpdk.org, chenbox@nvidia.com, david.marchand@redhat.com,
+ amorenoz@redhat.com
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>,
+	stable@dpdk.org
+Subject: [PATCH] vhost: add VDUSE virtqueue ready state polling workaround
+Date: Thu, 11 Sep 2025 10:36:07 +0200
+Message-ID: <20250911083607.3676640-1-maxime.coquelin@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB3860.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c9b2e63-0611-42f0-24b5-08ddf10ae8bc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2025 08:12:11.2203 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CgG4NkSOulhFSIU5eL+JysNLuL2BoFrSnzvWzC49SdjJ0fDbJgCNdeqcMwkevS7UuzKmAdBdlK99Sg7T0Y+2zQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR18MB5193
-X-Proofpoint-ORIG-GUID: omVxIj3vY8k0hzu2no459qOA3Uod7DBX
-X-Authority-Analysis: v=2.4 cv=LrKSymdc c=1 sm=1 tr=0 ts=68c2845e cx=c_pps
- a=boyZAcvaX7MgnFkYtrqV4Q==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=-AAbraWEqlQA:10
- a=M5GUcnROAAAA:8 a=4sKhHoTjCBkar7CGmwQA:9 a=QEXdDO2ut3YA:10
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: omVxIj3vY8k0hzu2no459qOA3Uod7DBX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTExMDA2NCBTYWx0ZWRfX13G6ZL/mKJ3P
- 3NBy0zCw8goG7NlDrAraYzGaepj4t/yMJ8DZCpI6eBiXgW1rVaXPFdnuxwMisro13TzopfjKZKW
- w8/sRDKq+kpS1y/BsZXjXd7+uu4SbuW5J7PM2J3OTwo1DDPeCu/TneyVgOAvyev3OqPe5KxaVj/
- TopIyJv0jd8y5CQExLxnDk8FtFZ0vS18iySaLefVS4JqmeQ2BxRJcYiGFSI2FOTC2WLAhrwT2yM
- mkM4BKrhOmOkSdfmzZRicR6Ptu+S4NrGI7G1WpCzuV9ntaP8oO65KMIwzEvfE5PfCRvMr+vE4bY
- V23uhCtZDIDQzbCpoMYRF5Lpe14eW8LCYxS2MpqIJOqhhCswQ0QNRKfXo93c3xYJ0cOP18NfeDX
- yWqhNVe3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_04,2025-09-10_01,2025-03-28_01
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: sOHF7LivXS05S6z81-Pl_VPGUqXVcjw-zL8Z_hkfGDU_1757579775
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -188,96 +65,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBIZWxsbywNCj4gDQo+IFRoZSB0aXRsZSBjYW4gYmUgc2ltcGx5ICJldGhkZXY6IGFkZCBsaW5r
-IHR5cGUiLg0KPiANCkFjay4NCg0KPiANCj4gMDgvMDkvMjAyNSAxMDo1MSwgc2tvcmlAbWFydmVs
-bC5jb206DQo+ID4gKyogKipBZGRlZCBldGhkZXYgQVBJIGluIGxpYnJhcnkuKg0KPiANCj4gUGxl
-YXNlIGJlIG1vcmUgc3BlY2lmaWMsIHdlIGRvbid0IG5lZWQgdG8gZ3JvdXAgYWxsIGV0aGRldiBj
-aGFuZ2VzIHRvZ2V0aGVyLg0KPiBFYWNoIG5ldyBBUEkgZmVhdHVyZSBkZXNlcnZlcyBhIHNlcGFy
-YXRlIGJ1bGxldC4NCj4gDQpBY2suDQoNCj4gPiArDQo+ID4gKyAgKiBBZGRlZCBBUEkgdG8gcmVw
-b3J0IHR5cGUgb2YgbGluayBjb25uZWN0aW9uIGZvciBhIHBvcnQuDQo+ID4gKyAgICBCeSBkZWZh
-dWx0LCBpdCByZXBvcnRzIGBgUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9OT05FYGANCj4gPiArICAg
-IHVubGVzcyBkcml2ZXIgc3BlY2lmaWVzIGl0Lg0KPiANCj4gSSB0aGluayB5b3UgbmVlZCB0byBl
-eHBsYWluIHdoYXQgaXMgYSB0eXBlIChjb3BwZXIsIGZpYmVyLCBldGMpLg0KPiANCkFjay4NCg0K
-PiBbLi4uXQ0KPiA+ICtSVEVfRVhQT1JUX0VYUEVSSU1FTlRBTF9TWU1CT0wocnRlX2V0aF9saW5r
-X2Nvbm5lY3Rvcl90b19zdHIsIDI1LjExKQ0KPiA+ICtjb25zdCBjaGFyICogcnRlX2V0aF9saW5r
-X2Nvbm5lY3Rvcl90b19zdHIoZW51bQ0KPiA+ICtydGVfZXRoX2xpbmtfY29ubmVjdG9yIGxpbmtf
-Y29ubmVjdG9yKSB7DQo+ID4gKwlzdGF0aWMgY29uc3QgY2hhciAqIGNvbnN0IGxpbmtfY29ubmVj
-dG9yX3N0cltdID0gew0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9SX05PTkVdID0gIk5v
-bmUiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9SX1RQXSA9ICJUd2lzdGVkIFBhaXIi
-LA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9SX0FVSV0gPSAiQXR0YWNobWVudCBVbml0
-IEludGVyZmFjZSIsDQo+ID4gKwkJW1JURV9FVEhfTElOS19DT05ORUNUT1JfTUlJXSA9ICJNZWRp
-YSBJbmRlcGVuZGVudA0KPiBJbnRlcmZhY2UiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVD
-VE9SX0ZJQkVSXSA9ICJGaWJlciIsDQo+ID4gKwkJW1JURV9FVEhfTElOS19DT05ORUNUT1JfQk5D
-XSA9ICJCTkMiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9SX0RBQ10gPSAiRGlyZWN0
-IEF0dGFjaCBDb3BwZXIiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9SX1NHTUlJXSA9
-ICJTR01JSSIsDQo+ID4gKwkJW1JURV9FVEhfTElOS19DT05ORUNUT1JfUVNHTUlJXSA9ICJRU0dN
-SUkiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9SX1hGSV0gPSAiWEZJIiwNCj4gPiAr
-CQlbUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9TRkldID0gIlNGSSIsDQo+ID4gKwkJW1JURV9FVEhf
-TElOS19DT05ORUNUT1JfWExBVUldID0gIlhMQVVJIiwNCj4gPiArCQlbUlRFX0VUSF9MSU5LX0NP
-Tk5FQ1RPUl9HQVVJXSA9ICJHQVVJIiwNCj4gPiArCQlbUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9Y
-QVVJXSA9ICJYQVVJIiwNCj4gPiArCQlbUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9DQVVJXSA9ICJD
-QVVJIiwNCj4gPiArCQlbUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9MQVVJXSA9ICJMQVVJIiwNCj4g
-PiArCQlbUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9TRlBdID0gIlNGUCIsDQo+ID4gKwkJW1JURV9F
-VEhfTElOS19DT05ORUNUT1JfU0ZQX0REXSA9ICJTRlAtREQiLA0KPiA+ICsJCVtSVEVfRVRIX0xJ
-TktfQ09OTkVDVE9SX1NGUF9QTFVTXSA9ICJTRlArIiwNCj4gPiArCQlbUlRFX0VUSF9MSU5LX0NP
-Tk5FQ1RPUl9TRlAyOF0gPSAiU0ZQMjgiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9S
-X1FTRlBdID0gIlFTRlAiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9SX1FTRlBfUExV
-U10gPSAiUVNGUCsiLA0KPiA+ICsJCVtSVEVfRVRIX0xJTktfQ09OTkVDVE9SX1FTRlAyOF0gPSAi
-UVNGUDI4IiwNCj4gPiArCQlbUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9RU0ZQNTZdID0gIlFTRlA1
-NiIsDQo+ID4gKwkJW1JURV9FVEhfTElOS19DT05ORUNUT1JfUVNGUF9ERF0gPSAiUVNGUC1ERCIs
-DQo+ID4gKwkJW1JURV9FVEhfTElOS19DT05ORUNUT1JfT1RIRVJdID0gIk90aGVyIiwNCj4gPiAr
-CX07DQo+ID4gKwljb25zdCBjaGFyICpzdHIgPSBOVUxMOw0KPiA+ICsNCj4gPiArCWlmIChsaW5r
-X2Nvbm5lY3RvciA8ICgoZW51bQ0KPiBydGVfZXRoX2xpbmtfY29ubmVjdG9yKVJURV9ESU0obGlu
-a19jb25uZWN0b3Jfc3RyKSkpDQo+ID4gKwkJc3RyID0gbGlua19jb25uZWN0b3Jfc3RyW2xpbmtf
-Y29ubmVjdG9yXTsNCj4gPiArDQo+ID4gKwlyZXR1cm4gc3RyOw0KPiA+ICt9DQo+IA0KPiBTbyB3
-ZSBzYXkgbGluayBjb25uZWN0b3IsIG5vdCBsaW5rIHR5cGUgYXMgaW4gdGhlIHRpdGxlIGFuZCBk
-ZXNjcmlwdGlvbnM/DQo+IA0KWWVzLCB3ZSBhcmUgcmVmZXJlZWluZyBsaW5rIGNvbm5lY3Rvci4N
-Cg0KPiBbLi4uXQ0KPiA+ICtlbnVtIHJ0ZV9ldGhfbGlua19jb25uZWN0b3Igew0KPiA+ICsJUlRF
-X0VUSF9MSU5LX0NPTk5FQ1RPUl9OT05FID0gMCwgICAgIC8qKjwgTm90IGRlZmluZWQgKi8NCj4g
-PiArCVJURV9FVEhfTElOS19DT05ORUNUT1JfVFAsICAgICAgICAgICAvKio8IFR3aXN0ZWQgUGFp
-ciAqLw0KPiA+ICsJUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9BVUksICAgICAgICAgIC8qKjwgQXR0
-YWNobWVudCBVbml0IEludGVyZmFjZSAqLw0KPiA+ICsJUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9N
-SUksICAgICAgICAgIC8qKjwgTWVkaWEgSW5kZXBlbmRlbnQgSW50ZXJmYWNlDQo+ICovDQo+ID4g
-KwlSVEVfRVRIX0xJTktfQ09OTkVDVE9SX0ZJQkVSLCAgICAgICAgLyoqPCBPcHRpY2FsIEZpYmVy
-IExpbmsgKi8NCj4gPiArCVJURV9FVEhfTElOS19DT05ORUNUT1JfQk5DLCAgICAgICAgICAvKio8
-IEJOQyBMaW5rIHR5cGUgZm9yIFJGDQo+IGNvbm5lY3Rpb24gKi8NCj4gPiArCVJURV9FVEhfTElO
-S19DT05ORUNUT1JfREFDLCAgICAgICAgICAvKio8IERpcmVjdCBBdHRhY2ggY29wcGVyICovDQo+
-ID4gKwlSVEVfRVRIX0xJTktfQ09OTkVDVE9SX1NHTUlJLCAgICAgICAgLyoqPCBTZXJpYWwgR2ln
-YWJpdCBNZWRpYQ0KPiBJbmRlcGVuZGVudCBJbnRlcmZhY2UgKi8NCj4gPiArCVJURV9FVEhfTElO
-S19DT05ORUNUT1JfUVNHTUlJLCAgICAgICAvKio8IExpbmsgdG8gbXVsdGlwbGV4IDQgU0dNSUkN
-Cj4gb3ZlciBvbmUgc2VyaWFsIGxpbmsgKi8NCj4gPiArCVJURV9FVEhfTElOS19DT05ORUNUT1Jf
-WEZJLCAgICAgICAgICAvKio8IDEwIEdpZ2FiaXQgQXR0YWNobWVudCBVbml0DQo+IEludGVyZmFj
-ZSAqLw0KPiA+ICsJUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9TRkksICAgICAgICAgIC8qKjwgMTAg
-R2lnYWJpdCBTZXJpYWwgSW50ZXJmYWNlIGZvcg0KPiBvcHRpY2FsIG5ldHdvcmsgKi8NCj4gPiAr
-CVJURV9FVEhfTElOS19DT05ORUNUT1JfWExBVUksICAgICAgICAvKio8IDQwIEdpZ2FiaXQgQXR0
-YWNobWVudCBVbml0DQo+IEludGVyZmFjZSAqLw0KPiA+ICsJUlRFX0VUSF9MSU5LX0NPTk5FQ1RP
-Ul9HQVVJLCAgICAgICAgIC8qKjwgR2lnYWJpdCBJbnRlcmZhY2UgZm9yDQo+IDUwLzEwMC8yMDAg
-R2JwcyAqLw0KPiA+ICsJUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9YQVVJLCAgICAgICAgIC8qKjwg
-MTAgR2lnYWJpdCBBdHRhY2htZW50IFVuaXQNCj4gSW50ZXJmYWNlICovDQo+ID4gKwlSVEVfRVRI
-X0xJTktfQ09OTkVDVE9SX0NBVUksICAgICAgICAgLyoqPCAxMDAgR2lnYWJpdCBBdHRhY2htZW50
-IFVuaXQNCj4gSW50ZXJmYWNlICovDQo+ID4gKwlSVEVfRVRIX0xJTktfQ09OTkVDVE9SX0xBVUks
-ICAgICAgICAgLyoqPCA1MCBHaWdhYml0IEF0dGFjaG1lbnQgVW5pdA0KPiBJbnRlcmZhY2UgKi8N
-Cj4gPiArCVJURV9FVEhfTElOS19DT05ORUNUT1JfU0ZQLCAgICAgICAgICAvKio8IFBsdWdnYWJs
-ZSBtb2R1bGUgZm9yIDENCj4gR2lnYWJpdCAqLw0KPiA+ICsJUlRFX0VUSF9MSU5LX0NPTk5FQ1RP
-Ul9TRlBfUExVUywgICAgIC8qKjwgUGx1Z2dhYmxlIG1vZHVsZSBmb3IgMTANCj4gR2lnYWJpdCAq
-Lw0KPiA+ICsJUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9TRlAyOCwgICAgICAgIC8qKjwgUGx1Z2dh
-YmxlIG1vZHVsZSBmb3IgMjUNCj4gR2lnYWJpdCAqLw0KPiA+ICsJUlRFX0VUSF9MSU5LX0NPTk5F
-Q1RPUl9TRlBfREQsICAgICAgIC8qKjwgUGx1Z2dhYmxlIG1vZHVsZSBmb3IgMTAwDQo+IEdpZ2Fi
-aXQgKi8NCj4gPiArCVJURV9FVEhfTElOS19DT05ORUNUT1JfUVNGUCwgICAgICAgICAvKio8IE1v
-ZHVsZSB0byBtdXRpcGxleCA0IFNGUCBpLmUuDQo+IDQqMT00IEdicHMgKi8NCj4gPiArCVJURV9F
-VEhfTElOS19DT05ORUNUT1JfUVNGUF9QTFVTLCAgICAvKio8IE1vZHVsZSB0byBtdXRpcGxleCA0
-DQo+IFNGUF9QTFVTIGkuZS4gNCoxMD00MCBHYnBzICovDQo+ID4gKwlSVEVfRVRIX0xJTktfQ09O
-TkVDVE9SX1FTRlAyOCwgICAgICAgLyoqPCBNb2R1bGUgdG8gbXV0aXBsZXggNCBTRlAyOA0KPiBp
-LmUuIDQqMjU9MTAwIEdicHMgKi8NCj4gPiArCVJURV9FVEhfTElOS19DT05ORUNUT1JfUVNGUDU2
-LCAgICAgICAvKio8IE1vZHVsZSB0byBtdXRpcGxleCA0IFNGUDU2DQo+IGkuZS4gNCo1MD0yMDAg
-R2JwcyAqLw0KPiA+ICsJUlRFX0VUSF9MSU5LX0NPTk5FQ1RPUl9RU0ZQX0RELCAgICAgIC8qKjwg
-TW9kdWxlIHRvIG11dGlwbGV4IDQNCj4gU0ZQX0REIGkuZS4gNCoxMDA9NDAwIEdicHMgKi8NCj4g
-PiArCVJURV9FVEhfTElOS19DT05ORUNUT1JfT1RIRVIgPSAzMSwgICAvKio8IG5vbi1waHlzaWNh
-bCBpbnRlcmZhY2VzDQo+IGxpa2UgdmlydGlvLCByaW5nIGV0Yy4NCj4gPiArCQkJCQkgICAgICAg
-KiBJdCBhbHNvIGluY2x1ZGVzIHVua25vd24gY29ubmVjdG9yDQo+IHR5cGVzLA0KPiA+ICsJCQkJ
-CSAgICAgICAqIGkuZS4gcGh5c2ljYWwgY29ubmVjdG9ycyBub3QgeWV0DQo+IGRlZmluZWQgaW4g
-dGhpcw0KPiA+ICsJCQkJCSAgICAgICAqIGxpc3Qgb2YgY29ubmVjdG9yIHR5cGVzLg0KPiANCj4g
-SXQgaXMgY29uZnVzaW5nIHdoZXRoZXIgd2UgdXNlIE5PTkUgb3IgT1RIRVIgZm9yIHVua25vd24g
-dHlwZXMuDQo+IA0KQWdyZWVkIGJlY2F1c2UgTk9ORSBhbHNvIHNwZWNpZmllcyB0aGUgc2FtZS4g
-SSB3aWxsIHVwZGF0ZSBpdC4gDQpJbnRlbnRpb24gaXMsIE9USEVSIHJlcHJlc2VudHMgVW5rbm93
-biBjb25uZWN0b3IuDQo=
+Add workaround to poll virtqueue ready states before starting device
+when VIRTIO_DEVICE_STATUS_DRIVER_OK is set in vduse_events_handler().
+
+For each virtqueue, poll using VDUSE_VQ_GET_INFO ioctl to check
+vq_info->ready state with configurable retry limit. This addresses
+timing issues where device start was attempted before all virtqueues
+were properly initialized and ready.
+
+A notification mechanism will be introduced in the next version of
+the VDUSE uAPI. When it lands, we would only apply this workaround
+when the kernel does not support it.
+
+Fixes: a9120db8b98b ("vhost: add VDUSE device startup")
+Cc: stable@dpdk.org
+
+Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+---
+ lib/vhost/vduse.c | 62 +++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 60 insertions(+), 2 deletions(-)
+
+diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
+index 9de7f04a4f..5a6025d702 100644
+--- a/lib/vhost/vduse.c
++++ b/lib/vhost/vduse.c
+@@ -272,6 +272,56 @@ vduse_vring_cleanup(struct virtio_net *dev, unsigned int index)
+ 	vq->last_avail_idx = 0;
+ }
+ 
++
++/*
++ * Tests show that it succeeds at the first retry at worst,
++ * but let's be on the safe side and allow more retries.
++ */
++#define VDUSE_VQ_READY_POLL_MAX_RETRIES 100
++
++static int
++vduse_wait_for_virtqueues_ready(struct virtio_net *dev)
++{
++	struct vduse_vq_info vq_info;
++	unsigned int i;
++	int ret;
++
++	for (i = 0; i < dev->nr_vring; i++) {
++		int retry_count = 0;
++
++		while (retry_count < VDUSE_VQ_READY_POLL_MAX_RETRIES) {
++			vq_info.index = i;
++			ret = ioctl(dev->vduse_dev_fd, VDUSE_VQ_GET_INFO, &vq_info);
++			if (ret) {
++				VHOST_CONFIG_LOG(dev->ifname, ERR,
++					"Failed to get VQ %u info while polling ready state: %s",
++					i, strerror(errno));
++				return -1;
++			}
++
++			if (vq_info.ready) {
++				VHOST_CONFIG_LOG(dev->ifname, DEBUG,
++					"VQ %u is ready after %u retries", i, retry_count);
++				break;
++			}
++
++			retry_count++;
++			/* Small delay between retries */
++			usleep(1000);
++		}
++
++		if (retry_count >= VDUSE_VQ_READY_POLL_MAX_RETRIES) {
++			VHOST_CONFIG_LOG(dev->ifname, ERR,
++				"VQ %u ready state polling timeout after %u retries",
++				i, VDUSE_VQ_READY_POLL_MAX_RETRIES);
++			return -1;
++		}
++	}
++
++	VHOST_CONFIG_LOG(dev->ifname, INFO, "All virtqueues are ready after polling");
++	return 0;
++}
++
+ static void
+ vduse_device_start(struct virtio_net *dev, bool reconnect)
+ {
+@@ -414,10 +464,18 @@ vduse_events_handler(int fd, void *arg, int *close __rte_unused)
+ 	}
+ 
+ 	if ((old_status ^ dev->status) & VIRTIO_DEVICE_STATUS_DRIVER_OK) {
+-		if (dev->status & VIRTIO_DEVICE_STATUS_DRIVER_OK)
++		if (dev->status & VIRTIO_DEVICE_STATUS_DRIVER_OK) {
++			/* Poll virtqueues ready states before starting device */
++			ret = vduse_wait_for_virtqueues_ready(dev);
++			if (ret < 0) {
++				VHOST_CONFIG_LOG(dev->ifname, ERR,
++					"Failed to wait for virtqueues ready, aborting device start");
++				return;
++			}
+ 			vduse_device_start(dev, false);
+-		else
++		} else {
+ 			vduse_device_stop(dev);
++		}
+ 	}
+ 
+ 	VHOST_CONFIG_LOG(dev->ifname, INFO, "Request %s (%u) handled successfully",
+-- 
+2.51.0
+
