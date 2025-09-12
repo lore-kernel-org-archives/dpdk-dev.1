@@ -2,45 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E305FCA101F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Sep 2025 09:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0794ECA101F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Sep 2025 09:32:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E22F3402DD;
-	Fri, 12 Sep 2025 11:28:53 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 520C5402CC
- for <dev@dpdk.org>; Fri, 12 Sep 2025 11:28:53 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 2B45D46ED8; Fri, 12 Sep 2025 11:28:53 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/meson Bug 1787] ARM toolchin prefix changed in newest toolchain
-Date: Fri, 12 Sep 2025 09:28:53 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: meson
-X-Bugzilla-Version: 24.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: major
-X-Bugzilla-Who: nelio.laranjeiro@6wind.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1787-3@https.bugs.dpdk.org/>
-Content-Type: multipart/alternative; boundary=17576693330.f7b8bE52.3393848
-Content-Transfer-Encoding: 7bit
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 3C92A4065F;
+	Fri, 12 Sep 2025 11:32:08 +0200 (CEST)
+Received: from fout-b8-smtp.messagingengine.com
+ (fout-b8-smtp.messagingengine.com [202.12.124.151])
+ by mails.dpdk.org (Postfix) with ESMTP id 370C9402CC;
+ Fri, 12 Sep 2025 11:32:07 +0200 (CEST)
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+ by mailfout.stl.internal (Postfix) with ESMTP id 545411D0039B;
+ Fri, 12 Sep 2025 05:32:06 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-12.internal (MEProxy); Fri, 12 Sep 2025 05:32:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1757669526;
+ x=1757755926; bh=z58u8LoKmQFpQ4IyuQGz5GMlrgmQxPgksGj1+LBpWdc=; b=
+ gwibmi/wHfau7mWMZvegk9RuyzBJb3LyMn/fMdPVDKC8Os2un878/ZtQndogoX34
+ ztJBDx8T9MKR9hxvf3adWy1JVaKSZb1MaVOaxn2eIzx9jkctGnIAGuh+gautEHp5
+ LAkH0CkUFgrfFRUFR1HVyZFMR6Ius21nYjSZ8I/JixaWYucbDMB+oy+J39SHxuWM
+ SfzgfKcwhqyQw0/ZhQOJrVxHjKUx0o5xLIUoZ0bI/O+2M7cyi0Kk53OINgWMYASe
+ CxZGhuSqtVrZhHawlAe26kdKaYX0X8HB/zPNy81N0+Rv8Ltb6ewVeh/+SKkdXl02
+ h60ICUagPBLo0zNwYIxQXw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757669526; x=
+ 1757755926; bh=z58u8LoKmQFpQ4IyuQGz5GMlrgmQxPgksGj1+LBpWdc=; b=i
+ sQexn4rUhwyQsSn99RQlL5NAC7iY81a2McKQXxjv0Orj2HRpAmDj4ZvzAH3IRaNL
+ O5Z7OslZJQ7A6lAFWEg2zrPp3g4+PXHXTSab+S3qBMsvZpZFVgycuO+DFick7m3p
+ B5LnAciab8YxzPh4RmzbuFVmitYoM3+kF3uSqCel/IwX4Vs7YJ5TAYEqx1zfqQpl
+ I7kve3lYZzy8RZbMeEkaWunAPUbaGS5dBnLBBmjgZ39OxWzSSVZnPUirplpmCx6U
+ Py7DbEugFLzZ7jCPWkJr1g+mK1zs9Dbcao+YbrVBXaB9dARNWpP9qsz9PnFAbek1
+ QgEeef8yaNca+mk/NJX4g==
+X-ME-Sender: <xms:lejDaIXSxE27O9dfPDsl_EH06bpFSaFZCBvj2ThegJAI9RvGkCWVIQ>
+ <xme:lejDaKhoxrCdsdHrddR0YKf2DYeFVVI3bWjO0uZnTw1DqAOwZmyREmBFpn2bxv2Q_
+ GHwTis410QoQwTaww>
+X-ME-Received: <xmr:lejDaOvA0qiaV6h9gXKLmYhZJWd6oybV5vLrjlHmPW4XxKAHx83_5LmyECX_IsiDaMVxWSDgHpmyT-wETNXx6BGX1A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvkeejtdcutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepiedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepkhgvrhgvmhdrrghkshhusehivdhiqdhshi
+ hsthgvmhhsrdgtohhmpdhrtghpthhtoheplhhinhhvihhllhgvsehtuhigughrihhvvghr
+ rdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtoheptghifi
+ hilhhlihgrsegsrhhotggruggvrdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgv
+ thifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepshhtrggslhgvseguphgukh
+ drohhrgh
+X-ME-Proxy: <xmx:lejDaL6gdiZVkoE6KHC0mN5FSayhyqFud21JJjGp4oYFtVSc-WroRg>
+ <xmx:lejDaKOUAsyDDq-LVtP9cZ7j4TlRPyeUb0s5YiflutaT9vmyyGcTMQ>
+ <xmx:lejDaJuKXfVu2X1-nQK6yHDfj4upAHnTXhuLTPmwNiEUoCaXDSUzoQ>
+ <xmx:lejDaNZkb0MMMftCZCjjhVUspXG1dZ3mHnM4xjotmZzYBlXe8WE8zA>
+ <xmx:lujDaGIEqGWobbRvsStiN_VjV-lbjofOpwgHBkQ-SSS8guNx3YFJJS9Q>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 12 Sep 2025 05:32:04 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Kerem Aksu <kerem.aksu@i2i-systems.com>
+Cc: linville@tuxdriver.com, dev@dpdk.org, ciwillia@brocade.com,
+ stephen@networkplumber.org, stable@dpdk.org
+Subject: Re: [PATCH] net/af_packet: fix crash in secondary process
+Date: Fri, 12 Sep 2025 11:32:02 +0200
+Message-ID: <3299441.5fSG56mABF@thomas>
+In-Reply-To: <20250912084758.354208-1-kerem.aksu@i2i-systems.com>
+References: <20250912084758.354208-1-kerem.aksu@i2i-systems.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,187 +91,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+12/09/2025 10:47, Kerem Aksu:
+> dumpcap crashes when trying to capture from af_packet devices. This is
+> caused by allocating interface name with
+> strdup (i.e. malloc). Interface name is not accessible from secondary
+> process and causes segmentation fault. Use rte_malloc instead of
+> strdup to fix the issue.
 
---17576693330.f7b8bE52.3393848
-Date: Fri, 12 Sep 2025 11:28:52 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+I agree with the analysis, thank you.
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1787
+[...]
+> -	(*internals)->if_name = strdup(pair->value);
+> +	(*internals)->if_name = rte_zmalloc_socket(name, ifnamelen + 1,
+> +									0, numa_node);
 
-            Bug ID: 1787
-           Summary: ARM toolchin prefix changed in newest toolchain
-           Product: DPDK
-           Version: 24.11
-          Hardware: ARM
-                OS: Linux
-            Status: UNCONFIRMED
-          Severity: major
-          Priority: Normal
-         Component: meson
-          Assignee: dev@dpdk.org
-          Reporter: nelio.laranjeiro@6wind.com
-  Target Milestone: ---
+Probably no need to go on the next line, you are allowed to go to 100 characters per line.
+If a second line is needed, only 2 tabs are required.
 
-In config/arm/* files in the binary section, the prefix tool chain is hardc=
-oded
-with the old notation i.e. arch-os-abi, this has changed to arch-vendor-os-=
-abi
-causing all this files unusable with latest tool chain.
+Why zmalloc? Probably no need to zero it.
 
-Example: arm-gnu-toolchain-14.3.rel1-aarch64-aarch64-none-linux-gnu.tar.xz =
-[1]
-which prefix is: aarch64-none-linux-gnu instead of old prefix
-aarch64-linux-gnu.
+>  	if ((*internals)->if_name == NULL)
+>  		goto free_internals;
+> +	memcpy((*internals)->if_name, pair->value, ifnamelen);
+> +	(*internals)->if_name[ifnamelen] = '\0';
 
-[1]
-https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-=
-gnu-toolchain-14.3.rel1-aarch64-aarch64-none-linux-gnu.tar.xz
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
-
---17576693330.f7b8bE52.3393848
-Date: Fri, 12 Sep 2025 11:28:53 +0200
-MIME-Version: 1.0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
-
-<html>
-    <head>
-      <base href=3D"https://bugs.dpdk.org/">
-    </head>
-    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
-bz_new_table">
-        <tr>
-          <th>Bug ID</th>
-          <td><a class=3D"bz_bug_link=20
-          bz_status_UNCONFIRMED "
-   title=3D"UNCONFIRMED - ARM toolchin prefix changed in newest toolchain"
-   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1787">1787</a>
-          </td>
-        </tr>
-
-        <tr>
-          <th>Summary</th>
-          <td>ARM toolchin prefix changed in newest toolchain
-          </td>
-        </tr>
-
-        <tr>
-          <th>Product</th>
-          <td>DPDK
-          </td>
-        </tr>
-
-        <tr>
-          <th>Version</th>
-          <td>24.11
-          </td>
-        </tr>
-
-        <tr>
-          <th>Hardware</th>
-          <td>ARM
-          </td>
-        </tr>
-
-        <tr>
-          <th>OS</th>
-          <td>Linux
-          </td>
-        </tr>
-
-        <tr>
-          <th>Status</th>
-          <td>UNCONFIRMED
-          </td>
-        </tr>
-
-        <tr>
-          <th>Severity</th>
-          <td>major
-          </td>
-        </tr>
-
-        <tr>
-          <th>Priority</th>
-          <td>Normal
-          </td>
-        </tr>
-
-        <tr>
-          <th>Component</th>
-          <td>meson
-          </td>
-        </tr>
-
-        <tr>
-          <th>Assignee</th>
-          <td>dev&#64;dpdk.org
-          </td>
-        </tr>
-
-        <tr>
-          <th>Reporter</th>
-          <td>nelio.laranjeiro&#64;6wind.com
-          </td>
-        </tr>
-
-        <tr>
-          <th>Target Milestone</th>
-          <td>---
-          </td>
-        </tr></table>
-      <p>
-        <div class=3D"bz_comment_block">
-          <pre class=3D"bz_comment_text">In config/arm/* files in the binar=
-y section, the prefix tool chain is hardcoded
-with the old notation i.e. arch-os-abi, this has changed to arch-vendor-os-=
-abi
-causing all this files unusable with latest tool chain.
-
-Example: arm-gnu-toolchain-14.3.rel1-aarch64-aarch64-none-linux-gnu.tar.xz =
-[1]
-which prefix is: aarch64-none-linux-gnu instead of old prefix
-aarch64-linux-gnu.
-
-[1]
-<a href=3D"https://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/=
-binrel/arm-gnu-toolchain-14.3.rel1-aarch64-aarch64-none-linux-gnu.tar.xz">h=
-ttps://developer.arm.com/-/media/Files/downloads/gnu/14.3.rel1/binrel/arm-g=
-nu-toolchain-14.3.rel1-aarch64-aarch64-none-linux-gnu.tar.xz</a>
-          </pre>
-        </div>
-      </p>
+We can use a string-specialized function, like strlcpy.
 
 
-      <hr>
-      <span>You are receiving this mail because:</span>
-
-      <ul>
-          <li>You are the assignee for the bug.</li>
-      </ul>
-      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
-        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
-ewAction">
-=20=20=20=20=20=20=20=20=20=20
-          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
-?id=3D1787">
-          <meta itemprop=3D"name" content=3D"View bug">
-        </div>
-        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
-ication">
-      </div>
-    </body>
-</html>=
-
---17576693330.f7b8bE52.3393848--
