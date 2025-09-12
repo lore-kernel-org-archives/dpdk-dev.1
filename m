@@ -2,72 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826E9CA101F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Sep 2025 15:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E8CCAC582
+	for <dpdk-dev@archiver.kernel.org>; Fri, 12 Sep 2025 16:02:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B6CC44066E;
-	Fri, 12 Sep 2025 17:32:13 +0200 (CEST)
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com
- [209.85.219.48]) by mails.dpdk.org (Postfix) with ESMTP id 896F14065E
- for <dev@dpdk.org>; Fri, 12 Sep 2025 17:32:12 +0200 (CEST)
-Received: by mail-qv1-f48.google.com with SMTP id
- 6a1803df08f44-7222f8f2b44so18418366d6.2
- for <dev@dpdk.org>; Fri, 12 Sep 2025 08:32:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1757691132;
- x=1758295932; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=kzQk5bQmXreBvp+YZrzIQLIVhSSsVbaJ3XBdIvXLT1g=;
- b=z3K4gPWttVbGB3V4TdpQAqVupSEtHGMwpphAaB61tW25U5Ndm/QUIzg76Ig+jVlheI
- 3LbdH7zCLVEr4ygHsXlDyvntK4+b2xAvJ7GrNf+t9chgttyUzlhD181CsRF8xTVp0Xzv
- wtcUOrXBEH2FlcMDYFwhGB5m/v9Z3/dI31ER5Qw8T6U0whj7Qt8uZfg2SnT1zZJhrmrB
- rszoshKkrSw+MHioVJAB0WmzLIVuMTw7e3egYdrqHIND1/pW5z6YZ/8IXeN3LFDGXtyz
- DZF9ubyXWKMFoHD0boVOrEhbiMF2X/cpnqkBkrbDt1xhubeeNIdS+9fTKEtfDKLTKGn5
- 07MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1757691132; x=1758295932;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=kzQk5bQmXreBvp+YZrzIQLIVhSSsVbaJ3XBdIvXLT1g=;
- b=Bv9FA/GvT7+bKA+87OAomtFljPa536URCf9s5mxhEUK4rtM6UKSRzkWlW0Y+VqHJlK
- cTHeMeE1My6y0S9z8hANXbtT7hA1ZuAuGCi112yEXQwxrJmKpEph6KPMdASKRuDg/ypF
- pRjpfMNsJRIBVja1BjwdvKDsQrcaKwyzj1IQpAjzSe9pELuc8g6HK2D1xnDqysqfdhap
- RbCtAvqnxB0mB7b8CC8TJtLPSizdwgg1FtPX+oKpAIeg1p1OyGFT/Os6E6U4oZ+0cV5j
- 9OEeF2KTNcRrjfP2mmFcSZAjoPNwoMvKN3RmeeYIQrafwYLvKHjoq0rq++KlgzRAOifU
- o3UA==
-X-Gm-Message-State: AOJu0YxQzfEMH4m0xQcglyfWXvPZNujeX8IHF9zChazuoWwH7/i0qiHU
- ukD/UujWz+R8oUIv0SMu0uAL8FAZXLkXCpMqDxuEtzd14YZB7v3GLKw8YUETUUk7LtQp7JHBX70
- Tm5PF
-X-Gm-Gg: ASbGncvV1ycdxlqkMVzAtmd5I3rkzW2aPy5L6cFBgm21wQ2hK89mKPfzJhkRqbob7D5
- OJeibX9rHTZzAdRdUcMlT/259OgK4kC8hrP90IPa+NPytWFL+xcJ8X1s9uBfcv8W28qxOf/qgg3
- a7EHiZPxW8jskfcG6KqoywpnCA9a6TVmTuxVMaUcTBGyivKzghHmIFffqOa4S946GqFNA2sOHYY
- nXcdutWJiLnsOx+MEX3gKEWZnCrndSfQH16tlKRkVNeE7SMmMmfs6XiJsL5MaNDDiMgxy3aPwqV
- zeoBzVWX0W21FYq8hv1uj2DGHBN8HNx/e6QWaVf9uVgo+uPa9eQnLlqxGimKA9pQLUEhYoUYawB
- Shap8c07b/s7Ks9WbTfqdgiy7QjG+713I62d3bOq9Jl5vgI9S+6p/KKF6riyQGAS7/HI/124Bsy
- zRTnY7ktG+GA==
-X-Google-Smtp-Source: AGHT+IG0NED94sWJ0KYh2e5P9CmVELnrVpIzfkMtGHXWXdPuN61moDeSIHr+hri09SiZ5DGZok6tjw==
-X-Received: by 2002:ad4:5dc2:0:b0:70d:aa75:cba with SMTP id
- 6a1803df08f44-767c3a546e6mr49290186d6.47.1757691131069; 
- Fri, 12 Sep 2025 08:32:11 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-763b450b4a2sm29206476d6.6.2025.09.12.08.32.10
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 12 Sep 2025 08:32:10 -0700 (PDT)
-Date: Fri, 12 Sep 2025 08:32:07 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Junlong Wang <wang.junlong1@zte.com.cn>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v1] net/zxdh: add support compiling on riscv-64 systems
-Message-ID: <20250912083207.12fd501a@hermes.local>
-In-Reply-To: <20250911023211.3576860-1-wang.junlong1@zte.com.cn>
-References: <20250911023211.3576860-1-wang.junlong1@zte.com.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 486894066E;
+	Fri, 12 Sep 2025 18:02:19 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id F1B6C4065E
+ for <dev@dpdk.org>; Fri, 12 Sep 2025 18:02:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1757692937; x=1789228937;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=2CsvYzT7hIfdUyRXHc8C1Z+Ry6pTeJHBV6rRCfoH99U=;
+ b=JxEv09GJY2gxW0Yd1N/9VomBz5KsZcSaYf5EqzEGgijh9JqV0ekCJBdo
+ DwY/jY6Bb+cNVtTaMKtpfs8gD2srv9sjoUCXM8UOewkkuRBBGbpuYV/fR
+ RAA/obF99gNf3LepJLLhIkT4h5InX86ECGggauiJ+tXTwHealjgpj/sa4
+ vI4AJ4JyboawUo4d+WMuD9vh+EcVhDgg7xqQQaJrNIn+FzsdzFxSacvJ+
+ v2zQf7ITHcSLvUVYpKiAq/u80lCl1ag24g1CLtZJ9GBhCmJdDedNPVBeo
+ EuFc1OSdX0OwTbGXAYW03FK6inByHFbbAgQFRMyvZ1t6VPltAKqUuT0KW g==;
+X-CSE-ConnectionGUID: CvipfLobR4CqOx11CeGjDg==
+X-CSE-MsgGUID: QBO68CQXRyOPvxSv8bwCaA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11551"; a="62669348"
+X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; d="scan'208";a="62669348"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Sep 2025 09:02:16 -0700
+X-CSE-ConnectionGUID: V4hFwmFtQ9+I4nHA7P5cEw==
+X-CSE-MsgGUID: lo8sTlbmSwSfU9r1yHRjbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; d="scan'208";a="178319085"
+Received: from silpixa00401385.ir.intel.com ([10.237.214.33])
+ by orviesa004.jf.intel.com with ESMTP; 12 Sep 2025 09:02:15 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] app/testpmd: enable warnings for possibly invalid config
+Date: Fri, 12 Sep 2025 17:02:10 +0100
+Message-ID: <20250912160210.388290-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,12 +57,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 11 Sep 2025 10:32:11 +0800
-Junlong Wang <wang.junlong1@zte.com.cn> wrote:
+When dealing with multi-segment packets, there are separate offload
+flags which should be enabled on Rx (scattered flag) and on Tx
+(multi-segment flag). Print warnings on testpmd startup if we detect a
+situation where we suspect the user is missing these flags, e.g. we
+allow scattered packets on Rx, but not on Tx.
 
-> modify meson.build for support compiling on riscv-64 systems
-> 
-> Signed-off-by: Junlong Wang <wang.junlong1@zte.com.cn>
-> ---
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ app/test-pmd/parameters.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Queued to next-net
+diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
+index f7601df0bf..058e3c6826 100644
+--- a/app/test-pmd/parameters.c
++++ b/app/test-pmd/parameters.c
+@@ -1770,6 +1770,27 @@ launch_args_parse(int argc, char** argv)
+ 			TESTPMD_OPT_PROC_ID, proc_id,
+ 			TESTPMD_OPT_NUM_PROCS, num_procs);
+ 
++	/* check for multiple segments without scattered flag enabled */
++	if (mbuf_data_size_n > 1 && (rx_offloads & RTE_ETH_RX_OFFLOAD_SCATTER) == 0)
++		TESTPMD_LOG(WARNING, "Warning: multiple mbuf sizes specified but scattered Rx not enabled\n");
++
++	/* check for max packet size greater than mbuf size, without scatter or multi-seg flags */
++	if (max_rx_pkt_len > mbuf_data_size[0]) {
++		if ((rx_offloads & RTE_ETH_RX_OFFLOAD_SCATTER) == 0)
++			TESTPMD_LOG(WARNING, "Warning: max-pkt-len (%u) is greater than mbuf size (%u) without scattered Rx enabled\n",
++					max_rx_pkt_len, mbuf_data_size[0]);
++		if ((tx_offloads & RTE_ETH_TX_OFFLOAD_MULTI_SEGS) == 0)
++			TESTPMD_LOG(WARNING, "Warning: max-pkt-len (%u) is greater than mbuf size (%u) without multi-segment Tx enabled\n",
++					max_rx_pkt_len, mbuf_data_size[0]);
++	}
++
++	/* check for scattered Rx enabled without also having multi-segment Tx */
++	if ((rx_offloads & RTE_ETH_RX_OFFLOAD_SCATTER) != 0 &&
++			(tx_offloads & RTE_ETH_TX_OFFLOAD_MULTI_SEGS) == 0) {
++		TESTPMD_LOG(WARNING, "Warning: Scattered RX offload enabled, but TX multi-segment support not enabled.\n");
++		TESTPMD_LOG(WARNING, "         Multi-segment packets can be received but not transmitted.\n");
++	}
++
+ 	/* Set offload configuration from command line parameters. */
+ 	rx_mode.offloads = rx_offloads;
+ 	tx_mode.offloads = tx_offloads;
+-- 
+2.48.1
+
