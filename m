@@ -2,77 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2166ECAC597
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Sep 2025 15:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193C1CAC597
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Sep 2025 15:46:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CC8D54060F;
-	Mon, 15 Sep 2025 17:43:50 +0200 (CEST)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com
- [209.85.222.174])
- by mails.dpdk.org (Postfix) with ESMTP id C5704402E3
- for <dev@dpdk.org>; Mon, 15 Sep 2025 17:43:49 +0200 (CEST)
-Received: by mail-qk1-f174.google.com with SMTP id
- af79cd13be357-8116af074e2so418470585a.0
- for <dev@dpdk.org>; Mon, 15 Sep 2025 08:43:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5DC1140684;
+	Mon, 15 Sep 2025 17:46:13 +0200 (CEST)
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com
+ [209.85.219.44]) by mails.dpdk.org (Postfix) with ESMTP id D3CAF402E3
+ for <dev@dpdk.org>; Mon, 15 Sep 2025 17:46:11 +0200 (CEST)
+Received: by mail-qv1-f44.google.com with SMTP id
+ 6a1803df08f44-7240eb21ccaso50758006d6.0
+ for <dev@dpdk.org>; Mon, 15 Sep 2025 08:46:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1757951029;
- x=1758555829; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1757951171;
+ x=1758555971; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=nlKPhLKSmOR25vcXniZSM5YK0dKkNzmF22NNwJchpQQ=;
- b=aIp7BdeALruCQlOGHv/5+MHMS/wNQY1sqQ1P1dtb/ZBrK/QnCa7V4GiBLFark+7igx
- 4x9qk6eNAvxuCsUfU5U2zFe89CY1POUSc7gInEnqnmb4gWWmFXIQ5pIKrK4QRCC5BJM6
- wQxhumsmMVHABrUZegVkhZ+q45KL5ahh9NMk+L8uDb5xNAPR3YsKLA0um1Mc3uPZdA1y
- At2jyM5Gv/Q1L9vrdmQDbMw5sK8j0SLfafyp7X8QRe9G+ET2inLpJ8n6D6NwZZF4Whmq
- Ot6DV1GDsnK+uhKjRAgHTQAoL0LC3k9gZYyFTlOaekkO/bkTM/TKIYKtMpiH1U1H11Y2
- I0Rg==
+ bh=glYbjCI6WfVKkkx9fYu01GDEuj0OIgVsV9y6QHfh8yI=;
+ b=K6jwDmeapwQxEbPFMyi5fjkasVmlcQlNdP7M1LW95xkQcTeJJatIA/6OuEPWd2Zfqk
+ G8qNJkG+dy1FDFs4L55TKqqsFYlMCAWmOFBUGxDZQY3LyQmso1Va7tChIKfot6fJnhP/
+ MSw0zcK21kVSOM/fSlJjsQh+8qG6e6fkpgqvm6aLtM3L++zb/hKT/GExkZnXzCZTwvMT
+ wOCStD9gsp9fp0YXtHf8thxBdFqI2eUPwVypncpSHbnQrTMPRD3Ot3mhrTnOpFxaoY3O
+ OhavSG6OKxosCLhSp1mqa2dGYf04u/MBZFR/erK4eloTcp8B2t9/5z0Y90nqh1bMJUFj
+ gISA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1757951029; x=1758555829;
+ d=1e100.net; s=20230601; t=1757951171; x=1758555971;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=nlKPhLKSmOR25vcXniZSM5YK0dKkNzmF22NNwJchpQQ=;
- b=XV4KJKaDy1yIBeAL0GOJP4aqJ0tnQLj2nAnlzl3iEfG9O9LYoxEps3VPQM1BOwISPk
- 9+dFXudCJTmXvLuzxwoUx7Se2T9ChtOxrH2yhHiao/0YK+YMmuJ+j73Fkm5V13Jxw8PT
- ftBaDjykd4wPVcxroOkBdksPZbkBj/Y6pzv8Ke0rfVgG1HoulVAluBhesnf9+Xw19uDX
- MZ+jrluRao7/F0wlCcbW9X6cnapBMwozvyQcuF2fsT0iGPK2Yy1JtVBFl6OmLkU20axj
- 2SwwkvEYDW2KAZeiveHQwXbIAKUmcOkhyQubVhU5r809ouqVT7KWxY3WFVs+Occ70+ro
- Gw6g==
-X-Forwarded-Encrypted: i=1;
- AJvYcCV2QtrBW+DD9ylTqTqwHpXUCCeKpE/3zaV+r+JHVtvF5VODQdwUOg3bLci8tQG4HKGrZF8=@dpdk.org
-X-Gm-Message-State: AOJu0YyXf3Xnf1S3KXKeH5IKhWsfKlsSS22Bt3v1VMBcn2UDgSzT+90F
- HdbmqFvute0JYB3afwen7ACsZVVUxoZ4+DZE4N9RzN+dcVGeAHb8WyozZGPMeh5iYFA=
-X-Gm-Gg: ASbGncuj2bh0ioSeYz6734qZMIWIgo4zCqVOpu4DT8xBKBQedSXma4aclZX89/rDAjX
- 7cqZtWRqV5OMzUdXnqDWpdbJ2edFmlNcuuN7iooPZPKIkhhCFI0ppzbugNTXlS2XuPLenHL1d2n
- HfBKFw4Hzg0Pp2ikGhtfYKseslXtRyQMjc/TXb+4rsUn1Wq//u3qfuOPA+fmwfmF2OmYjG9PyIk
- 7Oy8l86+lqYuoEy/mj+KV65Mr6DuiLcvRDs+hzPafxCRVIagZ35XtpVFGGslsK9b4KTKwBQ97s2
- NZDTZk9OnO+k27sTJhWnpzOtFfKMJJnh+cJnSIGWhJ5AjvfUWDKagjgE7wB5xY5Li23azl6Rctz
- hXweEr2GIC8sK9x8P3ifot2UthKyw50xZ7C5j/jnlwkqZDoqLXfZ9OW+GkLqAEI1w/CWFYW5K+z
- kaYNtpDLQloA==
-X-Google-Smtp-Source: AGHT+IGcbhmrzrjZQ92R7rl0Sf8qzntGt/QDgc3AzaCZzfaAR1nqQQIy7mi7tQjjiylY2ZYJCj/rww==
-X-Received: by 2002:a05:620a:40c8:b0:7fe:8292:187e with SMTP id
- af79cd13be357-82403498667mr1615023685a.60.1757951028760; 
- Mon, 15 Sep 2025 08:43:48 -0700 (PDT)
+ bh=glYbjCI6WfVKkkx9fYu01GDEuj0OIgVsV9y6QHfh8yI=;
+ b=pzguBf0sKFGfcxnYUNDk6ddW2oqjBMaYTElRHuatRfGjS4ULxpKjgW0Mu0HAKRWOjb
+ 6JqWhPlONcsgUI46m2GuYguDt97etJBQaH2QKo1mpI0+V5WWzloCFzEey5kd45ALUxel
+ ddYUnn4vM4qwNg7vh6mz4sSRuD9AUlDVmKaDVWh9X78WfAjKylWNDIxJla9Is+FM1han
+ mhE2AwoC8IsVCGta3+oAwJAsdv5XOHv0BbdIB66D4jA4IzKnp9qW/qAhWvq93ZUbf1Dw
+ UHoDDZ04wVLe/icpg5wp7gQ/F8H9Ki5rmk68PKAWzOVhBjjmwlgucjI+cFd+/M3b0SBu
+ t0lQ==
+X-Gm-Message-State: AOJu0YxDVDw8V/EnLJiaYzL1+qYIoJkjcpp+qZqpNKop9XKzcfcw16PY
+ JNG7gcGsYDiK9wMCHvjYtTgF14SOOsnR5KZGL4ytzOCgU4VzMc/TaMFv7ycCBOd4yQc=
+X-Gm-Gg: ASbGncu4pMwovlagaaRt7DVa5ijKttjzVw32lkeI4kn5YQDszBCAl3HQbahaGI2l8BE
+ QdEpFS9pkBph5jacRv0EKOs1QsJ85Awri9pnK6zAP3fZ4lZyFof5OFy8dQDrMxQAoqTCVT15cLR
+ ETIad52ICm4OJQNEkoI963RHpTi8c4ZspDk0pUnzM2tKnZ6TLBH/I9ov8w+j1Ls4wETf8dKtIhX
+ lHeIfBDpvVtsPYNt5OWcvFegKsP8rY60/Sd0eb/shw7wc8mLhxSwNdAujpApxr2QBRhQalu6Snf
+ tvY6zZWO6u2kkXpdLkH2O4OG/+VndUd1Runyiq4CVnOxhgERmnTqR1uJkorfGIMyG50/uo71vr/
+ cYVsoyEXkTHDv6D7TV9OQgfSaCc+Rf9okCZ4V+kZK4GUcC2DrtlloVpN8mwkKkF16SRf75C+aVh
+ 0=
+X-Google-Smtp-Source: AGHT+IEZ89t8ujWoa7DfyjWBYt3F+dElVp/D5lLRsTCFRt7bsDZ1zXnsHrIpD1lPK7xygmaadnn6Pg==
+X-Received: by 2002:a05:622a:5b89:b0:4b6:622:25f with SMTP id
+ d75a77b69052e-4b77cca73a9mr201120051cf.29.1757951171034; 
+ Mon, 15 Sep 2025 08:46:11 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4b639b997c4sm68467391cf.2.2025.09.15.08.43.47
+ d75a77b69052e-4b639def83csm70269241cf.53.2025.09.15.08.46.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 15 Sep 2025 08:43:48 -0700 (PDT)
-Date: Mon, 15 Sep 2025 08:43:44 -0700
+ Mon, 15 Sep 2025 08:46:10 -0700 (PDT)
+Date: Mon, 15 Sep 2025 08:46:07 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Cc: Aman Singh <aman.deep.singh@intel.com>, Tyler Retzlaff
- <roretzla@linux.microsoft.com>, Anatoly Burakov
- <anatoly.burakov@intel.com>, Lijun Ou <oulijun@huawei.com>, Ferruh Yigit
- <ferruh.yigit@amd.com>, Xiaoyun Li <xiaoyun.li@intel.com>, Ajit Khaparde
- <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH v3] app/testpmd: stop secondary process fwd_lcores
- during primary teardown
-Message-ID: <20250915084344.5c95a47e@hermes.local>
-In-Reply-To: <20250915112513.496136-1-14pwcse1224@uetpeshawar.edu.pk>
-References: <20250804113322.53650-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250915112513.496136-1-14pwcse1224@uetpeshawar.edu.pk>
+To: Serhii Iliushyk <sil-plv@napatech.com>
+Cc: dev@dpdk.org, mko-plv@napatech.com, ckm@napatech.com
+Subject: Re: [PATCH v2 1/7] net/ntnic: introduce service API for NTNIC PMD
+Message-ID: <20250915084607.748f391f@hermes.local>
+In-Reply-To: <20250908141740.1312268-2-sil-plv@napatech.com>
+References: <20250908110446.1071964-8-sil-plv@napatech.com>
+ <20250908141740.1312268-1-sil-plv@napatech.com>
+ <20250908141740.1312268-2-sil-plv@napatech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -89,32 +82,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 15 Sep 2025 04:25:13 -0700
-Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
+On Mon,  8 Sep 2025 16:17:33 +0200
+Serhii Iliushyk <sil-plv@napatech.com> wrote:
 
-> +#ifndef RTE_EXEC_ENV_WINDOWS
-> +		if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
-> +			printf("Stopping secondary process...\n");
-> +			struct eal_dev_mp_req req;
-> +			memset(&req, 0, sizeof(req));
-> +			req.t = EAL_DEV_REQ_TYPE_STOP;
-> +			eal_dev_hotplug_request_to_secondary(&req);
-> +		}
-> +#endif
->  		}
+> This commit adds a common service API for the NTNIC PMD,
+> which includes functions for service management: add or delete a service
+> and retrieve information about a service.
+> The API is designed to facilitate the interaction with services within
+> the NTNIC driver, allowing for better control
+> and monitoring of service states.
+> 
+> Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 
-This could be improved:
-	1. The structure can just be iniatialised as:
-		struct eal_dev_mp_req req = { .t = EAL_DEV_REQ_TYPE_STOP };
-	2. Check the result of sending request to secondary
-
-	3. This is really a different MP request path, please don't
-	   overload hotplug for this. Register a new type with rte_mp_action_register()
-
-        4. If done right, you should be able to drop the #ifdef around WINDOWS.
-           For now, there will be no secondary on Windows so the request to send
-           will just succeed as a nop.
-
-
-The other issue is that stopping the secondary would be faster if you
-used existing f_stop flag to break out of the forwarding loop.
+Queued to next-net
