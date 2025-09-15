@@ -2,124 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7866CAC597
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Sep 2025 14:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A50D5CAC597
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Sep 2025 15:02:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 086704066D;
-	Mon, 15 Sep 2025 16:43:45 +0200 (CEST)
-Received: from PH8PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11012033.outbound.protection.outlook.com [40.107.209.33])
- by mails.dpdk.org (Postfix) with ESMTP id 1CE1E40697
- for <dev@dpdk.org>; Mon, 15 Sep 2025 16:43:43 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mXsxsYNnAP4+EoUt51FRdp+Ie6BN8W7yYvoDMfhJTmjrDlzKH9t12ZKC8t5FQ6GOlKz1Hl6pOTUvophytEk5QfIz0gdyUelEo5q05LkhhfdX/0xGadwJ9KfZHtcEJbtslLl/ho5kONhEdfpSXg32IlRq4Dz3TJbUWxisSFhaB3zCVl/Uw2IEb072kp8QQnYosD6OV79Ufwlzw9XTd2ogNszwNBhHBl1r6AIMnH6BGogH5ANZsw/Y+164+Y8vAGgghuiGRl5NYVnxOBgiTfQoQgu8LSVDVwlgcS8ptH8oxxCCVLROf6YAH9CK9AHpbxkjNc7sf8stQd6ce4mlErRgpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lT1Te81eVS9APuM4HICfl2SOGNrNneMIGQ06+RY1hNk=;
- b=e6cQH5B7I7MORrGpYtA8DRdmdzWn+Z6IdQbWFmbYdUy3qVrUg0Sop8jPqdCG41gSZs2AzUFzkHYfFAd7ISbrVzAU/Js2laxZsFzzs9qPuxhcZBYIdbsVBKWQMdzxkfOQbyuLGA5TI3HX7tLtDSGlZRtBGZki8fEEaPC5YQejIo3AqOQ61knF8uIIgF87ZP+CSKG9c62D2tZTJaAtZKJ9feW+wl0T7UEcRc/iyqaFk3od2lJMT8xAEGjgqhzfe0Y8ggy2ZtlvyeKMcb3L6F2nrJpgD02citLF4gkQroMMuV7Wtf5cYqLWvSwuM76vkJ2ytrBV9yGZagtAjSurtKYKpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lT1Te81eVS9APuM4HICfl2SOGNrNneMIGQ06+RY1hNk=;
- b=VFe0/SNDKW5/g/ycFtCPG8QfCzHxt9OMdRG6RtkGsU57nupx8DJlvl87qmggx1twtz16M220dXzxWH4kr6sS14PRWeSA5uPTTA0zrqbxmzieSQnuzZI7N2wqF70aJgy3PHGKECS/gixy8Lb589INmCvOWMZ/v9GWHOwi2g5mmEK065qLz+mBqVnKItvSPRHVlznP4IvtRU9sN+3hwCgPK9dTwpm6MB+XgsZp+Y7F0skJHrBrhimV2tm1wONxGCyJsc/pzQnGVNaTWIA8t2gR7sKZSS8DKBtFI5SHCfwODY7lbpTx+7pqc4e8zqgXZ/WfqPBw89jB2HW6pN/ZkNozyw==
-Received: from SA9P223CA0016.NAMP223.PROD.OUTLOOK.COM (2603:10b6:806:26::21)
- by LV8PR12MB9666.namprd12.prod.outlook.com (2603:10b6:408:296::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Mon, 15 Sep
- 2025 14:43:37 +0000
-Received: from SA2PEPF0000150A.namprd04.prod.outlook.com
- (2603:10b6:806:26:cafe::2e) by SA9P223CA0016.outlook.office365.com
- (2603:10b6:806:26::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.20 via Frontend Transport; Mon,
- 15 Sep 2025 14:43:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SA2PEPF0000150A.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Mon, 15 Sep 2025 14:43:36 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 15 Sep
- 2025 07:43:16 -0700
-Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 15 Sep
- 2025 07:43:14 -0700
-From: Gregory Etelson <getelson@nvidia.com>
-To: <dev@dpdk.org>
-CC: <getelson@nvidia.com>, <mkashani@nvidia.com>, <rasland@nvidia.com>, "Bing
- Zhao" <bingz@nvidia.com>, Elena Agostini <eagostini@nvidia.com>
-Subject: [PATCH 9/9] gpu/cuda: support CUDA 13 building
-Date: Mon, 15 Sep 2025 17:41:36 +0300
-Message-ID: <20250915144137.54858-9-getelson@nvidia.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250915144137.54858-1-getelson@nvidia.com>
-References: <20250915144137.54858-1-getelson@nvidia.com>
+	by mails.dpdk.org (Postfix) with ESMTP id CE66040657;
+	Mon, 15 Sep 2025 17:02:23 +0200 (CEST)
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
+ [209.85.219.45]) by mails.dpdk.org (Postfix) with ESMTP id 44592402DC
+ for <dev@dpdk.org>; Mon, 15 Sep 2025 17:02:22 +0200 (CEST)
+Received: by mail-qv1-f45.google.com with SMTP id
+ 6a1803df08f44-76ea7993925so24207836d6.3
+ for <dev@dpdk.org>; Mon, 15 Sep 2025 08:02:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=atomicrules-com.20230601.gappssmtp.com; s=20230601; t=1757948541;
+ x=1758553341; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=DiOe3DsGkPpuJjCiId51FazWRCcWlEP+HKY0kMpZ/Ro=;
+ b=O4j8VA6a3SVX9VMalFpi9NvA2VPgEGyntqLiZFpIBX6ooSMqgqPT0ULNGJ1tzdFVCP
+ uqDzibTrRWHtFd1UuP14uHnQ1e8K2K4A50xJd6S8O+5qOVXQYEknPUAG0PJGRXJd4Zdo
+ BgidoE8AkNlmYpQgUB/zbJA5zYgNVSPfuXp6q2XFgE20AZa+ZQ15Qcs/+jjej3Gslskf
+ La8uzAN/VPS8sO5p/i1ri/x02jSWAg38HTebTR5YkPiJRsrOECIkrAoaBTUm+/GLJClB
+ EOdSGBIbRKYfaNl4iol9qkJtImHzQD4TUrIuhWL/K12JRxCWEL7QK3J2bCun3bHyDLnZ
+ prbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1757948541; x=1758553341;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=DiOe3DsGkPpuJjCiId51FazWRCcWlEP+HKY0kMpZ/Ro=;
+ b=lHyFvg/OmEbpFY2nrOT5aOFijpdhPhAg/16gCgX7cM0nyna2IffLNnUYj6Qh90MS/K
+ 2I6kRxfCbz9T1fjaX3myYG77TQ6IHBiXgmd9iYiY8eZmTkM+eatiHJHI1qTQhFxkoLhG
+ yDbzwEO9Rv//lhwih9YQZXsY4A+suSSbkDa33g7BTsm/nsuHLzJD5GpFoVxibQdtim+B
+ 8RIn8wjAJ6NyfLyIPfM5xxRg6pikUP0ltUJha49btdmuVjhkXm4/907OeC2uSE7NRbfT
+ H52eKYd4K7HfgLLda+vZ6prUQuRzHKlI/XfFtY+fHN6CkMfuiQnQgZ2g2yKhavxOLQ0d
+ YJPA==
+X-Gm-Message-State: AOJu0YyQkvadVy+S7Bp4Z3Fwi2tt0Fg67sZiiVyaJzMB4PwJagY0C/aC
+ wP+/IhxzfHhtCgH0xgjbOcm/7ijREIGCO9PcwnfI23lt/sC2VvFMg8sdD8J83mAHHgEhzUFBln6
+ dS/8=
+X-Gm-Gg: ASbGncu1elbldDBjJCJlhUWZoeJ9inF+u8rUcqpbKs/UooBCxoJPB1IKg03BIQPyr7w
+ /uUeteq/fBYEsS3qSI3QbsP1qCU1E6Y1Bp8IqU63sIND+Ffa9hbHmRiMQM4+H8O72xLjT8K/1bS
+ oOjyh+G+ukcyovd1sPF9IYKiUGAlOl9DbxZvmHv6XZjU7PPuieSFRR4rpsGzUiMh7F9kIA7jg4u
+ 7izY2I9kYGK8A3sMTf+PofxUbSGOF9plA9b3q9nyqG0nLPuAYv/wIZYXT6YV61eMWwVo5OGZ8+/
+ 6zPmj8g2NNsuXVLkgYeqQ6EBPuP51tkx/JsIwk4c0b+KJ+zpB7TFBII4p/qBjq3mPOqGMMoMyGn
+ eSIk7bHPJMGesQ3oHqH6++Y0AAHZjZ3niDnTgJF5ZrRgTnkK9ZKWUyeYwH7kfHgPoogLrfvnWOV
+ y9J7Eyf6yN
+X-Google-Smtp-Source: AGHT+IGfmDngqVI7D4LwIKGz5xZJtkZhdVoaBVIPWwA6Dz+bEN+pjyYvWkfATc1kfaBgxzaAMHiKFg==
+X-Received: by 2002:ad4:596a:0:b0:70d:ff3a:f96b with SMTP id
+ 6a1803df08f44-767c215b61bmr142651446d6.44.1757948540678; 
+ Mon, 15 Sep 2025 08:02:20 -0700 (PDT)
+Received: from z690.czeck.local (pool-108-20-194-239.bstnma.fios.verizon.net.
+ [108.20.194.239]) by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-783edc88db3sm18930486d6.66.2025.09.15.08.02.18
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 15 Sep 2025 08:02:19 -0700 (PDT)
+From: Ed Czeck <ed.czeck@atomicrules.com>
+To: dev@dpdk.org,
+	stephen@networkplumber.org
+Cc: Shepard Siegel <shepard.siegel@atomicrules.com>,
+ John Miller <john.miller@atomicrules.com>
+Subject: [PATCH v3 1/4] net/ark: add PCIe IDS for newly supported devices
+Date: Mon, 15 Sep 2025 11:02:01 -0400
+Message-Id: <20250915150204.1719628-1-ed.czeck@atomicrules.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250903212846.268492-1-ed.czeck@atomicrules.com>
+References: <20250903212846.268492-1-ed.czeck@atomicrules.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF0000150A:EE_|LV8PR12MB9666:EE_
-X-MS-Office365-Filtering-Correlation-Id: 93f5f678-5f80-4644-8009-08ddf46640e4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|376014|1800799024|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7XLjnRiSrXXoGUhuWboVYGdrYqh6S9l4yp2tI6qhAzdO42pjXzEayyXKNjBf?=
- =?us-ascii?Q?OvAy09yf+1FISTsxrpIpc4ra32s8RYEJKkdAPsWnNwwBtg6DYnLsf9XEYiuv?=
- =?us-ascii?Q?04Kxq/iEfN7xIwkS1FDa344FRhlcCHAEJJqMOnUJqBkOt0t757u17nSpz8ja?=
- =?us-ascii?Q?AGDyS/SnDr5IbfYlfZVowYSWoAkvyMG+ZuERQvyrLJED+S7WvHLCQ18o9//B?=
- =?us-ascii?Q?8RXcRLe0tMeBucJgM07lx2Pf9akkqDMIJN7Wgj9GTBEUUmHtvOBaiijrjQnH?=
- =?us-ascii?Q?oMspcqKQuEcO4RCE4XOD7ZRACqy0ZOk16rBS0fCVlZEL/9dPZra3Pbe3I9VE?=
- =?us-ascii?Q?6s8F/Y7nnMr/6jK26XoMBA7I0Ix/r3kcD5FcmpGScImBBIV9xgNG2apooOlD?=
- =?us-ascii?Q?i4Sy9cmJIs2LJmxRZ/MFVcFK/tp+R8OagcPU1PY02rDW/PXQk983PQhd4vli?=
- =?us-ascii?Q?4BQWKC8b4rByQTdTdFLgkBuTKEBy1QKQFXEhkboTucxzIj2UCpqZqTSNuuF3?=
- =?us-ascii?Q?FFz90mpU1svFmTOI0voJUf1lGZEVA9EICch3cbzGhlcfRa66SIXZrtMtQJPa?=
- =?us-ascii?Q?iof4CFxG+MQgAgOID89i2eAZsAsOdk/zVYRVG70sdv502KT/ITcIYWX1vsQQ?=
- =?us-ascii?Q?OTZKynn81ujk7V+T8L4kitMFWUd/mVkclA+FrfCaeckBqPvJ2Vj9cB5eAx5H?=
- =?us-ascii?Q?WjjxIoYz2b2ov3v8huedevPulKgxT5eMtJqTyFTAfzTIb6sYH0pq/DQjGWLQ?=
- =?us-ascii?Q?HJKKaSpdkHh5OfS5U2V1AyYbghIXgkF/eXey5WLlpMwQ1QqHc0XNlE5+ySWp?=
- =?us-ascii?Q?zpxF7Y+3LOLzbvd30QvIT7iTD4oRUovWGyKpBo4ltRWAP/bKLjxV2ZwneLa2?=
- =?us-ascii?Q?JS782z8K8XYKnhQfPNB15Z+Jv9Acc/EiIVOxFfXdpDspQ3s8DMqmj/bgAn5K?=
- =?us-ascii?Q?IAQSy2BZrxquMNzMNNTt6po5HtouLYZZj9KbbYS9NnNZEwWYfS69dh00pGHy?=
- =?us-ascii?Q?ZBZmc0otK7oyizRDrNfI7Im/ENGciIZjcAMDIb9dTFHfEiMQTyXOjBBq34hC?=
- =?us-ascii?Q?50HdwjgBP5Sob3ppUEoCOkDpZsgK20skv4CA5EeC6quwonzTeXRS3UcYqTiB?=
- =?us-ascii?Q?1L4Brss+YtndZwXbPcY6u1P8HvrxJuhn0Y+tKdy7HDpHT/DYnaFIueYPUnUP?=
- =?us-ascii?Q?mIYIfNoPyq8PzithIgI4dYr4ue5F47AoFWzYfQCa8ry1zXFU/G+jk593S/ZL?=
- =?us-ascii?Q?xxrME+Ah4EeGFk6+B2nrrYMK0yps78sG+IGOmE5mPnawKN2nLAKxac0xxFJx?=
- =?us-ascii?Q?YZLFwi5i01Vz+w0IZgmHOGG3XolgIKBSVdTbnnz7mOroVy7rnLFiGGot6kRe?=
- =?us-ascii?Q?A1I70El14f/PnQBDt0RUCa5Cph5sU44OALJd52JgTLekfUuLzNdHYqzsgtKW?=
- =?us-ascii?Q?aPupuCo+wjUKzLHY2ySdvmzFawXanIuP3F+NDCOi9ZPzLtTWwsbd8j43E5ZH?=
- =?us-ascii?Q?zE+CSyCy4YGKzGgDssrmIshT/QpCh3etdW67?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 14:43:36.6764 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93f5f678-5f80-4644-8009-08ddf46640e4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SA2PEPF0000150A.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9666
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -133,57 +83,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Bing Zhao <bingz@nvidia.com>
+Update documentation and release notes
+update link speed capabilities for 200G and 400G
 
-The API name and prototype have been changed in the new CUDA, this
-commit will ensure the compatibility with different versions.
-
-Signed-off-by: Bing Zhao <bingz@nvidia.com>
+Signed-off-by: Ed Czeck <ed.czeck@atomicrules.com>
 ---
- drivers/gpu/cuda/cuda.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+v2:
+- included 2 more device id
+- updated link speeds
+---
+ doc/guides/nics/ark.rst      |  7 +++++++
+ drivers/net/ark/ark_ethdev.c | 10 +++++++++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/cuda/cuda.c b/drivers/gpu/cuda/cuda.c
-index e050b6370b..3f3391cf30 100644
---- a/drivers/gpu/cuda/cuda.c
-+++ b/drivers/gpu/cuda/cuda.c
-@@ -28,6 +28,28 @@ static CUresult CUDAAPI (*sym_cuGetProcAddress)(const char *symbol,
- 		void **pfn, int cudaVersion, uint64_t flags);
+diff --git a/doc/guides/nics/ark.rst b/doc/guides/nics/ark.rst
+index 6aabde2ed5..c8ed57289b 100644
+--- a/doc/guides/nics/ark.rst
++++ b/doc/guides/nics/ark.rst
+@@ -310,6 +310,12 @@ ARK PMD supports the following Arkville RTL PCIe instances including:
+ * ``1d6c:1024`` - AR-TK242 [2x100GbE Packet Capture Device]
+ * ``1d6c:1025`` - AR-TK242-FX2 [2x100GbE Gen5 Packet Capture Device]
+ * ``1d6c:1026`` - AR-TK242-FX2 [1x200GbE Gen5 Packet Capture Device]
++* ``1d6c:102a`` - AR-TK242-FX2 [4x100GbE Gen5 Packet Capture Device]
++* ``1d6c:102b`` - AR-ARKV-FX1 [Arkville 128B DPDK Data Mover for Versal/CPM5]
++* ``1d6c:102c`` - AR-TK242-V80 [Gen5 PCAP Processor]
++* ``1d6c:102d`` - AR-TK242-FX2 [8x10GbE Gen5 Packet Capture-Replay Device]
++* ``1d6c:102e`` - AR-TK242-FX2 [8x25GbE Gen5 Packet Capture-Replay Device]
++* ``1d6c:102f`` - AR-TK242-FX2 [1x400GbE Gen5 Packet Capture-Replay Device]
  
- /* CUDA Driver functions loaded with cuGetProcAddress for versioning */
-+#if defined(CUDA_VERSION) && (CUDA_VERSION >= 13000)
-+static PFN_cuGetErrorString_v6000 pfn_cuGetErrorString;
-+static PFN_cuGetErrorName_v6000 pfn_cuGetErrorName;
-+static PFN_cuPointerSetAttribute_v6000 pfn_cuPointerSetAttribute;
-+static PFN_cuDeviceGetAttribute_v2000 pfn_cuDeviceGetAttribute;
-+static PFN_cuDeviceGetByPCIBusId_v4010 pfn_cuDeviceGetByPCIBusId;
-+static PFN_cuDevicePrimaryCtxRetain_v7000 pfn_cuDevicePrimaryCtxRetain;
-+static PFN_cuDevicePrimaryCtxRelease_v11000 pfn_cuDevicePrimaryCtxRelease;
-+static PFN_cuDeviceTotalMem_v3020 pfn_cuDeviceTotalMem;
-+static PFN_cuDeviceGetName_v2000 pfn_cuDeviceGetName;
-+static PFN_cuCtxGetApiVersion_v3020 pfn_cuCtxGetApiVersion;
-+static PFN_cuCtxSetCurrent_v4000 pfn_cuCtxSetCurrent;
-+static PFN_cuCtxGetCurrent_v4000 pfn_cuCtxGetCurrent;
-+static PFN_cuCtxGetDevice_v2000 pfn_cuCtxGetDevice;
-+static PFN_cuCtxGetExecAffinity_v11040 pfn_cuCtxGetExecAffinity;
-+static PFN_cuMemAlloc_v3020 pfn_cuMemAlloc;
-+static PFN_cuMemFree_v3020 pfn_cuMemFree;
-+static PFN_cuMemHostRegister_v6050 pfn_cuMemHostRegister;
-+static PFN_cuMemHostUnregister_v4000 pfn_cuMemHostUnregister;
-+static PFN_cuMemHostGetDevicePointer_v3020 pfn_cuMemHostGetDevicePointer;
-+static PFN_cuFlushGPUDirectRDMAWrites_v11030 pfn_cuFlushGPUDirectRDMAWrites;
-+#else
- static PFN_cuGetErrorString pfn_cuGetErrorString;
- static PFN_cuGetErrorName pfn_cuGetErrorName;
- static PFN_cuPointerSetAttribute pfn_cuPointerSetAttribute;
-@@ -48,6 +70,7 @@ static PFN_cuMemHostRegister pfn_cuMemHostRegister;
- static PFN_cuMemHostUnregister pfn_cuMemHostUnregister;
- static PFN_cuMemHostGetDevicePointer pfn_cuMemHostGetDevicePointer;
- static PFN_cuFlushGPUDirectRDMAWrites pfn_cuFlushGPUDirectRDMAWrites;
-+#endif
+ Arkville RTL Core Configurations
+ --------------------------------
+@@ -322,6 +328,7 @@ stream interfaces for both AMD/Xilinx and Intel FPGAs.
  
- static void *cudalib;
- static unsigned int cuda_api_version;
+ * ARK-FX0 - 256-bit 32B datapath (PCIe Gen3, Gen4)
+ * ARK-FX1 - 512-bit 64B datapath (PCIe Gen3, Gen4, Gen5)
++* ARKV-FX1 - 1024-bit 128B datapath (AMD PCIe Versal, Gen5 )
+ * ARK-FX2 - 1024-bit 128B datapath (PCIe Gen5x16 Only)
+ 
+ DPDK and Arkville Firmware Versioning
+diff --git a/drivers/net/ark/ark_ethdev.c b/drivers/net/ark/ark_ethdev.c
+index c029dc46b3..8d3c0a1b02 100644
+--- a/drivers/net/ark/ark_ethdev.c
++++ b/drivers/net/ark/ark_ethdev.c
+@@ -102,6 +102,12 @@ static const struct rte_pci_id pci_id_ark_map[] = {
+ 	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x1024)},
+ 	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x1025)},
+ 	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x1026)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102a)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102b)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102c)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102d)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102e)},
++	{RTE_PCI_DEVICE(AR_VENDOR_ID, 0x102f)},
+ 	{.vendor_id = 0, /* sentinel */ },
+ };
+ 
+@@ -733,7 +739,9 @@ eth_ark_dev_info_get(struct rte_eth_dev *dev,
+ 				RTE_ETH_LINK_SPEED_25G |
+ 				RTE_ETH_LINK_SPEED_40G |
+ 				RTE_ETH_LINK_SPEED_50G |
+-				RTE_ETH_LINK_SPEED_100G);
++				RTE_ETH_LINK_SPEED_100G |
++				RTE_ETH_LINK_SPEED_200G |
++				RTE_ETH_LINK_SPEED_400G);
+ 
+ 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_TIMESTAMP;
+ 
 -- 
-2.48.1
+2.34.1
 
