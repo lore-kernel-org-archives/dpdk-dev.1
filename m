@@ -2,81 +2,135 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0356CAC598
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Sep 2025 09:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1881DCAC58E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Sep 2025 09:39:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C2C0240395;
-	Mon, 15 Sep 2025 11:29:48 +0200 (CEST)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id 1D0C540395
- for <dev@dpdk.org>; Mon, 15 Sep 2025 11:29:48 +0200 (CEST)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-24b13313b1bso26365445ad.2
- for <dev@dpdk.org>; Mon, 15 Sep 2025 02:29:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1757928587;
- x=1758533387; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Fy5ET3VMEk9u1OLem6tPjCehyjOLXGc6H+jSgUY4DAQ=;
- b=I5EMhPwIr0TJvTjAfFuXojpUXI3v+hnKxCeyCFjmrr0usNwSRoVFGjOzgYLvi8Hmz6
- YQFtL3kURmZ4uodi1jjNo1SYy3VXgiuOOUAQ7Ot6e1Fn9Af7dRbhVm3bbCKRBgQttaVi
- 9Pua4dcRgECovq/znUupgr4rupvW72QUMmd53LbZK5GJdVcqhkMx+YGJ0nMf5z88q/Aq
- cagSgbvqvyOOjcKEw2nbeiUqy78lo6vczrA+4dqgLwffpmepXB1TB6ZDSnUMl9liXUKr
- X8Argvxc7Apx3Ij0maWDtiRieLshlLbFoYo+FVWNgh0nPNdVZCXYLRgJwy+njpb8Mfcu
- Ab8g==
+	by mails.dpdk.org (Postfix) with ESMTP id 70DBD40613;
+	Mon, 15 Sep 2025 11:39:17 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 740224060C
+ for <dev@dpdk.org>; Mon, 15 Sep 2025 11:39:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1757929155;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=rG6nFHnADSurordTi+CwCE43FVoNjLCXW3XItm9F2S4=;
+ b=MuuySeIyAhF7ZL9ox4sW8WlckkxpiIAWsQ0TFkwvydOmpZgEVIBQXwxUhJRIkU67YBm2ew
+ BVOu+9CmUszVn2zDtnv6qiH/SHwkYdHnRWThSbMM7xoA72yifd4B6XTWcmLoauAsTrSPrZ
+ Nku4cFK8yiGWhdpyvAK42hjl/qcO49g=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-247-IhSWLvTxPvehtb8SExU-xA-1; Mon, 15 Sep 2025 05:39:13 -0400
+X-MC-Unique: IhSWLvTxPvehtb8SExU-xA-1
+X-Mimecast-MFC-AGG-ID: IhSWLvTxPvehtb8SExU-xA_1757929152
+Received: by mail-wm1-f69.google.com with SMTP id
+ 5b1f17b1804b1-45cb612d362so22052545e9.3
+ for <dev@dpdk.org>; Mon, 15 Sep 2025 02:39:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1757928587; x=1758533387;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=Fy5ET3VMEk9u1OLem6tPjCehyjOLXGc6H+jSgUY4DAQ=;
- b=p5QSAWCIYy+MoL1tosua4Xpk4ymRbHhJy6LlIjn6rXvlNUntKvaNBhVLnMJMlIZEnb
- l6hyw+OonCtC9pp68i/akTyEetezYM8qR9+Ha+mt83lEyBPG01GZF4jKEAeHoY3csNTy
- 4V9ua6XaiQPqvikdbYL2179914qtrkVf0zjUDw03MHyL3gfnT68qL3AFM+nbiiB43Ikd
- m97dxY9FI+nBB7/TA+zDCrGe3WK0N3jzsKOhy+WH3X1YZbfNBlBhBCs7iUxobDHgawCU
- PhVtuyVNix+JKwR6TeAazFIC9736M7X2OY1q6TgeWQA+pJsjILMr2cwC9g49wf4LegYO
- HDzw==
-X-Gm-Message-State: AOJu0YxqyA4jLggC0++1A75BEgSEewFBw4OEHcMQinR+b2j1vXuzszhX
- bZ0QYJlGtiF2WY7iW3BQGaYOjExQjvuyyDtlPTtMUgfup2uUoxUKe5l1B+vN93GiTSk=
-X-Gm-Gg: ASbGncsX2hmnb0IWUBxUgICOIhC4VplhXzHl+b2l+qkm+yb6N0Celb5CHPQ77bz60yN
- lAJp9ly145Ep4cl7+KvTySmU7IZsxf3U4xESSYzG4xme+Y/rZggoXHUN+MqXZa+l27fCIjQMi9T
- RwgQfPT99cb0M/6zeOQxJNyCyihjAs3QiZ7rU6BP2YPq/GbE6IvToUz+bdlFJiwEQGLGx4ioo5x
- jIvWN22fyirIz78D2hQBPUIyvRhptD0D0x8quUFK5LmPqUd8bJGB7Or06TTkCfUhVW1jOSZV+NO
- e5Jxz8bXcQ8hVL5kp8PPIDMuEcZddjfL+rGxV3Tnt5In4GWW6wNTg0Ct4GexxTAcJzgXGhB6abE
- KXuIgZ/WyWkQtUz/Z8F/LFFdMabCuWam+KkNhrpxV3tqm2z/nNljgX89mnNccvB1zx5Kk3YtxL6
- z56feUFFAg+a3Pmi1SvwF9hbbMEAGuQC0zUpa6jEhNM5kHWOIymqOm6wPHxMQqrMwaFW+hH6S3/
- TZpXgpWuggaUukqe50CXaa7y6qSHeeV7ZyNEK+R70d9
-X-Google-Smtp-Source: AGHT+IFgn/Ku3cdPkI02VXJDt507jDPGj2o5C6b4X9rDZaCSd+R7cU/Ym1bZmoGmBpEYdw/zBUNLdw==
-X-Received: by 2002:a17:903:238e:b0:25c:b1d6:c41a with SMTP id
- d9443c01a7336-25d23e10eafmr147191055ad.11.1757928587130; 
- Mon, 15 Sep 2025 02:29:47 -0700 (PDT)
-Received: from localhost.localdomain
- (108-92-19-205.lightspeed.sntcca.sbcglobal.net. [108.92.19.205])
+ d=1e100.net; s=20230601; t=1757929152; x=1758533952;
+ h=content-transfer-encoding:in-reply-to:autocrypt:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=rG6nFHnADSurordTi+CwCE43FVoNjLCXW3XItm9F2S4=;
+ b=kumoICXM1GhYmsdAc2A9cCVCauAOCDrj3xRwwi4opiLa7aNxMqFm/TvdtW4VCvC1HM
+ LxeldE663w7D0U3mJFohvuuIecpHMsPN1w/Nnuf+F4GN+CrqK85LB29HqO4ryHVXLP0k
+ 0wVAdNTtIwaXU6yEeYpvMNeCsLlDI3Gu1jdR6ETrI0UVufgAzKtbYf6uABAELwVcf2hc
+ tGEzlcVSkjrLWbXX2+xWqvU8lr375nucXN1K3sRypf7L0DreeWSd7fB54St9Tc7zGLgp
+ A3Uc+j2NP/vVh9dlgjBn9CXVzPw87cxuHRyRCK702BF/8c6WVgmdvRI4a7Pf0Ec3Y6u1
+ Mx7Q==
+X-Gm-Message-State: AOJu0Yx5PnlVVzttxuz7ibzm6u3Jofq3BqBbgzn8vEgSI4R0od4sLdn1
+ Hm4Zn6xWUVYA1/VSaXjtR34Us0jyol77L26oQIuyNLk+wTVNpS35jLcO9fETReyED3O50J3PbI6
+ 6pVRxdM+6ArZX/p9EF4O+gyylfeapTSkWZKUecr/tqalH
+X-Gm-Gg: ASbGncv+wm5yeQnbwyCvb4Gr5sKYuImv1fDyUncccqSvca/r/P0otk+T96FCNGsUgGl
+ FypV910FZnV0YiY9WLXamVN4PqjXjTPlRKAYvI/rIZgTYzM6GEpDsPso87M9HE+cza9eVptzuef
+ mrqYHAm24tClwvVFy/0Y+O7x0d0dGrum5Wn5HMIZ0qWcvWqLzB9iAepTfpR31gVOOZdTxBzglEV
+ RqP/wpeF5qGPklS5OCKIEr12iokBkdqvBZ2zg1Azbzyi5IxaZR3aNLfvbjU2UrrNosdeMkAML7v
+ oeGYm6FKRboKZiJhvx3AdlCH6wf9epvR+nvfnO5kEb8=
+X-Received: by 2002:a05:600c:8284:b0:458:c094:8ba5 with SMTP id
+ 5b1f17b1804b1-45f211d5735mr112339445e9.12.1757929152066; 
+ Mon, 15 Sep 2025 02:39:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF6FHa+SbuMC7uH7TI381O+BksJAdaTUEKkgxx20lIhAiJsL9vaja/KBPa8cZn9bRjtIdMLdg==
+X-Received: by 2002:a05:600c:8284:b0:458:c094:8ba5 with SMTP id
+ 5b1f17b1804b1-45f211d5735mr112339195e9.12.1757929151670; 
+ Mon, 15 Sep 2025 02:39:11 -0700 (PDT)
+Received: from [192.168.0.56] ([78.16.128.176])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-265819a6212sm32553885ad.57.2025.09.15.02.29.46
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 15 Sep 2025 02:29:46 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: Aman Singh <aman.deep.singh@intel.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>, Lijun Ou <oulijun@huawei.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Cc: dev@dpdk.org, Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>,
- stable@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3] app/testpmd: stop secondary process fwd_lcores during
- primary teardown
-Date: Mon, 15 Sep 2025 02:29:37 -0700
-Message-Id: <20250915092937.491562-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20250804113322.53650-1-14pwcse1224@uetpeshawar.edu.pk>
-References: <20250804113322.53650-1-14pwcse1224@uetpeshawar.edu.pk>
+ 5b1f17b1804b1-45e037c9d91sm167615785e9.20.2025.09.15.02.39.10
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Mon, 15 Sep 2025 02:39:11 -0700 (PDT)
+Message-ID: <d9b7790c-1a71-4438-a9ad-6efc3cf51e7b@redhat.com>
+Date: Mon, 15 Sep 2025 10:39:10 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/15] net/ice: remove unsupported Rx offload
+To: David Marchand <david.marchand@redhat.com>,
+ "Loftus, Ciara" <ciara.loftus@intel.com>,
+ Luca Boccassi <luca.boccassi@gmail.com>,
+ "Xueming(Steven) Li" <xuemingl@nvidia.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>,
+ "Richardson, Bruce" <bruce.richardson@intel.com>,
+ dpdk stable <stable@dpdk.org>
+References: <20250818105914.169732-1-ciara.loftus@intel.com>
+ <20250818105914.169732-11-ciara.loftus@intel.com>
+ <CAJFAV8wu3jQh2WAY_aUdS-Y1xFMFFtYrGGh_hgbROmMaEpWcgQ@mail.gmail.com>
+ <DM3PPF7D18F34A18F628B6488BAB7ADD7608E15A@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
+ <CAJFAV8xp1Bckbudei4JFAFAacFYi8wTd50TnWXT0BqFSOMixSg@mail.gmail.com>
+From: Kevin Traynor <ktraynor@redhat.com>
+Autocrypt: addr=ktraynor@redhat.com; keydata=
+ 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
+In-Reply-To: <CAJFAV8xp1Bckbudei4JFAFAacFYi8wTd50TnWXT0BqFSOMixSg@mail.gmail.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: bDYpt-LEZ3h8wF4nIC_Y5-Qhz1femJCH9dEVUNpVPvU_1757929152
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,121 +144,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the secondary process testpmd application running any fwd_engine
-and after that primary has exited will cause a crash.
+On 15/09/2025 09:59, David Marchand wrote:
+> On Mon, 15 Sept 2025 at 10:45, Loftus, Ciara <ciara.loftus@intel.com> wrote:
+>>
+>>>
+>>> On Mon, 18 Aug 2025 at 13:00, Ciara Loftus <ciara.loftus@intel.com> wrote:
+>>>>
+>>>> The offload RTE_ETH_RX_OFFLOAD_SCTP_CKSUM is not supported in the ice
+>>>> driver so remove the one erroneous use of it.
+>>>>
+>>>> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+>>>> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+>>>
+>>> I just noticed this fix in main.
+>>> Fixes: 808a17b3c1e6 ("net/ice: add Rx AVX512 offload path")
+>>>
+>>> This looks like something worth fixing in LTS.
+>>> Was it intentional not marking it for backport?
+>>
+>> Apologies, it was not intentional not marking it for backport. I should have added that.
+> 
+> The fault is not yours.
+> Let's blame the reviewer instead ;-).
+> 
+> 
+>> Shall I submit a new patch to be backported or can this one be used?
+> 
+> It is ok.
+> Just, the scripts won't catch this fix, so let's ping people.
+> @LTS maintainers, fyi.
+> 
+> 
 
-This patch forces secondary process forwarding lcores
-in fwd_engine to stop before the primary process exits.
-
-Fixes: a550baf24af90f ("app/testpmd: support multi-process")
-Cc: stable@dpdk.org
-
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test-pmd/testpmd.c      | 25 ++++++++++++++++++++++---
- lib/eal/common/hotplug_mp.c |  3 +++
- lib/eal/common/hotplug_mp.h |  2 ++
- 3 files changed, 27 insertions(+), 3 deletions(-)
-
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index 0f58a31eb5..f385bf920d 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -11,6 +11,7 @@
- #include <fcntl.h>
- #ifndef RTE_EXEC_ENV_WINDOWS
- #include <sys/mman.h>
-+#include "hotplug_mp.h"
- #endif
- #include <sys/types.h>
- #include <errno.h>
-@@ -103,7 +104,7 @@ uint16_t verbose_level = 0; /**< Silent by default. */
- int testpmd_logtype; /**< Log type for testpmd logs */
- 
- /* Maximum delay for exiting after primary process. */
--#define MONITOR_INTERVAL (500 * 1000)
-+#define MONITOR_INTERVAL (500)
- 
- /* use main core for command line ? */
- uint8_t interactive = 0;
-@@ -2563,7 +2564,12 @@ stop_packet_forwarding(void)
- 	for (lc_id = 0; lc_id < cur_fwd_config.nb_fwd_lcores; lc_id++)
- 		fwd_lcores[lc_id]->stopped = 1;
- 	printf("\nWaiting for lcores to finish...\n");
--	rte_eal_mp_wait_lcore();
-+#ifndef RTE_EXEC_ENV_WINDOWS
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
-+		rte_eal_mp_wait_lcore();
-+#else
-+		rte_eal_mp_wait_lcore();
-+#endif
- 	port_fwd_end = cur_fwd_config.fwd_eng->port_fwd_end;
- 	if (port_fwd_end != NULL) {
- 		for (i = 0; i < cur_fwd_config.nb_fwd_ports; i++) {
-@@ -3634,6 +3640,13 @@ pmd_test_exit(void)
- 			printf("\nStopping port %d...\n", pt_id);
- 			fflush(stdout);
- 			stop_port(pt_id);
-+#ifndef RTE_EXEC_ENV_WINDOWS
-+			printf("Stopping secondary process...\n");
-+			struct eal_dev_mp_req req;
-+			memset(&req, 0, sizeof(req));
-+			req.t = EAL_DEV_REQ_TYPE_STOP;
-+			eal_dev_hotplug_request_to_secondary(&req);
-+#endif
- 		}
- 		RTE_ETH_FOREACH_DEV(pt_id) {
- 			printf("\nShutting down port %d...\n", pt_id);
-@@ -4371,7 +4384,13 @@ static void
- monitor_primary(void *arg __rte_unused)
- {
- 	if (rte_eal_primary_proc_alive(NULL)) {
--		rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
-+		if (f_exit_sec) {
-+			stop_packet_forwarding();
-+			fprintf(stderr, "\nPrimary process is no longer active, exiting...\n");
-+			exit(EXIT_FAILURE);
-+		} else {
-+			rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
-+		}
- 	} else {
- 		/*
- 		 * If primary process exits, then all the device information
-diff --git a/lib/eal/common/hotplug_mp.c b/lib/eal/common/hotplug_mp.c
-index 17089ca3db..2574a95168 100644
---- a/lib/eal/common/hotplug_mp.c
-+++ b/lib/eal/common/hotplug_mp.c
-@@ -239,6 +239,9 @@ static void __handle_primary_request(void *param)
- 	memset(&mp_resp, 0, sizeof(mp_resp));
- 
- 	switch (req->t) {
-+	case EAL_DEV_REQ_TYPE_STOP:
-+		f_exit_sec = 1;
-+		break;
- 	case EAL_DEV_REQ_TYPE_ATTACH:
- 	case EAL_DEV_REQ_TYPE_DETACH_ROLLBACK:
- 		ret = local_dev_probe(req->devargs, &dev);
-diff --git a/lib/eal/common/hotplug_mp.h b/lib/eal/common/hotplug_mp.h
-index 7221284286..4f7b6d8f58 100644
---- a/lib/eal/common/hotplug_mp.h
-+++ b/lib/eal/common/hotplug_mp.h
-@@ -9,6 +9,7 @@
- 
- #define EAL_DEV_MP_ACTION_REQUEST      "eal_dev_mp_request"
- #define EAL_DEV_MP_ACTION_RESPONSE     "eal_dev_mp_response"
-+volatile uint8_t f_exit_sec;
- 
- #define EAL_DEV_MP_DEV_NAME_MAX_LEN RTE_DEV_NAME_MAX_LEN
- #define EAL_DEV_MP_BUS_NAME_MAX_LEN 32
-@@ -19,6 +20,7 @@ enum eal_dev_req_type {
- 	EAL_DEV_REQ_TYPE_DETACH,
- 	EAL_DEV_REQ_TYPE_ATTACH_ROLLBACK,
- 	EAL_DEV_REQ_TYPE_DETACH_ROLLBACK,
-+	EAL_DEV_REQ_TYPE_STOP,
- };
- 
- struct eal_dev_mp_req {
--- 
-2.27.0
+Ack for 24.11
 
