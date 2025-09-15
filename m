@@ -2,80 +2,126 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C94DCCAC597
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Sep 2025 10:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 962C2CAC598
+	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Sep 2025 10:40:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 97FAB4064F;
-	Mon, 15 Sep 2025 12:23:29 +0200 (CEST)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id A895A40262
- for <dev@dpdk.org>; Mon, 15 Sep 2025 12:23:28 +0200 (CEST)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-32b863ed6b6so3333705a91.2
- for <dev@dpdk.org>; Mon, 15 Sep 2025 03:23:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1757931808;
- x=1758536608; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=zZAYaaQW6z5a37oKs6YY67/XQjP0ubG5rHOPh8ZU2B4=;
- b=WsPHqTHp2Gai1MvI0aT45WNJjsSUbEnZEavq1i4aGBB1PSir/7An/EioSawi8pDcFo
- jv/AYjcWjCt1nvtO+P0FAzaBFPCuMfcfH3Vzt1h6wgn4jlzBWYH9m43bWmzBtWk18Mxe
- 1qyhT+htI6xcpY1QtBxonxyFb01nbSXIFsg9qaOQB77MpoRQyqYGp57N2V7R+WvrpsIf
- b3wW87shcOsV1WC0FI3M2xeQyKYnn3C2Ax9AJRpFzFQFIr3tpUt2hVTNi4p+LRJ/ijdk
- GV2aQ/aj33eUa0RlPh4YNT/JVd6esT1sUZQMdTB3+a/hSLGGLaAP8GMAHqK21fdndBsq
- ULqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1757931808; x=1758536608;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=zZAYaaQW6z5a37oKs6YY67/XQjP0ubG5rHOPh8ZU2B4=;
- b=TMuRNM+ntZHR/6pA8U5cC084RmiwT/cX8O5pAhIZMrQeigYrBFiGckZSSpi5Exrt+6
- 8GBY3RCJLEDD2gpqnTu/4JhWllv4xLCuFgX7qGshc9Imdf8PDwj3T3GSIqs/3klsCqvW
- amXQSlE3FPMEeR4X8b1g38x9D4V3e+Sos/JRByQgXVVaCv2CAU/YhLI5cBICa49z5KsK
- pkg04riIB8AhRBRDHbE8OKAPxr5clt05dnm1I0m7WmNSUaoMOsbZdH5eiqNCubr79/A0
- 4FXgD2TjgTohXhovcRPAR47M5jLS/wbtMsqRxv3/RafwTF0HoTVmPG6aSQ+KrBJHeCVP
- TtOg==
-X-Gm-Message-State: AOJu0YwgwvS3uZ+EhSPWTJQ9cuaknULqkJTE2dt8bdlbCR6Wr3Zwo13a
- 9b4dpk78zXN3X3P+8XKCW1dg5mLQyKLJo4c1UA1lSYrb1debeBF5zhqW7TL3v88KmtU=
-X-Gm-Gg: ASbGncvLeAAZx2cHPtlK5wtvZYtiKswBEJKxrHQZoAnar8bwTvzKeJoHbszvUaJkP6b
- 7b37cK6G5u5Yk0wNIXgypjZCmP+JDtcEdPS5WVpTVNzi2/q8uvRpXTkm8jUIyP/Ddz76lRDPmjB
- sUsY05plu5ILBGl3NtOnuwUH6FPjiWPx5kZbO+5GwSZRUufojgfErK+rCwyRRDnLPLL46TcFrSQ
- XrN3s6syVGZfs1U91zfjAWjVDGl6g3ROEdvzhMNROioGB41mqWC036h8hnlhp2Z/54vfKQsSUxJ
- Wi4QYS7YJ+N32Lzb5nig/0p4SFeMVq/OwTCTgygZTYJjrIlFhiYi+l94BfHDHT2gI7IxKvUCfEL
- uLN06Wt8XnyLzUWXZnghc3Wc4zQ0WYp/lonZKdIIJSRG86RtXnJDuVMDXeYqw42eqvQzXEmvZxY
- 5j48zaEgTzVaizY1HA7c1Wyyz5DkpTHMGcaX4AU6glOHTkm37RDFRZ1PjaRaYDmiMcWhMNH5+OL
- IU4sza4o/wKtDhPca254Vp7c5ccadFYYIEAVPZ1jABs
-X-Google-Smtp-Source: AGHT+IGWk4elazYppLWTMZ/6lteIjg0A6PJqUHRo4jhtrQ4fHzbhnhiVqv1bnzFD9v5V8He4XfC/EQ==
-X-Received: by 2002:a17:90b:4cc9:b0:32e:59ef:f403 with SMTP id
- 98e67ed59e1d1-32e59f01354mr4272996a91.17.1757931807662; 
- Mon, 15 Sep 2025 03:23:27 -0700 (PDT)
-Received: from localhost.localdomain
- (108-92-19-205.lightspeed.sntcca.sbcglobal.net. [108.92.19.205])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-32df14d224asm9908190a91.5.2025.09.15.03.23.26
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 15 Sep 2025 03:23:27 -0700 (PDT)
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-To: Aman Singh <aman.deep.singh@intel.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Xiaoyun Li <xiaoyun.li@intel.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>, Lijun Ou <oulijun@huawei.com>
-Cc: dev@dpdk.org, Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>,
- stable@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3] app/testpmd: stop secondary process fwd_lcores during
- primary teardown
-Date: Mon, 15 Sep 2025 03:23:12 -0700
-Message-Id: <20250915102312.495221-1-14pwcse1224@uetpeshawar.edu.pk>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20250804113322.53650-1-14pwcse1224@uetpeshawar.edu.pk>
-References: <20250804113322.53650-1-14pwcse1224@uetpeshawar.edu.pk>
+	by mails.dpdk.org (Postfix) with ESMTP id BEBEF402CD;
+	Mon, 15 Sep 2025 12:40:39 +0200 (CEST)
+Received: from CO1PR03CU002.outbound.protection.outlook.com
+ (mail-westus2azon11010015.outbound.protection.outlook.com [52.101.46.15])
+ by mails.dpdk.org (Postfix) with ESMTP id 853F240262;
+ Mon, 15 Sep 2025 12:40:38 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sP3e6NsFFh1AQc+8qJ/rNZUv6eeKUpPSOeRkVFDhDlf96+nKz1x6OYjIwEnRJO9AgfIaxzzbkW9WIpytSFPM/P8hrUDMtTo3qAJCJzRIvfI49uCaOW9YboqYnASS02BBPPC6lrPPi+EKK1uykFeZoWS+P0RMfSGIoVBPSvO0rgkr6zx/JaEtSgdJMDbCJYab+WWIPW73AoyAx8ndxd7q2VxM8hMBxqEIDiM5aWUB74bdWcTB5glaEKNR8omAVibfs6uKkazxiF2ieWoVKKOSUC8B+NfI677dmhKZyMH3ukc4OHF+NyY5wd1VW1ViQuiruq1tkc1ZWVFS1dsogCRiew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HvarQRRAhQzNvQ2qjQjY9YzZy2DKb6ierpKcm38bpxU=;
+ b=W0qHHVgOPDNdwEQ7dpktLE2vtdVE8JkiN1a/IP7SlGrVA778Z1gFappO/9S92KqlA0n+Jgc1t+/BRkO855WibExEi+BOwHAVHN+onT0CZk6vQuHkNjkTX5ImrgSEOProcEct0S+sohUALRdCOq6ZHQ6+SOsJn0FRZD4rYz4xVXZ0rnqoOvvwXjxaIx+zJYl/Y4mEX6dsHCHwweNS8j4T0OyOUaUMSMNASXJ+BLTl0dGeir6brBxZin7udU6qrSsq88apdevsZ8xires5Huxf8EX/IGGsZ3iw8q7dM8X/buqnhe1RtufrcCNfytMsU7gn8YaWwPh+kySzEgyuih5QOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HvarQRRAhQzNvQ2qjQjY9YzZy2DKb6ierpKcm38bpxU=;
+ b=BmD/S8hiXOPTyaV7Ui9EGiILhCCR9ymYbE0rV4zpfnIlR+WNR3y8p+mOBaqabqlEANG5X1Pm1tp5uosJWWVJVtfrg1WKTiRD5PYLaOKDylodzWW2xUsoB1jetxcBgCSeHlUqoI0/WlefwI3mBugvfX3xVqEuwi/2jjUxt3JrPaTF7yChOs5Kmw5KeSGpdOLvWL/RTF2K7P9XZ2E2MUBwkCLf/pxFNdRgMnjl6tUGil3TAK26gC3YZFXPVWu0MBI1cjDnbUwkW8e0hPo4B8ZBluwLxFblUwlVT87EBa4RhrSMeJZSRRx3R01vQZaJgx0whs1uslrW1lHWN1ADNgygnQ==
+Received: from CH0PR03CA0353.namprd03.prod.outlook.com (2603:10b6:610:11a::15)
+ by SJ2PR12MB7964.namprd12.prod.outlook.com (2603:10b6:a03:4cf::7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Mon, 15 Sep
+ 2025 10:40:34 +0000
+Received: from DS3PEPF0000C37A.namprd04.prod.outlook.com
+ (2603:10b6:610:11a:cafe::f0) by CH0PR03CA0353.outlook.office365.com
+ (2603:10b6:610:11a::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.20 via Frontend Transport; Mon,
+ 15 Sep 2025 10:40:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS3PEPF0000C37A.mail.protection.outlook.com (10.167.23.4) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Mon, 15 Sep 2025 10:40:33 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 15 Sep
+ 2025 03:40:21 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 15 Sep
+ 2025 03:40:20 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Mon, 15 Sep 2025 03:40:17 -0700
+From: Maayan Kashani <mkashani@nvidia.com>
+To: <dev@dpdk.org>
+CC: <mkashani@nvidia.com>, <rasland@nvidia.com>, <stable@dpdk.org>, Bing Zhao
+ <bingz@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>, "Viacheslav
+ Ovsiienko" <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Subject: [PATCH] net/mlx5: fix missing next proto in IPv4/6 encap hash calc
+Date: Mon, 15 Sep 2025 13:40:12 +0300
+Message-ID: <20250915104013.165130-1-mkashani@nvidia.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37A:EE_|SJ2PR12MB7964:EE_
+X-MS-Office365-Filtering-Correlation-Id: 378b849e-5dc6-4cb3-628a-08ddf4444cde
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|36860700013|82310400026|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?WPEUK4D7BtJvS74DndE9cXIhBQKXkP9pwBZJwiB7f45LjsO/ZUiWU+PbfgEu?=
+ =?us-ascii?Q?BW77ztrQZxVezWmtFZvhJshfv/bpYNjRM9qtPr6JvvRndkfcNjqA7NZPUkJE?=
+ =?us-ascii?Q?bG1vOUwgFG3l6iX1OOqZgDhI4SYCActWn9dJg34wkEY5mOr4rx5l0mSugk6C?=
+ =?us-ascii?Q?oStrqTm+hF3a7IK0oQkHuhaoZXdGInRFywN3yM4dIK1U7UO8f8Xsqb9MKmFo?=
+ =?us-ascii?Q?PnnKwnin+GXkieX8cg3OJXkqnPJnhkvwKU26gUns0huebRzqJR7CKGmEQH3R?=
+ =?us-ascii?Q?hFObDUk8AbPZLjtJmbmHdtOJWrgQ3d66vc1zPin4AmemsqEi7XkkaK56L/oo?=
+ =?us-ascii?Q?w1dIzTdIMSFuhfhA9ialH0h7NpKQFA3PxSQ6hB86IItgj7x9qLl8VfmmERgn?=
+ =?us-ascii?Q?ES+x97ninWbcxnSjWIPgJJuAVoT2P8Obw+o+TUCvLFRzPNSgYGF/9R6/tf3t?=
+ =?us-ascii?Q?eOxxP1/uACTyNnwTqylmEtpl8xT/4J9o6yAYDAF0Df9KAN0AvZk0PFRHckgA?=
+ =?us-ascii?Q?2pc8KUAyYMDX369IR5i+6wSsnFO5QMluawadDWF3UG31e4mL8YulAcXsCyh4?=
+ =?us-ascii?Q?iHtoR6IGZ6HlGzH/FKSLq0GTe385xnOP2gbSLxIWHmfDAmdnS5gHI6GEAMmc?=
+ =?us-ascii?Q?c/ZNbsgXhanhcwiieGFcdgT+08dIglnVFF6kWyNhzKg+BFCb+C/nY93NRUBF?=
+ =?us-ascii?Q?um7+OZyeFSrEIABB6DHaXHHG5igwC/dkTbXibyfeLNq9gi4ySR7j2iBbkKtW?=
+ =?us-ascii?Q?UcSGz8TABI8FflCiXGTlHBStdWkD//jLEADN1jxAy/TpScU73YNf/C/JZnSX?=
+ =?us-ascii?Q?7IKLPrzncZcx1jkLgpnD8uJrJChuzNtA61BD4dgHtsen9oe9xE1mSQ71wc0S?=
+ =?us-ascii?Q?0svGAIIF+5+FHZqy7+GnXXsQY/Bvr7aV0rcu+kRvXjWa6RPRRg4N5yQfqBUo?=
+ =?us-ascii?Q?yYwbcegjF2vrjvOxAqgeSnBEZKk0CdM1EmVtykC0YGgUfmOgZp5MyVWrZch6?=
+ =?us-ascii?Q?5mU+T0tMw7gCiKHxFj35M5VrSagzxVlLNGhZcYSBjmVoEIGqVlkUUxdCOZBU?=
+ =?us-ascii?Q?RjzfLZ5TdytXiHtJjGafGVpLnWeXnGnvxGDqj7iVwGtAZrhTccTvsR7g3Pa0?=
+ =?us-ascii?Q?HU2PAivJ3hWuX072F+hf2zW6j3PW16IMKVmuG7MDONAwtihr5vyzRRfToBfY?=
+ =?us-ascii?Q?CUhspCbBd0tHpZiH8YEEIAa2ypZmXdoZfI2yk3k29gtD4rUC+wrCBBrEk/9e?=
+ =?us-ascii?Q?MpE7zS/jEKZVB3cqiuIcVPlt3iSi6Qzz6hEhryTCJ7z/Jw4BO47axAAfBX9G?=
+ =?us-ascii?Q?NdFqCQaCd5CMQWNEw0x57gm4kiEl2t8wOUaHKptbDttXLWsPw0byb6XQOo8d?=
+ =?us-ascii?Q?jf1aFWSSlpTLr2UgCpv+PZc5qAaIlLeaDeX9zrCKjcNA8vxwhNO2OvKGRooZ?=
+ =?us-ascii?Q?D5pMqYE9N+rvpztQONWXJrOJK40bApC4yOiWb6AN76CG/ZygODYq5X+j8ZM8?=
+ =?us-ascii?Q?4D6ih1G1fX4H9QlYA1vHaW07JWQDsOU5tHvc?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2025 10:40:33.9651 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 378b849e-5dc6-4cb3-628a-08ddf4444cde
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DS3PEPF0000C37A.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7964
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,129 +135,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the secondary process testpmd application running any fwd_engine
-and after that primary has exited will cause a crash.
+Add missing memcpy for next_protocol field when processing IPv4/6 items
+in flow_hw_calc_encap_hash function. This ensures the IPv4/6 header's
+proto field is properly copied to the hash calculation data structure.
 
-This patch forces secondary process forwarding lcores
-in fwd_engine to stop before the primary process exits.
-
-Fixes: a550baf24af90f ("app/testpmd: support multi-process")
+Fixes: bb328f44afe9 ("net/mlx5: support encapsulation hash calculation")
 Cc: stable@dpdk.org
 
-Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
+Acked-by: Bing Zhao <bingz@nvidia.com>
 ---
- app/test-pmd/testpmd.c      | 25 ++++++++++++++++++++++---
- lib/eal/common/hotplug_mp.c |  4 ++++
- lib/eal/common/hotplug_mp.h |  2 ++
- 3 files changed, 28 insertions(+), 3 deletions(-)
+ drivers/net/mlx5/mlx5_flow_hw.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index 0f58a31eb5..f385bf920d 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -11,6 +11,7 @@
- #include <fcntl.h>
- #ifndef RTE_EXEC_ENV_WINDOWS
- #include <sys/mman.h>
-+#include "hotplug_mp.h"
- #endif
- #include <sys/types.h>
- #include <errno.h>
-@@ -103,7 +104,7 @@ uint16_t verbose_level = 0; /**< Silent by default. */
- int testpmd_logtype; /**< Log type for testpmd logs */
- 
- /* Maximum delay for exiting after primary process. */
--#define MONITOR_INTERVAL (500 * 1000)
-+#define MONITOR_INTERVAL (500)
- 
- /* use main core for command line ? */
- uint8_t interactive = 0;
-@@ -2563,7 +2564,12 @@ stop_packet_forwarding(void)
- 	for (lc_id = 0; lc_id < cur_fwd_config.nb_fwd_lcores; lc_id++)
- 		fwd_lcores[lc_id]->stopped = 1;
- 	printf("\nWaiting for lcores to finish...\n");
--	rte_eal_mp_wait_lcore();
-+#ifndef RTE_EXEC_ENV_WINDOWS
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
-+		rte_eal_mp_wait_lcore();
-+#else
-+		rte_eal_mp_wait_lcore();
-+#endif
- 	port_fwd_end = cur_fwd_config.fwd_eng->port_fwd_end;
- 	if (port_fwd_end != NULL) {
- 		for (i = 0; i < cur_fwd_config.nb_fwd_ports; i++) {
-@@ -3634,6 +3640,13 @@ pmd_test_exit(void)
- 			printf("\nStopping port %d...\n", pt_id);
- 			fflush(stdout);
- 			stop_port(pt_id);
-+#ifndef RTE_EXEC_ENV_WINDOWS
-+			printf("Stopping secondary process...\n");
-+			struct eal_dev_mp_req req;
-+			memset(&req, 0, sizeof(req));
-+			req.t = EAL_DEV_REQ_TYPE_STOP;
-+			eal_dev_hotplug_request_to_secondary(&req);
-+#endif
- 		}
- 		RTE_ETH_FOREACH_DEV(pt_id) {
- 			printf("\nShutting down port %d...\n", pt_id);
-@@ -4371,7 +4384,13 @@ static void
- monitor_primary(void *arg __rte_unused)
- {
- 	if (rte_eal_primary_proc_alive(NULL)) {
--		rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
-+		if (f_exit_sec) {
-+			stop_packet_forwarding();
-+			fprintf(stderr, "\nPrimary process is no longer active, exiting...\n");
-+			exit(EXIT_FAILURE);
-+		} else {
-+			rte_eal_alarm_set(MONITOR_INTERVAL, monitor_primary, NULL);
-+		}
- 	} else {
- 		/*
- 		 * If primary process exits, then all the device information
-diff --git a/lib/eal/common/hotplug_mp.c b/lib/eal/common/hotplug_mp.c
-index 17089ca3db..d1913c50db 100644
---- a/lib/eal/common/hotplug_mp.c
-+++ b/lib/eal/common/hotplug_mp.c
-@@ -15,6 +15,7 @@
- #include "eal_private.h"
- 
- #define MP_TIMEOUT_S 5 /**< 5 seconds timeouts */
-+uint8_t f_exit_sec;
- 
- struct mp_reply_bundle {
- 	struct rte_mp_msg msg;
-@@ -239,6 +240,9 @@ static void __handle_primary_request(void *param)
- 	memset(&mp_resp, 0, sizeof(mp_resp));
- 
- 	switch (req->t) {
-+	case EAL_DEV_REQ_TYPE_STOP:
-+		f_exit_sec = 1;
-+		break;
- 	case EAL_DEV_REQ_TYPE_ATTACH:
- 	case EAL_DEV_REQ_TYPE_DETACH_ROLLBACK:
- 		ret = local_dev_probe(req->devargs, &dev);
-diff --git a/lib/eal/common/hotplug_mp.h b/lib/eal/common/hotplug_mp.h
-index 7221284286..a33e3cbcc5 100644
---- a/lib/eal/common/hotplug_mp.h
-+++ b/lib/eal/common/hotplug_mp.h
-@@ -9,6 +9,7 @@
- 
- #define EAL_DEV_MP_ACTION_REQUEST      "eal_dev_mp_request"
- #define EAL_DEV_MP_ACTION_RESPONSE     "eal_dev_mp_response"
-+extern uint8_t f_exit_sec;
- 
- #define EAL_DEV_MP_DEV_NAME_MAX_LEN RTE_DEV_NAME_MAX_LEN
- #define EAL_DEV_MP_BUS_NAME_MAX_LEN 32
-@@ -19,6 +20,7 @@ enum eal_dev_req_type {
- 	EAL_DEV_REQ_TYPE_DETACH,
- 	EAL_DEV_REQ_TYPE_ATTACH_ROLLBACK,
- 	EAL_DEV_REQ_TYPE_DETACH_ROLLBACK,
-+	EAL_DEV_REQ_TYPE_STOP,
- };
- 
- struct eal_dev_mp_req {
+diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
+index 2ca40b41465..ee8f8c35e57 100644
+--- a/drivers/net/mlx5/mlx5_flow_hw.c
++++ b/drivers/net/mlx5/mlx5_flow_hw.c
+@@ -15096,6 +15096,8 @@ flow_hw_calc_encap_hash(struct rte_eth_dev *dev,
+ 				((const struct rte_flow_item_ipv4 *)(pattern->spec))->hdr.dst_addr;
+ 			data.src.ipv4_addr =
+ 				((const struct rte_flow_item_ipv4 *)(pattern->spec))->hdr.src_addr;
++			data.next_protocol = ((const struct rte_flow_item_ipv4 *)
++				(pattern->spec))->hdr.next_proto_id;
+ 			break;
+ 		case RTE_FLOW_ITEM_TYPE_IPV6:
+ 			memcpy(data.dst.ipv6_addr,
+@@ -15104,6 +15106,8 @@ flow_hw_calc_encap_hash(struct rte_eth_dev *dev,
+ 			memcpy(data.src.ipv6_addr,
+ 			       &((const struct rte_flow_item_ipv6 *)(pattern->spec))->hdr.src_addr,
+ 			       sizeof(data.src.ipv6_addr));
++			data.next_protocol = ((const struct rte_flow_item_ipv6 *)
++			       (pattern->spec))->hdr.proto;
+ 			break;
+ 		case RTE_FLOW_ITEM_TYPE_UDP:
+ 			data.next_protocol = IPPROTO_UDP;
 -- 
-2.27.0
+2.21.0
 
