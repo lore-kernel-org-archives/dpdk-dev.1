@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2961CAC599
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 15:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C871DCAC599
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 15:13:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0BA6540673;
-	Tue, 16 Sep 2025 17:12:59 +0200 (CEST)
-Received: from SA9PR02CU001.outbound.protection.outlook.com
- (mail-southcentralusazon11013022.outbound.protection.outlook.com
- [40.93.196.22]) by mails.dpdk.org (Postfix) with ESMTP id 32BCF40673
- for <dev@dpdk.org>; Tue, 16 Sep 2025 17:12:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 625DA406B4;
+	Tue, 16 Sep 2025 17:13:07 +0200 (CEST)
+Received: from CH1PR05CU001.outbound.protection.outlook.com
+ (mail-northcentralusazon11010053.outbound.protection.outlook.com
+ [52.101.193.53]) by mails.dpdk.org (Postfix) with ESMTP id 108804064E
+ for <dev@dpdk.org>; Tue, 16 Sep 2025 17:13:06 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sF7inq2o0xpAdZN8BhXJfAGo/YSq9VBy87P5svfVTsMXBYvdpobGcWe1K80ncwxjn/wax6YyrsU9hKObKaULmEbM/6Omvb0ePJZYMtrfwhHFmoyiyU4LBA5SJX9+ZzxXcligmiIrnpgiw/dCgCQJ0MtCP8B31M//pV9h2T9NHSikwfNUjpbs3rAzXfHKo7qD5IT20mXbf71tUGJ2YEKJZzbx4VC1Nj0IbN/qpZCnE/wAUol/SnXKAq/Yv7yjCpRFzxbebVMLgbikd7u71yqDOD/h9Dpga/1eGwAxhvg8m/768FBjq5RxXYa3xYd6I5249tVBHUW27TQvN7jk57liog==
+ b=ETTcALmCAfFr6HsqGgL5kSW9hXqtIFixLBmXerWfA53DlncypcRlx5qJp7zEnbcI+y/mikyoa3RSeFjHkerE91htDSelbCXzeJHpt3cdIczSIQdJpQ8pQHpMWxUSxwWe2nGcGZHcLenbpyWEg4JaodgXXnYdvcT3tWjC2gsQD44wOxWGr6/qQqwXxOC2BaMwaxbq1ua5m6Jv5/HArINRBJOwISN6zPYj2/5OEgq9FE5G0Uv9j+SZr3Ue42buK4zy2iXu8iP4D61srGvI85XMEY9YX7zwSxC7iZWUAL1v+Q6/wi/vocDHppz+GXzhfITp0X/BvpG/L3BAqqV04SKImA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nbjT2UzJAjPUZQPUajtmibrGkUe5HyC0o5Klf9YXu5Q=;
- b=PmOBhFTRu7YHBQyU1uDu8AW9IC1dsTq6rV2fU++mpn9WNKlqa+Sd+7BjqlNUNY9M2b6w6uEafBBz5pPMsRCp1XAZS7VEiT0nNApZDWU0+P66gtwct6O/woy3SEb+gXeWn3NYPVO9XfXGQ8qcgS1ICD5BA9SsT9Cgk3E5y0HB7wAanE7j9s321HAX5zOrHHPgRX3iNN2altHhzCEcYr5bHYLGkZAGyjRjXxEtYci6cugnOgpQXNAmX0rPS9i5LVBG46KPS/sWEloMbaVfi1u9XDU5nkYSuxry4+oVXNKJAMHM7jeWjksV16ce7FFAuKmx5rwLk8tYEfZID5xE4lpnVw==
+ bh=rk4z6r5zop57NUdnVQAdspkTYHztKx1JnRu/0J73HJ8=;
+ b=ajKZhOhxVUYTQc4207AJQR/LxrE5hEOJBPUMJvP3aenzxu6gELJ4U4ZnrI9OgaHnJuHlgLIwpky9S4K5XpRm1v8/S22k/dUm4tZpfHzOhnY6A1o9wezaXUIi+oyCNLVSXIPic07kYeyIscDyxS4UkZInZeAaW4Vrx/KjXadObzdtytaHPEnKo87XbSrhEtaQaOtwnZ0Tsrc9ZXdPgxMcaIJXFA+xLZDP8xKepef0JpLF6Zklxv7rHm+n4ZudoJQ3D57XCrC9+yYHYzT46DD6D/7ebdFvQbJ/XGu+87SJb+zezf99njpKMVg1efHl4HjMrDJPDag0nfyt5EUlZhlLSQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nbjT2UzJAjPUZQPUajtmibrGkUe5HyC0o5Klf9YXu5Q=;
- b=BTnwl9Wx6GVEGB4EjV7E6Ib/2ZAd+8JhC18rj9QencL97lXM2orhAcQh1X3xyPLw8E9tqtdAZ2zxzBkZL8Al20gnmVeKq2sPnwhCJ6UthcbeWiXvYaO4Bx/9HEhj8TstMJR+qE+81JmTPNxgX+3Pi1JlC0rHe44JwzNzfMM4Vzv+rJO9D1qHOxtoE6QKEnwa/hWf4CDE0AKI876r9oSFroqYsCo/QDTDWpnMdbvd1JdspdjKNvGIt4SMcXgCsKKuyIePIOwwbhks9w/S2RKb0wkrMzGTBJJVARGNNgE1S9uZioCqGhIu5RZIr+fHs7sJeiVWlO97VUQs6ceIk1ppLA==
-Received: from CH0PR04CA0098.namprd04.prod.outlook.com (2603:10b6:610:75::13)
- by PH7PR12MB8427.namprd12.prod.outlook.com (2603:10b6:510:242::8)
+ bh=rk4z6r5zop57NUdnVQAdspkTYHztKx1JnRu/0J73HJ8=;
+ b=gnzbxezUZQu45ulg7JDPNSMBZ+c2PghZRMO5Dy/MWbBY6rHYzGLQ5c4p7iq4YCEA0roO0JVwg/Nax4mvSgoDGvkOP6XjKVVVTimVoh7UKdQhAhscaT+ODHXFcDtUIeFSc4tUQ7zf3gzgJ8utBjaK3JzeGD/geAH7xIBQNqTsU3LegTf0c/cIeAgY8wKLxwN81ZVZ4erlZsKGp7IWnzXNxhu+7hJ8AQ/DaPCQLg7JL1PWOQqr7KhuOummg9OeTGxbEAHs+A5aqtW/Kz5wcGWreUK0GpKDnOV4CR9/95uyGjyOy7bVWFfV7Q7YwGHbnOJXHdcyFIQYTeAZyzzwUgCjtw==
+Received: from CH0PR04CA0120.namprd04.prod.outlook.com (2603:10b6:610:75::35)
+ by CYXPR12MB9426.namprd12.prod.outlook.com (2603:10b6:930:e3::10)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 16 Sep
- 2025 15:12:53 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Tue, 16 Sep
+ 2025 15:12:58 +0000
 Received: from CH2PEPF0000014A.namprd02.prod.outlook.com
- (2603:10b6:610:75:cafe::45) by CH0PR04CA0098.outlook.office365.com
- (2603:10b6:610:75::13) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10b6:610:75:cafe::84) by CH0PR04CA0120.outlook.office365.com
+ (2603:10b6:610:75::35) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.22 via Frontend Transport; Tue,
- 16 Sep 2025 15:12:35 +0000
+ 16 Sep 2025 15:12:49 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
@@ -47,19 +47,19 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
 Received: from mail.nvidia.com (216.228.117.160) by
  CH2PEPF0000014A.mail.protection.outlook.com (10.167.244.107) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Tue, 16 Sep 2025 15:12:53 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ 15.20.9137.12 via Frontend Transport; Tue, 16 Sep 2025 15:12:58 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 16 Sep
- 2025 08:12:37 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 08:12:43 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 16 Sep
- 2025 08:12:37 -0700
+ 2025 08:12:43 -0700
 Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Tue, 16 Sep 2025 08:12:33 -0700
+ Transport; Tue, 16 Sep 2025 08:12:38 -0700
 From: Shani Peretz <shperetz@nvidia.com>
 To: <dev@dpdk.org>
 CC: <mb@smartsharesystems.com>, <stephen@networkplumber.org>,
@@ -67,10 +67,10 @@ CC: <mb@smartsharesystems.com>, <stephen@networkplumber.org>,
  <jerinj@marvell.com>, <konstantin.v.ananyev@yandex.ru>,
  <david.marchand@redhat.com>, <maxime.coquelin@redhat.com>,
  <gakhil@marvell.com>, <viacheslavo@nvidia.com>, <thomas@monjalon.net>, "Shani
- Peretz" <shperetz@nvidia.com>, Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v2 3/4] app/testpmd: add testpmd command to dump mbuf history
-Date: Tue, 16 Sep 2025 18:12:06 +0300
-Message-ID: <20250916151207.556618-4-shperetz@nvidia.com>
+ Peretz" <shperetz@nvidia.com>, Robin Jarry <rjarry@redhat.com>
+Subject: [PATCH v2 4/4] usertool: add a script to parse mbuf history dump
+Date: Tue, 16 Sep 2025 18:12:07 +0300
+Message-ID: <20250916151207.556618-5-shperetz@nvidia.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250916151207.556618-1-shperetz@nvidia.com>
 References: <20250616072910.113042-1-shperetz@nvidia.com>
@@ -81,53 +81,53 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000014A:EE_|PH7PR12MB8427:EE_
-X-MS-Office365-Filtering-Correlation-Id: a5374c06-bc55-4b9d-6143-08ddf533822c
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000014A:EE_|CYXPR12MB9426:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec436165-1ace-4604-6411-08ddf533853a
 X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|1800799024|376014|7416014|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?J1DqbaOta2ZAK8m+vJYGpfGHwILEvqvxTB0a4plLPS8EU+4mnW3ijGCYWgiO?=
- =?us-ascii?Q?nP88KUmzj4tsSykH+U45UykDXZtNucqXKn6ccGX6T+hzPsM+YVGqmjrkiwpz?=
- =?us-ascii?Q?n0E1qWscoMk1XUEQc5LudXG6bIPhkiIz+vGPdOuWPhL67hIWyH+AY9/HDKpq?=
- =?us-ascii?Q?B91Iwrzu3UBry6wTluDJsGfpRj7dqtHNRLtq6aeiwVet5kP8BYiaMUay2/Kb?=
- =?us-ascii?Q?YrsLR1Z+GTcgt7dlK84f2GkALW1oMYBU5kRriJOOEGI5BEiBfRXeJm2XElYx?=
- =?us-ascii?Q?vYkib5yEmbDIdrwmc/7JvEVAj4A4Mebn9XFxN4zHUDqIGKjWfOjk8EWu0PjP?=
- =?us-ascii?Q?MNtDfiZcZOiPf+5aG6yuThY8muQIDfIHRE00+BCdWH1c2vk8H5Yu07alYy81?=
- =?us-ascii?Q?9HXOKOWXKqwT6pZglHwzjFK1pUoZKx73Cw+Q08Q2GDPRadW2iPUx6v3WPBOZ?=
- =?us-ascii?Q?naiWTaiWcJ3Vda7BALvRF0DA0tbgys4GvF1VPxywQAGf5pUyWnYGs6oDtc4S?=
- =?us-ascii?Q?hwpj1UV3Nz4dccwHWUoYkFlW60dlscLzbk7t+e+23K0OBO7zlT+9joVyEInZ?=
- =?us-ascii?Q?27uw0R1+3ZKx7R9I6GAuCyG6C/WrTiQ6GB4eU/f3HTvbHAtiHYt03hrsic+H?=
- =?us-ascii?Q?0moTxeS4dcbQ3JyJUgc65bSkvHFPnjqhdDFjhn7ueAO6v+KV1JkYQcBidM26?=
- =?us-ascii?Q?20TVDWkG8Xptpkkn3thHbb4QJSyPiLkVc8dnmRo2w6V7w0ZamYvyqWthr2dg?=
- =?us-ascii?Q?XgbZLuseMyL0NE2DPIzcCVgcHA3uvpadpvyjheDkbDxfXZxojLz/atk3FSn7?=
- =?us-ascii?Q?9Zzq4gUq/tVKD21Tu7ZCBgV7BtQWWNYmMZTWt+ZqgCIpr1crIR4Ku5wWzvc6?=
- =?us-ascii?Q?1pH9fOMwr/gSrrQfZzmKfu5i4xpmsadnGh+cp4OrgWHzDn8WzMTTVIXv54nU?=
- =?us-ascii?Q?WXtVv0GTBa9jpW4K+phYGK8Jurqw7SoWtH7CjdRVzLfatYMAgaWWbUQno0CM?=
- =?us-ascii?Q?CfS3LlHQrTVvk+P1gGw6e3U6dAlDmsyswyKaLus5HyuFd7dMwPGXaHr+RPWB?=
- =?us-ascii?Q?8di/WT4S0EoZ3U7WoWlfXaSPBhZxq6FEy60P6IwOyt4Y3yBrvmYiWBruoQXv?=
- =?us-ascii?Q?29QDfkB3jGeYIMcnkEVEwDb738UVoCR9GV5qh3iLmEzdLtvNtowT4gW6X3P1?=
- =?us-ascii?Q?2F3epsKlYls/M90D7XDsJKHNO+ExP80CAo2e3Z6OXDVM5YWUN1eUEzu7OOeG?=
- =?us-ascii?Q?aQo8LnarXc4G4O4UwgiRLfuZWLD5sQJSLNBGaRAOb7N72aIRB4NrVQ6aLNM6?=
- =?us-ascii?Q?ssk0G0PhWsMCjlKq1WJYTPE44IuqXk67/yCKhMQY0pK4PZpi361A8fVrU+Xz?=
- =?us-ascii?Q?7kBNANBl7t5jc+mwmbY4FBGRhRTCBMshv4jxqMBe7pmZi4q8P9V1Apd+WZlR?=
- =?us-ascii?Q?P0cW3iHmtQ1zbv8iMSEnd2MGc8o1V0044KoN5F0DlpyXYF4hd81pMx7A7PI8?=
- =?us-ascii?Q?vlieIlXA1L2jfj0pEeE+IvwfoTQ5C29K71fS?=
+ ARA:13230040|1800799024|36860700013|82310400026|7416014|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?gULmR+oyX+BIeaKfjjmcow2LPI69xaWfH8PSlG3HJR7ZRrrj8ebOrkOybgTI?=
+ =?us-ascii?Q?Z39RPzSDkFuOuwv1Qlk7IDiO87S9vq7+4/3dt/S0hQfwpMwjA1KG1T/l1ZVf?=
+ =?us-ascii?Q?Lasro80e2VBg6FTnXgp3EobS7MybBE7yBDdp4ep+l/FqFU5MDzGWd3iB3NPo?=
+ =?us-ascii?Q?1YF00SlMw6YlrIvk2U/UvtjzO6OzF3xEcxoykKARXxJukp+EKYDnhzpVzxKQ?=
+ =?us-ascii?Q?Uj3k/fI4IbcAMt7PFWyTMoGwVffA+k7epRKWn1fjVFSIHuEKxWyzUM54S8gS?=
+ =?us-ascii?Q?8MZRIs2slbHhGZ3/QsmNrBsLkfsURWGA4E9pkXegpPPirf9Xt/sEk7t0+HQN?=
+ =?us-ascii?Q?vRtZHEeAJ6oiPD/4FMDK3AHzoVs/jyE+PZSRaDqBmEwyWGDlpGLwJQhmUN4A?=
+ =?us-ascii?Q?k0t+eLJKNc1hYyvlGIAaBzAdtkRp3gVx7qKxcEhq24HjsgrlEXMKg8fhFaL4?=
+ =?us-ascii?Q?yP3zr8y1f0Qcx3fH+9LXAkKwCLNQUe3Yvfxm1oWc7ZVepQYcUg842iGqo70D?=
+ =?us-ascii?Q?2W4BxdpwURb7sO9QJCPdoRjitAT0iqZPDqThG69CPfTT5cZaoRpXDB8MqF0S?=
+ =?us-ascii?Q?4rMAbKWCwEND66uzGKe1pAt3Gyo3vFDcXCNW+aqV+aZ5HfRLglN4w38q+NRB?=
+ =?us-ascii?Q?SV62lxOhI8zvuJ2WOxR2qPEvhBMR6Ix+K+AD3BwcgxksfEaiwgjSTS46PzvM?=
+ =?us-ascii?Q?5m4c2PKGpiTk953NCHHnjQdEagvk43FafcDvj6gon6K1sBmV45l4YRdOULGS?=
+ =?us-ascii?Q?XK2pAaBqemPydiVPFay9Fk+DlLV3Lohp5AmwFxpzJRcYKUQeK0ZumeW37dJh?=
+ =?us-ascii?Q?tInhXCkGvXnWV5Om/XDNgf7NYm/9qoBdjhSKBb9xFD+GtK8qDVfurDjnOmJ5?=
+ =?us-ascii?Q?NrY3XBuNWns9gaibLAesQIlZwb7w6pwoftV7Nk7narhwbVQkmoADR1n/YW3D?=
+ =?us-ascii?Q?GV72GiP23hRGfjGjEeCg3r9kmqBoG4MVfmpd6eUiKCApUcOXInmeEgkG427m?=
+ =?us-ascii?Q?pRrECh1Aw3D9Qt1qUYxqfrlM6csFdFKf9WL+3UNcTne2VCsiKHic2uoyZIfI?=
+ =?us-ascii?Q?Te12WQcvrTiuxIxs375d8N0nBZvtrfRh+SAgTj5ktl9nUSpv0npFuYjkxo46?=
+ =?us-ascii?Q?kJqDJdxnyXLpG5W+QiX8SmDZ8omEAHQ0GEoxpcCwJi1guD9++nZy6ancmmTo?=
+ =?us-ascii?Q?USeVVhgHXcT14H5MGYT+MOBwxU3P76ZcezpSBOGHPlu8beXhEPRSx64VAqwh?=
+ =?us-ascii?Q?RusNd5KFwMEh9wEh4QWScfWfum+9HE/I1H8/S6vEANOhM35zX0Mr7ywSwzdf?=
+ =?us-ascii?Q?TPZMVaAQQyQRxlXwxkWQCp/Yxy23drn+IGzNJurttN9OfQvxcdcP6GVcu+hD?=
+ =?us-ascii?Q?EunwV/N1KaJ9zHhfoKab+DJkLvNL9posmuNYvMAyNUnJNr1RLVC+xmRf1WfF?=
+ =?us-ascii?Q?niAhyNzUNfgBKZNquh4ERgYNzJGKwKFToYQMyxH70cYu/1muyDyMk3hP6yjy?=
+ =?us-ascii?Q?EcmG9r+SWodjxs3G5n0EHjdbILEfds+bS7Nj?=
 X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(1800799024)(376014)(7416014)(36860700013); DIR:OUT;
+ SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014); DIR:OUT;
  SFP:1101; 
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 15:12:53.0911 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5374c06-bc55-4b9d-6143-08ddf533822c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 15:12:58.2346 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec436165-1ace-4604-6411-08ddf533853a
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
  Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource: CH2PEPF0000014A.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8427
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9426
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -141,126 +141,198 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-dumps the mbufs history to console or to a file.
+Added a Python script that parses the history dump of a mbufs
+generated by rte_mbuf_objects_dump and presents it in a human-readable
+format.
 
-The dump will contain:
-- Operation history for each mbuf
-- Summary and statistics about all mbufs
-
-testpmd> dump_mbuf_history
-testpmd> dump_mbuf_history <file_name>
+If an operation ID is repeated, such as in the case of a double free,
+it will be highlighted in red and listed at the end of the file.
 
 Signed-off-by: Shani Peretz <shperetz@nvidia.com>
 ---
- app/test-pmd/cmdline.c | 60 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 59 insertions(+), 1 deletion(-)
+ usertools/dpdk-mbuf_history_parser.py | 173 ++++++++++++++++++++++++++
+ 1 file changed, 173 insertions(+)
+ create mode 100755 usertools/dpdk-mbuf_history_parser.py
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 3731fba370..7a1cba5094 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -40,6 +40,7 @@
- #include <rte_gro.h>
- #endif
- #include <rte_mbuf_dyn.h>
-+#include <rte_mbuf_history.h>
- #include <rte_trace.h>
- 
- #include <cmdline_rdline.h>
-@@ -296,6 +297,9 @@ static void cmd_help_long_parsed(void *parsed_result,
- 			"dump_log_types\n"
- 			"    Dumps the log level for all the dpdk modules\n\n"
- 
-+			"dump_mbuf_history\n"
-+			"    Dumps the mbuf history\n\n"
+diff --git a/usertools/dpdk-mbuf_history_parser.py b/usertools/dpdk-mbuf_history_parser.py
+new file mode 100755
+index 0000000000..c39a796d5d
+--- /dev/null
++++ b/usertools/dpdk-mbuf_history_parser.py
+@@ -0,0 +1,173 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright (c) 2023 NVIDIA Corporation & Affiliates
 +
- 			"show port (port_id) speed_lanes capabilities"
- 			"	Show speed lanes capabilities of a port.\n\n"
- 		);
-@@ -9177,6 +9181,8 @@ static void cmd_dump_parsed(void *parsed_result,
- #endif
- 	else if (!strcmp(res->dump, "dump_log_types"))
- 		rte_log_dump(stdout);
-+	else if (!strcmp(res->dump, "dump_mbuf_history"))
-+		rte_mbuf_history_dump(stdout);
- }
- 
- static cmdline_parse_token_string_t cmd_dump_dump =
-@@ -9198,7 +9204,8 @@ cmd_dump_init(void)
- #ifndef RTE_EXEC_ENV_WINDOWS
- 		"dump_trace#"
- #endif
--		"dump_log_types";
-+		"dump_log_types#"
-+		"dump_mbuf_history";
- }
- 
- static cmdline_parse_inst_t cmd_dump = {
-@@ -9260,6 +9267,56 @@ static cmdline_parse_inst_t cmd_dump_one = {
- 	},
- };
- 
-+/* Dump mbuf history to file */
-+struct cmd_dump_mbuf_to_file_result {
-+	cmdline_fixed_string_t dump;
-+	cmdline_fixed_string_t file;
-+};
++import sys
++import re
++import os
++import enum
 +
-+static void cmd_dump_mbuf_to_file_parsed(void *parsed_result, struct cmdline *cl,
-+				__rte_unused void *data)
-+{
-+	struct cmd_dump_mbuf_to_file_result *res = parsed_result;
-+	FILE *file = stdout;
-+	char *file_name = res->file;
-+
-+	if (strcmp(res->dump, "dump_mbuf_history")) {
-+		cmdline_printf(cl, "Invalid dump type\n");
-+		return;
-+	}
-+
-+	if (file_name && strlen(file_name)) {
-+		file = fopen(file_name, "w");
-+		if (!file) {
-+			rte_mbuf_history_dump(stdout);
-+			return;
-+		}
-+	}
-+	rte_mbuf_history_dump(file);
-+	printf("Flow dump finished\n");
-+	if (file_name && strlen(file_name))
-+		fclose(file);
-+}
-+
-+static cmdline_parse_token_string_t cmd_dump_mbuf_to_file_dump =
-+	TOKEN_STRING_INITIALIZER(struct cmd_dump_mbuf_to_file_result, dump,
-+				 "dump_mbuf_history");
-+
-+static cmdline_parse_token_string_t cmd_dump_mbuf_to_file_file =
-+	TOKEN_STRING_INITIALIZER(struct cmd_dump_mbuf_to_file_result, file, NULL);
-+
-+static cmdline_parse_inst_t cmd_dump_mbuf_to_file = {
-+	.f = cmd_dump_mbuf_to_file_parsed,  /* function to call */
-+	.data = NULL,      /* 2nd arg of func */
-+	.help_str = "dump_mbuf_history <file_name>: Dump mbuf history to file",
-+	.tokens = {        /* token list, NULL terminated */
-+		(void *)&cmd_dump_mbuf_to_file_dump,
-+		(void *)&cmd_dump_mbuf_to_file_file,
-+		NULL,
-+	},
-+};
++RED = "\033[91m"
++RESET = "\033[0m"
++ENUM_PATTERN = r'enum\s+rte_mbuf_history_op\s*{([^}]+)}'
++VALUE_PATTERN = r'([A-Z_]+)\s*=\s*(\d+),\s*(?:/\*\s*(.*?)\s*\*/)?'
++HEADER_FILE = os.path.join(
++    os.path.dirname(os.path.dirname(__file__)),
++    'lib/mbuf/rte_mbuf_history.h'
++)
 +
 +
- /* *** Filters Control *** */
- 
- #define IPV4_ADDR_TO_UINT(ip_addr, ip) \
-@@ -13999,6 +14056,7 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
- 	&cmd_cleanup_txq_mbufs,
- 	&cmd_dump,
- 	&cmd_dump_one,
-+	&cmd_dump_mbuf_to_file,
- 	&cmd_flow,
- 	&cmd_show_port_meter_cap,
- 	&cmd_add_port_meter_profile_srtcm,
++def print_history_sequence(address: str, sequence: list[str]):
++    max_op_width = max(
++        len(re.sub(r'\x1b\[[0-9;]*m', '', op)) for op in sequence
++    )
++    op_width = max_op_width
++    for i in range(0, len(sequence), 4):
++        chunk = sequence[i:i + 4]
++        formatted_ops = [f"{op:<{op_width}}" for op in chunk]
++        line = ""
++        for j, op in enumerate(formatted_ops):
++            line += op
++            if j < len(formatted_ops) - 1:
++                line += " -> "
++        if i + 4 < len(sequence):
++            line += " ->"
++        print(f"mbuf {address}: " + line)
++    print()
++
++
++def match_field(match: re.Match) -> tuple[int, str]:
++    name, value, _ = match.groups()
++    return (int(value), name.replace('RTE_MBUF_', ''))
++
++
++class HistoryEnum:
++    def __init__(self, ops: enum.Enum):
++        self.ops = ops
++
++    @staticmethod
++    def from_header(header_file: str) -> 'HistoryEnum':
++        with open(header_file, 'r') as f:
++            content = f.read()
++
++        # Extract each enum value and its comment
++        enum_content = re.search(ENUM_PATTERN, content, re.DOTALL).group(1)
++        fields = map(match_field, re.finditer(VALUE_PATTERN, enum_content))
++        fields = dict({v: k for k, v in fields})
++        return HistoryEnum(enum.Enum('HistoryOps', fields))
++
++
++class HistoryLine:
++    def __init__(self, address: str, ops: list):
++        self.address = address
++        self.ops = ops
++
++    def repeats(self) -> [list[str], str | None]:
++        repeated = None
++        sequence = []
++        for idx, op in enumerate(self.ops):
++            if idx > 0 and op == self.ops[idx - 1] and op.name != 'NEVER':
++                sequence[-1] = f"{RED}{op.name}{RESET}"
++                sequence.append(f"{RED}{op.name}{RESET}")
++                repeated = op.name
++            else:
++                sequence.append(op.name)
++        return sequence, repeated
++
++
++class HistoryMetrics:
++    def __init__(self, metrics: dict[str, int]):
++        self.metrics = metrics
++
++    def max_name_width(self) -> int:
++        return max(len(name) for name in self.metrics.keys())
++
++
++class HistoryParser:
++    def __init__(self):
++        self.history_enum = HistoryEnum.from_header(HEADER_FILE)
++
++    def parse(
++        self, dump_file: str
++    ) -> tuple[list[HistoryLine], 'HistoryMetrics']:
++        with open(dump_file, 'r') as f:
++            lines = [line for line in f.readlines() if line.strip()]
++            populated = next(line for line in lines if "Populated:" in line)
++            metrics_start = lines.index(populated)
++
++        history_lines = lines[3:metrics_start]
++        metrics_lines = lines[metrics_start:-1]
++        return (
++            self._parse_history(history_lines),
++            self._parse_metrics(metrics_lines)
++        )
++
++    def _parse_metrics(self, lines: list[str]) -> HistoryMetrics:
++        metrics = {}
++        for line in lines:
++            key, value = line.split(':', 1)
++            metrics[key] = int(value)
++        return HistoryMetrics(metrics)
++
++    def _parse_history(self, lines: list[str]) -> list[HistoryLine]:
++        # Parse the format "mbuf 0x1054b9980: 0000000000000065"
++        history_lines = []
++        for line in lines:
++            address = line.split(':')[0].split('mbuf ')[1]
++            history = line.split(':')[1]
++            history_lines.append(
++                HistoryLine(
++                    address=address,
++                    ops=self._parse(int(history, 16))
++                )
++            )
++        return history_lines
++
++    def _parse(self, history: int) -> list[str]:
++        ops = []
++        for _ in range(16):  # 64 bits / 4 bits = 16 possible operations
++            op = history & 0xF  # Extract lowest 4 bits
++            if op == 0:
++                break
++            ops.append(self.history_enum.ops(op))
++            history >>= 4
++
++        ops.reverse()
++        return ops
++
++
++def print_history_lines(history_lines: list[HistoryLine]):
++    lines = [
++        (line.address, line.repeats()) for line in history_lines
++    ]
++
++    for address, (sequence, _) in lines:
++        print_history_sequence(address, sequence)
++
++    print("=== Violations ===")
++    for address, (sequence, repeated) in lines:
++        if repeated:
++            print(f"mbuf {address} has repeated ops: {RED}{repeated}{RESET}")
++
++
++def print_metrics(metrics: HistoryMetrics):
++    print("=== Metrics Summary ===")
++    for name, value in metrics.metrics.items():
++        print(f"{name + ':':<{metrics.max_name_width() + 2}} {value}")
++
++
++def main():
++    if len(sys.argv) != 2:
++        print("Usage: {} <history_file>".format(sys.argv[0]))
++        sys.exit(1)
++
++    history_parser = HistoryParser()
++    history_lines, metrics = history_parser.parse(sys.argv[1])
++
++    print_history_lines(history_lines)
++    print()
++    print_metrics(metrics)
++
++
++if __name__ == "__main__":
++    main()
 -- 
 2.34.1
 
