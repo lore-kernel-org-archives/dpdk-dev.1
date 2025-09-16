@@ -2,35 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B78F9CAC592
-	for <dpdk-dev@archiver.kernel.org>; Mon, 15 Sep 2025 18:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A67CAC599
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 06:34:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1122A40673;
-	Mon, 15 Sep 2025 20:56:03 +0200 (CEST)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 4A710402C2
- for <dev@dpdk.org>; Mon, 15 Sep 2025 20:56:00 +0200 (CEST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 241821BF7;
- Mon, 15 Sep 2025 11:55:51 -0700 (PDT)
-Received: from ampere-altra-2-1.usa.arm.com (ampere-altra-2-1.usa.arm.com
- [10.118.91.158])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 33B043F694;
- Mon, 15 Sep 2025 11:55:59 -0700 (PDT)
-From: Wathsala Vithanage <wathsala.vithanage@arm.com>
-To: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: dev@dpdk.org, Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Ola Liljedahl <ola.liljedahl@arm.com>,
- Dhruv Tripathi <dhruv.tripathi@arm.com>
-Subject: [PATCH 1/1] ring: safe partial ordering for head/tail update
-Date: Mon, 15 Sep 2025 18:54:50 +0000
-Message-ID: <20250915185451.533039-2-wathsala.vithanage@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250915185451.533039-1-wathsala.vithanage@arm.com>
-References: <20250915185451.533039-1-wathsala.vithanage@arm.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 027D24027F;
+	Tue, 16 Sep 2025 08:34:31 +0200 (CEST)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+ by mails.dpdk.org (Postfix) with ESMTP id 8696F4025A
+ for <dev@dpdk.org>; Tue, 16 Sep 2025 08:34:29 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+ by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4cQsVd4lrtz1R93v;
+ Tue, 16 Sep 2025 14:31:21 +0800 (CST)
+Received: from kwepemr200009.china.huawei.com (unknown [7.202.195.137])
+ by mail.maildlp.com (Postfix) with ESMTPS id D34611400CB;
+ Tue, 16 Sep 2025 14:34:26 +0800 (CST)
+Received: from [10.67.121.193] (10.67.121.193) by
+ kwepemr200009.china.huawei.com (7.202.195.137) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 16 Sep 2025 14:34:26 +0800
+Message-ID: <efc43c28-b6d5-4fe6-abe3-0f7da30c32ce@huawei.com>
+Date: Tue, 16 Sep 2025 14:34:25 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] app/testpmd: fix L4 protocol retrieval from L3 header
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>, <lihuisong@huawei.com>,
+ <fengchengwen@huawei.com>, <liuyonglong@huawei.com>
+References: <20250830012913.1117632-1-huangdengdui@huawei.com>
+ <20250915093954.6f02c3f2@hermes.local>
+Content-Language: en-US
+From: huangdengdui <huangdengdui@huawei.com>
+In-Reply-To: <20250915093954.6f02c3f2@hermes.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.193]
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemr200009.china.huawei.com (7.202.195.137)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,87 +51,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The function __rte_ring_headtail_move_head() assumes that the barrier
-(fence) between the load of the head and the load-acquire of the
-opposing tail guarantees the following: if a first thread reads tail
-and then writes head and a second thread reads the new value of head
-and then reads tail, then it should observe the same (or a later)
-value of tail.
 
-This assumption is incorrect under the C11 memory model. If the barrier
-(fence) is intended to establish a total ordering of ring operations,
-it fails to do so. Instead, the current implementation only enforces a
-partial ordering, which can lead to unsafe interleavings. In particular,
-some partial orders can cause underflows in free slot or available
-element computations, potentially resulting in data corruption.
+On 2025/9/16 0:39, Stephen Hemminger wrote:
+> On Sat, 30 Aug 2025 09:29:13 +0800
+> Dengdui Huang <huangdengdui@huawei.com> wrote:
+> 
+>> Currently, when retrieving the L4 protocol from the L3 header,
+>> the case of IPv6 with extension headers is not handled correctly.
+>> This patch fixes it.
+>>
+>> Fixes: 76730c7b9b5a ("app/testpmd: use packet type parsing API")
+>> Cc: stable@dpdk.org
+>>
+>> Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
+>> ---
+>>  app/test-pmd/csumonly.c | 39 ++++++++++++++++-----------------------
+>>  1 file changed, 16 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
+>> index d355dbd8c0..a6e872e5a4 100644
+>> --- a/app/test-pmd/csumonly.c
+>> +++ b/app/test-pmd/csumonly.c
+>> @@ -525,20 +525,8 @@ get_tunnel_ol_flags_by_ptype(uint32_t ptype)
+>>  	}
+>>  }
+>>  
+>> -static void
+>> -parse_inner_l4_proto(void *outer_l3_hdr,
+>> -			struct testpmd_offload_info *info)
+>> -{
+>> -	struct rte_ipv4_hdr *ipv4_hdr = outer_l3_hdr;
+>> -	struct rte_ipv6_hdr *ipv6_hdr = outer_l3_hdr;
+>> -	if (info->ethertype == _htons(RTE_ETHER_TYPE_IPV4))
+>> -		info->l4_proto = ipv4_hdr->next_proto_id;
+>> -	else
+>> -		info->l4_proto = ipv6_hdr->proto;
+>> -}
+>> -
+>>  static uint8_t
+>> -parse_l4_proto(const struct rte_mbuf *m, uint32_t off, uint32_t ptype)
+>> +parse_l4_proto(const struct rte_mbuf *m, uint32_t off, uint32_t ptype, bool parse_inner)
+>>  {
+>>  	int frag = 0, ret;
+>>  
+>> @@ -557,16 +545,19 @@ parse_l4_proto(const struct rte_mbuf *m, uint32_t off, uint32_t ptype)
+>>  		if (unlikely(ip6h == NULL))
+>>  			return 0;
+>>  
+>> -		if ((ptype & RTE_PTYPE_INNER_L3_MASK) ==
+>> -				RTE_PTYPE_INNER_L3_IPV6_EXT) {
+>> -			ret = rte_net_skip_ip6_ext(ip6h->proto, m, &off, &frag);
+>> -			if (ret < 0)
+>> -				return 0;
+>> -			return ret;
+>> -		}
+>> +		if (!parse_inner && (ptype & RTE_PTYPE_L3_MASK) != RTE_PTYPE_L3_IPV6_EXT)
+>> +			return ip6h->proto;
+>> +
+>> +		if (parse_inner && (ptype & RTE_PTYPE_INNER_L3_MASK) != RTE_PTYPE_INNER_L3_IPV6_EXT)
+>> +			return ip6h->proto;
+>>  
+>> -		return ip6h->proto;
+>> +		off += sizeof(struct rte_ipv6_hdr);
+>> +		ret = rte_net_skip_ip6_ext(ip6h->proto, m, &off, &frag);
+>> +		if (ret < 0)
+>> +			return 0;
+>> +		return ret;
+>>  	}
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> @@ -705,7 +696,7 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
+>>  		info.l4_len = hdr_lens.l4_len;
+>>  		info.ethertype = get_ethertype_by_ptype(eth_hdr,
+>>  					ptype & RTE_PTYPE_L3_MASK);
+>> -		info.l4_proto = parse_l4_proto(m, info.l2_len, ptype);
+>> +		info.l4_proto = parse_l4_proto(m, info.l2_len, ptype, false);
+> 
+> 
+> Setting parse_inner to false would cause l4_proto to be set to the extension
+> header type (rather than the real L4 protocol). Was this change intentional?
+> Looks like it would cause checksum to be computed incorrectly for simple
+> case of IPV6 with extension header and TCP.
+> 
 
-The issue manifests when a CPU first acts as a producer and later as a
-consumer. In this scenario, the barrier assumption may fail when another
-core takes the consumer role. A Herd7 litmus test in C11 can demonstrate
-this violation. The problem has not been widely observed so far because:
-  (a) on strong memory models (e.g., x86-64) the assumption holds, and
-  (b) on relaxed models with RCsc semantics the ordering is still strong
-      enough to prevent hazards.
-The problem becomes visible only on weaker models, when load-acquire is
-implemented with RCpc semantics (e.g. some AArch64 CPUs which support
-the LDAPR and LDAPUR instructions).
-
-Three possible solutions exist:
-  1. Strengthen ordering by upgrading release/acquire semantics to
-     sequential consistency. This requires using seq-cst for stores,
-     loads, and CAS operations. However, this approach introduces a
-     significant performance penalty on relaxed-memory architectures.
-
-  2. Establish a safe partial order by enforcing a pair-wise
-     happens-before relationship between thread of same role by changing
-     the CAS and the preceding load of the head by converting them to
-     release and acquire respectively. This approach makes the original
-     barrier assumption unnecessary and allows its removal.
-
-  3. Retain partial ordering but ensure only safe partial orders are
-     committed. This can be done by detecting underflow conditions
-     (producer < consumer) and quashing the update in such cases.
-     This approach makes the original barrier assumption unnecessary
-     and allows its removal.
-
-This patch implements solution (3) for performance reasons.
-
-Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Signed-off-by: Ola Liljedahl <ola.liljedahl@arm.com>
-Reviewed-by: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
-Reviewed-by: Dhruv Tripathi <dhruv.tripathi@arm.com>
----
- lib/ring/rte_ring_c11_pvt.h | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/lib/ring/rte_ring_c11_pvt.h b/lib/ring/rte_ring_c11_pvt.h
-index b9388af0da..e5ac1f6b9e 100644
---- a/lib/ring/rte_ring_c11_pvt.h
-+++ b/lib/ring/rte_ring_c11_pvt.h
-@@ -83,9 +83,6 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
- 		/* Reset n to the initial burst count */
- 		n = max;
- 
--		/* Ensure the head is read before tail */
--		rte_atomic_thread_fence(rte_memory_order_acquire);
--
- 		/* load-acquire synchronize with store-release of ht->tail
- 		 * in update_tail.
- 		 */
-@@ -99,6 +96,13 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
- 		 */
- 		*entries = (capacity + stail - *old_head);
- 
-+		/*
-+		 * Ensure the entries calculation was not based on a stale
-+		 * and unsafe stail observation that causes underflow.
-+		 */
-+		if ((int)*entries < 0)
-+			*entries = 0;
-+
- 		/* check that we have enough room in ring */
- 		if (unlikely(n > *entries))
- 			n = (behavior == RTE_RING_QUEUE_FIXED) ?
--- 
-2.43.0
+Setting `parse_inner` to `false` does not result in `l4_proto` being assigned as an extended header type.
+The purpose of `parse_inner` is solely to indicate whether the `parse_l4_proto` function is handling the outer packet header or the inner packet header.
+Perhaps renaming the variable to `is_inner` would be more appropriate.
 
