@@ -2,76 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE58CAC599
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 15:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5F5CAC598
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 15:03:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EA1F94067B;
-	Tue, 16 Sep 2025 17:02:37 +0200 (CEST)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com
- [209.85.219.53]) by mails.dpdk.org (Postfix) with ESMTP id 3638740674
- for <dev@dpdk.org>; Tue, 16 Sep 2025 17:02:36 +0200 (CEST)
-Received: by mail-qv1-f53.google.com with SMTP id
- 6a1803df08f44-77d253914d0so20165086d6.0
- for <dev@dpdk.org>; Tue, 16 Sep 2025 08:02:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 31C9740696;
+	Tue, 16 Sep 2025 17:02:39 +0200 (CEST)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com
+ [209.85.160.173])
+ by mails.dpdk.org (Postfix) with ESMTP id B5C6640677
+ for <dev@dpdk.org>; Tue, 16 Sep 2025 17:02:37 +0200 (CEST)
+Received: by mail-qt1-f173.google.com with SMTP id
+ d75a77b69052e-4b7ae45a91cso9556471cf.2
+ for <dev@dpdk.org>; Tue, 16 Sep 2025 08:02:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758034955;
- x=1758639755; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758034957;
+ x=1758639757; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=FFmSK4w71UXrTs0A+InjcoRduvej3xb1wbU73oCVHnA=;
- b=FWt5ptfU55hHkE2tzc/kehjYMTe1gHwLHAj9LKf4kybGbfWwTYI4byakx6y2HsjteH
- Grtc6EcXK5YEkjwHM9UPHwbW9FqkPoFeotQ3ppOR91pK+r9jz/GSOynNArdJzt2rEU1v
- uBMznOe1RcMEJWEBx1oiOlAW1oawbC2MLNDF6WkEI3SH/0rB9qQvPthNhFnq7ujPSvai
- +zesRjmvGDZHBWwDVKKwqXrLCoJCbXHreiBcs/xDHedx8d6cyEQD91HRIev6wmDdi09d
- an2OZZ0xkQo+4JfDVz9ny8/86gWhlzaSK4oTBVD2ioTIOyNQPqiWsopK6toHKzHu4+iW
- BDtQ==
+ bh=KKCihvnOrtetXNNO9zEzEWC7Yu5B0adghpblwmkOte8=;
+ b=ixkPxoPxQw7nrZPbubCtPcPsjY93MTiX4b+z8RCs1bnsyWyb+TbPuAJNSykzY+oo5/
+ t2BvXglVoXV2ArCYd9hTvwKBfVWM54rdY5Tqc2yN2O3kVSpCbnf0TFgTUXNZoys0Zs8V
+ WUOv0hPDl74HehontKbj1RsP6nNOtogOYeZ4fs4ObbonBNQON3ymZBVSFaV1yFrmhOSO
+ ic9slbnbq97OAA8v92HIYvmRMOfE9Qqr6rhNpXbtiIQxR8nGxCA9mGj1IyJ2JbPt/zGD
+ bw0J7oidksvEsinPiQLIn0QShBw+P7iol8tH8cUhRBzXNuTDboLDBGiNMQKiGCq6SQj/
+ ZlxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758034955; x=1758639755;
+ d=1e100.net; s=20230601; t=1758034957; x=1758639757;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=FFmSK4w71UXrTs0A+InjcoRduvej3xb1wbU73oCVHnA=;
- b=n66ddpoRJnInyD0zDz3l8gq93Ox7xDB8LL1JfvzJIJC8Gy7cbsWb3q58pRq2YqxnfM
- cnvBtOVQUN07UU5iNdTTs2yfiMwI7VJ9S2YnkbXfofODU5NYdTAMDQeh3AxmczwzsY4n
- y2vnRmK6wRmqhaTErp7hH6BhJBFCmZ8/zSFJqDqL2jQT3WVXAq8gZMouUHdje8OQQapf
- uzRh1kyQgpZ18Uhx3yJ6OgjFceOvF05nrNoRgmcwkqfcx12bNS5m1FGhxJkAWFGZlaKJ
- XHUEUjqoEuT04YRSTcXBtIxrpP9xLDMeO8NFDdfVyjz14LP1f4Otl83GR2mVabxCg481
- jXdQ==
-X-Gm-Message-State: AOJu0YxBvUnQnWhsd9ede+VXCJYKglCjY0Kv0eRzsDlx9hF4mXh8mv9R
- mBkDGfSbtkGqXOP+JoHHtsrriEFr28cMy0VITlCsssiAfaoGN9dFYNyHYI6Kih4a/js0fqMYtJk
- Xwmip
-X-Gm-Gg: ASbGncuBH73LLDtYUiTZl+GVLARgc89Tj1WsB7SXrvAfwyvzpSPYhO3tTaVPN0cV9kf
- FPH6dsrmPTTj3zg69PwUVUN9+vpJCBApvmXw+wXO++EBuvF1ioPU7ddeDnj2ITFMBQ4Yb9lX3Xb
- IdWUsLjQf12AbPRTpkfnFL/K66nWNqc0k76gF6EQAIxB7ZtkA2S5cuEs/CQVdq5xu5XHkK9uJbR
- XZxV7I8OuG0l0z7Yvj0mr2fXKAgfknkVb2qtYyYNx4hW12wa4yEzYGgrzqSz7IAHAZ63AWoNz6+
- s9HBSxhsE7sFeQdklm/Dpu8bnh6gg9MotZRH3gtfbkT3HtpY8n7tqZIg2uEkOCRqfC3veMs/OVk
- Ay3GA8LtSA8wJnsAHpzu6o/rGFYnASz1WSF4LMvLhcg0F9Bu9O2UibLBLqsowWG8orSs4M5XG
-X-Google-Smtp-Source: AGHT+IEXnOomL0YGzuVUXn9A5ngIG6P13+3ilzrkkgPgHdkGB3IHPqnG5Mv0tKOU3DU4JZdOZxdpWQ==
-X-Received: by 2002:a05:6214:20ea:b0:721:812a:e6f0 with SMTP id
- 6a1803df08f44-767c3772476mr213459766d6.38.1758034954829; 
- Tue, 16 Sep 2025 08:02:34 -0700 (PDT)
+ bh=KKCihvnOrtetXNNO9zEzEWC7Yu5B0adghpblwmkOte8=;
+ b=lWluCIcBWe8pWDbsSao83xbEbhRK6YuzeelAZP3LAqz8vA9pUqdpnMakYYMo9WJZDl
+ VB6vhYE73enzusN/DIbyCVxVnZ0VMgHqqGFR2LL22NCZOeOWEk0HCHAGATmStcUmIVqz
+ I0s71+/lGMSjxZ/pdjLB3WsRgky1EK8u2eBDVWtRjnqymz6tNULA0Lp732+k6MQbcHWf
+ xCia52/z/6RS+PGf62IfdBLou30stmxA0b2fag7CGS7OY+FSYLr8WKF+Pek8luV6v8Gx
+ Ipebcj/GO8iN/d6NCOig9RSMxTZqIbL6oGx2xbD5hROF8YU5LzjS9FZHyFm5MN4UucON
+ TH1Q==
+X-Gm-Message-State: AOJu0YxI8gB9e4qF42i2x/2gDlyk1+BLqEEN1zR9bDVqpyMAW7dqjAF9
+ SEJ4lU+CpKWvm0WbuxNqdhUl1AyqqR+6FArzZjacFXDNgl62chce/DN/h3J8R1aRBDP7IjUqvly
+ rzTUX
+X-Gm-Gg: ASbGncvgpIRsU1qyx4r4JX8C4VDQRgRkHxoAWd7LiFUlykOqEmb+aU5KJHV/YkthcGT
+ t1VE560yaqI/hiWv8D/45NvOS6d9F7TrMm2+L7C2PItsGaJ+liVL+sgP1LR+UVjkn2Ufg8n6/lE
+ P+zCpmd+Z4MGWwmV3+U5ev50slvk5HskZUw+CeY92MkPIgGgNyYFCBNX6w9MQKLREKqYRVwypC3
+ oo9n6FO7PdxQm9sJgcw1X3pVoxNe4XkGtWoteXJuKngahE6ssVRFlhW/P6nxPqNe6yHncKDj19W
+ oDAXNUf/cgpZTC5duqGgo+JJABBU5bGAV1JYpRzSTvg3Nd+ZOx5TRUlBIqVwSSr7KcSXZBMn6cR
+ I1az+GuJT2I8wy7jW8gey97XsSzdhG8ihLaNaLu2DbIqD1kZFYkNUMwznK7fVnfIt7qFqJSOK
+X-Google-Smtp-Source: AGHT+IEG4dcAT5CZPXbwsznS0s0iVtsWyfYvtlf92LiQud95zVsX+xK4rrQLSbv19h+SKTCN+5Fjlg==
+X-Received: by 2002:a05:622a:612:b0:4b7:976e:8c48 with SMTP id
+ d75a77b69052e-4b7976e96bcmr118985431cf.14.1758034956699; 
+ Tue, 16 Sep 2025 08:02:36 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-763bee7c80dsm94324306d6.52.2025.09.16.08.02.33
+ 6a1803df08f44-763bee7c80dsm94324306d6.52.2025.09.16.08.02.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Sep 2025 08:02:34 -0700 (PDT)
+ Tue, 16 Sep 2025 08:02:36 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>,
  Yipeng Wang <yipeng1.wang@intel.com>,
  Sameh Gobriel <sameh.gobriel@intel.com>,
  Bruce Richardson <bruce.richardson@intel.com>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v4 3/4] hash: reduce architecture special cases
-Date: Tue, 16 Sep 2025 08:00:46 -0700
-Message-ID: <20250916150219.104936-4-stephen@networkplumber.org>
+Subject: [PATCH v4 4/4] hash: add support for common small key sizes
+Date: Tue, 16 Sep 2025 08:00:47 -0700
+Message-ID: <20250916150219.104936-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20250916150219.104936-1-stephen@networkplumber.org>
 References: <0250818233102.180207-1-stephen@networkplumber.org>
  <20250916150219.104936-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -86,342 +89,196 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Make comparison of sizes compatible across platforms.
-Keep the special case code for 16 bytes for x86 and arm64 but
-also add simple xor for others.
+Add new compare functions for common small key sizes.
 
-Need to keep rte_hash_k32_cmp_eq() exposed because ip_frag
-code poaches it.
+Fill in more key sizes to ensure more complete coverage of
+special cases.
+
+Bugzilla ID: 1775
+Suggested-by: Morten Brørup <mb@smartsharesystems.com>
+Reported-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Morten Brørup <mb@smartsharesystems.com>
 ---
- lib/hash/rte_cmp_arm64.h   | 56 +------------------------
- lib/hash/rte_cmp_generic.h | 35 ++++++++++++++++
- lib/hash/rte_cmp_x86.h     | 60 ++------------------------
- lib/hash/rte_cuckoo_hash.c | 86 +++++++++++++++++++++++++++++++++-----
- 4 files changed, 116 insertions(+), 121 deletions(-)
- create mode 100644 lib/hash/rte_cmp_generic.h
+ app/test/test_hash.c       |   7 ++-
+ lib/hash/rte_cuckoo_hash.c | 124 ++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 126 insertions(+), 5 deletions(-)
 
-diff --git a/lib/hash/rte_cmp_arm64.h b/lib/hash/rte_cmp_arm64.h
-index a3e85635eb..2b2a37ebd2 100644
---- a/lib/hash/rte_cmp_arm64.h
-+++ b/lib/hash/rte_cmp_arm64.h
-@@ -2,7 +2,7 @@
-  * Copyright(c) 2015 Cavium, Inc
+diff --git a/app/test/test_hash.c b/app/test/test_hash.c
+index 5791fd7f4c..fa6c254a23 100644
+--- a/app/test/test_hash.c
++++ b/app/test/test_hash.c
+@@ -35,8 +35,11 @@
   */
+ static rte_hash_function hashtest_funcs[] = {rte_jhash, rte_hash_crc};
+ static uint32_t hashtest_initvals[] = {0};
+-static uint32_t hashtest_key_lens[] = {0, 2, 4, 5, 6, 7, 8, 10, 11, 15, 16, 21, 31, 32, 33, 63, 64};
+-#define MAX_KEYSIZE 64
++static uint32_t hashtest_key_lens[] = {
++	0, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 14, 15, 16, 18, 20,
++	21, 31, 32, 33, 36, 48, 63, 64, 80, 96, 112, 128, 254
++};
++#define MAX_KEYSIZE 256
+ /******************************************************************************/
+ #define LOCAL_FBK_HASH_ENTRIES_MAX (1 << 15)
  
--/* Functions to compare multiple of 16 byte keys (up to 128 bytes) */
-+/* Functions to compare multiple of 16 byte keys */
- static inline int
- rte_hash_k16_cmp_eq(const void *key1, const void *key2,
- 		    size_t key_len __rte_unused)
-@@ -27,59 +27,7 @@ rte_hash_k16_cmp_eq(const void *key1, const void *key2,
- static inline int
- rte_hash_k32_cmp_eq(const void *key1, const void *key2, size_t key_len)
- {
--	return rte_hash_k16_cmp_eq(key1, key2, key_len) ||
-+	return rte_hash_k16_cmp_eq(key1, key2, key_len) |
- 		rte_hash_k16_cmp_eq((const char *) key1 + 16,
- 				(const char *) key2 + 16, key_len);
- }
--
--static inline int
--rte_hash_k48_cmp_eq(const void *key1, const void *key2, size_t key_len)
--{
--	return rte_hash_k16_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k16_cmp_eq((const char *) key1 + 16,
--				(const char *) key2 + 16, key_len) ||
--		rte_hash_k16_cmp_eq((const char *) key1 + 32,
--				(const char *) key2 + 32, key_len);
--}
--
--static inline int
--rte_hash_k64_cmp_eq(const void *key1, const void *key2, size_t key_len)
--{
--	return rte_hash_k32_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k32_cmp_eq((const char *) key1 + 32,
--				(const char *) key2 + 32, key_len);
--}
--
--static inline int
--rte_hash_k80_cmp_eq(const void *key1, const void *key2, size_t key_len)
--{
--	return rte_hash_k64_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k16_cmp_eq((const char *) key1 + 64,
--				(const char *) key2 + 64, key_len);
--}
--
--static inline int
--rte_hash_k96_cmp_eq(const void *key1, const void *key2, size_t key_len)
--{
--	return rte_hash_k64_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k32_cmp_eq((const char *) key1 + 64,
--				(const char *) key2 + 64, key_len);
--}
--
--static inline int
--rte_hash_k112_cmp_eq(const void *key1, const void *key2, size_t key_len)
--{
--	return rte_hash_k64_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k32_cmp_eq((const char *) key1 + 64,
--				(const char *) key2 + 64, key_len) ||
--		rte_hash_k16_cmp_eq((const char *) key1 + 96,
--				(const char *) key2 + 96, key_len);
--}
--
--static inline int
--rte_hash_k128_cmp_eq(const void *key1, const void *key2, size_t key_len)
--{
--	return rte_hash_k64_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k64_cmp_eq((const char *) key1 + 64,
--				(const char *) key2 + 64, key_len);
--}
-diff --git a/lib/hash/rte_cmp_generic.h b/lib/hash/rte_cmp_generic.h
-new file mode 100644
-index 0000000000..0069b2a3cb
---- /dev/null
-+++ b/lib/hash/rte_cmp_generic.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Stephen Hemminger
-+ */
-+
-+#ifndef _RTE_CMP_GENERIC_H_
-+#define _RTE_CMP_GENERIC_H_
-+
-+/* Function to compare 16 byte keys */
+diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
+index 608d79d33d..982fa1deee 100644
+--- a/lib/hash/rte_cuckoo_hash.c
++++ b/lib/hash/rte_cuckoo_hash.c
+@@ -50,8 +50,19 @@ RTE_LOG_REGISTER_DEFAULT(hash_logtype, INFO);
+  */
+ enum cmp_jump_table_case {
+ 	KEY_CUSTOM = 0,
++	KEY_2_BYTES,
++	KEY_3_BYTES,
++	KEY_4_BYTES,
++	KEY_5_BYTES,
++	KEY_6_BYTES,
++	KEY_8_BYTES,
++	KEY_10_BYTES,
++	KEY_12_BYTES,
++	KEY_14_BYTES,
+ 	KEY_16_BYTES,
++	KEY_20_BYTES,
+ 	KEY_32_BYTES,
++	KEY_36_BYTES,
+ 	KEY_48_BYTES,
+ 	KEY_64_BYTES,
+ 	KEY_80_BYTES,
+@@ -85,12 +96,108 @@ enum cmp_jump_table_case {
+ #include "rte_cmp_generic.h"
+ #endif
+ 
 +static inline int
-+rte_hash_k16_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
++rte_hash_k2_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
++{
++	const unaligned_uint16_t *k1 = key1;
++	const unaligned_uint16_t *k2 = key2;
++
++	return k1[0] ^ k2[0];
++}
++
+ static int
+-rte_hash_k48_cmp_eq(const void *key1, const void *key2, size_t key_len)
++rte_hash_k3_cmp_eq(const void *key1, const void *key2, size_t key_len)
++{
++	return rte_hash_k2_cmp_eq(key1, key2, key_len)
++		| (((const uint8_t *)key1)[2] ^ ((const uint8_t *)key2)[2]);
++}
++
++static int
++rte_hash_k4_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
++{
++	const unaligned_uint32_t *k1 = key1;
++	const unaligned_uint32_t *k2 = key2;
++
++	return k1[0] ^ k2[0];
++}
++
++static int
++rte_hash_k5_cmp_eq(const void *key1, const void *key2, size_t key_len)
++{
++	return rte_hash_k4_cmp_eq(key1, key2, key_len) |
++		(((const uint8_t *)key1)[4] ^ ((const uint8_t *)key2)[4]);
++}
++
++static int
++rte_hash_k6_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
++{
++	const unaligned_uint16_t *k1 = key1;
++	const unaligned_uint16_t *k2 = key2;
++
++	return (k1[0] ^ k2[0]) | (k1[1] ^ k2[1]) | (k1[2] ^ k2[2]);
++}
++
++static int
++rte_hash_k8_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
 +{
 +#ifdef RTE_ARCH_64
 +	const unaligned_uint64_t *k1 = key1;
 +	const unaligned_uint64_t *k2 = key2;
 +
-+	return !!((k1[0] ^ k2[0]) | (k1[1] ^ k2[1]));
++	return !!(k1[0] ^ k2[0]);
 +#else
 +	const unaligned_uint32_t *k1 = key1;
 +	const unaligned_uint32_t *k2 = key2;
 +
-+	return (k1[0] ^ k2[0]) | (k1[1] ^ k2[1]) |
-+	       (k1[2] ^ k2[2]) | (k1[3] ^ k2[3]);
++	return (k1[0] ^ k2[0]) | (k1[1] ^ k2[1]);
 +#endif
 +}
 +
-+/* Function to compare 32 byte keys */
-+static inline int
-+rte_hash_k32_cmp_eq(const void *key1, const void *key2, size_t key_len)
++static int
++rte_hash_k10_cmp_eq(const void *key1, const void *key2, size_t key_len)
 +{
-+	return rte_hash_k16_cmp_eq(key1, key2, key_len) |
-+		rte_hash_k16_cmp_eq((const uint8_t *) key1 + 16,
-+				(const uint8_t *) key2 + 16, key_len);
++	return rte_hash_k8_cmp_eq(key1, key2, key_len) |
++		rte_hash_k2_cmp_eq((const uint8_t *)key1 + 8,
++				   (const uint8_t *)key2 + 8, key_len);
 +}
 +
-+#endif
-diff --git a/lib/hash/rte_cmp_x86.h b/lib/hash/rte_cmp_x86.h
-index ddfbef462f..e7a38c8fcd 100644
---- a/lib/hash/rte_cmp_x86.h
-+++ b/lib/hash/rte_cmp_x86.h
-@@ -4,7 +4,7 @@
- 
- #include <rte_vect.h>
- 
--/* Functions to compare multiple of 16 byte keys (up to 128 bytes) */
-+/* Function to compare multiple of 16 byte keys */
- static inline int
- rte_hash_k16_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
- {
-@@ -18,59 +18,7 @@ rte_hash_k16_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unu
- static inline int
- rte_hash_k32_cmp_eq(const void *key1, const void *key2, size_t key_len)
- {
--	return rte_hash_k16_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k16_cmp_eq((const char *) key1 + 16,
--				(const char *) key2 + 16, key_len);
--}
--
--static inline int
--rte_hash_k48_cmp_eq(const void *key1, const void *key2, size_t key_len)
--{
--	return rte_hash_k16_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k16_cmp_eq((const char *) key1 + 16,
--				(const char *) key2 + 16, key_len) ||
--		rte_hash_k16_cmp_eq((const char *) key1 + 32,
--				(const char *) key2 + 32, key_len);
--}
--
--static inline int
--rte_hash_k64_cmp_eq(const void *key1, const void *key2, size_t key_len)
--{
--	return rte_hash_k32_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k32_cmp_eq((const char *) key1 + 32,
--				(const char *) key2 + 32, key_len);
--}
--
--static inline int
--rte_hash_k80_cmp_eq(const void *key1, const void *key2, size_t key_len)
--{
--	return rte_hash_k64_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k16_cmp_eq((const char *) key1 + 64,
--				(const char *) key2 + 64, key_len);
--}
--
--static inline int
--rte_hash_k96_cmp_eq(const void *key1, const void *key2, size_t key_len)
--{
--	return rte_hash_k64_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k32_cmp_eq((const char *) key1 + 64,
--				(const char *) key2 + 64, key_len);
--}
--
--static inline int
--rte_hash_k112_cmp_eq(const void *key1, const void *key2, size_t key_len)
--{
--	return rte_hash_k64_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k32_cmp_eq((const char *) key1 + 64,
--				(const char *) key2 + 64, key_len) ||
--		rte_hash_k16_cmp_eq((const char *) key1 + 96,
--				(const char *) key2 + 96, key_len);
--}
--
--static inline int
--rte_hash_k128_cmp_eq(const void *key1, const void *key2, size_t key_len)
--{
--	return rte_hash_k64_cmp_eq(key1, key2, key_len) ||
--		rte_hash_k64_cmp_eq((const char *) key1 + 64,
--				(const char *) key2 + 64, key_len);
-+	return rte_hash_k16_cmp_eq(key1, key2, key_len) |
-+		rte_hash_k16_cmp_eq((const uint8_t *) key1 + 16,
-+				(const uint8_t *) key2 + 16, key_len);
- }
-diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
-index 619fe0c691..608d79d33d 100644
---- a/lib/hash/rte_cuckoo_hash.c
-+++ b/lib/hash/rte_cuckoo_hash.c
-@@ -42,13 +42,6 @@ RTE_LOG_REGISTER_DEFAULT(hash_logtype, INFO);
- #define RETURN_IF_TRUE(cond, retval)
- #endif
- 
--#if defined(RTE_ARCH_X86)
--#include "rte_cmp_x86.h"
--#endif
--
--#if defined(RTE_ARCH_ARM64)
--#include "rte_cmp_arm64.h"
--#endif
- 
- /*
-  * All different options to select a key compare function,
-@@ -57,7 +50,6 @@ RTE_LOG_REGISTER_DEFAULT(hash_logtype, INFO);
-  */
- enum cmp_jump_table_case {
- 	KEY_CUSTOM = 0,
--#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
- 	KEY_16_BYTES,
- 	KEY_32_BYTES,
- 	KEY_48_BYTES,
-@@ -66,11 +58,85 @@ enum cmp_jump_table_case {
- 	KEY_96_BYTES,
- 	KEY_112_BYTES,
- 	KEY_128_BYTES,
--#endif
- 	KEY_OTHER_BYTES,
- 	NUM_KEY_CMP_CASES,
- };
- 
-+/*
-+ * Comparison functions for different key sizes.
-+ * Each function is only called with a specific fixed key size.
-+ *
-+ * Return value is 0 on equality to allow direct use of memcmp.
-+ * Recommend using XOR and | orperator to avoid branching
-+ * as long as key is smaller than cache line size.
-+ *
-+ * Key1 always points to key[] in rte_hash_key which is aligned.
-+ * Key2 is parameter to insert which might not be.
-+ *
-+ * Special cases for 16 and 32 bytes to allow for architecture
-+ * specific optimizations.
-+ */
++static int
++rte_hash_k12_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
++{
++	const unaligned_uint32_t *k1 = key1;
++	const unaligned_uint32_t *k2 = key2;
 +
-+#if defined(RTE_ARCH_X86)
-+#include "rte_cmp_x86.h"
-+#elif defined(RTE_ARCH_ARM64)
-+#include "rte_cmp_arm64.h"
-+#else
-+#include "rte_cmp_generic.h"
-+#endif
++	return (k1[0] ^ k2[0]) | (k1[1] ^ k2[1]) | (k1[2] ^ k2[2]);
++}
++
++static int
++rte_hash_k14_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
++{
++	return rte_hash_k8_cmp_eq(key1, key2, key_len) |
++		rte_hash_k6_cmp_eq((const uint8_t *)key1 + 8,
++				   (const uint8_t *)key2 + 8, key_len);
++}
++
++static int
++rte_hash_k20_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
+ {
+ 	return rte_hash_k16_cmp_eq(key1, key2, key_len) |
+-		rte_hash_k16_cmp_eq((const uint8_t *) key1 + 16,
+-				    (const uint8_t *) key2 + 16, key_len) ||
++		rte_hash_k4_cmp_eq((const uint8_t *)key1 + 16,
++				   (const uint8_t *)key2 + 16, key_len);
++}
++
++static int
++rte_hash_k36_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
++{
++	return rte_hash_k32_cmp_eq(key1, key2, key_len) ||
++		rte_hash_k4_cmp_eq((const uint8_t *)key1 + 32,
++				   (const uint8_t *)key2 + 32, key_len);
++}
 +
 +static int
 +rte_hash_k48_cmp_eq(const void *key1, const void *key2, size_t key_len)
 +{
-+	return rte_hash_k16_cmp_eq(key1, key2, key_len) |
-+		rte_hash_k16_cmp_eq((const uint8_t *) key1 + 16,
-+				    (const uint8_t *) key2 + 16, key_len) ||
-+		rte_hash_k16_cmp_eq((const uint8_t *) key1 + 32,
-+				    (const uint8_t *) key2 + 32, key_len);
-+}
-+
-+static int
-+rte_hash_k64_cmp_eq(const void *key1, const void *key2, size_t key_len)
-+{
-+	return rte_hash_k32_cmp_eq(key1, key2, key_len) ||
-+		rte_hash_k32_cmp_eq((const uint8_t *) key1 + 32,
-+				    (const uint8_t *) key2 + 32, key_len);
-+}
-+
-+static int
-+rte_hash_k80_cmp_eq(const void *key1, const void *key2, size_t key_len)
-+{
-+	return rte_hash_k64_cmp_eq(key1, key2, key_len) ||
-+		rte_hash_k16_cmp_eq((const uint8_t *) key1 + 64,
-+				    (const uint8_t *) key2 + 64, key_len);
-+}
-+
-+static int
-+rte_hash_k96_cmp_eq(const void *key1, const void *key2, size_t key_len)
-+{
-+	return rte_hash_k64_cmp_eq(key1, key2, key_len) ||
-+		rte_hash_k32_cmp_eq((const uint8_t *) key1 + 64,
-+				    (const uint8_t *) key2 + 64, key_len);
-+}
-+
-+static int
-+rte_hash_k112_cmp_eq(const void *key1, const void *key2, size_t key_len)
-+{
-+	return rte_hash_k64_cmp_eq(key1, key2, key_len) ||
-+		rte_hash_k32_cmp_eq((const uint8_t *) key1 + 64,
-+				    (const uint8_t *) key2 + 64, key_len) ||
-+		rte_hash_k16_cmp_eq((const uint8_t *) key1 + 96,
-+				    (const uint8_t *) key2 + 96, key_len);
-+}
-+
-+static int
-+rte_hash_k128_cmp_eq(const void *key1, const void *key2, size_t key_len)
-+{
-+	return rte_hash_k64_cmp_eq(key1, key2, key_len) ||
-+		rte_hash_k64_cmp_eq((const uint8_t *) key1 + 64,
-+				(const uint8_t *) key2 + 64, key_len);
-+}
-+
- /* Enum used to select the implementation of the signature comparison function to use
-  * eg: a system supporting SVE might want to use a NEON or scalar implementation.
-  */
-@@ -160,7 +226,6 @@ void rte_hash_set_cmp_func(struct rte_hash *h, rte_hash_cmp_eq_t func)
++	return	rte_hash_k32_cmp_eq(key1, key2, key_len) ||
+ 		rte_hash_k16_cmp_eq((const uint8_t *) key1 + 32,
+ 				    (const uint8_t *) key2 + 32, key_len);
+ }
+@@ -226,8 +333,19 @@ void rte_hash_set_cmp_func(struct rte_hash *h, rte_hash_cmp_eq_t func)
   */
  static const rte_hash_cmp_eq_t cmp_jump_table[NUM_KEY_CMP_CASES] = {
  	[KEY_CUSTOM] = NULL,
--#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
++	[KEY_2_BYTES] = rte_hash_k2_cmp_eq,
++	[KEY_3_BYTES] = rte_hash_k3_cmp_eq,
++	[KEY_4_BYTES] = rte_hash_k4_cmp_eq,
++	[KEY_5_BYTES] = rte_hash_k5_cmp_eq,
++	[KEY_6_BYTES] = rte_hash_k6_cmp_eq,
++	[KEY_8_BYTES] = rte_hash_k8_cmp_eq,
++	[KEY_10_BYTES] = rte_hash_k10_cmp_eq,
++	[KEY_12_BYTES] = rte_hash_k12_cmp_eq,
++	[KEY_14_BYTES] = rte_hash_k14_cmp_eq,
  	[KEY_16_BYTES] = rte_hash_k16_cmp_eq,
++	[KEY_20_BYTES] = rte_hash_k20_cmp_eq,
  	[KEY_32_BYTES] = rte_hash_k32_cmp_eq,
++	[KEY_36_BYTES] = rte_hash_k36_cmp_eq,
  	[KEY_48_BYTES] = rte_hash_k48_cmp_eq,
-@@ -169,7 +234,6 @@ static const rte_hash_cmp_eq_t cmp_jump_table[NUM_KEY_CMP_CASES] = {
- 	[KEY_96_BYTES] = rte_hash_k96_cmp_eq,
- 	[KEY_112_BYTES] = rte_hash_k112_cmp_eq,
- 	[KEY_128_BYTES] = rte_hash_k128_cmp_eq,
--#endif
- 	[KEY_OTHER_BYTES] = memcmp,
- };
- 
+ 	[KEY_64_BYTES] = rte_hash_k64_cmp_eq,
+ 	[KEY_80_BYTES] = rte_hash_k80_cmp_eq,
 -- 
 2.47.3
 
