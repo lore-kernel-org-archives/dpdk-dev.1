@@ -2,51 +2,205 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E74CAC598
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Sep 2025 05:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F65CAC598
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Sep 2025 07:30:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4E112402E3;
-	Wed, 17 Sep 2025 07:28:01 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 67909402C5
- for <dev@dpdk.org>; Wed, 17 Sep 2025 07:27:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1758086878; x=1789622878;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=7ejly6XKrAgkzH54UvXf0sL2KCxtiXT5/dRYLPxbGuk=;
- b=ewhzn6W1Ja/y8E0yPBQ/wV1jVVH8zuTCP8CkMW4osIzp1sCwsMd9uJxI
- DGgPo3MMhHyQjDVUt0OcuiNDns1gpmdrsobOJ4IA2GJgo33PYSMx15Gbu
- tIvOpE4tGgFeT/OXKSocQuK7diH2+oGi2coqsfy47lnSvGf86IXXcHFST
- /Oga3A8T3xzKwgnPOA20SyqLuwjXrZRPMeqtqYYBBrwMEcZxJoUR90KGB
- nDzDMOo/bVTuyom7n1nr7DrQZgplCallPkhB2K24g7LLj/d74nzgzdc+n
- h9aKRKPCpVFmirbH8aY6twHZSybM0h5tWK0+AHUYfdDCf4pt/OMAiXs/g w==;
-X-CSE-ConnectionGUID: tAeEHFAKQti6ZzemCCu4bA==
-X-CSE-MsgGUID: SbviSP5NRsuXo4tHTeWQdg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="60250209"
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; d="scan'208";a="60250209"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2025 22:27:57 -0700
-X-CSE-ConnectionGUID: vWBNjuRPQlq+1ar7/oAldA==
-X-CSE-MsgGUID: QL3sfxyiQw2wZg+eBCu3PQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; d="scan'208";a="206101434"
-Received: from unknown (HELO srv24..) ([10.138.182.231])
- by fmviesa001.fm.intel.com with ESMTP; 16 Sep 2025 22:27:55 -0700
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Subject: [PATCH 2/2] net/idpf: enable AVX2 for split queue Rx
-Date: Wed, 17 Sep 2025 10:56:58 +0530
-Message-Id: <20250917052658.582872-3-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250917052658.582872-1-shaiq.wani@intel.com>
-References: <20250917052658.582872-1-shaiq.wani@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id AD2AF4027A;
+	Wed, 17 Sep 2025 09:30:04 +0200 (CEST)
+Received: from AM0PR02CU008.outbound.protection.outlook.com
+ (mail-westeuropeazon11013053.outbound.protection.outlook.com [52.101.72.53])
+ by mails.dpdk.org (Postfix) with ESMTP id 5D2C040288
+ for <dev@dpdk.org>; Tue, 16 Sep 2025 20:20:20 +0200 (CEST)
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=JOjwzZtxXeD/5cEKMu526Ru2U/fQ0mSaWMhnZyD8PpXKHhqWeDaDExjoS0WL4IdihIx5oapFb5mP/qDCn0EJ0tLaVyrE8rti5vmHwGL68WF32/5wNvllPPkjgqoG5sXBhqt/6VjCxJLWjXesqwcprGeAxOiPmA4WvgHa9c+Oe0Joa8OhqGO9jedRa34T783vGpWh4LdhlET2ynIrj48htzEGG45bq2xHfxbYkv6u7QMfsZWuxlfRLmT8hPLmhfd/gKtDnN5Hw9FTWUkNGVsZtNGfyPUGsskfF9lyobGwfBvS3mT6sLP3dNqvDtgkKj5gML+ph5YDB+r9v6oWkf7x0w==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FLWDJuTwvcf2p7s30MSTyYa9WfExOMTR3YABIag+WpQ=;
+ b=V/oz4FhfdoKZFlKPg+o2oPleu1UUrof91/f3CYLY6IoFOaKQkXYt5Im6w/G7lBQyO9fuHsNkJhLPyppkoKmcGUIEPasIszx7OrOGpZ/Gnlr+l5EVW/Ody+MrYTaiIIfNcbIV1hFbag/velMeMbYnKa1dYNZbKQh/sEYP1dVMWY4JNQ0u9jjPQ6t8qDA3Wrj1YC8mKG+t2JXrT1Z2NWOitTSrrNb5+M3zKYHRVXIwj83q6yHK6NZe2GhHnoSP5bsaFb3jDM757OQWjyioT/wrnlmuOUoin/Pltsjp4UnAqhpqyouBF8xr8Gd58gksyT+uaAAIQRxOQE3MyMEDgLASoQ==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=intel.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FLWDJuTwvcf2p7s30MSTyYa9WfExOMTR3YABIag+WpQ=;
+ b=Vb9QSAJ/sBbybcGbzrTyEPrsLdaQmx0pcsvS1hAdUnrXA4nLSLG9xxxKfMH0KpZ6ylFN7sComC96CnumOgVjCs5q7eLsokaYPC8pjtWNL9nwFJPvH7jVPpmEHaxng8EjhR/yYfO6JYocIOoEewoUW5lex+UWO8dhLdC/BEBAnKo=
+Received: from DUZPR01CA0306.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b7::16) by DBAPR08MB5719.eurprd08.prod.outlook.com
+ (2603:10a6:10:1a6::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Tue, 16 Sep
+ 2025 18:20:16 +0000
+Received: from DU2PEPF0001E9BF.eurprd03.prod.outlook.com
+ (2603:10a6:10:4b7:cafe::61) by DUZPR01CA0306.outlook.office365.com
+ (2603:10a6:10:4b7::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Tue,
+ 16 Sep 2025 18:20:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DU2PEPF0001E9BF.mail.protection.outlook.com (10.167.8.68) with Microsoft SMTP
+ Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.12 via
+ Frontend Transport; Tue, 16 Sep 2025 18:20:15 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OZaPHniKzrKcB2iKLliSt2cViVBUs51hLw9ONzw+n9yLxbfbZNAdLqNP5T5WPKXndy/9z1KO97M3Qp1J+B1FG2/65i18SXCCmk2X0a6/5VNT5hrz88DANuhLTU1mkT8iPznAm/PVb986DHGULDD5nrWq2F3hLl9MBnwGXeDg22eZcEfT1jB/5XKqkIbAngEsHTcNhk+efd671lz49y6YbXYC2qFG8aVgZfzPhk1MKKuyU0Do8T3u29acXbRLBxgqtTFLNzyTZCE5htwRZxP3ILHwShyQMVwBKzK6ycsKdDTbYDli5bt/XEEjn6NrHZDGon6djEfKzLOSwrvHcGWizw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FLWDJuTwvcf2p7s30MSTyYa9WfExOMTR3YABIag+WpQ=;
+ b=yOyWF+uK1xVeUCtOX4qPL7avAvtamwdeTcUFLH/Y7W0rL/zwptqR8a9H+Ip336tutGnDpxUfw0CeCTLuuYDFBuRKQ3XMTsFO1nOKHNMi4hqBtXPMoHWRhMS+NM7WbqU7zxak6UrtDtQNe8XeLWGNtSQzFOgn16SohuU4F/rWnVt1CxfPm08nbprn9k5BC0UzsYUBE3hgZuzKkrHeYRA270xBMYtBwfGPn9/ntPs/TZ0qTHfQcuKdJ1WtiRJDbY2LBTetVqWK8Y2oP0MQtfC9AmfUKoGdOIlX2QZQTq/FjrfK/1iDjz2xBI+EkkhflJNJ4yFL+s/RwQrfy2OT4kjMSw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FLWDJuTwvcf2p7s30MSTyYa9WfExOMTR3YABIag+WpQ=;
+ b=Vb9QSAJ/sBbybcGbzrTyEPrsLdaQmx0pcsvS1hAdUnrXA4nLSLG9xxxKfMH0KpZ6ylFN7sComC96CnumOgVjCs5q7eLsokaYPC8pjtWNL9nwFJPvH7jVPpmEHaxng8EjhR/yYfO6JYocIOoEewoUW5lex+UWO8dhLdC/BEBAnKo=
+Received: from DU0PR08MB9557.eurprd08.prod.outlook.com (2603:10a6:10:44e::14)
+ by DB9PR08MB9682.eurprd08.prod.outlook.com (2603:10a6:10:462::11)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Tue, 16 Sep
+ 2025 18:19:41 +0000
+Received: from DU0PR08MB9557.eurprd08.prod.outlook.com
+ ([fe80::fdd1:fe93:89d8:1c07]) by DU0PR08MB9557.eurprd08.prod.outlook.com
+ ([fe80::fdd1:fe93:89d8:1c07%3]) with mapi id 15.20.9115.020; Tue, 16 Sep 2025
+ 18:19:41 +0000
+From: Ola Liljedahl <Ola.Liljedahl@arm.com>
+To: Bruce Richardson <bruce.richardson@intel.com>, Wathsala Vithanage
+ <wathsala.vithanage@arm.com>
+CC: Honnappa Nagarahalli <Honnappa.Nagarahalli@arm.com>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>, "dev@dpdk.org" <dev@dpdk.org>, Dhruv
+ Tripathi <Dhruv.Tripathi@arm.com>
+Subject: Re: [PATCH 1/1] ring: safe partial ordering for head/tail update
+Thread-Topic: [PATCH 1/1] ring: safe partial ordering for head/tail update
+Thread-Index: AQHcJnJiBml2HHEBUEWClQ4fxxecK7SV9DeAgABNVwA=
+Date: Tue, 16 Sep 2025 18:19:41 +0000
+Message-ID: <590A2369-28AC-494F-9E27-7CA9C670426C@arm.com>
+References: <20250915185451.533039-1-wathsala.vithanage@arm.com>
+ <20250915185451.533039-2-wathsala.vithanage@arm.com>
+ <aMmFeXsHI9VRn3GY@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aMmFeXsHI9VRn3GY@bricha3-mobl1.ger.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/16.100.25090553
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+x-ms-traffictypediagnostic: DU0PR08MB9557:EE_|DB9PR08MB9682:EE_|DU2PEPF0001E9BF:EE_|DBAPR08MB5719:EE_
+X-MS-Office365-Filtering-Correlation-Id: c66bbcb4-90f8-456d-4934-08ddf54daf35
+x-checkrecipientrouted: true
+nodisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;
+ ARA:13230040|366016|1800799024|376014|38070700021; 
+X-Microsoft-Antispam-Message-Info-Original: =?utf-8?B?TGRTN0ZGMDZiOVJuaFRkRzIxMms5V1diMkIvQ0xleW92YkZGcmoyaWZESllv?=
+ =?utf-8?B?OHFsZWtKSlYzVFNoVlJIam1HVmJ4YzE4U3VHVHJ0WlNLOG4rN0ZHZXJES0hp?=
+ =?utf-8?B?bXBwUDBhajM1cE1heFFQRWF1K3U5dllLOFIyNDgySGVpMGpGMXBLY2hGTUdH?=
+ =?utf-8?B?V2FNN0xZejNycGFsSmV3NDlYZjc5UThDb1k5c3VUa0Z1d21EeXQvR0o5V0Fw?=
+ =?utf-8?B?Z0k4aWlsMVRVZU5KMm9vWkFpb1RpcnN1RWVldGNWY3hjcHdIYS9PbmxnUjBY?=
+ =?utf-8?B?RFYwUnN0SlpSU2NadENSWHhCRlh2N2V6elRpTDNIZ28ybU1OSllUYXN0SXNX?=
+ =?utf-8?B?V3cxSllrejVVM05vV25FZjhKemg0WDVpbWFKRVprSTArcXQ4L2JpL1hHRDht?=
+ =?utf-8?B?MGF5OWwwa0tVZ2dZMTdra3NqMmdta1dwRUlkaFBQczBYQkVqNklEam1KaDFP?=
+ =?utf-8?B?d1FGUG1GYVdKQUVLQ2ZnUHhYak5tOHVjU2ViNFJnNFJSMkZLRmhEUFRMdHUx?=
+ =?utf-8?B?bDkxMU0xVkp1bHgrM0RsYmhuWnArL1padS91VzlKWjJJZThBbWxTS0RLWXUv?=
+ =?utf-8?B?NDJlUGJlKzRMWWNJTVZuY29VeDFsSWhsckx3RGhOZldZUEhCanNpOHNuUE8r?=
+ =?utf-8?B?WWdZQjdKdjB6SzBIZjJrbVV3bngxZzNuZmJuWXorSGZoeVgyNFdUelU2Y2FK?=
+ =?utf-8?B?NkhVQ3JUWUpPTU5PVXNWT2tzYTFvWXdRSVpEeG93bUtFMVRlZjROUVdhVlF1?=
+ =?utf-8?B?bnlteDRQYTFJUERqOGVVSzFnS3IyQmNJdEJGQXd1Q25IV0I0QlFOcUxMMUJ5?=
+ =?utf-8?B?eHlURWlnU080UWVNaEF0SFpyVjJyNGFBcnRUeURrVGZvdzVuUGM1cFkrdkwy?=
+ =?utf-8?B?U0pPaEN0WGJDQVo0ZHRYUFp1OTZ1aXZNRk8rM3ljd0VJbzdUMElNN2QybXJ4?=
+ =?utf-8?B?UXhEVDhtNkJHVjFFYVJMblFMN3ZELzZwZEYrRzB5L05OOFcySFlsRlZrQ1VH?=
+ =?utf-8?B?YXNCU1MySGdBRC9FOVdDSy9nZ2lDQVFNSGFRZEc3clRWYXA4VG16RmlBM3Bj?=
+ =?utf-8?B?dzRjVGlaa21XS2J1NUZtN2w1RVNvdk8yR2xEZnhUOFNDR3F3alJmWDhMN3Vn?=
+ =?utf-8?B?ZmRiOUdzdHVjak95NmM1S3JrSVFVTDZrcnlRbE05eGl4bHlINU94ZFBCR2dx?=
+ =?utf-8?B?cUtmTFFNS1YxSHZiWTk4QnhGMXNQMnVaODB3T2NqREl0aU9Hcks3Z2U0TWNv?=
+ =?utf-8?B?TGczZHVjeExkczJ6cVA4bHhuZjJHUTBOWHk1SUM2Zm0rV2Z0a0Y0dlh6SHd4?=
+ =?utf-8?B?UWRZdHRrOUpSMkRYbE9YSGR0cDI5UFhNeVU0cUkxKzQ1Zm5zK0d5aENiUDhn?=
+ =?utf-8?B?V1p3MURtY1hHQ0U1Rm9Hc2pNOVBIYVU4a3l6NnQzZzNXZUllV0tUTlRzNXBT?=
+ =?utf-8?B?OVk0M2p3YXJmeWRlZjc3R0VvNXdGeHdrdGhDb0FhakdjcUI5ejlQcTJxQkVt?=
+ =?utf-8?B?NWRSVitmTUZTSjVZN1F0VmpEN05iRUZjcFVJckVwRW5MT29nYjRnM0tOMzFV?=
+ =?utf-8?B?VkxLeUJEQzVWODE0cGNGRU1jaThSdmt1ejdrM1ovV243ZDV3cHNJSU5wL1dV?=
+ =?utf-8?B?RHZ4YnppZ3lnemdPWEp5eHdEc2I1eVRlcXpNUWRaM2RPempneVpFMy9jVWFr?=
+ =?utf-8?B?dVF1ZzFSVkVLbnJIeE9qdUVuN1JMTUNSL3Jld2YySWwwOVFWS3VQY2NXWGlE?=
+ =?utf-8?B?Mzc0S05IcEJHL09EdjZlUkY3T1FRSkdsei8reFU2cEk3enhpcGF2RWV5TjQ0?=
+ =?utf-8?B?MDQzMlhEdUNuZVpqMEFDZ0Fjd3dYa3N0RmxkM2lIb2JUY3FERWJWdFVkeGJC?=
+ =?utf-8?B?S1pKSFF2UXJFelpIdmlzWk4vc2hKbU9QK3dwdU9hQ2pXY1laRmJhdllaMElQ?=
+ =?utf-8?B?Q2VKbkR4TDBYQ0xpTlc3T2NBNVovQVFiNjZ5SmNFd3hUY3dWL29RQ1NSZ3JV?=
+ =?utf-8?Q?OLKiQHBRQXZhcrdPPlk9SdDjWAem/M=3D?=
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
+ SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:DU0PR08MB9557.eurprd08.prod.outlook.com;
+ PTR:; CAT:NONE; SFS:(13230040)(366016)(1800799024)(376014)(38070700021);
+ DIR:OUT; SFP:1101; 
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <35202689A34C20418460E75D6DC4B601@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB9682
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DU2PEPF0001E9BF.eurprd03.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 6f51150b-995f-4eb8-8d8d-08ddf54d9af3
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|36860700013|376014|82310400026|35042699022|14060799003|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?dWkrM3JMcTJCdDBkUG5MUXFIVisrWmxYK2YzKzYxMmxkSTVjcUxUQi9FS2ox?=
+ =?utf-8?B?MHcvM211ejJOeS8wODFSVzErZVhTRFlzNXJwSHVBM2p5WVQvL1UwcnFnQStV?=
+ =?utf-8?B?aTlqN25YdGFhWlB5S2NNWXQ3MjkzaFJIb2NyU1BjSEE4NU5IeDRNN3ducito?=
+ =?utf-8?B?SnlyaG5kTlVXeXcwa2lDcUFpbm9oSDdwcGh6RmJJaEhVQmdQR2JxQXZUd0ty?=
+ =?utf-8?B?SDFoUDZVeU5RaVVZeXQ4R0lJR1Nmc2dKNGZlZGgvWFBMZ2loQUdNdTdjbjQr?=
+ =?utf-8?B?QkFRYjZUYkZuSjVuTXpERDVLbkFJZTRJVnVScC9EcjU2QVREejNjc3o3WjJw?=
+ =?utf-8?B?VlMxZ0lydjZCVVdvbGFBTWJ2S09oNThxNnRRTDEveVQxWGg3VDN2VTJmM2xt?=
+ =?utf-8?B?blYvLzZ5aDNqaGtLT1I2b3htWVRHM0Y1TFlwMWw1RmJGOWZWZTM4cE9HSzNp?=
+ =?utf-8?B?L2J5aVh2UjNtRjZaYlRuMVQ0TXo5VVJPQzBqRFpHTm1mbklTaS9wclk2bWxv?=
+ =?utf-8?B?aXlNZm1qKythenlhcEs4ZFRHMytidTFpK25acS9pSjVlL1NzTGh5UHcwVTdk?=
+ =?utf-8?B?cTVXelhtVjMzRkpiWlJvTmFhYmd4WlNpTmN6TS93NEx1N3pDcVptbDFqNHl3?=
+ =?utf-8?B?eFpjQTZSSkpiT1A2SzZtcnZkVDhVd0Nzd1hHYzNQa001RG1NNTJZV3JiTjI3?=
+ =?utf-8?B?eEZyZXRGeWZzTU14Y1dIUUxHemNYWit3LzNqU3d0eTJ3SktmcE1HdE01Tlhz?=
+ =?utf-8?B?VklXanNmenp0a0JMSjZBNzB4a0tiODhPUzhGSjlpdkFZQUJEdFAvcUVWM3Vr?=
+ =?utf-8?B?UUhJcGtScmZmVkFGRzlvMkh2MFBmdjBwNlU2QSt1TFhsaUVEb1pVM3IxVlVy?=
+ =?utf-8?B?Q2NvQ0FCMk13bVp6WjZqMnRaZER0Tmo3eXJPNjZMRGJoRmRQSGdET2loK3Bs?=
+ =?utf-8?B?aWRRVW1CNkdaU1U3b3RpY01qNnIxUEhQTllWRkVhMVlOYTRSdjhJaVZMMHc4?=
+ =?utf-8?B?RGsvM2NUMW5vUDh2bU8ycjE0emF6YmNuZ1ZVcWplOVRDWXFOTWtCQ2g5VVFh?=
+ =?utf-8?B?RllLajhaVnk5Ym5VZXVCV2x2VWN3SU9NMVFOM0hIc2g3aVhDQzFCeUU4a1U2?=
+ =?utf-8?B?cXhyY3A4dEVJNElPRERLWUNvU0d3Z2NueXM4dExsVm55QVpsRDZxOXAvaDRG?=
+ =?utf-8?B?ZkxlMWU2SFlMTzhKajNNeUdMZDE4a2d3QVBGQnJHNWY4bTYwcTYwWHZLem9R?=
+ =?utf-8?B?NGVZbzE5YlFuVVZWbWhKRXAyVFZ6M25IUzFTR2U1VE1GT01jWDU1VG83UE9t?=
+ =?utf-8?B?bHhISmJod2NBa0hXbXh3L0M3eklKQXJldGJjWFdneXdtdHJsREV1MEQ1eGMr?=
+ =?utf-8?B?L29qc1dPMkNJVTVXb2pkUzFZdFdObEsxWEZPSWI2NlNBTkhoWVNlcHVjNHZU?=
+ =?utf-8?B?dUh6bHh4Qlk4MG85Mm1sVVBNUXlIM3FDeDVEbzhORTFueEtEemQ4UmZLSmsz?=
+ =?utf-8?B?YXV4SFJzMzNrK3FNZ0Nia3VPSWFMdEtjS2g3aUc1dkM3aWNGZklKZHFLSWNN?=
+ =?utf-8?B?alkxOENvejNEVDdqanljcW1DbkdJNkhXWU5tSmpEQ1g4SEYvM1l4V0RaOU9S?=
+ =?utf-8?B?dldLblZsdW5zR0RLR0VjZ05uVEpoaDZianJacUZncDg3UWluZXVkU0l2c1VB?=
+ =?utf-8?B?UC9SeTU3ZU1pNzFsYmd4NjB2NWJHcEFUdDVQeEpGdkJ5K0ZZRjJPR3FScGN3?=
+ =?utf-8?B?MEJQa25pcVloNVNjUlM1RVVTM2E5NWFFQ3lMcTUwVmhkVDlVenFQWE1kSldl?=
+ =?utf-8?B?TzVNSGlMSjc4d2xLd1RvRW5LTG1VVTZHOTZ6QytMeElmVnk3VUNSbDdaU3l1?=
+ =?utf-8?B?TXBRdnNKbStsNG0wZkE1ZENQN2hEMnZib2lJTjN1WXBHRHJ3NzJ2Y0tjT05t?=
+ =?utf-8?B?aXpRTGMvOUtta2lVZzc5RHZJWlBCRGZzb2RrbmhBRjBpMExBUzV1R0l6dzEr?=
+ =?utf-8?B?RXAxVkhUY1dQSUVOUUFiclREZFdUbXBZK1FneEF3Y1NpQXBEVXFFbEFuV2dN?=
+ =?utf-8?Q?lZn3mk?=
+X-Forefront-Antispam-Report: CIP:4.158.2.129; CTRY:GB; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:outbound-uk1.az.dlp.m.darktrace.com;
+ PTR:InfoDomainNonexistent; CAT:NONE;
+ SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026)(35042699022)(14060799003)(7053199007);
+ DIR:OUT; SFP:1101; 
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 18:20:15.6193 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c66bbcb4-90f8-456d-4934-08ddf54daf35
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d; Ip=[4.158.2.129];
+ Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource: DU2PEPF0001E9BF.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR08MB5719
+X-Mailman-Approved-At: Wed, 17 Sep 2025 09:30:03 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,316 +214,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In case some CPUs don't support AVX512. Enable AVX2 for them to
-get better per-core performance.
-
-In the single queue model, the same descriptor queue is used by SW
-to post descriptors to the device and used by device to report completed
-descriptors to SW. While as the split queue model separates them into
-different queues for parallel processing and improved performance.
-
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
- drivers/net/intel/idpf/idpf_common_rxtx.h     |   3 +
- .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 246 ++++++++++++++++++
- drivers/net/intel/idpf/idpf_rxtx.c            |  11 +-
- 3 files changed, 258 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
-index 82ddcf3310..d7c0e91256 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.h
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
-@@ -242,6 +242,9 @@ __rte_internal
- uint16_t idpf_dp_splitq_xmit_pkts_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
- 					 uint16_t nb_pkts);
- __rte_internal
-+uint16_t idpf_dp_splitq_recv_pkts_avx2(void *rxq, struct rte_mbuf **rx_pkts,
-+				     uint16_t nb_pkts);
-+__rte_internal
- uint16_t idpf_dp_singleq_recv_scatter_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 			  uint16_t nb_pkts);
- __rte_internal
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-index d0c37cbfc7..cef13b3249 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-@@ -482,6 +482,252 @@ idpf_dp_singleq_recv_pkts_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16
- 	return _idpf_singleq_recv_raw_pkts_vec_avx2(rx_queue, rx_pkts, nb_pkts);
- }
- 
-+static __rte_always_inline void
-+idpf_splitq_rearm_common(struct idpf_rx_queue *rx_bufq)
-+{
-+	int i;
-+	uint16_t rx_id;
-+	volatile union virtchnl2_rx_buf_desc *rxdp = rx_bufq->rx_ring;
-+	struct rte_mbuf **rxep = &rx_bufq->sw_ring[rx_bufq->rxrearm_start];
-+
-+	rxdp += rx_bufq->rxrearm_start;
-+
-+	/* Try to bulk allocate mbufs from mempool */
-+	if (rte_mempool_get_bulk(rx_bufq->mp,
-+				(void **)rxep,
-+				IDPF_RXQ_REARM_THRESH) < 0) {
-+		if (rx_bufq->rxrearm_nb + IDPF_RXQ_REARM_THRESH >= rx_bufq->nb_rx_desc) {
-+			__m128i zero_dma = _mm_setzero_si128();
-+
-+			for (i = 0; i < IDPF_VPMD_DESCS_PER_LOOP; i++) {
-+				rxep[i] = &rx_bufq->fake_mbuf;
-+				_mm_storeu_si128((__m128i *)(uintptr_t)&rxdp[i], zero_dma);
-+			}
-+		}
-+			rte_atomic_fetch_add_explicit(&rx_bufq->rx_stats.mbuf_alloc_failed,
-+							IDPF_RXQ_REARM_THRESH,
-+							rte_memory_order_relaxed);
-+		return;
-+	}
-+
-+	__m128i headroom = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM, RTE_PKTMBUF_HEADROOM);
-+
-+	for (i = 0; i < IDPF_RXQ_REARM_THRESH; i += 2, rxep += 2, rxdp += 2) {
-+		struct rte_mbuf *mb0 = rxep[0];
-+		struct rte_mbuf *mb1 = rxep[1];
-+
-+		__m128i buf_addr0 = _mm_loadu_si128((__m128i *)&mb0->buf_addr);
-+		__m128i buf_addr1 = _mm_loadu_si128((__m128i *)&mb1->buf_addr);
-+
-+		__m128i dma_addr0 = _mm_unpackhi_epi64(buf_addr0, buf_addr0);
-+		__m128i dma_addr1 = _mm_unpackhi_epi64(buf_addr1, buf_addr1);
-+
-+		dma_addr0 = _mm_add_epi64(dma_addr0, headroom);
-+		dma_addr1 = _mm_add_epi64(dma_addr1, headroom);
-+
-+		rxdp[0].split_rd.pkt_addr = _mm_cvtsi128_si64(dma_addr0);
-+		rxdp[1].split_rd.pkt_addr = _mm_cvtsi128_si64(dma_addr1);
-+	}
-+
-+	rx_bufq->rxrearm_start += IDPF_RXQ_REARM_THRESH;
-+	if (rx_bufq->rxrearm_start >= rx_bufq->nb_rx_desc)
-+		rx_bufq->rxrearm_start = 0;
-+
-+	rx_bufq->rxrearm_nb -= IDPF_RXQ_REARM_THRESH;
-+
-+	rx_id = (uint16_t)((rx_bufq->rxrearm_start == 0) ?
-+			(rx_bufq->nb_rx_desc - 1) : (rx_bufq->rxrearm_start - 1));
-+
-+	IDPF_PCI_REG_WRITE(rx_bufq->qrx_tail, rx_id);
-+}
-+
-+static __rte_always_inline void
-+idpf_splitq_rearm_avx2(struct idpf_rx_queue *rx_bufq)
-+{
-+	int i;
-+	uint16_t rx_id;
-+	volatile union virtchnl2_rx_buf_desc *rxdp = rx_bufq->rx_ring;
-+	struct rte_mempool_cache *cache =
-+		rte_mempool_default_cache(rx_bufq->mp, rte_lcore_id());
-+	struct rte_mbuf **rxp = &rx_bufq->sw_ring[rx_bufq->rxrearm_start];
-+
-+	rxdp += rx_bufq->rxrearm_start;
-+
-+	if (unlikely(!cache)) {
-+		idpf_splitq_rearm_common(rx_bufq);
-+		return;
-+	}
-+
-+	if (cache->len < IDPF_RXQ_REARM_THRESH) {
-+		uint32_t req = IDPF_RXQ_REARM_THRESH + (cache->size - cache->len);
-+		int ret = rte_mempool_ops_dequeue_bulk(rx_bufq->mp,
-+						&cache->objs[cache->len], req);
-+		if (ret == 0) {
-+			cache->len += req;
-+		} else {
-+			if (rx_bufq->rxrearm_nb + IDPF_RXQ_REARM_THRESH >=
-+				rx_bufq->nb_rx_desc) {
-+				__m128i dma_addr0 = _mm_setzero_si128();
-+				for (i = 0; i < IDPF_VPMD_DESCS_PER_LOOP; i++) {
-+					rxp[i] = &rx_bufq->fake_mbuf;
-+					_mm_storeu_si128(RTE_CAST_PTR(__m128i *, &rxdp[i]),
-+					dma_addr0);
-+				}
-+			}
-+			rte_atomic_fetch_add_explicit(&rx_bufq->rx_stats.mbuf_alloc_failed,
-+				IDPF_RXQ_REARM_THRESH, rte_memory_order_relaxed);
-+			return;
-+		}
-+	}
-+	__m128i headroom = _mm_set_epi64x(RTE_PKTMBUF_HEADROOM, RTE_PKTMBUF_HEADROOM);
-+	const int step = 2;
-+
-+	for (i = 0; i < IDPF_RXQ_REARM_THRESH; i += step, rxp += step, rxdp += step) {
-+		struct rte_mbuf *mb0 = (struct rte_mbuf *)cache->objs[--cache->len];
-+		struct rte_mbuf *mb1 = (struct rte_mbuf *)cache->objs[--cache->len];
-+		rxp[0] = mb0;
-+		rxp[1] = mb1;
-+
-+		__m128i buf_addr0 = _mm_loadu_si128((__m128i *)&mb0->buf_addr);
-+		__m128i buf_addr1 = _mm_loadu_si128((__m128i *)&mb1->buf_addr);
-+
-+		__m128i dma_addr0 = _mm_unpackhi_epi64(buf_addr0, buf_addr0);
-+		__m128i dma_addr1 = _mm_unpackhi_epi64(buf_addr1, buf_addr1);
-+
-+		dma_addr0 = _mm_add_epi64(dma_addr0, headroom);
-+		dma_addr1 = _mm_add_epi64(dma_addr1, headroom);
-+
-+		rxdp[0].split_rd.pkt_addr = _mm_cvtsi128_si64(dma_addr0);
-+		rxdp[1].split_rd.pkt_addr = _mm_cvtsi128_si64(dma_addr1);
-+	}
-+
-+	rx_bufq->rxrearm_start += IDPF_RXQ_REARM_THRESH;
-+	if (rx_bufq->rxrearm_start >= rx_bufq->nb_rx_desc)
-+		rx_bufq->rxrearm_start = 0;
-+
-+	rx_bufq->rxrearm_nb -= IDPF_RXQ_REARM_THRESH;
-+
-+	rx_id = (uint16_t)((rx_bufq->rxrearm_start == 0) ?
-+				(rx_bufq->nb_rx_desc - 1) : (rx_bufq->rxrearm_start - 1));
-+
-+	IDPF_PCI_REG_WRITE(rx_bufq->qrx_tail, rx_id);
-+}
-+static __rte_always_inline uint16_t
-+_idpf_splitq_recv_raw_pkts_vec_avx2(struct idpf_rx_queue *rxq,
-+					struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
-+{
-+	const uint32_t *ptype_tbl = rxq->adapter->ptype_tbl;
-+	struct rte_mbuf **sw_ring = &rxq->bufq2->sw_ring[rxq->rx_tail];
-+	volatile union virtchnl2_rx_desc *rxdp =
-+		(volatile union virtchnl2_rx_desc *)rxq->rx_ring + rxq->rx_tail;
-+
-+	rte_prefetch0(rxdp);
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, 4); /* 4 desc per AVX2 iteration */
-+
-+	if (rxq->bufq2->rxrearm_nb > IDPF_RXQ_REARM_THRESH)
-+		idpf_splitq_rearm_avx2(rxq->bufq2);
-+
-+	uint64_t head_gen = rxdp->flex_adv_nic_3_wb.pktlen_gen_bufq_id;
-+	if (((head_gen >> VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_S) &
-+		 VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_M) != rxq->expected_gen_id)
-+		return 0;
-+
-+	const __m128i gen_mask =
-+		_mm_set1_epi64x(((uint64_t)rxq->expected_gen_id) << 46);
-+
-+	uint16_t received = 0;
-+	for (uint16_t i = 0; i < nb_pkts; i += 4, rxdp += 4) {
-+		/* Step 1: pull mbufs */
-+		__m128i ptrs = _mm_loadu_si128((__m128i *)&sw_ring[i]);
-+		_mm_storeu_si128((__m128i *)&rx_pkts[i], ptrs);
-+
-+		/* Step 2: load descriptors */
-+		__m128i d0 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, &rxdp[0]));
-+		rte_compiler_barrier();
-+		__m128i d1 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, &rxdp[1]));
-+		rte_compiler_barrier();
-+		__m128i d2 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, &rxdp[2]));
-+		rte_compiler_barrier();
-+		__m128i d3 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, &rxdp[3]));
-+
-+		/* Step 3: shuffle out pkt_len, data_len, vlan, rss */
-+		const __m256i shuf = _mm256_set_epi8(
-+			/* descriptor 3 */
-+			0xFF, 0xFF, 0xFF, 0xFF, 11, 10, 5, 4,
-+			0xFF, 0xFF, 5, 4, 0xFF, 0xFF, 0xFF, 0xFF,
-+			/* descriptor 2 */
-+			0xFF, 0xFF, 0xFF, 0xFF, 11, 10, 5, 4,
-+			0xFF, 0xFF, 5, 4, 0xFF, 0xFF, 0xFF, 0xFF
-+		);
-+		__m128i d01_lo = d0, d01_hi = d1;
-+		__m128i d23_lo = d2, d23_hi = d3;
-+
-+		__m256i m23 = _mm256_shuffle_epi8(_mm256_set_m128i(d23_hi, d23_lo), shuf);
-+		__m256i m01 = _mm256_shuffle_epi8(_mm256_set_m128i(d01_hi, d01_lo), shuf);
-+
-+		/* Step 4: extract ptypes */
-+		const __m256i ptype_mask = _mm256_set1_epi16(VIRTCHNL2_RX_FLEX_DESC_PTYPE_M);
-+		__m256i pt23 = _mm256_and_si256(_mm256_set_m128i(d23_hi, d23_lo), ptype_mask);
-+		__m256i pt01 = _mm256_and_si256(_mm256_set_m128i(d01_hi, d01_lo), ptype_mask);
-+
-+		uint16_t ptype2 = _mm256_extract_epi16(pt23, 1);
-+		uint16_t ptype3 = _mm256_extract_epi16(pt23, 9);
-+		uint16_t ptype0 = _mm256_extract_epi16(pt01, 1);
-+		uint16_t ptype1 = _mm256_extract_epi16(pt01, 9);
-+
-+		m23 = _mm256_insert_epi32(m23, ptype_tbl[ptype3], 2);
-+		m23 = _mm256_insert_epi32(m23, ptype_tbl[ptype2], 0);
-+		m01 = _mm256_insert_epi32(m01, ptype_tbl[ptype1], 2);
-+		m01 = _mm256_insert_epi32(m01, ptype_tbl[ptype0], 0);
-+
-+		/* Step 5: extract gen bits */
-+		__m128i sts0 = _mm_srli_epi64(d0, 46);
-+		__m128i sts1 = _mm_srli_epi64(d1, 46);
-+		__m128i sts2 = _mm_srli_epi64(d2, 46);
-+		__m128i sts3 = _mm_srli_epi64(d3, 46);
-+
-+		__m128i merged_lo = _mm_unpacklo_epi64(sts0, sts2);
-+		__m128i merged_hi = _mm_unpacklo_epi64(sts1, sts3);
-+		__m128i valid = _mm_and_si128(_mm_and_si128(merged_lo, merged_hi),
-+						  _mm_unpacklo_epi64(gen_mask, gen_mask));
-+		__m128i cmp = _mm_cmpeq_epi64(valid, _mm_unpacklo_epi64(gen_mask, gen_mask));
-+		int burst = _mm_movemask_pd(_mm_castsi128_pd(cmp));
-+
-+		/* Step 6: write rearm_data safely */
-+		__m128i m01_lo = _mm256_castsi256_si128(m01);
-+		__m128i m23_lo = _mm256_castsi256_si128(m23);
-+
-+		*(uint64_t *)&rx_pkts[i]->rearm_data = _mm_extract_epi64(m01_lo, 0);
-+		*(uint64_t *)&rx_pkts[i + 1]->rearm_data = _mm_extract_epi64(m01_lo, 1);
-+		*(uint64_t *)&rx_pkts[i + 2]->rearm_data = _mm_extract_epi64(m23_lo, 0);
-+		*(uint64_t *)&rx_pkts[i + 3]->rearm_data = _mm_extract_epi64(m23_lo, 1);
-+
-+		received += burst;
-+		if (burst != 4)
-+			break;
-+	}
-+
-+	rxq->rx_tail += received;
-+	if (received & 1) {
-+		rxq->rx_tail &= ~(uint16_t)1;
-+		received--;
-+	}
-+	rxq->rx_tail &= (rxq->nb_rx_desc - 1);
-+	rxq->expected_gen_id ^= ((rxq->rx_tail & rxq->nb_rx_desc) != 0);
-+	rxq->bufq2->rxrearm_nb += received;
-+
-+	return received;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_splitq_recv_pkts_avx2)
-+uint16_t
-+idpf_dp_splitq_recv_pkts_avx2(void *rx_queue, struct rte_mbuf **rx_pkts,
-+				 uint16_t nb_pkts)
-+{
-+	return _idpf_splitq_recv_raw_pkts_vec_avx2(rx_queue, rx_pkts, nb_pkts);
-+}
-+
-+
- static inline void
- idpf_singleq_vtx1(volatile struct idpf_base_tx_desc *txdp,
- 		  struct rte_mbuf *pkt, uint64_t flags)
-diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
-index 7d5d8b9c48..413902ca21 100644
---- a/drivers/net/intel/idpf/idpf_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_rxtx.c
-@@ -803,10 +803,17 @@ idpf_set_rx_function(struct rte_eth_dev *dev)
- 				return;
- 			}
- #endif /* CC_AVX512_SUPPORT */
-+			if (vport->rx_use_avx2) {
-+				PMD_DRV_LOG(NOTICE,
-+						"Using Split AVX2 Vector Rx (port %d).",
-+						dev->data->port_id);
-+				dev->rx_pkt_burst = idpf_dp_splitq_recv_pkts_avx2;
-+				return;
-+			}
- 		}
- 		PMD_DRV_LOG(NOTICE,
--			    "Using Split Scalar Rx (port %d).",
--			    dev->data->port_id);
-+				"Using Split Scalar Rx (port %d).",
-+				dev->data->port_id);
- 		dev->rx_pkt_burst = idpf_dp_splitq_recv_pkts;
- 	} else {
- 		if (vport->rx_vec_allowed) {
--- 
-2.34.1
-
+KEkgYW0gc2VuZGluZyB0aGlzIGZyb20gT3V0bG9vaywgSSBob3BlIEkgaGF2ZSBiZWVuIGFibGUg
+dG8gZmFrZSBhIHByb3Blcg0KZW1haWwgY2xpZW50KQ0KDQo+IE9uIDIwMjUtMDktMTYsIDE3OjQz
+LCAiQnJ1Y2UgUmljaGFyZHNvbiIgPGJydWNlLnJpY2hhcmRzb25AaW50ZWwuY29tID4gPG1haWx0
+bzpicnVjZS5yaWNoYXJkc29uQGludGVsLmNvbT4+IHdyb3RlOg0KPg0KPg0KPiBPbiBNb24sIFNl
+cCAxNSwgMjAyNSBhdCAwNjo1NDo1MFBNICswMDAwLCBXYXRoc2FsYSBWaXRoYW5hZ2Ugd3JvdGU6
+DQo+ID4gVGhlIGZ1bmN0aW9uIF9fcnRlX3JpbmdfaGVhZHRhaWxfbW92ZV9oZWFkKCkgYXNzdW1l
+cyB0aGF0IHRoZSBiYXJyaWVyDQo+ID4gKGZlbmNlKSBiZXR3ZWVuIHRoZSBsb2FkIG9mIHRoZSBo
+ZWFkIGFuZCB0aGUgbG9hZC1hY3F1aXJlIG9mIHRoZQ0KPiA+IG9wcG9zaW5nIHRhaWwgZ3VhcmFu
+dGVlcyB0aGUgZm9sbG93aW5nOiBpZiBhIGZpcnN0IHRocmVhZCByZWFkcyB0YWlsDQo+ID4gYW5k
+IHRoZW4gd3JpdGVzIGhlYWQgYW5kIGEgc2Vjb25kIHRocmVhZCByZWFkcyB0aGUgbmV3IHZhbHVl
+IG9mIGhlYWQNCj4gPiBhbmQgdGhlbiByZWFkcyB0YWlsLCB0aGVuIGl0IHNob3VsZCBvYnNlcnZl
+IHRoZSBzYW1lIChvciBhIGxhdGVyKQ0KPiA+IHZhbHVlIG9mIHRhaWwuDQo+ID4NCj4gPiBUaGlz
+IGFzc3VtcHRpb24gaXMgaW5jb3JyZWN0IHVuZGVyIHRoZSBDMTEgbWVtb3J5IG1vZGVsLiBJZiB0
+aGUgYmFycmllcg0KPiA+IChmZW5jZSkgaXMgaW50ZW5kZWQgdG8gZXN0YWJsaXNoIGEgdG90YWwg
+b3JkZXJpbmcgb2YgcmluZyBvcGVyYXRpb25zLA0KPiA+IGl0IGZhaWxzIHRvIGRvIHNvLiBJbnN0
+ZWFkLCB0aGUgY3VycmVudCBpbXBsZW1lbnRhdGlvbiBvbmx5IGVuZm9yY2VzIGENCj4gPiBwYXJ0
+aWFsIG9yZGVyaW5nLCB3aGljaCBjYW4gbGVhZCB0byB1bnNhZmUgaW50ZXJsZWF2aW5ncy4gSW4g
+cGFydGljdWxhciwNCj4gPiBzb21lIHBhcnRpYWwgb3JkZXJzIGNhbiBjYXVzZSB1bmRlcmZsb3dz
+IGluIGZyZWUgc2xvdCBvciBhdmFpbGFibGUNCj4gPiBlbGVtZW50IGNvbXB1dGF0aW9ucywgcG90
+ZW50aWFsbHkgcmVzdWx0aW5nIGluIGRhdGEgY29ycnVwdGlvbi4NCj4gPg0KPiA+IFRoZSBpc3N1
+ZSBtYW5pZmVzdHMgd2hlbiBhIENQVSBmaXJzdCBhY3RzIGFzIGEgcHJvZHVjZXIgYW5kIGxhdGVy
+IGFzIGENCj4gPiBjb25zdW1lci4gSW4gdGhpcyBzY2VuYXJpbywgdGhlIGJhcnJpZXIgYXNzdW1w
+dGlvbiBtYXkgZmFpbCB3aGVuIGFub3RoZXINCj4gPiBjb3JlIHRha2VzIHRoZSBjb25zdW1lciBy
+b2xlLiBBIEhlcmQ3IGxpdG11cyB0ZXN0IGluIEMxMSBjYW4gZGVtb25zdHJhdGUNCj4gPiB0aGlz
+IHZpb2xhdGlvbi4gVGhlIHByb2JsZW0gaGFzIG5vdCBiZWVuIHdpZGVseSBvYnNlcnZlZCBzbyBm
+YXIgYmVjYXVzZToNCj4gPiAoYSkgb24gc3Ryb25nIG1lbW9yeSBtb2RlbHMgKGUuZy4sIHg4Ni02
+NCkgdGhlIGFzc3VtcHRpb24gaG9sZHMsIGFuZA0KPiA+IChiKSBvbiByZWxheGVkIG1vZGVscyB3
+aXRoIFJDc2Mgc2VtYW50aWNzIHRoZSBvcmRlcmluZyBpcyBzdGlsbCBzdHJvbmcNCj4gPiBlbm91
+Z2ggdG8gcHJldmVudCBoYXphcmRzLg0KPiA+IFRoZSBwcm9ibGVtIGJlY29tZXMgdmlzaWJsZSBv
+bmx5IG9uIHdlYWtlciBtb2RlbHMsIHdoZW4gbG9hZC1hY3F1aXJlIGlzDQo+ID4gaW1wbGVtZW50
+ZWQgd2l0aCBSQ3BjIHNlbWFudGljcyAoZS5nLiBzb21lIEFBcmNoNjQgQ1BVcyB3aGljaCBzdXBw
+b3J0DQo+ID4gdGhlIExEQVBSIGFuZCBMREFQVVIgaW5zdHJ1Y3Rpb25zKS4NCj4gPg0KPiA+IFRo
+cmVlIHBvc3NpYmxlIHNvbHV0aW9ucyBleGlzdDoNCj4gPiAxLiBTdHJlbmd0aGVuIG9yZGVyaW5n
+IGJ5IHVwZ3JhZGluZyByZWxlYXNlL2FjcXVpcmUgc2VtYW50aWNzIHRvDQo+ID4gc2VxdWVudGlh
+bCBjb25zaXN0ZW5jeS4gVGhpcyByZXF1aXJlcyB1c2luZyBzZXEtY3N0IGZvciBzdG9yZXMsDQo+
+ID4gbG9hZHMsIGFuZCBDQVMgb3BlcmF0aW9ucy4gSG93ZXZlciwgdGhpcyBhcHByb2FjaCBpbnRy
+b2R1Y2VzIGENCj4gPiBzaWduaWZpY2FudCBwZXJmb3JtYW5jZSBwZW5hbHR5IG9uIHJlbGF4ZWQt
+bWVtb3J5IGFyY2hpdGVjdHVyZXMuDQo+ID4NCj4gPiAyLiBFc3RhYmxpc2ggYSBzYWZlIHBhcnRp
+YWwgb3JkZXIgYnkgZW5mb3JjaW5nIGEgcGFpci13aXNlDQo+ID4gaGFwcGVucy1iZWZvcmUgcmVs
+YXRpb25zaGlwIGJldHdlZW4gdGhyZWFkIG9mIHNhbWUgcm9sZSBieSBjaGFuZ2luZw0KPiA+IHRo
+ZSBDQVMgYW5kIHRoZSBwcmVjZWRpbmcgbG9hZCBvZiB0aGUgaGVhZCBieSBjb252ZXJ0aW5nIHRo
+ZW0gdG8NCj4gPiByZWxlYXNlIGFuZCBhY3F1aXJlIHJlc3BlY3RpdmVseS4gVGhpcyBhcHByb2Fj
+aCBtYWtlcyB0aGUgb3JpZ2luYWwNCj4gPiBiYXJyaWVyIGFzc3VtcHRpb24gdW5uZWNlc3Nhcnkg
+YW5kIGFsbG93cyBpdHMgcmVtb3ZhbC4NCj4gPg0KPiA+IDMuIFJldGFpbiBwYXJ0aWFsIG9yZGVy
+aW5nIGJ1dCBlbnN1cmUgb25seSBzYWZlIHBhcnRpYWwgb3JkZXJzIGFyZQ0KPiA+IGNvbW1pdHRl
+ZC4gVGhpcyBjYW4gYmUgZG9uZSBieSBkZXRlY3RpbmcgdW5kZXJmbG93IGNvbmRpdGlvbnMNCj4g
+PiAocHJvZHVjZXIgPCBjb25zdW1lcikgYW5kIHF1YXNoaW5nIHRoZSB1cGRhdGUgaW4gc3VjaCBj
+YXNlcy4NCj4gPiBUaGlzIGFwcHJvYWNoIG1ha2VzIHRoZSBvcmlnaW5hbCBiYXJyaWVyIGFzc3Vt
+cHRpb24gdW5uZWNlc3NhcnkNCj4gPiBhbmQgYWxsb3dzIGl0cyByZW1vdmFsLg0KPiA+DQo+ID4g
+VGhpcyBwYXRjaCBpbXBsZW1lbnRzIHNvbHV0aW9uICgzKSBmb3IgcGVyZm9ybWFuY2UgcmVhc29u
+cy4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFdhdGhzYWxhIFZpdGhhbmFnZSA8d2F0aHNhbGEu
+dml0aGFuYWdlQGFybS5jb20gPG1haWx0bzp3YXRoc2FsYS52aXRoYW5hZ2VAYXJtLmNvbT4+DQo+
+ID4gU2lnbmVkLW9mZi1ieTogT2xhIExpbGplZGFobCA8b2xhLmxpbGplZGFobEBhcm0uY29tIDxt
+YWlsdG86b2xhLmxpbGplZGFobEBhcm0uY29tPj4NCj4gPiBSZXZpZXdlZC1ieTogSG9ubmFwcGEg
+TmFnYXJhaGFsbGkgPGhvbm5hcHBhLm5hZ2FyYWhhbGxpQGFybS5jb20gPG1haWx0bzpob25uYXBw
+YS5uYWdhcmFoYWxsaUBhcm0uY29tPj4NCj4gPiBSZXZpZXdlZC1ieTogRGhydXYgVHJpcGF0aGkg
+PGRocnV2LnRyaXBhdGhpQGFybS5jb20gPG1haWx0bzpkaHJ1di50cmlwYXRoaUBhcm0uY29tPj4N
+Cj4gPiAtLS0NCj4gPiBsaWIvcmluZy9ydGVfcmluZ19jMTFfcHZ0LmggfCAxMCArKysrKysrLS0t
+DQo+ID4gMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4g
+Pg0KPiBUaGFuayB5b3UgZm9yIHRoZSB2ZXJ5IGNvbXByZWhlbnNpdmUgd3JpdGUtdXAgaW4gdGhl
+IGFydGljbGUgYWJvdXQgdGhpcy4NCj4gSXQgd2FzIHZlcnkgZWR1Y2F0aW9uYWwuDQo+DQo+DQo+
+IE9uIHRoZSBwYXRjaCwgYXJlIHdlIHN1cmUgdGhhdCBvcHRpb24gIzMgaXMgc2FmZSB0byB0YWtl
+IGFzIGFuIGFwcHJvYWNoPyBJdA0KPiBzZWVtcyB3cm9uZyB0byBtZSB0byBkZWxpYmVyYXRlbHkg
+bGVhdmUgb3JkZXJpbmcgaXNzdWVzIGluIHRoZSBjb2RlIGFuZA0KPiBqdXN0IHRyeSBhbmQgZml4
+IHRoZW0gdXAgbGF0ZXIuIFdvdWxkIHRoZXJlIGJlIGEgbm90aWNhYmxlIHBlcmZvcm1hbmNlDQo+
+IGRpZmZlcmVuY2UgZm9yIHJlYWwtd29ybGQgYXBwcyBpZiB3ZSB0b29rIG9wdGlvbiAjMiwgYW5k
+IGFjdHVhbGx5IHVzZWQNCj4gY29ycmVjdCBvcmRlcmluZyBzZW1hbnRpY3M/DQpJIGFtIHByZXR0
+eSBzdXJlIHRoYXQgYWxsIG5lY2Vzc2FyeSBvcmRlcmluZ3MgZm9yIHNhZmVseSB0cmFuc2ZlcnJp
+bmcgZWxlbWVudHMNCmZyb20gcHJvZHVjZXJzIHRvIGNvbnN1bWVycyAoYW5kIGVtcHR5IHNsb3Rz
+IGZyb20gY29uc3VtZXJzIHRvIHByb2R1Y2VycykNCmFyZSBwcmVzZW50IGluIHRoZSBjb2RlIChJ
+IHN0aWxsIGhhdmUgc29tZSBxdWVzdGlvbnMgb24gdGhlIHVzZSBvZiBtZW1vcnkNCm9yZGVyIHJl
+bGF4ZWQgaW4gX19ydGVfcmluZ191cGRhdGVfdGFpbCwgd2Ugc2hvdWxkIGNyZWF0ZSBhIGxpdG11
+cyB0ZXN0IGZvcg0KdGhpcywgdG8gc2VlIHdoYXQgaXMgcmVxdWlyZWQgYnkgdGhlIEMgbWVtb3J5
+IG1vZGVsKS4gV2hhdCBvdGhlciBtZXRyaWNzDQpmb3IgY29ycmVjdG5lc3MgZG8geW91IHN1Z2dl
+c3Q/DQoNClNvbWUgZGF0YSBzdHJ1Y3R1cmVzIGFyZSBzcGVjaWZpZWQgb3IgZXhwZWN0ZWQgKGV4
+cGxpY2l0bHkgb3IgaW1wbGljaXRseSkgdG8gYmUNCmUuZy4gc2VxdWVudGlhbGx5IGNvbnNpc3Rl
+bnQsIHNvbWVvbmUgY2xhaW1lZCB0aGlzIGlzIHRydWUgZm9yIHNvbWUNCnN5bmNocm9uaXphdGlv
+biBtZWNoYW5pc21zIGluIHRoZSBMaW51eCBrZXJuZWwgYW5kIEkgaGF2ZSBzZWVuIHN1Y2ggY2xh
+aW1zDQpmb3IgdGhlIFBPU0lYIG11dGV4LiBBcmUgdGhlcmUgYW55IHNpbWlsYXIgcmVxdWlyZW1l
+bnRzIGZvciBEUERLIHJpbmcgYnVmZmVycz8NCg0KLSBPbGENCg0KPiBJIHJlYWxpc2UgdGhlIHBl
+cmYgZGF0YSBpbiB0aGUgYmxvZyBwb3N0IGFib3V0DQo+IHRoaXMgc2hvd3MgaXQgYmVpbmcgc2xv
+d2VyLCBidXQgZm9yIGVucXVldWVzIGFuZCBkZXF1ZXVlcyBvZiBidXJzdHMsIG9mDQo+IGUuZy4g
+OCwgcmF0aGVyIHRoYW4ganVzdCAxLCBpcyB0aGVyZSBhIHZlcnkgYmlnIGRlbHRhPw0KPg0KPg0K
+PiBSZWdhcmRzLA0KPiAvQnJ1Y2UNCg0KDQoNCklNUE9SVEFOVCBOT1RJQ0U6IFRoZSBjb250ZW50
+cyBvZiB0aGlzIGVtYWlsIGFuZCBhbnkgYXR0YWNobWVudHMgYXJlIGNvbmZpZGVudGlhbCBhbmQg
+bWF5IGFsc28gYmUgcHJpdmlsZWdlZC4gSWYgeW91IGFyZSBub3QgdGhlIGludGVuZGVkIHJlY2lw
+aWVudCwgcGxlYXNlIG5vdGlmeSB0aGUgc2VuZGVyIGltbWVkaWF0ZWx5IGFuZCBkbyBub3QgZGlz
+Y2xvc2UgdGhlIGNvbnRlbnRzIHRvIGFueSBvdGhlciBwZXJzb24sIHVzZSBpdCBmb3IgYW55IHB1
+cnBvc2UsIG9yIHN0b3JlIG9yIGNvcHkgdGhlIGluZm9ybWF0aW9uIGluIGFueSBtZWRpdW0uIFRo
+YW5rIHlvdS4NCg==
