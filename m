@@ -2,60 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9A0CAC59B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 13:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD2ACAC599
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 13:44:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BE8FD402E5;
-	Tue, 16 Sep 2025 15:22:42 +0200 (CEST)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
- [209.85.214.176])
- by mails.dpdk.org (Postfix) with ESMTP id 81D41402C2
- for <dev@dpdk.org>; Tue, 16 Sep 2025 15:22:41 +0200 (CEST)
-Received: by mail-pl1-f176.google.com with SMTP id
- d9443c01a7336-267a5aeb9f1so12456175ad.1
- for <dev@dpdk.org>; Tue, 16 Sep 2025 06:22:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1758028961; x=1758633761; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=gHtmP1/e4IBNDZ60YMMvz0TQZhhTw3toGIIIVU9gJWU=;
- b=OyUUhe641I9eW3r/ibercgZT3lyprR6sSe3lCxctsXsPvS9RNfYZiauIZKBtJiovrV
- LOA/nlA+e3vSgA7TazJOdU34/nwhPpc/PG9IKwqmFt6giiQpBiimUfxtPdsVp73p3TAV
- tdUHw5ycK2MfdfBwkeqo4W0XJdGq7SVIesY20=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758028961; x=1758633761;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=gHtmP1/e4IBNDZ60YMMvz0TQZhhTw3toGIIIVU9gJWU=;
- b=dsJbvgx/Crnqel9AsOuIfphnW/AofEyGPwhBVp9yQW6waZdpH7Fcd+2mOXGEkJVXD7
- COPWWTJzFvEktTPRPL3mDQOSfgNWqmslp/6EGBWxZsDzC+9Ck0ckyJN3sEU2urnPIXuI
- suWa72KAK983jeaMTMD2T1OLtfiRW/rWfRm+s5L6imip7/nx8Tc8j2JeuoxoOmPW7DWI
- fqmIUKr1k+wdKiftXShoK8979sJ6X3PZP3p4CWrhI/n1/W/ezRFtmJoToT4nYyj6dact
- ogvs3msEpzJfOBLrOIuixqZNAoJSB0PvsHuhtqChz0y4sVI7WtfQstQxDBBu48ZCmJaZ
- wh2Q==
-X-Gm-Message-State: AOJu0Yw0M08RhWYaK4B740aoxim9DpW/ga6sEXIxGK/xLMGP5ugVbPdP
- Y80NmuX452lpNrOxzwwGimuWC9MyMY47IN1nHpskCE0e32Yf/eFHunBP4a0DJhzYfuR041uAwQP
- SVhegz4Zl5AvA4VIvOkfPWjPwZQD9rnId4v13RCYgcQ==
-X-Gm-Gg: ASbGncuCjQx0QxvJKhKyL7n0NCKkeZEpIuUmhPQuPggxsajiTrqkWDnyoBzD87iaab6
- VzMr7+9X35T9NhYObs5XkCohlwhgURCIAsYeo6rRIIOToTXmYrcrEVt2MAXvLgzLNiZwRn4NRWb
- VLpHi1RwOox0piGhkep/0yTwPI6/lIVfkcbGMAAxBSgQe5aiCg+3Mq/SdDvVb3iznG0a3YZVwTy
- im3Y3ZZ6AaPnHTa6v4a49XOOBgAFmfyG/Cgb5ZdF+35W9FDSGY=
-X-Google-Smtp-Source: AGHT+IHDZP+kLCeg1LkvIJnO28Yn9q/9KNEtb6Dv3XO1Fov75klxc4LX0Pam17DLRZbVJzt9kt1Pi2+rAeGzmC9TqrY=
-X-Received: by 2002:a17:903:3888:b0:24c:bdf5:d74b with SMTP id
- d9443c01a7336-25d24da2d43mr209141595ad.19.1758028960638; Tue, 16 Sep 2025
- 06:22:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B8CFC402D1;
+	Tue, 16 Sep 2025 15:44:54 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 830A7402C2
+ for <dev@dpdk.org>; Tue, 16 Sep 2025 15:44:53 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 65CF746F09; Tue, 16 Sep 2025 15:44:53 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/DTS Bug 1788] Review all testsuite imports
+Date: Tue, 16 Sep 2025 13:44:53 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: DTS
+X-Bugzilla-Version: 25.07
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: minor
+X-Bugzilla-Who: probb@iol.unh.edu
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter cc
+ target_milestone
+Message-ID: <bug-1788-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17580302930.972c50E.2995464
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-References: <20250908163456.420268-1-shperetz@nvidia.com>
-In-Reply-To: <20250908163456.420268-1-shperetz@nvidia.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Tue, 16 Sep 2025 09:15:38 -0400
-X-Gm-Features: AS18NWDK9_DQIwtHlxmUKws_xchyspHiEoAoIhDcZHOsknzbtqiouA5ppW3CWXM
-Message-ID: <CAJvnSUBtD-XRzn5x4q4WEhNZeXAcXPPbZQqh-4cdexVcpLhPBA@mail.gmail.com>
-Subject: Re: [PATCH] eal: fix DMA mask validation inconsistency in IOVA VA
-To: Shani Peretz <shperetz@nvidia.com>
-Cc: dev@dpdk.org, thomas@monjalon.net
-Content-Type: multipart/alternative; boundary="000000000000b43e32063eeb03d7"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,266 +54,176 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000b43e32063eeb03d7
-Content-Type: text/plain; charset="UTF-8"
+
+--17580302930.972c50E.2995464
+Date: Tue, 16 Sep 2025 15:44:53 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-FYI The DTS failure for this series on patchwork for the MTU testsuite is
-coming from a different patch than this one. Once I have that resolved, I
-will put in a retest for this series which will clear up that MTU testsuite
-failure.
+https://bugs.dpdk.org/show_bug.cgi?id=3D1788
 
-On Mon, Sep 8, 2025 at 12:35=E2=80=AFPM Shani Peretz <shperetz@nvidia.com> =
-wrote:
+            Bug ID: 1788
+           Summary: Review all testsuite imports
+           Product: DPDK
+           Version: 25.07
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: minor
+          Priority: Normal
+         Component: DTS
+          Assignee: dev@dpdk.org
+          Reporter: probb@iol.unh.edu
+                CC: juraj.linkes@pantheon.tech, probb@iol.unh.edu
+  Target Milestone: ---
 
-> When --iova-mode is explicitly specified in command line, DMA mask
-> constraints were not being validated, leading to potential runtime
-> failures when device DMA capabilities are exceeded.
->
-> The issue occurred because rte_bus_get_iommu_class() was only called
-> during IOVA mode auto-detection, but this function has the important
-> side effect of triggering DMA mask detection (e.g., Intel IOMMU
-> address width checking via pci_device_iommu_support_va()).
->
-> This created an inconsistency, when choosing explicit mode,
-> the DMA checks are bypassed, but when choosing auto-detection mode,
-> the constraints are checked and enforced.
->
-> The fix moves rte_bus_get_iommu_class() outside the conditional logic
-> to ensure it's always called during EAL initialization.
->
-> Fixes: 4374ebc24bc1 ("malloc: modify error message for DMA mask check")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
-> ---
->  lib/eal/freebsd/eal.c | 6 +++++-
->  lib/eal/linux/eal.c   | 5 ++++-
->  lib/eal/windows/eal.c | 5 ++++-
->  3 files changed, 13 insertions(+), 3 deletions(-)
->
-> diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-> index c1ab8d86d2..0f957919d3 100644
-> --- a/lib/eal/freebsd/eal.c
-> +++ b/lib/eal/freebsd/eal.c
-> @@ -670,12 +670,16 @@ rte_eal_init(int argc, char **argv)
->          * with a message describing the cause.
->          */
->         has_phys_addr =3D internal_conf->no_hugetlbfs =3D=3D 0;
-> +
-> +       /* Always call rte_bus_get_iommu_class() to trigger DMA mask
-> detection and validation */
-> +       enum rte_iova_mode bus_iova_mode =3D rte_bus_get_iommu_class();
-> +
->         iova_mode =3D internal_conf->iova_mode;
->         if (iova_mode =3D=3D RTE_IOVA_DC) {
->                 EAL_LOG(DEBUG, "Specific IOVA mode is not requested,
-> autodetecting");
->                 if (has_phys_addr) {
->                         EAL_LOG(DEBUG, "Selecting IOVA mode according to
-> bus requests");
-> -                       iova_mode =3D rte_bus_get_iommu_class();
-> +                       iova_mode =3D bus_iova_mode;
->                         if (iova_mode =3D=3D RTE_IOVA_DC) {
->                                 if (!RTE_IOVA_IN_MBUF) {
->                                         iova_mode =3D RTE_IOVA_VA;
-> diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-> index 52efb8626b..3a0c9c9db6 100644
-> --- a/lib/eal/linux/eal.c
-> +++ b/lib/eal/linux/eal.c
-> @@ -1042,10 +1042,13 @@ rte_eal_init(int argc, char **argv)
->
->         phys_addrs =3D rte_eal_using_phys_addrs() !=3D 0;
->
-> +       /* Always call rte_bus_get_iommu_class() to trigger DMA mask
-> detection and validation */
-> +       enum rte_iova_mode bus_iova_mode =3D rte_bus_get_iommu_class();
-> +
->         /* if no EAL option "--iova-mode=3D<pa|va>", use bus IOVA scheme =
-*/
->         if (internal_conf->iova_mode =3D=3D RTE_IOVA_DC) {
->                 /* autodetect the IOVA mapping mode */
-> -               enum rte_iova_mode iova_mode =3D rte_bus_get_iommu_class(=
-);
-> +               enum rte_iova_mode iova_mode =3D bus_iova_mode;
->
->                 if (iova_mode =3D=3D RTE_IOVA_DC) {
->                         EAL_LOG(DEBUG, "Buses did not request a specific
-> IOVA mode.");
-> diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
-> index 4f0a164d9b..2502ec3c3d 100644
-> --- a/lib/eal/windows/eal.c
-> +++ b/lib/eal/windows/eal.c
-> @@ -348,12 +348,15 @@ rte_eal_init(int argc, char **argv)
->                 has_phys_addr =3D false;
->         }
->
-> +       /* Always call rte_bus_get_iommu_class() to trigger DMA mask
-> detection and validation */
-> +       enum rte_iova_mode bus_iova_mode =3D rte_bus_get_iommu_class();
-> +
->         iova_mode =3D internal_conf->iova_mode;
->         if (iova_mode =3D=3D RTE_IOVA_DC) {
->                 EAL_LOG(DEBUG, "Specific IOVA mode is not requested,
-> autodetecting");
->                 if (has_phys_addr) {
->                         EAL_LOG(DEBUG, "Selecting IOVA mode according to
-> bus requests");
-> -                       iova_mode =3D rte_bus_get_iommu_class();
-> +                       iova_mode =3D bus_iova_mode;
->                         if (iova_mode =3D=3D RTE_IOVA_DC) {
->                                 if (!RTE_IOVA_IN_MBUF) {
->                                         iova_mode =3D RTE_IOVA_VA;
-> --
-> 2.34.1
->
->
+Check all imports for existing testsuites. Any DTS framework imports should=
+ be
+coming from only the api dir going forward.
 
---000000000000b43e32063eeb03d7
-Content-Type: text/html; charset="UTF-8"
+Patrick to start a spreadsheet to track this until there are no remaining
+"illegal" imports.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17580302930.972c50E.2995464
+Date: Tue, 16 Sep 2025 15:44:53 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-<div dir=3D"ltr">FYI The DTS failure for this series on patchwork for the M=
-TU testsuite is coming from a different patch than this one. Once I have th=
-at resolved, I will put in a retest for this series which will clear up tha=
-t MTU testsuite failure.</div><br><div class=3D"gmail_quote gmail_quote_con=
-tainer"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Sep 8, 2025 at 12:35=
-=E2=80=AFPM Shani Peretz &lt;<a href=3D"mailto:shperetz@nvidia.com">shperet=
-z@nvidia.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" styl=
-e=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);paddin=
-g-left:1ex">When --iova-mode is explicitly specified in command line, DMA m=
-ask<br>
-constraints were not being validated, leading to potential runtime<br>
-failures when device DMA capabilities are exceeded.<br>
-<br>
-The issue occurred because rte_bus_get_iommu_class() was only called<br>
-during IOVA mode auto-detection, but this function has the important<br>
-side effect of triggering DMA mask detection (e.g., Intel IOMMU<br>
-address width checking via pci_device_iommu_support_va()).<br>
-<br>
-This created an inconsistency, when choosing explicit mode,<br>
-the DMA checks are bypassed, but when choosing auto-detection mode,<br>
-the constraints are checked and enforced.<br>
-<br>
-The fix moves rte_bus_get_iommu_class() outside the conditional logic<br>
-to ensure it&#39;s always called during EAL initialization.<br>
-<br>
-Fixes: 4374ebc24bc1 (&quot;malloc: modify error message for DMA mask check&=
-quot;)<br>
-Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
-><br>
-<br>
-Signed-off-by: Shani Peretz &lt;<a href=3D"mailto:shperetz@nvidia.com" targ=
-et=3D"_blank">shperetz@nvidia.com</a>&gt;<br>
----<br>
-=C2=A0lib/eal/freebsd/eal.c | 6 +++++-<br>
-=C2=A0lib/eal/linux/eal.c=C2=A0 =C2=A0| 5 ++++-<br>
-=C2=A0lib/eal/windows/eal.c | 5 ++++-<br>
-=C2=A03 files changed, 13 insertions(+), 3 deletions(-)<br>
-<br>
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c<br>
-index c1ab8d86d2..0f957919d3 100644<br>
---- a/lib/eal/freebsd/eal.c<br>
-+++ b/lib/eal/freebsd/eal.c<br>
-@@ -670,12 +670,16 @@ rte_eal_init(int argc, char **argv)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* with a message describing the cause.<br=
->
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*/<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 has_phys_addr =3D internal_conf-&gt;no_hugetlbf=
-s =3D=3D 0;<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0/* Always call rte_bus_get_iommu_class() to tri=
-gger DMA mask detection and validation */<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0enum rte_iova_mode bus_iova_mode =3D rte_bus_ge=
-t_iommu_class();<br>
-+<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 iova_mode =3D internal_conf-&gt;iova_mode;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (iova_mode =3D=3D RTE_IOVA_DC) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 EAL_LOG(DEBUG, &quo=
-t;Specific IOVA mode is not requested, autodetecting&quot;);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (has_phys_addr) =
-{<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 EAL_LOG(DEBUG, &quot;Selecting IOVA mode according to bus reques=
-ts&quot;);<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0iova_mode =3D rte_bus_get_iommu_class();<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0iova_mode =3D bus_iova_mode;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 if (iova_mode =3D=3D RTE_IOVA_DC) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (!RTE_IOVA_IN_MBUF) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 iova_mod=
-e =3D RTE_IOVA_VA;<br>
-diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c<br>
-index 52efb8626b..3a0c9c9db6 100644<br>
---- a/lib/eal/linux/eal.c<br>
-+++ b/lib/eal/linux/eal.c<br>
-@@ -1042,10 +1042,13 @@ rte_eal_init(int argc, char **argv)<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 phys_addrs =3D rte_eal_using_phys_addrs() !=3D =
-0;<br>
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0/* Always call rte_bus_get_iommu_class() to tri=
-gger DMA mask detection and validation */<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0enum rte_iova_mode bus_iova_mode =3D rte_bus_ge=
-t_iommu_class();<br>
-+<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 /* if no EAL option &quot;--iova-mode=3D&lt;pa|=
-va&gt;&quot;, use bus IOVA scheme */<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (internal_conf-&gt;iova_mode =3D=3D RTE_IOVA=
-_DC) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* autodetect the I=
-OVA mapping mode */<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0enum rte_iova_mode =
-iova_mode =3D rte_bus_get_iommu_class();<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0enum rte_iova_mode =
-iova_mode =3D bus_iova_mode;<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (iova_mode =3D=
-=3D RTE_IOVA_DC) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 EAL_LOG(DEBUG, &quot;Buses did not request a specific IOVA mode.=
-&quot;);<br>
-diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c<br>
-index 4f0a164d9b..2502ec3c3d 100644<br>
---- a/lib/eal/windows/eal.c<br>
-+++ b/lib/eal/windows/eal.c<br>
-@@ -348,12 +348,15 @@ rte_eal_init(int argc, char **argv)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 has_phys_addr =3D f=
-alse;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
-<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0/* Always call rte_bus_get_iommu_class() to tri=
-gger DMA mask detection and validation */<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0enum rte_iova_mode bus_iova_mode =3D rte_bus_ge=
-t_iommu_class();<br>
-+<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 iova_mode =3D internal_conf-&gt;iova_mode;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (iova_mode =3D=3D RTE_IOVA_DC) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 EAL_LOG(DEBUG, &quo=
-t;Specific IOVA mode is not requested, autodetecting&quot;);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (has_phys_addr) =
-{<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 EAL_LOG(DEBUG, &quot;Selecting IOVA mode according to bus reques=
-ts&quot;);<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0iova_mode =3D rte_bus_get_iommu_class();<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0iova_mode =3D bus_iova_mode;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 if (iova_mode =3D=3D RTE_IOVA_DC) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (!RTE_IOVA_IN_MBUF) {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 iova_mod=
-e =3D RTE_IOVA_VA;<br>
--- <br>
-2.34.1<br>
-<br>
-</blockquote></div>
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - Review all testsuite imports"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1788">1788</a>
+          </td>
+        </tr>
 
---000000000000b43e32063eeb03d7--
+        <tr>
+          <th>Summary</th>
+          <td>Review all testsuite imports
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>25.07
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>minor
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>DTS
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>probb&#64;iol.unh.edu
+          </td>
+        </tr>
+
+        <tr>
+          <th>CC</th>
+          <td>juraj.linkes&#64;pantheon.tech, probb&#64;iol.unh.edu
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">Check all imports for existing tes=
+tsuites. Any DTS framework imports should be
+coming from only the api dir going forward.
+
+Patrick to start a spreadsheet to track this until there are no remaining
+&quot;illegal&quot; imports.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1788">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17580302930.972c50E.2995464--
