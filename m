@@ -2,57 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E696DCAC599
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 13:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20BC3CAC599
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 13:54:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A02214064E;
-	Tue, 16 Sep 2025 15:54:28 +0200 (CEST)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTP id 99EF64042C
- for <dev@dpdk.org>; Tue, 16 Sep 2025 15:54:27 +0200 (CEST)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-261682fdfceso27296935ad.1
- for <dev@dpdk.org>; Tue, 16 Sep 2025 06:54:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5F27C4066A;
+	Tue, 16 Sep 2025 15:54:37 +0200 (CEST)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id A7AE540612
+ for <dev@dpdk.org>; Tue, 16 Sep 2025 15:54:35 +0200 (CEST)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-24458272c00so58398425ad.3
+ for <dev@dpdk.org>; Tue, 16 Sep 2025 06:54:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1758030866; x=1758635666; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1758030874; x=1758635674; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
  :date:message-id:reply-to;
- bh=gLsEZKTGJ9tDDZAxakZu2WIo4blsnEBR9V6Ja48vJdE=;
- b=VJcb94pOD9jhqRZtmJa9ywL9oyIkXmXbaDtREHf12rIH9lMVlVWo1C0Da4H/VGA5D4
- 88jemzy5fDyHVXLWmdeuf+DN9W7J2G2wkoul2EGg1fBi3Hc3Crj2LbJyUjMRad0gLKqv
- WFnhzqYWfQ+63vrQhR0nT+jJmhfHgqDjPnIxo=
+ bh=K4zHIBx1fzlbTDNAefECitQuuCjknugEH4s50otYjGc=;
+ b=Pl9N7pAkfMQW8+9kDiHkBcE7eijUKDllQLmyL+uo36C4v69Cd1UdN8kJhOlCEWjVmJ
+ G58Rs5uo9T/kwvidztmuBtiG08dFC4PdueDc8AJcF/sEvylSXHre/MLNTDKF+Spg9OHj
+ JAyq2IKZTI1CLb3G/923nqn2Ww7N1rS1slEwk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758030866; x=1758635666;
+ d=1e100.net; s=20230601; t=1758030874; x=1758635674;
  h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to;
- bh=gLsEZKTGJ9tDDZAxakZu2WIo4blsnEBR9V6Ja48vJdE=;
- b=OeFG2lzxBK9UzDBQGg7LFVBrZhU5P7VZvdV+NmH9nTMZDSTMwtLGTTPLxx8OdJDX5w
- KE3z2bqy6bZ0FSMsbmg2u74lIR6+wHzZG64eAC0k1+wOchw8eOunnEMVwhpncfrznAeg
- UwMlgthYERq8B/OSM7YqwtDullpjrmcS3hkFJZBqPTRC6yNL/TtJePF5Ycr0LKmXkw7J
- tulBeZgIKa5f1vhOYBAiE6HW3XeR4OCqbYxP9W8E3lE177wBP2K754o9KsJqFGtFTUJz
- VIF1HnjDGZ7PwhSFLPRgBXIfOHeTjc58COSr/t7fh5rH01gW6zqhkDVyfn339zxZrYkU
- 0hlQ==
-X-Gm-Message-State: AOJu0Yxf28nAUUD61hLnrX/h0aVuZHxzcAgAmJoSl1k/d6m2k19/oeRx
- m0iQNegoGmFZwIlo9oZFZylL8s3VqSknYFMvNWgjk/rUNLJU+P2KEmNwFNq0tZqVvvdggjOTwJ2
- 3gx203CnL1EK6VfSfWSKIfmkKjvzwH0gcFN7nNNF45cWY96pt37/mlyU=
-X-Gm-Gg: ASbGncux8X7FXZS196HatMw1S8WOool7zxTu6JKzTVbDs7nM0UhEA1oqTk1yKQSAt+G
- h5/Z1JUquVLnv5NZoSOOSVk/jGlnYuLliAKGZWLs2f6PYZo19XO1jCqMw+jZyptvojMobc36013
- xwFLOpe7nA+N7uw1f3yW8ureMR3xmiOzOsi2sck3DXi7i2n+GDjJkFdFX08HAkYN6cqvPV7cKfj
- LT6EjPmNwtjTzc7v7GPfT9uQw2kJ9UQnaJeSbncg/xoan1eS/4=
-X-Google-Smtp-Source: AGHT+IGBmLLPHl2TRvWgdlZGDjukrb73EZA8pi8RVXMVBd6osVfWMADPMgsS7Fxf04BVwyfweSaspqmWIEZC3KzDEW8=
-X-Received: by 2002:a17:902:cecc:b0:267:a1d5:7372 with SMTP id
- d9443c01a7336-267d151fba1mr34623265ad.4.1758030866354; Tue, 16 Sep 2025
- 06:54:26 -0700 (PDT)
+ bh=K4zHIBx1fzlbTDNAefECitQuuCjknugEH4s50otYjGc=;
+ b=VFQ8hf29RkVh244JvgjZbwynx8mygLWiv/BK0+I4iQFVGHXVTDiNu9IbYFeg++PwWR
+ z8S9kIC6AQLziju2wXTVshFKvKBpjqcFO2tmS4zW5JqifLICsseHwH/wm5oxyMQsxtJD
+ /ckisDi5vFSQcHlyf3FCK6/MSItvA4QhhWWyA01Eo/n7HH62W45cSwulEBiVASXGlpXp
+ WGzYgQHYFstFnyik3CgrEyr4KmCLcqBp7g1EH5uWi0kvChqtf2Rp5hgVq121Ya8gCkBn
+ MiE2wrF/R8m4MC60Xd526usqJ8Y8jMlRn3cmmtrZ0j6Y1CQru3lCRWANT2ReNGhatEad
+ JrMg==
+X-Gm-Message-State: AOJu0Yy732KuWcJiIi1+9UX8MGt0fMxEu6CrNHDg2yJrVuJf4L2RFtU9
+ HIKflH+eduEPKs1l2EZbiblvLmJimX/lvzzzVXMsWrWjULG95LAN17kDxpWhPna58p6d4rW61ga
+ CnDZ9L0rNUgQRjJHfxndWZKQM80IMAFNgrTi7mBs0VIeijLIYg781s6U=
+X-Gm-Gg: ASbGncsN4NVUBa1M27R2wRHoUqtWIeGfLcB39PDVj4TdPrrPPoXbDEijwV6rkLXbMs1
+ cU9JXDpFHybVQBZAO8r/1hTUMUCSOw194Hzs1u7gJR9PgL7qtzfh7bhYbHReSV/p4PnULda86jr
+ Nj21gwNHM6lRZPkALVJsydlO2Rxpd8oFjBb9jpc2Zqmv/6u2lzXqLHVoQegz9PjwW8MCQohoztX
+ 0kolUXa5Za4TeG0EXl5n1H/JrxSgwhC3trX+TKP
+X-Google-Smtp-Source: AGHT+IGUYXXXZp0SutpZenVlwIF5rWTB71KefaAht4Ts7N/tT0O/DnGWuAclr9KjGrP3e1Y/Pr23MMePWAH18cOof1s=
+X-Received: by 2002:a17:903:944:b0:267:16ec:390 with SMTP id
+ d9443c01a7336-26716ec061emr100647215ad.17.1758030874411; Tue, 16 Sep 2025
+ 06:54:34 -0700 (PDT)
 MIME-Version: 1.0
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Tue, 16 Sep 2025 09:47:24 -0400
-X-Gm-Features: AS18NWDYPKEm4euiP4pRv5Jwa1UF-LkYSSUgllcC7ISIzGu-lmrcWdICb08G7fY
-Message-ID: <CAJvnSUD-p5A71L13VWH6XD3N5gMmO1R4+gKbTpZXXd55v92jog@mail.gmail.com>
-Subject: DTS WG Meeting Minutes - August 28, 2025
+Date: Tue, 16 Sep 2025 09:47:32 -0400
+X-Gm-Features: AS18NWDgyplra9nLdyzpILCLjEUqL0dAQjBPi-iOSXOC1p9mNjlPqLJl8CJIRhc
+Message-ID: <CAJvnSUD3ZvcuSb+iWbkfJKuJ9P_pe+gQS46pxV5Z6M42dBeAmA@mail.gmail.com>
+Subject: DTS WG Meeting Minutes - September 11, 2025
 To: dev <dev@dpdk.org>
 Cc: ci@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000004b2b5c063eeb75da"
+Content-Type: multipart/alternative; boundary="000000000000c61828063eeb753f"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,18 +66,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000004b2b5c063eeb75da
+--000000000000c61828063eeb753f
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 ####################################################################
-August 28, 2025
+September 11, 2025
 Attendees
 * Patrick Robb
 * Luca Vizzarro
 * Andrew Bailey
 * Paul Szczepanek
-* Thomas Wilks
 
 ####################################################################
 Minutes
@@ -86,136 +85,138 @@ Minutes
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 General Discussion
-* The new DTS guide videos will be on the dpdk.org youtube soon
+* DTS Videos: We have shared the DTS tutorial videos with Ben from Linux
+Foundation / DPDK and he will cross post to their Youtube or other socials
+   * Video 1: How to run DTS
+   * Video 2: How to write a DTS testsuite
 
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 Patch discussions
-* TG Driver Bind series:
-   * Binding Worked fine except for mellanox where is_bound_for_dpdk logic
-resulted in unexpected behavior since kernel driver is the same as DPDK
-driver (mlx5_core)
+* TG Driver Bind:
+   * Andrew submitted a new version with a new =E2=80=9Cbound for kernel=E2=
+=80=9D property
+   * Patrick Robbto review and merge
 * RSS:
-   * Some testcase changes requested, but overall the implementation is
-working
-   * Someone will be taking this series over:
-      * Paul will take over this testsuite
-   * Proposed extension of the existing testcase #2 from below, splits it
-into 3 testcases. Left side is hash, right size is queue.
-      * Testcase #1:
-         * 0 -> 1
-         * 1 -> 2
-         * 2 -> 3
-         * 3 -> 4
-      * Testcase #2:
-         * 0 -> 0
-         * 1 -> 1
-         * 2 -> 1
-         * 3 -> 1
-      * Testcase #3:
-         * 0 -> 1
-         * 1 -> 1
-         * 2 -> 1
-         * 3 -> 1
-   * For test_reta_key_reta_queues, strange behavior for mellanox (creates
-a reta of 2, then 512, then 16)
-* Mbuf fast release testcase:
-   * Morten has drafted a required update to the testplan. Patrick will
-send a new version in new DTS. https://bugs.dpdk.org/show_bug.cgi?id=3D1769
-   * The testcase works, but we need to add in capability checks for
-tx_offloads and mbuf_fast_free tx_offload
+   * Paul has submitted an updated version
+   * Patrick Robb to test this and review/merge
+* Mbuf fast release testcase / tx_offload:
+   * Need to ensure that tx offload can only be applied to tx port/queue
+instead of rx or tx.
+   * Need to ensure we are correctly delineating between the queue and port
+offloads config
 * Virtio:
-   * Per Maxime=E2=80=99s advice, we will run a vhost backend with a virtio=
-_user
-frontend (with no VM) like so:
-https://doc.dpdk.org/guides/howto/virtio_user_as_exception_path.html
+   * V1 is finished but Dean is sick so it won=E2=80=99t be sent until next=
+ week
 * DTS API:
-   * Should be posted by the end of the week
+   * Paul has sent the V1
+   * Goal: every import for a testsuite is from the api dir
+   * Patrick Robb to do a review
+   * UNH guys should make a =E2=80=9Cdepends-on=E2=80=9D patch for this
+      * Packet_capture imports cpu logical core list
+      * We need to go through each testsuites and see what it imports and
+see if it can be moved out
+      * Let=E2=80=99s just make a spreadsheet with a row per import and col=
+or code
+by status, assign testsuites to people etc.
+      * Patrick Robb to ticket this
+      * Paul will handle artifact, and the parts inside a testsuite
+* Single_core_fwd:
+   * Now, in config func_traffic_generator does not include a TG path and
+config path, since it is not needed, only perf_traffic_generator does
+   * Now, context stores 2 traffic generators, which can be optionally a TG
+or None based on whether they=E2=80=99re specified in the config
+   * Trying to bind to the correct driver on TG at test_run state machine=
+=E2=80=99s
+testcasesetup:
+      * Patrick will propose a couple ideas when he sends the next patch
+      * One solution may be to gather the functional cases at runtime, run
+those first, then run the perf cases second
 * A couple patches have been merged:
-   * Still needs to be merged:
-https://patchwork.dpdk.org/project/dpdk/list/?series=3D35972
-   *
-https://patchwork.dpdk.org/project/dpdk/patch/20250820151850.484576-1-abail=
-ey@iol.unh.edu/
-      * Patrick to do a final review before merging
+   * Missing type hints
+   * File artifact manager
+* Default link topology series:
+   * This breaks the DPDK build, and the UNH team needs to figure out why
+* Updating docstrings:
+https://patchwork.dpdk.org/project/dpdk/patch/20250910194259.1027220-2-paul=
+.szczepanek@arm.com/
+   * Patrick Robbshould merge this today before it goes out of date
 
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 Bugzilla discussions
-* Patrick to review the bugzilla list and prune anything:
-https://bugs.dpdk.org/buglist.cgi?quicksearch=3Dcomponent%3Adts&list_id=3D9=
-622
+* A few more tickets have been pruned
 
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 Any other business
-* Next meeting is September 4
+* Next meeting is Sep 25, 2025
+* We should review the 25.11 release roadmap at the next meeting.
 
---0000000000004b2b5c063eeb75da
+--000000000000c61828063eeb753f
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr"><div><br clear=3D"all"></div><div>########################=
-############################################<br>August 28, 2025<br>Attendee=
-s<br>* Patrick Robb<br>* Luca Vizzarro<br>* Andrew Bailey<br>* Paul Szczepa=
-nek<br>* Thomas Wilks<br><br>##############################################=
-######################<br>Minutes<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+<div dir=3D"ltr">##########################################################=
+##########<br>September 11, 2025<br>Attendees<br>* Patrick Robb<br>* Luca V=
+izzarro<br>* Andrew Bailey<br>* Paul Szczepanek<br><br>####################=
+################################################<br>Minutes<br><br>=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D<br>General Discussion<br>* The new DTS guide video=
-s will be on the <a href=3D"http://dpdk.org">dpdk.org</a> youtube soon<br><=
-br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Patch discu=
-ssions<br>* TG Driver Bind series:<br>=C2=A0 =C2=A0* Binding Worked fine ex=
-cept for mellanox where is_bound_for_dpdk logic resulted in unexpected beha=
-vior since kernel driver is the same as DPDK driver (mlx5_core) <br>* RSS:<=
-br>=C2=A0 =C2=A0* Some testcase changes requested, but overall the implemen=
-tation is working<br>=C2=A0 =C2=A0* Someone will be taking this series over=
-:<br>=C2=A0 =C2=A0 =C2=A0 * Paul will take over this testsuite<br>=C2=A0 =
-=C2=A0* Proposed extension of the existing testcase #2 from below, splits i=
-t into 3 testcases. Left side is hash, right size is queue.<br>=C2=A0 =C2=
-=A0 =C2=A0 * Testcase #1:<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* 0 -&gt; 1<=
-br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* 1 -&gt; 2<br>=C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0* 2 -&gt; 3<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* 3 -&gt; 4<b=
-r>=C2=A0 =C2=A0 =C2=A0 * Testcase #2:<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
-* 0 -&gt; 0<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* 1 -&gt; 1<br>=C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0* 2 -&gt; 1<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* =
-3 -&gt; 1<br>=C2=A0 =C2=A0 =C2=A0 * Testcase #3:<br>=C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0* 0 -&gt; 1<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* 1 -&gt; 1<b=
-r>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0* 2 -&gt; 1<br>=C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0* 3 -&gt; 1<br>=C2=A0 =C2=A0* For test_reta_key_reta_queues, stra=
-nge behavior for mellanox (creates a reta of 2, then 512, then 16)<br>* Mbu=
-f fast release testcase: =C2=A0 =C2=A0 =C2=A0 =C2=A0<br>=C2=A0 =C2=A0* Mort=
-en has drafted a required update to the testplan. Patrick will send a new v=
-ersion in new DTS. <a href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1769"=
->https://bugs.dpdk.org/show_bug.cgi?id=3D1769</a><br>=C2=A0 =C2=A0* The tes=
-tcase works, but we need to add in capability checks for tx_offloads and mb=
-uf_fast_free tx_offload<br>* Virtio:<br>=C2=A0 =C2=A0* Per Maxime=E2=80=99s=
- advice, we will run a vhost backend with a virtio_user frontend (with no V=
-M) like so: <a href=3D"https://doc.dpdk.org/guides/howto/virtio_user_as_exc=
-eption_path.html">https://doc.dpdk.org/guides/howto/virtio_user_as_exceptio=
-n_path.html</a><br>* DTS API:<br>=C2=A0 =C2=A0* Should be posted by the end=
- of the week<br>* A couple patches have been merged:<br>=C2=A0 =C2=A0* Stil=
-l needs to be merged: <a href=3D"https://patchwork.dpdk.org/project/dpdk/li=
-st/?series=3D35972">https://patchwork.dpdk.org/project/dpdk/list/?series=3D=
-35972</a><br>=C2=A0 =C2=A0* <a href=3D"https://patchwork.dpdk.org/project/d=
-pdk/patch/20250820151850.484576-1-abailey@iol.unh.edu/">https://patchwork.d=
-pdk.org/project/dpdk/patch/20250820151850.484576-1-abailey@iol.unh.edu/</a>=
-<br>=C2=A0 =C2=A0 =C2=A0 * Patrick to do a final review before merging<br>=
-=C2=A0 =C2=A0 =C2=A0 <br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>General Discussion<b=
+r>* DTS Videos: We have shared the DTS tutorial videos with Ben from Linux =
+Foundation / DPDK and he will cross post to their Youtube or other socials<=
+br>=C2=A0 =C2=A0* Video 1: How to run DTS<br>=C2=A0 =C2=A0* Video 2: How to=
+ write a DTS testsuite<br>=C2=A0 =C2=A0<br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D<br>Bugzilla discussions<br>* Patrick to review the bugzilla list =
-and prune anything: <a href=3D"https://bugs.dpdk.org/buglist.cgi?quicksearc=
-h=3Dcomponent%3Adts&amp;list_id=3D9622">https://bugs.dpdk.org/buglist.cgi?q=
-uicksearch=3Dcomponent%3Adts&amp;list_id=3D9622</a><br><br>=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Patch discussions<br>* TG Driver Bind:<br>=
+=C2=A0 =C2=A0* Andrew submitted a new version with a new =E2=80=9Cbound for=
+ kernel=E2=80=9D property<br>=C2=A0 =C2=A0* Patrick Robbto review and merge=
+<br>* RSS:<br>=C2=A0 =C2=A0* Paul has submitted an updated version<br>=C2=
+=A0 =C2=A0* Patrick Robb to test this and review/merge<br>* Mbuf fast relea=
+se testcase / tx_offload: =C2=A0 =C2=A0 =C2=A0 =C2=A0<br>=C2=A0 =C2=A0* Nee=
+d to ensure that tx offload can only be applied to tx port/queue instead of=
+ rx or tx.<br>=C2=A0 =C2=A0* Need to ensure we are correctly delineating be=
+tween the queue and port offloads config<br>* Virtio:<br>=C2=A0 =C2=A0* V1 =
+is finished but Dean is sick so it won=E2=80=99t be sent until next week<br=
+>* DTS API:<br>=C2=A0 =C2=A0* Paul has sent the V1<br>=C2=A0 =C2=A0* Goal: =
+every import for a testsuite is from the api dir<br>=C2=A0 =C2=A0* Patrick =
+Robb to do a review<br>=C2=A0 =C2=A0* UNH guys should make a =E2=80=9Cdepen=
+ds-on=E2=80=9D patch for this <br>=C2=A0 =C2=A0 =C2=A0 * Packet_capture imp=
+orts cpu logical core list<br>=C2=A0 =C2=A0 =C2=A0 * We need to go through =
+each testsuites and see what it imports and see if it can be moved out<br>=
+=C2=A0 =C2=A0 =C2=A0 * Let=E2=80=99s just make a spreadsheet with a row per=
+ import and color code by status, assign testsuites to people etc.<br>=C2=
+=A0 =C2=A0 =C2=A0 * Patrick Robb to ticket this<br>=C2=A0 =C2=A0 =C2=A0 * P=
+aul will handle artifact, and the parts inside a testsuite<br>* Single_core=
+_fwd:<br>=C2=A0 =C2=A0* Now, in config func_traffic_generator does not incl=
+ude a TG path and config path, since it is not needed, only perf_traffic_ge=
+nerator does<br>=C2=A0 =C2=A0* Now, context stores 2 traffic generators, wh=
+ich can be optionally a TG or None based on whether they=E2=80=99re specifi=
+ed in the config<br>=C2=A0 =C2=A0* Trying to bind to the correct driver on =
+TG at test_run state machine=E2=80=99s testcasesetup:<br>=C2=A0 =C2=A0 =C2=
+=A0 * Patrick will propose a couple ideas when he sends the next patch<br>=
+=C2=A0 =C2=A0 =C2=A0 * One solution may be to gather the functional cases a=
+t runtime, run those first, then run the perf cases second<br>* A couple pa=
+tches have been merged:<br>=C2=A0 =C2=A0* Missing type hints<br>=C2=A0 =C2=
+=A0* File artifact manager<br>* Default link topology series:<br>=C2=A0 =C2=
+=A0* This breaks the DPDK build, and the UNH team needs to figure out why<b=
+r>* Updating docstrings: <a href=3D"https://patchwork.dpdk.org/project/dpdk=
+/patch/20250910194259.1027220-2-paul.szczepanek@arm.com/">https://patchwork=
+.dpdk.org/project/dpdk/patch/20250910194259.1027220-2-paul.szczepanek@arm.c=
+om/</a><br>=C2=A0 =C2=A0* Patrick Robbshould merge this today before it goe=
+s out of date<br>=C2=A0 =C2=A0<br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Any other business<br>* Next =
-meeting is September 4</div></div>
+=3D=3D=3D=3D=3D=3D<br>Bugzilla discussions<br>* A few more tickets have bee=
+n pruned<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+<br>Any other business<br>* Next meeting is Sep 25, 2025<br>* We should rev=
+iew the 25.11 release roadmap at the next meeting.</div>
 
---0000000000004b2b5c063eeb75da--
+--000000000000c61828063eeb753f--
