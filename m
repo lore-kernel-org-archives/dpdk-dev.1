@@ -2,103 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 396D4CAC599
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 08:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38327CAC598
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 08:59:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 424CF402A7;
-	Tue, 16 Sep 2025 10:47:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CF680402CD;
+	Tue, 16 Sep 2025 10:59:18 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 56EBC4025A
- for <dev@dpdk.org>; Tue, 16 Sep 2025 10:47:13 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id DD9D34028C
+ for <dev@dpdk.org>; Tue, 16 Sep 2025 10:59:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1758012432;
+ s=mimecast20190719; t=1758013157;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=FnSOhp75QZ5cVZUq/qAClVIQWvhGRoZ/IewfKKowDoc=;
- b=SWKfuZQ/7qQwkPnTQ6MZt+YSe6AaS9TRlLzX+sio2uQzXQM9bEG/1K92iPW8sCoJNtRTzF
- uZCBTbrwT2pQd1JtTrdYyY1fXWuJzeTylkMoF7VXVg96trte+vzVdPbTD1tTMhqYbvef6i
- Q3IVvXC3wD2aQyxSA2iBeurNjCz5Y4k=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-530-ltEnUIAmOqSIs5mf7Ge06g-1; Tue,
- 16 Sep 2025 04:47:11 -0400
-X-MC-Unique: ltEnUIAmOqSIs5mf7Ge06g-1
-X-Mimecast-MFC-AGG-ID: ltEnUIAmOqSIs5mf7Ge06g_1758012430
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 4044A19560B8; Tue, 16 Sep 2025 08:47:10 +0000 (UTC)
-Received: from [10.45.242.14] (unknown [10.45.242.14])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 2A8E218003FC; Tue, 16 Sep 2025 08:47:07 +0000 (UTC)
-Message-ID: <14e91aff-5cdd-4e4d-a4b6-9a34176c8d58@redhat.com>
-Date: Tue, 16 Sep 2025 10:47:04 +0200
+ in-reply-to:in-reply-to:references:references;
+ bh=0g07RQhAdrl7zacZzQVbdeuw4NzlXSTXEJUrKwzGR08=;
+ b=BOcih3eIfnh7+oyGO9Gtc8JUXp3gvakUoAyzAW8QfqjDZPEeBHtAai/cw3LuaW0hRFWM6d
+ tuzrqHq5yX0npDNWlJwNj1sybt3JUN/96onWfyDswaYeLYvsrvRDCs6qE1ajpkctSFBCzB
+ t6PgTouVwgTTaE7pAV0RrygTPHrvRwU=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-57-QFVEP2GMP-WJNS8xc9j4tQ-1; Tue, 16 Sep 2025 04:59:14 -0400
+X-MC-Unique: QFVEP2GMP-WJNS8xc9j4tQ-1
+X-Mimecast-MFC-AGG-ID: QFVEP2GMP-WJNS8xc9j4tQ_1758013153
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-56f85820d70so3890227e87.3
+ for <dev@dpdk.org>; Tue, 16 Sep 2025 01:59:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1758013153; x=1758617953;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=0g07RQhAdrl7zacZzQVbdeuw4NzlXSTXEJUrKwzGR08=;
+ b=PvpVkF2A1VvBnFRaLx9H5KSm0Rey9nQJaZZJ6QPvrXC7APFwE9pG3W4Hgmp2QsbBIE
+ wpJLh+Az9laFlHa8gXKpO8bIZM9Hvq7k764RgoiMvl+AGW5Nh6GlLn1wKUI1NprfbVQm
+ MUYbxl9YGlkuDLWcnFfG0/tkUjw8oE6tqdtY1+2w/6Hox4hfJ52MO8LNe1qw5VUm1cNc
+ dokSmP0ZH3eNceoHTjbSt82vmRQbnrD4gWdd7eyhKqOgS4caRusjp1OLDvo1OONwl64f
+ lQHEUD9MV8k6GjeR7WTIyQdRD+kjXNWJz4VR5eJc8Qw/9u8CSSYwK/Svrupn7fEMO3iq
+ Twvw==
+X-Gm-Message-State: AOJu0Yxke8WAmQihF8gXF/2Vzygr01pvxGG4q83B2KTBYcj/W5WECbjp
+ z55+a7/RuzfHNLhFw895Q0CA+/mbCJrhPly8KFqwj5/Du6FrkRkvc9vfAHBeYUbPgiQu4pq3sji
+ BTP+QrHO48IHCOKhGsgHitfOz9kqV0bkSyAG0Ab1unKBLWR1VVHN2WCy8rdGKiJFypjEZY4pT2b
+ SCyp9Uh8UkrlsJAdOw010=
+X-Gm-Gg: ASbGncvEt7H8eV2BG4pE1XK5FOcAXHf0KvIHrRPudbZy/9qdV231L90qwS+0EvRxxGj
+ yvXOsOQQkPYqDlK/mDqyIvHqHMm/FEMQRDB1cFZaxEYTSeu/yxgo7tPrEi/PAzU1UTTID7t4VH9
+ m6nPM0F+kur4ULLrMvTZa7C1M=
+X-Received: by 2002:a05:6512:3192:b0:55f:701f:933 with SMTP id
+ 2adb3069b0e04-57050828c63mr4977304e87.41.1758013152577; 
+ Tue, 16 Sep 2025 01:59:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG5z2d9jUaO08XZ55YXrdmQEdy3FUz0gLYNKRYVRTAnRKHQS8vj+cVE6MeJchG2Nqnhk8Z4+laHJVGPvbc5AJE=
+X-Received: by 2002:a05:6512:3192:b0:55f:701f:933 with SMTP id
+ 2adb3069b0e04-57050828c63mr4977295e87.41.1758013152143; Tue, 16 Sep 2025
+ 01:59:12 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vhost: add VDUSE virtqueue ready state polling workaround
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, chenbox@nvidia.com, amorenoz@redhat.com, stable@dpdk.org
-References: <20250911083607.3676640-1-maxime.coquelin@redhat.com>
- <CAJFAV8yxPW7k+mTTZ-9wnfCiMvmqzWeLZ5az5ExCYxfdOotaNg@mail.gmail.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <CAJFAV8yxPW7k+mTTZ-9wnfCiMvmqzWeLZ5az5ExCYxfdOotaNg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250908070414.1297844-1-thierry.herbelot@6wind.com>
+ <20250909054023.3263401-1-thierry.herbelot@6wind.com>
+ <20250909091724.2ea0615e@hermes.local>
+ <151c401a-87dc-423c-8bae-89d325dc8c90@6wind.com>
+ <20250910090926.204ff85d@hermes.local>
+In-Reply-To: <20250910090926.204ff85d@hermes.local>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 16 Sep 2025 10:59:00 +0200
+X-Gm-Features: AS18NWCqbhNN6DDVhfys6tJcYtO9UHh1FTZ-rhbgyjn9FSis1FbJfNB_VcKQkwg
+Message-ID: <CAJFAV8ytULR3Gr21Y2kUCgOigGJuRiU7DWb7QZLNzWLhsXDVFA@mail.gmail.com>
+Subject: Re: [V3] net/qede: reduce the optimization level for gcc > 11
+To: Stephen Hemminger <stephen@networkplumber.org>, 
+ Thierry Herbelot <thierry.herbelot@6wind.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
+ Devendra Singh Rawat <dsinghrawat@marvell.com>, Alok Prasad <palok@marvell.com>,
+ Jerin Jacob <jerinj@marvell.com>, Olivier Matz <olivier.matz@6wind.com>, 
+ Edwin Brossette <edwin.brossette@6wind.com>, stable@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 60f4MKrBq48dBiKOl01dcMgGRjRZL-dBPLzY9aaQqKo_1758012430
+X-Mimecast-MFC-PROC-ID: _5FNGjNA6wctDFwUbtmSrl48mM7hBFGhzfTqQpQZLLI_1758013153
 X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -112,150 +90,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Wed, 10 Sept 2025 at 18:42, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+> On Wed, 10 Sep 2025 08:49:38 +0200
+> Thierry Herbelot <thierry.herbelot@6wind.com> wrote:
+> > The error chain is:
+> >
+> > RX-nombufs
+> >   => (testpmd) stats.rx_nombuf
+> >    => (qede) p_stats->common.no_buff_discards
+> >     => (qede/base) HILO_64_REGPAIR(mstats.no_buff_discard)
+> >           (internal to the NIC)
+> >
+>
+> Thanks, lets root cause this (rather than paper it over) because
+
++1
+
+> other drivers may have same issue. Since no mbufs are present
+> looks like rx discriptor never made it to NIC
+
+I would add that if the descs do make it to the nic, maybe the (IOVA)
+addresses are incorrect.
+We changed the default IOVA not so long ago.. so maybe play with
+--iova-mode to continue investigations.
 
 
-On 9/15/25 11:42 AM, David Marchand wrote:
-> On Thu, 11 Sept 2025 at 10:36, Maxime Coquelin
-> <maxime.coquelin@redhat.com> wrote:
->>
->> Add workaround to poll virtqueue ready states before starting device
->> when VIRTIO_DEVICE_STATUS_DRIVER_OK is set in vduse_events_handler().
->>
->> For each virtqueue, poll using VDUSE_VQ_GET_INFO ioctl to check
->> vq_info->ready state with configurable retry limit. This addresses
->> timing issues where device start was attempted before all virtqueues
->> were properly initialized and ready.
->>
->> A notification mechanism will be introduced in the next version of
->> the VDUSE uAPI. When it lands, we would only apply this workaround
->> when the kernel does not support it.
->>
->> Fixes: a9120db8b98b ("vhost: add VDUSE device startup")
->> Cc: stable@dpdk.org
->>
->> Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
->> ---
->>   lib/vhost/vduse.c | 62 +++++++++++++++++++++++++++++++++++++++++++++--
->>   1 file changed, 60 insertions(+), 2 deletions(-)
->>
->> diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
->> index 9de7f04a4f..5a6025d702 100644
->> --- a/lib/vhost/vduse.c
->> +++ b/lib/vhost/vduse.c
->> @@ -272,6 +272,56 @@ vduse_vring_cleanup(struct virtio_net *dev, unsigned int index)
->>          vq->last_avail_idx = 0;
->>   }
->>
->> +
-> 
-> Nit: no need for double empty lines.
-> 
->> +/*
->> + * Tests show that it succeeds at the first retry at worst,
-> 
-> it?
-
-Changing to:
-"Tests show that virtqueues get ready at the first retry at worst..."
-
-> 
->> + * but let's be on the safe side and allow more retries.
->> + */
->> +#define VDUSE_VQ_READY_POLL_MAX_RETRIES 100
->> +
->> +static int
->> +vduse_wait_for_virtqueues_ready(struct virtio_net *dev)
->> +{
->> +       struct vduse_vq_info vq_info;
->> +       unsigned int i;
->> +       int ret;
->> +
->> +       for (i = 0; i < dev->nr_vring; i++) {
->> +               int retry_count = 0;
->> +
->> +               while (retry_count < VDUSE_VQ_READY_POLL_MAX_RETRIES) {
->> +                       vq_info.index = i;
-> 
-> It is not clear which part of the vduse_vq_info structure is r/o, r/w
-> or w/o in uapi header
-> I see that vduse_vring_setup() does nothing more than setting index.
-> I am probably paranoid but do we need an explicit reset of the whole
-> vq_info on retry?
-> 
-> Moving the definition of vq_info in this loop (right before setting
-> vq_info.index) seems better on that topic.
-> 
-
-The Kernel side only look for the index field (for now at least), but I 
-agree that could change, so zeroing vq_info should be done.
-
-I will also send a separate patch for vduse_vring_setup().
-
->> +                       ret = ioctl(dev->vduse_dev_fd, VDUSE_VQ_GET_INFO, &vq_info);
->> +                       if (ret) {
->> +                               VHOST_CONFIG_LOG(dev->ifname, ERR,
->> +                                       "Failed to get VQ %u info while polling ready state: %s",
->> +                                       i, strerror(errno));
->> +                               return -1;
->> +                       }
->> +
->> +                       if (vq_info.ready) {
->> +                               VHOST_CONFIG_LOG(dev->ifname, DEBUG,
->> +                                       "VQ %u is ready after %u retries", i, retry_count);
->> +                               break;
->> +                       }
->> +
->> +                       retry_count++;
->> +                       /* Small delay between retries */
-> 
-> I would remove this Lapalissade comment.
-> 
-> 
->> +                       usleep(1000);
->> +               }
->> +
->> +               if (retry_count >= VDUSE_VQ_READY_POLL_MAX_RETRIES) {
->> +                       VHOST_CONFIG_LOG(dev->ifname, ERR,
->> +                               "VQ %u ready state polling timeout after %u retries",
->> +                               i, VDUSE_VQ_READY_POLL_MAX_RETRIES);
->> +                       return -1;
->> +               }
->> +       }
->> +
->> +       VHOST_CONFIG_LOG(dev->ifname, INFO, "All virtqueues are ready after polling");
->> +       return 0;
->> +}
->> +
->>   static void
->>   vduse_device_start(struct virtio_net *dev, bool reconnect)
->>   {
->> @@ -414,10 +464,18 @@ vduse_events_handler(int fd, void *arg, int *close __rte_unused)
->>          }
->>
->>          if ((old_status ^ dev->status) & VIRTIO_DEVICE_STATUS_DRIVER_OK) {
->> -               if (dev->status & VIRTIO_DEVICE_STATUS_DRIVER_OK)
->> +               if (dev->status & VIRTIO_DEVICE_STATUS_DRIVER_OK) {
->> +                       /* Poll virtqueues ready states before starting device */
->> +                       ret = vduse_wait_for_virtqueues_ready(dev);
->> +                       if (ret < 0) {
->> +                               VHOST_CONFIG_LOG(dev->ifname, ERR,
->> +                                       "Failed to wait for virtqueues ready, aborting device start");
->> +                               return;
->> +                       }
->>                          vduse_device_start(dev, false);
->> -               else
->> +               } else {
->>                          vduse_device_stop(dev);
->> +               }
->>          }
->>
->>          VHOST_CONFIG_LOG(dev->ifname, INFO, "Request %s (%u) handled successfully",
->> --
->> 2.51.0
->>
-> 
-> Aside from those nits, it looks an acceptable workaround for now.
-> Reviewed-by: David Marchand <david.marchand@redhat.com>
-> 
-> 
+-- 
+David Marchand
 
