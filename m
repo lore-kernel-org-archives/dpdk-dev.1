@@ -2,80 +2,131 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5F5CAC598
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 15:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B95CAC598
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 15:12:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 31C9740696;
-	Tue, 16 Sep 2025 17:02:39 +0200 (CEST)
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com
- [209.85.160.173])
- by mails.dpdk.org (Postfix) with ESMTP id B5C6640677
- for <dev@dpdk.org>; Tue, 16 Sep 2025 17:02:37 +0200 (CEST)
-Received: by mail-qt1-f173.google.com with SMTP id
- d75a77b69052e-4b7ae45a91cso9556471cf.2
- for <dev@dpdk.org>; Tue, 16 Sep 2025 08:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758034957;
- x=1758639757; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=KKCihvnOrtetXNNO9zEzEWC7Yu5B0adghpblwmkOte8=;
- b=ixkPxoPxQw7nrZPbubCtPcPsjY93MTiX4b+z8RCs1bnsyWyb+TbPuAJNSykzY+oo5/
- t2BvXglVoXV2ArCYd9hTvwKBfVWM54rdY5Tqc2yN2O3kVSpCbnf0TFgTUXNZoys0Zs8V
- WUOv0hPDl74HehontKbj1RsP6nNOtogOYeZ4fs4ObbonBNQON3ymZBVSFaV1yFrmhOSO
- ic9slbnbq97OAA8v92HIYvmRMOfE9Qqr6rhNpXbtiIQxR8nGxCA9mGj1IyJ2JbPt/zGD
- bw0J7oidksvEsinPiQLIn0QShBw+P7iol8tH8cUhRBzXNuTDboLDBGiNMQKiGCq6SQj/
- ZlxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758034957; x=1758639757;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=KKCihvnOrtetXNNO9zEzEWC7Yu5B0adghpblwmkOte8=;
- b=lWluCIcBWe8pWDbsSao83xbEbhRK6YuzeelAZP3LAqz8vA9pUqdpnMakYYMo9WJZDl
- VB6vhYE73enzusN/DIbyCVxVnZ0VMgHqqGFR2LL22NCZOeOWEk0HCHAGATmStcUmIVqz
- I0s71+/lGMSjxZ/pdjLB3WsRgky1EK8u2eBDVWtRjnqymz6tNULA0Lp732+k6MQbcHWf
- xCia52/z/6RS+PGf62IfdBLou30stmxA0b2fag7CGS7OY+FSYLr8WKF+Pek8luV6v8Gx
- Ipebcj/GO8iN/d6NCOig9RSMxTZqIbL6oGx2xbD5hROF8YU5LzjS9FZHyFm5MN4UucON
- TH1Q==
-X-Gm-Message-State: AOJu0YxI8gB9e4qF42i2x/2gDlyk1+BLqEEN1zR9bDVqpyMAW7dqjAF9
- SEJ4lU+CpKWvm0WbuxNqdhUl1AyqqR+6FArzZjacFXDNgl62chce/DN/h3J8R1aRBDP7IjUqvly
- rzTUX
-X-Gm-Gg: ASbGncvgpIRsU1qyx4r4JX8C4VDQRgRkHxoAWd7LiFUlykOqEmb+aU5KJHV/YkthcGT
- t1VE560yaqI/hiWv8D/45NvOS6d9F7TrMm2+L7C2PItsGaJ+liVL+sgP1LR+UVjkn2Ufg8n6/lE
- P+zCpmd+Z4MGWwmV3+U5ev50slvk5HskZUw+CeY92MkPIgGgNyYFCBNX6w9MQKLREKqYRVwypC3
- oo9n6FO7PdxQm9sJgcw1X3pVoxNe4XkGtWoteXJuKngahE6ssVRFlhW/P6nxPqNe6yHncKDj19W
- oDAXNUf/cgpZTC5duqGgo+JJABBU5bGAV1JYpRzSTvg3Nd+ZOx5TRUlBIqVwSSr7KcSXZBMn6cR
- I1az+GuJT2I8wy7jW8gey97XsSzdhG8ihLaNaLu2DbIqD1kZFYkNUMwznK7fVnfIt7qFqJSOK
-X-Google-Smtp-Source: AGHT+IEG4dcAT5CZPXbwsznS0s0iVtsWyfYvtlf92LiQud95zVsX+xK4rrQLSbv19h+SKTCN+5Fjlg==
-X-Received: by 2002:a05:622a:612:b0:4b7:976e:8c48 with SMTP id
- d75a77b69052e-4b7976e96bcmr118985431cf.14.1758034956699; 
- Tue, 16 Sep 2025 08:02:36 -0700 (PDT)
-Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-763bee7c80dsm94324306d6.52.2025.09.16.08.02.35
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 16 Sep 2025 08:02:36 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v4 4/4] hash: add support for common small key sizes
-Date: Tue, 16 Sep 2025 08:00:47 -0700
-Message-ID: <20250916150219.104936-5-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250916150219.104936-1-stephen@networkplumber.org>
-References: <0250818233102.180207-1-stephen@networkplumber.org>
- <20250916150219.104936-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 5B35F4064E;
+	Tue, 16 Sep 2025 17:12:40 +0200 (CEST)
+Received: from BN1PR04CU002.outbound.protection.outlook.com
+ (mail-eastus2azon11010017.outbound.protection.outlook.com [52.101.56.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 4DB3D402E3
+ for <dev@dpdk.org>; Tue, 16 Sep 2025 17:12:39 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Tn27vENZniTL3TaH5UT3qbVCYLgmhnmJo84APSaI8vfpox/jlKEJykwOpSNLRokPL+AP8Oyjqr3FAjUAfJ+YYbC3erSWXy9shEAgVTg4dz7ks/JIDCN5v5wnmInQcs2V2Z9sbeuH12Kbzkwke1LtJQta6sooTM109U04IW7iaIzJyz9+ttROMvJMI3uKXApCRs8ayKoSw/vq8NAm+T1KZemcIzHbuVGXx/l0LlPeYxFo5JC6kJy5NGqwoc+nt2tzCZ9lHZ2TKtT9Hx2+3IX3EEegfd6nUnYu2x80y6BPfcWgOzK4vDbJirWkzk0KtAW7kuTuLFdJJH55KmI5kkYkVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oA3LSHdFHBfphofmWqq0VTrGknr1mq6YV2C5p62PnxU=;
+ b=ng6zWeK3eDomCewZpAx2ZqvTJesS30XFToyJ8V+KSMHMHVmOQHUZC7vn720ZjaPi8PiLG1JbPh62rQOVUoxplwRy5Jn9/dkoDMvWnPi9/um6CDJa8nJvQ2vbKMWGhqJzikf6L0P42RUiw1J9cjtbg7zvX/or9vSw9wiFHSi6E4E8bst+OmxRgAdAJH/2BU5+eLs2+rYvUTJsUFKCANoNCZ+Vn+SjlooC+QbvF7+zoTEAIFdIjM2lmzH3NLmczZdg0XcOMz7//Lmssl3mp98aSHoGCDTd0hVEVwco5RNV6K75rzwCEQ5osY2FisRNgN9EV3vgiJYKaTpMKNIR/1kWPA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oA3LSHdFHBfphofmWqq0VTrGknr1mq6YV2C5p62PnxU=;
+ b=hYHd+cHl0d/3/bWd4A7QPaf95iXfBvdCTb3KDbJWT59czSzYP7pjjeKDn7KfGjXGe4qH3tbSPH/VP55QiKbfxZ3HnEXL9hvxoxLJfYqYhw17AOxgQtY7nd4bEZpWaGaSpqt+vVG7weuQ0fl8M6KgJ0njjMqlas7IYqKaKvEunFji1SJzmcY+T3H4iFPWWbW3juZvVLhqqWlnEI5bv067+enO2y5+3Z/E5/wVLvUj0SOoaiBQyENAF/PAOR6as8j0DDID/zInxyX4VgtMitb7PPS2GhmsleAu3tBcPN/WMHgvQ0JZulvYVhARLmZHJipLKxe6qP4QvzeT5zNMddRGnw==
+Received: from CH0PR03CA0386.namprd03.prod.outlook.com (2603:10b6:610:119::29)
+ by CH8PR12MB9815.namprd12.prod.outlook.com (2603:10b6:610:277::13)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Tue, 16 Sep
+ 2025 15:12:35 +0000
+Received: from DS2PEPF0000343B.namprd02.prod.outlook.com
+ (2603:10b6:610:119:cafe::c6) by CH0PR03CA0386.outlook.office365.com
+ (2603:10b6:610:119::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Tue,
+ 16 Sep 2025 15:12:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS2PEPF0000343B.mail.protection.outlook.com (10.167.18.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Tue, 16 Sep 2025 15:12:35 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 16 Sep
+ 2025 08:12:19 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 16 Sep
+ 2025 08:12:18 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Tue, 16 Sep 2025 08:12:14 -0700
+From: Shani Peretz <shperetz@nvidia.com>
+To: <dev@dpdk.org>
+CC: <mb@smartsharesystems.com>, <stephen@networkplumber.org>,
+ <bruce.richardson@intel.com>, <ajit.khaparde@broadcom.com>,
+ <jerinj@marvell.com>, <konstantin.v.ananyev@yandex.ru>,
+ <david.marchand@redhat.com>, <maxime.coquelin@redhat.com>,
+ <gakhil@marvell.com>, <viacheslavo@nvidia.com>, <thomas@monjalon.net>, "Shani
+ Peretz" <shperetz@nvidia.com>
+Subject: [PATCH v2 0/4] add mbuf debug capabilities
+Date: Tue, 16 Sep 2025 18:12:03 +0300
+Message-ID: <20250916151207.556618-1-shperetz@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250616072910.113042-1-shperetz@nvidia.com>
+References: <20250616072910.113042-1-shperetz@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF0000343B:EE_|CH8PR12MB9815:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53b19e71-5052-4f6a-2315-08ddf5337795
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|7416014|376014|1800799024|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?wpplOUrQBDp1wGLUbHaex34vxDsFonaF98rtwJjR1aGntv8ZKMBIi6pxgPJO?=
+ =?us-ascii?Q?jOahclbyRUuAX5XZc9c04lAkccM48bp8J+ORFjbw1Ja7Mee8X+IriMssSLxi?=
+ =?us-ascii?Q?k8WXynWY39mLgG50aIQFd+6BzqSYsejMdxZI+SWiCxj1uhobOFdWPZ2uX0sx?=
+ =?us-ascii?Q?X5nFRPFdq3oy3Osh1F3ic+OsvvgHAWtYp+Nyfk1T7Inqph8ECGXpfTO/8wdz?=
+ =?us-ascii?Q?g4LdqGEoxfstAcET8AuQGtCTDm9vmgZCw62oJHAawxUUmMQ7F+In98FC+9v2?=
+ =?us-ascii?Q?+tIjfoMvaga7zZ4PA35NetJ4JSuTKtXxtubFIBAzJWbz2xjpSTeuWYrpEUny?=
+ =?us-ascii?Q?Nwy3m9iZ1E2PUtDGK0GJ1ggoYcpZaZb3O4XDxKu5zVpxW9IEOhbIpgHrzCIX?=
+ =?us-ascii?Q?HBqpN3ZfX2uNKqN3+LK2GBRsZKCMyFsW5cOyH3bIPTO4gEFo4YqlgqYp5kjC?=
+ =?us-ascii?Q?F56aQ3Qw57zN5ZTMFPM+nsPuQ1OBpABkudIp1e9nVb0y2LtNqxt7jAGjO6xv?=
+ =?us-ascii?Q?m0IhMt/aPYdC6n/Pi6UPY59vrOV4EsVh2zKkA4Rqoth9Rq+82XDMFDLpPUVm?=
+ =?us-ascii?Q?KOPoUXonySvLvPkC7T4QpfFClL3nuScvyDDalr+SSo7HAlEe8dEu3uMhubh8?=
+ =?us-ascii?Q?IFS+e53ws0rl3m6rKYd4cI13xHCPmLzAv5gfJKcKbqeBJwrz+zsJv2Xp1JnZ?=
+ =?us-ascii?Q?8/2lYcYkCoq0EwNauL6HCMs+FAyd2MM174WNPjCmpvw37ZGNjNzLAzptzhQS?=
+ =?us-ascii?Q?Sh3SMsobvEP42NEh5j99mllitu+WZzWuhvhkVmRLb3nJKTwWSqChtvjF6bsD?=
+ =?us-ascii?Q?iEpSa360J6rM+H15ydUz3r84qgNzihZfiIQOP2fM8Mfn9mwvV34LEPonDOAI?=
+ =?us-ascii?Q?EcHIZtYsc1x2Eayib0NxKPqv1O5Px/27CMoB7w8rDa69l+zHBRkfsvkC+C2W?=
+ =?us-ascii?Q?9cE5jnUD0c8pIZ5BnAiiEIntIwwxLk75yUzrmg0x9zk0RelDyQotzBZg41WW?=
+ =?us-ascii?Q?mfu2so3m5KT2XwFoZH2BnzMeYLyVMU1OpDIeLj6PBa67tJw7i9wrTLSX68gF?=
+ =?us-ascii?Q?CwFRivp38kFM43V5dJz/COQW2J5PgsNNfsHrMfceKInS0y07iQctxwRYn4oo?=
+ =?us-ascii?Q?4VBqcHd/DnN5ILSSMerRPqtuJr+jCapmbVQOW8J3O3wjoFuerxlO1Q/uoOQA?=
+ =?us-ascii?Q?JjZu+OKseUr2TdQXul4ycpWWRdh6a0M1QrnCc+PwkuEuBCV62sAZnlrbeAN/?=
+ =?us-ascii?Q?aMi1lzQ3ignL/XcGSBI9tIlXpsfYcfrIjYF0VYuPhcTwFGoUcMg4Sn5KQ1zA?=
+ =?us-ascii?Q?nfsue1FB5OaD85edxMX9rPvU6yoO0Jbgc2+qD85S+WvBJZNsBtNIzrnjjJBU?=
+ =?us-ascii?Q?J0o9NhRTRfMNP+4eSZan6k8dptEc85mP3PPw+E7/Syv1L4pK644plkxD+0YG?=
+ =?us-ascii?Q?rQwzCEaL9FAtEahzUdqnagT+augZoZM9MrktiVHBSud5m+HT1lVLbbrMOf8S?=
+ =?us-ascii?Q?r6aOTcRLwzd7YyfjHL1KUgRmBZytD0jP1AfG?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013); DIR:OUT;
+ SFP:1101; 
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2025 15:12:35.3401 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53b19e71-5052-4f6a-2315-08ddf5337795
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DS2PEPF0000343B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR12MB9815
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,196 +140,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add new compare functions for common small key sizes.
+v2:
+narrow scope to mbuf only - move the history tracking data to the rte_mbuf structure.
+use a dynamic mbuf field to store the tracking bitmap.
+remove the compilation flag.
 
-Fill in more key sizes to ensure more complete coverage of
-special cases.
+v1:
+This feature is designed to monitor the lifecycle of mempool objects
+as they move between the application and the PMD.
 
-Bugzilla ID: 1775
-Suggested-by: Morten Brørup <mb@smartsharesystems.com>
-Reported-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
+It will allow us to track the operations and transitions of each mempool
+object throughout the system, helping in debugging and understanding objects flow.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
----
- app/test/test_hash.c       |   7 ++-
- lib/hash/rte_cuckoo_hash.c | 124 ++++++++++++++++++++++++++++++++++++-
- 2 files changed, 126 insertions(+), 5 deletions(-)
+The implementation include several key components:
+1. Added a bitmap to mempool's header (rte_mempool_objhdr)
+   that represent the operations history.
+2. Added functions that allow marking operations on an
+   mempool objects.
+3. Dumps the history to a file or the console
+   (rte_mempool_objects_dump).
+4. Added python script that can parse, analyze the data and
+   present it in an human readable format.
+5. Added compilation flag to enable the feature.
 
-diff --git a/app/test/test_hash.c b/app/test/test_hash.c
-index 5791fd7f4c..fa6c254a23 100644
---- a/app/test/test_hash.c
-+++ b/app/test/test_hash.c
-@@ -35,8 +35,11 @@
-  */
- static rte_hash_function hashtest_funcs[] = {rte_jhash, rte_hash_crc};
- static uint32_t hashtest_initvals[] = {0};
--static uint32_t hashtest_key_lens[] = {0, 2, 4, 5, 6, 7, 8, 10, 11, 15, 16, 21, 31, 32, 33, 63, 64};
--#define MAX_KEYSIZE 64
-+static uint32_t hashtest_key_lens[] = {
-+	0, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 14, 15, 16, 18, 20,
-+	21, 31, 32, 33, 36, 48, 63, 64, 80, 96, 112, 128, 254
-+};
-+#define MAX_KEYSIZE 256
- /******************************************************************************/
- #define LOCAL_FBK_HASH_ENTRIES_MAX (1 << 15)
- 
-diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
-index 608d79d33d..982fa1deee 100644
---- a/lib/hash/rte_cuckoo_hash.c
-+++ b/lib/hash/rte_cuckoo_hash.c
-@@ -50,8 +50,19 @@ RTE_LOG_REGISTER_DEFAULT(hash_logtype, INFO);
-  */
- enum cmp_jump_table_case {
- 	KEY_CUSTOM = 0,
-+	KEY_2_BYTES,
-+	KEY_3_BYTES,
-+	KEY_4_BYTES,
-+	KEY_5_BYTES,
-+	KEY_6_BYTES,
-+	KEY_8_BYTES,
-+	KEY_10_BYTES,
-+	KEY_12_BYTES,
-+	KEY_14_BYTES,
- 	KEY_16_BYTES,
-+	KEY_20_BYTES,
- 	KEY_32_BYTES,
-+	KEY_36_BYTES,
- 	KEY_48_BYTES,
- 	KEY_64_BYTES,
- 	KEY_80_BYTES,
-@@ -85,12 +96,108 @@ enum cmp_jump_table_case {
- #include "rte_cmp_generic.h"
- #endif
- 
-+static inline int
-+rte_hash_k2_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
-+{
-+	const unaligned_uint16_t *k1 = key1;
-+	const unaligned_uint16_t *k2 = key2;
-+
-+	return k1[0] ^ k2[0];
-+}
-+
- static int
--rte_hash_k48_cmp_eq(const void *key1, const void *key2, size_t key_len)
-+rte_hash_k3_cmp_eq(const void *key1, const void *key2, size_t key_len)
-+{
-+	return rte_hash_k2_cmp_eq(key1, key2, key_len)
-+		| (((const uint8_t *)key1)[2] ^ ((const uint8_t *)key2)[2]);
-+}
-+
-+static int
-+rte_hash_k4_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
-+{
-+	const unaligned_uint32_t *k1 = key1;
-+	const unaligned_uint32_t *k2 = key2;
-+
-+	return k1[0] ^ k2[0];
-+}
-+
-+static int
-+rte_hash_k5_cmp_eq(const void *key1, const void *key2, size_t key_len)
-+{
-+	return rte_hash_k4_cmp_eq(key1, key2, key_len) |
-+		(((const uint8_t *)key1)[4] ^ ((const uint8_t *)key2)[4]);
-+}
-+
-+static int
-+rte_hash_k6_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
-+{
-+	const unaligned_uint16_t *k1 = key1;
-+	const unaligned_uint16_t *k2 = key2;
-+
-+	return (k1[0] ^ k2[0]) | (k1[1] ^ k2[1]) | (k1[2] ^ k2[2]);
-+}
-+
-+static int
-+rte_hash_k8_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
-+{
-+#ifdef RTE_ARCH_64
-+	const unaligned_uint64_t *k1 = key1;
-+	const unaligned_uint64_t *k2 = key2;
-+
-+	return !!(k1[0] ^ k2[0]);
-+#else
-+	const unaligned_uint32_t *k1 = key1;
-+	const unaligned_uint32_t *k2 = key2;
-+
-+	return (k1[0] ^ k2[0]) | (k1[1] ^ k2[1]);
-+#endif
-+}
-+
-+static int
-+rte_hash_k10_cmp_eq(const void *key1, const void *key2, size_t key_len)
-+{
-+	return rte_hash_k8_cmp_eq(key1, key2, key_len) |
-+		rte_hash_k2_cmp_eq((const uint8_t *)key1 + 8,
-+				   (const uint8_t *)key2 + 8, key_len);
-+}
-+
-+static int
-+rte_hash_k12_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
-+{
-+	const unaligned_uint32_t *k1 = key1;
-+	const unaligned_uint32_t *k2 = key2;
-+
-+	return (k1[0] ^ k2[0]) | (k1[1] ^ k2[1]) | (k1[2] ^ k2[2]);
-+}
-+
-+static int
-+rte_hash_k14_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
-+{
-+	return rte_hash_k8_cmp_eq(key1, key2, key_len) |
-+		rte_hash_k6_cmp_eq((const uint8_t *)key1 + 8,
-+				   (const uint8_t *)key2 + 8, key_len);
-+}
-+
-+static int
-+rte_hash_k20_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
- {
- 	return rte_hash_k16_cmp_eq(key1, key2, key_len) |
--		rte_hash_k16_cmp_eq((const uint8_t *) key1 + 16,
--				    (const uint8_t *) key2 + 16, key_len) ||
-+		rte_hash_k4_cmp_eq((const uint8_t *)key1 + 16,
-+				   (const uint8_t *)key2 + 16, key_len);
-+}
-+
-+static int
-+rte_hash_k36_cmp_eq(const void *key1, const void *key2, size_t key_len __rte_unused)
-+{
-+	return rte_hash_k32_cmp_eq(key1, key2, key_len) ||
-+		rte_hash_k4_cmp_eq((const uint8_t *)key1 + 32,
-+				   (const uint8_t *)key2 + 32, key_len);
-+}
-+
-+static int
-+rte_hash_k48_cmp_eq(const void *key1, const void *key2, size_t key_len)
-+{
-+	return	rte_hash_k32_cmp_eq(key1, key2, key_len) ||
- 		rte_hash_k16_cmp_eq((const uint8_t *) key1 + 32,
- 				    (const uint8_t *) key2 + 32, key_len);
- }
-@@ -226,8 +333,19 @@ void rte_hash_set_cmp_func(struct rte_hash *h, rte_hash_cmp_eq_t func)
-  */
- static const rte_hash_cmp_eq_t cmp_jump_table[NUM_KEY_CMP_CASES] = {
- 	[KEY_CUSTOM] = NULL,
-+	[KEY_2_BYTES] = rte_hash_k2_cmp_eq,
-+	[KEY_3_BYTES] = rte_hash_k3_cmp_eq,
-+	[KEY_4_BYTES] = rte_hash_k4_cmp_eq,
-+	[KEY_5_BYTES] = rte_hash_k5_cmp_eq,
-+	[KEY_6_BYTES] = rte_hash_k6_cmp_eq,
-+	[KEY_8_BYTES] = rte_hash_k8_cmp_eq,
-+	[KEY_10_BYTES] = rte_hash_k10_cmp_eq,
-+	[KEY_12_BYTES] = rte_hash_k12_cmp_eq,
-+	[KEY_14_BYTES] = rte_hash_k14_cmp_eq,
- 	[KEY_16_BYTES] = rte_hash_k16_cmp_eq,
-+	[KEY_20_BYTES] = rte_hash_k20_cmp_eq,
- 	[KEY_32_BYTES] = rte_hash_k32_cmp_eq,
-+	[KEY_36_BYTES] = rte_hash_k36_cmp_eq,
- 	[KEY_48_BYTES] = rte_hash_k48_cmp_eq,
- 	[KEY_64_BYTES] = rte_hash_k64_cmp_eq,
- 	[KEY_80_BYTES] = rte_hash_k80_cmp_eq,
+
+Shani Peretz (4):
+  mbuf: record mbuf operations history
+  net/mlx5: mark an operation in mbuf's history
+  app/testpmd: add testpmd command to dump mbuf history
+  usertool: add a script to parse mbuf history dump
+
+ app/test-pmd/cmdline.c                |  60 ++++++++-
+ config/meson.build                    |   1 +
+ drivers/net/mlx5/mlx5_rx.c            |  25 ++++
+ drivers/net/mlx5/mlx5_rx.h            |   6 +
+ drivers/net/mlx5/mlx5_rxq.c           |  15 ++-
+ drivers/net/mlx5/mlx5_rxtx_vec.c      |  16 +++
+ drivers/net/mlx5/mlx5_tx.h            |  21 +++
+ drivers/net/mlx5/mlx5_txq.c           |   3 +
+ lib/ethdev/rte_ethdev.h               |  15 +++
+ lib/mbuf/meson.build                  |   2 +
+ lib/mbuf/rte_mbuf.c                   |  10 +-
+ lib/mbuf/rte_mbuf.h                   |  23 +++-
+ lib/mbuf/rte_mbuf_dyn.h               |   7 +
+ lib/mbuf/rte_mbuf_history.c           | 181 ++++++++++++++++++++++++++
+ lib/mbuf/rte_mbuf_history.h           | 154 ++++++++++++++++++++++
+ meson_options.txt                     |   2 +
+ usertools/dpdk-mbuf_history_parser.py | 173 ++++++++++++++++++++++++
+ 17 files changed, 708 insertions(+), 6 deletions(-)
+ create mode 100644 lib/mbuf/rte_mbuf_history.c
+ create mode 100644 lib/mbuf/rte_mbuf_history.h
+ create mode 100755 usertools/dpdk-mbuf_history_parser.py
+
 -- 
-2.47.3
+2.34.1
 
