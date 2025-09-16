@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE75CAC599
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 14:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D593CAC599
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 14:22:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0FED8406B7;
-	Tue, 16 Sep 2025 16:21:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 40DA2406BC;
+	Tue, 16 Sep 2025 16:21:28 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id C176D402D1;
- Tue, 16 Sep 2025 16:21:22 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id E979B402D1;
+ Tue, 16 Sep 2025 16:21:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1758032483; x=1789568483;
+ t=1758032484; x=1789568484;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=UxIZEYUQCNqAfS2MBc9KFiXJPrN/eW8WRYmSenLBy5s=;
- b=Taxs7uRazK/XJKmLHMfxmswCOAjhdLHycRQVwu3c/k4z9EIlvYZED23L
- pDc+DgooEGuWtSNOZoxWRb4qAaB1tyeRrjPn0xEX4nZBbfKQAawQYhiPQ
- BqYjWLxXZmUpbT70quIrZywku/HCLDuPUh3vdbouRRd4jpDGTTYdwF1km
- 2o0M4C8B0q+TXvcnxLEIxab0vvOacyRdGagigU5P9casf+ep+JmwM5KBw
- HblTW28/XmVPg6UM9dJHPvy0w1Iks1P55SOAIst1yh7sQNFLMzRxpqdRZ
- PmRXfozwpbzf2ZEP7goh6OcoTGZFWYIGaw2Sy0nA1tKycgcYQRRmgTwI0 w==;
-X-CSE-ConnectionGUID: hHDd1CxwRkitOHk8WBRZjQ==
-X-CSE-MsgGUID: J/EqzwVdTRKeiMPefL3F9A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="71681338"
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; d="scan'208";a="71681338"
+ bh=eKJ4dbsuKbzNsYYO7dn3bMyowcWmZKeymj/ait+OZYs=;
+ b=SvReq3ZWVbZonjaqGoZBUKOgnkMD+V51hCNnOYFL5ufy4TiTM+k7urU+
+ gYVjyqMSk5mlNKmX1gNfKOzj0AjImJ2iyBvwfKuRX3TGNx9qzPHRHYRIF
+ H4GBXTr+DUqE1cwmTodvou0ShR0ypmtH/iq2DBrH3fYw8vhSgja7fm3cv
+ VZ09fJdlC4gtuGaoHRGpGlQAbDSaQlFFv3iuaTAE4RyS427aJe26XMA++
+ Rhc9oDaMrNnvpJifvBixYtjwPHMqyqrNLr9FYJ7RYYXsp4W77bi+ZCNDL
+ rIFQaRFM6PpMblAYcCqBhG7/k7P4pABhP4UcUfo8cY8NufrCFEd41k2Dr A==;
+X-CSE-ConnectionGUID: YXPN6Ej1Qcq9kkQJhICi/Q==
+X-CSE-MsgGUID: fuZRuJaKSpGLumk2DW08PA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="71681340"
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; d="scan'208";a="71681340"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2025 07:21:22 -0700
-X-CSE-ConnectionGUID: JCREyna0QtO9/+9V2BXmLw==
-X-CSE-MsgGUID: Di/LDPE0Tly2emXuTCNKmQ==
+ 16 Sep 2025 07:21:23 -0700
+X-CSE-ConnectionGUID: qlctk/pQTH254KdN8cCQNQ==
+X-CSE-MsgGUID: OilKCHTdQkS60EMNUTgCkQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; d="scan'208";a="212115224"
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; d="scan'208";a="212115230"
 Received: from silpixa00401177.ir.intel.com ([10.237.213.77])
- by orviesa001.jf.intel.com with ESMTP; 16 Sep 2025 07:21:22 -0700
+ by orviesa001.jf.intel.com with ESMTP; 16 Sep 2025 07:21:23 -0700
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
 Cc: Ciara Loftus <ciara.loftus@intel.com>,
 	stable@dpdk.org
-Subject: [PATCH 5/8] net/iavf: document support for free Tx mbuf on demand
-Date: Tue, 16 Sep 2025 14:21:10 +0000
-Message-Id: <20250916142113.3485738-6-ciara.loftus@intel.com>
+Subject: [PATCH 6/8] net/iavf: document support for burst mode info
+Date: Tue, 16 Sep 2025 14:21:11 +0000
+Message-Id: <20250916142113.3485738-7-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250916142113.3485738-1-ciara.loftus@intel.com>
 References: <20250916142113.3485738-1-ciara.loftus@intel.com>
@@ -60,11 +60,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The free tx mbuf on demand feature has been supported since commit
-86e44244f95c ("net/iavf: cleanup Tx buffers"). Update the list of
+The burst mode info feature has been supported since commit 0d5a856f5be9
+("net/iavf: support Rx/Tx burst mode info"). Update the list of
 supported features to reflect this.
 
-Fixes: 86e44244f95c ("net/iavf: cleanup Tx buffers")
+Fixes: 0d5a856f5be9 ("net/iavf: support Rx/Tx burst mode info")
 Cc: stable@dpdk.org
 
 Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
@@ -73,17 +73,17 @@ Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/doc/guides/nics/features/iavf.ini b/doc/guides/nics/features/iavf.ini
-index aac27bd706..4e4c5cc817 100644
+index 4e4c5cc817..7420432840 100644
 --- a/doc/guides/nics/features/iavf.ini
 +++ b/doc/guides/nics/features/iavf.ini
-@@ -10,6 +10,7 @@
- Link status          = Y
- Rx interrupt         = Y
- Fast mbuf free       = P
-+Free Tx mbuf on demand = Y
+@@ -14,6 +14,7 @@ Free Tx mbuf on demand = Y
  Queue start/stop     = Y
  Runtime Rx queue setup = Y
  Runtime Tx queue setup = Y
++Burst mode info      = Y
+ Power mgmt address monitor = Y
+ MTU update           = Y
+ Scattered Rx         = Y
 -- 
 2.34.1
 
