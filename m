@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC373CAC599
-	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 14:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD58CAC599
+	for <dpdk-dev@archiver.kernel.org>; Tue, 16 Sep 2025 14:22:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4C85940A6D;
-	Tue, 16 Sep 2025 16:21:29 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 67BB840A77;
+	Tue, 16 Sep 2025 16:21:30 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 2363E40612;
- Tue, 16 Sep 2025 16:21:24 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 494DE4069D;
+ Tue, 16 Sep 2025 16:21:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1758032485; x=1789568485;
+ t=1758032486; x=1789568486;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=9G7HIGsj5gH82Mli4/W6BqXFbJz7LwsUGGsoXrNUCfM=;
- b=deQY1oeEByoKS2K25sSMCaE5xviPR9i5Y+vCoMhTz8QiZ7eHEsg6k3te
- a9M5qJCUOehuw+1COKPD7g8CCExiYdoxzMfYeNvs9LeeeagxPdhm9V6ey
- 61WEXvEg4E5XioHypyP1vVUuikGxqS6gNIrWvInqveCZLSOdmj1CBzS55
- YG6YZDAm3woww9gkAA0vKV04FNGAPLkBG+03d9PgJtWUdnlxOojMUfWT8
- qMYikMonVacykQoXWRPdj6keONauKakeLokZ5xCNIkQm98L7yzrXRT2fc
- Y5hRtEEFs7OwX0FYmGwX7GWtIVUH1aNBXtozSU739X3jM3LJeXwSTUJtO w==;
-X-CSE-ConnectionGUID: 0m5p+Sf+T4iOVhbVO/2rBA==
-X-CSE-MsgGUID: v6+NvprES2aIVmzchqpasA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="71681343"
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; d="scan'208";a="71681343"
+ bh=0hGKqLKIyD40Vwy7mulTWI+POcsXVysLRE9iXE5Izdc=;
+ b=hUHRmYAgHZ4sQVJ5+jZc3MR+oD3ykWlfQj+mct4aZQKfFxr/Q9p0nJ5w
+ MoFPa80muPUTdtY2uCZa94yTiQvqKBlzohk4rVRn75K3Nz0MbLNOjQ6Bo
+ n7MHOkiG8YGHVfgi4zzaHAYGM0j+21KsJSQcvynNdVABKJHGXj2LmUbXz
+ BrfA3FU7j7Sj45zQ0uBxMeEjC9KvMc3TFuJzbgddWmKAxFely9azPe7dF
+ N7ydiuFIRfPCfqsfZXT+K9r0d5jd8KII957VJXZV0V0484AsMTIXY894C
+ UDTaH44u/ao62KQjLIHFPAc3kF+SXS4NOvR4tQUXuKKEIvBqb++JNgjt3 Q==;
+X-CSE-ConnectionGUID: 9YpXcCwXT+2krgkDj318Ow==
+X-CSE-MsgGUID: 9nWSn0m4RSyKAWASbrVI+w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="71681344"
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; d="scan'208";a="71681344"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2025 07:21:24 -0700
-X-CSE-ConnectionGUID: 8djWhzNZT5yQ/yGyUSQ7HQ==
-X-CSE-MsgGUID: +1vUpnLuTPaEIWCe8tZDBw==
+ 16 Sep 2025 07:21:25 -0700
+X-CSE-ConnectionGUID: F00YML4ZTGyd0NiQcC9UHQ==
+X-CSE-MsgGUID: as4YEYRvQt2RQhOTAhtsHQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; d="scan'208";a="212115235"
+X-IronPort-AV: E=Sophos;i="6.18,269,1751266800"; d="scan'208";a="212115246"
 Received: from silpixa00401177.ir.intel.com ([10.237.213.77])
- by orviesa001.jf.intel.com with ESMTP; 16 Sep 2025 07:21:24 -0700
+ by orviesa001.jf.intel.com with ESMTP; 16 Sep 2025 07:21:25 -0700
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
 Cc: Ciara Loftus <ciara.loftus@intel.com>,
 	stable@dpdk.org
-Subject: [PATCH 7/8] net/iavf: fix documentation of support for TSO
-Date: Tue, 16 Sep 2025 14:21:12 +0000
-Message-Id: <20250916142113.3485738-8-ciara.loftus@intel.com>
+Subject: [PATCH 8/8] net/iavf: document support for extended statistics
+Date: Tue, 16 Sep 2025 14:21:13 +0000
+Message-Id: <20250916142113.3485738-9-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250916142113.3485738-1-ciara.loftus@intel.com>
 References: <20250916142113.3485738-1-ciara.loftus@intel.com>
@@ -60,30 +60,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-TSO is only supported by the scalar path in the iavf driver. Update the
-documentation to reflect this partial support.
+The extended statistics feature has been implemented since commit
+d38a06bf4367 ("net/iavf: add extended stats"). Update the list of
+supported features to reflect this.
 
-Fixes: 319c421f3890 ("net/avf: enable SSE Rx Tx")
+Fixes: d38a06bf4367 ("net/iavf: add extended stats")
 Cc: stable@dpdk.org
 
 Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- doc/guides/nics/features/iavf.ini | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ doc/guides/nics/features/iavf.ini | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/doc/guides/nics/features/iavf.ini b/doc/guides/nics/features/iavf.ini
-index 7420432840..63c89ee28f 100644
+index 63c89ee28f..74c1910ca3 100644
 --- a/doc/guides/nics/features/iavf.ini
 +++ b/doc/guides/nics/features/iavf.ini
-@@ -18,7 +18,7 @@ Burst mode info      = Y
- Power mgmt address monitor = Y
- MTU update           = Y
- Scattered Rx         = Y
--TSO                  = Y
-+TSO                  = P
- Promiscuous mode     = Y
- Allmulticast mode    = Y
- Unicast MAC filter   = Y
+@@ -41,6 +41,7 @@ Packet type parsing  = Y
+ Rx descriptor status = Y
+ Tx descriptor status = Y
+ Basic stats          = Y
++Extended stats       = Y
+ Multiprocess aware   = Y
+ FreeBSD              = Y
+ Linux                = Y
 -- 
 2.34.1
 
