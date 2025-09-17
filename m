@@ -2,64 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA04CA0EE8
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Sep 2025 12:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D06CAC59A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Sep 2025 12:43:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0768F40661;
-	Wed, 17 Sep 2025 14:43:02 +0200 (CEST)
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com
- [209.85.219.42]) by mails.dpdk.org (Postfix) with ESMTP id 55F06402DA
- for <dev@dpdk.org>; Wed, 17 Sep 2025 14:42:59 +0200 (CEST)
-Received: by mail-qv1-f42.google.com with SMTP id
- 6a1803df08f44-776aee67e8dso23069196d6.3
+	by mails.dpdk.org (Postfix) with ESMTP id A6A664066E;
+	Wed, 17 Sep 2025 14:43:04 +0200 (CEST)
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com
+ [209.85.222.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 051DB402DA
+ for <dev@dpdk.org>; Wed, 17 Sep 2025 14:43:00 +0200 (CEST)
+Received: by mail-qk1-f178.google.com with SMTP id
+ af79cd13be357-827ec18434aso428527585a.0
  for <dev@dpdk.org>; Wed, 17 Sep 2025 05:42:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=iol.unh.edu; s=unh-iol; t=1758112979; x=1758717779; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=hcNsqUhEcQ0WrQ8b3rbHmWC+wO2dLxmxHOXD/ZmfHZA=;
- b=iR0GA+qzz69V+aBKABnshSRVDseb7qz/4SwQ6/14R0fp7opF2xjSBf2RGFS5wHMG65
- W9hXjgmKjKS05noTfWqwwdQkrrhKLETiBC4ks/mbjBVA5eEmWehDtmvvcatdeht1lGUV
- 2zSdmRxvCzqOcx5Ita/LqYjo9w9LcCRY8Ydnk=
+ bh=zvGj+X/jvn2E82tj2eAkUHI+6oRkHKDxEsy9HOAMVO4=;
+ b=MEtUddJIbYyKtzbvS2586D5KZcbch3gRgh3M2qJR7N/I2FzD51eYMXix+6XjyD/quE
+ rBInXbjTdUPHNXxu6Pz2gvB0DpFHlMcFJ2Ej21YPFwhCUJdYgSl8GH+3qEJgFhBehulV
+ BNu/Yij0xNLbMGFr/U3h0B0set6fWJt5oK3qg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20230601; t=1758112979; x=1758717779;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=hcNsqUhEcQ0WrQ8b3rbHmWC+wO2dLxmxHOXD/ZmfHZA=;
- b=Qty5tAt1Jpzu3UZsGhO/369DHkDciEopBgWKuO+z1mZ1njjUv9OcrCRO7AYk9AnCRU
- FQRDKcrraDLM3s1ZmfXLgOxGh1vgDCaaR9Euy/1xlw8bz7T0Bzujafr551BZc0UNVeUK
- KCE7m75FQJr75eQRhDMPUvya7BvzvBZ2JmhkO2/rQty90XjY36QEwsZBh+w2c16eHZcx
- jauIzZgaVPK74aFaPQgCAYV3LOlelbgr8Iau8Gt2VD92/UcOJJa2yEFHyicuiYpBZgiY
- f1RWQW4+EOy1pHhzdyaPQ4E53maJyISM1XH7bVkz9CKbWHuxJuf1r0VfrpsUXAWXfwsI
- zohQ==
+ bh=zvGj+X/jvn2E82tj2eAkUHI+6oRkHKDxEsy9HOAMVO4=;
+ b=oPxCW2h5I8X1S0MAZoLpU0ZVSVv6ictuZoVb9SJE5SpVYFLaRyFEqlv3YZILzA/9jZ
+ awdkKbN3vtH6BjM0v5CiYheDtZeIQTrW3GNfC77ne6ml5dz0YQJRCTtS3x33yrpAsDCO
+ P2NYPfOhdGRGU8eXmWR5BM5Dh+Fz5HMse0ztL7HDrT3ytI7ql7ydb3Xlt3TFvrQSt00R
+ 3NGlhTm6gnqKFh+rM3r/tl42NnyuN9nqNvfeAEfZjGpEiqAnNr4BsBarkoPGrDoeC9BV
+ 2picE1aELpyVfmCsJkWSvJ7A+JrlgKgYTDnJbKH/9H7pZLrMfFSMsWWevYiJ18YFr+Va
+ Y7/g==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUCAaXmRcNVGuXv6Y29+29A7fxojSwOQCgxKLh7AvS4isAMnistQqoT2Ul8wjQREenbglM=@dpdk.org
-X-Gm-Message-State: AOJu0YyP/G0xYBV5J51nPt+IsnpKpGU2msH050pvUI+jtMWTvBvsX7Q9
- R2L8EatkZVIcyxv7KNpzpYjfH3US9k6nvXcEKHZR2Eoj+SamrksNjsPWXQ2tGSBHIxI=
-X-Gm-Gg: ASbGnctC3I8wcZu40BIQ0L42wJbrx+Lx2rEMbTgSzjTUwFv743kX1Rk43hPv+7iO7oV
- 3vs8zzh4QZukoDrsnEyOHr0qGqdflkGAT1zwk3ZE1lcmWKaV3W/EU6lqa4WxXJsxYfYKpgbeF8H
- 21aBTKP2odbUkv213u6cZraLaIBmFPvvhpr8tcQrQu6X8xAh9hfzZuSPh1E7q9h5uzaoYvm4+z9
- es8zBQxDc8OsQRYamToPkyJp24we1R3HHWrO78ns5SdQzqFSNoo21Vo3wAnUNc77621rhUfZrsl
- 7qyLoKNMFtCKCKiIv3EZAYM7PdS0RSggZ/Qqm2hXJ7WSH0wbIaTDHBEa8GHD3AD4Rf3E3XtDPFg
- DvRIf+i8rhO8T6DZAypXrHq0DVYP30a6wkU0=
-X-Google-Smtp-Source: AGHT+IGDFsJsGc/HA7m50RINV5bbFneYh2Qlq7SqAkaEX7tvJAHUATOby0DY8d9JxNbkDVY+a/kf1g==
-X-Received: by 2002:a05:6214:801a:b0:78e:e166:72ac with SMTP id
- 6a1803df08f44-78ee1667397mr18376396d6.9.1758112977958; 
- Wed, 17 Sep 2025 05:42:57 -0700 (PDT)
+ AJvYcCUW3ReU6gVAe3oIvIsJyhTIYlJhs1QtYByQ8h8B+2iGGcwi5uvIf+20ECm+hZsDTzOWZYc=@dpdk.org
+X-Gm-Message-State: AOJu0YzWA14IW1cmSTX1SVl4TzfvdZ00+mBPrTUPtcfk9vsyKky2ewh+
+ a5a5OPtRYo+C6+GZpg7sh9szaVXTMwSQLM57jasi/AMJeGlMfoGKWufJspbjMEkSydqWIcYPdik
+ Exzev
+X-Gm-Gg: ASbGnctJS4nUDZIJOJoCLChI7F9VgzN4OJCRH3h+LCjOckhvApS3aty+nlK0WuMMqtI
+ QTuY689BqdRzbcZ28PsT4/Q3v9j/FnzZCmvtyaS81KvLQZjz6bYtY1k6Afid8DVtbG8aLH+XzUu
+ 7uP2dNqOw0qB1oOjyLL3mI8XZkLjbBTx1R8CVyqSr9zqGQa5BOTZETxc3ScshHNS8U+bPfnMjd8
+ DLV+tWX82kWCQtx1JDpIwLaBHP9AIT2r+Q+Oq8Mw7ebZcvAuIZd8OUEf9wQ+Nzq1iEe6IQl7tgv
+ X4aLHeHqIMFq+ScLShbMxw7OO7PTKwg0eQ+xgAqNSctPwA5MA2CiA9fD+V8KB0H/E5EzLg+VwhG
+ F+1+1o5IVWnAGf5Io33N45qRd2LBO6t+pL04=
+X-Google-Smtp-Source: AGHT+IF1gsgsrP8wQ6W62/6OBMWHTDZHsL21jqPiryy5Z8Luzckme2JE77Iyj42730H8JAuT02K89A==
+X-Received: by 2002:a05:620a:468f:b0:829:4b29:19d0 with SMTP id
+ af79cd13be357-83109e98432mr201681485a.7.1758112979150; 
+ Wed, 17 Sep 2025 05:42:59 -0700 (PDT)
 Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-825abc11db2sm908046285a.45.2025.09.17.05.42.56
+ af79cd13be357-825abc11db2sm908046285a.45.2025.09.17.05.42.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 17 Sep 2025 05:42:56 -0700 (PDT)
+ Wed, 17 Sep 2025 05:42:58 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: luca.vizzarro@arm.com
 Cc: abailey@iol.unh.edu, dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu,
- ivan.malov@arknetworks.am, Jeremy Spewock <jspewock@iol.unh.edu>
-Subject: [PATCH v3 2/3]  dts: add TX offload capabilities to NIC capabilities
-Date: Wed, 17 Sep 2025 08:42:42 -0400
-Message-ID: <20250917124243.31567-3-abailey@iol.unh.edu>
+ ivan.malov@arknetworks.am
+Subject: [PATCH v3 3/3] dts: update tx_offload test from old dts
+Date: Wed, 17 Sep 2025 08:42:43 -0400
+Message-ID: <20250917124243.31567-4-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250917124243.31567-1-abailey@iol.unh.edu>
 References: <20250902142725.56736-1-abailey@iol.unh.edu>
@@ -79,941 +81,154 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, there is no support for tracking tx_offload capabilities and
-there is no separation between port capabilities and queue
-capabilities. This is an issue if a test case requires a tx_offload
-capability or if a test case requires that a card supports a capability
-on a queue. This causes test cases with said requirements to not be
-skipped when appropriate. Add tx_offload capabilities and distinguish
-capabilities between ports and queues.
+Currently, the RX/TX offload test in old DTS expects the TX ports to be
+initially configured to use mbuf fast free. This is no longer the case
+and must be updated to assume mbuf fast free is not initially utilized
+by capable NICs. Add updated test suite to test mbuf fast free
+configuration.
 
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
-Signed-off-by: Jeremy Spewock <jspewock@iol.unh.edu>
 ---
- dts/framework/parser.py                       |  30 +
- dts/framework/remote_session/testpmd_shell.py | 660 +++++++++++++++---
- dts/tests/TestSuite_checksum_offload.py       |  10 +-
- dts/tests/TestSuite_pmd_buffer_scatter.py     |   4 +-
- dts/tests/TestSuite_vlan.py                   |   4 +-
- 5 files changed, 599 insertions(+), 109 deletions(-)
+ dts/tests/TestSuite_rx_tx_offload.py | 130 +++++++++++++++++++++++++++
+ 1 file changed, 130 insertions(+)
+ create mode 100644 dts/tests/TestSuite_rx_tx_offload.py
 
-diff --git a/dts/framework/parser.py b/dts/framework/parser.py
-index 7254c75b71..4170cdb1dd 100644
---- a/dts/framework/parser.py
-+++ b/dts/framework/parser.py
-@@ -116,6 +116,36 @@ def _composite_parser_fn(text: str) -> Any:
- 
-         return ParserFn(TextParser_fn=_composite_parser_fn)
- 
-+    @staticmethod
-+    def find_all(
-+        pattern: str | re.Pattern[str],
-+        flags: re.RegexFlag = re.RegexFlag(0),
-+    ) -> ParserFn:
-+        """Makes a parser function that finds all of the regular expression matches in the text.
+diff --git a/dts/tests/TestSuite_rx_tx_offload.py b/dts/tests/TestSuite_rx_tx_offload.py
+new file mode 100644
+index 0000000000..f97bb4978a
+--- /dev/null
++++ b/dts/tests/TestSuite_rx_tx_offload.py
+@@ -0,0 +1,130 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2025 University of New Hampshire
 +
-+        If there are no matches found in the text than None will be returned, otherwise a list
-+        containing all matches will be returned. Patterns that contain multiple groups will pack
-+        the matches for each group into a tuple.
++"""RX TX offload test suite.
 +
-+        Args:
-+            pattern: The regular expression pattern.
-+            flags: The regular expression flags. Ignored if the given pattern is already compiled.
++Test the testpmd feature of configuring RX and TX offloads.
++"""
 +
-+        Returns:
-+            A :class:`ParserFn` that can be used as metadata for a dataclass field.
-+        """
-+        if isinstance(pattern, str):
-+            pattern = re.compile(pattern, flags)
++from typing import Optional
 +
-+        def _find_all(text: str) -> list[str] | None:
-+            m = pattern.findall(text)
-+            if len(m) == 0:
-+                return None
-+
-+            return m
-+
-+        return ParserFn(TextParser_fn=_find_all)
-+
-     @staticmethod
-     def find(
-         pattern: str | re.Pattern[str],
-diff --git a/dts/framework/remote_session/testpmd_shell.py b/dts/framework/remote_session/testpmd_shell.py
-index ecbdd66edd..f2a7307e44 100644
---- a/dts/framework/remote_session/testpmd_shell.py
-+++ b/dts/framework/remote_session/testpmd_shell.py
-@@ -22,7 +22,17 @@
- from enum import Flag, auto
- from os import environ
- from pathlib import PurePath
--from typing import TYPE_CHECKING, Any, ClassVar, Concatenate, Literal, ParamSpec, Tuple, TypeAlias
-+from typing import (
-+    TYPE_CHECKING,
-+    Any,
-+    ClassVar,
-+    Concatenate,
-+    Literal,
-+    ParamSpec,
-+    Tuple,
-+    TypeAlias,
-+    cast,
++from framework.remote_session.testpmd_shell import (
++    OffloadConfiguration,
++    RxTxLiteralSwitch,
++    TestPmdShell,
 +)
- 
- from framework.context import get_ctx
- from framework.remote_session.interactive_shell import only_active
-@@ -43,6 +53,7 @@
- from framework.settings import SETTINGS
- from framework.utils import REGEX_FOR_MAC_ADDRESS, StrEnum
- 
-+RxTxLiteralSwitch = Literal["rx", "tx"]
- P = ParamSpec("P")
- TestPmdShellMethod = Callable[Concatenate["TestPmdShell", P], Any]
- 
-@@ -1278,7 +1289,110 @@ class TestPmdVerbosePacket(TextParser):
-     )
- 
- 
--class RxOffloadCapability(Flag):
-+class OffloadCapability(Flag):
-+    """Flags generated from RxOffloadCapabilites and TxOffloadCapabilities classes."""
-+
-+    @classmethod
-+    def from_string(cls, line: str) -> Self:
-+        """Make an instance from a string containing the flag names separated with a space.
-+
-+        Args:
-+            line: The line to parse.
-+
-+        Returns:
-+            A new instance containing all found flags.
-+        """
-+        flag = cls(0)
-+        for flag_name in line.split():
-+            flag |= cls[
-+                f"{getattr(
-+                            cls, f"_{cls.__name__}__PREFIX", 'PREFIX_NOT_FOUND_'
-+                          )
-+                  }{flag_name}"
-+            ]
-+        return flag
-+
-+    @classmethod
-+    def from_list(cls, lines: list[str]) -> list[Self]:
-+        """Gather capabilities from a list of strings.
-+
-+        Args:
-+            lines: The list of capabilities to make flags from.
-+        """
-+        return [cls.from_string(line) for line in lines]
-+
-+    @classmethod
-+    def make_parser(cls, per_port: bool, /, find_multiple: bool = False) -> ParserFn:
-+        """Make a parser function.
-+
-+        Args:
-+            per_port: If :data:`True`, will return capabilities per port. If :data:`False`,
-+                will return capabilities per queue.
-+            find_multiple: If :data:`True`, will use :func:`TextParser.find_all` to find all
-+                matches for the regex query and return a list of instances based on those matches.
-+                If :data:`False`, will return a single instance of the flag based off a single
-+                match.
-+
-+        Returns:
-+            ParserFn: A dictionary for the `dataclasses.field` metadata argument containing a
-+                parser function that makes an instance of this flag from text.
-+        """
-+        granularity = "Port" if per_port else "Queue"
-+        parser_func: Callable[..., ParserFn] = (
-+            TextParser.find_all if find_multiple else TextParser.find
-+        )
-+        instance_func: Callable[..., list[OffloadCapability]] | Callable[..., OffloadCapability] = (
-+            cls.from_list if find_multiple else cls.from_string
-+        )
-+        return TextParser.wrap(
-+            parser_func(rf"{granularity}[\s\[\]\d]+:(.*)$", re.MULTILINE),
-+            instance_func,
-+        )
++from framework.test_suite import TestSuite, func_test
++from framework.testbed_model.capability import NicCapability, requires
 +
 +
-+class TxOffloadCapability(OffloadCapability):
-+    """TX offload capabilities of a device.
++class TestRxTxOffload(TestSuite):
++    """RX/TX offload test suite."""
 +
-+    The flags are taken from ``lib/ethdev/rte_ethdev.h``.
-+    They're prefixed with ``RTE_ETH_TX_OFFLOAD`` in ``lib/ethdev/rte_ethdev.h``
-+    instead of ``TX_OFFLOAD``, which is what testpmd changes the prefix to.
-+
-+    The ``TX_OFFLOAD`` prefix has been preserved so that the same flag names can be used
-+    in :class:`NicCapability`. The prefix is needed in :class:`NicCapability` since there's
-+    no other qualifier which would sufficiently distinguish it from other capabilities.
-+
-+    References:
-+        DPDK lib: ``lib/ethdev/rte_ethdev.h``
-+        testpmd display function: ``app/test-pmd/cmdline.c:print_rx_offloads()``
-+    """
-+
-+    __PREFIX: ClassVar[str] = "TX_OFFLOAD_"
-+
-+    TX_OFFLOAD_VLAN_INSERT = auto()
-+    TX_OFFLOAD_IPV4_CKSUM = auto()
-+    TX_OFFLOAD_UDP_CKSUM = auto()
-+    TX_OFFLOAD_TCP_CKSUM = auto()
-+    TX_OFFLOAD_SCTP_CKSUM = auto()
-+    TX_OFFLOAD_TCP_TSO = auto()
-+    TX_OFFLOAD_UDP_TSO = auto()
-+    TX_OFFLOAD_OUTER_IPV4_CKSUM = auto()
-+    TX_OFFLOAD_QINQ_INSERT = auto()
-+    TX_OFFLOAD_VXLAN_TNL_TSO = auto()
-+    TX_OFFLOAD_GRE_TNL_TSO = auto()
-+    TX_OFFLOAD_IPIP_TNL_TSO = auto()
-+    TX_OFFLOAD_GENEVE_TNL_TSO = auto()
-+    TX_OFFLOAD_MACSEC_INSERT = auto()
-+    TX_OFFLOAD_MT_LOCKFREE = auto()
-+    TX_OFFLOAD_MULTI_SEGS = auto()
-+    TX_OFFLOAD_MBUF_FAST_FREE = auto()
-+    TX_OFFLOAD_SECURITY = auto()
-+    TX_OFFLOAD_UDP_TNL_TSO = auto()
-+    TX_OFFLOAD_IP_TNL_TSO = auto()
-+    TX_OFFLOAD_OUTER_UDP_CKSUM = auto()
-+    TX_OFFLOAD_SEND_ON_TIMESTAMP = auto()
-+
-+
-+class RxOffloadCapability(OffloadCapability):
-     """Rx offload capabilities of a device.
- 
-     The flags are taken from ``lib/ethdev/rte_ethdev.h``.
-@@ -1296,6 +1410,8 @@ class RxOffloadCapability(Flag):
-         testpmd display function: ``app/test-pmd/cmdline.c:print_rx_offloads()``
-     """
- 
-+    __PREFIX: ClassVar[str] = "RX_OFFLOAD_"
-+
-     #:
-     RX_OFFLOAD_VLAN_STRIP = auto()
-     #: Device supports L3 checksum offload.
-@@ -1342,57 +1458,68 @@ class RxOffloadCapability(Flag):
-         | RX_OFFLOAD_QINQ_STRIP
-     )
- 
--    @classmethod
--    def from_string(cls, line: str) -> Self:
--        """Make an instance from a string containing the flag names separated with a space.
- 
--        Args:
--            line: The line to parse.
-+@dataclass
-+class OffloadCapabilities(TextParser):
-+    """The result of testpmd's ``show port <port_id> tx_offload capabilities`` command.
- 
--        Returns:
--            A new instance containing all found flags.
--        """
--        flag = cls(0)
--        for flag_name in line.split():
--            flag |= cls[f"RX_OFFLOAD_{flag_name}"]
--        return flag
-+    References:
-+        testpmd command function: ``app/test-pmd/cmdline.c:cmd_tx_offload_get_capa()``
-+        testpmd display function: ``app/test-pmd/cmdline.c:cmd_tx_offload_get_capa_parsed()``
-+    """
- 
--    @classmethod
--    def make_parser(cls, per_port: bool) -> ParserFn:
--        """Make a parser function.
-+    port_id: int = field(metadata=TextParser.find_int(r"Offloading Capabilities of port (\d+) :"))
-+    #: Per-queue Rx offload capabilities.
-+    per_queue: RxOffloadCapability | TxOffloadCapability
-+    #: Capabilities other than per-queue Rx offload capabilities.
-+    per_port: RxOffloadCapability | TxOffloadCapability
- 
--        Args:
--            per_port: If :data:`True`, will return capabilities per port. If :data:`False`,
--                will return capabilities per queue.
- 
--        Returns:
--            ParserFn: A dictionary for the `dataclasses.field` metadata argument containing a
--                parser function that makes an instance of this flag from text.
--        """
--        granularity = "Port" if per_port else "Queue"
--        return TextParser.wrap(
--            TextParser.find(rf"Per {granularity}\s+:(.*)$", re.MULTILINE),
--            cls.from_string,
--        )
-+@dataclass
-+class RxOffloadCapabilities(OffloadCapabilities):
-+    """Extends :class:`OffloadCapabilities` with Rx specific functionality."""
-+
-+    per_queue: RxOffloadCapability = field(metadata=RxOffloadCapability.make_parser(False))
-+    per_port: RxOffloadCapability = field(metadata=RxOffloadCapability.make_parser(True))
- 
- 
- @dataclass
--class RxOffloadCapabilities(TextParser):
--    """The result of testpmd's ``show port <port_id> rx_offload capabilities`` command.
-+class TxOffloadCapabilities(OffloadCapabilities):
-+    """Extends :class:`OffloadCapabilities` with Tx specific functionality."""
- 
--    References:
--        testpmd command function: ``app/test-pmd/cmdline.c:cmd_rx_offload_get_capa()``
--        testpmd display function: ``app/test-pmd/cmdline.c:cmd_rx_offload_get_capa_parsed()``
--    """
-+    per_queue: TxOffloadCapability = field(metadata=TxOffloadCapability.make_parser(False))
-+    per_port: TxOffloadCapability = field(metadata=TxOffloadCapability.make_parser(True))
- 
--    #:
--    port_id: int = field(
--        metadata=TextParser.find_int(r"Rx Offloading Capabilities of port (\d+) :")
-+
-+@dataclass
-+class OffloadConfiguration(TextParser):
-+    """The result of testpmd's ``show port <port_id> rx/tx_offload configuration`` command."""
-+
-+    port_id: int = field(metadata=TextParser.find_int(r"Offloading Configuration of port (\d+) :"))
-+    #: Queue offload configurations.
-+    queues: list[RxOffloadCapability] | list[TxOffloadCapability]
-+    #: Port offload configuration.
-+    port: RxOffloadCapability | TxOffloadCapability
-+
-+
-+@dataclass
-+class RxOffloadConfiguration(OffloadConfiguration):
-+    """Extends :class:`OffloadingConfiguration` with Rx specific functionality."""
-+
-+    queues: list[RxOffloadCapability] = field(
-+        metadata=RxOffloadCapability.make_parser(False, find_multiple=True)
-     )
--    #: Per-queue Rx offload capabilities.
--    per_queue: RxOffloadCapability = field(metadata=RxOffloadCapability.make_parser(False))
--    #: Capabilities other than per-queue Rx offload capabilities.
--    per_port: RxOffloadCapability = field(metadata=RxOffloadCapability.make_parser(True))
-+    port: RxOffloadCapability = field(metadata=RxOffloadCapability.make_parser(True))
-+
-+
-+@dataclass
-+class TxOffloadConfiguration(OffloadConfiguration):
-+    """Extends :class:`OffloadingConfiguration` with Tx specific functionality."""
-+
-+    queues: list[TxOffloadCapability] = field(
-+        metadata=TxOffloadCapability.make_parser(False, find_multiple=True)
-+    )
-+    port: TxOffloadCapability = field(metadata=TxOffloadCapability.make_parser(True))
- 
- 
- @dataclass
-@@ -2390,27 +2517,56 @@ def close(self) -> None:
-     ====== Capability retrieval methods ======
-     """
- 
--    def get_capabilities_rx_offload(
--        self,
--        supported_capabilities: MutableSet["NicCapability"],
--        unsupported_capabilities: MutableSet["NicCapability"],
--    ) -> None:
--        """Get all rx offload capabilities and divide them into supported and unsupported.
-+    @staticmethod
-+    def get_offload_capabilities_func(
-+        rxtx: RxTxLiteralSwitch,
-+    ) -> Callable[["TestPmdShell", MutableSet["NicCapability"], MutableSet["NicCapability"]], None]:
-+        """High-order function that returns a method for gathering Rx/Tx offload capabilities.
- 
-         Args:
--            supported_capabilities: Supported capabilities will be added to this set.
--            unsupported_capabilities: Unsupported capabilities will be added to this set.
--        """
--        self._logger.debug("Getting rx offload capabilities.")
--        command = f"show port {self.ports[0].id} rx_offload capabilities"
--        rx_offload_capabilities_out = self.send_command(command)
--        rx_offload_capabilities = RxOffloadCapabilities.parse(rx_offload_capabilities_out)
--        self._update_capabilities_from_flag(
--            supported_capabilities,
--            unsupported_capabilities,
--            RxOffloadCapability,
--            rx_offload_capabilities.per_port | rx_offload_capabilities.per_queue,
--        )
-+            rxtx: whether to gather the rx or tx capabilities in the returned method.
-+
-+        Returns:
-+            A method for gathering Rx/Tx offload capabilities that meets the required structure.
-+        """
-+
-+        def get_capabilities(
-+            self: "TestPmdShell",
-+            supported_capabilities: MutableSet["NicCapability"],
-+            unsupported_capabilities: MutableSet["NicCapability"],
-+        ) -> None:
-+            """Get all rx/tx offload capabilities and divide them into supported and unsupported.
-+
-+            Args:
-+                self: The shell instance to get the capabilities from.
-+                supported_capabilities: Supported capabilities will be added to this set.
-+                unsupported_capabilities: Unsupported capabilities will be added to this set.
-+            """
-+            self._logger.debug(f"Getting {rxtx} offload capabilities.")
-+            command = f"show port {self.ports[0].id} {rxtx}_offload capabilities"
-+            offload_capabilities_out = self.send_command(command)
-+
-+            capabilities = TxOffloadCapabilities if rxtx == "tx" else RxOffloadCapabilities
-+            offload_capabilities = capabilities.parse(offload_capabilities_out)
-+            per_port = cast(OffloadCapability, offload_capabilities.per_port)
-+            per_queue = cast(OffloadCapability, offload_capabilities.per_queue)
-+
-+            self._update_capabilities_from_flag(
-+                supported_capabilities,
-+                unsupported_capabilities,
-+                TxOffloadCapability if rxtx == "tx" else RxOffloadCapability,
-+                per_port | per_queue,
-+                prefix="PORT_",
-+            )
-+            self._update_capabilities_from_flag(
-+                supported_capabilities,
-+                unsupported_capabilities,
-+                TxOffloadCapability if rxtx == "tx" else RxOffloadCapability,
-+                per_queue,
-+                prefix="QUEUE_",
-+            )
-+
-+        return get_capabilities
- 
-     def get_port_queue_info(
-         self, port_id: int, queue_id: int, is_rx_queue: bool
-@@ -2569,13 +2725,52 @@ def _update_capabilities_from_flag(
-         unsupported_capabilities: MutableSet["NicCapability"],
-         flag_class: type[Flag],
-         supported_flags: Flag,
-+        prefix: str = "",
-     ) -> None:
-         """Divide all flags from `flag_class` into supported and unsupported."""
-         for flag in flag_class:
-             if flag in supported_flags:
--                supported_capabilities.add(NicCapability[str(flag.name)])
-+                supported_capabilities.add(NicCapability[f"{prefix}{flag.name}"])
-             else:
--                unsupported_capabilities.add(NicCapability[str(flag.name)])
-+                unsupported_capabilities.add(NicCapability[f"{prefix}{flag.name}"])
-+
-+    @requires_started_ports
-+    def get_offload_config(
++    def _check_config(
 +        self,
++        testpmd: TestPmdShell,
++        port_offload: str | None,
 +        rxtx: RxTxLiteralSwitch,
 +        port_id: int,
 +        /,
++        queue_offload: Optional[list[str | None]] = None,
 +        verify: bool = True,
-+    ) -> RxOffloadConfiguration | TxOffloadConfiguration:
-+        """Get the Rx or Tx offload configuration of the queues from the given port.
++    ) -> bool:
++        config: OffloadConfiguration = testpmd.get_offload_config(rxtx, port_id, verify)
++        if config.port.name != port_offload:
++            return False
 +
-+        Args:
-+            rxtx: Whether to get the Rx or Tx configuration of the given queues.
-+            port_id: The port ID that contains the desired queues.
-+            verify: If :data:`True` the output of the command will be scanned in an attempt to
-+                verify that the offload configuration was retrieved successfully on all queues.
++        if queue_offload:
++            for i, q in enumerate(config.queues):
++                if q.name != queue_offload[i]:
++                    return False
++        return True
 +
-+        Returns:
-+            An offload configuration containing the capabilities of the port and queues.
++    def _set_all_queues_mbuf_fast_free(
++        self, testpmd: TestPmdShell, on: bool, port_id: int, num_queues: int, /, verify: bool = True
++    ) -> None:
++        for i in range(num_queues):
++            testpmd.set_queue_mbuf_fast_free(on, port_id, i, verify)
 +
-+        Raises:
-+            InteractiveCommandExecutionError: If all queue offload configurations could not be
-+                retrieved.
++    @requires(NicCapability.PORT_TX_OFFLOAD_MBUF_FAST_FREE)
++    @func_test
++    def test_mbuf_fast_free_configuration_per_port(self) -> None:
++        """Ensure mbuf_fast_free can be configured with testpmd per port.
++
++        Steps:
++            * Start up testpmd shell.
++            * Toggle mbuf_fast_free on per port.
++            * Toggle mbuf_fast_free off per port.
++
++        Verify:
++            * Mbuf_fast_free starts disabled.
++            * Mbuf_fast_free can be configured on per port.
++            * Mbuf_fast_free can be configured off per port.
 +        """
-+        config_output = self.send_command(f"show port {port_id} {rxtx}_offload configuration")
-+        if verify:
-+            if (
-+                f"Rx Offloading Configuration of port {port_id}" not in config_output
-+                and f"Tx Offloading Configuration of port {port_id}" not in config_output
-+            ):
-+                self._logger.debug(f"Get port offload config error\n{config_output}")
-+                raise InteractiveCommandExecutionError(
-+                    f"Failed to get offload config on port {port_id}:\n{config_output}"
-+                )
-+        if rxtx == "rx":
-+            return RxOffloadConfiguration.parse(config_output)
-+        else:
-+            return TxOffloadConfiguration.parse(config_output)
- 
-     @requires_started_ports
-     def get_capabilities_rxq_info(
-@@ -2758,102 +2953,367 @@ class NicCapability(NoAliasEnum):
-     we don't go looking for it again if a different test case also needs it.
-     """
- 
-+    PORT_TX_OFFLOAD_VLAN_INSERT: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_VLAN_INSERT: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_IPV4_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_IPV4_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_UDP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_UDP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_TCP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_TCP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_SCTP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_SCTP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_TCP_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_TCP_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_UDP_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_UDP_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_OUTER_IPV4_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_OUTER_IPV4_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_QINQ_INSERT: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_QINQ_INSERT: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_VXLAN_TNL_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_VXLAN_TNL_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_GRE_TNL_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_GRE_TNL_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_IPIP_TNL_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_IPIP_TNL_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_GENEVE_TNL_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_GENEVE_TNL_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_MACSEC_INSERT: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_MACSEC_INSERT: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_MT_LOCKFREE: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_MT_LOCKFREE: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_MULTI_SEGS: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_MULTI_SEGS: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_MBUF_FAST_FREE: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_MBUF_FAST_FREE: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_SECURITY: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_SECURITY: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_UDP_TNL_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_UDP_TNL_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_IP_TNL_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_IP_TNL_TSO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_OUTER_UDP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_OUTER_UDP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    PORT_TX_OFFLOAD_SEND_ON_TIMESTAMP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-+    QUEUE_TX_OFFLOAD_SEND_ON_TIMESTAMP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("tx"),
-+        None,
-+    )
-     #: Scattered packets Rx enabled
-     SCATTERED_RX_ENABLED: TestPmdShellNicCapability = (
-         TestPmdShell.get_capabilities_rxq_info,
-         add_remove_mtu(9000),
-     )
-     #:
--    RX_OFFLOAD_VLAN_STRIP: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_VLAN_STRIP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_VLAN_STRIP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports L3 checksum offload.
--    RX_OFFLOAD_IPV4_CKSUM: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_IPV4_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_IPV4_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports L4 checksum offload.
--    RX_OFFLOAD_UDP_CKSUM: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_UDP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_UDP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports L4 checksum offload.
--    RX_OFFLOAD_TCP_CKSUM: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_TCP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_TCP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports Large Receive Offload.
--    RX_OFFLOAD_TCP_LRO: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_rx_offload, None)
-+    PORT_RX_OFFLOAD_TCP_LRO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_TCP_LRO: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-     #: Device supports QinQ (queue in queue) offload.
--    RX_OFFLOAD_QINQ_STRIP: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_QINQ_STRIP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_QINQ_STRIP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports inner packet L3 checksum.
--    RX_OFFLOAD_OUTER_IPV4_CKSUM: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_OUTER_IPV4_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_OUTER_IPV4_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports MACsec.
--    RX_OFFLOAD_MACSEC_STRIP: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_MACSEC_STRIP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_MACSEC_STRIP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports filtering of a VLAN Tag identifier.
--    RX_OFFLOAD_VLAN_FILTER: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_VLAN_FILTER: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_VLAN_FILTER: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports VLAN offload.
--    RX_OFFLOAD_VLAN_EXTEND: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_VLAN_EXTEND: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_VLAN_EXTEND: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports receiving segmented mbufs.
--    RX_OFFLOAD_SCATTER: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_rx_offload, None)
-+    PORT_RX_OFFLOAD_SCATTER: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_SCATTER: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-     #: Device supports Timestamp.
--    RX_OFFLOAD_TIMESTAMP: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_TIMESTAMP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_TIMESTAMP: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports crypto processing while packet is received in NIC.
--    RX_OFFLOAD_SECURITY: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_SECURITY: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_SECURITY: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports CRC stripping.
--    RX_OFFLOAD_KEEP_CRC: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_KEEP_CRC: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_KEEP_CRC: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports L4 checksum offload.
--    RX_OFFLOAD_SCTP_CKSUM: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_SCTP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_SCTP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports inner packet L4 checksum.
--    RX_OFFLOAD_OUTER_UDP_CKSUM: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_OUTER_UDP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_OUTER_UDP_CKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports RSS hashing.
--    RX_OFFLOAD_RSS_HASH: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_RSS_HASH: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_RSS_HASH: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports scatter Rx packets to segmented mbufs.
--    RX_OFFLOAD_BUFFER_SPLIT: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_BUFFER_SPLIT: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_BUFFER_SPLIT: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports all checksum capabilities.
--    RX_OFFLOAD_CHECKSUM: TestPmdShellNicCapability = (
--        TestPmdShell.get_capabilities_rx_offload,
-+    PORT_RX_OFFLOAD_CHECKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_CHECKSUM: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-         None,
-     )
-     #: Device supports all VLAN capabilities.
--    RX_OFFLOAD_VLAN: TestPmdShellNicCapability = (TestPmdShell.get_capabilities_rx_offload, None)
-+    PORT_RX_OFFLOAD_VLAN: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-+    QUEUE_RX_OFFLOAD_VLAN: TestPmdShellNicCapability = (
-+        TestPmdShell.get_offload_capabilities_func("rx"),
-+        None,
-+    )
-     #: Device supports Rx queue setup after device started.
-     RUNTIME_RX_QUEUE_SETUP: TestPmdShellNicCapability = (
-         TestPmdShell.get_capabilities_show_port_info,
-diff --git a/dts/tests/TestSuite_checksum_offload.py b/dts/tests/TestSuite_checksum_offload.py
-index ff916a4bb7..8e06c6b65f 100644
---- a/dts/tests/TestSuite_checksum_offload.py
-+++ b/dts/tests/TestSuite_checksum_offload.py
-@@ -30,9 +30,9 @@
- 
- 
- @requires(topology_type=TopologyType.two_links)
--@requires(NicCapability.RX_OFFLOAD_IPV4_CKSUM)
--@requires(NicCapability.RX_OFFLOAD_UDP_CKSUM)
--@requires(NicCapability.RX_OFFLOAD_TCP_CKSUM)
-+@requires(NicCapability.PORT_RX_OFFLOAD_IPV4_CKSUM)
-+@requires(NicCapability.PORT_RX_OFFLOAD_UDP_CKSUM)
-+@requires(NicCapability.PORT_RX_OFFLOAD_TCP_CKSUM)
- class TestChecksumOffload(TestSuite):
-     """Checksum offload test suite.
- 
-@@ -285,7 +285,7 @@ def validate_rx_checksum(self) -> None:
-                     packet=packet_list[i], good_L4=False, good_IP=True, testpmd=testpmd, id=dport_id
-                 )
- 
--    @requires(NicCapability.RX_OFFLOAD_VLAN)
-+    @requires(NicCapability.PORT_RX_OFFLOAD_VLAN)
-     @func_test
-     def vlan_checksum(self) -> None:
-         """Test VLAN Rx checksum hardware offload and verify packet reception.
-@@ -342,7 +342,7 @@ def vlan_checksum(self) -> None:
-                     packet=packet_list[i], good_L4=False, good_IP=True, testpmd=testpmd, id=dport_id
-                 )
- 
--    @requires(NicCapability.RX_OFFLOAD_SCTP_CKSUM)
-+    @requires(NicCapability.PORT_RX_OFFLOAD_SCTP_CKSUM)
-     @func_test
-     def validate_sctp_checksum(self) -> None:
-         """Test SCTP Rx checksum hardware offload and verify packet reception.
-diff --git a/dts/tests/TestSuite_pmd_buffer_scatter.py b/dts/tests/TestSuite_pmd_buffer_scatter.py
-index 802777a697..54627157b5 100644
---- a/dts/tests/TestSuite_pmd_buffer_scatter.py
-+++ b/dts/tests/TestSuite_pmd_buffer_scatter.py
-@@ -29,7 +29,7 @@
- 
- 
- @requires(NicCapability.PHYSICAL_FUNCTION)
--@requires(NicCapability.RX_OFFLOAD_SCATTER)
-+@requires(NicCapability.PORT_RX_OFFLOAD_SCATTER)
- class TestPmdBufferScatter(TestSuite):
-     """DPDK PMD packet scattering test suite.
- 
-@@ -135,7 +135,7 @@ def scatter_mbuf_2048(self) -> None:
-         """Run the :meth:`pmd_scatter` test with `mb_size` set to 2048."""
-         self.pmd_scatter(mb_size=2048)
- 
--    @requires(NicCapability.RX_OFFLOAD_SCATTER)
-+    @requires(NicCapability.PORT_RX_OFFLOAD_SCATTER)
-     @func_test
-     def scatter_mbuf_2048_with_offload(self) -> None:
-         """Run the :meth:`pmd_scatter` test with `mb_size` set to 2048 and rx_scatter offload."""
-diff --git a/dts/tests/TestSuite_vlan.py b/dts/tests/TestSuite_vlan.py
-index ed36a2950d..906ceb0072 100644
---- a/dts/tests/TestSuite_vlan.py
-+++ b/dts/tests/TestSuite_vlan.py
-@@ -20,7 +20,7 @@
- from framework.testbed_model.capability import NicCapability, TopologyType, requires
- 
- 
--@requires(NicCapability.RX_OFFLOAD_VLAN_FILTER)
-+@requires(NicCapability.PORT_RX_OFFLOAD_VLAN_FILTER)
- @requires(topology_type=TopologyType.two_links)
- class TestVlan(TestSuite):
-     """DPDK VLAN test suite.
-@@ -129,7 +129,7 @@ def vlan_receipt_no_stripping(self) -> None:
-             testpmd.start()
-             self.send_vlan_packet_and_verify(True, strip=False, vlan_id=1)
- 
--    @requires(NicCapability.RX_OFFLOAD_VLAN_STRIP)
-+    @requires(NicCapability.PORT_RX_OFFLOAD_VLAN_STRIP)
-     @func_test
-     def vlan_receipt_stripping(self) -> None:
-         """Ensure VLAN packet received with no tag when receipts and header stripping are enabled.
++        with TestPmdShell() as testpmd:
++            verify = True
++            port_id = 0
++            testpmd.start_all_ports()
++
++            # Ensure MBUF_FAST_FREE is disabled by default and verify
++            self.verify(
++                self._check_config(testpmd, None, "tx", port_id, verify=verify),
++                "MBUF_FAST_FREE enabled on port start.",
++            )
++            # Enable MBUF_FAST_FREE per port and verify
++            testpmd.set_port_mbuf_fast_free(True, port_id, verify)
++            self.verify(
++                self._check_config(
++                    testpmd, "TX_OFFLOAD_MBUF_FAST_FREE", "tx", port_id, verify=verify
++                ),
++                "Failed to enable MBUF_FAST_FREE on port.",
++            )
++            # Disable MBUF_FAST_FREE per port and verify
++            testpmd.set_port_mbuf_fast_free(False, port_id, verify)
++            self.verify(
++                self._check_config(testpmd, None, "tx", port_id, verify=verify),
++                "Failed to disable MBUF_FAST_FREE on port.",
++            )
++
++    @requires(NicCapability.QUEUE_TX_OFFLOAD_MBUF_FAST_FREE)
++    @func_test
++    def test_mbuf_fast_free_configuration_per_queue(self) -> None:
++        """Ensure mbuf_fast_free can be configured with testpmd.
++
++        Steps:
++            * Start up testpmd shell.
++            * Toggle mbuf_fast_free on per queue.
++            * Toggle mbuf_fast_free off per queue.
++
++        Verify:
++            * Mbuf_fast_free starts disabled.
++            * Mbuf_fast_free can be configured on per queue.
++            * Mbuf_fast_free can be configured off per queue.
++        """
++        with TestPmdShell() as testpmd:
++            verify = True
++            port_id = 0
++            num_queues = 4
++            queue_off: Optional[list[str | None]] = [None] * num_queues
++            queue_on: Optional[list[str | None]] = ["TX_OFFLOAD_MBUF_FAST_FREE"] * num_queues
++
++            testpmd.set_ports_queues(num_queues)
++            testpmd.start_all_ports()
++
++            # Ensure mbuf_fast_free is disabled by default on port and queues
++            self.verify(
++                self._check_config(testpmd, None, "tx", port_id, queue_off, verify=verify),
++                "MBUF_FAST_FREE enabled on queue start.",
++            )
++            # Enable mbuf_fast_free per queue and verify
++            self._set_all_queues_mbuf_fast_free(testpmd, True, port_id, num_queues, verify)
++            self.verify(
++                self._check_config(testpmd, None, "tx", port_id, queue_on, verify),
++                "Failed to enable MBUF_FAST_FREE on all queues.",
++            )
++            # Disable mbuf_fast_free per queue and verify
++            self._set_all_queues_mbuf_fast_free(testpmd, False, port_id, num_queues, verify)
++            self.verify(
++                self._check_config(testpmd, None, "tx", port_id, queue_off, verify),
++                "Failed to disable MBUF_FAST_FREE on all queues.",
++            )
 -- 
 2.50.1
 
