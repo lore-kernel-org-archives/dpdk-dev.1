@@ -2,81 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE15CA0EE8
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Sep 2025 08:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 737CECAC598
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Sep 2025 09:17:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61BE64025A;
-	Wed, 17 Sep 2025 10:56:59 +0200 (CEST)
-Received: from fout-a6-smtp.messagingengine.com
- (fout-a6-smtp.messagingengine.com [103.168.172.149])
- by mails.dpdk.org (Postfix) with ESMTP id 2EAC740144;
- Wed, 17 Sep 2025 10:56:58 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id C0EB2EC0071;
- Wed, 17 Sep 2025 04:56:57 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Wed, 17 Sep 2025 04:56:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1758099417;
- x=1758185817; bh=+AzqrN8ibPPheKaU9DnmB2zeGelqNT15hBVYlK74kJk=; b=
- XLxKTPHPuQPUwnmFNAPdSk2slqVLhAPF72mCmmPt1nbs/5THt4T6LX7kJyI5TbLP
- +vPrrxxR+c/Tz2+F5nlP12GyMC0+ImmxeekZdONSlaw0x8SJlXBjPUM2aKZ6UmuX
- 2+GYMjVGx4iqU+O14PcWO5lAUr4O9svdYhHCtJW58FVp+ahQ9VEwGgsf+lD9in7M
- iSBL0JlhTUwKYV3k8FH+GUaoImZz4kXxZRiSubJMx5L4z+whXDH4xCDDXQ8+gyLe
- g/3GHsGHoprjTIFJt7iE3WsnPBdrelY16R2ekIdF9KTnfx11jFpbGyQ5feMWxQnO
- p0HxJ/gfw4ZnVo8r343Y8A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758099417; x=
- 1758185817; bh=+AzqrN8ibPPheKaU9DnmB2zeGelqNT15hBVYlK74kJk=; b=B
- pewquigrIIy7gIbkAj2hFXmr0V+RvZ4a/EN6R7rQ/r0JfXXPgPm3IbUKnzRS/KcE
- EMHsaDmNTdWiV4C0aLHlHhClfFbd2/GCF+h887tUCTgbgz5DprW+pucqUWt+aKCm
- FT7GJEIouxHxWI4hr0Iz6ZNZkpEJuA0GkxQx9iQ6naEatM3M2AS0AYa53eqXqlps
- PGPZufZgI9GhjH3Y/3PGO/xzjEkwZ8uh3+oSQf0Vld/XrOgNStj6kT9a2A+LpgiP
- FKYzog7Qxhhq8hKPBiQpIjiw2DaGDuMvQ3eXxz+5B3ytqE+p8m1xf372jW1ZRYqy
- zX89hGhBWRvD3bW5bit0w==
-X-ME-Sender: <xms:2XfKaNfCy7_Z_IbY03sVFZ9LNA6vn2DcBBC9V1ePb3ZmfvuVcrnQhg>
- <xme:2XfKaGEp1jj6qOM3LOXOva2hE7AHUlkzwS6K542wt9Dxv9mvhOr0fkdNSJIWm-9Hr
- WeUlLzE7Yzx9x_Ckg>
-X-ME-Received: <xmr:2XfKaOWE90KAVb_2YRNk2xHGw5OO9HFOC6GDwwXjG-JB6D7Jfs8oCbf7-cADzwgzRuzZARjiJFPZZ0RPtmu_pJsofg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegfedtvdcutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
- hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
- ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
- grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
- gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepgedpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepshhhphgvrhgvthiisehnvhhiughirgdrtg
- homhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehsthgrsghl
- vgesughpughkrdhorhhgpdhrtghpthhtohepfigrthhhshgrlhgrrdhvihhthhgrnhgrgh
- gvsegrrhhmrdgtohhm
-X-ME-Proxy: <xmx:2XfKaFJhz2suWHsQdX6rGqOU6VtQC-cTN-rhQtlcCrRcbB-a4BoPYQ>
- <xmx:2XfKaO8pdOU5lU1nbp_k3n3R8GrGRaI_HWw_UkUd5iVswwJhQH_sQw>
- <xmx:2XfKaILKt6dsWMM4xSWXklc5qe_cz929XJdU37jBY_GJu5dC_VOLYA>
- <xmx:2XfKaDlToENd0zOXhX2OMYe5caR6-PmLy_noGDKB8tUvGsqgoUw76Q>
- <xmx:2XfKaLnxZ2-mZFksdqAPLUjpmA8y2utJn7sVIbZaNYW77McqSV45bkwW>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 17 Sep 2025 04:56:56 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Shani Peretz <shperetz@nvidia.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, stable@dpdk.org,
- Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: Re: [PATCH] config/arm: support crypto in cortex-a78ae mcpu
-Date: Wed, 17 Sep 2025 10:56:55 +0200
-Message-ID: <4241362.aeNJFYEL58@thomas>
-In-Reply-To: <PAWPR08MB8909F6D501EA994F2EBE38549F3EA@PAWPR08MB8909.eurprd08.prod.outlook.com>
-References: <20250805062233.222260-1-shperetz@nvidia.com>
- <PAWPR08MB8909F6D501EA994F2EBE38549F3EA@PAWPR08MB8909.eurprd08.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id B0145402DA;
+	Wed, 17 Sep 2025 11:17:39 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 5FE0B40144
+ for <dev@dpdk.org>; Wed, 17 Sep 2025 11:17:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1758100659; x=1789636659;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=HSbV7G1Ck69N8VQJfU3O7FFkCn+lzbIBwiyRQ+k0Cd8=;
+ b=Yx4zjPQqkjGxi7n2z2y8FiLiALxUc2nXfOu5muMvz1+qYzECw2cD4JqQ
+ Us+8xH0hmwYSX/GIPOD6LpGRBUAEr4Sv5n2dLQlrCmXj41jK6+oEUna/M
+ UZx7v8eS7g0xJ/I4ja051kTMsKEWjmrxYagXD1dcSOUZkDdTafw/e4aTr
+ 5s9zz9PY4YJFoIc1LulOdaR9MIdTiKOexCF8LK8cpiPOOmbpeWzUkGc1R
+ Ds/c9vI/jDQrdhUQRqBxgpPMPxrokIV5prrbT59mj42HuJLMNnuvlinFr
+ 3hNAyMJsCTyOFjb2u1sqXaPpL9H+SJXxg6T1z/0Wu/5ly0phr52hVvNXB g==;
+X-CSE-ConnectionGUID: kxP5pyqkTBadX/sAEmeDXw==
+X-CSE-MsgGUID: ksuom4bJTlKHCdqJEBNYww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11555"; a="60464521"
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; d="scan'208";a="60464521"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Sep 2025 02:17:38 -0700
+X-CSE-ConnectionGUID: p7IHVL7QT6+yERSSouLoUQ==
+X-CSE-MsgGUID: Ks0+j5/QSaWMH1pYZMBh4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,271,1751266800"; d="scan'208";a="174760535"
+Received: from silpixa00401177.ir.intel.com ([10.237.213.77])
+ by orviesa009.jf.intel.com with ESMTP; 17 Sep 2025 02:17:36 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH v2 0/5] idpf and cpfl rx path selection simplification
+Date: Wed, 17 Sep 2025 09:17:26 +0000
+Message-Id: <20250917091731.3632520-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250911143145.3355960-1-ciara.loftus@intel.com>
+References: <20250911143145.3355960-1-ciara.loftus@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,26 +59,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> > ARM cortex-a78ae configuration (part number 0xd42) is being built without the
-> > necessary crypto extensions. This results in infinite loops in the crypto
-> > performance tests applications because the hardware crypto features are not
-> > properly enabled.
-> > This fix enables the crypto extension in the mcpu definition.
-> > 
-> > Fixes: c02c01dbf907 ("config/arm: prefer strict use of -mcpu if supported")
-> > Cc: wathsala.vithanage@arm.com
-> > Cc: stable@dpdk.org
-> > 
-> > Signed-off-by: Shani Peretz <shperetz@nvidia.com>
-> > ---
-> > +    'mcpu_cortex-a78ae': {
-> > +        'march': 'armv8.4-a',
-> > +        'march_extensions': ['crypto']
-> > +    }
-> 
-> Reviewed-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+This series refactors the vector capability detection and Rx path
+selection code in the idpf and cpfl PMDs to use the common functions
+provided in drivers/net/intel/common/rx.h.
 
-Applied, thanks.
+v2:
+* Moved AVX512DQ check to common code.
+* Refactored rx function array definition for better readability.
+* Restored Rx functions back to their original names.
 
+Ciara Loftus (5):
+  net/intel: add AVX512DQ flag to AVX-512 checks
+  net/idpf: use the new common vector capability function
+  net/idpf: use the common Rx path selection infrastructure
+  net/cpfl: use the new common vector capability function
+  net/cpfl: use the common Rx path selection infrastructure
 
+ drivers/net/intel/common/rx.h                 |   5 +
+ drivers/net/intel/common/rx_vec_x86.h         |   3 +-
+ drivers/net/intel/cpfl/cpfl_rxtx.c            | 143 +++++-------------
+ drivers/net/intel/cpfl/cpfl_rxtx_vec_common.h |  12 ++
+ drivers/net/intel/idpf/idpf_common_device.h   |  17 ++-
+ drivers/net/intel/idpf/idpf_common_rxtx.c     |  51 +++++++
+ drivers/net/intel/idpf/idpf_common_rxtx.h     |  12 ++
+ drivers/net/intel/idpf/idpf_ethdev.c          |   2 +
+ drivers/net/intel/idpf/idpf_rxtx.c            | 141 +++++------------
+ drivers/net/intel/idpf/idpf_rxtx_vec_common.h |  11 ++
+ 10 files changed, 180 insertions(+), 217 deletions(-)
+
+-- 
+2.34.1
 
