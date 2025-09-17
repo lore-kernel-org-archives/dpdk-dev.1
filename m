@@ -2,137 +2,193 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3013CAC599
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Sep 2025 14:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC4CCAC599
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Sep 2025 14:35:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A4DC402C3;
-	Wed, 17 Sep 2025 16:08:00 +0200 (CEST)
-Received: from GVXPR05CU001.outbound.protection.outlook.com
- (mail-swedencentralazon11023110.outbound.protection.outlook.com
- [52.101.83.110]) by mails.dpdk.org (Postfix) with ESMTP id 13AC740285
- for <dev@dpdk.org>; Wed, 17 Sep 2025 16:07:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8BF06402C3;
+	Wed, 17 Sep 2025 16:35:13 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id 74C3840285
+ for <dev@dpdk.org>; Wed, 17 Sep 2025 16:35:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1758119713; x=1789655713;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=94P5hd+MLkRIG1GjSaZFZdt1vfnGsBn0jrjQn7zKiGk=;
+ b=LH5fl44cVdJ25bY6gLz2Bxsr/jXX9gWhFSozpt+rrRmHMnMDTBT+ulHj
+ JJUHiB02oS+GDMiA/ZSwLScZdqdmeA6W6JrR/dTSAq6zJEv887gs748we
+ Rj7T0+UAIjaovbD2753N+rnUonvTl+Or23TvcG1ECVHJvQoxNubRdYyi3
+ yyyVDI60l4imAs1XO78BmIsIkatL1yZEvLqB2BrqNu8VnYg1YzbJ6QTC/
+ qC1CNdD7F3bg+X7f6hgeSsNaeiPliYvahe7fGrLP8GNHifqDUwptxuHpP
+ KPItlfUHpKdOTTpLgcZ7EPIm3Jhwxds+rtqv4QLl2wPGz6xdtnNl7k9aw Q==;
+X-CSE-ConnectionGUID: lsBJvsjnT/e3hq+Ke8ltRg==
+X-CSE-MsgGUID: FkdA1JbqTHeFv0NbBGgs1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="85869656"
+X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; d="scan'208";a="85869656"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Sep 2025 07:35:11 -0700
+X-CSE-ConnectionGUID: KRZJZqHnT1qJfAEYyMqX6Q==
+X-CSE-MsgGUID: yAL1lKq5S1y1s8pHRCq7Hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,272,1751266800"; d="scan'208";a="180398274"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Sep 2025 07:35:11 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 17 Sep 2025 07:35:10 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 17 Sep 2025 07:35:10 -0700
+Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.56) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 17 Sep 2025 07:35:09 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=utGlxLXGAwcsqmCICXRzRyHh4v+F1gm+gfDfGqQsgz9nLWkQ/6tQfPrzDUEpEBGLWouq4ZGPxaly4PIuY6RXeklzs4ujKllHpwxP8PfZ9+D2eQLIk5JMC2k4Eqx2thwF8CxqH/s+KT0ItEThPXSv/XR6JLiS/65VR6fOWW2eDxJp5btMyk+q8qZfe0Ofs5UMo6aFJgpqRXXC9Seuoynctn3HngyBmGFwA0AvSShJ2lOvTTKvAFS6ChEicV4C5RhZ0eSnfSqGl5J0Cu4ESPChX//QpK2KDMlStbQFCBbeRnd+GLDj2C1y31JvpQy74LN5ciMabyz+JV1juQIyoHxuXw==
+ b=Losw3kBFsgQG60LXcvD7so3tyHcbbRbhLtzVm0FLtAyVIqrtCO91urEEclXdn9oSzyBeQi5kRo7mm/cN4ZPW5gbac2QKyc5E1d6Tt0Ps/jkygMCjaUnzZWCwEQ8EGwekH/C2UZ+LW30IaIi0KADC5cIe9JUrnaC1QiC62efdtjNziPPVLFZZToZRSpTEeGQSMc9AYXgIgp4Tr9kF9kUXshSMXjq5+wD94nojuIqHWq468+nzY2Of23JgdhV2aEty49tJFE4a0QVyqScTJ6NrMjhfmyaIgem7vnVrrBzrlttzuGzuU0DwYBoKXJgxDBPcpeKraiC3p16h6RBJ8w+H+A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3hzRomIgm1As8jlqjfvtWi7AWHAUUWX7UhPZ5Q9CIdw=;
- b=xJ5zO4NCalODSgw79e77mJb2XOPctFTAgRSaP/IsGmsBzvO4Ac8B/roZHWkpOLxkUILLG6xns96BKVHoO/tT4FIGbCNUx+czAou4PhDMaUWVJQSmZY1nVXs9NXK+36Ksh8GHYn1M72Uyy5JPP20plGF0ahkbNsJb4t+zvm4Rwqsti5V393+zD8xYWnvegO6bem0ZllGJTPeXEtI3MheJXxr+4XFsxrGP0d4qEV3hGOJ9j8jRwBFZ0qKc+WuPYm8lJ3cUBGK0WQyXjQFJxls3IOehHMKrJTLKBoI7aONoZ0BgbMegKCl3u/bYoam7l/olUJGoCf/qarN/9wvHKMrhtQ==
+ bh=kl0vWSIXU21HRtndkjBHLu7dA+xMU0s1LEr1hr1VWgA=;
+ b=DCkPvJJeWQp9ZVUixFpqim1KuDwmDZQdrI+o8p8u+EESLB+UVibXG7maTlIcP/RU+UQWV+HbdnxLFT6zGF8oZ6ohU92REXHlCRpbOE8ZQziCXGBmB0imxNP4uTownIJM4pox0F4RI3I8XBx+A9o5jAz3Ydr/uXnOMYFxabz6qXXYaN7Xu4KaPjolIEqjG0QulZTYqaN+fDU4/Ysia1dAoKNllVXGzX0GdIslQ3y3kWJ5Jh96lICsQy1OgBqy23jHOD4nBqI6O7/CndMRtpuYZKueXV2evbYmJPm181AdKs861nA9aQVzQH6bV3fw0gwAt7xRs3TiqzG3GXNYFW9Ipg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=catonetworks.com; dmarc=pass action=none
- header.from=catonetworks.com; dkim=pass header.d=catonetworks.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=catonetworks.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3hzRomIgm1As8jlqjfvtWi7AWHAUUWX7UhPZ5Q9CIdw=;
- b=0mgdWEC8sfMx/3cnGePrs+RjxrI9OwDg/1iGMy9GI52+qVBsejdTgBkryA+5R49z18iuK7F9r0Ull3J9OpToDTOmWf0zMEn/C4JyVD4zKS3pyu4/vQlKadXI+09qWSdqLZ/Hko7gW2BPKw7nE3UQzAfkOcYI9rFSpyV+sXorF7Y=
-Received: from DB7PR03MB4890.eurprd03.prod.outlook.com (2603:10a6:10:75::16)
- by AM9PR03MB7866.eurprd03.prod.outlook.com (2603:10a6:20b:431::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
- 2025 14:07:56 +0000
-Received: from DB7PR03MB4890.eurprd03.prod.outlook.com
- ([fe80::7d9:95de:63e6:701c]) by DB7PR03MB4890.eurprd03.prod.outlook.com
- ([fe80::7d9:95de:63e6:701c%5]) with mapi id 15.20.9115.018; Wed, 17 Sep 2025
- 14:07:56 +0000
-From: Arik Alexander <arik.alexander@catonetworks.com>
-To: "dev@dpdk.org" <dev@dpdk.org>
-CC: Dima Babich <dima@catonetworks.com>
-Subject: DPDK LACP implemantation
-Thread-Topic: DPDK LACP implemantation
-Thread-Index: AQHcJ9p2HDXM2SQhRESVke3PVqaxxg==
-Date: Wed, 17 Sep 2025 14:07:56 +0000
-Message-ID: <DB7PR03MB48906F6B09425E675420A8A6F217A@DB7PR03MB4890.eurprd03.prod.outlook.com>
-Accept-Language: en-US
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ MN0PR11MB6012.namprd11.prod.outlook.com (2603:10b6:208:373::5) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.22; Wed, 17 Sep 2025 14:35:05 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::21e4:2d98:c498:2d7a]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::21e4:2d98:c498:2d7a%2]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
+ 14:35:05 +0000
+Message-ID: <a7594d91-1ff9-4f09-8302-1f76bb3b929d@intel.com>
+Date: Wed, 17 Sep 2025 16:34:57 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 7/9] vfio: stop including Linux kernel header in public
+ and driver API
+To: David Marchand <david.marchand@redhat.com>, <dev@dpdk.org>
+CC: <thomas@monjalon.net>, <maxime.coquelin@redhat.com>, Rosen Xu
+ <rosen.xu@altera.com>, Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal
+ <nikhil.agarwal@amd.com>, Hemant Agrawal <hemant.agrawal@nxp.com>, "Sachin
+ Saxena" <sachin.saxena@nxp.com>, Chenbo Xia <chenbox@nvidia.com>, "Tomasz
+ Duszynski" <tduszynski@marvell.com>, Ajit Khaparde
+ <ajit.khaparde@broadcom.com>, Vikas Gupta <vikas.gupta@broadcom.com>,
+ Chaoyong He <chaoyong.he@corigine.com>, Vijay Kumar Srivastava
+ <vsrivast@xilinx.com>, Tyler Retzlaff <roretzla@linux.microsoft.com>, "Harman
+ Kalra" <hkalra@marvell.com>
+References: <20250903072826.1727004-1-david.marchand@redhat.com>
+ <20250903151800.1965006-1-david.marchand@redhat.com>
+ <20250903151800.1965006-8-david.marchand@redhat.com>
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=catonetworks.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DB7PR03MB4890:EE_|AM9PR03MB7866:EE_
-x-ms-office365-filtering-correlation-id: 1da0fb15-17bc-4a3b-ff7e-08ddf5f39a27
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|376014|1800799024|39142699007|31052699007|38070700021|8096899003;
-x-microsoft-antispam-message-info: =?Windows-1252?Q?+V2KhCxou9LPfxhvQSaj7ZgNMbIGG0R7kTjr775BAltoHQM57TobmdD5?=
- =?Windows-1252?Q?x+PTuJWe7FDHU0Si4rnfKt8H5ukZ+UO9rRQVxVezOjMeeTQV4UEq/Y/K?=
- =?Windows-1252?Q?ZRa8ZSCM+1H4a19tbwRzc2apO8v9lCB/olqMSJajnzetXgO/cLDgg+KP?=
- =?Windows-1252?Q?IkdbNb3wDm1XdVSsErmeQ1y9Klbea7jW79DDhJ/OVoS+GUm273lBf+Qh?=
- =?Windows-1252?Q?b+mC2kNdnjTXNq+k1zGtrDtHainjyoVSGhXRigkr1uo1yzyRJ8pejcKW?=
- =?Windows-1252?Q?VFAv0l1pNCA8L96lw5cd1s0eGvatXjbbEuc+1x6iCBIh56Y/4S1kA9x8?=
- =?Windows-1252?Q?3tKJtyVb1oBJVG/YJv1FsE34FeZ/ywqkRhQHu2w5UZVUNJvXx2bBNXCr?=
- =?Windows-1252?Q?XLhxZH4Q69uEsVxjBVbaQ7L4HLRsHJZCNRJSQgq91rTjeF/Em5S00pzs?=
- =?Windows-1252?Q?27l/Y3BI54J3Od+tiRzKc/UNIASeImzQW/STaTlhVBZRqp9bheecfXYX?=
- =?Windows-1252?Q?9GcJL9m02S+xuViJc66WpxB6ktLVrkTldvQJoXZGsLSlsDF52Dwit94E?=
- =?Windows-1252?Q?4fxKUAzMoq1gQQ/ZSH8f3CXdHvlIkaU1I4MQhQdjDu6JoySETxu2AOOr?=
- =?Windows-1252?Q?y3g9hVP796cLdl7ZZIc7oXEoMESynvi2msWrpkc0PNbKmwfc8jTB4Vo6?=
- =?Windows-1252?Q?+Av1drY0/bvTsEdRFhYENPlymrDoSeTuv3LCtOAvcSpUlKWZXj62hOn0?=
- =?Windows-1252?Q?DBpU2UX+B1iW07/blfsMc+D+BqdmJgZpcPgT/4ZaG0twLywUGQ6dVelL?=
- =?Windows-1252?Q?rFH/W2r2ulhAVmGHpwwK94gKFDXV7qQmUB1/V+6xT5cMPGmj+ljIm6s5?=
- =?Windows-1252?Q?JeKpPJWitLijJdt2VhyKlbQHI2ecu73yuxSxNAl+rbEC1pkxN36v2UtB?=
- =?Windows-1252?Q?nMW0ZhAugBPAgFqjfLgGn24oBQuN4Fap89IgC94m9DPaAzKDzKyLQ8pm?=
- =?Windows-1252?Q?Q/H0cLVSjA0hM3BwM1iEO6q4UoFUbKTZerXeg1ODjLAh9+H0JWVRp79o?=
- =?Windows-1252?Q?j6hYZpe3Noc2vp68+WBOKHX59Sr5iT7PQBkCSiZfJHI1TPXK7CXZAX3E?=
- =?Windows-1252?Q?INZpwpz9EAyQBlaOG8OB/sV0+GXHv/i+sgVRQFdGjj88/0su63btV7LY?=
- =?Windows-1252?Q?j4VlRpuMwazs0YhTBXOGcX2wkR8930mLHdVolp8eijjj2p6BE5GBL2an?=
- =?Windows-1252?Q?egrGJMZBAwCkREq2fiwFumLV9xEMiuSLMEdNxiJdLTA5CY8Hyv/7ZTla?=
- =?Windows-1252?Q?GHkffL8Fn/xtnUZw+ZwfrV/F5BDvhlT2CCA8kmoPCZWVlWiQ86kg/eOK?=
- =?Windows-1252?Q?STPTBGt3BLAcHL/v7mqLc5ynTlStq0WRRybL2nkSQcL5oeKqEiuW/egq?=
- =?Windows-1252?Q?dA5wVrlvSKoYgKkz3+dWoCSUcoEOKYX13l0M9o/Y5UygUAP95cwam39r?=
- =?Windows-1252?Q?IJSaerdQOLK40aoJQ/y6HCs+vEXpgvz+VTXibiPZG9kDzXV1zLz4Kg0R?=
- =?Windows-1252?Q?SuHng2dsnmdktEC24NyL8JmYBn18ZEQjdU/pnA=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DB7PR03MB4890.eurprd03.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(39142699007)(31052699007)(38070700021)(8096899003);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?Windows-1252?Q?rJDZxA9kWk15Oeh8S3RN/l9lY+I63vN+FpI5+qvlqk1EF6GUXNOqByWV?=
- =?Windows-1252?Q?OKASNbfv+8jxaA0oDdIgQDD4QeMQLJ9snDnZ+btxEarfqQv2Vyzk62Lk?=
- =?Windows-1252?Q?XCgQ85Wx3S2UeQBGNvzV0hO/rE1lAd9XYcG3tyfpdT9kEc0dL0uqh6qN?=
- =?Windows-1252?Q?/k1cgaEnZXPtlXxf38nOD+FtJG2nVFXb2uHstPPxIxfIMLb7aanBrAWm?=
- =?Windows-1252?Q?nnWl504R5kqANrmcQrwk8pmuwJjFCyFI7g0LGMWsNhx4mz4aK14u87U9?=
- =?Windows-1252?Q?bfpuvETGtu68O1snn8BSAFZNGdCh1D/TcdzgiIcGd4EVc9IKiZdqbcC6?=
- =?Windows-1252?Q?MRk0HsHCHGUjAlFFxz0XnYPRspDM0hqIw8WqYPcwnL3wZczW9gbLt0vH?=
- =?Windows-1252?Q?FHFl/OQ3NdVtI55FASWfjbze8zsEcmR+Ht955pImgJreOyvgWxYHSUSF?=
- =?Windows-1252?Q?s5IDKSZZPo9UyAlFZoIxVb8radaiMAZ8pvUeBeeQNSptjK2nUa2aiIuN?=
- =?Windows-1252?Q?7e4JWWLIFNwceVcIX5gpx96+c0/NG++T8Gv/m96/JY9BexMluKK4X8qS?=
- =?Windows-1252?Q?NavbxVCUarwfm7xS17L9UimHERb3QjrWKb6DwlpkWmVHZrtSwkRw637q?=
- =?Windows-1252?Q?UxWet80VMO64WKcG6S46HOfnHUnmsHQEBahZlrUsaSjvgsQj1krI6Jre?=
- =?Windows-1252?Q?TfN/8LymYO1HN+XdDGZxGnLQe8QAdRLk+taOuVb0UmKhZr37Rj12Zdlf?=
- =?Windows-1252?Q?7GV3GE5SwqTTT1YndXy1jOOaH0xA33c7e2fY74XqHm1o13CtdIhcO0yW?=
- =?Windows-1252?Q?QBR6HbZUPp+xNmJ8VxuSN42r7T4HEbIk1I6YOky4dGKPuWDhJoDuVU8n?=
- =?Windows-1252?Q?+rHWpcdYrYcuE0onkyb2zpcypFTsy+b+PU00PMiNOL1YKy0SBxGhCTkR?=
- =?Windows-1252?Q?UpPC6muVQYCNa1k4JezzAM6gwg8Z7lRVEliii1TKRv0WFy0nekAvwJVJ?=
- =?Windows-1252?Q?lU9oYKvSNr5MBiMFiAo+toE8QdPFbUEg2tD3OYWuxvf4aAQQzrWd16cg?=
- =?Windows-1252?Q?UtUxVojMaqgdWCI4tcocrLKV5tAIiC1eddgpEHXYIriwYQxE66wYlnWi?=
- =?Windows-1252?Q?++oqMab3DoIyTJtZjtzdjjLOu8tLPyvGMPXnaSLhAOXt/VgTixfC33Vz?=
- =?Windows-1252?Q?Qgz9i+nZardQkcjA4B8LPJzY06wzw6lVcXAyILSdZeEMwQkVtGWL2kmF?=
- =?Windows-1252?Q?9UZU6b5W2/hcYHgtSiL56nRjECQvelufv0JPQ4UKHSYN5EoGN6JNa/Ub?=
- =?Windows-1252?Q?GayOR5zT7He/AGlyaFZDL7VNsqxqNYlAOx4aI3vAFXQoIyjj49S3cn+y?=
- =?Windows-1252?Q?JAlUjb58eIEVAOmY7QxsAqRDqbL1ax0YVz6YMJaP8yS55f9ueHsFCPhJ?=
- =?Windows-1252?Q?nneHk6GookCoDCn1hWyBwPrcEAMJ7BK+55qM4bcWIHDoWcbMGv3keJdi?=
- =?Windows-1252?Q?HHCyy4ljb9yrmriFYdfHgkWJNyVIm2mF7pBLDnU9SavxkrZlfGdKaoeS?=
- =?Windows-1252?Q?/rOmryWh8+uaP40efIqMDosLERWRVfyNauJRYutC3AdSoRtvx5kmTyXv?=
- =?Windows-1252?Q?aM1htGI1kfAqtpP1R36jQ8/pHrad8SmXYs9jMY2C/uksLPPgDSqOPleR?=
- =?Windows-1252?Q?S4XtKHiwfPRkxKiKdAjHq/4NdFfH3ZCEMQDCvjkWIRg58PnQSEcuLw?=
- =?Windows-1252?Q?=3D=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_DB7PR03MB48906F6B09425E675420A8A6F217ADB7PR03MB4890eurp_"
+In-Reply-To: <20250903151800.1965006-8-david.marchand@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU2P251CA0002.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:10:230::11) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
-X-OriginatorOrg: catonetworks.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|MN0PR11MB6012:EE_
+X-MS-Office365-Filtering-Correlation-Id: c2035647-694d-4a02-bf8f-08ddf5f76479
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|7416014|1800799024|366016|7053199007; 
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?V1BWS25qdmFMRjdIbjMxL25BdlZ0SEZNNHRWeFJHKzZ4eHY0Sy9jQjVJL0Nh?=
+ =?utf-8?B?Um1SVDBFVERFaW95bVk5a3BVWmROU2RnUGk4c1lTczFKYUlXOU5EYUpKYUZn?=
+ =?utf-8?B?a1hxUnRTeCtaVVQ3Vkk5eG5JcFJ6WnZpd1VlZ2JqMENjSUxhZWpobUVXTkxz?=
+ =?utf-8?B?ZEVaUWRid1dTcllDM29iL2djQWZvbk1KRlBFeGlYVGVEMXRMdTNlNGVwZGdn?=
+ =?utf-8?B?aGFwYnBubnRIYi9wdW0wTjJjOU5yTjd5V09FdGpId1hwcDRXMDlWL3FRVkJy?=
+ =?utf-8?B?aDJVeVJKdUdOZVRHaEhvOENqRXJQK0RXMHZHVFRkSStyZXRIa2hGNFozTWZE?=
+ =?utf-8?B?NmV1QVp4Tlc3RTBPS1BOaU1idnhDTVdZWjc1SFJnUG9BM0xqRHlXWk8vZEd6?=
+ =?utf-8?B?NStlTlp5SG45UklIeVBJRVpFL2VBQncwVWpJV2x3MXZCR1pNSHNhR1BQSVF0?=
+ =?utf-8?B?ZGJnWlZxdE9VbHJKUXhzYnRHSFBPMUxHRDNaRnNsQU1ZeGlQSW1UNkJkK2s1?=
+ =?utf-8?B?cUtueDFZYjRteTREc2tVZzVlQVZUbGpWb21NZlBrVzFMR2xlVC9SS1BXd2M4?=
+ =?utf-8?B?cEtsNHN1cU9tZjhjZWZxZGFjbWQ3L0wxQ3E2dDNxNEJvU0hJdVRlTFBPdUJw?=
+ =?utf-8?B?ays2YmZkcTRmZ2pBNkxqOGZFQUc2cFNreHZMM0R0K3Y1akNiR1ZRYmlOUXNM?=
+ =?utf-8?B?NlN6eks4dTZTQVBmMGV6c3dKK09JTWpkZVFsK3NNUlNLUFF0b0F6TmhiY2Vz?=
+ =?utf-8?B?ZlVZMFFmK042SVRlYnZ1NTArWXpEbEloYWRNNzg3TzBZVi9RWndzR1Uzdzdl?=
+ =?utf-8?B?bUIvVnRSaUFENFRoL0gwcE1yUmVKenRqd2JxNnJGWXZTcVRlTHUzSW9ub21S?=
+ =?utf-8?B?c2k3QytGMVkwOUJZK2VyNnZGODE4cEl4b0poZ29hTnk2N0pUWXBxN0taRzQ5?=
+ =?utf-8?B?RzUyWHk4dzFRZDg4LzVhZ2RjWUNGSnFXay80cHJSYTBpVG5XVVppRmRhSUtO?=
+ =?utf-8?B?Rzd1UjN5Tkl3dldaRUJZWTdIVm5tMjI0MTBzaEhMTGZCTUZmVXRGVW5PaEMy?=
+ =?utf-8?B?c3ZjWnJnUzVpVkhVVzhpU2M4N1lzLzBXaFdraCtQb05SVDdYbFNLTFZ4VDQ0?=
+ =?utf-8?B?M3E1NU96Ums1dkV2Rmp6TEJkYWtKUXorbkpiVUZmdTFKUmIvS0w1VTFwdFUw?=
+ =?utf-8?B?UERrNTFjWVB0QnlnZ2pYOWhHRnB3amxvY240NlNJVmVzQThNNUtyQnhsM3do?=
+ =?utf-8?B?dXlVSE5kWGhhMzVEUmZRVFJ1aHpibDRtcCtQYyswQzVBSHVraGxqVU5iSlNk?=
+ =?utf-8?B?M2ZPby94ZjRSd0tIT1IzdkZCYm9VdkErd05kbXYxTXdTUld1MFdTUnVVTldw?=
+ =?utf-8?B?STZFa3JrQjhYMkdsSDhqVFkrU3FLL0xIVVVVMlZoaGJFNUx1NzdicUZIYVdU?=
+ =?utf-8?B?c0FLYWlyaDlZbmtqdFZpbSs3c1N5Qk55K3E1ZTZ4b0RPd0xSc1BrQzNBRkYv?=
+ =?utf-8?B?M0NjMFJlS2YwRU16bkExd0RSbmxCV2kwM0JFYmRkREJaWVp1by9vOWdBQTk4?=
+ =?utf-8?B?NjlOaHBBeVZNNTVsMjl0eXY1Y3dMWGNIY0VyU1k2YW1WNVNrTnRGUFloV05B?=
+ =?utf-8?B?VUJ2dmh6aUMycVVnZzVudERGZnR1em1oWURuWC90V2U1amUzdWxXZCsvR2Rq?=
+ =?utf-8?B?WlM1V2ZsNGRRY1BJcTFaOG9tS0xYK0dObVExMGVvUzdXQVlkS1dNcHV2SzJY?=
+ =?utf-8?B?MVpLLy9SU28vcVovN3AwMnJmK3JFWEl3bm1URDhJaWg2RHBPVHlNQngvazd3?=
+ =?utf-8?B?cHR1b2NDUW5zdkYvZDBBNVdKcEp5LzI3VVFNWFMzTHlRZzd5b3BXeVR1TG9F?=
+ =?utf-8?B?U2JiZUlpRGNiMHFDS0FqM3BwMkt1empBRWQvZHNJbkxNTVRreEVhcHNjYytY?=
+ =?utf-8?Q?goEWX84EnT4=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007); DIR:OUT;
+ SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Nm9WUEpvQmQwQ3VIdmNJbVFpRElkbzZXWnVDU2x3VmI5TkhZa05IVWRlRXAw?=
+ =?utf-8?B?VDYyZS9kdTY2UmN5UlhzTnJZWnU3MkZtaWJXb1AyZk5PR2d5TVpVOVJFZ2tz?=
+ =?utf-8?B?Ym8xTHZ1MnVTN3ZFWUw4VDQ5NkJZMlVGbmVxd3loSU9rdW9UcWdsZ2tXSnI1?=
+ =?utf-8?B?dTZhRjFjb1hBNkJBcGVtMWh6SEZEOCtoUnQxcHIxMmhzVUt3YmtUTXFMR24w?=
+ =?utf-8?B?M2JWV2h2RmVCVEhJa29xSjA0cmdBZmd6YUQ4cXN3dU9KSmI1WS9yeWo3a3Fy?=
+ =?utf-8?B?TGRMd21vcnd3bnIvSTl1dk5iTWFLUE9GLys5RGVvdDVOQS91K2N2OXdlck42?=
+ =?utf-8?B?dXh2TzB5U2xZNis0MjB6UjUwODRQZTlBU3JXY2h5ejhyUFNxRkpOS2NNUFNJ?=
+ =?utf-8?B?L1pVNkpaZXBEeGFLYWdRbmY4enI5azcydjJDY2VvNjFpanEyekZwVzRyaWd2?=
+ =?utf-8?B?U2JTMXRsTmFVemd5U0xoMnRQMEYzV0YrS1lFNjQwOW1OZnpva0hkSzlDRVVk?=
+ =?utf-8?B?YklscFRnSVhOcnREdUpScDRMekloaW9pSktYeFRSajQrOVFLZUFJYmdsVUdo?=
+ =?utf-8?B?cm9vbXlwWXNreXE5ZmQvQmRKVnhrUEQxZ0M2ZVB3V3ZIR2xHdUdsYjVyVjZt?=
+ =?utf-8?B?SUtqTUhncU5oUWc2UmgxdXNhWkdYekFtb3YwQ21yVDFIdUdnWWR1UFFOakpk?=
+ =?utf-8?B?WUxrQkdFUm9mQW4zZ3RGcEh6RjB1anY5NHE2Zzc3bzZEWXVsc09xWHREU0kr?=
+ =?utf-8?B?OEx2SnpJVk1VWHFkQzMzVUY5eUY2VUNrbDU4VU1iWk5lVVlUWXZwM3daakNV?=
+ =?utf-8?B?Y3RJQ0NwNXVQUmswc1djRCtzY0U2WXdhOEpWZmZuWVNLcWxURGpIZnRVMzdn?=
+ =?utf-8?B?RXZHV2Izay9EN1QwS0Z0MUw1NUdJTGFDVHFYWlJnRURqd0ZlcWhid3R0Sk5Q?=
+ =?utf-8?B?YWdRSTlDWFNvMEI2b2lEVjlRZnovcDg2R2tweUhVVGEwVTV3bmlqWXBFWUli?=
+ =?utf-8?B?UmhQdWJIUnhqTWFyUFl4a1YwN0dvV0ZINk5MWnR5R2Izc2ZEeGdVcDBqMkFN?=
+ =?utf-8?B?NmJOM3MvY3FtckZjeUlwOVhoVHRvTVZMRkFBdEpYYmhSUzBRc1dvNVZDelNV?=
+ =?utf-8?B?WDN1M1dBZUsvdVpNeWlxZXdOWWhzNGVJZWRlRTVmV0xQZ0JXQktQcUxvclFx?=
+ =?utf-8?B?SGhVdVByV2pPSFI3RFQ2cG5Cb0lGNmNQcG5KUTRoUEl5T09tSkkrd0s0VmFs?=
+ =?utf-8?B?bE9NWW1sc2tIZGR0ZHN2UkNkaFhIZE42aFMzVGRrK3p5L04xYlFQRlhjQ1VO?=
+ =?utf-8?B?ZjYzN1ZhYWllQk1ZZFc4RXhGK3REM0l5UnRhWTk1eHBZTFFSN0s3c0FTZkVv?=
+ =?utf-8?B?TllCOXFjSFI5WWg5d1MyK1lUTEN1VkxLTWtSaVFvUEJVVzV2U0kzZm1SVS9i?=
+ =?utf-8?B?ZG5nbTJKTWV3UiszQ3NITU1aVitRV01wUE0vZEtVRWhDQmN0aWd2MTlocTRs?=
+ =?utf-8?B?VldINThYTVU0cllYRzIyZUdwOUFWdFhERDNCdFkrVlA1TGtqVGdjSWFETm1F?=
+ =?utf-8?B?RGI5em9waHAyTjJhc1RUdmFwbURGWFhTYnBzV1BNeW9sZFZOMkNkVnFKS25x?=
+ =?utf-8?B?NkxWQ3FjQWxnZ2lqeE1UUUwvVGowdGFxOC9CaDRzMW05bGVzM0RMOElLSGE4?=
+ =?utf-8?B?YTdUV3BZMSs2Zktsam81UFZLSkNYdGN5ZWZodDFpUzExTElqMnJSRFI5UUp6?=
+ =?utf-8?B?ZDVSMmR1MXhnMW5KTnZPNHBiUjhrV2dENHV1RzN0QzB0NWdPbDJWVFdaT1dE?=
+ =?utf-8?B?MFpvL1pUMnpOT1g2cFNJU29ibVFyUndZb2xMYWVJV1U5MUVTT28rb1pCc3h5?=
+ =?utf-8?B?N1BiOWlFeVM1OVlPOWxuL3BDRW4yMDY0UmxicGU3N2lQQldYRkNaZmVtOEQv?=
+ =?utf-8?B?YVhjZjBNbUVFU281d1RhRzBkcEZwVUoyMFptMkV2aWlaTks5Y2RIK3JrWUl2?=
+ =?utf-8?B?QVNzbSsyNzNLR1M0OVZON0tVNVhHbUp1cndNVmlDMFhvMFN2R08zYnFMUHFH?=
+ =?utf-8?B?blBBRk1vWUJ4Y3pyRk80VWF5bUw1TWhZdGNJUTZoaHZaZWh0R0l2Rk90c0k3?=
+ =?utf-8?B?d2FOREtvTzlieXBLQlhzNDlrUndzLzdxSi9wcEdHVWgwN2k4MDVTOXBGRDdo?=
+ =?utf-8?B?eXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2035647-694d-4a02-bf8f-08ddf5f76479
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB7PR03MB4890.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1da0fb15-17bc-4a3b-ff7e-08ddf5f39a27
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2025 14:07:56.8304 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d03fe63f-ee56-4020-a121-dd5b65bc7ea3
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: j+Ztd3Q5jpE8wD8m+YgpiW6syEVdGJXC2F/RtPX/J7cUYToe9rLZqNkgF5paXDwc8zTXnxmPiE1X+s4SnX7OGSJvU1qxrgQoHeXsJQR8q1Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR03MB7866
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 14:35:05.0565 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gbT/Om+heFRTqGQhLiAWoj5+mqILQa+6Jfuox6BenvmWJeiDFcYgzLO2mJHysOCm1qww6uRRNGblsB674Vnf/GvjcaNZZD09BfyzFBf93dQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB6012
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -146,90 +202,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_DB7PR03MB48906F6B09425E675420A8A6F217ADB7PR03MB4890eurp_
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+On 9/3/2025 5:17 PM, David Marchand wrote:
+> The DPDK API is not dependent on the VFIO API itself.
+> Remove inclusion in rte_vfio.h (and bus_fslmc_driver.h) and add explicit
+> inclusion where needed.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Reviewed-by: Rosen Xu <rosen.xu@altera.com>
+> ---
 
-Hi,
-At Cato Networks we are currently working on implementing LACP LAG (bonding=
- device, mode 4) using the DPDK library.
-During our evaluation, we identified some shortcomings in the implementatio=
-n =97 for example, the lack of support for short timeout and the absence of=
- proper handling for partner key mismatches.
-These gaps, combined with the lack of complaints or upstream patches addres=
-sing them, raise concerns about the maturity and stability of the library.
-We would be grateful if you could clarify the following:
+Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
-  *
-To what extent is the DPDK bonding/LACP code deployed in production enterpr=
-ise environments?
-  *
-Is it possible to share the names of companies or organizations that use it=
- in production?
-
-Your guidance would be greatly appreciated.
-
-
-
---_000_DB7PR03MB48906F6B09425E675420A8A6F217ADB7PR03MB4890eurp_
-Content-Type: text/html; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DWindows-1=
-252">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<pre class=3D"elementToProof" id=3D"x_b"><div class=3D"elementToProof" styl=
-e=3D"white-space: normal; margin-top: 1em; margin-bottom: 1em; font-family:=
- Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Aptos_MSFontService&quot;, Ca=
-libri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">Hi,</d=
-iv><div class=3D"elementToProof" style=3D"white-space: normal; margin-top: =
-1em; margin-bottom: 1em; font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;=
-, &quot;Aptos_MSFontService&quot;, Calibri, Helvetica, sans-serif; font-siz=
-e: 12pt; color: rgb(0, 0, 0);">At Cato Networks we are currently working on=
- implementing LACP LAG (bonding device, mode 4) using the DPDK library.&nbs=
-p;<br>During our evaluation, we identified some shortcomings in the impleme=
-ntation =97 for example, the lack of support for short timeout and the abse=
-nce of proper handling for partner key mismatches.</div><div class=3D"eleme=
-ntToProof" style=3D"white-space: normal; margin-top: 1em; margin-bottom: 1e=
-m; font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Aptos_MSFontSe=
-rvice&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0,=
- 0, 0);">These gaps, combined with the lack of complaints or upstream patch=
-es addressing them, raise concerns about the maturity and stability of the =
-library.</div><div class=3D"elementToProof" style=3D"white-space: normal; m=
-argin-top: 1em; margin-bottom: 1em; font-family: Aptos, &quot;Aptos_Embedde=
-dFont&quot;, &quot;Aptos_MSFontService&quot;, Calibri, Helvetica, sans-seri=
-f; font-size: 12pt; color: rgb(0, 0, 0);">We would be grateful if you could=
- clarify the following:</div><ul data-end=3D"795" data-start=3D"604"><li st=
-yle=3D"font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Aptos_MSFo=
-ntService&quot;, Calibri, Helvetica, sans-serif; font-size: 12pt; color: rg=
-b(0, 0, 0); white-space: normal;"><div role=3D"presentation" class=3D"eleme=
-ntToProof" style=3D"white-space: normal; margin-top: 1em; margin-bottom: 1e=
-m;">To what extent is the DPDK bonding/LACP code deployed in production ent=
-erprise environments?</div></li><li style=3D"font-family: Aptos, &quot;Apto=
-s_EmbeddedFont&quot;, &quot;Aptos_MSFontService&quot;, Calibri, Helvetica, =
-sans-serif; font-size: 12pt; color: rgb(0, 0, 0); white-space: normal;"><di=
-v role=3D"presentation" class=3D"elementToProof" style=3D"white-space: norm=
-al; margin-top: 1em; margin-bottom: 1em;">Is it possible to share the names=
- of companies or organizations that use it in production?</div></li></ul><d=
-iv class=3D"elementToProof" style=3D"white-space: normal; margin-top: 1em; =
-margin-bottom: 1em; font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &qu=
-ot;Aptos_MSFontService&quot;, Calibri, Helvetica, sans-serif; font-size: 12=
-pt; color: rgb(0, 0, 0);">Your guidance would be greatly appreciated.</div>=
-<div class=3D"elementToProof" style=3D"white-space: normal; margin-top: 1em=
-; margin-bottom: 1em; font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &=
-quot;Aptos_MSFontService&quot;, Calibri, Helvetica, sans-serif; font-size: =
-12pt; color: rgb(0, 0, 0);"><br></div></pre>
-<div style=3D"font-family: Aptos, &quot;Aptos_EmbeddedFont&quot;, &quot;Apt=
-os_MSFontService&quot;, Calibri, Helvetica, sans-serif; font-size: 11pt; co=
-lor: rgb(0, 0, 0);" class=3D"elementToProof">
-<br>
-</div>
-</body>
-</html>
-
---_000_DB7PR03MB48906F6B09425E675420A8A6F217ADB7PR03MB4890eurp_--
+-- 
+Thanks,
+Anatoly
