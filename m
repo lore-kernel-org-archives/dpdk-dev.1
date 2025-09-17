@@ -2,82 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8BECAC598
-	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Sep 2025 10:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1780CA0EE8
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Sep 2025 10:16:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C6DDC4025A;
-	Wed, 17 Sep 2025 12:06:12 +0200 (CEST)
-Received: from fout-a6-smtp.messagingengine.com
- (fout-a6-smtp.messagingengine.com [103.168.172.149])
- by mails.dpdk.org (Postfix) with ESMTP id 67F7140144
- for <dev@dpdk.org>; Wed, 17 Sep 2025 12:06:11 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id 1FC66EC02AB;
- Wed, 17 Sep 2025 06:06:11 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Wed, 17 Sep 2025 06:06:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1758103571;
- x=1758189971; bh=jXuQLazk6o1Otg4O1wCVxQB5567VdvAah2tEOvsqXH0=; b=
- rlmA56TxZpnk2XpY7H6p02VBxGxOJK+wdUl6d0PcEnH6smTF+S4rpXRWTHoZCI65
- deWOwLM8X6fq8/Abj1B9J5mPywBseWVBTeACsaXxNSXNysXe8qZQwnq8lXAZYNcI
- N/bS+dpNXJed+08PAALbsqpYR4/H3k4uyb9UAKXiaw10RRph38vowNP2/Xv4QF7R
- XJVhfhA3pl2j72ebRgEA1r/fg1dQmjxpaXRhBEuiPy0eHlm1JMD/TKlhm6ZqUBtE
- 2PqNQA6WSRcfgsKOd4ehQwbnfmY6EsC3TuJq4PIlYNLltdoEWZqGJR3OMiFtIzQA
- u6ogG4NUaUV/k3mtekA6Ww==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758103571; x=
- 1758189971; bh=jXuQLazk6o1Otg4O1wCVxQB5567VdvAah2tEOvsqXH0=; b=e
- ITo3Uxvp/qRjQagXMUU0rFhQQHul4LmQRTSgDb5er29aAZ5C70q9n1UrRlBS6qur
- 6/4C57FOwG4oQN+CnuXa2stHAYEMrrye1oqdIjOKBervmJETkCQNYwc89eoKaDeS
- xqIx7/iz2unMy+N37GnmcopO/b/NpiNWPoxFGRcWLMHJDc04P2r7D1UV5A9feKm/
- oxpSMocJZ/wG2m/tQ7DwP0cE8Zux7L4mbudZNfBu/F+bK9cygePyCgxdIEgJYinj
- xd57aIlhjBnjByUzQS6wKw04zf27g3OFMLNuCRyypeex3KqhUtOEl8F5gR8xmrpn
- m/8Bk89hXj1dmU/eSs4GA==
-X-ME-Sender: <xms:EojKaAcCGHXtdH6lENP_UWFYIG8EQZTsgIbOwFEtZHm8YT-ivHDZKg>
- <xme:EojKaAJvuLMoaXbZcwAp0965CJnrOfG21qVu5b8zmO6Va490K7vG3EmKv7Wea3QMO
- NnjDlmuEeJsne5N2g>
-X-ME-Received: <xmr:EojKaD1RjELLf3tUTDJvLyx3O-D54EQDD02_Lnk_URAo30hlP5eCiQxyJCPWczV873J1cGnWJHsaaf3nCtOW7mNcWw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegfedujecutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
- hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
- ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
- grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
- gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepiedpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepsghinhhgiiesnhhvihguihgrrdgtohhmpd
- hrtghpthhtohepvggrghhoshhtihhnihesnhhvihguihgrrdgtohhmpdhrtghpthhtohep
- ghgvthgvlhhsohhnsehnvhhiughirgdrtghomhdprhgtphhtthhopeguvghvseguphgukh
- drohhrghdprhgtphhtthhopehmkhgrshhhrghnihesnhhvihguihgrrdgtohhmpdhrtghp
- thhtoheprhgrshhlrghnugesnhhvihguihgrrdgtohhm
-X-ME-Proxy: <xmx:EojKaKi_unm_fT-qTiYXA8DcTOK_BFQCsZ9rvYX648c7-jRJiPjZHw>
- <xmx:EojKaEX6gd_dsrPTV_HJXkwlXWrBulK7D9XQByCxBaKpsMOVwosefA>
- <xmx:EojKaJVcQ-VRWodiqyUPNemUh7BAG6HAbdk0IqoFV43PyFVt-bfMwg>
- <xmx:EojKaEhoaEFxXxUe1EB5sG-Y8ogmD_6thIELIXDEem5q9EsSNiHHHw>
- <xmx:E4jKaMkXmJcMBg7GexfY7s4INfcaP6Nmliykkp2Q47jg6o4c-lqKrP8B>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 17 Sep 2025 06:06:09 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Bing Zhao <bingz@nvidia.com>, Elena Agostini <eagostini@nvidia.com>,
- Gregory Etelson <getelson@nvidia.com>
-Cc: dev@dpdk.org, mkashani@nvidia.com, rasland@nvidia.com
-Subject: Re: [PATCH 9/9] gpu/cuda: support CUDA 13 building
-Date: Wed, 17 Sep 2025 12:06:08 +0200
-Message-ID: <4771590.kQq0lBPeGt@thomas>
-In-Reply-To: <20250915144137.54858-9-getelson@nvidia.com>
-References: <20250915144137.54858-1-getelson@nvidia.com>
- <20250915144137.54858-9-getelson@nvidia.com>
+	by mails.dpdk.org (Postfix) with ESMTP id EAB7340285;
+	Wed, 17 Sep 2025 12:16:33 +0200 (CEST)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.3])
+ by mails.dpdk.org (Postfix) with ESMTP id 4701E40144
+ for <dev@dpdk.org>; Wed, 17 Sep 2025 12:16:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
+ MIME-Version; bh=gRMUuQmbRb+WO4OfKGpJO2vUV24I1TiCzjXR8EImiYE=;
+ b=A94TPBad3gaqyTLDMxsLj7lP840oKk/q1xS+GQCEes/GS9FCUY129Os2rZff4X
+ hT69zXj+VCMDjC8S/NJnr77kzcuNMGxTNcy+LeM+qpFyW75MeJzNAMDvFIi8w6pU
+ tR4rabZwzJw56Ei9PwqXqCk9UZISqa5F0hFsvCbyCotQE=
+Received: from localhost.localdomain (unknown [114.116.198.59])
+ by gzsmtp1 (Coremail) with SMTP id Ac8vCgBXohZzispo0ZVGAg--.58210S4;
+ Wed, 17 Sep 2025 18:16:29 +0800 (CST)
+From: Feifei Wang <wff_light@vip.163.com>
+To: dev@dpdk.org
+Subject: [V11 00/18] add-hinic3-PMD-driver
+Date: Wed, 17 Sep 2025 18:15:34 +0800
+Message-ID: <20250917101604.17045-1-wff_light@vip.163.com>
+X-Mailer: git-send-email 2.47.0.windows.2
+In-Reply-To: <20250418090621.9638-1-wff_light@vip.163.com>
+References: <20250418090621.9638-1-wff_light@vip.163.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: Ac8vCgBXohZzispo0ZVGAg--.58210S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW3WrWfKFyUXF45JrWxJFW7CFg_yoWxtF1fpF
+ 4UC3y3Ar1DKrW7tw1kJw1xAas8J3WxG345Kw13Za4Fvr97ZFy5A34UGFW8Ar9xtr17JF12
+ vFs09r4qgwn8tw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UQIDcUUUUU=
+X-Originating-IP: [114.116.198.59]
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiAhjLCmjKimwASQAAsW
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,42 +49,179 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-15/09/2025 16:41, Gregory Etelson:
-> From: Bing Zhao <bingz@nvidia.com>
-> 
-> The API name and prototype have been changed in the new CUDA, this
-> commit will ensure the compatibility with different versions.
-[...]
->  /* CUDA Driver functions loaded with cuGetProcAddress for versioning */
-> +#if defined(CUDA_VERSION) && (CUDA_VERSION >= 13000)
-> +static PFN_cuGetErrorString_v6000 pfn_cuGetErrorString;
-> +static PFN_cuGetErrorName_v6000 pfn_cuGetErrorName;
-> +static PFN_cuPointerSetAttribute_v6000 pfn_cuPointerSetAttribute;
-> +static PFN_cuDeviceGetAttribute_v2000 pfn_cuDeviceGetAttribute;
-> +static PFN_cuDeviceGetByPCIBusId_v4010 pfn_cuDeviceGetByPCIBusId;
-> +static PFN_cuDevicePrimaryCtxRetain_v7000 pfn_cuDevicePrimaryCtxRetain;
-> +static PFN_cuDevicePrimaryCtxRelease_v11000 pfn_cuDevicePrimaryCtxRelease;
-> +static PFN_cuDeviceTotalMem_v3020 pfn_cuDeviceTotalMem;
-> +static PFN_cuDeviceGetName_v2000 pfn_cuDeviceGetName;
-> +static PFN_cuCtxGetApiVersion_v3020 pfn_cuCtxGetApiVersion;
-> +static PFN_cuCtxSetCurrent_v4000 pfn_cuCtxSetCurrent;
-> +static PFN_cuCtxGetCurrent_v4000 pfn_cuCtxGetCurrent;
-> +static PFN_cuCtxGetDevice_v2000 pfn_cuCtxGetDevice;
-> +static PFN_cuCtxGetExecAffinity_v11040 pfn_cuCtxGetExecAffinity;
-> +static PFN_cuMemAlloc_v3020 pfn_cuMemAlloc;
-> +static PFN_cuMemFree_v3020 pfn_cuMemFree;
-> +static PFN_cuMemHostRegister_v6050 pfn_cuMemHostRegister;
-> +static PFN_cuMemHostUnregister_v4000 pfn_cuMemHostUnregister;
-> +static PFN_cuMemHostGetDevicePointer_v3020 pfn_cuMemHostGetDevicePointer;
-> +static PFN_cuFlushGPUDirectRDMAWrites_v11030 pfn_cuFlushGPUDirectRDMAWrites;
-> +#else
->  static PFN_cuGetErrorString pfn_cuGetErrorString;
->  static PFN_cuGetErrorName pfn_cuGetErrorName;
+The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
+for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.
 
-What is the logic here?
-The old version keeps its original name, and new versions have a suffix?
-Why not use the old version?
-What will happen with next versions?
+v11:
+-reorder code to avoid forward declarations
+-remove unused casts
+-use assignment instead of memcpy
+-change some LOG level to DEBUG level
+-remove unused function
+-remove unused check in mtu_set/dev_config/valn_filter_set
+-defer start/stop
+-use strlpy instead snprintf 
+-remove unnecessary line breaks, fit on line
 
+v10:
+-add prefix to some functions
+-use memcpy instead of rte_memcpy for simple fixed copies
+-modify LOG messege format
+-modify meson.build files
+-remove unused check in queue_start/stop/intr
+-remove unused function 
+-remove function that stubbed out
+-modify some api log level
+-remove features unsuppurted
+-modify some casts
+-change xstats_cal_num return type
+-modify stats get function 
+ 
+v9:
+-resolve type conflict issue
 
+v8:
+-resolve CI compile error
+-modify mbox section
+
+v7:
+-remove unused-functions
+
+v6:
+-modify based on community comments
+-remove mml files
+
+v5:
+-fix build err
+
+v4: 
+-solve patch application conflict issue 
+ 
+v3:
+-fix checkpatchs errors issue
+
+v2:
+-modify CI compile errors
+
+v1:
+-modify community comments and compile issues
+-remove the compilation flags in the meson build
+-remove (void) cur_link_machine_state
+-remove '*** BLURE HERE ***' in cover letter
+
+Feifei Wang (2):
+  net/hinic3: add dev ops
+  net/hinic3: add Rx/Tx functions
+
+Xin Wang (7):
+  net/hinic3: add basic header files
+  net/hinic3: add support for cmdq mechanism
+  net/hinic3: add NIC event module
+  net/hinic3: add context and work queue support
+  net/hinic3: add futions for initialization
+  net/hinic3: add device initialization
+  net/hinic3: add RSS promiscuous ops
+
+Yi Chen (9):
+  doc: add hinic3 driver
+  net/hinic3: add hardware interfaces of BAR operation
+  net/hinic3: add eq mechanism
+  net/hinic3: add mgmt module function code
+  net/hinic3: add module about hardware operation
+  net/hinic3: add a NIC business configuration module
+  net/hinic3: add a mailbox communication module
+  net/hinic3: add flow control and FDIR module
+  drivers/net: add hinic3 PMD build and doc files
+
+ .mailmap                                   |    4 +-
+ MAINTAINERS                                |    6 +
+ doc/guides/nics/features/hinic3.ini        |   60 +
+ doc/guides/nics/hinic3.rst                 |   47 +
+ doc/guides/nics/index.rst                  |    1 +
+ doc/guides/rel_notes/release_25_11.rst     |    4 +
+ drivers/net/hinic3/base/hinic3_cmd.h       |  156 +
+ drivers/net/hinic3/base/hinic3_cmdq.c      |  962 ++++++
+ drivers/net/hinic3/base/hinic3_cmdq.h      |  230 ++
+ drivers/net/hinic3/base/hinic3_compat.h    |  142 +
+ drivers/net/hinic3/base/hinic3_csr.h       |  108 +
+ drivers/net/hinic3/base/hinic3_eqs.c       |  708 ++++
+ drivers/net/hinic3/base/hinic3_eqs.h       |   98 +
+ drivers/net/hinic3/base/hinic3_hw_cfg.c    |  190 ++
+ drivers/net/hinic3/base/hinic3_hw_cfg.h    |  114 +
+ drivers/net/hinic3/base/hinic3_hw_comm.c   |  438 +++
+ drivers/net/hinic3/base/hinic3_hw_comm.h   |  365 ++
+ drivers/net/hinic3/base/hinic3_hwdev.c     |  553 +++
+ drivers/net/hinic3/base/hinic3_hwdev.h     |  164 +
+ drivers/net/hinic3/base/hinic3_hwif.c      |  739 ++++
+ drivers/net/hinic3/base/hinic3_hwif.h      |  146 +
+ drivers/net/hinic3/base/hinic3_mbox.c      | 1207 +++++++
+ drivers/net/hinic3/base/hinic3_mbox.h      |  181 +
+ drivers/net/hinic3/base/hinic3_mgmt.c      |  351 ++
+ drivers/net/hinic3/base/hinic3_mgmt.h      |  112 +
+ drivers/net/hinic3/base/hinic3_nic_cfg.c   | 1713 ++++++++++
+ drivers/net/hinic3/base/hinic3_nic_cfg.h   | 1530 +++++++++
+ drivers/net/hinic3/base/hinic3_nic_event.c |  402 +++
+ drivers/net/hinic3/base/hinic3_nic_event.h |   38 +
+ drivers/net/hinic3/base/hinic3_wq.c        |  139 +
+ drivers/net/hinic3/base/hinic3_wq.h        |  109 +
+ drivers/net/hinic3/base/meson.build        |   16 +
+ drivers/net/hinic3/hinic3_ethdev.c         | 3575 ++++++++++++++++++++
+ drivers/net/hinic3/hinic3_ethdev.h         |  164 +
+ drivers/net/hinic3/hinic3_fdir.c           | 1370 ++++++++
+ drivers/net/hinic3/hinic3_fdir.h           |  398 +++
+ drivers/net/hinic3/hinic3_flow.c           | 1481 ++++++++
+ drivers/net/hinic3/hinic3_flow.h           |  196 ++
+ drivers/net/hinic3/hinic3_nic_io.c         |  802 +++++
+ drivers/net/hinic3/hinic3_nic_io.h         |  171 +
+ drivers/net/hinic3/hinic3_rx.c             | 1059 ++++++
+ drivers/net/hinic3/hinic3_rx.h             |  354 ++
+ drivers/net/hinic3/hinic3_tx.c             | 1025 ++++++
+ drivers/net/hinic3/hinic3_tx.h             |  314 ++
+ drivers/net/hinic3/meson.build             |   30 +
+ drivers/net/meson.build                    |    1 +
+ 46 files changed, 21972 insertions(+), 1 deletion(-)
+ create mode 100644 doc/guides/nics/features/hinic3.ini
+ create mode 100644 doc/guides/nics/hinic3.rst
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmd.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_compat.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_csr.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_eqs.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_eqs.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwif.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_hwif.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_mbox.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_mbox.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.h
+ create mode 100644 drivers/net/hinic3/base/hinic3_wq.c
+ create mode 100644 drivers/net/hinic3/base/hinic3_wq.h
+ create mode 100644 drivers/net/hinic3/base/meson.build
+ create mode 100644 drivers/net/hinic3/hinic3_ethdev.c
+ create mode 100644 drivers/net/hinic3/hinic3_ethdev.h
+ create mode 100644 drivers/net/hinic3/hinic3_fdir.c
+ create mode 100644 drivers/net/hinic3/hinic3_fdir.h
+ create mode 100644 drivers/net/hinic3/hinic3_flow.c
+ create mode 100644 drivers/net/hinic3/hinic3_flow.h
+ create mode 100644 drivers/net/hinic3/hinic3_nic_io.c
+ create mode 100644 drivers/net/hinic3/hinic3_nic_io.h
+ create mode 100644 drivers/net/hinic3/hinic3_rx.c
+ create mode 100644 drivers/net/hinic3/hinic3_rx.h
+ create mode 100644 drivers/net/hinic3/hinic3_tx.c
+ create mode 100644 drivers/net/hinic3/hinic3_tx.h
+ create mode 100644 drivers/net/hinic3/meson.build
+
+-- 
+2.47.0.windows.2
 
