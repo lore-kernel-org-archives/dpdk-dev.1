@@ -2,80 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E40CCAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 12:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C00CAC598
+	for <dpdk-dev@archiver.kernel.org>; Wed, 17 Sep 2025 11:00:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A6DE40677;
-	Mon, 22 Sep 2025 14:33:47 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2609A402CB
- for <dev@dpdk.org>; Mon, 22 Sep 2025 14:33:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1758544425;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=NwFfNXuEYC5w2CRyqR8EU2ag6WrGBHgUh5XAyf5EiU4=;
- b=irQ9TNbJsML7/jxgnSVENeGGNJ1XPnB0KWOzsoZoZccInNzO6Iot76NoMcfr62kLhhSOai
- WxKwtwqithHQZscZv2WPyYwMLeLalVaPE4vt2aGdP6xm9n8dxuZoqaJ6jo3ntaxNN2Bc6x
- NUARqY/dGtd/0JiJv74BoE0vfqJd+NE=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-631-_8VNeTwYPT62zhzCsK9Q9w-1; Mon, 22 Sep 2025 08:33:44 -0400
-X-MC-Unique: _8VNeTwYPT62zhzCsK9Q9w-1
-X-Mimecast-MFC-AGG-ID: _8VNeTwYPT62zhzCsK9Q9w_1758544423
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-579e84da8a6so1701844e87.0
- for <dev@dpdk.org>; Mon, 22 Sep 2025 05:33:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 011B64042C;
+	Wed, 17 Sep 2025 13:00:33 +0200 (CEST)
+Received: from mails.dpdk.org (localhost [127.0.0.1])
+ by mails.dpdk.org (Postfix) with ESMTP id 5F4A9402C3;
+ Wed, 17 Sep 2025 13:00:32 +0200 (CEST)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
+ [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id BEA434025A
+ for <announce@dpdk.org>; Wed, 17 Sep 2025 13:00:30 +0200 (CEST)
+Received: by mail-wm1-f51.google.com with SMTP id
+ 5b1f17b1804b1-45b9c35bc0aso58428695e9.2
+ for <announce@dpdk.org>; Wed, 17 Sep 2025 04:00:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1758106830; x=1758711630; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:to
+ :from:from:to:cc:subject:date:message-id:reply-to;
+ bh=IWlk9V8L/mx1QBXVkMlTT98YBX6sID96O+p2dsX2+S0=;
+ b=eo1mX2P+Y5enozoJnJYmUiAEDMonug65sQiC/w4U4GqY8y5m0VRVG/6r4GFSRGXT/B
+ fADbPBpssM36ZMp+poDf1Z1It/f8+HlCR3iBhE7+1oHdsK+oFfd/8Z5EkwqFw1GOMbRO
+ kAvUgp5cEtTZlb8j3w0k+Z030l+dhkLlzZcKExPQtCZsncxU0MLDWVKHXwaMynkCQw6T
+ yFcaZuG+wG92iL5WHMZ8NE7BApQ59a0H16Prs6Rj52QswH3k/qWXi0QYe+3tAZ4aDjbO
+ 5dg0F8ZKyqlFIpJr0RJCEAhzjMOyGHo+4NnZmaCuc94AGjqpdUD7Z5OMau8JW25eq/Kz
+ K2pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758544422; x=1759149222;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=NwFfNXuEYC5w2CRyqR8EU2ag6WrGBHgUh5XAyf5EiU4=;
- b=XlqSZqPepXT2TTlTN7xqgPAF7sS4M9xoR5Ydpb91xI/iNfJFQ7Htdgq32UTDtsOaQc
- xRvTE+w7TbiyhX9vO6GXx/3xOEyNrwfe3o2EQC2CnwbV+s4WI5uAqCGnX+2XmCw5fVlJ
- piH1vPmQFQyfmzFMCuV4H3zepZrYA3/hb+AWaOQD3uEsAEMmyBTaIIFrI4sXbBbk3ktZ
- myJ20XMxyZoy9EbITMGXR546VAKfRVBo7hHBZU0yj/6qQIdGNxUEouVH3p0QiO/TaHqH
- Nl1Zz/YLZc5xUhQePhdr9GR594uMjOE7W5TN0pnP8PbckrhLflFZpeAF4TJZpjZ5xrGB
- YxQQ==
-X-Gm-Message-State: AOJu0YwbXKR9y2NQlrYcLPRAH1XRZnoPK8JWojbzM98UEvOSrq8+fJJp
- Qe8ZwkQ9DzlaG5B69YmMdGY0pUppt3BHMkl26q3ZR8e9+GQQWYelXn3RhYpGJq3qgyjGufHZNFA
- QVMYlWF8xvsPoG6TPOe7uVn+c5rYPaGkRsg4ylWFg7J3YmpnFvh8gbE5YQjKpVredMER4vDuDGV
- PIQ7h9V8W0C94VgeIKWgQ=
-X-Gm-Gg: ASbGncvf/Q5QocBMCVZZiRTYhEAmz+vqcTKtKTkY6yR+xnob8FFgDS3E/w32sCZwGXA
- rkim946iniFvdSJLEUCzk20esJ80J8DypGJ6YhTM/eY8qtLNSarj2sJpZ1tnLjG+Vbg613IFBSK
- TLukla60QCv3zNKxzSSQh+liA=
-X-Received: by 2002:a05:6512:6716:b0:577:184a:460a with SMTP id
- 2adb3069b0e04-579e3d2aff7mr4051113e87.38.1758544422582; 
- Mon, 22 Sep 2025 05:33:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG/0ISwc8EebvbZJJxicKfzanuCQb6Jtttze8If3QDMN0vBTJnKjiNGSm7012dJYJcJ5GZTXMJMvmiFPjSH19E=
-X-Received: by 2002:a05:6512:6716:b0:577:184a:460a with SMTP id
- 2adb3069b0e04-579e3d2aff7mr4051100e87.38.1758544422182; Mon, 22 Sep 2025
- 05:33:42 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1758106830; x=1758711630;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:to
+ :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=IWlk9V8L/mx1QBXVkMlTT98YBX6sID96O+p2dsX2+S0=;
+ b=Otld6VErWwm0VBqYA+e2QacTDWdOyZBS5lHrwI3UAdLKJmBO30KujfLJ4UC+h/NakA
+ LvOEvJCiIyQgeMEDGNGhWUXkAM4ZqG2EjjYrycc7JLoEUHslmrU4jJJWtoAwLgZH4gfX
+ F8vZZaN87fv2n3tqAdmhU2djBeQ3CmH4mybJ04ZP7XYgJ2tRzzJD5r866bgtPxWTBP7a
+ 5UBdlFdGaywegljoHMEddg8ptFk4NnStcYVCWMoGhJUI7Vr9dcRcXk9VMq2sby1ILmXv
+ +Dd64yStmiUH0lRTCYEICBtLvK/rhAf7jQ2G6o/qRCqL+DoghC733eIxAVqiObawcdeM
+ h/8w==
+X-Gm-Message-State: AOJu0Yxh/3P5TimoalVwYGkOHrT8goZR717Cl0K9S+yDTTZtxhwlmCSc
+ yKwr5d/osl3zHRNSv6GLIOr0gpDZzEnPoSjZSfiZgV5dY1ru5rHTBGmz0XenJQDH
+X-Gm-Gg: ASbGncuuivU+a7nfQMFSI5nr9zy2a6AzfR20ib26hQOlHrf+LkRTRSEpifmzCVWc5gZ
+ i6pr7YNNWeq9i+iJCJrLFhJNysehFxGHZW42BkqaTQkQCSVGbwlJMh3dVl2j5KlAwqJ/98X9B06
+ iDv+jm5N+FYuAJ4YksMa6G7ga5+AUZuu/CE8oJKItWbF8YKMa4bx62KtykJVtWBDJpoK4Px5aic
+ Vn7HzLZLoM96X9qQKnDiq938w1Evz1Uz8Ze9/d/KY1J9GkaQAa2iop1wSxzwXZ1Utgi4lbHSWBa
+ qvT00xAbwZkG2mHP528Us3zFqgjxT4WZJcuT1RG/JEx9KU5PWoIlJCg4PaYVGOh1G7/JkOevAfh
+ gcpUYD/syI7C9yqfI3PV5Kv3OnKFt
+X-Google-Smtp-Source: AGHT+IEIZkRFNh786sza+5XKQbDyZhDk/Eo53pJPE+aVJ8J5NZf24pL5slWoEimBBF5QVEsrCSrG/g==
+X-Received: by 2002:a05:600c:c87:b0:45d:d1b0:5fa2 with SMTP id
+ 5b1f17b1804b1-46205cc85ccmr15599235e9.19.1758106829863; 
+ Wed, 17 Sep 2025 04:00:29 -0700 (PDT)
+Received: from localhost ([2a01:4b00:d036:ae00:cc34:6a12:5564:42df])
+ by smtp.gmail.com with UTF8SMTPSA id
+ 5b1f17b1804b1-4613dccb4fesm33878605e9.16.2025.09.17.04.00.29
+ for <announce@dpdk.org>
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 17 Sep 2025 04:00:29 -0700 (PDT)
+From: luca.boccassi@gmail.com
+To: announce@dpdk.org
+Subject: DPDK 22.11.10 released
+Date: Wed, 17 Sep 2025 12:00:23 +0100
+Message-ID: <20250917110024.2548019-1-luca.boccassi@gmail.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-References: <20250407052532.1913-1-ming.1.yang@nokia-sbell.com>
- <20250719153227.1980-1-mosesyyoung@gmail.com>
- <20250719153227.1980-2-mosesyyoung@gmail.com>
- <82eea0d0-81c4-4623-984e-02ad11bdde59@intel.com>
-In-Reply-To: <82eea0d0-81c4-4623-984e-02ad11bdde59@intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 22 Sep 2025 14:33:30 +0200
-X-Gm-Features: AS18NWAeb3j-1HCQuSmovTb9VDsvtnUkdtC8lo-_nciVZRi7c4oBCyFdecVrtBE
-Message-ID: <CAJFAV8xrs164c5Ef05HCvkAC+UobMMw=M+ZheMyGEA=usHABuA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] crypto/ipsec_mb: fix QP release in secondary
-To: Yang Ming <mosesyyoung@gmail.com>
-Cc: dev@dpdk.org, kai.ji@intel.com, stable@dpdk.org, 
- "Burakov, Anatoly" <anatoly.burakov@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: XpsktulRzHBhdxw-u75ugqAMup6Ut2fvcKcKTiQeyTc_1758544423
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-X-BeenThere: dev@dpdk.org
+Content-Transfer-Encoding: 8bit
+X-BeenThere: announce@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
+X-BeenThere: dev@dpdk.org
 List-Id: DPDK patches and discussions <dev.dpdk.org>
 List-Unsubscribe: <https://mails.dpdk.org/options/dev>,
  <mailto:dev-request@dpdk.org?subject=unsubscribe>
@@ -86,54 +78,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 3 Sept 2025 at 11:27, Burakov, Anatoly
-<anatoly.burakov@intel.com> wrote:
->
-> On 7/19/2025 5:32 PM, Yang Ming wrote:
-> > When a secondary process tries to release a queue pair (QP) that
-> > does not belong to it, error logs occur:
-> > CRYPTODEV: ipsec_mb_ipc_request() line 373: Unable to release
-> > qp_id=0
-> > EAL: Message data is too long
-> > EAL: Fail to handle message: ipsec_mb_mp_msg
-> > EAL: Fail to recv reply for request /tmp/dpdk/l2hi/mp_socket:
-> > ipsec_mb_mp_msg
-> >
-> >  From the code path, cryptodev->data is allocated in the primary
-> > via rte_cryptodev_data_alloc() (inside
-> > ipsec_mb_create-->rte_cryptodev_pmd_create
-> > -->rte_cryptodev_pmd_allocate-->rte_cryptodev_data_alloc).
-> > This memory is placed in a shared memzone
-> > (rte_cryptodev_data_%u), so both primary and secondary processes
-> > reference the same cryptodev->data, including nb_queue_pairs and
-> > queue_pairs[].
-> >
-> > As a result, when the secondary process exits, ipsec_mb_remove()
-> > is called (inside
-> > rte_eal_cleanup-->eal_bus_cleanup-->vdev_cleanup
-> > -->rte_vdev_driver-->ipsec_mb_remove-->ipsec_mb_qp_release
-> > -->ipsec_mb_secondary_qp_op) and it loops through all queue
-> > pairs using:
-> > for (qp_id = 0; qp_id < cryptodev->data->nb_queue_pairs; qp_id++)
-> >       ipsec_mb_qp_release(cryptodev, qp_id);
-> >
-> > This causes the secondary to attempt releasing queue pairs it
-> > doesn't own, triggering the error logs mentioned above.
-> >
-> > This patch ensures that a secondary process only frees a QP if
-> > it actually owns it, preventing conflicts and resolving the
-> > issue.
-> >
-> > Fixes: b35848bc01f6 ("crypto/ipsec_mb: add multi-process IPC request handler")
-> > Cc: kai.ji@intel.com
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: Yang Ming <mosesyyoung@gmail.com>
-> Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Hi all,
 
-Series applied, thanks.
+Here is a new stable release:
+	https://fast.dpdk.org/rel/dpdk-22.11.10.tar.xz
 
+This is a security update to fix CVE-2025-23259.
 
--- 
-David Marchand
+The git tree is at:
+	https://dpdk.org/browse/dpdk-stable/?h=22.11
 
+Luca Boccassi
+
+---
+ VERSION                                |   2 +-
+ doc/guides/rel_notes/release_22_11.rst |  14 ++
+ drivers/net/mlx5/linux/mlx5_verbs.c    |   8 +-
+ drivers/net/mlx5/mlx5_devx.c           |   7 +-
+ drivers/net/mlx5/mlx5_ethdev.c         |   8 +-
+ drivers/net/mlx5/mlx5_rx.c             | 281 ++++++++++++++++++++++++++++++++-
+ drivers/net/mlx5/mlx5_rx.h             |  28 +++-
+ drivers/net/mlx5/mlx5_rxq.c            |  11 +-
+ 8 files changed, 346 insertions(+), 13 deletions(-)
+Luca Boccassi (1):
+      version: 22.11.10
+
+Viacheslav Ovsiienko (1):
+      net/mlx5: fix out-of-order completions in ordinary Rx burst
