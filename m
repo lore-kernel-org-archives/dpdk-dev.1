@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A550DCA1013
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 16:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DEECAC5A0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 16:39:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 118584066E;
-	Thu, 18 Sep 2025 18:39:07 +0200 (CEST)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com
- [209.85.219.41]) by mails.dpdk.org (Postfix) with ESMTP id 63D1D4066D
- for <dev@dpdk.org>; Thu, 18 Sep 2025 18:39:05 +0200 (CEST)
-Received: by mail-qv1-f41.google.com with SMTP id
- 6a1803df08f44-70ba7aa131fso12445356d6.2
- for <dev@dpdk.org>; Thu, 18 Sep 2025 09:39:05 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8993340676;
+	Thu, 18 Sep 2025 18:39:11 +0200 (CEST)
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com
+ [209.85.222.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 60FB34067E
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 18:39:09 +0200 (CEST)
+Received: by mail-qk1-f181.google.com with SMTP id
+ af79cd13be357-82946485d12so106789885a.2
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 09:39:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758213545;
- x=1758818345; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758213549;
+ x=1758818349; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=5eT0BdxvOG47sW0+7/NuQU5RVItB2LYTL+bRATO7L6s=;
- b=EoEqoOjCfTwcVGJy6t5RsmQ+HTwDF/uJ5Kbx9XjJS/P69FW/hJgKbzi+rb+DQJgBMs
- SaI+WUORMuEeUCbeWQa8p5KryHpQUmIhiQK9FCP3fdkQYj2FrxVJOLmzhBTUmw3elMCn
- JDmVkiG/DnpHxcdY1Txcis8GlBnKpg8e9m31/M+PtP2yQ0GOODi5RReGVi7W1ThgHD8C
- NInWfGUk7F3BDve28wg63YqVYb6ZPWBy/g3QA1Ed0rE7m7Y6/D5KRvMQinlTd4ihlEIQ
- oAy7gdlWNd1d6gT6uLZQZS7Dur7ubxp/hxkOx1TE2NqLFitHRHR07b+n1speKELdYZ4H
- 6bow==
+ bh=GtqTCj98OF+b/uQjWW+jbQyaf8ZLjfUdEKDjs1gBLao=;
+ b=D2FfqWW8KcBYiofjHlEvzjHlzUQz+IWbe3eclMjvzVw+GwAgirEbb4DQ/cALH3olvP
+ LHPwP6HcjdjvuoV0eDnRMTFqp14wqr5jbgCMn6QY9YgSuRHiyn9HKmQzbcZXpu61Fbaq
+ Tq8LjAllkZSXDbxJmqy2TzImDwquAHG1bEzJh8rx7w+SDg5RD2g/F9XVvqhukkmxUYWj
+ HCjBaeWV0I+a2GxGT6zSsv3nq8T5ScLRcSar+kfykXvLBkulfGoG/75raOpMXaxN6Edh
+ M/Q4OQelRWKxxUgA6bG8uGliDZVhmmwCsjc48U3hdb33i9twUrwL5EsmkGZbpKaZ4/wr
+ mhag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758213545; x=1758818345;
+ d=1e100.net; s=20230601; t=1758213549; x=1758818349;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=5eT0BdxvOG47sW0+7/NuQU5RVItB2LYTL+bRATO7L6s=;
- b=DXqVEWqEk43JjyAD7KGp47/KmjAIbTRgqwTEl3PhRkYtgJ8d/KdpSwrl8nYD5jXHEi
- WosjSxL8+Lfi+Ng4jbRsfbncQTtMigM8VNZgXSaZF/2RoLZZGqb2UDf1yNwnvNKvyX33
- wZeyVJETJ8B++Y9ksWWX0NHrUjvctaoGuaS3DU0q/h1nVrHtuXKJtyU651NwT7sOyCPy
- flX+UdzAjfTtZAITksN60bo1+5MvQvx/gMw+QdV75rlOSPziqRSGpjqq1RxFYxUZCmM0
- W7WWb04ssubIr5LgEILRvMQ3jQYFJF5Ny00MHFDe+/cE37isL3dFmStb12CgDGmARhvi
- ydvg==
-X-Gm-Message-State: AOJu0YzeXNE20X1QQTjYNdBgv/5ABSpiKLtPBJ2THOjCkCkJZNwn89bS
- MiGfhR2uDdwV2EAj+eqGmAO18haWwNMy29AkLRLGPRbn9S+ByN79QrBzof3hSAzhkcs=
-X-Gm-Gg: ASbGncsrLFDJHLN4XRu7kCgowApTT+Xn9dtVLIbgCxmTvDll3UOAfvCzkWYfDi6lNmF
- U47yclYnR9BKQU+VbanV9WA6eT4PWSlhGaEUGNGknvvrg1QjiZ7JLgZ1xeIFyegvWUd6eioaMLf
- GOhxi33eHGk+MaAyq8eCt1OuJkatLdNIsNEu2KyBmcStTeEpiSHjboGmGZZDvdBJsZmJrE1EE98
- 6tSJ175QEiLEjh4Ue2WLk5DuNne2/kzEDKPQqZN99iLjx0Fy9zSsIrb7lrZMUH8Ud+KIsCDV5Rv
- hvgVSY7mUqSWs90b2WOljJx1ntKFWRR2vcmXlMGTq9I6jAElMDjE56rPYMS7FrigSHHbQsF+I60
- LYJS3ZnKvxJQIs4NMOnJlfuCw5sJpr8zaWZnl5orsfJY8z1vrwF4nmH3+fhFkvrMm8OXm7FQl9W
- 226CDs01qMe+x4P7+Ftg==
-X-Google-Smtp-Source: AGHT+IGZuMHKj1zQ2Bye5yVNrGv2tM9Y1/HSB5abqOisn/cT0ni9ckr7kNkymj92kP7/fKDEW7Z+5g==
-X-Received: by 2002:a05:6214:1c4f:b0:796:dc45:8034 with SMTP id
- 6a1803df08f44-7991c5f1fa7mr707806d6.45.1758213544582; 
- Thu, 18 Sep 2025 09:39:04 -0700 (PDT)
+ bh=GtqTCj98OF+b/uQjWW+jbQyaf8ZLjfUdEKDjs1gBLao=;
+ b=VuNOZeLu0OveR6ITQUA76AKaTU99TLF7i10DmaOEcs1jP6QnPncz8md03f5VrrcmJy
+ FClLY6xyqnRgyP1w4Q5jynu3l3XY50RoRST05DA0YJBFZqNgqLltN/Qpz699rzNc3BW7
+ zZJDH+pn0KrdfML1GmjOy6N+n/uzGI181BX1aQ0T1QVCTAEIYLkuav29CseurszZ3AJJ
+ c1Zg49O1lzJFdUd/mfJrFIK2A+J410iaYpk/efPBOxvcv5PNAWac0zSwxBUB5lwmbIz8
+ 6hyYk9opCyMiJwgUaMCf0tXX/q+IgxAjbDafj/xsau/EbbYjBuFynxisfYNV1rvjIgDg
+ SS1g==
+X-Gm-Message-State: AOJu0Yxp2+l+PAU7BHg2dGITA3D7Xybi/0zutDff64CCGkWMJD12lGN2
+ zRQlfccUREx0UaYYlqmnMqMpIN2N6BDwTE7We9qTWOieKHc1FoTXlw3kzjVVuW6Oz+U=
+X-Gm-Gg: ASbGncsOxnlDyI4JCdkufQT9qbYxAnw27JXWR24AhjA7w3ZdW0Fof1p1kA/k2a80Vi4
+ pPDLLMUn8GGBTqMepx/CqTdPo0EM+iAIO+dzfF9+0Yt6/HUQqjq7PXyqrvxacgr1Ng+tAVWKndQ
+ WmMy2h1WW4gwi6Zv8Bl4+S0EcK/Dq+m5fRZZsBMyxi2Z4sBySVM+ekhkPqswepMM4Q5w0Zjujgi
+ 0f1qcJuGkYZhfk8a9iQ7GqhSa8UFhgqOgxugJO7QGtNGLC2/qKkaC1ksZFXHSAM5FjeEiWVTBCe
+ mRNbR6Hf4qsEwhrSJ6osbKRVXJXyW/0dtsey+DM8hIuj5L+0SoP7mqS6IJ5jbnMvZUsLr3ulty5
+ 02bx5HMv1QoA65dUIwguClCQkeZEFsK5cvYo5i9utiLjJ+VNAgfRpkHxqE9ESd5smSdomeXwUvq
+ Biif3mQlwvUzQzbXnkNxCd6L6vWjjK
+X-Google-Smtp-Source: AGHT+IEEAGThvM+z9yLdOE97N8YhortJYeQpNC0gKZGH5cY5p9+698hOjhJpZGDeBPko6Jdqc/Lhug==
+X-Received: by 2002:a05:620a:658e:b0:81a:9d8c:7b26 with SMTP id
+ af79cd13be357-83ba589b363mr24067085a.34.1758213548480; 
+ Thu, 18 Sep 2025 09:39:08 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-7934636f947sm15099276d6.16.2025.09.18.09.39.03
+ 6a1803df08f44-7934636f947sm15099276d6.16.2025.09.18.09.39.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 18 Sep 2025 09:39:04 -0700 (PDT)
-Date: Thu, 18 Sep 2025 09:38:42 -0700
+ Thu, 18 Sep 2025 09:39:08 -0700 (PDT)
+Date: Thu, 18 Sep 2025 09:30:57 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
  <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
 Subject: Re: [PATCH v9 04/17] net/nbl: add Channel layer definitions and
  implementation
-Message-ID: <20250918093842.2f0358a2@hermes.local>
+Message-ID: <20250918093057.1333d86b@hermes.local>
 In-Reply-To: <20250917080843.646050-5-dimon.zhao@nebula-matrix.com>
 References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
  <20250917080843.646050-1-dimon.zhao@nebula-matrix.com>
@@ -87,21 +88,24 @@ Errors-To: dev-bounces@dpdk.org
 On Wed, 17 Sep 2025 01:08:30 -0700
 Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
 
-> +
-> +static struct nbl_channel_ops chan_ops = {
-> +	.send_msg			= nbl_chan_send_msg,
-> +	.send_ack			= nbl_chan_send_ack,
-> +	.register_msg			= nbl_chan_register_msg,
-> +	.setup_queue			= nbl_chan_setup_queue,
-> +	.teardown_queue			= nbl_chan_teardown_queue,
-> +	.set_state			= nbl_chan_set_state,
-> +	.set_queue_state		= nbl_chan_set_queue_state,
-> +	.notify_interrupt		= nbl_chan_notify_interrupt,
-> +};
-> +
+> +	if (wait_head->ack_err >= 0 && (data_len > 3 * sizeof(uint32_t))) {
+> +		if (data_len - 3 * sizeof(uint32_t) != wait_head->ack_data_len)
+> +			NBL_LOG(ERR, "payload_len do not match ack_len!,"
+> +				" srcid:%u, msgtype:%u, msgid:%u, ack_msgid %u,"
+> +				" data_len:%u, ack_data_len:%u",
+> +				srcid, ack_msgtype, msgid,
+> +				ack_msgid, data_len, wait_head->ack_data_len);
 
-Can channel ops be const? Same for any other function pointer
-only table. It helps with preventing accidental code vulnerabilities
-where a buffer overrun can be used to cause other code to be run.
-Therefore for safety all function tables should be const where loader
-will put in read only memory.
+The grammar is incorrect, and prefer to avoid splitting error messages
+across multiple source lines because that makes it harder to look for the
+error in the driver source.
+
+The bigger issue is what does the error mean? Driver bug?
+
+> +		copy_len = RTE_MIN((u32)wait_head->ack_data_len,
+> +				   (u32)data_len - 3 * sizeof(uint32_t));
+
+Why the cast to u32 when variables are already uint32_t
+
+> +		memcpy(wait_head->ack_data, payload + 3, copy_len);
+> +	}
