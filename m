@@ -2,36 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0611CAC59A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 04:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA61CAC597
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 05:30:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9B9F5402B7;
-	Thu, 18 Sep 2025 06:15:43 +0200 (CEST)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
- by mails.dpdk.org (Postfix) with ESMTP id 5BD9C4027A
- for <dev@dpdk.org>; Thu, 18 Sep 2025 06:15:41 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.163.174])
- by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cS2Hj2zWXzRkQG;
- Thu, 18 Sep 2025 12:10:57 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 1A7671402CC;
- Thu, 18 Sep 2025 12:15:35 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 18 Sep 2025 12:15:34 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>
-CC: <dev@dpdk.org>
-Subject: [PATCH] test: support SVA copy for dmadev test
-Date: Thu, 18 Sep 2025 12:15:34 +0800
-Message-ID: <20250918041534.38227-1-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
+	by mails.dpdk.org (Postfix) with ESMTP id 41282402B7;
+	Thu, 18 Sep 2025 07:30:37 +0200 (CEST)
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com
+ [209.85.215.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 55AB94027A
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 07:30:36 +0200 (CEST)
+Received: by mail-pg1-f170.google.com with SMTP id
+ 41be03b00d2f7-b49b56a3f27so302471a12.1
+ for <dev@dpdk.org>; Wed, 17 Sep 2025 22:30:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1758173435; x=1758778235; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=IvPX2ekaEvXVDVf5gVEG4jdbi0jX/xhXwH4hnJ+1Flw=;
+ b=HYe+SfOUvccrSAaLbGsginCH/xxXN16W7AQLr6gsx68LdnxKvaEEej1jdhCFsrV3nX
+ 2MjuzlrceBHSAfaV5uGmUq6GvtwQH1xVdv7OfVVcARbW0rAdtVgdxwHlje0EwLl0mxeo
+ T02PxHBXnW4TCSHkpUcArxCrEuPyEbwZZnm/Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1758173435; x=1758778235;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=IvPX2ekaEvXVDVf5gVEG4jdbi0jX/xhXwH4hnJ+1Flw=;
+ b=N+/VLqIrnkZ1Y7E61fjEREd4vVA6NXqtNipe5C/Tkbz9ejyjwC3bTkHeyBygydbcAR
+ xH7Z8AQfbS9TIvDjXgaIEZuRCTbIbxSB31pnx1fks037qnzE/fCDdQkG7KEiVv3r005H
+ X66ZgnGOmhxEeCLDTS1saCh8xQPzKu4ZioToGQ7Cpw+rOpC5TPl4hbV5EYZCEUOkgb1i
+ ftrtL2nZbeRmHMPHXa/YCo651RSVNgM8kbfy+GaBs1qY5jLYRJ7vma4lV9Z95rugcDLu
+ g3HHaQ/OHTaB4O/n/rC+xI8MiU5LxI7NhaJwJSg1ig3QE2/ZjqYWmTd5++n20gcathWx
+ FiWg==
+X-Gm-Message-State: AOJu0YwHcFilQ4zSMUgsS8Fel++F2K5/qETzzs9IiOviH3OYqXdauSF5
+ 723SqVAeKhQ0qrdo1tv+r9Dlaes8VqAOP+QcLvyCoH9NUHrgmkmav4OpHLprKEsrVxHT+XC7DWo
+ mZugb9W4SPfEi/Sl+hTeU7EKYR3q3tckMmNJDBfeghPSsuqy0TLDacCM=
+X-Gm-Gg: ASbGncvqvZuuN321kSBVTWseRVteSB5hJ4JaWwT7RHGWjFzU4rCBxnRx9wxzhAcBbgK
+ AgyFGFwABLpizEJzrat7ha/fxCr2Fs8q8a517F36PDw8j6yjHife+DTGOA+WD3uabdDTuWiEFrr
+ a1zhWZtWzzQvJf4zTFjU6MPotAtO2UPUIOFq51SHrpQ0g+BUSr9QcAQDlifbO164lolmlF0LTmK
+ 3TfTINklLBGqv8dajfGkc9phy74wyNG4jj475XMDw==
+X-Google-Smtp-Source: AGHT+IHueODrzyCdr5yS5DmpwxUOw2SZPvoVlvPStAzyF3KQ/Z+r+WumQOl2JzdPfAd/9TAlYLfkJkg4NtYtFCa4NX8=
+X-Received: by 2002:a17:902:d2ca:b0:25c:bd0b:d048 with SMTP id
+ d9443c01a7336-26813903e80mr63285435ad.40.1758173435522; Wed, 17 Sep 2025
+ 22:30:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.50.165.33]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+References: <20250910152103.976383-1-paul.szczepanek@arm.com>
+ <20250910152103.976383-2-paul.szczepanek@arm.com>
+In-Reply-To: <20250910152103.976383-2-paul.szczepanek@arm.com>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Thu, 18 Sep 2025 01:30:19 -0400
+X-Gm-Features: AS18NWALjmibJ45P0uZo4mFlreNU76VScvGjdM4GqdhfgEl9Qd8pZpVP6QtROMQ
+Message-ID: <CAJvnSUD+qtkT88C_7q6BS8migv7r3cmdRtCMSq7KOk-ms1D1mw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] dts: move testpmd into API
+To: Paul Szczepanek <paul.szczepanek@arm.com>
+Cc: dev@dpdk.org, Luca Vizzarro <luca.vizzarro@arm.com>
+Content-Type: multipart/alternative; boundary="0000000000001413c5063f0ca7fc"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -45,131 +70,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This commit supports SVA copy for dmadev test.
+--0000000000001413c5063f0ca7fc
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- app/test/test_dmadev.c | 79 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+Reviewed-by: Patrick Robb <probb@iol.unh.edu>
 
-diff --git a/app/test/test_dmadev.c b/app/test/test_dmadev.c
-index 9cbb9a6552..dd4ace49ae 100644
---- a/app/test/test_dmadev.c
-+++ b/app/test/test_dmadev.c
-@@ -514,6 +514,65 @@ test_enqueue_sg_copies(int16_t dev_id, uint16_t vchan)
- 	return 0;
- }
- 
-+static int
-+test_single_sva_copy(int16_t dev_id, uint16_t vchan, const char *mem_src,
-+		     char *src, char *dst, uint32_t len)
-+{
-+	uint16_t i, id;
-+	int ret;
-+
-+	for (i = 0; i < len; i++)
-+		src[i] = rte_rand() & 0xFF;
-+
-+	ret = rte_dma_copy(dev_id, vchan, (rte_iova_t)src, (rte_iova_t)dst,
-+			len, RTE_DMA_OP_FLAG_SUBMIT);
-+	if (ret != id_count)
-+		ERR_RETURN("Error with %s rte_dma_copy, got %d expected %u\n",
-+			mem_src, ret, id_count);
-+
-+	await_hw(dev_id, vchan);
-+
-+	id = ~id;
-+	if (rte_dma_completed(dev_id, vchan, 1, &id, NULL) != 1)
-+		ERR_RETURN("Error with %s rte_dma_completed\n", mem_src);
-+	if (id != id_count)
-+		ERR_RETURN("Error with %s rte_dma_completed: incorrect job id received, %u [expected %u]\n",
-+			mem_src, id, id_count);
-+	id_count++;
-+
-+	for (i = 0; i < len; i++)
-+		if (dst[i] != src[i])
-+			ERR_RETURN("Error with %s data mismatch at char %u [Got %02x not %02x]\n",
-+				mem_src, i, dst[i], src[i]);
-+
-+	return 0;
-+}
-+
-+static int
-+test_enqueue_sva_copies(int16_t dev_id, uint16_t vchan)
-+{
-+	char *src_data = NULL, *dst_data = NULL;
-+	char src[COPY_LEN], dst[COPY_LEN];
-+	int ret;
-+
-+	/* test copy between buffer which malloced by libc. */
-+	src_data = malloc(COPY_LEN);
-+	dst_data = malloc(COPY_LEN);
-+	if (src_data == NULL || dst_data == NULL) {
-+		free(src_data);
-+		free(dst_data);
-+		ERR_RETURN("Error with malloc copy buffer!\n");
-+	}
-+	ret = test_single_sva_copy(dev_id, vchan, "libc", src_data, dst_data, COPY_LEN);
-+	free(src_data);
-+	free(dst_data);
-+	if (ret != 0)
-+		return ret;
-+
-+	/* test copy between buffer which belong stack. */
-+	return test_single_sva_copy(dev_id, vchan, "stack", src, dst, COPY_LEN);
-+}
-+
- /* Failure handling test cases - global macros and variables for those tests*/
- #define COMP_BURST_SZ	16
- #define OPT_FENCE(idx) ((fence && idx == 8) ? RTE_DMA_OP_FLAG_FENCE : 0)
-@@ -1063,6 +1122,21 @@ test_dmadev_sg_copy_setup(void)
- 	return ret;
- }
- 
-+static int
-+test_dmadev_sva_setup(void)
-+{
-+	int ret = TEST_SUCCESS;
-+
-+	if ((info.dev_capa & RTE_DMA_CAPA_SVA) == 0) {
-+		RTE_LOG(ERR, USER1,
-+			"DMA Dev %u: device does not support SVA, skipping SVA tests\n",
-+			test_dev_id);
-+		ret = TEST_SKIPPED;
-+	}
-+
-+	return ret;
-+}
-+
- static int
- test_dmadev_burst_setup(void)
- {
-@@ -1205,6 +1279,7 @@ test_dmadev_instance(int16_t dev_id)
- 	enum {
- 		  TEST_COPY = 0,
- 		  TEST_COPY_SG,
-+		  TEST_SVA_COPY,
- 		  TEST_START,
- 		  TEST_BURST,
- 		  TEST_ERR,
-@@ -1216,6 +1291,7 @@ test_dmadev_instance(int16_t dev_id)
- 	static struct runtest_param param[] = {
- 		{"copy", test_enqueue_copies, 640},
- 		{"sg_copy", test_enqueue_sg_copies, 1},
-+		{"sva_copy", test_enqueue_sva_copies, 1},
- 		{"stop_start", test_stop_start, 1},
- 		{"burst_capacity", test_burst_capacity, 1},
- 		{"error_handling", test_completion_handling, 1},
-@@ -1234,6 +1310,9 @@ test_dmadev_instance(int16_t dev_id)
- 			TEST_CASE_NAMED_WITH_DATA("sg_copy",
- 				test_dmadev_sg_copy_setup, NULL,
- 				runtest, &param[TEST_COPY_SG]),
-+			TEST_CASE_NAMED_WITH_DATA("sva_copy",
-+				test_dmadev_sva_setup, NULL,
-+				runtest, &param[TEST_SVA_COPY]),
- 			TEST_CASE_NAMED_WITH_DATA("stop_start",
- 				NULL, NULL,
- 				runtest, &param[TEST_START]),
--- 
-2.17.1
+--0000000000001413c5063f0ca7fc
+Content-Type: text/html; charset="UTF-8"
 
+<div dir="ltr">Reviewed-by: Patrick Robb &lt;<a href="mailto:probb@iol.unh.edu">probb@iol.unh.edu</a>&gt;</div>
+
+--0000000000001413c5063f0ca7fc--
