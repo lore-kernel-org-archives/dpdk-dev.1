@@ -2,70 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A35CA1013
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 15:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37250CAC59A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 15:53:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 46D5240670;
-	Thu, 18 Sep 2025 17:51:52 +0200 (CEST)
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
- [209.85.219.45]) by mails.dpdk.org (Postfix) with ESMTP id 3FCAF4060A
- for <dev@dpdk.org>; Thu, 18 Sep 2025 17:51:50 +0200 (CEST)
-Received: by mail-qv1-f45.google.com with SMTP id
- 6a1803df08f44-78f15d58576so10448256d6.0
- for <dev@dpdk.org>; Thu, 18 Sep 2025 08:51:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 87FD040288;
+	Thu, 18 Sep 2025 17:53:10 +0200 (CEST)
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com
+ [209.85.160.169])
+ by mails.dpdk.org (Postfix) with ESMTP id E522B4027A
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 17:53:08 +0200 (CEST)
+Received: by mail-qt1-f169.google.com with SMTP id
+ d75a77b69052e-4b60144fc74so14405951cf.2
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 08:53:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758210709;
- x=1758815509; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758210788;
+ x=1758815588; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=yvB8CfZXuxBaIoCRwzsWwGJ78ZFmL0BVzPhkCB8x5l4=;
- b=25nfs+szaa3B1rLGe930o/efN7yt30hG9cFhFEqAJdOSVfN3ucW2rMTVYGMnGCU25a
- U3+xeZKGpuV1qpFM+66Zn54Zq4De+zVEgtVpvuRoPGTMoxN5259qoewpMkWkErTzNi9i
- VpjipZ10fTnFG5bRGTY5561HqVemz2k9yJyWhZyv0BCtkzo2dPVx8PELEPKa2v3Sc6NV
- 12DXHle+BxLWWv1wHifUVmxKACXJobH2y5UqX7Imhvt6T/pv0v22+OicFlEnnvEQCS5b
- 0NCNpdjE04lTHrZ6W2S9i19d6Ed148XlMOHoq6IASCyYc3bwmOu70Cw8vMZR1Hmi2jdS
- BRWw==
+ bh=2tTe6i8CuIxrOfFxfoEKttkjyxT5U46PXXy7Xz850Vo=;
+ b=TVDoDmebzO1psW6MkPu6d/0XZ9q2IhXM9LakZafnVgsdBdo7g+oz8a7Q/606vOmE84
+ /6yRLsEz8xg2hI2DFP6KOEaA6cpuRn2M0Z2q2uDnmZkDAsY+BMI1su/LGAOCQCaiUebk
+ pvZZkpcR6PfY/bpy7H+jvttgY/qIZpuKuZsSiejQHMrZiTZ0miI1Pev3lSX9y+wL3Sr+
+ ldP53Rh/vr1C2dtsmDhhcvSUUa0hHVcxOzah+k/sgCKptATJDOKIZf8RAk2NxDoFI519
+ RbjspVZILPZ4tNcZJ/f45EGqIOgPn86A+KIaj1Z9vmzx2aoLbzqFYIGF7qVNlJYvBFOP
+ z3HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758210709; x=1758815509;
+ d=1e100.net; s=20230601; t=1758210788; x=1758815588;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=yvB8CfZXuxBaIoCRwzsWwGJ78ZFmL0BVzPhkCB8x5l4=;
- b=ftGlUYPZL1qXSt0BfEDz1tjh7RIm8icQT9/FGQUz0ZKcFqbN8NoFW2qhaa3aZvL3Mq
- +wsjeecDwNlFmMIBJhbmRm79RuQaU7+v2A4iB5KNXyqI6Po9UNK7OwS0Ub4VWczliHQK
- I5SzPePlk0rLQaGph+yxbs5lr/h2X5/aOZfxXJPTSYI1+B4qD8q8sZ392LJbz+VznMai
- gzNVY3vaGGy6h4xE2N5oAZWUR5X+4Vb8BNT/5mcn16JbbLGH3EjffpiVZZOBKqu51bVF
- 7ww3/49801x2sAsElRQKpjjBPxm+E2y3CqqdTofB2ojrm+JFvU3oxtBve5eFclB/Nk8o
- JR2w==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUSVZ2Xl5KMzihjgskvY4Oo4cIiMUFIcVPR01vJdOWWnTj50rweBReLTJbmnkfXUgH9nwQ=@dpdk.org
-X-Gm-Message-State: AOJu0YzS2LGipOsU1eu8qwIerEo8R17VqOf8HLAvTGCrDCXgT04fsFm6
- 6h/fle2nrfXWlywdHQAsXa0vN+H6Vm3a6sXps6yTtDYrDGjJfcvmOl0l+xRZU2G/4KA=
-X-Gm-Gg: ASbGnctH5z9pHpMc6+KXQyfmm/zmSlh/Ho9E5zOm0b/odQAL+hp19Et66hc15YqpeJF
- FT5eDpDmLKxxaMjL+eUbxHjnnfWXL5oDnQLboN0hFU3CnLHtvLZn0eIcr4cSIIOeINj1j9GhHdk
- gOa9A1DG59op/pLG7kY16WYkCLddTYbM7xp7E+OHDtseFC1w22cQMXjbdP7WwRz85Q61xErEco5
- qmSRyY5guF7DbCmKUe5e3cTCJ/D0iIsXr6d027zEuyNZQSgZraidqaWy97vFi4WBkYdflmyN6gJ
- ALkOw9mrHQtAyVIJqRgjn06sGFTlqJaYO8yVIOcsFjm0AFy3nG547PMUSTllabaqa/FlTxCpI6Z
- Sp4fGKUc24o1m8VzOCSbvW6vnNd0OsdG4ktwqRV8qD2p+Y/7jYtSSYF/bq+Zoe2kq3hAx6VdxhZ
- n9Sr0qRFzLk092JEJ9ug==
-X-Google-Smtp-Source: AGHT+IGt+uNw3JaX8DrRCNdZgmeuFLQaHMEslxpcI0KwYXEOFprlo/UcvWVHbc+3tc6oLvI6jj9slQ==
-X-Received: by 2002:ad4:5fca:0:b0:773:292c:4f69 with SMTP id
- 6a1803df08f44-792652fce9fmr42958796d6.10.1758210709361; 
- Thu, 18 Sep 2025 08:51:49 -0700 (PDT)
+ bh=2tTe6i8CuIxrOfFxfoEKttkjyxT5U46PXXy7Xz850Vo=;
+ b=STlS5Vp3WD09se5BcpMpAUG4ZD8u8gB9sH82HyYYZciAMZvG/uW+1y+HVk6C3+9+tl
+ g0hdTa+u/uwNC2IC1TrZAH3jaTQLRkvLZ5NxnD9w+pCcbZT0MMP/aXttgjcqUTjj+I9S
+ xvjuPjHt7TgMKXjZJ7VPyIrUACgaFRVJBr8M2FXy9TixZ3GuYiyraoTDIbfZx2fTxlp3
+ e04UZD+/LhPCQrigC/66bLRMRnWQbUcqn05qSLeoO0ATnaeRg1m3SGtFOOA0HQrj6PbP
+ 8dC3WCXOT+Drh1W81PZFNA7X+O+nG8k/cmKbkU4jJYzJb60fP9DthE2sdqS3BKa3D/Ws
+ pT5Q==
+X-Gm-Message-State: AOJu0Yx1iByyAA6T0xDfdrKnWw4+t6BBVI9qEjR1A9VfZkOezy5SlNbC
+ hESPoCMkvaDHxiX2dFSBECMGuMtlU3yGu/ySp/MZtql5H/xMUzlgHRTXLejbo1qmGTEQxk+Y/FM
+ 1pDTp
+X-Gm-Gg: ASbGncvdcEykB2oRAa65gVUQyvK1zRhygmknobpg/8XelyKmJws0GNBDOLpwhVBFqBW
+ Vu8BNil33uF/qL8tkId4ZqxB/XbOFGxZ9cyij+VWFkdspma3UzGuvvignKwk2qTIJcXLFB6NIIq
+ y3klPAL75HQiouitXL7mpyaKyuizxFcKQHQc8A91X4WFW9cUzM1FqUocM0sClGmOVHIx6Rs6ERp
+ uu/VbT+O7Qn6lk6rFEW7dHvo39youjmsMJ2am5UuItyoDZGXcfgrOvS//C3Cz7SAs3Xlq9Z+u2w
+ pHg4xiyHuMuA2uVP66zuPGmCVvWrPKBkOA74WGymA7vHjeVldbJJQg5rcJNlS7CV354sKO1gqAr
+ aekT3O0mj6ZTJiTfwTR3twQX8N+aOvZBZ0NL5PUgMaCZcFQw5iih7TBrpGO1wsCn3M2enZ69iri
+ C7TgciP2+f1B0u2wdpCw==
+X-Google-Smtp-Source: AGHT+IHhehOfWkzPCUNhWvI6XD6d+pWcG3SALdcVEnCVDlO2rDa05bfZ0c1x5NoCXzOw18ANWlckTw==
+X-Received: by 2002:a05:622a:4ccb:b0:4b2:edae:9df2 with SMTP id
+ d75a77b69052e-4ba6618ad59mr67296011cf.5.1758210788031; 
+ Thu, 18 Sep 2025 08:53:08 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-79356677f79sm14646336d6.72.2025.09.18.08.51.48
+ af79cd13be357-83626595d3csm180700485a.6.2025.09.18.08.53.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 18 Sep 2025 08:51:49 -0700 (PDT)
-Date: Thu, 18 Sep 2025 08:51:45 -0700
+ Thu, 18 Sep 2025 08:53:07 -0700 (PDT)
+Date: Thu, 18 Sep 2025 08:53:03 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Megha Ajmera <megha.ajmera@intel.com>
-Cc: jasvinder.singh@intel.com, dev@dpdk.org
-Subject: Re: [PATCH] sched: fix wrr parameter data type
-Message-ID: <20250918085145.584fca13@hermes.local>
-In-Reply-To: <20250918024609.2027038-1-megha.ajmera@intel.com>
-References: <20250918024609.2027038-1-megha.ajmera@intel.com>
+To: "Renyong Wan" <wanry@yunsilicon.com>
+Cc: <dev@dpdk.org>, <thomas@monjalon.net>, <qianr@yunsilicon.com>,
+ <nana@yunsilicon.com>, <zhangxx@yunsilicon.com>, <xudw@yunsilicon.com>,
+ <jacky@yunsilicon.com>, <weihg@yunsilicon.com>
+Subject: Re: [PATCH 1/2] net/xsc: improve interrupt uninstall
+Message-ID: <20250918085303.11dd9cf4@hermes.local>
+In-Reply-To: <20250916100850.226649-2-wanry@yunsilicon.com>
+References: <20250916100850.226649-1-wanry@yunsilicon.com>
+ <20250916100850.226649-2-wanry@yunsilicon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,31 +85,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 18 Sep 2025 08:16:09 +0530
-Megha Ajmera <megha.ajmera@intel.com> wrote:
+On Tue, 16 Sep 2025 18:08:51 +0800
+"Renyong Wan" <wanry@yunsilicon.com> wrote:
 
-> wrr tokens getting truncated to uint8_t in wrr_store function() due to
-> type mismatch. This patch changes the data type to uint16_t.
+> Use synchronous callback unregister to ensure no callbacks
+> are running after interrupt uninstallation. This improves
+> stability and prevents potential use-after-free issues during
+> device teardown.
 > 
-> Fixes: e16b06da0908 ("sched: remove WRR from strict priority TC queues")
-> 
-> Signed-off-by: Megha Ajmera <megha.ajmera@intel.com>
-> Acked-by: Jasvinder Singh <Jasvinder.singh@intel.com>
+> Signed-off-by: Rong Qian <qianr@yunsilicon.com>
+> Signed-off-by: Renyong Wan <wanry@yunsilicon.com>
+> ---
 
-The pipe tokens are updated in grinder_wrr_store by:
-
-	pipe->wrr_tokens[0] =
-			(grinder->wrr_tokens[0] & grinder->wrr_mask[0]) >>
-				RTE_SCHED_WRR_SHIFT;
-
-The token in rte_sched_grinder is uint16_t.
-The mask value in wrr_mask is either 0 or 0xffff.
-The shift is 3.
-Therefore the range of pipe tokens is 0xffff >> 3 = 1FFF
-
-The sched code is severely under commented and overly complex.
-The patch looks right.
-
-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
-
-
+Queued to next-net. Would be good to have a Fixes tag on this.
