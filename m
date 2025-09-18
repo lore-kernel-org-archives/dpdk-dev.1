@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9271CAC59A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 16:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65943CA1013
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 16:39:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B177402D1;
-	Thu, 18 Sep 2025 18:13:23 +0200 (CEST)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
- [209.85.160.181])
- by mails.dpdk.org (Postfix) with ESMTP id 4D4F640288
- for <dev@dpdk.org>; Thu, 18 Sep 2025 18:13:21 +0200 (CEST)
-Received: by mail-qt1-f181.google.com with SMTP id
- d75a77b69052e-4b38d4de61aso16634821cf.0
- for <dev@dpdk.org>; Thu, 18 Sep 2025 09:13:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 31FE0402D1;
+	Thu, 18 Sep 2025 18:39:03 +0200 (CEST)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com
+ [209.85.219.51]) by mails.dpdk.org (Postfix) with ESMTP id 94CB240288
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 18:39:01 +0200 (CEST)
+Received: by mail-qv1-f51.google.com with SMTP id
+ 6a1803df08f44-795be3a3644so4083316d6.0
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 09:39:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758212000;
- x=1758816800; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758213541;
+ x=1758818341; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Jfa1wiCsjCdXAcYmNQzTVn56dtsilTp6Z9h+FzGoimQ=;
- b=DpxMrxdnQgCHF+IP2lPDUXz7OFn308FkbBWkp5zp67JSBUL76ULcuHpxSLcoZVOq+g
- J9zXsJZHrahvCY1UMfcM3Y0sLSZSL+1WUN51jc/sFwXe8aTUeN/0ZNRjNMmDmHfATess
- 2H5mF4lQ+1KeX7b2XC+LEk4obAByry4G9QKuul9x8X61Zfgxic/wGEQ70jpoJYhIY8WC
- rfmtM6nqbuQai5/23gv8ohfuedjNbopxdqsWkS1+q6BU62zIM5r1h/59NZyEt6qD4nAA
- 5W2fCc216VAcwWlGxI9d3qHT1q7puqo1zlgi65R9/lwVTNH8LK4T2Gkb2zhKm4N6qUrB
- ca8A==
+ bh=sW4xRdeJHi+G6EQ6lV3oD85xxZ2x2XUWW+sk0VByi5I=;
+ b=RyA4TY+p5sDOKCubx6U/vIAj/fh6YddtTGzpPqTvecJCYSZxmYZgse6pTcbzsB9szy
+ cXemuhoYfuENr5sUngEyQwSFEiBt1b1jWzyzeOMHIanimc7JrYrQRFuDjH0y5khRawbu
+ EAgIbZ8j0IXgwVRXrFh5q73F9HQsAi34s7WcuR8wu3kog0OHLtbudiYcCb9cIxjGHBzd
+ LlsOwlUyWp/77eLrAGbBgcch5+UbbhamfLvqGR7xO5hgDafIV45sv2Dznp+WUVBhgEK9
+ VO5wKc21t4E1NVsAtYQzOX98s9ejhUL9Yd8OerM7QsXPf0xIjnZd7aDoKAs6zIZqCQlv
+ 0jMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758212000; x=1758816800;
+ d=1e100.net; s=20230601; t=1758213541; x=1758818341;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Jfa1wiCsjCdXAcYmNQzTVn56dtsilTp6Z9h+FzGoimQ=;
- b=BNbAamk1HGekdTWL7elpPz0KRED7gYsUa3th5kUaUS1IeE3Okc1CL/x5WOtGSdpX7m
- DfPzQQRArxTcUuOCwQEeena3D2m0RGWEGNJ+IwbZO2USXNZJT6q3ZNMS6pAo2GtcWF/z
- x670CGvwuKUMLoNum0072A6pk4xxtfwHL7FHGdo+rCxr4GYOWM+B7Yi9T6EpT41VqRpJ
- jM4QLQPTLAKuLZGecLpXsZXvNiZUN/W2p7Ly4X3KcdEcgrJ35uDypbi4xqrUfAGyXAIR
- jBPVaD7H/jw3dLJz9hFlSrKEzNpexPCwLdTB6UYIrfjCCFsu2IUUYvAb0TYerqkYnrQU
- srvA==
-X-Gm-Message-State: AOJu0Yw550mamiObLxmIvayOLUeSbjIp4VEDkPiPGuYLlAXnxmO0p0Jf
- HNGRqtQe8rnvlvS0y6j514YUtuyklx87Na1wWYXHxa4ePMfssckPttekAOEbW3zgZ9I=
-X-Gm-Gg: ASbGncuoRfHbZJLzZR/mXPCRkOHHpsUeAH4xmRMO6rf2iq3DlSVlYjfwdq7SkHQbLc0
- 9zaAHxOvyxyn2NaSf4/dN6jv0lrsZ3GRgejKynj9uNooiHoCT3XAkMa7oUUUUbCbGsYem8vNj2P
- LfDpewsJWSSEdUDWS+FgzU/oUs6CQ19pBPQmc0g3Abjw8vcar91hgwlcCrGnhkfUhgJaULneP0W
- FT7vrRWkcaFNpAlEOvGc8xintV+CybpYYxqk1LNYU1+NfSKLXhVytQ2D2WiyEfKVijPcVeG47bN
- DYACVKLursBmq9LdFdAC+5XFhiN+XqpsmcgF2NZtps+05BDmG4K3mVM2Er3VLWmNa6C1MtoliwM
- KvfWsfBAd52waSp+Imw9G07Flw9gvXHHepao9y53Nq2spiM1Rk9dgSK9YqdmXUqA/Gc9j4ZPem7
- Bo3asln3xfmatwchAhfw==
-X-Google-Smtp-Source: AGHT+IHucvgoCWDFkaePkydlWr6tKa50Ei3/aVxgliOx0wXvevAAWwhs+XvxZC31EVw6S4apWctN5g==
-X-Received: by 2002:a05:622a:228c:b0:4b7:9743:6da6 with SMTP id
- d75a77b69052e-4ba6b9401c0mr69950311cf.70.1758212000468; 
- Thu, 18 Sep 2025 09:13:20 -0700 (PDT)
+ bh=sW4xRdeJHi+G6EQ6lV3oD85xxZ2x2XUWW+sk0VByi5I=;
+ b=Fra/m3gWSnGGHtExE0RQyToBI2ybQ16Wo5NwtIEx6eFcm5eu4NIsCoscQwmDpGvHl9
+ qcKapUEN9YwJHYzSKqzyiAi6BpOkx686MBuk+YEyjD3S6zmf3BD2cIG6ria/Htg/KFsP
+ C+tabWiAL+XunV3FXjkwm0Regcgkuz+g8kDsdIKrugSkaiyXrIaQUGOTEQ+bP8h+cqIQ
+ nmja3qAuJHApNu3awnDxGteCoZHBiBukBn2zCE/mMVl0ErpuWhc8UXLucbkx9OwvXmLR
+ 932TsrYFiu1dx1AR7Gmb1VEHopJEO4tK6kipI8By9huuRHW5f8oOXG/9RgYM2Dx0G/1c
+ AJkQ==
+X-Gm-Message-State: AOJu0YyUN/gdNYmSrGKcicnksOfX1sZEXzO7IW6NXSGcXL10wYcg1LgR
+ Kq5UOC8q1HkeMenPw4wDTpyPgcrzwvJw37Fb6MVLja9xRwu/jpE0KGi8sEDMl9Z0K9LNC7RFLP0
+ BxjRZ
+X-Gm-Gg: ASbGncsXXCX0L1dsQu7BTI1bMDLbmxVeKZY3peJPb4Eo2mUBpFCQj683oQo7NZazMoh
+ SKC7wi+h9Gar5i4Y7CpcxwdmgnYBiRtO60evgli5uwMa8uC965Tb1OHYoV+B7pdXCSV3fAesUpA
+ u9SJwWOKd178Ook39CwteWYQZuBF9u0wxUc+PFo2E/FaD7XvwRI9CZUYK0pgytA+51jpIKSS7zI
+ gyn8o7Glc/Vac2yOwYNmWsDbMSZlaG8aNSAQK9M+hh1p3nn1w3CZcTfX0gRrdApb4AbOFg6ieDF
+ jbtxDTLGl3SgDEfLkgsq3uje2wG2+uqVJJ8GNr3DNUKP2LegHgyeMdTeDvOwkLBMeyT4KY448dK
+ 8h5e9oIxNTicOKIx7mogsEsLZbf0MRh8+P23Odk7gCoxzbEF+vunluSnIOAstH476Yyc2z39xU3
+ NdBPAGh3mGtBFjAu8ZEw==
+X-Google-Smtp-Source: AGHT+IGf73GwpUNtYxHQp4XnXZ/Y+g5E+sbRgGXjju5+hekSiHcQvcFTzJ03TRFOXJk3XjvPow+x+w==
+X-Received: by 2002:a05:6214:268b:b0:78f:1a9e:2590 with SMTP id
+ 6a1803df08f44-7991c124a4amr823756d6.34.1758213540493; 
+ Thu, 18 Sep 2025 09:39:00 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-83633b04dadsm180452485a.64.2025.09.18.09.13.19
+ 6a1803df08f44-7934636f947sm15099276d6.16.2025.09.18.09.38.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 18 Sep 2025 09:13:20 -0700 (PDT)
-Date: Thu, 18 Sep 2025 09:13:16 -0700
+ Thu, 18 Sep 2025 09:39:00 -0700 (PDT)
+Date: Thu, 18 Sep 2025 09:33:17 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Feifei Wang <wff_light@vip.163.com>
-Cc: dev@dpdk.org, Xin Wang <wangxin679@h-partners.com>, Yi Chen
- <chenyi221@huawei.com>, Feifei Wang <wangfeifei40@huawei.com>
-Subject: Re: [V11 02/18] net/hinic3: add basic header files
-Message-ID: <20250918091316.7ae0b47d@hermes.local>
-In-Reply-To: <20250917101604.17045-3-wff_light@vip.163.com>
-References: <20250418090621.9638-1-wff_light@vip.163.com>
- <20250917101604.17045-1-wff_light@vip.163.com>
- <20250917101604.17045-3-wff_light@vip.163.com>
+To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
+ <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: Re: [PATCH v9 04/17] net/nbl: add Channel layer definitions and
+ implementation
+Message-ID: <20250918093317.59c4cce2@hermes.local>
+In-Reply-To: <20250917080843.646050-5-dimon.zhao@nebula-matrix.com>
+References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
+ <20250917080843.646050-1-dimon.zhao@nebula-matrix.com>
+ <20250917080843.646050-5-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,29 +85,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 17 Sep 2025 18:15:36 +0800
-Feifei Wang <wff_light@vip.163.com> wrote:
+On Wed, 17 Sep 2025 01:08:30 -0700
+Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
 
+> +static void nbl_chan_recv_ack_msg(void *priv, uint16_t srcid, uint16_t msgid,
+> +				  void *data, uint32_t data_len)
+> +{
+> +	struct nbl_channel_mgt *chan_mgt = (struct nbl_channel_mgt *)priv;
+> +	union nbl_chan_info *chan_info = NULL;
+> +	struct nbl_chan_waitqueue_head *wait_head;
+> +	uint32_t *payload = (uint32_t *)data;
+> +	uint32_t ack_msgid;
+> +	uint32_t ack_msgtype;
+> +	uint32_t copy_len;
 > +
-> +#ifdef CLOCK_MONOTONIC_RAW /**< Defined in glibc bits/time.h . */
-> +#define CLOCK_TYPE CLOCK_MONOTONIC_RAW
-> +#else
-> +#define CLOCK_TYPE CLOCK_MONOTONIC
-> +#endif
-
-Defined but not used.
-
-
-> +#define HINIC3_S_TO_MS_UNIT  1000
-> +#define HINIC3_S_TO_NS_UNIT  1000000
+> +	chan_info = NBL_CHAN_MGT_TO_CHAN_INFO(chan_mgt);
+> +	ack_msgtype = *payload;
+> +	ack_msgid = *(payload + 1);
+> +	wait_head = &chan_info->mailbox.wait[ack_msgid];
+> +	wait_head->ack_err = *(payload + 2);
 > +
-> +#define cycles		      rte_get_timer_cycles()
-> +#define msecs_to_cycles(ms)  ((ms) * rte_get_timer_hz() / HINIC3_S_TO_MS_UNIT)
-> +#define time_before(now, end) ((now) < (end))
+> +	if (wait_head->ack_err >= 0 && (data_len > 3 * sizeof(uint32_t))) {
+> +		if (data_len - 3 * sizeof(uint32_t) != wait_head->ack_data_len)
+> +			NBL_LOG(ERR, "payload_len do not match ack_len!,"
+> +				" srcid:%u, msgtype:%u, msgid:%u, ack_msgid %u,"
+> +				" data_len:%u, ack_data_len:%u",
+> +				srcid, ack_msgtype, msgid,
+> +				ack_msgid, data_len, wait_head->ack_data_len);
+> +		copy_len = RTE_MIN((u32)wait_head->ack_data_len,
+> +				   (u32)data_len - 3 * sizeof(uint32_t));
+> +		memcpy(wait_head->ack_data, payload + 3, copy_len);
+> +	}
+> +
+> +	/* wmb */
+> +	rte_wmb();
+> +	wait_head->acked = 1;
+> +}
 
-That version of time_before() is not safe if TSC wraps around.
-Other places use:
-
-	#define time_before(now, end) ((int64_t)((now) - (end)) < 0)
-
-
+The C11 atomic (rte_atomic) model is preferred over using memory barriers.
+In this case you want to ensure the wati_head is updated before the
+store to acked. That would rte_memory_order_release or rte_memory_order_seq_cst.
