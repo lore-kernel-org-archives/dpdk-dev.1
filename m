@@ -2,78 +2,96 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC76CCAC59A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 15:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C36D5CA1013
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 15:13:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 33C0740611;
-	Thu, 18 Sep 2025 17:08:38 +0200 (CEST)
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
- [209.85.219.45]) by mails.dpdk.org (Postfix) with ESMTP id 6ECE040288
- for <dev@dpdk.org>; Thu, 18 Sep 2025 17:08:37 +0200 (CEST)
-Received: by mail-qv1-f45.google.com with SMTP id
- 6a1803df08f44-7970e8d1cfeso4574456d6.1
- for <dev@dpdk.org>; Thu, 18 Sep 2025 08:08:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9ECAC40288;
+	Thu, 18 Sep 2025 17:13:37 +0200 (CEST)
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
+ [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id 162EC40288
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 17:13:36 +0200 (CEST)
+Received: by mail-qv1-f54.google.com with SMTP id
+ 6a1803df08f44-78f30dac856so12613806d6.2
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 08:13:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758208116;
- x=1758812916; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758208415;
+ x=1758813215; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Le040uKjjezzOMibKYrfgiOvcG7HWuMWyQT9KXoBwN4=;
- b=d3lvhU6lLAgkT3BJKwFiRAVV62HYBKUIPu0bWEh9RgpjnVBsUkiCMEixJi5PYAoeKf
- dwZyZ1+7quygfUZ7pyAARTmKhHocSjA1SSmFZ0i/ZdaWl9VLiL230/X3se5usH03hBrT
- YL6f4xiEgD5t2Z3ioTdKCV5yaKV5dcNNAMM5377A6eZXz4gAgz72pR9RzO+xHxTIR79+
- nZhFrMZzepGJ7gMTzuNHEoRyplNHpE5ov39rMAzct30Kd0qFeK/Iq2MCrd9ZSPEp3yXd
- IaUV1x78gr/eGd1pRB6TULxCMacFaCQzEUyWV9TLCGQdZl/weqFQgt8QNoCvAoqebnzl
- kDbQ==
+ bh=ddl3XAkBE8a2zGgwlauoeE+12RTBMvntE6ZQvpHMTs0=;
+ b=a47xKgXqhMjMjHgRucZY6R9Zh9t6JaMunP3/AZ81RlGTEFhwwQsL4SmqOaS0K/oiwV
+ aVdgzkFwH76kn0IL/5aaTKkUc3m9SK+SuMa+SC4ksMMwCLwfYtuSeOflTU+NylmJuZCY
+ UzPohspQo+UFAVRCprVdl8vx+cv9ANUOcclV3UMXnWEQIsqRjIV2TlvwFRf9gaScXaOy
+ kPwmLHeUEjcHsx88MtxxgIDHoZ0Oe69Sn3WnlmE5QMrSNmfanIZ20VXOrcudz6Xw7arc
+ UyEMp2U6cllBoF+JFo25VXRndc9wMOWGdgoMwmAoyeKCLLUCVO9lPvSfPleP2YEuc2fG
+ lJ9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758208116; x=1758812916;
+ d=1e100.net; s=20230601; t=1758208415; x=1758813215;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Le040uKjjezzOMibKYrfgiOvcG7HWuMWyQT9KXoBwN4=;
- b=tPAw16lQv+RPFlpDWlfzKxGNuqUhpggjBm+BRbkXtccAEFAE4xAcmlCyqXY0BAHMRk
- 10jsZonJ0iLV8jdbgPcqsDh+Q6uUXjLmYH80OzzIgCe7G4hFwK4OKrBKCGCuFch3AfHP
- YQjbqZ4s1r1v07pjllHO0Ob0bTV3Jo70A3ATc6JgfX1VdipyZYb2BwQ/Wmpxvr+Sa2aI
- smLPX+zufGug4T17HJ7SaewlHsFRSfWebOD4V5lrqyNTYZxq+VUkeG3yf+yY0aCqHeTj
- gttdmg0f3Zn+DKd9QiOHPW6yaj2V74rAZJrQxWk5iFcxBiI4r/tCDlAEDxb+bqgNoh9l
- E3LA==
+ bh=ddl3XAkBE8a2zGgwlauoeE+12RTBMvntE6ZQvpHMTs0=;
+ b=oiWEteJiMABYav+rmfowAnzIQ0Z8PMSjpJMm/4+w63329v9MxNLo/e25ol81tf+NBl
+ 3jYL50sL2EQ6tRncdlp+9bSYklOsyJzFn376EuVOGkD9gQKI73wQfqVBbdG0BYQX2Y8X
+ llr6ij0Mv350r6yFw3NQz2IGZ9YKxYjDRQaRQ99NURhosASOK1DjFGv3LmTNrdbALXgP
+ hnlUoP+cpnQ8wzuLnPbKyOg/ogCzAJXhLJNLU5NGApp7HYxMwPC+QN8FZCaml7a7+eSz
+ Ob9577MafEU5W60LrFz4K98tl+H4Hk/mVaRQ0kWSYBC9q4mVLvVwu6Cl+r7nK2jF8cCo
+ pfvA==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVe7Id/A7wgEVuu770SU2dlAzVVgrszTKqki39+Bk4xMLOXDT+P5brZa39EpCd7gUKrD8M=@dpdk.org
-X-Gm-Message-State: AOJu0YxhHRsP12lzsIaAgTQCrklZF6S9jPx+c1vah4+/kuMFr/hlxXgY
- a3AsdxxMRE9PVtdx1/lbXs6mytDX/Cfz/jinT3xLjIp75aPscHmjRcP7Ik3ANYn+b/M=
-X-Gm-Gg: ASbGnctEyEnUZhugRL9M72NfY9aAAklTiJnvpDzQvFys/Ge2sAqVC8FsbQJL8WksA+C
- Nc+MD97pebF4COE59qbnxtvmnfxciCgkYikOpsjp0DqGCGRsMrJzrl+8xDKOkeivAd23q0kHxcL
- wwUa9xn1uV2YGTKbqMtln0Oozz7KHb91MgqHkAWJu9Mi8+cjnCRlVWSPleVTbraRBArAPr9zIzC
- Dnc+Q6Vvjnh6jQ71T/WHwvr5jARddhlBF81MT49zb2YvVmOtnuIFu9x9ia9vtKkBw+v6a447y3T
- 3C9wNBgY6UZRFnVVYQWhJY5d0wkM17qTzR000PtZmQLl+HPlhJMcQGDk3IAEwBuCUOvRABucY2c
- G1gNwMg7h+kX8HrecJHwfULoTBp70dNsCA7Sg0IqbjQ6W4kV9Hu5sF1eWobMcEGLruYXUwQDZr4
- xgLfnjIEmZHOs2C9xZVQ==
-X-Google-Smtp-Source: AGHT+IHd2J6g541B5qyfIjlpKythsjlWwIyRfTLddvktuVzIly5i6KEbrat/iF/43tKXfvsudPePVA==
-X-Received: by 2002:ad4:5992:0:b0:78e:d1a1:2323 with SMTP id
- 6a1803df08f44-78ed1b06601mr44559626d6.11.1758208116338; 
- Thu, 18 Sep 2025 08:08:36 -0700 (PDT)
+ AJvYcCWS6UqfwOlS/kE6wQ4FiDlojWhcVQ4igAFQYLI+qR96gdWS2P5LYR/Jv4f36DltnRkzcc4=@dpdk.org
+X-Gm-Message-State: AOJu0YwwvNAXZpFQ9yGen/u7MIy10uDSrP3veEa9+SrBXpW5CIiE/Zge
+ 90XRSrSpVWyTjFbi68Icu/G9FFRIKGZghwunhWBaFjnNp2gy1YHWdG3GGSMUW1CrDbo=
+X-Gm-Gg: ASbGncv5OCc2r398+gvbjfym1eN2nCUKWXEn0EqSJ7eqUGyRewo4K7n0zIs6YFjw4en
+ TIlPQGYl1Xuk9weIl6bB1lOQIGZtAUzYhZKBkZWIkFdZETCzn+HCj+e0hXSyFGAezhFtkyFYRXC
+ H81GKjkzbIl/zkE3UaduQb0NNxuBY3Lj0QCMe8/Mb/oKBVT2zou0Xr/VXm0+VTxfKWaEv1N8Cch
+ XjXvDX4e8fGlU9TZ6FbQodJ5OYK+qRY+wR7SXMWAcH5h9pQnH+ehg9d9E3j5Y65y7nxRDZaoYYM
+ h8PH5t9NHYHJQ+yWFveMyzPn9h1DHTTUCJz1ruwvTrtP0HYu91yvlcAIPtJWOtlzIdPwMQKIv8M
+ fP75sGH6jlnA3ECTCgGTVGjbYXM2v25rxLeZKWCjgj37RwXlBc8Z7XWk7SVC6d525WOrxe8rYW0
+ qaCn1TbFff5wfAuT0jrR2wWMm8MLK1
+X-Google-Smtp-Source: AGHT+IHFVllFQi8txDowKHKiU8k+wP/YtajfmTKbNzkIAR+U0uo8RDj+irOpPNxYmbKNS0E4l+UmHg==
+X-Received: by 2002:ad4:5c41:0:b0:780:555c:7690 with SMTP id
+ 6a1803df08f44-78ecf3053d0mr60310226d6.66.1758208415056; 
+ Thu, 18 Sep 2025 08:13:35 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-79355ce6648sm14013176d6.65.2025.09.18.08.08.35
+ 6a1803df08f44-79351f713a5sm14329046d6.44.2025.09.18.08.13.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 18 Sep 2025 08:08:36 -0700 (PDT)
-Date: Thu, 18 Sep 2025 08:08:31 -0700
+ Thu, 18 Sep 2025 08:13:34 -0700 (PDT)
+Date: Thu, 18 Sep 2025 08:13:27 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Cc: Aman Singh <aman.deep.singh@intel.com>, Anatoly Burakov
- <anatoly.burakov@intel.com>, Ferruh Yigit <ferruh.yigit@amd.com>, Lijun Ou
- <oulijun@huawei.com>, Ajit Khaparde <ajit.khaparde@broadcom.com>, Andrew
- Rybchenko <andrew.rybchenko@oktetlabs.ru>, dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH v5] app/testpmd: stop secondary process fwd_lcores
- during primary teardown
-Message-ID: <20250918080831.1057b4a4@hermes.local>
-In-Reply-To: <20250918064703.528973-1-14pwcse1224@uetpeshawar.edu.pk>
-References: <20250917113601.521308-1-14pwcse1224@uetpeshawar.edu.pk>
- <20250918064703.528973-1-14pwcse1224@uetpeshawar.edu.pk>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: "Ajit Khaparde" <ajit.khaparde@broadcom.com>, "Somnath Kotur"
+ <somnath.kotur@broadcom.com>, "Nithin Dabilpuram"
+ <ndabilpuram@marvell.com>, "Kiran Kumar K" <kirankumark@marvell.com>,
+ "Sunil Kumar Kori" <skori@marvell.com>, "Satha Rao"
+ <skoteshwar@marvell.com>, "Harman Kalra" <hkalra@marvell.com>, "Hemant
+ Agrawal" <hemant.agrawal@nxp.com>, "Sachin Saxena"
+ <sachin.saxena@oss.nxp.com>, "Shai Brandes" <shaibran@amazon.com>, "Evgeny
+ Schemeilin" <evgenys@amazon.com>, "Ron Beider" <rbeider@amazon.com>, "Amit
+ Bernstein" <amitbern@amazon.com>, "Wajeeh Atrash" <atrwajee@amazon.com>,
+ "Gaetan Rivet" <grive@u256.net>, "Xingui Yang" <yangxingui@huawei.com>,
+ "Chengwen Feng" <fengchengwen@huawei.com>, "Bruce Richardson"
+ <bruce.richardson@intel.com>, "Praveen Shetty" <praveen.shetty@intel.com>,
+ "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>, "Anatoly Burakov"
+ <anatoly.burakov@intel.com>, "Jingjing Wu" <jingjing.wu@intel.com>, "Rosen
+ Xu" <rosen.xu@altera.com>, "Andrew Boyer" <andrew.boyer@amd.com>, "Dariusz
+ Sosnowski" <dsosnowski@nvidia.com>, "Viacheslav Ovsiienko"
+ <viacheslavo@nvidia.com>, "Bing Zhao" <bingz@nvidia.com>, "Ori Kam"
+ <orika@nvidia.com>, "Suanming Mou" <suanmingm@nvidia.com>, "Matan Azrad"
+ <matan@nvidia.com>, "Wenbo Cao" <caowenbo@mucse.com>, "Andrew Rybchenko"
+ <andrew.rybchenko@oktetlabs.ru>, "Jerin Jacob" <jerinj@marvell.com>,
+ "Maciej Czekaj" <mczekaj@marvell.com>, <dev@dpdk.org>,
+ <techboard@dpdk.org>, "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Ivan Malov" <ivan.malov@arknetworks.am>, "Thomas Monjalon"
+ <thomas@monjalon.net>
+Subject: Re: Fixing MBUF_FAST_FREE TX offload requirements?
+Message-ID: <20250918081327.06fcdadf@hermes.local>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65442@smartserver.smartshare.dk>
+References: <98CBD80474FA8B44BF855DF32C47DC35F65442@smartserver.smartshare.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,34 +105,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 17 Sep 2025 23:47:03 -0700
-Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk> wrote:
+On Thu, 18 Sep 2025 10:50:11 +0200
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-> @@ -3628,6 +3709,7 @@ pmd_test_exit(void)
->  		}
->  	}
->  #endif
-> +
->  	if (ports != NULL) {
->  		no_link_check = 1;
->  		RTE_ETH_FOREACH_DEV(pt_id) {
+> Dear NIC driver maintainers (CC: DPDK Tech Board),
+>=20
+> The DPDK Tech Board has discussed that patch [1] (included in DPDK 25.07)=
+ extended the documented requirements to the RTE_ETH_TX_OFFLOAD_MBUF_FAST_F=
+REE offload.
+> These changes put additional limitations on applications' use of the MBUF=
+_FAST_FREE TX offload, and made MBUF_FAST_FREE mutually exclusive with MULT=
+I_SEGS (which is typically used for jumbo frame support).
+> The Tech Board discussed that these changes do not reflect the intention =
+of the MBUF_FAST_FREE TX offload, and wants to fix it.
+> Mainly, MBUF_FAST_FREE and MULTI_SEGS should not be mutually exclusive.
+>=20
+> The original RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE requirements were:
+> When set, application must guarantee that
+> 1) per-queue all mbufs come from the same mempool, and
+> 2) mbufs have refcnt =3D 1.
+>=20
+> The patch added the following requirements to the MBUF_FAST_FREE offload,=
+ reflecting rte_pktmbuf_prefree_seg() postconditions:
+> 3) mbufs are direct,
+> 4) mbufs have next =3D NULL and nb_segs =3D 1.
+>=20
+> Now, the key question is:
+> Can we roll back to the original two requirements?
+> Or do the drivers also depend on the third and/or fourth requirements?
 
-I will drop that extra newline... Sorry
+IMHO fast free should be as much like normal as possible.
+Only things that would have a measurable impact on performance would help.
 
-> +
-> +static int
-> +handle_testpmd_request(const struct rte_mp_msg *request, const void *peer)
-> +{
-> +	const struct testpmd_mp_req *req = (const struct testpmd_mp_req *)request->param;
-> +
-> +	if (req->t == TESTPMD_REQ_TYPE_EXIT) {
-> +		printf("\nReceived notification of primary exiting\n");
-> +		fflush(stdout);
-> +
-> +		/* Response is sent after forwarding loop exits */
-> +		rte_atomic_store_explicit(&primary_name, peer, rte_memory_order_relaxed);
-> +
-> +		kill(getpid(), SIGINT);
+The reason for the single mempool is mostly related to not requiring code
+that would walk a multi-segment mbuf to disperse the segments to potentially
+different pools.
 
-Needed to use kill() here to force end of read when testpmd is in interactive mode.
-Only other option would be closing stdin, but that seemed less safe.
+The reason for the refcnt =3D=3D 1 is that updating refcnt requires atomic
+operations which need to read-modify-write on memory (not just cache).
+And RMW operation can take several memory clock cycles.
+
