@@ -2,127 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABB6CAC597
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 05:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E46CAC59A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 06:47:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84301402B7;
-	Thu, 18 Sep 2025 07:43:52 +0200 (CEST)
-Received: from PH8PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11012048.outbound.protection.outlook.com [40.107.209.48])
- by mails.dpdk.org (Postfix) with ESMTP id 724684027A;
- Thu, 18 Sep 2025 07:43:51 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=je/Hs82GPnbboclUIzr1KgEJPybEiadviJJ9N0RKO9KTfJTdECxef4xtcG4Y47rBoOrPEV2KZAXNuDwbV01H9ve0mIrYAaghtVfNWIYHn3psIRSZ3H725xFeo4/CdV6OmsC77OkgE3BFR4vCYE5XGS4ZbDd6i3PW95CQXR9DmtzBcM4BXhj5EEIOuk5ay9xRiIWbYUSXNIq7PVrXFIHiMoqZc710PWdcsU3PvvTx/er/0Yz1VyFdz5dSxxk8rZU3IUmJp0nH1ptdvZF/sTnCYYWh6XiDrUkxCGkDsTNDTF1Akc9POCrIWvHvvFlYI9EUyjZNMclTKdSi9vPtCTp3yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uTZmxxaEqgnszYz7Tcy2+UJSo6tu/PZQIkj916cicJY=;
- b=e8dkO8x/YJWf+4EZYh1WfslQ3tZ8eKd4obMNsJf+zXqmRR7NGCmulCI5mZOoyvV66/QwxtJrDu/x/A/D8Bg0HSLT6wzNrQw4jNRJqUA2UY6cPnYngbf1xkftGUpdO/LxhRmVy0MlQjJFcGov0LTfIRe1e3v2M4lp4l17i0+FqPlDPDl2AABExswrbAFNtpfMufJClR3SC7977XJXN/yXZD99RwAIxH/lum0ZaXm39FbKGVjecq2764SsqfklKy+nYNWSPCmFViy6IAkn1R6j1ULeKQoxE1298dbV4EsmF2JwPuVDMzQRhO1DK23O2GTBur0xae7jhTzaGu2MjDF+4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uTZmxxaEqgnszYz7Tcy2+UJSo6tu/PZQIkj916cicJY=;
- b=kmmvTkhkxo/QXm5EJScudfc6Mc3/hr5mCMPtWIeYlJPyzlcv6wDsE5m3+G8Y+eQwi+miLA/fMOnoxExaw8AWO61AA1SiH1pfBBBLuDObXT8wWN4MzSB1pb+PAu9K9SLzK7Qgyhyh+qEzH/xH6QTNPVOoApmji+TKF3yBToMuRiidtN3lo7GzxPGfRkZaNA/dL5iDpQX9ll9MUQwdSo2SPVrJV1OS/RZCYBPRD+o82a88VVuut+yNM5JaNmUNwzXQfxJ/c4hiRVJjA9hOqOkk65izibakm8oV4QQTj5boIi0IwxllgD+/v/sjvU5Xr4lQXknx91yrnoF6EXDDR/grbA==
-Received: from DM6PR17CA0033.namprd17.prod.outlook.com (2603:10b6:5:1b3::46)
- by SJ1PR12MB6313.namprd12.prod.outlook.com (2603:10b6:a03:458::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Thu, 18 Sep
- 2025 05:43:47 +0000
-Received: from DS2PEPF00003447.namprd04.prod.outlook.com
- (2603:10b6:5:1b3:cafe::85) by DM6PR17CA0033.outlook.office365.com
- (2603:10b6:5:1b3::46) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Thu,
- 18 Sep 2025 05:43:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS2PEPF00003447.mail.protection.outlook.com (10.167.17.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Thu, 18 Sep 2025 05:43:47 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Wed, 17 Sep
- 2025 22:43:33 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 17 Sep
- 2025 22:43:33 -0700
-Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Wed, 17 Sep 2025 22:43:30 -0700
-From: Shani Peretz <shperetz@nvidia.com>
-To: <dev@dpdk.org>
-CC: <rasland@nvidia.com>, Shani Peretz <shperetz@nvidia.com>,
- <stable@dpdk.org>, Dariusz Sosnowski <dsosnowski@nvidia.com>, "Viacheslav
- Ovsiienko" <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>, Ophir Munk <ophirmu@nvidia.com>
-Subject: [PATCH] net/mlx5: fix MTU initialization in device spawn
-Date: Thu, 18 Sep 2025 08:43:25 +0300
-Message-ID: <20250918054325.777881-1-shperetz@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 459C4402D0;
+	Thu, 18 Sep 2025 08:47:17 +0200 (CEST)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com
+ [209.85.215.179])
+ by mails.dpdk.org (Postfix) with ESMTP id E1A964027A
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 08:47:15 +0200 (CEST)
+Received: by mail-pg1-f179.google.com with SMTP id
+ 41be03b00d2f7-b54c86f3fdfso1241695a12.1
+ for <dev@dpdk.org>; Wed, 17 Sep 2025 23:47:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1758178035;
+ x=1758782835; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=aBq3D06fH/ss0LaDqYrRau+6RjWHX7xTFGCfMNMavoc=;
+ b=bxSYoSiMKLcsoYFp+sq7HD68LpTrBUB5GhuW7j5MB4RTezN6jYxCxZ16egx4A7Fdb1
+ s04Lt8qB+RJwN/cxBTiU+oTklP/gUv729saZoC4KjxRkyB7mRA6HDa1BGeN3Mot0Emsz
+ rEwvkVDsGXuQ6V2U8FJNayPEH7/EO7JmImLWtcPQd74NtBoIRkb60G68Ew4mE+7mWOPT
+ nOgVgYGpRKyo4jLZx088cHoTB/+fJCuzpdP4MBPbedxT5ojY4+sG3utzlQUahtthXwtp
+ 8Za2OXCLxp9YCu4TxnGqe5XjvkxI9vyg9//TaytKPljIN7YebZlKyANnilESocBu7OoP
+ 27ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1758178035; x=1758782835;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=aBq3D06fH/ss0LaDqYrRau+6RjWHX7xTFGCfMNMavoc=;
+ b=Uwv6AL6GU/9SV5fxwfJBAE4JfH8fHOOo7ATBFQhbjTl/tqg3Al7fHNNWnZ/9tZxNB0
+ XKyFwd+1JNbdYGrpzpsP4678htu00vNwyONtOORMQXTQyepDWXEAmfQOpLzdVlpx6hkk
+ mtKV98rk0TIuyW9Pj/yGaQ/LHnigKl5nPANkt35Kocvx1BZ7VseS5s7daKij3MC1Bx33
+ hz2XMPsGDISMRdqEjdz3r5Oyme6HWhzFJz4qMsuFxjmK0zXRInRButKgzWv9beby71aw
+ MrALoooAKhAfIeju8gy2sWgH+dZJyLpxGRKuryvS5akx4xZxOagZh7MNdHKjKLIM/HxL
+ Gf0g==
+X-Gm-Message-State: AOJu0YwF5eFQXGqEDBaNXH7/Ho7XWTr/NqiVJ8rMY1DYocsG64DrhUlR
+ VWHzPrHqn3Kn0ZARuvsAOQdpaCOa2j8P7Z3+MLAoYQG28R6dyQucorjcrI/pxRzDYjA=
+X-Gm-Gg: ASbGncsc4jXkIN9ePv/lVYiTQM60KwiEcpIk0jgodq9nPyF0rJ1K+44G4lC9+DZN/5e
+ XVGz093NvPRndQIy6Fdv8u1PhDMc6hecNX5y/K/wkNl1XIy8oSVDHzMKZJJC3Ioa+4YRAjiYnPu
+ YUnDkZCn7sgPuU3Jb/FiXxAQRaeRPVUdiOlkYx3jleRefYWc9+DLq3+gIuP8FW2FP+ANr8+U+db
+ UtKNGyAVm7SpxGBxU3ZEsQzHYTBWOjkNHx64QrhX3uRR0Vi/KO4rM6Dylr8LicDXb7WwuuE0YCx
+ uPgGdTNyxnDmoaeTZtt5qOHnlWg6uO4v2DmzmXDdunndV87RdBBumwneiuNmtHBy5v5mValE08n
+ 1VO/3QxOQtR5VZnhjUiQR/2gvGSPWybRILbidlFmGNgQzQeZjeMSS0uuagbsQMlH3kXs6GLb0ve
+ CpNu/XuEx677mq1HCavt2ttF+UJTiCBtLTihpY28hw1ZQ1tJx15JOpED1waJtkVL+hhX24RXHSt
+ a2CU6NhrtiqGD8vSAzGMa0xYYU4Ifhnt0YkeO3t1AFcvwxE
+X-Google-Smtp-Source: AGHT+IHpZd26fRw102QPBKfWefpSufgEPJsRshvQnuTug4AiCDnt7vjLlFkpAv2FBObqriFWdteH7Q==
+X-Received: by 2002:a17:903:46cf:b0:267:9601:dca0 with SMTP id
+ d9443c01a7336-2697ce85e7cmr25242935ad.27.1758178035006; 
+ Wed, 17 Sep 2025 23:47:15 -0700 (PDT)
+Received: from localhost.localdomain
+ (108-92-19-205.lightspeed.sntcca.sbcglobal.net. [108.92.19.205])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-26980053230sm15271235ad.30.2025.09.17.23.47.13
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 17 Sep 2025 23:47:14 -0700 (PDT)
+From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+To: Aman Singh <aman.deep.singh@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Ferruh Yigit <ferruh.yigit@amd.com>, Lijun Ou <oulijun@huawei.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Cc: dev@dpdk.org, Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>,
+ stable@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v5] app/testpmd: stop secondary process fwd_lcores during
+ primary teardown
+Date: Wed, 17 Sep 2025 23:47:03 -0700
+Message-Id: <20250918064703.528973-1-14pwcse1224@uetpeshawar.edu.pk>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20250917113601.521308-1-14pwcse1224@uetpeshawar.edu.pk>
+References: <20250917113601.521308-1-14pwcse1224@uetpeshawar.edu.pk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003447:EE_|SJ1PR12MB6313:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f938649-6051-4cbd-5431-08ddf6765666
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700013|376014|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?DoEVCad5hXOPi8MVNDyJYOQV2EFRjazCRGA9kwqk7j7Kt0LPNM5Ye24l1Pbo?=
- =?us-ascii?Q?y8412RnCi9IPfaX8dcE+yXY2/bqsgjGNqQ0XKu23EBqx1mlF24C81SrN9/9A?=
- =?us-ascii?Q?dr/Q2LVUPtpvEG/Tg3WLTTnOe5QJ2W58rcQWgLt53RyzqhEG89OyLcxunHvR?=
- =?us-ascii?Q?UVP6wHc6bSyn4wDJYeQt8KusbElu+F8sJbmgp62lW8nKbvJibW774W6dmGEb?=
- =?us-ascii?Q?ScYWCnWSW6k7MIKEiah1mgdT7XPnJqBHQ5GeVPCNW4PstdEfN9x7xCSOzgT3?=
- =?us-ascii?Q?jcXoW2Qz+RIrIGM7Tfma/FsJp3yJsEqy0qlEKfaU9RhYFYN+Zx+MJDBqhspc?=
- =?us-ascii?Q?ElvV9sx0D0lKrRNW22UvCjsfbNlg0O0TUyxljrJRG9/qCSDVxdG8F0/ZzWWt?=
- =?us-ascii?Q?i2XEIhbyTtrmtLqL3pd+B5BMHZ91uTIrS4TMrbtzZ+db+dtVG4nC9m6JgD0+?=
- =?us-ascii?Q?7f0PdoqKWjDlab8o88strTYMTGRiqlBB/2/ylVTgAWS/OCmGBrKuhUbwfoa7?=
- =?us-ascii?Q?Iopa0HlXrwAT/8v9ptLG92YLG22T99kCDl0h3cUcw8gBm3bk5lRUlBEtJdw5?=
- =?us-ascii?Q?DyVFdWi8ht01LHHCGipc+sqNcThm5m5ZnZSPrAi0LEO39Rbimsjkd0u9Azg+?=
- =?us-ascii?Q?fEpbse1nwUIBmidG8UcnSKMfngG73WxHwnSpaVTK41SRREM9Z0y+B90o2cy+?=
- =?us-ascii?Q?iEgcmv6bsD+KaoT69sCDRWAJe3HYYGlZO8hKZS3L9QTpmC+hJe8BWoXKXCjd?=
- =?us-ascii?Q?g2yRXQx5ogcG4dWosLk6nHTM5ZS84QJjgMYMkefOaA/8iHrJcFUOm5Grxmyi?=
- =?us-ascii?Q?1CVsAmTaGjxp4LpQiWMaRC8CNKM2NS0T3CutKKppt1G+CfL9nTPckIRsNkf3?=
- =?us-ascii?Q?G8sMaVFX302wStWuN4uk/+WYKYNISL1QPqdFNxLQIftRGHjxVGdW9yJvjcGu?=
- =?us-ascii?Q?Yn/jfCZNa9JHkcs4hCXO3TG1KY477pfmGKD1AoJM07nHh1nR4ycmFRf0FHgN?=
- =?us-ascii?Q?DP1IONwxnf5ZS+hjI6MG0JAlj5cgWDRkUongivzoEQB3dk3wqjpG5u+H05wb?=
- =?us-ascii?Q?BB3mW7nxoJedplU/YXsuW0VoOiinD8kuPLhYgnNvUTLdqOntLHH1xBIhR6c/?=
- =?us-ascii?Q?W1JhGRGrp+N/TeaZbRipOmcrC3QHgMPHCzoPjz8Uwuf7yCbqzTJTMG3yZ7r5?=
- =?us-ascii?Q?DrellsFE2Huh2dcO3Kz6c5UBTwexKXZ49TcNMOTKrSWbl94XdmxFYA6fAvdd?=
- =?us-ascii?Q?GjQDKfJ36vNh6DFY+n+r/OSUfgdyk94RhN6Rm/kvqYgc2uHRrpg3M1FDVxgC?=
- =?us-ascii?Q?7xPKkVwNNQvrWuok4tuXY5sv4JkEDVMkV2PO5xRwM+neIRPC7/wSor4pGdTI?=
- =?us-ascii?Q?M/0SChbzvYI3XsaS6+qDZQjkRkVsNAAeuLq7z6yEQprTvJjw1HY0DRYSOAC6?=
- =?us-ascii?Q?Dx3usmqCbrDpjqMtxNwgeWY5TDYIYR7xNDb6Il4nSWTvzs1jCfo/XjPXjone?=
- =?us-ascii?Q?QT1j7LlcZarWAGMIZJgwayQG5kQOBl8IX+Cq?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 05:43:47.1223 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f938649-6051-4cbd-5431-08ddf6765666
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS2PEPF00003447.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6313
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -136,49 +89,169 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently with mlx5 PMD, rte_eth_dev_get_mtu() doesn't return
-the MTU the device was set with, but the default one.
-It happens because mlx5_dev_spawn() is not setting the eth_dev->data->mtu
-field after getting the actual MTU from the driver,
-so the default value is kept.
-This patch fixes the issue by retrieving setting the value of priv->mtu
-to eth_dev->data->mtu.
+When the secondary process testpmd application running any fwd_engine
+and after that primary has exited will cause a crash.
 
-Bugzilla ID: 1768
-Fixes: 2eb4d0107acc ("net/mlx5: refactor PCI probing on Linux")
+This patch forces secondary process forwarding lcores
+in fwd_engine to stop before the primary process exits.
+
+Fixes: a550baf24af90f ("app/testpmd: support multi-process")
 Cc: stable@dpdk.org
 
-Signed-off-by: Shani Peretz <shperetz@nvidia.com>
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Signed-off-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/mlx5/linux/mlx5_os.c   | 1 +
- drivers/net/mlx5/windows/mlx5_os.c | 1 +
- 2 files changed, 2 insertions(+)
+ app/test-pmd/testpmd.c | 104 +++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 100 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
-index 8c37c047bb..8d11b1ac3a 100644
---- a/drivers/net/mlx5/linux/mlx5_os.c
-+++ b/drivers/net/mlx5/linux/mlx5_os.c
-@@ -1601,6 +1601,7 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
- 		err = rte_errno;
- 		goto error;
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index 0f58a31eb5..6c97026962 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -3609,6 +3609,83 @@ detach_devargs(char *identifier)
+ 	rte_devargs_reset(&da);
+ }
+ 
++#ifndef RTE_EXEC_ENV_WINDOWS
++
++enum testpmd_req_type {
++	TESTPMD_REQ_TYPE_EXIT,
++};
++
++struct testpmd_mp_req {
++	enum testpmd_req_type t;
++};
++
++struct testpmd_mp_resp {
++	int result;
++};
++
++#define TESTPMD_MP	"mp_testpmd"
++
++/* Send reply to this peer when testpmd exits */
++static RTE_ATOMIC(const char *) primary_name;
++
++static void
++reply_to_primary(const char *peer, int result)
++{
++	struct rte_mp_msg reply = { };
++	struct testpmd_mp_resp *resp = (struct testpmd_mp_resp *) &reply.param;
++
++	strlcpy(reply.name, TESTPMD_MP, RTE_MP_MAX_NAME_LEN);
++	reply.len_param = sizeof(*resp);
++	resp->result = result;
++
++	printf("Replying %d to primary\n", result);
++	fflush(stdout);
++
++	if (rte_mp_reply(&reply, peer) < 0)
++		printf("Failed to send response to primary:%s", strerror(rte_errno));
++}
++
++/* Primary process is exiting, stop secondary process */
++static void
++pmd_notify_secondary(void)
++{
++	struct testpmd_mp_req request = {
++		.t = TESTPMD_REQ_TYPE_EXIT,
++	};
++	struct rte_mp_msg mp_req = {
++		.name = TESTPMD_MP,
++		.len_param = sizeof(request),
++	};
++	struct rte_mp_reply reply;
++	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
++
++	printf("\nPrimary: Sending 'stop_req' request to secondary...\n");
++	fflush(stdout);
++
++	memcpy(mp_req.param, &request, sizeof(request));
++	rte_mp_request_sync(&mp_req, &reply, &ts);
++}
++
++static int
++handle_testpmd_request(const struct rte_mp_msg *request, const void *peer)
++{
++	const struct testpmd_mp_req *req = (const struct testpmd_mp_req *)request->param;
++
++	if (req->t == TESTPMD_REQ_TYPE_EXIT) {
++		printf("\nReceived notification of primary exiting\n");
++		fflush(stdout);
++
++		/* Response is sent after forwarding loop exits */
++		rte_atomic_store_explicit(&primary_name, peer, rte_memory_order_relaxed);
++
++		kill(getpid(), SIGINT);
++	} else {
++		reply_to_primary(peer, -EINVAL);
++	}
++	return 0;
++}
++#endif
++
+ void
+ pmd_test_exit(void)
+ {
+@@ -3620,6 +3697,10 @@ pmd_test_exit(void)
+ 		stop_packet_forwarding();
+ 
+ #ifndef RTE_EXEC_ENV_WINDOWS
++	/* Tell secondary to exit */
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
++		pmd_notify_secondary();
++
+ 	for (i = 0 ; i < RTE_DIM(mempools) ; i++) {
+ 		if (mempools[i]) {
+ 			if (mp_alloc_type == MP_ALLOC_ANON)
+@@ -3628,6 +3709,7 @@ pmd_test_exit(void)
+ 		}
  	}
-+	eth_dev->data->mtu = priv->mtu;
- 	DRV_LOG(DEBUG, "port %u MTU is %u", eth_dev->data->port_id,
- 		priv->mtu);
- 	/* Initialize burst functions to prevent crashes before link-up. */
-diff --git a/drivers/net/mlx5/windows/mlx5_os.c b/drivers/net/mlx5/windows/mlx5_os.c
-index c4e3430bdc..4eadc872a5 100644
---- a/drivers/net/mlx5/windows/mlx5_os.c
-+++ b/drivers/net/mlx5/windows/mlx5_os.c
-@@ -509,6 +509,7 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
- 		err = rte_errno;
- 		goto error;
+ #endif
++
+ 	if (ports != NULL) {
+ 		no_link_check = 1;
+ 		RTE_ETH_FOREACH_DEV(pt_id) {
+@@ -4429,9 +4511,12 @@ main(int argc, char** argv)
+ 			 rte_strerror(rte_errno));
+ 
+ #ifndef RTE_EXEC_ENV_WINDOWS
+-	if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
+-	    enable_primary_monitor() < 0)
+-		rte_exit(EXIT_FAILURE, "Cannot setup primary monitor");
++	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
++		if (enable_primary_monitor() < 0)
++			rte_exit(EXIT_FAILURE, "Cannot setup primary monitor");
++		if (rte_mp_action_register(TESTPMD_MP, handle_testpmd_request) < 0)
++			rte_exit(EXIT_FAILURE, "Failed to register message action\n");
++	}
+ #endif
+ 
+ 	/* allocate port structures, and init them */
+@@ -4628,12 +4713,23 @@ main(int argc, char** argv)
  	}
-+	eth_dev->data->mtu = priv->mtu;
- 	DRV_LOG(DEBUG, "port %u MTU is %u.", eth_dev->data->port_id,
- 		priv->mtu);
- 	/* Initialize burst functions to prevent crashes before link-up. */
+ 
+ #ifndef RTE_EXEC_ENV_WINDOWS
+-	if (rte_eal_process_type() == RTE_PROC_SECONDARY)
++	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
+ 		disable_primary_monitor();
++		rte_mp_action_unregister(TESTPMD_MP);
++	}
+ #endif
+ 
+ 	pmd_test_exit();
+ 
++#ifndef RTE_EXEC_ENV_WINDOWS
++	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
++		const char *peer = rte_atomic_exchange_explicit(&primary_name, NULL,
++				rte_memory_order_relaxed);
++		if (peer)
++			reply_to_primary(peer, 0);
++	}
++#endif
++
+ #ifdef RTE_LIB_PDUMP
+ 	/* uninitialize packet capture framework */
+ 	rte_pdump_uninit();
 -- 
-2.34.1
+2.27.0
 
