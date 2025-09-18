@@ -2,96 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C36D5CA1013
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 15:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C00D7CA1013
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 15:16:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9ECAC40288;
-	Thu, 18 Sep 2025 17:13:37 +0200 (CEST)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
- [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id 162EC40288
- for <dev@dpdk.org>; Thu, 18 Sep 2025 17:13:36 +0200 (CEST)
-Received: by mail-qv1-f54.google.com with SMTP id
- 6a1803df08f44-78f30dac856so12613806d6.2
- for <dev@dpdk.org>; Thu, 18 Sep 2025 08:13:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E09BB40288;
+	Thu, 18 Sep 2025 17:16:58 +0200 (CEST)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com
+ [209.85.222.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 20FE84027A
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 17:16:58 +0200 (CEST)
+Received: by mail-qk1-f173.google.com with SMTP id
+ af79cd13be357-828d8d06630so123330785a.1
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 08:16:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758208415;
- x=1758813215; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758208617;
+ x=1758813417; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ddl3XAkBE8a2zGgwlauoeE+12RTBMvntE6ZQvpHMTs0=;
- b=a47xKgXqhMjMjHgRucZY6R9Zh9t6JaMunP3/AZ81RlGTEFhwwQsL4SmqOaS0K/oiwV
- aVdgzkFwH76kn0IL/5aaTKkUc3m9SK+SuMa+SC4ksMMwCLwfYtuSeOflTU+NylmJuZCY
- UzPohspQo+UFAVRCprVdl8vx+cv9ANUOcclV3UMXnWEQIsqRjIV2TlvwFRf9gaScXaOy
- kPwmLHeUEjcHsx88MtxxgIDHoZ0Oe69Sn3WnlmE5QMrSNmfanIZ20VXOrcudz6Xw7arc
- UyEMp2U6cllBoF+JFo25VXRndc9wMOWGdgoMwmAoyeKCLLUCVO9lPvSfPleP2YEuc2fG
- lJ9w==
+ bh=yxS6hIzCzYXa6eMy3GtnWMuV24D6ge/Kzi8chAC6mXE=;
+ b=UMc8vOwfV71j8+8YE4E/d+tls1RCHeQ2pd8CK428bu+xEBLiidYaO/mNcziX7w9d7Z
+ zrDe/eZLvwhUAqNUgd/w3BnoNZp7RGrPYK2E7btuetTB3UC7I+OnKQmmNIif2Xo51s6Z
+ He62Bus3KfPzfkCxkPJJqU8pUVrTHqbNOGEtU6Jj/LB1CkO8ss5LvD8jkL9o4ULEr6yn
+ 1nVOrFVe8/Ho4yek77Y5tmC0BhD88fwaGA4QOMwZ/9I3ylX08CDihdCNNYQv7UN0Yw8l
+ J+n1wNIxlxuVK/8Wm1TCeHWw6hUjg78U7GoLoFugcqXYG0wy5Mkoauz+5o7Fy3VXvV38
+ lfUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758208415; x=1758813215;
+ d=1e100.net; s=20230601; t=1758208617; x=1758813417;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=ddl3XAkBE8a2zGgwlauoeE+12RTBMvntE6ZQvpHMTs0=;
- b=oiWEteJiMABYav+rmfowAnzIQ0Z8PMSjpJMm/4+w63329v9MxNLo/e25ol81tf+NBl
- 3jYL50sL2EQ6tRncdlp+9bSYklOsyJzFn376EuVOGkD9gQKI73wQfqVBbdG0BYQX2Y8X
- llr6ij0Mv350r6yFw3NQz2IGZ9YKxYjDRQaRQ99NURhosASOK1DjFGv3LmTNrdbALXgP
- hnlUoP+cpnQ8wzuLnPbKyOg/ogCzAJXhLJNLU5NGApp7HYxMwPC+QN8FZCaml7a7+eSz
- Ob9577MafEU5W60LrFz4K98tl+H4Hk/mVaRQ0kWSYBC9q4mVLvVwu6Cl+r7nK2jF8cCo
- pfvA==
+ bh=yxS6hIzCzYXa6eMy3GtnWMuV24D6ge/Kzi8chAC6mXE=;
+ b=Gc2XEGYNvSiafteKxUaA33zaj3m0a8JtyWwXMuBK/UBUej6CW/0Uk2lkwA5aoND2i+
+ 2IDRRGUIFXbJ1kZoeGISpbwAG2tEucKcTCNCxz6Qo4aWrFhRn0yKjZQMs6AhlrRH3UqK
+ YnU/JKzSIhq8U7VRDsLS5a2IHLQ/S+VSEvw3NTy/WVSvSdRZNSn/4q4Luia5pkeyBCKa
+ xFz6ylwzNgFvigxaKupBSp2fTDPoJsZQPdxuuiOMkHZ1GZZqM+IPub39d070I6oWDjU7
+ GRZ/Y/TIV17nQOZTielGhgyc6l7TCxGWxM0HmBX0pyShgrTQTM7gHsevFRCcyQIur9G0
+ r/mA==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWS6UqfwOlS/kE6wQ4FiDlojWhcVQ4igAFQYLI+qR96gdWS2P5LYR/Jv4f36DltnRkzcc4=@dpdk.org
-X-Gm-Message-State: AOJu0YwwvNAXZpFQ9yGen/u7MIy10uDSrP3veEa9+SrBXpW5CIiE/Zge
- 90XRSrSpVWyTjFbi68Icu/G9FFRIKGZghwunhWBaFjnNp2gy1YHWdG3GGSMUW1CrDbo=
-X-Gm-Gg: ASbGncv5OCc2r398+gvbjfym1eN2nCUKWXEn0EqSJ7eqUGyRewo4K7n0zIs6YFjw4en
- TIlPQGYl1Xuk9weIl6bB1lOQIGZtAUzYhZKBkZWIkFdZETCzn+HCj+e0hXSyFGAezhFtkyFYRXC
- H81GKjkzbIl/zkE3UaduQb0NNxuBY3Lj0QCMe8/Mb/oKBVT2zou0Xr/VXm0+VTxfKWaEv1N8Cch
- XjXvDX4e8fGlU9TZ6FbQodJ5OYK+qRY+wR7SXMWAcH5h9pQnH+ehg9d9E3j5Y65y7nxRDZaoYYM
- h8PH5t9NHYHJQ+yWFveMyzPn9h1DHTTUCJz1ruwvTrtP0HYu91yvlcAIPtJWOtlzIdPwMQKIv8M
- fP75sGH6jlnA3ECTCgGTVGjbYXM2v25rxLeZKWCjgj37RwXlBc8Z7XWk7SVC6d525WOrxe8rYW0
- qaCn1TbFff5wfAuT0jrR2wWMm8MLK1
-X-Google-Smtp-Source: AGHT+IHFVllFQi8txDowKHKiU8k+wP/YtajfmTKbNzkIAR+U0uo8RDj+irOpPNxYmbKNS0E4l+UmHg==
-X-Received: by 2002:ad4:5c41:0:b0:780:555c:7690 with SMTP id
- 6a1803df08f44-78ecf3053d0mr60310226d6.66.1758208415056; 
- Thu, 18 Sep 2025 08:13:35 -0700 (PDT)
+ AJvYcCW7Sg1g0WbCZOVyeiJJXL5rJ9erVSIkTGNFPMu6qv+Y1cPX9VaAuMSvIxHsre6nXURe2aw=@dpdk.org
+X-Gm-Message-State: AOJu0YyRVK3wKjDUKlMrDNyOTm/Lrsm+8XDABlUE4v4cdPfRGWxljJfh
+ 4YJGnvlMV1YpcUvEFVJrrzMXYsaSfDbcWhrwpUzRKBltSInhpX1m+/Br7OHkhf8c51E=
+X-Gm-Gg: ASbGncu8aOZNndqqzzPhh8VVMe9lGOtfCd/C/FfcZclP/9Lk+0uOyIjDJFnGHgKg76I
+ LXxHGNBr/Hk4MXcZoVTj4aPMjBp7RSmb0jIdmIWUz8mtcGZ8oo1VlPp1eqTqoaCv1PhGhMR02Ik
+ xPYHx/U3PEdK+xHe0IHzZ1nsgVpcZ8NjHXbfQOAZGEyWdMHbc55H7D3Iz9aIO9dkGV9Sh8P1Q19
+ 1MyJWyasyIlA23ReguyRFJGYvpbCYBvqCr+0GwLddXFtH0Bef+1YZ2BjxdUzPz2Ds6s1nOev0pb
+ ilSFy4mYRFtDBJBY/5dl90lwhkLJuAavddvke5ddHXKaoB18kpKmTT0TNVN2qxDAZJRXmpqtDXs
+ 6PK8LgDRltYySfe468sRIk2lxsF6Gd1L1KjRiqfKyUeRJbDnhKNxLI921REoVykbhrYxXbtTPjv
+ gMXixwUuly3q2M8CsieQ==
+X-Google-Smtp-Source: AGHT+IGPIDfFgXoLOfvk2Hjy24d6QwmEfVX87ZufkwpvfHFw+eWs1vxIq1tsnux1nzSGkYGBc/sZpQ==
+X-Received: by 2002:a05:620a:a511:b0:836:974d:978e with SMTP id
+ af79cd13be357-836974d995cmr273118185a.41.1758208616463; 
+ Thu, 18 Sep 2025 08:16:56 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-79351f713a5sm14329046d6.44.2025.09.18.08.13.30
+ d75a77b69052e-4bdaa89796csm14999001cf.52.2025.09.18.08.16.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 18 Sep 2025 08:13:34 -0700 (PDT)
-Date: Thu, 18 Sep 2025 08:13:27 -0700
+ Thu, 18 Sep 2025 08:16:56 -0700 (PDT)
+Date: Thu, 18 Sep 2025 08:16:52 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: "Ajit Khaparde" <ajit.khaparde@broadcom.com>, "Somnath Kotur"
- <somnath.kotur@broadcom.com>, "Nithin Dabilpuram"
- <ndabilpuram@marvell.com>, "Kiran Kumar K" <kirankumark@marvell.com>,
- "Sunil Kumar Kori" <skori@marvell.com>, "Satha Rao"
- <skoteshwar@marvell.com>, "Harman Kalra" <hkalra@marvell.com>, "Hemant
- Agrawal" <hemant.agrawal@nxp.com>, "Sachin Saxena"
- <sachin.saxena@oss.nxp.com>, "Shai Brandes" <shaibran@amazon.com>, "Evgeny
- Schemeilin" <evgenys@amazon.com>, "Ron Beider" <rbeider@amazon.com>, "Amit
- Bernstein" <amitbern@amazon.com>, "Wajeeh Atrash" <atrwajee@amazon.com>,
- "Gaetan Rivet" <grive@u256.net>, "Xingui Yang" <yangxingui@huawei.com>,
- "Chengwen Feng" <fengchengwen@huawei.com>, "Bruce Richardson"
- <bruce.richardson@intel.com>, "Praveen Shetty" <praveen.shetty@intel.com>,
- "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>, "Anatoly Burakov"
- <anatoly.burakov@intel.com>, "Jingjing Wu" <jingjing.wu@intel.com>, "Rosen
- Xu" <rosen.xu@altera.com>, "Andrew Boyer" <andrew.boyer@amd.com>, "Dariusz
- Sosnowski" <dsosnowski@nvidia.com>, "Viacheslav Ovsiienko"
- <viacheslavo@nvidia.com>, "Bing Zhao" <bingz@nvidia.com>, "Ori Kam"
- <orika@nvidia.com>, "Suanming Mou" <suanmingm@nvidia.com>, "Matan Azrad"
- <matan@nvidia.com>, "Wenbo Cao" <caowenbo@mucse.com>, "Andrew Rybchenko"
- <andrew.rybchenko@oktetlabs.ru>, "Jerin Jacob" <jerinj@marvell.com>,
- "Maciej Czekaj" <mczekaj@marvell.com>, <dev@dpdk.org>,
- <techboard@dpdk.org>, "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "Ivan Malov" <ivan.malov@arknetworks.am>, "Thomas Monjalon"
- <thomas@monjalon.net>
-Subject: Re: Fixing MBUF_FAST_FREE TX offload requirements?
-Message-ID: <20250918081327.06fcdadf@hermes.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65442@smartserver.smartshare.dk>
-References: <98CBD80474FA8B44BF855DF32C47DC35F65442@smartserver.smartshare.dk>
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: David Marchand <david.marchand@redhat.com>, dev@dpdk.org,
+ maxime.coquelin@redhat.com, anatoly.burakov@intel.com
+Subject: Re: [RFC v2 8/9] uapi: import VFIO header
+Message-ID: <20250918081652.36fd3566@hermes.local>
+In-Reply-To: <2776153.atdPhlSkOF@thomas>
+References: <20250903072826.1727004-1-david.marchand@redhat.com>
+ <20250903151800.1965006-9-david.marchand@redhat.com>
+ <20250905211157.00ab0e5a@hermes.local> <2776153.atdPhlSkOF@thomas>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -105,43 +86,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 18 Sep 2025 10:50:11 +0200
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+On Thu, 18 Sep 2025 10:48:12 +0200
+Thomas Monjalon <thomas@monjalon.net> wrote:
 
-> Dear NIC driver maintainers (CC: DPDK Tech Board),
->=20
-> The DPDK Tech Board has discussed that patch [1] (included in DPDK 25.07)=
- extended the documented requirements to the RTE_ETH_TX_OFFLOAD_MBUF_FAST_F=
-REE offload.
-> These changes put additional limitations on applications' use of the MBUF=
-_FAST_FREE TX offload, and made MBUF_FAST_FREE mutually exclusive with MULT=
-I_SEGS (which is typically used for jumbo frame support).
-> The Tech Board discussed that these changes do not reflect the intention =
-of the MBUF_FAST_FREE TX offload, and wants to fix it.
-> Mainly, MBUF_FAST_FREE and MULTI_SEGS should not be mutually exclusive.
->=20
-> The original RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE requirements were:
-> When set, application must guarantee that
-> 1) per-queue all mbufs come from the same mempool, and
-> 2) mbufs have refcnt =3D 1.
->=20
-> The patch added the following requirements to the MBUF_FAST_FREE offload,=
- reflecting rte_pktmbuf_prefree_seg() postconditions:
-> 3) mbufs are direct,
-> 4) mbufs have next =3D NULL and nb_segs =3D 1.
->=20
-> Now, the key question is:
-> Can we roll back to the original two requirements?
-> Or do the drivers also depend on the third and/or fourth requirements?
+> 06/09/2025 06:11, Stephen Hemminger:
+> > On Wed,  3 Sep 2025 17:17:58 +0200
+> > David Marchand <david.marchand@redhat.com> wrote:
+> >   
+> > > Import VFIO header (from v6.16) to be included in many parts of DPDK.
+> > > 
+> > > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> > > ---
+> > >  kernel/linux/uapi/linux/vfio.h | 1836 ++++++++++++++++++++++++++++++++
+> > >  kernel/linux/uapi/version      |    2 +-
+> > >  2 files changed, 1837 insertions(+), 1 deletion(-)
+> > >  create mode 100644 kernel/linux/uapi/linux/vfio.h  
+> > 
+> > The linux kernel source tree has a well defined method for making exported
+> > uapi headers: 
+> > 	make headers_install
+> > 
+> > DPDK should not be inventing its own method for this.
+> > 
+> > If you use this on current released kernel (6.16) you will get slightly different file.
+> > The point of having DPDK vfio.h was to workaround case where distro was too old;
+> > not to be different.  
+> 
+> The diff below is because of a different (but compatible) version.
+> I don't see the point about the method.
 
-IMHO fast free should be as much like normal as possible.
-Only things that would have a measurable impact on performance would help.
 
-The reason for the single mempool is mostly related to not requiring code
-that would walk a multi-segment mbuf to disperse the segments to potentially
-different pools.
-
-The reason for the refcnt =3D=3D 1 is that updating refcnt requires atomic
-operations which need to read-modify-write on memory (not just cache).
-And RMW operation can take several memory clock cycles.
-
+The reason to use the same method of generating uapi headers
+is then the guard values are the same. If some other header happens
+to include the other vfio.h there will be no problem.
