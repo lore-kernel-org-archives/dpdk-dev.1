@@ -2,57 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76665CA1013
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 20:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67565CAC597
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 20:44:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E8BD4064C;
-	Thu, 18 Sep 2025 22:32:30 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 875D74065B;
+	Thu, 18 Sep 2025 22:44:20 +0200 (CEST)
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com
  [205.220.168.131])
- by mails.dpdk.org (Postfix) with ESMTP id F2735402D0
- for <dev@dpdk.org>; Thu, 18 Sep 2025 22:32:28 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 2DC04402D0
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 22:44:18 +0200 (CEST)
 Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
- by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58IIP2Yq027424;
- Thu, 18 Sep 2025 20:32:28 GMT
+ by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58II3wO6026846;
+ Thu, 18 Sep 2025 20:44:17 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
- cc:content-transfer-encoding:date:from:message-id:mime-version
- :subject:to; s=qcppdkim1; bh=gV0VPBcjmG0OHdqUOHk+2O1VvBGbm2Sd0iI
- b8cTKeZ4=; b=RAen5ScamX/nN0czkKQAesybg7gtgZfr0tIJcs2sliR0syT7dzZ
- MaF19EfIg9SLDhFdZuV/hx2V+uo2K6i/d24aoxXULQ8uBRQz1vVzDLDrueqkj/1K
- N+9syu94ToqlJoXQlGedhPzdv8RhBgk8SsfHL2WE3wMt0a1PeO31uf3cqHkdLv2U
- z729cf5tr3RYv7KmXCW89L3dKFSohTY8LRBrtIRFiJpIFJno5I7lNLCnadM+TogV
- BpusdbC/IDk1imjZJwQfDeU4jgY+VoZdOebacfXGwx4jp1SStdgCHkxPqlk6yDp7
- MKqgkJhceNU8eAP7At3doDI7/lpomRYCcXw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com
+ cc:content-transfer-encoding:date:from:in-reply-to:message-id
+ :mime-version:references:subject:to; s=qcppdkim1; bh=8LSCJ1O30Nc
+ 70fNVU3GfphoHdOYRuSIdMj/KTFjWrPg=; b=ShKDOdcOeSs8PRa/Rd5mR8Zc1Gq
+ n6ZrpK4+TPNkF/k3fntCBTKmbKNd6EzT/XP+0XSpJ7zLOv3NtYtjpP5hET7Lr6CE
+ u7GcX9hyVkU+13J1qhEYzsHr8xRvcTcvIap5i7XywxpRgHdC7Xf8j6eBcNSqw9wX
+ C1Xa32WuqSdoCrZjvlGYHsOPw47l4mD1UnQq2LVTzsvli/iJP/EHwl8eiS9jvC4p
+ ofjFCTMGY5Nzt+fyer3CHuSYdKE2Kd9Yz5+n5zaFWLzSOaws66zxy2jhALztQz8U
+ NLRrkpE9ZR+T0LCwlp51afk73FbuE1z9If8pRfXQF632uCJwOg71KkUDM/A==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com
  [199.106.103.254])
- by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxt81eh-1
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxt82bd-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 18 Sep 2025 20:32:27 +0000 (GMT)
-Received: from pps.filterd (NASANPPMTA01.qualcomm.com [127.0.0.1])
- by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 58IKWRCm024598; 
- Thu, 18 Sep 2025 20:32:27 GMT
+ Thu, 18 Sep 2025 20:44:17 +0000 (GMT)
+Received: from pps.filterd (NASANPPMTA02.qualcomm.com [127.0.0.1])
+ by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 58IKiGWZ014974; 
+ Thu, 18 Sep 2025 20:44:16 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
- by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 497wy0qm67-1
+ by NASANPPMTA02.qualcomm.com (PPS) with ESMTPS id 497grvjj3d-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 18 Sep 2025 20:32:27 +0000
-Received: from NASANPPMTA01.qualcomm.com (NASANPPMTA01.qualcomm.com
+ Thu, 18 Sep 2025 20:44:16 +0000
+Received: from NASANPPMTA02.qualcomm.com (NASANPPMTA02.qualcomm.com
  [127.0.0.1])
- by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58IKW4sv024241;
- Thu, 18 Sep 2025 20:32:27 GMT
+ by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58IKiGY9014905;
+ Thu, 18 Sep 2025 20:44:16 GMT
 Received: from tbs-5gnr-mt-30 (tbs-5gnr-mt-30.qualcomm.com [10.239.80.165])
- by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 58IKWQJ6024588
+ by NASANPPMTA02.qualcomm.com (PPS) with ESMTPS id 58IKiFx7014772
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 18 Sep 2025 20:32:27 +0000
+ Thu, 18 Sep 2025 20:44:16 +0000
 Received: by tbs-5gnr-mt-30 (Postfix, from userid 2316195)
- id 85C9D4016A; Thu, 18 Sep 2025 14:32:26 -0600 (MDT)
+ id B58264016A; Thu, 18 Sep 2025 14:44:15 -0600 (MDT)
 From: Sameer Vaze <svaze@qti.qualcomm.com>
 To: Sunila Sahu <ssahu@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
  Ashish Gupta <ashishg@marvell.com>
 Cc: dev@dpdk.org, Sameer Vaze <svaze@qti.qualcomm.com>
 Subject: [PATCH] compress/zlib: support for dictionary and PDCP checksum
-Date: Thu, 18 Sep 2025 14:32:10 -0600
-Message-Id: <20250918203210.1689254-1-svaze@qti.qualcomm.com>
+Date: Thu, 18 Sep 2025 14:44:11 -0600
+Message-Id: <20250918204411.1701035-1-svaze@qti.qualcomm.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20250918203210.1689254-1-svaze@qti.qualcomm.com>
+References: <20250918203210.1689254-1-svaze@qti.qualcomm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QCInternal: smtphost
@@ -61,23 +63,23 @@ X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
  signatures=585085
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
  signatures=585085
-X-Proofpoint-GUID: NgnF4Fiv347c_OonrJ5nmK2FnxqoK4yw
-X-Authority-Analysis: v=2.4 cv=bIMWIO+Z c=1 sm=1 tr=0 ts=68cc6c5b cx=c_pps
+X-Proofpoint-GUID: FNM-7514Ba6BnPF-AZ3TSujeRWSkUlf-
+X-Authority-Analysis: v=2.4 cv=bIMWIO+Z c=1 sm=1 tr=0 ts=68cc6f21 cx=c_pps
  a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
  a=yJojWOMRYYMA:10 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=BrkBEixOsbVaADiXYk8A:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX1ptgo6d+LW0g
- frQT7DBk+jPRjw8jBWG/msZUEZe0cVEcaBF0JDbhoHJFBBla+gPZeuKMUXw0QMc0EuCyp2l9NFe
- H0+uD3NdgfgERFW59rS7W61vVTHP6FurWnd+0VpifTuKFsr/RmSMPTvQdXuKSvF/TA21FbZCJmM
- HtFvGDP0Ky9NKZceulUiCBYjpztMl82LwEBTzob6yYE1tcZpvan2rPiN95dzzEMQ7mvaK63Qre5
- UdeJbq+7xOnEYKSYq+IU3BZm6CzdrNh6pZmoL3ifenogxhFqciHwlf6JgpcaZ14MAV5BsgJfZfr
- TRx/Q0907zdgT1O4LTUqTOQYkoimFsN0iuZCvp3cD1gTYn7MUCmlEMEGEzxyLphSzFhZGKD8+1k
- NZEm3G8z
-X-Proofpoint-ORIG-GUID: NgnF4Fiv347c_OonrJ5nmK2FnxqoK4yw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX+OfDd4cWk1Mh
+ RD2ds1yswmeSpcDoVDD8j4aaMAYA+t4IQ/ZvtQynAeoIU295cCiHaYNMyYNsO7QuUtkuxI+6cC/
+ QUh4GrCJOinJLXfSBMNMLWQl0owWIPEHOTlvWA6JKA1Mrp7JM1Xn34emu2tN926Eq0U1GNnkans
+ sRecNnQxtzdaFu0sOQ7HND9kA7HKjVqfmISJt0yJrosGev3GD8JVkHeS/F8gdgBty6/UQbLv1o9
+ 66+dUFECJoSV48A/9lPLfpuhWdwBynYpiSh4RBqe9DG6STV/yC/9Doc4Eir95uscELmq2jKaTGn
+ Fw/v64bAY91iUmOLCL/k6mHRay8yOp7LLRt3gn5IdKgG3IkkMrlrME3GE07dlGPaNBBrVX72Qo3
+ eaXvT4wK
+X-Proofpoint-ORIG-GUID: FNM-7514Ba6BnPF-AZ3TSujeRWSkUlf-
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-18_03,2025-09-18_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 impostorscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ clxscore=1015 impostorscore=0 malwarescore=0 adultscore=0 priorityscore=1501
  suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 classifier=typeunknown
  authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
  engine=8.19.0-2507300000 definitions=main-2509160202
@@ -100,7 +102,7 @@ read dictionary files
 
 Adds support for passing in and validationg 3GPP PDCP spec defined
 checksums as defined under the Uplink Data Compression(UDC) feature.
-Changes also include functions that do inflate or deflate specfic
+Changes also include functions that do inflate or deflate specific
 checksum operations.
 
 Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
