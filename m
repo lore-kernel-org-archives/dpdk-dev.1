@@ -2,74 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEADCAC597
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 21:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF2ACAC597
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 22:19:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8CA4F40655;
-	Thu, 18 Sep 2025 23:42:32 +0200 (CEST)
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com
- [209.85.219.44]) by mails.dpdk.org (Postfix) with ESMTP id 1D646402D0
- for <dev@dpdk.org>; Thu, 18 Sep 2025 23:42:30 +0200 (CEST)
-Received: by mail-qv1-f44.google.com with SMTP id
- 6a1803df08f44-79390b83c7dso11859936d6.1
- for <dev@dpdk.org>; Thu, 18 Sep 2025 14:42:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0251A40289;
+	Fri, 19 Sep 2025 00:19:03 +0200 (CEST)
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com
+ [209.85.210.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 19EAB4027C
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 00:19:02 +0200 (CEST)
+Received: by mail-pf1-f172.google.com with SMTP id
+ d2e1a72fcca58-77615d6af4fso2162239b3a.3
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 15:19:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758231750;
- x=1758836550; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=r8Wzr+Fv2CZQUy9Xc5fBiPgiMUe8sWggjk4WlgDmjvc=;
- b=o7PidjVjEIYrykPS/KV3Z1lYqCF44V49HoCl/cKlwqweliEKG3JZrC8sLX86U0go6F
- S52xjVT3sIJbE/jtVmrf+wIeSDVNpHMB4Rj+pDDdwtnSbgV8MnM/VoQUQJnQVHoxFBuM
- GjxvMj+gepHNse20CP6bcH38nzNlRhfiZfHkrCJWfmh9xjM/KJYzzXPnryGSAicYCRVu
- rgUHzfQh0EU/IYUp+/wMjjPagxNx9KlXvqi6hXlWoJCxaNB//TzSjuWfP3Xh2XWwxmCz
- O9C52FIpgmO6F8mdNtXICKyKE5ar6q4xeXqafxrSnTTriZBS6fl8Zk6bHZ/bwiH6xiC1
- BkAQ==
+ d=iol.unh.edu; s=unh-iol; t=1758233941; x=1758838741; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=tAT+cc8xpm6I040kvVI0YoOmOotD7DnGtL55PzDwMTU=;
+ b=aKsAs+CymmknlB1BtGRre2humENisuRdkol7SpQMo7FUIIoo6vHo+tCRB4vTpZlBQF
+ SdPTMnt9xPHvho9G8qUvb9re0mIxfWjrsLDttJ73LOmvi8TIrOrUIuXH8pob05WImnb4
+ kHrX0dPHdiNFWYCS5yXtSCCCea0DxYckj5wus=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758231750; x=1758836550;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=r8Wzr+Fv2CZQUy9Xc5fBiPgiMUe8sWggjk4WlgDmjvc=;
- b=pZI6kYMUNqJjMuB9yadRdCFjDe6c14FRMt7vrA2u5u9X3PC6QFZ80p9oGSrnszkx7b
- YY7H3mfCN/uY2hNGuljSnj7GE/XVr42ZZT83D/a4LVCxZ34G/GJiu8OdB82UwH/Hl313
- /A74Mm8osJWSgyWQYGt90hda95l5NTBzx4jgxGLps/bTBylMQLarGTbb6qCA8tAX3J4f
- 4rZUObH2PfKQOWH2yQPHak2EQrxS6iOC6+KcYvm08VQt2tRYpMWqNC5wNX4GzSpYHjKF
- icpRpV0JUhf6maCv5QM9WMUJwADLOLmGYBqar4GqX4p4TimXSnDfHLo0B8eL8wBL6pDr
- SJXg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVf1HWqsKsoexFv/uvF+9BM7QUIPTZOI3URMFu61g6RDhL6XAlW1sryu+727AXtYTA+sk0=@dpdk.org
-X-Gm-Message-State: AOJu0Yyw8SH4q54nVtaIiysESPGGuruJZqLtFjDl1iZHTJOCSTj3MNLN
- L3m2kHtj+dy4TPLZSRHPXXYCWBGzb2EdRKLhCMJtW0tLQ0mQhkhLv0wXSakNM7CJEjU=
-X-Gm-Gg: ASbGncvfCKVQCvYcLL9GC33UsYKqKFfoTG5g67fpRINPS61OvMr+ikllcWlURcwxx3k
- yHyfp9yfinC9dFNWzH412yQGHZJ4IjS6WKhnSXFMhtVHBPmLQi8Z4ivDfsK0jPdiPncAD2bVL7Z
- JgK9OTzhyO2tmKcSSmgvDWbPngJ+dpJzj17auA0/l7qlQeblYNZargOVf/lxjyiHOMqj/IvstAi
- 3k30BbgBbE/K5pwMxDytVtCHsi7bAI9smETMyWdDUdUPfP61zxLJ2uDtaHRHVPFxckqjeoa4DNk
- 0gBna7jQCtbZ5nTSejnmjIlsR8duh+LRiueQVyenzJAKWGbPxpyBNhQUFR2KNXiV4LR/Jot1TEV
- DrZEi+gO81cXd+n5Y/i9fO9Lu+4RSGHsoaX9coV3ttISDiKNTPDcRMqXfgdt79hCUHxmJtCj5bk
- 8Zc1PlRhDy9+LVG1+9lQ==
-X-Google-Smtp-Source: AGHT+IG5T0hj2pB3lv4luooG+4I55kMLJhBA5iB2jykAXz1iYGPIwbUsFSuoOEcq7ElVOQffzm+VTw==
-X-Received: by 2002:a05:6214:d4c:b0:78e:49a0:2ba4 with SMTP id
- 6a1803df08f44-7991dfd7de2mr11037406d6.58.1758231750188; 
- Thu, 18 Sep 2025 14:42:30 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-793533affbcsm19624036d6.49.2025.09.18.14.42.29
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 18 Sep 2025 14:42:29 -0700 (PDT)
-Date: Thu, 18 Sep 2025 14:42:25 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Sameer Vaze <svaze@qti.qualcomm.com>
-Cc: Sunila Sahu <ssahu@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
- Ashish Gupta <ashishg@marvell.com>, dev@dpdk.org
-Subject: Re: [PATCH] compress/zlib: support for dictionary and PDCP checksum
-Message-ID: <20250918144225.63a09b8d@hermes.local>
-In-Reply-To: <20250918203210.1689254-1-svaze@qti.qualcomm.com>
-References: <20250918203210.1689254-1-svaze@qti.qualcomm.com>
+ d=1e100.net; s=20230601; t=1758233941; x=1758838741;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=tAT+cc8xpm6I040kvVI0YoOmOotD7DnGtL55PzDwMTU=;
+ b=AXm5jh7l6trh/VXDTQI6WMG4MHMD4t3bcRIVA7iJpWf3cdw/RGBU//Ub11tGt+OumQ
+ 5y8AnMsEHK/+veOhuGoUzbE5ysFNe9XKTGBR33EAo2P+PVvzi7sAvBGfhSddoHtG89TA
+ +2yfxyA7CfY56lxlQvnK9d5Mw+qY4WMHjzlfeU8xc45rnNXv9WYv0GsRffVhRc47ett0
+ DquIbpO/H/58pKy/FMOP/UgnQaJEJuenQeNHpjha5hNawVg098wZSRuLtRYzfMKJcbjP
+ mfN7WuLeSbGuXYsBHkan8iZJTKsnjv+zUUREPiDKqg+hAvMpWvkYuBNu2xEsnlEFHRxX
+ BhJA==
+X-Gm-Message-State: AOJu0YyAmliBiynvbm9soLSnXcCPsEvQZKwLlAuWz4OXZQ8+NuQCVEwC
+ vIzvj++4C0EzRu7JgRtJDVqTpLZ3NVlr0CYYG07/bzSt+44k2QwPAdsF39gQ8odgJ1FQcLd9Ptr
+ YpIOpiMBTF0zsMi12C/0hvOrrKhOJe4WZgNzG4r/I9WaEnDNokMbV
+X-Gm-Gg: ASbGncu6CBrUUU0vzZbfdJg1v3r6d3IjXf1gOJ59f92qDbTwaes8rgh/+492E/uiH1/
+ F2iXfgmPxHDcWgZl+uyakNxm0xJoHQwz2Dkh2E65sZp/Kw2P1BT+umm+dQcDnLX94hRrTLBapaX
+ WjiL+xHeFCn1VqNNZ3YMNhmZ+Puomzihi9YXpoRoS+Q1fUP7CD6tYv7kBkLmOjhTT2YtCjSkRrZ
+ ot9s2tv7nihKu11/OqEmgQhhZFsZBfLWO+qHtt+C/fBjAUnuE4ekZkPuY8=
+X-Google-Smtp-Source: AGHT+IGr7rknEWYAYAqOBKxMZ/oVikJqffl3DP+SONRJN4c3j3kHY+8uvVSOdQheaH3xE5lKZKVObcu8tB83sMBm5Ho=
+X-Received: by 2002:a05:6a21:9999:b0:251:7f83:11d0 with SMTP id
+ adf61e73a8af0-29257e10eb7mr1660096637.5.1758233941205; Thu, 18 Sep 2025
+ 15:19:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250910152103.976383-1-paul.szczepanek@arm.com>
+ <20250910152103.976383-2-paul.szczepanek@arm.com>
+ <CAJvnSUD+qtkT88C_7q6BS8migv7r3cmdRtCMSq7KOk-ms1D1mw@mail.gmail.com>
+In-Reply-To: <CAJvnSUD+qtkT88C_7q6BS8migv7r3cmdRtCMSq7KOk-ms1D1mw@mail.gmail.com>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Thu, 18 Sep 2025 18:18:43 -0400
+X-Gm-Features: AS18NWDdpeOIGH2nteDnM9Ka64Z0asOZ3_WH8pebVvDZXFjbUMe3So3vzvc4zpQ
+Message-ID: <CAJvnSUDZAAy+Wh5-3oY8St4WoXHLQMNviMD0xCm6ZY8sYrBJCA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] dts: move testpmd into API
+To: Paul Szczepanek <paul.szczepanek@arm.com>
+Cc: dev@dpdk.org, Luca Vizzarro <luca.vizzarro@arm.com>
+Content-Type: multipart/alternative; boundary="0000000000007f7859063f1abdc9"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,70 +71,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 18 Sep 2025 14:32:10 -0600
-Sameer Vaze <svaze@qti.qualcomm.com> wrote:
+--0000000000007f7859063f1abdc9
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Adds support to provide predefined dictionaries to zlib. Handles setting
-> and getting of dictionaries using zlib apis. Also includes support to
-> read dictionary files
-> 
-> Adds support for passing in and validationg 3GPP PDCP spec defined
-> checksums as defined under the Uplink Data Compression(UDC) feature.
-> Changes also include functions that do inflate or deflate specfic
-> checksum operations.
-> 
-> Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
-> ---
->  drivers/compress/zlib/zlib_pmd.c         | 173 +++++++++++++++++++++--
->  drivers/compress/zlib/zlib_pmd_private.h |   8 ++
->  lib/compressdev/rte_comp.h               |  31 ++++
->  3 files changed, 203 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/compress/zlib/zlib_pmd.c b/drivers/compress/zlib/zlib_pmd.c
-> index 92e808e78c..1b1abd72e7 100644
-> --- a/drivers/compress/zlib/zlib_pmd.c
-> +++ b/drivers/compress/zlib/zlib_pmd.c
-> @@ -4,6 +4,7 @@
->  
->  #include <bus_vdev_driver.h>
->  #include <rte_common.h>
-> +#include <rte_malloc.h>
->  
->  #include "zlib_pmd_private.h"
->  
-> @@ -15,6 +16,120 @@
->  		(data = rte_pktmbuf_mtod(mbuf, uint8_t *)),	\
->  		(len = rte_pktmbuf_data_len(mbuf)) : 0)
->  
-> +#define BOTTOM_NIBBLE_OF_BYTE 0xf
-> +#define TOP_NIBBLE_OF_BYTE 0xf0
-> +
-> +static void
-> +process_zlib_deflate_chksum(struct rte_comp_op *op,
-> +		z_stream *strm, enum rte_comp_checksum_type chksum)
-> +{
-> +	uint8_t *dictionary = NULL;
+Per the discussion at the CI meeting this morning I ran all the existing
+tests on a cx5 card and saw no difference in results with this series
+applied vs running on for-main.
 
-Maybe best to not initialize this. That way if there attempts
-to use the variable when still NULL, the compiler can detect
-use of uninitialized variable.
+So, I will merge this series tomorrow morning. Thanks Paul.
 
-> +	uint32_t dictionary_len = 0;
-> +	op->status = RTE_COMP_OP_STATUS_SUCCESS;
-> +
-> +	switch (chksum) {
-> +	case RTE_COMP_CHECKSUM_NONE:
-> +	case RTE_COMP_CHECKSUM_CRC32:
-> +	case RTE_COMP_CHECKSUM_ADLER32:
-> +	case RTE_COMP_CHECKSUM_CRC32_ADLER32:
-> +		ZLIB_PMD_ERR("Checksum type not supported");
-> +		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
-> +		break;
+On Thu, Sep 18, 2025 at 1:30=E2=80=AFAM Patrick Robb <probb@iol.unh.edu> wr=
+ote:
 
-Why is this different than the default case?
+> Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+>
 
-> +	case RTE_COMP_CHECKSUM_3GPP_PDCP_UDC:
-> +		dictionary = rte_zmalloc(NULL, DEFLATE_MAX_WINDOW_SIZE, 0);
+--0000000000007f7859063f1abdc9
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Is there a requirement that the dictionary be in huge pages.
-If not use malloc() since that has better error checking.
+<div dir=3D"ltr">Per the discussion at the CI meeting this morning I ran al=
+l the existing tests on a cx5 card and saw no difference=C2=A0in results wi=
+th this series applied vs running on for-main.=C2=A0<div><br></div><div>So,=
+ I will merge this series tomorrow morning. Thanks Paul.</div></div><br><di=
+v class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gma=
+il_attr">On Thu, Sep 18, 2025 at 1:30=E2=80=AFAM Patrick Robb &lt;<a href=
+=3D"mailto:probb@iol.unh.edu">probb@iol.unh.edu</a>&gt; wrote:<br></div><bl=
+ockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-lef=
+t:1px solid rgb(204,204,204);padding-left:1ex"><div dir=3D"ltr">Reviewed-by=
+: Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu" target=3D"_blank">p=
+robb@iol.unh.edu</a>&gt;</div>
+</blockquote></div>
+
+--0000000000007f7859063f1abdc9--
