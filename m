@@ -2,71 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F6A3CAC597
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 07:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF04CCAC597
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 07:32:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C70D740288;
-	Thu, 18 Sep 2025 09:31:47 +0200 (CEST)
-Received: from fout-a4-smtp.messagingengine.com
- (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTP id 666494027A
- for <dev@dpdk.org>; Thu, 18 Sep 2025 09:31:46 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id DA6E7EC0192;
- Thu, 18 Sep 2025 03:31:45 -0400 (EDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DB7D740612;
+	Thu, 18 Sep 2025 09:32:07 +0200 (CEST)
+Received: from fhigh-a2-smtp.messagingengine.com
+ (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+ by mails.dpdk.org (Postfix) with ESMTP id A85B54027A;
+ Thu, 18 Sep 2025 09:32:06 +0200 (CEST)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 43B101400234;
+ Thu, 18 Sep 2025 03:32:06 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Thu, 18 Sep 2025 03:31:45 -0400
+ by phl-compute-06.internal (MEProxy); Thu, 18 Sep 2025 03:32:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm1; t=1758180705; x=1758267105; bh=7GrT6E1koKEz1eSuMhZDh
- buE8OI7PqyA3aDWKZCQ/IQ=; b=oYxBpg528oT+29okMe8anlajcPv6+RGUChGQF
- 4LEVP4cLMTz1liImeZ8x4KzD++sOM4QjpmmHFprG72uVoW/JwPXb1fEQtgxnwyma
- /wuivbSFVMSFcRz8bPSb1WBPdY5qL0BIT7VLMb/6YH02zWAa9Ez+wZ0bYUF8HZv3
- l/5+LU0D2HbLyu71jwVzvQs+6awEFrYXKOodxFZ6EgELTzqCFjq6LElm+OybmWZx
- mxrE6mHjICXow4hTRCKqMEaeSnChr2TmYDRwLQS33WHB+B4mMhKaOi1+dn9QkWKV
- 9/zK4qnFgKUL1j0vta9670PGAh5jtXZJXVyM1xIFw/htXRVDA==
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to; s=fm1; t=1758180726; x=
+ 1758267126; bh=51fguQeFqArwy85wukflxmiVYLUMFSobjee5Kjxb720=; b=Z
+ mnYqeqKq06C2gkH6oZtKnJoIf4XHohOywuaFpkCnlcSqpRcjYMXGFTPvdoReDRbm
+ pcwxm4jyMYxcOMP311KhzXbCt8/c2xwWtGNHXOhX1OgP2740+Xnx1BsI8tO9sLds
+ vf6ZA33RGubwbtoBq+2Ro9Mbtie1/bepcXUVbjTKRecgbjcq/VeZHiDGO4jYS03/
+ MgngUm3/tggNZIvwGgNb60vzsNNZmvep1/xpXNPRsgqJKMroC8c1KboGlfu88evq
+ CAgJMAa8Ash9xWRYjsvgcPLUWQ3M7yrftgbKYoAfxgyLYK7ZYC9KV2c5QN7eNDl8
+ 43jirpCHIg0gvpwOO1neA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
- 1758180705; x=1758267105; bh=7GrT6E1koKEz1eSuMhZDhbuE8OI7PqyA3aD
- WKZCQ/IQ=; b=OMMKiskRTXAudBR1Ow2JQZxmX9tlaF0liqyfV9SLHIEb3waeEH6
- YsFEb5+WNon33SuGjIP6j0I1cDdcHActxuskI0mX48FH6l5oAW1EnRQ1NiwmBYCN
- yqbN/elnn5KDgE7CEY9HPbmzkMGrlyO+oQio/x2c5BR3Q64hql570JvE5/l073Ev
- ao10LulqLFy7Ue1/4we9KhFtzP8A69MmZI9pPqJ82gPQ4t6AI3AQ7/gVOLHC+XfT
- nejwPrhp57LA0f4xkMQzT+52mE9TYllITYfvrsWi5ttpjVCWCHSBJ51nhOhrnfl9
- MXCoVDwKg9YdFsYQQIgQOKnH++2Y6WuR1BA==
-X-ME-Sender: <xms:YbXLaC2P3DMLDpFMr9N2pCMrghLlOAsbSHx9nkLwjq4ahP4wI9kOsw>
- <xme:YbXLaKVtBlCAJvxKhLm-LDmboCRX89RR17rp60ovRTzs84sc3akSVIcKuJ0PGrDl_
- Rv5u0Yzj-vgF6DfWA>
-X-ME-Received: <xmr:YbXLaMmM7tu_NN99imI-CMJ4pDx5QU_-VXR-YXoWTUQO5U0jCzhZBu7BtH120sIQVdl_Lndyi71m_fSkc6UstvauycxWylc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegheejgecutefuodetggdotefrod
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+ :x-me-sender:x-sasl-enc; s=fm1; t=1758180726; x=1758267126; bh=5
+ 1fguQeFqArwy85wukflxmiVYLUMFSobjee5Kjxb720=; b=WniJxmdm9eFbrz3DK
+ 0RKfS7WWtngXYENnoeVRUpt00v4piW0v6dHUuVQ04kU8rjIbCWuS8oKwXL5AG+qp
+ vyu3rsBVsxpkCAGBrQizjWCoyTh07vWfvM+/wNCaWffD4vEE/WrCTNbEcrCm61hc
+ n6ZH/TGd2Bv4o1paap/fvKeSr9N1Qu7ti6QTU0mNP6jV4g7k0rmVHpIE3qmeRig5
+ N6aTFn16/iUSs46sbosAivuhnDxfW4ZH19Z2oUtzyWIEhq9xsyxjgGGwmybhXFZK
+ hA/XDb9wHs06TNp33cJwqtiuz8K7mGfR6tnSWPklbqJNmudstoq9NAjdToCv5DWK
+ OiKGw==
+X-ME-Sender: <xms:dbXLaOgjIddxzSn9LxN23yXFjyWyYClUleYDPJma9t03AVWrOS0anA>
+ <xme:dbXLaFwKAixnL1FGLsNt2AxJdisZaNZfy_Y3k5jaooTkWaTNHwPwbLUtWHozbWTKY
+ AZz7ENs0eowN10M0w>
+X-ME-Received: <xmr:dbXLaH3xsBkdDIen7SukXCOGWzHmJrci8Jh5vawj-d8SAENfRABfEgj9NF6DEt2I3sHWVilwt2sSqovIlEJl8YLc-ytmB2A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegheejfecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
- enucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhj
- rghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeevveefveeiiefhtedukeegkeelie
- egffeukeevudetueffieduveetiedukeefleenucevlhhushhtvghrufhiiigvpedtnecu
- rfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpd
- hnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghv
- seguphgukhdrohhrghdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonhesih
- hnthgvlhdrtghomh
-X-ME-Proxy: <xmx:YbXLaMB9o0IJjs0ri7RaxLV81lgTIIKDi4AjTIzG7sHAWFLJve6wHg>
- <xmx:YbXLaMdTcdf5pMqmBxlwf3lkicdk3m_FEviSq8a9I6vmIDc2v5BXgA>
- <xmx:YbXLaHLzv0OtA86_jTS4dNR3oELr9pNbEQD5lkQmUMuObj0-2BNkWw>
- <xmx:YbXLaPf-IjT0TVyCIUuGin6hSWjST5aQ-M71-YkjLZxK6-UymkZdbg>
- <xmx:YbXLaOWuGTBRPW1KKVQvxCtWsC722qF3_1gFjr4Rvy3DGczAEJ0hX6IS>
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepvdejhfdugeehvddtieejieegteeuudfgjeeukeeiledthfetveekhefh
+ ieelhfdtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepledpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpth
+ htohepsghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthht
+ ohepshhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopegshihrohhnrdhmrghroh
+ hhnhesihhnthgvlhdrtghomhdprhgtphhtthhopeihihhpvghnghdurdifrghnghesihhn
+ thgvlhdrtghomhdprhgtphhtthhopehkvghithhhrdifihhlvghssehinhhtvghlrdgtoh
+ hmpdhrtghpthhtoheplhhutggrrdgsohgttggrshhsihesmhhitghrohhsohhfthdrtgho
+ mhdprhgtphhtthhopehhrghrrhihrdhvrghnrdhhrggrrhgvnhesihhnthgvlhdrtghomh
+ dprhgtphhtthhopehsvggrnhdrmhhorhhrihhsshgvhiesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:dbXLaC_1pnXHemLyOgK6Imp02KNnAZvvYYJ0RUxh9iCMUOmb2-nXfA>
+ <xmx:dbXLaHpUP--CtRYCMWPWnEPeogpES7DuiWLfcJ1-H_IlGf3EP7UtfQ>
+ <xmx:dbXLaMTD1PEDtRDMhkrUYESCRfFkOPks7s1WuOwcHTExpyy2FXTmrg>
+ <xmx:dbXLaKMoy6HwGwpS_cdLPePqpt6Jtd0I2hOIj7j-7iMTK1kU0JnUlw>
+ <xmx:drXLaNF9IOfKjpOs5RU9qhoGinYNcrflOgpQ9OXHgjWmV4OzVIN5Fdeh>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 18 Sep 2025 03:31:44 -0400 (EDT)
+ 18 Sep 2025 03:32:04 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com
-Subject: [PATCH 0/3] lib: fix AVX2 checks and macro exposure
-Date: Thu, 18 Sep 2025 09:28:02 +0200
-Message-ID: <20250918073135.1273767-1-thomas@monjalon.net>
+Cc: bruce.richardson@intel.com, stable@dpdk.org,
+ Byron Marohn <byron.marohn@intel.com>,
+ Yipeng Wang <yipeng1.wang@intel.com>, Keith Wiles <keith.wiles@intel.com>,
+ Luca Boccassi <luca.boccassi@microsoft.com>,
+ Harry van Haaren <harry.van.haaren@intel.com>,
+ Sean Morrissey <sean.morrissey@intel.com>
+Subject: [PATCH 1/3] efd: fix AVX2 support
+Date: Thu, 18 Sep 2025 09:28:03 +0200
+Message-ID: <20250918073135.1273767-2-thomas@monjalon.net>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250918073135.1273767-1-thomas@monjalon.net>
+References: <20250918073135.1273767-1-thomas@monjalon.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,23 +97,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-These are fixes for AVX2 in efd and member libraries.
-While at it, I've hidden a macro which was wrongly exported in the API
-without having a correct prefix.
+When switching to Meson build, the compilation check on CC_SUPPORT_AVX2
+became obsolete, thus the case EFD_LOOKUP_AVX2 became dead.
+The function efd_lookup_internal_avx2() was never called,
+and its header include rte_efd_x86.h has been removed later.
 
-Thomas Monjalon (3):
-  efd: fix AVX2 support
-  member: remove AVX2 build-time checks
-  member: hide internal macro
+AVX2 is assumed to be always supported on x86 with supported compilers,
+so the checks for AVX2 are simply removed, and the include is added back.
 
- lib/efd/rte_efd.c           |  3 ++-
- lib/efd/rte_efd_x86.h       | 10 ----------
- lib/member/member.h         |  9 +++++++++
- lib/member/rte_member.h     |  9 ---------
- lib/member/rte_member_ht.c  | 14 +++++++-------
- lib/member/rte_member_x86.h |  3 ---
- 6 files changed, 18 insertions(+), 30 deletions(-)
+Fixes: 5b9656b157d3 ("lib: build with meson")
+Fixes: 30a1de105a5f ("lib: remove unneeded header includes")
+Cc: stable@dpdk.org
 
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+---
+ lib/efd/rte_efd.c     |  3 ++-
+ lib/efd/rte_efd_x86.h | 10 ----------
+ 2 files changed, 2 insertions(+), 11 deletions(-)
+
+diff --git a/lib/efd/rte_efd.c b/lib/efd/rte_efd.c
+index b0e44e5c51..ebf1e0655f 100644
+--- a/lib/efd/rte_efd.c
++++ b/lib/efd/rte_efd.c
+@@ -26,6 +26,7 @@
+ 
+ #include "rte_efd.h"
+ #if defined(RTE_ARCH_X86)
++#include "rte_efd_x86.h"
+ #elif defined(RTE_ARCH_ARM64)
+ #include "rte_efd_arm64.h"
+ #endif
+@@ -1279,7 +1280,7 @@ efd_lookup_internal(const struct efd_online_group_entry * const group,
+ 
+ 	switch (lookup_fn) {
+ 
+-#if defined(RTE_ARCH_X86) && defined(CC_SUPPORT_AVX2)
++#if defined(RTE_ARCH_X86)
+ 	case EFD_LOOKUP_AVX2:
+ 		return efd_lookup_internal_avx2(group->hash_idx,
+ 					group->lookup_table,
+diff --git a/lib/efd/rte_efd_x86.h b/lib/efd/rte_efd_x86.h
+index e2f9dcca88..f7776db8a5 100644
+--- a/lib/efd/rte_efd_x86.h
++++ b/lib/efd/rte_efd_x86.h
+@@ -19,7 +19,6 @@ efd_lookup_internal_avx2(const efd_hashfunc_t *group_hash_idx,
+ 		const efd_lookuptbl_t *group_lookup_table,
+ 		const uint32_t hash_val_a, const uint32_t hash_val_b)
+ {
+-#ifdef __AVX2__
+ 	efd_value_t value = 0;
+ 	uint32_t i = 0;
+ 	__m256i vhash_val_a = _mm256_set1_epi32(hash_val_a);
+@@ -45,13 +44,4 @@ efd_lookup_internal_avx2(const efd_hashfunc_t *group_hash_idx,
+ 	}
+ 
+ 	return value;
+-#else
+-	RTE_SET_USED(group_hash_idx);
+-	RTE_SET_USED(group_lookup_table);
+-	RTE_SET_USED(hash_val_a);
+-	RTE_SET_USED(hash_val_b);
+-	/* Return dummy value, only to avoid compilation breakage */
+-	return 0;
+-#endif
+-
+ }
 -- 
 2.51.0
 
