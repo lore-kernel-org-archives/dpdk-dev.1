@@ -2,205 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E309CAC59A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 17:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76665CA1013
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 20:32:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C143B4066A;
-	Thu, 18 Sep 2025 19:41:26 +0200 (CEST)
-Received: from GVXPR05CU001.outbound.protection.outlook.com
- (mail-swedencentralazon11013055.outbound.protection.outlook.com
- [52.101.83.55]) by mails.dpdk.org (Postfix) with ESMTP id E9CC4402D6
- for <dev@dpdk.org>; Thu, 18 Sep 2025 19:41:24 +0200 (CEST)
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=jROEP52xjG2cjySMYzaAWxql/9cqJDAsbasKvvxBlwRZfMgtqq8ST6567P4RcRfcLoQoBuc8GotColiMjA0bFftJ5vQH0kqz68kjKwzfqZS6bDXM55aQGsXvVOJz/s4UlRja0WQw0+hAcGkBC7JqeC/ybxkILZf/g+IglTm7N9XAgX6fyVyUmRNzrxBJerIx3MxVU/WOOS7jVD1kkie0FgbV1db7tnSFy1uBUMALo79WFk31ogpdgZylkCXa3xgvTYL1bLNCdJsRhMGjy3ImZTuMK3svJQAeJj4B0/KGG+ZpDwv2A6u+42yLpydSQt2YMjdZ1tQwu8WxOch/epLuYg==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LwSVdr7DquErheWzv+KQU23Rcw1ehPMCmdSJcbYCMHs=;
- b=gGXDgQF2abcpRW6eziPC5VN32blc270aIKXfyX6EotBtwhCe2RgjXWDV3U3KGCXfbapotawIbL2C5ZLMHRc+tWJIM8FNML1OuTBbFxn3dk7772/cClaV0Ma1sOzkJ9u5Qn9USC7nCgUPkJwWjkoJ1YVSDdAROm0RG3hRQHOdnCP8JJrz8rw+sJrHJUF2cfEAWGjeYUAPLtycKAHhh3qrW8zXADoddNaU6Wm7ZuhlOlZ6W5JtXPJPFxfSKuL7/1k00V5RTLRmvZnGePRK8CODLBRnGIZcdhafGLhhbiWdVMyYX9lsLfDD7zsN7MT6dIq4PEVE/rTaxY3uln9UgtM8xA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=intel.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LwSVdr7DquErheWzv+KQU23Rcw1ehPMCmdSJcbYCMHs=;
- b=A9NiHPbyGXsUMGmYKQlx1i0c3mvOfz4jXMpmpFze/pgLNypOhp8/yKlqLMMtWofJ8hH7etmzAM7txQYVVFkwMVxx3kAS+R03i0XESqtQSetJQ8+nPojh5Gc6ZSCe5ScVdZQed6BnvX8VJBQLgQ8dAFRW3MTGU9Pp3BIULA7UeGc=
-Received: from AS4P192CA0005.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:5da::11)
- by DB5PR08MB10310.eurprd08.prod.outlook.com (2603:10a6:10:4a1::6)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Thu, 18 Sep
- 2025 17:41:19 +0000
-Received: from AM4PEPF00027A6B.eurprd04.prod.outlook.com
- (2603:10a6:20b:5da:cafe::c) by AS4P192CA0005.outlook.office365.com
- (2603:10a6:20b:5da::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.14 via Frontend Transport; Thu,
- 18 Sep 2025 17:41:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM4PEPF00027A6B.mail.protection.outlook.com (10.167.16.89) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.12
- via Frontend Transport; Thu, 18 Sep 2025 17:41:18 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N+8+/Y/RX+m9QEpAiEX/gzdHyKqBFhBTQFkaHjVGw6EG8YPYNvRhmkCaRQEb3pZdrqqAPstTBzNiNyAUTKl1pfdTHwF3PZ76bdq5eEsmvHOVy5FqEY71MXbA3489zrWTVBIWUyL7VUOwg/hej1bievOjdB/Yo6Xbngj8XueFUSwH95YKmS+6GTTBBhJ4MJh6gCPQ2MdW5n1arxOqJHctCcbHPPyE2LuweAlhsViE/q6U8pctdbG2SE+jhjAYIyC3IuoszVgiZVv0+v0btE0SR1VIl8RGuA35eKVRnY1M/fGw5VSlY0UiGf2WZXXcSWoY1Q+TcWju56U4LlutigtfPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LwSVdr7DquErheWzv+KQU23Rcw1ehPMCmdSJcbYCMHs=;
- b=ETH9FZ3jAzfoDuMDCYbQtUc1q1dqa9JnyXOUUdmpJ8twFpDEwQvlZd/kJsCnD7D3GM/vAtI5WiyvItRJX4C0O69EWCitKYteFFnr/0juQRiZsypkluFrb5zn9dVqE4c7+9zchrc92syh6EI2IS+ANgQgNMJ58cHFVM6IMSk2CTivMPBJvVRLyOzIkQWefiNt/DesJUEqhLNdOl8Mnm+7FhFDBxcVIRNRag27r7JAnCvBqGrKNvuAgxVrMHyN1gjjZJdueRCLwKlxcmXMtgmPc54A7B53BtW+LTA5ey1+ffWxMzCPc/2MdYh4fp8psdcOfdQQE04bVV0+nxZhT6ZITw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LwSVdr7DquErheWzv+KQU23Rcw1ehPMCmdSJcbYCMHs=;
- b=A9NiHPbyGXsUMGmYKQlx1i0c3mvOfz4jXMpmpFze/pgLNypOhp8/yKlqLMMtWofJ8hH7etmzAM7txQYVVFkwMVxx3kAS+R03i0XESqtQSetJQ8+nPojh5Gc6ZSCe5ScVdZQed6BnvX8VJBQLgQ8dAFRW3MTGU9Pp3BIULA7UeGc=
-Received: from PAWPR08MB8909.eurprd08.prod.outlook.com (2603:10a6:102:33a::19)
- by AS8PR08MB9196.eurprd08.prod.outlook.com (2603:10a6:20b:5a0::7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Thu, 18 Sep
- 2025 17:40:46 +0000
-Received: from PAWPR08MB8909.eurprd08.prod.outlook.com
- ([fe80::613d:8d51:60e5:d294]) by PAWPR08MB8909.eurprd08.prod.outlook.com
- ([fe80::613d:8d51:60e5:d294%6]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 17:40:45 +0000
-From: Wathsala Vithanage <wathsala.vithanage@arm.com>
-To: Ola Liljedahl <Ola.Liljedahl@arm.com>, "bruce.richardson@intel.com"
- <bruce.richardson@intel.com>
-CC: Honnappa Nagarahalli <Honnappa.Nagarahalli@arm.com>,
- "konstantin.ananyev@huawei.com" <konstantin.ananyev@huawei.com>,
- "dev@dpdk.org" <dev@dpdk.org>, Dhruv Tripathi <Dhruv.Tripathi@arm.com>
-Subject: Re: [PATCH 1/1] ring: safe partial ordering for head/tail update
-Thread-Topic: [PATCH 1/1] ring: safe partial ordering for head/tail update
-Thread-Index: AQHcJnJid/srWO08nEqlMPhaWlMNTbSV9DeAgAAr1ICAAOHPgIACN/qA
-Date: Thu, 18 Sep 2025 17:40:45 +0000
-Message-ID: <def294d88e810e99d9b538e6d82e12904e073a96.camel@arm.com>
-References: <20250915185451.533039-1-wathsala.vithanage@arm.com>
- <20250915185451.533039-2-wathsala.vithanage@arm.com>
- <aMmFeXsHI9VRn3GY@bricha3-mobl1.ger.corp.intel.com>
- <590A2369-28AC-494F-9E27-7CA9C670426C@arm.com>
- <aMpnqVPUDIsCj0zI@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aMpnqVPUDIsCj0zI@bricha3-mobl1.ger.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-x-ms-traffictypediagnostic: PAWPR08MB8909:EE_|AS8PR08MB9196:EE_|AM4PEPF00027A6B:EE_|DB5PR08MB10310:EE_
-X-MS-Office365-Filtering-Correlation-Id: d949a009-02fd-46c1-177c-08ddf6da9330
-x-checkrecipientrouted: true
-nodisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
- ARA:13230040|1800799024|376014|366016|38070700021; 
-X-Microsoft-Antispam-Message-Info-Original: =?utf-8?B?ZXM0Ymo4RmU5S0xqRVFwM1ptd2p6TlJWUi9uRWJtRURIalVvQ3lBcG1CbHNY?=
- =?utf-8?B?dmRVeE02TmM5OHhQQVYyc0c4SWI1M2FSWDdVcHJ1bjlRQm0xV1hybWxCVjJD?=
- =?utf-8?B?eVR0c3l4bW9GU1BBN3hCd2xWWnpzS0J2UTdxSTZrVTZBMm0yNEVHK0NQUWF2?=
- =?utf-8?B?bEhhR0l1TXB1ekhpNno4MVU2dXVSQlhwNW5JNm45ZVRCR05XT1lKZW54M25p?=
- =?utf-8?B?RHZwblZCZXVGWE9KSGEzaWlza0t1SkpFbkRCQ2RPTEdQUHI5eG5MRDVHSmpS?=
- =?utf-8?B?VDRZOHZ4VWMvc1ZsSS9kWktvR2NGREVKNmNDUTZmTDR4OGxkenJTVFFZTm1U?=
- =?utf-8?B?VnBndFZtOHp1bDhOeGhnR2NsQ1R2UTJDZW9QSWNyYlpjN3F1QzgrWXkwT29r?=
- =?utf-8?B?c2QyYXhOanR4N3hTNmZnSitld0lvanYyWXpUdUY3ZHZZV3lBTnQ0cDdsZzdC?=
- =?utf-8?B?T2E3bTl4UnUrV05OY3FQZ1Z2eVI0aXUwNHA2dzRwYnJlc2tYN0xHQWJiQjVY?=
- =?utf-8?B?TGRlQ3JMOFBScmZLR2NZV254d0ZZNDh6c2E5QThRREF0M05MRGNoMkxwYzFJ?=
- =?utf-8?B?YmtLQnFlems0ODZ0MTRNNXNiVDBTdjZpb1I5VnJwcS85Z1NCRlRZQ1U2dHl2?=
- =?utf-8?B?S0VxZzFXNDBkbkdidkpQWVRqNVVHMXZQbHRlVDR1Z2p6b2l2WEhkZEFmODBC?=
- =?utf-8?B?blZreTI5RTVtUTk4VVBKNnVJL04yWTEvcWFxSHl6cHowM1dPRFNUcUZ1MndL?=
- =?utf-8?B?VEF0dGVhdHpyaVBiUUZlNmpnaVd3MVptenp0SE9FLyswQUt4S0hzSnFkTUJh?=
- =?utf-8?B?aHRhdFRETUoxNjRFRE83RTNMRmx2dWJmbXVPaDZCZlk5bXZFL3JsdWd1UmN5?=
- =?utf-8?B?T0plQmxMOWM0RDJ0bmoxa1RURERoOVk0eXhaZ2JXaXJSMTBqQXZMK2I3aUNG?=
- =?utf-8?B?cnFOTFhxdklIclVXVlNMRm9JZUNxQ253c0lxR1pwcHNSc0RLTlJzZDNxNXQ5?=
- =?utf-8?B?WkNqTEd6TW92VWl1YklhNmNNOTliZHdTT1o2QWExMm1BSEJ6aWcyc3kwc1VS?=
- =?utf-8?B?OFZTY1QzaGJOMmJRaXVScEpXZGpWMjJvby9oUWgwNDA5Q1dvYkljUG9taVNI?=
- =?utf-8?B?dFpvNVRSUXJqZGl3bTdzQkJwUElzQXpMUVYzaWJRR3Y0Y1dUTnNsL01tRkZM?=
- =?utf-8?B?SCs5Mm1EcjRnb0xFN3hiMmRhOUxSTWUvZE90dDhMMUczcGowb1ZZYndhVmVB?=
- =?utf-8?B?QXdYdW1GRW5zUHFWcHlqbTJlRWUwZFJGWG1hU0FzMHk3dHk2elFKSzFKZG1Z?=
- =?utf-8?B?SHdjck5OUmhUSElxMENaWVJHdHVMcnR5N1hESzhWMGYxampxRHZ2UjVDdGtX?=
- =?utf-8?B?QUFnamZHZGNpWFFEWWNIT3R6SE85TGZLSWxZcFIweEpvNEQvbis5c1hJWjlj?=
- =?utf-8?B?ZjlMa2crNEh4WFB1V0lMblg2NlZodmVkSEVGaFdPY0M0dEJiN2FJeFEraiti?=
- =?utf-8?B?TyswOHljZDg3ZWI3Vmt3dHdEcDRxOXY5bEt0MmdNR0h2OHY1elV0eFFTSzRO?=
- =?utf-8?B?RVlJV3lLUk9PbFNWb0pHNEMvOGJsQm1lL3pNN3ErYTVtbWtmSGIzOW51aDhB?=
- =?utf-8?B?eHdTZm9qVEo0ZXo1U2gwTjhTcWdVT2lDdk4rT0p3SGRVSHRnaWtZcVJ3VDkx?=
- =?utf-8?B?TzRZZGF4alFCUlo1YjlISXFOZTVEWGJwQWRHNXBiVjNLRjNwZzhrOWNtaE16?=
- =?utf-8?B?UUd0dHkzK3cwT1pWT04xdkZReXYxdWdORC9YQTRhUzZNeXJoY2xsdE42djBB?=
- =?utf-8?B?bkp2WGF2NW8zc3RUazc4aDA5ZXVtbWc5MHZTek50WVdtSXA2YUxnTVpNdFVq?=
- =?utf-8?B?ajZ1UUtKcVpLajBlM3VuejNjeS9YSEdFV05nVjZXb0VqMjBydS9RUFFZby9X?=
- =?utf-8?B?ZWxtb0hGRXVRVUhFbWJBY1pwMCtjNExOY0lxVHE5Mm1Pd1I5cVMrR2xwSXk4?=
- =?utf-8?Q?U66BFVCcxxIKh5fAfvzVhsbgu8IgiM=3D?=
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
- SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:PAWPR08MB8909.eurprd08.prod.outlook.com;
- PTR:; CAT:NONE; SFS:(13230040)(1800799024)(376014)(366016)(38070700021);
- DIR:OUT; SFP:1101; 
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EF2C613625183C4A8A74BF14C25D51B1@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 3E8BD4064C;
+	Thu, 18 Sep 2025 22:32:30 +0200 (CEST)
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com
+ [205.220.168.131])
+ by mails.dpdk.org (Postfix) with ESMTP id F2735402D0
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 22:32:28 +0200 (CEST)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+ by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58IIP2Yq027424;
+ Thu, 18 Sep 2025 20:32:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+ cc:content-transfer-encoding:date:from:message-id:mime-version
+ :subject:to; s=qcppdkim1; bh=gV0VPBcjmG0OHdqUOHk+2O1VvBGbm2Sd0iI
+ b8cTKeZ4=; b=RAen5ScamX/nN0czkKQAesybg7gtgZfr0tIJcs2sliR0syT7dzZ
+ MaF19EfIg9SLDhFdZuV/hx2V+uo2K6i/d24aoxXULQ8uBRQz1vVzDLDrueqkj/1K
+ N+9syu94ToqlJoXQlGedhPzdv8RhBgk8SsfHL2WE3wMt0a1PeO31uf3cqHkdLv2U
+ z729cf5tr3RYv7KmXCW89L3dKFSohTY8LRBrtIRFiJpIFJno5I7lNLCnadM+TogV
+ BpusdbC/IDk1imjZJwQfDeU4jgY+VoZdOebacfXGwx4jp1SStdgCHkxPqlk6yDp7
+ MKqgkJhceNU8eAP7At3doDI7/lpomRYCcXw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com
+ [199.106.103.254])
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxt81eh-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 18 Sep 2025 20:32:27 +0000 (GMT)
+Received: from pps.filterd (NASANPPMTA01.qualcomm.com [127.0.0.1])
+ by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 58IKWRCm024598; 
+ Thu, 18 Sep 2025 20:32:27 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+ by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 497wy0qm67-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 18 Sep 2025 20:32:27 +0000
+Received: from NASANPPMTA01.qualcomm.com (NASANPPMTA01.qualcomm.com
+ [127.0.0.1])
+ by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58IKW4sv024241;
+ Thu, 18 Sep 2025 20:32:27 GMT
+Received: from tbs-5gnr-mt-30 (tbs-5gnr-mt-30.qualcomm.com [10.239.80.165])
+ by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 58IKWQJ6024588
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 18 Sep 2025 20:32:27 +0000
+Received: by tbs-5gnr-mt-30 (Postfix, from userid 2316195)
+ id 85C9D4016A; Thu, 18 Sep 2025 14:32:26 -0600 (MDT)
+From: Sameer Vaze <svaze@qti.qualcomm.com>
+To: Sunila Sahu <ssahu@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
+ Ashish Gupta <ashishg@marvell.com>
+Cc: dev@dpdk.org, Sameer Vaze <svaze@qti.qualcomm.com>
+Subject: [PATCH] compress/zlib: support for dictionary and PDCP checksum
+Date: Thu, 18 Sep 2025 14:32:10 -0600
+Message-Id: <20250918203210.1689254-1-svaze@qti.qualcomm.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB9196
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM4PEPF00027A6B.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 5a23f59e-2e4f-4477-bb4a-08ddf6da7f7f
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|35042699022|36860700013|14060799003|376014|82310400026|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?YTJhdXJHdGRibmIvN2IvcnRORUNUY0tReFZnUkd6b0x6TldDcVNNSFhoNktF?=
- =?utf-8?B?UUZ1ZGw3bXJzaGEwQzdzVFE1eTVyb3RvT2NmNUNVeUs2aXZmKzd0b25zUnRZ?=
- =?utf-8?B?MDJhTWNWazFRMFJsVGhySTY0Y1BCQ1RXUVB5c3JvVjQ2WlQ2Y1RqejRlVmE1?=
- =?utf-8?B?WDc4QzFycXdDVGpuQXBlTzFLTXJUaG1qdXcyYVpjSlFleU5oMUI3SmNaM1dJ?=
- =?utf-8?B?T0ZmL2xQcm05bEF5RTZFTUVsVGI5UG9GZjNWMlpHTFc5TG5jOThTMENIejVG?=
- =?utf-8?B?TGw1azFBaHEzWThoa0FFb05KdSt5V3BqdmUxUXNTMWdKdUQ2d3o4bSt1NzZE?=
- =?utf-8?B?NWxqb2J5ampteHB6VE9TajE1b2ZNVGRJendPVWFMSWQxMVM5ZHk0NU1TSmNG?=
- =?utf-8?B?RFBmRTRTNFdLUUZLeWdtVFhzV1BlVHN3Q3R5eFlyWThjcFZwS1ZaSzc4NCt5?=
- =?utf-8?B?a0w5RFB3ZE11RVhIanZlWjRFZEpwOHRBRVFqRVo4ZWl1NGJaNHBDc1EvNFV6?=
- =?utf-8?B?QzNVNFl6cTR5SVc1VC8xa21USzVxdDVwVXhjbVBaeUdGWklOUzBrdzBVYzQ3?=
- =?utf-8?B?UkpKb0JyMUlIZ2lLeWxBbVZhSkhMUjFYYlUxUG91ZENQTEY0a3pMZEFhU0FY?=
- =?utf-8?B?aDgyeThIRmlPTmkrMS9sdUxxWnIzTU9tbWpwcWZ5VmtvNjd1RThGUytnMFNF?=
- =?utf-8?B?Y3B5VzRRc05SdnpzNkVtcnZ0MkhMYWpSTHE5WFREOUNuOW15YkVaQlZLUlFP?=
- =?utf-8?B?THovc21XZXZxUXdMTGZyeUEvTUpBNGxJcjBrbGphRU9IZWc1eTJEeXpxQzh1?=
- =?utf-8?B?bHdUaGdxRFBoMnpFcmc4czFiT3c1ajhKTGZhTG5wdWdsUVVHUStteUIxWWRl?=
- =?utf-8?B?UmduU3ZBYm9VK3dtZWcxK0NBMTdqUWwySW5JWldqV0cvaHpleDFFSGZmQzZS?=
- =?utf-8?B?Vzg1V1pqT2ViZE0xaWRsVzU4NlpjdUZRS1p0ZXY5NGFxa1RBeTJQYWJwTEJi?=
- =?utf-8?B?NWl4OElpTDMvV2tDREl6MDhZTWRGamxlSUpzeXROdTZXNmtndUxiS2tvSXdO?=
- =?utf-8?B?R1d1VXowV202REpjVjZQOEgrb2QzN3BjRzViNmVIWG5hczVneEhQekhsMVl3?=
- =?utf-8?B?TjNBb2M2eEVGaklzZ2JDWmtVMFUycSt2UTY0NUVaWHJuSUJCekZqSGxYREQ0?=
- =?utf-8?B?NWVqbWg1dFJseFBBTjlHcFVnTnZMVW9XQ2VjU2RqdElsUjY1azFHR1RRV2Q5?=
- =?utf-8?B?dWU4U0hHQXI1dlhCMjBpSzErNisvdEpOUWJRZzZmWWxUR0o5SFJoTnB6L3Ur?=
- =?utf-8?B?THNLTlpuS2Q4TjZQQXdIOXF1K3FXdURPdTRGc3V4cnZYbG9kMk9VeWhkdzBX?=
- =?utf-8?B?NVZ0T3NTQ2pSTXZQWDA0TzVWWWs1WGV0RlBPbW9RaFZTQUhBdE9OZHBUTStl?=
- =?utf-8?B?R05DNUsvOGpHQW5xL2w2bTd2dVRpVmNleTlERXFnRkxIYzBiUm5aNGgvZnVI?=
- =?utf-8?B?Z2Q0ZjIwai95dy96UVRBNkNJN3RZQVovaHU5QUppWGRiSjAxekY3cklBUFZ2?=
- =?utf-8?B?bGZMWFdqenNyVFA0RXlLRFRienVnSXo3TFA0bFVqblBNZEJjS3NFblJSb3dm?=
- =?utf-8?B?V01UZytNZU0zRHNJWC8yL2dDUnJ2QkxBL1hVeVEwampTZ0l4UkluanNtRWJh?=
- =?utf-8?B?QmlQZXZxbGRzUG9oR3ZwdDZTdzBFMnNjSkNReFBaOWNCQjZ0RU9HZTdJR1NF?=
- =?utf-8?B?QVI1V2VKQ3liTWMvVGNIQ2g0UmFmY2VqWUZsOWZHK1diakNJQk9ub21qNGtK?=
- =?utf-8?B?MFpKc3lteGR6WWFZVjZ4VUdTUk44N1ZKRkNzUG1BL2RUaFdTVmNCSFU3MW1q?=
- =?utf-8?B?YWU1MkZESmlSdWE0eGpvc2tNSVZRcHB1RjFRcVZYdngzMGw5M0xobmZnT1VK?=
- =?utf-8?B?ZlNscFI5TmQ1bERqRjZHNEluODNpYTNab01FNWdFdzhBQWsrN0JkSUFjRjlX?=
- =?utf-8?B?UHVoZzlhREZXSzc2dHdmd0Z1MWxBUGp1OCtwZWRPMXpVQVJpR3phY0trQVZo?=
- =?utf-8?Q?3eV/qH?=
-X-Forefront-Antispam-Report: CIP:4.158.2.129; CTRY:GB; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:outbound-uk1.az.dlp.m.darktrace.com;
- PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(1800799024)(35042699022)(36860700013)(14060799003)(376014)(82310400026)(7053199007);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 17:41:18.8234 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d949a009-02fd-46c1-177c-08ddf6da9330
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d; Ip=[4.158.2.129];
- Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource: AM4PEPF00027A6B.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR08MB10310
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
+ signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
+ signatures=585085
+X-Proofpoint-GUID: NgnF4Fiv347c_OonrJ5nmK2FnxqoK4yw
+X-Authority-Analysis: v=2.4 cv=bIMWIO+Z c=1 sm=1 tr=0 ts=68cc6c5b cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=yJojWOMRYYMA:10 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=BrkBEixOsbVaADiXYk8A:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX1ptgo6d+LW0g
+ frQT7DBk+jPRjw8jBWG/msZUEZe0cVEcaBF0JDbhoHJFBBla+gPZeuKMUXw0QMc0EuCyp2l9NFe
+ H0+uD3NdgfgERFW59rS7W61vVTHP6FurWnd+0VpifTuKFsr/RmSMPTvQdXuKSvF/TA21FbZCJmM
+ HtFvGDP0Ky9NKZceulUiCBYjpztMl82LwEBTzob6yYE1tcZpvan2rPiN95dzzEMQ7mvaK63Qre5
+ UdeJbq+7xOnEYKSYq+IU3BZm6CzdrNh6pZmoL3ifenogxhFqciHwlf6JgpcaZ14MAV5BsgJfZfr
+ TRx/Q0907zdgT1O4LTUqTOQYkoimFsN0iuZCvp3cD1gTYn7MUCmlEMEGEzxyLphSzFhZGKD8+1k
+ NZEm3G8z
+X-Proofpoint-ORIG-GUID: NgnF4Fiv347c_OonrJ5nmK2FnxqoK4yw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-18_03,2025-09-18_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 impostorscore=0 malwarescore=0 adultscore=0 priorityscore=1501
+ suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509160202
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -214,112 +94,413 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-T24gV2VkLCAyMDI1LTA5LTE3IGF0IDA4OjQ3ICswMTAwLCBCcnVjZSBSaWNoYXJkc29uIHdyb3Rl
-Og0KPiBPbiBUdWUsIFNlcCAxNiwgMjAyNSBhdCAwNjoxOTo0MVBNICswMDAwLCBPbGEgTGlsamVk
-YWhsIHdyb3RlOg0KPiA+IChJIGFtIHNlbmRpbmcgdGhpcyBmcm9tIE91dGxvb2ssIEkgaG9wZSBJ
-IGhhdmUgYmVlbiBhYmxlIHRvIGZha2UgYQ0KPiA+IHByb3Blcg0KPiA+IGVtYWlsIGNsaWVudCkN
-Cj4gPg0KPiA+ID4gT24gMjAyNS0wOS0xNiwgMTc6NDMsICJCcnVjZSBSaWNoYXJkc29uIg0KPiA+
-ID4gPGJydWNlLnJpY2hhcmRzb25AaW50ZWwuY29tID4NCj4gPiA+IDxtYWlsdG86YnJ1Y2Uucmlj
-aGFyZHNvbkBpbnRlbC5jb20+PiB3cm90ZToNCj4gPiA+DQo+ID4gPg0KPiA+ID4gT24gTW9uLCBT
-ZXAgMTUsIDIwMjUgYXQgMDY6NTQ6NTBQTSArMDAwMCwgV2F0aHNhbGEgVml0aGFuYWdlDQo+ID4g
-PiB3cm90ZToNCj4gPiA+ID4gVGhlIGZ1bmN0aW9uIF9fcnRlX3JpbmdfaGVhZHRhaWxfbW92ZV9o
-ZWFkKCkgYXNzdW1lcyB0aGF0IHRoZQ0KPiA+ID4gPiBiYXJyaWVyDQo+ID4gPiA+IChmZW5jZSkg
-YmV0d2VlbiB0aGUgbG9hZCBvZiB0aGUgaGVhZCBhbmQgdGhlIGxvYWQtYWNxdWlyZSBvZg0KPiA+
-ID4gPiB0aGUNCj4gPiA+ID4gb3Bwb3NpbmcgdGFpbCBndWFyYW50ZWVzIHRoZSBmb2xsb3dpbmc6
-IGlmIGEgZmlyc3QgdGhyZWFkIHJlYWRzDQo+ID4gPiA+IHRhaWwNCj4gPiA+ID4gYW5kIHRoZW4g
-d3JpdGVzIGhlYWQgYW5kIGEgc2Vjb25kIHRocmVhZCByZWFkcyB0aGUgbmV3IHZhbHVlIG9mDQo+
-ID4gPiA+IGhlYWQNCj4gPiA+ID4gYW5kIHRoZW4gcmVhZHMgdGFpbCwgdGhlbiBpdCBzaG91bGQg
-b2JzZXJ2ZSB0aGUgc2FtZSAob3IgYQ0KPiA+ID4gPiBsYXRlcikNCj4gPiA+ID4gdmFsdWUgb2Yg
-dGFpbC4NCj4gPiA+ID4NCj4gPiA+ID4gVGhpcyBhc3N1bXB0aW9uIGlzIGluY29ycmVjdCB1bmRl
-ciB0aGUgQzExIG1lbW9yeSBtb2RlbC4gSWYgdGhlDQo+ID4gPiA+IGJhcnJpZXINCj4gPiA+ID4g
-KGZlbmNlKSBpcyBpbnRlbmRlZCB0byBlc3RhYmxpc2ggYSB0b3RhbCBvcmRlcmluZyBvZiByaW5n
-DQo+ID4gPiA+IG9wZXJhdGlvbnMsDQo+ID4gPiA+IGl0IGZhaWxzIHRvIGRvIHNvLiBJbnN0ZWFk
-LCB0aGUgY3VycmVudCBpbXBsZW1lbnRhdGlvbiBvbmx5DQo+ID4gPiA+IGVuZm9yY2VzIGENCj4g
-PiA+ID4gcGFydGlhbCBvcmRlcmluZywgd2hpY2ggY2FuIGxlYWQgdG8gdW5zYWZlIGludGVybGVh
-dmluZ3MuIEluDQo+ID4gPiA+IHBhcnRpY3VsYXIsDQo+ID4gPiA+IHNvbWUgcGFydGlhbCBvcmRl
-cnMgY2FuIGNhdXNlIHVuZGVyZmxvd3MgaW4gZnJlZSBzbG90IG9yDQo+ID4gPiA+IGF2YWlsYWJs
-ZQ0KPiA+ID4gPiBlbGVtZW50IGNvbXB1dGF0aW9ucywgcG90ZW50aWFsbHkgcmVzdWx0aW5nIGlu
-IGRhdGEgY29ycnVwdGlvbi4NCj4gPiA+ID4NCj4gPiA+ID4gVGhlIGlzc3VlIG1hbmlmZXN0cyB3
-aGVuIGEgQ1BVIGZpcnN0IGFjdHMgYXMgYSBwcm9kdWNlciBhbmQNCj4gPiA+ID4gbGF0ZXIgYXMg
-YQ0KPiA+ID4gPiBjb25zdW1lci4gSW4gdGhpcyBzY2VuYXJpbywgdGhlIGJhcnJpZXIgYXNzdW1w
-dGlvbiBtYXkgZmFpbA0KPiA+ID4gPiB3aGVuIGFub3RoZXINCj4gPiA+ID4gY29yZSB0YWtlcyB0
-aGUgY29uc3VtZXIgcm9sZS4gQSBIZXJkNyBsaXRtdXMgdGVzdCBpbiBDMTEgY2FuDQo+ID4gPiA+
-IGRlbW9uc3RyYXRlDQo+ID4gPiA+IHRoaXMgdmlvbGF0aW9uLiBUaGUgcHJvYmxlbSBoYXMgbm90
-IGJlZW4gd2lkZWx5IG9ic2VydmVkIHNvIGZhcg0KPiA+ID4gPiBiZWNhdXNlOg0KPiA+ID4gPiAo
-YSkgb24gc3Ryb25nIG1lbW9yeSBtb2RlbHMgKGUuZy4sIHg4Ni02NCkgdGhlIGFzc3VtcHRpb24N
-Cj4gPiA+ID4gaG9sZHMsIGFuZA0KPiA+ID4gPiAoYikgb24gcmVsYXhlZCBtb2RlbHMgd2l0aCBS
-Q3NjIHNlbWFudGljcyB0aGUgb3JkZXJpbmcgaXMgc3RpbGwNCj4gPiA+ID4gc3Ryb25nDQo+ID4g
-PiA+IGVub3VnaCB0byBwcmV2ZW50IGhhemFyZHMuDQo+ID4gPiA+IFRoZSBwcm9ibGVtIGJlY29t
-ZXMgdmlzaWJsZSBvbmx5IG9uIHdlYWtlciBtb2RlbHMsIHdoZW4gbG9hZC0NCj4gPiA+ID4gYWNx
-dWlyZSBpcw0KPiA+ID4gPiBpbXBsZW1lbnRlZCB3aXRoIFJDcGMgc2VtYW50aWNzIChlLmcuIHNv
-bWUgQUFyY2g2NCBDUFVzIHdoaWNoDQo+ID4gPiA+IHN1cHBvcnQNCj4gPiA+ID4gdGhlIExEQVBS
-IGFuZCBMREFQVVIgaW5zdHJ1Y3Rpb25zKS4NCj4gPiA+ID4NCj4gPiA+ID4gVGhyZWUgcG9zc2li
-bGUgc29sdXRpb25zIGV4aXN0Og0KPiA+ID4gPiAxLiBTdHJlbmd0aGVuIG9yZGVyaW5nIGJ5IHVw
-Z3JhZGluZyByZWxlYXNlL2FjcXVpcmUgc2VtYW50aWNzDQo+ID4gPiA+IHRvDQo+ID4gPiA+IHNl
-cXVlbnRpYWwgY29uc2lzdGVuY3kuIFRoaXMgcmVxdWlyZXMgdXNpbmcgc2VxLWNzdCBmb3Igc3Rv
-cmVzLA0KPiA+ID4gPiBsb2FkcywgYW5kIENBUyBvcGVyYXRpb25zLiBIb3dldmVyLCB0aGlzIGFw
-cHJvYWNoIGludHJvZHVjZXMgYQ0KPiA+ID4gPiBzaWduaWZpY2FudCBwZXJmb3JtYW5jZSBwZW5h
-bHR5IG9uIHJlbGF4ZWQtbWVtb3J5DQo+ID4gPiA+IGFyY2hpdGVjdHVyZXMuDQo+ID4gPiA+DQo+
-ID4gPiA+IDIuIEVzdGFibGlzaCBhIHNhZmUgcGFydGlhbCBvcmRlciBieSBlbmZvcmNpbmcgYSBw
-YWlyLXdpc2UNCj4gPiA+ID4gaGFwcGVucy1iZWZvcmUgcmVsYXRpb25zaGlwIGJldHdlZW4gdGhy
-ZWFkIG9mIHNhbWUgcm9sZSBieQ0KPiA+ID4gPiBjaGFuZ2luZw0KPiA+ID4gPiB0aGUgQ0FTIGFu
-ZCB0aGUgcHJlY2VkaW5nIGxvYWQgb2YgdGhlIGhlYWQgYnkgY29udmVydGluZyB0aGVtDQo+ID4g
-PiA+IHRvDQo+ID4gPiA+IHJlbGVhc2UgYW5kIGFjcXVpcmUgcmVzcGVjdGl2ZWx5LiBUaGlzIGFw
-cHJvYWNoIG1ha2VzIHRoZQ0KPiA+ID4gPiBvcmlnaW5hbA0KPiA+ID4gPiBiYXJyaWVyIGFzc3Vt
-cHRpb24gdW5uZWNlc3NhcnkgYW5kIGFsbG93cyBpdHMgcmVtb3ZhbC4NCj4gPiA+ID4NCj4gPiA+
-ID4gMy4gUmV0YWluIHBhcnRpYWwgb3JkZXJpbmcgYnV0IGVuc3VyZSBvbmx5IHNhZmUgcGFydGlh
-bCBvcmRlcnMNCj4gPiA+ID4gYXJlDQo+ID4gPiA+IGNvbW1pdHRlZC4gVGhpcyBjYW4gYmUgZG9u
-ZSBieSBkZXRlY3RpbmcgdW5kZXJmbG93IGNvbmRpdGlvbnMNCj4gPiA+ID4gKHByb2R1Y2VyIDwg
-Y29uc3VtZXIpIGFuZCBxdWFzaGluZyB0aGUgdXBkYXRlIGluIHN1Y2ggY2FzZXMuDQo+ID4gPiA+
-IFRoaXMgYXBwcm9hY2ggbWFrZXMgdGhlIG9yaWdpbmFsIGJhcnJpZXIgYXNzdW1wdGlvbiB1bm5l
-Y2Vzc2FyeQ0KPiA+ID4gPiBhbmQgYWxsb3dzIGl0cyByZW1vdmFsLg0KPiA+ID4gPg0KPiA+ID4g
-PiBUaGlzIHBhdGNoIGltcGxlbWVudHMgc29sdXRpb24gKDMpIGZvciBwZXJmb3JtYW5jZSByZWFz
-b25zLg0KPiA+ID4gPg0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBXYXRoc2FsYSBWaXRoYW5hZ2UN
-Cj4gPiA+ID4gPHdhdGhzYWxhLnZpdGhhbmFnZUBhcm0uY29tIDxtYWlsdG86DQo+ID4gPiA+IHdh
-dGhzYWxhLnZpdGhhbmFnZUBhcm0uY29tPj4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogT2xhIExp
-bGplZGFobA0KPiA+ID4gPiA8b2xhLmxpbGplZGFobEBhcm0uY29tIDxtYWlsdG86b2xhLmxpbGpl
-ZGFobEBhcm0uY29tPj4NCj4gPiA+ID4gUmV2aWV3ZWQtYnk6IEhvbm5hcHBhIE5hZ2FyYWhhbGxp
-DQo+ID4gPiA+IDxob25uYXBwYS5uYWdhcmFoYWxsaUBhcm0uY29tIDxtYWlsdG86DQo+ID4gPiA+
-IGhvbm5hcHBhLm5hZ2FyYWhhbGxpQGFybS5jb20+Pg0KPiA+ID4gPiBSZXZpZXdlZC1ieTogRGhy
-dXYgVHJpcGF0aGkNCj4gPiA+ID4gPGRocnV2LnRyaXBhdGhpQGFybS5jb20gPG1haWx0bzpkaHJ1
-di50cmlwYXRoaUBhcm0uY29tPj4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+IGxpYi9yaW5nL3J0ZV9y
-aW5nX2MxMV9wdnQuaCB8IDEwICsrKysrKystLS0NCj4gPiA+ID4gMSBmaWxlIGNoYW5nZWQsIDcg
-aW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCj4gPiA+ID4NCj4gPiA+IFRoYW5rIHlvdSBm
-b3IgdGhlIHZlcnkgY29tcHJlaGVuc2l2ZSB3cml0ZS11cCBpbiB0aGUgYXJ0aWNsZQ0KPiA+ID4g
-YWJvdXQgdGhpcy4NCj4gPiA+IEl0IHdhcyB2ZXJ5IGVkdWNhdGlvbmFsLg0KPiA+ID4NCj4gPiA+
-DQo+ID4gPiBPbiB0aGUgcGF0Y2gsIGFyZSB3ZSBzdXJlIHRoYXQgb3B0aW9uICMzIGlzIHNhZmUg
-dG8gdGFrZSBhcyBhbg0KPiA+ID4gYXBwcm9hY2g/IEl0DQo+ID4gPiBzZWVtcyB3cm9uZyB0byBt
-ZSB0byBkZWxpYmVyYXRlbHkgbGVhdmUgb3JkZXJpbmcgaXNzdWVzIGluIHRoZQ0KPiA+ID4gY29k
-ZSBhbmQNCj4gPiA+IGp1c3QgdHJ5IGFuZCBmaXggdGhlbSB1cCBsYXRlci4gV291bGQgdGhlcmUg
-YmUgYSBub3RpY2FibGUNCj4gPiA+IHBlcmZvcm1hbmNlDQo+ID4gPiBkaWZmZXJlbmNlIGZvciBy
-ZWFsLXdvcmxkIGFwcHMgaWYgd2UgdG9vayBvcHRpb24gIzIsIGFuZCBhY3R1YWxseQ0KPiA+ID4g
-dXNlZA0KPiA+ID4gY29ycmVjdCBvcmRlcmluZyBzZW1hbnRpY3M/DQo+ID4gSSBhbSBwcmV0dHkg
-c3VyZSB0aGF0IGFsbCBuZWNlc3Nhcnkgb3JkZXJpbmdzIGZvciBzYWZlbHkNCj4gPiB0cmFuc2Zl
-cnJpbmcgZWxlbWVudHMNCj4gPiBmcm9tIHByb2R1Y2VycyB0byBjb25zdW1lcnMgKGFuZCBlbXB0
-eSBzbG90cyBmcm9tIGNvbnN1bWVycyB0bw0KPiA+IHByb2R1Y2VycykNCj4gPiBhcmUgcHJlc2Vu
-dCBpbiB0aGUgY29kZSAoSSBzdGlsbCBoYXZlIHNvbWUgcXVlc3Rpb25zIG9uIHRoZSB1c2Ugb2YN
-Cj4gPiBtZW1vcnkNCj4gPiBvcmRlciByZWxheGVkIGluIF9fcnRlX3JpbmdfdXBkYXRlX3RhaWws
-IHdlIHNob3VsZCBjcmVhdGUgYSBsaXRtdXMNCj4gPiB0ZXN0IGZvcg0KPiA+IHRoaXMsIHRvIHNl
-ZSB3aGF0IGlzIHJlcXVpcmVkIGJ5IHRoZSBDIG1lbW9yeSBtb2RlbCkuIFdoYXQgb3RoZXINCj4g
-PiBtZXRyaWNzDQo+ID4gZm9yIGNvcnJlY3RuZXNzIGRvIHlvdSBzdWdnZXN0Pw0KPiA+DQo+DQo+
-IE5vdCBzdWdnZXN0aW5nIGFueSBvdGhlciBtZXRyaWNzIGZvciBjb3JyZWN0bmVzcy4gSSdtIGlu
-c3RlYWQganVzdA0KPiB3YW50aW5nDQo+IHRvIGRvdWJsZS1jaGVjayB0aGUgY29zdC1iZW5lZml0
-IG9mIHRha2luZyB0aGUgYXBwcm9hY2ggb2YgcHV0dGluZyBpbg0KPiBhDQo+IGZpeC11cCwgb3Ig
-d29ya2Fyb3VuZCwgaW4gdGhlIGNvZGUgaGVyZSwgcmF0aGVyIHRoYW4gYWN0dWFsbHkNCj4gY29y
-cmVjdGluZw0KPiB0aGUgbWVtb3J5IG9yZGVyaW5nIHVzZS4gIEFsc28sIGdpdmVuIHRoYXQgdGhl
-IHdvcmthcm91bmQgdXNlcw0KPiBzdWJ0cmFjdGlvbg0KPiB0byBkZXRlY3QgdW5kZXJmbG93LCBh
-cmUgd2UgMTAwJSBzdXJlIHRoYXQgd2UgaGF2ZSBndWFyYW50ZWVkIGNvcnJlY3QNCj4gYmVoYXZp
-b3VyIG9uIGNvdW50ZXIgd3JhcGFyb3VuZCBhdCB1aW50MzJfdCBtYXg/DQo+DQoNCkkgYWdyZWXi
-gJR0aGF0J3MgYSB2YWxpZCBjb25jZXJuLiBJZiB0aGUgY29uc3VtZXIgcmVhZHMgYSBzdGFsZQ0K
-cHJvZHVjZXJfdGFpbCBvZiAweGZmZmZmZmZmIGFuZCB0aGUgaW5kZXggaGFzIHNpbmNlIHdyYXBw
-ZWQgdG8gTiwgdGhlDQpuZWdhdGl2ZSBjaGVjayBkZXRlY3RzIHRoZSBwYXJ0aWFsLW9yZGVyIGVm
-ZmVjdCBmb3IgTiA8IDB4ODAwMDAwMDAgYW5kLA0Kbm90IGZvciBOIOKJpSAweDgwMDAwMDAwLiBJ
-biBwcmFjdGljZSB0aGUgbGlrZWxpaG9vZCBvZiB0aGUgbGF0dGVyIGlzDQp1bmxpa2VseS4NCkhv
-d2V2ZXIsIGNvbXBhcmluZyBhZ2FpbnN0IHRoZSByaW5nIGNhcGFjaXR5IHdvdWxkIGJlIGV2ZW4g
-c2FmZXIsIHNpbmNlDQppdCBjb3ZlcnMgYSBsYXJnZXIgcmFuZ2UgZm9yIE4uDQoNCi0td2F0aHNh
-bGENCg0KDQpJTVBPUlRBTlQgTk9USUNFOiBUaGUgY29udGVudHMgb2YgdGhpcyBlbWFpbCBhbmQg
-YW55IGF0dGFjaG1lbnRzIGFyZSBjb25maWRlbnRpYWwgYW5kIG1heSBhbHNvIGJlIHByaXZpbGVn
-ZWQuIElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQsIHBsZWFzZSBub3RpZnkg
-dGhlIHNlbmRlciBpbW1lZGlhdGVseSBhbmQgZG8gbm90IGRpc2Nsb3NlIHRoZSBjb250ZW50cyB0
-byBhbnkgb3RoZXIgcGVyc29uLCB1c2UgaXQgZm9yIGFueSBwdXJwb3NlLCBvciBzdG9yZSBvciBj
-b3B5IHRoZSBpbmZvcm1hdGlvbiBpbiBhbnkgbWVkaXVtLiBUaGFuayB5b3UuDQo=
+Adds support to provide predefined dictionaries to zlib. Handles setting
+and getting of dictionaries using zlib apis. Also includes support to
+read dictionary files
+
+Adds support for passing in and validationg 3GPP PDCP spec defined
+checksums as defined under the Uplink Data Compression(UDC) feature.
+Changes also include functions that do inflate or deflate specfic
+checksum operations.
+
+Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
+---
+ drivers/compress/zlib/zlib_pmd.c         | 173 +++++++++++++++++++++--
+ drivers/compress/zlib/zlib_pmd_private.h |   8 ++
+ lib/compressdev/rte_comp.h               |  31 ++++
+ 3 files changed, 203 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/compress/zlib/zlib_pmd.c b/drivers/compress/zlib/zlib_pmd.c
+index 92e808e78c..1b1abd72e7 100644
+--- a/drivers/compress/zlib/zlib_pmd.c
++++ b/drivers/compress/zlib/zlib_pmd.c
+@@ -4,6 +4,7 @@
+ 
+ #include <bus_vdev_driver.h>
+ #include <rte_common.h>
++#include <rte_malloc.h>
+ 
+ #include "zlib_pmd_private.h"
+ 
+@@ -15,6 +16,120 @@
+ 		(data = rte_pktmbuf_mtod(mbuf, uint8_t *)),	\
+ 		(len = rte_pktmbuf_data_len(mbuf)) : 0)
+ 
++#define BOTTOM_NIBBLE_OF_BYTE 0xf
++#define TOP_NIBBLE_OF_BYTE 0xf0
++
++static void
++process_zlib_deflate_chksum(struct rte_comp_op *op,
++		z_stream *strm, enum rte_comp_checksum_type chksum)
++{
++	uint8_t *dictionary = NULL;
++	uint32_t dictionary_len = 0;
++	op->status = RTE_COMP_OP_STATUS_SUCCESS;
++
++	switch (chksum) {
++	case RTE_COMP_CHECKSUM_NONE:
++	case RTE_COMP_CHECKSUM_CRC32:
++	case RTE_COMP_CHECKSUM_ADLER32:
++	case RTE_COMP_CHECKSUM_CRC32_ADLER32:
++		ZLIB_PMD_ERR("Checksum type not supported");
++		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
++		break;
++	case RTE_COMP_CHECKSUM_3GPP_PDCP_UDC:
++		dictionary = rte_zmalloc(NULL, DEFLATE_MAX_WINDOW_SIZE, 0);
++
++		if (!dictionary) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_ERROR;
++			return;
++		}
++
++		if (deflateGetDictionary(strm, dictionary, &dictionary_len)) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_CHECK_SUM_VALIDATION_FAILED;
++			rte_free(dictionary);
++			return;
++		}
++
++		uint32_t dictionary_start = (uint32_t)(*dictionary);
++		uint32_t dictionary_end = (uint32_t)(*(dictionary + dictionary_len - 4));
++		uint32_t sum = (dictionary_start & 0x0F0F0F0F)
++			+ (dictionary_start & (0xF0F0F0F0 >> 4))
++			+ (dictionary_end & 0x0F0F0F0F)
++			+ (dictionary_end & (0xF0F0F0F0 >> 4));
++		uint8_t *sum_bytes = (uint8_t *)&sum;
++
++		op->output_chksum = ~(sum_bytes[0] + sum_bytes[1] + sum_bytes[2] + sum_bytes[3])
++			 & BOTTOM_NIBBLE_OF_BYTE;
++
++		rte_free(dictionary);
++
++		break;
++	default:
++		ZLIB_PMD_ERR("Checksum not supported");
++		return;
++	}
++}
++
++static void
++process_zlib_inflate_chksum(struct rte_comp_op *op,
++		z_stream *strm,
++		enum rte_comp_checksum_type chksum)
++{
++	uint8_t *dictionary = NULL;
++	uint32_t dictionary_len = 0;
++	op->status = RTE_COMP_OP_STATUS_SUCCESS;
++
++	switch (chksum) {
++	case RTE_COMP_CHECKSUM_NONE:
++	case RTE_COMP_CHECKSUM_CRC32:
++	case RTE_COMP_CHECKSUM_ADLER32:
++	case RTE_COMP_CHECKSUM_CRC32_ADLER32:
++		ZLIB_PMD_ERR("Checksum type not supported");
++		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
++		break;
++	case RTE_COMP_CHECKSUM_3GPP_PDCP_UDC:
++		dictionary = rte_zmalloc(NULL, DEFLATE_MAX_WINDOW_SIZE, 0);
++
++		if (!dictionary) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_ERROR;
++			return;
++		}
++
++		if (inflateGetDictionary(strm, dictionary, &dictionary_len)) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_CHECK_SUM_VALIDATION_FAILED;
++			rte_free(dictionary);
++			return;
++		}
++
++		uint32_t dictionary_start = (uint32_t)(*dictionary);
++		uint32_t dictionary_end = (uint32_t)(*(dictionary + dictionary_len - 4));
++		uint32_t sum = (dictionary_start & 0x0F0F0F0F)
++			+ (dictionary_start & (0xF0F0F0F0 >> 4))
++			+ (dictionary_end & 0x0F0F0F0F)
++			+ (dictionary_end & (0xF0F0F0F0 >> 4));
++		uint8_t *sum_bytes = (uint8_t *)&sum;
++
++		op->output_chksum = ~(sum_bytes[0] + sum_bytes[1] + sum_bytes[2] + sum_bytes[3])
++			 & BOTTOM_NIBBLE_OF_BYTE;
++
++		if (op->input_chksum != op->output_chksum) {
++			ZLIB_PMD_ERR("Checksum does not match");
++			op->status = RTE_COMP_OP_STATUS_CHECK_SUM_VALIDATION_FAILED;
++			rte_free(dictionary);
++			return;
++		}
++		rte_free(dictionary);
++
++		break;
++	default:
++		ZLIB_PMD_ERR("Checksum not supported");
++		return;
++	}
++}
++
+ static void
+ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ {
+@@ -27,6 +142,9 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 	case RTE_COMP_FLUSH_FINAL:
+ 		fin_flush = Z_FINISH;
+ 		break;
++	case RTE_COMP_FLUSH_SYNC:
++		fin_flush = Z_SYNC_FLUSH;
++		break;
+ 	default:
+ 		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
+ 		ZLIB_PMD_ERR("Invalid flush value");
+@@ -49,6 +167,9 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 
+ 	strm->avail_out = rte_pktmbuf_data_len(mbuf_dst) - op->dst.offset;
+ 
++	uLong total_in_at_start = strm->total_in;
++	uLong total_out_at_start = strm->total_out;
++
+ 	/* Set flush value to NO_FLUSH unless it is last mbuf */
+ 	flush = Z_NO_FLUSH;
+ 	/* Initialize status to SUCCESS */
+@@ -56,8 +177,8 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 
+ 	do {
+ 		/* Set flush value to Z_FINISH for last block */
+-		if ((op->src.length - strm->total_in) <= strm->avail_in) {
+-			strm->avail_in = (op->src.length - strm->total_in);
++		if ((op->src.length - (strm->total_in - total_in_at_start)) <= strm->avail_in) {
++			strm->avail_in = (op->src.length - (strm->total_in - total_in_at_start));
+ 			flush = fin_flush;
+ 		}
+ 		do {
+@@ -92,17 +213,18 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 	/* Update op stats */
+ 	switch (op->status) {
+ 	case RTE_COMP_OP_STATUS_SUCCESS:
+-		op->consumed += strm->total_in;
++		op->consumed += strm->total_in - total_in_at_start;
+ 	/* Fall-through */
+ 	case RTE_COMP_OP_STATUS_OUT_OF_SPACE_TERMINATED:
+-		op->produced += strm->total_out;
++		op->produced += strm->total_out - total_out_at_start;
+ 		break;
+ 	default:
+ 		ZLIB_PMD_ERR("stats not updated for status:%d",
+ 				op->status);
+ 	}
+ 
+-	deflateReset(strm);
++	if (op->flush_flag != RTE_COMP_FLUSH_SYNC)
++		deflateReset(strm);
+ }
+ 
+ static void
+@@ -127,6 +249,9 @@ process_zlib_inflate(struct rte_comp_op *op, z_stream *strm)
+ 
+ 	strm->avail_out = rte_pktmbuf_data_len(mbuf_dst) - op->dst.offset;
+ 
++	uLong total_in_at_start = strm->total_in;
++	uLong total_out_at_start = strm->total_out;
++
+ 	/** Ignoring flush value provided from application for decompression */
+ 	flush = Z_NO_FLUSH;
+ 	/* initialize status to SUCCESS */
+@@ -178,17 +303,18 @@ process_zlib_inflate(struct rte_comp_op *op, z_stream *strm)
+ 	/* Update op stats */
+ 	switch (op->status) {
+ 	case RTE_COMP_OP_STATUS_SUCCESS:
+-		op->consumed += strm->total_in;
++		op->consumed += strm->total_in - total_in_at_start;
+ 	/* Fall-through */
+ 	case RTE_COMP_OP_STATUS_OUT_OF_SPACE_TERMINATED:
+-		op->produced += strm->total_out;
++		op->produced += strm->total_out - total_out_at_start;
+ 		break;
+ 	default:
+ 		ZLIB_PMD_ERR("stats not produced for status:%d",
+ 				op->status);
+ 	}
+ 
+-	inflateReset(strm);
++	if (op->flush_flag != RTE_COMP_FLUSH_SYNC)
++		inflateReset(strm);
+ }
+ 
+ /** Process comp operation for mbuf */
+@@ -203,10 +329,14 @@ process_zlib_op(struct zlib_qp *qp, struct rte_comp_op *op)
+ 			(op->dst.offset > rte_pktmbuf_data_len(op->m_dst))) {
+ 		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
+ 		ZLIB_PMD_ERR("Invalid source or destination buffers or "
+-			     "invalid Operation requested");
++				  "invalid Operation requested");
+ 	} else {
+ 		private_xform = (struct zlib_priv_xform *)op->private_xform;
+ 		stream = &private_xform->stream;
++		stream->chksum(op, &stream->strm, stream->chksum_type);
++		if (op->status != RTE_COMP_OP_STATUS_SUCCESS)
++			return -1;
++
+ 		stream->comp(op, &stream->strm);
+ 	}
+ 	/* whatever is out of op, put it into completion queue with
+@@ -232,6 +362,7 @@ zlib_set_stream_parameters(const struct rte_comp_xform *xform,
+ 	case RTE_COMP_COMPRESS:
+ 		stream->comp = process_zlib_deflate;
+ 		stream->free = deflateEnd;
++		stream->chksum = process_zlib_deflate_chksum;
+ 		/** Compression window bits */
+ 		switch (xform->compress.algo) {
+ 		case RTE_COMP_ALGO_DEFLATE:
+@@ -281,17 +412,30 @@ zlib_set_stream_parameters(const struct rte_comp_xform *xform,
+ 			ZLIB_PMD_ERR("Compression strategy not supported");
+ 			return -1;
+ 		}
++
++		/** Checksum used */
++		stream->chksum_type = xform->compress.chksum;
++
+ 		if (deflateInit2(strm, level,
+ 					Z_DEFLATED, wbits,
+ 					DEF_MEM_LEVEL, strategy) != Z_OK) {
+ 			ZLIB_PMD_ERR("Deflate init failed");
+ 			return -1;
+ 		}
++
++		if (xform->compress.dictionary) {
++			if (deflateSetDictionary(strm, xform->compress.dictionary,
++					xform->compress.dictionary_len)) {
++				ZLIB_PMD_ERR("Deflate set dictionary failed");
++				return -1;
++			}
++		}
+ 		break;
+ 
+ 	case RTE_COMP_DECOMPRESS:
+ 		stream->comp = process_zlib_inflate;
+ 		stream->free = inflateEnd;
++		stream->chksum = process_zlib_inflate_chksum;
+ 		/** window bits */
+ 		switch (xform->decompress.algo) {
+ 		case RTE_COMP_ALGO_DEFLATE:
+@@ -302,10 +446,21 @@ zlib_set_stream_parameters(const struct rte_comp_xform *xform,
+ 			return -1;
+ 		}
+ 
++		/** Checksum used */
++		stream->chksum_type = xform->decompress.chksum;
++
+ 		if (inflateInit2(strm, wbits) != Z_OK) {
+ 			ZLIB_PMD_ERR("Inflate init failed");
+ 			return -1;
+ 		}
++
++		if (xform->decompress.dictionary) {
++			if (inflateSetDictionary(strm, xform->decompress.dictionary,
++					xform->decompress.dictionary_len)) {
++				ZLIB_PMD_ERR("inflate set dictionary failed");
++				return -1;
++			}
++		}
+ 		break;
+ 	default:
+ 		return -1;
+diff --git a/drivers/compress/zlib/zlib_pmd_private.h b/drivers/compress/zlib/zlib_pmd_private.h
+index fd8c4c55a4..99bfdc9a76 100644
+--- a/drivers/compress/zlib/zlib_pmd_private.h
++++ b/drivers/compress/zlib/zlib_pmd_private.h
+@@ -46,6 +46,10 @@ typedef void (*comp_func_t)(struct rte_comp_op *op, z_stream *strm);
+ 
+ typedef int (*comp_free_t)(z_stream *strm);
+ 
++typedef void (*chksum_func_t)
++		(struct rte_comp_op *op, z_stream *strm, enum rte_comp_checksum_type chksum);
++
++
+ /** ZLIB Stream structure */
+ struct __rte_cache_aligned zlib_stream {
+ 	z_stream strm;
+@@ -54,6 +58,10 @@ struct __rte_cache_aligned zlib_stream {
+ 	/**< Operation (compression/decompression) */
+ 	comp_free_t free;
+ 	/**< Free Operation (compression/decompression) */
++	chksum_func_t chksum;
++	/**< Checksum Operation (compression/decompression) */
++	enum rte_comp_checksum_type chksum_type;
++	/**< Type of checksum to generate on the uncompressed data */
+ };
+ 
+ /** ZLIB private xform structure */
+diff --git a/lib/compressdev/rte_comp.h b/lib/compressdev/rte_comp.h
+index 96d9b276dd..169d3d960e 100644
+--- a/lib/compressdev/rte_comp.h
++++ b/lib/compressdev/rte_comp.h
+@@ -101,6 +101,10 @@ enum rte_comp_op_status {
+ 	 * is not an error case. Output data up to op.produced can be used and
+ 	 * next op in the stream should continue on from op.consumed+1.
+ 	 */
++	RTE_COMP_OP_STATUS_CHECK_SUM_VALIDATION_FAILED,
++	/**< Checksum validation failed. Either calculated does checksum not match
++	 * the one provided or there was an error calculating the checksum
++	 */
+ };
+ 
+ /** Compression Algorithms */
+@@ -166,6 +170,10 @@ enum rte_comp_checksum_type {
+ 	/**< Generates a xxHash-32 checksum, as used by LZ4.
+ 	 * https://github.com/Cyan4973/xxHash/blob/dev/doc/xxhash_spec.md
+ 	 */
++	RTE_COMP_CHECKSUM_3GPP_PDCP_UDC,
++	/**< Generates checksum as defined under Uplink Data Compression
++	 * checksum as defined in the 3GPP PDCP specification
++	 */
+ };
+ 
+ /** Compression Huffman Type - used by DEFLATE algorithm */
+@@ -201,6 +209,11 @@ enum rte_comp_flush_flag {
+ 	 */
+ };
+ 
++#define	DEFLATE_MAX_WINDOW_SIZE	(1ULL << 15)
++
++#define	DEFLATE_MIN_WINDOW_SIZE		(1ULL << 8)
++
++
+ /** Compression transform types */
+ enum rte_comp_xform_type {
+ 	RTE_COMP_COMPRESS,
+@@ -305,6 +318,15 @@ struct rte_comp_compress_xform {
+ 	/**< Hash algorithm to be used with compress operation. Hash is always
+ 	 * done on plaintext.
+ 	 */
++	uint8_t *dictionary;
++	/**<
++	 * Pointer to memory containing dictionary to be used for inflate
++	 * and deflate operations
++	 */
++	uint16_t dictionary_len;
++	/**<
++	 * Length of dictionary to be used
++	 */
+ };
+ 
+ /**
+@@ -328,6 +350,15 @@ struct rte_comp_decompress_xform {
+ 	/**< Hash algorithm to be used with decompress operation. Hash is always
+ 	 * done on plaintext.
+ 	 */
++	uint8_t *dictionary;
++	/**<
++	 * Pointer to memory containing dictionary to be used for inflate
++	 * and deflate operations
++	 */
++	uint16_t dictionary_len;
++	/**<
++	 * Length of dictionary to be used
++	 */
+ };
+ 
+ /**
+-- 
+2.31.1
+
