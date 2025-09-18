@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF04CCAC597
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 07:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A129CAC59A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 07:32:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB7D740612;
-	Thu, 18 Sep 2025 09:32:07 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E12494064F;
+	Thu, 18 Sep 2025 09:32:12 +0200 (CEST)
 Received: from fhigh-a2-smtp.messagingengine.com
  (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
- by mails.dpdk.org (Postfix) with ESMTP id A85B54027A;
- Thu, 18 Sep 2025 09:32:06 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7AA364042F
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 09:32:11 +0200 (CEST)
 Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 43B101400234;
- Thu, 18 Sep 2025 03:32:06 -0400 (EDT)
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 193BB140020F;
+ Thu, 18 Sep 2025 03:32:11 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Thu, 18 Sep 2025 03:32:06 -0400
+ by phl-compute-06.internal (MEProxy); Thu, 18 Sep 2025 03:32:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm1; t=1758180726; x=
- 1758267126; bh=51fguQeFqArwy85wukflxmiVYLUMFSobjee5Kjxb720=; b=Z
- mnYqeqKq06C2gkH6oZtKnJoIf4XHohOywuaFpkCnlcSqpRcjYMXGFTPvdoReDRbm
- pcwxm4jyMYxcOMP311KhzXbCt8/c2xwWtGNHXOhX1OgP2740+Xnx1BsI8tO9sLds
- vf6ZA33RGubwbtoBq+2Ro9Mbtie1/bepcXUVbjTKRecgbjcq/VeZHiDGO4jYS03/
- MgngUm3/tggNZIvwGgNb60vzsNNZmvep1/xpXNPRsgqJKMroC8c1KboGlfu88evq
- CAgJMAa8Ash9xWRYjsvgcPLUWQ3M7yrftgbKYoAfxgyLYK7ZYC9KV2c5QN7eNDl8
- 43jirpCHIg0gvpwOO1neA==
+ :reply-to:subject:subject:to:to; s=fm1; t=1758180731; x=
+ 1758267131; bh=AC4dziR9fMXAbVHePRC2hHlydgiqEgb1rll7ksG1IvY=; b=e
+ 5tsegU4JJ2W8Pu6CGRG61GGaWUjIufxZPPXeulWNtU13HKOTInquHisL5MW0C2K4
+ V3YFrXr/yZMe/JERgm9Dk1sMCZUJ/Hap2NpLVQya/rbrQ/O2uRs7nQpaxZvknrY5
+ 4/bvnG0KEYR5Ly3SpNUye1mevvyJqS6x/xuKo8SjDfG3uq2Y/fOxXGbsxowbsdyz
+ skJLdUZCQCPzcR2G76OoJzEdY1Qe+XD8cCA1vba/ovemaQ34JrfLzJcN9DMCjpW7
+ i35kgxReQhT+wGXsUHkzu0cw56NXguC+xccuZyHVrgoqJfWR7gOgOuR3ue5f6dfx
+ mq33KjJsL4wqUNhlBBWoQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm1; t=1758180726; x=1758267126; bh=5
- 1fguQeFqArwy85wukflxmiVYLUMFSobjee5Kjxb720=; b=WniJxmdm9eFbrz3DK
- 0RKfS7WWtngXYENnoeVRUpt00v4piW0v6dHUuVQ04kU8rjIbCWuS8oKwXL5AG+qp
- vyu3rsBVsxpkCAGBrQizjWCoyTh07vWfvM+/wNCaWffD4vEE/WrCTNbEcrCm61hc
- n6ZH/TGd2Bv4o1paap/fvKeSr9N1Qu7ti6QTU0mNP6jV4g7k0rmVHpIE3qmeRig5
- N6aTFn16/iUSs46sbosAivuhnDxfW4ZH19Z2oUtzyWIEhq9xsyxjgGGwmybhXFZK
- hA/XDb9wHs06TNp33cJwqtiuz8K7mGfR6tnSWPklbqJNmudstoq9NAjdToCv5DWK
- OiKGw==
-X-ME-Sender: <xms:dbXLaOgjIddxzSn9LxN23yXFjyWyYClUleYDPJma9t03AVWrOS0anA>
- <xme:dbXLaFwKAixnL1FGLsNt2AxJdisZaNZfy_Y3k5jaooTkWaTNHwPwbLUtWHozbWTKY
- AZz7ENs0eowN10M0w>
-X-ME-Received: <xmr:dbXLaH3xsBkdDIen7SukXCOGWzHmJrci8Jh5vawj-d8SAENfRABfEgj9NF6DEt2I3sHWVilwt2sSqovIlEJl8YLc-ytmB2A>
+ :x-me-sender:x-sasl-enc; s=fm1; t=1758180731; x=1758267131; bh=A
+ C4dziR9fMXAbVHePRC2hHlydgiqEgb1rll7ksG1IvY=; b=JfPMIo9gLa5vR4KYw
+ KWbep2AF2v0eXyjIfafJ0i3lanqT7BoA+emew9kuqcWujB7U/TM/LNxAbEWPyoiH
+ sRb5mrkTi9nIXNtyZn1VUiDI4HI4aY86QNh1evVsNQ7UNgtZgZFiYT0F4ydJPpFW
+ uhCxyPJa4xChBq77hN40keg+gZG+CjM+b2MUSXTG4u4WnEX49nQd4PixFjnL4UW0
+ XjurA0BpOG9GF5HF7NpmxQd5yD9cvBA5fwj+eE8X1LzA72HbIzxVhc51GpNe8T0v
+ VjDqtWc0se0L+9C0JjTdEGPwKOM6ZOELryVT5sxaPX+SYox/CPwq44YDH3cyBhpX
+ +9reg==
+X-ME-Sender: <xms:erXLaNSSS9-1EBu5-wwRFIbK4RqLChc5356xpJpDY3VZMqv930miGw>
+ <xme:erXLaBoGW5oQpZztJJLnL9z3pBMCfm3Quf8Q8QA-zDyYTQRkaClybh0yl66XWxzCs
+ mWA1sJGYiOVTLyxAQ>
+X-ME-Received: <xmr:erXLaKq1Yw9zT4Zf3G35vsOyAxdnzr9p3U9kj9eqWbE4TJ-ESRgorQq4oLdivkQGFVXl09suLGP8yYWizhwqAujaNm-xkV0>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegheejfecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
@@ -51,34 +51,26 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegheejfecutefuodetgg
  ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
  grthhtvghrnhepvdejhfdugeehvddtieejieegteeuudfgjeeukeeiledthfetveekhefh
  ieelhfdtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepledpmhho
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepgedpmhho
  uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpth
  htohepsghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthht
- ohepshhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopegshihrohhnrdhmrghroh
- hhnhesihhnthgvlhdrtghomhdprhgtphhtthhopeihihhpvghnghdurdifrghnghesihhn
- thgvlhdrtghomhdprhgtphhtthhopehkvghithhhrdifihhlvghssehinhhtvghlrdgtoh
- hmpdhrtghpthhtoheplhhutggrrdgsohgttggrshhsihesmhhitghrohhsohhfthdrtgho
- mhdprhgtphhtthhopehhrghrrhihrdhvrghnrdhhrggrrhgvnhesihhnthgvlhdrtghomh
- dprhgtphhtthhopehsvggrnhdrmhhorhhrihhsshgvhiesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:dbXLaC_1pnXHemLyOgK6Imp02KNnAZvvYYJ0RUxh9iCMUOmb2-nXfA>
- <xmx:dbXLaHpUP--CtRYCMWPWnEPeogpES7DuiWLfcJ1-H_IlGf3EP7UtfQ>
- <xmx:dbXLaMTD1PEDtRDMhkrUYESCRfFkOPks7s1WuOwcHTExpyy2FXTmrg>
- <xmx:dbXLaKMoy6HwGwpS_cdLPePqpt6Jtd0I2hOIj7j-7iMTK1kU0JnUlw>
- <xmx:drXLaNF9IOfKjpOs5RU9qhoGinYNcrflOgpQ9OXHgjWmV4OzVIN5Fdeh>
+ ohephihiphgvnhhguddrfigrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepshgrmh
+ gvhhdrghhosghrihgvlhesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:erXLaDMjTXVJkBxX_A6s8MWtOoghG3NTV8ZRgV8zNBwmcPvymRGxqg>
+ <xmx:erXLaLzcm8V-KoZQYXfRQRSbA1KrGjTCPiSz9JDqwpfahbgFfPED8Q>
+ <xmx:erXLaMsZP14tS2xyZxDNcRs_fgINe6YgIdvdVKG3AAJlieUT2QIRRA>
+ <xmx:erXLaE6rxPGTMFWWW_5xo7SnwUw_pN5qm9soK3a8JgjJBBD2w2gj9g>
+ <xmx:e7XLaL4ruQT9X1MXw9vXHKxiVLbeCblSiPYiTAGXYftQndnWOdskBs1X>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 18 Sep 2025 03:32:04 -0400 (EDT)
+ 18 Sep 2025 03:32:10 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, stable@dpdk.org,
- Byron Marohn <byron.marohn@intel.com>,
- Yipeng Wang <yipeng1.wang@intel.com>, Keith Wiles <keith.wiles@intel.com>,
- Luca Boccassi <luca.boccassi@microsoft.com>,
- Harry van Haaren <harry.van.haaren@intel.com>,
- Sean Morrissey <sean.morrissey@intel.com>
-Subject: [PATCH 1/3] efd: fix AVX2 support
-Date: Thu, 18 Sep 2025 09:28:03 +0200
-Message-ID: <20250918073135.1273767-2-thomas@monjalon.net>
+Cc: bruce.richardson@intel.com, Yipeng Wang <yipeng1.wang@intel.com>,
+ Sameh Gobriel <sameh.gobriel@intel.com>
+Subject: [PATCH 2/3] member: remove AVX2 build-time checks
+Date: Thu, 18 Sep 2025 09:28:04 +0200
+Message-ID: <20250918073135.1273767-3-thomas@monjalon.net>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250918073135.1273767-1-thomas@monjalon.net>
 References: <20250918073135.1273767-1-thomas@monjalon.net>
@@ -97,70 +89,102 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When switching to Meson build, the compilation check on CC_SUPPORT_AVX2
-became obsolete, thus the case EFD_LOOKUP_AVX2 became dead.
-The function efd_lookup_internal_avx2() was never called,
-and its header include rte_efd_x86.h has been removed later.
-
-AVX2 is assumed to be always supported on x86 with supported compilers,
-so the checks for AVX2 are simply removed, and the include is added back.
-
-Fixes: 5b9656b157d3 ("lib: build with meson")
-Fixes: 30a1de105a5f ("lib: remove unneeded header includes")
-Cc: stable@dpdk.org
+Since all supported compilers can generate AVX2 code,
+no need to check for AVX2 support when x86 arch is already checked.
 
 Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 ---
- lib/efd/rte_efd.c     |  3 ++-
- lib/efd/rte_efd_x86.h | 10 ----------
- 2 files changed, 2 insertions(+), 11 deletions(-)
+ lib/member/rte_member_ht.c  | 14 +++++++-------
+ lib/member/rte_member_x86.h |  3 ---
+ 2 files changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/lib/efd/rte_efd.c b/lib/efd/rte_efd.c
-index b0e44e5c51..ebf1e0655f 100644
---- a/lib/efd/rte_efd.c
-+++ b/lib/efd/rte_efd.c
-@@ -26,6 +26,7 @@
+diff --git a/lib/member/rte_member_ht.c b/lib/member/rte_member_ht.c
+index 738471b378..0a5b206778 100644
+--- a/lib/member/rte_member_ht.c
++++ b/lib/member/rte_member_ht.c
+@@ -13,7 +13,7 @@
+ #include "rte_member.h"
+ #include "rte_member_ht.h"
  
- #include "rte_efd.h"
- #if defined(RTE_ARCH_X86)
-+#include "rte_efd_x86.h"
- #elif defined(RTE_ARCH_ARM64)
- #include "rte_efd_arm64.h"
+-#if defined(RTE_ARCH_X86)
++#ifdef RTE_ARCH_X86
+ #include "rte_member_x86.h"
  #endif
-@@ -1279,7 +1280,7 @@ efd_lookup_internal(const struct efd_online_group_entry * const group,
  
- 	switch (lookup_fn) {
- 
--#if defined(RTE_ARCH_X86) && defined(CC_SUPPORT_AVX2)
-+#if defined(RTE_ARCH_X86)
- 	case EFD_LOOKUP_AVX2:
- 		return efd_lookup_internal_avx2(group->hash_idx,
- 					group->lookup_table,
-diff --git a/lib/efd/rte_efd_x86.h b/lib/efd/rte_efd_x86.h
-index e2f9dcca88..f7776db8a5 100644
---- a/lib/efd/rte_efd_x86.h
-+++ b/lib/efd/rte_efd_x86.h
-@@ -19,7 +19,6 @@ efd_lookup_internal_avx2(const efd_hashfunc_t *group_hash_idx,
- 		const efd_lookuptbl_t *group_lookup_table,
- 		const uint32_t hash_val_a, const uint32_t hash_val_b)
- {
--#ifdef __AVX2__
- 	efd_value_t value = 0;
- 	uint32_t i = 0;
- 	__m256i vhash_val_a = _mm256_set1_epi32(hash_val_a);
-@@ -45,13 +44,4 @@ efd_lookup_internal_avx2(const efd_hashfunc_t *group_hash_idx,
+@@ -113,7 +113,7 @@ rte_member_create_ht(struct rte_member_setsum *ss,
+ 		for (j = 0; j < RTE_MEMBER_BUCKET_ENTRIES; j++)
+ 			buckets[i].sets[j] = RTE_MEMBER_NO_MATCH;
  	}
+-#if defined(RTE_ARCH_X86)
++#ifdef RTE_ARCH_X86
+ 	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) &&
+ 			RTE_MEMBER_BUCKET_ENTRIES == 16 &&
+ 			rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_256)
+@@ -179,7 +179,7 @@ rte_member_lookup_ht(const struct rte_member_setsum *ss,
+ 	get_buckets_index(ss, key, &prim_bucket, &sec_bucket, &tmp_sig);
  
- 	return value;
--#else
--	RTE_SET_USED(group_hash_idx);
--	RTE_SET_USED(group_lookup_table);
--	RTE_SET_USED(hash_val_a);
--	RTE_SET_USED(hash_val_b);
--	/* Return dummy value, only to avoid compilation breakage */
--	return 0;
--#endif
+ 	switch (ss->sig_cmp_fn) {
+-#if defined(RTE_ARCH_X86) && defined(__AVX2__)
++#ifdef RTE_ARCH_X86
+ 	case RTE_MEMBER_COMPARE_AVX2:
+ 		if (search_bucket_single_avx(prim_bucket, tmp_sig, buckets,
+ 				set_id) ||
+@@ -219,7 +219,7 @@ rte_member_lookup_bulk_ht(const struct rte_member_setsum *ss,
+ 
+ 	for (i = 0; i < num_keys; i++) {
+ 		switch (ss->sig_cmp_fn) {
+-#if defined(RTE_ARCH_X86) && defined(__AVX2__)
++#ifdef RTE_ARCH_X86
+ 		case RTE_MEMBER_COMPARE_AVX2:
+ 			if (search_bucket_single_avx(prim_buckets[i],
+ 					tmp_sig[i], buckets, &set_id[i]) ||
+@@ -256,7 +256,7 @@ rte_member_lookup_multi_ht(const struct rte_member_setsum *ss,
+ 	get_buckets_index(ss, key, &prim_bucket, &sec_bucket, &tmp_sig);
+ 
+ 	switch (ss->sig_cmp_fn) {
+-#if defined(RTE_ARCH_X86) && defined(__AVX2__)
++#ifdef RTE_ARCH_X86
+ 	case RTE_MEMBER_COMPARE_AVX2:
+ 		search_bucket_multi_avx(prim_bucket, tmp_sig, buckets,
+ 			&num_matches, match_per_key, set_id);
+@@ -299,7 +299,7 @@ rte_member_lookup_multi_bulk_ht(const struct rte_member_setsum *ss,
+ 		match_cnt_tmp = 0;
+ 
+ 		switch (ss->sig_cmp_fn) {
+-#if defined(RTE_ARCH_X86) && defined(__AVX2__)
++#ifdef RTE_ARCH_X86
+ 		case RTE_MEMBER_COMPARE_AVX2:
+ 			search_bucket_multi_avx(prim_buckets[i], tmp_sig[i],
+ 				buckets, &match_cnt_tmp, match_per_key,
+@@ -360,7 +360,7 @@ try_update(struct member_ht_bucket *buckets, uint32_t prim, uint32_t sec,
+ 		enum rte_member_sig_compare_function cmp_fn)
+ {
+ 	switch (cmp_fn) {
+-#if defined(RTE_ARCH_X86) && defined(__AVX2__)
++#ifdef RTE_ARCH_X86
+ 	case RTE_MEMBER_COMPARE_AVX2:
+ 		if (update_entry_search_avx(prim, sig, buckets, set_id) ||
+ 				update_entry_search_avx(sec, sig, buckets,
+diff --git a/lib/member/rte_member_x86.h b/lib/member/rte_member_x86.h
+index 4de453485b..29cc2f0132 100644
+--- a/lib/member/rte_member_x86.h
++++ b/lib/member/rte_member_x86.h
+@@ -11,8 +11,6 @@
+ extern "C" {
+ #endif
+ 
+-#if defined(__AVX2__)
 -
+ static inline int
+ update_entry_search_avx(uint32_t bucket_id, member_sig_t tmp_sig,
+ 		struct member_ht_bucket *buckets,
+@@ -69,7 +67,6 @@ search_bucket_multi_avx(uint32_t bucket_id, member_sig_t tmp_sig,
+ 		hitmask &= ~(3U << ((hit_idx) << 1));
+ 	}
+ }
+-#endif
+ 
+ #ifdef __cplusplus
  }
 -- 
 2.51.0
