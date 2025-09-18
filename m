@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F5ACAC5A0
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 12:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A59CAC5A0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 12:28:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 38F0140288;
-	Thu, 18 Sep 2025 14:23:55 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AD7A640288;
+	Thu, 18 Sep 2025 14:28:11 +0200 (CEST)
 Received: from fout-b2-smtp.messagingengine.com
  (fout-b2-smtp.messagingengine.com [202.12.124.145])
- by mails.dpdk.org (Postfix) with ESMTP id 212844027A
- for <dev@dpdk.org>; Thu, 18 Sep 2025 14:23:54 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfout.stl.internal (Postfix) with ESMTP id 6B9AC1D003C9;
- Thu, 18 Sep 2025 08:23:53 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-05.internal (MEProxy); Thu, 18 Sep 2025 08:23:53 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 889B84027A
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 14:28:10 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.stl.internal (Postfix) with ESMTP id A384B1D003CF;
+ Thu, 18 Sep 2025 08:28:09 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Thu, 18 Sep 2025 08:28:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1758198233;
- x=1758284633; bh=ZeNIXfaqhvTKEeYRkqh1HOQT5SNRDBbba+Z05SMTRAQ=; b=
- oLMi8MvedWliYmxMkH/RIw9lw+1ggWu7gWuka6/1U/OXS8fF0XkwItPajKUPK1jM
- Igb91x297RZzr8AHuv8gW8DohzksrDinYdo7X0t5NqITan/ZEKG3LUUL9PKuRnxs
- qBU2UNuUU3fGzIUclkfZjtGaNK6dKjmRYdRShGfikvCMviY0YY72WTnexuFlPK3o
- qMOixZHCXfCTXOgHxy67mWip1fcJBelJJycQw26ykJbQEL6H37cZhLEa8Fjzv7+A
- BH8d66/IFUH6XZfCSKM+GWF089Lt4OUFRXvoxYKBYlMpdRBJrE14fNw0NlcZUPR7
- a1QffDXzU54NUxHkx+brzw==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1758198489;
+ x=1758284889; bh=CP9EqMT05t4EtJKzta6pBKGZbVtv+9mUwt6VuHgcPEY=; b=
+ GIDmaJooiF4OBm+zeM2aqi6CV7RT05yi8xqQWbhxy9Cro53xb9sWLZ+rSD9RbZL/
+ QzaBaDmVWCZrF2C//BdCsSyEkClOtmlirqN39dsMJWRYRib2efuSoECFVYJnfcG9
+ W4PA3NQvaZXt6Z3MLJCCmf/nMs3IZpFzG5l+VL6NcyOhvY0znuzIACKvrnXGcjDp
+ FxNL1X0xj7l5i9TZpiI7blFMoWqo5/JbL94l/yFzthzquR5l/hmGZ+f9RTtkFvmG
+ jTwhGJiD75OXCHXsC/p9g1N3es9FCP90/QgS5V1RjTdRMF5PlO4+Dkx/1Evzkvm4
+ uGqGgWI2j/MkctYH/CFfbA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758198233; x=
- 1758284633; bh=ZeNIXfaqhvTKEeYRkqh1HOQT5SNRDBbba+Z05SMTRAQ=; b=Y
- SvCGm/8SapRCSWM8LHv67F+uX3y3mhZRDahnl3kF7Sv6svP5cflKFEIg52E8vgC5
- G7oLZxcEgBC0a0w//fqWlhlvvscQGdmS12Olx90t7NSK4wpWfyWc+rhx3braeEHF
- 4JTBNncMLTp/BIlQwmoEvsgIwFH7FjVN8bM76bxE4tD29P9BQtsvA9uP+Ek71NNd
- pv1eA0cqcgxGTJHjbvt6mMa+yary3MwgJXn5uIqof7RZUXg121dxhjjCyMVIuqoE
- Oc/yiDrVcuqEctAmuGm0WihTjTLmsNGb6BRKa2fHedtDh0d5mPwfny4LFaDVhAzU
- aTB+grr6p/oENsVjGAXZQ==
-X-ME-Sender: <xms:2PnLaLVQc8V2bf3KVtq5DogoFuOHVhBQzmb-8yEqqiX58iSemFJQ2Q>
- <xme:2PnLaG0D9j0AI-7I3ckq62yGC_Ye1kw8lCn4U6Om3traQQ50vqYyzp7jIfB9Wj0PX
- ZeIpdmxvcdmXL1bzA>
-X-ME-Received: <xmr:2PnLaA3nGQD3YJjVYk-wV1-4jpA6dqzyZH5Z6AKvr4GsjQBuRNUzssZaQZgPbpZuqW7keIJo3BKX418hJgGE91vhVA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegieefvdcutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758198489; x=
+ 1758284889; bh=CP9EqMT05t4EtJKzta6pBKGZbVtv+9mUwt6VuHgcPEY=; b=o
+ F9bFlw0RwOjFn3jv76N36U90GJWQ5xkDMlLwSELm+p7QfZ1ft4OVmPWr1dKBrqdt
+ 8vUVzxDR3Q7svIdd2DWdw6F14r4oriHs8g84Ts7XZbtT2GTTfHZKrUN5GGlqzeUL
+ gQ6Epx24u1gjBRngiWGbpsWPQ+axHdQA948/UAnWbdtNyEe+F3mVcALmf5kGLL+b
+ WIZHiUFABgOdYENZ6nA+coqAKdjbhIIvg/aCDS8zdplFXcByqYT2G69lcI6Prjwi
+ FKb8TdDL+ZPjDbiGsXGDFO7+R02vcT0jjQF8TCV6ePHQ9rric5k5S856MZFy/B8I
+ Nv08YynkBVKT0YQfZ+uEQ==
+X-ME-Sender: <xms:2frLaCtTswcHZ440IVFVkReD2PDOHuAdRje8JjzslX4bDYZk9OyTog>
+ <xme:2frLaBG-SzUsnJgGS9ONhp9MajAiXeQIst1cRJKmOOyDyVLmjihm0-388l_OXYeg5
+ MWQU6x-PGlYbAIybA>
+X-ME-Received: <xmr:2frLaNwqgWWpHOo7wZ-0fIPO3bCXLAyscnxzCi-X9spQfa2Gf_0AemfzcRNkn0E_IU5Xaez2SCf3bhLCkr8hbYGrBg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegieeffecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
  hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
@@ -52,25 +52,27 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegieefvdcutefuodetgg
  grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
  gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
  epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepfedpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepfigrnhhgrdhjuhhnlhhonhhgudesiihtvg
- drtghomhdrtghnpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgs
- vghrrdhorhhgpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
-X-ME-Proxy: <xmx:2PnLaB-K-gDJ8Wpv41jK-ceOReWPygR2OjbLe9dW5UUm4CL9w8XXBw>
- <xmx:2PnLaF0q6sM9zct26bsJAqa7lWbcUzpuUSROVDp1ff_y46rv02O5hQ>
- <xmx:2PnLaG-hUu5BgCEmy2yWYbs5Rw_uWEfggjxLTCFr21UztiYwnQ1UWg>
- <xmx:2PnLaNs2uy2T97lUF-AIGGXEpSE39_ozfV9UlsYvineDVN4E0lw_6w>
- <xmx:2fnLaIVWodY31jgmL0oTinFjT-K3Je336MdK4bOQoR11-aCLe2mYkyMF>
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnhgusehrvg
+ guhhgrthdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthho
+ pehisehhrggtkhefrhdrmhhovg
+X-ME-Proxy: <xmx:2frLaAjwzsPLmxOF5p_9RmqcLX6iXyCoiZb2-eWU24kcf0mMWIgGHw>
+ <xmx:2frLaAzn7WquwvHPWKXIXEm0Ja4OekcmzWYcDWiv73RrdOXviMv_gg>
+ <xmx:2frLaLKjURa0XTG7-yMRchrZhSXGrfJsid8eoQLwOxwdjDXcIbMPlw>
+ <xmx:2frLaPQffigrV8CPQL-W2KciUUBepSVOpMJraV8rx809W5f114kSyA>
+ <xmx:2frLaIsdykY66k1gvdd7v9lhaC62gtgutK7iNtIy5OfU35oBxmU1qRWJ>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 18 Sep 2025 08:23:51 -0400 (EDT)
+ 18 Sep 2025 08:28:08 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Junlong Wang <wang.junlong1@zte.com.cn>
-Cc: stephen@networkplumber.org, dev@dpdk.org
-Subject: Re: [PATCH v1] net/zxdh: add support compiling on riscv-64 systems
-Date: Thu, 18 Sep 2025 14:23:50 +0200
-Message-ID: <16432632.tv2OnDr8pf@thomas>
-In-Reply-To: <20250911023211.3576860-1-wang.junlong1@zte.com.cn>
-References: <20250911023211.3576860-1-wang.junlong1@zte.com.cn>
+To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
+Cc: Eric Long <i@hack3r.moe>
+Subject: Re: [PATCH] test: raise fast test timeout to 60s on RISC-V
+Date: Thu, 18 Sep 2025 14:28:07 +0200
+Message-ID: <3616255.BddDVKsqQX@thomas>
+In-Reply-To: <MW4PR11MB8289AF4AB84FB5FA14BE3FC3D7282@MW4PR11MB8289.namprd11.prod.outlook.com>
+References: <MW4PR11MB8289B816B08C6E19716B8F82D72C2@MW4PR11MB8289.namprd11.prod.outlook.com>
+ <CAJFAV8xjcsip9dxKW3PdVtmv_-HYfbe7h9H+-8x816i=z=aL8Q@mail.gmail.com>
+ <MW4PR11MB8289AF4AB84FB5FA14BE3FC3D7282@MW4PR11MB8289.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,22 +89,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-11/09/2025 04:32, Junlong Wang:
-> modify meson.build for support compiling on riscv-64 systems
-[...]
-> -if not is_linux
-> +if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
->      build = false
-> -    reason = 'only supported on Linux'
-> -    subdir_done()
-> -endif
-> -
-> -if arch_subdir != 'x86' and arch_subdir != 'arm' or not dpdk_conf.get('RTE_ARCH_64')
-> -    build = false
-> -    reason = 'only supported on x86_64 and aarch64'
-> +    reason = 'only supported on 64-bit Linux'
->      subdir_done()
+27/11/2024 04:26, Eric Long:
+> On 27/11/2024 04:29, David Marchand wrote:
+> > You can extend the timeout via the multiplier option (default timeout
+> > of 10s * multiplier).
+> > So in your case:
+> > $ meson test -C <build> --suite fast-tests -t 6
+> 
+> I hope the RISC-V specific extended timeout could be upstreamed though, 
+> in this way we won't need to bump timeout in every distro supporting the 
+> architecture (like Debian [1]) or even not running the tests altogether 
+> (like OpenSUSE [2] and Fedora [3]), just because tests are failing due 
+> to timeout.
 
-There is also powerpc. Do you think it will compile?
+What do we decide?
+A specific timeout doesn't harm I guess?
+
 
 
