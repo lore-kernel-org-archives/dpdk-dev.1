@@ -2,77 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C79D3CAC5A0
-	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 12:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F5ACAC5A0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 18 Sep 2025 12:23:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A9B5340288;
-	Thu, 18 Sep 2025 14:18:04 +0200 (CEST)
-Received: from fhigh-b3-smtp.messagingengine.com
- (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
- by mails.dpdk.org (Postfix) with ESMTP id 498B04027A
- for <dev@dpdk.org>; Thu, 18 Sep 2025 14:18:03 +0200 (CEST)
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 669127A0344;
- Thu, 18 Sep 2025 08:18:02 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-12.internal (MEProxy); Thu, 18 Sep 2025 08:18:02 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 38F0140288;
+	Thu, 18 Sep 2025 14:23:55 +0200 (CEST)
+Received: from fout-b2-smtp.messagingengine.com
+ (fout-b2-smtp.messagingengine.com [202.12.124.145])
+ by mails.dpdk.org (Postfix) with ESMTP id 212844027A
+ for <dev@dpdk.org>; Thu, 18 Sep 2025 14:23:54 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfout.stl.internal (Postfix) with ESMTP id 6B9AC1D003C9;
+ Thu, 18 Sep 2025 08:23:53 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-05.internal (MEProxy); Thu, 18 Sep 2025 08:23:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm1; t=1758197882; x=1758284282; bh=YHP0GzsAD3Ccq15L025pN
- pWgErpiNW6v5LrIcz6zip4=; b=Oy0ZNiyWgovbhBeTNusRaM4c6jZXgzn0MJ46t
- vMeAOUJxbgpAhYZCDf9XSWnzJdGuXDEqsvlio27xXxE1kfVrhq8n+SMgzmrPBBVq
- wCXDrCO1GFZo7kI+l7Ps8K2uIuA80i+HZZY73Odr1mPKKbuAyeXd+zHEXdHFKyCT
- zC81MQ3o5VAs4F3zirdMAk+VgIbS88ZUSg14CoXNNHIL7/PYe7gZ+zJWO5Tv3XMl
- WoUzhxf34cmHqYSpwpPAZDVbyC8CJGkNGYS/ErWs3y6LH4JWm6rmZx4cqKWHCNuF
- MF2CnovEdw0q3qcXDu7DwVgJsL8cdVuRefdHV/z8YrUV6CTNg==
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1758198233;
+ x=1758284633; bh=ZeNIXfaqhvTKEeYRkqh1HOQT5SNRDBbba+Z05SMTRAQ=; b=
+ oLMi8MvedWliYmxMkH/RIw9lw+1ggWu7gWuka6/1U/OXS8fF0XkwItPajKUPK1jM
+ Igb91x297RZzr8AHuv8gW8DohzksrDinYdo7X0t5NqITan/ZEKG3LUUL9PKuRnxs
+ qBU2UNuUU3fGzIUclkfZjtGaNK6dKjmRYdRShGfikvCMviY0YY72WTnexuFlPK3o
+ qMOixZHCXfCTXOgHxy67mWip1fcJBelJJycQw26ykJbQEL6H37cZhLEa8Fjzv7+A
+ BH8d66/IFUH6XZfCSKM+GWF089Lt4OUFRXvoxYKBYlMpdRBJrE14fNw0NlcZUPR7
+ a1QffDXzU54NUxHkx+brzw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
- 1758197882; x=1758284282; bh=YHP0GzsAD3Ccq15L025pNpWgErpiNW6v5Lr
- Icz6zip4=; b=BP40NgKoCdanjbd15a2E9mEcI4r1kMzn3Bw6kkPTZlm7Y4wCVws
- Po0/7qVMgWDESFNN0Rwt7F8O37L8f+Q1+WWcLiAE/I7p0w4HfTdYuMvesCNu48Hq
- vYKab61qxPN8tDa0lHTA3kmX0yQWFkN4EnxNSCXxydpx5QjIbTY+H/NL+Lv/bOnU
- ugWsoE1F8dsmonlmga4CoYXmfC702h2HvRdm6ASmEZE1ZIZ5Y1lWLrh3UGTb4pOS
- 4ErocqLSVfAJcnB7fvpVA0QvxOKlIVq2JmrismBI1QLFQEHlQNSNJ2TM5hblIYkV
- d9XdlnsqS68gQlS9gc16oI+fdjyiO9s5Pwg==
-X-ME-Sender: <xms:efjLaMM_C9D2UqOlMqs5DA8LD5YByH2CExC8TzIhcptw6kqLM5yyMg>
- <xme:efjLaNhlwf-7sP1-vs9GZgUTQ4spXuy191fLRQ-9hIIRIPqY173RmPcehezk4b1fS
- gPLH7a0kyNyYt_btQ>
-X-ME-Received: <xmr:efjLaP16GLN03aWp3JR_BQJw3BSIzK5o1snqhEjvRhLTiYaB9D_Qr8bLcL6p1vZRbxYNcLuPb_gYEuuKuBT2hNh3ZfCYg1c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegieefudcutefuodetggdotefrod
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758198233; x=
+ 1758284633; bh=ZeNIXfaqhvTKEeYRkqh1HOQT5SNRDBbba+Z05SMTRAQ=; b=Y
+ SvCGm/8SapRCSWM8LHv67F+uX3y3mhZRDahnl3kF7Sv6svP5cflKFEIg52E8vgC5
+ G7oLZxcEgBC0a0w//fqWlhlvvscQGdmS12Olx90t7NSK4wpWfyWc+rhx3braeEHF
+ 4JTBNncMLTp/BIlQwmoEvsgIwFH7FjVN8bM76bxE4tD29P9BQtsvA9uP+Ek71NNd
+ pv1eA0cqcgxGTJHjbvt6mMa+yary3MwgJXn5uIqof7RZUXg121dxhjjCyMVIuqoE
+ Oc/yiDrVcuqEctAmuGm0WihTjTLmsNGb6BRKa2fHedtDh0d5mPwfny4LFaDVhAzU
+ aTB+grr6p/oENsVjGAXZQ==
+X-ME-Sender: <xms:2PnLaLVQc8V2bf3KVtq5DogoFuOHVhBQzmb-8yEqqiX58iSemFJQ2Q>
+ <xme:2PnLaG0D9j0AI-7I3ckq62yGC_Ye1kw8lCn4U6Om3traQQ50vqYyzp7jIfB9Wj0PX
+ ZeIpdmxvcdmXL1bzA>
+X-ME-Received: <xmr:2PnLaA3nGQD3YJjVYk-wV1-4jpA6dqzyZH5Z6AKvr4GsjQBuRNUzssZaQZgPbpZuqW7keIJo3BKX418hJgGE91vhVA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegieefvdcutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
- hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefvhhhomhgrshcuofho
- nhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrth
- htvghrnhepveevfeevieeihfetudekgeekleeigeffueekveduteeuffeiudevteeiudek
- feelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepth
- hhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepgedpmhhouggv
- pehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtoh
- eprhhorhgvthiilhgrsehlihhnuhigrdhmihgtrhhoshhofhhtrdgtohhmpdhrtghpthht
- ohepmhgrgihimhgvrdgtohhquhgvlhhinhesrhgvughhrghtrdgtohhmpdhrtghpthhtoh
- eptghhvghnsghogiesnhhvihguihgrrdgtohhm
-X-ME-Proxy: <xmx:efjLaHjhaLQxk_mIFqrIha9KdQIENCDj8dEtOqp6R0UnJQefFI039g>
- <xmx:efjLaPcdcET7FbmvhodOirmFLYZN8Zysxp3cFult_28ulb63p3q-bg>
- <xmx:efjLaKm_Rzj9BRoGdOfUxAS9VrjrJ32JCnYqgyc0rFJ1EGniF0HV6w>
- <xmx:efjLaItXt8WYvdgv3J6sn0P7xq1rlT5Zp3VNy_OPWFIFJsnjKbnHBw>
- <xmx:evjLaM3J6nNkZOYLa1qyVggt3DK-5n4wi5fgfw6wYSg5-MF3t5kQVqnL>
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepfedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepfigrnhhgrdhjuhhnlhhonhhgudesiihtvg
+ drtghomhdrtghnpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgs
+ vghrrdhorhhgpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:2PnLaB-K-gDJ8Wpv41jK-ceOReWPygR2OjbLe9dW5UUm4CL9w8XXBw>
+ <xmx:2PnLaF0q6sM9zct26bsJAqa7lWbcUzpuUSROVDp1ff_y46rv02O5hQ>
+ <xmx:2PnLaG-hUu5BgCEmy2yWYbs5Rw_uWEfggjxLTCFr21UztiYwnQ1UWg>
+ <xmx:2PnLaNs2uy2T97lUF-AIGGXEpSE39_ozfV9UlsYvineDVN4E0lw_6w>
+ <xmx:2fnLaIVWodY31jgmL0oTinFjT-K3Je336MdK4bOQoR11-aCLe2mYkyMF>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 18 Sep 2025 08:18:01 -0400 (EDT)
+ 18 Sep 2025 08:23:51 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [PATCH] lib: fix include guards
-Date: Thu, 18 Sep 2025 14:17:51 +0200
-Message-ID: <20250918121751.1552714-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.51.0
+To: Junlong Wang <wang.junlong1@zte.com.cn>
+Cc: stephen@networkplumber.org, dev@dpdk.org
+Subject: Re: [PATCH v1] net/zxdh: add support compiling on riscv-64 systems
+Date: Thu, 18 Sep 2025 14:23:50 +0200
+Message-ID: <16432632.tv2OnDr8pf@thomas>
+In-Reply-To: <20250911023211.3576860-1-wang.junlong1@zte.com.cn>
+References: <20250911023211.3576860-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,113 +87,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix the namespace of include guards by prefixing with "RTE",
-and add a missing include guard in rte_eal_paging.h.
+11/09/2025 04:32, Junlong Wang:
+> modify meson.build for support compiling on riscv-64 systems
+[...]
+> -if not is_linux
+> +if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
+>      build = false
+> -    reason = 'only supported on Linux'
+> -    subdir_done()
+> -endif
+> -
+> -if arch_subdir != 'x86' and arch_subdir != 'arm' or not dpdk_conf.get('RTE_ARCH_64')
+> -    build = false
+> -    reason = 'only supported on x86_64 and aarch64'
+> +    reason = 'only supported on 64-bit Linux'
+>      subdir_done()
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- lib/eal/include/rte_eal_paging.h | 11 ++++++++---
- lib/eal/include/rte_keepalive.h  |  6 +++---
- lib/jobstats/rte_jobstats.h      |  6 +++---
- lib/vhost/rte_vhost_crypto.h     |  6 +++---
- 4 files changed, 17 insertions(+), 12 deletions(-)
+There is also powerpc. Do you think it will compile?
 
-diff --git a/lib/eal/include/rte_eal_paging.h b/lib/eal/include/rte_eal_paging.h
-index f4431bb349..a05cf41ac9 100644
---- a/lib/eal/include/rte_eal_paging.h
-+++ b/lib/eal/include/rte_eal_paging.h
-@@ -2,9 +2,8 @@
-  * Copyright(c) 2020 Dmitry Kozlyuk
-  */
- 
--#include <stdint.h>
--
--#include <rte_compat.h>
-+#ifndef RTE_EAL_PAGING_H
-+#define RTE_EAL_PAGING_H
- 
- /**
-  * @file
-@@ -13,6 +12,10 @@
-  * Wrappers for OS facilities related to memory paging, used across DPDK.
-  */
- 
-+#include <stdint.h>
-+
-+#include <rte_compat.h>
-+
- /** Memory protection flags. */
- enum rte_mem_prot {
- 	RTE_PROT_READ = 1 << 0,   /**< Read access. */
-@@ -101,3 +104,5 @@ rte_mem_page_size(void);
- __rte_internal
- int
- rte_mem_lock(const void *virt, size_t size);
-+
-+#endif /* RTE_EAL_PAGING_H */
-diff --git a/lib/eal/include/rte_keepalive.h b/lib/eal/include/rte_keepalive.h
-index 9ff870f6b4..04d96947b0 100644
---- a/lib/eal/include/rte_keepalive.h
-+++ b/lib/eal/include/rte_keepalive.h
-@@ -7,8 +7,8 @@
-  * DPDK RTE LCore Keepalive Monitor.
-  */
- 
--#ifndef _KEEPALIVE_H_
--#define _KEEPALIVE_H_
-+#ifndef RTE_KEEPALIVE_H
-+#define RTE_KEEPALIVE_H
- 
- #include <rte_config.h>
- #include <rte_memory.h>
-@@ -146,4 +146,4 @@ rte_keepalive_register_relay_callback(struct rte_keepalive *keepcfg,
- }
- #endif
- 
--#endif /* _KEEPALIVE_H_ */
-+#endif /* RTE_KEEPALIVE_H */
-diff --git a/lib/jobstats/rte_jobstats.h b/lib/jobstats/rte_jobstats.h
-index bdd85fe000..08549be35f 100644
---- a/lib/jobstats/rte_jobstats.h
-+++ b/lib/jobstats/rte_jobstats.h
-@@ -2,8 +2,8 @@
-  * Copyright(c) 2015 Intel Corporation
-  */
- 
--#ifndef JOBSTATS_H_
--#define JOBSTATS_H_
-+#ifndef RTE_JOBSTATS_H
-+#define RTE_JOBSTATS_H
- 
- #include <stdint.h>
- 
-@@ -303,4 +303,4 @@ rte_jobstats_reset(struct rte_jobstats *job);
- }
- #endif
- 
--#endif /* JOBSTATS_H_ */
-+#endif /* RTE_JOBSTATS_H */
-diff --git a/lib/vhost/rte_vhost_crypto.h b/lib/vhost/rte_vhost_crypto.h
-index af61f0907e..adfd5cfab0 100644
---- a/lib/vhost/rte_vhost_crypto.h
-+++ b/lib/vhost/rte_vhost_crypto.h
-@@ -2,8 +2,8 @@
-  * Copyright(c) 2017-2018 Intel Corporation
-  */
- 
--#ifndef _VHOST_CRYPTO_H_
--#define _VHOST_CRYPTO_H_
-+#ifndef _RTE_VHOST_CRYPTO_H_
-+#define _RTE_VHOST_CRYPTO_H_
- 
- #include <stdint.h>
- 
-@@ -134,4 +134,4 @@ rte_vhost_crypto_finalize_requests(struct rte_crypto_op **ops,
- }
- #endif
- 
--#endif /**< _VHOST_CRYPTO_H_ */
-+#endif /* _RTE_VHOST_CRYPTO_H_ */
--- 
-2.51.0
 
