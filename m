@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E878FCAC59A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 09:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11849CAC5A5
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 09:20:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 015AF40684;
-	Fri, 19 Sep 2025 11:20:19 +0200 (CEST)
-Received: from egress-ip11b.ess.de.barracuda.com
- (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
- by mails.dpdk.org (Postfix) with ESMTP id 9B4ED4067B
- for <dev@dpdk.org>; Fri, 19 Sep 2025 11:20:17 +0200 (CEST)
-Received: from AM0PR83CU005.outbound.protection.outlook.com
- (mail-westeuropeazon11020080.outbound.protection.outlook.com [52.101.69.80])
- by mx-outbound16-38.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
- cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Fri, 19 Sep 2025 09:20:15 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id 739F640A4B;
+	Fri, 19 Sep 2025 11:20:24 +0200 (CEST)
+Received: from egress-ip42b.ess.de.barracuda.com
+ (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
+ by mails.dpdk.org (Postfix) with ESMTP id 86027406B6
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 11:20:22 +0200 (CEST)
+Received: from GVXPR05CU001.outbound.protection.outlook.com
+ (mail-swedencentralazon11023093.outbound.protection.outlook.com
+ [52.101.83.93]) by mx-outbound16-38.eu-central-1b.ess.aws.cudaops.com
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+ Fri, 19 Sep 2025 09:20:20 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cS7O39StkZaPbk1Arr5xzM1CycoHOhDElh+ng7Wk0NODgtyrvVvLDkTD716zWhfFqoTfSTcTbRI1dPziqg6RDhAlc/Himw5gWb8uTZVeQ6i/VFJ4MlzTSSuhWGWCvUeg4fHh40RhvB8uJ25qtZIesrXzGtGhWBuIAp70S39GJB5wnxrRrAqOwDUUV6RRU3lQjnsYJiQwFzlZ2yme8cr9PH9nzwZSHEoWwbmHV2Xm57UrrsrVdmwUTYoypxaqetn1Rc7G35otbjZO8C1Vr/fFBJXnmyEAfWXyutReBAnh+t13OWP7xW5iYv9b1RjPs1Bhtov8qhqiEC9byjuNooPFFQ==
+ b=Ge43dmrcuY70iwX93luojQSlz35Xu4pdm4hkJaKb4mBcSkIpcE+jOaeEVlXm2r2/eMUU0Dqw0Cn/F1rCLUG49J/RRIe+ImghnccFTVJNJ4o1uGucKiHf0cgTFnFdVT4hnVotR6AvD97yN++74RczSBLCyGVcgXImcElIy0uAF6yWk5bs4iSkOC9ae8PWUY1m1R52GjBMtv+YF/smH/jWuc51VNUQidyb4LnQgKAtoiq8uwBfMSlzqBiCA/f/P/0k/N6NoWYCwNBMzKbhk+EEtttPr1haJ5IZLaFqZxQQFCZ8RGGd8aHRmp+xpyTs9WKrhO2lNhq5LbF6Pj2Lc6Crlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EF7iv9UsIbafGGj4Fi1eSy0lKGhKOV4B9B6zCvKy7WQ=;
- b=dwwelrVn4OIJx67UrGi6L6wuaBGO8Bw9L6m43qVMZ30zDslAAQ3xL8hG10gKH+prO/LDz3vpP30Z6wLQHn0IxeRWC/zbwqXSzb2J3mZ0itTfoGsLJegPKkyFK0+GKkP0l1IDfbW+s+7JQy4JlwFi8OJbAsbdpsvGE+EsusVth2FwHThQavpadKPBvxCBtLkR2hjlBqIVyiBdlh9tzdRvEkGQdAqjaEgWLHvSHfCrM1UoY0qyqdmA5dvYCdrY7ZNcr4fiCAS03p3Rx0DqTVINDwhYgzj+ltJRmJ1HlcNqvOd+ITTjG300UX5HAfEB0Zi8un07ccbtOl+lo3z2mD3q4A==
+ bh=jR1mnIIbPBz0nr5etQVvWkOevawyrtpPN4qlZ1DtJoU=;
+ b=dFmEcYaWMfwODWzuF3H03UmQHG66K1uCju4C7Nc3QCjXpGW/Hgwdz2z6jWq4bWO5xrTb2LXy7/efxqNadiJT2tlPEcVtM3+cxzblF4BTmsbCHKNWoSrpZU4sKLYflGQpzO8+a4KFzwg/GcBnBv18nSS0ad6Lxj2ZxVCINfzzH2fpST811PcaZZRTJ2QxWgM+1Hz9g8O8u6XspFqtDuSaWSsSuzGVaFNdLdyvx9WVpJm9IZtohixERy2c7IzS3P3ImxsEZ7bnA5DclSWhO2ySPq6+Q7mAhouxVktkVH/nUGrK5mAVThhc1AIDcZhFCdy0FBwVaCbJhkDFp2QFr1vQbw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EF7iv9UsIbafGGj4Fi1eSy0lKGhKOV4B9B6zCvKy7WQ=;
- b=m7tfN2mfzw++dn9kF9xah8NB2ss404VRMpVoBCxcJ411g7FmcrnccEDqVfLXXMbg3R/180kTKmuPeG+hI4ZNb1MLVXgSA14Kv0y18I2vCtkIEVePNw1PhnDfNpPTU2OiqpVrKFrkW/Jhsl6s5YKnwzoJbCXTNW1RSBecQJHkexw=
-Received: from DU2PR04CA0354.eurprd04.prod.outlook.com (2603:10a6:10:2b4::7)
- by AS1P190MB1725.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:4ad::9) with
+ bh=jR1mnIIbPBz0nr5etQVvWkOevawyrtpPN4qlZ1DtJoU=;
+ b=ivEFFmfMhekkouEVfbvG8AXh8qvNDbjNZ45zCK2FXPMMmTgDuLuMxIzRtS7nvqOi7y4Ffap24x6RBeKtVIvys/e9blwBvLE64mB0eyEpdd0z7PwimJJdvqExAU4eg/qIFrJOv8GZsQPr7ccOpF1vb2bQpY7eGFNxDwVIUb+jjnw=
+Received: from DU2PR04CA0357.eurprd04.prod.outlook.com (2603:10a6:10:2b4::32)
+ by DB9P190MB1795.EURP190.PROD.OUTLOOK.COM (2603:10a6:10:33b::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
- 2025 09:20:13 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Fri, 19 Sep
+ 2025 09:20:16 +0000
 Received: from DU2PEPF00028D0E.eurprd03.prod.outlook.com
- (2603:10a6:10:2b4:cafe::a5) by DU2PR04CA0354.outlook.office365.com
- (2603:10a6:10:2b4::7) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:10:2b4:cafe::39) by DU2PR04CA0357.outlook.office365.com
+ (2603:10a6:10:2b4::32) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Fri,
- 19 Sep 2025 09:20:13 +0000
+ 19 Sep 2025 09:20:16 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -51,14 +51,14 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
 Received: from localhost.localdomain (178.72.21.4) by
  DU2PEPF00028D0E.mail.protection.outlook.com (10.167.242.22) with Microsoft
  SMTP Server id 15.20.9137.12 via Frontend Transport; Fri, 19 Sep 2025
- 09:20:13 +0000
+ 09:20:16 +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v1 02/16] net/ntnic: remove unused functions
-Date: Fri, 19 Sep 2025 11:14:47 +0200
-Message-ID: <20250919091504.1548351-3-sil-plv@napatech.com>
+Subject: [PATCH v1 06/16] net/ntnic: change prefix flm_ to prefix nthw_flm_
+Date: Fri, 19 Sep 2025 11:14:51 +0200
+Message-ID: <20250919091504.1548351-7-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250919091504.1548351-1-sil-plv@napatech.com>
 References: <20250919091504.1548351-1-sil-plv@napatech.com>
@@ -66,64 +66,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PEPF00028D0E:EE_|AS1P190MB1725:EE_
+X-MS-TrafficTypeDiagnostic: DU2PEPF00028D0E:EE_|DB9P190MB1795:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 2323989b-f0dd-4463-c448-08ddf75dbd47
+X-MS-Office365-Filtering-Correlation-Id: b70a4216-4285-4363-2b4d-08ddf75dbf1e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|36860700013|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ziunyXVc5RGdsVt+ULfuxmzQJxdiL99gd0UFtrdW3CJzcJ+0+qXODJMi92MB?=
- =?us-ascii?Q?iEUH2TiD7JGynuiiRr5RBwxDe8xHMVs4fAh5fsQlQqpme8N1Td/NORuZOY3I?=
- =?us-ascii?Q?2HhFqNMKv+ysBCfAxXP5dc+Q0Q7vOBoFSfB0Jeqw+isSqP7I4e+mAuFThfQM?=
- =?us-ascii?Q?dxxBHnAdGHH0rCtQIpKNoUPWBfmf/jgDp9RRxUPERwVquVN72tQFVG34U5nU?=
- =?us-ascii?Q?jExzm2LwWeoee6/JxMH/qPL9Wfuql/7PPtzngZhh4fZjAC88dHEyhRkltWg5?=
- =?us-ascii?Q?iD7Yk6LSgEruEUXymrr3OxuiX9QoNvReXS90Zxx9pz94QO6F6Qo/JUQZu3TA?=
- =?us-ascii?Q?zhjnBaVLQr+vYKPAaXxUaFf5n/5uU4WHDfL6wXOoUVNP1Cte7NWVBUtXcUfW?=
- =?us-ascii?Q?gMjPsvT2X5QJ2dgzoWF1S8x9nX26QnKKD0Cjhj1tuxMHUSq1WRpxeXZRFX5Q?=
- =?us-ascii?Q?uyzjLWnkR58uDHdg/MXxtiX+w+GJ/bgoUhIJ40klwrO6uqyAwAheKEoE0WZi?=
- =?us-ascii?Q?0c0etkgmqOsBcsiDGzjf/+AsIG1DucJikrlxFeyBltz/B4PF+0c+trAf706P?=
- =?us-ascii?Q?d7grpC5uqyhqk5pCsZxG93eEaw8iE7gjB8ag0fsQc/HDyUYCopjIHhKesBYp?=
- =?us-ascii?Q?ECFv/ActUaV1wqWb+Ci48P/kxVKjHi+x5loKTBA6HUI6A182oKeRZeYS8zSn?=
- =?us-ascii?Q?TOxMOV7VX/iP3fS93VFUeZeyKAnyYbmFhWIFA4CXBQOL775HLMdHfO1sam2+?=
- =?us-ascii?Q?f3N2B/QT/n8+KRE8iA+EdvWsyvPKTWhPBz+Kfibnl6dtEqkHOqmvDjLtGXyC?=
- =?us-ascii?Q?uANyvONt0gn80YfbzOy1XiPDvygHaPjUDIqoWHJIQZwMJms7RThK5AByRgi5?=
- =?us-ascii?Q?5UPPXY4Im0UIKKMJUoA1Nl/tzfgXamn5/l9pAOJsWQgPJVZnu5rfG1jOTDJr?=
- =?us-ascii?Q?y/dc+HXxuwlfWdYWE7+5QS0Pogece4cg1RH5z1F1/+/qi6LgFM/rH6F5+o4F?=
- =?us-ascii?Q?Y/EBrY4fqbXQ/B8qKOIP9IUAJIIniKSvRtzpJMw0W5nYf0fnQVjQVB8fkKRM?=
- =?us-ascii?Q?lSuJNnD/TTkQtradbo66b+CIB8Wi8Zffah9Fevh5Uieq5owADGFIktMBfgRW?=
- =?us-ascii?Q?Uxa4rxjAd+Tw8NJzFGdOvpnb+90aeAeN7L0sSimwe5aDi62GxunJiLNvtxxB?=
- =?us-ascii?Q?i13WvDfrkxq3NmlyFlRSdH0Rhj+d7/Y+rCGLQDxnPYMzf5uEtest71kx9ya+?=
- =?us-ascii?Q?GdyWgVHAAjoVew6hb+7MKtcVXbzWBLM6Zi8bO42qHqgINf9V7St+q280pL7P?=
- =?us-ascii?Q?yLlDdGRtK2Qldk61OYkDfu3rlA5uZOX3tTRqlKYIsNLS4r5+U/idZa9kmPKD?=
- =?us-ascii?Q?KMoWHnBHc4MIMfhY+yllv0aUlQx+qEGnBqDy23QYo6hf0CvvJdviRYORISr0?=
- =?us-ascii?Q?BUCQRVwUnOswS5gzOS4xv2NoQpA+tuAa/0Pf7e5w7/ojfZGKcrXO9ztU+Ebc?=
- =?us-ascii?Q?gm9FyMkwX+exhBUW8WLahnqd4uckpOGhs5RK?=
+ ARA:13230040|36860700013|376014|1800799024|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?6ZNUaDRm1rfchQVsPe9khvyl7MrvPEbJXxcD1wLSfU39Btuld2oECFb3wCfH?=
+ =?us-ascii?Q?Sk9VhCedd1At4Ai3rmHRuhsNrO6HE6xh1FUVpNPBwP7h9TOv+vtxjJvWdRoU?=
+ =?us-ascii?Q?RXr4R6jVCclrrM5pIBrNZXnT5RXqYNbONuvUrXLPRiLq5vrnyzFf4BL75Etp?=
+ =?us-ascii?Q?MBVFijXUADWbaNL5dx3YapgpFPcyr1MKLQnoNab0ygaKNvWVYY3cdPGMRscO?=
+ =?us-ascii?Q?LY2C2aVpvc+gXsMXI6N5A22v/77cIYsKTPTXCJWkYm5PyqQ9eKfvWHcbIjgt?=
+ =?us-ascii?Q?GaOkTa6pp4AwFCi7QqJnES8X1j3XJ2hm5PO2VuUVQhAH280QgJGM1dTh59Z3?=
+ =?us-ascii?Q?H7+40alncmLWtnI4X+G8E7wanMiuOzM4pMFFprh0KFtHIiZJAOqGcRX0BYfa?=
+ =?us-ascii?Q?fZtZ1udXfv1R2z7URDPdPwnIvzkfJ/bk9HMuIWsSvdCraURZlRFTKo0qhfPd?=
+ =?us-ascii?Q?YOF2SgPwEooQhGnkQwrA7HrL7bEIxNlnN1mWQus02xmoJVcsvBBZW+onMXzU?=
+ =?us-ascii?Q?DE9CiiMNlQxcVZDkqKUzBgEJcaWdCzN9/6NdUDYUbocWpZrnTUrgPuMJ5hOt?=
+ =?us-ascii?Q?VqPgbDpLEVr0Al/eJRq/1DE0HnkjJ/EtMyZDf7/M5XUtlEvWu8nPoc2UDvW4?=
+ =?us-ascii?Q?WmMhUEfCqX2mc78KyPPaa8+ovjwgKe7ibM6o3mVv0Fss/VSrgdx5bVZTsreq?=
+ =?us-ascii?Q?ORwNbIkOQgi0U0/U7xSpc60N0JUiXdjfxhHqR8VB3uEs+VeF/Biws3FcbDQF?=
+ =?us-ascii?Q?8g4QpZAX1Qp8PqhY/0GjInf63ToPBMMzY7Ny/xzMguUGLsr18hd1ik/QHzmL?=
+ =?us-ascii?Q?iXmx6+vcwL4SLFq8AG2SEXhkbCDvATS5zcOXl9/xXA41YaX9V84mO2R1IuNl?=
+ =?us-ascii?Q?XMfP2s9vnVdw/lGhVajyDM/zXhrdhiuD7Tp5p7ZD9fbr94khCEIPmI8O5vtG?=
+ =?us-ascii?Q?xtyRQye6iHEDSWs5V3jiCB/ucGjHNzRrz+Qm4JWV2yEmKYPdZnog5bxSuK4C?=
+ =?us-ascii?Q?jNqF0aGCp4gZQQ1WmqS2a84OUDySEN2OL77Yd9mAMM3nZgHbK8yBTZrCyrXr?=
+ =?us-ascii?Q?PkEi9KXkApAswGMemtSHKiJ5qOwijvFR7OOogrhS7GFOi20rt5WL6M/FF0ly?=
+ =?us-ascii?Q?LIrPuonig168+RosevOsZEBeYGISMV8iN/Nrdla/lUzXLX//GjKCIi/7J8XE?=
+ =?us-ascii?Q?eB9VT8DcHxU0iAkRAZIezst5cdcso+BAm2jRCKZP5NUVvuI5VYS95Zs37LwP?=
+ =?us-ascii?Q?zfzT3C3AFGAzl0UOhiKCGAevaSmJEPRRWphzodIniZ49Nm7S7SnHjErd96Wd?=
+ =?us-ascii?Q?mL/V580cJmiEtNcLa53ENz8peGSmbU54mPhU8G7FSFrZDBmi/pXpBP+Gstnx?=
+ =?us-ascii?Q?SnLZtpe0zP2n0GC6v9d2xN6SbymVXWum/ZUD3pnXGNSDX415++lcb/lPs9cM?=
+ =?us-ascii?Q?5p9cTP6GWrFoYIqP5Has9hbrtRslt1Y98J/7TjyrAQpEWSho1B4CbDnoWBNR?=
+ =?us-ascii?Q?nXY20lDu7ACm2jrDi9HR0huXf87VZ2b+U9uC?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);
+ CAT:NONE; SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 0PHwCY9A/kBj2nZOsvtlKr9/08/SXyFZiWjPyeZfnxNclpZelHfzZIa9R2uRITtPCmlQOA/p0a+FXgGf6ckginSTM8yHXPMdweDI5xjfB3K9HnJr+pQCc7kHcDA/jBzKa18vGwKg4Ta8zipNzwAKXSESi3SWGBmvTYJMrJ0r5n03LUitM+Bf+dO+FCVO6pjZgpSkHVPCK84uLVGxYwkvX96cYPqGiTABi9paZYpiA485QrAUVwWTghgaKcszCvV0Q3MuJpUF9l75G9SB7OVNlIvzElrWcnntp7fW2wDrnU5aVmHY+Vg0IUE8PWB3Ej6BNK8+3ZviOHoirKEpQOn1nc7mSdqyv/Iki/KYMDKG/zeXr4k8pzGKPbRoj6DbjuDhT/ZR7MY+BRckirF13Ml9emKxPL+uuCqpEU4IZhLPcCUUUqr1OXOEVPo4g12KH8ogA+8JSE7PNCD280iQELB7y8Bv3wqxiEc1cyeTk7w0TntRYjFZ9EjUvYmUwaUper/7g0F8UlqPj2APfjhaDba93/utkmHSy1fwN6/0c+3+h/jw+TFiLlXuPUo6lVNUFpx4Y3WPmvA4wWPe772GTBKAWgneD6KBo3IqW7P6YEyFhrsR61O+6GupQehnSEM5uPkDpd31uYbAKKBkeSTy2351eQ==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 0B4qaM19fppYDVHeJ6ntdzGGOLc9BtSFJvqD2gszhK7ekZYHRyDP/Xbtpk8KGTUuqoOGgJaIfRCfsN6TAuKBeTvwPKbRercB6jBxPIIGpxldyJOectT7mTt3UhdGuV66fgMXgKaKHMasPXtUq8SkRwkNKO2k3mkS02aLUgNZFGhTI0OHIwZNbDvIyy2elKIk3vSrk7H2WLAEDtGGuhJWW+tAJ5b5F5oXPG9FWgAjV99nXl9JUWej8fuz2Z982Pf9ComsyZpnUcd1mwyCjAYvIzbBbUB9H+nPIz+u/qkDN3EFnd/DhFG1TYiHlF5g+tvbzrJR3jTOHjgTcr8aSqo0J8jNJMg5j07sNTn7KquH0ypTWHSaU15PmEe1OQOjyHVB6MKIyo4j4DiYSlzaBjabamraRZyqXJVY6rn2KfGu95aVK/sM2zFk+SlMZ4DE2AMmXIU8COYJ9GoUo9pajSnTIUgItyuOtAtzya+2D5+AyC3Qx2PKuPsZRHhKwBpnSD8OVvFv8gtHgmrLs3R+y8+VIU1Bp5mCQtZ/RTGr1r5T8oyvrXzPSJ2wGb8AmQNcCIO13SXYmbJNCcKXz8n3fNLbsZZwJiVBrwMnGL2+ZOHvaeOuqrzlVdUL+FZUoO5CsI+WCAAh2ikUoCnNyiMUHQnfig==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 09:20:13.4589 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2323989b-f0dd-4463-c448-08ddf75dbd47
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 09:20:16.5422 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b70a4216-4285-4363-2b4d-08ddf75dbf1e
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU2PEPF00028D0E.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1P190MB1725
-X-BESS-ID: 1758273615-304134-7641-1086-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9P190MB1795
+X-BESS-ID: 1758273620-304134-7642-1094-1
 X-BESS-VER: 2019.1_20250904.2304
-X-BESS-Apparent-Source-IP: 52.101.69.80
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoamBuZGQGYGUNQ80cQg0dggLQ
- 0oZGGcZGCalJZiapxkZGxubm5smZSiVBsLAPda2vxCAAAA
+X-BESS-Apparent-Source-IP: 52.101.83.93
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVobmhoZmQGYGUNTcxMTE0swyzd
+ TcLMkgLdXIJMnA2DzN1NLIIDUt0TLVWKk2FgD+oO0uQgAAAA==
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.267598 [from 
- cloudscan12-195.eu-central-1a.ess.aws.cudaops.com]
+ cloudscan22-120.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -144,511 +144,469 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove unused functions from various files in the ntnic PMD.
+Change the prefix flm_ to prefix nthw_flm_ to specify that these functions
+and part of the ntwh (Napatech Hardware).
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- drivers/net/ntnic/nthw/core/nthw_hif.c        | 90 -------------------
- drivers/net/ntnic/nthw/core/nthw_mac_pcs.c    | 11 ---
- drivers/net/ntnic/nthw/core/nthw_pcie3.c      | 87 ------------------
- .../net/ntnic/nthw/core/nthw_pcm_nt400dxx.c   |  5 --
- drivers/net/ntnic/nthw/core/nthw_rpf.c        | 14 ---
- .../ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c   |  6 --
- .../net/ntnic/nthw/model/nthw_fpga_model.c    | 86 ------------------
- drivers/net/ntnic/ntutil/nt_util.c            | 51 -----------
- 8 files changed, 350 deletions(-)
+ .../flow_api/profile_inline/flm_age_queue.c   | 22 ++++----
+ .../flow_api/profile_inline/flm_age_queue.h   | 20 +++----
+ .../flow_api/profile_inline/flm_lrn_queue.c   | 12 ++--
+ .../flow_api/profile_inline/flm_lrn_queue.h   | 12 ++--
+ .../profile_inline/flow_api_profile_inline.c  | 55 ++++++++++---------
+ drivers/net/ntnic/ntnic_ethdev.c              |  6 +-
+ 6 files changed, 64 insertions(+), 63 deletions(-)
 
-diff --git a/drivers/net/ntnic/nthw/core/nthw_hif.c b/drivers/net/ntnic/nthw/core/nthw_hif.c
-index 2899c3706b..015dee1bcf 100644
---- a/drivers/net/ntnic/nthw/core/nthw_hif.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_hif.c
-@@ -217,96 +217,6 @@ int nthw_hif_trigger_sample_time(nthw_hif_t *p)
- 	return 0;
- }
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_age_queue.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_age_queue.c
+index c7522516d1..87c1a5a29e 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_age_queue.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_age_queue.c
+@@ -13,22 +13,22 @@
+ static struct rte_ring *age_queue[MAX_EVT_AGE_QUEUES];
+ static RTE_ATOMIC(uint16_t) age_event[MAX_EVT_AGE_PORTS];
  
--static int nthw_hif_get_stat(nthw_hif_t *p, uint32_t *p_rx_cnt, uint32_t *p_tx_cnt,
--	uint32_t *p_ref_clk_cnt, uint32_t *p_tg_unit_size, uint32_t *p_tg_ref_freq,
--	uint64_t *p_tags_in_use, uint64_t *p_rd_err, uint64_t *p_wr_err)
--{
--	*p_rx_cnt = nthw_field_get_updated(p->mp_fld_stat_rx_counter);
--	*p_tx_cnt = nthw_field_get_updated(p->mp_fld_stat_tx_counter);
--
--	*p_ref_clk_cnt = nthw_field_get_updated(p->mp_fld_stat_ref_clk_ref_clk);
--
--	*p_tg_unit_size = NTHW_TG_CNT_SIZE;
--	*p_tg_ref_freq = p->mn_fpga_hif_ref_clk_freq;
--
--	*p_tags_in_use = (p->mp_fld_status_tags_in_use
--			? nthw_field_get_updated(p->mp_fld_status_tags_in_use)
--			: 0);
--
--	*p_rd_err =
--		(p->mp_fld_status_rd_err ? nthw_field_get_updated(p->mp_fld_status_rd_err) : 0);
--	*p_wr_err =
--		(p->mp_fld_status_wr_err ? nthw_field_get_updated(p->mp_fld_status_wr_err) : 0);
--
--	return 0;
--}
--
--static int nthw_hif_get_stat_rate(nthw_hif_t *p, uint64_t *p_pci_rx_rate, uint64_t *p_pci_tx_rate,
--	uint64_t *p_ref_clk_cnt, uint64_t *p_tags_in_use,
--	uint64_t *p_rd_err_cnt, uint64_t *p_wr_err_cnt)
--{
--	uint32_t rx_cnt, tx_cnt, ref_clk_cnt, tg_unit_size, tg_ref_freq;
--	uint64_t n_tags_in_use, n_rd_err, n_wr_err;
--
--	nthw_hif_get_stat(p, &rx_cnt, &tx_cnt, &ref_clk_cnt, &tg_unit_size, &tg_ref_freq,
--		&n_tags_in_use, &n_rd_err, &n_wr_err);
--
--	*p_tags_in_use = n_tags_in_use;
--
--	if (n_rd_err)
--		(*p_rd_err_cnt)++;
--
--	if (n_wr_err)
--		(*p_wr_err_cnt)++;
--
--	if (ref_clk_cnt) {
--		uint64_t rx_rate;
--		uint64_t tx_rate;
--
--		*p_ref_clk_cnt = ref_clk_cnt;
--
--		rx_rate = ((uint64_t)rx_cnt * tg_unit_size * tg_ref_freq) / (uint64_t)ref_clk_cnt;
--		*p_pci_rx_rate = rx_rate;
--
--		tx_rate = ((uint64_t)tx_cnt * tg_unit_size * tg_ref_freq) / (uint64_t)ref_clk_cnt;
--		*p_pci_tx_rate = tx_rate;
--
--	} else {
--		*p_pci_rx_rate = 0;
--		*p_pci_tx_rate = 0;
--		*p_ref_clk_cnt = 0;
--	}
--
--	return 0;
--}
--
--static int nthw_hif_stat_req_enable(nthw_hif_t *p)
--{
--	nthw_field_set_all(p->mp_fld_stat_ctrl_ena);
--	nthw_field_set_all(p->mp_fld_stat_ctrl_req);
--	nthw_field_flush_register(p->mp_fld_stat_ctrl_req);
--	return 0;
--}
--
--static int nthw_hif_stat_req_disable(nthw_hif_t *p)
--{
--	nthw_field_clr_all(p->mp_fld_stat_ctrl_ena);
--	nthw_field_set_all(p->mp_fld_stat_ctrl_req);
--	nthw_field_flush_register(p->mp_fld_stat_ctrl_req);
--	return 0;
--}
--
--static int nthw_hif_end_point_cntrs_sample(nthw_hif_t *p, struct nthw_hif_end_point_counters *epc)
--{
--	RTE_ASSERT(epc);
--
--	/* Get stat rate and maintain rx/tx min/max */
--	nthw_hif_get_stat_rate(p, &epc->cur_tx, &epc->cur_rx, &epc->n_ref_clk_cnt,
--		&epc->n_tags_in_use, &epc->n_rd_err, &epc->n_wr_err);
--
--	return 0;
--}
--
- int nthw_hif_read_test_reg(nthw_hif_t *p, uint8_t test_reg, uint32_t *p_value)
+-__rte_always_inline int flm_age_event_get(uint8_t port)
++__rte_always_inline int nthw_flm_age_event_get(uint8_t port)
  {
- 	uint32_t data;
-diff --git a/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c b/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
-index a8d66268ff..4a7b7b9549 100644
---- a/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
-@@ -429,17 +429,6 @@ void nthw_mac_pcs_set_tx_sel_host(nthw_mac_pcs_t *p, bool enable)
- 		nthw_field_clr_flush(p->mp_fld_phymac_misc_tx_sel_host);
+ 	return  rte_atomic_load_explicit(&age_event[port], rte_memory_order_seq_cst);
  }
  
--static void nthw_mac_pcs_set_tx_sel_tfg(nthw_mac_pcs_t *p, bool enable)
--{
--	nthw_field_get_updated(p->mp_fld_phymac_misc_tx_sel_tfg);
--
--	if (enable)
--		nthw_field_set_flush(p->mp_fld_phymac_misc_tx_sel_tfg);
--
--	else
--		nthw_field_clr_flush(p->mp_fld_phymac_misc_tx_sel_tfg);
--}
--
- void nthw_mac_pcs_set_ts_eop(nthw_mac_pcs_t *p, bool enable)
+-__rte_always_inline void flm_age_event_set(uint8_t port)
++__rte_always_inline void nthw_flm_age_event_set(uint8_t port)
  {
- 	if (p->mp_fld_phymac_misc_ts_eop) {
-diff --git a/drivers/net/ntnic/nthw/core/nthw_pcie3.c b/drivers/net/ntnic/nthw/core/nthw_pcie3.c
-index 2953896759..763bf9e554 100644
---- a/drivers/net/ntnic/nthw/core/nthw_pcie3.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_pcie3.c
-@@ -168,90 +168,3 @@ int nthw_pcie3_trigger_sample_time(nthw_pcie3_t *p)
- 
- 	return 0;
- }
--
--static int nthw_pcie3_stat_req_enable(nthw_pcie3_t *p)
--{
--	nthw_field_set_all(p->mp_fld_stat_ctrl_ena);
--	nthw_field_set_all(p->mp_fld_stat_ctrl_req);
--	nthw_field_flush_register(p->mp_fld_stat_ctrl_req);
--	return 0;
--}
--
--static int nthw_pcie3_stat_req_disable(nthw_pcie3_t *p)
--{
--	nthw_field_clr_all(p->mp_fld_stat_ctrl_ena);
--	nthw_field_set_all(p->mp_fld_stat_ctrl_req);
--	nthw_field_flush_register(p->mp_fld_stat_ctrl_req);
--	return 0;
--}
--
--static int nthw_pcie3_get_stat(nthw_pcie3_t *p, uint32_t *p_rx_cnt, uint32_t *p_tx_cnt,
--	uint32_t *p_ref_clk_cnt, uint32_t *p_tg_unit_size, uint32_t *p_tg_ref_freq,
--	uint32_t *p_tag_use_cnt, uint32_t *p_rq_rdy_cnt, uint32_t *p_rq_vld_cnt)
--{
--	*p_rx_cnt = nthw_field_get_updated(p->mp_fld_stat_rx_counter);
--	*p_tx_cnt = nthw_field_get_updated(p->mp_fld_stat_tx_counter);
--
--	*p_ref_clk_cnt = nthw_field_get_updated(p->mp_fld_stat_ref_clk_ref_clk);
--
--	*p_tg_unit_size = NTHW_TG_CNT_SIZE;
--	*p_tg_ref_freq = NTHW_TG_REF_FREQ;
--
--	*p_tag_use_cnt = nthw_field_get_updated(p->mp_fld_status0_tags_in_use);
--
--	*p_rq_rdy_cnt = nthw_field_get_updated(p->mp_fld_stat_rq_rdy_counter);
--	*p_rq_vld_cnt = nthw_field_get_updated(p->mp_fld_stat_rq_vld_counter);
--
--	return 0;
--}
--
--static int nthw_pcie3_get_stat_rate(nthw_pcie3_t *p, uint64_t *p_pci_rx_rate,
--	uint64_t *p_pci_tx_rate,
--	uint64_t *p_ref_clk_cnt, uint64_t *p_tag_use_cnt,
--	uint64_t *p_pci_nt_bus_util, uint64_t *p_pci_xil_bus_util)
--{
--	uint32_t rx_cnt, tx_cnt, ref_clk_cnt;
--	uint32_t tg_unit_size, tg_ref_freq;
--	uint32_t tag_use_cnt, rq_rdy_cnt, rq_vld_cnt;
--
--	nthw_pcie3_get_stat(p, &rx_cnt, &tx_cnt, &ref_clk_cnt, &tg_unit_size, &tg_ref_freq,
--		&tag_use_cnt, &rq_rdy_cnt, &rq_vld_cnt);
--
--	if (ref_clk_cnt) {
--		uint64_t nt_bus_util, xil_bus_util;
--		uint64_t rx_rate, tx_rate;
--
--		rx_rate = ((uint64_t)rx_cnt * tg_unit_size * tg_ref_freq) / (uint64_t)ref_clk_cnt;
--		*p_pci_rx_rate = rx_rate;
--
--		tx_rate = ((uint64_t)tx_cnt * tg_unit_size * tg_ref_freq) / (uint64_t)ref_clk_cnt;
--		*p_pci_tx_rate = tx_rate;
--
--		*p_ref_clk_cnt = ref_clk_cnt;
--
--		*p_tag_use_cnt = tag_use_cnt;
--
--		nt_bus_util = ((uint64_t)rq_vld_cnt * 1000000ULL) / (uint64_t)ref_clk_cnt;
--		*p_pci_nt_bus_util = nt_bus_util;
--		xil_bus_util = ((uint64_t)rq_rdy_cnt * 1000000ULL) / (uint64_t)ref_clk_cnt;
--		*p_pci_xil_bus_util = xil_bus_util;
--
--	} else {
--		*p_ref_clk_cnt = 0;
--		*p_pci_nt_bus_util = 0;
--		*p_pci_xil_bus_util = 0;
--	}
--
--	return 0;
--}
--
--static int nthw_pcie3_end_point_counters_sample_post(nthw_pcie3_t *p,
--	struct nthw_hif_end_point_counters *epc)
--{
--	NT_LOG_DBGX(DBG, NTHW);
--	RTE_ASSERT(epc);
--	nthw_pcie3_get_stat_rate(p, &epc->cur_tx, &epc->cur_rx, &epc->n_ref_clk_cnt,
--		&epc->n_tags_in_use, &epc->cur_pci_nt_util,
--		&epc->cur_pci_xil_util);
--	return 0;
--}
-diff --git a/drivers/net/ntnic/nthw/core/nthw_pcm_nt400dxx.c b/drivers/net/ntnic/nthw/core/nthw_pcm_nt400dxx.c
-index 9004ebef06..e98378e154 100644
---- a/drivers/net/ntnic/nthw/core/nthw_pcm_nt400dxx.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_pcm_nt400dxx.c
-@@ -68,11 +68,6 @@ bool nthw_pcm_nt400dxx_get_ts_pll_locked_stat(nthw_pcm_nt400dxx_t *p)
- 	return nthw_field_get_updated(p->mp_fld_stat_ts_pll_locked) != 0;
+ 	rte_atomic_store_explicit(&age_event[port], 1, rte_memory_order_seq_cst);
  }
  
--static bool nthw_pcm_nt400dxx_get_ts_pll_locked_latch(nthw_pcm_nt400dxx_t *p)
--{
--	return nthw_field_get_updated(p->mp_fld_latch_ts_pll_locked) != 0;
--}
--
- void nthw_pcm_nt400dxx_set_ts_pll_locked_latch(nthw_pcm_nt400dxx_t *p, uint32_t val)
+-__rte_always_inline void flm_age_event_clear(uint8_t port)
++__rte_always_inline void nthw_flm_age_event_clear(uint8_t port)
  {
- 	nthw_field_update_register(p->mp_fld_latch_ts_pll_locked);
-diff --git a/drivers/net/ntnic/nthw/core/nthw_rpf.c b/drivers/net/ntnic/nthw/core/nthw_rpf.c
-index 6f06601de8..7184aedc04 100644
---- a/drivers/net/ntnic/nthw/core/nthw_rpf.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_rpf.c
-@@ -20,11 +20,6 @@ nthw_rpf_t *nthw_rpf_new(void)
- 	return p;
+ 	rte_atomic_store_explicit(&age_event[port], 0, rte_memory_order_seq_cst);
  }
  
--static void nthw_rpf_delete(nthw_rpf_t *p)
--{
--	free(p);
--}
--
- int nthw_rpf_init(nthw_rpf_t *p, nthw_fpga_t *p_fpga, int n_instance)
+-void flm_age_queue_free(uint8_t port, uint16_t caller_id)
++void nthw_flm_age_queue_free(uint8_t port, uint16_t caller_id)
  {
- 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_RPF, n_instance);
-@@ -67,15 +62,6 @@ int nthw_rpf_init(nthw_rpf_t *p, nthw_fpga_t *p_fpga, int n_instance)
- 	return 0;
+ 	struct rte_ring *q = NULL;
+ 
+@@ -43,17 +43,17 @@ void flm_age_queue_free(uint8_t port, uint16_t caller_id)
+ 	rte_ring_free(q);
  }
  
--static void nthw_rpf_administrative_block(nthw_rpf_t *p)
--{
--	/* block all MAC ports */
--	nthw_register_update(p->mp_reg_control);
--	nthw_field_set_val_flush32(p->mp_fld_control_pen, 0);
--
--	p->m_administrative_block = true;
--}
--
- void nthw_rpf_block(nthw_rpf_t *p)
- {
- 	nthw_register_update(p->mp_reg_control);
-diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c
-index d55adc6687..1862d77350 100644
---- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c
-+++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c
-@@ -402,12 +402,6 @@ static int hw_mod_tpe_ifr_counters_mod(struct flow_api_backend_s *be, enum hw_tp
- 	return 0;
- }
- 
--static int hw_mod_tpe_ifr_counters_set(struct flow_api_backend_s *be, enum hw_tpe_e field,
--	int index, uint32_t value)
--{
--	return hw_mod_tpe_ifr_counters_mod(be, field, index, &value, 0);
--}
--
- int hw_mod_tpe_ifr_counters_get(struct flow_api_backend_s *be, enum hw_tpe_e field, int index,
- 	uint32_t *value)
- {
-diff --git a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
-index 3655c86f51..0b8958c4c1 100644
---- a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
-+++ b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
-@@ -228,11 +228,6 @@ static void nthw_field_init(nthw_field_t *p, nthw_register_t *p_reg,
- 	}
- }
- 
--static void nthw_field_reset(const nthw_field_t *p)
--{
--	nthw_field_set_val32(p, (uint32_t)p->mn_reset_val);
--}
--
- /*
-  * Register
-  */
-@@ -467,20 +462,6 @@ static void nthw_fpga_model_init(nthw_fpga_t *p, nthw_fpga_prod_init_s *p_init,
- 	}
- }
- 
--static void nthw_fpga_set_debug_mode(nthw_fpga_t *p, int debug_mode)
--{
--	int i;
--
--	p->m_debug_mode = debug_mode;
--
--	for (i = 0; i < p->mn_modules; i++) {
--		nthw_module_t *p_mod = p->mpa_modules[i];
--
--		if (p_mod)
--			nthw_module_set_debug_mode(p_mod, debug_mode);
--	}
--}
--
- static nthw_module_t *nthw_fpga_lookup_module(const nthw_fpga_t *p, nthw_id_t id, int instance)
+-void flm_age_queue_free_all(void)
++void nthw_flm_age_queue_free_all(void)
  {
  	int i;
-@@ -612,19 +593,6 @@ uint32_t nthw_register_get_address(const nthw_register_t *p)
- 	return p->mn_addr;
+ 	int j;
+ 
+ 	for (i = 0; i < MAX_EVT_AGE_PORTS; i++)
+ 		for (j = 0; j < MAX_EVT_AGE_QUEUES; j++)
+-			flm_age_queue_free(i, j);
++			nthw_flm_age_queue_free(i, j);
  }
  
--static void nthw_register_reset(const nthw_register_t *p)
--{
--	int i;
--	nthw_field_t *p_field = NULL;
--
--	for (i = 0; i < p->mn_fields; i++) {
--		p_field = p->mpa_fields[i];
--
--		if (p_field)
--			nthw_field_reset(p_field);
--	}
--}
--
- static nthw_field_t *nthw_register_lookup_field(const nthw_register_t *p, nthw_id_t id)
+-struct rte_ring *flm_age_queue_create(uint8_t port, uint16_t caller_id, unsigned int count)
++struct rte_ring *nthw_flm_age_queue_create(uint8_t port, uint16_t caller_id, unsigned int count)
  {
- 	int i;
-@@ -667,16 +635,6 @@ nthw_field_t *nthw_register_get_field(const nthw_register_t *p, nthw_id_t id)
- 	return p_field;
+ 	char name[20];
+ 	struct rte_ring *q = NULL;
+@@ -112,7 +112,7 @@ struct rte_ring *flm_age_queue_create(uint8_t port, uint16_t caller_id, unsigned
+ 	return q;
  }
  
--static int nthw_register_get_bit_width(const nthw_register_t *p)
--{
--	return p->mn_bit_width;
--}
--
--static int nthw_register_get_debug_mode(const nthw_register_t *p)
--{
--	return p->mn_debug_mode;
--}
--
- /*
-  * NOTE: do not set debug on fields - as register operation dumps typically are enough
-  */
-@@ -750,28 +708,6 @@ static int nthw_register_write_data(const nthw_register_t *p, uint32_t cnt)
- 	return rc;
- }
- 
--static void nthw_register_get_val(const nthw_register_t *p, uint32_t *p_data, uint32_t len)
--{
--	uint32_t i;
--
--	if (len == (uint32_t)-1 || len > p->mn_len)
--		len = p->mn_len;
--
--	RTE_ASSERT(len <= p->mn_len);
--	RTE_ASSERT(p_data);
--
--	for (i = 0; i < len; i++)
--		p_data[i] = p->mp_shadow[i];
--}
--
--static uint32_t nthw_register_get_val32(const nthw_register_t *p)
--{
--	uint32_t val = 0;
--
--	nthw_register_get_val(p, &val, 1);
--	return val;
--}
--
- void nthw_register_update(const nthw_register_t *p)
+-void flm_age_queue_put(uint16_t caller_id, struct flm_age_event_s *obj)
++void nthw_flm_age_queue_put(uint16_t caller_id, struct flm_age_event_s *obj)
  {
- 	if (p && p->mn_type != NTHW_FPGA_REG_TYPE_WO) {
-@@ -806,15 +742,6 @@ void nthw_register_update(const nthw_register_t *p)
+ 	int ret;
+ 
+@@ -125,7 +125,7 @@ void flm_age_queue_put(uint16_t caller_id, struct flm_age_event_s *obj)
  	}
  }
  
--static uint32_t nthw_register_get_val_updated32(const nthw_register_t *p)
--{
--	uint32_t val = 0;
--
--	nthw_register_update(p);
--	nthw_register_get_val(p, &val, 1);
--	return val;
--}
--
- void nthw_register_make_dirty(nthw_register_t *p)
+-int flm_age_queue_get(uint16_t caller_id, struct flm_age_event_s *obj)
++int nthw_flm_age_queue_get(uint16_t caller_id, struct flm_age_event_s *obj)
  {
- 	uint32_t i;
-@@ -877,19 +804,6 @@ void nthw_register_flush(const nthw_register_t *p, uint32_t cnt)
+ 	int ret;
+ 
+@@ -142,7 +142,7 @@ int flm_age_queue_get(uint16_t caller_id, struct flm_age_event_s *obj)
+ 	return -ENOENT;
+ }
+ 
+-unsigned int flm_age_queue_count(uint16_t caller_id)
++unsigned int nthw_flm_age_queue_count(uint16_t caller_id)
+ {
+ 	unsigned int ret = 0;
+ 
+@@ -152,7 +152,7 @@ unsigned int flm_age_queue_count(uint16_t caller_id)
+ 	return ret;
+ }
+ 
+-unsigned int flm_age_queue_get_size(uint16_t caller_id)
++unsigned int nthw_flm_age_queue_get_size(uint16_t caller_id)
+ {
+ 	unsigned int ret = 0;
+ 
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_age_queue.h b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_age_queue.h
+index 55c410ac86..babf73fd7f 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_age_queue.h
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_age_queue.h
+@@ -28,15 +28,15 @@ struct flm_age_event_s {
+ 
+ #define FLM_AGE_ELEM_SIZE sizeof(struct flm_age_event_s)
+ 
+-int flm_age_event_get(uint8_t port);
+-void flm_age_event_set(uint8_t port);
+-void flm_age_event_clear(uint8_t port);
+-void flm_age_queue_free(uint8_t port, uint16_t caller_id);
+-void flm_age_queue_free_all(void);
+-struct rte_ring *flm_age_queue_create(uint8_t port, uint16_t caller_id, unsigned int count);
+-void flm_age_queue_put(uint16_t caller_id, struct flm_age_event_s *obj);
+-int flm_age_queue_get(uint16_t caller_id, struct flm_age_event_s *obj);
+-unsigned int flm_age_queue_count(uint16_t caller_id);
+-unsigned int flm_age_queue_get_size(uint16_t caller_id);
++int nthw_flm_age_event_get(uint8_t port);
++void nthw_flm_age_event_set(uint8_t port);
++void nthw_flm_age_event_clear(uint8_t port);
++void nthw_flm_age_queue_free(uint8_t port, uint16_t caller_id);
++void nthw_flm_age_queue_free_all(void);
++struct rte_ring *nthw_flm_age_queue_create(uint8_t port, uint16_t caller_id, unsigned int count);
++void nthw_flm_age_queue_put(uint16_t caller_id, struct flm_age_event_s *obj);
++int nthw_flm_age_queue_get(uint16_t caller_id, struct flm_age_event_s *obj);
++unsigned int nthw_flm_age_queue_count(uint16_t caller_id);
++unsigned int nthw_flm_age_queue_get_size(uint16_t caller_id);
+ 
+ #endif	/* _FLM_AGE_QUEUE_H_ */
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_lrn_queue.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_lrn_queue.c
+index f6cc09de9b..4f974a6e5b 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_lrn_queue.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_lrn_queue.c
+@@ -16,7 +16,7 @@
+ 
+ #define ELEM_SIZE sizeof(struct flm_v25_lrn_data_s)
+ 
+-void *flm_lrn_queue_create(void)
++void *nthw_flm_lrn_queue_create(void)
+ {
+ 	static_assert((ELEM_SIZE & ~(size_t)3) == ELEM_SIZE, "FLM LEARN struct size");
+ 	struct rte_ring *q = rte_ring_create_elem("RFQ",
+@@ -28,24 +28,24 @@ void *flm_lrn_queue_create(void)
+ 	return q;
+ }
+ 
+-void flm_lrn_queue_free(void *q)
++void nthw_flm_lrn_queue_free(void *q)
+ {
+ 	rte_ring_free(q);
+ }
+ 
+-uint32_t *flm_lrn_queue_get_write_buffer(void *q)
++uint32_t *nthw_flm_lrn_queue_get_write_buffer(void *q)
+ {
+ 	struct rte_ring_zc_data zcd;
+ 	unsigned int n = rte_ring_enqueue_zc_burst_elem_start(q, ELEM_SIZE, 1, &zcd, NULL);
+ 	return (n == 0) ? NULL : zcd.ptr1;
+ }
+ 
+-void flm_lrn_queue_release_write_buffer(void *q)
++void nthw_flm_lrn_queue_release_write_buffer(void *q)
+ {
+ 	rte_ring_enqueue_zc_elem_finish(q, 1);
+ }
+ 
+-read_record flm_lrn_queue_get_read_buffer(void *q)
++read_record nthw_flm_lrn_queue_get_read_buffer(void *q)
+ {
+ 	struct rte_ring_zc_data zcd;
+ 	read_record rr;
+@@ -62,7 +62,7 @@ read_record flm_lrn_queue_get_read_buffer(void *q)
+ 	return rr;
+ }
+ 
+-void flm_lrn_queue_release_read_buffer(void *q, uint32_t num)
++void nthw_flm_lrn_queue_release_read_buffer(void *q, uint32_t num)
+ {
+ 	rte_ring_dequeue_zc_elem_finish(q, num);
+ }
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_lrn_queue.h b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_lrn_queue.h
+index 40558f4201..ee1e2a63eb 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_lrn_queue.h
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_lrn_queue.h
+@@ -13,13 +13,13 @@ typedef struct read_record {
+ 	uint32_t num;
+ } read_record;
+ 
+-void *flm_lrn_queue_create(void);
+-void flm_lrn_queue_free(void *q);
++void *nthw_flm_lrn_queue_create(void);
++void nthw_flm_lrn_queue_free(void *q);
+ 
+-uint32_t *flm_lrn_queue_get_write_buffer(void *q);
+-void flm_lrn_queue_release_write_buffer(void *q);
++uint32_t *nthw_flm_lrn_queue_get_write_buffer(void *q);
++void nthw_flm_lrn_queue_release_write_buffer(void *q);
+ 
+-read_record flm_lrn_queue_get_read_buffer(void *q);
+-void flm_lrn_queue_release_read_buffer(void *q, uint32_t num);
++read_record nthw_flm_lrn_queue_get_read_buffer(void *q);
++void nthw_flm_lrn_queue_release_read_buffer(void *q, uint32_t num);
+ 
+ #endif	/* _FLM_LRN_QUEUE_H_ */
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+index 32aae24499..1a78933b7f 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+@@ -194,13 +194,13 @@ static int flow_mtr_create_meter(struct flow_eth_dev *dev,
+ 
+ 	learn_record =
+ 		(struct flm_v25_lrn_data_s *)
+-			flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
++			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 
+ 	while (learn_record == NULL) {
+ 		nt_os_wait_usec(1);
+ 		learn_record =
+ 			(struct flm_v25_lrn_data_s *)
+-				flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
++				nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
  	}
+ 
+ 	struct flm_flow_mtr_handle_s *handle = dev->ndev->flm_mtr_handle;
+@@ -232,7 +232,7 @@ static int flow_mtr_create_meter(struct flow_eth_dev *dev,
+ 	if (stats_mask)
+ 		learn_record->vol_idx = 1;
+ 
+-	flm_lrn_queue_release_write_buffer(flm_lrn_queue_arr);
++	nthw_flm_lrn_queue_release_write_buffer(flm_lrn_queue_arr);
+ 
+ 	struct flm_mtr_stat_s *mtr_stat = handle->port_stats[caller_id]->stats;
+ 	mtr_stat[mtr_id].buckets = buckets;
+@@ -252,13 +252,13 @@ static int flow_mtr_probe_meter(struct flow_eth_dev *dev, uint8_t caller_id, uin
+ 
+ 	learn_record =
+ 		(struct flm_v25_lrn_data_s *)
+-			flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
++			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 
+ 	while (learn_record == NULL) {
+ 		nt_os_wait_usec(1);
+ 		learn_record =
+ 			(struct flm_v25_lrn_data_s *)
+-				flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
++				nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 	}
+ 
+ 	struct flm_flow_mtr_handle_s *handle = dev->ndev->flm_mtr_handle;
+@@ -277,7 +277,7 @@ static int flow_mtr_probe_meter(struct flow_eth_dev *dev, uint8_t caller_id, uin
+ 
+ 	learn_record->id = flm_id;
+ 
+-	flm_lrn_queue_release_write_buffer(flm_lrn_queue_arr);
++	nthw_flm_lrn_queue_release_write_buffer(flm_lrn_queue_arr);
+ 
+ 	rte_spinlock_unlock(&dev->ndev->mtx);
+ 
+@@ -292,13 +292,13 @@ static int flow_mtr_destroy_meter(struct flow_eth_dev *dev, uint8_t caller_id, u
+ 
+ 	learn_record =
+ 		(struct flm_v25_lrn_data_s *)
+-			flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
++			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 
+ 	while (learn_record == NULL) {
+ 		nt_os_wait_usec(1);
+ 		learn_record =
+ 			(struct flm_v25_lrn_data_s *)
+-				flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
++				nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 	}
+ 
+ 	struct flm_flow_mtr_handle_s *handle = dev->ndev->flm_mtr_handle;
+@@ -329,7 +329,7 @@ static int flow_mtr_destroy_meter(struct flow_eth_dev *dev, uint8_t caller_id, u
+ 
+ 	ntnic_id_table_free_id(dev->ndev->id_table_handle, flm_id);
+ 
+-	flm_lrn_queue_release_write_buffer(flm_lrn_queue_arr);
++	nthw_flm_lrn_queue_release_write_buffer(flm_lrn_queue_arr);
+ 
+ 	rte_spinlock_unlock(&dev->ndev->mtx);
+ 
+@@ -345,13 +345,13 @@ static int flm_mtr_adjust_stats(struct flow_eth_dev *dev, uint8_t caller_id, uin
+ 
+ 	learn_record =
+ 		(struct flm_v25_lrn_data_s *)
+-			flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
++			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 
+ 	while (learn_record == NULL) {
+ 		nt_os_wait_usec(1);
+ 		learn_record =
+ 			(struct flm_v25_lrn_data_s *)
+-				flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
++				nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 	}
+ 
+ 	struct flm_flow_mtr_handle_s *handle = dev->ndev->flm_mtr_handle;
+@@ -376,7 +376,7 @@ static int flm_mtr_adjust_stats(struct flow_eth_dev *dev, uint8_t caller_id, uin
+ 	if (atomic_load(&mtr_stat->stats_mask))
+ 		learn_record->vol_idx = 1;
+ 
+-	flm_lrn_queue_release_write_buffer(flm_lrn_queue_arr);
++	nthw_flm_lrn_queue_release_write_buffer(flm_lrn_queue_arr);
+ 
+ 	rte_spinlock_unlock(&dev->ndev->mtx);
+ 
+@@ -385,19 +385,19 @@ static int flm_mtr_adjust_stats(struct flow_eth_dev *dev, uint8_t caller_id, uin
+ 
+ static void flm_setup_queues(void)
+ {
+-	flm_lrn_queue_arr = flm_lrn_queue_create();
++	flm_lrn_queue_arr = nthw_flm_lrn_queue_create();
+ 	RTE_ASSERT(flm_lrn_queue_arr != NULL);
  }
  
--static void nthw_register_clr(nthw_register_t *p)
--{
--	if (p->mp_shadow) {
--		memset(p->mp_shadow, 0, p->mn_len * sizeof(uint32_t));
--		nthw_register_make_dirty(p);
--	}
--}
--
--static int nthw_field_get_debug_mode(const nthw_field_t *p)
--{
--	return p->mn_debug_mode;
--}
--
- int nthw_field_get_bit_width(const nthw_field_t *p)
+ static void flm_free_queues(void)
  {
- 	return p->mn_bit_width;
-diff --git a/drivers/net/ntnic/ntutil/nt_util.c b/drivers/net/ntnic/ntutil/nt_util.c
-index c4a49d8358..18133570bb 100644
---- a/drivers/net/ntnic/ntutil/nt_util.c
-+++ b/drivers/net/ntnic/ntutil/nt_util.c
-@@ -85,24 +85,6 @@ struct nt_dma_s *nt_dma_alloc(uint64_t size, uint64_t align, int numa)
- 	return vfio_addr;
+-	flm_lrn_queue_free(flm_lrn_queue_arr);
++	nthw_flm_lrn_queue_free(flm_lrn_queue_arr);
  }
  
--static void nt_dma_free(struct nt_dma_s *vfio_addr)
--{
--	NT_LOG(DBG, GENERAL, "VFIO DMA free addr=%" PRIX64 ", iova=%" PRIX64 ", size=%" PRIX64,
--		vfio_addr->addr, vfio_addr->iova, vfio_addr->size);
--
--	int res = vfio_cb.vfio_dma_unmap(0, (void *)vfio_addr->addr, vfio_addr->iova,
--			vfio_addr->size);
--
--	if (res != 0) {
--		NT_LOG(WRN, GENERAL,
--			"VFIO DMA free FAILED addr=%" PRIX64 ", iova=%" PRIX64 ", size=%" PRIX64,
--			vfio_addr->addr, vfio_addr->iova, vfio_addr->size);
--	}
--
--	rte_free((void *)(vfio_addr->addr));
--	rte_free(vfio_addr);
--}
--
- /* NOTE: please note the difference between RTE_ETH_SPEED_NUM_xxx and RTE_ETH_LINK_SPEED_xxx */
- int nt_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed)
+ static uint32_t flm_lrn_update(struct flow_eth_dev *dev, uint32_t *inf_word_cnt,
+ 	uint32_t *sta_word_cnt)
  {
-@@ -180,39 +162,6 @@ uint32_t nt_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa)
- 	return eth_speed_capa;
+-	read_record r = flm_lrn_queue_get_read_buffer(flm_lrn_queue_arr);
++	read_record r = nthw_flm_lrn_queue_get_read_buffer(flm_lrn_queue_arr);
+ 	uint32_t handled_records = 0;
+ 
+ 	if (r.num) {
+@@ -405,7 +405,7 @@ static uint32_t flm_lrn_update(struct flow_eth_dev *dev, uint32_t *inf_word_cnt,
+ 			r.num, &handled_records, inf_word_cnt, sta_word_cnt))
+ 			NT_LOG(ERR, FILTER, "Flow programming failed");
+ 	}
+-	flm_lrn_queue_release_read_buffer(flm_lrn_queue_arr, handled_records);
++	nthw_flm_lrn_queue_release_read_buffer(flm_lrn_queue_arr, handled_records);
+ 
+ 	return r.num;
+ }
+@@ -481,10 +481,10 @@ static void flm_mtr_read_inf_records(struct flow_eth_dev *dev, uint32_t *data, u
+ 
+ 				is_remote = is_remote_caller(caller_id, &port);
+ 
+-				flm_age_queue_put(caller_id, &age_event);
++				nthw_flm_age_queue_put(caller_id, &age_event);
+ 				/* age events are supported only for physical ports */
+ 				if (!is_remote)
+-					flm_age_event_set(port);
++					nthw_flm_age_event_set(port);
+ 			}
+ 			break;
+ 
+@@ -973,13 +973,13 @@ static int flm_flow_programming(struct flow_handle *fh, uint32_t flm_op)
+ 
+ 	learn_record =
+ 		(struct flm_v25_lrn_data_s *)
+-			flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
++			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 
+ 	while (learn_record == NULL) {
+ 		nt_os_wait_usec(1);
+ 		learn_record =
+ 			(struct flm_v25_lrn_data_s *)
+-			flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
++			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 	}
+ 
+ 	memset(learn_record, 0x0, sizeof(struct flm_v25_lrn_data_s));
+@@ -1034,7 +1034,7 @@ static int flm_flow_programming(struct flow_handle *fh, uint32_t flm_op)
+ 	learn_record->eor = 1;
+ 	learn_record->scrub_prof = fh->flm_scrub_prof;
+ 
+-	flm_lrn_queue_release_write_buffer(flm_lrn_queue_arr);
++	nthw_flm_lrn_queue_release_write_buffer(flm_lrn_queue_arr);
+ 	return 0;
  }
  
--/* Converts link speed provided in Mbps to NT specific definitions.*/
--static nt_link_speed_t nthw_convert_link_speed(int link_speed_mbps)
--{
--	switch (link_speed_mbps) {
--	case 10:
--		return NT_LINK_SPEED_10M;
--
--	case 100:
--		return NT_LINK_SPEED_100M;
--
--	case 1000:
--		return NT_LINK_SPEED_1G;
--
--	case 10000:
--		return NT_LINK_SPEED_10G;
--
--	case 40000:
--		return NT_LINK_SPEED_40G;
--
--	case 100000:
--		return NT_LINK_SPEED_100G;
--
--	case 50000:
--		return NT_LINK_SPEED_50G;
--
--	case 25000:
--		return NT_LINK_SPEED_25G;
--
--	default:
--		return NT_LINK_SPEED_UNKNOWN;
--	}
--}
--
- int nt_link_duplex_to_eth_duplex(enum nt_link_duplex_e nt_link_duplex)
- {
- 	int eth_link_duplex = 0;
+@@ -4575,7 +4575,7 @@ int nthw_flow_get_aged_flows_profile_inline(struct flow_eth_dev *dev,
+ 	(void)dev;
+ 	nthw_flow_nic_set_error(ERR_SUCCESS, error);
+ 
+-	unsigned int queue_size = flm_age_queue_get_size(caller_id);
++	unsigned int queue_size = nthw_flm_age_queue_get_size(caller_id);
+ 
+ 	if (queue_size == 0) {
+ 		error->type = RTE_FLOW_ERROR_TYPE_UNSPECIFIED;
+@@ -4583,7 +4583,7 @@ int nthw_flow_get_aged_flows_profile_inline(struct flow_eth_dev *dev,
+ 		return -1;
+ 	}
+ 
+-	unsigned int queue_count = flm_age_queue_count(caller_id);
++	unsigned int queue_count = nthw_flm_age_queue_count(caller_id);
+ 
+ 	if (context == NULL)
+ 		return queue_count;
+@@ -4604,7 +4604,7 @@ int nthw_flow_get_aged_flows_profile_inline(struct flow_eth_dev *dev,
+ 
+ 	for (idx = 0; idx < nb_contexts; ++idx) {
+ 		struct flm_age_event_s obj;
+-		int ret = flm_age_queue_get(caller_id, &obj);
++		int ret = nthw_flm_age_queue_get(caller_id, &obj);
+ 
+ 		if (ret != 0)
+ 			break;
+@@ -4843,12 +4843,13 @@ int nthw_flow_configure_profile_inline(struct flow_eth_dev *dev, uint8_t caller_
+ 
+ 	if (port_attr->nb_aging_objects > 0) {
+ 		if (dev->nb_aging_objects > 0) {
+-			flm_age_queue_free(dev->port_id, caller_id);
++			nthw_flm_age_queue_free(dev->port_id, caller_id);
+ 			dev->nb_aging_objects = 0;
+ 		}
+ 
+ 		struct rte_ring *age_queue =
+-			flm_age_queue_create(dev->port_id, caller_id, port_attr->nb_aging_objects);
++			nthw_flm_age_queue_create(dev->port_id, caller_id,
++				port_attr->nb_aging_objects);
+ 
+ 		if (age_queue == NULL) {
+ 			error->message = "Failed to allocate aging objects";
+@@ -4898,7 +4899,7 @@ int nthw_flow_configure_profile_inline(struct flow_eth_dev *dev, uint8_t caller_
+ 	error->type = RTE_FLOW_ERROR_TYPE_UNSPECIFIED;
+ 
+ 	if (port_attr->nb_aging_objects > 0) {
+-		flm_age_queue_free(dev->port_id, caller_id);
++		nthw_flm_age_queue_free(dev->port_id, caller_id);
+ 		dev->nb_aging_objects = 0;
+ 	}
+ 
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index 9e6cc0e4cd..b515a69c87 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -1547,7 +1547,7 @@ drv_deinit(struct drv_s *p_drv)
+ 		/* Free all remote flm event queues */
+ 		nthw_flm_inf_sta_queue_free_all(FLM_INFO_REMOTE);
+ 		/* Free all aged flow event queues */
+-		flm_age_queue_free_all();
++		nthw_flm_age_queue_free_all();
+ 	}
+ 
+ 	/* stop adapter */
+@@ -1981,7 +1981,7 @@ static int port_event_service(void *context)
+ 			/* Note: RTE_FLOW_PORT_FLAG_STRICT_QUEUE flag is not supported so
+ 			 * event is always generated
+ 			 */
+-			int aged_event_count = flm_age_event_get(port_no);
++			int aged_event_count = nthw_flm_age_event_get(port_no);
+ 
+ 			if (aged_event_count > 0 &&
+ 				eth_dev[port_no] &&
+@@ -1990,7 +1990,7 @@ static int port_event_service(void *context)
+ 				rte_eth_dev_callback_process(eth_dev[port_no],
+ 					RTE_ETH_EVENT_FLOW_AGED,
+ 					NULL);
+-				flm_age_event_clear(port_no);
++				nthw_flm_age_event_clear(port_no);
+ 				do_wait = false;
+ 			}
+ 
 -- 
 2.45.0
 
