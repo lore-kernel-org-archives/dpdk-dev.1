@@ -2,87 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32348CAC592
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 17:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4441CAC592
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 17:48:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 947E040693;
-	Fri, 19 Sep 2025 19:34:22 +0200 (CEST)
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com
- [205.220.168.131])
- by mails.dpdk.org (Postfix) with ESMTP id 3DEF440657
- for <dev@dpdk.org>; Fri, 19 Sep 2025 19:34:19 +0200 (CEST)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
- by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JEmOT5010820
- for <dev@dpdk.org>; Fri, 19 Sep 2025 17:34:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
- cc:content-transfer-encoding:date:from:in-reply-to:message-id
- :mime-version:references:subject:to; s=qcppdkim1; bh=/EYnw0ITfKF
- qMScTd8mgu29W7E34VAXet4erzmRjqqU=; b=BFtl9BDLwfcAHB06IBhwvUAZKYm
- frYj9E4Lkug0BuSe+y3Jk6n1KCc3X1bYH+UlkhN2NfHps9EPME6fcv8XMCvVPhm8
- w15A2GT6Nw6kJAy3diRyGgXW6uts9qlb9Nbxm6R4wqcO/BjBGT5+3pu2C3GCaTEa
- EJFaGPQI0ip/Z6FOn57j7h3AI4q7v0AMpOLU2B8XjPDFY4qE4pczXRG6fAa3ul8t
- wi74cQqC1KiLWEoTljJi0fpwLNvvv0FHMCjgDnkUiJLKAIxefplOk+nr3QfUtU7M
- wfIFl2wXSBB6o52SJhxyCofe2eQfTFmOt7MiqVOzTTmEqtM9m6p3DiM2hJA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com
- [199.106.103.254])
- by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxy37ej-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 19 Sep 2025 17:34:18 +0000 (GMT)
-Received: from pps.filterd (NASANPPMTA01.qualcomm.com [127.0.0.1])
- by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 58JHYHUm009310
- for <dev@dpdk.org>; Fri, 19 Sep 2025 17:34:17 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
- by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 497wy16x9n-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 19 Sep 2025 17:34:17 +0000
-Received: from NASANPPMTA01.qualcomm.com (NASANPPMTA01.qualcomm.com
- [127.0.0.1])
- by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58JHYHaI009296
- for <dev@dpdk.org>; Fri, 19 Sep 2025 17:34:17 GMT
-Received: from tbs-5gnr-mt-30 (tbs-5gnr-mt-30.qualcomm.com [10.239.80.165])
- by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 58JHYGNC009283
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 19 Sep 2025 17:34:17 +0000
-Received: by tbs-5gnr-mt-30 (Postfix, from userid 2316195)
- id 9FBD04016D; Fri, 19 Sep 2025 11:34:16 -0600 (MDT)
-From: Sameer Vaze <svaze@qti.qualcomm.com>
-To: 
-Cc: dev@dpdk.org, Sameer Vaze <svaze@qti.qualcomm.com>
-Subject: [PATCH 3/3] app/compress-perf: support for dictionaries and PDCP
- checksum
-Date: Fri, 19 Sep 2025 11:34:15 -0600
-Message-Id: <20250919173415.2462642-3-svaze@qti.qualcomm.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20250919173415.2462642-1-svaze@qti.qualcomm.com>
-References: <20250919173415.2462642-1-svaze@qti.qualcomm.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A7EEF4042F;
+	Fri, 19 Sep 2025 19:48:23 +0200 (CEST)
+Received: from fout-a8-smtp.messagingengine.com
+ (fout-a8-smtp.messagingengine.com [103.168.172.151])
+ by mails.dpdk.org (Postfix) with ESMTP id 0FB5B4028E
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 19:48:22 +0200 (CEST)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfout.phl.internal (Postfix) with ESMTP id 89E11EC00BD;
+ Fri, 19 Sep 2025 13:48:21 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-06.internal (MEProxy); Fri, 19 Sep 2025 13:48:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1758304101;
+ x=1758390501; bh=Tg0xxt2njLOWVTbmhY7TX+MS0HFGRXe0reKN7Xn7MWQ=; b=
+ gUEvg6VHQR25/rXnrFwIDbnFzv8iY052DYaWyROmLytAd9ysDW18HFNUuAeo2C4U
+ LqRQyU9R/0njOyBWLLOiWeBBKhLYeuQnvxuriI8IbjT7q0m178ae2paJIGqRzmT4
+ 3uTfy5sxOdDovUFZvEm1/+hSjPLj71N0gkNJ97jkvKPZI2CRuxNBevzMxeenZcB+
+ MAr6rR6EDFRKIAjliq4L5mn4Bv47RZ3JEjoMRy0WVps5PmBb0jOWC2bQfz8CckrL
+ AZ81yMdWxE6Q1U7pmJYzsaytDbKch2N/xcoL6/sa+btZceO5UG8PxWHH223TbRHw
+ u7AGk8IK9ULpwM1HnnU74g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758304101; x=
+ 1758390501; bh=Tg0xxt2njLOWVTbmhY7TX+MS0HFGRXe0reKN7Xn7MWQ=; b=o
+ IIcuv0tr+qH/i2AW9j2cNETSKAqrsGnDgEI/cFcUD2Nd+RIwoluqHTzexpsKWzhW
+ davML2jaJkeGFZciM/CaWTeIw5VaRPrhEhW7IBXkCEIMLoVjImkwSiyOdo3iQOot
+ wm1rQ0c/QT3Doj8qQOzARnCziW8207tsOuLhE0Whq3x4l47DlsPDjDa2248eAtGP
+ 9OwFApKta6a2yKtXzfBA7dEiqBDFm3tXYCJ+94VAdHzxC5OhJF6KuQlkx/RBs3Jk
+ wUXKvCB2bixDiKAE8Tj9bBMNwB/Py24kNWnecvcjMUzitKe/0l9BiHkFCr56MkYv
+ jpwjX7XeBcE6Uzlm7YQ5A==
+X-ME-Sender: <xms:ZJfNaLXaimr_qjQRt8P2n4kqJZTSAWbGu_PCZN_pDLhoULesGzK9TQ>
+ <xme:ZJfNaPFPjFUQrwodceXxKr3I0XfFitbpIlIJEsLmFvMxpdDj_fKpZthXc7wNpWRDz
+ dnaePY6szc2fhcdGA>
+X-ME-Received: <xmr:ZJfNaN25XbIIUn-TGJXpfJotVY0fsbCfR0j3CAPOzkDiJW7E1fSAnYnp8CtlogSyfNZBJfjmkeTXZf6n9w7LJNot8w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegleekhecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohephedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepshhunhihuhgvtghhihesihhstggrshdrrg
+ gtrdgtnhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehvlhgr
+ ughimhhirhdrmhgvughvvggukhhinhesihhnthgvlhdrtghomhdprhgtphhtthhopehsth
+ grnhhishhlrgifrdhkrghruggrtghhsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuhhk
+ jegssehfohigmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:ZJfNaBNutlkiconkLpeRgpMW-cu9an76yRvGtc4JIWq7rLOxAelnAw>
+ <xmx:ZJfNaM5JEhGmQeTAIKGaAA2UkylCzCPv5iedJE9prqmJ8tBwXCOJFg>
+ <xmx:ZJfNaL3IObfuB8lpN4WjGLMmxbTlJOkEekidDvXjA9sSDh_ybTG6eg>
+ <xmx:ZJfNaNyHodmIjuYN19YWDwtH7qo4rTU1YJAeHWEhRDAj2G9pfMJYOA>
+ <xmx:ZZfNaORm7IRMRvAoRyDRbOEdw1pLfQnLvG6mV6S1L8ISz0UMN67zO-WR>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 19 Sep 2025 13:48:19 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Sun Yuechi <sunyuechi@iscas.ac.cn>
+Cc: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Stanislaw Kardach <stanislaw.kardach@gmail.com>, uk7b@foxmail.com
+Subject: Re: [PATCH v3 3/4] lib/fib: R-V V rte_fib_lookup_bulk
+Date: Fri, 19 Sep 2025 19:48:18 +0200
+Message-ID: <4567272.LM0AJKV5NW@thomas>
+In-Reply-To: <tencent_DCD86DAE038B30CC8DA74E95C5C27708B605@qq.com>
+References: <20250919163358.2887335-1-uk7b@foxmail.com>
+ <tencent_DCD86DAE038B30CC8DA74E95C5C27708B605@qq.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
- signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
- signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfXyTIchVOUskPY
- grH7II459ZCcu+ydD7N7Tz9uNPC1zMiqDALD8NpHlYWe/QZgFOox/jtmAttojnGzw8FKWi+jM7J
- 5iWXI/rAyL6Ji3EU4BhJ9t1P9jb8xr/jCcwoiFSwt36DZea8UtR90H5wUZIfGrE1cpKNdU7zNcG
- QD9ov24rMNgS+rFNa5Y7p5VOFTuw7oWKnD/rHQfQKLYlIUihYPs+9p2VsQWx7LSEOzQ5dAjWGcf
- nxY1bbLwYUxF1+9QaifLeR7dihRUUpxkmQsQp0rWuQQ+SWXbXwz6EKbD8m6xzroq0qsY4/g+CLE
- qD5RaXpFDxHFFguygI6yoQ/zo17nTBeG9gLUEh4cvyVHTtM9kFRCo08pMt0lj2c4Yh7MnrZ1WXC
- 4BImbJtR
-X-Proofpoint-ORIG-GUID: vGi8-QnthI1H94e7CXHz4tyFIvIipXdA
-X-Authority-Analysis: v=2.4 cv=KJZaDEFo c=1 sm=1 tr=0 ts=68cd941a cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=6sMvzI5xG4GYzBEuUpoA:9
-X-Proofpoint-GUID: vGi8-QnthI1H94e7CXHz4tyFIvIipXdA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-19_01,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 bulkscore=0 adultscore=0 impostorscore=0
- suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,288 +91,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Adds support to read and apply dictionaries.
+19/09/2025 18:33, uk7b@foxmail.com:
+> From: Sun Yuechi <sunyuechi@iscas.ac.cn>
+> +#ifndef _DIR248_RVV_H_
+> +#define _DIR248_RVV_H_
+> +
+> +#include "rte_cpuflags.h"
 
-Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
----
- app/test-compress-perf/comp_perf_options.h    |  4 +
- .../comp_perf_options_parse.c                 | 16 ++++
- .../comp_perf_test_verify.c                   | 37 +++++++-
- app/test-compress-perf/main.c                 | 90 +++++++++++++++++++
- 4 files changed, 144 insertions(+), 3 deletions(-)
+It should be
+	#include <rte_cpuflags.h>
+and it should be only where really needed (.c probably).
 
-diff --git a/app/test-compress-perf/comp_perf_options.h b/app/test-compress-perf/comp_perf_options.h
-index 828a7309d8..4c34dcd8aa 100644
---- a/app/test-compress-perf/comp_perf_options.h
-+++ b/app/test-compress-perf/comp_perf_options.h
-@@ -21,6 +21,7 @@ enum cleanup_st {
- 	ST_TEST_DATA,
- 	ST_COMPDEV,
- 	ST_INPUT_DATA,
-+	ST_DICTIONARY_DATA,
- 	ST_MEMORY_ALLOC,
- 	ST_DURING_TEST
- };
-@@ -48,10 +49,13 @@ struct range_list {
- struct comp_test_data {
- 	char driver_name[RTE_DEV_NAME_MAX_LEN];
- 	char input_file[PATH_MAX];
-+	char dictionary_file[PATH_MAX];
- 	enum cperf_test_type test;
- 
- 	uint8_t *input_data;
- 	size_t input_data_sz;
-+	uint8_t *dictionary_data;
-+	size_t dictionary_data_sz;
- 	uint16_t nb_qps;
- 	uint16_t seg_sz;
- 	uint16_t out_seg_sz;
-diff --git a/app/test-compress-perf/comp_perf_options_parse.c b/app/test-compress-perf/comp_perf_options_parse.c
-index 6d8c370fc2..37205ad806 100644
---- a/app/test-compress-perf/comp_perf_options_parse.c
-+++ b/app/test-compress-perf/comp_perf_options_parse.c
-@@ -31,6 +31,7 @@
- #define CPERF_LEVEL		("compress-level")
- #define CPERF_WINDOW_SIZE	("window-sz")
- #define CPERF_EXTERNAL_MBUFS	("external-mbufs")
-+#define CPERF_DICTIONARY	("dictionary")
- 
- /* cyclecount-specific options */
- #define CPERF_CYCLECOUNT_DELAY_US ("cc-delay-us")
-@@ -71,6 +72,7 @@ usage(char *progname)
- 		"		keeping the data directly in mbuf area\n"
- 		" --cc-delay-us N: delay between enqueue and dequeue operations in microseconds\n"
- 		"		valid only for cyclecount perf test (default: 500 us)\n"
-+		" --dictionary NAME: file with dictionary\n"
- 		" -h: prints this help\n",
- 		progname);
- }
-@@ -609,6 +611,18 @@ parse_external_mbufs(struct comp_test_data *test_data,
- 	return 0;
- }
- 
-+static int
-+parse_dictionary_file(struct comp_test_data *test_data, const char *arg)
-+{
-+	if (strlen(arg) > (sizeof(test_data->dictionary_file) - 1))
-+		return -1;
-+
-+	strlcpy(test_data->dictionary_file, arg, sizeof(test_data->dictionary_file));
-+
-+	return 0;
-+}
-+
-+
- static int
- parse_cyclecount_delay_us(struct comp_test_data *test_data,
- 			const char *arg)
-@@ -647,6 +661,7 @@ static struct option lgopts[] = {
- 	{ CPERF_LEVEL, required_argument, 0, 0 },
- 	{ CPERF_WINDOW_SIZE, required_argument, 0, 0 },
- 	{ CPERF_EXTERNAL_MBUFS, 0, 0, 0 },
-+	{ CPERF_DICTIONARY, required_argument, 0, 0 },
- 	{ CPERF_CYCLECOUNT_DELAY_US, required_argument, 0, 0 },
- 	{ NULL, 0, 0, 0 }
- };
-@@ -671,6 +686,7 @@ comp_perf_opts_parse_long(int opt_idx, struct comp_test_data *test_data)
- 		{ CPERF_LEVEL,		parse_level },
- 		{ CPERF_WINDOW_SIZE,	parse_window_sz },
- 		{ CPERF_EXTERNAL_MBUFS,	parse_external_mbufs },
-+		{ CPERF_DICTIONARY,	parse_dictionary_file },
- 		{ CPERF_CYCLECOUNT_DELAY_US,	parse_cyclecount_delay_us },
- 	};
- 	unsigned int i;
-diff --git a/app/test-compress-perf/comp_perf_test_verify.c b/app/test-compress-perf/comp_perf_test_verify.c
-index 09d97c5cf7..f1d02afa6e 100644
---- a/app/test-compress-perf/comp_perf_test_verify.c
-+++ b/app/test-compress-perf/comp_perf_test_verify.c
-@@ -64,6 +64,7 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
- 	int res = 0;
- 	int allocated = 0;
- 	uint32_t out_seg_sz;
-+	uint8_t dict[DEFLATE_MAX_WINDOW_SIZE] = {0};
- 
- 	if (test_data == NULL || !test_data->burst_sz) {
- 		RTE_LOG(ERR, USER1,
-@@ -71,6 +72,22 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
- 		return -1;
- 	}
- 
-+	uint16_t window_size = (1ULL << test_data->window_sz);
-+
-+	if (test_data->dictionary_data) {
-+		if (test_data->dictionary_data_sz >= window_size) {
-+			memcpy(dict,
-+				test_data->dictionary_data
-+				+ (test_data->dictionary_data_sz - window_size),
-+				window_size);
-+		} else if (test_data->dictionary_data_sz < window_size) {
-+			memcpy(dict + (window_size - test_data->dictionary_data_sz),
-+				test_data->dictionary_data,
-+				test_data->dictionary_data_sz);
-+		}
-+	}
-+
-+
- 	ops = rte_zmalloc_socket(NULL,
- 		2 * mem->total_bufs * sizeof(struct rte_comp_op *),
- 		0, rte_socket_id());
-@@ -91,7 +108,9 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
- 				.level = test_data->level,
- 				.window_size = test_data->window_sz,
- 				.chksum = RTE_COMP_CHECKSUM_NONE,
--				.hash_algo = RTE_COMP_HASH_ALGO_NONE
-+				.hash_algo = RTE_COMP_HASH_ALGO_NONE,
-+				.dictionary = dict,
-+				.dictionary_len = window_size
- 			}
- 		};
- 		if (test_data->test_algo == RTE_COMP_ALGO_DEFLATE)
-@@ -110,7 +129,9 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
- 				.algo = test_data->test_algo,
- 				.chksum = RTE_COMP_CHECKSUM_NONE,
- 				.window_size = test_data->window_sz,
--				.hash_algo = RTE_COMP_HASH_ALGO_NONE
-+				.hash_algo = RTE_COMP_HASH_ALGO_NONE,
-+				.dictionary = dict,
-+				.dictionary_len = window_size
- 			}
- 		};
- 		if (test_data->test_algo == RTE_COMP_ALGO_LZ4)
-@@ -194,7 +215,17 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
- 					rte_pktmbuf_pkt_len(input_bufs[buf_id]);
- 				ops[op_id]->dst.offset = 0;
- 				ops[op_id]->flush_flag = RTE_COMP_FLUSH_FINAL;
--				ops[op_id]->input_chksum = buf_id;
-+				if ((xform.type == RTE_COMP_DECOMPRESS) &&
-+					(xform.decompress.chksum
-+						== RTE_COMP_CHECKSUM_3GPP_PDCP_UDC)) {
-+					uint8_t *udc_header
-+						= rte_pktmbuf_mtod(ops[op_id]->m_src, uint8_t *);
-+					ops[op_id]->input_chksum = *udc_header & 0xf;
-+					ops[op_id]->src.offset = 1;
-+				} else {
-+					ops[op_id]->input_chksum = buf_id;
-+					ops[op_id]->src.offset = 0;
-+				}
- 				ops[op_id]->private_xform = priv_xform;
- 			}
- 
-diff --git a/app/test-compress-perf/main.c b/app/test-compress-perf/main.c
-index 70ce4316cc..693a7cc31b 100644
---- a/app/test-compress-perf/main.c
-+++ b/app/test-compress-perf/main.c
-@@ -335,6 +335,86 @@ comp_perf_dump_input_data(struct comp_test_data *test_data)
- 	return ret;
- }
- 
-+static int
-+comp_perf_dump_dictionary_data(struct comp_test_data *test_data)
-+{
-+	FILE *f = fopen(test_data->dictionary_file, "r");
-+	int ret = -1;
-+
-+	if (f == NULL) {
-+		RTE_LOG(ERR, USER1, "Dictionary file not specified\n");
-+		test_data->dictionary_data_sz = 0;
-+		test_data->dictionary_data = NULL;
-+		ret = 0;
-+		goto end;
-+	}
-+
-+	if (fseek(f, 0, SEEK_END) != 0) {
-+		RTE_LOG(ERR, USER1, "Size of input could not be calculated\n");
-+		goto end;
-+	}
-+	size_t actual_file_sz = ftell(f);
-+	/* If extended input data size has not been set,
-+	 * input data size = file size
-+	 */
-+
-+	if (test_data->dictionary_data_sz == 0)
-+		test_data->dictionary_data_sz = actual_file_sz;
-+
-+	if (test_data->dictionary_data_sz <= 0 || actual_file_sz <= 0 ||
-+			fseek(f, 0, SEEK_SET) != 0) {
-+		RTE_LOG(ERR, USER1, "Size of input could not be calculated\n");
-+		goto end;
-+	}
-+
-+	test_data->dictionary_data = rte_zmalloc_socket(NULL,
-+				test_data->dictionary_data_sz, 0, rte_socket_id());
-+
-+	if (test_data->dictionary_data == NULL) {
-+		RTE_LOG(ERR, USER1, "Memory to hold the data from the dictionary "
-+				"file could not be allocated\n");
-+		goto end;
-+	}
-+
-+	size_t remaining_data = test_data->dictionary_data_sz;
-+	uint8_t *data = test_data->dictionary_data;
-+
-+	while (remaining_data > 0) {
-+		size_t data_to_read = RTE_MIN(remaining_data, actual_file_sz);
-+
-+		if (fread(data, data_to_read, 1, f) != 1) {
-+			RTE_LOG(ERR, USER1, "Input file could not be read\n");
-+			goto end;
-+		}
-+		if (fseek(f, 0, SEEK_SET) != 0) {
-+			RTE_LOG(ERR, USER1,
-+				"Size of input could not be calculated\n");
-+			goto end;
-+		}
-+		remaining_data -= data_to_read;
-+		data += data_to_read;
-+	}
-+
-+	printf("\n");
-+	if (test_data->dictionary_data_sz > actual_file_sz)
-+		RTE_LOG(INFO, USER1,
-+		  "%zu bytes read from file %s, extending the file %.2f times\n",
-+			test_data->dictionary_data_sz, test_data->dictionary_file,
-+			(double)test_data->dictionary_data_sz/actual_file_sz);
-+	else
-+		RTE_LOG(INFO, USER1,
-+			"%zu bytes read from file %s\n",
-+			test_data->dictionary_data_sz, test_data->dictionary_file);
-+
-+	ret = 0;
-+
-+end:
-+	if (f)
-+		fclose(f);
-+
-+	return ret;
-+}
-+
- static void
- comp_perf_cleanup_on_signal(int signalNumber __rte_unused)
- {
-@@ -407,6 +487,13 @@ main(int argc, char **argv)
- 	}
- 
- 	test_data->cleanup = ST_INPUT_DATA;
-+	if (comp_perf_dump_dictionary_data(test_data) < 0) {
-+		ret = EXIT_FAILURE;
-+		goto end;
-+	}
-+
-+	test_data->cleanup = ST_DICTIONARY_DATA;
-+
- 
- 	if (test_data->level_lst.inc != 0)
- 		test_data->level = test_data->level_lst.min;
-@@ -496,6 +583,9 @@ main(int argc, char **argv)
- 			i++;
- 		}
- 		/* fallthrough */
-+	case ST_DICTIONARY_DATA:
-+		rte_free(test_data->dictionary_data);
-+		/* fallthrough */
- 	case ST_INPUT_DATA:
- 		rte_free(test_data->input_data);
- 		/* fallthrough */
--- 
-2.31.1
+Don't bother doing another version, I'm working on it,
+and will merge with coding style improvements.
+
+
 
