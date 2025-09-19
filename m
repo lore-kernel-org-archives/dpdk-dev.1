@@ -2,59 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B83CAC5A5
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 08:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E93CAC5A5
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 08:39:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 517014067A;
-	Fri, 19 Sep 2025 10:38:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6C1AF40678;
+	Fri, 19 Sep 2025 10:38:59 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8D8F54067E
- for <dev@dpdk.org>; Fri, 19 Sep 2025 10:38:49 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id DC798402B7
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 10:38:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1758271129;
+ s=mimecast20190719; t=1758271137;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=rMiNvi7XdIu48exx90IFa/Gtqz3TFFnKOktWYTVExdw=;
- b=B1aABt0C7x1Y+8DOOb6huzTfxV1SjC3k/7NV/8yhJZkN+DramfF8KmYuHmt/EyLHgKN9yH
- x9P2+vwbwKVQj6plDaxU2Sm7/nPLuG/S2Pf6UNQEi3f5o4gHjqvvQ4xdI06pstei8p7u+q
- 2YAbZpJQyGPJPX0d7/H10Wj686v7tGE=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=hjVwtgnzuFqlH2h+Qrmc09O5C4GdjWChWKM/iXNrbOs=;
+ b=J6QunhbC0vW9t+USDgc1YijC7XeHTEPFMB0688F/cph3TW7f/j7Hpm1fF7NLtLcYtl8i0Y
+ Cki9ZdchwbmGpMMP3aQWTfg477ToLz7b5yeHviUllr4/YPnUkmX1RE+sbwZsaHe5Opeyux
+ PhEv2SBd2u5I4/kpqVoOsqodw7FnSkY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-98-MVXgcCgnPWOzZQPIMeRyJw-1; Fri,
- 19 Sep 2025 04:38:45 -0400
-X-MC-Unique: MVXgcCgnPWOzZQPIMeRyJw-1
-X-Mimecast-MFC-AGG-ID: MVXgcCgnPWOzZQPIMeRyJw_1758271123
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-214-s8dYkeXOP4SISlvnjcgm9g-1; Fri,
+ 19 Sep 2025 04:38:52 -0400
+X-MC-Unique: s8dYkeXOP4SISlvnjcgm9g-1
+X-Mimecast-MFC-AGG-ID: s8dYkeXOP4SISlvnjcgm9g_1758271130
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 6CA3F1800452; Fri, 19 Sep 2025 08:38:43 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 4EAF0195608C; Fri, 19 Sep 2025 08:38:50 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.45.225.72])
  by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 1435F1800447; Fri, 19 Sep 2025 08:38:39 +0000 (UTC)
+ id 3FAEC1800446; Fri, 19 Sep 2025 08:38:45 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, maxime.coquelin@redhat.com, anatoly.burakov@intel.com,
- stephen@networkplumber.org, Bruce Richardson <bruce.richardson@intel.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Vikas Gupta <vikas.gupta@broadcom.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH v3 04/10] vfio: assume VFIO is always and only present on Linux
-Date: Fri, 19 Sep 2025 10:38:01 +0200
-Message-ID: <20250919083808.1667491-5-david.marchand@redhat.com>
+ stephen@networkplumber.org, Nipun Gupta <nipun.gupta@amd.com>,
+ Nikhil Agarwal <nikhil.agarwal@amd.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, Chenbo Xia <chenbox@nvidia.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Harman Kalra <hkalra@marvell.com>
+Subject: [PATCH v3 05/10] vfio: remove public wrappers
+Date: Fri, 19 Sep 2025 10:38:02 +0200
+Message-ID: <20250919083808.1667491-6-david.marchand@redhat.com>
 In-Reply-To: <20250919083808.1667491-1-david.marchand@redhat.com>
 References: <20250903072826.1727004-1-david.marchand@redhat.com>
  <20250919083808.1667491-1-david.marchand@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: C9AvK4zToZU5TmUTi1B7l6ddEjnfvtdw6luyXvU0Ioo_1758271123
+X-Mimecast-MFC-PROC-ID: QJ-LkL0V1NpPIOd_qvnEvoH1F2-YHSt3CwRYsprHWvE_1758271130
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -71,117 +73,521 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-RTE_EAL_VFIO is directly mapped to is_linux in meson.
-Replace this intermediate build knob with RTE_EXEC_ENV_LINUX.
-This is an intermediate state before importing the VFIO uapi header.
+The public header defines a number of wrappers that can be removed or
+hidden internally.
 
-Note: crypto/bcmfs was functional only for OSes supporting VFIO iow
-Linux. Stop compiling it on other OSes.
+Either, those concern old Linux kernel versions that are not supported by
+dpdk anymore (DPDK now requires Linux v5.4 at least), like:
+- the request notifier feature, present since Linux v4.0,
+- the noiommu mode, present since Linux v4.5,
+- the capability support, present since Linux v4.6,
+- the msix mapping feature, present since Linux v4.16,
+
+Or, those wrappers can be made private as only consumed internally.
+- VFIO_GET_REGION_IDX() has no equivalent in the Linux uapi, but
+  is only used by the Linux PCI bus code,
+- VFIO_DEVICE_FEATURE is only used by the CDX bus code,
+
+The last VFIO_ Linux specific macros around /dev/vfio/ and the noiommu
+kmod parameter are kept for convenience but prefixed with RTE_ to avoid
+polluting the VFIO_ namespace.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
-Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- config/meson.build                |  3 ---
- drivers/crypto/bcmfs/bcmfs_vfio.c | 18 ++----------------
- drivers/crypto/bcmfs/meson.build  |  4 ++--
- lib/eal/include/rte_vfio.h        |  6 +++---
- 4 files changed, 7 insertions(+), 24 deletions(-)
+Changes since RFC v2:
+- kept but renamed some local macros for /dev/vfio and vfio kmod,                                   
 
-diff --git a/config/meson.build b/config/meson.build
-index 55497f0bf5..b5e894de3c 100644
---- a/config/meson.build
-+++ b/config/meson.build
-@@ -459,9 +459,6 @@ dpdk_conf.set_quoted('RTE_EAL_PMD_PATH', eal_pmd_path)
- install_headers(['rte_config.h'],
-         subdir: get_option('include_subdir_arch'))
- 
--# enable VFIO only if it is linux OS
--dpdk_conf.set('RTE_EAL_VFIO', is_linux)
--
- # specify -D_GNU_SOURCE unconditionally
- add_project_arguments('-D_GNU_SOURCE', language: 'c')
- 
-diff --git a/drivers/crypto/bcmfs/bcmfs_vfio.c b/drivers/crypto/bcmfs/bcmfs_vfio.c
-index 8d6ea16544..9138f96eb0 100644
---- a/drivers/crypto/bcmfs/bcmfs_vfio.c
-+++ b/drivers/crypto/bcmfs/bcmfs_vfio.c
-@@ -7,14 +7,12 @@
- #include <sys/mman.h>
- #include <sys/ioctl.h>
- 
-+#include <rte_vfio.h>
-+
- #include "bcmfs_device.h"
- #include "bcmfs_logs.h"
- #include "bcmfs_vfio.h"
- 
--#ifdef RTE_EAL_VFIO
--
--#include <rte_vfio.h>
--
- static int
- vfio_map_dev_obj(const char *path, const char *dev_obj,
- 		 uint32_t *size, void **addr, int *dev_fd)
-@@ -94,15 +92,3 @@ bcmfs_release_vfio(struct bcmfs_device *dev)
- 		return;
- 	}
+---
+ drivers/bus/cdx/cdx_vfio.c       | 27 ++++++++++++
+ drivers/bus/fslmc/fslmc_vfio.c   | 15 +++----
+ drivers/bus/pci/linux/pci_vfio.c | 23 +++-------
+ drivers/bus/pci/pci_common.c     |  2 -
+ lib/eal/include/rte_vfio.h       | 74 +++-----------------------------
+ lib/eal/linux/eal_interrupts.c   | 10 -----
+ lib/eal/linux/eal_vfio.c         | 23 ++++------
+ 7 files changed, 54 insertions(+), 120 deletions(-)
+
+diff --git a/drivers/bus/cdx/cdx_vfio.c b/drivers/bus/cdx/cdx_vfio.c
+index 37e0c424d4..03d156388e 100644
+--- a/drivers/bus/cdx/cdx_vfio.c
++++ b/drivers/bus/cdx/cdx_vfio.c
+@@ -613,6 +613,33 @@ rte_cdx_vfio_intr_disable(const struct rte_intr_handle *intr_handle)
+ 	return ret;
  }
--#else /* ! RTE_EAL_VFIO */
--int
--bcmfs_attach_vfio(struct bcmfs_device *dev __rte_unused)
--{
--	return -1;
--}
--
--void
--bcmfs_release_vfio(struct bcmfs_device *dev __rte_unused)
--{
--}
--#endif /* RTE_EAL_VFIO */
-diff --git a/drivers/crypto/bcmfs/meson.build b/drivers/crypto/bcmfs/meson.build
-index 5842f83a3b..925dde2ee2 100644
---- a/drivers/crypto/bcmfs/meson.build
-+++ b/drivers/crypto/bcmfs/meson.build
-@@ -3,9 +3,9 @@
- # All rights reserved.
- #
  
--if is_windows
-+if not is_linux
-     build = false
--    reason = 'not supported on Windows'
-+    reason = 'only supported on Linux'
-     subdir_done()
- endif
++/* VFIO_DEVICE_FEATURE is defined for kernel version 5.7 and newer. */
++#ifdef	VFIO_DEVICE_FEATURE
++#define	RTE_VFIO_DEVICE_FEATURE	VFIO_DEVICE_FEATURE
++#else
++#define	RTE_VFIO_DEVICE_FEATURE	_IO(VFIO_TYPE, VFIO_BASE + 17)
++struct vfio_device_feature {
++	__u32	argsz;
++	__u32	flags;
++#define	VFIO_DEVICE_FEATURE_MASK	(0xffff) /* 16-bit feature index */
++#define	VFIO_DEVICE_FEATURE_GET		(1 << 16) /* Get feature into data[] */
++#define	VFIO_DEVICE_FEATURE_SET		(1 << 17) /* Set feature from data[] */
++#define	VFIO_DEVICE_FEATURE_PROBE	(1 << 18) /* Probe feature support */
++	__u8	data[];
++};
++#endif
++
++#ifdef	VFIO_DEVICE_FEATURE_BUS_MASTER
++#define	RTE_VFIO_DEVICE_FEATURE_BUS_MASTER	VFIO_DEVICE_FEATURE_BUS_MASTER
++#else
++#define	RTE_VFIO_DEVICE_FEATURE_BUS_MASTER	10
++struct vfio_device_feature_bus_master {
++	__u32 op;
++#define	VFIO_DEVICE_FEATURE_CLEAR_MASTER	0	/* Clear Bus Master */
++#define	VFIO_DEVICE_FEATURE_SET_MASTER		1	/* Set Bus Master */
++};
++#endif
++
+ /* Enable Bus Mastering */
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_cdx_vfio_bm_enable)
+ int
+diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
+index 68439cbd8c..4454f66c1d 100644
+--- a/drivers/bus/fslmc/fslmc_vfio.c
++++ b/drivers/bus/fslmc/fslmc_vfio.c
+@@ -190,7 +190,7 @@ fslmc_vfio_add_group(int vfio_group_fd,
+ 	group->groupid = iommu_group_num;
+ 	rte_strscpy(group->group_name, group_name, sizeof(group->group_name));
+ 	if (rte_vfio_noiommu_is_enabled() > 0)
+-		group->iommu_type = RTE_VFIO_NOIOMMU;
++		group->iommu_type = VFIO_NOIOMMU_IOMMU;
+ 	else
+ 		group->iommu_type = VFIO_TYPE1_IOMMU;
+ 	LIST_INSERT_HEAD(&s_vfio_container.groups, group, next);
+@@ -396,8 +396,7 @@ fslmc_vfio_open_group_fd(const char *group_name)
+ 	/* if primary, try to open the group */
+ 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+ 		/* try regular group format */
+-		snprintf(filename, sizeof(filename),
+-			VFIO_GROUP_FMT, iommu_group_num);
++		snprintf(filename, sizeof(filename), RTE_VFIO_GROUP_FMT, iommu_group_num);
+ 		vfio_group_fd = open(filename, O_RDWR);
  
+ 		goto add_vfio_group;
+@@ -451,7 +450,7 @@ fslmc_vfio_check_extensions(int vfio_container_fd)
+ 	int ret;
+ 	uint32_t idx, n_extensions = 0;
+ 	static const int type_id[] = {RTE_VFIO_TYPE1, RTE_VFIO_SPAPR,
+-		RTE_VFIO_NOIOMMU};
++		VFIO_NOIOMMU_IOMMU};
+ 	static const char * const type_id_nm[] = {"Type 1",
+ 		"sPAPR", "No-IOMMU"};
+ 
+@@ -495,10 +494,10 @@ fslmc_vfio_open_container_fd(void)
+ 
+ 	/* if we're in a primary process, try to open the container */
+ 	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+-		vfio_container_fd = open(VFIO_CONTAINER_PATH, O_RDWR);
++		vfio_container_fd = open(RTE_VFIO_CONTAINER_PATH, O_RDWR);
+ 		if (vfio_container_fd < 0) {
+ 			DPAA2_BUS_ERR("Open VFIO container(%s), err(%d)",
+-				VFIO_CONTAINER_PATH, vfio_container_fd);
++				RTE_VFIO_CONTAINER_PATH, vfio_container_fd);
+ 			ret = vfio_container_fd;
+ 			goto err_exit;
+ 		}
+@@ -851,7 +850,7 @@ fslmc_map_dma(uint64_t vaddr, rte_iova_t iovaddr, size_t len)
+ 			return fd;
+ 		return -EIO;
+ 	}
+-	if (fslmc_vfio_iommu_type(fd) == RTE_VFIO_NOIOMMU) {
++	if (fslmc_vfio_iommu_type(fd) == VFIO_NOIOMMU_IOMMU) {
+ 		DPAA2_BUS_DEBUG("Running in NOIOMMU mode");
+ 		if (phy != iovaddr) {
+ 			DPAA2_BUS_ERR("IOVA should support with IOMMU");
+@@ -951,7 +950,7 @@ fslmc_unmap_dma(uint64_t vaddr, uint64_t iovaddr, size_t len)
+ 			return fd;
+ 		return -EIO;
+ 	}
+-	if (fslmc_vfio_iommu_type(fd) == RTE_VFIO_NOIOMMU) {
++	if (fslmc_vfio_iommu_type(fd) == VFIO_NOIOMMU_IOMMU) {
+ 		DPAA2_BUS_DEBUG("Running in NOIOMMU mode");
+ 		return 0;
+ 	}
+diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
+index d0844585fe..9e5776ce3c 100644
+--- a/drivers/bus/pci/linux/pci_vfio.c
++++ b/drivers/bus/pci/linux/pci_vfio.c
+@@ -273,7 +273,6 @@ pci_vfio_setup_interrupts(struct rte_pci_device *dev, int vfio_dev_fd)
+ 	return -1;
+ }
+ 
+-#ifdef HAVE_VFIO_DEV_REQ_INTERFACE
+ /*
+  * Spinlock for device hot-unplug failure handling.
+  * If it tries to access bus or device, such as handle sigbus on bus
+@@ -390,7 +389,6 @@ pci_vfio_disable_notifier(struct rte_pci_device *dev)
+ 
+ 	return 0;
+ }
+-#endif
+ 
+ static int
+ pci_vfio_is_ioport_bar(const struct rte_pci_device *dev, int vfio_dev_fd,
+@@ -665,12 +663,12 @@ pci_vfio_info_cap(struct vfio_region_info *info, int cap)
+ 	struct vfio_info_cap_header *h;
+ 	size_t offset;
+ 
+-	if ((info->flags & RTE_VFIO_INFO_FLAG_CAPS) == 0) {
++	if ((info->flags & VFIO_REGION_INFO_FLAG_CAPS) == 0) {
+ 		/* VFIO info does not advertise capabilities */
+ 		return NULL;
+ 	}
+ 
+-	offset = VFIO_CAP_OFFSET(info);
++	offset = info->cap_offset;
+ 	while (offset != 0) {
+ 		h = RTE_PTR_ADD(info, offset);
+ 		if (h->id == cap)
+@@ -690,7 +688,7 @@ pci_vfio_msix_is_mappable(int vfio_dev_fd, int msix_region)
+ 	if (ret < 0)
+ 		return -1;
+ 
+-	ret = pci_vfio_info_cap(info, RTE_VFIO_CAP_MSIX_MAPPABLE) != NULL;
++	ret = pci_vfio_info_cap(info, VFIO_REGION_INFO_CAP_MSIX_MAPPABLE) != NULL;
+ 
+ 	/* cleanup */
+ 	free(info);
+@@ -745,10 +743,8 @@ pci_vfio_map_resource_primary(struct rte_pci_device *dev)
+ 	if (rte_intr_fd_set(dev->intr_handle, -1))
+ 		return -1;
+ 
+-#ifdef HAVE_VFIO_DEV_REQ_INTERFACE
+ 	if (rte_intr_fd_set(dev->vfio_req_intr_handle, -1))
+ 		return -1;
+-#endif
+ 
+ 	/* store PCI address string */
+ 	snprintf(pci_addr, sizeof(pci_addr), PCI_PRI_FMT,
+@@ -904,13 +900,11 @@ pci_vfio_map_resource_primary(struct rte_pci_device *dev)
+ 		goto err_map;
+ 	}
+ 
+-#ifdef HAVE_VFIO_DEV_REQ_INTERFACE
+ 	if (pci_vfio_enable_notifier(dev, vfio_dev_fd) != 0) {
+ 		PCI_LOG(ERR, "Error setting up notifier!");
+ 		goto err_map;
+ 	}
+ 
+-#endif
+ 	TAILQ_INSERT_TAIL(vfio_res_list, vfio_res, next);
+ 
+ 	return 0;
+@@ -945,10 +939,8 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+ 
+ 	if (rte_intr_fd_set(dev->intr_handle, -1))
+ 		return -1;
+-#ifdef HAVE_VFIO_DEV_REQ_INTERFACE
+ 	if (rte_intr_fd_set(dev->vfio_req_intr_handle, -1))
+ 		return -1;
+-#endif
+ 
+ 	/* store PCI address string */
+ 	snprintf(pci_addr, sizeof(pci_addr), PCI_PRI_FMT,
+@@ -1002,10 +994,8 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+ 	/* we need save vfio_dev_fd, so it can be used during release */
+ 	if (rte_intr_dev_fd_set(dev->intr_handle, vfio_dev_fd))
+ 		goto err_vfio_dev_fd;
+-#ifdef HAVE_VFIO_DEV_REQ_INTERFACE
+ 	if (rte_intr_dev_fd_set(dev->vfio_req_intr_handle, vfio_dev_fd))
+ 		goto err_vfio_dev_fd;
+-#endif
+ 
+ 	return 0;
+ err_vfio_dev_fd:
+@@ -1085,14 +1075,12 @@ pci_vfio_unmap_resource_primary(struct rte_pci_device *dev)
+ 	snprintf(pci_addr, sizeof(pci_addr), PCI_PRI_FMT,
+ 			loc->domain, loc->bus, loc->devid, loc->function);
+ 
+-#ifdef HAVE_VFIO_DEV_REQ_INTERFACE
+ 	ret = pci_vfio_disable_notifier(dev);
+ 	if (ret) {
+ 		PCI_LOG(ERR, "fail to disable req notifier.");
+ 		return -1;
+ 	}
+ 
+-#endif
+ 	if (rte_intr_fd_get(dev->intr_handle) < 0)
+ 		return -1;
+ 
+@@ -1226,6 +1214,7 @@ pci_vfio_ioport_map(struct rte_pci_device *dev, int bar,
+ 	return 0;
+ }
+ 
++#define PCI_VFIO_GET_REGION_IDX(x) (x >> 40)
+ void
+ pci_vfio_ioport_read(struct rte_pci_ioport *p,
+ 		     void *data, size_t len, off_t offset)
+@@ -1239,7 +1228,7 @@ pci_vfio_ioport_read(struct rte_pci_ioport *p,
+ 	if (pread(vfio_dev_fd, data,
+ 		    len, p->base + offset) <= 0)
+ 		PCI_LOG(ERR, "Can't read from PCI bar (%" PRIu64 ") : offset (%x)",
+-			VFIO_GET_REGION_IDX(p->base), (int)offset);
++			PCI_VFIO_GET_REGION_IDX(p->base), (int)offset);
+ }
+ 
+ void
+@@ -1255,7 +1244,7 @@ pci_vfio_ioport_write(struct rte_pci_ioport *p,
+ 	if (pwrite(vfio_dev_fd, data,
+ 		     len, p->base + offset) <= 0)
+ 		PCI_LOG(ERR, "Can't write to PCI bar (%" PRIu64 ") : offset (%x)",
+-			VFIO_GET_REGION_IDX(p->base), (int)offset);
++			PCI_VFIO_GET_REGION_IDX(p->base), (int)offset);
+ }
+ 
+ int
+diff --git a/drivers/bus/pci/pci_common.c b/drivers/bus/pci/pci_common.c
+index c88634f790..bf5df3d94e 100644
+--- a/drivers/bus/pci/pci_common.c
++++ b/drivers/bus/pci/pci_common.c
+@@ -603,7 +603,6 @@ pci_hot_unplug_handler(struct rte_device *dev)
+ 		return -1;
+ 
+ 	switch (pdev->kdrv) {
+-#ifdef HAVE_VFIO_DEV_REQ_INTERFACE
+ 	case RTE_PCI_KDRV_VFIO:
+ 		/*
+ 		 * vfio kernel module guaranty the pci device would not be
+@@ -614,7 +613,6 @@ pci_hot_unplug_handler(struct rte_device *dev)
+ 		rte_dev_event_callback_process(dev->name,
+ 					       RTE_DEV_EVENT_REMOVE);
+ 		break;
+-#endif
+ 	case RTE_PCI_KDRV_IGB_UIO:
+ 	case RTE_PCI_KDRV_UIO_GENERIC:
+ 	case RTE_PCI_KDRV_NIC_UIO:
 diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
-index 594d504c56..035b727dd0 100644
+index 035b727dd0..65cd803449 100644
 --- a/lib/eal/include/rte_vfio.h
 +++ b/lib/eal/include/rte_vfio.h
-@@ -19,7 +19,7 @@
- extern "C" {
- #endif
+@@ -21,79 +21,15 @@ extern "C" {
  
--#ifdef RTE_EAL_VFIO
-+#ifdef RTE_EXEC_ENV_LINUX
+ #ifdef RTE_EXEC_ENV_LINUX
  
- #include <linux/version.h>
- #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
-@@ -94,12 +94,12 @@ struct vfio_device_feature_bus_master {
- };
- #endif
+-#include <linux/version.h>
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
+-#define HAVE_VFIO_DEV_REQ_INTERFACE
+-#endif /* kernel version >= 4.0.0 */
+-
+ #include <linux/vfio.h>
  
--#else /* ! RTE_EAL_VFIO */
-+#else /* ! RTE_EXEC_ENV_LINUX */
+-#define VFIO_DIR "/dev/vfio"
+-#define VFIO_CONTAINER_PATH "/dev/vfio/vfio"
+-#define VFIO_GROUP_FMT "/dev/vfio/%u"
+-#define VFIO_NOIOMMU_GROUP_FMT "/dev/vfio/noiommu-%u"
+-#define VFIO_GET_REGION_IDX(x) (x >> 40)
+-#define VFIO_NOIOMMU_MODE      \
++#define RTE_VFIO_DIR "/dev/vfio"
++#define RTE_VFIO_CONTAINER_PATH "/dev/vfio/vfio"
++#define RTE_VFIO_GROUP_FMT "/dev/vfio/%u"
++#define RTE_VFIO_NOIOMMU_GROUP_FMT "/dev/vfio/noiommu-%u"
++#define RTE_VFIO_NOIOMMU_MODE      \
+ 	"/sys/module/vfio/parameters/enable_unsafe_noiommu_mode"
+ 
+-/* NOIOMMU is defined from kernel version 4.5 onwards */
+-#ifdef VFIO_NOIOMMU_IOMMU
+-#define RTE_VFIO_NOIOMMU VFIO_NOIOMMU_IOMMU
+-#else
+-#define RTE_VFIO_NOIOMMU 8
+-#endif
+-
+-/*
+- * capabilities are only supported on kernel 4.6+. there were also some API
+- * changes as well, so add a macro to get cap offset.
+- */
+-#ifdef VFIO_REGION_INFO_FLAG_CAPS
+-#define RTE_VFIO_INFO_FLAG_CAPS VFIO_REGION_INFO_FLAG_CAPS
+-#define VFIO_CAP_OFFSET(x) (x->cap_offset)
+-#else
+-#define RTE_VFIO_INFO_FLAG_CAPS (1 << 3)
+-#define VFIO_CAP_OFFSET(x) (x->resv)
+-struct vfio_info_cap_header {
+-	uint16_t id;
+-	uint16_t version;
+-	uint32_t next;
+-};
+-#endif
+-
+-/* kernels 4.16+ can map BAR containing MSI-X table */
+-#ifdef VFIO_REGION_INFO_CAP_MSIX_MAPPABLE
+-#define RTE_VFIO_CAP_MSIX_MAPPABLE VFIO_REGION_INFO_CAP_MSIX_MAPPABLE
+-#else
+-#define RTE_VFIO_CAP_MSIX_MAPPABLE 3
+-#endif
+-
+-/* VFIO_DEVICE_FEATURE is defined for kernel version 5.7 and newer. */
+-#ifdef	VFIO_DEVICE_FEATURE
+-#define	RTE_VFIO_DEVICE_FEATURE	VFIO_DEVICE_FEATURE
+-#else
+-#define	RTE_VFIO_DEVICE_FEATURE	_IO(VFIO_TYPE, VFIO_BASE + 17)
+-struct vfio_device_feature {
+-	__u32	argsz;
+-	__u32	flags;
+-#define	VFIO_DEVICE_FEATURE_MASK	(0xffff) /* 16-bit feature index */
+-#define	VFIO_DEVICE_FEATURE_GET		(1 << 16) /* Get feature into data[] */
+-#define	VFIO_DEVICE_FEATURE_SET		(1 << 17) /* Set feature from data[] */
+-#define	VFIO_DEVICE_FEATURE_PROBE	(1 << 18) /* Probe feature support */
+-	__u8	data[];
+-};
+-#endif
+-
+-#ifdef	VFIO_DEVICE_FEATURE_BUS_MASTER
+-#define	RTE_VFIO_DEVICE_FEATURE_BUS_MASTER	VFIO_DEVICE_FEATURE_BUS_MASTER
+-#else
+-#define	RTE_VFIO_DEVICE_FEATURE_BUS_MASTER	10
+-struct vfio_device_feature_bus_master {
+-	__u32 op;
+-#define	VFIO_DEVICE_FEATURE_CLEAR_MASTER	0	/* Clear Bus Master */
+-#define	VFIO_DEVICE_FEATURE_SET_MASTER		1	/* Set Bus Master */
+-};
+-#endif
+-
+ #else /* ! RTE_EXEC_ENV_LINUX */
  
  /* we don't need an actual definition, only pointer is used */
- struct vfio_device_info;
+diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
+index d420ecf947..43e05c86a2 100644
+--- a/lib/eal/linux/eal_interrupts.c
++++ b/lib/eal/linux/eal_interrupts.c
+@@ -336,7 +336,6 @@ vfio_disable_msix(const struct rte_intr_handle *intr_handle) {
+ 	return ret;
+ }
  
--#endif /* RTE_EAL_VFIO */
-+#endif /* RTE_EXEC_ENV_LINUX */
+-#ifdef HAVE_VFIO_DEV_REQ_INTERFACE
+ /* enable req notifier */
+ static int
+ vfio_enable_req(const struct rte_intr_handle *intr_handle)
+@@ -396,7 +395,6 @@ vfio_disable_req(const struct rte_intr_handle *intr_handle)
  
- #define RTE_VFIO_DEFAULT_CONTAINER_FD (-1)
+ 	return ret;
+ }
+-#endif
  
+ static int
+ uio_intx_intr_disable(const struct rte_intr_handle *intr_handle)
+@@ -741,12 +739,10 @@ rte_intr_enable(const struct rte_intr_handle *intr_handle)
+ 		if (vfio_enable_intx(intr_handle))
+ 			rc = -1;
+ 		break;
+-#ifdef HAVE_VFIO_DEV_REQ_INTERFACE
+ 	case RTE_INTR_HANDLE_VFIO_REQ:
+ 		if (vfio_enable_req(intr_handle))
+ 			rc = -1;
+ 		break;
+-#endif
+ 	/* not used at this moment */
+ 	case RTE_INTR_HANDLE_DEV_EVENT:
+ 		rc = -1;
+@@ -808,10 +804,8 @@ rte_intr_ack(const struct rte_intr_handle *intr_handle)
+ 		if (vfio_ack_intx(intr_handle))
+ 			return -1;
+ 		break;
+-#ifdef HAVE_VFIO_DEV_REQ_INTERFACE
+ 	case RTE_INTR_HANDLE_VFIO_REQ:
+ 		return -1;
+-#endif
+ 	/* not used at this moment */
+ 	case RTE_INTR_HANDLE_DEV_EVENT:
+ 		return -1;
+@@ -871,12 +865,10 @@ rte_intr_disable(const struct rte_intr_handle *intr_handle)
+ 		if (vfio_disable_intx(intr_handle))
+ 			rc = -1;
+ 		break;
+-#ifdef HAVE_VFIO_DEV_REQ_INTERFACE
+ 	case RTE_INTR_HANDLE_VFIO_REQ:
+ 		if (vfio_disable_req(intr_handle))
+ 			rc = -1;
+ 		break;
+-#endif
+ 	/* not used at this moment */
+ 	case RTE_INTR_HANDLE_DEV_EVENT:
+ 		rc = -1;
+@@ -937,9 +929,7 @@ eal_intr_process_interrupts(struct epoll_event *events, int nfds)
+ 		case RTE_INTR_HANDLE_ALARM:
+ 			bytes_read = sizeof(buf.timerfd_num);
+ 			break;
+-#ifdef HAVE_VFIO_DEV_REQ_INTERFACE
+ 		case RTE_INTR_HANDLE_VFIO_REQ:
+-#endif
+ 		case RTE_INTR_HANDLE_VFIO_MSIX:
+ 		case RTE_INTR_HANDLE_VFIO_MSI:
+ 		case RTE_INTR_HANDLE_VFIO_LEGACY:
+diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
+index 805f0ff92c..9ebf4425a8 100644
+--- a/lib/eal/linux/eal_vfio.c
++++ b/lib/eal/linux/eal_vfio.c
+@@ -85,7 +85,7 @@ static const struct vfio_iommu_type iommu_types[] = {
+ 	},
+ 	/* IOMMU-less mode */
+ 	{
+-		.type_id = RTE_VFIO_NOIOMMU,
++		.type_id = VFIO_NOIOMMU_IOMMU,
+ 		.name = "No-IOMMU",
+ 		.partial_unmap = true,
+ 		.dma_map_func = &vfio_noiommu_dma_map,
+@@ -363,8 +363,7 @@ vfio_open_group_fd(int iommu_group_num)
+ 	/* if primary, try to open the group */
+ 	if (internal_conf->process_type == RTE_PROC_PRIMARY) {
+ 		/* try regular group format */
+-		snprintf(filename, sizeof(filename),
+-				 VFIO_GROUP_FMT, iommu_group_num);
++		snprintf(filename, sizeof(filename), RTE_VFIO_GROUP_FMT, iommu_group_num);
+ 		vfio_group_fd = open(filename, O_RDWR);
+ 		if (vfio_group_fd < 0) {
+ 			/* if file not found, it's not an error */
+@@ -375,9 +374,8 @@ vfio_open_group_fd(int iommu_group_num)
+ 			}
+ 
+ 			/* special case: try no-IOMMU path as well */
+-			snprintf(filename, sizeof(filename),
+-					VFIO_NOIOMMU_GROUP_FMT,
+-					iommu_group_num);
++			snprintf(filename, sizeof(filename), RTE_VFIO_NOIOMMU_GROUP_FMT,
++				iommu_group_num);
+ 			vfio_group_fd = open(filename, O_RDWR);
+ 			if (vfio_group_fd < 0) {
+ 				if (errno != ENOENT) {
+@@ -1128,7 +1126,7 @@ rte_vfio_enable(const char *modname)
+ 	}
+ 
+ 	/* VFIO directory might not exist (e.g., unprivileged containers) */
+-	dir = opendir(VFIO_DIR);
++	dir = opendir(RTE_VFIO_DIR);
+ 	if (dir == NULL) {
+ 		EAL_LOG(DEBUG,
+ 			"VFIO directory does not exist, skipping VFIO support...");
+@@ -1315,15 +1313,12 @@ rte_vfio_get_container_fd(void)
+ 	const struct internal_config *internal_conf =
+ 		eal_get_internal_configuration();
+ 
+-
+ 	/* if we're in a primary process, try to open the container */
+ 	if (internal_conf->process_type == RTE_PROC_PRIMARY) {
+-		vfio_container_fd = open(VFIO_CONTAINER_PATH, O_RDWR);
++		vfio_container_fd = open(RTE_VFIO_CONTAINER_PATH, O_RDWR);
+ 		if (vfio_container_fd < 0) {
+-			EAL_LOG(ERR,
+-					"Cannot open VFIO container %s, error "
+-					"%i (%s)", VFIO_CONTAINER_PATH,
+-					errno, strerror(errno));
++			EAL_LOG(ERR, "Cannot open VFIO container %s, error %i (%s)",
++				RTE_VFIO_CONTAINER_PATH, errno, strerror(errno));
+ 			return -1;
+ 		}
+ 
+@@ -2053,7 +2048,7 @@ rte_vfio_noiommu_is_enabled(void)
+ 	ssize_t cnt;
+ 	char c;
+ 
+-	fd = open(VFIO_NOIOMMU_MODE, O_RDONLY);
++	fd = open(RTE_VFIO_NOIOMMU_MODE, O_RDONLY);
+ 	if (fd < 0) {
+ 		if (errno != ENOENT) {
+ 			EAL_LOG(ERR, "Cannot open VFIO noiommu file "
 -- 
 2.51.0
 
