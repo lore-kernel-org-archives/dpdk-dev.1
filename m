@@ -2,42 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CAFCAC592
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 16:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CDFCAC59A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 17:11:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 419694042F;
-	Fri, 19 Sep 2025 18:37:22 +0200 (CEST)
-Received: from cstnet.cn (smtp83.cstnet.cn [159.226.251.83])
- by mails.dpdk.org (Postfix) with ESMTP id 5019B402D0
- for <dev@dpdk.org>; Fri, 19 Sep 2025 18:37:20 +0200 (CEST)
-Received: from sunyuechi$iscas.ac.cn ( [42.177.177.196] ) by
- ajax-webmail-APP-09 (Coremail) ; Sat, 20 Sep 2025 00:37:17 +0800
- (GMT+08:00)
-X-Originating-IP: [42.177.177.196]
-Date: Sat, 20 Sep 2025 00:37:17 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?5a2Z6LaK5rGg?= <sunyuechi@iscas.ac.cn>
-To: "Thomas Monjalon" <thomas@monjalon.net>
-Cc: dev@dpdk.org, "Stanislaw Kardach" <stanislaw.kardach@gmail.com>, 
- uk7b@foxmail.com
-Subject: Re: Re: [PATCH v2 2/5] eal/riscv/spinlock: add rte_cpuflag.h
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
- 20240627(e6c6db66) Copyright (c) 2002-2025 www.mailtech.cn cnic.cn
-In-Reply-To: <40834601.10thIPus4b@thomas>
-References: <20250701182033.642384-1-uk7b@foxmail.com>
- <tencent_EFCE09AB3F6C9C0743F5C9226108A2D86D05@qq.com>
- <40834601.10thIPus4b@thomas>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	by mails.dpdk.org (Postfix) with ESMTP id 8E58C4042F;
+	Fri, 19 Sep 2025 19:11:31 +0200 (CEST)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com
+ [209.85.208.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E71D402D0
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 19:11:30 +0200 (CEST)
+Received: by mail-lj1-f169.google.com with SMTP id
+ 38308e7fff4ca-363f137bbf8so12056771fa.2
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 10:11:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1758301890; x=1758906690; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=HVihiuh2m2JENnnYbYqoYWpd6/ANQLAT0dlvYulevMU=;
+ b=jku7rFqfDnssnlnmMdnNpASbK9+/6FXVW7nLTxLLogSUKj1K6UyYLUNc3dbqHoscw0
+ kQ4rdDwFAR0bV0rLDMMeehrvyuLfO66tv117hh5lYKguWuZi4hldXSdxefuOM13Y+YSc
+ RzPKVs1r/dY+rK4UbrTwAP/IsjAp4flUlzlvw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1758301890; x=1758906690;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=HVihiuh2m2JENnnYbYqoYWpd6/ANQLAT0dlvYulevMU=;
+ b=na+80UDWMKXwRkm/WfAs9crBF4lt+ef9mcVyO0FkQ5KFE3uuOV456JS/6CjXzBUBAI
+ cNX0sj6PCT56k0LjlNv/g2KEbv/QPwawP5ylI3NZdLlAdL6ndcmhj/IvVp2s/FV89joF
+ s+U1jX5fVp4aRK4riJcIMFBIichknDLz5uHxuDnz3ctMue6L7wWDySEa5z/Eut5Ov1UL
+ t17OgAQIqBfYC3gQDocYzdKh9wclgRpdDkwGshkQMKdVdHkJVmsAr04fdu3l+ZMePYMc
+ WxA/BLOqEpIgg1uNLyXziIxi4PELXmQS7r6EkaMrysHGNpSbMA2UsmN4EbeHeC/HS32R
+ F/4g==
+X-Gm-Message-State: AOJu0YzTcKbPCX6IWNhx3fMaTIlcoJjx5btYxPV46rlY/4EcT0sQTM2F
+ 41+GrEOMuM462RuY13c+sGYDQrETo4T88TdRqNbY6QmgG4oJ3t5X2H9ox89E3wg8I60pBy8STYG
+ A69sn2ieJJAZnFoliUvmZCdVHW6X8EKUM6nVmbqTiqQ==
+X-Gm-Gg: ASbGncuhUjFdBxmCukuk8LvW6MnD3aNeWOMqKTqpuMBx8l8VWTpChP5e/SnE6hsRpS0
+ E9vD4A05NfN+WrWN7sfiwX2PQd2bOyyTDlStsmjoOkCZlUICJNluZRFqLQm2PiB/I7dJgdyFo5S
+ RHPScfhRIWZHAmG8IV3ZdQccyv7P47uswfWjjyDepViDCICxA5w3azuFL8YPyvc78IFNK06nK2s
+ pqm9XigMpoHl66Ijx0v+Q==
+X-Google-Smtp-Source: AGHT+IGRUg6cqn+nch8tw8P/rqqIlaoKiVBrtzpVQBQCqOpPhPpGWxpPI6hPnSjBI35L/O/gxSbQ++cZFVQU742CjIo=
+X-Received: by 2002:a05:651c:201d:b0:351:786c:e533 with SMTP id
+ 38308e7fff4ca-364147be89dmr8764331fa.15.1758301889756; Fri, 19 Sep 2025
+ 10:11:29 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <40a240e5.30087.19962d65496.Coremail.sunyuechi@iscas.ac.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: swCowADnHFa9hs1owq4FAA--.62585W
-X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAYKAmjNcTQw8QABsi
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
- CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
- daVFxhVjvjDU=
+References: <20250910194259.1027220-1-paul.szczepanek@arm.com>
+ <20250910194259.1027220-2-paul.szczepanek@arm.com>
+In-Reply-To: <20250910194259.1027220-2-paul.szczepanek@arm.com>
+From: Dean Marx <dmarx@iol.unh.edu>
+Date: Fri, 19 Sep 2025 13:11:16 -0400
+X-Gm-Features: AS18NWDYV09ihto4PilpU4b-wLcdr5iolc2YBrPaEXvmtFI4_yff1pUbcqwMAEg
+Message-ID: <CABD7UXPXsa1Psrg4cSLk4u4befxJ4_T7or16KnG1+pcMiGkOuQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] dts: update testsuite docs
+To: Paul Szczepanek <paul.szczepanek@arm.com>
+Cc: dev@dpdk.org, Thomas Wilks <thomas.wilks@arm.com>, 
+ Luca Vizzarro <luca.vizzarro@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,23 +73,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-T2theSwgSSBpbml0aWFsbHkgdGhvdWdodCB0aGlzIHdhcyBjb21tb24gcHJhY3RpY2UgYWNyb3Nz
-IGFsbCBhcmNoaXRlY3R1cmVzLCBidXQgaXQgdHVybnMgb3V0IG9ubHkgeDg2IGFkZGVkICNpbmNs
-dWRlICJydGVfY3B1ZmxhZ3MuaCIgaGVyZS4KSeKAmXZlIG5vdyBtb3ZlZCBpdCB0byBsaWIvZmli
-L2RpcjI0XzhfcnZ2LmggYW5kIHVwZGF0ZWQgdjMuCgoKJmd0OyAtLS0tLeWOn+Wni+mCruS7ti0t
-LS0tCiZndDsg5Y+R5Lu25Lq6OiAiVGhvbWFzIE1vbmphbG9uIiA8dGhvbWFzQG1vbmphbG9uLm5l
-dD4KJmd0OyDlj5HpgIHml7bpl7Q6IDIwMjUtMDktMTkgMjM6MTM6MTkgKOaYn+acn+S6lCkKJmd0
-OyDmlLbku7bkuro6ICJTdW4gWXVlY2hpIiA8c3VueXVlY2hpQGlzY2FzLmFjLmNuPgomZ3Q7IOaK
-hOmAgTogZGV2QGRwZGsub3JnLCAiU3RhbmlzbGF3IEthcmRhY2giIDxzdGFuaXNsYXcua2FyZGFj
-aEBnbWFpbC5jb20+LCB1azdiQGZveG1haWwuY29tCiZndDsg5Li76aKYOiBSZTogW1BBVENIIHYy
-IDIvNV0gZWFsL3Jpc2N2L3NwaW5sb2NrOiBhZGQgcnRlX2NwdWZsYWcuaAomZ3Q7IAomZ3Q7IDAx
-LzA3LzIwMjUgMjA6MjAsIHVrN2JAZm94bWFpbC5jb206CiZndDsgJmd0OyBGcm9tOiBTdW4gWXVl
-Y2hpIDxzdW55dWVjaGlAaXNjYXMuYWMuY24+CiZndDsgJmd0OyAKJmd0OyAmZ3Q7IFNhbWUgYXMg
-dGhlIHg4NiBzdHlsZSwgaW5jbHVkZSAicnRlX2NwdWZsYWdzLmgiIGluIHJ0ZV9zcGlubG9jay5o
-CiZndDsgJmd0OyBzbyB0aGF0IGZpbGVzIGxpa2UgbGliL2ZpYi9kaXIyNF84LmMgZG9u4oCZdCBu
-ZWVkIHRvIGluY2x1ZGUgaXQuCiZndDsgJmd0OyAKJmd0OyAmZ3Q7IFNpZ25lZC1vZmYtYnk6IFN1
-biBZdWVjaGkgPHN1bnl1ZWNoaUBpc2Nhcy5hYy5jbj4KJmd0OyAKJmd0OyBJIGRpc2FncmVlLgom
-Z3Q7IEkgcHJlZmVyIHJlbW92aW5nIHVzZWxlc3MgaW5jbHVkZXMgbGlrZSBpbiB4ODYgc3Bpbmxv
-Y2suCiZndDsgCjwvc3VueXVlY2hpQGlzY2FzLmFjLmNuPjwvc3VueXVlY2hpQGlzY2FzLmFjLmNu
-Pjwvc3RhbmlzbGF3LmthcmRhY2hAZ21haWwuY29tPjwvc3VueXVlY2hpQGlzY2FzLmFjLmNuPjwv
-dGhvbWFzQG1vbmphbG9uLm5ldD4=
+Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
+
+On Wed, Sep 10, 2025 at 3:43=E2=80=AFPM Paul Szczepanek <paul.szczepanek@ar=
+m.com> wrote:
+>
+> From: Thomas Wilks <thomas.wilks@arm.com>
+>
+> Updated and corrected test case doc strings inside of test suites.
+>
+> Changed helper functions inside of testsuites into private functions
+> and removed doc strings where redundant.
+>
+> Depends-on: series-36111 ("Split DTS framework and public API")
+>
+> Signed-off-by: Thomas Wilks <thomas.wilks@arm.com>
+> Signed-off-by: Paul Szczepanek <paul.szczepanek@arm.com>
+> Reviewed-by: Luca Vizzarro <luca.vizzarro@arm.com>
