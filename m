@@ -2,84 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08229CAC59A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 19:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFDCCAC592
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 19:08:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 42E1640658;
-	Fri, 19 Sep 2025 21:03:41 +0200 (CEST)
-Received: from fout-a1-smtp.messagingengine.com
- (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id 38A2B4042F
- for <dev@dpdk.org>; Fri, 19 Sep 2025 21:03:39 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id DA2FFEC025F;
- Fri, 19 Sep 2025 15:03:38 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Fri, 19 Sep 2025 15:03:38 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id DE73840647;
+	Fri, 19 Sep 2025 21:08:56 +0200 (CEST)
+Received: from fhigh-a8-smtp.messagingengine.com
+ (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mails.dpdk.org (Postfix) with ESMTP id 2D67E4042F
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 21:08:55 +0200 (CEST)
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id A33211400153;
+ Fri, 19 Sep 2025 15:08:54 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-10.internal (MEProxy); Fri, 19 Sep 2025 15:08:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm1; t=1758308618; x=1758395018; bh=0XP+2L1fY+xyatODCjMlB
- IDZ+cic0c4USZx89S2wf5A=; b=XYV7XguKx8wcwlXXsUABAJkdwgqj4ajfw45Fl
- h9EoXtBqSPnEmNX21aS7hDkIp0Kgbv+H9HXsOzGC4Sb2X80ZgkXw70UIIk1ssS5N
- kWu+Ss/YwSHIU+3Yph5huaOKRBppIZLPGwshH/N2+Q3+tQWzhiejZhpNFTdmY6+n
- Rxa8c+pd97I1K9hgW3TVQvutJORxZ6fsCJvCtq+b4lioDp4AYDjaaB5MQfXywram
- LVFkfoaVGFNhE/QPONrxwe8fgUr0WEIeOVjN4WkwiMCA8XOfOZSZtIwIxGQIOC8/
- idyqq/yfV01EV8vcYw0fvc8+ipVcZJ4a7avtvR4IhAXVkDdIw==
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1758308934;
+ x=1758395334; bh=GEqVqqsHdCCmjzrmrCPX3C5o6z5XP+SDL9PBnKSQqV4=; b=
+ fKDndsy425KzyPvmotSOKyI9knkTjuf+CjZiMEGCBErBDyFRNDqRt2kQFRbwh7vk
+ ZXxI9PfimnL1KkPljpsHlmz53YM4ZbKG2toXhP5q55g/8j4tmyAgCfaGLmElKBT8
+ E9TeGqZbZHSE2v8McRaNWOdhxMV1vkdp3KXLYVtaIUEJloRcfVrgejowzSokFeah
+ KT2pz1yBkqTgAfXhwTLxR6yUg9Zf+HJJsW6gvVlgkieXuY6HYhOkDRXPeUjHPbCl
+ rjHGi/pBDXpRE5k1ph9vCNtto8O6xmQThz4swPnq/0oGZ3z2TYfVyzHZ0eO8Mpnk
+ CSVLbWIsWN5zQAZQ1pWp7A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
- 1758308618; x=1758395018; bh=0XP+2L1fY+xyatODCjMlBIDZ+cic0c4USZx
- 89S2wf5A=; b=YFK7s91ZKuoTosUP1D15smFpg+ySP28X1uYFvJkS4krpmBEIJ5z
- 5z+aKTvcjaQiE5P1lQ5v3mdtKOCXgeE5AFp8sCHT1GLkTrX4Ph1aZSEn6uQqwBFH
- nWpru0+P8y+NRiSFFwa3XNMByPl1NeUDecEy9SK78C0TZmF4nxWD03/Emgp+oZ9H
- Mt58a8mYaYO8YkzhdJEDYK3FwB158tior93R1dpuNvxZXnaJxIcTw/VkQG7Ty7qk
- slVA8iyMEbr2izAMJdLQhn3Bemjdcy0tue/TT1lTZzBF9/BLUeKCTLbr3DTgVQov
- VN8yxzY5w/MgtyHvNpyOIUAwzi/7vgAQ7KA==
-X-ME-Sender: <xms:CqnNaPTEEpCtKekQUH5_JRCkDf0AKhlSFXxTAWTBGAqaTc1qnGEVzg>
- <xme:CqnNaIZvu9EvPcpEZM7UF73KGtoYAeOU1ftPlivkLGLFUxUui8Q2GNcKVyBz3n_Jb
- 6G0Vy8OLAKopIEv9A>
-X-ME-Received: <xmr:CqnNaCfb8URrcZsE5btKgpm9UFxAAA862bQrQgiPv7v_wV6luU0aSk557KBPzgsx3jTE79D8Zvv1hG4SUs9DSU8kZuJxxJw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehtddttdcutefuodetggdotefrod
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758308934; x=
+ 1758395334; bh=GEqVqqsHdCCmjzrmrCPX3C5o6z5XP+SDL9PBnKSQqV4=; b=U
+ SkfeHuWeiYzKKVhcBg5yP/GDpeIPFNS0qOY0oZ+r2A6s1qInm1Q9KvmrLVuvrqHt
+ LAP/VOsIfOeRCp9aJZJWmF30UvN3VGw01beUcigcQtSNBo1bNe1oRN2K7ifMdSeC
+ WbghUX4STVrD9JVfvsNiZiYf7xw4XbrUaE671g+YK6KvXGOTuivQYu6DQ1rIOG5w
+ KrCdHsOwKYuT1WavUL4RZlnoqjMRx3uTtdlqG/WmtXAD6/27TOXgPS1FEwwgcWIZ
+ H6WmVaKYLKc0CXkRDsLghVGH2Su6Of1/LgLt5KbkpDY3XPmhNzxTfAyQfIV5WLmQ
+ 5jRH3V9Id71Naz8DXUKgA==
+X-ME-Sender: <xms:RqrNaF57Ivi885rTA5WF2KrLlgOZhsKz8XsLPqsjRqp-lTrGtJ1dtg>
+ <xme:RqrNaOaNP4PPDyDCnqZsR-E-NqSwVCyNyydOwfzY0_dTdWGfYHmpiR2aMV5TP1tWZ
+ whiLAHr7fRkhUn1Mw>
+X-ME-Received: <xmr:RqrNaC45NcXmXsXiLIzJ_prRMTboNlykId-Ulnmh2sn418HN6rLbTmtzNwFIa0vn8S9MxBF3bAiCNqzvqpeFGoKRYA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehtddtudcutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
- hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefvhhhomhgrshcuofho
- nhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrth
- htvghrnhepveevfeevieeihfetudekgeekleeigeffueekveduteeuffeiudevteeiudek
- feelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepth
- hhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepkedpmhhouggv
- pehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtoh
- epkhgrihdrjhhisehinhhtvghlrdgtohhmpdhrtghpthhtohepphgrsghlohdruggvrdhl
- rghrrgdrghhurghrtghhsehinhhtvghlrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrh
- hitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepkhhonhhsthgrnhht
- ihhnrdgrnhgrnhihvghvsehhuhgrfigvihdrtghomhdprhgtphhtthhopehvlhgrughimh
- hirhdrmhgvughvvggukhhinhesihhnthgvlhdrtghomhdprhgtphhtthhopeihihhpvghn
- ghdurdifrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehsrghmvghhrdhgohgsrh
- hivghlsehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:CqnNaJIXYBPZfreq_7AvjXjx3r8heFKhoJ5BS5Dpox1LQzXRozn6GQ>
- <xmx:CqnNaPJSmGAK40AXwhJu3G91gZL_Io2Q3Pc-bB_ZeVCMqJBK6yfc2g>
- <xmx:CqnNaIVLt3bRfPQcw-3C3l8LBiH_1naXXHwW9CTMpJvi5Jqk4lmUJg>
- <xmx:CqnNaImjOA9aj4EmwmxaDPiqrNTXmZ1okvZFYbe0zkc2uheXNkQ9gw>
- <xmx:CqnNaDpmeM4GQEt-bmZHPJ63N71IzgWiAAaEt746sFWYWmTr5rM_XgVk>
+ hrpefhvfevufffkfgjfhgggfgtsehtqhertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepgedttdeljeejgeffkeekkedtjeevtdehvedtkeeivdeuuedvieduvdel
+ veejueejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohephedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepshhunhihuhgvtghhihesihhstggrshdrrg
+ gtrdgtnhdprhgtphhtthhopehukhejsgesfhhogihmrghilhdrtghomhdprhgtphhtthho
+ peguvghvseguphgukhdrohhrghdprhgtphhtthhopehsthgrnhhishhlrgifrdhkrghrug
+ grtghhsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughs
+ ohhnsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:RqrNaJBphpgvj44MTfER5uy2gUQG9Efgtlvw6L7e0qRLxx-NjCQtEw>
+ <xmx:RqrNaAeszuiUA114AsBgsCM4ljlNfO1eg2myv6yysJPW2ZriIbL5wA>
+ <xmx:RqrNaALROs0KxykdIowAh2OLhJDsJ5HcVSJizopfgSXtkzGROiUBXw>
+ <xmx:RqrNaD0LHJufbF52IyVgdIQJjg57kYpJkj3Wf5xujMGx2Bg_EWJ4Tw>
+ <xmx:RqrNaMV3ciuNw66dhcsXVredYdxxzq_-P-T6m1k3Jwsbr_pU-Ln-eDKw>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 19 Sep 2025 15:03:37 -0400 (EDT)
+ 19 Sep 2025 15:08:53 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: Kai Ji <kai.ji@intel.com>, Pablo de Lara <pablo.de.lara.guarch@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>
-Subject: [PATCH] eal/x86: remove useless include from spinlock header
-Date: Fri, 19 Sep 2025 21:02:26 +0200
-Message-ID: <20250919190226.1840008-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.51.0
+To: =?UTF-8?B?5a2Z6LaK5rGg?= <sunyuechi@iscas.ac.cn>, uk7b@foxmail.com
+Cc: dev@dpdk.org, Stanislaw Kardach <stanislaw.kardach@gmail.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH v3 1/4] config/riscv: detect V extension
+Date: Fri, 19 Sep 2025 21:08:52 +0200
+Message-ID: <2941954.PIDvDuAF1L@thomas>
+In-Reply-To: <39a1099c.30100.1996351c0d1.Coremail.sunyuechi@iscas.ac.cn>
+References: <20250919163358.2887335-1-uk7b@foxmail.com>
+ <3159839.72vocr9iq0@thomas>
+ <39a1099c.30100.1996351c0d1.Coremail.sunyuechi@iscas.ac.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,91 +92,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_cpuflags.h is not used in rte_spinlock.h,
-so it is removed, and added back in .c files where needed.
+19/09/2025 20:52, =E5=AD=99=E8=B6=8A=E6=B1=A0:
+> &gt; Please could you add a cross file in config/riscv/ for rv64gcv
+> &gt; and use it in devtools/test-meson-builds.sh so we can test compiling
+> &gt; with the vector extension?
+>=20
+> Sure, I plan to submit this next week.
+>=20
+> &gt; Another question about RISC-V maintenance in general,
+> &gt; what do you think about other pending patches for RISC-V?
+>=20
+> I would like to prioritize merging the hwprobe detection. The related wor=
+k is already mostly done here:
+>=20
+> [PATCH v3 0/9] riscv: implement accelerated crc using zbc
+>=20
+> The next step is to contact the author for a rebase and then review it. A=
+fter that, the following patch will be handled:
+>=20
+> [PATCH 0/2] eal/riscv: implement prefetch using zicbop
+>=20
+> In addition, our team has several riscv v extension optimization patches =
+that we are refining and will submit soon.
+>=20
+> I would prefer to be added as a maintainer, as this might make communicat=
+ion with other authors more efficient.
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- drivers/crypto/ipsec_mb/ipsec_mb_private.c | 1 +
- lib/eal/x86/include/rte_spinlock.h         | 1 -
- lib/eal/x86/rte_power_intrinsics.c         | 1 +
- lib/fib/trie.c                             | 1 +
- lib/member/rte_member_ht.c                 | 1 +
- lib/member/rte_member_sketch.c             | 1 +
- 6 files changed, 5 insertions(+), 1 deletion(-)
+You are welcome to become a maintainer of the whole arch RISC-V.
 
-diff --git a/drivers/crypto/ipsec_mb/ipsec_mb_private.c b/drivers/crypto/ipsec_mb/ipsec_mb_private.c
-index 0d2538832d..b4c36e7f58 100644
---- a/drivers/crypto/ipsec_mb/ipsec_mb_private.c
-+++ b/drivers/crypto/ipsec_mb/ipsec_mb_private.c
-@@ -5,6 +5,7 @@
- #include <bus_vdev_driver.h>
- #include <rte_common.h>
- #include <rte_cryptodev.h>
-+#include <rte_cpuflags.h>
- #include <rte_errno.h>
- 
- #include "ipsec_mb_private.h"
-diff --git a/lib/eal/x86/include/rte_spinlock.h b/lib/eal/x86/include/rte_spinlock.h
-index a14da41964..273bbdc39c 100644
---- a/lib/eal/x86/include/rte_spinlock.h
-+++ b/lib/eal/x86/include/rte_spinlock.h
-@@ -7,7 +7,6 @@
- 
- #include "generic/rte_spinlock.h"
- #include "rte_rtm.h"
--#include "rte_cpuflags.h"
- #include "rte_branch_prediction.h"
- #include "rte_common.h"
- #include "rte_pause.h"
-diff --git a/lib/eal/x86/rte_power_intrinsics.c b/lib/eal/x86/rte_power_intrinsics.c
-index 1cb2e908c0..489ad3983f 100644
---- a/lib/eal/x86/rte_power_intrinsics.c
-+++ b/lib/eal/x86/rte_power_intrinsics.c
-@@ -10,6 +10,7 @@
- #include <rte_lcore_var.h>
- #include <rte_rtm.h>
- #include <rte_spinlock.h>
-+#include <rte_cpuflags.h>
- 
- #include "rte_power_intrinsics.h"
- 
-diff --git a/lib/fib/trie.c b/lib/fib/trie.c
-index 24a08b827d..ff4c750952 100644
---- a/lib/fib/trie.c
-+++ b/lib/fib/trie.c
-@@ -8,6 +8,7 @@
- 
- #include <rte_debug.h>
- #include <rte_malloc.h>
-+#include <rte_cpuflags.h>
- #include <rte_errno.h>
- 
- #include <rte_rib6.h>
-diff --git a/lib/member/rte_member_ht.c b/lib/member/rte_member_ht.c
-index 738471b378..8c89a949c8 100644
---- a/lib/member/rte_member_ht.c
-+++ b/lib/member/rte_member_ht.c
-@@ -8,6 +8,7 @@
- #include <rte_random.h>
- #include <rte_log.h>
- #include <rte_vect.h>
-+#include <rte_cpuflags.h>
- 
- #include "member.h"
- #include "rte_member.h"
-diff --git a/lib/member/rte_member_sketch.c b/lib/member/rte_member_sketch.c
-index 15af6786e9..b753bac1bd 100644
---- a/lib/member/rte_member_sketch.c
-+++ b/lib/member/rte_member_sketch.c
-@@ -12,6 +12,7 @@
- #include <rte_log.h>
- #include <rte_random.h>
- #include <rte_prefetch.h>
-+#include <rte_cpuflags.h>
- #include <rte_ring_elem.h>
- 
- #include "member.h"
--- 
-2.51.0
+Please send a patch to add yourself.
+
+
+PS: please could you find a way to have your mails formatted differently?
+The quoted reply has "&gt;" instead of ">".
+Also the threading of your patches looks broken.
+
+Don't hesitate to join on Slack if you need advices.
+
+Thanks
+
 
