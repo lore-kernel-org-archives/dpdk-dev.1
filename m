@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 277BCCAC59A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 21:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF5FCAC592
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 21:08:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6BB56406B6;
-	Fri, 19 Sep 2025 23:03:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A6B3C4065F;
+	Fri, 19 Sep 2025 23:08:53 +0200 (CEST)
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com
  [205.220.168.131])
- by mails.dpdk.org (Postfix) with ESMTP id 68EB440611
- for <dev@dpdk.org>; Fri, 19 Sep 2025 23:02:58 +0200 (CEST)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
- by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JF9Pk2029494
- for <dev@dpdk.org>; Fri, 19 Sep 2025 21:02:57 GMT
+ by mails.dpdk.org (Postfix) with ESMTP id 3DADD402CE
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 23:08:51 +0200 (CEST)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+ by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JF50j6018236
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 21:08:50 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
  cc:content-transfer-encoding:date:from:in-reply-to:message-id
- :mime-version:references:subject:to; s=qcppdkim1; bh=H8lpNrx31aj
- Bj1wGUIWkUjy6YcZRiOHdG9EeFQm3Ppo=; b=Qlvj0cErnEnBeUXfAe4bbw9bKXJ
- npFfEnGzua/NTak0Ip4C0/G2BCohTpbl4hkfcvl3PV8P20FiMi2lyyuCA5f7BaHD
- v0U3dlJc1RXGPtjLWZHrLWx9TW6r+UDcPtDkNSnMpxKkk/WEH0Ua4wPJA1vrArT2
- hurN+BKMe/o0G1CrT5LIUXPM0mk79OvgHBeWsva9jmUT2D/UFE+H1ndK/FIukY/q
- Q/e8g2Ob64Cd/25NfYUEV03BTz77eknCEF5b4cwiVJN6Ym2pBZ8w4g4EE0qLuL8g
- M1fDhE97+Tilk55SXx6QYWT8EEhJ4fFeP+5BvzRxI9iTAR5HOcbSMY2Azew==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com
+ :mime-version:references:subject:to; s=qcppdkim1; bh=JjMOksI91eT
+ VAN/NFdCTHpaKNh0nClC1x5hPfU0n9RU=; b=bEHH9SgmT9DkN7TEqAq/xMxfUL3
+ eXL8uvbr1QQqlhe2O5TQbR0j4ser3TF5ecbgqyUsE9eTrY4LGwWcm0GQIGHUseXs
+ V2LOb7W9mMd4BQ3mjm/RU+YXZSC0KQwu4YAwm7+gwGMgvofIEoPYZ6EYWCO0cr94
+ fnLvTni8V5z35CbyCF7AmuDVyGn9cjAE8Bwirsny7blxTvoV+AH7DZpAAoehr/iO
+ vtQoqjuHgGCTHL4M6C0mqF6jWMdPE5rt6FHoF3LakOxz3ww5BcWB3zPTpwfX2Efo
+ X74/LJD+iV0BcqYKe7+x2g+EalKQS8YtkN/c4D4sAENFxsE3SSH+BXitwBA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com
  [199.106.103.254])
- by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fy13t3n-1
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxwktbh-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 19 Sep 2025 21:02:57 +0000 (GMT)
-Received: from pps.filterd (NASANPPMTA01.qualcomm.com [127.0.0.1])
- by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 58JL2uG6020831
- for <dev@dpdk.org>; Fri, 19 Sep 2025 21:02:56 GMT
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 21:08:50 +0000 (GMT)
+Received: from pps.filterd (NASANPPMTA04.qualcomm.com [127.0.0.1])
+ by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 58JL8nSI015390
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 21:08:49 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
- by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 497wy1a3xd-1
+ by NASANPPMTA04.qualcomm.com (PPS) with ESMTPS id 498v8nqt4n-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 19 Sep 2025 21:02:56 +0000
-Received: from NASANPPMTA01.qualcomm.com (NASANPPMTA01.qualcomm.com
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 21:08:49 +0000
+Received: from NASANPPMTA04.qualcomm.com (NASANPPMTA04.qualcomm.com
  [127.0.0.1])
- by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58JKxgXJ016936
- for <dev@dpdk.org>; Fri, 19 Sep 2025 21:02:56 GMT
+ by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58JL8nob015380
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 21:08:49 GMT
 Received: from tbs-5gnr-mt-30 (tbs-5gnr-mt-30.qualcomm.com [10.239.80.165])
- by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 58JL2tgS020824
+ by NASANPPMTA04.qualcomm.com (PPS) with ESMTPS id 58JL8nR0015375
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 19 Sep 2025 21:02:56 +0000
+ Fri, 19 Sep 2025 21:08:49 +0000
 Received: by tbs-5gnr-mt-30 (Postfix, from userid 2316195)
- id 8C9704016D; Fri, 19 Sep 2025 15:02:55 -0600 (MDT)
+ id CEFBC4016D; Fri, 19 Sep 2025 15:08:48 -0600 (MDT)
 From: Sameer Vaze <svaze@qti.qualcomm.com>
 To: 
 Cc: dev@dpdk.org, Sameer Vaze <svaze@qti.qualcomm.com>
 Subject: [PATCH 3/3] app/compress-perf: support for dictionaries and PDCP
  checksum
-Date: Fri, 19 Sep 2025 15:02:53 -0600
-Message-Id: <20250919210253.2664545-3-svaze@qti.qualcomm.com>
+Date: Fri, 19 Sep 2025 15:08:46 -0600
+Message-Id: <20250919210846.2665535-3-svaze@qti.qualcomm.com>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20250919210253.2664545-1-svaze@qti.qualcomm.com>
-References: <20250919210253.2664545-1-svaze@qti.qualcomm.com>
+In-Reply-To: <20250919210846.2665535-1-svaze@qti.qualcomm.com>
+References: <20250919210846.2665535-1-svaze@qti.qualcomm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QCInternal: smtphost
@@ -63,26 +63,26 @@ X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
  signatures=585085
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
  signatures=585085
-X-Proofpoint-ORIG-GUID: SJNcX1b5XcLgAJ58vJ3FfJIEo0RteVGC
-X-Authority-Analysis: v=2.4 cv=btZMBFai c=1 sm=1 tr=0 ts=68cdc501 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=HbIUTjE8 c=1 sm=1 tr=0 ts=68cdc662 cx=c_pps
  a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=IeAZipw4XQsdFnktVzgA:9
-X-Proofpoint-GUID: SJNcX1b5XcLgAJ58vJ3FfJIEo0RteVGC
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX6eh4ibOtZ7oO
- cThSuXKV4f+qtsW261pI3W0HutTab1Iq/nP49Uj5hje/0pzYlaI68HM1sP6/X8Rp+49usci+Qju
- iCrXDvc6AInAlNAqvcESOL6mZ8lxv9dY+DUdahsCazefS6FIEcZC+mXkuEiOXireuZqNzNOvJ75
- M1ACPgw51rSbPjGaxzByBG5ojCJ0vbzYxUPDoxYswmQd0ztZLZJfxE4iVqzWP+RS+hU/CxIxul7
- X4E2kz48YFbtqrDbXglarDc+V75UjP4VqAB8pXQecz5GsTT30KXvZ4iLoGUfJ30uMK2445YzVQw
- q7hFEeaMilpT487qVBrPOX0+EfvGO1PoetrJuknhnvZgPjGirDbTcx/qfdbf5A1u9mFOwrN1r2E
- 2ceS/uam
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=6sMvzI5xG4GYzBEuUpoA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX8kNqYu6dUA56
+ 1fYRIthel5xI4yoqBQzk09JLYUSeaC5FIhLu1YdB6Q8RVRH2qiwxQc2e00Gw+n5hc7ciVW7bWa1
+ Bdw7ToTd0Y4amMiALrQkxE71Alw2tnR9frj1/g2SrhtyEE032H48QRYrBFEyIdR7OQUD6tWruCO
+ hwtoATKXdEwD3TK9GJoMnIBI19egMUK42+QhZjsaDMHgCUSFtJ+23YbcLSrwZW1/ynj9LICuHMs
+ CMMOTDqf4aFnLDqoxfTugNUzGocqn/iPguljGifT0fGVtIwJqJ2o+mG7fC1fPxRVwxYAZeBNcNo
+ jgUp5rFgVQY4aFb4nSb7Eju6NkMPCOQ7bxZy0WQgAcfhPSabOKEfssBEI4vjd12pggVLztdyEzt
+ rewOc1Q5
+X-Proofpoint-GUID: GOmWculwAD1MvJPTHSkH7p8DuqZF872Z
+X-Proofpoint-ORIG-GUID: GOmWculwAD1MvJPTHSkH7p8DuqZF872Z
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-19_02,2025-09-19_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015 malwarescore=0
- spamscore=0 adultscore=0 phishscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160202
+ spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,7 +98,6 @@ Errors-To: dev-bounces@dpdk.org
 
 Adds support to read and apply dictionaries
 
-Change-Id: Ia48a463358d414286ad1275d3bbeca0d98a80776
 Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
 ---
  app/test-compress-perf/comp_perf_options.h    |  4 +
