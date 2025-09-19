@@ -2,51 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F64CAC592
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 16:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0F7CAC59A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 16:36:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92FBF40673;
-	Fri, 19 Sep 2025 18:36:08 +0200 (CEST)
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com
- [162.62.57.49])
- by mails.dpdk.org (Postfix) with UTF8SMTP id 1D8CB40612
- for <dev@dpdk.org>; Fri, 19 Sep 2025 18:36:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E954E4068A;
+	Fri, 19 Sep 2025 18:36:10 +0200 (CEST)
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com
+ [162.62.58.216])
+ by mails.dpdk.org (Postfix) with UTF8SMTP id 98D5240669
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 18:36:07 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
- s=s201512; t=1758299759;
- bh=Wtp8QCAyqkMOUwRgQPcmIk433wt+G6yTxnrsHk7bTZo=;
+ s=s201512; t=1758299761;
+ bh=xgPNCz5eUWNBKQ2bI3pKTQy0GcjXJXY6Q7K/wnvatNQ=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=e0IlJ1xGo4cBB3offU7CmmeYFPpqk38TWB7VzmQ6O0+DTRx/2Sur5rpUsMaQrdEIN
- v2wvhvU1SuJwP8LC+oD/5/AlQS++qshRYRkXucxE16Qb8Qa0T0T6KI3qUTBT3kNp8k
- j870hdUAbxcjC0F0lictkOyLp31YDw8KeEs5YcEU=
+ b=uQ4OVMcWAsLwROeWy0MusOQxwUFxiDekQR0urlQegjCapqujcFIqbWdtgiLdfjZGJ
+ ACBmfMy22OcMq8UI1ywGXM8ezicQ7bmywzWVRTzG0Ztc0nqP1tgsuz63+akk3eU/4L
+ pQNYPX0cevfEUXnOjGw8LvWuq1bSaXxyntSLDF3w=
 Received: from ar ([42.177.177.196])
- by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
- id 8F998C88; Sat, 20 Sep 2025 00:35:57 +0800
-X-QQ-mid: xmsmtpt1758299757t9u1wud7k
-Message-ID: <tencent_7B0BC50C737C584B612A3C3DAA1316974308@qq.com>
-X-QQ-XMAILINFO: NbgegmlEc3JuF7dsOx4wrq8sStRCSWQXM314kFQeBhsJYqCfN8xLnmYljNRU4N
- YlmOXMa0E58FRz+HyGwu3wg/5ADUXOhpuDoyNwBcdc75VdXutx32qQsUpfe7ihQWI98ykQqwJTzD
- 0RNqQnIETJ3ORcsLpL5xdrxP+6nFLV1f4fxoH7yDOG4472eu2Ohy1GN+u7iWX2cEZ99K9fhog4DI
- y1J+dNLjJlPjTVYNC+WTEOVSyQePqW3wku1MDuPu52B5kyovXncwiaKHBp6a4u7IsvbXrOBVb5g6
- 0ShAsnHgwOcKwhXv/g44/63I5Zyf+8RWF25eHkLlBDqRVS6RGltpmU2v7jFE6gG7Cw5G+u03mz0y
- 4oeauOQMDFwLlmFF0Lowlqnc4OaMVANjbSlByk7UsS4h11E9w0MPduGK4IcxRBIY8a5qxQ+R5oca
- s/uM36k0NQeKFcqB9VQTRWcdtub7Huxjn4hu/MEtL46jck0+MuvEgY1h7hFI5u9BpEWoTmpdu8Lk
- Wt2TQsTZ4mh3yJB91fNSDA3Sjcsxdkxr0QWlCcEKFk1z0bbIkoBiAG5jTRWkpDCRROGrS5xxNoZR
- wxUSNfqup17RVZEQDtK+PDqdeZYWeLont8X/dxPpIkaax6E9vfIBRcQZPFIdnO1ZiawOLlXHrV2R
- SUa/+PbrUZWkMHt7VMQmNWIiuX2k7OVYHwmvwTMC2qkVKQUertcnEoqiMlqdDIJO+Iak1h6vh5lC
- tfVd3aU8BedGOFqGBzoFhkbIDjrVnfQtAmVOX329B83Hh9ZRbICZkR3t5eH1wULegXS/5enz5ahn
- RC0xP2tJhDwoBRxdOcP0oCqgkiTfkP0uWPgQXWgCKy5hKQasA+7Cj2RCAHBw0wGxp2ucrMVJvxJV
- eMj1JTObWjax90a7Szm9iYf6CVuBs1Y71PYF39qlSkWPmExl3DlmGPDW627LVJun5z/tYYzLFmXd
- lcjUqcWyVspV6tPZTmIIcaHSWtJNyfiAI6446gni+2LYlFejiJYg==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+ by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
+ id 8FBA927D; Sat, 20 Sep 2025 00:35:59 +0800
+X-QQ-mid: xmsmtpt1758299759txjkfilql
+Message-ID: <tencent_DCD86DAE038B30CC8DA74E95C5C27708B605@qq.com>
+X-QQ-XMAILINFO: MIAHdi1iQo+zuettQcIvteTQaHIY+5u62mH9JyV4SGX2G4JLb9lDmxvk7gsOf6
+ dLtS+wzgcNUQSJjmDB3yv7it8gL0cMjAVBonEtR3OU6GMw6+ulEsrxxAuZwaXNsbSjhvH8+pBE1e
+ F3XuaEqlY4vj2QENdelz23a4aOZU3FUe+CdomXshIk63ghTkb0i2toh7hIFMdw2oh2zDM2GfTHFD
+ /3NESs4LK67/rm3hT/ag7HvR7I5N+3BB8QCT7sTmqioznl3qB+bq5jq8zZKDMDVt2G0JhzP6k37h
+ WRNrVIpNvdepGNBpLj22PF+UKGcNpQC11TpGA3SlkesH4OE7ciC4MI16iMXRrMxmhLiPj8UaPyZF
+ OmI17FeWnTZc+e+rvSXuHCUFPrmjDKuak7c3etGv898VPADut/hFnNpOAv0NKQR09S8PmRH8OQqO
+ n8UkB+LCZRNl4wxr6ib4cuT2ejsCEjFVvfqdjM0OULxG0vgY+W6rNukLdM8/2tFHQIfOasgTyP96
+ qrQ30Byb03r2+e/R7ij+B5HcHdv3R+weEtguTRJT0RdMTfEa6T829nE6aQjyqc/UW8TeaREIZcg0
+ Wf48FzvtLVzaV4zTTF6CefZdHM7d/w2YzBmPnXlmQ9JVMOPdgkNEPIA4V385lM2JbLxgyqENYiJh
+ kxucuLHZ9EhAlql9IzHGXfXAkyvXzY3X+4QvXwDHR4mdyO9aJxSvVc93L4nU8L2gFz1XeocFl7MB
+ 4SJf3TotKbPmtGtdMtZhdegOG2N0CYW4APXL2yROsBZX0sOnBp40RVgFbdrw/pr+JeLZvkNb02W8
+ G36jQQxz25a84Ws98DdG6Ci62lQp/jbox/c1q5/vV7xo7gDxHZXJn4w1ba7ZnTXTVpOuh6M6jhbX
+ EQza83Mt/1/k2h1Qd2tXY/V9FzU8SIjZgE/uYtaTFwDbXsmQJ3wJxgRysPUJizMui/dbEYG6ajXz
+ fEUel69/g=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
 From: uk7b@foxmail.com
 To: dev@dpdk.org
-Cc: Sun Yuechi <sunyuechi@iscas.ac.cn>, Thomas Monjalon <thomas@monjalon.net>,
- Bruce Richardson <bruce.richardson@intel.com>,
+Cc: Sun Yuechi <sunyuechi@iscas.ac.cn>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
  Stanislaw Kardach <stanislaw.kardach@gmail.com>
-Subject: [PATCH v3 2/4] lib/lpm: R-V V rte_lpm_lookupx4
-Date: Sat, 20 Sep 2025 00:33:55 +0800
-X-OQ-MSGID: <20250919163358.2887335-3-uk7b@foxmail.com>
+Subject: [PATCH v3 3/4] lib/fib: R-V V rte_fib_lookup_bulk
+Date: Sat, 20 Sep 2025 00:33:56 +0800
+X-OQ-MSGID: <20250919163358.2887335-4-uk7b@foxmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250919163358.2887335-1-uk7b@foxmail.com>
 References: <20250919163358.2887335-1-uk7b@foxmail.com>
@@ -67,121 +66,170 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Sun Yuechi <sunyuechi@iscas.ac.cn>
 
-Implement LPM lookupx4 function for RISC-V architecture using RISC-V
+Implement rte_fib_lookup_bulk function for RISC-V architecture using RISC-V
 Vector Extension instruction set
 
 Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
 ---
- MAINTAINERS           |  2 ++
- lib/lpm/meson.build   |  1 +
- lib/lpm/rte_lpm.h     |  2 ++
- lib/lpm/rte_lpm_rvv.h | 59 +++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 64 insertions(+)
- create mode 100644 lib/lpm/rte_lpm_rvv.h
+ lib/fib/dir24_8.c     | 20 ++++++++++++++
+ lib/fib/dir24_8_rvv.c | 64 +++++++++++++++++++++++++++++++++++++++++++
+ lib/fib/dir24_8_rvv.h | 26 ++++++++++++++++++
+ lib/fib/meson.build   |  2 ++
+ 4 files changed, 112 insertions(+)
+ create mode 100644 lib/fib/dir24_8_rvv.c
+ create mode 100644 lib/fib/dir24_8_rvv.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0e9357f3a3..9bd97879b6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -341,6 +341,8 @@ M: Stanislaw Kardach <stanislaw.kardach@gmail.com>
- F: config/riscv/
- F: doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst
- F: lib/eal/riscv/
-+M: sunyuechi <sunyuechi@iscas.ac.cn>
-+F: lib/**/*rvv*
+diff --git a/lib/fib/dir24_8.c b/lib/fib/dir24_8.c
+index 2ba7e93511..c652d3ca98 100644
+--- a/lib/fib/dir24_8.c
++++ b/lib/fib/dir24_8.c
+@@ -20,6 +20,10 @@
  
- Intel x86
- M: Bruce Richardson <bruce.richardson@intel.com>
-diff --git a/lib/lpm/meson.build b/lib/lpm/meson.build
-index cff8fed473..c4522eaf0c 100644
---- a/lib/lpm/meson.build
-+++ b/lib/lpm/meson.build
-@@ -11,6 +11,7 @@ indirect_headers += files(
-         'rte_lpm_scalar.h',
-         'rte_lpm_sse.h',
-         'rte_lpm_sve.h',
-+        'rte_lpm_rvv.h',
- )
- deps += ['hash']
- deps += ['rcu']
-diff --git a/lib/lpm/rte_lpm.h b/lib/lpm/rte_lpm.h
-index 6bf8d9d883..edfe77b458 100644
---- a/lib/lpm/rte_lpm.h
-+++ b/lib/lpm/rte_lpm.h
-@@ -420,6 +420,8 @@ rte_lpm_lookupx4(const struct rte_lpm *lpm, xmm_t ip, uint32_t hop[4],
- #include "rte_lpm_altivec.h"
- #elif defined(RTE_ARCH_X86)
- #include "rte_lpm_sse.h"
-+#elif defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V)
-+#include "rte_lpm_rvv.h"
+ #include "dir24_8_avx512.h"
+ 
++#elif defined(RTE_RISCV_FEATURE_V)
++
++#include "dir24_8_rvv.h"
++
+ #endif /* CC_AVX512_SUPPORT */
+ 
+ #define DIR24_8_NAMESIZE	64
+@@ -88,6 +92,22 @@ get_vector_fn(enum rte_fib_dir24_8_nh_sz nh_sz, bool be_addr)
+ 	default:
+ 		return NULL;
+ 	}
++#elif defined(RTE_RISCV_FEATURE_V)
++	RTE_SET_USED(be_addr);
++	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_RISCV_ISA_V) <= 0)
++		return NULL;
++	switch (nh_sz) {
++	case RTE_FIB_DIR24_8_1B:
++		return rte_dir24_8_vec_lookup_bulk_1b;
++	case RTE_FIB_DIR24_8_2B:
++		return rte_dir24_8_vec_lookup_bulk_2b;
++	case RTE_FIB_DIR24_8_4B:
++		return rte_dir24_8_vec_lookup_bulk_4b;
++	case RTE_FIB_DIR24_8_8B:
++		return rte_dir24_8_vec_lookup_bulk_8b;
++	default:
++		return NULL;
++	}
  #else
- #include "rte_lpm_scalar.h"
- #endif
-diff --git a/lib/lpm/rte_lpm_rvv.h b/lib/lpm/rte_lpm_rvv.h
+ 	RTE_SET_USED(nh_sz);
+ 	RTE_SET_USED(be_addr);
+diff --git a/lib/fib/dir24_8_rvv.c b/lib/fib/dir24_8_rvv.c
 new file mode 100644
-index 0000000000..0d3dc91055
+index 0000000000..9c14ca0481
 --- /dev/null
-+++ b/lib/lpm/rte_lpm_rvv.h
-@@ -0,0 +1,59 @@
++++ b/lib/fib/dir24_8_rvv.c
+@@ -0,0 +1,64 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences (ISCAS).
 + */
 +
-+#ifndef _RTE_LPM_RVV_H_
-+#define _RTE_LPM_RVV_H_
++#if defined(RTE_RISCV_FEATURE_V)
 +
 +#include <rte_vect.h>
++#include <rte_fib.h>
 +
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
++#include "dir24_8.h"
++#include "dir24_8_rvv.h"
 +
-+#define RTE_LPM_LOOKUP_SUCCESS 0x01000000
-+#define RTE_LPM_VALID_EXT_ENTRY_BITMASK 0x03000000
-+
-+static inline void rte_lpm_lookupx4(
-+	const struct rte_lpm *lpm, xmm_t ip, uint32_t hop[4], uint32_t defv)
-+{
-+	size_t vl = 4;
-+
-+	const uint32_t *tbl24_p = (const uint32_t *)lpm->tbl24;
-+	uint32_t tbl_entries[4] = {
-+		tbl24_p[((uint32_t)ip[0]) >> 8],
-+		tbl24_p[((uint32_t)ip[1]) >> 8],
-+		tbl24_p[((uint32_t)ip[2]) >> 8],
-+		tbl24_p[((uint32_t)ip[3]) >> 8],
-+	};
-+	vuint32m1_t vtbl_entry = __riscv_vle32_v_u32m1(tbl_entries, vl);
-+
-+	vbool32_t mask = __riscv_vmseq_vx_u32m1_b32(
-+	    __riscv_vand_vx_u32m1(vtbl_entry, RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl),
-+	    RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl);
-+
-+	vuint32m1_t vtbl8_index = __riscv_vsll_vx_u32m1(
-+	    __riscv_vadd_vv_u32m1(
-+		__riscv_vsll_vx_u32m1(__riscv_vand_vx_u32m1(vtbl_entry, 0x00FFFFFF, vl), 8, vl),
-+		__riscv_vand_vx_u32m1(
-+		    __riscv_vle32_v_u32m1((const uint32_t *)&ip, vl), 0x000000FF, vl),
-+		vl),
-+	    2, vl);
-+
-+	vtbl_entry = __riscv_vluxei32_v_u32m1_mu(
-+	    mask, vtbl_entry, (const uint32_t *)(lpm->tbl8), vtbl8_index, vl);
-+
-+	vuint32m1_t vnext_hop = __riscv_vand_vx_u32m1(vtbl_entry, 0x00FFFFFF, vl);
-+	mask = __riscv_vmseq_vx_u32m1_b32(
-+	    __riscv_vand_vx_u32m1(vtbl_entry, RTE_LPM_LOOKUP_SUCCESS, vl), 0, vl);
-+
-+	vnext_hop = __riscv_vmerge_vxm_u32m1(vnext_hop, defv, mask, vl);
-+
-+	__riscv_vse32_v_u32m1(hop, vnext_hop, vl);
++#define DECLARE_VECTOR_FN(SFX, NH_SZ) \
++void \
++rte_dir24_8_vec_lookup_bulk_##SFX(void *p, \
++		const uint32_t *ips, uint64_t *next_hops, unsigned int n) \
++{ \
++	const uint8_t  idx_bits = 3 - NH_SZ; \
++	const uint32_t idx_mask = (1u << (3 - NH_SZ)) - 1u; \
++	const uint64_t e_mask   = ~0ULL >> (64 - (8u << NH_SZ)); \
++	struct dir24_8_tbl *tbl = (struct dir24_8_tbl *)p; \
++	const uint64_t *tbl24   = tbl->tbl24; \
++	size_t vl; \
++	for (unsigned int i = 0; i < n; i += vl) { \
++		vl = __riscv_vsetvl_e32m4(n - i); \
++		vuint32m4_t v_ips = __riscv_vle32_v_u32m4(&ips[i], vl); \
++		vuint64m8_t vtbl_word = __riscv_vluxei32_v_u64m8(tbl24, \
++				__riscv_vsll_vx_u32m4( \
++				__riscv_vsrl_vx_u32m4(v_ips, idx_bits + 8, vl), 3, vl), vl); \
++		vuint32m4_t v_tbl_index = __riscv_vsrl_vx_u32m4(v_ips, 8, vl); \
++		vuint32m4_t v_entry_idx = __riscv_vand_vx_u32m4(v_tbl_index, idx_mask, vl); \
++		vuint32m4_t v_shift     = __riscv_vsll_vx_u32m4(v_entry_idx, 3 + NH_SZ, vl); \
++		vuint64m8_t vtbl_entry  = __riscv_vand_vx_u64m8( \
++				__riscv_vsrl_vv_u64m8(vtbl_word, \
++					__riscv_vwcvtu_x_x_v_u64m8(v_shift, vl), vl), e_mask, vl); \
++		vbool8_t mask = __riscv_vmseq_vx_u64m8_b8( \
++				__riscv_vand_vx_u64m8(vtbl_entry, 1, vl), 1, vl); \
++		if (__riscv_vcpop_m_b8(mask, vl)) { \
++			const uint64_t *tbl8 = tbl->tbl8; \
++			v_tbl_index = __riscv_vadd_vv_u32m4_mu(mask, v_tbl_index, \
++					__riscv_vsll_vx_u32m4( \
++						__riscv_vnsrl_wx_u32m4(vtbl_entry, 1, vl), 8, vl), \
++						__riscv_vand_vx_u32m4(v_ips, 0xFF, vl), vl); \
++			vtbl_word = __riscv_vluxei32_v_u64m8_mu(mask, vtbl_word, tbl8, \
++					__riscv_vsll_vx_u32m4( \
++					__riscv_vsrl_vx_u32m4(v_tbl_index, idx_bits, vl), 3, vl), \
++						vl); \
++			v_entry_idx = __riscv_vand_vx_u32m4(v_tbl_index, idx_mask, vl); \
++			v_shift     = __riscv_vsll_vx_u32m4(v_entry_idx, 3 + NH_SZ, vl); \
++			vtbl_entry  = __riscv_vand_vx_u64m8( \
++					__riscv_vsrl_vv_u64m8(vtbl_word, \
++					__riscv_vwcvtu_x_x_v_u64m8(v_shift, vl), vl), e_mask, vl); \
++		} \
++		__riscv_vse64_v_u64m8(&next_hops[i], \
++				__riscv_vsrl_vx_u64m8(vtbl_entry, 1, vl), vl); \
++	} \
 +}
 +
-+#ifdef __cplusplus
-+}
-+#endif
++DECLARE_VECTOR_FN(1b, 0)
++DECLARE_VECTOR_FN(2b, 1)
++DECLARE_VECTOR_FN(4b, 2)
++DECLARE_VECTOR_FN(8b, 3)
 +
-+#endif /* _RTE_LPM_RVV_H_ */
++#endif
+diff --git a/lib/fib/dir24_8_rvv.h b/lib/fib/dir24_8_rvv.h
+new file mode 100644
+index 0000000000..c75057e266
+--- /dev/null
++++ b/lib/fib/dir24_8_rvv.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences (ISCAS).
++ */
++
++#ifndef _DIR248_RVV_H_
++#define _DIR248_RVV_H_
++
++#include "rte_cpuflags.h"
++
++void
++rte_dir24_8_vec_lookup_bulk_1b(void *p, const uint32_t *ips,
++	uint64_t *next_hops, const unsigned int n);
++
++void
++rte_dir24_8_vec_lookup_bulk_2b(void *p, const uint32_t *ips,
++	uint64_t *next_hops, const unsigned int n);
++
++void
++rte_dir24_8_vec_lookup_bulk_4b(void *p, const uint32_t *ips,
++	uint64_t *next_hops, const unsigned int n);
++
++void
++rte_dir24_8_vec_lookup_bulk_8b(void *p, const uint32_t *ips,
++	uint64_t *next_hops, const unsigned int n);
++
++#endif /* _DIR248_RVV_H_ */
+diff --git a/lib/fib/meson.build b/lib/fib/meson.build
+index 6992ccc040..573fc50ff1 100644
+--- a/lib/fib/meson.build
++++ b/lib/fib/meson.build
+@@ -10,4 +10,6 @@ deps += ['net']
+ 
+ if dpdk_conf.has('RTE_ARCH_X86_64')
+     sources_avx512 += files('dir24_8_avx512.c', 'trie_avx512.c')
++elif dpdk_conf.has('RTE_ARCH_RISCV')
++    sources += files('dir24_8_rvv.c')
+ endif
 -- 
 2.51.0
 
