@@ -2,42 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DE6CAC592
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 17:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 884B5CAC592
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 18:16:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1E3BB4042F;
-	Fri, 19 Sep 2025 19:59:13 +0200 (CEST)
-Received: from cstnet.cn (smtp83.cstnet.cn [159.226.251.83])
- by mails.dpdk.org (Postfix) with ESMTP id BC3AF4028E
- for <dev@dpdk.org>; Fri, 19 Sep 2025 19:59:10 +0200 (CEST)
-Received: from sunyuechi$iscas.ac.cn ( [42.177.177.196] ) by
- ajax-webmail-APP-09 (Coremail) ; Sat, 20 Sep 2025 01:59:07 +0800
- (GMT+08:00)
-X-Originating-IP: [42.177.177.196]
-Date: Sat, 20 Sep 2025 01:59:07 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: =?UTF-8?B?5a2Z6LaK5rGg?= <sunyuechi@iscas.ac.cn>
-To: "Thomas Monjalon" <thomas@monjalon.net>
-Cc: dev@dpdk.org, "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>, 
- "Stanislaw Kardach" <stanislaw.kardach@gmail.com>, uk7b@foxmail.com
-Subject: Re: Re: [PATCH v3 3/4] lib/fib: R-V V rte_fib_lookup_bulk
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
- 20240627(e6c6db66) Copyright (c) 2002-2025 www.mailtech.cn cnic.cn
-In-Reply-To: <4567272.LM0AJKV5NW@thomas>
+	by mails.dpdk.org (Postfix) with ESMTP id 4EC5A4042F;
+	Fri, 19 Sep 2025 20:16:27 +0200 (CEST)
+Received: from fout-a1-smtp.messagingengine.com
+ (fout-a1-smtp.messagingengine.com [103.168.172.144])
+ by mails.dpdk.org (Postfix) with ESMTP id 0839B4028E
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 20:16:25 +0200 (CEST)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfout.phl.internal (Postfix) with ESMTP id 5421BEC012A;
+ Fri, 19 Sep 2025 14:16:25 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-06.internal (MEProxy); Fri, 19 Sep 2025 14:16:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1758305785;
+ x=1758392185; bh=vb3aCVOiZTS/H9uiQfeJU9fG0jDHQ9wT63YGDGyrmww=; b=
+ jLzQFxTU5Bn6bU/JVjMtLLJyTEf4Z09nzSmuGAOQrBOBPXwiJXBJYJRqSt7xANJj
+ BLRMvhkMORp+FiyufbNIiJ57KAkqtEy+61E2mZzuGaYgyd7Ri23tmrAK+dVlnbVB
+ BpkZlOjyRLjbr2Bz+9yGWiPVVXcVkY1CNCTQNRt4YIM5a3+upJcXcoiHmbtdESOR
+ 4oMKPhzIHJSPR3Ri63LITvdoq2CYIBlZK00sHhAHjcraFNWZNV5tZYCPVbDRMs3K
+ syDPf7Yhkn+mHYP91CPr4uvNkbccdDei/AgklqQZ5ThiP35RLEMNxxhwJMVxm5/t
+ XUmqDmWCu9UGNazlToyI6A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758305785; x=
+ 1758392185; bh=vb3aCVOiZTS/H9uiQfeJU9fG0jDHQ9wT63YGDGyrmww=; b=m
+ 4+pOg9HhDKsANmNV9UCRUi938gx353e6uBtAr8nitd+jLNEd8p3MZInl+gdZKDS9
+ gUyXUe7AfwqVMwaZ0wf9itBP0hr5bfZW6shDtF4K+qkbI5edJXEUFI2FRM2bpAnY
+ Of3Fbo6tFjvHM2mVI/cZsTmJO+lspi3lYpLbqFs4cgGuYWqMdNX6gDJ7aOmrtsFa
+ 1dXg4zybDLbCCdfQlAsSWbvykBGSRPXsYRCAojb7m1CXAEsZR3UP1n66wruxnOSk
+ EEX3PD8xpLRstE4SPiip3KJpOMB3Sa46FvoVObfP4aiXZNmxaewWAJlNvUgQYnPp
+ vQgTXo7ckAM85ma1Wb/4Q==
+X-ME-Sender: <xms:-J3NaIH1zCeypWz8nAr6mdAZqZjUkV6TTrxJ72tCOHwX9Snjv2qoEw>
+ <xme:-J3NaM0A1erZvTio0Fl83WujyUQAnNunlIkt5BpYhWm-oEtPn6DHG_SPD3kDzPeKR
+ BegYjFGh87K8TvClA>
+X-ME-Received: <xmr:-J3NaImvBmThBFVJYIFRi4ZDGGGQixGGVRQMFdw5H-5UkmkrEgHE2EeeLWX4eITysXusoJ6-ABi2eF-p4LN6-pt9SQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegleeltdcutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohephedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepshhunhihuhgvtghhihesihhstggrshdrrg
+ gtrdgtnhdprhgtphhtthhopehukhejsgesfhhogihmrghilhdrtghomhdprhgtphhtthho
+ peguvghvseguphgukhdrohhrghdprhgtphhtthhopehsthgrnhhishhlrgifrdhkrghrug
+ grtghhsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughs
+ ohhnsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:-J3NaE-Q7228wVE0HEthOd7ERIl3bLG1tRozF0Mq0-Ns8no_KiS9cg>
+ <xmx:-J3NaFrFd5nSOr_1b1jI8FAyij7Yqwuw6jEdYVVP7YpqMqbyJ9f8rw>
+ <xmx:-J3NaFkrf0SAMWyJzYbQuntofjwlj-S5kNdviRXwXiiW3W8nEfHJaw>
+ <xmx:-J3NaEislIZufxk2egkhXoL-NJwrZLedILueUrJC2gyBoLBZkuZpjA>
+ <xmx:-Z3NaGrgC9P-zefGtjfSfMg-405XSxcpwPTCYmwL_ewVD_JTIVM5W-au>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 19 Sep 2025 14:16:24 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Sun Yuechi <sunyuechi@iscas.ac.cn>, uk7b@foxmail.com
+Cc: dev@dpdk.org, Stanislaw Kardach <stanislaw.kardach@gmail.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH v3 1/4] config/riscv: detect V extension
+Date: Fri, 19 Sep 2025 20:16:22 +0200
+Message-ID: <3159839.72vocr9iq0@thomas>
+In-Reply-To: <tencent_FDE91C0DD66F18084FBD6A8F45C3D05AB106@qq.com>
 References: <20250919163358.2887335-1-uk7b@foxmail.com>
- <tencent_DCD86DAE038B30CC8DA74E95C5C27708B605@qq.com>
- <4567272.LM0AJKV5NW@thomas>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+ <tencent_FDE91C0DD66F18084FBD6A8F45C3D05AB106@qq.com>
 MIME-Version: 1.0
-Message-ID: <79ae2cb2.300ed.199632141d3.Coremail.sunyuechi@iscas.ac.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: swCowAB361Tsmc1oQLAFAA--.2069W
-X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiCREKAmjNcNhPEAABsD
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW5Jw
- CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
- daVFxhVjvjDU=
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,22 +91,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-R290IGl0LCB0aGFua3MuCgoKJmd0OyAtLS0tLeWOn+Wni+mCruS7ti0tLS0tCiZndDsg5Y+R5Lu2
-5Lq6OiAiVGhvbWFzIE1vbmphbG9uIiA8dGhvbWFzQG1vbmphbG9uLm5ldD4KJmd0OyDlj5HpgIHm
-l7bpl7Q6IDIwMjUtMDktMjAgMDE6NDg6MTggKOaYn+acn+WFrSkKJmd0OyDmlLbku7bkuro6ICJT
-dW4gWXVlY2hpIiA8c3VueXVlY2hpQGlzY2FzLmFjLmNuPgomZ3Q7IOaKhOmAgTogZGV2QGRwZGsu
-b3JnLCAiVmxhZGltaXIgTWVkdmVka2luIiA8dmxhZGltaXIubWVkdmVka2luQGludGVsLmNvbT4s
-ICJTdGFuaXNsYXcgS2FyZGFjaCIgPHN0YW5pc2xhdy5rYXJkYWNoQGdtYWlsLmNvbT4sIHVrN2JA
-Zm94bWFpbC5jb20KJmd0OyDkuLvpopg6IFJlOiBbUEFUQ0ggdjMgMy80XSBsaWIvZmliOiBSLVYg
-ViBydGVfZmliX2xvb2t1cF9idWxrCiZndDsgCiZndDsgMTkvMDkvMjAyNSAxODozMywgdWs3YkBm
-b3htYWlsLmNvbToKJmd0OyAmZ3Q7IEZyb206IFN1biBZdWVjaGkgPHN1bnl1ZWNoaUBpc2Nhcy5h
-Yy5jbj4KJmd0OyAmZ3Q7ICsjaWZuZGVmIF9ESVIyNDhfUlZWX0hfCiZndDsgJmd0OyArI2RlZmlu
-ZSBfRElSMjQ4X1JWVl9IXwomZ3Q7ICZndDsgKwomZ3Q7ICZndDsgKyNpbmNsdWRlICJydGVfY3B1
-ZmxhZ3MuaCIKJmd0OyAKJmd0OyBJdCBzaG91bGQgYmUKJmd0OyAJI2luY2x1ZGUgPHJ0ZV9jcHVm
-bGFncy5oPgomZ3Q7IGFuZCBpdCBzaG91bGQgYmUgb25seSB3aGVyZSByZWFsbHkgbmVlZGVkICgu
-YyBwcm9iYWJseSkuCiZndDsgCiZndDsgRG9uJ3QgYm90aGVyIGRvaW5nIGFub3RoZXIgdmVyc2lv
-biwgSSdtIHdvcmtpbmcgb24gaXQsCiZndDsgYW5kIHdpbGwgbWVyZ2Ugd2l0aCBjb2Rpbmcgc3R5
-bGUgaW1wcm92ZW1lbnRzLgomZ3Q7IAomZ3Q7IAo8L3J0ZV9jcHVmbGFncy5oPjwvc3VueXVlY2hp
-QGlzY2FzLmFjLmNuPjwvc3RhbmlzbGF3LmthcmRhY2hAZ21haWwuY29tPjwvdmxhZGltaXIubWVk
-dmVka2luQGludGVsLmNvbT48L3N1bnl1ZWNoaUBpc2Nhcy5hYy5jbj48L3Rob21hc0Btb25qYWxv
-bi5uZXQ+
+19/09/2025 18:33, uk7b@foxmail.com:
+> From: Sun Yuechi <sunyuechi@iscas.ac.cn>
+> 
+> This patch is derived from "config/riscv: detect presence of Zbc
+> extension with modifications".
+> 
+> The RISC-V C api defines architecture extension test macros
+> These let us detect whether the V extension is supported on the
+> compiler and -march we're building with. The C api also defines V
+> intrinsics we can use rather than inline assembly on newer versions of
+> GCC (14.1.0+) and Clang (18.1.0+).
+> 
+> If the V extension and intrinsics are both present and we can detect
+> the V extension at runtime, we define a flag, RTE_RISCV_FEATURE_V.
+> 
+> Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
+
+Series merged with style improvements, thanks.
+
+Please could you add a cross file in config/riscv/ for rv64gcv
+and use it in devtools/test-meson-builds.sh so we can test compiling
+with the vector extension?
+
+Another question about RISC-V maintenance in general,
+what do you think about other pending patches for RISC-V?
+
+
