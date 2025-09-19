@@ -2,82 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 884B5CAC592
-	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 18:16:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7897CAC592
+	for <dpdk-dev@archiver.kernel.org>; Fri, 19 Sep 2025 18:48:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4EC5A4042F;
-	Fri, 19 Sep 2025 20:16:27 +0200 (CEST)
-Received: from fout-a1-smtp.messagingengine.com
- (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id 0839B4028E
- for <dev@dpdk.org>; Fri, 19 Sep 2025 20:16:25 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfout.phl.internal (Postfix) with ESMTP id 5421BEC012A;
- Fri, 19 Sep 2025 14:16:25 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Fri, 19 Sep 2025 14:16:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1758305785;
- x=1758392185; bh=vb3aCVOiZTS/H9uiQfeJU9fG0jDHQ9wT63YGDGyrmww=; b=
- jLzQFxTU5Bn6bU/JVjMtLLJyTEf4Z09nzSmuGAOQrBOBPXwiJXBJYJRqSt7xANJj
- BLRMvhkMORp+FiyufbNIiJ57KAkqtEy+61E2mZzuGaYgyd7Ri23tmrAK+dVlnbVB
- BpkZlOjyRLjbr2Bz+9yGWiPVVXcVkY1CNCTQNRt4YIM5a3+upJcXcoiHmbtdESOR
- 4oMKPhzIHJSPR3Ri63LITvdoq2CYIBlZK00sHhAHjcraFNWZNV5tZYCPVbDRMs3K
- syDPf7Yhkn+mHYP91CPr4uvNkbccdDei/AgklqQZ5ThiP35RLEMNxxhwJMVxm5/t
- XUmqDmWCu9UGNazlToyI6A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758305785; x=
- 1758392185; bh=vb3aCVOiZTS/H9uiQfeJU9fG0jDHQ9wT63YGDGyrmww=; b=m
- 4+pOg9HhDKsANmNV9UCRUi938gx353e6uBtAr8nitd+jLNEd8p3MZInl+gdZKDS9
- gUyXUe7AfwqVMwaZ0wf9itBP0hr5bfZW6shDtF4K+qkbI5edJXEUFI2FRM2bpAnY
- Of3Fbo6tFjvHM2mVI/cZsTmJO+lspi3lYpLbqFs4cgGuYWqMdNX6gDJ7aOmrtsFa
- 1dXg4zybDLbCCdfQlAsSWbvykBGSRPXsYRCAojb7m1CXAEsZR3UP1n66wruxnOSk
- EEX3PD8xpLRstE4SPiip3KJpOMB3Sa46FvoVObfP4aiXZNmxaewWAJlNvUgQYnPp
- vQgTXo7ckAM85ma1Wb/4Q==
-X-ME-Sender: <xms:-J3NaIH1zCeypWz8nAr6mdAZqZjUkV6TTrxJ72tCOHwX9Snjv2qoEw>
- <xme:-J3NaM0A1erZvTio0Fl83WujyUQAnNunlIkt5BpYhWm-oEtPn6DHG_SPD3kDzPeKR
- BegYjFGh87K8TvClA>
-X-ME-Received: <xmr:-J3NaImvBmThBFVJYIFRi4ZDGGGQixGGVRQMFdw5H-5UkmkrEgHE2EeeLWX4eITysXusoJ6-ABi2eF-p4LN6-pt9SQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegleeltdcutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
- hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
- ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
- grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
- gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohephedpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepshhunhihuhgvtghhihesihhstggrshdrrg
- gtrdgtnhdprhgtphhtthhopehukhejsgesfhhogihmrghilhdrtghomhdprhgtphhtthho
- peguvghvseguphgukhdrohhrghdprhgtphhtthhopehsthgrnhhishhlrgifrdhkrghrug
- grtghhsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughs
- ohhnsehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:-J3NaE-Q7228wVE0HEthOd7ERIl3bLG1tRozF0Mq0-Ns8no_KiS9cg>
- <xmx:-J3NaFrFd5nSOr_1b1jI8FAyij7Yqwuw6jEdYVVP7YpqMqbyJ9f8rw>
- <xmx:-J3NaFkrf0SAMWyJzYbQuntofjwlj-S5kNdviRXwXiiW3W8nEfHJaw>
- <xmx:-J3NaEislIZufxk2egkhXoL-NJwrZLedILueUrJC2gyBoLBZkuZpjA>
- <xmx:-Z3NaGrgC9P-zefGtjfSfMg-405XSxcpwPTCYmwL_ewVD_JTIVM5W-au>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 19 Sep 2025 14:16:24 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Sun Yuechi <sunyuechi@iscas.ac.cn>, uk7b@foxmail.com
-Cc: dev@dpdk.org, Stanislaw Kardach <stanislaw.kardach@gmail.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: Re: [PATCH v3 1/4] config/riscv: detect V extension
-Date: Fri, 19 Sep 2025 20:16:22 +0200
-Message-ID: <3159839.72vocr9iq0@thomas>
-In-Reply-To: <tencent_FDE91C0DD66F18084FBD6A8F45C3D05AB106@qq.com>
-References: <20250919163358.2887335-1-uk7b@foxmail.com>
- <tencent_FDE91C0DD66F18084FBD6A8F45C3D05AB106@qq.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0C4084042F;
+	Fri, 19 Sep 2025 20:48:26 +0200 (CEST)
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com
+ [205.220.168.131])
+ by mails.dpdk.org (Postfix) with ESMTP id 6978A4028E
+ for <dev@dpdk.org>; Fri, 19 Sep 2025 20:48:24 +0200 (CEST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+ by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JH97t2022858;
+ Fri, 19 Sep 2025 18:48:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+ cc:content-transfer-encoding:date:from:in-reply-to:message-id
+ :mime-version:references:subject:to; s=qcppdkim1; bh=tOy1euZrgLB
+ IwGf7eY5/rb/SUtGL1ECaVZTUd4W5+Oc=; b=Ea0meSLPavDGM0rGQdtk/5LIRdI
+ 0aJsY1n7cF8QGovEahJVD1HAO62MjuoiRRU0PZciCTVCeid1Fw5DxWqvuy7LBdU9
+ vgjxcfv89mt/rzkocgWy8SWf9D+IJRL2TMWIdABxYMlRdGTmWiqjafilSarpT054
+ SW0R3+mwqg4LeTDDhwydqYl9Q18KKqN1azimcxGT59ApIm5Mx96T00z7KiJJzJMx
+ yzh/LE/Y9r6M5+Nnvk1vVTzx3XGJTqwCYmAv2khgrx/XctF9BOD9oS9yyjm728P/
+ 4QkEcwuMIQe7m6AIG4uTmYFqRAy6nncywssXB1s+0pLFtnL7d3loATepl7A==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com
+ [199.106.103.254])
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxy3fbm-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 19 Sep 2025 18:48:23 +0000 (GMT)
+Received: from pps.filterd (NASANPPMTA02.qualcomm.com [127.0.0.1])
+ by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 58JImM6e002306; 
+ Fri, 19 Sep 2025 18:48:22 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+ by NASANPPMTA02.qualcomm.com (PPS) with ESMTPS id 498uu4ntsu-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 19 Sep 2025 18:48:22 +0000
+Received: from NASANPPMTA02.qualcomm.com (NASANPPMTA02.qualcomm.com
+ [127.0.0.1])
+ by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58JIhmY1026332;
+ Fri, 19 Sep 2025 18:48:22 GMT
+Received: from tbs-5gnr-mt-30 (tbs-5gnr-mt-30.qualcomm.com [10.239.80.165])
+ by NASANPPMTA02.qualcomm.com (PPS) with ESMTPS id 58JImM5Z002283
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 19 Sep 2025 18:48:22 +0000
+Received: by tbs-5gnr-mt-30 (Postfix, from userid 2316195)
+ id 0D1654016C; Fri, 19 Sep 2025 12:48:22 -0600 (MDT)
+From: Sameer Vaze <svaze@qti.qualcomm.com>
+To: Sunila Sahu <ssahu@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
+ Ashish Gupta <ashishg@marvell.com>
+Cc: dev@dpdk.org, Sameer Vaze <svaze@qti.qualcomm.com>
+Subject: [PATCH 2/3] compress/zlib: support for dictionaries and PDCP checksum
+Date: Fri, 19 Sep 2025 12:48:19 -0600
+Message-Id: <20250919184821.2567839-2-svaze@qti.qualcomm.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20250919184821.2567839-1-svaze@qti.qualcomm.com>
+References: <20250919184821.2567839-1-svaze@qti.qualcomm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
+ signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
+ signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX7anjartHsNYP
+ 9DMA9M9n4xiTXs+TeTp23qKa+wg58ivMWv4a1HdJVX4ruMkYgGdsb/nLU/ouBOyjdLEjrdmoEbh
+ ax78Fa+6/EcNA+6sHfUZPcm2sq/r7BH+P5EZMa1IaQs1dsFLaAVtnz5oCE4mL0eVzBJy6vXq+BY
+ wpyd2YBDxmfII0VL3E+G8IGD1QjxRLe6W4AVEgUJXrOIb6qbcPDQ+mC6V/AZd5RjVlt4IHAMD0z
+ orEdMlBHbXwR4HWvEgsDdekF1IyomSA3EMYJcVhcnDDiUV03nfdsglQlpJfVAfrjTqcml04fgoJ
+ 235TuR1VBjcCr44b01szG7OjGc2kshJKverapwjzgOD45bn+hnDap/OyuVhQlfcIc1jwI8yw9xz
+ R4zbTxEi
+X-Proofpoint-ORIG-GUID: LcVIL76Fe8LsLQblqiuTIMIpGPiexIHh
+X-Authority-Analysis: v=2.4 cv=KJZaDEFo c=1 sm=1 tr=0 ts=68cda577 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=OVecn4WgEKDgdfIVBRYA:9
+X-Proofpoint-GUID: LcVIL76Fe8LsLQblqiuTIMIpGPiexIHh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-19_02,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 bulkscore=0 adultscore=0 impostorscore=0
+ suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,30 +96,334 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-19/09/2025 18:33, uk7b@foxmail.com:
-> From: Sun Yuechi <sunyuechi@iscas.ac.cn>
-> 
-> This patch is derived from "config/riscv: detect presence of Zbc
-> extension with modifications".
-> 
-> The RISC-V C api defines architecture extension test macros
-> These let us detect whether the V extension is supported on the
-> compiler and -march we're building with. The C api also defines V
-> intrinsics we can use rather than inline assembly on newer versions of
-> GCC (14.1.0+) and Clang (18.1.0+).
-> 
-> If the V extension and intrinsics are both present and we can detect
-> the V extension at runtime, we define a flag, RTE_RISCV_FEATURE_V.
-> 
-> Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
+Support to calculate PDCP checksums. Includes changes to
+pass in dictionaries. Adds support for sync flush
 
-Series merged with style improvements, thanks.
+Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
+---
+ drivers/compress/zlib/zlib_pmd.c         | 171 +++++++++++++++++++++--
+ drivers/compress/zlib/zlib_pmd_private.h |   8 ++
+ 2 files changed, 170 insertions(+), 9 deletions(-)
 
-Please could you add a cross file in config/riscv/ for rv64gcv
-and use it in devtools/test-meson-builds.sh so we can test compiling
-with the vector extension?
-
-Another question about RISC-V maintenance in general,
-what do you think about other pending patches for RISC-V?
-
+diff --git a/drivers/compress/zlib/zlib_pmd.c b/drivers/compress/zlib/zlib_pmd.c
+index 92e808e78c..c3eb8157c3 100644
+--- a/drivers/compress/zlib/zlib_pmd.c
++++ b/drivers/compress/zlib/zlib_pmd.c
+@@ -4,6 +4,7 @@
+ 
+ #include <bus_vdev_driver.h>
+ #include <rte_common.h>
++#include <rte_malloc.h>
+ 
+ #include "zlib_pmd_private.h"
+ 
+@@ -15,6 +16,118 @@
+ 		(data = rte_pktmbuf_mtod(mbuf, uint8_t *)),	\
+ 		(len = rte_pktmbuf_data_len(mbuf)) : 0)
+ 
++#define BOTTOM_NIBBLE_OF_BYTE 0xf
++#define TOP_NIBBLE_OF_BYTE 0xf0
++
++static void
++process_zlib_deflate_chksum(struct rte_comp_op *op,
++		z_stream *strm, enum rte_comp_checksum_type chksum)
++{
++	uint32_t dictionary_len = 0;
++	op->status = RTE_COMP_OP_STATUS_SUCCESS;
++
++	switch (chksum) {
++	case RTE_COMP_CHECKSUM_3GPP_PDCP_UDC:
++		{
++		uint8_t *dictionary = malloc(DEFLATE_MAX_WINDOW_SIZE);
++
++		if (!dictionary) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_ERROR;
++			return;
++		}
++
++		if (deflateGetDictionary(strm, dictionary, &dictionary_len)) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_CHECK_SUM_VALIDATION_FAILED;
++			free(dictionary);
++			return;
++		}
++
++		uint32_t dictionary_start = (uint32_t)(*dictionary);
++		uint32_t dictionary_end = (uint32_t)(*(dictionary + dictionary_len - 4));
++		uint32_t sum = (dictionary_start & 0x0F0F0F0F)
++			+ (dictionary_start & (0xF0F0F0F0 >> 4))
++			+ (dictionary_end & 0x0F0F0F0F)
++			+ (dictionary_end & (0xF0F0F0F0 >> 4));
++		uint8_t *sum_bytes = (uint8_t *)&sum;
++
++		op->output_chksum = ~(sum_bytes[0] + sum_bytes[1] + sum_bytes[2] + sum_bytes[3])
++			 & BOTTOM_NIBBLE_OF_BYTE;
++
++		free(dictionary);
++
++		break;
++	}
++	case RTE_COMP_CHECKSUM_NONE:
++	case RTE_COMP_CHECKSUM_CRC32:
++	case RTE_COMP_CHECKSUM_ADLER32:
++	case RTE_COMP_CHECKSUM_CRC32_ADLER32:
++	default:
++		ZLIB_PMD_ERR("Checksum not supported");
++		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
++		return;
++	}
++}
++
++static void
++process_zlib_inflate_chksum(struct rte_comp_op *op,
++		z_stream *strm,
++		enum rte_comp_checksum_type chksum)
++{
++	uint32_t dictionary_len = 0;
++	op->status = RTE_COMP_OP_STATUS_SUCCESS;
++
++	switch (chksum) {
++	case RTE_COMP_CHECKSUM_3GPP_PDCP_UDC:
++		{
++		uint8_t *dictionary = malloc(DEFLATE_MAX_WINDOW_SIZE);
++
++		if (!dictionary) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_ERROR;
++			return;
++		}
++
++		if (inflateGetDictionary(strm, dictionary, &dictionary_len)) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_CHECK_SUM_VALIDATION_FAILED;
++			free(dictionary);
++			return;
++		}
++
++		uint32_t dictionary_start = (uint32_t)(*dictionary);
++		uint32_t dictionary_end = (uint32_t)(*(dictionary + dictionary_len - 4));
++		uint32_t sum = (dictionary_start & 0x0F0F0F0F)
++			+ (dictionary_start & (0xF0F0F0F0 >> 4))
++			+ (dictionary_end & 0x0F0F0F0F)
++			+ (dictionary_end & (0xF0F0F0F0 >> 4));
++		uint8_t *sum_bytes = (uint8_t *)&sum;
++
++		op->output_chksum = ~(sum_bytes[0] + sum_bytes[1] + sum_bytes[2] + sum_bytes[3])
++			 & BOTTOM_NIBBLE_OF_BYTE;
++
++		if (op->input_chksum != op->output_chksum) {
++			ZLIB_PMD_ERR("Checksum does not match");
++			op->status = RTE_COMP_OP_STATUS_CHECK_SUM_VALIDATION_FAILED;
++			free(dictionary);
++			return;
++		}
++		free(dictionary);
++
++		break;
++		}
++	case RTE_COMP_CHECKSUM_NONE:
++	case RTE_COMP_CHECKSUM_CRC32:
++	case RTE_COMP_CHECKSUM_ADLER32:
++	case RTE_COMP_CHECKSUM_CRC32_ADLER32:
++	default:
++		ZLIB_PMD_ERR("Checksum not supported");
++		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
++		return;
++	}
++}
++
+ static void
+ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ {
+@@ -27,6 +140,9 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 	case RTE_COMP_FLUSH_FINAL:
+ 		fin_flush = Z_FINISH;
+ 		break;
++	case RTE_COMP_FLUSH_SYNC:
++		fin_flush = Z_SYNC_FLUSH;
++		break;
+ 	default:
+ 		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
+ 		ZLIB_PMD_ERR("Invalid flush value");
+@@ -49,6 +165,9 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 
+ 	strm->avail_out = rte_pktmbuf_data_len(mbuf_dst) - op->dst.offset;
+ 
++	uLong total_in_at_start = strm->total_in;
++	uLong total_out_at_start = strm->total_out;
++
+ 	/* Set flush value to NO_FLUSH unless it is last mbuf */
+ 	flush = Z_NO_FLUSH;
+ 	/* Initialize status to SUCCESS */
+@@ -56,8 +175,8 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 
+ 	do {
+ 		/* Set flush value to Z_FINISH for last block */
+-		if ((op->src.length - strm->total_in) <= strm->avail_in) {
+-			strm->avail_in = (op->src.length - strm->total_in);
++		if ((op->src.length - (strm->total_in - total_in_at_start)) <= strm->avail_in) {
++			strm->avail_in = (op->src.length - (strm->total_in - total_in_at_start));
+ 			flush = fin_flush;
+ 		}
+ 		do {
+@@ -92,17 +211,18 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 	/* Update op stats */
+ 	switch (op->status) {
+ 	case RTE_COMP_OP_STATUS_SUCCESS:
+-		op->consumed += strm->total_in;
++		op->consumed += strm->total_in - total_in_at_start;
+ 	/* Fall-through */
+ 	case RTE_COMP_OP_STATUS_OUT_OF_SPACE_TERMINATED:
+-		op->produced += strm->total_out;
++		op->produced += strm->total_out - total_out_at_start;
+ 		break;
+ 	default:
+ 		ZLIB_PMD_ERR("stats not updated for status:%d",
+ 				op->status);
+ 	}
+ 
+-	deflateReset(strm);
++	if (op->flush_flag != RTE_COMP_FLUSH_SYNC)
++		deflateReset(strm);
+ }
+ 
+ static void
+@@ -127,6 +247,9 @@ process_zlib_inflate(struct rte_comp_op *op, z_stream *strm)
+ 
+ 	strm->avail_out = rte_pktmbuf_data_len(mbuf_dst) - op->dst.offset;
+ 
++	uLong total_in_at_start = strm->total_in;
++	uLong total_out_at_start = strm->total_out;
++
+ 	/** Ignoring flush value provided from application for decompression */
+ 	flush = Z_NO_FLUSH;
+ 	/* initialize status to SUCCESS */
+@@ -178,17 +301,18 @@ process_zlib_inflate(struct rte_comp_op *op, z_stream *strm)
+ 	/* Update op stats */
+ 	switch (op->status) {
+ 	case RTE_COMP_OP_STATUS_SUCCESS:
+-		op->consumed += strm->total_in;
++		op->consumed += strm->total_in - total_in_at_start;
+ 	/* Fall-through */
+ 	case RTE_COMP_OP_STATUS_OUT_OF_SPACE_TERMINATED:
+-		op->produced += strm->total_out;
++		op->produced += strm->total_out - total_out_at_start;
+ 		break;
+ 	default:
+ 		ZLIB_PMD_ERR("stats not produced for status:%d",
+ 				op->status);
+ 	}
+ 
+-	inflateReset(strm);
++	if (op->flush_flag != RTE_COMP_FLUSH_SYNC)
++		inflateReset(strm);
+ }
+ 
+ /** Process comp operation for mbuf */
+@@ -203,10 +327,14 @@ process_zlib_op(struct zlib_qp *qp, struct rte_comp_op *op)
+ 			(op->dst.offset > rte_pktmbuf_data_len(op->m_dst))) {
+ 		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
+ 		ZLIB_PMD_ERR("Invalid source or destination buffers or "
+-			     "invalid Operation requested");
++				  "invalid Operation requested");
+ 	} else {
+ 		private_xform = (struct zlib_priv_xform *)op->private_xform;
+ 		stream = &private_xform->stream;
++		stream->chksum(op, &stream->strm, stream->chksum_type);
++		if (op->status != RTE_COMP_OP_STATUS_SUCCESS)
++			return -1;
++
+ 		stream->comp(op, &stream->strm);
+ 	}
+ 	/* whatever is out of op, put it into completion queue with
+@@ -232,6 +360,7 @@ zlib_set_stream_parameters(const struct rte_comp_xform *xform,
+ 	case RTE_COMP_COMPRESS:
+ 		stream->comp = process_zlib_deflate;
+ 		stream->free = deflateEnd;
++		stream->chksum = process_zlib_deflate_chksum;
+ 		/** Compression window bits */
+ 		switch (xform->compress.algo) {
+ 		case RTE_COMP_ALGO_DEFLATE:
+@@ -281,17 +410,30 @@ zlib_set_stream_parameters(const struct rte_comp_xform *xform,
+ 			ZLIB_PMD_ERR("Compression strategy not supported");
+ 			return -1;
+ 		}
++
++		/** Checksum used */
++		stream->chksum_type = xform->compress.chksum;
++
+ 		if (deflateInit2(strm, level,
+ 					Z_DEFLATED, wbits,
+ 					DEF_MEM_LEVEL, strategy) != Z_OK) {
+ 			ZLIB_PMD_ERR("Deflate init failed");
+ 			return -1;
+ 		}
++
++		if (xform->compress.dictionary) {
++			if (deflateSetDictionary(strm, xform->compress.dictionary,
++					xform->compress.dictionary_len)) {
++				ZLIB_PMD_ERR("Deflate set dictionary failed");
++				return -1;
++			}
++		}
+ 		break;
+ 
+ 	case RTE_COMP_DECOMPRESS:
+ 		stream->comp = process_zlib_inflate;
+ 		stream->free = inflateEnd;
++		stream->chksum = process_zlib_inflate_chksum;
+ 		/** window bits */
+ 		switch (xform->decompress.algo) {
+ 		case RTE_COMP_ALGO_DEFLATE:
+@@ -302,10 +444,21 @@ zlib_set_stream_parameters(const struct rte_comp_xform *xform,
+ 			return -1;
+ 		}
+ 
++		/** Checksum used */
++		stream->chksum_type = xform->decompress.chksum;
++
+ 		if (inflateInit2(strm, wbits) != Z_OK) {
+ 			ZLIB_PMD_ERR("Inflate init failed");
+ 			return -1;
+ 		}
++
++		if (xform->decompress.dictionary) {
++			if (inflateSetDictionary(strm, xform->decompress.dictionary,
++					xform->decompress.dictionary_len)) {
++				ZLIB_PMD_ERR("inflate set dictionary failed");
++				return -1;
++			}
++		}
+ 		break;
+ 	default:
+ 		return -1;
+diff --git a/drivers/compress/zlib/zlib_pmd_private.h b/drivers/compress/zlib/zlib_pmd_private.h
+index fd8c4c55a4..99bfdc9a76 100644
+--- a/drivers/compress/zlib/zlib_pmd_private.h
++++ b/drivers/compress/zlib/zlib_pmd_private.h
+@@ -46,6 +46,10 @@ typedef void (*comp_func_t)(struct rte_comp_op *op, z_stream *strm);
+ 
+ typedef int (*comp_free_t)(z_stream *strm);
+ 
++typedef void (*chksum_func_t)
++		(struct rte_comp_op *op, z_stream *strm, enum rte_comp_checksum_type chksum);
++
++
+ /** ZLIB Stream structure */
+ struct __rte_cache_aligned zlib_stream {
+ 	z_stream strm;
+@@ -54,6 +58,10 @@ struct __rte_cache_aligned zlib_stream {
+ 	/**< Operation (compression/decompression) */
+ 	comp_free_t free;
+ 	/**< Free Operation (compression/decompression) */
++	chksum_func_t chksum;
++	/**< Checksum Operation (compression/decompression) */
++	enum rte_comp_checksum_type chksum_type;
++	/**< Type of checksum to generate on the uncompressed data */
+ };
+ 
+ /** ZLIB private xform structure */
+-- 
+2.31.1
 
