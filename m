@@ -2,56 +2,164 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5ACCCAC592
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 07:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28126CAC592
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 07:40:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EC6ED4060A;
-	Mon, 22 Sep 2025 09:30:59 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id E4FA2402EF
- for <dev@dpdk.org>; Mon, 22 Sep 2025 09:30:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1758526258;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=mCUA3sgT7AlfG3Deh+BdLXDeZN4TfQ0mcyo6tQykMFo=;
- b=Pc4vDtSilBtbGN10SCAJ7bj0rZxMFMjVLzz/CIXpA74Ay38aUTGQF7g+OSOUZs5HUlNWqp
- QgQFIV80PEj1RTLGqaGEeo0qDys/0i3/Likc+1dYyQ+i5ojBFJLUqLiw//Olg0NIwQv8FR
- KROcvJ1j/fISpdXAivU69NVRXJPJIe4=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-489-V5JTb4-HNGOPjuO6mBoFQw-1; Mon,
- 22 Sep 2025 03:30:54 -0400
-X-MC-Unique: V5JTb4-HNGOPjuO6mBoFQw-1
-X-Mimecast-MFC-AGG-ID: V5JTb4-HNGOPjuO6mBoFQw_1758526253
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 776801800343; Mon, 22 Sep 2025 07:30:53 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.45.225.72])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 9F96A18004A3; Mon, 22 Sep 2025 07:30:51 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: stephen@networkplumber.org,
-	alialnu@nvidia.com,
-	stable@dpdk.org
-Subject: [PATCH] net/tap: fix build with LTO
-Date: Mon, 22 Sep 2025 09:30:43 +0200
-Message-ID: <20250922073043.2394557-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4F6FB40656;
+	Mon, 22 Sep 2025 09:40:41 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 63A964060A
+ for <dev@dpdk.org>; Mon, 22 Sep 2025 09:40:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1758526840; x=1790062840;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=KrN+plcXnaeJLJ9/knjyq4SXU/+STozy5bm5TjXsoFw=;
+ b=gOH805u3MRzr4rW6aaH8dXu3toFQ8P7JgE8aS2/SWRBq7YrznjYqX/IF
+ fLpQPgtMZhKBEI2PLX9staIcQGCY50JeA0bw/4qHo+VISynGVgo26NbNx
+ PM+Q1ATL8mkUzfULhQbkwmT7ojFx1RrgKTBYO4/M5d9LJ2qPRW7DAii4w
+ 61N8QzBxaNzuP8alzYfgxh6McbTBoYF4Y/QfNCRjzp6sXRWEF15EY6dSG
+ +pTjMsiT81ydnIEyfQTfB4N4fxTFNRvnDNPxJFizmv7j8Ri1pBriZeLaR
+ vTezqAqmneE2ED1YAlyoW1gfZ1Z+Ltmfjz6ZUdyDNsLdr3GptVjABYTkq A==;
+X-CSE-ConnectionGUID: 6ACHc9cjSI6teJpu9CzICw==
+X-CSE-MsgGUID: OmASW65hRyW7xVVySXInrw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="72148361"
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; d="scan'208";a="72148361"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Sep 2025 00:40:39 -0700
+X-CSE-ConnectionGUID: NKehEUPnTx6L1Nw+z2SbDw==
+X-CSE-MsgGUID: JIpjsyhZSt+VES2R9fpClw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; d="scan'208";a="176848924"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Sep 2025 00:40:39 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 22 Sep 2025 00:40:38 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Mon, 22 Sep 2025 00:40:38 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.54)
+ by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 22 Sep 2025 00:40:38 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=E5Gze+IdeqM1V3AMeKfePiRcTCOVffHVLDNk5pHLZA25/qwepF0IxvJGcf0UxY+y0nHHzulddZ9ScIdyS534fXK1EjdwN+W7pPT23kERbduR7NFb4vJZJZkoXT+QOgpwF87qUIYyOHy3YeTTI4GsoDyM1oWOHZ3xdM0xubBPW2Cvjjmg2UW+XsC5G8TuojwUYx+f/SswxB0iIGDsCtBqet5L2auFn09YtAeohPmZfBxOFXnLk+HTB2X+aqSkRjEi04b9cJ7sBFleb0wYS87wj/ricSfTec/hBpjLbEKaq+xxuc9r4feAk1+PMYcuovbCzzLUtOwLLBzCvaT4hBdEcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mGfecDt/iFxq08oa21msy5QlqpeBF4GKjgPFlO/7vFc=;
+ b=qsNkM4oHWFfwoi1zZbg45etpfKfBN034hLe0pU+ZcYnnPDm3ssX9ngyguPWRP0FomnsycyI9TVv6SjDSZAHv/m1Jlo6I6pcdtkPeLsNB1l5LdCAdv9QxjLHu6Yg3Vx8X/+Qb1FbIuhHOIr0psUWyDXMdW/oYnF6/Lbfw5s8TYxslDYDVvBKwzZR38DiL9BgRah6GMaz7V57BDUmgDzDCMjGIQB7A89Z0fhX1r1KPgy11wWuV5oornsQ2pxduZy9OHuregW/WV3NXZ71HGCJC9VMbrMrZI2Ob85Fwwn7zwbGjpQupjhvWMtwygSW9+VCVTr5bAupg9/fzx6Uq218ccQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by MW4PR11MB7102.namprd11.prod.outlook.com (2603:10b6:303:22b::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.17; Mon, 22 Sep
+ 2025 07:40:36 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
+ 07:40:36 +0000
+Date: Mon, 22 Sep 2025 08:40:31 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Thomas Monjalon <thomas@monjalon.net>
+CC: <dev@dpdk.org>, Kai Ji <kai.ji@intel.com>, Pablo de Lara
+ <pablo.de.lara.guarch@intel.com>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>, Vladimir Medvedkin
+ <vladimir.medvedkin@intel.com>, Yipeng Wang <yipeng1.wang@intel.com>, "Sameh
+ Gobriel" <sameh.gobriel@intel.com>
+Subject: Re: [PATCH] eal/x86: remove useless include from spinlock header
+Message-ID: <aND9b4QpcXHAaC2o@bricha3-mobl1.ger.corp.intel.com>
+References: <20250919190226.1840008-1-thomas@monjalon.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250919190226.1840008-1-thomas@monjalon.net>
+X-ClientProxiedBy: DUZPR01CA0084.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46a::11) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: U3xr_UTC98nNSYJLdcWCyOaXFw3an9WTx4m01L3YqZY_1758526253
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|MW4PR11MB7102:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0aa19f2a-6025-4da1-1eb8-08ddf9ab51aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?k45pXIoMsJFzJGVyNawDhH/3Ae2V1fPvOiYUpp1mhayQS290dVu6IqlX14cF?=
+ =?us-ascii?Q?fjRZJ/osdWdVbM5Czg93Ty4RILw8N6D0LreltdoZt8LzNto8XNglyjFZLfWD?=
+ =?us-ascii?Q?kBHq3SXFoHApvhsJc2+LQsrdNQrjohdtnJxV0GP/aeYEyoGR+mSDvCt3tg9U?=
+ =?us-ascii?Q?0dKO06SK7/zKt4Ud/tTUwXJRp3B2OegSeV4LUMMPFidH2+pezEniAPQxqXW4?=
+ =?us-ascii?Q?STMnJHl9CYs2oKj684+/xDryy2AwOv2cfJNFmeRc/+1L23KvTNNrTPJBW8Ws?=
+ =?us-ascii?Q?moxaa2QaFQdlHRRQSU7p9eZBYMXZes2vbgLNgYBQdHIsORq5WaZYrZZaQdn4?=
+ =?us-ascii?Q?gR/sEpde3KstQMr1VjXJNUy9iCEG1dlLJE1Wov9BN5aKqQCxqvgNJg5LzfPl?=
+ =?us-ascii?Q?hL+OemJkS5OnfkI652GDwtIHVDkzIF9Rz/zNXxKdJrEbV+32fSTVSQdCKHQo?=
+ =?us-ascii?Q?gA8sStBdKz9Y6zmXOLpcDKGq17YGpZXJYbEqf8J6TqmMNWR+ERKj/Mecrzmg?=
+ =?us-ascii?Q?KrEBYqbuQpG88jQPnx7je667bmQ9/KNE3e699VGrVslGEINaaniKebmWqbco?=
+ =?us-ascii?Q?c4IuwTz5/0rwqI/Q+rghnW0mia6miXVua5uk39+h3+sYahL6IVSsB9GmPVLl?=
+ =?us-ascii?Q?v8cgm+mfqPaDGCDvTQQzVAQ1sQ3sFtIiZY6ggHcuwCVhVWnq4fZcFB+5y+w/?=
+ =?us-ascii?Q?bUJF2D+jaO2stnmfyPHBgBA/r9X+aYHDm+QZX7fj9QfbBSIjdaGfIrsguwjk?=
+ =?us-ascii?Q?cDiR7bOMIegEGCL1vYBB0tgj+izS+07/8uwlhzgVhA02egUtL9coXqhZx6W1?=
+ =?us-ascii?Q?OafbRGdYHZwYTVxLZ4iiwAEOAIkhWBgIn0pR7ApyNX7c7K6SdGbJW7FhXHUR?=
+ =?us-ascii?Q?5F/wwS7mNHlkvBedo5+bUcev/J90t9fYyinLqxprsLUqKQV/Y1f9TtDYEdAz?=
+ =?us-ascii?Q?ZuzSnI6xWTORNE+9W61rchT8cXt14t7Pn9wihElG0MKie9iEtrc8XKVKCGne?=
+ =?us-ascii?Q?syOERVrRvXjxveqGpxdDfKjxJtVn9N/SGtTSPSQnjCIKRootzi6Be1vnkXHG?=
+ =?us-ascii?Q?ygn86L1FzYqFcUziYnLW0ySluQpILyF5vF0hHwmIEg9kTqIJMO2pQr+nZ1ZM?=
+ =?us-ascii?Q?kBzhgySJD4/H1c3Mm6AjNo+A8+dNn6gaBb/iVvRKYZazFKXEiNVTaxQD3NsV?=
+ =?us-ascii?Q?/m04RT0VYl1hSWePLk0LOuLfJSkW5pHQpBGWWarpbhKkPnBs7TlirYJGgsmb?=
+ =?us-ascii?Q?US3jQgWR8l6+OReQYQuth8b49H4yi+FUy3vtiqrCywHwtDcU2SV/EKW4aNBJ?=
+ =?us-ascii?Q?PRVJmihm0HAEz2MOPNX6tcIRCH5rCGSIovj4mpFg5sj6wB61fQQekgPB81o4?=
+ =?us-ascii?Q?TJ3mKsOb1oJqtCa3MyBvM1IA7fByPZ2jnYfkC25VTxEGq6APWFF9MzZn/kVt?=
+ =?us-ascii?Q?IHmtKPoP0TY=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?s/0RWG2vCH5tJwdBbf4Of6yifvAHYvEBl9u5UYIRwq+HS2DvH6cKsR9RRgJ2?=
+ =?us-ascii?Q?P8gsPo/o92ohoA1QMevuG/+WiWUd0IvcS8/zd00fMhvFdYkOdwBNGqhB7HBX?=
+ =?us-ascii?Q?8ilrGsaflxxcNYj9FJgwitGeEp9u+jGnIXytbqP9uEwnO9VAtynJKhHTQzbi?=
+ =?us-ascii?Q?fA07nHSoGJt/QZEcu9/eHoJXwpKeDbj2WaG4IVrhbnIQat+inmb06iEtnpzV?=
+ =?us-ascii?Q?/ibKcA7iMTXm/Ls7LLiCEfAZovzPtKzkLWpjVj0CUQFFTyRDvMmbf+sZCYAB?=
+ =?us-ascii?Q?x362CkGhDan2ZvDFCQ2b7r8fVQWTdsPULiEptVSahicKmJUbMfv6+1QRzuBX?=
+ =?us-ascii?Q?9UZxJ2zWW0H1rPjPjWLQe5rarKc0TimWrZMlWCPSbHGUiYWZcribb9RMzJzs?=
+ =?us-ascii?Q?KWqE5sn/KNrt3TZc/1A9A0wR9tjlqz/+t4+3t5jZ0bzzLaGaEVVsIv2O3GHA?=
+ =?us-ascii?Q?lUnf0+nsXmZ2BHk/PSXNgvHa+iJJDONCSA/ECNNrVbTYTpdPPaQ3voqM2dEe?=
+ =?us-ascii?Q?i58UDedEpPkh1MTOBh4XobJ6qq1kykry5VUHXsr8Z7bIViIZef4U7r1ngDvU?=
+ =?us-ascii?Q?JWzdAhAnbbSrDYAWgvKcLOk5mV+ghE73Uu/cx86Re82Xmizp1VnV6hP9Zf8v?=
+ =?us-ascii?Q?Vdo30uw50dIMhgIzchHhdDwid2pZRZ50w66FOfF9H5e+nd+YS0XW7N1iTG+q?=
+ =?us-ascii?Q?M5DIYlVrluG9S+++saqx7zHWGXe5pjd+utMBgU+W2eJ+bFChD5XmGXd/bOeg?=
+ =?us-ascii?Q?TA64TWfNzfuG7IIERX62YsgM8BcAwZu7aCVvMcDweSNYwwR9keC6x+IfrvOz?=
+ =?us-ascii?Q?1u0NfoBj9nTfyeoNuUOT8cirNICslAnLFX5z6Q/f7F1VpYILEM9LG3ZrliCH?=
+ =?us-ascii?Q?1GHJR0nfj8+Kr7gS0RuAo9l4qPprIFuCjvMGBIkM8nmydeVOBRZnnAXQr1Ny?=
+ =?us-ascii?Q?oHNZmU/eW5AR+7oWt4k8AbuqoaXFASGFJZ2BGVR7dDhb1ub2qYZ+kvEsqo2W?=
+ =?us-ascii?Q?oSVryEQ7ZL9NiblbBkUdUTybr5tmM1J9s+l0cGB5z8LZpHrMQwwYDjjXVRet?=
+ =?us-ascii?Q?9BKcpn3OviS78TzcVaDIF1pB9bo+fLWuOVR6IwG06eg6DVofCUxiH2DWKW7N?=
+ =?us-ascii?Q?vNO6+VXz2j1iW6+jXEGlgraP9iNqhJxjXOU+zaqM7ioQuqYmkKib0edhGBKm?=
+ =?us-ascii?Q?67Kx561kfr8iN3ChSMligfj6jT23OzSf6rcPBOtqp90CKfVvK5J1FCBM29ed?=
+ =?us-ascii?Q?/0o3CJ6UOFGARKRygC+jL9R26MT4+TdgZ2WTsGO4eNlX5aBWMwm23/a4XGct?=
+ =?us-ascii?Q?2CcCBecVba2Sf8QGvHcADGNqxDcA/1Bn4qsnzw/uxts2bLFdhuddxJLRLvAe?=
+ =?us-ascii?Q?kNHSd/8Aocn6Ddprn6JfvMZoUngUgFXsEd+fBP7PRHG6wB1rAe1RaqQPiT4a?=
+ =?us-ascii?Q?Lf23cLjrK3HeRXEuTl9XuD/HVBFN5/lWqNwbwtxe0Up6sMy3S/FnRr8IWVqP?=
+ =?us-ascii?Q?h2Z2jLCcKCkthHAbc0sI0o16H5xQCjggHwpGLpvIPuYcJvL6PFftu0fye/6n?=
+ =?us-ascii?Q?FagaNCo6bd+19W9k9kvifqtXtc5GDRsMpY0k/6YwOhWslKKsM4ok2tmH7TL/?=
+ =?us-ascii?Q?7A=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0aa19f2a-6025-4da1-1eb8-08ddf9ab51aa
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 07:40:36.3315 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UMVbra/yVvSYBd4o4hvWzFo2x4T+/3wqqIt3sZOck5TB1E0OwSCTCzkEmVAfCmivRp04suTpdp1Igzx8r2NjR3YtHaOOEWLQBLjawZhVXn8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB7102
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,378 +173,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The compiler has trouble understanding that the code is actually pointing
-at the data in the message past the nh struct.
-
-Update the tap_nlattr_add* helpers and the NLMSG_TAIL macro passing a
-pointer to msg.
-
-Bugzilla ID: 1511
-Fixes: 7c25284e30c2 ("net/tap: add netlink back-end for flow API")
-Cc: stable@dpdk.org
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- drivers/net/tap/tap_flow.c    | 117 +++++++++++++---------------------
- drivers/net/tap/tap_netlink.c |  24 +++----
- drivers/net/tap/tap_netlink.h |  10 +--
- drivers/net/tap/tap_tcmsgs.c  |   6 +-
- 4 files changed, 65 insertions(+), 92 deletions(-)
-
-diff --git a/drivers/net/tap/tap_flow.c b/drivers/net/tap/tap_flow.c
-index 373b773e2d..9d4ef27a8a 100644
---- a/drivers/net/tap/tap_flow.c
-+++ b/drivers/net/tap/tap_flow.c
-@@ -430,20 +430,16 @@ tap_flow_create_eth(const struct rte_flow_item *item, struct convert_data *info)
- 		return 0;
- 	msg = &flow->msg;
- 	if (!rte_is_zero_ether_addr(&mask->hdr.dst_addr)) {
--		tap_nlattr_add(&msg->nh, TCA_FLOWER_KEY_ETH_DST,
--			RTE_ETHER_ADDR_LEN,
--			   &spec->hdr.dst_addr.addr_bytes);
--		tap_nlattr_add(&msg->nh,
--			   TCA_FLOWER_KEY_ETH_DST_MASK, RTE_ETHER_ADDR_LEN,
--			   &mask->hdr.dst_addr.addr_bytes);
-+		tap_nlattr_add(msg, TCA_FLOWER_KEY_ETH_DST, RTE_ETHER_ADDR_LEN,
-+			&spec->hdr.dst_addr.addr_bytes);
-+		tap_nlattr_add(msg, TCA_FLOWER_KEY_ETH_DST_MASK, RTE_ETHER_ADDR_LEN,
-+			&mask->hdr.dst_addr.addr_bytes);
- 	}
- 	if (!rte_is_zero_ether_addr(&mask->hdr.src_addr)) {
--		tap_nlattr_add(&msg->nh, TCA_FLOWER_KEY_ETH_SRC,
--			RTE_ETHER_ADDR_LEN,
-+		tap_nlattr_add(msg, TCA_FLOWER_KEY_ETH_SRC, RTE_ETHER_ADDR_LEN,
- 			&spec->hdr.src_addr.addr_bytes);
--		tap_nlattr_add(&msg->nh,
--			   TCA_FLOWER_KEY_ETH_SRC_MASK, RTE_ETHER_ADDR_LEN,
--			   &mask->hdr.src_addr.addr_bytes);
-+		tap_nlattr_add(msg, TCA_FLOWER_KEY_ETH_SRC_MASK, RTE_ETHER_ADDR_LEN,
-+			&mask->hdr.src_addr.addr_bytes);
- 	}
- 	return 0;
- }
-@@ -498,11 +494,9 @@ tap_flow_create_vlan(const struct rte_flow_item *item, struct convert_data *info
- 		uint8_t vid = VLAN_ID(tci);
- 
- 		if (prio)
--			tap_nlattr_add8(&msg->nh,
--					TCA_FLOWER_KEY_VLAN_PRIO, prio);
-+			tap_nlattr_add8(msg, TCA_FLOWER_KEY_VLAN_PRIO, prio);
- 		if (vid)
--			tap_nlattr_add16(&msg->nh,
--					 TCA_FLOWER_KEY_VLAN_ID, vid);
-+			tap_nlattr_add16(msg, TCA_FLOWER_KEY_VLAN_ID, vid);
- 	}
- 	return 0;
- }
-@@ -544,20 +538,15 @@ tap_flow_create_ipv4(const struct rte_flow_item *item, struct convert_data *info
- 	if (!spec)
- 		return 0;
- 	if (mask->hdr.dst_addr) {
--		tap_nlattr_add32(&msg->nh, TCA_FLOWER_KEY_IPV4_DST,
--			     spec->hdr.dst_addr);
--		tap_nlattr_add32(&msg->nh, TCA_FLOWER_KEY_IPV4_DST_MASK,
--			     mask->hdr.dst_addr);
-+		tap_nlattr_add32(msg, TCA_FLOWER_KEY_IPV4_DST, spec->hdr.dst_addr);
-+		tap_nlattr_add32(msg, TCA_FLOWER_KEY_IPV4_DST_MASK, mask->hdr.dst_addr);
- 	}
- 	if (mask->hdr.src_addr) {
--		tap_nlattr_add32(&msg->nh, TCA_FLOWER_KEY_IPV4_SRC,
--			     spec->hdr.src_addr);
--		tap_nlattr_add32(&msg->nh, TCA_FLOWER_KEY_IPV4_SRC_MASK,
--			     mask->hdr.src_addr);
-+		tap_nlattr_add32(msg, TCA_FLOWER_KEY_IPV4_SRC, spec->hdr.src_addr);
-+		tap_nlattr_add32(msg, TCA_FLOWER_KEY_IPV4_SRC_MASK, mask->hdr.src_addr);
- 	}
- 	if (spec->hdr.next_proto_id)
--		tap_nlattr_add8(&msg->nh, TCA_FLOWER_KEY_IP_PROTO,
--			    spec->hdr.next_proto_id);
-+		tap_nlattr_add8(msg, TCA_FLOWER_KEY_IP_PROTO, spec->hdr.next_proto_id);
- 	return 0;
- }
- 
-@@ -599,20 +588,19 @@ tap_flow_create_ipv6(const struct rte_flow_item *item, struct convert_data *info
- 	if (!spec)
- 		return 0;
- 	if (memcmp(&mask->hdr.dst_addr, empty_addr, 16)) {
--		tap_nlattr_add(&msg->nh, TCA_FLOWER_KEY_IPV6_DST,
--			   sizeof(spec->hdr.dst_addr), &spec->hdr.dst_addr);
--		tap_nlattr_add(&msg->nh, TCA_FLOWER_KEY_IPV6_DST_MASK,
--			   sizeof(mask->hdr.dst_addr), &mask->hdr.dst_addr);
-+		tap_nlattr_add(msg, TCA_FLOWER_KEY_IPV6_DST, sizeof(spec->hdr.dst_addr),
-+			&spec->hdr.dst_addr);
-+		tap_nlattr_add(msg, TCA_FLOWER_KEY_IPV6_DST_MASK, sizeof(mask->hdr.dst_addr),
-+			&mask->hdr.dst_addr);
- 	}
- 	if (memcmp(&mask->hdr.src_addr, empty_addr, 16)) {
--		tap_nlattr_add(&msg->nh, TCA_FLOWER_KEY_IPV6_SRC,
--			   sizeof(spec->hdr.src_addr), &spec->hdr.src_addr);
--		tap_nlattr_add(&msg->nh, TCA_FLOWER_KEY_IPV6_SRC_MASK,
--			   sizeof(mask->hdr.src_addr), &mask->hdr.src_addr);
-+		tap_nlattr_add(msg, TCA_FLOWER_KEY_IPV6_SRC, sizeof(spec->hdr.src_addr),
-+			&spec->hdr.src_addr);
-+		tap_nlattr_add(msg, TCA_FLOWER_KEY_IPV6_SRC_MASK, sizeof(mask->hdr.src_addr),
-+			&mask->hdr.src_addr);
- 	}
- 	if (spec->hdr.proto)
--		tap_nlattr_add8(&msg->nh,
--				TCA_FLOWER_KEY_IP_PROTO, spec->hdr.proto);
-+		tap_nlattr_add8(msg, TCA_FLOWER_KEY_IP_PROTO, spec->hdr.proto);
- 	return 0;
- }
- 
-@@ -649,15 +637,13 @@ tap_flow_create_udp(const struct rte_flow_item *item, struct convert_data *info)
- 	if (!flow)
- 		return 0;
- 	msg = &flow->msg;
--	tap_nlattr_add8(&msg->nh, TCA_FLOWER_KEY_IP_PROTO, IPPROTO_UDP);
-+	tap_nlattr_add8(msg, TCA_FLOWER_KEY_IP_PROTO, IPPROTO_UDP);
- 	if (!spec)
- 		return 0;
- 	if (mask->hdr.dst_port)
--		tap_nlattr_add16(&msg->nh, TCA_FLOWER_KEY_UDP_DST,
--			     spec->hdr.dst_port);
-+		tap_nlattr_add16(msg, TCA_FLOWER_KEY_UDP_DST, spec->hdr.dst_port);
- 	if (mask->hdr.src_port)
--		tap_nlattr_add16(&msg->nh, TCA_FLOWER_KEY_UDP_SRC,
--			     spec->hdr.src_port);
-+		tap_nlattr_add16(msg, TCA_FLOWER_KEY_UDP_SRC, spec->hdr.src_port);
- 	return 0;
- }
- 
-@@ -694,15 +680,13 @@ tap_flow_create_tcp(const struct rte_flow_item *item, struct convert_data *info)
- 	if (!flow)
- 		return 0;
- 	msg = &flow->msg;
--	tap_nlattr_add8(&msg->nh, TCA_FLOWER_KEY_IP_PROTO, IPPROTO_TCP);
-+	tap_nlattr_add8(msg, TCA_FLOWER_KEY_IP_PROTO, IPPROTO_TCP);
- 	if (!spec)
- 		return 0;
- 	if (mask->hdr.dst_port)
--		tap_nlattr_add16(&msg->nh, TCA_FLOWER_KEY_TCP_DST,
--			     spec->hdr.dst_port);
-+		tap_nlattr_add16(msg, TCA_FLOWER_KEY_TCP_DST, spec->hdr.dst_port);
- 	if (mask->hdr.src_port)
--		tap_nlattr_add16(&msg->nh, TCA_FLOWER_KEY_TCP_SRC,
--			     spec->hdr.src_port);
-+		tap_nlattr_add16(msg, TCA_FLOWER_KEY_TCP_SRC, spec->hdr.src_port);
- 	return 0;
- }
- 
-@@ -810,37 +794,30 @@ add_action(struct rte_flow *flow, size_t *act_index, struct action_data *adata)
- 	if (tap_nlattr_nested_start(msg, (*act_index)++) < 0)
- 		return -1;
- 
--	tap_nlattr_add(&msg->nh, TCA_ACT_KIND,
--				strlen(adata->id) + 1, adata->id);
-+	tap_nlattr_add(msg, TCA_ACT_KIND, strlen(adata->id) + 1, adata->id);
- 	if (tap_nlattr_nested_start(msg, TCA_ACT_OPTIONS) < 0)
- 		return -1;
- 	if (strcmp("gact", adata->id) == 0) {
--		tap_nlattr_add(&msg->nh, TCA_GACT_PARMS, sizeof(adata->gact),
--			   &adata->gact);
-+		tap_nlattr_add(msg, TCA_GACT_PARMS, sizeof(adata->gact), &adata->gact);
- 	} else if (strcmp("mirred", adata->id) == 0) {
- 		if (adata->mirred.eaction == TCA_EGRESS_MIRROR)
- 			adata->mirred.action = TC_ACT_PIPE;
- 		else /* REDIRECT */
- 			adata->mirred.action = TC_ACT_STOLEN;
--		tap_nlattr_add(&msg->nh, TCA_MIRRED_PARMS,
--			   sizeof(adata->mirred),
--			   &adata->mirred);
-+		tap_nlattr_add(msg, TCA_MIRRED_PARMS, sizeof(adata->mirred), &adata->mirred);
- 	} else if (strcmp("skbedit", adata->id) == 0) {
--		tap_nlattr_add(&msg->nh, TCA_SKBEDIT_PARMS,
--			   sizeof(adata->skbedit.skbedit), &adata->skbedit.skbedit);
-+		tap_nlattr_add(msg, TCA_SKBEDIT_PARMS, sizeof(adata->skbedit.skbedit),
-+			&adata->skbedit.skbedit);
- 		if (adata->skbedit.mark)
--			tap_nlattr_add32(&msg->nh, TCA_SKBEDIT_MARK, adata->skbedit.mark);
-+			tap_nlattr_add32(msg, TCA_SKBEDIT_MARK, adata->skbedit.mark);
- 		else
--			tap_nlattr_add16(&msg->nh, TCA_SKBEDIT_QUEUE_MAPPING, adata->skbedit.queue);
-+			tap_nlattr_add16(msg, TCA_SKBEDIT_QUEUE_MAPPING, adata->skbedit.queue);
- 	} else if (strcmp("bpf", adata->id) == 0) {
- #ifdef HAVE_BPF_RSS
--		tap_nlattr_add32(&msg->nh, TCA_ACT_BPF_FD, adata->bpf.bpf_fd);
--		tap_nlattr_add(&msg->nh, TCA_ACT_BPF_NAME,
--			   strlen(adata->bpf.annotation) + 1,
--			   adata->bpf.annotation);
--		tap_nlattr_add(&msg->nh, TCA_ACT_BPF_PARMS,
--			   sizeof(adata->bpf.bpf),
--			   &adata->bpf.bpf);
-+		tap_nlattr_add32(msg, TCA_ACT_BPF_FD, adata->bpf.bpf_fd);
-+		tap_nlattr_add(msg, TCA_ACT_BPF_NAME, strlen(adata->bpf.annotation) + 1,
-+			adata->bpf.annotation);
-+		tap_nlattr_add(msg, TCA_ACT_BPF_PARMS, sizeof(adata->bpf.bpf), &adata->bpf.bpf);
- #else
- 		TAP_LOG(ERR, "Internal error: bpf requested but not supported");
- 		return -1;
-@@ -975,7 +952,7 @@ priv_flow_process(struct pmd_internals *pmd,
- 				TC_H_MAKE(MULTIQ_MAJOR_HANDLE, 0);
- 		}
- 		/* use flower filter type */
--		tap_nlattr_add(&flow->msg.nh, TCA_KIND, sizeof("flower"), "flower");
-+		tap_nlattr_add(&flow->msg, TCA_KIND, sizeof("flower"), "flower");
- 		if (tap_nlattr_nested_start(&flow->msg, TCA_OPTIONS) < 0) {
- 			rte_flow_error_set(error, ENOMEM, RTE_FLOW_ERROR_TYPE_ACTION,
- 					   actions, "could not allocated netlink msg");
-@@ -1015,15 +992,11 @@ priv_flow_process(struct pmd_internals *pmd,
- 	}
- 	if (flow) {
- 		if (data.vlan) {
--			tap_nlattr_add16(&flow->msg.nh, TCA_FLOWER_KEY_ETH_TYPE,
--				     htons(ETH_P_8021Q));
--			tap_nlattr_add16(&flow->msg.nh,
--				     TCA_FLOWER_KEY_VLAN_ETH_TYPE,
--				     data.eth_type ?
--				     data.eth_type : htons(ETH_P_ALL));
-+			tap_nlattr_add16(&flow->msg, TCA_FLOWER_KEY_ETH_TYPE, htons(ETH_P_8021Q));
-+			tap_nlattr_add16(&flow->msg, TCA_FLOWER_KEY_VLAN_ETH_TYPE,
-+				data.eth_type ?  data.eth_type : htons(ETH_P_ALL));
- 		} else if (data.eth_type) {
--			tap_nlattr_add16(&flow->msg.nh, TCA_FLOWER_KEY_ETH_TYPE,
--				     data.eth_type);
-+			tap_nlattr_add16(&flow->msg, TCA_FLOWER_KEY_ETH_TYPE, data.eth_type);
- 		}
- 	}
- 	if (mirred && flow) {
-diff --git a/drivers/net/tap/tap_netlink.c b/drivers/net/tap/tap_netlink.c
-index 8a57c9242c..5ff60f41d4 100644
---- a/drivers/net/tap/tap_netlink.c
-+++ b/drivers/net/tap/tap_netlink.c
-@@ -293,18 +293,18 @@ tap_nl_recv(int nlsk_fd, int (*cb)(struct nlmsghdr *, void *arg), void *arg)
-  *   The data to append.
-  */
- void
--tap_nlattr_add(struct nlmsghdr *nh, unsigned short type,
-+tap_nlattr_add(struct tap_nlmsg *msg, unsigned short type,
- 	   unsigned int data_len, const void *data)
- {
- 	/* see man 3 rtnetlink */
- 	struct rtattr *rta;
- 
--	rta = (struct rtattr *)NLMSG_TAIL(nh);
-+	rta = (struct rtattr *)NLMSG_TAIL(msg);
- 	rta->rta_len = RTA_LENGTH(data_len);
- 	rta->rta_type = type;
- 	if (data_len > 0)
- 		memcpy(RTA_DATA(rta), data, data_len);
--	nh->nlmsg_len = NLMSG_ALIGN(nh->nlmsg_len) + RTA_ALIGN(rta->rta_len);
-+	msg->nh.nlmsg_len = NLMSG_ALIGN(msg->nh.nlmsg_len) + RTA_ALIGN(rta->rta_len);
- }
- 
- /**
-@@ -318,9 +318,9 @@ tap_nlattr_add(struct nlmsghdr *nh, unsigned short type,
-  *   The data to append.
-  */
- void
--tap_nlattr_add8(struct nlmsghdr *nh, unsigned short type, uint8_t data)
-+tap_nlattr_add8(struct tap_nlmsg *msg, unsigned short type, uint8_t data)
- {
--	tap_nlattr_add(nh, type, sizeof(uint8_t), &data);
-+	tap_nlattr_add(msg, type, sizeof(uint8_t), &data);
- }
- 
- /**
-@@ -334,9 +334,9 @@ tap_nlattr_add8(struct nlmsghdr *nh, unsigned short type, uint8_t data)
-  *   The data to append.
-  */
- void
--tap_nlattr_add16(struct nlmsghdr *nh, unsigned short type, uint16_t data)
-+tap_nlattr_add16(struct tap_nlmsg *msg, unsigned short type, uint16_t data)
- {
--	tap_nlattr_add(nh, type, sizeof(uint16_t), &data);
-+	tap_nlattr_add(msg, type, sizeof(uint16_t), &data);
- }
- 
- /**
-@@ -350,9 +350,9 @@ tap_nlattr_add16(struct nlmsghdr *nh, unsigned short type, uint16_t data)
-  *   The data to append.
-  */
- void
--tap_nlattr_add32(struct nlmsghdr *nh, unsigned short type, uint32_t data)
-+tap_nlattr_add32(struct tap_nlmsg *msg, unsigned short type, uint32_t data)
- {
--	tap_nlattr_add(nh, type, sizeof(uint32_t), &data);
-+	tap_nlattr_add(msg, type, sizeof(uint32_t), &data);
- }
- 
- /**
-@@ -379,9 +379,9 @@ tap_nlattr_nested_start(struct tap_nlmsg *msg, uint16_t type)
- 		return -1;
- 	}
- 
--	tail->tail = (struct rtattr *)NLMSG_TAIL(&msg->nh);
-+	tail->tail = (struct rtattr *)NLMSG_TAIL(msg);
- 
--	tap_nlattr_add(&msg->nh, type, 0, NULL);
-+	tap_nlattr_add(msg, type, 0, NULL);
- 
- 	tail->prev = msg->nested_tails;
- 
-@@ -404,7 +404,7 @@ tap_nlattr_nested_finish(struct tap_nlmsg *msg)
- {
- 	struct nested_tail *tail = msg->nested_tails;
- 
--	tail->tail->rta_len = (char *)NLMSG_TAIL(&msg->nh) - (char *)tail->tail;
-+	tail->tail->rta_len = (char *)NLMSG_TAIL(msg) - (char *)tail->tail;
- 
- 	if (tail->prev)
- 		msg->nested_tails = tail->prev;
-diff --git a/drivers/net/tap/tap_netlink.h b/drivers/net/tap/tap_netlink.h
-index 466c47a6d7..5eff6edbb1 100644
---- a/drivers/net/tap/tap_netlink.h
-+++ b/drivers/net/tap/tap_netlink.h
-@@ -23,7 +23,7 @@ struct tap_nlmsg {
- 	struct nested_tail *nested_tails;
- };
- 
--#define NLMSG_TAIL(nlh) (void *)((char *)(nlh) + NLMSG_ALIGN((nlh)->nlmsg_len))
-+#define NLMSG_TAIL(msg) (void *)((char *)(msg) + NLMSG_ALIGN((msg)->nh.nlmsg_len))
- 
- int tap_nl_init(uint32_t nl_groups);
- int tap_nl_final(int nlsk_fd);
-@@ -31,11 +31,11 @@ int tap_nl_send(int nlsk_fd, struct nlmsghdr *nh);
- int tap_nl_recv(int nlsk_fd, int (*callback)(struct nlmsghdr *, void *),
- 		void *arg);
- int tap_nl_recv_ack(int nlsk_fd);
--void tap_nlattr_add(struct nlmsghdr *nh, unsigned short type,
-+void tap_nlattr_add(struct tap_nlmsg *msg, unsigned short type,
- 		    unsigned int data_len, const void *data);
--void tap_nlattr_add8(struct nlmsghdr *nh, unsigned short type, uint8_t data);
--void tap_nlattr_add16(struct nlmsghdr *nh, unsigned short type, uint16_t data);
--void tap_nlattr_add32(struct nlmsghdr *nh, unsigned short type, uint32_t data);
-+void tap_nlattr_add8(struct tap_nlmsg *msg, unsigned short type, uint8_t data);
-+void tap_nlattr_add16(struct tap_nlmsg *msg, unsigned short type, uint16_t data);
-+void tap_nlattr_add32(struct tap_nlmsg *msg, unsigned short type, uint32_t data);
- int tap_nlattr_nested_start(struct tap_nlmsg *msg, uint16_t type);
- void tap_nlattr_nested_finish(struct tap_nlmsg *msg);
- 
-diff --git a/drivers/net/tap/tap_tcmsgs.c b/drivers/net/tap/tap_tcmsgs.c
-index caca9445c8..c32f0ff815 100644
---- a/drivers/net/tap/tap_tcmsgs.c
-+++ b/drivers/net/tap/tap_tcmsgs.c
-@@ -123,8 +123,8 @@ qdisc_add_multiq(int nlsk_fd, unsigned int ifindex)
- 		    NLM_F_REQUEST | NLM_F_ACK | NLM_F_EXCL | NLM_F_CREATE);
- 	msg.t.tcm_handle = TC_H_MAKE(MULTIQ_MAJOR_HANDLE, 0);
- 	msg.t.tcm_parent = TC_H_ROOT;
--	tap_nlattr_add(&msg.nh, TCA_KIND, sizeof("multiq"), "multiq");
--	tap_nlattr_add(&msg.nh, TCA_OPTIONS, sizeof(opt), &opt);
-+	tap_nlattr_add(&msg, TCA_KIND, sizeof("multiq"), "multiq");
-+	tap_nlattr_add(&msg, TCA_OPTIONS, sizeof(opt), &opt);
- 	if (tap_nl_send(nlsk_fd, &msg.nh) < 0)
- 		return -1;
- 	if (tap_nl_recv_ack(nlsk_fd) < 0)
-@@ -152,7 +152,7 @@ qdisc_add_ingress(int nlsk_fd, unsigned int ifindex)
- 		    NLM_F_REQUEST | NLM_F_ACK | NLM_F_EXCL | NLM_F_CREATE);
- 	msg.t.tcm_handle = TC_H_MAKE(TC_H_INGRESS, 0);
- 	msg.t.tcm_parent = TC_H_INGRESS;
--	tap_nlattr_add(&msg.nh, TCA_KIND, sizeof("ingress"), "ingress");
-+	tap_nlattr_add(&msg, TCA_KIND, sizeof("ingress"), "ingress");
- 	if (tap_nl_send(nlsk_fd, &msg.nh) < 0)
- 		return -1;
- 	if (tap_nl_recv_ack(nlsk_fd) < 0)
--- 
-2.51.0
-
+On Fri, Sep 19, 2025 at 09:02:26PM +0200, Thomas Monjalon wrote:
+> rte_cpuflags.h is not used in rte_spinlock.h,
+> so it is removed, and added back in .c files where needed.
+> 
+> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> ---
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
