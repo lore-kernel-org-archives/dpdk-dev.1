@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E61CA100F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 15:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBE0CA100F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 15:52:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CD40B402CB;
-	Mon, 22 Sep 2025 17:51:36 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 03FD0402CB;
+	Mon, 22 Sep 2025 17:52:58 +0200 (CEST)
 Received: from fout-b7-smtp.messagingengine.com
  (fout-b7-smtp.messagingengine.com [202.12.124.150])
- by mails.dpdk.org (Postfix) with ESMTP id 5E5ED402A9
- for <dev@dpdk.org>; Mon, 22 Sep 2025 17:51:35 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfout.stl.internal (Postfix) with ESMTP id 810CF1D001EE;
- Mon, 22 Sep 2025 11:51:34 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Mon, 22 Sep 2025 11:51:34 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 6A0EF402A9
+ for <dev@dpdk.org>; Mon, 22 Sep 2025 17:52:56 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfout.stl.internal (Postfix) with ESMTP id AD0AB1D0017A;
+ Mon, 22 Sep 2025 11:52:55 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-04.internal (MEProxy); Mon, 22 Sep 2025 11:52:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1758556294;
- x=1758642694; bh=Lh2eCuR1bc2erNx0UCqclN3F2QaYmTfMJE/KYVKWY34=; b=
- n77rqW4M9nNZeZ/dtnSekDA2dLYfxiaLvSqAc+bmqkbPY7kiKGSFt0fxpH3rgHYK
- aIPQSWj7eb7O7mPWRgj+VCXkQVMwvyNc5FH0VNMiMj8/EZQO78gSap74DdeNxLzw
- W7HD950X7qdi3nxRv1TDLMTraYMuPTtj6FIxQnBj+80EFWgHQbc93CHePTJles74
- ZeyZY8AlHEQJTbiU5hxKYkF1TXenyuNCMOVUdG8yDQPyb0sYmX8RY6/YAc37Q7t5
- UGCAy09VOfIixC1BVk89XS6VLhqcBlUSGDgVSemGqc22bq9hTnuoxmE6oo5PCMIs
- uA29vI2uJEwfYBawKIjLDQ==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1758556375;
+ x=1758642775; bh=IueKjGU1dS2N4tcPo1ey9BmK7RbDlRa2AVItd/OeZCk=; b=
+ phZB0tdZFY4q4mn/WOEHqQMSyPN655ObQ+/ks/J6gNjjXiUj/oxEWHy84q0kVOer
+ FK1H90Pc8Q2l/zZKXHgxiE8fHghvrfMcOGr1Ch3XD95ah4BSddtIy82RXxdmxO4a
+ zyplXyryq86DBfgHasL7/F9R6xp4FcZyLHzZSWDtDjtpMLmun3dy0kJK6/Gr+qmB
+ hfz/bj0xQa1WyuozmVBOEChzdPkPt+uC7nMDGrFZ6tEumzpYztOwx9hsTjbP+f/l
+ lbkQPUWtxAHtJF8WOWL2f1T/2fKUqAVcWydzSzXEfsrTGiKMPkykU+oJpfrnUFD/
+ /Jfl3cG0BgFQyURuG26Gxw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758556294; x=
- 1758642694; bh=Lh2eCuR1bc2erNx0UCqclN3F2QaYmTfMJE/KYVKWY34=; b=k
- wgh3d8IYKwK/+43YLzyStyMwu4dxCgQAE777ZuQxAvVoHIUYxPgZD/KEOaGwn0F7
- HwWkhFXvI+imUnjL9EKQZzcNmHxMdxNVK5dWxJYVbHaHf9BvFMLPta3WytZ2rAv0
- U896axC50gr2RTpZUcgzGlnLLjSFk/s8ToLscn7EblUNiBX0N3Ala2D0+hzHn4WI
- nl0gs7q4cSDMFOaFyL98P6iRbn5ViF7Gygk0zXrV5+EztjHUd3ZCHRJozVwro/dO
- nEy9yR5WsJBYYyvLx2ZKFDcucW27JFnQ7GrZul7HiTb4ohynXprPtxxPZhlee4td
- 8SVIDR+vltrZVAJTNch7Q==
-X-ME-Sender: <xms:hXDRaLF7CKdQN58y1uLE5A-nsL-7otCO0hk4eSEwRXvC5hXEfPKrVg>
- <xme:hXDRaDz-f5E5_XP8Txw4rHXIRzgcOYg2fAgh6b9jMrAXPhm_avc6C9F-xYxHfmRdt
- 6crGJFYcF6F0UeQNHZAM_JOa1vDqbQ6zrlcCs9vLpaEBr8a1naXjZg>
-X-ME-Received: <xmr:hXDRaAo7JOExSR3XdfN_OTkSn8MnP90ennDMPhNoQgoX2q7qDvmIE-5gKfkDbL7KkwQ2h9oYl6Z48P4PlMZmtbLV7Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehkedvhecutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758556375; x=
+ 1758642775; bh=IueKjGU1dS2N4tcPo1ey9BmK7RbDlRa2AVItd/OeZCk=; b=E
+ Jhc4rYDE7nVjsYszXOiB5s8/faJG+24PwYiK2fn4xL5BY6IZz0gsbsJsYg3AMLs6
+ UJrCWeWWXWCmwGvPq3QfC1E6fpWJZLVKdUxsAOLS1bVrFBigfh0qgmCO9AbxkPfn
+ fVLcDlxM/AImcXHVfa8UZxhXmFyiFKcn9SE75U1y08O5CGhb6vlym0YhJmlp6iV6
+ xzx4o4a1cgBs0fYEoCkd0poMn/Q9k/1Pbwmo2TQAJsRbvpbjojS0DBzpYSWhlBM4
+ lA5lrHKgbiuOIKUJ3go966t/ghVv5uK/ZcYsRj/+f/hvcngspuEOoUY4WdkrCLrE
+ 3YW22ZlFMLHKNna6af+yQ==
+X-ME-Sender: <xms:13DRaMm05b2INSZz4ilidS7sJnoOLhjT33iVzwyg6vpQWZeDMT_p3Q>
+ <xme:13DRaHTdHIGiqtGe3j6-VP3Vm6tjhkdpseeSGhvP7v44XUKKOYq_6BN6wFuJdr_O2
+ 4_CgFxBz6Ip-spocpnWa4iToHUjV3u-yHQJNHfYjlKvlb_-tPydBA>
+X-ME-Received: <xmr:13DRaOKVGy_JJa16exu4ptacKpXnnzwZ441WvqSwykEW5kdRHJtrepEsMJ9WeqEE9MjiklxDxZqcDd-u569EGGEABg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehkedviecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
  hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
@@ -56,23 +56,25 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehkedvhecutefuodetgg
  htohepkhhtrhgrhihnohhrsehrvgguhhgrthdrtghomhdprhgtphhtthhopegsrhhutggv
  rdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtthhopegurghvihgurd
  hmrghrtghhrghnugesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:hXDRaNgF3Z0RmPiIaDkaj21p8ExEpxfL7iEcKnHaHePGU5ffBTo84A>
- <xmx:hXDRaNgfjiBG1_p1BBZ9lFg9VdD1GxsRwZpw49_3HpR9dQWYxGJ42w>
- <xmx:hXDRaDjJ4L3BEC8PjGjKsFkSiQ8MWqInFuqWR4f4r_WgDh1ttNfVlQ>
- <xmx:hXDRaNK5MxK9A0WF50mkScpLiD_-vx6d0zWp_eA3Uc97MuWeI7IjWw>
- <xmx:hnDRaA7aqyXW-YTBQRA4leVgkMvp9MTXxGvQrAy73WqHTpk95htWHFeO>
+X-ME-Proxy: <xmx:13DRaNDD7BrMurZCwf8dvX22Nw9TgnUHAr1IERv0SD722_Aos9F1HQ>
+ <xmx:13DRaHDSjrV5OiBDT-L9geCBlf_5rglTbwDa066N7Rc4oSSvqXPnQQ>
+ <xmx:13DRaPBjwUMorFhgwLeIV4BvZZ5fUgsysl4Xx9NA_mTja8DcljzW0A>
+ <xmx:13DRaCrqdg_PXJKsYV353ihrTDKKfjxPI-kmX31kaynWti1JNi_MUw>
+ <xmx:13DRaEbk2_FTmcPtt1oVIpuRL3_a9_mlUOhhc1sOGf97nd1R9kzq1kXc>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Sep 2025 11:51:32 -0400 (EDT)
+ 22 Sep 2025 11:52:54 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org, Kevin Traynor <ktraynor@redhat.com>
 Cc: bruce.richardson@intel.com, david.marchand@redhat.com,
  Kevin Traynor <ktraynor@redhat.com>
-Subject: Re: [PATCH 1/2] build: add backward compatibility for nested drivers
-Date: Mon, 22 Sep 2025 17:51:31 +0200
-Message-ID: <2842623.IobQ9Gjlxr@thomas>
-In-Reply-To: <20250922110708.47879-1-ktraynor@redhat.com>
+Subject: Re: [PATCH 2/2] build: add backwards compatibility for wildcarding
+ nested drivers
+Date: Mon, 22 Sep 2025 17:52:53 +0200
+Message-ID: <8866794.lvqk35OSZv@thomas>
+In-Reply-To: <20250922110708.47879-2-ktraynor@redhat.com>
 References: <20250922110708.47879-1-ktraynor@redhat.com>
+ <20250922110708.47879-2-ktraynor@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -90,62 +92,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 22/09/2025 13:07, Kevin Traynor:
+> Up until DPDK 25.03 'net/*' could be used with meson options
+> enable_drivers or disable_drivers to explicitly enable or
+> disable all net drivers.
+> 
+> In DPDK 25.03 commit
+> c1d145834f28 ("net/intel: move Intel drivers to a subdirectory")
+> moved Intel drivers to 'net/intel/*' and 'net/*' no longer enabled
+> or disabled the Intel drivers.
+> 
+> Expand wildcards handling to include nested drivers.
+> e.g. 'net/*' will also enable/disable drivers in 'net/*/*'
+> 
+> This adds backwards compatibility so that so that 'net/*' will
+> continue to enable/disable Intel and any future nested drivers.
+> 
+> Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
+> ---
+>  drivers/meson.build | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/meson.build b/drivers/meson.build
+> index 3fbf04e1cd..ccd25e4d18 100644
 > --- a/drivers/meson.build
 > +++ b/drivers/meson.build
-> -# add cmdline disabled drivers and meson disabled drivers together
-> -disable_drivers += ',' + get_option('disable_drivers')
-> +# map legacy driver names
-> +driver_map = {
-> +    'net/e1000': 'net/intel/e1000',
-> +    'net/fm10k': 'net/intel/fm10k',
-> +    'net/i40e': 'net/intel/i40e',
-> +    'net/iavf': 'net/intel/iavf',
-> +    'net/ice': 'net/intel/ice',
-> +    'net/idpf': 'net/intel/idpf',
-> +    'net/ipn3ke': 'net/intel/ipn3ke',
-> +    'net/ixgbe': 'net/intel/ixgbe',
-> +    'net/cpfl': 'net/intel/cpfl',
-> +}
+> @@ -58,4 +58,9 @@ foreach driver_type : [['disable', get_option('disable_drivers')],
+>                      .format(driver, driver_mapped))
+>              driver = driver_mapped
+> +        elif driver.contains('*')
+> +            if driver.endswith('/*') and not driver.contains('/*/*')
+> +                # for wildcard add nested wildcard
+> +                driver = driver + ',' + driver + '/*'
+> +            endif
 
-Should we build this list inside a file drivers/net/intel/meson.build ?
-I'm not sure my idea is better...
-
-> +
-> +# add cmdline drivers
-> +foreach driver_type : [['disable', get_option('disable_drivers')],
-> +                       ['enable', get_option('enable_drivers')]]
-> +    driver_list_name = driver_type[0] + '_drivers'
-> +    cmdline_drivers = ',' + driver_type[1]
-> +
-> +    foreach driver : cmdline_drivers.split(',')
-> +        if driver_map.has_key(driver)
-
-I feel we need comments for above parsing.
-
-> +            driver_mapped = driver_map[driver]
-> +            warning('Driver name "@0@" is deprecated, please use "@1@" instead.'
-
-Not sure about this warning.
-We can keep compatibility without saying it is deprecated.
-
-> +                    .format(driver, driver_mapped))
-> +            driver = driver_mapped
-> +        endif
-> +        if driver_list_name == 'disable_drivers'
-> +            disable_drivers += ',' + driver
-> +        else
-> +            enable_drivers += ',' + driver
-> +        endif
-> +    endforeach
-> +endforeach
-> +
-> +# add cmdline drivers and meson drivers together
-
-This comment is not clear.
-
->  disable_drivers = run_command(list_dir_globs, disable_drivers, check: true).stdout().split()
-> -
-> -# add cmdline enabled drivers and meson enabled drivers together
-> -enable_drivers = ',' + get_option('enable_drivers')
+The special pattern ** does not work in Meson?
 
 
