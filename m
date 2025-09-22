@@ -2,69 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 593ACCAC592
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 05:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7299DCAC592
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 05:52:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C593402EB;
-	Mon, 22 Sep 2025 07:52:29 +0200 (CEST)
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com
- [209.85.160.179])
- by mails.dpdk.org (Postfix) with ESMTP id 6F78B402EB
- for <dev@dpdk.org>; Mon, 22 Sep 2025 07:52:27 +0200 (CEST)
-Received: by mail-qt1-f179.google.com with SMTP id
- d75a77b69052e-4b7a967a990so46056841cf.2
- for <dev@dpdk.org>; Sun, 21 Sep 2025 22:52:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BEC8C4060F;
+	Mon, 22 Sep 2025 07:52:48 +0200 (CEST)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com
+ [209.85.160.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 3CA68402C4
+ for <dev@dpdk.org>; Mon, 22 Sep 2025 07:52:47 +0200 (CEST)
+Received: by mail-qt1-f173.google.com with SMTP id
+ d75a77b69052e-4b7a8c428c3so31929121cf.0
+ for <dev@dpdk.org>; Sun, 21 Sep 2025 22:52:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1758520347; x=1759125147; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1758520366; x=1759125166; darn=dpdk.org;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=isNh3WTdlXO7kakiuJAA/4SAYdcaPxXt32KN7kRD+vw=;
- b=Cj/+Py93Yu2kDGU5SZ1uuc0znp+oHz88I2KYm2MLD5vcXRAbstqJVJiSCzsH855xBg
- ZKDXhLgBzmlQNjLGjtLCOLM/BgHnT+EkpCilCChyJeBpUxlMh/uHfIPMyRRdTI2SE9dY
- d0R41ws9paxlXtdY2VBQJPKYgptH0kC3sXTwwm1mObP667og6l9bcCuxBBMsnf8bXK6X
- F6fq8tvK9rTfFk0KJ1YhuItCo15e5c9sNU+SL3xIWr2HegJCju1h2eP6fs+JPItgmqov
- 3VebbeSBeJ4Nj2ioSUfEjvCwkhUY3PYfQ/lQ9KI1xytUHH7SsBb01COfDpWMQVoT1yyk
- KLlA==
+ bh=GnHQNSsoywmYqpEzhdIa68nBESn5oHadoA09HPcJs70=;
+ b=fm5H5KxRkm0fuSCFnvniwdgSx0mDV773ENiWEDsmxgFgYpzX4ZK5yq/dx72QuoRCGj
+ u/pLR0cAklFGS0j39JiC76ij0Kj0CddODFOn3TeoHAT5H1HvC9SDstzPHd1L4r0q0YJU
+ g27YX4SHW1NPVzEfugrpFdkbbP93ZJ5nEe+t5/JUKUPSXIMS2mw+zpfRuylgRHXGLNwu
+ xUiJCE4y1Ynbpn+KSKFLXs5FL9OodA/ByLzXGkm/3RcOS/PhDO3xkCA93OVwGe9ram3l
+ 8nxteGvTn/u4xQ6UbluvzIDDSGgNCzDv2ExgWr1kvW8Y3Z2KAZkkxbOX7kcWWzJLEOjV
+ 6WOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758520347; x=1759125147;
+ d=1e100.net; s=20230601; t=1758520366; x=1759125166;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=isNh3WTdlXO7kakiuJAA/4SAYdcaPxXt32KN7kRD+vw=;
- b=gzwbeO49sJW/1SWuUbzUpOq+jbX1W9kdtvxo4LmZqBcFRFmDPhda9ZtwBhQGnLEtCb
- hFh8+og98ZTqgcwfnvpei0sFpxe51q2LM8VF2jx6T/q1ZZfQzv3M373wi1k9tbDa9T86
- NQ1whv4nKbwRGOl9NKnngZWR5CpaSExTeZocEiRKftSSog+O47tFJOjk/Mbqf2U3OHe6
- cXnEkuBaTXeA6WwoOIbrRBxen8C8ChG5RB8JhYT3H5zbnlY6ARpVdF04EUw4RrdrjI+b
- Vos/y8bfKB6tWk0HVzgsNcW06CN4Ki6bOcGbxU3X/HSe8IOJoNyfY+UChX7W1TfPth6q
- wSrw==
+ bh=GnHQNSsoywmYqpEzhdIa68nBESn5oHadoA09HPcJs70=;
+ b=bzjVVXUrKABe5flXY4eZ/UUSbw8MKiE2xbb1LOImbo2zkf+bNcCOzTWaEJqTdm+CcH
+ 78Oq8R8JfuXQBshR5byGqptfYBOE7wiMA5KnAUn/41r/gpull8Me0L+cjNnEMFp8ihx1
+ GqJSvSNGINqrYSh2gHxFbbjwkcYLnQsLMKVe21jtdrHJQuZFuLFBnBOp8qbVd97A4UdD
+ xvrCUIZjGO9dNxkVNpg6NBi61pG8zDlCEPXx373BVqtcmchPT8W3gxEZEcczERp776HH
+ MpX120s7lvO9Sb/ZWB2aadUyvJ3I56iem3DPROGajU++10R5VTDpbe6v4P6peKPnv9CA
+ l7bQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWtzQvLNQZzMEbIb+DQwLnEl3ZSHjZFRknXI41zFP0VHQtbVbPhkN57N04UJGAInMYg4Lw=@dpdk.org
-X-Gm-Message-State: AOJu0Ywm4QKtj6cGuVTt23ps8utJbFtq79BRQ2pdGA0vGeVZkSHAncdk
- Ts/XWuyZb+S41EGDsGb8mB9nfUBhVoXvx/3yuRZGnGNWKaWbLYfYg+b7NUjPGDd9n0QTGKy2buz
- vBArRmqxO2sefILk4PvJR2c7QR8PMt/0=
-X-Gm-Gg: ASbGncuAkI5xRwTT1xiAn0Qk2g8bEJn1ZqUhJCG6aDpqqhGEes8cLbXXwoOsj9ldRnX
- ePBQPQP/IvMkjcv35GrVfd6s/Upu6/Kc/Snnhir3zPlUisRJym2Rgal6FwBGRXd0Ro1ccdoXUx4
- GMrLyM8fW/8kQBU74HW+uJASgmSYB+6F4RibNz2dM63STzVZTX6fqhw9nX21swneGqcwHLn0PcJ
- kRz3jI=
-X-Google-Smtp-Source: AGHT+IGT9geF8XIyiJvLRfj2VvZh05emxjxWb+xOiryvh9rK2sLSE7VLD7xssHh2peXbjnYMoSRNbVEUhvz649Xn5Ls=
-X-Received: by 2002:a05:622a:410a:b0:4b5:1bee:f550 with SMTP id
- d75a77b69052e-4c072e280c6mr148879951cf.59.1758520346615; Sun, 21 Sep 2025
- 22:52:26 -0700 (PDT)
+ AJvYcCUTSVh4fq5mwgFhGPDzS8/dCE0f64uZCUGlMmIGriAOsrmHSZ+QThrSC9WmYunyiqoQxlo=@dpdk.org
+X-Gm-Message-State: AOJu0YzsrYFlVNdLx5lMy7nEaHW7LBNzofE6pvBlmyqMbNF+CGG+eDTx
+ JDOJE91bu15b2HW6ZruIQqeUx50kexeaaRE8K634ls4dfI+mry1JMoYARzyK80Q/b+HEwj+w10P
+ RIA2FZP7NGkTSHng4CE2DCD3m3Gi0iOblo358
+X-Gm-Gg: ASbGncsv9VJOGmmgW5TdfSl5WkKwfHh91ALrOFU+V5bDULKCr8dX/sRBgDOdWNKhJOD
+ nVb0dvxMI/Vp3s09uiFlzw7bqfReuy0Pr5HlFNN18m53Xj0+My0uciLmY4AHXE8WcF2KCx0b53C
+ 7cXavBllfkjaqHEW3RyVUOQp8UtueGeRi4ah5Z3e+E7Uv3XHUWtPusm0o6T3pRinqZW3ruQLXzF
+ 93rLQLMVshbl2uhBkU6DL+FQaM4b4qIND95YsywdCaffQpiX9dQdJXvBLm8j2M=
+X-Google-Smtp-Source: AGHT+IHV1f5buYfqK9w86i4m+e12wSE58sYakWldwPhVEuEKsL+bCW67M3z7ywFYDN9GoRqIx8cSif7pg8WhUbXA9xE=
+X-Received: by 2002:a05:622a:5e1b:b0:4b7:9f68:52de with SMTP id
+ d75a77b69052e-4c23430a2aamr97444151cf.22.1758520366364; Sun, 21 Sep 2025
+ 22:52:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250901154400.2333310-1-sivaprasad.tummala@amd.com>
-In-Reply-To: <20250901154400.2333310-1-sivaprasad.tummala@amd.com>
-From: Nithin Dabilpuram <nithind1988@gmail.com>
-Date: Mon, 22 Sep 2025 11:22:14 +0530
-X-Gm-Features: AS18NWB3x0pn-QlB9h4IZ-Tf3EtBpofp1TJtHDNVVVievDYNdIJ7D29saewNDfI
-Message-ID: <CAMuDWKRZDdnrzjJGFpRTmfjcw-z+w+3wObc5bvUANA3JXStgkQ@mail.gmail.com>
-Subject: Re: [PATCH] examples/l3fwd-graph: remove redundant Tx queue limit
-To: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-Cc: jerinj@marvell.com, kirankumark@marvell.com, ndabilpuram@marvell.com, 
- yanzhirun_163@163.com, david.marchand@redhat.com, ktraynor@redhat.com, 
- thomas@monjalon.net, konstantin.ananyev@huawei.com, 
- konstantin.v.ananyev@yandex.ru, bruce.richardson@intel.com, 
- maxime.coquelin@redhat.com, aconole@redhat.com, dev@dpdk.org, stable@dpdk.org
+References: <20250714054041.2257589-1-vattunuru@marvell.com>
+In-Reply-To: <20250714054041.2257589-1-vattunuru@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Mon, 22 Sep 2025 11:22:20 +0530
+X-Gm-Features: AS18NWDzF--c0plBpKzV95j6bkS-qWLH41pokrra_GIDEbwDni8Cm3hJhTtTeCs
+Message-ID: <CALBAE1O3RSq2vHh-1C9i72Cp=vUBge8SNFSkx761xGrvbiL=bw@mail.gmail.com>
+Subject: Re: [PATCH v0 1/1] net/octeon_ep: fix mbuf data offset update
+To: Vamsi Krishna <vattunuru@marvell.com>
+Cc: jerinj@marvell.com, dev@dpdk.org, stable@dpdk.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
@@ -80,53 +76,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
-
-On Mon, Sep 1, 2025 at 11:39=E2=80=AFPM Sivaprasad Tummala
-<sivaprasad.tummala@amd.com> wrote:
+On Mon, Jul 14, 2025 at 11:23=E2=80=AFAM Vamsi Krishna <vattunuru@marvell.c=
+om> wrote:
 >
-> In `l3fwd-graph` application, Tx queues are configured per lcore
-> to enable a lockless design and achieve optimal performance.
+> From: Vamsi Attunuru <vattunuru@marvell.com>
 >
-> The `MAX_TX_QUEUE_PER_PORT` macro, defined as `RTE_MAX_ETHPORTS`,
-> introduced an artificial constraint on the number of Tx queues
-> and limited core-scaling performance.
+> Buffer refill routine uses mempool API instead of pktmbuf
+> alloc to avoid mbuf reset. Patch uses rearm to update the
+> mbuf fields. Also it removes redundant refill count update.
 >
-> This patch removes the unused `MAX_TX_QUEUE_PER_PORT` macro and
-> redundant Tx queue check, allowing Tx queues to scale directly
-> with the no. of lcores.
->
-> Fixes: 08bd1a174461 ("examples/l3fwd-graph: add graph-based l3fwd skeleto=
-n")
-> Cc: ndabilpuram@marvell.com
+> Fixes: 35dee56cee00 ("net/octeon_ep: add new fastpath routines")
 > Cc: stable@dpdk.org
 >
-> Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+
+Applied to dpdk-next-net-mrvl/for-main. Thanks
+
+
 > ---
->  examples/l3fwd-graph/main.c | 3 ---
->  1 file changed, 3 deletions(-)
+>  drivers/net/octeon_ep/cnxk_ep_rx.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
 >
-> diff --git a/examples/l3fwd-graph/main.c b/examples/l3fwd-graph/main.c
-> index 92cdaa1ebe..12908acbba 100644
-> --- a/examples/l3fwd-graph/main.c
-> +++ b/examples/l3fwd-graph/main.c
-> @@ -49,7 +49,6 @@
->  #define RX_DESC_DEFAULT 1024
->  #define TX_DESC_DEFAULT 1024
+> diff --git a/drivers/net/octeon_ep/cnxk_ep_rx.c b/drivers/net/octeon_ep/c=
+nxk_ep_rx.c
+> index 7465e0a017..a10e9c536e 100644
+> --- a/drivers/net/octeon_ep/cnxk_ep_rx.c
+> +++ b/drivers/net/octeon_ep/cnxk_ep_rx.c
+> @@ -10,7 +10,6 @@ cnxk_ep_process_pkts_scalar_mseg(struct rte_mbuf **rx_p=
+kts, struct otx_ep_droq *
+>  {
+>         struct rte_mbuf **recv_buf_list =3D droq->recv_buf_list;
+>         uint32_t total_pkt_len, bytes_rsvd =3D 0;
+> -       uint16_t port_id =3D droq->otx_ep_dev->port_id;
+>         uint16_t nb_desc =3D droq->nb_desc;
+>         uint16_t pkts;
 >
-> -#define MAX_TX_QUEUE_PER_PORT RTE_MAX_ETHPORTS
->  #define MAX_RX_QUEUE_PER_PORT 128
+> @@ -22,7 +21,7 @@ cnxk_ep_process_pkts_scalar_mseg(struct rte_mbuf **rx_p=
+kts, struct otx_ep_droq *
+>                 uint32_t pkt_len =3D 0;
 >
->  #define MAX_RX_QUEUE_PER_LCORE 16
-> @@ -1076,8 +1075,6 @@ main(int argc, char **argv)
+>                 mbuf =3D recv_buf_list[droq->read_idx];
+> -               info =3D rte_pktmbuf_mtod(mbuf, struct otx_ep_droq_info *=
+);
+> +               info =3D cnxk_pktmbuf_mtod(mbuf, struct otx_ep_droq_info =
+*);
 >
->                 nb_rx_queue =3D get_port_n_rx_queues(portid);
->                 n_tx_queue =3D nb_lcores;
-> -               if (n_tx_queue > MAX_TX_QUEUE_PER_PORT)
-> -                       n_tx_queue =3D MAX_TX_QUEUE_PER_PORT;
->                 printf("Creating queues: nb_rxq=3D%d nb_txq=3D%u... ",
->                        nb_rx_queue, n_tx_queue);
+>                 total_pkt_len =3D rte_bswap16(info->length >> 48) + OTX_E=
+P_INFO_SIZE;
 >
+> @@ -37,7 +36,7 @@ cnxk_ep_process_pkts_scalar_mseg(struct rte_mbuf **rx_p=
+kts, struct otx_ep_droq *
+>                         if (!pkt_len) {
+>                                 /* Note the first seg */
+>                                 first_buf =3D mbuf;
+> -                               mbuf->data_off +=3D OTX_EP_INFO_SIZE;
+> +                               *(uint64_t *)&mbuf->rearm_data =3D droq->=
+rearm_data;
+>                                 mbuf->pkt_len =3D cpy_len - OTX_EP_INFO_S=
+IZE;
+>                                 mbuf->data_len =3D cpy_len - OTX_EP_INFO_=
+SIZE;
+>                         } else {
+> @@ -57,12 +56,10 @@ cnxk_ep_process_pkts_scalar_mseg(struct rte_mbuf **rx=
+_pkts, struct otx_ep_droq *
+>                         droq->refill_count++;
+>                 }
+>                 mbuf =3D first_buf;
+> -               mbuf->port =3D port_id;
+>                 rx_pkts[pkts] =3D mbuf;
+>                 bytes_rsvd +=3D pkt_len;
+>         }
+>
+> -       droq->refill_count +=3D new_pkts;
+>         droq->pkts_pending -=3D pkts;
+>         /* Stats */
+>         droq->stats.pkts_received +=3D pkts;
 > --
-> 2.43.0
+> 2.34.1
 >
