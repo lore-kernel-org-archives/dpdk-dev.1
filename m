@@ -2,139 +2,166 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BA0CAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 08:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0781FCAC5A7
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 08:24:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D813740653;
-	Mon, 22 Sep 2025 10:23:04 +0200 (CEST)
-Received: from PH7PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11010071.outbound.protection.outlook.com [52.101.201.71])
- by mails.dpdk.org (Postfix) with ESMTP id B36CA4060A;
- Mon, 22 Sep 2025 10:23:03 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1481240653;
+	Mon, 22 Sep 2025 10:24:28 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id D0CE24060A
+ for <dev@dpdk.org>; Mon, 22 Sep 2025 10:24:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1758529467; x=1790065467;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=ys5U9ZVRvZ53c09va0+U1nGb4kBu75aKyqt6fIZvbOk=;
+ b=LY3wJ8AO2/xthLYlx+uj8jrosZYxgzo6SHA99DcNaS1Iya2V9nHMA84F
+ 9rmElHdUIZnpwnkUif4zd2nuXE9GtLouCx+OBU7MoBkOKCKH8kM1nbt/l
+ 2oMjeW8/WfZ1DS/f9ZNLmuVBbdkINp7tm4BGUWwKb6HjmZPN7Ao4PQiMz
+ ww6Wxphh83ic9qHvqu4xa/lFp99PKe4sdW8AqI74SMr+V9h2Dr6ozAXCu
+ cOIf/mbpjxsoq3vzYM7f1PZU66whSLTWWsTlcA1TjIFrlDIyQOVGqBxvi
+ rdwIfaguEPSoXrYvLn6PFbWrv4I7IuE6VCt0501fkyzH+xuBljN3h2ccx A==;
+X-CSE-ConnectionGUID: ZAb1r2yURma9U0FwDCFAeQ==
+X-CSE-MsgGUID: eB6KNaA/TGOyZ2Qi+nNzCA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="59825388"
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; d="scan'208";a="59825388"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Sep 2025 01:24:26 -0700
+X-CSE-ConnectionGUID: lc71mlBYSQ2urxs4w9ftMg==
+X-CSE-MsgGUID: hoaRPHvYTqSsO5m+o2UdQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; d="scan'208";a="176489116"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Sep 2025 01:24:26 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 22 Sep 2025 01:24:25 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Mon, 22 Sep 2025 01:24:25 -0700
+Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.7) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 22 Sep 2025 01:24:24 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o5EB5ywMsUfLdghWhbHsWHajp5ZYipd7RLAjIKlD09U3RP4Pxa02eCVgN3fgB5ZOzKldtfc3XMYQzN5a0YV/YpRpVCrew6ZY2EebObO7seTG8ukF6sxQo06C7oOwKYdiwgpaTCWf5bW/dVuEXBFF5qAceroKe/LjPafgiFSrCqP2ASWjn1FWeWMpwjYLS1BeUs9btdyphwB2+IJKeOyalm3nLF+1Q32ci5AiLSFdVkxTEVr7V4Ll2evGCC9FZWP0263OMfK2pvAwhGY7W1A1SBJl5WlAmWfxitanrPniBCN+kM7xIGpeNN1JfSerkJ2eRJaPRfFkpE5vRiWzvsoWeA==
+ b=Gv0OW+eltom4K3uHz7NCYI4Jz06pRuTOqeBo4zY868jDYxvAMOryPJWPY4rffv6+QCcMhDjSLEc9M9IhF0FmNrgG7SCyh4iYRebphkRcGnIVj0ySxeIle1H4Jy+PcVrSRa1XOCEkmNhZJvoWq4Ica3cU6Tfc3D+KKfb4rmANJdH7tCk6OfP+mMhSJfEgJvQqVby6SWLUffsItwOUQwhDJYZ/hGr7qNm9Sh8Sb00D8sjh/qEw/FESV2RyHN+cwX/ApyF5e+e3tVv+MR6BXquiI/zgBD2D9HVxKzdD48p4zxpGLFmhGi1gFsoD/YlpX9RNAXZ+VChimD0fYjPhHcT67A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/iUtm/1ZnRDVpWHGQh82rCEdOT/TgoteUBjRgnijH14=;
- b=Oy89JCZ5wU+S7O/+2zx382WNOB1lKfQ/dkt4H3EAchiwgzLo28ivD04SLZtkTQT5WHgMQqJNqDy7FsySOu4/t7Rvssn9CwSyS/XAwhkShje6ztGAuOVdI24ofHIU/vliC8ymrds/L9ypexW9Y7EbGc1+3hbBsr9X9J3WyTb1fhSjcOSkRjmdYXtWRX5krEB8p1HBu6PB6gEXFskjPlX6/irMy/IRztFX6vmkdAf3N3l/56SdPYO7VX8kG5M/4k+pS4cdLqQUqgly1hyFyeZC0585Fy2mlr3uhuuo42NEc3Hc5Hv0nd4yxKxUc5lb7Q4ah9zpQC1u+B23OTCZTeEXnA==
+ bh=7yXOQiydcdS44jL+utY0Fr0uZpbgRIdCx6yBbgFJGrA=;
+ b=GxhqL0/uk2F7WxOBTSgrG5WfGRoNUteqw1MXYu7jfYhL5bhziJgMGKLoPECgUOubVDFvopgIlPkPRRwMLiA/KSubHsjDOWsrqDx2RM0aAl6xC4LvGjfoM5JABhXwlGwsciU4V93Ogzys/eC7wbzLnOswjJ5rGP3agftgOgV0rKQzxrL1tWSxPLsDC5yrfnUHv7YyswIGhile1NRsPnd8hLQYQgAIMmOSYDonoAGsc9wM0zWbfK1asabknw39kvokopejEXGUgy8cmXhLBdAJ90UkUquEcEJv1hUrKspjm9+tMVByNCYX9ot/aN1zcMYfdaEExROBFtIo4c7ckBeeiA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/iUtm/1ZnRDVpWHGQh82rCEdOT/TgoteUBjRgnijH14=;
- b=d3j+ToamrZi7HOuZSaj4sWedTnU5TASSOWf9LoyCUGMWbrecms6ggWWAYzdKtrKUNyfjuYFUXoOdqum4pQT8js4s/pbhULfGqPh2e14xwZiUtu2B5eOmiwRSwYdL1jWHqaYQgM/GvswVXia7CkDsOZiUeBrx7IRBb0XY54SwICaP6RGS7Zz9PPktv1IIaloK7c9pTK7wTqjiIIIwHy73rhwPQKP/Su5xAkDWmwrnpqd3mmW8OX8ixD7SzgGTIbqZnqmDTI/dlNTJUnoDg9l+5PZ+2EceXDGVkr/jLYeuzostgWTOa2+3VX0750eAEBZl8WVBboQ0ch73oq1ps2YXbg==
-Received: from MN0PR12MB6103.namprd12.prod.outlook.com (2603:10b6:208:3c9::19)
- by SA0PR12MB4430.namprd12.prod.outlook.com (2603:10b6:806:70::20)
- with Microsoft SMTP Server (version=TLS1_2,
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA4PR11MB9034.namprd11.prod.outlook.com (2603:10b6:208:567::22)
+ by DS7PR11MB8808.namprd11.prod.outlook.com (2603:10b6:8:257::10) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Mon, 22 Sep
- 2025 08:23:00 +0000
-Received: from MN0PR12MB6103.namprd12.prod.outlook.com
- ([fe80::3c6c:6f63:917e:98d8]) by MN0PR12MB6103.namprd12.prod.outlook.com
- ([fe80::3c6c:6f63:917e:98d8%4]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
- 08:22:59 +0000
-From: Chenbo Xia <chenbox@nvidia.com>
-To: Konrad Sztyber <konrad.sztyber@intel.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Chaoyong He <chaoyong.he@corigine.com>,
- Stephen Hemminger <stephen@networkplumber.org>, David Marchand
- <david.marchand@redhat.com>, "stable@dpdk.org" <stable@dpdk.org>, Nipun Gupta
- <nipun.gupta@amd.com>, Anatoly Burakov <anatoly.burakov@intel.com>, Long Wu
- <long.wu@corigine.com>, Zerun Fu <zerun.fu@corigine.com>
-Subject: Re: [PATCH v3] bus/pci: don't open uio device in secondary process
-Thread-Topic: [PATCH v3] bus/pci: don't open uio device in secondary process
-Thread-Index: AQHbG88D+lTTcA6f0kqeaHijkw52srSg/ImA
-Date: Mon, 22 Sep 2025 08:22:59 +0000
-Message-ID: <B7194C63-9B63-4E74-876F-C0B83CD113FA@nvidia.com>
-References: <20240829085724.270041-1-konrad.sztyber@intel.com>
- <20241011111533.20746-1-konrad.sztyber@intel.com>
-In-Reply-To: <20241011111533.20746-1-konrad.sztyber@intel.com>
+ 2025 08:24:17 +0000
+Received: from IA4PR11MB9034.namprd11.prod.outlook.com
+ ([fe80::ee0d:e6ed:9eba:e5a]) by IA4PR11MB9034.namprd11.prod.outlook.com
+ ([fe80::ee0d:e6ed:9eba:e5a%6]) with mapi id 15.20.9137.012; Mon, 22 Sep 2025
+ 08:24:17 +0000
+From: "Wani, Shaiq" <shaiq.wani@intel.com>
+To: "Loftus, Ciara" <ciara.loftus@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "Loftus, Ciara" <ciara.loftus@intel.com>
+Subject: RE: [PATCH v2 0/5] idpf and cpfl rx path selection simplification
+Thread-Topic: [PATCH v2 0/5] idpf and cpfl rx path selection simplification
+Thread-Index: AQHcJ7P7buC7FgVIt0CA7K4VfeMXkLSe5LUg
+Date: Mon, 22 Sep 2025 08:24:17 +0000
+Message-ID: <IA4PR11MB90343F79AF837A027743E3BB9212A@IA4PR11MB9034.namprd11.prod.outlook.com>
+References: <20250911143145.3355960-1-ciara.loftus@intel.com>
+ <20250917091731.3632520-1-ciara.loftus@intel.com>
+In-Reply-To: <20250917091731.3632520-1-ciara.loftus@intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
+ header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR12MB6103:EE_|SA0PR12MB4430:EE_
-x-ms-office365-filtering-correlation-id: 0f2e22a3-13fe-4525-d30f-08ddf9b13de0
+x-ms-traffictypediagnostic: IA4PR11MB9034:EE_|DS7PR11MB8808:EE_
+x-ms-office365-filtering-correlation-id: f296db68-2e9a-454f-de39-08ddf9b16c34
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|7416014|38070700021; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?qu4IN2VPjQVa+Spk7sMPdUbMDEF6sV7UQVQEDuXoUZzxwpI96fcHMmp2X3VV?=
- =?us-ascii?Q?vKQsZl59+0+IbATjmRTFu7enfRhKxeN0GmbqbVW+O/dkzkgwYUt4Dlc3rlwi?=
- =?us-ascii?Q?/51iU436zFwlqejL1yDPEi7otl79RdNfay4h3zTWJsfcPeAr9Wo7dbHHuS57?=
- =?us-ascii?Q?bukfILLGT4Kl/Yh68hMVaXigU9zjqZnfn6QEQ12//xQpTdKgI9ZRnOreDUlE?=
- =?us-ascii?Q?fxGHQZWneLuCHS5BZx4nYlxhLpOkaWqMlPLWoPkgxtYb/WvQ6BTvibvN7pEe?=
- =?us-ascii?Q?yLkZn0wftiKjlGj8PhOa9Yatp9h6St/SRMLZgr9UwiNh4kI/Ea9UwPmiaKph?=
- =?us-ascii?Q?CU1XJuNKUuPdjM2A+BX3LuoZjuLFNgOzw4CqCXKsyS+Z4X9XeQJGtXqcAWR5?=
- =?us-ascii?Q?G8FDOSYl2S7ONypWZ18jDfya1ieW9QhxiV2B3ttPtXMMinTfN3zkGedYEUkf?=
- =?us-ascii?Q?sgNGLy2GtUQ49PWM4jhv9cdyWQAUV9jhXIJSuz283+BbCecN+mPdQ1ngusfP?=
- =?us-ascii?Q?l4nRHRcSHYFr6IUJNtXSLiueHytSYCP4rUrWWcUacDcsBtT+lcxb4rxSVn4B?=
- =?us-ascii?Q?rBoA7Ohq1sRvkTpbJdyFmpNDzPUOZXtkujTQgoNJVvMCFOEmo4YOaYwpp6yG?=
- =?us-ascii?Q?UiO+ari5o4K/nJnlhBVE4kHAhHZtdOR394ATbf8Od6vDLA9qTj6tKKKRaA+X?=
- =?us-ascii?Q?c6EfoRvHeLGbYBf4sN6v66Eq0q45NZjwIWvbYIX1LkgU7xfu97MeYlRJ3dTg?=
- =?us-ascii?Q?D353+k4YFEb9iLJaZE3v/Gc/PjITe9d7VjuJHm40byHUncC3Lgtf4XVSTs9V?=
- =?us-ascii?Q?oJtUbkCZZ2yuvrX2Zx6G2BCtmbIX3iDfObqtcMEewE8+lxJRTgQ8oKNRkrrx?=
- =?us-ascii?Q?Zy40OHdGIOAIVbiOh2ECjtgs8qRJEhTqzhXBSgdA5C6FsJ87F0yCelbP318W?=
- =?us-ascii?Q?RPKzE24i2OHOmZg5qTOt4MsefYmmI7RD/Noi/C0hyMOqk15mNXNUH4JLHsNP?=
- =?us-ascii?Q?dQfgfH83V4VV4QXkwGd00aUUmhKQH75XrUScrD8sEzF5SPJH4d3v0oVSDWkl?=
- =?us-ascii?Q?qqy6VcGY1+A12s1Ti0Lm8hDmDGmLWEiVZ4ZYxMoq6l7rQL4CfSpb40N9QKak?=
- =?us-ascii?Q?NTZ+i5qTsfwD29jlywj/3zgIi03vlBFDJWI63sB4y1RQE9gb4lQVnWtTzg9e?=
- =?us-ascii?Q?yw9SRalA7JFi7eS0isXQLnmuqHgpWxw08QrnzZdQIQxzgVn0Gp5IYXs/4+Z7?=
- =?us-ascii?Q?dpNDNq7pBuktuXwYVk76RzNb0f8jkklcX+57t+hDVcA3MHVW5H26d79jOHwq?=
- =?us-ascii?Q?TPt61HWrgOdySC7BPF4Vy86/2mMrMyD5G2RtZCkEYyF2/UXqtOxIcMXevHi3?=
- =?us-ascii?Q?pTEJbqeeYwpBDkjq/yg1wmwGHU1INTmoM+kyZdJYggsFdlxWsyM1VH6L4mVV?=
- =?us-ascii?Q?XqLknQ5ZlhSC4fpjIyvEI9RGQv3TO0KiWVWnnSUsGga2yCCXGRruKLKkM/cL?=
- =?us-ascii?Q?Yuq1LJL6A07AihU=3D?=
+ ARA:13230040|1800799024|366016|376014|38070700021|7053199007; 
+x-microsoft-antispam-message-info: =?us-ascii?Q?luJkfsO+IF1by1AmClHEXyJ1bTyIjpbTas8igo4FQ6eFP+KT2bIY5BRYwlTN?=
+ =?us-ascii?Q?qVD5dh8Cd81lSDJXKI5IO560XI/XaulluzRoyZSF86CT3T+yXdclci5KUN07?=
+ =?us-ascii?Q?oWKp6FQRP+XylcId0gu3utlbI+UH0A08HJXNUDCVTjCyXRJhS3Tbls9DMS/v?=
+ =?us-ascii?Q?RYHpQN+NKE24B0S4zEy6snqmS7jBaUA6hKxX9m7KiVOqp51SY9S+hDhpSehM?=
+ =?us-ascii?Q?XSLow/EfMnc9STst3UXDOHUMf9TsLyoeMmpwTNT721AHYbDs9A7I3Jc1VDLF?=
+ =?us-ascii?Q?0+HaKvLI1SSsKWlFPA3hBJtjoXJoXMjRwJm0P9l3UnlDRK7Im88jNxd2RXl5?=
+ =?us-ascii?Q?2OHvnA312TIZVXS7v0tajFU7xmtbhOupTUanf+LE8s+kYvby8UIL9X0+FDVA?=
+ =?us-ascii?Q?klnBNATUdVU9950ybstYBv4dy0BR8H1wlynUldUV+OkQYj7IXwpH/YFTORaO?=
+ =?us-ascii?Q?oQugrX3ytOVpVTLaXKwrT4l3hAUI6iQ+ED3YHMZlpD8sA6/fpjajfTZsUeEw?=
+ =?us-ascii?Q?LHT9kc/0kbbLqPl00ozAbd4PfPBJzre4IAG5crj1UJimSZjGd4L9Vosch8je?=
+ =?us-ascii?Q?nxQt7v+J45f8dx4QtMW2fSVmZS7Q+acn3+pqn8sDs3292BvnKmpLUo/u26qi?=
+ =?us-ascii?Q?LfuWxt5Siy85XC50cOjiEfblXC2y3wj2VlGIsMZVm92DWtHq4V7mKu1HeZFR?=
+ =?us-ascii?Q?e7D0X4z8/AMrUCCyFTzET7bWbx3xm42DpY6PDlX4C67+xrKs0L5saO+N24Ya?=
+ =?us-ascii?Q?jmFbXLvutC1l45nBsSU7/xfu+9ffBXe5aJpj3z8CjYBdYVIJpCGQkBrkEC91?=
+ =?us-ascii?Q?IGS3r7sfiLUUNFvB9eIss2X4IfVrowe757ACX/mcdF/fgNb4t5+MJiDO5mpI?=
+ =?us-ascii?Q?RUPpJDrS9npvXx0jY4+BQZGQkff6uuX1SKHjXG7sTv1jC76AyGLh6O1cFWpc?=
+ =?us-ascii?Q?tMnlz1fhPyimHj96lNFR+7w4lan4JklC56bVvG4mSt9TKPpdG/JQU1dQc7e0?=
+ =?us-ascii?Q?rygyOLtidxv6LUMFclOAnFdrVLYsL7dVsN9Xkk7dYahB/6pzHSGpjPBwrAi6?=
+ =?us-ascii?Q?zvCAMr/FdCetqW/RqjRFuXDB/c3DW6nM5JjMxUiHY/mzi4Z3PQlNMCeCSHBc?=
+ =?us-ascii?Q?9vudbWgSC3FUb68XPPrWqM1L3F6QbY0bkUfP4YNo1rKJow8xxFalNp06ZjJ+?=
+ =?us-ascii?Q?3K7ydrAfQih9kHxezgkJyZL1gmfRy9etF2ILEwK/trGslehThz2HxBLiV6Dd?=
+ =?us-ascii?Q?jC9j9Psb4eo8Aw8MMC53hncm+XKmr3e8xZxIfEEMDzaULyrtL+lMkLpePv8R?=
+ =?us-ascii?Q?N8AvgBNPrL5D+mgKsFE0XgHwFs3HSTug2+kR/WE1blxKNXeGbttEjrTLZj4p?=
+ =?us-ascii?Q?nsA6rYxWtk3EghxW1vJkX7rOxGVWG54YtfsMnr0bK/X3gCfnI3OQ+TlDiODX?=
+ =?us-ascii?Q?fmIA3Rw5MT7pP3wg+DB+JmfSZUERAr+Ee0EuGZQMNhfWz2ZtnAoL9Nt1fJ4g?=
+ =?us-ascii?Q?5jZiQeScFpOBcic=3D?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:MN0PR12MB6103.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700021); DIR:OUT;
+ IPV:NLI; SFV:NSPM; H:IA4PR11MB9034.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(38070700021)(7053199007); DIR:OUT;
  SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?szpRR6hS2aeBRSkZ6Dk+eVlIL0F284CE+p6SShQydVGVFJlhAntGm5nihKCI?=
- =?us-ascii?Q?A+odLg9JA5S+mM2fa4bIF+PfttKC2SSFywQ+SUOHM+xiw6QL6QLhgmP1GjlT?=
- =?us-ascii?Q?4j7whioZ6WPImszu8HKjE+3jgi0BFKem+A6uX/UikexlsWL0a/iVcvV07cuF?=
- =?us-ascii?Q?jJqKKarETcfGP/G6hwgnUjDc0oKLwkF4UBWjFSK+cowAUh7zkf9T64z/dpR+?=
- =?us-ascii?Q?SBnw+w4gJpkS8v3oyyW8x+I9WaXlj8hyJkuT6oC0nQ2DwoRV08ckzPPuwCWA?=
- =?us-ascii?Q?PkFHcQOpcDV09FSLKJ+iiVRsr3gMyAja4icPjeRdeBPuhKekCo6ZXaNA03/n?=
- =?us-ascii?Q?jWVPDmgvF7StPUmGiWlCLG8K4s1G6ZbImwGm+HepERhN6uWBORrKKZNeVBwF?=
- =?us-ascii?Q?CuMTnM6Rnht9g/wc3+flXQGKEmajxpAbKQ7ZBPy5F4Osb/q8FtvgTGScBrbD?=
- =?us-ascii?Q?0bMi6nds20vQoxS506/ySeygi/GyjkMze1rDvT1PRApSxLoCdCkl3RlDNlrJ?=
- =?us-ascii?Q?AmRZJ+URF2QBPeWKK7DeT7Mqz4KgkhZQdg0UjnLbUf8SEVVTrQjyZRMyF0f9?=
- =?us-ascii?Q?0YqbmJNI1kebBqLMbZZ2Wimiu8bf5/UExlQmSMjW+/io+uVZHbCaAHOXjPfX?=
- =?us-ascii?Q?yPoaM+6+M7S2GqhdWBbj24tv9peSk1K/YFlmgxxyUlOV2vLh0tQ79z2ppt4Z?=
- =?us-ascii?Q?US38kuoZ2i0BB5mqcAoqdApjXj1XcdNGRBoWIMQYiJZQmC3LJhjGknpuC/+O?=
- =?us-ascii?Q?q0f1WXMnHuFBTZ+awwFDWuVxLdRNUGtoMDud7mL580LgfAbIoPtvY4LQn/f+?=
- =?us-ascii?Q?ExmPNG+mNb0E9sQTTFKwvK99aq7AMr7hoYlb8vi9LNQe58mxwod4l9vFTjFy?=
- =?us-ascii?Q?+HyWPgFcq3Fg+RaM3MbggaeuBkX6eR9d9A4U5/snaTtrLiPbWUfIsH683u9s?=
- =?us-ascii?Q?sdqMqnt69/liA2zJ+S0y9JCMny8Ug856SuWL+pTow/7b7+HmsmXVGTBgjsW9?=
- =?us-ascii?Q?3+87d+gKuFTkJTyRN1i8fC21iBijvujqTJCx4kfe8HlCdaW8LinmvUI6Lr13?=
- =?us-ascii?Q?M0QdCtW0+yWmvU1o9pYpP5xk1YNJuJlBzm+7b5V8UCnn/DrHnU+C+yrDYVXL?=
- =?us-ascii?Q?MI6GRrytrQzWntroV/V3iI/P07i3ndxvZjssd1kHSjT8SLtwEnYqwxrErdPK?=
- =?us-ascii?Q?O46oT3bDdSV3oyeWmgeF+2Eb+aPnphC5U9EPRdR0C75OxygwJIXMdLGchIlg?=
- =?us-ascii?Q?t43TkblNfjhr2kYGKj7F9u774d4rB/NRueF7EoVy0BIuvXhoNx02YeUwYXQT?=
- =?us-ascii?Q?XLmOIZAq/YGZb4J5bt6YInQLDF0+lRgEPPGFBCa10HR80q2V6Mcc6d4Lv/pM?=
- =?us-ascii?Q?shfkOZtzE++GvdaphehYvZSSD9EdWfLhVy/8Rt81+IhkoEXtm4faWTeDout+?=
- =?us-ascii?Q?9LTDciKhq4gtZGs1zajTPd7pIH0Mx5q/yo1+ew0tpxN3C3YOK3Con9jTtjN2?=
- =?us-ascii?Q?hV0iGaGOzoZ3eMSbzewuwP+9vwm7j7fUnfhmrXo3pz2Hxfku4WNiFIWXzvsC?=
- =?us-ascii?Q?ijYHQB/D/JKal/u68ubQiW2PKMWO7E3kaZXku/Bu?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?nM4khyWWlngAzDRL9E3H09GBLkWtVZp2DYIBNgz49+MzEiIg8syoN90byUdV?=
+ =?us-ascii?Q?sxjboM6DJQ7WB7bm5sgwmc8gnnVK6nwfnzR1doVX3B2UHzHi+ujaG8vBeSe9?=
+ =?us-ascii?Q?Jo0eTq2whFBvIsZoD0V+FJy9c4zvIl4n4SeR71/tk1TXShumOFwlCVU8ihdy?=
+ =?us-ascii?Q?2GYFu5MGGC2RWHFwnrzQX8pgiwd6B4hK1aJ5pHNV6Hncpt+KkilgjrgCxO7L?=
+ =?us-ascii?Q?TI0LVUZeDcFyYTGeKQzIcflUhxNkEczARhDqeLI3rLBAXPsymc2gEKkAVnBs?=
+ =?us-ascii?Q?HH44ipNDWy1x1xqMjcxgIXFDC4SdwqcE/7eCx0G28G10BdFOs5tr19i+ETH7?=
+ =?us-ascii?Q?5ZvJJafIPZmExnRR8vHYB+yrbsxAc6fQq12mH4FZSPRd4QSBwCjn8avcoG8W?=
+ =?us-ascii?Q?1IjES2ggoa1aL5CjOIZT1QKJ3r5BbAXVSURWSYHyEhVZ/7NPzf8EGzgaDITZ?=
+ =?us-ascii?Q?kBm5X2260b7c8w//y1v6Ni8L7wEFGwZXjq/X22tm6nLVQuLk0ikQVU5/Fuhr?=
+ =?us-ascii?Q?8FITs1IcR5C+NR5cHCRD/KoywYJsTVMIxoT6fv3oewd8lRJxwlAnWVQa9NHK?=
+ =?us-ascii?Q?8Nwt5JD6u5xJcuTsSyjHQO6URawrt4MNVWTZl4UEd0XhD9q9BpqpubMWdOiM?=
+ =?us-ascii?Q?Z/S1pv0cGkTK+JZeD/pDTlzUsiz3xMqcGrkGRbeKD4Modsbp+YzonJfeS8uU?=
+ =?us-ascii?Q?uhDLG07oXjgCf7gf88MqCkDCr5AzWulPcbr9njPXkU8YFKeAWCskgBK67wd+?=
+ =?us-ascii?Q?XPdnUag66N+c7bkeKebR+gg/c555yzdiLahZlJlWE0brVMWkdZYYWMski2MC?=
+ =?us-ascii?Q?c7nWKeRTN1FXGNL00dOwmlYQsTvJd7mOIgL4C2GAlQJ6My0BEOl5zi3jccCP?=
+ =?us-ascii?Q?XS8pFGG+PimrhTaf+BCiWMPJ/jG2N5Ks98raFXqv3+pJ8wsZ7/VL3OUBd2S3?=
+ =?us-ascii?Q?u2589wLUdNB5FOl6qBJiu+JZEdftFv5A55Htp+tKL2gtuzSYQhIyFCgLddc+?=
+ =?us-ascii?Q?fCoilZZD1SFGe5G8/bWXCBRHnzCEfBw3ezg/6cmRKzwuVtaxtsxpTortjTiw?=
+ =?us-ascii?Q?S6IEWdJCMH4RxtUlp9ROO0YRw2Uog2s+Z8eFFW+5lW+2TjaKI1oMqYMjcnTX?=
+ =?us-ascii?Q?zkPZdsIacnWNJZlVbIqBtm1W8HouzeWJ0ir8iTzzBUFXgNtwl1bGBtnFYNPc?=
+ =?us-ascii?Q?G+ITqvmE0QYk2cOeqOZ47caJVIph7360z5cFs+B7P8mhWT61emLYf+rQbZHB?=
+ =?us-ascii?Q?QG4BF3T/kj1qp/XOEwX50zO6LjZknSlz5rKEZh08wpk6CY6PMMMR9rXxp4CR?=
+ =?us-ascii?Q?yxuTH/MHuPp85A67sZkX8PbmieElZHhLNvkCA8yJG2gRLkWX3o4GTNbevup6?=
+ =?us-ascii?Q?vb4thBt7QSjx3YNvEXUZOuoPqPw6Q4AcKb6xBrm0FDlixxWSX3u7Uegl1Sf5?=
+ =?us-ascii?Q?q7RpVzpU/Wp/BmWwQaSKhO8viKXy/70lshfpsv8cyiQ/ycl9YDpICWilOjIP?=
+ =?us-ascii?Q?ZkBR5G8hiZC8fgP6fT2EZC0WV6ominyum0KUXEiIPvwZUXf68PedjAyST3tW?=
+ =?us-ascii?Q?FMjX11Iwih3nXSiZG6/2mtJvFq/ksHa2ilc+rJgk?=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <AAC4AE7CBAEA6D458FAE8C5AF35DFFA6@namprd12.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6103.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f2e22a3-13fe-4525-d30f-08ddf9b13de0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2025 08:22:59.8808 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9034.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f296db68-2e9a-454f-de39-08ddf9b16c34
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2025 08:24:17.6021 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7aZIx8zKPTeVGF0Yp1DOrixfUykLKmH59DFpfy0O+asjVTlVGpBYEhW1p/Hweg1rKH0SBx7706gYHeiKofNMHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4430
+X-MS-Exchange-CrossTenant-userprincipalname: LQseeG7eAdg0jpAL4b5rshjgUBR1bj5yGEuYIK/vIyMozzKnmd1RX5E7QvkuBphnaq8TwjD3af6Jp5PUVybfPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB8808
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -148,251 +175,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Konrad,
 
-> On Oct 11, 2024, at 19:15, Konrad Sztyber <konrad.sztyber@intel.com> wrot=
-e:
+
+> -----Original Message-----
+> From: Ciara Loftus <ciara.loftus@intel.com>
+> Sent: Wednesday, September 17, 2025 2:47 PM
+> To: dev@dpdk.org
+> Cc: Loftus, Ciara <ciara.loftus@intel.com>
+> Subject: [PATCH v2 0/5] idpf and cpfl rx path selection simplification
 >=20
-> External email: Use caution opening links or attachments
+> This series refactors the vector capability detection and Rx path selecti=
+on code
+> in the idpf and cpfl PMDs to use the common functions provided in
+> drivers/net/intel/common/rx.h.
 >=20
->=20
-> The uio_pci_generic driver clears the bus master bit when the device
-> file is closed. So, when the secondary process terminates after probing
-> a device, that device becomes unusable in the primary process.
->=20
-> To avoid that, the device file is now opened only in the primary process
-> and the secondary gets it over UNIX domain socket via SCM_RIGHTS.
->=20
-> Fixes: 847d78fb9530 ("bus/pci: fix FD in secondary process")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Konrad Sztyber <konrad.sztyber@intel.com>
-> ---
-> v3:
->  Use the rte_mp_* infrastructure to pass the uio fd from the primary
->  process to the secondary.
 > v2:
->  Fixed coding style issues.
-> ---
-> drivers/bus/pci/linux/pci_uio.c | 140 ++++++++++++++++++++++++++++----
-> 1 file changed, 126 insertions(+), 14 deletions(-)
+> * Moved AVX512DQ check to common code.
+> * Refactored rx function array definition for better readability.
+> * Restored Rx functions back to their original names.
 >=20
-> diff --git a/drivers/bus/pci/linux/pci_uio.c b/drivers/bus/pci/linux/pci_=
-uio.c
-> index 4c1d3327a9..220390d921 100644
-> --- a/drivers/bus/pci/linux/pci_uio.c
-> +++ b/drivers/bus/pci/linux/pci_uio.c
-> @@ -21,14 +21,22 @@
-> #include <rte_bus_pci.h>
-> #include <rte_common.h>
-> #include <rte_malloc.h>
-> +#include <rte_eal.h>
-> +#include <rte_errno.h>
+> Ciara Loftus (5):
+>   net/intel: add AVX512DQ flag to AVX-512 checks
+>   net/idpf: use the new common vector capability function
+>   net/idpf: use the common Rx path selection infrastructure
+>   net/cpfl: use the new common vector capability function
+>   net/cpfl: use the common Rx path selection infrastructure
 >=20
-> #include "eal_filesystem.h"
-> #include "pci_init.h"
-> #include "private.h"
->=20
-> void *pci_map_addr =3D NULL;
-> +static int pci_uio_dev_count;
->=20
-> #define OFF_MAX              ((uint64_t)(off_t)-1)
-> +#define SEND_FD_MP_KEY       "pci_uio_send_fd"
-> +
-> +struct pci_uio_send_fd_param {
-> +       struct rte_pci_addr addr;
-> +};
->=20
-> int
-> pci_uio_read_config(const struct rte_intr_handle *intr_handle,
-> @@ -211,6 +219,93 @@ pci_uio_free_resource(struct rte_pci_device *dev,
->                rte_intr_fd_set(dev->intr_handle, -1);
->                rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOW=
-N);
->        }
-> +
-> +       if (rte_eal_process_type() =3D=3D RTE_PROC_PRIMARY) {
-> +               assert(pci_uio_dev_count > 0);
-> +               pci_uio_dev_count--;
-> +               if (pci_uio_dev_count =3D=3D 0)
-> +                       rte_mp_action_unregister(SEND_FD_MP_KEY);
-> +       }
-> +}
-> +
-> +static int
-> +pci_uio_send_fd(const struct rte_mp_msg *request, const void *peer)
-> +{
-> +       struct rte_pci_device *dev;
-> +       const struct pci_uio_send_fd_param *param =3D
-> +               (const struct pci_uio_send_fd_param *)request->param;
-> +       struct rte_mp_msg reply =3D {};
-> +       int fd;
-> +
-> +       strlcpy(reply.name, request->name, sizeof(reply.name));
-> +       TAILQ_FOREACH(dev, &rte_pci_bus.device_list, next) {
-> +               if (!rte_pci_addr_cmp(&dev->addr, &param->addr))
-> +                       break;
-> +       }
-> +
-> +       if (dev =3D=3D NULL) {
-> +               PCI_LOG(ERR, "Could not find PCI device (" PCI_PRI_FMT ")=
-",
-> +                       param->addr.domain, param->addr.bus,
-> +                       param->addr.devid, param->addr.function);
-> +               goto reply;
-> +       }
-> +
-> +       fd =3D rte_intr_fd_get(dev->intr_handle);
-> +       if (fd < 0) {
-> +               PCI_LOG(ERR, "Could not get fd (" PCI_PRI_FMT ")",
-> +                       param->addr.domain, param->addr.bus,
-> +                       param->addr.devid, param->addr.function);
-> +               goto reply;
-> +       }
+Tested-by: <shaiq.wani@intel.com>
 
-Should we just return error instead of calling rte_mp_reply when dev =3D=3D=
- NULL or fd < 0?
-
-Thanks,
-Chenbo
-
-> +
-> +       reply.num_fds =3D 1;
-> +       reply.fds[0] =3D fd;
-> +reply:
-> +       if (rte_mp_reply(&reply, peer) !=3D 0) {
-> +               PCI_LOG(ERR, "Failed to send reply: %d (" PCI_PRI_FMT ")"=
-,
-> +                       rte_errno, param->addr.domain, param->addr.bus,
-> +                       param->addr.devid, param->addr.function);
-> +               return -1;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int
-> +pci_uio_request_fd(struct rte_pci_device *dev)
-> +{
-> +       struct rte_mp_msg request =3D {}, *reply;
-> +       struct timespec timeout =3D {.tv_sec =3D 1, .tv_nsec =3D 0};
-> +       struct pci_uio_send_fd_param *param =3D
-> +               (struct pci_uio_send_fd_param *)request.param;
-> +       struct rte_mp_reply replies;
-> +       int rc;
-> +
-> +       strlcpy(request.name, SEND_FD_MP_KEY, sizeof(request.name));
-> +       memcpy(&param->addr, &dev->addr, sizeof(param->addr));
-> +       request.len_param =3D sizeof(*param);
-> +
-> +       rc =3D rte_mp_request_sync(&request, &replies, &timeout);
-> +       if (rc !=3D 0 || replies.nb_received !=3D 1) {
-> +               PCI_LOG(ERR, "Failed to request fd from primary: %d (" PC=
-I_PRI_FMT ")",
-> +                       rte_errno, dev->addr.domain, dev->addr.bus,
-> +                       dev->addr.devid, dev->addr.function);
-> +               return -1;
-> +       }
-> +
-> +       reply =3D replies.msgs;
-> +       if (reply->num_fds !=3D 1) {
-> +               PCI_LOG(ERR, "Received unexpected number of fds: %d (" PC=
-I_PRI_FMT ")",
-> +                       reply->num_fds, dev->addr.domain, dev->addr.bus,
-> +                       dev->addr.devid, dev->addr.function);
-> +               free(reply);
-> +               return -1;
-> +       }
-> +
-> +       rte_intr_fd_set(dev->intr_handle, reply->fds[0]);
-> +       free(reply);
-> +
-> +       return 0;
-> }
->=20
-> int
-> @@ -220,7 +315,7 @@ pci_uio_alloc_resource(struct rte_pci_device *dev,
->        char dirname[PATH_MAX];
->        char cfgname[PATH_MAX];
->        char devname[PATH_MAX]; /* contains the /dev/uioX */
-> -       int uio_num, fd, uio_cfg_fd;
-> +       int rc, uio_num, fd, uio_cfg_fd;
->        struct rte_pci_addr *loc;
->=20
->        loc =3D &dev->addr;
-> @@ -232,18 +327,6 @@ pci_uio_alloc_resource(struct rte_pci_device *dev,
->                        loc->domain, loc->bus, loc->devid, loc->function);
->                return 1;
->        }
-> -       snprintf(devname, sizeof(devname), "/dev/uio%u", uio_num);
-> -
-> -       /* save fd */
-> -       fd =3D open(devname, O_RDWR);
-> -       if (fd < 0) {
-> -               PCI_LOG(ERR, "Cannot open %s: %s", devname, strerror(errn=
-o));
-> -               goto error;
-> -       }
-> -
-> -       if (rte_intr_fd_set(dev->intr_handle, fd))
-> -               goto error;
-> -
->        snprintf(cfgname, sizeof(cfgname),
->                        "/sys/class/uio/uio%u/device/config", uio_num);
->=20
-> @@ -270,8 +353,27 @@ pci_uio_alloc_resource(struct rte_pci_device *dev,
->                }
->        }
->=20
-> -       if (rte_eal_process_type() !=3D RTE_PROC_PRIMARY)
-> +       if (rte_eal_process_type() !=3D RTE_PROC_PRIMARY) {
-> +               if (pci_uio_request_fd(dev) !=3D 0)
-> +                       goto error;
->                return 0;
-> +       }
-> +
-> +       /*
-> +        * The uio_pci_generic driver clears the bus master enable bit wh=
-en the
-> +        * device file is closed, so open it only in the primary process.=
- The
-> +        * secondary will get it via SCM_RIGHTS.
-> +        */
-> +       snprintf(devname, sizeof(devname), "/dev/uio%u", uio_num);
-> +       /* save fd */
-> +       fd =3D open(devname, O_RDWR);
-> +       if (fd < 0) {
-> +               PCI_LOG(ERR, "Cannot open %s: %s", devname, strerror(errn=
-o));
-> +               goto error;
-> +       }
-> +
-> +       if (rte_intr_fd_set(dev->intr_handle, fd))
-> +               goto error;
->=20
->        /* allocate the mapping details for secondary processes*/
->        *uio_res =3D rte_zmalloc("UIO_RES", sizeof(**uio_res), 0);
-> @@ -280,6 +382,16 @@ pci_uio_alloc_resource(struct rte_pci_device *dev,
->                goto error;
->        }
->=20
-> +       if (pci_uio_dev_count =3D=3D 0) {
-> +               rc =3D rte_mp_action_register(SEND_FD_MP_KEY, pci_uio_sen=
-d_fd);
-> +               if (rc !=3D 0 && rte_errno !=3D ENOTSUP) {
-> +                       PCI_LOG(ERR, "Failed to register multi-process ca=
-llback: %d",
-> +                               rte_errno);
-> +                       goto error;
-> +               }
-> +       }
-> +
-> +       pci_uio_dev_count++;
->        strlcpy((*uio_res)->path, devname, sizeof((*uio_res)->path));
->        memcpy(&(*uio_res)->pci_addr, &dev->addr, sizeof((*uio_res)->pci_a=
-ddr));
+>  drivers/net/intel/common/rx.h                 |   5 +
+>  drivers/net/intel/common/rx_vec_x86.h         |   3 +-
+>  drivers/net/intel/cpfl/cpfl_rxtx.c            | 143 +++++-------------
+>  drivers/net/intel/cpfl/cpfl_rxtx_vec_common.h |  12 ++
+>  drivers/net/intel/idpf/idpf_common_device.h   |  17 ++-
+>  drivers/net/intel/idpf/idpf_common_rxtx.c     |  51 +++++++
+>  drivers/net/intel/idpf/idpf_common_rxtx.h     |  12 ++
+>  drivers/net/intel/idpf/idpf_ethdev.c          |   2 +
+>  drivers/net/intel/idpf/idpf_rxtx.c            | 141 +++++------------
+>  drivers/net/intel/idpf/idpf_rxtx_vec_common.h |  11 ++
+>  10 files changed, 180 insertions(+), 217 deletions(-)
 >=20
 > --
-> 2.46.2
->=20
+> 2.34.1
 
