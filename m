@@ -2,63 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F804CAC592
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 15:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E61CA100F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 15:51:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 50119402CB;
-	Mon, 22 Sep 2025 17:46:50 +0200 (CEST)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
- [209.85.215.177])
- by mails.dpdk.org (Postfix) with ESMTP id 3437A402A9
- for <dev@dpdk.org>; Mon, 22 Sep 2025 17:46:49 +0200 (CEST)
-Received: by mail-pg1-f177.google.com with SMTP id
- 41be03b00d2f7-b5241e51764so3575199a12.1
- for <dev@dpdk.org>; Mon, 22 Sep 2025 08:46:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1758556008; x=1759160808; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=UTpuRbL3Z3N1xOfoEB0DGfuvu5hIzDuKDOu8Us2DiCE=;
- b=AfsbGnFmcd36FDwL3TM90P36j6rZUH+x0/dl8sraueWtxVuvfOdS/8zCrB2jv707me
- SzfpxHZqGtIRrHsv388W7ROe8pdvUnmfFTajuK+LEFW60SoxSXEVMZ33/NLGoI3nXloT
- 8ATW7SdQ3WVjpBXOrDdB6hbb5fZ6hmWJquJbg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758556008; x=1759160808;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=UTpuRbL3Z3N1xOfoEB0DGfuvu5hIzDuKDOu8Us2DiCE=;
- b=C/ZRZezxwqVlyWKxD3ejeY02sq4X89Rp05EIUMMJHurszUn5XP1ztI0VK1uezOG5lg
- K5VvRxm/bO4KMFqcwHtRrEFI3VzpjkDNGHECTVJlkZp5P4QUvoci3yO8eKLIVjx61A2L
- XcTKMAvLYUDlcwdnK+bbyI0TCuwtuyPdS5QuDz9AM9Xy3saDjmmUUY8kQ9C1xkfqwJpX
- BBpzbNgzUA+x8qqH9beMQLDs9JUtxpLu0xYi+DBkwGjnMzciCGc3xwYry/eKEoxuxxU/
- RsI+get+i8Hrhl7PiCSBHfaiGsm9/6pU418wT82XCeMR5Bzf5vYSHTAlhBRQ9wNVLnVP
- WIfA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWZQ+7X014o0bqx6YGSV0/I9UzBfP3AlauIkgVw0gmxnkyyQLNsbCDSyRSQgdtBE6II0/4=@dpdk.org
-X-Gm-Message-State: AOJu0YxBwPpwKt0zisSL09kn73xk1B6zSAnkHwi4/7iYW7pbMzUe8dgu
- BQb4D7uc4oS+mFbkxObQ2rWbnF7SGw+anc+Tri3349a32Z9YZlf4NTgcOc98I0fE3G+AciFFfTK
- qejkdOp9MpVcnMBUFzw8QMVCyG6zeun2uyv7+A0pQjw==
-X-Gm-Gg: ASbGncv2F9kmfZmvpZzeex5epVySAa55yAE3NAYBVLsePqCYwCoGC+h+9VhioYIok8Z
- CFYaH9hN++4AK6U9ZUHCrBZnNe+wCMbPC5tx+Gpr8FuF4aX8POLVGg4CXURQuljVD7ZEAVnOXkg
- nDO/7QDfLZOWSzWaZlDmb76Vp9hZlOT+WkQxZeqcxvgb8hZbMT+c61Vpw9X5YE4DyLy3tnhVtZv
- MMMnd8OO6estJeORIq4RA==
-X-Google-Smtp-Source: AGHT+IHFo9CQRwkiGYnwwCGDVzFRjIDCyALR4zA5roxMeXvnXc0xBXvTRFQ3U6cIBpKspJDvzJtU1f/BX4QJXEwjazY=
-X-Received: by 2002:a17:90b:1e12:b0:32e:ca03:3d6 with SMTP id
- 98e67ed59e1d1-3309838d3bcmr13965673a91.36.1758556008151; Mon, 22 Sep 2025
- 08:46:48 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CD40B402CB;
+	Mon, 22 Sep 2025 17:51:36 +0200 (CEST)
+Received: from fout-b7-smtp.messagingengine.com
+ (fout-b7-smtp.messagingengine.com [202.12.124.150])
+ by mails.dpdk.org (Postfix) with ESMTP id 5E5ED402A9
+ for <dev@dpdk.org>; Mon, 22 Sep 2025 17:51:35 +0200 (CEST)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfout.stl.internal (Postfix) with ESMTP id 810CF1D001EE;
+ Mon, 22 Sep 2025 11:51:34 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-06.internal (MEProxy); Mon, 22 Sep 2025 11:51:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1758556294;
+ x=1758642694; bh=Lh2eCuR1bc2erNx0UCqclN3F2QaYmTfMJE/KYVKWY34=; b=
+ n77rqW4M9nNZeZ/dtnSekDA2dLYfxiaLvSqAc+bmqkbPY7kiKGSFt0fxpH3rgHYK
+ aIPQSWj7eb7O7mPWRgj+VCXkQVMwvyNc5FH0VNMiMj8/EZQO78gSap74DdeNxLzw
+ W7HD950X7qdi3nxRv1TDLMTraYMuPTtj6FIxQnBj+80EFWgHQbc93CHePTJles74
+ ZeyZY8AlHEQJTbiU5hxKYkF1TXenyuNCMOVUdG8yDQPyb0sYmX8RY6/YAc37Q7t5
+ UGCAy09VOfIixC1BVk89XS6VLhqcBlUSGDgVSemGqc22bq9hTnuoxmE6oo5PCMIs
+ uA29vI2uJEwfYBawKIjLDQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758556294; x=
+ 1758642694; bh=Lh2eCuR1bc2erNx0UCqclN3F2QaYmTfMJE/KYVKWY34=; b=k
+ wgh3d8IYKwK/+43YLzyStyMwu4dxCgQAE777ZuQxAvVoHIUYxPgZD/KEOaGwn0F7
+ HwWkhFXvI+imUnjL9EKQZzcNmHxMdxNVK5dWxJYVbHaHf9BvFMLPta3WytZ2rAv0
+ U896axC50gr2RTpZUcgzGlnLLjSFk/s8ToLscn7EblUNiBX0N3Ala2D0+hzHn4WI
+ nl0gs7q4cSDMFOaFyL98P6iRbn5ViF7Gygk0zXrV5+EztjHUd3ZCHRJozVwro/dO
+ nEy9yR5WsJBYYyvLx2ZKFDcucW27JFnQ7GrZul7HiTb4ohynXprPtxxPZhlee4td
+ 8SVIDR+vltrZVAJTNch7Q==
+X-ME-Sender: <xms:hXDRaLF7CKdQN58y1uLE5A-nsL-7otCO0hk4eSEwRXvC5hXEfPKrVg>
+ <xme:hXDRaDz-f5E5_XP8Txw4rHXIRzgcOYg2fAgh6b9jMrAXPhm_avc6C9F-xYxHfmRdt
+ 6crGJFYcF6F0UeQNHZAM_JOa1vDqbQ6zrlcCs9vLpaEBr8a1naXjZg>
+X-ME-Received: <xmr:hXDRaAo7JOExSR3XdfN_OTkSn8MnP90ennDMPhNoQgoX2q7qDvmIE-5gKfkDbL7KkwQ2h9oYl6Z48P4PlMZmtbLV7Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehkedvhecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohephedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpth
+ htohepkhhtrhgrhihnohhrsehrvgguhhgrthdrtghomhdprhgtphhtthhopegsrhhutggv
+ rdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtthhopegurghvihgurd
+ hmrghrtghhrghnugesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:hXDRaNgF3Z0RmPiIaDkaj21p8ExEpxfL7iEcKnHaHePGU5ffBTo84A>
+ <xmx:hXDRaNgfjiBG1_p1BBZ9lFg9VdD1GxsRwZpw49_3HpR9dQWYxGJ42w>
+ <xmx:hXDRaDjJ4L3BEC8PjGjKsFkSiQ8MWqInFuqWR4f4r_WgDh1ttNfVlQ>
+ <xmx:hXDRaNK5MxK9A0WF50mkScpLiD_-vx6d0zWp_eA3Uc97MuWeI7IjWw>
+ <xmx:hnDRaA7aqyXW-YTBQRA4leVgkMvp9MTXxGvQrAy73WqHTpk95htWHFeO>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 22 Sep 2025 11:51:32 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org, Kevin Traynor <ktraynor@redhat.com>
+Cc: bruce.richardson@intel.com, david.marchand@redhat.com,
+ Kevin Traynor <ktraynor@redhat.com>
+Subject: Re: [PATCH 1/2] build: add backward compatibility for nested drivers
+Date: Mon, 22 Sep 2025 17:51:31 +0200
+Message-ID: <2842623.IobQ9Gjlxr@thomas>
+In-Reply-To: <20250922110708.47879-1-ktraynor@redhat.com>
+References: <20250922110708.47879-1-ktraynor@redhat.com>
 MIME-Version: 1.0
-References: <20250808182152.356879-2-abailey@iol.unh.edu>
- <20250910122749.8277-1-abailey@iol.unh.edu>
-In-Reply-To: <20250910122749.8277-1-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Mon, 22 Sep 2025 11:46:27 -0400
-X-Gm-Features: AS18NWAYg_xGi2GJ9GYAqtZKc5IwimycZXk40r4tSso0D41CqHUfKdbizgOAV6I
-Message-ID: <CAJvnSUD5raC7qtXzD7v11wHR0r2XG4+5hm+UcCPo7H+Oa=QuFA@mail.gmail.com>
-Subject: Re: [PATCH v5] dts: enable port binding on the TG
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, dev@dpdk.org, dmarx@iol.unh.edu
-Content-Type: multipart/alternative; boundary="0000000000002f0ef6063f65ba2d"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,74 +89,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000002f0ef6063f65ba2d
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+22/09/2025 13:07, Kevin Traynor:
+> --- a/drivers/meson.build
+> +++ b/drivers/meson.build
+> -# add cmdline disabled drivers and meson disabled drivers together
+> -disable_drivers += ',' + get_option('disable_drivers')
+> +# map legacy driver names
+> +driver_map = {
+> +    'net/e1000': 'net/intel/e1000',
+> +    'net/fm10k': 'net/intel/fm10k',
+> +    'net/i40e': 'net/intel/i40e',
+> +    'net/iavf': 'net/intel/iavf',
+> +    'net/ice': 'net/intel/ice',
+> +    'net/idpf': 'net/intel/idpf',
+> +    'net/ipn3ke': 'net/intel/ipn3ke',
+> +    'net/ixgbe': 'net/intel/ixgbe',
+> +    'net/cpfl': 'net/intel/cpfl',
+> +}
 
-On Wed, Sep 10, 2025 at 8:30=E2=80=AFAM Andrew Bailey <abailey@iol.unh.edu>=
- wrote:
+Should we build this list inside a file drivers/net/intel/meson.build ?
+I'm not sure my idea is better...
 
-> Currently, ports on the TG are not bound to the correct drivers prior to
-> running DTS. This causes DTS to crash if they are not initially bound to
-> the intended drivers. Binding the TG ports to the proper driver caused
-> DTS to fail when the OS and DPDK drivers were the same, due to the port
-> link not being up.
+> +
+> +# add cmdline drivers
+> +foreach driver_type : [['disable', get_option('disable_drivers')],
+> +                       ['enable', get_option('enable_drivers')]]
+> +    driver_list_name = driver_type[0] + '_drivers'
+> +    cmdline_drivers = ',' + driver_type[1]
+> +
+> +    foreach driver : cmdline_drivers.split(',')
+> +        if driver_map.has_key(driver)
+
+I feel we need comments for above parsing.
+
+> +            driver_mapped = driver_map[driver]
+> +            warning('Driver name "@0@" is deprecated, please use "@1@" instead.'
+
+Not sure about this warning.
+We can keep compatibility without saying it is deprecated.
+
+> +                    .format(driver, driver_mapped))
+> +            driver = driver_mapped
+> +        endif
+> +        if driver_list_name == 'disable_drivers'
+> +            disable_drivers += ',' + driver
+> +        else
+> +            enable_drivers += ',' + driver
+> +        endif
+> +    endforeach
+> +endforeach
+> +
+> +# add cmdline drivers and meson drivers together
+
+This comment is not clear.
+
+>  disable_drivers = run_command(list_dir_globs, disable_drivers, check: true).stdout().split()
+> -
+> -# add cmdline enabled drivers and meson enabled drivers together
+> -enable_drivers = ',' + get_option('enable_drivers')
 
 
-This probably does not read very clearly to people not working on DTS. I
-would be more "to the point" by saying something like "Currently, DTS will
-not attempt to bind the TG interfaces to the kernel driver automatically,
-meaning the user must manually verify the TG binding before running DTS.
-Also, when the TG and DPDK drivers are the same, DTS will not automatically
-attempt to bring up the link on the TG port. So, this change adds both of
-these automatic steps for the TG."
-
-
-> Changing the bound_for_dpdk method for a port to
-> return false when the OS driver and DPDK driver were shared on a TG
-> node allowed the TG ports to enter the logic to be brought up in the
-> configure_ports method within the topology class.
->
-
-I believe this is a carry over from your V3. The V4 and V5 patches do not
-include this change to the bound_for_dpdk property.
-
-Otherwise, the commit looks good, thank you! I will tweak the commit
-message itself per my preferences above when I merge to next-dts.
-
---0000000000002f0ef6063f65ba2d
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Sep 10,=
- 2025 at 8:30=E2=80=AFAM Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.un=
-h.edu">abailey@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gma=
-il_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,2=
-04,204);padding-left:1ex">Currently, ports on the TG are not bound to the c=
-orrect drivers prior to<br>
-running DTS. This causes DTS to crash if they are not initially bound to<br=
->
-the intended drivers. Binding the TG ports to the proper driver caused<br>
-DTS to fail when the OS and DPDK drivers were the same, due to the port<br>
-link not being up. </blockquote><div><br></div><div>This probably does not =
-read very clearly to people not working on DTS. I would be more &quot;to th=
-e point&quot; by saying something like &quot;Currently, DTS will not attemp=
-t to bind the TG interfaces to the kernel driver automatically, meaning the=
- user must manually verify the TG binding before running DTS. Also, when th=
-e TG and DPDK drivers are the same, DTS will not automatically attempt to b=
-ring up the link on the TG port. So, this change adds both of these automat=
-ic steps for the TG.&quot;=C2=A0</div><div>=C2=A0</div><blockquote class=3D=
-"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(2=
-04,204,204);padding-left:1ex">Changing the bound_for_dpdk method for a port=
- to<br>
-return false when the OS driver and DPDK driver were shared on a TG<br>
-node allowed the TG ports to enter the logic to be brought up in the<br>
-configure_ports method within the topology class.<br></blockquote><div><br>=
-</div><div>I believe this is a carry over from your V3. The V4 and V5 patch=
-es do not include this change to the bound_for_dpdk property.</div><div><br=
-></div><div>Otherwise, the commit looks good, thank you! I will tweak the c=
-ommit message itself per my preferences above when I merge to next-dts.</di=
-v><div>=C2=A0</div></div></div>
-
---0000000000002f0ef6063f65ba2d--
