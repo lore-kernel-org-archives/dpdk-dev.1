@@ -2,56 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7F3CAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 07:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5ACCCAC592
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 07:31:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B0EBA402EF;
-	Mon, 22 Sep 2025 09:12:28 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 2A873402ED
- for <dev@dpdk.org>; Mon, 22 Sep 2025 09:12:26 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.186.31])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cVZ590h6Kz6L5N2;
- Mon, 22 Sep 2025 15:10:37 +0800 (CST)
-Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
- by mail.maildlp.com (Postfix) with ESMTPS id E19271402ED;
- Mon, 22 Sep 2025 15:12:23 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 22 Sep 2025 08:12:23 +0100
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Mon, 22 Sep 2025 08:12:23 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Wathsala Vithanage <wathsala.vithanage@arm.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Dhruv Tripathi <Dhruv.Tripathi@arm.com>,
- Bruce Richardson <bruce.richardson@intel.com>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>, Ola Liljedahl <Ola.Liljedahl@arm.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>, Honnappa Nagarahalli
- <Honnappa.Nagarahalli@arm.com>
-Subject: RE: [PATCH 1/1] ring: safe partial ordering for head/tail update
-Thread-Topic: [PATCH 1/1] ring: safe partial ordering for head/tail update
-Thread-Index: AQHcJnJlB2Gj2xn6O0SOJRCJl7cS/rSWYP5wgABfdICAADf1oP///ZsAgATllsCAAFc5AIACm8ew
-Date: Mon, 22 Sep 2025 07:12:23 +0000
-Message-ID: <475a1eca0b7841a599dd9dddef18f11d@huawei.com>
-References: <20250915185451.533039-1-wathsala.vithanage@arm.com>
- <20250915185451.533039-2-wathsala.vithanage@arm.com>
- <a5fae8a9edc947fdbaf4e2519c39f93e@huawei.com>
- <2a611c3cf926d752a54b7655c27d6df874a2d0de.camel@arm.com>
- <61a9d5b157be4816aa296194f9c0eabe@huawei.com>
- <4173E44D-BB31-45B9-AF6A-553B1E755604@arm.com>
- <64a7def62ee642139c3af31ce4fd94e9@huawei.com>
- <cf7e14d4ba5e9d78fddf083b6c92d75942447931.camel@arm.com>
-In-Reply-To: <cf7e14d4ba5e9d78fddf083b6c92d75942447931.camel@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.126.173.214]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id EC6ED4060A;
+	Mon, 22 Sep 2025 09:30:59 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id E4FA2402EF
+ for <dev@dpdk.org>; Mon, 22 Sep 2025 09:30:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1758526258;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=mCUA3sgT7AlfG3Deh+BdLXDeZN4TfQ0mcyo6tQykMFo=;
+ b=Pc4vDtSilBtbGN10SCAJ7bj0rZxMFMjVLzz/CIXpA74Ay38aUTGQF7g+OSOUZs5HUlNWqp
+ QgQFIV80PEj1RTLGqaGEeo0qDys/0i3/Likc+1dYyQ+i5ojBFJLUqLiw//Olg0NIwQv8FR
+ KROcvJ1j/fISpdXAivU69NVRXJPJIe4=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-489-V5JTb4-HNGOPjuO6mBoFQw-1; Mon,
+ 22 Sep 2025 03:30:54 -0400
+X-MC-Unique: V5JTb4-HNGOPjuO6mBoFQw-1
+X-Mimecast-MFC-AGG-ID: V5JTb4-HNGOPjuO6mBoFQw_1758526253
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 776801800343; Mon, 22 Sep 2025 07:30:53 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.225.72])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 9F96A18004A3; Mon, 22 Sep 2025 07:30:51 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: stephen@networkplumber.org,
+	alialnu@nvidia.com,
+	stable@dpdk.org
+Subject: [PATCH] net/tap: fix build with LTO
+Date: Mon, 22 Sep 2025 09:30:43 +0200
+Message-ID: <20250922073043.2394557-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: U3xr_UTC98nNSYJLdcWCyOaXFw3an9WTx4m01L3YqZY_1758526253
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -65,214 +65,378 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gPiA+ID4NCj4gPiA+ID4gVG8gYXZvaWQgaW5mb3JtYXRpb24gbG9zcyBJIGNvbWJpbmVk
-IHJlcGx5IHRvIHR3byBXYXRoc2FsYQ0KPiA+ID4gPiByZXBsaWVzIGludG8gb25lLg0KPiA+ID4g
-Pg0KPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiBUaGUgZnVuY3Rpb24gX19ydGVfcmluZ19oZWFkdGFp
-bF9tb3ZlX2hlYWQoKSBhc3N1bWVzIHRoYXQNCj4gPiA+ID4gPiA+ID4gdGhlDQo+ID4gPiA+ID4g
-PiA+IGJhcnJpZXINCj4gPiA+ID4gPiA+IChmZW5jZSkgYmV0d2VlbiB0aGUgbG9hZCBvZiB0aGUg
-aGVhZCBhbmQgdGhlIGxvYWQtYWNxdWlyZSBvZg0KPiA+ID4gPiA+ID4gdGhlDQo+ID4gPiA+ID4g
-PiA+IG9wcG9zaW5nIHRhaWwgZ3VhcmFudGVlcyB0aGUgZm9sbG93aW5nOiBpZiBhIGZpcnN0IHRo
-cmVhZA0KPiA+ID4gPiA+ID4gPiByZWFkcw0KPiA+ID4gPiA+ID4gPiB0YWlsDQo+ID4gPiA+ID4g
-PiA+IGFuZCB0aGVuIHdyaXRlcyBoZWFkIGFuZCBhIHNlY29uZCB0aHJlYWQgcmVhZHMgdGhlIG5l
-dw0KPiA+ID4gPiA+ID4gPiB2YWx1ZSBvZg0KPiA+ID4gPiA+ID4gPiBoZWFkDQo+ID4gPiA+ID4g
-PiA+IGFuZCB0aGVuIHJlYWRzIHRhaWwsIHRoZW4gaXQgc2hvdWxkIG9ic2VydmUgdGhlIHNhbWUg
-KG9yIGENCj4gPiA+ID4gPiA+ID4gbGF0ZXIpDQo+ID4gPiA+ID4gPiA+IHZhbHVlIG9mIHRhaWwu
-DQo+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+IFRoaXMgYXNzdW1wdGlvbiBpcyBpbmNvcnJl
-Y3QgdW5kZXIgdGhlIEMxMSBtZW1vcnkgbW9kZWwuIElmDQo+ID4gPiA+ID4gPiA+IHRoZQ0KPiA+
-ID4gPiA+ID4gPiBiYXJyaWVyDQo+ID4gPiA+ID4gPiA+IChmZW5jZSkgaXMgaW50ZW5kZWQgdG8g
-ZXN0YWJsaXNoIGEgdG90YWwgb3JkZXJpbmcgb2YgcmluZw0KPiA+ID4gPiA+ID4gPiBvcGVyYXRp
-b25zLA0KPiA+ID4gPiA+ID4gPiBpdCBmYWlscyB0byBkbyBzby4gSW5zdGVhZCwgdGhlIGN1cnJl
-bnQgaW1wbGVtZW50YXRpb24gb25seQ0KPiA+ID4gPiA+ID4gPiBlbmZvcmNlcyBhDQo+ID4gPiA+
-ID4gPiA+IHBhcnRpYWwgb3JkZXJpbmcsIHdoaWNoIGNhbiBsZWFkIHRvIHVuc2FmZSBpbnRlcmxl
-YXZpbmdzLg0KPiA+ID4gPiA+ID4gPiBJbg0KPiA+ID4gPiA+ID4gPiBwYXJ0aWN1bGFyLA0KPiA+
-ID4gPiA+ID4gPiBzb21lIHBhcnRpYWwgb3JkZXJzIGNhbiBjYXVzZSB1bmRlcmZsb3dzIGluIGZy
-ZWUgc2xvdCBvcg0KPiA+ID4gPiA+ID4gPiBhdmFpbGFibGUNCj4gPiA+ID4gPiA+ID4gZWxlbWVu
-dCBjb21wdXRhdGlvbnMsIHBvdGVudGlhbGx5IHJlc3VsdGluZyBpbiBkYXRhDQo+ID4gPiA+ID4g
-PiA+IGNvcnJ1cHRpb24uDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gSG1tLi4uIHNvdW5kcyBl
-eGFjdGx5IGxpa2UgdGhlIHByb2JsZW0gZnJvbSB0aGUgcGF0Y2ggd2UNCj4gPiA+ID4gPiA+IGRp
-c2N1c3NlZA0KPiA+ID4gPiA+ID4gZWFybGllciB0aGF0IHllYXI6DQo+ID4gPiA+ID4gPiBodHRw
-czovL3BhdGNod29yay5kcGRrLm9yZy9wcm9qZWN0L2RwZGsvcGF0Y2gvMjAyNTA1MjExMTE0MzIu
-MjA3OTM2LQ0KPiA0DQo+ID4gPiA+ID4gPiAtDQo+ID4gPiBrb25zdGFudGluLmFuYW55ZXZAaHVh
-d2VpLmNvbSA8bWFpbHRvOjIwMjUwNTIxMTExNDMyLjIwNzkzNi00LQ0KPiA+ID4ga29uc3RhbnRp
-bi5hbmFueWV2QGh1YXdlaS5jb20+Lw0KPiA+ID4gPiA+ID4gSW4gdHdvIHdvcmRzOg0KPiA+ID4g
-PiA+ID4gIi4uLiB0aHJlYWQgY2FuIHNlZSAnbGF0ZXN0JyAnY29ucy5oZWFkJyB2YWx1ZSwgd2l0
-aA0KPiA+ID4gPiA+ID4gJ3ByZXZpb3VzJyB2YWx1ZQ0KPiA+ID4gPiA+ID4gZm9yICdwcm9kLnRh
-aWwnIG9yIHZpc2EtdmVyc2EuDQo+ID4gPiA+ID4gPiBJbiBvdGhlciB3b3JkczogJ2NvbnMuaGVh
-ZCcgdmFsdWUgZGVwZW5kcyBvbiAncHJvZC50YWlsJywgc28NCj4gPiA+ID4gPiA+IGJlZm9yZQ0K
-PiA+ID4gPiA+ID4gbWFraW5nIGxhdGVzdCAnY29ucy5oZWFkJw0KPiA+ID4gPiA+ID4gdmFsdWUg
-dmlzaWJsZSB0byBvdGhlciB0aHJlYWRzLCB3ZSBuZWVkIHRvIGVuc3VyZSB0aGF0IGxhdGVzdA0K
-PiA+ID4gPiA+ID4gJ3Byb2QudGFpbCcgaXMgYWxzbyB2aXNpYmxlLiINCj4gPiA+ID4gPiA+IElz
-IHRoYXQgdGhlIG9uZT8NCj4gPiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4gPiBZZXMsIHRoZSBiZWhh
-dmlvciBvY2N1cnMgdW5kZXIgUkNwYyAoTERBUFIpIGJ1dCBub3QgdW5kZXIgUkNzYw0KPiA+ID4g
-PiA+IChMREFSKSwNCj4gPiA+ID4gPiB3aGljaCBpcyB3aHkgd2UgZGlkbuKAmXQgY2F0Y2ggaXQg
-ZWFybGllci4gQSBmdWxsZXIgZXhwbGFuYXRpb24sDQo+ID4gPiA+ID4gd2l0aA0KPiA+ID4gPiA+
-IEhlcmQ3IHNpbXVsYXRpb25zLCBpcyBpbiB0aGUgYmxvZyBwb3N0IGxpbmtlZCBpbiB0aGUgY292
-ZXINCj4gPiA+ID4gPiBsZXR0ZXIuDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBodHRwczovL2NvbW11
-bml0eS5hcm0uY29tL2FybS1jb21tdW5pdHktYmxvZ3MvYi9hcmNoaXRlY3R1cmVzLWFuZA0KPiA+
-ID4gPiA+IC0NCj4gPiA+IHByb2Nlc3NvcnMtYmxvZy9wb3N0cy93aGVuLWEtYmFycmllci1kb2Vz
-LW5vdC1ibG9jay10aGUtcGl0ZmFsbHMtDQo+ID4gPiBvZi1wYXJ0aWFsLW9yZGVyDQo+ID4gPiA8
-aHR0cHM6Ly9jb21tdW5pdHkuYXJtLmNvbS9hcm0tY29tbXVuaXR5LWJsb2dzL2IvYXJjaGl0ZWN0
-dXJlcy1hbmQtDQo+ID4gPiBwcm9jZXNzb3JzLWJsb2cvcG9zdHMvd2hlbi1hLWJhcnJpZXItZG9l
-cy1ub3QtYmxvY2stdGhlLXBpdGZhbGxzLQ0KPiA+ID4gb2YtcGFydGlhbC1vcmRlcj4NCj4gPiA+
-ID4NCj4gPiA+ID4NCj4gPiA+ID4gSSBzZWUsIHNvIG5vdyBpdCBpcyByZXByb2R1Y2libGUgd2l0
-aCBjb3JlIHJ0ZV9yaW5nIG9uIHJlYWwgSFcuDQo+ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+ID4g
-Pg0KPiA+ID4gPiA+ID4gPiBUaGUgaXNzdWUgbWFuaWZlc3RzIHdoZW4gYSBDUFUgZmlyc3QgYWN0
-cyBhcyBhIHByb2R1Y2VyIGFuZA0KPiA+ID4gPiA+ID4gPiBsYXRlcg0KPiA+ID4gPiA+ID4gPiBh
-cyBhDQo+ID4gPiA+ID4gPiA+IGNvbnN1bWVyLiBJbiB0aGlzIHNjZW5hcmlvLCB0aGUgYmFycmll
-ciBhc3N1bXB0aW9uIG1heSBmYWlsDQo+ID4gPiA+ID4gPiA+IHdoZW4NCj4gPiA+ID4gPiA+ID4g
-YW5vdGhlcg0KPiA+ID4gPiA+ID4gPiBjb3JlIHRha2VzIHRoZSBjb25zdW1lciByb2xlLiBBIEhl
-cmQ3IGxpdG11cyB0ZXN0IGluIEMxMQ0KPiA+ID4gPiA+ID4gPiBjYW4NCj4gPiA+ID4gPiA+ID4g
-ZGVtb25zdHJhdGUNCj4gPiA+ID4gPiA+ID4gdGhpcyB2aW9sYXRpb24uIFRoZSBwcm9ibGVtIGhh
-cyBub3QgYmVlbiB3aWRlbHkgb2JzZXJ2ZWQgc28NCj4gPiA+ID4gPiA+ID4gZmFyDQo+ID4gPiA+
-ID4gPiA+IGJlY2F1c2U6DQo+ID4gPiA+ID4gPiA+IChhKSBvbiBzdHJvbmcgbWVtb3J5IG1vZGVs
-cyAoZS5nLiwgeDg2LTY0KSB0aGUgYXNzdW1wdGlvbg0KPiA+ID4gPiA+ID4gPiBob2xkcywNCj4g
-PiA+ID4gPiA+ID4gYW5kDQo+ID4gPiA+ID4gPiA+IChiKSBvbiByZWxheGVkIG1vZGVscyB3aXRo
-IFJDc2Mgc2VtYW50aWNzIHRoZSBvcmRlcmluZyBpcw0KPiA+ID4gPiA+ID4gPiBzdGlsbA0KPiA+
-ID4gPiA+ID4gPiBzdHJvbmcNCj4gPiA+ID4gPiA+ID4gZW5vdWdoIHRvIHByZXZlbnQgaGF6YXJk
-cy4NCj4gPiA+ID4gPiA+ID4gVGhlIHByb2JsZW0gYmVjb21lcyB2aXNpYmxlIG9ubHkgb24gd2Vh
-a2VyIG1vZGVscywgd2hlbg0KPiA+ID4gPiA+ID4gPiBsb2FkLQ0KPiA+ID4gPiA+ID4gPiBhY3F1
-aXJlIGlzDQo+ID4gPiA+ID4gPiA+IGltcGxlbWVudGVkIHdpdGggUkNwYyBzZW1hbnRpY3MgKGUu
-Zy4gc29tZSBBQXJjaDY0IENQVXMNCj4gPiA+ID4gPiA+ID4gd2hpY2gNCj4gPiA+ID4gPiA+ID4g
-c3VwcG9ydA0KPiA+ID4gPiA+ID4gPiB0aGUgTERBUFIgYW5kIExEQVBVUiBpbnN0cnVjdGlvbnMp
-Lg0KPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiBUaHJlZSBwb3NzaWJsZSBzb2x1dGlvbnMg
-ZXhpc3Q6DQo+ID4gPiA+ID4gPiA+IDEuIFN0cmVuZ3RoZW4gb3JkZXJpbmcgYnkgdXBncmFkaW5n
-IHJlbGVhc2UvYWNxdWlyZQ0KPiA+ID4gPiA+ID4gPiBzZW1hbnRpY3MgdG8NCj4gPiA+ID4gPiA+
-ID4gc2VxdWVudGlhbCBjb25zaXN0ZW5jeS4gVGhpcyByZXF1aXJlcyB1c2luZyBzZXEtY3N0IGZv
-cg0KPiA+ID4gPiA+ID4gPiBzdG9yZXMsDQo+ID4gPiA+ID4gPiA+IGxvYWRzLCBhbmQgQ0FTIG9w
-ZXJhdGlvbnMuIEhvd2V2ZXIsIHRoaXMgYXBwcm9hY2gNCj4gPiA+ID4gPiA+ID4gaW50cm9kdWNl
-cyBhDQo+ID4gPiA+ID4gPiA+IHNpZ25pZmljYW50IHBlcmZvcm1hbmNlIHBlbmFsdHkgb24gcmVs
-YXhlZC1tZW1vcnkNCj4gPiA+ID4gPiA+ID4gYXJjaGl0ZWN0dXJlcy4NCj4gPiA+ID4gPiA+ID4N
-Cj4gPiA+ID4gPiA+ID4gMi4gRXN0YWJsaXNoIGEgc2FmZSBwYXJ0aWFsIG9yZGVyIGJ5IGVuZm9y
-Y2luZyBhIHBhaXItd2lzZQ0KPiA+ID4gPiA+ID4gPiBoYXBwZW5zLWJlZm9yZSByZWxhdGlvbnNo
-aXAgYmV0d2VlbiB0aHJlYWQgb2Ygc2FtZSByb2xlIGJ5DQo+ID4gPiA+ID4gPiA+IGNoYW5naW5n
-DQo+ID4gPiA+ID4gPiA+IHRoZSBDQVMgYW5kIHRoZSBwcmVjZWRpbmcgbG9hZCBvZiB0aGUgaGVh
-ZCBieSBjb252ZXJ0aW5nDQo+ID4gPiA+ID4gPiA+IHRoZW0NCj4gPiA+ID4gPiA+ID4gdG8NCj4g
-PiA+ID4gPiA+ID4gcmVsZWFzZSBhbmQgYWNxdWlyZSByZXNwZWN0aXZlbHkuIFRoaXMgYXBwcm9h
-Y2ggbWFrZXMgdGhlDQo+ID4gPiA+ID4gPiA+IG9yaWdpbmFsDQo+ID4gPiA+ID4gPiA+IGJhcnJp
-ZXIgYXNzdW1wdGlvbiB1bm5lY2Vzc2FyeSBhbmQgYWxsb3dzIGl0cyByZW1vdmFsLg0KPiA+ID4g
-PiA+ID4NCj4gPiA+ID4gPiA+IEZvciB0aGUgc2FrZSBvZiBjbGFyaXR5LCBjYW4geW91IG91dGxp
-bmUgd2hhdCB3b3VsZCBiZSBleGFjdA0KPiA+ID4gPiA+ID4gY29kZQ0KPiA+ID4gPiA+ID4gY2hh
-bmdlcyBmb3INCj4gPiA+ID4gPiA+IGFwcHJvYWNoICMyPyBTYW1lIGFzIGluIHRoYXQgcGF0Y2g6
-DQo+ID4gPiA+ID4gPiBodHRwczovL3BhdGNod29yay5kcGRrLm9yZy9wcm9qZWN0L2RwZGsvcGF0
-Y2gvMjAyNTA1MjExMTE0MzIuMjA3OTM2LQ0KPiA0DQo+ID4gPiA+ID4gPiAtDQo+ID4gPiA8DQo+
-ID4gPiBodHRwczovL3BhdGNod29yay5kcGRrLm9yZy9wcm9qZWN0L2RwZGsvcGF0Y2gvMjAyNTA1
-MjExMTE0MzIuMjA3OTM2LQ0KPiA+ID4gNC0+DQo+ID4gPiA+ID4ga29uc3RhbnRpbi5hbmFueWV2
-QGh1YXdlaS5jb20gPG1haWx0bzoNCj4gPiA+ID4gPiBrb25zdGFudGluLmFuYW55ZXZAaHVhd2Vp
-LmNvbT4vDQo+ID4gPiA+ID4gPiBPciBzb21ldGhpbmcgZGlmZmVyZW50Pw0KPiA+ID4gPiA+DQo+
-ID4gPiA+ID4gU29ycnksIEkgbWlzc2VkIHRoZSBsYXRlciBoYWxmIHlvdSB5b3VyIGNvbW1lbnQg
-YmVmb3JlLg0KPiA+ID4gPiA+IFllcywgeW91IGhhdmUgcHJvcG9zZWQgdGhlIHNhbWUgc29sdXRp
-b24gdGhlcmUuDQo+ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IE9rLCB0aGFua3MgZm9yIGNvbmZp
-cm1hdGlvbi4NCj4gPiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPg0KPiA+
-ID4gPiA+ID4gPiAzLiBSZXRhaW4gcGFydGlhbCBvcmRlcmluZyBidXQgZW5zdXJlIG9ubHkgc2Fm
-ZSBwYXJ0aWFsDQo+ID4gPiA+ID4gPiA+IG9yZGVycw0KPiA+ID4gPiA+ID4gPiBhcmUNCj4gPiA+
-ID4gPiA+ID4gY29tbWl0dGVkLiBUaGlzIGNhbiBiZSBkb25lIGJ5IGRldGVjdGluZyB1bmRlcmZs
-b3cNCj4gPiA+ID4gPiA+ID4gY29uZGl0aW9ucw0KPiA+ID4gPiA+ID4gPiAocHJvZHVjZXIgPCBj
-b25zdW1lcikgYW5kIHF1YXNoaW5nIHRoZSB1cGRhdGUgaW4gc3VjaA0KPiA+ID4gPiA+ID4gPiBj
-YXNlcy4NCj4gPiA+ID4gPiA+ID4gVGhpcyBhcHByb2FjaCBtYWtlcyB0aGUgb3JpZ2luYWwgYmFy
-cmllciBhc3N1bXB0aW9uDQo+ID4gPiA+ID4gPiA+IHVubmVjZXNzYXJ5DQo+ID4gPiA+ID4gPiA+
-IGFuZCBhbGxvd3MgaXRzIHJlbW92YWwuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiBUaGlz
-IHBhdGNoIGltcGxlbWVudHMgc29sdXRpb24gKDMpIGZvciBwZXJmb3JtYW5jZSByZWFzb25zLg0K
-PiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBXYXRoc2FsYSBWaXRo
-YW5hZ2UNCj4gPiA+ID4gPiA+ID4gPHdhdGhzYWxhLnZpdGhhbmFnZUBhcm0uY29tDQo+ID4gPiA8
-bWFpbHRvOndhdGhzYWxhLnZpdGhhbmFnZUBhcm0uY29tPj4NCj4gPiA+ID4gPiA+ID4gU2lnbmVk
-LW9mZi1ieTogT2xhIExpbGplZGFobCA8b2xhLmxpbGplZGFobEBhcm0uY29tDQo+ID4gPiA8bWFp
-bHRvOm9sYS5saWxqZWRhaGxAYXJtLmNvbT4+DQo+ID4gPiA+ID4gPiA+IFJldmlld2VkLWJ5OiBI
-b25uYXBwYSBOYWdhcmFoYWxsaQ0KPiA+ID4gPiA+ID4gPiA8aG9ubmFwcGEubmFnYXJhaGFsbGlA
-YXJtLmNvbQ0KPiA+ID4gPG1haWx0bzpob25uYXBwYS5uYWdhcmFoYWxsaUBhcm0uY29tPj4NCj4g
-PiA+ID4gPiA+ID4gUmV2aWV3ZWQtYnk6IERocnV2IFRyaXBhdGhpIDxkaHJ1di50cmlwYXRoaUBh
-cm0uY29tDQo+ID4gPiA8bWFpbHRvOmRocnV2LnRyaXBhdGhpQGFybS5jb20+Pg0KPiA+ID4gPiA+
-ID4gPiAtLS0NCj4gPiA+ID4gPiA+ID4gbGliL3JpbmcvcnRlX3JpbmdfYzExX3B2dC5oIHwgMTAg
-KysrKysrKy0tLQ0KPiA+ID4gPiA+ID4gPiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCsp
-LCAzIGRlbGV0aW9ucygtKQ0KPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiBkaWZmIC0tZ2l0
-IGEvbGliL3JpbmcvcnRlX3JpbmdfYzExX3B2dC5oDQo+ID4gPiA+ID4gPiA+IGIvbGliL3Jpbmcv
-cnRlX3JpbmdfYzExX3B2dC5oDQo+ID4gPiA+ID4gPiA+IGluZGV4IGI5Mzg4YWYwZGEuLmU1YWMx
-ZjZiOWUgMTAwNjQ0DQo+ID4gPiA+ID4gPiA+IC0tLSBhL2xpYi9yaW5nL3J0ZV9yaW5nX2MxMV9w
-dnQuaA0KPiA+ID4gPiA+ID4gPiArKysgYi9saWIvcmluZy9ydGVfcmluZ19jMTFfcHZ0LmgNCj4g
-PiA+ID4gPiA+ID4gQEAgLTgzLDkgKzgzLDYgQEAgX19ydGVfcmluZ19oZWFkdGFpbF9tb3ZlX2hl
-YWQoc3RydWN0DQo+ID4gPiA+ID4gPiA+IHJ0ZV9yaW5nX2hlYWR0YWlsDQo+ID4gPiA+ID4gPiA+
-ICpkLA0KPiA+ID4gPiA+ID4gPiAvKiBSZXNldCBuIHRvIHRoZSBpbml0aWFsIGJ1cnN0IGNvdW50
-ICovDQo+ID4gPiA+ID4gPiA+IG4gPSBtYXg7DQo+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+
-IC0gLyogRW5zdXJlIHRoZSBoZWFkIGlzIHJlYWQgYmVmb3JlIHRhaWwgKi8NCj4gPiA+ID4gPiA+
-ID4gLSBydGVfYXRvbWljX3RocmVhZF9mZW5jZShydGVfbWVtb3J5X29yZGVyX2FjcXVpcmUpOw0K
-PiA+ID4gPiA+ID4gPiAtDQo+ID4gPiA+ID4gPiA+IC8qIGxvYWQtYWNxdWlyZSBzeW5jaHJvbml6
-ZSB3aXRoIHN0b3JlLXJlbGVhc2Ugb2YNCj4gPiA+ID4gPiA+ID4gaHQtPnRhaWwNCj4gPiA+ID4g
-PiA+ID4gKiBpbiB1cGRhdGVfdGFpbC4NCj4gPiA+ID4gPiA+ID4gKi8NCj4gPiA+ID4gPiA+DQo+
-ID4gPiA+ID4gPiBCdXQgdGhlbiBjb25zLmhlYWQgY2FuIGJlIHJlYWQgYSBiZWZvcmUgcHJvZC50
-YWlsIChhbmQgdmlzYS0NCj4gPiA+ID4gPiA+IHZlcnNhKSwNCj4gPiA+ID4gPiA+IHJpZ2h0Pw0K
-PiA+ID4gPiA+DQo+ID4gPiA+ID4gUmlnaHQsIHdlIGxldCBpdCBoYXBwZW4gYnV0IGVsaW1pbmF0
-ZSBhbnkgcmVzdWx0aW5nIHN0YXRlcyB0aGF0DQo+ID4gPiA+ID4gYXJlDQo+ID4gPiA+ID4gc2Vt
-YW50aWNhbGx5IGluY29ycmVjdCBhdCB0aGUgZW5kLg0KPiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4g
-PiBUd28gY29tbWVudHMgaGVyZToNCj4gPiA+ID4gMSkgSSB0aGluayBpdCBpcyBwcm9iYWJseSBz
-YWZlciB0byBkbyB0aGUgY2hlY2sgbGlrZSB0aGF0Og0KPiA+ID4gPiBJZiAoKmVudHJpZXMgPiBy
-aW5nLT5jYXBhY2l0eSkgLi4uDQo+ID4gPiBZZXMsIHRoaXMgbWlnaHQgYmUgYW5vdGhlciB3YXkg
-b2YgaGFuZGxpbmcgdW5kZXJmbG93IHNpdHVhdGlvbnMuIFdlDQo+ID4gPiBjb3VsZCBzdHVkeQ0K
-PiA+ID4gdGhpcy4NCj4gPiA+DQo+ID4gPiBJIGhhdmUgdXNlZCB0aGUgY2hlY2sgZm9yIG5lZ2F0
-aXZlIHdpdGhvdXQgcHJvYmxlbXMgaW4gbXkgcmluZw0KPiA+ID4gYnVmZmVyDQo+ID4gPiBpbXBs
-ZW1lbnRhdGlvbnMNCj4gPiA+IGh0dHBzOi8vZ2l0aHViLmNvbS9BUk0tc29mdHdhcmUvcHJvZ3Jl
-c3M2NC9ibG9iL21hc3Rlci9zcmMvcDY0X3JpbmdidWYuYw0KPiA+ID4gYnV0IGNhbid0IHNheSB0
-aGF0IGhhcyBiZWVuIGJhdHRsZS10ZXN0ZWQuDQo+ID4NCj4gPiBNeSB0aG91Z2h0IHdhcyBhYm91
-dCB0aGUgY2FzZSAocHJvYmFibHkgaHlwb3RoZXRpY2FsKSB3aGVuIHRoZQ0KPiA+IGRpZmZlcmVu
-Y2UNCj4gPiBiZXR3ZWVuIHN0YWxlIHRhaWwgYW5kIGhlYWQgd2lsbCBiZSBiaWdnZXIgdGhlbiAy
-XjMxICsgMS4NCj4gPg0KPiA+ID4gPiAyKSBNeSBjb25jZXJuIHRoYXQgd2l0aG91dCBmb3JjaW5n
-IGEgcHJvcGVyIHJlYWQgb3JkZXJpbmcNCj4gPiA+ID4gKGNvbnMuaGVhZCBmaXJzdCB0aGVuIHBy
-b2QudGFpbCkgd2UgcmUtaW50cm9kdWNlIGEgd2luZG93IGZvciBhbGwNCj4gPiA+ID4gc29ydHMg
-b2YNCj4gPiA+ID4gQUJBLWxpa2UgcHJvYmxlbXMuDQo+IA0KPiBUaGUgQUJBIGxpa2UgcHJvYmxl
-bSB5b3UgYXJlIHJlZmVycmluZyBoZXJlIGlzIGluZGV4IHdyYXBwaW5nIGFyb3VuZA0KPiB0aGVu
-IHJlYWNoaW5nIHRoZSBwb2ludCBvZiBub3QgcmVzdWx0aW5nIGEgbmVnYXRpdmUgdmFsdWUgSSBh
-c3N1bWUuDQo+IElmIHNvLCB0aGUgZGlzdGFuY2UgYmV0d2VlbiBhIHN0YWxlICh0YWlsKSBhbmQg
-YSB3cmFwcGVkIGFyb3VuZCBoZWFkDQo+IGhhcyB0byBiZSBhdCBsZWFzdCAweDgwMDAwMDAwLg0K
-DQpZZXMsIEkgdGhpbmsgc28uIA0KDQo+ID4gPiBIZWFkIGFuZCB0YWlsIGluZGV4ZXMgYXJlIG1v
-bm90b25pY2FsbHkgaW5jcmVhc2luZyBzbyBJIGRvbid0IHNlZSBhDQo+ID4gPiByaXNrIGZvciBB
-QkEtbGlrZQ0KPiA+ID4gcHJvYmxlbXMuDQo+ID4NCj4gPiBJIHVuZGVyc3RhbmQgdGhhdCwgYnV0
-IHdpdGggY3VycmVudCBDUFUgc3BlZWRzIGl0IGNhbiB0YWtlIHJ0ZV9yaW5nDQo+ID4ganVzdCBm
-ZXcgc2Vjb25kcyB0bw0KPiA+IHdyYXAgYXJvdW5kIGhlYWQvdGFpbCB2YWx1ZXMuIElmIHVzZXIg
-ZG9pbmcgc29tZXRoaW5nIHJlYWxseSBmYW5jeSAtDQo+ID4gbGlrZSB1c2luZyBydGVfcmluZyBa
-QyBBUEkNCj4gPiAoaS5lLiBqdXN0IG1vdmluZyBoZWFkL3RhaWwgd2l0aG91dCByZWFkaW5nIGFj
-dHVhbCBvYmplY3RzKSB0aGF0IGNhbg0KPiA+IHByb2JhYmx5IGhhcHBlbiBldmVuDQo+ID4gZmFz
-dGVyIChsZXNzIHRoYW4gYSBzZWNvbmQ/KS4NCj4gPiBBcmUgd2Ugc3VyZSB0aGF0IHRoZSBzdGFs
-ZSB0YWlsIHZhbHVlIHdpbGwgbmV2ZXIgcGVyc2lzdCB0aGF0IGxvbmc/DQo+ID4gTGV0IHNheSB1
-c2VyIGNhbGxpbmcgbW92ZV9oZWFkKCkgaW4gYSBsb29wIHRpbGwgaXQgc3VjY2VlZHM/DQo+ID4N
-Cj4gDQo+IFN5c3RlbXMgd2l0aCBmYXN0IENQVXMgbWF5IGFsc28gaGF2ZSBzaG9ydGVyIHdpbmRv
-dyBvZiBpbmNvbnNpc3RlbmN5Lg0KPiANCj4gPiA+IEluZGVlZCwgYWRkaW5nIGEgbW9ub3Rvbmlj
-YWxseSBpbmNyZWFzaW5nIHRhZyB0byBwb2ludGVycyBpcyB0aGUNCj4gPiA+IGNvbW1vbiB3YXkg
-b2YNCj4gPiA+IGF2b2lkaW5nIEFCQQ0KPiA+ID4gcHJvYmxlbXMgaW4gbG9jay1mcmVlIGRlc2ln
-bnMuDQo+ID4NCj4gPiBZZXAsIHVzaW5nIDY0LWJpdCB2YWx1ZXMgZm9yIGhlYWQvdGFpbCBjb3Vu
-dGVycyB3aWxsIGhlbHAgdG8gYXZvaWQNCj4gPiB0aGVzZSBjb25jZXJucy4NCj4gPiBCdXQgaXQg
-d2lsbCBwcm9iYWJseSBicmVhayBIVFMvUlRTIG1vZGVzLCBwbHVzIGl0IGlzIGFuIEFCSSBjaGFu
-Z2UNCj4gPiBmb3Igc3VyZS4NCj4gPg0KPiA+IEFjdHVhbGx5IGFmdGVyIGFub3RoZXIgdGhvdWdo
-dCwgSSBoYXZlIG9uZSBtb3JlIGNvbmNlcm4gaGVyZToNCj4gPg0KPiA+ICsgICAgICAgICAgICAg
-ICAvKg0KPiA+ICsgICAgICAgICAgICAgICAgKiBFbnN1cmUgdGhlIGVudHJpZXMgY2FsY3VsYXRp
-b24gd2FzIG5vdCBiYXNlZCBvbiBhDQo+ID4gc3RhbGUNCj4gPiArICAgICAgICAgICAgICAgICog
-YW5kIHVuc2FmZSBzdGFpbCBvYnNlcnZhdGlvbiB0aGF0IGNhdXNlcw0KPiA+IHVuZGVyZmxvdy4N
-Cj4gPiArICAgICAgICAgICAgICAgICovDQo+ID4gKyAgICAgICAgICAgICAgIGlmICgoaW50KSpl
-bnRyaWVzIDwgMCkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAqZW50cmllcyA9IDA7DQo+
-ID4gKw0KPiA+DQo+ID4gV2l0aCB0aGF0IGNoYW5nZSwgaXQgbWlnaHQgcmV0dXJuIG5vdC12YWxp
-ZCBpbmZvcm1hdGlvbiBiYWNrIHRvIHRoZQ0KPiA+IHVzZXINCj4gPiBhYm91dCBudW1iZXIgb2Yg
-ZnJlZS9vY2N1cGllZCBlbnRyaWVzIGluIHRoZSByaW5nLg0KPiA+IFBsdXMgcnRlX3JpbmdfZW5x
-dWV1ZSgpIG5vdyBtaWdodCBmYWlsIGV2ZW4gd2hlbiB0aGVyZSBhcmUgZW5vdWdoDQo+ID4gZnJl
-ZSBlbnRyaWVzDQo+ID4gaW4gdGhlIHJpbmcgKHNhbWUgZm9yIGRlcXVldWUpLg0KPiA+IFRoYXQg
-bG9va3MgbGlrZSBhIGNoYW5nZSBpbiBvdXIgcHVibGljIEFQSSBiZWhhdmlvciB0aGF0IG1pZ2h0
-IGJyZWFrDQo+ID4gbWFueSB0aGluZ3MuDQo+ID4gVGhlcmUgYXJlIHF1aXRlIGZldyBwbGFjZXMg
-d2hlbiBjYWxsZXIgZXhwZWN0cyBlbnF1ZXVlL2RlcXVldWUNCj4gPiBvcGVyYXRpb24gdG8gYWx3
-YXlzIHN1Y2NlZWQgKGxldCBzYXkgdGhlcmUgYWx3YXlzIHNob3VsZCBiZSBlbm91Z2gNCj4gPiBm
-cmVlIHNwYWNlIGluIHRoZSByaW5nKS4NCj4gPiBGb3IgZXhhbXBsZTogcnRlX21lbXBvb2wgd29y
-a3MgbGlrZSB0aGF0Lg0KPiA+IEkgYW0gcHJldHR5IHN1cmUgdGhlcmUgYXJlIHF1aXRlIGZldyBv
-dGhlciBwbGFjZXMgbGlrZSB0aGF0IGluc2lkZQ0KPiA+IERQREssDQo+ID4gbm90IHRvIG1lbnRp
-b24gdGhpcmQtcGFydHkgY29kZS4NCj4gPg0KPiA+IENvbnNpZGVyaW5nIGFsbCBvZiB0aGUgYWJv
-dmUsIEkgYW0gYWN0dWFsbHkgbW9yZSBpbiBmYXZvcg0KPiA+IHRvIGNvbWJpbmUgYXBwcm9hY2hl
-cyAjMiBhbmQgIzMgZm9yIHRoZSBmaW5hbCBwYXRjaDoNCj4gPiBlc3RhYmxpc2ggYSBzYWZlIHBh
-cnRpYWwgb3JkZXIgKCMyKSBhbmQga2VlcCB0aGUgY2hlY2sgZnJvbSAjMw0KPiA+IChzaG91bGQg
-aXQgYmVjb21lIGFuIGFzc2VydCgpL3ZlcmlmeSgpPykNCj4gPg0KPiANCj4gIzIgaXMgT0sgdG9v
-LCBkaWZmZXJlbmNlIGluIHBlcmZvcm1hbmNlIGlzIG9ubHkgbWVhbmluZ2Z1bCB3aGVuIGF0DQo+
-IHNpbmdsZSBjb3JlIEZpZ3VyZSAxMiBpbiBibG9nIHBvc3QuDQoNClllcywgc2FtZSB0aG91Z2h0
-IGhlcmUuDQoNCj4gQnV0IHdoeSBjb21iaW5lICMzPyBMaXRtdXMgdGVzdHMgcHJvdmUgdGhhdCB0
-aGlzIHN0YXRlIHdvbid0IGJlIHJlYWNoZWQNCj4gaW4gIzIgKEZpZ3VyZSAxMCkuDQoNCk15IGlu
-dGVudGlvbiB3YXMgdG8gY29udmVydCBpdCB0byBSVEVfQVNTRVJUKCkuDQpUbyBoZWxwIHBlb3Bs
-ZSBjYXRjaCBzaXR1YXRpb25zIHdoZW4gdGhpbmdzIHdlbnQgY29tcGxldGVseSB3cm9uZy4NClRo
-b3VnaCBpZiB5b3UgYmVsaWV2ZSBpdCBpcyBjb21wbGV0ZWx5IHVubmVjZXNzYXJ5IC0gSSBhbSBv
-ayB3aXRoIHB1cmUgIzIgYXBwcm9hY2guIA0KDQo+ID4gQW5vdGhlciB0aGluZyB0byBub3RlOiB3
-aGF0ZXZlciBmaW5hbCBhcHByb2FjaCB3ZSBjaG9vc2UgLQ0KPiA+IHdlIG5lZWQgdG8gbWFrZSBz
-dXJlIHRoYXQgdGhlIHByb2JsZW0gaXMgYWRkcmVzc2VkIGFjcm9zcyBhbGwgb3RoZXINCj4gPiBy
-dGVfcmluZyBmbGF2b3JzL21vZGVzIHRvbyAoZ2VuZXJpYyBpbXBsZW1lbnRhdGlvbiwgcnRzL2h0
-cyBtb2RlLA0KPiA+IHNvcmluZykuDQo+IA0KPiBBZ3JlZS4NCg0KT2ssIHBpbmcgbWUgaWYgeW91
-IG5lZWQgYSBoYW5kIHdpdGggdjIuDQpUaGFua3MNCktvbnN0YW50aW4NCiANCg==
+The compiler has trouble understanding that the code is actually pointing
+at the data in the message past the nh struct.
+
+Update the tap_nlattr_add* helpers and the NLMSG_TAIL macro passing a
+pointer to msg.
+
+Bugzilla ID: 1511
+Fixes: 7c25284e30c2 ("net/tap: add netlink back-end for flow API")
+Cc: stable@dpdk.org
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ drivers/net/tap/tap_flow.c    | 117 +++++++++++++---------------------
+ drivers/net/tap/tap_netlink.c |  24 +++----
+ drivers/net/tap/tap_netlink.h |  10 +--
+ drivers/net/tap/tap_tcmsgs.c  |   6 +-
+ 4 files changed, 65 insertions(+), 92 deletions(-)
+
+diff --git a/drivers/net/tap/tap_flow.c b/drivers/net/tap/tap_flow.c
+index 373b773e2d..9d4ef27a8a 100644
+--- a/drivers/net/tap/tap_flow.c
++++ b/drivers/net/tap/tap_flow.c
+@@ -430,20 +430,16 @@ tap_flow_create_eth(const struct rte_flow_item *item, struct convert_data *info)
+ 		return 0;
+ 	msg = &flow->msg;
+ 	if (!rte_is_zero_ether_addr(&mask->hdr.dst_addr)) {
+-		tap_nlattr_add(&msg->nh, TCA_FLOWER_KEY_ETH_DST,
+-			RTE_ETHER_ADDR_LEN,
+-			   &spec->hdr.dst_addr.addr_bytes);
+-		tap_nlattr_add(&msg->nh,
+-			   TCA_FLOWER_KEY_ETH_DST_MASK, RTE_ETHER_ADDR_LEN,
+-			   &mask->hdr.dst_addr.addr_bytes);
++		tap_nlattr_add(msg, TCA_FLOWER_KEY_ETH_DST, RTE_ETHER_ADDR_LEN,
++			&spec->hdr.dst_addr.addr_bytes);
++		tap_nlattr_add(msg, TCA_FLOWER_KEY_ETH_DST_MASK, RTE_ETHER_ADDR_LEN,
++			&mask->hdr.dst_addr.addr_bytes);
+ 	}
+ 	if (!rte_is_zero_ether_addr(&mask->hdr.src_addr)) {
+-		tap_nlattr_add(&msg->nh, TCA_FLOWER_KEY_ETH_SRC,
+-			RTE_ETHER_ADDR_LEN,
++		tap_nlattr_add(msg, TCA_FLOWER_KEY_ETH_SRC, RTE_ETHER_ADDR_LEN,
+ 			&spec->hdr.src_addr.addr_bytes);
+-		tap_nlattr_add(&msg->nh,
+-			   TCA_FLOWER_KEY_ETH_SRC_MASK, RTE_ETHER_ADDR_LEN,
+-			   &mask->hdr.src_addr.addr_bytes);
++		tap_nlattr_add(msg, TCA_FLOWER_KEY_ETH_SRC_MASK, RTE_ETHER_ADDR_LEN,
++			&mask->hdr.src_addr.addr_bytes);
+ 	}
+ 	return 0;
+ }
+@@ -498,11 +494,9 @@ tap_flow_create_vlan(const struct rte_flow_item *item, struct convert_data *info
+ 		uint8_t vid = VLAN_ID(tci);
+ 
+ 		if (prio)
+-			tap_nlattr_add8(&msg->nh,
+-					TCA_FLOWER_KEY_VLAN_PRIO, prio);
++			tap_nlattr_add8(msg, TCA_FLOWER_KEY_VLAN_PRIO, prio);
+ 		if (vid)
+-			tap_nlattr_add16(&msg->nh,
+-					 TCA_FLOWER_KEY_VLAN_ID, vid);
++			tap_nlattr_add16(msg, TCA_FLOWER_KEY_VLAN_ID, vid);
+ 	}
+ 	return 0;
+ }
+@@ -544,20 +538,15 @@ tap_flow_create_ipv4(const struct rte_flow_item *item, struct convert_data *info
+ 	if (!spec)
+ 		return 0;
+ 	if (mask->hdr.dst_addr) {
+-		tap_nlattr_add32(&msg->nh, TCA_FLOWER_KEY_IPV4_DST,
+-			     spec->hdr.dst_addr);
+-		tap_nlattr_add32(&msg->nh, TCA_FLOWER_KEY_IPV4_DST_MASK,
+-			     mask->hdr.dst_addr);
++		tap_nlattr_add32(msg, TCA_FLOWER_KEY_IPV4_DST, spec->hdr.dst_addr);
++		tap_nlattr_add32(msg, TCA_FLOWER_KEY_IPV4_DST_MASK, mask->hdr.dst_addr);
+ 	}
+ 	if (mask->hdr.src_addr) {
+-		tap_nlattr_add32(&msg->nh, TCA_FLOWER_KEY_IPV4_SRC,
+-			     spec->hdr.src_addr);
+-		tap_nlattr_add32(&msg->nh, TCA_FLOWER_KEY_IPV4_SRC_MASK,
+-			     mask->hdr.src_addr);
++		tap_nlattr_add32(msg, TCA_FLOWER_KEY_IPV4_SRC, spec->hdr.src_addr);
++		tap_nlattr_add32(msg, TCA_FLOWER_KEY_IPV4_SRC_MASK, mask->hdr.src_addr);
+ 	}
+ 	if (spec->hdr.next_proto_id)
+-		tap_nlattr_add8(&msg->nh, TCA_FLOWER_KEY_IP_PROTO,
+-			    spec->hdr.next_proto_id);
++		tap_nlattr_add8(msg, TCA_FLOWER_KEY_IP_PROTO, spec->hdr.next_proto_id);
+ 	return 0;
+ }
+ 
+@@ -599,20 +588,19 @@ tap_flow_create_ipv6(const struct rte_flow_item *item, struct convert_data *info
+ 	if (!spec)
+ 		return 0;
+ 	if (memcmp(&mask->hdr.dst_addr, empty_addr, 16)) {
+-		tap_nlattr_add(&msg->nh, TCA_FLOWER_KEY_IPV6_DST,
+-			   sizeof(spec->hdr.dst_addr), &spec->hdr.dst_addr);
+-		tap_nlattr_add(&msg->nh, TCA_FLOWER_KEY_IPV6_DST_MASK,
+-			   sizeof(mask->hdr.dst_addr), &mask->hdr.dst_addr);
++		tap_nlattr_add(msg, TCA_FLOWER_KEY_IPV6_DST, sizeof(spec->hdr.dst_addr),
++			&spec->hdr.dst_addr);
++		tap_nlattr_add(msg, TCA_FLOWER_KEY_IPV6_DST_MASK, sizeof(mask->hdr.dst_addr),
++			&mask->hdr.dst_addr);
+ 	}
+ 	if (memcmp(&mask->hdr.src_addr, empty_addr, 16)) {
+-		tap_nlattr_add(&msg->nh, TCA_FLOWER_KEY_IPV6_SRC,
+-			   sizeof(spec->hdr.src_addr), &spec->hdr.src_addr);
+-		tap_nlattr_add(&msg->nh, TCA_FLOWER_KEY_IPV6_SRC_MASK,
+-			   sizeof(mask->hdr.src_addr), &mask->hdr.src_addr);
++		tap_nlattr_add(msg, TCA_FLOWER_KEY_IPV6_SRC, sizeof(spec->hdr.src_addr),
++			&spec->hdr.src_addr);
++		tap_nlattr_add(msg, TCA_FLOWER_KEY_IPV6_SRC_MASK, sizeof(mask->hdr.src_addr),
++			&mask->hdr.src_addr);
+ 	}
+ 	if (spec->hdr.proto)
+-		tap_nlattr_add8(&msg->nh,
+-				TCA_FLOWER_KEY_IP_PROTO, spec->hdr.proto);
++		tap_nlattr_add8(msg, TCA_FLOWER_KEY_IP_PROTO, spec->hdr.proto);
+ 	return 0;
+ }
+ 
+@@ -649,15 +637,13 @@ tap_flow_create_udp(const struct rte_flow_item *item, struct convert_data *info)
+ 	if (!flow)
+ 		return 0;
+ 	msg = &flow->msg;
+-	tap_nlattr_add8(&msg->nh, TCA_FLOWER_KEY_IP_PROTO, IPPROTO_UDP);
++	tap_nlattr_add8(msg, TCA_FLOWER_KEY_IP_PROTO, IPPROTO_UDP);
+ 	if (!spec)
+ 		return 0;
+ 	if (mask->hdr.dst_port)
+-		tap_nlattr_add16(&msg->nh, TCA_FLOWER_KEY_UDP_DST,
+-			     spec->hdr.dst_port);
++		tap_nlattr_add16(msg, TCA_FLOWER_KEY_UDP_DST, spec->hdr.dst_port);
+ 	if (mask->hdr.src_port)
+-		tap_nlattr_add16(&msg->nh, TCA_FLOWER_KEY_UDP_SRC,
+-			     spec->hdr.src_port);
++		tap_nlattr_add16(msg, TCA_FLOWER_KEY_UDP_SRC, spec->hdr.src_port);
+ 	return 0;
+ }
+ 
+@@ -694,15 +680,13 @@ tap_flow_create_tcp(const struct rte_flow_item *item, struct convert_data *info)
+ 	if (!flow)
+ 		return 0;
+ 	msg = &flow->msg;
+-	tap_nlattr_add8(&msg->nh, TCA_FLOWER_KEY_IP_PROTO, IPPROTO_TCP);
++	tap_nlattr_add8(msg, TCA_FLOWER_KEY_IP_PROTO, IPPROTO_TCP);
+ 	if (!spec)
+ 		return 0;
+ 	if (mask->hdr.dst_port)
+-		tap_nlattr_add16(&msg->nh, TCA_FLOWER_KEY_TCP_DST,
+-			     spec->hdr.dst_port);
++		tap_nlattr_add16(msg, TCA_FLOWER_KEY_TCP_DST, spec->hdr.dst_port);
+ 	if (mask->hdr.src_port)
+-		tap_nlattr_add16(&msg->nh, TCA_FLOWER_KEY_TCP_SRC,
+-			     spec->hdr.src_port);
++		tap_nlattr_add16(msg, TCA_FLOWER_KEY_TCP_SRC, spec->hdr.src_port);
+ 	return 0;
+ }
+ 
+@@ -810,37 +794,30 @@ add_action(struct rte_flow *flow, size_t *act_index, struct action_data *adata)
+ 	if (tap_nlattr_nested_start(msg, (*act_index)++) < 0)
+ 		return -1;
+ 
+-	tap_nlattr_add(&msg->nh, TCA_ACT_KIND,
+-				strlen(adata->id) + 1, adata->id);
++	tap_nlattr_add(msg, TCA_ACT_KIND, strlen(adata->id) + 1, adata->id);
+ 	if (tap_nlattr_nested_start(msg, TCA_ACT_OPTIONS) < 0)
+ 		return -1;
+ 	if (strcmp("gact", adata->id) == 0) {
+-		tap_nlattr_add(&msg->nh, TCA_GACT_PARMS, sizeof(adata->gact),
+-			   &adata->gact);
++		tap_nlattr_add(msg, TCA_GACT_PARMS, sizeof(adata->gact), &adata->gact);
+ 	} else if (strcmp("mirred", adata->id) == 0) {
+ 		if (adata->mirred.eaction == TCA_EGRESS_MIRROR)
+ 			adata->mirred.action = TC_ACT_PIPE;
+ 		else /* REDIRECT */
+ 			adata->mirred.action = TC_ACT_STOLEN;
+-		tap_nlattr_add(&msg->nh, TCA_MIRRED_PARMS,
+-			   sizeof(adata->mirred),
+-			   &adata->mirred);
++		tap_nlattr_add(msg, TCA_MIRRED_PARMS, sizeof(adata->mirred), &adata->mirred);
+ 	} else if (strcmp("skbedit", adata->id) == 0) {
+-		tap_nlattr_add(&msg->nh, TCA_SKBEDIT_PARMS,
+-			   sizeof(adata->skbedit.skbedit), &adata->skbedit.skbedit);
++		tap_nlattr_add(msg, TCA_SKBEDIT_PARMS, sizeof(adata->skbedit.skbedit),
++			&adata->skbedit.skbedit);
+ 		if (adata->skbedit.mark)
+-			tap_nlattr_add32(&msg->nh, TCA_SKBEDIT_MARK, adata->skbedit.mark);
++			tap_nlattr_add32(msg, TCA_SKBEDIT_MARK, adata->skbedit.mark);
+ 		else
+-			tap_nlattr_add16(&msg->nh, TCA_SKBEDIT_QUEUE_MAPPING, adata->skbedit.queue);
++			tap_nlattr_add16(msg, TCA_SKBEDIT_QUEUE_MAPPING, adata->skbedit.queue);
+ 	} else if (strcmp("bpf", adata->id) == 0) {
+ #ifdef HAVE_BPF_RSS
+-		tap_nlattr_add32(&msg->nh, TCA_ACT_BPF_FD, adata->bpf.bpf_fd);
+-		tap_nlattr_add(&msg->nh, TCA_ACT_BPF_NAME,
+-			   strlen(adata->bpf.annotation) + 1,
+-			   adata->bpf.annotation);
+-		tap_nlattr_add(&msg->nh, TCA_ACT_BPF_PARMS,
+-			   sizeof(adata->bpf.bpf),
+-			   &adata->bpf.bpf);
++		tap_nlattr_add32(msg, TCA_ACT_BPF_FD, adata->bpf.bpf_fd);
++		tap_nlattr_add(msg, TCA_ACT_BPF_NAME, strlen(adata->bpf.annotation) + 1,
++			adata->bpf.annotation);
++		tap_nlattr_add(msg, TCA_ACT_BPF_PARMS, sizeof(adata->bpf.bpf), &adata->bpf.bpf);
+ #else
+ 		TAP_LOG(ERR, "Internal error: bpf requested but not supported");
+ 		return -1;
+@@ -975,7 +952,7 @@ priv_flow_process(struct pmd_internals *pmd,
+ 				TC_H_MAKE(MULTIQ_MAJOR_HANDLE, 0);
+ 		}
+ 		/* use flower filter type */
+-		tap_nlattr_add(&flow->msg.nh, TCA_KIND, sizeof("flower"), "flower");
++		tap_nlattr_add(&flow->msg, TCA_KIND, sizeof("flower"), "flower");
+ 		if (tap_nlattr_nested_start(&flow->msg, TCA_OPTIONS) < 0) {
+ 			rte_flow_error_set(error, ENOMEM, RTE_FLOW_ERROR_TYPE_ACTION,
+ 					   actions, "could not allocated netlink msg");
+@@ -1015,15 +992,11 @@ priv_flow_process(struct pmd_internals *pmd,
+ 	}
+ 	if (flow) {
+ 		if (data.vlan) {
+-			tap_nlattr_add16(&flow->msg.nh, TCA_FLOWER_KEY_ETH_TYPE,
+-				     htons(ETH_P_8021Q));
+-			tap_nlattr_add16(&flow->msg.nh,
+-				     TCA_FLOWER_KEY_VLAN_ETH_TYPE,
+-				     data.eth_type ?
+-				     data.eth_type : htons(ETH_P_ALL));
++			tap_nlattr_add16(&flow->msg, TCA_FLOWER_KEY_ETH_TYPE, htons(ETH_P_8021Q));
++			tap_nlattr_add16(&flow->msg, TCA_FLOWER_KEY_VLAN_ETH_TYPE,
++				data.eth_type ?  data.eth_type : htons(ETH_P_ALL));
+ 		} else if (data.eth_type) {
+-			tap_nlattr_add16(&flow->msg.nh, TCA_FLOWER_KEY_ETH_TYPE,
+-				     data.eth_type);
++			tap_nlattr_add16(&flow->msg, TCA_FLOWER_KEY_ETH_TYPE, data.eth_type);
+ 		}
+ 	}
+ 	if (mirred && flow) {
+diff --git a/drivers/net/tap/tap_netlink.c b/drivers/net/tap/tap_netlink.c
+index 8a57c9242c..5ff60f41d4 100644
+--- a/drivers/net/tap/tap_netlink.c
++++ b/drivers/net/tap/tap_netlink.c
+@@ -293,18 +293,18 @@ tap_nl_recv(int nlsk_fd, int (*cb)(struct nlmsghdr *, void *arg), void *arg)
+  *   The data to append.
+  */
+ void
+-tap_nlattr_add(struct nlmsghdr *nh, unsigned short type,
++tap_nlattr_add(struct tap_nlmsg *msg, unsigned short type,
+ 	   unsigned int data_len, const void *data)
+ {
+ 	/* see man 3 rtnetlink */
+ 	struct rtattr *rta;
+ 
+-	rta = (struct rtattr *)NLMSG_TAIL(nh);
++	rta = (struct rtattr *)NLMSG_TAIL(msg);
+ 	rta->rta_len = RTA_LENGTH(data_len);
+ 	rta->rta_type = type;
+ 	if (data_len > 0)
+ 		memcpy(RTA_DATA(rta), data, data_len);
+-	nh->nlmsg_len = NLMSG_ALIGN(nh->nlmsg_len) + RTA_ALIGN(rta->rta_len);
++	msg->nh.nlmsg_len = NLMSG_ALIGN(msg->nh.nlmsg_len) + RTA_ALIGN(rta->rta_len);
+ }
+ 
+ /**
+@@ -318,9 +318,9 @@ tap_nlattr_add(struct nlmsghdr *nh, unsigned short type,
+  *   The data to append.
+  */
+ void
+-tap_nlattr_add8(struct nlmsghdr *nh, unsigned short type, uint8_t data)
++tap_nlattr_add8(struct tap_nlmsg *msg, unsigned short type, uint8_t data)
+ {
+-	tap_nlattr_add(nh, type, sizeof(uint8_t), &data);
++	tap_nlattr_add(msg, type, sizeof(uint8_t), &data);
+ }
+ 
+ /**
+@@ -334,9 +334,9 @@ tap_nlattr_add8(struct nlmsghdr *nh, unsigned short type, uint8_t data)
+  *   The data to append.
+  */
+ void
+-tap_nlattr_add16(struct nlmsghdr *nh, unsigned short type, uint16_t data)
++tap_nlattr_add16(struct tap_nlmsg *msg, unsigned short type, uint16_t data)
+ {
+-	tap_nlattr_add(nh, type, sizeof(uint16_t), &data);
++	tap_nlattr_add(msg, type, sizeof(uint16_t), &data);
+ }
+ 
+ /**
+@@ -350,9 +350,9 @@ tap_nlattr_add16(struct nlmsghdr *nh, unsigned short type, uint16_t data)
+  *   The data to append.
+  */
+ void
+-tap_nlattr_add32(struct nlmsghdr *nh, unsigned short type, uint32_t data)
++tap_nlattr_add32(struct tap_nlmsg *msg, unsigned short type, uint32_t data)
+ {
+-	tap_nlattr_add(nh, type, sizeof(uint32_t), &data);
++	tap_nlattr_add(msg, type, sizeof(uint32_t), &data);
+ }
+ 
+ /**
+@@ -379,9 +379,9 @@ tap_nlattr_nested_start(struct tap_nlmsg *msg, uint16_t type)
+ 		return -1;
+ 	}
+ 
+-	tail->tail = (struct rtattr *)NLMSG_TAIL(&msg->nh);
++	tail->tail = (struct rtattr *)NLMSG_TAIL(msg);
+ 
+-	tap_nlattr_add(&msg->nh, type, 0, NULL);
++	tap_nlattr_add(msg, type, 0, NULL);
+ 
+ 	tail->prev = msg->nested_tails;
+ 
+@@ -404,7 +404,7 @@ tap_nlattr_nested_finish(struct tap_nlmsg *msg)
+ {
+ 	struct nested_tail *tail = msg->nested_tails;
+ 
+-	tail->tail->rta_len = (char *)NLMSG_TAIL(&msg->nh) - (char *)tail->tail;
++	tail->tail->rta_len = (char *)NLMSG_TAIL(msg) - (char *)tail->tail;
+ 
+ 	if (tail->prev)
+ 		msg->nested_tails = tail->prev;
+diff --git a/drivers/net/tap/tap_netlink.h b/drivers/net/tap/tap_netlink.h
+index 466c47a6d7..5eff6edbb1 100644
+--- a/drivers/net/tap/tap_netlink.h
++++ b/drivers/net/tap/tap_netlink.h
+@@ -23,7 +23,7 @@ struct tap_nlmsg {
+ 	struct nested_tail *nested_tails;
+ };
+ 
+-#define NLMSG_TAIL(nlh) (void *)((char *)(nlh) + NLMSG_ALIGN((nlh)->nlmsg_len))
++#define NLMSG_TAIL(msg) (void *)((char *)(msg) + NLMSG_ALIGN((msg)->nh.nlmsg_len))
+ 
+ int tap_nl_init(uint32_t nl_groups);
+ int tap_nl_final(int nlsk_fd);
+@@ -31,11 +31,11 @@ int tap_nl_send(int nlsk_fd, struct nlmsghdr *nh);
+ int tap_nl_recv(int nlsk_fd, int (*callback)(struct nlmsghdr *, void *),
+ 		void *arg);
+ int tap_nl_recv_ack(int nlsk_fd);
+-void tap_nlattr_add(struct nlmsghdr *nh, unsigned short type,
++void tap_nlattr_add(struct tap_nlmsg *msg, unsigned short type,
+ 		    unsigned int data_len, const void *data);
+-void tap_nlattr_add8(struct nlmsghdr *nh, unsigned short type, uint8_t data);
+-void tap_nlattr_add16(struct nlmsghdr *nh, unsigned short type, uint16_t data);
+-void tap_nlattr_add32(struct nlmsghdr *nh, unsigned short type, uint32_t data);
++void tap_nlattr_add8(struct tap_nlmsg *msg, unsigned short type, uint8_t data);
++void tap_nlattr_add16(struct tap_nlmsg *msg, unsigned short type, uint16_t data);
++void tap_nlattr_add32(struct tap_nlmsg *msg, unsigned short type, uint32_t data);
+ int tap_nlattr_nested_start(struct tap_nlmsg *msg, uint16_t type);
+ void tap_nlattr_nested_finish(struct tap_nlmsg *msg);
+ 
+diff --git a/drivers/net/tap/tap_tcmsgs.c b/drivers/net/tap/tap_tcmsgs.c
+index caca9445c8..c32f0ff815 100644
+--- a/drivers/net/tap/tap_tcmsgs.c
++++ b/drivers/net/tap/tap_tcmsgs.c
+@@ -123,8 +123,8 @@ qdisc_add_multiq(int nlsk_fd, unsigned int ifindex)
+ 		    NLM_F_REQUEST | NLM_F_ACK | NLM_F_EXCL | NLM_F_CREATE);
+ 	msg.t.tcm_handle = TC_H_MAKE(MULTIQ_MAJOR_HANDLE, 0);
+ 	msg.t.tcm_parent = TC_H_ROOT;
+-	tap_nlattr_add(&msg.nh, TCA_KIND, sizeof("multiq"), "multiq");
+-	tap_nlattr_add(&msg.nh, TCA_OPTIONS, sizeof(opt), &opt);
++	tap_nlattr_add(&msg, TCA_KIND, sizeof("multiq"), "multiq");
++	tap_nlattr_add(&msg, TCA_OPTIONS, sizeof(opt), &opt);
+ 	if (tap_nl_send(nlsk_fd, &msg.nh) < 0)
+ 		return -1;
+ 	if (tap_nl_recv_ack(nlsk_fd) < 0)
+@@ -152,7 +152,7 @@ qdisc_add_ingress(int nlsk_fd, unsigned int ifindex)
+ 		    NLM_F_REQUEST | NLM_F_ACK | NLM_F_EXCL | NLM_F_CREATE);
+ 	msg.t.tcm_handle = TC_H_MAKE(TC_H_INGRESS, 0);
+ 	msg.t.tcm_parent = TC_H_INGRESS;
+-	tap_nlattr_add(&msg.nh, TCA_KIND, sizeof("ingress"), "ingress");
++	tap_nlattr_add(&msg, TCA_KIND, sizeof("ingress"), "ingress");
+ 	if (tap_nl_send(nlsk_fd, &msg.nh) < 0)
+ 		return -1;
+ 	if (tap_nl_recv_ack(nlsk_fd) < 0)
+-- 
+2.51.0
+
