@@ -2,72 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBE3CAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 12:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E40CCAC5A7
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 12:33:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DA50E402CB;
-	Mon, 22 Sep 2025 14:09:24 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8A6DE40677;
+	Mon, 22 Sep 2025 14:33:47 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id CE0354025A
- for <dev@dpdk.org>; Mon, 22 Sep 2025 14:09:23 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 2609A402CB
+ for <dev@dpdk.org>; Mon, 22 Sep 2025 14:33:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1758542963;
+ s=mimecast20190719; t=1758544425;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=1HOtlIuPrdua+jPRl1/RsRdCzfyUjy26RBQfbThs7O0=;
- b=gMZBIvptBJ/praw+JrrNjRANcun2z35ls5d+EVuhqCcMkm2n0T45tKcxcI0/HuDQkMDc2D
- 9WNcM+nvrUAzR/rbPR1HRPRsAXqZd5f18+5HdLUb96ut6XPVN9/xqExFVaTf6w1U4UQq5/
- gfPHzl9tZhbmynR+TYxqJ/9+oB2vi7I=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=NwFfNXuEYC5w2CRyqR8EU2ag6WrGBHgUh5XAyf5EiU4=;
+ b=irQ9TNbJsML7/jxgnSVENeGGNJ1XPnB0KWOzsoZoZccInNzO6Iot76NoMcfr62kLhhSOai
+ WxKwtwqithHQZscZv2WPyYwMLeLalVaPE4vt2aGdP6xm9n8dxuZoqaJ6jo3ntaxNN2Bc6x
+ NUARqY/dGtd/0JiJv74BoE0vfqJd+NE=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-41-kiKh1MQSP7GDzssHzwJk1g-1; Mon, 22 Sep 2025 08:09:21 -0400
-X-MC-Unique: kiKh1MQSP7GDzssHzwJk1g-1
-X-Mimecast-MFC-AGG-ID: kiKh1MQSP7GDzssHzwJk1g_1758542960
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-35f62a3c170so27265281fa.0
- for <dev@dpdk.org>; Mon, 22 Sep 2025 05:09:21 -0700 (PDT)
+ us-mta-631-_8VNeTwYPT62zhzCsK9Q9w-1; Mon, 22 Sep 2025 08:33:44 -0400
+X-MC-Unique: _8VNeTwYPT62zhzCsK9Q9w-1
+X-Mimecast-MFC-AGG-ID: _8VNeTwYPT62zhzCsK9Q9w_1758544423
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-579e84da8a6so1701844e87.0
+ for <dev@dpdk.org>; Mon, 22 Sep 2025 05:33:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758542960; x=1759147760;
+ d=1e100.net; s=20230601; t=1758544422; x=1759149222;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=1HOtlIuPrdua+jPRl1/RsRdCzfyUjy26RBQfbThs7O0=;
- b=EmHLqKoJsaZS8Q3QRnikAUD7LDXGYTGxcD4AK+jmF3NShORY77iF9xwpx7Hei09IzT
- rIApfHU5BYhOD8y/yQzlOCqF26x5MjDMymIdjnoVSMms0Dd9Jqc4toWZsAbjRi1H7cM5
- blOph4cwPeL542lESC/XlYuHCPUJ2GwMK5sSv1QsmmlLgANv1f93avbJgm7HXV9n+UwL
- ZQmk7TZ5VkYmxFpUQwFfAWam4QV/QBTloxlhFwx1ugzouHW0phNzyGDzC3fTFt5fQbwb
- y2b9YbXs0LUSew8q89pjt0xQ3waEC10waxpUkcIZlNRDZxx6O77UQ4RpfisHbu11m5GQ
- FDRw==
-X-Gm-Message-State: AOJu0Yy5XGg/6HeYqRMUHlr0vSAbudcS42BYlroV3G45hEvwNXT6sXrG
- LZ4nGBTz5jAFXsTxx8toWISC8jmt0eX0QaeqRPLMQ82UK+buExyLNuZiVc25nHguqZgMHoJghOA
- ti3hpNc2I89nagqbXbNTBasEwtQcohveiTf4yDQVScPCduudD4jX8I/UuiAq0g4sFxFzdBr26CK
- dfv++ddabj0JVIuPVFsHI=
-X-Gm-Gg: ASbGncuOmRUoFKEZJPPmRpBWKJAfJfpbTeXGa1T1PQpDsdyV6WXFJ7VKaZ+kMe++PcB
- oCZmDC0PuRt+IPEm8i1cVVFVC/57lzqNhNAmxsYzLvOQvndfbcvdGVhrpKMXuRIc72KZ294Gn9Y
- AwvngobMy0TCDk32hL+QiFKcI=
-X-Received: by 2002:a05:651c:4355:10b0:36c:173:148 with SMTP id
- 38308e7fff4ca-36c01730368mr4941641fa.6.1758542960301; 
- Mon, 22 Sep 2025 05:09:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTUaOb48UJWGdcoZhTO2bZtCM0HnLeAKz7cq373Zeb7s4231Ffag16FA+BxQmtOP4tg/tbXMp+cL3ysaMkhBw=
-X-Received: by 2002:a05:651c:4355:10b0:36c:173:148 with SMTP id
- 38308e7fff4ca-36c01730368mr4941531fa.6.1758542959883; Mon, 22 Sep 2025
- 05:09:19 -0700 (PDT)
+ bh=NwFfNXuEYC5w2CRyqR8EU2ag6WrGBHgUh5XAyf5EiU4=;
+ b=XlqSZqPepXT2TTlTN7xqgPAF7sS4M9xoR5Ydpb91xI/iNfJFQ7Htdgq32UTDtsOaQc
+ xRvTE+w7TbiyhX9vO6GXx/3xOEyNrwfe3o2EQC2CnwbV+s4WI5uAqCGnX+2XmCw5fVlJ
+ piH1vPmQFQyfmzFMCuV4H3zepZrYA3/hb+AWaOQD3uEsAEMmyBTaIIFrI4sXbBbk3ktZ
+ myJ20XMxyZoy9EbITMGXR546VAKfRVBo7hHBZU0yj/6qQIdGNxUEouVH3p0QiO/TaHqH
+ Nl1Zz/YLZc5xUhQePhdr9GR594uMjOE7W5TN0pnP8PbckrhLflFZpeAF4TJZpjZ5xrGB
+ YxQQ==
+X-Gm-Message-State: AOJu0YwbXKR9y2NQlrYcLPRAH1XRZnoPK8JWojbzM98UEvOSrq8+fJJp
+ Qe8ZwkQ9DzlaG5B69YmMdGY0pUppt3BHMkl26q3ZR8e9+GQQWYelXn3RhYpGJq3qgyjGufHZNFA
+ QVMYlWF8xvsPoG6TPOe7uVn+c5rYPaGkRsg4ylWFg7J3YmpnFvh8gbE5YQjKpVredMER4vDuDGV
+ PIQ7h9V8W0C94VgeIKWgQ=
+X-Gm-Gg: ASbGncvf/Q5QocBMCVZZiRTYhEAmz+vqcTKtKTkY6yR+xnob8FFgDS3E/w32sCZwGXA
+ rkim946iniFvdSJLEUCzk20esJ80J8DypGJ6YhTM/eY8qtLNSarj2sJpZ1tnLjG+Vbg613IFBSK
+ TLukla60QCv3zNKxzSSQh+liA=
+X-Received: by 2002:a05:6512:6716:b0:577:184a:460a with SMTP id
+ 2adb3069b0e04-579e3d2aff7mr4051113e87.38.1758544422582; 
+ Mon, 22 Sep 2025 05:33:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/0ISwc8EebvbZJJxicKfzanuCQb6Jtttze8If3QDMN0vBTJnKjiNGSm7012dJYJcJ5GZTXMJMvmiFPjSH19E=
+X-Received: by 2002:a05:6512:6716:b0:577:184a:460a with SMTP id
+ 2adb3069b0e04-579e3d2aff7mr4051100e87.38.1758544422182; Mon, 22 Sep 2025
+ 05:33:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250919145125.113028-1-venkatesh.vemula@intel.com>
-In-Reply-To: <20250919145125.113028-1-venkatesh.vemula@intel.com>
+References: <20250407052532.1913-1-ming.1.yang@nokia-sbell.com>
+ <20250719153227.1980-1-mosesyyoung@gmail.com>
+ <20250719153227.1980-2-mosesyyoung@gmail.com>
+ <82eea0d0-81c4-4623-984e-02ad11bdde59@intel.com>
+In-Reply-To: <82eea0d0-81c4-4623-984e-02ad11bdde59@intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 22 Sep 2025 14:09:07 +0200
-X-Gm-Features: AS18NWAZ32IOL2vJv0nulcyGLxCdwzxGwLlFUNceMIt3SUVJrLdhyQujjGRC6Mo
-Message-ID: <CAJFAV8wK8G_Y+-PTLm1J4Z9g9+5WKSGMGr=1jBrd10kqt0CLVw@mail.gmail.com>
-Subject: Re: [PATCH v1] net/idpf: add IDPF PCI class ID support
-To: Vemula Venkatesh <venkatesh.vemula@intel.com>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>, 
- Shaiq Wani <shaiq.wani@intel.com>
+Date: Mon, 22 Sep 2025 14:33:30 +0200
+X-Gm-Features: AS18NWAeb3j-1HCQuSmovTb9VDsvtnUkdtC8lo-_nciVZRi7c4oBCyFdecVrtBE
+Message-ID: <CAJFAV8xrs164c5Ef05HCvkAC+UobMMw=M+ZheMyGEA=usHABuA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] crypto/ipsec_mb: fix QP release in secondary
+To: Yang Ming <mosesyyoung@gmail.com>
+Cc: dev@dpdk.org, kai.ji@intel.com, stable@dpdk.org, 
+ "Burakov, Anatoly" <anatoly.burakov@intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: PuOL2fmKBO90Xum_LAhaazlj4F3xySK0Y5Qz9GABBWY_1758542960
+X-Mimecast-MFC-PROC-ID: XpsktulRzHBhdxw-u75ugqAMup6Ut2fvcKcKTiQeyTc_1758544423
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -83,34 +86,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
-
-On Mon, 22 Sept 2025 at 08:35, Vemula Venkatesh
-<venkatesh.vemula@intel.com> wrote:
-> diff --git a/drivers/net/intel/idpf/idpf_common_device.h b/drivers/net/intel/idpf/idpf_common_device.h
-> index 5f3e4a4fcf..9d1d7dc47c 100644
-> --- a/drivers/net/intel/idpf/idpf_common_device.h
-> +++ b/drivers/net/intel/idpf/idpf_common_device.h
-> @@ -44,6 +44,23 @@
->         (sizeof(struct virtchnl2_ptype) +                               \
->          (((p)->proto_id_count ? ((p)->proto_id_count - 1) : 0) * sizeof((p)->proto_id[0])))
+On Wed, 3 Sept 2025 at 11:27, Burakov, Anatoly
+<anatoly.burakov@intel.com> wrote:
 >
-> +/** Macro used to help building up tables of device IDs with PCI class */
-> +#define RTE_PCI_CLASS(cls)          \
-> +       .class_id = (cls),      \
-> +       .vendor_id = RTE_PCI_ANY_ID,  \
-> +       .device_id = RTE_PCI_ANY_ID,  \
-> +       .subsystem_vendor_id = RTE_PCI_ANY_ID, \
-> +       .subsystem_device_id = RTE_PCI_ANY_ID
+> On 7/19/2025 5:32 PM, Yang Ming wrote:
+> > When a secondary process tries to release a queue pair (QP) that
+> > does not belong to it, error logs occur:
+> > CRYPTODEV: ipsec_mb_ipc_request() line 373: Unable to release
+> > qp_id=0
+> > EAL: Message data is too long
+> > EAL: Fail to handle message: ipsec_mb_mp_msg
+> > EAL: Fail to recv reply for request /tmp/dpdk/l2hi/mp_socket:
+> > ipsec_mb_mp_msg
+> >
+> >  From the code path, cryptodev->data is allocated in the primary
+> > via rte_cryptodev_data_alloc() (inside
+> > ipsec_mb_create-->rte_cryptodev_pmd_create
+> > -->rte_cryptodev_pmd_allocate-->rte_cryptodev_data_alloc).
+> > This memory is placed in a shared memzone
+> > (rte_cryptodev_data_%u), so both primary and secondary processes
+> > reference the same cryptodev->data, including nb_queue_pairs and
+> > queue_pairs[].
+> >
+> > As a result, when the secondary process exits, ipsec_mb_remove()
+> > is called (inside
+> > rte_eal_cleanup-->eal_bus_cleanup-->vdev_cleanup
+> > -->rte_vdev_driver-->ipsec_mb_remove-->ipsec_mb_qp_release
+> > -->ipsec_mb_secondary_qp_op) and it loops through all queue
+> > pairs using:
+> > for (qp_id = 0; qp_id < cryptodev->data->nb_queue_pairs; qp_id++)
+> >       ipsec_mb_qp_release(cryptodev, qp_id);
+> >
+> > This causes the secondary to attempt releasing queue pairs it
+> > doesn't own, triggering the error logs mentioned above.
+> >
+> > This patch ensures that a secondary process only frees a QP if
+> > it actually owns it, preventing conflicts and resolving the
+> > issue.
+> >
+> > Fixes: b35848bc01f6 ("crypto/ipsec_mb: add multi-process IPC request handler")
+> > Cc: kai.ji@intel.com
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: Yang Ming <mosesyyoung@gmail.com>
+> Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
-Don't define a macro with the RTE_PCI_ namespace in a driver.
-
-Either this is really specific to IDPF, and this should be renamed
-with a prefix reflecting this.
-This macro is a huge wildcard on a pci class, which seems very specific.
-
-Or this makes sense for other drivers and then this macro should be
-moved to the pci bus driver header.
+Series applied, thanks.
 
 
 -- 
