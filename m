@@ -2,55 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB7CCAC592
-	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 14:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F804CAC592
+	for <dpdk-dev@archiver.kernel.org>; Mon, 22 Sep 2025 15:46:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DA74640698;
-	Mon, 22 Sep 2025 16:11:13 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id C733640685
- for <dev@dpdk.org>; Mon, 22 Sep 2025 16:11:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1758550272; x=1790086272;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=4sVEy1kp288CQLBDHjb++w4H8Emz7itSn2iZwW3yFIY=;
- b=hv+cicHEWxvHEuaEvCZ2kBF5IGg+kGR5SNnsvyUuuwTnn+SEy/EeY8lr
- WF79JAtRS+/oJUPJhJ9xFXa4WE88qaY/FN0gy5qiLRGy+dFVRk4czr1hO
- 5SDx0Hys17ChloaqLkqyr8GcfY+XOoGs7GTFX6cPiFE6OQkIi0BY3idOD
- GsyGzB7H/QrolnZdpIYyuMsLY0Mul4kkqPC8ClSvWDQV8t3YEQ4yPDxv4
- u0rXxWs5Xe3F/3959bca6eoUY5JO5k51dmZhEMtalkDlavus+d6+QoEXq
- o/YfEVXDYgEOdjnIPKDhaTwpUaBrZVxOvAMNCD4HCVB5FfRxs6LHvB1VQ w==;
-X-CSE-ConnectionGUID: xG5KTVzwTM+k3qTEw4lB9g==
-X-CSE-MsgGUID: tEjxGtpnTsKZ/qQr7RpFnQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60869758"
-X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; d="scan'208";a="60869758"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Sep 2025 07:11:11 -0700
-X-CSE-ConnectionGUID: mbic4KMiQjunFoowcrt2CQ==
-X-CSE-MsgGUID: +9073TBMQuGuhlBf/KrTtQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; d="scan'208";a="176560304"
-Received: from gk6031-gr4-41638.igk.intel.com (HELO
- GK6031-GR4-41638-c04.igk.intel.com) ([10.91.173.62])
- by orviesa008.jf.intel.com with ESMTP; 22 Sep 2025 07:11:10 -0700
-From: "Shetty, Praveen" <praveen.shetty@intel.com>
-To: bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Cc: dev@dpdk.org, Praveen Shetty <praveen.shetty@intel.com>,
- Dhananjay Shukla <dhananjay.shukla@intel.com>,
- Atul Patel <Atul.Patel@intel.com>
-Subject: [PATCH v2 4/4] net/cpfl: add cpchnl get vport info support
-Date: Mon, 22 Sep 2025 16:10:58 +0200
-Message-Id: <20250922141058.1390212-5-praveen.shetty@intel.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20250922141058.1390212-1-praveen.shetty@intel.com>
-References: <20250922094819.1350709-2-praveen.shetty@intel.com>
- <20250922141058.1390212-1-praveen.shetty@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 50119402CB;
+	Mon, 22 Sep 2025 17:46:50 +0200 (CEST)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
+ [209.85.215.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 3437A402A9
+ for <dev@dpdk.org>; Mon, 22 Sep 2025 17:46:49 +0200 (CEST)
+Received: by mail-pg1-f177.google.com with SMTP id
+ 41be03b00d2f7-b5241e51764so3575199a12.1
+ for <dev@dpdk.org>; Mon, 22 Sep 2025 08:46:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1758556008; x=1759160808; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=UTpuRbL3Z3N1xOfoEB0DGfuvu5hIzDuKDOu8Us2DiCE=;
+ b=AfsbGnFmcd36FDwL3TM90P36j6rZUH+x0/dl8sraueWtxVuvfOdS/8zCrB2jv707me
+ SzfpxHZqGtIRrHsv388W7ROe8pdvUnmfFTajuK+LEFW60SoxSXEVMZ33/NLGoI3nXloT
+ 8ATW7SdQ3WVjpBXOrDdB6hbb5fZ6hmWJquJbg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1758556008; x=1759160808;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=UTpuRbL3Z3N1xOfoEB0DGfuvu5hIzDuKDOu8Us2DiCE=;
+ b=C/ZRZezxwqVlyWKxD3ejeY02sq4X89Rp05EIUMMJHurszUn5XP1ztI0VK1uezOG5lg
+ K5VvRxm/bO4KMFqcwHtRrEFI3VzpjkDNGHECTVJlkZp5P4QUvoci3yO8eKLIVjx61A2L
+ XcTKMAvLYUDlcwdnK+bbyI0TCuwtuyPdS5QuDz9AM9Xy3saDjmmUUY8kQ9C1xkfqwJpX
+ BBpzbNgzUA+x8qqH9beMQLDs9JUtxpLu0xYi+DBkwGjnMzciCGc3xwYry/eKEoxuxxU/
+ RsI+get+i8Hrhl7PiCSBHfaiGsm9/6pU418wT82XCeMR5Bzf5vYSHTAlhBRQ9wNVLnVP
+ WIfA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWZQ+7X014o0bqx6YGSV0/I9UzBfP3AlauIkgVw0gmxnkyyQLNsbCDSyRSQgdtBE6II0/4=@dpdk.org
+X-Gm-Message-State: AOJu0YxBwPpwKt0zisSL09kn73xk1B6zSAnkHwi4/7iYW7pbMzUe8dgu
+ BQb4D7uc4oS+mFbkxObQ2rWbnF7SGw+anc+Tri3349a32Z9YZlf4NTgcOc98I0fE3G+AciFFfTK
+ qejkdOp9MpVcnMBUFzw8QMVCyG6zeun2uyv7+A0pQjw==
+X-Gm-Gg: ASbGncv2F9kmfZmvpZzeex5epVySAa55yAE3NAYBVLsePqCYwCoGC+h+9VhioYIok8Z
+ CFYaH9hN++4AK6U9ZUHCrBZnNe+wCMbPC5tx+Gpr8FuF4aX8POLVGg4CXURQuljVD7ZEAVnOXkg
+ nDO/7QDfLZOWSzWaZlDmb76Vp9hZlOT+WkQxZeqcxvgb8hZbMT+c61Vpw9X5YE4DyLy3tnhVtZv
+ MMMnd8OO6estJeORIq4RA==
+X-Google-Smtp-Source: AGHT+IHFo9CQRwkiGYnwwCGDVzFRjIDCyALR4zA5roxMeXvnXc0xBXvTRFQ3U6cIBpKspJDvzJtU1f/BX4QJXEwjazY=
+X-Received: by 2002:a17:90b:1e12:b0:32e:ca03:3d6 with SMTP id
+ 98e67ed59e1d1-3309838d3bcmr13965673a91.36.1758556008151; Mon, 22 Sep 2025
+ 08:46:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250808182152.356879-2-abailey@iol.unh.edu>
+ <20250910122749.8277-1-abailey@iol.unh.edu>
+In-Reply-To: <20250910122749.8277-1-abailey@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Mon, 22 Sep 2025 11:46:27 -0400
+X-Gm-Features: AS18NWAYg_xGi2GJ9GYAqtZKc5IwimycZXk40r4tSso0D41CqHUfKdbizgOAV6I
+Message-ID: <CAJvnSUD5raC7qtXzD7v11wHR0r2XG4+5hm+UcCPo7H+Oa=QuFA@mail.gmail.com>
+Subject: Re: [PATCH v5] dts: enable port binding on the TG
+To: Andrew Bailey <abailey@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, dev@dpdk.org, dmarx@iol.unh.edu
+Content-Type: multipart/alternative; boundary="0000000000002f0ef6063f65ba2d"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,236 +72,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Praveen Shetty <praveen.shetty@intel.com>
+--0000000000002f0ef6063f65ba2d
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-vCPF will only receive the relative queue id from the FW.
-CPCHNL2_OP_GET_VPORT_INFO cpchnl message is used
-to get the absolute rx/tx queue id and vsi of its own vport.
-This patch will add the support to call CPCHNL2_OP_GET_VPORT_INFO
-cpchnl message from the vCPF PMD.
+On Wed, Sep 10, 2025 at 8:30=E2=80=AFAM Andrew Bailey <abailey@iol.unh.edu>=
+ wrote:
 
-Signed-off-by: Praveen Shetty <praveen.shetty@intel.com>
-Signed-off-by: Dhananjay Shukla <dhananjay.shukla@intel.com>
-Signed-off-by: Atul Patel <Atul.Patel@intel.com>
----
- drivers/net/intel/cpfl/cpfl_cpchnl.h |  7 +--
- drivers/net/intel/cpfl/cpfl_ethdev.c | 63 +++++++++++++++++++++++++
- drivers/net/intel/cpfl/cpfl_ethdev.h | 70 +++++++++++++++++++++-------
- 3 files changed, 119 insertions(+), 21 deletions(-)
+> Currently, ports on the TG are not bound to the correct drivers prior to
+> running DTS. This causes DTS to crash if they are not initially bound to
+> the intended drivers. Binding the TG ports to the proper driver caused
+> DTS to fail when the OS and DPDK drivers were the same, due to the port
+> link not being up.
 
-diff --git a/drivers/net/intel/cpfl/cpfl_cpchnl.h b/drivers/net/intel/cpfl/cpfl_cpchnl.h
-index 0c9dfcdbf1..7b01468a83 100644
---- a/drivers/net/intel/cpfl/cpfl_cpchnl.h
-+++ b/drivers/net/intel/cpfl/cpfl_cpchnl.h
-@@ -133,11 +133,8 @@ CPCHNL2_CHECK_STRUCT_LEN(3792, cpchnl2_queue_groups);
-  * @brief function types
-  */
- enum cpchnl2_func_type {
--	CPCHNL2_FTYPE_LAN_VF = 0x0,
--	CPCHNL2_FTYPE_LAN_RSV1 = 0x1,
--	CPCHNL2_FTYPE_LAN_PF = 0x2,
--	CPCHNL2_FTYPE_LAN_RSV2 = 0x3,
--	CPCHNL2_FTYPE_LAN_MAX
-+	CPCHNL2_FTYPE_LAN_PF = 0,
-+	CPCHNL2_FTYPE_LAN_VF = 1,
- };
- 
- /**
-diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c b/drivers/net/intel/cpfl/cpfl_ethdev.c
-index c411a2a024..fa783b33e7 100644
---- a/drivers/net/intel/cpfl/cpfl_ethdev.c
-+++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
-@@ -1902,6 +1902,43 @@ cpfl_dev_alarm_handler(void *param)
- 	rte_eal_alarm_set(CPFL_ALARM_INTERVAL, cpfl_dev_alarm_handler, adapter);
- }
- 
-+static
-+int vcpf_save_vport_info_response(struct cpfl_vport *cpfl_vport,
-+		struct cpchnl2_get_vport_info_response *response)
-+{
-+	struct cpchnl2_vport_info *info;
-+	struct vcpf_vport_info *vport_info;
-+	struct cpchnl2_queue_group_info *qgp;
-+	struct cpchnl2_queue_chunk *q_chnk;
-+	u16 num_queue_groups;
-+	u16 num_chunks;
-+	u32 q_type;
-+
-+	info = &response->info;
-+	vport_info = &cpfl_vport->vport_info;
-+	vport_info->vport_index = info->vport_index;
-+	vport_info->vsi_id = info->vsi_id;
-+
-+	num_queue_groups = response->queue_groups.num_queue_groups;
-+	for (u16 i = 0; i < num_queue_groups; i++) {
-+		qgp = &response->queue_groups.groups[i];
-+		num_chunks = qgp->chunks.num_chunks;
-+		/* rx q and tx q are stored in first 2 chunks */
-+		for (u16 j = 0; j < (num_chunks - 2); j++) {
-+			q_chnk = &qgp->chunks.chunks[j];
-+			q_type = q_chnk->type;
-+			if (q_type == VIRTCHNL2_QUEUE_TYPE_TX) {
-+				vport_info->abs_start_txq_id = q_chnk->start_queue_id;
-+				vport_info->num_tx_q = q_chnk->num_queues;
-+			} else if (q_type == VIRTCHNL2_QUEUE_TYPE_RX) {
-+				vport_info->abs_start_rxq_id = q_chnk->start_queue_id;
-+				vport_info->num_rx_q = q_chnk->num_queues;
-+			}
-+		}
-+	}
-+	return 0;
-+}
-+
- static int
- cpfl_stop_cfgqs(struct cpfl_adapter_ext *adapter)
- {
-@@ -2720,7 +2757,11 @@ cpfl_dev_vport_init(struct rte_eth_dev *dev, void *init_params)
- 	/* for sending create vport virtchnl msg prepare */
- 	struct virtchnl2_create_vport create_vport_info;
- 	struct virtchnl2_add_queue_groups p2p_queue_grps_info;
-+	struct cpchnl2_get_vport_info_response response;
- 	uint8_t p2p_q_vc_out_info[IDPF_DFLT_MBX_BUF_SIZE] = {0};
-+	struct cpfl_vport_id vi;
-+	struct cpchnl2_vport_id v_id;
-+	struct rte_pci_device *pci_dev = RTE_DEV_TO_PCI(dev->device);
- 	int ret = 0;
- 
- 	dev->dev_ops = &cpfl_eth_dev_ops;
-@@ -2790,6 +2831,28 @@ cpfl_dev_vport_init(struct rte_eth_dev *dev, void *init_params)
- 			cpfl_p2p_queue_grps_del(vport);
- 		}
- 	}
-+	/* get the vport info */
-+	if (adapter->base.hw.device_id == IXD_DEV_ID_VCPF) {
-+		pci_dev = RTE_DEV_TO_PCI(dev->device);
-+		vi.func_type = CPCHNL2_FTYPE_LAN_VF;
-+		vi.pf_id = CPFL_HOST0_CPF_ID;
-+		vi.vf_id = pci_dev->addr.function;
-+
-+		v_id.vport_id = cpfl_vport->base.vport_info.info.vport_id;
-+		v_id.vport_type = cpfl_vport->base.vport_info.info.vport_type;
-+
-+		ret = cpfl_cc_vport_info_get(adapter, &v_id, &vi, &response);
-+		if (ret != 0) {
-+			PMD_INIT_LOG(ERR, "Failed to send vport info cpchnl message.");
-+			return -1;
-+		}
-+
-+		ret = vcpf_save_vport_info_response(cpfl_vport, &response);
-+		if (ret != 0) {
-+			PMD_INIT_LOG(ERR, "Failed to save cpchnl response.");
-+			return -1;
-+		}
-+	}
- 
- 	return 0;
- 
-diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.h b/drivers/net/intel/cpfl/cpfl_ethdev.h
-index 81f223eef5..90b9e05819 100644
---- a/drivers/net/intel/cpfl/cpfl_ethdev.h
-+++ b/drivers/net/intel/cpfl/cpfl_ethdev.h
-@@ -165,10 +165,20 @@ struct cpfl_itf {
- 	void *data;
- };
- 
-+struct vcpf_vport_info {
-+	u16 vport_index;
-+	u16 vsi_id;
-+	u32 abs_start_txq_id;
-+	u32 num_tx_q;
-+	u32 abs_start_rxq_id;
-+	u32 num_rx_q;
-+};
-+
- struct cpfl_vport {
- 	struct cpfl_itf itf;
- 	struct idpf_vport base;
- 	struct p2p_queue_chunks_info *p2p_q_chunks_info;
-+	struct vcpf_vport_info vport_info;
- 
- 	struct rte_mempool *p2p_mp;
- 
-@@ -320,6 +330,7 @@ cpfl_get_vsi_id(struct cpfl_itf *itf)
- 	uint32_t vport_id;
- 	int ret;
- 	struct cpfl_vport_id vport_identity;
-+	u16 vsi_id = 0;
- 
- 	if (!itf)
- 		return CPFL_INVALID_HW_ID;
-@@ -329,24 +340,30 @@ cpfl_get_vsi_id(struct cpfl_itf *itf)
- 
- 		return repr->vport_info->vport.info.vsi_id;
- 	} else if (itf->type == CPFL_ITF_TYPE_VPORT) {
--		vport_id = ((struct cpfl_vport *)itf)->base.vport_id;
--
--		vport_identity.func_type = CPCHNL2_FTYPE_LAN_PF;
--		/* host: CPFL_HOST0_CPF_ID, acc: CPFL_ACC_CPF_ID */
--		vport_identity.pf_id = (itf->adapter->host_id == CPFL_HOST_ID_ACC) ?
--								CPFL_ACC_CPF_ID : CPFL_HOST0_CPF_ID;
--		vport_identity.vf_id = 0;
--		vport_identity.vport_id = vport_id;
--		ret = rte_hash_lookup_data(itf->adapter->vport_map_hash,
--					   &vport_identity,
--					   (void **)&info);
--		if (ret < 0) {
--			PMD_DRV_LOG(ERR, "vport id not exist");
--			goto err;
-+		if (itf->adapter->base.hw.device_id == IDPF_DEV_ID_CPF) {
-+			vport_id = ((struct cpfl_vport *)itf)->base.vport_id;
-+
-+			vport_identity.func_type = CPCHNL2_FTYPE_LAN_PF;
-+			/* host: CPFL_HOST0_CPF_ID, acc: CPFL_ACC_CPF_ID */
-+			vport_identity.pf_id = (itf->adapter->host_id == CPFL_HOST_ID_ACC) ?
-+							CPFL_ACC_CPF_ID : CPFL_HOST0_CPF_ID;
-+			vport_identity.vf_id = 0;
-+			vport_identity.vport_id = vport_id;
-+			ret = rte_hash_lookup_data(itf->adapter->vport_map_hash,
-+						   &vport_identity,
-+						   (void **)&info);
-+			if (ret < 0) {
-+				PMD_DRV_LOG(ERR, "vport id not exist");
-+				goto err;
-+			}
-+
-+			vsi_id = info->vport.info.vsi_id;
-+		} else {
-+			if (itf->adapter->base.hw.device_id == IXD_DEV_ID_VCPF)
-+				vsi_id = (uint16_t)((struct cpfl_vport *)itf)->vport_info.vsi_id;
- 		}
--
--		return info->vport.info.vsi_id;
- 	}
-+	return vsi_id;
- 
- err:
- 	return CPFL_INVALID_HW_ID;
-@@ -375,4 +392,25 @@ cpfl_get_itf_by_port_id(uint16_t port_id)
- 
- 	return CPFL_DEV_TO_ITF(dev);
- }
-+
-+static inline uint32_t
-+vcpf_get_abs_qid(uint16_t port_id,  uint32_t queue_type)
-+{
-+	struct cpfl_itf *itf = cpfl_get_itf_by_port_id(port_id);
-+	struct cpfl_vport *vport;
-+	if (!itf)
-+		return CPFL_INVALID_HW_ID;
-+	if (itf->type == CPFL_ITF_TYPE_VPORT) {
-+		vport = (void *)itf;
-+		if (itf->adapter->base.hw.device_id == IXD_DEV_ID_VCPF) {
-+			switch (queue_type) {
-+			case VIRTCHNL2_QUEUE_TYPE_TX:
-+				return vport->vport_info.abs_start_txq_id;
-+			case VIRTCHNL2_QUEUE_TYPE_RX:
-+				return vport->vport_info.abs_start_rxq_id;
-+			}
-+		}
-+	}
-+	return 0;
-+}
- #endif /* _CPFL_ETHDEV_H_ */
--- 
-2.37.3
 
+This probably does not read very clearly to people not working on DTS. I
+would be more "to the point" by saying something like "Currently, DTS will
+not attempt to bind the TG interfaces to the kernel driver automatically,
+meaning the user must manually verify the TG binding before running DTS.
+Also, when the TG and DPDK drivers are the same, DTS will not automatically
+attempt to bring up the link on the TG port. So, this change adds both of
+these automatic steps for the TG."
+
+
+> Changing the bound_for_dpdk method for a port to
+> return false when the OS driver and DPDK driver were shared on a TG
+> node allowed the TG ports to enter the logic to be brought up in the
+> configure_ports method within the topology class.
+>
+
+I believe this is a carry over from your V3. The V4 and V5 patches do not
+include this change to the bound_for_dpdk property.
+
+Otherwise, the commit looks good, thank you! I will tweak the commit
+message itself per my preferences above when I merge to next-dts.
+
+--0000000000002f0ef6063f65ba2d
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Sep 10,=
+ 2025 at 8:30=E2=80=AFAM Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.un=
+h.edu">abailey@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gma=
+il_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,2=
+04,204);padding-left:1ex">Currently, ports on the TG are not bound to the c=
+orrect drivers prior to<br>
+running DTS. This causes DTS to crash if they are not initially bound to<br=
+>
+the intended drivers. Binding the TG ports to the proper driver caused<br>
+DTS to fail when the OS and DPDK drivers were the same, due to the port<br>
+link not being up. </blockquote><div><br></div><div>This probably does not =
+read very clearly to people not working on DTS. I would be more &quot;to th=
+e point&quot; by saying something like &quot;Currently, DTS will not attemp=
+t to bind the TG interfaces to the kernel driver automatically, meaning the=
+ user must manually verify the TG binding before running DTS. Also, when th=
+e TG and DPDK drivers are the same, DTS will not automatically attempt to b=
+ring up the link on the TG port. So, this change adds both of these automat=
+ic steps for the TG.&quot;=C2=A0</div><div>=C2=A0</div><blockquote class=3D=
+"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(2=
+04,204,204);padding-left:1ex">Changing the bound_for_dpdk method for a port=
+ to<br>
+return false when the OS driver and DPDK driver were shared on a TG<br>
+node allowed the TG ports to enter the logic to be brought up in the<br>
+configure_ports method within the topology class.<br></blockquote><div><br>=
+</div><div>I believe this is a carry over from your V3. The V4 and V5 patch=
+es do not include this change to the bound_for_dpdk property.</div><div><br=
+></div><div>Otherwise, the commit looks good, thank you! I will tweak the c=
+ommit message itself per my preferences above when I merge to next-dts.</di=
+v><div>=C2=A0</div></div></div>
+
+--0000000000002f0ef6063f65ba2d--
