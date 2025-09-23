@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CE0CAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 14:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEC4CAC5AC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 14:40:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B299E402CB;
-	Tue, 23 Sep 2025 16:32:33 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 4C420402B3
- for <dev@dpdk.org>; Tue, 23 Sep 2025 16:32:32 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6D1B840667;
+	Tue, 23 Sep 2025 16:40:08 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id E0F7F402CB
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 16:40:06 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1758637952; x=1790173952;
+ t=1758638407; x=1790174407;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=nLBl/oD94TCLPug2gXX/rGCU2iA4uWAGIHVxX1EI6Og=;
- b=YzPxXyZ3tjhdCSNGa0Gp5i7cNEOgh7RfEgHXYkW8Uhvl3JcE1N1Qo3N7
- X33w5Rbi3leLBMl2zq3eop1NMjvexJNk165SuPl2H0hzGgh9td6mKx5bB
- lSxBE/0g80YZz5OuCxAw32DcNIBooQe1Tn5hfuPwhYUqeHdKhwRkdpHgQ
- pZJ4Sore0u3Wj/GeQUlUhgD+vAdWJynDAo5r+7P0AR0mYPN4oB8wLmv2j
- zYQpbTacuGVNV67kj874jb9lDW0qrOPVA+fuxJEN/zyZokrPjwHdv36sY
- hJxpY70pi/n9rX5Zqx4YtsGerV6bUmZpUeb5hH7jcpxctcQv4uJvCHHVr w==;
-X-CSE-ConnectionGUID: yI6piVLfTiOWW02eUaKLHA==
-X-CSE-MsgGUID: E9BuLYspTM61rd8ajLtafw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="64745146"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="64745146"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Sep 2025 07:32:31 -0700
-X-CSE-ConnectionGUID: dpi/L7icSayt0rG+x4vASA==
-X-CSE-MsgGUID: WrUfaYcnQ5uYJNb80DqtKA==
+ bh=BOdKQOh71mI3FqEeeqSLWn/uEdYwMlyr8Jxz7O2BROE=;
+ b=MsNTFYo/tvy+kLdCge7PF3p6bFJ6HUjylDpPAtb6QF203sqIQ7camIhK
+ CpWekfr6JiBFdEIgLoMkURFNJaguoCuDFTTeQyuLV1GHwbsXzqF4up8b6
+ xYRQ172Nw96pJwQAbm1wcx7kB7wR91B05j557ua6hRX2D5WYPY/pVfZH9
+ 9Ls7Ahu0Ou6evVbQsT5GBS0ONc5bSQ0ZagpqWta2MzGu0i0vMxie/5W4C
+ 0eHK0D70lTG/xL9Vv9KRhF2Y2XKaFPxRE8p/2lVtn9KhCLKKXAQl9qmrz
+ RCAYBQNhSe5wByb5G2coQNB2GLbJ9hYlUlrBr8l8t0qmDvqvYZMdPEI2o A==;
+X-CSE-ConnectionGUID: //EzXz2xTAqEkIy1mQBcWA==
+X-CSE-MsgGUID: lREMG+H9QeSR8pD9gmyvCw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="63547835"
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="63547835"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Sep 2025 07:40:06 -0700
+X-CSE-ConnectionGUID: WHo8zunsR8CsPsWCKBaxZQ==
+X-CSE-MsgGUID: KLr/GHjUT1ef0iqDe51m0A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="175903731"
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="176359303"
 Received: from silpixa00401385.ir.intel.com (HELO silpixa00401385..)
  ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 23 Sep 2025 07:32:30 -0700
+ by orviesa009.jf.intel.com with ESMTP; 23 Sep 2025 07:40:04 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
  David Marchand <david.marchand@redhat.com>
-Subject: [PATCH v2] telemetry: remove deprecated functions
-Date: Tue, 23 Sep 2025 15:32:25 +0100
-Message-ID: <20250923143225.12252-1-bruce.richardson@intel.com>
+Subject: [PATCH v3] build: remove deprecated kmods option
+Date: Tue, 23 Sep 2025 15:40:00 +0100
+Message-ID: <20250923144000.13570-1-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250919075654.220920-1-bruce.richardson@intel.com>
-References: <20250919075654.220920-1-bruce.richardson@intel.com>
+In-Reply-To: <20250919075733.221023-1-bruce.richardson@intel.com>
+References: <20250919075733.221023-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,136 +61,115 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The "_u64" telemetry functions were replaced by the "_uint" versions
-back in 2023 [1], so can be removed from the release.
+The "enable_kmods" meson option was deprecated back in 2023[1], so can
+now be removed from DPDK.
 
-[1] https://doc.dpdk.org/guides-23.03/rel_notes/deprecation.html
+[1] https://doc.dpdk.org/guides-23.11/rel_notes/deprecation.html
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 Acked-by: David Marchand <david.marchand@redhat.com>
+
 ---
- doc/guides/rel_notes/deprecation.rst   |  5 ----
- doc/guides/rel_notes/release_25_11.rst |  4 +++
- lib/telemetry/rte_telemetry.h          | 35 --------------------------
- lib/telemetry/telemetry_data.c         | 14 -----------
- 4 files changed, 4 insertions(+), 54 deletions(-)
+v3: add release note update.
+v2: remove missed references in DTS and in freebsd meson.build
+---
+ doc/guides/rel_notes/deprecation.rst   | 7 -------
+ doc/guides/rel_notes/release_25_11.rst | 7 +++++++
+ dts/framework/remote_session/dpdk.py   | 2 +-
+ dts/framework/utils.py                 | 2 +-
+ kernel/freebsd/meson.build             | 4 ++--
+ meson_options.txt                      | 2 --
+ 6 files changed, 11 insertions(+), 13 deletions(-)
 
 diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index bdcd2775b6..483030cda8 100644
+index 5aaeb1052a..bdcd2775b6 100644
 --- a/doc/guides/rel_notes/deprecation.rst
 +++ b/doc/guides/rel_notes/deprecation.rst
-@@ -20,11 +20,6 @@ Deprecation Notices
+@@ -17,13 +17,6 @@ Other API and ABI deprecation notices are to be posted below.
+ Deprecation Notices
+ -------------------
+ 
+-* build: The ``enable_kmods`` option is deprecated and will be removed in a future release.
+-  Setting/clearing the option has no impact on the build.
+-  Instead, kernel modules will be always built for OS's where out-of-tree kernel modules
+-  are required for DPDK operation.
+-  Currently, this means that modules will only be built for FreeBSD.
+-  No modules are shipped with DPDK for either Linux or Windows.
+-
  * kvargs: The function ``rte_kvargs_process`` will get a new parameter
    for returning key match count. It will ease handling of no-match case.
  
--* telemetry: The functions ``rte_tel_data_add_array_u64`` and ``rte_tel_data_add_dict_u64``,
--  used by telemetry callbacks for adding unsigned integer values to be returned to the user,
--  are renamed to ``rte_tel_data_add_array_uint`` and ``rte_tel_data_add_dict_uint`` respectively.
--  As such, the old function names are deprecated and will be removed in a future release.
--
- * eal: The ``-c <coremask>`` commandline parameter is deprecated
-   and will be removed in a future release.
-   Use the ``-l <corelist>`` or ``--lcores=<corelist>`` parameters instead
 diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
-index efb88bbbb0..03cee47369 100644
+index efb88bbbb0..bce8e9f563 100644
 --- a/doc/guides/rel_notes/release_25_11.rst
 +++ b/doc/guides/rel_notes/release_25_11.rst
-@@ -89,6 +89,10 @@ Removed Items
+@@ -89,6 +89,13 @@ Removed Items
     Also, make sure to start the actual text at the margin.
     =======================================================
  
-+* telemetry: As previously announced in the deprecation notices,
-+  the functions ``rte_tel_data_add_array_u64`` and ``rte_tel_data_add_dict_u64`` are removed.
-+  They are replaced by ``rte_tel_data_add_array_uint`` and ``rte_tel_data_add_dict_uint`` respectively.
++* build: as previously announced in the deprecation notices,
++  the ``enable_kmods`` build option has been removed.
++  Kernel modules will now automatically be built for OS's where out-of-tree kernel modules
++  are required for DPDK operation.
++  Currently, this means that modules will only be built for FreeBSD.
++  No modules are shipped with DPDK for either Linux or Windows.
 +
  
  API Changes
  -----------
-diff --git a/lib/telemetry/rte_telemetry.h b/lib/telemetry/rte_telemetry.h
-index c4554e4028..b9662a5213 100644
---- a/lib/telemetry/rte_telemetry.h
-+++ b/lib/telemetry/rte_telemetry.h
-@@ -136,22 +136,6 @@ rte_tel_data_add_array_int(struct rte_tel_data *d, int64_t x);
- int
- rte_tel_data_add_array_uint(struct rte_tel_data *d, uint64_t x);
+diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
+index 606d6e22fe..2dc8dab642 100644
+--- a/dts/framework/remote_session/dpdk.py
++++ b/dts/framework/remote_session/dpdk.py
+@@ -262,7 +262,7 @@ def _build_dpdk(self) -> None:
+         """
+         self._session.build_dpdk(
+             self._env_vars,
+-            MesonArgs(default_library="static", enable_kmods=True, libdir="lib"),
++            MesonArgs(default_library="static", libdir="lib"),
+             self.remote_dpdk_tree_path,
+             self.remote_dpdk_build_dir,
+         )
+diff --git a/dts/framework/utils.py b/dts/framework/utils.py
+index 0c81ab1b95..9f7201c888 100644
+--- a/dts/framework/utils.py
++++ b/dts/framework/utils.py
+@@ -111,7 +111,7 @@ def __init__(self, default_library: str | None = None, **dpdk_args: str | bool):
+         Example:
+             ::
  
-- /**
-- * Add a uint64_t to an array.
-- * The array must have been started by rte_tel_data_start_array() with
-- * RTE_TEL_UINT_VAL as the type parameter.
-- *
-- * @param d
-- *   The data structure passed to the callback
-- * @param x
-- *   The number to be returned in the array
-- * @return
-- *   0 on success, negative errno on error
-- */
--int
--rte_tel_data_add_array_u64(struct rte_tel_data *d, uint64_t x)
--	__rte_deprecated_msg("use 'rte_tel_data_add_array_uint' instead");
--
- /**
-  * Add a container to an array. A container is an existing telemetry data
-  * array. The array the container is to be added to must have been started by
-@@ -249,25 +233,6 @@ int
- rte_tel_data_add_dict_uint(struct rte_tel_data *d,
- 		const char *name, uint64_t val);
- 
-- /**
-- * Add a uint64_t value to a dictionary.
-- * The dict must have been started by rte_tel_data_start_dict().
-- *
-- * @param d
-- *   The data structure passed to the callback
-- * @param name
-- *   The name the value is to be stored under in the dict
-- *   Must contain only alphanumeric characters or the symbols: '_' or '/'
-- * @param val
-- *   The number to be stored in the dict
-- * @return
-- *   0 on success, negative errno on error, E2BIG on string truncation of name.
-- */
--int
--rte_tel_data_add_dict_u64(struct rte_tel_data *d,
--		const char *name, uint64_t val)
--	__rte_deprecated_msg("use 'rte_tel_data_add_dict_uint' instead");
--
- /**
-  * Add a container to a dictionary. A container is an existing telemetry data
-  * array. The dict the container is to be added to must have been started by
-diff --git a/lib/telemetry/telemetry_data.c b/lib/telemetry/telemetry_data.c
-index c120600622..0354a06548 100644
---- a/lib/telemetry/telemetry_data.c
-+++ b/lib/telemetry/telemetry_data.c
-@@ -91,13 +91,6 @@ rte_tel_data_add_array_uint(struct rte_tel_data *d, uint64_t x)
- 	return 0;
- }
- 
--RTE_EXPORT_SYMBOL(rte_tel_data_add_array_u64)
--int
--rte_tel_data_add_array_u64(struct rte_tel_data *d, uint64_t x)
--{
--	return rte_tel_data_add_array_uint(d, x);
--}
--
- RTE_EXPORT_SYMBOL(rte_tel_data_add_array_container)
- int
- rte_tel_data_add_array_container(struct rte_tel_data *d,
-@@ -229,13 +222,6 @@ rte_tel_data_add_dict_uint(struct rte_tel_data *d,
- 	return bytes < RTE_TEL_MAX_STRING_LEN ? 0 : E2BIG;
- }
- 
--RTE_EXPORT_SYMBOL(rte_tel_data_add_dict_u64)
--int
--rte_tel_data_add_dict_u64(struct rte_tel_data *d, const char *name, uint64_t val)
--{
--	return rte_tel_data_add_dict_uint(d, name, val);
--}
--
- RTE_EXPORT_SYMBOL(rte_tel_data_add_dict_container)
- int
- rte_tel_data_add_dict_container(struct rte_tel_data *d, const char *name,
+-                meson_args = MesonArgs(enable_kmods=True).
++                meson_args = MesonArgs(check_includes=True).
+         """
+         self._default_library = f"--default-library={default_library}" if default_library else ""
+         self._dpdk_args = " ".join(
+diff --git a/kernel/freebsd/meson.build b/kernel/freebsd/meson.build
+index 1f612711be..862e19e766 100644
+--- a/kernel/freebsd/meson.build
++++ b/kernel/freebsd/meson.build
+@@ -29,7 +29,7 @@ foreach k:kmods
+                 'KMOD_CFLAGS=' + ' '.join(kmod_cflags),
+                 'CC=clang'],
+             depends: built_kmods, # make each module depend on prev
+-            build_by_default: get_option('enable_kmods'),
+-            install: get_option('enable_kmods'),
++            build_by_default: true,
++            install: true,
+             install_dir: '/boot/modules/')
+ endforeach
+diff --git a/meson_options.txt b/meson_options.txt
+index e49b2fc089..e28d24054c 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -24,8 +24,6 @@ option('enable_drivers', type: 'string', value: '', description:
+        'Comma-separated list of drivers to build. If unspecified, build all drivers.')
+ option('enable_driver_sdk', type: 'boolean', value: false, description:
+        'Install headers to build drivers.')
+-option('enable_kmods', type: 'boolean', value: true, description:
+-       '[Deprecated - will be removed in future release] build kernel modules')
+ option('enable_libs', type: 'string', value: '', description:
+        'Comma-separated list of optional libraries to explicitly enable. [NOTE: mandatory libs are always enabled]')
+ option('examples', type: 'string', value: '', description:
 -- 
 2.48.1
 
