@@ -2,26 +2,25 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD0FCAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 03:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB53CCAC5A7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 03:54:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1BBEF40658;
-	Tue, 23 Sep 2025 05:54:20 +0200 (CEST)
-Received: from out28-193.mail.aliyun.com (out28-193.mail.aliyun.com
- [115.124.28.193])
- by mails.dpdk.org (Postfix) with ESMTP id 370324021F
- for <dev@dpdk.org>; Tue, 23 Sep 2025 05:54:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2E23940671;
+	Tue, 23 Sep 2025 05:54:21 +0200 (CEST)
+Received: from out28-51.mail.aliyun.com (out28-51.mail.aliyun.com
+ [115.124.28.51]) by mails.dpdk.org (Postfix) with ESMTP id CEC9B402E9
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 05:54:17 +0200 (CEST)
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.elCCQkU_1758599653 cluster:ay29) by smtp.aliyun-inc.com;
- Tue, 23 Sep 2025 11:54:14 +0800
+ fp:SMTPD_---.elCCQlk_1758599655 cluster:ay29) by smtp.aliyun-inc.com;
+ Tue, 23 Sep 2025 11:54:15 +0800
 From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 To: dimon.zhao@nebula-matrix.com,
 	dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>, Kyo Liu <kyo.liu@nebula-matrix.com>,
- Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v10 01/17] net/nbl: add doc and minimum nbl build framework
-Date: Mon, 22 Sep 2025 20:53:46 -0700
-Message-Id: <20250923035402.1759922-2-dimon.zhao@nebula-matrix.com>
+Cc: Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>,
+ Sam Chen <sam.chen@nebula-matrix.com>
+Subject: [PATCH v10 03/17] net/nbl: add HW layer definitions and implementation
+Date: Mon, 22 Sep 2025 20:53:48 -0700
+Message-Id: <20250923035402.1759922-4-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250923035402.1759922-1-dimon.zhao@nebula-matrix.com>
 References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
@@ -41,315 +40,373 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add minimum PMD code, doc and build infrastructure for nbl driver.
+add HW layer related definitions and product ops
 
 Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 ---
- .mailmap                                      |  4 +
- MAINTAINERS                                   |  9 ++
- doc/guides/nics/features/nbl.ini              | 31 +++++++
- doc/guides/nics/index.rst                     |  1 +
- doc/guides/nics/nbl.rst                       | 87 +++++++++++++++++++
- doc/guides/rel_notes/release_25_11.rst        |  4 +
- drivers/net/meson.build                       |  1 +
- drivers/net/nbl/meson.build                   | 11 +++
- drivers/net/nbl/nbl_ethdev.c                  |  3 +
- .../net/nbl/nbl_include/nbl_product_base.h    | 31 +++++++
- 10 files changed, 182 insertions(+)
- create mode 100644 doc/guides/nics/features/nbl.ini
- create mode 100644 doc/guides/nics/nbl.rst
- create mode 100644 drivers/net/nbl/meson.build
- create mode 100644 drivers/net/nbl/nbl_ethdev.c
- create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
+ drivers/net/nbl/meson.build                   |  2 +
+ drivers/net/nbl/nbl_core.c                    | 49 +++++++++-
+ drivers/net/nbl/nbl_core.h                    | 22 ++++-
+ drivers/net/nbl/nbl_hw/nbl_hw.h               | 28 ++++++
+ .../nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c | 98 +++++++++++++++++++
+ .../nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.h | 10 ++
+ drivers/net/nbl/nbl_include/nbl_def_hw.h      | 35 +++++++
+ drivers/net/nbl/nbl_include/nbl_include.h     | 12 +++
+ 8 files changed, 252 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_hw.h
 
-diff --git a/.mailmap b/.mailmap
-index 1d9ac7af8a..e4a649579d 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -375,6 +375,7 @@ Diana Wang <na.wang@corigine.com>
- Didier Pallard <didier.pallard@6wind.com>
- Dilshod Urazov <dilshod.urazov@oktetlabs.ru>
- Dima Ruinskiy <dima.ruinskiy@intel.com>
-+Dimon Zhao <dimon.zhao@nebula-matrix.com>
- Ding Zhi <zhi.ding@6wind.com>
- Diogo Behrens <diogo.behrens@huawei.com>
- Dirk-Holger Lenz <dirk.lenz@ng4t.com>
-@@ -858,6 +859,7 @@ Kumar Amber <kumar.amber@intel.com>
- Kumara Parameshwaran <kumaraparamesh92@gmail.com> <kparameshwar@vmware.com>
- Kumar Sanghvi <kumaras@chelsio.com>
- Kyle Larose <klarose@sandvine.com>
-+Kyo Liu <kyo.liu@nebula-matrix.com>
- Lance Richardson <lance.richardson@broadcom.com>
- Laszlo Ersek <lersek@redhat.com>
- Laura Stroe <laura.stroe@intel.com>
-@@ -872,6 +874,7 @@ Lei Gong <arei.gonglei@huawei.com>
- Lei Ji <jilei8@huawei.com>
- Lei Yao <lei.a.yao@intel.com>
- Leonid Myravjev <myravjev@amicon.ru>
-+Leon Yu <leon.yu@nebula-matrix.com>
- Leo Xu <yongquanx@nvidia.com>
- Leszek Zygo <leszek.zygo@intel.com>
- Levend Sayar <levendsayar@gmail.com>
-@@ -1391,6 +1394,7 @@ Saikrishna Edupuganti <saikrishna.edupuganti@intel.com>
- Saleh Alsouqi <salehals@nvidia.com> <salehals@mellanox.com>
- Salem Sol <salems@nvidia.com>
- Sam Andrew <samandrew@microsoft.com>
-+Sam Chen <sam.chen@nebula-matrix.com>
- Sameh Gobriel <sameh.gobriel@intel.com>
- Sam Grove <sam.grove@sifive.com>
- Samik Gupta <samik.gupta@broadcom.com>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a867a5622d..8ad9bd7e5f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1010,6 +1010,15 @@ F: drivers/net/rnp/
- F: doc/guides/nics/rnp.rst
- F: doc/guides/nics/features/rnp.ini
- 
-+Nebulamatrix nbl
-+M: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-+M: Kyo Liu<kyo.liu@nebula-matrix.com>
-+M: Leon Yu <leon.yu@nebula-matrix.com>
-+M: Sam Chen <sam.chen@nebula-matrix.com>
-+F: drivers/net/nbl
-+F: doc/guides/nics/nbl.rst
-+F: doc/guides/nics/features/nbl.ini
-+
- Realtek r8169
- M: Howard Wang <howard_wang@realsil.com.cn>
- M: Chunhao Lin <hau@realtek.com>
-diff --git a/doc/guides/nics/features/nbl.ini b/doc/guides/nics/features/nbl.ini
-new file mode 100644
-index 0000000000..90ec593759
---- /dev/null
-+++ b/doc/guides/nics/features/nbl.ini
-@@ -0,0 +1,31 @@
-+;
-+; Supported features of the 'nbl' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Speed capabilities   = Y
-+Link speed configuration = Y
-+Link status          = Y
-+FEC                  = Y
-+Queue start/stop     = Y
-+Burst mode info      = Y
-+MTU update           = Y
-+Scattered Rx         = Y
-+TSO                  = Y
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+RSS reta update      = Y
-+VLAN filter          = Y
-+VLAN offload         = P
-+L3 checksum offload  = P
-+L4 checksum offload  = P
-+Basic stats          = Y
-+Extended stats       = Y
-+Stats per queue      = Y
-+FW version           = Y
-+Module EEPROM dump   = Y
-+Linux                = Y
-+ARMv8                = Y
-+x86-64               = Y
-diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
-index 57d161c526..84d4ece101 100644
---- a/doc/guides/nics/index.rst
-+++ b/doc/guides/nics/index.rst
-@@ -50,6 +50,7 @@ Network Interface Controller Drivers
-     mvneta
-     mvpp2
-     netvsc
-+    nbl
-     nfb
-     nfp
-     ngbe
-diff --git a/doc/guides/nics/nbl.rst b/doc/guides/nics/nbl.rst
-new file mode 100644
-index 0000000000..fa5dfaecdc
---- /dev/null
-+++ b/doc/guides/nics/nbl.rst
-@@ -0,0 +1,87 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+   Copyright 2025 Nebulamatrix Technology Co., Ltd
-+
-+NBL Poll Mode Driver
-+====================
-+
-+The NBL PMD (**librte_net_nbl**) provides poll mode driver support for
-+10/25/50/100/200 Gbps Nebulamatrix Series Network Adapters.
-+
-+
-+Features
-+--------
-+
-+Features of the NBL PMD are:
-+
-+- Multiple queues for TX and RX
-+- Receiver Side Scaling (RSS). Currently does not support user-configured RSS and only supports packet spraying via RSS.
-+- Jumbo frames
-+
-+
-+Supported NICs
-+--------------
-+
-+The following Nebulamatrix device models are supported by the same nbl driver:
-+
-+  - S1205CQ-A00CHT
-+  - S1105AS-A00CHT
-+  - S1055AS-A00CHT
-+  - S1052AS-A00CHT
-+  - S1051AS-A00CHT
-+  - S1045XS-A00CHT
-+  - S1205CQ-A00CSP
-+  - S1055AS-A00CSP
-+  - S1052AS-A00CSP
-+
-+
-+Linux Prerequisites
-+~~~~~~~~~~~~~~~~~~~
-+
-+This driver relies on kernel drivers for resources allocations and initialization.
-+The following dependencies are not part of DPDK and must be installed separately:
-+
-+- **Kernel modules**
-+
-+  They provide low level device drivers that manage actual hardware initialization
-+  and resources sharing with user-space processes.
-+
-+  Unlike most other PMDs, these modules must remain loaded and bound to
-+  their devices:
-+
-+  - ``nbl_core``: hardware driver managing Ethernet kernel network devices.
-+
-+Because the nbl_core kernel driver code has not been upstreamed to the Linux kernel community, it cannot be provided by standard Linux distributions.
-+However, the nbl_core kernel driver has been upstreamed to the openEuler and Anolis communities. You can obtain the nbl_core code from the following links:
-+
-+openEuler community:
-+https://gitee.com/openeuler/kernel/pulls/11667
-+
-+Anolis community:
-+https://gitee.com/anolis/cloud-kernel/pulls/5185
-+https://gitee.com/anolis/cloud-kernel/pulls/5059
-+
-+Alternatively, you can contact us to obtain the nbl_core code and installation package.
-+
-+
-+Prerequisites
-+-------------
-+
-+- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>`
-+  to setup the basic DPDK environment.
-+
-+- Learn about `Nebulamatrix Series NICs
-+  <https://www.nebula-matrix.com/main>`_.
-+
-+
-+Multiple Processes
-+~~~~~~~~~~~~~~~~~~
-+
-+The NBL PMD does not support Multiple Processes.
-+
-+
-+Limitations or Known Issues
-+---------------------------
-+
-+32-bit architectures are not supported.
-+
-+Windows and BSD are not supported yet.
-diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
-index fccf3d1366..afed18d9cc 100644
---- a/doc/guides/rel_notes/release_25_11.rst
-+++ b/doc/guides/rel_notes/release_25_11.rst
-@@ -98,6 +98,10 @@ New Features
-   * Added multi-process per port.
-   * Optimized code.
- 
-+* **Added Nebulamatrix nbl net driver.**
-+
-+  * Added the PMD for Nebulamatrix NICs.
-+
- 
- Removed Items
- -------------
-diff --git a/drivers/net/meson.build b/drivers/net/meson.build
-index 61f8cddb30..517e78d18b 100644
---- a/drivers/net/meson.build
-+++ b/drivers/net/meson.build
-@@ -40,6 +40,7 @@ drivers = [
-         'mlx5',
-         'mvneta',
-         'mvpp2',
-+        'nbl',
-         'netvsc',
-         'nfb',
-         'nfp',
 diff --git a/drivers/net/nbl/meson.build b/drivers/net/nbl/meson.build
-new file mode 100644
-index 0000000000..68c045a48c
---- /dev/null
+index 778c495c68..dca81f9586 100644
+--- a/drivers/net/nbl/meson.build
 +++ b/drivers/net/nbl/meson.build
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright 2025 NebulaMatrix Technology Co., Ltd.
+@@ -7,8 +7,10 @@ if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
+ endif
+ 
+ includes += include_directories('nbl_include')
++includes += include_directories('nbl_hw')
+ 
+ sources = files(
+         'nbl_ethdev.c',
+         'nbl_core.c',
++        'nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c',
+ )
+diff --git a/drivers/net/nbl/nbl_core.c b/drivers/net/nbl/nbl_core.c
+index 267293715a..decab211d3 100644
+--- a/drivers/net/nbl/nbl_core.c
++++ b/drivers/net/nbl/nbl_core.c
+@@ -4,17 +4,60 @@
+ 
+ #include "nbl_core.h"
+ 
++const struct nbl_product_core_ops nbl_product_core_ops[NBL_PRODUCT_MAX] = {
++	[NBL_LEONIS_TYPE] = {
++		.hw_init	= nbl_hw_init_leonis_snic,
++		.hw_remove	= nbl_hw_remove_leonis_snic,
++		.res_init	= NULL,
++		.res_remove	= NULL,
++		.chan_init	= NULL,
++		.chan_remove	= NULL,
++	},
++};
 +
-+if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
-+    build = false
-+    reason = 'only supported on 64bit Linux'
-+endif
++static const struct nbl_product_core_ops *
++nbl_core_get_product_ops(enum nbl_product_type product_type)
++{
++	RTE_ASSERT(product_type < NBL_PRODUCT_MAX);
++	return &nbl_product_core_ops[product_type];
++}
 +
-+sources = files(
-+        'nbl_ethdev.c',
-+)
-diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
++static void nbl_init_func_caps(const struct rte_pci_device *pci_dev, struct nbl_func_caps *caps)
++{
++	caps->product_type = NBL_PRODUCT_MAX;
++	if (pci_dev->id.device_id >= NBL_DEVICE_ID_M18110 &&
++	    pci_dev->id.device_id <= NBL_DEVICE_ID_M18100_VF)
++		caps->product_type = NBL_LEONIS_TYPE;
++}
++
+ int nbl_core_init(struct nbl_adapter *adapter, const struct rte_eth_dev *eth_dev)
+ {
+-	RTE_SET_USED(adapter);
+-	RTE_SET_USED(eth_dev);
++	const struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
++	const struct nbl_product_core_ops *product_base_ops = NULL;
++	int ret = 0;
++
++	nbl_init_func_caps(pci_dev, &adapter->caps);
++
++	product_base_ops = nbl_core_get_product_ops(adapter->caps.product_type);
++
++	/* every product's hw/chan/res layer has a great difference, so call their own init ops */
++	ret = product_base_ops->hw_init(adapter);
++	if (ret)
++		goto hw_init_fail;
+ 
+ 	return 0;
++
++hw_init_fail:
++	return -EINVAL;
+ }
+ 
+ void nbl_core_remove(struct nbl_adapter *adapter)
+ {
+-	RTE_SET_USED(adapter);
++	const struct nbl_product_core_ops *product_base_ops = NULL;
++
++	product_base_ops = nbl_core_get_product_ops(adapter->caps.product_type);
++
++	product_base_ops->hw_remove(adapter);
+ }
+ 
+ int nbl_core_start(struct nbl_adapter *adapter)
+diff --git a/drivers/net/nbl/nbl_core.h b/drivers/net/nbl/nbl_core.h
+index 0b0769a780..036f04b395 100644
+--- a/drivers/net/nbl/nbl_core.h
++++ b/drivers/net/nbl/nbl_core.h
+@@ -5,7 +5,8 @@
+ #ifndef _NBL_CORE_H_
+ #define _NBL_CORE_H_
+ 
+-#include "nbl_include.h"
++#include "nbl_product_base.h"
++#include "nbl_def_hw.h"
+ 
+ #define NBL_VENDOR_ID				(0x1F0F)
+ #define NBL_DEVICE_ID_M18110			(0x3403)
+@@ -27,9 +28,28 @@
+ #define NBL_DEVICE_ID_M18100_VF			(0x3413)
+ 
+ #define NBL_MAX_INSTANCE_CNT 516
++
++#define NBL_ADAPTER_TO_HW_MGT(adapter)		((adapter)->core.hw_mgt)
++#define NBL_ADAPTER_TO_HW_OPS_TBL(adapter)	((adapter)->intf.hw_ops_tbl)
++
++struct nbl_core {
++	void *hw_mgt;
++	void *res_mgt;
++	void *disp_mgt;
++	void *chan_mgt;
++	void *dev_mgt;
++};
++
++struct nbl_interface {
++	struct nbl_hw_ops_tbl *hw_ops_tbl;
++};
++
+ struct nbl_adapter {
+ 	TAILQ_ENTRY(nbl_adapter) next;
+ 	struct rte_pci_device *pci_dev;
++	struct nbl_core core;
++	struct nbl_interface intf;
++	struct nbl_func_caps caps;
+ };
+ 
+ int nbl_core_init(struct nbl_adapter *adapter, const struct rte_eth_dev *eth_dev);
+diff --git a/drivers/net/nbl/nbl_hw/nbl_hw.h b/drivers/net/nbl/nbl_hw/nbl_hw.h
 new file mode 100644
-index 0000000000..3ad8e4033a
+index 0000000000..03500a0d07
 --- /dev/null
-+++ b/drivers/net/nbl/nbl_ethdev.c
-@@ -0,0 +1,3 @@
++++ b/drivers/net/nbl/nbl_hw/nbl_hw.h
+@@ -0,0 +1,28 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
 + */
-diff --git a/drivers/net/nbl/nbl_include/nbl_product_base.h b/drivers/net/nbl/nbl_include/nbl_product_base.h
-new file mode 100644
-index 0000000000..648278b094
---- /dev/null
-+++ b/drivers/net/nbl/nbl_include/nbl_product_base.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-+ */
 +
-+#ifndef _NBL_DEF_PRODUCT_BASE_H_
-+#define _NBL_DEF_PRODUCT_BASE_H_
++#ifndef _NBL_HW_H_
++#define _NBL_HW_H_
 +
-+#include "nbl_include.h"
++#include "nbl_ethdev.h"
 +
-+struct nbl_product_core_ops {
-+	int (*hw_init)(void *p);
-+	void (*hw_remove)(void *p);
-+	int (*res_init)(void *p, struct rte_eth_dev *eth_dev);
-+	void (*res_remove)(void *p);
-+	int (*chan_init)(void *p);
-+	void (*chan_remove)(void *p);
++#define NBL_NOTIFY_ADDR			(0x00000000)
++#define NBL_BYTES_IN_REG		(4)
++#define NBL_TAIL_PTR_OFT		(16)
++#define NBL_LO_DWORD(x)			((u32)((x) & 0xFFFFFFFF))
++#define NBL_HI_DWORD(x)			((u32)(((x) >> 32) & 0xFFFFFFFF))
++
++struct nbl_hw_mgt {
++	u8 *hw_addr;
++	u64 memory_bar_pa;
++	u8 *mailbox_bar_hw_addr;
++	u64 notify_addr;
++	u32 version;
 +};
 +
-+struct nbl_product_dev_ops {
-+	int (*dev_init)(void *adapter);
-+	void (*dev_uninit)(void *adapter);
-+	int (*dev_start)(void *adapter);
-+	void (*dev_stop)(void *adapter);
-+};
-+
-+struct nbl_product_dispatch_ops {
-+	int (*dispatch_init)(void *mgt);
-+	int (*dispatch_uninit)(void *mgt);
++struct nbl_hw_mgt_leonis_snic {
++	struct nbl_hw_mgt hw_mgt;
 +};
 +
 +#endif
+diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c
+new file mode 100644
+index 0000000000..ef6be6db68
+--- /dev/null
++++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c
+@@ -0,0 +1,98 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#include "nbl_hw_leonis_snic.h"
++
++static inline void nbl_wr32(void *priv, u64 reg, u32 value)
++{
++	struct nbl_hw_mgt *hw_mgt = (struct nbl_hw_mgt *)priv;
++
++	rte_write32(rte_cpu_to_le_32(value), ((hw_mgt)->hw_addr + (reg)));
++}
++
++static void nbl_hw_update_tail_ptr(void *priv, u16 notify_qid, u16 tail_ptr)
++{
++	nbl_wr32(priv, NBL_NOTIFY_ADDR, ((u32)tail_ptr << NBL_TAIL_PTR_OFT | (u32)notify_qid));
++}
++
++static u8 *nbl_hw_get_tail_ptr(void *priv)
++{
++	struct nbl_hw_mgt *hw_mgt = (struct nbl_hw_mgt *)priv;
++
++	return hw_mgt->hw_addr;
++}
++
++const struct nbl_hw_ops hw_ops = {
++	.update_tail_ptr		= nbl_hw_update_tail_ptr,
++	.get_tail_ptr			= nbl_hw_get_tail_ptr,
++};
++
++static int nbl_hw_setup_ops(struct nbl_hw_ops_tbl **hw_ops_tbl,
++			    struct nbl_hw_mgt_leonis_snic *hw_mgt_leonis_snic)
++{
++	*hw_ops_tbl = calloc(1, sizeof(**hw_ops_tbl));
++	if (!*hw_ops_tbl)
++		return -ENOMEM;
++
++	NBL_HW_OPS_TBL_TO_OPS(*hw_ops_tbl) = &hw_ops;
++	NBL_HW_OPS_TBL_TO_PRIV(*hw_ops_tbl) = hw_mgt_leonis_snic;
++
++	return 0;
++}
++
++static void nbl_hw_remove_ops(struct nbl_hw_ops_tbl **hw_ops_tbl)
++{
++	free(*hw_ops_tbl);
++	*hw_ops_tbl = NULL;
++}
++
++int nbl_hw_init_leonis_snic(void *p)
++{
++	struct nbl_hw_mgt_leonis_snic **hw_mgt_leonis_snic;
++	struct nbl_hw_mgt *hw_mgt;
++	struct nbl_hw_ops_tbl **hw_ops_tbl;
++	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
++	struct rte_pci_device *pci_dev = adapter->pci_dev;
++	int ret = 0;
++
++	hw_mgt_leonis_snic = (struct nbl_hw_mgt_leonis_snic **)&NBL_ADAPTER_TO_HW_MGT(adapter);
++	hw_ops_tbl = &NBL_ADAPTER_TO_HW_OPS_TBL(adapter);
++
++	*hw_mgt_leonis_snic = rte_zmalloc("nbl_hw_mgt", sizeof(**hw_mgt_leonis_snic), 0);
++	if (!*hw_mgt_leonis_snic) {
++		ret = -ENOMEM;
++		goto alloc_hw_mgt_failed;
++	}
++
++	hw_mgt = &(*hw_mgt_leonis_snic)->hw_mgt;
++
++	hw_mgt->hw_addr = (u8 *)pci_dev->mem_resource[0].addr;
++	hw_mgt->memory_bar_pa = pci_dev->mem_resource[0].phys_addr;
++	hw_mgt->mailbox_bar_hw_addr = (u8 *)pci_dev->mem_resource[2].addr;
++
++	ret = nbl_hw_setup_ops(hw_ops_tbl, *hw_mgt_leonis_snic);
++	if (ret)
++		goto setup_ops_failed;
++
++	return ret;
++
++setup_ops_failed:
++	rte_free(*hw_mgt_leonis_snic);
++alloc_hw_mgt_failed:
++	return ret;
++}
++
++void nbl_hw_remove_leonis_snic(void *p)
++{
++	struct nbl_hw_mgt_leonis_snic **hw_mgt_leonis_snic;
++	struct nbl_hw_ops_tbl **hw_ops_tbl;
++	struct nbl_adapter *adapter = (struct nbl_adapter *)p;
++
++	hw_mgt_leonis_snic = (struct nbl_hw_mgt_leonis_snic **)&adapter->core.hw_mgt;
++	hw_ops_tbl = &NBL_ADAPTER_TO_HW_OPS_TBL(adapter);
++
++	rte_free(*hw_mgt_leonis_snic);
++
++	nbl_hw_remove_ops(hw_ops_tbl);
++}
+diff --git a/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.h b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.h
+new file mode 100644
+index 0000000000..94f5062cf0
+--- /dev/null
++++ b/drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#ifndef _NBL_HW_LEONIS_SNIC_H_
++#define _NBL_HW_LEONIS_SNIC_H_
++
++#include "../nbl_hw.h"
++
++#endif
+diff --git a/drivers/net/nbl/nbl_include/nbl_def_hw.h b/drivers/net/nbl/nbl_include/nbl_def_hw.h
+new file mode 100644
+index 0000000000..285ca98570
+--- /dev/null
++++ b/drivers/net/nbl/nbl_include/nbl_def_hw.h
+@@ -0,0 +1,35 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#ifndef _NBL_DEF_HW_H_
++#define _NBL_DEF_HW_H_
++
++#include "nbl_include.h"
++
++#define NBL_HW_OPS_TBL_TO_OPS(hw_ops_tbl)	((hw_ops_tbl)->ops)
++#define NBL_HW_OPS_TBL_TO_PRIV(hw_ops_tbl)	((hw_ops_tbl)->priv)
++
++struct nbl_hw_ops {
++	/* queue */
++	void (*update_tail_ptr)(void *priv, u16 notify_qid, u16 tail_ptr);
++	u8 *(*get_tail_ptr)(void *priv);
++
++	/* mailbox */
++	void (*config_mailbox_rxq)(void *priv, uint64_t dma_addr, int size_bwid);
++	void (*config_mailbox_txq)(void *priv, uint64_t dma_addr, int size_bwid);
++	void (*stop_mailbox_rxq)(void *priv);
++	void (*stop_mailbox_txq)(void *priv);
++	uint16_t (*get_mailbox_rx_tail_ptr)(void *priv);
++	void (*update_mailbox_queue_tail_ptr)(void *priv, uint16_t tail_ptr, uint8_t txrx);
++};
++
++struct nbl_hw_ops_tbl {
++	const struct nbl_hw_ops *ops;
++	void *priv;
++};
++
++int nbl_hw_init_leonis_snic(void *adapter);
++void nbl_hw_remove_leonis_snic(void *adapter);
++
++#endif
+diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
+index 3c7573f3bf..d116d22f51 100644
+--- a/drivers/net/nbl/nbl_include/nbl_include.h
++++ b/drivers/net/nbl/nbl_include/nbl_include.h
+@@ -28,6 +28,7 @@
+ #include <ethdev_driver.h>
+ #include <ethdev_pci.h>
+ #include <bus_pci_driver.h>
++#include <rte_io.h>
+ 
+ #include "nbl_logs.h"
+ 
+@@ -40,4 +41,15 @@ typedef int32_t s32;
+ typedef int16_t s16;
+ typedef int8_t s8;
+ 
++enum nbl_product_type {
++	NBL_LEONIS_TYPE,
++	NBL_PRODUCT_MAX,
++};
++
++struct nbl_func_caps {
++	enum nbl_product_type product_type;
++	u32 is_vf:1;
++	u32 rsv:31;
++};
++
+ #endif
 -- 
 2.34.1
 
