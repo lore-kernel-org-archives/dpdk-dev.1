@@ -2,69 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC71CAC5AC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 14:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CE0CAC5A7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 14:32:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B6FF7402CB;
-	Tue, 23 Sep 2025 16:23:02 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id B3368402B3
- for <dev@dpdk.org>; Tue, 23 Sep 2025 16:23:01 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58N5L4sc022952;
- Tue, 23 Sep 2025 07:23:01 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=W0ZF5rkFZTs7pnLDSK17ExR
- HJYpA6QHIXp68tQWbOgo=; b=LX5ilZdvaffShYfEQIpFx4JdrCkNN/0zz+UrTlr
- Edq7fSeUMYO1bwCx6drVWFIRlnbcUUJ4Buhy6kDeZhoAjXPSQtycAyVeBJ7nqF3E
- eqaX/fiH4Jg1Dz9kvEjzpRBWK7tUggi7hKbQnLpaphtgbgLJgBXQBQOr7iYL+UkH
- vMmRYUyCXQGh6E9Nt4roW9EqIspLTaHLk7taMpTfo6Q2uuEU1ROS4I9LJx6vjBGc
- FYCAld6jpZrObcZQX3eUzb2BagA32HQ/Jlpmxnc5bEhoUhrlaaVGd/GHse3x5JPw
- VI3D5lgIKlkshIfeblmjjCpqxW4QG43CF+lS49uz+RU89iw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49bnags34a-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 23 Sep 2025 07:23:00 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 23 Sep 2025 07:22:59 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 23 Sep 2025 07:22:59 -0700
-Received: from nkaithakadan-dkr.marvell.com (unknown [10.29.45.70])
- by maili.marvell.com (Postfix) with ESMTP id 877B75B6924;
- Tue, 23 Sep 2025 07:22:56 -0700 (PDT)
-From: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
-To: <dev@dpdk.org>
-CC: <anoobj@marvell.com>, <ktejasree@marvell.com>, <gakhil@marvell.com>,
- <kai.ji@intel.com>, <ciara.power@intel.com>,
- <pablo.de.lara.guarch@intel.com>, <arkadiuszx.kusztal@intel.com>
-Subject: [PATCH] test/crypto: fix for mbuf sanity check failure
-Date: Tue, 23 Sep 2025 14:22:54 +0000
-Message-ID: <20250923142254.1904208-1-nkaithakadan@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id B299E402CB;
+	Tue, 23 Sep 2025 16:32:33 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 4C420402B3
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 16:32:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1758637952; x=1790173952;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=nLBl/oD94TCLPug2gXX/rGCU2iA4uWAGIHVxX1EI6Og=;
+ b=YzPxXyZ3tjhdCSNGa0Gp5i7cNEOgh7RfEgHXYkW8Uhvl3JcE1N1Qo3N7
+ X33w5Rbi3leLBMl2zq3eop1NMjvexJNk165SuPl2H0hzGgh9td6mKx5bB
+ lSxBE/0g80YZz5OuCxAw32DcNIBooQe1Tn5hfuPwhYUqeHdKhwRkdpHgQ
+ pZJ4Sore0u3Wj/GeQUlUhgD+vAdWJynDAo5r+7P0AR0mYPN4oB8wLmv2j
+ zYQpbTacuGVNV67kj874jb9lDW0qrOPVA+fuxJEN/zyZokrPjwHdv36sY
+ hJxpY70pi/n9rX5Zqx4YtsGerV6bUmZpUeb5hH7jcpxctcQv4uJvCHHVr w==;
+X-CSE-ConnectionGUID: yI6piVLfTiOWW02eUaKLHA==
+X-CSE-MsgGUID: E9BuLYspTM61rd8ajLtafw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="64745146"
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="64745146"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Sep 2025 07:32:31 -0700
+X-CSE-ConnectionGUID: dpi/L7icSayt0rG+x4vASA==
+X-CSE-MsgGUID: WrUfaYcnQ5uYJNb80DqtKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="175903731"
+Received: from silpixa00401385.ir.intel.com (HELO silpixa00401385..)
+ ([10.20.224.226])
+ by orviesa006.jf.intel.com with ESMTP; 23 Sep 2025 07:32:30 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ David Marchand <david.marchand@redhat.com>
+Subject: [PATCH v2] telemetry: remove deprecated functions
+Date: Tue, 23 Sep 2025 15:32:25 +0100
+Message-ID: <20250923143225.12252-1-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250919075654.220920-1-bruce.richardson@intel.com>
+References: <20250919075654.220920-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=X6pSKHTe c=1 sm=1 tr=0 ts=68d2ad44 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=yJojWOMRYYMA:10 a=M5GUcnROAAAA:8 a=5FrFcuNKcf7HXzTYalUA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDA0NyBTYWx0ZWRfXxVv9XKx1BNtL
- Vz8sXwIPVvgSk4u/QFAALxF52gct3Js7oEIf+jLl9BSJz0m/DmkHUpg08dwRVlLS7DPJkVUew64
- 9h/4zl9LNiyPokdEEjgrMsfkdN5ISUxGRnPfsk3gZPcpqSkMrBzWg9HEtzIqmkT5HvGht1KH1gj
- ckubjagXkRpznPNfzCD4884skOgkhpZ3muyYczN9ihLJoDaDRP42kZOhxQg4trj7MK2C6Hpwmj5
- cVLiUtIMYeHdEH8QcZPGmUypAnT6M0gSVikMP4w0aUK652YQFtWVuEG3Pg1bG8oco+YGYHKC9zH
- BAPzoITJJOrSyBHDeheZsCVGtxywoNrz/+pL3KwOPjodvXiaSwFUO3lnBBuZwLf7WsJEhlWs/6e
- x9iLb7vA
-X-Proofpoint-GUID: IUbAsCGMAOJUkm2prgb2u-FngIgje_iX
-X-Proofpoint-ORIG-GUID: IUbAsCGMAOJUkm2prgb2u-FngIgje_iX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-23_03,2025-09-22_05,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,164 +61,136 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch resolves the following mbuf sanity check errors.
-  - updating nb_segs and pkt_len in the head mbuf after
-    freeing intermediate nodes in the chain.
-  - fix incorrect usage of rte_pktmbuf_append by ensuring
-    the head mbuf is passed instead of an intermediate
-    node, allowing proper tail detection and metadata
-    update.
+The "_u64" telemetry functions were replaced by the "_uint" versions
+back in 2023 [1], so can be removed from the release.
 
-Fixes: dc3f6c5347b2 ("test/crypto: fix wireless auth digest segment")
-Fixes: 43220096d66a ("test/crypto: add PDCP cases for scatter gather")
-Fixes: dcdd01691f39 ("test/crypto: add GMAC SGL")
-Fixes: f3dbf94be60c ("app/test: check SGL on QAT")
+[1] https://doc.dpdk.org/guides-23.03/rel_notes/deprecation.html
 
-Signed-off-by: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: David Marchand <david.marchand@redhat.com>
 ---
- app/test/test_cryptodev.c | 59 ++++++++++++++++++++++++++-------------
- 1 file changed, 40 insertions(+), 19 deletions(-)
+ doc/guides/rel_notes/deprecation.rst   |  5 ----
+ doc/guides/rel_notes/release_25_11.rst |  4 +++
+ lib/telemetry/rte_telemetry.h          | 35 --------------------------
+ lib/telemetry/telemetry_data.c         | 14 -----------
+ 4 files changed, 4 insertions(+), 54 deletions(-)
 
-diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c
-index 5229ac2bf6..f092f608a9 100644
---- a/app/test/test_cryptodev.c
-+++ b/app/test/test_cryptodev.c
-@@ -3488,6 +3488,8 @@ create_wireless_algo_auth_cipher_operation(
- 		uint16_t remaining_off = (auth_offset >> 3) + (auth_len >> 3);
- 		struct rte_mbuf *sgl_buf = (op_mode == IN_PLACE ?
- 				sym_op->m_src : sym_op->m_dst);
-+		struct rte_mbuf *sgl_buf_head = sgl_buf;
+diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
+index bdcd2775b6..483030cda8 100644
+--- a/doc/guides/rel_notes/deprecation.rst
++++ b/doc/guides/rel_notes/deprecation.rst
+@@ -20,11 +20,6 @@ Deprecation Notices
+ * kvargs: The function ``rte_kvargs_process`` will get a new parameter
+   for returning key match count. It will ease handling of no-match case.
+ 
+-* telemetry: The functions ``rte_tel_data_add_array_u64`` and ``rte_tel_data_add_dict_u64``,
+-  used by telemetry callbacks for adding unsigned integer values to be returned to the user,
+-  are renamed to ``rte_tel_data_add_array_uint`` and ``rte_tel_data_add_dict_uint`` respectively.
+-  As such, the old function names are deprecated and will be removed in a future release.
+-
+ * eal: The ``-c <coremask>`` commandline parameter is deprecated
+   and will be removed in a future release.
+   Use the ``-l <corelist>`` or ``--lcores=<corelist>`` parameters instead
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index efb88bbbb0..03cee47369 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -89,6 +89,10 @@ Removed Items
+    Also, make sure to start the actual text at the margin.
+    =======================================================
+ 
++* telemetry: As previously announced in the deprecation notices,
++  the functions ``rte_tel_data_add_array_u64`` and ``rte_tel_data_add_dict_u64`` are removed.
++  They are replaced by ``rte_tel_data_add_array_uint`` and ``rte_tel_data_add_dict_uint`` respectively.
 +
- 		while (remaining_off >= rte_pktmbuf_data_len(sgl_buf)) {
- 			remaining_off -= rte_pktmbuf_data_len(sgl_buf);
- 			sgl_buf = sgl_buf->next;
-@@ -3495,11 +3497,18 @@ create_wireless_algo_auth_cipher_operation(
  
- 		/* The last segment should be large enough to hold full digest */
- 		if (sgl_buf->data_len < auth_tag_len) {
--			rte_pktmbuf_free(sgl_buf->next);
--			sgl_buf->next = NULL;
--			TEST_ASSERT_NOT_NULL(rte_pktmbuf_append(sgl_buf,
--					auth_tag_len - sgl_buf->data_len),
--					"No room to append auth tag");
-+			uint16_t next_data_len = 0;
-+			if (sgl_buf->next != NULL) {
-+				next_data_len = sgl_buf->next->data_len;
-+
-+				rte_pktmbuf_free(sgl_buf->next);
-+				sgl_buf->next = NULL;
-+				sgl_buf_head->nb_segs -= 1;
-+				sgl_buf_head->pkt_len -= next_data_len;
-+			}
-+			TEST_ASSERT_NOT_NULL(rte_pktmbuf_append(
-+						sgl_buf_head, auth_tag_len - sgl_buf->data_len),
-+						"No room to append auth tag");
- 		}
+ API Changes
+ -----------
+diff --git a/lib/telemetry/rte_telemetry.h b/lib/telemetry/rte_telemetry.h
+index c4554e4028..b9662a5213 100644
+--- a/lib/telemetry/rte_telemetry.h
++++ b/lib/telemetry/rte_telemetry.h
+@@ -136,22 +136,6 @@ rte_tel_data_add_array_int(struct rte_tel_data *d, int64_t x);
+ int
+ rte_tel_data_add_array_uint(struct rte_tel_data *d, uint64_t x);
  
- 		sym_op->auth.digest.data = rte_pktmbuf_mtod_offset(sgl_buf,
-@@ -9795,11 +9804,13 @@ test_pdcp_proto_SGL(int i, int oop,
- 			buf_oop = buf_oop->next;
- 			memset(rte_pktmbuf_mtod(buf_oop, uint8_t *),
- 					0, rte_pktmbuf_tailroom(buf_oop));
--			rte_pktmbuf_append(buf_oop, to_trn);
-+			TEST_ASSERT_NOT_NULL(ut_params->obuf, "Output buffer not initialized");
-+			TEST_ASSERT_NOT_NULL(rte_pktmbuf_append(ut_params->obuf, to_trn), "Failed to append to mbuf");
- 		}
+- /**
+- * Add a uint64_t to an array.
+- * The array must have been started by rte_tel_data_start_array() with
+- * RTE_TEL_UINT_VAL as the type parameter.
+- *
+- * @param d
+- *   The data structure passed to the callback
+- * @param x
+- *   The number to be returned in the array
+- * @return
+- *   0 on success, negative errno on error
+- */
+-int
+-rte_tel_data_add_array_u64(struct rte_tel_data *d, uint64_t x)
+-	__rte_deprecated_msg("use 'rte_tel_data_add_array_uint' instead");
+-
+ /**
+  * Add a container to an array. A container is an existing telemetry data
+  * array. The array the container is to be added to must have been started by
+@@ -249,25 +233,6 @@ int
+ rte_tel_data_add_dict_uint(struct rte_tel_data *d,
+ 		const char *name, uint64_t val);
  
--		plaintext = (uint8_t *)rte_pktmbuf_append(buf,
-+		plaintext = (uint8_t *)rte_pktmbuf_append(ut_params->ibuf,
- 				to_trn);
-+		TEST_ASSERT_NOT_NULL(plaintext, "Failed to append plaintext");
+- /**
+- * Add a uint64_t value to a dictionary.
+- * The dict must have been started by rte_tel_data_start_dict().
+- *
+- * @param d
+- *   The data structure passed to the callback
+- * @param name
+- *   The name the value is to be stored under in the dict
+- *   Must contain only alphanumeric characters or the symbols: '_' or '/'
+- * @param val
+- *   The number to be stored in the dict
+- * @return
+- *   0 on success, negative errno on error, E2BIG on string truncation of name.
+- */
+-int
+-rte_tel_data_add_dict_u64(struct rte_tel_data *d,
+-		const char *name, uint64_t val)
+-	__rte_deprecated_msg("use 'rte_tel_data_add_dict_uint' instead");
+-
+ /**
+  * Add a container to a dictionary. A container is an existing telemetry data
+  * array. The dict the container is to be added to must have been started by
+diff --git a/lib/telemetry/telemetry_data.c b/lib/telemetry/telemetry_data.c
+index c120600622..0354a06548 100644
+--- a/lib/telemetry/telemetry_data.c
++++ b/lib/telemetry/telemetry_data.c
+@@ -91,13 +91,6 @@ rte_tel_data_add_array_uint(struct rte_tel_data *d, uint64_t x)
+ 	return 0;
+ }
  
- 		memcpy(plaintext, input_vec + trn_data, to_trn);
- 		trn_data += to_trn;
-@@ -9828,7 +9839,7 @@ test_pdcp_proto_SGL(int i, int oop,
- 			buf_oop = buf_oop->next;
- 			memset(rte_pktmbuf_mtod(buf_oop, uint8_t *),
- 					0, rte_pktmbuf_tailroom(buf_oop));
--			rte_pktmbuf_append(buf_oop, to_trn);
-+			TEST_ASSERT_NOT_NULL(rte_pktmbuf_append(ut_params->obuf, to_trn), "Failed to append to mbuf");
+-RTE_EXPORT_SYMBOL(rte_tel_data_add_array_u64)
+-int
+-rte_tel_data_add_array_u64(struct rte_tel_data *d, uint64_t x)
+-{
+-	return rte_tel_data_add_array_uint(d, x);
+-}
+-
+ RTE_EXPORT_SYMBOL(rte_tel_data_add_array_container)
+ int
+ rte_tel_data_add_array_container(struct rte_tel_data *d,
+@@ -229,13 +222,6 @@ rte_tel_data_add_dict_uint(struct rte_tel_data *d,
+ 	return bytes < RTE_TEL_MAX_STRING_LEN ? 0 : E2BIG;
+ }
  
- 			trn_data += to_trn;
- 		}
-@@ -15916,15 +15927,18 @@ test_AES_GMAC_authentication_SGL(const struct gmac_test_data *tdata,
- 		memset(rte_pktmbuf_mtod(buf, uint8_t *), 0,
- 				rte_pktmbuf_tailroom(buf));
- 
--		plaintext = (uint8_t *)rte_pktmbuf_append(buf,
-+		plaintext = (uint8_t *)rte_pktmbuf_append(ut_params->ibuf,
- 				to_trn);
-+		TEST_ASSERT_NOT_NULL(plaintext, "Failed to append plaintext");
- 
- 		memcpy(plaintext, tdata->plaintext.data + trn_data,
- 				to_trn);
- 		trn_data += to_trn;
--		if (trn_data  == tdata->plaintext.len)
--			digest_mem = (uint8_t *)rte_pktmbuf_append(buf,
-+		if (trn_data  == tdata->plaintext.len) {
-+			digest_mem = (uint8_t *)rte_pktmbuf_append(ut_params->ibuf,
- 					tdata->gmac_tag.len);
-+			TEST_ASSERT_NOT_NULL(digest_mem, "Failed to append digest data");
-+		}
- 	}
- 	ut_params->ibuf->nb_segs = segs;
- 
-@@ -17223,23 +17237,28 @@ test_authenticated_encryption_SGL(const struct aead_test_data *tdata,
- 			buf_oop = buf_oop->next;
- 			memset(rte_pktmbuf_mtod(buf_oop, uint8_t *),
- 					0, rte_pktmbuf_tailroom(buf_oop));
--			rte_pktmbuf_append(buf_oop, to_trn);
-+			TEST_ASSERT_NOT_NULL(rte_pktmbuf_append(ut_params->obuf, to_trn), "Failed to append to mbuf");
- 		}
- 
--		plaintext = (uint8_t *)rte_pktmbuf_append(buf,
-+		plaintext = (uint8_t *)rte_pktmbuf_append(ut_params->ibuf,
- 				to_trn);
-+		TEST_ASSERT_NOT_NULL(plaintext, "Failed to append plaintext");
- 
- 		memcpy(plaintext, tdata->plaintext.data + trn_data,
- 				to_trn);
- 		trn_data += to_trn;
- 		if (trn_data  == tdata->plaintext.len) {
- 			if (oop) {
--				if (!fragsz_oop)
--					digest_mem = rte_pktmbuf_append(buf_oop,
-+				if (!fragsz_oop) {
-+					digest_mem = rte_pktmbuf_append(ut_params->obuf,
- 						tdata->auth_tag.len);
--			} else
--				digest_mem = (uint8_t *)rte_pktmbuf_append(buf,
-+					TEST_ASSERT_NOT_NULL(digest_mem, "Failed to append auth tag");
-+				}
-+			} else {
-+				digest_mem = (uint8_t *)rte_pktmbuf_append(ut_params->ibuf,
- 					tdata->auth_tag.len);
-+				TEST_ASSERT_NOT_NULL(digest_mem, "Failed to append auth tag");
-+			}
- 		}
- 	}
- 
-@@ -17274,16 +17293,18 @@ test_authenticated_encryption_SGL(const struct aead_test_data *tdata,
- 
- 			buf_last_oop = buf_oop->next =
- 					rte_pktmbuf_alloc(ts_params->mbuf_pool);
-+			TEST_ASSERT_NOT_NULL(buf_oop->next, "Unexpected end of chain");
- 			buf_oop = buf_oop->next;
- 			memset(rte_pktmbuf_mtod(buf_oop, uint8_t *),
- 					0, rte_pktmbuf_tailroom(buf_oop));
--			rte_pktmbuf_append(buf_oop, to_trn);
-+			TEST_ASSERT_NOT_NULL(rte_pktmbuf_append(ut_params->obuf, to_trn), "Failed to append to mbuf");
- 
- 			trn_data += to_trn;
- 
- 			if (trn_data  == tdata->plaintext.len) {
--				digest_mem = rte_pktmbuf_append(buf_oop,
-+				digest_mem = rte_pktmbuf_append(ut_params->obuf,
- 					tdata->auth_tag.len);
-+				TEST_ASSERT_NOT_NULL(digest_mem, "Failed to append auth tag");
- 			}
- 		}
- 
+-RTE_EXPORT_SYMBOL(rte_tel_data_add_dict_u64)
+-int
+-rte_tel_data_add_dict_u64(struct rte_tel_data *d, const char *name, uint64_t val)
+-{
+-	return rte_tel_data_add_dict_uint(d, name, val);
+-}
+-
+ RTE_EXPORT_SYMBOL(rte_tel_data_add_dict_container)
+ int
+ rte_tel_data_add_dict_container(struct rte_tel_data *d, const char *name,
 -- 
 2.48.1
 
