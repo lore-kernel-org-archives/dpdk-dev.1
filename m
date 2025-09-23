@@ -2,52 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEC4CAC5AC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 14:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4929FCAC5A7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 14:48:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6D1B840667;
-	Tue, 23 Sep 2025 16:40:08 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id E0F7F402CB
- for <dev@dpdk.org>; Tue, 23 Sep 2025 16:40:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1758638407; x=1790174407;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=BOdKQOh71mI3FqEeeqSLWn/uEdYwMlyr8Jxz7O2BROE=;
- b=MsNTFYo/tvy+kLdCge7PF3p6bFJ6HUjylDpPAtb6QF203sqIQ7camIhK
- CpWekfr6JiBFdEIgLoMkURFNJaguoCuDFTTeQyuLV1GHwbsXzqF4up8b6
- xYRQ172Nw96pJwQAbm1wcx7kB7wR91B05j557ua6hRX2D5WYPY/pVfZH9
- 9Ls7Ahu0Ou6evVbQsT5GBS0ONc5bSQ0ZagpqWta2MzGu0i0vMxie/5W4C
- 0eHK0D70lTG/xL9Vv9KRhF2Y2XKaFPxRE8p/2lVtn9KhCLKKXAQl9qmrz
- RCAYBQNhSe5wByb5G2coQNB2GLbJ9hYlUlrBr8l8t0qmDvqvYZMdPEI2o A==;
-X-CSE-ConnectionGUID: //EzXz2xTAqEkIy1mQBcWA==
-X-CSE-MsgGUID: lREMG+H9QeSR8pD9gmyvCw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="63547835"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="63547835"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Sep 2025 07:40:06 -0700
-X-CSE-ConnectionGUID: WHo8zunsR8CsPsWCKBaxZQ==
-X-CSE-MsgGUID: KLr/GHjUT1ef0iqDe51m0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="176359303"
-Received: from silpixa00401385.ir.intel.com (HELO silpixa00401385..)
- ([10.20.224.226])
- by orviesa009.jf.intel.com with ESMTP; 23 Sep 2025 07:40:04 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- David Marchand <david.marchand@redhat.com>
-Subject: [PATCH v3] build: remove deprecated kmods option
-Date: Tue, 23 Sep 2025 15:40:00 +0100
-Message-ID: <20250923144000.13570-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250919075733.221023-1-bruce.richardson@intel.com>
-References: <20250919075733.221023-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 920E040615;
+	Tue, 23 Sep 2025 16:48:02 +0200 (CEST)
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com
+ [209.85.222.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 5D76C402CB
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 16:48:01 +0200 (CEST)
+Received: by mail-qk1-f174.google.com with SMTP id
+ af79cd13be357-8498f5194deso234835985a.1
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 07:48:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758638881;
+ x=1759243681; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=cPqgaKsg/aPA245vm+plvYXxCCh+nj2WVz+Vx+bUpPA=;
+ b=ilsVVZ/9hKtM9qK4qQgGYwpTVGdwcgDhwHxtekiU7UllaQ9TWtykdaRUhP7Z7SoZYL
+ DZ9Iu9qQCliJqjJZVCYVh8tRACDcX7U75iL2VTzvZs/plKwQqxuKaGhGLGCUbhdzLbAH
+ Q/Q3nqe4SPyH1haPXCPdvCFooGr9IbwthC98Bn6/oD+il+996R9LR4uc9tjalt05X7uY
+ Ix9jCwNgc+iZgRHo2Vby579c4unksZZ0HzPI9rkG/KKeuTvNTv7JnHyDdJd/+ryRvynU
+ MAbNdWq9zuL93ZmB0H8/Vavdw48ecRtwjM1yqaeRd3pgSK0vAkQIQJeq8fwiD1DjvlI4
+ UOvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1758638881; x=1759243681;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=cPqgaKsg/aPA245vm+plvYXxCCh+nj2WVz+Vx+bUpPA=;
+ b=lsYgXdnnqUCxuMKtLUH80vL00gBTWSKA5xtD+olanheKRNHX09LpkiIVUHh5yhFJlE
+ ntjeyIIL0qOnjt8YQA/XSWGDE2mKOqDL2igNJK5z9rjz8eOmQaSw9QMJWl/5E6bfDVf9
+ BEXeEcMwyxkGD66kCyZwU9tbskWE9edJctCzEvpPnweri9Nw+r107Ofuy2+Gpyauf9vC
+ JEkx9cNHiESQkWSBlBWNMeQhi13CjqBWhT/Rn4zsM4+EbMvU1HN/AuO8ODvZAF92+wRH
+ X7jal2fXw2VifMXi2I4Vh0B0z1RTXx1KKCgmdTCJlI3unQ0RlS6LdXBClDnuM6ozeKr2
+ BcDg==
+X-Gm-Message-State: AOJu0Yy5FyalAe6152M31tYqXRHeRFoy/wXCxw/YiiFTKUjp1z+G6nAu
+ OYtmwvacq3rs4b9JbejTwlLNWmqffGgBJq3vdk32VfZcmf2hRMjK/ThMd5hzlKTtv6Jn599ZXO9
+ b82LA
+X-Gm-Gg: ASbGnct0krVlDmKr+/5wQicUD2XWq62kPPqEPt3cUekKS2CGQH50omTaNo/3AgF1kxc
+ AWB5F2xoSh3Ff8R36Xo8RAkJTHrPwP1vK2mskdhPlMu6YhO38Uv432Yql9fVecOYW038lryUhXR
+ 5FpfsNssjRkxfrIgvIXj/gWZYFA9osf+LQdTK2bxPqW+Mn1XSTIX+pEPiFarwNRbB2vxXxVl9RT
+ +PENEoNcJ7B75wgs79QMgpdX/aGhsS+naNa5jhtcAx1UAUCCHctbdviNw0QzHuxU7tD22tr/7VL
+ SPVIHE0+z9KXAnVdJzbWWic4c+reA8Ygk7ESXbA+1Wdd3v+CgmSb60FJcyEKiAMzAlA7wDQpzsp
+ qHMPFVG+GdnazxLQBslhHO2Qyl4ku93YYTGMG1P8aA/Zgp8f+3ymVRjn1/Eg/4sEc4EtTas4DZV
+ 7irsODBUnqEA==
+X-Google-Smtp-Source: AGHT+IFf6SS3L45OpmO2dbYuExOcsXIQZiKX1yl2cU3qaWr5Da+rvAAfg+9xjUBiWKlHwsnMKgL4Yg==
+X-Received: by 2002:a05:620a:4808:b0:83a:dd34:aa77 with SMTP id
+ af79cd13be357-85176047373mr317253885a.68.1758638879439; 
+ Tue, 23 Sep 2025 07:47:59 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-848dd28fb3bsm420651985a.28.2025.09.23.07.47.58
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 23 Sep 2025 07:47:59 -0700 (PDT)
+Date: Tue, 23 Sep 2025 07:47:25 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Serhii Iliushyk <sil-plv@napatech.com>
+Cc: dev@dpdk.org, mko-plv@napatech.com, ckm@napatech.com
+Subject: Re: [PATCH v2 0/7] migrate threads to DPDK service framework
+Message-ID: <20250923074715.41aed917@hermes.local>
+In-Reply-To: <20250908141740.1312268-1-sil-plv@napatech.com>
+References: <20250908110446.1071964-8-sil-plv@napatech.com>
+ <20250908141740.1312268-1-sil-plv@napatech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,115 +83,106 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The "enable_kmods" meson option was deprecated back in 2023[1], so can
-now be removed from DPDK.
+On Mon,  8 Sep 2025 16:17:32 +0200
+Serhii Iliushyk <sil-plv@napatech.com> wrote:
 
-[1] https://doc.dpdk.org/guides-23.11/rel_notes/deprecation.html
+> This modification provides better resource (CPU) management for NTNIC PMD.
+> 
+> The following threads are migrated:
+>         * FLM update thread
+>         * Statistic thread
+>         * Port event thread
+>         * Adapter monitoring thread
+> Additionally, a warning is added to inform users about the importance of
+> dedicating lcores to the DPDK service framework when using the NTNIC PMD.
+> The code is also cleaned up to use pthreads and rte_thread APIs.
+> 
+> After this patch series, an each application using NTNIC PMD should
+> dedicate at least five(5) cores for DPDK service framework to ensure
+> proper operation of the NTNIC PMD.
+> 
+> The sercvice cores can be dedicated by EAL options:
+>         * s SERVICE COREMASK Hexadecimal bitmask of cores to be used as service cores
+>         * S SERVICE CORELIST List of cores to run services on
+> Or with special API by application itself.
+>         * rte_pmd_ntnic_service_set_lcore to map a service to a specific lcore
+>         * rte_pmd_ntnic_service_get_id to get a service ID.
+> 
+> Serhii Iliushyk (7):
+>   net/ntnic: introduce service API for NTNIC PMD
+>   net/ntnic: migrate flm update thread to service
+>   net/ntnic: migrate statistic thread to service
+>   net/ntnic: migrate port event thread to service
+>   net/ntnic: migrate adapter mon thread to service
+>   net/ntnic: add warning about service cores
+>   net/ntnic: cleanup using pthreads and rte_thread
+> 
+>  doc/guides/nics/ntnic.rst                     | 112 ++++
+>  drivers/net/ntnic/adapter/nt4ga_adapter.c     |  27 +-
+>  .../net/ntnic/include/common_adapter_defs.h   |  15 -
+>  drivers/net/ntnic/include/nt4ga_adapter.h     |   4 -
+>  drivers/net/ntnic/include/ntdrv_4ga.h         |   4 -
+>  drivers/net/ntnic/include/ntnic_stat.h        |   2 +-
+>  drivers/net/ntnic/include/ntos_drv.h          |   4 +-
+>  .../link_mgmt/link_100g/nt4ga_link_100g.c     | 303 +++++-----
+>  .../link_agx_100g/nt4ga_agx_link_100g.c       | 306 ++++++-----
+>  drivers/net/ntnic/meson.build                 |   2 +
+>  drivers/net/ntnic/nthw/core/nthw_pca9532.c    |   2 -
+>  drivers/net/ntnic/nthw/core/nthw_pcal6416a.c  |   1 -
+>  .../net/ntnic/nthw/core/nthw_si5332_si5156.c  |   1 -
+>  .../profile_inline/flow_api_profile_inline.c  |   2 +-
+>  drivers/net/ntnic/ntnic_ethdev.c              | 520 ++++++++++--------
+>  drivers/net/ntnic/ntnic_filter/ntnic_filter.c |  17 +
+>  drivers/net/ntnic/ntutil/nt_service.c         | 127 +++++
+>  drivers/net/ntnic/ntutil/nt_service.h         |  62 +++
+>  drivers/net/ntnic/ntutil/nt_util.c            |   2 +-
+>  drivers/net/ntnic/rte_pmd_ntnic.c             | 104 ++++
+>  drivers/net/ntnic/rte_pmd_ntnic.h             |  26 +
+>  21 files changed, 1073 insertions(+), 570 deletions(-)
+>  delete mode 100644 drivers/net/ntnic/include/common_adapter_defs.h
+>  create mode 100644 drivers/net/ntnic/ntutil/nt_service.c
+>  create mode 100644 drivers/net/ntnic/ntutil/nt_service.h
+>  create mode 100644 drivers/net/ntnic/rte_pmd_ntnic.c
+> 
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: David Marchand <david.marchand@redhat.com>
+I got a report from Raslan about format overflow from sprintf()
+so dropping this from next-net for now.
 
----
-v3: add release note update.
-v2: remove missed references in DTS and in freebsd meson.build
----
- doc/guides/rel_notes/deprecation.rst   | 7 -------
- doc/guides/rel_notes/release_25_11.rst | 7 +++++++
- dts/framework/remote_session/dpdk.py   | 2 +-
- dts/framework/utils.py                 | 2 +-
- kernel/freebsd/meson.build             | 4 ++--
- meson_options.txt                      | 2 --
- 6 files changed, 11 insertions(+), 13 deletions(-)
+Please consider resubmitting with a fix for that.
+Something like this (untested) change to not use sprintf at all
 
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 5aaeb1052a..bdcd2775b6 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -17,13 +17,6 @@ Other API and ABI deprecation notices are to be posted below.
- Deprecation Notices
- -------------------
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index 3edf7796f7..18dab16f6b 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -2580,7 +2580,8 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+                                .callback_userdata = internals
+                        };
  
--* build: The ``enable_kmods`` option is deprecated and will be removed in a future release.
--  Setting/clearing the option has no impact on the build.
--  Instead, kernel modules will be always built for OS's where out-of-tree kernel modules
--  are required for DPDK operation.
--  Currently, this means that modules will only be built for FreeBSD.
--  No modules are shipped with DPDK for either Linux or Windows.
+-                       sprintf(port_event_spec.name, "ntnic-port_%d_event_service", n_intf_no);
++                       snprintf(port_event_spec.name, RTE_SERVICE_NAME_MAX,
++                                "ntnic-%d_event", n_intf_no);
+ 
+                        const int port_srv_tag[2] = {
+                                RTE_NTNIC_SERVICE_PORT_0_EVENT,
+@@ -2612,9 +2613,8 @@ static int
+ nthw_pci_dev_deinit(struct rte_eth_dev *eth_dev __rte_unused)
+ {
+        NT_LOG_DBGX(DBG, NTNIC, "PCI device deinitialization");
 -
- * kvargs: The function ``rte_kvargs_process`` will get a new parameter
-   for returning key match count. It will ease handling of no-match case.
+        int i;
+-       char name[32];
++       char name[RTE_ETH_NAME_MAX_LEN];
  
-diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
-index efb88bbbb0..bce8e9f563 100644
---- a/doc/guides/rel_notes/release_25_11.rst
-+++ b/doc/guides/rel_notes/release_25_11.rst
-@@ -89,6 +89,13 @@ Removed Items
-    Also, make sure to start the actual text at the margin.
-    =======================================================
+        struct pmd_internals *internals = eth_dev->data->dev_private;
+        ntdrv_4ga_t *p_ntdrv = &internals->p_drv->ntdrv;
+@@ -2641,7 +2641,7 @@ nthw_pci_dev_deinit(struct rte_eth_dev *eth_dev __rte_unused)
+        }
  
-+* build: as previously announced in the deprecation notices,
-+  the ``enable_kmods`` build option has been removed.
-+  Kernel modules will now automatically be built for OS's where out-of-tree kernel modules
-+  are required for DPDK operation.
-+  Currently, this means that modules will only be built for FreeBSD.
-+  No modules are shipped with DPDK for either Linux or Windows.
-+
- 
- API Changes
- -----------
-diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
-index 606d6e22fe..2dc8dab642 100644
---- a/dts/framework/remote_session/dpdk.py
-+++ b/dts/framework/remote_session/dpdk.py
-@@ -262,7 +262,7 @@ def _build_dpdk(self) -> None:
-         """
-         self._session.build_dpdk(
-             self._env_vars,
--            MesonArgs(default_library="static", enable_kmods=True, libdir="lib"),
-+            MesonArgs(default_library="static", libdir="lib"),
-             self.remote_dpdk_tree_path,
-             self.remote_dpdk_build_dir,
-         )
-diff --git a/dts/framework/utils.py b/dts/framework/utils.py
-index 0c81ab1b95..9f7201c888 100644
---- a/dts/framework/utils.py
-+++ b/dts/framework/utils.py
-@@ -111,7 +111,7 @@ def __init__(self, default_library: str | None = None, **dpdk_args: str | bool):
-         Example:
-             ::
- 
--                meson_args = MesonArgs(enable_kmods=True).
-+                meson_args = MesonArgs(check_includes=True).
-         """
-         self._default_library = f"--default-library={default_library}" if default_library else ""
-         self._dpdk_args = " ".join(
-diff --git a/kernel/freebsd/meson.build b/kernel/freebsd/meson.build
-index 1f612711be..862e19e766 100644
---- a/kernel/freebsd/meson.build
-+++ b/kernel/freebsd/meson.build
-@@ -29,7 +29,7 @@ foreach k:kmods
-                 'KMOD_CFLAGS=' + ' '.join(kmod_cflags),
-                 'CC=clang'],
-             depends: built_kmods, # make each module depend on prev
--            build_by_default: get_option('enable_kmods'),
--            install: get_option('enable_kmods'),
-+            build_by_default: true,
-+            install: true,
-             install_dir: '/boot/modules/')
- endforeach
-diff --git a/meson_options.txt b/meson_options.txt
-index e49b2fc089..e28d24054c 100644
---- a/meson_options.txt
-+++ b/meson_options.txt
-@@ -24,8 +24,6 @@ option('enable_drivers', type: 'string', value: '', description:
-        'Comma-separated list of drivers to build. If unspecified, build all drivers.')
- option('enable_driver_sdk', type: 'boolean', value: false, description:
-        'Install headers to build drivers.')
--option('enable_kmods', type: 'boolean', value: true, description:
--       '[Deprecated - will be removed in future release] build kernel modules')
- option('enable_libs', type: 'string', value: '', description:
-        'Comma-separated list of optional libraries to explicitly enable. [NOTE: mandatory libs are always enabled]')
- option('examples', type: 'string', value: '', description:
--- 
-2.48.1
+        for (i = 0; i < n_phy_ports; i++) {
+-               sprintf(name, "ntnic%d", i);
++               snprintf(name, sizeof(name), "ntnic%d", i);
+                eth_dev = rte_eth_dev_allocated(name);
+                if (eth_dev == NULL)
+                        continue; /* port already released */
 
