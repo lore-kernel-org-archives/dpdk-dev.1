@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C02CAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 14:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF548CAC5AC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 14:12:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44B5E40695;
-	Tue, 23 Sep 2025 16:12:29 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E2A7540697;
+	Tue, 23 Sep 2025 16:12:50 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 6F3E040695
- for <dev@dpdk.org>; Tue, 23 Sep 2025 16:12:27 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6E317402B3
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 16:12:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1758636748; x=1790172748;
+ t=1758636769; x=1790172769;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=fNnjYQIvC6qn2PVoJbsULqsmVS8vYDZnLCzMaPnJYrk=;
- b=G3GZiYl5FNQ3/YYE95M9t9PBkxQlV5/adNRNWwhapcrkOma3A9RkLBIt
- x21EIj4efM0Sa4jPFbKyekMz7jEbS5XF1u/5UIWcs1KDpgeTVZcoHCJgc
- 8QqgIHCb+f8kpUKGoGP9BFjyuINLm95cwJJ+2YYNehOZ805Yg8aUUa0gm
- FfDpnYva+YusI6LtTRYj2mbNzVm3fQbV1xF86tUUaIC4Y7nCuezLpPvSF
- rbEAKx3aY6MoOY0uF2f15JCicJxQ4j52mfcnO4dzpMVwHF++ExTNBFLq8
- IIgD9erFKFkT0MksKmauXxWturyRuKeiT+V5jzxxpS7ZrvPGPVxEFr3Ia g==;
-X-CSE-ConnectionGUID: e+mfAqWJTWecZ0PuaB+vRQ==
-X-CSE-MsgGUID: V7ga5UgsRXeUo/2kfXRUdw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="64554254"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="64554254"
+ bh=E2BHBFOdGONM8HvvMC9T0t+4aXEqytlHLBm4AODD000=;
+ b=MMcCKiKgJOLQZAe8xB3DKh+RDfD3FUFtub8dfjaEw2zrzSLIBGfQ5Fnn
+ g9bOBDXeEeglMVzHoEtHJ6ArdZZBf59EAoUkO6O1FJ7Jy5BHEbFM07qfL
+ xYs+qsgEmR2gDoWFb7fvX3Md8b3p6c+TDNCjjH1av8uDJ+s8PE8ek/ebp
+ 14AFzSkomyawgHN5BbbHVZCXu9ETi+VVqEQgEhwJTD9uFw7y5QixhFfko
+ tRjPcSS7qWlS4NfezrzW82z0xuqBVDNWgs5dZxeglPg6XPLjoWshRiD+e
+ HwimnhoVsXi1kTJzTUEkyj5pNz3/M0w+6RYD7pJEvlAETCsgXIuR+78mL w==;
+X-CSE-ConnectionGUID: 6VrmAL0qS4qyO++ndDyCbw==
+X-CSE-MsgGUID: qaUAFQdMRqChnOj7/D1Eyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="64554301"
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="64554301"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Sep 2025 07:12:27 -0700
-X-CSE-ConnectionGUID: j9Ok/5MTSmWBM3qs+YDd3g==
-X-CSE-MsgGUID: YxQVrIgsR5GvYmg7XClobA==
+ 23 Sep 2025 07:12:45 -0700
+X-CSE-ConnectionGUID: z2W7/i92R+i1zzhZlcxdrg==
+X-CSE-MsgGUID: y8jc8dKMTBSSaovUDHQfUg==
 X-ExtLoop1: 1
 Received: from silpixa00401385.ir.intel.com (HELO silpixa00401385..)
  ([10.20.224.226])
- by fmviesa003.fm.intel.com with ESMTP; 23 Sep 2025 07:12:25 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 23 Sep 2025 07:12:43 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [RFC PATCH 3/6] ethdev: remove queue stats from ethdev stats structure
-Date: Tue, 23 Sep 2025 15:12:03 +0100
-Message-ID: <20250923141207.10403-4-bruce.richardson@intel.com>
+ Reshma Pattan <reshma.pattan@intel.com>,
+ Aman Singh <aman.deep.singh@intel.com>
+Subject: [RFC PATCH 5/6] app: remove queue stats from eth stats
+Date: Tue, 23 Sep 2025 15:12:05 +0100
+Message-ID: <20250923141207.10403-6-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250923141207.10403-1-bruce.richardson@intel.com>
 References: <20250923141207.10403-1-bruce.richardson@intel.com>
@@ -61,285 +61,88 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The queue stats part of the rte_eth_stats structure has been deprecated
-for many years now, since 2020 [1]. Therefore we look to remove these
-fields from the stats structure.
+Adjust applications to take account of the fact that queue stats are no
+longer part of ethdev stats.
 
-Unfortunately, the flag introduced by the deprecation,
-"RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS", means that for drivers using it we
-still have to return queue stats from the driver stats_get function.
-This means that we need a new parameter for those stats as part of the
-stats_get interface. The autofill flag is set for 35 drivers, which
-means that if we didn't do so, users of those 35 drivers would lose all
-ability to get per-queue stats.
-
-[1] Commit a72cb3e7656a ("doc: announce queue stats moving to xstats")
-	https://github.com/DPDK/dpdk/commit/a72cb3e
+- For proc-info, we have to drop the output of the stats, since they are
+  no longer present.
+- For the virtual_pmd in the test app, we adjust our stats_get function.
+- For testpmd, we can no longer reference the queue stats counter to
+  check it, however, the range is checked in the ethdev APIs anyway, so
+  just remove the check.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- config/rte_config.h               |  1 -
- lib/ethdev/ethdev_driver.h        | 23 ++++++++++++++++++-
- lib/ethdev/ethdev_private.c       | 26 ++++++++++++++++++++++
- lib/ethdev/ethdev_private.h       |  2 ++
- lib/ethdev/rte_ethdev.c           | 37 +++++++++----------------------
- lib/ethdev/rte_ethdev.h           | 11 ---------
- lib/ethdev/rte_ethdev_telemetry.c | 20 +----------------
- 7 files changed, 61 insertions(+), 59 deletions(-)
+ app/proc-info/main.c   | 16 ----------------
+ app/test-pmd/config.c  |  6 ------
+ app/test/virtual_pmd.c |  3 ++-
+ 3 files changed, 2 insertions(+), 23 deletions(-)
 
-diff --git a/config/rte_config.h b/config/rte_config.h
-index 05344e2619..94f9a6427e 100644
---- a/config/rte_config.h
-+++ b/config/rte_config.h
-@@ -67,7 +67,6 @@
- 
- /* ether defines */
- #define RTE_MAX_QUEUES_PER_PORT 1024
--#define RTE_ETHDEV_QUEUE_STAT_CNTRS 16 /* max 256 */
- #define RTE_ETHDEV_RXTX_CALLBACKS 1
- #define RTE_MAX_MULTI_HOST_CTRLS 4
- 
-diff --git a/lib/ethdev/ethdev_driver.h b/lib/ethdev/ethdev_driver.h
-index 71085bddff..d6f6d974cb 100644
---- a/lib/ethdev/ethdev_driver.h
-+++ b/lib/ethdev/ethdev_driver.h
-@@ -24,6 +24,27 @@
- extern "C" {
- #endif
- 
-+#define RTE_ETHDEV_QUEUE_STAT_CNTRS 16 /* max 256 */
-+
-+/**
-+ * @internal
-+ * structure used to pass queue stats back to ethdev for drivers which rely
-+ * on ethdev to add the queue stats automatically to xstats.
-+ */
-+struct eth_queue_stats {
-+	/* Queue stats are limited to max 256 queues */
-+	/** Total number of queue Rx packets. */
-+	uint64_t q_ipackets[RTE_ETHDEV_QUEUE_STAT_CNTRS];
-+	/** Total number of queue Tx packets. */
-+	uint64_t q_opackets[RTE_ETHDEV_QUEUE_STAT_CNTRS];
-+	/** Total number of successfully received queue bytes. */
-+	uint64_t q_ibytes[RTE_ETHDEV_QUEUE_STAT_CNTRS];
-+	/** Total number of successfully transmitted queue bytes. */
-+	uint64_t q_obytes[RTE_ETHDEV_QUEUE_STAT_CNTRS];
-+	/** Total number of queue packets received that are dropped. */
-+	uint64_t q_errors[RTE_ETHDEV_QUEUE_STAT_CNTRS];
-+};
-+
- /**
-  * @internal
-  * Structure used to hold information about the callbacks to be called for a
-@@ -428,7 +449,7 @@ typedef int (*eth_speed_lanes_get_capability_t)(struct rte_eth_dev *dev,
- 
- /** @internal Get global I/O statistics of an Ethernet device. */
- typedef int (*eth_stats_get_t)(struct rte_eth_dev *dev,
--				struct rte_eth_stats *igb_stats);
-+				struct rte_eth_stats *stats, struct eth_queue_stats *qstats);
- 
- /**
-  * @internal
-diff --git a/lib/ethdev/ethdev_private.c b/lib/ethdev/ethdev_private.c
-index 285d377d91..499e3f56b2 100644
---- a/lib/ethdev/ethdev_private.c
-+++ b/lib/ethdev/ethdev_private.c
-@@ -477,3 +477,29 @@ eth_dev_tx_queue_config(struct rte_eth_dev *dev, uint16_t nb_queues)
- 	dev->data->nb_tx_queues = nb_queues;
- 	return 0;
- }
-+
-+int
-+eth_stats_qstats_get(uint16_t port_id, struct rte_eth_stats *stats, struct eth_queue_stats *qstats)
-+{
-+	struct rte_eth_dev *dev;
-+	int ret;
-+
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
-+	dev = &rte_eth_devices[port_id];
-+
-+	if (stats == NULL) {
-+		RTE_ETHDEV_LOG_LINE(ERR, "Cannot get ethdev port %u stats to NULL",
-+			port_id);
-+		return -EINVAL;
-+	}
-+
-+	memset(stats, 0, sizeof(*stats));
-+	memset(qstats, 0, sizeof(*qstats));
-+
-+	if (dev->dev_ops->stats_get == NULL)
-+		return -ENOTSUP;
-+	stats->rx_nombuf = dev->data->rx_mbuf_alloc_failed;
-+	ret = eth_err(port_id, dev->dev_ops->stats_get(dev, stats, qstats));
-+
-+	return ret;
-+}
-diff --git a/lib/ethdev/ethdev_private.h b/lib/ethdev/ethdev_private.h
-index b07b1b4c42..735d9e60b6 100644
---- a/lib/ethdev/ethdev_private.h
-+++ b/lib/ethdev/ethdev_private.h
-@@ -79,4 +79,6 @@ void eth_dev_txq_release(struct rte_eth_dev *dev, uint16_t qid);
- int eth_dev_rx_queue_config(struct rte_eth_dev *dev, uint16_t nb_queues);
- int eth_dev_tx_queue_config(struct rte_eth_dev *dev, uint16_t nb_queues);
- 
-+int eth_stats_qstats_get(uint16_t port_id, struct rte_eth_stats *stats, struct eth_queue_stats *qstats);
-+
- #endif /* _ETH_PRIVATE_H_ */
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index f22139cb38..aa2d5703bd 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -73,16 +73,16 @@ static const struct rte_eth_xstats_name_off eth_dev_stats_strings[] = {
- #define RTE_NB_STATS RTE_DIM(eth_dev_stats_strings)
- 
- static const struct rte_eth_xstats_name_off eth_dev_rxq_stats_strings[] = {
--	{"packets", offsetof(struct rte_eth_stats, q_ipackets)},
--	{"bytes", offsetof(struct rte_eth_stats, q_ibytes)},
--	{"errors", offsetof(struct rte_eth_stats, q_errors)},
-+	{"packets", offsetof(struct eth_queue_stats, q_ipackets)},
-+	{"bytes", offsetof(struct eth_queue_stats, q_ibytes)},
-+	{"errors", offsetof(struct eth_queue_stats, q_errors)},
- };
- 
- #define RTE_NB_RXQ_STATS RTE_DIM(eth_dev_rxq_stats_strings)
- 
- static const struct rte_eth_xstats_name_off eth_dev_txq_stats_strings[] = {
--	{"packets", offsetof(struct rte_eth_stats, q_opackets)},
--	{"bytes", offsetof(struct rte_eth_stats, q_obytes)},
-+	{"packets", offsetof(struct eth_queue_stats, q_opackets)},
-+	{"bytes", offsetof(struct eth_queue_stats, q_obytes)},
- };
- #define RTE_NB_TXQ_STATS RTE_DIM(eth_dev_txq_stats_strings)
- 
-@@ -3346,27 +3346,9 @@ RTE_EXPORT_SYMBOL(rte_eth_stats_get)
- int
- rte_eth_stats_get(uint16_t port_id, struct rte_eth_stats *stats)
+diff --git a/app/proc-info/main.c b/app/proc-info/main.c
+index be67386658..1b9979b7c8 100644
+--- a/app/proc-info/main.c
++++ b/app/proc-info/main.c
+@@ -657,7 +657,6 @@ static void
+ nic_stats_display(uint16_t port_id)
  {
--	struct rte_eth_dev *dev;
--	int ret;
--
--	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
--	dev = &rte_eth_devices[port_id];
--
--	if (stats == NULL) {
--		RTE_ETHDEV_LOG_LINE(ERR, "Cannot get ethdev port %u stats to NULL",
--			port_id);
--		return -EINVAL;
+ 	struct rte_eth_stats stats;
+-	uint8_t i;
+ 
+ 	static const char *nic_stats_border = "########################";
+ 
+@@ -673,21 +672,6 @@ nic_stats_display(uint16_t port_id)
+ 	       "  TX-bytes:  %-10"PRIu64"\n", stats.opackets, stats.oerrors,
+ 	       stats.obytes);
+ 
+-	printf("\n");
+-	for (i = 0; i < RTE_ETHDEV_QUEUE_STAT_CNTRS; i++) {
+-		printf("  Stats reg %2d RX-packets: %-10"PRIu64
+-		       "  RX-errors: %-10"PRIu64
+-		       "  RX-bytes: %-10"PRIu64"\n",
+-		       i, stats.q_ipackets[i], stats.q_errors[i], stats.q_ibytes[i]);
 -	}
 -
--	memset(stats, 0, sizeof(*stats));
+-	printf("\n");
+-	for (i = 0; i < RTE_ETHDEV_QUEUE_STAT_CNTRS; i++) {
+-		printf("  Stats reg %2d TX-packets: %-10"PRIu64
+-		       "  TX-bytes: %-10"PRIu64"\n",
+-		       i, stats.q_opackets[i], stats.q_obytes[i]);
+-	}
 -
--	if (dev->dev_ops->stats_get == NULL)
--		return -ENOTSUP;
--	stats->rx_nombuf = dev->data->rx_mbuf_alloc_failed;
--	ret = eth_err(port_id, dev->dev_ops->stats_get(dev, stats));
-+	int ret = eth_stats_qstats_get(port_id, stats, NULL);
- 
- 	rte_eth_trace_stats_get(port_id, stats, ret);
--
- 	return ret;
+ 	printf("  %s############################%s\n",
+ 		   nic_stats_border, nic_stats_border);
  }
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index c1bd6921ea..ff170159a1 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -6727,12 +6727,6 @@ set_qmap(portid_t port_id, uint8_t is_rx, uint16_t queue_id, uint8_t map_value)
+ 	if (is_rx ? (rx_queue_id_is_invalid(queue_id)) : (tx_queue_id_is_invalid(queue_id)))
+ 		return;
  
-@@ -3709,12 +3691,13 @@ eth_basic_stats_get(uint16_t port_id, struct rte_eth_xstat *xstats)
- {
- 	struct rte_eth_dev *dev;
- 	struct rte_eth_stats eth_stats;
-+	struct eth_queue_stats queue_stats;
- 	unsigned int count = 0, i, q;
- 	uint64_t val, *stats_ptr;
- 	uint16_t nb_rxqs, nb_txqs;
- 	int ret;
- 
--	ret = rte_eth_stats_get(port_id, &eth_stats);
-+	ret = eth_stats_qstats_get(port_id, &eth_stats, &queue_stats);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -3737,7 +3720,7 @@ eth_basic_stats_get(uint16_t port_id, struct rte_eth_xstat *xstats)
- 	/* per-rxq stats */
- 	for (q = 0; q < nb_rxqs; q++) {
- 		for (i = 0; i < RTE_NB_RXQ_STATS; i++) {
--			stats_ptr = RTE_PTR_ADD(&eth_stats,
-+			stats_ptr = RTE_PTR_ADD(&queue_stats,
- 					eth_dev_rxq_stats_strings[i].offset +
- 					q * sizeof(uint64_t));
- 			val = *stats_ptr;
-@@ -3748,7 +3731,7 @@ eth_basic_stats_get(uint16_t port_id, struct rte_eth_xstat *xstats)
- 	/* per-txq stats */
- 	for (q = 0; q < nb_txqs; q++) {
- 		for (i = 0; i < RTE_NB_TXQ_STATS; i++) {
--			stats_ptr = RTE_PTR_ADD(&eth_stats,
-+			stats_ptr = RTE_PTR_ADD(&queue_stats,
- 					eth_dev_txq_stats_strings[i].offset +
- 					q * sizeof(uint64_t));
- 			val = *stats_ptr;
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index d23c143eed..4cfc940000 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -272,17 +272,6 @@ struct rte_eth_stats {
- 	uint64_t ierrors;   /**< Total number of erroneous received packets. */
- 	uint64_t oerrors;   /**< Total number of failed transmitted packets. */
- 	uint64_t rx_nombuf; /**< Total number of Rx mbuf allocation failures. */
--	/* Queue stats are limited to max 256 queues */
--	/** Total number of queue Rx packets. */
--	uint64_t q_ipackets[RTE_ETHDEV_QUEUE_STAT_CNTRS];
--	/** Total number of queue Tx packets. */
--	uint64_t q_opackets[RTE_ETHDEV_QUEUE_STAT_CNTRS];
--	/** Total number of successfully received queue bytes. */
--	uint64_t q_ibytes[RTE_ETHDEV_QUEUE_STAT_CNTRS];
--	/** Total number of successfully transmitted queue bytes. */
--	uint64_t q_obytes[RTE_ETHDEV_QUEUE_STAT_CNTRS];
--	/** Total number of queue packets received that are dropped. */
--	uint64_t q_errors[RTE_ETHDEV_QUEUE_STAT_CNTRS];
- };
- 
- /**@{@name Link speed capabilities
-diff --git a/lib/ethdev/rte_ethdev_telemetry.c b/lib/ethdev/rte_ethdev_telemetry.c
-index 5e6c4172d3..519ad34be7 100644
---- a/lib/ethdev/rte_ethdev_telemetry.c
-+++ b/lib/ethdev/rte_ethdev_telemetry.c
-@@ -10,6 +10,7 @@
- 
- #include "rte_ethdev.h"
- #include "ethdev_driver.h"
-+#include "ethdev_private.h"
- #include "sff_telemetry.h"
- #include "rte_tm.h"
- 
-@@ -60,20 +61,6 @@ eth_dev_handle_port_list(const char *cmd __rte_unused,
- 	return 0;
- }
- 
--static void
--eth_dev_add_port_queue_stats(struct rte_tel_data *d, uint64_t *q_stats,
--		const char *stat_name)
--{
--	int q;
--	struct rte_tel_data *q_data = rte_tel_data_alloc();
--	if (q_data == NULL)
+-	if (map_value >= RTE_ETHDEV_QUEUE_STAT_CNTRS) {
+-		fprintf(stderr, "map_value not in required range 0..%d\n",
+-			RTE_ETHDEV_QUEUE_STAT_CNTRS - 1);
 -		return;
--	rte_tel_data_start_array(q_data, RTE_TEL_UINT_VAL);
--	for (q = 0; q < RTE_ETHDEV_QUEUE_STAT_CNTRS; q++)
--		rte_tel_data_add_array_uint(q_data, q_stats[q]);
--	rte_tel_data_add_dict_container(d, stat_name, q_data, 0);
--}
+-	}
 -
- static int
- eth_dev_parse_hide_zero(const char *key, const char *value, void *extra_args)
- {
-@@ -121,11 +108,6 @@ eth_dev_handle_port_stats(const char *cmd __rte_unused,
- 	ADD_DICT_STAT(stats, ierrors);
- 	ADD_DICT_STAT(stats, oerrors);
- 	ADD_DICT_STAT(stats, rx_nombuf);
--	eth_dev_add_port_queue_stats(d, stats.q_ipackets, "q_ipackets");
--	eth_dev_add_port_queue_stats(d, stats.q_opackets, "q_opackets");
--	eth_dev_add_port_queue_stats(d, stats.q_ibytes, "q_ibytes");
--	eth_dev_add_port_queue_stats(d, stats.q_obytes, "q_obytes");
--	eth_dev_add_port_queue_stats(d, stats.q_errors, "q_errors");
- 
- 	return 0;
+ 	if (!is_rx) { /* tx */
+ 		ret = rte_eth_dev_set_tx_queue_stats_mapping(port_id, queue_id,
+ 							     map_value);
+diff --git a/app/test/virtual_pmd.c b/app/test/virtual_pmd.c
+index b7d74a467a..aa37e4073c 100644
+--- a/app/test/virtual_pmd.c
++++ b/app/test/virtual_pmd.c
+@@ -181,7 +181,8 @@ virtual_ethdev_link_update_fail(struct rte_eth_dev *bonding_eth_dev __rte_unused
  }
+ 
+ static int
+-virtual_ethdev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats)
++virtual_ethdev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
++	struct eth_queue_stats *qstats __rte_unused)
+ {
+ 	struct virtual_ethdev_private *dev_private = dev->data->dev_private;
+ 
 -- 
 2.48.1
 
