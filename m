@@ -2,163 +2,182 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB0BCAC5AC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 13:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A5DCAC5A7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 14:04:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EA3D9402E9;
-	Tue, 23 Sep 2025 15:28:27 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id 4A4A2402CB
- for <dev@dpdk.org>; Tue, 23 Sep 2025 15:28:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4A7F0402CB;
+	Tue, 23 Sep 2025 16:04:15 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id DCB23402B3
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 16:04:13 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1758634107; x=1790170107;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=kJZzbfxhI5xDjuSku91ERdj5udZZRtsfJavDjVC+p6Y=;
- b=glXY9OqU1Jqy9EE2h3TTS38Ox9bD3IHYIIbUgkn80PLMEIMx7T0Q5/D4
- aHvUldG9ZFyJzM3G8gemXye5xvD2YLAdDks0Y6Y2eIhwMX7mMmS4VZHmR
- DWQfnPaLSpnza105fkEqyGILQ02rmYRIx+PvMwXGHPHKYdhSG/N19n4AZ
- nfjxvMk3dKPSaY/C2N7n/leuVcSETWjeVbEBAx6R87TMJgGbL7Ta2wyby
- wcIxi5Z23JzO232YwkMzQg+Vl0QqJHl/mkcbzfrWwUcQFodOERhbifs7b
- M+nloOehw7DjvuYvaDUAuF3p/2Lzqffdza0+n1KGxt4pWuJ87nrTPLjtl Q==;
-X-CSE-ConnectionGUID: tpUI10U9QYySDgGTnTyUfQ==
-X-CSE-MsgGUID: ScQ97HH2SI6vntV0BuazZg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60967946"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="60967946"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Sep 2025 06:28:25 -0700
-X-CSE-ConnectionGUID: N3CSHX3PRx+PublTeKkCEA==
-X-CSE-MsgGUID: AsR6Bm+fQXuux0xRcbmEOg==
+ t=1758636254; x=1790172254;
+ h=message-id:date:subject:from:to:cc:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=1c8pRTYNkAjPMCID6ofbdM6/LV4Yv9tLdzs9WocfydM=;
+ b=BhbcL47PxUAFNi5V3aYKArrIVp/ZM31nSCwns2RAMDx/6qnamhWMaZzU
+ AydqjeYLol0fPqCC/QtJqZSrATIvdq0lvI+K76zyPOAGlyOYIZOKcFdoQ
+ An76zkqNUqbkJ3/QX4DPy9AMpHaLikY2EtJXJCT/wGdcW0cSV+k9UAYYs
+ 6vYNkUCOVFRYAWX2XPb+TPFqzQFJhAShnH1Wl072xc+u5MH3+giI2ANMr
+ /W8AmqXz2/wD7IOroagurCohEjdnJRc9FK7/JTFLzkKzXKmQhvecbCDrF
+ y3dVALpT6N43cklRlsDncpQ02JJvmIZs2lHjLs+0STMIOc0Q3eUmuVZw9 g==;
+X-CSE-ConnectionGUID: AXBBpIWmRlmicuAmbO3lGA==
+X-CSE-MsgGUID: 0hPPts7KT0GjH05P/+i42A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="72021972"
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="72021972"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Sep 2025 07:04:11 -0700
+X-CSE-ConnectionGUID: /9sT0+vXSFOiRTscyt0Hhg==
+X-CSE-MsgGUID: t5tZUmS+QAqZbDFNZfgDIw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="181070433"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Sep 2025 06:28:25 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="177148423"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Sep 2025 07:04:11 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 23 Sep 2025 06:28:24 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ 15.2.2562.17; Tue, 23 Sep 2025 07:04:10 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Tue, 23 Sep 2025 06:28:24 -0700
-Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.15) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ 15.2.2562.17 via Frontend Transport; Tue, 23 Sep 2025 07:04:10 -0700
+Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.37) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Tue, 23 Sep 2025 06:28:23 -0700
+ 15.2.2562.17; Tue, 23 Sep 2025 07:04:09 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T5BYFx43z4QfwZ9yrcF2yJK5T/EeBAsBvldUlXwQO18+sFav2Wt3B1AuyPIUw2tl+lqVF/WjK+Tygy+ItJicKhJi4ZR+5CLVZm6Kw80R2eamL7upNsppIA3LEXXkzcKciRUiOP0OabX8WcKt9Ji4OZWtnEYJHpnnVs6CI57Qtz84zQ07hRBAHuaI6upA8aeHifNqROIcHtqP+Rmr6E7yE25ZqLaw/pa+XuHNiDd5/eMhILWU/wprkat5rok4EqJmTdLuRK942AcuQnQLXKF4TvquatfcgfTGwCoUAFG01wxVufQoZNhgZ3mNSLoUviiyi6dXLyvSkxTLqHIyA7M87w==
+ b=ge9/r0pfFvNmSgP0Wt0jWP1VdBzbIar4iaE0gupmvRbiSFX1pRd8NhPHgrO1DjAqInXnwVH6tYIZWnVxFCUZmrOd0nCVgipjtgIEa+v+1gK93RnX8sf70GZ3sdOevdFYwrXymiiEbBVDucPVGoWeq7GJQ1cQ/IPV3CCjZJJVidQpD6yIYWxqE2cPkLK/WyPFm7nd09sO1kNhqXfquErQk7qi3nY15t+SHEVBrpRNZ3h1AZGohfrpnMS3ig25rpaDqShp35vgSlBXgeum3WsxodYmAfbq6fR6MSPkAjIMhfj3MXoAXzOtDOOFNR73/5fRs8kaqKa9Mv+ujc+DMxtWSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ejbWgtZ9Tl08cwrTPgHPqHEbumiibqCpWX7LtoH58zE=;
- b=FFZ8Rgwj11B43KrTZuE+pL28b0s9JBdXw6RO4q15bWUD8yxdthhtuwJLpt+faPbQg0N+1drQxsNQDlAASCtW5nRIIHvRMnCyXXiFEiVISRBbx8Bl9cm83vSsZBX7ra1SOzvAI3XWXQforkQZvHznJ2rkKBdI4cAiKzMGKpK1v8e9gwnGonvQaJd4Fmhm559LeCFNEtX8ETDhfjTeaFWN30/WHBpNVwxc8SR26n7gn+MapFIdHpiEGcU5DTmz0oYNtMIDb3WV+6cjexlVkwRNA/HHhmNq/hdmi/KCXB88XBNWLsQybDU0H4+hrraRXD60OMi9Ct9pAs1cdlG+smti6w==
+ bh=tBbHkHiSuxOBXSVAXp3nxufsS+ad6vgCXSVFlLz2hOc=;
+ b=sJaiiVw0cTg54odjKshWOR8YxO9VbvihuLG6yJGWaJtxmFuONtOCNZ4Oz2jnWqvKB6see6DZ7hqn9d9kPHGzigzvIzT3od8F27pHLnvXrPXIRSeZK1NP1164FkS9y2732SNade30IW0SgCebkXG+qGQZl92oO3W/NkwTJbiSsIdALDMcNEEXkx/46RbfoLlCCQ99xR8fglAwicvt342ST0fqLr6M+XTGLfUgs5n11pprpBxSZ3MjbMtkVuQfTaPmjotgnuK3SZ11JC8CDRRu/m4W+k+TOa4ivZDuSru+iPcHTxRbrfTt6ZKG6of6MO2a3fGC04IzQhT1EBbfkb44aA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by PH0PR11MB5880.namprd11.prod.outlook.com (2603:10b6:510:143::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Tue, 23 Sep
- 2025 13:28:19 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 13:28:19 +0000
-Date: Tue, 23 Sep 2025 14:28:14 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Kevin Traynor <ktraynor@redhat.com>
-CC: Thomas Monjalon <thomas@monjalon.net>, <dev@dpdk.org>,
- <david.marchand@redhat.com>
-Subject: Re: [PATCH 1/2] build: add backward compatibility for nested drivers
-Message-ID: <aNKgbnlYLSvu1zgq@bricha3-mobl1.ger.corp.intel.com>
-References: <20250922110708.47879-1-ktraynor@redhat.com>
- <2842623.IobQ9Gjlxr@thomas>
- <4a7059c1-43ad-4df7-a4fb-03ea938e6009@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <4a7059c1-43ad-4df7-a4fb-03ea938e6009@redhat.com>
-X-ClientProxiedBy: DU2PR04CA0199.eurprd04.prod.outlook.com
- (2603:10a6:10:28d::24) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
+ PH0PR11MB4968.namprd11.prod.outlook.com (2603:10b6:510:39::15) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.20; Tue, 23 Sep 2025 14:04:08 +0000
+Received: from DM8PR11MB5653.namprd11.prod.outlook.com
+ ([fe80::2962:1efd:f912:a5a3]) by DM8PR11MB5653.namprd11.prod.outlook.com
+ ([fe80::2962:1efd:f912:a5a3%4]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
+ 14:04:08 +0000
+Message-ID: <905bfd08-821d-49ea-bd66-e4ddd0969dde@intel.com>
+Date: Tue, 23 Sep 2025 15:04:04 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] [RFC] lib/cryptodev: update API documentation for
+ aux_flags
+From: Radu Nicolau <radu.nicolau@intel.com>
+To: Akhil Goyal <gakhil@marvell.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "kai.ji@intel.com" <kai.ji@intel.com>, Fan Zhang <fanzhang.oss@gmail.com>
+References: <20250827094338.767062-1-radu.nicolau@intel.com>
+ <CO6PR18MB4484F38CE9989A01F49C8CF7D808A@CO6PR18MB4484.namprd18.prod.outlook.com>
+ <114c4b2b-f619-4a12-ac0c-adca09fe6033@intel.com>
+ <CO6PR18MB4484C9F7FBBCC5AA04405899D808A@CO6PR18MB4484.namprd18.prod.outlook.com>
+ <6157cf0d-4a9e-4f4d-9278-24dd0507ed77@intel.com>
+Content-Language: en-US
+In-Reply-To: <6157cf0d-4a9e-4f4d-9278-24dd0507ed77@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: DB7PR02CA0018.eurprd02.prod.outlook.com
+ (2603:10a6:10:52::31) To DM8PR11MB5653.namprd11.prod.outlook.com
+ (2603:10b6:8:25::8)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH0PR11MB5880:EE_
-X-MS-Office365-Filtering-Correlation-Id: 924cca16-9e94-48d8-8187-08ddfaa50f8a
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-TrafficTypeDiagnostic: DM8PR11MB5653:EE_|PH0PR11MB4968:EE_
+X-MS-Office365-Filtering-Correlation-Id: 62b83b72-2880-48ee-731c-08ddfaaa0ff0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7Lnb3dhk+Q+tqmE1CdaOrnf6+VjabtLoRI3apK8ghFVyhFt+XuYKJfhP/Tby?=
- =?us-ascii?Q?RdpLsihgUum+e5ur3zX99yR7qBOPL90gcacpT2inggwg4Ans9wCtO8re2BS3?=
- =?us-ascii?Q?OVWEVebBY4rpbS0wLYr9wecAlRzK2jIROFtIgX5srd4vnWtiPgULMbILRNjw?=
- =?us-ascii?Q?KK2Enlr6Bv8WI8Pdr9frpRVbc18Rz93358WvgatOg+/eijFvLl7YDqWJWgW+?=
- =?us-ascii?Q?rgKhvkOVD45A8wZJBzcwtAnj0QddbjLnV0Tmx87G48pYTt6G0/l58Nik9a/d?=
- =?us-ascii?Q?lcfhzlEMRDLVXuZ3QuIynUqazVvQ7DrHGVm6tVmzNSDHm6eMAdwtZ5OgUnR5?=
- =?us-ascii?Q?nVXhH88Pdj8drz+qgz623sXKlVwma9j+R8trkVXByPWKRA4aATz0Qo+v1+3/?=
- =?us-ascii?Q?LpYqrSrDo8lPRcErd/cq0PgZYhsq6J/Eqr29z1afzdem7B3uQQjHqFl/RkSh?=
- =?us-ascii?Q?OERL+KMU46UthIUnaLzShuQ8U2WZrfwlXH1t3r2s4wVak/bJjkeoNBZJBPYf?=
- =?us-ascii?Q?1RwA/AAmlKKtZxtjwEhP2C2Weh+uFJtHc0+W9iGyM+Ahmx7WQJS//LbRd1Xm?=
- =?us-ascii?Q?KzspBA0DxyLh2vmc2/+55EabvY9sNgXEk7Hwhr93OenaBdrxBsWx2Nbsju9T?=
- =?us-ascii?Q?e+zsxbG8Vl1QciCOx6+D09K60b17dULVehXwAfnPq0ZVM4R/ZbHo6s6yw/gl?=
- =?us-ascii?Q?NMLp83Ryi+uLaoLxuX8IrWbOr/dUeSM0/n76d5Vv4uOQeHyxt8pA0cOP0E8H?=
- =?us-ascii?Q?+m7jMJegfyCo8c/Us2uQvEoHk/uzZ/hYeS//nxwXxOeAX/f+m6r/LMJGDQTQ?=
- =?us-ascii?Q?CU4sNzKB29pL9QVpARcc2QturHZbfM+caUWtTi6J14cjxtpx8/s64DuwK4Le?=
- =?us-ascii?Q?JaLCHTU05qCl6rRz+dBp1Z2u12CS7DrzTacJTKfDOBFXoTK8tc0BX9tYKOeD?=
- =?us-ascii?Q?mxsAC2W4GbGQG480n/HOkajWJUaMs5/4WHkiylZK6jiltt+Au1G2ksMsURD0?=
- =?us-ascii?Q?TsOS0X/w6bo5DdILZZaV5FCn2He04ZdN0cmPa03DVG0TXu5FduZf04Zf67lE?=
- =?us-ascii?Q?hGiaWSX5FNzk1Bofwssrpmtdak/GGpvsSjU3rPUmgJjFhkoL76VtLdOqp0G5?=
- =?us-ascii?Q?a9xxhQG8EobFJ9XVN9nDCh3DcFqtZfNlZv7mBOccncH/vCegkEE2h3et/FOr?=
- =?us-ascii?Q?3c/hIK6OKcFqs8LWD5lfUnv9o1zQXn85XN5j5Xmi1nGfs68Q65RNKCp6Um58?=
- =?us-ascii?Q?IYtNozNEWO9Zy31zQ0fL22lFe6izgnG8LOEQS1Zd4yHir5nkhy3RY1ttnHbW?=
- =?us-ascii?Q?RE6qXq70ki9bmOzb8K11OYGVQLtj0+V7H8YFjt4dT78CzY86YIJZuBFJuUeb?=
- =?us-ascii?Q?pWSFdg2UuKncrUcZdHssVd9DdHADhcAHO6V8qCADt6WNiKzCpuAmZG1MphTs?=
- =?us-ascii?Q?XB+g8Q3KncE=3D?=
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MU44dzV1WHBwRkFFZGs2KzVuc3R5KzJIRTJZRmhGVjArRk9CNFhuWnpQbjFY?=
+ =?utf-8?B?bGYvUnVKYVVCVEpVdU0xRmZSR09zUWlWZWtldXY1aURmYnBLY2xGMGtCVEM0?=
+ =?utf-8?B?eS9HbSthZFhaWVg5SVFXTk5EVVRaV1J1WWYzajZlSXpIM1pTYjBzS3dzQXJq?=
+ =?utf-8?B?MDlEaEJnRHVsOXNuVTNQQXZUWTBRK3JkeVVYcS9STW9rZytVODVWdXl6aVJP?=
+ =?utf-8?B?L092ZFNZSGY1QXBjTUIwNWQzRktFUzNuWW51NnJWZEdobTVGUEhzem5mdVdZ?=
+ =?utf-8?B?bHdXSWs0dVhMMnJNbXo2ZkdIV3NMd0VYZm01WEZCZmtNS1k0Y1U4NHpZdVBx?=
+ =?utf-8?B?M1hScVdCWE9rRUhBMU4vTjNpSlhXbkNkQVdjSTRUcFJTQmkzUFJXckpkWE1p?=
+ =?utf-8?B?ZTE3Y0w0bWJhTTh5VHloc0lmakpWQ3dWU0VsWms1OTN2RVdvTW82OCt2SllV?=
+ =?utf-8?B?V1Z1NTNiUGx1T1JiQ2l3OHJzekJHN1FhZko0Zlcxb1ZHbDR1Q0I5TG13ZVpt?=
+ =?utf-8?B?V0ZuTW52c3hOc1lZaTRIRXg4U3JUaXdueVRRUlk0SVhNbVdBM1QyWHBHcjFX?=
+ =?utf-8?B?ckRQanVYYmZDcFowR0VieDBFVkxBSEg4RFJUNEFWZGE0dExodDJCdjdFOWhu?=
+ =?utf-8?B?Nys0ZnpoLzc2MnUzMmtOWmZIZEVBZWtFOHY2OW53UTNsK083dnVjd2laUVY4?=
+ =?utf-8?B?M2NBTkZlcnd0V2RjaEdKTXovbUp0R1doL1RIbWFZUFVEdjlkRlViVEZVQlhX?=
+ =?utf-8?B?cGUzQ1BQU3dUdlVJQ0sxMjFEK0RFcHhxcVJhV0J0TC8zYjN6L29MSzVXblJV?=
+ =?utf-8?B?bVdqR1NmWGI0R0pnbnNoSTJmNGEzNUZ5aEdielZyTXdqeTVXTWx4VzRVU0tt?=
+ =?utf-8?B?N2lOUjA5dnNzSkxBbWxKTXRIUnUzcFcrcVFkMHhvekdwVXBoUlk5aDJTV29y?=
+ =?utf-8?B?RU40UGtkS1lldW10N3IyckNWMDNMVFRwY3lmZUsvVGEydGVzZHc0UkU2TXBt?=
+ =?utf-8?B?L2JLNDI1ZnJzT0dzNmtHUHNqV0Z3OGkzSnphM0lieE40aDlPdTUvYk5oRE5z?=
+ =?utf-8?B?NEhmOXI3eG5tUkpjZ3JoU1k1djZlNmxjUU5tcC9CcVJRZzVLR251RDl0blRz?=
+ =?utf-8?B?NHZLY2FsOXFmZFdXMXdUL3hUeVZDOUY4bWZjdGVEZHdmNi8ycDdHTDNKQms4?=
+ =?utf-8?B?RzhaZ1hYYy9QUG8zMVNDUHo5VG9sUC9JeXdJOHZzeWRhM25pVm03QnZsMjJh?=
+ =?utf-8?B?QWFaS0d2cWJ3QXV0UG55QjFXditUR0hGZno2bW5jZlM4VzBUaXFENFhaRWd0?=
+ =?utf-8?B?WTFVWjVKc2l2aHRWcmtsTE1QM3QwZmhXZEhSbmNDVFlORlJQWnhFQlBUa3Uy?=
+ =?utf-8?B?ekdRN0toUUQrbTBHandpSVpkQjlycjVheUsxUUtlazUvczc4MmFDenlmNUJO?=
+ =?utf-8?B?ajBlREhRNVBXZUxkUWNVRURwY3RreU5lOXhiUWRKNS9URXdWSUNYUHlpQVYr?=
+ =?utf-8?B?TUg3ZjRZY0RhK09VZXRtN2JyeVFTR3NJTlZyaHVhWG1yODdnT3l5R0ZvMXZD?=
+ =?utf-8?B?aDd5YldvM25uMkNkMmxNZ1dXT3F6ZmNTS0VsVXZ5TUx0d1JKWndlQVVzQzRm?=
+ =?utf-8?B?TDRWc0hMdW9HNWVpVTlsUWlJeUk1Z0pzczFLVmwxaTFFSDNWM24weElESWQz?=
+ =?utf-8?B?TmpjdUt6ZThwdzNxR0RwSFo0WGhDVzc1VExqdENhVU5QUXBjbnNMZmZnK1ZU?=
+ =?utf-8?B?YUtTQjRjQWVuMndRNnFodzZYd0VRcWwrSGdSMFRnTVJkRWtQUk5NbEdnM1pG?=
+ =?utf-8?B?M3JoV2tZWWIvVUNhdzRweHJZdkpLZFNJbVYrOXZXK0pEL3h3eVRZM3p2WUtl?=
+ =?utf-8?Q?p02P51+VEbn48?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ IPV:NLI; SFV:NSPM; H:DM8PR11MB5653.namprd11.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?O50xCbXEZMDwxzYgXptKUvTll8n6cvexwm4nO+aoO3xra7OKqCQgt0SmgzYp?=
- =?us-ascii?Q?ysbV5XusjxHyT/HUj5x0seErde19m+zfFbK7F5/zOAUpRpRhlI+UNd1oHq3U?=
- =?us-ascii?Q?Q8bKC01ANTEevjJV3SeIEyS9gP3jFN+lqduWKinmzpTPvs37Gozf1g8H8tsz?=
- =?us-ascii?Q?4Gjo2oodbow4l83Fkg4xypsUejHGswsxL5R2+aLoWvL5yWGyRDq6pRfRcRBN?=
- =?us-ascii?Q?qqnVzkIiUF3BkLDrN88/FhIMWu4ElAsi78DSn0ET69tZdu+tgy2GTSXbEp9E?=
- =?us-ascii?Q?rEzTMLQoUnq5DqII18ZxiuYra3585SPLot6Ye+X9bRxuOb20ILKW61v+5Qcf?=
- =?us-ascii?Q?OuYgpBZF6CXlA9DkByXc4tCZIb8VdMljsEfHjv3paKEH6+x3p/1SdPyPoF0B?=
- =?us-ascii?Q?cdQEy/lHbB/qi076UeHCmrLSxUVV8L2fs1kAcuARZ1Ibde31wMEHuhLOvPMp?=
- =?us-ascii?Q?1znE4xy0Ez0kX4gMqnva7WyQFklDU4s7XgxMeMgh96Xpe2i9Er3INm298dC5?=
- =?us-ascii?Q?AidaRJfWXjEU130Y2STCqKlFokps3b67LtAVTw4jIum63YHQV6SR8H5mRVFV?=
- =?us-ascii?Q?CBN74Z9xXcPlJHLLkyQ23D8jlGGZwrxjAPPYuF6BmRzLBq4I0NHGsIhYCUgF?=
- =?us-ascii?Q?O/efUTDlMEhWHBa08lVMoyYd7/vpFM9HL2hzL6qpJx1sj7HgiC3YdFR5kFcZ?=
- =?us-ascii?Q?9zAnhfVYTjaSVOwrccoHGb/Bp+oWt056l2v0OVQN/yYI0vTYZryTOXTc1cx+?=
- =?us-ascii?Q?GHoxvjXNKPSL5Bqt3roMQE+ThsRhF/y1fn5y774xvBoyNPGroSJhlzRipxEn?=
- =?us-ascii?Q?g7XPAlzcuouPUyFtM870J6sM2F01xqyOrq02RUL6j273jjihGzCTUCbF0Qo2?=
- =?us-ascii?Q?9PqVc8wUagT8ZNH1qbt0ky6VZJJdZUVhBqrRjsF+x/5Cjdgiqa35FSFIIQA8?=
- =?us-ascii?Q?izzpZdtaG9OV/lRUcYlTIOuBloYb3KlLLFGJh5eB518g86klwLzG4pswjFwy?=
- =?us-ascii?Q?xUeBP6JONFMRV1Cs+uMY4cMdNGVh58L+AN+HzVIRqzymXASBrTlEZPOiWlLN?=
- =?us-ascii?Q?z6DGkkiO9b9C1G1xcFmTIZ6HlTyqJKQM28dWCY4/cz29cEowaMEVspRMQwKP?=
- =?us-ascii?Q?kSAyLwt24XO4tyitqNzxIx3L6hAtVekM0/0akrDQc5sDb8AWqq4wM7QZwI76?=
- =?us-ascii?Q?shftXaTvVUidWjkfEZxOJosClzhOXM8W/2AfJBJjmwxbU3NrcBGAUQnqc6wp?=
- =?us-ascii?Q?BEGnWJ7NNxQlsucpI1CRtQclLOBLDt0pkGgDaCYW+5QbxOb4PKxIiQKL9qhe?=
- =?us-ascii?Q?HWJ+KncuMlbStNSldyr5+SQLhrY0QLEq130+M8MC74MZBnjQgheOB7FfcSsZ?=
- =?us-ascii?Q?7CS0tcIhFnmTDc4brVeFMindeL64cQIESO5iDNw7ina6dFIk4uxR0+Egg6D+?=
- =?us-ascii?Q?sjiiBNc24yNnRoxpL6I46GmcndbX04VzUtQf3986aAciw0y3vKjeX6yy0LW9?=
- =?us-ascii?Q?iXXZOlUu5aIEV/2NS4AwcnTyfkEwYvbANtkcjLe6GswDlO4ME0kf69FcUeKh?=
- =?us-ascii?Q?NVuaP9OPMoMPrpcIzz8dXxpH3QKDXG1y+LQyf6r5xoFRLtavzxMVZ71pTAWZ?=
- =?us-ascii?Q?cA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 924cca16-9e94-48d8-8187-08ddfaa50f8a
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZDdTZE11RytuNWo2Z1hLNWxSaTBSS2JsSWtYQVh6TGtoZXdBdE84SGpYWmht?=
+ =?utf-8?B?Rk1laXZQWlVoZ1VtdjhVREdzVzk5Ly9JSVVEcHNKYTIxSkl2SVFoWkRJWU5p?=
+ =?utf-8?B?a2hWM0VnTFEzYlV5VXkyK2JNdk1LVWVRNmh1a0lmd0o3QzQ0dW5zQmFDMVNs?=
+ =?utf-8?B?aTB1ZUNMZlNidnJFbC9rMUhBbGNOaStlZzNUUDBUbHNSdHVha01QNlpLU3Vn?=
+ =?utf-8?B?K1E1bmc0YWF1Wi9GcHpROThlaVlJSWlDMkg0Nk8rWUw5TFBPWXBLNk5nTmps?=
+ =?utf-8?B?Qk9KL1dsUWZlcnZzK3gvdDVOajJkNXAzTDJkNnRKSVNsRHJLaE16dEJmSzUv?=
+ =?utf-8?B?dTd6MWF0UDZWS1B5a2c2VWQ1S3BNR3owejB4cVN4SGkrV0xCMURrVE9mU2Js?=
+ =?utf-8?B?cTVUdHNYdHIwQy91Y1l4Q2R0RkJsaVI0eVRaQnNyN09kQkRrOVJZcE1nV3Nj?=
+ =?utf-8?B?WkRDSWYyS2k0R1pyd2QzVitHSGJtL3Q0SWVmcURTc3VtSE1kMVRDWEZTekFN?=
+ =?utf-8?B?OC82R21xenZVb2k5VXJzTHJOS2ludnQyMzVoVHFvYVBLUU5KK25JNDFLTEZH?=
+ =?utf-8?B?Sy8yYUl6eTZ5aTNMb2tLUXhKMFRMamtqVUVSMGtLNjN6SlF5RC9qa1A2Nm1r?=
+ =?utf-8?B?RmdYS1JCeGNBQTIvVitLYlB6VkwxUjJJb00xbVEyZ1J4aEJNU3Z4Z21FZG0w?=
+ =?utf-8?B?eWdZN2lGSzNvQm5DemNFbCswYnBDaEtPdDV2emtoM0xPUnF2WkNDSTloK1Z1?=
+ =?utf-8?B?bjhvc1BXL3g0UDRGSldoSUNMQkQ5SlZOZjEwc3MvNEdOdjNyK0kraU1Xd3Ar?=
+ =?utf-8?B?TUw5MG5MWEpqYURjZXBqclpWcGZ6VGdDc2FGaDEzZVdRQVo0SkswT1lNRnQ5?=
+ =?utf-8?B?c0l6QjBWc2lBblZCaytlc3doaFg4L3lNUXpHaXQyT2dFQ05RL05WSmZCUWxD?=
+ =?utf-8?B?ZWo2SUhlc3ZOdndHQW94eFhJOFkwSExQbHN6NW5QdjNMeU9ZK3Jtd2swc1BI?=
+ =?utf-8?B?UmJLQ2JXQkNjNmhsRTBSc2VYTWZjZTk2QU5ud2hNMFJEVVhlbCtlQm1HWXJl?=
+ =?utf-8?B?M0VybkJ6RmVIMWMrUDByUUlnNm5wSnVxUmhyYVAyc2FmQ0tVblRvMFMzZFVD?=
+ =?utf-8?B?RTBnakdha2UzNVBMeDZkOXQxcUpIdnAwZFlOMmJuL1lrZG5NZ3c4L1RML0Zy?=
+ =?utf-8?B?NkRQQzlrVC9Bc2QrY3ZOUmhhWEJ4Nm9MbW91Zmt0ZGFSMXlBekhYenBxdHlY?=
+ =?utf-8?B?b2ZHRkxLYzlGanJreEdJMG5iWDkzdW1tcFN0bENhQ2dDOHdsckFDWUhUMVJZ?=
+ =?utf-8?B?YnN2RXlHdndYYVFsV09YRFN0RlVuQlRrdzBOSDczZUpoUTd1dDdrdTVqNU9v?=
+ =?utf-8?B?OCt3TVZzU0VhbWRqMGkwbzB3OFZZWTE0ZHNVeVpNbWN0T01QMStQL1JqL09y?=
+ =?utf-8?B?TFRSb0tmczFGN3pYMXI3SmJOMEdIdjVEOVhndS9TL2ltbjJpVHk5b0dnQmYr?=
+ =?utf-8?B?OWFBOC9KSDcrSURGUVNxTGFTd2pqL2hwZkc3THo4YkUwR1pPRGpDMm9mTHc2?=
+ =?utf-8?B?dm9hUzJlNkxnWmEwMUVtTXRyWGpVRTZGcHEyZTFiSzkvWDdwWTVTQkx5dlBW?=
+ =?utf-8?B?alg5VGpGL2o0bnNsVFJOZUYzemRNWmlIakRuWFAxcERyZitDV0I4TmFObmUw?=
+ =?utf-8?B?THI4UjEyOWprb0JpbEE3V2t3RENOOUhvRmhGTytNWnlOWTliTFM1bkxmZzZp?=
+ =?utf-8?B?UjhnZ2xzTy83bDJmZWQ1LzFpRDFINFFCSnQwRlVBSmdFRFc4Y2d0VHNUd0JB?=
+ =?utf-8?B?NWgwUjIrTkFESlRCZDRhQUNsNlZqUWZWNXduMnNHOGpVUzg1VmtwM0I2N1VB?=
+ =?utf-8?B?VkFldmpxTGp4aE1Vb0FBSnFqRG84bnZvbEt1VWNWSGlzZ0ZEUXU4M01CTVQx?=
+ =?utf-8?B?bC9ZRDIyM2RrOEh3ZVAwSEVCbXVscTM1ZkxXQTN2SERJUURnVDRBMmVSYlJK?=
+ =?utf-8?B?OFZwMkhuUHdpdkV3OENpa0tWN2RjQk9iU3NVakkrV1dqc3RBYXpocmM4SXpm?=
+ =?utf-8?B?enF4bG5DaEE2cjFFMkdBbUR6OWtqOU1DdDVzR0xTVkJWa2xWUUZDVjJ3Ymly?=
+ =?utf-8?B?aldld2VkU25aeXBlc2VRdHJBVUZUMGRZVFNpR2FEd3pNRExnd1VVSUVyeWQ0?=
+ =?utf-8?B?U3c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62b83b72-2880-48ee-731c-08ddfaaa0ff0
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5653.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 13:28:19.6318 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2025 14:04:08.1923 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: R2u7wWKeIGf0ys1NfCGJ5ue3J5qtW+7DYIGPyohqPbA8aBICIHm3Zl67mCxrHzWoPJftA6U2t2tO1B+cEzi8d+ShSRvj8gKxl35IdQ6H52c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5880
+X-MS-Exchange-CrossTenant-UserPrincipalName: StCljwN/tRIfTvjYNnVEZkXo61JCfbnXZ+5KrD00BhiLj64DP26FEPnnfVzm11/SHq2w0B+UX7Q1l+bjhoo9bQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4968
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -173,80 +192,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Sep 23, 2025 at 02:08:35PM +0100, Kevin Traynor wrote:
-> On 22/09/2025 16:51, Thomas Monjalon wrote:
-> > 22/09/2025 13:07, Kevin Traynor:
-> >> --- a/drivers/meson.build
-> >> +++ b/drivers/meson.build
-> >> -# add cmdline disabled drivers and meson disabled drivers together
-> >> -disable_drivers += ',' + get_option('disable_drivers')
-> >> +# map legacy driver names
-> >> +driver_map = {
-> >> +    'net/e1000': 'net/intel/e1000',
-> >> +    'net/fm10k': 'net/intel/fm10k',
-> >> +    'net/i40e': 'net/intel/i40e',
-> >> +    'net/iavf': 'net/intel/iavf',
-> >> +    'net/ice': 'net/intel/ice',
-> >> +    'net/idpf': 'net/intel/idpf',
-> >> +    'net/ipn3ke': 'net/intel/ipn3ke',
-> >> +    'net/ixgbe': 'net/intel/ixgbe',
-> >> +    'net/cpfl': 'net/intel/cpfl',
-> >> +}
-> > 
-> > Should we build this list inside a file drivers/net/intel/meson.build ?
-> > I'm not sure my idea is better...
-> > 
-> 
-> Not sure. It's generic as is, so any other driver moved anywhere could
-> add to this list here easily. Let's see what others think.
-> 
+Hi Akhil, I will take this RFC down, thanks for the feedback.
 
-I'm fine either way. Having a general list may be good, as we may have
-other driver moves or renames in future too.
 
-> >> +
-> >> +# add cmdline drivers
-> >> +foreach driver_type : [['disable', get_option('disable_drivers')],
-> >> +                       ['enable', get_option('enable_drivers')]]
-> >> +    driver_list_name = driver_type[0] + '_drivers'
-> >> +    cmdline_drivers = ',' + driver_type[1]
-> >> +
-> >> +    foreach driver : cmdline_drivers.split(',')
-> >> +        if driver_map.has_key(driver)
-> > 
-> > I feel we need comments for above parsing.
-> > 
-> 
-> Ack, will add
-> 
-> >> +            driver_mapped = driver_map[driver]
-> >> +            warning('Driver name "@0@" is deprecated, please use "@1@" instead.'
-> > 
-> > Not sure about this warning.
-> > We can keep compatibility without saying it is deprecated.
-> > 
-> 
-> Yes, that is a good point for discussion. Seen as support for the legacy
-> names were already dropped and I wasn't aware of any ABI like policy
-> about it, I thought there may be a preference for deprecation
-> warning/continuing to move to the new name only.
-> 
-> I would be happy to keep the legacy name without a warning/deprecation
-> for a longer term and we could adopt this as general guideline by
-> default too. It should not cost much effort to do this.
-> 
-
-Agreed. If we do decide after a while to remove an old name, then we should
-do a deprecation notice first.
-
-> Another minor point is, if this needs a Fixes tag? Yes, in the sense it
-> feels like it added a banana skin for users (the patches are because I
-> hit this issue with 25.07). I didn't add it for now, as no guarantees
-> were broken and there isn't an upstream stable for backporting to anyway.
-> 
-
-If there is no backporting, I'm not sure it matters. Maybe add one anyway
-to imply that this was something that should have been thought of in the
-original patch.
-
-/Bruce
+On 12-Sep-25 4:14 PM, Radu Nicolau wrote:
+>
+> On 12-Sep-25 3:56 PM, Akhil Goyal wrote:
+>>> On 12-Sep-25 2:05 PM, Akhil Goyal wrote:
+>>>> Hi Radu,
+>>>>
+>>>>> Update the API documentation description of rte_crypto_op field
+>>>>> aux_flags as to allow PMDs to define driver-specific flags.
+>>>> Can you give examples of the flags that you want to add for driver 
+>>>> specific
+>>> work?
+>>>> I believe adding driver specific things here may not be good.
+>>>> May be we can discuss the specific flags and define them as common 
+>>>> for all
+>>> PMDs.
+>>>
+>>> The flags we have in mind are very PMD specific i.e. controlling
+>>> specific hardware behavior so they will not be suitable to be added to
+>>> the common flags.
+>>>
+>>> Seeing that aux_flags are not that strongly defined and seeing that 
+>>> they
+>>> are already potentially used for PMD specific values my reasoning 
+>>> was to
+>>> formalize this possibility of usage
+>>>
+>>> aux_flags are used here to potentially carry a value that is not 
+>>> covered
+>>> in the common API aux_flags definitions:
+>>>
+>>> https://git.dpdk.org/dpdk/tree/drivers/crypto/cnxk/cn20k_cryptodev_ops.c#n857 
+>>>
+>>>
+>> The aux flags that are currently defined are for soft expiry(out 
+>> param) and TLS padding(in param).
+>> These are not PMD specific and are defined as generic flags passed by 
+>> application
+>>   Or getting more info about the crypto operation such as soft expiry 
+>> which is not an error
+>> but will be useful for application to trigger rekeying in advance.
+>>
+>> In your case, these flags need to be exposed if application is 
+>> required to set.
+> The application is not required to set these flags, the RFC change 
+> specifically states "optional auxiliary flags".
+>> And we cannot define pmd specific flags in rte_crypto.h.
+>> Please specify use case if it can be useful for other PMDs also and 
+>> we can add another flag.
+>>
+>> For PMD specific flags, is it not possible for you to use mbuf 
+>> dynamic fields if it is an IPsec case?
+>> Or we can also explore to introduce dynfields in crypto_op.
+> Yes, we can use dynfields and we can explore adding them to the crypto 
+> op, but since we already have these flags we can make use of them.
+>>
+>> In above link, cop->aux_flags = res->uc_compcode;
+>> is set to give debug information to application, as warning codes are 
+>> not exposed in crypto_op status.
+>> Application is not required to take any action based on the values 
+>> other than the ones defined in rte_crypto.h.
+> My proposal is very similar to this use case, just in the other 
+> direction. The PMD is not required to take any action on the value of 
+> aux_flags, and the application is not required to set anything.
+>>
+>> -Akhil
