@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9315CAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 15:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDF6CAC5A7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 16:02:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B215140615;
-	Tue, 23 Sep 2025 17:58:02 +0200 (CEST)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
- [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id 1A065402CB
- for <dev@dpdk.org>; Tue, 23 Sep 2025 17:58:00 +0200 (CEST)
-Received: by mail-qv1-f52.google.com with SMTP id
- 6a1803df08f44-7960d69f14bso31443186d6.2
- for <dev@dpdk.org>; Tue, 23 Sep 2025 08:58:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1C53040615;
+	Tue, 23 Sep 2025 18:02:21 +0200 (CEST)
+Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com
+ [74.125.224.43]) by mails.dpdk.org (Postfix) with ESMTP id 1D128402CB
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 18:02:19 +0200 (CEST)
+Received: by mail-yx1-f43.google.com with SMTP id
+ 956f58d0204a3-6352c8b683eso2811750d50.2
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 09:02:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758643080;
- x=1759247880; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758643338;
+ x=1759248138; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=G0uAeiGw/ShN+6tgvtWm7gJwkNslHmQBFVJq6JyXeZI=;
- b=HqhEm+cTnioaAlZJCn4cQZOxoBZ3TP0huJp2JQu5BR9NmrqNsn6mzyxo4zrNl79sM9
- Zw3no0AX3GwYE5QcgzbuW+EBhcvs7rrjP/prLDUS8/7rwFm3U2AHjCCHr95ZEShb2h0J
- LQyHRBF4e7MMT0T2YewZEcu4YzMjQi3QX3IrAonnCzcAeKj1A18ZzWLUGGUzPvm4EGV5
- Z5hYdLJXF+0QQEzgEqzTgTdmVa1l8dROw6qCZwchlOLt980o7y0f2zvwhutl1d8GFAEL
- IefsaohgcRKbbK1ps/q3yDQBksN1ZRlCqVA01uIZC55Ww6QUJQjrCve5kDvd8KR6VBQN
- E4lA==
+ bh=KKz+9D8BvGwCmzY9wBmXVj8X7/tGldhpazoRjGw0dLs=;
+ b=QK8GUOxk3edRaB4nv4riBYegHP3xm2DW0aMZtDSQtJU3Z28YyHge3YtNfwr0P4HCdu
+ Wks6zN2LBXDv6sI4fa1XSVXNnhfno+yZ+0xFfqwOLvnriXOxrdNLksrTAVCc7N5wJcnL
+ z8U85k6Rup91zDGSIYXwrvD8BznqYgPmf2wcV33RIjUoWDhfOkRf1E5Y19f23yy2JJ2i
+ qralFr8ugi+7DA6XgAo/bo6Gj1x0CXHd/fZm8SCisu8NozGshLYz5O7qzOcKdJr+2FtQ
+ C576P5oBoWJdf8lTFC4kgffm8bgo6haXEJWMR+dSg1fM6kF6ypt1u9ZVrK66eTeIVR6/
+ hwSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758643080; x=1759247880;
+ d=1e100.net; s=20230601; t=1758643338; x=1759248138;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=G0uAeiGw/ShN+6tgvtWm7gJwkNslHmQBFVJq6JyXeZI=;
- b=xAJjPbfRks18x14mIonn3hRzYh0JRteToIGGoaOT7YYQif0xlnmQYtuuTIPTNUnreg
- yjnZk3ChCwrgMWFaPrbtd0lly3Rr16gvLUQkYRKJG1yektkOGGfBgM2zmAuf26pHTDu0
- tW9vUkpv+fKaukAFTx37ihzOkqf/1r0NDVnTvqe7QR6dvInNiDZllnVc4Y9EwYFwt6NK
- RmnvqwsrxIliH1zPPrTQE7s8CG04VMVYD28lzcKW5udwwBRE8eJ6ArQorYYxC0SZK3rs
- jmEVhyeZnZRDRx8eFCdd6Ykytf9RjzV7ewPvwOMGnb/CfjBw0GihgPCENj3Oe/Ix6ln7
- rqzA==
-X-Gm-Message-State: AOJu0YzzJ/nY+MWfg/xLkWyL/wNG1KW8r4WNjmZjYaKS4uBmIZa449cB
- w4GRJfQ/vavB1+cAVOIe2Oa9jTmu2CHfez3jGi3EAeUfYJIiG148w4WFDyZVJ+fMgBw=
-X-Gm-Gg: ASbGncvx4oFaMvVOVWCm0y3BizeHJaXGSJNUU8uiysEEds1c477BUcdiK3QFNM8h7PH
- 90cBVz9KvAx2+Fn887LTdxaPOcF93a2g7hcUiW+UWbvqDPXeO0WUpwY+8gjcAbDbh7/b3C2sEwZ
- PJ3qPawqcEW4p9nT9cfsmeqMtce+HGXksbTVMXXBNJysnBubmaGIsvFPtbuVyRo8ZrBb7Z+zfL5
- 83Lf+dgGpfp6hbAMK9YhH90mY7eHrr10EEuyhIp+Q4mOZqHgr3tUyD1RfI62+S9IM2vGin7AoJN
- 3M3eshORSMgseFRMufQ7fo4tHdBtCQCNDRvvScSdHoJ5jH0ADxqq1d4lY6TCbSX/XrwXR/c2c45
- 7P3F1srh/v90HxEyvQLNmjsrN3EwLNlHpte7vUdxTq0I4OCfbf0s0xyO959s+kdarpVFR2TdLa4
- Y=
-X-Google-Smtp-Source: AGHT+IEqsWIN00DJoF5S7gSkL0X1mevzCiCwKojgN3n3gafZDtkZi1d4/ytH8Yt5tdk9vckvcMYQ4A==
-X-Received: by 2002:ad4:5c86:0:b0:79c:1b67:2cbf with SMTP id
- 6a1803df08f44-7e7154564a5mr32543316d6.61.1758643080138; 
- Tue, 23 Sep 2025 08:58:00 -0700 (PDT)
+ bh=KKz+9D8BvGwCmzY9wBmXVj8X7/tGldhpazoRjGw0dLs=;
+ b=ijWbalfQEcw0ciOuaSa81mnLgZfBRjOJQ+xlknWHrUMOa9WUXsat4J9g6IS/Mf1/rw
+ 3caXfUS7lQkLNLPDHwBm38rHf1oq+YjgedquoI88cSQiVLoXVn8zZ4Ep/xzMj0Afu5RY
+ fz6QnzqCeZK94IJMQqJCzVtGeiEfJrACHnevo6rgW1oZhluMlSoHEsFd4FAlVlxYWvM2
+ nBf6LZwblVd0BJbxiKkMR5EBYdSNwDxzkMNplLF05p3rFVoVrHkJUIsYeScco/htSE63
+ iO67N5hwLH9r3et7pGyZuw+1cEW3180kr84NLnYr87M5JMgIyIGz9wTjwo85dre88MCN
+ i+7g==
+X-Gm-Message-State: AOJu0Yy4DMr7yxJytuGHf0vdudmKVJFrZs2oIYuLn5fVHBXOtJGV0Fem
+ 6LxCi11puBPaCgYIw9tFb1+8KN3dS3ZL17GC6i5yviHqN/+y/TcqoBsWcGGgnv+QGGI=
+X-Gm-Gg: ASbGncv8YWO7k8vwFrngGOQKhLAP28CHE/Kb9WOp9jwrIcYN6NBvazSx5Y+6RRVk8kw
+ RJYh2bKMZdKbc5o+4rvZ5Jm3MrzbtEVp1KR3o2cKE7FY3RpdwYeDd0MupDdjrl6cz40j22e5UHu
+ eI9jxfjKyAGSokRaP3qctMp3Pw/UMq82a+QDc0iHlmmSZS8COkSq9wSHvg3VYTNN9wHPF/dxiPC
+ x6Eac3G9iH4/cr68j4rd/q8TIE2+pVYsCwGz6jmKEMgbuM+ICNBmOiHpNJHYMbt3aZqDkoZBRKV
+ 1oJBno7s8XSATD8vyoora9r4UzYgbfGsg5uA+C0M9emjjmN7zYzUmoPzvhyEA2E4Xq6BH535Gl2
+ Jc+gEBTk3AGNDMtACBCC+E4vmWsUPTv/MR5dxwxcswOiCNm8n4MY9ow/mCcRz3E9WwNKd1lXS3E
+ 4Nt4AGFTzl7mooK8vNvA==
+X-Google-Smtp-Source: AGHT+IGQtwbK0GkE/Y/wnGN2aKpDstMcaI5RwnqIPSyL5k4w6oDAdt6fuE8OduTxNCRelbbB017i7Q==
+X-Received: by 2002:a53:eb91:0:b0:632:e9f0:768c with SMTP id
+ 956f58d0204a3-6360463d061mr1941701d50.24.1758643336614; 
+ Tue, 23 Sep 2025 09:02:16 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-7e0ddd8ae94sm22963926d6.38.2025.09.23.08.57.59
+ af79cd13be357-83631a7fb5esm981956385a.55.2025.09.23.09.02.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 23 Sep 2025 08:57:59 -0700 (PDT)
-Date: Tue, 23 Sep 2025 08:57:56 -0700
+ Tue, 23 Sep 2025 09:02:16 -0700 (PDT)
+Date: Tue, 23 Sep 2025 09:02:12 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Feifei Wang <wff_light@vip.163.com>
-Cc: dev@dpdk.org, gongfan1@huawei.com
-Subject: Re: [V12 00/18] add-hinic3-PMD-driver
-Message-ID: <20250923085756.3daef787@hermes.local>
-In-Reply-To: <20250919112433.17926-1-wff_light@vip.163.com>
-References: <20250418090621.9638-1-wff_light@vip.163.com>
- <20250919112433.17926-1-wff_light@vip.163.com>
+To: Serhii Iliushyk <sil-plv@napatech.com>
+Cc: dev@dpdk.org, mko-plv@napatech.com, ckm@napatech.com
+Subject: Re: [PATCH v1 00/16] refactoring naming the for exported symbols
+Message-ID: <20250923090212.521acb23@hermes.local>
+In-Reply-To: <20250919091504.1548351-1-sil-plv@napatech.com>
+References: <20250919091504.1548351-1-sil-plv@napatech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,186 +80,155 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 19 Sep 2025 19:24:04 +0800
-Feifei Wang <wff_light@vip.163.com> wrote:
+On Fri, 19 Sep 2025 11:14:45 +0200
+Serhii Iliushyk <sil-plv@napatech.com> wrote:
 
-> The hinic3 PMD (**librte_net_hinic3**) provides poll mode driver support
-> for 25Gbps/100Gbps/200Gbps Huawei SPx series Network Adapters.
+> This patch series dedicates to align the naming if the exported symbols in order to avoid
+> potential conflicts with other application and libraries.
+> The main change is to add the prefix "nthw_".
 > 
-> V12:
-> -modify get_bit function
-> -remove define but not used macro
-> -modify time_before macro
+> Serhii Iliushyk (16):
+>   net/ntnic: single file function as static
+>   net/ntnic: remove unused functions
+>   net/ntnic: move nthw_ to prefix
+>   net/ntnic: change prefix hw_ to prefix nthw_
+>   net/ntnic: modify prefix flow_ with prefix nthw_
+>   net/ntnic: change prefix flm_ to prefix nthw_flm_
+>   net/ntnic: change prefix nt_ to prefix nthw_
+>   net/ntnic: change prefix ntlog_ to prefix nthw_log
+>   net/ntnic: change prefix km_ to prefix nthw_km_
+>   net/ntnic: change prefix set_ to prefix nthw_set_
+>   net/ntnic: rename common hash and flow functions
+>   net/ntnic: rename register ops function
+>   net/ntnic: rename get ops functions
+>   net/ntnic: rename ops_init functions
+>   net/ntnic: rename nim agx setup function
+>   net/ntnic: rename table id functions
 > 
-> v11:
-> -reorder code to avoid forward declarations
-> -remove unused casts
-> -use assignment instead of memcpy
-> -change some LOG level to DEBUG level
-> -remove unused function
-> -remove unused check in mtu_set/dev_config/valn_filter_set
-> -defer start/stop
-> -use strlpy instead snprintf 
-> -remove unnecessary line breaks, fit on line
-> 
-> v10:
-> -add prefix to some functions
-> -use memcpy instead of rte_memcpy for simple fixed copies
-> -modify LOG messege format
-> -modify meson.build files
-> -remove unused check in queue_start/stop/intr
-> -remove unused function 
-> -remove function that stubbed out
-> -modify some api log level
-> -remove features unsuppurted
-> -modify some casts
-> -change xstats_cal_num return type
-> -modify stats get function 
->  
-> v9:
-> -resolve type conflict issue
-> 
-> v8:
-> -resolve CI compile error
-> -modify mbox section
-> 
-> v7:
-> -remove unused-functions
-> 
-> v6:
-> -modify based on community comments
-> -remove mml files
-> 
-> v5:
-> -fix build err
-> 
-> v4: 
-> -solve patch application conflict issue 
->  
-> v3:
-> -fix checkpatchs errors issue
-> 
-> v2:
-> -modify CI compile errors
-> 
-> v1:
-> -modify community comments and compile issues
-> -remove the compilation flags in the meson build
-> -remove (void) cur_link_machine_state
-> -remove '*** BLURE HERE ***' in cover letter
-> 
-> Feifei Wang (2):
->   net/hinic3: add dev ops
->   net/hinic3: add Rx/Tx functions
-> 
-> Xin Wang (7):
->   net/hinic3: add basic header files
->   net/hinic3: add support for cmdq mechanism
->   net/hinic3: add NIC event module
->   net/hinic3: add context and work queue support
->   net/hinic3: add futions for initialization
->   net/hinic3: add device initialization
->   net/hinic3: add RSS promiscuous ops
-> 
-> Yi Chen (9):
->   doc: add hinic3 driver
->   net/hinic3: add hardware interfaces of BAR operation
->   net/hinic3: add eq mechanism
->   net/hinic3: add mgmt module function code
->   net/hinic3: add module about hardware operation
->   net/hinic3: add a NIC business configuration module
->   net/hinic3: add a mailbox communication module
->   net/hinic3: add flow control and FDIR module
->   drivers/net: add hinic3 PMD build and doc files
-> 
->  .mailmap                                   |    4 +-
->  MAINTAINERS                                |    6 +
->  doc/guides/nics/features/hinic3.ini        |   60 +
->  doc/guides/nics/hinic3.rst                 |   47 +
->  doc/guides/nics/index.rst                  |    1 +
->  doc/guides/rel_notes/release_25_11.rst     |    4 +
->  drivers/net/hinic3/base/hinic3_cmd.h       |  135 +
->  drivers/net/hinic3/base/hinic3_cmdq.c      |  962 ++++++
->  drivers/net/hinic3/base/hinic3_cmdq.h      |  222 ++
->  drivers/net/hinic3/base/hinic3_compat.h    |  133 +
->  drivers/net/hinic3/base/hinic3_csr.h       |  104 +
->  drivers/net/hinic3/base/hinic3_eqs.c       |  700 ++++
->  drivers/net/hinic3/base/hinic3_eqs.h       |   92 +
->  drivers/net/hinic3/base/hinic3_hw_cfg.c    |  190 ++
->  drivers/net/hinic3/base/hinic3_hw_cfg.h    |  110 +
->  drivers/net/hinic3/base/hinic3_hw_comm.c   |  442 +++
->  drivers/net/hinic3/base/hinic3_hw_comm.h   |  365 ++
->  drivers/net/hinic3/base/hinic3_hwdev.c     |  549 +++
->  drivers/net/hinic3/base/hinic3_hwdev.h     |  166 +
->  drivers/net/hinic3/base/hinic3_hwif.c      |  739 ++++
->  drivers/net/hinic3/base/hinic3_hwif.h      |  145 +
->  drivers/net/hinic3/base/hinic3_mbox.c      | 1189 +++++++
->  drivers/net/hinic3/base/hinic3_mbox.h      |  181 +
->  drivers/net/hinic3/base/hinic3_mgmt.c      |  340 ++
->  drivers/net/hinic3/base/hinic3_mgmt.h      |  102 +
->  drivers/net/hinic3/base/hinic3_nic_cfg.c   | 1785 ++++++++++
->  drivers/net/hinic3/base/hinic3_nic_cfg.h   | 1517 +++++++++
->  drivers/net/hinic3/base/hinic3_nic_event.c |  400 +++
->  drivers/net/hinic3/base/hinic3_nic_event.h |   38 +
->  drivers/net/hinic3/base/hinic3_wq.c        |  139 +
->  drivers/net/hinic3/base/hinic3_wq.h        |  109 +
->  drivers/net/hinic3/base/meson.build        |   16 +
->  drivers/net/hinic3/hinic3_ethdev.c         | 3565 ++++++++++++++++++++
->  drivers/net/hinic3/hinic3_ethdev.h         |  164 +
->  drivers/net/hinic3/hinic3_fdir.c           | 1364 ++++++++
->  drivers/net/hinic3/hinic3_fdir.h           |  398 +++
->  drivers/net/hinic3/hinic3_flow.c           | 1476 ++++++++
->  drivers/net/hinic3/hinic3_flow.h           |  196 ++
->  drivers/net/hinic3/hinic3_nic_io.c         |  802 +++++
->  drivers/net/hinic3/hinic3_nic_io.h         |  171 +
->  drivers/net/hinic3/hinic3_rx.c             | 1057 ++++++
->  drivers/net/hinic3/hinic3_rx.h             |  354 ++
->  drivers/net/hinic3/hinic3_tx.c             | 1025 ++++++
->  drivers/net/hinic3/hinic3_tx.h             |  314 ++
->  drivers/net/hinic3/meson.build             |   30 +
->  drivers/net/meson.build                    |    1 +
->  46 files changed, 21908 insertions(+), 1 deletion(-)
->  create mode 100644 doc/guides/nics/features/hinic3.ini
->  create mode 100644 doc/guides/nics/hinic3.rst
->  create mode 100644 drivers/net/hinic3/base/hinic3_cmd.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.c
->  create mode 100644 drivers/net/hinic3/base/hinic3_cmdq.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_compat.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_csr.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_eqs.c
->  create mode 100644 drivers/net/hinic3/base/hinic3_eqs.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.c
->  create mode 100644 drivers/net/hinic3/base/hinic3_hw_cfg.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.c
->  create mode 100644 drivers/net/hinic3/base/hinic3_hw_comm.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.c
->  create mode 100644 drivers/net/hinic3/base/hinic3_hwdev.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_hwif.c
->  create mode 100644 drivers/net/hinic3/base/hinic3_hwif.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_mbox.c
->  create mode 100644 drivers/net/hinic3/base/hinic3_mbox.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.c
->  create mode 100644 drivers/net/hinic3/base/hinic3_mgmt.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.c
->  create mode 100644 drivers/net/hinic3/base/hinic3_nic_cfg.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.c
->  create mode 100644 drivers/net/hinic3/base/hinic3_nic_event.h
->  create mode 100644 drivers/net/hinic3/base/hinic3_wq.c
->  create mode 100644 drivers/net/hinic3/base/hinic3_wq.h
->  create mode 100644 drivers/net/hinic3/base/meson.build
->  create mode 100644 drivers/net/hinic3/hinic3_ethdev.c
->  create mode 100644 drivers/net/hinic3/hinic3_ethdev.h
->  create mode 100644 drivers/net/hinic3/hinic3_fdir.c
->  create mode 100644 drivers/net/hinic3/hinic3_fdir.h
->  create mode 100644 drivers/net/hinic3/hinic3_flow.c
->  create mode 100644 drivers/net/hinic3/hinic3_flow.h
->  create mode 100644 drivers/net/hinic3/hinic3_nic_io.c
->  create mode 100644 drivers/net/hinic3/hinic3_nic_io.h
->  create mode 100644 drivers/net/hinic3/hinic3_rx.c
->  create mode 100644 drivers/net/hinic3/hinic3_rx.h
->  create mode 100644 drivers/net/hinic3/hinic3_tx.c
->  create mode 100644 drivers/net/hinic3/hinic3_tx.h
->  create mode 100644 drivers/net/hinic3/meson.build
+>  drivers/net/ntnic/adapter/nt4ga_adapter.c     |   14 +-
+>  .../net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c |   10 +-
+>  drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c |   54 +-
+>  drivers/net/ntnic/include/create_elements.h   |    9 -
+>  drivers/net/ntnic/include/flow_api.h          |   10 +-
+>  drivers/net/ntnic/include/flow_api_engine.h   |   18 +-
+>  drivers/net/ntnic/include/hw_mod_backend.h    |  281 ++--
+>  drivers/net/ntnic/include/ntnic_dbs.h         |   22 +-
+>  .../link_mgmt/link_100g/nt4ga_link_100g.c     |   14 +-
+>  .../link_agx_100g/nt4ga_agx_link_100g.c       |   22 +-
+>  drivers/net/ntnic/link_mgmt/nt4ga_link.c      |    2 +-
+>  drivers/net/ntnic/nim/i2c_nim.c               |   10 +-
+>  drivers/net/ntnic/nim/i2c_nim.h               |    2 +-
+>  .../net/ntnic/nthw/core/include/nthw_fpga.h   |   14 +-
+>  .../net/ntnic/nthw/core/include/nthw_hif.h    |   12 -
+>  .../net/ntnic/nthw/core/include/nthw_iic.h    |    9 -
+>  .../ntnic/nthw/core/include/nthw_mac_pcs.h    |    9 -
+>  .../net/ntnic/nthw/core/include/nthw_pcie3.h  |   13 -
+>  .../nthw/core/include/nthw_pcm_nt400dxx.h     |    1 -
+>  .../ntnic/nthw/core/include/nthw_phy_tile.h   |    2 -
+>  .../net/ntnic/nthw/core/include/nthw_rpf.h    |    2 -
+>  .../net/ntnic/nthw/core/include/nthw_si5340.h |    2 -
+>  .../clock_profiles/nthw_fpga_clk9563.c        |    4 +-
+>  .../nthw/core/nt200a0x/nthw_fpga_nt200a0x.c   |    8 +-
+>  .../core/nt200a0x/reset/nthw_fpga_rst9563.c   |    8 +-
+>  .../nt200a0x/reset/nthw_fpga_rst_nt200a0x.c   |    6 +-
+>  .../nthw/core/nt400dxx/nthw_fpga_nt400dxx.c   |    8 +-
+>  .../core/nt400dxx/reset/nthw_fpga_rst9574.c   |   22 +-
+>  .../nt400dxx/reset/nthw_fpga_rst_nt400dxx.c   |   36 +-
+>  drivers/net/ntnic/nthw/core/nthw_fpga.c       |   22 +-
+>  drivers/net/ntnic/nthw/core/nthw_hif.c        |   90 --
+>  drivers/net/ntnic/nthw/core/nthw_i2cm.c       |    4 +-
+>  drivers/net/ntnic/nthw/core/nthw_igam.c       |    4 +-
+>  drivers/net/ntnic/nthw/core/nthw_iic.c        |  240 +--
+>  drivers/net/ntnic/nthw/core/nthw_mac_pcs.c    |   67 +-
+>  drivers/net/ntnic/nthw/core/nthw_pcie3.c      |   86 --
+>  .../net/ntnic/nthw/core/nthw_pcm_nt400dxx.c   |    5 -
+>  drivers/net/ntnic/nthw/core/nthw_phy_tile.c   |   51 +-
+>  drivers/net/ntnic/nthw/core/nthw_rpf.c        |   14 -
+>  .../net/ntnic/nthw/core/nthw_si5332_si5156.c  |    2 +-
+>  drivers/net/ntnic/nthw/core/nthw_si5340.c     |    6 +-
+>  drivers/net/ntnic/nthw/core/nthw_spi_v3.c     |   12 +-
+>  drivers/net/ntnic/nthw/dbs/nthw_dbs.c         |   22 +-
+>  drivers/net/ntnic/nthw/flow_api/flow_api.c    |  253 ++--
+>  .../nthw/flow_api/flow_backend/flow_backend.c | 1342 ++++++++---------
+>  drivers/net/ntnic/nthw/flow_api/flow_filter.c |    4 +-
+>  .../net/ntnic/nthw/flow_api/flow_hsh_cfg.c    |   46 +-
+>  .../net/ntnic/nthw/flow_api/flow_hsh_cfg.h    |    2 +-
+>  .../net/ntnic/nthw/flow_api/flow_id_table.c   |   10 +-
+>  .../net/ntnic/nthw/flow_api/flow_id_table.h   |   10 +-
+>  drivers/net/ntnic/nthw/flow_api/flow_kcc.c    |    2 +-
+>  drivers/net/ntnic/nthw/flow_api/flow_km.c     |  134 +-
+>  .../nthw/flow_api/hw_mod/hw_mod_backend.c     |   18 +-
+>  .../ntnic/nthw/flow_api/hw_mod/hw_mod_cat.c   |  356 ++---
+>  .../ntnic/nthw/flow_api/hw_mod/hw_mod_flm.c   |   70 +-
+>  .../ntnic/nthw/flow_api/hw_mod/hw_mod_hsh.c   |   14 +-
+>  .../ntnic/nthw/flow_api/hw_mod/hw_mod_km.c    |  107 +-
+>  .../ntnic/nthw/flow_api/hw_mod/hw_mod_pdb.c   |   40 +-
+>  .../ntnic/nthw/flow_api/hw_mod/hw_mod_qsl.c   |   32 +-
+>  .../nthw/flow_api/hw_mod/hw_mod_slc_lr.c      |   14 +-
+>  .../ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c   |   80 +-
+>  .../flow_api/profile_inline/flm_age_queue.c   |   22 +-
+>  .../flow_api/profile_inline/flm_age_queue.h   |   20 +-
+>  .../flow_api/profile_inline/flm_lrn_queue.c   |   12 +-
+>  .../flow_api/profile_inline/flm_lrn_queue.h   |   12 +-
+>  .../profile_inline/flow_api_hw_db_inline.c    | 1138 +++++++-------
+>  .../profile_inline/flow_api_hw_db_inline.h    |   99 +-
+>  .../profile_inline/flow_api_profile_inline.c  |  596 ++++----
+>  .../profile_inline/flow_api_profile_inline.h  |   49 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_cat.c    |  230 +--
+>  .../ntnic/nthw/flow_filter/flow_nthw_cat.h    |  230 +--
+>  .../ntnic/nthw/flow_filter/flow_nthw_csu.c    |   22 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_csu.h    |   24 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_flm.c    |  278 ++--
+>  .../ntnic/nthw/flow_filter/flow_nthw_flm.h    |  278 ++--
+>  .../ntnic/nthw/flow_filter/flow_nthw_hfu.c    |   58 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_hfu.h    |   58 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_hsh.c    |   60 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_hsh.h    |   60 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_ifr.c    |   30 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_ifr.h    |   30 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_info.c   |   88 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_info.h   |   88 +-
+>  .../net/ntnic/nthw/flow_filter/flow_nthw_km.c |  160 +-
+>  .../net/ntnic/nthw/flow_filter/flow_nthw_km.h |  162 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_pdb.c    |   54 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_pdb.h    |   56 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_qsl.c    |   68 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_qsl.h    |   68 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_rpp_lr.c |   32 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_rpp_lr.h |   32 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_slc_lr.c |   28 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_slc_lr.h |   28 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_tx_cpy.c |   22 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_tx_cpy.h |   22 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_tx_ins.c |   20 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_tx_ins.h |   20 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_tx_rpl.c |   42 +-
+>  .../ntnic/nthw/flow_filter/flow_nthw_tx_rpl.h |   46 +-
+>  .../net/ntnic/nthw/model/nthw_fpga_model.c    |  577 +++----
+>  .../net/ntnic/nthw/model/nthw_fpga_model.h    |   28 -
+>  drivers/net/ntnic/nthw/nthw_platform.c        |    2 +-
+>  drivers/net/ntnic/nthw/nthw_platform_drv.h    |    2 +-
+>  drivers/net/ntnic/nthw/nthw_rac.c             |   28 +-
+>  .../net/ntnic/nthw/ntnic_meter/ntnic_meter.c  |   20 +-
+>  .../nthw/supported/nthw_fpga_mod_str_map.c    |    2 +-
+>  .../nthw/supported/nthw_fpga_mod_str_map.h    |    2 +-
+>  drivers/net/ntnic/ntlog/ntlog.c               |    6 +-
+>  drivers/net/ntnic/ntlog/ntlog.h               |    6 +-
+>  drivers/net/ntnic/ntnic_ethdev.c              |  108 +-
+>  drivers/net/ntnic/ntnic_filter/ntnic_filter.c |   49 +-
+>  drivers/net/ntnic/ntnic_mod_reg.c             |   96 +-
+>  drivers/net/ntnic/ntnic_mod_reg.h             |  142 +-
+>  drivers/net/ntnic/ntnic_vfio.c                |   18 +-
+>  drivers/net/ntnic/ntnic_vfio.h                |   12 +-
+>  drivers/net/ntnic/ntnic_xstats/ntnic_xstats.c |    4 +-
+>  drivers/net/ntnic/ntutil/nt_util.c            |   73 +-
+>  drivers/net/ntnic/ntutil/nt_util.h            |   21 +-
+>  118 files changed, 4434 insertions(+), 4887 deletions(-)
 > 
 
-Queued to next-net. Thank you for following up on all the review
+Looks good but I ended up pulling out the ntnic driver service changes
+because of the error detected on build with fortify (string format overflow).
+
+When you resubmit the ntnic driver you can either merge these
+changes into that, or just add these patches as after thought.
+
