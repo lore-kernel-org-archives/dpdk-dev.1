@@ -2,171 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B3CCAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 14:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C4CCAC5A7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 15:04:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7FD9D40615;
-	Tue, 23 Sep 2025 16:48:45 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 2A6E6402CB
- for <dev@dpdk.org>; Tue, 23 Sep 2025 16:48:44 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58N5LHCG023495;
- Tue, 23 Sep 2025 07:48:43 -0700
-Received: from bn1pr04cu002.outbound.protection.outlook.com
- (mail-eastus2azon11020082.outbound.protection.outlook.com [52.101.56.82])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49bnags4wt-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 23 Sep 2025 07:48:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V0sIDwR67iOMcaeXucZysa+AnQX8GB4F5K6j8w0190DTA38Db0kH/5LE2evYQJ1AjIP9rjxd89s/O5xbNiHheymJAW4UNMjL/DYsj72tDOHwrZvJ5sp458jputA6+q89CsPopHSuF6/QbO9DvT83N1NB0Lc8NwYU6hJ9c9kfMc8esX/K/7cYNXx5l004awhgG13dH2OdvOAIo5f4nJltKialwY7sulMVEgfgGh9q8nSbigvjofsF/AB2+dTlpMqfdPIYFOE1PT7MyF142kakKx0G2DOD+Ru5ARjV5B+ODVRkP0TJgRjODPeMFdkwFx/g9RC+ZoIrOdnQ3q9xdb8TOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P+RVDYWSlovUev9PuqRY0WdwRJO3ZKSfIfFE+ovgqso=;
- b=HZSZzcTAdAaKFid/1x4O6RSgGXt5qdud7eQLN9J82K6aJxCrPWM+2+L6ghpmHPbnvU4mOkxNNWNnHom5VzT06w2YCbL7d2/7hGmQy9vKB1I7DvX+Yy9l2mPQLE++9/U+RmfABU3Kg4ONnCF7bmveMBAhzqxOwzju5p79LvJ7cHCoMC2tEbwd4KvKUpUubx0Jhav39K+foCh3XFyKEv6p/gG7nRZXphd8AGcFTAkUYo8fHjSukgVhMLpLaHuyzz84RaqCDeQE2lp8raskyUe6XQorw/viECSpNrcwYVlqF8MvBQP02yN3li3Szo1wFihlYwjrJe3yvC4PydevviVw1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P+RVDYWSlovUev9PuqRY0WdwRJO3ZKSfIfFE+ovgqso=;
- b=MG0YCtjpv8VOLEk/RuhfsRcx92lxhxnfdDikmIRcQ1ftNPzh3aOm8czxX3PymL5V8HB/8Y4X423AGI8uyecLyt+EXt0RDJ0Os72UyI5m6KFX8uHjcv9jwSYJhdCsjoeaRgpF/d8oMmNQchcwEiEU6noO2bdVzg1T3UEOO+VRXa8=
-Received: from PH0PR18MB4086.namprd18.prod.outlook.com (2603:10b6:510:3::9) by
- CH0PR18MB5418.namprd18.prod.outlook.com (2603:10b6:610:190::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Tue, 23 Sep
- 2025 14:48:39 +0000
-Received: from PH0PR18MB4086.namprd18.prod.outlook.com
- ([fe80::ed37:4ea0:6359:f717]) by PH0PR18MB4086.namprd18.prod.outlook.com
- ([fe80::ed37:4ea0:6359:f717%5]) with mapi id 15.20.9137.018; Tue, 23 Sep 2025
- 14:48:39 +0000
-From: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>
-To: Bruce Richardson <bruce.richardson@intel.com>, fengchengwen
- <fengchengwen@huawei.com>
-CC: Jerin Jacob <jerinj@marvell.com>, Vamsi Krishna Attunuru
- <vattunuru@marvell.com>, "g.singh@nxp.com" <g.singh@nxp.com>,
- "sachin.saxena@nxp.com" <sachin.saxena@nxp.com>, "hemant.agrawal@nxp.com"
- <hemant.agrawal@nxp.com>, "kevin.laatz@intel.com" <kevin.laatz@intel.com>,
- "conor.walsh@intel.com" <conor.walsh@intel.com>, Gowrishankar Muthukrishnan
- <gmuthukrishn@marvell.com>, Vidya Sagar Velumuri <vvelumuri@marvell.com>,
- "anatoly.burakov@intel.com" <anatoly.burakov@intel.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-Subject: Re: [25.11 PATCH v3 0/5] Introduce DMA enqueue/dequeue operations
-Thread-Topic: [25.11 PATCH v3 0/5] Introduce DMA enqueue/dequeue operations
-Thread-Index: AQHcJY0Ql0OU8ZwQvUa55jGKlVvicbSg5tXy
-Date: Tue, 23 Sep 2025 14:48:39 +0000
-Message-ID: <PH0PR18MB40864782009501565B46BAD8DE1DA@PH0PR18MB4086.namprd18.prod.outlook.com>
-References: <20250519185604.5584-1-pbhagavatula@marvell.com>
- <20250524091316.10056-1-pbhagavatula@marvell.com>
- <aDQjDZowik8E7Jfh@bricha3-mobl1.ger.corp.intel.com>
- <PH0PR18MB408699863CC25944A04C2F18DE6BA@PH0PR18MB4086.namprd18.prod.outlook.com>
- <PH0PR18MB4086AB67CD19C038A19472EBDE0AA@PH0PR18MB4086.namprd18.prod.outlook.com>
-In-Reply-To: <PH0PR18MB4086AB67CD19C038A19472EBDE0AA@PH0PR18MB4086.namprd18.prod.outlook.com>
-Accept-Language: en-US, en-IN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR18MB4086:EE_|CH0PR18MB5418:EE_
-x-ms-office365-filtering-correlation-id: 510d11c0-73fb-484f-7fa2-08ddfab0485d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|366016|376014|38070700021;
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?/GZrXABXQihqOZn/RBgzRKQr1AS/raFCA5X4zs9sCxCWULdtLo4js5AFtW?=
- =?iso-8859-1?Q?956XDvWPREQRkqYMQRklQKVu5+mIonfOXYu+NwoFB+CRb/WyKj4/+SUnYn?=
- =?iso-8859-1?Q?DnXSY6jlyAPR65Dj+VTo/Fr88Up08GJwJmHC84maDb8TSe9Wengh9WUQyF?=
- =?iso-8859-1?Q?O+hA7iF6W1iOs2Z6YhDLnKjCKWNDHCEWAEVoiiycg2MUuXuXvlcZmTM3QZ?=
- =?iso-8859-1?Q?vPiLtO3x9veXo1Ak1Z0r4QtvU2D5xEfOept+nC0NaCYLsMCUkvh5OyPVTE?=
- =?iso-8859-1?Q?jNEazl2H6MS+ewGOWoiba2aCcNMj1kk94KMDbusPdsQJNzEGW6R25Tx/zk?=
- =?iso-8859-1?Q?6cV98tn8QlVZxt4QDhjCu8E4UFFP79O1pD418C8K0407NahETvNsI5vGVC?=
- =?iso-8859-1?Q?YiUHRFpAM+OZeFECEdQUV83Dd12heJ2lRb2ZaSGhwRmTdibYUtNaxhyHd9?=
- =?iso-8859-1?Q?kgRAM7yxqyvd2yBk8FMDp8CdwXda0GbasdDwymBF3BL6Y1lI2T0VSVsA2I?=
- =?iso-8859-1?Q?nkZz2jxAwY5fM9vW12L93uYJSJkjTjEB6nLZtVyM7jLLSnWepPEIkpZTM4?=
- =?iso-8859-1?Q?ZrtI/XurHb/KAaYX2WSICkirT3oUBB65Yc7ZHcBYlV1Pt2peulTfgvDQG+?=
- =?iso-8859-1?Q?7TGwJBZfwoHlHl7dMG3OhUp5b5xjjPalQvKYlSeWZTaI0nUflkYSByeWzw?=
- =?iso-8859-1?Q?ajkww12OTBOopT1OvdQyeNjbzWSh/fRLiCNEv4hGjk3ZDFLM6xbMLyvrNW?=
- =?iso-8859-1?Q?xlyQWz6Zrlvpm78AhwLYI34yNLUf0odygp9zfksntE+SRD1H0eNcdu+ecg?=
- =?iso-8859-1?Q?bGTO5pXALswr1jrAFF/nQcDnaZAdqiVoWJAmFvZ1ERAwFfCtio0DNTlVgT?=
- =?iso-8859-1?Q?HUEdgqPlrrQmMr5YwD5hFCjPEUQWFLeO93WMXA12bh5gSLbMOR0bW/2D+g?=
- =?iso-8859-1?Q?snLNVSqQDDPhm26ZNJ0TJCyoe+WwhcdhKXiR1dqrRFFURi3UhHYMvoVdhi?=
- =?iso-8859-1?Q?CDnaKm57w2la5079KcO5M2RCAY4u7ogBdq5j+gstEMhrsG3ohjOB7r042N?=
- =?iso-8859-1?Q?aDcwXhw2DJsSTyCqbxMxWd0n27IVfwHRQhrBsFoD+zm+59OSrvbqjEBd3G?=
- =?iso-8859-1?Q?aEH6ZZasS7+2lXyuzMZYIuKO2ita6VJFYA0iscGBb8WOJZSA+G1wtd0WWq?=
- =?iso-8859-1?Q?u6qerMkhn/EWUZTWUPQK/ezwxRVFiYWzV39+Wv9xKXp0B45+JDWkhtk8eB?=
- =?iso-8859-1?Q?zAKAFUpW5SzVjOSfDTsSh7BfGXPTwc273UD/x2U0hyr0ngAqbkNLy5yijj?=
- =?iso-8859-1?Q?7Bps9/7urSRPQ8eJfxHYXle6UehatdEJHsWTMpEpWpF7B0RMrJ4i0Efo+U?=
- =?iso-8859-1?Q?xwIeTzff3fbePTo8VnDOX5ckd0JjNqDXhZAdXLbvwlSKRcBg7O1DN5D8N1?=
- =?iso-8859-1?Q?9jW9g0qADn9QthVwMbl52mH7s6p1N8kjvPOjCJBVGrkDBqoPlDiWZk2lnJ?=
- =?iso-8859-1?Q?GhyYBAqD5eJWdXPWUIrUuVbTur2sp8fBgOWi3i9oidhfx8TEI4/2fgalN2?=
- =?iso-8859-1?Q?RDJa4vs=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH0PR18MB4086.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(38070700021); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?lgycxqvbGnyEywTnvxBjoqQdGaRc3xkeYQAsoUUrhIrmz8J2Xx/u4UZdGP?=
- =?iso-8859-1?Q?WpD03/+BEnV16r+OmIvYKzSrm1k65xKjKgOnxIWbaht/GhzZrhTSxsTHZp?=
- =?iso-8859-1?Q?RXjNs/Gub2FmddAPjDOclaIyVMMVMQ9YknTuDk8PX3+DD952pSUytyX5kg?=
- =?iso-8859-1?Q?GM4h00kurlD1YQp3hzdPQUhDiGxPdt8EeHW8Jh/dnn0If9itRBQllajDZK?=
- =?iso-8859-1?Q?AkIlMPVL3MeHUoxdv7IRn8VeZwiaNMnMjk/+q9wEIkTbqJ8r+9qqLDwlIA?=
- =?iso-8859-1?Q?TnlwT8C0w8a/YJRx+cKyeQ+AbWaKAxInOCkYU1EkI6PEYnizcGCvQ5CS8W?=
- =?iso-8859-1?Q?8bSXTnFwzMUEqjfrJhD7lK0Qqj7OG5A0+IB28uvibs6BVLmwLjoh82hDNQ?=
- =?iso-8859-1?Q?XbCfdQcT/J7G8wrAI1kk9jIpW96FgaCuMN5pAiZuy5A0aY/duOzMv0dVVH?=
- =?iso-8859-1?Q?aiCHVfa5RiWutyCOnFz+ouUFxmSLPSNrxaluH7lu6FShgfnq36OOPDms4A?=
- =?iso-8859-1?Q?nxIDnkrGFpKN5R6Jh6iI+hX/FRofCT5miivPKR2SM4Xa7af+0I8KjrHm7z?=
- =?iso-8859-1?Q?XCNrt3iuKzBr8VPqmdALlk1VFTUCnexvvDDg1hMnfU2b8qe2Qvl64S1+dk?=
- =?iso-8859-1?Q?ji/Otq6FTB7qJDu9qkeqCaVF7poMDiaOTgmhEdnbhiqRL4xYNPhRAcTPGB?=
- =?iso-8859-1?Q?FKv8NeLooUmKF6BQwmBTQvacDB8mxL+G7N5hwtnt2ZpvndlNdx9va4QrzH?=
- =?iso-8859-1?Q?LZNdmWu8+louWrscJZ5yD0x3KVU+021mFjE+QawO+HX0dweKgtRM4D21ia?=
- =?iso-8859-1?Q?B8T2/JIxsCDrGqcClViKYBWxtiicc8fzKGSdpW53sbLQAbcqmDNnItU0um?=
- =?iso-8859-1?Q?v7BGJfBOkjw20+3VKD8cuJJNBm1OTo8P2QLWNkM15OjUwqRNEp9tqpTx+8?=
- =?iso-8859-1?Q?0IRwEYyJpEoX1hwJY06oqCEbmQOIl7RPapfnAsPJLlTCKU3GN0wPQ6i2Zw?=
- =?iso-8859-1?Q?5l9dSbAq6NpZzF/tU50lpRb49Yi6iWYT/rUI0NmWxyCxRRR+bP2GpHly81?=
- =?iso-8859-1?Q?wud15UiTRAjR0tvSyxmN1S6fVXBvjyKSPZ8KmHn2x1H85sDhakqqEI6+fC?=
- =?iso-8859-1?Q?+LnrjIHrlm1KJt47NPI1cjgCYgSrRjG0fNifY2FF4iqAgSKLFb0DaeYV0r?=
- =?iso-8859-1?Q?35pSnHqUV+UgmMM9IBY1qOyr8aLRt2gfm8qtvBBSWjUT3sdjM88oAIccr9?=
- =?iso-8859-1?Q?Y2q7+7Ptnmi1Stik2a0UaA/JvO6c60GPvZvgBecFXcCUht/H8Iw5Y6MaG6?=
- =?iso-8859-1?Q?XQmVjqgm1UIYy55j/JNAalP4eMx5dOa3Ojv4NGyW+cuPOZInx+beqWX9j1?=
- =?iso-8859-1?Q?lljlLhPVBbivqZDOyUgXdMtDtNpI9K0D2ECJm+FmTmD85gGA4NKBPP3t4/?=
- =?iso-8859-1?Q?ukd1pA80c1f2S1gtQYWj8Rmi9sxJNnIXtebOAd09IYduH9M/+5eJfXP3c6?=
- =?iso-8859-1?Q?mFDKufRHa5dETPpjznR6YlbpmXh0uED6vaa7YXtz2AG1DP0lmyIj4Rb8zU?=
- =?iso-8859-1?Q?fSv4EusfY6Nuj0HPP6O9ClA3oU33suudnC5Zs9X7iZ1Mog2s588Fu8Y6TP?=
- =?iso-8859-1?Q?Do9MuKi+jxpp/3ZXvsbZ8vo46x4nijMmW7?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 6C25040615;
+	Tue, 23 Sep 2025 17:04:51 +0200 (CEST)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com
+ [209.85.208.45]) by mails.dpdk.org (Postfix) with ESMTP id 54D8C402CB
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 17:04:49 +0200 (CEST)
+Received: by mail-ed1-f45.google.com with SMTP id
+ 4fb4d7f45d1cf-631df7b2dffso3441540a12.1
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 08:04:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758639889;
+ x=1759244689; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=27SMaDXHZPfxiXf+kqn54/jaSvJ7a5pB51nGZt8d8s0=;
+ b=ln37IDo9t8rC43farjLlslb9f0Cf9sJdEFmLznt5zrdEuFoFIIVfjYA0NfhH8XTjEW
+ AX8rlFaTljre/IgpencKAFkrXTblt3X6Rokq6UnlmsOdmKfKnMqIwI9qkTwysKSINPYC
+ eYcbyggU+r4Ei45j3G23KmefpqznuXVik7TyrDRjDjiyJo6ISGk6S2kY8XJPrOcUkSTn
+ 5dcVRmZ/ku3ux/ihuK6OvzaqFybLoh7RHoNjyew5DvUeUHD1jVEPnz9DaM7XS4aFGshL
+ BKe3lTGcJ6rpIbd/EVhMcKmdWsYmb6isCK98kUkgzwLrdopF6s+YftraWr76WBz32rvC
+ Fezw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1758639889; x=1759244689;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=27SMaDXHZPfxiXf+kqn54/jaSvJ7a5pB51nGZt8d8s0=;
+ b=msKPz+bfWlUaGCrv0B1UWBomCcWbmnHNf8TWhg7JxdHXWMkoL8i6pxM8avlmvaMbLp
+ feqzByqhudmdEWDTqIz/+wbMD6+ZSmVOuiWVC6EQDuZqrFPAxSs2dMy7bYAxx520uZB5
+ qg1tuwH8zJPsydYGWtKPaX8XCqkI5S0+bsXh6jbwNCp2Ul7Pox7/D35E/rYhlIWiRY1a
+ cMZ0vWM/IKlRhDwAuiEKz4YXnN+CQzsXkv7rmnaOAWz5Czo/cMktfHUiWYjM/cln2+Zy
+ mKu6u+Og99PiGHZjtU+KhdAIpqzJ5mfixpob0EIynb4dIqOBQQIeqBc7UhZ41ch4fwSH
+ 8J2A==
+X-Gm-Message-State: AOJu0YwYi9oxtrBOQjjZpgjNfFhwVd4eD95pwl4UKV90kBEXe3UQZOKe
+ xZLzJuum4ou2eeRG0f2EUDVJ5xonVGva30GhN7Ff6lJg6rrHALN7Bg0+VN0doVlkhpQ=
+X-Gm-Gg: ASbGnctQJ1I2ZeeNuH9LC4qskSv/SOWLIxy8HSGlWo1c/qD+0rjnU1qaTpr9o/rCsmJ
+ dcZZpr/2aNRrQA3a+ZmaAeKHVrs2+rk3xYd/8KnDEqtlFs9WyetCTUyVevc0rs+RYrAp5Dili4L
+ 1iEbdLP0xNL64TVFOEKJLORmtJ7NYRiK1tirEo004mPe0boW27qjZnshObPLssF3a7XFI7ZiB1G
+ F5WuzY0n2kWWgc1GSnBC7mEEQzgk4IpqiN75wmiE5jKsRRD8gHY4ina/W7nrDL39cilI1B6d2ZE
+ FrakJFO9bxmQz0rVrUMWXK5/BbU5/UmiD0nQdFclGQr0rpxRzCTRH2ktcayqocwsPJdmyR/LAmj
+ zdxRAcqw5d6vI0shAmyEzPx2BOkYeoeQ/0bGooXZAG4ws6GAYB3Ji0JTmd59j6F3z92Lx3JaqD0
+ Q=
+X-Google-Smtp-Source: AGHT+IEchRnDYNrBD0ZVaOM/foF3OcrEle13uJ1OMOrLqTJas3fCLtM0AUkHHlr1ULYPGVLjiU3Vgg==
+X-Received: by 2002:a05:6402:1d49:b0:61c:db49:aec0 with SMTP id
+ 4fb4d7f45d1cf-63467bfe3fdmr2267218a12.5.1758639888555; 
+ Tue, 23 Sep 2025 08:04:48 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 4fb4d7f45d1cf-62fa5cfa883sm10762985a12.11.2025.09.23.08.04.47
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 23 Sep 2025 08:04:48 -0700 (PDT)
+Date: Tue, 23 Sep 2025 08:04:43 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [RFC PATCH 0/6] remove deprecated queue stats
+Message-ID: <20250923080443.5430306c@hermes.local>
+In-Reply-To: <20250923141207.10403-1-bruce.richardson@intel.com>
+References: <20250923141207.10403-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4086.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 510d11c0-73fb-484f-7fa2-08ddfab0485d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Sep 2025 14:48:39.1349 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MJIDipq/4Gh7tqIkxdOpUfdznT69cdkbYAY1Q0X1qYgSu205QwK1j2Pgbza3/RqQvnM+Csrj3Vhl28Jb8H2KmRw/kQ98Y/vNo1UlBhxe5ek=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR18MB5418
-X-Authority-Analysis: v=2.4 cv=X6pSKHTe c=1 sm=1 tr=0 ts=68d2b34b cx=c_pps
- a=o2lqJXFw7WzsGQLwBBQY9A==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10 a=yJojWOMRYYMA:10 a=-AAbraWEqlQA:10
- a=NEAV23lmAAAA:8 a=M5GUcnROAAAA:8 a=fUSa9ZSKsGB9THjxU0YA:9 a=wPNLvfGTeEIA:10
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIzMDA0NyBTYWx0ZWRfX57MzK67B238x
- ViPY8QGFRZXBKhIY7czlCdYws0bUyFMcF7JSvnQu+GzXQRzqR7TZLVAMF0RbaeCcs41tV7wdKtu
- Rs1id0R2M/mtpvke7Es6UG+5CFOt8Blq3IEBV6f+LAIskTvnM60DXS4QqbC9Hx3f9uch5FVikZx
- /hICsYj6KGln3jKL8tn4H4FndySdHtPy8Z3P4mltE5iy8VZvjUVyO+FOta88odrM8nv4sv72BA3
- Rtp1mSPg4QYYlIwMqxJw3aj3sgDLzDMRntETOpjZzfs79kvNJD8UJDaIF3Dowu6faszmmqi0q0V
- 3ze884N9hKeu0dep5OqLo5yncg49bK485OcX88NPM9FaIrb021DF4OyElzoYjqB1Kimmv51AaVN
- gKRgzM7M
-X-Proofpoint-GUID: GWOG6v5Y_zXFwstvu2vp1cEObUbf7p_8
-X-Proofpoint-ORIG-GUID: GWOG6v5Y_zXFwstvu2vp1cEObUbf7p_8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-23_03,2025-09-22_05,2025-03-28_01
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -180,58 +80,187 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Gentle reminder.=0A=
-=0A=
->Ping for review.=0A=
->=0A=
->>Hi Bruce,=0A=
->>=0A=
->>>On Sat, May 24, 2025 at 02:43:10PM +0530, pbhagavatula@marvell.com wrote=
-:=0A=
->>>> From: Pavan Nikhilesh <pbhagavatula@marvell.com>=0A=
->>>>=0A=
->>>> Introduce DMA enqueue/dequeue operations to the DMA device library.=0A=
->>>>=0A=
->>>> Add configuration flags to rte_dma_config instead of boolean for=0A=
->>>> individual features.=0A=
->>>>=0A=
->>>> The enqueue/dequeue operations allow applications to communicate with =
-the=0A=
->>>> DMA device using the rte_dma_op structure, providing a more flexible a=
-nd=0A=
->>>> efficient way to manage DMA operations.=0A=
->>>>=0A=
->>>=0A=
->>>While I have no really strong objections to this addition to the dmadev=
-=0A=
->>>API, I'd appreciate if you could explain WHY or how this method of worki=
-ng=0A=
->>>is more efficient in your usecase? When designing the dmadev APIs=0A=
->>>originally, we looked at using both an enqueue-type API as well as the=
-=0A=
->>>implemented individual-op-based APIs. IIRC at that time testing showed t=
-hat=0A=
->>>using the single ops directly was faster than using the enqueue APIs, so=
-=0A=
->>>I'm wondering what exactly has changed, or is different about your useca=
-se?=0A=
->>>=0A=
->>=0A=
->>Here is an example where we see enqueue/dequeue ops to be useful especial=
-ly when=0A=
->>integrating with Graph library.=0A=
->>=0A=
->>We had to write an entire wrapper[1] for tracking sges with the current i=
-mplementation=0A=
->>making our nodes[2] very complex.=0A=
->>=0A=
->>[1]https://github.com/MarvellEmbeddedProcessors/dao/blob/dao-devel/lib/co=
-mmon/dao_dma.h=0A=
->>[2]https://github.com/MarvellEmbeddedProcessors/dao/blob/3f364261de91e355=
-699bd9af20d60ea6459f7d67/lib/virtio_net/virtio_net_deq_ext.c#L51=0A=
->>=0A=
->>>/Bruce=0A=
->>=0A=
->>Thanks,=0A=
->>Pavan.=0A=
-=0A=
+On Tue, 23 Sep 2025 15:12:00 +0100
+Bruce Richardson <bruce.richardson@intel.com> wrote:
+
+> Since DPDK 20.11 release, the use of queue stats inside the rte_eth_stats
+> structure has been deprecated with the intention to remove them. Sadly,
+> despite 5 years passing that has still not been done. This patchset
+> finally attempts to fix that situation and remove the queue stats fields.
+> 
+> The biggest complication here is the fact that, as part of the deprecation,
+> a new driver flag was added which caused ethdev to automatically add the
+> queue stats into xstats. While this was good, in that it allowed quick use
+> of xstats for getting queue statistics, it now causes lots of problems
+> because we have 35 drivers (by a rough count using grep) which rely on this
+> functionality to export their queue stats via xstats. This means that if we
+> drop the queue stats fields from the regular stats structure, then 35
+> drivers will lose *all* queue stats reporting functionality! This is not an
+> acceptable situation IMHO. [And in one patchset trying to change all 35
+> drivers to directly export via xstats is not feasible either, since adding
+> extra xstats can be very complicated at times.]
+> 
+> Therefore, we need to make changes that a) removes the queue fields from
+> the regular stats structure, while also b) continuing to allow the
+> individual driver stats_get functions return those stats to ethdev for
+> filling in. I tried a number of approaches here to find one that was most
+> feasible to implement for large numbers of drivers, so that either scripts
+> or AI assistants could automate a lot of the changes. The most feasible
+> approach I found was to define a DPDK-internal queue-stats-only structure,
+> which would be passed as a 3rd parameter to the drivers' stats_get
+> functions. When calling stats_get from ethdev, this third parameter would
+> be NULL, but for gathering xstats, it would be non-NULL for drivers which
+> have the RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS flag set.
+> 
+> For this set, I've separated out the driver changes from the ethdev changes
+> and the app changes, since the driver changes are so numerous, making the
+> rest hard to review. In order to ensure clean compilation and git history,
+> patches 3 through 6 should be squashed into a single one on apply.
+> 
+> Beyond these patches, more cleanup should/could be done:
+> * ensure that any drivers which don't set the AUTOFILL flag have the qstats
+>   parameter set as __rte_unused.
+> * For those that do use the AUTOFILL flag, we should ensure that they
+>   actually do fill in the stats, and not just set them to zero. (First two
+>   patches here fix that for a couple of Intel drivers)
+> * then work to reduce the number of drivers which use the flag to set the
+>   xstats, with a view to completely removing the queue stats from regular
+>   stats functions.
+> * Within ethdev (and testpmd), we should consider what to do with any other
+>   legacy queue stats related functions, for example, do we still keep the
+>   queue mappings functions.
+> 
+> 
+> Bruce Richardson (6):
+>   net/ice: don't report empty queue xstats
+>   net/ipn3ke: drop unsupported per-queue xstats
+>   ethdev: remove queue stats from ethdev stats structure
+>   drivers/net: update to remove queue stats from eth stats
+>   app: remove queue stats from eth stats
+>   doc: update docs for ethdev changes
+> 
+>  app/proc-info/main.c                          |  16 ---
+>  app/test-pmd/config.c                         |   6 -
+>  app/test/virtual_pmd.c                        |   3 +-
+>  config/rte_config.h                           |   1 -
+>  doc/guides/rel_notes/deprecation.rst          |   7 -
+>  doc/guides/rel_notes/release_25_11.rst        |   6 +
+>  drivers/net/af_packet/rte_eth_af_packet.c     |  13 +-
+>  drivers/net/af_xdp/rte_eth_af_xdp.c           |  35 +++--
+>  drivers/net/ark/ark_ethdev.c                  |  36 +++--
+>  drivers/net/ark/ark_ethdev_rx.c               |  14 +-
+>  drivers/net/ark/ark_ethdev_rx.h               |   3 +-
+>  drivers/net/ark/ark_ethdev_tx.c               |  12 +-
+>  drivers/net/ark/ark_ethdev_tx.h               |   3 +-
+>  drivers/net/atlantic/atl_ethdev.c             |  19 +--
+>  drivers/net/atlantic/atl_types.h              |   1 +
+>  drivers/net/avp/avp_ethdev.c                  |  20 ++-
+>  drivers/net/axgbe/axgbe_ethdev.c              |  22 +--
+>  drivers/net/axgbe/axgbe_ethdev.h              |   1 +
+>  drivers/net/bnx2x/bnx2x_ethdev.c              |   3 +-
+>  drivers/net/bnxt/bnxt_reps.c                  |  14 +-
+>  drivers/net/bnxt/bnxt_reps.h                  |   2 +-
+>  drivers/net/bnxt/bnxt_stats.c                 | 133 ++++++++++--------
+>  drivers/net/bnxt/bnxt_stats.h                 |   2 +-
+>  drivers/net/bonding/rte_eth_bond_pmd.c        |  14 +-
+>  drivers/net/cnxk/cnxk_ethdev.h                |   3 +-
+>  drivers/net/cnxk/cnxk_rep.h                   |   3 +-
+>  drivers/net/cnxk/cnxk_rep_ops.c               |  15 +-
+>  drivers/net/cnxk/cnxk_stats.c                 |  49 ++++---
+>  drivers/net/cxgbe/cxgbe_ethdev.c              |   3 +-
+>  drivers/net/cxgbe/cxgbevf_ethdev.c            |   3 +-
+>  drivers/net/dpaa/dpaa_ethdev.c                |   3 +-
+>  drivers/net/dpaa2/dpaa2_ethdev.c              |  28 ++--
+>  drivers/net/ena/ena_ethdev.c                  |  46 +++---
+>  drivers/net/enetc/enetc_ethdev.c              |   4 +-
+>  drivers/net/enetfec/enet_ethdev.c             |   3 +-
+>  drivers/net/enic/enic.h                       |   3 +-
+>  drivers/net/enic/enic_ethdev.c                |   4 +-
+>  drivers/net/enic/enic_main.c                  |   3 +-
+>  drivers/net/enic/enic_vf_representor.c        |   3 +-
+>  drivers/net/failsafe/failsafe_ether.c         |   9 --
+>  drivers/net/failsafe/failsafe_ops.c           |   3 +-
+>  drivers/net/gve/gve_ethdev.c                  |   4 +-
+>  drivers/net/hinic/hinic_pmd_ethdev.c          |  64 ++++++---
+>  drivers/net/hns3/hns3_stats.c                 |   4 +-
+>  drivers/net/hns3/hns3_stats.h                 |   3 +-
+>  drivers/net/intel/cpfl/cpfl_ethdev.c          |   3 +-
+>  drivers/net/intel/e1000/em_ethdev.c           |   7 +-
+>  drivers/net/intel/e1000/igb_ethdev.c          |  14 +-
+>  drivers/net/intel/e1000/igc_ethdev.c          |  33 +++--
+>  drivers/net/intel/fm10k/fm10k_ethdev.c        |  27 ++--
+>  drivers/net/intel/i40e/i40e_ethdev.c          |   5 +-
+>  drivers/net/intel/i40e/i40e_vf_representor.c  |   2 +-
+>  drivers/net/intel/iavf/iavf_ethdev.c          |   5 +-
+>  drivers/net/intel/ice/ice_dcf_ethdev.c        |   3 +-
+>  drivers/net/intel/ice/ice_ethdev.c            |   7 +-
+>  drivers/net/intel/idpf/idpf_ethdev.c          |   3 +-
+>  drivers/net/intel/ipn3ke/ipn3ke_representor.c |  14 +-
+>  drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  29 ++--
+>  drivers/net/ionic/ionic_ethdev.c              |   6 +-
+>  drivers/net/ionic/ionic_lif.c                 |  35 +++--
+>  drivers/net/ionic/ionic_lif.h                 |   3 +-
+>  drivers/net/mana/mana.c                       |  15 +-
+>  drivers/net/memif/rte_eth_memif.c             |  15 +-
+>  drivers/net/mlx4/mlx4.h                       |   3 +-
+>  drivers/net/mlx4/mlx4_ethdev.c                |  17 +--
+>  drivers/net/mlx5/mlx5.h                       |   3 +-
+>  drivers/net/mlx5/mlx5_stats.c                 |  17 +--
+>  drivers/net/mvneta/mvneta_ethdev.c            |   5 +-
+>  drivers/net/mvpp2/mrvl_ethdev.c               |  23 +--
+>  drivers/net/netvsc/hn_ethdev.c                |  17 +--
+>  drivers/net/netvsc/hn_var.h                   |   3 +-
+>  drivers/net/netvsc/hn_vf.c                    |   3 +-
+>  drivers/net/nfp/flower/nfp_flower.c           |   8 +-
+>  .../net/nfp/flower/nfp_flower_representor.c   |  19 +--
+>  .../net/nfp/flower/nfp_flower_representor.h   |   3 +
+>  drivers/net/nfp/nfp_net_common.c              |  46 +++---
+>  drivers/net/nfp/nfp_net_common.h              |   4 +-
+>  drivers/net/ngbe/ngbe_ethdev.c                |  53 +++----
+>  drivers/net/ngbe/ngbe_ethdev_vf.c             |   5 +-
+>  drivers/net/ntnic/ntnic_ethdev.c              |  22 +--
+>  drivers/net/null/rte_eth_null.c               |  15 +-
+>  drivers/net/octeon_ep/otx_ep_ethdev.c         |  17 ++-
+>  drivers/net/octeontx/octeontx_ethdev.c        |   3 +-
+>  drivers/net/pcap/pcap_ethdev.c                |  23 +--
+>  drivers/net/pfe/pfe_ethdev.c                  |   3 +-
+>  drivers/net/qede/qede_ethdev.c                |  23 ++-
+>  drivers/net/r8169/r8169_ethdev.c              |   6 +-
+>  drivers/net/ring/rte_eth_ring.c               |  13 +-
+>  drivers/net/rnp/rnp_ethdev.c                  |  15 +-
+>  drivers/net/sfc/sfc_ethdev.c                  |   3 +-
+>  drivers/net/sfc/sfc_repr.c                    |   3 +-
+>  drivers/net/tap/rte_eth_tap.c                 |  23 +--
+>  drivers/net/thunderx/nicvf_ethdev.c           |  27 ++--
+>  drivers/net/txgbe/txgbe_ethdev.c              |  53 +++----
+>  drivers/net/txgbe/txgbe_ethdev_vf.c           |   5 +-
+>  drivers/net/vhost/rte_eth_vhost.c             |  26 ++--
+>  drivers/net/virtio/virtio_ethdev.c            |  23 +--
+>  drivers/net/vmxnet3/vmxnet3_ethdev.c          |  20 +--
+>  drivers/net/xsc/xsc_ethdev.c                  |  19 +--
+>  drivers/net/zxdh/zxdh_ethdev_ops.c            |  39 ++---
+>  drivers/net/zxdh/zxdh_ethdev_ops.h            |   3 +-
+>  lib/ethdev/ethdev_driver.h                    |  23 ++-
+>  lib/ethdev/ethdev_private.c                   |  26 ++++
+>  lib/ethdev/ethdev_private.h                   |   2 +
+>  lib/ethdev/rte_ethdev.c                       |  37 ++---
+>  lib/ethdev/rte_ethdev.h                       |  11 --
+>  lib/ethdev/rte_ethdev_telemetry.c             |  20 +--
+>  107 files changed, 898 insertions(+), 706 deletions(-)
+> 
+> --
+> 2.48.1
+> 
+
+There is one thing xstats does not do well. Because xstats is a per-driver
+API, there is no uniformity in reporting per-queue information. And if you
+take off the auto-fill flag what little information there is will be disappear.
+
+I would propose a new API (and driver callback) to query a single queues
+statistics. This would give uniformity across drivers.
+
+But not certain it really matters, have not seen any code that references
+the queue counters directly. Maybe somewhere in VPP (doing SNMP??) could care.
+The main use of xstats is in debugging and in that case the per-driver
+naming is not a big issue.
+
