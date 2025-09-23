@@ -2,50 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E87CAC5A5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 16:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52219CAC5A5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 17:37:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 77D4540615;
-	Tue, 23 Sep 2025 18:58:41 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id 1B808402CB;
- Tue, 23 Sep 2025 18:58:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1758646719; x=1790182719;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=k2ztdteinfFU0LkXoT9CATjuI3QSJClwG399uRYG9cM=;
- b=cg+kAItOKN+rkh+t/hf2ZNLUquommODXWFNVMyK7GHDWeO5E4Oohkhq5
- 44FD88kZ6mCu7mBg6h561S2VQ311ex4ImctfPRSjicXsfkiJe+Lxnej6P
- EipR7GrXhSkiFYC1fDm0nTg1nTPMdyRKjXuzzYNce+Yu8qG7aDiBipaur
- WaoMxZkQ7pusnmle3uPL8118meMc/XlT4dOx4J057CTqqMK8R2F9Eu60s
- BQSOLy36/F3vpodPBl2nyfYmt7dehUxiRTW94s4KQn2TadR7TMyx4/y55
- 3EEl7+JNqgRkkESIvHkgLqO8mJPO57OFT/U+Ilqsb2lnYR9lRKJAkvM1W A==;
-X-CSE-ConnectionGUID: 1gC+pLIyTdGba3U0+oHUOw==
-X-CSE-MsgGUID: d0SzbIY7SeaP6uipOvmjaA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="60857132"
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="60857132"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Sep 2025 09:58:38 -0700
-X-CSE-ConnectionGUID: 3aHdH7YQSamY/4DEss0i8w==
-X-CSE-MsgGUID: +eYVMnwMTmevTl+J2NFmLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,288,1751266800"; d="scan'208";a="181130215"
-Received: from silpixa00401385.ir.intel.com (HELO silpixa00401385..)
- ([10.20.224.226])
- by orviesa004.jf.intel.com with ESMTP; 23 Sep 2025 09:58:37 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2382040674;
+	Tue, 23 Sep 2025 19:37:38 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id EB4B4402D9
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 19:37:36 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id CE4EA46F5E; Tue, 23 Sep 2025 19:37:36 +0200 (CEST)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH] examples/l2fwd-cat: check compatibility of dependency lib
-Date: Tue, 23 Sep 2025 17:58:30 +0100
-Message-ID: <20250923165830.527416-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.48.1
+Subject: [DPDK/other Bug 1792] fpga rawdev using printf not logging
+Date: Tue, 23 Sep 2025 17:37:36 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: other
+X-Bugzilla-Version: 25.07
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: stephen@networkplumber.org
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1792-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17586490560.8BEB4b6ce.564149
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,34 +54,162 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The meson find_library() function can sometimes return incompatible
-libraries which are unsuitable for linking. For example, after
-installing the native x86 pqos library on my system, arm64 builds
-started trying (and failing) to build the l2fwd-cat example app. Fix
-this incorrect detection in our build files by checking that the found
-pqos library can actually be used to link apps.
 
-Fixes: dd25c80b4f48 ("examples/l2fwd-cat: make build dependent on pqos lib")
-Cc: stable@dpdk.org
+--17586490560.8BEB4b6ce.564149
+Date: Tue, 23 Sep 2025 19:37:36 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- examples/l2fwd-cat/meson.build | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+https://bugs.dpdk.org/show_bug.cgi?id=3D1792
 
-diff --git a/examples/l2fwd-cat/meson.build b/examples/l2fwd-cat/meson.build
-index ebcc3f66f2..be29657ebb 100644
---- a/examples/l2fwd-cat/meson.build
-+++ b/examples/l2fwd-cat/meson.build
-@@ -7,7 +7,7 @@
- # DPDK instance, use 'make'
- 
- pqos = cc.find_library('pqos', required: false)
--build = pqos.found()
-+build = (pqos.found() and cc.links('int main(void) { return 0; }', dependencies: pqos))
- if not build
-     subdir_done()
- endif
--- 
-2.48.1
+            Bug ID: 1792
+           Summary: fpga rawdev using printf not logging
+           Product: DPDK
+           Version: 25.07
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: other
+          Assignee: dev@dpdk.org
+          Reporter: stephen@networkplumber.org
+  Target Milestone: ---
 
+The ifpa_rawdev.c calls printf directly instead of using rte_log.
+This is not the correct way to implement output for devices in DPDK.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
+
+--17586490560.8BEB4b6ce.564149
+Date: Tue, 23 Sep 2025 19:37:36 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - fpga rawdev using printf not logging"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1792">1792</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>fpga rawdev using printf not logging
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>25.07
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>other
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>stephen&#64;networkplumber.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">The ifpa_rawdev.c calls printf dir=
+ectly instead of using rte_log.
+This is not the correct way to implement output for devices in DPDK.
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1792">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17586490560.8BEB4b6ce.564149--
