@@ -2,74 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0CCCAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 04:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E78E9CAC5A5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 23 Sep 2025 06:52:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 819C440676;
-	Tue, 23 Sep 2025 06:45:47 +0200 (CEST)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
- [209.85.160.178])
- by mails.dpdk.org (Postfix) with ESMTP id 1849240144
- for <dev@dpdk.org>; Tue, 23 Sep 2025 06:45:45 +0200 (CEST)
-Received: by mail-qt1-f178.google.com with SMTP id
- d75a77b69052e-4ca7a71adcbso14780791cf.3
- for <dev@dpdk.org>; Mon, 22 Sep 2025 21:45:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758602744;
- x=1759207544; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=A1iwbpaUIwnHVmmQWPUO+03mbQuXQsChsL8dlVAyncI=;
- b=FscX8FssiztFIx7oNq8ycsntspgbGiyKhiDcTZIOe0+2jC0lurn/CdQamJGUH1duwx
- JJCVDjG6TtcKNjN5z+FQzMMUgr7eSIeeOrVvLArqKI9KeKFdX5cmHe75jul6zNMyGimI
- 3X1fxrfxMdgBFeZeGxC8IP83+gL9BgEGnVALQ4IGNMEbcyaulLJvnGd8jmo4asb9R0QP
- yEY7qyabSnX1BmVPryQY19AdAH96IVq37HucvUfe+K3BdgfEJqISuzNig768qJf6Mbtq
- df+DSPYuolHnAFHpqlsMp5WpgqX3k7J3JWuztyEu0fG/FtKHkCWGe6uIvkMwIw8bpE/7
- flJQ==
+	by mails.dpdk.org (Postfix) with ESMTP id DB15B4021F;
+	Tue, 23 Sep 2025 08:52:35 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 9465F40144
+ for <dev@dpdk.org>; Tue, 23 Sep 2025 08:52:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1758610354;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=Eca7EVwSZ9v1kUs1RjmcYa0+PbWEGgRGVHF8RUhrqm8=;
+ b=MKvTcSqJDMhXxBdsUYtbt9I8oBDUvEQqgsFaGDFbJ1kR0runDYuzxlITkQsupGwUvC4qrH
+ pDgzuI2MX5NCNhKbyttmHvPrDO4IJeh3d7lWyPgxmPbeWkk3R6LgPB4VRKyXw1zF/EdGIG
+ nitVf6jTYwhYgUQrD0Ln79VDBduw5GY=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-83-x7t0nsKtO_aTYvrX5gaueA-1; Tue, 23 Sep 2025 02:52:32 -0400
+X-MC-Unique: x7t0nsKtO_aTYvrX5gaueA-1
+X-Mimecast-MFC-AGG-ID: x7t0nsKtO_aTYvrX5gaueA_1758610351
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-36412b9b157so29833641fa.3
+ for <dev@dpdk.org>; Mon, 22 Sep 2025 23:52:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758602744; x=1759207544;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=A1iwbpaUIwnHVmmQWPUO+03mbQuXQsChsL8dlVAyncI=;
- b=ZHbA7ZQCHgyyulXDMCD6rBK0uCbTCaib036pzVNG2TA+fmY9LxLoa+1eMXBimC60FT
- qEPBBeAm95a7Ow1cyAmVFMafRHWxMwnN/JZVOcIg0bNygtCwZsGzx1LbTbG+bK7Qv2qy
- 5cUGLCe46XBLiTVrOndUlaJg2pes0m9lpwqDKVjwtTYO5sXPpq6MdZ4MvS4yi0l7dVn/
- r/cVpCLsBDn0EJtwup5JGPacqV97NE6okemDj+SvFoxLBczwGLYQacMXu2+gy4qNUvv4
- BnOjPrdqOqZcNiHbftkqrk2vJF25TC/waTKEjXFJWEBKlnpX3QdqRWeLiJoAM9nKfS5n
- /gfw==
-X-Gm-Message-State: AOJu0YyD8i7Go/q+0jrEvJEA2VWwMUhsdqGA4ON+waoXUvamSgVnYKvK
- isdfxQLFukd85NBcH9Fw37K53zVIGUJCFQdZD9gICXLokkxeLWWFNlQqOn2ktJAF3cqw+1X/FFz
- m5aD0
-X-Gm-Gg: ASbGnctjDWuknjbdDxMT32u3QXmn41Mpx5jvdgeeRh1le1UdTOjivp3H9Ds15qo1QVn
- MNWFiUrWsgfYA46OlCuU4zlNn1Mk/T8oYwPUacAwpXWrHuCdFN5zqjVPMazIMtR3O/ToL7GyH1b
- GNMjkxa/TUChVIHBaWkUWTSOCCEq/KNjFic8c3wPWrud0DO2kLR/Pf+SRjVPwEG9UyhiUQ2lC6h
- y5ZclQVUSnIj0X1kdKv590GOCmMMBtINYGfX+FMOytHJLIJKR+NOGvYvd2+7WC9EiFvWcpLY13q
- nj0bzd9ECnH97ix5coT+b1UZ8WRZaXgxZNde11KGkx8huyqJqUTDw2RiNdjzWD9vByrfSetHKsG
- nDfWrYwMMRuDLI7Avo3gMWRnmhcpwEX0QVIgDMG/ezB+CSgGytdxrXTs6rh5ZdkSIcf25kG5j
-X-Google-Smtp-Source: AGHT+IFHOnmfpH0Ir6PXpFfb89bQ+BBD++iQ8SO4sI6EzdIQIqcDsO4kRFn5OyO5gP4EPZ8zSLQc+A==
-X-Received: by 2002:a05:622a:1b88:b0:4b7:9a38:d002 with SMTP id
- d75a77b69052e-4d3698e8865mr14965681cf.33.1758602744383; 
- Mon, 22 Sep 2025 21:45:44 -0700 (PDT)
-Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4d0df5f7d03sm14771361cf.7.2025.09.22.21.45.43
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 22 Sep 2025 21:45:44 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, rbhansali@marvell.com,
- stable@dpdk.org
-Subject: [PATCH 2/2] net/cnxk: fix overrun in dis_xqe_drop
-Date: Mon, 22 Sep 2025 21:45:29 -0700
-Message-ID: <20250923044528.89132-3-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250923044528.89132-2-stephen@networkplumber.org>
-References: <20250923044528.89132-2-stephen@networkplumber.org>
+ d=1e100.net; s=20230601; t=1758610351; x=1759215151;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=Eca7EVwSZ9v1kUs1RjmcYa0+PbWEGgRGVHF8RUhrqm8=;
+ b=RriVDarOGg8CF0cOd59UigV5gHFt53wJYz36sB/NJxObSA1n7lxHYHRO5/qI/79P3l
+ Olkns+sHTBp9DgdEUZ4WT7wfBJYfdC67ymUib0k4lCN7t2d6FPLg6BFDPV/ptX5o8U6+
+ jOzPPOjKia+BvHw8ifetW3Gb4zb180FpvvWCylHCOTIndUjfZunK85x+fj8yFX3SNcUD
+ 4Yb5wQTVjXoJtgOg8R89UDV0HHeHQ2cln1s0CViFaOCayVuCZEu7SX8n7cRAArx0HSXk
+ EqRHl7SA4M/5IUu8zIQzRQgVLIC9s3JBTwOZQEqR4WP5ZXTORrWk2CqspPUuXArd4A6f
+ aPEg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWNw/i37XpzRy0iLD5bgJI8A1SFGtQEI230oc1VIZNP+yL/5XEa8BdItoXDbhxD8INk0Ro=@dpdk.org
+X-Gm-Message-State: AOJu0YwC9RZDmPDLydOWsAmzoIfmNjDu2QzkDYNQMdmsrHIvmJDhUWZ1
+ gEfvspz1d4RsHPpYQb0o7lfPZE5e3lQhXwHvidrli8R0OTL/GblRV/AWeo/BruzyNppkLz7m05h
+ saK/tBrE8P/mdyM2Gy3PdzGukTB+aS4KWpf3AxdF50kvYWLwRswVGAg8tgCAPc2VtUEcT4ilec6
+ opt7C7ft2LCiuJCHVEATM=
+X-Gm-Gg: ASbGnct4UXH+htPpUJpB7HJkDdnAzbAzfZ8LSTeOYnqhQsyulqt75Uf8IRbMQSlGUDV
+ 6GXkZQIqlLMnMz/8zD7VL2UI58TY2kGhbtB52wjiFQyE5TLGJiXcmxPNBENKR8Db0Vc1cBCvSAz
+ pw+0y3Ez4+6ud6ZTID1UaNccY=
+X-Received: by 2002:a05:6512:b28:b0:55f:6cec:2890 with SMTP id
+ 2adb3069b0e04-58073702892mr452469e87.38.1758610350709; 
+ Mon, 22 Sep 2025 23:52:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IElC9MczAX6Eux7B2cFONPl6vqdoDwYJ5rx5XuGy27ZmZ45dpjeyJijK60knEHI/n+dqOsLaBdrjQH9a3jK1w4=
+X-Received: by 2002:a05:6512:b28:b0:55f:6cec:2890 with SMTP id
+ 2adb3069b0e04-58073702892mr452459e87.38.1758610350278; Mon, 22 Sep 2025
+ 23:52:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250919145125.113028-1-venkatesh.vemula@intel.com>
+ <CAJFAV8wK8G_Y+-PTLm1J4Z9g9+5WKSGMGr=1jBrd10kqt0CLVw@mail.gmail.com>
+ <a1edf69a-33ee-41de-b7d3-24f0894734c6@intel.com>
+In-Reply-To: <a1edf69a-33ee-41de-b7d3-24f0894734c6@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 23 Sep 2025 08:52:18 +0200
+X-Gm-Features: AS18NWCvwVpA0MM9q6nPyx2CcqpzFnRZMbQ6y0LRz8Xo9g5Qxt9d7HHGgnFJe1I
+Message-ID: <CAJFAV8xazigsmtQ1OTcU7DyYFF5Z9oZ83n6zAST_qV6LTihBEQ@mail.gmail.com>
+Subject: Re: [PATCH v1] net/idpf: add IDPF PCI class ID support
+To: "Singh, Aman Deep" <aman.deep.singh@intel.com>
+Cc: Vemula Venkatesh <venkatesh.vemula@intel.com>, dev@dpdk.org, 
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Shaiq Wani <shaiq.wani@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: _uoEyVJIJeHS8KEuvjPeksKlMEHN3qiy4raMu3Bl7n0_1758610351
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,39 +88,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The function parse_flag expects 16 bit value for flag,
-but dis_xqe_drop is a byte. Detected when LTO enabled as:
+Hello,
 
-../drivers/net/cnxk/cnxk_ethdev_devargs.c:166: warning: writing 2 bytes into a region of size 1 [-Wstringop-overflow=]
-  166 |         *(uint16_t *)extra_args = atoi(value);
-../drivers/net/cnxk/cnxk_ethdev_devargs.c: In function ‘cnxk_ethdev_parse_devargs’:
-../drivers/net/cnxk/cnxk_ethdev_devargs.c:312:17: note: destination object ‘dis_xqe_drop’ of size 1
-  312 |         uint8_t dis_xqe_drop = 0;
-      |                 ^
+On Mon, 22 Sept 2025 at 18:36, Singh, Aman Deep
+<aman.deep.singh@intel.com> wrote:
+> On Mon, 22 Sept 2025 at 08:35, Vemula Venkatesh
+> <venkatesh.vemula@intel.com> wrote:
+>
+> diff --git a/drivers/net/intel/idpf/idpf_common_device.h b/drivers/net/intel/idpf/idpf_common_device.h
+> index 5f3e4a4fcf..9d1d7dc47c 100644
+> --- a/drivers/net/intel/idpf/idpf_common_device.h
+> +++ b/drivers/net/intel/idpf/idpf_common_device.h
+> @@ -44,6 +44,23 @@
+>         (sizeof(struct virtchnl2_ptype) +                               \
+>          (((p)->proto_id_count ? ((p)->proto_id_count - 1) : 0) * sizeof((p)->proto_id[0])))
+>
+> +/** Macro used to help building up tables of device IDs with PCI class */
+> +#define RTE_PCI_CLASS(cls)          \
+> +       .class_id = (cls),      \
+> +       .vendor_id = RTE_PCI_ANY_ID,  \
+> +       .device_id = RTE_PCI_ANY_ID,  \
+> +       .subsystem_vendor_id = RTE_PCI_ANY_ID, \
+> +       .subsystem_device_id = RTE_PCI_ANY_ID
+>
+> Don't define a macro with the RTE_PCI_ namespace in a driver.
+>
+> Either this is really specific to IDPF, and this should be renamed
+> with a prefix reflecting this.
+> This macro is a huge wildcard on a pci class, which seems very specific.
+>
+> Or this makes sense for other drivers and then this macro should be
+> moved to the pci bus driver header.
+>
+> Yes David, it only applies to IDPF. As per PCI document-
+>
+>  https://members.pcisig.com/document/20113 Table: 1.3
 
-Bugzilla ID: 1790
-Fixes: 0344fb5a59c2 ("net/cnxk: add option to disable XQE drop")
-Cc: rbhansali@marvell.com
-Cc: stable@dpdk.org
+I'll trust you, as I don't have access.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/cnxk/cnxk_ethdev_devargs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Is it OK to rename it: IDPF_PCI_CLASS ?
 
-diff --git a/drivers/net/cnxk/cnxk_ethdev_devargs.c b/drivers/net/cnxk/cnxk_ethdev_devargs.c
-index 5d774e0d70..68e6b1d190 100644
---- a/drivers/net/cnxk/cnxk_ethdev_devargs.c
-+++ b/drivers/net/cnxk/cnxk_ethdev_devargs.c
-@@ -309,7 +309,7 @@ cnxk_ethdev_parse_devargs(struct rte_devargs *devargs, struct cnxk_eth_dev *dev)
- 	uint16_t custom_sa_act = 0;
- 	uint16_t custom_inb_sa = 0;
- 	struct rte_kvargs *kvlist;
--	uint8_t dis_xqe_drop = 0;
-+	uint16_t dis_xqe_drop = 0;
- 	uint32_t meta_buf_sz = 0;
- 	uint16_t lock_rx_ctx = 0;
- 	uint16_t rx_inj_ena = 0;
+Ok for me.
+Thank you.
+
+
 -- 
-2.47.3
+David Marchand
 
