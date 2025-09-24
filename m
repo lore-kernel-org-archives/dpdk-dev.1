@@ -2,55 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45329CAC59A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 06:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9436ACAC5A5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 07:37:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3404F40289;
-	Wed, 24 Sep 2025 08:56:27 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 6A0654027C
- for <dev@dpdk.org>; Wed, 24 Sep 2025 08:56:25 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.186.31])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cWndh2zRNz6L50m;
- Wed, 24 Sep 2025 14:54:32 +0800 (CST)
-Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
- by mail.maildlp.com (Postfix) with ESMTPS id D818C1400DC;
- Wed, 24 Sep 2025 14:56:24 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 24 Sep 2025 07:56:23 +0100
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Wed, 24 Sep 2025 07:56:23 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Ola Liljedahl <Ola.Liljedahl@arm.com>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>, Honnappa Nagarahalli
- <Honnappa.Nagarahalli@arm.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Dhruv Tripathi <Dhruv.Tripathi@arm.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: RE: [PATCH 1/1] ring: safe partial ordering for head/tail update
-Thread-Topic: [PATCH 1/1] ring: safe partial ordering for head/tail update
-Thread-Index: AQHcJnJlB2Gj2xn6O0SOJRCJl7cS/rSWYP5wgABfdICAADf1oP///ZsAgATllsCABXDfAIAApMtQ
-Date: Wed, 24 Sep 2025 06:56:23 +0000
-Message-ID: <8eab3da6eb2944a4a4a197aeb38ee2f1@huawei.com>
-References: <20250915185451.533039-1-wathsala.vithanage@arm.com>
- <20250915185451.533039-2-wathsala.vithanage@arm.com>
- <a5fae8a9edc947fdbaf4e2519c39f93e@huawei.com>
- <2a611c3cf926d752a54b7655c27d6df874a2d0de.camel@arm.com>
- <61a9d5b157be4816aa296194f9c0eabe@huawei.com>
- <4173E44D-BB31-45B9-AF6A-553B1E755604@arm.com>
- <64a7def62ee642139c3af31ce4fd94e9@huawei.com>
- <EF1C5BFC-B9C7-4D38-8FDC-FF412DD45C21@arm.com>
-In-Reply-To: <EF1C5BFC-B9C7-4D38-8FDC-FF412DD45C21@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
+	by mails.dpdk.org (Postfix) with ESMTP id 7E5FD40289;
+	Wed, 24 Sep 2025 09:37:21 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 7850B4027C
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 09:37:20 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 1CB0D205C8;
+ Wed, 24 Sep 2025 09:37:20 +0200 (CEST)
+Content-class: urn:content-classes:message
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [RFC PATCH 3/6] ethdev: remove queue stats from ethdev stats
+ structure
+Date: Wed, 24 Sep 2025 09:37:18 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65463@smartserver.smartshare.dk>
+In-Reply-To: <20250923141207.10403-4-bruce.richardson@intel.com>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.126.173.27]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+Thread-Topic: [RFC PATCH 3/6] ethdev: remove queue stats from ethdev stats
+ structure
+Thread-Index: AdwslBz5Ft02jIHlTtmrNjNKOw5s4gAkSLgA
+References: <20250923141207.10403-1-bruce.richardson@intel.com>
+ <20250923141207.10403-4-bruce.richardson@intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>,
+	<dev@dpdk.org>
+Cc: "Thomas Monjalon" <thomas@monjalon.net>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,239 +51,338 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQo+ID4gPiA+IFRvIGF2b2lkIGluZm9ybWF0aW9uIGxvc3MgSSBjb21iaW5lZCByZXBseSB0byB0
-d28gV2F0aHNhbGEgcmVwbGllcyBpbnRvIG9uZS4NCj4gPiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4g
-PiA+ID4gVGhlIGZ1bmN0aW9uIF9fcnRlX3JpbmdfaGVhZHRhaWxfbW92ZV9oZWFkKCkgYXNzdW1l
-cyB0aGF0IHRoZQ0KPiA+ID4gPiA+ID4gPiBiYXJyaWVyDQo+ID4gPiA+ID4gPiAoZmVuY2UpIGJl
-dHdlZW4gdGhlIGxvYWQgb2YgdGhlIGhlYWQgYW5kIHRoZSBsb2FkLWFjcXVpcmUgb2YgdGhlDQo+
-ID4gPiA+ID4gPiA+IG9wcG9zaW5nIHRhaWwgZ3VhcmFudGVlcyB0aGUgZm9sbG93aW5nOiBpZiBh
-IGZpcnN0IHRocmVhZCByZWFkcw0KPiA+ID4gPiA+ID4gPiB0YWlsDQo+ID4gPiA+ID4gPiA+IGFu
-ZCB0aGVuIHdyaXRlcyBoZWFkIGFuZCBhIHNlY29uZCB0aHJlYWQgcmVhZHMgdGhlIG5ldyB2YWx1
-ZSBvZg0KPiA+ID4gPiA+ID4gPiBoZWFkDQo+ID4gPiA+ID4gPiA+IGFuZCB0aGVuIHJlYWRzIHRh
-aWwsIHRoZW4gaXQgc2hvdWxkIG9ic2VydmUgdGhlIHNhbWUgKG9yIGEgbGF0ZXIpDQo+ID4gPiA+
-ID4gPiA+IHZhbHVlIG9mIHRhaWwuDQo+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+IFRoaXMg
-YXNzdW1wdGlvbiBpcyBpbmNvcnJlY3QgdW5kZXIgdGhlIEMxMSBtZW1vcnkgbW9kZWwuIElmIHRo
-ZQ0KPiA+ID4gPiA+ID4gPiBiYXJyaWVyDQo+ID4gPiA+ID4gPiA+IChmZW5jZSkgaXMgaW50ZW5k
-ZWQgdG8gZXN0YWJsaXNoIGEgdG90YWwgb3JkZXJpbmcgb2YgcmluZw0KPiA+ID4gPiA+ID4gPiBv
-cGVyYXRpb25zLA0KPiA+ID4gPiA+ID4gPiBpdCBmYWlscyB0byBkbyBzby4gSW5zdGVhZCwgdGhl
-IGN1cnJlbnQgaW1wbGVtZW50YXRpb24gb25seQ0KPiA+ID4gPiA+ID4gPiBlbmZvcmNlcyBhDQo+
-ID4gPiA+ID4gPiA+IHBhcnRpYWwgb3JkZXJpbmcsIHdoaWNoIGNhbiBsZWFkIHRvIHVuc2FmZSBp
-bnRlcmxlYXZpbmdzLiBJbg0KPiA+ID4gPiA+ID4gPiBwYXJ0aWN1bGFyLA0KPiA+ID4gPiA+ID4g
-PiBzb21lIHBhcnRpYWwgb3JkZXJzIGNhbiBjYXVzZSB1bmRlcmZsb3dzIGluIGZyZWUgc2xvdCBv
-ciBhdmFpbGFibGUNCj4gPiA+ID4gPiA+ID4gZWxlbWVudCBjb21wdXRhdGlvbnMsIHBvdGVudGlh
-bGx5IHJlc3VsdGluZyBpbiBkYXRhIGNvcnJ1cHRpb24uDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+
-ID4gSG1tLi4uIHNvdW5kcyBleGFjdGx5IGxpa2UgdGhlIHByb2JsZW0gZnJvbSB0aGUgcGF0Y2gg
-d2UgZGlzY3Vzc2VkDQo+ID4gPiA+ID4gPiBlYXJsaWVyIHRoYXQgeWVhcjoNCj4gPiA+ID4gPiA+
-DQo+IGh0dHBzOi8vcGF0Y2h3b3JrLmRwZGsub3JnL3Byb2plY3QvZHBkay9wYXRjaC8yMDI1MDUy
-MTExMTQzMi4yMDc5MzYtNC0NCj4gPGh0dHBzOi8vcGF0Y2h3b3JrLmRwZGsub3JnL3Byb2plY3Qv
-ZHBkay9wYXRjaC8yMDI1MDUyMTExMTQzMi4yMDc5MzYtNC0+DQo+ID4gPiBrb25zdGFudGluLmFu
-YW55ZXZAaHVhd2VpLmNvbQ0KPiA8bWFpbHRvOmtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29t
-PiA8bWFpbHRvOjIwMjUwNTIxMTExNDMyLjIwNzkzNi00LQ0KPiA+ID4ga29uc3RhbnRpbi5hbmFu
-eWV2QGh1YXdlaS5jb20NCj4gPG1haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVhd2VpLmNvbT4+
-Lw0KPiA+ID4gPiA+ID4gSW4gdHdvIHdvcmRzOg0KPiA+ID4gPiA+ID4gIi4uLiB0aHJlYWQgY2Fu
-IHNlZSAnbGF0ZXN0JyAnY29ucy5oZWFkJyB2YWx1ZSwgd2l0aCAncHJldmlvdXMnIHZhbHVlDQo+
-ID4gPiA+ID4gPiBmb3IgJ3Byb2QudGFpbCcgb3IgdmlzYS12ZXJzYS4NCj4gPiA+ID4gPiA+IElu
-IG90aGVyIHdvcmRzOiAnY29ucy5oZWFkJyB2YWx1ZSBkZXBlbmRzIG9uICdwcm9kLnRhaWwnLCBz
-byBiZWZvcmUNCj4gPiA+ID4gPiA+IG1ha2luZyBsYXRlc3QgJ2NvbnMuaGVhZCcNCj4gPiA+ID4g
-PiA+IHZhbHVlIHZpc2libGUgdG8gb3RoZXIgdGhyZWFkcywgd2UgbmVlZCB0byBlbnN1cmUgdGhh
-dCBsYXRlc3QNCj4gPiA+ID4gPiA+ICdwcm9kLnRhaWwnIGlzIGFsc28gdmlzaWJsZS4iDQo+ID4g
-PiA+ID4gPiBJcyB0aGF0IHRoZSBvbmU/DQo+ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+ID4gWWVz
-LCB0aGUgYmVoYXZpb3Igb2NjdXJzIHVuZGVyIFJDcGMgKExEQVBSKSBidXQgbm90IHVuZGVyIFJD
-c2MgKExEQVIpLA0KPiA+ID4gPiA+IHdoaWNoIGlzIHdoeSB3ZSBkaWRu4oCZdCBjYXRjaCBpdCBl
-YXJsaWVyLiBBIGZ1bGxlciBleHBsYW5hdGlvbiwgd2l0aA0KPiA+ID4gPiA+IEhlcmQ3IHNpbXVs
-YXRpb25zLCBpcyBpbiB0aGUgYmxvZyBwb3N0IGxpbmtlZCBpbiB0aGUgY292ZXIgbGV0dGVyLg0K
-PiA+ID4gPiA+DQo+ID4gPiA+ID4gaHR0cHM6Ly9jb21tdW5pdHkuYXJtLmNvbS9hcm0tY29tbXVu
-aXR5LWJsb2dzL2IvYXJjaGl0ZWN0dXJlcy1hbmQtDQo+IDxodHRwczovL2NvbW11bml0eS5hcm0u
-Y29tL2FybS1jb21tdW5pdHktYmxvZ3MvYi9hcmNoaXRlY3R1cmVzLWFuZC0+DQo+ID4gPiBwcm9j
-ZXNzb3JzLWJsb2cvcG9zdHMvd2hlbi1hLWJhcnJpZXItZG9lcy1ub3QtYmxvY2stdGhlLXBpdGZh
-bGxzLW9mLXBhcnRpYWwtDQo+IG9yZGVyDQo+ID4gPiA8aHR0cHM6Ly9jb21tdW5pdHkuYXJtLmNv
-bS9hcm0tY29tbXVuaXR5LWJsb2dzL2IvYXJjaGl0ZWN0dXJlcy1hbmQtDQo+IDxodHRwczovL2Nv
-bW11bml0eS5hcm0uY29tL2FybS1jb21tdW5pdHktYmxvZ3MvYi9hcmNoaXRlY3R1cmVzLWFuZC0+
-DQo+ID4gPiBwcm9jZXNzb3JzLWJsb2cvcG9zdHMvd2hlbi1hLWJhcnJpZXItZG9lcy1ub3QtYmxv
-Y2stdGhlLXBpdGZhbGxzLW9mLXBhcnRpYWwtDQo+IG9yZGVyPg0KPiA+ID4gPg0KPiA+ID4gPg0K
-PiA+ID4gPiBJIHNlZSwgc28gbm93IGl0IGlzIHJlcHJvZHVjaWJsZSB3aXRoIGNvcmUgcnRlX3Jp
-bmcgb24gcmVhbCBIVy4NCj4gPiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4g
-PiA+IFRoZSBpc3N1ZSBtYW5pZmVzdHMgd2hlbiBhIENQVSBmaXJzdCBhY3RzIGFzIGEgcHJvZHVj
-ZXIgYW5kIGxhdGVyDQo+ID4gPiA+ID4gPiA+IGFzIGENCj4gPiA+ID4gPiA+ID4gY29uc3VtZXIu
-IEluIHRoaXMgc2NlbmFyaW8sIHRoZSBiYXJyaWVyIGFzc3VtcHRpb24gbWF5IGZhaWwgd2hlbg0K
-PiA+ID4gPiA+ID4gPiBhbm90aGVyDQo+ID4gPiA+ID4gPiA+IGNvcmUgdGFrZXMgdGhlIGNvbnN1
-bWVyIHJvbGUuIEEgSGVyZDcgbGl0bXVzIHRlc3QgaW4gQzExIGNhbg0KPiA+ID4gPiA+ID4gPiBk
-ZW1vbnN0cmF0ZQ0KPiA+ID4gPiA+ID4gPiB0aGlzIHZpb2xhdGlvbi4gVGhlIHByb2JsZW0gaGFz
-IG5vdCBiZWVuIHdpZGVseSBvYnNlcnZlZCBzbyBmYXINCj4gPiA+ID4gPiA+ID4gYmVjYXVzZToN
-Cj4gPiA+ID4gPiA+ID4gKGEpIG9uIHN0cm9uZyBtZW1vcnkgbW9kZWxzIChlLmcuLCB4ODYtNjQp
-IHRoZSBhc3N1bXB0aW9uIGhvbGRzLA0KPiA+ID4gPiA+ID4gPiBhbmQNCj4gPiA+ID4gPiA+ID4g
-KGIpIG9uIHJlbGF4ZWQgbW9kZWxzIHdpdGggUkNzYyBzZW1hbnRpY3MgdGhlIG9yZGVyaW5nIGlz
-IHN0aWxsDQo+ID4gPiA+ID4gPiA+IHN0cm9uZw0KPiA+ID4gPiA+ID4gPiBlbm91Z2ggdG8gcHJl
-dmVudCBoYXphcmRzLg0KPiA+ID4gPiA+ID4gPiBUaGUgcHJvYmxlbSBiZWNvbWVzIHZpc2libGUg
-b25seSBvbiB3ZWFrZXIgbW9kZWxzLCB3aGVuIGxvYWQtDQo+ID4gPiA+ID4gPiA+IGFjcXVpcmUg
-aXMNCj4gPiA+ID4gPiA+ID4gaW1wbGVtZW50ZWQgd2l0aCBSQ3BjIHNlbWFudGljcyAoZS5nLiBz
-b21lIEFBcmNoNjQgQ1BVcyB3aGljaA0KPiA+ID4gPiA+ID4gPiBzdXBwb3J0DQo+ID4gPiA+ID4g
-PiA+IHRoZSBMREFQUiBhbmQgTERBUFVSIGluc3RydWN0aW9ucykuDQo+ID4gPiA+ID4gPiA+DQo+
-ID4gPiA+ID4gPiA+IFRocmVlIHBvc3NpYmxlIHNvbHV0aW9ucyBleGlzdDoNCj4gPiA+ID4gPiA+
-ID4gMS4gU3RyZW5ndGhlbiBvcmRlcmluZyBieSB1cGdyYWRpbmcgcmVsZWFzZS9hY3F1aXJlIHNl
-bWFudGljcyB0bw0KPiA+ID4gPiA+ID4gPiBzZXF1ZW50aWFsIGNvbnNpc3RlbmN5LiBUaGlzIHJl
-cXVpcmVzIHVzaW5nIHNlcS1jc3QgZm9yDQo+ID4gPiA+ID4gPiA+IHN0b3JlcywNCj4gPiA+ID4g
-PiA+ID4gbG9hZHMsIGFuZCBDQVMgb3BlcmF0aW9ucy4gSG93ZXZlciwgdGhpcyBhcHByb2FjaCBp
-bnRyb2R1Y2VzIGENCj4gPiA+ID4gPiA+ID4gc2lnbmlmaWNhbnQgcGVyZm9ybWFuY2UgcGVuYWx0
-eSBvbiByZWxheGVkLW1lbW9yeQ0KPiA+ID4gPiA+ID4gPiBhcmNoaXRlY3R1cmVzLg0KPiA+ID4g
-PiA+ID4gPg0KPiA+ID4gPiA+ID4gPiAyLiBFc3RhYmxpc2ggYSBzYWZlIHBhcnRpYWwgb3JkZXIg
-YnkgZW5mb3JjaW5nIGEgcGFpci13aXNlDQo+ID4gPiA+ID4gPiA+IGhhcHBlbnMtYmVmb3JlIHJl
-bGF0aW9uc2hpcCBiZXR3ZWVuIHRocmVhZCBvZiBzYW1lIHJvbGUgYnkNCj4gPiA+ID4gPiA+ID4g
-Y2hhbmdpbmcNCj4gPiA+ID4gPiA+ID4gdGhlIENBUyBhbmQgdGhlIHByZWNlZGluZyBsb2FkIG9m
-IHRoZSBoZWFkIGJ5IGNvbnZlcnRpbmcgdGhlbQ0KPiA+ID4gPiA+ID4gPiB0bw0KPiA+ID4gPiA+
-ID4gPiByZWxlYXNlIGFuZCBhY3F1aXJlIHJlc3BlY3RpdmVseS4gVGhpcyBhcHByb2FjaCBtYWtl
-cyB0aGUNCj4gPiA+ID4gPiA+ID4gb3JpZ2luYWwNCj4gPiA+ID4gPiA+ID4gYmFycmllciBhc3N1
-bXB0aW9uIHVubmVjZXNzYXJ5IGFuZCBhbGxvd3MgaXRzIHJlbW92YWwuDQo+ID4gPiA+ID4gPg0K
-PiA+ID4gPiA+ID4gRm9yIHRoZSBzYWtlIG9mIGNsYXJpdHksIGNhbiB5b3Ugb3V0bGluZSB3aGF0
-IHdvdWxkIGJlIGV4YWN0IGNvZGUNCj4gPiA+ID4gPiA+IGNoYW5nZXMgZm9yDQo+ID4gPiA+ID4g
-PiBhcHByb2FjaCAjMj8gU2FtZSBhcyBpbiB0aGF0IHBhdGNoOg0KPiA+ID4gPiA+ID4NCj4gaHR0
-cHM6Ly9wYXRjaHdvcmsuZHBkay5vcmcvcHJvamVjdC9kcGRrL3BhdGNoLzIwMjUwNTIxMTExNDMy
-LjIwNzkzNi00LQ0KPiA8aHR0cHM6Ly9wYXRjaHdvcmsuZHBkay5vcmcvcHJvamVjdC9kcGRrL3Bh
-dGNoLzIwMjUwNTIxMTExNDMyLjIwNzkzNi00LT4NCj4gPiA+IDxodHRwczovL3BhdGNod29yay5k
-cGRrLm9yZy9wcm9qZWN0L2RwZGsvcGF0Y2gvMjAyNTA1MjExMTE0MzIuMjA3OTM2LTQtDQo+ID4g
-PGh0dHBzOi8vcGF0Y2h3b3JrLmRwZGsub3JnL3Byb2plY3QvZHBkay9wYXRjaC8yMDI1MDUyMTEx
-MTQzMi4yMDc5MzYtNC0NCj4gJmd0Oz4NCj4gPiA+ID4gPiBrb25zdGFudGluLmFuYW55ZXZAaHVh
-d2VpLmNvbQ0KPiA8bWFpbHRvOmtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPg0KPiA8bWFp
-bHRvOmtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tDQo+IDxtYWlsdG86a29uc3RhbnRpbi5h
-bmFueWV2QGh1YXdlaS5jb20+Pi8NCj4gPiA+ID4gPiA+IE9yIHNvbWV0aGluZyBkaWZmZXJlbnQ/
-DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBTb3JyeSwgSSBtaXNzZWQgdGhlIGxhdGVyIGhhbGYgeW91
-IHlvdXIgY29tbWVudCBiZWZvcmUuDQo+ID4gPiA+ID4gWWVzLCB5b3UgaGF2ZSBwcm9wb3NlZCB0
-aGUgc2FtZSBzb2x1dGlvbiB0aGVyZS4NCj4gPiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4gT2ssIHRo
-YW5rcyBmb3IgY29uZmlybWF0aW9uLg0KPiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiA+ID4NCj4g
-PiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+IDMuIFJldGFpbiBwYXJ0aWFsIG9yZGVyaW5nIGJ1dCBl
-bnN1cmUgb25seSBzYWZlIHBhcnRpYWwgb3JkZXJzDQo+ID4gPiA+ID4gPiA+IGFyZQ0KPiA+ID4g
-PiA+ID4gPiBjb21taXR0ZWQuIFRoaXMgY2FuIGJlIGRvbmUgYnkgZGV0ZWN0aW5nIHVuZGVyZmxv
-dyBjb25kaXRpb25zDQo+ID4gPiA+ID4gPiA+IChwcm9kdWNlciA8IGNvbnN1bWVyKSBhbmQgcXVh
-c2hpbmcgdGhlIHVwZGF0ZSBpbiBzdWNoIGNhc2VzLg0KPiA+ID4gPiA+ID4gPiBUaGlzIGFwcHJv
-YWNoIG1ha2VzIHRoZSBvcmlnaW5hbCBiYXJyaWVyIGFzc3VtcHRpb24NCj4gPiA+ID4gPiA+ID4g
-dW5uZWNlc3NhcnkNCj4gPiA+ID4gPiA+ID4gYW5kIGFsbG93cyBpdHMgcmVtb3ZhbC4NCj4gPiA+
-ID4gPiA+DQo+ID4gPiA+ID4gPiA+IFRoaXMgcGF0Y2ggaW1wbGVtZW50cyBzb2x1dGlvbiAoMykg
-Zm9yIHBlcmZvcm1hbmNlIHJlYXNvbnMuDQo+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+IFNp
-Z25lZC1vZmYtYnk6IFdhdGhzYWxhIFZpdGhhbmFnZSA8d2F0aHNhbGEudml0aGFuYWdlQGFybS5j
-b20NCj4gPG1haWx0bzp3YXRoc2FsYS52aXRoYW5hZ2VAYXJtLmNvbT4NCj4gPiA+IDxtYWlsdG86
-d2F0aHNhbGEudml0aGFuYWdlQGFybS5jb20NCj4gPG1haWx0bzp3YXRoc2FsYS52aXRoYW5hZ2VA
-YXJtLmNvbT4+Pg0KPiA+ID4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBPbGEgTGlsamVkYWhsIDxv
-bGEubGlsamVkYWhsQGFybS5jb20NCj4gPG1haWx0bzpvbGEubGlsamVkYWhsQGFybS5jb20+DQo+
-ID4gPiA8bWFpbHRvOm9sYS5saWxqZWRhaGxAYXJtLmNvbSA8bWFpbHRvOm9sYS5saWxqZWRhaGxA
-YXJtLmNvbT4+Pg0KPiA+ID4gPiA+ID4gPiBSZXZpZXdlZC1ieTogSG9ubmFwcGEgTmFnYXJhaGFs
-bGkgPGhvbm5hcHBhLm5hZ2FyYWhhbGxpQGFybS5jb20NCj4gPG1haWx0bzpob25uYXBwYS5uYWdh
-cmFoYWxsaUBhcm0uY29tPg0KPiA+ID4gPG1haWx0bzpob25uYXBwYS5uYWdhcmFoYWxsaUBhcm0u
-Y29tDQo+IDxtYWlsdG86aG9ubmFwcGEubmFnYXJhaGFsbGlAYXJtLmNvbT4+Pg0KPiA+ID4gPiA+
-ID4gPiBSZXZpZXdlZC1ieTogRGhydXYgVHJpcGF0aGkgPGRocnV2LnRyaXBhdGhpQGFybS5jb20N
-Cj4gPG1haWx0bzpkaHJ1di50cmlwYXRoaUBhcm0uY29tPg0KPiA+ID4gPG1haWx0bzpkaHJ1di50
-cmlwYXRoaUBhcm0uY29tIDxtYWlsdG86ZGhydXYudHJpcGF0aGlAYXJtLmNvbT4+Pg0KPiA+ID4g
-PiA+ID4gPiAtLS0NCj4gPiA+ID4gPiA+ID4gbGliL3JpbmcvcnRlX3JpbmdfYzExX3B2dC5oIHwg
-MTAgKysrKysrKy0tLQ0KPiA+ID4gPiA+ID4gPiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25z
-KCspLCAzIGRlbGV0aW9ucygtKQ0KPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiBkaWZmIC0t
-Z2l0IGEvbGliL3JpbmcvcnRlX3JpbmdfYzExX3B2dC5oDQo+ID4gPiA+ID4gPiA+IGIvbGliL3Jp
-bmcvcnRlX3JpbmdfYzExX3B2dC5oDQo+ID4gPiA+ID4gPiA+IGluZGV4IGI5Mzg4YWYwZGEuLmU1
-YWMxZjZiOWUgMTAwNjQ0DQo+ID4gPiA+ID4gPiA+IC0tLSBhL2xpYi9yaW5nL3J0ZV9yaW5nX2Mx
-MV9wdnQuaA0KPiA+ID4gPiA+ID4gPiArKysgYi9saWIvcmluZy9ydGVfcmluZ19jMTFfcHZ0LmgN
-Cj4gPiA+ID4gPiA+ID4gQEAgLTgzLDkgKzgzLDYgQEAgX19ydGVfcmluZ19oZWFkdGFpbF9tb3Zl
-X2hlYWQoc3RydWN0DQo+ID4gPiA+ID4gPiA+IHJ0ZV9yaW5nX2hlYWR0YWlsDQo+ID4gPiA+ID4g
-PiA+ICpkLA0KPiA+ID4gPiA+ID4gPiAvKiBSZXNldCBuIHRvIHRoZSBpbml0aWFsIGJ1cnN0IGNv
-dW50ICovDQo+ID4gPiA+ID4gPiA+IG4gPSBtYXg7DQo+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4g
-PiA+IC0gLyogRW5zdXJlIHRoZSBoZWFkIGlzIHJlYWQgYmVmb3JlIHRhaWwgKi8NCj4gPiA+ID4g
-PiA+ID4gLSBydGVfYXRvbWljX3RocmVhZF9mZW5jZShydGVfbWVtb3J5X29yZGVyX2FjcXVpcmUp
-Ow0KPiA+ID4gPiA+ID4gPiAtDQo+ID4gPiA+ID4gPiA+IC8qIGxvYWQtYWNxdWlyZSBzeW5jaHJv
-bml6ZSB3aXRoIHN0b3JlLXJlbGVhc2Ugb2YNCj4gPiA+ID4gPiA+ID4gaHQtPnRhaWwNCj4gPiA+
-ID4gPiA+ID4gKiBpbiB1cGRhdGVfdGFpbC4NCj4gPiA+ID4gPiA+ID4gKi8NCj4gPiA+ID4gPiA+
-DQo+ID4gPiA+ID4gPiBCdXQgdGhlbiBjb25zLmhlYWQgY2FuIGJlIHJlYWQgYSBiZWZvcmUgcHJv
-ZC50YWlsIChhbmQgdmlzYS12ZXJzYSksDQo+ID4gPiA+ID4gPiByaWdodD8NCj4gPiA+ID4gPg0K
-PiA+ID4gPiA+IFJpZ2h0LCB3ZSBsZXQgaXQgaGFwcGVuIGJ1dCBlbGltaW5hdGUgYW55IHJlc3Vs
-dGluZyBzdGF0ZXMgdGhhdCBhcmUNCj4gPiA+ID4gPiBzZW1hbnRpY2FsbHkgaW5jb3JyZWN0IGF0
-IHRoZSBlbmQuDQo+ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IFR3byBjb21tZW50cyBoZXJlOg0K
-PiA+ID4gPiAxKSBJIHRoaW5rIGl0IGlzIHByb2JhYmx5IHNhZmVyIHRvIGRvIHRoZSBjaGVjayBs
-aWtlIHRoYXQ6DQo+ID4gPiA+IElmICgqZW50cmllcyA+IHJpbmctPmNhcGFjaXR5KSAuLi4NCj4g
-PiA+IFllcywgdGhpcyBtaWdodCBiZSBhbm90aGVyIHdheSBvZiBoYW5kbGluZyB1bmRlcmZsb3cg
-c2l0dWF0aW9ucy4gV2UgY291bGQNCj4gc3R1ZHkNCj4gPiA+IHRoaXMuDQo+ID4gPg0KPiA+ID4g
-SSBoYXZlIHVzZWQgdGhlIGNoZWNrIGZvciBuZWdhdGl2ZSB3aXRob3V0IHByb2JsZW1zIGluIG15
-IHJpbmcgYnVmZmVyDQo+ID4gPiBpbXBsZW1lbnRhdGlvbnMNCj4gPiA+IGh0dHBzOi8vZ2l0aHVi
-LmNvbS9BUk0tDQo+IHNvZnR3YXJlL3Byb2dyZXNzNjQvYmxvYi9tYXN0ZXIvc3JjL3A2NF9yaW5n
-YnVmLmMgPGh0dHBzOi8vZ2l0aHViLmNvbS9BUk0tDQo+IHNvZnR3YXJlL3Byb2dyZXNzNjQvYmxv
-Yi9tYXN0ZXIvc3JjL3A2NF9yaW5nYnVmLmM+DQo+ID4gPiBidXQgY2FuJ3Qgc2F5IHRoYXQgaGFz
-IGJlZW4gYmF0dGxlLXRlc3RlZC4NCj4gPg0KPiA+DQo+ID4gTXkgdGhvdWdodCB3YXMgYWJvdXQg
-dGhlIGNhc2UgKHByb2JhYmx5IGh5cG90aGV0aWNhbCkgd2hlbiB0aGUgZGlmZmVyZW5jZQ0KPiA+
-IGJldHdlZW4gc3RhbGUgdGFpbCBhbmQgaGVhZCB3aWxsIGJlIGJpZ2dlciB0aGVuIDJeMzEgKyAx
-Lg0KPiA+DQo+ID4NCj4gPiA+ID4gMikgTXkgY29uY2VybiB0aGF0IHdpdGhvdXQgZm9yY2luZyBh
-IHByb3BlciByZWFkIG9yZGVyaW5nDQo+ID4gPiA+IChjb25zLmhlYWQgZmlyc3QgdGhlbiBwcm9k
-LnRhaWwpIHdlIHJlLWludHJvZHVjZSBhIHdpbmRvdyBmb3IgYWxsIHNvcnRzIG9mDQo+ID4gPiA+
-IEFCQS1saWtlIHByb2JsZW1zLg0KPiA+ID4gSGVhZCBhbmQgdGFpbCBpbmRleGVzIGFyZSBtb25v
-dG9uaWNhbGx5IGluY3JlYXNpbmcgc28gSSBkb24ndCBzZWUgYSByaXNrIGZvcg0KPiBBQkEtbGlr
-ZQ0KPiA+ID4gcHJvYmxlbXMuDQo+ID4NCj4gPg0KPiA+IEkgdW5kZXJzdGFuZCB0aGF0LCBidXQg
-d2l0aCBjdXJyZW50IENQVSBzcGVlZHMgaXQgY2FuIHRha2UgcnRlX3JpbmcganVzdCBmZXcNCj4g
-c2Vjb25kcyB0bw0KPiA+IHdyYXAgYXJvdW5kIGhlYWQvdGFpbCB2YWx1ZXMuIElmIHVzZXIgZG9p
-bmcgc29tZXRoaW5nIHJlYWxseSBmYW5jeSAtIGxpa2UgdXNpbmcNCj4gcnRlX3JpbmcgWkMgQVBJ
-DQo+ID4gKGkuZS4ganVzdCBtb3ZpbmcgaGVhZC90YWlsIHdpdGhvdXQgcmVhZGluZyBhY3R1YWwg
-b2JqZWN0cykgdGhhdCBjYW4gcHJvYmFibHkNCj4gaGFwcGVuIGV2ZW4NCj4gPiBmYXN0ZXIgKGxl
-c3MgdGhhbiBhIHNlY29uZD8pLg0KPiA+IEFyZSB3ZSBzdXJlIHRoYXQgdGhlIHN0YWxlIHRhaWwg
-dmFsdWUgd2lsbCBuZXZlciBwZXJzaXN0IHRoYXQgbG9uZz8NCj4gPiBMZXQgc2F5IHVzZXIgY2Fs
-bGluZyBtb3ZlX2hlYWQoKSBpbiBhIGxvb3AgdGlsbCBpdCBzdWNjZWVkcz8NCj4gPg0KPiA+DQo+
-ID4gPiBJbmRlZWQsIGFkZGluZyBhIG1vbm90b25pY2FsbHkgaW5jcmVhc2luZyB0YWcgdG8gcG9p
-bnRlcnMgaXMgdGhlIGNvbW1vbiB3YXkNCj4gb2YNCj4gPiA+IGF2b2lkaW5nIEFCQQ0KPiA+ID4g
-cHJvYmxlbXMgaW4gbG9jay1mcmVlIGRlc2lnbnMuDQo+ID4NCj4gPg0KPiA+IFllcCwgdXNpbmcg
-NjQtYml0IHZhbHVlcyBmb3IgaGVhZC90YWlsIGNvdW50ZXJzIHdpbGwgaGVscCB0byBhdm9pZCB0
-aGVzZSBjb25jZXJucy4NCj4gPiBCdXQgaXQgd2lsbCBwcm9iYWJseSBicmVhayBIVFMvUlRTIG1v
-ZGVzLCBwbHVzIGl0IGlzIGFuIEFCSSBjaGFuZ2UgZm9yIHN1cmUuDQo+ID4NCj4gPg0KPiA+IEFj
-dHVhbGx5IGFmdGVyIGFub3RoZXIgdGhvdWdodCwgSSBoYXZlIG9uZSBtb3JlIGNvbmNlcm4gaGVy
-ZToNCj4gPg0KPiA+DQo+ID4gKyAvKg0KPiA+ICsgKiBFbnN1cmUgdGhlIGVudHJpZXMgY2FsY3Vs
-YXRpb24gd2FzIG5vdCBiYXNlZCBvbiBhIHN0YWxlDQo+ID4gKyAqIGFuZCB1bnNhZmUgc3RhaWwg
-b2JzZXJ2YXRpb24gdGhhdCBjYXVzZXMgdW5kZXJmbG93Lg0KPiA+ICsgKi8NCj4gPiArIGlmICgo
-aW50KSplbnRyaWVzIDwgMCkNCj4gPiArICplbnRyaWVzID0gMDsNCj4gPiArDQo+ID4NCj4gPg0K
-PiA+IFdpdGggdGhhdCBjaGFuZ2UsIGl0IG1pZ2h0IHJldHVybiBub3QtdmFsaWQgaW5mb3JtYXRp
-b24gYmFjayB0byB0aGUgdXNlcg0KPiA+IGFib3V0IG51bWJlciBvZiBmcmVlL29jY3VwaWVkIGVu
-dHJpZXMgaW4gdGhlIHJpbmcuDQo+ID4gUGx1cyBydGVfcmluZ19lbnF1ZXVlKCkgbm93IG1pZ2h0
-IGZhaWwgZXZlbiB3aGVuIHRoZXJlIGFyZSBlbm91Z2ggZnJlZQ0KPiBlbnRyaWVzDQo+ID4gaW4g
-dGhlIHJpbmcgKHNhbWUgZm9yIGRlcXVldWUpLg0KPiBIb3cgZG8geW91IChvciB0aGUgdGhyZWFk
-KSBrbm93IHRoZXJlIGFyZSBlbm91Z2ggZnJlZSAob3IgdXNlZCkgZW50cmllcz8gRG8NCj4geW91
-DQo+IGFzc3VtZSBzZXF1ZW50aWFsbHkgY29uc2lzdGVudCBiZWhhdmlvdXIgKGEgdG90YWwgb3Jk
-ZXIgb2YgbWVtb3J5IGFjY2Vzc2VzKT8NCj4gT3RoZXJ3aXNlLCB5b3Ugd291bGQgbmVlZCB0byBl
-eHBsaWNpdGx5IGNyZWF0ZSBhIGhhcHBlbnMtYmVmb3JlIHJlbGF0aW9uDQo+IGJldHdlZW4gdGhy
-ZWFkcywgZS5nLiBhIGNvbnN1bWVyIHdoaWNoIG1hZGUgcm9vbSBpbiB0aGUgcmluZyBidWZmZXIg
-bXVzdA0KPiBzeW5jaHJvbml6ZS13aXRoIHRoZSBwcm9kdWNlciB0aGF0IHRoZXJlIGlzIG5vdyBy
-b29tIGZvciBtb3JlIGVsZW1lbnRzLiBUaGF0DQo+IHN5bmNocm9uaXplLXdpdGggZWRnZSB3aWxs
-IGVuc3VyZSB0aGUgcHJvZHVjZXIgcmVhZHMgYSBmcmVzaCB2YWx1ZSBvZiBzdGFpbC4gQnV0DQo+
-IHdpdGhvdXQgaXQsIGhvdyBjYW4gYSB0aHJlYWQga25vdyB0aGUgc3RhdGUgb2YgdGhlIHJpbmcg
-YnVmZmVyIHRoYXQgaXMgYmVpbmcNCj4gbWFuaXB1bGF0ZWQgYnkgYW5vdGhlciB0aHJlYWQ/DQo+
-IA0KPiA+IFRoYXQgbG9va3MgbGlrZSBhIGNoYW5nZSBpbiBvdXIgcHVibGljIEFQSSBiZWhhdmlv
-ciB0aGF0IG1pZ2h0IGJyZWFrIG1hbnkNCj4gdGhpbmdzLg0KPiA+IFRoZXJlIGFyZSBxdWl0ZSBm
-ZXcgcGxhY2VzIHdoZW4gY2FsbGVyIGV4cGVjdHMgZW5xdWV1ZS9kZXF1ZXVlDQo+ID4gb3BlcmF0
-aW9uIHRvIGFsd2F5cyBzdWNjZWVkIChsZXQgc2F5IHRoZXJlIGFsd2F5cyBzaG91bGQgYmUgZW5v
-dWdoIGZyZWUgc3BhY2UNCj4gaW4gdGhlIHJpbmcpLg0KPiBTaW5nbGUtdGhyZWFkZWQgc2NlbmFy
-aW9zIGFyZSBub3QgYSBwcm9ibGVtLiBEbyB5b3UgaGF2ZSBhIG11bHRpdGhyZWFkZWQNCj4gc2Nl
-bmFyaW8gd2hlcmUNCj4gdGhlIGNhbGxlciBleHBlY3RzIGVucXVldWUvZGVxdWV1ZSB0byBhbHdh
-eXMgc3VjY2VlZD8gSG93IGFyZSB0aGUgdGhyZWFkcw0KPiBpbnZvbHZlZCBpbiBzdWNoDQo+IGEg
-c2NlbmFyaW8gc3luY2hyb25pemluZyB3aXRoIGVhY2ggb3RoZXI/DQoNClN1cmUsIEkgYW0gdGFs
-a2luZyBhYm91dCBNVCBzY2VuYXJpby4NCkkgdGhpbmsgSSBhbHJlYWR5IHByb3ZpZGVkIGFuIGV4
-YW1wbGU6IERQREsgbWVtcG9vbCBsaWJyYXJ5IChzZWUgYmVsb3cpLg0KSW4gYnJpZWYsIEl0IHdv
-cmtzIGxpa2UgdGhhdDoNCkF0IGluaXQgaXQgYWxsb2NhdGVzIHJpbmcgb2YgTiBtZW1vcnkgYnVm
-ZmVycyBhbmQgcmluZyBiaWcgZW5vdWdoIHRvIGhvbGQgYWxsIG9mIHRoZW0uDQpUaGVuIGl0IGVu
-cXVldWVzIGFsbCBhbGxvY2F0ZWQgbWVtb3J5IGJ1ZmZlcnMgaW50byB0aGUgcmluZy4NCm1lbXBv
-b2xfZ2V0IC0gcmV0cmlldmVzIChkZXF1ZXVlcykgYnVmZmVycyBmcm9tIHRoZSByaW5nLg0KbWVt
-cG9vbF9wdXQgLSBwdXRzIHRoZW0gYmFjayAoZW5xdWV1ZXMpIHRvIHRoZSByaW5nDQpnZXQoKSBt
-aWdodCBmYWlsIChFTk9NRU0pLCB3aGlsZSBwdXQgaXMgZXhwZWN0ZWQgdG8gYWx3YXlzIHN1Y2Nl
-ZWQuIA0KDQo+IA0KPiA+IEZvciBleGFtcGxlOiBydGVfbWVtcG9vbCB3b3JrcyBsaWtlIHRoYXQu
-DQo+ID4gSSBhbSBwcmV0dHkgc3VyZSB0aGVyZSBhcmUgcXVpdGUgZmV3IG90aGVyIHBsYWNlcyBs
-aWtlIHRoYXQgaW5zaWRlIERQREssDQo+ID4gbm90IHRvIG1lbnRpb24gdGhpcmQtcGFydHkgY29k
-ZS4NCj4gPg0KPiA+DQo+ID4gQ29uc2lkZXJpbmcgYWxsIG9mIHRoZSBhYm92ZSwgSSBhbSBhY3R1
-YWxseSBtb3JlIGluIGZhdm9yDQo+ID4gdG8gY29tYmluZSBhcHByb2FjaGVzICMyIGFuZCAjMyBm
-b3IgdGhlIGZpbmFsIHBhdGNoOg0KPiA+IGVzdGFibGlzaCBhIHNhZmUgcGFydGlhbCBvcmRlciAo
-IzIpIGFuZCBrZWVwIHRoZSBjaGVjayBmcm9tICMzIChzaG91bGQgaXQgYmVjb21lDQo+IGFuIGFz
-c2VydCgpL3ZlcmlmeSgpPykNCj4gSSBhZ3JlZSB0aGF0IHVzaW5nIGFjcXVpcmUvcmVsZWFzZSBm
-b3IgYWxsIHByb2QvY29uc19oZWFkIGFjY2Vzc2VzIHdpbGwgbWFrZSBpdA0KPiBlYXNpZXIgdG8N
-Cj4gcmVhc29uIGFib3V0IHRoZSByaW5nIGJ1ZmZlciBzdGF0ZS4gU2VxdWVudGlhbCBjb25zaXN0
-ZW5jeSAodG90YWwgb3JkZXIpIGlzIHRoZQ0KPiBlYXNpZXN0IHRvDQo+IHJlYXNvbiBhYm91dCBh
-bmQgb2Z0ZW4gc2VlbXMgdG8gYmUgZGVzaXJlZCBhbmQgZXhwZWN0ZWQgYnkgcHJvZ3JhbW1lcnMg
-KGUuZy4NCj4gIkknbGwganVzdA0KPiBhZGQgYSBiYXJyaWVyIGhlcmUgdG8gZW5zdXJlIEEgaGFw
-cGVucyBiZWZvcmUgQiBpbiB0aGlzIHRocmVhZCwgbm93IHRoZXJlIGlzIGENCj4gdG90YWwgb3Jk
-ZXIuLi4iKS4NCj4gDQo+IC0gT2xhDQo+IA0KPiA+DQo+ID4NCj4gPiBBbm90aGVyIHRoaW5nIHRv
-IG5vdGU6IHdoYXRldmVyIGZpbmFsIGFwcHJvYWNoIHdlIGNob29zZSAtDQo+ID4gd2UgbmVlZCB0
-byBtYWtlIHN1cmUgdGhhdCB0aGUgcHJvYmxlbSBpcyBhZGRyZXNzZWQgYWNyb3NzIGFsbCBvdGhl
-cg0KPiA+IHJ0ZV9yaW5nIGZsYXZvcnMvbW9kZXMgdG9vIChnZW5lcmljIGltcGxlbWVudGF0aW9u
-LCBydHMvaHRzIG1vZGUsIHNvcmluZykuDQo+ID4NCj4gPg0KPiA+IEtvbnN0YW50aW4NCj4gDQo+
-IA0KPiBJTVBPUlRBTlQgTk9USUNFOiBUaGUgY29udGVudHMgb2YgdGhpcyBlbWFpbCBhbmQgYW55
-IGF0dGFjaG1lbnRzIGFyZQ0KPiBjb25maWRlbnRpYWwgYW5kIG1heSBhbHNvIGJlIHByaXZpbGVn
-ZWQuIElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQsDQo+IHBsZWFzZSBub3Rp
-ZnkgdGhlIHNlbmRlciBpbW1lZGlhdGVseSBhbmQgZG8gbm90IGRpc2Nsb3NlIHRoZSBjb250ZW50
-cyB0byBhbnkNCj4gb3RoZXIgcGVyc29uLCB1c2UgaXQgZm9yIGFueSBwdXJwb3NlLCBvciBzdG9y
-ZSBvciBjb3B5IHRoZSBpbmZvcm1hdGlvbiBpbiBhbnkNCj4gbWVkaXVtLiBUaGFuayB5b3UuDQo=
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Tuesday, 23 September 2025 16.12
+>=20
+> The queue stats part of the rte_eth_stats structure has been =
+deprecated
+> for many years now, since 2020 [1]. Therefore we look to remove these
+> fields from the stats structure.
+>=20
+> Unfortunately, the flag introduced by the deprecation,
+> "RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS", means that for drivers using it =
+we
+> still have to return queue stats from the driver stats_get function.
+> This means that we need a new parameter for those stats as part of the
+> stats_get interface. The autofill flag is set for 35 drivers, which
+> means that if we didn't do so, users of those 35 drivers would lose =
+all
+> ability to get per-queue stats.
+>=20
+> [1] Commit a72cb3e7656a ("doc: announce queue stats moving to xstats")
+> 	https://github.com/DPDK/dpdk/commit/a72cb3e
+>=20
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+
+Thank you for finally attacking this, Bruce.
+
+A few documentation comments and a bugfix inline below.
+
+> ---
+>  config/rte_config.h               |  1 -
+>  lib/ethdev/ethdev_driver.h        | 23 ++++++++++++++++++-
+>  lib/ethdev/ethdev_private.c       | 26 ++++++++++++++++++++++
+>  lib/ethdev/ethdev_private.h       |  2 ++
+>  lib/ethdev/rte_ethdev.c           | 37 =
++++++++++----------------------
+>  lib/ethdev/rte_ethdev.h           | 11 ---------
+>  lib/ethdev/rte_ethdev_telemetry.c | 20 +----------------
+>  7 files changed, 61 insertions(+), 59 deletions(-)
+>=20
+> diff --git a/config/rte_config.h b/config/rte_config.h
+> index 05344e2619..94f9a6427e 100644
+> --- a/config/rte_config.h
+> +++ b/config/rte_config.h
+> @@ -67,7 +67,6 @@
+>=20
+>  /* ether defines */
+>  #define RTE_MAX_QUEUES_PER_PORT 1024
+> -#define RTE_ETHDEV_QUEUE_STAT_CNTRS 16 /* max 256 */
+>  #define RTE_ETHDEV_RXTX_CALLBACKS 1
+>  #define RTE_MAX_MULTI_HOST_CTRLS 4
+>=20
+> diff --git a/lib/ethdev/ethdev_driver.h b/lib/ethdev/ethdev_driver.h
+> index 71085bddff..d6f6d974cb 100644
+> --- a/lib/ethdev/ethdev_driver.h
+> +++ b/lib/ethdev/ethdev_driver.h
+> @@ -24,6 +24,27 @@
+>  extern "C" {
+>  #endif
+>=20
+> +#define RTE_ETHDEV_QUEUE_STAT_CNTRS 16 /* max 256 */
+> +
+> +/**
+> + * @internal
+> + * structure used to pass queue stats back to ethdev for drivers =
+which
+> rely
+> + * on ethdev to add the queue stats automatically to xstats.
+> + */
+> +struct eth_queue_stats {
+> +	/* Queue stats are limited to max 256 queues */
+> +	/** Total number of queue Rx packets. */
+> +	uint64_t q_ipackets[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+> +	/** Total number of queue Tx packets. */
+> +	uint64_t q_opackets[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+> +	/** Total number of successfully received queue bytes. */
+> +	uint64_t q_ibytes[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+> +	/** Total number of successfully transmitted queue bytes. */
+> +	uint64_t q_obytes[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+> +	/** Total number of queue packets received that are dropped. */
+> +	uint64_t q_errors[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+> +};
+> +
+>  /**
+>   * @internal
+>   * Structure used to hold information about the callbacks to be =
+called
+> for a
+> @@ -428,7 +449,7 @@ typedef int
+> (*eth_speed_lanes_get_capability_t)(struct rte_eth_dev *dev,
+>=20
+>  /** @internal Get global I/O statistics of an Ethernet device. */
+>  typedef int (*eth_stats_get_t)(struct rte_eth_dev *dev,
+> -				struct rte_eth_stats *igb_stats);
+> +				struct rte_eth_stats *stats, struct
+> eth_queue_stats *qstats);
+
+Please document that qstats is allowed to be NULL.
+
+>=20
+>  /**
+>   * @internal
+> diff --git a/lib/ethdev/ethdev_private.c b/lib/ethdev/ethdev_private.c
+> index 285d377d91..499e3f56b2 100644
+> --- a/lib/ethdev/ethdev_private.c
+> +++ b/lib/ethdev/ethdev_private.c
+> @@ -477,3 +477,29 @@ eth_dev_tx_queue_config(struct rte_eth_dev *dev,
+> uint16_t nb_queues)
+>  	dev->data->nb_tx_queues =3D nb_queues;
+>  	return 0;
+>  }
+> +
+> +int
+> +eth_stats_qstats_get(uint16_t port_id, struct rte_eth_stats *stats,
+> struct eth_queue_stats *qstats)
+
+Please document that qstats is allowed to be NULL.
+
+> +{
+> +	struct rte_eth_dev *dev;
+> +	int ret;
+> +
+> +	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
+> +	dev =3D &rte_eth_devices[port_id];
+> +
+> +	if (stats =3D=3D NULL) {
+> +		RTE_ETHDEV_LOG_LINE(ERR, "Cannot get ethdev port %u stats
+> to NULL",
+> +			port_id);
+> +		return -EINVAL;
+> +	}
+> +
+> +	memset(stats, 0, sizeof(*stats));
+> +	memset(qstats, 0, sizeof(*qstats));
+
+Don't clear qstats if NULL.
+
+> +
+> +	if (dev->dev_ops->stats_get =3D=3D NULL)
+> +		return -ENOTSUP;
+> +	stats->rx_nombuf =3D dev->data->rx_mbuf_alloc_failed;
+> +	ret =3D eth_err(port_id, dev->dev_ops->stats_get(dev, stats,
+> qstats));
+> +
+> +	return ret;
+> +}
+> diff --git a/lib/ethdev/ethdev_private.h b/lib/ethdev/ethdev_private.h
+> index b07b1b4c42..735d9e60b6 100644
+> --- a/lib/ethdev/ethdev_private.h
+> +++ b/lib/ethdev/ethdev_private.h
+> @@ -79,4 +79,6 @@ void eth_dev_txq_release(struct rte_eth_dev *dev,
+> uint16_t qid);
+>  int eth_dev_rx_queue_config(struct rte_eth_dev *dev, uint16_t
+> nb_queues);
+>  int eth_dev_tx_queue_config(struct rte_eth_dev *dev, uint16_t
+> nb_queues);
+>=20
+> +int eth_stats_qstats_get(uint16_t port_id, struct rte_eth_stats
+> *stats, struct eth_queue_stats *qstats);
+
+Please document that qstats is allowed to be NULL.
+
+> +
+>  #endif /* _ETH_PRIVATE_H_ */
+> diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+> index f22139cb38..aa2d5703bd 100644
+> --- a/lib/ethdev/rte_ethdev.c
+> +++ b/lib/ethdev/rte_ethdev.c
+> @@ -73,16 +73,16 @@ static const struct rte_eth_xstats_name_off
+> eth_dev_stats_strings[] =3D {
+>  #define RTE_NB_STATS RTE_DIM(eth_dev_stats_strings)
+>=20
+>  static const struct rte_eth_xstats_name_off
+> eth_dev_rxq_stats_strings[] =3D {
+> -	{"packets", offsetof(struct rte_eth_stats, q_ipackets)},
+> -	{"bytes", offsetof(struct rte_eth_stats, q_ibytes)},
+> -	{"errors", offsetof(struct rte_eth_stats, q_errors)},
+> +	{"packets", offsetof(struct eth_queue_stats, q_ipackets)},
+> +	{"bytes", offsetof(struct eth_queue_stats, q_ibytes)},
+> +	{"errors", offsetof(struct eth_queue_stats, q_errors)},
+>  };
+>=20
+>  #define RTE_NB_RXQ_STATS RTE_DIM(eth_dev_rxq_stats_strings)
+>=20
+>  static const struct rte_eth_xstats_name_off
+> eth_dev_txq_stats_strings[] =3D {
+> -	{"packets", offsetof(struct rte_eth_stats, q_opackets)},
+> -	{"bytes", offsetof(struct rte_eth_stats, q_obytes)},
+> +	{"packets", offsetof(struct eth_queue_stats, q_opackets)},
+> +	{"bytes", offsetof(struct eth_queue_stats, q_obytes)},
+>  };
+>  #define RTE_NB_TXQ_STATS RTE_DIM(eth_dev_txq_stats_strings)
+>=20
+> @@ -3346,27 +3346,9 @@ RTE_EXPORT_SYMBOL(rte_eth_stats_get)
+>  int
+>  rte_eth_stats_get(uint16_t port_id, struct rte_eth_stats *stats)
+>  {
+> -	struct rte_eth_dev *dev;
+> -	int ret;
+> -
+> -	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
+> -	dev =3D &rte_eth_devices[port_id];
+> -
+> -	if (stats =3D=3D NULL) {
+> -		RTE_ETHDEV_LOG_LINE(ERR, "Cannot get ethdev port %u stats
+> to NULL",
+> -			port_id);
+> -		return -EINVAL;
+> -	}
+> -
+> -	memset(stats, 0, sizeof(*stats));
+> -
+> -	if (dev->dev_ops->stats_get =3D=3D NULL)
+> -		return -ENOTSUP;
+> -	stats->rx_nombuf =3D dev->data->rx_mbuf_alloc_failed;
+> -	ret =3D eth_err(port_id, dev->dev_ops->stats_get(dev, stats));
+> +	int ret =3D eth_stats_qstats_get(port_id, stats, NULL);
+>=20
+>  	rte_eth_trace_stats_get(port_id, stats, ret);
+> -
+>  	return ret;
+>  }
+>=20
+> @@ -3709,12 +3691,13 @@ eth_basic_stats_get(uint16_t port_id, struct
+> rte_eth_xstat *xstats)
+>  {
+>  	struct rte_eth_dev *dev;
+>  	struct rte_eth_stats eth_stats;
+> +	struct eth_queue_stats queue_stats;
+>  	unsigned int count =3D 0, i, q;
+>  	uint64_t val, *stats_ptr;
+>  	uint16_t nb_rxqs, nb_txqs;
+>  	int ret;
+>=20
+> -	ret =3D rte_eth_stats_get(port_id, &eth_stats);
+> +	ret =3D eth_stats_qstats_get(port_id, &eth_stats, &queue_stats);
+>  	if (ret < 0)
+>  		return ret;
+>=20
+> @@ -3737,7 +3720,7 @@ eth_basic_stats_get(uint16_t port_id, struct
+> rte_eth_xstat *xstats)
+>  	/* per-rxq stats */
+>  	for (q =3D 0; q < nb_rxqs; q++) {
+>  		for (i =3D 0; i < RTE_NB_RXQ_STATS; i++) {
+> -			stats_ptr =3D RTE_PTR_ADD(&eth_stats,
+> +			stats_ptr =3D RTE_PTR_ADD(&queue_stats,
+>  					eth_dev_rxq_stats_strings[i].offset +
+>  					q * sizeof(uint64_t));
+>  			val =3D *stats_ptr;
+> @@ -3748,7 +3731,7 @@ eth_basic_stats_get(uint16_t port_id, struct
+> rte_eth_xstat *xstats)
+>  	/* per-txq stats */
+>  	for (q =3D 0; q < nb_txqs; q++) {
+>  		for (i =3D 0; i < RTE_NB_TXQ_STATS; i++) {
+> -			stats_ptr =3D RTE_PTR_ADD(&eth_stats,
+> +			stats_ptr =3D RTE_PTR_ADD(&queue_stats,
+>  					eth_dev_txq_stats_strings[i].offset +
+>  					q * sizeof(uint64_t));
+>  			val =3D *stats_ptr;
+> diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+> index d23c143eed..4cfc940000 100644
+> --- a/lib/ethdev/rte_ethdev.h
+> +++ b/lib/ethdev/rte_ethdev.h
+> @@ -272,17 +272,6 @@ struct rte_eth_stats {
+>  	uint64_t ierrors;   /**< Total number of erroneous received
+> packets. */
+>  	uint64_t oerrors;   /**< Total number of failed transmitted
+> packets. */
+>  	uint64_t rx_nombuf; /**< Total number of Rx mbuf allocation
+> failures. */
+> -	/* Queue stats are limited to max 256 queues */
+> -	/** Total number of queue Rx packets. */
+> -	uint64_t q_ipackets[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+> -	/** Total number of queue Tx packets. */
+> -	uint64_t q_opackets[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+> -	/** Total number of successfully received queue bytes. */
+> -	uint64_t q_ibytes[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+> -	/** Total number of successfully transmitted queue bytes. */
+> -	uint64_t q_obytes[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+> -	/** Total number of queue packets received that are dropped. */
+> -	uint64_t q_errors[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+>  };
+>=20
+>  /**@{@name Link speed capabilities
+> diff --git a/lib/ethdev/rte_ethdev_telemetry.c
+> b/lib/ethdev/rte_ethdev_telemetry.c
+> index 5e6c4172d3..519ad34be7 100644
+> --- a/lib/ethdev/rte_ethdev_telemetry.c
+> +++ b/lib/ethdev/rte_ethdev_telemetry.c
+> @@ -10,6 +10,7 @@
+>=20
+>  #include "rte_ethdev.h"
+>  #include "ethdev_driver.h"
+> +#include "ethdev_private.h"
+>  #include "sff_telemetry.h"
+>  #include "rte_tm.h"
+>=20
+> @@ -60,20 +61,6 @@ eth_dev_handle_port_list(const char *cmd
+> __rte_unused,
+>  	return 0;
+>  }
+>=20
+> -static void
+> -eth_dev_add_port_queue_stats(struct rte_tel_data *d, uint64_t
+> *q_stats,
+> -		const char *stat_name)
+> -{
+> -	int q;
+> -	struct rte_tel_data *q_data =3D rte_tel_data_alloc();
+> -	if (q_data =3D=3D NULL)
+> -		return;
+> -	rte_tel_data_start_array(q_data, RTE_TEL_UINT_VAL);
+> -	for (q =3D 0; q < RTE_ETHDEV_QUEUE_STAT_CNTRS; q++)
+> -		rte_tel_data_add_array_uint(q_data, q_stats[q]);
+> -	rte_tel_data_add_dict_container(d, stat_name, q_data, 0);
+> -}
+> -
+>  static int
+>  eth_dev_parse_hide_zero(const char *key, const char *value, void
+> *extra_args)
+>  {
+> @@ -121,11 +108,6 @@ eth_dev_handle_port_stats(const char *cmd
+> __rte_unused,
+>  	ADD_DICT_STAT(stats, ierrors);
+>  	ADD_DICT_STAT(stats, oerrors);
+>  	ADD_DICT_STAT(stats, rx_nombuf);
+> -	eth_dev_add_port_queue_stats(d, stats.q_ipackets, "q_ipackets");
+> -	eth_dev_add_port_queue_stats(d, stats.q_opackets, "q_opackets");
+> -	eth_dev_add_port_queue_stats(d, stats.q_ibytes, "q_ibytes");
+> -	eth_dev_add_port_queue_stats(d, stats.q_obytes, "q_obytes");
+> -	eth_dev_add_port_queue_stats(d, stats.q_errors, "q_errors");
+>=20
+>  	return 0;
+>  }
+> --
+> 2.48.1
+
