@@ -2,74 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A81FCAC5AE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 15:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627AACAC5A5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 15:46:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52C044066A;
-	Wed, 24 Sep 2025 17:45:56 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 9F36C4066A
- for <dev@dpdk.org>; Wed, 24 Sep 2025 17:45:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1758728754;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=MN1eugF4tnVM+CSPf5lgA5B5Vg97egF6ic1/8vmgE5Y=;
- b=dQPxLGphbqX27O4EYnYSCQuqqxXm7OfJTo0vLYGQsvhzoHTtKPp0Jv+fLsN1e2xAJKf0nT
- HLlpIdGGilzaI9TeOmpLgUZwxt1SzNS0by2MvT8UmWwtq+6EQFSCYkqGblnwYLrblDtjok
- P3Ba0xdu6kCo6EJypavQFkmN9bMjoK0=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-632-WwLhT0GbOq2cR5sgxzxIug-1; Wed, 24 Sep 2025 11:45:52 -0400
-X-MC-Unique: WwLhT0GbOq2cR5sgxzxIug-1
-X-Mimecast-MFC-AGG-ID: WwLhT0GbOq2cR5sgxzxIug_1758728751
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-57bccf22e0bso2934592e87.3
- for <dev@dpdk.org>; Wed, 24 Sep 2025 08:45:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758728751; x=1759333551;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=MN1eugF4tnVM+CSPf5lgA5B5Vg97egF6ic1/8vmgE5Y=;
- b=MQhj960FCVDV3tdyCmLeP9WtL2dpO5rQGjLO2kxgeodQjncIq+qs2g+b6/NqkF8foi
- YGOYqWIcEbT7xIyfEQrFUJMnA/BIFGOpBHaFvA5zRfnNrUNC9BWKtiPZ9ytvWtNBvIUi
- 5f4cVDiyDqCZnmJ290d9fJ2LTV2TBdn7WnVpI5sn2oYGN+BhwYGoEaVL5mnSO4yiMrMF
- Uxxw+Z5rW4+lQ/htXt2sSpsLbdxhoOwymImsmZVQVIeJZrC1YwBqlThPWEytd3CWUV8h
- q8guVxAf153bsFYAIKUIHoAboz0ja3MKd8uHxq9MydxYh6yZtN0+j2IsX7+rRPaklCaA
- omjg==
-X-Gm-Message-State: AOJu0Ywu09LtIIZxzaGX5Bg4iNE7JsHgXsQ2T+jZYQu+ILs1QrFuBO5r
- HHvHgdZ3DzmDaYuqIyI1JmNxSvGTZOM3c5emlEalhBi3inEFCscqwAb2JmIUnjo28u24sJ0Hey8
- rZSXDzgkKQClX5fVRTVUFSnntUhXyeR3ApMpBNX4Z5w0HKhrqMHzZC4f1srHSHRIaBsD075eR6J
- 3uDmgpnhQGvlg0fB8IAbU=
-X-Gm-Gg: ASbGncsYpDc89qVKpnJ1h7W97g059OBNZIIrX+TAbCyrh/UCfHg4b0kCfxkQeUGNGLD
- ugEQdGe3d1wCxbFA7kYFUoGYugBO+XxZRkWOeWA/L3NKhi9z8ZHQD33zNsTtDkOcAKA4Nc0VvAP
- FUsorq9dxVb9+R00+4zaCWqCw=
-X-Received: by 2002:a05:6512:10c9:b0:55f:44b8:1ecf with SMTP id
- 2adb3069b0e04-58070328f0bmr2446414e87.9.1758728751130; 
- Wed, 24 Sep 2025 08:45:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFzZseP32tKnx8tC3MDcEP+I1LdsxisSKXBnLuCAQXcd94KB76F89w/d7+NKXo/UQQtFE5z6B4nFUTotri0WAc=
-X-Received: by 2002:a05:6512:10c9:b0:55f:44b8:1ecf with SMTP id
- 2adb3069b0e04-58070328f0bmr2446404e87.9.1758728750750; Wed, 24 Sep 2025
- 08:45:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B3AD640613;
+	Wed, 24 Sep 2025 17:46:48 +0200 (CEST)
+Received: from fhigh-b5-smtp.messagingengine.com
+ (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+ by mails.dpdk.org (Postfix) with ESMTP id 062D840613
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 17:46:47 +0200 (CEST)
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 46AE27A0193;
+ Wed, 24 Sep 2025 11:46:46 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-09.internal (MEProxy); Wed, 24 Sep 2025 11:46:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to; s=fm1; t=1758728806; x=
+ 1758815206; bh=QJPQ37idamN3QufDhgDP7/lGE0ygJGRqcI3KtA7dTY8=; b=q
+ J2/9X3P+fhe/e4vx8blNB2zvoA/QJdYI936HxHxQt3Mj0B0QnrTh3i/Sp/I4uC4N
+ kBA9tD8+xJxxgsEeax0cyZEU11p0L9TCFOwVpv6Ou35iz5A8f6fKk+1iX2PSkKwQ
+ N41yVwBlEfEOXycEZxLFhHuH3hO6DqGtP2S8piEo3rRNg3+cKgwa915sJJZARiq1
+ 5sbcGyM18EbwFQWD7vV9g2HZUdjbeE+hoiFfkhifxWGmMqiAevZdlZPyqyvr4UJo
+ ZEs7j07+Luj9agPV/r6LmTNnGgpVpgYOEFSMDxq+b32Aa+ok4Z42fwC2RgYcxhO8
+ wsENGZ+JsSQkY+/soJbCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+ :x-me-sender:x-sasl-enc; s=fm1; t=1758728806; x=1758815206; bh=Q
+ JPQ37idamN3QufDhgDP7/lGE0ygJGRqcI3KtA7dTY8=; b=OGp/MJrXurl+V7HB2
+ X0JdxYPnpLQYsxIWB9ZxLgX5Aafa++iYCBN/Wa5oEjAnZ6aMLQj7yVCuLB4NQ2N3
+ yi/tLK0L8rYBWOgMJC0IetkyaTrTxgz8zsFgjvSw96PY5JqvTuIXQSrk0rYOPGXF
+ XgSgnO00olOAkIGi2344BdzynnAd816FWfidsRilwG37FSD3QbFFG9Bx+bMVpyHf
+ FPT6cdRRwVDfCz+KXZVoNd5mh23/Xcbyp35Ut2FbxibdVs8TP5hJb3nqmXvYjVEr
+ QoTMHrt/bmIBgrSg+3FnYZvu9ERNAc1WWaoW9afdYz3tGXSfNZWSOtB/zER3XwXt
+ hOMiQ==
+X-ME-Sender: <xms:ZRLUaL7A5c6lHe4CPp34jKNxnGN7Dp7PfkvFlcU_21U-sVhe5U9ASQ>
+ <xme:ZRLUaNOx0LeR7VrfYvuxgfGS19pb0PwWEOLumXiTBbiG8kLOt5mw3gcGEZmTqlKEW
+ 0juL4h8aHQE0FXrKd3THK2TUpOuneoW9lra4y2ETPWYudgQw7e9Dg>
+X-ME-Received: <xmr:ZRLUaFNSIrvXVONh6MEyD0_OXMKTl1es0GjPy4EcPoKa00ebb1hiWGGDZK-LSi2oVeKghEoH8gL1tdX1BVu3qxAyijzaR_o>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeigedttdcutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekredtre
+ dttdenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhho
+ nhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpedvjefhudeghedvtdeijeeige
+ etuedugfejueekieeltdfhteevkeehhfeilefhtdenucevlhhushhtvghrufhiiigvpedt
+ necurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvg
+ htpdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegu
+ vghvseguphgukhdrohhrghdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
+ esihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:ZRLUaN8-qzo3EZQ7gN1XlRhJBcw6efW0E7yKlhQcDQGU1WOxbEk5Jw>
+ <xmx:ZRLUaB4VQ2GTtbJh2lDXway3WUjhSrY8QLyFpvokxAI1zZgJ0EtjnQ>
+ <xmx:ZRLUaM06C1LGID37lvpwMX9pO2gHi095dq7ZG3lzORqTGExBjR_-tQ>
+ <xmx:ZRLUaAC1XupSY7D-aogmZyBqT-TyiLDVuTAOcoGNq0zVWZKoCWg-gQ>
+ <xmx:ZhLUaDheBMje5ZoTwfkh_hd1UXRE6aAPxgsKvI3TFaRSzxFDvrL_0jjx>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 24 Sep 2025 11:46:45 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com
+Subject: [PATCH v3 0/2] lib: fix AVX2 checks and macro exposure
+Date: Wed, 24 Sep 2025 17:43:16 +0200
+Message-ID: <20250924154641.2684705-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250918073135.1273767-1-thomas@monjalon.net>
+References: <20250918073135.1273767-1-thomas@monjalon.net>
 MIME-Version: 1.0
-References: <20250919075733.221023-1-bruce.richardson@intel.com>
- <20250923144000.13570-1-bruce.richardson@intel.com>
-In-Reply-To: <20250923144000.13570-1-bruce.richardson@intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 24 Sep 2025 17:45:38 +0200
-X-Gm-Features: AS18NWAferoms-WpZckQAu90dJBn511eKYvPv3PCzlek1buO7TIUf3eL5WM2XU4
-Message-ID: <CAJFAV8ySAMbErqh_9_gy-6FK+OP+8D4vvsn1iYYNniYGBPZT7w@mail.gmail.com>
-Subject: Re: [PATCH v3] build: remove deprecated kmods option
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 6jrvRyrD7hOowcCkjEKTmOEQeFjMvYLvpnOZL745Cxs_1758728751
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,21 +86,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 23 Sept 2025 at 16:40, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> The "enable_kmods" meson option was deprecated back in 2023[1], so can
-> now be removed from DPDK.
->
-> [1] https://doc.dpdk.org/guides-23.11/rel_notes/deprecation.html
->
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> Acked-by: David Marchand <david.marchand@redhat.com>
+I've found the AVX2 function is not used in efd library.
+Then I tried to make AVX2 compilation simpler in efd and member libraries.
 
-I see errors coming from Intel CI that requests enable_kmod option.
-It needs to be fixed on Intel side so we can merge this series.
+While at it, I've hidden a macro which was wrongly exported in the API
+without having a correct prefix.
 
+The v3 does not have the patches removing build-time checks:
+  - efd: remove AVX2 build-time check
+  - member: remove AVX2 build-time checks
+because I'm not sure losing inlining for cleanup is worth.
+
+Thomas Monjalon (2):
+  efd: fix AVX2 support
+  member: hide internal macro
+
+ lib/efd/rte_efd.c       | 3 ++-
+ lib/member/member.h     | 9 +++++++++
+ lib/member/rte_member.h | 9 ---------
+ 3 files changed, 11 insertions(+), 10 deletions(-)
 
 -- 
-David Marchand
+2.51.0
 
