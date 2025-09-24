@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CCDCAC5AE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 14:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE01CAC5AE
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 14:42:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC774406BA;
-	Wed, 24 Sep 2025 16:42:02 +0200 (CEST)
-Received: from egress-ip42b.ess.de.barracuda.com
- (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id 5DB9C406A2
- for <dev@dpdk.org>; Wed, 24 Sep 2025 16:42:00 +0200 (CEST)
-Received: from DUZPR83CU001.outbound.protection.outlook.com
- (mail-northeuropeazon11022116.outbound.protection.outlook.com
- [52.101.66.116]) by mx-outbound22-32.eu-central-1b.ess.aws.cudaops.com
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Wed, 24 Sep 2025 14:41:57 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id 07340406FF;
+	Wed, 24 Sep 2025 16:42:04 +0200 (CEST)
+Received: from egress-ip11b.ess.de.barracuda.com
+ (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 08E1D406A2
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 16:42:01 +0200 (CEST)
+Received: from DU2PR03CU002.outbound.protection.outlook.com
+ (mail-northeuropeazon11021094.outbound.protection.outlook.com [52.101.65.94])
+ by mx-outbound22-32.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
+ cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+ Wed, 24 Sep 2025 14:41:59 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WAEBCHRyrlWskeH4wfxIqkq/Ix0yC7LsSj7GnTCMo/OdP1f5rtlazg/bzk05ze6vUKY0tGV3lNH8THrxqMcz6L2M7sNGCNM9+JIO7IDYcfIAKPCfWglahvzs04m2MLfKDF67c/c/Jx0DjlVDwX2wVtJov5hYypeGiaa4DAcL6G/FduVGN6/slW87H2N6RGxxPET1siyQjXlgVG480FnDtmCbYfx69GgEjqUOSN2FbCSN7f+1tgfro0R7oN2yZeljhUdWxWuafRqGWSpE8BpGCCgikGA32ZCEF3La+F8dQOh14bzj1M9b5Gs4ShCwQ0atRrkS7V4xvtoQJAdYbSPXZQ==
+ b=Osf8fjQyLfBw7MWHrAROBXQCX0cvIaYhVSL85iEAS4g0UT6i3pwFp9biIQgY+h9vdEm3ckkZ8odh/VAGDSMezmlkOIzI8ca+Q6oOLmKecyPgYXo4AenxrZeAq/Y4JDHRj3mHNSSM4qM+5qjsp8RczBnYt4x6eieHixrjxqWdpjaBPE+k5sJwDcmnf5reMC7Z7H+ot3PbL+kr9SohylVUot/M3iEqus3PbSW+db/56qEzWvI3hm0gZlqYpPjfj56D+/lwhuLfdVvnABXSn5woaJqAG/IL4RJaKAtCyKW6J5i4kZSv8WfHZN+w7Yzb4RxLMC1mxOLkaCtSIUmoYGtNmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XcYQWGRv0Q1LnBT0K8PuA/vm7aUlNEc0lAAd7bK5tYY=;
- b=fabD/3uxZO9NuaG188jVGCGs+KjwmiebGDrOalmECyJnlVFWEyeeNuUMruEx29WnoW03NJ6RswxfSMHESXdA/4AzVyXBQ6p761Kecs2RXLGsj+ISjv5f/9MrIfKXpH9xqDs+UziyE7sJeZ4haiiE8CDBR33Xl6N/9iKvf35JkS5+TA20sDYto7JEtiyPbfS5RmcoN8tTu7xZ5Ik84AB5SSV9hSDcL0rH/MydVYdWLrHX40tBidHS8qk+kBTdnx7t+GLtQkK2lqaeYhLaiBVkaqZXhyTWO8ulEgIq/RL1DKMpyEyL5rPbPDVrnb7TruhUqZbLZRpxGDeT7wU9LddtkQ==
+ bh=0LUpJU6M/gnwPdMUnKD7MmYF9/2kqth9oPK4faU0wYI=;
+ b=cjqpoWkpyZH/RvaUoOe8SAyM1vJBRpY+gkMBOnffLsPzXqWm4UCktw7R8vp1oePL5Tkcc10vImyfjYy4A6yv6zzkflfEo/VD4RILhZJzd4OiU1pxvn8echNvcWu3wMK9RBIwWXc8waJp7Zh8krQBq2dj6B5USis9FHniO6EZ4YwbD1S7ExzMGy3WS8gp17zvVt68Tj4rUOQWuyGpoEvav0MWpFEeRKdn/VzM4eIVGjRg6eJ+NlzCTwJEil08V4tGiYBlHnmQoGRkDz6nzH8MaIQdamXHiHW0uZuT+w85XOy/wgEmfH28jWMs/LMBrfOskm/4TUQrMTKu7HSD0bR5BQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XcYQWGRv0Q1LnBT0K8PuA/vm7aUlNEc0lAAd7bK5tYY=;
- b=XHnwtOn3ISKNCh7AhDFXOlmuRd9PfiqQz5RB9MU5MkRChOZWyaq66kRC1NlIGsRo0AoLxGANkYD4Jd33gwsprwh8+T9FSRAGiDBJVQd3v4Hv3rJCURQmnfYeFDCpx9DYUIxbnJAinBLX94Gzh0ONmkC8ERSDvnc5W2kwB3T2AyM=
-Received: from CWLP123CA0236.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:19f::18)
- by AM0P190MB0625.EURP190.PROD.OUTLOOK.COM (2603:10a6:208:199::14)
+ bh=0LUpJU6M/gnwPdMUnKD7MmYF9/2kqth9oPK4faU0wYI=;
+ b=M3STkReGvN9kndTqzyCBi+2nkoUcanyivEqJKZPr511Hbvap+3l5Z5zgRedT1JimqPSM0b11N+h6gTESPZ094EovL77aXXKJPvQhbXsTGxRKYwg37/wR58oQx9B9c88MXIu8UIxHxmJrHLyS0aoSkhGE7jtw4K8HMVfFcFSLSZM=
+Received: from CWLP123CA0231.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:19f::17)
+ by AS8P190MB1111.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:2e8::15)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
- 2025 14:41:56 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Wed, 24 Sep
+ 2025 14:41:58 +0000
 Received: from AM4PEPF00027A69.eurprd04.prod.outlook.com
- (2603:10a6:400:19f:cafe::ad) by CWLP123CA0236.outlook.office365.com
- (2603:10a6:400:19f::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.21 via Frontend Transport; Wed,
- 24 Sep 2025 14:41:55 +0000
+ (2603:10a6:400:19f:cafe::3b) by CWLP123CA0231.outlook.office365.com
+ (2603:10a6:400:19f::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.20 via Frontend Transport; Wed,
+ 24 Sep 2025 14:41:50 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,81 +50,81 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  AM4PEPF00027A69.mail.protection.outlook.com (10.167.16.87) with Microsoft
- SMTP Server id 15.20.9160.9 via Frontend Transport; Wed, 24 Sep 2025 14:41:55
+ SMTP Server id 15.20.9160.9 via Frontend Transport; Wed, 24 Sep 2025 14:41:58
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v1 00/24] Migrate threads to the DPDK service framework and
- refactor naming for exported symbols
-Date: Wed, 24 Sep 2025 16:41:23 +0200
-Message-ID: <20250924144152.53203-1-sil-plv@napatech.com>
+Subject: [PATCH v1 02/24] net/ntnic: migrate flm update thread to service
+Date: Wed, 24 Sep 2025 16:41:25 +0200
+Message-ID: <20250924144152.53203-3-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20250908141740.1312268-2-sil-plv@napatech.com>
+In-Reply-To: <20250924144152.53203-1-sil-plv@napatech.com>
 References: <20250908141740.1312268-2-sil-plv@napatech.com>
+ <20250924144152.53203-1-sil-plv@napatech.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A69:EE_|AM0P190MB0625:EE_
+X-MS-TrafficTypeDiagnostic: AM4PEPF00027A69:EE_|AS8P190MB1111:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 4e9de5b4-4ce6-4a81-5542-08ddfb788230
+X-MS-Office365-Filtering-Correlation-Id: 224f1f21-3558-4117-e401-08ddfb7883c0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|1800799024|82310400026|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?NK4yuaNd6fHQHOi0ga6fMOAvq/wBSfNHcmZsszNNHXHezGl7OdPCtgU3s9KN?=
- =?us-ascii?Q?3oj394tWmYLBxDPhipC+cjG8/YugYeJMQ/u7HtQEcDrIt23mLrDVDiAijLX/?=
- =?us-ascii?Q?MtB2qOWGJCn3l4AhuiSTdHyL+6aOyiJllB9E6uotRbr/bFyNbCYJXyvMuW5C?=
- =?us-ascii?Q?01hwHduqWjMfXtsRND/+GKKvmEp2DbWXzeb/3wU0ijQTr42RWY35UrUsUMI9?=
- =?us-ascii?Q?a4Lu0UZiIOrMlGvmNrDUmvroQtBbu9XDffNNuM7FxCMbs0ZNkzCX/Ve12B6t?=
- =?us-ascii?Q?r8+Qr2ZfgleolHpxaaLzzN9fSbUkVS2nWM0Ez54rxMwS1OGzpkaWhVYLW0Os?=
- =?us-ascii?Q?nyFm6oFQF8o2bjRiS3d67WmDLNpPJ8jY7AdX5mGRzPfpTaDcyLD4TNPNtXS6?=
- =?us-ascii?Q?Ur2ErMy7i3Ox2Zyzml3LqjZ/LAIOEDjDlgF6Sp0cw3+D89bMjSWDF2f9Sje9?=
- =?us-ascii?Q?BZVEb8322ue+66QPaH4wCjmAYeM2y13vye9NQPaVqjCdY3/obyY6rveqLEoV?=
- =?us-ascii?Q?6395ySoJkEU4doedEanXE2VytQPhZcAk7brp25zevPNBeeZ64UTPnrZLiSV2?=
- =?us-ascii?Q?BGBPXQFrZqXxoEz/AiZFlhz6k/BSZSWswgb5ch6BaXcQCAiZnXFpNFzE28fP?=
- =?us-ascii?Q?tltduzpvzRJlkaR5JJBDQjMzScvyGctIGo4qotDRc1ghXSDE72/GERm8PRJe?=
- =?us-ascii?Q?dqgH9DRAnWv3zVbwJQ2+mYS/4j8WJKyHuvpCCzCehuylfdirqKzzkIkw2G2v?=
- =?us-ascii?Q?+Z1l4g3SVgkKBxwvPR+tkka5OADYha8wyG45LhJ4NgBJfyHrVo1SsxYhsAzr?=
- =?us-ascii?Q?GMn2ZS1h7LHMclANKKb9WnUY9LJWJ7hLHj0QIbY1aJXaa2+2zP76Z6tBzpeo?=
- =?us-ascii?Q?W/UQj2flI6lTkajb3v9IIUTIPqnm0xd9y62dOh6xIXIIBMJGIFW5qn6OCBsI?=
- =?us-ascii?Q?359U+QSwvkhfVGX/EZ5s75714B4B/Y4GUsPg+QEwc8YTCCgvWG6pKHGVOjjB?=
- =?us-ascii?Q?aB/iaC4LYo7sw1u42x2CpjlDrY7dbzjz48kRrMC8ul3lqUI/qTGDuymJNH35?=
- =?us-ascii?Q?Yh3/PXSokjbuyHE8w/Tusp0m6qChCllkga0716a87MAkMcCeimMP/SseatXU?=
- =?us-ascii?Q?ZofP2TQd/BhcHsRc+3b7yvZQ2AvvsenMF8i8XUODLRSPVzlqFDEEXd5tO1FY?=
- =?us-ascii?Q?9Ug5jNMcYj9yxjjaq3kv1vzQQQvYVz3Pj98mh5RTtKxYwZcBUPLDhLpCJ5Ac?=
- =?us-ascii?Q?hlP6ocpeBfhonRrDIJSHRJjGz62/uWfcA5JSGyXKA0Ois6utlHEEzZDaRkHl?=
- =?us-ascii?Q?DBwQnaW5IvFrp7ow7Vfkp+UaZO7dCzZ3nlGPSHzdr5WnIsiUUqHlncm33iOO?=
- =?us-ascii?Q?k9A+0bxYtiiZhGwb3CXcwCXC3MHB/p6Z/YLVy8CZLK4CctkRrHQc2OJu8I+G?=
- =?us-ascii?Q?LA4cJMQUJayRKoFt0CO+Qjr7JR8lkeQfblEuEDRRhEdj42aWFc3x/OYp65MD?=
- =?us-ascii?Q?SMpBr0auuGa1tbJ5kLMlaFS6nBxIRp4wcKuZ?=
+ ARA:13230040|1800799024|82310400026|36860700013|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?XcgChaFMwOWtmnyQ841RoEK7/AP9FPhRIOSnzzE6O3UsGhcjoFSFYBY16OcU?=
+ =?us-ascii?Q?QrfpIk+uH7srEmMD11n2bbIdH7WnGeSWZ3Wieg+G6yDtphQ/+pCLeojmTOCP?=
+ =?us-ascii?Q?YDtGTP9RK4Bt3XSswQ0Yu/6PdCqHAH8FtuCMJJ6pYgp5mz3n6wdHQMxn0LjH?=
+ =?us-ascii?Q?ExL8x5aH5kwHd0zBhiIS79J9jz9mU8X/JWdyleNL4Aj+dpjDso1m3ueNYcYi?=
+ =?us-ascii?Q?rHpL2aMhQV04L7gyqXarZSXTQLdutBo3x4f18ZJ7wnGx1kebqo5UvqvLpiDb?=
+ =?us-ascii?Q?UdLrR8Xo9x43EC8ufGQfeo/4M1kUQOO65RNScysNdAYXUWEhrPVrWm04dy8V?=
+ =?us-ascii?Q?wJ4qXt60IglqrpOzj1/vW1xtMkXS1zhrQFKWxR9ckwb9r8tSY707n48KaL2o?=
+ =?us-ascii?Q?EOXiRhbK/j7GguIsWX45pFdB8dDzHlw/tMy4zp2sfLKL0nP7igmap4tfsR8z?=
+ =?us-ascii?Q?Rt9cJNfY0zCHk9Fqr8JMeL4z5OjgHaRDWLLTH7IQTPMwSkuL/Gom0Q28n6y8?=
+ =?us-ascii?Q?99q0dmgfYIViFdhKHIRm635Cf8LWH2tZdBljFgAzhrpMMyHOyztoElsEutEK?=
+ =?us-ascii?Q?SBXr/KNSZ44csI5k2+EfMOyN8HAPh7Q7Hkl77JvW+aPVLwuHJMK7Aljtewqb?=
+ =?us-ascii?Q?fK/bQ4MS2zRilwT9TjocuhCBLedTk5xpUT7Zin8g7/5vRt6WUtPLO/DD5x88?=
+ =?us-ascii?Q?7IW1A63VoAJ4oUMxZAEMWjuP20MIrNISwSVoiOpGhUMd7eYCncSo9FH3DRKW?=
+ =?us-ascii?Q?H2dDbynOj5OdDliPx5Z3m8frZVgV80sjh5ieEDlqwE/mOkHXAasjzM+zlzO2?=
+ =?us-ascii?Q?tyJV7Ktrswp8JYcCz8WeA+GeCIAefSyWTnGu9XNugCpjkqMPTZRFZthbKcIj?=
+ =?us-ascii?Q?jiJX4HWP5cJ4LNZpoXSsZ67Xx+bPfAWPEJOBc/Fhv0he3BTo776o+/8bZAaQ?=
+ =?us-ascii?Q?zdHOk9SfYCngNqEtFI2/jDmaqgdavTblmzlqJ+RA3b7mM98qJmzWnSfEI0sg?=
+ =?us-ascii?Q?eimHwVEf311Cym550W5N2UM/fyPtq2tbYwbfxqVoCWuHIx5PpvIFqk3oVbaJ?=
+ =?us-ascii?Q?99ha7dk0qGkmB5Tz1E/yxjylo/+Bya8+6T8n+D8fipoahipndXvb3cZ6qKdO?=
+ =?us-ascii?Q?iCpQCUeDtpMC/LkVojzVoha53s4z2UJCLAnMcSDuQ86JAqtVxloV8l5HS+zz?=
+ =?us-ascii?Q?R57atRAiR0CRcSpYp+GrI+pXV8s/eN7oPtPm/4LFTNgE/NKRU8IIZXyRfrNo?=
+ =?us-ascii?Q?W4fGfyzOXk//wlayk3lAJ+bhcm4HDFAf5Y1YeYvTyX2jnCX2H+s5J/X4r6K/?=
+ =?us-ascii?Q?GIzFBxGGN8TFuSGoMM/CibqpHc9v/gVLeASRrP3rvY4sn1u7y2wD+MrCSyYB?=
+ =?us-ascii?Q?PccKvqaOIHGSF40ciFV7BMyw8L+cT1g0WCzZtwfIJJ1/0UL4NyLTSI3BsgUj?=
+ =?us-ascii?Q?qwxjWnEvXF9zs7VJX5vhjdnTEykTNiNjcTYO9lwb/4HOoAxiMMhGQnc0Dn3c?=
+ =?us-ascii?Q?olqyB/NhipBx5fqVZkNkqgfUVSF1yMmcJOC7?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);
+ CAT:NONE; SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: uuuBFv9JRSM14hqzHkXZQuhKwH7mvPDUa3CUcp41tNDB+wrqDJYlhpAQOnCL+KtVvb/KSXbWUdp/GoPacCx/+HlN5uMWNHL3Hbm5UZj6+F3aaO5QYIvBfMXmgMKup/NUDXJO5m3EQ3IwxrgFsH9VzfQyGp4GOxy94A9xpwKmMWc7ne9ULaZP9RPLhYDJ+OjTvJk15zibpqP2cEHNTwzo8eadCV6g9FVz7+6TcZQMObeWKhU3N1R8/11CF55B52vm+tNmsAqrrBInWOCGDKyPPxDEqkQKILB8lkYzwZA551vxQxbjXx4H/26HsodNCzdcqJgHQ3ct3R+IHTWCdnp07KD+OA3C/txoXbHxN7bp+1BwiGBE0K+oN36W1bVAnLq+2hTstiEuvo+Mw5axEAUwO+U0iuyAzjFj9jxXPnFuS5gT8LhxfagYBUSwtrQQgW5JbghmQ4gNpN+lSjD2jswgSYk5ztRBs1e3er/LQO2ivbQOdnzexwM+ntqne7Dv2xIsvFUz49iZAkZPpVVPWJYxTd382OspCTiI9mes+eiMpLeiAX1pKpnieKudHkWvh3g0P+K8SnoLe4nJBECpayWqLDNL2VBjSz35GVNIfHYikCmPnTjuwjBu4qwclSI6YpMt2JYkK9QZf7dauQCbGoXURQ==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: HiUizwgu8Knz8AGnzA7JE6NV7KYdrn9X5FGtxSRYqJ08b5Ubrwhn5NBVx7igDRwS/de6d35u/Qcq0OxgNHB2Diz87ZPGEJ4po2WA1/Gvq4IZ8Cs7tQ8YleMgJtx0Dl5dR+8tBtp3sOCrpgJX0M0wUSGmR3Hpd9O8FDLK1aSpGAsK2ewsJjmonvXZrXkILbDOGBflIaATarQlva/VWrQF58DT771WOxJmNZp00jwzIAKx+neY5m81VQRfcew+W9VLbJm+I4XNYwFcjPOdaWxs5x3pLL1Kiw1Ip9oMJeYMcqyIiRVMlVWFn/TlCm/F1dfDdoGnPBOYPnyGT8kOCbooYfqbRpIPrmv8MCErIycoc02UqDCeNDPlTyz0MkUB5MIVHd34wcUnljydzpjwkt5B+jgiGIX2rzOVhknSbs/SySJ5GSEBITLcf+HjKiNz5Ni2Nmamgp8/WZevX5l/A0bseo1lbpIUmtZGj/jj+0qwxQG9TGQ7clnyIDBmpV8Wc8ICrzKj6UE+OpDww9tmhmEp05CGvGxTS5hQ4pFDFGmijyeSYFlHIsf34nhBTEOc5Ev8zF6KkZIpnzvzyMokxRTPIyFnEQ0ceovNHMDLh+qB/Q/KJwoU2YKx+HPnHRitae9FgAJK/WB6dfqNuBn5/LpGEA==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:41:55.4245 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e9de5b4-4ce6-4a81-5542-08ddfb788230
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:41:58.0563 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 224f1f21-3558-4117-e401-08ddfb7883c0
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM4PEPF00027A69.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0P190MB0625
-X-BESS-ID: 1758724917-305664-7613-8003-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8P190MB1111
+X-BESS-ID: 1758724919-305664-7612-8005-1
 X-BESS-VER: 2019.1_20250904.2304
-X-BESS-Apparent-Source-IP: 52.101.66.116
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoYGhgamQGYGUDQtySTJwDwpyd
- jEJMXU0CQxzcQ8zTDN0DTJ1MDUyNg4Wak2FgDVZvQiQgAAAA==
+X-BESS-Apparent-Source-IP: 52.101.65.94
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVuZmxkZAVgZQMCXVwjLZwsIoyc
+ jEwsDMLNHSwCgtLSklydLQPC3J3DhNqTYWABDd39xBAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.267723 [from 
- cloudscan10-56.eu-central-1a.ess.aws.cudaops.com]
+ cloudscan21-85.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -145,195 +145,218 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This modification provides better resource (CPU) management for NTNIC PMD.
+This commit adds the FLM update service to the NTNIC PMD.
+The service is responsible for handling creating/destroying flows.
 
-The following threads are migrated:
-        * FLM update thread
-        * Statistic thread
-        * Port event thread
-        * Adapter monitoring thread
-Additionally, a warning is added to inform users about the importance of
-dedicating lcores to the DPDK service framework when using the NTNIC PMD.
-The code is also cleaned up to use pthreads and rte_thread APIs.
+Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
+---
+ drivers/net/ntnic/include/ntdrv_4ga.h         |  1 -
+ drivers/net/ntnic/ntnic_ethdev.c              | 67 ++++++++++++-------
+ drivers/net/ntnic/ntnic_filter/ntnic_filter.c | 17 +++++
+ drivers/net/ntnic/ntutil/nt_service.c         |  4 +-
+ drivers/net/ntnic/rte_pmd_ntnic.h             |  3 +-
+ 5 files changed, 62 insertions(+), 30 deletions(-)
 
-After this patch series, an each application using NTNIC PMD should
-dedicate at least five(5) cores for DPDK service framework to ensure
-proper operation of the NTNIC PMD.
-
-The service cores can be dedicated by EAL options:
-        * s SERVICE COREMASK Hexadecimal bitmask of cores to be used as service cores
-        * S SERVICE CORELIST List of cores to run services on
-Or with a special API by the application itself.
-        * rte_pmd_ntnic_service_set_lcore to map a service to a specific lcore
-        * rte_pmd_ntnic_service_get_id to get a service ID.
-
-This patch series also includes aligning the naming of the exported symbols to avoid
-potential conflicts with other applications and libraries.
-The main change is to add the prefix "nthw_".
-
-Serhii Iliushyk (24):
-  net/ntnic: introduce service API for NTNIC PMD
-  net/ntnic: migrate flm update thread to service
-  net/ntnic: migrate statistic thread to service
-  net/ntnic: migrate port event thread to service
-  net/ntnic: migrate adapter mon thread to service
-  net/ntnic: add warning about service cores
-  net/ntnic: avoid using thread API
-  net/ntnic: fix potential format overflow
-  net/ntnic: single file function as static
-  net/ntnic: remove unused functions
-  net/ntnic: move nthw to prefix part
-  net/ntnic: change prefix hw to prefix nthw
-  net/ntnic: modify prefix flow with prefix nthw
-  net/ntnic: change prefix flm to prefix nthw
-  net/ntnic: change prefix nt to prefix nthw
-  net/ntnic: change prefix ntlog to prefix nthw
-  net/ntnic: change prefix km to prefix nthw
-  net/ntnic: change prefix set to prefix nthw
-  net/ntnic: rename common hash and flow functions
-  net/ntnic: rename register ops function
-  net/ntnic: rename get ops functions
-  net/ntnic: rename ops init functions
-  net/ntnic: rename nim agx setup function
-  net/ntnic: rename table ID functions
-
- doc/guides/nics/ntnic.rst                     |  112 ++
- drivers/net/ntnic/adapter/nt4ga_adapter.c     |   41 +-
- .../net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c |   10 +-
- drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c |   54 +-
- .../net/ntnic/include/common_adapter_defs.h   |   15 -
- drivers/net/ntnic/include/create_elements.h   |    9 -
- drivers/net/ntnic/include/flow_api.h          |   10 +-
- drivers/net/ntnic/include/flow_api_engine.h   |   18 +-
- drivers/net/ntnic/include/hw_mod_backend.h    |  281 ++--
- drivers/net/ntnic/include/nt4ga_adapter.h     |    4 -
- drivers/net/ntnic/include/ntdrv_4ga.h         |    4 -
- drivers/net/ntnic/include/ntnic_dbs.h         |   22 +-
- drivers/net/ntnic/include/ntnic_stat.h        |    2 +-
- drivers/net/ntnic/include/ntos_drv.h          |    4 +-
- .../link_mgmt/link_100g/nt4ga_link_100g.c     |  315 ++--
- .../link_agx_100g/nt4ga_agx_link_100g.c       |  326 ++--
- drivers/net/ntnic/link_mgmt/nt4ga_link.c      |    2 +-
- drivers/net/ntnic/meson.build                 |    2 +
- drivers/net/ntnic/nim/i2c_nim.c               |   10 +-
- drivers/net/ntnic/nim/i2c_nim.h               |    2 +-
- .../net/ntnic/nthw/core/include/nthw_fpga.h   |   14 +-
- .../net/ntnic/nthw/core/include/nthw_hif.h    |   12 -
- .../net/ntnic/nthw/core/include/nthw_iic.h    |    9 -
- .../ntnic/nthw/core/include/nthw_mac_pcs.h    |    9 -
- .../net/ntnic/nthw/core/include/nthw_pcie3.h  |   13 -
- .../nthw/core/include/nthw_pcm_nt400dxx.h     |    1 -
- .../ntnic/nthw/core/include/nthw_phy_tile.h   |    2 -
- .../net/ntnic/nthw/core/include/nthw_rpf.h    |    2 -
- .../net/ntnic/nthw/core/include/nthw_si5340.h |    2 -
- .../clock_profiles/nthw_fpga_clk9563.c        |    4 +-
- .../nthw/core/nt200a0x/nthw_fpga_nt200a0x.c   |    8 +-
- .../core/nt200a0x/reset/nthw_fpga_rst9563.c   |    8 +-
- .../nt200a0x/reset/nthw_fpga_rst_nt200a0x.c   |    6 +-
- .../nthw/core/nt400dxx/nthw_fpga_nt400dxx.c   |    8 +-
- .../core/nt400dxx/reset/nthw_fpga_rst9574.c   |   22 +-
- .../nt400dxx/reset/nthw_fpga_rst_nt400dxx.c   |   36 +-
- drivers/net/ntnic/nthw/core/nthw_fpga.c       |   22 +-
- drivers/net/ntnic/nthw/core/nthw_hif.c        |   90 --
- drivers/net/ntnic/nthw/core/nthw_i2cm.c       |    4 +-
- drivers/net/ntnic/nthw/core/nthw_igam.c       |    4 +-
- drivers/net/ntnic/nthw/core/nthw_iic.c        |  240 +--
- drivers/net/ntnic/nthw/core/nthw_mac_pcs.c    |   67 +-
- drivers/net/ntnic/nthw/core/nthw_pca9532.c    |    2 -
- drivers/net/ntnic/nthw/core/nthw_pcal6416a.c  |    1 -
- drivers/net/ntnic/nthw/core/nthw_pcie3.c      |   86 --
- .../net/ntnic/nthw/core/nthw_pcm_nt400dxx.c   |    5 -
- drivers/net/ntnic/nthw/core/nthw_phy_tile.c   |   51 +-
- drivers/net/ntnic/nthw/core/nthw_rpf.c        |   14 -
- .../net/ntnic/nthw/core/nthw_si5332_si5156.c  |    3 +-
- drivers/net/ntnic/nthw/core/nthw_si5340.c     |    6 +-
- drivers/net/ntnic/nthw/core/nthw_spi_v3.c     |   12 +-
- drivers/net/ntnic/nthw/dbs/nthw_dbs.c         |   22 +-
- drivers/net/ntnic/nthw/flow_api/flow_api.c    |  253 ++--
- .../nthw/flow_api/flow_backend/flow_backend.c | 1342 ++++++++---------
- drivers/net/ntnic/nthw/flow_api/flow_filter.c |    4 +-
- .../net/ntnic/nthw/flow_api/flow_hsh_cfg.c    |   46 +-
- .../net/ntnic/nthw/flow_api/flow_hsh_cfg.h    |    2 +-
- .../net/ntnic/nthw/flow_api/flow_id_table.c   |   10 +-
- .../net/ntnic/nthw/flow_api/flow_id_table.h   |   10 +-
- drivers/net/ntnic/nthw/flow_api/flow_kcc.c    |    2 +-
- drivers/net/ntnic/nthw/flow_api/flow_km.c     |  134 +-
- .../nthw/flow_api/hw_mod/hw_mod_backend.c     |   18 +-
- .../ntnic/nthw/flow_api/hw_mod/hw_mod_cat.c   |  356 ++---
- .../ntnic/nthw/flow_api/hw_mod/hw_mod_flm.c   |   70 +-
- .../ntnic/nthw/flow_api/hw_mod/hw_mod_hsh.c   |   14 +-
- .../ntnic/nthw/flow_api/hw_mod/hw_mod_km.c    |  107 +-
- .../ntnic/nthw/flow_api/hw_mod/hw_mod_pdb.c   |   40 +-
- .../ntnic/nthw/flow_api/hw_mod/hw_mod_qsl.c   |   32 +-
- .../nthw/flow_api/hw_mod/hw_mod_slc_lr.c      |   14 +-
- .../ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c   |   80 +-
- .../flow_api/profile_inline/flm_age_queue.c   |   22 +-
- .../flow_api/profile_inline/flm_age_queue.h   |   20 +-
- .../flow_api/profile_inline/flm_lrn_queue.c   |   12 +-
- .../flow_api/profile_inline/flm_lrn_queue.h   |   12 +-
- .../profile_inline/flow_api_hw_db_inline.c    | 1138 +++++++-------
- .../profile_inline/flow_api_hw_db_inline.h    |   99 +-
- .../profile_inline/flow_api_profile_inline.c  |  598 ++++----
- .../profile_inline/flow_api_profile_inline.h  |   49 +-
- .../ntnic/nthw/flow_filter/flow_nthw_cat.c    |  230 +--
- .../ntnic/nthw/flow_filter/flow_nthw_cat.h    |  230 +--
- .../ntnic/nthw/flow_filter/flow_nthw_csu.c    |   22 +-
- .../ntnic/nthw/flow_filter/flow_nthw_csu.h    |   24 +-
- .../ntnic/nthw/flow_filter/flow_nthw_flm.c    |  278 ++--
- .../ntnic/nthw/flow_filter/flow_nthw_flm.h    |  278 ++--
- .../ntnic/nthw/flow_filter/flow_nthw_hfu.c    |   58 +-
- .../ntnic/nthw/flow_filter/flow_nthw_hfu.h    |   58 +-
- .../ntnic/nthw/flow_filter/flow_nthw_hsh.c    |   60 +-
- .../ntnic/nthw/flow_filter/flow_nthw_hsh.h    |   60 +-
- .../ntnic/nthw/flow_filter/flow_nthw_ifr.c    |   30 +-
- .../ntnic/nthw/flow_filter/flow_nthw_ifr.h    |   30 +-
- .../ntnic/nthw/flow_filter/flow_nthw_info.c   |   88 +-
- .../ntnic/nthw/flow_filter/flow_nthw_info.h   |   88 +-
- .../net/ntnic/nthw/flow_filter/flow_nthw_km.c |  160 +-
- .../net/ntnic/nthw/flow_filter/flow_nthw_km.h |  162 +-
- .../ntnic/nthw/flow_filter/flow_nthw_pdb.c    |   54 +-
- .../ntnic/nthw/flow_filter/flow_nthw_pdb.h    |   56 +-
- .../ntnic/nthw/flow_filter/flow_nthw_qsl.c    |   68 +-
- .../ntnic/nthw/flow_filter/flow_nthw_qsl.h    |   68 +-
- .../ntnic/nthw/flow_filter/flow_nthw_rpp_lr.c |   32 +-
- .../ntnic/nthw/flow_filter/flow_nthw_rpp_lr.h |   32 +-
- .../ntnic/nthw/flow_filter/flow_nthw_slc_lr.c |   28 +-
- .../ntnic/nthw/flow_filter/flow_nthw_slc_lr.h |   28 +-
- .../ntnic/nthw/flow_filter/flow_nthw_tx_cpy.c |   22 +-
- .../ntnic/nthw/flow_filter/flow_nthw_tx_cpy.h |   22 +-
- .../ntnic/nthw/flow_filter/flow_nthw_tx_ins.c |   20 +-
- .../ntnic/nthw/flow_filter/flow_nthw_tx_ins.h |   20 +-
- .../ntnic/nthw/flow_filter/flow_nthw_tx_rpl.c |   42 +-
- .../ntnic/nthw/flow_filter/flow_nthw_tx_rpl.h |   46 +-
- .../net/ntnic/nthw/model/nthw_fpga_model.c    |  577 +++----
- .../net/ntnic/nthw/model/nthw_fpga_model.h    |   28 -
- drivers/net/ntnic/nthw/nthw_platform.c        |    2 +-
- drivers/net/ntnic/nthw/nthw_platform_drv.h    |    2 +-
- drivers/net/ntnic/nthw/nthw_rac.c             |   28 +-
- .../net/ntnic/nthw/ntnic_meter/ntnic_meter.c  |   20 +-
- .../nthw/supported/nthw_fpga_mod_str_map.c    |    2 +-
- .../nthw/supported/nthw_fpga_mod_str_map.h    |    2 +-
- drivers/net/ntnic/ntlog/ntlog.c               |    6 +-
- drivers/net/ntnic/ntlog/ntlog.h               |    6 +-
- drivers/net/ntnic/ntnic_ethdev.c              |  617 ++++----
- drivers/net/ntnic/ntnic_filter/ntnic_filter.c |   66 +-
- drivers/net/ntnic/ntnic_mod_reg.c             |   96 +-
- drivers/net/ntnic/ntnic_mod_reg.h             |  142 +-
- drivers/net/ntnic/ntnic_vfio.c                |   18 +-
- drivers/net/ntnic/ntnic_vfio.h                |   12 +-
- drivers/net/ntnic/ntnic_xstats/ntnic_xstats.c |    4 +-
- drivers/net/ntnic/ntutil/nt_service.c         |  127 ++
- drivers/net/ntnic/ntutil/nt_service.h         |   62 +
- drivers/net/ntnic/ntutil/nt_util.c            |   75 +-
- drivers/net/ntnic/ntutil/nt_util.h            |   21 +-
- drivers/net/ntnic/rte_pmd_ntnic.c             |  104 ++
- drivers/net/ntnic/rte_pmd_ntnic.h             |   26 +
- 131 files changed, 5500 insertions(+), 5449 deletions(-)
- delete mode 100644 drivers/net/ntnic/include/common_adapter_defs.h
- create mode 100644 drivers/net/ntnic/ntutil/nt_service.c
- create mode 100644 drivers/net/ntnic/ntutil/nt_service.h
- create mode 100644 drivers/net/ntnic/rte_pmd_ntnic.c
-
+diff --git a/drivers/net/ntnic/include/ntdrv_4ga.h b/drivers/net/ntnic/include/ntdrv_4ga.h
+index 78cf10368a..35afcd546c 100644
+--- a/drivers/net/ntnic/include/ntdrv_4ga.h
++++ b/drivers/net/ntnic/include/ntdrv_4ga.h
+@@ -15,7 +15,6 @@ typedef struct ntdrv_4ga_s {
+ 	char *p_drv_name;
+ 
+ 	volatile bool b_shutdown;
+-	rte_thread_t flm_thread;
+ 	rte_spinlock_t stat_lck;
+ 	rte_thread_t stat_thread;
+ 	rte_thread_t port_event_thread;
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index 79ef9e7e7c..c114017db8 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -31,6 +31,7 @@
+ #include "profile_inline/flm_age_queue.h"
+ #include "profile_inline/flm_evt_queue.h"
+ #include "rte_pmd_ntnic.h"
++#include "nt_service.h"
+ 
+ const rte_thread_attr_t thread_attr = { .priority = RTE_THREAD_PRIORITY_NORMAL };
+ #define THREAD_CREATE(a, b, c) rte_thread_create(a, &thread_attr, b, c)
+@@ -1546,7 +1547,7 @@ drv_deinit(struct drv_s *p_drv)
+ 	THREAD_JOIN(p_nt_drv->stat_thread);
+ 
+ 	if (fpga_info->profile == FPGA_INFO_PROFILE_INLINE) {
+-		THREAD_JOIN(p_nt_drv->flm_thread);
++		nthw_service_del(RTE_NTNIC_SERVICE_FLM_UPDATE);
+ 		profile_inline_ops->flm_free_queues();
+ 		THREAD_JOIN(p_nt_drv->port_event_thread);
+ 		/* Free all local flm event queues */
+@@ -1980,40 +1981,46 @@ THREAD_FUNC port_event_thread_fn(void *context)
+ }
+ 
+ /*
+- * Adapter flm stat thread
++ * Adapter flm update service
+  */
+-THREAD_FUNC adapter_flm_update_thread_fn(void *context)
++static int adapter_flm_update_service(void *context)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	static struct flow_eth_dev *dev;
++	static const struct profile_inline_ops *profile_inline_ops;
+ 
+-	if (profile_inline_ops == NULL) {
+-		NT_LOG(ERR, NTNIC, "%s: profile_inline module uninitialized", __func__);
+-		return THREAD_RETURN;
+-	}
++	struct nt_service *flm_update_srv = nthw_service_get_info(RTE_NTNIC_SERVICE_FLM_UPDATE);
++	RTE_ASSERT(flm_update_srv != NULL);
+ 
+-	struct drv_s *p_drv = context;
++	if (!NT_SERVICE_GET_STATE(flm_update_srv)) {
++		struct drv_s *p_drv = context;
++		RTE_ASSERT(p_drv != NULL);
+ 
+-	struct ntdrv_4ga_s *p_nt_drv = &p_drv->ntdrv;
+-	struct adapter_info_s *p_adapter_info = &p_nt_drv->adapter_info;
+-	struct nt4ga_filter_s *p_nt4ga_filter = &p_adapter_info->nt4ga_filter;
+-	struct flow_nic_dev *p_flow_nic_dev = p_nt4ga_filter->mp_flow_device;
++		struct ntdrv_4ga_s *p_nt_drv = &p_drv->ntdrv;
++		struct adapter_info_s *p_adapter_info = &p_nt_drv->adapter_info;
++		struct nt4ga_filter_s *p_nt4ga_filter = &p_adapter_info->nt4ga_filter;
++		struct flow_nic_dev *p_flow_nic_dev = p_nt4ga_filter->mp_flow_device;
+ 
+-	NT_LOG(DBG, NTNIC, "%s: %s: waiting for port configuration",
+-		p_adapter_info->mp_adapter_id_str, __func__);
++		NT_LOG(DBG, NTNIC, "%s: %s: waiting for port configuration",
++			p_adapter_info->mp_adapter_id_str, __func__);
+ 
+-	while (p_flow_nic_dev->eth_base == NULL)
+-		nt_os_wait_usec(1 * 1000 * 1000);
++		if (p_flow_nic_dev->eth_base == NULL)
++			return -1;
+ 
+-	struct flow_eth_dev *dev = p_flow_nic_dev->eth_base;
++		dev = p_flow_nic_dev->eth_base;
+ 
+-	NT_LOG(DBG, NTNIC, "%s: %s: begin", p_adapter_info->mp_adapter_id_str, __func__);
++		profile_inline_ops = get_profile_inline_ops();
++		RTE_ASSERT(profile_inline_ops != NULL);
+ 
+-	while (!p_drv->ntdrv.b_shutdown)
+-		if (profile_inline_ops->flm_update(dev) == 0)
+-			nt_os_wait_usec(10);
++		NT_LOG(INF, NTNIC, "flm update service started on lcore %i",  rte_lcore_id());
++		flm_update_srv->lcore = rte_lcore_id();
++		NT_SERVICE_SET_STATE(flm_update_srv, true);
++		return 0;
++	}
+ 
+-	NT_LOG(DBG, NTNIC, "%s: %s: end", p_adapter_info->mp_adapter_id_str, __func__);
+-	return THREAD_RETURN;
++	if (profile_inline_ops->flm_update(dev) == 0)
++		nt_os_wait_usec(10);
++
++	return 0;
+ }
+ 
+ /*
+@@ -2346,8 +2353,16 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 
+ 	if (profile_inline_ops != NULL && fpga_info->profile == FPGA_INFO_PROFILE_INLINE) {
+ 		profile_inline_ops->flm_setup_queues();
+-		res = THREAD_CTRL_CREATE(&p_nt_drv->flm_thread, "ntnic-nt_flm_update_thr",
+-			adapter_flm_update_thread_fn, (void *)p_drv);
++
++		struct rte_service_spec flm_update_spec = {
++			.name = "ntnic-flm_update_service",
++			.callback = adapter_flm_update_service,
++			.socket_id = SOCKET_ID_ANY,
++			.capabilities = RTE_SERVICE_CAP_MT_SAFE,
++			.callback_userdata = p_drv
++		};
++
++		res = nthw_service_add(&flm_update_spec, RTE_NTNIC_SERVICE_FLM_UPDATE);
+ 
+ 		if (res) {
+ 			NT_LOG_DBGX(ERR, NTNIC, "%s: error=%d",
+diff --git a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
+index fc06cf12c3..c6c448312f 100644
+--- a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
++++ b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
+@@ -6,6 +6,7 @@
+ #include <rte_flow_driver.h>
+ #include <rte_pci.h>
+ #include <rte_version.h>
++#include <rte_pmd_ntnic.h>
+ 
+ #include "ntlog.h"
+ #include "nt_util.h"
+@@ -13,6 +14,8 @@
+ #include "ntnic_mod_reg.h"
+ #include "ntos_system.h"
+ #include "ntos_drv.h"
++#include "nt_service.h"
++#include "rte_service.h"
+ 
+ #define MAX_RTE_FLOWS 8192
+ 
+@@ -543,6 +546,13 @@ eth_flow_destroy(struct rte_eth_dev *eth_dev, struct rte_flow *flow, struct rte_
+ 		return -1;
+ 	}
+ 
++	struct nt_service *srv = nthw_service_get_info(RTE_NTNIC_SERVICE_FLM_UPDATE);
++
++	if (!srv || !NT_SERVICE_GET_STATE(srv) || !rte_service_runstate_get(srv->id))	{
++		NT_LOG(ERR, FILTER, "flm update service is not started. Flow cannot be destroyed");
++		return -1;
++	}
++
+ 	struct pmd_internals *internals = eth_dev->data->dev_private;
+ 
+ 	error->type = RTE_FLOW_ERROR_TYPE_NONE;
+@@ -580,6 +590,13 @@ static struct rte_flow *eth_flow_create(struct rte_eth_dev *eth_dev,
+ 		return NULL;
+ 	}
+ 
++	struct nt_service *srv = nthw_service_get_info(RTE_NTNIC_SERVICE_FLM_UPDATE);
++
++	if (!srv || !NT_SERVICE_GET_STATE(srv) || !rte_service_runstate_get(srv->id))	{
++		NT_LOG(ERR, FILTER, "flm update service is not started. Flow cannot be created");
++		return NULL;
++	}
++
+ 	struct pmd_internals *internals = eth_dev->data->dev_private;
+ 
+ 	struct fpga_info_s *fpga_info = &internals->p_drv->ntdrv.adapter_info.fpga_info;
+diff --git a/drivers/net/ntnic/ntutil/nt_service.c b/drivers/net/ntnic/ntutil/nt_service.c
+index 4ef1233f12..86f709e401 100644
+--- a/drivers/net/ntnic/ntutil/nt_service.c
++++ b/drivers/net/ntnic/ntutil/nt_service.c
+@@ -12,8 +12,8 @@
+ #define NT_SERVICE_UNKNOWN_ID (-1)
+ 
+ static struct nt_service g_nt_services[RTE_NTNIC_SERVICE_MAX] = {
+-	[0] = {
+-		.tag = RTE_NTNIC_SERVICE_MAX,
++	[RTE_NTNIC_SERVICE_FLM_UPDATE] = {
++		.tag = RTE_NTNIC_SERVICE_FLM_UPDATE,
+ 		.id = NT_SERVICE_UNKNOWN_ID,
+ 		.lcore = RTE_MAX_LCORE,
+ 		.initialized = false,
+diff --git a/drivers/net/ntnic/rte_pmd_ntnic.h b/drivers/net/ntnic/rte_pmd_ntnic.h
+index 7a491319fa..d6236dae32 100644
+--- a/drivers/net/ntnic/rte_pmd_ntnic.h
++++ b/drivers/net/ntnic/rte_pmd_ntnic.h
+@@ -41,7 +41,8 @@ enum rte_ntnic_event_type {
+ };
+ 
+ enum rte_ntnic_service_tag {
+-	RTE_NTNIC_SERVICE_MAX = 1
++	RTE_NTNIC_SERVICE_FLM_UPDATE = 0,
++	RTE_NTNIC_SERVICE_MAX
+ };
+ 
+ /**
 -- 
 2.45.0
 
