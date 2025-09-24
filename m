@@ -2,212 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D7ACAC5A5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 10:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0566DCAC5A5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 11:13:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4A600402CB;
-	Wed, 24 Sep 2025 12:12:25 +0200 (CEST)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com
- (mail-northeuropeazon11010014.outbound.protection.outlook.com [52.101.84.14])
- by mails.dpdk.org (Postfix) with ESMTP id 5F8AB40289
- for <dev@dpdk.org>; Wed, 24 Sep 2025 10:52:11 +0200 (CEST)
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=RE8lAYi2zkmGG4Z/z6ljO+idTnI+rXU2R2B044unw9P8OYu0oVWX1FztG1gZ+diNCzIpdy582b4bEjIDKp1ntEuPwv6ZoS5JNykD49VYV6ic2ODVzrkZWFsfU+AUikNkjZzVAvSv9GFcPqtbaYjVh0MI+e+VCAT0hyZlfIl9PIT3rN9zhoEzyHp0kmlAKAV4gMrXi6qars2eUS321Vy9JNlIWYDsgeDMd8YO/nEQNzM3wMx5hob9zGFVhhqYx8lQQBbHNl8YDDXrxWCiWGPYRzITCyZZlb06ikqDWvJPH1Ca5U2V8hRzp5W/Nl2dFfqJq6s6z8ZrgBsv/xesfi1JSQ==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Lf0qYXPA+5XEt5G8SH6hWRauKN3Pcp+xwsYmgOc2+9k=;
- b=mVwfA46cu2RXrUExKCQeCUWXmsJeLuSMxlenAQzCliFgJJQ3LukkYROVGdK0LtdCc6hXNFs++K+wrSo9visx95Nl3BI41jpwuLBbvhQJguHEJ1bo5LVLOcXdRROF2vr6STVKZ+zeD/B+545e2mKW6zlFD9tVmFpZxAtaTvbmJskFZrKx02LHajA8pscV3ZC/rHVr9RNpuPJxiEX6qCnxUXE+lbyHS5EN84n5BmO/rIQvizlQZyHt5/wRlGyM6aIWg4emQmiBdHksEi6wscVFwsK0dORzd1OsZTM9ifz+UiVhLq495kPlfGwqrMC20s0r3yMlV9mxxLXIuhgA8mGDiw==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=huawei.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Lf0qYXPA+5XEt5G8SH6hWRauKN3Pcp+xwsYmgOc2+9k=;
- b=dewjuZ0g9VsUUcUT2pJC0a+SOuD9S9KOI/wLzYtVT9eM/NIDrY2HGpGIWDwpjnOIWjXlD7AN0FvtYZJQ9llPs58z3hMAcsif+Kyz4KYvv2pEwSa8y7y11wL3/XwAm/JhZr8Cd2TjdQ9izTX1vLej4kDtWrgTlpk7OuO6WnRjOIk=
-Received: from DU2PR04CA0337.eurprd04.prod.outlook.com (2603:10a6:10:2b4::35)
- by VI0PR08MB10447.eurprd08.prod.outlook.com (2603:10a6:800:207::9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Wed, 24 Sep
- 2025 08:52:09 +0000
-Received: from DB1PEPF00050A00.eurprd03.prod.outlook.com
- (2603:10a6:10:2b4:cafe::3a) by DU2PR04CA0337.outlook.office365.com
- (2603:10a6:10:2b4::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.20 via Frontend Transport; Wed,
- 24 Sep 2025 08:52:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DB1PEPF00050A00.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.12
- via Frontend Transport; Wed, 24 Sep 2025 08:52:08 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Aaz361TS98kEcQkpRzYLof4jCCd9vqGPkcgZEF1k7M9tbocEbvwBTarqnwQslwuV7RBAL9HbyIzjyyIGSgdD9vOQoC+D8bQ/3PQ1+RlbSxOm4ErFRxHfs9GHyalSVtpk+rE8tQrrAHUsBPRqBifZqLH/21BqHZK9vqA2MIT8Zx6ki0nvWija+l97URh3JU77zzlBCyaSJoMB81tQaV1BDbos2SvyQ5YwrwSP3XdloD77LKabNI/W0MoGupgFk8+Bc04aoJWOmZAy7cBttaFfE0ClRsC3Y6UGy/2vZOlKz2Yb/hufY//R0WRhU1zSOhELzf42ckD5dvyrEluN/NtF4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Lf0qYXPA+5XEt5G8SH6hWRauKN3Pcp+xwsYmgOc2+9k=;
- b=pu1jl8A9Rw8keikJ2TDCzn8VhSk/glMGJmBxg7y81dac3FyM22noN+NUSibPGYDl5B7c7T4aJG+TitaURzp5hpst14gRgBHWDUU6ZlXyYfS9y2uUvgUqLNOZrI8KMI2Nk4bswRIfix4SO6Jks5p7evMWhizKdPXVcPGSdCusqjEoMWaJgSvKS9yYbAT7FhvmaWrlrRA2LD1zKD3B0U5OqUYsEDNhvF1WdVxLLgv8aJN8T9MfndazaLzrjegZaDy1eHxzk65lyr4pHCjEobXqU9Y7rZMgTLYH9g0S72nJmQ941Je44eCI3Tjt61ZtRWRuGdl4yttsGD3cyMR/YT6rOQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Lf0qYXPA+5XEt5G8SH6hWRauKN3Pcp+xwsYmgOc2+9k=;
- b=dewjuZ0g9VsUUcUT2pJC0a+SOuD9S9KOI/wLzYtVT9eM/NIDrY2HGpGIWDwpjnOIWjXlD7AN0FvtYZJQ9llPs58z3hMAcsif+Kyz4KYvv2pEwSa8y7y11wL3/XwAm/JhZr8Cd2TjdQ9izTX1vLej4kDtWrgTlpk7OuO6WnRjOIk=
-Received: from DU0PR08MB9557.eurprd08.prod.outlook.com (2603:10a6:10:44e::14)
- by PAWPR08MB10133.eurprd08.prod.outlook.com (2603:10a6:102:35f::10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Wed, 24 Sep
- 2025 08:51:33 +0000
-Received: from DU0PR08MB9557.eurprd08.prod.outlook.com
- ([fe80::fdd1:fe93:89d8:1c07]) by DU0PR08MB9557.eurprd08.prod.outlook.com
- ([fe80::fdd1:fe93:89d8:1c07%3]) with mapi id 15.20.9160.008; Wed, 24 Sep 2025
- 08:51:33 +0000
-From: Ola Liljedahl <Ola.Liljedahl@arm.com>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>, Honnappa Nagarahalli
- <Honnappa.Nagarahalli@arm.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Dhruv Tripathi <Dhruv.Tripathi@arm.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: Re: [PATCH 1/1] ring: safe partial ordering for head/tail update
-Thread-Topic: [PATCH 1/1] ring: safe partial ordering for head/tail update
-Thread-Index: AQHcJnJiBml2HHEBUEWClQ4fxxecK7SWYP5wgABfdICAADf1oIAAQKiAgATGqYCABX8KAIAAdQaAgAAPLICAADKHAA==
-Date: Wed, 24 Sep 2025 08:51:33 +0000
-Message-ID: <71C73931-11EA-4B4C-8FFF-F82A2B2F7520@arm.com>
-References: <20250915185451.533039-1-wathsala.vithanage@arm.com>
- <20250915185451.533039-2-wathsala.vithanage@arm.com>
- <a5fae8a9edc947fdbaf4e2519c39f93e@huawei.com>
- <2a611c3cf926d752a54b7655c27d6df874a2d0de.camel@arm.com>
- <61a9d5b157be4816aa296194f9c0eabe@huawei.com>
- <4173E44D-BB31-45B9-AF6A-553B1E755604@arm.com>
- <64a7def62ee642139c3af31ce4fd94e9@huawei.com>
- <EF1C5BFC-B9C7-4D38-8FDC-FF412DD45C21@arm.com>
- <8eab3da6eb2944a4a4a197aeb38ee2f1@huawei.com>
- <d485010b97654d09a1921b97879faf90@huawei.com>
-In-Reply-To: <d485010b97654d09a1921b97879faf90@huawei.com>
-Accept-Language: en-US
-Content-Language: en-GB
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/16.100.25090553
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-x-ms-traffictypediagnostic: DU0PR08MB9557:EE_|PAWPR08MB10133:EE_|DB1PEPF00050A00:EE_|VI0PR08MB10447:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8330fa0-555d-4ee8-85f5-08ddfb47a50e
-x-checkrecipientrouted: true
-nodisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
- ARA:13230040|376014|366016|1800799024|38070700021; 
-X-Microsoft-Antispam-Message-Info-Original: =?utf-8?B?SWRFc0VodDM5RU9FTFdKNXJONHdES3BDWHZsNXBjNnFxUDFrMUNXeU9kazlr?=
- =?utf-8?B?dEptN3JQYUlMbXpSVmFTczRjT1hIK0FmbmJabVVnU3p3TU10Zk1nQm1MOVdV?=
- =?utf-8?B?NmkxUm0yaGwxK1NYNUZNenJYL1FsOFFzVE5vVWJqUGRmMHVtMUE0a2tveVMw?=
- =?utf-8?B?QWRoY1Zwd3d0YVdYM25aS0E4UjhUOHc2NHBBMllra3V6VXVsUXVZd3NkZFll?=
- =?utf-8?B?SWlnTTBabkllRXc4R05TMVh4alR4SHNLUEtmYjRLT0lxeTllYlRUYWlick9L?=
- =?utf-8?B?ODVub0NYY3Nsbmxqd1dHZ0VnN3Q2emtuNGVpMW56UElOWEF0MUFhQnUzeXRj?=
- =?utf-8?B?dHVNcFBha1BwTGFSL2hqcUg3VFFBR2dobzRIY0tDQ0lObXdhdnFHVjNZancw?=
- =?utf-8?B?SUhjb2JiSGlON0M5OEh6WExtcHZtdmpxOGI2bUxKTVNMVWdNN3ZhZmp4WVJU?=
- =?utf-8?B?MGRpSVhnckFzYjMzTGxLMmpqT1pmWGR6SmpENVFyd0FjRjhYQkFBMW1GVDVT?=
- =?utf-8?B?RWRPWmJXVE1Ja1oxUkFDZ2NLOEF2MmpDSWNhaTBMcjBCREhLd3hKTmFFcjk1?=
- =?utf-8?B?a0RnMDM5YXMrNzF5SiszZlVrVUhoeGJyR2pUV1lRUHlYZ3FOY21qVlRqMFpj?=
- =?utf-8?B?dWJIVDR6ZUFJcXhEWFhMQXdxQ1F5blNRRnUyNzFieU5xbURzSlZqQ1E0Lytu?=
- =?utf-8?B?SEVHcTlhdTdRdmFYNHQ0cDA5YzJQckVJdm9RWjJhZ0VWQWZOSDFZUzNvOGx2?=
- =?utf-8?B?YVYxUm0rL2l2M0dJVHkzSkNlUUNRTEdXRkIyMFlZeFVUd1FnQ0dxTDN4NHdP?=
- =?utf-8?B?TVBLY2s3RHlZYVpSMzRzSzZ5RE9DM1I1dlBoZTIxMzlZbThCT1ZMM1hLN1RZ?=
- =?utf-8?B?dGdGYXAyV3JZNzNzamhUK1grU1pWRnpoUm9Uc0E5eE1mREFiVFNUU0Y2M3Vn?=
- =?utf-8?B?bWxXWWx5TVV0Nnk4SVAzVnh5NlVVaXlzaUFGek1CWE9HWE9EV1VkQTBUQmNk?=
- =?utf-8?B?eEg2dFo2YTFIY1dTMnhTNHFwSC9vbmN5WWt3bzlrVTJxM3QrK2FiRkxiRXlR?=
- =?utf-8?B?M0NlK2JHYzB0MjhZbEpRb05UcWlqYW0rSDMwc25SbnJuWUl0TnZzUUVNam1t?=
- =?utf-8?B?S25qRjRSUDZQcU9OLzlUR2R2dkx3Qm5zRTJIb1N3ZE5yMWRYWiswNnF1cXlo?=
- =?utf-8?B?NlZUQk0xc2k3amJxcXNVcHhKcG5iRloza09PS3NkVC9SUkNWM2NXVmhHWTUx?=
- =?utf-8?B?Z2pzdkZTSG1PUzV2emZmOFg1U1FVOFJEZjUyc0szMWtkcUtjUVF2Ujg0SEN6?=
- =?utf-8?B?am5UKzFSaURVdjZlWjg5VnAxYlphYjJEbTJmTjFqT3BGNmJHREdUOUw1N2xS?=
- =?utf-8?B?UXpWS1M3MU9pMU5oelRsUk9heVd6YlRhRmtDWmx1QXRvS0hnV3VEWDZiS2VJ?=
- =?utf-8?B?UXpaOURtK0ZHUitjejhhQVJ4bGRqREtCSGdBVGxoRUxINGk4UGQwVmhGZnRU?=
- =?utf-8?B?UHRQejhhNTVXRFMxcmZDQ0t0UldSNDJLaERmZFhZdGk2R3AwaW1tS3FwSGlS?=
- =?utf-8?B?NnBPNXQ3SDBPazZ5clVyVUJIcEhFd0kzYVQ0WGI0c2R6OUVKVXZxRWZDaTQx?=
- =?utf-8?B?MGJsTC9XcUVldFgrcFZETzMyZTJCTVZhaHExcmMvMHdCSmI5RDM5Zk04N2Rv?=
- =?utf-8?B?Q05LN0tZZzcvdHdiTW5PejFZbnhsNlY3WDFLTFJUWGV2U2Fpdm1jWm1nUElG?=
- =?utf-8?B?VjFYWEFPaTRCdUdLV21hME4zbGtta3diS3J6L1gwZkw3aFdCNnNLOG1KWUNi?=
- =?utf-8?B?Ui8wajMrQUJiM1N1VW5ubmc3RzZQejJKWDVsNHlUUjVpeUoxUi93TmJOV1hu?=
- =?utf-8?B?SXcvYXh0cFFrSit6Q1VYZGxVV2JoRkh4WkZ2dkN0MTJkOHJaNldySktXbzNu?=
- =?utf-8?B?bXlncUNSck90aUVlUTBqS3hiQjVCK0VnUVl6OUsvczZiR1FRWVpKMmVST2NI?=
- =?utf-8?Q?4a48Owj4C8ohF9oWO3qQUwUqSUk7Jw=3D?=
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
- SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:DU0PR08MB9557.eurprd08.prod.outlook.com;
- PTR:; CAT:NONE; SFS:(13230040)(376014)(366016)(1800799024)(38070700021);
- DIR:OUT; SFP:1101; 
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F17D1B81D38E554296965614FCC563DD@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id D343F40289;
+	Wed, 24 Sep 2025 13:13:35 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id B4D854027C
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 13:13:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1758712411; x=1790248411;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=cEdAynOmUBSEhssCaSKFTdVa7m/vqDqg1yILrFzDEi0=;
+ b=Nas2c6/iTgwPsUX31MGNTMBF9hRqPlNwGwTSHpGDyUS2JRyRbg/fztoe
+ EeDmY28QgcDt31sadte8TEfdKC4Q4MaxwG2hkSkq8g8DF8e6o5utvETMa
+ 3YQgBa83wGNuzh2S/dork3DvevhEW9Vp1mWFH0s4cUb5lLjOGAItno6QO
+ sPzqwo4Gk/Vcaf0a2wPapeZUR0QAjv25aR2WkI5XJ3pC8rk5Gyasxpn3v
+ wgcmj38IFTyt5kYfWt9Qidvg1Uar60kgBoN9FsbhutQ7wRPa2rx+twY1D
+ r304OaVHajO66P/sJw9dIckCeK2WVrG/JBBX9r7dfsYC8fqLaGk4K4fnU w==;
+X-CSE-ConnectionGUID: q2arBzLtSliWOyHsSg6ihw==
+X-CSE-MsgGUID: J4xPAynRSuyOvxN8L4QPBQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="71628106"
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; d="scan'208";a="71628106"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Sep 2025 04:13:29 -0700
+X-CSE-ConnectionGUID: Cxbh8uOmRhqBnqaL7Fe9BA==
+X-CSE-MsgGUID: 7JZjKE8SQRukqpLjOz6Rfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,290,1751266800"; d="scan'208";a="207941636"
+Received: from silpixa00401385.ir.intel.com (HELO silpixa00401385..)
+ ([10.20.224.226])
+ by fmviesa001.fm.intel.com with ESMTP; 24 Sep 2025 04:13:24 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Nicolas Chautru <nicolas.chautru@intel.com>,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
+ Srikanth Yalavarthi <syalavarthi@marvell.com>,
+ Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>,
+ Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ David Hunt <david.hunt@intel.com>,
+ Sivaprasad Tummala <sivaprasad.tummala@amd.com>,
+ Rosen Xu <rosen.xu@altera.com>,
+ Tomasz Kantecki <tomasz.kantecki@intel.com>,
+ Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [PATCH v2] build: validate libraries returned from meson find function
+Date: Wed, 24 Sep 2025 11:54:00 +0100
+Message-ID: <20250924111318.567771-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250923165830.527416-1-bruce.richardson@intel.com>
+References: <20250923165830.527416-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR08MB10133
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB1PEPF00050A00.eurprd03.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 74a54134-992c-42da-8088-08ddfb47900d
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|82310400026|1800799024|376014|35042699022|14060799003|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?RGRYVVZHWW5yc2RYSWxTMVNiQWRwTmI4Z1JqTjFUTlpIbzR1bFBmRFIvdFp0?=
- =?utf-8?B?cW1OUDRXd1NFcFVJbllIV2MyRU9nMXpoYWxWdkZWMUtScWtqN21RWi9GbGli?=
- =?utf-8?B?SzVvOHBCVVY2U0tzT1MxeUNrNjdhQXViRENMN3hlVzdnMnZqTXVNRStHOTZ0?=
- =?utf-8?B?dFFSTVFUOXIzazFycndiQk9OTHZMMmVsTHdJTmxuZnZEa3hpNEVNSktIME9V?=
- =?utf-8?B?S2lmbjNpblJYdTRjVUp0MnkrbEQ5UDluVkY0dUp5OWw5Y1lkNGllb05DbzJo?=
- =?utf-8?B?dnl3VXdtT2NoVzR5ellkUTZITW9ET1hDaktiUG5IYVJpb1I2enRxSUxxLzNL?=
- =?utf-8?B?ckdwdnRQTHpac2RWMXBGUzdpQ1VRb0tMV2hnZW40a2JpZC9obnJMOXlpajVx?=
- =?utf-8?B?ZSsxRHFBWmxJUjB6S3owWFV0VnN4aVF2OUtCRHAwV1kzUzlBN0VJcUFTeUVx?=
- =?utf-8?B?bmw3cmpvK3pLUkFObUlIbDlHY1pwa0lBUzhlOElxdUpQWDlGTktuODUzcVE4?=
- =?utf-8?B?c05CR3BJdHp4WjR3V1dCQjc3bWcrekFMOHBjUDBKVzNzdytNK0pMRWg0d09O?=
- =?utf-8?B?bmo3L3FyYmhWbFJCSi9rem1odzd5bzVXSTFuTEtnMkJ2L3AyMElmZ09tbitS?=
- =?utf-8?B?WlA1ZUlGOGczdkFDK1JGNDNBVTA2dGZId3VaZnBFRy9vblFRNUJEeVBFREFa?=
- =?utf-8?B?TFlRT01PMUtISXF0K3ZVTHArVXRXQ0dOYWdabFBZYnl2eCt5SVNCNDEzWlIz?=
- =?utf-8?B?TEdDYkdhNS9GMGIzQUkxSUFQWGJYaFhTajhobzFDblNYaEdVUGpDcDkramNU?=
- =?utf-8?B?ZjNIQWVHTyt5eFFqcHhqck1IcitoVVRHL2dUUXc5ZXRiRG1zdDNvdUVxSERr?=
- =?utf-8?B?V2hLbXRaT201Y0s2enFycnI4R1lZMTloTGlHUUZUM1NmeGJnbkFPZkVKUFR5?=
- =?utf-8?B?YU9SOXFNcFdIZExzVzR4dFV0bzEra0JOZHdGQzlZK3J1MFBxZU5IL3BLS3pk?=
- =?utf-8?B?QURYbXpPa2JuWUhPb0d2TXlSSmZXc1dIT3YvVU4ybksrbUk1dHhCWkw1QUk5?=
- =?utf-8?B?UzVxMFVnVGRhajJTV2NXNnRQdjJXRWJLRmFxbU1aa2N1bFlORCtiRk1zOVhp?=
- =?utf-8?B?MHpubS9nRzZTZm1Ja1VTdi9ZNDR1U24zMnBlUXhTcE5UQTl3RXc3dGZOV2NB?=
- =?utf-8?B?NUhjYjExUjJjdXhCdk9OOTk2ejNPZ01ZdnRKeVdMbjZZRk4wQ0Y2NVkyZ0Z4?=
- =?utf-8?B?S0tXNkE5clY0eGtzdEs5S1NGWGlNVjJmQ01QRjBLeWVuTGVkd3FET2JxMmtW?=
- =?utf-8?B?eXJlekdibXBoQlZaenA4bHI1M1NVeTFTbGlGbDMzUVJtVXQ1VjR4aE9ROE4x?=
- =?utf-8?B?QXpBV1NDM2VESFBwcTE5VlNpcGUyTmdTcFVLbUFtNTVVMnpQRjc2ZzIvOHFX?=
- =?utf-8?B?UUZLcVFmSGNwT1h5b1E1aHM2SXo4Y0RYeTN2dmNoS3VyTFMzV1dkK2VyZmUv?=
- =?utf-8?B?aXpnbi9GTFRZQks4aFR6VWJTSHhFYlRSWEVOUWJjcVBFaVFUWkdITzdUVmV2?=
- =?utf-8?B?c2RRVndnVGYxSVVjeHpTOEtTQ2xkb1hEWHVZcERwSWdOam1qYkxuK1RuL3dz?=
- =?utf-8?B?NXlQSlJxVUxxYlNOeElHVDlVMVFDUDNlM2lzQVg5YVFCMEtBU3hjYmsvNEk1?=
- =?utf-8?B?clBWRzFNbG9HZUtJWEhpdlpYcm40VjgyODJLTExkQjg2TFRuS2pPS0c3VkVx?=
- =?utf-8?B?V3Rxa21lV282MlltM3oxcFpMMHZCaDFicGgvSElQWjRuMFNYUGtUOEVnR201?=
- =?utf-8?B?U05TUll3WWhCc2VXTHBJRk4zNGE1Z0lTS0lMVnFKY0RGWUliN3RaR2R1WDNl?=
- =?utf-8?B?b2NxdWt1c1NzMVdQTmFNcHA0ZGhubmpOaGt4ckVyc09nZll6Zzc3MCtsSWRV?=
- =?utf-8?B?eFZPWGxWWUg1aTlNWk1aRFBCbi92eDNnWWh3SDh6Q0Q5TWlxN0c0SzlWNHgv?=
- =?utf-8?B?cHpCb0ZJTkgxb2NNQU9Zc21CMDNNQW12T1FtVUpVMzhmZFRPek5TaW92UXF6?=
- =?utf-8?Q?U7dasa?=
-X-Forefront-Antispam-Report: CIP:4.158.2.129; CTRY:GB; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:outbound-uk1.az.dlp.m.darktrace.com;
- PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(35042699022)(14060799003)(7053199007);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 08:52:08.5939 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8330fa0-555d-4ee8-85f5-08ddfb47a50e
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d; Ip=[4.158.2.129];
- Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource: DB1PEPF00050A00.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR08MB10447
-X-Mailman-Approved-At: Wed, 24 Sep 2025 12:12:23 +0200
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -221,31 +75,418 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiDvu79PbiAyMDI1LTA5LTI0LCAwOTo1MCwgIktvbnN0YW50aW4gQW5hbnlldiIgPGtvbnN0YW50
-aW4uYW5hbnlldkBodWF3ZWkuY29tIDxtYWlsdG86a29uc3RhbnRpbi5hbmFueWV2QGh1YXdlaS5j
-b20+PiB3cm90ZToNCj4gPiBTdXJlLCBJIGFtIHRhbGtpbmcgYWJvdXQgTVQgc2NlbmFyaW8uDQo+
-ID4gSSB0aGluayBJIGFscmVhZHkgcHJvdmlkZWQgYW4gZXhhbXBsZTogRFBESyBtZW1wb29sIGxp
-YnJhcnkgKHNlZSBiZWxvdykuDQo+ID4gSW4gYnJpZWYsIEl0IHdvcmtzIGxpa2UgdGhhdDoNCj4g
-PiBBdCBpbml0IGl0IGFsbG9jYXRlcyByaW5nIG9mIE4gbWVtb3J5IGJ1ZmZlcnMgYW5kIHJpbmcg
-YmlnIGVub3VnaCB0byBob2xkIGFsbCBvZiB0aGVtLg0KPg0KPiBTb3JyeSwgSSBtZWFudCB0byBz
-YXk6ICJpdCBhbGxvY2F0ZXMgTiBtZW1vcnkgYnVmZmVycyBhbmQgcmluZyBiaWcgZW5vdWdoIHRv
-IGhvbGQgYWxsIG9mIHRoZW0iLg0KPg0KPiA+IFRoZW4gaXQgZW5xdWV1ZXMgYWxsIGFsbG9jYXRl
-ZCBtZW1vcnkgYnVmZmVycyBpbnRvIHRoZSByaW5nLg0KPiA+IG1lbXBvb2xfZ2V0IC0gcmV0cmll
-dmVzIChkZXF1ZXVlcykgYnVmZmVycyBmcm9tIHRoZSByaW5nLg0KPiA+IG1lbXBvb2xfcHV0IC0g
-cHV0cyB0aGVtIGJhY2sgKGVucXVldWVzKSB0byB0aGUgcmluZw0KPiA+IGdldCgpIG1pZ2h0IGZh
-aWwgKEVOT01FTSksIHdoaWxlIHB1dCBpcyBleHBlY3RlZCB0byBhbHdheXMgc3VjY2VlZC4NCkJ1
-dCBob3cgZG9lcyB0aGUgdGhyZWFkIHdoaWNoIGNhbGxzIG1lbXBvb2xfcHV0KCkgZ2V0IGhvbGQg
-b2YgdGhlIG1lbW9yeSBidWZmZXJzIHRoYXQNCndlcmUgb2J0YWluZWQgdXNpbmcgbWVtcG9vbF9n
-ZXQoKSBieSBzb21lIG90aGVyIHRocmVhZD8gT3IgdGhpcyBpcyBub3QgdGhlIHNjZW5hcmlvIHlv
-dQ0KYXJlIHdvcnJ5aW5nIGFib3V0Pw0KSXMgaXQgcmF0aGVyIHRoYXQgbXVsdGlwbGUgdGhyZWFk
-cyBpbmRlcGVuZGVudGx5IGNhbGwgbWVtcG9vbF9nZXQoKSBhbmQgdGhlbiBtZW1wb29sX3B1dCgp
-DQpvbiB0aGVpciBvd24gYnVmZmVycz8gQW5kIHlvdSBhcmUgd29ycmllZCB0aGF0IGEgdGhyZWFk
-IHdpbGwgZmFpbCB0byByZXR1cm4gKG1lbXBvb2xfcHV0KSBhDQpidWZmZXIgdGhhdCBpdCBlYXJs
-aWVyIGFsbG9jYXRlZCAobWVtcG9vbF9nZXQpPyBXZSBjb3VsZCBjcmVhdGUgYSBsaXRtdXMgdGVz
-dCBmb3IgdGhhdC4NCg0KLSBPbGENCg0KDQpJTVBPUlRBTlQgTk9USUNFOiBUaGUgY29udGVudHMg
-b2YgdGhpcyBlbWFpbCBhbmQgYW55IGF0dGFjaG1lbnRzIGFyZSBjb25maWRlbnRpYWwgYW5kIG1h
-eSBhbHNvIGJlIHByaXZpbGVnZWQuIElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGll
-bnQsIHBsZWFzZSBub3RpZnkgdGhlIHNlbmRlciBpbW1lZGlhdGVseSBhbmQgZG8gbm90IGRpc2Ns
-b3NlIHRoZSBjb250ZW50cyB0byBhbnkgb3RoZXIgcGVyc29uLCB1c2UgaXQgZm9yIGFueSBwdXJw
-b3NlLCBvciBzdG9yZSBvciBjb3B5IHRoZSBpbmZvcm1hdGlvbiBpbiBhbnkgbWVkaXVtLiBUaGFu
-ayB5b3UuDQo=
+The meson find_library() API call sometimes finds a library that is
+actually incompatible with the current build, for example, returning a
+64-bit library when doing a 32-bit build. To avoid problems with this,
+check each library returned from a find_library() call and treat the
+library as unfound if its incompatible.
+
+This checking is not necessary (or should not be necessary) for
+dependencies got using pkg-config, since the .pc files for each build
+type are stored in a different directory on the system.
+
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+v2: expanded the scope of the patch from just fixing the one instance
+    I hit, to changing things globally to try and avoid any future issues.
+---
+ config/meson.build                            | 15 ++++++----
+ drivers/baseband/acc/meson.build              | 30 +++++++++++++++----
+ drivers/baseband/turbo_sw/meson.build         | 30 +++++++++++++++----
+ drivers/common/mlx5/linux/meson.build         |  4 +--
+ drivers/common/mlx5/windows/meson.build       |  2 +-
+ drivers/ml/cnxk/meson.build                   |  6 +++-
+ drivers/net/af_xdp/meson.build                |  3 ++
+ drivers/net/mana/meson.build                  |  2 +-
+ drivers/net/mlx4/meson.build                  |  2 +-
+ drivers/net/pcap/meson.build                  |  6 +++-
+ drivers/power/amd_uncore/meson.build          |  2 +-
+ drivers/raw/ifpga/meson.build                 |  2 +-
+ examples/l2fwd-cat/meson.build                |  2 +-
+ examples/l2fwd-keepalive/meson.build          |  2 +-
+ .../vm_power_manager/guest_cli/meson.build    |  2 +-
+ examples/vm_power_manager/meson.build         |  2 +-
+ lib/eal/windows/meson.build                   | 24 +++++++++++----
+ meson.build                                   |  3 ++
+ 18 files changed, 105 insertions(+), 34 deletions(-)
+
+diff --git a/config/meson.build b/config/meson.build
+index 55497f0bf5..bb8d475ec8 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -208,7 +208,8 @@ if not is_windows
+ endif
+ 
+ # on some OS, maths functions are in a separate library
+-if cc.find_library('m', required : false).found()
++math_dep = cc.find_library('m', required : false)
++if math_dep.found() and cc.links(min_c_code, dependencies: math_dep)
+     # some libs depend on maths lib
+     add_project_link_arguments('-lm', language: 'c')
+     dpdk_extra_ldflags += '-lm'
+@@ -235,7 +236,7 @@ if meson.is_cross_build() and not meson.get_external_property('numa', true)
+ endif
+ if find_libnuma
+     numa_dep = cc.find_library('numa', required: false)
+-    if numa_dep.found() and cc.has_header('numaif.h')
++    if numa_dep.found() and cc.has_header('numaif.h') and cc.links(min_c_code, dependencies: numa_dep)
+         dpdk_conf.set10('RTE_HAS_LIBNUMA', true)
+         has_libnuma = true
+         add_project_link_arguments('-lnuma', language: 'c')
+@@ -245,7 +246,7 @@ endif
+ 
+ has_libfdt = false
+ fdt_dep = cc.find_library('fdt', required: false)
+-if fdt_dep.found() and cc.has_header('fdt.h')
++if fdt_dep.found() and cc.has_header('fdt.h') and cc.links(min_c_code, dependencies: fdt_dep)
+     dpdk_conf.set10('RTE_HAS_LIBFDT', true)
+     has_libfdt = true
+     add_project_link_arguments('-lfdt', language: 'c')
+@@ -253,7 +254,7 @@ if fdt_dep.found() and cc.has_header('fdt.h')
+ endif
+ 
+ libexecinfo = cc.find_library('execinfo', required: false)
+-if libexecinfo.found()
++if libexecinfo.found() and cc.links(min_c_code, dependencies: libexecinfo)
+     add_project_link_arguments('-lexecinfo', language: 'c')
+     dpdk_extra_ldflags += '-lexecinfo'
+ endif
+@@ -288,7 +289,8 @@ if not pcap_dep.found()
+     # pcap got a pkg-config file only in 1.9.0
+     pcap_dep = cc.find_library(pcap_lib, required: false)
+ endif
+-if pcap_dep.found() and cc.has_header('pcap.h', dependencies: pcap_dep)
++if (pcap_dep.found() and cc.has_header('pcap.h', dependencies: pcap_dep)
++        and cc.links(min_c_code, dependencies: pcap_dep))
+     dpdk_conf.set('RTE_HAS_LIBPCAP', 1)
+     dpdk_extra_ldflags += '-l@0@'.format(pcap_lib)
+ endif
+@@ -296,6 +298,9 @@ endif
+ # for clang 32-bit compiles we need libatomic for 64-bit atomic ops
+ if cc.get_id() == 'clang' and dpdk_conf.get('RTE_ARCH_64') == false
+     atomic_dep = cc.find_library('atomic', required: true)
++    if not cc.links(min_c_code, dependencies: atomic_dep)
++        error('broken dependency, "libatomic"')
++    endif
+     add_project_link_arguments('-latomic', language: 'c')
+     dpdk_extra_ldflags += '-latomic'
+ endif
+diff --git a/drivers/baseband/acc/meson.build b/drivers/baseband/acc/meson.build
+index 64fcf1537a..4e6d715d7c 100644
+--- a/drivers/baseband/acc/meson.build
++++ b/drivers/baseband/acc/meson.build
+@@ -5,11 +5,31 @@
+ dep_dec5g = dependency('flexran_sdk_ldpc_decoder_5gnr', required: false)
+ 
+ if dep_dec5g.found()
+-    ext_deps += cc.find_library('stdc++', required: true)
+-    ext_deps += cc.find_library('irc', required: true)
+-    ext_deps += cc.find_library('imf', required: true)
+-    ext_deps += cc.find_library('ipps', required: true)
+-    ext_deps += cc.find_library('svml', required: true)
++    stdcpp_dep = cc.find_library('stdc++', required: true)
++    if not cc.links(min_c_code, dependencies: stdcpp_dep)
++        error('broken dependency, "libstdc++"')
++    endif
++    ext_deps += stdcpp_dep
++    irc_dep = cc.find_library('irc', required: true)
++    if not cc.links(min_c_code, dependencies: irc_dep)
++        error('broken dependency, "libirc"')
++    endif
++    ext_deps += irc_dep
++    imf_dep = cc.find_library('imf', required: true)
++    if not cc.links(min_c_code, dependencies: imf_dep)
++        error('broken dependency, "libimf"')
++    endif
++    ext_deps += imf_dep
++    ipps_dep = cc.find_library('ipps', required: true)
++    if not cc.links(min_c_code, dependencies: ipps_dep)
++        error('broken dependency, "libipps"')
++    endif
++    ext_deps += ipps_dep
++    svml_dep = cc.find_library('svml', required: true)
++    if not cc.links(min_c_code, dependencies: svml_dep)
++        error('broken dependency, "libsvml"')
++    endif
++    ext_deps += svml_dep
+     ext_deps += dep_dec5g
+     ext_deps += dependency('flexran_sdk_ldpc_encoder_5gnr', required: true)
+     ext_deps += dependency('flexran_sdk_LDPC_ratematch_5gnr', required: true)
+diff --git a/drivers/baseband/turbo_sw/meson.build b/drivers/baseband/turbo_sw/meson.build
+index a9035a753e..5fd5e41c69 100644
+--- a/drivers/baseband/turbo_sw/meson.build
++++ b/drivers/baseband/turbo_sw/meson.build
+@@ -6,11 +6,31 @@ dep_turbo = dependency('flexran_sdk_turbo', required: false)
+ dep_dec5g = dependency('flexran_sdk_ldpc_decoder_5gnr', required: false)
+ 
+ if dep_turbo.found()
+-    ext_deps += cc.find_library('stdc++', required: true)
+-    ext_deps += cc.find_library('irc', required: true)
+-    ext_deps += cc.find_library('imf', required: true)
+-    ext_deps += cc.find_library('ipps', required: true)
+-    ext_deps += cc.find_library('svml', required: true)
++    stdcpp_dep = cc.find_library('stdc++', required: true)
++    if not cc.links(min_c_code, dependencies: stdcpp_dep)
++        error('broken dependency, "libstdc++"')
++    endif
++    ext_deps += stdcpp_dep
++    irc_dep = cc.find_library('irc', required: true)
++    if not cc.links(min_c_code, dependencies: irc_dep)
++        error('broken dependency, "libirc"')
++    endif
++    ext_deps += irc_dep
++    imf_dep = cc.find_library('imf', required: true)
++    if not cc.links(min_c_code, dependencies: imf_dep)
++        error('broken dependency, "libimf"')
++    endif
++    ext_deps += imf_dep
++    ipps_dep = cc.find_library('ipps', required: true)
++    if not cc.links(min_c_code, dependencies: ipps_dep)
++        error('broken dependency, "libipps"')
++    endif
++    ext_deps += ipps_dep
++    svml_dep = cc.find_library('svml', required: true)
++    if not cc.links(min_c_code, dependencies: svml_dep)
++        error('broken dependency, "libsvml"')
++    endif
++    ext_deps += svml_dep
+     ext_deps += dep_turbo
+     ext_deps += dependency('flexran_sdk_crc', required: true)
+     ext_deps += dependency('flexran_sdk_rate_matching', required: true)
+diff --git a/drivers/common/mlx5/linux/meson.build b/drivers/common/mlx5/linux/meson.build
+index 5548a56199..3fe7db7ec4 100644
+--- a/drivers/common/mlx5/linux/meson.build
++++ b/drivers/common/mlx5/linux/meson.build
+@@ -23,7 +23,7 @@ foreach libname:libnames
+     if not lib.found() and not static_ibverbs
+         lib = cc.find_library(libname, required:false)
+     endif
+-    if lib.found()
++    if lib.found() and cc.links(min_c_code, dependencies: lib)
+         libs += lib
+         if not static_ibverbs and not dlopen_ibverbs
+             ext_deps += lib
+@@ -47,7 +47,7 @@ endif
+ 
+ libmtcr_ul_found = false
+ lib = cc.find_library('mtcr_ul', required:false)
+-if lib.found()
++if lib.found() and cc.links(min_c_code, dependencies: lib)
+     libmtcr_ul_found = true
+     ext_deps += lib
+ endif
+diff --git a/drivers/common/mlx5/windows/meson.build b/drivers/common/mlx5/windows/meson.build
+index c3bd3aac26..f454788a9f 100644
+--- a/drivers/common/mlx5/windows/meson.build
++++ b/drivers/common/mlx5/windows/meson.build
+@@ -8,7 +8,7 @@ if not cc.has_header('mlx5devx.h')
+ endif
+ 
+ devxlib = cc.find_library('mlx5devx', required: false)
+-if not devxlib.found()
++if not devxlib.found() or not cc.links(min_c_code, dependencies: devxlib)
+     build = false
+     reason = 'missing dependency, "mlx5devx"'
+     subdir_done()
+diff --git a/drivers/ml/cnxk/meson.build b/drivers/ml/cnxk/meson.build
+index 0680a0faa5..ef7e21d747 100644
+--- a/drivers/ml/cnxk/meson.build
++++ b/drivers/ml/cnxk/meson.build
+@@ -72,7 +72,11 @@ ext_deps += dlpack_dep
+ ext_deps += dmlc_dep
+ ext_deps += tvm_dep
+ ext_deps += tvmdp_dep
+-ext_deps += cc.find_library('stdc++', required: true)
++stdcpp_dep = cc.find_library('stdc++', required: true)
++if not cc.links(min_c_code, dependencies: stdcpp_dep)
++    error('broken dependency, "libstdc++"')
++endif
++ext_deps += stdcpp_dep
+ 
+ deps += ['bus_vdev']
+ 
+diff --git a/drivers/net/af_xdp/meson.build b/drivers/net/af_xdp/meson.build
+index 2d37bcc869..b35888b869 100644
+--- a/drivers/net/af_xdp/meson.build
++++ b/drivers/net/af_xdp/meson.build
+@@ -20,6 +20,9 @@ xdp_dep = dependency('libxdp', version : libxdp_ver, required: false, method: 'p
+ bpf_dep = dependency('libbpf', required: false, method: 'pkg-config')
+ if not bpf_dep.found()
+     bpf_dep = cc.find_library('bpf', required: false)
++    if bpf_dep.found() and not cc.links(min_c_code, dependencies: bpf_dep)
++        bpf_dep = disabler()
++    endif
+ endif
+ 
+ cflags += no_wvla_cflag
+diff --git a/drivers/net/mana/meson.build b/drivers/net/mana/meson.build
+index e320da7fc4..19d4b3695e 100644
+--- a/drivers/net/mana/meson.build
++++ b/drivers/net/mana/meson.build
+@@ -27,7 +27,7 @@ foreach libname:libnames
+     if not lib.found()
+         lib = cc.find_library(libname, required:false)
+     endif
+-    if lib.found()
++    if lib.found() and cc.links(min_c_code, dependencies: lib)
+         libs += lib
+         ext_deps += lib
+     else
+diff --git a/drivers/net/mlx4/meson.build b/drivers/net/mlx4/meson.build
+index 869d2895c8..1eb67f3c47 100644
+--- a/drivers/net/mlx4/meson.build
++++ b/drivers/net/mlx4/meson.build
+@@ -31,7 +31,7 @@ foreach libname:libnames
+     if not lib.found() and not static_ibverbs
+         lib = cc.find_library(libname, required:false)
+     endif
+-    if lib.found()
++    if lib.found() and cc.links(min_c_code, dependencies: lib)
+         libs += lib
+         if not static_ibverbs and not dlopen_ibverbs
+             ext_deps += lib
+diff --git a/drivers/net/pcap/meson.build b/drivers/net/pcap/meson.build
+index 676c55018e..f30fc8338b 100644
+--- a/drivers/net/pcap/meson.build
++++ b/drivers/net/pcap/meson.build
+@@ -13,7 +13,11 @@ sources = files(
+ 
+ ext_deps += pcap_dep
+ if is_windows
+-    ext_deps += cc.find_library('iphlpapi', required: true)
++    iphlpapi_dep = cc.find_library('iphlpapi', required: true)
++    if not cc.links(min_c_code, dependencies: iphlpapi_dep)
++        error('broken dependency, "iphlpapi"')
++    endif
++    ext_deps += iphlpapi_dep
+ endif
+ 
+ require_iova_in_mbuf = false
+diff --git a/drivers/power/amd_uncore/meson.build b/drivers/power/amd_uncore/meson.build
+index 8cbab47b01..cab260b64e 100644
+--- a/drivers/power/amd_uncore/meson.build
++++ b/drivers/power/amd_uncore/meson.build
+@@ -9,7 +9,7 @@ endif
+ 
+ ESMI_header = '#include<e_smi/e_smi.h>'
+ lib = cc.find_library('e_smi64', required: false)
+-if not lib.found()
++if not lib.found() or not cc.links(min_c_code, dependencies: lib)
+     build = false
+     reason = 'missing dependency, "libe_smi"'
+ else
+diff --git a/drivers/raw/ifpga/meson.build b/drivers/raw/ifpga/meson.build
+index 4295ec04bd..395894af2a 100644
+--- a/drivers/raw/ifpga/meson.build
++++ b/drivers/raw/ifpga/meson.build
+@@ -11,7 +11,7 @@ rtdep = dependency('librt', required: false)
+ if not rtdep.found()
+     rtdep = cc.find_library('rt', required: false)
+ endif
+-if not rtdep.found()
++if not rtdep.found() or not cc.links(min_c_code, dependencies: rtdep)
+     build = false
+     reason = 'missing dependency, "librt"'
+     subdir_done()
+diff --git a/examples/l2fwd-cat/meson.build b/examples/l2fwd-cat/meson.build
+index ebcc3f66f2..5e8ff3a56c 100644
+--- a/examples/l2fwd-cat/meson.build
++++ b/examples/l2fwd-cat/meson.build
+@@ -7,7 +7,7 @@
+ # DPDK instance, use 'make'
+ 
+ pqos = cc.find_library('pqos', required: false)
+-build = pqos.found()
++build = (pqos.found() and cc.links(min_c_code, dependencies: pqos))
+ if not build
+     subdir_done()
+ endif
+diff --git a/examples/l2fwd-keepalive/meson.build b/examples/l2fwd-keepalive/meson.build
+index ed49c61238..e3f72aedb8 100644
+--- a/examples/l2fwd-keepalive/meson.build
++++ b/examples/l2fwd-keepalive/meson.build
+@@ -8,7 +8,7 @@
+ 
+ allow_experimental_apis = true
+ librt = cc.find_library('rt', required: false)
+-if not librt.found()
++if not librt.found() or not cc.links(min_c_code, dependencies: librt)
+     build = false
+     subdir_done()
+ endif
+diff --git a/examples/vm_power_manager/guest_cli/meson.build b/examples/vm_power_manager/guest_cli/meson.build
+index 00bc32526d..6a6809240e 100644
+--- a/examples/vm_power_manager/guest_cli/meson.build
++++ b/examples/vm_power_manager/guest_cli/meson.build
+@@ -17,5 +17,5 @@ sources = files(
+ allow_experimental_apis = true
+ 
+ opt_dep = cc.find_library('virt', required : false)
+-build = opt_dep.found()
++build = (opt_dep.found() and cc.links(min_c_code, dependencies: opt_dep))
+ ext_deps += opt_dep
+diff --git a/examples/vm_power_manager/meson.build b/examples/vm_power_manager/meson.build
+index dcf23198eb..53949ce6d8 100644
+--- a/examples/vm_power_manager/meson.build
++++ b/examples/vm_power_manager/meson.build
+@@ -38,7 +38,7 @@ else
+ endif
+ 
+ opt_dep = cc.find_library('virt', required : false)
+-build = opt_dep.found()
++build = (opt_dep.found() and cc.links(min_c_code, dependencies: opt_dep))
+ ext_deps += opt_dep
+ 
+ opt_dep = dependency('jansson', required : false, method: 'pkg-config')
+diff --git a/lib/eal/windows/meson.build b/lib/eal/windows/meson.build
+index c526ede405..afa029d1fc 100644
+--- a/lib/eal/windows/meson.build
++++ b/lib/eal/windows/meson.build
+@@ -24,12 +24,24 @@ sources += files(
+ 
+ dpdk_conf.set10('RTE_EAL_NUMA_AWARE_HUGEPAGES', true)
+ 
+-ext_deps += [
+-        cc.find_library('dbghelp'),
+-        cc.find_library('setupapi'),
+-        cc.find_library('ws2_32'),
+-]
++dbghelp_dep = cc.find_library('dbghelp')
++if not cc.links(min_c_code, dependencies: dbghelp_dep)
++    error('broken dependency, "dbghelp"')
++endif
++setupapi_dep = cc.find_library('setupapi')
++if not cc.links(min_c_code, dependencies: setupapi_dep)
++    error('broken dependency, "setupapi"')
++endif
++ws2_32_dep = cc.find_library('ws2_32')
++if not cc.links(min_c_code, dependencies: ws2_32_dep)
++    error('broken dependency, "ws2_32"')
++endif
++ext_deps += [dbghelp_dep, setupapi_dep, ws2_32_dep]
+ if is_ms_linker
+         # Contrary to docs, VirtualAlloc2() is exported by mincore.lib.
+-        ext_deps += cc.find_library('mincore')
++        mincore_dep = cc.find_library('mincore')
++        if not cc.links(min_c_code, dependencies: mincore_dep)
++            error('broken dependency, "mincore"')
++        endif
++        ext_deps += mincore_dep
+ endif
+diff --git a/meson.build b/meson.build
+index 2423884df7..fcf3d79a3d 100644
+--- a/meson.build
++++ b/meson.build
+@@ -51,6 +51,9 @@ testpmd_drivers_sources = []
+ testpmd_drivers_deps = []
+ abi_version_file = files('ABI_VERSION')
+ 
++# minimal C code for testing library linking compatibility
++min_c_code = 'int main(void) { return 0; }'
++
+ if host_machine.cpu_family().startswith('x86')
+     arch_subdir = 'x86'
+ elif host_machine.cpu_family().startswith('arm') or host_machine.cpu_family().startswith('aarch')
+-- 
+2.48.1
+
