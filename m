@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16027CAC5AE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 14:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB3BCAC5A5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 14:45:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 705B140E49;
-	Wed, 24 Sep 2025 16:42:39 +0200 (CEST)
-Received: from egress-ip42b.ess.de.barracuda.com
- (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id B7E3440A72
- for <dev@dpdk.org>; Wed, 24 Sep 2025 16:42:21 +0200 (CEST)
-Received: from PA4PR04CU001.outbound.protection.outlook.com
- (mail-francecentralazon11023117.outbound.protection.outlook.com
- [40.107.162.117]) by mx-outbound42-195.eu-central-1c.ess.aws.cudaops.com
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Wed, 24 Sep 2025 14:42:20 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id DAA3140E44;
+	Wed, 24 Sep 2025 16:42:40 +0200 (CEST)
+Received: from egress-ip11a.ess.de.barracuda.com
+ (egress-ip11a.ess.de.barracuda.com [18.184.203.234])
+ by mails.dpdk.org (Postfix) with ESMTP id 250C540DD3
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 16:42:22 +0200 (CEST)
+Received: from AS8PR04CU009.outbound.protection.outlook.com
+ (mail-westeuropeazon11021109.outbound.protection.outlook.com [52.101.70.109])
+ by mx-outbound13-221.eu-central-1a.ess.aws.cudaops.com (version=TLSv1.2
+ cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+ Wed, 24 Sep 2025 14:42:21 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d82WO5Jx+7bc6undYMAgj4VpJJko6FHOxKZV7PiJ45qXpFNNFe++aOsHXpV9guRfMojFeF//oBxKmcVqtPzxWKxwYXrcTTwyCrH8LNHf4/siLJhOj/AfztRu822BkhyBGpoEKOdwi/jNVJyyod29K98QseYSAJ4y4PKZfrnAtrSHKvkX0VRRLMOf83SmmfARDBv05XN/vlHTKc/jIMp4vYTKrxmYeEbwy02kLEMg/JmLHKLUx4a8S9AH+U1nIw/crJBxhGJPko7D3CRuthE1lU2YbUTcKB//g+7SsF34qiaOjb03CYPz2sj3aveZp5SDMGlaz6rAq448FQdvYEtOTQ==
+ b=UmrrVWrjXFLm8coBTHsIyBTm0lGut2BQQmpJl/hcngopR3ZYxEwXuxTYSbuT20LqaHoa1qJ90jdlmnV2aR5mINqsR/jJSXzRsuPbrfMKpnXz4xs85kl1cWgOJTkN3McFLDFTaytuEhlnjT97ng2p8L+BcFzDtbKMS4NJIS3wSRQetuP2HWD0ICu2aRcbVVxFbYUVobCntq4S97oMmcAmgYK5zEihoqEsF8TqlfXteMYwlNVLaqPVM6tHkdKgsUJC+jABnH5qNC88dmE1vO79YB/7WoWGxys/6INy55ocpep744xzqtnI7lqSZ3COaiHI9DPD+b0lbeYCRfop+F2R5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jvfCU7oHVj8/jLplMSp80Zcwv3zix7T1v39DmjtXMiA=;
- b=Eqj0K+qYi8lhs3R1lssqrWvJgeXX+vmRY29xZPDl4N5rIKi+d+IspHr5bcTYfP8oVF1RSIRFSq2h8BEdfwgbP3yLE9lKeITbZMjTYETxaRkncqtU3oADxNvi5gFgipxzK2Ta9rwIUxMyrIwyNwRGSrAaUtLe2tFL4GavkItirRaPuvuMj+VeIsr/xCmNJngV+2BiNnFigaYCi8/g18+8yU+2Bg4KZb85hv+1NLeB7C0Go4FWo+t3TT7IMI+Nhrm+X+FYgFe1kcdk3AW9mYtf751bLt0Re2yAimtVXiFu06CBuFaQ+H6/80aH+Y8AnrKKGzb0VzC3sSUwbCObLtM19Q==
+ bh=VEeo1+Y3gTDiU7p7qosYgVJ96utSoAHRuueLVqeMh3Y=;
+ b=MuxlpKf43QaH6CUeNZV3LyA5V+xBuY9WUpRc+jlY+9CfWS1enevHmxgXs4MGk3XoIH5w1ErA+p+rrwxdnAauBAmbYaJaFpXT5DWFDm5hVhyDyFZvIKST2SPR7Lm717p24elKbGnUveUiVVRmNVRqKSAD6prBN9Ye5PI0D9ZmjsCLYlE1zjRwmIE18ElVTqM3eTucCxCfVQvGHp2Z3rjZm6WyxTp5G5Wf3PvMxz0MCUJGIUxzWFjI/uj2DNhLit3+EtXd/WFS3dJiuMRehKxDYz/WxR3Tr/J25zN7rxLNAwXQFJNPhvjClmTfEMyp7edDTOAEmS9RQarxQ1ED1CV7VQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jvfCU7oHVj8/jLplMSp80Zcwv3zix7T1v39DmjtXMiA=;
- b=LogcTcV4agz0KnqCXISDdOZ38NHbPvI71DijQfwtSpWqDI+n8dgK2yNrD5gWXql47PPe9XAnTAZQBvpPGqhxoK4f457YJ1SSyL8Hlnj35dmnNPTtdJ6zMcKsBO2rK0nU5YSa/zwlcywA5HLGPmxEQQ2ky1TNJiP0uWElAaU8t1E=
+ bh=VEeo1+Y3gTDiU7p7qosYgVJ96utSoAHRuueLVqeMh3Y=;
+ b=ZTaPrphVorzN4NgOspsyDWoOWtzb1/9WGmKq8D16PZ53N7/c76Db7tVq9BiNFa7yEcgyG2Gqn59cybUrVBnPEnHnVUyjBzHPeSn1KdN2sKVqF2eFAqKvt6l5jMfeqZNXay/k0Y42A49vj7VPenAtb3mgnj6ZCNUWDTzuHjCk8VY=
 Received: from CWLP123CA0229.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:19f::16)
- by DB9P190MB1308.EURP190.PROD.OUTLOOK.COM (2603:10a6:10:22a::24) with
+ by DBAP190MB0871.EURP190.PROD.OUTLOOK.COM (2603:10a6:10:1a2::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Wed, 24 Sep
- 2025 14:42:19 +0000
+ 2025 14:42:18 +0000
 Received: from AM4PEPF00027A69.eurprd04.prod.outlook.com
- (2603:10a6:400:19f:cafe::4e) by CWLP123CA0229.outlook.office365.com
+ (2603:10a6:400:19f:cafe::bf) by CWLP123CA0229.outlook.office365.com
  (2603:10a6:400:19f::16) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.21 via Frontend Transport; Wed,
- 24 Sep 2025 14:42:19 +0000
+ 24 Sep 2025 14:42:18 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  AM4PEPF00027A69.mail.protection.outlook.com (10.167.16.87) with Microsoft
- SMTP Server id 15.20.9160.9 via Frontend Transport; Wed, 24 Sep 2025 14:42:19
+ SMTP Server id 15.20.9160.9 via Frontend Transport; Wed, 24 Sep 2025 14:42:18
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v1 24/24] net/ntnic: rename table ID functions
-Date: Wed, 24 Sep 2025 16:41:47 +0200
-Message-ID: <20250924144152.53203-25-sil-plv@napatech.com>
+Subject: [PATCH v1 23/24] net/ntnic: rename nim agx setup function
+Date: Wed, 24 Sep 2025 16:41:46 +0200
+Message-ID: <20250924144152.53203-24-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250924144152.53203-1-sil-plv@napatech.com>
 References: <20250908141740.1312268-2-sil-plv@napatech.com>
@@ -67,70 +67,72 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A69:EE_|DB9P190MB1308:EE_
+X-MS-TrafficTypeDiagnostic: AM4PEPF00027A69:EE_|DBAP190MB0871:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: d6e071f8-6876-4053-49f9-08ddfb78906a
+X-MS-Office365-Filtering-Correlation-Id: a984fca3-0e9f-49e6-309b-08ddfb788ffb
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|376014|36860700013|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?UrsLCVMJ3gzPACpYvl5SQNc0xtRIrvBZmJzGbDqVE3riq2dNT3DlbHkJ21F0?=
- =?us-ascii?Q?he09gL+CGb8cb1l4WZAFGCAKEIj3zsnhAamxjyEdrWJe2A3w2Pmvtj7RSM98?=
- =?us-ascii?Q?0CRQMir7bqNFJPfxVtDpQi6yqMOMEHQ56jbytda5pI5JyjeLTEX+rIzUz4Qj?=
- =?us-ascii?Q?3k0gEnFYganj5Rc2DjEPZmvG9+/+JNCCgS4ocXwJOmrsTZ6s86DbO6GUGSRy?=
- =?us-ascii?Q?3fdaYA1zYXGlYp6fK044ygRefZTLTV7RoSTf3pFDwONGyLmGsz3CVC+8RIi0?=
- =?us-ascii?Q?j23BRBULT0aXEn6yw4CTnz6tYIeSsQeV953lX1FvRzLho1wtt2LwiXiWfWyw?=
- =?us-ascii?Q?4gCnQeAKePbnim7yUpu0GBoNFd1fyZ3W2966fu+zJL3geYWGJQt+8GBZHnB0?=
- =?us-ascii?Q?U1ztSprWJPJwx9Yfjjl1sFaxH+9tg4gZ6OTFI0XJQD5mdE0xN+aYL/YAUL1m?=
- =?us-ascii?Q?v67j/NVB4BJ3KbE5I/6Crjc2/ZW3UyRR60ucmQcHLukDAZ2Rn1MT8QqGP0OD?=
- =?us-ascii?Q?HmIT1SnK2PcYi+nDfR8C0EBnjifwMevoBs0SYZdyuvvhHmv2UXSuF4VWj4yT?=
- =?us-ascii?Q?Pls6eBflGs3/iXNOYqVGFj66IG8u6f2H2SSonTCgp5IRXARwUohM6Zugo43i?=
- =?us-ascii?Q?VfJpPl1Qd6T2lmhvZstfF1pvAcChk/tlK/A9o4Xs+gBUuHeXv45pWIJZoHSv?=
- =?us-ascii?Q?YXJDSb7kQeMWcKc9kf1rkWlG6A/U1F5MPmdobeZvjthfDi6oL/GbWvmCl2VK?=
- =?us-ascii?Q?TjWmsNKjpNRuz8dHalMQxRbqcocg6sN+HASvzNplHpYmgbfv4PTo3fSKFVst?=
- =?us-ascii?Q?QyjaPylpOYz8bF2VDVfL+phEpeVH+Aw7pio9m3QrtwaixROr87Os1+r1s5o1?=
- =?us-ascii?Q?KEwTq9AXOsR0kRH0E/mMNcGdnUSnweqbZwf+nRXZh2KFhl6D8IL+uWtEOKh0?=
- =?us-ascii?Q?98kGetjeNnoPZZZy6+oit77cAKJU/KPivSKRyX1tWJp6IeoDrKy5kU21Ock8?=
- =?us-ascii?Q?RdXY+SwTC7vttwP/peyMN6dyAbqA+WW3HaVY45Biv8SnNnn0VuhQKYk4u8B0?=
- =?us-ascii?Q?aR+p2lt0hqkIcf5sgEiRRiVWoBEoRzwo0/eBooNxp9XO8QggtgeN4aWvPn9N?=
- =?us-ascii?Q?ZB2OiuLGjHts20eZYrmqSLinHkttJbdQjfbC0OMkEXoYDNP8cTYC2Yo7FYXb?=
- =?us-ascii?Q?NbGOdOOPPoTZMr53fojFR9QxhXT0DEzNE+rH9JBN7LJB6pH038NnfqFvG2eU?=
- =?us-ascii?Q?EmRO9Wh4L0h2uH9mmtpeq7xtMi13tfG9nUO3wEt17C5dP+9WHF5ErkqwVTSZ?=
- =?us-ascii?Q?my2ncf/kDz+njzPA1dxeGQPE5MafIBEXs0nW9N2Y6fjgHyk9UiAJH8H1lUOy?=
- =?us-ascii?Q?aqyjhXnLJFDXjBAxB038l8Q1xdn3nBRGcGJc8v3ESrGlaB8BJzjvOq8vwJ7n?=
- =?us-ascii?Q?twsaEU1sgfe+pfhCoIe8BgJqKdpsNYAdSylWpVafDUIcPjAueA6rP5oYpcaN?=
- =?us-ascii?Q?N/NTXSbzeGzVPQVU9BXqTYj/xVP4I+J0ybRl?=
+ ARA:13230040|1800799024|36860700013|376014|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?KH6Dsm+7RkL8ghrrkVbB0eg5U1GnxCpnLAEg/66iZ9RrGi5HMPwhW2DK5zBP?=
+ =?us-ascii?Q?9GqKc9pM4QzVJbBza7Qyqzv+6+5OpMeYLjWUvHV22rfylApg8qwdWRW4ySV8?=
+ =?us-ascii?Q?89TbLq/pntjG2dej1LZG/m9m2jZOGqSKupu8Sp+kPfboQVgJStYAUSL4pgTk?=
+ =?us-ascii?Q?YJ9QlaMZVLkg0A7trNBKYovHC0rcg4vVfxBjpawfJonCpD8rat+1t81KUl+3?=
+ =?us-ascii?Q?L14/6K21o7tSqJZEeNExtVbyVfegYWtateWDLLN4oGmQC/PG9CDr5EmnRFR1?=
+ =?us-ascii?Q?qTptQoXYvxbJNJdJ91CIEFB5KnBeo+5bJhQhqG7KKaCBgMGXiaR6+ooNDTEt?=
+ =?us-ascii?Q?Uw1WLaO7m0fphmJhEcv7L8k8SGxwhD95Ul1x9huhjm+53qFWNmU4mzyvGeOE?=
+ =?us-ascii?Q?4JPEqRRsMbiaGuNzMa1E0qYw1G2LdpxJf51cb3nb+R1WsmDMszROphJa4Tch?=
+ =?us-ascii?Q?3+aOg3AQIaMVOevnYqE64A5ENbUYscaIyb3OmsFZvI13SuJmiBRFfoWK1llO?=
+ =?us-ascii?Q?pxYfy68V9Go8vCHhFC638ace8X+dURZDA6dSB1kyDkerJsPgDRg9Op52OJxz?=
+ =?us-ascii?Q?ZiMmlmDYiz+2ipTMzKtoKfX/UKvF2IAQp81Zcg5PCVntJ6bgF+Kdg87rPVAw?=
+ =?us-ascii?Q?DRBWVyXwH00YKGtM6Eq+ev9uueMoOjHACN4rzUdHvgKb/VF9vXSJkFUeyn6w?=
+ =?us-ascii?Q?Is0W6HhrlJj85Hxo78uziFS7wLdZwfDBbeolfvEqeidNmDuOWmp+lUzVXsTy?=
+ =?us-ascii?Q?8Zhm6JwrSNo/3vGRl4L0AbDVDToRUOUQfVW4pIeC2ChlbEZ7Y9RQArT/m7+Z?=
+ =?us-ascii?Q?KSbkGyZV5ZNL6egnSq5CICMg9VC42YZHSrp4U7PB0qa1Svw4rdWAj/YgWOzW?=
+ =?us-ascii?Q?jhDQWk1KCNY34pOF2T3xTmtADPqSq3L+qocPjTUQDxyutaoC9/djPQSCv0/c?=
+ =?us-ascii?Q?rp1qorQFyrIRMJYDLTk2AFlSQR8VHSCEETcYXxwXSwtZvFuWsc73Z16SxLm0?=
+ =?us-ascii?Q?QBOtG0/Px45l4V2z5ViXRnzA5MT7dqCDL/CVMkup9qxmAmdwb1yAALw6lyLL?=
+ =?us-ascii?Q?8apsIgg6Li0oZXMhGlSm53Q1R9zqU2tF6X+FkVg3Pww2TqaTShyeo6uiLDcU?=
+ =?us-ascii?Q?OYG7VEk42ed/AAZYXLcsA5+z3nq7iLKi10DO1A2cFtL/GWyboF5/wuG3Tv8Y?=
+ =?us-ascii?Q?HDef8cYVoY7zdPSEy3gMDi7X71B8RcnA2kMjqm232AOKGtmhTkruHhjqsjPX?=
+ =?us-ascii?Q?gtHh0QdG1uDnT5FuPU7l9Oguq2O+YR93oymBC4WU5zKmK3QKNHOEd4vNmj5g?=
+ =?us-ascii?Q?iKOTOt7EetSqD00eO/ZlkWa7TKBsIpoblI1iJclF5s+Zq2YdKdsPiyI8bHh+?=
+ =?us-ascii?Q?8sSpnwvaPfjdYbvuYcoIJVeAn6SgcTxQrD6x3sg1GPfBs8T3pbhNe0gPFPXd?=
+ =?us-ascii?Q?XpkoXyKBpI0UP5Fsg0m20vL/o73POBs4gFKjzTkQ1SCBHwXqiXy9dBJdf7gl?=
+ =?us-ascii?Q?SPC+z30/dvkcYXpacJWtgqgu8MZSwsyOkrDJ?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);
+ CAT:NONE; SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: JUTEIA+E1It+k9gKYoNe429eZAaVqGP6TT1EZRLKv8k6NdCGg3UhkGFWhB4WkdodF4UpCZ5oLU0SuODyZDDJaiuvZUvFQOoUUkAMxn6L8V7ZAvUY7puWFSrBh33rqbAJ6Ofeg0DLLhipA87SyQx46Lto8h0Z1ictaPKCJvDaAbHaJ3L8nFlvgdzzNemu2wM7LlXawr/geUoX5kartCuVbtTe+Silu3aX4Xod1DBVFqOOvJu5iSEV/m5wEpIPbDoaxuRlCNAXa+AuLQBx5f2GAx2yHadlBMIuThqJFjy73ZtOVg8v1HZj8B7+n0REr430ARSA7LU3q2nJ3eu/QdV9NpuG87B9e5murCM3CVRB71ig/umd2SJ8xdMMzFaW2WBbndP491nx61Aa3au46SrLkD8IWwopTRHjxAFTAauI1AVgZUJGzkRhJueVi3ptPKWx/2n320ywWaQROQUWh6pqAWyCXQnRNFSo+iyPd1elKLPdagGBHTog2AmNgOqkXyZmGWAtFGNUvaH9Pbzkhv/5naYA26COi+w5Wge2POQitpEHZH/wIK3uLTW2ybm6QXarYX/QDaX3oloZiimFlNhXEuyfnW0aUPi/2+WykZHR2WLFx9PlUWvHEgIPWONw+4/1KuUWAs2lBc87XdBkzsM/Ig==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: bmokI+y1XFXIMExOB/O7s7WUF7wURmM02jDwFTTEFB6CCHXK0XMqV1W5ChjqJfi3uASnaMxeJjRt5y4jklPrdnTaAlSVp0qaA+dpF24Xksb+WKqW3EIXeKLw8j+DzBc9BNWfJdQJHAi8E0Zx4j1F0VWmUhyzAxHOuVYi+mD7K1tSLlH0A96bSSzw5QFE2fQEAl1Ge/Xx31Wi8ptz9OJz6/ignRHeu8jgRRp8ypI4kXgwdbjQZWvz29Bp9Kr00EyKQYvQtAL7vQS8nVuANduYUoei4RSOS9oAUa5BD/cNGUNPKj0EOBG7h+GSSbQzvog92zyM4oS+EnaXCo0hADAHHJcXnVdk/JcRERVizq8jWgJFgMxbbzqUIyFBf4fqebBEAF8WLM+yLSD3V6Oou+42hmXVXxuBcyL0QOXT3A9zG5irmjf3RqCKS6Vv38SoA5j9aw78ZJjFvkX5aZ+KBtu/At9/we2HuAVgUZ8SKitn4XmDDiOdegqRpUmQ9mtyhZwExfYROvNfW1m25MafO1UfsmwN4KnDZT9v0XynGgGYZCn5Rzee4yHSzTDR3ObjufHpkNBjAX40nctV2YM1g5njt82zUj6xd1Lqzu5Z8GYpS9UhBGwKt3yzCBJRRNvCS5pEilhM2mS+r/+pFlksNRZRJw==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:42:19.2996 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6e071f8-6876-4053-49f9-08ddfb78906a
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:42:18.5713 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a984fca3-0e9f-49e6-309b-08ddfb788ffb
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM4PEPF00027A69.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9P190MB1308
-X-BESS-ID: 1758724940-310947-7721-8064-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAP190MB0871
+X-BESS-ID: 1758724941-303549-7635-8096-1
 X-BESS-VER: 2019.1_20250904.2304
-X-BESS-Apparent-Source-IP: 40.107.162.117
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVmYmxmZAVgZQ0MQozTDFyMgoyd
- LA0NIiyTIxxdTANMXMyCzF0DwxMTlFqTYWAGoBvopBAAAA
-X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Apparent-Source-IP: 52.101.70.109
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkYmZuZAVgZQMCk5ySzR0tjc0D
+ DFMNEyNTUtOdHM0NA4NTEx1cjIzMxUqTYWAIFDFUZBAAAA
+X-BESS-Outbound-Spam-Score: 1.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.267723 [from 
- cloudscan8-57.eu-central-1a.ess.aws.cudaops.com]
+ cloudscan18-36.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
+ 0.50 BSF_RULE7568M          META: Custom Rule 7568M 
  0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS113687 scores of
- KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+ 0.50 BSF_RULE_7582B         META: Custom Rule 7582B 
+X-BESS-Outbound-Spam-Status: SCORE=1.00 using account:ESS113687 scores of
+ KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND, BSF_RULE_7582B
 X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -145,163 +147,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Extent table id functions with prefix nthw_.
+Add prefix nthw_ to nim_agx_setup to follow naming convention.
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- drivers/net/ntnic/nthw/flow_api/flow_id_table.c  | 10 +++++-----
- drivers/net/ntnic/nthw/flow_api/flow_id_table.h  | 10 +++++-----
- .../profile_inline/flow_api_profile_inline.c     | 16 ++++++++--------
- 3 files changed, 18 insertions(+), 18 deletions(-)
+ drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c | 2 +-
+ drivers/net/ntnic/nim/i2c_nim.c                                 | 2 +-
+ drivers/net/ntnic/nim/i2c_nim.h                                 | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_id_table.c b/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
-index f22796597f..f7c983fb9f 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
-@@ -64,7 +64,7 @@ static inline uint32_t ntnic_id_table_array_pop_free_id(struct ntnic_id_table_da
- 	return id;
+diff --git a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
+index 36ecf0d0ec..8bd6584b1d 100644
+--- a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
++++ b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
+@@ -991,7 +991,7 @@ int nt4ga_agx_link_100g_ports_init(struct adapter_info_s *p_adapter_info, nthw_f
+ 		for (i = 0; i < nb_ports; i++) {
+ 			/* 2 + adapter port number */
+ 			const uint8_t instance = (uint8_t)(2U + i);
+-			nim_agx_setup(&nim_ctx[i], p_nthw_agx->p_io_nim, p_nthw_agx->p_i2cm,
++			nthw_nim_agx_setup(&nim_ctx[i], p_nthw_agx->p_io_nim, p_nthw_agx->p_i2cm,
+ 				p_nthw_agx->p_pca9849);
+ 			nim_ctx[i].hwagx.mux_channel = i;
+ 			nim_ctx[i].instance = instance;	/* not used */
+diff --git a/drivers/net/ntnic/nim/i2c_nim.c b/drivers/net/ntnic/nim/i2c_nim.c
+index a394b4c5d4..9393467904 100644
+--- a/drivers/net/ntnic/nim/i2c_nim.c
++++ b/drivers/net/ntnic/nim/i2c_nim.c
+@@ -881,7 +881,7 @@ bool nthw_qsfp28_set_fec_enable(nim_i2c_ctx_p ctx, bool media_side_fec, bool hos
+ 	return true;
  }
  
--void *ntnic_id_table_create(void)
-+void *nthw_id_table_create(void)
+-void nim_agx_setup(struct nim_i2c_ctx *ctx, nthw_pcal6416a_t *p_io_nim, nthw_i2cm_t *p_nt_i2cm,
++void nthw_nim_agx_setup(struct nim_i2c_ctx *ctx, nthw_pcal6416a_t *p_io_nim, nthw_i2cm_t *p_nt_i2cm,
+ 	nthw_pca9849_t *p_ca9849)
  {
- 	struct ntnic_id_table_data *handle = calloc(1, sizeof(struct ntnic_id_table_data));
+ 	ctx->hwagx.p_nt_i2cm = p_nt_i2cm;
+diff --git a/drivers/net/ntnic/nim/i2c_nim.h b/drivers/net/ntnic/nim/i2c_nim.h
+index 61dfedaa4f..2fdfd37a03 100644
+--- a/drivers/net/ntnic/nim/i2c_nim.h
++++ b/drivers/net/ntnic/nim/i2c_nim.h
+@@ -36,7 +36,7 @@ int nthw_construct_and_preinit_nim(nim_i2c_ctx_p ctx, void *extra);
+ void nthw_qsfp28_set_high_power(nim_i2c_ctx_p ctx);
+ bool nthw_qsfp28_set_fec_enable(nim_i2c_ctx_p ctx, bool media_side_fec, bool host_side_fec);
  
-@@ -74,7 +74,7 @@ void *ntnic_id_table_create(void)
- 	return handle;
- }
+-void nim_agx_setup(struct nim_i2c_ctx *ctx, nthw_pcal6416a_t *p_io_nim, nthw_i2cm_t *p_nt_i2cm,
++void nthw_nim_agx_setup(struct nim_i2c_ctx *ctx, nthw_pcal6416a_t *p_io_nim, nthw_i2cm_t *p_nt_i2cm,
+ 	nthw_pca9849_t *p_ca9849);
  
--void ntnic_id_table_destroy(void *id_table)
-+void nthw_id_table_destroy(void *id_table)
- {
- 	struct ntnic_id_table_data *handle = id_table;
- 
-@@ -84,7 +84,7 @@ void ntnic_id_table_destroy(void *id_table)
- 	free(id_table);
- }
- 
--uint32_t ntnic_id_table_get_id(void *id_table, union flm_handles flm_h, uint8_t caller_id,
-+uint32_t nthw_id_table_get_id(void *id_table, union flm_handles flm_h, uint8_t caller_id,
- 	uint8_t type)
- {
- 	struct ntnic_id_table_data *handle = id_table;
-@@ -106,7 +106,7 @@ uint32_t ntnic_id_table_get_id(void *id_table, union flm_handles flm_h, uint8_t
- 	return new_id;
- }
- 
--void ntnic_id_table_free_id(void *id_table, uint32_t id)
-+void nthw_id_table_free_id(void *id_table, uint32_t id)
- {
- 	struct ntnic_id_table_data *handle = id_table;
- 
-@@ -129,7 +129,7 @@ void ntnic_id_table_free_id(void *id_table, uint32_t id)
- 	rte_spinlock_unlock(&handle->mtx);
- }
- 
--void ntnic_id_table_find(void *id_table, uint32_t id, union flm_handles *flm_h, uint8_t *caller_id,
-+void nthw_id_table_find(void *id_table, uint32_t id, union flm_handles *flm_h, uint8_t *caller_id,
- 	uint8_t *type)
- {
- 	struct ntnic_id_table_data *handle = id_table;
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_id_table.h b/drivers/net/ntnic/nthw/flow_api/flow_id_table.h
-index edb4f42729..99789955bc 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_id_table.h
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_id_table.h
-@@ -13,14 +13,14 @@ union flm_handles {
- 	void *p;
- };
- 
--void *ntnic_id_table_create(void);
--void ntnic_id_table_destroy(void *id_table);
-+void *nthw_id_table_create(void);
-+void nthw_id_table_destroy(void *id_table);
- 
--uint32_t ntnic_id_table_get_id(void *id_table, union flm_handles flm_h, uint8_t caller_id,
-+uint32_t nthw_id_table_get_id(void *id_table, union flm_handles flm_h, uint8_t caller_id,
- 	uint8_t type);
--void ntnic_id_table_free_id(void *id_table, uint32_t id);
-+void nthw_id_table_free_id(void *id_table, uint32_t id);
- 
--void ntnic_id_table_find(void *id_table, uint32_t id, union flm_handles *flm_h, uint8_t *caller_id,
-+void nthw_id_table_find(void *id_table, uint32_t id, union flm_handles *flm_h, uint8_t *caller_id,
- 	uint8_t *type);
- 
- #endif	/* FLOW_ID_TABLE_H_ */
-diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-index 3f80e0f945..d9c10a8eab 100644
---- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-+++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-@@ -211,7 +211,7 @@ static int flow_mtr_create_meter(struct flow_eth_dev *dev,
- 
- 	union flm_handles flm_h;
- 	flm_h.idx = mtr_id;
--	uint32_t flm_id = ntnic_id_table_get_id(dev->ndev->id_table_handle, flm_h, caller_id, 2);
-+	uint32_t flm_id = nthw_id_table_get_id(dev->ndev->id_table_handle, flm_h, caller_id, 2);
- 
- 	learn_record->sw9 = flm_id;
- 	learn_record->kid = 1;
-@@ -327,7 +327,7 @@ static int flow_mtr_destroy_meter(struct flow_eth_dev *dev, uint8_t caller_id, u
- 	mtr_stat[mtr_id].n_pkt_base = 0;
- 	mtr_stat[mtr_id].buckets = NULL;
- 
--	ntnic_id_table_free_id(dev->ndev->id_table_handle, flm_id);
-+	nthw_id_table_free_id(dev->ndev->id_table_handle, flm_id);
- 
- 	nthw_flm_lrn_queue_release_write_buffer(flm_lrn_queue_arr);
- 
-@@ -431,7 +431,7 @@ static void flm_mtr_read_inf_records(struct flow_eth_dev *dev, uint32_t *data, u
- 		uint8_t caller_id;
- 		uint8_t type;
- 		union flm_handles flm_h;
--		ntnic_id_table_find(dev->ndev->id_table_handle, inf_data->id, &flm_h, &caller_id,
-+		nthw_id_table_find(dev->ndev->id_table_handle, inf_data->id, &flm_h, &caller_id,
- 			&type);
- 
- 		/* Check that received record hold valid meter statistics */
-@@ -507,7 +507,7 @@ static void flm_mtr_read_sta_records(struct flow_eth_dev *dev, uint32_t *data, u
- 		uint8_t caller_id;
- 		uint8_t type;
- 		union flm_handles flm_h;
--		ntnic_id_table_find(dev->ndev->id_table_handle, sta_data->id, &flm_h, &caller_id,
-+		nthw_id_table_find(dev->ndev->id_table_handle, sta_data->id, &flm_h, &caller_id,
- 			&type);
- 
- 		if (type == 1) {
-@@ -958,14 +958,14 @@ static int flm_flow_programming(struct flow_handle *fh, uint32_t flm_op)
- 	if (flm_op == NT_FLM_OP_LEARN) {
- 		union flm_handles flm_h;
- 		flm_h.p = fh;
--		fh->flm_id = ntnic_id_table_get_id(fh->dev->ndev->id_table_handle, flm_h,
-+		fh->flm_id = nthw_id_table_get_id(fh->dev->ndev->id_table_handle, flm_h,
- 			fh->caller_id, 1);
- 	}
- 
- 	uint32_t flm_id = fh->flm_id;
- 
- 	if (flm_op == NT_FLM_OP_UNLEARN) {
--		ntnic_id_table_free_id(fh->dev->ndev->id_table_handle, flm_id);
-+		nthw_id_table_free_id(fh->dev->ndev->id_table_handle, flm_id);
- 
- 		if (rte_atomic_load_explicit(&fh->learn_ignored, rte_memory_order_seq_cst) == 1)
- 			return 0;
-@@ -4057,7 +4057,7 @@ int nthw_init_flow_mgmnt_of_ndev_profile_inline(struct flow_nic_dev *ndev)
- 
- 		nthw_mod_flm_pst_flush(&ndev->be, 0, ALL_ENTRIES);
- 
--		ndev->id_table_handle = ntnic_id_table_create();
-+		ndev->id_table_handle = nthw_id_table_create();
- 
- 		if (ndev->id_table_handle == NULL)
- 			goto err_exit0;
-@@ -4132,7 +4132,7 @@ int nthw_done_flow_mgmnt_of_ndev_profile_inline(struct flow_nic_dev *ndev)
- 		free(ndev->flm_mtr_handle);
- 
- 		nthw_flow_group_handle_destroy(&ndev->group_handle);
--		ntnic_id_table_destroy(ndev->id_table_handle);
-+		nthw_id_table_destroy(ndev->id_table_handle);
- 
- 		nthw_mod_cat_cfn_set(&ndev->be, HW_CAT_CFN_PRESET_ALL, 0, 0, 0);
- 		nthw_mod_cat_cfn_flush(&ndev->be, 0, 1);
+ #endif	/* I2C_NIM_H_ */
 -- 
 2.45.0
 
