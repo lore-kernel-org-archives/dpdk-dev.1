@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F44CAC5AE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 14:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCC9CAC5AE
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 14:44:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7776140E2A;
-	Wed, 24 Sep 2025 16:42:33 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9F50840DD5;
+	Wed, 24 Sep 2025 16:42:34 +0200 (CEST)
 Received: from egress-ip42a.ess.de.barracuda.com
  (egress-ip42a.ess.de.barracuda.com [18.185.115.201])
- by mails.dpdk.org (Postfix) with ESMTP id 5DBC140DCE
- for <dev@dpdk.org>; Wed, 24 Sep 2025 16:42:15 +0200 (CEST)
-Received: from MRWPR03CU001.outbound.protection.outlook.com
- (mail-francesouthazon11021109.outbound.protection.outlook.com
- [40.107.130.109]) by mx-outbound13-221.eu-central-1a.ess.aws.cudaops.com
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Wed, 24 Sep 2025 14:42:12 +0000
+ by mails.dpdk.org (Postfix) with ESMTP id 05FE640BA4
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 16:42:17 +0200 (CEST)
+Received: from DB3PR0202CU003.outbound.protection.outlook.com
+ (mail-northeuropeazon11020093.outbound.protection.outlook.com [52.101.84.93])
+ by mx-outbound13-221.eu-central-1a.ess.aws.cudaops.com (version=TLSv1.2
+ cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+ Wed, 24 Sep 2025 14:42:15 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PpciXlFd9WPofTCOFcc/kSLAZtHq6uqiIIMk5zb6ZBenB88adrY48jNUBRpfr8uK1TU1QS684gkHbMKXdiI/10CihBBAGGK7tV3v/eA/KwRM2zVntGUnTanDNUzxsz5/wZ9gzbiu/H6h9eIxoDpsXJQu+sflZGmfXZkYiNblNNa0qeouqvTgOGyhpNs0aNvdgBJjx5rwsZ/cLhnPZMqp1rhPZMPrQEik52L4RbJQgcHLwoYtmQ6zSAv7uuP1Sp9wr/YnB8WIyz3ODntgy8RuyIR2UnJ49oSQe7vJQhhbkM4HOGQrqN4q4fEpk60Bo0hw3jl4ITwERsHjDfID3EFoOw==
+ b=IZVBWq4p6uRc6Tepu5wWB1pTluEGu0JD4tAFJivAZDbxkFdkJbOpC3sZNdyijMjRsffN2i0gaNeOHTDVDRWZ3+WezxzUObYgNglv3QnDoWcKnZWKfSVJJOExiVXDVfUCjyHXztgxOLDTJ4Oocn2aTnXQF8NgjAgFNrgDeeyRsWOlViKI0KUawJ2YbbDEXn7egfml+a0kAP3BGD2BpbTknRACwmBy1HjULCoPZmqBZ/li/2qjMemaDt51PELClk0F/FngRhuxKyfp6G27qu+GZDMuSC4F7iODusGQAL3x1icZnTHjxFv9zHCUalbqHtiUrSdJFwM2c8OJQDVwK7Gpfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2ZonLSyb53XOFBoD3zPS7EAdfbf5DaiAO6WpvagFyL8=;
- b=EmFFTqeRdFAPo0lm/EZEQfQna4MAwz5VQd1WWZXQHakOhooKzSZxYdw8lwQRdCdDIlz9KHWmkNhtBDEF0vDfJn4ojvoYbrpQfef27DHjbMJFS29X89bDaJ1kOKY1px1+z42BAvu6QmLuNqrb24V/l9AYZIxBHEYztXtj4lfcQmd2NHOHYZkxhwSiC+3VL6nNvTD6giEeaZV5MmdxqvKj9JM8hHk6Sxh2X7VaY8Rh06nyBP+3YkwgQu5pCFAj+M49KWQ2HQa8HH+47zRNootIwhBdtb7RKnSloFnvv9/j06ywPFJucsjaqt/Cpnq7gg7sMHYUS9OQhwPkny5coPk7aA==
+ bh=dS8zvUWdqpFX8ssniW8zlkKdatz1gAS/qOgz92/SN4A=;
+ b=N+01pHgdOiwhZP+GofJ95HzPP5ZpHJZt+XfrrntigWoeGaI0+Vpikf4Ok2we/jbaAapE3e6cocIYqrwCPVtfAHDmUWj9S9yOoT+8BqjgLV/79sDsnNHmSPbvlwmQUZ/rEc0rLFmJMXhmK8W1lBlc8GKLZIjOo1679S/dylSuHD1SfBUSZ2rCRBp3t6u3jSH7COObH7eDykAGgw6ORkd1x/9Q3aXeh5OsUBzZ1kv+Fq9GFg/EXCBsp4oNVrfkY4uBdcT0BqInkCllJ8ff4TzqWUY6MEnvoC6vHssp7zDxs/uJwVfpwqri4LTbHKZvrtY+os9f72CnR124IN3gJlm8TQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2ZonLSyb53XOFBoD3zPS7EAdfbf5DaiAO6WpvagFyL8=;
- b=ZTzLxkwYwxn8lT/CdlkthysWQsZmdMwRvCMGAOQqK7KQ30yYbZCi7Vfd1TwiLPwuMiZbfoIt8KDRmo2dLtgWarSSX2Xbv4I0sBtvY5LmKl/qEJfldRXOp6qcf/dsvcsciFlo8mPrAJETOPKo4n1CYY+Jk6REdtFsl8C8i2CH2d4=
-Received: from CWLP123CA0237.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:19f::7)
- by DU4P190MB2200.EURP190.PROD.OUTLOOK.COM (2603:10a6:10:56f::18) with
+ bh=dS8zvUWdqpFX8ssniW8zlkKdatz1gAS/qOgz92/SN4A=;
+ b=lQHH4PmMmTFNekOh7oMUNURtGU+CG0Bbu/Kp4mGURvRjCo21Z7TOfGiTdS7jK8BEs1PBo1dGlPCJbjPcPmZi7Xss5n191fiC7jNFIGi+0ojc7sdKV3Jv6+NSbMYpeWwE2apn6luKPHTJhllj27lW8InvN7bC7R1W7On/EMtx9QI=
+Received: from CWLP123CA0239.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:19f::8)
+ by DU0P190MB1729.EURP190.PROD.OUTLOOK.COM (2603:10a6:10:341::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.18; Wed, 24 Sep
- 2025 14:42:10 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Wed, 24 Sep
+ 2025 14:42:13 +0000
 Received: from AM4PEPF00027A69.eurprd04.prod.outlook.com
- (2603:10a6:400:19f:cafe::b6) by CWLP123CA0237.outlook.office365.com
- (2603:10a6:400:19f::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.21 via Frontend Transport; Wed,
- 24 Sep 2025 14:42:10 +0000
+ (2603:10a6:400:19f:cafe::e2) by CWLP123CA0239.outlook.office365.com
+ (2603:10a6:400:19f::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.20 via Frontend Transport; Wed,
+ 24 Sep 2025 14:42:12 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  AM4PEPF00027A69.mail.protection.outlook.com (10.167.16.87) with Microsoft
- SMTP Server id 15.20.9160.9 via Frontend Transport; Wed, 24 Sep 2025 14:42:10
+ SMTP Server id 15.20.9160.9 via Frontend Transport; Wed, 24 Sep 2025 14:42:12
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v1 15/24] net/ntnic: change prefix nt to prefix nthw
-Date: Wed, 24 Sep 2025 16:41:38 +0200
-Message-ID: <20250924144152.53203-16-sil-plv@napatech.com>
+Subject: [PATCH v1 18/24] net/ntnic: change prefix set to prefix nthw
+Date: Wed, 24 Sep 2025 16:41:41 +0200
+Message-ID: <20250924144152.53203-19-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250924144152.53203-1-sil-plv@napatech.com>
 References: <20250908141740.1312268-2-sil-plv@napatech.com>
@@ -67,71 +67,70 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A69:EE_|DU4P190MB2200:EE_
+X-MS-TrafficTypeDiagnostic: AM4PEPF00027A69:EE_|DU0P190MB1729:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 6bf3eb15-fa7f-457e-4ea6-08ddfb788b2b
+X-MS-Office365-Filtering-Correlation-Id: 958aef60-5be3-448e-786f-08ddfb788c55
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|36860700013|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Rl1O7Pl49behe/HepdelKmyIy0L+mpfCkBn5z99UEBASZYC8otMXnVjyBSyu?=
- =?us-ascii?Q?33YZxyCCIizq+SguvK7Ydb4sva9P1ZMYmUabGBPlIUyP9P2Nxq/uWRLx/vcS?=
- =?us-ascii?Q?3S1TwyB5GY5e8+jh8n648lQLSujEC06xVJjICaxibH8FmkJJpmnuwTlShnIq?=
- =?us-ascii?Q?rzhNb35MhrsViYpDrMEOMTIkbypemQ2BkdQMT5A899wL4N2Txuukg6AF5Qp3?=
- =?us-ascii?Q?/ESkxUrFYO3xBPk1Z1YxA0xtxAcEuPnj+AsYjEkEuCBP96fqyePJRN8B8ZKt?=
- =?us-ascii?Q?+tkMmU90dXAUNa8iGSqWXNq1/oaBcJQx954bcVHbJDkYP8dpwmk6SSLX+JO+?=
- =?us-ascii?Q?YoqyzmK8rmI51UY6agXzfnCkm+P/GmNYCZw51Jn8DRM+IK6kPPM7uG5z75UB?=
- =?us-ascii?Q?0tviu3SzWwtG7i26SFaFz1lK/A+4/iPWaS3RnHGmiIHk8hKa5ICA0abvPgwF?=
- =?us-ascii?Q?ZOLuYUMPbypmX8eONMzmUNKshyPRsZ9YEkwLLA4n+0QtFmgscLU8YfFer0hK?=
- =?us-ascii?Q?H4M76qTKuFYwePdpb3GcKgm0Sz0Gm4mpgoTAwxHo2NTXPyl8jlpoX1dWh4rJ?=
- =?us-ascii?Q?QjadKc+q+Nzj2jWjHopdPD8yhf7OnyPoM779i4NN3X/lmUlTjG7zNWBTlluK?=
- =?us-ascii?Q?dU1Q/m2yer8yKDbPAVcDvc/URRKrFOhf1gPDg0abmjuFcG+45ceTVtZ7Wpfj?=
- =?us-ascii?Q?+//D5D8Vr1WuUBMHaqj1Kxv8v1cld5oQ/eY7eZAVls6X7ASbHkjSdfdC3i54?=
- =?us-ascii?Q?qMadpe/SFNA6XKaG+yj+MJs415MUrf9WcHItJ8aaQDAPqUOEuwTu/CFXf959?=
- =?us-ascii?Q?FBgsrw4xspNDVVx/gBITLT+wUG7CgrZje6Jruil7tVHIWBZN4sqZIB6uotnT?=
- =?us-ascii?Q?KDNEZU98IrH+c0+8R41F422yl5i4wbP0MUsdBS1g5un+yv7t1A6CTJJRPJ2B?=
- =?us-ascii?Q?nJYSGXSGtmHiNC21MSnD28Zc/rbuZs73dKUbEbrMhSDC11UB0FxfpFD0dI/o?=
- =?us-ascii?Q?eRaftmTscpGxh+H3tsWPO6HC5t0bPCc6qYMFniRlVBOjfTKZ9a90xzAf4iIs?=
- =?us-ascii?Q?D6FSk/CHW2XJc8N0aoFKGwrzn8PvTcIPpV3xnV4zHrybrTpCFutxJ4/SeO7h?=
- =?us-ascii?Q?zP4rYlGgq4AqxUzjrJhNl1dkECHDE7rPxK1UdcNFpZRCu7XaKJZdlnHGN0Tt?=
- =?us-ascii?Q?/IunDQuHaJdoIAFjYYAXBgnRxgpAoAtRdb/7aTi/W+Q2wsybAqkIHlFyulUX?=
- =?us-ascii?Q?7Uoga/OgrJfnGJwCbWc+ynSpl6QeQySmaoyhk4elb9lJE+XdC7PIE3ucPURM?=
- =?us-ascii?Q?y6gM2QKCs3Q+7vTg1CX+1eVdaIafO9qyz6673jv+LCjXdON90mN85eo9M5df?=
- =?us-ascii?Q?87U/L6SJsOudyyZj8lydthE/wgAnxN1aQ3JT3ZZJcx0YY4RkNI++el2l1dsj?=
- =?us-ascii?Q?hg4kg2GGoHoLk9SWWPAp/yMwXL8SoYjWyrs/zedRsYnMB4EICmUDzjbIstTh?=
- =?us-ascii?Q?aOVsYtIGP30sLXfO2YSmmjwYx8zfBDP41mGm?=
+ ARA:13230040|376014|36860700013|1800799024|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Iq10OYnXf6aWwAIcRPW8cw3sUiViuBsctJnBpozRvaMgoMTXGEzw2j/Q1k+F?=
+ =?us-ascii?Q?AXs5Xo6xJtVlWtPt3ZGgGoy967f8nmXaZltmb90RI2WXdG+ZxW2CLwJutP3w?=
+ =?us-ascii?Q?GoHm/TlizR/Jhy6TXnrMuvx3G/Rm562SFQ4f4zPxABnU3t1aWhpGPe5HfhS0?=
+ =?us-ascii?Q?6NpCVnFHrDkoNUcSjZIdJmIH+oE1zaf7o5fEUxGzoJXuNZyWy26WaZ4mVUaY?=
+ =?us-ascii?Q?R66FjbDctWnhthTI/t0o2Rwl8QvqijYCJqmbr6YBczX21JTRZNX2lAK2xOME?=
+ =?us-ascii?Q?RlCfhxNDkNtI2H+QK4HQHhCFSso82IkLuXsETWEtd2NN0XqdNA02W29rzzsM?=
+ =?us-ascii?Q?++U4WazgZXXRy9zabW9k1kWrzjJthFt3ezH44WFUxtlEvgyZ13zvxOGqXRCc?=
+ =?us-ascii?Q?tC6xbnfwrLVxrxIf7VyOHZFTZtkbDp5rbixKqAawA39CJL7T9MwMJMbgsqoZ?=
+ =?us-ascii?Q?PFGOmloZ/vJLBT9WU46pB3okTgvNzYw1YX8qBJuZBJJCxjYV9gyNflmfpcH+?=
+ =?us-ascii?Q?asfjtlFoqQaPyyYSJwP7GrMwB3/AFYSHIzsmN/NrU7rgQG2RVrfN261SnZy3?=
+ =?us-ascii?Q?RSk5ubi0FPbhN+9JCyLKBCHHhxAOL1VY2ryK5UuxKsR0xsT9LYxsQCoVdxGm?=
+ =?us-ascii?Q?Hbx2Khg30H7iP/IJ1BtTgLU4KZ86qnp+fWnHFFyTTOtvAuFU7n9Qp+ph+WX8?=
+ =?us-ascii?Q?L3SsZ1GWXxsOX9wUtPgCHfEpd7WhnDBiw6QFhYWjGHyDogi8jZ2Zd65nxMmK?=
+ =?us-ascii?Q?zagkSH49HI1/PDNrqXuCVc6Irsag6WA5yELN0+GEyBy8KSSDn720Uxx65oQE?=
+ =?us-ascii?Q?M2Cyj+yYDrZIvculU8I0bKczyKqowOkGnCmYp6mDksdPLcPUF6pFPS3NG6ZJ?=
+ =?us-ascii?Q?QoXeQsjnvW923YLMmPtuL+yXr9sMMLxTMH4Q51BW8ssoFRaYsfAjMf1I9mRp?=
+ =?us-ascii?Q?irkI5Y8pPFupIFsGVCj754HCe3e8SZFlF2yYIrxy9WAxwQBd6PD/EUeMaoCJ?=
+ =?us-ascii?Q?BamRaH1pBntIw5YXBF0/0Pnk9LdRcdELWBFSNmoi/KaFBrrRSuzMWfljpmGw?=
+ =?us-ascii?Q?dtHzgtShlo1X/r5OEnb3/yo1iR6VOIt72GraM2g5M/FJiWhCSe05vcXSt2Nf?=
+ =?us-ascii?Q?fc5FfIIadKTi2zlU2QTvAwlFCCXobPvIELvGMqcr3SvXXHvbmm7jshBRK4jo?=
+ =?us-ascii?Q?rT8HYoiwURYXHjfZnC5el+4FDy6l+birKAJ5DUcVNmCZNxvKwgeK7G+eRA+X?=
+ =?us-ascii?Q?khWg/09vObW/y6we4Sp1bwdK57+0e4D7Joq6O7VVyWhNTqtHuFSaPrOx9+Fu?=
+ =?us-ascii?Q?9i28CENF7lfncMu/fHsoQEcLTLNgJh31lwhX1tPs6lu80L8/YdUiHthK0IN/?=
+ =?us-ascii?Q?O1eboRcBUYEVOBwkZ4LZ8nka75DijdftRpuqLgU6XN+e2iCNP036IIy4ylGv?=
+ =?us-ascii?Q?f/I11VaT42Ir4XyD5ugPUPimbdxVr11xE/weLMEeMs4IOzYbuyNGSJrrbkxe?=
+ =?us-ascii?Q?cvKW/Gk4PPeYl1Kj+vP+CcKGM+m1XgOFSbc0?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);
+ CAT:NONE; SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: s7lDJ6hmjF3zDpI3sHmjSZ0oNjukcZuFTPMYbYatWb6/zGz9EatdiCkDBMONyPE3Pdssyc6LFBwWiGt7Pc28mpRYDIOaE1L46zLq6t0EQwG2eDJGYIYn2VeiJNqADXutvj1xe0+wBIG3mGBhTLitbK4l65cIYfAH5ExoFQQL4HEbTXnjB1B+ZLI9gzLftmDWBsfLZOfcJ/XSbdLS7HLeWD5IjA5mgkruuXiQd/MsZ6U24jDwvAYnxCJNJUswoAj8g4cJPNgG9q2oXcP6N040eAMgB85qRwJUciEivEU9BkoiITKYTuMsbRoWlvVuGEAiVItRVdJ5ph+Ekk9Cw4LKPaqJQhR6V8AQVe0asGrcN36XPenyncboIw4LNjMykXukwXNAAtaCMrRQzXH4KOL+UywHUfc2Du/Jy6NgVUvBB85WNeDTBp8nDkNgfMEPBlcFmrXX2G8Nyz9rfc/VmK2ae16VT2jhzUxUfMD4bEG2gwHb7Zi77Sq1LTiCtVuSnU9MBye3T3kJmlAAPfcZnaTNsGG2l8qF28wTHAInHgg0QAAF2xXHg4Rchzjk4SG58bJ1zeSzqLws77Qec8Bk4k3F0y+fbdpYgD/xWedghmDmC8gq6P0dL+bXAruRYxPhk4jSp07kZryOe+MNPjACAUwKaw==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: uN0MjlATwaLa4+Df7lZvVGSWzJE3X2ZC1KGWqVhGem73T6mF+P1s1yVekgeoYVC/6fRyWWDkjqty6eD57oeOo+kQMSjKqJO9U9+GnTu1y0ukuiCS9KcPCe3RCNcHhrfufL3XfIKBblA+bjj22ysLDLjQ3DxSjuGLmoLNa2GynHnJWbeqZUJmOtQzgu2h0LfagAvGPUm5qUcIJ2PU3iAzPOO62IAdHA84U4sjoWmtC/ao5giPSWx7J//BmATT9Dwb9DQH5MSdtaZxgTOKwv2Ll/1SqB/lk8TE2C/pvIDXlfxcz6LanZzOJNXleNMxeP3v9IoGn6f3ZJgTo7EreKyiFGkykXN0lADtMyUx7gI3A7iGZdekHBLo6A6swInNx+K98EDZmU1QoTSSHh4NHGBYErZHC6AXnzK1MR9t1VkvLJiR6E723AlIZ6BjqTRHMxji/HGxMgATNnUYJNawt5Bx4Yf3u/Fp8xpiLbaoGkczQS6dDBDnA2FFpHc2IrV++YRvAcZVGlp8CCEWS9yH2BkgD4eMuoiQt/qbssQsJW3BWFkYcZQKnqmrXEIrDWAX988Eeoqy9Woh+5Fub8nQa4kNyLoSxAQCIjU2G2q4aygkQvCzaGA6aBMwV+S2VGE5mk70qz69F4EOMYxzfu26AAbWqQ==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:42:10.4974 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6bf3eb15-fa7f-457e-4ea6-08ddfb788b2b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:42:12.4521 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 958aef60-5be3-448e-786f-08ddfb788c55
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM4PEPF00027A69.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4P190MB2200
-X-BESS-ID: 1758724932-303549-7640-8101-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0P190MB1729
+X-BESS-ID: 1758724935-303549-7631-8104-1
 X-BESS-VER: 2019.1_20250904.2304
-X-BESS-Apparent-Source-IP: 40.107.130.109
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKViaWBkaWQGYGUNQsLTExyTw1Jc
- nMPNEyOdUYyExNsjC1TExMTbEwM7FUqo0FADnGYk9CAAAA
-X-BESS-Outbound-Spam-Score: 0.50
+X-BESS-Apparent-Source-IP: 52.101.84.93
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoamBsbmQGYGUDQtMTXZJNE00T
+ I11cg8OcUkLdHMPMnCxNIkySjV0ijFUKk2FgDWpK7iQgAAAA==
+X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.267723 [from 
- cloudscan10-222.eu-central-1a.ess.aws.cudaops.com]
+ cloudscan22-49.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
- 0.50 BSF_RULE7568M          META: Custom Rule 7568M 
  0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS113687 scores of
- KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS113687 scores of
+ KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -146,1317 +145,401 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-change prefix nt_ to prefix nthw_ to specify that this is related to
-Napatech hardware.
+Change setter functions prefix from set_ to nthw_set_ for DBS module
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- .../net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c |  2 +-
- drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c |  2 +-
- .../link_mgmt/link_100g/nt4ga_link_100g.c     | 12 ++---
- .../link_agx_100g/nt4ga_agx_link_100g.c       | 16 +++----
- drivers/net/ntnic/nim/i2c_nim.c               |  4 +-
- .../nt200a0x/reset/nthw_fpga_rst_nt200a0x.c   |  2 +-
- .../core/nt400dxx/reset/nthw_fpga_rst9574.c   | 18 ++++----
- .../nt400dxx/reset/nthw_fpga_rst_nt400dxx.c   | 32 ++++++-------
- drivers/net/ntnic/nthw/core/nthw_fpga.c       |  2 +-
- drivers/net/ntnic/nthw/core/nthw_i2cm.c       |  4 +-
- drivers/net/ntnic/nthw/core/nthw_igam.c       |  4 +-
- drivers/net/ntnic/nthw/core/nthw_iic.c        |  2 +-
- drivers/net/ntnic/nthw/core/nthw_mac_pcs.c    |  6 +--
- drivers/net/ntnic/nthw/core/nthw_phy_tile.c   | 46 +++++++++----------
- .../net/ntnic/nthw/core/nthw_si5332_si5156.c  |  2 +-
- drivers/net/ntnic/nthw/core/nthw_si5340.c     |  4 +-
- drivers/net/ntnic/nthw/core/nthw_spi_v3.c     | 12 ++---
- .../profile_inline/flow_api_profile_inline.c  | 18 ++++----
- .../net/ntnic/nthw/model/nthw_fpga_model.c    |  2 +-
- drivers/net/ntnic/nthw/nthw_rac.c             |  8 ++--
- drivers/net/ntnic/ntnic_ethdev.c              | 42 +++++++++--------
- drivers/net/ntnic/ntnic_vfio.c                | 16 +++----
- drivers/net/ntnic/ntnic_vfio.h                | 10 ++--
- drivers/net/ntnic/ntutil/nt_util.c            | 22 ++++-----
- drivers/net/ntnic/ntutil/nt_util.h            | 18 ++++----
- 25 files changed, 154 insertions(+), 152 deletions(-)
+ drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c | 50 +++++++++----------
+ drivers/net/ntnic/include/ntnic_dbs.h         | 22 ++++----
+ drivers/net/ntnic/nthw/dbs/nthw_dbs.c         | 22 ++++----
+ 3 files changed, 47 insertions(+), 47 deletions(-)
 
-diff --git a/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c b/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
-index ff83ba69f7..9d0d77dcc8 100644
---- a/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
-+++ b/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
-@@ -128,7 +128,7 @@ static int nt4ga_stat_setup(struct adapter_info_s *p_adapter_info)
- 		int numa_node = p_adapter_info->fpga_info.numa_node;
- 
- 		/* FPGA needs a 16K alignment on Statistics */
--		p_dma = nt_dma_alloc(n_stat_size, 0x4000, numa_node);
-+		p_dma = nthw_dma_alloc(n_stat_size, 0x4000, numa_node);
- 
- 		if (!p_dma) {
- 			NT_LOG_DBGX(ERR, NTNIC, "p_dma alloc failed");
 diff --git a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
-index 107fe91394..7b2e2e53fc 100644
+index 7b2e2e53fc..3257233545 100644
 --- a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
 +++ b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
-@@ -485,7 +485,7 @@ static int dbs_wait_hw_queue_shutdown(struct nthw_virt_queue *vq, int rx)
+@@ -198,7 +198,7 @@ static void dbs_init_tx_queue(nthw_dbs_t *p_nthw_dbs, uint32_t queue, uint32_t s
+ 		nthw_get_tx_init(p_nthw_dbs, &init, &dummy, &busy);
+ 	} while (busy != 0);
  
- 	if (err) {
- 		if (err == -ENOTSUP) {
--			nt_os_wait_usec(200000);
-+			nthw_os_wait_usec(200000);
- 			return 0;
- 		}
+-	set_tx_init(p_nthw_dbs, start_idx, start_ptr, INIT_QUEUE, queue);
++	nthw_set_tx_init(p_nthw_dbs, start_idx, start_ptr, INIT_QUEUE, queue);
  
-diff --git a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
-index 21e95d84bd..2c7a88aed9 100644
---- a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
-+++ b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
-@@ -50,9 +50,9 @@ static int _reset_rx(adapter_info_t *drv, nthw_mac_pcs_t *mac_pcs)
- 	(void)drv;
+ 	do {
+ 		nthw_get_tx_init(p_nthw_dbs, &init, &dummy, &busy);
+@@ -221,14 +221,14 @@ static int nthw_virt_queue_init(struct fpga_info_s *p_fpga_info)
+ 	if (p_nthw_dbs == NULL)
+ 		return -1;
  
- 	nthw_mac_pcs_rx_path_rst(mac_pcs, true);
--	nt_os_wait_usec(10000);	/* 10ms */
-+	nthw_os_wait_usec(10000);	/* 10ms */
- 	nthw_mac_pcs_rx_path_rst(mac_pcs, false);
--	nt_os_wait_usec(10000);	/* 10ms */
-+	nthw_os_wait_usec(10000);	/* 10ms */
+-	res = dbs_init(NULL, p_fpga, 0);/* Check that DBS exists in FPGA */
++	res = nthw_dbs_init(NULL, p_fpga, 0);/* Check that DBS exists in FPGA */
  
- 	return 0;
- }
-@@ -110,7 +110,7 @@ static void _set_loopback(struct adapter_info_s *p_adapter_info,
- 	/* After changing the loopback the system must be properly reset */
- 	_reset_rx(p_adapter_info, mac_pcs);
+ 	if (res) {
+ 		free(p_nthw_dbs);
+ 		return res;
+ 	}
  
--	nt_os_wait_usec(10000);	/* 10ms - arbitrary choice */
-+	nthw_os_wait_usec(10000);	/* 10ms - arbitrary choice */
+-	res = dbs_init(p_nthw_dbs, p_fpga, 0);	/* Create DBS module */
++	res = nthw_dbs_init(p_nthw_dbs, p_fpga, 0);	/* Create DBS module */
  
- 	if (!nthw_mac_pcs_is_rx_path_rst(mac_pcs)) {
- 		nthw_mac_pcs_reset_bip_counters(mac_pcs);
-@@ -286,14 +286,14 @@ static int _create_nim(adapter_info_t *drv, int port, bool enable)
+ 	if (res) {
+ 		free(p_nthw_dbs);
+@@ -242,7 +242,7 @@ static int nthw_virt_queue_init(struct fpga_info_s *p_fpga_info)
+ 		txvq[i].usage = NTHW_VIRTQ_UNUSED;
+ 	}
+ 
+-	dbs_reset(p_nthw_dbs);
++	nthw_dbs_reset(p_nthw_dbs);
+ 
+ 	for (i = 0; i < NT_DBS_RX_QUEUES_MAX; ++i)
+ 		dbs_init_rx_queue(p_nthw_dbs, i, 0, 0);
+@@ -382,8 +382,8 @@ static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	 * 3. Configure the DBS.RX_DR_DATA memory; good idea to initialize all
+ 	 * DBS_RX_QUEUES entries.
  	 */
- 	NT_LOG(DBG, NTNIC, "%s: Performing NIM reset", drv->mp_port_id_str[port]);
- 	nthw_gpio_phy_set_reset(gpio_phy, (uint8_t)port, true);
--	nt_os_wait_usec(100000);/* pause 0.1s */
-+	nthw_os_wait_usec(100000);/* pause 0.1s */
- 	nthw_gpio_phy_set_reset(gpio_phy, (uint8_t)port, false);
- 
- 	/*
- 	 * Wait a little after a module has been inserted before trying to access I2C
- 	 * data, otherwise the module will not respond correctly.
- 	 */
--	nt_os_wait_usec(1000000);	/* pause 1.0s */
-+	nthw_os_wait_usec(1000000);	/* pause 1.0s */
- 
- 	if (!_nim_is_present(gpio_phy, (uint8_t)port)) {
- 		NT_LOG(DBG, NTNIC, "%s: NIM module is no longer absent!",
-@@ -650,7 +650,7 @@ static int _common_ptp_nim_state_machine(void *data)
- 	}	/* end-for */
- 
- 	if (rte_service_runstate_get(adapter_mon_srv->id))
--		nt_os_wait_usec(5 * 100000U);	/* 5 x 0.1s = 0.5s */
-+		nthw_os_wait_usec(5 * 100000U);	/* 5 x 0.1s = 0.5s */
- 
- 	return 0;
- }
-diff --git a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-index c8b7912e26..b700a9e76e 100644
---- a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-+++ b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-@@ -93,17 +93,17 @@ static void phy_tx_path_rst(adapter_info_t *drv, int port, bool reset)
- static void phy_reset_rx(adapter_info_t *drv, int port)
- {
- 	phy_rx_path_rst(drv, port, true);
--	nt_os_wait_usec(10000);	/* 10ms */
-+	nthw_os_wait_usec(10000);	/* 10ms */
- 	phy_rx_path_rst(drv, port, false);
--	nt_os_wait_usec(10000);	/* 10ms */
-+	nthw_os_wait_usec(10000);	/* 10ms */
- }
- 
- static void phy_reset_tx(adapter_info_t *drv, int port)
- {
- 	phy_tx_path_rst(drv, port, true);
--	nt_os_wait_usec(10000);	/* 10ms */
-+	nthw_os_wait_usec(10000);	/* 10ms */
- 	phy_tx_path_rst(drv, port, false);
--	nt_os_wait_usec(10000);	/* 10ms */
-+	nthw_os_wait_usec(10000);	/* 10ms */
- }
- 
- static int phy_set_host_loopback(adapter_info_t *drv, int port, loopback_host_t loopback)
-@@ -499,7 +499,7 @@ set_loopback(struct adapter_info_s *p_adapter_info, int port, uint32_t mode, uin
- 	/* After changing the loopback the system must be properly reset */
- 	phy_reset_rx(p_adapter_info, port);
- 	phy_reset_tx(p_adapter_info, port);
--	nt_os_wait_usec(10000);	/* 10ms - arbitrary choice */
-+	nthw_os_wait_usec(10000);	/* 10ms - arbitrary choice */
- }
- 
- static void port_disable(adapter_info_t *drv, int port)
-@@ -547,14 +547,14 @@ static int create_nim(adapter_info_t *drv, int port, bool enable)
- 
- 	NT_LOG(DBG, NTNIC, "%s: Performing NIM reset", drv->mp_port_id_str[port]);
- 	nim_set_reset(nim_ctx, (uint8_t)port, true);
--	nt_os_wait_usec(100000);/*  pause 0.1s */
-+	nthw_os_wait_usec(100000);/*  pause 0.1s */
- 	nim_set_reset(nim_ctx, (uint8_t)port, false);
- 
- 	/*
- 	 * Wait a little after a module has been inserted before trying to access I2C
- 	 * data, otherwise the module will not respond correctly.
- 	 */
--	nt_os_wait_usec(1000000);	/* pause 1.0s */
-+	nthw_os_wait_usec(1000000);	/* pause 1.0s */
- 
- 	res = nthw_construct_and_preinit_nim(nim_ctx, NULL);
- 
-@@ -941,7 +941,7 @@ static int _common_ptp_nim_state_machine(void *data)
- 	}
- 
- 	if (rte_service_runstate_get(adapter_mon_srv->id))
--		nt_os_wait_usec(5 * 100000U);	/*  5 x 0.1s = 0.5s */
-+		nthw_os_wait_usec(5 * 100000U);	/*  5 x 0.1s = 0.5s */
- 
- 	return 0;
- }
-diff --git a/drivers/net/ntnic/nim/i2c_nim.c b/drivers/net/ntnic/nim/i2c_nim.c
-index 4fd882b8c9..a394b4c5d4 100644
---- a/drivers/net/ntnic/nim/i2c_nim.c
-+++ b/drivers/net/ntnic/nim/i2c_nim.c
-@@ -704,7 +704,7 @@ static void qsfp28_wait_for_ready_after_reset(nim_i2c_ctx_p ctx)
- 	 * Probably because access to the paged address space is required.
- 	 */
- 	if (!init_complete_flag_present) {
--		nt_os_wait_usec(500000);
-+		nthw_os_wait_usec(500000);
- 		return;
- 	}
- 
-@@ -724,7 +724,7 @@ static void qsfp28_wait_for_ready_after_reset(nim_i2c_ctx_p ctx)
- 			break;
- 		}
- 
--		nt_os_wait_usec(100000);/* 100 ms */
-+		nthw_os_wait_usec(100000);/* 100 ms */
- 		count++;
- 	}
- }
-diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c
-index cc6f7d13b5..34527b0cca 100644
---- a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c
-+++ b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c
-@@ -197,7 +197,7 @@ static int nthw_fpga_rst_nt200a0x_wait_sdc_calibrated(nthw_fpga_t *p_fpga,
- 		 * reset DDR and perform calibration retry
- 		 */
- 		nthw_field_set_flush(p->mp_fld_rst_ddr4);	/* Reset DDR PLL */
--		nt_os_wait_usec(100);
-+		nthw_os_wait_usec(100);
- 		nthw_field_clr_flush(p->mp_fld_rst_ddr4);
- 
- 		n_retry_cnt++;
-diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
-index 8cad9fac5a..28769e3aa5 100644
---- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
-+++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
-@@ -150,7 +150,7 @@ static int nthw_fpga_rst9574_wait_ddr4_calibration_complete(struct fpga_info_s *
- 		complete = nthw_fpga_rst9574_get_ddr4_calib_complete_stat(p_rst);
- 
- 		if (!complete)
--			nt_os_wait_usec(100);
-+			nthw_os_wait_usec(100);
- 
- 		timeout--;
- 
-@@ -187,7 +187,7 @@ static int nthw_fpga_rst9574_wait_phy_ftile_rdy(struct fpga_info_s *p_fpga_info,
- 		complete = nthw_fpga_rst9574_get_phy_ftile_rdy_stat(p_rst);
- 
- 		if (!complete) {
--			nt_os_wait_usec(100);
-+			nthw_os_wait_usec(100);
- 
- 		} else {
- 			NT_LOG(DBG, NTHW, "%s: PHY FTILE ready, margin to timeout %u",
-@@ -221,7 +221,7 @@ static int nthw_fpga_rst9574_wait_phy_ftile_rst_done(struct fpga_info_s *p_fpga_
- 		complete = nthw_fpga_rst9574_get_phy_ftile_rst_done_stat(p_rst);
- 
- 		if (!complete)
--			nt_os_wait_usec(100);
-+			nthw_os_wait_usec(100);
- 
- 		timeout--;
- 
-@@ -251,7 +251,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- 	/*
- 	 * Wait a while before waiting for deasserting ddr4 reset
- 	 */
--	nt_os_wait_usec(2000);
-+	nthw_os_wait_usec(2000);
- 
- 	/* (1) De-RTE_ASSERT DDR4 reset: */
- 	NT_LOG(DBG, NTHW, "%s: %s: De-asserting DDR4 reset", p_adapter_id_str, __func__);
-@@ -261,7 +261,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- 	 * Wait a while before waiting for calibration complete, since calibration complete
- 	 * is true while ddr4 is in reset
- 	 */
--	nt_os_wait_usec(2000);
-+	nthw_os_wait_usec(2000);
- 
- 	/* (2) Wait until DDR4 calibration complete */
- 	res = nthw_fpga_rst9574_wait_ddr4_calibration_complete(p_fpga_info, p_rst);
-@@ -273,7 +273,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- 	nthw_fpga_rst9574_set_ddr4_calib_complete_latch(p_rst, 1);
- 
- 	/* Wait for phy to settle.*/
--	nt_os_wait_usec(20000);
-+	nthw_os_wait_usec(20000);
- 
- 	/* (4) Ensure all latched status bits are still set: */
- 	if (!nthw_fpga_rst9574_get_ddr4_calib_complete_latch(p_rst)) {
-@@ -301,7 +301,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- 			__func__);
- 		nthw_fpga_rst9574_phy_ftile_rst(p_rst, 0);
- 
--		nt_os_wait_usec(10000);
-+		nthw_os_wait_usec(10000);
- 		/* (7) Wait until PHY_FTILE ready */
- 		if (nthw_fpga_rst9574_wait_phy_ftile_rdy(p_fpga_info, p_rst) != -1) {
- 			success = true;
-@@ -331,7 +331,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- 				int32_t count = 1000;
- 
- 				do {
--					nt_os_wait_usec(1000);
-+					nthw_os_wait_usec(1000);
- 				} while (!nthw_phy_tile_get_port_status_reset_ack(p_phy_tile, i) &&
- 					(--count > 0));
- 
-@@ -343,7 +343,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
- 
- 				/* Active low */
- 				nthw_phy_tile_set_port_config_rst(p_phy_tile, i, 1);
--				nt_os_wait_usec(20000);
-+				nthw_os_wait_usec(20000);
- 			}
- 		}
- 
-diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
-index d9c4281eeb..d158135c17 100644
---- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
-+++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
-@@ -58,13 +58,13 @@ static int nthw_fpga_rst_nt400dxx_init(struct fpga_info_s *p_fpga_info)
- 
- 	/* (b1) Reset platform. It is released later */
- 	nthw_prm_nt400dxx_platform_rst(p_fpga_info->mp_nthw_agx.p_prm, 1);
--	nt_os_wait_usec(10000);
-+	nthw_os_wait_usec(10000);
- 
- 	/* (C) Reset peripherals and release the reset */
- 	nthw_prm_nt400dxx_periph_rst(p_fpga_info->mp_nthw_agx.p_prm, 1);
--	nt_os_wait_usec(10000);
-+	nthw_os_wait_usec(10000);
- 	nthw_prm_nt400dxx_periph_rst(p_fpga_info->mp_nthw_agx.p_prm, 0);
--	nt_os_wait_usec(10000);
-+	nthw_os_wait_usec(10000);
- 
- 	res = nthw_fpga_avr_probe(p_fpga, 0);
- 
-@@ -155,7 +155,7 @@ static int nthw_fpga_rst_nt400dxx_init(struct fpga_info_s *p_fpga_info)
- 
- 	/* Enable power supply to NIMs */
- 	nthw_pcal6416a_write(p_fpga_info->mp_nthw_agx.p_io_nim, 8, 1);
--	nt_os_wait_usec(100000);/* 100ms */
-+	nthw_os_wait_usec(100000);/* 100ms */
- 
- 	/* Check that power supply turned on. Warn if it didn't. */
- 	uint8_t port_power_ok;
-@@ -225,7 +225,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
- 
- 			/* (F) Check that the system PLL is ready. */
- 			for (int i = 1000; i >= 0; i--) {
--				nt_os_wait_usec(1000);
-+				nthw_os_wait_usec(1000);
- 				data = nthw_igam_read(p_igam, 0xffff4);
- 
- 				if (data == 0x80000000 || data == 0xA0000000) {
-@@ -251,7 +251,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
- 			nthw_igam_set_ctrl_forward_rst(p_igam,
- 				0);	/* Ensure that the Avalon bus is not */
- 			/* reset at every driver re-load. */
--			nt_os_wait_usec(1000000);
-+			nthw_os_wait_usec(1000000);
- 			NT_LOG(DBG, NTHW, "%s: IGAM module not used.", p_adapter_id_str);
- 		}
- 
-@@ -267,14 +267,14 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
- 
- 	if (p_fpga_info->mp_nthw_agx.tcxo_present && p_fpga_info->mp_nthw_agx.tcxo_capable) {
- 		nthw_pcm_nt400dxx_set_ts_pll_recal(p_pcm, 1);
--		nt_os_wait_usec(1000);
-+		nthw_os_wait_usec(1000);
- 		nthw_pcm_nt400dxx_set_ts_pll_recal(p_pcm, 0);
--		nt_os_wait_usec(1000);
-+		nthw_os_wait_usec(1000);
- 	}
- 
- 	/* (I) Wait for TS PLL locked. */
- 	for (int i = 1000; i >= 0; i--) {
--		nt_os_wait_usec(1000);
-+		nthw_os_wait_usec(1000);
- 
- 		if (nthw_pcm_nt400dxx_get_ts_pll_locked_stat(p_pcm))
- 			break;
-@@ -320,9 +320,9 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
- 	if (res == 0)
- 		NT_LOG(DBG, NTHW, "%s: Hif module found", p_fpga_info->mp_adapter_id_str);
- 
--	nt_os_wait_usec(1000);
-+	nthw_os_wait_usec(1000);
- 	nthw_hif_force_soft_reset(p_nthw_hif);
--	nt_os_wait_usec(1000);
-+	nthw_os_wait_usec(1000);
- 	nthw_hif_delete(p_nthw_hif);
- 
- 	/* (L) De-RTE_ASSERT platform reset. */
-@@ -354,7 +354,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
- 
- 		/* (F) Check that the system PLL is ready. */
- 		for (int i = 1000; i >= 0; i--) {
--			nt_os_wait_usec(1000);
-+			nthw_os_wait_usec(1000);
- 
- 			if (nthw_phy_tile_get_sys_pll_get_rdy(p_phy_tile) &&
- 				nthw_phy_tile_get_sys_pll_system_pll_lock(p_phy_tile)) {
-@@ -363,7 +363,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
- 
- 			if (i == 500) {
- 				nthw_phy_tile_set_sys_pll_force_rst(p_phy_tile, 1);
--				nt_os_wait_usec(1000);
-+				nthw_os_wait_usec(1000);
- 				nthw_phy_tile_set_sys_pll_force_rst(p_phy_tile, 0);
- 				NT_LOG_DBGX(DBG,
- 					NTHW,
-@@ -380,13 +380,13 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
- 			}
- 		}
- 
--		nt_os_wait_usec(100000);/* 100 ms */
-+		nthw_os_wait_usec(100000);/* 100 ms */
- 
- 		uint32_t fgt_enable = 0x0d;	/* FGT 0, 2 & 3 */
- 		nthw_phy_tile_set_sys_pll_en_ref_clk_fgt(p_phy_tile, fgt_enable);
- 
- 		for (int i = 1000; i >= 0; i--) {
--			nt_os_wait_usec(1000);
-+			nthw_os_wait_usec(1000);
- 
- 			if (nthw_phy_tile_get_sys_pll_ref_clk_fgt_enabled(p_phy_tile) ==
- 				fgt_enable) {
-@@ -395,7 +395,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
- 
- 			if (i == 500) {
- 				nthw_phy_tile_set_sys_pll_force_rst(p_phy_tile, 1);
--				nt_os_wait_usec(1000);
-+				nthw_os_wait_usec(1000);
- 				nthw_phy_tile_set_sys_pll_force_rst(p_phy_tile, 0);
- 				NT_LOG_DBGX(DBG,
- 					NTHW,
-diff --git a/drivers/net/ntnic/nthw/core/nthw_fpga.c b/drivers/net/ntnic/nthw/core/nthw_fpga.c
-index f9e8f90e8a..f9ae466383 100644
---- a/drivers/net/ntnic/nthw/core/nthw_fpga.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_fpga.c
-@@ -537,7 +537,7 @@ int nthw_fpga_init(struct fpga_info_s *p_fpga_info)
- 			NT_LOG(DBG, NTHW, "%s: TSM time: %016" PRIX64 " %016" PRIX64 "\n",
- 				p_adapter_id_str, n_time, n_ts);
- 
--			nt_os_wait_usec(1000);
-+			nthw_os_wait_usec(1000);
- 		}
- 	}
- #endif
-diff --git a/drivers/net/ntnic/nthw/core/nthw_i2cm.c b/drivers/net/ntnic/nthw/core/nthw_i2cm.c
-index 353fb3f82a..1b98fa4ca3 100644
---- a/drivers/net/ntnic/nthw/core/nthw_i2cm.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_i2cm.c
-@@ -102,7 +102,7 @@ int nthw_i2cm_init(nthw_i2cm_t *p, nthw_fpga_t *p_fpga, int n_i2c_instance)
- 		NT_I2C_CMD_STOP | NT_I2C_CMD_NACK);
- 
- 	NT_LOG(INF, NTHW, "%s: %s  init done", p_adapter_id_str, __PRETTY_FUNCTION__);
--	nt_os_wait_usec(10000);
-+	nthw_os_wait_usec(10000);
- 
- 	/* Initialize mutex */
- 	rte_spinlock_init(&p->i2cmmutex);
-@@ -118,7 +118,7 @@ static bool nthw_i2cm_ready(nthw_i2cm_t *p, bool wait_for_ack)
- 		uint32_t status = nthw_field_get_updated(p->mp_fld_cmd_status_cmd_status);
- 		uint32_t ready = (status & flags) == 0U;
- 		/* MUST have a short break to avoid time-outs, even if ready == true */
--		nt_os_wait_usec(SLEEP_USECS);
-+		nthw_os_wait_usec(SLEEP_USECS);
- 
- 		if (ready)
- 			return true;
-diff --git a/drivers/net/ntnic/nthw/core/nthw_igam.c b/drivers/net/ntnic/nthw/core/nthw_igam.c
-index 385282298a..4a672daeb3 100644
---- a/drivers/net/ntnic/nthw/core/nthw_igam.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_igam.c
-@@ -68,7 +68,7 @@ uint32_t nthw_igam_read(nthw_igam_t *p, uint32_t address)
- 	nthw_field_set_val_flush32(p->mp_fld_base_ptr, address);
- 
- 	while (nthw_field_get_updated(p->mp_fld_base_busy) == 1)
--		nt_os_wait_usec(100);
-+		nthw_os_wait_usec(100);
- 
- 	return nthw_field_get_updated(p->mp_fld_data_data);
- }
-@@ -81,7 +81,7 @@ void nthw_igam_write(nthw_igam_t *p, uint32_t address, uint32_t data)
- 	nthw_field_set_val_flush32(p->mp_fld_base_cmd, 1);
- 
- 	while (nthw_field_get_updated(p->mp_fld_base_busy) == 1)
--		nt_os_wait_usec(100);
-+		nthw_os_wait_usec(100);
- }
- 
- void nthw_igam_set_ctrl_forward_rst(nthw_igam_t *p, uint32_t value)
-diff --git a/drivers/net/ntnic/nthw/core/nthw_iic.c b/drivers/net/ntnic/nthw/core/nthw_iic.c
-index 7a2247e371..17b7c1a079 100644
---- a/drivers/net/ntnic/nthw/core/nthw_iic.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_iic.c
-@@ -14,7 +14,7 @@
- #define I2C_TRANSMIT_WR (0x00)
- #define I2C_TRANSMIT_RD (0x01)
- 
--#define I2C_WAIT_US(x) nt_os_wait_usec(x)
-+#define I2C_WAIT_US(x) nthw_os_wait_usec(x)
- 
- /*
-  * Minimum timing values for I2C for a Marvel 88E11111 Phy.
-diff --git a/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c b/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
-index 4a7b7b9549..b6c1a9a702 100644
---- a/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
-@@ -588,11 +588,11 @@ void nthw_mac_pcs_set_fec(nthw_mac_pcs_t *p, bool enable)
- 	/* Both Rx and Tx must be reset for new FEC state to become active */
- 	nthw_mac_pcs_rx_path_rst(p, true);
- 	nthw_mac_pcs_tx_path_rst(p, true);
--	nt_os_wait_usec(10000);	/* 10ms */
-+	nthw_os_wait_usec(10000);	/* 10ms */
- 
- 	nthw_mac_pcs_rx_path_rst(p, false);
- 	nthw_mac_pcs_tx_path_rst(p, false);
--	nt_os_wait_usec(10000);	/* 10ms */
-+	nthw_os_wait_usec(10000);	/* 10ms */
- }
- 
- bool nthw_mac_pcs_get_fec_bypass(nthw_mac_pcs_t *p)
-@@ -740,7 +740,7 @@ void nthw_mac_pcs_set_receiver_equalization_mode(nthw_mac_pcs_t *p, uint8_t mode
- 	nthw_field_set_val32(p->mp_field_gty_ctl_rx_equa_rst2, 1);
- 	nthw_field_set_val_flush32(p->mp_field_gty_ctl_rx_equa_rst3, 1);
- 
--	nt_os_wait_usec(1000);	/* 1ms */
-+	nthw_os_wait_usec(1000);	/* 1ms */
- 
- 	nthw_field_set_val32(p->mp_field_gty_ctl_rx_equa_rst0, 0);
- 	nthw_field_set_val32(p->mp_field_gty_ctl_rx_equa_rst1, 0);
-diff --git a/drivers/net/ntnic/nthw/core/nthw_phy_tile.c b/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
-index 5e8055f0e3..8a7236d94f 100644
---- a/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
-@@ -683,7 +683,7 @@ void nthw_phy_tile_set_rx_reset(nthw_phy_tile_t *p, uint8_t intf_no, bool reset)
- 			int32_t count = 1000;
- 
- 			do {
--				nt_os_wait_usec(1000);	/* 1ms */
-+				nthw_os_wait_usec(1000);	/* 1ms */
- 			} while (nthw_field_get_updated(p->mp_fld_port_status_rx_reset_ackn
- 				[intf_no]) && (--count > 0));
- 
-@@ -711,7 +711,7 @@ void nthw_phy_tile_set_tx_reset(nthw_phy_tile_t *p, uint8_t intf_no, bool reset)
- 			int32_t count = 1000;
- 
- 			do {
--				nt_os_wait_usec(1000);	/* 1ms */
-+				nthw_os_wait_usec(1000);	/* 1ms */
- 			} while (nthw_field_get_updated(p->mp_fld_port_status_tx_reset_ackn
- 				[intf_no]) && (--count > 0));
- 
-@@ -734,7 +734,7 @@ uint32_t nthw_phy_tile_read_xcvr(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t la
- 	nthw_field_set_val_flush32(p->mp_fld_port_xcvr_base_ptr[intf_no][lane], address);
- 
- 	while (nthw_field_get_updated(p->mp_fld_port_xcvr_base_busy[intf_no][lane]) == 1)
--		nt_os_wait_usec(100);
-+		nthw_os_wait_usec(100);
- 
- 	return nthw_field_get_updated(p->mp_fld_port_xcvr_data_data[intf_no][lane]);
- }
-@@ -749,7 +749,7 @@ void nthw_phy_tile_write_xcvr(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane,
- 
- 	while (nthw_field_get_updated(p->mp_fld_port_xcvr_base_busy[intf_no][lane]) == 1)
- 		/* NT_LOG(INF, NTHW, "busy"); */
--		nt_os_wait_usec(100);
-+		nthw_os_wait_usec(100);
- }
- 
- static uint32_t nthw_phy_tile_read_dyn_reconfig(nthw_phy_tile_t *p, uint32_t address)
-@@ -759,7 +759,7 @@ static uint32_t nthw_phy_tile_read_dyn_reconfig(nthw_phy_tile_t *p, uint32_t add
- 	nthw_field_set_val_flush32(p->mp_fld_dyn_reconfig_base_ptr, address);
- 
- 	while (nthw_field_get_updated(p->mp_fld_dyn_reconfig_base_busy) == 1)
--		nt_os_wait_usec(100);
-+		nthw_os_wait_usec(100);
- 
- 	uint32_t value = nthw_field_get_updated(p->mp_fld_dyn_reconfig_data_data);
- 	/*
-@@ -781,7 +781,7 @@ static void nthw_phy_tile_write_dyn_reconfig(nthw_phy_tile_t *p, uint32_t addres
- 
- 	while (nthw_field_get_updated(p->mp_fld_dyn_reconfig_base_busy) == 1)
- 		/* NT_LOG(INF, NTHW, "busy"); */
--		nt_os_wait_usec(100);
-+		nthw_os_wait_usec(100);
- }
- 
- static uint32_t nthw_phy_tile_cpi_request(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane,
-@@ -803,7 +803,7 @@ static uint32_t nthw_phy_tile_cpi_request(nthw_phy_tile_t *p, uint8_t intf_no, u
- 
- 	nthw_phy_tile_write_xcvr(p, intf_no, lane, link_addr + lane_offset, cpi_cmd);
- 
--	nt_os_wait_usec(10000);
-+	nthw_os_wait_usec(10000);
- 
- 	for (int i = 20; i >= 0; i--) {
- 		data = nthw_phy_tile_read_xcvr(p, intf_no, lane, phy_addr + lane_offset);
-@@ -815,7 +815,7 @@ static uint32_t nthw_phy_tile_cpi_request(nthw_phy_tile_t *p, uint8_t intf_no, u
- 		if (((value & bit_cpi_assert) == cpi_assert) && ((value & cpi_in_reset) == 0))
- 			break;
- 
--		nt_os_wait_usec(10000);
-+		nthw_os_wait_usec(10000);
- 
- 		if (i == 0)
- 			NT_LOG(ERR, NTHW, "Time out");
-@@ -961,7 +961,7 @@ static uint32_t nthw_phy_tile_read_eth(nthw_phy_tile_t *p, uint8_t intf_no, uint
- 	nthw_field_set_val_flush32(p->mp_fld_port_eth_base_ptr[intf_no], address);
- 
- 	while (nthw_field_get_updated(p->mp_fld_port_eth_base_busy[intf_no]) == 1)
--		nt_os_wait_usec(100);
-+		nthw_os_wait_usec(100);
- 
- 	return nthw_field_get_updated(p->mp_fld_port_eth_data_data[intf_no]);
- }
-@@ -976,7 +976,7 @@ static void nthw_phy_tile_write_eth(nthw_phy_tile_t *p, uint8_t intf_no,
- 
- 	while (nthw_field_get_updated(p->mp_fld_port_eth_base_busy[intf_no]) == 1)
- 		/* NT_LOG(INF, NTHW, "busy"); */
--		nt_os_wait_usec(100);
-+		nthw_os_wait_usec(100);
- }
- 
- bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enable)
-@@ -1047,7 +1047,7 @@ bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enabl
- 		nthw_phy_tile_write_eth(p, intf_no, eth_soft_csr2,
- 			(0 << 9) + (0 << 6) + (0 << 3) + (final_fec_profile << 0));
- 
--		nt_os_wait_usec(10000);
-+		nthw_os_wait_usec(10000);
- 		nthw_phy_tile_set_reset(p, intf_no, false);
- 		nthw_phy_tile_set_tx_reset(p, intf_no, false);
- 
-@@ -1074,7 +1074,7 @@ bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enabl
- 	NT_LOG(DBG, NTHW, "intf_no %u: Step 1 Wait for DR NIOS", intf_no);
- 
- 	while ((nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_trigger_reg) & 0x02) != 0x02)
--		nt_os_wait_usec(10000);
-+		nthw_os_wait_usec(10000);
- 
- 	/* Step 2: Triggering Reconfiguration */
- 	NT_LOG(DBG, NTHW, "intf_no %u: Step 2: Triggering Reconfiguration", intf_no);
-@@ -1082,12 +1082,12 @@ bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enabl
- 	nthw_phy_tile_set_reset(p, intf_no, true);
- 	nthw_phy_tile_set_rx_reset(p, intf_no, true);
- 	nthw_phy_tile_set_tx_reset(p, intf_no, true);
--	nt_os_wait_usec(10000);
-+	nthw_os_wait_usec(10000);
- 
- 	/* Disable original profile */
- 	nthw_phy_tile_write_dyn_reconfig(p, dyn_rcfg_dr_next_profile_0_reg,
- 		(1U << 18) + (0U << 15) + original_dr_profile_id);
--	nt_os_wait_usec(10000);
-+	nthw_os_wait_usec(10000);
- 	NT_LOG(DBG, NTHW, "intf_no %u: dyn_rcfg_dr_next_profile_0_reg: %#010x", intf_no,
- 		nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_next_profile_0_reg));
- 
-@@ -1098,7 +1098,7 @@ bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enabl
- 	 * Enable profile 2 and terminate dyn reconfig by
- 	 * setting next profile to 0 and deactivate it
- 	 */
--	nt_os_wait_usec(10000);
-+	nthw_os_wait_usec(10000);
- 	NT_LOG(DBG, NTHW, "intf_no %u: dyn_rcfg_dr_next_profile_1_reg: %#010x", intf_no,
- 		nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_next_profile_1_reg));
- 
-@@ -1110,38 +1110,38 @@ bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enabl
- 	nthw_phy_tile_write_dyn_reconfig(p, dyn_rcfg_dr_next_profile_2_reg,
- 		(0U << 15) + neutral_dr_profile + (0U << 31) +
- 		(neutral_dr_profile << 16));
--	nt_os_wait_usec(10000);
-+	nthw_os_wait_usec(10000);
- 	NT_LOG(DBG, NTHW, "intf_no %u: dyn_rcfg_dr_next_profile_2_reg: %#010x", intf_no,
- 		nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_next_profile_2_reg));
- 
--	nt_os_wait_usec(10000);
-+	nthw_os_wait_usec(10000);
- 
- 	/* Step 3: Trigger DR interrupt */
- 	NT_LOG(DBG, NTHW, "intf_no %u: Step 3: Trigger DR interrupt", intf_no);
- 	nthw_phy_tile_write_dyn_reconfig(p, dyn_rcfg_dr_trigger_reg, 0x00000001);
- 
--	nt_os_wait_usec(1000000);
-+	nthw_os_wait_usec(1000000);
- 
- 	/* Step 4: Wait for interrupt Acknowledge */
- 	NT_LOG(DBG, NTHW, "intf_no %u: Step 4: Wait for interrupt Acknowledge", intf_no);
- 
- 	while ((nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_trigger_reg) & 0x01) != 0x00)
--		nt_os_wait_usec(10000);
-+		nthw_os_wait_usec(10000);
- 
--	nt_os_wait_usec(10000);
-+	nthw_os_wait_usec(10000);
- 
- 	/* Step 5: Wait Until DR config is done */
- 	NT_LOG(DBG, NTHW, "intf_no %u: Step 5: Wait Until DR config is done", intf_no);
- 
- 	while ((nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_trigger_reg) & 0x02) != 0x02)
--		nt_os_wait_usec(10000);
-+		nthw_os_wait_usec(10000);
- 
--	nt_os_wait_usec(1000000);
-+	nthw_os_wait_usec(1000000);
- 
- 	/* Write Fec status to scratch register */
- 	nthw_phy_tile_write_fec_enabled_by_scratch(p, intf_no, enable);
- 
--	nt_os_wait_usec(1000000);
-+	nthw_os_wait_usec(1000000);
- 
- 	nthw_phy_tile_set_reset(p, intf_no, false);
- 	nthw_phy_tile_set_tx_reset(p, intf_no, false);
-diff --git a/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c b/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
-index 537d58afb7..22c2c74a4d 100644
---- a/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
-@@ -42,7 +42,7 @@ int nthw_pca9849_set_channel(nthw_pca9849_t *p, uint8_t channel)
- 			return res;
- 
- 		p->m_current_channel = channel;
--		nt_os_wait_usec(10000);
-+		nthw_os_wait_usec(10000);
- 	}
- 
- 	return 0;
-diff --git a/drivers/net/ntnic/nthw/core/nthw_si5340.c b/drivers/net/ntnic/nthw/core/nthw_si5340.c
-index 27f8653c9b..02674c06f2 100644
---- a/drivers/net/ntnic/nthw/core/nthw_si5340.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_si5340.c
-@@ -121,7 +121,7 @@ static int nthw_si5340_cfg(nthw_si5340_t *p, const void *p_data, int data_cnt,
- 
- 		if (addr == 0x0006) {
- 			/* Wait 300ms before continuing. See NT200E3-2-PTP_U23_Si5340_adr0_v2.h */
--			nt_os_wait_usec(300000);
-+			nthw_os_wait_usec(300000);
- 		}
- 
- 		nthw_si5340_write(p, addr, value);
-@@ -167,7 +167,7 @@ static int nthw_si5340_config(nthw_si5340_t *p, const void *p_data, int data_cnt
- 			break;
- 		}
- 
--		nt_os_wait_usec(1000000);	/* 1 sec */
-+		nthw_os_wait_usec(1000000);	/* 1 sec */
- 	}
- 
- 	if (!success) {
-diff --git a/drivers/net/ntnic/nthw/core/nthw_spi_v3.c b/drivers/net/ntnic/nthw/core/nthw_spi_v3.c
-index a995b1fb6e..afa037756e 100644
---- a/drivers/net/ntnic/nthw/core/nthw_spi_v3.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_spi_v3.c
-@@ -39,10 +39,10 @@ static int wait_for_tx_data_sent(nthw_spim_t *p_spim_mod, uint64_t time_out)
- 	bool empty;
- 	uint64_t start_time;
- 	uint64_t cur_time;
--	start_time = nt_os_get_time_monotonic_counter();
-+	start_time = nthw_os_get_time_monotonic_counter();
- 
- 	while (true) {
--		nt_os_wait_usec(1000);	/* Every 1ms */
-+		nthw_os_wait_usec(1000);	/* Every 1ms */
- 
- 		result = nthw_spim_get_tx_fifo_empty(p_spim_mod, &empty);
- 
-@@ -54,7 +54,7 @@ static int wait_for_tx_data_sent(nthw_spim_t *p_spim_mod, uint64_t time_out)
- 		if (empty)
- 			break;
- 
--		cur_time = nt_os_get_time_monotonic_counter();
-+		cur_time = nthw_os_get_time_monotonic_counter();
- 
- 		if ((cur_time - start_time) > time_out) {
- 			NT_LOG(WRN, NTHW, "%s: Timed out", __func__);
-@@ -74,11 +74,11 @@ static int wait_for_rx_data_ready(nthw_spis_t *p_spis_mod, uint64_t time_out)
- 	bool empty;
- 	uint64_t start_time;
- 	uint64_t cur_time;
--	start_time = nt_os_get_time_monotonic_counter();
-+	start_time = nthw_os_get_time_monotonic_counter();
- 
- 	/* Wait for data to become ready in the Rx FIFO */
- 	while (true) {
--		nt_os_wait_usec(10000);	/* Every 10ms */
-+		nthw_os_wait_usec(10000);	/* Every 10ms */
- 
- 		result = nthw_spis_get_rx_fifo_empty(p_spis_mod, &empty);
- 
-@@ -90,7 +90,7 @@ static int wait_for_rx_data_ready(nthw_spis_t *p_spis_mod, uint64_t time_out)
- 		if (!empty)
- 			break;
- 
--		cur_time = nt_os_get_time_monotonic_counter();
-+		cur_time = nthw_os_get_time_monotonic_counter();
- 
- 		if ((cur_time - start_time) > time_out) {
- 			NT_LOG(WRN, NTHW, "%s: Timed out", __func__);
-diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-index 1a78933b7f..6fc496e16a 100644
---- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-+++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-@@ -197,7 +197,7 @@ static int flow_mtr_create_meter(struct flow_eth_dev *dev,
- 			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
- 
- 	while (learn_record == NULL) {
--		nt_os_wait_usec(1);
-+		nthw_os_wait_usec(1);
- 		learn_record =
- 			(struct flm_v25_lrn_data_s *)
- 				nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
-@@ -255,7 +255,7 @@ static int flow_mtr_probe_meter(struct flow_eth_dev *dev, uint8_t caller_id, uin
- 			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
- 
- 	while (learn_record == NULL) {
--		nt_os_wait_usec(1);
-+		nthw_os_wait_usec(1);
- 		learn_record =
- 			(struct flm_v25_lrn_data_s *)
- 				nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
-@@ -295,7 +295,7 @@ static int flow_mtr_destroy_meter(struct flow_eth_dev *dev, uint8_t caller_id, u
- 			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
- 
- 	while (learn_record == NULL) {
--		nt_os_wait_usec(1);
-+		nthw_os_wait_usec(1);
- 		learn_record =
- 			(struct flm_v25_lrn_data_s *)
- 				nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
-@@ -348,7 +348,7 @@ static int flm_mtr_adjust_stats(struct flow_eth_dev *dev, uint8_t caller_id, uin
- 			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
- 
- 	while (learn_record == NULL) {
--		nt_os_wait_usec(1);
-+		nthw_os_wait_usec(1);
- 		learn_record =
- 			(struct flm_v25_lrn_data_s *)
- 				nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
-@@ -644,7 +644,7 @@ static int flm_sdram_calibrate(struct flow_nic_dev *ndev)
- 		if (fail_value != 0)
- 			break;
- 
--		nt_os_wait_usec(1);
-+		nthw_os_wait_usec(1);
- 	}
- 
- 	if (!success) {
-@@ -685,7 +685,7 @@ static int flm_sdram_reset(struct flow_nic_dev *ndev, int enable)
- 			break;
- 		}
- 
--		nt_os_wait_usec(1);
-+		nthw_os_wait_usec(1);
- 	}
- 
- 	if (!success) {
-@@ -709,7 +709,7 @@ static int flm_sdram_reset(struct flow_nic_dev *ndev, int enable)
- 			break;
- 		}
- 
--		nt_os_wait_usec(1);
-+		nthw_os_wait_usec(1);
- 	}
- 
- 	if (!success) {
-@@ -976,7 +976,7 @@ static int flm_flow_programming(struct flow_handle *fh, uint32_t flm_op)
- 			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
- 
- 	while (learn_record == NULL) {
--		nt_os_wait_usec(1);
-+		nthw_os_wait_usec(1);
- 		learn_record =
- 			(struct flm_v25_lrn_data_s *)
- 			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
-@@ -5274,7 +5274,7 @@ struct flow_handle *nthw_flow_async_create_profile_inline(struct flow_eth_dev *d
- 
- 		} else {
- 			do {
--				nt_os_wait_usec(1);
-+				nthw_os_wait_usec(1);
- 				status = atomic_load(&pattern_action_pair->status);
- 			} while (status == CELL_STATUS_INITIALIZING);
- 
-diff --git a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
-index 9e269eb69f..b9d03b4982 100644
---- a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
-+++ b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
-@@ -1060,7 +1060,7 @@ static int nthw_field_wait_cond32(const nthw_field_t *p, enum nthw_field_match e
- 		if (n_poll_iterations <= 0)
- 			return -1;
- 
--		nt_os_wait_usec(n_poll_interval);
-+		nthw_os_wait_usec(n_poll_interval);
- 	}
- 
- 	return 0;
-diff --git a/drivers/net/ntnic/nthw/nthw_rac.c b/drivers/net/ntnic/nthw/nthw_rac.c
-index 33e0caa581..4845c2b0c9 100644
---- a/drivers/net/ntnic/nthw/nthw_rac.c
-+++ b/drivers/net/ntnic/nthw/nthw_rac.c
-@@ -326,7 +326,7 @@ int nthw_rac_rab_setup(nthw_rac_t *p)
- 
- 	const struct fpga_info_s *const p_fpga_info = p->mp_fpga->p_fpga_info;
- 	uint32_t n_dma_buf_size = 2L * RAB_DMA_BUF_CNT * sizeof(uint32_t);
--	const size_t align_size = nt_util_align_size(n_dma_buf_size);
-+	const size_t align_size = nthw_util_align_size(n_dma_buf_size);
- 	int numa_node = p_fpga_info->numa_node;
- 	uint64_t dma_addr;
- 	uint32_t buf;
-@@ -334,10 +334,10 @@ int nthw_rac_rab_setup(nthw_rac_t *p)
- 	if (!p->m_dma) {
- 		struct nt_dma_s *vfio_dma;
- 		/* FPGA needs Page alignment (4K) */
--		vfio_dma = nt_dma_alloc(align_size, 0x1000, numa_node);
-+		vfio_dma = nthw_dma_alloc(align_size, 0x1000, numa_node);
- 
- 		if (vfio_dma == NULL) {
--			NT_LOG(ERR, NTNIC, "nt_dma_alloc failed");
-+			NT_LOG(ERR, NTNIC, "nthw_dma_alloc failed");
- 			return -1;
- 		}
- 
-@@ -418,7 +418,7 @@ static int nthw_rac_rab_dma_wait(nthw_rac_t *p)
- 	uint32_t i;
- 
- 	for (i = 0; i < RAB_DMA_WAIT; i++) {
--		nt_os_wait_usec_poll(1);
-+		nthw_os_wait_usec_poll(1);
- 
- 		if ((p->m_dma_out_buf[p->m_dma_out_ptr_rd] & completion) == completion)
- 			break;
-diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
-index c580684a84..1c26411da8 100644
---- a/drivers/net/ntnic/ntnic_ethdev.c
-+++ b/drivers/net/ntnic/ntnic_ethdev.c
-@@ -281,11 +281,12 @@ eth_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete __rte_unused)
- 		nt_link_speed_t port_link_speed =
- 			port_ops->get_link_speed(p_adapter_info, n_intf_no);
- 		eth_dev->data->dev_link.link_speed =
--			nt_link_speed_to_eth_speed_num(port_link_speed);
-+			nthw_link_speed_to_eth_speed_num(port_link_speed);
- 
- 		nt_link_duplex_t nt_link_duplex =
- 			port_ops->get_link_duplex(p_adapter_info, n_intf_no);
--		eth_dev->data->dev_link.link_duplex = nt_link_duplex_to_eth_duplex(nt_link_duplex);
-+		eth_dev->data->dev_link.link_duplex =
-+			nthw_link_duplex_to_eth_duplex(nt_link_duplex);
- 
- 	} else {
- 		eth_dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
-@@ -355,7 +356,7 @@ eth_dev_infos_get(struct rte_eth_dev *eth_dev, struct rte_eth_dev_info *dev_info
- 
- 		const uint32_t nt_port_speed_capa =
- 			port_ops->get_link_speed_capabilities(p_adapter_info, n_intf_no);
--		dev_info->speed_capa = nt_link_speed_capa_to_eth_speed_capa(nt_port_speed_capa);
-+		dev_info->speed_capa = nthw_link_speed_capa_to_eth_speed_capa(nt_port_speed_capa);
- 	}
- 
- 	return 0;
-@@ -785,7 +786,8 @@ static int allocate_hw_virtio_queues(struct rte_eth_dev *eth_dev, int vf_num, st
- 	uint64_t tot_alloc_size = 0x100000 + (uint64_t)buf_size * (uint64_t)num_descr;
- 
- 	void *virt =
--		rte_malloc_socket("VirtQDescr", tot_alloc_size, nt_util_align_size(tot_alloc_size),
-+		rte_malloc_socket("VirtQDescr", tot_alloc_size,
-+			nthw_util_align_size(tot_alloc_size),
- 			eth_dev->data->numa_node);
- 
- 	if (!virt)
-@@ -820,7 +822,7 @@ static int allocate_hw_virtio_queues(struct rte_eth_dev *eth_dev, int vf_num, st
- 		if (!virt)
- 			return -1;
- 
--		res = nt_vfio_dma_map(vf_num, virt, &iova_addr, size);
-+		res = nthw_vfio_dma_map(vf_num, virt, &iova_addr, size);
- 
- 		NT_LOG(DBG, NTNIC, "VFIO MMAP res %i, vf_num %i", res, vf_num);
- 
-@@ -862,7 +864,7 @@ static int allocate_hw_virtio_queues(struct rte_eth_dev *eth_dev, int vf_num, st
- 			return -1;
- 		}
- 
--		res = nt_vfio_dma_map(vf_num, virt_addr, &iova_addr, size);
-+		res = nthw_vfio_dma_map(vf_num, virt_addr, &iova_addr, size);
- 
- 		NT_LOG(DBG, NTNIC,
- 			"VFIO MMAP res %i, virt %p, iova %016"
-@@ -887,7 +889,7 @@ static int allocate_hw_virtio_queues(struct rte_eth_dev *eth_dev, int vf_num, st
- 		return 0;
- 	}	/* End of: no optimal IOMMU mapping available */
- 
--	res = nt_vfio_dma_map(vf_num, virt, &iova_addr, ONE_G_SIZE);
-+	res = nthw_vfio_dma_map(vf_num, virt, &iova_addr, ONE_G_SIZE);
- 
- 	if (res != 0) {
- 		NT_LOG(ERR, NTNIC, "VFIO MMAP FAILED! res %i, vf_num %i", res, vf_num);
-@@ -948,7 +950,7 @@ static int deallocate_hw_virtio_queues(struct hwq_s *hwq)
- 
- 	void *virt = hwq->virt_queues_ctrl.virt_addr;
- 
--	int res = nt_vfio_dma_unmap(vf_num, hwq->virt_queues_ctrl.virt_addr,
-+	int res = nthw_vfio_dma_unmap(vf_num, hwq->virt_queues_ctrl.virt_addr,
- 			(uint64_t)hwq->virt_queues_ctrl.phys_addr, hwq->virt_queues_ctrl.len);
- 
- 	if (res != 0) {
-@@ -959,7 +961,7 @@ static int deallocate_hw_virtio_queues(struct hwq_s *hwq)
- 	if (hwq->pkt_buffers_ctrl.virt_addr != NULL &&
- 			hwq->pkt_buffers_ctrl.phys_addr != NULL &&
- 			hwq->pkt_buffers_ctrl.len > 0) {
--		int res = nt_vfio_dma_unmap(vf_num,
-+		int res = nthw_vfio_dma_unmap(vf_num,
- 				hwq->pkt_buffers_ctrl.virt_addr,
- 				(uint64_t)hwq->pkt_buffers_ctrl.phys_addr,
- 				hwq->pkt_buffers_ctrl.len);
-@@ -1414,7 +1416,7 @@ eth_dev_start(struct rte_eth_dev *eth_dev)
- 				break;
- 			}
- 
--			nt_os_wait_usec(100 * 1000);
-+			nthw_os_wait_usec(100 * 1000);
- 		}
- 
- 		if (internals->lpbk_mode) {
-@@ -1532,7 +1534,7 @@ drv_deinit(struct drv_s *p_drv)
- 	 * 1 second to give the services a chance to see the termonation.
- 	 */
- 	clear_pdrv(p_drv);
--	nt_os_wait_usec(1000000);
-+	nthw_os_wait_usec(1000000);
- 
- 	/* stop statistics service */
- 	nthw_service_del(RTE_NTNIC_SERVICE_STAT);
-@@ -1995,7 +1997,7 @@ static int port_event_service(void *context)
- 			}
- 
- 			if (do_wait)
--				nt_os_wait_usec(10);
-+				nthw_os_wait_usec(10);
- 
- 			count++;
- 			do_wait = true;
-@@ -2043,7 +2045,7 @@ static int adapter_flm_update_service(void *context)
- 	}
- 
- 	if (profile_inline_ops->flm_update(dev) == 0)
--		nt_os_wait_usec(10);
-+		nthw_os_wait_usec(10);
- 
- 	return 0;
- }
-@@ -2081,7 +2083,7 @@ static int adapter_stat_service(void *context)
- 		return 0;
- 	}
- 
--	nt_os_wait_usec(10 * 1000);
-+	nthw_os_wait_usec(10 * 1000);
- 
- 	nthw_stat_trigger(p_nthw_stat);
- 
-@@ -2089,7 +2091,7 @@ static int adapter_stat_service(void *context)
- 
- 	while (rte_service_runstate_get(stat_srv->id) &&
- 		(*p_nthw_stat->mp_timestamp == (uint64_t)-1)) {
--		nt_os_wait_usec(1 * 100);
-+		nthw_os_wait_usec(1 * 100);
- 
- 		if ((++loop & 0x3fff) == 0) {
- 			if (p_nt4ga_stat->mp_nthw_rpf) {
-@@ -2148,7 +2150,7 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
- 		/* Return statement is not necessary here to allow traffic processing by SW  */
- 	}
- 
--	nt_vfio_init();
-+	nthw_vfio_init();
- 	const struct port_ops *port_ops = get_port_ops();
- 
- 	if (port_ops == NULL) {
-@@ -2271,7 +2273,7 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
- 	}
- 
- 	/* Setup VFIO context */
--	int vfio = nt_vfio_setup(pci_dev);
-+	int vfio = nthw_vfio_setup(pci_dev);
- 
- 	if (vfio < 0) {
- 		NT_LOG_DBGX(ERR, NTNIC, "%s: vfio_setup error %d",
-@@ -2622,7 +2624,7 @@ nthw_pci_dev_deinit(struct rte_eth_dev *eth_dev __rte_unused)
- 
- 	/* let running services end Rx and Tx activity */
- 	if (sg_ops != NULL) {
--		nt_os_wait_usec(1 * 1000 * 1000);
-+		nthw_os_wait_usec(1 * 1000 * 1000);
- 
- 		while (internals) {
- 			for (i = internals->nb_tx_queues - 1; i >= 0; i--) {
-@@ -2647,7 +2649,7 @@ nthw_pci_dev_deinit(struct rte_eth_dev *eth_dev __rte_unused)
- 		rte_eth_dev_release_port(eth_dev);
- 	}
- 
--	nt_vfio_remove(EXCEPTION_PATH_HID);
-+	nthw_vfio_remove(EXCEPTION_PATH_HID);
- 	return 0;
- }
- 
-@@ -2698,7 +2700,7 @@ nthw_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
- 	 * flooding by OVS from multiple virtual port services - no need to be precise
- 	 */
- 	uint64_t now_rtc = rte_get_tsc_cycles();
--	nt_os_wait_usec(10 * 1000);
-+	nthw_os_wait_usec(10 * 1000);
- 	rte_tsc_freq = 100 * (rte_get_tsc_cycles() - now_rtc);
- 
- 	NT_LOG_DBGX(DBG, NTNIC, "leave: ret=%d", ret);
-diff --git a/drivers/net/ntnic/ntnic_vfio.c b/drivers/net/ntnic/ntnic_vfio.c
-index b1e807d6fa..187829d287 100644
---- a/drivers/net/ntnic/ntnic_vfio.c
-+++ b/drivers/net/ntnic/ntnic_vfio.c
-@@ -47,7 +47,7 @@ vfio_get(int vf_num)
- 
- /* External API */
- int
--nt_vfio_setup(struct rte_pci_device *dev)
-+nthw_vfio_setup(struct rte_pci_device *dev)
- {
- 	int ret;
- 	char devname[RTE_DEV_NAME_MAX_LEN] = { 0 };
-@@ -123,7 +123,7 @@ nt_vfio_setup(struct rte_pci_device *dev)
- }
- 
- int
--nt_vfio_remove(int vf_num)
-+nthw_vfio_remove(int vf_num)
- {
- 	struct vfio_dev *vfio;
- 
-@@ -141,7 +141,7 @@ nt_vfio_remove(int vf_num)
- }
- 
- int
--nt_vfio_dma_map(int vf_num, void *virt_addr, uint64_t *iova_addr, uint64_t size)
-+nthw_vfio_dma_map(int vf_num, void *virt_addr, uint64_t *iova_addr, uint64_t size)
- {
- 	uint64_t gp_virt_base;
- 	uint64_t gp_offset;
-@@ -189,7 +189,7 @@ nt_vfio_dma_map(int vf_num, void *virt_addr, uint64_t *iova_addr, uint64_t size)
- }
- 
- int
--nt_vfio_dma_unmap(int vf_num, void *virt_addr, uint64_t iova_addr, uint64_t size)
-+nthw_vfio_dma_unmap(int vf_num, void *virt_addr, uint64_t iova_addr, uint64_t size)
- {
- 	uint64_t gp_virt_base;
- 	struct vfio_dev *vfio;
-@@ -225,10 +225,10 @@ nt_vfio_dma_unmap(int vf_num, void *virt_addr, uint64_t iova_addr, uint64_t size
- }
- 
- void
--nt_vfio_init(void)
-+nthw_vfio_init(void)
- {
--	struct nt_util_vfio_impl s = { .vfio_dma_map = nt_vfio_dma_map,
--		       .vfio_dma_unmap = nt_vfio_dma_unmap
-+	struct nt_util_vfio_impl s = { .vfio_dma_map = nthw_vfio_dma_map,
-+		       .vfio_dma_unmap = nthw_vfio_dma_unmap
- 	};
--	nt_util_vfio_init(&s);
-+	nthw_util_vfio_init(&s);
- }
-diff --git a/drivers/net/ntnic/ntnic_vfio.h b/drivers/net/ntnic/ntnic_vfio.h
-index e070e9460c..72f8165a48 100644
---- a/drivers/net/ntnic/ntnic_vfio.h
-+++ b/drivers/net/ntnic/ntnic_vfio.h
-@@ -11,17 +11,17 @@
- #include <ethdev_pci.h>
- 
- void
--nt_vfio_init(void);
-+nthw_vfio_init(void);
- 
- int
--nt_vfio_setup(struct rte_pci_device *dev);
-+nthw_vfio_setup(struct rte_pci_device *dev);
- int
--nt_vfio_remove(int vf_num);
-+nthw_vfio_remove(int vf_num);
- 
- int
--nt_vfio_dma_map(int vf_num, void *virt_addr, uint64_t *iova_addr, uint64_t size);
-+nthw_vfio_dma_map(int vf_num, void *virt_addr, uint64_t *iova_addr, uint64_t size);
- int
--nt_vfio_dma_unmap(int vf_num, void *virt_addr, uint64_t iova_addr, uint64_t size);
-+nthw_vfio_dma_unmap(int vf_num, void *virt_addr, uint64_t iova_addr, uint64_t size);
- 
- /* Find device (PF/VF) number from device address */
- #endif	/* _NTNIC_VFIO_H_ */
-diff --git a/drivers/net/ntnic/ntutil/nt_util.c b/drivers/net/ntnic/ntutil/nt_util.c
-index 18133570bb..2401aee3dc 100644
---- a/drivers/net/ntnic/ntutil/nt_util.c
-+++ b/drivers/net/ntnic/ntutil/nt_util.c
-@@ -17,35 +17,35 @@
- static struct nt_util_vfio_impl vfio_cb;
- 
- /* uses usleep which schedules out the calling service */
--void nt_os_wait_usec(int val)
-+void nthw_os_wait_usec(int val)
- {
- 	rte_delay_us_sleep(val);
- }
- 
- /* spins in a waiting loop calling pause asm instruction uses RDTSC - precise wait */
--void nt_os_wait_usec_poll(int val)
-+void nthw_os_wait_usec_poll(int val)
- {
- 	rte_delay_us(val);
- }
- 
--uint64_t nt_os_get_time_monotonic_counter(void)
-+uint64_t nthw_os_get_time_monotonic_counter(void)
- {
- 	return rte_get_timer_cycles();
- }
- 
- /* Allocation size matching minimum alignment of specified size */
--uint64_t nt_util_align_size(uint64_t size)
-+uint64_t nthw_util_align_size(uint64_t size)
- {
- 	uint64_t alignment_size = 1ULL << rte_log2_u64(size);
- 	return alignment_size;
- }
- 
--void nt_util_vfio_init(struct nt_util_vfio_impl *impl)
-+void nthw_util_vfio_init(struct nt_util_vfio_impl *impl)
- {
- 	vfio_cb = *impl;
- }
- 
--struct nt_dma_s *nt_dma_alloc(uint64_t size, uint64_t align, int numa)
-+struct nt_dma_s *nthw_dma_alloc(uint64_t size, uint64_t align, int numa)
- {
- 	int res;
- 	struct nt_dma_s *vfio_addr;
-@@ -65,7 +65,7 @@ struct nt_dma_s *nt_dma_alloc(uint64_t size, uint64_t align, int numa)
+-	if (set_rx_dr_data(p_nthw_dbs, index, (uint64_t)desc_struct_phys_addr, host_id, qs, header,
+-			0) != 0) {
++	if (nthw_set_rx_dr_data(p_nthw_dbs, index, (uint64_t)desc_struct_phys_addr,
++		host_id, qs, header, 0) != 0) {
  		return NULL;
  	}
  
--	res = vfio_cb.vfio_dma_map(0, addr, &vfio_addr->iova, nt_util_align_size(size));
-+	res = vfio_cb.vfio_dma_map(0, addr, &vfio_addr->iova, nthw_util_align_size(size));
+@@ -398,9 +398,9 @@ static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	int_enable = 0;
+ 	vec = 0;
+ 	istk = 0;
+-	NT_LOG_DBGX(DBG, NTNIC, "set_rx_uw_data int=0 irq_vector=%i", irq_vector);
++	NT_LOG_DBGX(DBG, NTNIC, "nthw_set_rx_uw_data int=0 irq_vector=%i", irq_vector);
  
- 	if (res != 0) {
- 		rte_free(addr);
-@@ -75,7 +75,7 @@ struct nt_dma_s *nt_dma_alloc(uint64_t size, uint64_t align, int numa)
+-	if (set_rx_uw_data(p_nthw_dbs, index,
++	if (nthw_set_rx_uw_data(p_nthw_dbs, index,
+ 			(uint64_t)used_struct_phys_addr,
+ 			host_id, qs, 0, int_enable, vec, istk) != 0) {
+ 		return NULL;
+@@ -414,7 +414,7 @@ static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	 *    at a later time (after we have enabled vfio interrupts in the kernel).
+ 	 */
+ 	if (irq_vector < 0) {
+-		if (set_rx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr,
++		if (nthw_set_rx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr,
+ 				RX_AM_DISABLE, host_id, 0,
+ 				0) != 0) {
+ 			return NULL;
+@@ -432,7 +432,7 @@ static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	 *  good idea to initialize all DBS_RX_QUEUES entries.
+ 	 */
+ 	uint32_t enable = rx_deferred_start ? RX_AM_DISABLE : RX_AM_ENABLE;
+-	if (set_rx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr, enable,
++	if (nthw_set_rx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr, enable,
+ 			host_id, 0, irq_vector >= 0 ? 1 : 0) != 0) {
+ 		return NULL;
+ 	}
+@@ -520,7 +520,7 @@ static int dbs_internal_release_rx_virt_queue(struct nthw_virt_queue *rxvq)
+ 	/* Clear UW */
+ 	rxvq->used_struct_phys_addr = NULL;
+ 
+-	if (set_rx_uw_data(p_nthw_dbs, rxvq->index, (uint64_t)rxvq->used_struct_phys_addr,
++	if (nthw_set_rx_uw_data(p_nthw_dbs, rxvq->index, (uint64_t)rxvq->used_struct_phys_addr,
+ 			rxvq->host_id, 0, PACKED(rxvq->vq_type), 0, 0, 0) != 0) {
+ 		return -1;
+ 	}
+@@ -528,7 +528,7 @@ static int dbs_internal_release_rx_virt_queue(struct nthw_virt_queue *rxvq)
+ 	/* Disable AM */
+ 	rxvq->am_enable = RX_AM_DISABLE;
+ 
+-	if (set_rx_am_data(p_nthw_dbs,
++	if (nthw_set_rx_am_data(p_nthw_dbs,
+ 			rxvq->index,
+ 			(uint64_t)rxvq->avail_struct_phys_addr,
+ 			rxvq->am_enable,
+@@ -546,7 +546,7 @@ static int dbs_internal_release_rx_virt_queue(struct nthw_virt_queue *rxvq)
+ 	rxvq->avail_struct_phys_addr = NULL;
+ 	rxvq->host_id = 0;
+ 
+-	if (set_rx_am_data(p_nthw_dbs,
++	if (nthw_set_rx_am_data(p_nthw_dbs,
+ 			rxvq->index,
+ 			(uint64_t)rxvq->avail_struct_phys_addr,
+ 			rxvq->am_enable,
+@@ -558,7 +558,7 @@ static int dbs_internal_release_rx_virt_queue(struct nthw_virt_queue *rxvq)
+ 	/* Clear DR */
+ 	rxvq->desc_struct_phys_addr = NULL;
+ 
+-	if (set_rx_dr_data(p_nthw_dbs,
++	if (nthw_set_rx_dr_data(p_nthw_dbs,
+ 			rxvq->index,
+ 			(uint64_t)rxvq->desc_struct_phys_addr,
+ 			rxvq->host_id,
+@@ -602,7 +602,7 @@ static int dbs_internal_release_tx_virt_queue(struct nthw_virt_queue *txvq)
+ 	/* Clear UW */
+ 	txvq->used_struct_phys_addr = NULL;
+ 
+-	if (set_tx_uw_data(p_nthw_dbs, txvq->index, (uint64_t)txvq->used_struct_phys_addr,
++	if (nthw_set_tx_uw_data(p_nthw_dbs, txvq->index, (uint64_t)txvq->used_struct_phys_addr,
+ 			txvq->host_id, 0, PACKED(txvq->vq_type), 0, 0, 0,
+ 			txvq->in_order) != 0) {
+ 		return -1;
+@@ -611,7 +611,7 @@ static int dbs_internal_release_tx_virt_queue(struct nthw_virt_queue *txvq)
+ 	/* Disable AM */
+ 	txvq->am_enable = TX_AM_DISABLE;
+ 
+-	if (set_tx_am_data(p_nthw_dbs,
++	if (nthw_set_tx_am_data(p_nthw_dbs,
+ 			txvq->index,
+ 			(uint64_t)txvq->avail_struct_phys_addr,
+ 			txvq->am_enable,
+@@ -629,7 +629,7 @@ static int dbs_internal_release_tx_virt_queue(struct nthw_virt_queue *txvq)
+ 	txvq->avail_struct_phys_addr = NULL;
+ 	txvq->host_id = 0;
+ 
+-	if (set_tx_am_data(p_nthw_dbs,
++	if (nthw_set_tx_am_data(p_nthw_dbs,
+ 			txvq->index,
+ 			(uint64_t)txvq->avail_struct_phys_addr,
+ 			txvq->am_enable,
+@@ -644,7 +644,7 @@ static int dbs_internal_release_tx_virt_queue(struct nthw_virt_queue *txvq)
+ 	txvq->port = 0;
+ 	txvq->header = 0;
+ 
+-	if (set_tx_dr_data(p_nthw_dbs,
++	if (nthw_set_tx_dr_data(p_nthw_dbs,
+ 			txvq->index,
+ 			(uint64_t)txvq->desc_struct_phys_addr,
+ 			txvq->host_id,
+@@ -713,8 +713,8 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	 * 3. Configure the DBS.TX_DR_DATA memory; good idea to initialize all
+ 	 *    DBS_TX_QUEUES entries.
+ 	 */
+-	if (set_tx_dr_data(p_nthw_dbs, index, (uint64_t)desc_struct_phys_addr, host_id, qs, port,
+-			header, 0) != 0) {
++	if (nthw_set_tx_dr_data(p_nthw_dbs, index, (uint64_t)desc_struct_phys_addr,
++			host_id, qs, port, header, 0) != 0) {
+ 		return NULL;
  	}
  
- 	vfio_addr->addr = (uint64_t)addr;
--	vfio_addr->size = nt_util_align_size(size);
-+	vfio_addr->size = nthw_util_align_size(size);
+@@ -730,7 +730,7 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	vec = 0;
+ 	istk = 0;
  
- 	NT_LOG(DBG, GENERAL,
- 		"VFIO DMA alloc addr=%" PRIX64 ", iova=%" PRIX64
-@@ -86,7 +86,7 @@ struct nt_dma_s *nt_dma_alloc(uint64_t size, uint64_t align, int numa)
+-	if (set_tx_uw_data(p_nthw_dbs, index,
++	if (nthw_set_tx_uw_data(p_nthw_dbs, index,
+ 			(uint64_t)used_struct_phys_addr,
+ 			host_id, qs, 0, int_enable, vec, istk, in_order) != 0) {
+ 		return NULL;
+@@ -740,7 +740,7 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	 * 2. Configure the DBS.TX_AM_DATA memory and enable the queues you plan to use;
+ 	 *    good idea to initialize all DBS_TX_QUEUES entries.
+ 	 */
+-	if (set_tx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr, TX_AM_DISABLE,
++	if (nthw_set_tx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr, TX_AM_DISABLE,
+ 			host_id, 0, irq_vector >= 0 ? 1 : 0) != 0) {
+ 		return NULL;
+ 	}
+@@ -764,7 +764,7 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	 */
+ 	if (irq_vector < 0) {
+ 		uint32_t enable = tx_deferred_start ? TX_AM_DISABLE : TX_AM_ENABLE;
+-		if (set_tx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr,
++		if (nthw_set_tx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr,
+ 				enable, host_id, 0, 0) != 0) {
+ 			return NULL;
+ 		}
+@@ -1127,12 +1127,12 @@ nthw_setup_mngd_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 
+ static int nthw_switch_rx_virt_queue(nthw_dbs_t *p_nthw_dbs, uint32_t index, uint32_t enable)
+ {
+-	return set_rx_am_data_enable(p_nthw_dbs, index, enable);
++	return nthw_set_rx_am_data_enable(p_nthw_dbs, index, enable);
  }
  
- /* NOTE: please note the difference between RTE_ETH_SPEED_NUM_xxx and RTE_ETH_LINK_SPEED_xxx */
--int nt_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed)
-+int nthw_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed)
+ static int nthw_switch_tx_virt_queue(nthw_dbs_t *p_nthw_dbs, uint32_t index, uint32_t enable)
  {
- 	int eth_speed_num = RTE_ETH_SPEED_NUM_NONE;
- 
-@@ -131,7 +131,7 @@ int nt_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed)
- 	return eth_speed_num;
+-	return set_tx_am_data_enable(p_nthw_dbs, index, enable);
++	return nthw_set_tx_am_data_enable(p_nthw_dbs, index, enable);
  }
  
--uint32_t nt_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa)
-+uint32_t nthw_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa)
- {
- 	uint32_t eth_speed_capa = 0;
+ static uint16_t nthw_get_rx_packets(struct nthw_virt_queue *rxvq,
+diff --git a/drivers/net/ntnic/include/ntnic_dbs.h b/drivers/net/ntnic/include/ntnic_dbs.h
+index c35a7cb99b..3de7206ccb 100644
+--- a/drivers/net/ntnic/include/ntnic_dbs.h
++++ b/drivers/net/ntnic/include/ntnic_dbs.h
+@@ -233,8 +233,8 @@ struct nthw_dbs_s {
+ typedef struct nthw_dbs_s nthw_dbs_t;
  
-@@ -162,7 +162,7 @@ uint32_t nt_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa)
- 	return eth_speed_capa;
+ nthw_dbs_t *nthw_dbs_new(void);
+-int dbs_init(nthw_dbs_t *p, nthw_fpga_t *p_fpga, int n_instance);
+-void dbs_reset(nthw_dbs_t *p);
++int nthw_dbs_init(nthw_dbs_t *p, nthw_fpga_t *p_fpga, int n_instance);
++void nthw_dbs_reset(nthw_dbs_t *p);
+ 
+ int nthw_set_rx_control(nthw_dbs_t *p,
+ 	uint32_t last_queue,
+@@ -253,30 +253,30 @@ int nthw_set_tx_control(nthw_dbs_t *p,
+ int nthw_set_rx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
+ 	uint32_t queue);
+ int nthw_get_rx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy);
+-int set_tx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
++int nthw_set_tx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
+ 	uint32_t queue);
+ int nthw_get_tx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy);
+ int nthw_set_rx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue);
+ int nthw_get_rx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy);
+ int nthw_set_tx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue);
+ int nthw_get_tx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy);
+-int set_rx_am_data(nthw_dbs_t *p,
++int nthw_set_rx_am_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
+ 	uint32_t enable,
+ 	uint32_t host_id,
+ 	uint32_t packed,
+ 	uint32_t int_enable);
+-int set_rx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable);
+-int set_tx_am_data(nthw_dbs_t *p,
++int nthw_set_rx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable);
++int nthw_set_tx_am_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
+ 	uint32_t enable,
+ 	uint32_t host_id,
+ 	uint32_t packed,
+ 	uint32_t int_enable);
+-int set_tx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable);
+-int set_rx_uw_data(nthw_dbs_t *p,
++int nthw_set_tx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable);
++int nthw_set_rx_uw_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
+ 	uint32_t host_id,
+@@ -285,7 +285,7 @@ int set_rx_uw_data(nthw_dbs_t *p,
+ 	uint32_t int_enable,
+ 	uint32_t vec,
+ 	uint32_t istk);
+-int set_tx_uw_data(nthw_dbs_t *p,
++int nthw_set_tx_uw_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
+ 	uint32_t host_id,
+@@ -295,14 +295,14 @@ int set_tx_uw_data(nthw_dbs_t *p,
+ 	uint32_t vec,
+ 	uint32_t istk,
+ 	uint32_t in_order);
+-int set_rx_dr_data(nthw_dbs_t *p,
++int nthw_set_rx_dr_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
+ 	uint32_t host_id,
+ 	uint32_t queue_size,
+ 	uint32_t header,
+ 	uint32_t packed);
+-int set_tx_dr_data(nthw_dbs_t *p,
++int nthw_set_tx_dr_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
+ 	uint32_t host_id,
+diff --git a/drivers/net/ntnic/nthw/dbs/nthw_dbs.c b/drivers/net/ntnic/nthw/dbs/nthw_dbs.c
+index da64dbab48..25989d170b 100644
+--- a/drivers/net/ntnic/nthw/dbs/nthw_dbs.c
++++ b/drivers/net/ntnic/nthw/dbs/nthw_dbs.c
+@@ -76,7 +76,7 @@ nthw_dbs_t *nthw_dbs_new(void)
+ 	return p;
  }
  
--int nt_link_duplex_to_eth_duplex(enum nt_link_duplex_e nt_link_duplex)
-+int nthw_link_duplex_to_eth_duplex(enum nt_link_duplex_e nt_link_duplex)
+-int dbs_init(nthw_dbs_t *p, nthw_fpga_t *p_fpga, int n_instance)
++int nthw_dbs_init(nthw_dbs_t *p, nthw_fpga_t *p_fpga, int n_instance)
  {
- 	int eth_link_duplex = 0;
+ 	nthw_module_t *mod = nthw_fpga_query_module(p_fpga, MOD_DBS, n_instance);
  
-diff --git a/drivers/net/ntnic/ntutil/nt_util.h b/drivers/net/ntnic/ntutil/nt_util.h
-index 39a4956187..c889d07a10 100644
---- a/drivers/net/ntnic/ntutil/nt_util.h
-+++ b/drivers/net/ntnic/ntutil/nt_util.h
-@@ -32,16 +32,16 @@
- #define PCIIDENT_PRINT_STR "%04x:%02x:%02x.%x"
- #define BDF_TO_PCIIDENT(dom, bus, dev, fnc) (((dom) << 16) | ((bus) << 8) | ((dev) << 3) | (fnc))
- 
--uint64_t nt_os_get_time_monotonic_counter(void);
--void nt_os_wait_usec(int val);
--void nt_os_wait_usec_poll(int val);
-+uint64_t nthw_os_get_time_monotonic_counter(void);
-+void nthw_os_wait_usec(int val);
-+void nthw_os_wait_usec_poll(int val);
- 
- static inline int min(int a, int b)
- {
- 	return (a < b) ? a : b;
+@@ -369,7 +369,7 @@ static int dbs_reset_tx_control(nthw_dbs_t *p)
+ 	return 0;
  }
  
--uint64_t nt_util_align_size(uint64_t size);
-+uint64_t nthw_util_align_size(uint64_t size);
+-void dbs_reset(nthw_dbs_t *p)
++void nthw_dbs_reset(nthw_dbs_t *p)
+ {
+ 	int i;
+ 	dbs_reset_rx_control(p);
+@@ -462,7 +462,7 @@ int nthw_get_rx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *b
+ 	return 0;
+ }
  
- struct nt_dma_s {
- 	uint64_t iova;
-@@ -54,17 +54,17 @@ struct port_link_speed {
- 	int link_speed;
- };
+-int set_tx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
++int nthw_set_tx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
+ 	uint32_t queue)
+ {
+ 	if (p->mp_reg_tx_init_val) {
+@@ -601,7 +601,7 @@ static void flush_rx_am_data(nthw_dbs_t *p, uint32_t index)
+ 	nthw_register_flush(p->mp_reg_rx_avail_monitor_data, 1);
+ }
  
--struct nt_dma_s *nt_dma_alloc(uint64_t size, uint64_t align, int numa);
-+struct nt_dma_s *nthw_dma_alloc(uint64_t size, uint64_t align, int numa);
- struct nt_util_vfio_impl {
- 	int (*vfio_dma_map)(int vf_num, void *virt_addr, uint64_t *iova_addr, uint64_t size);
- 	int (*vfio_dma_unmap)(int vf_num, void *virt_addr, uint64_t iova_addr, uint64_t size);
- };
+-int set_rx_am_data(nthw_dbs_t *p,
++int nthw_set_rx_am_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
+ 	uint32_t enable,
+@@ -618,7 +618,7 @@ int set_rx_am_data(nthw_dbs_t *p,
+ 	return 0;
+ }
  
--void nt_util_vfio_init(struct nt_util_vfio_impl *impl);
-+void nthw_util_vfio_init(struct nt_util_vfio_impl *impl);
+-int set_rx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable)
++int nthw_set_rx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable)
+ {
+ 	if (!p->mp_reg_rx_avail_monitor_data)
+ 		return -ENOTSUP;
+@@ -673,7 +673,7 @@ static void flush_tx_am_data(nthw_dbs_t *p, uint32_t index)
+ 	nthw_register_flush(p->mp_reg_tx_avail_monitor_data, 1);
+ }
  
--int nt_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed);
--uint32_t nt_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa);
--int nt_link_duplex_to_eth_duplex(enum nt_link_duplex_e nt_link_duplex);
-+int nthw_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed);
-+uint32_t nthw_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa);
-+int nthw_link_duplex_to_eth_duplex(enum nt_link_duplex_e nt_link_duplex);
+-int set_tx_am_data(nthw_dbs_t *p,
++int nthw_set_tx_am_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
+ 	uint32_t enable,
+@@ -690,7 +690,7 @@ int set_tx_am_data(nthw_dbs_t *p,
+ 	return 0;
+ }
  
- int nthw_string_to_u32(const char *key_str __rte_unused, const char *value_str, void *extra_args);
+-int set_tx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable)
++int nthw_set_tx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable)
+ {
+ 	if (!p->mp_reg_tx_avail_monitor_data)
+ 		return -ENOTSUP;
+@@ -796,7 +796,7 @@ static void flush_rx_uw_data(nthw_dbs_t *p, uint32_t index)
+ 	nthw_register_flush(p->mp_reg_rx_used_writer_data, 1);
+ }
  
+-int set_rx_uw_data(nthw_dbs_t *p,
++int nthw_set_rx_uw_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
+ 	uint32_t host_id,
+@@ -923,7 +923,7 @@ static void flush_tx_uw_data(nthw_dbs_t *p, uint32_t index)
+ 	nthw_register_flush(p->mp_reg_tx_used_writer_data, 1);
+ }
+ 
+-int set_tx_uw_data(nthw_dbs_t *p,
++int nthw_set_tx_uw_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
+ 	uint32_t host_id,
+@@ -1019,7 +1019,7 @@ static void flush_rx_dr_data(nthw_dbs_t *p, uint32_t index)
+ 	nthw_register_flush(p->mp_reg_rx_descriptor_reader_data, 1);
+ }
+ 
+-int set_rx_dr_data(nthw_dbs_t *p,
++int nthw_set_rx_dr_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
+ 	uint32_t host_id,
+@@ -1121,7 +1121,7 @@ static void flush_tx_dr_data(nthw_dbs_t *p, uint32_t index)
+ 	nthw_register_flush(p->mp_reg_tx_descriptor_reader_data, 1);
+ }
+ 
+-int set_tx_dr_data(nthw_dbs_t *p,
++int nthw_set_tx_dr_data(nthw_dbs_t *p,
+ 	uint32_t index,
+ 	uint64_t guest_physical_address,
+ 	uint32_t host_id,
 -- 
 2.45.0
 
