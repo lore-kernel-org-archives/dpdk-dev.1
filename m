@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D72CCAC5AE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 14:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F44CAC5AE
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 14:44:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 400C840E25;
-	Wed, 24 Sep 2025 16:42:32 +0200 (CEST)
-Received: from egress-ip11a.ess.de.barracuda.com
- (egress-ip11a.ess.de.barracuda.com [18.184.203.234])
- by mails.dpdk.org (Postfix) with ESMTP id 383ED40151
+	by mails.dpdk.org (Postfix) with ESMTP id 7776140E2A;
+	Wed, 24 Sep 2025 16:42:33 +0200 (CEST)
+Received: from egress-ip42a.ess.de.barracuda.com
+ (egress-ip42a.ess.de.barracuda.com [18.185.115.201])
+ by mails.dpdk.org (Postfix) with ESMTP id 5DBC140DCE
  for <dev@dpdk.org>; Wed, 24 Sep 2025 16:42:15 +0200 (CEST)
-Received: from OSPPR02CU001.outbound.protection.outlook.com
- (mail-norwayeastazon11023137.outbound.protection.outlook.com
- [40.107.159.137]) by mx-outbound13-221.eu-central-1a.ess.aws.cudaops.com
+Received: from MRWPR03CU001.outbound.protection.outlook.com
+ (mail-francesouthazon11021109.outbound.protection.outlook.com
+ [40.107.130.109]) by mx-outbound13-221.eu-central-1a.ess.aws.cudaops.com
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Wed, 24 Sep 2025 14:42:13 +0000
+ Wed, 24 Sep 2025 14:42:12 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=olI0wh7A/x0jVlM0kXV240xvPM016Zw0OfCgP4CzNBlnuiHm21NkEWRLZZFp0FxgcPz5veS01YAFSSKqMP9Y2KPMTGR/0n6Y2oyS2IfihgjRk45txoMCSIgG8soaJAtyckjkwRoE7WYXQAlBrmiFnAn480DUMQqjv9X/mbGikwSv9J3dvgE0k13oiD/PodA02+gIewlKzot8teE1NG80RxoxtZyrEcOezoNFICQw1eTodSnm4QszbSc1okveuRWvzh42BtNiKSbgH+hgXF9AFn1IjbSbflE+rl4bEo4PsPgVz8mJR5xeqCuKgkS7UEkOEcZp9IP0A8RC4srZzOYFUA==
+ b=PpciXlFd9WPofTCOFcc/kSLAZtHq6uqiIIMk5zb6ZBenB88adrY48jNUBRpfr8uK1TU1QS684gkHbMKXdiI/10CihBBAGGK7tV3v/eA/KwRM2zVntGUnTanDNUzxsz5/wZ9gzbiu/H6h9eIxoDpsXJQu+sflZGmfXZkYiNblNNa0qeouqvTgOGyhpNs0aNvdgBJjx5rwsZ/cLhnPZMqp1rhPZMPrQEik52L4RbJQgcHLwoYtmQ6zSAv7uuP1Sp9wr/YnB8WIyz3ODntgy8RuyIR2UnJ49oSQe7vJQhhbkM4HOGQrqN4q4fEpk60Bo0hw3jl4ITwERsHjDfID3EFoOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Nn418dZt87Mct0rllbuDsHiQGybUiNecxLfxzPTuAiw=;
- b=ee1US0z+mYFgz30fX1YEgmiYZFLcSDpyIPd0P74MZMxQbSbWwasyJd7TD2rHMzAU9X9IEy7wCw5bgmYyO5uHm+nCSh3oIXu579t6jEvOdAAZ/sT1OkaSyCodjtYhLax24NhsVV4iWdM+e3glLSfT8zNd9lzbRLwdstEAHc2ane4oy9OrythCQXOPMCKIrdQ0qbBnnBfekvgSC8LH9gUjMramWdlrA2P9XLdhtLDu7mp0+hgwTeV9bxCV9hPkEBI50juueB/hRpLyJ3Lx230gqbTILypIWbiZh7IAyLZSsk1gLozhPmGKgdzIX+kWaXqNDfvJjFDXnbgWxfTmxqq30w==
+ bh=2ZonLSyb53XOFBoD3zPS7EAdfbf5DaiAO6WpvagFyL8=;
+ b=EmFFTqeRdFAPo0lm/EZEQfQna4MAwz5VQd1WWZXQHakOhooKzSZxYdw8lwQRdCdDIlz9KHWmkNhtBDEF0vDfJn4ojvoYbrpQfef27DHjbMJFS29X89bDaJ1kOKY1px1+z42BAvu6QmLuNqrb24V/l9AYZIxBHEYztXtj4lfcQmd2NHOHYZkxhwSiC+3VL6nNvTD6giEeaZV5MmdxqvKj9JM8hHk6Sxh2X7VaY8Rh06nyBP+3YkwgQu5pCFAj+M49KWQ2HQa8HH+47zRNootIwhBdtb7RKnSloFnvv9/j06ywPFJucsjaqt/Cpnq7gg7sMHYUS9OQhwPkny5coPk7aA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Nn418dZt87Mct0rllbuDsHiQGybUiNecxLfxzPTuAiw=;
- b=HpVXLMrhfnm0o4xBY5oXyYrbsf2Kt4qnes8+4g/oxsW5Z64Ws3Gl8m7vA9i2Gx+hgakUTBHyrMdRtN3Fg0BlELDj2Ts0iJxgoxaNQPBSl0L5S4SauESeBfubqtTyRqbs/OuBOr8AUqO7y9Ka/6zUf+Klo3MouS2B6W+jmKC4JXs=
-Received: from CWLP123CA0224.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:19f::12)
- by AS8P190MB1094.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:2b7::23)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Wed, 24 Sep
- 2025 14:42:11 +0000
+ bh=2ZonLSyb53XOFBoD3zPS7EAdfbf5DaiAO6WpvagFyL8=;
+ b=ZTzLxkwYwxn8lT/CdlkthysWQsZmdMwRvCMGAOQqK7KQ30yYbZCi7Vfd1TwiLPwuMiZbfoIt8KDRmo2dLtgWarSSX2Xbv4I0sBtvY5LmKl/qEJfldRXOp6qcf/dsvcsciFlo8mPrAJETOPKo4n1CYY+Jk6REdtFsl8C8i2CH2d4=
+Received: from CWLP123CA0237.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:19f::7)
+ by DU4P190MB2200.EURP190.PROD.OUTLOOK.COM (2603:10a6:10:56f::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.18; Wed, 24 Sep
+ 2025 14:42:10 +0000
 Received: from AM4PEPF00027A69.eurprd04.prod.outlook.com
- (2603:10a6:400:19f:cafe::40) by CWLP123CA0224.outlook.office365.com
- (2603:10a6:400:19f::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.22 via Frontend Transport; Wed,
- 24 Sep 2025 14:42:11 +0000
+ (2603:10a6:400:19f:cafe::b6) by CWLP123CA0237.outlook.office365.com
+ (2603:10a6:400:19f::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.21 via Frontend Transport; Wed,
+ 24 Sep 2025 14:42:10 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  AM4PEPF00027A69.mail.protection.outlook.com (10.167.16.87) with Microsoft
- SMTP Server id 15.20.9160.9 via Frontend Transport; Wed, 24 Sep 2025 14:42:11
+ SMTP Server id 15.20.9160.9 via Frontend Transport; Wed, 24 Sep 2025 14:42:10
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v1 17/24] net/ntnic: change prefix km to prefix nthw
-Date: Wed, 24 Sep 2025 16:41:40 +0200
-Message-ID: <20250924144152.53203-18-sil-plv@napatech.com>
+Subject: [PATCH v1 15/24] net/ntnic: change prefix nt to prefix nthw
+Date: Wed, 24 Sep 2025 16:41:38 +0200
+Message-ID: <20250924144152.53203-16-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250924144152.53203-1-sil-plv@napatech.com>
 References: <20250908141740.1312268-2-sil-plv@napatech.com>
@@ -67,64 +67,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A69:EE_|AS8P190MB1094:EE_
+X-MS-TrafficTypeDiagnostic: AM4PEPF00027A69:EE_|DU4P190MB2200:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: a83a1a31-2bac-493f-a962-08ddfb788bee
+X-MS-Office365-Filtering-Correlation-Id: 6bf3eb15-fa7f-457e-4ea6-08ddfb788b2b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|82310400026|36860700013|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?br7Q0MXuKj1FQQaA2AXzSBFmZOQV4fIyX1uhlcurOnNZBIkCC6jswbXcJwMq?=
- =?us-ascii?Q?1kkqND5XUvL4UhMmx5XPz5TkNed51sUxaOMCLm9kKg7jKS5XvB7xESf5S7+l?=
- =?us-ascii?Q?ek1vqu9esZLnCb91krOPQETPsfKpfebuumge6QoOR0v1yO7P5WkdYvaPZdtM?=
- =?us-ascii?Q?dK4TbzwO7owhSzT9OfDzfpVeGZe2kQDb5snzeFiNdKqfCieQ7tpjPQ0qRPUh?=
- =?us-ascii?Q?GgXNmkhVB4LIiQqM+lZjfrcfDjPkyoy40HWD15Uhox7wtmeR9y5P+mpR1k4O?=
- =?us-ascii?Q?CUunWWTg1N8uT3u7b4W7YzNvHW1GZnVshuzFrBxDU5NU8AAQnodm/KiNkKH7?=
- =?us-ascii?Q?yApYv2TaCKbG+LO6QvTq2Kr6JSWwCKnKzIBtCebgDfxe7M9GlqSFfxCXpmOp?=
- =?us-ascii?Q?r7FDFNvkvRtKgoIIJSWDlCeKwKUJjyckzaOqrQ91OhKZhzF4Rlc+RSElwo0h?=
- =?us-ascii?Q?CFWya/wUF5LUoU6LEFrThiolu7rE3/PMB6SC3E1hIDo9Io/6CIBIf8051j4h?=
- =?us-ascii?Q?3R2gaxD0yuF0wiJMdkU5FTYpquA5Vo1ntKmgN5WT7tDwu8xkJgAEwjvOTbY0?=
- =?us-ascii?Q?IFJvJ0UAMEi+DIxMR6HHmFODWJ6NxAmFG1tTzWOoPDI2kUn//LNhg9vjidLE?=
- =?us-ascii?Q?iREFgzAnXHqgDp1gyyxAtGiywCeSz+vF/O7D+QhCzYm9CZkhXRyF4oDNAbwv?=
- =?us-ascii?Q?aX8tFc33pYiTQm6q8A9S911CLEp0GWCBVXoHWbXnLzEtmQMNfwBhGcpgwg8N?=
- =?us-ascii?Q?SOriEOcWySqiMxeKxq2nfq3zs+A/aZ6vfsFeMfHRgoZfNBfNBhuXb9bBq/44?=
- =?us-ascii?Q?POQeaRo/Pk2WhVkcwkzeKZ/MwjcYB0hNgXsHLzyvoNZl+s8IfeLW93uT/gN7?=
- =?us-ascii?Q?pF14RjMuC7WrXt3zwSWHTBv+QhV+dVI+gTwOyfmHamwZplRBrF2NVDaYjEOs?=
- =?us-ascii?Q?RdwgBkt7CPt6c6o2aYkiJbUTe+D3O+tHsZCsOrtJ0yVzUxvUh+zcztzEwpQA?=
- =?us-ascii?Q?Iyon3IzUklO/QXrvAeFQZCOxdJ9LmIlCRspSeYi0Z3K6O9ItiCcf1oJ299D4?=
- =?us-ascii?Q?yViJzgO23FN0jg5uKMki1Em/m9sGbR8yiBQtiWOVj1zIf32xOO+5T+HUg21w?=
- =?us-ascii?Q?GnqZNereC7vTUlIf83nzJxr7m/6Mj3bFcjFJ+533IaXx2I7bS3I6XWo6t+jN?=
- =?us-ascii?Q?eoB21beo7HE5f1aDc0FrHza0UeA22Ajk3ofUgosriNSaiLTW3iA8y+dgjdwf?=
- =?us-ascii?Q?CmcVLuCoErQkKSLXg0M+xkRupGsL7/anFjTrBO/QmEtJ58Kg5yZBafK2r2kq?=
- =?us-ascii?Q?hOi6Z0G+wc6ypsqBBvPefAijyuN/d+Dt3acNnq4JBHb04y+Aw7C3RqBgKKVA?=
- =?us-ascii?Q?4a+Slc3yZ55hVKmXsHuE/S/64J9+L6be+6CoBbBeUJCHfjn3Y5x+69diiqoO?=
- =?us-ascii?Q?r7H1QI+EgBIt//nX/yRN/ORfz8PI2iPhLwMkvnx3dMJwAzE/LHNUOQmjAol1?=
- =?us-ascii?Q?gKnU3cd72HtFmZwqKfqHvML3YphWqMB5JJWJ?=
+ ARA:13230040|376014|1800799024|36860700013|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Rl1O7Pl49behe/HepdelKmyIy0L+mpfCkBn5z99UEBASZYC8otMXnVjyBSyu?=
+ =?us-ascii?Q?33YZxyCCIizq+SguvK7Ydb4sva9P1ZMYmUabGBPlIUyP9P2Nxq/uWRLx/vcS?=
+ =?us-ascii?Q?3S1TwyB5GY5e8+jh8n648lQLSujEC06xVJjICaxibH8FmkJJpmnuwTlShnIq?=
+ =?us-ascii?Q?rzhNb35MhrsViYpDrMEOMTIkbypemQ2BkdQMT5A899wL4N2Txuukg6AF5Qp3?=
+ =?us-ascii?Q?/ESkxUrFYO3xBPk1Z1YxA0xtxAcEuPnj+AsYjEkEuCBP96fqyePJRN8B8ZKt?=
+ =?us-ascii?Q?+tkMmU90dXAUNa8iGSqWXNq1/oaBcJQx954bcVHbJDkYP8dpwmk6SSLX+JO+?=
+ =?us-ascii?Q?YoqyzmK8rmI51UY6agXzfnCkm+P/GmNYCZw51Jn8DRM+IK6kPPM7uG5z75UB?=
+ =?us-ascii?Q?0tviu3SzWwtG7i26SFaFz1lK/A+4/iPWaS3RnHGmiIHk8hKa5ICA0abvPgwF?=
+ =?us-ascii?Q?ZOLuYUMPbypmX8eONMzmUNKshyPRsZ9YEkwLLA4n+0QtFmgscLU8YfFer0hK?=
+ =?us-ascii?Q?H4M76qTKuFYwePdpb3GcKgm0Sz0Gm4mpgoTAwxHo2NTXPyl8jlpoX1dWh4rJ?=
+ =?us-ascii?Q?QjadKc+q+Nzj2jWjHopdPD8yhf7OnyPoM779i4NN3X/lmUlTjG7zNWBTlluK?=
+ =?us-ascii?Q?dU1Q/m2yer8yKDbPAVcDvc/URRKrFOhf1gPDg0abmjuFcG+45ceTVtZ7Wpfj?=
+ =?us-ascii?Q?+//D5D8Vr1WuUBMHaqj1Kxv8v1cld5oQ/eY7eZAVls6X7ASbHkjSdfdC3i54?=
+ =?us-ascii?Q?qMadpe/SFNA6XKaG+yj+MJs415MUrf9WcHItJ8aaQDAPqUOEuwTu/CFXf959?=
+ =?us-ascii?Q?FBgsrw4xspNDVVx/gBITLT+wUG7CgrZje6Jruil7tVHIWBZN4sqZIB6uotnT?=
+ =?us-ascii?Q?KDNEZU98IrH+c0+8R41F422yl5i4wbP0MUsdBS1g5un+yv7t1A6CTJJRPJ2B?=
+ =?us-ascii?Q?nJYSGXSGtmHiNC21MSnD28Zc/rbuZs73dKUbEbrMhSDC11UB0FxfpFD0dI/o?=
+ =?us-ascii?Q?eRaftmTscpGxh+H3tsWPO6HC5t0bPCc6qYMFniRlVBOjfTKZ9a90xzAf4iIs?=
+ =?us-ascii?Q?D6FSk/CHW2XJc8N0aoFKGwrzn8PvTcIPpV3xnV4zHrybrTpCFutxJ4/SeO7h?=
+ =?us-ascii?Q?zP4rYlGgq4AqxUzjrJhNl1dkECHDE7rPxK1UdcNFpZRCu7XaKJZdlnHGN0Tt?=
+ =?us-ascii?Q?/IunDQuHaJdoIAFjYYAXBgnRxgpAoAtRdb/7aTi/W+Q2wsybAqkIHlFyulUX?=
+ =?us-ascii?Q?7Uoga/OgrJfnGJwCbWc+ynSpl6QeQySmaoyhk4elb9lJE+XdC7PIE3ucPURM?=
+ =?us-ascii?Q?y6gM2QKCs3Q+7vTg1CX+1eVdaIafO9qyz6673jv+LCjXdON90mN85eo9M5df?=
+ =?us-ascii?Q?87U/L6SJsOudyyZj8lydthE/wgAnxN1aQ3JT3ZZJcx0YY4RkNI++el2l1dsj?=
+ =?us-ascii?Q?hg4kg2GGoHoLk9SWWPAp/yMwXL8SoYjWyrs/zedRsYnMB4EICmUDzjbIstTh?=
+ =?us-ascii?Q?aOVsYtIGP30sLXfO2YSmmjwYx8zfBDP41mGm?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);
+ CAT:NONE; SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: SAB1FoZEcUMjNrt+lnfqpXTo8Nww8lz8u7I69QOwAE3QDxysYS0JLYsWusK2ekOXrGGsLz3PFBfa188nryl4H21TtLhO2YVfQcRH8BeDndvHtUGRWA7zbNuSjx4XfbnD2unwf5w2BB5ZYJm5JXOqfpk76iS6jlTw4U7qap8ft6KE6aBid7+JV8ESByowwKTCGBCiroZFNm+E8cASLYTg117CWE/BCGQT6ik9Q3lotqeAC+15mSUc6896mF/eW8UTAYg1f/8+QicJu5Z3CT5ngd/GWiA3WHNsSIdCeG1GPn9zpKI22TeCmqxpb1BGReoEPysNqJTK1bt5wbknwk7o951eZ56g3lZ6aM7eEKzzBN/aWdCxpNTVbX7MTQbnuvBpX1bDHmSpW88flfjX1KowvCBpD3k8RkkXtTvfKPjM1JWY9lGSHgPnqo3SP/C6gON4VyM1ISA1mzjSkqzQBUVa66x2n19dFXPSCxUdSYKsb+NSA2tDVoaTxOVvKr697inW8mzh/090SoHNnoLHmTkRTrdwSE30JfZC94dLU7mgKkrAMMC1Zj2s5QDvJU4bNFmvvlUH6fbFxHPpECDm5Gy4HsY2tCbYgh7qtbQuBa4oNVkXGIITjAnStsG1Z8HwDO1QwFl5u+6AVun0PSqAhvWhVQ==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: s7lDJ6hmjF3zDpI3sHmjSZ0oNjukcZuFTPMYbYatWb6/zGz9EatdiCkDBMONyPE3Pdssyc6LFBwWiGt7Pc28mpRYDIOaE1L46zLq6t0EQwG2eDJGYIYn2VeiJNqADXutvj1xe0+wBIG3mGBhTLitbK4l65cIYfAH5ExoFQQL4HEbTXnjB1B+ZLI9gzLftmDWBsfLZOfcJ/XSbdLS7HLeWD5IjA5mgkruuXiQd/MsZ6U24jDwvAYnxCJNJUswoAj8g4cJPNgG9q2oXcP6N040eAMgB85qRwJUciEivEU9BkoiITKYTuMsbRoWlvVuGEAiVItRVdJ5ph+Ekk9Cw4LKPaqJQhR6V8AQVe0asGrcN36XPenyncboIw4LNjMykXukwXNAAtaCMrRQzXH4KOL+UywHUfc2Du/Jy6NgVUvBB85WNeDTBp8nDkNgfMEPBlcFmrXX2G8Nyz9rfc/VmK2ae16VT2jhzUxUfMD4bEG2gwHb7Zi77Sq1LTiCtVuSnU9MBye3T3kJmlAAPfcZnaTNsGG2l8qF28wTHAInHgg0QAAF2xXHg4Rchzjk4SG58bJ1zeSzqLws77Qec8Bk4k3F0y+fbdpYgD/xWedghmDmC8gq6P0dL+bXAruRYxPhk4jSp07kZryOe+MNPjACAUwKaw==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:42:11.7780 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a83a1a31-2bac-493f-a962-08ddfb788bee
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:42:10.4974 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bf3eb15-fa7f-457e-4ea6-08ddfb788b2b
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM4PEPF00027A69.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8P190MB1094
-X-BESS-ID: 1758724933-303549-7631-8102-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4P190MB2200
+X-BESS-ID: 1758724932-303549-7640-8101-1
 X-BESS-VER: 2019.1_20250904.2304
-X-BESS-Apparent-Source-IP: 40.107.159.137
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkYGliamQGYGUNTcMNXQ0DDZKN
- U8LdnUwCg1yTIlLSXJINHAINXU1MTIXKk2FgBEKZrfQgAAAA==
+X-BESS-Apparent-Source-IP: 40.107.130.109
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKViaWBkaWQGYGUNQsLTExyTw1Jc
+ nMPNEyOdUYyExNsjC1TExMTbEwM7FUqo0FADnGYk9CAAAA
 X-BESS-Outbound-Spam-Score: 0.50
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.267723 [from 
- cloudscan17-191.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan10-222.eu-central-1a.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -146,495 +146,1317 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Change prefix km_ (key matcher) to prefix nthw_km_ for flow_api module.
+change prefix nt_ to prefix nthw_ to specify that this is related to
+Napatech hardware.
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- drivers/net/ntnic/include/flow_api_engine.h   | 18 ++--
- drivers/net/ntnic/nthw/flow_api/flow_api.c    |  4 +-
- drivers/net/ntnic/nthw/flow_api/flow_kcc.c    |  2 +-
- drivers/net/ntnic/nthw/flow_api/flow_km.c     | 16 +--
- .../profile_inline/flow_api_profile_inline.c  | 99 ++++++++++---------
- 5 files changed, 75 insertions(+), 64 deletions(-)
+ .../net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c |  2 +-
+ drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c |  2 +-
+ .../link_mgmt/link_100g/nt4ga_link_100g.c     | 12 ++---
+ .../link_agx_100g/nt4ga_agx_link_100g.c       | 16 +++----
+ drivers/net/ntnic/nim/i2c_nim.c               |  4 +-
+ .../nt200a0x/reset/nthw_fpga_rst_nt200a0x.c   |  2 +-
+ .../core/nt400dxx/reset/nthw_fpga_rst9574.c   | 18 ++++----
+ .../nt400dxx/reset/nthw_fpga_rst_nt400dxx.c   | 32 ++++++-------
+ drivers/net/ntnic/nthw/core/nthw_fpga.c       |  2 +-
+ drivers/net/ntnic/nthw/core/nthw_i2cm.c       |  4 +-
+ drivers/net/ntnic/nthw/core/nthw_igam.c       |  4 +-
+ drivers/net/ntnic/nthw/core/nthw_iic.c        |  2 +-
+ drivers/net/ntnic/nthw/core/nthw_mac_pcs.c    |  6 +--
+ drivers/net/ntnic/nthw/core/nthw_phy_tile.c   | 46 +++++++++----------
+ .../net/ntnic/nthw/core/nthw_si5332_si5156.c  |  2 +-
+ drivers/net/ntnic/nthw/core/nthw_si5340.c     |  4 +-
+ drivers/net/ntnic/nthw/core/nthw_spi_v3.c     | 12 ++---
+ .../profile_inline/flow_api_profile_inline.c  | 18 ++++----
+ .../net/ntnic/nthw/model/nthw_fpga_model.c    |  2 +-
+ drivers/net/ntnic/nthw/nthw_rac.c             |  8 ++--
+ drivers/net/ntnic/ntnic_ethdev.c              | 42 +++++++++--------
+ drivers/net/ntnic/ntnic_vfio.c                | 16 +++----
+ drivers/net/ntnic/ntnic_vfio.h                | 10 ++--
+ drivers/net/ntnic/ntutil/nt_util.c            | 22 ++++-----
+ drivers/net/ntnic/ntutil/nt_util.h            | 18 ++++----
+ 25 files changed, 154 insertions(+), 152 deletions(-)
 
-diff --git a/drivers/net/ntnic/include/flow_api_engine.h b/drivers/net/ntnic/include/flow_api_engine.h
-index 6401c79e3c..6a27ba8e12 100644
---- a/drivers/net/ntnic/include/flow_api_engine.h
-+++ b/drivers/net/ntnic/include/flow_api_engine.h
-@@ -396,26 +396,26 @@ struct flow_template_table {
- 	uint16_t caller_id;
- };
+diff --git a/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c b/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
+index ff83ba69f7..9d0d77dcc8 100644
+--- a/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
++++ b/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
+@@ -128,7 +128,7 @@ static int nt4ga_stat_setup(struct adapter_info_s *p_adapter_info)
+ 		int numa_node = p_adapter_info->fpga_info.numa_node;
  
--void km_attach_ndev_resource_management(struct km_flow_def_s *km, void **handle);
--void km_free_ndev_resource_management(void **handle);
-+void nthw_km_attach_ndev_resource_management(struct km_flow_def_s *km, void **handle);
-+void nthw_km_free_ndev_resource_management(void **handle);
+ 		/* FPGA needs a 16K alignment on Statistics */
+-		p_dma = nt_dma_alloc(n_stat_size, 0x4000, numa_node);
++		p_dma = nthw_dma_alloc(n_stat_size, 0x4000, numa_node);
  
--int km_add_match_elem(struct km_flow_def_s *km, uint32_t e_word[4], uint32_t e_mask[4],
-+int nthw_km_add_match_elem(struct km_flow_def_s *km, uint32_t e_word[4], uint32_t e_mask[4],
- 	uint32_t word_len, enum frame_offs_e start, int8_t offset);
+ 		if (!p_dma) {
+ 			NT_LOG_DBGX(ERR, NTNIC, "p_dma alloc failed");
+diff --git a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
+index 107fe91394..7b2e2e53fc 100644
+--- a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
++++ b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
+@@ -485,7 +485,7 @@ static int dbs_wait_hw_queue_shutdown(struct nthw_virt_queue *vq, int rx)
  
--int km_key_create(struct km_flow_def_s *km, uint32_t port_id);
-+int nthw_km_key_create(struct km_flow_def_s *km, uint32_t port_id);
- /*
-  * Compares 2 KM key definitions after first collect validate and optimization.
-  * km is compared against an existing km1.
-  * if identical, km1 flow_type is returned
-  */
--int km_key_compare(struct km_flow_def_s *km, struct km_flow_def_s *km1);
-+int nthw_km_key_compare(struct km_flow_def_s *km, struct km_flow_def_s *km1);
+ 	if (err) {
+ 		if (err == -ENOTSUP) {
+-			nt_os_wait_usec(200000);
++			nthw_os_wait_usec(200000);
+ 			return 0;
+ 		}
  
--int km_rcp_set(struct km_flow_def_s *km, int index);
-+int nthw_km_rcp_set(struct km_flow_def_s *km, int index);
+diff --git a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
+index 21e95d84bd..2c7a88aed9 100644
+--- a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
++++ b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
+@@ -50,9 +50,9 @@ static int _reset_rx(adapter_info_t *drv, nthw_mac_pcs_t *mac_pcs)
+ 	(void)drv;
  
--int km_write_data_match_entry(struct km_flow_def_s *km, uint32_t color);
--int km_clear_data_match_entry(struct km_flow_def_s *km);
-+int nthw_km_write_data_match_entry(struct km_flow_def_s *km, uint32_t color);
-+int nthw_km_clear_data_match_entry(struct km_flow_def_s *km);
+ 	nthw_mac_pcs_rx_path_rst(mac_pcs, true);
+-	nt_os_wait_usec(10000);	/* 10ms */
++	nthw_os_wait_usec(10000);	/* 10ms */
+ 	nthw_mac_pcs_rx_path_rst(mac_pcs, false);
+-	nt_os_wait_usec(10000);	/* 10ms */
++	nthw_os_wait_usec(10000);	/* 10ms */
  
--void kcc_free_ndev_resource_management(void **handle);
-+void nthw_kcc_free_ndev_resource_mgmnt(void **handle);
+ 	return 0;
+ }
+@@ -110,7 +110,7 @@ static void _set_loopback(struct adapter_info_s *p_adapter_info,
+ 	/* After changing the loopback the system must be properly reset */
+ 	_reset_rx(p_adapter_info, mac_pcs);
  
- /*
-  * Group management
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_api.c b/drivers/net/ntnic/nthw/flow_api/flow_api.c
-index 4c7bb4a60a..4d1c9c8d7c 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_api.c
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_api.c
-@@ -478,8 +478,8 @@ static void flow_ndev_reset(struct flow_nic_dev *ndev)
+-	nt_os_wait_usec(10000);	/* 10ms - arbitrary choice */
++	nthw_os_wait_usec(10000);	/* 10ms - arbitrary choice */
  
- 	profile_inline_ops->nthw_done_flow_mgmnt_of_ndev_profile_inline(ndev);
+ 	if (!nthw_mac_pcs_is_rx_path_rst(mac_pcs)) {
+ 		nthw_mac_pcs_reset_bip_counters(mac_pcs);
+@@ -286,14 +286,14 @@ static int _create_nim(adapter_info_t *drv, int port, bool enable)
+ 	 */
+ 	NT_LOG(DBG, NTNIC, "%s: Performing NIM reset", drv->mp_port_id_str[port]);
+ 	nthw_gpio_phy_set_reset(gpio_phy, (uint8_t)port, true);
+-	nt_os_wait_usec(100000);/* pause 0.1s */
++	nthw_os_wait_usec(100000);/* pause 0.1s */
+ 	nthw_gpio_phy_set_reset(gpio_phy, (uint8_t)port, false);
  
--	km_free_ndev_resource_management(&ndev->km_res_handle);
--	kcc_free_ndev_resource_management(&ndev->kcc_res_handle);
-+	nthw_km_free_ndev_resource_management(&ndev->km_res_handle);
-+	nthw_kcc_free_ndev_resource_mgmnt(&ndev->kcc_res_handle);
- 
- 	ndev->flow_unique_id_counter = 0;
- 
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_kcc.c b/drivers/net/ntnic/nthw/flow_api/flow_kcc.c
-index e99e63d9f1..47311729ea 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_kcc.c
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_kcc.c
-@@ -8,7 +8,7 @@
- #include "hw_mod_backend.h"
- #include "flow_api_engine.h"
- 
--void kcc_free_ndev_resource_management(void **handle)
-+void nthw_kcc_free_ndev_resource_mgmnt(void **handle)
- {
- 	if (*handle) {
- 		free(*handle);
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_km.c b/drivers/net/ntnic/nthw/flow_api/flow_km.c
-index 1052773668..4ccd77895b 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_km.c
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_km.c
-@@ -73,7 +73,7 @@ struct tcam_distrib_s {
- 
- static int tcam_find_mapping(struct km_flow_def_s *km);
- 
--void km_attach_ndev_resource_management(struct km_flow_def_s *km, void **handle)
-+void nthw_km_attach_ndev_resource_management(struct km_flow_def_s *km, void **handle)
- {
  	/*
- 	 * KM entries occupied in CAM - to manage the cuckoo shuffling
-@@ -100,7 +100,7 @@ void km_attach_ndev_resource_management(struct km_flow_def_s *km, void **handle)
- 	nthw_init_hasher(km->hsh, km->be->km.nb_cam_banks, km->be->km.nb_cam_records);
+ 	 * Wait a little after a module has been inserted before trying to access I2C
+ 	 * data, otherwise the module will not respond correctly.
+ 	 */
+-	nt_os_wait_usec(1000000);	/* pause 1.0s */
++	nthw_os_wait_usec(1000000);	/* pause 1.0s */
+ 
+ 	if (!_nim_is_present(gpio_phy, (uint8_t)port)) {
+ 		NT_LOG(DBG, NTNIC, "%s: NIM module is no longer absent!",
+@@ -650,7 +650,7 @@ static int _common_ptp_nim_state_machine(void *data)
+ 	}	/* end-for */
+ 
+ 	if (rte_service_runstate_get(adapter_mon_srv->id))
+-		nt_os_wait_usec(5 * 100000U);	/* 5 x 0.1s = 0.5s */
++		nthw_os_wait_usec(5 * 100000U);	/* 5 x 0.1s = 0.5s */
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
+index c8b7912e26..b700a9e76e 100644
+--- a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
++++ b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
+@@ -93,17 +93,17 @@ static void phy_tx_path_rst(adapter_info_t *drv, int port, bool reset)
+ static void phy_reset_rx(adapter_info_t *drv, int port)
+ {
+ 	phy_rx_path_rst(drv, port, true);
+-	nt_os_wait_usec(10000);	/* 10ms */
++	nthw_os_wait_usec(10000);	/* 10ms */
+ 	phy_rx_path_rst(drv, port, false);
+-	nt_os_wait_usec(10000);	/* 10ms */
++	nthw_os_wait_usec(10000);	/* 10ms */
  }
  
--void km_free_ndev_resource_management(void **handle)
-+void nthw_km_free_ndev_resource_management(void **handle)
+ static void phy_reset_tx(adapter_info_t *drv, int port)
  {
- 	if (*handle) {
- 		free(*handle);
-@@ -110,7 +110,7 @@ void km_free_ndev_resource_management(void **handle)
- 	*handle = NULL;
+ 	phy_tx_path_rst(drv, port, true);
+-	nt_os_wait_usec(10000);	/* 10ms */
++	nthw_os_wait_usec(10000);	/* 10ms */
+ 	phy_tx_path_rst(drv, port, false);
+-	nt_os_wait_usec(10000);	/* 10ms */
++	nthw_os_wait_usec(10000);	/* 10ms */
  }
  
--int km_add_match_elem(struct km_flow_def_s *km, uint32_t e_word[4], uint32_t e_mask[4],
-+int nthw_km_add_match_elem(struct km_flow_def_s *km, uint32_t e_word[4], uint32_t e_mask[4],
- 	uint32_t word_len, enum frame_offs_e start_id, int8_t offset)
- {
- 	/* valid word_len 1,2,4 */
-@@ -173,7 +173,7 @@ static int get_word(struct km_flow_def_s *km, uint32_t size, int marked[])
- 	return -1;
+ static int phy_set_host_loopback(adapter_info_t *drv, int port, loopback_host_t loopback)
+@@ -499,7 +499,7 @@ set_loopback(struct adapter_info_s *p_adapter_info, int port, uint32_t mode, uin
+ 	/* After changing the loopback the system must be properly reset */
+ 	phy_reset_rx(p_adapter_info, port);
+ 	phy_reset_tx(p_adapter_info, port);
+-	nt_os_wait_usec(10000);	/* 10ms - arbitrary choice */
++	nthw_os_wait_usec(10000);	/* 10ms - arbitrary choice */
  }
  
--int km_key_create(struct km_flow_def_s *km, uint32_t port_id)
-+int nthw_km_key_create(struct km_flow_def_s *km, uint32_t port_id)
- {
+ static void port_disable(adapter_info_t *drv, int port)
+@@ -547,14 +547,14 @@ static int create_nim(adapter_info_t *drv, int port, bool enable)
+ 
+ 	NT_LOG(DBG, NTNIC, "%s: Performing NIM reset", drv->mp_port_id_str[port]);
+ 	nim_set_reset(nim_ctx, (uint8_t)port, true);
+-	nt_os_wait_usec(100000);/*  pause 0.1s */
++	nthw_os_wait_usec(100000);/*  pause 0.1s */
+ 	nim_set_reset(nim_ctx, (uint8_t)port, false);
+ 
  	/*
- 	 * Create combined extractor mappings
-@@ -377,7 +377,7 @@ int km_key_create(struct km_flow_def_s *km, uint32_t port_id)
+ 	 * Wait a little after a module has been inserted before trying to access I2C
+ 	 * data, otherwise the module will not respond correctly.
+ 	 */
+-	nt_os_wait_usec(1000000);	/* pause 1.0s */
++	nthw_os_wait_usec(1000000);	/* pause 1.0s */
+ 
+ 	res = nthw_construct_and_preinit_nim(nim_ctx, NULL);
+ 
+@@ -941,7 +941,7 @@ static int _common_ptp_nim_state_machine(void *data)
+ 	}
+ 
+ 	if (rte_service_runstate_get(adapter_mon_srv->id))
+-		nt_os_wait_usec(5 * 100000U);	/*  5 x 0.1s = 0.5s */
++		nthw_os_wait_usec(5 * 100000U);	/*  5 x 0.1s = 0.5s */
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/ntnic/nim/i2c_nim.c b/drivers/net/ntnic/nim/i2c_nim.c
+index 4fd882b8c9..a394b4c5d4 100644
+--- a/drivers/net/ntnic/nim/i2c_nim.c
++++ b/drivers/net/ntnic/nim/i2c_nim.c
+@@ -704,7 +704,7 @@ static void qsfp28_wait_for_ready_after_reset(nim_i2c_ctx_p ctx)
+ 	 * Probably because access to the paged address space is required.
+ 	 */
+ 	if (!init_complete_flag_present) {
+-		nt_os_wait_usec(500000);
++		nthw_os_wait_usec(500000);
+ 		return;
+ 	}
+ 
+@@ -724,7 +724,7 @@ static void qsfp28_wait_for_ready_after_reset(nim_i2c_ctx_p ctx)
+ 			break;
+ 		}
+ 
+-		nt_os_wait_usec(100000);/* 100 ms */
++		nthw_os_wait_usec(100000);/* 100 ms */
+ 		count++;
+ 	}
+ }
+diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c
+index cc6f7d13b5..34527b0cca 100644
+--- a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c
++++ b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c
+@@ -197,7 +197,7 @@ static int nthw_fpga_rst_nt200a0x_wait_sdc_calibrated(nthw_fpga_t *p_fpga,
+ 		 * reset DDR and perform calibration retry
+ 		 */
+ 		nthw_field_set_flush(p->mp_fld_rst_ddr4);	/* Reset DDR PLL */
+-		nt_os_wait_usec(100);
++		nthw_os_wait_usec(100);
+ 		nthw_field_clr_flush(p->mp_fld_rst_ddr4);
+ 
+ 		n_retry_cnt++;
+diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
+index 8cad9fac5a..28769e3aa5 100644
+--- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
++++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
+@@ -150,7 +150,7 @@ static int nthw_fpga_rst9574_wait_ddr4_calibration_complete(struct fpga_info_s *
+ 		complete = nthw_fpga_rst9574_get_ddr4_calib_complete_stat(p_rst);
+ 
+ 		if (!complete)
+-			nt_os_wait_usec(100);
++			nthw_os_wait_usec(100);
+ 
+ 		timeout--;
+ 
+@@ -187,7 +187,7 @@ static int nthw_fpga_rst9574_wait_phy_ftile_rdy(struct fpga_info_s *p_fpga_info,
+ 		complete = nthw_fpga_rst9574_get_phy_ftile_rdy_stat(p_rst);
+ 
+ 		if (!complete) {
+-			nt_os_wait_usec(100);
++			nthw_os_wait_usec(100);
+ 
+ 		} else {
+ 			NT_LOG(DBG, NTHW, "%s: PHY FTILE ready, margin to timeout %u",
+@@ -221,7 +221,7 @@ static int nthw_fpga_rst9574_wait_phy_ftile_rst_done(struct fpga_info_s *p_fpga_
+ 		complete = nthw_fpga_rst9574_get_phy_ftile_rst_done_stat(p_rst);
+ 
+ 		if (!complete)
+-			nt_os_wait_usec(100);
++			nthw_os_wait_usec(100);
+ 
+ 		timeout--;
+ 
+@@ -251,7 +251,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
+ 	/*
+ 	 * Wait a while before waiting for deasserting ddr4 reset
+ 	 */
+-	nt_os_wait_usec(2000);
++	nthw_os_wait_usec(2000);
+ 
+ 	/* (1) De-RTE_ASSERT DDR4 reset: */
+ 	NT_LOG(DBG, NTHW, "%s: %s: De-asserting DDR4 reset", p_adapter_id_str, __func__);
+@@ -261,7 +261,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
+ 	 * Wait a while before waiting for calibration complete, since calibration complete
+ 	 * is true while ddr4 is in reset
+ 	 */
+-	nt_os_wait_usec(2000);
++	nthw_os_wait_usec(2000);
+ 
+ 	/* (2) Wait until DDR4 calibration complete */
+ 	res = nthw_fpga_rst9574_wait_ddr4_calibration_complete(p_fpga_info, p_rst);
+@@ -273,7 +273,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
+ 	nthw_fpga_rst9574_set_ddr4_calib_complete_latch(p_rst, 1);
+ 
+ 	/* Wait for phy to settle.*/
+-	nt_os_wait_usec(20000);
++	nthw_os_wait_usec(20000);
+ 
+ 	/* (4) Ensure all latched status bits are still set: */
+ 	if (!nthw_fpga_rst9574_get_ddr4_calib_complete_latch(p_rst)) {
+@@ -301,7 +301,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
+ 			__func__);
+ 		nthw_fpga_rst9574_phy_ftile_rst(p_rst, 0);
+ 
+-		nt_os_wait_usec(10000);
++		nthw_os_wait_usec(10000);
+ 		/* (7) Wait until PHY_FTILE ready */
+ 		if (nthw_fpga_rst9574_wait_phy_ftile_rdy(p_fpga_info, p_rst) != -1) {
+ 			success = true;
+@@ -331,7 +331,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
+ 				int32_t count = 1000;
+ 
+ 				do {
+-					nt_os_wait_usec(1000);
++					nthw_os_wait_usec(1000);
+ 				} while (!nthw_phy_tile_get_port_status_reset_ack(p_phy_tile, i) &&
+ 					(--count > 0));
+ 
+@@ -343,7 +343,7 @@ static int nthw_fpga_rst9574_product_reset(struct fpga_info_s *p_fpga_info,
+ 
+ 				/* Active low */
+ 				nthw_phy_tile_set_port_config_rst(p_phy_tile, i, 1);
+-				nt_os_wait_usec(20000);
++				nthw_os_wait_usec(20000);
+ 			}
+ 		}
+ 
+diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
+index d9c4281eeb..d158135c17 100644
+--- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
++++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
+@@ -58,13 +58,13 @@ static int nthw_fpga_rst_nt400dxx_init(struct fpga_info_s *p_fpga_info)
+ 
+ 	/* (b1) Reset platform. It is released later */
+ 	nthw_prm_nt400dxx_platform_rst(p_fpga_info->mp_nthw_agx.p_prm, 1);
+-	nt_os_wait_usec(10000);
++	nthw_os_wait_usec(10000);
+ 
+ 	/* (C) Reset peripherals and release the reset */
+ 	nthw_prm_nt400dxx_periph_rst(p_fpga_info->mp_nthw_agx.p_prm, 1);
+-	nt_os_wait_usec(10000);
++	nthw_os_wait_usec(10000);
+ 	nthw_prm_nt400dxx_periph_rst(p_fpga_info->mp_nthw_agx.p_prm, 0);
+-	nt_os_wait_usec(10000);
++	nthw_os_wait_usec(10000);
+ 
+ 	res = nthw_fpga_avr_probe(p_fpga, 0);
+ 
+@@ -155,7 +155,7 @@ static int nthw_fpga_rst_nt400dxx_init(struct fpga_info_s *p_fpga_info)
+ 
+ 	/* Enable power supply to NIMs */
+ 	nthw_pcal6416a_write(p_fpga_info->mp_nthw_agx.p_io_nim, 8, 1);
+-	nt_os_wait_usec(100000);/* 100ms */
++	nthw_os_wait_usec(100000);/* 100ms */
+ 
+ 	/* Check that power supply turned on. Warn if it didn't. */
+ 	uint8_t port_power_ok;
+@@ -225,7 +225,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
+ 
+ 			/* (F) Check that the system PLL is ready. */
+ 			for (int i = 1000; i >= 0; i--) {
+-				nt_os_wait_usec(1000);
++				nthw_os_wait_usec(1000);
+ 				data = nthw_igam_read(p_igam, 0xffff4);
+ 
+ 				if (data == 0x80000000 || data == 0xA0000000) {
+@@ -251,7 +251,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
+ 			nthw_igam_set_ctrl_forward_rst(p_igam,
+ 				0);	/* Ensure that the Avalon bus is not */
+ 			/* reset at every driver re-load. */
+-			nt_os_wait_usec(1000000);
++			nthw_os_wait_usec(1000000);
+ 			NT_LOG(DBG, NTHW, "%s: IGAM module not used.", p_adapter_id_str);
+ 		}
+ 
+@@ -267,14 +267,14 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
+ 
+ 	if (p_fpga_info->mp_nthw_agx.tcxo_present && p_fpga_info->mp_nthw_agx.tcxo_capable) {
+ 		nthw_pcm_nt400dxx_set_ts_pll_recal(p_pcm, 1);
+-		nt_os_wait_usec(1000);
++		nthw_os_wait_usec(1000);
+ 		nthw_pcm_nt400dxx_set_ts_pll_recal(p_pcm, 0);
+-		nt_os_wait_usec(1000);
++		nthw_os_wait_usec(1000);
+ 	}
+ 
+ 	/* (I) Wait for TS PLL locked. */
+ 	for (int i = 1000; i >= 0; i--) {
+-		nt_os_wait_usec(1000);
++		nthw_os_wait_usec(1000);
+ 
+ 		if (nthw_pcm_nt400dxx_get_ts_pll_locked_stat(p_pcm))
+ 			break;
+@@ -320,9 +320,9 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
+ 	if (res == 0)
+ 		NT_LOG(DBG, NTHW, "%s: Hif module found", p_fpga_info->mp_adapter_id_str);
+ 
+-	nt_os_wait_usec(1000);
++	nthw_os_wait_usec(1000);
+ 	nthw_hif_force_soft_reset(p_nthw_hif);
+-	nt_os_wait_usec(1000);
++	nthw_os_wait_usec(1000);
+ 	nthw_hif_delete(p_nthw_hif);
+ 
+ 	/* (L) De-RTE_ASSERT platform reset. */
+@@ -354,7 +354,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
+ 
+ 		/* (F) Check that the system PLL is ready. */
+ 		for (int i = 1000; i >= 0; i--) {
+-			nt_os_wait_usec(1000);
++			nthw_os_wait_usec(1000);
+ 
+ 			if (nthw_phy_tile_get_sys_pll_get_rdy(p_phy_tile) &&
+ 				nthw_phy_tile_get_sys_pll_system_pll_lock(p_phy_tile)) {
+@@ -363,7 +363,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
+ 
+ 			if (i == 500) {
+ 				nthw_phy_tile_set_sys_pll_force_rst(p_phy_tile, 1);
+-				nt_os_wait_usec(1000);
++				nthw_os_wait_usec(1000);
+ 				nthw_phy_tile_set_sys_pll_force_rst(p_phy_tile, 0);
+ 				NT_LOG_DBGX(DBG,
+ 					NTHW,
+@@ -380,13 +380,13 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
+ 			}
+ 		}
+ 
+-		nt_os_wait_usec(100000);/* 100 ms */
++		nthw_os_wait_usec(100000);/* 100 ms */
+ 
+ 		uint32_t fgt_enable = 0x0d;	/* FGT 0, 2 & 3 */
+ 		nthw_phy_tile_set_sys_pll_en_ref_clk_fgt(p_phy_tile, fgt_enable);
+ 
+ 		for (int i = 1000; i >= 0; i--) {
+-			nt_os_wait_usec(1000);
++			nthw_os_wait_usec(1000);
+ 
+ 			if (nthw_phy_tile_get_sys_pll_ref_clk_fgt_enabled(p_phy_tile) ==
+ 				fgt_enable) {
+@@ -395,7 +395,7 @@ static int nthw_fpga_rst_nt400dxx_reset(struct fpga_info_s *p_fpga_info)
+ 
+ 			if (i == 500) {
+ 				nthw_phy_tile_set_sys_pll_force_rst(p_phy_tile, 1);
+-				nt_os_wait_usec(1000);
++				nthw_os_wait_usec(1000);
+ 				nthw_phy_tile_set_sys_pll_force_rst(p_phy_tile, 0);
+ 				NT_LOG_DBGX(DBG,
+ 					NTHW,
+diff --git a/drivers/net/ntnic/nthw/core/nthw_fpga.c b/drivers/net/ntnic/nthw/core/nthw_fpga.c
+index f9e8f90e8a..f9ae466383 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_fpga.c
++++ b/drivers/net/ntnic/nthw/core/nthw_fpga.c
+@@ -537,7 +537,7 @@ int nthw_fpga_init(struct fpga_info_s *p_fpga_info)
+ 			NT_LOG(DBG, NTHW, "%s: TSM time: %016" PRIX64 " %016" PRIX64 "\n",
+ 				p_adapter_id_str, n_time, n_ts);
+ 
+-			nt_os_wait_usec(1000);
++			nthw_os_wait_usec(1000);
+ 		}
+ 	}
+ #endif
+diff --git a/drivers/net/ntnic/nthw/core/nthw_i2cm.c b/drivers/net/ntnic/nthw/core/nthw_i2cm.c
+index 353fb3f82a..1b98fa4ca3 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_i2cm.c
++++ b/drivers/net/ntnic/nthw/core/nthw_i2cm.c
+@@ -102,7 +102,7 @@ int nthw_i2cm_init(nthw_i2cm_t *p, nthw_fpga_t *p_fpga, int n_i2c_instance)
+ 		NT_I2C_CMD_STOP | NT_I2C_CMD_NACK);
+ 
+ 	NT_LOG(INF, NTHW, "%s: %s  init done", p_adapter_id_str, __PRETTY_FUNCTION__);
+-	nt_os_wait_usec(10000);
++	nthw_os_wait_usec(10000);
+ 
+ 	/* Initialize mutex */
+ 	rte_spinlock_init(&p->i2cmmutex);
+@@ -118,7 +118,7 @@ static bool nthw_i2cm_ready(nthw_i2cm_t *p, bool wait_for_ack)
+ 		uint32_t status = nthw_field_get_updated(p->mp_fld_cmd_status_cmd_status);
+ 		uint32_t ready = (status & flags) == 0U;
+ 		/* MUST have a short break to avoid time-outs, even if ready == true */
+-		nt_os_wait_usec(SLEEP_USECS);
++		nthw_os_wait_usec(SLEEP_USECS);
+ 
+ 		if (ready)
+ 			return true;
+diff --git a/drivers/net/ntnic/nthw/core/nthw_igam.c b/drivers/net/ntnic/nthw/core/nthw_igam.c
+index 385282298a..4a672daeb3 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_igam.c
++++ b/drivers/net/ntnic/nthw/core/nthw_igam.c
+@@ -68,7 +68,7 @@ uint32_t nthw_igam_read(nthw_igam_t *p, uint32_t address)
+ 	nthw_field_set_val_flush32(p->mp_fld_base_ptr, address);
+ 
+ 	while (nthw_field_get_updated(p->mp_fld_base_busy) == 1)
+-		nt_os_wait_usec(100);
++		nthw_os_wait_usec(100);
+ 
+ 	return nthw_field_get_updated(p->mp_fld_data_data);
+ }
+@@ -81,7 +81,7 @@ void nthw_igam_write(nthw_igam_t *p, uint32_t address, uint32_t data)
+ 	nthw_field_set_val_flush32(p->mp_fld_base_cmd, 1);
+ 
+ 	while (nthw_field_get_updated(p->mp_fld_base_busy) == 1)
+-		nt_os_wait_usec(100);
++		nthw_os_wait_usec(100);
+ }
+ 
+ void nthw_igam_set_ctrl_forward_rst(nthw_igam_t *p, uint32_t value)
+diff --git a/drivers/net/ntnic/nthw/core/nthw_iic.c b/drivers/net/ntnic/nthw/core/nthw_iic.c
+index 7a2247e371..17b7c1a079 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_iic.c
++++ b/drivers/net/ntnic/nthw/core/nthw_iic.c
+@@ -14,7 +14,7 @@
+ #define I2C_TRANSMIT_WR (0x00)
+ #define I2C_TRANSMIT_RD (0x01)
+ 
+-#define I2C_WAIT_US(x) nt_os_wait_usec(x)
++#define I2C_WAIT_US(x) nthw_os_wait_usec(x)
+ 
+ /*
+  * Minimum timing values for I2C for a Marvel 88E11111 Phy.
+diff --git a/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c b/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
+index 4a7b7b9549..b6c1a9a702 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
++++ b/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
+@@ -588,11 +588,11 @@ void nthw_mac_pcs_set_fec(nthw_mac_pcs_t *p, bool enable)
+ 	/* Both Rx and Tx must be reset for new FEC state to become active */
+ 	nthw_mac_pcs_rx_path_rst(p, true);
+ 	nthw_mac_pcs_tx_path_rst(p, true);
+-	nt_os_wait_usec(10000);	/* 10ms */
++	nthw_os_wait_usec(10000);	/* 10ms */
+ 
+ 	nthw_mac_pcs_rx_path_rst(p, false);
+ 	nthw_mac_pcs_tx_path_rst(p, false);
+-	nt_os_wait_usec(10000);	/* 10ms */
++	nthw_os_wait_usec(10000);	/* 10ms */
+ }
+ 
+ bool nthw_mac_pcs_get_fec_bypass(nthw_mac_pcs_t *p)
+@@ -740,7 +740,7 @@ void nthw_mac_pcs_set_receiver_equalization_mode(nthw_mac_pcs_t *p, uint8_t mode
+ 	nthw_field_set_val32(p->mp_field_gty_ctl_rx_equa_rst2, 1);
+ 	nthw_field_set_val_flush32(p->mp_field_gty_ctl_rx_equa_rst3, 1);
+ 
+-	nt_os_wait_usec(1000);	/* 1ms */
++	nthw_os_wait_usec(1000);	/* 1ms */
+ 
+ 	nthw_field_set_val32(p->mp_field_gty_ctl_rx_equa_rst0, 0);
+ 	nthw_field_set_val32(p->mp_field_gty_ctl_rx_equa_rst1, 0);
+diff --git a/drivers/net/ntnic/nthw/core/nthw_phy_tile.c b/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
+index 5e8055f0e3..8a7236d94f 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
++++ b/drivers/net/ntnic/nthw/core/nthw_phy_tile.c
+@@ -683,7 +683,7 @@ void nthw_phy_tile_set_rx_reset(nthw_phy_tile_t *p, uint8_t intf_no, bool reset)
+ 			int32_t count = 1000;
+ 
+ 			do {
+-				nt_os_wait_usec(1000);	/* 1ms */
++				nthw_os_wait_usec(1000);	/* 1ms */
+ 			} while (nthw_field_get_updated(p->mp_fld_port_status_rx_reset_ackn
+ 				[intf_no]) && (--count > 0));
+ 
+@@ -711,7 +711,7 @@ void nthw_phy_tile_set_tx_reset(nthw_phy_tile_t *p, uint8_t intf_no, bool reset)
+ 			int32_t count = 1000;
+ 
+ 			do {
+-				nt_os_wait_usec(1000);	/* 1ms */
++				nthw_os_wait_usec(1000);	/* 1ms */
+ 			} while (nthw_field_get_updated(p->mp_fld_port_status_tx_reset_ackn
+ 				[intf_no]) && (--count > 0));
+ 
+@@ -734,7 +734,7 @@ uint32_t nthw_phy_tile_read_xcvr(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t la
+ 	nthw_field_set_val_flush32(p->mp_fld_port_xcvr_base_ptr[intf_no][lane], address);
+ 
+ 	while (nthw_field_get_updated(p->mp_fld_port_xcvr_base_busy[intf_no][lane]) == 1)
+-		nt_os_wait_usec(100);
++		nthw_os_wait_usec(100);
+ 
+ 	return nthw_field_get_updated(p->mp_fld_port_xcvr_data_data[intf_no][lane]);
+ }
+@@ -749,7 +749,7 @@ void nthw_phy_tile_write_xcvr(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane,
+ 
+ 	while (nthw_field_get_updated(p->mp_fld_port_xcvr_base_busy[intf_no][lane]) == 1)
+ 		/* NT_LOG(INF, NTHW, "busy"); */
+-		nt_os_wait_usec(100);
++		nthw_os_wait_usec(100);
+ }
+ 
+ static uint32_t nthw_phy_tile_read_dyn_reconfig(nthw_phy_tile_t *p, uint32_t address)
+@@ -759,7 +759,7 @@ static uint32_t nthw_phy_tile_read_dyn_reconfig(nthw_phy_tile_t *p, uint32_t add
+ 	nthw_field_set_val_flush32(p->mp_fld_dyn_reconfig_base_ptr, address);
+ 
+ 	while (nthw_field_get_updated(p->mp_fld_dyn_reconfig_base_busy) == 1)
+-		nt_os_wait_usec(100);
++		nthw_os_wait_usec(100);
+ 
+ 	uint32_t value = nthw_field_get_updated(p->mp_fld_dyn_reconfig_data_data);
+ 	/*
+@@ -781,7 +781,7 @@ static void nthw_phy_tile_write_dyn_reconfig(nthw_phy_tile_t *p, uint32_t addres
+ 
+ 	while (nthw_field_get_updated(p->mp_fld_dyn_reconfig_base_busy) == 1)
+ 		/* NT_LOG(INF, NTHW, "busy"); */
+-		nt_os_wait_usec(100);
++		nthw_os_wait_usec(100);
+ }
+ 
+ static uint32_t nthw_phy_tile_cpi_request(nthw_phy_tile_t *p, uint8_t intf_no, uint8_t lane,
+@@ -803,7 +803,7 @@ static uint32_t nthw_phy_tile_cpi_request(nthw_phy_tile_t *p, uint8_t intf_no, u
+ 
+ 	nthw_phy_tile_write_xcvr(p, intf_no, lane, link_addr + lane_offset, cpi_cmd);
+ 
+-	nt_os_wait_usec(10000);
++	nthw_os_wait_usec(10000);
+ 
+ 	for (int i = 20; i >= 0; i--) {
+ 		data = nthw_phy_tile_read_xcvr(p, intf_no, lane, phy_addr + lane_offset);
+@@ -815,7 +815,7 @@ static uint32_t nthw_phy_tile_cpi_request(nthw_phy_tile_t *p, uint8_t intf_no, u
+ 		if (((value & bit_cpi_assert) == cpi_assert) && ((value & cpi_in_reset) == 0))
+ 			break;
+ 
+-		nt_os_wait_usec(10000);
++		nthw_os_wait_usec(10000);
+ 
+ 		if (i == 0)
+ 			NT_LOG(ERR, NTHW, "Time out");
+@@ -961,7 +961,7 @@ static uint32_t nthw_phy_tile_read_eth(nthw_phy_tile_t *p, uint8_t intf_no, uint
+ 	nthw_field_set_val_flush32(p->mp_fld_port_eth_base_ptr[intf_no], address);
+ 
+ 	while (nthw_field_get_updated(p->mp_fld_port_eth_base_busy[intf_no]) == 1)
+-		nt_os_wait_usec(100);
++		nthw_os_wait_usec(100);
+ 
+ 	return nthw_field_get_updated(p->mp_fld_port_eth_data_data[intf_no]);
+ }
+@@ -976,7 +976,7 @@ static void nthw_phy_tile_write_eth(nthw_phy_tile_t *p, uint8_t intf_no,
+ 
+ 	while (nthw_field_get_updated(p->mp_fld_port_eth_base_busy[intf_no]) == 1)
+ 		/* NT_LOG(INF, NTHW, "busy"); */
+-		nt_os_wait_usec(100);
++		nthw_os_wait_usec(100);
+ }
+ 
+ bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enable)
+@@ -1047,7 +1047,7 @@ bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enabl
+ 		nthw_phy_tile_write_eth(p, intf_no, eth_soft_csr2,
+ 			(0 << 9) + (0 << 6) + (0 << 3) + (final_fec_profile << 0));
+ 
+-		nt_os_wait_usec(10000);
++		nthw_os_wait_usec(10000);
+ 		nthw_phy_tile_set_reset(p, intf_no, false);
+ 		nthw_phy_tile_set_tx_reset(p, intf_no, false);
+ 
+@@ -1074,7 +1074,7 @@ bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enabl
+ 	NT_LOG(DBG, NTHW, "intf_no %u: Step 1 Wait for DR NIOS", intf_no);
+ 
+ 	while ((nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_trigger_reg) & 0x02) != 0x02)
+-		nt_os_wait_usec(10000);
++		nthw_os_wait_usec(10000);
+ 
+ 	/* Step 2: Triggering Reconfiguration */
+ 	NT_LOG(DBG, NTHW, "intf_no %u: Step 2: Triggering Reconfiguration", intf_no);
+@@ -1082,12 +1082,12 @@ bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enabl
+ 	nthw_phy_tile_set_reset(p, intf_no, true);
+ 	nthw_phy_tile_set_rx_reset(p, intf_no, true);
+ 	nthw_phy_tile_set_tx_reset(p, intf_no, true);
+-	nt_os_wait_usec(10000);
++	nthw_os_wait_usec(10000);
+ 
+ 	/* Disable original profile */
+ 	nthw_phy_tile_write_dyn_reconfig(p, dyn_rcfg_dr_next_profile_0_reg,
+ 		(1U << 18) + (0U << 15) + original_dr_profile_id);
+-	nt_os_wait_usec(10000);
++	nthw_os_wait_usec(10000);
+ 	NT_LOG(DBG, NTHW, "intf_no %u: dyn_rcfg_dr_next_profile_0_reg: %#010x", intf_no,
+ 		nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_next_profile_0_reg));
+ 
+@@ -1098,7 +1098,7 @@ bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enabl
+ 	 * Enable profile 2 and terminate dyn reconfig by
+ 	 * setting next profile to 0 and deactivate it
+ 	 */
+-	nt_os_wait_usec(10000);
++	nthw_os_wait_usec(10000);
+ 	NT_LOG(DBG, NTHW, "intf_no %u: dyn_rcfg_dr_next_profile_1_reg: %#010x", intf_no,
+ 		nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_next_profile_1_reg));
+ 
+@@ -1110,38 +1110,38 @@ bool nthw_phy_tile_configure_fec(nthw_phy_tile_t *p, uint8_t intf_no, bool enabl
+ 	nthw_phy_tile_write_dyn_reconfig(p, dyn_rcfg_dr_next_profile_2_reg,
+ 		(0U << 15) + neutral_dr_profile + (0U << 31) +
+ 		(neutral_dr_profile << 16));
+-	nt_os_wait_usec(10000);
++	nthw_os_wait_usec(10000);
+ 	NT_LOG(DBG, NTHW, "intf_no %u: dyn_rcfg_dr_next_profile_2_reg: %#010x", intf_no,
+ 		nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_next_profile_2_reg));
+ 
+-	nt_os_wait_usec(10000);
++	nthw_os_wait_usec(10000);
+ 
+ 	/* Step 3: Trigger DR interrupt */
+ 	NT_LOG(DBG, NTHW, "intf_no %u: Step 3: Trigger DR interrupt", intf_no);
+ 	nthw_phy_tile_write_dyn_reconfig(p, dyn_rcfg_dr_trigger_reg, 0x00000001);
+ 
+-	nt_os_wait_usec(1000000);
++	nthw_os_wait_usec(1000000);
+ 
+ 	/* Step 4: Wait for interrupt Acknowledge */
+ 	NT_LOG(DBG, NTHW, "intf_no %u: Step 4: Wait for interrupt Acknowledge", intf_no);
+ 
+ 	while ((nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_trigger_reg) & 0x01) != 0x00)
+-		nt_os_wait_usec(10000);
++		nthw_os_wait_usec(10000);
+ 
+-	nt_os_wait_usec(10000);
++	nthw_os_wait_usec(10000);
+ 
+ 	/* Step 5: Wait Until DR config is done */
+ 	NT_LOG(DBG, NTHW, "intf_no %u: Step 5: Wait Until DR config is done", intf_no);
+ 
+ 	while ((nthw_phy_tile_read_dyn_reconfig(p, dyn_rcfg_dr_trigger_reg) & 0x02) != 0x02)
+-		nt_os_wait_usec(10000);
++		nthw_os_wait_usec(10000);
+ 
+-	nt_os_wait_usec(1000000);
++	nthw_os_wait_usec(1000000);
+ 
+ 	/* Write Fec status to scratch register */
+ 	nthw_phy_tile_write_fec_enabled_by_scratch(p, intf_no, enable);
+ 
+-	nt_os_wait_usec(1000000);
++	nthw_os_wait_usec(1000000);
+ 
+ 	nthw_phy_tile_set_reset(p, intf_no, false);
+ 	nthw_phy_tile_set_tx_reset(p, intf_no, false);
+diff --git a/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c b/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
+index 537d58afb7..22c2c74a4d 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
++++ b/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
+@@ -42,7 +42,7 @@ int nthw_pca9849_set_channel(nthw_pca9849_t *p, uint8_t channel)
+ 			return res;
+ 
+ 		p->m_current_channel = channel;
+-		nt_os_wait_usec(10000);
++		nthw_os_wait_usec(10000);
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/net/ntnic/nthw/core/nthw_si5340.c b/drivers/net/ntnic/nthw/core/nthw_si5340.c
+index 27f8653c9b..02674c06f2 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_si5340.c
++++ b/drivers/net/ntnic/nthw/core/nthw_si5340.c
+@@ -121,7 +121,7 @@ static int nthw_si5340_cfg(nthw_si5340_t *p, const void *p_data, int data_cnt,
+ 
+ 		if (addr == 0x0006) {
+ 			/* Wait 300ms before continuing. See NT200E3-2-PTP_U23_Si5340_adr0_v2.h */
+-			nt_os_wait_usec(300000);
++			nthw_os_wait_usec(300000);
+ 		}
+ 
+ 		nthw_si5340_write(p, addr, value);
+@@ -167,7 +167,7 @@ static int nthw_si5340_config(nthw_si5340_t *p, const void *p_data, int data_cnt
+ 			break;
+ 		}
+ 
+-		nt_os_wait_usec(1000000);	/* 1 sec */
++		nthw_os_wait_usec(1000000);	/* 1 sec */
+ 	}
+ 
+ 	if (!success) {
+diff --git a/drivers/net/ntnic/nthw/core/nthw_spi_v3.c b/drivers/net/ntnic/nthw/core/nthw_spi_v3.c
+index a995b1fb6e..afa037756e 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_spi_v3.c
++++ b/drivers/net/ntnic/nthw/core/nthw_spi_v3.c
+@@ -39,10 +39,10 @@ static int wait_for_tx_data_sent(nthw_spim_t *p_spim_mod, uint64_t time_out)
+ 	bool empty;
+ 	uint64_t start_time;
+ 	uint64_t cur_time;
+-	start_time = nt_os_get_time_monotonic_counter();
++	start_time = nthw_os_get_time_monotonic_counter();
+ 
+ 	while (true) {
+-		nt_os_wait_usec(1000);	/* Every 1ms */
++		nthw_os_wait_usec(1000);	/* Every 1ms */
+ 
+ 		result = nthw_spim_get_tx_fifo_empty(p_spim_mod, &empty);
+ 
+@@ -54,7 +54,7 @@ static int wait_for_tx_data_sent(nthw_spim_t *p_spim_mod, uint64_t time_out)
+ 		if (empty)
+ 			break;
+ 
+-		cur_time = nt_os_get_time_monotonic_counter();
++		cur_time = nthw_os_get_time_monotonic_counter();
+ 
+ 		if ((cur_time - start_time) > time_out) {
+ 			NT_LOG(WRN, NTHW, "%s: Timed out", __func__);
+@@ -74,11 +74,11 @@ static int wait_for_rx_data_ready(nthw_spis_t *p_spis_mod, uint64_t time_out)
+ 	bool empty;
+ 	uint64_t start_time;
+ 	uint64_t cur_time;
+-	start_time = nt_os_get_time_monotonic_counter();
++	start_time = nthw_os_get_time_monotonic_counter();
+ 
+ 	/* Wait for data to become ready in the Rx FIFO */
+ 	while (true) {
+-		nt_os_wait_usec(10000);	/* Every 10ms */
++		nthw_os_wait_usec(10000);	/* Every 10ms */
+ 
+ 		result = nthw_spis_get_rx_fifo_empty(p_spis_mod, &empty);
+ 
+@@ -90,7 +90,7 @@ static int wait_for_rx_data_ready(nthw_spis_t *p_spis_mod, uint64_t time_out)
+ 		if (!empty)
+ 			break;
+ 
+-		cur_time = nt_os_get_time_monotonic_counter();
++		cur_time = nthw_os_get_time_monotonic_counter();
+ 
+ 		if ((cur_time - start_time) > time_out) {
+ 			NT_LOG(WRN, NTHW, "%s: Timed out", __func__);
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+index 1a78933b7f..6fc496e16a 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+@@ -197,7 +197,7 @@ static int flow_mtr_create_meter(struct flow_eth_dev *dev,
+ 			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 
+ 	while (learn_record == NULL) {
+-		nt_os_wait_usec(1);
++		nthw_os_wait_usec(1);
+ 		learn_record =
+ 			(struct flm_v25_lrn_data_s *)
+ 				nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+@@ -255,7 +255,7 @@ static int flow_mtr_probe_meter(struct flow_eth_dev *dev, uint8_t caller_id, uin
+ 			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 
+ 	while (learn_record == NULL) {
+-		nt_os_wait_usec(1);
++		nthw_os_wait_usec(1);
+ 		learn_record =
+ 			(struct flm_v25_lrn_data_s *)
+ 				nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+@@ -295,7 +295,7 @@ static int flow_mtr_destroy_meter(struct flow_eth_dev *dev, uint8_t caller_id, u
+ 			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 
+ 	while (learn_record == NULL) {
+-		nt_os_wait_usec(1);
++		nthw_os_wait_usec(1);
+ 		learn_record =
+ 			(struct flm_v25_lrn_data_s *)
+ 				nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+@@ -348,7 +348,7 @@ static int flm_mtr_adjust_stats(struct flow_eth_dev *dev, uint8_t caller_id, uin
+ 			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 
+ 	while (learn_record == NULL) {
+-		nt_os_wait_usec(1);
++		nthw_os_wait_usec(1);
+ 		learn_record =
+ 			(struct flm_v25_lrn_data_s *)
+ 				nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+@@ -644,7 +644,7 @@ static int flm_sdram_calibrate(struct flow_nic_dev *ndev)
+ 		if (fail_value != 0)
+ 			break;
+ 
+-		nt_os_wait_usec(1);
++		nthw_os_wait_usec(1);
+ 	}
+ 
+ 	if (!success) {
+@@ -685,7 +685,7 @@ static int flm_sdram_reset(struct flow_nic_dev *ndev, int enable)
+ 			break;
+ 		}
+ 
+-		nt_os_wait_usec(1);
++		nthw_os_wait_usec(1);
+ 	}
+ 
+ 	if (!success) {
+@@ -709,7 +709,7 @@ static int flm_sdram_reset(struct flow_nic_dev *ndev, int enable)
+ 			break;
+ 		}
+ 
+-		nt_os_wait_usec(1);
++		nthw_os_wait_usec(1);
+ 	}
+ 
+ 	if (!success) {
+@@ -976,7 +976,7 @@ static int flm_flow_programming(struct flow_handle *fh, uint32_t flm_op)
+ 			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+ 
+ 	while (learn_record == NULL) {
+-		nt_os_wait_usec(1);
++		nthw_os_wait_usec(1);
+ 		learn_record =
+ 			(struct flm_v25_lrn_data_s *)
+ 			nthw_flm_lrn_queue_get_write_buffer(flm_lrn_queue_arr);
+@@ -5274,7 +5274,7 @@ struct flow_handle *nthw_flow_async_create_profile_inline(struct flow_eth_dev *d
+ 
+ 		} else {
+ 			do {
+-				nt_os_wait_usec(1);
++				nthw_os_wait_usec(1);
+ 				status = atomic_load(&pattern_action_pair->status);
+ 			} while (status == CELL_STATUS_INITIALIZING);
+ 
+diff --git a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
+index 9e269eb69f..b9d03b4982 100644
+--- a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
++++ b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
+@@ -1060,7 +1060,7 @@ static int nthw_field_wait_cond32(const nthw_field_t *p, enum nthw_field_match e
+ 		if (n_poll_iterations <= 0)
+ 			return -1;
+ 
+-		nt_os_wait_usec(n_poll_interval);
++		nthw_os_wait_usec(n_poll_interval);
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/net/ntnic/nthw/nthw_rac.c b/drivers/net/ntnic/nthw/nthw_rac.c
+index 33e0caa581..4845c2b0c9 100644
+--- a/drivers/net/ntnic/nthw/nthw_rac.c
++++ b/drivers/net/ntnic/nthw/nthw_rac.c
+@@ -326,7 +326,7 @@ int nthw_rac_rab_setup(nthw_rac_t *p)
+ 
+ 	const struct fpga_info_s *const p_fpga_info = p->mp_fpga->p_fpga_info;
+ 	uint32_t n_dma_buf_size = 2L * RAB_DMA_BUF_CNT * sizeof(uint32_t);
+-	const size_t align_size = nt_util_align_size(n_dma_buf_size);
++	const size_t align_size = nthw_util_align_size(n_dma_buf_size);
+ 	int numa_node = p_fpga_info->numa_node;
+ 	uint64_t dma_addr;
+ 	uint32_t buf;
+@@ -334,10 +334,10 @@ int nthw_rac_rab_setup(nthw_rac_t *p)
+ 	if (!p->m_dma) {
+ 		struct nt_dma_s *vfio_dma;
+ 		/* FPGA needs Page alignment (4K) */
+-		vfio_dma = nt_dma_alloc(align_size, 0x1000, numa_node);
++		vfio_dma = nthw_dma_alloc(align_size, 0x1000, numa_node);
+ 
+ 		if (vfio_dma == NULL) {
+-			NT_LOG(ERR, NTNIC, "nt_dma_alloc failed");
++			NT_LOG(ERR, NTNIC, "nthw_dma_alloc failed");
+ 			return -1;
+ 		}
+ 
+@@ -418,7 +418,7 @@ static int nthw_rac_rab_dma_wait(nthw_rac_t *p)
+ 	uint32_t i;
+ 
+ 	for (i = 0; i < RAB_DMA_WAIT; i++) {
+-		nt_os_wait_usec_poll(1);
++		nthw_os_wait_usec_poll(1);
+ 
+ 		if ((p->m_dma_out_buf[p->m_dma_out_ptr_rd] & completion) == completion)
+ 			break;
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index c580684a84..1c26411da8 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -281,11 +281,12 @@ eth_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete __rte_unused)
+ 		nt_link_speed_t port_link_speed =
+ 			port_ops->get_link_speed(p_adapter_info, n_intf_no);
+ 		eth_dev->data->dev_link.link_speed =
+-			nt_link_speed_to_eth_speed_num(port_link_speed);
++			nthw_link_speed_to_eth_speed_num(port_link_speed);
+ 
+ 		nt_link_duplex_t nt_link_duplex =
+ 			port_ops->get_link_duplex(p_adapter_info, n_intf_no);
+-		eth_dev->data->dev_link.link_duplex = nt_link_duplex_to_eth_duplex(nt_link_duplex);
++		eth_dev->data->dev_link.link_duplex =
++			nthw_link_duplex_to_eth_duplex(nt_link_duplex);
+ 
+ 	} else {
+ 		eth_dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
+@@ -355,7 +356,7 @@ eth_dev_infos_get(struct rte_eth_dev *eth_dev, struct rte_eth_dev_info *dev_info
+ 
+ 		const uint32_t nt_port_speed_capa =
+ 			port_ops->get_link_speed_capabilities(p_adapter_info, n_intf_no);
+-		dev_info->speed_capa = nt_link_speed_capa_to_eth_speed_capa(nt_port_speed_capa);
++		dev_info->speed_capa = nthw_link_speed_capa_to_eth_speed_capa(nt_port_speed_capa);
+ 	}
+ 
+ 	return 0;
+@@ -785,7 +786,8 @@ static int allocate_hw_virtio_queues(struct rte_eth_dev *eth_dev, int vf_num, st
+ 	uint64_t tot_alloc_size = 0x100000 + (uint64_t)buf_size * (uint64_t)num_descr;
+ 
+ 	void *virt =
+-		rte_malloc_socket("VirtQDescr", tot_alloc_size, nt_util_align_size(tot_alloc_size),
++		rte_malloc_socket("VirtQDescr", tot_alloc_size,
++			nthw_util_align_size(tot_alloc_size),
+ 			eth_dev->data->numa_node);
+ 
+ 	if (!virt)
+@@ -820,7 +822,7 @@ static int allocate_hw_virtio_queues(struct rte_eth_dev *eth_dev, int vf_num, st
+ 		if (!virt)
+ 			return -1;
+ 
+-		res = nt_vfio_dma_map(vf_num, virt, &iova_addr, size);
++		res = nthw_vfio_dma_map(vf_num, virt, &iova_addr, size);
+ 
+ 		NT_LOG(DBG, NTNIC, "VFIO MMAP res %i, vf_num %i", res, vf_num);
+ 
+@@ -862,7 +864,7 @@ static int allocate_hw_virtio_queues(struct rte_eth_dev *eth_dev, int vf_num, st
+ 			return -1;
+ 		}
+ 
+-		res = nt_vfio_dma_map(vf_num, virt_addr, &iova_addr, size);
++		res = nthw_vfio_dma_map(vf_num, virt_addr, &iova_addr, size);
+ 
+ 		NT_LOG(DBG, NTNIC,
+ 			"VFIO MMAP res %i, virt %p, iova %016"
+@@ -887,7 +889,7 @@ static int allocate_hw_virtio_queues(struct rte_eth_dev *eth_dev, int vf_num, st
+ 		return 0;
+ 	}	/* End of: no optimal IOMMU mapping available */
+ 
+-	res = nt_vfio_dma_map(vf_num, virt, &iova_addr, ONE_G_SIZE);
++	res = nthw_vfio_dma_map(vf_num, virt, &iova_addr, ONE_G_SIZE);
+ 
+ 	if (res != 0) {
+ 		NT_LOG(ERR, NTNIC, "VFIO MMAP FAILED! res %i, vf_num %i", res, vf_num);
+@@ -948,7 +950,7 @@ static int deallocate_hw_virtio_queues(struct hwq_s *hwq)
+ 
+ 	void *virt = hwq->virt_queues_ctrl.virt_addr;
+ 
+-	int res = nt_vfio_dma_unmap(vf_num, hwq->virt_queues_ctrl.virt_addr,
++	int res = nthw_vfio_dma_unmap(vf_num, hwq->virt_queues_ctrl.virt_addr,
+ 			(uint64_t)hwq->virt_queues_ctrl.phys_addr, hwq->virt_queues_ctrl.len);
+ 
+ 	if (res != 0) {
+@@ -959,7 +961,7 @@ static int deallocate_hw_virtio_queues(struct hwq_s *hwq)
+ 	if (hwq->pkt_buffers_ctrl.virt_addr != NULL &&
+ 			hwq->pkt_buffers_ctrl.phys_addr != NULL &&
+ 			hwq->pkt_buffers_ctrl.len > 0) {
+-		int res = nt_vfio_dma_unmap(vf_num,
++		int res = nthw_vfio_dma_unmap(vf_num,
+ 				hwq->pkt_buffers_ctrl.virt_addr,
+ 				(uint64_t)hwq->pkt_buffers_ctrl.phys_addr,
+ 				hwq->pkt_buffers_ctrl.len);
+@@ -1414,7 +1416,7 @@ eth_dev_start(struct rte_eth_dev *eth_dev)
+ 				break;
+ 			}
+ 
+-			nt_os_wait_usec(100 * 1000);
++			nthw_os_wait_usec(100 * 1000);
+ 		}
+ 
+ 		if (internals->lpbk_mode) {
+@@ -1532,7 +1534,7 @@ drv_deinit(struct drv_s *p_drv)
+ 	 * 1 second to give the services a chance to see the termonation.
+ 	 */
+ 	clear_pdrv(p_drv);
+-	nt_os_wait_usec(1000000);
++	nthw_os_wait_usec(1000000);
+ 
+ 	/* stop statistics service */
+ 	nthw_service_del(RTE_NTNIC_SERVICE_STAT);
+@@ -1995,7 +1997,7 @@ static int port_event_service(void *context)
+ 			}
+ 
+ 			if (do_wait)
+-				nt_os_wait_usec(10);
++				nthw_os_wait_usec(10);
+ 
+ 			count++;
+ 			do_wait = true;
+@@ -2043,7 +2045,7 @@ static int adapter_flm_update_service(void *context)
+ 	}
+ 
+ 	if (profile_inline_ops->flm_update(dev) == 0)
+-		nt_os_wait_usec(10);
++		nthw_os_wait_usec(10);
+ 
+ 	return 0;
+ }
+@@ -2081,7 +2083,7 @@ static int adapter_stat_service(void *context)
+ 		return 0;
+ 	}
+ 
+-	nt_os_wait_usec(10 * 1000);
++	nthw_os_wait_usec(10 * 1000);
+ 
+ 	nthw_stat_trigger(p_nthw_stat);
+ 
+@@ -2089,7 +2091,7 @@ static int adapter_stat_service(void *context)
+ 
+ 	while (rte_service_runstate_get(stat_srv->id) &&
+ 		(*p_nthw_stat->mp_timestamp == (uint64_t)-1)) {
+-		nt_os_wait_usec(1 * 100);
++		nthw_os_wait_usec(1 * 100);
+ 
+ 		if ((++loop & 0x3fff) == 0) {
+ 			if (p_nt4ga_stat->mp_nthw_rpf) {
+@@ -2148,7 +2150,7 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 		/* Return statement is not necessary here to allow traffic processing by SW  */
+ 	}
+ 
+-	nt_vfio_init();
++	nthw_vfio_init();
+ 	const struct port_ops *port_ops = get_port_ops();
+ 
+ 	if (port_ops == NULL) {
+@@ -2271,7 +2273,7 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 	}
+ 
+ 	/* Setup VFIO context */
+-	int vfio = nt_vfio_setup(pci_dev);
++	int vfio = nthw_vfio_setup(pci_dev);
+ 
+ 	if (vfio < 0) {
+ 		NT_LOG_DBGX(ERR, NTNIC, "%s: vfio_setup error %d",
+@@ -2622,7 +2624,7 @@ nthw_pci_dev_deinit(struct rte_eth_dev *eth_dev __rte_unused)
+ 
+ 	/* let running services end Rx and Tx activity */
+ 	if (sg_ops != NULL) {
+-		nt_os_wait_usec(1 * 1000 * 1000);
++		nthw_os_wait_usec(1 * 1000 * 1000);
+ 
+ 		while (internals) {
+ 			for (i = internals->nb_tx_queues - 1; i >= 0; i--) {
+@@ -2647,7 +2649,7 @@ nthw_pci_dev_deinit(struct rte_eth_dev *eth_dev __rte_unused)
+ 		rte_eth_dev_release_port(eth_dev);
+ 	}
+ 
+-	nt_vfio_remove(EXCEPTION_PATH_HID);
++	nthw_vfio_remove(EXCEPTION_PATH_HID);
  	return 0;
  }
  
--int km_key_compare(struct km_flow_def_s *km, struct km_flow_def_s *km1)
-+int nthw_km_key_compare(struct km_flow_def_s *km, struct km_flow_def_s *km1)
+@@ -2698,7 +2700,7 @@ nthw_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
+ 	 * flooding by OVS from multiple virtual port services - no need to be precise
+ 	 */
+ 	uint64_t now_rtc = rte_get_tsc_cycles();
+-	nt_os_wait_usec(10 * 1000);
++	nthw_os_wait_usec(10 * 1000);
+ 	rte_tsc_freq = 100 * (rte_get_tsc_cycles() - now_rtc);
+ 
+ 	NT_LOG_DBGX(DBG, NTNIC, "leave: ret=%d", ret);
+diff --git a/drivers/net/ntnic/ntnic_vfio.c b/drivers/net/ntnic/ntnic_vfio.c
+index b1e807d6fa..187829d287 100644
+--- a/drivers/net/ntnic/ntnic_vfio.c
++++ b/drivers/net/ntnic/ntnic_vfio.c
+@@ -47,7 +47,7 @@ vfio_get(int vf_num)
+ 
+ /* External API */
+ int
+-nt_vfio_setup(struct rte_pci_device *dev)
++nthw_vfio_setup(struct rte_pci_device *dev)
  {
- 	if (km->target != km1->target || km->num_ftype_elem != km1->num_ftype_elem ||
- 		km->key_word_size != km1->key_word_size || km->info_set != km1->info_set)
-@@ -473,7 +473,7 @@ int km_key_compare(struct km_flow_def_s *km, struct km_flow_def_s *km1)
- 	return km1->flow_type;
+ 	int ret;
+ 	char devname[RTE_DEV_NAME_MAX_LEN] = { 0 };
+@@ -123,7 +123,7 @@ nt_vfio_setup(struct rte_pci_device *dev)
  }
  
--int km_rcp_set(struct km_flow_def_s *km, int index)
-+int nthw_km_rcp_set(struct km_flow_def_s *km, int index)
+ int
+-nt_vfio_remove(int vf_num)
++nthw_vfio_remove(int vf_num)
  {
- 	int qw = 0;
- 	int sw = 0;
-@@ -1101,7 +1101,7 @@ static int tcam_reset_entry(struct km_flow_def_s *km)
- 	return err;
+ 	struct vfio_dev *vfio;
+ 
+@@ -141,7 +141,7 @@ nt_vfio_remove(int vf_num)
  }
  
--int km_write_data_match_entry(struct km_flow_def_s *km, uint32_t color)
-+int nthw_km_write_data_match_entry(struct km_flow_def_s *km, uint32_t color)
+ int
+-nt_vfio_dma_map(int vf_num, void *virt_addr, uint64_t *iova_addr, uint64_t size)
++nthw_vfio_dma_map(int vf_num, void *virt_addr, uint64_t *iova_addr, uint64_t size)
  {
- 	int res = -1;
- 
-@@ -1125,7 +1125,7 @@ int km_write_data_match_entry(struct km_flow_def_s *km, uint32_t color)
- 	return res;
+ 	uint64_t gp_virt_base;
+ 	uint64_t gp_offset;
+@@ -189,7 +189,7 @@ nt_vfio_dma_map(int vf_num, void *virt_addr, uint64_t *iova_addr, uint64_t size)
  }
  
--int km_clear_data_match_entry(struct km_flow_def_s *km)
-+int nthw_km_clear_data_match_entry(struct km_flow_def_s *km)
+ int
+-nt_vfio_dma_unmap(int vf_num, void *virt_addr, uint64_t iova_addr, uint64_t size)
++nthw_vfio_dma_unmap(int vf_num, void *virt_addr, uint64_t iova_addr, uint64_t size)
  {
- 	int res = 0;
+ 	uint64_t gp_virt_base;
+ 	struct vfio_dev *vfio;
+@@ -225,10 +225,10 @@ nt_vfio_dma_unmap(int vf_num, void *virt_addr, uint64_t iova_addr, uint64_t size
+ }
  
-diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-index 6fc496e16a..e0cdd12626 100644
---- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-+++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-@@ -1725,7 +1725,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 		sw_mask[0] = 0x0fff;
- 		sw_data[0] = implicit_vlan_vid & sw_mask[0];
+ void
+-nt_vfio_init(void)
++nthw_vfio_init(void)
+ {
+-	struct nt_util_vfio_impl s = { .vfio_dma_map = nt_vfio_dma_map,
+-		       .vfio_dma_unmap = nt_vfio_dma_unmap
++	struct nt_util_vfio_impl s = { .vfio_dma_map = nthw_vfio_dma_map,
++		       .vfio_dma_unmap = nthw_vfio_dma_unmap
+ 	};
+-	nt_util_vfio_init(&s);
++	nthw_util_vfio_init(&s);
+ }
+diff --git a/drivers/net/ntnic/ntnic_vfio.h b/drivers/net/ntnic/ntnic_vfio.h
+index e070e9460c..72f8165a48 100644
+--- a/drivers/net/ntnic/ntnic_vfio.h
++++ b/drivers/net/ntnic/ntnic_vfio.h
+@@ -11,17 +11,17 @@
+ #include <ethdev_pci.h>
  
--		km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0], 1, DYN_FIRST_VLAN, 0);
-+		nthw_km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0], 1, DYN_FIRST_VLAN, 0);
- 		set_key_def_sw(key_def, sw_counter, DYN_FIRST_VLAN, 0);
- 		sw_counter += 1;
+ void
+-nt_vfio_init(void);
++nthw_vfio_init(void);
  
-@@ -1874,7 +1874,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ int
+-nt_vfio_setup(struct rte_pci_device *dev);
++nthw_vfio_setup(struct rte_pci_device *dev);
+ int
+-nt_vfio_remove(int vf_num);
++nthw_vfio_remove(int vf_num);
  
- 					qw_mask[3] = ntohs(eth_mask->ether_type) << 16;
+ int
+-nt_vfio_dma_map(int vf_num, void *virt_addr, uint64_t *iova_addr, uint64_t size);
++nthw_vfio_dma_map(int vf_num, void *virt_addr, uint64_t *iova_addr, uint64_t size);
+ int
+-nt_vfio_dma_unmap(int vf_num, void *virt_addr, uint64_t iova_addr, uint64_t size);
++nthw_vfio_dma_unmap(int vf_num, void *virt_addr, uint64_t iova_addr, uint64_t size);
  
--					km_add_match_elem(&fd->km,
-+					nthw_km_add_match_elem(&fd->km,
- 						&qw_data[(size_t)(qw_counter * 4)],
- 						&qw_mask[(size_t)(qw_counter * 4)], 4, DYN_L2, 0);
- 					set_key_def_qw(key_def, qw_counter, DYN_L2, 0);
-@@ -1897,7 +1897,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 					sw_mask[0] = ntohs(eth_mask->ether_type) << 16;
- 					sw_data[0] = ntohs(eth_spec->ether_type) << 16 & sw_mask[0];
+ /* Find device (PF/VF) number from device address */
+ #endif	/* _NTNIC_VFIO_H_ */
+diff --git a/drivers/net/ntnic/ntutil/nt_util.c b/drivers/net/ntnic/ntutil/nt_util.c
+index 18133570bb..2401aee3dc 100644
+--- a/drivers/net/ntnic/ntutil/nt_util.c
++++ b/drivers/net/ntnic/ntutil/nt_util.c
+@@ -17,35 +17,35 @@
+ static struct nt_util_vfio_impl vfio_cb;
  
--					km_add_match_elem(&fd->km, &sw_data[0],
-+					nthw_km_add_match_elem(&fd->km, &sw_data[0],
- 						&sw_mask[0], 1, DYN_L2, 12);
- 					set_key_def_sw(key_def, sw_counter, DYN_L2, 12);
- 					sw_counter += 1;
-@@ -1944,7 +1944,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 						ntohs(vlan_spec->eth_proto);
- 					sw_data[0] &= sw_mask[0];
+ /* uses usleep which schedules out the calling service */
+-void nt_os_wait_usec(int val)
++void nthw_os_wait_usec(int val)
+ {
+ 	rte_delay_us_sleep(val);
+ }
  
--					km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0], 1,
-+					nthw_km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0], 1,
- 						DYN_FIRST_VLAN, 2 + 4 * fd->vlans);
- 					set_key_def_sw(key_def, sw_counter, DYN_FIRST_VLAN,
- 						2 + 4 * fd->vlans);
-@@ -1971,7 +1971,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 					qw_data[2] &= qw_mask[2];
- 					qw_data[3] &= qw_mask[3];
+ /* spins in a waiting loop calling pause asm instruction uses RDTSC - precise wait */
+-void nt_os_wait_usec_poll(int val)
++void nthw_os_wait_usec_poll(int val)
+ {
+ 	rte_delay_us(val);
+ }
  
--					km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0], 4,
-+					nthw_km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0], 4,
- 						DYN_FIRST_VLAN, 2 + 4 * fd->vlans);
- 					set_key_def_qw(key_def, qw_counter, DYN_FIRST_VLAN,
- 						2 + 4 * fd->vlans);
-@@ -2066,7 +2066,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 					qw_data[2] = ntohl(ipv4_spec->hdr.src_addr) & qw_mask[2];
- 					qw_data[3] = ntohl(ipv4_spec->hdr.dst_addr) & qw_mask[3];
+-uint64_t nt_os_get_time_monotonic_counter(void)
++uint64_t nthw_os_get_time_monotonic_counter(void)
+ {
+ 	return rte_get_timer_cycles();
+ }
  
--					km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0], 4,
-+					nthw_km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0], 4,
- 						any_count > 0 ? DYN_TUN_L3 : DYN_L3, 4);
- 					set_key_def_qw(key_def, qw_counter, any_count > 0
- 						? DYN_TUN_L3 : DYN_L3, 4);
-@@ -2094,7 +2094,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 					sw_mask[0] = ntohl(ipv4_mask->hdr.src_addr);
- 					sw_data[0] = ntohl(ipv4_spec->hdr.src_addr) & sw_mask[0];
+ /* Allocation size matching minimum alignment of specified size */
+-uint64_t nt_util_align_size(uint64_t size)
++uint64_t nthw_util_align_size(uint64_t size)
+ {
+ 	uint64_t alignment_size = 1ULL << rte_log2_u64(size);
+ 	return alignment_size;
+ }
  
--					km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0], 1,
-+					nthw_km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0], 1,
- 						any_count > 0 ? DYN_TUN_L3 : DYN_L3, 12);
- 					set_key_def_sw(key_def, sw_counter, any_count > 0
- 						? DYN_TUN_L3 : DYN_L3, 12);
-@@ -2115,7 +2115,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 					sw_mask[0] = ntohl(ipv4_mask->hdr.dst_addr);
- 					sw_data[0] = ntohl(ipv4_spec->hdr.dst_addr) & sw_mask[0];
+-void nt_util_vfio_init(struct nt_util_vfio_impl *impl)
++void nthw_util_vfio_init(struct nt_util_vfio_impl *impl)
+ {
+ 	vfio_cb = *impl;
+ }
  
--					km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0], 1,
-+					nthw_km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0], 1,
- 						any_count > 0 ? DYN_TUN_L3 : DYN_L3, 16);
- 					set_key_def_sw(key_def, sw_counter, any_count > 0
- 						? DYN_TUN_L3 : DYN_L3, 16);
-@@ -2137,7 +2137,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 					sw_data[0] = ipv4_spec->hdr.next_proto_id
- 						<< 16 & sw_mask[0];
+-struct nt_dma_s *nt_dma_alloc(uint64_t size, uint64_t align, int numa)
++struct nt_dma_s *nthw_dma_alloc(uint64_t size, uint64_t align, int numa)
+ {
+ 	int res;
+ 	struct nt_dma_s *vfio_addr;
+@@ -65,7 +65,7 @@ struct nt_dma_s *nt_dma_alloc(uint64_t size, uint64_t align, int numa)
+ 		return NULL;
+ 	}
  
--					km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0], 1,
-+					nthw_km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0], 1,
- 						any_count > 0 ? DYN_TUN_L3 : DYN_L3, 8);
- 					set_key_def_sw(key_def, sw_counter, any_count > 0
- 						? DYN_TUN_L3 : DYN_L3, 8);
-@@ -2208,7 +2208,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 					qw_data[2] &= qw_mask[2];
- 					qw_data[3] &= qw_mask[3];
+-	res = vfio_cb.vfio_dma_map(0, addr, &vfio_addr->iova, nt_util_align_size(size));
++	res = vfio_cb.vfio_dma_map(0, addr, &vfio_addr->iova, nthw_util_align_size(size));
  
--					km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0], 4,
-+					nthw_km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0], 4,
- 						any_count > 0 ? DYN_TUN_L3 : DYN_L3, 8);
- 					set_key_def_qw(key_def, qw_counter, any_count > 0
- 						? DYN_TUN_L3 : DYN_L3, 8);
-@@ -2244,7 +2244,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 					qw_data[2] &= qw_mask[2];
- 					qw_data[3] &= qw_mask[3];
+ 	if (res != 0) {
+ 		rte_free(addr);
+@@ -75,7 +75,7 @@ struct nt_dma_s *nt_dma_alloc(uint64_t size, uint64_t align, int numa)
+ 	}
  
--					km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0], 4,
-+					nthw_km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0], 4,
- 						any_count > 0 ? DYN_TUN_L3 : DYN_L3, 24);
- 					set_key_def_qw(key_def, qw_counter, any_count > 0
- 						? DYN_TUN_L3 : DYN_L3, 24);
-@@ -2259,8 +2259,9 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 						sw_mask[0] = ipv6_mask->hdr.proto << 8;
- 						sw_data[0] = ipv6_spec->hdr.proto << 8 & sw_mask[0];
+ 	vfio_addr->addr = (uint64_t)addr;
+-	vfio_addr->size = nt_util_align_size(size);
++	vfio_addr->size = nthw_util_align_size(size);
  
--						km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0],
--							1, any_count > 0 ? DYN_TUN_L3 : DYN_L3, 4);
-+						nthw_km_add_match_elem(&fd->km,
-+							&sw_data[0], &sw_mask[0], 1,
-+							any_count > 0 ? DYN_TUN_L3 : DYN_L3, 4);
- 						set_key_def_sw(key_def, sw_counter, any_count > 0
- 							? DYN_TUN_L3 : DYN_L3, 4);
- 						sw_counter += 1;
-@@ -2286,8 +2287,9 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 						qw_data[2] &= qw_mask[2];
- 						qw_data[3] &= qw_mask[3];
+ 	NT_LOG(DBG, GENERAL,
+ 		"VFIO DMA alloc addr=%" PRIX64 ", iova=%" PRIX64
+@@ -86,7 +86,7 @@ struct nt_dma_s *nt_dma_alloc(uint64_t size, uint64_t align, int numa)
+ }
  
--						km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0],
--							4, any_count > 0 ? DYN_TUN_L3 : DYN_L3, 0);
-+						nthw_km_add_match_elem(&fd->km,
-+							&qw_data[0], &qw_mask[0], 4,
-+							any_count > 0 ? DYN_TUN_L3 : DYN_L3, 0);
- 						set_key_def_qw(key_def, qw_counter, any_count > 0
- 							? DYN_TUN_L3 : DYN_L3, 0);
- 						qw_counter += 1;
-@@ -2349,8 +2351,9 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 							<< 16) | ntohs(udp_spec->hdr.dst_port)) &
- 							sw_mask[0];
+ /* NOTE: please note the difference between RTE_ETH_SPEED_NUM_xxx and RTE_ETH_LINK_SPEED_xxx */
+-int nt_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed)
++int nthw_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed)
+ {
+ 	int eth_speed_num = RTE_ETH_SPEED_NUM_NONE;
  
--						km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0],
--							1, any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
-+						nthw_km_add_match_elem(&fd->km,
-+							&sw_data[0], &sw_mask[0], 1,
-+							any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
- 						set_key_def_sw(key_def, sw_counter, any_count > 0
- 							? DYN_TUN_L4 : DYN_L4, 0);
- 						sw_counter += 1;
-@@ -2378,8 +2381,9 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 						qw_data[2] &= qw_mask[2];
- 						qw_data[3] &= qw_mask[3];
+@@ -131,7 +131,7 @@ int nt_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed)
+ 	return eth_speed_num;
+ }
  
--						km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0],
--							4, any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
-+						nthw_km_add_match_elem(&fd->km,
-+							&qw_data[0], &qw_mask[0], 4,
-+							any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
- 						set_key_def_qw(key_def, qw_counter, any_count > 0
- 							? DYN_TUN_L4 : DYN_L4, 0);
- 						qw_counter += 1;
-@@ -2443,8 +2447,9 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 							<< 16) | ntohs(sctp_spec->hdr.dst_port)) &
- 							sw_mask[0];
+-uint32_t nt_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa)
++uint32_t nthw_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa)
+ {
+ 	uint32_t eth_speed_capa = 0;
  
--						km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0],
--							1, any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
-+						nthw_km_add_match_elem(&fd->km,
-+							&sw_data[0], &sw_mask[0], 1,
-+							any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
- 						set_key_def_sw(key_def, sw_counter, any_count > 0
- 							? DYN_TUN_L4 : DYN_L4, 0);
- 						sw_counter += 1;
-@@ -2472,8 +2477,9 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 						qw_data[2] &= qw_mask[2];
- 						qw_data[3] &= qw_mask[3];
+@@ -162,7 +162,7 @@ uint32_t nt_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa)
+ 	return eth_speed_capa;
+ }
  
--						km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0],
--							4, any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
-+						nthw_km_add_match_elem(&fd->km,
-+							&qw_data[0], &qw_mask[0], 4,
-+							any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
- 						set_key_def_qw(key_def, qw_counter, any_count > 0
- 							? DYN_TUN_L4 : DYN_L4, 0);
- 						qw_counter += 1;
-@@ -2541,7 +2547,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 							icmp_spec->hdr.icmp_code << 16;
- 						sw_data[0] &= sw_mask[0];
+-int nt_link_duplex_to_eth_duplex(enum nt_link_duplex_e nt_link_duplex)
++int nthw_link_duplex_to_eth_duplex(enum nt_link_duplex_e nt_link_duplex)
+ {
+ 	int eth_link_duplex = 0;
  
--						km_add_match_elem(&fd->km, &sw_data[0],
-+						nthw_km_add_match_elem(&fd->km, &sw_data[0],
- 							&sw_mask[0], 1, any_count > 0
- 							? DYN_TUN_L4 : DYN_L4, 0);
- 						set_key_def_sw(key_def, sw_counter,
-@@ -2571,8 +2577,9 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 						qw_data[2] &= qw_mask[2];
- 						qw_data[3] &= qw_mask[3];
+diff --git a/drivers/net/ntnic/ntutil/nt_util.h b/drivers/net/ntnic/ntutil/nt_util.h
+index 39a4956187..c889d07a10 100644
+--- a/drivers/net/ntnic/ntutil/nt_util.h
++++ b/drivers/net/ntnic/ntutil/nt_util.h
+@@ -32,16 +32,16 @@
+ #define PCIIDENT_PRINT_STR "%04x:%02x:%02x.%x"
+ #define BDF_TO_PCIIDENT(dom, bus, dev, fnc) (((dom) << 16) | ((bus) << 8) | ((dev) << 3) | (fnc))
  
--						km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0],
--							4, any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
-+						nthw_km_add_match_elem(&fd->km,
-+							&qw_data[0], &qw_mask[0], 4,
-+							any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
- 						set_key_def_qw(key_def, qw_counter, any_count > 0
- 							? DYN_TUN_L4 : DYN_L4, 0);
- 						qw_counter += 1;
-@@ -2640,8 +2647,9 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 							icmp_spec->code << 16;
- 						sw_data[0] &= sw_mask[0];
+-uint64_t nt_os_get_time_monotonic_counter(void);
+-void nt_os_wait_usec(int val);
+-void nt_os_wait_usec_poll(int val);
++uint64_t nthw_os_get_time_monotonic_counter(void);
++void nthw_os_wait_usec(int val);
++void nthw_os_wait_usec_poll(int val);
  
--						km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0],
--							1, any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
-+						nthw_km_add_match_elem(&fd->km,
-+							&sw_data[0], &sw_mask[0], 1,
-+							any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
+ static inline int min(int a, int b)
+ {
+ 	return (a < b) ? a : b;
+ }
  
- 						set_key_def_sw(key_def, sw_counter, any_count > 0
- 							? DYN_TUN_L4 : DYN_L4, 0);
-@@ -2670,8 +2678,9 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 						qw_data[2] &= qw_mask[2];
- 						qw_data[3] &= qw_mask[3];
+-uint64_t nt_util_align_size(uint64_t size);
++uint64_t nthw_util_align_size(uint64_t size);
  
--						km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0],
--							4, any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
-+						nthw_km_add_match_elem(&fd->km,
-+							&qw_data[0], &qw_mask[0], 4,
-+							any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
- 						set_key_def_qw(key_def, qw_counter, any_count > 0
- 							? DYN_TUN_L4 : DYN_L4, 0);
- 						qw_counter += 1;
-@@ -2743,8 +2752,9 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 							((ntohs(tcp_spec->hdr.src_port) << 16) |
- 							ntohs(tcp_spec->hdr.dst_port)) & sw_mask[0];
+ struct nt_dma_s {
+ 	uint64_t iova;
+@@ -54,17 +54,17 @@ struct port_link_speed {
+ 	int link_speed;
+ };
  
--						km_add_match_elem(&fd->km, &sw_data[0], &sw_mask[0],
--							1, any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
-+						nthw_km_add_match_elem(&fd->km,
-+							&sw_data[0], &sw_mask[0], 1,
-+							any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
- 						set_key_def_sw(key_def, sw_counter, any_count > 0
- 							? DYN_TUN_L4 : DYN_L4, 0);
- 						sw_counter += 1;
-@@ -2772,8 +2782,9 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 						qw_data[2] &= qw_mask[2];
- 						qw_data[3] &= qw_mask[3];
+-struct nt_dma_s *nt_dma_alloc(uint64_t size, uint64_t align, int numa);
++struct nt_dma_s *nthw_dma_alloc(uint64_t size, uint64_t align, int numa);
+ struct nt_util_vfio_impl {
+ 	int (*vfio_dma_map)(int vf_num, void *virt_addr, uint64_t *iova_addr, uint64_t size);
+ 	int (*vfio_dma_unmap)(int vf_num, void *virt_addr, uint64_t iova_addr, uint64_t size);
+ };
  
--						km_add_match_elem(&fd->km, &qw_data[0], &qw_mask[0],
--							4, any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
-+						nthw_km_add_match_elem(&fd->km,
-+							&qw_data[0], &qw_mask[0], 4,
-+							any_count > 0 ? DYN_TUN_L4 : DYN_L4, 0);
- 						set_key_def_qw(key_def, qw_counter, any_count > 0
- 							? DYN_TUN_L4 : DYN_L4, 0);
- 						qw_counter += 1;
-@@ -2832,7 +2843,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 						sw_data[0] =
- 							ntohl(gtp_spec->teid) & sw_mask[0];
+-void nt_util_vfio_init(struct nt_util_vfio_impl *impl);
++void nthw_util_vfio_init(struct nt_util_vfio_impl *impl);
  
--						km_add_match_elem(&fd->km, &sw_data[0],
-+						nthw_km_add_match_elem(&fd->km, &sw_data[0],
- 							&sw_mask[0], 1,
- 							DYN_L4_PAYLOAD, 4);
- 						set_key_def_sw(key_def, sw_counter,
-@@ -2862,7 +2873,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 						qw_data[2] &= qw_mask[2];
- 						qw_data[3] &= qw_mask[3];
+-int nt_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed);
+-uint32_t nt_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa);
+-int nt_link_duplex_to_eth_duplex(enum nt_link_duplex_e nt_link_duplex);
++int nthw_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed);
++uint32_t nthw_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa);
++int nthw_link_duplex_to_eth_duplex(enum nt_link_duplex_e nt_link_duplex);
  
--						km_add_match_elem(&fd->km, &qw_data[0],
-+						nthw_km_add_match_elem(&fd->km, &qw_data[0],
- 							&qw_mask[0], 4,
- 							DYN_L4_PAYLOAD, 4);
- 						set_key_def_qw(key_def, qw_counter,
-@@ -2916,7 +2927,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 						sw_data[0] = ntohl(gtp_psc_spec->qfi) &
- 							sw_mask[0];
+ int nthw_string_to_u32(const char *key_str __rte_unused, const char *value_str, void *extra_args);
  
--						km_add_match_elem(&fd->km, &sw_data[0],
-+						nthw_km_add_match_elem(&fd->km, &sw_data[0],
- 							&sw_mask[0], 1,
- 							DYN_L4_PAYLOAD, 14);
- 						set_key_def_sw(key_def, sw_counter,
-@@ -2946,7 +2957,7 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
- 						qw_data[2] &= qw_mask[2];
- 						qw_data[3] &= qw_mask[3];
- 
--						km_add_match_elem(&fd->km, &qw_data[0],
-+						nthw_km_add_match_elem(&fd->km, &qw_data[0],
- 							&qw_mask[0], 4,
- 							DYN_L4_PAYLOAD, 14);
- 						set_key_def_qw(key_def, qw_counter,
-@@ -3713,7 +3724,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
- 		if (fd->km.num_ftype_elem) {
- 			struct flow_handle *flow = dev->ndev->flow_base, *found_flow = NULL;
- 
--			if (km_key_create(&fd->km, fh->port_id)) {
-+			if (nthw_km_key_create(&fd->km, fh->port_id)) {
- 				NT_LOG(ERR, FILTER, "KM creation failed");
- 				nthw_flow_nic_set_error(ERR_MATCH_FAILED_BY_HW_LIMITS, error);
- 				goto error_out;
-@@ -3725,7 +3736,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
- 			while (flow) {
- 				if (flow->type == FLOW_HANDLE_TYPE_FLOW &&
- 					flow->fd->km.flow_type) {
--					int res = km_key_compare(&fd->km, &flow->fd->km);
-+					int res = nthw_km_key_compare(&fd->km, &flow->fd->km);
- 
- 					if (res < 0) {
- 						/* Flow rcp and match data is identical */
-@@ -3743,7 +3754,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
- 				flow = flow->next;
- 			}
- 
--			km_attach_ndev_resource_management(&fd->km, &dev->ndev->km_res_handle);
-+			nthw_km_attach_ndev_resource_management(&fd->km, &dev->ndev->km_res_handle);
- 
- 			if (found_flow != NULL) {
- 				/* Reuse existing KM RCP */
-@@ -3778,7 +3789,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
- 					goto error_out;
- 				}
- 
--				km_rcp_set(&fd->km, rcp);
-+				nthw_km_rcp_set(&fd->km, rcp);
- 				km_rcp_data.rcp = (uint32_t)rcp;
- 			}
- 		}
-@@ -3832,7 +3843,7 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
- 
- 			nthw_mod_km_rcp_flush(&dev->ndev->be, (int)km_rcp_data.rcp, 1);
- 
--			km_write_data_match_entry(&fd->km, 0);
-+			nthw_km_write_data_match_entry(&fd->km, 0);
- 		}
- 
- 		/* Setup Match Set */
-@@ -4298,7 +4309,7 @@ int nthw_flow_destroy_locked_profile_inline(struct flow_eth_dev *dev,
- 		NT_LOG(DBG, FILTER, "removing flow :%p", fh);
- 
- 		if (fh->fd->km.num_ftype_elem) {
--			km_clear_data_match_entry(&fh->fd->km);
-+			nthw_km_clear_data_match_entry(&fh->fd->km);
- 
- 			const struct hw_db_inline_km_rcp_data *other_km_rcp_data =
- 				nthw_db_inline_find_data(dev->ndev, dev->ndev->hw_db_handle,
 -- 
 2.45.0
 
