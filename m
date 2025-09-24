@@ -2,78 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1830BCAC5A5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 16:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C0F0CAC5A5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 16:55:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D8AE4065C;
-	Wed, 24 Sep 2025 18:50:56 +0200 (CEST)
-Received: from fout-b5-smtp.messagingengine.com
- (fout-b5-smtp.messagingengine.com [202.12.124.148])
- by mails.dpdk.org (Postfix) with ESMTP id 700DF402D8
- for <dev@dpdk.org>; Wed, 24 Sep 2025 18:50:54 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.stl.internal (Postfix) with ESMTP id AD2F71D00183;
- Wed, 24 Sep 2025 12:50:53 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Wed, 24 Sep 2025 12:50:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1758732653;
- x=1758819053; bh=DvBEDDmD7aqGbBcMP705CPGFDIr1ELHpCvaHaHr8H5U=; b=
- bfM/2YiXPMK92Gk/ohLNeZIMiEc5zYoU7xwkMRm4+6TXhwJ8W2g5GX7mC26+9j0H
- /VA1+t5t7ZlIbSQOw7SYXVqbIWeOoD0xZSQ694xN5hFYrZu5C7iWlwC4bNF74A/t
- sXEgxwObjhXoCcFMKS9NR42Z6GHuDSi4MmWoiINitLZTkMvVcwY9ffTELSKJFk2m
- bfT8SyK+c/1Yarnf2Oqu6psdm8dZd2ewL/7/mywSHKFH5y3Q0tuwEcbU7EdfmhfJ
- eVIJ23MDYVVyDbwAjErT6ZS8YY91ZxpX4JjUq+tGk+JnP4W9vlZ/HtQLyhbpjHeM
- 9jbdZcBbPvvnZZ6+/fVuUA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758732653; x=
- 1758819053; bh=DvBEDDmD7aqGbBcMP705CPGFDIr1ELHpCvaHaHr8H5U=; b=X
- Oz50/IwIcT5dgdd/2LrjY7F5M+VneiFm1011ke8AOVhRrubnVGT7er0d20OHdGyO
- wVJrtNLIdqJW5IiNr9/rTCMNIGx/02vJtjjlnLsHkKU7LMzPeVtm8qUqHciKcp2L
- A8C80wS+FgNe0OzHeavERLvbCDns9XrPUDo3361Suze5Dx5irzYPbW7fV4xqRp7Z
- rEuS5Y5sSA6kGwJrjhwpAIcGZl8DHPo+hMSxc5cEiLdgekF+06W6AMo/VQ2fTqXW
- bI34MgvZmXdkGUebfmfIEHvt7Y71vvrRDa8SoajyePixUO219UKtW4s28mR1fagj
- Heh/CgyzjoEkzFYl0kNZw==
-X-ME-Sender: <xms:bSHUaOiIVl0r_XziF7_D6EDhh-AYSFPsBiWwZY77dshqEmIVZenAeA>
- <xme:bSHUaLWnY6TkneI__Ri1btfnNye7n3aExC-ZzFjsZ2qERDzof9gMafNcHmzvMVvNm
- dAUVwzTL162yC1GUOh7be1yUiyOgGLSHSOUnaS7-8tHsiKcHuWiRA>
-X-ME-Received: <xmr:bSHUaI0P9ibytTCWdDfb2UREHj9Cfzywh_ge3XfQgFFT97mzTEhVMpyVPiKh42QqJZEZIBSrvfjG7AXN8aMWBA__hA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeigedufecutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkjghfggfgtgesthfuredttd
- dtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhho
- nhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgf
- dtgeekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedt
- necurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvg
- htpdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegu
- vghvseguphgukhdrohhrghdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
- esihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:bSHUaJHsTB1VVqoPzinnw6ZLyj0xPK_4Lw__l9qqa99JajdRIdbpBg>
- <xmx:bSHUaOj1P56F-nELrzQTbSBSKasFhAeCNBQBx93dUf4jTRnIUuyNdA>
- <xmx:bSHUaM9s5OGOEOeII0iLMskiuTHReimaXrtdXhyJkjAbr3QWEDSs8Q>
- <xmx:bSHUaNrLniK1iWSaRaa36_Lkiibusb4ikwk5uHGZjQXo2oQeNlbsLw>
- <xmx:bSHUaDJbcAV5KAmTa1Wjr25-uxvdI_zGLkp0rt6d-yOzklLEgLMNIctw>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 24 Sep 2025 12:50:52 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id D8A884065C;
+	Wed, 24 Sep 2025 18:55:32 +0200 (CEST)
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com
+ [209.85.222.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 4CD49402D8
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 18:55:31 +0200 (CEST)
+Received: by mail-qk1-f179.google.com with SMTP id
+ af79cd13be357-826311c1774so11894485a.2
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 09:55:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758732930;
+ x=1759337730; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=20fvuxfi4T6tAuajxwsjjJ7lcwFG541OPr6sFWT3V8Q=;
+ b=mkbnS+0FYqKjUF7IcljBX12KopA9tFzSuqddUM9qPUS7gzTh9sgmKnEmaTqkvSWXUw
+ +pBao47PLip2Kd/QPHIdJRaO+47g0zKJpWRdtr3M2HdxWM3BqM+yABSSKVLfiaKlcQGz
+ 17QZgqqYf0ZH34w+CUW05XtEgA5csNfoHnfXCE2o7G5EnxQ0i1BeiPUVemXVaxA72wxK
+ R+agaFQooyatqfdwvhjmeOsll1uoyZ3HyfUij6xnhi8n5uPfMVX4rB7C2cd4xpxEDMy2
+ vtBSib8wMNI6dGQaf1B/8utBXSyrPaHYjurXx5QEytDZyY0SA6makWkb0Sfs8KnIsPAL
+ 2Igg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1758732930; x=1759337730;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=20fvuxfi4T6tAuajxwsjjJ7lcwFG541OPr6sFWT3V8Q=;
+ b=qzTqnEluhi1GCjvuUi/cojLuOxGJDJh/TqFhWp7cYqDDFc3T6g+BvyP3I7KmTIrjHo
+ F4XssLePjpC576kqjE4zy2MZ9as2pItbR3Lpyid/CemPjeFNx5CN+a+QmW6h7xWhRbI1
+ eo1Lu7TixwZiqQ040g8JrW9V3XxsDOdfcM7rMKui4Kw7t79vbmdvhQCir99QSsP/Si+X
+ QHcxhG3wygK8aTflHRHBxqh87MHxHbOkmjVpdh2bi0qOnj+m6sNpifTkEIeZGojpCn/5
+ Rpoy+cvjVvvg2g1YCh7CNk3Lvkm2jUOvp5oDjFreukjQ89cnhhHVpWLfwnfRjapz3Yjv
+ 0PVQ==
+X-Gm-Message-State: AOJu0Yy37dfKW5Lj8G8uPpszkxtbxuipPsyxI2mpQBmXmGUAHF8pBL1v
+ d0WXZ78tx0LPGvo+XcqTm2flc5ZI/ZebNb/P4WR77r2ujGaEP5QtegH6NkOB9BMaqZeu4ARNOJP
+ x322Z
+X-Gm-Gg: ASbGncuCCrb91Wq4jleNgjsKAc/CZbHWR2jfNjcehwayZGyu48z6avfTJnEOXtU9MvK
+ D7eRJ1KcM212Q4fqMSUdANTSl48HInQ7hTjiGUFDAtJWAwl1/vZ+FF6Dpqa8ykvuvEbrZBHPlpZ
+ zV9RICQp3VzO2Jb1aVP7YB4E/kiKXjX5meBKuFcIFVE4hnQhSzbMcYJhSv6y7a3wO2YBdbZ54E2
+ 43RNgy6Lt7ZcXgkkXpR8FHiWJhtofyyC5V6Bgp8Gl+lO8A9sFlGGFkZrPA9SHVJHIfNocKW6geM
+ XRsxt1SakRXooEeJXS7TvaaezaVVTy1trB2PKMMWMWqVTm0pnu90ut9auv2RaiBqAqv5M6QYSta
+ KmStOCUPr5OHtayxWj9AESrDFkosSjSMIbhKJxpsLPm2jl20K/p6bgWsSdDMiz8cgMbAWJQBnau
+ tbDxHi77Y=
+X-Google-Smtp-Source: AGHT+IGfw4juKQeTXalxJ4ZlWmASPxrW0x2Rehiy4rkhXzxoSvqltmxb0zk5wbd6/HYCJfc7Z666fQ==
+X-Received: by 2002:a05:620a:1790:b0:826:776f:3493 with SMTP id
+ af79cd13be357-85adf5d26aamr52278085a.16.1758732930537; 
+ Wed, 24 Sep 2025 09:55:30 -0700 (PDT)
+Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-4bda15f91a0sm106052751cf.1.2025.09.24.09.55.29
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 24 Sep 2025 09:55:30 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com
-Subject: Re: [PATCH v3 0/2] lib: fix AVX2 checks and macro exposure
-Date: Wed, 24 Sep 2025 18:50:51 +0200
-Message-ID: <13998226.VsHLxoZxqI@thomas>
-In-Reply-To: <20250924154641.2684705-1-thomas@monjalon.net>
-References: <20250918073135.1273767-1-thomas@monjalon.net>
- <20250924154641.2684705-1-thomas@monjalon.net>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [RFC 0/6] get rid of pthread_cancel
+Date: Wed, 24 Sep 2025 09:51:07 -0700
+Message-ID: <20250924165527.268645-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,26 +79,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-24/09/2025 17:43, Thomas Monjalon:
-> I've found the AVX2 function is not used in efd library.
-> Then I tried to make AVX2 compilation simpler in efd and member libraries.
-> 
-> While at it, I've hidden a macro which was wrongly exported in the API
-> without having a correct prefix.
-> 
-> The v3 does not have the patches removing build-time checks:
->   - efd: remove AVX2 build-time check
->   - member: remove AVX2 build-time checks
-> because I'm not sure losing inlining for cleanup is worth.
-> 
-> Thomas Monjalon (2):
->   efd: fix AVX2 support
->   member: hide internal macro
+The use of pthread_cancel in DPDK is problematic since cancel is implemented
+as signal in Linux and TerminateThread in Windows. Using pthread_cancel
+also exposes the internals of rte_thread_t to drivers which limits potential
+ABI changes.
 
-Applied
+This patchset shows how the same effect can be had in most places by using
+either existing flag variables or the semantics of sockets/pipes used to
+communicate with the thread.
 
-The 2 other patches from v2 could be reconsidered later
-if we measure that the performance hit is neglictible.
-I probably won't work on it, so I let it to anyone interested.
+This RFC because it doesn't cover all uses of pthread_cancel, in the final
+version pthread_cancel will be gone and flagged as error in checkpatch;
+and the patches hit multiple drivers which require special hardware.
 
+Stephen Hemminger (6):
+  eal: avoid using pthread_cancel
+  eventdev: avoid use of pthread_cancel
+  raw/ifpga: avoid use of pthread_cancel
+  dma/skeleton: avoid use of pthread_cancel
+  intel/ipn3ke: avoid use of pthread_cancel
+  intel/iavf: remove use of pthread_cancel
+
+ drivers/dma/skeleton/skeleton_dmadev.c        |  5 +---
+ drivers/net/intel/iavf/iavf_vchnl.c           |  8 +++----
+ drivers/net/intel/ipn3ke/ipn3ke_representor.c |  8 ++-----
+ drivers/raw/ifpga/ifpga_rawdev.c              |  8 +------
+ lib/eal/common/eal_common_proc.c              | 24 +++++--------------
+ lib/eventdev/rte_event_eth_rx_adapter.c       | 21 ++++++++--------
+ 6 files changed, 25 insertions(+), 49 deletions(-)
+
+-- 
+2.47.3
 
