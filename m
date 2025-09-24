@@ -2,57 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B31CAC5AE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 17:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A45CAC5A5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 17:26:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 04D4F40695;
-	Wed, 24 Sep 2025 19:25:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4DBD840B94;
+	Wed, 24 Sep 2025 19:25:59 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id A36D34067E
- for <dev@dpdk.org>; Wed, 24 Sep 2025 19:25:50 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A170C40685
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 19:25:58 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1758734750;
+ s=mimecast20190719; t=1758734758;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=xmXM8tVCRWLdDtnrO7WKZU2zBAxP7Yc9J00rckQg3BM=;
- b=PJCzjroW+W1NchuujWXSBciiWdMuxBeBxN7VVN4I9VgpSHyp1Phcj0zOXKfN11jj5lQxT/
- jsZr4BK/9VBcySUV5QjLvrCveE9xN3dvHqavZI7O4Hb3KdlbLC1oYejrUdPsspN3EFROLt
- TskKRoFU5IQdL5F8EhJTVIYADxknTNo=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=9vKEBlSofHzNfmWfgG9GHUFS3MFee7glQ5klr6yDbqM=;
+ b=hsFywhc/MUDgArNiim0lEIvz+z7XWNXlHRo1va18EnMCmMHvfrXOwDgAPMWKy3GAShavv8
+ 0te5sX1GCVTFfxZk0FoqW//nF5YYVfsRFWJYU5sI9SGOkYSBM0PdQNLyJfcFirXPAuhiAr
+ TrEdypQd+RTuLWSzmJgYORVaBHrlb4o=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-348-W9hYgRw8NU6XqVwfCGyiWA-1; Wed,
- 24 Sep 2025 13:25:47 -0400
-X-MC-Unique: W9hYgRw8NU6XqVwfCGyiWA-1
-X-Mimecast-MFC-AGG-ID: W9hYgRw8NU6XqVwfCGyiWA_1758734746
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-654-A3dOavudMJuI-YQpUHFx7w-1; Wed,
+ 24 Sep 2025 13:25:56 -0400
+X-MC-Unique: A3dOavudMJuI-YQpUHFx7w-1
+X-Mimecast-MFC-AGG-ID: A3dOavudMJuI-YQpUHFx7w_1758734753
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 083741800289; Wed, 24 Sep 2025 17:25:46 +0000 (UTC)
+ by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 22D771955F2A; Wed, 24 Sep 2025 17:25:53 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.45.225.72])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 1D6BE1955F19; Wed, 24 Sep 2025 17:25:43 +0000 (UTC)
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id EA18718003FC; Wed, 24 Sep 2025 17:25:48 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Nicolas Chautru <nicolas.chautru@intel.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>
-Subject: [PATCH v3 1/7] baseband/acc: fix exported header
-Date: Wed, 24 Sep 2025 19:25:29 +0200
-Message-ID: <20250924172536.2447183-2-david.marchand@redhat.com>
+ Thomas Monjalon <thomas@monjalon.net>,
+ Srikanth Yalavarthi <syalavarthi@marvell.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, Ori Kam <orika@nvidia.com>,
+ Akhil Goyal <gakhil@marvell.com>, Anoob Joseph <anoobj@marvell.com>
+Subject: [PATCH v3 2/7] drivers: drop export of driver headers
+Date: Wed, 24 Sep 2025 19:25:30 +0200
+Message-ID: <20250924172536.2447183-3-david.marchand@redhat.com>
 In-Reply-To: <20250924172536.2447183-1-david.marchand@redhat.com>
 References: <20241127112617.1331125-1-david.marchand@redhat.com>
  <20250924172536.2447183-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Nwl3isCrVlBr19gOmpHsqRmUmAWZK492ZUDTc7tWgRs_1758734746
+X-Mimecast-MFC-PROC-ID: qD4q3o--4CErzM12goIHRKS3o-UewhTyRNnozbiqE3c_1758734753
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -69,26 +74,130 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_acc_cfg.h relies on rte_acc_common_cfg.h.
-
-Fixes: 32e8b7ea35dd ("baseband/acc100: refactor to segregate common code")
+Many classes are exposing driver only headers as public headers.
+Move them to the driver_sdk_headers list.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 ---
- drivers/baseband/acc/meson.build | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v2:
+- rebased,
 
-diff --git a/drivers/baseband/acc/meson.build b/drivers/baseband/acc/meson.build
-index 64fcf1537a..d9fb947eaa 100644
---- a/drivers/baseband/acc/meson.build
-+++ b/drivers/baseband/acc/meson.build
-@@ -26,4 +26,4 @@ deps += ['bus_pci']
+---
+ lib/bbdev/meson.build    | 14 +++++++++-----
+ lib/ethdev/meson.build   |  6 +++---
+ lib/mldev/meson.build    |  5 +----
+ lib/rawdev/meson.build   |  3 ++-
+ lib/regexdev/meson.build |  3 ++-
+ lib/security/meson.build |  3 ++-
+ 6 files changed, 19 insertions(+), 15 deletions(-)
+
+diff --git a/lib/bbdev/meson.build b/lib/bbdev/meson.build
+index 2e48d5f3da..002fc3f1ac 100644
+--- a/lib/bbdev/meson.build
++++ b/lib/bbdev/meson.build
+@@ -1,10 +1,14 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2017 Intel Corporation
  
- sources = files('acc_common.c', 'rte_acc100_pmd.c', 'rte_vrb_pmd.c')
+-sources = files('rte_bbdev.c',
+-        'bbdev_trace_points.c')
+-headers = files('rte_bbdev.h',
+-        'rte_bbdev_pmd.h',
++sources = files(
++        'rte_bbdev.c',
++        'bbdev_trace_points.c',
++)
++headers = files(
++        'rte_bbdev.h',
+         'rte_bbdev_op.h',
+-        'rte_bbdev_trace_fp.h')
++        'rte_bbdev_trace_fp.h',
++)
++driver_sdk_headers = files('rte_bbdev_pmd.h')
+ deps += ['mbuf']
+diff --git a/lib/ethdev/meson.build b/lib/ethdev/meson.build
+index f1d2586591..8ba6c708a2 100644
+--- a/lib/ethdev/meson.build
++++ b/lib/ethdev/meson.build
+@@ -26,11 +26,8 @@ headers = files(
+         'rte_ethdev_trace_fp.h',
+         'rte_dev_info.h',
+         'rte_flow.h',
+-        'rte_flow_driver.h',
+         'rte_mtr.h',
+-        'rte_mtr_driver.h',
+         'rte_tm.h',
+-        'rte_tm_driver.h',
+ )
  
--headers = files('rte_acc_cfg.h')
-+headers = files('rte_acc_cfg.h', 'rte_acc_common_cfg.h')
+ indirect_headers += files(
+@@ -42,6 +39,9 @@ driver_sdk_headers += files(
+         'ethdev_driver.h',
+         'ethdev_pci.h',
+         'ethdev_vdev.h',
++        'rte_flow_driver.h',
++        'rte_mtr_driver.h',
++        'rte_tm_driver.h',
+ )
+ 
+ if is_linux
+diff --git a/lib/mldev/meson.build b/lib/mldev/meson.build
+index 0079ccd205..39f1fba927 100644
+--- a/lib/mldev/meson.build
++++ b/lib/mldev/meson.build
+@@ -26,11 +26,8 @@ headers = files(
+         'rte_mldev.h',
+ )
+ 
+-indirect_headers += files(
+-        'rte_mldev_core.h',
+-)
+-
+ driver_sdk_headers += files(
++        'rte_mldev_core.h',
+         'rte_mldev_pmd.h',
+         'mldev_utils.h',
+ )
+diff --git a/lib/rawdev/meson.build b/lib/rawdev/meson.build
+index 7dfc3d5cf9..ccfd922fda 100644
+--- a/lib/rawdev/meson.build
++++ b/lib/rawdev/meson.build
+@@ -8,6 +8,7 @@ if is_windows
+ endif
+ 
+ sources = files('rte_rawdev.c')
+-headers = files('rte_rawdev.h', 'rte_rawdev_pmd.h')
++headers = files('rte_rawdev.h')
++driver_sdk_headers = files('rte_rawdev_pmd.h')
+ 
+ deps += ['telemetry']
+diff --git a/lib/regexdev/meson.build b/lib/regexdev/meson.build
+index 7e12d8cd6d..2684da3825 100644
+--- a/lib/regexdev/meson.build
++++ b/lib/regexdev/meson.build
+@@ -2,6 +2,7 @@
+ # Copyright 2020 Mellanox Technologies, Ltd
+ 
+ sources = files('rte_regexdev.c')
+-headers = files('rte_regexdev.h', 'rte_regexdev_driver.h')
++headers = files('rte_regexdev.h')
+ indirect_headers += files('rte_regexdev_core.h')
++driver_sdk_headers = files('rte_regexdev_driver.h')
+ deps += ['mbuf']
+diff --git a/lib/security/meson.build b/lib/security/meson.build
+index 1034a7a299..d5431d472c 100644
+--- a/lib/security/meson.build
++++ b/lib/security/meson.build
+@@ -2,5 +2,6 @@
+ # Copyright(c) 2017-2019 Intel Corporation
+ 
+ sources = files('rte_security.c')
+-headers = files('rte_security.h', 'rte_security_driver.h')
++headers = files('rte_security.h')
++driver_sdk_headers = files('rte_security_driver.h')
+ deps += ['mempool', 'cryptodev', 'net']
 -- 
 2.51.0
 
