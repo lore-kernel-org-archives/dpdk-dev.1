@@ -2,83 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE45CAC5AE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 15:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 096A9CAC5AE
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 15:46:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0A0340A7F;
-	Wed, 24 Sep 2025 17:46:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2A51140B8D;
+	Wed, 24 Sep 2025 17:46:55 +0200 (CEST)
 Received: from fhigh-b5-smtp.messagingengine.com
  (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
- by mails.dpdk.org (Postfix) with ESMTP id 783DE40A6D;
- Wed, 24 Sep 2025 17:46:50 +0200 (CEST)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfhigh.stl.internal (Postfix) with ESMTP id A31BB7A01AE;
- Wed, 24 Sep 2025 11:46:49 -0400 (EDT)
+ by mails.dpdk.org (Postfix) with ESMTP id 936BD40A8A
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 17:46:53 +0200 (CEST)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 040F57A01AE;
+ Wed, 24 Sep 2025 11:46:52 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Wed, 24 Sep 2025 11:46:49 -0400
+ by phl-compute-06.internal (MEProxy); Wed, 24 Sep 2025 11:46:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm1; t=1758728809; x=
- 1758815209; bh=qiIIuHij3QXWxQJJGdQTZHk/cAAB2xt2xIVoOy9+RDg=; b=F
- nUQzxd2ShbWuYkOIG8UeP+GaDDaOkMlefU8eacmZuI8PROKmhy10h3vMxfApr4hC
- SqsKWQ57J2MOzgetzMELWVWmaLd3sZcHZ/tG+Vsl/b6zUL/5w8TvWu9pfM71yaH9
- /EFGOBDqfLRP78P9kgXgfoFHHmleLqzRQEhgt0qHDdHJlnyP9R3j0GtB7tGit6aN
- ZwKvb8cDVR5fBp8jYqW7nlcPLzcdGSZa8jI3bPx8uywrvBXe41qZbJA9fHHo36W3
- CMnvjmht5IHCuR5El1eti2z/YBG6xuiipPi7iE2yDrWi35nYNWsDI/8iwfd59Od5
- EfoXNQgcbbaHEZ11WYlTA==
+ :reply-to:subject:subject:to:to; s=fm1; t=1758728812; x=
+ 1758815212; bh=OlNwW43vz7u8c/rPwOemiQSIytQfPHMP2QwdNEBpSrY=; b=L
+ buDZgkWXxD6mIb7gA2NVmlaj6698SwjoxfhxyPO3Fd2/oRhBL+V3kKTwwDZP0MlR
+ 0+aN5LcYo+nu1gmW/o/cRp+u1Z0QG00LhtcFJPYqn8aRcpXfmCPS0C4agmzDpYLN
+ sDMSNS1VVH6GlVzHOCd0vtRMI+GmLOIW7qS/FxfL9DoVap0nDjZ2yWUONjUimbND
+ bJF3ygFlBFlxw2XrHdllwDokC+F+a2uNNcLBWZtDkDMqAsUEpW/93g5fpakOIQtd
+ QUrrDxL3a75s7wORNA6+iue96b5xRJENna265lQYOaWdMe/sZDdkLKDWQcqbAAYZ
+ ZE0sXy+y5VnPGbzahIcng==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm1; t=1758728809; x=1758815209; bh=q
- iIIuHij3QXWxQJJGdQTZHk/cAAB2xt2xIVoOy9+RDg=; b=PDoHpIqcdZCB4q5oY
- I8qaGudxTpFfOk/WaOQeyJ28r/arYIkkqTgoEYYDgGK8JE4ch8v/19+A3y23kdZC
- YpuOFbi6A35NK0/MD7ZzIStBmRfU4Ejqed+WOahMSHc5o6ZoEqcwn6onlUChpRwo
- nuCrRlNznFnz/fUhJd52tyrafevoV4ZHGRuvEQd1GRpjUu4mZogM7glddxQO0Bzk
- 2NWVq6ly7XAuS3qQG68Ur0ttWx9akBicjjfSngrrPtZVDnHJg5jHoIGQLseE757F
- tezJ2gwX2X2y12KcPkz/s0tI/TiVpvH6BsL5JmOjnSPo/wQ6X1kpnAiHvq6iBNzU
- fYv8A==
-X-ME-Sender: <xms:aRLUaAcILFNtJDa56mKXpLaW0E0WghrFiVEPumgeBDnw9vaK7K1sIg>
- <xme:aRLUaOOyIVK-74FcNI96yVf8XNamqXPdl4qKncYgCVtOUd6AkX4uPLXoyGkrBvBbE
- RnP17QkdPjMblII2I9wXvG3Gq2katyG0pISr5EKGigc3bJLSifwNg>
-X-ME-Received: <xmr:aRLUaDttGIWAJWcRxKY25DNvgYZMIYZHgJWanhLPvbimrWA1f2l0ek-013qrCryIbuyfJjrSZzdqEYXwbUK6X3Lb_rnJW3A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeigedtudcutefuodetggdotefrod
+ :x-me-sender:x-sasl-enc; s=fm1; t=1758728812; x=1758815212; bh=O
+ lNwW43vz7u8c/rPwOemiQSIytQfPHMP2QwdNEBpSrY=; b=XTFLJnxP5tkjy1C/7
+ /47uBBh+QLFW4179ME+0HgDNI/ll9bq2V1SCJ12ddvjUYT/L7VZHq+ISgz+J8LXR
+ hmsCe8NfBIBu/QTYpomebFmYvcY5vcxoiqsYLbxEJRCmRaEXebT9JO4nza+7YQtG
+ Rr4IkSxEsTukG50qsTjdzcLJGYWYux6v22KFpSBVXMlJ2XJGNOuV+2kro+pE77ki
+ BihnpqT8yb1JGTjiTxihjfewZ+R0UNO9AFkTWiYS7gBDhnPCaLvnEzy10VjX2Zdz
+ qeaXSmCsU9Sq9hICV1Zsji4jyuy3HYoKjcJFonA+mcTTpIdENz61duex0B2raAHm
+ S61wg==
+X-ME-Sender: <xms:bBLUaMTZuVgdIB0J69Cv94xv5lydNlOOh1JDy6TjaoQ6wbbgJIn5_w>
+ <xme:bBLUaJ5RCYTUa396lhYm-ao4p3mbVNeKsQJ4-DFbSmTQEaqxv_6b3uWk3XmqPmPC8
+ P0tdjCa1sN-rIM8OtrBMLbzRDRPgK8ZADULWS0ooaxrk_RMlBOuXA>
+X-ME-Received: <xmr:bBLUaBy-xkZ3rvfq4bBFVSLVjrMPLhpoFaCRK1VIYO03XjBdibVTk-R3eR7RQ3NcS53ZL3yB2fP-iJU5MfJnANn3hwSGzvI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeigedttdcutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
  hrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefvhhhomhgrshcu
  ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
  grthhtvghrnhepvdejhfdugeehvddtieejieegteeuudfgjeeukeeiledthfetveekhefh
  ieelhfdtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepledpmhho
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepgedpmhho
  uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpth
  htohepsghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthht
- ohepshhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopegshihrohhnrdhmrghroh
- hhnhesihhnthgvlhdrtghomhdprhgtphhtthhopeihihhpvghnghdurdifrghnghesihhn
- thgvlhdrtghomhdprhgtphhtthhopehkvghithhhrdifihhlvghssehinhhtvghlrdgtoh
- hmpdhrtghpthhtohephhgrrhhrhidrvhgrnhdrhhgrrghrvghnsehinhhtvghlrdgtohhm
- pdhrtghpthhtoheplhhutggrrdgsohgttggrshhsihesmhhitghrohhsohhfthdrtghomh
- dprhgtphhtthhopehsvggrnhdrmhhorhhrihhsshgvhiesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:aRLUaHBkoaxc9UP1uvxR45yr03VRIcrHB_svMRR7A_bSkQjnkRB_5Q>
- <xmx:aRLUaKY4Ur9hNH0stD4zOEeR0AQNwi-GP4bbrkNKBDEjQybIt7cFjg>
- <xmx:aRLUaCX4e4-xTxT3DGC0dQvtYqNzmxMdQUmJ1gepdCFSJcZzeVf1ag>
- <xmx:aRLUaJMVVtK2zb5v8bS4H8mORxjJ-ZRp4ehLsvadaIwMOOiWZfmb0w>
- <xmx:aRLUaDXT48ddM0bSK8pRvfjDhWqO1UStAyVgVdjIc25joI4ShGdeRk7F>
+ ohephihiphgvnhhguddrfigrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepshgrmh
+ gvhhdrghhosghrihgvlhesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:bBLUaITaap5QxICHgotI-s153cCeSnZWYDu73JgZiAOQlL5JyUzMIw>
+ <xmx:bBLUaAWwa8twUTfWnqWbPjfseoPlT678AIuYIMz8dP4pfzHe87s6KA>
+ <xmx:bBLUaCZ-utDka3HwmxAKCj-qsmIGiyO6OUYnvWMarAewryH_s0PIXA>
+ <xmx:bBLUaO0PB1l7ihiDH1xlhe1A1Jli54_UD3QuT1TKBSpGhCrWYbdTMQ>
+ <xmx:bBLUaKDBaEuv9-GBhx_Rrzzn8ZNNifQtjrJSsevsBJ6kIHt8ZJ9C4pR->
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 24 Sep 2025 11:46:47 -0400 (EDT)
+ 24 Sep 2025 11:46:51 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, stable@dpdk.org,
- Byron Marohn <byron.marohn@intel.com>,
- Yipeng Wang <yipeng1.wang@intel.com>, Keith Wiles <keith.wiles@intel.com>,
- Harry van Haaren <harry.van.haaren@intel.com>,
- Luca Boccassi <luca.boccassi@microsoft.com>,
- Sean Morrissey <sean.morrissey@intel.com>
-Subject: [PATCH v3 1/2] efd: fix AVX2 support
-Date: Wed, 24 Sep 2025 17:43:17 +0200
-Message-ID: <20250924154641.2684705-2-thomas@monjalon.net>
+Cc: bruce.richardson@intel.com, Yipeng Wang <yipeng1.wang@intel.com>,
+ Sameh Gobriel <sameh.gobriel@intel.com>
+Subject: [PATCH v3 2/2] member: hide internal macro
+Date: Wed, 24 Sep 2025 17:43:18 +0200
+Message-ID: <20250924154641.2684705-3-thomas@monjalon.net>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250924154641.2684705-1-thomas@monjalon.net>
 References: <20250918073135.1273767-1-thomas@monjalon.net>
@@ -98,45 +90,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When switching to Meson build, the compilation check on CC_SUPPORT_AVX2
-became obsolete, thus the case EFD_LOOKUP_AVX2 became dead.
-The function efd_lookup_internal_avx2() was never called,
-and its header include rte_efd_x86.h has been removed later.
-
-EFD_LOOKUP_AVX2 is chosen at runtime after checking AVX2 availability,
-so the obsolete build-time check for AVX2 can be simply removed,
-and the missing include added back.
-
-Fixes: 5b9656b157d3 ("lib: build with meson")
-Fixes: 30a1de105a5f ("lib: remove unneeded header includes")
-Cc: stable@dpdk.org
+The hash function used by the library is not supposed
+to be exposed and be part of the API.
 
 Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/efd/rte_efd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ lib/member/member.h     | 9 +++++++++
+ lib/member/rte_member.h | 9 ---------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/lib/efd/rte_efd.c b/lib/efd/rte_efd.c
-index b0e44e5c51..ebf1e0655f 100644
---- a/lib/efd/rte_efd.c
-+++ b/lib/efd/rte_efd.c
-@@ -26,6 +26,7 @@
+diff --git a/lib/member/member.h b/lib/member/member.h
+index 609b326a8a..96003f7543 100644
+--- a/lib/member/member.h
++++ b/lib/member/member.h
+@@ -10,3 +10,12 @@ extern int librte_member_logtype;
+ #define MEMBER_LOG(level, ...) \
+ 	RTE_LOG_LINE_PREFIX(level, MEMBER, \
+ 		"%s(): ", __func__, __VA_ARGS__)
++
++/* Hash function used by membership library. */
++#if defined(RTE_ARCH_X86) || defined(__ARM_FEATURE_CRC32)
++#include <rte_hash_crc.h>
++#define MEMBER_HASH_FUNC       rte_hash_crc
++#else
++#include <rte_jhash.h>
++#define MEMBER_HASH_FUNC       rte_jhash
++#endif
+diff --git a/lib/member/rte_member.h b/lib/member/rte_member.h
+index 0235bb0a81..6d9740e0f1 100644
+--- a/lib/member/rte_member.h
++++ b/lib/member/rte_member.h
+@@ -87,15 +87,6 @@ typedef uint16_t member_set_t;
+ /** For sketch, use the flag if to count packet size instead of packet count */
+ #define RTE_MEMBER_SKETCH_COUNT_BYTE 0x02
  
- #include "rte_efd.h"
- #if defined(RTE_ARCH_X86)
-+#include "rte_efd_x86.h"
- #elif defined(RTE_ARCH_ARM64)
- #include "rte_efd_arm64.h"
+-/** @internal Hash function used by membership library. */
+-#if defined(RTE_ARCH_X86) || defined(__ARM_FEATURE_CRC32)
+-#include <rte_hash_crc.h>
+-#define MEMBER_HASH_FUNC       rte_hash_crc
+-#else
+-#include <rte_jhash.h>
+-#define MEMBER_HASH_FUNC       rte_jhash
+-#endif
+-
+ #ifdef __cplusplus
+ extern "C" {
  #endif
-@@ -1279,7 +1280,7 @@ efd_lookup_internal(const struct efd_online_group_entry * const group,
- 
- 	switch (lookup_fn) {
- 
--#if defined(RTE_ARCH_X86) && defined(CC_SUPPORT_AVX2)
-+#if defined(RTE_ARCH_X86)
- 	case EFD_LOOKUP_AVX2:
- 		return efd_lookup_internal_avx2(group->hash_idx,
- 					group->lookup_table,
 -- 
 2.51.0
 
