@@ -2,71 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0210CCAC5AE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 16:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1830BCAC5A5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 16:50:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E73E040BA0;
-	Wed, 24 Sep 2025 18:47:42 +0200 (CEST)
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com
- [209.85.219.46]) by mails.dpdk.org (Postfix) with ESMTP id 1F40C4065C
- for <dev@dpdk.org>; Wed, 24 Sep 2025 18:47:39 +0200 (CEST)
-Received: by mail-qv1-f46.google.com with SMTP id
- 6a1803df08f44-792f273fbe4so38445816d6.3
- for <dev@dpdk.org>; Wed, 24 Sep 2025 09:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1758732458; x=1759337258; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=rP/k+79MQDjVscRmR9hlCnTKsxwmVrEVUCwo7iB8niY=;
- b=WQY98b58cMU0oOnKPBc5Tj3sNclQXdP4KM+Xxwv1/7weIqYqlywr0JvWREVZshoD9o
- mAKBfJywlbrp8FdBAdJSWcF+4xhApwGKfNfR2Olom/iF3Dt4zoY62zt050cguCaXSIc9
- sQGPrykepXG70a3HqZAGrgh+zj9U9Se8dzEgI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758732458; x=1759337258;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=rP/k+79MQDjVscRmR9hlCnTKsxwmVrEVUCwo7iB8niY=;
- b=LghVW8BkuLilegUWTYCrvp5st0DwsDSP9W9964982ViBjm0ngrRA4GkWsDzU+k0wiq
- z0eCxeDVTPl4X05PNAE5Xjxa/Co2G7ZVhm3Deq4kT+0Enypm8puHfhjGEQxa1GVL7r6G
- 6s9cWGxBvGhnKkvmk29p22mhmywwmRNZL0K21iLiWg5kcT+oZn/iHrlb4pTDfRKPZQqY
- 3XG4L5wjH6VC24L/3SJX+rKx+KTce6l90DzKTxk4Wau5kq9879CubggQ+YLVP4jS581j
- VsdAw1lWt23mg5utq13XXLx6Em7DpYUmSKjKuZuctZZ7z5QmrLYaqwEzPCrgESZ2vcOl
- 6rbQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXXtrwIwyp7QEQNgdavnuku0PCssqNJnKMEiersEzQW1Q8LEun+7cWdDHiAF3O1b09iIEw=@dpdk.org
-X-Gm-Message-State: AOJu0YxRsPabk5iVY7NigdE0S33VFqsbmVgh9YHKqyVn6BB8pxgqGO2A
- mHYPgrg8t13NSi69qKFSl9MkHhnsp1rpsH5a1W8Z2AhzIDk2tBB9pNwcsF6p22Zia7UkFBH7lKE
- KmZPm
-X-Gm-Gg: ASbGncs9OFMu2Nv85oFLnoojUvIFYdK3QBW6QkxLjBVgbZyFJ7VjFAqJqQXb0avkFAE
- GUB54VMh3sBovrccjP1DTjxH8dKf/3t1mqVdUOrhhTDOzXYNmHtMaDB94yHfAkKhJTah3XxtPYp
- 039coKJ/Tjn3G/RV6sLX995Gi24V78L+lKCFFwLLGw4zLlNUWIypYwKzt+UCG2XdpOfmWy0Xu1h
- ZEWG+yGPxkYZ1Z8L4vBk8g+rDgs+Xq7M+Env8Nf1i15vCkQheL0g/YUdUK+sqn5cuWQ5Kg/RTmD
- 1926DagMuKlor9m39dwe0RlG6AIgiUzfQ1dLr+hIxktdegf/fhxEyFlGS8EeW8aPdaZWhr/GRVQ
- GgE9+jX1LDmDsW6uBXqYjK8nNsyDXcmtHiB4=
-X-Google-Smtp-Source: AGHT+IHcv5E5GQN755t0ypH01x6DUXqjrA/kCPmW7mn/hR1cbUvkPKpUrx/KV3G03GHnPVAmU4rAkw==
-X-Received: by 2002:a05:6214:1252:b0:7b4:d622:84d6 with SMTP id
- 6a1803df08f44-7fc2d51d191mr9952966d6.22.1758732458277; 
- Wed, 24 Sep 2025 09:47:38 -0700 (PDT)
-Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-7a4c5785d49sm76849996d6.63.2025.09.24.09.47.37
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 24 Sep 2025 09:47:37 -0700 (PDT)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: luca.vizzarro@arm.com
-Cc: abailey@iol.unh.edu, dev@dpdk.org, dmarx@iol.unh.edu,
- ivan.malov@arknetworks.am, probb@iol.unh.edu
-Subject: [PATCH v4 3/3] dts: update tx_offload test from old dts
-Date: Wed, 24 Sep 2025 12:47:25 -0400
-Message-ID: <20250924164725.168773-4-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250924164725.168773-1-abailey@iol.unh.edu>
-References: <20250902114327.48185-1-abailey@iol.unh.edu>
- <20250924164725.168773-1-abailey@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id 5D8AE4065C;
+	Wed, 24 Sep 2025 18:50:56 +0200 (CEST)
+Received: from fout-b5-smtp.messagingengine.com
+ (fout-b5-smtp.messagingengine.com [202.12.124.148])
+ by mails.dpdk.org (Postfix) with ESMTP id 700DF402D8
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 18:50:54 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.stl.internal (Postfix) with ESMTP id AD2F71D00183;
+ Wed, 24 Sep 2025 12:50:53 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Wed, 24 Sep 2025 12:50:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1758732653;
+ x=1758819053; bh=DvBEDDmD7aqGbBcMP705CPGFDIr1ELHpCvaHaHr8H5U=; b=
+ bfM/2YiXPMK92Gk/ohLNeZIMiEc5zYoU7xwkMRm4+6TXhwJ8W2g5GX7mC26+9j0H
+ /VA1+t5t7ZlIbSQOw7SYXVqbIWeOoD0xZSQ694xN5hFYrZu5C7iWlwC4bNF74A/t
+ sXEgxwObjhXoCcFMKS9NR42Z6GHuDSi4MmWoiINitLZTkMvVcwY9ffTELSKJFk2m
+ bfT8SyK+c/1Yarnf2Oqu6psdm8dZd2ewL/7/mywSHKFH5y3Q0tuwEcbU7EdfmhfJ
+ eVIJ23MDYVVyDbwAjErT6ZS8YY91ZxpX4JjUq+tGk+JnP4W9vlZ/HtQLyhbpjHeM
+ 9jbdZcBbPvvnZZ6+/fVuUA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758732653; x=
+ 1758819053; bh=DvBEDDmD7aqGbBcMP705CPGFDIr1ELHpCvaHaHr8H5U=; b=X
+ Oz50/IwIcT5dgdd/2LrjY7F5M+VneiFm1011ke8AOVhRrubnVGT7er0d20OHdGyO
+ wVJrtNLIdqJW5IiNr9/rTCMNIGx/02vJtjjlnLsHkKU7LMzPeVtm8qUqHciKcp2L
+ A8C80wS+FgNe0OzHeavERLvbCDns9XrPUDo3361Suze5Dx5irzYPbW7fV4xqRp7Z
+ rEuS5Y5sSA6kGwJrjhwpAIcGZl8DHPo+hMSxc5cEiLdgekF+06W6AMo/VQ2fTqXW
+ bI34MgvZmXdkGUebfmfIEHvt7Y71vvrRDa8SoajyePixUO219UKtW4s28mR1fagj
+ Heh/CgyzjoEkzFYl0kNZw==
+X-ME-Sender: <xms:bSHUaOiIVl0r_XziF7_D6EDhh-AYSFPsBiWwZY77dshqEmIVZenAeA>
+ <xme:bSHUaLWnY6TkneI__Ri1btfnNye7n3aExC-ZzFjsZ2qERDzof9gMafNcHmzvMVvNm
+ dAUVwzTL162yC1GUOh7be1yUiyOgGLSHSOUnaS7-8tHsiKcHuWiRA>
+X-ME-Received: <xmr:bSHUaI0P9ibytTCWdDfb2UREHj9Cfzywh_ge3XfQgFFT97mzTEhVMpyVPiKh42QqJZEZIBSrvfjG7AXN8aMWBA__hA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeigedufecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkjghfggfgtgesthfuredttd
+ dtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhho
+ nhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeejudevheeiveduuddtveffgf
+ dtgeekueevjeffjeegtdeggeekgfdvuefgfeekjeenucevlhhushhtvghrufhiiigvpedt
+ necurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvg
+ htpdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegu
+ vghvseguphgukhdrohhrghdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
+ esihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:bSHUaJHsTB1VVqoPzinnw6ZLyj0xPK_4Lw__l9qqa99JajdRIdbpBg>
+ <xmx:bSHUaOj1P56F-nELrzQTbSBSKasFhAeCNBQBx93dUf4jTRnIUuyNdA>
+ <xmx:bSHUaM9s5OGOEOeII0iLMskiuTHReimaXrtdXhyJkjAbr3QWEDSs8Q>
+ <xmx:bSHUaNrLniK1iWSaRaa36_Lkiibusb4ikwk5uHGZjQXo2oQeNlbsLw>
+ <xmx:bSHUaDJbcAV5KAmTa1Wjr25-uxvdI_zGLkp0rt6d-yOzklLEgLMNIctw>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 24 Sep 2025 12:50:52 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com
+Subject: Re: [PATCH v3 0/2] lib: fix AVX2 checks and macro exposure
+Date: Wed, 24 Sep 2025 18:50:51 +0200
+Message-ID: <13998226.VsHLxoZxqI@thomas>
+In-Reply-To: <20250924154641.2684705-1-thomas@monjalon.net>
+References: <20250918073135.1273767-1-thomas@monjalon.net>
+ <20250924154641.2684705-1-thomas@monjalon.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,169 +87,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, the RX/TX offload test in old DTS expects the TX ports to be
-initially configured to use mbuf fast free. This is no longer the case
-and must be updated to assume mbuf fast free is not initially utilized
-by capable NICs. Add updated test suite to test mbuf fast free
-configuration.
+24/09/2025 17:43, Thomas Monjalon:
+> I've found the AVX2 function is not used in efd library.
+> Then I tried to make AVX2 compilation simpler in efd and member libraries.
+> 
+> While at it, I've hidden a macro which was wrongly exported in the API
+> without having a correct prefix.
+> 
+> The v3 does not have the patches removing build-time checks:
+>   - efd: remove AVX2 build-time check
+>   - member: remove AVX2 build-time checks
+> because I'm not sure losing inlining for cleanup is worth.
+> 
+> Thomas Monjalon (2):
+>   efd: fix AVX2 support
+>   member: hide internal macro
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
----
- doc/api/dts/tests.TestSuite_rx_tx_offload.rst |   8 ++
- dts/tests/TestSuite_rx_tx_offload.py          | 128 ++++++++++++++++++
- 2 files changed, 136 insertions(+)
- create mode 100644 doc/api/dts/tests.TestSuite_rx_tx_offload.rst
- create mode 100644 dts/tests/TestSuite_rx_tx_offload.py
+Applied
 
-diff --git a/doc/api/dts/tests.TestSuite_rx_tx_offload.rst b/doc/api/dts/tests.TestSuite_rx_tx_offload.rst
-new file mode 100644
-index 0000000000..225267a45f
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_rx_tx_offload.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+rx_tx_offload Test Suite
-+=========================
-+
-+.. automodule:: tests.TestSuite_rx_tx_offload
-+   :members:
-+   :show-inheritance:
-\ No newline at end of file
-diff --git a/dts/tests/TestSuite_rx_tx_offload.py b/dts/tests/TestSuite_rx_tx_offload.py
-new file mode 100644
-index 0000000000..6ae98068e4
---- /dev/null
-+++ b/dts/tests/TestSuite_rx_tx_offload.py
-@@ -0,0 +1,128 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 University of New Hampshire
-+
-+"""RX TX offload test suite.
-+
-+Test the testpmd feature of configuring RX and TX offloads.
-+"""
-+
-+from framework.remote_session.testpmd_shell import (
-+    OffloadConfiguration,
-+    RxTxLiteralSwitch,
-+    TestPmdShell,
-+)
-+from framework.test_suite import TestSuite, func_test
-+from framework.testbed_model.capability import NicCapability, requires
-+
-+
-+class TestRxTxOffload(TestSuite):
-+    """RX/TX offload test suite."""
-+
-+    def _check_config(
-+        self,
-+        testpmd: TestPmdShell,
-+        port_offload: str | None,
-+        rxtx: RxTxLiteralSwitch,
-+        port_id: int,
-+        /,
-+        queue_offload: list[str | None] | None = None,
-+        verify: bool = True,
-+    ) -> bool:
-+        config: OffloadConfiguration = testpmd.get_offload_config(rxtx, port_id, verify)
-+        if config.port.name != port_offload:
-+            return False
-+
-+        if queue_offload:
-+            for i, q in enumerate(config.queues):
-+                if q.name != queue_offload[i]:
-+                    return False
-+        return True
-+
-+    def _set_all_queues_mbuf_fast_free(
-+        self, testpmd: TestPmdShell, on: bool, port_id: int, num_queues: int, /, verify: bool = True
-+    ) -> None:
-+        for i in range(num_queues):
-+            testpmd.set_queue_mbuf_fast_free(on, port_id, i, verify)
-+
-+    @requires(NicCapability.PORT_TX_OFFLOAD_MBUF_FAST_FREE)
-+    @func_test
-+    def test_mbuf_fast_free_configuration_per_port(self) -> None:
-+        """Ensure mbuf_fast_free can be configured with testpmd per port.
-+
-+        Steps:
-+            * Start up testpmd shell.
-+            * Toggle mbuf_fast_free on per port.
-+            * Toggle mbuf_fast_free off per port.
-+
-+        Verify:
-+            * Mbuf_fast_free starts disabled.
-+            * Mbuf_fast_free can be configured on per port.
-+            * Mbuf_fast_free can be configured off per port.
-+        """
-+        with TestPmdShell() as testpmd:
-+            verify = True
-+            port_id = 0
-+            testpmd.start_all_ports()
-+
-+            # Ensure MBUF_FAST_FREE is disabled by default and verify
-+            self.verify(
-+                self._check_config(testpmd, None, "tx", port_id, verify=verify),
-+                "MBUF_FAST_FREE enabled on port start.",
-+            )
-+            # Enable MBUF_FAST_FREE per port and verify
-+            testpmd.set_port_mbuf_fast_free(True, port_id, verify)
-+            self.verify(
-+                self._check_config(
-+                    testpmd, "TX_OFFLOAD_MBUF_FAST_FREE", "tx", port_id, verify=verify
-+                ),
-+                "Failed to enable MBUF_FAST_FREE on port.",
-+            )
-+            # Disable MBUF_FAST_FREE per port and verify
-+            testpmd.set_port_mbuf_fast_free(False, port_id, verify)
-+            self.verify(
-+                self._check_config(testpmd, None, "tx", port_id, verify=verify),
-+                "Failed to disable MBUF_FAST_FREE on port.",
-+            )
-+
-+    @requires(NicCapability.QUEUE_TX_OFFLOAD_MBUF_FAST_FREE)
-+    @func_test
-+    def test_mbuf_fast_free_configuration_per_queue(self) -> None:
-+        """Ensure mbuf_fast_free can be configured with testpmd.
-+
-+        Steps:
-+            * Start up testpmd shell.
-+            * Toggle mbuf_fast_free on per queue.
-+            * Toggle mbuf_fast_free off per queue.
-+
-+        Verify:
-+            * Mbuf_fast_free starts disabled.
-+            * Mbuf_fast_free can be configured on per queue.
-+            * Mbuf_fast_free can be configured off per queue.
-+        """
-+        with TestPmdShell() as testpmd:
-+            verify = True
-+            port_id = 0
-+            num_queues = 4
-+            queue_off: list[str | None] | None = [None] * num_queues
-+            queue_on: list[str | None] | None = ["TX_OFFLOAD_MBUF_FAST_FREE"] * num_queues
-+
-+            testpmd.set_ports_queues(num_queues)
-+            testpmd.start_all_ports()
-+
-+            # Ensure mbuf_fast_free is disabled by default on port and queues
-+            self.verify(
-+                self._check_config(testpmd, None, "tx", port_id, queue_off, verify=verify),
-+                "MBUF_FAST_FREE enabled on queue start.",
-+            )
-+            # Enable mbuf_fast_free per queue and verify
-+            self._set_all_queues_mbuf_fast_free(testpmd, True, port_id, num_queues, verify)
-+            self.verify(
-+                self._check_config(testpmd, None, "tx", port_id, queue_on, verify),
-+                "Failed to enable MBUF_FAST_FREE on all queues.",
-+            )
-+            # Disable mbuf_fast_free per queue and verify
-+            self._set_all_queues_mbuf_fast_free(testpmd, False, port_id, num_queues, verify)
-+            self.verify(
-+                self._check_config(testpmd, None, "tx", port_id, queue_off, verify),
-+                "Failed to disable MBUF_FAST_FREE on all queues.",
-+            )
--- 
-2.50.1
+The 2 other patches from v2 could be reconsidered later
+if we measure that the performance hit is neglictible.
+I probably won't work on it, so I let it to anyone interested.
+
 
