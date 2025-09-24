@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B36ACAC5AE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 20:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6455CAC5A5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 20:32:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C3BE40658;
-	Wed, 24 Sep 2025 22:27:36 +0200 (CEST)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com
- [209.85.208.44]) by mails.dpdk.org (Postfix) with ESMTP id 09ECD4064A
- for <dev@dpdk.org>; Wed, 24 Sep 2025 22:27:35 +0200 (CEST)
-Received: by mail-ed1-f44.google.com with SMTP id
- 4fb4d7f45d1cf-62ec5f750f7so284160a12.3
- for <dev@dpdk.org>; Wed, 24 Sep 2025 13:27:35 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0AA1940658;
+	Wed, 24 Sep 2025 22:32:08 +0200 (CEST)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com
+ [209.85.160.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 03F0E4064A
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 22:32:06 +0200 (CEST)
+Received: by mail-qt1-f182.google.com with SMTP id
+ d75a77b69052e-4da72b541f8so3260191cf.1
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 13:32:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758745654;
- x=1759350454; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758745925;
+ x=1759350725; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HWqKuoZtj9ctV8OulGD5B9hM3F0uXduGsF1wM0dnAEI=;
- b=Wm7/bJlIoopPeQxPSU3eyc1/GMj8235takbGP2KZO12bEk8EKc8MG/SXfc2gtn6khy
- 4GCtzPT/Ob+K6VkF2AtPltxOJrOnbMMY6JTS8zNcXAGWYnZ1XOfnYIPv6RoJH/N1vHpO
- o/JTY/DoRjwbBpxA65IxjyFubpbpGwL3KbYLXicsyzxVRBXH+v/DS9WzhGdZu3Lyt4Os
- JyX3WX/r8fxFRzoJTg3dOrhwHc8WDq6b49XTp6mHk6Gup/8lQz1pp/FKXK+p16BLj3bI
- ylfNeJg0xWWyq79raKsi+qpthEnkCG5FbGU9VCKTZ71/2y9LBvx9wnMEIs/wovVLrI42
- OqTA==
+ bh=cxyEjVyMsXhtWAe7FmiYI+HLh3KFk1NeEDcyF7KAAZQ=;
+ b=rrCvs7r7jQfiVngImTmgTUhaiiBBrD3DN8OJ/WlyS009s/e935DThHdkHdhh/ZRexL
+ B7WfqGz4+4W4a192pAZDqC2h1NjN9poCSG1xAJN6wH6CdzWzzAaOk8xEL4/hhYL6QFxr
+ xsGd+eJb7eIVpZr1ApukK1kM1rBoz+WXqQUk/99p00FhZbD0gNhbJAGuDSBqHAZVFe2V
+ 6zVCM/kmhTaHunxTdAg+g85mkX+ygghMeDNUDrbocgphArFdrhidDnJ362MIKbHVfBY2
+ rIAlTJJlZGrTVSHpXNAAXhK0gze0gVIYGFlecZNt5gkDKbtG1wOo9G7OcUT2qMsXzfzO
+ nM9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758745654; x=1759350454;
+ d=1e100.net; s=20230601; t=1758745925; x=1759350725;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=HWqKuoZtj9ctV8OulGD5B9hM3F0uXduGsF1wM0dnAEI=;
- b=qZQPmxZPz5k6NushwhlhjQG4ssqU8sYRFpP3kEDFBL+1d6Yc9W5jETU8+XbuiogA0A
- Nvzd5ixNdmwRS5O9ERzMJOP7TL9YySJPperLZiprmEj4n7gUZKgjgHSgKkcHYq+joOnK
- bP9gVctSaqVQ7wt7mzM27uZ5tB7wBW2Kqu/eXqeaJzG8S/qS1eML8dNZgRia83L0GYYQ
- DMu/naNciP2Mi4paG6qiyQ0S6lZA1zH2jJgkd9ssJfaHgvM9C5rN/KIq8iINhoCACVLE
- HBRlxWe6p2QKx+4lsVEcWdh70pYvFWDQvLno9n9zQwzkeDkez6PfvC3fgGRPg63x1yEM
- TLQA==
-X-Gm-Message-State: AOJu0YyZYchhi6LmZzRUjr83x/g5+VwdU7xissiOUnRH0On39Cof7nmM
- J/WjJJweaFfYCWkwewpl2W3Cu0rhN8PDLTTCv9BMg4tQmSBNbPSbdcLyDIbkiNUtSDj4NyISNV0
- m8irW
-X-Gm-Gg: ASbGncvEvVdDTQhpEQMK40WKaZOUl+5mMqMawbCizI0Uu73GmlExYYveY9h+u1D+Do8
- RXN1N0uMdpSinqI8LeLsWfewrpu5Mo6IxDLtysORs3aoV6qaXyBnlYRoFc1274325rr/ZgJasG/
- +SF71f5NWDXm5wBwJrHIVzjvaMWMDbjql93PYqBi8M+oHc1c3neTYzY0kmF8InXkOeBmiVjDUTj
- uKNgZX/T/wp5YNPMr8IxvkgVXkWhMYdeJRAvjKf4Ns8knZUii6o6j98Cq52W2csCpMEZWBD5rDJ
- KRADNxDTIm5prmnrNSp+OUOl4jylHZAuYPKzYHGig+OtfWh8V9ZKQ8hY+HBE3Tpf5CvzOIHdeQ8
- ojGeXjzr1fQZdPKiCsH+kCSs8Smk4jU5zaGQR1ppwNZwNeOoKHDXsqyWNM5WCZPpBA1QAAmN5o7
- A=
-X-Google-Smtp-Source: AGHT+IGd0frJJWDiUFht+XAC+Garnm0Ioba+jGwqBbRMAxfySI7AsRg4F9kRzKOeugmUBY0a8553Tw==
-X-Received: by 2002:a17:907:6091:b0:b1d:368e:3ae5 with SMTP id
- a640c23a62f3a-b34b1e7b1fdmr100558266b.0.1758745654303; 
- Wed, 24 Sep 2025 13:27:34 -0700 (PDT)
+ bh=cxyEjVyMsXhtWAe7FmiYI+HLh3KFk1NeEDcyF7KAAZQ=;
+ b=B9lXkOVnYaAW3A4WzBM9nKpJsMmVCQ8knmuu0woJzByrh62SVQw4VVNS/WHD/kUdMd
+ fM1uOSNEhn0G5gb+KxKGVXiqUfi8+pM6xyS3Fw1uq9T12XTGjVC2uBxD8y7YH4zSeMIi
+ BQpwa/eHP7MzRoJyK1Nq+BzRikaV45hEyh4tth7FEvMH/i24i5mrEZo2FLTwY3mPtOtO
+ jgyMF/rAhsJKzdbZdN/w3b+PBCHjLymvFs3o+63DhQc8yTb7tfZvqaDyGNHDV7rMFem7
+ E5vG8a7abl+sQyMJoP1KcTuT+EIjEckrvugTJkERJzlBYG0k7smq4+R6eiGUXARgFeAy
+ odgQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXzqn2CbGl9vMKt3Y98ZzImTgdstv53Hl5D9tBlxo4A4Cu0n4QkXJQzaKGgrM8P1RW4weo=@dpdk.org
+X-Gm-Message-State: AOJu0YyB+wfBi5+oxLSUyLorw4zPqxMrNst8seJkpmRvPd0Zr8ilpRQm
+ GtFC+Y4PJxpXd0lM8Qmx+CP8Tsg4GCGVEMdjCE2jbQOhjA0tB7SAxdNiJ0DelcwCr7+1Acfps4P
+ ySHUn
+X-Gm-Gg: ASbGncs7AvJZnEmtFgCsw53oUzuqRkMohLVSWx4jnl2aYdI3Q05QVOf4hxptnp94YmN
+ bO2z/DJGc7zS2dxh5HR/MHYiBct/PPgR25xezBJxfG3e2uUh53ZZNofnRMtHu6WfHDthM8+X58E
+ /KVezzl48KZPPYRgZve96mqR4yFCTpsmKpz8vHGrOVVRw1OniyyNeVxb0jyzsdEwPaFGH8XQZfJ
+ 3DC1bWtetFRufgSb33J8Fce56FddxiINnhDdmULtob9ZPGrAJS2G5UHP2cdg/huDkFZQkjJvLQc
+ Jib3XmLGgmfMNsFuy/CWtiqTyHQ2Zhfck9F2zKIbtA112CBiLM1o4VFJnjHDH4ct7awvAy0cuxr
+ vqFa1FgmGb4wf9nyitk83lToQvd+EYEV/IC/uak8EkkhPk5TP0bY917aiopw64dk9wBPDtoF5Xb
+ E=
+X-Google-Smtp-Source: AGHT+IG0ATQpQiLohBrZaM/a2EzmEteC+xL74xoP0V55TxwY9IZaAzNXWFdGpHNi1VmESbZrSRtocw==
+X-Received: by 2002:ac8:7e86:0:b0:4d9:c572:f9b6 with SMTP id
+ d75a77b69052e-4da4bbe418cmr15058901cf.55.1758745925063; 
+ Wed, 24 Sep 2025 13:32:05 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b353e5cfc0dsm11558266b.10.2025.09.24.13.27.32
+ 6a1803df08f44-8013e5d5f8esm672046d6.27.2025.09.24.13.32.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 24 Sep 2025 13:27:33 -0700 (PDT)
-Date: Wed, 24 Sep 2025 13:27:28 -0700
+ Wed, 24 Sep 2025 13:32:04 -0700 (PDT)
+Date: Wed, 24 Sep 2025 13:31:07 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Serhii Iliushyk <sil-plv@napatech.com>
-Cc: dev@dpdk.org, mko-plv@napatech.com, ckm@napatech.com
-Subject: Re: [PATCH v1 1/7] net/ntnic: introduce service API for NTNIC PMD
-Message-ID: <20250924132728.35434e87@hermes.local>
-In-Reply-To: <20250908110446.1071964-2-sil-plv@napatech.com>
-References: <20250908110446.1071964-1-sil-plv@napatech.com>
- <20250908110446.1071964-2-sil-plv@napatech.com>
+To: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
+Cc: wang.junlong1@zte.com.cn, yang.yonggang@zte.com.cn, dev@dpdk.org
+Subject: Re: [PATCH v1] net/zxdh: support multiple PF process flow table
+Message-ID: <20250924133107.23414572@hermes.local>
+In-Reply-To: <20250924082331.39962-1-zhang.tianhao2@zte.com.cn>
+References: <20250924082331.39962-1-zhang.tianhao2@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,17 +84,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  8 Sep 2025 13:04:39 +0200
-Serhii Iliushyk <sil-plv@napatech.com> wrote:
+On Wed, 24 Sep 2025 16:23:31 +0800
+Tianhao Zhang <zhang.tianhao2@zte.com.cn> wrote:
 
-> This commit adds a common service API for the NTNIC PMD,
-> which includes functions for service management: add or delete a service
-> and retrieve information about a service.
-> The API is designed to facilitate the interaction with services within
-> the NTNIC driver, allowing for better control
-> and monitoring of service states.
-> 
-> Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
-> ---
+> +static void
+> +zxdh_priv_res_free(struct zxdh_hw *priv)
+> +{
+> +	rte_free(priv->vfinfo);
+> +	priv->vfinfo = NULL;
+> +	if (priv->channel_context != NULL) {
+> +		rte_free(priv->channel_context);
+> +		priv->channel_context = NULL;
+> +	}
+> +}
+> +
 
-Series queued to next-net
+You don't need the check for channel_context.
+It is better to make both pieces consistent:
+
+Like:
+
+static void
+zxdh_priv_res_free(struct zxdh_hw *priv)
+{
+	rte_free(priv->vfinfo);
+	priv->vfinfo = NULL;
+
+	rte_free(priv->channel_context);
+	priv->channel_context = NULL;
+}
