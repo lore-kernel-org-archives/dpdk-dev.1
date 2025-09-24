@@ -2,73 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF66ACAC5AE
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 16:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07EC8CAC5AE
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 17:25:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3DF9840DD7;
-	Wed, 24 Sep 2025 18:55:42 +0200 (CEST)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
- [209.85.160.181])
- by mails.dpdk.org (Postfix) with ESMTP id B09A940DCE
- for <dev@dpdk.org>; Wed, 24 Sep 2025 18:55:38 +0200 (CEST)
-Received: by mail-qt1-f181.google.com with SMTP id
- d75a77b69052e-4d142e9903fso753351cf.0
- for <dev@dpdk.org>; Wed, 24 Sep 2025 09:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758732938;
- x=1759337738; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=nSLSRIPkUfbzcCyM90QYhpAsCcgtIja0luSxNpfH6QY=;
- b=k3yAs0FC7tYXyddj0HDmoR177jxrfKJaG1YXLCFDCQ6eSQbhJgOe+XxU90QcmK+Thk
- qGZ4MfyJ+ZJBAhifLTm5a+ZfGnzHfx1UxnANIi/kAdyjgv07+4CmlTkdTAMBWYTil3ci
- IkhEayRr0l9Pj94So6nsXqLfZVD3OPtLiMuGTIMmSq3cvfZvT5M5J31SGcmS5GMl9qyV
- OTe7Jcc1+JF3qP0H6y+5/CYXTVVtS0wQJ9JuyIA9aEwE7qSJXZVEili+H4oRF29MzEhM
- 38JauOC5P/puzOz0iEeFLTJ6jsb0CpYmZq6U9Jpv+pbWomAPfVqffhTiOiQv+FeYJiwm
- Eapg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758732938; x=1759337738;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=nSLSRIPkUfbzcCyM90QYhpAsCcgtIja0luSxNpfH6QY=;
- b=ZByFypo0blRuJv5yzeu1dDxiZsyXdc3fy6PdDWkZ7K3/7OtR+2YWao0yGdvPe1JTHQ
- nJStHWgZdMqhwZfv7U5cAlkK6FcEILlIIIPYvc41Bfcdw6rsWIDXH5Fzf2R4BKSbz/Bd
- xhStcOwzdHNfFFuEfqW9Crym/QBv6b8HrnlfTldtXMXwcEm9HVhMrBu4d1xJgsGQYJjz
- zVgjCY/zWiJwPM71XU2VtU1SP6qavNJXMLPFiE3BnklgLXseQrtDRMXw7LOVjkL6rBOe
- TQ2di2fG9m4Sg+O+PieHjWRaL8gBkuryxUUkkKiKUmSIdv1zbW96BfcKOwJFk6tCUJmL
- Vs9w==
-X-Gm-Message-State: AOJu0YyTbWdDOAtA0EzGkfMjgwrqtLI5VSK2FlYSBKGWAG04uRkdMiwQ
- gI7uc6Bb9iWpTKCJjj7kks12Dkmx8Q8EOSP4x3iOS0EZcU1mGHdLc3FxsdVyMcOsJA2s9PBm5U+
- ZfpA7
-X-Gm-Gg: ASbGncvug8GhwUTapEoQesin34JCs93FmDzGIvagHp2AGFi2QGbgK3NJafX+qR+CKKc
- w/057wEavYxtYNJybOcky+oYKpnBGhd5xgE69/tgzx+YKd/nlHUuhayIcY3MxgyD74RH44n1nu9
- xUe9GboF9htC93vWeInH+K88ZIv7Ll9MQUwZLrPEn0gb+RcKFUdbffffZzLuki8CppbeWru4Syv
- fpAGie2wsqLoZI2ZDoO4/7OGWzYaQ91Kdd7Frw5cw7bfOhEK3Nbj8dJIfinSRXwSfjyxcztcLO3
- uI1pA3T0fuTY72VGUs3lt1MmUDj90gpgnSDV3Yyx+uktKRkMZIR/NaFYvRDfJM/WyMUm1kKkpqC
- unJ5qYCMdbe80WrSBaDyzjs2rrCtEbU20FlMELe0GvAqzKHHl5CItidIERucrgrR4V/bKnsnz
-X-Google-Smtp-Source: AGHT+IHyfblCodJFVeF8gFQNlrj7Pz4siPPvkUBOdwQ1VyXDXiyk74gyfRE8rg3sS94eHnFHh+YWVw==
-X-Received: by 2002:a05:622a:258c:b0:4d9:1d03:83c9 with SMTP id
- d75a77b69052e-4da485b6ac1mr7622491cf.25.1758732938025; 
- Wed, 24 Sep 2025 09:55:38 -0700 (PDT)
-Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4bda15f91a0sm106052751cf.1.2025.09.24.09.55.37
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 24 Sep 2025 09:55:37 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id E32504065C;
+	Wed, 24 Sep 2025 19:25:45 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id F2B2140615
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 19:25:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1758734743;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=hqMQBMULUwx44pWAgoiTHsU352ze5MGFU3AR95aTVfI=;
+ b=CO5zfA+zipJ6yTg3bY9ultOaC17k+PgwYG+sxaAutmp8FKmKjARtgdy15Rrr3OjB/f2VNX
+ CIczK+SHFacbvFTTM6KgAlZ1KvpY4k+Vn68ue7l9jyz5rPElI85+5Soah2GM0qTf1DrsEy
+ exRt6aFxo6ATbgdLdYEr1l3wPojVZMw=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-92-6wn8Un0IOtajGWw1Mbcm4A-1; Wed,
+ 24 Sep 2025 13:25:42 -0400
+X-MC-Unique: 6wn8Un0IOtajGWw1Mbcm4A-1
+X-Mimecast-MFC-AGG-ID: 6wn8Un0IOtajGWw1Mbcm4A_1758734741
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 446671956050
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 17:25:41 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.225.72])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 4D56219560B1
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 17:25:39 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [RFC 6/6] intel/iavf: remove use of pthread_cancel
-Date: Wed, 24 Sep 2025 09:51:13 -0700
-Message-ID: <20250924165527.268645-7-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250924165527.268645-1-stephen@networkplumber.org>
-References: <20250924165527.268645-1-stephen@networkplumber.org>
+Subject: [PATCH v3 0/7] Add a stricter headers check
+Date: Wed, 24 Sep 2025 19:25:28 +0200
+Message-ID: <20250924172536.2447183-1-david.marchand@redhat.com>
+In-Reply-To: <20241127112617.1331125-1-david.marchand@redhat.com>
+References: <20241127112617.1331125-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: YR4iE75v_1SOWuPyY24Mz4eNL4YpmduMbAPZPZ2B5o0_1758734741
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,38 +67,73 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The iavf driver uses a pipe to communicate with control thread.
-By closing the write side of the pipe, the main thread can
-tell the control thread to exit without use of pthread_cancel.
+As explained in patch 6, the current headers check can not catch
+issues when a public header includes an internal header.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/intel/iavf/iavf_vchnl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Patch 1-5 fixes have not been marked as backport material as those bugs
+seems minor/easy to fix externally (by either including missing headers,
+or enabling enable_driver_sdk option).
 
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index b1b7a5bf94..781bae11be 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -161,14 +161,14 @@ iavf_dev_event_handler_fini(void)
- 	if (rte_atomic_fetch_sub_explicit(&handler->ndev, 1, rte_memory_order_relaxed) - 1 != 0)
- 		return;
- 
--	int unused = pthread_cancel((pthread_t)handler->tid.opaque_id);
--	RTE_SET_USED(unused);
--	close(handler->fd[0]);
-+	/* closing the write side of the pipe will cause read() to return 0 in thread */
- 	close(handler->fd[1]);
--	handler->fd[0] = -1;
- 	handler->fd[1] = -1;
- 
- 	rte_thread_join(handler->tid, NULL);
-+	close(handler->fd[0]);
-+	handler->fd[0] = -1;
-+
- 	pthread_mutex_destroy(&handler->lock);
- 
- 	struct iavf_event_element *pos, *save_next;
+
 -- 
-2.47.3
+David Marchand
+
+Changes since v2:
+- major rework, dropping the makefile approach, and instead copying
+  headers to a staging directory used by the check,
+- rebased,
+- dropped changes on raw cnxk drivers and disabled the associated
+  build warning in the headers check,
+
+David Marchand (7):
+  baseband/acc: fix exported header
+  drivers: drop export of driver headers
+  eventdev: do not include driver header in DMA adapter
+  gpudev: fix driver header for Windows
+  drivers: fix some exported headers
+  buildtools/chkincs: use a staging directory for headers
+  power: separate public and driver headers
+
+ MAINTAINERS                                   |  3 ++
+ buildtools/chkincs/meson.build                | 41 +++++++++----------
+ buildtools/meson.build                        |  1 +
+ buildtools/stage-headers.py                   | 32 +++++++++++++++
+ drivers/baseband/acc/meson.build              |  2 +-
+ drivers/bus/vmbus/rte_vmbus_reg.h             |  6 +++
+ drivers/crypto/cnxk/rte_pmd_cnxk_crypto.h     |  2 +
+ drivers/meson.build                           | 28 +++++++++++--
+ drivers/net/dpaa/rte_pmd_dpaa.h               |  2 +
+ drivers/net/intel/iavf/rte_pmd_iavf.h         |  6 +++
+ drivers/net/mlx5/rte_pmd_mlx5.h               |  3 ++
+ drivers/raw/dpaa2_cmdif/rte_pmd_dpaa2_cmdif.h |  2 +
+ drivers/raw/ntb/rte_pmd_ntb.h                 |  2 +
+ lib/bbdev/meson.build                         | 14 ++++---
+ lib/eal/include/meson.build                   |  8 ++++
+ lib/eal/meson.build                           | 10 +++++
+ lib/ethdev/meson.build                        |  6 +--
+ lib/eventdev/rte_event_dma_adapter.h          |  2 +-
+ lib/gpudev/gpudev.c                           |  1 +
+ lib/gpudev/gpudev_driver.h                    |  4 +-
+ lib/meson.build                               | 41 +++++++++++++++----
+ lib/mldev/meson.build                         |  5 +--
+ lib/power/meson.build                         |  7 +++-
+ lib/power/power_cpufreq.h                     | 14 +------
+ lib/power/power_uncore_ops.h                  |  1 +
+ lib/power/rte_power_cpufreq.c                 |  2 +-
+ lib/power/rte_power_cpufreq.h                 | 15 ++++++-
+ lib/power/rte_power_uncore.c                  |  2 +-
+ lib/power/rte_power_uncore.h                  |  3 +-
+ lib/rawdev/meson.build                        |  3 +-
+ lib/regexdev/meson.build                      |  3 +-
+ lib/security/meson.build                      |  3 +-
+ meson.build                                   |  4 ++
+ staging/drivers/meson.build                   |  5 +++
+ staging/meson.build                           |  7 ++++
+ 35 files changed, 217 insertions(+), 73 deletions(-)
+ create mode 100644 buildtools/stage-headers.py
+ create mode 100644 staging/drivers/meson.build
+ create mode 100644 staging/meson.build
+
+-- 
+2.51.0
 
