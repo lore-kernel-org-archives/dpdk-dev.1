@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA76CAC5A5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 14:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7AA3CAC5AE
+	for <dpdk-dev@archiver.kernel.org>; Wed, 24 Sep 2025 14:42:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E67DD40B8D;
-	Wed, 24 Sep 2025 16:42:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 25B8240BA2;
+	Wed, 24 Sep 2025 16:42:13 +0200 (CEST)
 Received: from egress-ip42b.ess.de.barracuda.com
  (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id 570AC40A6E
- for <dev@dpdk.org>; Wed, 24 Sep 2025 16:42:04 +0200 (CEST)
-Received: from OSPPR02CU001.outbound.protection.outlook.com
- (mail-norwayeastazon11023138.outbound.protection.outlook.com
- [40.107.159.138]) by mx-outbound22-32.eu-central-1b.ess.aws.cudaops.com
+ by mails.dpdk.org (Postfix) with ESMTP id 15ACD40A6E
+ for <dev@dpdk.org>; Wed, 24 Sep 2025 16:42:05 +0200 (CEST)
+Received: from GVXPR05CU001.outbound.protection.outlook.com
+ (mail-swedencentralazon11023134.outbound.protection.outlook.com
+ [52.101.83.134]) by mx-outbound22-32.eu-central-1b.ess.aws.cudaops.com
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
  Wed, 24 Sep 2025 14:42:03 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=itnsphglq0MkUpcRAuNGYbnPF0FzkFjPbYwNy1h4IZ1bGD/POmb3BiUXYSbSEZY28WuSNSq0YraKbwGYYpCxRvUkrjy247jW3mRm+XMg7rSaXDvgMruzbd8hiN0390VD8lGxdez0otLfOinXh/kSwjcCaRlkzpEUCFmicVbnfg5dqOBDniiTxt/jlYfG+QGBuidpUEvXTs1J+7oDc2oFaIYRyge1owd5WCOitVzQF0DU3Plb+ErECba0HFZ3M0PINM3fANVOkf+H4THauZdUSqZpLMZCYdBqoXru7pDz6lqyHpB5FtS9sc+XXylO75329hN89zNGFTcxVcIhkwG24Q==
+ b=UZ+eNBPq16lV5tZnK7dQLfpKcFF+isTXO/z2ZSDePCMl1g0zf9+inNxfec1b6hbYsoZvGWDT3MtmZXQQQkMc5sJyWgGYXf1ZthOrXfK3Cb4ZE6eo6HUAzaWaFGxLf9OQdSW+zAnW9r8USkG6lS7mj8gfslHDQiRJ1RrbJ3A/zmDManM0Jo7hUQkWNXToY9PGyAMGTHQkKKtzhIOrEs5c61BvFXT72UL6jBVW2v+G98BiJCO70wgKm4vIHAQjmSon2cEPKocdBDKq+uH8a+v9o1qQlzWXnRf9XKrLX7QbNRaAktzPgBctTfD/+yDxz7RjBrjmU6f+s8rCdlyW1mxdvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8xRN7x++kI2XgC/c6uvGyR4i3R1LkUg/QKm3V1H2fz4=;
- b=hAR/iJFJoW814BAfZwb7H5IP6cCfTEnB9AALiHclYsApqZSHhEFDjKRCH/O4JcbvPCcC6/ro4pbEksPFK7r5s8fuNCCEvfSKjKjyJZtd8uLyUnU6OQs69U4FhqySfqBTsFu7bby3bMsibDHj2VTFf5MGo/drYyV4cGyMKzpDU5No49v5/Df3ug6Kq3xzDlsBQ+KCzV2KKs8HXac66wHKky/F/ip1ALjKhcFgzI53iN6FsyM0Qs5kE4lccGypkgYuHWPBxGn8c1e1koDdvEEwGPuNoDcEayMagjS3nHvdjjSBxE+KFNrJby3cHM1xVAeoVAGfpC2hlzVqFNoHzNu4Hw==
+ bh=EZg9D7tawOfQe3N7kAQd4XPMi713ywFs36aHCdG1CH8=;
+ b=Fq+ipzm4Sa6HDNAsQ3o5tFib8jCqnn/BOO9kI94mpF6ukNGlYhPw3gFKk2dd+JhZpCfyL3FTV7uqDPc5SUaCypKMkuVz4SvyfVBQhp3OvUrQ2H4yGklSVIYKgAeU/1EJy1avU2k4GXTEq7137BXr6dq5q9oWz/TQdst4h1rORixpxpvjIxsRX8AQoQY842l4NZgYLP3MiiTX4lkWS1fdqCWcHrqHA3kbMgByy4rdymH8bKWOsS+o9i1tC2ZIoyQlv/+cJfR9tioxToW9fGXVgAHOBiZJ7UFatl0Eg9tzMsMnQeYDsOIs2WlxclUMjicde6OvJTTDFR7mUfi2TBKfgw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8xRN7x++kI2XgC/c6uvGyR4i3R1LkUg/QKm3V1H2fz4=;
- b=NjPbRm3QomvbMlLo1YED9RBdRCEjgAhFG3x+r4JrISE6RGkmXN0SZSDNXJTZOCz3vYDL3CEkQW/5fsomLEBpvMorSGg/w1nBOYuhrZvaWkvo2vjqLldCDVG+PbbseXpk6+MN6eRJ8TKypm/LoLQ9jvphxGwt0sAuyLc/8nVmMp8=
-Received: from CWLP123CA0232.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:19f::14)
- by PA4P190MB1101.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:102::23)
+ bh=EZg9D7tawOfQe3N7kAQd4XPMi713ywFs36aHCdG1CH8=;
+ b=G+DjK8dKAtTZmd3pJkQaLHDMYqQZD/qC70yZ8Hng/zIrABluJPnvXYc3+Rh0k9ayeIdiibahNNNn9A1w9V+hlWepU+sSM5AXBlBmtjJKtn9fe1nHNtxPDv4QjEaIxZZ8nSbAtXitq3aPSNIZ89zKtqmDG/P316XC6b/lipt9Wwo=
+Received: from CWLP123CA0235.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:19f::23)
+ by VE1P190MB0846.EURP190.PROD.OUTLOOK.COM (2603:10a6:800:1a1::18)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.17; Wed, 24 Sep
- 2025 14:42:01 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Wed, 24 Sep
+ 2025 14:41:59 +0000
 Received: from AM4PEPF00027A69.eurprd04.prod.outlook.com
- (2603:10a6:400:19f:cafe::ce) by CWLP123CA0232.outlook.office365.com
- (2603:10a6:400:19f::14) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:400:19f:cafe::d0) by CWLP123CA0235.outlook.office365.com
+ (2603:10a6:400:19f::23) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.21 via Frontend Transport; Wed,
- 24 Sep 2025 14:42:01 +0000
+ 24 Sep 2025 14:41:59 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  AM4PEPF00027A69.mail.protection.outlook.com (10.167.16.87) with Microsoft
- SMTP Server id 15.20.9160.9 via Frontend Transport; Wed, 24 Sep 2025 14:42:01
+ SMTP Server id 15.20.9160.9 via Frontend Transport; Wed, 24 Sep 2025 14:41:59
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v1 07/24] net/ntnic: avoid using thread API
-Date: Wed, 24 Sep 2025 16:41:30 +0200
-Message-ID: <20250924144152.53203-8-sil-plv@napatech.com>
+Subject: [PATCH v1 04/24] net/ntnic: migrate port event thread to service
+Date: Wed, 24 Sep 2025 16:41:27 +0200
+Message-ID: <20250924144152.53203-5-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20250924144152.53203-1-sil-plv@napatech.com>
 References: <20250908141740.1312268-2-sil-plv@napatech.com>
@@ -67,70 +67,71 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00027A69:EE_|PA4P190MB1101:EE_
+X-MS-TrafficTypeDiagnostic: AM4PEPF00027A69:EE_|VE1P190MB0846:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: d049e244-9c0c-4434-0cdf-08ddfb7885d4
+X-MS-Office365-Filtering-Correlation-Id: 28b0c70d-87d8-4c90-5aab-08ddfb788494
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|82310400026|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?m/KBPo4w9WIHS5zZTEtu/Inj2PUfa8TZWMOgBAk8eIxQdhgRm6lKudFXRR36?=
- =?us-ascii?Q?lHISlk3N91z9uLzkY9Jh6LFVeSOacDS59+2FADAqIUEZgZr+XRgggSVwTuGb?=
- =?us-ascii?Q?7UmlgG2msU6yv+bUXU8QNe+OOvfJMsLGz6jn73Bse0DvRuJMDSe7w6n1FAMT?=
- =?us-ascii?Q?rwjk25Mf1hllx/XLn9MEIoFl3InGAju4P81IocwWI4fXrqiT9BqWZo1AuXuc?=
- =?us-ascii?Q?p35AkdLp16Nkpz55XYVKCc9DezXzyR0H9jgSgPsw3zlTATGzqEZs807U/yFi?=
- =?us-ascii?Q?IZ52sqL/g3dLHZvuzdRKVitC1aYFqr/48b+l02S81HN+k+o+lTU204wcfuQT?=
- =?us-ascii?Q?ocY1krF5i5R2JD26O50VX83k+9G5LvjIlPD+sSfwsowJZA0p/aWwKZKMgvxz?=
- =?us-ascii?Q?jCqfBa+64XIiN/n4bxwCnV4Vs2sP+RPUHZ0suM8UnwQMZSicawf6Bmp+RLFM?=
- =?us-ascii?Q?2ZUhLKiRn5/QAYZ2GmsBNs0RG7m1SxeD5t2Ra2Awfqg0GVo4io9RvH1EV5tT?=
- =?us-ascii?Q?mGIX2GRYE8qMyzAXcvRjKE/Tu/YhVcGnj2i3xvot/vMrXch5GEkF8xeVNbZD?=
- =?us-ascii?Q?SpE+t4fuKmXlw0pOu60OmZBfEK+W08QaFIIWfjIv+HuMk/35IRJ3cd8UmtXg?=
- =?us-ascii?Q?7pFaz+3R2IAGmiSP2rD7P0QEeB7IriDtmXXYi+go5Yu/G4BsrsH1YjRcmTDQ?=
- =?us-ascii?Q?Ga64eyxJBfTa8k3reyhsMMRqy1rNR/vsJ3hJCaAd3grzxQiyeUeUU0fLuazl?=
- =?us-ascii?Q?9StpvNOtOdHU91JOwV22cxF+Pv9z5Nf3W32VzcJoB9mkFJGIYYT7uN44HHto?=
- =?us-ascii?Q?t8Hpoue1kFh238z6OsXLLUAOhFnXbVBJIBJs9q26O6iEAx28rSHZYCD1o1qe?=
- =?us-ascii?Q?2vSRxF3RB0+ebdOV/07mDLVpBHV63N4gf+uZygAAtsYu2mBh/deGRQSLQGJQ?=
- =?us-ascii?Q?QUWkp8cYhdCuFdVfdQ1i+wYuQtytyD9gIjHK8ButowoDP6s0PlYacO2p2ezS?=
- =?us-ascii?Q?ASK0iggc6u0YFHQmrh8hENUsSod1D2I+TsGjU8vBBH6Zj6BCYdkUkCIHqciq?=
- =?us-ascii?Q?Epn3DZpqVCMW7xHwd3Rgvvyaw1RKAHtWcv9RgenGaazE+mCOasxCZYsnYOgA?=
- =?us-ascii?Q?8nV5LZuuabqZtt03s+/j7LjzVKivs3zDZFMlkU07HArgxCloMxjYWtlMnVZB?=
- =?us-ascii?Q?0sPuklZRDfvXfkrB/gtHX4u2rKN2ywz2jlD7XC8+hZHCm4YqSsN53JCvA55+?=
- =?us-ascii?Q?TEDm8lsd+1na7/5ncoHX/0E8T01QFIhDDRiM35ThfeN6dyBqXxjpZOYq5m4U?=
- =?us-ascii?Q?tk8nf6wU9mEbUrFarS08ak9dt0am+WrsZpq09f5kcWUV0r8JUNloNYMte5bu?=
- =?us-ascii?Q?r893JWehRuVPZLwnLIAetZfbRTAYJN/lnCDDyOJ0S/FNa20IiJnJ1vWt4dbF?=
- =?us-ascii?Q?sGpbZ9EJuWb+wyurCDAmoCrq4bcsILDHxw6zPpN0qQSI3xHvdWzxp72MdbVZ?=
- =?us-ascii?Q?h14h64HGwitQsdq67svkzVykXkkU7LUHoecW?=
+ ARA:13230040|376014|36860700013|1800799024|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?5dNoEHmsnLESOTgbrUUjiNVnCVs/7JHjZvKW5w04RYArzQpT3VjJJXOpYpAZ?=
+ =?us-ascii?Q?Dei5TuI5csddJ1Kf8MFFGps21/94f4HQJ9LztbwZsEturBg658DdpFGa6iVO?=
+ =?us-ascii?Q?OwivcWCj+3MPWEIkxuDZ+337zBD0vNuxFOJU9HfoZXaD+GXVN8JrhRsexy73?=
+ =?us-ascii?Q?7wKep4rkNvi4vInJP+3PoCgQD1Y4XoQbho4jAKCknz4DlA9coxVkr3AksJae?=
+ =?us-ascii?Q?CpjQZaluLMwZN8TdjkScfMWxT6iV4ICVrr7oixKB8rOlnhFlTUnjzSS162ag?=
+ =?us-ascii?Q?VDPfsXeyUSW8h9UbJXjy3ZVTPVGT0vuvFVhmz5ZmjZfjjw/oI3U5xtBmKEsE?=
+ =?us-ascii?Q?nsK4ws0oA73r0BaU7G/laYY8KEEOu3bVjHgkVgP9kWBf1I1aJGUNkP+Wer5q?=
+ =?us-ascii?Q?CwS1qulXiMkBK+20V6vTspfbSa1biMLzKSeGHkpLJ6jJKkvCF5+goEdNHYyB?=
+ =?us-ascii?Q?tN3Ek5KcSHAL+hzrMI/U9A2jHu02KZE/KILo3uvNvqSr8IYCFeVrzxXKZtUV?=
+ =?us-ascii?Q?cPiBRjAXUJvvQghfEvKClUttlwTeFu1jLn2nEF2zejwCRzAocGiLaNJ5uGjy?=
+ =?us-ascii?Q?tNwv9S1fZRKVqfqUUfP/ScF5zBWemC253e7loK7utoDyX54cSPa94ClCTVjp?=
+ =?us-ascii?Q?eAeQQBZ9hz4mTpfkIJKq+rZknab95vKUQVMCFPJITExNqxJPOdtBeL7Etrm+?=
+ =?us-ascii?Q?4NKDU6l8bCUPLSuBG949KnhdoTzhlA3Uf2nPBlcz3S4lYl08EJbAo6BCyWHy?=
+ =?us-ascii?Q?bjKVkFcL6gegtfSMiU5Z7Ag1//Ku0BGbBkxXEkMmFmCopuLEsr/jCtOuQDrW?=
+ =?us-ascii?Q?8hprAJcecD5f3ywFidlO33GJq1DmLyncNMRw5InJLjsISEvjeUfkKuVcSaVa?=
+ =?us-ascii?Q?6iphAsVnDDRW9/LsqJXyUNn1lfYNypibP81YgJOSY8OB2MiuxKCCZ0QwkbTI?=
+ =?us-ascii?Q?SzKjyMUPMjL2UgasihF+kozebEtPEcG9K2sVYfocxSsAKg46nCXknD/y5hyL?=
+ =?us-ascii?Q?EOwZtG2Fn1ZHPrm7pw+zZjtMNljq3fBVyaa/SnJ9KJhowTz6HmvORoB8U2pl?=
+ =?us-ascii?Q?9Ju1tWXWHEHP7bHoyNZFvWr5ypPoY+se3Avd52SiEYQFvXOP7P8UvQSRz5w5?=
+ =?us-ascii?Q?TW75k77MEVYT/6FllWAkVZ1IDlyotDGm6JG9DynqU+85cc6OJYHGTBahf6xG?=
+ =?us-ascii?Q?Y98T9xSZVyWjtXcy91I1G4ho3fRYpfXcQ4xneAB/oCgvAQISrPKebZZmG6RU?=
+ =?us-ascii?Q?Vl4bNtFG9N9UoF/4sS8llXtITXScdwXG3Y2a7i8ZdSuahMXZ4pkZhGcZiYw+?=
+ =?us-ascii?Q?mSLWCPAVH5kNQ2AGCWR0qX5qJ+DQDFjjjEWltkwhXOg1ljv/HVguEqs2hl54?=
+ =?us-ascii?Q?N7m2WdQ9Cqbmt4t/B6qumpnPjtK3eztcSOnInWt5piiiwTsdqooLzAtCMKgf?=
+ =?us-ascii?Q?h8VodBQFMh2rWZRjKwoENptU+3X5M5PWVDWlPa9nQ8TQ41n/oBpoMraj//AO?=
+ =?us-ascii?Q?Q46465Maw2A9waGm8/Vy0HcdOq0kSSCyu0dR?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);
+ CAT:NONE; SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: Np7i+UcGvrxAZbEbEu1cefptywbFSkVy2R7t+NAQpOUgEOnWgBuRUXZjgBtqjDabiirnTYqdn5LmrSiZfjZ+ac6Jv3aZdTUlwTweMAgYXmtPsCxGDqIzVrvNVnR9osr7w4yM1uDYxLbESt/5MQwHyljVw6SPCKtm/1gkvpZYRaJr939AW1lnFh+Pk7zIq5RUGOPi7qAPoPjsZxgF+7IU+Jt+QC8rxX+uc28Ejz4v12YfpRVhyvTV4PNFb/LTQPq85wRyCN39aqQhhqlPq9LH6CwXg3zQsaCiH0bHB6a0WzeaFMFZb6GptHoCXeY+Us55h6fV3Vmyc4CQvyTJ1UBarMErCJ0YHhXUIBr1us4JCM8PzoiCAo3cXPQGVvq0kJ7wkNc4jvad6bEWGrmPVLLzrG+oY9hjyY2AMy+hk6qGO7paMeQcopgxyDPcid15sJQjrm79+raRzDLJdPqi8ZOQfC/7eLjnauwPEG3ePeEFURK5QcDx2netfy6xLzeyCASiwtRw0nByPCc1ZaRRTD0oxZuaVQVqD6IgOfJc6dn0RdMZ7NpFDJoUoGJPtsqIrGyYnitVcrFc7KYY8mYuGRLygm0/QBYITXVM3O4Mrq/eZC0wvjwuVBc0/w1hvIgviY1sEX6quHoLHZZz0F2uN9IRTQ==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: YvjycgAUyy0h3QBk61nTH4Hf5mqSRHQf2dKZqazK09RG53B/3/+PY1hGfbuPXQMXIIRv4UZBV6UzdQDlFW5F6IHd+RuUzNmOCxlcfTCWSB0D3ebGKFPndwMfl/M5OwlbmQpoGg1/srBdCYNbbvfYV84kgRzjCduzjDzejmi9ofD30nLCYF2jDXRktMVVC+Yim474+EgwYbi6fqgWdxfDouxXSgUjLNX3pIjUs8slQwOJBd8u5Vr0qZ7apQYijvdiQXaS2QJaCLHQWGk8ulT2L5wVGnRLwej21sU50Vso7LQJeyrfDfgfU/YswMg9J80t6O7vtVYfGyUN7VhYEaq0ww1W5o34uMf0DNgyF3SXOJolAgwRvAt71Fge9UlQE/kOrZU3WWuXF54Y4yex9GXOeT7cBpWfmM6j5rCJ/akUkoqrxLzw/JMUWRJBOgsXdjkfXe4rb+hqe/JLzisauD7tq51SqPXFhy67sDkflr1R/ge6bk8V+QicsVvobx63M6Sj6qaD5lUMgluWBOe3dlaLPYbYtODbEbhtdVn1nqyIROEePwVlCxTu11poAToRybPotYRqEPlekpGZsP4WaGo4D2kquAk2aov10HbEOsNGR1KE3MQsvp9PtSCExC9hE0PgiMuXChCLpDaYKK4XGFDYPw==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:42:01.5338 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d049e244-9c0c-4434-0cdf-08ddfb7885d4
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2025 14:41:59.4417 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28b0c70d-87d8-4c90-5aab-08ddfb788494
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM4PEPF00027A69.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4P190MB1101
-X-BESS-ID: 1758724923-305664-7607-8011-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1P190MB0846
+X-BESS-ID: 1758724923-305664-7608-8011-1
 X-BESS-VER: 2019.1_20250904.2304
-X-BESS-Apparent-Source-IP: 40.107.159.138
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVubGZoZAVgZQMNky0cTY3DjVJD
- kpOTnNPNkkLS0tydTA1NQ8NTXN0shQqTYWACFsmFVBAAAA
-X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Apparent-Source-IP: 52.101.83.134
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVobGpqYWQGYGUNTI2DTZMMk0Kd
+ nUwszUwNzEPDE1JdEk1TTJzMAs0SDFTKk2FgA8XX30QgAAAA==
+X-BESS-Outbound-Spam-Score: 0.50
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.267723 [from 
- cloudscan17-191.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan16-124.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
+ 0.50 BSF_RULE7568M          META: Custom Rule 7568M 
  0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS113687 scores of
- KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS113687 scores of
+ KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -145,202 +146,397 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch cleans up the code to use pthreads and rte_thread APIs.
-Instead it uses service lcore.
+The port event service is responsible for handling port events.
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- drivers/net/ntnic/adapter/nt4ga_adapter.c     |  2 --
- drivers/net/ntnic/include/nt4ga_adapter.h     |  1 -
- drivers/net/ntnic/include/ntdrv_4ga.h         |  1 -
- drivers/net/ntnic/nthw/core/nthw_pca9532.c    |  2 --
- drivers/net/ntnic/nthw/core/nthw_pcal6416a.c  |  1 -
- .../net/ntnic/nthw/core/nthw_si5332_si5156.c  |  1 -
- .../profile_inline/flow_api_profile_inline.c  |  2 +-
- drivers/net/ntnic/ntnic_ethdev.c              | 22 +++++--------------
- drivers/net/ntnic/ntutil/nt_util.c            |  2 +-
- 9 files changed, 7 insertions(+), 27 deletions(-)
+ drivers/net/ntnic/include/ntdrv_4ga.h |   1 -
+ drivers/net/ntnic/include/ntos_drv.h  |   2 +-
+ drivers/net/ntnic/ntnic_ethdev.c      | 272 +++++++++++++++-----------
+ drivers/net/ntnic/ntutil/nt_service.c |  12 ++
+ drivers/net/ntnic/rte_pmd_ntnic.h     |   2 +
+ 5 files changed, 175 insertions(+), 114 deletions(-)
 
-diff --git a/drivers/net/ntnic/adapter/nt4ga_adapter.c b/drivers/net/ntnic/adapter/nt4ga_adapter.c
-index 363874c85f..de4e8707bf 100644
---- a/drivers/net/ntnic/adapter/nt4ga_adapter.c
-+++ b/drivers/net/ntnic/adapter/nt4ga_adapter.c
-@@ -3,8 +3,6 @@
-  * Copyright(c) 2023 Napatech A/S
-  */
- 
--#include <rte_thread.h>
--
- #include "nt_service.h"
- #include "ntlog.h"
- #include "nthw_fpga.h"
-diff --git a/drivers/net/ntnic/include/nt4ga_adapter.h b/drivers/net/ntnic/include/nt4ga_adapter.h
-index 6c701b601f..0598e62b7b 100644
---- a/drivers/net/ntnic/include/nt4ga_adapter.h
-+++ b/drivers/net/ntnic/include/nt4ga_adapter.h
-@@ -40,7 +40,6 @@ typedef struct adapter_info_s {
- 	char *mp_port_id_str[NUM_ADAPTER_PORTS_MAX];
- 	char *mp_adapter_id_str;
- 	char *p_dev_name;
--	volatile bool *pb_shutdown;
- 
- 	int adapter_no;
- 	int n_rx_host_buffers;
 diff --git a/drivers/net/ntnic/include/ntdrv_4ga.h b/drivers/net/ntnic/include/ntdrv_4ga.h
-index ee0e66c4d4..4ff1f115f4 100644
+index c143c0c2b6..ee0e66c4d4 100644
 --- a/drivers/net/ntnic/include/ntdrv_4ga.h
 +++ b/drivers/net/ntnic/include/ntdrv_4ga.h
-@@ -14,7 +14,6 @@ typedef struct ntdrv_4ga_s {
- 	struct adapter_info_s adapter_info;
- 	char *p_drv_name;
+@@ -16,7 +16,6 @@ typedef struct ntdrv_4ga_s {
  
--	volatile bool b_shutdown;
+ 	volatile bool b_shutdown;
  	rte_spinlock_t stat_lck;
+-	rte_thread_t port_event_thread;
  } ntdrv_4ga_t;
  
-diff --git a/drivers/net/ntnic/nthw/core/nthw_pca9532.c b/drivers/net/ntnic/nthw/core/nthw_pca9532.c
-index af14cd6d06..805e0275e8 100644
---- a/drivers/net/ntnic/nthw/core/nthw_pca9532.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_pca9532.c
-@@ -3,8 +3,6 @@
-  * Copyright(c) 2023 Napatech A/S
-  */
+ #endif	/* __NTDRV_4GA_H__ */
+diff --git a/drivers/net/ntnic/include/ntos_drv.h b/drivers/net/ntnic/include/ntos_drv.h
+index 047c077057..e6e46f8cc1 100644
+--- a/drivers/net/ntnic/include/ntos_drv.h
++++ b/drivers/net/ntnic/include/ntos_drv.h
+@@ -21,7 +21,7 @@
+ #define NUM_MULTICAST_ADDRS_PER_PORT (16U)
  
--#include <pthread.h>
--
- #include "nt_util.h"
- #include "ntlog.h"
+ #define NUM_ADAPTER_MAX (8)
+-#define NUM_ADAPTER_PORTS_MAX (128)
++#define NUM_ADAPTER_PORTS_MAX (2)
  
-diff --git a/drivers/net/ntnic/nthw/core/nthw_pcal6416a.c b/drivers/net/ntnic/nthw/core/nthw_pcal6416a.c
-index 2fca469497..f7efc196f4 100644
---- a/drivers/net/ntnic/nthw/core/nthw_pcal6416a.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_pcal6416a.c
-@@ -2,7 +2,6 @@
-  * SPDX-License-Identifier: BSD-3-Clause
-  * Copyright(c) 2023 Napatech A/S
-  */
--#include <pthread.h>
  
- #include "nt_util.h"
- #include "ntlog.h"
-diff --git a/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c b/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
-index eb11ebc67a..537d58afb7 100644
---- a/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_si5332_si5156.c
-@@ -3,7 +3,6 @@
-  * Copyright(c) 2023 Napatech A/S
-  */
- 
--#include <pthread.h>
- #include "generic/rte_spinlock.h"
- #include "nt_util.h"
- #include "ntlog.h"
-diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-index eaaf681ac6..2291642ca9 100644
---- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-+++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-@@ -5276,7 +5276,7 @@ struct flow_handle *flow_async_create_profile_inline(struct flow_eth_dev *dev,
- 			} while (status == CELL_STATUS_INITIALIZING);
- 
- 			/* error handling in case that create_flow_filter() will fail in the other
--			 * thread
-+			 * service
- 			 */
- 			if (status == CELL_STATUS_UNINITIALIZED)
- 				goto err_exit;
+ /* Max RSS queues */
 diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
-index 40a8d2b2dc..a867e7b16d 100644
+index 54c9e218bc..d98c0289cc 100644
 --- a/drivers/net/ntnic/ntnic_ethdev.c
 +++ b/drivers/net/ntnic/ntnic_ethdev.c
-@@ -6,8 +6,6 @@
- #include <stdint.h>
- #include <stdarg.h>
- 
--#include <signal.h>
--
- #include <rte_eal.h>
- #include <rte_dev.h>
- #include <rte_vfio.h>
-@@ -33,12 +31,6 @@
- #include "rte_pmd_ntnic.h"
- #include "nt_service.h"
- 
--const rte_thread_attr_t thread_attr = { .priority = RTE_THREAD_PRIORITY_NORMAL };
--#define THREAD_CREATE(a, b, c) rte_thread_create(a, &thread_attr, b, c)
--#define THREAD_CTRL_CREATE(a, b, c, d) rte_thread_create_internal_control(a, b, c, d)
--#define THREAD_JOIN(a) rte_thread_join(a, NULL)
--#define THREAD_FUNC static uint32_t
--#define THREAD_RETURN (0)
- #define HW_MAX_PKT_LEN (10000)
- #define MAX_MTU (HW_MAX_PKT_LEN - RTE_ETHER_HDR_LEN - RTE_ETHER_CRC_LEN)
- #define MIN_MTU_INLINE 512
-@@ -1536,14 +1528,13 @@ drv_deinit(struct drv_s *p_drv)
- 	fpga_info_t *fpga_info = &p_nt_drv->adapter_info.fpga_info;
- 
- 	/*
--	 * Mark the global pdrv for cleared. Used by some threads to terminate.
--	 * 1 second to give the threads a chance to see the termonation.
-+	 * Mark the global pdrv for cleared. Used by some services to terminate.
-+	 * 1 second to give the services a chance to see the termonation.
- 	 */
- 	clear_pdrv(p_drv);
- 	nt_os_wait_usec(1000000);
- 
- 	/* stop statistics service */
--	p_drv->ntdrv.b_shutdown = true;
- 	nthw_service_del(RTE_NTNIC_SERVICE_STAT);
- 
+@@ -1549,7 +1549,8 @@ drv_deinit(struct drv_s *p_drv)
  	if (fpga_info->profile == FPGA_INFO_PROFILE_INLINE) {
-@@ -2323,9 +2314,6 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
- 		p_nt_drv->adapter_info.hw_info.pci_sub_vendor_id,
- 		p_nt_drv->adapter_info.hw_info.pci_sub_device_id);
+ 		nthw_service_del(RTE_NTNIC_SERVICE_FLM_UPDATE);
+ 		profile_inline_ops->flm_free_queues();
+-		THREAD_JOIN(p_nt_drv->port_event_thread);
++		nthw_service_del(RTE_NTNIC_SERVICE_PORT_0_EVENT);
++		nthw_service_del(RTE_NTNIC_SERVICE_PORT_1_EVENT);
+ 		/* Free all local flm event queues */
+ 		nthw_flm_inf_sta_queue_free_all(FLM_INFO_LOCAL);
+ 		/* Free all remote flm event queues */
+@@ -1849,135 +1850,168 @@ static struct eth_dev_ops nthw_eth_dev_ops = {
+ };
  
--	p_nt_drv->b_shutdown = false;
--	p_nt_drv->adapter_info.pb_shutdown = &p_nt_drv->b_shutdown;
+ /*
+- * Port event thread
++ * Port event service
+  */
+-THREAD_FUNC port_event_thread_fn(void *context)
++static int port_event_service(void *context)
+ {
+ 	struct pmd_internals *internals = context;
+-	struct drv_s *p_drv = internals->p_drv;
+-	ntdrv_4ga_t *p_nt_drv = &p_drv->ntdrv;
+-	struct adapter_info_s *p_adapter_info = &p_nt_drv->adapter_info;
+-	struct flow_nic_dev *ndev = p_adapter_info->nt4ga_filter.mp_flow_device;
++	RTE_ASSERT(internals != NULL);
+ 
+-	nt4ga_stat_t *p_nt4ga_stat = &p_nt_drv->adapter_info.nt4ga_stat;
+-	struct rte_eth_dev *eth_dev = &rte_eth_devices[internals->port_id];
+-	uint8_t port_no = internals->port;
++	const uint8_t port_no = internals->port;
++	if (port_no >= NUM_ADAPTER_PORTS_MAX) {
++		NT_LOG(ERR, NTNIC, "Invalid Port number");
++		return -1;
++	}
+ 
+-	ntnic_flm_load_t flmdata;
+-	ntnic_port_load_t portdata;
++	static ntdrv_4ga_t *p_nt_drv[NUM_ADAPTER_PORTS_MAX] = {NULL, NULL};
++	static struct rte_eth_dev *eth_dev[NUM_ADAPTER_PORTS_MAX] = {NULL, NULL};
++	static nt4ga_stat_t *p_nt4ga_stat[NUM_ADAPTER_PORTS_MAX] = {NULL, NULL};
++	static ntnic_flm_load_t flmdata[NUM_ADAPTER_PORTS_MAX];
++	static ntnic_port_load_t portdata[NUM_ADAPTER_PORTS_MAX];
+ 
+-	memset(&flmdata, 0, sizeof(flmdata));
+-	memset(&portdata, 0, sizeof(portdata));
++	const int port_srv_tag[2] = {
++		RTE_NTNIC_SERVICE_PORT_0_EVENT,
++		RTE_NTNIC_SERVICE_PORT_1_EVENT
++	};
+ 
+-	while (ndev != NULL && ndev->eth_base == NULL)
+-		nt_os_wait_usec(1 * 1000 * 1000);
++	struct nt_service *port_event_srv = nthw_service_get_info(port_srv_tag[port_no]);
++	RTE_ASSERT(port_event_srv != NULL);
++
++	if (!NT_SERVICE_GET_STATE(port_event_srv)) {
++		struct drv_s *p_drv = internals->p_drv;
++		p_nt_drv[port_no] = &p_drv->ntdrv;
++		struct adapter_info_s *p_adapter_info = &p_nt_drv[port_no]->adapter_info;
++		struct flow_nic_dev *ndev = p_adapter_info->nt4ga_filter.mp_flow_device;
++		p_nt4ga_stat[port_no] = &p_nt_drv[port_no]->adapter_info.nt4ga_stat;
++		eth_dev[port_no] = &rte_eth_devices[internals->port_id];
++		if (ndev != NULL && ndev->eth_base == NULL)
++			return -1;
+ 
+-	while (!p_drv->ntdrv.b_shutdown) {
+-		/*
+-		 * FLM load measurement
+-		 * Do only send event, if there has been a change
+-		 */
+-		if (p_nt4ga_stat->flm_stat_ver > 22 && p_nt4ga_stat->mp_stat_structs_flm) {
+-			if (flmdata.lookup != p_nt4ga_stat->mp_stat_structs_flm->load_lps ||
+-				flmdata.access != p_nt4ga_stat->mp_stat_structs_flm->load_aps) {
+-				rte_spinlock_lock(&p_nt_drv->stat_lck);
+-				flmdata.lookup = p_nt4ga_stat->mp_stat_structs_flm->load_lps;
+-				flmdata.access = p_nt4ga_stat->mp_stat_structs_flm->load_aps;
+-				flmdata.lookup_maximum =
+-					p_nt4ga_stat->mp_stat_structs_flm->max_lps;
+-				flmdata.access_maximum =
+-					p_nt4ga_stat->mp_stat_structs_flm->max_aps;
+-				rte_spinlock_unlock(&p_nt_drv->stat_lck);
 -
- 	/* store context */
- 	store_pdrv(p_drv);
+-				if (eth_dev && eth_dev->data && eth_dev->data->dev_private) {
+-					rte_eth_dev_callback_process(eth_dev,
+-						(enum rte_eth_event_type)RTE_NTNIC_FLM_LOAD_EVENT,
+-						&flmdata);
+-				}
++		memset(&flmdata, 0, sizeof(flmdata));
++		memset(&portdata, 0, sizeof(portdata));
++
++
++		NT_LOG(INF, NTNIC, "port[%u] event service started on lcore %i",
++			port_no, rte_lcore_id());
++		port_event_srv->lcore = rte_lcore_id();
++		NT_SERVICE_SET_STATE(port_event_srv, true);
++		return 0;
++	}
++
++	/*
++	 * FLM load measurement
++	 * Do only send event, if there has been a change
++	 */
++
++	nt4ga_stat_t *port_stat = p_nt4ga_stat[port_no];
++	ntnic_flm_load_t *port_flm_load = &flmdata[port_no];
++	ntnic_port_load_t *port_load = &portdata[port_no];
++
++	if (port_stat->flm_stat_ver > 22 && port_stat->mp_stat_structs_flm) {
++		if (port_flm_load->lookup != port_stat->mp_stat_structs_flm->load_lps ||
++			port_flm_load->access != port_stat->mp_stat_structs_flm->load_aps) {
++			rte_spinlock_lock(&p_nt_drv[port_no]->stat_lck);
++			port_flm_load->lookup = port_stat->mp_stat_structs_flm->load_lps;
++			port_flm_load->access = port_stat->mp_stat_structs_flm->load_aps;
++			port_flm_load->lookup_maximum =
++				port_stat->mp_stat_structs_flm->max_lps;
++			port_flm_load->access_maximum =
++				port_stat->mp_stat_structs_flm->max_aps;
++			rte_spinlock_unlock(&p_nt_drv[port_no]->stat_lck);
++
++			if (eth_dev[port_no] &&
++				eth_dev[port_no]->data &&
++				eth_dev[port_no]->data->dev_private) {
++				rte_eth_dev_callback_process(eth_dev[port_no],
++					(enum rte_eth_event_type)RTE_NTNIC_FLM_LOAD_EVENT,
++					&flmdata);
+ 			}
+ 		}
++	}
  
-@@ -2366,7 +2354,7 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
- 		NT_LOG_DBGX(DBG, NTNIC, "SG module is not initialized");
+-		/*
+-		 * Port load measurement
+-		 * Do only send event, if there has been a change.
+-		 */
+-		if (p_nt4ga_stat->mp_port_load) {
+-			if (portdata.rx_bps != p_nt4ga_stat->mp_port_load[port_no].rx_bps ||
+-				portdata.tx_bps != p_nt4ga_stat->mp_port_load[port_no].tx_bps) {
+-				rte_spinlock_lock(&p_nt_drv->stat_lck);
+-				portdata.rx_bps = p_nt4ga_stat->mp_port_load[port_no].rx_bps;
+-				portdata.tx_bps = p_nt4ga_stat->mp_port_load[port_no].tx_bps;
+-				portdata.rx_pps = p_nt4ga_stat->mp_port_load[port_no].rx_pps;
+-				portdata.tx_pps = p_nt4ga_stat->mp_port_load[port_no].tx_pps;
+-				portdata.rx_pps_maximum =
+-					p_nt4ga_stat->mp_port_load[port_no].rx_pps_max;
+-				portdata.tx_pps_maximum =
+-					p_nt4ga_stat->mp_port_load[port_no].tx_pps_max;
+-				portdata.rx_bps_maximum =
+-					p_nt4ga_stat->mp_port_load[port_no].rx_bps_max;
+-				portdata.tx_bps_maximum =
+-					p_nt4ga_stat->mp_port_load[port_no].tx_bps_max;
+-				rte_spinlock_unlock(&p_nt_drv->stat_lck);
+-
+-				if (eth_dev && eth_dev->data && eth_dev->data->dev_private) {
+-					rte_eth_dev_callback_process(eth_dev,
+-						(enum rte_eth_event_type)RTE_NTNIC_PORT_LOAD_EVENT,
+-						&portdata);
+-				}
++	/*
++	 * Port load measurement
++	 * Do only send event, if there has been a change.
++	 */
++	if (port_stat->mp_port_load) {
++		if (port_load->rx_bps != port_stat->mp_port_load[port_no].rx_bps ||
++			port_load->tx_bps != port_stat->mp_port_load[port_no].tx_bps) {
++			rte_spinlock_lock(&p_nt_drv[port_no]->stat_lck);
++			port_load->rx_bps = port_stat->mp_port_load[port_no].rx_bps;
++			port_load->tx_bps = port_stat->mp_port_load[port_no].tx_bps;
++			port_load->rx_pps = port_stat->mp_port_load[port_no].rx_pps;
++			port_load->tx_pps = port_stat->mp_port_load[port_no].tx_pps;
++			port_load->rx_pps_maximum =
++				port_stat->mp_port_load[port_no].rx_pps_max;
++			port_load->tx_pps_maximum =
++				port_stat->mp_port_load[port_no].tx_pps_max;
++			port_load->rx_bps_maximum =
++				port_stat->mp_port_load[port_no].rx_bps_max;
++			port_load->tx_bps_maximum =
++				port_stat->mp_port_load[port_no].tx_bps_max;
++			rte_spinlock_unlock(&p_nt_drv[port_no]->stat_lck);
++
++			if (eth_dev[port_no] && eth_dev[port_no]->data &&
++				eth_dev[port_no]->data->dev_private) {
++				rte_eth_dev_callback_process(eth_dev[port_no],
++					(enum rte_eth_event_type)RTE_NTNIC_PORT_LOAD_EVENT,
++					&portdata);
+ 			}
+ 		}
++	}
+ 
+-		/* Process events */
+-		{
+-			int count = 0;
+-			bool do_wait = true;
+-
+-			while (count < 5000) {
+-				/* Local FLM statistic events */
+-				struct flm_info_event_s data;
+-
+-				if (nthw_flm_inf_queue_get(port_no, FLM_INFO_LOCAL, &data) == 0) {
+-					if (eth_dev && eth_dev->data &&
+-						eth_dev->data->dev_private) {
+-						struct ntnic_flm_statistic_s event_data;
+-						event_data.bytes = data.bytes;
+-						event_data.packets = data.packets;
+-						event_data.cause = data.cause;
+-						event_data.id = data.id;
+-						event_data.timestamp = data.timestamp;
+-						rte_eth_dev_callback_process(eth_dev,
+-							(enum rte_eth_event_type)
+-							RTE_NTNIC_FLM_STATS_EVENT,
+-							&event_data);
+-						do_wait = false;
+-					}
+-				}
+-
+-				/* AGED event */
+-				/* Note: RTE_FLOW_PORT_FLAG_STRICT_QUEUE flag is not supported so
+-				 * event is always generated
+-				 */
+-				int aged_event_count = flm_age_event_get(port_no);
+-
+-				if (aged_event_count > 0 && eth_dev && eth_dev->data &&
+-					eth_dev->data->dev_private) {
+-					rte_eth_dev_callback_process(eth_dev,
+-						RTE_ETH_EVENT_FLOW_AGED,
+-						NULL);
+-					flm_age_event_clear(port_no);
++	/* Process events */
++	{
++		int count = 0;
++		bool do_wait = true;
++
++		while (count < 5000) {
++			/* Local FLM statistic events */
++			struct flm_info_event_s data;
++
++			if (nthw_flm_inf_queue_get(port_no, FLM_INFO_LOCAL, &data) == 0) {
++				if (eth_dev[port_no] && eth_dev[port_no]->data &&
++					eth_dev[port_no]->data->dev_private) {
++					struct ntnic_flm_statistic_s event_data;
++					event_data.bytes = data.bytes;
++					event_data.packets = data.packets;
++					event_data.cause = data.cause;
++					event_data.id = data.id;
++					event_data.timestamp = data.timestamp;
++					rte_eth_dev_callback_process(eth_dev[port_no],
++						(enum rte_eth_event_type)
++						RTE_NTNIC_FLM_STATS_EVENT,
++						&event_data);
+ 					do_wait = false;
+ 				}
++			}
+ 
+-				if (do_wait)
+-					nt_os_wait_usec(10);
+-
+-				count++;
+-				do_wait = true;
++			/* AGED event */
++			/* Note: RTE_FLOW_PORT_FLAG_STRICT_QUEUE flag is not supported so
++			 * event is always generated
++			 */
++			int aged_event_count = flm_age_event_get(port_no);
++
++			if (aged_event_count > 0 &&
++				eth_dev[port_no] &&
++				eth_dev[port_no]->data &&
++				eth_dev[port_no]->data->dev_private) {
++				rte_eth_dev_callback_process(eth_dev[port_no],
++					RTE_ETH_EVENT_FLOW_AGED,
++					NULL);
++				flm_age_event_clear(port_no);
++				do_wait = false;
+ 			}
++
++			if (do_wait)
++				nt_os_wait_usec(10);
++
++			count++;
++			do_wait = true;
+ 		}
  	}
  
--	/* Start ctrl, monitor, stat thread only for primary process. */
-+	/* Start ctrl, monitor, stat service only for primary process. */
- 	if (err == 0) {
- 		/* mp_adapter_id_str is initialized after nt4ga_adapter_init(p_nt_drv) */
- 		const char *const p_adapter_id_str = p_nt_drv->adapter_info.mp_adapter_id_str;
-@@ -2632,7 +2620,7 @@ nthw_pci_dev_deinit(struct rte_eth_dev *eth_dev __rte_unused)
- 	fpga_info_t *fpga_info = &p_ntdrv->adapter_info.fpga_info;
- 	const int n_phy_ports = fpga_info->n_phy_ports;
+-	return THREAD_RETURN;
++	return 0;
+ }
  
--	/* let running threads end Rx and Tx activity */
-+	/* let running services end Rx and Tx activity */
- 	if (sg_ops != NULL) {
- 		nt_os_wait_usec(1 * 1000 * 1000);
+ /*
+@@ -2547,10 +2581,24 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 			}
+ 		}
  
-@@ -2707,7 +2695,7 @@ nthw_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
+-		/* Port event thread */
++		/* Port event service */
+ 		if (fpga_info->profile == FPGA_INFO_PROFILE_INLINE) {
+-			res = THREAD_CTRL_CREATE(&p_nt_drv->port_event_thread, "nt_port_event_thr",
+-					port_event_thread_fn, (void *)internals);
++			struct rte_service_spec port_event_spec = {
++				.callback = port_event_service,
++				.socket_id = SOCKET_ID_ANY,
++				.capabilities = RTE_SERVICE_CAP_MT_SAFE,
++				.callback_userdata = internals
++			};
++
++			snprintf(port_event_spec.name, RTE_SERVICE_NAME_MAX,
++				 "ntnic-port_%d_event_service", n_intf_no);
++
++			const int port_srv_tag[2] = {
++				RTE_NTNIC_SERVICE_PORT_0_EVENT,
++				RTE_NTNIC_SERVICE_PORT_1_EVENT
++			};
++
++			res = nthw_service_add(&port_event_spec, port_srv_tag[n_intf_no]);
  
- 	/*
- 	 * 1 time calculation of 1 sec stat update rtc cycles to prevent stat poll
--	 * flooding by OVS from multiple virtual port threads - no need to be precise
-+	 * flooding by OVS from multiple virtual port services - no need to be precise
- 	 */
- 	uint64_t now_rtc = rte_get_tsc_cycles();
- 	nt_os_wait_usec(10 * 1000);
-diff --git a/drivers/net/ntnic/ntutil/nt_util.c b/drivers/net/ntnic/ntutil/nt_util.c
-index df382e7a24..a4d30d8ca4 100644
---- a/drivers/net/ntnic/ntutil/nt_util.c
-+++ b/drivers/net/ntnic/ntutil/nt_util.c
-@@ -16,7 +16,7 @@
+ 			if (res) {
+ 				NT_LOG(ERR, NTNIC, "%s: error=%d",
+diff --git a/drivers/net/ntnic/ntutil/nt_service.c b/drivers/net/ntnic/ntutil/nt_service.c
+index c109b44483..9f22ee2bba 100644
+--- a/drivers/net/ntnic/ntutil/nt_service.c
++++ b/drivers/net/ntnic/ntutil/nt_service.c
+@@ -24,6 +24,18 @@ static struct nt_service g_nt_services[RTE_NTNIC_SERVICE_MAX] = {
+ 		.lcore = RTE_MAX_LCORE,
+ 		.initialized = false,
+ 	},
++	[RTE_NTNIC_SERVICE_PORT_0_EVENT] = {
++		.tag = RTE_NTNIC_SERVICE_PORT_0_EVENT,
++		.id = NT_SERVICE_UNKNOWN_ID,
++		.lcore = RTE_MAX_LCORE,
++		.initialized = false,
++	},
++	[RTE_NTNIC_SERVICE_PORT_1_EVENT] = {
++		.tag = RTE_NTNIC_SERVICE_PORT_1_EVENT,
++		.id = NT_SERVICE_UNKNOWN_ID,
++		.lcore = RTE_MAX_LCORE,
++		.initialized = false,
++	},
+ };
  
- static struct nt_util_vfio_impl vfio_cb;
+ inline struct nt_service *nthw_service_get_info(const enum rte_ntnic_service_tag tag)
+diff --git a/drivers/net/ntnic/rte_pmd_ntnic.h b/drivers/net/ntnic/rte_pmd_ntnic.h
+index 6fe6541984..1a68cb8e37 100644
+--- a/drivers/net/ntnic/rte_pmd_ntnic.h
++++ b/drivers/net/ntnic/rte_pmd_ntnic.h
+@@ -43,6 +43,8 @@ enum rte_ntnic_event_type {
+ enum rte_ntnic_service_tag {
+ 	RTE_NTNIC_SERVICE_FLM_UPDATE = 0,
+ 	RTE_NTNIC_SERVICE_STAT = 1,
++	RTE_NTNIC_SERVICE_PORT_0_EVENT = 2,
++	RTE_NTNIC_SERVICE_PORT_1_EVENT = 3,
+ 	RTE_NTNIC_SERVICE_MAX
+ };
  
--/* uses usleep which schedules out the calling thread */
-+/* uses usleep which schedules out the calling service */
- void nt_os_wait_usec(int val)
- {
- 	rte_delay_us_sleep(val);
 -- 
 2.45.0
 
