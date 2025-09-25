@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDDACAC5AA
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 07:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FFFCAC5AA
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 07:01:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5DD5F40DFB;
-	Thu, 25 Sep 2025 08:59:33 +0200 (CEST)
-Received: from out28-122.mail.aliyun.com (out28-122.mail.aliyun.com
- [115.124.28.122])
- by mails.dpdk.org (Postfix) with ESMTP id E2BE0406FF
- for <dev@dpdk.org>; Thu, 25 Sep 2025 08:59:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 78ECB40E03;
+	Thu, 25 Sep 2025 08:59:34 +0200 (CEST)
+Received: from out28-197.mail.aliyun.com (out28-197.mail.aliyun.com
+ [115.124.28.197])
+ by mails.dpdk.org (Postfix) with ESMTP id BA29E40698
+ for <dev@dpdk.org>; Thu, 25 Sep 2025 08:59:19 +0200 (CEST)
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.en46btF_1758783555 cluster:ay29) by smtp.aliyun-inc.com;
- Thu, 25 Sep 2025 14:59:15 +0800
+ fp:SMTPD_---.en46buw_1758783556 cluster:ay29) by smtp.aliyun-inc.com;
+ Thu, 25 Sep 2025 14:59:16 +0800
 From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 To: dimon.zhao@nebula-matrix.com,
 	dev@dpdk.org
 Cc: Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>,
  Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v11 15/17] net/nbl: add nbl ethdev infos get
-Date: Wed, 24 Sep 2025 23:58:52 -0700
-Message-Id: <20250925065854.2907820-16-dimon.zhao@nebula-matrix.com>
+Subject: [PATCH v11 17/17] net/nbl: add nbl device set MTU and promisc
+Date: Wed, 24 Sep 2025 23:58:54 -0700
+Message-Id: <20250925065854.2907820-18-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250925065854.2907820-1-dimon.zhao@nebula-matrix.com>
 References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
@@ -41,176 +41,307 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement NBL ethdev infos get functions
+Implement NBL device set MTU and promisc functions
 
 Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 ---
- drivers/net/nbl/nbl_dev/nbl_dev.c            | 55 ++++++++++++++++++++
- drivers/net/nbl/nbl_dev/nbl_dev.h            |  4 ++
- drivers/net/nbl/nbl_ethdev.c                 |  1 +
- drivers/net/nbl/nbl_ethdev.h                 | 18 +++++++
- drivers/net/nbl/nbl_include/nbl_def_common.h |  2 +
- drivers/net/nbl/nbl_include/nbl_include.h    |  7 +++
- 6 files changed, 87 insertions(+)
+ drivers/net/nbl/nbl_core.h                    |  2 +
+ drivers/net/nbl/nbl_dev/nbl_dev.c             | 59 ++++++++++++++
+ drivers/net/nbl/nbl_dev/nbl_dev.h             |  7 +-
+ drivers/net/nbl/nbl_dispatch.c                | 76 +++++++++++++++++++
+ drivers/net/nbl/nbl_dispatch.h                |  2 +
+ drivers/net/nbl/nbl_ethdev.c                  |  3 +
+ drivers/net/nbl/nbl_include/nbl_def_channel.h | 10 +++
+ .../net/nbl/nbl_include/nbl_def_dispatch.h    |  1 +
+ .../net/nbl/nbl_include/nbl_def_resource.h    |  2 +
+ 9 files changed, 161 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/net/nbl/nbl_core.h b/drivers/net/nbl/nbl_core.h
+index 729fd64124..0c58b4cc05 100644
+--- a/drivers/net/nbl/nbl_core.h
++++ b/drivers/net/nbl/nbl_core.h
+@@ -51,6 +51,8 @@
+ #define NBL_IS_NOT_COEXISTENCE(common)		({ typeof(common) _common = (common);	\
+ 						_common->nl_socket_route < 0 ||		\
+ 						_common->ifindex < 0; })
++#define NBL_IS_COEXISTENCE(common)		((common)->devfd != -1)
++
+ struct nbl_core {
+ 	void *hw_mgt;
+ 	void *res_mgt;
 diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index ca2975e574..cfa70feba4 100644
+index d41690c517..ef8fddb07a 100644
 --- a/drivers/net/nbl/nbl_dev/nbl_dev.c
 +++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -295,6 +295,61 @@ void nbl_rx_queues_release(struct rte_eth_dev *eth_dev, uint16_t queue_id)
- 	disp_ops->release_rx_ring(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), queue_id);
+@@ -517,6 +517,65 @@ int nbl_xstats_reset(struct rte_eth_dev *eth_dev)
+ 	return 0;
  }
  
-+int nbl_dev_infos_get(struct rte_eth_dev *eth_dev, struct rte_eth_dev_info *dev_info)
++int nbl_mtu_set(struct rte_eth_dev *eth_dev, uint16_t mtu)
++{
++	struct rte_eth_dev_data *dev_data = eth_dev->data;
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
++	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
++	uint32_t frame_size = mtu + NBL_ETH_OVERHEAD;
++	int ret;
++
++	/* mtu setting is forbidden if port is start */
++	if (dev_data->dev_started) {
++		NBL_LOG(ERR, "port %d must be stopped before configuration", dev_data->port_id);
++		return -EBUSY;
++	}
++
++	dev_data->dev_conf.rxmode.mtu = frame_size;
++	ret = disp_ops->set_mtu(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), dev_mgt->net_dev->vsi_id, mtu);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++int nbl_promiscuous_enable(struct rte_eth_dev *eth_dev)
 +{
 +	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
 +	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
-+	struct nbl_dev_ring_mgt *ring_mgt = &dev_mgt->net_dev->ring_mgt;
-+	struct nbl_board_port_info *board_info = &dev_mgt->common->board_info;
-+	u8 speed_mode = board_info->speed;
++	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
++	struct nbl_common_info *common = &adapter->common;
 +
-+	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
-+	dev_info->max_mtu = NBL_MAX_JUMBO_FRAME_SIZE - NBL_ETH_OVERHEAD;
-+	dev_info->max_rx_pktlen = NBL_FRAME_SIZE_MAX;
-+	dev_info->max_mac_addrs = dev_mgt->net_dev->max_mac_num;
-+	dev_info->max_rx_queues = ring_mgt->rx_ring_num;
-+	dev_info->max_tx_queues = ring_mgt->tx_ring_num;
-+	dev_info->min_rx_bufsize = NBL_DEV_MIN_RX_BUFSIZE;
-+	dev_info->flow_type_rss_offloads = NBL_RSS_OFFLOAD_TYPE;
-+	dev_info->hash_key_size = NBL_EPRO_RSS_SK_SIZE;
-+	dev_info->tx_desc_lim = (struct rte_eth_desc_lim) {
-+		.nb_max = 32768,
-+		.nb_min = 128,
-+		.nb_align = 1,
-+		.nb_seg_max = 128,
-+		.nb_mtu_seg_max = 128,
-+	};
-+	dev_info->rx_desc_lim = (struct rte_eth_desc_lim) {
-+		.nb_max = 32768,
-+		.nb_min = 128,
-+		.nb_align = 1,
-+		.nb_seg_max = 128,
-+		.nb_mtu_seg_max = 128,
-+	};
-+	dev_info->default_rxportconf.nb_queues = ring_mgt->rx_ring_num;
-+	dev_info->default_txportconf.nb_queues = ring_mgt->tx_ring_num;
-+	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
-+	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_SCATTER;
-+	switch (speed_mode) {
-+	case NBL_FW_PORT_SPEED_100G:
-+		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_100G;
-+		/* FALLTHROUGH */
-+	case NBL_FW_PORT_SPEED_50G:
-+		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_50G;
-+		/* FALLTHROUGH */
-+	case NBL_FW_PORT_SPEED_25G:
-+		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_25G;
-+		/* FALLTHROUGH */
-+	case NBL_FW_PORT_SPEED_10G:
-+		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_10G;
-+		break;
-+	default:
-+		dev_info->speed_capa = RTE_ETH_LINK_SPEED_25G;
++	if (!common->is_vf) {
++		disp_ops->set_promisc_mode(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++					   dev_mgt->net_dev->vsi_id, 1);
++		dev_mgt->net_dev->promisc = 1;
++	} else {
++		return -ENOTSUP;
 +	}
 +
 +	return 0;
 +}
 +
- int nbl_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete __rte_unused)
++int nbl_promiscuous_disable(struct rte_eth_dev *eth_dev)
++{
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
++	struct nbl_dispatch_ops *disp_ops = NBL_DEV_MGT_TO_DISP_OPS(dev_mgt);
++	struct nbl_common_info *common = &adapter->common;
++
++	if (!common->is_vf) {
++		disp_ops->set_promisc_mode(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt),
++					   dev_mgt->net_dev->vsi_id, 0);
++		dev_mgt->net_dev->promisc = 0;
++	} else {
++		return -ENOTSUP;
++	}
++
++	return 0;
++}
++
+ static int nbl_dev_setup_chan_queue(struct nbl_adapter *adapter)
  {
- 	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
+ 	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
 diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.h b/drivers/net/nbl/nbl_dev/nbl_dev.h
-index 49e91fe24f..78c36dbeaf 100644
+index 3146abd3ee..b00069a150 100644
 --- a/drivers/net/nbl/nbl_dev/nbl_dev.h
 +++ b/drivers/net/nbl/nbl_dev/nbl_dev.h
-@@ -17,6 +17,9 @@
- #define NBL_DEV_MGT_TO_ETH_DEV(dev_mgt)		((dev_mgt)->net_dev->eth_dev)
- #define NBL_DEV_MGT_TO_COMMON(dev_mgt)		((dev_mgt)->common)
+@@ -48,7 +48,9 @@ struct nbl_dev_net_mgt {
+ 	u8 eth_mode;
+ 	u8 eth_id;
+ 	u16 max_mac_num;
+-	bool trust;
++	u8 trust:1;
++	u8 promisc:1;
++	u8 rsv:6;
+ };
  
-+#define NBL_FRAME_SIZE_MAX			(9600)
-+#define NBL_DEV_MIN_RX_BUFSIZE			(2048)
+ struct nbl_dev_mgt {
+@@ -80,5 +82,8 @@ int nbl_xstats_get_names(struct rte_eth_dev *eth_dev,
+ 			 struct rte_eth_xstat_name *xstats_names,
+ 			 __rte_unused unsigned int limit);
+ int nbl_xstats_reset(struct rte_eth_dev *eth_dev);
++int nbl_mtu_set(struct rte_eth_dev *eth_dev, uint16_t mtu);
++int nbl_promiscuous_enable(struct rte_eth_dev *eth_dev);
++int nbl_promiscuous_disable(struct rte_eth_dev *eth_dev);
+ 
+ #endif
+diff --git a/drivers/net/nbl/nbl_dispatch.c b/drivers/net/nbl/nbl_dispatch.c
+index 5c3711154d..276f8c687d 100644
+--- a/drivers/net/nbl/nbl_dispatch.c
++++ b/drivers/net/nbl/nbl_dispatch.c
+@@ -886,6 +886,73 @@ static void nbl_disp_get_private_stat_data_req(void *priv, u32 eth_id, u64 *data
+ 	chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt), &chan_send);
+ }
+ 
++static int nbl_disp_set_mtu(void *priv, u16 vsi_id, u16 mtu)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++	int ret = 0;
 +
- struct nbl_dev_ring {
- 	u16 index;
- 	u64 dma;
-@@ -65,6 +68,7 @@ int nbl_rx_queue_setup(struct rte_eth_dev *eth_dev, u16 queue_idx,
- 		       const struct rte_eth_rxconf *conf, struct rte_mempool *mempool);
- void nbl_tx_queues_release(struct rte_eth_dev *eth_dev, uint16_t queue_id);
- void nbl_rx_queues_release(struct rte_eth_dev *eth_dev, uint16_t queue_id);
-+int nbl_dev_infos_get(struct rte_eth_dev *eth_dev, struct rte_eth_dev_info *dev_info);
- int nbl_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete __rte_unused);
- int nbl_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *rte_stats);
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	ret = NBL_OPS_CALL(res_ops->set_mtu, (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id, mtu));
++	return ret;
++}
++
++static int nbl_disp_chan_set_mtu_req(void *priv, u16 vsi_id, u16 mtu)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	const struct nbl_channel_ops *chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
++	struct nbl_chan_send_info chan_send = {0};
++	struct nbl_chan_param_set_mtu param = {0};
++
++	param.mtu = mtu;
++	param.vsi_id = vsi_id;
++
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_MTU_SET,
++		      &param, sizeof(param), NULL, 0, 1);
++	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt),
++				  &chan_send);
++}
++
++static int nbl_disp_set_promisc_mode(void *priv, u16 vsi_id, u16 mode)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_resource_ops *res_ops;
++	int ret = 0;
++
++	res_ops = NBL_DISP_MGT_TO_RES_OPS(disp_mgt);
++	ret = NBL_OPS_CALL(res_ops->set_promisc_mode,
++			   (NBL_DISP_MGT_TO_RES_PRIV(disp_mgt), vsi_id, mode));
++	return ret;
++}
++
++static int nbl_disp_chan_set_promisc_mode_req(void *priv, u16 vsi_id, u16 mode)
++{
++	struct nbl_dispatch_mgt *disp_mgt = (struct nbl_dispatch_mgt *)priv;
++	struct nbl_common_info *common;
++	const struct nbl_channel_ops *chan_ops = NBL_DISP_MGT_TO_CHAN_OPS(disp_mgt);
++	struct nbl_chan_param_set_promisc_mode param = {0};
++	struct nbl_chan_send_info chan_send = {0};
++	int ret = 0;
++
++	common = NBL_DISP_MGT_TO_COMMON(disp_mgt);
++	if (NBL_IS_COEXISTENCE(common)) {
++		ret = ioctl(common->devfd, NBL_DEV_USER_SET_PROMISC_MODE, &mode);
++		if (ret) {
++			NBL_LOG(ERR, "userspace send set_promisc_mode ioctl msg failed ret %d",
++				ret);
++			return ret;
++		}
++		return 0;
++	}
++
++	param.vsi_id = vsi_id;
++	param.mode = mode;
++	NBL_CHAN_SEND(chan_send, 0, NBL_CHAN_MSG_SET_PROSISC_MODE,
++		      &param, sizeof(param), NULL, 0, 1);
++	return chan_ops->send_msg(NBL_DISP_MGT_TO_CHAN_PRIV(disp_mgt),
++				  &chan_send);
++}
++
+ #define NBL_DISP_OPS_TBL						\
+ do {									\
+ 	NBL_DISP_SET_OPS(configure_msix_map, nbl_disp_configure_msix_map,			\
+@@ -1056,6 +1123,14 @@ do {									\
+ 			 NBL_DISP_CTRL_LVL_MGT,				\
+ 			 NBL_CHAN_MSG_GET_ETH_STATS,			\
+ 			 nbl_disp_get_private_stat_data_req, NULL);	\
++	NBL_DISP_SET_OPS(set_promisc_mode, nbl_disp_set_promisc_mode,	\
++			 NBL_DISP_CTRL_LVL_MGT,				\
++			 NBL_CHAN_MSG_SET_PROSISC_MODE,			\
++			 nbl_disp_chan_set_promisc_mode_req, NULL);	\
++	NBL_DISP_SET_OPS(set_mtu, nbl_disp_set_mtu,			\
++			 NBL_DISP_CTRL_LVL_MGT,	NBL_CHAN_MSG_MTU_SET,	\
++			 nbl_disp_chan_set_mtu_req,			\
++			 NULL);						\
+ } while (0)
+ 
+ /* Structure starts here, adding an op should not modify anything below */
+@@ -1177,6 +1252,7 @@ int nbl_disp_init(void *p)
+ 	NBL_DISP_MGT_TO_RES_OPS_TBL(*disp_mgt) = res_ops_tbl;
+ 	NBL_DISP_MGT_TO_CHAN_OPS_TBL(*disp_mgt) = chan_ops_tbl;
+ 	NBL_DISP_MGT_TO_DISP_OPS_TBL(*disp_mgt) = *disp_ops_tbl;
++	NBL_DISP_MGT_TO_COMMON(*disp_mgt) = NBL_ADAPTER_TO_COMMON(adapter);
+ 
+ 	if (disp_product_ops->dispatch_init) {
+ 		ret = disp_product_ops->dispatch_init(*disp_mgt);
+diff --git a/drivers/net/nbl/nbl_dispatch.h b/drivers/net/nbl/nbl_dispatch.h
+index dcdf87576a..d1572769fe 100644
+--- a/drivers/net/nbl/nbl_dispatch.h
++++ b/drivers/net/nbl/nbl_dispatch.h
+@@ -16,11 +16,13 @@
+ #define NBL_DISP_MGT_TO_DISP_OPS_TBL(disp_mgt)	((disp_mgt)->disp_ops_tbl)
+ #define NBL_DISP_MGT_TO_DISP_OPS(disp_mgt)	(NBL_DISP_MGT_TO_DISP_OPS_TBL(disp_mgt)->ops)
+ #define NBL_DISP_MGT_TO_DISP_PRIV(disp_mgt)	(NBL_DISP_MGT_TO_DISP_OPS_TBL(disp_mgt)->priv)
++#define NBL_DISP_MGT_TO_COMMON(disp_mgt)	((disp_mgt)->common)
+ 
+ struct nbl_dispatch_mgt {
+ 	struct nbl_resource_ops_tbl *res_ops_tbl;
+ 	struct nbl_channel_ops_tbl *chan_ops_tbl;
+ 	struct nbl_dispatch_ops_tbl *disp_ops_tbl;
++	struct nbl_common_info *common;
+ 	uint32_t ctrl_lvl;
+ };
  
 diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
-index 0964aa55d7..7ba030d7fa 100644
+index 2282def14d..a3b963e9cc 100644
 --- a/drivers/net/nbl/nbl_ethdev.c
 +++ b/drivers/net/nbl/nbl_ethdev.c
-@@ -35,6 +35,7 @@ const struct eth_dev_ops nbl_eth_dev_ops = {
- 	.rx_queue_setup = nbl_rx_queue_setup,
- 	.tx_queue_release = nbl_tx_queues_release,
- 	.rx_queue_release = nbl_rx_queues_release,
-+	.dev_infos_get = nbl_dev_infos_get,
- 	.link_update = nbl_link_update,
- 	.stats_get = nbl_stats_get,
- };
-diff --git a/drivers/net/nbl/nbl_ethdev.h b/drivers/net/nbl/nbl_ethdev.h
-index e20a7b940e..2381da13d9 100644
---- a/drivers/net/nbl/nbl_ethdev.h
-+++ b/drivers/net/nbl/nbl_ethdev.h
-@@ -10,4 +10,22 @@
- #define ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev) \
- 	((struct nbl_adapter *)((eth_dev)->data->dev_private))
- 
-+#define NBL_MAX_JUMBO_FRAME_SIZE		(9600)
-+#define NBL_RSS_OFFLOAD_TYPE ( \
-+	RTE_ETH_RSS_IPV4 | \
-+	RTE_ETH_RSS_FRAG_IPV4 | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_SCTP | \
-+	RTE_ETH_RSS_NONFRAG_IPV4_OTHER | \
-+	RTE_ETH_RSS_IPV6 | \
-+	RTE_ETH_RSS_FRAG_IPV6 | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_SCTP | \
-+	RTE_ETH_RSS_NONFRAG_IPV6_OTHER | \
-+	RTE_ETH_RSS_VXLAN | \
-+	RTE_ETH_RSS_GENEVE | \
-+	RTE_ETH_RSS_NVGRE)
-+
- #endif
-diff --git a/drivers/net/nbl/nbl_include/nbl_def_common.h b/drivers/net/nbl/nbl_include/nbl_def_common.h
-index bd2c844dfa..5480d30f0d 100644
---- a/drivers/net/nbl/nbl_include/nbl_def_common.h
-+++ b/drivers/net/nbl/nbl_include/nbl_def_common.h
-@@ -30,6 +30,8 @@
- #define NBL_ETH_OVERHEAD \
- 	(RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN + NBL_VLAN_TAG_SIZE * 2)
- 
-+#define NBL_EPRO_RSS_SK_SIZE			(40)
-+
- struct nbl_dev_user_channel_msg {
- 	u16 msg_type;
- 	u16 dst_id;
-diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
-index ad726683e1..2fb65283fd 100644
---- a/drivers/net/nbl/nbl_include/nbl_include.h
-+++ b/drivers/net/nbl/nbl_include/nbl_include.h
-@@ -114,6 +114,13 @@ struct nbl_board_port_info {
- 	u8 rsv[6];
+@@ -42,6 +42,9 @@ const struct eth_dev_ops nbl_eth_dev_ops = {
+ 	.xstats_get = nbl_xstats_get,
+ 	.xstats_get_names = nbl_xstats_get_names,
+ 	.xstats_reset = nbl_xstats_reset,
++	.mtu_set = nbl_mtu_set,
++	.promiscuous_enable = nbl_promiscuous_enable,
++	.promiscuous_disable = nbl_promiscuous_disable,
  };
  
-+enum nbl_fw_port_speed {
-+	NBL_FW_PORT_SPEED_10G,
-+	NBL_FW_PORT_SPEED_25G,
-+	NBL_FW_PORT_SPEED_50G,
-+	NBL_FW_PORT_SPEED_100G,
+ static int nbl_eth_dev_init(struct rte_eth_dev *eth_dev)
+diff --git a/drivers/net/nbl/nbl_include/nbl_def_channel.h b/drivers/net/nbl/nbl_include/nbl_def_channel.h
+index cfed01837e..dd7057f3b2 100644
+--- a/drivers/net/nbl/nbl_include/nbl_def_channel.h
++++ b/drivers/net/nbl/nbl_include/nbl_def_channel.h
+@@ -427,6 +427,16 @@ enum nbl_chan_queue_state {
+ 	NBL_CHAN_STATE_NBITS
+ };
+ 
++struct nbl_chan_param_set_promisc_mode {
++	u16 vsi_id;
++	u16 mode;
 +};
 +
- struct nbl_common_info {
- 	const struct rte_eth_dev *eth_dev;
- 	u16 vsi_id;
++struct nbl_chan_param_set_mtu {
++	u16 vsi_id;
++	u16 mtu;
++};
++
+ struct nbl_channel_ops {
+ 	int (*send_msg)(void *priv, struct nbl_chan_send_info *chan_send);
+ 	int (*send_ack)(void *priv, struct nbl_chan_ack_info *chan_ack);
+diff --git a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
+index 5102e35a89..85ca4da47c 100644
+--- a/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
++++ b/drivers/net/nbl/nbl_include/nbl_def_dispatch.h
+@@ -37,6 +37,7 @@ struct nbl_dispatch_ops {
+ 	void (*clear_flow)(void *priv, u16 vsi_id);
+ 	void (*get_firmware_version)(void *priv, char *firmware_version, u8 max_len);
+ 	int (*set_promisc_mode)(void *priv, u16 vsi_id, u16 mode);
++	int (*set_mtu)(void *priv, u16 vsi_id, u16 mtu);
+ 	int (*alloc_txrx_queues)(void *priv, u16 vsi_id, u16 queue_num);
+ 	void (*free_txrx_queues)(void *priv, u16 vsi_id);
+ 	u16 (*get_vsi_id)(void *priv);
+diff --git a/drivers/net/nbl/nbl_include/nbl_def_resource.h b/drivers/net/nbl/nbl_include/nbl_def_resource.h
+index ac8b65e3f9..cde240d098 100644
+--- a/drivers/net/nbl/nbl_include/nbl_def_resource.h
++++ b/drivers/net/nbl/nbl_include/nbl_def_resource.h
+@@ -77,6 +77,8 @@ struct nbl_resource_ops {
+ 	int (*setup_cqs)(void *priv, u16 vsi_id, u16 real_qps, bool rss_indir_set);
+ 	void (*remove_cqs)(void *priv, u16 vsi_id);
+ 	void (*get_link_state)(void *priv, u8 eth_id, struct nbl_eth_link_info *eth_link_info);
++	int (*set_promisc_mode)(void *priv, u16 vsi_id, u16 mode);
++	int (*set_mtu)(void *priv, u16 vsi_id, u16 mtu);
+ };
+ 
+ struct nbl_resource_ops_tbl {
 -- 
 2.34.1
 
