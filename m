@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6BACAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 17:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7A3CAC5B9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 18:48:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 526CA40663;
-	Thu, 25 Sep 2025 19:59:20 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id CFC2D4065E
- for <dev@dpdk.org>; Thu, 25 Sep 2025 19:59:19 +0200 (CEST)
-Received: from debian (unknown [78.109.77.163])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id DEBFFE050B;
- Thu, 25 Sep 2025 21:59:17 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am DEBFFE050B
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1758823158;
- bh=0ONlXE+ONV/uGc6J7w7MizYg6r7rxbmFWDic2jL/GcM=;
- h=Date:From:To:cc:Subject:In-Reply-To:References:From;
- b=c1XQ6w5RO412nZghvlVhq9wPitgOqW+Ylagz17HzaPYj0jlftRiIy4hrf+bSAJeUS
- pfMeLSVc5fgbJvqM9eqaK7IPfjxvkZa06q/vxZhYnmgxJPsdUKWxeBwKWeL+1TVdXS
- 8AQg30fI/d3JF9Fz5hUffmTLg+9xOvgJz44pvfCfQJz0i7MqbjJhLBbwQiIOvvyyxp
- QP52J3d/4yIOUUVyD0tbP5igfBkoIKenE8HJ2/QX4eTX8n/75qiTfCSHc2ZHz6H8Be
- IiPf9w9sMWEFYmQOnRUeGK5w9T40hWJkvjwjNLrM0wWr8sCUWP67SMr7yn1WHzkeO5
- c1U1aw1Jiee2g==
-Date: Thu, 25 Sep 2025 21:59:16 +0400 (+04)
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-cc: dev@dpdk.org, bruce.richardson@intel.com, anatoly.burakov@intel.com, 
- thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru, 
- stephen@networkplumber.org
-Subject: Re: [RFC PATCH 4/6] ethdev: extend VMDq/DCB configuration with queue
- mapping
-In-Reply-To: <20250830171706.428977-5-vladimir.medvedkin@intel.com>
-Message-ID: <4c1c74c5-5d03-7a00-9dc3-c837a2ec47d2@arknetworks.am>
-References: <20250830171706.428977-1-vladimir.medvedkin@intel.com>
- <20250830171706.428977-5-vladimir.medvedkin@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id EECF040663;
+	Thu, 25 Sep 2025 20:48:44 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 061704065E
+ for <dev@dpdk.org>; Thu, 25 Sep 2025 20:48:43 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id C8BCE46F77; Thu, 25 Sep 2025 20:48:43 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/doc Bug 1793] Broken link to bifurcated PMD presentation
+Date: Thu, 25 Sep 2025 18:48:43 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: doc
+X-Bugzilla-Version: 25.07
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: andremuz@gmail.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1793-3@https.bugs.dpdk.org/>
+Content-Type: multipart/alternative; boundary=17588261230.A491C5F.2089034
+Content-Transfer-Encoding: 7bit
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,42 +54,169 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Vladimir,
 
-On Sat, 30 Aug 2025, Vladimir Medvedkin wrote:
+--17588261230.A491C5F.2089034
+Date: Thu, 25 Sep 2025 20:48:43 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-> Currently DCB Traffic Class queue mapping is only used when calling get
-> DCB info API, while setting up queue mappings is up to each individual
-> driver. Use the tc queue mapping structure to enable setting up custom
-> mapping explicitly.
->
+https://bugs.dpdk.org/show_bug.cgi?id=3D1793
 
-snip
+            Bug ID: 1793
+           Summary: Broken link to bifurcated PMD presentation
+           Product: DPDK
+           Version: 25.07
+          Hardware: All
+                OS: Linux
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: doc
+          Assignee: dev@dpdk.org
+          Reporter: andremuz@gmail.com
+  Target Milestone: ---
 
-> -/**
-> - * A structure used to get the information of queue and
-> - * TC mapping on both Tx and Rx paths.
-> - */
-> -struct rte_eth_dcb_tc_queue_mapping {
-> -	/** Rx queues assigned to tc per Pool */
-> -	struct {
-> -		uint16_t base;
-> -		uint16_t nb_queue;
-> -	} tc_rxq[RTE_ETH_MAX_VMDQ_POOL][RTE_ETH_DCB_NUM_TCS];
-> -	/** Rx queues assigned to tc per Pool */
-> -	struct {
-> -		uint16_t base;
-> -		uint16_t nb_queue;
-> -	} tc_txq[RTE_ETH_MAX_VMDQ_POOL][RTE_ETH_DCB_NUM_TCS];
-> -};
+File: doc\guides\linux_gsg\linux_drivers.rst
+Section: Bifurcated Driver
+Broken link:
+https://www.dpdk.org/wp-content/uploads/sites/35/2016/10/Day02-Session04-Ro=
+nyEfraim-Userspace2016.pdf
 
-May I clarify: is 'tc_rxq' structure supposed to facilitate the use case where:
-- VLAN ID (VID) of the packet selects a 'pool' containing some entries;
-- VLAN UP (priority) selects an entry in the 'pool' (gives 'base', 'nb_queue);
-- if 'nb_queue' is 1, we send the packet to a specific queue ('base');
-- if 'nb_queue > 1', we perform RSS across 'nb_queue' relative to 'base'?
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
 
-I'm slightly confused, as [3/6] seems to remove 'rte_eth_vmdq_dcb_conf' and
-the 'pool_map' (with 'vlan_id') and I'm not sure where it should resurface.
+--17588261230.A491C5F.2089034
+Date: Thu, 25 Sep 2025 20:48:43 +0200
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Bugzilla-URL: https://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 
-Thank you.
+<html>
+    <head>
+      <base href=3D"https://bugs.dpdk.org/">
+    </head>
+    <body><table border=3D"1" cellspacing=3D"0" cellpadding=3D"8" class=3D"=
+bz_new_table">
+        <tr>
+          <th>Bug ID</th>
+          <td><a class=3D"bz_bug_link=20
+          bz_status_UNCONFIRMED "
+   title=3D"UNCONFIRMED - Broken link to bifurcated PMD presentation"
+   href=3D"https://bugs.dpdk.org/show_bug.cgi?id=3D1793">1793</a>
+          </td>
+        </tr>
+
+        <tr>
+          <th>Summary</th>
+          <td>Broken link to bifurcated PMD presentation
+          </td>
+        </tr>
+
+        <tr>
+          <th>Product</th>
+          <td>DPDK
+          </td>
+        </tr>
+
+        <tr>
+          <th>Version</th>
+          <td>25.07
+          </td>
+        </tr>
+
+        <tr>
+          <th>Hardware</th>
+          <td>All
+          </td>
+        </tr>
+
+        <tr>
+          <th>OS</th>
+          <td>Linux
+          </td>
+        </tr>
+
+        <tr>
+          <th>Status</th>
+          <td>UNCONFIRMED
+          </td>
+        </tr>
+
+        <tr>
+          <th>Severity</th>
+          <td>normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Priority</th>
+          <td>Normal
+          </td>
+        </tr>
+
+        <tr>
+          <th>Component</th>
+          <td>doc
+          </td>
+        </tr>
+
+        <tr>
+          <th>Assignee</th>
+          <td>dev&#64;dpdk.org
+          </td>
+        </tr>
+
+        <tr>
+          <th>Reporter</th>
+          <td>andremuz&#64;gmail.com
+          </td>
+        </tr>
+
+        <tr>
+          <th>Target Milestone</th>
+          <td>---
+          </td>
+        </tr></table>
+      <p>
+        <div class=3D"bz_comment_block">
+          <pre class=3D"bz_comment_text">File: doc\guides\linux_gsg\linux_d=
+rivers.rst
+Section: Bifurcated Driver
+Broken link:
+<a href=3D"https://www.dpdk.org/wp-content/uploads/sites/35/2016/10/Day02-S=
+ession04-RonyEfraim-Userspace2016.pdf">https://www.dpdk.org/wp-content/uplo=
+ads/sites/35/2016/10/Day02-Session04-RonyEfraim-Userspace2016.pdf</a>
+          </pre>
+        </div>
+      </p>
+
+
+      <hr>
+      <span>You are receiving this mail because:</span>
+
+      <ul>
+          <li>You are the assignee for the bug.</li>
+      </ul>
+      <div itemscope itemtype=3D"http://schema.org/EmailMessage">
+        <div itemprop=3D"action" itemscope itemtype=3D"http://schema.org/Vi=
+ewAction">
+=20=20=20=20=20=20=20=20=20=20
+          <link itemprop=3D"url" href=3D"https://bugs.dpdk.org/show_bug.cgi=
+?id=3D1793">
+          <meta itemprop=3D"name" content=3D"View bug">
+        </div>
+        <meta itemprop=3D"description" content=3D"Bugzilla bug update notif=
+ication">
+      </div>
+    </body>
+</html>=
+
+--17588261230.A491C5F.2089034--
