@@ -2,72 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98680CAC5B1
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 16:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6BACAC5A7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 17:59:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C49CC40663;
-	Thu, 25 Sep 2025 18:54:32 +0200 (CEST)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com
- [209.85.208.50]) by mails.dpdk.org (Postfix) with ESMTP id AEBF54065E
- for <dev@dpdk.org>; Thu, 25 Sep 2025 18:54:30 +0200 (CEST)
-Received: by mail-ed1-f50.google.com with SMTP id
- 4fb4d7f45d1cf-62f0702ef0dso4853163a12.1
- for <dev@dpdk.org>; Thu, 25 Sep 2025 09:54:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758819270;
- x=1759424070; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=5qZ1izHFRA+J9X9+4W/trcoCGZlhOkV8cEaLFDHLlbc=;
- b=mlGw9m5QFjoJ88yqpOnirLi8ZgldWeW/kAXhpPzA047skD62CF2jBxgebSO7bTibZc
- jv1pGQCkq1mwYBZPhslQLgxjb9sdzKB0VZZr/Fz56kTaxAHyxS7SGJQqouZ+gtm+wlFh
- 3dEg2NYgLq6sGBZ7HofJZ7EqyB3Xc4RdY+gc7V41TdJZWiO/ikpJ4xAWn8X9TcyvvHa+
- NFDw6qWQHaFoNMw5i2mqlv3if9vmhyrT+9UZIZpfzLSDNHgJKwPkmB/5HHXHddyJX4VI
- 9iLHzq8r8NsQv/PAcsIjryZTffnLxjJksn4sdHZyRfVkn+oUw1yHcyuou++Y1bMh+4Sd
- L+ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758819270; x=1759424070;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=5qZ1izHFRA+J9X9+4W/trcoCGZlhOkV8cEaLFDHLlbc=;
- b=RRxi3/6QiD3JIwjB9Jz/euFTDrlXq+PRaA/sTeBVlx2a+NFDU12QmIYgR6vEtlTf4n
- gVx+Scgqdy7Vy1ZFL/77JBkEP1DxqtbRXS8Wnfq7OsjLupU1XEXA2CATgsZOJtmN076B
- gCOJ6Ou/aLHPi3dwGml8CzRU0u0joF5s2jZ3fAFJl3emN6VGByy8vErM0SY682Z+cOFx
- aiC3GRxFf2aeVo+G7OMHJ7K2y5qPo49/pUYTz8uUL/XxwNs+iL1ACxprTDnabpD66voH
- m6zV2qznU0zwxS0oZG0VMe+YW82ttP4mDjKHIY7PQvXujh+p5EQ6pCx0f35Zx44L6H7t
- CuuA==
-X-Gm-Message-State: AOJu0Yw5R7Kju/W6QPbNqonZleWXKS+T/ZBqQGiZfyzbPTM228f09BR6
- UFW/wVG1TRYDyfPuRwGbxWbBc8sQUvfzidpxN5vSb8vxqV4pViX7UApLj7inEFVG7Ygn4IUnSUT
- 0yoXk
-X-Gm-Gg: ASbGnctZFJIXTF5NGvenayqLfyba8vE2pKRs0qc4WkHnA85QE8VFn1Dai3vkgkvhVyZ
- wOjGzmGjJ0fu8Tgvg1WJ4+xOeTz+AnDrVKfoPFjj+Ngv2yTrfCs7Dw0N3C5qxXzfzPpajGMF2/5
- qqC9inQhZQDOvYD63opINKOIgAXUasV2MQ+eQZB36j7k+PNZUdyFjW0Eu6E0fTK4yuByMRJMt32
- 3ENWFgUQklJ9m9dXj2otct2lWv7tIJ9xL4kvcigfD2rkA3OMBdMmoGd8W9f5t2Q5VmZyiWHCj4s
- WXHp5juUSz9akQvTpoZOb+YzRLfa4mmxMB9LzyNVMYxnu4TGER/Nd1/z8jYXd7kppQj7VO2VeY7
- K0wlhSkQ8EAov/PliMJGQFHGSNCg/WlM2nZj35JUmW1pdCaAlTuh5dsdaUt3dTonplImCb30fxW
- Y=
-X-Google-Smtp-Source: AGHT+IFo6J97afj9EeyvYO2PeJdt0/6SQBZtQPi4movxxYDV7PCctOccmrC1EQ5Wncy8c+o7UIBeBw==
-X-Received: by 2002:a17:907:5c1:b0:b19:f444:5bc8 with SMTP id
- a640c23a62f3a-b354e605ff9mr357291066b.31.1758819269944; 
- Thu, 25 Sep 2025 09:54:29 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-634a3650969sm1459888a12.19.2025.09.25.09.54.28
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 25 Sep 2025 09:54:29 -0700 (PDT)
-Date: Thu, 25 Sep 2025 09:54:25 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Junlong Wang <wang.junlong1@zte.com.cn>, Lijie Shan <shan.lijie@zte.com.cn>
-Subject: Re: [PATCH] net/zxdh: remove unnecessary null free check
-Message-ID: <20250925095425.44047425@hermes.local>
-In-Reply-To: <20250924202252.472101-1-stephen@networkplumber.org>
-References: <20250924202252.472101-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 526CA40663;
+	Thu, 25 Sep 2025 19:59:20 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id CFC2D4065E
+ for <dev@dpdk.org>; Thu, 25 Sep 2025 19:59:19 +0200 (CEST)
+Received: from debian (unknown [78.109.77.163])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id DEBFFE050B;
+ Thu, 25 Sep 2025 21:59:17 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am DEBFFE050B
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1758823158;
+ bh=0ONlXE+ONV/uGc6J7w7MizYg6r7rxbmFWDic2jL/GcM=;
+ h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+ b=c1XQ6w5RO412nZghvlVhq9wPitgOqW+Ylagz17HzaPYj0jlftRiIy4hrf+bSAJeUS
+ pfMeLSVc5fgbJvqM9eqaK7IPfjxvkZa06q/vxZhYnmgxJPsdUKWxeBwKWeL+1TVdXS
+ 8AQg30fI/d3JF9Fz5hUffmTLg+9xOvgJz44pvfCfQJz0i7MqbjJhLBbwQiIOvvyyxp
+ QP52J3d/4yIOUUVyD0tbP5igfBkoIKenE8HJ2/QX4eTX8n/75qiTfCSHc2ZHz6H8Be
+ IiPf9w9sMWEFYmQOnRUeGK5w9T40hWJkvjwjNLrM0wWr8sCUWP67SMr7yn1WHzkeO5
+ c1U1aw1Jiee2g==
+Date: Thu, 25 Sep 2025 21:59:16 +0400 (+04)
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+cc: dev@dpdk.org, bruce.richardson@intel.com, anatoly.burakov@intel.com, 
+ thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru, 
+ stephen@networkplumber.org
+Subject: Re: [RFC PATCH 4/6] ethdev: extend VMDq/DCB configuration with queue
+ mapping
+In-Reply-To: <20250830171706.428977-5-vladimir.medvedkin@intel.com>
+Message-ID: <4c1c74c5-5d03-7a00-9dc3-c837a2ec47d2@arknetworks.am>
+References: <20250830171706.428977-1-vladimir.medvedkin@intel.com>
+ <20250830171706.428977-5-vladimir.medvedkin@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,11 +54,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 24 Sep 2025 13:22:52 -0700
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+Hi Vladimir,
 
-> Found with coccinell null free script.
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+On Sat, 30 Aug 2025, Vladimir Medvedkin wrote:
 
-Queued to next-net
+> Currently DCB Traffic Class queue mapping is only used when calling get
+> DCB info API, while setting up queue mappings is up to each individual
+> driver. Use the tc queue mapping structure to enable setting up custom
+> mapping explicitly.
+>
+
+snip
+
+> -/**
+> - * A structure used to get the information of queue and
+> - * TC mapping on both Tx and Rx paths.
+> - */
+> -struct rte_eth_dcb_tc_queue_mapping {
+> -	/** Rx queues assigned to tc per Pool */
+> -	struct {
+> -		uint16_t base;
+> -		uint16_t nb_queue;
+> -	} tc_rxq[RTE_ETH_MAX_VMDQ_POOL][RTE_ETH_DCB_NUM_TCS];
+> -	/** Rx queues assigned to tc per Pool */
+> -	struct {
+> -		uint16_t base;
+> -		uint16_t nb_queue;
+> -	} tc_txq[RTE_ETH_MAX_VMDQ_POOL][RTE_ETH_DCB_NUM_TCS];
+> -};
+
+May I clarify: is 'tc_rxq' structure supposed to facilitate the use case where:
+- VLAN ID (VID) of the packet selects a 'pool' containing some entries;
+- VLAN UP (priority) selects an entry in the 'pool' (gives 'base', 'nb_queue);
+- if 'nb_queue' is 1, we send the packet to a specific queue ('base');
+- if 'nb_queue > 1', we perform RSS across 'nb_queue' relative to 'base'?
+
+I'm slightly confused, as [3/6] seems to remove 'rte_eth_vmdq_dcb_conf' and
+the 'pool_map' (with 'vlan_id') and I'm not sure where it should resurface.
+
+Thank you.
