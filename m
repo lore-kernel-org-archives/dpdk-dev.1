@@ -2,90 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E146CAC5B5
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 20:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86187CAC5B5
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 23:54:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EA09D402E9;
-	Thu, 25 Sep 2025 22:47:48 +0200 (CEST)
-Received: from fhigh-b7-smtp.messagingengine.com
- (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
- by mails.dpdk.org (Postfix) with ESMTP id B318F4028F;
- Thu, 25 Sep 2025 22:47:46 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 9CF377A002F;
- Thu, 25 Sep 2025 16:47:45 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-05.internal (MEProxy); Thu, 25 Sep 2025 16:47:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1758833265;
- x=1758919665; bh=Hf/AbgWutXkEkn8ETF2hPECxWzNb08xEFYKv0IhzPlw=; b=
- i9GjfiYep9npRjTVUkXPaKfEbuGTDREE5205cfZZnKneM+m5QLYepDLtsjvRKCg+
- lYCQF1/hqRuZOX55UKwqsX1rLELzC2iiV/Yf4Pr9bmttteeYWdkI1fC2CrjWUZYn
- ggd8K4AWZwyHxoAlUh5pmLvG5owjYz1/GVfZZMAlrKdhfaSrCP/j1Hie/Vdj5gHx
- r+IKEFQvUSc6Jrk7DEABRkQwrmYGS6eJMQh6DXLpoeKivIdO5pWXp8mpoib7nE+e
- NveU2X/NCF0gm4Eg++aCaLsBN23S1QvSviVm5ZjY7IzyOl+7pY2ZwbEnb5mILxcq
- YFadu/mssKi9wqBKOQ5wcQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758833265; x=
- 1758919665; bh=Hf/AbgWutXkEkn8ETF2hPECxWzNb08xEFYKv0IhzPlw=; b=i
- uFxi823PC5ivA8dqVJGGlUkiYOh+swz4d2yR4fcIkB+qlfm8ebVSlm15LCh0K6BO
- QbDZdzbM2UgjK8YINy6hvbrS9yJlnAAuKJ5nZQVQ0fTpFo/H5KcJwGOW2YCkRsT+
- 4piHyaJaBQ/fKL8Vs6AFLLSuLB92uDqss2Qc1Yvm3GEXBVuERLkGtpE+js401U6A
- kCsjyrtYcDCAABKundlbkztsHEkC8/MhgsNQp90ZNUoM4DIJweui4ZFs7JIygmX9
- fLzQUPest3aX9QevOHhD6+XEdA9W/6Xip3f4MK9i/ApQjGMjGgFCcF5MZpcI57bW
- zeZTQuiHP8N3gkmnmAcng==
-X-ME-Sender: <xms:cKrVaGMTxU7bWyrTLA9f6xa3w-9f23AFVsYAqJYb82fmzq1IVIHKNQ>
- <xme:cKrVaA8xUDN0rLBbg0jE6NBaMTrGVQdlqWf3zAzZJ249zPZWdG5EGlNxiXR4QfCtR
- 5GopBs1I8-vaiqmtHM31-bn8bBKQz3MtUmrKc5-vdZr-vVZE8JvQg>
-X-ME-Received: <xmr:cKrVaPetz6Oc_kiqyNUxaDOEW4iF0o3DVqIYD950F_u1OQB48ieCYIodyyeabKUQy_0QvHQM4uaZLWMhdWTsngrDeA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeijeeglecutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
- hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
- ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
- grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
- gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepledpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepkhgrihdrjhhisehinhhtvghlrdgtohhmpd
- hrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepshhtvghphhgvnhes
- nhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepsghruhgtvgdrrhhitg
- hhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggrvhhiugdrmhgrrhgt
- hhgrnhgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehsthgrsghlvgesughpughkrd
- horhhgpdhrtghpthhtohepphgrsghlohdruggvrdhlrghrrgdrghhurghrtghhsehinhht
- vghlrdgtohhmpdhrtghpthhtohepfhgrnhiihhgrnhhgrdhoshhssehgmhgrihhlrdgtoh
- hmpdhrtghpthhtohepghgrkhhhihhlsehmrghrvhgvlhhlrdgtohhm
-X-ME-Proxy: <xmx:cKrVaHzcIBrwFYcEiZEIu3wG8ZmW_WzAd7UxJ0D4i4gVgHHi9NEnJA>
- <xmx:carVaMIdg_eY2-1Z9alAb7Pa2xt1bvuRrEsi-BwKFSfTeLmG9DFUzw>
- <xmx:carVaBGt9Oc3QGxoAXkTleJh9s6wE3co7wANwkhLvB8oPQ8W_TEnnQ>
- <xmx:carVaA8m12GZR4swqaXsoEkl-nymmbJaAPdLFP9O6qW2IQe0XlXAEw>
- <xmx:carVaLtogZjVzocWKMUztTpCcg7bGZ4iF4LNS6yT48ks49BwpM-vQkl->
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 25 Sep 2025 16:47:43 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Kai Ji <kai.ji@intel.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
- David Marchand <david.marchand@redhat.com>, stable@dpdk.org,
- Pablo de Lara <pablo.de.lara.guarch@intel.com>,
- Fan Zhang <fanzhang.oss@gmail.com>, Akhil Goyal <gakhil@marvell.com>
-Subject: Re: [EXTERNAL] [dpdk-dev v1] cryptodev: introduce constant-time memory
- comparison
-Date: Thu, 25 Sep 2025 22:47:42 +0200
-Message-ID: <3819475.yaVYbkx8dN@thomas>
-In-Reply-To: <CO6PR18MB4484264974305D4A6B065A76D81FA@CO6PR18MB4484.namprd18.prod.outlook.com>
-References: <20250925102223.145471-1-kai.ji@intel.com>
- <CO6PR18MB4484264974305D4A6B065A76D81FA@CO6PR18MB4484.namprd18.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4DC234028F;
+	Fri, 26 Sep 2025 01:54:50 +0200 (CEST)
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com
+ [209.85.219.47]) by mails.dpdk.org (Postfix) with ESMTP id 4A7F740273
+ for <dev@dpdk.org>; Fri, 26 Sep 2025 01:54:49 +0200 (CEST)
+Received: by mail-qv1-f47.google.com with SMTP id
+ 6a1803df08f44-71b9d805f2fso12426756d6.0
+ for <dev@dpdk.org>; Thu, 25 Sep 2025 16:54:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758844488;
+ x=1759449288; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=x3yNcr/8AAqsrivomhYh7/7aL+iththlbSy9p3WmCCc=;
+ b=Kih6dMR7EHHem2L1SSwwMJuGmuRV1fsdN/7vifm9XkQedWkWtnckXvoHTm8NcgLbdx
+ zsFRpyuju4/hGIwB1hG7o6wxUJWiiWyGbJdUF9jTFV1RrkHTo59N5ZqjvJ5zmb32y0fx
+ A5BRpZ0zMMVE8Ql9mKrmdYleziKR1oH73gy5PociKvVun0bJbfcUZfLltSiZJefUzRFh
+ Br34gCvh/aiWBMzNyh3cdLvw6a4gXoB6ynFQaje1be3AdLk77yzNn4GFUDZACZ8tPw5l
+ sDpfKEEHEqY777f2JjrJA3lEYjBL4ObRFbKkwDiQLNWBoZCmr3XcVb0CNR8xYNHi6v5Y
+ 5IcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1758844488; x=1759449288;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=x3yNcr/8AAqsrivomhYh7/7aL+iththlbSy9p3WmCCc=;
+ b=Cwt5gF26ug0CTnKVB5w0o/HMas9jkM3x7rb4J3JcERcAWJK3x0mG2C4aW69a7g4k9L
+ p4HRQKk9Mzecmlsx3F+85dKU6zoE4p9NegVKMUnZrnovUEVt/IWkN4n1plrnqfmF5Bi0
+ vsD9b3Ptgwk8I8RvjqorGRGFusYTgueiwA6B6bn65ZwDc6mAH9BrbaS88pbLNmYPm5xZ
+ lgql12A36fp1p23AioiUZDvtP1GNid2hqI087SUTZfO5sKpcU3XlrNbb0mIgLUKIQpg5
+ f3CLfKwbxGYvOYGCvByg4/F7FXHyEuoxdncSDYctIV9+9DL0WfiwkFg+u8aw+jAoboRC
+ D1Ow==
+X-Gm-Message-State: AOJu0YyU37NN75GD9VInz7JNPRQpWGXy9Lzhiier05V435LUIdGqFzZL
+ DTtnUq33QB+Pbsr04cPQmqH8rV9kAc7C1Y3ObnJ5m0+TP1GYX8wgaqqEZGLKY9P/d3s=
+X-Gm-Gg: ASbGncth9r4pAl3FgLAmq9jwTOwiWfL2pn/z6oHKczBUTJETbYejOc1AikhJD+QhwkR
+ 9786InWsSMBO3AkSi1jlU4PMfhKJuQILKi2t6/58Om+5neHIaucyRhFkIMoqiRcbcUZpAcGBT5Z
+ xd7RoeO1RUDnk6WWpdDBYZqstcgPBfBBBz2UaYzA8QQLdvt03OoXM3Z71XquZcE0XHx4p0B/4ru
+ eZ0AxX/mWrml8dv8cmfIzniwBEMNYzEx+xRSi7DJ4CrcE0wvZFTHBp0xQFDvVYE6eDwxVqqRwFv
+ 0Vph+Anc0YbHjTBHCmVIXwSBN56qA7gWJFILzfp5x8UGPKyl5/1WurLNJTLVxsjMl9yUQx251to
+ Csy3QXQdVJAF+JqVD0zjrtXH8O0SWNka/suHxTpTVcJzyvWXFpkpC3gLWYXt1HPekokgkEN67HH
+ E=
+X-Google-Smtp-Source: AGHT+IHyO5p2bHB0N6Ma5oFbixcBhSecuKbgG/nwRnwEBZRRnDubREdFuA8jNxslIS9JeskG8zeFjg==
+X-Received: by 2002:a05:6214:1c89:b0:7e9:a4a1:b44f with SMTP id
+ 6a1803df08f44-7fc3aa70787mr77765766d6.36.1758844488377; 
+ Thu, 25 Sep 2025 16:54:48 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-80135b55793sm18874826d6.7.2025.09.25.16.54.47
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 25 Sep 2025 16:54:48 -0700 (PDT)
+Date: Thu, 25 Sep 2025 16:54:42 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Schneide <schneide@qti.qualcomm.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, Reshma Pattan
+ <reshma.pattan@intel.com>, Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>
+Subject: Re: [PATCH v2] pcapng: allow any protocol link type for the
+ interface block
+Message-ID: <20250925165442.3a7a1764@hermes.local>
+In-Reply-To: <20250827223216.1337749-1-schneide@qti.qualcomm.com>
+References: <20250827153852.1066521-1-schneide@qti.qualcomm.com>
+ <20250827223216.1337749-1-schneide@qti.qualcomm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,40 +85,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-25/09/2025 12:33, Akhil Goyal:
-> > +/**
-> > + * Constant-time memory comparison for cryptographic use.
-> > + * Returns 0 if the memory regions are equal, nonzero otherwise.
-> > + * Runs in constant time with respect to the length to prevent timing attacks.
-> > + *
-> > + * @param a
-> > + *   Pointer to the first memory region.
-> > + * @param b
-> > + *   Pointer to the second memory region.
-> > + * @param n
-> > + *   Number of bytes to compare.
-> > + * @return
-> > + *   0 if memory regions are equal, nonzero otherwise.
-> > + */
-> > +#define rte_consttime_memcmp(a, b, n) __extension__ ({ \
-> > +	const volatile uint8_t *__pa = (const volatile uint8_t *)(a); \
-> > +	const volatile uint8_t *__pb = (const volatile uint8_t *)(b); \
-> > +	uint8_t __result = 0; \
-> > +	for (size_t __i = 0; __i < (n); __i++) \
-> > +		__result |= __pa[__i] ^ __pb[__i]; \
-> > +	__result; \
-> > +})
+On Wed, 27 Aug 2025 16:32:15 -0600
+Schneide <schneide@qti.qualcomm.com> wrote:
+
+> From: Dylan Schneider <schneide@qti.qualcomm.com>
 > 
-> I believe this is not the right place to add this define.
-> It should be somewhere in common eal if it is already not there.
+> Allow the user to specify protocol link type when creating pcapng files.
+> This change is needed to specify the protocol type in the pcapng file,
+> DLT_EN10MB specifies ethernet packets only. This will allow dissectors
+> for other protocols to be used on files generated by pcapng.
+> 
+> Includes a breaking change to rte_pcapng_add_interface to add link_type
+> parameter. Existing calls to the function have been updated to pass
+> DLT_EN10MB for the link type argument.
+> 
+> Fixes: d1da6d0d04c7 ("pcapng: require per-interface information")
+> Signed-off-by: Dylan Schneider <schneide@qti.qualcomm.com>
+> Cc: stephen@networkplumber.org
+> ---
+> v2:
+> * Remove function versioning
+> * Define DLT_EN10MB macro only if it has not been defined
+> 
+>  .mailmap                               |  1 +
+>  app/dumpcap/main.c                     |  5 +++--
+>  app/test/test_pcapng.c                 |  8 ++++----
+>  doc/guides/rel_notes/release_25_11.rst |  4 ++++
+>  lib/graph/graph_pcap.c                 |  2 +-
+>  lib/pcapng/rte_pcapng.c                |  4 ++--
+>  lib/pcapng/rte_pcapng.h                | 10 +++++++++-
+>  7 files changed, 24 insertions(+), 10 deletions(-)
 
-Yes indeed.
-cryptodev is the API for managing crypto devices.
-A new memcmp function would be better hosted in libc,
-and in EAL for compatibility with all supported libc.
 
-I mean please add it in EAL, and propose it to glibc as well.
-
-
-
-
+Acked-by: Stephen Hemminger <stephen@networplumber.org>
