@@ -2,176 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F33D5CAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 12:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0123ECAC5A7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 13:05:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4BBBB40671;
-	Thu, 25 Sep 2025 14:45:04 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 26122402AB
- for <dev@dpdk.org>; Thu, 25 Sep 2025 14:45:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1758804303; x=1790340303;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=w9L4jJ4peOos+mmDh5JcvmkHaxy0tx7PIfmrVAjbhtI=;
- b=X/ldDCv+h0vTzJHSF6H0Bp7bKuDq+fRLUGIvKCom6w7m3Iz6aRkn6/GW
- KdisfMCe38kVf0x6x51TwA8R9e5A8Oau38LZRkFbx1mP92MdzNHuqsrdL
- PLKlDPmrGRDKar0kmDSaRogpNZDUr7MwNjal1wNWNQ0ZvDlyWIiIvJiZE
- mNTf7Ds/2clJ47lxMyxotwXGCzgVfTYX1s7EU/5ikaISGLr8Y0WxoLDM7
- jEjl2ae6tAYPfjSlMO2jdnBOxfRe5B+GbfnMRJu+I58UJp4JdBrxrBW6u
- T7XN/OQ1+XvxXa529BHpH4+Mrk9KOPWMEKlerCFWKFZ2rrDzA/RgsbUSE w==;
-X-CSE-ConnectionGUID: Dc8sRe4jToS96+7wTag8tA==
-X-CSE-MsgGUID: 2yOH71qoRWKpUUileZrmew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64928834"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="64928834"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Sep 2025 05:45:02 -0700
-X-CSE-ConnectionGUID: Z57OFlSRSYSgFcj922wiDA==
-X-CSE-MsgGUID: oeYBQB5dSiqTm7o20ET0Vg==
-X-ExtLoop1: 1
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Sep 2025 05:45:00 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 25 Sep 2025 05:44:59 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 25 Sep 2025 05:44:59 -0700
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.30)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 25 Sep 2025 05:44:58 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R7f0EpkWg6ky9aspKgqrtViAJWFy2JD6W6uWoMVm+YQS7bnkTeirbWKr+Rsqek5mu9xrE/zVFF4e5Ne8q6kuBk9uBcgBEmlnp4dQg0D0d5X2sSBpytZpOuFj9ywIA1D/5XkCDNhPsbEzdr1Kfcri57BvledYl1ZGCucbdnZ3u3xDNrrN+uSoqDdyx/wW+ME8mNAnNDuZOxYmxvxiP33WyCH7RAYW0I8Be7mlWdXxI5tF6xNwv9cBK23jkda15Xxfbl32dv3pctZF/7RAy68DHyCTnVaXBq5IWL2kqiTbOvJwlY84e6WzXym0cfZbiqgmKes7BaJeeBObEkk1GL11FQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x2Y9Ua63syhFA2qaTHMvw7oC7C5j/u5rSnreZeV4PRU=;
- b=h2YOSpf7gNrTqGrozqw6y04ws0smHIp91lkNH5+tfF3yr+kmfQMpBFDwIPZ+jV14ZTvRpfyhjAtk/EMo4Zn0dnIizLNBPNV+qzqy27colEIIjePYHo0SJYQZvSzfHscrJVAoz6IGYno9M/2sgfkQNPjFL1faf9NL0xouseTzPMFbkUHipBCxP1Jx3MWNci0iAGhA36n5qlplPtUt/Iaxsjlypi6w44EP83SbtBeBLhfq9cYbxhskknKc+Y61d3J1t+Np281vx3ZoK44jid9YusFUeybnb1qnNabWwiBdHXiyJrM/Ms31cgeE/Fy6WAzEMaEkjOjQqHrka9D5ODLudA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY8PR11MB7290.namprd11.prod.outlook.com (2603:10b6:930:9a::6)
- by SJ0PR11MB6696.namprd11.prod.outlook.com (2603:10b6:a03:44f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Thu, 25 Sep
- 2025 12:44:47 +0000
-Received: from CY8PR11MB7290.namprd11.prod.outlook.com
- ([fe80::2fa:a105:f81e:5971]) by CY8PR11MB7290.namprd11.prod.outlook.com
- ([fe80::2fa:a105:f81e:5971%6]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
- 12:44:47 +0000
-Date: Thu, 25 Sep 2025 13:44:39 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, Long Li <longli@microsoft.com>, Wei Hu
- <weh@microsoft.com>, Ankur Dwivedi <adwivedi@marvell.com>, Anoob Joseph
- <anoobj@marvell.com>, Tejasree Kondoj <ktejasree@marvell.com>, Hemant Agrawal
- <hemant.agrawal@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>, "Vladimir
- Medvedkin" <vladimir.medvedkin@intel.com>, Dariusz Sosnowski
- <dsosnowski@nvidia.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>, "Bing
- Zhao" <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Gagandeep Singh
- <g.singh@nxp.com>, Jingjing Wu <jingjing.wu@intel.com>, Stephen Hemminger
- <stephen@networkplumber.org>, Akhil Goyal <gakhil@marvell.com>, Haiyue Wang
- <haiyue.wang@intel.com>, Jeff Guo <jia.guo@intel.com>, Michael Baum
- <michaelba@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>, Shreyansh Jain
- <shreyansh.jain@nxp.com>, Xiaoyun Li <xiaoyun.li@intel.com>
-Subject: Re: [PATCH v4 5/7] drivers: fix some exported headers
-Message-ID: <aNU5N3y15SqzCV7l@bricha3-mobl1.ger.corp.intel.com>
-References: <20241127112617.1331125-1-david.marchand@redhat.com>
- <20250925123150.3063298-1-david.marchand@redhat.com>
- <20250925123150.3063298-6-david.marchand@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250925123150.3063298-6-david.marchand@redhat.com>
-X-ClientProxiedBy: DU2P251CA0012.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:10:230::8) To CY8PR11MB7290.namprd11.prod.outlook.com
- (2603:10b6:930:9a::6)
+	by mails.dpdk.org (Postfix) with ESMTP id 3173140665;
+	Thu, 25 Sep 2025 15:05:00 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 8478540651
+ for <dev@dpdk.org>; Thu, 25 Sep 2025 15:04:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1758805498;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=XVPHcyZkyhJeIXH/gMh8Ml75UP2h83cOtjvHYbMyetw=;
+ b=LPI6k1FpBmRhLcxICTm6TbU9XwQiaz2XmbE2XgCr4mauZx3XP4YDOY0Qb6c38DgpFYGeSK
+ MbwaFmbzLqRRsKrM5YjJcyN04Lki+hqMIJ8KaZxQZxGWUja8xs1GrataHVjLfQYy8dw1d3
+ rsLvaQCkAxRXiQAs0IHXcaaaMKLXjSE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-558-RA2YPuNpNga9UKwMmlevZQ-1; Thu,
+ 25 Sep 2025 09:04:54 -0400
+X-MC-Unique: RA2YPuNpNga9UKwMmlevZQ-1
+X-Mimecast-MFC-AGG-ID: RA2YPuNpNga9UKwMmlevZQ_1758805493
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 5505E1800365; Thu, 25 Sep 2025 13:04:53 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.225.72])
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id EBFE3300021A; Thu, 25 Sep 2025 13:04:50 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: andremue@linux.microsoft.com, Thomas Monjalon <thomas@monjalon.net>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] buildtools: prepare symbol check for Windows
+Date: Thu, 25 Sep 2025 15:04:38 +0200
+Message-ID: <20250925130438.3072610-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR11MB7290:EE_|SJ0PR11MB6696:EE_
-X-MS-Office365-Filtering-Correlation-Id: 82a43270-cb66-42e8-bead-08ddfc314f84
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|7416014|1800799024|366016|7053199007; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?gYnoGint24Hh4GGoJzA05h1/XKn8FVaitmhuJ5zZXQuIwc8DQ1caL/jI0Xmd?=
- =?us-ascii?Q?nbz3QBHxY0bIoPjNF9VnnPJMEFKXMrCvdbu8DfUDf1ZOUbXp6PW5tVmzuGQt?=
- =?us-ascii?Q?l32ZT5hyap13Dfin3V9XTtwWsD/VuK+AoC7OWUcVMj8jN9cXVBf1cI2D8c3W?=
- =?us-ascii?Q?oDM6+ixFpeqyqWIzHZC0dMN3+MG2Xc4XgF+eEIyoTHJR2PyzoNzGSWvLTc2B?=
- =?us-ascii?Q?tCXt566ihCRA8uCBzgdvKDGIxk9MQ1iP0szoYSBsa7FbUbK8K4Tk5DNoT55b?=
- =?us-ascii?Q?n+pKskJp83dEOi0zMfbph6O16FeHQTNY5Ag3xLJAX4vK5IdC/oXPUW1cNMrH?=
- =?us-ascii?Q?vVuvBNc+IEslxHd/7Af4miXtTn6h2oRyyheq1hLsxCo8Tl5hc/7MUEtJGRMm?=
- =?us-ascii?Q?apLi5p4D7g81dqzYUTCVDh3jXN1CO2B5xT2dyY2tuzsIglqqPBhTm+e4jrGY?=
- =?us-ascii?Q?CHsjfROKDGU3NDGNwT7y4Sldo6aHAo6O4lNQW2jYiZfjWLwiHgKr0F/gIEQ0?=
- =?us-ascii?Q?e8Iafr3yU8q5pBEhdJcgBwoBveoHGBl+A4JbR7ai3j5c81HKHbL7rCv4BMzj?=
- =?us-ascii?Q?+4VO8sdZ7AtJ4cKHd5zIPwr7nBMrcmHbOV6UdaR5s2xGUHr/pBx0kcZtfL4S?=
- =?us-ascii?Q?aihHyh3QxDazVKIx31Yu8V5ZxDYfpoje523PruYZ2QBWa+5jKe5izQm7SVcm?=
- =?us-ascii?Q?x36oKaPobEHUI8UXkoyDDERvLHomhwKWqxvXRhxCnP2sqGnyRXgg5B8S8iEZ?=
- =?us-ascii?Q?9Q0oh8HMSDY3S99vAguSpMqADNUcnpaFW2eimqXlvfnBip9Tu8ANc8nbq61x?=
- =?us-ascii?Q?veNEnAnyZBLGXLgl4z5/d52QfepHyGpyZ9ZzKlcRu7Uql+qvBrntmCTjWzwT?=
- =?us-ascii?Q?Y+IxJrIFYsuK77RFULYxasjtCKG/4/A5PJeWhUIOFant3mN6fZ/hOvvMazxD?=
- =?us-ascii?Q?reQ9W9Q95jpKqEAvghcVi2rfV4kGAKiY1f7EelWSV4Xsp49U2bEaXESJXlMk?=
- =?us-ascii?Q?LnSbbuaGjYZ9tvGUT/pHXCB9uOtCXYXY8EFvVLb6N3gnxSYLHoSM2uG1GvS0?=
- =?us-ascii?Q?rqDNBWqJFZkV0Hp/JCuEyzZStMo/BT2H0ddZnV3Co5V425dWaKjuOy+ldxLU?=
- =?us-ascii?Q?Ej6CM+WEI4HKa8f2xaaSU8hA3UT/NG8EQCxWrUKOk7dzATnvjQ/M2d3ZSQqj?=
- =?us-ascii?Q?xCDaXEwuGJ+mq0TtuVv1S+rwClfgYNF/JpKy5u/e2MK5w/0qR+O4hiq0qkoe?=
- =?us-ascii?Q?OIbUKRPxxIOmK5aLIj+jpsqG/mudiTQjavWxTTU93SnuD+xtPQcsTK6cbYYd?=
- =?us-ascii?Q?LMGiwwmUreKgN7KFl8FQ1/C6iqjGl8GDWl8TdP+cb9MxDKueYxNqUGV0YpxY?=
- =?us-ascii?Q?khlmQSvsF7i0kk2Sfj9IZgv4EuDeT9hEBh78Cd2NZBSMXeu4MupQLPax+O2a?=
- =?us-ascii?Q?UAkxtMO8pgk=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CY8PR11MB7290.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007); DIR:OUT;
- SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?dnxfk600W0UmscAD/AH1y0M3DKQ8UVcYULh6pIylxyORCnmzkowheAMnFd94?=
- =?us-ascii?Q?Wg6n/C2lCOQbRZ5zpzBz2TcEtCOmALq+8Yy6pq5ZT/Wv3VNfmuHdhfDQMo+U?=
- =?us-ascii?Q?euYmddTMVomXQhX95Pa8lAgqggGItXvQaFlWJM6Xq39Nv3BTUY53p8Cddx7R?=
- =?us-ascii?Q?tKbRGm2WzoVHMHU3iMADf34QzGNqj2JMlfEAvaL/RptBeDcxR2z8UJ/+lXLY?=
- =?us-ascii?Q?ncgKJ/5nwoGKKv6YNuawWMMlJkMpYh3SZeb1+HPcpZQjo9BSj/OfNxhTrnFI?=
- =?us-ascii?Q?bDI9KA6PEOQXNOa6ZOM8xYAeK8k8+ijUFl/egxSGB/2eGxHMrkWU/HRBthcr?=
- =?us-ascii?Q?L4VVEipXpkHUuKvG1a3LZj7p6bpASiiWTyIPonso9brrB+WzF4MFSzAMYRPD?=
- =?us-ascii?Q?1kkTeZ7U8pOpPYNp164w8e/J4qWksl958MOcuvey+icJ5r807+YTf16g1dGy?=
- =?us-ascii?Q?QAZS6kuXQLANYnqjIcmsQI00KkW0wcqCzcuVJs0tmFXjnNny3xOu1ocFXTGk?=
- =?us-ascii?Q?BuikWrNIoLMiCSckEcHgzqL9A11tP0h9h2+PAQI5NnDtdqbt9aX6bdCTvC2Y?=
- =?us-ascii?Q?1Co1KrJSPoEG7g+8KM++XSxSMPwU2sN7GBrYxuIUVo1a+EvYIhK14gnUJMpM?=
- =?us-ascii?Q?32HxJLAKJxB+n8ciFHtVeSXDEOKeKeH7/sGz5cXIQnX0HFL7RThyv+tXFPTg?=
- =?us-ascii?Q?2djZ+INV5wtJ8tE+WOULKzreQMKdRBikLuRsM/7oUraa2DzdfccDW/geTchc?=
- =?us-ascii?Q?j5EyiW+H8JTyzZ/Wcq5g0Ka9dM7pqEL/eurRla6uc5TQ2hEMfRwK931oHA7P?=
- =?us-ascii?Q?N6omp+rO2U+MPF6F8kh5ZbAl6GcXiZi5ynKY+OFOZJkO91qHiD/cgtOHS/mD?=
- =?us-ascii?Q?+tEx8lJYeK0ziCOX8L4r3H7wOs2lg4yeS+/aGjeFxk44aH9U5xjzSRyJ/O+A?=
- =?us-ascii?Q?E6h93pk/T8wxqxZn8DFEZOPPtqk+nUj2iaYuTIevdG2IhE3QDnx5tZGkxZU5?=
- =?us-ascii?Q?79g/yQE9xdAj4IQ7taeE7PlY3crjX/3tWRD/QKer0Tno9sP42/L5hKysIEeU?=
- =?us-ascii?Q?vkzIUCNKymOZV5wvtR/TcOSoX0hdBdlEdm/IJCUVhonQ1iyjhpdh7VUgfKiB?=
- =?us-ascii?Q?D98dknI4UXPJtjPgScCQJsvwtPzerNDBKKd3BPY1boKIubKu8vUuB0z1zfOa?=
- =?us-ascii?Q?jE6NBv8vK1m0Wsa6hoQSX+lRYuKseS51I+tQ4sR/8nPAWZ/+/Z5ZEvwRgpoE?=
- =?us-ascii?Q?vH1NOEEplxdNTmRyGhCdgsUmd5WOhvwXwqI3rFIimAbrEhhc2GWXyvFcJOOW?=
- =?us-ascii?Q?dGBtVtInbycFVUd7Kxc4dxjMeF9ArcLcihSZSdoFNPsnLWp+7pezb2ZEWIuj?=
- =?us-ascii?Q?4lgkHMsA/YSjGuKnXLyy52LNFakvdE1WrhinBRfo1oAkhzqFbrPKlALWvzG0?=
- =?us-ascii?Q?8DbfF6WaYJbbrRN8JG/tKNMR8CVtMAcsphnbRYLFQfr1RrYtLyDwXWk11s6o?=
- =?us-ascii?Q?ohv1XSt/XN4EiHDKETRG0LzVFJzgIDo1wYzo+F4rFZfg69/aQa5+rmacRsN0?=
- =?us-ascii?Q?QjNIhyV+FMW+Y/eg/sqzZy+rxwuurci/ANQmxO21M32J6nE0182rGw9RXfcM?=
- =?us-ascii?Q?ZA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82a43270-cb66-42e8-bead-08ddfc314f84
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7290.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 12:44:47.6952 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4TL+Jb5SvOORTAbgP7ipgyHyXELcs43IPgFZBZu+iPUQb74XTcA9czWX0oOA5+0jXpshDrFNYZ3bsHjLs3FvzQQ+h4o27lRFI9QGcFfG3wE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6696
-X-OriginatorOrg: intel.com
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 8t17F6ZK4UsCNTlM6SaOqD5Ons1YVfCWb-CPVjYREDo_1758805493
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -185,22 +64,614 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Sep 25, 2025 at 02:31:47PM +0200, David Marchand wrote:
-> Those headers could not be included individually as they were not
-> including their dependencies, were subject to some build warnings,
-> or were not compiling on Windows.
-> 
-> Fixes: 831dba47bd36 ("bus/vmbus: add Hyper-V virtual bus support")
-> Fixes: 5b2a1a02dcaf ("crypto/cnxk: fix experimental version for PMD API")
-> Fixes: e5abbeeeefa5 ("crypto/cnxk: add PMD API for getting CPTR")
-> Fixes: 3ca607402c4d ("crypto/cnxk: add PMD API to flush CTX")
-> Fixes: 8c3495f5d2dd ("net/dpaa: support loopback API")
-> Fixes: 12b435bf8f2f ("net/iavf: support flex desc metadata extraction")
-> Fixes: 23f627e0ed28 ("net/mlx5: add flow sync API")
-> Fixes: f5177bdc8b76 ("net/mlx5: add GENEVE TLV options parser API")
-> Fixes: 53c71586c789 ("raw/dpaa2_cmdif: support enqueue/dequeue operations")
-> Fixes: c39d1e082a4b ("raw/ntb: setup queues")
-> 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+The symbol check was implemented so far with shell scripts, relying
+on objdump and other unix tools preventing it from being run on Windows.
+
+There was also an ask from some maintainers to convert this type of
+developer checks to python scripts, to make it easier to extend and
+maintain.
+
+The new implementation still performs the four consistency checks:
+- symbols exported as experimental but missing __rte_experimental flag,
+- symbols flagged as experimental but missing export declaration,
+- symbols exported as internal but missing __rte_internal flag,
+- symbols flagged as internal but missing export declaration,
+
+The initial implementation was done relying on Claude Code
+(asking it to reimplement the existing check after it analysed
+the current build flow).
+
+I then cleaned up the python script, removed dumb comments, fixed coding
+style, fixed MAINTAINERS, fixed some dumb issues (like definition order in
+buildtools/meson.build).
+
+Actual implementation on Windows seems doable now but is left to
+an interested party.
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ MAINTAINERS                   |   5 +-
+ buildtools/check-symbols.py   | 324 ++++++++++++++++++++++++++++++++++
+ buildtools/check-symbols.sh   |  73 --------
+ buildtools/map-list-symbol.sh |  85 ---------
+ buildtools/meson.build        |   2 +-
+ drivers/meson.build           |   3 -
+ lib/meson.build               |   3 -
+ 7 files changed, 327 insertions(+), 168 deletions(-)
+ create mode 100755 buildtools/check-symbols.py
+ delete mode 100755 buildtools/check-symbols.sh
+ delete mode 100755 buildtools/map-list-symbol.sh
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1a2729be66..0926a766f3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -121,15 +121,14 @@ F: Makefile
+ F: meson.build
+ F: meson_options.txt
+ F: config/
+-F: buildtools/check-symbols.sh
+-F: buildtools/chkincs/
+ F: buildtools/call-sphinx-build.py
++F: buildtools/check-symbols.py
++F: buildtools/chkincs/
+ F: buildtools/gen-version-map.py
+ F: buildtools/get-cpu-count.py
+ F: buildtools/get-min-meson-version.py
+ F: buildtools/get-numa-count.py
+ F: buildtools/list-dir-globs.py
+-F: buildtools/map-list-symbol.sh
+ F: buildtools/pkg-config/
+ F: buildtools/symlink-drivers-solibs.sh
+ F: buildtools/symlink-drivers-solibs.py
+diff --git a/buildtools/check-symbols.py b/buildtools/check-symbols.py
+new file mode 100755
+index 0000000000..5543d84eb7
+--- /dev/null
++++ b/buildtools/check-symbols.py
+@@ -0,0 +1,324 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: BSD-3-Clause
++
++"""Check symbol consistency between exports and flags in DPDK."""
++
++import argparse
++import sys
++import re
++import struct
++import io
++from pathlib import Path
++from dataclasses import dataclass
++from typing import Dict, Set, List, Optional, Iterator
++from elftools.elf.elffile import ELFFile
++from elftools.elf.sections import SymbolTableSection
++
++
++@dataclass
++class ValidationError:
++    """Represents a symbol consistency validation error."""
++    symbol: str
++    message: str
++
++
++@dataclass
++class ArchiveMember:
++    """Represents a member file within an archive."""
++    name: str
++    data: bytes
++    size: int
++
++
++class ArchiveParser:
++    """Pure Python parser for Unix archive (.a) files."""
++
++    MAGIC = b'!<arch>\n'
++    MEMBER_HEADER_SIZE = 60
++
++    def __init__(self, archive_path: Path):
++        self.archive_path = archive_path
++
++    def parse_members(self) -> Iterator[ArchiveMember]:
++        """Parse archive file and yield member files."""
++        try:
++            with open(self.archive_path, 'rb') as f:
++                magic = f.read(8)
++                if magic != self.MAGIC:
++                    raise ValueError(f"Invalid archive magic: {magic}")
++
++                while True:
++                    member = self._parse_member(f)
++                    if member is None:
++                        break
++                    yield member
++
++        except IOError as e:
++            print(f"Error reading archive {self.archive_path}: {e}", file=sys.stderr)
++
++    def _parse_member(self, f) -> Optional[ArchiveMember]:
++        """Parse a single member from the archive."""
++        header_data = f.read(self.MEMBER_HEADER_SIZE)
++        if len(header_data) < self.MEMBER_HEADER_SIZE:
++            return None
++
++        # Parse header fields
++        # Format: name(16) + date(12) + uid(6) + gid(6) + mode(8) + size(10) + end(2)
++        header = struct.unpack('16s12s6s6s8s10s2s', header_data)
++
++        name = header[0].decode('ascii', errors='ignore').rstrip('\x00 ')
++        size_str = header[5].decode('ascii', errors='ignore').rstrip('\x00 ')
++
++        try:
++            size = int(size_str)
++        except ValueError:
++            return None
++
++        if name.startswith('/') or name == '':
++            f.seek(size, 1)
++            if size % 2:
++                f.read(1)
++            return self._parse_member(f)
++
++        data = f.read(size)
++        if len(data) != size:
++            return None
++
++        if size % 2:
++            f.read(1)
++
++        return ArchiveMember(name=name, data=data, size=size)
++
++
++class VersionMapParser:
++    """Parse GNU linker version map files to extract symbol sections."""
++
++    def __init__(self, map_file: Path):
++        self.map_file = map_file
++        self.symbols_by_section: Dict[str, Set[str]] = {}
++        self._parse_map_file()
++
++    def _parse_map_file(self):
++        """Parse the version map file and extract symbols by section."""
++        try:
++            with open(self.map_file, 'r', encoding='utf-8') as f:
++                content = f.read()
++        except IOError as e:
++            print(f"Error reading map file {self.map_file}: {e}", file=sys.stderr)
++            sys.exit(1)
++
++        current_section = None
++        in_global_block = False
++
++        for line in content.splitlines():
++            line = line.strip()
++
++            section_match = re.match(r'^(\w+)\s*\{', line)
++            if section_match:
++                current_section = section_match.group(1)
++                self.symbols_by_section.setdefault(current_section, set())
++                in_global_block = False
++                continue
++
++            if line == "global:":
++                in_global_block = True
++                continue
++
++            if line == "};":
++                current_section = None
++                in_global_block = False
++                continue
++
++            if line.startswith("local:"):
++                in_global_block = False
++                continue
++
++            if current_section and in_global_block and line and not line.startswith("local:"):
++                symbol_line = line.split(';')[0].strip()
++                comment_split = symbol_line.split('#')
++                symbol = comment_split[0].strip()
++
++                if symbol and not symbol.startswith('}'):
++                    self.symbols_by_section[current_section].add(symbol)
++
++    def get_symbols_by_section(self, section: str) -> Set[str]:
++        """Get all symbols in a specific section."""
++        return self.symbols_by_section.get(section, set())
++
++    def symbol_in_section(self, symbol: str, section: str) -> bool:
++        """Check if a symbol exists in a specific section."""
++        return symbol in self.get_symbols_by_section(section)
++
++
++class ELFSymbolAnalyzer:
++    """Analyze archive files to extract symbol information from contained objects."""
++
++    def __init__(self, archive_file: Path):
++        self.archive_file = archive_file
++        self.text_symbols: Set[str] = set()
++        self.experimental_symbols: Set[str] = set()
++        self.internal_symbols: Set[str] = set()
++
++        self._analyze_archive_file()
++
++    def _analyze_archive_file(self):
++        """Extract and analyze all object files from archive using native parser."""
++        try:
++            archive_parser = ArchiveParser(self.archive_file)
++
++            for member in archive_parser.parse_members():
++                if member.name.endswith('.o'):
++                    self._analyze_archived_object(member)
++
++        except Exception as e:
++            print(f"Error processing archive {self.archive_file}: {e}", file=sys.stderr)
++            sys.exit(1)
++
++    def _analyze_archived_object(self, member: ArchiveMember):
++        """Analyze a single object file member from archive."""
++        try:
++            elf_data = io.BytesIO(member.data)
++            elffile = ELFFile(elf_data)
++            self._extract_symbols(elffile)
++
++        except Exception as e:
++            print(f"Warning: Error analyzing {member.name}: {e}", file=sys.stderr)
++
++
++    def _extract_symbols(self, elffile: ELFFile):
++        """Extract symbol information from the ELF file."""
++        section_names = {}
++        for i, section in enumerate(elffile.iter_sections()):
++            section_names[i] = section.name
++
++        for section in elffile.iter_sections():
++            if not isinstance(section, SymbolTableSection):
++                continue
++
++            for symbol in section.iter_symbols():
++                symbol_name = symbol.name
++
++                if not symbol_name or symbol['st_shndx'] == 'SHN_UNDEF':
++                    continue
++
++                section_index = symbol['st_shndx']
++                if isinstance(section_index, int) and section_index in section_names:
++                    section_name = section_names[section_index]
++
++                    if section_name.startswith('.text'):
++                        self.text_symbols.add(symbol_name)
++
++                        if section_name == '.text.experimental':
++                            self.experimental_symbols.add(symbol_name)
++                        elif section_name == '.text.internal':
++                            self.internal_symbols.add(symbol_name)
++
++    def symbol_in_text(self, symbol: str) -> bool:
++        """Check if symbol exists in any .text section."""
++        return symbol in self.text_symbols
++
++    def symbol_in_experimental_section(self, symbol: str) -> bool:
++        """Check if symbol exists in .text.experimental section."""
++        return symbol in self.experimental_symbols
++
++    def symbol_in_internal_section(self, symbol: str) -> bool:
++        """Check if symbol exists in .text.internal section."""
++        return symbol in self.internal_symbols
++
++
++class SymbolConsistencyChecker:
++    """Main checker that orchestrates all symbol consistency validations."""
++
++    def __init__(self, map_file: Path, archive_file: Path):
++        self.map_parser = VersionMapParser(map_file)
++        self.elf_analyzer = ELFSymbolAnalyzer(archive_file)
++        self.errors: List[ValidationError] = []
++
++    def check_experimental_consistency(self):
++        """Check consistency between experimental exports and flags."""
++
++        # Check 1: Symbols exported as experimental but not flagged with __rte_experimental
++        for symbol in self.map_parser.get_symbols_by_section("EXPERIMENTAL"):
++            if (self.elf_analyzer.symbol_in_text(symbol) and
++                not self.elf_analyzer.symbol_in_experimental_section(symbol)):
++                self.errors.append(ValidationError(
++                    symbol=symbol,
++                    message=f"{symbol} is not flagged as experimental but is exported as an experimental symbol\n"
++                           f"Please add __rte_experimental to the definition of {symbol}"
++                ))
++
++        # Check 2: Symbols flagged as experimental but not exported
++        for symbol in self.elf_analyzer.experimental_symbols:
++            if not self.map_parser.symbol_in_section(symbol, "EXPERIMENTAL"):
++                self.errors.append(ValidationError(
++                    symbol=symbol,
++                    message=f"{symbol} is flagged as experimental but is not exported as an experimental symbol\n"
++                           f"Please add RTE_EXPORT_EXPERIMENTAL_SYMBOL to the definition of {symbol}"
++                ))
++
++    def check_internal_consistency(self):
++        """Check consistency between internal exports and flags."""
++
++        # Check 3: Symbols exported as internal but not flagged with __rte_internal
++        for symbol in self.map_parser.get_symbols_by_section("INTERNAL"):
++            if (self.elf_analyzer.symbol_in_text(symbol) and
++                not self.elf_analyzer.symbol_in_internal_section(symbol)):
++                self.errors.append(ValidationError(
++                    symbol=symbol,
++                    message=f"{symbol} is not flagged as internal but is exported as an internal symbol\n"
++                           f"Please add __rte_internal to the definition of {symbol}"
++                ))
++
++        # Check 4: Symbols flagged as internal but not exported
++        for symbol in self.elf_analyzer.internal_symbols:
++            if not self.map_parser.symbol_in_section(symbol, "INTERNAL"):
++                self.errors.append(ValidationError(
++                    symbol=symbol,
++                    message=f"{symbol} is flagged as internal but is not exported as an internal symbol\n"
++                           f"Please add RTE_EXPORT_INTERNAL_SYMBOL to the definition of {symbol}"
++                ))
++
++    def run_all_checks(self) -> int:
++        """Run all consistency checks and return exit code."""
++        self.check_experimental_consistency()
++        self.check_internal_consistency()
++
++        for error in self.errors:
++            print(error.message, file=sys.stderr)
++
++        return 1 if self.errors else 0
++
++
++def main() -> int:
++    """Main entry point for the symbol consistency checker."""
++    parser = argparse.ArgumentParser(
++        description="Check symbol consistency between exports and flags in DPDK libraries.",
++        formatter_class=argparse.RawDescriptionHelpFormatter
++    )
++    parser.add_argument(
++        "map_file",
++        type=Path,
++        help="Version map file (e.g., lib_exports.map)"
++    )
++    parser.add_argument(
++        "archive_file",
++        type=Path,
++        help="Archive file to analyze (static library .a file)"
++    )
++
++    args = parser.parse_args()
++
++    if not args.map_file.exists():
++        print(f"Error: Map file {args.map_file} does not exist", file=sys.stderr)
++        return 1
++
++    if not args.archive_file.exists():
++        print(f"Error: Archive file {args.archive_file} does not exist", file=sys.stderr)
++        return 1
++
++    checker = SymbolConsistencyChecker(args.map_file, args.archive_file)
++    return checker.run_all_checks()
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/buildtools/check-symbols.sh b/buildtools/check-symbols.sh
+deleted file mode 100755
+index 0d6745ec14..0000000000
+--- a/buildtools/check-symbols.sh
++++ /dev/null
+@@ -1,73 +0,0 @@
+-#!/bin/sh
+-
+-# SPDX-License-Identifier: BSD-3-Clause
+-
+-MAPFILE=$1
+-OBJFILE=$2
+-
+-ROOTDIR=$(readlink -f $(dirname $(readlink -f $0))/..)
+-LIST_SYMBOL=$ROOTDIR/buildtools/map-list-symbol.sh
+-DUMPFILE=$(mktemp -t dpdk.${0##*/}.objdump.XXXXXX)
+-trap 'rm -f "$DUMPFILE"' EXIT
+-objdump -t $OBJFILE >$DUMPFILE
+-
+-ret=0
+-
+-for SYM in `$LIST_SYMBOL -S EXPERIMENTAL $MAPFILE |cut -d ' ' -f 3`
+-do
+-	if grep -q "\.text.*[[:space:]]$SYM$" $DUMPFILE &&
+-		! grep -q "\.text\.experimental.*[[:space:]]$SYM$" $DUMPFILE &&
+-		$LIST_SYMBOL -s $SYM $MAPFILE | grep -q EXPERIMENTAL
+-	then
+-		cat >&2 <<- END_OF_MESSAGE
+-		$SYM is not flagged as experimental but is exported as an experimental symbol
+-		Please add __rte_experimental to the definition of $SYM
+-		END_OF_MESSAGE
+-		ret=1
+-	fi
+-done
+-
+-for SYM in `awk '{
+-	if ($2 != "l" && $4 == ".text.experimental") {
+-		print $NF
+-	}
+-}' $DUMPFILE`
+-do
+-	$LIST_SYMBOL -S EXPERIMENTAL -s $SYM -q $MAPFILE || {
+-		cat >&2 <<- END_OF_MESSAGE
+-		$SYM is flagged as experimental but is not exported as an experimental symbol
+-		Please add RTE_EXPORT_EXPERIMENTAL_SYMBOL to the definition of $SYM
+-		END_OF_MESSAGE
+-		ret=1
+-	}
+-done
+-
+-for SYM in `$LIST_SYMBOL -S INTERNAL $MAPFILE |cut -d ' ' -f 3`
+-do
+-	if grep -q "\.text.*[[:space:]]$SYM$" $DUMPFILE &&
+-		! grep -q "\.text\.internal.*[[:space:]]$SYM$" $DUMPFILE
+-	then
+-		cat >&2 <<- END_OF_MESSAGE
+-		$SYM is not flagged as internal but is exported as an internal symbol
+-		Please add __rte_internal to the definition of $SYM
+-		END_OF_MESSAGE
+-		ret=1
+-	fi
+-done
+-
+-for SYM in `awk '{
+-	if ($2 != "l" && $4 == ".text.internal") {
+-		print $NF
+-	}
+-}' $DUMPFILE`
+-do
+-	$LIST_SYMBOL -S INTERNAL -s $SYM -q $MAPFILE || {
+-		cat >&2 <<- END_OF_MESSAGE
+-		$SYM is flagged as internal but is not exported as an internal symbol
+-		Please add RTE_EXPORT_INTERNAL_SYMBOL to the definition of $SYM
+-		END_OF_MESSAGE
+-		ret=1
+-	}
+-done
+-
+-exit $ret
+diff --git a/buildtools/map-list-symbol.sh b/buildtools/map-list-symbol.sh
+deleted file mode 100755
+index 962d5f3271..0000000000
+--- a/buildtools/map-list-symbol.sh
++++ /dev/null
+@@ -1,85 +0,0 @@
+-#!/bin/sh
+-# SPDX-License-Identifier: BSD-3-Clause
+-# Copyright(c) 2018 David Marchand <david.marchand@redhat.com>
+-
+-section=all
+-symbol=all
+-quiet=
+-version=
+-
+-while getopts 'S:s:qV:' name; do
+-	case $name in
+-	S)
+-		[ $section = 'all' ] || {
+-			echo 'Cannot list in multiple sections'
+-			exit 1
+-		}
+-		section=$OPTARG
+-	;;
+-	s)
+-		[ $symbol = 'all' ] || {
+-			echo 'Cannot list multiple symbols'
+-			exit 1
+-		}
+-		symbol=$OPTARG
+-	;;
+-	q)
+-		quiet='y'
+-	;;
+-	V)
+-		version=$OPTARG
+-	;;
+-	?)
+-		echo 'usage: $0 [-S section] [-s symbol] [-V [version|unset]] [-q]'
+-		exit 1
+-	;;
+-	esac
+-done
+-
+-shift $(($OPTIND - 1))
+-
+-for file in $@; do
+-	cat "$file" |awk '
+-	BEGIN {
+-		current_section = "";
+-		if ("'$section'" == "all" && "'$symbol'" == "all" && "'$version'" == "") {
+-			ret = 0;
+-		} else {
+-			ret = 1;
+-		}
+-	}
+-	/^.*\{/ {
+-		if ("'$section'" == "all" || $1 == "'$section'") {
+-			current_section = $1;
+-		}
+-	}
+-	/.*}/ { current_section = ""; }
+-	/^[^}].*[^:*];/ {
+-		if (current_section == "") {
+-			next;
+-		}
+-		if (/^[^}].*[^:*]; # added in /) {
+-			symbol_version = $5
+-		}
+-		if ("'$version'" != "") {
+-			if ("'$version'" == "unset" && symbol_version != "") {
+-				next;
+-			} else if ("'$version'" != "unset" && "'$version'" != symbol_version) {
+-				next;
+-			}
+-		}
+-		gsub(";","");
+-		if ("'$symbol'" == "all" || $1 == "'$symbol'") {
+-			ret = 0;
+-			if ("'$quiet'" == "") {
+-				print "'$file' "current_section" "$1" "symbol_version;
+-			}
+-			if ("'$symbol'" != "all") {
+-				exit 0;
+-			}
+-		}
+-	}
+-	END {
+-		exit ret;
+-	}'
+-done
+diff --git a/buildtools/meson.build b/buildtools/meson.build
+index 32cea7cff7..629b7d0873 100644
+--- a/buildtools/meson.build
++++ b/buildtools/meson.build
+@@ -2,7 +2,6 @@
+ # Copyright(c) 2017-2019 Intel Corporation
+ 
+ pkgconf = find_program('pkg-config', 'pkgconf', required: false)
+-check_symbols = find_program('check-symbols.sh')
+ ldflags_ibverbs_static = find_program('options-ibverbs-static.sh')
+ 
+ python3_required_modules = []
+@@ -18,6 +17,7 @@ else
+     py3 = ['meson', 'runpython']
+ endif
+ echo = py3 + ['-c', 'import sys; print(*sys.argv[1:])']
++check_symbols = py3 + files('check-symbols.py')
+ gen_version_map = py3 + files('gen-version-map.py')
+ list_dir_globs = py3 + files('list-dir-globs.py')
+ sphinx_wrapper = py3 + files('call-sphinx-build.py')
+diff --git a/drivers/meson.build b/drivers/meson.build
+index f25f425565..1c613d6d7a 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -321,9 +321,6 @@ foreach subpath:subdirs
+         endif
+ 
+         if not is_windows and developer_mode
+-            # on unix systems check the output of the
+-            # check-symbols.sh script, using it as a
+-            # dependency of the .so build
+             lk_deps += custom_target(lib_name + '.sym_chk',
+                     command: [check_symbols, version_map.full_path(), '@INPUT@'],
+                     capture: true,
+diff --git a/lib/meson.build b/lib/meson.build
+index a67efaf718..c284355d4a 100644
+--- a/lib/meson.build
++++ b/lib/meson.build
+@@ -306,9 +306,6 @@ foreach l:libraries
+     endif
+ 
+     if developer_mode and not is_windows
+-        # on unix systems check the output of the
+-        # check-symbols.sh script, using it as a
+-        # dependency of the .so build
+         lk_deps += custom_target(name + '.sym_chk',
+                 command: [check_symbols, version_map.full_path(), '@INPUT@'],
+                 capture: true,
+-- 
+2.51.0
+
