@@ -2,76 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D09ECAC5A5
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 08:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBF3CAC5AA
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 08:43:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DAC29402AB;
-	Thu, 25 Sep 2025 10:43:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3201F402AB;
+	Thu, 25 Sep 2025 10:43:48 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6225E4028F
- for <dev@dpdk.org>; Thu, 25 Sep 2025 10:43:04 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 440494028F
+ for <dev@dpdk.org>; Thu, 25 Sep 2025 10:43:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1758789784;
+ s=mimecast20190719; t=1758789825;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=aA7F/PS3E8uGFdVqbaXRW/7kiZFdtQwnl1BV5Y3mSrk=;
- b=Y7MrP8gjp7x8B8RN4LSE+m4ZiGRQmCRcIVGtWpTENYiZh/jzHERqaJLaEGzMzfxxp+Cxi9
- wO8W1frSkDYGnkNL584HUqatuMOYhmq5YEN+VoddLqchNUgGjXDbkOkqLFZAzhefYO4VTP
- 6BAflKxHkFobLylTbx/E4zEHTukJ4Ss=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=Y1CXa6A+i2ivb0Nwvg0zp7C6ZpGneYkEQ37xeWycP6o=;
+ b=chHqQPERJkK5v9DfNlpzR/H3Zczr9PP2HjzRHTiEFy8SkCTPfFv+B09qcnRYcoeB9E9CSj
+ 9HFEiZnplrSlgjejt8Css489Y/A0AV/dz+7wkVuUgHeXFFauNadlU0SSvEbuU4cIgKV/cd
+ getYlFqmfIBsuwhSupw0qQjgORtknDY=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-640-X3QCkqNsPHihL7mcjZy16g-1; Thu, 25 Sep 2025 04:43:02 -0400
-X-MC-Unique: X3QCkqNsPHihL7mcjZy16g-1
-X-Mimecast-MFC-AGG-ID: X3QCkqNsPHihL7mcjZy16g_1758789781
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-57e47033f38so264076e87.0
- for <dev@dpdk.org>; Thu, 25 Sep 2025 01:43:01 -0700 (PDT)
+ us-mta-516-k4CbOiXZPXKVb6kv5ht3fA-1; Thu, 25 Sep 2025 04:43:44 -0400
+X-MC-Unique: k4CbOiXZPXKVb6kv5ht3fA-1
+X-Mimecast-MFC-AGG-ID: k4CbOiXZPXKVb6kv5ht3fA_1758789823
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-36c0f8f1095so1767591fa.0
+ for <dev@dpdk.org>; Thu, 25 Sep 2025 01:43:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758789780; x=1759394580;
+ d=1e100.net; s=20230601; t=1758789823; x=1759394623;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=aA7F/PS3E8uGFdVqbaXRW/7kiZFdtQwnl1BV5Y3mSrk=;
- b=FsZlGgD9UncgYdvvXGG0YJl4pIIRj06Sv8Khzj4FhoS+GWgnjvNyd5O/XRRk/N6aO7
- O6FdlMyhK3qt9RhaeuDoxNSFFRrRfOdqGJ6FhWZwVPzYuJm3bznZsX4NMsVJCwbnF//C
- 7962s1DrCC7IcAfMkz77nMiX6bFACNqLr63Ok2x9b0Pn3oL/aQE8GT74pNMWw20dKzJo
- daUYNTtkLqucrFNB18pfzPPgw5KTkGsFDHFro7A+ByjqjvpNOR70ug+dTH83m8oH4uii
- Yvremlk7Gqt1zKC2Vkx0zzBo4FVjtX9PCjz5m/rl/8Sn89Wgff89QnMr03I4pek7CRQD
- 8cyg==
-X-Gm-Message-State: AOJu0Ywm6wgeC/Fm8su1F4GCkUBrsp/YZAjuswL8z+9bSo41nm3h/brM
- 2ll4zzTpMEZTp+lYm52GOSHp3aso/wFq41BBVrQluWR3PnxYt7A1mM8p27LASVJxZVpCbYjWzur
- ihUWzjvbY/tkh0mOOnn9SHWvlseTCfLlcjQdzQ2Ang9C9wV5hDPZuQzW4qMhcEZmDSyPvxoe5Nw
- N46zUU9GJV1Rd9ZadXmSU=
-X-Gm-Gg: ASbGncsip9zu1cEH//j3gJklkn+D7dlxSQuMPMN9B2FVO+xzbftqINOxDV/0aYoUERV
- OK5ZWyuoMaMl85mGnXNO/loLvpxIPa1hWk4F3XbrdIoUTIp+km7KyhHVIkmTRoA4yvXGExri2Nh
- MV8q7q8UiT6YbY86fJw2aH8cY=
-X-Received: by 2002:a05:6512:a83:b0:57f:3f75:9b3b with SMTP id
- 2adb3069b0e04-582d2b4a278mr696808e87.38.1758789780501; 
- Thu, 25 Sep 2025 01:43:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxluQR8aKFCZyFn3EbeNWctD6Zv0BQ++GqFDwhu0T1h1FzTcUJpfhC1wIc8iDMESM6llUWDsMeBKxciX3ps28=
-X-Received: by 2002:a05:6512:a83:b0:57f:3f75:9b3b with SMTP id
- 2adb3069b0e04-582d2b4a278mr696798e87.38.1758789780024; Thu, 25 Sep 2025
- 01:43:00 -0700 (PDT)
+ bh=Y1CXa6A+i2ivb0Nwvg0zp7C6ZpGneYkEQ37xeWycP6o=;
+ b=rI5FR+mkvCgKbuK2UsePMB00/5tSdDQryexWh3eKaSa3Ids8HCga86nQsByiAYJh6t
+ OgMjZSqPs2iNGU6X1qYDw3Y0/trlDj4quCtwWMptINLNybP1cwR4HB++brpV6+vSGwTs
+ r+UCl9Dr9vGhnJqTNHnNR0DGGOkxt3zQMSK1P1/a7PjBIY01mg+JzmYxs5j4IyXCyDPk
+ E5jH3LkPDNLleuUdbmZsAb7V81wWcRQ8ftjNdbx0fvKtVK48gEmX0eQQD6qrXcZJFo47
+ Ug5d1NgLMvl4cYm86XTBRu/JHekYmmoUFJeEryT1ek3PkX2BdKoj4Asajp/T01XxSDa5
+ 0Yvw==
+X-Gm-Message-State: AOJu0YwVbTrNDtAM4+hFt9bVI6qAehGBYiuI3fWcNuHX9HOyVYTA5BwH
+ To4KwcCTTbzx/h6RgynWN3/0L6dyiXZD/A0Xu6fxvn7z1g+p97yZZccyFuiexeynLJfmC9/DWPe
+ CWJzfK00AWFlfX6HH9r3lXH3iGNIuMo1Ws6zUlTZ1DTAu9W1zcl4DosJtRBx1u9qnzwYYboOZNO
+ eIdQkhZvRtivKlXEM1mY0=
+X-Gm-Gg: ASbGncto8KkHZSqZd310pw7iftLeGZwJU/zR1C7/ABif0Pk9z+n71QllcvM2b1gFP0B
+ tEd3sAKA16evQfjec0B0krVGrHjWIkVu3wT2M/2k+vhciJtJDhsoo7oXU4PszMsZBGxbLCUE3dj
+ xiexr+RqUh8uOaZOfxqJb6zpM=
+X-Received: by 2002:a2e:b8c2:0:b0:336:d0f8:5a7a with SMTP id
+ 38308e7fff4ca-36fb0ca5275mr5931711fa.6.1758789822725; 
+ Thu, 25 Sep 2025 01:43:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFnDexFa1VoPmHavdqdVyJwoFv4FsA+nP+0UiDWp2WW6xGcv5GT5V889FCri/cXfQIblkT1rzqUlP18ZQ9tKfc=
+X-Received: by 2002:a2e:b8c2:0:b0:336:d0f8:5a7a with SMTP id
+ 38308e7fff4ca-36fb0ca5275mr5931631fa.6.1758789822283; Thu, 25 Sep 2025
+ 01:43:42 -0700 (PDT)
 MIME-Version: 1.0
 References: <20241127112617.1331125-1-david.marchand@redhat.com>
  <20250924172536.2447183-1-david.marchand@redhat.com>
- <20250924172536.2447183-7-david.marchand@redhat.com>
- <aNT2gMD4BH44UB3i@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aNT2gMD4BH44UB3i@bricha3-mobl1.ger.corp.intel.com>
+ <20250924172536.2447183-5-david.marchand@redhat.com>
+ <aNT03PNYURvMU4zS@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aNT03PNYURvMU4zS@bricha3-mobl1.ger.corp.intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 25 Sep 2025 10:42:47 +0200
-X-Gm-Features: AS18NWAp1459hHH6KE941EgtjCq3TEwXAmz7PNlQdAU80npjAgiZs48J5gfME10
-Message-ID: <CAJFAV8z7pnVm51HmfNDTr7=xsALPcKN9fRh7rVGgKgM2sWY8mQ@mail.gmail.com>
-Subject: Re: [PATCH v3 6/7] buildtools/chkincs: use a staging directory for
- headers
+Date: Thu, 25 Sep 2025 10:43:29 +0200
+X-Gm-Features: AS18NWABmtxrvKwXG1hMmJBgSEk0CWFue0dpVgC_FWGlnJUvU_SexnU7J7V6ztA
+Message-ID: <CAJFAV8z1Jvv7JCz+4GofoB8WaBOLV-WcnL+QEBkR3aF1c0hHUA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/7] gpudev: fix driver header for Windows
 To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
- Tyler Retzlaff <roretzla@linux.microsoft.com>
+Cc: dev@dpdk.org, Elena Agostini <eagostini@nvidia.com>, 
+ Thomas Monjalon <thomas@monjalon.net>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 2pCx-W5-U8JSqPNsDC9O_CMg0z9BF1kNCiqYuDdJNA8_1758789781
+X-Mimecast-MFC-PROC-ID: ycSUhsWzYJsB_h9Nuw6_n4i7zAwkdIWmyoT89IiPUtM_1758789823
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -89,47 +88,43 @@ Errors-To: dev-bounces@dpdk.org
 
 Hello Bruce,
 
-On Thu, 25 Sept 2025 at 10:00, Bruce Richardson
+On Thu, 25 Sept 2025 at 09:53, Bruce Richardson
 <bruce.richardson@intel.com> wrote:
 >
-> On Wed, Sep 24, 2025 at 07:25:34PM +0200, David Marchand wrote:
-> > A problem with the current headers check is that it relies on
-> > meson dependencies objects that come with their include_directories
-> > directives, and all of those point at the library / driver sources.
+> On Wed, Sep 24, 2025 at 07:25:32PM +0200, David Marchand wrote:
+> > Use rte_os.h and its RTE_TAILQ_HEAD definition compatible with BSD
+> > sys/queue.h
 > >
-> > This means that we won't detect a public header including a private
-> > (as in, not exported) header, or a driver only header.
-> >
-> > To address this issue, a staging directory is added and every header
-> > is copied to it.
-> >
-> > Drivers and library headers are staged to two different directories
-> > and the check is updated accordingly.
+> > Fixes: 18cb07563165 ("gpudev: add event notification")
 > >
 > > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> > ---
+> >  lib/gpudev/gpudev.c        | 1 +
+> >  lib/gpudev/gpudev_driver.h | 4 ++--
+> >  2 files changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/lib/gpudev/gpudev.c b/lib/gpudev/gpudev.c
+> > index 0473d9ffb3..4a2335834c 100644
+> > --- a/lib/gpudev/gpudev.c
+> > +++ b/lib/gpudev/gpudev.c
+> > @@ -3,6 +3,7 @@
+> >   */
+> >
+> >  #include <stdlib.h>
+> > +#include <sys/queue.h>
+> >
+> >  #include <eal_export.h>
+> >  #include <rte_eal.h>
 >
-> In general looks ok to me.
-> One small comment though - can we not have "staging" as a top-level
-> directory, but instead hide it inside the buildtools directory, or even the
-> chkincs directory? I dislike having too many subdirectories directly off
-> the root of the project, especially ones purely for internal tooling.
+> A bit confused. Why do we add sys/queue.h here but replace it below with
+> rte_os.h?
 
-Well, at first I was trying to change the whole build process iow rely
-only on the staging directory and remove all the include_directories:
-directives from the declare_dependency() objects.
-Libraries and apps were ok, but there were a *lot* of complications
-with drivers (what a *huge mess*, especially for NXP drivers with
-"compat.h" includes, and Marvell drivers to a smaller extent).
-I may retry in the future with some AI tool that will brute force this :-).
+I only fixed the minimum possible in the exported header.
 
-For now, I gave up but did not reconsider the location of the staging part.
-Moving to buildtools is indeed saner as it is only for the check now,
-and I can also make this staging stuff dependent on the check_includes
-option now.
-
-I have a strange build error with Windows + clang target that I'll
-need to understand (maybe a problem in how we reference DPDK public
-headers via "" instead of <>?).
+To reuse rte_os.h here, I would have to change more code in the
+library as this code uses the sys/queue.h API.
+(EAL Windows provides one for internal consumption, if you did not
+notice, see lib/eal/windows/include).
 
 
 -- 
