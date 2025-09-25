@@ -2,81 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A01FDCAC5A7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 09:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D31F1CAC5A7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 09:31:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EC18640661;
-	Thu, 25 Sep 2025 11:22:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D3F0240661;
+	Thu, 25 Sep 2025 11:31:50 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 28A2F402AB
- for <dev@dpdk.org>; Thu, 25 Sep 2025 11:22:51 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 56159402AB
+ for <dev@dpdk.org>; Thu, 25 Sep 2025 11:31:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1758792171; x=1790328171;
+ t=1758792709; x=1790328709;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=GgtVlFpAFnMPG6gEkV/Mlb30Taqn31QNcSnco+KRMO8=;
- b=KOVksFj8ukZMpn3OsB0cKFpSqd+64tpaDJ7x/imsJjs4/SnEWCIFrEfP
- ke5dzqxY1Ebak2K0VevBnkMrlWgaU9eV0ogZowOslDiKd8ER+Y+sl5+Qt
- N6u1mYANaVbGII79lO8ceQZo6YUBPpGdO2kb6dA7+YcNiqyvnVI+AKFQB
- 4/icRfQy6Mw2gO+JUTtZvgyYvwJjHG2ies3dsKvOGlBCWS0P3UxN/XGXw
- JowmKBWqyXd1RzJNnVka5HIrpqK7M4DrHpeUlU7LpLz8yLZcMqLOQKevB
- g6e5MCT+Q8Hp7EhxVUwWvBIXnURl/MCj8YxtTvN4ae3EChFRjkDM7tJnX w==;
-X-CSE-ConnectionGUID: wKdY8hQlQUKXTfHiHT883g==
-X-CSE-MsgGUID: zXAmH45eSomRKz+UL6vllg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="61212429"
-X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; d="scan'208";a="61212429"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ bh=d1ZLDlL3/0gAA3TjZ3TkPaPTEzIUzXTbW2lIoj6w64E=;
+ b=akULoKYXSHfcm9Vo6OvnlZ0R9o0f44839FZuHnPLHEbuYM/B6KQwbvqx
+ n2kYqlPcDwfNHhXBjCjvISGQxflODwARI85IEXFg9FWxNEXcf9GqWTEX0
+ 9nnoBOgR5MLDk50O5+4kK/ffuufwQG4reNkEgflagrkcGBbyehfYCWmX3
+ RAKHMgd5reGVgpwDNxEkY/evhUmpddiyGGaGpfVLvPq0EdfPSSLWbTEmw
+ bCjq3JjNKO2HvUJ0wy8H8jQvZ/XDdo5WcaDOc3+/24z0JCwT5KHR3bTdO
+ cSh/G7RLouF9PEU6tc2Hn6oL0ETQHaSeuKluPMWqxs29s55BaY8gUTBCv w==;
+X-CSE-ConnectionGUID: q7E0M96tRry0dBo/h9MrXg==
+X-CSE-MsgGUID: hwfuxQKUSnaTOETl+ZVeSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="61213150"
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; d="scan'208";a="61213150"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Sep 2025 02:22:50 -0700
-X-CSE-ConnectionGUID: +z8Z91I4SGyGbM4nwvF3Vw==
-X-CSE-MsgGUID: SV8CxzICRyiT/baBHFq4YQ==
+ 25 Sep 2025 02:31:48 -0700
+X-CSE-ConnectionGUID: 3dRQWnQXQy2O+VZjBAj3+w==
+X-CSE-MsgGUID: jIGUBkUGQNi6PRVxBXExww==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; d="scan'208";a="177120088"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Sep 2025 02:22:51 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; d="scan'208";a="177343633"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Sep 2025 02:31:48 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 25 Sep 2025 02:22:49 -0700
+ 15.2.2562.27; Thu, 25 Sep 2025 02:31:47 -0700
 Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 25 Sep 2025 02:22:49 -0700
-Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.9) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ 15.2.2562.27 via Frontend Transport; Thu, 25 Sep 2025 02:31:47 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.21)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 25 Sep 2025 02:22:47 -0700
+ 15.2.2562.27; Thu, 25 Sep 2025 02:31:46 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CfK9LHVo/9DiU5dfoXMzyAE4rgyvTRsmcN1NMXT3jcohqY/o/FDY93w7uYZp+XfXyQ7Ia/cKkzr9GLFW2RV/qZYF4vbtJeetg7/AfGpOGfiHouVWTirF0fykh6gu909k+EjbjIIYkoehiGyK3G/f2S8Jyx+VyYbrsfBbwVL/K/vY/5R9PljmS92TsUzV7tcpgLZbm6PW/TV7kcbGak5NeonE/Rlmg2Tsm5uZTWuFVoS9Uaesy6PA/uEuvrvuGEhF+jGOAfy3kTU9/KlI+AXki3QoagHHDCHDm7IYpL/QM7gRegSWvxeYzRnPVygABD2HFnfd7zznDeAtPn6+iBVycg==
+ b=EJXqm5R6IX9qsOg0+PxpT1Mq1VAxvz7vnkZJJ7Yz7SieXywfVSQJA6hiYxuO1tt28M2wU2DEiHlUw7NRixS9JznttHra7Os/H+zyEY8MOWwya0wZn3fSMFUTWTgadfl2byZwYZ3nfjIJdxUUtg4wX3j4DILMqjQIdsXJRpEK4RA0V4u5xPTV63flcxq7tS+U4yLBWdl4jgXcGB7o4uxMd/3fjpN6Sx2M3DK7jeCd/LqDNPwofle3lP2QmkL5TCFfjMcqsvO3uLjgoyx9qgUGv5EJguzRJn2UMS1oUme1GvD+46fAaumo5rs3BGJ5yZ/Um7gfHp0OH2WEFtfdJuzWEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VFAgix2ztRhrE87f6z4ZXFnizHRPGwjLN/NPi6qc7bs=;
- b=doAoHyljfQn/IihqFYAX745ovRcfQR+ZeCJG4uJmsVMcLf3q5W9DHaMYozVMxzsqmiIXvVSIMjn4agnCekpoIAAjeyo8IyVFkrjI09zU6onbdvzu4fnMjLe5zTYThS/svCuVa8CtnLjP2TN0RU5ZIkJXFlxzyqGW6wIM/qmMBPEEMoTnrRTObFDUWGkBBhLp7Y6dDnfk7LEVYIl/1rR3aOJPOwrATpsF0EAulJxAhrHvrgHK0tWhtDtrfFUeBCZPKj4TY/3rfknKtJ45TciGLvf89Lv3ViLuBzBlMJuYSasahlKF+J3NpsYwPSAihv6QKd5S1M3z28disRySdPacXw==
+ bh=qjM3jOYoo3ePwKiHxPJu78sZ4ODVJ13UVuuXxn5Z03s=;
+ b=CkqZOCZtMhVaK5sxUr5UfIyo0rwunv/gUIucZPESObEQfd7OofSSkZA2MbnXM+KBImhgtzZM/R3Hqtgmrpk7SwF5pRAjxQjddtX9sHFqAcDb8EGndZ9uh7nTXv0623tesjCa5hZYOppXjOSC1l3JyuIqxURbfrK8SotyxxQNNvf+xoT0YIO5WhyTi8AYi3Q8M8t0O1CJbOcZlA8khrYBqhFQcjsKoblW1U03J2NZyJg9nKZHWv6X7nDtzDzxNHgdauiJCQjRAXXsI2yzQ9+ejL6cIDWuscZ2BdxPMw9tqRqFag+IA9y27yqoLf5uVmOCdptEO2dDnb56hO0olkOCtQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by MW4PR11MB6981.namprd11.prod.outlook.com (2603:10b6:303:229::20) with
+ by DM4PR11MB7325.namprd11.prod.outlook.com (2603:10b6:8:107::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Thu, 25 Sep
- 2025 09:22:44 +0000
+ 2025 09:31:44 +0000
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9137.018; Thu, 25 Sep 2025
- 09:22:44 +0000
-Date: Thu, 25 Sep 2025 10:22:39 +0100
+ 09:31:44 +0000
+Date: Thu, 25 Sep 2025 10:31:40 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: David Marchand <david.marchand@redhat.com>
 CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Tyler Retzlaff
  <roretzla@linux.microsoft.com>
 Subject: Re: [PATCH v3 6/7] buildtools/chkincs: use a staging directory for
  headers
-Message-ID: <aNUJ3yFwNVpZdGzk@bricha3-mobl1.ger.corp.intel.com>
+Message-ID: <aNUL_Pl6Hf2bmcJJ@bricha3-mobl1.ger.corp.intel.com>
 References: <20241127112617.1331125-1-david.marchand@redhat.com>
  <20250924172536.2447183-1-david.marchand@redhat.com>
  <20250924172536.2447183-7-david.marchand@redhat.com>
@@ -85,83 +85,83 @@ References: <20241127112617.1331125-1-david.marchand@redhat.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 In-Reply-To: <CAJFAV8z7pnVm51HmfNDTr7=xsALPcKN9fRh7rVGgKgM2sWY8mQ@mail.gmail.com>
-X-ClientProxiedBy: DB8PR03CA0018.eurprd03.prod.outlook.com
- (2603:10a6:10:be::31) To DS0PR11MB7309.namprd11.prod.outlook.com
+X-ClientProxiedBy: DB7PR02CA0023.eurprd02.prod.outlook.com
+ (2603:10a6:10:52::36) To DS0PR11MB7309.namprd11.prod.outlook.com
  (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|MW4PR11MB6981:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc06ad99-b8e2-41ee-a2a3-08ddfc15157f
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DM4PR11MB7325:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8e098d7-6d16-4652-5833-08ddfc165756
 X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?b9/MgkaRIPkt7J2RvLQKMRedhr7M73Kor4yNuWi+AeJk0mC5f2Ha02wp/yOe?=
- =?us-ascii?Q?zcXzAn7kBd4ddaw/5CYoLw35kbpv70cmTPmjIrrS2AhHB/lCpsMLsKZpq5M0?=
- =?us-ascii?Q?2fKhjfMTxiSEl33XdqHHHSL/u5zc+Kp13VZMOr9SnT+QgR/qCHyXH0p7+cQ2?=
- =?us-ascii?Q?/SOEw5HHQ5yOcPoaDG9YHeBMA08dkpxM0YCMrN3AbDN776Z17dUQiOfrrMQ7?=
- =?us-ascii?Q?Nk3ytUg9dJ4aVz3BFqJ83x4BYZnrXVwfottGTsQkxwwPJWP0Iwmd0CWEaOYp?=
- =?us-ascii?Q?2iK6YGLr+EltCryO9SFkuhrHgD61o4J48Dk2ck5uQvN3DKjXoyvAuAF/WBl7?=
- =?us-ascii?Q?Klctjj1OLWBCc8g9+cAV4rS+qIEvyUcfJ0/3LCXW7krZdjcpNA5qiNSJMhIM?=
- =?us-ascii?Q?BER9oDm/CKRD+0etGsGivVhw7kwwzR2ZA3k3JWcP6/ea1exMKXWSagdN2iv+?=
- =?us-ascii?Q?RyCiQ0PVjGPmMWiOHEDWWas8QMVEn68fufFYskdCgvwcOqtFXbUgBGauuGPz?=
- =?us-ascii?Q?4u3abDD6nDr2V+izE7i79Ao3Nmj6KttkAsjciaIO9U0gmSfJ1v32O12pvoj2?=
- =?us-ascii?Q?Hd4DTy0AecFJOvrLtFpVw5k7Y6LTV3LcaU0WMDrYzy2Evsgb8Vni2gkysoAj?=
- =?us-ascii?Q?eYfPGSu90jAEYbcAox6Aph+7Ds6NfVd2UhRsrtTTbZsdeI4oQm1xRGmNUzwN?=
- =?us-ascii?Q?fRzf08c9n38W4uIKZhYFmO2SDBHy43i9kiVuwgt6kQYoAOW70cvUxCwNg4p1?=
- =?us-ascii?Q?Dp6zibxqCG6XHQqPZ1xanA3m6cR1NZlaynuC2wUtKiHQuxF46MtRBRwXq8pT?=
- =?us-ascii?Q?xAgVa1Td4gYrp6CFWByRbOeu+bSRMj4oDAFB63KDVf8lLbR5muI+sRcpQVrw?=
- =?us-ascii?Q?+Pw8JDr02oZhVhzYdLPzv9bWvaePRYuJUoTDCG6pycuL2g39WRu5OuL0qP4/?=
- =?us-ascii?Q?NqSBItQemJfZYMhiKYjNHj1UB0guZKLyUQCOqpzQwSwhHOLaU3WW37Q+W4eb?=
- =?us-ascii?Q?bl+02Z7bbYaYIquo+0c3XOIZ3qZKJyRyQAOWm/xRvyfxcKoknQ9H6sKjZIiO?=
- =?us-ascii?Q?Xclr39xOIUXzgMC8Y6F/5S2kdhaP5Ygm0fC8Imp+iQuujiBCrFcb0VMPqxkE?=
- =?us-ascii?Q?QpUnplp5TC5SnCQIkJ+y5HQEqSht785jJeC5L2KTWBOroXBbEcj1cU2/Ysi2?=
- =?us-ascii?Q?ARDFpTMglxWboaOoPHxyDXp8KArFkvjo8F0c1Mf9NzBmVA0cicu84Vbq0Xr/?=
- =?us-ascii?Q?JBg+pdjEnwmuZs3soEYwQXw2aA1oa4ntZgmAmJ9sMeQT7+cBoJYSSk14N8A4?=
- =?us-ascii?Q?xFUMDfVuqOcKAGTIiJ8aj46JvieO9ej9TLkOWgUPdNc1mJubgBogtc0uWQ+U?=
- =?us-ascii?Q?2qzsyVTaaPQi0xWhpAVlBzJXlKpYONjjkm1YZ+zhQxRxRq+ovj91VKomM9XB?=
- =?us-ascii?Q?31UgZihLCFVK2mPLXQDzWaS8CoFEqIZM2Juhpo1bb3wyEY+8ltvAAw=3D=3D?=
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?zvrauV3wqq12wentlitTrC+svGOdg7/K10zqVi3ANX+eENAonnCe/yOLkIQa?=
+ =?us-ascii?Q?ufnzg+oqHOKvYqVUKOPXNpAqVoOBaLHbE505xMosef+h2S4OXKnTt9WylRz6?=
+ =?us-ascii?Q?RN5QNqsGxaK+APEMhvT4Suk2Tpc26TCOqV5q3Xnt/KjNMTq57ex8VljfoyqX?=
+ =?us-ascii?Q?NvLuTeZBlWxMoidI9CC8wb14LV4UXvFkxsNGIWRVv5brmYipmNnaB5LV1htm?=
+ =?us-ascii?Q?aDryVU8jwUSe/F6GEszePmtWHKlbVGrhcgIOuVYGBx45IW1u4G1b6WzP1BjX?=
+ =?us-ascii?Q?6eTsKhIWrKVccleAuO1d28MTiFa1X8Sz4wp2z06LFO/TAHN/cYWoNLDzvzzq?=
+ =?us-ascii?Q?aFVE68CsmJA9dbPvyx3MiOodC2YDdRboKAXOrbV+JgXsdvM+5Eau6uCW9hon?=
+ =?us-ascii?Q?DV1iimRMG5iMI8jBvLLgxhgjTVlCuGiQk9YIZ6NpPMK9Y0wiLWTmZLw3TH9h?=
+ =?us-ascii?Q?gMlT8rM9Ctt1d3Gh0O56hDrZ2AMWFEtY6HOyo3DB9fhADDRxkzwVDcEYXH+I?=
+ =?us-ascii?Q?P6xJexjrRS1USmJb4oL7ieERD76LBf7DOkAEcMO37JKkobib4MiVVUV/1nPX?=
+ =?us-ascii?Q?GzLeSDH0Ck2DRhdVF8KJ+TFgY2BC+wuuBf2sqb2jqOJCvcsaEEZ/jcQSab6P?=
+ =?us-ascii?Q?6yic5zPs2JobYNMPqIPTwRpAjlbp9nTWNwfODJqj1HnTpYdwSxkHeXNV2hut?=
+ =?us-ascii?Q?aBGStISuEoL0Pl7EmusDwB+6/WM52VuKVDJupqbL4Ip1bYxpxgbZALtNajG/?=
+ =?us-ascii?Q?O12lDZtRa+m3RVkQ6FzlRzNUMe0JVd6abTv8THsEnY1o3gOMEmj2FaH0ekoU?=
+ =?us-ascii?Q?GJGMRJbu7D7Z7fp1Ha4zYbiTsm7vSfmkmdiCLJk9KsX/385E8S/Ktpv+7SzF?=
+ =?us-ascii?Q?DUZKu49Kgjn2Bx6cPJIpQWHW56h0Z+6RwhF7zUSrSeHz5KQEJzLAoDjbiZQ9?=
+ =?us-ascii?Q?BMtge81s2Zd1wqqwSyzFdgXfLUAHWVwJEq0wcxibJtnlRpdQzfC6NhtN2CgR?=
+ =?us-ascii?Q?IMS7hRNAvQaZqH5pcbEwpDwD2CFzgXZnIXTt5lS4Rw77LFzRYlccT/JVeWfY?=
+ =?us-ascii?Q?uic+4ZKXyRJ27d8bx2i11FxF10HA+2CJYR2AN8rZKUeH3NIZnzXdiq3Yddvl?=
+ =?us-ascii?Q?NE4Dx8/FmIjteZLrJrN4MMax+bg82ZR1AJDdU5R6q9H1ie6WBug+wpD7g/EO?=
+ =?us-ascii?Q?zhqEsXf/C2YIN9GxaDkeWcHQsX0EseaehHwe02z8AI40EQTKX62W+Nh2UosB?=
+ =?us-ascii?Q?qAqAzOSxmNOjxd8T2ckH3gMh1biNlvlunIz7Ga4zBzAYDbG6yXFOLgO/AvMz?=
+ =?us-ascii?Q?Msz9H7aRt3CKV8sxwkK55UlRAUcWkjIrdARmDR1iTBSVtVtNyqHwPOk8+XNL?=
+ =?us-ascii?Q?/C69wvcDK6W6dSG20Tq1DZC7M4hL2QEvvUEU3F2/ZWjm3ylAC75BJhpmm74W?=
+ =?us-ascii?Q?EYXvGDwXsck=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(7053199007); DIR:OUT; SFP:1101; 
+ SFS:(13230040)(366016)(376014)(1800799024)(7053199007); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?jkjCgs8fp1t/GdAIVur2EeYJTs03aAMJlPAl52u0ay0AutSvnEVp0fcXiIQ6?=
- =?us-ascii?Q?RulLaSOaWHnHt1GumS9NwjjeHEzhaycoFAo5Y3bgsIubokR8wQldEo95cJ4O?=
- =?us-ascii?Q?iRU4W6kwCZGdiHscfgs/3WbHlff5oMgl13JxXPGVi43XdBp4OSywsUFDZYYr?=
- =?us-ascii?Q?dvau/mfD5tLUTkzq6/cb/e1QtprL1wCe+rISlcwbUvSQ3WbieozGX0qbd6is?=
- =?us-ascii?Q?BLJiIOk0W7g624N3udi5RnsHk2Cn7QIhQvBdSZw3648rfs/1olpkPc5sK3oo?=
- =?us-ascii?Q?x0cfiVN4w09A1SZiHrzGltf7bxOAfFrk1JIu/yXD6257MXyiwOU77aPsCNfM?=
- =?us-ascii?Q?s8o3ES/elgLpsDwAQnRi2o0sjNj8oz4ivwRgdGtmwk93Uhd1ygtR0uKkmJz9?=
- =?us-ascii?Q?jTQ5X5yRCkMoaK4GgGljaRChenWpOZA6ib9Ddn9pXxW7XsxruQy5niL8Nz/P?=
- =?us-ascii?Q?ZDF52gdsaqvuBlrXDDQN8YfVCc9LTvhzeL5+Xce09227BJf+3BcYolZhnG6r?=
- =?us-ascii?Q?tdo9f5jdKnP2sTlGfXp1h7nqi5KUC7kfC9RfE3C/ThJB5ioDDpoyn4x2bA5i?=
- =?us-ascii?Q?F1f69FQzHW1gxp7aT6ly0HgNvO/n0aQFf/vn4hTvH3mJ4UXK63qqnhJAmIUA?=
- =?us-ascii?Q?B9XDfnjojP2ipzqP96aG5mnGEhWddrHVU0mLXwgqBHOslvYxBBKXXzKkXj/y?=
- =?us-ascii?Q?e2Ngj6X88J1aW/oF2DdOw1M7v0rZeluaV4tfVUucXLB4ss6/IPS3tDn06yAO?=
- =?us-ascii?Q?q6kul+dlQuL29Mviz3Bjn5c4wEdOfg2rS44voW5SKqd2VJdsM7gMdEGLVr47?=
- =?us-ascii?Q?I+nuUOApQbj5p+N8QHKbGekaGZmC05kmx5EI4ka0pzKnvyPl313BLv9Gx86W?=
- =?us-ascii?Q?7aQTYryYserSJJeJvxAu5YvdSPkjJEFOWasQfHdjENp+YJU9OG4d++rcadYD?=
- =?us-ascii?Q?EGV/tBeNACgDB7kiI5Ln1pmucb7zFu+RM3Sb3g1MK0nwqgUeqToGuvJMzNHs?=
- =?us-ascii?Q?BX3c3smHjgWDxZUqF4RsCMqM5/vHINZrhInu3hlRev+I1tTL/atS7oVQeOzX?=
- =?us-ascii?Q?BH/Qxtf3HJAzvMSrA3/VNYAxMrtn7zB+veFZAgei16qqd7RBy+C8Eza2NBlZ?=
- =?us-ascii?Q?MwV9kVQ5Sd5Eg54LOj5p7kf4fV+ij7QglVWCerZqqUJM3abOq28wNR6aZ42m?=
- =?us-ascii?Q?MMbAtPexXBiYI6d+cs9nTsLWV1pX9tgI79IVt252ClTzYPHaohZjgu6qePJr?=
- =?us-ascii?Q?1A8U8iT7TLBfcwko2L9iF4ae8A3EiUX+dCP299/7DCXJ2cx5Y+UnS2GKwwWG?=
- =?us-ascii?Q?Ah/xfKlUs+veP6suAqTtdRDkWYR/8MIvZ34NZ36coh6TKYjiabAHJYiKe7aE?=
- =?us-ascii?Q?6ZpbIq+LRYaRnUzccf484QOZJVSb59P0H2h2EG315E22hG39FKTDVM7WkCl6?=
- =?us-ascii?Q?mDEB77ykwAOIxv7A8MJN1E1o7iJzuSPFbDQLHA1jqJCBESw+9EYCJsR7Y9aK?=
- =?us-ascii?Q?8VV48zCmXNvNcfwntMmJw52aUDZOMks4jWQJ+1GNU2+YFEIVdJxYxtfnROO9?=
- =?us-ascii?Q?CWW2nbKb4Huq2I5LdnvZjV+/iHbc33PeNmegMetRDhaSihFmFATnZmw8+Lh7?=
- =?us-ascii?Q?1A=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc06ad99-b8e2-41ee-a2a3-08ddfc15157f
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Q6mp8B+2S0Io+6UmYXFaLbER5xL1mUTrqDvcw4uSYKQqwJb28h3XNyuo/for?=
+ =?us-ascii?Q?rjSUcb/Yz8RFkxcCbFoOsQ9PzZ+8uVhhYWsDVx5kvcz8qmcGVAmBkWEF7zFE?=
+ =?us-ascii?Q?nRyW+UBg7Z+l3Sjq3S9Zr9Qo0916p5U/2PCH7LZrzPDiPn5ydoqUypu6GzcU?=
+ =?us-ascii?Q?1EiJZYB6oBzKOVK7xQyVeHftC/VN5websCvWdFCUatOE5GD9dyrguTXpCCdi?=
+ =?us-ascii?Q?dABjP5Is7Bt5jMHU86WHEhAUDAiqsCNktCZEITsqL+G7kr9FNxKa1d0/cfdD?=
+ =?us-ascii?Q?EBZO4aeVkqx6RprVi+THjs3mfDxmpKwoOX+NnL7ctyQxc2Y5uMP7PGvfBJf8?=
+ =?us-ascii?Q?4ieWC8IEWU8IQWz6Mb9r91p30KT/Lbc9CG4rGlMdwdujx1eD520FHBXurAhc?=
+ =?us-ascii?Q?3vJf7vDuoz5XKnvZdHCSsmayYV/vIUe55PqAV8oZ2YAAxdmeIVXxU3pSD5l+?=
+ =?us-ascii?Q?cNAzdVHO0NvcQ3Dpnz7gxbZBCKgPDPH00zyqtPxrQoquPSnIZ3U/W7KRffgH?=
+ =?us-ascii?Q?qsAj/chmsW6kFJfy1j7by5rO5a4t+vSOY4e+b67YE6p/8Fsvsrcm6C8+w492?=
+ =?us-ascii?Q?pxFmG3oRt2pFszzFVmS55e+mJPUoOUzlFGggFsmvZ1mafR+KEljTEdszdwRe?=
+ =?us-ascii?Q?CHwSjrecU+ed33RXHob4VMBtBOr/80FkGbSspmMilQdqqBpISM2NGdm+sS7K?=
+ =?us-ascii?Q?cABGccFi9GGplbK8MGADYAs3MuFjiIJXDa6LAVdgGh0rl5n2JEeeBBLWJjJa?=
+ =?us-ascii?Q?+Zwgptn52nxsfCfXsaxhWwQeKoJfMtMImU5hKLYcYQTZNbh+obuyYkK5whQw?=
+ =?us-ascii?Q?Bv7MvvWGvm6MPLG53li9uYFNDc+iuXVmm8jry9eXc58RUYBQbfaFuYZxFMja?=
+ =?us-ascii?Q?0z4XNNceku0ceVyO16GLC48UFbq++FDN2DpyShGQIuonVJLdkeL79L5Q9LpW?=
+ =?us-ascii?Q?5jT+ORo/skqwnvy1pSeNoYK7ZHlRsDwCmwezkKBnADP7mFdPQEpm5tO3nM+2?=
+ =?us-ascii?Q?ugRkqAbJbbEEEnZG75WFdpn3B2w2K5vYxWbnn2TEiZgClncviv3iV/nK4Mj0?=
+ =?us-ascii?Q?x9shuLB+fAsa3/qqv7r7DOlUK8uJt2472bYQpxiUtNGlUFkRZXSwuJweNMlZ?=
+ =?us-ascii?Q?LC8THH6yIvkoqwrzPrWWl87ctI26c6QC25geXKCONQPNgCAchg8yIVlPfALp?=
+ =?us-ascii?Q?GjDxq+YLEpB56YOfyv+l+ZJbw7eMBPt3i/yvBkGud1FgbIOC/9LZPG0FkgRc?=
+ =?us-ascii?Q?qb+CnnFzY8t1kgncXtiFVu3mqKWWrICYgoh3XZsvH5JtMfJwnKcJiICVZDBi?=
+ =?us-ascii?Q?aFci1Hz8reP9OdcXhMbXdFUPfnObsR1JEEfJtB19dn8UIL2xFJ6JLomL1AQD?=
+ =?us-ascii?Q?FUUBqBZ/Wqsb/Nd2oiUBnlV8CF9XQwJTU/7GcPhecefZnVtasMLRRyoUL1T4?=
+ =?us-ascii?Q?g9Dd16q8cbyDUbHhSko/dIq8lu24evj7Kel8AqbzDno3JhDEO5snpN+Bq087?=
+ =?us-ascii?Q?SlR97oX9an5puJcNvswRzYm/C+OQbIf0kKyIyzH7lmNDyD0UCPNhZF2MNFSN?=
+ =?us-ascii?Q?bNIY2I87XRQ/oQIFaJA2567GlTi1ZTtQtPwMToMq8C69Z09ngqQZB6msL2eo?=
+ =?us-ascii?Q?Hw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8e098d7-6d16-4652-5833-08ddfc165756
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 09:22:44.3867 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 09:31:44.2388 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5F5/RsqCWPSjKvetvSvkrRSTD2QjCFdPdqYZxtGwlQIfSQ3VnGshC5SUsuu31YSQZnVutZ32C3436+M9iBpnijeaI7xhj9HALPCC98ArBg4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6981
+X-MS-Exchange-CrossTenant-UserPrincipalName: QeoD8vVxZZTdWFbni4OmoWsVhoCrNPZw97d97M2gJjp1Rr+GMxIiqAcZ9qvX96YN9FQtww2Q9ejsUJYDQvs50fZfCx2CPePCCU0zaaksS4Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7325
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -183,8 +183,8 @@ On Thu, Sep 25, 2025 at 10:42:47AM +0200, David Marchand wrote:
 > <bruce.richardson@intel.com> wrote:
 > >
 > > On Wed, Sep 24, 2025 at 07:25:34PM +0200, David Marchand wrote:
-> > > A problem with the current headers check is that it relies on meson
-> > > dependencies objects that come with their include_directories
+> > > A problem with the current headers check is that it relies on
+> > > meson dependencies objects that come with their include_directories
 > > > directives, and all of those point at the library / driver sources.
 > > >
 > > > This means that we won't detect a public header including a private
@@ -198,40 +198,32 @@ On Thu, Sep 25, 2025 at 10:42:47AM +0200, David Marchand wrote:
 > > >
 > > > Signed-off-by: David Marchand <david.marchand@redhat.com>
 > >
-> > In general looks ok to me.  One small comment though - can we not have
-> > "staging" as a top-level directory, but instead hide it inside the
-> > buildtools directory, or even the chkincs directory? I dislike having
-> > too many subdirectories directly off the root of the project,
-> > especially ones purely for internal tooling.
+> > In general looks ok to me.
+> > One small comment though - can we not have "staging" as a top-level
+> > directory, but instead hide it inside the buildtools directory, or even the
+> > chkincs directory? I dislike having too many subdirectories directly off
+> > the root of the project, especially ones purely for internal tooling.
 > 
 > Well, at first I was trying to change the whole build process iow rely
 > only on the staging directory and remove all the include_directories:
-> directives from the declare_dependency() objects.  Libraries and apps
-> were ok, but there were a *lot* of complications with drivers (what a
-> *huge mess*, especially for NXP drivers with "compat.h" includes, and
-> Marvell drivers to a smaller extent).  I may retry in the future with
-> some AI tool that will brute force this :-).
+> directives from the declare_dependency() objects.
+> Libraries and apps were ok, but there were a *lot* of complications
+> with drivers (what a *huge mess*, especially for NXP drivers with
+> "compat.h" includes, and Marvell drivers to a smaller extent).
+> I may retry in the future with some AI tool that will brute force this :-).
 > 
-One note of caution here: if doing this, you may want to consider using
-run_command rather than a custom_target to copy the headers in order to
-avoid potentially slowing down the build.
+> For now, I gave up but did not reconsider the location of the staging part.
+> Moving to buildtools is indeed saner as it is only for the check now,
+> and I can also make this staging stuff dependent on the check_includes
+> option now.
+>
 
-We used to do this copying of header files in the old make build system,
-and one downside of it is that it means that the build of ".c" files in one
-directory cannot be started until the copying of headers from the dependent
-components are completed. The decision to use the include paths in the
-dependency objects rather than copying the headers to a central location
-was a deliberate decision when moving build system because it means that
-when you run "ninja", every single .c file can be compiled to a .o file
-in parallel, because all dependent headers are available at their original
-locations. For most components, it's only the final link stage that has any
-dependencies, the compile commands are all independent.
-
-On the other hand, using run_command is not necessarily a good solution
-either, because it means that all changes to the headers require a re-run
-of meson, which will also be slower because of all the copying. :-(
-
-Therefore, I'd tend towards keeping things as they are here, in order to
-minimise reconfiguration and build times.
+I wonder should we just consider making chkincs an install-time job rather
+than a build-time one? We could look to build chkincs using a custom
+install script (meson.add_install_script) after the header copies are
+already done for us. That should cut down on the complexity within the
+build system, but it does mean an additional install step to a temporary
+directory to get it to run. However, for use in our CI I don't see why
+having an install step with DEST_DIR set to /tmp shouldn't be feasible.
 
 /Bruce
