@@ -2,68 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29053CAC5A5
-	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 12:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14640CAC5A7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 25 Sep 2025 12:32:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0EB864042F;
-	Thu, 25 Sep 2025 14:09:53 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 292AF402AB
- for <dev@dpdk.org>; Thu, 25 Sep 2025 14:09:51 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58P1XQoO012994
- for <dev@dpdk.org>; Thu, 25 Sep 2025 05:09:50 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=RbQCk3zab2IZPvPEJHH4XZI
- WAKIt77DpC0q8aV1Eb3k=; b=ausQ+wg61I0o46e8iG6DXZlU1qSy7tvURK3nws9
- FcLA6H4nIvc0V/ErkR/Pi3FBCHKR2U9Q/c7YJLJhTfK1W3K5xeersbsGK/M3t6QE
- jSs5gEc75tYDMVxHIFhNJTN9QnHWu8BZNu0JggGhegECwOvai4YISTPasf2Qzaba
- vbQBJRfu6a8MbvG+sYUc2L+ftWjTwY7JJ59IVsiuv5+yco0bdcEwbFsRMdn8UTBc
- 4PHsqARNVMALQVP2PO+chJL+3rhkPqFlC5s1JYNMJTGhBjDpFFfaNPMbH4iZiJgL
- bsw/ITWVKAJ7wFRogrV415T0EGZDn+1zO55jyePlxsiZmhw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49cv6798ax-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 25 Sep 2025 05:09:49 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 25 Sep 2025 05:09:49 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 25 Sep 2025 05:09:49 -0700
-Received: from localhost.localdomain (unknown [10.28.34.29])
- by maili.marvell.com (Postfix) with ESMTP id 5EDB83F7043;
- Thu, 25 Sep 2025 05:09:47 -0700 (PDT)
-From: Shijith Thotton <sthotton@marvell.com>
-To: <jerinj@marvell.com>
-CC: Shijith Thotton <sthotton@marvell.com>, <dev@dpdk.org>,
- <pbhagavatula@marvell.com>
-Subject: [PATCH] event/cnxk: update queue weight mapping for CN20K
-Date: Thu, 25 Sep 2025 17:39:12 +0530
-Message-ID: <20250925120912.1137360-1-sthotton@marvell.com>
-X-Mailer: git-send-email 2.25.1
+	by mails.dpdk.org (Postfix) with ESMTP id 2A7AC4042F;
+	Thu, 25 Sep 2025 14:32:05 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id C5187402AB
+ for <dev@dpdk.org>; Thu, 25 Sep 2025 14:32:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1758803523;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=rgXMYpPiHC+GfZQJUbAkFbCYW69aFTIPuOJj0hCSXlc=;
+ b=gW9Nd5A8elfHsHV8wICJaPZK+LJhQbKjnYztV0oAc3WnqLMZQgyQp8mCWP/A7l91c8wxod
+ TKZqkYwYBuRryOVBlWJX0haxt8bIMEFCoRA4hnsxzE6ICe3T6LvBZJD1/50q5HIUS8s7R1
+ sPb9t45NhSeBXfC8a2X65sqnpCTcq4M=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-449-k-JnpYgJPj-dHutinuUeBg-1; Thu,
+ 25 Sep 2025 08:32:01 -0400
+X-MC-Unique: k-JnpYgJPj-dHutinuUeBg-1
+X-Mimecast-MFC-AGG-ID: k-JnpYgJPj-dHutinuUeBg_1758803521
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 9EADE1800365; Thu, 25 Sep 2025 12:32:00 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.225.72])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 6055D1956095; Thu, 25 Sep 2025 12:31:59 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com
+Subject: [PATCH v4 0/7] Add a stricter headers check
+Date: Thu, 25 Sep 2025 14:31:42 +0200
+Message-ID: <20250925123150.3063298-1-david.marchand@redhat.com>
+In-Reply-To: <20241127112617.1331125-1-david.marchand@redhat.com>
+References: <20241127112617.1331125-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: gZQCyF9TpckD3IJptGdoKp8iVsssWtn3nof0eiTUPVg_1758803521
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=Vef3PEp9 c=1 sm=1 tr=0 ts=68d5310d cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=yJojWOMRYYMA:10 a=M5GUcnROAAAA:8 a=VFDFmSU8EEjFXhA4Kb8A:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: gOMHS9kY6N20kInREiR_6vXEAqAD9WB1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDAxMiBTYWx0ZWRfX8M+clPHIXvg4
- PT16rfRdcpK+QSGHNaIa5OyBY9Cfk39X7UwyRj/qp9NALHSiLpAEeQNmj9eByA8HiWjg1zWE3E7
- bCZWsljTIBt+R+qabEkjJItHlC+CrU7LvfouXNssSIUB7BzmGlD0cyEVLsmnjow3iU2jOgjv1VY
- JFp7YI2gRlkgB5Gcp0HbpGBSf4dogunFW6Pu+6Uc6XY43CMA4sRAGfX7qemSFcae9CrEEHpGYeQ
- Bj7M7Vd2vc39qmtOncmkhVevmC0LoMiGR4NRB8hn0DtcnUuo7SnyWHiYQKij3Q0d1lw/NFXpKct
- g1oOgjOk3mM87nbl1tfNwucqjGvgdcDcXE3t/9IkVFoze58w1ecS5c55NBAdncQjKxxvsO4YdjZ
- c8i4bN/I
-X-Proofpoint-ORIG-GUID: gOMHS9kY6N20kInREiR_6vXEAqAD9WB1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-25_01,2025-09-24_01,2025-03-28_01
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,117 +66,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The CN20K platform accepts weights in the range of 1 to 255, while DPDK
-allows weights from 0 to 255. This patch aligns DPDK's weight values
-with the hardware-supported range.
+As explained in patch 6, the current headers check can not catch
+issues when a public header includes an internal header.
 
-Signed-off-by: Shijith Thotton <sthotton@marvell.com>
----
- drivers/event/cnxk/cn20k_eventdev.c | 70 ++++++++++++++++++++++++++++-
- drivers/event/cnxk/cn20k_eventdev.h |  1 +
- 2 files changed, 69 insertions(+), 2 deletions(-)
+Patch 1-5 fixes have not been marked as backport material as those bugs
+seems minor/easy to fix externally (by either including missing headers,
+or enabling enable_driver_sdk option).
 
-diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
-index 4552f6da97..b25e570211 100644
---- a/drivers/event/cnxk/cn20k_eventdev.c
-+++ b/drivers/event/cnxk/cn20k_eventdev.c
-@@ -20,6 +20,72 @@
- #define CN20K_SET_EVDEV_ENQ_OP(dev, enq_op, enq_ops)                                               \
- 	enq_op = enq_ops[dev->tx_offloads & (NIX_TX_OFFLOAD_MAX - 1)]
- 
-+static uint8_t
-+cn20k_sso_hw_weight(uint8_t weight)
-+{
-+	/* Map DPDK weight 0-255 to HW weight 1-255 */
-+	return (weight + 1) > CN20K_SSO_WEIGHT_MAX ? CN20K_SSO_WEIGHT_MAX : (weight + 1);
-+}
-+
-+static int
-+cn20k_sso_queue_setup(struct rte_eventdev *event_dev, uint8_t queue_id,
-+		      const struct rte_event_queue_conf *queue_conf)
-+{
-+	struct cnxk_sso_evdev *dev = cnxk_sso_pmd_priv(event_dev);
-+	uint8_t priority, weight, affinity;
-+
-+	priority = CNXK_QOS_NORMALIZE(queue_conf->priority, 0, RTE_EVENT_DEV_PRIORITY_LOWEST,
-+				      CNXK_SSO_PRIORITY_CNT);
-+	weight = cn20k_sso_hw_weight(queue_conf->weight);
-+	affinity = CNXK_QOS_NORMALIZE(queue_conf->affinity, 0, RTE_EVENT_QUEUE_AFFINITY_HIGHEST,
-+				      CNXK_SSO_AFFINITY_CNT);
-+
-+	plt_sso_dbg("Queue=%u prio=%u weight=%u affinity=%u", queue_id, priority, weight, affinity);
-+
-+	return roc_sso_hwgrp_set_priority(&dev->sso, queue_id, weight, affinity, priority);
-+}
-+
-+static int
-+cn20k_sso_queue_attribute_set(struct rte_eventdev *event_dev, uint8_t queue_id, uint32_t attr_id,
-+			      uint64_t attr_value)
-+{
-+	struct cnxk_sso_evdev *dev = cnxk_sso_pmd_priv(event_dev);
-+	uint8_t priority, weight, affinity;
-+	struct rte_event_queue_conf *conf;
-+
-+	conf = &event_dev->data->queues_cfg[queue_id];
-+
-+	switch (attr_id) {
-+	case RTE_EVENT_QUEUE_ATTR_PRIORITY:
-+		conf->priority = attr_value;
-+		break;
-+	case RTE_EVENT_QUEUE_ATTR_WEIGHT:
-+		conf->weight = attr_value;
-+		break;
-+	case RTE_EVENT_QUEUE_ATTR_AFFINITY:
-+		conf->affinity = attr_value;
-+		break;
-+	case RTE_EVENT_QUEUE_ATTR_NB_ATOMIC_FLOWS:
-+	case RTE_EVENT_QUEUE_ATTR_NB_ATOMIC_ORDER_SEQUENCES:
-+	case RTE_EVENT_QUEUE_ATTR_EVENT_QUEUE_CFG:
-+	case RTE_EVENT_QUEUE_ATTR_SCHEDULE_TYPE:
-+		/* FALLTHROUGH */
-+		plt_sso_dbg("Unsupported attribute id %u", attr_id);
-+		return -ENOTSUP;
-+	default:
-+		plt_err("Invalid attribute id %u", attr_id);
-+		return -EINVAL;
-+	}
-+
-+	priority = CNXK_QOS_NORMALIZE(conf->priority, 0, RTE_EVENT_DEV_PRIORITY_LOWEST,
-+				      CNXK_SSO_PRIORITY_CNT);
-+	weight = cn20k_sso_hw_weight(conf->weight);
-+	affinity = CNXK_QOS_NORMALIZE(conf->affinity, 0, RTE_EVENT_QUEUE_AFFINITY_HIGHEST,
-+				      CNXK_SSO_AFFINITY_CNT);
-+
-+	return roc_sso_hwgrp_set_priority(&dev->sso, queue_id, weight, affinity, priority);
-+}
-+
- static void *
- cn20k_sso_init_hws_mem(void *arg, uint8_t port_id)
- {
-@@ -1114,9 +1180,9 @@ static struct eventdev_ops cn20k_sso_dev_ops = {
- 	.dev_configure = cn20k_sso_dev_configure,
- 
- 	.queue_def_conf = cnxk_sso_queue_def_conf,
--	.queue_setup = cnxk_sso_queue_setup,
-+	.queue_setup = cn20k_sso_queue_setup,
- 	.queue_release = cnxk_sso_queue_release,
--	.queue_attr_set = cnxk_sso_queue_attribute_set,
-+	.queue_attr_set = cn20k_sso_queue_attribute_set,
- 
- 	.port_def_conf = cnxk_sso_port_def_conf,
- 	.port_setup = cn20k_sso_port_setup,
-diff --git a/drivers/event/cnxk/cn20k_eventdev.h b/drivers/event/cnxk/cn20k_eventdev.h
-index 8ea2878fa5..71f1fc6086 100644
---- a/drivers/event/cnxk/cn20k_eventdev.h
-+++ b/drivers/event/cnxk/cn20k_eventdev.h
-@@ -7,6 +7,7 @@
- 
- #define CN20K_SSO_DEFAULT_STASH_OFFSET -1
- #define CN20K_SSO_DEFAULT_STASH_LENGTH 2
-+#define CN20K_SSO_WEIGHT_MAX	       (0xff)
- 
- struct __rte_cache_aligned cn20k_sso_hws {
- 	uint64_t base;
+
 -- 
-2.25.1
+David Marchand
+
+Changes since v3:
+- narrowed down the changes under a check on check_includes= option,
+- moved the staging directories under buildtools/chkincs,
+
+Changes since v2:
+- major rework, dropping the makefile approach, and instead copying
+  headers to a staging directory used by the check,
+- rebased,
+- dropped changes on raw cnxk drivers and disabled the associated
+  build warning in the headers check,
+
+David Marchand (7):
+  baseband/acc: fix exported header
+  drivers: drop export of driver headers
+  eventdev: do not include driver header in DMA adapter
+  gpudev: fix driver header for Windows
+  drivers: fix some exported headers
+  buildtools/chkincs: use a staging directory for headers
+  power: separate public and driver headers
+
+ MAINTAINERS                                   |  1 +
+ buildtools/chkincs/meson.build                | 69 +++++++++++++------
+ .../chkincs/staging/drivers/meson.build       |  4 ++
+ buildtools/chkincs/staging/meson.build        |  5 ++
+ buildtools/meson.build                        |  1 +
+ buildtools/stage-headers.py                   | 32 +++++++++
+ drivers/baseband/acc/meson.build              |  2 +-
+ drivers/bus/vmbus/rte_vmbus_reg.h             |  6 ++
+ drivers/crypto/cnxk/rte_pmd_cnxk_crypto.h     |  2 +
+ drivers/meson.build                           | 26 ++++++-
+ drivers/net/dpaa/rte_pmd_dpaa.h               |  2 +
+ drivers/net/intel/iavf/rte_pmd_iavf.h         |  6 ++
+ drivers/net/mlx5/rte_pmd_mlx5.h               |  3 +
+ drivers/raw/dpaa2_cmdif/rte_pmd_dpaa2_cmdif.h |  2 +
+ drivers/raw/ntb/rte_pmd_ntb.h                 |  2 +
+ lib/bbdev/meson.build                         | 14 ++--
+ lib/eal/include/meson.build                   | 10 +++
+ lib/eal/meson.build                           | 12 ++++
+ lib/ethdev/meson.build                        |  6 +-
+ lib/eventdev/rte_event_dma_adapter.h          |  2 +-
+ lib/gpudev/gpudev.c                           |  1 +
+ lib/gpudev/gpudev_driver.h                    |  4 +-
+ lib/meson.build                               | 27 +++++++-
+ lib/mldev/meson.build                         |  5 +-
+ lib/power/meson.build                         |  7 +-
+ lib/power/power_cpufreq.h                     | 14 +---
+ lib/power/power_uncore_ops.h                  |  1 +
+ lib/power/rte_power_cpufreq.c                 |  2 +-
+ lib/power/rte_power_cpufreq.h                 | 15 +++-
+ lib/power/rte_power_uncore.c                  |  2 +-
+ lib/power/rte_power_uncore.h                  |  3 +-
+ lib/rawdev/meson.build                        |  3 +-
+ lib/regexdev/meson.build                      |  3 +-
+ lib/security/meson.build                      |  3 +-
+ meson.build                                   |  8 +++
+ 35 files changed, 242 insertions(+), 63 deletions(-)
+ create mode 100644 buildtools/chkincs/staging/drivers/meson.build
+ create mode 100644 buildtools/chkincs/staging/meson.build
+ create mode 100644 buildtools/stage-headers.py
+
+-- 
+2.51.0
 
