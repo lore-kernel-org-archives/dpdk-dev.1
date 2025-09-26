@@ -2,90 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC355CAC5AE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Sep 2025 15:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8A5CAC5B8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Sep 2025 15:49:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C65D940677;
-	Fri, 26 Sep 2025 17:43:36 +0200 (CEST)
-Received: from fout-b2-smtp.messagingengine.com
- (fout-b2-smtp.messagingengine.com [202.12.124.145])
- by mails.dpdk.org (Postfix) with ESMTP id 9BF7240261
- for <dev@dpdk.org>; Fri, 26 Sep 2025 17:43:35 +0200 (CEST)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfout.stl.internal (Postfix) with ESMTP id B509C1D00031;
- Fri, 26 Sep 2025 11:43:34 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-10.internal (MEProxy); Fri, 26 Sep 2025 11:43:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1758901414;
- x=1758987814; bh=z7uK6ns45AXfXw5ra3Wavu94gO5fXsIE0rQPTC9C83s=; b=
- a/0xUrZRELrqtAC/KnYnwcLw9UJFwtPUxcwng2Bh3wpxGrAdfsVLvuMtnyWxm7NO
- Ud9uIuwen8UdW0J649V571TT7T4yAru8BMrt+WAOdvd7fsftP9k75yPgA4BoHvZp
- l1Uyx2K08MpQyHyIhLBBc5isgujkK79GvgRuhGFai1LpYcA3oM8HPraD+fQjcWRM
- zJSki/2eYGTDkcZ69XkCWkHtuVVUnvLm636STunERM7ZfvCJw6en1aXThFIh3TzY
- HCBlSQfRHL6KoEUDy/JL0U5or6gZUCYYs8toHqyszHiVxxVDmnwpd0NaFT8WiBBY
- K9MrgqTPUgp5+Ax/05waig==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1758901414; x=
- 1758987814; bh=z7uK6ns45AXfXw5ra3Wavu94gO5fXsIE0rQPTC9C83s=; b=j
- 5N1Zx7bTw/f09/L5j0TYdQweGpkhFZ6HS6wTmYpwX9z+LjaFm3MGFcousZDfLdT+
- BsdDUPooSOqbnz+r6livdFiBe7onLj5UWKgOPpZETf3loIZknh98DssgIwII8sST
- nzR47aLWa989GuGznZMe3DKS9B/3BZs+8r38hZ5Y0eJGkMegcgsjYVl0vZPmhicy
- LBgLg+321UEBW2L9Ms7LLraJNXGDqQbTiPbBQx/etT8ZjtTtldtj4RXeu+oO1H5h
- f4yMClGgox7DxPf8VQJtlBefizhO7iuneRRIa90qHPKpRFIZIJJucX23VmzggIvJ
- 4+lI7SrBV8ICFSVCJEfaQ==
-X-ME-Sender: <xms:pbTWaL88rK29YSUeL_DgvrV7likD64yBC4zdoVEDNKUqrYcDs9A_WA>
- <xme:pbTWaBzXSqV8al0tf9nOoAnzQQT3yuqczZAH5rU3qLDiJ1iBHZhZvE7J0HVmCSLu1
- uyb0kC8mC_KQ780URI4EuSZC0GaTos4kO9bBbNyT5OGD1Ns1zKXVw>
-X-ME-Received: <xmr:pbTWaI4ay6ec7fTQyPrjAKgDUxL9u45Hns1PWege1MyK0fs2TCOuQNqqZy5G0Pjlzwmo_Vay3E5i8vdLClbwSKG-RA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeileejiecutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
- hrpefhvfevufffkfgjfhgggfgtsehtqhertddttdejnecuhfhrohhmpefvhhhomhgrshcu
- ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
- grthhtvghrnhepgedttdeljeejgeffkeekkedtjeevtdehvedtkeeivdeuuedvieduvdel
- veejueejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepkedpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhrkhhplh
- humhgsvghrrdhorhhgpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthht
- ohephihiphgvnhhguddrfigrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepshgrmh
- gvhhdrghhosghrihgvlhesihhnthgvlhdrtghomhdprhgtphhtthhopegsrhhutggvrdhr
- ihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtthhopehvlhgrughimhhirh
- drmhgvughvvggukhhinhesihhnthgvlhdrtghomhdprhgtphhtthhopehfvghnghgthhgv
- nhhgfigvnheshhhurgifvghirdgtohhmpdhrtghpthhtohepmhgssehsmhgrrhhtshhhrg
- hrvghshihsthgvmhhsrdgtohhm
-X-ME-Proxy: <xmx:pbTWaI_dphgl_RMHTGNTDockTKVzkEcHFRmrtUlb2meIqlw4FYMwMg>
- <xmx:pbTWaNqNez9HzWIuHEi4DVidseDLJ7wIayG-0h7FXX1y2O_wdj05-Q>
- <xmx:pbTWaJpf7k77vKHazgLMJbemjFdzKJ6e8umx6KaQyHVPz6vKKFNmQA>
- <xmx:pbTWaA2fmZsO6Qmm-xrzk-YcM5rCawOukwoQ6AJzixVaK7C3Q0YOTg>
- <xmx:prTWaOR5r1-7gBiCo2wbixx1X42Smddp6t2vMp4G1uLjaB9tYgcm9k9M>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 26 Sep 2025 11:43:32 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- fengchengwen <fengchengwen@huawei.com>,
- Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Subject: Re: [PATCH] hash: replace zero length array
-Date: Fri, 26 Sep 2025 17:43:29 +0200
-Message-ID: <2679209.vCJZsxu672@thomas>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FE59@smartserver.smartshare.dk>
-References: <20250820211901.21986-1-stephen@networkplumber.org>
- <0b845c31-7c76-4cc4-b1e6-a1912be7898b@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FE59@smartserver.smartshare.dk>
+	by mails.dpdk.org (Postfix) with ESMTP id 3FBB840677;
+	Fri, 26 Sep 2025 17:49:14 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 2EF7F40261;
+ Fri, 26 Sep 2025 17:49:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1758901753; x=1790437753;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=sFppT/r/jCVCp7Hb2FiajDqh1oSiczFHlUGodYrmazE=;
+ b=SfrvDUGirXOTkiFEQpafxj5tEp+3A35tvs9KJ9Cz0ZKzmTFn8/wg9knJ
+ gSjal1iPTY2YSm2xbErxQJrkL19zWegrO3hDuhrQXBVK+2eqw1s7zmVZb
+ 5ZfHTO4YUORrdyzuOgzN+Fn8I79dGvoVDxkD4fi+OuqVnmfVuI/cKU7RQ
+ G0xEWxEAtiaNAC4KcGnzNqYONAiedXMsl0JP4au4cqjp6TeenYgX1iLjr
+ 5sohVhsQyLCuBsz4/riF72V7K3A+3GF+PfzcmfIap1I3Im/9JEeLpPnHq
+ CqGWF/+tEk+cNfx1JEUSxe62YUq76aIIyiXZNYkm5z9Ht7e6GmVa4ei4A A==;
+X-CSE-ConnectionGUID: M10HspbIRBK2A0ZEkZOccA==
+X-CSE-MsgGUID: SBJSasJRQG+bq5RRQteVag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11565"; a="61405462"
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; d="scan'208";a="61405462"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Sep 2025 08:49:12 -0700
+X-CSE-ConnectionGUID: OYT6+IOuRzOvBMVhwHlMtw==
+X-CSE-MsgGUID: YdzpjdINRTatMU6USJpZfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,295,1751266800"; d="scan'208";a="177694255"
+Received: from silpixa00401840.ir.intel.com ([10.20.224.243])
+ by orviesa008.jf.intel.com with ESMTP; 26 Sep 2025 08:49:10 -0700
+From: Kai Ji <kai.ji@intel.com>
+To: dev@dpdk.org
+Cc: gakhil@marvell.com, konstantin.ananyev@huawei.com,
+ bruce.richardson@intel.com, thomas@monjalon.net,
+ stephen@networkplumber.org, Kai Ji <kai.ji@intel.com>, stable@dpdk.org
+Subject: [dpdk-dev v2 1/2] eal: Add rte_consttime_memsq() to prevent timing
+ attacks memcmp.
+Date: Fri, 26 Sep 2025 15:49:04 +0000
+Message-Id: <20250926154905.54416-1-kai.ji@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250925102223.145471-1-kai.ji@intel.com>
+References: <20250925102223.145471-1-kai.ji@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,13 +62,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> > > Zero-length arrays are a GNU C extension and instead use the ISO C99
-> > > flexible array member.
-> > >
-> > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> > Acked-by: Chengwen Feng <fengchengwen@huawei.com>
-> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+Bugzilla ID: 1773
+Cc: stable@dpdk.org
 
-Applied, thanks.
+[0] https://bugs.dpdk.org/show_bug.cgi?id=1773
 
+Signed-off-by: Kai Ji <kai.ji@intel.com>
+---
+ lib/eal/include/rte_common.h | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index 9e7d84f929..ddbba083be 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -700,6 +700,40 @@ rte_is_aligned(const void * const __rte_restrict ptr, const unsigned int align)
+ 	return ((uintptr_t)ptr & (align - 1)) == 0;
+ }
+ 
++/**
++ * Constant-time memory inequality comparison.
++ *
++ * This function compares two memory regions in constant time, making it
++ * resistant to timing side-channel attacks. The execution time depends only
++ * on the length parameter, not on the actual data values being compared.
++ *
++ * This is particularly important for cryptographic operations where timing
++ * differences could leak information about secret keys, passwords, or other
++ * sensitive data.
++ *
++ * @param a
++ *   Pointer to the first memory region to compare
++ * @param b
++ *   Pointer to the second memory region to compare
++ * @param n
++ *   Number of bytes to compare
++ * @return
++ *   false if the memory regions are identical, true if they differ
++ */
++static inline bool
++rte_consttime_memneq(const void *a, const void *b, size_t n)
++{
++	const volatile uint8_t *pa = (const volatile uint8_t *)a;
++	const volatile uint8_t *pb = (const volatile uint8_t *)b;
++	uint8_t result = 0;
++	size_t i;
++
++	for (i = 0; i < n; i++)
++		result |= pa[i] ^ pb[i];
++
++	return result != 0;
++}
++
+ /*********** Macros for compile type checks ********/
+ 
+ /* Workaround for toolchain issues with missing C11 macro in FreeBSD */
+-- 
+2.34.1
 
