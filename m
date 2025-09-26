@@ -2,71 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35FC1CAC5B8
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Sep 2025 18:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E42CAC5AE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Sep 2025 18:12:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C4CF40277;
-	Fri, 26 Sep 2025 20:10:22 +0200 (CEST)
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com
- [209.85.222.180])
- by mails.dpdk.org (Postfix) with ESMTP id 8ABCC40262
- for <dev@dpdk.org>; Fri, 26 Sep 2025 20:10:21 +0200 (CEST)
-Received: by mail-qk1-f180.google.com with SMTP id
- af79cd13be357-85e76e886a0so137683885a.1
- for <dev@dpdk.org>; Fri, 26 Sep 2025 11:10:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2F08140277;
+	Fri, 26 Sep 2025 20:12:40 +0200 (CEST)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com
+ [209.85.222.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 86D8740262
+ for <dev@dpdk.org>; Fri, 26 Sep 2025 20:12:38 +0200 (CEST)
+Received: by mail-qk1-f171.google.com with SMTP id
+ af79cd13be357-86278558d6fso66396285a.1
+ for <dev@dpdk.org>; Fri, 26 Sep 2025 11:12:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758910221;
- x=1759515021; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=Dbqa0JXcQrZe7FI66xxyt3RwDgDnRnfuLSmK9wyIBeM=;
- b=Bn9JIHX0Fi3Ejzu0oUeOINx4MkiaZicBcmdtK4Xs5K8Oh2U2F1kzv/Wj0Z4hbT7sNm
- qN92f5jtocmkYROA4BcE/WV+MRzrx/Yyz69j8E+TSFossXZGZ7S73TKbT9tGeTMMnmWm
- r6nwp80HyI6OwzCmj3aZIO41y7BHtmcfIg/c3pGuPPoHZ393toKdcAKpBLMWPtOZWtNQ
- bMIOU6xOVmS1BwxmmcZKqkS+o05Yx5VLukBapHjE1KAeA9aKWJpn53g0OgrEcWd6kChk
- 1jiEVax8VS0aDvLqj1TbBlo9CXQyRqXTXc2pXI+Qb3pssl2UBKcSYTfBJEDHioa+a6Xq
- 8UKw==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758910358;
+ x=1759515158; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=VfkFXbalWsvLPofd5XQ2pRNFNUPH3PS9ccEKvcyEkGw=;
+ b=cuo+My+jBE7V8PdGgPRexunmHMo+tM2sb++Ie84v9jy375QSAtCfZ6nbFoL0pIdj60
+ +J+uTbimGmy8aNDMNjwFKobO7OahTcC+7oSwoeS02u7Psz3ak9p8hxQhRZhNs2A5YUvB
+ EeOra8QGgLr3zB7lyIh6ptwC5WOPhavIRgDAFtA8BqzxtFgxbcNGPmx7uExJBRHaBTH9
+ 27UjPlPzjLIVLrSJU4BBO+9Mb891RAJHXHQUd7avWc6CmBR8zk7HT0U+s4q+BQuVno8C
+ JxQi0Jceq/9Ex/T4XSuHuPGBPoHkmb962157Sil/Rd28GpvKl3AWgPo6C5q6RKRdQwLQ
+ xrSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1758910221; x=1759515021;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=Dbqa0JXcQrZe7FI66xxyt3RwDgDnRnfuLSmK9wyIBeM=;
- b=JP05NSJSsbAuV98eMF+HGr20ofvb4woDfAF+avtCywhCcUcRaET1QctdRO/UH6k9Qg
- h2AUYQ4gVU/hTzRmM5ngqbc9Q1yrUGz1MgnQWpPJ1I5oKrjwCTWcewBGR/E639Qmphdi
- XP88ToMZUoLgMH1g2L50e/R7nF/5JnHu30y5P7dq97Se0Qhy817DscWyx5hVjJZg2PPK
- IQnRuNZu6/9QwvUCc1kK1rw+ltTFxDyQp6zPKpcL2tiWun8NVnwNoe/h2x1ZBo6xdnxZ
- eZ+kS1YASBRVNCU96kLUUKloVaGwme559qg2K4pjuZDzP2n3QqgnUZB6Asiwjv8F+vpJ
- iPww==
-X-Gm-Message-State: AOJu0YxSnc8FGONsIx8NDg5nbEZ5U8c0RrN4eCaIV++i7asbG955T8qD
- Ki0MuNGCgPjZZcLbMdttjJeGTovv39rYGw67Zo0DgIAMfZZ8P68l+InouZjlTZ0PeHTcrQVyg6w
- NOKKjU2E=
-X-Gm-Gg: ASbGncv6qbDh8r1oRc9jmfhWWTbenTSEN7slRIEh7mV8xxMu9nAmuOx4EACQfngBcWN
- vlTV2H/wMkJUlek8gS8bgKe9uObwmqpweF6LPUSjRrUQ2of9nAWzGXho77Sn45C3ovBNZswNYN9
- tTtoivuiggU4woZiangXvNEQqzCEmjuNWC691yo5oduk33LuYN+jYDGO79DIJXyW4MvuRkvV7SK
- vqs5milmxpSYJj5Kg89mO61RM68+Jj0huP94UmKqHY4cI9LajWfhCEsWV3lZ6Oy0UnIj+d7rqcK
- q81ajj1Mj7HalsxIXEe9WRe6f4MlegbDfef9QQAGtPst8pKqdxj+CTgE9o2bA7dYWO2kmGFl+xr
- ULTGbcJgnY9pEtByX/inKBKqgGcH3N5xkT4dcToBNNQPzk3oNM9ZE1gB2dXp3wTf7TzkMkobu3w
- qEbah93GU=
-X-Google-Smtp-Source: AGHT+IHtYYugU/3miPX59pFXTf6B45tu1gttWPPfrBN7aAavzPPz560ZfqMZ4lzq/+soOveXvgNN+w==
-X-Received: by 2002:a05:620a:a081:b0:85d:aabb:47eb with SMTP id
- af79cd13be357-85daabb4f6bmr652449585a.1.1758910220837; 
- Fri, 26 Sep 2025 11:10:20 -0700 (PDT)
-Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20230601; t=1758910358; x=1759515158;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=VfkFXbalWsvLPofd5XQ2pRNFNUPH3PS9ccEKvcyEkGw=;
+ b=P5UlEpS4vgaJrl3w/zzvqtkJja+sIEyd4csDdFvLiSg21aJWmHqd665v4PwHiRQi8z
+ DGE6JLGOg4L/XKvOhXxOxifrUHuFfENFD6jyZ20SR8H8Bql/CjG9U5uKXRpZ+reVeP+c
+ 7nIDiW2qtdnOfxAs0OD3WSoEop8S6EWQhqn+rZaKfx4R2lcp07lff/Zaj9ZuXC8XNYI/
+ fq/ScGD7fHWIWujrELd1I96JbzTgW0KEWDsEAAZgLZQDXwQNzLCt+Nl6nsUbHcO6KnGx
+ DRBd7Da5c2M+hZ52xLhh/eI4LchQLWR7Yj2cDjmqnVlqrjpStpxoPeScn3L1uX4QIrq3
+ k+qA==
+X-Gm-Message-State: AOJu0YywEapVqOLQcuZAtnYzwQjrVQsA48pR0BrSwWIe7g1vpzZ8I3yy
+ Gn0q749RwNDEyESQTT6PRhZGs3SAGjBdPUvXyc/61YUscTr2XPw22uYSSEIQTZDvAVyfFX4gyU+
+ W7Sx5vlo=
+X-Gm-Gg: ASbGnct50D4uyu2YsYuUhQp6+v5azpO0/JkUKEuOasGnn3E9y2wSP8UqmEZFzmWiBQU
+ MIA4asGYq6rRrQELEFifv/Psgq2+EeOoyGMHJ5MJk04zPz7CKXHf2+8KUAM1MDw0bJYOPpMh5Ka
+ TwaaHcolCFKpXRFRr12535FdGoymoSHM2sgK9Tsb8Pc6s2xH6ZSJGe1joWkUll1TnGgU9PK9qsP
+ XaC8+0wcovpn/N3EftTFDUKRTNHCDS3LVqb+LPi8w/iaDsnlsUQHGfI0utlisXWycEGwmX+nd8C
+ 3yURXxAQ9I0C3qNNeu+ylVai1eB8ZlnCS0ByBi5qyTMg0CSlCmb5UVew9f8eMnMt1HcDmgTXacW
+ 602e6uO645JRqCAU4flr917Ulc7TcAnWcQZRHqZovzxk60SAH4lqKrCNWsmjLnWRVJwLBOuss5Y
+ E=
+X-Google-Smtp-Source: AGHT+IHMiWhhBRFWLYWjwLUaPM4udS0yCXVyctJIJsGirzllYNKSTy08uNKkZdjOI8ovJPxW5zIp5Q==
+X-Received: by 2002:a05:620a:480c:b0:80f:1ef6:6510 with SMTP id
+ af79cd13be357-85ae97a5cfdmr1045924985a.81.1758910357765; 
+ Fri, 26 Sep 2025 11:12:37 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-85c2737847dsm317224585a.13.2025.09.26.11.10.19
+ af79cd13be357-85c28a89bd4sm320816685a.19.2025.09.26.11.12.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 26 Sep 2025 11:10:20 -0700 (PDT)
+ Fri, 26 Sep 2025 11:12:37 -0700 (PDT)
+Date: Fri, 26 Sep 2025 11:12:33 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Junlong Wang <wang.junlong1@zte.com.cn>, Lijie Shan <shan.lijie@zte.com.cn>
-Subject: [PATCH] net/zxdh: avoid use of rte_memcpy
-Date: Fri, 26 Sep 2025 11:10:17 -0700
-Message-ID: <20250926181017.470585-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.47.3
+To: Kai Ji <kai.ji@intel.com>
+Cc: dev@dpdk.org, gakhil@marvell.com, konstantin.ananyev@huawei.com,
+ bruce.richardson@intel.com, thomas@monjalon.net
+Subject: Re: [dpdk-dev v3 1/2] eal: Add rte_consttime_memneq() to prevent
+ timing attacks memcmp.
+Message-ID: <20250926111233.4c0b983a@hermes.local>
+In-Reply-To: <20250926160209.56496-1-kai.ji@intel.com>
+References: <20250926154905.54416-1-kai.ji@intel.com>
+ <20250926160209.56496-1-kai.ji@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,144 +85,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The regular library memcpy has more error checking and is as
-fast or faster for small fixed sizes. Use struct assignment
-for even more type checking.
+On Fri, 26 Sep 2025 16:02:08 +0000
+Kai Ji <kai.ji@intel.com> wrote:
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/zxdh/zxdh_flow.c | 53 ++++++++++++++++--------------------
- 1 file changed, 23 insertions(+), 30 deletions(-)
+> +/**
+> + * Constant-time memory inequality comparison.
+> + *
+> + * This function compares two memory regions in constant time, making it
+> + * resistant to timing side-channel attacks. The execution time depends only
+> + * on the length parameter, not on the actual data values being compared.
+> + *
+> + * This is particularly important for cryptographic operations where timing
+> + * differences could leak information about secret keys, passwords, or other
+> + * sensitive data.
+> + *
+> + * @param a
+> + *   Pointer to the first memory region to compare
+> + * @param b
+> + *   Pointer to the second memory region to compare
+> + * @param n
+> + *   Number of bytes to compare
+> + * @return
+> + *   false if the memory regions are identical, true if they differ
+> + */
+> +static inline bool
+> +rte_consttime_memneq(const void *a, const void *b, size_t n)
 
-diff --git a/drivers/net/zxdh/zxdh_flow.c b/drivers/net/zxdh/zxdh_flow.c
-index 7a2e20ac39..1167f53641 100644
---- a/drivers/net/zxdh/zxdh_flow.c
-+++ b/drivers/net/zxdh/zxdh_flow.c
-@@ -94,9 +94,9 @@ static void
- zxdh_adjust_flow_op_rsp_memory_layout(void *old_data,
- 		size_t old_size, void *new_data)
- {
--	rte_memcpy(new_data, old_data, sizeof(struct zxdh_flow));
-+	memcpy(new_data, old_data, sizeof(struct zxdh_flow));
- 	memset((char *)new_data + sizeof(struct zxdh_flow), 0, 4);
--	rte_memcpy((char *)new_data + sizeof(struct zxdh_flow) + 4,
-+	memcpy((char *)new_data + sizeof(struct zxdh_flow) + 4,
- 		(char *)old_data + sizeof(struct zxdh_flow),
- 		old_size - sizeof(struct zxdh_flow));
- }
-@@ -1328,14 +1328,11 @@ static int fd_flow_parse_pattern(struct rte_eth_dev *dev, const struct rte_flow_
- 						ipv4_mask->hdr.type_of_service;
- 				key->frag_flag = (ipv4_spec->hdr.fragment_offset != 0) ? 1 : 0;
- 				key_mask->frag_flag = (ipv4_mask->hdr.fragment_offset != 0) ? 1 : 0;
--				rte_memcpy((uint32_t *)key->src_ip + 3,
--							 &ipv4_spec->hdr.src_addr, 4);
--				rte_memcpy((uint32_t *)key->dst_ip + 3,
--							 &ipv4_spec->hdr.dst_addr, 4);
--				rte_memcpy((uint32_t *)key_mask->src_ip + 3,
--							 &ipv4_mask->hdr.src_addr, 4);
--				rte_memcpy((uint32_t *)key_mask->dst_ip + 3,
--							 &ipv4_mask->hdr.dst_addr, 4);
-+
-+				memcpy((uint32_t *)key->src_ip + 3, &ipv4_spec->hdr.src_addr, 4);
-+				memcpy((uint32_t *)key->dst_ip + 3, &ipv4_spec->hdr.dst_addr, 4);
-+				memcpy((uint32_t *)key_mask->src_ip + 3, &ipv4_mask->hdr.src_addr, 4);
-+				memcpy((uint32_t *)key_mask->dst_ip + 3, &ipv4_mask->hdr.dst_addr, 4);
- 			}
- 			break;
- 		case RTE_FLOW_ITEM_TYPE_IPV6:
-@@ -1364,14 +1361,10 @@ static int fd_flow_parse_pattern(struct rte_eth_dev *dev, const struct rte_flow_
- 				key->nw_proto = ipv6_spec->hdr.proto;
- 				key_mask->nw_proto = ipv6_mask->hdr.proto;
- 
--				rte_memcpy(key->src_ip,
--							 &ipv6_spec->hdr.src_addr, 16);
--				rte_memcpy(key->dst_ip,
--							 &ipv6_spec->hdr.dst_addr, 16);
--				rte_memcpy(key_mask->src_ip,
--							 &ipv6_mask->hdr.src_addr, 16);
--				rte_memcpy(key_mask->dst_ip,
--							 &ipv6_mask->hdr.dst_addr, 16);
-+				memcpy(key->src_ip, &ipv6_spec->hdr.src_addr, 16);
-+				memcpy(key->dst_ip, &ipv6_spec->hdr.dst_addr, 16);
-+				memcpy(key_mask->src_ip, &ipv6_mask->hdr.src_addr, 16);
-+				memcpy(key_mask->dst_ip, &ipv6_mask->hdr.dst_addr, 16);
- 			}
- 			break;
- 		case RTE_FLOW_ITEM_TYPE_TCP:
-@@ -1477,8 +1470,8 @@ static int fd_flow_parse_pattern(struct rte_eth_dev *dev, const struct rte_flow_
- 								 "Invalid vxlan mask");
- 					return -rte_errno;
- 			}
--			rte_memcpy(key->vni, vxlan_spec->vni, 3);
--			rte_memcpy(key_mask->vni, vxlan_mask->vni, 3);
-+			memcpy(key->vni, vxlan_spec->vni, 3);
-+			memcpy(key_mask->vni, vxlan_mask->vni, 3);
- 			break;
- 		}
- 		case RTE_FLOW_ACTION_TYPE_VOID:
-@@ -1573,10 +1566,10 @@ fd_flow_parse_vxlan_encap(struct rte_eth_dev *dev __rte_unused,
- 		switch (items->type) {
- 		case RTE_FLOW_ITEM_TYPE_ETH:
- 			item_eth = items->spec;
--			rte_memcpy(&dh_flow->encap0.dst_mac1, item_eth->dst.addr_bytes, 2);
--			rte_memcpy(&dh_flow->encap1.src_mac1, item_eth->src.addr_bytes, 2);
--			rte_memcpy(&dh_flow->encap0.dst_mac2, &item_eth->dst.addr_bytes[2], 4);
--			rte_memcpy(&dh_flow->encap1.src_mac2, &item_eth->src.addr_bytes[2], 4);
-+			memcpy(&dh_flow->encap0.dst_mac1, item_eth->dst.addr_bytes, 2);
-+			memcpy(&dh_flow->encap1.src_mac1, item_eth->src.addr_bytes, 2);
-+			memcpy(&dh_flow->encap0.dst_mac2, &item_eth->dst.addr_bytes[2], 4);
-+			memcpy(&dh_flow->encap1.src_mac2, &item_eth->src.addr_bytes[2], 4);
- 			dh_flow->encap0.dst_mac1 = rte_bswap16(dh_flow->encap0.dst_mac1);
- 			dh_flow->encap1.src_mac1 = rte_bswap16(dh_flow->encap1.src_mac1);
- 			dh_flow->encap0.dst_mac2 = rte_bswap32(dh_flow->encap0.dst_mac2);
-@@ -1592,9 +1585,9 @@ fd_flow_parse_vxlan_encap(struct rte_eth_dev *dev __rte_unused,
- 			dh_flow->encap0.tos = item_ipv4->hdr.type_of_service;
- 			dh_flow->encap0.ttl = item_ipv4->hdr.time_to_live;
- 			addr = rte_bswap32(item_ipv4->hdr.src_addr);
--			rte_memcpy((uint32_t *)dh_flow->encap1.sip.ip_addr + 3, &addr, 4);
-+			memcpy((uint32_t *)dh_flow->encap1.sip.ip_addr + 3, &addr, 4);
- 			addr = rte_bswap32(item_ipv4->hdr.dst_addr);
--			rte_memcpy((uint32_t *)dh_flow->encap0.dip.ip_addr + 3, &addr, 4);
-+			memcpy((uint32_t *)dh_flow->encap0.dip.ip_addr + 3, &addr, 4);
- 			break;
- 		case RTE_FLOW_ITEM_TYPE_IPV6:
- 			item_ipv6 = items->spec;
-@@ -1603,7 +1596,7 @@ fd_flow_parse_vxlan_encap(struct rte_eth_dev *dev __rte_unused,
- 					(item_ipv6->hdr.vtc_flow & RTE_IPV6_HDR_TC_MASK) >>
- 						RTE_IPV6_HDR_TC_SHIFT;
- 			dh_flow->encap0.ttl = item_ipv6->hdr.hop_limits;
--			rte_memcpy(dh_flow->encap1.sip.ip_addr, &item_ipv6->hdr.src_addr, 16);
-+			memcpy(dh_flow->encap1.sip.ip_addr, &item_ipv6->hdr.src_addr, 16);
- 			dh_flow->encap1.sip.ip_addr[0] =
- 				rte_bswap32(dh_flow->encap1.sip.ip_addr[0]);
- 			dh_flow->encap1.sip.ip_addr[1] =
-@@ -1612,7 +1605,7 @@ fd_flow_parse_vxlan_encap(struct rte_eth_dev *dev __rte_unused,
- 				rte_bswap32(dh_flow->encap1.sip.ip_addr[2]);
- 			dh_flow->encap1.sip.ip_addr[3] =
- 				rte_bswap32(dh_flow->encap1.sip.ip_addr[3]);
--			rte_memcpy(dh_flow->encap0.dip.ip_addr, &item_ipv6->hdr.dst_addr, 16);
-+			memcpy(dh_flow->encap0.dip.ip_addr, &item_ipv6->hdr.dst_addr, 16);
- 			dh_flow->encap0.dip.ip_addr[0] =
- 					rte_bswap32(dh_flow->encap0.dip.ip_addr[0]);
- 			dh_flow->encap0.dip.ip_addr[1] =
-@@ -1884,7 +1877,7 @@ vf_flow_msg_process(enum zxdh_msg_type msg_type, struct rte_eth_dev *dev,
- 	struct zxdh_flow_op_rsp *flow_rsp = (struct zxdh_flow_op_rsp *)flow_op_rsp;
- 
- 	dh_flow->hash_search_index = hw->hash_search_index;
--	rte_memcpy(&flow_msg->dh_flow, dh_flow, sizeof(struct zxdh_flow));
-+	flow_msg->dh_flow = *dh_flow;
- 
- 	zxdh_msg_head_build(hw, msg_type, &msg_info);
- 	ret = zxdh_vf_send_msg_to_pf(dev, &msg_info, sizeof(struct zxdh_msg_info),
-@@ -1909,7 +1902,7 @@ vf_flow_msg_process(enum zxdh_msg_type msg_type, struct rte_eth_dev *dev,
- 	if (msg_type == ZXDH_FLOW_HW_ADD)
- 		dh_flow->flowentry.hw_idx = flow_rsp->dh_flow.flowentry.hw_idx;
- 	if (count)
--		rte_memcpy((void *)count, &flow_rsp->count, sizeof(flow_rsp->count));
-+		memcpy((void *)count, &flow_rsp->count, sizeof(flow_rsp->count));
- 
- 	return ret;
- }
--- 
-2.47.3
-
+prefer FreeBSD naming i.e memeq instead of memneq
