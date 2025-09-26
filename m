@@ -2,52 +2,166 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD38CAC5AC
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Sep 2025 08:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F882CAC5AE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Sep 2025 09:06:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A8BF40693;
-	Fri, 26 Sep 2025 10:54:21 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id 048D94066D
- for <dev@dpdk.org>; Fri, 26 Sep 2025 10:54:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 39DA44066A;
+	Fri, 26 Sep 2025 11:06:17 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id D207C4042F
+ for <dev@dpdk.org>; Fri, 26 Sep 2025 11:06:15 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1758876860; x=1790412860;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=I0cBO1JIO/26kFlKenSL2HHGUar6sYFG92m+KC6wtZ0=;
- b=k2JNe0rLB19SEuHi4xSSjWVqBVIMklok42ESLpZDnJivOMKeWtpGm/a4
- qjDC6yBk4hHekI+sxDVWZNCIxrpH2PQejJGE1jD6mckCk0kuVBNf+mRaX
- cT81IIGOWKcxbhm9/TyrNx8Bn8mOgbrXpv5I/k8AVKm20vyRxEVMGo60L
- 1pAU4Et36TY0kOKvB55P6hOnRBsfQ3tZVSePSc6xW/USutOLnOiygRR91
- yheCpw7DO2Xt/21UKLPsR5JCvbi9wqBE4ZaTNvLBQ8K3upxnWKjEjwbQf
- 9jNdbYXvZnqfcv8M0Prhm5UgILnbUrhUMsjX9dKgN3OIJQO+dfMfAyz+B g==;
-X-CSE-ConnectionGUID: QptVab1JQ/qsyDMavVKbfw==
-X-CSE-MsgGUID: 5AZAXb8OScKoCWTA1st5vA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11564"; a="83815216"
-X-IronPort-AV: E=Sophos;i="6.18,294,1751266800"; d="scan'208";a="83815216"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Sep 2025 01:54:19 -0700
-X-CSE-ConnectionGUID: 80PnUZlLT9+hNa6e9//JVw==
-X-CSE-MsgGUID: vnsUpiBBSRC62VSn6+fqPg==
+ t=1758877576; x=1790413576;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=OPXEApRMkgml27mPxaP3HjNp9yqY5Yi8ueMGc5487k8=;
+ b=LdgRZGQcwp9pzB8i+X2fvXbOlkUhbso9BSxRO5gYwouhLr21VdjFuNYC
+ XhE7w3HYqAcS2IVhX2fePbCLY3y10/SSzGPBZA/sNGc+cZzKVjRpAvOF8
+ wA1SGHsju4bJYpieQxz3WL+8OfXt6mEKqNFJC4BJEBGELxzY1wOlZKUh3
+ sJPMyLsmXZTDx0ABpFNdWCUyXqogsK7OsKuSZtcKWgv6NPcNLKISDAK84
+ aSos6t6pdOkebC+kLriwcRao3W+rB91Cd0kL7fDOnzRoYKIC1mHkrbYj/
+ at4sZElMwzPbYHqovDKj5sxyDOmDaejJmKKDBDS4WUDO0sUPQSfppr2dR Q==;
+X-CSE-ConnectionGUID: Gf5WQckZT0+UjprOyA1DuQ==
+X-CSE-MsgGUID: V+9mJOWvQI2calGguzyLBg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65020526"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="65020526"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Sep 2025 02:06:14 -0700
+X-CSE-ConnectionGUID: VZ9AlcYbSbmxUtpm7DRXKA==
+X-CSE-MsgGUID: TKYc1vAFQkaKD9Ozx0aKUA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,294,1751266800"; d="scan'208";a="177170933"
-Received: from unknown (HELO srv24..) ([10.138.182.231])
- by fmviesa007.fm.intel.com with ESMTP; 26 Sep 2025 01:54:17 -0700
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Subject: [PATCH v3 2/2] net/idpf: enable AVX2 for split queue Tx
-Date: Fri, 26 Sep 2025 14:24:04 +0530
-Message-Id: <20250926085404.2074382-3-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250926085404.2074382-1-shaiq.wani@intel.com>
-References: <20250917052658.582872-1-shaiq.wani@intel.com/>
- <20250926085404.2074382-1-shaiq.wani@intel.com>
+X-IronPort-AV: E=Sophos;i="6.18,294,1751266800"; d="scan'208";a="177954127"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Sep 2025 02:06:14 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 26 Sep 2025 02:06:13 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 26 Sep 2025 02:06:13 -0700
+Received: from CH4PR04CU002.outbound.protection.outlook.com (40.107.201.57) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 26 Sep 2025 02:06:10 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AWWwjM+7IFXLqAuMmVLwhNT9UDSxqRYJBPqCYLcgY0nBr+Q4WwKtrB/WVwwUFyhZQlT8RM16RGdmVM0rAKBlkyBd8tSXtWTyBQ1Oh6Tq1ttIupoTdvkA4aBWfNuqhFYcRXP/lhsvy579zsYbEEXmdDoaLc+yiZw3Y2E/h4MKewfskK0Kfjt8DdPaT5L7vwB1eRSJavpACv0K6wEsW2+plrPKq3sqT7SZuuIV5+a8VQCfj7X1RwRXnYb68V2aKv8k3Mvzbd7dJtEvGYkqZ4zQOCagHisnYRNEJXJfN6XHop3xR/VL/P6ouUj72UzZ8VBtH96iGa52iipu68hqCfqUEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4sm+OWDueS8femYmH7iMTPZP5ff0/zlp9J1V1hHbj/M=;
+ b=hcry4wKjjYkt0t8IU2L/gJRUjFdriDP5PzEvMSRi2fE4nnn7RPo2YhHEBcOvSddekJwXfxYgnn8Q9XOwajC/5rJsqI7KttUYmEsSP4ICY4h6jKDcgMnouBwsf8MwqCz1UVJesVgE6ZoQnazHqifWDXnWmc3Rv96PyybRioM1O/GV7TN0QkGzvrygmjgEJ89T7T1Qv8fEEAjuwZds/eRUE5D553ODgm1lg4xnHjGsBbc9g2paSWj1TSVOjAuV8X9Ijd60+hWW5+UaywFfSqhVgSkU3J4ix6BfDUwSgbBFzWdBUJE+GhRVf56KJi5mFRxiseqO45h+3BgP/OEjT10uGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by SJ0PR11MB5199.namprd11.prod.outlook.com (2603:10b6:a03:2dd::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.13; Fri, 26 Sep
+ 2025 09:06:06 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9160.010; Fri, 26 Sep 2025
+ 09:06:06 +0000
+Date: Fri, 26 Sep 2025 10:06:01 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Tyler Retzlaff
+ <roretzla@linux.microsoft.com>
+Subject: Re: [PATCH v4 6/7] buildtools/chkincs: use a staging directory for
+ headers
+Message-ID: <aNZXeXui-n59iRAb@bricha3-mobl1.ger.corp.intel.com>
+References: <20241127112617.1331125-1-david.marchand@redhat.com>
+ <20250925123150.3063298-1-david.marchand@redhat.com>
+ <20250925123150.3063298-7-david.marchand@redhat.com>
+ <aNVV3PwL39sY-W80@bricha3-mobl1.ger.corp.intel.com>
+ <CAJFAV8zjD5M7DDapTZfjCzusm-w5ufBJq+0C3wkFeKt5o79rGQ@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAJFAV8zjD5M7DDapTZfjCzusm-w5ufBJq+0C3wkFeKt5o79rGQ@mail.gmail.com>
+X-ClientProxiedBy: DUZP191CA0043.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:4f8::26) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ0PR11MB5199:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0d7c2cbb-5824-40f4-1779-08ddfcdbecfa
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?K9bC3ebNvh2wBSsbNqeNKL8C04C4IY+kdFjz/DMOaYrynaCfTQFLxWNu8z9B?=
+ =?us-ascii?Q?PNf3UbXSwgx+zf//JPY5F0WtN+Snk14hhfkxS/EMSkBrxnb6zZg4iwqn8ghe?=
+ =?us-ascii?Q?PS+0Cs//H7w5QfKFR1bvgNLt/6N3itM2WItQLfDsHte3cijbC/iHfvQ+tII8?=
+ =?us-ascii?Q?mM3lcio2gwHtM1mCx31G7feioq0WTLnxhZTxD3qe3JQAc8ax7J5I451vPIZ/?=
+ =?us-ascii?Q?yV9Gh0q/PhiXVUYSp5n5bdEoyn/lOOE99wWm2xSB3ppcOf/pk1hHXcpvPOIf?=
+ =?us-ascii?Q?hs/oQHAs94UvBZB+Pe3qPqpeWzXRqJerS79MpuFmO7XWsnuAAKcoFkaYUUZx?=
+ =?us-ascii?Q?hcUI9ey3ijFtg65MuC6XkCO2wkMd0aFVOQqbd6MlEQ+KU5CN2u8IyfZKarCZ?=
+ =?us-ascii?Q?38iCa2ltDzVFAvGLZ+iVgY2oesAoBXS8xfEyrClnG8TKF+j016nBuuIJdRqU?=
+ =?us-ascii?Q?pWMBt7gBY/W1K/RZFVK5KMNFaMqiY2CALa7xy2W0WyKGWNivOKZ0uAxCSkmu?=
+ =?us-ascii?Q?eLacV/CQE1i41KB94xnvD4b+3wup/G2C9/sJBbPxH86ymQ/w3Ly23XPAC73E?=
+ =?us-ascii?Q?j865UDOLeWkviZnBLbxj0+VB/aIrcRl2OK5VD6CRhnND9g5az2mAp6n16pSu?=
+ =?us-ascii?Q?PeQ38zFvUaVeREpVswGzh0dAcJCbkDNDXInp4q5N8fJGY1wkmDM/tu5/uUzp?=
+ =?us-ascii?Q?m/hU3VFPHSQvRB1dxgJt/76waZZ1GQO8Dmuh1Kre7RkkuPGih7s7DpyOl/CF?=
+ =?us-ascii?Q?OXVo6MDH7gTAtxHheyrH0gfJIJ1y4Tx2XL0XUrpEe9iYQf+TIqm0bHHANusi?=
+ =?us-ascii?Q?1LtM2XJUR+TmNZNho4b9lM10Ifdk3TFluTfz3Ir82wqPRLspXWMq5pKq8NKD?=
+ =?us-ascii?Q?Xh9LHXexg9em2BlDETkYpxZczaLwZoxhEzcdAcbxNSRoVPCmSDpv0DloaW22?=
+ =?us-ascii?Q?Bz3UqUqCykCQo7/pZGxZRhUOv+aETwADvCLWCWPe7XYO2wAGYRnT2oa5vc3D?=
+ =?us-ascii?Q?B/8g/eyApXlfgixtz6WopFli+OtPuOseq7mmqb98dAsWF00L2cIebWPh5/K2?=
+ =?us-ascii?Q?KuYMx8f1dlJzs2kIu7cFzMfJvjagIt2Dv8zQhlJCbKJ/esW+fY5DeG6mRmKl?=
+ =?us-ascii?Q?LkeTPrkWq7HabZhvBAk+e1HAR4+YpmFEt9vJVeGdlewY8zCu3ou0X2pj+RWv?=
+ =?us-ascii?Q?X9+ESRRIDOi/VUr2IlO/A0FsPRv83GkF6XoxM4a1xTgGFxZ0ZeKhMJWFCfOW?=
+ =?us-ascii?Q?3jx1L0pdEAIGm22FooDEQiRnG00S+IYn+c1hAZFO7RQLBh4BjfO2BSleFkd4?=
+ =?us-ascii?Q?LmKupBxKNR62WVvpCzqZu5HtjLE7XhYls6PSANLMXr7M1laAKS5NDHlkArTT?=
+ =?us-ascii?Q?fWL7lR+tCsiqDAzSCvhCqtV8rp/nPlBiLiVtUMWS4F7Tcgfc+g=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?w34Sv0QKKBmsyE+MCCwX/4UqcFN0j+SE6ATISO643HJFwcYwSzNflht3tctJ?=
+ =?us-ascii?Q?7ypQbJV8Z5cbwpcc76lb7arabX8yVsp1UMGkijZQnrriwV+njH2LwWHS3F5g?=
+ =?us-ascii?Q?aLxkVLQjOV9+Oc9BAKh6tNxodXAXLTDH369reu+np7CnfhZiCBOsM3AOWpBX?=
+ =?us-ascii?Q?8PH0oKVee1F/IKwb1EkLTMl5rQV05/6qmBdfZsm7Dv4v24qE7eoPLg9VTOWb?=
+ =?us-ascii?Q?XlIkOZOX0oiwb6pcKI9C6Xl2SXbo2ZIKcs+FCCfPfRbGzjj8AtASe6uxLUZD?=
+ =?us-ascii?Q?3kTBDvEeGdNJ0UyX6kHWEuWPXQ7szfVy/I1CCayHYCOxNHzIV0P/uBXR0G7M?=
+ =?us-ascii?Q?x1nGli++rhs6eJgBiJTYpoAssSXaymF0c18JJyTRNJk+1RJlh3bGA1ZezLAR?=
+ =?us-ascii?Q?GuwD3uwIx9gNrVFpIoBVzbBu0FFxTR80/s5A2NEEByNnr5J8LVuAteaLoOHY?=
+ =?us-ascii?Q?YcvIK3FHcOfkPouc5VAefSLOweBLGKiUT1lu+uB6YgYwtuEyAAZGbS2GsbrT?=
+ =?us-ascii?Q?XhrTexm1D2uN5kfV06LjcEzwoYM6Piy2UdUydC3d9FaQJx5h59mJZiC9TmAg?=
+ =?us-ascii?Q?vhsZMWoMassQ1F6tahQJo7MvlPk6Fm5yFX/BcpJ8NtUCrkQyUMKffnkwmucA?=
+ =?us-ascii?Q?1iDjWstN2AzI0DrSg6RilFRyHe0wXgY++7UhebcfbW6BlG4zD4rx1vxVfiHd?=
+ =?us-ascii?Q?Vl0M68aWsX0lplgZ4c///ocdM5NACfx7vWvPrlRsPXWulUJXj7+qoSJYxUo/?=
+ =?us-ascii?Q?343hMz6L4YCZLhR1wNiPwX/LaCAEvYq0ASZG/6GTnOy5fgdASuginqtMH2ta?=
+ =?us-ascii?Q?YYcqImb0yAT8zlmnbfvB6DtCs5mgHa/cA2as2e8J+hqFmwPqsezHwhXsdjRN?=
+ =?us-ascii?Q?SZzyPnrP7egrn+f6iIoO+Z4L4mJ/uiG3QyVNhTNTiwvkFczJEGxx7hePZOFA?=
+ =?us-ascii?Q?5h6r3U4sdi+X1JF+OhCOdieBdyafOVnqqtD4oepTeeW21qQzUSYhXGK4SgmE?=
+ =?us-ascii?Q?Onrsjx29ULmYMe1pheN+G7lQj6ItGl73Mj/S7l/avHjz/P+MdEkmv3geRafz?=
+ =?us-ascii?Q?TqfW8rU+q9kcJusQ661gMudRPP52NUZK+xlnjRrQqg9mMDbdMOj5wB47nC9y?=
+ =?us-ascii?Q?qeITrENd/ki0xoMk9XRZiDx2eInK1/9byNpukT4XAmYwkon4M3Pk0YKpgvcf?=
+ =?us-ascii?Q?vL6KggeptOrAxXtx63Ur+yMGByPuhOENaAAQ0kzEiUwMtH6V8+hTULL5J1Dz?=
+ =?us-ascii?Q?zGL6GybBx3a7qc61fZW2ub73oAE+0j3zM8P3izbvC4zZNz9E2/5h5uSWmLfV?=
+ =?us-ascii?Q?7aH0tKi3vzTV6iPtnlOC6MSZCIWMhazFoLdWke/dho9IOwyTmtPGxkXoT9wh?=
+ =?us-ascii?Q?wrWjWiKSbrTaXNlMgqVSmfws31zrSQ02ZVGFb/X8ttwn/ASoBaONQ0YzKrrT?=
+ =?us-ascii?Q?QPWpL7vbwPvrSaybvyxq2D4/Pe4eIkBSoEhmJdxWKA86k4J7wMKPNT9hidui?=
+ =?us-ascii?Q?yeFJoBzN0yJRudmcEWTEXqZo3tL/X/t8DpCarq5oVHT1roRp1cBnKPmmpzkt?=
+ =?us-ascii?Q?FcwAnE8hxZkk1basxyyf7ESX0XO0tytjLxQyU9BUIu0H1nnouUwXvX/Ke+8F?=
+ =?us-ascii?Q?Bw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d7c2cbb-5824-40f4-1779-08ddfcdbecfa
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 09:06:06.2627 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xenHAiteRWw+OKcthJrEut23ljLVBgDzbufu73PRMLW2oTiDszYyWZC3hv1RQvOimexCRsaMTGE8lZ5QoTYmB4YmBsx4qY8zH1jEho7yy4o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5199
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,258 +175,143 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In case some CPUs don't support AVX512. Enable AVX2 for them to
-get better per-core performance.
+On Fri, Sep 26, 2025 at 10:14:31AM +0200, David Marchand wrote:
+> On Thu, 25 Sept 2025 at 16:47, Bruce Richardson
+> <bruce.richardson@intel.com> wrote:
+> > > diff --git a/buildtools/chkincs/meson.build b/buildtools/chkincs/meson.build
+> > > index 49dbc55254..376556f5f4 100644
+> > > --- a/buildtools/chkincs/meson.build
+> > > +++ b/buildtools/chkincs/meson.build
+> > > @@ -12,38 +12,47 @@ gen_c_files = generator(gen_c_file_for_header,
+> > >          arguments: ['@INPUT@', '@OUTPUT@'])
+> > >
+> > >  cflags = machine_args
+> > > +cflags += '-Wno-missing-field-initializers'
+> > >  cflags += no_wvla_cflag
+> > > +cflags += '-I' + dpdk_source_root + '/config'
+> > > +cflags += '-I' + dpdk_build_root
+> > > +cflags += '-I' + dpdk_chkinc_staging_dir
+> > >
+> >
+> > Two minor suggestions, 1) should we not use "include_directories()" here to
+> > pass these properly? and 2) would using the existing "global_inc" value as
+> > include path not work ok? Is the reason for not using the latter the fact
+> > it includes too many source dirs?
+> 
+> 1) include_directories() requires a source directory to exist, so I
+> would need to keep almost empty directories with minimal meson.build
+> in them.
+> 
+Ack.
 
-In the single queue model, the same descriptor queue is used by SW
-to post descriptors to the device and used by device to report completed
-descriptors to SW. While as the split queue model separates them into
-different queues for parallel processing and improved performance.
+> 2) Indeed, global_inc is not usable as is.
+> 
+> meson.build:global_inc = [include_directories('.', 'config',
+> meson.build-    'lib/eal/include',
+> meson.build-    'lib/eal/@0@/include'.format(host_machine.system()),
+> meson.build-    'lib/eal/@0@/include'.format(arch_subdir),
+> meson.build-)]
+> 
+> global_inc refers to the EAL sources, so anything in those directories
+> is reachable.
+> There are a number of non exported headers in there, like
+> lib/eal/include/rte_eal_paging.h or Windows specific/internal headers
+> in lib/eal/windows/include.
+> 
+> I can split it as two variables.
+>
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
- drivers/net/intel/idpf/idpf_common_rxtx.h     |   3 +
- .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 195 ++++++++++++++++++
- drivers/net/intel/idpf/idpf_rxtx.c            |   9 +
- 3 files changed, 207 insertions(+)
-
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
-index 3a9af06c86..ef3199524a 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.h
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
-@@ -262,6 +262,9 @@ uint16_t idpf_dp_singleq_recv_pkts_avx2(void *rx_queue,
- 					struct rte_mbuf **rx_pkts,
- 					uint16_t nb_pkts);
- __rte_internal
-+uint16_t idpf_dp_splitq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				       uint16_t nb_pkts);
-+__rte_internal
- uint16_t idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue,
- 					struct rte_mbuf **tx_pkts,
- 					uint16_t nb_pkts);
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-index b00f85ce78..a91051c7b9 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-@@ -882,3 +882,198 @@ idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+Ok, thanks. Was just making suggestions to try and improve things.
  
- 	return nb_tx;
- }
-+
-+static __rte_always_inline void
-+idpf_splitq_scan_cq_ring(struct ci_tx_queue *cq)
-+{
-+	struct idpf_splitq_tx_compl_desc *compl_ring;
-+	struct ci_tx_queue *txq;
-+	uint16_t genid, txq_qid, cq_qid, i;
-+	uint8_t ctype;
-+
-+	cq_qid = cq->tx_tail;
-+
-+	for (i = 0; i < IDPD_TXQ_SCAN_CQ_THRESH; i++) {
-+		if (cq_qid == cq->nb_tx_desc) {
-+			cq_qid = 0;
-+			cq->expected_gen_id ^= 1;  /* toggle generation bit */
-+		}
-+
-+		compl_ring = &cq->compl_ring[cq_qid];
-+
-+		genid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+			 IDPF_TXD_COMPLQ_GEN_M) >> IDPF_TXD_COMPLQ_GEN_S;
-+
-+		if (genid != cq->expected_gen_id)
-+			break;
-+
-+		ctype = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+			 IDPF_TXD_COMPLQ_COMPL_TYPE_M) >> IDPF_TXD_COMPLQ_COMPL_TYPE_S;
-+
-+		txq_qid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+			   IDPF_TXD_COMPLQ_QID_M) >> IDPF_TXD_COMPLQ_QID_S;
-+
-+		txq = cq->txqs[txq_qid - cq->tx_start_qid];
-+		if (ctype == IDPF_TXD_COMPLT_RS)
-+			txq->rs_compl_count++;
-+
-+		cq_qid++;
-+	}
-+
-+	cq->tx_tail = cq_qid;
-+}
-+
-+static __rte_always_inline void
-+idpf_splitq_vtx1_avx2(struct idpf_flex_tx_sched_desc *txdp,
-+				struct rte_mbuf *pkt, uint64_t flags)
-+{
-+	uint64_t high_qw =
-+		IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE |
-+		((uint64_t)flags) |
-+		((uint64_t)pkt->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+
-+	__m128i descriptor = _mm_set_epi64x(high_qw,
-+						pkt->buf_iova + pkt->data_off);
-+	_mm_storeu_si128((__m128i *)txdp, descriptor);
-+}
-+
-+
-+static inline void
-+idpf_splitq_vtx_avx2(struct idpf_flex_tx_sched_desc *txdp,
-+				struct rte_mbuf **pkt, uint16_t nb_pkts, uint64_t flags)
-+{
-+	const uint64_t hi_qw_tmpl = IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE |
-+		((uint64_t)flags);
-+
-+	/* align if needed */
-+	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
-+		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
-+		txdp++, pkt++, nb_pkts--;
-+	}
-+
-+	for (; nb_pkts > 3; txdp += 4, pkt += 4, nb_pkts -= 4) {
-+		uint64_t hi_qw3 = hi_qw_tmpl |
-+			((uint64_t)pkt[3]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw2 = hi_qw_tmpl |
-+			((uint64_t)pkt[2]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw1 = hi_qw_tmpl |
-+			((uint64_t)pkt[1]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw0 = hi_qw_tmpl |
-+			((uint64_t)pkt[0]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+
-+		__m256i desc2_3 = _mm256_set_epi64x(hi_qw3,
-+			pkt[3]->buf_iova + pkt[3]->data_off,
-+			hi_qw2,
-+			pkt[2]->buf_iova + pkt[2]->data_off);
-+
-+		__m256i desc0_1 = _mm256_set_epi64x(hi_qw1,
-+			pkt[1]->buf_iova + pkt[1]->data_off,
-+			hi_qw0,
-+			pkt[0]->buf_iova + pkt[0]->data_off);
-+
-+		_mm256_storeu_si256((__m256i *)(txdp + 2), desc2_3);
-+		_mm256_storeu_si256((__m256i *)txdp, desc0_1);
-+	}
-+
-+	while (nb_pkts--) {
-+		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
-+		txdp++;
-+		pkt++;
-+	}
-+}
-+
-+static inline uint16_t
-+idpf_splitq_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+						uint16_t nb_pkts)
-+{
-+	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+	struct idpf_flex_tx_sched_desc *txdp;
-+	struct ci_tx_entry_vec *txep;
-+	uint16_t n, nb_commit, tx_id;
-+	uint64_t cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_EOP;
-+
-+	tx_id = txq->tx_tail;
-+
-+	/* restrict to max burst size */
-+	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
-+
-+	/* make sure we have enough free space */
-+	if (txq->nb_tx_free < txq->tx_free_thresh)
-+		ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
-+
-+	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
-+	nb_pkts = nb_commit;
-+	if (unlikely(nb_pkts == 0))
-+		return 0;
-+
-+	txdp = (struct idpf_flex_tx_sched_desc *)&txq->desc_ring[tx_id];
-+	txep = (void *)txq->sw_ring;
-+	txep += tx_id;
-+
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
-+
-+	n = (uint16_t)(txq->nb_tx_desc - tx_id);
-+	if (nb_commit >= n) {
-+		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
-+
-+		idpf_splitq_vtx_avx2(txdp, tx_pkts, n - 1, cmd_dtype);
-+		tx_pkts += (n - 1);
-+		txdp += (n - 1);
-+
-+		idpf_splitq_vtx1_avx2(txdp, *tx_pkts++, cmd_dtype);
-+
-+		nb_commit = (uint16_t)(nb_commit - n);
-+
-+		tx_id = 0;
-+		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
-+
-+		txdp = &txq->desc_ring[tx_id];
-+		txep = (void *)txq->sw_ring;
-+		txep += tx_id;
-+	}
-+
-+	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
-+
-+	idpf_splitq_vtx_avx2(txdp, tx_pkts, nb_commit, cmd_dtype);
-+
-+	tx_id = (uint16_t)(tx_id + nb_commit);
-+	if (tx_id > txq->tx_next_rs)
-+		txq->tx_next_rs =
-+		(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
-+
-+	txq->tx_tail = tx_id;
-+
-+	IDPF_PCI_REG_WRITE(txq->qtx_tail, txq->tx_tail);
-+
-+	return nb_pkts;
-+}
-+
-+uint16_t
-+idpf_dp_splitq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+					uint16_t nb_pkts)
-+{
-+	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+	uint16_t nb_tx = 0;
-+
-+	while (nb_pkts) {
-+		uint16_t ret, num;
-+		idpf_splitq_scan_cq_ring(txq->complq);
-+
-+		if (txq->rs_compl_count > txq->tx_free_thresh) {
-+			ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
-+			txq->rs_compl_count -= txq->tx_rs_thresh;
-+		}
-+
-+		num = (uint16_t)RTE_MIN(nb_pkts, txq->tx_rs_thresh);
-+		ret = idpf_splitq_xmit_fixed_burst_vec_avx2(tx_queue,
-+								&tx_pkts[nb_tx], num);
-+		nb_tx += ret;
-+		nb_pkts -= ret;
-+		if (ret < num)
-+			break;
-+	}
-+
-+	return nb_tx;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_splitq_xmit_pkts_avx2)
-diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
-index 1c725065df..6950fabb49 100644
---- a/drivers/net/intel/idpf/idpf_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_rxtx.c
-@@ -850,6 +850,15 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
- 				return;
- 			}
- #endif /* CC_AVX512_SUPPORT */
-+			if (tx_simd_width == RTE_VECT_SIMD_256) {
-+				PMD_DRV_LOG(NOTICE,
-+					    "Using Split AVX2 Vector Tx (port %d).",
-+					    dev->data->port_id);
-+				dev->tx_pkt_burst = idpf_dp_splitq_xmit_pkts_avx2;
-+				dev->tx_pkt_prepare = idpf_dp_prep_pkts;
-+				return;
-+			}
-+
- 		}
- 		PMD_DRV_LOG(NOTICE,
- 			    "Using Split Scalar Tx (port %d).",
--- 
-2.34.1
+> >
+> > >  sources = files('main.c')
+> > >  sources += gen_c_files.process(dpdk_chkinc_headers)
+> > >
+> > > -# some driver SDK headers depend on these two buses, which are mandatory in build
+> > > -# so we always include them in deps list
+> > > -deps = [get_variable('shared_rte_bus_vdev'), get_variable('shared_rte_bus_pci')]
+> > > -if dpdk_conf.has('RTE_BUS_VMBUS')
+> > > -    deps += get_variable('shared_rte_bus_vmbus')
+> > > -endif
+> 
+> [snip]
+> 
+> > > diff --git a/drivers/meson.build b/drivers/meson.build
+> > > index f25f425565..dae1e83ca4 100644
+> > > --- a/drivers/meson.build
+> > > +++ b/drivers/meson.build
+> > > @@ -245,7 +245,31 @@ foreach subpath:subdirs
+> > >          if get_option('enable_driver_sdk')
+> > >              install_headers(driver_sdk_headers)
+> > >          endif
+> > > -        dpdk_chkinc_headers += driver_sdk_headers
+> > > +        dpdk_chkinc_headers += headers
+> > > +        dpdk_chkinc_drivers_headers += driver_sdk_headers
+> > > +
+> > > +        if get_option('check_includes')
+> > > +            if headers.length() > 0
+> > > +                dpdk_chkinc_staging_deps += declare_dependency(sources:
+> > > +                        custom_target(lib_name + '_header_staging',
+> > > +                                output: lib_name + '_header_staging.stamp',
+> > > +                                command: [stage_headers_cmd, dpdk_chkinc_staging_dir, '@OUTPUT@',
+> > > +                                    headers],
+> > > +                                install: false,
+> > > +                        )
+> > > +                )
+> >
+> > Rather than using an external script and custom target for this, would the
+> > configure_file() meson function, with "copy" set to true also work for us?
+> > https://mesonbuild.com/Reference-manual_functions.html#configure_file
+> 
+> I don't like configure_file().
+> Touching any of those headers will trigger a meson reconfigure, right?
+> I think I am not the only one who dislike meson reconfigurations that
+> pollutes your terminal a lot when you do many compilations (Thomas?).
+> 
+> But let's say this is acceptable.
+> 
+> I had tried but configure_file() won't accept outputting to a specific
+> directory, or I am doing it wrong?
+> Trying again as an example in lib/meson.build:
+>         foreach header: headers + indirect_headers
+>             configure_file(input: header,
+>                 output: 'staging/@BASENAME@.h',
+>                 copy: true,
+>                 install: false,
+>             )
+>         endforeach
+> 
+> Gives:
+> ../lib/meson.build:221:12: ERROR: configure_file keyword argument
+> "output" Output 'staging/@BASENAME@.h' must not contain a path
+> segment.
+> 
+> 
+> Relooking *again* at all this (la nuit porte conseil), if we tracked
+> headers in global variables, for "normal" headers, arch headers,
+> generic headers and drivers headers, all of the changes could be
+> isolated in the buildtools/chkincs directory.
+> This would also make it possible to factorize install_headers() calls,
+> and avoid drivers doing it behind drivers/meson.build back (I spotted
+> one).
+> 
+> I just pushed an experiment:
+> - single headers install:
+> https://github.com/david-marchand/dpdk/commit/headers_rework~2
+> - chkincs rework (still not using configure_file):
+> https://github.com/david-marchand/dpdk/commit/headers_rework~1
+> 
+> WDYT?
+> 
+
+Those changes seem good to me.
+
+One final idea/suggestion (apologies for the many suggestions here). Rather
+than having a new script and dependency tracking for the header copies,
+would it be easier to do the header copy as part of the existing C file
+generation script? It's already writing a C file to an output directory,
+would it make sense to have that script just copy the header file to the
+same location too?
+
+/Bruce
 
