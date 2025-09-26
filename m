@@ -2,193 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C50E7CAC5B8
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Sep 2025 16:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A2FCAC5AE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Sep 2025 16:18:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1618640647;
-	Fri, 26 Sep 2025 18:15:24 +0200 (CEST)
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com
- [205.220.180.131])
- by mails.dpdk.org (Postfix) with ESMTP id AE4B040262
- for <dev@dpdk.org>; Fri, 26 Sep 2025 18:15:22 +0200 (CEST)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
- by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58QEWoZ3015940;
- Fri, 26 Sep 2025 16:15:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
- cc:content-type:date:from:in-reply-to:message-id:mime-version
- :references:subject:to; s=qcppdkim1; bh=eiYWDxUlVtlP0bqS0A9wL7Rx
- Wspq7qC+TXTTB0Awtg8=; b=Z3DO1pt7kDuJm0caVE1HVWLan7aqThFlPnEEpozQ
- xusEDMqJvqdzW8FPLSnjlLS1IFOG3Jjju/vB3KS9PYxuR4atKStGNoJd4hD53Tg6
- S8uz/Pw8UC2wd012bOLL5K+rwxuFhmxjbwNYzs90/KR5ySB0S6grk85FLjI3Zdgy
- mlFgabBaisJ76tLIcq5di69CIKlYo4qZXewNrXLLSXsOAtftkVXZMso11SZeO+UF
- KhNCMdMTPAQRpk6zUT7lWvwdgux5sV722aegtexOPkaQIU8szi2NisNaKrzpZ0ZU
- hh0f7KPBaGS6Swj5TIqkK8dQFM2+Q4NYKWiLtLk9SXwp5w==
-Received: from dm2pr0701cu001.outbound.protection.outlook.com
- (mail-dm2pr0701cu00105.outbound.protection.outlook.com [40.93.13.69])
- by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49db0tuf8h-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 26 Sep 2025 16:15:21 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b5qDCls0A44TItO3imUKLSn38a1DXtQqDtdIuugH0KUDdLaoFG8oNIIFiDIUPRhpktsF6r5Brnml+51JHAdTpfXBvBekmLgQxsXy1GAKXLG7K/YOSGZcOxJ5nUvGxSZwZvmNi9lInBh8H1ek+uLnwGcVJ9NZFbHVbQsaB4PzfhqxMdwK9rW8N9OTmCb72UbzB7f4W1HZ1c34Tq7mDzqFK8GThOgQRSlZsObGjw3rYwa2y9Nf1aKrH+L39JvFooI2MKM2ZI2XMHKd140lNlh9371BbhEnw3OAqfoa0IPaFZasFTO9Y72X9H5JgK/t6TTr1jJ3SFKg4EPbQoEX+dFSgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eiYWDxUlVtlP0bqS0A9wL7RxWspq7qC+TXTTB0Awtg8=;
- b=iBk09GQYZ1rXHZKvnxeqOlnjHiW1fGS73eGbEwQk4Z/zLLXpvp1NDjQcSfXjsoyiXzz6vC8/D4as3AL18oKt1u9lgK+BxpiblUsC0GkncJa+rO7/DvkfnM35qie/aG8g7SUMmx12Pq2MJ1WDr/mNGqJ2wQtEE44DE7jhgRRHYV0/n8rqypxBhyEoqgZK2Rn0xUph8z43hb3XTx5gL4vmI4L1QxSucIIuZ1Q9Zf5cb2fXX5LxHC41ZrMigHGm4/UdLeJcKUobwsLhxu3qjemYFcnmZXxSMSxCiRADvtoFWkC6DBantOpgfih7YQEBmwkRcHnBAm4szKEh0wypFyJ9ug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=qti.qualcomm.com; dmarc=pass action=none
- header.from=qti.qualcomm.com; dkim=pass header.d=qti.qualcomm.com; arc=none
-Received: from SJ2PR02MB9795.namprd02.prod.outlook.com (2603:10b6:a03:549::7)
- by MN2PR02MB6670.namprd02.prod.outlook.com (2603:10b6:208:1d8::14)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.13; Fri, 26 Sep
- 2025 16:15:09 +0000
-Received: from SJ2PR02MB9795.namprd02.prod.outlook.com
- ([fe80::697:a925:e536:acbb]) by SJ2PR02MB9795.namprd02.prod.outlook.com
- ([fe80::697:a925:e536:acbb%4]) with mapi id 15.20.9137.012; Fri, 26 Sep 2025
- 16:15:09 +0000
-From: Sameer Vaze <svaze@qti.qualcomm.com>
-To: Patrick Robb <probb@iol.unh.edu>
-CC: Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashishg@marvell.com>,
- "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [PATCH 1/3] compressdev: support for dictionaries and PDCP
- checksum
-Thread-Topic: [PATCH 1/3] compressdev: support for dictionaries and PDCP
- checksum
-Thread-Index: AQHcLW7+Yx3s32UTiUaGijgdWUWe3bSix3yAgALeobc=
-Date: Fri, 26 Sep 2025 16:15:09 +0000
-Message-ID: <SJ2PR02MB979508BAD29B4BCE728EC4AF891EA@SJ2PR02MB9795.namprd02.prod.outlook.com>
-References: <20250924161918.2211290-1-svaze@qti.qualcomm.com>
- <CAJvnSUByJac475uKawdR7wGLFi1fptp8ducXHqJ=x4EmjpvGWQ@mail.gmail.com>
-In-Reply-To: <CAJvnSUByJac475uKawdR7wGLFi1fptp8ducXHqJ=x4EmjpvGWQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ2PR02MB9795:EE_|MN2PR02MB6670:EE_
-x-ms-office365-filtering-correlation-id: 38ff215b-52bd-4228-3b3d-08ddfd17dd3f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|8096899003|13003099007|7053199007|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?L3ZHRWRFbmNuUEwzeVJmb2VIc0RYd0I1c1IwbFdmYVdkdkZUTGovcy9Lcy9m?=
- =?utf-8?B?b0VrdFBvb3YyZEoydUM0RTJkM2JEbXM5S1A0TEJOd0NGeXdMaVdCWDVyb240?=
- =?utf-8?B?a0Y2NWVpN1pxRGR0RlowaDhwL1Y5emppQmpHNGhYV1dPcHB0SlVwSkRwcnM3?=
- =?utf-8?B?TEZwVUI2WDAvNGRMeXVZb040NCtxM2wxYno2Z1hmZ01yRXU3MS9pMDlWZEVS?=
- =?utf-8?B?ci8zUWdIS3N0SmtoM0J6TWQvc2toWThyZERiR2J6TGtENjF6MEtCc1dMeEtk?=
- =?utf-8?B?REFPU2ZJeUszaXN2aWZFMXJHc0FIWTdWbk16VUpFNy9vc2dkQy9WaWxUbUkr?=
- =?utf-8?B?Vit1eDNRTGM1amM2QWhHeTBzVXFidjZqUHVKUngzTWk3WUVVVmF2V1VwblNs?=
- =?utf-8?B?TlJTbHUza2FLOGc5VDhzWVRKZHVlRkdJK0JEQnVNdmdqanRTU0ZxR3ZrQWpZ?=
- =?utf-8?B?ODZMcFc0OU9iMVhTSXJnTVQybU1xNlRsQWNtTUpKQVovcWNzTTlWK08rdlFx?=
- =?utf-8?B?bytkL3hzV2NiSUF2cHBjTVFtUWR6Q05scUF2QmVObHc4QzZWdi9maDByNXho?=
- =?utf-8?B?TzQvR0tvbWNtb0x2eTdoOG9JaWdUaVk2UXl0N2VORGNGa3RhNDVGU3ZNMEo3?=
- =?utf-8?B?amJmTnRjTjFWeEJnU3YwZ0lFdXQrb3dIeUtCTC9ES2J6NVhZTFdjdUNIbXFB?=
- =?utf-8?B?b3VBRkl5SFJqNXVKeUpXOTFlQ05pd3ozRy9xZnEwVHNkOW5IYnpQZlF3NGpw?=
- =?utf-8?B?eWlwZmN1dUM1Z2oxZ1J4ODFOUTlvWndSbmliR2c0aVVxQkZ1NjB0Uk4vZUsz?=
- =?utf-8?B?cElNaGlTRUJjdGFiU2gwTUx0ekFUNVEvRnpLTkVCR2tHc1RVNEdYZFhlSm5H?=
- =?utf-8?B?eCt1UFBXRkpUM1hmM0crcW96WkhxdkRidjFsY0NpRmRYWjVQb2FUYkdNeHF1?=
- =?utf-8?B?T05NQnU3V3JqYzRJdGRmTnRnUlNJRTh3YThVcmp4STY1UkpOeERiV3pvQ2Rq?=
- =?utf-8?B?NzNKaVI3VjFaWGg2RHRUdmZmNmk0c3hmcTRoSXNLZnBJUGczeTlCajJrendB?=
- =?utf-8?B?RTFpNWNwYWY4Zk93N3pHRlJGeXB6YlhCY1JrWlNGSXFxa2s3aFNLTkdzNjhC?=
- =?utf-8?B?bUUxb1dXU0s0SUJXbk1laGJJLzBZbk43R1N1Q1o1a0FieWJtUVZFTzVSSDRS?=
- =?utf-8?B?ZTY5R1hRb2x6S0l0YnVFWUJjQXR4MUY2VVpKZGtCK0RleFZjNEFhQXZ4bjBi?=
- =?utf-8?B?UkxTOFFOT29mWkZiVllCSG00MG5oZWpSTnlEUG82VDRoTkZDR1NaSTdFSkhZ?=
- =?utf-8?B?bExJekRMUTlrekpKZTVJUEFXdTN6ZTMzSDFTZFhIc1VuV2lkZmVLYzhadFUy?=
- =?utf-8?B?elFXN2loSTJVMFFESDhJeU1IM2NucXF2Y2EvTStlNXhFeGlPQ0VzR1ZiT0JW?=
- =?utf-8?B?QWZPVjZUNldDWWRUTTM0ajZEcmc3UTVZYTV3ZWxsMWJWZ1Nkb2VPR1pLM1ps?=
- =?utf-8?B?N005dHdBNXAvdWlQd25VQWVyczRiUGppQ0QyUkZUc1l0SGF6cU5IbHhMcW1N?=
- =?utf-8?B?SjNEbnM0NW80bGhmTjhMa211T3lPOGw4eFhDWnNaS0hPajhOcGRoNjRJQW11?=
- =?utf-8?B?NTZzc1Q5NmdNVXhVYy9KZU85blFXcEFTTDA3MDZ5UWFJaG5MRWVmV04wOHAz?=
- =?utf-8?B?MFVPRnQwVk1XSnJIcWtSSWd0d1FqV1dPb3V4TDJhUjlNVGdlaGNGOThXd200?=
- =?utf-8?B?dm12UWt3VTJxbitpT3JRNkNiRW0ycVZ3cGNxNnl3V0R0MjRsajhCbFdSc3JG?=
- =?utf-8?B?ZlhzT21mWXh4SzVBMTk3dkxnMUs2NHJRR095Yy9lc0F1TjZybGllQVlOUDl3?=
- =?utf-8?B?QlVZRTNpd2I4ZzlLdlQ1aUd5SzFEOWR4QTI1Um54VG9nb1BFRGVoUEMvTTBX?=
- =?utf-8?B?M0JtSjV1VHN0bldYYUM1c3d6Zi9ndmlMb0VXWlNycU5sNFVaRlIvYVA0aTh6?=
- =?utf-8?B?TmNzU3QyWm9CSW5icWlXelFudXhybDlpSndLVi9KZVVuYUY1UWdLSmZBZzh0?=
- =?utf-8?Q?xhOs3/?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SJ2PR02MB9795.namprd02.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(8096899003)(13003099007)(7053199007)(38070700021);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NXE0aE1pd1YxK0w5RWxBL3FIZnFCZnN5dlFGYVZsZ0M4QnB1TEJoM002SDBM?=
- =?utf-8?B?WGd6czdmOElTZVhPdFZ2Z0cwSlhHNzF1RmdsQjBaSGdQamlUZXkzcDQyOXg0?=
- =?utf-8?B?eEtkbjFpbFBqOUhMeTNabk5NT2d1eGxEYnJ1MFd1eXJDeUN3QjNLUXFvMGxP?=
- =?utf-8?B?SEJPb0xOdnlHamJ0N1dUSHpTdnFwRUZOSWxITHM1eXdmZUdXd3RKKzlRYVF4?=
- =?utf-8?B?Y2VwQUVoK0JQMGN6bFlVWDdYYndQNmxFUVdWSXdvayt1dWFmR0pHcTNqUldw?=
- =?utf-8?B?MVVXOE9xVUszZGsrb2NGOUI5OVpXSWdaSlZBcGpRVTQrRXZxbmRQWFc4VHBs?=
- =?utf-8?B?MXFYeEpocEZsTm1LdEFNeFlZYkF3RmdHd3I1a1NvMmMzQnNRc0pYckdzZ2lk?=
- =?utf-8?B?SjBCZTBxempSWDRWNy9hdDQ5M2Zvd3RHMHMrZ2JMM0hCM0R0Rm1LbktFRUdZ?=
- =?utf-8?B?TGxXTXF2a0RhbHc5ZC80QlNKQ2NsZkJkaDNURnZhSzNYdTBvU2I2cDcybUlu?=
- =?utf-8?B?Si9NREs2QXNmWU1uRjd3V2ZGalZFWHMvaUYrY2JQaUl5aHRocUdTSjlsZjFr?=
- =?utf-8?B?dUI0djJ5U2p1MjJxejIrN3Z5YWdJcDZmV0JqMjQzdE1LRXFqais2UGdscGV3?=
- =?utf-8?B?S0hKWEJzT2VTdDFBT2lwRS9yZDhOVG9QdU5zaXY5dzE0MWxtZ2FkeTlXSnYv?=
- =?utf-8?B?dXkzWWVFUm5BVm85YWJlRU82R045VU5wNVRmQVp1WC9RWE5BcjR1Mmp3Qy9w?=
- =?utf-8?B?VkR1WlhPKytrWFJLUHVHS3FHVUxwUzZTTzZaNEE1Vkc2VXFMRXZSQUtldjVm?=
- =?utf-8?B?VFFsdVIzTmR0ZWluY09CU0wySktlUkY2SHZ4eDBsYWR5ZTk1NjU3N3ZicDk3?=
- =?utf-8?B?UUdnZHpzYk4xZVdYMzR2UmpXdGdGb2tRWklYNUtYS2dTNEcyTVdERTJlcGpU?=
- =?utf-8?B?SjBQTW1RY0oveTlYTXpLTzZqOEV6REtFZjJFSC9EUDU4R01MNVM3Z1lVYzc3?=
- =?utf-8?B?OGFOQWJlR0xoQWxJM3BoTm9lTWRXeWNibGJRMnErN1R5bTkyRHZUM2xoOCto?=
- =?utf-8?B?SmZRL0paNzc0ZVJybWxMS1RyZVRLbDVzMnFlcTRtbzM4UStxWTJIVkVySlVW?=
- =?utf-8?B?Z2gxYmx6OWlpZy9VTDh6R3FhakVpdFE2NE00S0ZnUGhsRVNUZ0orWnkzb1dz?=
- =?utf-8?B?aWwzSGRMY1JIUUZjVTlPQjNteEg2Z0JwckhLcWtEcmRRYVgxUnFhbjdEcU8v?=
- =?utf-8?B?Z09qbVBGZTFPTXRKUFk1bWNHTUpLODFWejV0cXQwOHdZb3M4SS9yL0lxVXlO?=
- =?utf-8?B?bW52MVVLV0N5dVZ4a2hnL2luOTlGTlBjRDRtM2ZaRDUxM2tsbVZFU0xKUnVU?=
- =?utf-8?B?QTNmOEJzRzl3MStRYjkzVDdwNkw2VFE4MUVjZ2x6Y3JIMGJEUmU3QzkrdDlv?=
- =?utf-8?B?bHNCTkI3bVNxQllkeE9lVSsvbWxJNDAwUkh2dzBpVUxMcFJnU1lZOVR2SE92?=
- =?utf-8?B?emdSL3JDTTlObkhCWk11VFp6T2FDYTB3WlgxYldsbGp0bVVQQjQ5ckxWRE9x?=
- =?utf-8?B?eXAvZDQxUGRnODErZGE4eTZPQkZNOFN5MDNRK1lSTndiZ0oyR2lnTHNTbWlS?=
- =?utf-8?B?WGllVkxQVGVVa3ExRXRPVzRja3JoaEVrWE8xM3I2ckw1MWZDME9IM21URkFZ?=
- =?utf-8?B?NWlEWk5WT1pnenpsUUtNYkY5T3JJekNaL0xGbjNTRE82SzVIOTBRVkxIdDEx?=
- =?utf-8?B?amY0UStWaVpaa0FzblpJVFRkQys3dkRHTHQ3bHBTVXRYcVZzNDdVMExQSjdL?=
- =?utf-8?B?T0hKZFEvNCthemhCWm1WdzBvVjJTellHcjlwVjhvT0pBY2pKbGFWRTJxcitW?=
- =?utf-8?B?amJHM1dqeVY3cWxGYnhkNHhuSndQY2RvYWdweVg4QVBOUFZVaVdhVnBBbmI4?=
- =?utf-8?B?VlFjU0QrQ0dLa3IwQjh5TEQ2NEEyRSt1Qk15aXZtUFRRZnRQdWFJSm1ETnY1?=
- =?utf-8?B?UVBDcldPZnhiS3EyeTBicVBDQzltQ3VUQXdITVFJN1dLaEs0YW5va1l0ZmtW?=
- =?utf-8?B?cXF4ckN4QWw3akZySDJGa1NRQ25zMzNsb3dKbDdnYW5qMC9mYWlaaVM0RFpT?=
- =?utf-8?Q?N03aPGFuCMHAP4KvF60bWR2sd?=
-Content-Type: multipart/alternative;
- boundary="_000_SJ2PR02MB979508BAD29B4BCE728EC4AF891EASJ2PR02MB9795namp_"
+	by mails.dpdk.org (Postfix) with ESMTP id B55BF40647;
+	Fri, 26 Sep 2025 18:18:43 +0200 (CEST)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com
+ [209.85.222.173])
+ by mails.dpdk.org (Postfix) with ESMTP id F1A9E40262
+ for <dev@dpdk.org>; Fri, 26 Sep 2025 18:18:42 +0200 (CEST)
+Received: by mail-qk1-f173.google.com with SMTP id
+ af79cd13be357-8276e579242so245513685a.0
+ for <dev@dpdk.org>; Fri, 26 Sep 2025 09:18:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1758903522;
+ x=1759508322; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=60YNUSwTrbj7aE6YMYriLrN8+BFolBAotgdGSfI75Rg=;
+ b=ceedPgex09/t7QZcy52B2rL8VPi53p5EF1D2HzKSAApxsmel4vd0gxDIBSeRaXFMYT
+ oVaqfSxJalY1QcPG6yy5Bq9u8lxnQDQplTvwCEfGBynqgEmzaV2QGTZZwE/lj13oNSN4
+ TXRXuvSSUtdt+HVLS2H8OglXQ+D7g2Hlo1SH+xzQqcJlpc7FYIxiZEsE5a0R6AdrQU9d
+ kUz/347wRJkJ/f31vGtAZjciYyOJRw8Lo13SwU1MuHa6c1tk2rxbpjLXvxfiYgEppEc8
+ kaV/W5GbDfmglvXUB1gmDI7zxFRQkY3yT+NxvYJc82YLGpELq7PcIXw9TOOhe9oiNONd
+ gG7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1758903522; x=1759508322;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=60YNUSwTrbj7aE6YMYriLrN8+BFolBAotgdGSfI75Rg=;
+ b=L8oCJC8l1nj7dIGzJfU+vCSjpZRXFBwX1nOzlS0izWmTxzZbi3xJbeBVsuuyx7zU3J
+ RlnvWYuB22N7JBsx/ff0asP8vBmGB0fTNYoobZclew3PyALwSq8aOXy+YSQPKDnG4m6D
+ f0tFZH+SXYrC/lMciajJ0891WCJETV9Nho4orzph+jOxTb45Xr9chDprHaIO10Dyzyxe
+ CLYrTdw3hu6y8fbzNyXJFmmVLomWpOwegnlxOWxRfaFiQTuKtI37nVaZ/DS3UrFiDAuj
+ RU/0yOai/QQg97NWhrsJD4u0TVoduLNutd5rcEbqzeO1WQfyLawepQfD5Tq3dqU8uBHu
+ ruuQ==
+X-Gm-Message-State: AOJu0YwfHlmE3wkLb7pV5/Vb0bmRj004UWKPSfXJC+OUgxVUPhFZWSeu
+ Wr6wDvV2REf2AJfcbvMv84CotxKLtAz/luoYtzmTVUd5K0yqlt0fgOQb7K1Y0+2OL5MsWTv1Stc
+ khKg3g/g=
+X-Gm-Gg: ASbGncvcFX/KUcZqz53+3PiWWRjdQJRozvrh/poGtcGXCj1y0UMw43p8wv0MhggbM7j
+ kHJeJ4AskNM1jtrozrABXHLVYG++HN2NHsPync/zbcCcFYYW/QKze83vNbeBX9lsT/ED+2Plg2t
+ pNA0a1y9fPedUbVs7iYz46TxcXhx1CDWn4ruCMTjzMxxtMJkcX4Vg1Z5m/oO///9Z5XWcwAo9RY
+ gIfB3glWWOXkFnJoc4+2dz1AGkdwxOl9/g4KqhaVR1icmIuM1QC9XDZTxxIMvdgXASQlZGD+U2R
+ PZwCIfjg83Loo5ctkMGHIdLFoduu/Q6V2/pPfjXStNZfAatDxHoNGhGhEnfIf29p5E/OXUEuH+d
+ R6tzajJOgmugQ5+xQGP11kbBBv9JXRHLIo1+ItA/3aCXhKmc6cpVhrfSrgW++PliLiFCS6kjo
+X-Google-Smtp-Source: AGHT+IF/HpCO99LUwDuMnXLbWIFIyLxPzRlVGXOE/h2ob4m8k/u+lm1Pgfi2EKTI1bfKtXtNLhI9jA==
+X-Received: by 2002:a05:620a:4012:b0:850:efbf:381e with SMTP id
+ af79cd13be357-85ae1d14608mr1087448285a.36.1758903521942; 
+ Fri, 26 Sep 2025 09:18:41 -0700 (PDT)
+Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-85c307acc4bsm305791785a.40.2025.09.26.09.18.40
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 26 Sep 2025 09:18:41 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>
+Subject: [PATCH] net/bonding: rename global symbols
+Date: Fri, 26 Sep 2025 09:18:37 -0700
+Message-ID: <20250926161837.400929-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: LVdelpQJQHZ08IAW+qZaqqf58Gx3tm0hkPMAZ3qXg6WLVv+YFpYLIML0oN79WCCpnPUT8BF0PQrjhGAKNfmIkiyr2MYSZGnvtYosC9b1mDF82P/qrJKkdlmvwlX6og3BQkqZCLj1m7e+YM7zDgJ47NGzKBSzQLIo5mhj5FHe1xPK5oluZoxIIz5/wmqhjcLMj5RzCrYue1F7/FIQtd8LdznsAv7oxxSRt+R8uDnLec8pqzSeF/LgpHisjEGQSkD5jsIBGBhnuBYo9p2t+zO0iHLg+DoNKSb9a6/eIrSEJKQgGAG6O+xxZc18xaDo39l+Hw5hk3VCHEAdTvJ6uQ3zuR9b0bFVk5qYGotaERcX2KTpXrdWFj35+djxio9b3V+ZSGzfkR1iM9IdmtCdaQb8oA8sh07jkpJhcVv2DNmZZcnB78sZiYiwdKSgALxiNWqfdwTn7sxGF8lSChJ8gXQB8zqmSda0tMm/A7Kr1iOinEi7G63l+EmDsAqYuGb9y3h9UUdIoBFQ/MOG3zE840Z5o5M/ZVYrulxkrP61guXIB/0ip1pQytCw71OCnrVDAcjjhX9lPsErGo0NE6pIPeml3LyM/03Nc8vJFlJtVk1Ga/qqFBFxxETYhCHswzUTi3Mq
-X-OriginatorOrg: qti.qualcomm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR02MB9795.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38ff215b-52bd-4228-3b3d-08ddfd17dd3f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2025 16:15:09.3997 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ApOp0x00Yx7IR7qu+uh+4P/mjKsP9FJyl8LwDB0HoYBWS4Q6pK/pXO5mIpFIktDgj+3lD0q4cs4IY0c7Ql0e5Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB6670
-X-Authority-Analysis: v=2.4 cv=I9Vohdgg c=1 sm=1 tr=0 ts=68d6bc19 cx=c_pps
- a=mEkeH8uuAp53uVOxVFYO2Q==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=yJojWOMRYYMA:10
- a=EUspDBNiAAAA:8 a=NEAV23lmAAAA:8 a=pGLkceISAAAA:8 a=M5GUcnROAAAA:8
- a=8rWy6zfcAAAA:8 a=fSO74jdL270F-flyWZoA:9 a=lqcHg5cX4UMA:10 a=QEXdDO2ut3YA:10
- a=7yoFsyMwCwO3OYPTFZQA:9 a=XEtpVt_J1xoncySV:21 a=frz4AuCg-hUA:10
- a=_W_S_7VecoQA:10 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-GUID: XufODRkaEVvTvu387GSug4WwIbX9PX7W
-X-Proofpoint-ORIG-GUID: XufODRkaEVvTvu387GSug4WwIbX9PX7W
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI1MDE3MSBTYWx0ZWRfX2MQFhD3hiA88
- ww6G+5AD8UX0M2/30j6MXnw2PqQOCN9NsFQLoI7WmWiry3zzkaQOVDAIhFx7ybgGGGTYc5NPB5p
- xy62+R5kpx+44DblhfxRZ6GYO0DtluhBvyDsZklLp9fv5cRHcG1UQaKyGOFIG1X2FijxGQf44/N
- jRD6QwDXcieHdQOe8NvDqFLxkt6127nMjjA+16up5dsaoiBUdMBHOYH/DE3JhERq2YYEJmgNJLW
- pKUUOJ5NA6bNZZixkIFnoVt5sP0Y8rJQEzgYa01Jtw+0Yh2FFQCBlyZlNZtaWCQUeCUDh0LJ7j9
- CrVrr+e0h+uq0p82j/OHAINLpoupigexZtMv8IqmDfK82siwV3LpkhoFGzzmozhtsA2gygYLcwq
- 3DuN4yheaSKjddD8ngt0SS+bEKamTw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-26_05,2025-09-26_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- priorityscore=1501 malwarescore=0 impostorscore=0 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509250171
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -202,197 +79,550 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_SJ2PR02MB979508BAD29B4BCE728EC4AF891EASJ2PR02MB9795namp_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+All global symbols should use a consistent prefix to avoid
+conflict when linking statically. The device ops can just
+be made local.
 
-SGV5IFBhdHJpY2ssDQoNCldlcmUgeW91IGFibGUgdG8gZml4IHRoZSBpc3N1ZSB3aXRoIHRoZSB0
-cmFmZmljIGdlbmVyYXRvcj8gSXMgdGhlcmUgZG9jdW1lbnRhdGlvbiBvbiB3aGF0IHN0ZXBzIG5l
-ZWQgdG8gYmUgZG9uZSB0byByZXF1ZXN0IGEgcmVydW4/DQoNClRoYW5rcw0KU2FtZWVyIFZhemUN
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQpGcm9tOiBQYXRyaWNrIFJvYmIgPHBy
-b2JiQGlvbC51bmguZWR1Pg0KU2VudDogV2VkbmVzZGF5LCBTZXB0ZW1iZXIgMjQsIDIwMjUgMjoy
-NCBQTQ0KVG86IFNhbWVlciBWYXplIDxzdmF6ZUBxdGkucXVhbGNvbW0uY29tPg0KQ2M6IEZhbiBa
-aGFuZyA8ZmFuemhhbmcub3NzQGdtYWlsLmNvbT47IEFzaGlzaCBHdXB0YSA8YXNoaXNoZ0BtYXJ2
-ZWxsLmNvbT47IGRldkBkcGRrLm9yZyA8ZGV2QGRwZGsub3JnPg0KU3ViamVjdDogUmU6IFtQQVRD
-SCAxLzNdIGNvbXByZXNzZGV2OiBzdXBwb3J0IGZvciBkaWN0aW9uYXJpZXMgYW5kIFBEQ1AgY2hl
-Y2tzdW0NCg0KDQpXQVJOSU5HOiBUaGlzIGVtYWlsIG9yaWdpbmF0ZWQgZnJvbSBvdXRzaWRlIG9m
-IFF1YWxjb21tLiBQbGVhc2UgYmUgd2FyeSBvZiBhbnkgbGlua3Mgb3IgYXR0YWNobWVudHMsIGFu
-ZCBkbyBub3QgZW5hYmxlIG1hY3Jvcy4NCg0KVGhlIENJIHRlc3RpbmcgZmFpbHVyZSBmb3IgdGhp
-cyBzZXJpZXMgaXMgZHVlIHRvIGFuIGlzc3VlIHdpdGggdGhlIHRyYWZmaWMgZ2VuZXJhdG9yIHRo
-YXQgaXMgdW5yZWxhdGVkIHRvIHRoZSBwYXRjaC4gSSB3aWxsIHJlc29sdmUgaXQgdG9tb3Jyb3cg
-YW5kIGRvIGEgdGVzdCByZXJ1bi4NCg0KT24gV2VkLCBTZXAgMjQsIDIwMjUgYXQgMTI6MTnigK9Q
-TSBTYW1lZXIgVmF6ZSA8c3ZhemVAcXRpLnF1YWxjb21tLmNvbTxtYWlsdG86c3ZhemVAcXRpLnF1
-YWxjb21tLmNvbT4+IHdyb3RlOg0KQWRkcyBkZWZpbml0aW9ucyBmb3IgUERDUCBjaGVja3N1bXMg
-YW5kIGFwaXMgdG8gcGFzcyBpbg0KZGljdGlvbmFyaWVzDQoNClNpZ25lZC1vZmYtYnk6IFNhbWVl
-ciBWYXplIDxzdmF6ZUBxdGkucXVhbGNvbW0uY29tPG1haWx0bzpzdmF6ZUBxdGkucXVhbGNvbW0u
-Y29tPj4NCi0tLQ0KIGxpYi9jb21wcmVzc2Rldi9ydGVfY29tcC5oIHwgMzEgKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCAzMSBpbnNlcnRpb25zKCspDQoN
-CmRpZmYgLS1naXQgYS9saWIvY29tcHJlc3NkZXYvcnRlX2NvbXAuaCBiL2xpYi9jb21wcmVzc2Rl
-di9ydGVfY29tcC5oDQppbmRleCA5NmQ5YjI3NmRkLi4xNjlkM2Q5NjBlIDEwMDY0NA0KLS0tIGEv
-bGliL2NvbXByZXNzZGV2L3J0ZV9jb21wLmgNCisrKyBiL2xpYi9jb21wcmVzc2Rldi9ydGVfY29t
-cC5oDQpAQCAtMTAxLDYgKzEwMSwxMCBAQCBlbnVtIHJ0ZV9jb21wX29wX3N0YXR1cyB7DQogICAg
-ICAgICAqIGlzIG5vdCBhbiBlcnJvciBjYXNlLiBPdXRwdXQgZGF0YSB1cCB0byBvcC5wcm9kdWNl
-ZCBjYW4gYmUgdXNlZCBhbmQNCiAgICAgICAgICogbmV4dCBvcCBpbiB0aGUgc3RyZWFtIHNob3Vs
-ZCBjb250aW51ZSBvbiBmcm9tIG9wLmNvbnN1bWVkKzEuDQogICAgICAgICAqLw0KKyAgICAgICBS
-VEVfQ09NUF9PUF9TVEFUVVNfQ0hFQ0tfU1VNX1ZBTElEQVRJT05fRkFJTEVELA0KKyAgICAgICAv
-Kio8IENoZWNrc3VtIHZhbGlkYXRpb24gZmFpbGVkLiBFaXRoZXIgY2FsY3VsYXRlZCBkb2VzIGNo
-ZWNrc3VtIG5vdCBtYXRjaA0KKyAgICAgICAgKiB0aGUgb25lIHByb3ZpZGVkIG9yIHRoZXJlIHdh
-cyBhbiBlcnJvciBjYWxjdWxhdGluZyB0aGUgY2hlY2tzdW0NCisgICAgICAgICovDQogfTsNCg0K
-IC8qKiBDb21wcmVzc2lvbiBBbGdvcml0aG1zICovDQpAQCAtMTY2LDYgKzE3MCwxMCBAQCBlbnVt
-IHJ0ZV9jb21wX2NoZWNrc3VtX3R5cGUgew0KICAgICAgICAvKio8IEdlbmVyYXRlcyBhIHh4SGFz
-aC0zMiBjaGVja3N1bSwgYXMgdXNlZCBieSBMWjQuDQogICAgICAgICAqIGh0dHBzOi8vZ2l0aHVi
-LmNvbS9DeWFuNDk3My94eEhhc2gvYmxvYi9kZXYvZG9jL3h4aGFzaF9zcGVjLm1kDQogICAgICAg
-ICAqLw0KKyAgICAgICBSVEVfQ09NUF9DSEVDS1NVTV8zR1BQX1BEQ1BfVURDLA0KKyAgICAgICAv
-Kio8IEdlbmVyYXRlcyBjaGVja3N1bSBhcyBkZWZpbmVkIHVuZGVyIFVwbGluayBEYXRhIENvbXBy
-ZXNzaW9uDQorICAgICAgICAqIGNoZWNrc3VtIGFzIGRlZmluZWQgaW4gdGhlIDNHUFAgUERDUCBz
-cGVjaWZpY2F0aW9uDQorICAgICAgICAqLw0KIH07DQoNCiAvKiogQ29tcHJlc3Npb24gSHVmZm1h
-biBUeXBlIC0gdXNlZCBieSBERUZMQVRFIGFsZ29yaXRobSAqLw0KQEAgLTIwMSw2ICsyMDksMTEg
-QEAgZW51bSBydGVfY29tcF9mbHVzaF9mbGFnIHsNCiAgICAgICAgICovDQogfTsNCg0KKyNkZWZp
-bmUgICAgICAgIERFRkxBVEVfTUFYX1dJTkRPV19TSVpFICgxVUxMIDw8IDE1KQ0KKw0KKyNkZWZp
-bmUgICAgICAgIERFRkxBVEVfTUlOX1dJTkRPV19TSVpFICAgICAgICAgKDFVTEwgPDwgOCkNCisN
-CisNCiAvKiogQ29tcHJlc3Npb24gdHJhbnNmb3JtIHR5cGVzICovDQogZW51bSBydGVfY29tcF94
-Zm9ybV90eXBlIHsNCiAgICAgICAgUlRFX0NPTVBfQ09NUFJFU1MsDQpAQCAtMzA1LDYgKzMxOCwx
-NSBAQCBzdHJ1Y3QgcnRlX2NvbXBfY29tcHJlc3NfeGZvcm0gew0KICAgICAgICAvKio8IEhhc2gg
-YWxnb3JpdGhtIHRvIGJlIHVzZWQgd2l0aCBjb21wcmVzcyBvcGVyYXRpb24uIEhhc2ggaXMgYWx3
-YXlzDQogICAgICAgICAqIGRvbmUgb24gcGxhaW50ZXh0Lg0KICAgICAgICAgKi8NCisgICAgICAg
-dWludDhfdCAqZGljdGlvbmFyeTsNCisgICAgICAgLyoqPA0KKyAgICAgICAgKiBQb2ludGVyIHRv
-IG1lbW9yeSBjb250YWluaW5nIGRpY3Rpb25hcnkgdG8gYmUgdXNlZCBmb3IgaW5mbGF0ZQ0KKyAg
-ICAgICAgKiBhbmQgZGVmbGF0ZSBvcGVyYXRpb25zDQorICAgICAgICAqLw0KKyAgICAgICB1aW50
-MTZfdCBkaWN0aW9uYXJ5X2xlbjsNCisgICAgICAgLyoqPA0KKyAgICAgICAgKiBMZW5ndGggb2Yg
-ZGljdGlvbmFyeSB0byBiZSB1c2VkDQorICAgICAgICAqLw0KIH07DQoNCiAvKioNCkBAIC0zMjgs
-NiArMzUwLDE1IEBAIHN0cnVjdCBydGVfY29tcF9kZWNvbXByZXNzX3hmb3JtIHsNCiAgICAgICAg
-LyoqPCBIYXNoIGFsZ29yaXRobSB0byBiZSB1c2VkIHdpdGggZGVjb21wcmVzcyBvcGVyYXRpb24u
-IEhhc2ggaXMgYWx3YXlzDQogICAgICAgICAqIGRvbmUgb24gcGxhaW50ZXh0Lg0KICAgICAgICAg
-Ki8NCisgICAgICAgdWludDhfdCAqZGljdGlvbmFyeTsNCisgICAgICAgLyoqPA0KKyAgICAgICAg
-KiBQb2ludGVyIHRvIG1lbW9yeSBjb250YWluaW5nIGRpY3Rpb25hcnkgdG8gYmUgdXNlZCBmb3Ig
-aW5mbGF0ZQ0KKyAgICAgICAgKiBhbmQgZGVmbGF0ZSBvcGVyYXRpb25zDQorICAgICAgICAqLw0K
-KyAgICAgICB1aW50MTZfdCBkaWN0aW9uYXJ5X2xlbjsNCisgICAgICAgLyoqPA0KKyAgICAgICAg
-KiBMZW5ndGggb2YgZGljdGlvbmFyeSB0byBiZSB1c2VkDQorICAgICAgICAqLw0KIH07DQoNCiAv
-KioNCi0tDQoyLjMxLjENCg0K
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/net/bonding/eth_bond_private.h | 57 +++++++++------------
+ drivers/net/bonding/rte_eth_bond_api.c | 45 ++++++++---------
+ drivers/net/bonding/rte_eth_bond_pmd.c | 69 +++++++++++++-------------
+ 3 files changed, 80 insertions(+), 91 deletions(-)
 
---_000_SJ2PR02MB979508BAD29B4BCE728EC4AF891EASJ2PR02MB9795namp_
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: base64
+diff --git a/drivers/net/bonding/eth_bond_private.h b/drivers/net/bonding/eth_bond_private.h
+index 378bbba4e6..1796bf5d9d 100644
+--- a/drivers/net/bonding/eth_bond_private.h
++++ b/drivers/net/bonding/eth_bond_private.h
+@@ -188,11 +188,6 @@ struct bond_dev_private {
+ 	struct rte_bitmap *vlan_filter_bmp;
+ };
+ 
+-extern const struct eth_dev_ops default_dev_ops;
+-
+-int
+-check_for_main_bonding_ethdev(const struct rte_eth_dev *eth_dev);
+-
+ int
+ check_for_bonding_ethdev(const struct rte_eth_dev *eth_dev);
+ 
+@@ -218,65 +213,61 @@ valid_port_id(uint16_t port_id);
+ int
+ valid_bonding_port_id(uint16_t port_id);
+ 
+-int
+-valid_member_port_id(struct bond_dev_private *internals, uint16_t port_id);
+-
+ void
+-deactivate_member(struct rte_eth_dev *eth_dev, uint16_t port_id);
++bond_deactivate_member(struct rte_eth_dev *eth_dev, uint16_t port_id);
+ 
+ void
+-activate_member(struct rte_eth_dev *eth_dev, uint16_t port_id);
++bond_activate_member(struct rte_eth_dev *eth_dev, uint16_t port_id);
+ 
+ int
+-mac_address_set(struct rte_eth_dev *eth_dev,
+-		struct rte_ether_addr *new_mac_addr);
++bond_mac_address_set(struct rte_eth_dev *eth_dev,
++		     struct rte_ether_addr *new_mac_addr);
+ 
+ int
+-mac_address_get(struct rte_eth_dev *eth_dev,
+-		struct rte_ether_addr *dst_mac_addr);
++bond_mac_address_get(struct rte_eth_dev *eth_dev,
++		     struct rte_ether_addr *dst_mac_addr);
+ 
+ int
+-mac_address_members_update(struct rte_eth_dev *bonding_eth_dev);
++bond_mac_address_members_update(struct rte_eth_dev *bonding_eth_dev);
+ 
+ int
+-member_add_mac_addresses(struct rte_eth_dev *bonding_eth_dev,
+-		uint16_t member_port_id);
++bond_member_add_mac_addresses(struct rte_eth_dev *bonding_eth_dev,
++			      uint16_t member_port_id);
+ 
+ int
+-member_remove_mac_addresses(struct rte_eth_dev *bonding_eth_dev,
+-		uint16_t member_port_id);
++bond_member_remove_mac_addresses(struct rte_eth_dev *bonding_eth_dev,
++				 uint16_t member_port_id);
+ 
+ int
+ bond_ethdev_mode_set(struct rte_eth_dev *eth_dev, uint8_t mode);
+ 
+ int
+-member_configure(struct rte_eth_dev *bonding_eth_dev,
+-		struct rte_eth_dev *member_eth_dev);
++bond_member_configure(struct rte_eth_dev *bonding_eth_dev,
++		      struct rte_eth_dev *member_eth_dev);
+ 
+ int
+-member_start(struct rte_eth_dev *bonding_eth_dev,
+-		struct rte_eth_dev *member_eth_dev);
++bond_member_start(struct rte_eth_dev *bonding_eth_dev,
++		  struct rte_eth_dev *member_eth_dev);
+ 
+ void
+-member_remove(struct bond_dev_private *internals,
+-		struct rte_eth_dev *member_eth_dev);
++bond_member_remove(struct bond_dev_private *internals,
++		   struct rte_eth_dev *member_eth_dev);
+ 
+ void
+-member_add(struct bond_dev_private *internals,
++bond_member_add(struct bond_dev_private *internals,
+ 		struct rte_eth_dev *member_eth_dev);
+ 
+ void
+-burst_xmit_l2_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
+-		uint16_t member_count, uint16_t *members);
++bond_xmit_l2_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
++			uint16_t member_count, uint16_t *members);
+ 
+ void
+-burst_xmit_l23_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
+-		uint16_t member_count, uint16_t *members);
++bond_xmit_l23_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
++		   uint16_t member_count, uint16_t *members);
+ 
+ void
+-burst_xmit_l34_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
+-		uint16_t member_count, uint16_t *members);
+-
++bond_xmit_l34_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
++		   uint16_t member_count, uint16_t *members);
+ 
+ void
+ bond_ethdev_primary_set(struct bond_dev_private *internals,
+diff --git a/drivers/net/bonding/rte_eth_bond_api.c b/drivers/net/bonding/rte_eth_bond_api.c
+index 9e5df67c18..d5c6510f21 100644
+--- a/drivers/net/bonding/rte_eth_bond_api.c
++++ b/drivers/net/bonding/rte_eth_bond_api.c
+@@ -37,7 +37,7 @@ valid_bonding_port_id(uint16_t port_id)
+ 	return check_for_bonding_ethdev(&rte_eth_devices[port_id]);
+ }
+ 
+-int
++static int
+ check_for_main_bonding_ethdev(const struct rte_eth_dev *eth_dev)
+ {
+ 	int i;
+@@ -56,7 +56,7 @@ check_for_main_bonding_ethdev(const struct rte_eth_dev *eth_dev)
+ 	return 0;
+ }
+ 
+-int
++static int
+ valid_member_port_id(struct bond_dev_private *internals, uint16_t member_port_id)
+ {
+ 	RTE_ETH_VALID_PORTID_OR_ERR_RET(member_port_id, -1);
+@@ -80,7 +80,7 @@ valid_member_port_id(struct bond_dev_private *internals, uint16_t member_port_id
+ }
+ 
+ void
+-activate_member(struct rte_eth_dev *eth_dev, uint16_t port_id)
++bond_activate_member(struct rte_eth_dev *eth_dev, uint16_t port_id)
+ {
+ 	struct bond_dev_private *internals = eth_dev->data->dev_private;
+ 	uint16_t active_count = internals->active_member_count;
+@@ -107,7 +107,7 @@ activate_member(struct rte_eth_dev *eth_dev, uint16_t port_id)
+ }
+ 
+ void
+-deactivate_member(struct rte_eth_dev *eth_dev, uint16_t port_id)
++bond_deactivate_member(struct rte_eth_dev *eth_dev, uint16_t port_id)
+ {
+ 	uint16_t member_pos;
+ 	struct bond_dev_private *internals = eth_dev->data->dev_private;
+@@ -496,7 +496,7 @@ __eth_bond_member_add_lock_free(uint16_t bonding_port_id, uint16_t member_port_i
+ 		return -1;
+ 	}
+ 
+-	member_add(internals, member_eth_dev);
++	bond_member_add(internals, member_eth_dev);
+ 
+ 	/* We need to store members reta_size to be able to synchronize RETA for all
+ 	 * member devices even if its sizes are different.
+@@ -509,7 +509,7 @@ __eth_bond_member_add_lock_free(uint16_t bonding_port_id, uint16_t member_port_i
+ 		 * bonding device.
+ 		 */
+ 		if (!internals->user_defined_mac) {
+-			if (mac_address_set(bonding_eth_dev,
++			if (bond_mac_address_set(bonding_eth_dev,
+ 					    member_eth_dev->data->mac_addrs)) {
+ 				RTE_BOND_LOG(ERR, "Failed to set MAC address");
+ 				return -1;
+@@ -566,7 +566,7 @@ __eth_bond_member_add_lock_free(uint16_t bonding_port_id, uint16_t member_port_i
+ 	}
+ 
+ 	/* Add additional MAC addresses to the member */
+-	if (member_add_mac_addresses(bonding_eth_dev, member_port_id) != 0) {
++	if (bond_member_add_mac_addresses(bonding_eth_dev, member_port_id) != 0) {
+ 		RTE_BOND_LOG(ERR, "Failed to add mac address(es) to member %hu",
+ 				member_port_id);
+ 		return -1;
+@@ -575,13 +575,13 @@ __eth_bond_member_add_lock_free(uint16_t bonding_port_id, uint16_t member_port_i
+ 	internals->member_count++;
+ 
+ 	if (bonding_eth_dev->data->dev_started) {
+-		if (member_configure(bonding_eth_dev, member_eth_dev) != 0) {
++		if (bond_member_configure(bonding_eth_dev, member_eth_dev) != 0) {
+ 			internals->member_count--;
+ 			RTE_BOND_LOG(ERR, "rte_bond_members_configure: port=%d",
+ 					member_port_id);
+ 			return -1;
+ 		}
+-		if (member_start(bonding_eth_dev, member_eth_dev) != 0) {
++		if (bond_member_start(bonding_eth_dev, member_eth_dev) != 0) {
+ 			internals->member_count--;
+ 			RTE_BOND_LOG(ERR, "rte_bond_members_start: port=%d",
+ 					member_port_id);
+@@ -590,7 +590,7 @@ __eth_bond_member_add_lock_free(uint16_t bonding_port_id, uint16_t member_port_i
+ 	}
+ 
+ 	/* Update all member devices MACs */
+-	mac_address_members_update(bonding_eth_dev);
++	bond_mac_address_members_update(bonding_eth_dev);
+ 
+ 	/*
+ 	 * Register link status change callback with bonding device pointer as
+@@ -683,7 +683,7 @@ __eth_bond_member_remove_lock_free(uint16_t bonding_port_id,
+ 		internals->active_member_count, member_port_id);
+ 
+ 	if (member_idx < internals->active_member_count)
+-		deactivate_member(bonding_eth_dev, member_port_id);
++		bond_deactivate_member(bonding_eth_dev, member_port_id);
+ 
+ 	member_idx = -1;
+ 	/* now find in member list */
+@@ -710,7 +710,7 @@ __eth_bond_member_remove_lock_free(uint16_t bonding_port_id,
+ 			&internals->members[member_idx].persisted_mac_addr);
+ 
+ 	/* remove additional MAC addresses from the member */
+-	member_remove_mac_addresses(bonding_eth_dev, member_port_id);
++	bond_member_remove_mac_addresses(bonding_eth_dev, member_port_id);
+ 
+ 	/*
+ 	 * Remove bond device flows from member device.
+@@ -735,7 +735,7 @@ __eth_bond_member_remove_lock_free(uint16_t bonding_port_id,
+ 	}
+ 
+ 	member_eth_dev = &rte_eth_devices[member_port_id];
+-	member_remove(internals, member_eth_dev);
++	bond_member_remove(internals, member_eth_dev);
+ 	member_eth_dev->data->dev_flags &= (~RTE_ETH_DEV_BONDING_MEMBER);
+ 
+ 	/*  first member in the active list will be the primary by default,
+@@ -747,7 +747,7 @@ __eth_bond_member_remove_lock_free(uint16_t bonding_port_id,
+ 			internals->current_primary_port = internals->members[0].port_id;
+ 		else
+ 			internals->primary_port = 0;
+-		mac_address_members_update(bonding_eth_dev);
++		bond_mac_address_members_update(bonding_eth_dev);
+ 	}
+ 
+ 	if (internals->active_member_count < 1) {
+@@ -931,14 +931,14 @@ rte_eth_bond_mac_address_set(uint16_t bonding_port_id,
+ 	internals = bonding_eth_dev->data->dev_private;
+ 
+ 	/* Set MAC Address of Bonding Device */
+-	if (mac_address_set(bonding_eth_dev, mac_addr))
++	if (bond_mac_address_set(bonding_eth_dev, mac_addr))
+ 		return -1;
+ 
+ 	internals->user_defined_mac = 1;
+ 
+ 	/* Update all member devices MACs*/
+ 	if (internals->member_count > 0)
+-		return mac_address_members_update(bonding_eth_dev);
++		return bond_mac_address_members_update(bonding_eth_dev);
+ 
+ 	return 0;
+ }
+@@ -972,14 +972,13 @@ rte_eth_bond_mac_address_reset(uint16_t bonding_port_id)
+ 		}
+ 
+ 		/* Set MAC Address of Bonding Device */
+-		if (mac_address_set(bonding_eth_dev,
+-			&internals->members[member_port].persisted_mac_addr)
+-				!= 0) {
++		if (bond_mac_address_set(bonding_eth_dev,
++			&internals->members[member_port].persisted_mac_addr) != 0) {
+ 			RTE_BOND_LOG(ERR, "Failed to set MAC address on bonding device");
+ 			return -1;
+ 		}
+ 		/* Update all member devices MAC addresses */
+-		return mac_address_members_update(bonding_eth_dev);
++		return bond_mac_address_members_update(bonding_eth_dev);
+ 	}
+ 	/* No need to update anything as no members present */
+ 	return 0;
+@@ -999,15 +998,15 @@ rte_eth_bond_xmit_policy_set(uint16_t bonding_port_id, uint8_t policy)
+ 	switch (policy) {
+ 	case BALANCE_XMIT_POLICY_LAYER2:
+ 		internals->balance_xmit_policy = policy;
+-		internals->burst_xmit_hash = burst_xmit_l2_hash;
++		internals->burst_xmit_hash = bond_xmit_l2_hash;
+ 		break;
+ 	case BALANCE_XMIT_POLICY_LAYER23:
+ 		internals->balance_xmit_policy = policy;
+-		internals->burst_xmit_hash = burst_xmit_l23_hash;
++		internals->burst_xmit_hash = bond_xmit_l23_hash;
+ 		break;
+ 	case BALANCE_XMIT_POLICY_LAYER34:
+ 		internals->balance_xmit_policy = policy;
+-		internals->burst_xmit_hash = burst_xmit_l34_hash;
++		internals->burst_xmit_hash = bond_xmit_l34_hash;
+ 		break;
+ 
+ 	default:
+diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
+index 4906701a95..6bf638f598 100644
+--- a/drivers/net/bonding/rte_eth_bond_pmd.c
++++ b/drivers/net/bonding/rte_eth_bond_pmd.c
+@@ -699,10 +699,9 @@ ipv6_hash(struct rte_ipv6_hdr *ipv6_hdr)
+ 			(word_src_addr[3] ^ word_dst_addr[3]);
+ }
+ 
+-
+ void
+-burst_xmit_l2_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
+-		uint16_t member_count, uint16_t *members)
++bond_xmit_l2_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
++		  uint16_t member_count, uint16_t *members)
+ {
+ 	struct rte_ether_hdr *eth_hdr;
+ 	uint32_t hash;
+@@ -718,8 +717,8 @@ burst_xmit_l2_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
+ }
+ 
+ void
+-burst_xmit_l23_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
+-		uint16_t member_count, uint16_t *members)
++bond_xmit_l23_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
++		   uint16_t member_count, uint16_t *members)
+ {
+ 	uint16_t i;
+ 	struct rte_ether_hdr *eth_hdr;
+@@ -756,8 +755,8 @@ burst_xmit_l23_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
+ }
+ 
+ void
+-burst_xmit_l34_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
+-		uint16_t member_count, uint16_t *members)
++bond_xmit_l34_hash(struct rte_mbuf **buf, uint16_t nb_pkts,
++		   uint16_t member_count, uint16_t *members)
+ {
+ 	struct rte_ether_hdr *eth_hdr;
+ 	uint16_t proto;
+@@ -1434,8 +1433,8 @@ link_properties_valid(struct rte_eth_dev *ethdev,
+ }
+ 
+ int
+-mac_address_get(struct rte_eth_dev *eth_dev,
+-		struct rte_ether_addr *dst_mac_addr)
++bond_mac_address_get(struct rte_eth_dev *eth_dev,
++		     struct rte_ether_addr *dst_mac_addr)
+ {
+ 	struct rte_ether_addr *mac_addr;
+ 
+@@ -1456,8 +1455,8 @@ mac_address_get(struct rte_eth_dev *eth_dev,
+ }
+ 
+ int
+-mac_address_set(struct rte_eth_dev *eth_dev,
+-		struct rte_ether_addr *new_mac_addr)
++bond_mac_address_set(struct rte_eth_dev *eth_dev,
++		     struct rte_ether_addr *new_mac_addr)
+ {
+ 	struct rte_ether_addr *mac_addr;
+ 
+@@ -1486,8 +1485,8 @@ static const struct rte_ether_addr null_mac_addr;
+  * Add additional MAC addresses to the member
+  */
+ int
+-member_add_mac_addresses(struct rte_eth_dev *bonding_eth_dev,
+-		uint16_t member_port_id)
++bond_member_add_mac_addresses(struct rte_eth_dev *bonding_eth_dev,
++			      uint16_t member_port_id)
+ {
+ 	int i, ret;
+ 	struct rte_ether_addr *mac_addr;
+@@ -1514,8 +1513,8 @@ member_add_mac_addresses(struct rte_eth_dev *bonding_eth_dev,
+  * Remove additional MAC addresses from the member
+  */
+ int
+-member_remove_mac_addresses(struct rte_eth_dev *bonding_eth_dev,
+-		uint16_t member_port_id)
++bond_member_remove_mac_addresses(struct rte_eth_dev *bonding_eth_dev,
++				 uint16_t member_port_id)
+ {
+ 	int i, rc, ret;
+ 	struct rte_ether_addr *mac_addr;
+@@ -1536,7 +1535,7 @@ member_remove_mac_addresses(struct rte_eth_dev *bonding_eth_dev,
+ }
+ 
+ int
+-mac_address_members_update(struct rte_eth_dev *bonding_eth_dev)
++bond_mac_address_members_update(struct rte_eth_dev *bonding_eth_dev)
+ {
+ 	struct bond_dev_private *internals = bonding_eth_dev->data->dev_private;
+ 	bool set;
+@@ -1735,7 +1734,7 @@ member_configure_slow_queue(struct rte_eth_dev *bonding_eth_dev,
+ }
+ 
+ int
+-member_configure(struct rte_eth_dev *bonding_eth_dev,
++bond_member_configure(struct rte_eth_dev *bonding_eth_dev,
+ 		struct rte_eth_dev *member_eth_dev)
+ {
+ 	uint16_t nb_rx_queues;
+@@ -1817,8 +1816,8 @@ member_configure(struct rte_eth_dev *bonding_eth_dev,
+ }
+ 
+ int
+-member_start(struct rte_eth_dev *bonding_eth_dev,
+-		struct rte_eth_dev *member_eth_dev)
++bond_member_start(struct rte_eth_dev *bonding_eth_dev,
++		  struct rte_eth_dev *member_eth_dev)
+ {
+ 	int errval = 0;
+ 	struct bond_rx_queue *bd_rx_q;
+@@ -1941,8 +1940,8 @@ member_start(struct rte_eth_dev *bonding_eth_dev,
+ }
+ 
+ void
+-member_remove(struct bond_dev_private *internals,
+-		struct rte_eth_dev *member_eth_dev)
++bond_member_remove(struct bond_dev_private *internals,
++		   struct rte_eth_dev *member_eth_dev)
+ {
+ 	uint16_t i;
+ 
+@@ -1975,7 +1974,7 @@ static void
+ bond_ethdev_member_link_status_change_monitor(void *cb_arg);
+ 
+ void
+-member_add(struct bond_dev_private *internals,
++bond_member_add(struct bond_dev_private *internals,
+ 		struct rte_eth_dev *member_eth_dev)
+ {
+ 	struct bond_member_details *member_details =
+@@ -2048,7 +2047,7 @@ bond_ethdev_start(struct rte_eth_dev *eth_dev)
+ 		if (new_mac_addr == NULL)
+ 			goto out_err;
+ 
+-		if (mac_address_set(eth_dev, new_mac_addr) != 0) {
++		if (bond_mac_address_set(eth_dev, new_mac_addr) != 0) {
+ 			RTE_BOND_LOG(ERR, "bonding port (%d) failed to update MAC address",
+ 					eth_dev->data->port_id);
+ 			goto out_err;
+@@ -2069,14 +2068,14 @@ bond_ethdev_start(struct rte_eth_dev *eth_dev)
+ 	for (i = 0; i < internals->member_count; i++) {
+ 		struct rte_eth_dev *member_ethdev =
+ 				&(rte_eth_devices[internals->members[i].port_id]);
+-		if (member_configure(eth_dev, member_ethdev) != 0) {
++		if (bond_member_configure(eth_dev, member_ethdev) != 0) {
+ 			RTE_BOND_LOG(ERR,
+ 				"bonding port (%d) failed to reconfigure member device (%d)",
+ 				eth_dev->data->port_id,
+ 				internals->members[i].port_id);
+ 			goto out_err;
+ 		}
+-		if (member_start(eth_dev, member_ethdev) != 0) {
++		if (bond_member_start(eth_dev, member_ethdev) != 0) {
+ 			RTE_BOND_LOG(ERR,
+ 				"bonding port (%d) failed to start member device (%d)",
+ 				eth_dev->data->port_id,
+@@ -2099,7 +2098,7 @@ bond_ethdev_start(struct rte_eth_dev *eth_dev)
+ 	}
+ 
+ 	/* Update all member devices MACs*/
+-	if (mac_address_members_update(eth_dev) != 0)
++	if (bond_mac_address_members_update(eth_dev) != 0)
+ 		goto out_err;
+ 
+ 	if (internals->user_defined_primary_port)
+@@ -2203,7 +2202,7 @@ bond_ethdev_stop(struct rte_eth_dev *eth_dev)
+ 		if (find_member_by_id(internals->active_members,
+ 				internals->active_member_count, member_id) !=
+ 					internals->active_member_count)
+-			deactivate_member(eth_dev, member_id);
++			bond_deactivate_member(eth_dev, member_id);
+ 	}
+ 
+ 	for (i = 0; i < eth_dev->data->nb_rx_queues; i++)
+@@ -3076,12 +3075,12 @@ bond_ethdev_lsc_event_callback(uint16_t port_id, enum rte_eth_event_type type,
+ 			internals->current_primary_port = port_id;
+ 			lsc_flag = 1;
+ 
+-			mac_address_members_update(bonding_eth_dev);
++			bond_mac_address_members_update(bonding_eth_dev);
+ 			bond_ethdev_promiscuous_update(bonding_eth_dev);
+ 			bond_ethdev_allmulticast_update(bonding_eth_dev);
+ 		}
+ 
+-		activate_member(bonding_eth_dev, port_id);
++		bond_activate_member(bonding_eth_dev, port_id);
+ 
+ 		/* If the user has defined the primary port then default to
+ 		 * using it.
+@@ -3094,7 +3093,7 @@ bond_ethdev_lsc_event_callback(uint16_t port_id, enum rte_eth_event_type type,
+ 			goto link_update;
+ 
+ 		/* Remove from active member list */
+-		deactivate_member(bonding_eth_dev, port_id);
++		bond_deactivate_member(bonding_eth_dev, port_id);
+ 
+ 		if (internals->active_member_count < 1)
+ 			lsc_flag = 1;
+@@ -3107,7 +3106,7 @@ bond_ethdev_lsc_event_callback(uint16_t port_id, enum rte_eth_event_type type,
+ 						internals->active_members[0]);
+ 			else
+ 				internals->current_primary_port = internals->primary_port;
+-			mac_address_members_update(bonding_eth_dev);
++			bond_mac_address_members_update(bonding_eth_dev);
+ 			bond_ethdev_promiscuous_update(bonding_eth_dev);
+ 			bond_ethdev_allmulticast_update(bonding_eth_dev);
+ 		}
+@@ -3297,7 +3296,7 @@ static int
+ bond_ethdev_mac_address_set(struct rte_eth_dev *dev,
+ 			struct rte_ether_addr *addr)
+ {
+-	if (mac_address_set(dev, addr)) {
++	if (bond_mac_address_set(dev, addr)) {
+ 		RTE_BOND_LOG(ERR, "Failed to update MAC address");
+ 		return -EINVAL;
+ 	}
+@@ -3617,7 +3616,7 @@ bond_ethdev_priv_dump(struct rte_eth_dev *dev, FILE *f)
+ 	return 0;
+ }
+ 
+-const struct eth_dev_ops default_dev_ops = {
++static const struct eth_dev_ops default_dev_ops = {
+ 	.dev_start            = bond_ethdev_start,
+ 	.dev_stop             = bond_ethdev_stop,
+ 	.dev_close            = bond_ethdev_close,
+@@ -3692,7 +3691,7 @@ bond_alloc(struct rte_vdev_device *dev, uint8_t mode)
+ 	internals->mode = BONDING_MODE_INVALID;
+ 	internals->current_primary_port = RTE_MAX_ETHPORTS + 1;
+ 	internals->balance_xmit_policy = BALANCE_XMIT_POLICY_LAYER2;
+-	internals->burst_xmit_hash = burst_xmit_l2_hash;
++	internals->burst_xmit_hash = bond_xmit_l2_hash;
+ 	internals->user_defined_mac = 0;
+ 
+ 	internals->link_status_polling_enabled = 0;
+@@ -4257,7 +4256,7 @@ bond_ethdev_configure(struct rte_eth_dev *dev)
+ 	for (i = 0; i < internals->member_count; i++) {
+ 		struct rte_eth_dev *member_ethdev =
+ 				&(rte_eth_devices[internals->members[i].port_id]);
+-		if (member_configure(dev, member_ethdev) != 0) {
++		if (bond_member_configure(dev, member_ethdev) != 0) {
+ 			RTE_BOND_LOG(ERR,
+ 				"bonding port (%d) failed to configure member device (%d)",
+ 				dev->data->port_id,
+-- 
+2.47.3
 
-PGh0bWw+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0i
-dGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyIgc3R5bGU9
-ImRpc3BsYXk6bm9uZTsiPiBQIHttYXJnaW4tdG9wOjA7bWFyZ2luLWJvdHRvbTowO30gPC9zdHls
-ZT4NCjwvaGVhZD4NCjxib2R5IGRpcj0ibHRyIj4NCjxkaXYgc3R5bGU9ImZvbnQtZmFtaWx5OiBB
-cHRvcywgQXB0b3NfRW1iZWRkZWRGb250LCBBcHRvc19NU0ZvbnRTZXJ2aWNlLCBDYWxpYnJpLCBI
-ZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTFwdDsgY29sb3I6IHJnYigwLCAwLCAw
-KTsiIGNsYXNzPSJlbGVtZW50VG9Qcm9vZiI+DQpIZXkgUGF0cmljayw8L2Rpdj4NCjxkaXYgc3R5
-bGU9ImZvbnQtZmFtaWx5OiBBcHRvcywgQXB0b3NfRW1iZWRkZWRGb250LCBBcHRvc19NU0ZvbnRT
-ZXJ2aWNlLCBDYWxpYnJpLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTFwdDsg
-Y29sb3I6IHJnYigwLCAwLCAwKTsiIGNsYXNzPSJlbGVtZW50VG9Qcm9vZiI+DQo8YnI+DQo8L2Rp
-dj4NCjxkaXYgc3R5bGU9ImZvbnQtZmFtaWx5OiBBcHRvcywgQXB0b3NfRW1iZWRkZWRGb250LCBB
-cHRvc19NU0ZvbnRTZXJ2aWNlLCBDYWxpYnJpLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGZvbnQt
-c2l6ZTogMTFwdDsgY29sb3I6IHJnYigwLCAwLCAwKTsiIGNsYXNzPSJlbGVtZW50VG9Qcm9vZiI+
-DQpXZXJlIHlvdSBhYmxlIHRvIGZpeCB0aGUgaXNzdWUgd2l0aCB0aGUgdHJhZmZpYyBnZW5lcmF0
-b3I/IElzIHRoZXJlIGRvY3VtZW50YXRpb24gb24gd2hhdCBzdGVwcyBuZWVkIHRvIGJlIGRvbmUg
-dG8gcmVxdWVzdCBhIHJlcnVuPzwvZGl2Pg0KPGRpdiBpZD0iU2lnbmF0dXJlIj4NCjxkaXYgc3R5
-bGU9ImZvbnQtZmFtaWx5OiBDYWxpYnJpLCBBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmOyBm
-b250LXNpemU6IDExcHQ7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij4NCjxicj4NCjwvZGl2Pg0KPGRp
-diBzdHlsZT0iZm9udC1mYW1pbHk6IENhbGlicmksIEFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2Vy
-aWY7IGZvbnQtc2l6ZTogMTFwdDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPg0KVGhhbmtzPGJyPg0K
-U2FtZWVyIFZhemU8L2Rpdj4NCjwvZGl2Pg0KPGRpdiBpZD0iYXBwZW5kb25zZW5kIj48L2Rpdj4N
-CjxociBzdHlsZT0iZGlzcGxheTppbmxpbmUtYmxvY2s7d2lkdGg6OTglIiB0YWJpbmRleD0iLTEi
-Pg0KPGRpdiBpZD0iZGl2UnBseUZ3ZE1zZyIgZGlyPSJsdHIiPjxmb250IGZhY2U9IkNhbGlicmks
-IHNhbnMtc2VyaWYiIHN0eWxlPSJmb250LXNpemU6MTFwdCIgY29sb3I9IiMwMDAwMDAiPjxiPkZy
-b206PC9iPiBQYXRyaWNrIFJvYmIgJmx0O3Byb2JiQGlvbC51bmguZWR1Jmd0Ozxicj4NCjxiPlNl
-bnQ6PC9iPiBXZWRuZXNkYXksIFNlcHRlbWJlciAyNCwgMjAyNSAyOjI0IFBNPGJyPg0KPGI+VG86
-PC9iPiBTYW1lZXIgVmF6ZSAmbHQ7c3ZhemVAcXRpLnF1YWxjb21tLmNvbSZndDs8YnI+DQo8Yj5D
-Yzo8L2I+IEZhbiBaaGFuZyAmbHQ7ZmFuemhhbmcub3NzQGdtYWlsLmNvbSZndDs7IEFzaGlzaCBH
-dXB0YSAmbHQ7YXNoaXNoZ0BtYXJ2ZWxsLmNvbSZndDs7IGRldkBkcGRrLm9yZyAmbHQ7ZGV2QGRw
-ZGsub3JnJmd0Ozxicj4NCjxiPlN1YmplY3Q6PC9iPiBSZTogW1BBVENIIDEvM10gY29tcHJlc3Nk
-ZXY6IHN1cHBvcnQgZm9yIGRpY3Rpb25hcmllcyBhbmQgUERDUCBjaGVja3N1bTwvZm9udD4NCjxk
-aXY+Jm5ic3A7PC9kaXY+DQo8L2Rpdj4NCjxkaXY+DQo8cCBzdHlsZT0idGV4dC1hbGlnbjpjZW50
-ZXIiPjxzcGFuIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmMDA7IGZvbnQtc2l6ZToxNHB4
-OyBmb250LWZhbWlseTpzYW5zLXNlcmlmOyBjb2xvcjojMDAwMDAwIj48c3Ryb25nPldBUk5JTkc6
-PC9zdHJvbmc+IFRoaXMgZW1haWwgb3JpZ2luYXRlZCBmcm9tIG91dHNpZGUgb2YgUXVhbGNvbW0u
-IFBsZWFzZSBiZSB3YXJ5IG9mIGFueSBsaW5rcyBvciBhdHRhY2htZW50cywgYW5kIGRvIG5vdCBl
-bmFibGUNCiBtYWNyb3MuPC9zcGFuPjwvcD4NCjxkaXY+DQo8ZGl2IGRpcj0ibHRyIj5UaGUgQ0kg
-dGVzdGluZyBmYWlsdXJlIGZvciB0aGlzIHNlcmllcyBpcyBkdWUgdG8gYW4gaXNzdWUgd2l0aCB0
-aGUmbmJzcDt0cmFmZmljIGdlbmVyYXRvciB0aGF0IGlzIHVucmVsYXRlZCB0byB0aGUgcGF0Y2gu
-IEkgd2lsbCByZXNvbHZlIGl0IHRvbW9ycm93IGFuZCBkbyBhIHRlc3QgcmVydW4uPC9kaXY+DQo8
-YnI+DQo8ZGl2IGNsYXNzPSJ4X2dtYWlsX3F1b3RlIHhfZ21haWxfcXVvdGVfY29udGFpbmVyIj4N
-CjxkaXYgZGlyPSJsdHIiIGNsYXNzPSJ4X2dtYWlsX2F0dHIiPk9uIFdlZCwgU2VwIDI0LCAyMDI1
-IGF0IDEyOjE54oCvUE0gU2FtZWVyIFZhemUgJmx0OzxhIGhyZWY9Im1haWx0bzpzdmF6ZUBxdGku
-cXVhbGNvbW0uY29tIj5zdmF6ZUBxdGkucXVhbGNvbW0uY29tPC9hPiZndDsgd3JvdGU6PGJyPg0K
-PC9kaXY+DQo8YmxvY2txdW90ZSBjbGFzcz0ieF9nbWFpbF9xdW90ZSIgc3R5bGU9Im1hcmdpbjow
-cHggMHB4IDBweCAwLjhleDsgYm9yZGVyLWxlZnQ6MXB4IHNvbGlkIHJnYigyMDQsMjA0LDIwNCk7
-IHBhZGRpbmctbGVmdDoxZXgiPg0KQWRkcyBkZWZpbml0aW9ucyBmb3IgUERDUCBjaGVja3N1bXMg
-YW5kIGFwaXMgdG8gcGFzcyBpbjxicj4NCmRpY3Rpb25hcmllczxicj4NCjxicj4NClNpZ25lZC1v
-ZmYtYnk6IFNhbWVlciBWYXplICZsdDs8YSBocmVmPSJtYWlsdG86c3ZhemVAcXRpLnF1YWxjb21t
-LmNvbSIgdGFyZ2V0PSJfYmxhbmsiPnN2YXplQHF0aS5xdWFsY29tbS5jb208L2E+Jmd0Ozxicj4N
-Ci0tLTxicj4NCiZuYnNwO2xpYi9jb21wcmVzc2Rldi9ydGVfY29tcC5oIHwgMzEgKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKzxicj4NCiZuYnNwOzEgZmlsZSBjaGFuZ2VkLCAzMSBpbnNl
-cnRpb25zKCspPGJyPg0KPGJyPg0KZGlmZiAtLWdpdCBhL2xpYi9jb21wcmVzc2Rldi9ydGVfY29t
-cC5oIGIvbGliL2NvbXByZXNzZGV2L3J0ZV9jb21wLmg8YnI+DQppbmRleCA5NmQ5YjI3NmRkLi4x
-NjlkM2Q5NjBlIDEwMDY0NDxicj4NCi0tLSBhL2xpYi9jb21wcmVzc2Rldi9ydGVfY29tcC5oPGJy
-Pg0KKysrIGIvbGliL2NvbXByZXNzZGV2L3J0ZV9jb21wLmg8YnI+DQpAQCAtMTAxLDYgKzEwMSwx
-MCBAQCBlbnVtIHJ0ZV9jb21wX29wX3N0YXR1cyB7PGJyPg0KJm5ic3A7ICZuYnNwOyAmbmJzcDsg
-Jm5ic3A7ICZuYnNwOyogaXMgbm90IGFuIGVycm9yIGNhc2UuIE91dHB1dCBkYXRhIHVwIHRvIG9w
-LnByb2R1Y2VkIGNhbiBiZSB1c2VkIGFuZDxicj4NCiZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNw
-OyAmbmJzcDsqIG5leHQgb3AgaW4gdGhlIHN0cmVhbSBzaG91bGQgY29udGludWUgb24gZnJvbSBv
-cC5jb25zdW1lZCsxLjxicj4NCiZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsqLzxi
-cj4NCismbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDtSVEVfQ09NUF9PUF9TVEFUVVNfQ0hFQ0tf
-U1VNX1ZBTElEQVRJT05fRkFJTEVELDxicj4NCismbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsv
-KiombHQ7IENoZWNrc3VtIHZhbGlkYXRpb24gZmFpbGVkLiBFaXRoZXIgY2FsY3VsYXRlZCBkb2Vz
-IGNoZWNrc3VtIG5vdCBtYXRjaDxicj4NCismbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgKiB0
-aGUgb25lIHByb3ZpZGVkIG9yIHRoZXJlIHdhcyBhbiBlcnJvciBjYWxjdWxhdGluZyB0aGUgY2hl
-Y2tzdW08YnI+DQorJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICovPGJyPg0KJm5ic3A7fTs8
-YnI+DQo8YnI+DQombmJzcDsvKiogQ29tcHJlc3Npb24gQWxnb3JpdGhtcyAqLzxicj4NCkBAIC0x
-NjYsNiArMTcwLDEwIEBAIGVudW0gcnRlX2NvbXBfY2hlY2tzdW1fdHlwZSB7PGJyPg0KJm5ic3A7
-ICZuYnNwOyAmbmJzcDsgJm5ic3A7IC8qKiZsdDsgR2VuZXJhdGVzIGEgeHhIYXNoLTMyIGNoZWNr
-c3VtLCBhcyB1c2VkIGJ5IExaNC48YnI+DQombmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5i
-c3A7KiA8YSBocmVmPSJodHRwczovL2dpdGh1Yi5jb20vQ3lhbjQ5NzMveHhIYXNoL2Jsb2IvZGV2
-L2RvYy94eGhhc2hfc3BlYy5tZCIgcmVsPSJub3JlZmVycmVyIiB0YXJnZXQ9Il9ibGFuayI+DQpo
-dHRwczovL2dpdGh1Yi5jb20vQ3lhbjQ5NzMveHhIYXNoL2Jsb2IvZGV2L2RvYy94eGhhc2hfc3Bl
-Yy5tZDwvYT48YnI+DQombmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7Ki88YnI+DQor
-Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7UlRFX0NPTVBfQ0hFQ0tTVU1fM0dQUF9QRENQX1VE
-Qyw8YnI+DQorJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7LyoqJmx0OyBHZW5lcmF0ZXMgY2hl
-Y2tzdW0gYXMgZGVmaW5lZCB1bmRlciBVcGxpbmsgRGF0YSBDb21wcmVzc2lvbjxicj4NCismbmJz
-cDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgKiBjaGVja3N1bSBhcyBkZWZpbmVkIGluIHRoZSAzR1BQ
-IFBEQ1Agc3BlY2lmaWNhdGlvbjxicj4NCismbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgKi88
-YnI+DQombmJzcDt9Ozxicj4NCjxicj4NCiZuYnNwOy8qKiBDb21wcmVzc2lvbiBIdWZmbWFuIFR5
-cGUgLSB1c2VkIGJ5IERFRkxBVEUgYWxnb3JpdGhtICovPGJyPg0KQEAgLTIwMSw2ICsyMDksMTEg
-QEAgZW51bSBydGVfY29tcF9mbHVzaF9mbGFnIHs8YnI+DQombmJzcDsgJm5ic3A7ICZuYnNwOyAm
-bmJzcDsgJm5ic3A7Ki88YnI+DQombmJzcDt9Ozxicj4NCjxicj4NCisjZGVmaW5lJm5ic3A7ICZu
-YnNwOyAmbmJzcDsgJm5ic3A7IERFRkxBVEVfTUFYX1dJTkRPV19TSVpFICgxVUxMICZsdDsmbHQ7
-IDE1KTxicj4NCis8YnI+DQorI2RlZmluZSZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyBERUZM
-QVRFX01JTl9XSU5ET1dfU0laRSZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsoMVVM
-TCAmbHQ7Jmx0OyA4KTxicj4NCis8YnI+DQorPGJyPg0KJm5ic3A7LyoqIENvbXByZXNzaW9uIHRy
-YW5zZm9ybSB0eXBlcyAqLzxicj4NCiZuYnNwO2VudW0gcnRlX2NvbXBfeGZvcm1fdHlwZSB7PGJy
-Pg0KJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IFJURV9DT01QX0NPTVBSRVNTLDxicj4NCkBA
-IC0zMDUsNiArMzE4LDE1IEBAIHN0cnVjdCBydGVfY29tcF9jb21wcmVzc194Zm9ybSB7PGJyPg0K
-Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IC8qKiZsdDsgSGFzaCBhbGdvcml0aG0gdG8gYmUg
-dXNlZCB3aXRoIGNvbXByZXNzIG9wZXJhdGlvbi4gSGFzaCBpcyBhbHdheXM8YnI+DQombmJzcDsg
-Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7KiBkb25lIG9uIHBsYWludGV4dC48YnI+DQombmJz
-cDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7Ki88YnI+DQorJm5ic3A7ICZuYnNwOyAmbmJz
-cDsgJm5ic3A7dWludDhfdCAqZGljdGlvbmFyeTs8YnI+DQorJm5ic3A7ICZuYnNwOyAmbmJzcDsg
-Jm5ic3A7LyoqJmx0Ozxicj4NCismbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgKiBQb2ludGVy
-IHRvIG1lbW9yeSBjb250YWluaW5nIGRpY3Rpb25hcnkgdG8gYmUgdXNlZCBmb3IgaW5mbGF0ZTxi
-cj4NCismbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgKiBhbmQgZGVmbGF0ZSBvcGVyYXRpb25z
-PGJyPg0KKyZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAqLzxicj4NCismbmJzcDsgJm5ic3A7
-ICZuYnNwOyAmbmJzcDt1aW50MTZfdCBkaWN0aW9uYXJ5X2xlbjs8YnI+DQorJm5ic3A7ICZuYnNw
-OyAmbmJzcDsgJm5ic3A7LyoqJmx0Ozxicj4NCismbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsg
-KiBMZW5ndGggb2YgZGljdGlvbmFyeSB0byBiZSB1c2VkPGJyPg0KKyZuYnNwOyAmbmJzcDsgJm5i
-c3A7ICZuYnNwOyAqLzxicj4NCiZuYnNwO307PGJyPg0KPGJyPg0KJm5ic3A7LyoqPGJyPg0KQEAg
-LTMyOCw2ICszNTAsMTUgQEAgc3RydWN0IHJ0ZV9jb21wX2RlY29tcHJlc3NfeGZvcm0gezxicj4N
-CiZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAvKiombHQ7IEhhc2ggYWxnb3JpdGhtIHRvIGJl
-IHVzZWQgd2l0aCBkZWNvbXByZXNzIG9wZXJhdGlvbi4gSGFzaCBpcyBhbHdheXM8YnI+DQombmJz
-cDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7KiBkb25lIG9uIHBsYWludGV4dC48YnI+DQom
-bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7Ki88YnI+DQorJm5ic3A7ICZuYnNwOyAm
-bmJzcDsgJm5ic3A7dWludDhfdCAqZGljdGlvbmFyeTs8YnI+DQorJm5ic3A7ICZuYnNwOyAmbmJz
-cDsgJm5ic3A7LyoqJmx0Ozxicj4NCismbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgKiBQb2lu
-dGVyIHRvIG1lbW9yeSBjb250YWluaW5nIGRpY3Rpb25hcnkgdG8gYmUgdXNlZCBmb3IgaW5mbGF0
-ZTxicj4NCismbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgKiBhbmQgZGVmbGF0ZSBvcGVyYXRp
-b25zPGJyPg0KKyZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAqLzxicj4NCismbmJzcDsgJm5i
-c3A7ICZuYnNwOyAmbmJzcDt1aW50MTZfdCBkaWN0aW9uYXJ5X2xlbjs8YnI+DQorJm5ic3A7ICZu
-YnNwOyAmbmJzcDsgJm5ic3A7LyoqJmx0Ozxicj4NCismbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJz
-cDsgKiBMZW5ndGggb2YgZGljdGlvbmFyeSB0byBiZSB1c2VkPGJyPg0KKyZuYnNwOyAmbmJzcDsg
-Jm5ic3A7ICZuYnNwOyAqLzxicj4NCiZuYnNwO307PGJyPg0KPGJyPg0KJm5ic3A7LyoqPGJyPg0K
-LS0gPGJyPg0KMi4zMS4xPGJyPg0KPGJyPg0KPC9ibG9ja3F1b3RlPg0KPC9kaXY+DQo8L2Rpdj4N
-CjwvZGl2Pg0KPC9ib2R5Pg0KPC9odG1sPg0K
-
---_000_SJ2PR02MB979508BAD29B4BCE728EC4AF891EASJ2PR02MB9795namp_--
