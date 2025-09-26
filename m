@@ -2,60 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB15CAC5B9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Sep 2025 12:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 776B5CAC5AE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 26 Sep 2025 12:50:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7B14140A71;
-	Fri, 26 Sep 2025 14:42:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B144140664;
+	Fri, 26 Sep 2025 14:50:06 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0181A40A6D
- for <dev@dpdk.org>; Fri, 26 Sep 2025 14:42:18 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id F3D0B4028F
+ for <dev@dpdk.org>; Fri, 26 Sep 2025 14:50:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1758890538;
+ s=mimecast20190719; t=1758891005;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=r/EV/pbtbJWM84FR5E+c4Gpy+iybyXEvn4C3R+q4kV8=;
- b=IXtLnmeFHAOABYCRyaYcDo0Jth7i/B8nHPgenFfjrpEfnng0Cst+rzmvOTylS5h25dIH8U
- 3dCFpjHP2Az1C+I3tdcLk3Rjq/m12bPawe0KTCkaxZHmvAsJhRwuKrPxLjiVAK/H54SC0H
- prd1Xlch8SoWSxlWtpVL7Gz+B9EgEC0=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-655-3s8Wo_gUMEOKE2e1lgcgiw-1; Fri,
- 26 Sep 2025 08:42:17 -0400
-X-MC-Unique: 3s8Wo_gUMEOKE2e1lgcgiw-1
-X-Mimecast-MFC-AGG-ID: 3s8Wo_gUMEOKE2e1lgcgiw_1758890536
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 2D6F318002CC; Fri, 26 Sep 2025 12:42:16 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.45.225.72])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 3EE5919560B4; Fri, 26 Sep 2025 12:42:13 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, Anatoly Burakov <anatoly.burakov@intel.com>,
- David Hunt <david.hunt@intel.com>,
- Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-Subject: [PATCH v5 9/9] power: separate public and driver headers
-Date: Fri, 26 Sep 2025 14:41:02 +0200
-Message-ID: <20250926124103.750844-10-david.marchand@redhat.com>
-In-Reply-To: <20250926124103.750844-1-david.marchand@redhat.com>
-References: <20241127112617.1331125-1-david.marchand@redhat.com>
- <20250926124103.750844-1-david.marchand@redhat.com>
+ bh=H5YofyCbr972ZF8eHwTiNiMZzb0tl7WOhxY03hj8dJY=;
+ b=SYUFlJhcJj/20dKuVIV9ksmGz8QIn2iH5Jr30RuDYyHaoz2AC6R4kIwlJKSMIO91gwltKi
+ N1O4KBUe1w036RSbjfWqQiai2ahMq92mWvyix+M0TO5iG8Wuh5cTxjpkHtCBKL//mrebTF
+ mv415Jtur8pjerorXjMO6w6bwBcE3lA=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-492-gH4Z4mR9OzO0JAjZkPpflQ-1; Fri, 26 Sep 2025 08:50:02 -0400
+X-MC-Unique: gH4Z4mR9OzO0JAjZkPpflQ-1
+X-Mimecast-MFC-AGG-ID: gH4Z4mR9OzO0JAjZkPpflQ_1758891001
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-36c983e4c21so12081881fa.1
+ for <dev@dpdk.org>; Fri, 26 Sep 2025 05:50:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1758891000; x=1759495800;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=H5YofyCbr972ZF8eHwTiNiMZzb0tl7WOhxY03hj8dJY=;
+ b=nxHGNMfsv1M+qU/phDnRS23U91YHBfMm8vidTNP7LYTsyUawycAbha66agxoLOdzEx
+ 4cxC8bNr5Uazk3gA6mLHZAkniJIcFXNo0k+D9+2uJCVv/DrR2CBtgIhR+PuOA8rABQ63
+ 9m+kCinCkv1EnqrubalK2V+C4N2HGTaTNndp7Pme4bkPVrBofPKXHSQnU4eyTjWbJU/D
+ fmr9ppuBBsV0tSnq5HZBlFKt0Ym6paPSJAu6GNBVIXR0M3KLAemEOOKwnoTmvpFbWk6h
+ n/pnCzxBJwpnNiqsMFKOZ/0oYn196NvmEjhBJZ5hkw3H8ZWfGO8ro75oTyeC+rYIX36R
+ GVug==
+X-Gm-Message-State: AOJu0YzJV4s6BZYioey4y16KHzQA/JOeb8dQ+Gwzh/15DWGjhgkTMR1T
+ 4qU/7sSzq2j6RjIvPbzesfKu6QUoWwBYSy5fCV7bQy0C3z4oyvQ+O/bPsjEokFfzy6YiPnyYV3V
+ gDAKulEDCjDcYk8HuUI4IoDPYw7dnYVYs+YHzjTc4G7IaYwRbL+7098+F2DjrIU2fKBGaMMggfd
+ 5cdfmZiAyWRi4/qnt7auojWAxzFHj+Xg==
+X-Gm-Gg: ASbGnct4kDa0WsoXi5eba6r5fCTiA73UC5hxHKiVq3LS0I+kCWbwjCmF42NK2tQxjbg
+ mQTZr5UKGgzZzvPTI0FzjeV5UXDg/Cob3LSJwLd4CcNJhG/ARjC5Qtd+tRSnYirfrEesWF52AHy
+ WheewwqKzOAFpteF2mbIszsDA=
+X-Received: by 2002:a2e:be1b:0:b0:36a:6c51:18b5 with SMTP id
+ 38308e7fff4ca-36f7ee63d77mr30079241fa.33.1758891000433; 
+ Fri, 26 Sep 2025 05:50:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFMwb1a/w0xhIaz/O5Q0Gz8GVEmXostQi95fJR9cLLVt/50D3UKvn3PSfYpeNthh3RwTA0CowOXTs7IktcMagw=
+X-Received: by 2002:a2e:be1b:0:b0:36a:6c51:18b5 with SMTP id
+ 38308e7fff4ca-36f7ee63d77mr30079041fa.33.1758890999984; Fri, 26 Sep 2025
+ 05:49:59 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20250925130438.3072610-1-david.marchand@redhat.com>
+In-Reply-To: <20250925130438.3072610-1-david.marchand@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 26 Sep 2025 14:49:47 +0200
+X-Gm-Features: AS18NWBbzv1lPx0MG9-nXt2Xv1DZiURXoS9DLS8mUezKRMSEpRi4qNEW3-k_a6M
+Message-ID: <CAJFAV8xVEoKfsTJTwZeXbr63vn4BcRKg4XadEaWSaEJEMcmkuw@mail.gmail.com>
+Subject: Re: [PATCH] buildtools: prepare symbol check for Windows
+To: dev@dpdk.org
+Cc: andremue@linux.microsoft.com, Thomas Monjalon <thomas@monjalon.net>, 
+ Bruce Richardson <bruce.richardson@intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: hjp_p5CsRfcny77I9rWsQrP1gWLEGK7t_J-ccTs8l-c_1758890536
+X-Mimecast-MFC-PROC-ID: gTiVo7sS9rP6P5acvjjJLgcWKmsR9MnaYwkSuSexuXg_1758891001
 X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,167 +83,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-power_cpufreq.h, power_common.h and power_uncore_ops.h look like driver
-only headers, but were included from public headers.
-Move them to the driver_sdk_headers list.
+On Thu, 25 Sept 2025 at 15:05, David Marchand <david.marchand@redhat.com> wrote:
+>
+> The symbol check was implemented so far with shell scripts, relying
+> on objdump and other unix tools preventing it from being run on Windows.
+>
+> There was also an ask from some maintainers to convert this type of
+> developer checks to python scripts, to make it easier to extend and
+> maintain.
+>
+> The new implementation still performs the four consistency checks:
+> - symbols exported as experimental but missing __rte_experimental flag,
+> - symbols flagged as experimental but missing export declaration,
+> - symbols exported as internal but missing __rte_internal flag,
+> - symbols flagged as internal but missing export declaration,
+>
+> The initial implementation was done relying on Claude Code
+> (asking it to reimplement the existing check after it analysed
+> the current build flow).
+>
+> I then cleaned up the python script, removed dumb comments, fixed coding
+> style, fixed MAINTAINERS, fixed some dumb issues (like definition order in
+> buildtools/meson.build).
 
-There is one complication though for power_cpufreq.h as it was included
-from a public header rte_power_cpufreq.h.
-Move the rte_power_core_capabilities struct definition to the public
-header, since a (stable) public symbol relies on it.
+Looks like trusting Claude on the python subtleties was not a good idea.
+A v2 will be needed, but this change can wait to have a real user.
+I'll mark as changes requested in patchwork.
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- lib/power/meson.build         |  7 +++++--
- lib/power/power_cpufreq.h     | 14 +-------------
- lib/power/power_uncore_ops.h  |  1 +
- lib/power/rte_power_cpufreq.c |  2 +-
- lib/power/rte_power_cpufreq.h | 15 +++++++++++++--
- lib/power/rte_power_uncore.c  |  2 +-
- lib/power/rte_power_uncore.h  |  3 ++-
- 7 files changed, 24 insertions(+), 20 deletions(-)
 
-diff --git a/lib/power/meson.build b/lib/power/meson.build
-index 56b59071ea..d89fb55514 100644
---- a/lib/power/meson.build
-+++ b/lib/power/meson.build
-@@ -22,12 +22,15 @@ sources = files(
-         'rte_power_uncore.c',
- )
- headers = files(
--        'power_cpufreq.h',
--        'power_uncore_ops.h',
-         'rte_power_cpufreq.h',
-         'rte_power_pmd_mgmt.h',
-         'rte_power_qos.h',
-         'rte_power_uncore.h',
- )
-+driver_sdk_headers = files(
-+        'power_common.h',
-+        'power_cpufreq.h',
-+        'power_uncore_ops.h',
-+)
- 
- deps += ['timer', 'ethdev']
-diff --git a/lib/power/power_cpufreq.h b/lib/power/power_cpufreq.h
-index 92f1ab8f37..fb0b7feb82 100644
---- a/lib/power/power_cpufreq.h
-+++ b/lib/power/power_cpufreq.h
-@@ -14,6 +14,7 @@
- #include <rte_common.h>
- #include <rte_log.h>
- #include <rte_compat.h>
-+#include <rte_power_cpufreq.h>
- 
- #define RTE_POWER_DRIVER_NAMESZ 24
- 
-@@ -131,19 +132,6 @@ typedef int (*rte_power_freq_change_t)(unsigned int lcore_id);
-  *  - Negative on error.
-  */
- 
--/**
-- * Power capabilities summary.
-- */
--struct rte_power_core_capabilities {
--	union {
--		uint64_t capabilities;
--		struct {
--			uint64_t turbo:1;       /**< Turbo can be enabled. */
--			uint64_t priority:1;    /**< SST-BF high freq core */
--		};
--	};
--};
--
- typedef int (*rte_power_get_capabilities_t)(unsigned int lcore_id,
- 			struct rte_power_core_capabilities *caps);
- 
-diff --git a/lib/power/power_uncore_ops.h b/lib/power/power_uncore_ops.h
-index b92af28df9..783860ee5b 100644
---- a/lib/power/power_uncore_ops.h
-+++ b/lib/power/power_uncore_ops.h
-@@ -13,6 +13,7 @@
- 
- #include <rte_compat.h>
- #include <rte_common.h>
-+#include <rte_power_uncore.h>
- 
- #define RTE_POWER_UNCORE_DRIVER_NAMESZ 24
- 
-diff --git a/lib/power/rte_power_cpufreq.c b/lib/power/rte_power_cpufreq.c
-index d4db03a4e5..f63e976dc2 100644
---- a/lib/power/rte_power_cpufreq.c
-+++ b/lib/power/rte_power_cpufreq.c
-@@ -6,8 +6,8 @@
- #include <rte_spinlock.h>
- #include <rte_debug.h>
- 
--#include "rte_power_cpufreq.h"
- #include "power_common.h"
-+#include "power_cpufreq.h"
- 
- static enum power_management_env global_default_env = PM_ENV_NOT_SET;
- static struct rte_power_cpufreq_ops *global_cpufreq_ops;
-diff --git a/lib/power/rte_power_cpufreq.h b/lib/power/rte_power_cpufreq.h
-index 82d274214b..1605ba866a 100644
---- a/lib/power/rte_power_cpufreq.h
-+++ b/lib/power/rte_power_cpufreq.h
-@@ -14,8 +14,6 @@
- #include <rte_common.h>
- #include <rte_log.h>
- 
--#include "power_cpufreq.h"
--
- #ifdef __cplusplus
- extern "C" {
- #endif
-@@ -248,6 +246,19 @@ int rte_power_freq_enable_turbo(unsigned int lcore_id);
-  */
- int rte_power_freq_disable_turbo(unsigned int lcore_id);
- 
-+/**
-+ * Power capabilities summary.
-+ */
-+struct rte_power_core_capabilities {
-+	union {
-+		uint64_t capabilities;
-+		struct {
-+			uint64_t turbo:1;       /**< Turbo can be enabled. */
-+			uint64_t priority:1;    /**< SST-BF high freq core */
-+		};
-+	};
-+};
-+
- /**
-  * Returns power capabilities for a specific lcore.
-  * Function pointer definition. Review each environments
-diff --git a/lib/power/rte_power_uncore.c b/lib/power/rte_power_uncore.c
-index 30cd374127..25bdb113c5 100644
---- a/lib/power/rte_power_uncore.c
-+++ b/lib/power/rte_power_uncore.c
-@@ -7,8 +7,8 @@
- #include <rte_spinlock.h>
- #include <rte_debug.h>
- 
--#include "rte_power_uncore.h"
- #include "power_common.h"
-+#include "power_uncore_ops.h"
- 
- static enum rte_uncore_power_mgmt_env global_uncore_env = RTE_UNCORE_PM_ENV_NOT_SET;
- static struct rte_power_uncore_ops *global_uncore_ops;
-diff --git a/lib/power/rte_power_uncore.h b/lib/power/rte_power_uncore.h
-index dfeade77e9..66aea1b37f 100644
---- a/lib/power/rte_power_uncore.h
-+++ b/lib/power/rte_power_uncore.h
-@@ -11,7 +11,8 @@
-  * Uncore Frequency Management
-  */
- 
--#include "power_uncore_ops.h"
-+#include <rte_compat.h>
-+#include <rte_common.h>
- 
- #ifdef __cplusplus
- extern "C" {
 -- 
-2.51.0
+David Marchand
 
