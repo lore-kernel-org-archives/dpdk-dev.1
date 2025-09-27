@@ -2,45 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED9ECAC5B9
-	for <dpdk-dev@archiver.kernel.org>; Sat, 27 Sep 2025 06:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D9B9CAC5B0
+	for <dpdk-dev@archiver.kernel.org>; Sat, 27 Sep 2025 09:28:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 352BE40268;
-	Sat, 27 Sep 2025 08:34:00 +0200 (CEST)
-Received: from mail.lysator.liu.se (mail.lysator.liu.se [130.236.254.3])
- by mails.dpdk.org (Postfix) with ESMTP id 076C540261;
- Sat, 27 Sep 2025 08:33:58 +0200 (CEST)
-Received: from mail.lysator.liu.se (localhost [127.0.0.1])
- by mail.lysator.liu.se (Postfix) with ESMTP id 8B92611C27;
- Sat, 27 Sep 2025 08:33:58 +0200 (CEST)
-Received: by mail.lysator.liu.se (Postfix, from userid 1004)
- id 7081111C88; Sat, 27 Sep 2025 08:33:58 +0200 (CEST)
-Received: from [192.168.1.85] (h-62-63-215-114.A163.priv.bahnhof.se
- [62.63.215.114])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
- (No client certificate requested)
- by mail.lysator.liu.se (Postfix) with ESMTPSA id 4693811BD8;
- Sat, 27 Sep 2025 08:33:56 +0200 (CEST)
-Message-ID: <28464878-8221-4bdb-b63a-8e1414c24302@lysator.liu.se>
-Date: Sat, 27 Sep 2025 08:33:55 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 500C940268;
+	Sat, 27 Sep 2025 11:28:47 +0200 (CEST)
+Received: from fhigh-b5-smtp.messagingengine.com
+ (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+ by mails.dpdk.org (Postfix) with ESMTP id C975E40261
+ for <dev@dpdk.org>; Sat, 27 Sep 2025 11:28:45 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id A49BE7A0047;
+ Sat, 27 Sep 2025 05:28:44 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-02.internal (MEProxy); Sat, 27 Sep 2025 05:28:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1758965324;
+ x=1759051724; bh=IXcscPlFZM7PzAJJWoS2rT2TTQCLQ+m4zYOh+nkdwJ4=; b=
+ NjZNwCviuHMtxfR3TBYCYsMiuCR6LIVNswBBgdZ52dlF0LTZ/aKJ0KcG2vZTv5ln
+ BpwxUznLdT14ug2rWR6OywEaOinVeUgxovF+6hAymfM/OK8RcyXHgH3+F+E2BC3G
+ yRtPVQGOFR15Zvgia8Zivbii/l1Iryoi2XuXx14uY7oI0k7ZC8D1Ctwiw+YmYlsS
+ sqN761JzERilHU0SJsGag2oZFEBje/ltrmbqQTRBbM/ghue23cswkBoXodwPmKY3
+ d0nBTWHXdQgKkhJkDDdYroSrFms1/SDX3QRDIc0MNaNGfmxS694B96mspCkKxvFB
+ iZSua3yZBFpZpbuA7HsjCg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1758965324; x=
+ 1759051724; bh=IXcscPlFZM7PzAJJWoS2rT2TTQCLQ+m4zYOh+nkdwJ4=; b=o
+ 4Oj3J6vWQho7nYdABG73Vgw6K25fmXIAhYZCdm9tSbwt0hLBK4YWR+vdnsz+4cia
+ igAQJT6H3+rjTgm8GVBA1JCVvzerSK7g8IT7qHNQZXunDWzs/86PBrIS9aIsKkWq
+ vL0IXBtRnXthWlHGD3J4a2LrHj6+VbRUoMOpRMU55gl3BCzwtOFBshcywewsX5H7
+ rT0ZPX5TtY6NlJRfodU5BvEdMw7pAbHRPxv/qZT+6PNzxjD4dKgQuoYbfPRtcwI0
+ cj+wO2MO0pLPPrLT7V/HRjyKeFU+IavmGxu8/RZusCYGuxajUruoS+J3Uzy867ut
+ gP6FzwX+vlv8WJR27QH1w==
+X-ME-Sender: <xms:S67XaDlIXXJb2QzIpskjPbuWd00bmZ2zzn2hluwULiaMIApI8OtSbw>
+ <xme:S67XaF7xjxEhYT4fP27tauWtI0t8_cqg8I4rKds3cWmL9BiizQWrhgCVlHmot1jA4
+ w8nDUAYCHVlEw6Sq0bsIjKXG5wHxCLii9XzSE_tTJNZF5js33TiHQ>
+X-ME-Received: <xmr:S67XaP32WGeC-_tY-flMy5PIm3qTIfpTbP0G33XeKtvW10T1rpLP1wfN9DY7RfU5viBXb9tlMxx67-05vZGa>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejudeklecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepkedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepshgthhhnvghiuggvsehqthhirdhquhgrlh
+ gtohhmmhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthho
+ pehrvghshhhmrgdrphgrthhtrghnsehinhhtvghlrdgtohhmpdhrtghpthhtohepjhgvrh
+ hinhhjsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepkhhirhgrnhhkuhhmrghrkhes
+ mhgrrhhvvghllhdrtghomhdprhgtphhtthhopehnuggrsghilhhpuhhrrghmsehmrghrvh
+ gvlhhlrdgtohhmpdhrtghpthhtohephigrnhiihhhirhhunhgpudeifeesudeifedrtgho
+ mhdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrgh
+X-ME-Proxy: <xmx:S67XaIGV7Xo2yy-EfKBrbGGQLQM0R0FtVlX7Ofcx4Dyckw0qprgArg>
+ <xmx:S67XaGgcpaTSop1_I9nebuJhlOYt3xfInUrgFomxCzmuMErS3RnEIA>
+ <xmx:S67XaDCGarJjp9Cs4fDrlbRoq1umlwoXJKvxdwmmYTGXiLKp2X9vHA>
+ <xmx:S67XaAST7YIOwZbsFlaib2XqW92IBYkt0bMpTN9-56kDbiKRR58JHw>
+ <xmx:TK7XaCiu6WvWdhAuce45ko7EVtmY6ns9-N0sj-KxIAn7_4aHk1dCz1nZ>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 27 Sep 2025 05:28:41 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Schneide <schneide@qti.qualcomm.com>
+Cc: dev@dpdk.org, Reshma Pattan <reshma.pattan@intel.com>,
+ Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH v2] pcapng: allow any protocol link type for the interface
+ block
+Date: Sat, 27 Sep 2025 11:28:37 +0200
+Message-ID: <3296173.BjyWNHgNrj@thomas>
+In-Reply-To: <20250925170447.2ae8d5bf@hermes.local>
+References: <20250827153852.1066521-1-schneide@qti.qualcomm.com>
+ <20250827223216.1337749-1-schneide@qti.qualcomm.com>
+ <20250925170447.2ae8d5bf@hermes.local>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/9] eal/arm: fix C++ build for 32-bit memcpy
-To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
-Cc: bruce.richardson@intel.com, stable@dpdk.org,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-References: <20241127112617.1331125-1-david.marchand@redhat.com>
- <20250926124103.750844-1-david.marchand@redhat.com>
- <20250926124103.750844-7-david.marchand@redhat.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <hofors@lysator.liu.se>
-In-Reply-To: <20250926124103.750844-7-david.marchand@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,52 +98,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 9/26/25 14:40, David Marchand wrote:
-> This was caught while checking ARM arch headers.
+26/09/2025 02:04, Stephen Hemminger:
+> On Wed, 27 Aug 2025 16:32:15 -0600
+> Schneide <schneide@qti.qualcomm.com> wrote:
 > 
-> In file included from buildtools/chkincs/chkincs-cpp.p/rte_memcpy_32.cpp:1:
-> /home/runner/work/dpdk/dpdk/lib/eal/arm/include/rte_memcpy_32.h:302:1:
-> 	error: expected declaration before ‘}’ token
->    302 | }
->        | ^
+> >  
+> > +* pcapng: Changed the API for adding interfaces to include a link type argument.
+> > +  The link type was previously hardcoded to the ethernet link type in the API.
+> > +  This argument is added to ``rte_pcapng_add_interface``.
+> > +  These functions are versioned to retain binary compatibility until the next LTS release.
 > 
+> Since link connector is now merged, and that wording might overlap and
+> be confusing. Would be could to add reference to pcap-linktype.7 man
+> page.
 
-Acked-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
+I'm not sure it overlaps.
+RTE_ETH_LINK_CONNECTOR is about Ethernet cables while
+pcap link type will be simply Ethernet type.
 
-> Fixes: 719834a6849e ("use C linkage where appropriate in headers")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
->   lib/eal/arm/include/rte_memcpy_32.h | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/lib/eal/arm/include/rte_memcpy_32.h b/lib/eal/arm/include/rte_memcpy_32.h
-> index 99fd5757ca..861be06f5e 100644
-> --- a/lib/eal/arm/include/rte_memcpy_32.h
-> +++ b/lib/eal/arm/include/rte_memcpy_32.h
-> @@ -19,10 +19,14 @@
->   /* ARM NEON Intrinsics are used to copy data */
->   #include <arm_neon.h>
->   
-> +#endif /* RTE_ARCH_ARM_NEON_MEMCPY */
-> +
->   #ifdef __cplusplus
->   extern "C" {
->   #endif
->   
-> +#ifdef RTE_ARCH_ARM_NEON_MEMCPY
-> +
->   static inline void
->   rte_mov16(uint8_t *dst, const uint8_t *src)
->   {
-> @@ -252,7 +256,7 @@ rte_memcpy_func(void *dst, const void *src, size_t n)
->   	return ret;
->   }
->   
-> -#else
-> +#else /* ! RTE_ARCH_ARM_NEON_MEMCPY */
->   
->   static inline void
->   rte_mov16(uint8_t *dst, const uint8_t *src)
+This being said, I don't understand the immediate benefit of this commit.
+Why pcap link type would not be always Ethernet in DPDK case?
+I think the only benefit is for future if other link types are added.
+Is there something else I'm missing?
+
 
