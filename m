@@ -2,49 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB0ECAC5B5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Sep 2025 14:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E23CAC5BE
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Sep 2025 14:39:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 22F2F4067B;
-	Mon, 29 Sep 2025 16:31:21 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 967CC40668
- for <dev@dpdk.org>; Mon, 29 Sep 2025 16:31:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759156279; x=1790692279;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=K+9wZ6eM789IktAND5OuYSfZwU/nLqQNkyZGdqDRnIY=;
- b=FMUVAcx/jSwWInYf4lbR1cZzEcqHtI5O2jY5tcZY0wfwybMczPuCr+D3
- b1y8BemFvrY7NC7NtEyFP7+SY7MQDtz37r0AJNwkbxbRLpL9UK3D/kTVS
- 7C/kEqeUsTWh/9zM+MAbQscQrKTPOqYq8C6YhrYSzOvRjxTe5W6hHWRmy
- XdsFM8vUYkiE8hz99l10Cvgm9ncxJMz3bJcEu2YG7jqld3ds9xlMxZqTa
- Rq5gsa6bPYDyG0FMrnHTfIFW5zp5KZdeobb5ch+M+HFz3xgP9nUGkYl8T
- Y1Ghn+uqwqKc64mh9mSQ/FZYfRkeFV5/CbwTsZ0znpGGtlTQKfR+gHM3d w==;
-X-CSE-ConnectionGUID: RACLPhJzQUqCBwArSJQvAA==
-X-CSE-MsgGUID: bQ8YTLDJQ5OzLvx0n4w97g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="72076962"
-X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; d="scan'208";a="72076962"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Sep 2025 07:31:14 -0700
-X-CSE-ConnectionGUID: JZyswfGARZ6/5ppOjK5adQ==
-X-CSE-MsgGUID: B2msc8IBTkyvjnJ+pWCutQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,301,1751266800"; d="scan'208";a="183440198"
-Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by orviesa005.jf.intel.com with ESMTP; 29 Sep 2025 07:31:12 -0700
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>,
- Timothy Miskell <timothy.miskell@intel.com>
-Subject: [PATCH 1/2] net/iavf: support VF initiated resets
-Date: Mon, 29 Sep 2025 14:30:38 +0000
-Message-Id: <20250929143039.547207-1-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id E18AF4060F;
+	Mon, 29 Sep 2025 16:39:07 +0200 (CEST)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
+ [209.85.222.182])
+ by mails.dpdk.org (Postfix) with ESMTP id D8F2140289
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 16:39:06 +0200 (CEST)
+Received: by mail-qk1-f182.google.com with SMTP id
+ af79cd13be357-854585036e8so491942785a.1
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 07:39:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1759156746;
+ x=1759761546; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=cEkKbJ686xvqxhiYaUcgBsuTcEec8BgKeUws+JzOhm8=;
+ b=N/8/b2HVtbEtUtQSCKpjrfvdmTk+Ijkc4y6SWPC7pO3AoshLne/Mg2RuW83y2cSfqn
+ IumzPKAjrmdl5F1y76qax7dKTxVhRkp5g0MIwm+Up1+EjPnuETkVkt7r2Ipcg8ZG8wws
+ EPj7waySa86my7naKSNXtqZHmLaWcoM5+jWGscPUvBkTKB3lG/U9rsUv2cejbraMfQll
+ SSPPyCv8KLOCAOuJOVwEnk5eaa6Qsp1Ht91NAhMhZxX5jw9iyYGlI10tpfbGImrhM6wx
+ qBDJ6yPAOKs8q2wz4aGDeK7wre77KKzrL468ix4WJkMuHFbs31WqIfeVq0+oUw4xS5eE
+ eERA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1759156746; x=1759761546;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=cEkKbJ686xvqxhiYaUcgBsuTcEec8BgKeUws+JzOhm8=;
+ b=R86m3FY9KUSTMFbgQRfEgvBZ0QkOe8lI6zJF/ElFhRDOm/i9WMStOQXkrbOchR8J0j
+ 9S0/nIg6MDGY2jX/k/odfBW2vCOOZI8TuwAaGn4GNUb5BeFxCYRtfb/SU0Mg5+GUizTb
+ oE7Jnoxc5B0U3h2rhb4iyz8j2HMDMcXRPEMoDM3FpL48N/p3RQ/CCsKpc99XduP2KWm/
+ cqIPqf4PkaqTHe7OdY/KxEZ1lMfYjvef2YBr4HBrrFGQaK8YDgUSuje4m1IIjyCDdnFU
+ k4jx2ZiODqbMWdZDWoQgk76939X+OGi1WRm61wl9UyYq0BQYWRTRaI3BAgD9DqyMlj6Z
+ Hr4g==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVvRj75HLcNXnPW6BjvqnU5o6FrG0vH7Q1GzQrXP7+tsCkhyzC8Jx26NCSJYtJMRdvrQ5A=@dpdk.org
+X-Gm-Message-State: AOJu0Yy5YTloVnyFW5E59j32rrooYHF70S+Clh+d419OxEf4bELWidjK
+ in+JfeJN9gMTZ84Fzq6xs2e88GevupeqWAKAUOAB9nSQ0Qyk4A/2pMx12KS+K7v+pSE=
+X-Gm-Gg: ASbGncs4yPLLKKUMgYCvtYM1+J653gMTB417JTMePKJ4jMU2kUL1w4f9FwwEKC3as6n
+ VVSmUVVOfvOlUP5KAee0gWjxz1Tm01ts8IGbO7xirSBT7ctnmthOhY0W5Ga5dpnO+rzSvDM7JJ8
+ IhqFsBLQlNACRvJ8FSBl9H2okwddHsUF12ZOb20dIeSY9faXzA0stqkxmNaVZiEJlOpcpZJq36x
+ KnCtS1s98/LtzQUZ3GiLQhktjdWPKqcTvf+iXmrY2kjYDAgDGBFo91qkj8lg1+QOsW9wp9GPp+Q
+ Ewyhwept785Zs5qHgQqynHgG6A/knqCCW3fNEg348V7IcHqQFynN+tY98JXYC+lMv2/rlr9hiyl
+ HJKX80CQ/XAXFRyfjmrt034Qn5buNfnWpRF2f6vEYGRKsYtn+EIufi516le+H1XGe4thtdy5Mig
+ Pq4A4dIRULVA==
+X-Google-Smtp-Source: AGHT+IHmj4pYQJDg/Mb92bVlrBn7WTnHOj2nq5u8DUehHci0SL4hsxgbyjl649cipdsubipPZdwmcA==
+X-Received: by 2002:a05:620a:1a1c:b0:85e:91c6:cebb with SMTP id
+ af79cd13be357-85e91d61a7bmr1451647485a.27.1759156745928; 
+ Mon, 29 Sep 2025 07:39:05 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-85c27099635sm871183985a.2.2025.09.29.07.39.04
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 29 Sep 2025 07:39:05 -0700 (PDT)
+Date: Mon, 29 Sep 2025 07:39:01 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: "Shetty, Praveen" <praveen.shetty@intel.com>,
+ <aman.deep.singh@intel.com>, <dev@dpdk.org>, Dhananjay Shukla
+ <dhananjay.shukla@intel.com>, atulpatel261194 <Atul.Patel@intel.com>
+Subject: Re: [PATCH v3 2/4] net/idpf: add splitq jumbo packet handling
+Message-ID: <20250929073901.102782db@hermes.local>
+In-Reply-To: <aNp8T1rYYJHLFoQw@bricha3-mobl1.ger.corp.intel.com>
+References: <20250922141058.1390212-2-praveen.shetty@intel.com>
+ <20250923125455.1484992-1-praveen.shetty@intel.com>
+ <20250923125455.1484992-3-praveen.shetty@intel.com>
+ <aNp8T1rYYJHLFoQw@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,160 +88,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce a function that allows a VF to request the PF to reset itself.
-This is useful for example when the application detects that one of the
-queues have hung or any event where a reset is required and the PF is
-unlikely to trigger it.
+On Mon, 29 Sep 2025 13:32:15 +0100
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
-Signed-off-by: Timothy Miskell <timothy.miskell@intel.com>
----
- drivers/net/intel/iavf/iavf.h         |  2 ++
- drivers/net/intel/iavf/iavf_ethdev.c  |  5 ++++
- drivers/net/intel/iavf/iavf_vchnl.c   | 29 +++++++++++++++++++++++
- drivers/net/intel/iavf/meson.build    |  1 +
- drivers/net/intel/iavf/rte_pmd_iavf.c | 33 +++++++++++++++++++++++++++
- drivers/net/intel/iavf/rte_pmd_iavf.h | 11 +++++++++
- 6 files changed, 81 insertions(+)
- create mode 100644 drivers/net/intel/iavf/rte_pmd_iavf.c
+> > +			first_seg->pkt_len =
+> > +					(uint16_t)(first_seg->pkt_len +
+> > +							pkt_len);  
+> 
+> Since we allow 100 characters per line, does this line really need to be
+> split into 3? [I realise this is a copy-paste from other drivers, but we
+> can clean it up as new code here]
 
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 435902fbc2..6e7aec1bb1 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -565,4 +565,6 @@ void iavf_dev_watchdog_enable(struct iavf_adapter *adapter);
- void iavf_dev_watchdog_disable(struct iavf_adapter *adapter);
- void iavf_handle_hw_reset(struct rte_eth_dev *dev);
- void iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change);
-+bool is_iavf_supported(struct rte_eth_dev *dev);
-+int iavf_request_reset(struct rte_eth_dev *dev);
- #endif /* _IAVF_ETHDEV_H_ */
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 08c814725d..996c7274ce 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -3212,6 +3212,11 @@ static struct rte_pci_driver rte_iavf_pmd = {
- 	.remove = eth_iavf_pci_remove,
- };
- 
-+bool is_iavf_supported(struct rte_eth_dev *dev)
-+{
-+	return !strcmp(dev->device->driver->name, rte_iavf_pmd.driver.name);
-+}
-+
- RTE_PMD_REGISTER_PCI(net_iavf, rte_iavf_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_iavf, pci_id_iavf_map);
- RTE_PMD_REGISTER_KMOD_DEP(net_iavf, "* igb_uio | vfio-pci");
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index b1b7a5bf94..65afd2c2d5 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -2271,3 +2271,32 @@ iavf_get_phc_time(struct ci_rx_queue *rxq)
- 	rte_spinlock_unlock(&vf->phc_time_aq_lock);
- 	return err;
- }
-+
-+int
-+iavf_request_reset(struct rte_eth_dev *dev)
-+{
-+	struct iavf_adapter *adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
-+	struct iavf_cmd_info args;
-+	int err = 0;
-+
-+	args.ops = VIRTCHNL_OP_RESET_VF;
-+	args.in_args = NULL;
-+	args.in_args_size = 0;
-+	args.out_buffer = vf->aq_resp;
-+	args.out_size = IAVF_AQ_BUF_SZ;
-+
-+	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Failed to execute command of VIRTCHNL_OP_RESET_VF");
-+		return err;
-+	}
-+
-+	PMD_DRV_LOG(DEBUG, "VF reset request sent to PF successfully");
-+
-+	vf->vf_reset = true;
-+	iavf_set_no_poll(dev->data->dev_private, false);
-+	iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_RESET, NULL, 0);
-+
-+	return 0;
-+}
-diff --git a/drivers/net/intel/iavf/meson.build b/drivers/net/intel/iavf/meson.build
-index 0db94d6fe6..b39337733f 100644
---- a/drivers/net/intel/iavf/meson.build
-+++ b/drivers/net/intel/iavf/meson.build
-@@ -24,6 +24,7 @@ sources = files(
-         'iavf_tm.c',
-         'iavf_ipsec_crypto.c',
-         'iavf_fsub.c',
-+        'rte_pmd_iavf.c',
- )
- 
- if arch_subdir == 'x86'
-diff --git a/drivers/net/intel/iavf/rte_pmd_iavf.c b/drivers/net/intel/iavf/rte_pmd_iavf.c
-new file mode 100644
-index 0000000000..4cb7fe11b8
---- /dev/null
-+++ b/drivers/net/intel/iavf/rte_pmd_iavf.c
-@@ -0,0 +1,33 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2010-2025 Intel Corporation
-+ */
-+
-+#include <eal_export.h>
-+
-+#include "iavf.h"
-+#include "rte_pmd_iavf.h"
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_iavf_reset, 25.11)
-+int
-+rte_pmd_iavf_reset(uint16_t port)
-+{
-+	struct rte_eth_dev *dev;
-+	int ret;
-+
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
-+
-+	dev = &rte_eth_devices[port];
-+
-+	if (!is_iavf_supported(dev)) {
-+		PMD_DRV_LOG(ERR, "Cannot reset VF, port %u is not an IAVF device.", port);
-+		return -ENOTSUP;
-+	}
-+
-+	ret = iavf_request_reset(dev);
-+	if (ret) {
-+		PMD_DRV_LOG(ERR, "Request to reset VF failed for port %u", port);
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/net/intel/iavf/rte_pmd_iavf.h b/drivers/net/intel/iavf/rte_pmd_iavf.h
-index 56d453fc4c..1de490a977 100644
---- a/drivers/net/intel/iavf/rte_pmd_iavf.h
-+++ b/drivers/net/intel/iavf/rte_pmd_iavf.h
-@@ -95,6 +95,17 @@ extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_tcp_mask;
- extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_ip_offset_mask;
- extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_ipsec_crypto_said_mask;
- 
-+/**
-+ * Request PF driver to initiate a PF-to-VF RESET
-+ *
-+ * @param port
-+ *   The port identifier of the Ethernet device.
-+ * @return
-+ *   0 if successful, otherwise if a failure occurs
-+ */
-+__rte_experimental
-+int rte_pmd_iavf_reset(uint16_t port);
-+
- /**
-  * The mbuf dynamic field pointer for flexible descriptor's extraction metadata.
-  */
--- 
-2.34.1
-
+Also why the cast?
