@@ -2,67 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3CFCAC5B9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Sep 2025 16:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12924CAC5B9
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Sep 2025 16:32:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A6DE40663;
-	Mon, 29 Sep 2025 18:28:40 +0200 (CEST)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com
- [209.85.208.50]) by mails.dpdk.org (Postfix) with ESMTP id 7584A4064E
- for <dev@dpdk.org>; Mon, 29 Sep 2025 18:28:39 +0200 (CEST)
-Received: by mail-ed1-f50.google.com with SMTP id
- 4fb4d7f45d1cf-6365c5704ceso621443a12.0
- for <dev@dpdk.org>; Mon, 29 Sep 2025 09:28:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 434AE4064E;
+	Mon, 29 Sep 2025 18:32:43 +0200 (CEST)
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com
+ [209.85.219.48]) by mails.dpdk.org (Postfix) with ESMTP id 89788402EB
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 18:32:41 +0200 (CEST)
+Received: by mail-qv1-f48.google.com with SMTP id
+ 6a1803df08f44-7957e2f6ba8so46922906d6.3
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 09:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1759163319; x=1759768119; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=hm26wC994YLvhkHvRgJqKe8wUTKTxmZIqToSyhDM2NU=;
- b=dJnF1e/F5WiBSwNYrwns12DUp+hwuhjF+vlsL9PLs49YsGhrG80BsATTjO68WTpVp4
- oNZ0y/Kv/+r1LimUGZ1p25aOlmmuoMZzjbwzkfCFbTudPEkAJxcwgjHt1AGqnVb6todj
- MzK7VjqGe1W7+pLujSy73cd9epSgViWQidazEC3Q7HVqMIcGBuARELrNUPS3aLABKNIg
- pEN8GLUSFcLm24Spf7/0FhNhmn+2DbzFF4Ll7VcJK85pwcUg+qKvypDhu+sbdbTHGzM6
- rzpE8HMG3JYX8/oWb9GlFuCe84uoTcsalUxMnNSWBLaxTAgo3Ty51phRUdQ8lm+3kaNP
- fm5Q==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1759163561;
+ x=1759768361; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=UhEifHwuPy7KqMiJEobyFfKosv3tFBcaWfKVaD0PruA=;
+ b=wjue8KsCHNvL2HzJmhpLMQ12xjP5vXS2ylKjY8Icgi0PdytfMbmgGWBIyDF6Go4pQD
+ Kd5Dn/ujLjP38OE/uR0A9FpZwshbVeKN2ayK12kNhCsjIBWGJYqT8+4tDpkftHWfMfly
+ VaFGfieNjIJgRSF/wjcSot1zmftwuep8lAs0lEbb97tmg7iqq4CFtS6ZyFESmyTqlHr3
+ Fh0UZ+KZ+lksPcCFmFfm/blVoLqCEqsBNnLwSR4MZ9VUD0V/Rlr3+iW2AMB6hxSj6fty
+ aLJ03yIA0CafliGSwk7PyFkTfa40h2kIUPX5bMJNFh/9IUakhCNOiknQx33jL2YNHSxT
+ 83oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759163319; x=1759768119;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=hm26wC994YLvhkHvRgJqKe8wUTKTxmZIqToSyhDM2NU=;
- b=Rb1UjVvndxqfSutGIuNHBp2EZV9zrgA6y/GF46e5cKPs4Vk8rCfLKYv2fQDjznIhmn
- IgrcbapOseTKAJeQPvtR30xOuXqcYhh6m4KT59sUA//cXm2UVFVxhvNwbbP8dHFnmFU/
- J/v9Sm5pLjirIYhkx/i3YMjTdH6hJXvxfqSVWQb3o2TS+PIQwm42ai4YhueVLvY+lh9k
- cQYEwjViadBTwppB0G0VYzelLGkxjXuQYw8nZJL8Y/frdOP/GnJFwtAgcp0IpKrn8V4E
- nqyPJ0T91k5BitvHt0qwGx110ifw+sS2r+R/L6qaExEmVBkOFTTmALfH8lMzCo08U8hO
- 5fyA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXwrhbeWpTjtnXZk9ZfIgK9i1a1l//FupdEIvTts7OhO8S8hIKcc4Q4r/FJvTZ/4xoc6MQ=@dpdk.org
-X-Gm-Message-State: AOJu0YxCTtiJUnUKvqFoUYmJsLL3ZKhdTcdeZkXdzx38rChtBthRsSoo
- D6zcQei9eEVmMlPWIrkOI26mZN7TqAyWYOhJ4mxdj9LzKOLxMzYv/NFzHdvVFPBP6YSte3tlpEH
- Gh8CZFbWQCwe7Lk/Sn4+V7CUR7sl+ZNM=
-X-Gm-Gg: ASbGnctFq/BmfddOLJt1Jk0NEszNBVJGA50qGgtaeWYSuzyUuDr+3TKedFNBpU6zVu5
- twUuyKjqEsVdln5GiarwCdPd5tNSpbc0hXWxBB1diTK9Ibsxd0V7l4Bo0CgngR8NYEtMAvoUEJw
- +qrfkFU9oriwP1OGbz7iibTygcfUDLvS6BjvHBT6+clnzGCd6qB9ItSxHTxdLIvx4Y3/0tL1ejh
- lBIBWo=
-X-Google-Smtp-Source: AGHT+IFbsaqlHbrvKabyEiivJjRtsVQ1zqyLZGU+tuy2Hnto0jboI6mnmqTTjAlM9qtJHXP6uKPObpRtEQ9KJBsfsaA=
-X-Received: by 2002:a05:6402:5622:b0:61c:8114:8832 with SMTP id
- 4fb4d7f45d1cf-6349fa1c934mr12675563a12.16.1759163318818; Mon, 29 Sep 2025
- 09:28:38 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1759163561; x=1759768361;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=UhEifHwuPy7KqMiJEobyFfKosv3tFBcaWfKVaD0PruA=;
+ b=ZyhEQ1AbxKVjn4XNBh60eRWMwGJ4meoEey3lwr1NNbOcn0ujiAMAbqcy4iUBlOpKDZ
+ CSRNrHyFxHxDROmlm9Zv5lFUQPIY7v5auWDYVNc8+WuGXTWyT3UoNs1MOELKbROqHWgO
+ 40jIjagoLtjTUXKeiq8+ytYASgLedyq5pwkrCYJoUiv6kU+bYYGIm7Rz5lRoKT6IGXWK
+ WPXh+Kkkt9Jh5kZzyfN9hLNq6wUYoSdtUkfGgMyhwnDdcJ8DyLtU0HXMv9PvqNZYfMkr
+ XkDsOGkg+zPutJvYvbVdf5Q9uKHEssuTM4/v4DGbEr0SvTKmOmsgZo1Ja5nACCFQVwk3
+ VCZw==
+X-Gm-Message-State: AOJu0YyF4mVISClJ4qin4VzToEJGhNy8V7t8VluDXOsTEpGo3IkzAc/J
+ AHV7FlzFsGBFaPmpg7+sJn+Upju9da3delAZwJEfA4EzehOdDXyV5y5ow7UUWZv+irs=
+X-Gm-Gg: ASbGnctgvnNdy5DSFNcmaB/efSpyBiQVJT7/moZjxKg+eSHs8op+NNXDkmhhnnZabCb
+ u6/yjd8dHqUtaU9tkKOFGvRwnGrV6JBy60ubsQkOAUI45Y5SuNOqzEHKN8tUweBhIBQEqNG/IZn
+ AEfjG58k3woKjCACeHeIFimBHVNQNOQnF5DM7nFmyq8rpcLdcbet5ggYvdjhPLQCaKuUEAbsFo4
+ G+8jkUxoNPDX/MqGR2B3pM5l72SEOzFOoJ8lBy19Whh9Msu3F8q094K/Y533eK78EBqDyr2DarS
+ p+cd2lW/haF4jS7MUyx3Emr2BfbwYEDJDxTi5+5bJQfz+yyqAFlQVhVZfrjgjuCYPzNbrhu+h5K
+ V9MRRyvRc1yTOk2aq4LR+z3Yp6q8nfeKePYcfb4IkDPS8r/6I5t2/ZZpxD3SF/ZDFRDM535yEUR
+ Q=
+X-Google-Smtp-Source: AGHT+IFxRCb79Tc9E47vdZyBB9B+aFWUAQhdRSrg75GsHo5K8swd4YNvd1T/eE7VttwNQku827Vm7A==
+X-Received: by 2002:a05:6214:268e:b0:823:f922:8f10 with SMTP id
+ 6a1803df08f44-823f9229040mr163536056d6.30.1759163560690; 
+ Mon, 29 Sep 2025 09:32:40 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-80166781d27sm79646666d6.45.2025.09.29.09.32.39
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 29 Sep 2025 09:32:40 -0700 (PDT)
+Date: Mon, 29 Sep 2025 09:32:36 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Kai Ji <kai.ji@intel.com>
+Cc: dev@dpdk.org, gakhil@marvell.com, konstantin.ananyev@huawei.com,
+ bruce.richardson@intel.com, thomas@monjalon.net, mb@smartsharesystems.com,
+ stable@dpdk.org
+Subject: Re: [dpdk-dev v4 1/2] eal: Add mem equal and non-equal to prevent
+ timing attacks memcmp.
+Message-ID: <20250929093236.37fe5460@hermes.local>
+In-Reply-To: <20250929145049.153078-1-kai.ji@intel.com>
+References: <20250926160209.56496-1-kai.ji@intel.com>
+ <20250929145049.153078-1-kai.ji@intel.com>
 MIME-Version: 1.0
-References: <20250716103439.831760-1-16567adigashreesh@gmail.com>
- <2664319.yIU609i1g2@thomas>
-In-Reply-To: <2664319.yIU609i1g2@thomas>
-From: Shreesh Adiga <16567adigashreesh@gmail.com>
-Date: Mon, 29 Sep 2025 21:58:25 +0530
-X-Gm-Features: AS18NWBCQEe4Bcm-KxIWVC3AGEG6sadezGYQT1Usm5izuM99cZHd33uK4CYzymU
-Message-ID: <CA+-x59aDXS9-G=Yx3bUHj=XQX2Tjavkihu0w5r69P62y-g8Lpw@mail.gmail.com>
-Subject: Re: [PATCH] net/crc: reduce usage of static arrays in net_crc_sse.c
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: Bruce Richardson <bruce.richardson@intel.com>, 
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, 
- Jasvinder Singh <jasvinder.singh@intel.com>, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000b85b55063ff32031"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,67 +84,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000b85b55063ff32031
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Mon, 29 Sep 2025 14:50:48 +0000
+Kai Ji <kai.ji@intel.com> wrote:
 
-On Wed, Sep 24, 2025 at 8:28=E2=80=AFPM Thomas Monjalon <thomas@monjalon.ne=
-t> wrote:
+> diff --git a/lib/eal/include/rte_memory.h b/lib/eal/include/rte_memory.h
+> index dcc0e69cfe..bbdef8e939 100644
+> --- a/lib/eal/include/rte_memory.h
+> +++ b/lib/eal/include/rte_memory.h
+> @@ -746,6 +746,74 @@ __rte_experimental
+>  void
+>  rte_memzero_explicit(void *dst, size_t sz);
+>  
+> +/**
+> + * @warning
+> + * @b EXPERIMENTAL: this API may change without prior notice.
+> + *
+> + * Constant-time memory inequality comparison.
+> + *
+> + * This function compares two memory regions in constant time, making it
+> + * resistant to timing side-channel attacks. The execution time depends only
+> + * on the length parameter, not on the actual data values being compared.
+> + *
+> + * This is particularly important for cryptographic operations where timing
+> + * differences could leak information about secret keys, passwords, or other
+> + * sensitive data.
+> + *
+> + * @param a
+> + *   Pointer to the first memory region to compare
+> + * @param b
+> + *   Pointer to the second memory region to compare
+> + * @param n
+> + *   Number of bytes to compare
+> + * @return
+> + *   false if the memory regions are identical, true if they differ
+> + */
+> +__rte_experimental
+> +static inline bool
+> +rte_memneq_consttime(const void *a, const void *b, size_t n)
 
-> Hello,
->
-> 16/07/2025 12:34, Shreesh Adiga:
-> > Replace the clearing of lower 32 bits of XMM register with blend of
-> > zero register.
-> > Replace the clearing of upper 64 bits of XMM register with
-> _mm_move_epi64.
-> > Clang is able to optimize away the AND + memory operand with the
-> > above sequence, however GCC is still emitting the code for AND with
-> > memory operands which is being explicitly eliminated here.
-> >
-> > Additionally replace the 48 byte crc_xmm_shift_tab with the contents of
-> > shf_table which is 32 bytes, achieving the same functionality.
-> >
-> > Signed-off-by: Shreesh Adiga <16567adigashreesh@gmail.com>
->
-> Sorry I'm not following.
-> Please could you start with defining the goal of this patch?
-> Is it a code simplification or a performance optimization?
-
-It is intended to be a minor performance optimization.
-
---000000000000b85b55063ff32031
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div class=3D"gmail_quote gmail_quote_container"><div dir=
-=3D"ltr" class=3D"gmail_attr">On Wed, Sep 24, 2025 at 8:28=E2=80=AFPM Thoma=
-s Monjalon &lt;<a href=3D"mailto:thomas@monjalon.net">thomas@monjalon.net</=
-a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0p=
-x 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">He=
-llo,<br>
-<br>
-16/07/2025 12:34, Shreesh Adiga:<br>
-&gt; Replace the clearing of lower 32 bits of XMM register with blend of<br=
->
-&gt; zero register.<br>
-&gt; Replace the clearing of upper 64 bits of XMM register with _mm_move_ep=
-i64.<br>
-&gt; Clang is able to optimize away the AND + memory operand with the<br>
-&gt; above sequence, however GCC is still emitting the code for AND with<br=
->
-&gt; memory operands which is being explicitly eliminated here.<br>
-&gt; <br>
-&gt; Additionally replace the 48 byte crc_xmm_shift_tab with the contents o=
-f<br>
-&gt; shf_table which is 32 bytes, achieving the same functionality.<br>
-&gt; <br>
-&gt; Signed-off-by: Shreesh Adiga &lt;<a href=3D"mailto:16567adigashreesh@g=
-mail.com" target=3D"_blank">16567adigashreesh@gmail.com</a>&gt;<br>
-<br>
-Sorry I&#39;m not following.<br>
-Please could you start with defining the goal of this patch?<br>
-Is it a code simplification or a performance optimization?</blockquote><div=
->It is intended to be a minor performance optimization.</div></div></div>
-
---000000000000b85b55063ff32031--
+NAK
+Please change to match BSD equivalent function (ie not not equal)
