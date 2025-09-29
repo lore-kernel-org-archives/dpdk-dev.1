@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12924CAC5B9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Sep 2025 16:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F56ACAC5B0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Sep 2025 16:33:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 434AE4064E;
-	Mon, 29 Sep 2025 18:32:43 +0200 (CEST)
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com
- [209.85.219.48]) by mails.dpdk.org (Postfix) with ESMTP id 89788402EB
- for <dev@dpdk.org>; Mon, 29 Sep 2025 18:32:41 +0200 (CEST)
-Received: by mail-qv1-f48.google.com with SMTP id
- 6a1803df08f44-7957e2f6ba8so46922906d6.3
- for <dev@dpdk.org>; Mon, 29 Sep 2025 09:32:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7A5134064E;
+	Mon, 29 Sep 2025 18:33:31 +0200 (CEST)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
+ [209.85.222.182])
+ by mails.dpdk.org (Postfix) with ESMTP id A6831402EB
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 18:33:29 +0200 (CEST)
+Received: by mail-qk1-f182.google.com with SMTP id
+ af79cd13be357-8571a0947d1so560493185a.0
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 09:33:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1759163561;
- x=1759768361; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1759163609;
+ x=1759768409; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=UhEifHwuPy7KqMiJEobyFfKosv3tFBcaWfKVaD0PruA=;
- b=wjue8KsCHNvL2HzJmhpLMQ12xjP5vXS2ylKjY8Icgi0PdytfMbmgGWBIyDF6Go4pQD
- Kd5Dn/ujLjP38OE/uR0A9FpZwshbVeKN2ayK12kNhCsjIBWGJYqT8+4tDpkftHWfMfly
- VaFGfieNjIJgRSF/wjcSot1zmftwuep8lAs0lEbb97tmg7iqq4CFtS6ZyFESmyTqlHr3
- Fh0UZ+KZ+lksPcCFmFfm/blVoLqCEqsBNnLwSR4MZ9VUD0V/Rlr3+iW2AMB6hxSj6fty
- aLJ03yIA0CafliGSwk7PyFkTfa40h2kIUPX5bMJNFh/9IUakhCNOiknQx33jL2YNHSxT
- 83oA==
+ bh=vm9e2QWqyJ4SORGBvFJdxgVeiOkv05+fAqiGOMrxEiA=;
+ b=VWAAsrl4MDD4+lSb9YyJWAe3sU+dVhnEcFeBzxHOsdRP37bUpuAHC/piEpZNKLuQd5
+ nAWy37PH4hDWXXcq/Dq8VaFkGKJJE40DR/kOgkp6bojpW1Ao4yuKj8Mwx/KZHrrzewSz
+ kyHIKunX2V0IM6fWgfn7c9v0R5wVARkOlt6Ak8GH+G+gPPieuiaHO7SODg90/AbtTVQh
+ kvz15BirjaPuaLHMkb8HnIGeaALvo7lbqoeUgY4bwV2qWTnQ5D0nD2ZwoJf7RpAfOJnW
+ n0/2YO+BNLRhJttYQJmN0X6kTLU2NZf2pfiSRaw3gmzqsdWTLY2oNOBSW6xo9c/Jun+V
+ MWOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759163561; x=1759768361;
+ d=1e100.net; s=20230601; t=1759163609; x=1759768409;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=UhEifHwuPy7KqMiJEobyFfKosv3tFBcaWfKVaD0PruA=;
- b=ZyhEQ1AbxKVjn4XNBh60eRWMwGJ4meoEey3lwr1NNbOcn0ujiAMAbqcy4iUBlOpKDZ
- CSRNrHyFxHxDROmlm9Zv5lFUQPIY7v5auWDYVNc8+WuGXTWyT3UoNs1MOELKbROqHWgO
- 40jIjagoLtjTUXKeiq8+ytYASgLedyq5pwkrCYJoUiv6kU+bYYGIm7Rz5lRoKT6IGXWK
- WPXh+Kkkt9Jh5kZzyfN9hLNq6wUYoSdtUkfGgMyhwnDdcJ8DyLtU0HXMv9PvqNZYfMkr
- XkDsOGkg+zPutJvYvbVdf5Q9uKHEssuTM4/v4DGbEr0SvTKmOmsgZo1Ja5nACCFQVwk3
- VCZw==
-X-Gm-Message-State: AOJu0YyF4mVISClJ4qin4VzToEJGhNy8V7t8VluDXOsTEpGo3IkzAc/J
- AHV7FlzFsGBFaPmpg7+sJn+Upju9da3delAZwJEfA4EzehOdDXyV5y5ow7UUWZv+irs=
-X-Gm-Gg: ASbGnctgvnNdy5DSFNcmaB/efSpyBiQVJT7/moZjxKg+eSHs8op+NNXDkmhhnnZabCb
- u6/yjd8dHqUtaU9tkKOFGvRwnGrV6JBy60ubsQkOAUI45Y5SuNOqzEHKN8tUweBhIBQEqNG/IZn
- AEfjG58k3woKjCACeHeIFimBHVNQNOQnF5DM7nFmyq8rpcLdcbet5ggYvdjhPLQCaKuUEAbsFo4
- G+8jkUxoNPDX/MqGR2B3pM5l72SEOzFOoJ8lBy19Whh9Msu3F8q094K/Y533eK78EBqDyr2DarS
- p+cd2lW/haF4jS7MUyx3Emr2BfbwYEDJDxTi5+5bJQfz+yyqAFlQVhVZfrjgjuCYPzNbrhu+h5K
- V9MRRyvRc1yTOk2aq4LR+z3Yp6q8nfeKePYcfb4IkDPS8r/6I5t2/ZZpxD3SF/ZDFRDM535yEUR
- Q=
-X-Google-Smtp-Source: AGHT+IFxRCb79Tc9E47vdZyBB9B+aFWUAQhdRSrg75GsHo5K8swd4YNvd1T/eE7VttwNQku827Vm7A==
-X-Received: by 2002:a05:6214:268e:b0:823:f922:8f10 with SMTP id
- 6a1803df08f44-823f9229040mr163536056d6.30.1759163560690; 
- Mon, 29 Sep 2025 09:32:40 -0700 (PDT)
+ bh=vm9e2QWqyJ4SORGBvFJdxgVeiOkv05+fAqiGOMrxEiA=;
+ b=i6jky5oygmi+PKtk4QBQUsQGEQ5e9LXGqX0BqAa3isomF4QdgBT5M5DGFzqpJcxZK0
+ O+2dvISDMKdcPvpYm5U3vki4tMKu7WIe0KP6H12cJllJm7fLsH5sRII6L7DYIrj95o5V
+ Mfy16+BlT1H/10SBC0U+bpvUF9kALC5K5e1bhoNF8ayESrtuHJvRxTiF78GL4suAysEb
+ uDmvdDA5Upt9PYYgQDT9Y3FJaOm0elx1jSjlABMisc/xLLMAPKG9ojz+H2HlV+rMA6yd
+ FGNB7SwmIF7D8Mr30uajC+8bOrS5sGAvK1zYBasf7aXkC1efz2XuMRgmHKyqCTMS2Vpg
+ NB+g==
+X-Gm-Message-State: AOJu0YyX3o+tuNkjexDeVjJa1wfBTMW91ptZ02Q63qUYnn+ZKzT6mD8U
+ aV3PMMe4dE3wbY59KSEfNW0irWoyWWexHLfApCoyHqCodQJRezF+fvHke14sz7UPS3jXJareJW+
+ 2UNOwzgM=
+X-Gm-Gg: ASbGncuxJ+g0vlMpk787M0aEHNXxYC7qUqupoiabfNQubRjszw8M6FzezBVOkx6tx1w
+ EOoycIAcQbdE4PosNOzeHpMGa7Ovwf6rj0gLpxwj/OIKXSaY+M7dAGbvd7ag3aY0h7wzAzvCdCC
+ gcyIRMCnUe6vgFtVc2nM+9nHITdnT7nt3Di+Pqcuj9a1C5JxENYrSy6ypyR9Cjm4wUYvtKLbRbs
+ QZAI+GQq5I8Fx6BAA5d/iiusKHnOD0wpg4RZyVxntT/gRWxmWOZLM3JioMe703S4OA+Wv8JMvk3
+ 7sglSQazUc7CHkKfSz4Y8cOq9hWLPbVafG+3CrpBSe2dbsLwy4Px3oRv/xohC8xoFJAWfIuXtSe
+ sfVrZqfWANIN/3GaO+6G0LXR8pPxnnoa5uSkOHLfHyiDFSQYpdntT6z/lH/nVdn/OMIMKPr68E7
+ G/S1AW9gGhuQ==
+X-Google-Smtp-Source: AGHT+IEFg21Vd7+3YZVC3Ef+apNp+DyGzCW/ZqulU28kvh6B8g2etuaqA+h4CeXXYDM0ly1RD4zHcA==
+X-Received: by 2002:a05:620a:9575:b0:855:9556:8ec8 with SMTP id
+ af79cd13be357-86ee0f482d5mr143645185a.26.1759163608658; 
+ Mon, 29 Sep 2025 09:33:28 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-80166781d27sm79646666d6.45.2025.09.29.09.32.39
+ af79cd13be357-85c27099635sm894604885a.2.2025.09.29.09.33.26
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 29 Sep 2025 09:32:40 -0700 (PDT)
-Date: Mon, 29 Sep 2025 09:32:36 -0700
+ Mon, 29 Sep 2025 09:33:27 -0700 (PDT)
+Date: Mon, 29 Sep 2025 09:33:23 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Kai Ji <kai.ji@intel.com>
-Cc: dev@dpdk.org, gakhil@marvell.com, konstantin.ananyev@huawei.com,
- bruce.richardson@intel.com, thomas@monjalon.net, mb@smartsharesystems.com,
- stable@dpdk.org
-Subject: Re: [dpdk-dev v4 1/2] eal: Add mem equal and non-equal to prevent
- timing attacks memcmp.
-Message-ID: <20250929093236.37fe5460@hermes.local>
-In-Reply-To: <20250929145049.153078-1-kai.ji@intel.com>
-References: <20250926160209.56496-1-kai.ji@intel.com>
- <20250929145049.153078-1-kai.ji@intel.com>
+To: Serhii Iliushyk <sil-plv@napatech.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [RFC 0/3] net/ntnic: prefix global symbols
+Message-ID: <20250929093323.67dc12f6@hermes.local>
+In-Reply-To: <VE1P190MB08308308E532B306FCBCAE3C801BA@VE1P190MB0830.EURP190.PROD.OUTLOOK.COM>
+References: <20250926162534.401577-1-stephen@networkplumber.org>
+ <VE1P190MB08308308E532B306FCBCAE3C801BA@VE1P190MB0830.EURP190.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,43 +83,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 29 Sep 2025 14:50:48 +0000
-Kai Ji <kai.ji@intel.com> wrote:
+On Mon, 29 Sep 2025 15:59:36 +0000
+Serhii Iliushyk <sil-plv@napatech.com> wrote:
 
-> diff --git a/lib/eal/include/rte_memory.h b/lib/eal/include/rte_memory.h
-> index dcc0e69cfe..bbdef8e939 100644
-> --- a/lib/eal/include/rte_memory.h
-> +++ b/lib/eal/include/rte_memory.h
-> @@ -746,6 +746,74 @@ __rte_experimental
->  void
->  rte_memzero_explicit(void *dst, size_t sz);
->  
-> +/**
-> + * @warning
-> + * @b EXPERIMENTAL: this API may change without prior notice.
-> + *
-> + * Constant-time memory inequality comparison.
-> + *
-> + * This function compares two memory regions in constant time, making it
-> + * resistant to timing side-channel attacks. The execution time depends only
-> + * on the length parameter, not on the actual data values being compared.
-> + *
-> + * This is particularly important for cryptographic operations where timing
-> + * differences could leak information about secret keys, passwords, or other
-> + * sensitive data.
-> + *
-> + * @param a
-> + *   Pointer to the first memory region to compare
-> + * @param b
-> + *   Pointer to the second memory region to compare
-> + * @param n
-> + *   Number of bytes to compare
-> + * @return
-> + *   false if the memory regions are identical, true if they differ
-> + */
-> +__rte_experimental
-> +static inline bool
-> +rte_memneq_consttime(const void *a, const void *b, size_t n)
+> Hi!
+> 
+> The patch series looks good.
+> Only one thought from my side is about consistency between prefixes for global symbols for variables and functions.
+> 
+> For functions, we use the prefix "nthw_*"; however, the patch series uses the prefix "ntnic_" for global variables.
+> Will it be better to keep the same prefix for functions and variables?
+> If there is no strict rule, we may keep "ntnic_".
+> 
+> On 26.09.2025, 19:25, "Stephen Hemminger" <stephen@networkplumber.org> wrote:
+> 
+> The ntnic driver in next-net is not consitent in prefixing
+> all global symbols.
+> 
+> Stephen Hemminger (3):
+>   net/ntnic: rename nt_log_ types
+>   net/ntnic: rename hwlock
+>   net/ntnic: make flow_lock local
+> 
+>  drivers/net/ntnic/include/create_elements.h   |  2 --
+>  .../ntnic/include/stream_binary_flow_api.h    |  2 +-
+>  drivers/net/ntnic/ntlog/ntlog.h               | 16 +++++++-------
+>  drivers/net/ntnic/ntnic_ethdev.c              | 22 +++++++++----------
+>  drivers/net/ntnic/ntnic_filter/ntnic_filter.c | 10 ++++-----
+>  5 files changed, 25 insertions(+), 27 deletions(-)
+> 
+> --
+> 2.47.3
 
-NAK
-Please change to match BSD equivalent function (ie not not equal)
+Sure ntnic_ and nthw_ are both ok, you choose where needed.
