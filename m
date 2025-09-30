@@ -2,85 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBABBCAC5B9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CC7CAC5B8
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:08:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 511FF40E28;
-	Tue, 30 Sep 2025 09:05:54 +0200 (CEST)
-Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com
- [209.85.214.225])
- by mails.dpdk.org (Postfix) with ESMTP id 14B7E402A2
+	by mails.dpdk.org (Postfix) with ESMTP id 7279040E2F;
+	Tue, 30 Sep 2025 09:05:55 +0200 (CEST)
+Received: from mail-oo1-f98.google.com (mail-oo1-f98.google.com
+ [209.85.161.98]) by mails.dpdk.org (Postfix) with ESMTP id 869B2402A2
  for <dev@dpdk.org>; Tue, 30 Sep 2025 02:37:07 +0200 (CEST)
-Received: by mail-pl1-f225.google.com with SMTP id
- d9443c01a7336-26e68904f0eso53260965ad.0
+Received: by mail-oo1-f98.google.com with SMTP id
+ 006d021491bc7-643cd58c678so1406677eaf.3
  for <dev@dpdk.org>; Mon, 29 Sep 2025 17:37:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759192626; x=1759797426;
+ d=1e100.net; s=20230601; t=1759192627; x=1759797427;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=PHjvvpHYx5Ftfh2AvSqM0ChA3PUyEyIfBV//D7wQ4mI=;
- b=AFdJ4Il53rcsBoVsTcgToL+YGCBk2H+iQLeyt8UiRvNOKlP++qWVgMeBdkIY1A9R+o
- o8QISAXXpj4LSa0+qOo9VggUV4Lkf2hBukgbreX67nHYrbdN34dcE7uAfWxJu9roYVO7
- TZOu/r9I1L+zCnHsSF6y6APDsNOJJPVTEcjDEvyZrNX4rHO1/F4aq9UF8EGVnCNDibHz
- 9+JSOv9Hvb+f8rgNcEWfiLpO8Ulz6GZLiYtO+z5djoL5MdcXu3zXwJ3y2lv1lwSu+qRv
- Kp0GIC6+UhbDsI2Aac6beSMk7D/jNuOhGhTdYZrDxYh3T/ZaNiAiHsqpHBgz+MifY6HJ
- afoQ==
-X-Gm-Message-State: AOJu0YyBYO7luIp16jmPZduaJORrhJFJjPewStQprcJDNIrk/zFrF504
- XpTrbnadWIEmT5Hegx1dNSlg+Vc60J1n7CPpv2+w2OIMgdJV/7EqfuiAi89RPcuMJuvE+nmrJKm
- LxQgQkTcSKcZj2W2Ozlk9wb5hi/eKsd9m5FYeYg8PHnqEO6+Cre2JsZ6qmpP0ozEdj/+RQ0cCYb
- vF2kQiPgxQLU1z47uzygt1VJXqp4M2EaHcZIJ5a2hQSdmSgUOG1fm/1+hrkkEj2BlWjaJdWw==
-X-Gm-Gg: ASbGnct/JXO68/XyYdITv4Dm6P0N+xwxb+Y840j4N0o4GzicHG3zA7knVr+Dq50raIb
- GbFVadV683GwwIK0WIwGfwXKIwwarfi9na11/zebCu/1T043uj0LHCmafzO+FvjBD05hFeeZ2iM
- V8BZbAeudiAJ2ugNsUqz2m46PqrRORGoAd+eEb99HkJKe7O1ytFWnVrJbNGxwsulI9DgH0MvWUj
- 3FmWYXIdvEeNBX+2xWIC+BP9Fk3YMaAKl1vCLcYb4l4qqh/7sZFwlPwk+GJ3Pax5dzIc3py6+Dj
- ODQr14LYWhmtg73MuvIvMCKBv+nlSg1fdKzaGIp96De0LbUirnOmNGtJ96Io/bYqP70Jxx/wM+v
- 7CL8Mmbyn0bKTwAQ3UeqYgS2RqTr97YjBIyNf/K9BVnJ+oBtZDds2XLY3AcMqhnDiPzbybl9izA
- chDktOLDY=
-X-Google-Smtp-Source: AGHT+IHG4aa4twlJW5iHq2pyN+i7D+3UF/6sT0svnP788Z1KongkUptv4CKJaBcxXGQowc8UnhsV2n0qKuZ2
-X-Received: by 2002:a17:902:c403:b0:23f:fa79:15d0 with SMTP id
- d9443c01a7336-27ed4a986e0mr201629765ad.46.1759192626131; 
+ bh=j3sxnLaXiWkXvG469e06v5H7cEbF5In/yjOTAzyItFM=;
+ b=WOGgrQz5h302RZ8lRl6WCgiCEW40W96gus6HYP+ho4FqEh66J5oQzvniaS6naFyb3+
+ ftVwWUrs94Ix4e/yrQALM6AYMIPDGBtHZqiigVPtJDViiT256PYS6t3+D5vLYkvCJani
+ FYCqbNSRLcZkDET18j5pAoeHdr4KShy3FXGoRjdQiP5DjbTtMwEOGZA3AC92Nk9z3bLW
+ mOi4UlaU1Skv1Ueyamw0ubYKNN9H43QSzWMIlzyRwYhENzqvAMStkHWS5gF2HPfQdbwU
+ 04SFVIBGPvz7yUD2ALg13c8pR3DQGyqJS6RgRbl6ZVRtdOIAl14FLE+d/TOFB9mXNCqJ
+ wsTQ==
+X-Gm-Message-State: AOJu0Yww3L5L9hr5cFRdZWmHaP7zztH3YOVVmvSecDTSCX2YTibcxW6s
+ FLqhxVaFYxeNWjk7adzamPNM2bj319L8015xTUAlpqh4GgoOe3ET8XrbUqhe8c4seBRrhhgaSiY
+ IW79H2S3O3wqtP5RBlDzJgN+Wd46xJyDMppBV97MOtTMlyxPw8Q6LcMOtDVO2ggTtx4daVyJ7dL
+ r6hJpqVXwuwJWnDw93OFnUDBLS4pvckCkkcl599wZeRNRBCbmzWWYJKg0/Jpk/LXt/yNhuyg==
+X-Gm-Gg: ASbGncuPyTEaoLjYaN/OvkPfSC4BlmgIM9EtXaiQk1i4pZwZwEAEv6x9qX10AkbS9hs
+ 8jR1ybc2WNykoPBKFDwtxIBne3gXfeLJtHcd872ul/Sz+6N2NZlV3ABN5GTpZT31mhk0P8rbYBP
+ ZdeBDZOLazbGrQjIH//Ds01QQoYEOQChV1n1i9RsrhgZm1YGaEw6/A2McDe2AbagPsohxVIW7c4
+ UB3Ro+2mniqjchEjajD5v1RkFI4YbVnnDKfoy9U97i4tEJIstma4eSPNGGDdcBd03CTPzMt1gFC
+ T+SmEKLZ0angQ0JEbHCeY22fbz6+1nlD9G0AYh54dffeyuzCGE37ygq8xzmlKsfL5+f5RVE3UzO
+ 0/Di9YeFH9Zm2A98XCHoQ9KBrL94fx6o/Q4QPr0BEhYCduiuvvgauUkOMgtlTZY23UrT5urZAGE
+ j/fkE9uGs=
+X-Google-Smtp-Source: AGHT+IFzX2XeOcNHoufxrajmApRjzGoXNbVG0HuXrIPe9bCnmleHv7ZsingUtFA97VUIm3rP7BHLI45Tb+Vm
+X-Received: by 2002:a05:6870:783:b0:340:a15c:111b with SMTP id
+ 586e51a60fabf-35ebf10ab82mr7775343fac.14.1759192626658; 
  Mon, 29 Sep 2025 17:37:06 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-121.dlp.protect.broadcom.com. [144.49.247.121])
+ (address-144-49-247-116.dlp.protect.broadcom.com. [144.49.247.116])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-27ed680fe8asm10879255ad.57.2025.09.29.17.37.05
+ 586e51a60fabf-363a2ce97f1sm1059853fac.3.2025.09.29.17.37.06
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
  Mon, 29 Sep 2025 17:37:06 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pf1-f197.google.com with SMTP id
- d2e1a72fcca58-78104c8c8ddso4397993b3a.2
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:37:04 -0700 (PDT)
+Received: by mail-pg1-f197.google.com with SMTP id
+ 41be03b00d2f7-b55153c5ef2so3547743a12.0
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 17:37:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1759192624; x=1759797424; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1759192625; x=1759797425; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=PHjvvpHYx5Ftfh2AvSqM0ChA3PUyEyIfBV//D7wQ4mI=;
- b=TCdKE6uelE9Cpnn3USchBmrmHWuFrtk1yavJhbFG6S02vyu9VOH9NcglZYEnBUV11z
- 3o4W48KaMCj+5TiGlVG9L+XA60JudFRWBwgAV0l3QsFU7NslMfDGAI58XN1YwPW047I4
- ZY0PVLX6MTuxr0mNZZYmyg+y7gFncy0880+X0=
-X-Received: by 2002:a05:6a20:7347:b0:245:4181:e1ff with SMTP id
- adf61e73a8af0-2e7c7ea0e27mr23159539637.14.1759192623549; 
- Mon, 29 Sep 2025 17:37:03 -0700 (PDT)
-X-Received: by 2002:a05:6a20:7347:b0:245:4181:e1ff with SMTP id
- adf61e73a8af0-2e7c7ea0e27mr23159509637.14.1759192622875; 
- Mon, 29 Sep 2025 17:37:02 -0700 (PDT)
+ bh=j3sxnLaXiWkXvG469e06v5H7cEbF5In/yjOTAzyItFM=;
+ b=CokamxlqHyN842AHdzqzqkhPbv09NOfcKPy/53ei5mVRIJ16EY6LOdgbGO7MynEuRD
+ fA1tjdokAsjKBiP+JBR+Za1rB1yK0EVZXg2azVoqFR94itgrSk7Nmhf9694u4Ke04Xvh
+ 3ZF8T7RgjyyTTQuQj0hBJnXjdsyDstHpPTiyk=
+X-Received: by 2002:a05:6a20:e212:b0:2af:65aa:4eef with SMTP id
+ adf61e73a8af0-2e7d37e3fa8mr21630163637.47.1759192624834; 
+ Mon, 29 Sep 2025 17:37:04 -0700 (PDT)
+X-Received: by 2002:a05:6a20:e212:b0:2af:65aa:4eef with SMTP id
+ adf61e73a8af0-2e7d37e3fa8mr21630133637.47.1759192624289; 
+ Mon, 29 Sep 2025 17:37:04 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.37.01
+ 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.37.03
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Mon, 29 Sep 2025 17:37:02 -0700 (PDT)
+ Mon, 29 Sep 2025 17:37:03 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Shuanglin Wang <shuanglin.wang@broadcom.com>
-Subject: [PATCH 23/54] net/bnxt/tf_ulp: enable support for global index table
-Date: Mon, 29 Sep 2025 20:35:33 -0400
-Message-Id: <20250930003604.87108-24-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com, Shuanglin Wang <shuanglin.wang@broadcom.com>,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Subject: [PATCH 24/54] net/bnxt/tf_core: fix build failure with flow scale
+ option
+Date: Mon, 29 Sep 2025 20:35:34 -0400
+Message-Id: <20250930003604.87108-25-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250930003604.87108-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -101,290 +100,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+From: Shuanglin Wang <shuanglin.wang@broadcom.com>
 
-The multi instance applications use metadata profile tables to set the
-metadata mask and this mask needs to be shared by multiple applications.
-The code is extended to support global id for these metadata profiles
-that these can be shared across applications. Since there are limited
-number of these resources, to scale the number of applications this
-resource needs to be shared as global ids.
+Resolved the build failure when building dpdk with the extra c flag:
+-DTF_FLOW_SCALE_QUERY. The issue is caused by the new debug code
+in DPDK 24.11.
 
-Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
+Signed-off-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
+Reviewed-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/ulp_mapper.c     | 111 +++++++++++++++++++++++
- drivers/net/bnxt/tf_ulp/ulp_mapper.h     |  11 +++
- drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c  |   2 +
- drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c |  77 ++++++++++++++++
- 4 files changed, 201 insertions(+)
+ drivers/net/bnxt/tf_core/tf_resources.c     |  2 +-
+ drivers/net/bnxt/tf_core/v3/tfc_resources.c | 12 +++++++-----
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.c b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-index 1901845499..9cda3b355b 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-@@ -3129,6 +3129,110 @@ ulp_mapper_global_identifier_process(struct bnxt_ulp_mapper_parms *parms,
- 	return rc;
- }
+diff --git a/drivers/net/bnxt/tf_core/tf_resources.c b/drivers/net/bnxt/tf_core/tf_resources.c
+index b3174ba1af..3219d61cab 100644
+--- a/drivers/net/bnxt/tf_core/tf_resources.c
++++ b/drivers/net/bnxt/tf_core/tf_resources.c
+@@ -535,7 +535,7 @@ void tf_resc_usage_update_all(struct bnxt *bp)
  
-+static int32_t
-+ulp_mapper_global_idx_tbl_process(struct bnxt_ulp_mapper_parms *parms,
-+				  struct bnxt_ulp_mapper_tbl_info *tbl)
-+{
-+	const struct ulp_mapper_core_ops *op = parms->mapper_data->mapper_oper;
-+	struct bnxt_ulp_glb_resource_info glb_res = { 0 };
-+	struct ulp_flow_db_res_params fid_parms = { 0 };
-+	struct bnxt_ulp_mapper_key_info	*kflds;
-+	struct ulp_blob key;
-+	uint32_t num_kflds = 0;
-+	uint16_t tmplen = 0;
-+	uint64_t idx = 0;
-+	uint8_t *context;
-+	int32_t rc = 0;
-+	uint32_t i;
-+
-+	/* check the table opcode  */
-+	if (tbl->tbl_opcode != BNXT_ULP_GLOBAL_IDX_TBL_OPC_ALLOC) {
-+		BNXT_DRV_DBG(ERR, "Invalid global idx table opcode %d",
-+			     tbl->tbl_opcode);
-+		return -EINVAL;
-+	}
-+
-+	/* Create the key blob */
-+	if (unlikely(ulp_blob_init(&key, tbl->blob_key_bit_size,
-+				   BNXT_ULP_BYTE_ORDER_BE))) {
-+		BNXT_DRV_DBG(ERR, "blob init failed.");
-+		return -EINVAL;
-+	}
-+
-+	kflds = ulp_mapper_key_fields_get(parms, tbl, &num_kflds);
-+	for (i = 0; i < num_kflds; i++) {
-+		rc = ulp_mapper_field_opc_process(parms, tbl->direction,
-+						  &kflds[i].field_info_spec,
-+						  &key, 1,
-+						  "Global Idx Context");
-+		if (unlikely(rc)) {
-+			BNXT_DRV_DBG(ERR, "Key field set failed %s",
-+				     kflds[i].field_info_spec.description);
-+			return rc;
-+		}
-+	}
-+
-+	context = ulp_blob_data_get(&key, &tmplen);
-+	tmplen = ULP_BITS_2_BYTE(tmplen);
-+
-+	if (unlikely(!op->ulp_mapper_core_glb_idx_tbl_alloc)) {
-+		BNXT_DRV_DBG(ERR, "global idx tbl process not supported");
-+		return -EINVAL;
-+	}
-+
-+	rc = op->ulp_mapper_core_glb_idx_tbl_alloc(parms->ulp_ctx,
-+						   tbl->resource_type,
-+						   tbl->direction, context,
-+						   tmplen, &idx);
-+	if (unlikely(rc)) {
-+		BNXT_DRV_DBG(ERR, "global idx tbl process failed");
-+		return rc;
-+	}
-+
-+	/* Add the table index to the flow db */
-+	memset(&fid_parms, 0, sizeof(fid_parms));
-+	fid_parms.direction = tbl->direction;
-+	fid_parms.resource_func = tbl->resource_func;
-+	fid_parms.resource_type	= tbl->resource_type;
-+	fid_parms.critical_resource = tbl->critical_resource;
-+	fid_parms.resource_hndl = idx;
-+
-+	rc = ulp_mapper_fdb_opc_process(parms, tbl, &fid_parms);
-+	if (unlikely(rc)) {
-+		BNXT_DRV_DBG(ERR, "Fail to link res to flow rc = %d", rc);
-+		goto error;
-+	}
-+
-+	rc = bnxt_ulp_cntxt_dev_id_get(parms->ulp_ctx, &glb_res.device_id);
-+	if (unlikely(rc)) {
-+		BNXT_DRV_DBG(ERR, "Failed to get device id (%d)", rc);
-+		goto error;
-+	}
-+
-+	rc = bnxt_ulp_cntxt_app_id_get(parms->ulp_ctx, &glb_res.app_id);
-+	if (unlikely(rc)) {
-+		BNXT_DRV_DBG(ERR, "Failed to get app id (%d)", rc);
-+		goto error;
-+	}
-+
-+	glb_res.direction = tbl->direction;
-+	glb_res.resource_func = tbl->resource_func;
-+	glb_res.resource_type = tbl->resource_type;
-+	glb_res.glb_regfile_index = tbl->tbl_operand;
-+	/* Write the table index into the regfile*/
-+	if (ulp_mapper_glb_resource_write(parms->mapper_data, &glb_res,
-+					  tfp_cpu_to_be_64(idx), false)) {
-+		BNXT_DRV_DBG(ERR, "Glb Regfile[%d] write failed.",
-+			     tbl->tbl_operand);
-+		rc = -EINVAL;
-+		goto error;
-+	}
-+	return rc;
-+error:
-+	(void)op->ulp_mapper_core_glb_idx_tbl_free(parms->ulp_ctx, &fid_parms);
-+	return rc;
-+}
-+
- /* Free the vnic resource */
- static int32_t
- ulp_mapper_vnic_tbl_res_free(struct bnxt_ulp_context *ulp __rte_unused,
-@@ -4357,6 +4461,9 @@ ulp_mapper_tbls_process(struct bnxt_ulp_mapper_parms *parms, void *error)
- 		case BNXT_ULP_RESOURCE_FUNC_GLOBAL_IDENTIFIER:
- 			rc = ulp_mapper_global_identifier_process(parms, tbl);
- 			break;
-+		case BNXT_ULP_RESOURCE_FUNC_GLOBAL_IDX_TBL:
-+			rc = ulp_mapper_global_idx_tbl_process(parms, tbl);
-+			break;
- 		default:
- 			BNXT_DRV_DBG(ERR, "Unexpected mapper resource %d\n",
- 				     tbl->resource_func);
-@@ -4501,6 +4608,10 @@ ulp_mapper_resource_free(struct bnxt_ulp_context *ulp,
- 		break;
- 	case BNXT_ULP_RESOURCE_FUNC_GLOBAL_IDENTIFIER:
- 		rc = mapper_op->ulp_mapper_core_global_ident_free(ulp, res);
-+		break;
-+	case BNXT_ULP_RESOURCE_FUNC_GLOBAL_IDX_TBL:
-+		rc = mapper_op->ulp_mapper_core_glb_idx_tbl_free(ulp, res);
-+		break;
- 	default:
- 		break;
+ 	tfp = bnxt_ulp_bp_tfp_get(bp, BNXT_ULP_SESSION_TYPE_DEFAULT);
+ 	if (!tfp || !tfp->session) {
+-		BNXT_DRV_DBG(ERR, "Failed to get truflow or session pointer\n");
++		BNXT_DRV_DBG(ERR, "Failed to get truflow or session pointer");
+ 		return;
  	}
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.h b/drivers/net/bnxt/tf_ulp/ulp_mapper.h
-index a4a42ab84d..732f095f01 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.h
-@@ -166,6 +166,17 @@ struct ulp_mapper_core_ops {
- 	(*ulp_mapper_core_global_ident_free)(struct bnxt_ulp_context *ulp_ctx,
- 					     struct ulp_flow_db_res_params *r);
  
-+	int32_t
-+	(*ulp_mapper_core_glb_idx_tbl_alloc)(struct bnxt_ulp_context *ctx,
-+					     uint16_t sub_type,
-+					     uint8_t direction,
-+					     uint8_t *context_id,
-+					     uint16_t context_len,
-+					     uint64_t *idx_id);
-+
-+	int32_t
-+	(*ulp_mapper_core_glb_idx_tbl_free)(struct bnxt_ulp_context *ulp_ctx,
-+					    struct ulp_flow_db_res_params *r);
- 	uint32_t
- 	(*ulp_mapper_core_dyn_tbl_type_get)(struct bnxt_ulp_mapper_parms *parms,
- 					    struct bnxt_ulp_mapper_tbl_info *t,
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
-index 72d0f96573..3960be4e48 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
-@@ -1380,6 +1380,8 @@ const struct ulp_mapper_core_ops ulp_mapper_tf_core_ops = {
- 	.ulp_mapper_core_ident_free = ulp_mapper_tf_ident_free,
- 	.ulp_mapper_core_global_ident_alloc = NULL,
- 	.ulp_mapper_core_global_ident_free = NULL,
-+	.ulp_mapper_core_glb_idx_tbl_alloc = NULL,
-+	.ulp_mapper_core_glb_idx_tbl_free = NULL,
- 	.ulp_mapper_core_dyn_tbl_type_get = ulp_mapper_tf_dyn_tbl_type_get,
- 	.ulp_mapper_core_index_tbl_alloc_process =
- 		ulp_mapper_tf_index_tbl_alloc_process,
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-index 20b1ac09fc..0f967b838d 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-@@ -1911,6 +1911,81 @@ ulp_mapper_tfc_mtr_stats_hndl_del(uint32_t mtr_id)
- 		}
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_resources.c b/drivers/net/bnxt/tf_core/v3/tfc_resources.c
+index 5fa6d113ca..44b7a0afcb 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_resources.c
++++ b/drivers/net/bnxt/tf_core/v3/tfc_resources.c
+@@ -59,14 +59,16 @@ tfc_query_resc_usage(struct tfc *tfcp, enum cfa_dir dir)
  
- 	return rc;
-+}
-+
-+static int32_t
-+ulp_mapper_tfc_glb_idx_tbl_alloc(struct bnxt_ulp_context *ulp_ctx,
-+				 uint16_t sub_type, uint8_t direction,
-+				 uint8_t *context_id, uint16_t context_len,
-+				 uint64_t *idx_id)
-+{
-+	struct tfc *tfcp = NULL;
-+	struct tfc_global_id_req glb_req = { 0 };
-+	struct tfc_global_id glb_rsp = { 0 };
-+	uint16_t fw_fid = 0;
-+	int32_t rc = 0;
-+	bool first = false;
-+
-+	if (unlikely(bnxt_ulp_cntxt_fid_get(ulp_ctx, &fw_fid))) {
-+		BNXT_DRV_DBG(ERR, "Failed to get func_id");
-+		return -EINVAL;
-+	}
-+
-+	tfcp = bnxt_ulp_cntxt_tfcp_get(ulp_ctx);
-+	if (unlikely(tfcp == NULL)) {
-+		BNXT_DRV_DBG(ERR, "Failed to get tfcp pointer");
-+		return -EINVAL;
-+	}
-+
-+	glb_req.rtype = CFA_RTYPE_IDX_TBL;
-+	glb_req.dir = direction;
-+	glb_req.rsubtype = sub_type;
-+	glb_req.context_len = context_len;
-+	glb_req.context_id = context_id;
-+
-+	rc = tfc_global_id_alloc(tfcp, fw_fid, &glb_req, &glb_rsp, &first);
-+	if (unlikely(rc != 0)) {
-+		BNXT_DRV_DBG(ERR, "alloc failed %d", rc);
-+		return rc;
-+	}
-+	*idx_id = glb_rsp.id;
-+
-+	return rc;
-+}
-+
-+static int32_t
-+ulp_mapper_tfc_glb_idx_tbl_free(struct bnxt_ulp_context *ulp_ctx,
-+				struct ulp_flow_db_res_params *res)
-+{
-+	struct tfc_global_id_req glb_req = { 0 };
-+	struct tfc *tfcp = NULL;
-+	int32_t rc = 0;
-+	uint16_t fw_fid = 0;
-+
-+	if (unlikely(bnxt_ulp_cntxt_fid_get(ulp_ctx, &fw_fid))) {
-+		BNXT_DRV_DBG(ERR, "Failed to get func_id");
-+		return -EINVAL;
-+	}
-+
-+	tfcp = bnxt_ulp_cntxt_tfcp_get(ulp_ctx);
-+	if (unlikely(tfcp == NULL)) {
-+		BNXT_DRV_DBG(ERR, "Failed to get tfcp pointer");
-+		return -EINVAL;
-+	}
-+
-+	glb_req.rtype = CFA_RTYPE_IDX_TBL;
-+	glb_req.dir = (enum cfa_dir)res->direction;
-+	glb_req.rsubtype = res->resource_type;
-+	glb_req.resource_id = (uint16_t)res->resource_hndl;
-+
-+	rc = tfc_global_id_free(tfcp, fw_fid, &glb_req);
-+	if (unlikely(rc != 0)) {
-+		BNXT_DRV_DBG(ERR, "free failed %d", rc);
-+		return rc;
-+	}
-+
-+	return rc;
-+}
+ 	rc = tfo_sid_get(tfcp->tfo, &sid);
+ 	if (rc) {
+-		PMD_DRV_LOG_LINE(ERR, "Failed to retrieve SID, rc:%s\n",
+-				 strerror(-rc));
++		PMD_DRV_LOG_LINE(ERR, "%s: Failed to retrieve SID, rc:%s",
++				 __func__, strerror(-rc));
+ 		return rc;
+ 	}
+ 	tfc_msg_resc_usage_query(tfcp, sid, dir, &data_size, &stats_info);
+ 	PMD_DRV_LOG_LINE(ERR,
+-			 "dir:%s, %d - %d %d(1-slice) - %d %d(2-slices) - %d(4-slices) - %d(unused row) - %d(used_slices)\n",
+-			 dir ? "TX" : "RX", stats_info.max_slices,
++			 "%s: dir:%s, %d - %d %d(1-slice) - %d %d(2-slices) - %d(4-slices) - %d(unused row) - %d(used_slices)",
++			 __func__,
++			 dir ? "TX" : "RX",
++			 stats_info.max_slices,
+ 			 stats_info.row_1_slice_p_used,
+ 			 stats_info.row_1_slice_f_used,
+ 			 stats_info.row_2_slice_p_used,
+@@ -86,7 +88,7 @@ void tfc_resc_usage_query_all(struct bnxt *bp)
  
- static inline int32_t
- ulp_mapper_tfc_tcam_prio_update(struct bnxt_ulp_mapper_parms *parms,
-@@ -1963,6 +2038,8 @@ const struct ulp_mapper_core_ops ulp_mapper_tfc_core_ops = {
- 	.ulp_mapper_core_ident_free = ulp_mapper_tfc_ident_free,
- 	.ulp_mapper_core_global_ident_alloc = ulp_mapper_tfc_global_ident_alloc,
- 	.ulp_mapper_core_global_ident_free = ulp_mapper_tfc_global_ident_free,
-+	.ulp_mapper_core_glb_idx_tbl_alloc = ulp_mapper_tfc_glb_idx_tbl_alloc,
-+	.ulp_mapper_core_glb_idx_tbl_free = ulp_mapper_tfc_glb_idx_tbl_free,
- 	.ulp_mapper_core_dyn_tbl_type_get = ulp_mapper_tfc_dyn_tbl_type_get,
- 	.ulp_mapper_core_index_tbl_alloc_process =
- 		ulp_mapper_tfc_index_tbl_alloc_process,
+ 	tfcp = bnxt_ulp_cntxt_tfcp_get(bp->ulp_ctx);
+ 	if (!tfcp) {
+-		BNXT_DRV_DBG(ERR, "Failed to get truflow pointer\n");
++		BNXT_DRV_DBG(ERR, "Failed to get truflow pointer");
+ 		return;
+ 	}
+ 
 -- 
 2.39.5 (Apple Git-154)
 
