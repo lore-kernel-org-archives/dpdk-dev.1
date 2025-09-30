@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFAACAC5B8
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 09:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F026ACAC5B9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 09:07:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DBF54406B7;
-	Tue, 30 Sep 2025 11:07:34 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4584A40A6D;
+	Tue, 30 Sep 2025 11:07:38 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id B1100400D7
- for <dev@dpdk.org>; Tue, 30 Sep 2025 11:07:32 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7C71140696
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 11:07:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759223253; x=1790759253;
+ t=1759223254; x=1790759254;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=nD2w3+6fTXKIGgd3qlceFbYIUw2dO+hCeWb2h1JWl+M=;
- b=IAvcUyV1boGwL65ybuQ4n+dqLtbEHSVD9p/JTdHaoyeVED8N1pDE/Lf+
- IEbhcM3I3k39RMj89tjcHokOfuJhqPb8QRKyWlwGfbgVFuBrUN3WV9r7g
- UnNFcdlSx+meCxKAzEruZZzonIgAFAKQb5V/88IuvtFDCFipd7MK67hOR
- gzIQK7RLORct9tauoBxNjd2HvOlDQ7c8A/0G2nOumGVN7CUS0hddk+Ma1
- j4uG4sw3+e/98x6JwnhKO+AAoPnyUutMad/6tmHoD04rIFam5tV7v8UKh
- xLSULcBMhy23lU3y3HJUF3r2PORKpU59y+7HdL9DSx1Xkv5IKSvG3RWV3 w==;
-X-CSE-ConnectionGUID: 0CYJxA8/RlCkp9tzDaHGXw==
-X-CSE-MsgGUID: 1hYZs8cpS5K0XFVmBTJHDg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="61363309"
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; d="scan'208";a="61363309"
+ bh=GzfbLJvaL+OVBjCicVHwVbOcVRd+l6rvHr8IhXCKdq0=;
+ b=TZ6yEukUSfB9AlxC0Gdgi6TqDyLwsDZ17R63x25bKET402OL/Z0AFNzW
+ zgKgtAat4lywFp18osS03JrNgmjSk1aX6oICttXlXQ0Iwyno/uGrXNU31
+ RcZsu6EYMHHs5KurLL/JnEFr5PbSdJ+2Evoz2YxNRF+6l5Izr9a2M9xlY
+ uIDQwRYnwpiLjdDtE2zDU2tXap9luwV5UQesQIXNu9Hd04llsf3WUleDk
+ Yojs8XFHD+pT3Dv/IJIdzMLaRLTPJrnfuTWdarcHQ5kjTMkNjT1OOkF6X
+ M+VZbo9e+gIDWTyR8nmgEfyJ+hZ0c1lQ+GwQbPUHrz3m+lKQ1dNuAZSA0 g==;
+X-CSE-ConnectionGUID: dt65D8emSqCw897ZDQGWnQ==
+X-CSE-MsgGUID: 2jPxQHoRQjS2u+SG8KtrUg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="61363310"
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; d="scan'208";a="61363310"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Sep 2025 02:07:32 -0700
-X-CSE-ConnectionGUID: aasZHFqKT4OoLE4gEqVm6w==
-X-CSE-MsgGUID: 1yvE+Vg6RJOtis5mVvMcWQ==
+ 30 Sep 2025 02:07:34 -0700
+X-CSE-ConnectionGUID: R5E/Izf1RlmQvG+2kN5ZVg==
+X-CSE-MsgGUID: e/XvWKKuQW6yzmUmALeilw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; d="scan'208";a="182757354"
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; d="scan'208";a="182757359"
 Received: from unknown (HELO srv24..) ([10.138.182.231])
- by orviesa004.jf.intel.com with ESMTP; 30 Sep 2025 02:07:30 -0700
+ by orviesa004.jf.intel.com with ESMTP; 30 Sep 2025 02:07:32 -0700
 From: Shaiq Wani <shaiq.wani@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
-Subject: [PATCH v4 1/2] net/idpf: enable AVX2 for split queue Rx
-Date: Tue, 30 Sep 2025 14:37:08 +0530
-Message-Id: <20250930090709.2521114-2-shaiq.wani@intel.com>
+Subject: [PATCH v4 2/2] net/idpf: enable AVX2 for split queue Tx
+Date: Tue, 30 Sep 2025 14:37:09 +0530
+Message-Id: <20250930090709.2521114-3-shaiq.wani@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250930090709.2521114-1-shaiq.wani@intel.com>
 References: <20250917052658.582872-1-shaiq.wani@intel.com/>
@@ -71,368 +71,247 @@ different queues for parallel processing and improved performance.
 
 Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
 ---
- drivers/net/intel/idpf/idpf_common_device.h   |   1 +
- drivers/net/intel/idpf/idpf_common_rxtx.c     |  64 +++++++
- drivers/net/intel/idpf/idpf_common_rxtx.h     |   5 +
- .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 160 ++++++++++++++++++
- .../net/intel/idpf/idpf_common_rxtx_avx512.c  |  56 ------
- 5 files changed, 230 insertions(+), 56 deletions(-)
+ drivers/net/intel/idpf/idpf_common_rxtx.h     |   3 +
+ .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 194 ++++++++++++++++++
+ drivers/net/intel/idpf/idpf_rxtx.c            |   9 +
+ 3 files changed, 206 insertions(+)
 
-diff --git a/drivers/net/intel/idpf/idpf_common_device.h b/drivers/net/intel/idpf/idpf_common_device.h
-index 3b95d519c6..ed459e6f54 100644
---- a/drivers/net/intel/idpf/idpf_common_device.h
-+++ b/drivers/net/intel/idpf/idpf_common_device.h
-@@ -49,6 +49,7 @@ enum idpf_rx_func_type {
- 	IDPF_RX_SINGLEQ,
- 	IDPF_RX_SINGLEQ_SCATTERED,
- 	IDPF_RX_SINGLEQ_AVX2,
-+	IDPF_RX_AVX2,
- 	IDPF_RX_AVX512,
- 	IDPF_RX_SINGLQ_AVX512,
- 	IDPF_RX_MAX
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index a2b8c372d6..b00bf69a25 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -250,6 +250,63 @@ idpf_qc_split_tx_complq_reset(struct ci_tx_queue *cq)
- 	cq->expected_gen_id = 1;
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_splitq_rearm_common)
-+void
-+idpf_splitq_rearm_common(struct idpf_rx_queue *rx_bufq)
-+{
-+	struct rte_mbuf **rxp = &rx_bufq->sw_ring[rx_bufq->rxrearm_start];
-+	volatile union virtchnl2_rx_buf_desc *rxdp = rx_bufq->rx_ring;
-+	uint16_t rx_id;
-+	int i;
-+
-+	rxdp += rx_bufq->rxrearm_start;
-+
-+	/* Pull 'n' more MBUFs into the software ring */
-+	if (rte_mbuf_raw_alloc_bulk(rx_bufq->mp,
-+				 (void *)rxp,
-+				 IDPF_RXQ_REARM_THRESH) < 0) {
-+		if (rx_bufq->rxrearm_nb + IDPF_RXQ_REARM_THRESH >=
-+		    rx_bufq->nb_rx_desc) {
-+			__m128i dma_addr0;
-+
-+			dma_addr0 = _mm_setzero_si128();
-+			for (i = 0; i < IDPF_VPMD_DESCS_PER_LOOP; i++) {
-+				rxp[i] = &rx_bufq->fake_mbuf;
-+				_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[i]),
-+						dma_addr0);
-+			}
-+		}
-+	rte_atomic_fetch_add_explicit(&rx_bufq->rx_stats.mbuf_alloc_failed,
-+			   IDPF_RXQ_REARM_THRESH, rte_memory_order_relaxed);
-+		return;
-+	}
-+
-+	/* Initialize the mbufs in vector, process 8 mbufs in one loop */
-+	for (i = 0; i < IDPF_RXQ_REARM_THRESH;
-+			i += 8, rxp += 8, rxdp += 8) {
-+		rxdp[0].split_rd.pkt_addr = rxp[0]->buf_iova + RTE_PKTMBUF_HEADROOM;
-+		rxdp[1].split_rd.pkt_addr = rxp[1]->buf_iova + RTE_PKTMBUF_HEADROOM;
-+		rxdp[2].split_rd.pkt_addr = rxp[2]->buf_iova + RTE_PKTMBUF_HEADROOM;
-+		rxdp[3].split_rd.pkt_addr = rxp[3]->buf_iova + RTE_PKTMBUF_HEADROOM;
-+		rxdp[4].split_rd.pkt_addr = rxp[4]->buf_iova + RTE_PKTMBUF_HEADROOM;
-+		rxdp[5].split_rd.pkt_addr = rxp[5]->buf_iova + RTE_PKTMBUF_HEADROOM;
-+		rxdp[6].split_rd.pkt_addr = rxp[6]->buf_iova + RTE_PKTMBUF_HEADROOM;
-+		rxdp[7].split_rd.pkt_addr = rxp[7]->buf_iova + RTE_PKTMBUF_HEADROOM;
-+	}
-+
-+	rx_bufq->rxrearm_start += IDPF_RXQ_REARM_THRESH;
-+	if (rx_bufq->rxrearm_start >= rx_bufq->nb_rx_desc)
-+		rx_bufq->rxrearm_start = 0;
-+
-+	rx_bufq->rxrearm_nb -= IDPF_RXQ_REARM_THRESH;
-+
-+	rx_id = (uint16_t)((rx_bufq->rxrearm_start == 0) ?
-+			     (rx_bufq->nb_rx_desc - 1) : (rx_bufq->rxrearm_start - 1));
-+
-+	/* Update the tail pointer on the NIC */
-+	IDPF_PCI_REG_WRITE(rx_bufq->qrx_tail, rx_id);
-+}
-+
- RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_single_tx_queue_reset)
- void
- idpf_qc_single_tx_queue_reset(struct ci_tx_queue *txq)
-@@ -1656,6 +1713,13 @@ const struct ci_rx_path_info idpf_rx_path_infos[] = {
- 			.rx_offloads = IDPF_RX_VECTOR_OFFLOADS,
- 			.simd_width = RTE_VECT_SIMD_256,
- 			.extra.single_queue = true}},
-+	[IDPF_RX_AVX2] = {
-+	    .pkt_burst = idpf_dp_splitq_recv_pkts_avx2,
-+	    .info = "Split AVX2 Vector",
-+	    .features = {
-+			.rx_offloads = IDPF_RX_VECTOR_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_256,
-+	       }},
- #ifdef CC_AVX512_SUPPORT
- 	[IDPF_RX_AVX512] = {
- 		.pkt_burst = idpf_dp_splitq_recv_pkts_avx512,
 diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
-index 3bc3323af4..87f6895c4c 100644
+index 87f6895c4c..3636d55272 100644
 --- a/drivers/net/intel/idpf/idpf_common_rxtx.h
 +++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
-@@ -203,6 +203,8 @@ void idpf_qc_split_tx_descq_reset(struct ci_tx_queue *txq);
+@@ -264,6 +264,9 @@ uint16_t idpf_dp_singleq_recv_pkts_avx2(void *rx_queue,
+ 					struct rte_mbuf **rx_pkts,
+ 					uint16_t nb_pkts);
  __rte_internal
- void idpf_qc_split_tx_complq_reset(struct ci_tx_queue *cq);
- __rte_internal
-+void idpf_splitq_rearm_common(struct idpf_rx_queue *rx_bufq);
++uint16_t idpf_dp_splitq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
++				       uint16_t nb_pkts);
 +__rte_internal
- void idpf_qc_single_tx_queue_reset(struct ci_tx_queue *txq);
- __rte_internal
- void idpf_qc_rx_queue_release(void *rxq);
-@@ -252,6 +254,9 @@ __rte_internal
- uint16_t idpf_dp_splitq_xmit_pkts_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
- 					 uint16_t nb_pkts);
- __rte_internal
-+uint16_t idpf_dp_splitq_recv_pkts_avx2(void *rxq, struct rte_mbuf **rx_pkts,
-+				     uint16_t nb_pkts);
-+__rte_internal
- uint16_t idpf_dp_singleq_recv_scatter_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 			  uint16_t nb_pkts);
- __rte_internal
+ uint16_t idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue,
+ 					struct rte_mbuf **tx_pkts,
+ 					uint16_t nb_pkts);
 diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-index 21c8f79254..986fffdbc1 100644
+index 986fffdbc1..2dfe64b41e 100644
 --- a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
 +++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-@@ -482,6 +482,166 @@ idpf_dp_singleq_recv_pkts_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16
- 	return _idpf_singleq_recv_raw_pkts_vec_avx2(rx_queue, rx_pkts, nb_pkts);
- }
+@@ -800,3 +800,197 @@ idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
  
-+uint16_t
-+idpf_dp_splitq_recv_pkts_avx2(void *rxq, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 	return nb_tx;
+ }
++
++static __rte_always_inline void
++idpf_splitq_scan_cq_ring(struct ci_tx_queue *cq)
 +{
-+	struct idpf_rx_queue *queue = (struct idpf_rx_queue *)rxq;
-+	const uint32_t *ptype_tbl = queue->adapter->ptype_tbl;
-+	struct rte_mbuf **sw_ring = &queue->bufq2->sw_ring[queue->rx_tail];
-+	volatile union virtchnl2_rx_desc *rxdp =
-+		(volatile union virtchnl2_rx_desc *)queue->rx_ring + queue->rx_tail;
-+	const __m256i mbuf_init = _mm256_set_epi64x(0, 0, 0, queue->mbuf_initializer);
++	struct idpf_splitq_tx_compl_desc *compl_ring;
++	struct ci_tx_queue *txq;
++	uint16_t genid, txq_qid, cq_qid, i;
++	uint8_t ctype;
 +
-+	rte_prefetch0(rxdp);
-+	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, 4); /* 4 desc per AVX2 iteration */
++	cq_qid = cq->tx_tail;
 +
-+	if (queue->bufq2->rxrearm_nb > IDPF_RXQ_REARM_THRESH)
-+		idpf_splitq_rearm_common(queue->bufq2);
-+
-+	/* head gen check */
-+	uint64_t head_gen = rxdp->flex_adv_nic_3_wb.pktlen_gen_bufq_id;
-+	if (((head_gen >> VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_S) &
-+		 VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_M) != queue->expected_gen_id)
-+		return 0;
-+
-+	uint16_t received = 0;
-+
-+	/* Shuffle mask: picks fields from each 16-byte descriptor pair into the
-+	 * layout that will be merged into mbuf->rearm_data candidates.
-+	 */
-+	const __m256i shuf = _mm256_set_epi8(
-+		/* high 128 bits (desc 3 then desc 2 lanes) */
-+		(char)0xFF, (char)0xFF, (char)0xFF, (char)0xFF, 11, 10, 5, 4,
-+		(char)0xFF, (char)0xFF, 5, 4, (char)0xFF, (char)0xFF, (char)0xFF, (char)0xFF,
-+		/* low 128 bits (desc 1 then desc 0 lanes) */
-+		(char)0xFF, (char)0xFF, (char)0xFF, (char)0xFF, 11, 10, 5, 4,
-+		(char)0xFF, (char)0xFF, 5, 4, (char)0xFF, (char)0xFF, (char)0xFF, (char)0xFF
-+	);
-+
-+	/* mask that clears the high 16 bits of packet length word */
-+	const __m256i len_mask = _mm256_set_epi32(
-+		0xffffffff, 0xffffffff, 0xffff3fff, 0xffffffff,
-+		0xffffffff, 0xffffffff, 0xffff3fff, 0xffffffff
-+	);
-+
-+	const __m256i ptype_mask = _mm256_set1_epi16(VIRTCHNL2_RX_FLEX_DESC_PTYPE_M);
-+
-+	for (uint16_t i = 0; i < nb_pkts; i += 4, rxdp += 4) {
-+		/* Step 1: copy 4 mbuf pointers (64-bit each) into rx_pkts[] */
-+		__m128i ptrs_lo = _mm_loadu_si128((const __m128i *)&sw_ring[i]);
-+		__m128i ptrs_hi = _mm_loadu_si128((const __m128i *)&sw_ring[i + 2]);
-+		_mm_storeu_si128((__m128i *)&rx_pkts[i], ptrs_lo);
-+		_mm_storeu_si128((__m128i *)&rx_pkts[i + 2], ptrs_hi);
-+
-+		/* Step 2: load four 128-bit descriptors */
-+		__m128i d0 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, &rxdp[0]));
-+		rte_compiler_barrier();
-+		__m128i d1 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, &rxdp[1]));
-+		rte_compiler_barrier();
-+		__m128i d2 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, &rxdp[2]));
-+		rte_compiler_barrier();
-+		__m128i d3 = _mm_load_si128(RTE_CAST_PTR(const __m128i *, &rxdp[3]));
-+
-+		/* Build 256-bit descriptor-pairs */
-+		__m256i d01 = _mm256_set_m128i(d1, d0); /* low lane: d0, d1 */
-+		__m256i d23 = _mm256_set_m128i(d3, d2); /* high lane: d2, d3 */
-+
-+		/* mask off high pkt_len bits  */
-+		__m256i desc01 = _mm256_and_si256(d01, len_mask);
-+		__m256i desc23 = _mm256_and_si256(d23, len_mask);
-+
-+		/* Step 3: shuffle relevant bytes into mbuf rearm candidates */
-+		__m256i mb01 = _mm256_shuffle_epi8(desc01, shuf);
-+		__m256i mb23 = _mm256_shuffle_epi8(desc23, shuf);
-+
-+		/* Step 4: extract ptypes from descriptors and translate via table */
-+		__m256i pt01 = _mm256_and_si256(d01, ptype_mask);
-+		__m256i pt23 = _mm256_and_si256(d23, ptype_mask);
-+
-+		uint16_t ptype0 = (uint16_t)_mm256_extract_epi16(pt01, 1);
-+		uint16_t ptype1 = (uint16_t)_mm256_extract_epi16(pt01, 9);
-+		uint16_t ptype2 = (uint16_t)_mm256_extract_epi16(pt23, 1);
-+		uint16_t ptype3 = (uint16_t)_mm256_extract_epi16(pt23, 9);
-+
-+		mb01 = _mm256_insert_epi32(mb01, (int)ptype_tbl[ptype1], 2);
-+		mb01 = _mm256_insert_epi32(mb01, (int)ptype_tbl[ptype0], 0);
-+		mb23 = _mm256_insert_epi32(mb23, (int)ptype_tbl[ptype3], 2);
-+		mb23 = _mm256_insert_epi32(mb23, (int)ptype_tbl[ptype2], 0);
-+
-+		/* Step 5: build rearm vectors */
-+		__m128i mb01_lo = _mm256_castsi256_si128(mb01);
-+		__m128i mb01_hi = _mm256_extracti128_si256(mb01, 1);
-+		__m128i mb23_lo = _mm256_castsi256_si128(mb23);
-+		__m128i mb23_hi = _mm256_extracti128_si256(mb23, 1);
-+
-+		__m256i rearm0 = _mm256_permute2f128_si256(mbuf_init, _mm256_set_m128i
-+							(mb01_hi, mb01_lo), 0x20);
-+		__m256i rearm1 = _mm256_blend_epi32(mbuf_init, _mm256_set_m128i
-+							(mb01_hi, mb01_lo), 0xF0);
-+		__m256i rearm2 = _mm256_permute2f128_si256(mbuf_init, _mm256_set_m128i
-+							(mb23_hi, mb23_lo), 0x20);
-+		__m256i rearm3 = _mm256_blend_epi32(mbuf_init, _mm256_set_m128i
-+							(mb23_hi, mb23_lo), 0xF0);
-+
-+		/* Step 6: per-descriptor scalar validity checks */
-+		bool valid0 = false, valid1 = false, valid2 = false, valid3 = false;
-+		{
-+			uint64_t g0 = rxdp[0].flex_adv_nic_3_wb.pktlen_gen_bufq_id;
-+			uint64_t g1 = rxdp[1].flex_adv_nic_3_wb.pktlen_gen_bufq_id;
-+			uint64_t g2 = rxdp[2].flex_adv_nic_3_wb.pktlen_gen_bufq_id;
-+			uint64_t g3 = rxdp[3].flex_adv_nic_3_wb.pktlen_gen_bufq_id;
-+
-+			bool dd0 = (g0 & 1ULL) != 0ULL;
-+			bool dd1 = (g1 & 1ULL) != 0ULL;
-+			bool dd2 = (g2 & 1ULL) != 0ULL;
-+			bool dd3 = (g3 & 1ULL) != 0ULL;
-+
-+			uint64_t gen0 = (g0 >> VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_S) &
-+						VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_M;
-+			uint64_t gen1 = (g1 >> VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_S) &
-+						VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_M;
-+			uint64_t gen2 = (g2 >> VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_S) &
-+						VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_M;
-+			uint64_t gen3 = (g3 >> VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_S) &
-+						VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_M;
-+
-+			valid0 = dd0 && (gen0 == queue->expected_gen_id);
-+			valid1 = dd1 && (gen1 == queue->expected_gen_id);
-+			valid2 = dd2 && (gen2 == queue->expected_gen_id);
-+			valid3 = dd3 && (gen3 == queue->expected_gen_id);
++	for (i = 0; i < IDPD_TXQ_SCAN_CQ_THRESH; i++) {
++		if (cq_qid == cq->nb_tx_desc) {
++			cq_qid = 0;
++			cq->expected_gen_id ^= 1;  /* toggle generation bit */
 +		}
 +
-+		unsigned int mask =	(valid0 ? 1U : 0U) | (valid1 ? 2U : 0U)
-+						| (valid2 ? 4U : 0U) | (valid3 ? 8U : 0U);
-+		uint16_t burst = (uint16_t)__builtin_popcount(mask);
++		compl_ring = &cq->compl_ring[cq_qid];
 +
-+		/* Step 7: store rearm_data only for validated descriptors */
-+		if (valid0)
-+			_mm256_storeu_si256((__m256i *)&rx_pkts[i + 0]->rearm_data, rearm0);
-+		if (valid1)
-+			_mm256_storeu_si256((__m256i *)&rx_pkts[i + 1]->rearm_data, rearm1);
-+		if (valid2)
-+			_mm256_storeu_si256((__m256i *)&rx_pkts[i + 2]->rearm_data, rearm2);
-+		if (valid3)
-+			_mm256_storeu_si256((__m256i *)&rx_pkts[i + 3]->rearm_data, rearm3);
++		genid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
++			 IDPF_TXD_COMPLQ_GEN_M) >> IDPF_TXD_COMPLQ_GEN_S;
 +
-+		received += burst;
-+		if (burst != 4)
++		if (genid != cq->expected_gen_id)
 +			break;
++
++		ctype = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
++			 IDPF_TXD_COMPLQ_COMPL_TYPE_M) >> IDPF_TXD_COMPLQ_COMPL_TYPE_S;
++
++		txq_qid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
++			   IDPF_TXD_COMPLQ_QID_M) >> IDPF_TXD_COMPLQ_QID_S;
++
++		txq = cq->txqs[txq_qid - cq->tx_start_qid];
++		if (ctype == IDPF_TXD_COMPLT_RS)
++			txq->rs_compl_count++;
++
++		cq_qid++;
 +	}
-+	queue->rx_tail += received;
-+	queue->expected_gen_id ^= ((queue->rx_tail & queue->nb_rx_desc) != 0);
-+	queue->rx_tail &= (queue->nb_rx_desc - 1);
-+	if ((queue->rx_tail & 1) == 1 && received > 1) {
-+		queue->rx_tail--;
-+		received--;
-+	}
-+	queue->bufq2->rxrearm_nb += received;
-+	return received;
++
++	cq->tx_tail = cq_qid;
 +}
 +
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_splitq_recv_pkts_avx2)
++static __rte_always_inline void
++idpf_splitq_vtx1_avx2(struct idpf_flex_tx_sched_desc *txdp,
++				struct rte_mbuf *pkt, uint64_t flags)
++{
++	uint64_t high_qw =
++		IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE |
++		((uint64_t)flags) |
++		((uint64_t)pkt->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
 +
- static inline void
- idpf_singleq_vtx1(volatile struct idpf_base_tx_desc *txdp,
- 		  struct rte_mbuf *pkt, uint64_t flags)
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-index bc2cadd738..d3a161c763 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-@@ -540,62 +540,6 @@ idpf_dp_singleq_recv_pkts_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
- 	return _idpf_singleq_recv_raw_pkts_avx512(rx_queue, rx_pkts, nb_pkts);
- }
- 
--static __rte_always_inline void
--idpf_splitq_rearm_common(struct idpf_rx_queue *rx_bufq)
--{
--	struct rte_mbuf **rxp = &rx_bufq->sw_ring[rx_bufq->rxrearm_start];
--	volatile union virtchnl2_rx_buf_desc *rxdp = rx_bufq->rx_ring;
--	uint16_t rx_id;
--	int i;
--
--	rxdp += rx_bufq->rxrearm_start;
--
--	/* Pull 'n' more MBUFs into the software ring */
--	if (rte_mbuf_raw_alloc_bulk(rx_bufq->mp,
--				 (void *)rxp,
--				 IDPF_RXQ_REARM_THRESH) < 0) {
--		if (rx_bufq->rxrearm_nb + IDPF_RXQ_REARM_THRESH >=
--		    rx_bufq->nb_rx_desc) {
--			__m128i dma_addr0;
--
--			dma_addr0 = _mm_setzero_si128();
--			for (i = 0; i < IDPF_VPMD_DESCS_PER_LOOP; i++) {
--				rxp[i] = &rx_bufq->fake_mbuf;
--				_mm_store_si128(RTE_CAST_PTR(__m128i *, &rxdp[i]),
--						dma_addr0);
--			}
--		}
--	rte_atomic_fetch_add_explicit(&rx_bufq->rx_stats.mbuf_alloc_failed,
--			   IDPF_RXQ_REARM_THRESH, rte_memory_order_relaxed);
--		return;
--	}
--
--	/* Initialize the mbufs in vector, process 8 mbufs in one loop */
--	for (i = 0; i < IDPF_RXQ_REARM_THRESH;
--			i += 8, rxp += 8, rxdp += 8) {
--		rxdp[0].split_rd.pkt_addr = rxp[0]->buf_iova + RTE_PKTMBUF_HEADROOM;
--		rxdp[1].split_rd.pkt_addr = rxp[1]->buf_iova + RTE_PKTMBUF_HEADROOM;
--		rxdp[2].split_rd.pkt_addr = rxp[2]->buf_iova + RTE_PKTMBUF_HEADROOM;
--		rxdp[3].split_rd.pkt_addr = rxp[3]->buf_iova + RTE_PKTMBUF_HEADROOM;
--		rxdp[4].split_rd.pkt_addr = rxp[4]->buf_iova + RTE_PKTMBUF_HEADROOM;
--		rxdp[5].split_rd.pkt_addr = rxp[5]->buf_iova + RTE_PKTMBUF_HEADROOM;
--		rxdp[6].split_rd.pkt_addr = rxp[6]->buf_iova + RTE_PKTMBUF_HEADROOM;
--		rxdp[7].split_rd.pkt_addr = rxp[7]->buf_iova + RTE_PKTMBUF_HEADROOM;
--	}
--
--	rx_bufq->rxrearm_start += IDPF_RXQ_REARM_THRESH;
--	if (rx_bufq->rxrearm_start >= rx_bufq->nb_rx_desc)
--		rx_bufq->rxrearm_start = 0;
--
--	rx_bufq->rxrearm_nb -= IDPF_RXQ_REARM_THRESH;
--
--	rx_id = (uint16_t)((rx_bufq->rxrearm_start == 0) ?
--			     (rx_bufq->nb_rx_desc - 1) : (rx_bufq->rxrearm_start - 1));
--
--	/* Update the tail pointer on the NIC */
--	IDPF_PCI_REG_WRITE(rx_bufq->qrx_tail, rx_id);
--}
--
- static __rte_always_inline void
- idpf_splitq_rearm(struct idpf_rx_queue *rx_bufq)
- {
++	__m128i descriptor = _mm_set_epi64x(high_qw,
++						pkt->buf_iova + pkt->data_off);
++	_mm_storeu_si128((__m128i *)txdp, descriptor);
++}
++
++static inline void
++idpf_splitq_vtx_avx2(struct idpf_flex_tx_sched_desc *txdp,
++				struct rte_mbuf **pkt, uint16_t nb_pkts, uint64_t flags)
++{
++	const uint64_t hi_qw_tmpl = IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE |
++		((uint64_t)flags);
++
++	/* align if needed */
++	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
++		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
++		txdp++, pkt++, nb_pkts--;
++	}
++
++	for (; nb_pkts > 3; txdp += 4, pkt += 4, nb_pkts -= 4) {
++		uint64_t hi_qw3 = hi_qw_tmpl |
++			((uint64_t)pkt[3]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
++		uint64_t hi_qw2 = hi_qw_tmpl |
++			((uint64_t)pkt[2]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
++		uint64_t hi_qw1 = hi_qw_tmpl |
++			((uint64_t)pkt[1]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
++		uint64_t hi_qw0 = hi_qw_tmpl |
++			((uint64_t)pkt[0]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
++
++		__m256i desc2_3 = _mm256_set_epi64x(hi_qw3,
++			pkt[3]->buf_iova + pkt[3]->data_off,
++			hi_qw2,
++			pkt[2]->buf_iova + pkt[2]->data_off);
++
++		__m256i desc0_1 = _mm256_set_epi64x(hi_qw1,
++			pkt[1]->buf_iova + pkt[1]->data_off,
++			hi_qw0,
++			pkt[0]->buf_iova + pkt[0]->data_off);
++
++		_mm256_storeu_si256((__m256i *)(txdp + 2), desc2_3);
++		_mm256_storeu_si256((__m256i *)txdp, desc0_1);
++	}
++
++	while (nb_pkts--) {
++		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
++		txdp++;
++		pkt++;
++	}
++}
++
++static inline uint16_t
++idpf_splitq_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
++						uint16_t nb_pkts)
++{
++	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
++	struct idpf_flex_tx_sched_desc *txdp;
++	struct ci_tx_entry_vec *txep;
++	uint16_t n, nb_commit, tx_id;
++	uint64_t cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_EOP;
++
++	tx_id = txq->tx_tail;
++
++	/* restrict to max burst size */
++	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
++
++	/* make sure we have enough free space */
++	if (txq->nb_tx_free < txq->tx_free_thresh)
++		ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
++
++	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
++	nb_pkts = nb_commit;
++	if (unlikely(nb_pkts == 0))
++		return 0;
++
++	txdp = (struct idpf_flex_tx_sched_desc *)&txq->desc_ring[tx_id];
++	txep = (void *)txq->sw_ring;
++	txep += tx_id;
++
++	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
++
++	n = (uint16_t)(txq->nb_tx_desc - tx_id);
++	if (nb_commit >= n) {
++		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
++
++		idpf_splitq_vtx_avx2(txdp, tx_pkts, n - 1, cmd_dtype);
++		tx_pkts += (n - 1);
++		txdp += (n - 1);
++
++		idpf_splitq_vtx1_avx2(txdp, *tx_pkts++, cmd_dtype);
++
++		nb_commit = (uint16_t)(nb_commit - n);
++
++		tx_id = 0;
++		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
++
++		txdp = &txq->desc_ring[tx_id];
++		txep = (void *)txq->sw_ring;
++		txep += tx_id;
++	}
++
++	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
++
++	idpf_splitq_vtx_avx2(txdp, tx_pkts, nb_commit, cmd_dtype);
++
++	tx_id = (uint16_t)(tx_id + nb_commit);
++	if (tx_id > txq->tx_next_rs)
++		txq->tx_next_rs =
++		(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
++
++	txq->tx_tail = tx_id;
++
++	IDPF_PCI_REG_WRITE(txq->qtx_tail, txq->tx_tail);
++
++	return nb_pkts;
++}
++
++uint16_t
++idpf_dp_splitq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
++					uint16_t nb_pkts)
++{
++	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
++	uint16_t nb_tx = 0;
++
++	while (nb_pkts) {
++		uint16_t ret, num;
++		idpf_splitq_scan_cq_ring(txq->complq);
++
++		if (txq->rs_compl_count > txq->tx_free_thresh) {
++			ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
++			txq->rs_compl_count -= txq->tx_rs_thresh;
++		}
++
++		num = (uint16_t)RTE_MIN(nb_pkts, txq->tx_rs_thresh);
++		ret = idpf_splitq_xmit_fixed_burst_vec_avx2(tx_queue,
++								&tx_pkts[nb_tx], num);
++		nb_tx += ret;
++		nb_pkts -= ret;
++		if (ret < num)
++			break;
++	}
++
++	return nb_tx;
++}
++
++RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_splitq_xmit_pkts_avx2)
+diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
+index 1c725065df..6950fabb49 100644
+--- a/drivers/net/intel/idpf/idpf_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_rxtx.c
+@@ -850,6 +850,15 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
+ 				return;
+ 			}
+ #endif /* CC_AVX512_SUPPORT */
++			if (tx_simd_width == RTE_VECT_SIMD_256) {
++				PMD_DRV_LOG(NOTICE,
++					    "Using Split AVX2 Vector Tx (port %d).",
++					    dev->data->port_id);
++				dev->tx_pkt_burst = idpf_dp_splitq_xmit_pkts_avx2;
++				dev->tx_pkt_prepare = idpf_dp_prep_pkts;
++				return;
++			}
++
+ 		}
+ 		PMD_DRV_LOG(NOTICE,
+ 			    "Using Split Scalar Tx (port %d).",
 -- 
 2.34.1
 
