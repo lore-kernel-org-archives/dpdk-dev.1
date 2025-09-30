@@ -2,74 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CF9CAC5B0
-	for <dpdk-dev@archiver.kernel.org>; Mon, 29 Sep 2025 23:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B74CAC5B9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 02:57:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 29037402D8;
-	Tue, 30 Sep 2025 01:57:30 +0200 (CEST)
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
- [209.85.160.180])
- by mails.dpdk.org (Postfix) with ESMTP id D6C93402A2
- for <dev@dpdk.org>; Tue, 30 Sep 2025 01:57:28 +0200 (CEST)
-Received: by mail-qt1-f180.google.com with SMTP id
- d75a77b69052e-4da37f6e64cso44706411cf.2
- for <dev@dpdk.org>; Mon, 29 Sep 2025 16:57:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1759190248;
- x=1759795048; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=VwQiy4fSLmVqcLMNwvNkE2MuBRhZfc97cE2Vm8pRj5g=;
- b=Bvr5Hlbz4C5tEElseWIF0hCdfD6Q/HNLt+xD4Us/C9KhFz7DdVaSZ7286u93OHmRGI
- bInBFctWaND1eHteBML/Yo1hDrMBovS7gprxHuQsp74l03EoGzEYnizwGfywVtvnx4pb
- MaepjnpKQzlxqAi0OPSYlHeOPQISt2EQcbqdTSxrbHlo1RnkMGhW9AXDck63mlez83t0
- p0jDICoQXz5UOvUnu8eBEBDZJWmpNcC7bIoXuoH03XHUZQBmbwLyc6Bc0NLP4eqqNfW+
- /VUZj8M2B+NtR4QrHI+GgaqS2Tuh9xzpqzOoKCkZPVZZyMrll4FXMrLhtjz4hTunB0Cy
- 8cyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759190248; x=1759795048;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=VwQiy4fSLmVqcLMNwvNkE2MuBRhZfc97cE2Vm8pRj5g=;
- b=JVqEI55XPO3pvotPjmADhaOPpWLec5rQyyj2dK9CfKuMwWbVFd32GQc/Ugr9r8HLmJ
- +QAPuyzPq0uKFE3XYSP5Fn+h/PsnrWcmNGJD6+QdToueOU2pv30dC6ge24mVs+ABdAVW
- pzzEn4oK9XUT1JEYGHfYQPclf37L7+gtes2Ye6pBoBn2hO89QKUlg0BphFmrJdMxSoqn
- jZ+z0MKqT1irWtwGH+4xwrgomIvVAKWpaosQ5nyEIM4WkYVhEVE+tK1C3wSp0Ob4Ytk9
- DpOs+fuy1zAHaDvNPOWM7cX4rGA7F0Dl8+FuGJeTdsg1YCiLbCaKR04mSsacmbdjJiWl
- 2dPw==
-X-Gm-Message-State: AOJu0YzNAJsY9vAwdwrbRiGddbhNu9wdv2aPv5mkyXKMtXyCGoie2Z9b
- dOcBTkMWfpiOqFNPbfF0Su5AcsbsVIFFywoQdnSCHhk+A6DI5a+A5BpwEmPKTALgbWY=
-X-Gm-Gg: ASbGncsMhsHmxZ/bCEGMXPpe7x55ZqfbwToXiUjU0dJkurj99+OWLgcd60NeQJOI7KA
- p5HOpsdMe4ZVMkGMbvxFN+lDV5EhYV1kwn3LLjjU6cEOVhr9RD2/fbyOLpNh5XH2lNG0EXK8Wjw
- EBYTcCYKZp5oMG31fSVMPCBkP0kf+pL/UPrmwiWbMSvPAPGeBmtZCNotO4qhbTl0Euuyi7Y3Unx
- RQ/7h2vIATgfkQvxWaeelzNL15sFBaNFz4aXaeMhtuhvN6gB3PxljZ3sh3Wpx6wPUbSS3JrzD+x
- hvgqYZFVJG7q+xc5e5oHaSSMdvAjr2hBD0+1PwNSyYrnDDfW6tI4oqwXjkBtNsbG3y6mR4vc5iw
- ec+ceE7lsVzTEDNrqQDdrwjl673nNFM4T+OFSzO3DsLvYZOnrQJ38ImJn2B/bEEfVsm4ZwUFgZj
- K5IMHLlgZ0B/TkzNelG62g4G168teEPBf/1A==
-X-Google-Smtp-Source: AGHT+IHsH2/evp0ATSRUU36eS4njRPS3XrwMOW3fQKA9n6EJwqtHuhkjVrC6RG9swXg2Ig7v0u7lhQ==
-X-Received: by 2002:a05:622a:54b:b0:4de:9079:6755 with SMTP id
- d75a77b69052e-4de9079b719mr163902341cf.81.1759190248071; 
- Mon, 29 Sep 2025 16:57:28 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4db0b56feacsm89145531cf.17.2025.09.29.16.57.26
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 29 Sep 2025 16:57:27 -0700 (PDT)
-Date: Mon, 29 Sep 2025 16:57:24 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Xingui Yang <yangxingui@huawei.com>
-Cc: <dev@dpdk.org>, <david.marchand@redhat.com>, <liuyonglong@huawei.com>,
- <kangfenglong@huawei.com>, <fengchengwen@huawei.com>,
- <lihuisong@huawei.com>
-Subject: Re: [PATCH 0/2] bugfix for hns3
-Message-ID: <20250929165724.38379ae7@hermes.local>
-In-Reply-To: <20250929113554.2443832-1-yangxingui@huawei.com>
-References: <20250929113554.2443832-1-yangxingui@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id B3F35402A2;
+	Tue, 30 Sep 2025 04:57:33 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 30B4B4026D
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 04:57:32 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 030FD4886A; Tue, 30 Sep 2025 04:57:31 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/testpmd Bug 1797] [dpdk-25.11-rc0]
+ rxtx_offload/txoffload_port_multi_segs: set multi segs failed
+Date: Tue, 30 Sep 2025 02:57:31 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: testpmd
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: hailinx.xu@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1797-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,19 +55,88 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 29 Sep 2025 19:35:52 +0800
-Xingui Yang <yangxingui@huawei.com> wrote:
+http://bugs.dpdk.org/show_bug.cgi?id=3D1797
 
-> This patchset fixes some bugs.
-> 
-> Xingui Yang (2):
->   net/hns3: fix VLAN tag loss for short tunnel frame
->   net/hns3: print invalid MAC address from firmware
-> 
->  drivers/net/hns3/hns3_common.c |  6 ++---
->  drivers/net/hns3/hns3_ethdev.h |  1 +
->  drivers/net/hns3/hns3_rxtx.c   | 48 +++++++++++++++++++++++-----------
->  3 files changed, 37 insertions(+), 18 deletions(-)
-> 
+            Bug ID: 1797
+           Summary: [dpdk-25.11-rc0]
+                    rxtx_offload/txoffload_port_multi_segs: set multi segs
+                    failed
+           Product: DPDK
+           Version: unspecified
+          Hardware: All
+                OS: FreeBSD
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: testpmd
+          Assignee: dev@dpdk.org
+          Reporter: hailinx.xu@intel.com
+  Target Milestone: ---
 
-Queued to next-net
+ENV:=20
+=3D=3D=3D=3D
+DPDK version: dpdk25.11.0-rc0: 1d627ea13aeec2bcccf27246e6be2508370d171e
+OS: FreeBSD 14.3-RELEASE/14.3-RELEASE
+Compiler: gcc version 13.3.0 (FreeBSD Ports Collection)
+Hardware platform: Intel(R) Xeon(R) Gold 6348 CPU @ 2.60GHz
+NIC hardware:Intel Corporation Ethernet Controller E810-C for SFP
+NIC firmware:=C2=A0
+    Driver: ice-2.0.9
+    NVM: nvm 4.90 etid 80020f02 netlist 4.4.2000-1.17.0.dfc6695b oem 1.3863=
+.0
+    DDP: ICE OS Default Package version 1.3.44.0
+
+step:
+=3D=3D=3D=3D=3D
+1. bind ports to DPDK
+kenv hw.nic_uio.bdfs=3D"75:0:0,75:0:1,75:0:2,75:0:3"
+kldload ./x86_64-native-bsdapp-gcc/kmod/nic_uio.ko =C2=A02. exit testpmd
+
+2. Launch testpmd x86_64-native-bsdapp-gcc/app/dpdk-testpmd -l 0,2,4,28 -n =
+4 -a
+0000:4b:00.0 -a 0000:4b:00.1 -a 0000:4b:00.2 -a 0000:4b:00.3  -- -i
+port stop all
+port config 0 tx_offload multi_segs on
+port config 1 tx_offload multi_segs on
+port config 2 tx_offload multi_segs on
+port config 3 tx_offload multi_segs on
+port start all
+port start 0
+
+output
+=3D=3D=3D=3D=3D=3D
+Configuring Port 0 (socket 0)
+ETHDEV: id=3D0 offload clash, MULTI_SEGS vs MBUF_FAST_FREE
+Fail to configure port 0
+
+Expected Result
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+testpmd> show port 0 tx_offload configuration
+Tx Offloading Configuration of port 0 :
+  Port : MULTI_SEGS
+  Queue[ 0] : MULTI_SEGS
+
+bad commit
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+commit fdb840367cf0d6abeb17b05623679b8d1ea4c902
+Author: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+Date:   Sun Aug 3 19:42:18 2025 +0000
+
+    ethdev: reject conflicting Tx offload configurations
+
+    When an ethdev port is configured for fast mbuf release, the driver can
+    use a Tx burst function relying on the fast mbuf release preconditions.
+    Thus, also configuring this port or a queue on the port for transmitting
+    segmented packets is prohibited.
+    Checks for these conflicting configurations have been added to the ethd=
+ev
+    library, so the drivers don't have to implement them.
+
+    Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+    Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+    Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+    Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
