@@ -2,68 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7A8CCA470
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 12:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E43CCA468
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 12:46:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 16EC740673;
-	Tue, 30 Sep 2025 14:30:37 +0200 (CEST)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com
- [209.85.217.50]) by mails.dpdk.org (Postfix) with ESMTP id F3CCD400EF
- for <dev@dpdk.org>; Tue, 30 Sep 2025 14:30:35 +0200 (CEST)
-Received: by mail-vs1-f50.google.com with SMTP id
- ada2fe7eead31-59dff155dc6so3725920137.3
- for <dev@dpdk.org>; Tue, 30 Sep 2025 05:30:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1759235435;
- x=1759840235; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=f9FGm5YZqK2ePHR88fPAlU4OpIuTbuiBT/9KX0a+j9U=;
- b=17GuyMr1AWm5H6zSuBFHCWm5MBm/KoN4uiDu3Jqis7/ASOlo+lAlgxIzkDKgR7hbtw
- mhU1SE/Ef/rdUtkmbRDvCLGwLF5eY5aGFfMIBKC7ErTMCjBYrcihJKniI5i/gFaq6rsg
- QsF5XUTVXqikJQGXBbjb8id07XHTWlb8K0hin3pExQ83NijdG5J8LZdSK4BGBeyEY/jp
- UFWi+ys792ouZGNSpXc5dxqir2vfFNHKbZTHfl40JUqmXkIEA4SGtcnD8JuTuLB8yTxu
- RCiRW7apEkoP93AZzzFb+OYThZ29mmVoJ3htaTJx5iVZK7726i/4O6durSlHZ7LAik/q
- 6+xg==
+	by mails.dpdk.org (Postfix) with ESMTP id 02625400EF;
+	Tue, 30 Sep 2025 14:46:08 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 90756400D7
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 14:46:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1759236366;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=16cuNArr8vObKkz74QAhoe0dkCwfIciJujbjDMkiqcI=;
+ b=IZctghGlDV42xMAnnOejCnkXN1FyzNlyHbwQ/1BzLNWvDEL81NDgGVMcpWqmHgTTCVX2IS
+ l/nLBOsKkHOpg45FcWSVfxzKxRHXd8JlLS0qpUSVnNWGLLfKUZwzRpufofOWKgifiXI/qh
+ mOYGvIdXao7PxAILZZPBQjffe1kY/Bg=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-112-75HVAeQkM-u6Oa8W5abDFg-1; Tue, 30 Sep 2025 08:46:03 -0400
+X-MC-Unique: 75HVAeQkM-u6Oa8W5abDFg-1
+X-Mimecast-MFC-AGG-ID: 75HVAeQkM-u6Oa8W5abDFg_1759236362
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-36ac8376af1so23986071fa.3
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 05:46:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759235435; x=1759840235;
+ d=1e100.net; s=20230601; t=1759236362; x=1759841162;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=f9FGm5YZqK2ePHR88fPAlU4OpIuTbuiBT/9KX0a+j9U=;
- b=qGsefponKrNHwVUwYcseYOzLD39mMjPvxdv8+os2VjUqElX/n3JSnpiNi0A8lPrP4n
- dDpcRmwJXoszHloFOYr3F8Pkjh+0P89yTilJaDarLRK5lFc4/eVQ4vkkHY+n7UHU/n6l
- mGmRKrnvJs3hdXLmotmSQPYHLJqgmLkrnoGQbdps6s+MzFHfa1Be0gjshPyfoH/RgWxe
- 4bt5+LqkM68KDmDYYa3Puu7RybMuENKaiJ6TODtv9TrAhtX4UQnHJj0mscCAdQmEGevL
- JHwYXwwWzcRBihPMz8f4ArQay6KCKx+kkhGQNvztRq5alZ6F/J9PGRBfjxa5jgJurDys
- A9AA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUANxFrTIv51yJtfZf/lB7RMhTFXF7zPaBSgPV/t4xuO0VDKvtLNYcBVu+vmplXlpTFIvA=@dpdk.org
-X-Gm-Message-State: AOJu0YxBdO6ZR44SZfIWnMSUDNzrNcEZiki5qsUBBFSLvna0bwY1vQBk
- DMPI6TIOnBjVFUrZSAOTsXZv4nlQzcdc2gjTEnNFC1oROIoz/4ZhdR7LTd/+ZyQGU+OdKnX6LzS
- +hV8AWceQ31L/HAiaHmife3vT0KtJWn9UvA29uCeSmQ==
-X-Gm-Gg: ASbGncu7ZX7Rsdp0ak+lVDLgjqjfcngzwTU9dV65culuCM9xB4xZBwtq9oOeqSAmc8e
- GYo9FXxW/U3phAfZh7PjDUm2UzDSG5ieCcmsOBcSQXoC6SM6P/v3l2oE2dVRK+48SpTZZOfZcY3
- g4SwRssiw56ktjMmq2xl30wepotOJ2PAtbAXlqvnm3XZ2LS18AaJ318adUB/Gt5bC8bQKq152hd
- +sMQP8XCIJ/IpycKH8yIupUCkuR1yycipZ8USjgIfXUzCRk1s3kU04MVeyB7Iyki4IZ+K9nvk9t
-X-Google-Smtp-Source: AGHT+IGaVevRl7wj9q67VpbDXiLaAmyUGiWEECu+JCZV+IKcVJWlu0SMz+vZIS5B0GXEurpvuhF0MrScr0rL7vH+Q7g=
-X-Received: by 2002:a05:6102:510d:b0:529:fc9e:84a0 with SMTP id
- ada2fe7eead31-5acd36bc5d5mr7509110137.32.1759235434937; Tue, 30 Sep 2025
- 05:30:34 -0700 (PDT)
+ bh=16cuNArr8vObKkz74QAhoe0dkCwfIciJujbjDMkiqcI=;
+ b=jaeQE7Xg3KwXPGDXrUTJwfWci3LiW5BF8agZ+hPuodAwIIpaPm/odVUq1qHPRTqzdU
+ DcrjoIJC496kTURoWaPtVcu+HyxDpKmUbB3T6USCFYtWnmOGliJGTebF7DNplWcu/mFH
+ cnktuhxycniew3U5Ht97hBsSAgXIbiGY56XC4cLJkvxtlJmzsfLx7fIOVaVX4CAxvsGN
+ vWm2yIcYArVd9EAYPRqTdtfwKhcuh89ITDVFFpK6NSExSd9T5eO2TxRtDy+iI+j76kkb
+ Fg99GIpXhHQQ8Eg2IJnbV2nfrtlY2+9gdYRka4cCuuSaH6N/X4hupzprgy4GUrw1+vb7
+ rBxA==
+X-Gm-Message-State: AOJu0Yx2gc53R0KWUvIm6XW6gzoBoB57pkrupy3SRoz3/pq7rRfKsgDl
+ uY289LJ8HBhLmECWJ9vpFW2/TCtn70o/0yxuofMuJcsU2nF3i2d2wCtJbLw+kVB2MvENkHNRFOZ
+ dvTUp9UKYsUaGJ7yhtiwWmW8ib3JRFNUikGZHQZBBgr7rEAUfdEqxAtpy4yzR+URvWCjTe7WwKH
+ YWL1ZGD6NX9HauvaW4x2Q=
+X-Gm-Gg: ASbGncspMjJt4bVXyXnEfmhyrSVzBUowPixRSveKZdNITHfqoHZYFOq8ObQdPBFkP8D
+ LK02CKKJ9JwpPQ0o4oxb+VCm9pwHZGS72Pe5bM6N6hPcXhTSphtz4/+0yP3FysU65k78hvswJPT
+ JKo3Ku1gO2Np56vK5ZyHbZne5FIHO/
+X-Received: by 2002:a2e:bd84:0:b0:372:89a5:c550 with SMTP id
+ 38308e7fff4ca-37289a5c9a9mr30725391fa.45.1759236362274; 
+ Tue, 30 Sep 2025 05:46:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGSfpXpxzybgpn7XR9zGEdn5RGGewyXOVaKFaUp1eZhC/QgWyDou9dFqiGOxFhJpsVAGFXuCiv1N49KwwQrsPM=
+X-Received: by 2002:a2e:bd84:0:b0:372:89a5:c550 with SMTP id
+ 38308e7fff4ca-37289a5c9a9mr30725301fa.45.1759236361785; Tue, 30 Sep 2025
+ 05:46:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250929143039.547207-1-ciara.loftus@intel.com>
- <aNudwFx7CPH3vWot@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aNudwFx7CPH3vWot@bricha3-mobl1.ger.corp.intel.com>
-From: Stephen Hemminger <stephen@networkplumber.org>
-Date: Tue, 30 Sep 2025 05:30:22 -0700
-X-Gm-Features: AS18NWATeA2vGRvwHz8ZUt_RpA8MDQjMwzfhd-HOFcD0NBIqevvSjHGYrYdhKaw
-Message-ID: <CAOaVG14zU7xw_osq7j58UGCCx_=b3y0n4p8-gbvoDuV2dStMvw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] net/iavf: support VF initiated resets
+References: <20250520164025.2055721-1-bruce.richardson@intel.com>
+ <20250723162013.2392-1-bruce.richardson@intel.com>
+ <20250723162013.2392-7-bruce.richardson@intel.com>
+In-Reply-To: <20250723162013.2392-7-bruce.richardson@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 30 Sep 2025 14:45:49 +0200
+X-Gm-Features: AS18NWADPwMq8lT7zczQi4zluJU4EjdhbsNvTEZ_nNYWQ3oRRqnbGrxfU6oLxDc
+Message-ID: <CAJFAV8ymGTU2tDzQoy-jk-bN6uigV1f2oh0TAwiHBzsc8nZNbg@mail.gmail.com>
+Subject: Re: [PATCH v7 06/13] eal: define the EAL parameters in argparse format
 To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: Ciara Loftus <ciara.loftus@intel.com>, dev <dev@dpdk.org>, 
- Timothy Miskell <timothy.miskell@intel.com>,
- dpdk-techboard <techboard@dpdk.org>
-Content-Type: multipart/alternative; boundary="0000000000002d0e37064003eb36"
+Cc: dev@dpdk.org, Tyler Retzlaff <roretzla@linux.microsoft.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: NvfUeeu1bXrH1S03aicvQMhN7e8VWfuGHZ5H9ozvaqU_1759236362
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,168 +84,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000002d0e37064003eb36
-Content-Type: text/plain; charset="UTF-8"
+On Wed, 23 Jul 2025 at 18:21, Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+> +/*
+> + * list of EAL arguments as struct rte_argparse_arg.
+> + * Format of each entry: long name, short name, help string, struct member name.
+> + */
+> +/* (Alphabetical) List of common options first */
+> +LIST_ARG("--allow", "-a", "Add device to allow-list, causing DPDK to only use specified devices", allow)
+> +STR_ARG("--base-virtaddr", NULL, "Base virtual address to reserve memory", base_virtaddr)
+> +LIST_ARG("--block", "-b", "Add device to block-list, preventing DPDK from using the device", block)
+> +STR_ARG("--coremask", "-c", "Hexadecimal bitmask of cores to use", coremask)
+> +LIST_ARG("--driver-path", "-d", "Path to external driver shared object, or directory of drivers", driver_path)
+> +STR_ARG("--force-max-simd-bitwidth", NULL, "Set max SIMD bitwidth to use in vector code paths", force_max_simd_bitwidth)
+> +OPT_STR_ARG("--huge-unlink", NULL, "Unlink hugetlbfs files on exit (existing|always|never)", huge_unlink)
+> +BOOL_ARG("--in-memory", NULL, "DPDK should not create shared mmap files in filesystem  (disables secondary process support)", in_memory)
+> +STR_ARG("--iova-mode", NULL, "IOVA mapping mode, physical (pa)/virtual (va)", iova_mode)
+> +STR_ARG("--lcores", "-l", "List of CPU cores to use", lcores)
+> +BOOL_ARG("--legacy-mem", NULL, "Enable legacy memory behavior", legacy_mem)
+> +OPT_STR_ARG("--log-color", NULL, "Enable/disable color in log output", log_color)
+> +STR_ARG("--log-level", NULL, "Log level for loggers; use log-level=help for list of log types and levels", log_level)
 
-Like the idea of a flag argument to reset function.
+Previously, we could have multiple --log-level options.
+While here, I think we will keep only the last value.
 
-On Tue, Sep 30, 2025, 02:07 Bruce Richardson <bruce.richardson@intel.com>
-wrote:
+Should it be a LIST_ARG?
 
-> On Mon, Sep 29, 2025 at 02:30:38PM +0000, Ciara Loftus wrote:
-> > Introduce a function that allows a VF to request the PF to reset itself.
-> > This is useful for example when the application detects that one of the
-> > queues have hung or any event where a reset is required and the PF is
-> > unlikely to trigger it.
-> >
-> > Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
-> > Signed-off-by: Timothy Miskell <timothy.miskell@intel.com>
-> > ---
-> >  drivers/net/intel/iavf/iavf.h         |  2 ++
-> >  drivers/net/intel/iavf/iavf_ethdev.c  |  5 ++++
-> >  drivers/net/intel/iavf/iavf_vchnl.c   | 29 +++++++++++++++++++++++
-> >  drivers/net/intel/iavf/meson.build    |  1 +
-> >  drivers/net/intel/iavf/rte_pmd_iavf.c | 33 +++++++++++++++++++++++++++
-> >  drivers/net/intel/iavf/rte_pmd_iavf.h | 11 +++++++++
-> >  6 files changed, 81 insertions(+)
-> >  create mode 100644 drivers/net/intel/iavf/rte_pmd_iavf.c
-> >
-> > diff --git a/drivers/net/intel/iavf/iavf.h
-> b/drivers/net/intel/iavf/iavf.h
-> > index 435902fbc2..6e7aec1bb1 100644
-> > --- a/drivers/net/intel/iavf/iavf.h
-> > +++ b/drivers/net/intel/iavf/iavf.h
-> > @@ -565,4 +565,6 @@ void iavf_dev_watchdog_enable(struct iavf_adapter
-> *adapter);
-> >  void iavf_dev_watchdog_disable(struct iavf_adapter *adapter);
-> >  void iavf_handle_hw_reset(struct rte_eth_dev *dev);
-> >  void iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change);
-> > +bool is_iavf_supported(struct rte_eth_dev *dev);
-> > +int iavf_request_reset(struct rte_eth_dev *dev);
-> >  #endif /* _IAVF_ETHDEV_H_ */
->
-> In general, I'm not a huge fan of adding driver-specific functions and I
-> feel like this should fit under the existing reset APIs in some way. That
-> should avoid the need to update (or such a big update) to testpmd, for
-> example.
-> Some thoughts here:
->
-> 1. we could add a devarg to the driver to adjust whether reset does a
->    "softer" reset of the VF just resetting itself, or a "hard" reset where
-> the
->    PF does a fuller reset of the VF.
-> 2. rather than a devarg, would do use a driver-specific function to adjust
->    this behaviour. The difference here would be that the driver-specific
->    function would be an init-time one rather than runtime, so the runtime
-> of
->    the app, like testpmd, would be generic.
-> 3. the most generic solution would be to add an additional parameter to the
->    reset() function itself to specify a hard or soft reset. This would mean
->    updating all drivers to handle the new parameter (shouldn't be hard,
-> since
->    it would be __rte_unused in all cases by default). This also opens up
->    the possibility of other drivers - especially VFs - using it in the same
->    way. We could actually document that the "hard" option "may be used by
-> VF
->    drivers to request a full reset of the VF by the PF".
->
-> CC'ing techboard to get some wider opinions here, especially thoughts on
-> option #3.
->
-> /Bruce
->
+> +OPT_STR_ARG("--log-timestamp", NULL, "Enable/disable timestamp in log output", log_timestamp)
+> +STR_ARG("--main-lcore", NULL, "Select which core to use for the main thread", main_lcore)
+> +STR_ARG("--mbuf-pool-ops-name", NULL, "User defined mbuf default pool ops name", mbuf_pool_ops_name)
+> +STR_ARG("--memory-channels", "-n", "Number of memory channels per socket", memory_channels)
+> +STR_ARG("--memory-ranks", "-r", "Force number of memory ranks (don't detect)", memory_ranks)
+> +STR_ARG("--memory-size", "-m", "Total size of memory to allocate initially", memory_size)
+> +BOOL_ARG("--no-hpet", NULL, "Disable HPET timer", no_hpet)
+> +BOOL_ARG("--no-huge", NULL, "Disable hugetlbfs support", no_huge)
+> +BOOL_ARG("--no-pci", NULL, "Disable all PCI devices", no_pci)
+> +BOOL_ARG("--no-shconf", NULL, "Disable shared config file generation", no_shconf)
+> +BOOL_ARG("--no-telemetry", NULL, "Disable telemetry", no_telemetry)
+> +STR_ARG("--proc-type", NULL, "Type of process (primary|secondary|auto)", proc_type)
+> +STR_ARG("--service-corelist", "-S", "List of cores to use for service threads", service_corelist)
+> +STR_ARG("--service-coremask", "-s", "Hexadecimal bitmask of cores to use for service threads", service_coremask)
+> +BOOL_ARG("--single-file-segments", NULL, "Store all pages within single files (per-page-size, per-node)", single_file_segments)
+> +BOOL_ARG("--telemetry", NULL, "Enable telemetry", telemetry)
+> +LIST_ARG("--vdev", NULL, "Add a virtual device to the system; format=<driver><id>[,key=val,...]", vdev)
+> +BOOL_ARG("--vmware-tsc-map", NULL, "Use VMware TSC mapping instead of native RDTSC", vmware_tsc_map)
+> +BOOL_ARG("--version", "-v", "Show version", version)
+> +
+> +#if defined(INCLUDE_ALL_ARG) || !defined(RTE_EXEC_ENV_WINDOWS)
+> +/* Linux and FreeBSD options*/
+> +OPT_STR_ARG("--syslog", NULL, "Log to syslog (and optionally set facility)", syslog)
+> +STR_ARG("--trace", NULL, "Enable trace based on regular expression trace name", trace)
 
---0000000000002d0e37064003eb36
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Same comment for --trace.
 
-<div dir=3D"auto">Like the idea of a flag argument to reset function.</div>=
-<br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=
-=3D"gmail_attr">On Tue, Sep 30, 2025, 02:07 Bruce Richardson &lt;<a href=3D=
-"mailto:bruce.richardson@intel.com">bruce.richardson@intel.com</a>&gt; wrot=
-e:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;bo=
-rder-left:1px #ccc solid;padding-left:1ex">On Mon, Sep 29, 2025 at 02:30:38=
-PM +0000, Ciara Loftus wrote:<br>
-&gt; Introduce a function that allows a VF to request the PF to reset itsel=
-f.<br>
-&gt; This is useful for example when the application detects that one of th=
-e<br>
-&gt; queues have hung or any event where a reset is required and the PF is<=
-br>
-&gt; unlikely to trigger it.<br>
-&gt; <br>
-&gt; Signed-off-by: Ciara Loftus &lt;<a href=3D"mailto:ciara.loftus@intel.c=
-om" target=3D"_blank" rel=3D"noreferrer">ciara.loftus@intel.com</a>&gt;<br>
-&gt; Signed-off-by: Timothy Miskell &lt;<a href=3D"mailto:timothy.miskell@i=
-ntel.com" target=3D"_blank" rel=3D"noreferrer">timothy.miskell@intel.com</a=
->&gt;<br>
-&gt; ---<br>
-&gt;=C2=A0 drivers/net/intel/iavf/iavf.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0|=
-=C2=A0 2 ++<br>
-&gt;=C2=A0 drivers/net/intel/iavf/iavf_ethdev.c=C2=A0 |=C2=A0 5 ++++<br>
-&gt;=C2=A0 drivers/net/intel/iavf/iavf_vchnl.c=C2=A0 =C2=A0| 29 +++++++++++=
-++++++++++++<br>
-&gt;=C2=A0 drivers/net/intel/iavf/meson.build=C2=A0 =C2=A0 |=C2=A0 1 +<br>
-&gt;=C2=A0 drivers/net/intel/iavf/rte_pmd_iavf.c | 33 +++++++++++++++++++++=
-++++++<br>
-&gt;=C2=A0 drivers/net/intel/iavf/rte_pmd_iavf.h | 11 +++++++++<br>
-&gt;=C2=A0 6 files changed, 81 insertions(+)<br>
-&gt;=C2=A0 create mode 100644 drivers/net/intel/iavf/rte_pmd_iavf.c<br>
-&gt; <br>
-&gt; diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/ia=
-vf.h<br>
-&gt; index 435902fbc2..6e7aec1bb1 100644<br>
-&gt; --- a/drivers/net/intel/iavf/iavf.h<br>
-&gt; +++ b/drivers/net/intel/iavf/iavf.h<br>
-&gt; @@ -565,4 +565,6 @@ void iavf_dev_watchdog_enable(struct iavf_adapter =
-*adapter);<br>
-&gt;=C2=A0 void iavf_dev_watchdog_disable(struct iavf_adapter *adapter);<br=
->
-&gt;=C2=A0 void iavf_handle_hw_reset(struct rte_eth_dev *dev);<br>
-&gt;=C2=A0 void iavf_set_no_poll(struct iavf_adapter *adapter, bool link_ch=
-ange);<br>
-&gt; +bool is_iavf_supported(struct rte_eth_dev *dev);<br>
-&gt; +int iavf_request_reset(struct rte_eth_dev *dev);<br>
-&gt;=C2=A0 #endif /* _IAVF_ETHDEV_H_ */<br>
-<br>
-In general, I&#39;m not a huge fan of adding driver-specific functions and =
-I<br>
-feel like this should fit under the existing reset APIs in some way. That<b=
-r>
-should avoid the need to update (or such a big update) to testpmd, for exam=
-ple.<br>
-Some thoughts here:<br>
-<br>
-1. we could add a devarg to the driver to adjust whether reset does a<br>
-=C2=A0 =C2=A0&quot;softer&quot; reset of the VF just resetting itself, or a=
- &quot;hard&quot; reset where the<br>
-=C2=A0 =C2=A0PF does a fuller reset of the VF.<br>
-2. rather than a devarg, would do use a driver-specific function to adjust<=
-br>
-=C2=A0 =C2=A0this behaviour. The difference here would be that the driver-s=
-pecific<br>
-=C2=A0 =C2=A0function would be an init-time one rather than runtime, so the=
- runtime of<br>
-=C2=A0 =C2=A0the app, like testpmd, would be generic.<br>
-3. the most generic solution would be to add an additional parameter to the=
-<br>
-=C2=A0 =C2=A0reset() function itself to specify a hard or soft reset. This =
-would mean<br>
-=C2=A0 =C2=A0updating all drivers to handle the new parameter (shouldn&#39;=
-t be hard, since<br>
-=C2=A0 =C2=A0it would be __rte_unused in all cases by default). This also o=
-pens up<br>
-=C2=A0 =C2=A0the possibility of other drivers - especially VFs - using it i=
-n the same<br>
-=C2=A0 =C2=A0way. We could actually document that the &quot;hard&quot; opti=
-on &quot;may be used by VF<br>
-=C2=A0 =C2=A0drivers to request a full reset of the VF by the PF&quot;.<br>
-<br>
-CC&#39;ing techboard to get some wider opinions here, especially thoughts o=
-n<br>
-option #3.<br>
-<br>
-/Bruce<br>
-</blockquote></div>
 
---0000000000002d0e37064003eb36--
+> +STR_ARG("--trace-bufsz", NULL, "Trace buffer size", trace_bufsz)
+> +STR_ARG("--trace-dir", NULL, "Trace directory", trace_dir)
+> +STR_ARG("--trace-mode", NULL, "Trace mode", trace_mode)
+> +#endif
+> +
+> +#if defined(INCLUDE_ALL_ARG) || defined(RTE_EXEC_ENV_LINUX)
+> +/* Linux-only options */
+> +BOOL_ARG("--create-uio-dev", NULL, "Create /dev/uioX devices", create_uio_dev)
+> +STR_ARG("--file-prefix", NULL, "Base filename of hugetlbfs files", file_prefix)
+> +STR_ARG("--huge-dir", NULL, "Directory for hugepage files", huge_dir)
+> +OPT_STR_ARG("--huge-worker-stack", NULL, "Allocate worker thread stacks from hugepage memory, with optional size (kB)", huge_worker_stack)
+> +BOOL_ARG("--match-allocations", NULL, "Free hugepages exactly as allocated", match_allocations)
+> +STR_ARG("--numa-mem", NULL, "Memory to allocate on NUMA nodes (comma separated values)", numa_mem)
+> +STR_ARG("--numa-limit", NULL, "Limit memory allocation on NUMA nodes (comma separated values)", numa_limit)
+> +STR_ALIAS("--socket-mem", NULL, "Alias for --numa-mem", numa_mem)
+> +STR_ALIAS("--socket-limit", NULL, "Alias for --numa-limit", numa_limit)
+> +STR_ARG("--vfio-intr", NULL, "VFIO interrupt mode (legacy|msi|msix)", vfio_intr)
+> +STR_ARG("--vfio-vf-token", NULL, "VF token (UUID) shared between SR-IOV PF and VFs", vfio_vf_token)
+> +#endif
+
+
+-- 
+David Marchand
+
