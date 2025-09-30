@@ -2,85 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 162BFCAC5B9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 459B3CAC5B9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:08:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 147DB40E11;
-	Tue, 30 Sep 2025 09:05:48 +0200 (CEST)
-Received: from mail-pg1-f228.google.com (mail-pg1-f228.google.com
- [209.85.215.228])
- by mails.dpdk.org (Postfix) with ESMTP id 9FFA5402D8
- for <dev@dpdk.org>; Tue, 30 Sep 2025 02:36:58 +0200 (CEST)
-Received: by mail-pg1-f228.google.com with SMTP id
- 41be03b00d2f7-b5a631b9c82so1401465a12.1
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3B46D40E18;
+	Tue, 30 Sep 2025 09:05:49 +0200 (CEST)
+Received: from mail-io1-f97.google.com (mail-io1-f97.google.com
+ [209.85.166.97]) by mails.dpdk.org (Postfix) with ESMTP id 43B61402A2
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 02:37:01 +0200 (CEST)
+Received: by mail-io1-f97.google.com with SMTP id
+ ca18e2360f4ac-887764c2868so486422439f.1
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 17:37:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759192618; x=1759797418;
+ d=1e100.net; s=20230601; t=1759192620; x=1759797420;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=b5s4amC7p9WJpKP5ilrkQY3tN37ouYRIk1tdUYSu/FQ=;
- b=Reqr95RHft+YjniOZslJ1gSfTQa1pDGJRtXTM5WrtywwQq/v6Oe+8xgqnx1YiCDtI/
- 4GTl7zFujM7QnNdvD2iVcPY2XEGh4zxtv7go/cqNM5+uC3BI5f2y4Dt5Y3dAdH0ZKEYT
- Uxo6d5+PacZwWp9qVDi+ZNNninnQDDr8XoGEjTXCLNKOD0rkUpkcbQjTLu7aOXKJgz5s
- mPn7Mk9aIEnBG/0OcSkhcGx1yFktASkh1WAo+bRFHU26A/gEU6j3Ol6Kj4GfhotWPt6K
- B1JYNMhrvIZY1/pmnFbmAm/2hsQm7QdKHkT977ityKZSs4wFLs/YtthxPzzzH/6q7Vbl
- kHzQ==
-X-Gm-Message-State: AOJu0YxDQMeR0k476geQQWpONPjDVc61gbHVitVaEUOxW4BZwjqg3Eam
- 2sONoRLQAQHdjnz8IsOQxprQ470I49PK1tsMTOlcG7fJjUvJc11QW3iAc4cK+H0MxTWnBp/5xM+
- 2otzcDlcOExsgZsGvD2NhhYFyQXCQn5GV9rVa//yi7HR/caIqW4uRlcbTYqf9t4V2bR5xP6bmbw
- 4A/zgbpFlVSqHDbX0YahwusLuXdcBsVk8cZf8YqASsizvq/xxzE0yeR9iC7pVTfmc1oPiyGA==
-X-Gm-Gg: ASbGncuwBN62Qg5qJibSCdqUPZcEb1MH54tgef4UJd46rHVJQgIWeGkS4HA3eB4fmzZ
- 1/1qXfarrqq3iRXuvkd0LlR14Dsea8TF30f3j99qRV089qYGtOTtRO89gcKOf57ylErwSMhUFTx
- Ub0+kZpOnY1KQ3/TgygqdXILNZOWTomotgC8C/YR59aWFvEkaMPLzHKtIiSp3mJvg+APX3V8Gao
- 3QW8ybetyiHrUlxOSJJEpPR8Tx+8r/3eRmEJDgL3hOo2IbQWXnI7qxnGicKDveORN7JdxNurq/4
- FZsX3JMc4eoQt03ne0omeL09XpwKdd4onH3p1vn7Pbv7GEtZZg3MBa+HZIVQlv39Lx8n8pVme4b
- YlJFMAa7lRFSyZbEQYWchEYlr2y3a+6+PoXXneRcwvnTyjrtALpeTOezTvT5cjSyKvCSjDBAsH/
- M5sQX8aDs=
-X-Google-Smtp-Source: AGHT+IEldDfQ06Wx7+OPhlsmtb0iK3Pn0kif0Cks5w+frBm4cMNkvePosA5TPcg3QdPK6kLz+dupd/Qfq63j
-X-Received: by 2002:a17:903:3d06:b0:275:7ee4:83bc with SMTP id
- d9443c01a7336-27ed49b8694mr221777655ad.2.1759192617771; 
- Mon, 29 Sep 2025 17:36:57 -0700 (PDT)
+ bh=7poXymUB0F4sa3gKpgobPHyIuBapet5auu2536ceqBA=;
+ b=VkRJVtlRbC20c3zGrxUpLh37YXv+LeslquVoa7ImlKglM5eMXBpTAC/awSgEYmhCyS
+ 0JfGUWHUYyO9EI0NXFNLESG9Wj8Usg7bczobP3jpx0T9tr1xX73uOYwd3aL+FOEehc0v
+ XJchV6PQmGPCPa05mvI5jFX5Y0Y0ZmBtBqitH2S6Zk4TjEmKRqgxPwyDKIY4RQdyT6gZ
+ 2Peiv0DuiDZhlLIYT4MqIxPstjf54/WU5LhKOx95oHApVgVNQPS7IsOT/h/yjt17oHkb
+ WV/aGWVXktNE3lvVFP/97btkrAHw2kYTPVvAbeHtG0HRvHZvoT1Cq+ZqmVbl9BLVN9Hu
+ WqVg==
+X-Gm-Message-State: AOJu0YyXmjgS7che0VXiXJJ3zYB3Kopz4NJiBGrh4cSxDBHAoR1X9iCS
+ VZf8uYNzGmzTvF5ATD1IOXCvO5p0U/HhlSf/tKq3HzsUndrboBVEmcMv4JBmJvQndQbQ+Gdywez
+ WEAVsVDmKOLIPIsSqifdMo78AXYr4pqnHnQbVMFz9nkYZJET3t51fUwlqsf6eVoKKEXZnBxotgV
+ GorWq6Qju3pqZSeyjH37EGU99U/D6sm8oLbvPtLPH474Sbtpb7/yzA7NYfY6lWomc199XPXw==
+X-Gm-Gg: ASbGnctjONGGMjv6U12W6mDmEuuxdk8Uuybv/0hBDCI66xq4tadU3vKVDW0dbt9L/CO
+ xWZSaRKmNL/at5RDXZv1bGDJ1OiF/HhT8dJRHRnnSSzAbSV7ab4e2l1rm/L9+i6UlXVB98rwSle
+ 6kf2vfuvdVafq0XxwLKsTHsE/BNrA97ywO3xz8MP7EZEH3hxEPhqPbmxyQ8gaN37wyoXpad4MVI
+ Wh0rbA7L92dToaCJP7nZ/Y5UCHjNjnB0EFZ5K4ncZ2XO6oUkc12lBXdPuOSoR4S00uGjhJyicbR
+ kECQsNpzPi1Yct5sFE/gFVaycX4hmLpBr9RWHppWQL+juTkTMvYfuJavLsBQjRl5f+4C0HQpfSv
+ XZfBhwJ8I5VEwE84bIqj4JjbHawGDWU+W9NdCF3UyBFmYINAssH5H31sRxfRGRCO73AIPr1i0Fy
+ G5lw==
+X-Google-Smtp-Source: AGHT+IHFaXG0pIPutrEB3zG89E+vp40Kk8vQZk6SQyyCJJ71cdlFUp8kAiFVqdrK0fZqS2gwTv1bwxFdN8Rp
+X-Received: by 2002:a05:6602:3cf:b0:8d6:87c1:27ba with SMTP id
+ ca18e2360f4ac-9015632895cmr2926170939f.7.1759192620408; 
+ Mon, 29 Sep 2025 17:37:00 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-100.dlp.protect.broadcom.com. [144.49.247.100])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-27ed6700a4csm11289025ad.32.2025.09.29.17.36.57
+ ca18e2360f4ac-903f8d31216sm46344339f.2.2025.09.29.17.36.59
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 29 Sep 2025 17:36:57 -0700 (PDT)
+ Mon, 29 Sep 2025 17:37:00 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pf1-f197.google.com with SMTP id
- d2e1a72fcca58-78102ba5966so4862859b3a.2
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:56 -0700 (PDT)
+Received: by mail-pg1-f200.google.com with SMTP id
+ 41be03b00d2f7-b56ae0c8226so3641771a12.2
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1759192615; x=1759797415; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1759192617; x=1759797417; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=b5s4amC7p9WJpKP5ilrkQY3tN37ouYRIk1tdUYSu/FQ=;
- b=cBm+EisvvT6kEhtW/B/DvPFi76DthjO3EQAkp/4kYFfHWrfZOT3xNsHk8N/rPvK3Pj
- SKXHxxHw93JJoPtcuWXPf7GGu4tOzOE5cQC/0FJQEVXpazJEkFqtnPbk/X3iymv/7PAC
- UPTPdNq3x6kI2MbDonIKZlLJzm+Fq0i4Xy/oA=
-X-Received: by 2002:a05:6a21:a60a:b0:2ee:4037:1df7 with SMTP id
- adf61e73a8af0-2ee40379aa6mr11985542637.7.1759192615629; 
- Mon, 29 Sep 2025 17:36:55 -0700 (PDT)
-X-Received: by 2002:a05:6a21:a60a:b0:2ee:4037:1df7 with SMTP id
- adf61e73a8af0-2ee40379aa6mr11985522637.7.1759192615069; 
- Mon, 29 Sep 2025 17:36:55 -0700 (PDT)
+ bh=7poXymUB0F4sa3gKpgobPHyIuBapet5auu2536ceqBA=;
+ b=A8sJn5louPdGlq/06+5OEWQsiR3ku2kIrE6JEpwMG+kE96SWPwQry9P6cQjaFX0Ype
+ wNSSdvndK3w6u4qNsklTqH/bUB2hTtsK4fuO5d0GqWrSsopfVWzhTGYRQHA9mGvHL3Y8
+ 30jOmZawosWDdp9d0DjfwmzE5WS0WkkH2P6RQ=
+X-Received: by 2002:a05:6a20:3d20:b0:24d:301a:79d0 with SMTP id
+ adf61e73a8af0-2e7cdda1017mr22370813637.38.1759192617355; 
+ Mon, 29 Sep 2025 17:36:57 -0700 (PDT)
+X-Received: by 2002:a05:6a20:3d20:b0:24d:301a:79d0 with SMTP id
+ adf61e73a8af0-2e7cdda1017mr22370771637.38.1759192616654; 
+ Mon, 29 Sep 2025 17:36:56 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.36.53
+ 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.36.55
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Mon, 29 Sep 2025 17:36:54 -0700 (PDT)
+ Mon, 29 Sep 2025 17:36:56 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Shuanglin Wang <shuanglin.wang@broadcom.com>
-Subject: [PATCH 18/54] net/bnxt/tf_ulp: fix stats counter memory initialization
-Date: Mon, 29 Sep 2025 20:35:28 -0400
-Message-Id: <20250930003604.87108-19-manish.kurup@broadcom.com>
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Subject: [PATCH 19/54] net/bnxt: fix max VFs count for thor2
+Date: Mon, 29 Sep 2025 20:35:29 -0400
+Message-Id: <20250930003604.87108-20-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250930003604.87108-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -103,117 +101,502 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-The stats counter cache memory initialization did not print the
-error message on failure, updated the initialization to print
-error message on failure.
+The number of max vfs per pf is 128 for thor2.
+Fixed the vnic hash table creation if the number of max vnics is less
+than 8.
 
 Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
+Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c | 35 ++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 12 deletions(-)
+ drivers/net/bnxt/bnxt.h        |   2 +
+ drivers/net/bnxt/bnxt_compat.h | 433 +++++++++++++++++++++++++++++++++
+ drivers/net/bnxt/bnxt_vnic.c   |  11 +
+ 3 files changed, 446 insertions(+)
+ create mode 100644 drivers/net/bnxt/bnxt_compat.h
 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-index fc4207b36c..b246b90fe2 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-@@ -63,29 +63,30 @@ int32_t ulp_sc_mgr_init(struct bnxt_ulp_context *ctxt)
- 	int i;
- 
- 	if (!ctxt) {
--		BNXT_DRV_DBG(DEBUG, "Invalid ULP CTXT\n");
-+		BNXT_DRV_DBG(ERR, "Invalid ULP CTXT\n");
- 		return -EINVAL;
- 	}
- 
- 	if (bnxt_ulp_cntxt_dev_id_get(ctxt, &dev_id)) {
--		BNXT_DRV_DBG(DEBUG, "Failed to get device id\n");
-+		BNXT_DRV_DBG(ERR, "Failed to get device id\n");
- 		return -EINVAL;
- 	}
- 
- 	dparms = bnxt_ulp_device_params_get(dev_id);
- 	if (!dparms) {
--		BNXT_DRV_DBG(DEBUG, "Failed to device parms\n");
-+		BNXT_DRV_DBG(ERR, "Failed to device parms\n");
- 		return -EINVAL;
- 	}
- 
- 	sc_ops = bnxt_ulp_sc_ops_get(ctxt);
- 	if (sc_ops == NULL) {
--		BNXT_DRV_DBG(DEBUG, "Failed to get the counter ops\n");
-+		BNXT_DRV_DBG(ERR, "Failed to get the counter ops\n");
- 		return -EINVAL;
- 	}
- 
- 	ulp_sc_info = rte_zmalloc("ulp_sc_info", sizeof(*ulp_sc_info), 0);
- 	if (!ulp_sc_info) {
-+		BNXT_DRV_DBG(ERR, "Failed to allocate stats cache container\n");
- 		rc = -ENOMEM;
- 		goto error;
- 	}
-@@ -99,8 +100,9 @@ int32_t ulp_sc_mgr_init(struct bnxt_ulp_context *ctxt)
- 	ulp_sc_info->num_counters = dparms->ext_flow_db_num_entries;
- 	if (!ulp_sc_info->num_counters) {
- 		/* No need for software counters, call fw directly */
--		BNXT_DRV_DBG(DEBUG, "Sw flow counter support not enabled\n");
--		return 0;
-+		BNXT_DRV_DBG(ERR, "Num of flow entries is not configured\n");
-+		rc = -EINVAL;
-+		goto error;
- 	}
- 
- 	/*
-@@ -115,6 +117,7 @@ int32_t ulp_sc_mgr_init(struct bnxt_ulp_context *ctxt)
- 	ulp_sc_info->stats_cache_tbl = rte_zmalloc("ulp_stats_cache_tbl",
- 						   stats_cache_tbl_sz, 0);
- 	if (!ulp_sc_info->stats_cache_tbl) {
-+		BNXT_DRV_DBG(ERR, "Failed to allocate stats cache table\n");
- 		rc = -ENOMEM;
- 		goto error;
- 	}
-@@ -123,7 +126,7 @@ int32_t ulp_sc_mgr_init(struct bnxt_ulp_context *ctxt)
- 					     ULP_SC_BATCH_SIZE * ULP_SC_PAGE_SIZE,
- 					     ULP_SC_PAGE_SIZE);
- 	if (!ulp_sc_info->read_data) {
--		rte_free(ulp_sc_info->stats_cache_tbl);
-+		BNXT_DRV_DBG(ERR, "Failed to allocate stats cache data\n");
- 		rc = -ENOMEM;
- 		goto error;
- 	}
-@@ -135,10 +138,15 @@ int32_t ulp_sc_mgr_init(struct bnxt_ulp_context *ctxt)
- 	}
- 
- 	rc = ulp_sc_mgr_thread_start(ctxt);
--	if (rc)
--		BNXT_DRV_DBG(DEBUG, "Stats counter thread start failed\n");
-+	if (rc) {
-+		BNXT_DRV_DBG(ERR, "Stats cache thread start failed\n");
-+		rc = -EIO;
-+		goto error;
-+	}
- 
-- error:
+diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
+index 00bdb53215..90352d537c 100644
+--- a/drivers/net/bnxt/bnxt.h
++++ b/drivers/net/bnxt/bnxt.h
+@@ -260,8 +260,10 @@ struct bnxt_pf_info {
+ #define BNXT_MAX_VFS(bp)	((bp)->pf->max_vfs)
+ #define BNXT_MAX_VF_REPS_P4     64
+ #define BNXT_MAX_VF_REPS_P5     256
++#define BNXT_MAX_VF_REPS_P7     128
+ #define BNXT_MAX_VF_REPS(bp) \
+ 				(BNXT_CHIP_P5(bp) ? BNXT_MAX_VF_REPS_P5 : \
++				BNXT_CHIP_P7(bp) ? BNXT_MAX_VF_REPS_P7 : \
+ 				BNXT_MAX_VF_REPS_P4)
+ #define BNXT_TOTAL_VFS(bp)	((bp)->pf->total_vfs)
+ #define BNXT_FIRST_VF_FID	128
+diff --git a/drivers/net/bnxt/bnxt_compat.h b/drivers/net/bnxt/bnxt_compat.h
+new file mode 100644
+index 0000000000..3218d1da8d
+--- /dev/null
++++ b/drivers/net/bnxt/bnxt_compat.h
+@@ -0,0 +1,433 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2023 Broadcom
++ * All rights reserved.
++ */
++
++#ifndef _BNXT_COMPAT_H_
++#define _BNXT_COMPAT_H_
++
++#include <rte_version.h>
++#if (RTE_VERSION_NUM(21, 0, 0, 0) > RTE_VERSION)
++#include <rte_bitops.h>
++#endif
++
++#if (RTE_VERSION_NUM(21, 11, 0, 0) > RTE_VERSION)
++
++#define RTE_ETH_NUM_RECEIVE_MAC_ADDR	ETH_NUM_RECEIVE_MAC_ADDR
++
++#define RTE_ETH_RX_OFFLOAD_CHECKSUM		DEV_RX_OFFLOAD_CHECKSUM
++#define RTE_ETH_RX_OFFLOAD_VLAN			DEV_RX_OFFLOAD_VLAN
++
++#define RTE_ETH_RX_OFFLOAD_VLAN_STRIP		DEV_RX_OFFLOAD_VLAN_STRIP
++#define RTE_ETH_RX_OFFLOAD_IPV4_CKSUM		DEV_RX_OFFLOAD_IPV4_CKSUM
++#define RTE_ETH_RX_OFFLOAD_UDP_CKSUM		DEV_RX_OFFLOAD_UDP_CKSUM
++#define RTE_ETH_RX_OFFLOAD_TCP_CKSUM		DEV_RX_OFFLOAD_TCP_CKSUM
++#define RTE_ETH_RX_OFFLOAD_TCP_LRO		DEV_RX_OFFLOAD_TCP_LRO
++#define RTE_ETH_RX_OFFLOAD_QINQ_STRIP		DEV_RX_OFFLOAD_QINQ_STRIP
++#define RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM	DEV_RX_OFFLOAD_OUTER_IPV4_CKSUM
++#define RTE_ETH_RX_OFFLOAD_MACSEC_STRIP		DEV_RX_OFFLOAD_MACSEC_STRIP
++#define RTE_ETH_RX_OFFLOAD_HEADER_SPLIT		DEV_RX_OFFLOAD_HEADER_SPLIT
++#define RTE_ETH_RX_OFFLOAD_VLAN_FILTER		DEV_RX_OFFLOAD_VLAN_FILTER
++#define RTE_ETH_RX_OFFLOAD_VLAN_EXTEND		DEV_RX_OFFLOAD_VLAN_EXTEND
++#define RTE_ETH_RX_OFFLOAD_JUMBO_FRAME		DEV_RX_OFFLOAD_JUMBO_FRAME
++#define RTE_ETH_RX_OFFLOAD_SCATTER		DEV_RX_OFFLOAD_SCATTER
++#define RTE_ETH_RX_OFFLOAD_TIMESTAMP		DEV_RX_OFFLOAD_TIMESTAMP
++#define RTE_ETH_RX_OFFLOAD_SECURITY		DEV_RX_OFFLOAD_SECURITY
++#define RTE_ETH_RX_OFFLOAD_KEEP_CRC		DEV_RX_OFFLOAD_KEEP_CRC
++#define RTE_ETH_RX_OFFLOAD_SCTP_CKSUM		DEV_RX_OFFLOAD_SCTP_CKSUM
++#define RTE_ETH_RX_OFFLOAD_OUTER_UDP_CKSUM	DEV_RX_OFFLOAD_OUTER_UDP_CKSUM
++#define RTE_ETH_RX_OFFLOAD_RSS_HASH		DEV_RX_OFFLOAD_RSS_HASH
++
++#define RTE_ETH_RX_OFFLOAD_CHECKSUM		DEV_RX_OFFLOAD_CHECKSUM
++#define RTE_ETH_RX_OFFLOAD_VLAN			DEV_RX_OFFLOAD_VLAN
++
++#define RTE_ETH_TX_OFFLOAD_VLAN_INSERT		DEV_TX_OFFLOAD_VLAN_INSERT
++#define RTE_ETH_TX_OFFLOAD_IPV4_CKSUM		DEV_TX_OFFLOAD_IPV4_CKSUM
++#define RTE_ETH_TX_OFFLOAD_UDP_CKSUM		DEV_TX_OFFLOAD_UDP_CKSUM
++#define RTE_ETH_TX_OFFLOAD_TCP_CKSUM		DEV_TX_OFFLOAD_TCP_CKSUM
++#define RTE_ETH_TX_OFFLOAD_SCTP_CKSUM		DEV_TX_OFFLOAD_SCTP_CKSUM
++#define RTE_ETH_TX_OFFLOAD_TCP_TSO		DEV_TX_OFFLOAD_TCP_TSO
++#define RTE_ETH_TX_OFFLOAD_UDP_TSO		DEV_TX_OFFLOAD_UDP_TSO
++#define RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM	DEV_TX_OFFLOAD_OUTER_IPV4_CKSUM
++#define RTE_ETH_TX_OFFLOAD_QINQ_INSERT		DEV_TX_OFFLOAD_QINQ_INSERT
++#define RTE_ETH_TX_OFFLOAD_VXLAN_TNL_TSO	DEV_TX_OFFLOAD_VXLAN_TNL_TSO
++#define RTE_ETH_TX_OFFLOAD_GRE_TNL_TSO		DEV_TX_OFFLOAD_GRE_TNL_TSO
++#define RTE_ETH_TX_OFFLOAD_IPIP_TNL_TSO		DEV_TX_OFFLOAD_IPIP_TNL_TSO
++#define RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO	DEV_TX_OFFLOAD_GENEVE_TNL_TSO
++#define RTE_ETH_TX_OFFLOAD_MACSEC_INSERT	DEV_TX_OFFLOAD_MACSEC_INSERT
++#define RTE_ETH_TX_OFFLOAD_MT_LOCKFREE		DEV_TX_OFFLOAD_MT_LOCKFREE
++#define RTE_ETH_TX_OFFLOAD_MULTI_SEGS		DEV_TX_OFFLOAD_MULTI_SEGS
++#define RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE	DEV_TX_OFFLOAD_MBUF_FAST_FREE
++#define RTE_ETH_TX_OFFLOAD_SECURITY		DEV_TX_OFFLOAD_SECURITY
++#define RTE_ETH_TX_OFFLOAD_UDP_TNL_TSO		DEV_TX_OFFLOAD_UDP_TNL_TSO
++#define RTE_ETH_TX_OFFLOAD_IP_TNL_TSO		DEV_TX_OFFLOAD_IP_TNL_TSO
++#define RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM	DEV_TX_OFFLOAD_OUTER_UDP_CKSUM
++#define RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP	DEV_TX_OFFLOAD_SEND_ON_TIMESTAMP
++
++#define RTE_ETH_TUNNEL_TYPE_NONE		RTE_TUNNEL_TYPE_NONE
++#define RTE_ETH_TUNNEL_TYPE_VXLAN		RTE_TUNNEL_TYPE_VXLAN
++#define RTE_ETH_TUNNEL_TYPE_GENEVE		RTE_TUNNEL_TYPE_GENEVE
++#define RTE_ETH_TUNNEL_TYPE_TEREDO		RTE_TUNNEL_TYPE_TEREDO
++#define RTE_ETH_TUNNEL_TYPE_NVGRE		RTE_TUNNEL_TYPE_NVGRE
++#define RTE_ETH_TUNNEL_TYPE_IP_IN_GRE		RTE_TUNNEL_TYPE_IP_IN_GRE
++#define RTE_ETH_L2_TUNNEL_TYPE_E_TAG		RTE_L2_TUNNEL_TYPE_E_TAG
++#define RTE_ETH_TUNNEL_TYPE_VXLAN_GPE		RTE_TUNNEL_TYPE_VXLAN_GPE
++#define RTE_ETH_TUNNEL_TYPE_MAX			RTE_TUNNEL_TYPE_MAX
++
++#define RTE_ETH_VLAN_TYPE_UNKNOWN		ETH_VLAN_TYPE_UNKNOWN
++#define RTE_ETH_VLAN_TYPE_INNER			ETH_VLAN_TYPE_INNER
++#define RTE_ETH_VLAN_TYPE_OUTER			ETH_VLAN_TYPE_OUTER
++#define RTE_ETH_VLAN_TYPE_MAX			ETH_VLAN_TYPE_MAX
++#define RTE_ETH_VLAN_STRIP_OFFLOAD		ETH_VLAN_STRIP_OFFLOAD
++#define RTE_ETH_VLAN_FILTER_OFFLOAD		ETH_VLAN_FILTER_OFFLOAD
++#define RTE_ETH_VLAN_EXTEND_OFFLOAD		ETH_VLAN_EXTEND_OFFLOAD
++#define RTE_ETH_QINQ_STRIP_OFFLOAD		ETH_QINQ_STRIP_OFFLOAD
++#define RTE_ETH_VLAN_STRIP_MASK			ETH_VLAN_STRIP_MASK
++#define RTE_ETH_VLAN_FILTER_MASK		ETH_VLAN_FILTER_MASK
++#define RTE_ETH_VLAN_EXTEND_MASK		ETH_VLAN_EXTEND_MASK
++#define RTE_ETH_QINQ_STRIP_MASK			ETH_QINQ_STRIP_MASK
++#define RTE_ETH_VLAN_ID_MAX			ETH_VLAN_ID_MAX
++
++#define RTE_ETH_FC_NONE				RTE_FC_NONE
++#define RTE_ETH_FC_RX_PAUSE			RTE_FC_RX_PAUSE
++#define RTE_ETH_FC_TX_PAUSE			RTE_FC_TX_PAUSE
++#define RTE_ETH_FC_FULL				RTE_FC_FULL
++
++#define RTE_ETH_VMDQ_MAX_VLAN_FILTERS		ETH_VMDQ_MAX_VLAN_FILTERS
++#define RTE_ETH_DCB_NUM_USER_PRIORITIES		ETH_DCB_NUM_USER_PRIORITIES
++#define RTE_ETH_VMDQ_DCB_NUM_QUEUES		ETH_VMDQ_DCB_NUM_QUEUES
++#define RTE_ETH_DCB_NUM_QUEUES			ETH_DCB_NUM_QUEUES
++#define RTE_ETH_DCB_PG_SUPPORT			ETH_DCB_PG_SUPPORT
++#define RTE_ETH_DCB_PFC_SUPPORT			ETH_DCB_PFC_SUPPORT
++
++#define RTE_ETH_VMDQ_NUM_UC_HASH_ARRAY		ETH_VMDQ_NUM_UC_HASH_ARRAY
++#define RTE_ETH_VMDQ_ACCEPT_UNTAG		ETH_VMDQ_ACCEPT_UNTAG
++#define RTE_ETH_VMDQ_ACCEPT_HASH_MC		ETH_VMDQ_ACCEPT_HASH_MC
++#define RTE_ETH_VMDQ_ACCEPT_HASH_UC		ETH_VMDQ_ACCEPT_HASH_UC
++#define RTE_ETH_VMDQ_ACCEPT_BROADCAST		ETH_VMDQ_ACCEPT_BROADCAST
++#define RTE_ETH_VMDQ_ACCEPT_MULTICAST		ETH_VMDQ_ACCEPT_MULTICAST
++
++#define RTE_ETH_4_TCS				ETH_4_TCS
++#define RTE_ETH_8_TCS				ETH_8_TCS
++#define RTE_ETH_DCB_NUM_TCS			ETH_DCB_NUM_TCS
++#define RTE_ETH_MAX_VMDQ_POOL			ETH_MAX_VMDQ_POOL
++#define RTE_ETH_DCB_NUM_TCS			ETH_DCB_NUM_TCS
++#define RTE_ETH_MAX_VMDQ_POOL			ETH_MAX_VMDQ_POOL
++#define RTE_ETH_64_POOLS			ETH_64_POOLS
++
++#define RTE_ETH_LINK_SPEED_AUTONEG		ETH_LINK_SPEED_AUTONEG
++#define RTE_ETH_LINK_SPEED_FIXED		ETH_LINK_SPEED_FIXED
++#define RTE_ETH_LINK_SPEED_10M_HD		ETH_LINK_SPEED_10M_HD
++#define RTE_ETH_LINK_SPEED_10M			ETH_LINK_SPEED_10M
++#define RTE_ETH_LINK_SPEED_100M_HD		ETH_LINK_SPEED_100M_HD
++#define RTE_ETH_LINK_SPEED_100M			ETH_LINK_SPEED_100M
++#define RTE_ETH_LINK_SPEED_1G			ETH_LINK_SPEED_1G
++#define RTE_ETH_LINK_SPEED_2_5G			ETH_LINK_SPEED_2_5G
++#define RTE_ETH_LINK_SPEED_5G			ETH_LINK_SPEED_5G
++#define RTE_ETH_LINK_SPEED_10G			ETH_LINK_SPEED_10G
++#define RTE_ETH_LINK_SPEED_20G			ETH_LINK_SPEED_20G
++#define RTE_ETH_LINK_SPEED_25G			ETH_LINK_SPEED_25G
++#define RTE_ETH_LINK_SPEED_40G			ETH_LINK_SPEED_40G
++#define RTE_ETH_LINK_SPEED_50G			ETH_LINK_SPEED_50G
++#define RTE_ETH_LINK_SPEED_56G			ETH_LINK_SPEED_56G
++#define RTE_ETH_LINK_SPEED_100G			ETH_LINK_SPEED_100G
++#define RTE_ETH_LINK_SPEED_200G			ETH_LINK_SPEED_200G
++
++#define RTE_ETH_SPEED_NUM_NONE			ETH_SPEED_NUM_NONE
++#define RTE_ETH_SPEED_NUM_10M			ETH_SPEED_NUM_10M
++#define RTE_ETH_SPEED_NUM_100M			ETH_SPEED_NUM_100M
++#define RTE_ETH_SPEED_NUM_1G			ETH_SPEED_NUM_1G
++#define RTE_ETH_SPEED_NUM_2_5G			ETH_SPEED_NUM_2_5G
++#define RTE_ETH_SPEED_NUM_5G			ETH_SPEED_NUM_5G
++#define RTE_ETH_SPEED_NUM_10G			ETH_SPEED_NUM_10G
++#define RTE_ETH_SPEED_NUM_20G			ETH_SPEED_NUM_20G
++#define RTE_ETH_SPEED_NUM_25G			ETH_SPEED_NUM_25G
++#define RTE_ETH_SPEED_NUM_40G			ETH_SPEED_NUM_40G
++#define RTE_ETH_SPEED_NUM_50G			ETH_SPEED_NUM_50G
++#define RTE_ETH_SPEED_NUM_56G			ETH_SPEED_NUM_56G
++#define RTE_ETH_SPEED_NUM_100G			ETH_SPEED_NUM_100G
++#define RTE_ETH_SPEED_NUM_200G			ETH_SPEED_NUM_200G
++#define RTE_ETH_SPEED_NUM_UNKNOWN		ETH_SPEED_NUM_UNKNOWN
++
++#define RTE_ETH_LINK_HALF_DUPLEX		ETH_LINK_HALF_DUPLEX
++#define RTE_ETH_LINK_FULL_DUPLEX		ETH_LINK_FULL_DUPLEX
++#define RTE_ETH_LINK_DOWN			ETH_LINK_DOWN
++#define RTE_ETH_LINK_UP				ETH_LINK_UP
++#define RTE_ETH_LINK_FIXED			ETH_LINK_FIXED
++#define RTE_ETH_LINK_AUTONEG			ETH_LINK_AUTONEG
++
++#define RTE_ETH_MQ_RX_RSS_FLAG		ETH_MQ_RX_RSS_FLAG
++#define RTE_ETH_MQ_RX_DCB_FLAG		ETH_MQ_RX_DCB_FLAG
++#define RTE_ETH_MQ_RX_VMDQ_FLAG		ETH_MQ_RX_VMDQ_FLAG
++
++#define RTE_ETH_MQ_RX_NONE		ETH_MQ_RX_NONE
++#define RTE_ETH_MQ_RX_RSS		ETH_MQ_RX_RSS
++#define RTE_ETH_MQ_RX_DCB		ETH_MQ_RX_DCB
++#define RTE_ETH_MQ_RX_DCB_RSS		ETH_MQ_RX_DCB_RSS
++#define RTE_ETH_MQ_RX_VMDQ_ONLY		ETH_MQ_RX_VMDQ_ONLY
++#define RTE_ETH_MQ_RX_VMDQ_RSS		ETH_MQ_RX_VMDQ_RSS
++#define RTE_ETH_MQ_RX_VMDQ_DCB		ETH_MQ_RX_VMDQ_DCB
++#define RTE_ETH_MQ_RX_VMDQ_DCB_RSS	ETH_MQ_RX_VMDQ_DCB_RSS
++
++#define RTE_ETH_MQ_TX_NONE		ETH_MQ_TX_NONE
++#define RTE_ETH_MQ_TX_DCB		ETH_MQ_TX_DCB
++#define RTE_ETH_MQ_TX_VMDQ_DCB		ETH_MQ_TX_VMDQ_DCB
++#define RTE_ETH_MQ_TX_VMDQ_ONLY		ETH_MQ_TX_VMDQ_ONLY
++
++#define RTE_ETH_RSS_IPV4		ETH_RSS_IPV4
++#define RTE_ETH_RSS_FRAG_IPV4		ETH_RSS_FRAG_IPV4
++#define RTE_ETH_RSS_NONFRAG_IPV4_TCP	ETH_RSS_NONFRAG_IPV4_TCP
++#define RTE_ETH_RSS_NONFRAG_IPV4_UDP	ETH_RSS_NONFRAG_IPV4_UDP
++#define RTE_ETH_RSS_NONFRAG_IPV4_SCTP	ETH_RSS_NONFRAG_IPV4_SCTP
++#define RTE_ETH_RSS_NONFRAG_IPV4_OTHER	ETH_RSS_NONFRAG_IPV4_OTHER
++#define RTE_ETH_RSS_IPV6		ETH_RSS_IPV6
++#define RTE_ETH_RSS_FRAG_IPV6		ETH_RSS_FRAG_IPV6
++#define RTE_ETH_RSS_NONFRAG_IPV6_TCP	ETH_RSS_NONFRAG_IPV6_TCP
++#define RTE_ETH_RSS_NONFRAG_IPV6_UDP	ETH_RSS_NONFRAG_IPV6_UDP
++#define RTE_ETH_RSS_NONFRAG_IPV6_SCTP	ETH_RSS_NONFRAG_IPV6_SCTP
++#define RTE_ETH_RSS_NONFRAG_IPV6_OTHER	ETH_RSS_NONFRAG_IPV6_OTHER
++#define RTE_ETH_RSS_L2_PAYLOAD		ETH_RSS_L2_PAYLOAD
++#define RTE_ETH_RSS_IPV6_EX		ETH_RSS_IPV6_EX
++#define RTE_ETH_RSS_IPV6_TCP_EX		ETH_RSS_IPV6_TCP_EX
++#define RTE_ETH_RSS_IPV6_UDP_EX		ETH_RSS_IPV6_UDP_EX
++#define RTE_ETH_RSS_PORT		ETH_RSS_PORT
++#define RTE_ETH_RSS_VXLAN		ETH_RSS_VXLAN
++#define RTE_ETH_RSS_GENEVE		ETH_RSS_GENEVE
++#define RTE_ETH_RSS_NVGRE		ETH_RSS_NVGRE
++#define RTE_ETH_RSS_GTPU		ETH_RSS_GTPU
++#define RTE_ETH_RSS_ETH			ETH_RSS_ETH
++#define RTE_ETH_RSS_S_VLAN		ETH_RSS_S_VLAN
++#define RTE_ETH_RSS_C_VLAN		ETH_RSS_C_VLAN
++#define RTE_ETH_RSS_ESP			ETH_RSS_ESP
++#define RTE_ETH_RSS_AH			ETH_RSS_AH
++#define RTE_ETH_RSS_L2TPV3		ETH_RSS_L2TPV3
++#define RTE_ETH_RSS_PFCP		ETH_RSS_PFCP
++#define RTE_ETH_RSS_PPPOE		ETH_RSS_PPPOE
++#define RTE_ETH_RSS_ECPRI		ETH_RSS_ECPRI
++#define RTE_ETH_RSS_MPLS		ETH_RSS_MPLS
++#define RTE_ETH_RSS_IPV4_CHKSUM		(1ULL << 34)
++#define RTE_ETH_RSS_IPV6_FLOW_LABEL	(1ULL << 36)
++#define RTE_ETH_RSS_L4_CHKSUM		(1ULL << 35)
++#define RTE_ETH_RSS_L2TPV2			(1ULL << 36)
++#define RTE_ETH_RSS_L3_SRC_ONLY ETH_RSS_L3_SRC_ONLY
++#define RTE_ETH_RSS_L3_DST_ONLY		ETH_RSS_L3_DST_ONLY
++#define RTE_ETH_RSS_L4_SRC_ONLY		ETH_RSS_L4_SRC_ONLY
++#define RTE_ETH_RSS_L4_DST_ONLY		ETH_RSS_L4_DST_ONLY
++#define RTE_ETH_RSS_L2_SRC_ONLY		ETH_RSS_L2_SRC_ONLY
++#define RTE_ETH_RSS_L2_DST_ONLY		ETH_RSS_L2_DST_ONLY
++
++#define RTE_ETH_RSS_LEVEL_PMD_DEFAULT	ETH_RSS_LEVEL_PMD_DEFAULT
++#define RTE_ETH_RSS_LEVEL_OUTERMOST	ETH_RSS_LEVEL_OUTERMOST
++#define RTE_ETH_RSS_LEVEL_INNERMOST	ETH_RSS_LEVEL_INNERMOST
++#define RTE_ETH_RSS_LEVEL_MASK		ETH_RSS_LEVEL_MASK
++#define RTE_ETH_RSS_LEVEL(rss_hf)	ETH_RSS_LEVEL(rss_hf)
++#define RTE_ETH_RSS_IPV6_PRE32		ETH_RSS_IPV6_PRE32
++#define RTE_ETH_RSS_IPV6_PRE40		ETH_RSS_IPV6_PRE40
++#define RTE_ETH_RSS_IPV6_PRE48		ETH_RSS_IPV6_PRE48
++#define RTE_ETH_RSS_IPV6_PRE56		ETH_RSS_IPV6_PRE56
++#define RTE_ETH_RSS_IPV6_PRE64		ETH_RSS_IPV6_PRE64
++#define RTE_ETH_RSS_IPV6_PRE96		ETH_RSS_IPV6_PRE96
++#define RTE_ETH_RSS_IPV6_PRE32_UDP	ETH_RSS_IPV6_PRE32_UDP
++#define RTE_ETH_RSS_IPV6_PRE40_UDP	ETH_RSS_IPV6_PRE40_UDP
++#define RTE_ETH_RSS_IPV6_PRE48_UDP	ETH_RSS_IPV6_PRE48_UDP
++#define RTE_ETH_RSS_IPV6_PRE56_UDP	ETH_RSS_IPV6_PRE56_UDP
++#define RTE_ETH_RSS_IPV6_PRE64_UDP	ETH_RSS_IPV6_PRE64_UDP
++#define RTE_ETH_RSS_IPV6_PRE96_UDP	ETH_RSS_IPV6_PRE96_UDP
++#define RTE_ETH_RSS_IPV6_PRE32_TCP	ETH_RSS_IPV6_PRE32_TCP
++#define RTE_ETH_RSS_IPV6_PRE40_TCP	ETH_RSS_IPV6_PRE40_TCP
++#define RTE_ETH_RSS_IPV6_PRE48_TCP	ETH_RSS_IPV6_PRE48_TCP
++#define RTE_ETH_RSS_IPV6_PRE56_TCP	ETH_RSS_IPV6_PRE56_TCP
++#define RTE_ETH_RSS_IPV6_PRE64_TCP	ETH_RSS_IPV6_PRE64_TCP
++#define RTE_ETH_RSS_IPV6_PRE96_TCP	ETH_RSS_IPV6_PRE96_TCP
++#define RTE_ETH_RSS_IPV6_PRE32_SCTP	ETH_RSS_IPV6_PRE32_SCTP
++#define RTE_ETH_RSS_IPV6_PRE40_SCTP	ETH_RSS_IPV6_PRE40_SCTP
++#define RTE_ETH_RSS_IPV6_PRE48_SCTP	ETH_RSS_IPV6_PRE48_SCTP
++#define RTE_ETH_RSS_IPV6_PRE56_SCTP	ETH_RSS_IPV6_PRE56_SCTP
++#define RTE_ETH_RSS_IPV6_PRE64_SCTP	ETH_RSS_IPV6_PRE64_SCTP
++#define RTE_ETH_RSS_IPV6_PRE96_SCTP	ETH_RSS_IPV6_PRE96_SCTP
++#define RTE_ETH_RSS_IP			ETH_RSS_IP
++#define RTE_ETH_RSS_UDP			ETH_RSS_UDP
++#define RTE_ETH_RSS_TCP			ETH_RSS_TCP
++#define RTE_ETH_RSS_SCTP		ETH_RSS_SCTP
++#define RTE_ETH_RSS_TUNNEL		ETH_RSS_TUNNEL
++#define RTE_ETH_RSS_VLAN		ETH_RSS_VLAN
++#define RTE_ETH_RSS_PROTO_MASK		ETH_RSS_PROTO_MASK
++#define RTE_ETH_RSS_RETA_SIZE_64	ETH_RSS_RETA_SIZE_64
++#define RTE_ETH_RSS_RETA_SIZE_128	ETH_RSS_RETA_SIZE_128
++#define RTE_ETH_RSS_RETA_SIZE_256	ETH_RSS_RETA_SIZE_256
++#define RTE_ETH_RSS_RETA_SIZE_512	ETH_RSS_RETA_SIZE_512
++#define RTE_ETH_RETA_GROUP_SIZE		RTE_RETA_GROUP_SIZE
++
++#define RTE_MBUF_F_RX_VLAN			PKT_RX_VLAN
++#define RTE_MBUF_F_RX_RSS_HASH			PKT_RX_RSS_HASH
++#define RTE_MBUF_F_RX_FDIR			PKT_RX_FDIR
++#define RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD	PKT_RX_EIP_CKSUM_BAD
++#define RTE_MBUF_F_RX_VLAN_STRIPPED		PKT_RX_VLAN_STRIPPED
++#define RTE_MBUF_F_RX_IP_CKSUM_MASK		PKT_RX_IP_CKSUM_MASK
++
++#define RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN		PKT_RX_IP_CKSUM_UNKNOWN
++#define RTE_MBUF_F_RX_IP_CKSUM_BAD		PKT_RX_IP_CKSUM_BAD
++#define RTE_MBUF_F_RX_IP_CKSUM_GOOD		PKT_RX_IP_CKSUM_GOOD
++#define RTE_MBUF_F_RX_IP_CKSUM_NONE		PKT_RX_IP_CKSUM_NONE
++
++#define RTE_MBUF_F_RX_L4_CKSUM_MASK		PKT_RX_L4_CKSUM_MASK
++#define RTE_MBUF_F_RX_L4_CKSUM_UNKNOWN		PKT_RX_L4_CKSUM_UNKNOWN
++#define RTE_MBUF_F_RX_L4_CKSUM_BAD		PKT_RX_L4_CKSUM_BAD
++#define RTE_MBUF_F_RX_L4_CKSUM_GOOD		PKT_RX_L4_CKSUM_GOOD
++#define RTE_MBUF_F_RX_L4_CKSUM_NONE		PKT_RX_L4_CKSUM_NONE
++
++#define RTE_MBUF_F_RX_IEEE1588_PTP		PKT_RX_IEEE1588_PTP
++#define RTE_MBUF_F_RX_IEEE1588_TMST		PKT_RX_IEEE1588_TMST
++#define RTE_MBUF_F_RX_FDIR_ID			PKT_RX_FDIR_ID
++#define RTE_MBUF_F_RX_FDIR_FLX			PKT_RX_FDIR_FLX
++
++#define RTE_MBUF_F_RX_QINQ_STRIPPED		PKT_RX_QINQ_STRIPPED
++#define RTE_MBUF_F_RX_LRO			PKT_RX_LRO
++#define RTE_MBUF_F_RX_SEC_OFFLOAD		PKT_RX_SEC_OFFLOAD
++#define RTE_MBUF_F_RX_SEC_OFFLOAD_FAILED	PKT_RX_SEC_OFFLOAD_FAILED
++#define RTE_MBUF_F_RX_QINQ			PKT_RX_QINQ
++
++#define RTE_MBUF_F_RX_OUTER_L4_CKSUM_UNKNOWN	PKT_RX_OUTER_L4_CKSUM_UNKNOWN
++#define RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD	PKT_RX_OUTER_L4_CKSUM_BAD
++#define RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD	PKT_RX_OUTER_L4_CKSUM_GOOD
++#define RTE_MBUF_F_RX_OUTER_L4_CKSUM_INVALID	PKT_RX_OUTER_L4_CKSUM_INVALID
++
++#define RTE_MBUF_F_FIRST_FREE		PKT_FIRST_FREE
++#define RTE_MBUF_F_LAST_FREE		PKT_LAST_FREE
++
++#define RTE_MBUF_F_TX_OUTER_UDP_CKSUM	PKT_TX_OUTER_UDP_CKSUM
++#define RTE_MBUF_F_TX_UDP_SEG		PKT_TX_UDP_SEG
++#define RTE_MBUF_F_TX_SEC_OFFLOAD	PKT_TX_SEC_OFFLOAD
++#define RTE_MBUF_F_TX_MACSEC		PKT_TX_MACSEC
++
++#define RTE_MBUF_F_TX_TUNNEL_VXLAN	PKT_TX_TUNNEL_VXLAN
++#define RTE_MBUF_F_TX_TUNNEL_GRE	PKT_TX_TUNNEL_GRE
++#define RTE_MBUF_F_TX_TUNNEL_IPIP	PKT_TX_TUNNEL_IPIP
++#define RTE_MBUF_F_TX_TUNNEL_GENEVE	PKT_TX_TUNNEL_GENEVE
++#define RTE_MBUF_F_TX_TUNNEL_MPLSINUDP	PKT_TX_TUNNEL_MPLSINUDP
++#define RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE	PKT_TX_TUNNEL_VXLAN_GPE
++#define RTE_MBUF_F_TX_TUNNEL_GTP	PKT_TX_TUNNEL_GTP
++#define RTE_MBUF_F_TX_TUNNEL_ESP	PKT_TX_TUNNEL_ESP
++#define RTE_MBUF_F_TX_TUNNEL_IP		PKT_TX_TUNNEL_IP
++#define RTE_MBUF_F_TX_TUNNEL_MASK	PKT_TX_TUNNEL_MASK
++
++#define RTE_MBUF_F_TX_QINQ		PKT_TX_QINQ_PKT
++#define RTE_MBUF_F_TX_TCP_SEG		PKT_TX_TCP_SEG
++#define	RTE_MBUF_F_TX_IEEE1588_TMST	PKT_TX_IEEE1588_TMST
++
++#define RTE_MBUF_F_TX_L4_NO_CKSUM	PKT_TX_L4_NO_CKSUM
++#define RTE_MBUF_F_TX_TCP_CKSUM		PKT_TX_TCP_CKSUM
++#define RTE_MBUF_F_TX_SCTP_CKSUM	PKT_TX_SCTP_CKSUM
++#define RTE_MBUF_F_TX_UDP_CKSUM		PKT_TX_UDP_CKSUM
++#define RTE_MBUF_F_TX_L4_MASK		PKT_TX_L4_MASK
++
++#define RTE_MBUF_F_TX_IP_CKSUM		PKT_TX_IP_CKSUM
++#define RTE_MBUF_F_TX_IPV4		PKT_TX_IPV4
++#define RTE_MBUF_F_TX_IPV6		PKT_TX_IPV6
++#define RTE_MBUF_F_TX_VLAN		PKT_TX_VLAN_PKT
++#define RTE_MBUF_F_TX_OUTER_IP_CKSUM	PKT_TX_OUTER_IP_CKSUM
++#define RTE_MBUF_F_TX_OUTER_IPV4	PKT_TX_OUTER_IPV4
++#define RTE_MBUF_F_TX_OUTER_IPV6	PKT_TX_OUTER_IPV6
++
++#define RTE_MBUF_F_TX_OFFLOAD_MASK	PKT_TX_OFFLOAD_MASK
++#define RTE_MBUF_F_INDIRECT		IND_ATTACHED_MBUF
++#define RTE_MBUF_F_EXTERNAL		EXT_ATTACHED_MBUF
++
++#define RTE_TAILQ_FOREACH_SAFE		TAILQ_FOREACH_SAFE
++
++#else
++	#ifndef RTE_ETH_RSS_IPV6_FLOW_LABEL
++	#define RTE_ETH_RSS_IPV6_FLOW_LABEL	RTE_BIT64(36)
++	#endif
++#endif /* (RTE_VERSION_NUM(21, 11, 0, 0) > RTE_VERSION) */
++
++#ifndef RTE_ETH_LINK_SPEED_400G
++#define RTE_ETH_LINK_SPEED_400G                RTE_BIT32(16) /**< 400 Gbps */
++#endif /* RTE_ETH_LINK_SPEED_400G */
++
++#ifndef RTE_ETH_SPEED_NUM_400G
++#define RTE_ETH_SPEED_NUM_400G                 RTE_BIT32(16) /**< 400 Gbps */
++#endif /* RTE_ETH_SPEED_NUM_400G */
++
++#ifndef RTE_VLAN_HLEN
++#define RTE_VLAN_HLEN	4
++#endif /* RTE_VLAN_HLEN */
++
++#if (RTE_VERSION_NUM(22, 11, 0, 0) > RTE_VERSION)
++#define RTE_ETH_EVENT_ERR_RECOVERING	0
++#define RTE_ETH_EVENT_RECOVERY_SUCCESS	0
++#define RTE_ETH_EVENT_RECOVERY_FAILED	0
++#endif /* (RTE_VERSION_NUM(22, 11, 0, 0) > RTE_VERSION) */
++
++#ifndef RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP
++#define RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP	0
++#endif /* RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP */
++
++#ifndef RTE_ETHER_ADDR_PRT_FMT
++#define RTE_ETHER_ADDR_PRT_FMT		"%02X:%02X:%02X:%02X:%02X:%02X"
++#endif /* RTE_ETHER_ADDR_PRT_FMT */
++
++#ifndef RTE_ETH_TUNNEL_TYPE_ECPRI
++#define RTE_ETH_TUNNEL_TYPE_ECPRI	0
++#endif /* RTE_ETH_TUNNEL_TYPE_ECPRI */
++
++#ifndef RTE_LOG_REGISTER_SUFFIX
++#define RTE_LOG_REGISTER_SUFFIX	RTE_LOG_REGISTER
++#endif /* RTE_LOG_REGISTER_SUFFIX */
++
++#ifndef RTE_HASH_BUCKET_ENTRIES
++/* it is defined in lib/hash/rte_cuckoo_hash.h */
++#define RTE_HASH_BUCKET_ENTRIES     8
++#endif /* RTE_HASH_BUCKET_ENTRIES */
++
++#ifndef rte_popcount64
++#define rte_popcount64		__builtin_popcountll
++#endif
++
++#if (RTE_VERSION_NUM(21, 11, 0, 0) > RTE_VERSION)
++#include <stdlib.h>
++#include <string.h>
++
++#include <rte_errno.h>
++#include <rte_interrupts.h>
++#include <rte_log.h>
++#include <rte_malloc.h>
++
++static inline int rte_intr_vec_list_index_set(struct rte_intr_handle *intr_handle,
++					      int index, int vec)
++{
++	intr_handle->intr_vec[index] = vec;
++
 +	return 0;
-+error:
-+	ulp_sc_mgr_deinit(ctxt);
- 	return rc;
- }
++}
++
++static inline int rte_intr_vec_list_alloc(struct rte_intr_handle *intr_handle,
++			    const char *name, int size)
++{
++	intr_handle->intr_vec = rte_zmalloc(name, size * sizeof(int), 0);
++	if (intr_handle->intr_vec == NULL)
++		return -ENOMEM;
++	return 0;
++}
++
++static inline void rte_intr_vec_list_free(struct rte_intr_handle *intr_handle)
++{
++	if (intr_handle == NULL)
++		return;
++
++	rte_free(intr_handle->intr_vec);
++	intr_handle->intr_vec = NULL;
++}
++
++static inline int rte_intr_max_intr_get(const struct rte_intr_handle *intr_handle)
++{
++	return intr_handle->max_intr;
++}
++
++static inline int rte_intr_nb_efd_get(const struct rte_intr_handle *intr_handle)
++{
++	return intr_handle->nb_efd;
++}
++#endif /* (RTE_VERSION_NUM(21, 11, 0, 0) > RTE_VERSION) */
++
++#endif /* _BNXT_COMPAT_H_ */
+diff --git a/drivers/net/bnxt/bnxt_vnic.c b/drivers/net/bnxt/bnxt_vnic.c
+index 7b028f2ee5..637e9b9aa4 100644
+--- a/drivers/net/bnxt/bnxt_vnic.c
++++ b/drivers/net/bnxt/bnxt_vnic.c
+@@ -16,6 +16,11 @@
+ #include "hsi_struct_def_dpdk.h"
+ #include "bnxt_hwrm.h"
  
-@@ -399,8 +407,11 @@ void ulp_sc_mgr_thread_cancel(struct bnxt_ulp_context *ctxt)
- 	if (!ulp_sc_info)
- 		return;
- 
--	ulp_sc_info->flags &= ~ULP_FLAG_SC_THREAD;
--	pthread_cancel(ulp_sc_info->tid);
-+	/* if thread started then stop it */
-+	if (ulp_sc_info->flags & ULP_FLAG_SC_THREAD) {
-+		pthread_cancel((pthread_t)ulp_sc_info->tid.opaque_id);
-+		ulp_sc_info->flags &= ~ULP_FLAG_SC_THREAD;
-+	}
- }
- 
- /*
++#ifndef RTE_HASH_BUCKET_ENTRIES
++/* it is defined in lib/hash/rte_cuckoo_hash.h */
++#define RTE_HASH_BUCKET_ENTRIES     8
++#endif /* RTE_HASH_BUCKET_ENTRIES */
++
+ /* Macros to manipulate vnic bitmaps*/
+ #define BNXT_VNIC_BITMAP_SIZE	64
+ #define BNXT_VNIC_BITMAP_SET(b, i)	((b[(i) / BNXT_VNIC_BITMAP_SIZE]) |= \
+@@ -978,6 +983,12 @@ int32_t bnxt_vnic_queue_db_init(struct bnxt *bp)
+ 	hash_tbl_params.name = hash_tbl_name;
+ 	hash_tbl_params.entries = (bp->max_vnics > BNXT_VNIC_MAX_SUPPORTED_ID) ?
+ 		BNXT_VNIC_MAX_SUPPORTED_ID : bp->max_vnics;
++
++	/* if the number of max vnis is less than bucket size */
++	/* then let the max entries size be the least value */
++	if (hash_tbl_params.entries <= RTE_HASH_BUCKET_ENTRIES)
++		hash_tbl_params.entries = RTE_HASH_BUCKET_ENTRIES;
++
+ 	hash_tbl_params.key_len = BNXT_VNIC_MAX_QUEUE_SZ_IN_8BITS;
+ 	hash_tbl_params.socket_id = rte_socket_id();
+ 	bp->vnic_queue_db.rss_q_db = rte_hash_create(&hash_tbl_params);
 -- 
 2.39.5 (Apple Git-154)
 
