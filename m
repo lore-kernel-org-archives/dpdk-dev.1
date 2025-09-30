@@ -2,85 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C29CAC5B9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5206BCAC5B9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:05:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4677D40A7F;
-	Tue, 30 Sep 2025 09:05:15 +0200 (CEST)
-Received: from mail-pg1-f227.google.com (mail-pg1-f227.google.com
- [209.85.215.227])
- by mails.dpdk.org (Postfix) with ESMTP id 28095402A2
- for <dev@dpdk.org>; Tue, 30 Sep 2025 02:36:39 +0200 (CEST)
-Received: by mail-pg1-f227.google.com with SMTP id
- 41be03b00d2f7-b553412a19bso3767454a12.1
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3826740B8F;
+	Tue, 30 Sep 2025 09:05:16 +0200 (CEST)
+Received: from mail-qt1-f228.google.com (mail-qt1-f228.google.com
+ [209.85.160.228])
+ by mails.dpdk.org (Postfix) with ESMTP id 26ADF402A2
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 02:36:40 +0200 (CEST)
+Received: by mail-qt1-f228.google.com with SMTP id
+ d75a77b69052e-4df2911ac5aso17213691cf.2
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759192598; x=1759797398;
+ d=1e100.net; s=20230601; t=1759192599; x=1759797399;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=wMqWzkpqP9CDU6QHvkbsbsQCjyfYfkeAC+XgnmyMsa0=;
- b=R1X1Cav3b22trmRMtOI5Nq2UFJsoc64JF/WqZqP50oPhCIjSW7oC6/mu1gk5yq06ke
- f06qClRCnbhWTHQsCBFrG9z+4ag9/WRUjVz2A28N1DZmdW6UqqIFDgieOJVldnBf6Ifw
- tYTiwYnIKzHp6Rec6RIOXUAoL7xGs1P0W/4AaagdAaswsorUEhoX1QVVxaI97gN6Xw68
- OJu5mNzddgPc+9TezOsWjCDNcy9NTGT8MZM7Fa4f0aOtIetAHlLrn7Oyspw49LGDbbKA
- t77gw3yhblgfoK996vIQMrTVVmDhKWmbp5iQq4d7JDP2bFVLHU+t8ve9e6b8P+bXbAPW
- +gaA==
-X-Gm-Message-State: AOJu0Yx2yk0+P1VYdfsc6E7Pc2xcxkBOqrXzHDs534ExGl4R4RJEWce1
- i0caJDXwn8FswYjLI3eubvd1Ola9ROLNRFFyXVWk23+Od6J5l5dpDnT5Tq2dAMpOzBjOw3mP1Wq
- sEgqPYkuow8iQUuqCygGoiDYQRnAOKlSBktJ6hqULgbl0n+w/c20LU21Upp7A5wygtTwsBHGmwW
- HiUEsu8JkMSnw69jtTdUVGr77mnmh8Bkl/uDbp5KhNEfSuMIxXFAP1fCNkrTBAL7kzkbMbcA==
-X-Gm-Gg: ASbGnctK7HqUMG3N2JUXPLjMS3/XN/jayng5NZaLwfgjO5QTk7baivH6rSyrJT6dZJb
- oISvl8ba9tEL2diL1uEL2BCxSFVUhRJkB5xdVO1Pjg8PX/hvoKG3WosgCDycQQYikYQ4PdIGmjv
- ZOMZK95qu+s439B8kZZ83l1SM7PqktFFUoJxHz1sA+bujcn8a4WiXpbGgm8udGEkXACbcki5OPa
- 0mEGRnQz2lLdcw4DAt/lNCoMOkfrwYUEBNMRRlZjYv0bQH0woMPEraT/+dx8+bNz5zQnXcOKFoE
- 9jHTgXE3lxvP/yFqUBTtlQjJ9h4tAQ9Jwrkt8fhK3hxch0qYQ2TVJgabnOE1RqikgOmt2pt+C0F
- RVe0xeqeluN7EsakIzC/ZCTF90Ic8i+wATJVnTFHxUTWGL+B9xL7gRYFKzhGv4DaoYDFnlpcEaV
- 64HXSFQCw=
-X-Google-Smtp-Source: AGHT+IF2px9X5zh7Gkxnqa2SBpgLNA7kC5bS6Ad/aVP2doVJWKyCfXfxG4bdPSKGjDjZFPNgxr8B2fnwYtmd
-X-Received: by 2002:a17:902:e54b:b0:26d:e984:8157 with SMTP id
- d9443c01a7336-27ed4a08e9emr176206165ad.8.1759192598250; 
- Mon, 29 Sep 2025 17:36:38 -0700 (PDT)
+ bh=O8awvPmoGY/dQQXwjK9SPQZOiFtuSD/X/fXdrTTHrXw=;
+ b=CAMnz3XVkdqgY27WKOrQhPb/6nBUACHAHlb+i+mbn5Glv0eUIeQy8RyJ8xLHre/nf+
+ YQFLX339iWO0NG1NX+fDYAoT/p9/mrD0rRNEanT7U24l0qs/KOVEDWBeC79ReWQkN8L7
+ lXdmDJJPnQp7laBLg0AbZJ4XsJhqh69IjpXhQ8PZ+pldnOKMBUqIhAI8JTsuThW/loSK
+ DlqRmMrsoOdMd+A3AHFmfNS0uzj9p8wFvv3Xgldd6bQsJBSuEHqdbAzD/yRmWoQvREal
+ UxhVeq3Pf9eBW8iT1tT0As8MVLzre8OsVhORLXSwPphJfSiCHEAH3Q9DI9tJus9izUDS
+ 6dgA==
+X-Gm-Message-State: AOJu0YwNCkukIFChusd95KY7frQ3vHO77M4XbsAcMvgnVIGOXkF6V7DR
+ BhHABp61ttqAlxharq/vi4imYEAObDGuGGYsje+M7YN4/bSEyqtHVEZM6yjqGl5KcFN4jVXrnBo
+ 8WXr/HFCA3pfhkLkt+gs6ZcYaayH5wDqMJ8if1GcmRx8Gc86jE1j/NtBDOwibRXjsphNhgr/e0R
+ OuJN/zPkgFp6ovYwmxVAbczCcsdBkUGFxzKyoDN+59qiMl3BPI/Y4JdMI7qFv9jKVDvSjlLA==
+X-Gm-Gg: ASbGncvRca6ClKHh/q3d+CZzKqTBzK3xsFXZ2RYfr7rhEyeurltHC2RpVtS7BMuhJT7
+ wcKxKmtSkWZdjOvil04UoiN7epAS3344V9mHiOnuOf2F1tWycuwb2MNst158Pg2bJC5TKjLUFve
+ 19YEKOzqxtoHUmPKHcp5cpY5BGkmxFqkntSMis1x9dd4KUSz2+CPSm0kwArH8VKgd94YNUWWffB
+ Zd4xHjq7ftV8YsDuofya34y2qGT/V/65RbN0m2N+5+gLODZxjW6peGdEXZMMcv8rkBj2rKQqgLx
+ q+F+vhKYJv8/TXlLCM/Y/ym05YUKgu/AdXij8iOOx3W+4/Z6onIIMcathsNTTN3FEOPUjHFgTOa
+ dx1OaLXjguMDIThxv56Uhq10VK2PAuBCXPrehKEwGRt34T31WzgcB05oFL6fKvzcucL2V8k+CK1
+ gZ7A==
+X-Google-Smtp-Source: AGHT+IHauKrZtF+036gnseS4DTka6vaCEUhpB6TCxvEYXd7ghHtS1MDbzEVbEAAvRS8lNxpHnDt2IaXR96pt
+X-Received: by 2002:a05:622a:4e:b0:4d9:f929:1531 with SMTP id
+ d75a77b69052e-4da47dfd7camr284747961cf.23.1759192599391; 
+ Mon, 29 Sep 2025 17:36:39 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-100.dlp.protect.broadcom.com. [144.49.247.100])
+ (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-27eec81e1f8sm8635725ad.50.2025.09.29.17.36.37
+ d75a77b69052e-4db0ee49556sm3435101cf.9.2025.09.29.17.36.39
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 29 Sep 2025 17:36:38 -0700 (PDT)
+ Mon, 29 Sep 2025 17:36:39 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pf1-f197.google.com with SMTP id
- d2e1a72fcca58-77e7808cf4bso3206978b3a.0
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:37 -0700 (PDT)
+Received: by mail-pg1-f200.google.com with SMTP id
+ 41be03b00d2f7-b5527f0d39bso7422040a12.2
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1759192596; x=1759797396; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1759192598; x=1759797398; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=wMqWzkpqP9CDU6QHvkbsbsQCjyfYfkeAC+XgnmyMsa0=;
- b=C92JXTfy14TAcrCUHPe1MImWbaP+H9JHPQbr5MxEA1H2eSLeJeebajwDoRVUU9nmAZ
- 0pvXbtd5L/2xCFHuf+2uX3/+XMvNpUlPJPIahfQZU5DuhYeokyxGHTjDMgBoWb6i272d
- Jaep4QXyW+8L7HqoBWWtFaMqqUDktwWntO5Os=
-X-Received: by 2002:a05:6a21:6d98:b0:2b5:9c2:c579 with SMTP id
- adf61e73a8af0-2e7d37f2d92mr22302872637.54.1759192596259; 
- Mon, 29 Sep 2025 17:36:36 -0700 (PDT)
-X-Received: by 2002:a05:6a21:6d98:b0:2b5:9c2:c579 with SMTP id
- adf61e73a8af0-2e7d37f2d92mr22302830637.54.1759192595534; 
- Mon, 29 Sep 2025 17:36:35 -0700 (PDT)
+ bh=O8awvPmoGY/dQQXwjK9SPQZOiFtuSD/X/fXdrTTHrXw=;
+ b=PShZVSWYuY567lVAzwUGIt5vNhzLXXBL49sbUfDEyYFVYXHd2dX/qPJwcLjtPLlWw9
+ UO4GGXK3pACbmQQ7QANGD6ypjfNld0sdSCRU7+PgW03esxC+qo0q0Mea352jJLV4SXXa
+ 3JIXyC1I6xUfWXUO2ayvy9BmuEDPTrOkOSnWw=
+X-Received: by 2002:a05:6a21:4d05:b0:302:9f3b:3e5c with SMTP id
+ adf61e73a8af0-3029f3b3f6dmr11638863637.39.1759192597912; 
+ Mon, 29 Sep 2025 17:36:37 -0700 (PDT)
+X-Received: by 2002:a05:6a21:4d05:b0:302:9f3b:3e5c with SMTP id
+ adf61e73a8af0-3029f3b3f6dmr11638829637.39.1759192597348; 
+ Mon, 29 Sep 2025 17:36:37 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.36.34
+ 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.36.35
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Mon, 29 Sep 2025 17:36:35 -0700 (PDT)
+ Mon, 29 Sep 2025 17:36:36 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com, Jay Ding <jay.ding@broadcom.com>,
+Cc: ajit.khaparde@broadcom.com, Farah Smith <farah.smith@broadcom.com>,
  Peter Spreadborough <peter.spreadborough@broadcom.com>
-Subject: [PATCH 06/54] net/bnxt/tf_core: fix the miscalculation of the lkup
- table pool
-Date: Mon, 29 Sep 2025 20:35:16 -0400
-Message-Id: <20250930003604.87108-7-manish.kurup@broadcom.com>
+Subject: [PATCH 07/54] net/bnxt/tf_core: thor2 TF table scope sizing
+ adjustments
+Date: Mon, 29 Sep 2025 20:35:17 -0400
+Message-Id: <20250930003604.87108-8-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250930003604.87108-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -101,60 +101,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jay Ding <jay.ding@broadcom.com>
+From: Farah Smith <farah.smith@broadcom.com>
 
-The size of the lkup table pool should include the static
-bucket. The miscalculation casues crash with big number of
-offloaded flows.
+In order for the pool size to be calculated correctly flow counts
+must be updated to the next power of 2 so that the pool_size_exp
+shift can be used correctly without losing pool entries due to
+rounding errors.  Also, max_pools must be a power of 2 for same
+reasons.
 
-Signed-off-by: Jay Ding <jay.ding@broadcom.com>
-Reviewed-by: Manish Kurup <manish.kurup@broadcom.com>
+Signed-off-by: Farah Smith <farah.smith@broadcom.com>
 Reviewed-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
 ---
- drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-index 10149a3963..88863ed6ad 100644
+index 88863ed6ad..e7b82eee49 100644
 --- a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
 +++ b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-@@ -941,8 +941,7 @@ int tfc_tbl_scope_size_query(struct tfc *tfcp,
+@@ -86,6 +86,8 @@ static int calc_lkup_rec_cnt(uint32_t flow_cnt, uint16_t key_sz_in_bytes,
+ 	unsigned int flow_adj;	  /* flow_cnt adjusted for factor */
+ 	unsigned int key_rec_cnt;
+ 
++	flow_cnt = 1 << next_pow2(flow_cnt);
++
+ 	switch (factor) {
+ 	case TFC_TBL_SCOPE_BUCKET_FACTOR_1:
+ 		flow_adj = flow_cnt;
+@@ -924,6 +926,12 @@ int tfc_tbl_scope_size_query(struct tfc *tfcp,
+ 		return -EINVAL;
+ 	}
+ 
++	if (parms->max_pools != next_pow2(parms->max_pools)) {
++		PMD_DRV_LOG(ERR, "%s: Invalid max_pools %u not pow2\n",
++			    __func__, parms->max_pools);
++		return -EINVAL;
++	}
++
+ 	for (dir = CFA_DIR_RX; dir < CFA_DIR_MAX; dir++) {
+ 		rc = calc_lkup_rec_cnt(parms->flow_cnt[dir],
+ 				       parms->key_sz_in_bytes[dir],
+@@ -941,7 +949,8 @@ int tfc_tbl_scope_size_query(struct tfc *tfcp,
  			break;
  
  		rc = calc_pool_sz_exp(&parms->lkup_pool_sz_exp[dir],
--				      parms->lkup_rec_cnt[dir] -
--				      (1 << parms->static_bucket_cnt_exp[dir]),
-+				      parms->lkup_rec_cnt[dir],
+-				      parms->lkup_rec_cnt[dir],
++				      parms->lkup_rec_cnt[dir] -
++				      (1 << parms->static_bucket_cnt_exp[dir]),
  				      parms->max_pools);
  		if (rc)
  			break;
-@@ -1290,6 +1289,7 @@ int tfc_tbl_scope_mem_alloc(struct tfc *tfcp, uint16_t fid, uint8_t tsid,
- 					valid, parms->max_pools);
- 		}
+@@ -1033,6 +1042,11 @@ int tfc_tbl_scope_mem_alloc(struct tfc *tfcp, uint16_t fid, uint8_t tsid,
+ 		PMD_DRV_LOG_LINE(ERR, "tsid(%d) not allocated", tsid);
+ 		return -EINVAL;
  	}
-+
- 	return rc;
- cleanup:
- 	for (dir = 0; dir < CFA_DIR_MAX; dir++) {
-@@ -1632,7 +1632,7 @@ int tfc_tbl_scope_cpm_alloc(struct tfc *tfcp, uint8_t tsid,
- 				goto cleanup;
- 			}
- 			/* Create lkup pool CMM instance */
--			qparms.max_records = mem_cfg.rec_cnt;
-+			qparms.max_records = mem_cfg.rec_cnt - mem_cfg.lkup_rec_start_offset;
- 			qparms.max_contig_records = pi.lkup_max_contig_rec;
- 			rc = cfa_mm_query(&qparms);
- 			if (rc != 0) {
-@@ -1653,7 +1653,8 @@ int tfc_tbl_scope_cpm_alloc(struct tfc *tfcp, uint8_t tsid,
- 			/* override the record size since a single pool because
- 			 * pool_sz_exp is 0 in this case
- 			 */
--			tfc_cpm_set_pool_size(pi.lkup_cpm, mem_cfg.rec_cnt);
-+			tfc_cpm_set_pool_size(pi.lkup_cpm,
-+					      mem_cfg.rec_cnt - mem_cfg.lkup_rec_start_offset);
++	if (parms->max_pools != next_pow2(parms->max_pools)) {
++		PMD_DRV_LOG(ERR, "%s: Invalid max_pools %u not pow2\n", __func__,
++			    parms->max_pools);
++		return -EINVAL;
++	}
  
- 			/* Store CMM instance in the CPM for pool_id 0 */
- 			rc = tfc_cpm_set_cmm_inst(pi.lkup_cpm, pool_id, cmm_lkup);
+ 	/* Normalize page size to a power of 2 */
+ 	page_sz = 1 << next_pow2(parms->pbl_page_sz_in_bytes);
 -- 
 2.39.5 (Apple Git-154)
 
