@@ -2,84 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8A9CAC5B9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D5FCAC5BE
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:05:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45EA0406BA;
-	Tue, 30 Sep 2025 09:05:11 +0200 (CEST)
-Received: from mail-ot1-f99.google.com (mail-ot1-f99.google.com
- [209.85.210.99]) by mails.dpdk.org (Postfix) with ESMTP id D2197402A2
- for <dev@dpdk.org>; Tue, 30 Sep 2025 02:36:33 +0200 (CEST)
-Received: by mail-ot1-f99.google.com with SMTP id
- 46e09a7af769-7a9c15464f7so1380101a34.2
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 40DF540A6B;
+	Tue, 30 Sep 2025 09:05:12 +0200 (CEST)
+Received: from mail-pg1-f225.google.com (mail-pg1-f225.google.com
+ [209.85.215.225])
+ by mails.dpdk.org (Postfix) with ESMTP id 91FE1402D8
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 02:36:35 +0200 (CEST)
+Received: by mail-pg1-f225.google.com with SMTP id
+ 41be03b00d2f7-b5241e51764so4511844a12.1
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759192593; x=1759797393;
+ d=1e100.net; s=20230601; t=1759192595; x=1759797395;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=805lZjX2jdDGYGkrFvla+zLPmfx9Pfc7jTF7wfcVhwE=;
- b=pxdgOxosYv+O21KnUd/uq0PwAm3XALROi2BRRW0FSiKGGJAR6kWmhDx8s4KS/LtLjy
- JCy3y1EbCizRZY28WDsyxbnREPJDlQlV6egcpIG0SPRhAqJlS31LyGOu0PDUSlU8+sNX
- PxfKCOUd36uvzLbjxo4bbF9GDX845gdUMoJeaospCuaaYekoBYrYB6jmiRjR5D/IP74l
- Y6C6Ztxo9Nbuo7kBbdJwNXH+E+nPo4ZsyDZ/h7xWHkaqoG7SG7yCuv2JwC1j4iX2bs0I
- fni8SCBGya5/q9SjVT8SA7JaoMGNXu0dhasjr+r09GHkngvOewR00YDahTV7ftMjY16q
- XiQA==
-X-Gm-Message-State: AOJu0YxjaZFrde6b8WQhu7xuEXA5rMeq1UWVm/lBgFe1RQ/6S9Ory6CE
- ypCLEov/yRgkBxohgolr7eXMGrd0xCoGTUavlwmflwOmmr8cGdMbPghpETd+IYOXEg5N/WKlIfA
- QBZDOBDJvIm/SWhIkJmzsrEzhJB4WL+GjqudjSAkcgkq7lD+rOcYrfZkMtOLYITLxomG1aAQvw+
- Y2X7SiIxdKBuVn5LkN+dMWHciU0Lu1FMXDMsPQFRnPbbNqUt2xsWO2/KI3J05QAA5zPFVmyQ==
-X-Gm-Gg: ASbGncv2o5X9kbiUFO5LhHIs3RoqnpUrqtkJr5BnOy6t8om//mf+L2vL4gaeTNGKbRz
- pk+4ODoveHp5Ux3FeHSrzXT7ah8EYn385dUIG0SpXisEHlYhpzDgkum54GtU9jfYV7Yi96dBqT6
- Z/KM0Ll47jUjD348+2WjztySBDJuS7gB1uNhqo4xAxZDrBRveinEN2luv927laa8wUIxA2RH0kh
- 4QQrRdSJ0L0wkdh5s01jEWWcowRGg+GR+UiOqSHAFnUsB9OTbyyyTUxmkAHU2unoevNtSF/AphW
- T3gG4HjOgJ2+HF0UVk2lMAffpfZc9qC912LzNuET1Niz0OqwjCGxHBjRgW8HepMWYQqBUxqltl5
- 7CGBnsEhmZ1GYSuUpKCbGqS2cW88i0CYzYRn+nmZNVcq5ILVvOfUemvYJUPqzGfiy0jivLvsO7z
- qnTw==
-X-Google-Smtp-Source: AGHT+IG+WeHFmmMkOdog2r/Ct5pZdn/Qq6J7lVDvl7ay+kTFEKERJgOWnVSCf35mt4sNGed42wjP7Y0KNa8Z
-X-Received: by 2002:a05:6830:3484:b0:758:1e20:c41b with SMTP id
- 46e09a7af769-7a04b05e2b7mr11438152a34.33.1759192593070; 
+ bh=4UvrD8t42B5aNAtBGuLV4siWpgjMlcU40vV7uz9gj64=;
+ b=U9UHA6m8NxlgP1XYF4SnQR3oLaD7kGviR25jnq3QW1uo0Mse2GAkz+Q6sO1Dymnqmb
+ Hrq8ZfLU/uloCKhgI52Lahc2L85CkRdyaxG7N9orge1Do+6K4p3O3c4eISRqE2PwUCOk
+ JXLImjMNaYFVEit3sQAbW2ryZmWhqj6UgHDtTHgg9wvfYbDP8ynEQcsoYDoKt3F8b4V9
+ Jmx2gHnc0g+gaWg7JLnKIZtaHFqKKHrFCuAAi3Zkr0tl6DtsCltXh+Tv94Zp4vPnQs7h
+ ToPk3O4tg6llxpoy9B3ekrerInLtUnXTfgv1+j644ZcZPsJZEaNBLIcL0N+dvYgvrJLo
+ YL+A==
+X-Gm-Message-State: AOJu0Yy0zEQMIz5pQyYz/pdBPezbizfZznmQjZk/4yFeICaW+ndMCRJx
+ dMvYkVZJ2NvzkmQdX22QHq3rSOCGRtSpXARv1vSd13cNZ9FU+4g5atq36DSSiG6i6t49v98zHq4
+ FJz6kVCB2pKVYjYicQ6NL28nHlyZeFWCvse0rKGbICZjbm9RnMl5wMI+Ri3DitDzP+wURjpiN38
+ hRc6JGRusgFByi6vDdv1U2ay9uetALOzdY+FUUp90bzzR8xxklNMWXK9nEYRCgYlbBtoPkKQ==
+X-Gm-Gg: ASbGncvFRQbi+c4p1S4IEulvd2zkR97XeGxrYeleLfS+mMAYrzWXkr7BUqM0+k0A1xU
+ QP85sWihRR0AFaSwmxLFpSLnhjcdDd4jmjc6AWgbn6qur5sNKLl4bS03tLPHVM3mWDdm5Jp52Yp
+ JhCXqLsbSzz1EyqDpb6aJFtCgfvYlD0sFWBf+OtwrfKboEWGbxcfpfyJUgO7iw06M9ERcq3xH1v
+ Ik04gFla8MaTKnW605rhsJWmM9pPQHGWW6dYFCLreF2Znee2Y56BJFOKQjYgtM4rMaeYGxGD+0U
+ tqUQo6Cb346soAGwVHgU42vCQmUZ51nSNVcUmaV2KJC6soNoxjL6ZnP57UU5GLiG4/hGTU9cG0P
+ bgdLquvsJEyBMnGNlUVyJx2Uaii1CDI16CfEo5KPCLkIlVSix7/D7mVSi1561VAqs7R/+g3W3gL
+ oMpEFBwR8=
+X-Google-Smtp-Source: AGHT+IG8NU3ZBSqe+kDh/SG52VSD0ixp/xJNK+MGpPmPL5AwDXvvU+Q8QjSXJ7T8BFW6F2KkB2d4uXFhxwTQ
+X-Received: by 2002:a17:902:ea0a:b0:24b:62ef:9d38 with SMTP id
+ d9443c01a7336-27ed49d2948mr207676235ad.19.1759192593993; 
  Mon, 29 Sep 2025 17:36:33 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-121.dlp.protect.broadcom.com. [144.49.247.121])
+ (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
  by smtp-relay.gmail.com with ESMTPS id
- 46e09a7af769-7b4c0e92ee4sm205693a34.8.2025.09.29.17.36.31
+ d9443c01a7336-27ed6827e1asm10198835ad.62.2025.09.29.17.36.33
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
  Mon, 29 Sep 2025 17:36:33 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pf1-f197.google.com with SMTP id
- d2e1a72fcca58-78117fbda6eso3929268b3a.3
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:31 -0700 (PDT)
+Received: by mail-pg1-f198.google.com with SMTP id
+ 41be03b00d2f7-b549a25ade1so7064375a12.3
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1759192590; x=1759797390; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1759192592; x=1759797392; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=805lZjX2jdDGYGkrFvla+zLPmfx9Pfc7jTF7wfcVhwE=;
- b=PCcAHrJlbl3Xrxd2bB3FAf5gyNdpVAoe3Yr8bc0d72zvXRJPB0SXUd3JcSND0f7Q3w
- y0lPQ2SuoWwE5DC57fo2y6KuB/UHfHUyQfCexDx2HBMEyWSX3Fw0IXHMspix3adiyX59
- DIvAPlGo4op7NkiGp46HCjWzHsIGfMpYVtsFE=
-X-Received: by 2002:a05:6a21:3394:b0:250:429b:9e6d with SMTP id
- adf61e73a8af0-2e7d1ff03b0mr22475116637.44.1759192590380; 
- Mon, 29 Sep 2025 17:36:30 -0700 (PDT)
-X-Received: by 2002:a05:6a21:3394:b0:250:429b:9e6d with SMTP id
- adf61e73a8af0-2e7d1ff03b0mr22475087637.44.1759192589793; 
- Mon, 29 Sep 2025 17:36:29 -0700 (PDT)
+ bh=4UvrD8t42B5aNAtBGuLV4siWpgjMlcU40vV7uz9gj64=;
+ b=BL94tpV7g0Bmag1iBGrppSN77lQu8Di700guwAaIWsIyOVfXC36sgDyjGLCs5aMTP9
+ 7IbYfj04JnrVtRDitH/oxzAk/3ujfQXnxzHGxm+1n1lNAGWyHkU85SyPiNBoCPuHm2TH
+ kTLHTTsSJ5+UVysfgzTMUsXPf60D7wXn8vvig=
+X-Received: by 2002:a05:6a21:998e:b0:319:b5a9:15fe with SMTP id
+ adf61e73a8af0-319b5a91818mr1520361637.12.1759192591756; 
+ Mon, 29 Sep 2025 17:36:31 -0700 (PDT)
+X-Received: by 2002:a05:6a21:998e:b0:319:b5a9:15fe with SMTP id
+ adf61e73a8af0-319b5a91818mr1520329637.12.1759192591259; 
+ Mon, 29 Sep 2025 17:36:31 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.36.28
+ 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.36.30
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Mon, 29 Sep 2025 17:36:29 -0700 (PDT)
+ Mon, 29 Sep 2025 17:36:30 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com, Jay Ding <jay.ding@broadcom.com>,
- Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-Subject: [PATCH 02/54] net/bnxt: fix a NULL pointer dereference in bnxt_rep
- funcs
-Date: Mon, 29 Sep 2025 20:35:12 -0400
-Message-Id: <20250930003604.87108-3-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Shuanglin Wang <shuanglin.wang@broadcom.com>
+Subject: [PATCH 03/54] net/bnxt: enable vector mode processing
+Date: Mon, 29 Sep 2025 20:35:13 -0400
+Message-Id: <20250930003604.87108-4-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250930003604.87108-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -100,47 +101,171 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jay Ding <jay.ding@broadcom.com>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-There are some changes made in the 23.11 upstream function
-rte_eth_dev_release_port(). The library now sets "eth_dev->data = NULL"
-at the end of the routine. This causes a NULL pointer dereference in the
-bnxt_rep_link_update_op() and bnxt_vfr_free() routines when it tries to
-access the parent dev.
+When representors are not enabled, then truflow could be run in
+vector mode processing to achieve higher throughput. Added logic
+to check representors to enable or disable vector mode.
 
-Signed-off-by: Jay Ding <jay.ding@broadcom.com>
-Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-Reviewed-by: Manish Kurup <manish.kurup@broadcom.com>
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_reps.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/bnxt/bnxt.h        |  7 +++
+ drivers/net/bnxt/bnxt_ethdev.c | 88 +++++++++++++++++++++++++++++++++-
+ 2 files changed, 93 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt_reps.c b/drivers/net/bnxt/bnxt_reps.c
-index 6f5c3f80eb..20a0ba65a5 100644
---- a/drivers/net/bnxt/bnxt_reps.c
-+++ b/drivers/net/bnxt/bnxt_reps.c
-@@ -299,10 +299,10 @@ int bnxt_rep_link_update_op(struct rte_eth_dev *eth_dev, int wait_to_compl)
- 	struct rte_eth_link *link;
- 	int rc;
+diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
+index c9fdd36d3e..72ac66b0db 100644
+--- a/drivers/net/bnxt/bnxt.h
++++ b/drivers/net/bnxt/bnxt.h
+@@ -852,6 +852,13 @@ struct bnxt {
+ 	((bp)->flags2 & BNXT_FLAGS2_MULTIROOT_EN)
  
--	parent_bp = rep->parent_dev->data->dev_private;
--	if (!parent_bp)
-+	if (!bnxt_rep_check_parent(rep))
- 		return 0;
+ #define	BNXT_FLAGS2_COMPRESSED_RX_CQE		BIT(5)
++#define	BNXT_FLAGS2_USE_MPC			BIT(6)
++#define BNXT_USE_MPC(bp)			\
++	((bp)->flags2 & BNXT_FLAGS2_USE_MPC)
++#define	BNXT_FLAGS2_REP_MODE			BIT(7)
++#define BNXT_REP_MODE_EN(bp)			\
++	((bp)->flags2 & BNXT_FLAGS2_REP_MODE)
++
+ 	uint32_t		fw_cap;
+ #define BNXT_FW_CAP_HOT_RESET		BIT(0)
+ #define BNXT_FW_CAP_IF_CHANGE		BIT(1)
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index cb0d99b9ee..0836be3b1e 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -107,6 +107,8 @@ static const struct rte_pci_id bnxt_pci_id_map[] = {
+ #define BNXT_DEVARG_IEEE_1588	"ieee-1588"
+ #define BNXT_DEVARG_CQE_MODE	"cqe-mode"
+ #define BNXT_DEVARG_MPC		"mpc"
++#define BNXT_DEVARG_SCALAR_MODE	"scalar-mode"
++#define BNXT_DEVARD_APP_INST_ID "app-instance-id"
  
-+	parent_bp = rep->parent_dev->data->dev_private;
- 	rc = bnxt_link_update_op(parent_bp->eth_dev, wait_to_compl);
+ static const char *const bnxt_dev_args[] = {
+ 	BNXT_DEVARG_REPRESENTOR,
+@@ -122,6 +124,8 @@ static const char *const bnxt_dev_args[] = {
+ 	BNXT_DEVARG_IEEE_1588,
+ 	BNXT_DEVARG_CQE_MODE,
+ 	BNXT_DEVARG_MPC,
++	BNXT_DEVARG_SCALAR_MODE,
++	BNXT_DEVARD_APP_INST_ID,
+ 	NULL
+ };
  
- 	/* Link state. Inherited from PF or trusted VF */
-@@ -542,7 +542,7 @@ static int bnxt_vfr_free(struct bnxt_representor *vfr)
+@@ -1447,7 +1451,7 @@ bnxt_receive_function(struct rte_eth_dev *eth_dev)
+ 	 * asynchronous completions and receive completions can be placed in
+ 	 * the same completion ring.
+ 	 */
+-	if ((BNXT_TRUFLOW_EN(bp) && !BNXT_CHIP_P7(bp)) ||
++	if ((BNXT_TRUFLOW_EN(bp) && BNXT_REP_MODE_EN(bp)) ||
+ 	    !BNXT_NUM_ASYNC_CPR(bp))
+ 		goto use_scalar_rx;
  
- 	if (!bnxt_rep_check_parent(vfr)) {
- 		PMD_DRV_LOG_LINE(DEBUG, "BNXT Port:%d VFR already freed",
--			    vfr->dpdk_port_id);
-+				 vfr->dpdk_port_id);
- 		return 0;
- 	}
- 	parent_bp = vfr->parent_dev->data->dev_private;
+@@ -1523,7 +1527,7 @@ bnxt_transmit_function(__rte_unused struct rte_eth_dev *eth_dev)
+ 	 */
+ 	if (eth_dev->data->scattered_rx ||
+ 	    (offloads & ~RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) ||
+-	    (BNXT_TRUFLOW_EN(bp) && !BNXT_CHIP_P7(bp)) ||
++	    (BNXT_TRUFLOW_EN(bp) && BNXT_REP_MODE_EN(bp)) ||
+ 	    bp->ieee_1588)
+ 		goto use_scalar_tx;
+ 
+@@ -6385,6 +6389,64 @@ bnxt_parse_devarg_rep_fc_f2r(__rte_unused const char *key,
+ 	return 0;
+ }
+ 
++static int
++bnxt_parse_devarg_representor_mode(__rte_unused const char *key,
++				   const char *value, void *opaque_arg)
++{
++	struct bnxt *bp = opaque_arg;
++	unsigned long rep;
++	char *end = NULL;
++
++	if (!value || !opaque_arg) {
++		PMD_DRV_LOG_LINE(ERR,
++				 "Invalid param passed to rep mode in devargs");
++		return -EINVAL;
++	}
++
++	rep = strtoul(value, &end, 10);
++	if (end == NULL || *end != '\0' ||
++	    (rep == ULONG_MAX && errno == ERANGE)) {
++		PMD_DRV_LOG_LINE(ERR,
++				 "Invalid param passed to rep mode in devargs");
++		return -EINVAL;
++	}
++
++	if (rep > 0)
++		bp->flags2 |= BNXT_FLAGS2_REP_MODE;
++	PMD_DRV_LOG_LINE(INFO, "representor feature enabled");
++
++	return 0;
++}
++
++static int
++bnxt_parse_devarg_scalar_mode(__rte_unused const char *key,
++			      const char *value, void *opaque_arg)
++{
++	struct bnxt *bp = opaque_arg;
++	unsigned long rep;
++	char *end = NULL;
++
++	if (!value || !opaque_arg) {
++		PMD_DRV_LOG_LINE(ERR,
++				 "Invalid param passed to scalar mode in devargs");
++		return -EINVAL;
++	}
++
++	rep = strtoul(value, &end, 10);
++	if (end == NULL || *end != '\0' ||
++	    (rep == ULONG_MAX && errno == ERANGE)) {
++		PMD_DRV_LOG_LINE(ERR,
++				 "Invalid param passed to scalar mode in devargs");
++		return -EINVAL;
++	}
++
++	if (rep > 0)
++		bp->flags2 |= BNXT_FLAGS2_REP_MODE;
++	PMD_DRV_LOG_LINE(INFO, "Scalar mode enabled");
++
++	return 0;
++}
++
+ static int
+ bnxt_parse_dev_args(struct bnxt *bp, struct rte_devargs *devargs)
+ {
+@@ -6445,6 +6507,28 @@ bnxt_parse_dev_args(struct bnxt *bp, struct rte_devargs *devargs)
+ 	rte_kvargs_process(kvlist, BNXT_DEVARG_CQE_MODE,
+ 			   bnxt_parse_devarg_cqe_mode, bp);
+ 
++	/*
++	 * Handler for "representor" devarg.
++	 * Invoked as for ex: "-a 000:00:0d.0,representor=1"
++	 */
++	rte_kvargs_process(kvlist, BNXT_DEVARG_REPRESENTOR,
++			   bnxt_parse_devarg_representor_mode, bp);
++
++	/*
++	 * Handler for "scalar-mode" devarg.
++	 * Invoked as for ex: "-a 000:00:0d.0,scalar-mode=1"
++	 */
++	rte_kvargs_process(kvlist, BNXT_DEVARG_SCALAR_MODE,
++			   bnxt_parse_devarg_scalar_mode, bp);
++
++	/*
++	 * Handler for "app-instance-id" devarg.
++	 * Invoked as for ex: "-a 000:00:0d.0,app-instance-id=1"
++	 * This argument is required for enabling truflow hot upgrade feature.
++	 */
++	rte_kvargs_process(kvlist, BNXT_DEVARD_APP_INST_ID,
++			   bnxt_parse_devarg_app_instance_id, bp);
++
+ 	rte_kvargs_free(kvlist);
+ 	return ret;
+ }
 -- 
 2.39.5 (Apple Git-154)
 
