@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C52D0CCA468
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 13:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDCBCCA468
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 13:56:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7D4AA409FA;
-	Tue, 30 Sep 2025 15:56:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8BAFA40A6E;
+	Tue, 30 Sep 2025 15:56:06 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 74DE840151
- for <dev@dpdk.org>; Tue, 30 Sep 2025 15:56:01 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4877E409FA
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 15:56:03 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759240561; x=1790776561;
+ t=1759240563; x=1790776563;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=KQBJFfyInDtxPkBSHoUDicQUiS/L9HwYkH15+GXuZF4=;
- b=Wi8qvGY8MGv/K7a5/tVXgaFhavG/Rkdy37E6HZJyrAJ2G4GviQtPDAWY
- t7LYJRTMG5uHZ0CdFVtJt2ptA0WNTV/AQuS1N5lHyPlt5eLdT9dTw7QZo
- 4oiDMltl2Ik/RMnFW2iPyQlpSlGIIUToZOPw6GR6WeyHF0BGe/SU2Odm6
- 6QQMh2uFapcOqI8I4bwfIdioq3R9cQNw2KcRM0E6TsrB+HDZ/ry8Kjp4P
- OSLnFbBUAEascRbuTbW1lXluTYrUSyaUq/bMEzWmOA6+lc+YqCaQgIp0o
- NW4ml7Lm4jS/+g+Q1TEr/7e6GSNLfPvpln0sw9QdddP2MTHt7215VEgj1 g==;
-X-CSE-ConnectionGUID: dZw6vMRDTdOvOm+LFU79LA==
-X-CSE-MsgGUID: lZBVpE+dQzyYznj36JD1LA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="49058318"
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; d="scan'208";a="49058318"
+ bh=tf1Fk8iRY4ROJ7M59u3T1n4AjWNWms8tcFkaxxkznh8=;
+ b=lMhzYxPu7/HZhDeOJVYOrFv+9GHeH61cCPXZO3SRXfG6tmwdNcS+MMLk
+ oeysm8hNeO/7IMewbgL7ifJbSicPEsPtj2xYch8sw+FAkINm730bbHZrX
+ /gRV0sWb7vBirWxjoBvmmFX7NWoH6frf87P2PITp6rIEohWYfhpkomXKj
+ nwG3XjuhxOq0qNAHaaSaTyXvyvKix+hD4dSvFthB1IxvBAOqIxHmzyuTK
+ RKY5nrotp9kxVTLjLL64eRIxhuDPBxdEJNBwpHp6M+xYsjyAh/h5KPtbV
+ isnP1rwb99dk+0AGFt6iVP6+SgGTeZ6082DDJiqVh7vLItZLkDr18o8eg g==;
+X-CSE-ConnectionGUID: /pGX227XQeuTd0bHsl3YmQ==
+X-CSE-MsgGUID: k60wArEMS82HBkosgayWqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="49058319"
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; d="scan'208";a="49058319"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Sep 2025 06:56:01 -0700
-X-CSE-ConnectionGUID: zvs8/lV2QQmgTXGZzA7bYA==
-X-CSE-MsgGUID: dN/HDiy7S3q4szyasBsxLw==
+ 30 Sep 2025 06:56:02 -0700
+X-CSE-ConnectionGUID: OFoGtUNJRDuPmr7CFc3dzw==
+X-CSE-MsgGUID: RBbpQ7z+TKqbgkX0reJxvw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; d="scan'208";a="178933664"
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; d="scan'208";a="178933673"
 Received: from gk3153-pr3-41011.igk.intel.com (HELO
  GK3153-PR3-41011-c0b.igk.intel.com) ([10.123.200.84])
- by fmviesa009.fm.intel.com with ESMTP; 30 Sep 2025 06:55:59 -0700
+ by fmviesa009.fm.intel.com with ESMTP; 30 Sep 2025 06:56:01 -0700
 From: "Shetty, Praveen" <praveen.shetty@intel.com>
 To: bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
 Cc: dev@dpdk.org, Praveen Shetty <praveen.shetty@intel.com>,
- Atul Patel <atul.patel@intel.com>,
- Dhananjay Shukla <dhananjay.shukla@intel.com>
-Subject: [PATCH v4 1/4] net/intel: add vCPF PMD support
-Date: Tue, 30 Sep 2025 15:55:53 +0200
-Message-Id: <20250930135556.2861075-2-praveen.shetty@intel.com>
+ Dhananjay Shukla <dhananjay.shukla@intel.com>,
+ atulpatel261194 <Atul.Patel@intel.com>
+Subject: [PATCH v4 2/4] net/idpf: add splitq jumbo packet handling
+Date: Tue, 30 Sep 2025 15:55:54 +0200
+Message-Id: <20250930135556.2861075-3-praveen.shetty@intel.com>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20250930135556.2861075-1-praveen.shetty@intel.com>
 References: <20250922094819.1350709-2-praveen.shetty@intel.com>
@@ -66,102 +66,110 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Praveen Shetty <praveen.shetty@intel.com>
 
-This patch adds the registration support for a new vCPF PMD.
-vCPF PMD is responsible for enabling control and data path
-functionality for the CPF VF devices.
+This patch will add the jumbo packets handling in the
+idpf_dp_splitq_recv_pkts function.
 
 Signed-off-by: Praveen Shetty <praveen.shetty@intel.com>
-Tested-by: Atul Patel  <atul.patel@intel.com>
-Tested-by: Dhananjay Shukla <dhananjay.shukla@intel.com>
+Signed-off-by: Dhananjay Shukla <dhananjay.shukla@intel.com>
+Signed-off-by: atulpatel261194 <Atul.Patel@intel.com>
 ---
- drivers/net/intel/cpfl/cpfl_ethdev.c        | 17 +++++++++++++++++
- drivers/net/intel/idpf/idpf_common_device.c |  4 ++--
- drivers/net/intel/idpf/idpf_common_device.h |  1 +
- 3 files changed, 20 insertions(+), 2 deletions(-)
+ drivers/net/intel/idpf/idpf_common_rxtx.c | 48 ++++++++++++++++++-----
+ 1 file changed, 38 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c b/drivers/net/intel/cpfl/cpfl_ethdev.c
-index 6d7b23ad7a..6aa0971941 100644
---- a/drivers/net/intel/cpfl/cpfl_ethdev.c
-+++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
-@@ -1854,6 +1854,7 @@ cpfl_handle_virtchnl_msg(struct cpfl_adapter_ext *adapter)
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
+index eb25b091d8..0a06aed92f 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
+@@ -623,10 +623,12 @@ idpf_dp_splitq_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 	volatile struct virtchnl2_rx_flex_desc_adv_nic_3 *rx_desc_ring;
+ 	volatile struct virtchnl2_rx_flex_desc_adv_nic_3 *rx_desc;
+ 	uint16_t pktlen_gen_bufq_id;
+-	struct idpf_rx_queue *rxq;
++	struct idpf_rx_queue *rxq = rx_queue;
+ 	const uint32_t *ptype_tbl;
+ 	uint8_t status_err0_qw1;
+ 	struct idpf_adapter *ad;
++	struct rte_mbuf *first_seg = rxq->pkt_first_seg;
++	struct rte_mbuf *last_seg = rxq->pkt_last_seg;
+ 	struct rte_mbuf *rxm;
+ 	uint16_t rx_id_bufq1;
+ 	uint16_t rx_id_bufq2;
+@@ -659,6 +661,7 @@ idpf_dp_splitq_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
  
- 		switch (mbx_op) {
- 		case idpf_mbq_opc_send_msg_to_peer_pf:
-+		case idpf_mbq_opc_send_msg_to_peer_drv:
- 			if (vc_op == VIRTCHNL2_OP_EVENT) {
- 				cpfl_handle_vchnl_event_msg(adapter, adapter->base.mbx_resp,
- 							    ctlq_msg.data_len);
-@@ -2610,6 +2611,11 @@ static const struct rte_pci_id pci_id_cpfl_map[] = {
- 	{ .vendor_id = 0, /* sentinel */ },
- };
- 
-+static const struct rte_pci_id pci_id_vcpf_map[] = {
-+	{ RTE_PCI_DEVICE(IDPF_INTEL_VENDOR_ID, IXD_DEV_ID_VCPF) },
-+	{ .vendor_id = 0, /* sentinel */ },
-+};
+ 		pktlen_gen_bufq_id =
+ 			rte_le_to_cpu_16(rx_desc->pktlen_gen_bufq_id);
++		status_err0_qw1 = rte_le_to_cpu_16(rx_desc->status_err0_qw1);
+ 		gen_id = (pktlen_gen_bufq_id &
+ 			  VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_M) >>
+ 			VIRTCHNL2_RX_FLEX_DESC_ADV_GEN_S;
+@@ -697,16 +700,37 @@ idpf_dp_splitq_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		rxm->pkt_len = pkt_len;
+ 		rxm->data_len = pkt_len;
+ 		rxm->data_off = RTE_PKTMBUF_HEADROOM;
 +
- static struct cpfl_adapter_ext *
- cpfl_find_adapter_ext(struct rte_pci_device *pci_dev)
- {
-@@ -2866,6 +2872,14 @@ static struct rte_pci_driver rte_cpfl_pmd = {
- 	.remove		= cpfl_pci_remove,
- };
- 
-+static struct rte_pci_driver rte_vcpf_pmd = {
-+	.id_table	= pci_id_vcpf_map,
-+	.drv_flags	= RTE_PCI_DRV_NEED_MAPPING |
-+			  RTE_PCI_DRV_PROBE_AGAIN,
-+	.probe		= cpfl_pci_probe,
-+	.remove		= cpfl_pci_remove,
-+};
++		/*
++		 * If this is the first buffer of the received packet, set the
++		 * pointer to the first mbuf of the packet and initialize its
++		 * context. Otherwise, update the total length and the number
++		 * of segments of the current scattered packet, and update the
++		 * pointer to the last mbuf of the current packet.
++		 */
++		if (!first_seg) {
++			first_seg = rxm;
++			first_seg->nb_segs = 1;
++			first_seg->pkt_len = pkt_len;
++		} else {
++			first_seg->pkt_len = (uint16_t)(first_seg->pkt_len + pkt_len);
++			first_seg->nb_segs++;
++			last_seg->next = rxm;
++		}
 +
- /**
-  * Driver initialization routine.
-  * Invoked once at EAL init time.
-@@ -2874,6 +2888,9 @@ static struct rte_pci_driver rte_cpfl_pmd = {
- RTE_PMD_REGISTER_PCI(net_cpfl, rte_cpfl_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_cpfl, pci_id_cpfl_map);
- RTE_PMD_REGISTER_KMOD_DEP(net_cpfl, "* igb_uio | vfio-pci");
-+RTE_PMD_REGISTER_PCI(net_vcpf, rte_vcpf_pmd);
-+RTE_PMD_REGISTER_PCI_TABLE(net_vcpf, pci_id_vcpf_map);
-+RTE_PMD_REGISTER_KMOD_DEP(net_vcpf, "vfio-pci");
- RTE_PMD_REGISTER_PARAM_STRING(net_cpfl,
- 	CPFL_TX_SINGLE_Q "=<0|1> "
- 	CPFL_RX_SINGLE_Q "=<0|1> "
-diff --git a/drivers/net/intel/idpf/idpf_common_device.c b/drivers/net/intel/idpf/idpf_common_device.c
-index ff1fbcd2b4..8c637a2fb6 100644
---- a/drivers/net/intel/idpf/idpf_common_device.c
-+++ b/drivers/net/intel/idpf/idpf_common_device.c
-@@ -130,7 +130,7 @@ idpf_init_mbx(struct idpf_hw *hw)
- 	struct idpf_ctlq_info *ctlq;
- 	int ret = 0;
++		if (!(status_err0_qw1 & (1 << VIRTCHNL2_RX_FLEX_DESC_ADV_STATUS0_EOF_S))) {
++			last_seg = rxm;
++			continue;
++		}
++
+ 		rxm->next = NULL;
+-		rxm->nb_segs = 1;
+-		rxm->port = rxq->port_id;
+-		rxm->ol_flags = 0;
+-		rxm->packet_type =
++		first_seg->port = rxq->port_id;
++		first_seg->ol_flags = 0;
++		first_seg->packet_type =
+ 			ptype_tbl[(rte_le_to_cpu_16(rx_desc->ptype_err_fflags0) &
+ 				   VIRTCHNL2_RX_FLEX_DESC_ADV_PTYPE_M) >>
+ 				  VIRTCHNL2_RX_FLEX_DESC_ADV_PTYPE_S];
+-
+-		status_err0_qw1 = rx_desc->status_err0_qw1;
++		status_err0_qw1 = rte_le_to_cpu_16(rx_desc->status_err0_qw1);
+ 		pkt_flags = idpf_splitq_rx_csum_offload(status_err0_qw1);
+ 		pkt_flags |= idpf_splitq_rx_rss_offload(rxm, rx_desc);
+ 		if (idpf_timestamp_dynflag > 0 &&
+@@ -719,16 +743,20 @@ idpf_dp_splitq_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			*RTE_MBUF_DYNFIELD(rxm,
+ 					   idpf_timestamp_dynfield_offset,
+ 					   rte_mbuf_timestamp_t *) = ts_ns;
+-			rxm->ol_flags |= idpf_timestamp_dynflag;
++			first_seg->ol_flags |= idpf_timestamp_dynflag;
+ 		}
  
--	if (hw->device_id == IDPF_DEV_ID_SRIOV)
-+	if (hw->device_id == IDPF_DEV_ID_SRIOV || hw->device_id == IXD_DEV_ID_VCPF)
- 		ret = idpf_ctlq_init(hw, IDPF_CTLQ_NUM, vf_ctlq_info);
- 	else
- 		ret = idpf_ctlq_init(hw, IDPF_CTLQ_NUM, pf_ctlq_info);
-@@ -389,7 +389,7 @@ idpf_adapter_init(struct idpf_adapter *adapter)
- 	struct idpf_hw *hw = &adapter->hw;
- 	int ret;
+-		rxm->ol_flags |= pkt_flags;
++		first_seg->ol_flags |= pkt_flags;
  
--	if (hw->device_id == IDPF_DEV_ID_SRIOV) {
-+	if (hw->device_id == IDPF_DEV_ID_SRIOV || hw->device_id == IXD_DEV_ID_VCPF) {
- 		ret = idpf_check_vf_reset_done(hw);
- 	} else {
- 		idpf_reset_pf(hw);
-diff --git a/drivers/net/intel/idpf/idpf_common_device.h b/drivers/net/intel/idpf/idpf_common_device.h
-index 5f3e4a4fcf..d536ce7e15 100644
---- a/drivers/net/intel/idpf/idpf_common_device.h
-+++ b/drivers/net/intel/idpf/idpf_common_device.h
-@@ -11,6 +11,7 @@
- #include "idpf_common_logs.h"
+-		rx_pkts[nb_rx++] = rxm;
++		rx_pkts[nb_rx++] = first_seg;
++
++		first_seg = NULL;
+ 	}
  
- #define IDPF_DEV_ID_SRIOV	0x145C
-+#define IXD_DEV_ID_VCPF         0x1203
- 
- #define IDPF_RSS_KEY_LEN	52
- 
+ 	if (nb_rx > 0) {
+ 		rxq->rx_tail = rx_id;
++		rxq->pkt_first_seg = first_seg;
++		rxq->pkt_last_seg = last_seg;
+ 		if (rx_id_bufq1 != rxq->bufq1->rx_next_avail)
+ 			rxq->bufq1->rx_next_avail = rx_id_bufq1;
+ 		if (rx_id_bufq2 != rxq->bufq2->rx_next_avail)
 -- 
 2.37.3
 
