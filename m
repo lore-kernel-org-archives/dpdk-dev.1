@@ -2,30 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE16CCA470
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 10:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A49CCA470
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 10:00:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1309440A67;
-	Tue, 30 Sep 2025 12:00:27 +0200 (CEST)
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
- by mails.dpdk.org (Postfix) with ESMTP id 0BFFA40150
- for <dev@dpdk.org>; Tue, 30 Sep 2025 12:00:24 +0200 (CEST)
-X-QQ-mid: esmtpgz13t1759226419tb3a18220
-X-QQ-Originating-IP: oIBqtwcRoMImKmWaHAMJyu7BNAIfYNc16hEJMsrZUH8=
+	by mails.dpdk.org (Postfix) with ESMTP id 2CDC240A7F;
+	Tue, 30 Sep 2025 12:00:30 +0200 (CEST)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+ by mails.dpdk.org (Postfix) with ESMTP id 2E77140A7F
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 12:00:27 +0200 (CEST)
+X-QQ-mid: esmtpgz13t1759226422t5f9d5c43
+X-QQ-Originating-IP: jvjvvr3T8Xv/+QIvZqFPfndzTBpuMHliLEZiwG+Sx8Y=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.220.225.164])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 30 Sep 2025 18:00:18 +0800 (CST)
+ id ; Tue, 30 Sep 2025 18:00:21 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9564367347419751474
+X-BIZMAIL-ID: 11329806905909766861
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, Jiawen Wu <jiawenwu@trustnetic.com>,
  Jian Wang <jianwang@trustnetic.com>
-Subject: [PATCH v4 02/20] net/txgbe: add new SW-FW mailbox interface
-Date: Tue, 30 Sep 2025 17:59:34 +0800
-Message-Id: <20250930095953.18508-3-zaiyuwang@trustnetic.com>
+Subject: [PATCH v4 03/20] net/txgbe: add identification support for new
+ SFP/QSFP modules
+Date: Tue, 30 Sep 2025 17:59:35 +0800
+Message-Id: <20250930095953.18508-4-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20250930095953.18508-1-zaiyuwang@trustnetic.com>
 References: <20250418094131.24136-1-zaiyuwang@trustnetic.com>
@@ -34,23 +35,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: N4WhQbLQyIqSIp83KxsxUFBxgME1huD3JVUJtEK+QF3c7Eeso1kkYDYE
- ZdoYYLw69aTBdr7Q/fQr/TdB154GqbPymdCHNXHerI8RKZ3I+OJ/IzISBc1sdQT521JwcDc
- JIAV7zTasmTIn+i0IDy1RILe4ONxVw2280AO7bNDvrSFpxakP72PAvg2YipAG7NCG4bgH5J
- s4zN7lTGzh7DO48s8RLWxER4wD3ljQjJa3C+WoPWhqM927G5fg3AsO5utRsFZ5rUBJkAnQ8
- 3gmO6pdxyK87k8ZSk7djJkv2/d3Ea4ageZys5dRqCIC/pMPGyx/IAcnKD6bcfbvWbmB3/3z
- QNhyBLOUJUMg+nbaH7jY6B0RFm8lDt04ikKksxpJvTFd9hwULjN0G5+EEhbfAiEXCPCYg33
- ueEFttSW5KROz1KDn0pt0/bGwx7K7CBcnRfh6RAWdylFD1v00j3AVBc3SLMlm6XltLYADvk
- AyKRhPN2fN4oeh4uvL/jnM2pDmsNvOG3fpYpfeMWF12yp44GgqX9ZznbtgyNGedd8K9SokS
- OOYqMgmCAK9ZhFVxDd9hZDNYkZEjo7fUsAFUpjgAIvb2WcTHU5st2ge7C3dKk9Sw5/BeCu7
- IBMB++axuAn1OMuSli8Equ3bbkM/9xnOkpsMkE2l59zuC/CU1lMfJgYgzdfwrLsSdnqdKUA
- tA5HbOa2mu/9EkJTIL7aAeMvrpUK/PVvdtz33Fr0ua+dymyafeDw7BPcTdnEdUhi+pcDhTa
- mKPgQu4AkUA2rx7vJsui1v9an5uv8MKME3AvDD5yvNqjMfdJDQPMZePku/kklN9/PgHaq8z
- UeyiSg+CKwXYg1P1j8y09QulTp9HmcaQOdbqfDGoeq9S5zb1Q7T480tmvw4+6D4Iq5Lmk/r
- 7jGcCH6ZD+/Yjg+wk3DsuCedtRbNIX5UxQe1nm7YiF8XOUAqPyuCODvsBaAwEyRYbWhemT8
- eWmFC/uW70as0P3lLPgwUvZUd/nDBB5F/9C3A9rris6ADElUyU4U557NrAn6cVJSl1OYoFm
- wmXjuPVDAkyawVIEYtNUJnslh7NXiHS1WGNrRi+bY3V2lUUi2s
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-XMAILINFO: MzUsEJ4eXJ2k7McbtbrBlR59vzecZPf3e43UEolJ9UrJxxE+p2HwrAe7
+ 746ibpc7ATpVCSYlbkt1p8adcRaUrN/unjKjK8WaN+PxeC9Y+jki6hpYuda4rK68NaBIw21
+ 41mbZvDtOxp/bN17BW6EkT8AzygCm7TB2kpnorAQDoWyiP14CJI3OhSuyLXk0h6GTK0kHYq
+ 2vE+eWjNiEtgark97InlZCHB3CsPgfTnfQU+HywrJ0XR9jiUwEGdcefQro4CcMIXnnGlsc5
+ 41Wby633b0j7aXGPD2tUs2Ld78RI0AGA+WYGcE29aF5PYkv+G6oscOVgrK6QYxlOBgzI+qJ
+ 2op0TC0pdb3pN3BmJ1G3jeXAUQXJOBSpj1jqLI3nAVqddkOHzejewZMODySCZiaeHJojZlI
+ 4IErr9D5gYKlmtDU0Z9WcYQmta4O2mnI0NXSGuPDkAk+tTn5j6FQn5jm+/muN9KPrpDvwYi
+ rBcqBmgBQZjDPpihZWcdJ9iM3RWiVB4FS7zQeNuCWo8k2p9CR4tCve2idEGxeFwDvFvPDHR
+ c/K8OfEqtfzYiDzxH9+mdy3YyzRHeeEUDMmUy0WcwzrQ+hBPQRux5iIu/ofmxR+GJriiTn5
+ 79iBquYws5KdP4zPFSTZnP/soyJU5R7x1WGouSntnCLWpjJRBwN4ydqMi+hXNLkgsy1/K97
+ qzsZJ5bGXGIU+SWwZDMzyE1DvgIKW4ybHPC6H044fONzfGpmMxhkRr79ytFYitHWHBsu3pf
+ jZIf9vsTNenD2hrx3gsBTylS0ptY9LLv1xSXWgPRtBC4QpyAN9nRi/UPDYn/p3plNAbVaU6
+ WtlHnrM+ZTGmw/vD2twg1MCmINgVTB9Hh/N8TvBOrFaHHZbItzdy/5RctaJdx4228NPBeW+
+ 68mVnYcm3576J3zsLJ9vG3NBWQR2K2+B1n4gszIJ/nMmnKuKsEL0KnRVtpNPwuQ8HwTjUG+
+ cOcFZ4wVe7q9kibr8l4sYH7gLIK/RkaQ8O7D4wTMoAdpjgfVVSTHVK/zbKGluxJT/S8Uk/b
+ H0yqqiGcEADtcfLrvZ2LtnsC5XTeB0ABQOWGkm49ovtR3kCzGhCM+B7H17E48onZ5X9FzGZ
+ A==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -65,333 +67,269 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Amber-Lite NICs adopt new mailbox interface for software-firmware
-interaion to enable enhanced functionality.
+Add identification support for new SFP/QSFP module types (e.g., 25G
+SR/CR) in the Amber-Lite NIC configuration flow.
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_eeprom.c |   7 +-
- drivers/net/txgbe/base/txgbe_eeprom.h |   2 +
- drivers/net/txgbe/base/txgbe_mng.c    | 148 +++++++++++++++++++++++---
- drivers/net/txgbe/base/txgbe_mng.h    |  17 ++-
- drivers/net/txgbe/base/txgbe_regs.h   |   7 ++
- drivers/net/txgbe/base/txgbe_type.h   |   4 +
- 6 files changed, 165 insertions(+), 20 deletions(-)
+ drivers/net/txgbe/base/txgbe_phy.c  | 92 ++++++++++++++++++++++++-----
+ drivers/net/txgbe/base/txgbe_phy.h  | 23 ++++++++
+ drivers/net/txgbe/base/txgbe_regs.h |  5 +-
+ drivers/net/txgbe/base/txgbe_type.h | 12 ++++
+ 4 files changed, 117 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_eeprom.c b/drivers/net/txgbe/base/txgbe_eeprom.c
-index aeeae06dfc..eb53b35a19 100644
---- a/drivers/net/txgbe/base/txgbe_eeprom.c
-+++ b/drivers/net/txgbe/base/txgbe_eeprom.c
-@@ -366,8 +366,13 @@ s32 txgbe_calc_eeprom_checksum(struct txgbe_hw *hw)
- 		err = hw->rom.readw_buffer(hw, i, seg, buffer);
- 		if (err)
- 			return err;
--		for (j = 0; j < seg; j++)
-+		for (j = 0; j < seg; j++) {
-+			if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
-+				if (((i + j) >= (TXGBE_SHOWROM_I2C_PTR / 2)) &&
-+				    ((i + j) < (TXGBE_SHOWROM_I2C_END / 2)))
-+					buffer[j] = 0xffff;
- 			checksum += buffer[j];
+diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
+index ce6882e262..81e9aee295 100644
+--- a/drivers/net/txgbe/base/txgbe_phy.c
++++ b/drivers/net/txgbe/base/txgbe_phy.c
+@@ -774,10 +774,21 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 	u8 identifier = 0;
+ 	u8 comp_codes_1g = 0;
+ 	u8 comp_codes_10g = 0;
++	u8 comp_codes_25g = 0;
++	u8 comp_copper_len = 0;
+ 	u8 oui_bytes[3] = {0, 0, 0};
+ 	u8 cable_tech = 0;
+ 	u8 cable_spec = 0;
+ 	u16 enforce_sfp = 0;
++	u32 value;
++
++	if (hw->mac.type == txgbe_mac_aml) {
++		value = rd32(hw, TXGBE_GPIOEXT);
++		if (value & TXGBE_SFP1_MOD_ABS_LS) {
++			hw->phy.sfp_type = txgbe_sfp_type_not_present;
++			return TXGBE_ERR_SFP_NOT_PRESENT;
 +		}
++	}
+ 
+ 	if (hw->phy.media_type != txgbe_media_type_fiber) {
+ 		hw->phy.sfp_type = txgbe_sfp_type_not_present;
+@@ -811,6 +822,16 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 	if (err != 0)
+ 		goto ERR_I2C;
+ 
++	err = hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_25GBE_COMP_CODES,
++					      &comp_codes_25g);
++	if (err != 0)
++		goto ERR_I2C;
++
++	err = hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_COPPER_LENGTH,
++					      &comp_copper_len);
++	if (err != 0)
++		goto ERR_I2C;
++
+ 	err = hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_CABLE_TECHNOLOGY,
+ 					     &cable_tech);
+ 	if (err != 0)
+@@ -832,12 +853,7 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 	  * 11  SFP_1g_sx_CORE0 - chip-specific
+ 	  * 12  SFP_1g_sx_CORE1 - chip-specific
+ 	  */
+-	if (cable_tech & TXGBE_SFF_CABLE_DA_PASSIVE) {
+-		if (hw->bus.lan_id == 0)
+-			hw->phy.sfp_type = txgbe_sfp_type_da_cu_core0;
+-		else
+-			hw->phy.sfp_type = txgbe_sfp_type_da_cu_core1;
+-	} else if (cable_tech & TXGBE_SFF_CABLE_DA_ACTIVE) {
++	if (cable_tech & TXGBE_SFF_CABLE_DA_ACTIVE) {
+ 		err = hw->phy.read_i2c_eeprom(hw,
+ 			TXGBE_SFF_CABLE_SPEC_COMP, &cable_spec);
+ 		if (err != 0)
+@@ -849,6 +865,17 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 		} else {
+ 			hw->phy.sfp_type = txgbe_sfp_type_unknown;
+ 		}
++	} else if (comp_codes_25g == TXGBE_SFF_25GBASESR_CAPABLE ||
++		   comp_codes_25g == TXGBE_SFF_25GBASEER_CAPABLE) {
++		if (hw->bus.lan_id == 0)
++			hw->phy.sfp_type = txgbe_sfp_type_25g_sr_core0;
++		else
++			hw->phy.sfp_type = txgbe_sfp_type_25g_sr_core1;
++	} else if (comp_codes_25g == TXGBE_SFF_25GBASELR_CAPABLE) {
++		if (hw->bus.lan_id == 0)
++			hw->phy.sfp_type = txgbe_sfp_type_25g_lr_core0;
++		else
++			hw->phy.sfp_type = txgbe_sfp_type_25g_lr_core1;
+ 	} else if (comp_codes_10g &
+ 		   (TXGBE_SFF_10GBASESR_CAPABLE |
+ 		    TXGBE_SFF_10GBASELR_CAPABLE)) {
+@@ -876,11 +903,20 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 
+ 	/* Determine if the SFP+ PHY is dual speed or not. */
+ 	hw->phy.multispeed_fiber = false;
+-	if (((comp_codes_1g & TXGBE_SFF_1GBASESX_CAPABLE) &&
+-	     (comp_codes_10g & TXGBE_SFF_10GBASESR_CAPABLE)) ||
+-	    ((comp_codes_1g & TXGBE_SFF_1GBASELX_CAPABLE) &&
+-	     (comp_codes_10g & TXGBE_SFF_10GBASELR_CAPABLE)))
+-		hw->phy.multispeed_fiber = true;
++	if (hw->mac.type == txgbe_mac_aml) {
++		if ((comp_codes_25g == TXGBE_SFF_25GBASESR_CAPABLE ||
++		     comp_codes_25g == TXGBE_SFF_25GBASELR_CAPABLE ||
++		     comp_codes_25g == TXGBE_SFF_25GBASEER_CAPABLE) &&
++		   ((comp_codes_10g & TXGBE_SFF_10GBASESR_CAPABLE) ||
++		    (comp_codes_10g & TXGBE_SFF_10GBASELR_CAPABLE)))
++			hw->phy.multispeed_fiber = true;
++	} else {
++		if (((comp_codes_1g & TXGBE_SFF_1GBASESX_CAPABLE) &&
++		     (comp_codes_10g & TXGBE_SFF_10GBASESR_CAPABLE)) ||
++		    ((comp_codes_1g & TXGBE_SFF_1GBASELX_CAPABLE) &&
++		     (comp_codes_10g & TXGBE_SFF_10GBASELR_CAPABLE)))
++			hw->phy.multispeed_fiber = true;
++	}
+ 
+ 	/* Determine PHY vendor */
+ 	if (hw->phy.type != txgbe_phy_nl) {
+@@ -938,7 +974,7 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
  	}
  
- 	checksum = (u16)TXGBE_EEPROM_SUM - checksum + read_checksum;
-diff --git a/drivers/net/txgbe/base/txgbe_eeprom.h b/drivers/net/txgbe/base/txgbe_eeprom.h
-index c10ad45ec8..26cc53ab42 100644
---- a/drivers/net/txgbe/base/txgbe_eeprom.h
-+++ b/drivers/net/txgbe/base/txgbe_eeprom.h
-@@ -20,6 +20,8 @@
- #define TXGBE_PBANUM0_PTR		0x05
- #define TXGBE_PBANUM1_PTR		0x06
- #define TXGBE_SW_REGION_PTR             0x1C
-+#define TXGBE_SHOWROM_I2C_PTR		0xB00
-+#define TXGBE_SHOWROM_I2C_END		0xF00
+ 	/* Verify supported 1G SFP modules */
+-	if (comp_codes_10g == 0 &&
++	if (comp_codes_10g == 0 && comp_codes_25g == 0 &&
+ 	    !(hw->phy.sfp_type == txgbe_sfp_type_1g_cu_core1 ||
+ 	      hw->phy.sfp_type == txgbe_sfp_type_1g_cu_core0 ||
+ 	      hw->phy.sfp_type == txgbe_sfp_type_1g_lx_core0 ||
+@@ -986,6 +1022,7 @@ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw)
+ 	u8 cable_length = 0;
+ 	u8 device_tech = 0;
+ 	bool active_cable = false;
++	u32 value;
  
- #define TXGBE_EE_CSUM_MAX		0x800
- #define TXGBE_EEPROM_CHECKSUM		0x2F
-diff --git a/drivers/net/txgbe/base/txgbe_mng.c b/drivers/net/txgbe/base/txgbe_mng.c
-index 7dc8f21183..8839450b44 100644
---- a/drivers/net/txgbe/base/txgbe_mng.c
-+++ b/drivers/net/txgbe/base/txgbe_mng.c
-@@ -45,17 +45,6 @@ txgbe_hic_unlocked(struct txgbe_hw *hw, u32 *buffer, u32 length, u32 timeout)
- 	u32 value, loop;
- 	u16 i, dword_len;
- 
--	if (!length || length > TXGBE_PMMBX_BSIZE) {
--		DEBUGOUT("Buffer length failure buffersize=%d.", length);
--		return TXGBE_ERR_HOST_INTERFACE_COMMAND;
--	}
--
--	/* Calculate length in DWORDs. We must be DWORD aligned */
--	if (length % sizeof(u32)) {
--		DEBUGOUT("Buffer length failure, not aligned to dword");
--		return TXGBE_ERR_INVALID_ARGUMENT;
--	}
--
- 	dword_len = length >> 2;
- 
- 	txgbe_flush(hw);
-@@ -114,7 +103,7 @@ txgbe_host_interface_command(struct txgbe_hw *hw, u32 *buffer,
- 	u32 hdr_size = sizeof(struct txgbe_hic_hdr);
- 	struct txgbe_hic_hdr *resp = (struct txgbe_hic_hdr *)buffer;
- 	u16 buf_len;
--	s32 err;
-+	s32 err = 0;
- 	u32 bi;
- 	u32 dword_len;
- 
-@@ -123,6 +112,12 @@ txgbe_host_interface_command(struct txgbe_hw *hw, u32 *buffer,
- 		return TXGBE_ERR_HOST_INTERFACE_COMMAND;
+ 	if (hw->phy.media_type != txgbe_media_type_fiber_qsfp) {
+ 		hw->phy.sfp_type = txgbe_sfp_type_not_present;
+@@ -993,6 +1030,16 @@ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw)
+ 		goto out;
  	}
  
-+	/* Calculate length in DWORDs. We must be DWORD aligned */
-+	if (length % sizeof(u32)) {
-+		DEBUGOUT("Buffer length failure, not aligned to dword");
-+		return TXGBE_ERR_INVALID_ARGUMENT;
++	if (hw->mac.type == txgbe_mac_aml40) {
++		/* config GPIO before read i2c */
++		wr32(hw, TXGBE_GPIODATA, TXGBE_GPIOBIT_1);
++		value = rd32(hw, TXGBE_GPIOEXT);
++		if (value & TXGBE_SFP1_MOD_PRST_LS) {
++			hw->phy.sfp_type = txgbe_sfp_type_not_present;
++			return TXGBE_ERR_SFP_NOT_PRESENT;
++		}
 +	}
 +
- 	/* Take management host interface semaphore */
- 	err = hw->mac.acquire_swfw_sync(hw, TXGBE_MNGSEM_SWMBX);
- 	if (err)
-@@ -165,6 +160,117 @@ txgbe_host_interface_command(struct txgbe_hw *hw, u32 *buffer,
- 	return err;
- }
+ 	err = hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_IDENTIFIER,
+ 					     &identifier);
+ ERR_I2C:
+@@ -1024,10 +1071,27 @@ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw)
  
-+static s32
-+txgbe_host_interface_command_aml(struct txgbe_hw *hw, u32 *buffer,
-+				 u32 length, u32 timeout, bool return_data)
-+{
-+	u32 hdr_size = sizeof(struct txgbe_hic_hdr);
-+	struct txgbe_hic_hdr *resp = (struct txgbe_hic_hdr *)buffer;
-+	struct txgbe_hic_hdr *recv_hdr;
-+	u16 buf_len;
-+	s32 err = 0;
-+	u32 bi, i;
-+	u32 dword_len;
-+	u8 send_cmd;
+ 	if (comp_codes_10g & TXGBE_SFF_QSFP_DA_PASSIVE_CABLE) {
+ 		hw->phy.type = txgbe_phy_qsfp_unknown_passive;
++		if (hw->mac.type == txgbe_mac_aml40) {
++			if (hw->bus.lan_id == 0)
++				hw->phy.sfp_type = txgbe_qsfp_type_40g_cu_core0;
++			else
++				hw->phy.sfp_type = txgbe_qsfp_type_40g_cu_core1;
++		} else {
++			if (hw->bus.lan_id == 0)
++				hw->phy.sfp_type = txgbe_sfp_type_da_cu_core0;
++			else
++				hw->phy.sfp_type = txgbe_sfp_type_da_cu_core1;
++		}
++	} else if (comp_codes_10g & TXGBE_SFF_40GBASE_SR4) {
++		if (hw->bus.lan_id == 0)
++			hw->phy.sfp_type = txgbe_qsfp_type_40g_sr_core0;
++		else
++			hw->phy.sfp_type = txgbe_qsfp_type_40g_sr_core1;
++	} else if (comp_codes_10g & TXGBE_SFF_40GBASE_LR4) {
+ 		if (hw->bus.lan_id == 0)
+-			hw->phy.sfp_type = txgbe_sfp_type_da_cu_core0;
++			hw->phy.sfp_type = txgbe_qsfp_type_40g_lr_core0;
+ 		else
+-			hw->phy.sfp_type = txgbe_sfp_type_da_cu_core1;
++			hw->phy.sfp_type = txgbe_qsfp_type_40g_lr_core1;
+ 	} else if (comp_codes_10g & (TXGBE_SFF_10GBASESR_CAPABLE |
+ 				     TXGBE_SFF_10GBASELR_CAPABLE)) {
+ 		if (hw->bus.lan_id == 0)
+diff --git a/drivers/net/txgbe/base/txgbe_phy.h b/drivers/net/txgbe/base/txgbe_phy.h
+index 4dfe18930c..c02be3cc34 100644
+--- a/drivers/net/txgbe/base/txgbe_phy.h
++++ b/drivers/net/txgbe/base/txgbe_phy.h
+@@ -249,6 +249,8 @@
+ #define TXGBE_SFF_VENDOR_OUI_BYTE2	0x27
+ #define TXGBE_SFF_1GBE_COMP_CODES	0x06
+ #define TXGBE_SFF_10GBE_COMP_CODES	0x03
++#define TXGBE_SFF_25GBE_COMP_CODES	0x24
++#define TXGBE_SFF_COPPER_LENGTH		0x12
+ #define TXGBE_SFF_CABLE_TECHNOLOGY	0x08
+ #define   TXGBE_SFF_CABLE_DA_PASSIVE    0x4
+ #define   TXGBE_SFF_CABLE_DA_ACTIVE     0x8
+@@ -275,6 +277,23 @@
+ #define TXGBE_SFF_1GBASET_CAPABLE		0x8
+ #define TXGBE_SFF_10GBASESR_CAPABLE		0x10
+ #define TXGBE_SFF_10GBASELR_CAPABLE		0x20
++#define TXGBE_SFF_25GBASESR_CAPABLE		0x2
++#define TXGBE_SFF_25GBASELR_CAPABLE		0x3
++#define TXGBE_SFF_25GBASEER_CAPABLE		0x4
++#define TXGBE_SFF_25GBASECR_91FEC		0xB
++#define TXGBE_SFF_25GBASECR_74FEC		0xC
++#define TXGBE_SFF_25GBASECR_NOFEC		0xD
++#define TXGBE_SFF_40GBASE_SR_CAPABLE		0x10
++#define TXGBE_SFF_4x10GBASESR_CAP		0x11
++#define TXGBE_SFF_40GBASEPSM4_PARALLEL		0x12
++#define TXGBE_SFF_40GBASE_SWMD4_CAP		0x1f
 +
-+	if (length == 0 || length > TXGBE_PMMBX_BSIZE) {
-+		DEBUGOUT("Buffer length failure buffersize=%d.", length);
-+		return TXGBE_ERR_HOST_INTERFACE_COMMAND;
-+	}
++#define TXGBE_SFF_DA_SPEC_ACTIVE_LIMITING	0x4
++#define TXGBE_SFF_25GAUI_C2M_AOC_BER_5		0x1
++#define TXGBE_SFF_25GAUI_C2M_ACC_BER_5		0x8
++#define TXGBE_SFF_25GAUI_C2M_AOC_BER_12		0x18
++#define TXGBE_SFF_25GAUI_C2M_ACC_BER_12		0x19
 +
-+	/* Calculate length in DWORDs. We must be DWORD aligned */
-+	if (length % sizeof(u32)) {
-+		DEBUGOUT("Buffer length failure, not aligned to dword");
-+		return TXGBE_ERR_INVALID_ARGUMENT;
-+	}
-+
-+	/* try to get lock */
-+	while (rte_atomic32_test_and_set(&hw->swfw_busy)) {
-+		timeout--;
-+		if (!timeout)
-+			return TXGBE_ERR_TIMEOUT;
-+		usec_delay(1000);
-+	}
-+
-+	/* index to unique seq id for each mbox message */
-+	resp->index = hw->swfw_index;
-+	send_cmd = resp->cmd;
-+
-+	/* Calculate length in DWORDs */
-+	dword_len = length >> 2;
-+
-+	/* write data to SW-FW mbox array */
-+	for (i = 0; i < dword_len; i++) {
-+		wr32a(hw, TXGBE_AML_MNG_MBOX_SW2FW,
-+				i, rte_cpu_to_le_32(buffer[i]));
-+		/* write flush */
-+		rd32a(hw, TXGBE_AML_MNG_MBOX_SW2FW, i);
-+	}
-+
-+	/* amlite: generate interrupt to notify FW */
-+	wr32m(hw, TXGBE_AML_MNG_MBOX_CTL_SW2FW,
-+			  TXGBE_AML_MNG_MBOX_NOTIFY, 0);
-+	wr32m(hw, TXGBE_AML_MNG_MBOX_CTL_SW2FW,
-+			  TXGBE_AML_MNG_MBOX_NOTIFY, TXGBE_AML_MNG_MBOX_NOTIFY);
-+
-+	/* Calculate length in DWORDs */
-+	dword_len = hdr_size >> 2;
-+
-+	/* polling reply from FW */
-+	timeout = 50;
-+	do {
-+		timeout--;
-+		usec_delay(1000);
-+
-+		/* read hdr */
-+		for (bi = 0; bi < dword_len; bi++)
-+			buffer[bi] = rd32a(hw, TXGBE_AML_MNG_MBOX_FW2SW, bi);
-+
-+		/* check hdr */
-+		recv_hdr = (struct txgbe_hic_hdr *)buffer;
-+
-+		if (recv_hdr->cmd == send_cmd &&
-+		    recv_hdr->index == hw->swfw_index)
-+			break;
-+	} while (timeout);
-+
-+	if (!timeout) {
-+		PMD_DRV_LOG(ERR, "Polling from FW messages timeout, cmd is 0x%x, index is %d",
-+			send_cmd, hw->swfw_index);
-+		err = TXGBE_ERR_TIMEOUT;
-+		goto rel_out;
-+	}
-+
-+	/* expect no reply from FW then return */
-+	/* release lock if return */
-+	if (!return_data)
-+		goto rel_out;
-+
-+	/* If there is any thing in data position pull it in */
-+	buf_len = recv_hdr->buf_len;
-+	if (buf_len == 0)
-+		goto rel_out;
-+
-+	if (length < buf_len + hdr_size) {
-+		DEBUGOUT("Buffer not large enough for reply message.");
-+		err = TXGBE_ERR_HOST_INTERFACE_COMMAND;
-+		goto rel_out;
-+	}
-+
-+	/* Calculate length in DWORDs, add 3 for odd lengths */
-+	dword_len = (buf_len + 3) >> 2;
-+	for (; bi <= dword_len; bi++)
-+		buffer[bi] = rd32a(hw, TXGBE_AML_MNG_MBOX_FW2SW, bi);
-+
-+rel_out:
-+	/* index++, index replace txgbe_hic_hdr.checksum */
-+	hw->swfw_index = resp->index == TXGBE_HIC_HDR_INDEX_MAX ?
-+					0 : resp->index + 1;
-+	rte_atomic32_clear(&hw->swfw_busy);
-+
-+	return err;
-+}
-+
- /**
-  *  txgbe_hic_sr_read - Read EEPROM word using a host interface cmd
-  *  assuming that the semaphore is already obtained.
-@@ -179,6 +285,12 @@ s32 txgbe_hic_sr_read(struct txgbe_hw *hw, u32 addr, u8 *buf, int len)
- 	struct txgbe_hic_read_shadow_ram command;
- 	u32 value;
- 	int err, i = 0, j = 0;
-+	u32 mngmbx_addr;
-+
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
-+		mngmbx_addr = TXGBE_AML_MNG_MBOX_FW2SW;
-+	else
-+		mngmbx_addr = TXGBE_MNGMBX;
+ #define TXGBE_SFF_SOFT_RS_SELECT_MASK		0x8
+ #define TXGBE_SFF_SOFT_RS_SELECT_10G		0x8
+ #define TXGBE_SFF_SOFT_RS_SELECT_1G		0x0
+@@ -290,6 +309,10 @@
+ #define TXGBE_I2C_EEPROM_STATUS_FAIL		0x2
+ #define TXGBE_I2C_EEPROM_STATUS_IN_PROGRESS	0x3
  
- 	if (len > TXGBE_PMMBX_DATA_SIZE)
- 		return TXGBE_ERR_HOST_INTERFACE_COMMAND;
-@@ -191,18 +303,22 @@ s32 txgbe_hic_sr_read(struct txgbe_hw *hw, u32 addr, u8 *buf, int len)
- 	command.address = cpu_to_be32(addr);
- 	command.length = cpu_to_be16(len);
- 
--	err = txgbe_hic_unlocked(hw, (u32 *)&command,
--			sizeof(command), TXGBE_HI_COMMAND_TIMEOUT);
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
-+		err = txgbe_host_interface_command_aml(hw, (u32 *)&command,
-+				sizeof(command), TXGBE_HI_COMMAND_TIMEOUT, false);
-+	else
-+		err = txgbe_hic_unlocked(hw, (u32 *)&command,
-+				sizeof(command), TXGBE_HI_COMMAND_TIMEOUT);
- 	if (err)
- 		return err;
- 
- 	while (i < (len >> 2)) {
--		value = rd32a(hw, TXGBE_MNGMBX, FW_NVM_DATA_OFFSET + i);
-+		value = rd32a(hw, mngmbx_addr, FW_NVM_DATA_OFFSET + i);
- 		((u32 *)buf)[i] = value;
- 		i++;
- 	}
- 
--	value = rd32a(hw, TXGBE_MNGMBX, FW_NVM_DATA_OFFSET + i);
-+	value = rd32a(hw, mngmbx_addr, FW_NVM_DATA_OFFSET + i);
- 	for (i <<= 2; i < len; i++)
- 		((u8 *)buf)[i] = ((u8 *)&value)[j++];
- 
-diff --git a/drivers/net/txgbe/base/txgbe_mng.h b/drivers/net/txgbe/base/txgbe_mng.h
-index 16775862d6..613aa7b88a 100644
---- a/drivers/net/txgbe/base/txgbe_mng.h
-+++ b/drivers/net/txgbe/base/txgbe_mng.h
-@@ -60,6 +60,8 @@
- #define TXGBE_CHECKSUM_CAP_ST_PASS      0x80658383
- #define TXGBE_CHECKSUM_CAP_ST_FAIL      0x70657376
- 
-+#define TXGBE_HIC_HDR_INDEX_MAX         255
++#define TXGBE_SFF_40GBASE_CR4			0x8
++#define TXGBE_SFF_40GBASE_SR4			0x4
++#define TXGBE_SFF_40GBASE_LR4			0x2
 +
- /* Host Interface Command Structures */
- struct txgbe_hic_hdr {
- 	u8 cmd;
-@@ -68,21 +70,30 @@ struct txgbe_hic_hdr {
- 		u8 cmd_resv;
- 		u8 ret_status;
- 	} cmd_or_resp;
--	u8 checksum;
-+	union {
-+		u8 checksum;
-+		u8 index;
-+	};
- };
+ /* EEPROM for SFF-8472 (dev_addr = 0xA2) */
+ #define TXGBE_I2C_EEPROM_DEV_ADDR2	0xA2
  
- struct txgbe_hic_hdr2_req {
- 	u8 cmd;
- 	u8 buf_lenh;
- 	u8 buf_lenl;
--	u8 checksum;
-+	union {
-+		u8 checksum;
-+		u8 index;
-+	};
- };
- 
- struct txgbe_hic_hdr2_rsp {
- 	u8 cmd;
- 	u8 buf_lenl;
- 	u8 buf_lenh_status;     /* 7-5: high bits of buf_len, 4-0: status */
--	u8 checksum;
-+	union {
-+		u8 checksum;
-+		u8 index;
-+	};
- };
- 
- union txgbe_hic_hdr2 {
 diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
-index 8da976dcc4..3b0bf08ea2 100644
+index 3b0bf08ea2..e75597591f 100644
 --- a/drivers/net/txgbe/base/txgbe_regs.h
 +++ b/drivers/net/txgbe/base/txgbe_regs.h
-@@ -263,6 +263,13 @@
- #define   TXGBE_MNGMBXCTL_FWACK    MS(3, 0x1)
- #define TXGBE_MNGMBX               0x01E100
+@@ -1605,7 +1605,10 @@ enum txgbe_5tuple_protocol {
+ #define TXGBE_GPIOINTSTAT               0x014840
+ #define TXGBE_GPIORAWINTSTAT            0x014844
+ #define TXGBE_GPIOEOI                   0x01484C
+-
++#define TXGBE_GPIOEXT                   0x014850
++#define   TXGBE_SFP1_MOD_ABS_LS         MS(2, 0x1) /* GPIO_EXT SFP ABSENT*/
++#define   TXGBE_SFP1_RX_LOS_LS          MS(3, 0x1) /* GPIO_EXT RX LOSS */
++#define   TXGBE_SFP1_MOD_PRST_LS        MS(4, 0x1) /* GPIO_EXT SFP ABSENT*/
  
-+/* amlite: swfw mailbox changes */
-+#define TXGBE_AML_MNG_MBOX_CTL_SW2FW    0x01E0A0
-+#define TXGBE_AML_MNG_MBOX_SW2FW        0x01E200
-+#define TXGBE_AML_MNG_MBOX_CTL_FW2SW    0x01E0A4
-+#define TXGBE_AML_MNG_MBOX_FW2SW        0x01E300
-+#define   TXGBE_AML_MNG_MBOX_NOTIFY     MS(31, 0x1)
-+
- /******************************************************************************
-  * Port Registers
-  ******************************************************************************/
+ #define TXGBE_ARBPOOLIDX                0x01820C
+ #define TXGBE_ARBTXRATE                 0x018404
 diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
-index 731a7b4373..a34c782ec8 100644
+index a34c782ec8..2d13539f87 100644
 --- a/drivers/net/txgbe/base/txgbe_type.h
 +++ b/drivers/net/txgbe/base/txgbe_type.h
-@@ -814,6 +814,10 @@ struct txgbe_hw {
- 		u64 tx_qp_bytes;
- 		u64 rx_qp_mc_packets;
- 	} qp_last[TXGBE_MAX_QP];
-+
-+	/*amlite: new SW-FW mbox */
-+	u8 swfw_index;
-+	rte_atomic32_t swfw_busy;
+@@ -206,6 +206,18 @@ enum txgbe_sfp_type {
+ 	txgbe_sfp_type_1g_sx_core1,
+ 	txgbe_sfp_type_1g_lx_core0,
+ 	txgbe_sfp_type_1g_lx_core1,
++	txgbe_sfp_type_25g_sr_core0,
++	txgbe_sfp_type_25g_sr_core1,
++	txgbe_sfp_type_25g_lr_core0,
++	txgbe_sfp_type_25g_lr_core1,
++	txgbe_sfp_type_25g_aoc_core0,
++	txgbe_sfp_type_25g_aoc_core1,
++	txgbe_qsfp_type_40g_cu_core0,
++	txgbe_qsfp_type_40g_cu_core1,
++	txgbe_qsfp_type_40g_sr_core0,
++	txgbe_qsfp_type_40g_sr_core1,
++	txgbe_qsfp_type_40g_lr_core0,
++	txgbe_qsfp_type_40g_lr_core1,
+ 	txgbe_sfp_type_not_present = 0xFFFE,
+ 	txgbe_sfp_type_not_known = 0xFFFF
  };
- 
- struct txgbe_backplane_ability {
 -- 
 2.21.0.windows.1
 
