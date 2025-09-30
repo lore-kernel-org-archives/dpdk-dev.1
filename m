@@ -2,87 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC0FFCAC5B8
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA50CAC5B9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:11:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 016634111B;
-	Tue, 30 Sep 2025 09:06:30 +0200 (CEST)
-Received: from mail-pl1-f227.google.com (mail-pl1-f227.google.com
- [209.85.214.227])
- by mails.dpdk.org (Postfix) with ESMTP id A7E1B402A2
- for <dev@dpdk.org>; Tue, 30 Sep 2025 02:37:29 +0200 (CEST)
-Received: by mail-pl1-f227.google.com with SMTP id
- d9443c01a7336-271067d66fbso54699435ad.3
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:37:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4F12C40B9C;
+	Tue, 30 Sep 2025 09:06:31 +0200 (CEST)
+Received: from mail-pj1-f99.google.com (mail-pj1-f99.google.com
+ [209.85.216.99]) by mails.dpdk.org (Postfix) with ESMTP id B86C6402A2
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 02:37:30 +0200 (CEST)
+Received: by mail-pj1-f99.google.com with SMTP id
+ 98e67ed59e1d1-32ec291a325so4128221a91.1
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 17:37:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759192649; x=1759797449;
+ d=1e100.net; s=20230601; t=1759192650; x=1759797450;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=0+VFzjwDWq3oyf6ypGL9F9LArEfUW2em8ItgyWpfPSw=;
- b=Ic/5aoahhPROaIVU1IywXj/2G/qL39HN+zNHSbjOT4txqpeHdv1D5dZubIjkBGEp+A
- uStUa5eCtab14MXTIZnOCa25qAJcD95lUPAALKC7wGXsX5Fk4i2IzlGbSLHDNNRiak7m
- rP90kkob1ziex+wvztOQBnrQ7qIRuKCYI6nBHTazvRvwr8FMsVr7j440O5DkEKkM/uua
- /uDXhRew9u1wSkXiNNEwHshGwnetC4LDGNAN/eaJqakQuvKhXB9n/rBZi/3C59dKL7yV
- yJGJPbYKOKHJ62/RQU54MqugfEGv/aGVLgpM2U4ZmT1XuH0LSKX03FlyUzyfpC9pue5O
- A7oA==
-X-Gm-Message-State: AOJu0Yyhx0eGuYJcLqvOYgnYQ2zB+QTMispk483iCVaJCS3YoPy306pa
- dluabDRXRGMIwXKSs6tU47Sxz5NDGdteHpsHuxaunJGsscQcqQufYVjvmadLgXvY/hoTptHxEPo
- LfO//2dP91q9vX+Chp/s9+TYfKeqPX8cWNVEm/tSqu+MZe7yGvLEPKQJ+ozUcA9gWIeLUuUkjVW
- xj9bO/21GUQNUyofTd98PEA8H2MCQ4rvAqA/TkRB8xxDRpiqP0qt6SNAY0Ynn/ajx8hcjDww==
-X-Gm-Gg: ASbGncs/wfZMfHxXaMFihig/BAc39VHh+XuUp/9m16moiLvzK/q9Af5q0Am2/adEV9X
- lwTyAfjkFRPQKdkZoc56bWiLUqLmHuiFsgm60e/T1avhqJNZeUj5gs7NMphK1W1FKp1cj5zaayB
- 3d0tZ5i5mNvvB5ajywxE4Ja4bGBA85Ykw9++IZcrJ0WdcwPAycKF3f63eFr9ftqq6IIY0JYkryh
- P+GqVwRU5rcgRgqV19Wdoc/JjVsTmsiVQeS3qrvY2IsIStnX3gXCEgR0dRcclKMVI1ao15ExjQP
- fTMWg9knyGid+vn89x3SMgNhpFVaFmvbRZalJ3sz7RCXvLOhudDFFTuFdOIyoHTjA0BH6Mz0cVN
- f37IRVhSmUczB/MldDGMroVDJRsHkNNQmIiG4qeqSFEcR1l5A5uHEIwcnPvC1ZZd2e+Ba0hEGGv
- 1fTMV2iKA=
-X-Google-Smtp-Source: AGHT+IFKHFFMv2hEmROlkuugU8/8+FjnCujreVtsfG2DoUrAkvvgyjsNUHouxNvImR5MFQNlBjQCxv5bKHj+
-X-Received: by 2002:a17:902:f542:b0:269:805c:9447 with SMTP id
- d9443c01a7336-27ed49df2a4mr208017705ad.4.1759192648809; 
- Mon, 29 Sep 2025 17:37:28 -0700 (PDT)
+ bh=ppYHn13KO0Du4KFq4Ryfa4j5VeeeZaQR4lrPcYj8NAI=;
+ b=u9RrTWZGYq6FIUhIxT+FlTcdAyzl1uEKHjNvt/0Pm67GvggDMyGIp+KqDD0H9uIqQq
+ okZdL5U4JUpkIh2YygMzLBVkDZjGSX0q8Q6wNAqk1DTnCL9Jq5DlKZOJi2DKgEn+aj0I
+ a9yzcwmYJkElwRO/pVLFb/KOMQu83jNz6VbYpRi+y5ethIwZUr6jRfQda4Ic6o/se9su
+ uxopcn7Pfkklkb2JZRXCi9DdZ5EMiZy2sNq/AbFr0D6eNMEUMcMf6YxNCs0yRbLJ93QK
+ xI/UpIVxa9+sAyh+Ps01ovhdmk1w5bVJeC34MY4dPpNgTzpt00Pyc12qHwi0LvG10Vct
+ ML5g==
+X-Gm-Message-State: AOJu0Yy7vllJEgWiYvayz/k3/IJv9JTb1PTna3dT2mzgpMR+vkVEWt7J
+ 5NY5kR7TGlcOe0JWPtQrqBseWXNWck1TfgLqAU0QctprgWH0+wtIy+94N+68naiFQXzNbU/A+zz
+ Lhf/q8ybOu1FduO18b0PDaR0YPRERW8/6LaJ1mOPu2br0LswE0/LvRH3RcHGshBUbNYB6oTnW6D
+ /tu01/9cHUaVOOyU63j7HXH02BlOgAbl4xOAkQektFz2sfP+cjLIyuwgA8Tq4SxqZQLUzBnQ==
+X-Gm-Gg: ASbGncsf9TVP6vErIBZRv5vVFFZn6DDjnttmwNVwadeNUraNABS3f+GJ2IzOKwnkQwB
+ qcbfKibfNsLcixu9F5am9RKjQZAOmfC8G5H6FaCUxZHteOw0Cr19eg6Ar44Qa9ShicsJ5uU3LxR
+ jMwmlVGl5Zj6Wf6SQb6fj27e9zGxshcOwPYyembUMC5DqwmMLHWnvGFRM631jg9RrO9cOgLMzX1
+ PPw2rXEn7oEwD1Vx61QkcPjbt/lb0lQITCr9G0+bbOmLl4ytdCtnUS46ZGTTL84Q8pGf7LGpaZN
+ uO6FLTD1CAK+eDXqqK3V0Pre/uLU5L8hHNbJqdC+bErUwGU830sx4E0JFrkKlFS6P3ngDD0MEOb
+ L4daNNqKe6uvhwOycMpxsMxtGUgfsrrRR5xpCGU3XpRc9AzDYzcl/DaopXWuo2MxE3uv/AKI1VV
+ ACxw==
+X-Google-Smtp-Source: AGHT+IHdx/kGmajyJfIAUbqA8OeKF7aXkk/nsRZ3LIB3+qSsjAXAXyVxmBJa5rQ7FdkecnaehEUaDt4HPXTq
+X-Received: by 2002:a17:90b:5109:b0:32b:baaa:21b0 with SMTP id
+ 98e67ed59e1d1-3342a2498b0mr20866374a91.6.1759192649920; 
+ Mon, 29 Sep 2025 17:37:29 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-100.dlp.protect.broadcom.com. [144.49.247.100])
+ (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-27ed6827e1asm10200015ad.62.2025.09.29.17.37.28
+ 98e67ed59e1d1-3341bdf72d8sm1035855a91.3.2025.09.29.17.37.29
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 29 Sep 2025 17:37:28 -0700 (PDT)
+ Mon, 29 Sep 2025 17:37:29 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
 Received: by mail-pg1-f200.google.com with SMTP id
- 41be03b00d2f7-b471737e673so6561894a12.1
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:37:27 -0700 (PDT)
+ 41be03b00d2f7-b5535902495so3960841a12.0
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 17:37:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1759192646; x=1759797446; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1759192648; x=1759797448; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=0+VFzjwDWq3oyf6ypGL9F9LArEfUW2em8ItgyWpfPSw=;
- b=JoYYn1NLdnQR8hyAafQR8T2Hz/WfUTPXPyh1eF77K//wpzP8c3bsXDpXrnGtkodUsw
- 8zDKzoFOw8QS3ZUM+cfMhxC/vZDbke8ffb8adKbM7gpXoxCrvfOqi+FSEpMAr5GUJIsx
- 68RTcXEhQOiWPjSvd9eAaUeNJFEC5C9CzsobY=
-X-Received: by 2002:a05:6a21:32a7:b0:2fc:660a:241b with SMTP id
- adf61e73a8af0-2fc660a28cbmr12433324637.30.1759192646429; 
- Mon, 29 Sep 2025 17:37:26 -0700 (PDT)
-X-Received: by 2002:a05:6a21:32a7:b0:2fc:660a:241b with SMTP id
- adf61e73a8af0-2fc660a28cbmr12433285637.30.1759192645668; 
- Mon, 29 Sep 2025 17:37:25 -0700 (PDT)
+ bh=ppYHn13KO0Du4KFq4Ryfa4j5VeeeZaQR4lrPcYj8NAI=;
+ b=G699hebm56tcPKkdQ0xC2VQpbJ5qOHIfUcxS7Y3MZ8qgjLy+MkwcYb0Jj5tT2Rqdfh
+ nE/kQxCU7UBdEVY+dFQCWEEgU8LwWshHV3PJ2J8iS62GG3ke6+g1J6IwiTZfW6qo0erN
+ tbaQwom1eDLd2+rDkio3qI0wIT4WM+A6DJYgY=
+X-Received: by 2002:a05:6a20:320c:b0:2f4:abe3:2c94 with SMTP id
+ adf61e73a8af0-2f4abe32f54mr12667510637.50.1759192647831; 
+ Mon, 29 Sep 2025 17:37:27 -0700 (PDT)
+X-Received: by 2002:a05:6a20:320c:b0:2f4:abe3:2c94 with SMTP id
+ adf61e73a8af0-2f4abe32f54mr12667482637.50.1759192647293; 
+ Mon, 29 Sep 2025 17:37:27 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.37.24
+ 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.37.26
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Mon, 29 Sep 2025 17:37:25 -0700 (PDT)
+ Mon, 29 Sep 2025 17:37:26 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com,
- Peter Spreadborough <peter.spreadborough@broadcom.com>,
- Stephen Shi <stephen.shi@broadcom.com>,
- Shuanglin Wang <shuanglin.wang@broadcom.com>,
- Damodharam Ammepalli <damodharam.ammepalli@broadcom.com>
-Subject: [PATCH 37/54] net/bnxt: avoid potential segfault in VFR handling
-Date: Mon, 29 Sep 2025 20:35:47 -0400
-Message-Id: <20250930003604.87108-38-manish.kurup@broadcom.com>
+	Shahaji Bhosle <shahaji.bhosle@broadcom.com>
+Subject: [PATCH 38/54] net/bnxt/tf_ulp: change rte_mem_virt2iova to
+ rte_mem_virt2phys
+Date: Mon, 29 Sep 2025 20:35:48 -0400
+Message-Id: <20250930003604.87108-39-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250930003604.87108-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -103,78 +100,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Peter Spreadborough <peter.spreadborough@broadcom.com>
+From: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
 
-1. Addresses crashes that were seen when using invalid
-   representor arguments. The crash would occur when unwinding
-   after a bnxt_pci_probe() failure.
-2. If a representor port exists and an attempt is made to attach
-   the same port a crash would occur. This change adds a check
-   for an already existing port.
+Need to support --no-huge mode which allows application
+to run as unprivileged user and does not have access to
+hugepage mount point and files within it.
 
-Signed-off-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
-Tested-by: Stephen Shi <stephen.shi@broadcom.com>
-Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
+rte_mem_virt2phy() does not have access to physical
+addresses(PA) without hugepages, so use rte_mem_virt2iova()
+with vfio-pci kernel driver.
+
+Signed-off-by: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
 Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
-Reviewed-by: Damodharam Ammepalli <damodharam.ammepalli@broadcom.com>
-Reviewed-by: Manish Kurup <manish.kurup@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_ethdev.c | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+ drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index a395c2ab47..efecbba2c3 100644
---- a/drivers/net/bnxt/bnxt_ethdev.c
-+++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -6905,16 +6905,9 @@ static int bnxt_rep_port_probe(struct rte_pci_device *pci_dev,
- 		return -ENOTSUP;
- 	}
- 	num_rep = eth_da->nb_representor_ports;
--	if (num_rep > max_vf_reps) {
--		PMD_DRV_LOG_LINE(ERR, "nb_representor_ports = %d > %d MAX VF REPS",
--			    num_rep, max_vf_reps);
--		return -EINVAL;
--	}
--
--	if (num_rep >= RTE_MAX_ETHPORTS) {
--		PMD_DRV_LOG_LINE(ERR,
--			    "nb_representor_ports = %d > %d MAX ETHPORTS",
--			    num_rep, RTE_MAX_ETHPORTS);
-+	if (num_rep > max_vf_reps || num_rep > RTE_MAX_ETHPORTS) {
-+		PMD_DRV_LOG_LINE(ERR, "nb_representor_ports = %d > %d OR %d MAX VF REPS",
-+			    num_rep, max_vf_reps, RTE_MAX_ETHPORTS);
- 		return -EINVAL;
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c
+index 4be2703740..c765e123fe 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c
+@@ -62,9 +62,9 @@ ulp_fc_mgr_shadow_mem_alloc(struct hw_fc_mem_info *parms, int size)
+ 
+ 	rte_mem_lock_page(parms->mem_va);
+ 
+-	parms->mem_pa = (void *)(uintptr_t)rte_mem_virt2phy(parms->mem_va);
++	parms->mem_pa = (void *)(uintptr_t)rte_mem_virt2iova(parms->mem_va);
+ 	if (parms->mem_pa == (void *)RTE_BAD_IOVA) {
+-		BNXT_DRV_DBG(ERR, "Allocate failed mem_pa\n");
++		BNXT_DRV_DBG(ERR, "virt2iova failed for mem_va 0x%p", parms->mem_va);
+ 		return -ENOMEM;
  	}
  
-@@ -6947,6 +6940,13 @@ static int bnxt_rep_port_probe(struct rte_pci_device *pci_dev,
- 		snprintf(name, sizeof(name), "net_%s_representor_%d",
- 			 pci_dev->device.name, eth_da->representor_ports[i]);
- 
-+		if (rte_eth_dev_allocated(name) != NULL) {
-+			PMD_DRV_LOG_LINE(ERR,
-+					 "Ethernet device with name %s already allocated",
-+					 name);
-+			return -EEXIST;
-+		}
-+
- 		kvlist = rte_kvargs_parse(dev_args, bnxt_dev_args);
- 		if (kvlist) {
- 			/*
-@@ -7083,7 +7083,13 @@ static int bnxt_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
- 
- 	num_rep = eth_da.nb_representor_ports;
- 	PMD_DRV_LOG_LINE(DEBUG, "nb_representor_ports = %d",
--		    num_rep);
-+			 num_rep);
-+	if (num_rep >= RTE_MAX_ETHPORTS) {
-+		PMD_DRV_LOG_LINE(ERR,
-+				 "nb_representor_ports = %d > %d MAX ETHPORTS",
-+				 num_rep, RTE_MAX_ETHPORTS);
-+		return -EINVAL;
-+	}
- 
- 	/* We could come here after first level of probe is already invoked
- 	 * as part of an application bringup(OVS-DPDK vswitchd), so first check
 -- 
 2.39.5 (Apple Git-154)
 
