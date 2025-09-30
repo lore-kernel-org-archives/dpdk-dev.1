@@ -2,52 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F026ACAC5B9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 09:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBDBCCA470
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 10:00:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4584A40A6D;
-	Tue, 30 Sep 2025 11:07:38 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 7C71140696
- for <dev@dpdk.org>; Tue, 30 Sep 2025 11:07:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759223254; x=1790759254;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=GzfbLJvaL+OVBjCicVHwVbOcVRd+l6rvHr8IhXCKdq0=;
- b=TZ6yEukUSfB9AlxC0Gdgi6TqDyLwsDZ17R63x25bKET402OL/Z0AFNzW
- zgKgtAat4lywFp18osS03JrNgmjSk1aX6oICttXlXQ0Iwyno/uGrXNU31
- RcZsu6EYMHHs5KurLL/JnEFr5PbSdJ+2Evoz2YxNRF+6l5Izr9a2M9xlY
- uIDQwRYnwpiLjdDtE2zDU2tXap9luwV5UQesQIXNu9Hd04llsf3WUleDk
- Yojs8XFHD+pT3Dv/IJIdzMLaRLTPJrnfuTWdarcHQ5kjTMkNjT1OOkF6X
- M+VZbo9e+gIDWTyR8nmgEfyJ+hZ0c1lQ+GwQbPUHrz3m+lKQ1dNuAZSA0 g==;
-X-CSE-ConnectionGUID: dt65D8emSqCw897ZDQGWnQ==
-X-CSE-MsgGUID: 2jPxQHoRQjS2u+SG8KtrUg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="61363310"
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; d="scan'208";a="61363310"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Sep 2025 02:07:34 -0700
-X-CSE-ConnectionGUID: R5E/Izf1RlmQvG+2kN5ZVg==
-X-CSE-MsgGUID: e/XvWKKuQW6yzmUmALeilw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; d="scan'208";a="182757359"
-Received: from unknown (HELO srv24..) ([10.138.182.231])
- by orviesa004.jf.intel.com with ESMTP; 30 Sep 2025 02:07:32 -0700
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Subject: [PATCH v4 2/2] net/idpf: enable AVX2 for split queue Tx
-Date: Tue, 30 Sep 2025 14:37:09 +0530
-Message-Id: <20250930090709.2521114-3-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250930090709.2521114-1-shaiq.wani@intel.com>
-References: <20250917052658.582872-1-shaiq.wani@intel.com/>
- <20250930090709.2521114-1-shaiq.wani@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C4C4840150;
+	Tue, 30 Sep 2025 12:00:07 +0200 (CEST)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+ by mails.dpdk.org (Postfix) with ESMTP id 56CE940685
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 12:00:06 +0200 (CEST)
+X-QQ-mid: esmtpgz13t1759226401tdaac1957
+X-QQ-Originating-IP: b7KnqHCPiTguJK2AcB3oPMTyCJec+LHGtSzL4cjgd2Q=
+Received: from DSK-zaiyuwang.trustnetic.com ( [115.220.225.164])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Tue, 30 Sep 2025 17:59:59 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 15674576346580966815
+EX-QQ-RecipientCnt: 2
+From: Zaiyu Wang <zaiyuwang@trustnetic.com>
+To: dev@dpdk.org
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Subject: [PATCH v4 00/20] Wangxun new NIC support
+Date: Tue, 30 Sep 2025 17:59:32 +0800
+Message-Id: <20250930095953.18508-1-zaiyuwang@trustnetic.com>
+X-Mailer: git-send-email 2.21.0.windows.1
+In-Reply-To: <20250418094131.24136-1-zaiyuwang@trustnetic.com>
+References: <20250418094131.24136-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: MNbA5mkmBXEJXzF9wFmc2dEh1a/v7+iEVLGG0oxztusDUM7qvd6mj/Lj
+ yRACVEt9otlO8wLh6LskwGaeHT5uiDpyfEAlBi4buMmaOqlPskyTOf93NB9UlX5EbHEoVRO
+ VWFqXRK0OJpRcPHVKnI2MehRZ8rYh7TF/W5TpRPGf3+VVicNFJh446P1ZWneAC0Z0e21IhB
+ rEtjywStClSX7WJNP/TA/SyJ4mBTLPjkR7E/yZ0YsSstY67DWSWX5Ubfon0QxWBXJPnqv+t
+ ZMnKKCunyHq4pHfP9S4lLsxoqz6ha/NLcu5XjcxZAV+k8RsRXLeSP1FocpYJqmyd/xhvGBb
+ skdWJIsSXu3HVbrAHO+46NzAg5uJRwnk8G1ILdyAY4tYOgf0IGmczfXrqyDVTHUXQWoLI3R
+ orLUqRbQ4jFeSF+PBibNlAapGRL/ReVkEEnwLAQOsr+Vif/0qSB7sdyaGzO7frcEiOWbamJ
+ u5pPPBNyPtaOty66n4QayWqWNJq5BxsMfYGXSbc4XRxMD4BEh5UFMKxM9ma9jzcg6LAF6ar
+ 15fPPgZZ5xg4m6pFOAOoa2iaRvBKAG4qeiQ11FgkW1P+8o/ns6vRSvRHQU2HZ6TLAeild89
+ c+qu1TErZHwGdW9Wdxm6OQ37kOOiZZzOwyDShJz63ql1AV9QK7NfY33OxdOp+YHFZ/zhVz0
+ rLhGDGqMxOH+OBxP7a/UoNyDegbcOVeElqqaBsnkGqVwgqlkDviMeEJj/j3wWBLFLWg6YgI
+ FP+b5L2sJOzcYl1+eQh7XLc/qDGiGacViYoiACWQiFcxSdLJFOIs975m+NNtd8rtk8in5eR
+ 54pjRMzkMJ1o2U4PV1ZRtYG2zydfyyHbsdGdheUE76MWID8Iwx3/Zsc8xRvcMUaH1RlNksr
+ 5rnm/iBhi3W51ewh1NbLndCPyaNeMHfKsUfeGbFtIF5RJJPwiForSuBe2pPArMR7sE0Rtak
+ sbxfRABUtW7mn/C2SqJL2lTnmE3//rOoQAyUSfhsuVaG5LGkwPq42pbBNhMGg96dxYMaCIB
+ cS4TChq6zQ4CL34mBj
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,257 +64,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In case some CPUs don't support AVX512. Enable AVX2 for them to
-get better per-core performance.
+We have released a new NIC series: Amber-Lite, with two models
+supporting 10G/25G and 40G rates. Due to minimal hardware 
+differences from existing 10G NICs, it remains supported within
+the txgbe driver.
 
-In the single queue model, the same descriptor queue is used by SW
-to post descriptors to the device and used by device to report completed
-descriptors to SW. While as the split queue model separates them into
-different queues for parallel processing and improved performance.
+Zaiyu Wang (20):
+  net/txgbe: add basic information for Amber-Lite 25G/40G NICs
+  net/txgbe: add new SW-FW mailbox interface
+  net/txgbe: add identification support for new SFP/QSFP modules
+  net/txgbe: rename raptor to sp for Sapphire-specific code
+  net/txgbe: add basic link configuration for Amber-Lite NICs
+  net/txgbe: add support for PHY configuration via SW-FW mailbox
+  net/txgbe: add RX&TX support for Amber-Lite NICs
+  net/txgbe: add hardware reset change for Amber-Lite NICs
+  net/txgbe: add MAC reconfiguration to avoid packet loss
+  net/txgbe: add TX head Write-Back mode for Amber-Lite NICs
+  net/txgbe: add RX desc merge mode for Amber-Lite NICs
+  net/txgbe: add FEC support for Amber-Lite 25G NICs
+  net/txgbe: add GPIO configuration
+  net/txgbe: disable unstable features
+  net/txgbe: add support for TX laser enable/disable
+  net/txgbe: add support for TX queue rate limiting
+  net/txgbe: add support for getting PHY ID
+  net/txgbe: add thermal sensor configuration for Amber-Lite NICs
+  net/txgbe: add RSS for Amber-Lite NICs
+  doc: update for txgbe
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
- drivers/net/intel/idpf/idpf_common_rxtx.h     |   3 +
- .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 194 ++++++++++++++++++
- drivers/net/intel/idpf/idpf_rxtx.c            |   9 +
- 3 files changed, 206 insertions(+)
+ doc/guides/nics/txgbe.rst                 |   8 +-
+ drivers/net/txgbe/base/meson.build        |   2 +
+ drivers/net/txgbe/base/txgbe_aml.c        | 354 ++++++++++++++++++++
+ drivers/net/txgbe/base/txgbe_aml.h        |  22 ++
+ drivers/net/txgbe/base/txgbe_aml40.c      | 160 +++++++++
+ drivers/net/txgbe/base/txgbe_aml40.h      |  20 ++
+ drivers/net/txgbe/base/txgbe_devids.h     |   9 +
+ drivers/net/txgbe/base/txgbe_eeprom.c     |   7 +-
+ drivers/net/txgbe/base/txgbe_eeprom.h     |   2 +
+ drivers/net/txgbe/base/txgbe_hw.c         | 365 ++++++++++++++++----
+ drivers/net/txgbe/base/txgbe_hw.h         |  15 +-
+ drivers/net/txgbe/base/txgbe_mng.c        | 184 +++++++++-
+ drivers/net/txgbe/base/txgbe_mng.h        |  34 +-
+ drivers/net/txgbe/base/txgbe_osdep.h      |   2 +
+ drivers/net/txgbe/base/txgbe_phy.c        | 127 ++++++-
+ drivers/net/txgbe/base/txgbe_phy.h        |  24 ++
+ drivers/net/txgbe/base/txgbe_regs.h       | 103 +++++-
+ drivers/net/txgbe/base/txgbe_type.h       |  70 +++-
+ drivers/net/txgbe/base/txgbe_vf.c         |   2 +-
+ drivers/net/txgbe/txgbe_ethdev.c          | 390 ++++++++++++++++++++--
+ drivers/net/txgbe/txgbe_ethdev.h          |   2 +-
+ drivers/net/txgbe/txgbe_ethdev_vf.c       |   2 +-
+ drivers/net/txgbe/txgbe_flow.c            |   2 +-
+ drivers/net/txgbe/txgbe_rxtx.c            | 203 ++++++++---
+ drivers/net/txgbe/txgbe_rxtx.h            |   3 +
+ drivers/net/txgbe/txgbe_rxtx_vec_common.h |  27 +-
+ 26 files changed, 1937 insertions(+), 202 deletions(-)
+ create mode 100644 drivers/net/txgbe/base/txgbe_aml.c
+ create mode 100644 drivers/net/txgbe/base/txgbe_aml.h
+ create mode 100644 drivers/net/txgbe/base/txgbe_aml40.c
+ create mode 100644 drivers/net/txgbe/base/txgbe_aml40.h
 
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
-index 87f6895c4c..3636d55272 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.h
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
-@@ -264,6 +264,9 @@ uint16_t idpf_dp_singleq_recv_pkts_avx2(void *rx_queue,
- 					struct rte_mbuf **rx_pkts,
- 					uint16_t nb_pkts);
- __rte_internal
-+uint16_t idpf_dp_splitq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				       uint16_t nb_pkts);
-+__rte_internal
- uint16_t idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue,
- 					struct rte_mbuf **tx_pkts,
- 					uint16_t nb_pkts);
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-index 986fffdbc1..2dfe64b41e 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-@@ -800,3 +800,197 @@ idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 
- 	return nb_tx;
- }
-+
-+static __rte_always_inline void
-+idpf_splitq_scan_cq_ring(struct ci_tx_queue *cq)
-+{
-+	struct idpf_splitq_tx_compl_desc *compl_ring;
-+	struct ci_tx_queue *txq;
-+	uint16_t genid, txq_qid, cq_qid, i;
-+	uint8_t ctype;
-+
-+	cq_qid = cq->tx_tail;
-+
-+	for (i = 0; i < IDPD_TXQ_SCAN_CQ_THRESH; i++) {
-+		if (cq_qid == cq->nb_tx_desc) {
-+			cq_qid = 0;
-+			cq->expected_gen_id ^= 1;  /* toggle generation bit */
-+		}
-+
-+		compl_ring = &cq->compl_ring[cq_qid];
-+
-+		genid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+			 IDPF_TXD_COMPLQ_GEN_M) >> IDPF_TXD_COMPLQ_GEN_S;
-+
-+		if (genid != cq->expected_gen_id)
-+			break;
-+
-+		ctype = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+			 IDPF_TXD_COMPLQ_COMPL_TYPE_M) >> IDPF_TXD_COMPLQ_COMPL_TYPE_S;
-+
-+		txq_qid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+			   IDPF_TXD_COMPLQ_QID_M) >> IDPF_TXD_COMPLQ_QID_S;
-+
-+		txq = cq->txqs[txq_qid - cq->tx_start_qid];
-+		if (ctype == IDPF_TXD_COMPLT_RS)
-+			txq->rs_compl_count++;
-+
-+		cq_qid++;
-+	}
-+
-+	cq->tx_tail = cq_qid;
-+}
-+
-+static __rte_always_inline void
-+idpf_splitq_vtx1_avx2(struct idpf_flex_tx_sched_desc *txdp,
-+				struct rte_mbuf *pkt, uint64_t flags)
-+{
-+	uint64_t high_qw =
-+		IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE |
-+		((uint64_t)flags) |
-+		((uint64_t)pkt->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+
-+	__m128i descriptor = _mm_set_epi64x(high_qw,
-+						pkt->buf_iova + pkt->data_off);
-+	_mm_storeu_si128((__m128i *)txdp, descriptor);
-+}
-+
-+static inline void
-+idpf_splitq_vtx_avx2(struct idpf_flex_tx_sched_desc *txdp,
-+				struct rte_mbuf **pkt, uint16_t nb_pkts, uint64_t flags)
-+{
-+	const uint64_t hi_qw_tmpl = IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE |
-+		((uint64_t)flags);
-+
-+	/* align if needed */
-+	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
-+		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
-+		txdp++, pkt++, nb_pkts--;
-+	}
-+
-+	for (; nb_pkts > 3; txdp += 4, pkt += 4, nb_pkts -= 4) {
-+		uint64_t hi_qw3 = hi_qw_tmpl |
-+			((uint64_t)pkt[3]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw2 = hi_qw_tmpl |
-+			((uint64_t)pkt[2]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw1 = hi_qw_tmpl |
-+			((uint64_t)pkt[1]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw0 = hi_qw_tmpl |
-+			((uint64_t)pkt[0]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+
-+		__m256i desc2_3 = _mm256_set_epi64x(hi_qw3,
-+			pkt[3]->buf_iova + pkt[3]->data_off,
-+			hi_qw2,
-+			pkt[2]->buf_iova + pkt[2]->data_off);
-+
-+		__m256i desc0_1 = _mm256_set_epi64x(hi_qw1,
-+			pkt[1]->buf_iova + pkt[1]->data_off,
-+			hi_qw0,
-+			pkt[0]->buf_iova + pkt[0]->data_off);
-+
-+		_mm256_storeu_si256((__m256i *)(txdp + 2), desc2_3);
-+		_mm256_storeu_si256((__m256i *)txdp, desc0_1);
-+	}
-+
-+	while (nb_pkts--) {
-+		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
-+		txdp++;
-+		pkt++;
-+	}
-+}
-+
-+static inline uint16_t
-+idpf_splitq_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+						uint16_t nb_pkts)
-+{
-+	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+	struct idpf_flex_tx_sched_desc *txdp;
-+	struct ci_tx_entry_vec *txep;
-+	uint16_t n, nb_commit, tx_id;
-+	uint64_t cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_EOP;
-+
-+	tx_id = txq->tx_tail;
-+
-+	/* restrict to max burst size */
-+	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
-+
-+	/* make sure we have enough free space */
-+	if (txq->nb_tx_free < txq->tx_free_thresh)
-+		ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
-+
-+	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
-+	nb_pkts = nb_commit;
-+	if (unlikely(nb_pkts == 0))
-+		return 0;
-+
-+	txdp = (struct idpf_flex_tx_sched_desc *)&txq->desc_ring[tx_id];
-+	txep = (void *)txq->sw_ring;
-+	txep += tx_id;
-+
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
-+
-+	n = (uint16_t)(txq->nb_tx_desc - tx_id);
-+	if (nb_commit >= n) {
-+		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
-+
-+		idpf_splitq_vtx_avx2(txdp, tx_pkts, n - 1, cmd_dtype);
-+		tx_pkts += (n - 1);
-+		txdp += (n - 1);
-+
-+		idpf_splitq_vtx1_avx2(txdp, *tx_pkts++, cmd_dtype);
-+
-+		nb_commit = (uint16_t)(nb_commit - n);
-+
-+		tx_id = 0;
-+		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
-+
-+		txdp = &txq->desc_ring[tx_id];
-+		txep = (void *)txq->sw_ring;
-+		txep += tx_id;
-+	}
-+
-+	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
-+
-+	idpf_splitq_vtx_avx2(txdp, tx_pkts, nb_commit, cmd_dtype);
-+
-+	tx_id = (uint16_t)(tx_id + nb_commit);
-+	if (tx_id > txq->tx_next_rs)
-+		txq->tx_next_rs =
-+		(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
-+
-+	txq->tx_tail = tx_id;
-+
-+	IDPF_PCI_REG_WRITE(txq->qtx_tail, txq->tx_tail);
-+
-+	return nb_pkts;
-+}
-+
-+uint16_t
-+idpf_dp_splitq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+					uint16_t nb_pkts)
-+{
-+	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+	uint16_t nb_tx = 0;
-+
-+	while (nb_pkts) {
-+		uint16_t ret, num;
-+		idpf_splitq_scan_cq_ring(txq->complq);
-+
-+		if (txq->rs_compl_count > txq->tx_free_thresh) {
-+			ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
-+			txq->rs_compl_count -= txq->tx_rs_thresh;
-+		}
-+
-+		num = (uint16_t)RTE_MIN(nb_pkts, txq->tx_rs_thresh);
-+		ret = idpf_splitq_xmit_fixed_burst_vec_avx2(tx_queue,
-+								&tx_pkts[nb_tx], num);
-+		nb_tx += ret;
-+		nb_pkts -= ret;
-+		if (ret < num)
-+			break;
-+	}
-+
-+	return nb_tx;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_splitq_xmit_pkts_avx2)
-diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
-index 1c725065df..6950fabb49 100644
---- a/drivers/net/intel/idpf/idpf_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_rxtx.c
-@@ -850,6 +850,15 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
- 				return;
- 			}
- #endif /* CC_AVX512_SUPPORT */
-+			if (tx_simd_width == RTE_VECT_SIMD_256) {
-+				PMD_DRV_LOG(NOTICE,
-+					    "Using Split AVX2 Vector Tx (port %d).",
-+					    dev->data->port_id);
-+				dev->tx_pkt_burst = idpf_dp_splitq_xmit_pkts_avx2;
-+				dev->tx_pkt_prepare = idpf_dp_prep_pkts;
-+				return;
-+			}
-+
- 		}
- 		PMD_DRV_LOG(NOTICE,
- 			    "Using Split Scalar Tx (port %d).",
 -- 
-2.34.1
+2.21.0.windows.1
 
