@@ -2,83 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B20CAC5B9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 348ACCAC5B9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:09:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8792040E30;
-	Tue, 30 Sep 2025 09:05:56 +0200 (CEST)
-Received: from mail-vs1-f99.google.com (mail-vs1-f99.google.com
- [209.85.217.99]) by mails.dpdk.org (Postfix) with ESMTP id 7B01C402A2
- for <dev@dpdk.org>; Tue, 30 Sep 2025 02:37:09 +0200 (CEST)
-Received: by mail-vs1-f99.google.com with SMTP id
- ada2fe7eead31-59d576379b9so2635228137.1
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:37:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B0E4A40E39;
+	Tue, 30 Sep 2025 09:05:57 +0200 (CEST)
+Received: from mail-pf1-f226.google.com (mail-pf1-f226.google.com
+ [209.85.210.226])
+ by mails.dpdk.org (Postfix) with ESMTP id 166A5402A2
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 02:37:11 +0200 (CEST)
+Received: by mail-pf1-f226.google.com with SMTP id
+ d2e1a72fcca58-7800ff158d5so3458878b3a.1
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 17:37:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759192629; x=1759797429;
+ d=1e100.net; s=20230601; t=1759192630; x=1759797430;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=ij0hSuFP4lyPjAbN4hXlpNhbJAvcj6+7MhEvujeLGeg=;
- b=EtJqkD+sF3BA01qMNeUQRNHO3Osyjsx2rRUrP3CvWwiuMgjBse70JdvqD9BMnh24mX
- LU7FKujToavXk8MugI21UhEBQ7/wYECfwLuRp9KVDi+6wj3klnahQMvZiZonsJCfxMrG
- cGH5tUVUESzwMGY0Tn/T2eCl439kmL+KaHq3HGIbLUDxqQpOfZbEbHNF9PvqUPUJ3Ubr
- YeDLEZe2OReaSyVkYiwt5HoMywYAZcsE7cud9QQvoNCe1uaqh59emQT9LVDbnQmp/omN
- u0h9VCWdlktdkOwAE1OE77NKlvSxEKefIeSoSKM7Wt/x/PS4lCpXnVtWBU1E/TLn8pe2
- FhNQ==
-X-Gm-Message-State: AOJu0Yx0+lm5PRAbhudu5ObMuu41DmKRWODf4yvYC3y0iuE/gdDfyXFn
- 1AZTf67DV7RpVZQhcQKurkMTegFswQNuaOrooMg3Ut/svrb8hy83Fmn8AJYyQLAgHd/NrPbnZD6
- dS5uUTY4pbWLnEqVH2YiW63DcZ/hu/zh+enXLRaaUqBkhzbE2PJpRh2smtpe/b3zvZiGD4D92yx
- SwNt9RHbs50PB9gK8KoO1pWvPg/LeJAEIyp3qXHEZoFAJuhcMxtxQSw16+hrmOq7khPmKMig==
-X-Gm-Gg: ASbGncssMd2cjq7o7wuNjladdmpEOai714szIcuAtDR1hFZtxjS7xB/cZnrBza8mw3T
- nwGfkozm4y1ghksuaLtzKpqpiuO9RA4wGZQvMGDwHVYwPUUBbNb/M7fRcUqQLf3NNNyqN06xGW6
- //1ajovjVO83Gmp+FmnJdOE538HPqLCYoOyq0x6n8PnGu1w1eGbNjCwz1h39GU7FkjKkdZqnUap
- PI1xSl93ZaW3wMrlC88mnIJWjOUWF0/SYBMm605cGQI4fycTmKd+0ppxLT+QC1PW+oCgtHdpKm2
- Tb9NIgHpsd4kZLxx69RJLG+TP7IyTIMAW7nDtIXMKyyxt+GWbDDwH6NlV78m1QVJ33bFX725UQA
- OTMVCLl07DEqOE/EkAvO/1UkOKNxGbO+FqK0JqXl82pQ4UY78UyjK1F3bdN1lEntKrqcb0J8o1L
- 0l/Etz4vI=
-X-Google-Smtp-Source: AGHT+IG4reh5Ps72oPoCkIxskRx9Dl+C6NgAUGs52captHExfUnTx4LrcRUNKhVSPbWpGCI4uEoDMA10ESNF
-X-Received: by 2002:a05:6102:5488:b0:55d:cfa5:9d58 with SMTP id
- ada2fe7eead31-5acc72a1b1dmr7681230137.13.1759192628658; 
- Mon, 29 Sep 2025 17:37:08 -0700 (PDT)
+ bh=BF+1RWP7HZuZ0jVq4900WIuWJRcPMvRIlRba3aJr6+c=;
+ b=wf3NmbzPr7JUPK2CEKXLaETj8s+6IDsYQGibWjbGnfNGVw1BMpEvkFlQLsWpNnJFWd
+ ZqDZlHia+2EGAvtxXDQfXeR56MQEUF5EmJc/iCkafdVKqPwvGfcaJdjmIWomMWrN25q+
+ 4gbpzl1n91mQQfejO0CPJjqPtW/W8aLUhmsU2w2fdIajh5mRXcTo9SZst2h6lPMVHsBQ
+ OoacHH7j8oNJRj8RXA7xEdL9gsXudNME+H5tL8QXkz8Y+hYhikUIY79HslBqUwBzYv8g
+ wbl6Dff2X1Wdz7ywe6HfMJovyYzPc5hWteKwDcmBYdZ4FOdfyE+g0KroyemyqaRxYCWK
+ OTPA==
+X-Gm-Message-State: AOJu0YznaTALDOEbhyho6hEEt+j1xKlQbe10VfWKtLx+geJxaZpLGXJj
+ G4SfPIr20iEsy4UH1oU26liCK+IEjydvjrHUycnK9wujgQIe5Xrbz6EX+uPV6/1LTpJM8GyfZ2J
+ E8X5i98bid2Dg5uTayBI3zAjSLrA//gF0l2rrHo/Zuw/gdUnJI8RjTUPqeUIFXXdlN7cLcDb/NM
+ pY49yK5rJIgmWxDmKHRGtJjjEK91Q/z97gE96SoierPuS56atswUYtidA/bWPBLFzy2H1b/A==
+X-Gm-Gg: ASbGncvs/w1H4mjlRDqCusYSkQ0jdPpzlj9j4nO5l77op7dDEq1besxvwQJDNAyPOuW
+ tcS6wae96TSBHfsz9TuXbyKo3vsgbZ28TXRakF9ioqt6JAlaTtGrziZdsM5dhIHrmf6KQztDtKO
+ fERBTjnNT3kSn1ZScOsKHilcFwmKijuE3m92zPBYnRetL4QfA34NFhlYofkdoFesAQGkSBGSeoH
+ kvn03UGl2/t74BPAG6VCIC6VVE/dubjLjMidwPja1NoR7ER4crA4cz0RubkYcK8Jmrnzlk0rTKA
+ N0yQesN4Q74Sx2iPYOM+UH8Tyom7+oozaBvbso8zCZuRusnC33EwmVhVnmHXBGAZFLhaYnSqPLa
+ IvXSLeiC2Kh0i78tqZNQNomW0rVcHwCg46WahHAxOgcS5o3y0zntzgYj8dFkmKlhQvTJUUOuA+B
+ DxreRlIkw=
+X-Google-Smtp-Source: AGHT+IFdMz/yMqQdWdqbBuuFEhDBT7+CnXrj7LHkSDgINRScbqpjRUVsXvyKAoOYKB9h2qkxoRjEn5Ryjam1
+X-Received: by 2002:a05:6a00:2d24:b0:781:f1ee:a9cf with SMTP id
+ d2e1a72fcca58-781f1eeacacmr8266090b3a.23.1759192630239; 
+ Mon, 29 Sep 2025 17:37:10 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-121.dlp.protect.broadcom.com. [144.49.247.121])
+ (address-144-49-247-100.dlp.protect.broadcom.com. [144.49.247.100])
  by smtp-relay.gmail.com with ESMTPS id
- ada2fe7eead31-5ae302f2b7csm1038991137.1.2025.09.29.17.37.07
+ d2e1a72fcca58-78102ae5c2csm942241b3a.9.2025.09.29.17.37.09
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 29 Sep 2025 17:37:08 -0700 (PDT)
+ Mon, 29 Sep 2025 17:37:10 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pf1-f199.google.com with SMTP id
- d2e1a72fcca58-7810289cd5eso7476145b3a.1
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:37:07 -0700 (PDT)
+Received: by mail-pl1-f197.google.com with SMTP id
+ d9443c01a7336-28c58e009d1so21347185ad.3
+ for <dev@dpdk.org>; Mon, 29 Sep 2025 17:37:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1759192626; x=1759797426; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1759192628; x=1759797428; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ij0hSuFP4lyPjAbN4hXlpNhbJAvcj6+7MhEvujeLGeg=;
- b=GOi1kNYoXYf9w0WzT3c49N1P54pdAgeaU0KqmnX5AdtTOdQQ43C+sE6fI/YdkoYZWv
- wp+WT9ItB3g03Y7fRws+UVtpymesn3gB4n1vZrwmAiRR/PZQ6xs3QiPxq0csj7t5WeiM
- EmxIg16gf+akWoJwgNxrQO/7ipczCs4MCGAmQ=
-X-Received: by 2002:a05:6a20:4310:b0:2fa:26fb:4a7b with SMTP id
- adf61e73a8af0-2fa27291293mr16568681637.57.1759192626490; 
- Mon, 29 Sep 2025 17:37:06 -0700 (PDT)
-X-Received: by 2002:a05:6a20:4310:b0:2fa:26fb:4a7b with SMTP id
- adf61e73a8af0-2fa27291293mr16568649637.57.1759192625936; 
- Mon, 29 Sep 2025 17:37:05 -0700 (PDT)
+ bh=BF+1RWP7HZuZ0jVq4900WIuWJRcPMvRIlRba3aJr6+c=;
+ b=ZIN6d6fatASUSo5TflbemA01QuZfqyJpHnDbZV2aJ4NcYX9qUYMDUgv6zNtTXpv0VQ
+ 7bhUh3z3b70daAs67mNlsvrUopdxIXmkb5TXCsR+9K4zkzGAkXNAfj6Gz+DT6oSJ8CLP
+ piMa+axw/kLslLemhRznhbCDdDmtyq7WmdSrI=
+X-Received: by 2002:a17:903:1c9:b0:24e:e5c9:ecfd with SMTP id
+ d9443c01a7336-27ed4a491ffmr225384405ad.42.1759192627999; 
+ Mon, 29 Sep 2025 17:37:07 -0700 (PDT)
+X-Received: by 2002:a17:903:1c9:b0:24e:e5c9:ecfd with SMTP id
+ d9443c01a7336-27ed4a491ffmr225384195ad.42.1759192627377; 
+ Mon, 29 Sep 2025 17:37:07 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.37.04
+ 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.37.06
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Mon, 29 Sep 2025 17:37:05 -0700 (PDT)
+ Mon, 29 Sep 2025 17:37:06 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com,
- Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
-Subject: [PATCH 25/54] net/bnxt: truflow remove redundant code for mpc init
-Date: Mon, 29 Sep 2025 20:35:35 -0400
-Message-Id: <20250930003604.87108-26-manish.kurup@broadcom.com>
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Shuanglin Wang <shuanglin.wang@broadcom.com>
+Subject: [PATCH 26/54] net/bnxt/tf_ulp: optimize template enums
+Date: Mon, 29 Sep 2025 20:35:36 -0400
+Message-Id: <20250930003604.87108-27-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250930003604.87108-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -99,47 +101,121 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-This patch removes redundant code from two files which is used
-during mpc init. The NULL condition check for mpc member in
-bnxt_mpc.c file is not required as mpc will always be initialized
-for P7 platform. The extra condition added in bnxt_ethdev.c to
-enable mpc for tf apps is not required as it will be always be
-enabled for P7 platform.
+The template enums are broken into two files, the enum file contains
+the enumeration that is common for applications and define file that
+contains application specific enumerations.
 
-Signed-off-by: Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
-Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_mpc.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ .../ulp_template_db_enum.h                    | 82 +------------------
+ 1 file changed, 3 insertions(+), 79 deletions(-)
+ rename drivers/net/bnxt/tf_ulp/{generic_templates => }/ulp_template_db_enum.h (96%)
 
-diff --git a/drivers/net/bnxt/bnxt_mpc.c b/drivers/net/bnxt/bnxt_mpc.c
-index ff2f0d7043..2582b50782 100644
---- a/drivers/net/bnxt/bnxt_mpc.c
-+++ b/drivers/net/bnxt/bnxt_mpc.c
-@@ -719,20 +719,10 @@ int bnxt_mpc_send(struct bnxt *bp,
- 		  bool batch)
- {
- 	int rc;
--	struct bnxt_mpc_txq *mpc_queue;
-+	struct bnxt_mpc_txq *mpc_queue = bp->mpc->mpc_txq[in_msg->chnl_id];
- 	int retry = BNXT_MPC_RX_RETRY;
- 	uint32_t pi = 0;
+diff --git a/drivers/net/bnxt/tf_ulp/generic_templates/ulp_template_db_enum.h b/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
+similarity index 96%
+rename from drivers/net/bnxt/tf_ulp/generic_templates/ulp_template_db_enum.h
+rename to drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
+index 87e24c37c2..4e7cb570b0 100644
+--- a/drivers/net/bnxt/tf_ulp/generic_templates/ulp_template_db_enum.h
++++ b/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
+@@ -3,74 +3,10 @@
+  * All rights reserved.
+  */
  
--	/*
--	 * TODO: This condition check is added to avoid
--	 * segmentation fault in case mpc argument is
--	 * missing in dev-args. Fix this by removing
--	 * mpc argument from dev args.
--	 */
--	if (!bp->mpc)
--		return -1;
--	mpc_queue = bp->mpc->mpc_txq[in_msg->chnl_id];
+-#ifndef ULP_TEMPLATE_DB_H_
+-#define ULP_TEMPLATE_DB_H_
++#ifndef ULP_TEMPLATE_DB_ENUM_H_
++#define ULP_TEMPLATE_DB_ENUM_H_
+ 
+-#define BNXT_ULP_REGFILE_MAX_SZ 107
+-#define BNXT_ULP_MAX_NUM_DEVICES 5
+-#define BNXT_ULP_LOG2_MAX_NUM_DEV 2.32192809488736
+-#define BNXT_ULP_GEN_TBL_MAX_SZ 62
+-#define BNXT_ULP_ALLOCATOR_TBL_MAX_SZ 2
+-#define BNXT_ULP_CLASS_MATCH_LIST_MAX_SZ 163
+-#define BNXT_ULP_ACT_MATCH_LIST_MAX_SZ 21
+-#define BNXT_ULP_APP_RESOURCE_RESV_LIST_MAX_SZ 0
+-#define BNXT_ULP_GLB_RESOURCE_TBL_MAX_SZ 57
+-#define BNXT_ULP_APP_GLB_RESOURCE_TBL_MAX_SZ 0
+-#define BNXT_ULP_RESOURCE_RESV_LIST_MAX_SZ 73
+-#define BNXT_ULP_APP_CAP_TBL_MAX_SZ 3
+-#define BNXT_ULP_COND_GOTO_REJECT 1023
+-#define BNXT_ULP_COND_GOTO_RF 0x10000
+-#define BNXT_ULP_APP_ID_CONFIG 0
+-#define BNXT_ULP_GLB_FIELD_TBL_SIZE 129
+-#define BNXT_ULP_GLB_SIG_TBL_SIZE 1
+-#define ULP_WH_PLUS_CLASS_TMPL_LIST_SIZE 8
+-#define ULP_WH_PLUS_CLASS_TBL_LIST_SIZE 98
+-#define ULP_WH_PLUS_CLASS_KEY_INFO_LIST_SIZE 683
+-#define ULP_WH_PLUS_CLASS_KEY_EXT_LIST_SIZE 0
+-#define ULP_WH_PLUS_CLASS_IDENT_LIST_SIZE 29
+-#define ULP_WH_PLUS_CLASS_RESULT_FIELD_LIST_SIZE 657
+-#define ULP_WH_PLUS_CLASS_COND_LIST_SIZE 50
+-#define ULP_WH_PLUS_CLASS_COND_OPER_LIST_SIZE 0
+-#define ULP_THOR_CLASS_TMPL_LIST_SIZE 8
+-#define ULP_THOR_CLASS_TBL_LIST_SIZE 214
+-#define ULP_THOR_CLASS_KEY_INFO_LIST_SIZE 940
+-#define ULP_THOR_CLASS_KEY_EXT_LIST_SIZE 778
+-#define ULP_THOR_CLASS_IDENT_LIST_SIZE 67
+-#define ULP_THOR_CLASS_RESULT_FIELD_LIST_SIZE 1322
+-#define ULP_THOR_CLASS_COND_LIST_SIZE 4909
+-#define ULP_THOR_CLASS_COND_OPER_LIST_SIZE 15
+-#define ULP_THOR2_CLASS_TMPL_LIST_SIZE 8
+-#define ULP_THOR2_CLASS_TBL_LIST_SIZE 182
+-#define ULP_THOR2_CLASS_KEY_INFO_LIST_SIZE 737
+-#define ULP_THOR2_CLASS_KEY_EXT_LIST_SIZE 668
+-#define ULP_THOR2_CLASS_IDENT_LIST_SIZE 61
+-#define ULP_THOR2_CLASS_RESULT_FIELD_LIST_SIZE 1603
+-#define ULP_THOR2_CLASS_COND_LIST_SIZE 4214
+-#define ULP_THOR2_CLASS_COND_OPER_LIST_SIZE 14
+-#define ULP_WH_PLUS_ACT_TMPL_LIST_SIZE 13
+-#define ULP_WH_PLUS_ACT_TBL_LIST_SIZE 155
+-#define ULP_WH_PLUS_ACT_KEY_INFO_LIST_SIZE 49
+-#define ULP_WH_PLUS_ACT_KEY_EXT_LIST_SIZE 0
+-#define ULP_WH_PLUS_ACT_IDENT_LIST_SIZE 20
+-#define ULP_WH_PLUS_ACT_RESULT_FIELD_LIST_SIZE 995
+-#define ULP_WH_PLUS_ACT_COND_LIST_SIZE 134
+-#define ULP_WH_PLUS_ACT_COND_OPER_LIST_SIZE 6
+-#define ULP_THOR_ACT_TMPL_LIST_SIZE 13
+-#define ULP_THOR_ACT_TBL_LIST_SIZE 104
+-#define ULP_THOR_ACT_KEY_INFO_LIST_SIZE 83
+-#define ULP_THOR_ACT_KEY_EXT_LIST_SIZE 5
+-#define ULP_THOR_ACT_IDENT_LIST_SIZE 19
+-#define ULP_THOR_ACT_RESULT_FIELD_LIST_SIZE 416
+-#define ULP_THOR_ACT_COND_LIST_SIZE 90
+-#define ULP_THOR_ACT_COND_OPER_LIST_SIZE 0
+-#define ULP_THOR2_ACT_TMPL_LIST_SIZE 13
+-#define ULP_THOR2_ACT_TBL_LIST_SIZE 121
+-#define ULP_THOR2_ACT_KEY_INFO_LIST_SIZE 86
+-#define ULP_THOR2_ACT_KEY_EXT_LIST_SIZE 5
+-#define ULP_THOR2_ACT_IDENT_LIST_SIZE 42
+-#define ULP_THOR2_ACT_RESULT_FIELD_LIST_SIZE 452
+-#define ULP_THOR2_ACT_COND_LIST_SIZE 96
+-#define ULP_THOR2_ACT_COND_OPER_LIST_SIZE 0
++#include "ulp_template_db_defs.h"
+ 
+ enum bnxt_ulp_act_bit {
+ 	BNXT_ULP_ACT_BIT_MARK                = 0x0000000000000001,
+@@ -2181,16 +2117,4 @@ enum ulp_thor2_sym {
+ 	ULP_THOR2_SYM_T_ECPRI_CONTEXT_MASK = 0
+ };
+ 
+-enum bnxt_ulp_df_tpl {
+-	BNXT_ULP_DF_TPL_DEFAULT_UPLINK_PORT = 3,
+-	BNXT_ULP_DF_TPL_DEFAULT_VFR = 4
+-};
 -
- 	if (out_msg->cmp_type != CMPL_BASE_TYPE_MID_PATH_SHORT &&
- 	    out_msg->cmp_type != CMPL_BASE_TYPE_MID_PATH_LONG)
- 		return -1;
+-enum bnxt_ulp_template_id {
+-	BNXT_ULP_TEMPLATE_PROMISCUOUS_ENABLE = 5,
+-	BNXT_ULP_TEMPLATE_PROMISCUOUS_DISABLE = 6,
+-	BNXT_ULP_TEMPLATE_GROUP_MISS_ACTION = 7
+-};
+-
+ #endif
+-
 -- 
 2.39.5 (Apple Git-154)
 
