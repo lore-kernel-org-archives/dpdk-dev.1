@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A49CCA470
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 10:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2DECCA468
+	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 10:00:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2CDC240A7F;
-	Tue, 30 Sep 2025 12:00:30 +0200 (CEST)
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
- by mails.dpdk.org (Postfix) with ESMTP id 2E77140A7F
- for <dev@dpdk.org>; Tue, 30 Sep 2025 12:00:27 +0200 (CEST)
-X-QQ-mid: esmtpgz13t1759226422t5f9d5c43
-X-QQ-Originating-IP: jvjvvr3T8Xv/+QIvZqFPfndzTBpuMHliLEZiwG+Sx8Y=
+	by mails.dpdk.org (Postfix) with ESMTP id 8896740B9C;
+	Tue, 30 Sep 2025 12:00:32 +0200 (CEST)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+ by mails.dpdk.org (Postfix) with ESMTP id EC24F40A6D
+ for <dev@dpdk.org>; Tue, 30 Sep 2025 12:00:29 +0200 (CEST)
+X-QQ-mid: esmtpgz13t1759226424t7f5f3652
+X-QQ-Originating-IP: pjGDPNKURuUdTIDf0BQPXZUA/LmsfVddIaZlH4P4H6I=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.220.225.164])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 30 Sep 2025 18:00:21 +0800 (CST)
+ id ; Tue, 30 Sep 2025 18:00:23 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11329806905909766861
+X-BIZMAIL-ID: 1178880294213098784
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, Jiawen Wu <jiawenwu@trustnetic.com>,
  Jian Wang <jianwang@trustnetic.com>
-Subject: [PATCH v4 03/20] net/txgbe: add identification support for new
- SFP/QSFP modules
-Date: Tue, 30 Sep 2025 17:59:35 +0800
-Message-Id: <20250930095953.18508-4-zaiyuwang@trustnetic.com>
+Subject: [PATCH v4 04/20] net/txgbe: rename raptor to sp for Sapphire-specific
+ code
+Date: Tue, 30 Sep 2025 17:59:36 +0800
+Message-Id: <20250930095953.18508-5-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20250930095953.18508-1-zaiyuwang@trustnetic.com>
 References: <20250418094131.24136-1-zaiyuwang@trustnetic.com>
@@ -35,24 +35,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: MzUsEJ4eXJ2k7McbtbrBlR59vzecZPf3e43UEolJ9UrJxxE+p2HwrAe7
- 746ibpc7ATpVCSYlbkt1p8adcRaUrN/unjKjK8WaN+PxeC9Y+jki6hpYuda4rK68NaBIw21
- 41mbZvDtOxp/bN17BW6EkT8AzygCm7TB2kpnorAQDoWyiP14CJI3OhSuyLXk0h6GTK0kHYq
- 2vE+eWjNiEtgark97InlZCHB3CsPgfTnfQU+HywrJ0XR9jiUwEGdcefQro4CcMIXnnGlsc5
- 41Wby633b0j7aXGPD2tUs2Ld78RI0AGA+WYGcE29aF5PYkv+G6oscOVgrK6QYxlOBgzI+qJ
- 2op0TC0pdb3pN3BmJ1G3jeXAUQXJOBSpj1jqLI3nAVqddkOHzejewZMODySCZiaeHJojZlI
- 4IErr9D5gYKlmtDU0Z9WcYQmta4O2mnI0NXSGuPDkAk+tTn5j6FQn5jm+/muN9KPrpDvwYi
- rBcqBmgBQZjDPpihZWcdJ9iM3RWiVB4FS7zQeNuCWo8k2p9CR4tCve2idEGxeFwDvFvPDHR
- c/K8OfEqtfzYiDzxH9+mdy3YyzRHeeEUDMmUy0WcwzrQ+hBPQRux5iIu/ofmxR+GJriiTn5
- 79iBquYws5KdP4zPFSTZnP/soyJU5R7x1WGouSntnCLWpjJRBwN4ydqMi+hXNLkgsy1/K97
- qzsZJ5bGXGIU+SWwZDMzyE1DvgIKW4ybHPC6H044fONzfGpmMxhkRr79ytFYitHWHBsu3pf
- jZIf9vsTNenD2hrx3gsBTylS0ptY9LLv1xSXWgPRtBC4QpyAN9nRi/UPDYn/p3plNAbVaU6
- WtlHnrM+ZTGmw/vD2twg1MCmINgVTB9Hh/N8TvBOrFaHHZbItzdy/5RctaJdx4228NPBeW+
- 68mVnYcm3576J3zsLJ9vG3NBWQR2K2+B1n4gszIJ/nMmnKuKsEL0KnRVtpNPwuQ8HwTjUG+
- cOcFZ4wVe7q9kibr8l4sYH7gLIK/RkaQ8O7D4wTMoAdpjgfVVSTHVK/zbKGluxJT/S8Uk/b
- H0yqqiGcEADtcfLrvZ2LtnsC5XTeB0ABQOWGkm49ovtR3kCzGhCM+B7H17E48onZ5X9FzGZ
- A==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-XMAILINFO: OQEfmBmUqqJ6triph1LVPyLavF6y9qHnU2LuGJfXTW9HKKrhmQyevr2T
+ NuPN4//ypSrO+FDjz7O0ZaHb/j8Fp0Zzpcq/SY4yECSJQt07Y+qvHi/+S2VhewJTYmL0ZDZ
+ j5IaFu0BqFGs8dm2EKZau5bVPHIKYJG/oE8rfbkQyTnLhzfWPrnCZzSoYfsHsWoHhSqt9KV
+ 6wkJzOSqI5D3gIm6wMF4DoHc8XuBcsvuQWwKKzj7g0v8mYWtcE9diAJVAxO5PcHM15B556M
+ SsAsJQ6n7bJycgFhws/mdPKLm7qusl+fKXiIARXwteRbecPYZ2G2cTEjPaKoJVzb+m4Ei3i
+ oe4l3BJoOKB7xj/Vf5Bge9Q/rco0RM88yQ+dwh/6Hm+RKbhP00IwUnUNvPsptC4J6KHCZWM
+ nWu/cOys54Tp4akV2h4ITx4HJ201XzfwPiyJzoMKcTeIbOzdayWjjgKRYVLkjDjYRuNZMhM
+ zgqdhvXuOG7bgeqEmILOsOcTvyn2ilMJJVxJ8OdtUhZGM7yySi3Xy0uaAnmZpA2Vgq9EXv9
+ xmfOARCxS87Nfn+pYhSblXu7RbyLgl1QO9oxne64Z7v7ZLypKUVrcTU1ba9Z2KFNZmWyh6i
+ TfZt74gnlbZ601QrU2DEVwcMz4DKuPcY0LwsVGwcxbzWofGwveYl0NkoEs7urDdFzHo3Wdu
+ sPxusMdHB57APiyasM+7ZcIfzlkglLySYP2c/Z4zxqN6I3Xjjba4jTPmWNGfgoIYzTdBZpt
+ mXujUVryyrR2Bogz3ASByR8r9yrwGbG2uu7+iq1vv76i+hs4EaRT49CPjNV59PCjBCrCq9E
+ Wex9I494joWMTTOx0omHkgomwtQdWBAaP4JvGQ5l9Iu6cjDUTHcLWPT/GsrpUdcuVEFGxUV
+ McGGmV/26Wfq82zWHSz7KjkXfMdquBekzo1OTfCM3LA8eDsu0UpBkCp1GVq5yg3Vze3MROk
+ rawIEF+ekzXqULrvNbIk1QScb7HiSEWG4Z8GUh3U/u6UcbHazzOdMzohZmU76BIicaiYc8O
+ y18pP+d9PrJ/4iIw+49FydlvdwO0HH8ROuSefHKACj087K9/0P
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,269 +66,514 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add identification support for new SFP/QSFP module types (e.g., 25G
-SR/CR) in the Amber-Lite NIC configuration flow.
+The term "raptor" was originally used as a general designation for
+NICs when only Sapphire series existed. With the addition of
+Amber-Lite series NICs, we now use "sp" to replace "raptor" for
+driver components that are specific to Sapphire NICs, while
+retaining the "raptor" name for common flows applicable to all NICs.
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_phy.c  | 92 ++++++++++++++++++++++++-----
- drivers/net/txgbe/base/txgbe_phy.h  | 23 ++++++++
- drivers/net/txgbe/base/txgbe_regs.h |  5 +-
- drivers/net/txgbe/base/txgbe_type.h | 12 ++++
- 4 files changed, 117 insertions(+), 15 deletions(-)
+ drivers/net/txgbe/base/txgbe_hw.c   | 62 +++++++++++++++++++----------
+ drivers/net/txgbe/base/txgbe_hw.h   | 11 ++---
+ drivers/net/txgbe/base/txgbe_regs.h |  8 ++--
+ drivers/net/txgbe/base/txgbe_type.h |  5 ++-
+ drivers/net/txgbe/base/txgbe_vf.c   |  2 +-
+ drivers/net/txgbe/txgbe_ethdev.c    | 14 +++----
+ drivers/net/txgbe/txgbe_ethdev_vf.c |  2 +-
+ drivers/net/txgbe/txgbe_flow.c      |  2 +-
+ drivers/net/txgbe/txgbe_rxtx.c      | 24 +++++------
+ 9 files changed, 76 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
-index ce6882e262..81e9aee295 100644
---- a/drivers/net/txgbe/base/txgbe_phy.c
-+++ b/drivers/net/txgbe/base/txgbe_phy.c
-@@ -774,10 +774,21 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
- 	u8 identifier = 0;
- 	u8 comp_codes_1g = 0;
- 	u8 comp_codes_10g = 0;
-+	u8 comp_codes_25g = 0;
-+	u8 comp_copper_len = 0;
- 	u8 oui_bytes[3] = {0, 0, 0};
- 	u8 cable_tech = 0;
- 	u8 cable_spec = 0;
- 	u16 enforce_sfp = 0;
-+	u32 value;
+diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
+index 76f8ecf62e..81e686fdf1 100644
+--- a/drivers/net/txgbe/base/txgbe_hw.c
++++ b/drivers/net/txgbe/base/txgbe_hw.c
+@@ -272,7 +272,7 @@ s32 txgbe_start_hw(struct txgbe_hw *hw)
+ 
+ 	/* Cache bit indicating need for crosstalk fix */
+ 	switch (hw->mac.type) {
+-	case txgbe_mac_raptor:
++	case txgbe_mac_sp:
+ 		hw->mac.get_device_caps(hw, &device_caps);
+ 		if (device_caps & TXGBE_DEVICE_CAPS_NO_CROSSTALK_WR)
+ 			hw->need_crosstalk_fix = false;
+@@ -1915,7 +1915,7 @@ static bool txgbe_need_crosstalk_fix(struct txgbe_hw *hw)
+  *
+  *  Reads the links register to determine if link is up and the current speed
+  **/
+-s32 txgbe_check_mac_link(struct txgbe_hw *hw, u32 *speed,
++s32 txgbe_check_mac_link_sp(struct txgbe_hw *hw, u32 *speed,
+ 				 bool *link_up, bool link_up_wait_to_complete)
+ {
+ 	u32 links_reg, links_orig;
+@@ -1928,7 +1928,7 @@ s32 txgbe_check_mac_link(struct txgbe_hw *hw, u32 *speed,
+ 		u32 sfp_cage_full;
+ 
+ 		switch (hw->mac.type) {
+-		case txgbe_mac_raptor:
++		case txgbe_mac_sp:
+ 			sfp_cage_full = !rd32m(hw, TXGBE_GPIODATA,
+ 					TXGBE_GPIOBIT_2);
+ 			break;
+@@ -2475,12 +2475,13 @@ s32 txgbe_init_shared_code(struct txgbe_hw *hw)
+ 
+ 	txgbe_init_ops_dummy(hw);
+ 	switch (hw->mac.type) {
+-	case txgbe_mac_raptor:
++	case txgbe_mac_sp:
++		txgbe_init_ops_sp(hw);
++		break;
+ 	case txgbe_mac_aml:
+ 	case txgbe_mac_aml40:
+-		status = txgbe_init_ops_pf(hw);
+ 		break;
+-	case txgbe_mac_raptor_vf:
++	case txgbe_mac_sp_vf:
+ 		status = txgbe_init_ops_vf(hw);
+ 		break;
+ 	default:
+@@ -2497,7 +2498,7 @@ s32 txgbe_init_shared_code(struct txgbe_hw *hw)
+ bool txgbe_is_pf(struct txgbe_hw *hw)
+ {
+ 	switch (hw->mac.type) {
+-	case txgbe_mac_raptor:
++	case txgbe_mac_sp:
+ 		return true;
+ 	default:
+ 		return false;
+@@ -2523,7 +2524,7 @@ s32 txgbe_set_mac_type(struct txgbe_hw *hw)
+ 	switch (hw->device_id) {
+ 	case TXGBE_DEV_ID_SP1000:
+ 	case TXGBE_DEV_ID_WX1820:
+-		hw->mac.type = txgbe_mac_raptor;
++		hw->mac.type = txgbe_mac_sp;
+ 		break;
+ 	case TXGBE_DEV_ID_AML:
+ 	case TXGBE_DEV_ID_AML5025:
+@@ -2537,7 +2538,7 @@ s32 txgbe_set_mac_type(struct txgbe_hw *hw)
+ 	case TXGBE_DEV_ID_SP1000_VF:
+ 	case TXGBE_DEV_ID_WX1820_VF:
+ 		hw->phy.media_type = txgbe_media_type_virtual;
+-		hw->mac.type = txgbe_mac_raptor_vf;
++		hw->mac.type = txgbe_mac_sp_vf;
+ 		break;
+ 	case TXGBE_DEV_ID_AML_VF:
+ 	case TXGBE_DEV_ID_AML5024_VF:
+@@ -2556,7 +2557,7 @@ s32 txgbe_set_mac_type(struct txgbe_hw *hw)
+ 	return err;
+ }
+ 
+-void txgbe_init_mac_link_ops(struct txgbe_hw *hw)
++void txgbe_init_mac_link_ops_sp(struct txgbe_hw *hw)
+ {
+ 	struct txgbe_mac_info *mac = &hw->mac;
+ 
+@@ -2616,7 +2617,7 @@ s32 txgbe_init_phy_raptor(struct txgbe_hw *hw)
+ 		goto init_phy_ops_out;
+ 
+ 	/* Setup function pointers based on detected SFP module and speeds */
+-	txgbe_init_mac_link_ops(hw);
++	txgbe_init_mac_link_ops_sp(hw);
+ 
+ 	/* If copper media, overwrite with copper function pointers */
+ 	if (phy->media_type == txgbe_media_type_copper) {
+@@ -2651,7 +2652,7 @@ s32 txgbe_setup_sfp_modules(struct txgbe_hw *hw)
+ 	if (hw->phy.sfp_type == txgbe_sfp_type_unknown)
+ 		return 0;
+ 
+-	txgbe_init_mac_link_ops(hw);
++	txgbe_init_mac_link_ops_sp(hw);
+ 
+ 	/* PHY config will finish before releasing the semaphore */
+ 	err = hw->mac.acquire_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
+@@ -2792,13 +2793,13 @@ s32 txgbe_flash_read_dword(struct txgbe_hw *hw, u32 addr, u32 *data)
+ }
+ 
+ /**
+- *  txgbe_init_ops_pf - Inits func ptrs and MAC type
++ *  txgbe_init_ops_generic - Inits func ptrs and MAC type
+  *  @hw: pointer to hardware structure
+  *
+  *  Initialize the function pointers and assign the MAC type.
+  *  Does not touch the hardware.
+  **/
+-s32 txgbe_init_ops_pf(struct txgbe_hw *hw)
++s32 txgbe_init_ops_generic(struct txgbe_hw *hw)
+ {
+ 	struct txgbe_bus_info *bus = &hw->bus;
+ 	struct txgbe_mac_info *mac = &hw->mac;
+@@ -2918,15 +2919,31 @@ s32 txgbe_init_ops_pf(struct txgbe_hw *hw)
+ 	return 0;
+ }
+ 
++void txgbe_init_ops_sp(struct txgbe_hw *hw)
++{
++	struct txgbe_mac_info *mac = &hw->mac;
++	struct txgbe_phy_info *phy = &hw->phy;
 +
-+	if (hw->mac.type == txgbe_mac_aml) {
-+		value = rd32(hw, TXGBE_GPIOEXT);
-+		if (value & TXGBE_SFP1_MOD_ABS_LS) {
-+			hw->phy.sfp_type = txgbe_sfp_type_not_present;
-+			return TXGBE_ERR_SFP_NOT_PRESENT;
-+		}
++	txgbe_init_ops_generic(hw);
++
++	/* PHY */
++	phy->get_media_type = txgbe_get_media_type_sp;
++
++	/* LINK */
++	mac->init_mac_link_ops = txgbe_init_mac_link_ops_sp;
++	mac->get_link_capabilities = txgbe_get_link_capabilities_sp;
++	mac->check_link = txgbe_check_mac_link_sp;
++}
++
+ /**
+- *  txgbe_get_link_capabilities_raptor - Determines link capabilities
++ *  txgbe_get_link_capabilities_sp - Determines link capabilities
+  *  @hw: pointer to hardware structure
+  *  @speed: pointer to link speed
+  *  @autoneg: true when autoneg or autotry is enabled
+  *
+  *  Determines the link capabilities by reading the AUTOC register.
+  **/
+-s32 txgbe_get_link_capabilities_raptor(struct txgbe_hw *hw,
++s32 txgbe_get_link_capabilities_sp(struct txgbe_hw *hw,
+ 				      u32 *speed,
+ 				      bool *autoneg)
+ {
+@@ -3027,12 +3044,12 @@ s32 txgbe_get_link_capabilities_raptor(struct txgbe_hw *hw,
+ }
+ 
+ /**
+- *  txgbe_get_media_type_raptor - Get media type
++ *  txgbe_get_media_type_sp - Get media type
+  *  @hw: pointer to hardware structure
+  *
+  *  Returns the media type (fiber, copper, backplane)
+  **/
+-u32 txgbe_get_media_type_raptor(struct txgbe_hw *hw)
++u32 txgbe_get_media_type_sp(struct txgbe_hw *hw)
+ {
+ 	u32 media_type;
+ 
+@@ -3565,8 +3582,10 @@ s32 txgbe_reset_hw(struct txgbe_hw *hw)
+ 	if (!hw->phy.reset_disable)
+ 		hw->phy.reset(hw);
+ 
+-	/* remember AUTOC from before we reset */
+-	autoc = hw->mac.autoc_read(hw);
++	if (hw->mac.type == txgbe_mac_sp) {
++		/* remember AUTOC from before we reset */
++		autoc = hw->mac.autoc_read(hw);
 +	}
  
- 	if (hw->phy.media_type != txgbe_media_type_fiber) {
- 		hw->phy.sfp_type = txgbe_sfp_type_not_present;
-@@ -811,6 +822,16 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
- 	if (err != 0)
- 		goto ERR_I2C;
+ mac_reset_top:
+ 	/* Do LAN reset, the MNG domain will not be reset. */
+@@ -3615,7 +3634,8 @@ s32 txgbe_reset_hw(struct txgbe_hw *hw)
+ 		msec_delay(50);
  
-+	err = hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_25GBE_COMP_CODES,
-+					      &comp_codes_25g);
-+	if (err != 0)
-+		goto ERR_I2C;
-+
-+	err = hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_COPPER_LENGTH,
-+					      &comp_copper_len);
-+	if (err != 0)
-+		goto ERR_I2C;
-+
- 	err = hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_CABLE_TECHNOLOGY,
- 					     &cable_tech);
- 	if (err != 0)
-@@ -832,12 +853,7 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
- 	  * 11  SFP_1g_sx_CORE0 - chip-specific
- 	  * 12  SFP_1g_sx_CORE1 - chip-specific
- 	  */
--	if (cable_tech & TXGBE_SFF_CABLE_DA_PASSIVE) {
--		if (hw->bus.lan_id == 0)
--			hw->phy.sfp_type = txgbe_sfp_type_da_cu_core0;
--		else
--			hw->phy.sfp_type = txgbe_sfp_type_da_cu_core1;
--	} else if (cable_tech & TXGBE_SFF_CABLE_DA_ACTIVE) {
-+	if (cable_tech & TXGBE_SFF_CABLE_DA_ACTIVE) {
- 		err = hw->phy.read_i2c_eeprom(hw,
- 			TXGBE_SFF_CABLE_SPEC_COMP, &cable_spec);
- 		if (err != 0)
-@@ -849,6 +865,17 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
- 		} else {
- 			hw->phy.sfp_type = txgbe_sfp_type_unknown;
- 		}
-+	} else if (comp_codes_25g == TXGBE_SFF_25GBASESR_CAPABLE ||
-+		   comp_codes_25g == TXGBE_SFF_25GBASEER_CAPABLE) {
-+		if (hw->bus.lan_id == 0)
-+			hw->phy.sfp_type = txgbe_sfp_type_25g_sr_core0;
-+		else
-+			hw->phy.sfp_type = txgbe_sfp_type_25g_sr_core1;
-+	} else if (comp_codes_25g == TXGBE_SFF_25GBASELR_CAPABLE) {
-+		if (hw->bus.lan_id == 0)
-+			hw->phy.sfp_type = txgbe_sfp_type_25g_lr_core0;
-+		else
-+			hw->phy.sfp_type = txgbe_sfp_type_25g_lr_core1;
- 	} else if (comp_codes_10g &
- 		   (TXGBE_SFF_10GBASESR_CAPABLE |
- 		    TXGBE_SFF_10GBASELR_CAPABLE)) {
-@@ -876,11 +903,20 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
- 
- 	/* Determine if the SFP+ PHY is dual speed or not. */
- 	hw->phy.multispeed_fiber = false;
--	if (((comp_codes_1g & TXGBE_SFF_1GBASESX_CAPABLE) &&
--	     (comp_codes_10g & TXGBE_SFF_10GBASESR_CAPABLE)) ||
--	    ((comp_codes_1g & TXGBE_SFF_1GBASELX_CAPABLE) &&
--	     (comp_codes_10g & TXGBE_SFF_10GBASELR_CAPABLE)))
--		hw->phy.multispeed_fiber = true;
-+	if (hw->mac.type == txgbe_mac_aml) {
-+		if ((comp_codes_25g == TXGBE_SFF_25GBASESR_CAPABLE ||
-+		     comp_codes_25g == TXGBE_SFF_25GBASELR_CAPABLE ||
-+		     comp_codes_25g == TXGBE_SFF_25GBASEER_CAPABLE) &&
-+		   ((comp_codes_10g & TXGBE_SFF_10GBASESR_CAPABLE) ||
-+		    (comp_codes_10g & TXGBE_SFF_10GBASELR_CAPABLE)))
-+			hw->phy.multispeed_fiber = true;
-+	} else {
-+		if (((comp_codes_1g & TXGBE_SFF_1GBASESX_CAPABLE) &&
-+		     (comp_codes_10g & TXGBE_SFF_10GBASESR_CAPABLE)) ||
-+		    ((comp_codes_1g & TXGBE_SFF_1GBASELX_CAPABLE) &&
-+		     (comp_codes_10g & TXGBE_SFF_10GBASELR_CAPABLE)))
-+			hw->phy.multispeed_fiber = true;
-+	}
- 
- 	/* Determine PHY vendor */
- 	if (hw->phy.type != txgbe_phy_nl) {
-@@ -938,7 +974,7 @@ s32 txgbe_identify_sfp_module(struct txgbe_hw *hw)
+ 		/* A temporary solution to set phy */
+-		txgbe_set_phy_temp(hw);
++		if (hw->mac.type == txgbe_mac_sp)
++			txgbe_set_phy_temp(hw);
  	}
  
- 	/* Verify supported 1G SFP modules */
--	if (comp_codes_10g == 0 &&
-+	if (comp_codes_10g == 0 && comp_codes_25g == 0 &&
- 	    !(hw->phy.sfp_type == txgbe_sfp_type_1g_cu_core1 ||
- 	      hw->phy.sfp_type == txgbe_sfp_type_1g_cu_core0 ||
- 	      hw->phy.sfp_type == txgbe_sfp_type_1g_lx_core0 ||
-@@ -986,6 +1022,7 @@ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw)
- 	u8 cable_length = 0;
- 	u8 device_tech = 0;
- 	bool active_cable = false;
-+	u32 value;
+ 	/* Store the permanent mac address */
+diff --git a/drivers/net/txgbe/base/txgbe_hw.h b/drivers/net/txgbe/base/txgbe_hw.h
+index 7a45020824..62c027c850 100644
+--- a/drivers/net/txgbe/base/txgbe_hw.h
++++ b/drivers/net/txgbe/base/txgbe_hw.h
+@@ -56,7 +56,7 @@ s32 txgbe_set_vlvf(struct txgbe_hw *hw, u32 vlan, u32 vind,
+ s32 txgbe_clear_vfta(struct txgbe_hw *hw);
+ s32 txgbe_find_vlvf_slot(struct txgbe_hw *hw, u32 vlan, bool vlvf_bypass);
  
- 	if (hw->phy.media_type != txgbe_media_type_fiber_qsfp) {
- 		hw->phy.sfp_type = txgbe_sfp_type_not_present;
-@@ -993,6 +1030,16 @@ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw)
- 		goto out;
- 	}
+-s32 txgbe_check_mac_link(struct txgbe_hw *hw,
++s32 txgbe_check_mac_link_sp(struct txgbe_hw *hw,
+ 			       u32 *speed,
+ 			       bool *link_up, bool link_up_wait_to_complete);
  
-+	if (hw->mac.type == txgbe_mac_aml40) {
-+		/* config GPIO before read i2c */
-+		wr32(hw, TXGBE_GPIODATA, TXGBE_GPIOBIT_1);
-+		value = rd32(hw, TXGBE_GPIOEXT);
-+		if (value & TXGBE_SFP1_MOD_PRST_LS) {
-+			hw->phy.sfp_type = txgbe_sfp_type_not_present;
-+			return TXGBE_ERR_SFP_NOT_PRESENT;
-+		}
-+	}
-+
- 	err = hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_IDENTIFIER,
- 					     &identifier);
- ERR_I2C:
-@@ -1024,10 +1071,27 @@ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw)
- 
- 	if (comp_codes_10g & TXGBE_SFF_QSFP_DA_PASSIVE_CABLE) {
- 		hw->phy.type = txgbe_phy_qsfp_unknown_passive;
-+		if (hw->mac.type == txgbe_mac_aml40) {
-+			if (hw->bus.lan_id == 0)
-+				hw->phy.sfp_type = txgbe_qsfp_type_40g_cu_core0;
-+			else
-+				hw->phy.sfp_type = txgbe_qsfp_type_40g_cu_core1;
-+		} else {
-+			if (hw->bus.lan_id == 0)
-+				hw->phy.sfp_type = txgbe_sfp_type_da_cu_core0;
-+			else
-+				hw->phy.sfp_type = txgbe_sfp_type_da_cu_core1;
-+		}
-+	} else if (comp_codes_10g & TXGBE_SFF_40GBASE_SR4) {
-+		if (hw->bus.lan_id == 0)
-+			hw->phy.sfp_type = txgbe_qsfp_type_40g_sr_core0;
-+		else
-+			hw->phy.sfp_type = txgbe_qsfp_type_40g_sr_core1;
-+	} else if (comp_codes_10g & TXGBE_SFF_40GBASE_LR4) {
- 		if (hw->bus.lan_id == 0)
--			hw->phy.sfp_type = txgbe_sfp_type_da_cu_core0;
-+			hw->phy.sfp_type = txgbe_qsfp_type_40g_lr_core0;
- 		else
--			hw->phy.sfp_type = txgbe_sfp_type_da_cu_core1;
-+			hw->phy.sfp_type = txgbe_qsfp_type_40g_lr_core1;
- 	} else if (comp_codes_10g & (TXGBE_SFF_10GBASESR_CAPABLE |
- 				     TXGBE_SFF_10GBASELR_CAPABLE)) {
- 		if (hw->bus.lan_id == 0)
-diff --git a/drivers/net/txgbe/base/txgbe_phy.h b/drivers/net/txgbe/base/txgbe_phy.h
-index 4dfe18930c..c02be3cc34 100644
---- a/drivers/net/txgbe/base/txgbe_phy.h
-+++ b/drivers/net/txgbe/base/txgbe_phy.h
-@@ -249,6 +249,8 @@
- #define TXGBE_SFF_VENDOR_OUI_BYTE2	0x27
- #define TXGBE_SFF_1GBE_COMP_CODES	0x06
- #define TXGBE_SFF_10GBE_COMP_CODES	0x03
-+#define TXGBE_SFF_25GBE_COMP_CODES	0x24
-+#define TXGBE_SFF_COPPER_LENGTH		0x12
- #define TXGBE_SFF_CABLE_TECHNOLOGY	0x08
- #define   TXGBE_SFF_CABLE_DA_PASSIVE    0x4
- #define   TXGBE_SFF_CABLE_DA_ACTIVE     0x8
-@@ -275,6 +277,23 @@
- #define TXGBE_SFF_1GBASET_CAPABLE		0x8
- #define TXGBE_SFF_10GBASESR_CAPABLE		0x10
- #define TXGBE_SFF_10GBASELR_CAPABLE		0x20
-+#define TXGBE_SFF_25GBASESR_CAPABLE		0x2
-+#define TXGBE_SFF_25GBASELR_CAPABLE		0x3
-+#define TXGBE_SFF_25GBASEER_CAPABLE		0x4
-+#define TXGBE_SFF_25GBASECR_91FEC		0xB
-+#define TXGBE_SFF_25GBASECR_74FEC		0xC
-+#define TXGBE_SFF_25GBASECR_NOFEC		0xD
-+#define TXGBE_SFF_40GBASE_SR_CAPABLE		0x10
-+#define TXGBE_SFF_4x10GBASESR_CAP		0x11
-+#define TXGBE_SFF_40GBASEPSM4_PARALLEL		0x12
-+#define TXGBE_SFF_40GBASE_SWMD4_CAP		0x1f
-+
-+#define TXGBE_SFF_DA_SPEC_ACTIVE_LIMITING	0x4
-+#define TXGBE_SFF_25GAUI_C2M_AOC_BER_5		0x1
-+#define TXGBE_SFF_25GAUI_C2M_ACC_BER_5		0x8
-+#define TXGBE_SFF_25GAUI_C2M_AOC_BER_12		0x18
-+#define TXGBE_SFF_25GAUI_C2M_ACC_BER_12		0x19
-+
- #define TXGBE_SFF_SOFT_RS_SELECT_MASK		0x8
- #define TXGBE_SFF_SOFT_RS_SELECT_10G		0x8
- #define TXGBE_SFF_SOFT_RS_SELECT_1G		0x0
-@@ -290,6 +309,10 @@
- #define TXGBE_I2C_EEPROM_STATUS_FAIL		0x2
- #define TXGBE_I2C_EEPROM_STATUS_IN_PROGRESS	0x3
- 
-+#define TXGBE_SFF_40GBASE_CR4			0x8
-+#define TXGBE_SFF_40GBASE_SR4			0x4
-+#define TXGBE_SFF_40GBASE_LR4			0x2
-+
- /* EEPROM for SFF-8472 (dev_addr = 0xA2) */
- #define TXGBE_I2C_EEPROM_DEV_ADDR2	0xA2
- 
+@@ -87,10 +87,11 @@ s32 txgbe_negotiate_fc(struct txgbe_hw *hw, u32 adv_reg, u32 lp_reg,
+ s32 txgbe_init_shared_code(struct txgbe_hw *hw);
+ bool txgbe_is_pf(struct txgbe_hw *hw);
+ s32 txgbe_set_mac_type(struct txgbe_hw *hw);
+-s32 txgbe_init_ops_pf(struct txgbe_hw *hw);
+-s32 txgbe_get_link_capabilities_raptor(struct txgbe_hw *hw,
++s32 txgbe_init_ops_generic(struct txgbe_hw *hw);
++void txgbe_init_ops_sp(struct txgbe_hw *hw);
++s32 txgbe_get_link_capabilities_sp(struct txgbe_hw *hw,
+ 				      u32 *speed, bool *autoneg);
+-u32 txgbe_get_media_type_raptor(struct txgbe_hw *hw);
++u32 txgbe_get_media_type_sp(struct txgbe_hw *hw);
+ void txgbe_disable_tx_laser_multispeed_fiber(struct txgbe_hw *hw);
+ void txgbe_enable_tx_laser_multispeed_fiber(struct txgbe_hw *hw);
+ void txgbe_flap_tx_laser_multispeed_fiber(struct txgbe_hw *hw);
+@@ -104,7 +105,7 @@ s32 txgbe_start_mac_link_raptor(struct txgbe_hw *hw,
+ s32 txgbe_setup_mac_link(struct txgbe_hw *hw, u32 speed,
+ 			       bool autoneg_wait_to_complete);
+ s32 txgbe_setup_sfp_modules(struct txgbe_hw *hw);
+-void txgbe_init_mac_link_ops(struct txgbe_hw *hw);
++void txgbe_init_mac_link_ops_sp(struct txgbe_hw *hw);
+ s32 txgbe_reset_hw(struct txgbe_hw *hw);
+ s32 txgbe_start_hw_raptor(struct txgbe_hw *hw);
+ s32 txgbe_init_phy_raptor(struct txgbe_hw *hw);
 diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
-index 3b0bf08ea2..e75597591f 100644
+index e75597591f..ab1a11230c 100644
 --- a/drivers/net/txgbe/base/txgbe_regs.h
 +++ b/drivers/net/txgbe/base/txgbe_regs.h
-@@ -1605,7 +1605,10 @@ enum txgbe_5tuple_protocol {
- #define TXGBE_GPIOINTSTAT               0x014840
- #define TXGBE_GPIORAWINTSTAT            0x014844
- #define TXGBE_GPIOEOI                   0x01484C
--
-+#define TXGBE_GPIOEXT                   0x014850
-+#define   TXGBE_SFP1_MOD_ABS_LS         MS(2, 0x1) /* GPIO_EXT SFP ABSENT*/
-+#define   TXGBE_SFP1_RX_LOS_LS          MS(3, 0x1) /* GPIO_EXT RX LOSS */
-+#define   TXGBE_SFP1_MOD_PRST_LS        MS(4, 0x1) /* GPIO_EXT SFP ABSENT*/
- 
- #define TXGBE_ARBPOOLIDX                0x01820C
- #define TXGBE_ARBTXRATE                 0x018404
+@@ -1737,11 +1737,11 @@ txgbe_map_reg(struct txgbe_hw *hw, u32 reg)
+ {
+ 	switch (reg) {
+ 	case TXGBE_REG_RSSTBL:
+-		if (hw->mac.type == txgbe_mac_raptor_vf)
++		if (hw->mac.type == txgbe_mac_sp_vf)
+ 			reg = TXGBE_VFRSSTBL(0);
+ 		break;
+ 	case TXGBE_REG_RSSKEY:
+-		if (hw->mac.type == txgbe_mac_raptor_vf)
++		if (hw->mac.type == txgbe_mac_sp_vf)
+ 			reg = TXGBE_VFRSSKEY(0);
+ 		break;
+ 	default:
+@@ -1917,10 +1917,10 @@ po32m(struct txgbe_hw *hw, u32 reg, u32 mask, u32 expect, u32 *actual,
+ static inline void txgbe_flush(struct txgbe_hw *hw)
+ {
+ 	switch (hw->mac.type) {
+-	case txgbe_mac_raptor:
++	case txgbe_mac_sp:
+ 		rd32(hw, TXGBE_PWR);
+ 		break;
+-	case txgbe_mac_raptor_vf:
++	case txgbe_mac_sp_vf:
+ 		rd32(hw, TXGBE_VFSTATUS);
+ 		break;
+ 	default:
 diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
-index a34c782ec8..2d13539f87 100644
+index 2d13539f87..4d825bec44 100644
 --- a/drivers/net/txgbe/base/txgbe_type.h
 +++ b/drivers/net/txgbe/base/txgbe_type.h
-@@ -206,6 +206,18 @@ enum txgbe_sfp_type {
- 	txgbe_sfp_type_1g_sx_core1,
- 	txgbe_sfp_type_1g_lx_core0,
- 	txgbe_sfp_type_1g_lx_core1,
-+	txgbe_sfp_type_25g_sr_core0,
-+	txgbe_sfp_type_25g_sr_core1,
-+	txgbe_sfp_type_25g_lr_core0,
-+	txgbe_sfp_type_25g_lr_core1,
-+	txgbe_sfp_type_25g_aoc_core0,
-+	txgbe_sfp_type_25g_aoc_core1,
-+	txgbe_qsfp_type_40g_cu_core0,
-+	txgbe_qsfp_type_40g_cu_core1,
-+	txgbe_qsfp_type_40g_sr_core0,
-+	txgbe_qsfp_type_40g_sr_core1,
-+	txgbe_qsfp_type_40g_lr_core0,
-+	txgbe_qsfp_type_40g_lr_core1,
- 	txgbe_sfp_type_not_present = 0xFFFE,
- 	txgbe_sfp_type_not_known = 0xFFFF
+@@ -139,10 +139,10 @@ enum txgbe_eeprom_type {
+ 
+ enum txgbe_mac_type {
+ 	txgbe_mac_unknown = 0,
+-	txgbe_mac_raptor,
++	txgbe_mac_sp,
+ 	txgbe_mac_aml,
+ 	txgbe_mac_aml40,
+-	txgbe_mac_raptor_vf,
++	txgbe_mac_sp_vf,
+ 	txgbe_mac_aml_vf,
+ 	txgbe_num_macs
  };
+@@ -544,6 +544,7 @@ struct txgbe_mac_info {
+ 	s32 (*prot_autoc_read)(struct txgbe_hw *hw, bool *locked, u64 *value);
+ 	s32 (*prot_autoc_write)(struct txgbe_hw *hw, bool locked, u64 value);
+ 	s32 (*negotiate_api_version)(struct txgbe_hw *hw, int api);
++	void (*init_mac_link_ops)(struct txgbe_hw *hw);
+ 
+ 	/* Link */
+ 	void (*disable_tx_laser)(struct txgbe_hw *hw);
+diff --git a/drivers/net/txgbe/base/txgbe_vf.c b/drivers/net/txgbe/base/txgbe_vf.c
+index 8c731b4776..5e41ba1a3e 100644
+--- a/drivers/net/txgbe/base/txgbe_vf.c
++++ b/drivers/net/txgbe/base/txgbe_vf.c
+@@ -488,7 +488,7 @@ s32 txgbe_check_mac_link_vf(struct txgbe_hw *hw, u32 *speed,
+ 	/* for SFP+ modules and DA cables it can take up to 500usecs
+ 	 * before the link status is correct
+ 	 */
+-	if (mac->type == txgbe_mac_raptor_vf && wait_to_complete) {
++	if (mac->type == txgbe_mac_sp_vf && wait_to_complete) {
+ 		if (po32m(hw, TXGBE_VFSTATUS, TXGBE_VFSTATUS_UP,
+ 			0, NULL, 5, 100))
+ 			goto out;
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index d49030357d..82cec488f4 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -385,7 +385,7 @@ txgbe_dev_queue_stats_mapping_set(struct rte_eth_dev *eth_dev,
+ 	uint32_t q_map;
+ 	uint8_t n, offset;
+ 
+-	if (hw->mac.type != txgbe_mac_raptor)
++	if (hw->mac.type != txgbe_mac_sp)
+ 		return -ENOSYS;
+ 
+ 	if (stat_idx & ~QMAP_FIELD_RESERVED_BITS_MASK)
+@@ -1806,7 +1806,7 @@ txgbe_dev_start(struct rte_eth_dev *dev)
+ 	}
+ 
+ 	/* Skip link setup if loopback mode is enabled. */
+-	if (hw->mac.type == txgbe_mac_raptor &&
++	if (hw->mac.type == txgbe_mac_sp &&
+ 	    dev->data->dev_conf.lpbk_mode)
+ 		goto skip_link_setup;
+ 
+@@ -3072,7 +3072,7 @@ txgbe_dev_link_update_share(struct rte_eth_dev *dev,
+ 	}
+ 
+ 	/* Re configure MAC RX */
+-	if (hw->mac.type == txgbe_mac_raptor) {
++	if (hw->mac.type == txgbe_mac_sp) {
+ 		reg = rd32(hw, TXGBE_MACRXCFG);
+ 		wr32(hw, TXGBE_MACRXCFG, reg);
+ 		wr32m(hw, TXGBE_MACRXFLT, TXGBE_MACRXFLT_PROMISC,
+@@ -3858,7 +3858,7 @@ txgbe_uc_hash_table_set(struct rte_eth_dev *dev,
+ 	struct txgbe_uta_info *uta_info = TXGBE_DEV_UTA_INFO(dev);
+ 
+ 	/* The UTA table only exists on pf hardware */
+-	if (hw->mac.type < txgbe_mac_raptor)
++	if (hw->mac.type < txgbe_mac_sp)
+ 		return -ENOTSUP;
+ 
+ 	vector = txgbe_uta_vector(hw, mac_addr);
+@@ -3903,7 +3903,7 @@ txgbe_uc_all_hash_table_set(struct rte_eth_dev *dev, uint8_t on)
+ 	int i;
+ 
+ 	/* The UTA table only exists on pf hardware */
+-	if (hw->mac.type < txgbe_mac_raptor)
++	if (hw->mac.type < txgbe_mac_sp)
+ 		return -ENOTSUP;
+ 
+ 	if (on) {
+@@ -4969,8 +4969,8 @@ bool
+ txgbe_rss_update_sp(enum txgbe_mac_type mac_type)
+ {
+ 	switch (mac_type) {
+-	case txgbe_mac_raptor:
+-	case txgbe_mac_raptor_vf:
++	case txgbe_mac_sp:
++	case txgbe_mac_sp_vf:
+ 		return 1;
+ 	default:
+ 		return 0;
+diff --git a/drivers/net/txgbe/txgbe_ethdev_vf.c b/drivers/net/txgbe/txgbe_ethdev_vf.c
+index 847febf8c3..6505c5848c 100644
+--- a/drivers/net/txgbe/txgbe_ethdev_vf.c
++++ b/drivers/net/txgbe/txgbe_ethdev_vf.c
+@@ -375,7 +375,7 @@ eth_txgbevf_dev_init(struct rte_eth_dev *eth_dev)
+ 
+ 	PMD_INIT_LOG(DEBUG, "port %d vendorID=0x%x deviceID=0x%x mac.type=%s",
+ 		     eth_dev->data->port_id, pci_dev->id.vendor_id,
+-		     pci_dev->id.device_id, "txgbe_mac_raptor_vf");
++		     pci_dev->id.device_id, "txgbe_mac_sp_vf");
+ 
+ 	return 0;
+ }
+diff --git a/drivers/net/txgbe/txgbe_flow.c b/drivers/net/txgbe/txgbe_flow.c
+index 99a76daca0..31af3593ed 100644
+--- a/drivers/net/txgbe/txgbe_flow.c
++++ b/drivers/net/txgbe/txgbe_flow.c
+@@ -2854,7 +2854,7 @@ txgbe_parse_fdir_filter(struct rte_eth_dev *dev,
+ 
+ step_next:
+ 
+-	if (hw->mac.type == txgbe_mac_raptor &&
++	if (hw->mac.type == txgbe_mac_sp &&
+ 		rule->fdirflags == TXGBE_FDIRPICMD_DROP &&
+ 		(rule->input.src_port != 0 || rule->input.dst_port != 0))
+ 		return -ENOTSUP;
+diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
+index e6f33739c4..5c05dfd90a 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.c
++++ b/drivers/net/txgbe/txgbe_rxtx.c
+@@ -80,7 +80,7 @@ txgbe_is_vf(struct rte_eth_dev *dev)
+ 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
+ 
+ 	switch (hw->mac.type) {
+-	case txgbe_mac_raptor_vf:
++	case txgbe_mac_sp_vf:
+ 		return 1;
+ 	default:
+ 		return 0;
+@@ -2121,10 +2121,10 @@ txgbe_get_rx_port_offloads(struct rte_eth_dev *dev)
+ 	 * RSC is only supported by PF devices in a non-SR-IOV
+ 	 * mode.
+ 	 */
+-	if (hw->mac.type == txgbe_mac_raptor && !sriov->active)
++	if (hw->mac.type == txgbe_mac_sp && !sriov->active)
+ 		offloads |= RTE_ETH_RX_OFFLOAD_TCP_LRO;
+ 
+-	if (hw->mac.type == txgbe_mac_raptor)
++	if (hw->mac.type == txgbe_mac_sp)
+ 		offloads |= RTE_ETH_RX_OFFLOAD_MACSEC_STRIP;
+ 
+ 	offloads |= RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM;
+@@ -2498,7 +2498,7 @@ txgbe_dev_tx_queue_setup(struct rte_eth_dev *dev,
+ 	/* Modification to set tail pointer for virtual function
+ 	 * if vf is detected.
+ 	 */
+-	if (hw->mac.type == txgbe_mac_raptor_vf) {
++	if (hw->mac.type == txgbe_mac_sp_vf) {
+ 		txq->tdt_reg_addr = TXGBE_REG_ADDR(hw, TXGBE_TXWP(queue_idx));
+ 		txq->tdc_reg_addr = TXGBE_REG_ADDR(hw, TXGBE_TXCFG(queue_idx));
+ 	} else {
+@@ -2791,7 +2791,7 @@ txgbe_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 	/*
+ 	 * Modified to setup VFRDT for Virtual Function
+ 	 */
+-	if (hw->mac.type == txgbe_mac_raptor_vf) {
++	if (hw->mac.type == txgbe_mac_sp_vf) {
+ 		rxq->rdt_reg_addr =
+ 			TXGBE_REG_ADDR(hw, TXGBE_RXWP(queue_idx));
+ 		rxq->rdh_reg_addr =
+@@ -3037,7 +3037,7 @@ txgbe_rss_disable(struct rte_eth_dev *dev)
+ 	struct txgbe_hw *hw;
+ 
+ 	hw = TXGBE_DEV_HW(dev);
+-	if (hw->mac.type == txgbe_mac_raptor_vf)
++	if (hw->mac.type == txgbe_mac_sp_vf)
+ 		wr32m(hw, TXGBE_VFPLCFG, TXGBE_VFPLCFG_RSSENA, 0);
+ 	else
+ 		wr32m(hw, TXGBE_RACTL, TXGBE_RACTL_RSSENA, 0);
+@@ -3074,7 +3074,7 @@ txgbe_dev_rss_hash_update(struct rte_eth_dev *dev,
+ 
+ 	/* Set configured hashing protocols */
+ 	rss_hf = rss_conf->rss_hf & TXGBE_RSS_OFFLOAD_ALL;
+-	if (hw->mac.type == txgbe_mac_raptor_vf) {
++	if (hw->mac.type == txgbe_mac_sp_vf) {
+ 		mrqc = rd32(hw, TXGBE_VFPLCFG);
+ 		mrqc &= ~TXGBE_VFPLCFG_RSSMASK;
+ 		if (rss_hf & RTE_ETH_RSS_IPV4)
+@@ -3166,7 +3166,7 @@ txgbe_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
+ 	}
+ 
+ 	rss_hf = 0;
+-	if (hw->mac.type == txgbe_mac_raptor_vf) {
++	if (hw->mac.type == txgbe_mac_sp_vf) {
+ 		mrqc = rd32(hw, TXGBE_VFPLCFG);
+ 		if (mrqc & TXGBE_VFPLCFG_RSSIPV4)
+ 			rss_hf |= RTE_ETH_RSS_IPV4;
+@@ -3627,7 +3627,7 @@ txgbe_dcb_hw_arbite_tx_config(struct txgbe_hw *hw, uint16_t *refill,
+ 		uint16_t *max, uint8_t *bwg_id, uint8_t *tsa, uint8_t *map)
+ {
+ 	switch (hw->mac.type) {
+-	case txgbe_mac_raptor:
++	case txgbe_mac_sp:
+ 		txgbe_dcb_config_tx_desc_arbiter_raptor(hw, refill,
+ 							max, bwg_id, tsa);
+ 		txgbe_dcb_config_tx_data_arbiter_raptor(hw, refill,
+@@ -4555,7 +4555,7 @@ txgbe_dev_rx_init(struct rte_eth_dev *dev)
+ 	 * If loopback mode is configured, set LPBK bit.
+ 	 */
+ 	hlreg0 = rd32(hw, TXGBE_PSRCTL);
+-	if (hw->mac.type == txgbe_mac_raptor &&
++	if (hw->mac.type == txgbe_mac_sp &&
+ 	    dev->data->dev_conf.lpbk_mode)
+ 		hlreg0 |= TXGBE_PSRCTL_LBENA;
+ 	else
+@@ -4640,7 +4640,7 @@ txgbe_dev_rx_init(struct rte_eth_dev *dev)
+ 
+ 	wr32(hw, TXGBE_PSRCTL, rxcsum);
+ 
+-	if (hw->mac.type == txgbe_mac_raptor) {
++	if (hw->mac.type == txgbe_mac_sp) {
+ 		rdrxctl = rd32(hw, TXGBE_SECRXCTL);
+ 		if (rx_conf->offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC)
+ 			rdrxctl &= ~TXGBE_SECRXCTL_CRCSTRIP;
+@@ -4765,7 +4765,7 @@ txgbe_dev_rxtx_start(struct rte_eth_dev *dev)
+ 	hw->mac.enable_rx_dma(hw, rxctrl);
+ 
+ 	/* If loopback mode is enabled, set up the link accordingly */
+-	if (hw->mac.type == txgbe_mac_raptor &&
++	if (hw->mac.type == txgbe_mac_sp &&
+ 	    dev->data->dev_conf.lpbk_mode)
+ 		txgbe_setup_loopback_link_raptor(hw);
+ 
 -- 
 2.21.0.windows.1
 
