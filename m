@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 259F4CCA470
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Oct 2025 07:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03270CCA470
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Oct 2025 07:38:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EB87540651;
-	Wed,  1 Oct 2025 09:38:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CE85340685;
+	Wed,  1 Oct 2025 09:38:06 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 29222400EF
- for <dev@dpdk.org>; Wed,  1 Oct 2025 09:38:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B60D8400EF
+ for <dev@dpdk.org>; Wed,  1 Oct 2025 09:38:05 +0200 (CEST)
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5912vnEk024470;
- Wed, 1 Oct 2025 00:37:59 -0700
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5916ODog025179;
+ Wed, 1 Oct 2025 00:38:05 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=W
- s+gN8A93fPbU0LuueqPpxAnaunI16U/5ytup0MTyBY=; b=BuWzLq0Cu34RulZ/n
- 0zWGo27C+KC161ENRv4OPKRDJVmF2od0p4Ih5EhVWqTxbh5zI4o2Qx2z/DWDbP/o
- Hb3JAqzdSQVtJtIhn1al+xdmjUAEfPnSMy2oqMV8hU70rSiwNmOXohFVE6jg/9Hv
- KJKipC0Gq1/1dPDPZmvIL5j/Iz7Cf8+25U6e3vMbRXUWNAv6XByxXKFyG4hF+AKs
- Pru5fpPhEGKbUwZvSOJb6ajLeA8Ee2Jtfr44e59SSencFRVIDFbbYi81n7Afc6T6
- mLw1dR+No1iKiOQ8slly7SpipPJEg/UxqAazP3tNFo99lOWLkQFJPWfFPGWjPsSx
- mkUlg==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=h
+ z0Czguk1d1i/bfI7EwF18pOEvvrBg1a34N9VoyUsV4=; b=fc6xrw1I54GI7yZ7J
+ uPwIti9yQgiO7bmWrXHvXx0MVmkmeySgWfnveVzXPFbUlqApT9dyWY6qMvNzAA4k
+ dcZQKPvxnuBUEnxLCQjE3Oktg8Shr199OjA1SH8Zp5IQ2ssCwTB9OPJ2kjP3dcef
+ bQWnJp2EpFN5pIkeFH4wCyveJ5nCGXKeEJwc/36gMlUyBfA3nttUfgx1OywERdtJ
+ lFn9Zv24m9YEo4tQc7Zj4zaJKRoB0Nk1PDq2PvkJ0U1VcRJE13HEejMNMmwm1Jia
+ KjRAth3u6QKQxXZhQGNyFJo0MDY/6RMJS+Si4aOhwYlHacikRrbUVKzpKApXemw6
+ MKqCA==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49efefhcgf-2
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49efefhcgr-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 01 Oct 2025 00:37:59 -0700 (PDT)
+ Wed, 01 Oct 2025 00:38:04 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 1 Oct 2025 00:38:06 -0700
+ 15.2.1544.25; Wed, 1 Oct 2025 00:38:12 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 1 Oct 2025 00:38:06 -0700
+ Transport; Wed, 1 Oct 2025 00:38:12 -0700
 Received: from IN-lckQE5Rwctls.marvell.com (unknown [10.193.79.12])
- by maili.marvell.com (Postfix) with ESMTP id 4ACE83F70C2;
- Wed,  1 Oct 2025 00:37:55 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 3BA3E3F70C2;
+ Wed,  1 Oct 2025 00:38:00 -0700 (PDT)
 From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
 To: <dev@dpdk.org>, Akhil Goyal <gakhil@marvell.com>, Fan Zhang
  <fanzhang.oss@gmail.com>, Kai Ji <kai.ji@intel.com>
 CC: <anoobj@marvell.com>, Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-Subject: [PATCH v2 0/3] cryptodev: support PQC ML algorithms
-Date: Wed, 1 Oct 2025 13:07:52 +0530
-Message-ID: <20251001073758.1295-1-gmuthukrishn@marvell.com>
+Subject: [PATCH v2 1/3] cryptodev: support PQC ML algorithms
+Date: Wed, 1 Oct 2025 13:07:53 +0530
+Message-ID: <20251001073758.1295-2-gmuthukrishn@marvell.com>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20250930180316.1021-1-gmuthukrishn@marvell.com>
+In-Reply-To: <20251001073758.1295-1-gmuthukrishn@marvell.com>
 References: <20250930180316.1021-1-gmuthukrishn@marvell.com>
+ <20251001073758.1295-1-gmuthukrishn@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: d46GafSeZTJeVROx9Z1Y46gUSpD8BAGS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDExMyBTYWx0ZWRfX0nH3q8Pw3fTX
- xuI41ZHQrlYu4Wr3elEgtSBHmgVdl/pmI4qNdEizCZd7PDAgm5wPDNceFhDG3phnFYLQJWlVzJa
- FXVMDhzzhDxjKkflUvUGFLu8w5QcKPb+nYDMOf1BeFZu/erfFz2lY2epTOckPUWtZwUsWPInwYP
- EKHhSTGf+PXPd05uWJ7z31ySfNtypLRXurVEp+glAev9/jE/jHhVPQKhxik2OKw3N8YW/ydoI+J
- HmxlMmBTIfQsg+857pdxoRIonCKIhBU6VF51Sfsvv0OGxOIRjrIsVSPzo5AQlYQEDhxyyqceaJG
- I2dSt8sWyMXVwEDdsfZA+q8MnvV+SZjL9xdKMUZBzr6ouhCujb0LcKUBUQh9oN8e1KcAAe7iyZ7
- cb5yar58sQtroaS32NguNA1t18UAYQ==
-X-Authority-Analysis: v=2.4 cv=RorI7SmK c=1 sm=1 tr=0 ts=68dcda57 cx=c_pps
+X-Proofpoint-GUID: X_KklUIg_vuTfdGrLA4etDp8uThpjaGu
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDExMyBTYWx0ZWRfX9vb1LvqUkGYC
+ hLKfxItP+KTX4Qbj/Y6FBrM02bM/5E/2AoswGlGIsiWsnh5qm+lVscbbeVncTYZ//euHTJioyuz
+ WDSqWsybEw0qX5+YVpAL9JY071fQ63614HZg+paGlTQ3PeXE0/aSNIBMys6ve3oi1PxqR7jok3Z
+ 35ltUJHu221j2J3E4m0rqSw9S79gADwRewzBT1JO1ATYcgAcDCBK81SUykANLivJj6F0kp3A3Hk
+ SvgR7uk09dwLVFkR4QBXqnCOsx2fT1DxGcdYYSSqBCP2/XS5OfxhOKLqcJZBOObLNj07PakOJrq
+ jkzpF9ttUQS2NhpPCt+Tpzr+Lgddu9RYLkcz2JRetuxlLWZOacfobeTQgnYenth3VVSr0680MD1
+ NLpLs7eDl/KTvre26h2EuqXmgvbc0A==
+X-Authority-Analysis: v=2.4 cv=RorI7SmK c=1 sm=1 tr=0 ts=68dcda5c cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=x6icFKpwvdMA:10 a=jAYgDtSajxceOUjdMdoA:9
-X-Proofpoint-ORIG-GUID: d46GafSeZTJeVROx9Z1Y46gUSpD8BAGS
+ a=x6icFKpwvdMA:10 a=M5GUcnROAAAA:8 a=ycAqupunDWhcI6OXPpcA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: X_KklUIg_vuTfdGrLA4etDp8uThpjaGu
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-01_01,2025-09-29_04,2025-03-28_01
@@ -79,30 +81,532 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series added support for PQC ML-KEM and ML-DSA algorithms.
+Add support for PQC ML-KEM and ML-DSA algorithms.
 
-Gowrishankar Muthukrishnan (3):
-  cryptodev: support PQC ML algorithms
-  crypto/openssl: add ML crypto support
-  app/test: add ML crypto test vectors
+Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
+---
+ doc/guides/cryptodevs/features/default.ini |   2 +
+ doc/guides/prog_guide/cryptodev_lib.rst    |   3 +-
+ doc/guides/rel_notes/release_25_11.rst     |  11 +
+ lib/cryptodev/rte_crypto_asym.h            | 306 +++++++++++++++++++++
+ lib/cryptodev/rte_cryptodev.c              |  60 ++++
+ lib/cryptodev/rte_cryptodev.h              |  15 +-
+ 6 files changed, 394 insertions(+), 3 deletions(-)
 
- app/test/test_cryptodev_asym.c                |  856 ++++++++
- app/test/test_cryptodev_ml_dsa_test_vectors.h | 1856 +++++++++++++++++
- app/test/test_cryptodev_ml_kem_test_vectors.h |  873 ++++++++
- doc/guides/cryptodevs/features/default.ini    |    2 +
- doc/guides/cryptodevs/features/openssl.ini    |    2 +
- doc/guides/prog_guide/cryptodev_lib.rst       |    3 +-
- doc/guides/rel_notes/release_25_11.rst        |   11 +
- drivers/crypto/openssl/openssl_pmd_private.h  |   16 +
- drivers/crypto/openssl/rte_openssl_pmd.c      |  870 ++++++++
- drivers/crypto/openssl/rte_openssl_pmd_ops.c  |  131 ++
- lib/cryptodev/rte_crypto_asym.h               |  306 +++
- lib/cryptodev/rte_cryptodev.c                 |   60 +
- lib/cryptodev/rte_cryptodev.h                 |   15 +-
- 13 files changed, 4998 insertions(+), 3 deletions(-)
- create mode 100644 app/test/test_cryptodev_ml_dsa_test_vectors.h
- create mode 100644 app/test/test_cryptodev_ml_kem_test_vectors.h
-
+diff --git a/doc/guides/cryptodevs/features/default.ini b/doc/guides/cryptodevs/features/default.ini
+index 116ffce249..64198f013a 100644
+--- a/doc/guides/cryptodevs/features/default.ini
++++ b/doc/guides/cryptodevs/features/default.ini
+@@ -134,6 +134,8 @@ ECPM                    =
+ ECDH                    =
+ SM2                     =
+ EdDSA                   =
++ML-DSA                  =
++ML-KEM                  =
+ 
+ ;
+ ; Supported Operating systems of a default crypto driver.
+diff --git a/doc/guides/prog_guide/cryptodev_lib.rst b/doc/guides/prog_guide/cryptodev_lib.rst
+index b54efcb74e..f0ee44eb54 100644
+--- a/doc/guides/prog_guide/cryptodev_lib.rst
++++ b/doc/guides/prog_guide/cryptodev_lib.rst
+@@ -928,7 +928,8 @@ Asymmetric Cryptography
+ The cryptodev library currently provides support for the following asymmetric
+ Crypto operations; RSA, Modular exponentiation and inversion, Diffie-Hellman and
+ Elliptic Curve Diffie-Hellman public and/or private key generation and shared
+-secret compute, DSA and EdDSA signature generation and verification.
++secret compute, DSA and EdDSA signature generation and verification,
++PQC ML-KEM and ML-DSA algorithms.
+ 
+ Session and Session Management
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index c3b94e1896..9d47f762d7 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -76,6 +76,14 @@ New Features
+   * Added multi-process per port.
+   * Optimized code.
+ 
++* **Added PQC ML-KEM and ML-DSA support.**
++
++  * Added PQC ML-KEM support with reference to FIPS203.
++  * Added PQC ML-DSA support with reference to FIPS204.
++
++* **Updated openssl crypto driver.**
++
++  * Added support for PQC ML-KEM and ML-DSA algorithms.
+ 
+ Removed Items
+ -------------
+@@ -138,6 +146,9 @@ ABI Changes
+ * stack: The structure ``rte_stack_lf_head`` alignment has been updated to 16 bytes
+   to avoid unaligned accesses.
+ 
++* cryptodev: The enum ``rte_crypto_asym_xform_type``, struct ``rte_crypto_asym_xform``
++  and struct ``rte_crypto_asym_op`` are updated to include new values to support
++  ML-KEM and ML-DSA.
+ 
+ Known Issues
+ ------------
+diff --git a/lib/cryptodev/rte_crypto_asym.h b/lib/cryptodev/rte_crypto_asym.h
+index 9787b710e7..14a0e57467 100644
+--- a/lib/cryptodev/rte_crypto_asym.h
++++ b/lib/cryptodev/rte_crypto_asym.h
+@@ -37,6 +37,20 @@ rte_crypto_asym_ke_strings[];
+ extern const char *
+ rte_crypto_asym_op_strings[];
+ 
++/** PQC ML crypto op parameters size */
++extern const uint16_t
++rte_crypto_ml_kem_pubkey_size[];
++extern const uint16_t
++rte_crypto_ml_kem_privkey_size[];
++extern const uint16_t
++rte_crypto_ml_kem_cipher_size[];
++extern const uint16_t
++rte_crypto_ml_dsa_pubkey_size[];
++extern const uint16_t
++rte_crypto_ml_dsa_privkey_size[];
++extern const uint16_t
++rte_crypto_ml_dsa_sign_size[];
++
+ #ifdef __cplusplus
+ }
+ #endif
+@@ -144,6 +158,14 @@ enum rte_crypto_asym_xform_type {
+ 	/**< Edwards Curve Digital Signature Algorithm
+ 	 * Perform Signature Generation and Verification.
+ 	 */
++	RTE_CRYPTO_ASYM_XFORM_ML_KEM,
++	/**< Module Lattice based Key Encapsulation Mechanism
++	 * Performs Key Pair Generation, Encapsulation and Decapsulation.
++	 */
++	RTE_CRYPTO_ASYM_XFORM_ML_DSA
++	/**< Module Lattice based Digital Signature Algorithm
++	 * Performs Key Pair Generation, Signature Generation and Verification.
++	 */
+ };
+ 
+ /**
+@@ -720,6 +742,282 @@ struct rte_crypto_sm2_op_param {
+ 	 */
+ };
+ 
++/**
++ * PQC ML-KEM algorithms
++ *
++ * List of ML-KEM algorithms used in PQC
++ */
++enum rte_crypto_ml_kem_param_set {
++	RTE_CRYPTO_ML_KEM_PARAM_NONE,
++	RTE_CRYPTO_ML_KEM_PARAM_512,
++	RTE_CRYPTO_ML_KEM_PARAM_768,
++	RTE_CRYPTO_ML_KEM_PARAM_1024,
++};
++
++/**
++ * PQC ML-KEM op types
++ *
++ * List of ML-KEM op types in PQC
++ */
++enum rte_crypto_ml_kem_op_type {
++	RTE_CRYPTO_ML_KEM_OP_KEYGEN,
++	RTE_CRYPTO_ML_KEM_OP_KEYVER,
++	RTE_CRYPTO_ML_KEM_OP_ENCAP,
++	RTE_CRYPTO_ML_KEM_OP_DECAP,
++	RTE_CRYPTO_ML_KEM_OP_END
++};
++
++/**
++ * PQC ML-KEM transform data
++ *
++ * Structure describing ML-KEM xform params
++ */
++struct rte_crypto_ml_kem_xform {
++	enum rte_crypto_ml_kem_param_set param;
++};
++
++/**
++ * PQC ML-KEM KEYGEN op
++ *
++ * Parameters for PQC ML-KEM key generation operation
++ */
++struct rte_crypto_ml_kem_keygen_op {
++	rte_crypto_param d;
++	/**< The seed d value (of 32 bytes in length) to generate key pair.*/
++
++	rte_crypto_param z;
++	/**< The seed z value (of 32 bytes in length) to generate key pair.*/
++
++	rte_crypto_param ek;
++	/**<
++	 * Pointer to output data
++	 * - The computed encapsulation key.
++	 * - Refer `rte_crypto_ml_kem_pubkey_size` for size of buffer.
++	 */
++
++	rte_crypto_param dk;
++	/**<
++	 * Pointer to output data
++	 * - The computed decapsulation key.
++	 * - Refer `rte_crypto_ml_kem_privkey_size` for size of buffer.
++	 */
++};
++
++/**
++ * PQC ML-KEM KEYVER op
++ *
++ * Parameters for PQC ML-KEM key verification operation
++ */
++struct rte_crypto_ml_kem_keyver_op {
++	enum rte_crypto_ml_kem_op_type op;
++	/**<
++	 * Op associated with key to be verified is one of below:
++	 * - Encapsulation op
++	 * - Decapsulation op
++	 */
++
++	rte_crypto_param key;
++	/**<
++	 * KEM key to check.
++	 * - ek in case of encapsulation op.
++	 * - dk in case of decapsulation op.
++	 */
++};
++
++/**
++ * PQC ML-KEM ENCAP op
++ *
++ * Parameters for PQC ML-KEM encapsulation operation
++ */
++struct rte_crypto_ml_kem_encap_op {
++	rte_crypto_param message;
++	/**< The message (of 32 bytes in length) for randomness.*/
++
++	rte_crypto_param ek;
++	/**< The encapsulation key.*/
++
++	rte_crypto_param cipher;
++	/**<
++	 * Pointer to output data
++	 * - The computed cipher.
++	 * - Refer `rte_crypto_ml_kem_cipher_size` for size of buffer.
++	 */
++
++	rte_crypto_param sk;
++	/**<
++	 * Pointer to output data
++	 * - The computed shared secret key (32 bytes).
++	 */
++};
++
++/**
++ * PQC ML-KEM DECAP op
++ *
++ * Parameters for PQC ML-KEM decapsulation operation
++ */
++struct rte_crypto_ml_kem_decap_op {
++	rte_crypto_param cipher;
++	/**< The cipher to be decapsulated.*/
++
++	rte_crypto_param dk;
++	/**< The decapsulation key.*/
++
++	rte_crypto_param sk;
++	/**<
++	 * Pointer to output data
++	 * - The computed shared secret key (32 bytes).
++	 */
++};
++
++/**
++ * PQC ML-KEM op
++ *
++ * Parameters for PQC ML-KEM operation
++ */
++struct rte_crypto_ml_kem_op {
++	enum rte_crypto_ml_kem_op_type op;
++	union {
++		struct rte_crypto_ml_kem_keygen_op keygen;
++		struct rte_crypto_ml_kem_keyver_op keyver;
++		struct rte_crypto_ml_kem_encap_op encap;
++		struct rte_crypto_ml_kem_decap_op decap;
++	};
++};
++
++/**
++ * PQC ML-DSA algorithms
++ *
++ * List of ML-DSA algorithms used in PQC
++ */
++enum rte_crypto_ml_dsa_param_set {
++	RTE_CRYPTO_ML_DSA_PARAM_NONE,
++	RTE_CRYPTO_ML_DSA_PARAM_44,
++	RTE_CRYPTO_ML_DSA_PARAM_65,
++	RTE_CRYPTO_ML_DSA_PARAM_87,
++};
++
++/**
++ * PQC ML-DSA op types
++ *
++ * List of ML-DSA op types in PQC
++ */
++enum rte_crypto_ml_dsa_op_type {
++	RTE_CRYPTO_ML_DSA_OP_KEYGEN,
++	RTE_CRYPTO_ML_DSA_OP_SIGN,
++	RTE_CRYPTO_ML_DSA_OP_VERIFY,
++	RTE_CRYPTO_ML_DSA_OP_END
++};
++
++/**
++ * PQC ML-DSA transform data
++ *
++ * Structure describing ML-DSA xform params
++ */
++struct rte_crypto_ml_dsa_xform {
++	enum rte_crypto_ml_dsa_param_set param;
++
++	bool sign_deterministic;
++	/**< The signature generated using deterministic method. */
++
++	bool sign_prehash;
++	/**< The signature generated using prehash or pure routine. */
++};
++
++/**
++ * PQC ML-DSA KEYGEN op
++ *
++ * Parameters for PQC ML-DSA key generation operation
++ */
++struct rte_crypto_ml_dsa_keygen_op {
++	rte_crypto_param seed;
++	/**< The random seed (of 32 bytes in length) to generate key pair.*/
++
++	rte_crypto_param pubkey;
++	/**<
++	 * Pointer to output data
++	 * - The computed public key.
++	 * - Refer `rte_crypto_ml_dsa_pubkey_size` for size of buffer.
++	 */
++
++	rte_crypto_param privkey;
++	/**<
++	 * Pointer to output data
++	 * - The computed secret key.
++	 * - Refer `rte_crypto_ml_dsa_privkey_size` for size of buffer.
++	 */
++};
++
++/**
++ * PQC ML-DSA SIGGEN op
++ *
++ * Parameters for PQC ML-DSA sign operation
++ */
++struct rte_crypto_ml_dsa_siggen_op {
++	rte_crypto_param message;
++	/**< The message to generate signature.*/
++
++	rte_crypto_param mu;
++	/**< The mu to generate signature.*/
++
++	rte_crypto_param privkey;
++	/**< The secret key to generate signature.*/
++
++	rte_crypto_param seed;
++	/**< The seed to generate signature.*/
++
++	rte_crypto_param ctx;
++	/**< The context key to generate signature.*/
++
++	enum rte_crypto_auth_algorithm hash;
++	/**< Hash function to generate signature. */
++
++	rte_crypto_param sign;
++	/**<
++	 * Pointer to output data
++	 * - The computed signature.
++	 * - Refer `rte_crypto_ml_dsa_sign_size` for size of buffer.
++	 */
++};
++
++/**
++ * PQC ML-DSA SIGVER op
++ *
++ * Parameters for PQC ML-DSA verify operation
++ */
++struct rte_crypto_ml_dsa_sigver_op {
++	rte_crypto_param pubkey;
++	/**< The public key to verify signature.*/
++
++	rte_crypto_param message;
++	/**< The message used to verify signature.*/
++
++	rte_crypto_param sign;
++	/**< The signature to verify.*/
++
++	rte_crypto_param mu;
++	/**< The mu used to generate signature.*/
++
++	rte_crypto_param ctx;
++	/**< The context key to generate signature.*/
++
++	enum rte_crypto_auth_algorithm hash;
++	/**< Hash function to generate signature. */
++};
++
++/**
++ * PQC ML-DSA op
++ *
++ * Parameters for PQC ML-DSA operation
++ */
++struct rte_crypto_ml_dsa_op {
++	enum rte_crypto_ml_dsa_op_type op;
++	union {
++		struct rte_crypto_ml_dsa_keygen_op keygen;
++		struct rte_crypto_ml_dsa_siggen_op siggen;
++		struct rte_crypto_ml_dsa_sigver_op sigver;
++	};
++};
++
+ /**
+  * Asymmetric crypto transform data
+  *
+@@ -751,6 +1049,12 @@ struct rte_crypto_asym_xform {
+ 		/**< EC xform parameters, used by elliptic curve based
+ 		 * operations.
+ 		 */
++
++		struct rte_crypto_ml_kem_xform mlkem;
++		/**< PQC ML-KEM xform parameters */
++
++		struct rte_crypto_ml_dsa_xform mldsa;
++		/**< PQC ML-DSA xform parameters */
+ 	};
+ };
+ 
+@@ -778,6 +1082,8 @@ struct rte_crypto_asym_op {
+ 		struct rte_crypto_ecpm_op_param ecpm;
+ 		struct rte_crypto_sm2_op_param sm2;
+ 		struct rte_crypto_eddsa_op_param eddsa;
++		struct rte_crypto_ml_kem_op mlkem;
++		struct rte_crypto_ml_dsa_op mldsa;
+ 	};
+ 	uint16_t flags;
+ 	/**<
+diff --git a/lib/cryptodev/rte_cryptodev.c b/lib/cryptodev/rte_cryptodev.c
+index bb7bab4dd5..fd40c8a64c 100644
+--- a/lib/cryptodev/rte_cryptodev.c
++++ b/lib/cryptodev/rte_cryptodev.c
+@@ -229,6 +229,66 @@ const char *rte_crypto_asym_ke_strings[] = {
+ 	[RTE_CRYPTO_ASYM_KE_PUB_KEY_VERIFY] = "pub_ec_key_verify"
+ };
+ 
++/**
++ * Public key size used in PQC ML-KEM based crypto ops.
++ */
++RTE_EXPORT_SYMBOL(rte_crypto_ml_kem_pubkey_size)
++const uint16_t rte_crypto_ml_kem_pubkey_size[] = {
++	[RTE_CRYPTO_ML_KEM_PARAM_512] = 800,
++	[RTE_CRYPTO_ML_KEM_PARAM_768] = 1184,
++	[RTE_CRYPTO_ML_KEM_PARAM_1024] = 1568,
++};
++
++/**
++ * Private key size used in PQC ML-KEM based crypto ops.
++ */
++RTE_EXPORT_SYMBOL(rte_crypto_ml_kem_privkey_size)
++const uint16_t rte_crypto_ml_kem_privkey_size[] = {
++	[RTE_CRYPTO_ML_KEM_PARAM_512] = 1632,
++	[RTE_CRYPTO_ML_KEM_PARAM_768] = 2400,
++	[RTE_CRYPTO_ML_KEM_PARAM_1024] = 3168,
++};
++
++/**
++ * Cipher size used in PQC ML-KEM based crypto ops.
++ */
++RTE_EXPORT_SYMBOL(rte_crypto_ml_kem_cipher_size)
++const uint16_t rte_crypto_ml_kem_cipher_size[] = {
++	[RTE_CRYPTO_ML_KEM_PARAM_512] = 768,
++	[RTE_CRYPTO_ML_KEM_PARAM_768] = 1088,
++	[RTE_CRYPTO_ML_KEM_PARAM_1024] = 1568,
++};
++
++/**
++ * Public key size used in PQC ML-DSA based crypto ops.
++ */
++RTE_EXPORT_SYMBOL(rte_crypto_ml_dsa_pubkey_size)
++const uint16_t rte_crypto_ml_dsa_pubkey_size[] = {
++	[RTE_CRYPTO_ML_DSA_PARAM_44] = 1312,
++	[RTE_CRYPTO_ML_DSA_PARAM_65] = 1952,
++	[RTE_CRYPTO_ML_DSA_PARAM_87] = 2592,
++};
++
++/**
++ * Private key size used in PQC ML-DSA based crypto ops.
++ */
++RTE_EXPORT_SYMBOL(rte_crypto_ml_dsa_privkey_size)
++const uint16_t rte_crypto_ml_dsa_privkey_size[] = {
++	[RTE_CRYPTO_ML_DSA_PARAM_44] = 2560,
++	[RTE_CRYPTO_ML_DSA_PARAM_65] = 4032,
++	[RTE_CRYPTO_ML_DSA_PARAM_87] = 4896,
++};
++
++/**
++ * Sign size used in PQC ML-KEM based crypto ops.
++ */
++RTE_EXPORT_SYMBOL(rte_crypto_ml_dsa_sign_size)
++const uint16_t rte_crypto_ml_dsa_sign_size[] = {
++	[RTE_CRYPTO_ML_DSA_PARAM_44] = 2420,
++	[RTE_CRYPTO_ML_DSA_PARAM_65] = 3309,
++	[RTE_CRYPTO_ML_DSA_PARAM_87] = 4627,
++};
++
+ struct rte_cryptodev_sym_session_pool_private_data {
+ 	uint16_t sess_data_sz;
+ 	/**< driver session data size */
+diff --git a/lib/cryptodev/rte_cryptodev.h b/lib/cryptodev/rte_cryptodev.h
+index eaf0e50d37..37a6a5e49b 100644
+--- a/lib/cryptodev/rte_cryptodev.h
++++ b/lib/cryptodev/rte_cryptodev.h
+@@ -167,10 +167,13 @@ struct rte_cryptodev_asymmetric_xform_capability {
+ 	uint32_t op_types;
+ 	/**<
+ 	 * Bitmask for supported rte_crypto_asym_op_type or
++	 * rte_crypto_ml_kem_op_type or rte_crypto_ml_dsa_op_type or
+ 	 * rte_crypto_asym_ke_type. Which enum is used is determined
+ 	 * by the rte_crypto_asym_xform_type. For key exchange algorithms
+-	 * like Diffie-Hellman it is rte_crypto_asym_ke_type, for others
+-	 * it is rte_crypto_asym_op_type.
++	 * like Diffie-Hellman it is rte_crypto_asym_ke_type,
++	 * for ML-KEM algorithms it is rte_crypto_ml_kem_op_type,
++	 * for ML-DSA algorithms it is rte_crypto_ml_dsa_op_type,
++	 * or others it is rte_crypto_asym_op_type.
+ 	 */
+ 
+ 	__extension__
+@@ -188,6 +191,12 @@ struct rte_cryptodev_asymmetric_xform_capability {
+ 
+ 		uint32_t op_capa[RTE_CRYPTO_ASYM_OP_LIST_END];
+ 		/**< Operation specific capabilities. */
++
++		uint32_t mlkem_capa[RTE_CRYPTO_ML_KEM_OP_END];
++		/**< Bitmask of supported ML-KEM parameter sets. */
++
++		uint32_t mldsa_capa[RTE_CRYPTO_ML_DSA_OP_END];
++		/**< Bitmask of supported ML-DSA parameter sets. */
+ 	};
+ 
+ 	uint64_t hash_algos;
+@@ -577,6 +586,8 @@ rte_cryptodev_asym_get_xform_string(enum rte_crypto_asym_xform_type xform_enum);
+ /**< Support inner checksum computation/verification */
+ #define RTE_CRYPTODEV_FF_SECURITY_RX_INJECT		(1ULL << 28)
+ /**< Support Rx injection after security processing */
++#define RTE_CRYPTODEV_FF_MLDSA_SIGN_PREHASH		(1ULL << 29)
++/**< Support Pre Hash ML-DSA Signature Generation */
+ 
+ /**
+  * Get the name of a crypto device feature flag
 -- 
 2.37.1
 
