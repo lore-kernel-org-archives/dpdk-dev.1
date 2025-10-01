@@ -2,52 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC46CCA470
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Oct 2025 07:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5371BCCA470
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Oct 2025 08:18:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C401240DCD;
-	Wed,  1 Oct 2025 09:56:33 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 8E14140B9C
- for <dev@dpdk.org>; Wed,  1 Oct 2025 09:56:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759305391; x=1790841391;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=jbS66hv+p/8iH5nYqPvPJwoK82u9+C/thFx2C1PURE8=;
- b=lIEKPQCX7OtPUWT0gkELpihZolvO8z7qpM4pEJKTCQ/x1vWKw/b3k6HT
- nfdEPE16zKzDoIEvoxkWznZi1vCqeHwOit/WlyfpFi3F5wGD5gHILmqGw
- 0QkORm0CIN3r9WwXGC546PbJHQ4ThZPZRC8jXpjGnFD98+d1vPzE9HuLl
- jmH2s6vD47Ns98qXWKbxdb2ptpHhcXycj8Gc/EWocGZJyJNzsYxvif9Fg
- LqB8l5LObVZ7KQDp2qpy58uYqamBU3M2iBoOASLbGGtpzv0AdCMfBYAlW
- jyPMWnia0BUNNSRkpcZlE+QKKt7WWZnIUOTpzFQg9aNY+WroyE2SNXgr8 Q==;
-X-CSE-ConnectionGUID: X9cthoF/TPqmoxePQuAk+Q==
-X-CSE-MsgGUID: ANDUo9YzQx2/97r2KaETyA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="79222927"
-X-IronPort-AV: E=Sophos;i="6.18,306,1751266800"; d="scan'208";a="79222927"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Oct 2025 00:56:31 -0700
-X-CSE-ConnectionGUID: CS4+kNGrSRykt2VVVRrP+w==
-X-CSE-MsgGUID: AZbCTLOxQHKqftQYRKf6Ag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,306,1751266800"; d="scan'208";a="183912607"
-Received: from unknown (HELO srv24..) ([10.138.182.231])
- by orviesa005.jf.intel.com with ESMTP; 01 Oct 2025 00:56:30 -0700
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Subject: [PATCH v5 2/2] net/idpf: enable AVX2 for split queue Tx
-Date: Wed,  1 Oct 2025 13:26:09 +0530
-Message-Id: <20251001075609.2608021-3-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251001075609.2608021-1-shaiq.wani@intel.com>
-References: <20250917052658.582872-1-shaiq.wani@intel.com/>
- <20251001075609.2608021-1-shaiq.wani@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9C9094065D;
+	Wed,  1 Oct 2025 10:18:37 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 65F08400EF
+ for <dev@dpdk.org>; Wed,  1 Oct 2025 10:18:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1759306716;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=+0Pud6huWbag1hgtIg1x6FTRahc8sr2HMQQ0gZWWjkM=;
+ b=Nty12sjtP1zXumpJsgxBc6eO1qyuHrVtXmGpI88Tk3IiD/Rnlp19g1IMLV+DA2986aKJ65
+ +6QCYaGkeLHl1SIigstq01lCk1jqxMjntLveXJ2phIachMUkzINjanA5/SMq5kWh8cLS59
+ xG94uiWADr0obAUHc7gVxKZu4VJc/d8=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-6-HByhSglWM1m_bGyQY1upCw-1; Wed,
+ 01 Oct 2025 04:18:33 -0400
+X-MC-Unique: HByhSglWM1m_bGyQY1upCw-1
+X-Mimecast-MFC-AGG-ID: HByhSglWM1m_bGyQY1upCw_1759306712
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id AC261195608B; Wed,  1 Oct 2025 08:18:31 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.224.213])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 84EC6195608E; Wed,  1 Oct 2025 08:18:29 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: rjarry@redhat.com, Aaron Conole <aconole@redhat.com>,
+ Michael Santana <maicolgabriel@hotmail.com>,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: [PATCH] ci: configure Coderabbit
+Date: Wed,  1 Oct 2025 10:18:25 +0200
+Message-ID: <20251001081825.2638077-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: iSz7mX2LR_qAXdcwVp5Z15CYlAC3q8pi7oJ-GiORZOw_1759306712
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,260 +65,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In case some CPUs don't support AVX512. Enable AVX2 for them to
-get better per-core performance.
+Coderabbit currently runs in ovsrobot repository (and can be used in
+public personal forks).
 
-In the single queue model, the same descriptor queue is used by SW
-to post descriptors to the device and used by device to report completed
-descriptors to SW. While as the split queue model separates them into
-different queues for parallel processing and improved performance.
+poems are funny, but not really helpful.
+Reduce some noise by disabling (or collapsing) some verbose outputs.
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
+Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/net/intel/idpf/idpf_common_rxtx.h     |   3 +
- .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 197 ++++++++++++++++++
- drivers/net/intel/idpf/idpf_rxtx.c            |   9 +
- 3 files changed, 209 insertions(+)
+I copied the tone instructions and some settings from grout.
+The docstrings check is noisy, and often wrong for C headers
+(especially EAL arch headers).
 
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
-index 87f6895c4c..3636d55272 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.h
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
-@@ -264,6 +264,9 @@ uint16_t idpf_dp_singleq_recv_pkts_avx2(void *rx_queue,
- 					struct rte_mbuf **rx_pkts,
- 					uint16_t nb_pkts);
- __rte_internal
-+uint16_t idpf_dp_splitq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				       uint16_t nb_pkts);
-+__rte_internal
- uint16_t idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue,
- 					struct rte_mbuf **tx_pkts,
- 					uint16_t nb_pkts);
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-index 0837c9cef3..20dbd02922 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-@@ -802,3 +802,200 @@ idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+Opinions?
+
+---
+ .coderabbit.yaml           | 14 ++++++++++++++
+ MAINTAINERS                |  1 +
+ devtools/check-spdx-tag.sh |  2 +-
+ 3 files changed, 16 insertions(+), 1 deletion(-)
+ create mode 100644 .coderabbit.yaml
+
+diff --git a/.coderabbit.yaml b/.coderabbit.yaml
+new file mode 100644
+index 0000000000..7968f4f4ba
+--- /dev/null
++++ b/.coderabbit.yaml
+@@ -0,0 +1,14 @@
++language: "en-US"
++tone_instructions: "Only provide helpful, relevant comments. Be brief and terse but clear."
++reviews:
++  profile: "chill"
++  collapse_walkthrough: true
++  changed_files_summary: false
++  sequence_diagrams: false
++  suggested_labels: false
++  poem: false
++  finishing_touches:
++    docstrings:
++      enabled: false
++    unit_tests:
++      enabled: false
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 1a2729be66..b82632fea3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -141,6 +141,7 @@ M: Aaron Conole <aconole@redhat.com>
+ M: Michael Santana <maicolgabriel@hotmail.com>
+ F: .github/workflows/build.yml
+ F: .ci/
++F: .coderabbit.yaml
  
- 	return nb_tx;
- }
-+
-+static __rte_always_inline void
-+idpf_splitq_scan_cq_ring(struct ci_tx_queue *cq)
-+{
-+	struct idpf_splitq_tx_compl_desc *compl_ring;
-+	struct ci_tx_queue *txq;
-+	uint16_t genid, txq_qid, cq_qid, i;
-+	uint8_t ctype;
-+
-+	cq_qid = cq->tx_tail;
-+
-+	for (i = 0; i < IDPD_TXQ_SCAN_CQ_THRESH; i++) {
-+		if (cq_qid == cq->nb_tx_desc) {
-+			cq_qid = 0;
-+			cq->expected_gen_id ^= 1;  /* toggle generation bit */
-+		}
-+
-+		compl_ring = &cq->compl_ring[cq_qid];
-+
-+		genid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+			 IDPF_TXD_COMPLQ_GEN_M) >> IDPF_TXD_COMPLQ_GEN_S;
-+
-+		if (genid != cq->expected_gen_id)
-+			break;
-+
-+		ctype = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+			 IDPF_TXD_COMPLQ_COMPL_TYPE_M) >> IDPF_TXD_COMPLQ_COMPL_TYPE_S;
-+
-+		txq_qid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+			   IDPF_TXD_COMPLQ_QID_M) >> IDPF_TXD_COMPLQ_QID_S;
-+
-+		txq = cq->txqs[txq_qid - cq->tx_start_qid];
-+		if (ctype == IDPF_TXD_COMPLT_RS)
-+			txq->rs_compl_count++;
-+
-+		cq_qid++;
-+	}
-+
-+	cq->tx_tail = cq_qid;
-+}
-+
-+static __rte_always_inline void
-+idpf_splitq_vtx1_avx2(struct idpf_flex_tx_sched_desc *txdp,
-+				struct rte_mbuf *pkt, uint64_t flags)
-+{
-+	uint64_t high_qw =
-+		IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE |
-+		((uint64_t)flags) |
-+		((uint64_t)pkt->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+
-+	__m128i descriptor = _mm_set_epi64x(high_qw,
-+						pkt->buf_iova + pkt->data_off);
-+	_mm_storeu_si128((__m128i *)txdp, descriptor);
-+}
-+
-+static inline void
-+idpf_splitq_vtx_avx2(struct idpf_flex_tx_sched_desc *txdp,
-+				struct rte_mbuf **pkt, uint16_t nb_pkts, uint64_t flags)
-+{
-+	const uint64_t hi_qw_tmpl = IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE |
-+		((uint64_t)flags);
-+
-+	/* align if needed */
-+	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
-+		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
-+		txdp++, pkt++, nb_pkts--;
-+	}
-+
-+	for (; nb_pkts >= IDPF_VPMD_DESCS_PER_LOOP;
-+					txdp += IDPF_VPMD_DESCS_PER_LOOP,
-+					pkt += IDPF_VPMD_DESCS_PER_LOOP,
-+					nb_pkts -= IDPF_VPMD_DESCS_PER_LOOP) {
-+		uint64_t hi_qw3 = hi_qw_tmpl |
-+			((uint64_t)pkt[3]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw2 = hi_qw_tmpl |
-+			((uint64_t)pkt[2]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw1 = hi_qw_tmpl |
-+			((uint64_t)pkt[1]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw0 = hi_qw_tmpl |
-+			((uint64_t)pkt[0]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+
-+		__m256i desc2_3 = _mm256_set_epi64x(hi_qw3,
-+			pkt[3]->buf_iova + pkt[3]->data_off,
-+			hi_qw2,
-+			pkt[2]->buf_iova + pkt[2]->data_off);
-+
-+		__m256i desc0_1 = _mm256_set_epi64x(hi_qw1,
-+			pkt[1]->buf_iova + pkt[1]->data_off,
-+			hi_qw0,
-+			pkt[0]->buf_iova + pkt[0]->data_off);
-+
-+		_mm256_storeu_si256((__m256i *)(txdp + 2), desc2_3);
-+		_mm256_storeu_si256((__m256i *)txdp, desc0_1);
-+	}
-+
-+	while (nb_pkts--) {
-+		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
-+		txdp++;
-+		pkt++;
-+	}
-+}
-+
-+static inline uint16_t
-+idpf_splitq_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+						uint16_t nb_pkts)
-+{
-+	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+	struct idpf_flex_tx_sched_desc *txdp;
-+	struct ci_tx_entry_vec *txep;
-+	uint16_t n, nb_commit, tx_id;
-+	uint64_t cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_EOP;
-+
-+	tx_id = txq->tx_tail;
-+
-+	/* restrict to max burst size */
-+	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
-+
-+	/* make sure we have enough free space */
-+	if (txq->nb_tx_free < txq->tx_free_thresh)
-+		ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
-+
-+	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
-+	nb_pkts = nb_commit;
-+	if (unlikely(nb_pkts == 0))
-+		return 0;
-+
-+	txdp = (struct idpf_flex_tx_sched_desc *)&txq->desc_ring[tx_id];
-+	txep = (void *)txq->sw_ring;
-+	txep += tx_id;
-+
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
-+
-+	n = (uint16_t)(txq->nb_tx_desc - tx_id);
-+	if (nb_commit >= n) {
-+		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
-+
-+		idpf_splitq_vtx_avx2(txdp, tx_pkts, n - 1, cmd_dtype);
-+		tx_pkts += (n - 1);
-+		txdp += (n - 1);
-+
-+		idpf_splitq_vtx1_avx2(txdp, *tx_pkts++, cmd_dtype);
-+
-+		nb_commit = (uint16_t)(nb_commit - n);
-+
-+		tx_id = 0;
-+		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
-+
-+		txdp = &txq->desc_ring[tx_id];
-+		txep = (void *)txq->sw_ring;
-+		txep += tx_id;
-+	}
-+
-+	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
-+
-+	idpf_splitq_vtx_avx2(txdp, tx_pkts, nb_commit, cmd_dtype);
-+
-+	tx_id = (uint16_t)(tx_id + nb_commit);
-+	if (tx_id > txq->tx_next_rs)
-+		txq->tx_next_rs =
-+		(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
-+
-+	txq->tx_tail = tx_id;
-+
-+	IDPF_PCI_REG_WRITE(txq->qtx_tail, txq->tx_tail);
-+
-+	return nb_pkts;
-+}
-+
-+uint16_t
-+idpf_dp_splitq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+					uint16_t nb_pkts)
-+{
-+	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+	uint16_t nb_tx = 0;
-+
-+	while (nb_pkts) {
-+		uint16_t ret, num;
-+		idpf_splitq_scan_cq_ring(txq->complq);
-+
-+		if (txq->rs_compl_count > txq->tx_free_thresh) {
-+			ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
-+			txq->rs_compl_count -= txq->tx_rs_thresh;
-+		}
-+
-+		num = (uint16_t)RTE_MIN(nb_pkts, txq->tx_rs_thresh);
-+		ret = idpf_splitq_xmit_fixed_burst_vec_avx2(tx_queue,
-+								&tx_pkts[nb_tx], num);
-+		nb_tx += ret;
-+		nb_pkts -= ret;
-+		if (ret < num)
-+			break;
-+	}
-+
-+	return nb_tx;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_splitq_xmit_pkts_avx2)
-diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
-index 1c725065df..6950fabb49 100644
---- a/drivers/net/intel/idpf/idpf_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_rxtx.c
-@@ -850,6 +850,15 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
- 				return;
- 			}
- #endif /* CC_AVX512_SUPPORT */
-+			if (tx_simd_width == RTE_VECT_SIMD_256) {
-+				PMD_DRV_LOG(NOTICE,
-+					    "Using Split AVX2 Vector Tx (port %d).",
-+					    dev->data->port_id);
-+				dev->tx_pkt_burst = idpf_dp_splitq_xmit_pkts_avx2;
-+				dev->tx_pkt_prepare = idpf_dp_prep_pkts;
-+				return;
-+			}
-+
- 		}
- 		PMD_DRV_LOG(NOTICE,
- 			    "Using Split Scalar Tx (port %d).",
+ Driver information
+ M: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+diff --git a/devtools/check-spdx-tag.sh b/devtools/check-spdx-tag.sh
+index 984825026e..eb4a88a3fb 100755
+--- a/devtools/check-spdx-tag.sh
++++ b/devtools/check-spdx-tag.sh
+@@ -18,7 +18,7 @@ print_usage () {
+ no_license_list=\
+ ':^.git* :^.mailmap :^.ci/* :^README :^*/README* :^MAINTAINERS :^VERSION :^ABI_VERSION '\
+ ':^license/ :^config/ :^buildtools/ :^*.abignore :^*.cocci :^*/poetry.lock '\
+-':^*/Kbuild :^kernel/linux/uapi/version '\
++':^*/Kbuild :^kernel/linux/uapi/version :^.coderabbit.yaml '\
+ ':^*.ini :^*.data :^*.json :^*.cfg :^*.txt :^*.svg :^*.png'
+ 
+ check_spdx() {
 -- 
-2.34.1
+2.51.0
 
