@@ -2,84 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B6CCAC5BB
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Oct 2025 12:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39DCFCCA470
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Oct 2025 12:29:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9654C40A71;
-	Wed,  1 Oct 2025 14:16:20 +0200 (CEST)
-Received: from fhigh-a3-smtp.messagingengine.com
- (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id 99A50406A2
- for <dev@dpdk.org>; Wed,  1 Oct 2025 14:16:19 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 285C714001C2;
- Wed,  1 Oct 2025 08:16:19 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-05.internal (MEProxy); Wed, 01 Oct 2025 08:16:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1759320979;
- x=1759407379; bh=CsaHOeIUMGQwTi1MFpUZVK9zUA5PVeLqY0Nl6ou781E=; b=
- QUrie7vPFiDtOf8m6dKqqopFBg3ic3dBb3RAvAtuWmxirNVdq02mgTai9JeNARxr
- 33t2TdWBRb7gjzVnBC3f0CtomCzi8Bc/pKcVC40KCZC7y2v/tp0JuzkAX0Bksb4N
- vU+PZ+UsTq1cUyqojj1YLlLk6oNh89sGtI5Jn01lfpSwOaa4qd1+IHGy0v2hnaIQ
- DfV4lQfHn3GTm2/uhss4NqorVTpG8evWKKoCPZMIxPyK3FlVAxsJfWlG8mExOm6y
- 80mojaS2zULcfn9G3yDNVsAWynrKL8+r0v9ojpz9wbrB8G7zlkerz4dkeytUxsjv
- INYZalj5A7RNQR+CT6ou9A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759320979; x=
- 1759407379; bh=CsaHOeIUMGQwTi1MFpUZVK9zUA5PVeLqY0Nl6ou781E=; b=n
- 7vnxvceZ/QV2H9mxR4UGedI+tC5fnVB1IlOd7vH+fUM8JYUXdm8DYx4guvq9gdhE
- PJc/SFZdlsc/tBa26GxEjQ8TWYGWR7UzfDz5b0ViYH2/HiAuKieTqQDQGSWKCb0v
- aNNptzqw1aqkxj+xDB8Az6BwEMtSJsD1zdzDbjbldAy5qkw7DFag9YPi+5XhSGfL
- VqJ/lvlsAZ4gOppyJKof62tMRfWjw9acqyK29vk9HHqmFygSMcpVCaQHf6zOtd6B
- S2xKeEReckLp8DR1PN+25URMQ4zj0aEaKbtSyzDdovVNNmQtDl3iQCrf892xRFsn
- u3upKDQfyCzsYuXQXMRrA==
-X-ME-Sender: <xms:khvdaG1AGkftcDnUycxMheBU3L3pUYRBgemZnXRwaprhW8AMsW83iA>
- <xme:khvdaEiqIRVuVOLPdChDT8eZwQI1oSZzLrY_CytFRGaPGHmm1dadP0dH4uhdw3HJo
- 11x-hpLJffylTpCCj5cM-oW0D78JUc7WgU1emOVO6nVhJmS5ZoSPQ>
-X-ME-Received: <xmr:khvdaCZEnTCW_GHsYeml5z-6b0Wpc3A1yXc4sWfhjfOjY1NpXUkvYLNR10P6rzZPuocBS8avXStQ0RNN1Aku8qZ5uQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekfeduudcutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
- hrpefhvfevufffkfgjfhgggfgtsehtqhertddttdejnecuhfhrohhmpefvhhhomhgrshcu
- ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
- grthhtvghrnhepgedttdeljeejgeffkeekkedtjeevtdehvedtkeeivdeuuedvieduvdel
- veejueejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohephedpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepudeiheeijegrughighgrshhhrhgvvghshh
- esghhmrghilhdrtghomhdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonhes
- ihhnthgvlhdrtghomhdprhgtphhtthhopehkohhnshhtrghnthhinhdrvhdrrghnrghnhi
- gvvheshigrnhguvgigrdhruhdprhgtphhtthhopehjrghsvhhinhguvghrrdhsihhnghhh
- sehinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
-X-ME-Proxy: <xmx:khvdaMQOZeBQM5uCAWTEKqF4XDFpLnaNwPTcQubl1SVf5eUGnVRomQ>
- <xmx:khvdaFT0DY7hPpsLgTQjCVLedjy1LQV9TBnqQ-RrAzdg1b-B5MRcYw>
- <xmx:khvdaASqhaBRIlOpOEERcQ6xoSEKAJFX8rKgtyVKFoYvV4LlzBXgpQ>
- <xmx:khvdaK64btjBB2jIauDP3D_BT0RTqUbRKloLJHJCd_VtIVaYJu3BEQ>
- <xmx:kxvdaF3pKxVSdXyPtE5PNOTpMhIaF5O_wlk8Aq3z0_VNenaxPYGNilX9>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 1 Oct 2025 08:16:17 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Shreesh Adiga <16567adigashreesh@gmail.com>
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- Jasvinder Singh <jasvinder.singh@intel.com>, dev@dpdk.org
-Subject: Re: [PATCH] net/crc: reduce usage of static arrays in net_crc_sse.c
-Date: Wed, 01 Oct 2025 14:16:15 +0200
-Message-ID: <22593368.0c2gjJ1VT2@thomas>
-In-Reply-To: <CA+-x59aZzXLWACV17OaHCyUU_WnqfdGdJqjJqMeHmLX49G_2mg@mail.gmail.com>
-References: <20250716103439.831760-1-16567adigashreesh@gmail.com>
- <7068093.UjTJXf6HLC@thomas>
- <CA+-x59aZzXLWACV17OaHCyUU_WnqfdGdJqjJqMeHmLX49G_2mg@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2223740B94;
+	Wed,  1 Oct 2025 14:29:16 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 246F2406A2
+ for <dev@dpdk.org>; Wed,  1 Oct 2025 14:29:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1759321754; x=1790857754;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=7uJqb2rryfFT03ByhvVZBHOn5DJ1ASvrbUNvgeyxVmg=;
+ b=IifZ4+WmUvRMRZDo5XMQVq1y/VppfmJ4MC4+PyMUjAdHmX7H64EDVsN4
+ aObyJgqPW7YU7h35Ks6/4eY+wTWWlL47NZwQjlOja6v0JG2uRq8rOmW2n
+ A8S5gLMr/MeqInV+sSex1Y3f+kKRjNzJNN4SL5bwESGGJwKvc9l9NuzoW
+ uFYVxlixrA3RxdLK01Pa+B8bdXyJLAjQWh4OQv0mc1CizCTzX4Yu9Xg/c
+ g7pG4ENojXgp7xx+viXxXALzOv/7K+BQW9rz1yOBz79FVYAWfTDJNb/N9
+ +T/4L1SBQxv55zgJj/CwFwE5xFd9ISb5b6XHr14lB0nk0KMjXrx1cQpkT Q==;
+X-CSE-ConnectionGUID: JK9hYo6VRBCseuyOiPNUMw==
+X-CSE-MsgGUID: bYG4ugMoQ5alTiTPz9ciKg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="60807862"
+X-IronPort-AV: E=Sophos;i="6.18,306,1751266800"; d="scan'208";a="60807862"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Oct 2025 05:29:13 -0700
+X-CSE-ConnectionGUID: PJQqoS5iQrio6b9JLdVPWw==
+X-CSE-MsgGUID: 23ly8KQ6TXOVfLSbtaB6Tw==
+X-ExtLoop1: 1
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by fmviesa003.fm.intel.com with ESMTP; 01 Oct 2025 05:29:12 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com,
+	vladimir.medvedkin@intel.com
+Subject: [PATCH v2 0/5] Update ICE base driver
+Date: Wed,  1 Oct 2025 13:29:03 +0100
+Message-ID: <cover.1759321681.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1759231103.git.anatoly.burakov@intel.com>
+References: <cover.1759231103.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,61 +59,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-01/10/2025 12:24, Shreesh Adiga:
-> On Wed, Oct 1, 2025 at 1:25=E2=80=AFPM Thomas Monjalon <thomas@monjalon.n=
-et> wrote:
->=20
-> > 29/09/2025 18:28, Shreesh Adiga:
-> > > On Wed, Sep 24, 2025 at 8:28=E2=80=AFPM Thomas Monjalon <thomas@monja=
-lon.net>
-> > wrote:
-> > >
-> > > > Hello,
-> > > >
-> > > > 16/07/2025 12:34, Shreesh Adiga:
-> > > > > Replace the clearing of lower 32 bits of XMM register with blend =
-of
-> > > > > zero register.
-> > > > > Replace the clearing of upper 64 bits of XMM register with
-> > > > _mm_move_epi64.
-> > > > > Clang is able to optimize away the AND + memory operand with the
-> > > > > above sequence, however GCC is still emitting the code for AND wi=
-th
-> > > > > memory operands which is being explicitly eliminated here.
-> > > > >
-> > > > > Additionally replace the 48 byte crc_xmm_shift_tab with the conte=
-nts
-> > of
-> > > > > shf_table which is 32 bytes, achieving the same functionality.
-> > > > >
-> > > > > Signed-off-by: Shreesh Adiga <16567adigashreesh@gmail.com>
-> > > >
-> > > > Sorry I'm not following.
-> > > > Please could you start with defining the goal of this patch?
-> > > > Is it a code simplification or a performance optimization?
-> > >
-> > > It is intended to be a minor performance optimization.
-> >
-> > Please could you give some performance numbers in the commit log?
-> >
-> I don't think that this change can be reliably measured. The changes only
-> impact
-> the last stage crc 64 to 32 fold and the last 16 bytes computation. The
-> impact will only
-> be a couple of clock cycles at best. Reducing the static array usage also=
- I
-> don't know
-> if it can be reliably measured especially since it is not affecting the
-> main loop.
-> This patch can be ignored if minor incremental changes are not desirable.
+A few more changes for the ICE base driver:
 
-Minor changes are desirable.
-I'm just asking to understand the real impact of the change.
-In general when doing an optimization we try to test it
-and give some numbers.
-Note we have a unit test for CRC in app/test/test_crc.c
-but no performance test for it.
+- Integer overflow fix
+- DCB/PFC changes that were submitted earlier by Vladimir [1]
 
-I'll wait for a review from an x86 maintainer.
+The intent is to merge these as base driver changes, with
+successive work to be built on top.
 
+v2:
+- Fix setting MAC config when no TC's were specified
+
+[1] https://patches.dpdk.org/project/dpdk/cover/20250817130152.682972-1-vladimir.medvedkin@intel.com/
+
+Anatoly Burakov (1):
+  net/ice/base: update README
+
+Chinh Cao (1):
+  net/ice/base: fix integer overflow on NVM init
+
+Vladimir Medvedkin (3):
+  net/ice/base: add utility functions
+  net/ice/base: make set MAC config TC aware
+  net/ice/base: add support for asymmetric PFC
+
+ drivers/net/intel/ice/base/README       |   2 +-
+ drivers/net/intel/ice/base/ice_common.c | 221 ++++++++++++++++++++----
+ drivers/net/intel/ice/base/ice_common.h |  11 ++
+ drivers/net/intel/ice/base/ice_dcb.c    | 105 +++++++++--
+ drivers/net/intel/ice/base/ice_dcb.h    |  16 +-
+ drivers/net/intel/ice/base/ice_type.h   |  17 +-
+ 6 files changed, 318 insertions(+), 54 deletions(-)
+
+-- 
+2.47.3
 
