@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA1ECCA470
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Oct 2025 15:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3AACAC5BB
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Oct 2025 15:11:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5490440E39;
-	Wed,  1 Oct 2025 17:10:36 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B5D3540E4B;
+	Wed,  1 Oct 2025 17:10:37 +0200 (CEST)
 Received: from egress-ip42b.ess.de.barracuda.com
  (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id 2E79E40E01
+ by mails.dpdk.org (Postfix) with ESMTP id 65C7240E2A
  for <dev@dpdk.org>; Wed,  1 Oct 2025 17:10:33 +0200 (CEST)
-Received: from PA4PR04CU001.outbound.protection.outlook.com
- (mail-francecentralazon11023106.outbound.protection.outlook.com
- [40.107.162.106]) by mx-outbound22-252.eu-central-1b.ess.aws.cudaops.com
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+Received: from AM0PR83CU005.outbound.protection.outlook.com
+ (mail-westeuropeazon11020120.outbound.protection.outlook.com [52.101.69.120])
+ by mx-outbound22-252.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
+ cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
  Wed, 01 Oct 2025 15:10:32 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vk75TNgD0SVahdOXOl4Zh05TLUgwAqT1VCH50eztV6lN8Cw7jtxNANQS0gGdp7oLjzYXBwzyTDA9W6pgEPy91zACEeVjJCJ1jVveWKVAIUnEy5Kp0gsGuwzKKGCKTN3En7P15xVvY7oQdM4dyLaPKrf0Nljkexck0Ak7Fj0CJiOtOrDT7/ylAaQ1eD+YLhjaQrcu+FrGIsEY0A6P/2ka7f9i9dAnA4OLXdTrptXI2qif+pJtWkJUBM4ZRixs6Sj8SRhTLVinar5qpKixO2U6MoYZ6n/g7pqUfOVcr8jK76VEjtyGz07e8Yu7H9EDL2rOWLMOkoGnB1Ttso9uiZjrAw==
+ b=fMaMuZYSkdi2SkxSGlFRhVKg4TKnjkBx8FtekogApb45Qv1BZcbxJXURvGb7YrHV0Zrt6vYZaNbOTVnpT4udp4/dnTta5tAlWC/EBCL5GButvjXl7WlMLkuoCsx57ToXRe8qEPBcij0xafuGFazT0+bKo0g9qO/R3oU+nWOATGf9ZA1Gf/oWWwrO8kwW+l7EcfaNQUlab60Pff/TnoeyL4GL+UR5AgsxY9Ax9e58tDiA6waC4mIbuI2BAh+vB16LwPBcLraN5OUheAl5NkZnxsTH+2hercqUI3RUSJq8/dsu0GleMkoY94kHpGM/3O1/JT//Iws9fxtnr5Z1bmUQzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MWwWprbEBRSOxORP4LRNj7gxqAU5zUKefrBbHXYrBTM=;
- b=gu0rAkWf8c/E4Ewvf6s5uBgwd4+kxITVJNFNLY50zaeTIxnm0Z+K71jUBxEN5sv38MG+cUQuBIPyDH0X5oN8If+Z8UQC00xDta8lelX73pFFD9+65livGdKLLK5GpuY1PxMCy51k+TnqYEqnaVO7Q1EGFta3ChfUhIvXP+wX+FN3laCb4laLlWiWjwwvy/1WIfvfF/5DRc7mCqu6FzHW71LsWa3ugArhFNQiLmG14ch1iEqoXJWH0WFXw183JtcrnUL2DhXoz2y1WkKElyeIVCnW3DqfNcBUFP2SiQX9xQDZOZ7jVo80YM8UVgaW+N/QAFvju9CaIwG0Q/kfCXYHmA==
+ bh=6g8YFpLbxsUhzG+zjo6X68g/v/MztfjZ3om3d1mt+Xg=;
+ b=MABBFO0XgP9AmwCw2NyERX0m2ETmvr45kCwL6TtG7dipYrtgXhFDZFVP61bqPmnyZHz9MkqewGZGfUzJOkojnprb/MC8fMmoOodzd/Q33Pypn9cDCfg7EeTNzL96P5n7PikAZ91eYbvVdQOgey1Ps935I5RQIBm7yY4MATFET5Ku1UKEnd4el8tQOCdKEEU50olatBZftPZROeDN5bAGT/CLHQK+9ekgzPOVxMMLfDX9/uK3n3/zCQPpFiEZlq8LGgOmx9ABEpVjh2pVgSCK1+KeduyhKDfificM4YydHoiNZUubLe/TaKPxiz6yJifnfnyOQdiof6zJMX+GN6hPgg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MWwWprbEBRSOxORP4LRNj7gxqAU5zUKefrBbHXYrBTM=;
- b=m/Gj1OCI/mgdZNYFRyGOg51CYUTC7OXRkF/f2412fBi3XNVbZMZadOrvWks4Z/usHj9o4AP3fLGKrr5spbT8dT69iW7JgphCxjdydSaW3jz+GBr7dtGvZuNosjN04MpoyyZCCge9E+sVzW7Ow5tB8bjTFAEDrrSCQmlnRKgZsB0=
-Received: from DB9PR02CA0024.eurprd02.prod.outlook.com (2603:10a6:10:1d9::29)
- by DB9P190MB1353.EURP190.PROD.OUTLOOK.COM (2603:10a6:10:22d::24) with
+ bh=6g8YFpLbxsUhzG+zjo6X68g/v/MztfjZ3om3d1mt+Xg=;
+ b=PFPyfX6RfRSMDH/BLc7IqyikfGZm0G065vL3s0qOCGc7OrOv7tPy+in3MUS+iFUZgJY+tSJz6TCtgLFZibkeSANdO0T3LlwR4SbGaK94tznMqOdpJNOx4VMd6L62dmnsiph7ZS4f4d/+2mW22G4aFmhfrPXxz2phuRHv9gk0ffE=
+Received: from DB9PR02CA0007.eurprd02.prod.outlook.com (2603:10a6:10:1d9::12)
+ by VI0P190MB2235.EURP190.PROD.OUTLOOK.COM (2603:10a6:800:25c::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Wed, 1 Oct
- 2025 15:10:30 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Wed, 1 Oct
+ 2025 15:10:29 +0000
 Received: from DU2PEPF00028D02.eurprd03.prod.outlook.com
- (2603:10a6:10:1d9:cafe::6c) by DB9PR02CA0024.outlook.office365.com
- (2603:10a6:10:1d9::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.14 via Frontend Transport; Wed,
- 1 Oct 2025 15:10:30 +0000
+ (2603:10a6:10:1d9:cafe::2a) by DB9PR02CA0007.outlook.office365.com
+ (2603:10a6:10:1d9::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.15 via Frontend Transport; Wed,
+ 1 Oct 2025 15:10:29 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  DU2PEPF00028D02.mail.protection.outlook.com (10.167.242.186) with Microsoft
- SMTP Server id 15.20.9182.15 via Frontend Transport; Wed, 1 Oct 2025 15:10:30
+ SMTP Server id 15.20.9182.15 via Frontend Transport; Wed, 1 Oct 2025 15:10:29
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v1 10/20] net/ntnic: add reset init stage 8 for NT400D11
-Date: Wed,  1 Oct 2025 17:09:52 +0200
-Message-ID: <20251001151018.250671-11-sil-plv@napatech.com>
+Subject: [PATCH v1 09/20] net/ntnic: add reset init stage 7 for NT400D11
+Date: Wed,  1 Oct 2025 17:09:51 +0200
+Message-ID: <20251001151018.250671-10-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20251001151018.250671-1-sil-plv@napatech.com>
 References: <20251001151018.250671-1-sil-plv@napatech.com>
@@ -66,65 +66,65 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PEPF00028D02:EE_|DB9P190MB1353:EE_
+X-MS-TrafficTypeDiagnostic: DU2PEPF00028D02:EE_|VI0P190MB2235:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: d5d8bff4-8526-4908-d71f-08de00fca963
+X-MS-Office365-Filtering-Correlation-Id: d399bc7b-b731-4a2a-97df-08de00fca8e9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|1800799024|376014|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?POHo5yRrK4CeA+3r7E8J16Jox6k9oN14heygbAtaKVJgRZGO+/kuU78PkaU1?=
- =?us-ascii?Q?8LJYziID5HxttHfyNUbg1VFqKM749VLFg9C6rTeua69CvHBRX6TevCkyCKn3?=
- =?us-ascii?Q?LDP/Ya+ZkFudSZn+ph/y3L8e5MOSVgyVD6qeaNkmvWF10oyaTrtHG1t9nFKO?=
- =?us-ascii?Q?Z0WsfA//XFbjX5PZjG4OWJ5N92l4EU/HnfHO7IEonledk/ZLbbTnsQ7L/RaS?=
- =?us-ascii?Q?436ulikff2tp8fl+LUkKXq7NF3BENT7yzNnkcbZ7gco6aS3GxqY3BWyFlJVR?=
- =?us-ascii?Q?9yk5IINCyWi+rFauPM0l0mwGJ8jx5xHz58R5BSXHMDQB/OQoVnnqo7Yse40t?=
- =?us-ascii?Q?VrTxae7gIxH0eE2Ea6g9y5FKsxgJNgY/Nxqh6+ZfNhus1QnT04Vb0zFoQ07B?=
- =?us-ascii?Q?W56Qj8P1M9wKyeTs1EwSqNMWXqKoeNXaj+R7KwB/czc9SV6uKqUjCogUFhUI?=
- =?us-ascii?Q?d4EW6rKK+34jOZTaVjL1LHujJUXMQwpr0M5mkPvI43ka4NWZDu8qWTehTYBz?=
- =?us-ascii?Q?0XqRy2HHdC/vLMePQYA8742fULooYe33bEaaRH/UdvNHBoqP8dw2IBLZfNkt?=
- =?us-ascii?Q?L0VnhS7bbaleSdfVCBDlsO1/K0M9aPRHv+d94cdCUduFHMXD46I3xrYfdb38?=
- =?us-ascii?Q?rStclKQ9+T9pYCo8mNRv9H6cp1MIgjg8f0reNxUwGaMPSl5tLq6lHor3Et4k?=
- =?us-ascii?Q?eG6a+fP1wSfdrIbvmtwH/7vFTMrBDQqGl1Zgel576+N3trKqfKC9DGZBBTa+?=
- =?us-ascii?Q?eBEhvzkter1x654hHnuQnW+9HA0QLVTp7lZgqdV07kIkoqKrn1ssMCpmVDwR?=
- =?us-ascii?Q?2PfzDEwHGxD138ukDVxW4KB61Jb4AHSozasWS2ZyLgJCpL8IjiI69QBKceQX?=
- =?us-ascii?Q?ZyeW/FbYxlcwft8hra3SdIAQMSjL89BoWW82wPhfdQRj8+lqTqUeIpWfEJKR?=
- =?us-ascii?Q?zVc/G6oHofeOBAH7G59BbY9ChH9o2pcUHecWlTQbQRbtXDMa55Y0AHDbo0g+?=
- =?us-ascii?Q?QQ+J3CMUv4VOHOFBcI6thqUfsCXhCK6OU0+nOB83dT1tsnWQGUZTsXrl7i23?=
- =?us-ascii?Q?IVlAO62+b16uGVJ4wruEvQTaHXwpUjonxDCXOxEtigVMXfigTKn/K3SEJNIS?=
- =?us-ascii?Q?YUVOO17pfjT0BzsjqZpJpHw9oZGxEdpsbdG2r+H/52N2JtGuptBO0Z+BDFou?=
- =?us-ascii?Q?IJn0YWQQcMIez5Wn4nZjTkQ/o4mnTjju7IOh1usDXaQYWyfPHG4W3xjjQjZn?=
- =?us-ascii?Q?0gE2jH3yD/6PvjfEnu3YzMIgAcXZHbJCfSg7bLnBAigVC6fZoUH4NBoE/lMN?=
- =?us-ascii?Q?M3VL6QDYPGBRoCRVs7t2v5RALxEbnsV82aHxtiApzfU9+PCyeSF1sj2vwzfy?=
- =?us-ascii?Q?FTBCkPiXQTVXgCDmNjTGV7Xqi3i0kEwILPah1exppp3gOvgGvdSJN1UsxFvV?=
- =?us-ascii?Q?Mdwh0KV/QUqY60KZMnK983B4rT1oUmyiDp88OZG+MqUaqR+Z5iPGnfaSguSz?=
- =?us-ascii?Q?rOAw/nRzFHGwBjXc2kjE9ABO2djxILx3kOe2CLHKtlopjlWCxL7T+8qIvvBz?=
- =?us-ascii?Q?wwiJN1IcGO7Ht+GioVQ=3D?=
+ ARA:13230040|376014|1800799024|82310400026|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ajs+racfxE3bfOc5dTX8W0Vfnvum5KSjbq5uZ8kho4pEucygM5XF0L+3GrFh?=
+ =?us-ascii?Q?uLUxV+mQkUxF4eDJUAaw9v2JjUybqTOE59piLlYnHrmc3eUGDRToN8LeM0Me?=
+ =?us-ascii?Q?JqHo12+vJuqv8ARCjoE5CweFL+4v+DkLX5lQbMJp46Aonny3GWY4wKGCOx2z?=
+ =?us-ascii?Q?F0ciyidDPHBjMivvdVsOhrhb8+ue/xvyP69mPo7aIerlCUqIViMY1PJQofKh?=
+ =?us-ascii?Q?cpSM1HW7d+Is0qQycLY9+TglbfTeR6eISMWigwvnfPn+VE82dEsTtnNjqMo/?=
+ =?us-ascii?Q?sDSYI42adThiNpps8TEQKf2KdIb2DTz8TuSXIYvCzpN8h+om4yf4WuV4OIt6?=
+ =?us-ascii?Q?KYwlsc+jNn0yDKmbL8KbtnzuGvVeQoi3/WOUsrwu3VSxQqBFTzs5ViFlLk25?=
+ =?us-ascii?Q?r1XLV3hKVWvqB6I8aYS56a+Jl0fRiHt5P1TU8DPrsTVrJnZbd8eKbyrkkOPV?=
+ =?us-ascii?Q?tpuThi12lV1vEKnvhVqblvhuyBx4KGpZUd+fftGhJayb9gSmN7r5iFv1RRlB?=
+ =?us-ascii?Q?m3BPXljQ6y1/0jM/X8tfXpyKmbHlBZREwnJBuPsSnF4794hXVM97kMz7SG8H?=
+ =?us-ascii?Q?/kD4Nye/l3csS+ruX0VAHpUpp5omy2lZGMQW+HHZtb8D/n/mPIf21qVHAJW/?=
+ =?us-ascii?Q?VS80o+4PzdmdQSbjuC9Y5PqkINfSZi0J2sLEMmb8WYrCK1dr62h/Eid4DWJp?=
+ =?us-ascii?Q?zHBgUaMw3YZsQLiB/U3NO2YBZXKieSB4TD3WWRFJtl1EBbvBD+xMLxw4BMKC?=
+ =?us-ascii?Q?7ABZ1B9ev59++SBXrAL0MJolo82HNYN+IH2EAePoae6y6VyeTJHtU+MecbUf?=
+ =?us-ascii?Q?twsUI3oB8Nc+reVWy9YDPjZCkca1W+uQ5cS2Ui+ddiA9IUaflO+GR/nIDfdb?=
+ =?us-ascii?Q?waW9PC5yKIZSuFuGTr628TWZ3pseN/M+b/iNHmIssGN7vMkN1Bx+oMDVcbDw?=
+ =?us-ascii?Q?6HdsaAIEh4C3nPWXFckqvQlZBM1S7zGulXbTxoPUPE3YimaQX+OSsUA1MGRN?=
+ =?us-ascii?Q?3EWdzUoVxElYhy7zDi070iHCjmiKeppNkrx/iuzamfshsPRrUPzYsjsThc5C?=
+ =?us-ascii?Q?86Iz9h+V8oguSragLb8PwcHJnmR6zGveehNVf0R9ODNNsywR9eEOf1aidoe+?=
+ =?us-ascii?Q?rVKUzIA2z/mEclXFjvKhpIXg2dAyTrMtuXZYAEro1OKR+LFTRKteQhnb3EE+?=
+ =?us-ascii?Q?KnIhBZmeUSegPa75buv/uBOzueaoI6ZA5gqNNHpDaIP25hx4hDeCrThO5Wp+?=
+ =?us-ascii?Q?VDLiq+vOgsrvrxEHZDUbB6xu5IlFfQ5x+8UPBBYAL9QyiXS/nW4a+Zr4M2cC?=
+ =?us-ascii?Q?64qlJV5OwRRKLIjZiMen96nYSFEEpeDEkot9WCV/OirzNexQIh6LfV7ir6pF?=
+ =?us-ascii?Q?axZn+JoMybkMO71cI8PMyDv7FLs65AnddAe487vWNfd4Tqz2CgB+KpglqdmC?=
+ =?us-ascii?Q?HPIWFZz5e/qkR7yFKJLDmGRAP0w4O7758giTLXzTfJUljDglkXWcAVZMODHL?=
+ =?us-ascii?Q?w5SzYab8ucRIzfCYe09Zu2jqDox5qqtgkxK/7lNY9d/KW5CVRZycNa0mhV1C?=
+ =?us-ascii?Q?LSUeBcOTyFiEExPsQTQ=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);
+ CAT:NONE; SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: C+RV+6K3tBhrBKUEaQk+YCxumdRjRlW6HNbcQUKv5N2Ii46bOVholTcr1+JVo/E1fVYkNSMdJZMhTuYT3MZPdh6zjivt378E8J7kDuaoDyXnJYwA9YxzDDf9M1ZeGBZ9v8lpc/R4hKLLt2Wo/2ZI0pSuis65Co2rlusnPO4AXWYKoD/ifgcY9YU0rs/m0enHJVZO5nSgelscmjpKxd94u/q9AmSfzaecMhgdUYSF4ir/q0d9549fGSisd9Qn0zkp6xCkqreVaKZs6rw7+bO/UGCPPBbJ0v4c/ge1pvBSVUQI45hZwT7nzMXR064JPvvS14lx/JtnsRB6rm75BvOJjn3cL612O3zG7h05gKYR1kr6ock5RvWFclCvZqKEgoiEZ/xoxyUqITo2qOysbr+D921S6JoecwXtXA13d8DSgH4QzRST6+a46H6MUu1doY/mRFt6rdyX8+nwJEmZFz4eTQo1nc0plmPPkg020iAw0LVD5a+VuktaZ5DqPvfaLR9/LSy6bYB+zq44jfK3gdUuVACBzGP8H8Cqd4dPpKyFXBm8aN96dh/+TOipRJ5YTXm1GHUGyE5ahCKxy4YwcW8en0hhVDmm3tMFEgfN/YT3eFuIeizXqMVoU6u2ZTXXZjGdTsebDFai58TF0YNKhpCdYA==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: CqZOg60Zn5NL6QucWW5q478grCwZFwh18C2u8WXEpnFk/NSWGJc2BoIsCgZOtMUug9fmTl6mWXXDrtNckDHFRg4iAEMQMAKE03oy72J43mWd4TCo2dsjI8gKxfX/HHKDhBCRTWdiFBhXdObKcNMVShDVSihPkcg5E/vkcgOXnTbM3gUph4NHKqopyCpTGWCtgFONqndFVxqp/CJwP+lVTuJO6GUdcX5p7TccDU+SbxK/CbYFnCJGI291OQ1gemP8lpmNlEQhVT8cJHIFHEfoZBmdq/TaHJQLGhMeyXR8DQKUPJOruNnDDwd9i4FKqPOMF72nLE1fHn8/ZFIBr7UYAn45udjcZAv7ioWtQ9eWLEcEMrpAsoT2fnYrTHhns6ErsnA6JkLDczusdwsbuKngDznSWn1lbjmWRKFgVVVtGW1eIO2sFiGycaJkumvveEJf9ZMZGgkCZm9SUpXUpelBeHxW0/jh8X0HEBWVZsIRpdIATkk4OxThH7S+fFxK6ca4Kknh6ktHafH/eHh/4+0KlJuimKpliN6NdRGIRdnE+DP5RX9TOlXNCXKwANwXsHBErg6fBAXnPpT26nh4PloEtx60mWeMcCST79g3WzZqUrSAepEHUddmV873FBTwYA7BsW60SUoviUnm4/cn3A8x2g==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 15:10:30.4485 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5d8bff4-8526-4908-d71f-08de00fca963
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 15:10:29.6428 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d399bc7b-b731-4a2a-97df-08de00fca8e9
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU2PEPF00028D02.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9P190MB1353
-X-BESS-ID: 1759331432-305884-7636-4378-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0P190MB2235
+X-BESS-ID: 1759331432-305884-7641-4379-1
 X-BESS-VER: 2019.1_20250904.2304
-X-BESS-Apparent-Source-IP: 40.107.162.106
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVobGRuZAVgZQMNUgLcXAwtDI3M
- DM0DI1yTQ1OSXZ3MjANDEJyDEzNlOqjQUA7qZbe0EAAAA=
+X-BESS-Apparent-Source-IP: 52.101.69.120
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKViYGJuZAVgZQ0DLZMtkk0cDcyM
+ jYwNjA3NAi0dTYMNksxSDVMMkkzcJYqTYWADolv69BAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.267892 [from 
- cloudscan15-63.eu-central-1a.ess.aws.cudaops.com]
+ cloudscan14-203.eu-central-1a.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -145,41 +145,136 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add De-assert SYS reset
+add waiting while PHY_FTILE ready.
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- .../ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../core/nt400dxx/reset/nthw_fpga_rst9569.c   | 90 ++++++++++++++++++-
+ 1 file changed, 88 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
-index 29e32ffb22..f2b064f054 100644
+index 5ddf0a093e..29e32ffb22 100644
 --- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
 +++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
-@@ -73,6 +73,12 @@ static void nthw_fpga_rst9569_set_default_rst_values(struct nthw_fpga_rst_nt400d
- 	nthw_field_set_val_flush32(p->p_fld_rst_phy_ftile, 1);
+@@ -100,6 +100,11 @@ static bool nthw_fpga_rst9569_get_phy_ftile_rst_done_stat(struct nthw_fpga_rst_n
+ 	return nthw_field_get_updated(p->p_fld_stat_phy_ftile_rst_done) != 0;
  }
  
-+static void nthw_fpga_rst9569_sys_rst(struct nthw_fpga_rst_nt400dxx *const p, uint32_t val)
++static bool nthw_fpga_rst9569_get_phy_ftile_rdy_stat(struct nthw_fpga_rst_nt400dxx *const p)
 +{
-+	nthw_field_update_register(p->p_fld_rst_sys);
-+	nthw_field_set_val_flush32(p->p_fld_rst_sys, val);
++	return nthw_field_get_updated(p->p_fld_stat_phy_ftile_rdy) != 0;
 +}
 +
- static void nthw_fpga_rst9569_ddr4_rst(struct nthw_fpga_rst_nt400dxx *const p, uint32_t val)
+ static bool nthw_fpga_rst9569_get_ddr4_calib_complete_latch(struct nthw_fpga_rst_nt400dxx *const p)
  {
- 	nthw_field_update_register(p->p_fld_rst_ddr4);
-@@ -345,6 +351,10 @@ static int nthw_fpga_rst9569_product_reset(struct fpga_info_s *p_fpga_info,
- 		}
- 	} while (!success);
- 
-+	/* (8) De-assert SYS reset: */
-+	NT_LOG(DBG, NTHW, "%s: %s: De-asserting SYS reset", p_adapter_id_str, __func__);
-+	nthw_fpga_rst9569_sys_rst(p_rst, 0);
-+
+ 	return nthw_field_get_updated(p->p_fld_latch_ddr4_calib_complete) != 0;
+@@ -155,6 +160,40 @@ static int nthw_fpga_rst9569_wait_ddr4_calibration_complete(struct fpga_info_s *
  	return 0;
  }
  
++static int nthw_fpga_rst9569_wait_phy_ftile_rdy(struct fpga_info_s *p_fpga_info,
++	struct nthw_fpga_rst_nt400dxx *p_rst)
++{
++	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
++	uint32_t complete;
++	uint32_t timeout;
++
++	/* 5: wait until PHY_FTILE reset done */
++	NT_LOG(DBG, NTHW, "%s: %s: PHY FTILE ready", p_adapter_id_str, __func__);
++	timeout = 50000;/* initial timeout must be set to 5 sec. */
++
++	do {
++		complete = nthw_fpga_rst9569_get_phy_ftile_rdy_stat(p_rst);
++
++		if (!complete) {
++			nthw_os_wait_usec(100);
++
++		} else {
++			NT_LOG(DBG, NTHW, "%s: PHY FTILE ready, margin to timeout %u",
++				p_adapter_id_str, timeout);
++		}
++
++		timeout--;
++
++		if (timeout == 0) {
++			NT_LOG_DBGX(ERR, NTHW, "%s: Timeout waiting for PHY FTILE ready",
++				p_adapter_id_str);
++			return -1;
++		}
++	} while (!complete);
++
++	return 0;
++}
++
+ static int nthw_fpga_rst9569_wait_phy_ftile_rst_done(struct fpga_info_s *p_fpga_info,
+ 	struct nthw_fpga_rst_nt400dxx *p_rst)
+ {
+@@ -232,7 +271,8 @@ static int nthw_fpga_rst9569_product_reset(struct fpga_info_s *p_fpga_info,
+ 			p_adapter_id_str, __func__);
+ 	}
+ 
+-	bool success = true;
++	int tries = 0;
++	bool success = false;
+ 
+ 	do {
+ 		/* Only wait for ftile rst done if ftile is indeed in reset. */
+@@ -256,8 +296,54 @@ static int nthw_fpga_rst9569_product_reset(struct fpga_info_s *p_fpga_info,
+ 
+ 		nthw_os_wait_usec(10000);
+ 
+-	} while (!success);
++		/* (7) Wait until PHY_FTILE ready */
++		if (nthw_fpga_rst9569_wait_phy_ftile_rdy(p_fpga_info, p_rst) == -1) {
++			if (++tries >= 5) {
++				/* Give up */
++				NT_LOG_DBGX(ERR, NTHW, "%s: PHY_TILE not ready after %u attempts",
++					p_adapter_id_str, tries);
++				return res;
++			}
+ 
++			/* Try to recover with as little effort as possible */
++			nthw_phy_tile_t *p_phy_tile = p_fpga_info->mp_nthw_agx.p_phy_tile;
++
++			for (uint8_t i = 0; i < nthw_phy_tile_get_no_intfs(p_phy_tile); i++) {
++				/* Also consider TX_PLL_LOCKED == 0 */
++				if (!nthw_phy_tile_get_port_status_tx_lanes_stable(p_phy_tile,
++					i)) {
++					success = false;
++					NT_LOG_DBGX(WRN, NTHW,
++						"%s: PHY_TILE Intf %u TX_LANES_STABLE == FALSE",
++						p_adapter_id_str, i);
++
++					/* Active low */
++					nthw_phy_tile_set_port_config_rst(p_phy_tile, i, 0);
++					int32_t count = 1000;
++
++					do {
++						nthw_os_wait_usec(1000);
++					} while
++					(!nthw_phy_tile_get_port_status_reset_ack(p_phy_tile, i) &&
++						(--count > 0));
++
++					if (count <= 0) {
++						NT_LOG(ERR, NTHW,
++							"%s: IntfNo %u: Time-out waiting for PortStatusResetAck",
++							p_adapter_id_str, i);
++					}
++
++					/* Active low */
++					nthw_phy_tile_set_port_config_rst(p_phy_tile, i, 1);
++					nthw_os_wait_usec(20000);
++				}
++			}
++
++		} else {
++			NT_LOG_DBGX(DBG, NTHW, "%s: PHY_TILE ready", p_adapter_id_str);
++			success = true;
++		}
++	} while (!success);
+ 
+ 	return 0;
+ }
 -- 
 2.45.0
 
