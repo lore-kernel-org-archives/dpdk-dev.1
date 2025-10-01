@@ -2,61 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB03CCA470
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Oct 2025 06:46:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A446BCCA470
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Oct 2025 06:46:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 168B040A79;
-	Wed,  1 Oct 2025 08:46:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EBD8A40A6F;
+	Wed,  1 Oct 2025 08:46:19 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8028B40A67
- for <dev@dpdk.org>; Wed,  1 Oct 2025 08:46:08 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id AD691406BC
+ for <dev@dpdk.org>; Wed,  1 Oct 2025 08:46:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1759301168;
+ s=mimecast20190719; t=1759301178;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=waqnPtFNEAm495YzWtQSqHnActNg7sA3Ix5/gll7E/0=;
- b=TR1+LZx6mCA08NPrFm7JQ3UoyAdHLzFA4xlMa5n8O8A891Tjc78lngpTBhk7qF/9sHMYo3
- M8boRvBt4gWlPgnGR9qlvA9umqdWmcmrENSfN5UAsPS23yGpkGKMjbYUR+jhn9n/P2EfRA
- HiGSJZJ0qT34JECaWHR0EUmt3j/z0es=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ bh=iMJTFglZm+N6IeuDj5T5DDNqlLBGzHjOX+y9n861E88=;
+ b=erAMdSV0cfUBXh7GYoqRRzGFVipUeJrXVUw6bsc++t3UnZwMqLkf1Svufgewcpj8FCYSmM
+ f5NmCiKqQWFQgYRy3BXbuedj/Rp3DOQOz+AqTsH3CgBYN/gq5gl+TLmkbBTkv80R2K0zIn
+ 4Z6jDyRh10WzkiBAZ2KgDB3ZevtjPBA=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-beMG67I8O1G1h6xjxNHw1w-1; Wed,
- 01 Oct 2025 02:46:04 -0400
-X-MC-Unique: beMG67I8O1G1h6xjxNHw1w-1
-X-Mimecast-MFC-AGG-ID: beMG67I8O1G1h6xjxNHw1w_1759301163
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-642-RyxzEpAeOvG_wHdUnMiOsQ-1; Wed,
+ 01 Oct 2025 02:46:15 -0400
+X-MC-Unique: RyxzEpAeOvG_wHdUnMiOsQ-1
+X-Mimecast-MFC-AGG-ID: RyxzEpAeOvG_wHdUnMiOsQ_1759301174
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 58E3D195604F; Wed,  1 Oct 2025 06:46:03 +0000 (UTC)
+ by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 6D6551955F28; Wed,  1 Oct 2025 06:46:12 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.45.224.213])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 704E8180035E; Wed,  1 Oct 2025 06:46:00 +0000 (UTC)
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 8263D30002D0; Wed,  1 Oct 2025 06:46:06 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, stable@dpdk.org,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: [PATCH v7 6/9] eal/arm: fix C++ build for 32-bit memcpy
-Date: Wed,  1 Oct 2025 08:45:08 +0200
-Message-ID: <20251001064512.2539269-7-david.marchand@redhat.com>
+Cc: bruce.richardson@intel.com, Thomas Monjalon <thomas@monjalon.net>,
+ Jiawen Wu <jiawenwu@trustnetic.com>, Jian Wang <jianwang@trustnetic.com>,
+ Zaiyu Wang <zaiyuwang@trustnetic.com>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Min Zhou <zhoumin@loongson.cn>, David Christensen <drc@linux.ibm.com>,
+ =?UTF-8?q?Stanis=C5=82aw=20Kardach?= <stanislaw.kardach@gmail.com>,
+ Sun Yuechi <sunyuechi@iscas.ac.cn>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH v7 7/9] build: factorize headers installation
+Date: Wed,  1 Oct 2025 08:45:09 +0200
+Message-ID: <20251001064512.2539269-8-david.marchand@redhat.com>
 In-Reply-To: <20251001064512.2539269-1-david.marchand@redhat.com>
 References: <20241127112617.1331125-1-david.marchand@redhat.com>
  <20251001064512.2539269-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Pwc7azpTJ8w4uKDm8kSM7zwR8lS8WmH5RePwXxsGNU8_1759301163
+X-Mimecast-MFC-PROC-ID: 235N_M9ztEuYsB0xEpLNNfOFUIRKV6XwQ1m9K6drK6w_1759301174
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,53 +75,299 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This was caught while checking ARM arch headers.
+Gather all headers in global variables, put headers installation
+in a single location and make the headers check use them instead of
+dpdk_chkinc_headers.
 
-In file included from buildtools/chkincs/chkincs-cpp.p/rte_memcpy_32.cpp:1:
-/home/runner/work/dpdk/dpdk/lib/eal/arm/include/rte_memcpy_32.h:302:1:
-	error: expected declaration before ‘}’ token
-  302 | }
-      | ^
+This rework reveals a number of issues:
+- net/txgbe driver was directly installing its header, bypassing
+  drivers/meson.build and skipping the headers check,
+- arch headers were not checked except for x86,
+- some driver headers were not checked,
 
-Fixes: 719834a6849e ("use C linkage where appropriate in headers")
-Cc: stable@dpdk.org
+For the last point, a build warning must be disabled (like it is
+globally in DPDK) for headers from raw drivers.
+
+Finally, checkpatches is updated to avoid reintroductions of
+install_headers().
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
-Acked-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
 ---
- lib/eal/arm/include/rte_memcpy_32.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ buildtools/chkincs/meson.build        |  7 +++++--
+ config/meson.build                    |  3 +--
+ devtools/checkpatches.sh              |  8 ++++++++
+ drivers/meson.build                   |  7 ++-----
+ drivers/net/txgbe/meson.build         |  2 +-
+ lib/eal/arm/include/meson.build       |  3 +--
+ lib/eal/include/meson.build           |  3 +--
+ lib/eal/loongarch/include/meson.build |  3 +--
+ lib/eal/ppc/include/meson.build       |  3 +--
+ lib/eal/riscv/include/meson.build     |  3 +--
+ lib/eal/x86/include/meson.build       |  6 ++----
+ lib/meson.build                       | 10 +++-------
+ meson.build                           | 15 ++++++++++++++-
+ 13 files changed, 41 insertions(+), 32 deletions(-)
 
-diff --git a/lib/eal/arm/include/rte_memcpy_32.h b/lib/eal/arm/include/rte_memcpy_32.h
-index 99fd5757ca..861be06f5e 100644
---- a/lib/eal/arm/include/rte_memcpy_32.h
-+++ b/lib/eal/arm/include/rte_memcpy_32.h
-@@ -19,10 +19,14 @@
- /* ARM NEON Intrinsics are used to copy data */
- #include <arm_neon.h>
+diff --git a/buildtools/chkincs/meson.build b/buildtools/chkincs/meson.build
+index 49dbc55254..ac7df41304 100644
+--- a/buildtools/chkincs/meson.build
++++ b/buildtools/chkincs/meson.build
+@@ -12,10 +12,13 @@ gen_c_files = generator(gen_c_file_for_header,
+         arguments: ['@INPUT@', '@OUTPUT@'])
  
-+#endif /* RTE_ARCH_ARM_NEON_MEMCPY */
+ cflags = machine_args
++if cc.has_argument('-Wno-missing-field-initializers')
++    cflags += '-Wno-missing-field-initializers'
++endif
+ cflags += no_wvla_cflag
+ 
+ sources = files('main.c')
+-sources += gen_c_files.process(dpdk_chkinc_headers)
++sources += gen_c_files.process(dpdk_arch_headers + dpdk_headers + dpdk_drivers_headers)
+ 
+ # some driver SDK headers depend on these two buses, which are mandatory in build
+ # so we always include them in deps list
+@@ -56,7 +59,7 @@ gen_cpp_files = generator(gen_c_file_for_header,
+         arguments: ['@INPUT@', '@OUTPUT@'])
+ 
+ cpp_sources = files('main.cpp')
+-cpp_sources += gen_cpp_files.process(dpdk_chkinc_headers)
++cpp_sources += gen_cpp_files.process(dpdk_arch_headers + dpdk_headers + dpdk_drivers_headers)
+ 
+ executable('chkincs-cpp', cpp_sources,
+         cpp_args: ['-include', 'rte_config.h', cflags],
+diff --git a/config/meson.build b/config/meson.build
+index 55497f0bf5..f737b67c36 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -456,8 +456,7 @@ endif
+ # set the install path for the drivers
+ dpdk_conf.set_quoted('RTE_EAL_PMD_PATH', eal_pmd_path)
+ 
+-install_headers(['rte_config.h'],
+-        subdir: get_option('include_subdir_arch'))
++dpdk_arch_headers += files('rte_config.h')
+ 
+ # enable VFIO only if it is linux OS
+ dpdk_conf.set('RTE_EAL_VFIO', is_linux)
+diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
+index 35037aa8f1..9fb8fd0a07 100755
+--- a/devtools/checkpatches.sh
++++ b/devtools/checkpatches.sh
+@@ -87,6 +87,14 @@ check_forbidden_additions() { # <patch>
+ 		-f $(dirname $(readlink -f $0))/check-forbidden-tokens.awk \
+ 		"$1" || res=1
+ 
++	# don't call directly install_headers()
++	awk -v FOLDERS="lib drivers" \
++		-v EXPRESSIONS="\\\<install_headers\\\>" \
++		-v RET_ON_FAIL=1 \
++		-v MESSAGE='Using install_headers()' \
++		-f $(dirname $(readlink -f $0))/check-forbidden-tokens.awk \
++		"$1" || res=1
 +
- #ifdef __cplusplus
- extern "C" {
- #endif
+ 	# refrain from using compiler attribute without defining a common macro
+ 	awk -v FOLDERS="lib drivers app examples" \
+ 		-v SKIP_FILES='lib/eal/include/rte_common.h' \
+diff --git a/drivers/meson.build b/drivers/meson.build
+index f25f425565..424acb03a7 100644
+--- a/drivers/meson.build
++++ b/drivers/meson.build
+@@ -241,11 +241,8 @@ foreach subpath:subdirs
  
-+#ifdef RTE_ARCH_ARM_NEON_MEMCPY
+         dpdk_extra_ldflags += pkgconfig_extra_libs
+ 
+-        install_headers(headers)
+-        if get_option('enable_driver_sdk')
+-            install_headers(driver_sdk_headers)
+-        endif
+-        dpdk_chkinc_headers += driver_sdk_headers
++        dpdk_headers += headers
++        dpdk_drivers_headers += driver_sdk_headers
+ 
+         if headers.length() > 0
+             dpdk_includes += include_directories(drv_path)
+diff --git a/drivers/net/txgbe/meson.build b/drivers/net/txgbe/meson.build
+index 4dbbf597bb..5cdec017ed 100644
+--- a/drivers/net/txgbe/meson.build
++++ b/drivers/net/txgbe/meson.build
+@@ -31,4 +31,4 @@ elif arch_subdir == 'arm'
+     sources += files('txgbe_rxtx_vec_neon.c')
+ endif
+ 
+-install_headers('rte_pmd_txgbe.h')
++headers = files('rte_pmd_txgbe.h')
+diff --git a/lib/eal/arm/include/meson.build b/lib/eal/arm/include/meson.build
+index 657bf58569..822ddac520 100644
+--- a/lib/eal/arm/include/meson.build
++++ b/lib/eal/arm/include/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2017 Intel Corporation.
+ 
+-arch_headers = files(
++dpdk_arch_headers += files(
+         'rte_atomic_32.h',
+         'rte_atomic_64.h',
+         'rte_atomic.h',
+@@ -28,4 +28,3 @@ arch_headers = files(
+         'rte_spinlock.h',
+         'rte_vect.h',
+ )
+-install_headers(arch_headers, subdir: get_option('include_subdir_arch'))
+diff --git a/lib/eal/include/meson.build b/lib/eal/include/meson.build
+index d903577caa..aef5824e5f 100644
+--- a/lib/eal/include/meson.build
++++ b/lib/eal/include/meson.build
+@@ -64,7 +64,7 @@ driver_sdk_headers = files(
+ )
+ 
+ # special case install the generic headers, since they go in a subdir
+-generic_headers = files(
++dpdk_generic_headers += files(
+         'generic/rte_atomic.h',
+         'generic/rte_byteorder.h',
+         'generic/rte_cpuflags.h',
+@@ -78,4 +78,3 @@ generic_headers = files(
+         'generic/rte_spinlock.h',
+         'generic/rte_vect.h',
+ )
+-install_headers(generic_headers, subdir: 'generic')
+diff --git a/lib/eal/loongarch/include/meson.build b/lib/eal/loongarch/include/meson.build
+index 6e8d12601a..574aa6dac2 100644
+--- a/lib/eal/loongarch/include/meson.build
++++ b/lib/eal/loongarch/include/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2022 Loongson Technology Corporation Limited
+ 
+-arch_headers = files(
++dpdk_arch_headers += files(
+         'rte_atomic.h',
+         'rte_byteorder.h',
+         'rte_cpuflags.h',
+@@ -15,4 +15,3 @@ arch_headers = files(
+         'rte_spinlock.h',
+         'rte_vect.h',
+ )
+-install_headers(arch_headers, subdir: get_option('include_subdir_arch'))
+diff --git a/lib/eal/ppc/include/meson.build b/lib/eal/ppc/include/meson.build
+index fa64330f01..87887187b8 100644
+--- a/lib/eal/ppc/include/meson.build
++++ b/lib/eal/ppc/include/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2018 Luca Boccassi <bluca@debian.org>
+ 
+-arch_headers = files(
++dpdk_arch_headers += files(
+         'rte_altivec.h',
+         'rte_atomic.h',
+         'rte_byteorder.h',
+@@ -16,4 +16,3 @@ arch_headers = files(
+         'rte_spinlock.h',
+         'rte_vect.h',
+ )
+-install_headers(arch_headers, subdir: get_option('include_subdir_arch'))
+diff --git a/lib/eal/riscv/include/meson.build b/lib/eal/riscv/include/meson.build
+index 481c7d50a4..a7a387fb8a 100644
+--- a/lib/eal/riscv/include/meson.build
++++ b/lib/eal/riscv/include/meson.build
+@@ -3,7 +3,7 @@
+ # Copyright(c) 2022 SiFive
+ # Copyright(c) 2022 Semihalf
+ 
+-arch_headers = files(
++dpdk_arch_headers += files(
+         'rte_atomic.h',
+         'rte_byteorder.h',
+         'rte_cpuflags.h',
+@@ -17,4 +17,3 @@ arch_headers = files(
+         'rte_spinlock.h',
+         'rte_vect.h',
+ )
+-install_headers(arch_headers, subdir: get_option('include_subdir_arch'))
+diff --git a/lib/eal/x86/include/meson.build b/lib/eal/x86/include/meson.build
+index 52d2f8e969..71f149e821 100644
+--- a/lib/eal/x86/include/meson.build
++++ b/lib/eal/x86/include/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2017 Intel Corporation
+ 
+-arch_headers = files(
++dpdk_arch_headers += files(
+         'rte_atomic.h',
+         'rte_byteorder.h',
+         'rte_cpuflags.h',
+@@ -16,11 +16,9 @@ arch_headers = files(
+         'rte_spinlock.h',
+         'rte_vect.h',
+ )
+-arch_indirect_headers = files(
++dpdk_arch_indirect_headers += files(
+         'rte_atomic_32.h',
+         'rte_atomic_64.h',
+         'rte_byteorder_32.h',
+         'rte_byteorder_64.h',
+ )
+-install_headers(arch_headers + arch_indirect_headers, subdir: get_option('include_subdir_arch'))
+-dpdk_chkinc_headers += arch_headers
+diff --git a/lib/meson.build b/lib/meson.build
+index a67efaf718..d79740a4c3 100644
+--- a/lib/meson.build
++++ b/lib/meson.build
+@@ -208,13 +208,9 @@ foreach l:libraries
+ 
+     dpdk_libs_enabled += name
+     dpdk_conf.set('RTE_LIB_' + name.to_upper(), 1)
+-    install_headers(headers)
+-    install_headers(indirect_headers)
+-    if get_option('enable_driver_sdk')
+-        install_headers(driver_sdk_headers)
+-    endif
+-    dpdk_chkinc_headers += headers
+-    dpdk_chkinc_headers += driver_sdk_headers
++    dpdk_headers += headers
++    dpdk_indirect_headers += indirect_headers
++    dpdk_drivers_headers += driver_sdk_headers
+ 
+     libname = 'rte_' + name
+     includes += include_directories(l)
+diff --git a/meson.build b/meson.build
+index 2423884df7..9f0b06179b 100644
+--- a/meson.build
++++ b/meson.build
+@@ -37,7 +37,12 @@ dpdk_libraries = []
+ dpdk_static_libraries = []
+ dpdk_shared_lib_deps = []
+ dpdk_static_lib_deps = []
+-dpdk_chkinc_headers = []
++dpdk_arch_headers = []
++dpdk_arch_indirect_headers = []
++dpdk_generic_headers = []
++dpdk_headers = []
++dpdk_indirect_headers = []
++dpdk_drivers_headers = []
+ dpdk_driver_classes = []
+ dpdk_drivers = []
+ dpdk_extra_ldflags = []
+@@ -106,6 +111,14 @@ if get_option('check_includes')
+     subdir('buildtools/chkincs')
+ endif
+ 
++install_headers(dpdk_arch_headers + dpdk_arch_indirect_headers,
++        subdir: get_option('include_subdir_arch'))
++install_headers(dpdk_headers + dpdk_indirect_headers)
++install_headers(dpdk_generic_headers, subdir: 'generic')
++if get_option('enable_driver_sdk')
++    install_headers(dpdk_drivers_headers)
++endif
 +
- static inline void
- rte_mov16(uint8_t *dst, const uint8_t *src)
- {
-@@ -252,7 +256,7 @@ rte_memcpy_func(void *dst, const void *src, size_t n)
- 	return ret;
- }
- 
--#else
-+#else /* ! RTE_ARCH_ARM_NEON_MEMCPY */
- 
- static inline void
- rte_mov16(uint8_t *dst, const uint8_t *src)
+ # write the build config
+ build_cfg = 'rte_build_config.h'
+ configure_file(output: build_cfg,
 -- 
 2.51.0
 
