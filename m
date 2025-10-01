@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E6FCCA470
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Oct 2025 15:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D24ECCA470
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Oct 2025 15:11:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B2CB240E5A;
-	Wed,  1 Oct 2025 17:10:38 +0200 (CEST)
-Received: from egress-ip42b.ess.de.barracuda.com
- (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id 001D540E2D
- for <dev@dpdk.org>; Wed,  1 Oct 2025 17:10:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A7E6540E6E;
+	Wed,  1 Oct 2025 17:10:39 +0200 (CEST)
+Received: from egress-ip11b.ess.de.barracuda.com
+ (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 896E440E2D
+ for <dev@dpdk.org>; Wed,  1 Oct 2025 17:10:37 +0200 (CEST)
 Received: from DB3PR0202CU003.outbound.protection.outlook.com
- (mail-northeuropeazon11020077.outbound.protection.outlook.com [52.101.84.77])
- by mx-outbound22-252.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
- cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Wed, 01 Oct 2025 15:10:32 +0000
+ (mail-northeuropeazon11020117.outbound.protection.outlook.com
+ [52.101.84.117]) by mx-outbound22-252.eu-central-1b.ess.aws.cudaops.com
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+ Wed, 01 Oct 2025 15:10:36 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aoA1JYzEJbMYRHv15W9Zse/CqIZ9QY+Y+fgLIdclGhLwd/7RID29v8N9J4Ni0Yvp1FNt4WMMxEd4srQTTNlaf+gDz8mL7gDGDppjvxI1SLKr7iZANa6FIjk3xqfJEWyQErabZ5lGOdL1zA3NGU3EdgGcw7wqdy2vBU16sQzPSR+67+rIjcrS9HzD1ZPjTFZ9i73mIT8Kc6Sk9T2mCB4OIDyGNmNCxbXSJSKyJJkXIqF1YzgpRfBC7npkWrSIfhqkSyLUSvYSI4UY0NIL6PFC38f4JHahc5buAvAUNEkfetRCxEik0n+yia1SFdV2ycOhNeLPkc/HBIy9AFNkO8bqhQ==
+ b=yJethVbXJ3GtZ6/djIvgE7Qti+jnwqeSdf66pVloOIQytNb9BC1jkhnuw7X8WqunQGAFwY3ZoYXAJFUtnQbKD882+e4UfbQQp2/1h1A/UmdYulwbUMXQVKqskdmXq3ARgpMflNM+Ant8CA4D1jfHw/cpf9hlnZqWoMyGOgAkbdu1U+21yt5PNazDDoORBPq+X7sHSd2S8YiIORVPqb8ZaXJVihKwLPwMh1GkNFfUHvLD2Bw1PIGo130Bu2ljVw9hZnI+wP2REVLajm7zyT4YEYCt4Z8wEBSz7UdaI58RNrJKGIwIDJRn5imk2NTQbXgDyrnxOuxVlAfsnDByv/BqrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qfIuqlzGyEB7ZKeEtuoFeXC37nJjgOMmS1pX4Zes3cE=;
- b=eHjYP+xuhLdnqq7bhbosGc28QY12GiR03lBn7NoVEDLrFwQ189zKuysRyjkspeakpcfvY4SKajHCGJnLPk18gNncH1MWduXrmlD0HAYNyM/onTv0A3A0gmJbwBNrFzD8+Beee+2ZA2wZPKJNfCoYjBl+JSqlzc3/VL+C5BJ/Kln5GeYeAMX9G0MGZ1K5US730bSelbhYFb+Rtjyk80lwG+ECVoIhIpDjcDESqdLKdMgmOvXgTkMgF9WPrO7djN/6I5y1kPyXEkcz1KGO26CUU2UzPjCLA1YQiolaUW0JfGq0j8ln3449gUFaLUhu+6cpCERPIhNGoETcC9+zD1pI5Q==
+ bh=AtOe6+1wA/aHpTcZsMJW9CHuPEIcjVV5efxWD42a7xs=;
+ b=PXqM9ePMdHzOO2P2LVry8ba6vbfrDVZBr/b6h/UMAx0UP/8l1GeRlRt2aL0848IcF9S4py731+3Bfb6ZgJteleQcql79VIDudyzyJu4CYje2A1YnvLA5LekzNomrPYfCbBv8oynYzH064gzXOC3mV8uD1kY+sh/T+EpRoZ1Zc5lvQMTTN/hMUmZElIUVFkrJdBJABiFozUfCITUpADQ/YIS9gToUpqHyfLq1jN/PMQBm/TYQSPB6xABd6+3ksf6BcbNeHv9hBjcSgHUF5RFFZRnCLK1ieDk+qTpq6aZRncPG1NjxR04fqATUk6tWsA9NeUB5bnpU2yg6rWg4gg0D8Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qfIuqlzGyEB7ZKeEtuoFeXC37nJjgOMmS1pX4Zes3cE=;
- b=WiksaK+OpGEsj7LA5H7JvZuCTrpU5HYm6YRaRkPjBtfpr7e6yICq1Ek91HFdgriho1kJcxmljFIvTeEWBaGAWNu4Metm8y+hCN8HbP4y79L5lUfYSGnWeNwSndt6PHvrDlbIZqao9oCyCIQ4FbspvYJ4RL/pdY0FO0Ry7F3Tr4E=
-Received: from DB9PR02CA0015.eurprd02.prod.outlook.com (2603:10a6:10:1d9::20)
- by GVXP190MB1848.EURP190.PROD.OUTLOOK.COM (2603:10a6:150:6e::6) with
+ bh=AtOe6+1wA/aHpTcZsMJW9CHuPEIcjVV5efxWD42a7xs=;
+ b=KdaiO3t/HytXu+9fvy1M5/A6x5UER012g6WwvIeLmYHahClCf6GDxHeDqb4Cdycr0Rb0O1DQKDZ8Y71NZ673o+KmqBlGm+ZQde0WzbE5UHoLNe63S/wt+5Q/KloK5YLrKq8dp2dMimt/vqYC+yyA5pVXUgVgDkm7lT8b8a77hEM=
+Received: from DB9PR02CA0029.eurprd02.prod.outlook.com (2603:10a6:10:1d9::34)
+ by GV1P190MB1874.EURP190.PROD.OUTLOOK.COM (2603:10a6:150:61::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Wed, 1 Oct
- 2025 15:10:27 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Wed, 1 Oct
+ 2025 15:10:32 +0000
 Received: from DU2PEPF00028D02.eurprd03.prod.outlook.com
- (2603:10a6:10:1d9:cafe::67) by DB9PR02CA0015.outlook.office365.com
- (2603:10a6:10:1d9::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.17 via Frontend Transport; Wed,
- 1 Oct 2025 15:10:26 +0000
+ (2603:10a6:10:1d9:cafe::46) by DB9PR02CA0029.outlook.office365.com
+ (2603:10a6:10:1d9::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.14 via Frontend Transport; Wed,
+ 1 Oct 2025 15:10:27 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,16 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  DU2PEPF00028D02.mail.protection.outlook.com (10.167.242.186) with Microsoft
- SMTP Server id 15.20.9182.15 via Frontend Transport; Wed, 1 Oct 2025 15:10:26
+ SMTP Server id 15.20.9182.15 via Frontend Transport; Wed, 1 Oct 2025 15:10:31
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v1 06/20] net/ntnic: add reset init stage 3 and 4 for NT400D11
-Date: Wed,  1 Oct 2025 17:09:48 +0200
-Message-ID: <20251001151018.250671-7-sil-plv@napatech.com>
+Subject: [PATCH v1 12/20] net/ntnic: add support pattern matching on inner ETH
+ headers
+Date: Wed,  1 Oct 2025 17:09:54 +0200
+Message-ID: <20251001151018.250671-13-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20251001151018.250671-1-sil-plv@napatech.com>
 References: <20251001151018.250671-1-sil-plv@napatech.com>
@@ -66,65 +67,65 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PEPF00028D02:EE_|GVXP190MB1848:EE_
+X-MS-TrafficTypeDiagnostic: DU2PEPF00028D02:EE_|GV1P190MB1874:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 1d785ca7-28ab-4e34-b963-08de00fca730
+X-MS-Office365-Filtering-Correlation-Id: 513a3d19-2a57-4443-3852-08de00fcaa36
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|1800799024|36860700013|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?T3UpfAon8+/x0jTLoAo0fAM9zK99YdBKFmhq/BJpld4AvHIxsxhesDjVkQGk?=
- =?us-ascii?Q?3K0D+yVw3wN3Q+YcUju98SB1mr9yz2uls58axq/NkWqcOsUCQMO1tXTUiFCR?=
- =?us-ascii?Q?14JYOvbnW7BQsxNZzrzoXDB4IlKtvtw+O+sYt/5yR2ezIZORxOj3ik7UDGwj?=
- =?us-ascii?Q?429lppKd4y0UtUyKiFUE/sNRlB6wVOyHYkg0KHxjymRvR4s259g3EDVN1y9S?=
- =?us-ascii?Q?S6ybxvFc8TxN1R3n4YCSQUD5UpQdAs4DVENkL9qnXFbkin/fVz5c9/tXfihl?=
- =?us-ascii?Q?Ejk2J949bOy62gVq3VkjOIzsnkxCXJKbocoAvWoNRPWhkZTJ98rrKRVnNSQo?=
- =?us-ascii?Q?7SQaWlREPQzb96gVYTN2O7yzjjFSl23ZAcznKRNDkQMv/7XCCIZ30IlYjofx?=
- =?us-ascii?Q?SDZ1AXme8VkXlUdVn/s3o7+hzq4/pivuWuIzSu2WJfanQTk/4/pAQlNaKMiP?=
- =?us-ascii?Q?UrQdueNaWHlrVYfpMMbvIa1LaIW+vE624pr8eUq69G9T2iPMCiukAIWruDR/?=
- =?us-ascii?Q?CK1vLMSbYuxknGs7gKKGkSeoaFNsnbDFcr0z/JpzoC3M/ljGP81TErddaxzb?=
- =?us-ascii?Q?zxVAWQGXgfA+C52M9eDwsKYN4nyrEuL/2q5npVjk/DAGr4+bsQ8EfAGGPLuS?=
- =?us-ascii?Q?Az00xKjfitsXz5GLYNoDWQTs0mh0FNjEeB/EdABbwxzgjDjpeWO36EIfvU9L?=
- =?us-ascii?Q?RdHEtwqJkyRKJgHVtlavU2Xg4XNAIiXVa899Gc1TZErFcGEyHmj7mzy4Vc/T?=
- =?us-ascii?Q?3z1QuEVYnYpI1FQHxOhKO+CblEAtcNn6He47A/IDk/o+/n6XMs4nND69OJaR?=
- =?us-ascii?Q?ZinjF2cqdbAK4Fd1wd1N1F6UHEy9f72DGT+bNGb5lbTMpUmFCGp1TDLX6b/L?=
- =?us-ascii?Q?KxIYmxvM61fYrHTaXmxHhaDVvMcz9znfGn6Q04dWKA+o1xEmeYwyFs4gdao1?=
- =?us-ascii?Q?kcg4cetuITT53DUdflDF8CyrvHSzJV8YBUfYZdIGFk6KcyZ2H+Kzqree6TFd?=
- =?us-ascii?Q?HIf7m0UzSkFLUidAFn8vS2Q3OJ11WdRShHzwbVPYUofBuhhEzvorsrjQ0Gd5?=
- =?us-ascii?Q?SZiTz/Q/YPk1Yle8fA+DlWNmKWK/LnfSp9AqoCpTj2x9VG+RYHzRYuOikj3s?=
- =?us-ascii?Q?/T3j67CRalB2ziyA9yYjwMbqgdEKRgWw+IWik+PjnY1AfUfRrn4gnrkI3eMM?=
- =?us-ascii?Q?8SSNHPzkDbtmPQZ3iPF6VXYAMWhrhSVssmJBIpnexd4G0HHdRuGF+tqlOurB?=
- =?us-ascii?Q?EBZK2CmJhgl9jf7vCEFRXVD1GX9Ldk3iVlmDE2toh/3nbDCIf7mRQbc8ZQLS?=
- =?us-ascii?Q?dNHfBopDggAdHXlj5Nz6/4ViXD22lmS1v7aVK6y5KMXZjJz7bcVzUWOQJRWM?=
- =?us-ascii?Q?Uj8Rplu+1g0l5uazKDT6HHbVub3+nISB26j6A7MuzyLcq8yCWrATVslNsNqd?=
- =?us-ascii?Q?1iAv6aAKySYIAFDJHTNNSB/KDsrK1QM8Ta9yBJFKWjCOZDsGUfrBDwZrZtLN?=
- =?us-ascii?Q?gt28o7FqriN2UShWL3X2LCrMYBExMDOB6yWyS+9ncw8tD5iU/EbqyArI2qdc?=
- =?us-ascii?Q?W+fHY15Vhj9hxRWgmoY=3D?=
+ ARA:13230040|36860700013|376014|82310400026|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7YIvStQeG50imBa1tRvU9KP6LF3KesFQu71hnr1n66Mj+YEqEsRprFJs9GY8?=
+ =?us-ascii?Q?p1265nveNope7wndwmp+pAcwNnO8cSVfKTll34BP5W3L64RWm8Z+N3kpB4N9?=
+ =?us-ascii?Q?d2xu4x3mI4tX8NffJoRYlWCE4U3Jgv9IcKDVfNh4bTzO8EXMkT7xG/jnzTS6?=
+ =?us-ascii?Q?G+pBDODRudHTsl6Ci9529iZi0L8dpZ3LYeYFDNE9eBicUUs4eGyyV3RI+dv7?=
+ =?us-ascii?Q?UKchRGDeeuHzGU63nxyIdnic4iom0fNHRWTPPlAgD68FfDz0VkZNj/NqoYg/?=
+ =?us-ascii?Q?vcg9VxUbuP2tVfs6+7o6ZF2VUj8E7x+jWJoknRIg9iWJ9GuI6swUoMQvygPY?=
+ =?us-ascii?Q?QFS+9DhHZMZlhp0HENsIN64NHP1tbC2jAddE7K601DXrV4ylwEeiivSgPcOm?=
+ =?us-ascii?Q?8obuBgi+PJfW+StrCZ/APABVm6Z1adh8oUxvxbq0d4c4vNTixV5kCd/8OoiD?=
+ =?us-ascii?Q?eyjxCSqpE/kiT6AVsVSyf+s2SP6Q5+SwLpgEmRKjZ6AujrrKxvnyEJ0hl2RW?=
+ =?us-ascii?Q?xuKL1+ELr6CQtNPTAizM+GFOKbF2HkQo6JI0q8xO5Ypd08NXkL3a7Ivnr1Ax?=
+ =?us-ascii?Q?FUiuc1RjKMWUfyxzCJjMThKKY3B6/NTf8SAg/Emz0lnli6YZXzzH6t+wsAau?=
+ =?us-ascii?Q?MRZ6DCJM2LLO7tWgWo1ijUzo11Q9u+7f/HWvAjBgyCrEJmkOKo7wexgpMc+5?=
+ =?us-ascii?Q?/gEwzPfZ9Lje3IsS/MU41nBopnfK25uQHnockArsedF16hoyHOLVdvfOoQXz?=
+ =?us-ascii?Q?vm/4hdka8CNTMBcCsJ1qqPJRTa50C6fYsAymKnE6EnDdv1wz6aDchG+t2S5o?=
+ =?us-ascii?Q?E8HJyeOCG1eUEjmSZVg9Phpzv3r/ig4NPM8DaobWQKBbYk5yaIuP5JmL6mfj?=
+ =?us-ascii?Q?BuE2kETsq6ShjV4c6O7/hmnnlOFcsmwBnSjwNQGsZq8n2hiGY5Y/n4UI7Nxg?=
+ =?us-ascii?Q?DJYHdu5QxNYT5qjbHSIB8d9y3oVydPoANYMWvZDTllTcrVQ+yYpU5Shci0f6?=
+ =?us-ascii?Q?81P6Yu5cNQSuWfakaYM0O4jgIXo8OiFYzWaKSokwyu9FySlcged4YMfTEKFs?=
+ =?us-ascii?Q?ppqm07siQ8O212oU+vrxImWDAgVfipTm06YxyhBaSO+9yiRczkH/B6gjd6xl?=
+ =?us-ascii?Q?94pbu8HWAaUgYf5KeFH/ZOcqAphF79qgFZoM1noMGUzG44LYtqmvcwQxPauC?=
+ =?us-ascii?Q?4l44qFYkkisuHDfYIqZr0alJRoBPxFIlwDQG0O6A3e4dDNXDYNjpBrYjG1q9?=
+ =?us-ascii?Q?+ybcCI6uacK8su5bbnbnpJIBjrZfY/fltb8COKaQqj4iYqrqTSsuonuYaNI8?=
+ =?us-ascii?Q?dKJgHt+//CIu8WF3YiFSTNcTVhxkpT7+vd4VVPgAqdNu9CUbXHmgA7yuMBC4?=
+ =?us-ascii?Q?4HhuOHm2FdydBDS1DQrcU5J6mSPIRuckfaT7PwmSJsFS6G+M3hqpZ8WGXRxn?=
+ =?us-ascii?Q?ptJ6XnWjyqMABgj3FBmMRCGYMsphbQaoNr4FzChrlci2MtY2Z+0Py4x7rYN6?=
+ =?us-ascii?Q?7WeLtzCi5gO2GWniP5ChlnANZ+Zxmh6jYvvZloSABOpONgZ94VTuXFzSB2f6?=
+ =?us-ascii?Q?CwG7h3k79yDdB+mCMrI=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);
+ CAT:NONE; SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: ohAzStqp4CATBOw0mpn7ZewCuPxqm+1TnhXcwqcFl1NVhC/eNSGvw5Yfd/0tWHsoZaSLqJqXDDA04sKQEDVMlfCV7LA51s0iKC2vz/63VYiAk0I8PNPvFeYnHqUxAlVwjz6gZAM6MxHGwCpLPvCbD7HfIXMby3AjZMB6BatQyWQoEJjqvlJXY1emx8Zsxs5BgH14YOpZcd5MqXFD56KzhEUoLZ8GFIXkQkDpn3W8lT7Nvhu7KNf+aCu6xmRymSfWnJgfUSaMPFbHaZIRv/YByjvASi+Xox+lOws4corNPUKYlSQCUJ0ZhmfVmHzTKhWYqh8mcM1Dxyp0qc3CTsMMUe7aOsUTuXHCHCw71flGUnEeJIgm0ijF/FyH/8uNSFMemaPgzODWMl5Nqk2bhswucKvbWLZlc8GymFYU17FAy603BxnWmTUJyRwqYUtVXOj7nGIjhYuo5s9vHNWJBiwLlZW3wZm0zZ62+XfcWD8/nY4YPq41+XPlViUlQIGp8xjkRB3CdGHi/6vRiYG59qsPYa/YR5gK0M0sj7eX6x2/FiT+Nb8bYBcKT5BwV6nMeILVl7wr/LkfQp9LhG7mhMPpiWQDwtcGcK/y+cM1ncTDrYJ9xTtnVYWtdNns4xqt3XROc9dgAsdOlU3TznvSkpVS2g==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: YjshRYX5HnaXwPGBc5Ft6BPfSuzPPSEPSc7yLCj1hPqZ2w2Xffbi8gbeJ+0nXWL+FaLnu1DbsbK6n91j7N3F/zD0VI9V69DDHdHdPiJQDhAuLmezcX8UeagkqnCvWEYhXZ/EV9XNi9vOYpPjIiatp/HXxJw45zxXzePJERI6rhT3op9wYBpUiCughd7H4pKtC/PVALqVtfyPEfvkQAtEljsImKvUkqzhn7Q41475S4NYDI7M5+X0hvJQUWK/78JZdBIjThEZH4LnuicSz4YLIa/vHJ/RGtC9YdwlOgmRymZSGKbTK66gJJNYIxFO72jtlsAZwCYY0F8FXaraS0mQhvhxyRVfq4146ldq3+Dx6VXCEL+O0FGUPgi03TrXXCQFiwBh1AuVIOH3uFsiH9CqRuJ6sAneBsLL7pXvWkCH5t6DVRiQtk3DeXXqv4Ki5rg9hcNolphu8wCIGfxtJg4zgYKiYhsZesNBRk3v9C/K4Uys1U9HhEymRQZ4NeAvZG1Nxg5241gpLMbOoNPYdJvgS2E+1RJJffu9s6w7Og3HHrgG1wHaQo6YnAscgcth/MYixQTcUazNjl4pj8zAVYXeNXRNNGm8mulizrvByoHleFiGV7g8f5jkbkX3q35JV3aarKQvk4cg3jLtaiK7wB/6mQ==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 15:10:26.7580 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d785ca7-28ab-4e34-b963-08de00fca730
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 15:10:31.8273 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 513a3d19-2a57-4443-3852-08de00fcaa36
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU2PEPF00028D02.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXP190MB1848
-X-BESS-ID: 1759331432-305884-7639-4377-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1P190MB1874
+X-BESS-ID: 1759331436-305884-7635-4386-1
 X-BESS-VER: 2019.1_20250904.2304
-X-BESS-Apparent-Source-IP: 52.101.84.77
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkYG5kZAVgZQ0MQkydjALM3SJN
- nC0NjQLDk1zTTFItEi1djCzNwyzdhMqTYWAK09FW9BAAAA
+X-BESS-Apparent-Source-IP: 52.101.84.117
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVmaWZqZAVgZQMMXczNQozSIt0c
+ jcMsnU0sQyNckoCcRMTbG0NLAwV6qNBQBdedt6QQAAAA==
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.267892 [from 
- cloudscan21-198.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan18-214.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -145,62 +146,155 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add DDR4 calib complete latched bits.
+Implements support for match on inner ETH header.
+Updates flow dump output to print both outer and
+inner l2 masks.
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- .../core/nt400dxx/reset/nthw_fpga_rst9569.c   | 24 +++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/net/ntnic/include/flow_api_engine.h   |  1 +
+ .../profile_inline/flow_api_hw_db_inline.c    |  9 ++++--
+ .../profile_inline/flow_api_hw_db_inline.h    |  1 +
+ .../profile_inline/flow_api_profile_inline.c  | 30 +++++++++++--------
+ 4 files changed, 25 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
-index 5e127ecc86..e416e739da 100644
---- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
-+++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
-@@ -84,6 +84,13 @@ static bool nthw_fpga_rst9569_get_ddr4_calib_complete_stat(struct nthw_fpga_rst_
- 	return nthw_field_get_updated(p->p_fld_stat_ddr4_calib_complete) != 0;
- }
+diff --git a/drivers/net/ntnic/include/flow_api_engine.h b/drivers/net/ntnic/include/flow_api_engine.h
+index 6a27ba8e12..362e1666bd 100644
+--- a/drivers/net/ntnic/include/flow_api_engine.h
++++ b/drivers/net/ntnic/include/flow_api_engine.h
+@@ -203,6 +203,7 @@ struct nic_flow_def {
+ 	int l3_prot;
+ 	int l4_prot;
+ 	int tunnel_prot;
++	int tunnel_l2_prot;
+ 	int tunnel_l3_prot;
+ 	int tunnel_l4_prot;
+ 	int vlans;
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c
+index 5de4f6bae7..5caf5b2768 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c
+@@ -396,10 +396,11 @@ void nthw_db_inline_dump(struct flow_nic_dev *ndev, void *db_handle, const struc
+ 			fprintf(file, "    Port msk 0x%02x, VLAN msk 0x%02x\n",
+ 				(int)data->mac_port_mask, (int)data->vlan_mask);
+ 			fprintf(file,
+-				"    Proto msks: Frag 0x%02x, l2 0x%02x, l3 0x%02x, l4 0x%02x, l3t 0x%02x, l4t 0x%02x\n",
++				"    Proto msks: Frag 0x%02x, l2 0x%02x, l3 0x%02x, l4 0x%02x, l2t 0x%02x, l3t 0x%02x, l4t 0x%02x\n",
+ 				(int)data->ptc_mask_frag, (int)data->ptc_mask_l2,
+ 				(int)data->ptc_mask_l3, (int)data->ptc_mask_l4,
+-				(int)data->ptc_mask_l3_tunnel, (int)data->ptc_mask_l4_tunnel);
++				(int)data->ptc_mask_l2_tunnel, (int)data->ptc_mask_l3_tunnel,
++				(int)data->ptc_mask_l4_tunnel);
+ 			fprintf(file, "    IP protocol: pn %u pnt %u\n", data->ip_prot,
+ 				data->ip_prot_tunnel);
+ 			break;
+@@ -958,7 +959,8 @@ static int hw_db_inline_filter_apply(struct flow_nic_dev *ndev,
+ 		nthw_mod_cat_cfn_set(&ndev->be, HW_CAT_CFN_PTC_L4, cat_hw_id, 0, cat->ptc_mask_l4);
+ 		nthw_mod_cat_cfn_set(&ndev->be, HW_CAT_CFN_PTC_TUNNEL, cat_hw_id, 0,
+ 			cat->ptc_mask_tunnel);
+-		nthw_mod_cat_cfn_set(&ndev->be, HW_CAT_CFN_PTC_TNL_L2, cat_hw_id, 0, -1);
++		nthw_mod_cat_cfn_set(&ndev->be, HW_CAT_CFN_PTC_TNL_L2, cat_hw_id, 0,
++			cat->ptc_mask_l2_tunnel);
+ 		nthw_mod_cat_cfn_set(&ndev->be, HW_CAT_CFN_PTC_TNL_VLAN, cat_hw_id, 0, -1);
+ 		nthw_mod_cat_cfn_set(&ndev->be, HW_CAT_CFN_PTC_TNL_MPLS, cat_hw_id, 0, -1);
+ 		nthw_mod_cat_cfn_set(&ndev->be, HW_CAT_CFN_PTC_TNL_L3, cat_hw_id, 0,
+@@ -2294,6 +2296,7 @@ static int hw_db_inline_cat_compare(const struct hw_db_inline_cat_data *data1,
+ 		data1->ptc_mask_l3 == data2->ptc_mask_l3 &&
+ 		data1->ptc_mask_l4 == data2->ptc_mask_l4 &&
+ 		data1->ptc_mask_tunnel == data2->ptc_mask_tunnel &&
++		data1->ptc_mask_l2_tunnel == data2->ptc_mask_l2_tunnel &&
+ 		data1->ptc_mask_l3_tunnel == data2->ptc_mask_l3_tunnel &&
+ 		data1->ptc_mask_l4_tunnel == data2->ptc_mask_l4_tunnel &&
+ 		data1->err_mask_ttl_tunnel == data2->err_mask_ttl_tunnel &&
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.h b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.h
+index b2bd2f6d2d..ec36678c12 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.h
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.h
+@@ -219,6 +219,7 @@ struct hw_db_inline_cat_data {
+ 	uint32_t err_mask_ttl : 2;
+ 	uint32_t padding1 : 9;
  
-+static void nthw_fpga_rst9569_set_ddr4_calib_complete_latch(struct nthw_fpga_rst_nt400dxx *const p,
-+	uint32_t val)
-+{
-+	nthw_field_update_register(p->p_fld_latch_ddr4_calib_complete);
-+	nthw_field_set_val_flush32(p->p_fld_latch_ddr4_calib_complete, val);
-+}
-+
- static int nthw_fpga_rst9569_wait_ddr4_calibration_complete(struct fpga_info_s *p_fpga_info,
- 	struct nthw_fpga_rst_nt400dxx *p_rst)
++	uint8_t ptc_mask_l2_tunnel;
+ 	uint8_t ip_prot;
+ 	uint8_t ip_prot_tunnel;
+ };
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+index d9c10a8eab..f8a4ab715c 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+@@ -908,6 +908,7 @@ static inline struct nic_flow_def *prepare_nic_flow_def(struct nic_flow_def *fd)
+ 		fd->l4_prot = -1;
+ 		fd->vlans = 0;
+ 		fd->tunnel_prot = -1;
++		fd->tunnel_l2_prot = -1;
+ 		fd->tunnel_l3_prot = -1;
+ 		fd->tunnel_l4_prot = -1;
+ 		fd->fragmentation = -1;
+@@ -928,7 +929,8 @@ static inline struct nic_flow_def *allocate_nic_flow_def(void)
+ static bool fd_has_empty_pattern(const struct nic_flow_def *fd)
  {
-@@ -127,6 +134,11 @@ static int nthw_fpga_rst9569_wait_ddr4_calibration_complete(struct fpga_info_s *
- 	return 0;
+ 	return fd && fd->vlans == 0 && fd->l2_prot < 0 && fd->l3_prot < 0 && fd->l4_prot < 0 &&
+-		fd->tunnel_prot < 0 && fd->tunnel_l3_prot < 0 && fd->tunnel_l4_prot < 0 &&
++		fd->tunnel_prot < 0 && fd->tunnel_l2_prot < 0 &&
++		fd->tunnel_l3_prot < 0 && fd->tunnel_l4_prot < 0 &&
+ 		fd->ip_prot < 0 && fd->tunnel_ip_prot < 0 && fd->non_empty < 0;
  }
  
-+static bool nthw_fpga_rst9569_get_ddr4_calib_complete_latch(struct nthw_fpga_rst_nt400dxx *const p)
-+{
-+	return nthw_field_get_updated(p->p_fld_latch_ddr4_calib_complete) != 0;
-+}
-+
- static int nthw_fpga_rst9569_product_reset(struct fpga_info_s *p_fpga_info,
- 	struct nthw_fpga_rst_nt400dxx *p_rst)
- {
-@@ -163,6 +175,18 @@ static int nthw_fpga_rst9569_product_reset(struct fpga_info_s *p_fpga_info,
- 		return res;
- 	}
+@@ -1798,15 +1800,11 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 				const struct rte_ether_hdr *eth_mask =
+ 					(const struct rte_ether_hdr *)elem[eidx].mask;
  
-+	/* (3) Set DDR4 calib complete latched bits: */
-+	nthw_fpga_rst9569_set_ddr4_calib_complete_latch(p_rst, 1);
-+
-+	/* Wait for phy to settle. */
-+	nthw_os_wait_usec(20000);
-+
-+	/* (4) Ensure all latched status bits are still set: */
-+	if (!nthw_fpga_rst9569_get_ddr4_calib_complete_latch(p_rst)) {
-+		NT_LOG(ERR, NTHW, "%s: %s: DDR4 calibration complete has toggled",
-+			p_adapter_id_str, __func__);
-+	}
-+
+-				if (any_count > 0) {
+-					NT_LOG(ERR, FILTER,
+-						"Tunneled L2 ethernet not supported");
+-					nthw_flow_nic_set_error(ERR_FAILED, error);
+-					return -1;
+-				}
+-
+ 				if (eth_spec == NULL || eth_mask == NULL) {
+-					fd->l2_prot = PROT_L2_ETH2;
++					if (any_count > 0 || fd->l2_prot != -1)
++						fd->tunnel_l2_prot = PROT_L2_ETH2;
++					else
++						fd->l2_prot = PROT_L2_ETH2;
+ 					break;
+ 				}
  
- 	return 0;
- }
+@@ -1876,8 +1874,10 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 
+ 					nthw_km_add_match_elem(&fd->km,
+ 						&qw_data[(size_t)(qw_counter * 4)],
+-						&qw_mask[(size_t)(qw_counter * 4)], 4, DYN_L2, 0);
+-					set_key_def_qw(key_def, qw_counter, DYN_L2, 0);
++						&qw_mask[(size_t)(qw_counter * 4)], 4,
++							any_count > 0 ? DYN_TUN_L2 : DYN_L2, 0);
++					set_key_def_qw(key_def, qw_counter,
++						any_count > 0 ? DYN_TUN_L2 : DYN_L2, 0);
+ 					qw_counter += 1;
+ 
+ 					if (!non_zero)
+@@ -1898,8 +1898,10 @@ static int interpret_flow_elements(const struct flow_eth_dev *dev,
+ 					sw_data[0] = ntohs(eth_spec->ether_type) << 16 & sw_mask[0];
+ 
+ 					nthw_km_add_match_elem(&fd->km, &sw_data[0],
+-						&sw_mask[0], 1, DYN_L2, 12);
+-					set_key_def_sw(key_def, sw_counter, DYN_L2, 12);
++						&sw_mask[0], 1,
++						any_count > 0 ? DYN_TUN_L2 : DYN_L2, 12);
++					set_key_def_sw(key_def, sw_counter,
++						any_count > 0 ? DYN_TUN_L2 : DYN_L2, 12);
+ 					sw_counter += 1;
+ 				}
+ 
+@@ -3699,6 +3701,8 @@ static struct flow_handle *create_flow_filter(struct flow_eth_dev *dev, struct n
+ 				fd->ttl_sub_outer) ? -1 : 0x1,
+ 			.ptc_mask_tunnel = fd->tunnel_prot !=
+ 			-1 ? (1 << (fd->tunnel_prot > 10 ? 10 : fd->tunnel_prot)) : -1,
++			.ptc_mask_l2_tunnel =
++				fd->tunnel_l2_prot != -1 ? (1 << fd->tunnel_l2_prot) : -1,
+ 			.ptc_mask_l3_tunnel =
+ 				fd->tunnel_l3_prot != -1 ? (1 << fd->tunnel_l3_prot) : -1,
+ 			.ptc_mask_l4_tunnel =
 -- 
 2.45.0
 
