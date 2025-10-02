@@ -2,52 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 158BCCAC5B0
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Oct 2025 17:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D82CAC5B8
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Oct 2025 19:36:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 554AA4113C;
-	Thu,  2 Oct 2025 19:43:50 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 39610410E7
- for <dev@dpdk.org>; Thu,  2 Oct 2025 19:43:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759427026; x=1790963026;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=gGVKDFOtdRpSW0445A2QhWG1YfPjhDyWPjE7wUBIpXw=;
- b=DEukD4Z5GXPN0fupq3StcyAVipTrIB0H/tAH+OOvvbvHx91Pd2CdZ/V2
- flPnq3QE7NJFJJwC8j0gTX5CTfxuv1N1pmxKHHK+AQRU4uY60c2HoL45R
- lTdkuvShn2o/JNHQIXiEwSdZIq3ENzT0p/i4m2QoyXmjYjFnXqmnzwE5t
- jSrm8F1THFxdswRYn7W7GartUU6QiQjwcG3RLDbICP76FreLGYg+gKm//
- VRUTM98kxUrfDJXOh9tXRpi71Hadu1wy7eUBF12N6oejQBt2yW+veDrDJ
- /i6dxTEVgMABB0csbcTzoIyH7X+ZbapdKda147UMEgjZKqdnXWQ1CCMEw A==;
-X-CSE-ConnectionGUID: k2SYOEmfSUuYjJazoAu/Tw==
-X-CSE-MsgGUID: s1F+Em7rRFaA9UFP7K2X/g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="49271899"
-X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; d="scan'208";a="49271899"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Oct 2025 10:43:45 -0700
-X-CSE-ConnectionGUID: +eXPC3Y3QdaB2SaXpx0dYg==
-X-CSE-MsgGUID: vRlFU5pyTNymYXgpHDzDZg==
-X-ExtLoop1: 1
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa003.fm.intel.com with ESMTP; 02 Oct 2025 10:43:44 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: david.marchand@redhat.com,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v8 18/18] eal: allow lcore remapping with autodetected core
- affinity
-Date: Thu,  2 Oct 2025 18:43:15 +0100
-Message-ID: <20251002174315.962992-19-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251002174315.962992-1-bruce.richardson@intel.com>
-References: <20250520164025.2055721-1-bruce.richardson@intel.com>
- <20251002174315.962992-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0C393402BB;
+	Thu,  2 Oct 2025 21:36:58 +0200 (CEST)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
+ [209.85.215.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 0B9A3402A6
+ for <dev@dpdk.org>; Thu,  2 Oct 2025 21:36:56 +0200 (CEST)
+Received: by mail-pg1-f177.google.com with SMTP id
+ 41be03b00d2f7-b5a631b9c82so926328a12.1
+ for <dev@dpdk.org>; Thu, 02 Oct 2025 12:36:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1759433815; x=1760038615; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=aWK295z44VRe6EJkfHihF4a5RopwM5y3hz+C9SBF/ks=;
+ b=IFlf4dpud343tBDuHkh1Kx4NYqbOclHNxwlBfek1PoK6tOp/4DhVPJQ/JZGNyUPtva
+ y9mOzOv5jIXgLAGtR+JVFTglzFedXX9OD/IP1yqweYmWPiio0u6BznyaefiBYMIq5ssR
+ PjOZMsqGR8DA1PKxOhDfafDbf1kEz9b4fGgfQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1759433815; x=1760038615;
+ h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=aWK295z44VRe6EJkfHihF4a5RopwM5y3hz+C9SBF/ks=;
+ b=lnvDskHQao5GsAukFVHwUofUn1YFAVfbD5QCSUNhJz0t/Cpb8vYTjhze8oUdqCVKrD
+ yrmCy6kQTEs9JogTDrsVxxus22xqYo1Vd1j2bwbBjFxTzTz4nxKNQ+S5epjC5qVYhLkF
+ hVcVcZOjhPy42lR64XHVDDNmvDPSj3VnlyM/8QEpN7LthHX6ANScNbf+tioAqs+pdVnb
+ Uw6iWGDpRpMekYyJqMtB1vt5tjEfn3qYf+VciLf/TeW6Q/Tk/MDzBrDKyBww7Lt0gV1N
+ zPz7o2Dl6+AKGCFVlnhyXMBi6aP5lGfymOvcpQbJc0I5w5y4EkeuncfAP29BaXbpTU86
+ QaVA==
+X-Gm-Message-State: AOJu0YyDplTuMqMV/bGV7XX2zkGTBKT9UKgJQh6Agbw6kxTQU8aU/YII
+ bBbvEdUz0FRwABsF2mBJFPzWwiK9xsSwiAaaz0Gj0SoV8xzlNJu4mRlixxTnvA5KXuF2vHxJ9jo
+ NCca35CFtOvuCFt4/RZkly8bwzKIgeTjVSgYfBzYJTw==
+X-Gm-Gg: ASbGncuZxpMjzc0AqAfpRNKbr6W44vK6tsiejdtYD+7P886KAkqS9DPa9XhkAUGQRja
+ x+CVEJ9Y2eZDcPVYmtg0wJe/BitMKOyHNqa6+x4UYykewNKM2dRwJvlQkOTgxw5m9fYecJpnN/I
+ V5PsKQDdQDnwBrPQMrEkTJW9b3izO8LuoCKQqwcPznVPOSwx0j3HyXcpUUldd0WLUHStjWpR/V+
+ FOFIhq266ul5505HO0zjULzi/NEJZ4owObhvzT1brRS5ujxAhNIN+Z4bd5I+1BkbR1RKaiCvC8=
+X-Google-Smtp-Source: AGHT+IFz1nXzIOwwbuD7o0V/wG1tdTEvFyw+BeGM09ofOQz+ujWDeEQdIcPivrWnhn9nW9tzol0Ut/rzeCGReoGnj7E=
+X-Received: by 2002:a17:903:38d0:b0:262:d081:96c with SMTP id
+ d9443c01a7336-28e9a546837mr5444795ad.17.1759433814891; Thu, 02 Oct 2025
+ 12:36:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Thu, 2 Oct 2025 15:36:23 -0400
+X-Gm-Features: AS18NWBI-kMFm6Jnzii1So_dC3PppqvP0XCTtVl0xGDN34r6_4IWaMgJ9Kaw-PM
+Message-ID: <CAJvnSUCH62hqKkacrB5QG8uONS_XhKC2fnk68VTmKfCxfKDnhg@mail.gmail.com>
+Subject: Community CI Meeting Minutes - September 18 2025
+To: ci@dpdk.org
+Cc: dev <dev@dpdk.org>
+Content-Type: multipart/alternative; boundary="0000000000008af0eb0640321ba2"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,203 +66,230 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When run without an coremask or core list parameters, EAL detects the
-working set of cores allowed for the current process and uses that as a
-core list for use. Currently, this does not work for cores which are
-numbered >= RTE_MAX_LCORE.
+--0000000000008af0eb0640321ba2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-We can fix this by allowing the remap option to also be used with these
-auto-detected cores. In the process we simplify the code by taking
-advantage of that fact that we know up-front when processing parameters
-if any core parameter is passed, so we no longer need a flag and to
-auto-detect at the end. Instead, we take advantage of the fact that our
-core-arg processing routines now all work with cpusets, to have a simple
-tri-state option for remapping (if we don't have manual remapping done
-by --lcores-parameter):
-  * parse coremask to cpuset
-  * parse core list to cpuset
-  * query OS for current thread's cpuset
-Once that is done, we have common code for processing, and optionally
-remapping, the resulting cpuset.
+#####################################################################
+September 18, 2025
+Attendees
+   1. Patrick Robb
+   2. Aaron Conole
+   3. Luca Vizzarro
+   4. Sadashiva Rao
+   5. Paul Szczepanek
+   6. Aaron Conole
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- lib/eal/common/eal_common_options.c | 110 +++++++++++-----------------
- 1 file changed, 43 insertions(+), 67 deletions(-)
+#####################################################################
+Minutes
 
-diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index c754c19511..b1830aa9d7 100644
---- a/lib/eal/common/eal_common_options.c
-+++ b/lib/eal/common/eal_common_options.c
-@@ -292,8 +292,6 @@ struct device_option {
- static struct device_option_list devopt_list =
- TAILQ_HEAD_INITIALIZER(devopt_list);
- 
--static int core_parsed;
--
- /* Returns rte_usage_hook_t */
- rte_usage_hook_t
- eal_get_application_usage_hook(void)
-@@ -830,7 +828,7 @@ eal_parse_service_coremask(const char *coremask)
- 	if (count == 0)
- 		return -1;
- 
--	if (core_parsed && taken_lcore_count != count) {
-+	if (taken_lcore_count != count) {
- 		EAL_LOG(WARNING,
- 			"Not all service cores are in the coremask. "
- 			"Please ensure -c or -l includes service cores");
-@@ -1051,7 +1049,7 @@ eal_parse_service_corelist(const char *corelist)
- 	if (count == 0)
- 		return -1;
- 
--	if (core_parsed && taken_lcore_count != count) {
-+	if (taken_lcore_count != count) {
- 		EAL_LOG(WARNING,
- 			"Not all service cores were in the coremask. "
- 			"Please ensure -c or -l includes service cores");
-@@ -1919,32 +1917,31 @@ eal_parse_args(void)
- 		}
- 	}
- 
--	/* parse the core list arguments */
--	if (args.coremask != NULL) {
--		rte_cpuset_t cpuset;
- 
--		if (rte_eal_parse_coremask(args.coremask, &cpuset, !remap_lcores) < 0) {
--			EAL_LOG(ERR, "invalid coremask syntax");
--			return -1;
--		}
--		if (update_lcore_config(&cpuset, remap_lcores, lcore_id_base) < 0) {
--			char *available = available_cores();
--
--			EAL_LOG(ERR, "invalid coremask '%s', please check specified cores are part of %s",
--					args.coremask, available);
--			free(available);
-+	/* parse the core list arguments
-+	 * First handle the special case where we have explicit core mapping/remapping
-+	 */
-+	if (args.lcores != NULL && !remap_lcores) {
-+		if (eal_parse_lcores(args.lcores) < 0) {
-+			EAL_LOG(ERR, "invalid lcore list: '%s'", args.lcores);
- 			return -1;
- 		}
--		core_parsed = 1;
--	} else if (args.lcores != NULL) {
--		if (!remap_lcores) {
--			if (eal_parse_lcores(args.lcores) < 0) {
--				EAL_LOG(ERR, "invalid lcore list: '%s'", args.lcores);
-+	} else {
-+		/* otherwise get a cpuset of the cores to be used and then handle that
-+		 * taking mappings into account. Cpuset comes from either:
-+		 * 1. coremask parameter
-+		 * 2. core list parameter
-+		 * 3. autodetecting current thread affinities
-+		 */
-+		rte_cpuset_t cpuset;
-+		const char *cpuset_source;
-+		if (args.coremask != NULL) {
-+			if (rte_eal_parse_coremask(args.coremask, &cpuset, !remap_lcores) < 0) {
-+				EAL_LOG(ERR, "invalid coremask syntax");
- 				return -1;
- 			}
--		} else {
--			rte_cpuset_t cpuset;
--
-+			cpuset_source = "coremask";
-+		} else if (args.lcores != NULL) {
- 			if (strchr(args.lcores, '@') != NULL || strchr(args.lcores, '(') != NULL) {
- 				EAL_LOG(ERR, "cannot use '@' or core groupings '()' in lcore list when remapping lcores");
- 				return -1;
-@@ -1954,18 +1951,29 @@ eal_parse_args(void)
- 				EAL_LOG(ERR, "Error parsing lcore list: '%s'", args.lcores);
- 				return -1;
- 			}
--
--			if (update_lcore_config(&cpuset, remap_lcores, lcore_id_base) < 0) {
--				char *available = available_cores();
--
--				EAL_LOG(ERR, "invalid coremask '%s', please check specified cores are part of %s",
--						args.coremask, available);
--				free(available);
-+			cpuset_source = "core list";
-+		} else {
-+			if (rte_thread_get_affinity_by_id(rte_thread_self(), &cpuset) != 0) {
-+				EAL_LOG(ERR, "Error querying current process thread affinities");
- 				return -1;
- 			}
-+			cpuset_source = "affinity auto-detection";
-+		}
-+		char *cpuset_str = eal_cpuset_to_str(&cpuset);
-+		if (cpuset_str != NULL) {
-+			EAL_LOG(DEBUG, "Cores selected by %s: %s", cpuset_source, cpuset_str);
-+			free(cpuset_str);
-+		}
-+		if (update_lcore_config(&cpuset, remap_lcores, lcore_id_base) < 0) {
-+			char *available = available_cores();
-+
-+			EAL_LOG(ERR, "invalid coremask or core-list parameter, please check specified cores are part of %s",
-+					available);
-+			free(available);
-+			return -1;
- 		}
--		core_parsed = 1;
- 	}
-+
- 	/* service core options */
- 	if (args.service_coremask != NULL) {
- 		if (eal_parse_service_coremask(args.service_coremask) < 0) {
-@@ -2208,27 +2216,6 @@ eal_parse_args(void)
- 	return 0;
- }
- 
--static void
--eal_auto_detect_cores(struct rte_config *cfg)
--{
--	unsigned int lcore_id;
--	unsigned int removed = 0;
--	rte_cpuset_t affinity_set;
--
--	if (rte_thread_get_affinity_by_id(rte_thread_self(), &affinity_set) != 0)
--		CPU_ZERO(&affinity_set);
--
--	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
--		if (cfg->lcore_role[lcore_id] == ROLE_RTE &&
--		    !CPU_ISSET(lcore_id, &affinity_set)) {
--			cfg->lcore_role[lcore_id] = ROLE_OFF;
--			removed++;
--		}
--	}
--
--	cfg->lcore_count -= removed;
--}
--
- static void
- compute_ctrl_threads_cpuset(struct internal_config *internal_cfg)
- {
-@@ -2276,20 +2263,9 @@ int
- eal_adjust_config(struct internal_config *internal_cfg)
- {
- 	int i;
--	struct rte_config *cfg = rte_eal_get_configuration();
--	struct internal_config *internal_conf =
--		eal_get_internal_configuration();
--
--	if (!core_parsed)
--		eal_auto_detect_cores(cfg);
--
--	if (cfg->lcore_count == 0) {
--		EAL_LOG(ERR, "No detected lcore is enabled, please check the core list");
--		return -1;
--	}
- 
--	if (internal_conf->process_type == RTE_PROC_AUTO)
--		internal_conf->process_type = eal_proc_type_detect();
-+	if (internal_cfg->process_type == RTE_PROC_AUTO)
-+		internal_cfg->process_type = eal_proc_type_detect();
- 
- 	compute_ctrl_threads_cpuset(internal_cfg);
- 
--- 
-2.48.1
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+General Announcements
+   * UNH guys met with governing board about the DTS work this year and
+priorities going forward in remaining 2025 time and in 2026 (pending next
+contract).
+   * We have published the new DTS instructional videos, showing how to
+setup and run the framework, and how to write a testcase.
+        * Should produce a part 2 video soon showing some of the minor
+details like how to use the logger etc.
+   * OvS conference: Call for papers now, ending Monday
+CI Status
 
+---------------------------------------------------------------------
+AWS Lab
+   * None
+
+---------------------------------------------------------------------
+UNH-IOL Community Lab
+   * PW-CI: Working on standing up an instance of pw-ci, so we can start to
+poll for some patches and better understand if this can be used in our lab
+        * Adam made a graphic about how pw-ci works and sent it to Aaron to
+see whether our understanding is correct
+        * It could also be committed to the repo if that was considered a
+value
+   * DTS:
+        * Mlx5_core: A patch has been merged which changes how the device
+reports MTU, causing the MTU DTS testsuite to fail. Patrick needs to check
+what the issue is and send the info to the submitter.
+   * Sadashiva asked what platforms/tests are being run at the community
+lab:
+        * Intel i40e and ice testing:
+        * Performance:
+            * Single core forwarding test
+        * Functional testing:
+            * Various ethdev tests found in
+https://git.dpdk.org/tools/dts/tree/tests
+        * Cryptodev testing:
+            * Still using legacy DTS for this
+        * Patrick to send a summary to Satashiva for Intel based testing at
+the Community Lab
+
+---------------------------------------------------------------------
+Intel Lab
+   * None
+
+---------------------------------------------------------------------
+Github Actions Robot
+   * Aaron has sent out to a few CI people an initial patch porting pw-ci
+over to Python.
+        * Adam and Patrick from UNH will do a review
+        * Coderabbit and sourcery.ai:
+            * Reporting into DPDK patchwork
+        * Consensus from tech board is that it is sometimes catching
+issues, but also making a lot of =E2=80=9Cnoise.=E2=80=9D Unclear whether i=
+t is a positive
+or negative value.
+            * Possibly going to disable coderabbit for now and enable a
+competing system.
+
+---------------------------------------------------------------------
+Loongson Lab
+   * None
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DTS Improvements & Test Development
+   * Aaron=E2=80=99s AI CI systems are sending some reviews for DTS patches=
+:
+        * https://github.com/ovsrobot/dpdk/pull/49
+   * DTS API Series:
+        * Looks good. Patrick to merge.
+        * Want to ensure that there are no bugs introduced to testsuites
+through this patch. UNH guys to run testing on our hardware.
+   * Testsuite docs:
+https://patchwork.dpdk.org/project/dpdk/patch/20250910194259.1027220-2-paul=
+.szczepanek@arm.com/
+        * Depends on the API update series, which is being merged today.
+   * Virtio testing: Dean is working on a virtio forwarding testsuite to
+start
+        * Contains virtio testing testcases both with the backend vhost in
+=E2=80=93no-pci mode and also others that have the backend vhost forward pa=
+ckets
+from physical NICs
+        * V1 Submitted.
+   * Single_core_forwarding
+        * Different drivers require different testpmd flags to optimize
+performance. So, reading SUT node config from get_ctx() and switching
+testpmd args based on this.
+            * Without this change, some NICs will perform below their
+forwarding baseline
+        * Build args for Intel:
+            * Intel uses a special flag for the rx descriptor byte size,
+which would need to be included in the user=E2=80=99s test_run.yaml for the=
+ SUT to
+build =E2=80=9Ccorrectly.=E2=80=9D
+   *
+https://patchwork.dpdk.org/project/dpdk/patch/20250910122749.8277-1-abailey=
+@iol.unh.edu/
+        * We need to refactor the bound_for_kernel logic
+        * Patrick needs to do a review the v5
+   * Patrick to do a review for the tx_offload framework support and the
+mbuf_fast_free series
+        * https://patchwork.dpdk.org/project/dpdk/list/?series=3D36153
+        * Tech board is still discussing the right default behavior for
+mbuf_fast_free, which will determine how the testcase should be written
+
+Any other business
+      * Next Meeting is Oct 2, 2025
+
+--0000000000008af0eb0640321ba2
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">##########################################################=
+###########<br>September 18, 2025<br>Attendees<br>=C2=A0 =C2=A01. Patrick R=
+obb<br>=C2=A0 =C2=A02. Aaron Conole<br>=C2=A0 =C2=A03. Luca Vizzarro<br>=C2=
+=A0 =C2=A04. Sadashiva Rao<br>=C2=A0 =C2=A05. Paul Szczepanek<br>=C2=A0 =C2=
+=A06. Aaron Conole<br>=C2=A0 =C2=A0<br>####################################=
+#################################<br>Minutes<br><br>=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>General Announcements<br>=C2=A0 =C2=
+=A0* UNH guys met with governing board about the DTS work this year and pri=
+orities going forward in remaining 2025 time and in 2026 (pending next cont=
+ract).<br>=C2=A0 =C2=A0* We have published the new DTS instructional videos=
+, showing how to setup and run the framework, and how to write a testcase.<=
+br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Should produce a part 2 video soon showing=
+ some of the minor details like how to use the logger etc.<br>=C2=A0 =C2=A0=
+* OvS conference: Call for papers now, ending Monday<br>CI Status<br><br>--=
+-------------------------------------------------------------------<br>AWS =
+Lab<br>=C2=A0 =C2=A0* None<br>=C2=A0 =C2=A0<br>----------------------------=
+-----------------------------------------<br>UNH-IOL Community Lab<br>=C2=
+=A0 =C2=A0* PW-CI: Working on standing up an instance of pw-ci, so we can s=
+tart to poll for some patches and better understand if this can be used in =
+our lab<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Adam made a graphic about how pw-c=
+i works and sent it to Aaron to see whether our understanding is correct<br=
+>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * It could also be committed to the repo if th=
+at was considered a value<br>=C2=A0 =C2=A0* DTS:<br>=C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 * Mlx5_core: A patch has been merged which changes how the device re=
+ports MTU, causing the MTU DTS testsuite to fail. Patrick needs to check wh=
+at the issue is and send the info to the submitter.<br>=C2=A0 =C2=A0* Sadas=
+hiva asked what platforms/tests are being run at the community lab:<br>=C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 * Intel i40e and ice testing:<br>=C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 * Performance:<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Si=
+ngle core forwarding test<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Functional testi=
+ng:<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Various ethdev tests fou=
+nd in <a href=3D"https://git.dpdk.org/tools/dts/tree/tests">https://git.dpd=
+k.org/tools/dts/tree/tests</a><br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Cryptodev t=
+esting:<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Still using legacy D=
+TS for this<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Patrick to send a summary to S=
+atashiva for Intel based testing at the Community Lab<br><br>--------------=
+-------------------------------------------------------<br>Intel Lab<br>=C2=
+=A0 =C2=A0* None<br><br>---------------------------------------------------=
+------------------<br>Github Actions Robot<br>=C2=A0 =C2=A0* Aaron has sent=
+ out to a few CI people an initial patch porting pw-ci over to Python.<br>=
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Adam and Patrick from UNH will do a review<br=
+>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Coderabbit and <a href=3D"http://sourcery.ai=
+">sourcery.ai</a>:<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Reporting=
+ into DPDK patchwork<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Consensus from tech b=
+oard is that it is sometimes catching issues, but also making a lot of =E2=
+=80=9Cnoise.=E2=80=9D Unclear whether it is a positive or negative value.<b=
+r>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Possibly going to disable cod=
+erabbit for now and enable a competing system.<br><br>---------------------=
+------------------------------------------------<br>Loongson Lab<br>=C2=A0 =
+=C2=A0* None<br>=C2=A0 =C2=A0<br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D<br>DTS Improvements &amp; Test Development<br>=C2=A0 =C2=A0=
+* Aaron=E2=80=99s AI CI systems are sending some reviews for DTS patches:<b=
+r>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * <a href=3D"https://github.com/ovsrobot/dpdk=
+/pull/49">https://github.com/ovsrobot/dpdk/pull/49</a><br>=C2=A0 =C2=A0* DT=
+S API Series:<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Looks good. Patrick to merge=
+.<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Want to ensure that there are no bugs in=
+troduced to testsuites through this patch. UNH guys to run testing on our h=
+ardware.<br>=C2=A0 =C2=A0* Testsuite docs: <a href=3D"https://patchwork.dpd=
+k.org/project/dpdk/patch/20250910194259.1027220-2-paul.szczepanek@arm.com/"=
+>https://patchwork.dpdk.org/project/dpdk/patch/20250910194259.1027220-2-pau=
+l.szczepanek@arm.com/</a><br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Depends on the A=
+PI update series, which is being merged today.<br>=C2=A0 =C2=A0* Virtio tes=
+ting: Dean is working on a virtio forwarding testsuite to start<br>=C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 * Contains virtio testing testcases both with the back=
+end vhost in =E2=80=93no-pci mode and also others that have the backend vho=
+st forward packets from physical NICs<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * V1 S=
+ubmitted.<br>=C2=A0 =C2=A0* Single_core_forwarding<br>=C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 * Different drivers require different testpmd flags to optimize perf=
+ormance. So, reading SUT node config from get_ctx() and switching testpmd a=
+rgs based on this.<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Without t=
+his change, some NICs will perform below their forwarding baseline<br>=C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 * Build args for Intel:<br>=C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 * Intel uses a special flag for the rx descriptor byte=
+ size, which would need to be included in the user=E2=80=99s test_run.yaml =
+for the SUT to build =E2=80=9Ccorrectly.=E2=80=9D<br>=C2=A0 =C2=A0* <a href=
+=3D"https://patchwork.dpdk.org/project/dpdk/patch/20250910122749.8277-1-aba=
+iley@iol.unh.edu/">https://patchwork.dpdk.org/project/dpdk/patch/2025091012=
+2749.8277-1-abailey@iol.unh.edu/</a><br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * We ne=
+ed to refactor the bound_for_kernel logic<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * =
+Patrick needs to do a review the v5<br>=C2=A0 =C2=A0* Patrick to do a revie=
+w for the tx_offload framework support and the mbuf_fast_free series<br>=C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 * <a href=3D"https://patchwork.dpdk.org/project/dp=
+dk/list/?series=3D36153">https://patchwork.dpdk.org/project/dpdk/list/?seri=
+es=3D36153</a><br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 * Tech board is still discuss=
+ing the right default behavior for mbuf_fast_free, which will determine how=
+ the testcase should be written<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 <br>Any other business<br>=C2=A0 =C2=A0 =C2=A0 * Next Mee=
+ting is Oct 2, 2025</div>
+
+--0000000000008af0eb0640321ba2--
