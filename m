@@ -2,55 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18858CAC5B8
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Oct 2025 16:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE4E3CAC5B8
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Oct 2025 17:05:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CDBA340E0A;
-	Thu,  2 Oct 2025 18:56:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E172D40DFD;
+	Thu,  2 Oct 2025 19:05:26 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id BD48540A87
- for <dev@dpdk.org>; Thu,  2 Oct 2025 18:56:00 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 5B3DD40DFD
+ for <dev@dpdk.org>; Thu,  2 Oct 2025 19:05:25 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1759424160;
+ s=mimecast20190719; t=1759424724;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=SzFRN9bzJs2bsOssgRNYI/YmgWeHCHtTvwwWnS0rC+U=;
- b=E0hLhrMCzQLMDVxS5fz1FiljBXK6/lULIerk/6FOOBGXelqm4Ru5/61oOaoSi19SO9LVLo
- uiMRF1H25USUSpyK9cDvywg1lLRhyrWzXR2CuidxDbS4xDL5VLbOiedIOAXmh6ZT1P0zAH
- QB+FdESQhoEs05xH35H1KeGvgc2BLs8=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-518-FhrOF2WjO9qi_mn4nuOiUQ-1; Thu,
- 02 Oct 2025 12:55:54 -0400
-X-MC-Unique: FhrOF2WjO9qi_mn4nuOiUQ-1
-X-Mimecast-MFC-AGG-ID: FhrOF2WjO9qi_mn4nuOiUQ_1759424153
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id D7A69195608F; Thu,  2 Oct 2025 16:55:52 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.45.224.213])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 330BC1955F19; Thu,  2 Oct 2025 16:55:50 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: dsosnowski@nvidia.com, stable@dpdk.org,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Subject: [PATCH] test/debug: fix crash with mlx5 devices
-Date: Thu,  2 Oct 2025 18:55:45 +0200
-Message-ID: <20251002165546.523435-1-david.marchand@redhat.com>
+ in-reply-to:in-reply-to:references:references;
+ bh=cDDmlMVJjJxcp43v8td07ItvQ2cVvElNmIP8g1lARAc=;
+ b=Zn7uXiQ6fgFy5WG+f8JwTLjoJ3eQpZO0NEBEsVplOZseV7eg7A8smaRqBtufDZD/oNrE5c
+ JOpsAboiVxDWFkmXxABScyw9slgHt3QZBvo0Xe01HW5iP+Mf49o2EsoV87h6f3WEAoFdsi
+ JwkWKKSqL4Fa87Yob4sKuzJF+HmVy3I=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-283-GHmGy9_oP0WZRQ71zJoicg-1; Thu, 02 Oct 2025 13:05:23 -0400
+X-MC-Unique: GHmGy9_oP0WZRQ71zJoicg-1
+X-Mimecast-MFC-AGG-ID: GHmGy9_oP0WZRQ71zJoicg_1759424721
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-333f92d6612so5947411fa.2
+ for <dev@dpdk.org>; Thu, 02 Oct 2025 10:05:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1759424720; x=1760029520;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=cDDmlMVJjJxcp43v8td07ItvQ2cVvElNmIP8g1lARAc=;
+ b=jc3n7PZMCMBijJdaUtFPdrfWCYnpLAhWVhbTG+3TroUYuKCWxvYK996WlliI8fS875
+ UIk3ptWj5yVCXQHmWJkl5AQXQ2c68dgBkczJ92EdCuVD3okToPWxgMqJJ2cyrrW7H7St
+ rqAhKyM3FmoE7sTvoH8Keaue9Vd7fliQchkBbjfyHbShdRJI1pD/EiK2JweMeF7dR/g1
+ EZ+Wb641wMfAFhiF1C4WMQnKbcMys7NQx39oNCvDEh4Gm3VIInL3mBXp5O0LIUfKWdfH
+ VwQvPBOyewHANkxOBZmfx2FsVOldDg/QuW7ebjY6upXBkss/UusNIMvbNJ7+NMnnlS2/
+ 5icA==
+X-Gm-Message-State: AOJu0YwNvkN/YkkHmmRW4ce2H5NPxY0lRGlJdM7kjGfSQgXdlnyGwzxp
+ nI6/L1DJNWW2337MGTzHYMaZwYrLd2Va1078hP7zQjloB4w452N5oYexGuEFC+/Jf1xpA2Dpbv+
+ zd8QvGWQghzhhbgqmWdwKSHZxWdaLT6/qXbT6V1qqSCIWnXh/8RknJJQvK1HCrhOKTPcjK65Ehp
+ gWEHwA8onHSdqp6yBJnwFA8QcB7Bk=
+X-Gm-Gg: ASbGncvjKRrJ83Z7ngn9w+9WYypYYd78TXeMWI+jM+CdK4Jn8rePgamjDXejRUYDA4J
+ UCKogsRGB632eNRNooIG62pAgiJgZ+KsEAfi6WvDIssDvHI7DYwNRBjRkIBtBKmDhkJf7uMAURP
+ ZonIUGN5wimOWsXVc7H4lyMefnNju0
+X-Received: by 2002:a05:651c:12c1:b0:36d:6ae3:8158 with SMTP id
+ 38308e7fff4ca-373a73cdb64mr24701701fa.25.1759424720527; 
+ Thu, 02 Oct 2025 10:05:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEpLCf7lNCyA+Tn45/gU0dgc8b86Ix/LodciT7Bue6BjUyr2VM3x0YXCWA1BZkGPb3LyaPjLN/nhxZB4RCsnpU=
+X-Received: by 2002:a05:651c:12c1:b0:36d:6ae3:8158 with SMTP id
+ 38308e7fff4ca-373a73cdb64mr24701651fa.25.1759424720118; Thu, 02 Oct 2025
+ 10:05:20 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20251002165546.523435-1-david.marchand@redhat.com>
+In-Reply-To: <20251002165546.523435-1-david.marchand@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 2 Oct 2025 19:05:08 +0200
+X-Gm-Features: AS18NWB262yZT6ral8pNLDoPN2YxxDrbHUbuX7vaSxaeFil88TdkrJHLlHiZe50
+Message-ID: <CAJFAV8x2xSmaPwUmrFMY=NN53JbG4WgEqJv3C7EJqhf5J-ugug@mail.gmail.com>
+Subject: Re: [PATCH] test/debug: fix crash with mlx5 devices
+To: dev@dpdk.org
+Cc: dsosnowski@nvidia.com, stable@dpdk.org, 
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: OLZzg0pgRNQ6iwjj1ni-gkTH2JpwUgT7LtoUBuT6JDs_1759424153
+X-Mimecast-MFC-PROC-ID: RojYKEHhV_ZMlZs5_8CA9w-4OgWpNi-a5mcIbTwhgHU_1759424721
 X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,225 +83,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Running rte_exit() in a forked process means that shared memory will be
-released by the child process before the parent process does the same.
-This issue has been seen recently when some GHA virtual machine (with
-some mlx5 devices) runs the debug_autotest unit test.
+On Thu, 2 Oct 2025 at 18:56, David Marchand <david.marchand@redhat.com> wrote:
+>
+> Running rte_exit() in a forked process means that shared memory will be
+> released by the child process before the parent process does the same.
 
-Instead, run rte_panic() and rte_exit() from a new DPDK process spawned
-like for other recursive unit tests.
+Another way of describing the issue is that the unit test code by
+forking at rte_eal_init made it so two primary processes were
+accessing the DPDK shared memory.
+Nothing good can come from this...
 
-Bugzilla ID: 1796
-Fixes: af75078fece3 ("first public release")
-Cc: stable@dpdk.org
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- app/test/process.h    |  2 +-
- app/test/test.c       |  2 +
- app/test/test.h       |  2 +
- app/test/test_debug.c | 94 ++++++++++++++++++++++++++++++-------------
- 4 files changed, 71 insertions(+), 29 deletions(-)
-
-diff --git a/app/test/process.h b/app/test/process.h
-index 9fb2bf481c..8e11d0b059 100644
---- a/app/test/process.h
-+++ b/app/test/process.h
-@@ -203,7 +203,7 @@ process_dup(const char *const argv[], int numargs, const char *env_value)
-  * tests attempting to use this function on FreeBSD.
-  */
- #ifdef RTE_EXEC_ENV_LINUX
--static char *
-+static inline char *
- get_current_prefix(char *prefix, int size)
- {
- 	char path[PATH_MAX] = {0};
-diff --git a/app/test/test.c b/app/test/test.c
-index fd653cbbfd..8a4598baee 100644
---- a/app/test/test.c
-+++ b/app/test/test.c
-@@ -80,6 +80,8 @@ do_recursive_call(void)
- 			{ "test_memory_flags", no_action },
- 			{ "test_file_prefix", no_action },
- 			{ "test_no_huge_flag", no_action },
-+			{ "test_panic", test_panic },
-+			{ "test_exit", test_exit },
- #ifdef RTE_LIB_TIMER
- #ifndef RTE_EXEC_ENV_WINDOWS
- 			{ "timer_secondary_spawn_wait", test_timer_secondary },
-diff --git a/app/test/test.h b/app/test/test.h
-index ebc4864bf8..c6d7d23313 100644
---- a/app/test/test.h
-+++ b/app/test/test.h
-@@ -174,7 +174,9 @@ extern const char *prgname;
- int commands_init(void);
- int command_valid(const char *cmd);
- 
-+int test_exit(void);
- int test_mp_secondary(void);
-+int test_panic(void);
- int test_timer_secondary(void);
- 
- int test_set_rxtx_conf(cmdline_fixed_string_t mode);
-diff --git a/app/test/test_debug.c b/app/test/test_debug.c
-index 8ad6d40fcb..623b80a753 100644
---- a/app/test/test_debug.c
-+++ b/app/test/test_debug.c
-@@ -8,6 +8,18 @@
- #include <stdint.h>
- 
- #ifdef RTE_EXEC_ENV_WINDOWS
-+int
-+test_panic(void)
-+{
-+	printf("debug not supported on Windows, skipping test\n");
-+	return TEST_SKIPPED;
-+}
-+int
-+test_exit(void)
-+{
-+	printf("debug not supported on Windows, skipping test\n");
-+	return TEST_SKIPPED;
-+}
- static int
- test_debug(void)
- {
-@@ -25,34 +37,33 @@ test_debug(void)
- #include <rte_debug.h>
- #include <rte_common.h>
- #include <rte_eal.h>
--#include <rte_service_component.h>
-+#include <rte_lcore.h>
-+
-+#include "process.h"
-+
-+#define launch_proc(ARGV) process_dup(ARGV, RTE_DIM(ARGV), __func__)
- 
- /*
-  * Debug test
-  * ==========
-  */
- 
--/* use fork() to test rte_panic() */
--static int
-+static const char *test_args[7];
-+
-+int
- test_panic(void)
- {
--	int pid;
- 	int status;
- 
--	pid = fork();
--
--	if (pid == 0) {
-+	if (getenv(RECURSIVE_ENV_VAR) != NULL) {
- 		struct rlimit rl;
- 
- 		/* No need to generate a coredump when panicking. */
- 		rl.rlim_cur = rl.rlim_max = 0;
- 		setrlimit(RLIMIT_CORE, &rl);
- 		rte_panic("Test Debug\n");
--	} else if (pid < 0) {
--		printf("Fork Failed\n");
--		return -1;
- 	}
--	wait(&status);
-+	status = launch_proc(test_args);
- 	if(status == 0){
- 		printf("Child process terminated normally!\n");
- 		return -1;
-@@ -62,27 +73,16 @@ test_panic(void)
- 	return 0;
- }
- 
--/* use fork() to test rte_exit() */
- static int
- test_exit_val(int exit_val)
- {
--	int pid;
-+	char buf[5];
- 	int status;
- 
--	/* manually cleanup EAL memory, as the fork() below would otherwise
--	 * cause the same hugepages to be free()-ed multiple times.
--	 */
--	rte_service_finalize();
--
--	pid = fork();
--
--	if (pid == 0)
--		rte_exit(exit_val, __func__);
--	else if (pid < 0){
--		printf("Fork Failed\n");
--		return -1;
--	}
--	wait(&status);
-+	sprintf(buf, "%d", exit_val);
-+	if (setenv("TEST_DEBUG_EXIT_VAL", buf, 1) == -1)
-+		rte_panic("Failed to set exit value in env\n");
-+	status = launch_proc(test_args);
- 	printf("Child process status: %d\n", status);
- 	if(!WIFEXITED(status) || WEXITSTATUS(status) != (uint8_t)exit_val){
- 		printf("Child process terminated with incorrect status (expected = %d)!\n",
-@@ -92,11 +92,22 @@ test_exit_val(int exit_val)
- 	return 0;
- }
- 
--static int
-+int
- test_exit(void)
- {
- 	int test_vals[] = { 0, 1, 2, 255, -1 };
- 	unsigned i;
-+
-+	if (getenv(RECURSIVE_ENV_VAR) != NULL) {
-+		int exit_val;
-+
-+		if (!getenv("TEST_DEBUG_EXIT_VAL"))
-+			rte_panic("No exit value set in env\n");
-+
-+		exit_val = strtol(getenv("TEST_DEBUG_EXIT_VAL"), NULL, 0);
-+		rte_exit(exit_val, __func__);
-+	}
-+
- 	for (i = 0; i < RTE_DIM(test_vals); i++) {
- 		if (test_exit_val(test_vals[i]) < 0)
- 			return -1;
-@@ -128,6 +139,33 @@ test_usage(void)
- static int
- test_debug(void)
- {
-+#ifdef RTE_EXEC_ENV_FREEBSD
-+	/* BSD target doesn't support prefixes at this point, and we also need to
-+	 * run another primary process here.
-+	 */
-+	const char * prefix = "--no-shconf";
-+#else
-+	const char * prefix = "--file-prefix=debug";
-+#endif
-+	char core[10];
-+
-+	sprintf(core, "%d", rte_get_main_lcore());
-+
-+	test_args[0] = prgname;
-+	test_args[1] = prefix;
-+	test_args[2] = "-l";
-+	test_args[3] = core;
-+
-+	if (rte_eal_has_hugepages()) {
-+		test_args[4] = "";
-+		test_args[5] = "";
-+		test_args[6] = "";
-+	} else {
-+		test_args[4] = "--no-huge";
-+		test_args[5] = "-m";
-+		test_args[6] = "2048";
-+	}
-+
- 	rte_dump_stack();
- 	if (test_panic() < 0)
- 		return -1;
 -- 
-2.51.0
+David Marchand
 
