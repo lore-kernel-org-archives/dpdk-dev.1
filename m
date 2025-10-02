@@ -2,103 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B52E2CAC5B0
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Oct 2025 07:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6196CAC5B0
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Oct 2025 07:53:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E7170406A2;
-	Thu,  2 Oct 2025 09:46:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CE3A440A8A;
+	Thu,  2 Oct 2025 09:53:33 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 158D440262
- for <dev@dpdk.org>; Thu,  2 Oct 2025 09:46:04 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0069940262
+ for <dev@dpdk.org>; Thu,  2 Oct 2025 09:53:32 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1759391163;
+ s=mimecast20190719; t=1759391612;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=grRueHnTqd67kl1LJ7ch+QRe4xOqPA75N6Qj4zWraAo=;
- b=GsNhwmdmYaXjQMtfAdh+IeirXFjPa9e7aDWeQN4lsYu/QTrTy/PtqDO2tY2ut7ojn9hGOd
- 2ZR4894K2YZiRyDGG19I7JNGvK9WF+iAu+ASr3PrlZBo6+6DhWUqFEMhOL2QskML14Z1BJ
- m206cLgezadztYRpNioJKMzkJlcvP28=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-434-prWQnXcKOyq7JxyoT-lZjA-1; Thu,
- 02 Oct 2025 03:46:00 -0400
-X-MC-Unique: prWQnXcKOyq7JxyoT-lZjA-1
-X-Mimecast-MFC-AGG-ID: prWQnXcKOyq7JxyoT-lZjA_1759391159
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 16051195608D; Thu,  2 Oct 2025 07:45:59 +0000 (UTC)
-Received: from [10.44.22.15] (unknown [10.44.22.15])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 29AAF19560B1; Thu,  2 Oct 2025 07:45:56 +0000 (UTC)
-Message-ID: <7249a88e-e4b2-418e-b75f-8a68afa1064f@redhat.com>
-Date: Thu, 2 Oct 2025 09:45:53 +0200
+ in-reply-to:in-reply-to:references:references;
+ bh=yuo+9uRHishv8mH6l9AFZRNp8h2u1T7hHI0KbxVki5U=;
+ b=FiTeZ1/XH4XlFsN+Hd+FlEvf5z9Df0qk5HFFehmPFwY7lW/j5FXVzS9P2T9o6csN0zvncL
+ YfbScY++Az00UXOInCliZAmCA7PZtNc7UCp3ju8JnVwJPxD4uY5Uf0yYv7MM3KdYRsSo5o
+ Z3hGpS+Fc1ppekjYFUO0uVX3SKgOybs=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-694-MIjIcxNiNkSQhkzMDG0ewQ-1; Thu, 02 Oct 2025 03:53:29 -0400
+X-MC-Unique: MIjIcxNiNkSQhkzMDG0ewQ-1
+X-Mimecast-MFC-AGG-ID: MIjIcxNiNkSQhkzMDG0ewQ_1759391608
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-5711e6ebaabso412540e87.1
+ for <dev@dpdk.org>; Thu, 02 Oct 2025 00:53:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1759391607; x=1759996407;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=yuo+9uRHishv8mH6l9AFZRNp8h2u1T7hHI0KbxVki5U=;
+ b=YTnDh/FAsigvUajXgLb81awf6L0+Zvceyn+rAlH+XGeFvMhwIMv7PXFfTMx39gWUlw
+ Tft8ECH1UBcljaMMg/aR2+n+D2xETF/9KMuMYjRME7wLQlMiDoOFZKpMLAFuLRz2BWcN
+ B3/AkTyJ6k8pd81pcc4yevVSvBHJz1pVJp3aOIGzMibQVMUTbMXRCNGXaK9HW6kgymLo
+ ff30v2mPO0yjA6Lt9zfipZValQroCxg6+BU4sG1JXYLquaFk+szewH/D0DAXm+s8pLbQ
+ 9NjBVT7sgv5UN/TUppA8OB0iUwIyqlgKpk+pIwha77wV2w/8McsXSNffeyzIKxiJs7RW
+ TuqA==
+X-Gm-Message-State: AOJu0YxqxtLxMEWNYloRN6gGZF5CSr6esss0LONm+BHf07eaXOoukDXL
+ dZDIjsoc57JntP7S1FfKwQKWGv+XX+fHg8d/5wzlkvWlGzoXhGad2tJ+lHn1rdsrqntdveLsD9B
+ 0TtJF/e23qxlAGClqsPk1JmiZZ7rjTE1+TAwQwpI+V7BJ0XXC3uowkF831JFI7hRdtZTHlXLpCj
+ F2l643EFmXxOWgg4sdwWE=
+X-Gm-Gg: ASbGnct3/KVHg9rGZ0OwDGv2tJWyUdsjbhkw3ELuAyoJmXlTbZMz2P4Cd+/ZKRv3ZYD
+ /Uja/cz1mlg+0B83r4YGHQbpVNBEBia+zXQIAKgr5SmNR0vSFgWsq77uFF8QDgpm4MJRYiZUIA1
+ uKH8CLvaRUI1CckcbLWsuQh8LzAPIA
+X-Received: by 2002:a05:6512:4001:b0:57b:c798:9eeb with SMTP id
+ 2adb3069b0e04-58af9f6e9efmr1726895e87.47.1759391607590; 
+ Thu, 02 Oct 2025 00:53:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHevuYIBHFiHztpVoLU0xtOYTGu1UtYttwv8nfOZjKSE41LmuU4li023YDFxFN5GscwSnGvRHLg5cVpeecKO0o=
+X-Received: by 2002:a05:6512:4001:b0:57b:c798:9eeb with SMTP id
+ 2adb3069b0e04-58af9f6e9efmr1726871e87.47.1759391607170; Thu, 02 Oct 2025
+ 00:53:27 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] doc: clarify the window index usage in bbdev
-To: Nicolas Chautru <nicolas.chautru@intel.com>, dev@dpdk.org
-Cc: hemant.agrawal@nxp.com, hernan.vargas@intel.com
-References: <20250826194324.95284-1-nicolas.chautru@intel.com>
- <20250826194324.95284-3-nicolas.chautru@intel.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <20250826194324.95284-3-nicolas.chautru@intel.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20250923165830.527416-1-bruce.richardson@intel.com>
+ <20250924111318.567771-1-bruce.richardson@intel.com>
+In-Reply-To: <20250924111318.567771-1-bruce.richardson@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 2 Oct 2025 09:53:15 +0200
+X-Gm-Features: AS18NWBm091mui7vfIzgTVUhMbIV7PYszdwLFV7s0vVJVW0xCOeVs9JBcUot5ak
+Message-ID: <CAJFAV8ztEthzEhjCYy-L0T98F7zb2qECG+2Cd0-HavPEBUQnAg@mail.gmail.com>
+Subject: Re: [PATCH v2] build: validate libraries returned from meson find
+ function
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Nicolas Chautru <nicolas.chautru@intel.com>, 
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, 
+ Matan Azrad <matan@nvidia.com>, Srikanth Yalavarthi <syalavarthi@marvell.com>, 
+ Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>, 
+ Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>, 
+ Anatoly Burakov <anatoly.burakov@intel.com>, David Hunt <david.hunt@intel.com>,
+ Sivaprasad Tummala <sivaprasad.tummala@amd.com>, Rosen Xu <rosen.xu@altera.com>,
+ Tomasz Kantecki <tomasz.kantecki@intel.com>,
+ Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>, 
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: cMFbRoy2A7n4A_FWiQvzbuoxTWRTsFqfTZvYogTL-Xo_1759391159
+X-Mimecast-MFC-PROC-ID: U0lBz28MIPRWpkp-k5tir1zgol_x_vgCSyNJq-th-vs_1759391608
 X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -112,38 +96,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Hello Bruce,
+
+On Wed, 24 Sept 2025 at 13:13, Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+>
+> The meson find_library() API call sometimes finds a library that is
+> actually incompatible with the current build, for example, returning a
+> 64-bit library when doing a 32-bit build. To avoid problems with this,
+> check each library returned from a find_library() call and treat the
+> library as unfound if its incompatible.
+
+meson should have all it needs to double check itself that the "found"
+library links fine...
+But well, we need to live with existing behavior.
+
+It's a pity meson refuses to define user helpers... so much copy/paste
+in this patch.
 
 
-On 8/26/25 9:43 PM, Nicolas Chautru wrote:
-> Clarify the usage, range and mapping for the set of window
-> indexes of each cyclic shift for the FFT processing pipeline.
-> 
-> Signed-off-by: Nicolas Chautru <nicolas.chautru@intel.com>
-> ---
->   doc/guides/prog_guide/bbdev.rst | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/doc/guides/prog_guide/bbdev.rst b/doc/guides/prog_guide/bbdev.rst
-> index 6f1f3f65fb..064c2b1fe6 100644
-> --- a/doc/guides/prog_guide/bbdev.rst
-> +++ b/doc/guides/prog_guide/bbdev.rst
-> @@ -296,8 +296,11 @@ Capabilities details for FFT function
->   
->   The total number of distinct time windows supported
->   for the post-FFT point-wise multiplication is exposed as ``fft_windows_num``.
-> -The ``window_index`` provided for each cyclic shift
-> -in each ``rte_bbdev_op_fft`` operation is expected to be limited to that size.
-> +The ``window_index`` provided for each cyclic shift in each ``rte_bbdev_op_fft`` operation is
-> +expected to be within the range (0 to ``fft_windows_num`` - 1).
-> +These indexes for up to 12 cyclic shifts are mapped consecutively into an array of 6 bytes
-> +(ie. the first index is the first 4 most significant bits of the first byte, etc...):
-> +``uint8_t window_index[RTE_BBDEV_MAX_CS_2]``.
->   
->   The information related to the width of each of these pre-configured window
->   is also exposed using the ``fft_window_width`` array.
+>
+> This checking is not necessary (or should not be necessary) for
+> dependencies got using pkg-config, since the .pc files for each build
+> type are stored in a different directory on the system.
 
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+Would it affect the library lookup if we pass has_headers to find_library()?
 
-Thanks,
-Maxime
+
+-- 
+David Marchand
 
