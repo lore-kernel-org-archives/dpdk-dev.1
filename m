@@ -2,35 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130ABCAC5B0
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Oct 2025 17:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32032CAC5B8
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Oct 2025 17:43:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 65F8540E19;
-	Thu,  2 Oct 2025 19:42:01 +0200 (CEST)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 9262B4060B
- for <dev@dpdk.org>; Thu,  2 Oct 2025 19:41:59 +0200 (CEST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF5CB2050;
- Thu,  2 Oct 2025 10:41:50 -0700 (PDT)
-Received: from ampere-altra-2-1.usa.arm.com (ampere-altra-2-1.usa.arm.com
- [10.118.91.158])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7B37F3F59E;
- Thu,  2 Oct 2025 10:41:58 -0700 (PDT)
-From: Wathsala Vithanage <wathsala.vithanage@arm.com>
-To: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: dev@dpdk.org, Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Ola Liljedahl <ola.liljedahl@arm.com>,
- Dhruv Tripathi <dhruv.tripathi@arm.com>
-Subject: [PATCH v2 1/1] ring: safe partial ordering for head/tail update
-Date: Thu,  2 Oct 2025 17:41:37 +0000
-Message-ID: <20251002174137.3612042-2-wathsala.vithanage@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251002174137.3612042-1-wathsala.vithanage@arm.com>
-References: <20251002174137.3612042-1-wathsala.vithanage@arm.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 8325940E17;
+	Thu,  2 Oct 2025 19:43:27 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 8DD624060B
+ for <dev@dpdk.org>; Thu,  2 Oct 2025 19:43:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1759427006; x=1790963006;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=WnAR9tTDaJ3GZKf6aIxHJ9QPyiUZ9KNI692AO3IcQsA=;
+ b=KFUdAdwU1SzmnM3RkOCJV0niY0LPdo/Voku/s+4AheB7+MI14xUSeGic
+ kVbOIf9fmPWHC7Ue8PnOirJ9eE3vr/GJQFriQ8qF4QCyv9CbllwqeLo0t
+ Fyb7Er6NDbLNVUR18RQaePgohn8T/gHnXWogRExlqLBrO81lmRZzlgRCd
+ oF8HCO0iUemMmKBVOUpDnTp6tm/1s14DJGyRVT1d9ZK4U/6ZLSmTX5Uy6
+ sDqfLHxff3xXF9hslaY1A4jdBO85tG1w0V6pIEfZ3sH4Rr3vVbLXOiSqf
+ S9FN+yovKNjr96wDk1Wv9sv8WdNL3POxu16nxrSjn14teyi9POGvlI/GJ Q==;
+X-CSE-ConnectionGUID: oXIwkse1Qf2Zwn12U4s3xA==
+X-CSE-MsgGUID: PMIJ+rLSSJO4ApaUJbWUUg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="49271832"
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; d="scan'208";a="49271832"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 02 Oct 2025 10:43:25 -0700
+X-CSE-ConnectionGUID: +/eMQeADTVSkJfsrqRMYIw==
+X-CSE-MsgGUID: oDATqmKYRjqzDcAPpEK5dA==
+X-ExtLoop1: 1
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by fmviesa003.fm.intel.com with ESMTP; 02 Oct 2025 10:43:24 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: david.marchand@redhat.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v8 00/18] Simplify running with high-numbered CPUs
+Date: Thu,  2 Oct 2025 18:42:57 +0100
+Message-ID: <20251002174315.962992-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250520164025.2055721-1-bruce.richardson@intel.com>
+References: <20250520164025.2055721-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -45,93 +59,128 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The function __rte_ring_headtail_move_head() assumes that the barrier
-(fence) between the load of the head and the load-acquire of the
-opposing tail guarantees the following: if a first thread reads tail
-and then writes head and a second thread reads the new value of head
-and then reads tail, then it should observe the same (or a later)
-value of tail.
+The ultimate of this patchset is to make it easier to run on systems
+with large numbers of cores, by simplifying the process of using core
+numbers >RTE_MAX_LCORE. The new EAL arg ``-remap-lcore-ids``, also
+shortened to ``-R``, is added to DPDK to support this.
 
-This assumption is incorrect under the C11 memory model. If the barrier
-(fence) is intended to establish a total ordering of ring operations,
-it fails to do so. Instead, the current implementation only enforces a
-partial ordering, which can lead to unsafe interleavings. In particular,
-some partial orders can cause underflows in free slot or available
-element computations, potentially resulting in data corruption.
+However, in order to add this new flag easily, the first dozen or more
+patches rework the argument handling in EAL to simplify things, using
+the argparse library for argument handling.
 
-The issue manifests when a CPU first acts as a producer and later as a
-consumer. In this scenario, the barrier assumption may fail when another
-core takes the consumer role. A Herd7 litmus test in C11 can demonstrate
-this violation. The problem has not been widely observed so far because:
-  (a) on strong memory models (e.g., x86-64) the assumption holds, and
-  (b) on relaxed models with RCsc semantics the ordering is still strong
-      enough to prevent hazards.
-The problem becomes visible only on weaker models, when load-acquire is
-implemented with RCpc semantics (e.g. some AArch64 CPUs which support
-the LDAPR and LDAPUR instructions).
+When processing cmdline arguments in DPDK, we always do so with very
+little context. So, for example, when processing the "-l" flag, we have
+no idea whether there will be later a --proc-type=secondary flag. We
+have all sorts of post-arg-processing checks in place to try and catch
+these scenarios.
 
-Three possible solutions exist:
-  1. Strengthen ordering by upgrading release/acquire semantics to
-     sequential consistency. This requires using seq-cst for stores,
-     loads, and CAS operations. However, this approach introduces a
-     significant performance penalty on relaxed-memory architectures.
+To improve this situation, this patchset tries to simplify the handling
+of argument processing, by explicitly doing an initial pass to collate
+all arguments into a structure. Thereafter, the actual arg parsing is
+done in a fixed order, meaning that e.g. when processing the
+--main-lcore flag, we have already processed the service core flags. We
+also can far quicker and easier check for conflicting options, since
+they can all be checked for NULL/non-NULL in the arg structure
+immediately after the struct has been populated.
 
-  2. Establish a safe partial order by enforcing a pair-wise
-     happens-before relationship between thread of same role by changing
-     the CAS and the preceding load of the head by converting them to
-     release and acquire respectively. This approach makes the original
-     barrier assumption unnecessary and allows its removal.
+An additional benefit of this work is that the argument parsing for EAL
+is much more centralised into common options and the options list file.
+This single list with ifdefs makes it clear to the viewer what options
+are common across OS's, vs what are unix-only or linux-only.
 
-  3. Retain partial ordering but ensure only safe partial orders are
-     committed. This can be done by detecting underflow conditions
-     (producer < consumer) and quashing the update in such cases.
-     This approach makes the original barrier assumption unnecessary
-     and allows its removal.
+Once the cleanup and rework is done, adding the new options for
+remapping cores becomes a lot simpler, since we can very easily check
+for scenarios like multi-process and handle those appropriately.
 
-This patch implements solution (2) to preserve the “enqueue always
-succeeds” contract expected by dependent libraries (e.g., mempool).
-While solution (3) offers higher performance, adopting it now would
-break that assumption.
+V8:
+* dropped the final two patches from the series, dropping the new -L
+  option in favour of the -R modifier.
+* reordered patch 11 to be with the other argparse patches (now patch 5)
+* added patch 12, which uses macros to initialize the args structure
+  from the arguments header file, avoiding potential issues when we add
+  new args.
+* simplified and consolidated lcore mask and core list parsing to always
+  work off cpusets rather than arrays of uint8
+* enhanced debug printouts to also work better with cpusets and handle
+  core values in those sets >= RTE_MAX_LCORE
+* for completeness, ensure the new -R option works for coremasks, and
+  for cases where no explicit core-list or coremask is specified.
 
-Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Signed-off-by: Ola Liljedahl <ola.liljedahl@arm.com>
-Reviewed-by: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
-Reviewed-by: Dhruv Tripathi <dhruv.tripathi@arm.com>
----
- lib/ring/rte_ring_c11_pvt.h | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+V7:
+* expand the scope of the patchset beyond just cleanup to add in the
+  extra 3 patches for -L and --lcoreid-base option.
 
-diff --git a/lib/ring/rte_ring_c11_pvt.h b/lib/ring/rte_ring_c11_pvt.h
-index b9388af0da..98c6584edb 100644
---- a/lib/ring/rte_ring_c11_pvt.h
-+++ b/lib/ring/rte_ring_c11_pvt.h
-@@ -78,14 +78,11 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
- 	unsigned int max = n;
- 
- 	*old_head = rte_atomic_load_explicit(&d->head,
--			rte_memory_order_relaxed);
-+			rte_memory_order_acquire);
- 	do {
- 		/* Reset n to the initial burst count */
- 		n = max;
- 
--		/* Ensure the head is read before tail */
--		rte_atomic_thread_fence(rte_memory_order_acquire);
--
- 		/* load-acquire synchronize with store-release of ht->tail
- 		 * in update_tail.
- 		 */
-@@ -115,8 +112,8 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail *d,
- 			/* on failure, *old_head is updated */
- 			success = rte_atomic_compare_exchange_strong_explicit(
- 					&d->head, old_head, *new_head,
--					rte_memory_order_relaxed,
--					rte_memory_order_relaxed);
-+					rte_memory_order_acq_rel,
-+					rte_memory_order_acquire);
- 	} while (unlikely(success == 0));
- 	return n;
- }
--- 
-2.43.0
+V6:
+* Rebase to apply cleanly on latest main
+
+V5:
+* Resubmit of V4, which didn't get sent correctly, or picked up correctly
+  in patchwork.
+
+V4:
+* Updated patch 5 to auto-generate the arg struct definition from the same
+  list of defines used to construct the argument list.
+
+V3:
+* Added 3 new initial patches, one for minor build-system addition, and two
+  for functionality in argparse to allow the user-callback help function to
+  be maintained as we move to argparse.
+* Added doc updates in the first EAL patch adding the long options
+* Fixed ASAN issues by adding a patch to properly clean up EAL init - both
+  memory allocations and fixing the run-once flag
+* Put ifdefs around the linux-only or unix-only options in EAL patch 2
+* Updated args to handle numa-mem and numa-limit as equivalent socket-mem
+  and socket-limit
+
+
+Bruce Richardson (18):
+  build: add define for the OS environment name
+  argparse: export function to print help text for object
+  argparse: allow user-override of help printing
+  argparse: add documentation on supported value types
+  argparse: add support for parsing core lists
+  eal: add long options for each short option
+  eal: define the EAL parameters in argparse format
+  eal: gather EAL args before processing
+  eal: ensure proper cleanup on EAL init failure
+  eal: combine parameter validation checks
+  eal: simplify handling of conflicting cmdline options
+  eal: automatically init arg list options
+  eal: add internal fn for converting cpuset to string
+  eal: use common cpuset to string function
+  eal: introduce lcore remapping option for coremasks
+  eal: rework internal coremask parsing to use cpu sets
+  eal: allow lcore id remapping with core lists
+  eal: allow lcore remapping with autodetected core affinity
+
+ app/test/test_argparse.c                   |  188 +++
+ config/meson.build                         |    1 +
+ doc/guides/contributing/design.rst         |    2 +-
+ doc/guides/linux_gsg/eal_args.include.rst  |   42 +-
+ doc/guides/prog_guide/argparse_lib.rst     |  121 +-
+ doc/guides/rel_notes/release_25_11.rst     |   18 +
+ drivers/event/dlb2/dlb2_priv.h             |    2 +-
+ drivers/event/dlb2/pf/base/dlb2_resource.c |   11 +-
+ lib/argparse/rte_argparse.c                |  109 +-
+ lib/argparse/rte_argparse.h                |   23 +-
+ lib/eal/common/eal_common_lcore.c          |   13 +-
+ lib/eal/common/eal_common_memory.c         |    3 +-
+ lib/eal/common/eal_common_options.c        | 1417 +++++++++++---------
+ lib/eal/common/eal_common_thread.c         |   43 +-
+ lib/eal/common/eal_option_list.h           |   98 ++
+ lib/eal/common/eal_options.h               |  104 +-
+ lib/eal/common/eal_private.h               |   21 +
+ lib/eal/common/eal_thread.h                |   13 +-
+ lib/eal/freebsd/eal.c                      |  245 +---
+ lib/eal/include/rte_eal.h                  |   20 -
+ lib/eal/linux/eal.c                        |  470 +------
+ lib/eal/linux/eal_memory.c                 |    2 +-
+ lib/eal/meson.build                        |    2 +-
+ lib/eal/windows/eal.c                      |  156 +--
+ lib/meson.build                            |    1 +
+ 25 files changed, 1533 insertions(+), 1592 deletions(-)
+ create mode 100644 lib/eal/common/eal_option_list.h
+
+--
+2.48.1
 
