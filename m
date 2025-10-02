@@ -2,45 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C21CAC5B8
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Oct 2025 17:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDD6CAC5B8
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Oct 2025 17:43:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A484540E22;
-	Thu,  2 Oct 2025 19:43:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B71BC40E2D;
+	Thu,  2 Oct 2025 19:43:29 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 25ECE4060B
+ by mails.dpdk.org (Postfix) with ESMTP id 080E64060B
  for <dev@dpdk.org>; Thu,  2 Oct 2025 19:43:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759427006; x=1790963006;
+ t=1759427007; x=1790963007;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=o9KwQwOwTQAtMRGhwRRD81Fg3UqipV/jbIFr+3/nwvY=;
- b=IrV3U3dfh11nBdmixRFwV4cqCE4BRDy5seU0DIib+FVSBaUjZDXo3veD
- 3UXTRU6PdnOuwUxtTy4ZXptG8AAViay2aD/LKtu2QfahRbqUEKzmq33sX
- GO44wDO4JnZJfJ8CIINYB/mct8yyqPL6RwylCD79qEFNhacmHmHCBRmLl
- NFwCws8hx0ahBsixMDC9pthPokziVw3PHA8lv7gFGCduimLSOIfjDBclb
- BoqlUzKDke248MtlhRkEczuGW1JAlEP/QFtGutj4WW4cbCXnT9L0dC8uj
- gg/DW27WuDj/xTHd9qrKNlEX3pnsibNh91kNTknidS89cFPNIQui6lLZz w==;
-X-CSE-ConnectionGUID: MFWLvLZcRT6ZN4ZmLBJswg==
-X-CSE-MsgGUID: beSueCxySoyocICFvKhutQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="49271834"
-X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; d="scan'208";a="49271834"
+ bh=uvLCH5NjZxwY+N4OXNmFvIpmLkAp2TcOzqaOyexMijo=;
+ b=TPW5j77h08l125EhK8NIPyXEjGGnSrBCX9XdhP+3qLycdfmdbkTZDqQg
+ rCV24zMio9XAZcf01xzy+F1fvzPZ+t31JPayebB19t1VweVJxPSqxjLje
+ D1P+5KdO1qHL2T8exVN4h1PVlfoie7NwomRRyIGmqC1LWHxD+QadliK4L
+ 1gOe4Fo4V/+1Fed/uNHQzw/Ki8GNK5STWCkbYguUNFfHLl43P5hU71dyr
+ Gb+vAIULDHhDAlvokwVAMlrIoidi5h92dn0Wt7smXhbYLXL2TdLuFI+Wr
+ W4nlq1/vPLVMuYmekcBncGjP1vQ9J+gQvq38RPND8h/AUNqNA2TJ/WPRe A==;
+X-CSE-ConnectionGUID: Z/+NFemJQOGeNR8a7vMQ2Q==
+X-CSE-MsgGUID: fR8ZWLwMTTq8T+HhQDVQKQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="49271838"
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; d="scan'208";a="49271838"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 02 Oct 2025 10:43:26 -0700
-X-CSE-ConnectionGUID: G4s9T0YhR7arCDQftIF+5g==
-X-CSE-MsgGUID: JL+cWJ7JSb+ysSE8t6Pg3w==
+ 02 Oct 2025 10:43:27 -0700
+X-CSE-ConnectionGUID: 5SdFEuIZRAm5VR9+DobM8Q==
+X-CSE-MsgGUID: PHkCEf3cR9uzpyTpD0LLjw==
 X-ExtLoop1: 1
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa003.fm.intel.com with ESMTP; 02 Oct 2025 10:43:25 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 02 Oct 2025 10:43:26 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v8 01/18] build: add define for the OS environment name
-Date: Thu,  2 Oct 2025 18:42:58 +0100
-Message-ID: <20251002174315.962992-2-bruce.richardson@intel.com>
+Subject: [PATCH v8 02/18] argparse: export function to print help text for
+ object
+Date: Thu,  2 Oct 2025 18:42:59 +0100
+Message-ID: <20251002174315.962992-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251002174315.962992-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
@@ -60,46 +61,155 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce a string define for the currently running OS, or execution
-environment.
-
-Originally, with old make build system, CONFIG_RTE_EXEC_ENV used to hold
-this name string, but the variable seems to have been missed in the
-meson build system, until commit cadb255e25d6 ("eal: add OS defines for
-C conditional checks") which introduced the RTE_EXEC_ENV for a different
-purpose. Now we can fix the docs with the new name reference.
+Make the function to print out the help text for an argparse object a
+public function, which takes as a new parameter the file stream on which
+to print. This can be used in future to allow application to extend
+their own help information.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- config/meson.build                 | 1 +
- doc/guides/contributing/design.rst | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ lib/argparse/rte_argparse.c | 43 +++++++++++++++++++------------------
+ lib/argparse/rte_argparse.h | 14 ++++++++++++
+ 2 files changed, 36 insertions(+), 21 deletions(-)
 
-diff --git a/config/meson.build b/config/meson.build
-index 55497f0bf5..495245d527 100644
---- a/config/meson.build
-+++ b/config/meson.build
-@@ -20,6 +20,7 @@ foreach env, id:exec_envs
-     dpdk_conf.set10('RTE_EXEC_ENV_IS_' + env.to_upper(), (exec_env == env))
- endforeach
- dpdk_conf.set('RTE_EXEC_ENV', exec_envs[exec_env])
-+dpdk_conf.set_quoted('RTE_EXEC_ENV_NAME', exec_env)
- dpdk_conf.set('RTE_EXEC_ENV_' + exec_env.to_upper(), 1)
+diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
+index 331f05f01d..f0c2c33178 100644
+--- a/lib/argparse/rte_argparse.c
++++ b/lib/argparse/rte_argparse.c
+@@ -716,23 +716,23 @@ calc_help_align(const struct rte_argparse *obj)
+ }
  
- # MS linker requires special treatment.
-diff --git a/doc/guides/contributing/design.rst b/doc/guides/contributing/design.rst
-index b724177ba1..5517613424 100644
---- a/doc/guides/contributing/design.rst
-+++ b/doc/guides/contributing/design.rst
-@@ -50,7 +50,7 @@ Per Execution Environment Sources
+ static void
+-show_oneline_help(const struct rte_argparse_arg *arg, uint32_t width)
++show_oneline_help(FILE *stream, const struct rte_argparse_arg *arg, uint32_t width)
+ {
+ 	uint32_t len = 0;
+ 	uint32_t i;
  
- The following macro options can be used:
+ 	if (arg->name_short != NULL)
+-		len = printf(" %s,", arg->name_short);
+-	len += printf(" %s", arg->name_long);
++		len = fprintf(stream, " %s,", arg->name_short);
++	len += fprintf(stream, " %s", arg->name_long);
  
--* ``RTE_EXEC_ENV`` is a string that contains the name of the executive environment.
-+* ``RTE_EXEC_ENV_NAME`` is a string that contains the name of the executive environment.
- * ``RTE_EXEC_ENV_FREEBSD``, ``RTE_EXEC_ENV_LINUX`` or ``RTE_EXEC_ENV_WINDOWS`` are defined only if we are building for this execution environment.
+ 	for (i = len; i < width; i++)
+-		printf(" ");
++		fprintf(stream, " ");
  
- Mbuf features
+-	printf("%s\n", arg->help);
++	fprintf(stream, "%s\n", arg->help);
+ }
+ 
+ static void
+-show_args_pos_help(const struct rte_argparse *obj, uint32_t align)
++show_args_pos_help(FILE *stream, const struct rte_argparse *obj, uint32_t align)
+ {
+ 	uint32_t position_count = calc_position_count(obj);
+ 	const struct rte_argparse_arg *arg;
+@@ -741,19 +741,19 @@ show_args_pos_help(const struct rte_argparse *obj, uint32_t align)
+ 	if (position_count == 0)
+ 		return;
+ 
+-	printf("\npositional arguments:\n");
++	fprintf(stream, "\npositional arguments:\n");
+ 	for (i = 0; /* NULL */; i++) {
+ 		arg = &obj->args[i];
+ 		if (arg->name_long == NULL)
+ 			break;
+ 		if (!is_arg_positional(arg))
+ 			continue;
+-		show_oneline_help(arg, align);
++		show_oneline_help(stream, arg, align);
+ 	}
+ }
+ 
+ static void
+-show_args_opt_help(const struct rte_argparse *obj, uint32_t align)
++show_args_opt_help(FILE *stream, const struct rte_argparse *obj, uint32_t align)
+ {
+ 	static const struct rte_argparse_arg help = {
+ 		.name_long = "--help",
+@@ -763,34 +763,35 @@ show_args_opt_help(const struct rte_argparse *obj, uint32_t align)
+ 	const struct rte_argparse_arg *arg;
+ 	uint32_t i;
+ 
+-	printf("\noptions:\n");
+-	show_oneline_help(&help, align);
++	fprintf(stream, "\noptions:\n");
++	show_oneline_help(stream, &help, align);
+ 	for (i = 0; /* NULL */; i++) {
+ 		arg = &obj->args[i];
+ 		if (arg->name_long == NULL)
+ 			break;
+ 		if (!is_arg_optional(arg))
+ 			continue;
+-		show_oneline_help(arg, align);
++		show_oneline_help(stream, arg, align);
+ 	}
+ }
+ 
+-static void
+-show_args_help(const struct rte_argparse *obj)
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_argparse_print_help, 25.11)
++void
++rte_argparse_print_help(FILE *stream, const struct rte_argparse *obj)
+ {
+ 	uint32_t align = calc_help_align(obj);
+ 
+-	printf("usage: %s %s\n", obj->prog_name, obj->usage);
++	fprintf(stream, "usage: %s %s\n", obj->prog_name, obj->usage);
+ 	if (obj->descriptor != NULL)
+-		printf("\ndescriptor: %s\n", obj->descriptor);
++		fprintf(stream, "\ndescriptor: %s\n", obj->descriptor);
+ 
+-	show_args_pos_help(obj, align);
+-	show_args_opt_help(obj, align);
++	show_args_pos_help(stream, obj, align);
++	show_args_opt_help(stream, obj, align);
+ 
+ 	if (obj->epilog != NULL)
+-		printf("\n%s\n", obj->epilog);
++		fprintf(stream, "\n%s\n", obj->epilog);
+ 	else
+-		printf("\n");
++		fprintf(stream, "\n");
+ }
+ 
+ RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_argparse_parse, 24.03)
+@@ -820,7 +821,7 @@ rte_argparse_parse(const struct rte_argparse *obj, int argc, char **argv)
+ 		goto error;
+ 
+ 	if (show_help) {
+-		show_args_help(obj);
++		rte_argparse_print_help(stdout, obj);
+ 		exit(0);
+ 	}
+ 
+diff --git a/lib/argparse/rte_argparse.h b/lib/argparse/rte_argparse.h
+index 52bef34363..baf278f6b9 100644
+--- a/lib/argparse/rte_argparse.h
++++ b/lib/argparse/rte_argparse.h
+@@ -189,6 +189,20 @@ struct rte_argparse {
+ __rte_experimental
+ int rte_argparse_parse(const struct rte_argparse *obj, int argc, char **argv);
+ 
++/**
++ * @warning
++ * @b EXPERIMENTAL: this API may change without prior notice.
++ *
++ * Output the help text information for the given argparse object.
++ *
++ * @param stream
++ *   Output file handle, e.g. stdout, stderr, on which to print the help text.
++ * @param obj
++ *   Parser object.
++ */
++__rte_experimental
++void rte_argparse_print_help(FILE *stream, const struct rte_argparse *obj);
++
+ /**
+  * @warning
+  * @b EXPERIMENTAL: this API may change without prior notice.
 -- 
 2.48.1
 
