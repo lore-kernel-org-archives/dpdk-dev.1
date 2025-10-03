@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBFA1CAC5B0
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 08:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2260CCA470
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 08:15:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A1C6F40661;
-	Fri,  3 Oct 2025 10:15:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C838D40674;
+	Fri,  3 Oct 2025 10:15:22 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 9E9E2402C4
- for <dev@dpdk.org>; Fri,  3 Oct 2025 10:15:18 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BAAB540651
+ for <dev@dpdk.org>; Fri,  3 Oct 2025 10:15:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759479319; x=1791015319;
+ t=1759479320; x=1791015320;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=cTNlCNSnUeJ9wvWlGYXkJ4nrT7mmRkqTxlbZZ2bxIII=;
- b=HMQS0WUP/2kfz0cnukWmBxIlP9ZK40Du5OEQebzkGqddOGlh0E5i780p
- H+SND3v7lce8aS7bbaR8/ey7g3Ao6gYhV5NOOJjjYY8zejynK9M20H/9f
- YZXAetl2OlGOzmsrXRyo2wVStX83drDvX64WB1zRhv/pqqB7AI/scB6c1
- v0YtJbB3Z6sFvMTMmqwioE1KnZlyzJMbOH9HLIph/JhpDNCyLGEfL5viK
- bj9brNmJPkcjrLKOdqIT1TBa7zSU/9zF2iwtEs8XbMZk+Xe/c0Ozp6hD3
- BwDtS8vi5L+ww6cwL7qjvAvQgPTHT7L61xb1lB9/Qe9k0KwaG1SIWtVvZ Q==;
-X-CSE-ConnectionGUID: rM4UnhfQTnGAnqnzKZGlKg==
-X-CSE-MsgGUID: ZH47BwavTW2LchdwOMxW7A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="61473551"
-X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; d="scan'208";a="61473551"
+ bh=KFeN5qVIW+IdPSsx6MSn7k+Hji1hIpJQ0HyMztXC9gQ=;
+ b=mly8uB70OtCOSTGn7hZ0qNDyTDXyWH/iRdEZbu/Ls4smzun9izVcimeF
+ T0QgviW6F0nfbJ/0YBKS9bBrmS6kdrA9Bj2/9MbloaHpPhRwQMGq8RFjT
+ q8z/YdPVteYyYeEc8ST/FRdvvMfH7m8xZaARxVG+iBksoG9V5pOlInb24
+ RMq9LXRpLORrqaocwRD+yKc3aB2JgAahYZkLsq5De5ljn55vBE9KbZNP3
+ g4Lb4VLkUuVXIk+izqO7gFaVkYG0WBdxH+46jr/NJVb23XSdBEunSJAqu
+ 2Cwvv1v29A9Hbmu7lIXVof+kE3SVeSJ2YrUzGxXmgteK0AFBIBFjzb+aw g==;
+X-CSE-ConnectionGUID: dfQQDS7KT0KxmIPOJhxeGw==
+X-CSE-MsgGUID: NH9vnCdgRrGkf4ixfQl/CQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="61473562"
+X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; d="scan'208";a="61473562"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Oct 2025 01:15:19 -0700
-X-CSE-ConnectionGUID: LeCiQn0sRHqTLh1X6EHysQ==
-X-CSE-MsgGUID: eNBwDh2rThmVytjrhc1HeA==
+ 03 Oct 2025 01:15:20 -0700
+X-CSE-ConnectionGUID: XBiVrb6sRkuBp45zZ5Nipw==
+X-CSE-MsgGUID: 7HYPoJViSOu2sO/YbWaByw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; d="scan'208";a="184525830"
+X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; d="scan'208";a="184525833"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa004.fm.intel.com with ESMTP; 03 Oct 2025 01:15:17 -0700
+ by fmviesa004.fm.intel.com with ESMTP; 03 Oct 2025 01:15:18 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v9 05/18] argparse: add support for parsing core lists
-Date: Fri,  3 Oct 2025 09:14:57 +0100
-Message-ID: <20251003081510.1197166-6-bruce.richardson@intel.com>
+Subject: [PATCH v9 06/18] eal: add long options for each short option
+Date: Fri,  3 Oct 2025 09:14:58 +0100
+Message-ID: <20251003081510.1197166-7-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251003081510.1197166-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
@@ -61,397 +61,152 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Core lists are widely used in DPDK, so add support for parsing them.
+To simplify future rework of the EAL arg handling, add a long-option
+equivalent for each short option that doesn't already have one.
+
+When updating the docs with the new long options, standardize the format
+of options which have both short and long variants, and drop the
+deprecated service-coremask option from the docs, rather than adding its
+new long option.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/test_argparse.c               | 188 +++++++++++++++++++++++++
- doc/guides/prog_guide/argparse_lib.rst |  32 +++++
- lib/argparse/rte_argparse.c            |  63 +++++++++
- lib/argparse/rte_argparse.h            |   2 +
- 4 files changed, 285 insertions(+)
+ doc/guides/linux_gsg/eal_args.include.rst | 20 ++++++++------------
+ lib/eal/common/eal_common_options.c       |  8 ++++++++
+ lib/eal/common/eal_options.h              | 16 ++++++++++++++++
+ 3 files changed, 32 insertions(+), 12 deletions(-)
 
-diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
-index 0a229752fa..c829ea75e4 100644
---- a/app/test/test_argparse.c
-+++ b/app/test/test_argparse.c
-@@ -6,6 +6,7 @@
- #include <string.h>
+diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
+index 9ced54af40..0b17879d42 100644
+--- a/doc/guides/linux_gsg/eal_args.include.rst
++++ b/doc/guides/linux_gsg/eal_args.include.rst
+@@ -4,7 +4,7 @@
+ Lcore-related options
+ ~~~~~~~~~~~~~~~~~~~~~
  
- #include <rte_argparse.h>
-+#include <rte_os.h>
+-*   ``-l/--lcores <core list>``
++*   ``-l, --lcores <core list>``
  
- #include "test.h"
+     List of cores to run on
  
-@@ -500,6 +501,40 @@ test_argparse_opt_autosave_parse_int_of_optional_val(void)
- 	return 0;
- }
+@@ -71,11 +71,7 @@ Lcore-related options
  
-+static int
-+test_argparse_opt_parse_corelist_of_required_val(void)
-+{
-+	struct rte_argparse *obj;
-+	rte_cpuset_t val_cpuset;
-+	char *argv[3];
-+	int ret;
-+
-+	/* test with long option and single core - this is known to work */
-+	obj = test_argparse_init_obj();
-+	obj->args[0].name_long = "--corelist";
-+	obj->args[0].name_short = "-c";
-+	obj->args[0].val_saver = (void *)&val_cpuset;
-+	obj->args[0].val_set = NULL;
-+	obj->args[0].value_required = RTE_ARGPARSE_VALUE_REQUIRED;
-+	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_CORELIST;
-+	obj->args[1].name_long = NULL;
-+	argv[0] = test_strdup(obj->prog_name);
-+	argv[1] = test_strdup("--corelist");
-+	argv[2] = test_strdup("1,3-5");
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse(obj, 3, argv);
-+	TEST_ASSERT(ret == 3, "Argparse parse expect success!");
-+	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(3, &val_cpuset), "Core 3 should be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(4, &val_cpuset), "Core 4 should be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(5, &val_cpuset), "Core 5 should be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in corelist!");
-+
-+	return 0;
-+}
-+
- static int
- opt_callback_parse_int_of_no_val(uint32_t index, const char *value, void *opaque)
- {
-@@ -782,6 +817,152 @@ test_argparse_pos_callback_parse_int(void)
- 	return 0;
- }
+     Core ID that is used as main.
  
-+static int
-+test_argparse_parse_type_corelist(void)
-+{
-+	char *corelist_valid_single = test_strdup("5");
-+	char *corelist_valid_multiple = test_strdup("0,1,5");
-+	char *corelist_valid_range = test_strdup("1-5");
-+	char *corelist_valid_mixed = test_strdup("0,1,5-10,12-16,18,20");
-+	char *corelist_valid_reverse_range = test_strdup("10-5");
-+	char *corelist_valid_initial_spaces = test_strdup("   1,2,5-7");
-+	char *corelist_valid_empty = test_strdup("");
-+	char *corelist_invalid_spaces = test_strdup(" 1 , 2 , 5-7 ");
-+	char *corelist_invalid_letters = test_strdup("1,a,3");
-+	char *corelist_invalid_range_incomplete = test_strdup("1-");
-+	char *corelist_invalid_range_double_dash = test_strdup("1--5");
-+	char *corelist_invalid_special_chars = test_strdup("1,2@3");
-+	char *corelist_invalid_comma_only = test_strdup(",");
-+	char *corelist_invalid_out_of_range = test_strdup("70000");
-+	rte_cpuset_t val_cpuset;
-+	int ret;
-+
-+	/* test valid single core */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_single,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (single core) failed!");
-+	TEST_ASSERT(CPU_ISSET(5, &val_cpuset), "Core 5 should be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(1, &val_cpuset), "Core 1 should not be set in corelist!");
-+
-+	/* test valid multiple cores */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_multiple,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (multiple cores) failed!");
-+	TEST_ASSERT(CPU_ISSET(0, &val_cpuset), "Core 0 should be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(5, &val_cpuset), "Core 5 should be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(3, &val_cpuset), "Core 3 should not be set in corelist!");
-+
-+	/* test valid range */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_range,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (range) failed!");
-+	for (int i = 1; i <= 5; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 1-5!", i);
-+	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5!");
-+	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5!");
-+
-+	/* test valid mixed corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_mixed,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (mixed) failed!");
-+	TEST_ASSERT(CPU_ISSET(0, &val_cpuset), "Core 0 should be set in mixed corelist!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in mixed corelist!");
-+	for (int i = 5; i <= 10; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 5-10!", i);
-+	for (int i = 12; i <= 16; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 12-16!", i);
-+
-+	TEST_ASSERT(CPU_ISSET(18, &val_cpuset), "Core 18 should be set in mixed corelist!");
-+	TEST_ASSERT(CPU_ISSET(20, &val_cpuset), "Core 20 should be set in mixed corelist!");
-+	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in mixed corelist!");
-+	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in mixed corelist!");
-+	TEST_ASSERT(!CPU_ISSET(17, &val_cpuset), "Core 17 should not be set in mixed corelist!");
-+	TEST_ASSERT(!CPU_ISSET(19, &val_cpuset), "Core 19 should not be set in mixed corelist!");
-+
-+	/* test valid reverse range (10-5 should be interpreted as 5-10) */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_reverse_range,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (reverse range) failed!");
-+	for (int i = 5; i <= 10; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset),
-+				"Core %d should be set in reverse range 10-5!", i);
-+	TEST_ASSERT(!CPU_ISSET(4, &val_cpuset), "Core 4 should not be set in reverse range 10-5!");
-+	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in reverse range 10-5!");
-+
-+	/* test valid corelist with initial spaces only */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_initial_spaces,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (with initial spaces) failed!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in initial spaced corelist!");
-+	TEST_ASSERT(CPU_ISSET(2, &val_cpuset), "Core 2 should be set in initial spaced corelist!");
-+	for (int i = 5; i <= 7; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset),
-+				"Core %d should be set in initial spaced range 5-7!", i);
-+
-+	/* test valid empty corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_empty,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (empty) failed!");
-+	/* Verify that no cores are set in empty corelist */
-+	for (int i = 0; i < CPU_SETSIZE; i++)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset),
-+				"Core %d should not be set in empty corelist!", i);
-+
-+	/* test invalid corelist with spaces */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_spaces,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (with spaces) should have failed!");
-+
-+	/* test invalid corelist with letters */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_letters,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (with letters) should have failed!");
-+
-+	/* test invalid corelist with incomplete range */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_incomplete,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (incomplete range) should have failed!");
-+
-+	/* test invalid corelist with double dash */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_double_dash,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (double dash) should have failed!");
-+
-+	/* test invalid corelist with special characters */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_special_chars,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (special chars) should have failed!");
-+
-+	/* test invalid comma-only corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_comma_only,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (comma only) should have failed!");
-+
-+	/* test invalid out-of-range corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_out_of_range,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (out of range) should have failed!");
-+
-+	return 0;
-+}
-+
- static int
- test_argparse_parse_type(void)
- {
-@@ -880,6 +1061,12 @@ test_argparse_parse_type(void)
- 	ret = rte_argparse_parse_type(bool_numeric_invalid, RTE_ARGPARSE_VALUE_TYPE_BOOL,
- 			&val_bool);
- 	TEST_ASSERT(ret != 0, "Argparse parse type for bool (numeric invalid) passed unexpectedly!");
-+
-+	/* test for corelist parsing */
-+	ret = test_argparse_parse_type_corelist();
-+	if (ret != 0)
-+		return ret;
-+
- 	return 0;
- }
+-*   ``-s <service core mask>``
+-
+-    Hexadecimal bitmask of cores to be used as service cores.
+-
+-*   ``-S <service core list>``
++*   ``-S, --service-corelist <service core list>``
  
-@@ -900,6 +1087,7 @@ static struct unit_test_suite argparse_test_suite = {
- 		TEST_CASE(test_argparse_opt_autosave_parse_int_of_no_val),
- 		TEST_CASE(test_argparse_opt_autosave_parse_int_of_required_val),
- 		TEST_CASE(test_argparse_opt_autosave_parse_int_of_optional_val),
-+		TEST_CASE(test_argparse_opt_parse_corelist_of_required_val),
- 		TEST_CASE(test_argparse_opt_callback_parse_int_of_no_val),
- 		TEST_CASE(test_argparse_opt_callback_parse_int_of_required_val),
- 		TEST_CASE(test_argparse_opt_callback_parse_int_of_optional_val),
-diff --git a/doc/guides/prog_guide/argparse_lib.rst b/doc/guides/prog_guide/argparse_lib.rst
-index 7868af5672..7882d910ab 100644
---- a/doc/guides/prog_guide/argparse_lib.rst
-+++ b/doc/guides/prog_guide/argparse_lib.rst
-@@ -229,6 +229,38 @@ Boolean arguments are parsed using ``RTE_ARGPARSE_VALUE_TYPE_BOOL`` and accept t
-       },
-    };
+     List of cores to be used as service cores.
  
-+Corelist Type
-+^^^^^^^^^^^^^
-+
-+The argparse library supports automatic parsing of CPU core lists using the
-+``RTE_ARGPARSE_VALUE_TYPE_CORELIST`` value type. This feature allows users to
-+specify CPU cores in a flexible format similar to other DPDK applications.
-+
-+.. code-block:: C
-+
-+   #include <rte_os.h>  /* for CPU set operations */
-+
-+   static rte_cpuset_t cores;
-+
-+   static struct rte_argparse obj = {
-+      .args = {
-+         { "--cores", "-c", "CPU cores to use", &cores, NULL, RTE_ARGPARSE_VALUE_REQUIRED, RTE_ARGPARSE_VALUE_TYPE_CORELIST },
-+         ARGPARSE_ARG_END(),
-+      },
-+   };
-+
-+The corelist parsing supports the following input formats:
-+
-+- **Single core**: ``--cores 5`` (sets core 5)
-+- **Multiple cores**: ``--cores 1,2,5`` (sets cores 1, 2, and 5)
-+- **Core ranges**: ``--cores 1-5`` (sets cores 1, 2, 3, 4, and 5)
-+- **Mixed format**: ``--cores 0,2-4,7`` (sets cores 0, 2, 3, 4, and 7)
-+- **Reverse ranges**: ``--cores 5-1`` (equivalent to 1-5, sets cores 1, 2, 3, 4, and 5)
-+- **Empty corelist**: ``--cores ""`` (sets no cores)
-+
-+The parsed result is stored in an ``rte_cpuset_t`` structure that can be used
-+with standard CPU set operations:
-+
- Parsing by callback way
- ~~~~~~~~~~~~~~~~~~~~~~~
+@@ -108,7 +104,7 @@ Device-related options
  
-diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
-index 2b5da5f1db..e4851bd046 100644
---- a/lib/argparse/rte_argparse.c
-+++ b/lib/argparse/rte_argparse.c
-@@ -5,9 +5,11 @@
- #include <errno.h>
- #include <stdlib.h>
- #include <string.h>
-+#include <ctype.h>
+        --vdev 'net_pcap0,rx_pcap=input.pcap,tx_pcap=output.pcap'
  
- #include <eal_export.h>
- #include <rte_log.h>
-+#include <rte_os.h>
+-*   ``-d <path to shared object or directory>``
++*   ``-d, --driver-path <path to shared object or directory>``
  
- #include "rte_argparse.h"
+     Load external drivers. An argument can be a single shared object file, or a
+     directory containing multiple driver shared objects. Multiple -d options are
+@@ -134,15 +130,15 @@ Multiprocessing-related options
+ Memory-related options
+ ~~~~~~~~~~~~~~~~~~~~~~
  
-@@ -53,6 +55,7 @@ is_valid_value_type_field(const struct rte_argparse_arg *arg)
- 	case RTE_ARGPARSE_VALUE_TYPE_U64:
- 	case RTE_ARGPARSE_VALUE_TYPE_STR:
- 	case RTE_ARGPARSE_VALUE_TYPE_BOOL:
-+	case RTE_ARGPARSE_VALUE_TYPE_CORELIST:
- 		return true;
- 	/* omit default case so compiler warns on any missing enum values */
- 	}
-@@ -554,6 +557,64 @@ parse_arg_bool(const struct rte_argparse_arg *arg, const char *value)
- 	return 0;
- }
+-*   ``-n <number of channels>``
++*   ``-n, --memory-channels <number of channels>``
  
-+static int
-+parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
-+{
-+	rte_cpuset_t *cpuset = arg->val_saver;
-+	const char *last = value;
-+	int min = -1;
-+
-+	if (value == NULL) {
-+		*cpuset = *(rte_cpuset_t *)arg->val_set;
-+		return 0;
-+	}
-+
-+	CPU_ZERO(cpuset);
-+	while (*last != '\0') {
-+		char *end;
-+		int64_t idx;
-+		int32_t max;
-+
-+		while (isblank(*value))
-+			value++;
-+
-+		if (!isdigit(*value))
-+			return -1;
-+
-+		errno = 0;
-+		idx = strtol(value, &end, 10);
-+		last = end;
-+		if (errno || idx > UINT16_MAX)
-+			return -1;
-+
-+		if (*end == '-') {
-+			min = idx; /* start of range, move to next loop stage */
-+		} else if (*end == ',' || *end == '\0') {
-+			/* single value followed by comma or end (min is set only by '-') */
-+			if (min == -1) {
-+				min = max = idx;
-+			} else if (min > idx) {
-+				/* we have range from high to low */
-+				max = min;
-+				min = idx;
-+			} else {
-+				/* range from low to high */
-+				max = idx;
-+			}
-+
-+			for (; min <= max; min++)
-+				CPU_SET(min, cpuset);
-+
-+			min = -1; /* no longer in a range */
-+		} else {
-+			/* end is an unexpected character, return error */
-+			return -1;
-+		}
-+		value = last + 1;
-+	}
-+	return 0;
-+}
-+
- static int
- parse_arg_autosave(const struct rte_argparse_arg *arg, const char *value)
- {
-@@ -575,6 +636,8 @@ parse_arg_autosave(const struct rte_argparse_arg *arg, const char *value)
- 		return parse_arg_str(arg, value);
- 	case RTE_ARGPARSE_VALUE_TYPE_BOOL:
- 		return parse_arg_bool(arg, value);
-+	case RTE_ARGPARSE_VALUE_TYPE_CORELIST:
-+		return parse_arg_corelist(arg, value);
- 	/* omit default case so compiler warns on missing enum values */
- 	}
- 	return -EINVAL;
-diff --git a/lib/argparse/rte_argparse.h b/lib/argparse/rte_argparse.h
-index 63b49ba220..991f084927 100644
---- a/lib/argparse/rte_argparse.h
-+++ b/lib/argparse/rte_argparse.h
-@@ -69,6 +69,8 @@ enum rte_argparse_value_type {
- 	RTE_ARGPARSE_VALUE_TYPE_STR,
- 	/** The argument's value is boolean flag type. */
- 	RTE_ARGPARSE_VALUE_TYPE_BOOL,
-+	/** The argument's value is a corelist */
-+	RTE_ARGPARSE_VALUE_TYPE_CORELIST,
+     Set the number of memory channels to use.
+ 
+-*   ``-r <number of ranks>``
++*   ``-r, --memory-ranks <number of ranks>``
+ 
+     Set the number of memory ranks (auto-detected by default).
+ 
+-*   ``-m <megabytes>``
++*   ``-m, --memory-size <megabytes>``
+ 
+     Amount of memory to preallocate at startup.
+ 
+@@ -236,11 +232,11 @@ Debugging options
+ Other options
+ ~~~~~~~~~~~~~
+ 
+-*   ``-h``, ``--help``
++*   ``-h, --help``
+ 
+     Display help message listing all EAL parameters.
+ 
+-*   ``-v``
++*   ``-v, --version``
+ 
+     Display the version information on startup.
+ 
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index 2f91b96190..675745d610 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -66,7 +66,9 @@ eal_short_options[] =
+ const struct option
+ eal_long_options[] = {
+ 	{OPT_BASE_VIRTADDR,     1, NULL, OPT_BASE_VIRTADDR_NUM    },
++	{OPT_COREMASK,          1, NULL, OPT_COREMASK_NUM        },
+ 	{OPT_CREATE_UIO_DEV,    0, NULL, OPT_CREATE_UIO_DEV_NUM   },
++	{OPT_DRIVER_PATH,       1, NULL, OPT_DRIVER_PATH_NUM     },
+ 	{OPT_FILE_PREFIX,       1, NULL, OPT_FILE_PREFIX_NUM      },
+ 	{OPT_HELP,              0, NULL, OPT_HELP_NUM             },
+ 	{OPT_HUGE_DIR,          1, NULL, OPT_HUGE_DIR_NUM         },
+@@ -76,6 +78,11 @@ eal_long_options[] = {
+ 	{OPT_LOG_COLOR,		2, NULL, OPT_LOG_COLOR_NUM	  },
+ 	{OPT_LOG_LEVEL,         1, NULL, OPT_LOG_LEVEL_NUM        },
+ 	{OPT_LOG_TIMESTAMP,     2, NULL, OPT_LOG_TIMESTAMP_NUM    },
++	{OPT_MEMORY_CHANNELS,   1, NULL, OPT_MEMORY_CHANNELS_NUM },
++	{OPT_MEMORY_RANKS,      1, NULL, OPT_MEMORY_RANKS_NUM    },
++	{OPT_MEMORY_SIZE,       1, NULL, OPT_MEMORY_SIZE_NUM     },
++	{OPT_SERVICE_CORELIST,  1, NULL, OPT_SERVICE_CORELIST_NUM },
++	{OPT_SERVICE_COREMASK,  1, NULL, OPT_SERVICE_COREMASK_NUM },
+ 	{OPT_TRACE,             1, NULL, OPT_TRACE_NUM            },
+ 	{OPT_TRACE_DIR,         1, NULL, OPT_TRACE_DIR_NUM        },
+ 	{OPT_TRACE_BUF_SIZE,    1, NULL, OPT_TRACE_BUF_SIZE_NUM   },
+@@ -109,6 +116,7 @@ eal_long_options[] = {
+ 	{OPT_NO_TELEMETRY,      0, NULL, OPT_NO_TELEMETRY_NUM     },
+ 	{OPT_FORCE_MAX_SIMD_BITWIDTH, 1, NULL, OPT_FORCE_MAX_SIMD_BITWIDTH_NUM},
+ 	{OPT_HUGE_WORKER_STACK, 2, NULL, OPT_HUGE_WORKER_STACK_NUM     },
++	{OPT_VERSION,           0, NULL, OPT_VERSION_NUM         },
+ 
+ 	{0,                     0, NULL, 0                        }
  };
+diff --git a/lib/eal/common/eal_options.h b/lib/eal/common/eal_options.h
+index 7a56aa3810..6ef45559f0 100644
+--- a/lib/eal/common/eal_options.h
++++ b/lib/eal/common/eal_options.h
+@@ -17,8 +17,24 @@ enum {
+ 	OPT_DEV_ALLOW_NUM       = 'a',
+ #define OPT_DEV_BLOCK         "block"
+ 	OPT_DEV_BLOCK_NUM      = 'b',
++#define OPT_COREMASK          "coremask"
++	OPT_COREMASK_NUM       = 'c',
++#define OPT_DRIVER_PATH       "driver-path"
++	OPT_DRIVER_PATH_NUM    = 'd',
+ #define OPT_LCORES            "lcores"
+ 	OPT_LCORES_NUM         = 'l',
++#define OPT_MEMORY_SIZE       "memory-size"
++	OPT_MEMORY_SIZE_NUM    = 'm',
++#define OPT_MEMORY_CHANNELS   "memory-channels"
++	OPT_MEMORY_CHANNELS_NUM = 'n',
++#define OPT_MEMORY_RANKS     "memory-ranks"
++	OPT_MEMORY_RANKS_NUM   = 'r',
++#define OPT_SERVICE_COREMASK  "service-coremask"
++	OPT_SERVICE_COREMASK_NUM = 's',
++#define OPT_SERVICE_CORELIST  "service-corelist"
++	OPT_SERVICE_CORELIST_NUM = 'S',
++#define OPT_VERSION           "version"
++	OPT_VERSION_NUM        = 'v',
  
- /** Additional flags which may be specified for each argument */
+ 	/* first long only option value must be >= 256, so that we won't
+ 	 * conflict with short options */
 -- 
 2.48.1
 
