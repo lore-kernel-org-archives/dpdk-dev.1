@@ -2,49 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB12CCA471
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 11:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D86ECAC5B0
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 11:45:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E7E4B4028B;
-	Fri,  3 Oct 2025 13:09:50 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 0DC3E40262;
- Fri,  3 Oct 2025 13:09:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759489790; x=1791025790;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=/I4cryzZ2VWXbegWLnyfHr8Z+OIeVzlgvxhR2KzqOuo=;
- b=CvF2TtQ8aFCO/+Yub8CXusNsI2z2rtoBMDd2cnhvUQIMzSd4L+YU3q1R
- wB4cUwModlDumBKq0bXMczFHh7PEPb8vxRUchktfGmRcunvDKePuxhtJa
- lY/p63eIA/ftRg8JfhFLtztSX3vTG0sn7RfL/20JisyYa4qpYM93/YvLy
- GFPj7znLhXFbBCJDP0+H8AtoS7t5sZEBuSiibrKyAJqJW04/GpACt2kqh
- Djv0BUIzcfojg6EDzxkME5rLOPKLWxTSkfDVf/bTWDPnX8sBnKeXdZM3a
- juOXS8hR1LytaVQfafdEa/VDiOCqdf4TuRLt7OQqaDxWpB2tuRprjTlTs A==;
-X-CSE-ConnectionGUID: RCVhBDwFQRyX2H3+Zcz59g==
-X-CSE-MsgGUID: LmvhQ0kiS3yXxYOw2SMb+g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="64386655"
-X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; d="scan'208";a="64386655"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Oct 2025 04:09:49 -0700
-X-CSE-ConnectionGUID: WWMOTT9oSN2EGnGMgIhG6g==
-X-CSE-MsgGUID: Y5pcXxr2SrmylLqe8ooCOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; d="scan'208";a="209945200"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa002.jf.intel.com with ESMTP; 03 Oct 2025 04:09:48 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id B014E4028B;
+	Fri,  3 Oct 2025 13:45:36 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 635E940262
+ for <dev@dpdk.org>; Fri,  3 Oct 2025 13:45:35 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 540CB4889F; Fri,  3 Oct 2025 13:45:35 +0200 (CEST)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH] ethdev: fix copy-paste error in fn parameter description
-Date: Fri,  3 Oct 2025 12:09:44 +0100
-Message-ID: <20251003110944.1594659-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.48.1
+Subject: [DPDK/core Bug 1798] Meson can't find MLX5 build dependencies with
+ clang
+Date: Fri, 03 Oct 2025 11:45:34 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: core
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: alialnu@nvidia.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone attachments.created
+Message-ID: <bug-1798-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,30 +55,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The description of the rx_queue_id parameter was copy-pasted from the
-queue mapping function without being updated. Fix the text.
+http://bugs.dpdk.org/show_bug.cgi?id=3D1798
 
-Fixes: 81f9db8ecc2c ("ethdev: add vlan offload support")
-Cc: stable@dpdk.org
+            Bug ID: 1798
+           Summary: Meson can't find MLX5 build dependencies with clang
+           Product: DPDK
+           Version: unspecified
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: core
+          Assignee: dev@dpdk.org
+          Reporter: alialnu@nvidia.com
+  Target Milestone: ---
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- lib/ethdev/rte_ethdev.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Created attachment 331
+  --> http://bugs.dpdk.org/attachment.cgi?id=3D331&action=3Dedit
+Meson logs with and without the first bad commit
 
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index a122df4e8e..6ab934b60c 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -3711,7 +3711,7 @@ int rte_eth_dev_vlan_filter(uint16_t port_id, uint16_t vlan_id, int on);
-  * @param port_id
-  *   The port identifier of the Ethernet device.
-  * @param rx_queue_id
-- *   The index of the receive queue for which a queue stats mapping is required.
-+ *   The index of the receive queue on which to enable/disable VLAN stripping.
-  *   The value must be in the range [0, nb_rx_queue - 1] previously supplied
-  *   to rte_eth_dev_configure().
-  * @param on
--- 
-2.48.1
+MLX5 drivers are getting disabled due to missing dependency warnings:
 
+Message: Disabling mlx5 [drivers/net/mlx5]: missing internal dependency
+"common_mlx5"
+
+Build command:
+CC=3Dclang PKG_CONFIG_PATH=3D/opt/rdma-core/build/lib/pkgconfig meson
+--werror --buildtype=3Ddebugoptimized build
+
+OS: Ubuntu 22.04
+Compiler: clang 14.0.0
+Meson: 0.61.2
+
+gcc does not reproduce.
+
+$ PKG_CONFIG_PATH=3D:/opt/rdma-core/build/lib/pkgconfig pkg-config --modver=
+sion
+libibverbs
+1.15.60.0
+
+git-bisect points to 0681e15f42df ("build: validate libraries returned from
+meson find function").
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
