@@ -2,50 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69915CAC5B0
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 14:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B87EBCCA471
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 16:51:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3C781402B5;
-	Fri,  3 Oct 2025 16:59:02 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 035BC402A2;
- Fri,  3 Oct 2025 16:59:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759503541; x=1791039541;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=XFfbNT/GRBIB8QM8W9EQW+7pmZwSoaAfDymgnpSrFA4=;
- b=Osm51wbkeGoRJoeEFbfocsz+T5rlLRDMJ4Gjor7wQdW9J+PTvIM1Hj7M
- A7K5g6TJNRHBFk6Y7UYYfVg9mb7860lTM50hPusQIg1mK89vLERnTuhKX
- atu9gIUyUibbHJGsJz43TW39IEZyr3S6OTd9l1ghQIw7YyBO1ZiIbx+NF
- /MWbkof8vedzO7pk8h1fb+7HOn5Vozi0yMuuRpNf+LQQw6ADrU1QBM0YL
- /F6bJ3DGggkGCVzNSNjxEs9roXXMtjTvQoge+uOR4HHnK+KDZMH6zS9u8
- 8lR4B+acaU2G39ZQvxFZFG00gWQELNfHs6vTmqMYYBrrdV5vgN2hNXixY g==;
-X-CSE-ConnectionGUID: 6IZXNN9qTia+mtr3cZ1SdQ==
-X-CSE-MsgGUID: KYZLcrPHSvmMtEl6b+Entw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11571"; a="65635124"
-X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; d="scan'208";a="65635124"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Oct 2025 07:59:00 -0700
-X-CSE-ConnectionGUID: MYWz2RRMR+eemQg5FtsW0w==
-X-CSE-MsgGUID: qm705QFtQEqEY4hN4hrjEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; d="scan'208";a="183711214"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa005.fm.intel.com with ESMTP; 03 Oct 2025 07:58:58 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Praveen Shetty <praveen.shetty@intel.com>, Qi Zhang <qi.z.zhang@intel.com>,
- Yuying Zhang <yuying.zhang@intel.com>
-Subject: [PATCH] net/cpfl: fix display of commands in the docs
-Date: Fri,  3 Oct 2025 15:58:48 +0100
-Message-ID: <20251003145848.1675691-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.48.1
+	by mails.dpdk.org (Postfix) with ESMTP id 7C3E14028F;
+	Fri,  3 Oct 2025 18:51:45 +0200 (CEST)
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com
+ [205.220.180.131])
+ by mails.dpdk.org (Postfix) with ESMTP id 298734028F
+ for <dev@dpdk.org>; Fri,  3 Oct 2025 18:51:43 +0200 (CEST)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+ by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 593BSwB7022897;
+ Fri, 3 Oct 2025 16:51:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+ cc:content-transfer-encoding:date:from:in-reply-to:message-id
+ :mime-version:references:subject:to; s=qcppdkim1; bh=BqLtF5FEXyI
+ ofKafQ79SCrp/hnxnLT8w/l3Tm2Sg0oY=; b=jh5BOniU8mY8EDclU/Z8roD3tR5
+ ahitpmGpNJL7Se8tZseBbiJW5Yvvh2X+6FFYYYL9KWDfASRWeWSwKqn9mIVKf1sv
+ QcC8fTOPq5c7PzUuy3vwEq2DYH2bEFJfLXI8WKAUK2eofzMCoxFl41f8YE92eHtB
+ O16Bxy11B3b+LU3VMAXr1u2n8wfB5AavjoBQj31H5OCN4K8d3vV9QDKboR8XNxnG
+ ZeRbvLX9PThicMM8eDf55NqDNDQ/MQ88bwsiKfDAQsXqnm42qvIFAryjTH9pyka/
+ eh2Ei3qWbeaFQAVdEb2/BF2P9QcEb6WXpLDPxOCgnmqLp12Dqq9oOCdnF/Q==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com
+ [199.106.103.254])
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e59nbsbd-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 03 Oct 2025 16:51:42 +0000 (GMT)
+Received: from pps.filterd (NASANPPMTA04.qualcomm.com [127.0.0.1])
+ by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 593GpeFT009730; 
+ Fri, 3 Oct 2025 16:51:40 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+ by NASANPPMTA04.qualcomm.com (PPS) with ESMTPS id 49hxy6fma1-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 03 Oct 2025 16:51:40 +0000
+Received: from NASANPPMTA04.qualcomm.com (NASANPPMTA04.qualcomm.com
+ [127.0.0.1])
+ by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 593GpegX009724;
+ Fri, 3 Oct 2025 16:51:40 GMT
+Received: from tbs-5gnr-mt-30 (tbs-5gnr-mt-30.qualcomm.com [10.239.80.165])
+ by NASANPPMTA04.qualcomm.com (PPS) with ESMTPS id 593GpePW009711
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 03 Oct 2025 16:51:40 +0000
+Received: by tbs-5gnr-mt-30 (Postfix, from userid 2316195)
+ id E1729400E0; Fri,  3 Oct 2025 10:51:39 -0600 (MDT)
+From: Sameer Vaze <svaze@qti.qualcomm.com>
+To: Sunila Sahu <ssahu@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
+ Ashish Gupta <ashishg@marvell.com>
+Cc: dev@dpdk.org, Sameer Vaze <svaze@qti.qualcomm.com>
+Subject: [PATCH v2 2/3] compress/zlib: support for dictionaries and PDCP
+ checksum
+Date: Fri,  3 Oct 2025 10:51:31 -0600
+Message-Id: <20251003165132.3201643-2-svaze@qti.qualcomm.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20251003165132.3201643-1-svaze@qti.qualcomm.com>
+References: <20250924161918.2211290-1-svaze@qti.qualcomm.com>
+ <20251003165132.3201643-1-svaze@qti.qualcomm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
+ signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
+ signatures=585085
+X-Proofpoint-GUID: ou7m-OwS9-wkAE14D0xCBc-DSXuk8xqx
+X-Authority-Analysis: v=2.4 cv=O4g0fR9W c=1 sm=1 tr=0 ts=68dfff1e cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=OVecn4WgEKDgdfIVBRYA:9
+X-Proofpoint-ORIG-GUID: ou7m-OwS9-wkAE14D0xCBc-DSXuk8xqx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAwMSBTYWx0ZWRfX3bgwOr78cEgo
+ FLXEdNAVt6O0o8hKl/0Er7Vc2j77pgiXKQ2I2bMnBz7FUqggW/vXe+tB6wtIiOvy6/QBP2Z31yL
+ IzA50kOK38Hq7C/bUuiYIX11peOflSj1+Fcq1s0dQHQiO/jei6QumFBn+H8190qSM09j6bsTA+9
+ FU5VlrxaRtVjJ8xTxhVkt6ZXobOkPwsli2ubHFKol4S+y6IiZ2NE5Dv8JeuTZMObDpCbALqsph6
+ 3BHrT+GNf0i1x2OlIYaGoRVy0H0ZG136uFk8xEnmJnRqQmTTnpPHbXjvN4XKir5RdJEfE+jBR04
+ ztESBNw3FssJnqgv30WbJNTQRKpQDzLXzw+UXEOj79wEDLfLTFjcsx5/T7riObgLkrJY1N0yun1
+ cvixZ01LhCP8NBRctMNZgoaLESRN8g==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-03_05,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270001
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,42 +98,340 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The literal text of the commands to use were not displayed properly
-because of a double ":" at the end of the preceding text, meaning that
-the ".. code-block" marker got recognised as the literal text to
-include. Change the double colon to single, and also indent the line
-continuation in the multi-line flow-create command.
+Support to calculate PDCP checksums. Includes changes to
+pass in dictionaries. Adds support for sync flush
 
-Fixes: 03f976012304 ("net/cpfl: adapt FXP to flow engine")
-Cc: stable@dpdk.org
-
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
 ---
- doc/guides/nics/cpfl.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+v2:
+* Moved dictionary params to deflate struct
+* Added inflate params struct to union
 
-diff --git a/doc/guides/nics/cpfl.rst b/doc/guides/nics/cpfl.rst
-index 54a3015aa0..bc42c524ea 100644
---- a/doc/guides/nics/cpfl.rst
-+++ b/doc/guides/nics/cpfl.rst
-@@ -218,14 +218,14 @@ low level hardware resources.
-       dpdk-testpmd -l 0,1 -a 0000:af:00.6,vport=[0-1],flow_parser="refpkg.json" -- -i
+ drivers/compress/zlib/zlib_pmd.c         | 173 +++++++++++++++++++++--
+ drivers/compress/zlib/zlib_pmd_private.h |   8 ++
+ 2 files changed, 172 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/compress/zlib/zlib_pmd.c b/drivers/compress/zlib/zlib_pmd.c
+index 92e808e78c..931dd39a4c 100644
+--- a/drivers/compress/zlib/zlib_pmd.c
++++ b/drivers/compress/zlib/zlib_pmd.c
+@@ -4,6 +4,7 @@
  
- #. Create one flow to forward ETH-IPV4-TCP from I/O port to a local(CPF's) vport. Flow should be created on
--   vport X. Group M should match fxp module. Action port_representor Y means forward packet to local vport Y::
-+   vport X. Group M should match fxp module. Action port_representor Y means forward packet to local vport Y:
+ #include <bus_vdev_driver.h>
+ #include <rte_common.h>
++#include <stdlib.h>
  
-    .. code-block:: console
+ #include "zlib_pmd_private.h"
  
-       flow create X ingress group M pattern eth dst is 00:01:00:00:03:14 / ipv4 src is 192.168.0.1 \
--      dst is 192.168.0.2 / tcp / end actions port_representor port_id Y / end
-+         dst is 192.168.0.2 / tcp / end actions port_representor port_id Y / end
+@@ -15,6 +16,120 @@
+ 		(data = rte_pktmbuf_mtod(mbuf, uint8_t *)),	\
+ 		(len = rte_pktmbuf_data_len(mbuf)) : 0)
  
--#. Send a matched packet, and it should be displayed on PMD::
-+#. Send a matched packet, and it should be displayed on PMD:
++#define BOTTOM_NIBBLE_OF_BYTE 0xf
++#define TOP_NIBBLE_OF_BYTE 0xf0
++
++static void
++process_zlib_deflate_chksum(struct rte_comp_op *op,
++		z_stream *strm, enum rte_comp_checksum_type chksum)
++{
++	uint32_t dictionary_len = 0;
++	op->status = RTE_COMP_OP_STATUS_SUCCESS;
++
++	switch (chksum) {
++	case RTE_COMP_CHECKSUM_3GPP_PDCP_UDC:
++		{
++		uint8_t *dictionary = malloc(DEFLATE_MAX_WINDOW_SIZE);
++
++		if (!dictionary) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_ERROR;
++			return;
++		}
++
++		if (deflateGetDictionary(strm, dictionary, &dictionary_len)) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_CHECK_SUM_VALIDATION_FAILED;
++			free(dictionary);
++			return;
++		}
++
++		uint32_t dictionary_start = (uint32_t)(*dictionary);
++		uint32_t dictionary_end = (uint32_t)(*(dictionary + dictionary_len - 4));
++		uint32_t sum = (dictionary_start & 0x0F0F0F0F)
++			+ (dictionary_start & (0xF0F0F0F0 >> 4))
++			+ (dictionary_end & 0x0F0F0F0F)
++			+ (dictionary_end & (0xF0F0F0F0 >> 4));
++		uint8_t *sum_bytes = (uint8_t *)&sum;
++
++		op->output_chksum = ~(sum_bytes[0] + sum_bytes[1] + sum_bytes[2] + sum_bytes[3])
++			 & BOTTOM_NIBBLE_OF_BYTE;
++
++		free(dictionary);
++
++		break;
++	}
++	case RTE_COMP_CHECKSUM_NONE:
++		break;
++	case RTE_COMP_CHECKSUM_CRC32:
++	case RTE_COMP_CHECKSUM_ADLER32:
++	case RTE_COMP_CHECKSUM_CRC32_ADLER32:
++	default:
++		ZLIB_PMD_ERR("Checksum not supported");
++		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
++		return;
++	}
++}
++
++static void
++process_zlib_inflate_chksum(struct rte_comp_op *op,
++		z_stream *strm,
++		enum rte_comp_checksum_type chksum)
++{
++	uint32_t dictionary_len = 0;
++	op->status = RTE_COMP_OP_STATUS_SUCCESS;
++
++	switch (chksum) {
++	case RTE_COMP_CHECKSUM_3GPP_PDCP_UDC:
++		{
++		uint8_t *dictionary = malloc(DEFLATE_MAX_WINDOW_SIZE);
++
++		if (!dictionary) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_ERROR;
++			return;
++		}
++
++		if (inflateGetDictionary(strm, dictionary, &dictionary_len)) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_CHECK_SUM_VALIDATION_FAILED;
++			free(dictionary);
++			return;
++		}
++
++		uint32_t dictionary_start = (uint32_t)(*dictionary);
++		uint32_t dictionary_end = (uint32_t)(*(dictionary + dictionary_len - 4));
++		uint32_t sum = (dictionary_start & 0x0F0F0F0F)
++			+ (dictionary_start & (0xF0F0F0F0 >> 4))
++			+ (dictionary_end & 0x0F0F0F0F)
++			+ (dictionary_end & (0xF0F0F0F0 >> 4));
++		uint8_t *sum_bytes = (uint8_t *)&sum;
++
++		op->output_chksum = ~(sum_bytes[0] + sum_bytes[1] + sum_bytes[2] + sum_bytes[3])
++			 & BOTTOM_NIBBLE_OF_BYTE;
++
++		if (op->input_chksum != op->output_chksum) {
++			ZLIB_PMD_ERR("Checksum does not match");
++			op->status = RTE_COMP_OP_STATUS_CHECK_SUM_VALIDATION_FAILED;
++			free(dictionary);
++			return;
++		}
++		free(dictionary);
++
++		break;
++		}
++	case RTE_COMP_CHECKSUM_NONE:
++		break;
++	case RTE_COMP_CHECKSUM_CRC32:
++	case RTE_COMP_CHECKSUM_ADLER32:
++	case RTE_COMP_CHECKSUM_CRC32_ADLER32:
++	default:
++		ZLIB_PMD_ERR("Checksum not supported");
++		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
++		return;
++	}
++}
++
+ static void
+ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ {
+@@ -27,6 +142,9 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 	case RTE_COMP_FLUSH_FINAL:
+ 		fin_flush = Z_FINISH;
+ 		break;
++	case RTE_COMP_FLUSH_SYNC:
++		fin_flush = Z_SYNC_FLUSH;
++		break;
+ 	default:
+ 		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
+ 		ZLIB_PMD_ERR("Invalid flush value");
+@@ -49,6 +167,9 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
  
-    .. code-block:: console
+ 	strm->avail_out = rte_pktmbuf_data_len(mbuf_dst) - op->dst.offset;
  
++	uLong total_in_at_start = strm->total_in;
++	uLong total_out_at_start = strm->total_out;
++
+ 	/* Set flush value to NO_FLUSH unless it is last mbuf */
+ 	flush = Z_NO_FLUSH;
+ 	/* Initialize status to SUCCESS */
+@@ -56,8 +177,8 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 
+ 	do {
+ 		/* Set flush value to Z_FINISH for last block */
+-		if ((op->src.length - strm->total_in) <= strm->avail_in) {
+-			strm->avail_in = (op->src.length - strm->total_in);
++		if ((op->src.length - (strm->total_in - total_in_at_start)) <= strm->avail_in) {
++			strm->avail_in = (op->src.length - (strm->total_in - total_in_at_start));
+ 			flush = fin_flush;
+ 		}
+ 		do {
+@@ -92,17 +213,18 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 	/* Update op stats */
+ 	switch (op->status) {
+ 	case RTE_COMP_OP_STATUS_SUCCESS:
+-		op->consumed += strm->total_in;
++		op->consumed += strm->total_in - total_in_at_start;
+ 	/* Fall-through */
+ 	case RTE_COMP_OP_STATUS_OUT_OF_SPACE_TERMINATED:
+-		op->produced += strm->total_out;
++		op->produced += strm->total_out - total_out_at_start;
+ 		break;
+ 	default:
+ 		ZLIB_PMD_ERR("stats not updated for status:%d",
+ 				op->status);
+ 	}
+ 
+-	deflateReset(strm);
++	if (op->flush_flag != RTE_COMP_FLUSH_SYNC)
++		deflateReset(strm);
+ }
+ 
+ static void
+@@ -127,6 +249,9 @@ process_zlib_inflate(struct rte_comp_op *op, z_stream *strm)
+ 
+ 	strm->avail_out = rte_pktmbuf_data_len(mbuf_dst) - op->dst.offset;
+ 
++	uLong total_in_at_start = strm->total_in;
++	uLong total_out_at_start = strm->total_out;
++
+ 	/** Ignoring flush value provided from application for decompression */
+ 	flush = Z_NO_FLUSH;
+ 	/* initialize status to SUCCESS */
+@@ -178,17 +303,18 @@ process_zlib_inflate(struct rte_comp_op *op, z_stream *strm)
+ 	/* Update op stats */
+ 	switch (op->status) {
+ 	case RTE_COMP_OP_STATUS_SUCCESS:
+-		op->consumed += strm->total_in;
++		op->consumed += strm->total_in - total_in_at_start;
+ 	/* Fall-through */
+ 	case RTE_COMP_OP_STATUS_OUT_OF_SPACE_TERMINATED:
+-		op->produced += strm->total_out;
++		op->produced += strm->total_out - total_out_at_start;
+ 		break;
+ 	default:
+ 		ZLIB_PMD_ERR("stats not produced for status:%d",
+ 				op->status);
+ 	}
+ 
+-	inflateReset(strm);
++	if (op->flush_flag != RTE_COMP_FLUSH_SYNC)
++		inflateReset(strm);
+ }
+ 
+ /** Process comp operation for mbuf */
+@@ -203,10 +329,14 @@ process_zlib_op(struct zlib_qp *qp, struct rte_comp_op *op)
+ 			(op->dst.offset > rte_pktmbuf_data_len(op->m_dst))) {
+ 		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
+ 		ZLIB_PMD_ERR("Invalid source or destination buffers or "
+-			     "invalid Operation requested");
++				  "invalid Operation requested");
+ 	} else {
+ 		private_xform = (struct zlib_priv_xform *)op->private_xform;
+ 		stream = &private_xform->stream;
++		stream->chksum(op, &stream->strm, stream->chksum_type);
++		if (op->status != RTE_COMP_OP_STATUS_SUCCESS)
++			return -1;
++
+ 		stream->comp(op, &stream->strm);
+ 	}
+ 	/* whatever is out of op, put it into completion queue with
+@@ -232,6 +362,7 @@ zlib_set_stream_parameters(const struct rte_comp_xform *xform,
+ 	case RTE_COMP_COMPRESS:
+ 		stream->comp = process_zlib_deflate;
+ 		stream->free = deflateEnd;
++		stream->chksum = process_zlib_deflate_chksum;
+ 		/** Compression window bits */
+ 		switch (xform->compress.algo) {
+ 		case RTE_COMP_ALGO_DEFLATE:
+@@ -281,17 +412,30 @@ zlib_set_stream_parameters(const struct rte_comp_xform *xform,
+ 			ZLIB_PMD_ERR("Compression strategy not supported");
+ 			return -1;
+ 		}
++
++		/** Checksum used */
++		stream->chksum_type = xform->compress.chksum;
++
+ 		if (deflateInit2(strm, level,
+ 					Z_DEFLATED, wbits,
+ 					DEF_MEM_LEVEL, strategy) != Z_OK) {
+ 			ZLIB_PMD_ERR("Deflate init failed");
+ 			return -1;
+ 		}
++
++		if (xform->compress.deflate.dictionary) {
++			if (deflateSetDictionary(strm, xform->compress.deflate.dictionary,
++					xform->compress.deflate.dictionary_len)) {
++				ZLIB_PMD_ERR("Deflate set dictionary failed");
++				return -1;
++			}
++		}
+ 		break;
+ 
+ 	case RTE_COMP_DECOMPRESS:
+ 		stream->comp = process_zlib_inflate;
+ 		stream->free = inflateEnd;
++		stream->chksum = process_zlib_inflate_chksum;
+ 		/** window bits */
+ 		switch (xform->decompress.algo) {
+ 		case RTE_COMP_ALGO_DEFLATE:
+@@ -302,10 +446,21 @@ zlib_set_stream_parameters(const struct rte_comp_xform *xform,
+ 			return -1;
+ 		}
+ 
++		/** Checksum used */
++		stream->chksum_type = xform->decompress.chksum;
++
+ 		if (inflateInit2(strm, wbits) != Z_OK) {
+ 			ZLIB_PMD_ERR("Inflate init failed");
+ 			return -1;
+ 		}
++
++		if (xform->decompress.inflate.dictionary) {
++			if (inflateSetDictionary(strm, xform->decompress.inflate.dictionary,
++					xform->decompress.inflate.dictionary_len)) {
++				ZLIB_PMD_ERR("inflate set dictionary failed");
++				return -1;
++			}
++		}
+ 		break;
+ 	default:
+ 		return -1;
+diff --git a/drivers/compress/zlib/zlib_pmd_private.h b/drivers/compress/zlib/zlib_pmd_private.h
+index fd8c4c55a4..99bfdc9a76 100644
+--- a/drivers/compress/zlib/zlib_pmd_private.h
++++ b/drivers/compress/zlib/zlib_pmd_private.h
+@@ -46,6 +46,10 @@ typedef void (*comp_func_t)(struct rte_comp_op *op, z_stream *strm);
+ 
+ typedef int (*comp_free_t)(z_stream *strm);
+ 
++typedef void (*chksum_func_t)
++		(struct rte_comp_op *op, z_stream *strm, enum rte_comp_checksum_type chksum);
++
++
+ /** ZLIB Stream structure */
+ struct __rte_cache_aligned zlib_stream {
+ 	z_stream strm;
+@@ -54,6 +58,10 @@ struct __rte_cache_aligned zlib_stream {
+ 	/**< Operation (compression/decompression) */
+ 	comp_free_t free;
+ 	/**< Free Operation (compression/decompression) */
++	chksum_func_t chksum;
++	/**< Checksum Operation (compression/decompression) */
++	enum rte_comp_checksum_type chksum_type;
++	/**< Type of checksum to generate on the uncompressed data */
+ };
+ 
+ /** ZLIB private xform structure */
 -- 
-2.48.1
+2.31.1
 
