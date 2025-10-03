@@ -2,68 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0D3CAC5B0
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 03:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F2ACCD183
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 06:51:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92362402B1;
-	Fri,  3 Oct 2025 05:43:16 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id CF1D4402A7
- for <dev@dpdk.org>; Fri,  3 Oct 2025 05:43:14 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 592MDVEU031638;
- Thu, 2 Oct 2025 20:43:14 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=+2vE2I/jNKj27LYqh5IaA7h
- WRRzwyfjbz2itFaR0rl8=; b=G9wa/0KGpQSS1Xj1l+d7FKI8Z21IWo+Y0/UsoCA
- HoeDc38QcCwbSWbdgkgnsaTU1TuGskyVTQIM06mC7Up5xDGtaxIg1Zew15K2AXbH
- kJ+v6WW5d3rg65K5r3ffYkgmpZt7FlodQePYeAtP/fKqHpgwYiM9n48GfUSL08ej
- plr2MuQbefHVULs4nAmqfujacVc119fvtA6iaxupM/u0XGxp5X4kfqGXkECnFxCp
- C9hueETEjYdKastckx8AtKq2/Pj1lXlBmOgHsex0c0FT2SOIdRZVunTEbFvuVeXW
- 9o7uuW0oVFoD9Ejt9Vs1n/A35Ds8B9rEYQB58qZhoS/mRCg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49j20e8g6j-2
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 02 Oct 2025 20:43:13 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 2 Oct 2025 20:43:17 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 2 Oct 2025 20:43:17 -0700
-Received: from hyd11149.caveonetworks.com (unknown [10.29.44.105])
- by maili.marvell.com (Postfix) with ESMTP id A590E5B6950;
- Thu,  2 Oct 2025 20:43:05 -0700 (PDT)
-From: Rupesh Chiluka <rchiluka@marvell.com>
-To: Kai Ji <kai.ji@intel.com>
-CC: <dev@dpdk.org>, <gakhil@marvell.com>, <anoobj@marvell.com>,
- <ktejasree@marvell.com>, Rupesh Chiluka <rchiluka@marvell.com>
-Subject: [PATCH] app/crypto-perf: add ECDSA P192/P224/P521 support
-Date: Fri, 3 Oct 2025 09:12:33 +0530
-Message-ID: <20251003034233.2964182-1-rchiluka@marvell.com>
-X-Mailer: git-send-email 2.48.1
+	by mails.dpdk.org (Postfix) with ESMTP id 0493A4025D;
+	Fri,  3 Oct 2025 08:51:16 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id D751240151
+ for <dev@dpdk.org>; Fri,  3 Oct 2025 08:51:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1759474273;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=1PfeQSrVSpkvjdzG6vvUukFXzTsSDZJ6iMqfcJq/Eng=;
+ b=E8+wN12b6KNB9GOEBqvwBz/L3yvJQIfS5k9dJ/1s+0xSTKnWi6OmCkSRUvjxvN8i6AVCM5
+ TtWuDp/khRFvt8P3NWIIvh/uGAuze8xB1OmMQQtMZhFbjUvfsF4WlaSTsGsRKkK+2H3Vwn
+ SnRGZOPyc+/2+InsFmwqumuAb348fK8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-503-l8uaKtfXOC2t-h1cpU4VPA-1; Fri,
+ 03 Oct 2025 02:51:11 -0400
+X-MC-Unique: l8uaKtfXOC2t-h1cpU4VPA-1
+X-Mimecast-MFC-AGG-ID: l8uaKtfXOC2t-h1cpU4VPA_1759474270
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 534C8195608E; Fri,  3 Oct 2025 06:51:10 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.224.213])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 94EDB1955F19; Fri,  3 Oct 2025 06:51:08 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: dsosnowski@nvidia.com, stable@dpdk.org,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [PATCH v2] test/debug: fix crash with mlx5 devices
+Date: Fri,  3 Oct 2025 08:51:01 +0200
+Message-ID: <20251003065101.617467-1-david.marchand@redhat.com>
+In-Reply-To: <20251002165546.523435-1-david.marchand@redhat.com>
+References: <20251002165546.523435-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: uxGYv1evIe0nxwCQPvgqYLt6U2BVoY1F-jPGOvF13GE_1759474270
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=S4PUAYsP c=1 sm=1 tr=0 ts=68df4651 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=x6icFKpwvdMA:10 a=M5GUcnROAAAA:8 a=2GoupwNzwNddJfAKPi8A:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: Nk8ZrI64sPYZePzKKfIOqEbUGUZ40CyU
-X-Proofpoint-ORIG-GUID: Nk8ZrI64sPYZePzKKfIOqEbUGUZ40CyU
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDAyMDE5NCBTYWx0ZWRfX30V4yrgx9Kod
- 2Rm4a7BUAcmGHsiOGh1n3p78oP9acYK7cm+S49kXO7LPn5K5wOruGoYA4aKNVeIqIGpAiuVMGwR
- MDAjItjxRCmqlSSZhwunVqKfrQdlH61rICwD6vtviS0Dge3POOCZeFwH9X+1GDEwFXIh+UQikUp
- u9AyHm5tTJh5dWcallAbGzBCvp6vbQMZSAGx2ZB8YIKse7ATcygH93y0wTQC1P33HL8ft+RXNgw
- +cLtL/t4bPBjnc9c/f0sG0phWQoqykDymltOru6hRKAMhuseyvfRYGncS76tekd7p5ziZYS8asx
- 47jUEC/o2NCyOuzfMErbvCerHBtbV5saoN37PqNbmdZr+ClLxlqeEwjYZUeTbHCKxDMx9hfehSB
- feiPolvpb2tHYLKaPF79PoNWaGJ3qw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-03_01,2025-10-02_03,2025-03-28_01
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,728 +67,228 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for ECDSA SECP192R1, SECP224R1, SECP521R1 curve SIGN and
-VERIFY operations
+Running rte_exit() in a forked process means that shared memory will be
+released by the child process before the parent process does the same.
+This issue has been seen recently when some GHA virtual machine (with
+some mlx5 devices) runs the debug_autotest unit test.
 
-Signed-off-by: Rupesh Chiluka <rchiluka@marvell.com>
+Instead, run rte_panic() and rte_exit() from a new DPDK process spawned
+like for other recursive unit tests.
+
+Bugzilla ID: 1796
+Fixes: af75078fece3 ("first public release")
+Cc: stable@dpdk.org
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- app/test-crypto-perf/cperf_ops.c             | 116 ++++----
- app/test-crypto-perf/cperf_options.h         |   6 +
- app/test-crypto-perf/cperf_options_parsing.c |  32 ++-
- app/test-crypto-perf/cperf_test_common.c     |   3 +
- app/test-crypto-perf/cperf_test_vectors.c    | 273 +++++++++++++++++++
- app/test-crypto-perf/cperf_test_vectors.h    |   3 +
- app/test-crypto-perf/main.c                  |  44 ++-
- doc/guides/tools/cryptoperf.rst              |   3 +
- 8 files changed, 419 insertions(+), 61 deletions(-)
+Changes since v1:
+- revert last minute cosmetic change that broke the fix... iow pass
+  the name of the function to run, instead of __func__,
 
-diff --git a/app/test-crypto-perf/cperf_ops.c b/app/test-crypto-perf/cperf_ops.c
-index b04c523542..d3e35721ed 100644
---- a/app/test-crypto-perf/cperf_ops.c
-+++ b/app/test-crypto-perf/cperf_ops.c
-@@ -95,36 +95,46 @@ cperf_set_ops_asym_ecdsa(struct rte_crypto_op **ops,
- 	uint16_t i;
- 
- 	for (i = 0; i < nb_ops; i++) {
-+		const struct cperf_ecdsa_test_data *ecdsa_curve_data = NULL;
- 		struct rte_crypto_asym_op *asym_op = ops[i]->asym;
- 
- 		ops[i]->status = RTE_CRYPTO_OP_STATUS_NOT_PROCESSED;
- 		rte_crypto_op_attach_asym_session(ops[i], sess);
- 
- 		asym_op->ecdsa.op_type = options->asym_op_type;
--		if (options->op_type == CPERF_ASYM_SECP256R1) {
--			asym_op->ecdsa.message.data = options->secp256r1_data->message.data;
--			asym_op->ecdsa.message.length = options->secp256r1_data->message.length;
--
--			asym_op->ecdsa.k.data = options->secp256r1_data->k.data;
--			asym_op->ecdsa.k.length = options->secp256r1_data->k.length;
--
--			asym_op->ecdsa.r.data = options->secp256r1_data->sign_r.data;
--			asym_op->ecdsa.r.length = options->secp256r1_data->sign_r.length;
--			asym_op->ecdsa.s.data = options->secp256r1_data->sign_s.data;
--			asym_op->ecdsa.s.length = options->secp256r1_data->sign_s.length;
--		} else if (options->op_type == CPERF_ASYM_SECP384R1) {
--			asym_op->ecdsa.message.data = options->secp384r1_data->message.data;
--			asym_op->ecdsa.message.length = options->secp384r1_data->message.length;
--
--			asym_op->ecdsa.k.data = options->secp384r1_data->k.data;
--			asym_op->ecdsa.k.length = options->secp384r1_data->k.length;
--
--			asym_op->ecdsa.r.data = options->secp384r1_data->sign_r.data;
--			asym_op->ecdsa.r.length = options->secp384r1_data->sign_r.length;
--			asym_op->ecdsa.s.data = options->secp384r1_data->sign_s.data;
--			asym_op->ecdsa.s.length = options->secp384r1_data->sign_s.length;
-+
-+		switch (options->op_type) {
-+		case CPERF_ASYM_SECP192R1:
-+			ecdsa_curve_data = options->secp192r1_data;
-+			break;
-+		case CPERF_ASYM_SECP224R1:
-+			ecdsa_curve_data = options->secp224r1_data;
-+			break;
-+		case CPERF_ASYM_SECP256R1:
-+			ecdsa_curve_data = options->secp256r1_data;
-+			break;
-+		case CPERF_ASYM_SECP384R1:
-+			ecdsa_curve_data = options->secp384r1_data;
-+			break;
-+		case CPERF_ASYM_SECP521R1:
-+			ecdsa_curve_data = options->secp521r1_data;
-+			break;
-+		default:
-+			rte_panic("Unsupported ECDSA operation type %d\n",
-+				  options->op_type);
-+			break;
- 		}
- 
-+		asym_op->ecdsa.message.data = ecdsa_curve_data->message.data;
-+		asym_op->ecdsa.message.length = ecdsa_curve_data->message.length;
-+
-+		asym_op->ecdsa.k.data = ecdsa_curve_data->k.data;
-+		asym_op->ecdsa.k.length = ecdsa_curve_data->k.length;
-+
-+		asym_op->ecdsa.r.data = ecdsa_curve_data->sign_r.data;
-+		asym_op->ecdsa.r.length = ecdsa_curve_data->sign_r.length;
-+		asym_op->ecdsa.s.data = ecdsa_curve_data->sign_s.data;
-+		asym_op->ecdsa.s.length = ecdsa_curve_data->sign_s.length;
- 	}
- }
- 
-@@ -1078,6 +1088,7 @@ cperf_create_session(struct rte_mempool *sess_mp,
- 	const struct cperf_test_vector *test_vector,
- 	uint16_t iv_offset)
+---
+ app/test/process.h    |  2 +-
+ app/test/test.c       |  2 +
+ app/test/test.h       |  2 +
+ app/test/test_debug.c | 92 ++++++++++++++++++++++++++++++-------------
+ 4 files changed, 69 insertions(+), 29 deletions(-)
+
+diff --git a/app/test/process.h b/app/test/process.h
+index 9fb2bf481c..8e11d0b059 100644
+--- a/app/test/process.h
++++ b/app/test/process.h
+@@ -203,7 +203,7 @@ process_dup(const char *const argv[], int numargs, const char *env_value)
+  * tests attempting to use this function on FreeBSD.
+  */
+ #ifdef RTE_EXEC_ENV_LINUX
+-static char *
++static inline char *
+ get_current_prefix(char *prefix, int size)
  {
-+	const struct cperf_ecdsa_test_data *ecdsa_curve_data = NULL;
- 	struct rte_crypto_sym_xform cipher_xform;
- 	struct rte_crypto_sym_xform auth_xform;
- 	struct rte_crypto_sym_xform aead_xform;
-@@ -1135,42 +1146,42 @@ cperf_create_session(struct rte_mempool *sess_mp,
- 		return asym_sess;
- 	}
+ 	char path[PATH_MAX] = {0};
+diff --git a/app/test/test.c b/app/test/test.c
+index fd653cbbfd..8a4598baee 100644
+--- a/app/test/test.c
++++ b/app/test/test.c
+@@ -80,6 +80,8 @@ do_recursive_call(void)
+ 			{ "test_memory_flags", no_action },
+ 			{ "test_file_prefix", no_action },
+ 			{ "test_no_huge_flag", no_action },
++			{ "test_panic", test_panic },
++			{ "test_exit", test_exit },
+ #ifdef RTE_LIB_TIMER
+ #ifndef RTE_EXEC_ENV_WINDOWS
+ 			{ "timer_secondary_spawn_wait", test_timer_secondary },
+diff --git a/app/test/test.h b/app/test/test.h
+index ebc4864bf8..c6d7d23313 100644
+--- a/app/test/test.h
++++ b/app/test/test.h
+@@ -174,7 +174,9 @@ extern const char *prgname;
+ int commands_init(void);
+ int command_valid(const char *cmd);
  
--	if (options->op_type == CPERF_ASYM_SECP256R1) {
--		xform.next = NULL;
--		xform.xform_type = RTE_CRYPTO_ASYM_XFORM_ECDSA;
--		xform.ec.curve_id = options->secp256r1_data->curve;
--		xform.ec.pkey.data = options->secp256r1_data->pkey.data;
--		xform.ec.pkey.length = options->secp256r1_data->pkey.length;
--		xform.ec.q.x.data = options->secp256r1_data->pubkey_qx.data;
--		xform.ec.q.x.length = options->secp256r1_data->pubkey_qx.length;
--		xform.ec.q.y.data = options->secp256r1_data->pubkey_qy.data;
--		xform.ec.q.y.length = options->secp256r1_data->pubkey_qy.length;
--
--		ret = rte_cryptodev_asym_session_create(dev_id, &xform,
--				sess_mp, &asym_sess);
--		if (ret < 0) {
--			RTE_LOG(ERR, USER1, "ECDSA P256 Asym session create failed\n");
--			return NULL;
--		}
--
--		return asym_sess;
-+	switch (options->op_type) {
-+	case CPERF_ASYM_SECP192R1:
-+		ecdsa_curve_data = options->secp192r1_data;
-+		break;
-+	case CPERF_ASYM_SECP224R1:
-+		ecdsa_curve_data = options->secp224r1_data;
-+		break;
-+	case CPERF_ASYM_SECP256R1:
-+		ecdsa_curve_data = options->secp256r1_data;
-+		break;
-+	case CPERF_ASYM_SECP384R1:
-+		ecdsa_curve_data = options->secp384r1_data;
-+		break;
-+	case CPERF_ASYM_SECP521R1:
-+		ecdsa_curve_data = options->secp521r1_data;
-+		break;
-+	default:
-+		rte_panic("Unsupported ECDSA operation type %d\n", options->op_type);
-+		break;
- 	}
++int test_exit(void);
+ int test_mp_secondary(void);
++int test_panic(void);
+ int test_timer_secondary(void);
  
--	if (options->op_type == CPERF_ASYM_SECP384R1) {
-+	if (ecdsa_curve_data) {
- 		xform.next = NULL;
- 		xform.xform_type = RTE_CRYPTO_ASYM_XFORM_ECDSA;
--		xform.ec.curve_id = options->secp384r1_data->curve;
--		xform.ec.pkey.data = options->secp384r1_data->pkey.data;
--		xform.ec.pkey.length = options->secp384r1_data->pkey.length;
--		xform.ec.q.x.data = options->secp384r1_data->pubkey_qx.data;
--		xform.ec.q.x.length = options->secp384r1_data->pubkey_qx.length;
--		xform.ec.q.y.data = options->secp384r1_data->pubkey_qy.data;
--		xform.ec.q.y.length = options->secp384r1_data->pubkey_qy.length;
-+		xform.ec.curve_id = ecdsa_curve_data->curve;
-+		xform.ec.pkey.data = ecdsa_curve_data->pkey.data;
-+		xform.ec.pkey.length = ecdsa_curve_data->pkey.length;
-+		xform.ec.q.x.data = ecdsa_curve_data->pubkey_qx.data;
-+		xform.ec.q.x.length = ecdsa_curve_data->pubkey_qx.length;
-+		xform.ec.q.y.data = ecdsa_curve_data->pubkey_qy.data;
-+		xform.ec.q.y.length = ecdsa_curve_data->pubkey_qy.length;
+ int test_set_rxtx_conf(cmdline_fixed_string_t mode);
+diff --git a/app/test/test_debug.c b/app/test/test_debug.c
+index 8ad6d40fcb..fe5dd5b02d 100644
+--- a/app/test/test_debug.c
++++ b/app/test/test_debug.c
+@@ -8,6 +8,18 @@
+ #include <stdint.h>
  
- 		ret = rte_cryptodev_asym_session_create(dev_id, &xform,
- 				sess_mp, &asym_sess);
- 		if (ret < 0) {
--			RTE_LOG(ERR, USER1, "ECDSA P384 Asym session create failed\n");
-+			RTE_LOG(ERR, USER1, "ECDSA Asym session create failed\n");
- 			return NULL;
- 		}
- 
-@@ -1519,10 +1530,11 @@ cperf_get_op_functions(const struct cperf_options *options,
- 	case CPERF_ASYM_RSA:
- 		op_fns->populate_ops = cperf_set_ops_asym_rsa;
- 		break;
-+	case CPERF_ASYM_SECP192R1:
-+	case CPERF_ASYM_SECP224R1:
- 	case CPERF_ASYM_SECP256R1:
--		op_fns->populate_ops = cperf_set_ops_asym_ecdsa;
--		break;
- 	case CPERF_ASYM_SECP384R1:
-+	case CPERF_ASYM_SECP521R1:
- 		op_fns->populate_ops = cperf_set_ops_asym_ecdsa;
- 		break;
- 	case CPERF_ASYM_ED25519:
-diff --git a/app/test-crypto-perf/cperf_options.h b/app/test-crypto-perf/cperf_options.h
-index 38621e28a0..428e8cb4f1 100644
---- a/app/test-crypto-perf/cperf_options.h
-+++ b/app/test-crypto-perf/cperf_options.h
-@@ -94,8 +94,11 @@ enum cperf_op_type {
- 	CPERF_IPSEC,
- 	CPERF_ASYM_MODEX,
- 	CPERF_ASYM_RSA,
-+	CPERF_ASYM_SECP192R1,
-+	CPERF_ASYM_SECP224R1,
- 	CPERF_ASYM_SECP256R1,
- 	CPERF_ASYM_SECP384R1,
-+	CPERF_ASYM_SECP521R1,
- 	CPERF_ASYM_ED25519,
- 	CPERF_ASYM_SM2,
- 	CPERF_TLS,
-@@ -177,8 +180,11 @@ struct cperf_options {
- 	uint8_t imix_distribution_count;
- 	struct cperf_modex_test_data *modex_data;
- 	uint16_t modex_len;
-+	struct cperf_ecdsa_test_data *secp192r1_data;
-+	struct cperf_ecdsa_test_data *secp224r1_data;
- 	struct cperf_ecdsa_test_data *secp256r1_data;
- 	struct cperf_ecdsa_test_data *secp384r1_data;
-+	struct cperf_ecdsa_test_data *secp521r1_data;
- 	struct cperf_eddsa_test_data *eddsa_data;
- 	struct cperf_sm2_test_data *sm2_data;
- 	enum rte_crypto_asym_op_type asym_op_type;
-diff --git a/app/test-crypto-perf/cperf_options_parsing.c b/app/test-crypto-perf/cperf_options_parsing.c
-index d13a7ab297..14e731586b 100644
---- a/app/test-crypto-perf/cperf_options_parsing.c
-+++ b/app/test-crypto-perf/cperf_options_parsing.c
-@@ -39,7 +39,9 @@ usage(char *progname)
- 		" --devtype TYPE: set crypto device type to use\n"
- 		" --low-prio-qp-mask mask: set low priority for queues set in mask(hex)\n"
- 		" --optype cipher-only / auth-only / cipher-then-auth / auth-then-cipher /\n"
--		"        aead / pdcp / docsis / ipsec / modex / rsa / secp256r1 / secp384r1 / eddsa / sm2 / tls-record : set operation type\n"
-+		"        aead / pdcp / docsis / ipsec / modex / rsa / secp192r1 /\n"
-+		"        secp224r1 / secp256r1 / secp384r1 / secp521r1 / eddsa / sm2 /\n"
-+		"        tls-record : set operation type\n"
- 		" --sessionless: enable session-less crypto operations\n"
- 		" --shared-session: share 1 session across all queue pairs on crypto device\n"
- 		" --out-of-place: enable out-of-place crypto operations\n"
-@@ -529,6 +531,14 @@ parse_op_type(struct cperf_options *opts, const char *arg)
- 			cperf_op_type_strs[CPERF_ASYM_RSA],
- 			CPERF_ASYM_RSA
- 		},
-+		{
-+			cperf_op_type_strs[CPERF_ASYM_SECP192R1],
-+			CPERF_ASYM_SECP192R1
-+		},
-+		{
-+			cperf_op_type_strs[CPERF_ASYM_SECP224R1],
-+			CPERF_ASYM_SECP224R1
-+		},
- 		{
- 			cperf_op_type_strs[CPERF_ASYM_SECP256R1],
- 			CPERF_ASYM_SECP256R1
-@@ -537,6 +547,10 @@ parse_op_type(struct cperf_options *opts, const char *arg)
- 			cperf_op_type_strs[CPERF_ASYM_SECP384R1],
- 			CPERF_ASYM_SECP384R1
- 		},
-+		{
-+			cperf_op_type_strs[CPERF_ASYM_SECP521R1],
-+			CPERF_ASYM_SECP521R1
-+		},
- 		{
- 			cperf_op_type_strs[CPERF_ASYM_ED25519],
- 			CPERF_ASYM_ED25519
-@@ -1153,8 +1167,11 @@ cperf_options_default(struct cperf_options *opts)
- 	opts->rsa_data = &rsa_pub_perf_data[0];
- 	opts->rsa_keytype = UINT8_MAX;
- 
-+	opts->secp192r1_data = &secp192r1_perf_data;
-+	opts->secp224r1_data = &secp224r1_perf_data;
- 	opts->secp256r1_data = &secp256r1_perf_data;
- 	opts->secp384r1_data = &secp384r1_perf_data;
-+	opts->secp521r1_data = &secp521r1_perf_data;
- 	opts->eddsa_data = &ed25519_perf_data;
- 	opts->sm2_data = &sm2_perf_data;
- 	opts->asym_op_type = RTE_CRYPTO_ASYM_OP_ENCRYPT;
-@@ -1639,6 +1656,19 @@ cperf_options_check(struct cperf_options *options)
- 		}
- 	}
- 
-+	if (options->op_type == CPERF_ASYM_SECP192R1 ||
-+		options->op_type == CPERF_ASYM_SECP224R1 ||
-+		options->op_type == CPERF_ASYM_SECP256R1 ||
-+		options->op_type == CPERF_ASYM_SECP384R1 ||
-+		options->op_type == CPERF_ASYM_SECP521R1) {
-+
-+		if (options->asym_op_type != RTE_CRYPTO_ASYM_OP_SIGN &&
-+			options->asym_op_type != RTE_CRYPTO_ASYM_OP_VERIFY) {
-+			RTE_LOG(ERR, USER1, "ECDSA operations only support sign and verify\n");
-+			return -EINVAL;
-+		}
-+	}
-+
- #ifdef RTE_LIB_SECURITY
- 	if (options->op_type == CPERF_DOCSIS) {
- 		if (check_docsis_buffer_length(options) < 0)
-diff --git a/app/test-crypto-perf/cperf_test_common.c b/app/test-crypto-perf/cperf_test_common.c
-index da0202a870..caf429b4d9 100644
---- a/app/test-crypto-perf/cperf_test_common.c
-+++ b/app/test-crypto-perf/cperf_test_common.c
-@@ -307,8 +307,11 @@ cperf_is_asym_test(const struct cperf_options *options)
- {
- 	if (options->op_type == CPERF_ASYM_MODEX ||
- 	    options->op_type == CPERF_ASYM_RSA ||
-+	    options->op_type == CPERF_ASYM_SECP192R1 ||
-+	    options->op_type == CPERF_ASYM_SECP224R1 ||
- 	    options->op_type == CPERF_ASYM_SECP256R1 ||
- 	    options->op_type == CPERF_ASYM_SECP384R1 ||
-+	    options->op_type == CPERF_ASYM_SECP521R1 ||
- 	    options->op_type == CPERF_ASYM_ED25519 ||
- 	    options->op_type == CPERF_ASYM_SM2)
- 		return true;
-diff --git a/app/test-crypto-perf/cperf_test_vectors.c b/app/test-crypto-perf/cperf_test_vectors.c
-index f1dedcd119..f4f856ff69 100644
---- a/app/test-crypto-perf/cperf_test_vectors.c
-+++ b/app/test-crypto-perf/cperf_test_vectors.c
-@@ -804,6 +804,98 @@ cperf_modex_test_data modex_perf_data[10] = {
- 	}
- };
- 
-+static uint8_t secp192r1_pkey[] = {
-+	0x24, 0xed, 0xd2, 0x2f, 0x7d, 0xdd, 0x6f, 0xa5,
-+	0xbc, 0x61, 0xfc, 0x06, 0x53, 0x47, 0x9a, 0xa4,
-+	0x08, 0x09, 0xef, 0x86, 0x5c, 0xf2, 0x7a, 0x47
-+};
-+
-+static uint8_t secp192r1_qx[] = {
-+	0x9b, 0xf1, 0x2d, 0x71, 0x74, 0xb7, 0x70, 0x8a,
-+	0x07, 0x6a, 0x38, 0xbc, 0x80, 0xaa, 0x28, 0x66,
-+	0x2f, 0x25, 0x1e, 0x2e, 0xd8, 0xd4, 0x14, 0xdc
-+};
-+
-+static uint8_t secp192r1_qy[] = {
-+	0x48, 0x54, 0xc8, 0xd0, 0x7d, 0xfc, 0x08, 0x82,
-+	0x4e, 0x9e, 0x47, 0x1c, 0xa2, 0xfe, 0xdc, 0xfc,
-+	0xff, 0x3d, 0xdc, 0xb0, 0x11, 0x57, 0x34, 0x98
-+};
-+
-+static uint8_t secp192r1_k[] = {
-+	0xa5, 0xc8, 0x17, 0xa2, 0x36, 0xa5, 0xf7, 0xfa,
-+	0xa3, 0x29, 0xb8, 0xec, 0xc3, 0xc5, 0x96, 0x68,
-+	0x7c, 0x71, 0xaa, 0xaf, 0x86, 0xc7, 0x70, 0x3e
-+};
-+
-+static uint8_t secp192r1_sign_r[] = {
-+	0x35, 0x4a, 0xba, 0xec, 0xf4, 0x36, 0x1f, 0xea,
-+	0x90, 0xc2, 0x9b, 0x91, 0x99, 0x88, 0x2e, 0xdf,
-+	0x85, 0x73, 0xe6, 0x86, 0xa8, 0x13, 0xef, 0xf8
-+};
-+
-+static uint8_t secp192r1_sign_s[] = {
-+	0x80, 0xf5, 0x00, 0x00, 0xac, 0x86, 0x11, 0x1c,
-+	0x9b, 0x30, 0x47, 0x38, 0x5a, 0x15, 0xd7, 0x8e,
-+	0x63, 0x2c, 0x58, 0xb7, 0x94, 0x9e, 0x82, 0xc1
-+};
-+
-+static uint8_t secp192r1_message[] = {
-+	0x5a, 0xe8, 0x31, 0x7d, 0x34, 0xd1, 0xe5, 0x95,
-+	0xe3, 0xfa, 0x72, 0x47, 0xdb, 0x80, 0xc0, 0xaf,
-+	0x43, 0x20, 0xcc, 0xe1, 0x11, 0x6d, 0xe1, 0x87,
-+	0xf8, 0xf7, 0xe2, 0xe0, 0x99, 0xc0, 0xd8, 0xd0
-+};
-+
-+static uint8_t secp224r1_pkey[] = {
-+	0x88, 0x8f, 0xc9, 0x92, 0x89, 0x3b, 0xdd, 0x8a,
-+	0xa0, 0x2c, 0x80, 0x76, 0x88, 0x32, 0x60, 0x5d,
-+	0x02, 0x0b, 0x81, 0xae, 0x0b, 0x25, 0x47, 0x41,
-+	0x54, 0xec, 0x89, 0xaa
-+};
-+
-+static uint8_t secp224r1_qx[] = {
-+	0x4c, 0x74, 0x1e, 0x4d, 0x20, 0x10, 0x36, 0x70,
-+	0xb7, 0x16, 0x1a, 0xe7, 0x22, 0x71, 0x08, 0x21,
-+	0x55, 0x83, 0x84, 0x18, 0x08, 0x43, 0x35, 0x33,
-+	0x8a, 0xc3, 0x8f, 0xa4
-+};
-+
-+static uint8_t secp224r1_qy[] = {
-+	0xdb, 0x79, 0x19, 0x15, 0x1a, 0xc2, 0x85, 0x87,
-+	0xb7, 0x2b, 0xad, 0x7a, 0xb1, 0x80, 0xec, 0x8e,
-+	0x95, 0xab, 0x9e, 0x2c, 0x8d, 0x81, 0xd9, 0xb9,
-+	0xd7, 0xe2, 0xe3, 0x83
-+};
-+
-+static uint8_t secp224r1_k[] = {
-+	0x06, 0xf7, 0xa5, 0x60, 0x07, 0x82, 0x54, 0x33,
-+	0xc4, 0xc6, 0x11, 0x53, 0xdf, 0x1a, 0x13, 0x5e,
-+	0xee, 0x2f, 0x38, 0xec, 0x68, 0x7b, 0x49, 0x2e,
-+	0xd4, 0x0d, 0x9c, 0x90
-+};
-+
-+static uint8_t secp224r1_sign_r[] = {
-+	0x09, 0x09, 0xc9, 0xb9, 0xca, 0xe8, 0xd2, 0x79,
-+	0x0e, 0x29, 0xdb, 0x6a, 0xfd, 0xb4, 0x5c, 0x04,
-+	0xf5, 0xb0, 0x72, 0xc4, 0xc2, 0x04, 0x10, 0xc7,
-+	0xdc, 0x9b, 0x67, 0x72
-+};
-+
-+static uint8_t secp224r1_sign_s[] = {
-+	0x29, 0x8f, 0x4f, 0xca, 0xe1, 0xfe, 0x27, 0x1d,
-+	0xa1, 0xe0, 0x34, 0x5d, 0x11, 0xd0, 0x7a, 0x1f,
-+	0xca, 0x43, 0xf5, 0x8a, 0xf4, 0xc1, 0x13, 0xb9,
-+	0x09, 0xee, 0xde, 0xa0
-+};
-+
-+static uint8_t secp224r1_message[] = {
-+	0x00, 0xc6, 0xfc, 0x53, 0xc1, 0x98, 0x6d, 0x19,
-+	0xa8, 0xa8, 0xb5, 0x80, 0xee, 0x55, 0x3d, 0xc1,
-+	0x24, 0x07, 0x45, 0xd7, 0x60, 0x64, 0x7d, 0x1c,
-+	0x0a, 0xdf, 0x44, 0x2c, 0x13, 0x3c, 0x7f, 0x56
-+};
-+
- static uint8_t secp256r1_pkey[] = {
- 	0x51, 0x9b, 0x42, 0x3d, 0x71, 0x5f, 0x8b, 0x58,
- 	0x1f, 0x4f, 0xa8, 0xee, 0x59, 0xf4, 0x77, 0x1a,
-@@ -914,6 +1006,85 @@ static uint8_t secp384r1_message[] = {
- 	0x3e, 0x18, 0xcd, 0x01, 0x7d, 0x7f, 0x3e, 0xd1
- };
- 
-+static uint8_t secp521r1_pkey[] = {
-+	0x01, 0xe8, 0xc0, 0x59, 0x96, 0xb8, 0x5e, 0x6f,
-+	0x3f, 0x87, 0x57, 0x12, 0xa0, 0x9c, 0x1b, 0x40,
-+	0x67, 0x2b, 0x5e, 0x7a, 0x78, 0xd5, 0x85, 0x2d,
-+	0xe0, 0x15, 0x85, 0xc5, 0xfb, 0x99, 0x0b, 0xf3,
-+	0x81, 0x2c, 0x32, 0x45, 0x53, 0x4a, 0x71, 0x43,
-+	0x89, 0xae, 0x90, 0x14, 0xd6, 0x77, 0xa4, 0x49,
-+	0xef, 0xd6, 0x58, 0x25, 0x4e, 0x61, 0x0d, 0xa8,
-+	0xe6, 0xca, 0xd3, 0x34, 0x14, 0xb9, 0xd3, 0x3e,
-+	0x0d, 0x7a
-+};
-+
-+static uint8_t secp521r1_qx[] = {
-+	0x00, 0x7d, 0x04, 0x2c, 0xa1, 0x94, 0x08, 0x52,
-+	0x4e, 0x68, 0xb9, 0x81, 0xf1, 0x41, 0x93, 0x51,
-+	0xe3, 0xb8, 0x47, 0x36, 0xc7, 0x7f, 0xe5, 0x8f,
-+	0xee, 0x7d, 0x11, 0x31, 0x7d, 0xf2, 0xe8, 0x50,
-+	0xd9, 0x60, 0xc7, 0xdd, 0x10, 0xd1, 0x0b, 0xa7,
-+	0x14, 0xc8, 0xa6, 0x09, 0xd1, 0x63, 0x50, 0x2b,
-+	0x79, 0xd6, 0x82, 0xe8, 0xbb, 0xec, 0xd4, 0xf5,
-+	0x25, 0x91, 0xd2, 0x74, 0x85, 0x33, 0xe4, 0x5a,
-+	0x86, 0x7a
-+};
-+
-+static uint8_t secp521r1_qy[] = {
-+	0x01, 0x97, 0xac, 0x64, 0x16, 0x11, 0x1c, 0xcf,
-+	0x98, 0x7d, 0x29, 0x04, 0x59, 0xeb, 0xc8, 0xad,
-+	0x9e, 0xc5, 0x6e, 0x49, 0x05, 0x9c, 0x99, 0x21,
-+	0x55, 0x53, 0x9a, 0x36, 0xa6, 0x26, 0x63, 0x1f,
-+	0x4a, 0x2d, 0x89, 0x16, 0x4b, 0x98, 0x51, 0x54,
-+	0xf2, 0xdd, 0xdc, 0x02, 0x81, 0xee, 0x5b, 0x51,
-+	0x78, 0x27, 0x1f, 0x3a, 0x76, 0xa0, 0x91, 0x4c,
-+	0x3f, 0xcd, 0x1f, 0x97, 0xbe, 0x8e, 0x83, 0x76,
-+	0xef, 0xb3
-+};
-+
-+static uint8_t secp521r1_k[] = {
-+	0x00, 0xdc, 0x8d, 0xaa, 0xac, 0xdd, 0xb8, 0xfd,
-+	0x2f, 0xf5, 0xc3, 0x4a, 0x5c, 0xe1, 0x83, 0xa4,
-+	0x22, 0x61, 0xad, 0x3c, 0x64, 0xdb, 0xfc, 0x09,
-+	0x5e, 0x58, 0x92, 0x43, 0x64, 0xdc, 0x47, 0xea,
-+	0x1c, 0x05, 0xe2, 0x59, 0x9a, 0xae, 0x91, 0x7c,
-+	0x2c, 0x95, 0xf4, 0x7d, 0x6b, 0xb3, 0x7d, 0xa0,
-+	0x08, 0xaf, 0x9f, 0x55, 0x73, 0x0d, 0xdb, 0xe4,
-+	0xd8, 0xde, 0xd2, 0x4f, 0x9e, 0x8d, 0xaa, 0x46,
-+	0xdb, 0x6a
-+};
-+
-+static uint8_t secp521r1_sign_r[] = {
-+	0x00, 0x9d, 0xd1, 0xf2, 0xa7, 0x16, 0x84, 0x3e,
-+	0xed, 0xec, 0x7a, 0x66, 0x45, 0xac, 0x83, 0x4d,
-+	0x43, 0x36, 0xe7, 0xb1, 0x8e, 0x35, 0x70, 0x1f,
-+	0x06, 0xca, 0xe9, 0xd6, 0xb2, 0x90, 0xd4, 0x14,
-+	0x91, 0x42, 0x47, 0x35, 0xf3, 0xb5, 0x7e, 0x82,
-+	0x9a, 0xd5, 0xde, 0x05, 0x5e, 0xae, 0xef, 0x17,
-+	0x78, 0xf0, 0x51, 0xc1, 0xee, 0x15, 0x2b, 0xf2,
-+	0x13, 0x1a, 0x08, 0x1e, 0x53, 0xdf, 0x2a, 0x56,
-+	0x7a, 0x8a
-+};
-+
-+static uint8_t secp521r1_sign_s[] = {
-+	0x00, 0x21, 0x48, 0xe8, 0x42, 0x8d, 0x70, 0xa7,
-+	0x2b, 0xc9, 0xfa, 0x98, 0x6c, 0x38, 0xc2, 0xc9,
-+	0x7d, 0xed, 0xa0, 0x42, 0x0f, 0x22, 0x2f, 0x9d,
-+	0xc9, 0x9d, 0x32, 0xc0, 0xac, 0xba, 0x69, 0x9d,
-+	0xc7, 0xba, 0x0a, 0x2b, 0x79, 0xce, 0x59, 0x99,
-+	0xff, 0x61, 0xbd, 0x0b, 0x23, 0x3c, 0x74, 0x4a,
-+	0x89, 0x3b, 0xc1, 0x05, 0xbc, 0xa5, 0xc2, 0x35,
-+	0x42, 0x3e, 0x53, 0x16, 0x12, 0xda, 0x65, 0xd7,
-+	0x2e, 0x62
-+};
-+
-+static uint8_t secp521r1_message[] = {
-+	0x53, 0xe6, 0x53, 0x7c, 0xb6, 0xea, 0x68, 0xae,
-+	0x47, 0xa8, 0x16, 0x11, 0xc2, 0x27, 0x56, 0xd7,
-+	0x70, 0xd7, 0xa3, 0x7e, 0x33, 0x6c, 0x3a, 0xf0,
-+	0xb0, 0x81, 0x4b, 0x04, 0xfa, 0x39, 0x43, 0x4b
-+};
-+
- static uint8_t ed25519_pkey[] = {
- 	0x4c, 0xcd, 0x08, 0x9b, 0x28, 0xff, 0x96, 0xda,
- 	0x9d, 0xb6, 0xc3, 0x46, 0xec, 0x11, 0x4e, 0x0f,
-@@ -1421,6 +1592,74 @@ uint8_t ipsec_plaintext[2048] = {
- 		0x75, 0x67, 0x00, 0x01
- };
- 
-+/** ECDSA secp192r1 elliptic curve test params */
-+struct
-+cperf_ecdsa_test_data secp192r1_perf_data = {
-+	.pubkey_qx = {
-+		.data = secp192r1_qx,
-+		.length = sizeof(secp192r1_qx),
-+	},
-+	.pubkey_qy = {
-+		.data = secp192r1_qy,
-+		.length = sizeof(secp192r1_qy),
-+	},
-+	.k = {
-+		.data = secp192r1_k,
-+		.length = sizeof(secp192r1_k),
-+	},
-+	.sign_r = {
-+		.data = secp192r1_sign_r,
-+		.length = sizeof(secp192r1_sign_r),
-+	},
-+	.sign_s = {
-+		.data = secp192r1_sign_s,
-+		.length = sizeof(secp192r1_sign_s),
-+	},
-+	.pkey = {
-+		.data = secp192r1_pkey,
-+		.length = sizeof(secp192r1_pkey),
-+	},
-+	.message = {
-+		.data = secp192r1_message,
-+		.length = sizeof(secp192r1_message),
-+	},
-+	.curve = RTE_CRYPTO_EC_GROUP_SECP192R1
-+};
-+
-+/** ECDSA secp224r1 elliptic curve test params */
-+struct
-+cperf_ecdsa_test_data secp224r1_perf_data = {
-+	.pubkey_qx = {
-+		.data = secp224r1_qx,
-+		.length = sizeof(secp224r1_qx),
-+	},
-+	.pubkey_qy = {
-+		.data = secp224r1_qy,
-+		.length = sizeof(secp224r1_qy),
-+	},
-+	.k = {
-+		.data = secp224r1_k,
-+		.length = sizeof(secp224r1_k),
-+	},
-+	.sign_r = {
-+		.data = secp224r1_sign_r,
-+		.length = sizeof(secp224r1_sign_r),
-+	},
-+	.sign_s = {
-+		.data = secp224r1_sign_s,
-+		.length = sizeof(secp224r1_sign_s),
-+	},
-+	.pkey = {
-+		.data = secp224r1_pkey,
-+		.length = sizeof(secp224r1_pkey),
-+	},
-+	.message = {
-+		.data = secp224r1_message,
-+		.length = sizeof(secp224r1_message),
-+	},
-+	.curve = RTE_CRYPTO_EC_GROUP_SECP224R1
-+};
-+
- /** ECDSA secp256r1 elliptic curve test params */
- struct
- cperf_ecdsa_test_data secp256r1_perf_data = {
-@@ -1489,6 +1728,40 @@ cperf_ecdsa_test_data secp384r1_perf_data = {
- 	.curve = RTE_CRYPTO_EC_GROUP_SECP384R1
- };
- 
-+/** ECDSA secp521r1 elliptic curve test params */
-+struct
-+cperf_ecdsa_test_data secp521r1_perf_data = {
-+	.pubkey_qx = {
-+		.data = secp521r1_qx,
-+		.length = sizeof(secp521r1_qx),
-+	},
-+	.pubkey_qy = {
-+		.data = secp521r1_qy,
-+		.length = sizeof(secp521r1_qy),
-+	},
-+	.k = {
-+		.data = secp521r1_k,
-+		.length = sizeof(secp521r1_k),
-+	},
-+	.sign_r = {
-+		.data = secp521r1_sign_r,
-+		.length = sizeof(secp521r1_sign_r),
-+	},
-+	.sign_s = {
-+		.data = secp521r1_sign_s,
-+		.length = sizeof(secp521r1_sign_s),
-+	},
-+	.pkey = {
-+		.data = secp521r1_pkey,
-+		.length = sizeof(secp521r1_pkey),
-+	},
-+	.message = {
-+		.data = secp521r1_message,
-+		.length = sizeof(secp521r1_message),
-+	},
-+	.curve = RTE_CRYPTO_EC_GROUP_SECP521R1
-+};
-+
- /* EdDSA 25519 elliptic curve test params */
- struct
- cperf_eddsa_test_data ed25519_perf_data = {
-diff --git a/app/test-crypto-perf/cperf_test_vectors.h b/app/test-crypto-perf/cperf_test_vectors.h
-index 5f2f6ab8af..d6f18268c4 100644
---- a/app/test-crypto-perf/cperf_test_vectors.h
-+++ b/app/test-crypto-perf/cperf_test_vectors.h
-@@ -177,8 +177,11 @@ extern uint8_t aad[];
- extern uint8_t digest[2048];
- 
- extern struct cperf_modex_test_data modex_perf_data[10];
-+extern struct cperf_ecdsa_test_data secp192r1_perf_data;
-+extern struct cperf_ecdsa_test_data secp224r1_perf_data;
- extern struct cperf_ecdsa_test_data secp256r1_perf_data;
- extern struct cperf_ecdsa_test_data secp384r1_perf_data;
-+extern struct cperf_ecdsa_test_data secp521r1_perf_data;
- extern struct cperf_eddsa_test_data ed25519_perf_data;
- extern struct cperf_sm2_test_data sm2_perf_data;
- extern struct cperf_rsa_test_data rsa_pub_perf_data[4];
-diff --git a/app/test-crypto-perf/main.c b/app/test-crypto-perf/main.c
-index 4f98e0172a..cf4525e46b 100644
---- a/app/test-crypto-perf/main.c
-+++ b/app/test-crypto-perf/main.c
-@@ -46,8 +46,11 @@ const char *cperf_op_type_strs[] = {
- 	[CPERF_IPSEC] = "ipsec",
- 	[CPERF_ASYM_MODEX] = "modex",
- 	[CPERF_ASYM_RSA] = "rsa",
-+	[CPERF_ASYM_SECP192R1] = "ecdsa_p192r1",
-+	[CPERF_ASYM_SECP224R1] = "ecdsa_p224r1",
- 	[CPERF_ASYM_SECP256R1] = "ecdsa_p256r1",
- 	[CPERF_ASYM_SECP384R1] = "ecdsa_p384r1",
-+	[CPERF_ASYM_SECP521R1] = "ecdsa_p521r1",
- 	[CPERF_ASYM_ED25519] = "eddsa_25519",
- 	[CPERF_ASYM_SM2] = "sm2",
- 	[CPERF_TLS] = "tls-record"
-@@ -234,8 +237,11 @@ cperf_initialize_cryptodev(struct cperf_options *opts, uint8_t *enabled_cdevs)
- 		};
- 
- 		switch (opts->op_type) {
-+		case CPERF_ASYM_SECP192R1:
-+		case CPERF_ASYM_SECP224R1:
- 		case CPERF_ASYM_SECP256R1:
- 		case CPERF_ASYM_SECP384R1:
-+		case CPERF_ASYM_SECP521R1:
- 		case CPERF_ASYM_ED25519:
- 		case CPERF_ASYM_SM2:
- 		case CPERF_ASYM_RSA:
-@@ -350,6 +356,15 @@ cperf_initialize_cryptodev(struct cperf_options *opts, uint8_t *enabled_cdevs)
- 	return enabled_cdev_count;
- }
- 
-+static void
-+set_ecdsa_key_null(struct cperf_ecdsa_test_data *curve_data)
+ #ifdef RTE_EXEC_ENV_WINDOWS
++int
++test_panic(void)
 +{
-+	if (curve_data != NULL) {
-+		curve_data->k.data = NULL;
-+		curve_data->k.length = 0;
-+	}
++	printf("debug not supported on Windows, skipping test\n");
++	return TEST_SKIPPED;
 +}
-+
++int
++test_exit(void)
++{
++	printf("debug not supported on Windows, skipping test\n");
++	return TEST_SKIPPED;
++}
  static int
- cperf_verify_devices_capabilities(struct cperf_options *opts,
- 		uint8_t *enabled_cdevs, uint8_t nb_cryptodevs)
-@@ -393,8 +408,11 @@ cperf_verify_devices_capabilities(struct cperf_options *opts,
+ test_debug(void)
+ {
+@@ -25,34 +37,31 @@ test_debug(void)
+ #include <rte_debug.h>
+ #include <rte_common.h>
+ #include <rte_eal.h>
+-#include <rte_service_component.h>
++#include <rte_lcore.h>
++
++#include "process.h"
  
- 		}
+ /*
+  * Debug test
+  * ==========
+  */
  
--		if ((opts->op_type == CPERF_ASYM_SECP256R1) ||
--			(opts->op_type == CPERF_ASYM_SECP384R1)) {
-+		if ((opts->op_type == CPERF_ASYM_SECP192R1) ||
-+			(opts->op_type == CPERF_ASYM_SECP224R1) ||
-+			(opts->op_type == CPERF_ASYM_SECP256R1) ||
-+			(opts->op_type == CPERF_ASYM_SECP384R1) ||
-+			(opts->op_type == CPERF_ASYM_SECP521R1)) {
- 			asym_cap_idx.type = RTE_CRYPTO_ASYM_XFORM_ECDSA;
- 			asym_capability = rte_cryptodev_asym_capability_get(cdev_id, &asym_cap_idx);
- 			if (asym_capability == NULL)
-@@ -405,12 +423,22 @@ cperf_verify_devices_capabilities(struct cperf_options *opts,
- 				return -1;
+-/* use fork() to test rte_panic() */
+-static int
++static const char *test_args[7];
++
++int
+ test_panic(void)
+ {
+-	int pid;
+ 	int status;
  
- 			if (asym_capability->internal_rng != 0) {
--				if (opts->op_type == CPERF_ASYM_SECP256R1) {
--					opts->secp256r1_data->k.data = NULL;
--					opts->secp256r1_data->k.length = 0;
--				} else {
--					opts->secp384r1_data->k.data = NULL;
--					opts->secp384r1_data->k.length = 0;
-+				switch (opts->op_type) {
-+				case CPERF_ASYM_SECP192R1:
-+					set_ecdsa_key_null(opts->secp192r1_data);
-+					break;
-+				case CPERF_ASYM_SECP224R1:
-+					set_ecdsa_key_null(opts->secp224r1_data);
-+					break;
-+				case CPERF_ASYM_SECP256R1:
-+					set_ecdsa_key_null(opts->secp256r1_data);
-+					break;
-+				case CPERF_ASYM_SECP384R1:
-+					set_ecdsa_key_null(opts->secp384r1_data);
-+					break;
-+				case CPERF_ASYM_SECP521R1:
-+					set_ecdsa_key_null(opts->secp521r1_data);
-+					break;
- 				}
- 			}
- 		}
-diff --git a/doc/guides/tools/cryptoperf.rst b/doc/guides/tools/cryptoperf.rst
-index c35f39d948..d7ee468e17 100644
---- a/doc/guides/tools/cryptoperf.rst
-+++ b/doc/guides/tools/cryptoperf.rst
-@@ -175,8 +175,11 @@ The following are the application command-line options:
-            pdcp
-            docsis
-            modex
-+           ecdsa_p192r1
-+           ecdsa_p224r1
-            ecdsa_p256r1
-            ecdsa_p384r1
-+           ecdsa_p521r1
-            eddsa_25519
-            rsa
-            sm2
+-	pid = fork();
+-
+-	if (pid == 0) {
++	if (getenv(RECURSIVE_ENV_VAR) != NULL) {
+ 		struct rlimit rl;
+ 
+ 		/* No need to generate a coredump when panicking. */
+ 		rl.rlim_cur = rl.rlim_max = 0;
+ 		setrlimit(RLIMIT_CORE, &rl);
+ 		rte_panic("Test Debug\n");
+-	} else if (pid < 0) {
+-		printf("Fork Failed\n");
+-		return -1;
+ 	}
+-	wait(&status);
++	status = process_dup(test_args, RTE_DIM(test_args), "test_panic");
+ 	if(status == 0){
+ 		printf("Child process terminated normally!\n");
+ 		return -1;
+@@ -62,27 +71,16 @@ test_panic(void)
+ 	return 0;
+ }
+ 
+-/* use fork() to test rte_exit() */
+ static int
+ test_exit_val(int exit_val)
+ {
+-	int pid;
++	char buf[5];
+ 	int status;
+ 
+-	/* manually cleanup EAL memory, as the fork() below would otherwise
+-	 * cause the same hugepages to be free()-ed multiple times.
+-	 */
+-	rte_service_finalize();
+-
+-	pid = fork();
+-
+-	if (pid == 0)
+-		rte_exit(exit_val, __func__);
+-	else if (pid < 0){
+-		printf("Fork Failed\n");
+-		return -1;
+-	}
+-	wait(&status);
++	sprintf(buf, "%d", exit_val);
++	if (setenv("TEST_DEBUG_EXIT_VAL", buf, 1) == -1)
++		rte_panic("Failed to set exit value in env\n");
++	status = process_dup(test_args, RTE_DIM(test_args), "test_exit");
+ 	printf("Child process status: %d\n", status);
+ 	if(!WIFEXITED(status) || WEXITSTATUS(status) != (uint8_t)exit_val){
+ 		printf("Child process terminated with incorrect status (expected = %d)!\n",
+@@ -92,11 +90,22 @@ test_exit_val(int exit_val)
+ 	return 0;
+ }
+ 
+-static int
++int
+ test_exit(void)
+ {
+ 	int test_vals[] = { 0, 1, 2, 255, -1 };
+ 	unsigned i;
++
++	if (getenv(RECURSIVE_ENV_VAR) != NULL) {
++		int exit_val;
++
++		if (!getenv("TEST_DEBUG_EXIT_VAL"))
++			rte_panic("No exit value set in env\n");
++
++		exit_val = strtol(getenv("TEST_DEBUG_EXIT_VAL"), NULL, 0);
++		rte_exit(exit_val, __func__);
++	}
++
+ 	for (i = 0; i < RTE_DIM(test_vals); i++) {
+ 		if (test_exit_val(test_vals[i]) < 0)
+ 			return -1;
+@@ -128,6 +137,33 @@ test_usage(void)
+ static int
+ test_debug(void)
+ {
++#ifdef RTE_EXEC_ENV_FREEBSD
++	/* BSD target doesn't support prefixes at this point, and we also need to
++	 * run another primary process here.
++	 */
++	const char * prefix = "--no-shconf";
++#else
++	const char * prefix = "--file-prefix=debug";
++#endif
++	char core[10];
++
++	sprintf(core, "%d", rte_get_main_lcore());
++
++	test_args[0] = prgname;
++	test_args[1] = prefix;
++	test_args[2] = "-l";
++	test_args[3] = core;
++
++	if (rte_eal_has_hugepages()) {
++		test_args[4] = "";
++		test_args[5] = "";
++		test_args[6] = "";
++	} else {
++		test_args[4] = "--no-huge";
++		test_args[5] = "-m";
++		test_args[6] = "2048";
++	}
++
+ 	rte_dump_stack();
+ 	if (test_panic() < 0)
+ 		return -1;
 -- 
-2.48.1
+2.51.0
 
