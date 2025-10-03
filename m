@@ -2,88 +2,176 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF95CCA471
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 16:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AF4CCA471
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 16:56:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B02764042F;
-	Fri,  3 Oct 2025 18:51:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E40F04028F;
+	Fri,  3 Oct 2025 18:56:25 +0200 (CEST)
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com
  [205.220.180.131])
- by mails.dpdk.org (Postfix) with ESMTP id 6EA36402A2
- for <dev@dpdk.org>; Fri,  3 Oct 2025 18:51:43 +0200 (CEST)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
- by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 593BXfOQ018009
- for <dev@dpdk.org>; Fri, 3 Oct 2025 16:51:42 GMT
+ by mails.dpdk.org (Postfix) with ESMTP id C953640281
+ for <dev@dpdk.org>; Fri,  3 Oct 2025 18:56:23 +0200 (CEST)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+ by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5939xi2s012279;
+ Fri, 3 Oct 2025 16:56:23 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
- cc:content-transfer-encoding:date:from:in-reply-to:message-id
- :mime-version:references:subject:to; s=qcppdkim1; bh=kMHF7dhgXtj
- ucUOYl8BpHlrC6gO4O1tE4+wO50Dy3No=; b=O1eakOtn7Tc2DENxXkQG12TDMnG
- BZWASJqQ0wMhbCi5rHQVY5mG/75d9xKgv5+HRMrbW+Ozb2fpw7ZstbIp2Atz1GHT
- hH3ZRPJPlHBUKqWpqFqZXkIwyL8aKa4N+GSJnnb+ZeGdUotXuMJuZqGMs9q9LncP
- 2941Uo9B7Ay44Z180uFUfDVxiLs45x+PdC3BNHIf6wutHvyvtgQBKjL3li2sFGjg
- yp6FYhV3pYEpzp3PJCegrOcO8PPKYAef4hwOMzgDpMzrFLS/G+bRKGZSi9CTbin5
- exnA0plI4CnpmJ1q3ZLPy7JhUbvVfu0Gux8VuzoILppvxgB9dvGG4N2053w==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com
- [199.106.103.254])
- by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49fyrfcx43-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 03 Oct 2025 16:51:42 +0000 (GMT)
-Received: from pps.filterd (NASANPPMTA01.qualcomm.com [127.0.0.1])
- by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 593GpfYS001008
- for <dev@dpdk.org>; Fri, 3 Oct 2025 16:51:41 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
- by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 49gsu4yem5-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Fri, 03 Oct 2025 16:51:41 +0000
-Received: from NASANPPMTA01.qualcomm.com (NASANPPMTA01.qualcomm.com
- [127.0.0.1])
- by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 593GpfKV000999
- for <dev@dpdk.org>; Fri, 3 Oct 2025 16:51:41 GMT
-Received: from tbs-5gnr-mt-30 (tbs-5gnr-mt-30.qualcomm.com [10.239.80.165])
- by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 593Gpev1000996
+ cc:content-type:date:from:in-reply-to:message-id:mime-version
+ :references:subject:to; s=qcppdkim1; bh=EKbsepo+UTnzIeXyyAchIpFn
+ Kllsr4Juk1h5JYh76L0=; b=pSD/7ZSp6cJXmhS2EfKk2kE4PAwo/G9x6HBXusYR
+ H5tMcMalFysJNTAyhXIwGvvRnmEozw7RG3jcvrd+nKsMJFAnWbdwSeRCNlVO335m
+ yBkj8i0sOAxWrLEbVHFEa4kCVc6OhoDxRxi9NIIpXASzPlmnWnS08jg8suC3JQvS
+ XLDaLbp7kqi4nhXBD5WzmA1FSWxmZMo8h/JQzEyFMcJeUyd8k0nZTwKckJHwFJnJ
+ rwfkVHQ2X3j1RHaD6AS1TlFEz7k7phYo4m2gyrDJUfN5UTvuf2rSeqk5rZtayFw4
+ 2hnV18+GfCwoZD62FrPC9k5OeP1hA6IGlEDz+3YAYh1esQ==
+Received: from co1pr08cu001.outbound.protection.outlook.com
+ (mail-co1pr08cu00106.outbound.protection.outlook.com [40.93.10.102])
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e80u3k7d-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 03 Oct 2025 16:51:41 +0000
-Received: by tbs-5gnr-mt-30 (Postfix, from userid 2316195)
- id 7DEC0400E2; Fri,  3 Oct 2025 10:51:40 -0600 (MDT)
+ Fri, 03 Oct 2025 16:56:22 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hO9UjyFQlueJLTfZqca9y7WhaqPfyewDFwpHRDEDDSQze3cA1N6nV0ZMUy6bCeK6gfgsR9RLbM7nnwnU1C6QPP19rOFXJS+59cKTekP/KrUFxMHNxOcBb+NE1D7qnpfT+x5L6DWk/4WeU6IgEfheXPabiZ8h5n/Syl80YXihUQc+pbQZA7q9I0P585o4Q7xQl36uX/UF6oyGd1sq2r3231KkasqXm5k17VvJkgdcJUc7yPJTYB6N5IgqItBeZFtlTCXKYVKegEc6zDnyQwacoUq2wqBImQrOBUP0nmcqimovnTJElmfGwaEg+xSkhv6AdxQRfJc/bgaaA8Q+zIzLGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EKbsepo+UTnzIeXyyAchIpFnKllsr4Juk1h5JYh76L0=;
+ b=nJFDguR1ZVFUMNIvOYdLTq1oRgzTrZGYofPB5BAUH6GhtyC5/FlVPamV0+qRaUF/A4w2chWM+y4c2unuZ86doxmXLWPW534bEfY1fyhCM07X/Q4TOH63XM22AMsrbfR/CkWzF7V8mRTjjtniYkrm/2A1k9ApJvRZNS6KSyQMpsIJHmKlvsncwLWtPxaJueJZyndkqZdnvpOf7pMWGlNRutIS4eEUdbjz6S3hJKlC9cU8DAdWgqjBjjikmSms4kldSpwbzgQ8TJsaC/DDQY0zyqgMtbOPsjEgotPjw9j6rnY7QEXfonfOciP3PyQOWW9XL693bMAm3C9ZAs0XRaP7qA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=qti.qualcomm.com; dmarc=pass action=none
+ header.from=qti.qualcomm.com; dkim=pass header.d=qti.qualcomm.com; arc=none
+Received: from SJ2PR02MB9795.namprd02.prod.outlook.com (2603:10b6:a03:549::7)
+ by BY5PR02MB7060.namprd02.prod.outlook.com (2603:10b6:a03:236::12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.16; Fri, 3 Oct
+ 2025 16:56:14 +0000
+Received: from SJ2PR02MB9795.namprd02.prod.outlook.com
+ ([fe80::5f1:dcbe:bb2f:83d8]) by SJ2PR02MB9795.namprd02.prod.outlook.com
+ ([fe80::5f1:dcbe:bb2f:83d8%5]) with mapi id 15.20.9160.017; Fri, 3 Oct 2025
+ 16:56:14 +0000
 From: Sameer Vaze <svaze@qti.qualcomm.com>
-To: 
-Cc: dev@dpdk.org, Sameer Vaze <svaze@qti.qualcomm.com>
-Subject: [PATCH v2 3/3] app/compress-perf: support for dictionaries and PDCP
- checksum
-Date: Fri,  3 Oct 2025 10:51:32 -0600
-Message-Id: <20251003165132.3201643-3-svaze@qti.qualcomm.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20251003165132.3201643-1-svaze@qti.qualcomm.com>
+To: Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
+ Ashish Gupta <ashishg@marvell.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: [EXTERNAL] [PATCH 1/3] compressdev: support for dictionaries and
+ PDCP checksum
+Thread-Topic: [EXTERNAL] [PATCH 1/3] compressdev: support for dictionaries and
+ PDCP checksum
+Thread-Index: AQHcLW7+Yx3s32UTiUaGijgdWUWe3bSsL5oAgALpJYCAAPqwgIAAnf58
+Date: Fri, 3 Oct 2025 16:56:14 +0000
+Message-ID: <SJ2PR02MB9795048742BCA7F33AE5F86589E4A@SJ2PR02MB9795.namprd02.prod.outlook.com>
 References: <20250924161918.2211290-1-svaze@qti.qualcomm.com>
- <20251003165132.3201643-1-svaze@qti.qualcomm.com>
+ <CO6PR18MB4484EEAC621E731A4E5E64C8D81AA@CO6PR18MB4484.namprd18.prod.outlook.com>
+ <SJ2PR02MB97957A1B0CF42BF92F77941689E7A@SJ2PR02MB9795.namprd02.prod.outlook.com>
+ <CO6PR18MB4484895AFF0D3C3932D83C70D8E4A@CO6PR18MB4484.namprd18.prod.outlook.com>
+In-Reply-To: <CO6PR18MB4484895AFF0D3C3932D83C70D8E4A@CO6PR18MB4484.namprd18.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ2PR02MB9795:EE_|BY5PR02MB7060:EE_
+x-ms-office365-filtering-correlation-id: 55f78691-de29-4ce2-a6f1-08de029dc380
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|1800799024|366016|13003099007|38070700021|8096899003|7053199007;
+x-microsoft-antispam-message-info: =?us-ascii?Q?bMrEZKhe1WrgPnj0cFW3eRfjDZZTKt9JRczGwVag+pxziNOgC7s6jGTW2hsa?=
+ =?us-ascii?Q?4DaYZgsxg0FEjgts6BQAk0Xip3O8WBBbOypf6sjuzWcsgRRBzy4bZb7U9AO9?=
+ =?us-ascii?Q?6YkyO8zqXh8QFuGyResLosIw6z1usU7oUPGk13u9IXeyvGjSp/QwqSWAl9lY?=
+ =?us-ascii?Q?k37QkHbP2Sx4rUgDn4ZpqZkQF225TuwB7bNeUrk0IGhvF8t8BtS1PRkTAcsk?=
+ =?us-ascii?Q?D8xMLxoVNoeP/+OdV8TvD76ODCUmMveCu9X443/fsqdLhnW+CqBNra5enVJr?=
+ =?us-ascii?Q?gtfcAStaCGQOV5jDTWePtzPjgZXjG+OygPlRuNOJXJT7syZdb5ThwjY/LWSS?=
+ =?us-ascii?Q?fj67HEGMQvKQaHRhEuGFdMururks6PiwESgO8IufwBJ7tMkLsRWCOkalMpp0?=
+ =?us-ascii?Q?AdFv0cbG3NMhrtiT2B3POeZ71YtZcg9P0JhQiKSd6xaPgTbA1IqlC90LqgaV?=
+ =?us-ascii?Q?HFUxMSH/CoPNN2/4wJNOQHUlWIquy3IuV80a67BOG5cAWK1btz1x6QkbdjtC?=
+ =?us-ascii?Q?jpYS4g6RRjCTzww7PsecgrbYhcHjDkwSAhqvGjPnf1cNIvEVSFeX+Qut3aaD?=
+ =?us-ascii?Q?8I/NU+C1bmRtmKd0LiVNKd33h0ZiqywxQYDWXhwwt0cRRPFrHWYxvtgBMDKi?=
+ =?us-ascii?Q?BKBFyVKyfE4WRHMesPBRcNfNOk+2MJTXfwnbE7EGAu0SdmK5CUIixO0Nca7t?=
+ =?us-ascii?Q?h6zNG7tWDifnbX3mNOfMCtLZQYMtFHPwttGtyTVV4so2c7+2uxHJg4Lr6IIZ?=
+ =?us-ascii?Q?4ufDKs+4R5SdQyo1eKsa6RwQGYbukvDHH4YHIWJ4JT+uWaH2630nhGyerqOH?=
+ =?us-ascii?Q?zX8eKIyCofoX4EompPnrLpwPYTqeTh7a0j5WdocOpiHL3l8jCjjrTj7Y5Yfx?=
+ =?us-ascii?Q?OsbT1LJB+YWnJA+1Kl9d1WYfnnsjjVIzlIExtRk9Ykav870I+orqdyfaEo6U?=
+ =?us-ascii?Q?MjSXyXOtGzrHvjDDcfBu8WynA9beRRjdvzBz0dn4Krwms5XX4SlV4M+xyefQ?=
+ =?us-ascii?Q?vpx5FMiN0cPFqyDE55UlDwO5cOxlkvlXdoO7SnCJtcQ44LifQH176uEDzrbo?=
+ =?us-ascii?Q?CJr0PhWi6Lg74K+xO/eWYQ3Dg5mU0ypQHTNpRCgTe5htOoS7t3OS27G0vkTk?=
+ =?us-ascii?Q?4kCIJrPSmfRK3gOYuZodmpH4AGrvxCYGLtIHyio+kPWygPUIupQaibsdoyHg?=
+ =?us-ascii?Q?gJsEdUeuFrSiPzYcnVoZ0sfPz977UEAbFHePZj87fNaylrtg0tqtEGdbA1mg?=
+ =?us-ascii?Q?vkZn4QP7QEe2unCeDLT328clGPp03wc/PM46Erpmj7aK/g2SCo1kytKYYlTm?=
+ =?us-ascii?Q?UJQoTzPVnMS2vB/5/b6LAdHjBp6MlyjpWFmGdE8HmHR48CzAGwcdHBYgllI3?=
+ =?us-ascii?Q?nhBxuUKZOulCIBBf9sW1F3Mu0ACbtSDNe63gIHC9806fjzYB32KZPn13k/7I?=
+ =?us-ascii?Q?2RqBupU1iIQBQz9PYb1Ybw8h1Coi5WxndgZdJNTdaE23DU8KJKiyow=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SJ2PR02MB9795.namprd02.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(13003099007)(38070700021)(8096899003)(7053199007);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Xqm/TotQtsJwZJDN7hgKikpKkN3qRTb9YkxbRYBcjH+uGN/l0Ii6t4egCpEw?=
+ =?us-ascii?Q?DswTGoggAX0vE8/ZPxJznAqDJd/7/Hc7O04CYWuR/aG9fTjw+teNz87XiFXj?=
+ =?us-ascii?Q?ec8Gp9vlUnSeRQr3Xhpd7SPKKanKy5JCYtMWAbmF2KWDCVKaI8CyiOPpcUTc?=
+ =?us-ascii?Q?UExfw4wVly4t/ZxFO6R/vdh780J5FcG5nfbMqxc34QLE59uTE365u8N1XVme?=
+ =?us-ascii?Q?GwD9QyWkoa1ysnwCNEEc/mUbCGfKcCUFJ/cXXnKq8Ny3dS7QQtGw+k/WOcDX?=
+ =?us-ascii?Q?MZQ6XoGCVApWR8D+6yD8gMrBlktliLyU7d/yMbscXs+/V/Gjt92LgjQwwV62?=
+ =?us-ascii?Q?s+zBPCiessQUujftYKrYK2iPrV22+SKSbeyWP6agTSBG8KUFu0Q9xz/07VFY?=
+ =?us-ascii?Q?195PM0HUcwc6yyMNWEqn8zL6WfRUY4fPWOWJD9caRm4F1sHJJH+jZLTbwc/s?=
+ =?us-ascii?Q?Pex7rgEjNpJplM/dMczat74nq2xWE9frulvg2VLwinPiyFJk+DZPz67Wmvy4?=
+ =?us-ascii?Q?Mu9jOssbEljGeHssY4rxEmYZW2Ssozj1+R//NCYINqT7z6YnmPe+d1h1+5qf?=
+ =?us-ascii?Q?1hWvlx5uwjsuwXiYx15zbFCtmzXT3hjotQkUXRLBWagkmPWej0HasFkdIEwL?=
+ =?us-ascii?Q?5RcVEm+Eol0R5P+Crkti1g5AWW1TydGWYWNlzuYe3UQcWKwgg8+Ig0b/mOoU?=
+ =?us-ascii?Q?F3CnK7nj18BqIGRCQrPpzu45rPo5IkT9tVXSEH5TfhWAQy34S6gSsDeqi8PW?=
+ =?us-ascii?Q?ALM9OOhM9V3bW8C+R3mloQTb6lRLgPMGgu2niSvFiuGBRIxfZtiQGXx8u8aS?=
+ =?us-ascii?Q?NiwaW3S2diskjaVS+TdTNXluelvZW9y97gVtmWCkXNlOlxd+j1GIMIc5PEYh?=
+ =?us-ascii?Q?NY/DC1Hj9/A8ted/BJ8M/IJwtcUNZvYJlLZAp9R9ZuZPlLnOOrpWLuaEZ8/w?=
+ =?us-ascii?Q?+TXZpw936wFURfsKosZBi2caqhDuHGdJ3z3dQIxU9aKDiUYVGCiqYmJ6hW1s?=
+ =?us-ascii?Q?lok5Q9XGQo6dQp2JU4gqRtzHUi50Yfpb0z8ZVazV0Nz1J1r3UeOEtMkp+nz7?=
+ =?us-ascii?Q?HJrhtlCh2mmP8B9TNqdc50L0QDq1Xutm2QPE7no3RhQuHK4DEuw28vxBEm+k?=
+ =?us-ascii?Q?+IC/ma2u4eunUseALRzOZ1RvzP6YL55vJcKmS3diIzUnRf3NK0+tWBoNutCA?=
+ =?us-ascii?Q?WzfA9sZxedlIDnRHiJhL3O5gnxW5pFtCBdNbknYR6qUCHNZCnvJSm7+ivdOP?=
+ =?us-ascii?Q?SRixgAD7FS8gDtVTkpVn9yKShaoZVBfiSuZ37VW0HvK8q4KhM8iW0M3FOuCY?=
+ =?us-ascii?Q?XBPx+G1zk5Tp/HrO0p/EPD1bU29u9dPebnZVV45FDFEUSfXOyq4eVDGJcFBd?=
+ =?us-ascii?Q?USwRH3xMzuPPs0WJx8V7ZgbdjECakt7GAUShGn4Z6AJ7O/ifCP06Do5eOUfU?=
+ =?us-ascii?Q?iILT/OC2kn8N2w3qP8ATxhrzGS8O/LF/oIlAgmGk+MATxm5GU7WQQl1n94cB?=
+ =?us-ascii?Q?mAvA7sn1buDOSsoeIvt/jQSaKxCxtT9vNUCCUk9niooNKuZX4DQ7pPu2sg8I?=
+ =?us-ascii?Q?Ou97rgpWvG1Utc+LNbty0dCCMK3vHpVXiyzHK30Y?=
+Content-Type: multipart/alternative;
+ boundary="_000_SJ2PR02MB9795048742BCA7F33AE5F86589E4ASJ2PR02MB9795namp_"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
- signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
- signatures=585085
-X-Proofpoint-ORIG-GUID: ddxrjIzp5NMp0QRwiQ5y8J_CDcx3Mbc1
-X-Proofpoint-GUID: ddxrjIzp5NMp0QRwiQ5y8J_CDcx3Mbc1
-X-Authority-Analysis: v=2.4 cv=etzSD4pX c=1 sm=1 tr=0 ts=68dfff1e cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=IeAZipw4XQsdFnktVzgA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI5MDE3NSBTYWx0ZWRfX9aWcM6Sl8Ubm
- ODNb3NSJc33HMOamS/h80Lwj/mCDysksRyzX+4eIH6sTVOJr43F1j077L/3nKBKxjPn8d7ZppsL
- YfwqL3FGPyP3t8vtrfjM5j34T0hywS13SfNnvjV32/4IUWb9Up6mgNxd+n5FkrPIQpS5Bt7/D0u
- KDSjVKVqDAMJ9fk6YuEkwCVh23AP4LFNi0a9Ct+iepSbW+751KI0cRmHpWFBYkSpuboK5d4SiZP
- vyaxXl/FwJ8+uupA2HOy1HZWa2x+1mBbxySmGqYegxRCNsQzRWX9J3DM/NfZ4BjHjjcJdjTVknA
- zek8RsmA4FgeIFZcWTNdEQgbOta8zT/eInp2wAoCRSxtrDOEbgDXrLwl7FwfTuGagpG4E9bPCiC
- 8HiZQp2t/HZAXAt848fDQ3ex7RbXTw==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: T43dx+drP88eUMZeUSXERw6kmxStJgUjxgvzRmz14uWCMfTaOBO6pd11jjbS0DEPZ7AtzQr6LbO9ReRWthuSpEVEYGeH3+A+kd/0GIqLleWuIGCQ41V+f0L52yaxqtscimwcSmp0rXICpXwgHbZ8S09SbgSDsBIXNzaVTBjna42FTyU3l2PrnuzDlLX/GXgyJs67ZC35Bjz1KTs4gOnla7VfdGR4CQXBFz0pCDXfpW7KyGSNebTxtQjaacog950VEUbQFEc+OxsYpNcSlYUHNt3279ePOkayBiQy4+Du9kB4VWpqNhcCKWLodLJoG90ur6dLTZpAXD8i3qedwn7+0R/ZhY2wlBmQNMxsEstERvKl9ThYbiej5h9/ldrQ9N2QRsrFqZp8FEG6p+NUYq2K3Ik4UoFWg1JADjZnMYSDcmr6/iwl3cJXIpuV3ip9BewNf3H5RzRUtxT5faBxnIomhsO7x3lVYzmn+6PG5bU6Rl5B8jWt4JfAoKx5/Rq7XzSk/xX6fYgGoznDF/OwOXfhjVt2j4jkfWlpVJt55RNaenThwPoFNdLEvA+CGzlYhi5D/rCbSpMmKnodsc/W2XVA10NTOD5aeHGdcPY6K8PynGOWiKSvMOUf6H6uZw2p9g/z
+X-OriginatorOrg: qti.qualcomm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR02MB9795.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55f78691-de29-4ce2-a6f1-08de029dc380
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2025 16:56:14.6120 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XJJN5aT9WMDXsDvzS6BPLro3TQD4KPv4E1Jx2ziwA724WtA3N72KOK4UQYRHAAMiwp0HWeWa2t18p+VozKBC8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB7060
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyOSBTYWx0ZWRfX+f/wXCLUd5T2
+ oXeCY7gxCvrL022hFEQTPXRCUVMq/wErfJLtRh1pvz+EZt6YBSY80JTSRZnxpCKpLwEMMWvM0XR
+ Pg5mDm3+7Ba1ZANAk0nohcGoC467Fi9zaeL6s9h2qMg1V+uaM4y/M+6IiRcl89YDpEMDx9ERwCJ
+ BAT5ECe84H0O4Lgs10MIFlXB2qAK1IpCgRBE3CXjvNdOK1NUo4lvCkAmolxfsuTHlJZfChPaeEG
+ EsB1dvQ0CJAydWmApm33A/lpVLt6uvMtTZFgNNX9DbLNWgF/wRcsjDgfB2x76zY3D3CShvGvL3N
+ BjlFaVCAaJxE5ikjv1/xvoSoLF7eumbC3iUrBvEvk1Vc1JfdwoIT4dA1M/P7ApUfpp8aOnH9Q1r
+ 1H3fXsLovulirMVGrLPUQ1oLW9x5Bw==
+X-Proofpoint-GUID: jyuW9jLNxYX7Ay0q3DdFsGTvmrqGAAee
+X-Authority-Analysis: v=2.4 cv=OMkqHCaB c=1 sm=1 tr=0 ts=68e00037 cx=c_pps
+ a=IC9ezy+LpI74bZSTnHh9OQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
+ a=8rWy6zfcAAAA:8 a=EUspDBNiAAAA:8 a=M5GUcnROAAAA:8 a=pGLkceISAAAA:8
+ a=SWAEecC5FQml2-hjlHcA:9 a=CjuIK1q_8ugA:10 a=nhWdwjMz9NxOi2fC:21
+ a=frz4AuCg-hUA:10 a=_W_S_7VecoQA:10 a=YjdVzJdQTyZRADMV7wFX:22
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: jyuW9jLNxYX7Ay0q3DdFsGTvmrqGAAee
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-03_05,2025-10-02_03,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 impostorscore=0 adultscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509290175
+ impostorscore=0 malwarescore=0 bulkscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 spamscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270029
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,299 +185,157 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Adds support to read and apply dictionaries
+--_000_SJ2PR02MB9795048742BCA7F33AE5F86589E4ASJ2PR02MB9795namp_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
----
-v2:
-* Handles relocated dictionary params
+Hey Akhil,
 
- app/test-compress-perf/comp_perf_options.h    |  4 +
- .../comp_perf_options_parse.c                 | 16 ++++
- .../comp_perf_test_verify.c                   | 42 +++++++--
- app/test-compress-perf/main.c                 | 90 +++++++++++++++++++
- 4 files changed, 147 insertions(+), 5 deletions(-)
+I pushed a reworked  v2 patch based on the comments below: https://patches.=
+dpdk.org/project/dpdk/list/?series=3D36288
 
-diff --git a/app/test-compress-perf/comp_perf_options.h b/app/test-compress-perf/comp_perf_options.h
-index 828a7309d8..4c34dcd8aa 100644
---- a/app/test-compress-perf/comp_perf_options.h
-+++ b/app/test-compress-perf/comp_perf_options.h
-@@ -21,6 +21,7 @@ enum cleanup_st {
- 	ST_TEST_DATA,
- 	ST_COMPDEV,
- 	ST_INPUT_DATA,
-+	ST_DICTIONARY_DATA,
- 	ST_MEMORY_ALLOC,
- 	ST_DURING_TEST
- };
-@@ -48,10 +49,13 @@ struct range_list {
- struct comp_test_data {
- 	char driver_name[RTE_DEV_NAME_MAX_LEN];
- 	char input_file[PATH_MAX];
-+	char dictionary_file[PATH_MAX];
- 	enum cperf_test_type test;
- 
- 	uint8_t *input_data;
- 	size_t input_data_sz;
-+	uint8_t *dictionary_data;
-+	size_t dictionary_data_sz;
- 	uint16_t nb_qps;
- 	uint16_t seg_sz;
- 	uint16_t out_seg_sz;
-diff --git a/app/test-compress-perf/comp_perf_options_parse.c b/app/test-compress-perf/comp_perf_options_parse.c
-index 6d8c370fc2..37205ad806 100644
---- a/app/test-compress-perf/comp_perf_options_parse.c
-+++ b/app/test-compress-perf/comp_perf_options_parse.c
-@@ -31,6 +31,7 @@
- #define CPERF_LEVEL		("compress-level")
- #define CPERF_WINDOW_SIZE	("window-sz")
- #define CPERF_EXTERNAL_MBUFS	("external-mbufs")
-+#define CPERF_DICTIONARY	("dictionary")
- 
- /* cyclecount-specific options */
- #define CPERF_CYCLECOUNT_DELAY_US ("cc-delay-us")
-@@ -71,6 +72,7 @@ usage(char *progname)
- 		"		keeping the data directly in mbuf area\n"
- 		" --cc-delay-us N: delay between enqueue and dequeue operations in microseconds\n"
- 		"		valid only for cyclecount perf test (default: 500 us)\n"
-+		" --dictionary NAME: file with dictionary\n"
- 		" -h: prints this help\n",
- 		progname);
- }
-@@ -609,6 +611,18 @@ parse_external_mbufs(struct comp_test_data *test_data,
- 	return 0;
- }
- 
-+static int
-+parse_dictionary_file(struct comp_test_data *test_data, const char *arg)
-+{
-+	if (strlen(arg) > (sizeof(test_data->dictionary_file) - 1))
-+		return -1;
-+
-+	strlcpy(test_data->dictionary_file, arg, sizeof(test_data->dictionary_file));
-+
-+	return 0;
-+}
-+
-+
- static int
- parse_cyclecount_delay_us(struct comp_test_data *test_data,
- 			const char *arg)
-@@ -647,6 +661,7 @@ static struct option lgopts[] = {
- 	{ CPERF_LEVEL, required_argument, 0, 0 },
- 	{ CPERF_WINDOW_SIZE, required_argument, 0, 0 },
- 	{ CPERF_EXTERNAL_MBUFS, 0, 0, 0 },
-+	{ CPERF_DICTIONARY, required_argument, 0, 0 },
- 	{ CPERF_CYCLECOUNT_DELAY_US, required_argument, 0, 0 },
- 	{ NULL, 0, 0, 0 }
- };
-@@ -671,6 +686,7 @@ comp_perf_opts_parse_long(int opt_idx, struct comp_test_data *test_data)
- 		{ CPERF_LEVEL,		parse_level },
- 		{ CPERF_WINDOW_SIZE,	parse_window_sz },
- 		{ CPERF_EXTERNAL_MBUFS,	parse_external_mbufs },
-+		{ CPERF_DICTIONARY,	parse_dictionary_file },
- 		{ CPERF_CYCLECOUNT_DELAY_US,	parse_cyclecount_delay_us },
- 	};
- 	unsigned int i;
-diff --git a/app/test-compress-perf/comp_perf_test_verify.c b/app/test-compress-perf/comp_perf_test_verify.c
-index 09d97c5cf7..3fc4b99b51 100644
---- a/app/test-compress-perf/comp_perf_test_verify.c
-+++ b/app/test-compress-perf/comp_perf_test_verify.c
-@@ -64,6 +64,7 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
- 	int res = 0;
- 	int allocated = 0;
- 	uint32_t out_seg_sz;
-+	uint8_t dict[DEFLATE_MAX_WINDOW_SIZE] = {0};
- 
- 	if (test_data == NULL || !test_data->burst_sz) {
- 		RTE_LOG(ERR, USER1,
-@@ -71,6 +72,22 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
- 		return -1;
- 	}
- 
-+	uint16_t window_size = (1ULL << test_data->window_sz);
-+
-+	if (test_data->dictionary_data) {
-+		if (test_data->dictionary_data_sz >= window_size) {
-+			memcpy(dict,
-+				test_data->dictionary_data
-+				+ (test_data->dictionary_data_sz - window_size),
-+				window_size);
-+		} else if (test_data->dictionary_data_sz < window_size) {
-+			memcpy(dict + (window_size - test_data->dictionary_data_sz),
-+				test_data->dictionary_data,
-+				test_data->dictionary_data_sz);
-+		}
-+	}
-+
-+
- 	ops = rte_zmalloc_socket(NULL,
- 		2 * mem->total_bufs * sizeof(struct rte_comp_op *),
- 		0, rte_socket_id());
-@@ -91,12 +108,14 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
- 				.level = test_data->level,
- 				.window_size = test_data->window_sz,
- 				.chksum = RTE_COMP_CHECKSUM_NONE,
--				.hash_algo = RTE_COMP_HASH_ALGO_NONE
-+				.hash_algo = RTE_COMP_HASH_ALGO_NONE,
- 			}
- 		};
--		if (test_data->test_algo == RTE_COMP_ALGO_DEFLATE)
-+		if (test_data->test_algo == RTE_COMP_ALGO_DEFLATE) {
- 			xform.compress.deflate.huffman = test_data->huffman_enc;
--		else if (test_data->test_algo == RTE_COMP_ALGO_LZ4)
-+			xform.compress.deflate.dictionary = dict;
-+			xform.compress.deflate.dictionary_len = window_size;
-+		} else if (test_data->test_algo == RTE_COMP_ALGO_LZ4)
- 			xform.compress.lz4.flags = test_data->lz4_flags;
- 		output_data_ptr = ctx->mem.compressed_data;
- 		output_data_sz = &ctx->comp_data_sz;
-@@ -113,7 +132,10 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
- 				.hash_algo = RTE_COMP_HASH_ALGO_NONE
- 			}
- 		};
--		if (test_data->test_algo == RTE_COMP_ALGO_LZ4)
-+		if (test_data->test_algo == RTE_COMP_ALGO_DEFLATE) {
-+			xform.decompress.inflate.dictionary = dict;
-+			xform.decompress.inflate.dictionary_len = window_size;
-+		} else if (test_data->test_algo == RTE_COMP_ALGO_LZ4)
- 			xform.decompress.lz4.flags = test_data->lz4_flags;
- 		output_data_ptr = ctx->mem.decompressed_data;
- 		output_data_sz = &ctx->decomp_data_sz;
-@@ -194,7 +216,17 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
- 					rte_pktmbuf_pkt_len(input_bufs[buf_id]);
- 				ops[op_id]->dst.offset = 0;
- 				ops[op_id]->flush_flag = RTE_COMP_FLUSH_FINAL;
--				ops[op_id]->input_chksum = buf_id;
-+				if ((xform.type == RTE_COMP_DECOMPRESS) &&
-+					(xform.decompress.chksum
-+						== RTE_COMP_CHECKSUM_3GPP_PDCP_UDC)) {
-+					uint8_t *udc_header
-+						= rte_pktmbuf_mtod(ops[op_id]->m_src, uint8_t *);
-+					ops[op_id]->input_chksum = *udc_header & 0xf;
-+					ops[op_id]->src.offset = 1;
-+				} else {
-+					ops[op_id]->input_chksum = buf_id;
-+					ops[op_id]->src.offset = 0;
-+				}
- 				ops[op_id]->private_xform = priv_xform;
- 			}
- 
-diff --git a/app/test-compress-perf/main.c b/app/test-compress-perf/main.c
-index 70ce4316cc..693a7cc31b 100644
---- a/app/test-compress-perf/main.c
-+++ b/app/test-compress-perf/main.c
-@@ -335,6 +335,86 @@ comp_perf_dump_input_data(struct comp_test_data *test_data)
- 	return ret;
- }
- 
-+static int
-+comp_perf_dump_dictionary_data(struct comp_test_data *test_data)
-+{
-+	FILE *f = fopen(test_data->dictionary_file, "r");
-+	int ret = -1;
-+
-+	if (f == NULL) {
-+		RTE_LOG(ERR, USER1, "Dictionary file not specified\n");
-+		test_data->dictionary_data_sz = 0;
-+		test_data->dictionary_data = NULL;
-+		ret = 0;
-+		goto end;
-+	}
-+
-+	if (fseek(f, 0, SEEK_END) != 0) {
-+		RTE_LOG(ERR, USER1, "Size of input could not be calculated\n");
-+		goto end;
-+	}
-+	size_t actual_file_sz = ftell(f);
-+	/* If extended input data size has not been set,
-+	 * input data size = file size
-+	 */
-+
-+	if (test_data->dictionary_data_sz == 0)
-+		test_data->dictionary_data_sz = actual_file_sz;
-+
-+	if (test_data->dictionary_data_sz <= 0 || actual_file_sz <= 0 ||
-+			fseek(f, 0, SEEK_SET) != 0) {
-+		RTE_LOG(ERR, USER1, "Size of input could not be calculated\n");
-+		goto end;
-+	}
-+
-+	test_data->dictionary_data = rte_zmalloc_socket(NULL,
-+				test_data->dictionary_data_sz, 0, rte_socket_id());
-+
-+	if (test_data->dictionary_data == NULL) {
-+		RTE_LOG(ERR, USER1, "Memory to hold the data from the dictionary "
-+				"file could not be allocated\n");
-+		goto end;
-+	}
-+
-+	size_t remaining_data = test_data->dictionary_data_sz;
-+	uint8_t *data = test_data->dictionary_data;
-+
-+	while (remaining_data > 0) {
-+		size_t data_to_read = RTE_MIN(remaining_data, actual_file_sz);
-+
-+		if (fread(data, data_to_read, 1, f) != 1) {
-+			RTE_LOG(ERR, USER1, "Input file could not be read\n");
-+			goto end;
-+		}
-+		if (fseek(f, 0, SEEK_SET) != 0) {
-+			RTE_LOG(ERR, USER1,
-+				"Size of input could not be calculated\n");
-+			goto end;
-+		}
-+		remaining_data -= data_to_read;
-+		data += data_to_read;
-+	}
-+
-+	printf("\n");
-+	if (test_data->dictionary_data_sz > actual_file_sz)
-+		RTE_LOG(INFO, USER1,
-+		  "%zu bytes read from file %s, extending the file %.2f times\n",
-+			test_data->dictionary_data_sz, test_data->dictionary_file,
-+			(double)test_data->dictionary_data_sz/actual_file_sz);
-+	else
-+		RTE_LOG(INFO, USER1,
-+			"%zu bytes read from file %s\n",
-+			test_data->dictionary_data_sz, test_data->dictionary_file);
-+
-+	ret = 0;
-+
-+end:
-+	if (f)
-+		fclose(f);
-+
-+	return ret;
-+}
-+
- static void
- comp_perf_cleanup_on_signal(int signalNumber __rte_unused)
- {
-@@ -407,6 +487,13 @@ main(int argc, char **argv)
- 	}
- 
- 	test_data->cleanup = ST_INPUT_DATA;
-+	if (comp_perf_dump_dictionary_data(test_data) < 0) {
-+		ret = EXIT_FAILURE;
-+		goto end;
-+	}
-+
-+	test_data->cleanup = ST_DICTIONARY_DATA;
-+
- 
- 	if (test_data->level_lst.inc != 0)
- 		test_data->level = test_data->level_lst.min;
-@@ -496,6 +583,9 @@ main(int argc, char **argv)
- 			i++;
- 		}
- 		/* fallthrough */
-+	case ST_DICTIONARY_DATA:
-+		rte_free(test_data->dictionary_data);
-+		/* fallthrough */
- 	case ST_INPUT_DATA:
- 		rte_free(test_data->input_data);
- 		/* fallthrough */
--- 
-2.31.1
+Even though I included --in-reply-to to the older series it seems to have c=
+reated a new series. Is that expected or is the command I used incorrect? T=
+he command I used was:
 
+git send-email --to-cmd ./devtools/get-maintainer.sh --cc dev@dpdk.org --th=
+read --no-chain-reply-to --in-reply-to=3D20250924161918.2211290-1-svaze@qti=
+.qualcomm.com *.patch
+
+Thanks
+Sameer Vaze
+________________________________
+From: Akhil Goyal <gakhil@marvell.com>
+Sent: Friday, October 3, 2025 1:27 AM
+To: Sameer Vaze <svaze@qti.qualcomm.com>; Fan Zhang <fanzhang.oss@gmail.com=
+>; Ashish Gupta <ashishg@marvell.com>
+Cc: dev@dpdk.org <dev@dpdk.org>
+Subject: RE: [EXTERNAL] [PATCH 1/3] compressdev: support for dictionaries a=
+nd PDCP checksum
+
+WARNING: This email originated from outside of Qualcomm. Please be wary of =
+any links or attachments, and do not enable macros.
+
+> Sorry for the various series I pushed. I attempted in reply to but it see=
+med to
+> create a new series. If I am making changes to one commit in a series, do=
+ I need
+> to resend all commits with an updated version? In such a case do I reply =
+to the
+> series or the specific change I am updating?
+Yes reply to the series. And all patches need to be resent.
+
+>
+> Regarding the comments on adding UDC as a new algo: UDC uses raw deflate =
+and
+> is not a separate algo in itself. Support for pre defined dictionaries is=
+ already
+> supported by zlib and is not UDC specific per se.
+>
+In that case also, these new params in xform should be part of alg specific=
+ params - rte_comp_deflate_params.
+
+Please note: we need to close the RC1 by 5th Oct. Please send the rework as=
+ap.
+
+Thanks.
+
+--_000_SJ2PR02MB9795048742BCA7F33AE5F86589E4ASJ2PR02MB9795namp_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
+s=3D"elementToProof">
+Hey Akhil,</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
+s=3D"elementToProof">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
+s=3D"elementToProof">
+I pushed a reworked&nbsp; v2 patch based on the comments below: <a class=3D=
+"OWAAutoLink" id=3D"LPlnk401803" href=3D"https://patches.dpdk.org/project/d=
+pdk/list/?series=3D36288">
+https://patches.dpdk.org/project/dpdk/list/?series=3D36288</a></div>
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
+s=3D"elementToProof">
+<br>
+Even though I included --in-reply-to to the older series it seems to have c=
+reated a new series. Is that expected or is the command I used incorrect? T=
+he command I used was:</div>
+<div id=3D"Signature">
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+git send-email --to-cmd ./devtools/get-maintainer.sh --cc dev@dpdk.org --th=
+read --no-chain-reply-to --in-reply-to=3D20250924161918.2211290-1-svaze@qti=
+.qualcomm.com *.patch</div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 11pt; color: rgb(0, 0, 0);">
+Thanks<br>
+Sameer Vaze</div>
+</div>
+<div id=3D"appendonsend"></div>
+<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
+<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
+yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Akhil Goyal &lt;gakhi=
+l@marvell.com&gt;<br>
+<b>Sent:</b> Friday, October 3, 2025 1:27 AM<br>
+<b>To:</b> Sameer Vaze &lt;svaze@qti.qualcomm.com&gt;; Fan Zhang &lt;fanzha=
+ng.oss@gmail.com&gt;; Ashish Gupta &lt;ashishg@marvell.com&gt;<br>
+<b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;<br>
+<b>Subject:</b> RE: [EXTERNAL] [PATCH 1/3] compressdev: support for diction=
+aries and PDCP checksum</font>
+<div>&nbsp;</div>
+</div>
+<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
+">
+<div class=3D"PlainText">WARNING: This email originated from outside of Qua=
+lcomm. Please be wary of any links or attachments, and do not enable macros=
+.<br>
+<br>
+&gt; Sorry for the various series I pushed. I attempted in reply to but it =
+seemed to<br>
+&gt; create a new series. If I am making changes to one commit in a series,=
+ do I need<br>
+&gt; to resend all commits with an updated version? In such a case do I rep=
+ly to the<br>
+&gt; series or the specific change I am updating?<br>
+Yes reply to the series. And all patches need to be resent.<br>
+<br>
+&gt;<br>
+&gt; Regarding the comments on adding UDC as a new algo: UDC uses raw defla=
+te and<br>
+&gt; is not a separate algo in itself. Support for pre defined dictionaries=
+ is already<br>
+&gt; supported by zlib and is not UDC specific per se.<br>
+&gt;<br>
+In that case also, these new params in xform should be part of alg specific=
+ params - rte_comp_deflate_params.<br>
+<br>
+Please note: we need to close the RC1 by 5th Oct. Please send the rework as=
+ap.<br>
+<br>
+Thanks.<br>
+</div>
+</span></font></div>
+</body>
+</html>
+
+--_000_SJ2PR02MB9795048742BCA7F33AE5F86589E4ASJ2PR02MB9795namp_--
