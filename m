@@ -2,58 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F71DCAC5B0
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 16:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF95CCA471
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 16:51:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 81253402D9;
-	Fri,  3 Oct 2025 18:51:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B02764042F;
+	Fri,  3 Oct 2025 18:51:47 +0200 (CEST)
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com
  [205.220.180.131])
- by mails.dpdk.org (Postfix) with ESMTP id 243F240281
+ by mails.dpdk.org (Postfix) with ESMTP id 6EA36402A2
  for <dev@dpdk.org>; Fri,  3 Oct 2025 18:51:43 +0200 (CEST)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
- by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 593Ae3tx023326;
- Fri, 3 Oct 2025 16:51:42 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+ by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 593BXfOQ018009
+ for <dev@dpdk.org>; Fri, 3 Oct 2025 16:51:42 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
  cc:content-transfer-encoding:date:from:in-reply-to:message-id
- :mime-version:references:subject:to; s=qcppdkim1; bh=vdlB1HOZXHW
- /cKVzzKLFTOMQ0yFWoYFIFDWV/FwZ/F8=; b=UhOJs0MQdDImhvGYZ/CEWQqin5I
- d3t7uXnrZTV69zwVyN/HFV9fRocCfCaheOVnP4bzWjfHyMO8GV/CNri3idPXHlZg
- f7H/IXSRgII6bnsR/HVzNtQDwZy8qFWPbK0/u0jtc9vbzKKGtNp3qoeoNJrMmhpx
- gVBC47s3hz6EGW/x5Q+/U4KYayABA1LEPGcR3kXt2d347/58B9uRq/AZ0CJWTX0q
- YNErhmfI5i+laSGiyBronFXiAEOV1BuaHGoOXJrWkPgbuGg8gvNCcFOMqBzzU56a
- M7WOXSTtM4n5eamXg+G/kUoQ8oykaKAkTwxwzmnBbSbH0ZsMNG5U9/ZFwiw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com
+ :mime-version:references:subject:to; s=qcppdkim1; bh=kMHF7dhgXtj
+ ucUOYl8BpHlrC6gO4O1tE4+wO50Dy3No=; b=O1eakOtn7Tc2DENxXkQG12TDMnG
+ BZWASJqQ0wMhbCi5rHQVY5mG/75d9xKgv5+HRMrbW+Ozb2fpw7ZstbIp2Atz1GHT
+ hH3ZRPJPlHBUKqWpqFqZXkIwyL8aKa4N+GSJnnb+ZeGdUotXuMJuZqGMs9q9LncP
+ 2941Uo9B7Ay44Z180uFUfDVxiLs45x+PdC3BNHIf6wutHvyvtgQBKjL3li2sFGjg
+ yp6FYhV3pYEpzp3PJCegrOcO8PPKYAef4hwOMzgDpMzrFLS/G+bRKGZSi9CTbin5
+ exnA0plI4CnpmJ1q3ZLPy7JhUbvVfu0Gux8VuzoILppvxgB9dvGG4N2053w==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com
  [199.106.103.254])
- by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8a6be6w-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 03 Oct 2025 16:51:42 +0000 (GMT)
-Received: from pps.filterd (NASANPPMTA05.qualcomm.com [127.0.0.1])
- by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 593Gperi023503; 
- Fri, 3 Oct 2025 16:51:40 GMT
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49fyrfcx43-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Fri, 03 Oct 2025 16:51:42 +0000 (GMT)
+Received: from pps.filterd (NASANPPMTA01.qualcomm.com [127.0.0.1])
+ by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 593GpfYS001008
+ for <dev@dpdk.org>; Fri, 3 Oct 2025 16:51:41 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
- by NASANPPMTA05.qualcomm.com (PPS) with ESMTPS id 49gjtev7cu-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 03 Oct 2025 16:51:40 +0000
-Received: from NASANPPMTA05.qualcomm.com (NASANPPMTA05.qualcomm.com
+ by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 49gsu4yem5-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Fri, 03 Oct 2025 16:51:41 +0000
+Received: from NASANPPMTA01.qualcomm.com (NASANPPMTA01.qualcomm.com
  [127.0.0.1])
- by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 593Gpeex023495;
- Fri, 3 Oct 2025 16:51:40 GMT
+ by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 593GpfKV000999
+ for <dev@dpdk.org>; Fri, 3 Oct 2025 16:51:41 GMT
 Received: from tbs-5gnr-mt-30 (tbs-5gnr-mt-30.qualcomm.com [10.239.80.165])
- by NASANPPMTA05.qualcomm.com (PPS) with ESMTPS id 593Gpen0023490
+ by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 593Gpev1000996
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 03 Oct 2025 16:51:40 +0000
+ Fri, 03 Oct 2025 16:51:41 +0000
 Received: by tbs-5gnr-mt-30 (Postfix, from userid 2316195)
- id C5BE4400A3; Fri,  3 Oct 2025 10:51:39 -0600 (MDT)
+ id 7DEC0400E2; Fri,  3 Oct 2025 10:51:40 -0600 (MDT)
 From: Sameer Vaze <svaze@qti.qualcomm.com>
-To: Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashishg@marvell.com>
+To: 
 Cc: dev@dpdk.org, Sameer Vaze <svaze@qti.qualcomm.com>
-Subject: [PATCH v2 1/3] compressdev: support for dictionaries and PDCP checksum
-Date: Fri,  3 Oct 2025 10:51:30 -0600
-Message-Id: <20251003165132.3201643-1-svaze@qti.qualcomm.com>
+Subject: [PATCH v2 3/3] app/compress-perf: support for dictionaries and PDCP
+ checksum
+Date: Fri,  3 Oct 2025 10:51:32 -0600
+Message-Id: <20251003165132.3201643-3-svaze@qti.qualcomm.com>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20250924161918.2211290-1-svaze@qti.qualcomm.com>
+In-Reply-To: <20251003165132.3201643-1-svaze@qti.qualcomm.com>
 References: <20250924161918.2211290-1-svaze@qti.qualcomm.com>
+ <20251003165132.3201643-1-svaze@qti.qualcomm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QCInternal: smtphost
@@ -62,26 +64,26 @@ X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
  signatures=585085
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
  signatures=585085
-X-Authority-Analysis: v=2.4 cv=RZKdyltv c=1 sm=1 tr=0 ts=68dfff1e cx=c_pps
+X-Proofpoint-ORIG-GUID: ddxrjIzp5NMp0QRwiQ5y8J_CDcx3Mbc1
+X-Proofpoint-GUID: ddxrjIzp5NMp0QRwiQ5y8J_CDcx3Mbc1
+X-Authority-Analysis: v=2.4 cv=etzSD4pX c=1 sm=1 tr=0 ts=68dfff1e cx=c_pps
  a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=x6icFKpwvdMA:10 a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=ICaHq2TlwKOIBCp4uuMA:9
-X-Proofpoint-GUID: spybECaa2yvwVM9wR3bAc8R9hOcN7igJ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMyBTYWx0ZWRfX5/K7eQ0Vsh31
- Id1EKzH90rSmSydQCiv1CK4giH/FWym2PJQpQf5PtZz9HT5+fGUpM+P51koEoq9LRJcHhUy/cHa
- 2n3Jd+cf96JgJOovcOSqys5n8c1ZvweDnTe8CZ85cOmq24b8XdGLt0mg50G/RMLYbgwAu7C0zkE
- dvV8qPxabK8wncPP7G2C1gfaTGiZXhjujyZQJWivCqRKUDFaKaKEK5sZNHYxlYo47GXIXYWdPn1
- md8SJGeqICNegpzsuosad+imLsXiVAuue+i79LIwz8HVE4BFVPQlOzZ/ybI10AiLz13tW79Ja5D
- v2eN/HOvngSuyXWLeA5C3JN/ODJJIPN4WZZMJ4ZMdMUhyHQ10Aj3OrlzT5RfJK3tRRHCeqm6D4P
- PpJrLpGEvhAd0souQz04R5bhaUScgA==
-X-Proofpoint-ORIG-GUID: spybECaa2yvwVM9wR3bAc8R9hOcN7igJ
+ a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=IeAZipw4XQsdFnktVzgA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI5MDE3NSBTYWx0ZWRfX9aWcM6Sl8Ubm
+ ODNb3NSJc33HMOamS/h80Lwj/mCDysksRyzX+4eIH6sTVOJr43F1j077L/3nKBKxjPn8d7ZppsL
+ YfwqL3FGPyP3t8vtrfjM5j34T0hywS13SfNnvjV32/4IUWb9Up6mgNxd+n5FkrPIQpS5Bt7/D0u
+ KDSjVKVqDAMJ9fk6YuEkwCVh23AP4LFNi0a9Ct+iepSbW+751KI0cRmHpWFBYkSpuboK5d4SiZP
+ vyaxXl/FwJ8+uupA2HOy1HZWa2x+1mBbxySmGqYegxRCNsQzRWX9J3DM/NfZ4BjHjjcJdjTVknA
+ zek8RsmA4FgeIFZcWTNdEQgbOta8zT/eInp2wAoCRSxtrDOEbgDXrLwl7FwfTuGagpG4E9bPCiC
+ 8HiZQp2t/HZAXAt848fDQ3ex7RbXTw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-03_05,2025-10-02_03,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 priorityscore=1501 adultscore=0 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
+ phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 adultscore=0 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270033
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509290175
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,83 +97,299 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Adds definitions for PDCP checksums and apis to pass in
-dictionaries
+Adds support to read and apply dictionaries
 
 Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
 ---
 v2:
-* Moved dictionary params to deflate params
-* Added infalte params to union
+* Handles relocated dictionary params
 
- lib/compressdev/rte_comp.h | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ app/test-compress-perf/comp_perf_options.h    |  4 +
+ .../comp_perf_options_parse.c                 | 16 ++++
+ .../comp_perf_test_verify.c                   | 42 +++++++--
+ app/test-compress-perf/main.c                 | 90 +++++++++++++++++++
+ 4 files changed, 147 insertions(+), 5 deletions(-)
 
-diff --git a/lib/compressdev/rte_comp.h b/lib/compressdev/rte_comp.h
-index 96d9b276dd..25835d589d 100644
---- a/lib/compressdev/rte_comp.h
-+++ b/lib/compressdev/rte_comp.h
-@@ -101,6 +101,10 @@ enum rte_comp_op_status {
- 	 * is not an error case. Output data up to op.produced can be used and
- 	 * next op in the stream should continue on from op.consumed+1.
- 	 */
-+	RTE_COMP_OP_STATUS_CHECK_SUM_VALIDATION_FAILED,
-+	/**< Checksum validation failed. Either calculated does checksum not match
-+	 * the one provided or there was an error calculating the checksum
+diff --git a/app/test-compress-perf/comp_perf_options.h b/app/test-compress-perf/comp_perf_options.h
+index 828a7309d8..4c34dcd8aa 100644
+--- a/app/test-compress-perf/comp_perf_options.h
++++ b/app/test-compress-perf/comp_perf_options.h
+@@ -21,6 +21,7 @@ enum cleanup_st {
+ 	ST_TEST_DATA,
+ 	ST_COMPDEV,
+ 	ST_INPUT_DATA,
++	ST_DICTIONARY_DATA,
+ 	ST_MEMORY_ALLOC,
+ 	ST_DURING_TEST
+ };
+@@ -48,10 +49,13 @@ struct range_list {
+ struct comp_test_data {
+ 	char driver_name[RTE_DEV_NAME_MAX_LEN];
+ 	char input_file[PATH_MAX];
++	char dictionary_file[PATH_MAX];
+ 	enum cperf_test_type test;
+ 
+ 	uint8_t *input_data;
+ 	size_t input_data_sz;
++	uint8_t *dictionary_data;
++	size_t dictionary_data_sz;
+ 	uint16_t nb_qps;
+ 	uint16_t seg_sz;
+ 	uint16_t out_seg_sz;
+diff --git a/app/test-compress-perf/comp_perf_options_parse.c b/app/test-compress-perf/comp_perf_options_parse.c
+index 6d8c370fc2..37205ad806 100644
+--- a/app/test-compress-perf/comp_perf_options_parse.c
++++ b/app/test-compress-perf/comp_perf_options_parse.c
+@@ -31,6 +31,7 @@
+ #define CPERF_LEVEL		("compress-level")
+ #define CPERF_WINDOW_SIZE	("window-sz")
+ #define CPERF_EXTERNAL_MBUFS	("external-mbufs")
++#define CPERF_DICTIONARY	("dictionary")
+ 
+ /* cyclecount-specific options */
+ #define CPERF_CYCLECOUNT_DELAY_US ("cc-delay-us")
+@@ -71,6 +72,7 @@ usage(char *progname)
+ 		"		keeping the data directly in mbuf area\n"
+ 		" --cc-delay-us N: delay between enqueue and dequeue operations in microseconds\n"
+ 		"		valid only for cyclecount perf test (default: 500 us)\n"
++		" --dictionary NAME: file with dictionary\n"
+ 		" -h: prints this help\n",
+ 		progname);
+ }
+@@ -609,6 +611,18 @@ parse_external_mbufs(struct comp_test_data *test_data,
+ 	return 0;
+ }
+ 
++static int
++parse_dictionary_file(struct comp_test_data *test_data, const char *arg)
++{
++	if (strlen(arg) > (sizeof(test_data->dictionary_file) - 1))
++		return -1;
++
++	strlcpy(test_data->dictionary_file, arg, sizeof(test_data->dictionary_file));
++
++	return 0;
++}
++
++
+ static int
+ parse_cyclecount_delay_us(struct comp_test_data *test_data,
+ 			const char *arg)
+@@ -647,6 +661,7 @@ static struct option lgopts[] = {
+ 	{ CPERF_LEVEL, required_argument, 0, 0 },
+ 	{ CPERF_WINDOW_SIZE, required_argument, 0, 0 },
+ 	{ CPERF_EXTERNAL_MBUFS, 0, 0, 0 },
++	{ CPERF_DICTIONARY, required_argument, 0, 0 },
+ 	{ CPERF_CYCLECOUNT_DELAY_US, required_argument, 0, 0 },
+ 	{ NULL, 0, 0, 0 }
+ };
+@@ -671,6 +686,7 @@ comp_perf_opts_parse_long(int opt_idx, struct comp_test_data *test_data)
+ 		{ CPERF_LEVEL,		parse_level },
+ 		{ CPERF_WINDOW_SIZE,	parse_window_sz },
+ 		{ CPERF_EXTERNAL_MBUFS,	parse_external_mbufs },
++		{ CPERF_DICTIONARY,	parse_dictionary_file },
+ 		{ CPERF_CYCLECOUNT_DELAY_US,	parse_cyclecount_delay_us },
+ 	};
+ 	unsigned int i;
+diff --git a/app/test-compress-perf/comp_perf_test_verify.c b/app/test-compress-perf/comp_perf_test_verify.c
+index 09d97c5cf7..3fc4b99b51 100644
+--- a/app/test-compress-perf/comp_perf_test_verify.c
++++ b/app/test-compress-perf/comp_perf_test_verify.c
+@@ -64,6 +64,7 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
+ 	int res = 0;
+ 	int allocated = 0;
+ 	uint32_t out_seg_sz;
++	uint8_t dict[DEFLATE_MAX_WINDOW_SIZE] = {0};
+ 
+ 	if (test_data == NULL || !test_data->burst_sz) {
+ 		RTE_LOG(ERR, USER1,
+@@ -71,6 +72,22 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
+ 		return -1;
+ 	}
+ 
++	uint16_t window_size = (1ULL << test_data->window_sz);
++
++	if (test_data->dictionary_data) {
++		if (test_data->dictionary_data_sz >= window_size) {
++			memcpy(dict,
++				test_data->dictionary_data
++				+ (test_data->dictionary_data_sz - window_size),
++				window_size);
++		} else if (test_data->dictionary_data_sz < window_size) {
++			memcpy(dict + (window_size - test_data->dictionary_data_sz),
++				test_data->dictionary_data,
++				test_data->dictionary_data_sz);
++		}
++	}
++
++
+ 	ops = rte_zmalloc_socket(NULL,
+ 		2 * mem->total_bufs * sizeof(struct rte_comp_op *),
+ 		0, rte_socket_id());
+@@ -91,12 +108,14 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
+ 				.level = test_data->level,
+ 				.window_size = test_data->window_sz,
+ 				.chksum = RTE_COMP_CHECKSUM_NONE,
+-				.hash_algo = RTE_COMP_HASH_ALGO_NONE
++				.hash_algo = RTE_COMP_HASH_ALGO_NONE,
+ 			}
+ 		};
+-		if (test_data->test_algo == RTE_COMP_ALGO_DEFLATE)
++		if (test_data->test_algo == RTE_COMP_ALGO_DEFLATE) {
+ 			xform.compress.deflate.huffman = test_data->huffman_enc;
+-		else if (test_data->test_algo == RTE_COMP_ALGO_LZ4)
++			xform.compress.deflate.dictionary = dict;
++			xform.compress.deflate.dictionary_len = window_size;
++		} else if (test_data->test_algo == RTE_COMP_ALGO_LZ4)
+ 			xform.compress.lz4.flags = test_data->lz4_flags;
+ 		output_data_ptr = ctx->mem.compressed_data;
+ 		output_data_sz = &ctx->comp_data_sz;
+@@ -113,7 +132,10 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
+ 				.hash_algo = RTE_COMP_HASH_ALGO_NONE
+ 			}
+ 		};
+-		if (test_data->test_algo == RTE_COMP_ALGO_LZ4)
++		if (test_data->test_algo == RTE_COMP_ALGO_DEFLATE) {
++			xform.decompress.inflate.dictionary = dict;
++			xform.decompress.inflate.dictionary_len = window_size;
++		} else if (test_data->test_algo == RTE_COMP_ALGO_LZ4)
+ 			xform.decompress.lz4.flags = test_data->lz4_flags;
+ 		output_data_ptr = ctx->mem.decompressed_data;
+ 		output_data_sz = &ctx->decomp_data_sz;
+@@ -194,7 +216,17 @@ main_loop(struct cperf_verify_ctx *ctx, enum rte_comp_xform_type type)
+ 					rte_pktmbuf_pkt_len(input_bufs[buf_id]);
+ 				ops[op_id]->dst.offset = 0;
+ 				ops[op_id]->flush_flag = RTE_COMP_FLUSH_FINAL;
+-				ops[op_id]->input_chksum = buf_id;
++				if ((xform.type == RTE_COMP_DECOMPRESS) &&
++					(xform.decompress.chksum
++						== RTE_COMP_CHECKSUM_3GPP_PDCP_UDC)) {
++					uint8_t *udc_header
++						= rte_pktmbuf_mtod(ops[op_id]->m_src, uint8_t *);
++					ops[op_id]->input_chksum = *udc_header & 0xf;
++					ops[op_id]->src.offset = 1;
++				} else {
++					ops[op_id]->input_chksum = buf_id;
++					ops[op_id]->src.offset = 0;
++				}
+ 				ops[op_id]->private_xform = priv_xform;
+ 			}
+ 
+diff --git a/app/test-compress-perf/main.c b/app/test-compress-perf/main.c
+index 70ce4316cc..693a7cc31b 100644
+--- a/app/test-compress-perf/main.c
++++ b/app/test-compress-perf/main.c
+@@ -335,6 +335,86 @@ comp_perf_dump_input_data(struct comp_test_data *test_data)
+ 	return ret;
+ }
+ 
++static int
++comp_perf_dump_dictionary_data(struct comp_test_data *test_data)
++{
++	FILE *f = fopen(test_data->dictionary_file, "r");
++	int ret = -1;
++
++	if (f == NULL) {
++		RTE_LOG(ERR, USER1, "Dictionary file not specified\n");
++		test_data->dictionary_data_sz = 0;
++		test_data->dictionary_data = NULL;
++		ret = 0;
++		goto end;
++	}
++
++	if (fseek(f, 0, SEEK_END) != 0) {
++		RTE_LOG(ERR, USER1, "Size of input could not be calculated\n");
++		goto end;
++	}
++	size_t actual_file_sz = ftell(f);
++	/* If extended input data size has not been set,
++	 * input data size = file size
 +	 */
- };
- 
- /** Compression Algorithms */
-@@ -166,6 +170,10 @@ enum rte_comp_checksum_type {
- 	/**< Generates a xxHash-32 checksum, as used by LZ4.
- 	 * https://github.com/Cyan4973/xxHash/blob/dev/doc/xxhash_spec.md
- 	 */
-+	RTE_COMP_CHECKSUM_3GPP_PDCP_UDC,
-+	/**< Generates checksum as defined under Uplink Data Compression
-+	 * checksum as defined in the 3GPP PDCP specification
-+	 */
- };
- 
- /** Compression Huffman Type - used by DEFLATE algorithm */
-@@ -201,6 +209,10 @@ enum rte_comp_flush_flag {
- 	 */
- };
- 
-+#define	DEFLATE_MAX_WINDOW_SIZE	(1ULL << 15)
 +
-+#define	DEFLATE_MIN_WINDOW_SIZE		(1ULL << 8)
++	if (test_data->dictionary_data_sz == 0)
++		test_data->dictionary_data_sz = actual_file_sz;
 +
- /** Compression transform types */
- enum rte_comp_xform_type {
- 	RTE_COMP_COMPRESS,
-@@ -228,6 +240,18 @@ enum rte_comp_op_type {
- struct rte_comp_deflate_params {
- 	enum rte_comp_huffman huffman;
- 	/**< Compression huffman encoding type */
-+	uint8_t *dictionary;
-+	/**< Pointer to memory containing dictionary to be used for deflate operations */
-+	uint16_t dictionary_len;
-+	/**< Length of dictionary to be used */
-+};
++	if (test_data->dictionary_data_sz <= 0 || actual_file_sz <= 0 ||
++			fseek(f, 0, SEEK_SET) != 0) {
++		RTE_LOG(ERR, USER1, "Size of input could not be calculated\n");
++		goto end;
++	}
 +
-+/** Parameters specific to the inflate algorithm */
-+struct rte_comp_inflate_params {
-+	uint8_t *dictionary;
-+	/**< Pointer to memory containing dictionary to be used for inflate operations */
-+	uint16_t dictionary_len;
-+	/**< Length of dictionary to be used */
- };
++	test_data->dictionary_data = rte_zmalloc_socket(NULL,
++				test_data->dictionary_data_sz, 0, rte_socket_id());
++
++	if (test_data->dictionary_data == NULL) {
++		RTE_LOG(ERR, USER1, "Memory to hold the data from the dictionary "
++				"file could not be allocated\n");
++		goto end;
++	}
++
++	size_t remaining_data = test_data->dictionary_data_sz;
++	uint8_t *data = test_data->dictionary_data;
++
++	while (remaining_data > 0) {
++		size_t data_to_read = RTE_MIN(remaining_data, actual_file_sz);
++
++		if (fread(data, data_to_read, 1, f) != 1) {
++			RTE_LOG(ERR, USER1, "Input file could not be read\n");
++			goto end;
++		}
++		if (fseek(f, 0, SEEK_SET) != 0) {
++			RTE_LOG(ERR, USER1,
++				"Size of input could not be calculated\n");
++			goto end;
++		}
++		remaining_data -= data_to_read;
++		data += data_to_read;
++	}
++
++	printf("\n");
++	if (test_data->dictionary_data_sz > actual_file_sz)
++		RTE_LOG(INFO, USER1,
++		  "%zu bytes read from file %s, extending the file %.2f times\n",
++			test_data->dictionary_data_sz, test_data->dictionary_file,
++			(double)test_data->dictionary_data_sz/actual_file_sz);
++	else
++		RTE_LOG(INFO, USER1,
++			"%zu bytes read from file %s\n",
++			test_data->dictionary_data_sz, test_data->dictionary_file);
++
++	ret = 0;
++
++end:
++	if (f)
++		fclose(f);
++
++	return ret;
++}
++
+ static void
+ comp_perf_cleanup_on_signal(int signalNumber __rte_unused)
+ {
+@@ -407,6 +487,13 @@ main(int argc, char **argv)
+ 	}
  
- /**
-@@ -321,6 +345,8 @@ struct rte_comp_decompress_xform {
- 	 * setup of stream or private_xform should fail.
- 	 */
- 	union {
-+		struct rte_comp_inflate_params inflate;
-+		/**< Parameters specific to the deflate algorithm */
- 		struct rte_comp_lz4_params lz4;
- 		/**< Parameters specific to the LZ4 algorithm */
- 	}; /**< Algorithm specific parameters */
+ 	test_data->cleanup = ST_INPUT_DATA;
++	if (comp_perf_dump_dictionary_data(test_data) < 0) {
++		ret = EXIT_FAILURE;
++		goto end;
++	}
++
++	test_data->cleanup = ST_DICTIONARY_DATA;
++
+ 
+ 	if (test_data->level_lst.inc != 0)
+ 		test_data->level = test_data->level_lst.min;
+@@ -496,6 +583,9 @@ main(int argc, char **argv)
+ 			i++;
+ 		}
+ 		/* fallthrough */
++	case ST_DICTIONARY_DATA:
++		rte_free(test_data->dictionary_data);
++		/* fallthrough */
+ 	case ST_INPUT_DATA:
+ 		rte_free(test_data->input_data);
+ 		/* fallthrough */
 -- 
 2.31.1
 
