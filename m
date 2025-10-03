@@ -2,50 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3B5CCA471
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 09:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B80CAC5B0
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 10:24:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 023DA402E0;
-	Fri,  3 Oct 2025 11:50:23 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id 63497402D4
- for <dev@dpdk.org>; Fri,  3 Oct 2025 11:50:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 605834028B;
+	Fri,  3 Oct 2025 12:24:13 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 5B2DD40262
+ for <dev@dpdk.org>; Fri,  3 Oct 2025 12:24:11 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759485021; x=1791021021;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=zq5LH0TRrlzVt2RrzEpZLt2xWjNHNbDB1RzsATruk7Q=;
- b=DrrmiY5dKpCIziWR2HhNi7hd+xx6uAQHVTe4e6tAhP/iFGCjnDYqo9sV
- sLIj957ItY5qmqQH5vjQFyUgudv560nuundYXe6jLG4WytW2cZlrvcLEN
- PHY/rgLdE2Tr40SFetYcbtZ1lIDYxn6ZYquhVisglcwMjqz6FUeROHLaf
- zYz2o6OX8wDTaPrcQIdEvPFCGIM85D84M++o3FFu0uuLTg1Bd/69OK5Rz
- PrTa5xisrgGqMfaUb6WcwDP08vDK1nhw4cUMbTjbjzhSYC8DVcrGoOEUZ
- 8E9RDwpZvVbu5bcH3DVjNTxWvYKVuu7ja2fGejh3DGYqxQ66/7xtgF/SA w==;
-X-CSE-ConnectionGUID: G6puAGlFQT+2fFyZOpxYrw==
-X-CSE-MsgGUID: 52q6wr1UTsmiPDt0QOBVwA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="87223208"
-X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; d="scan'208";a="87223208"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Oct 2025 02:50:21 -0700
-X-CSE-ConnectionGUID: fXp8PLmMT9mZ4KlKnpO6Ug==
-X-CSE-MsgGUID: 5nogVVBgQiKIJWNETYA0Pg==
+ t=1759487052; x=1791023052;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=/5WS8gZ6PRhdvm79pDj5qzibecpbtsCxGckoqQFdGFM=;
+ b=DTu6BN/NUfltMQVEWU3uCP+wTbercwFoT8fMgLxFdb4nO2dHJtIlQoV1
+ Gcxkke35xhp5bL9sem9NZ5rLoCmlPHwBTmZOQ/pdXLsnsFRv7epf2bYEM
+ uvfrOZ/qeT7S5OYiK7eNHi7JwXRi3fSdef6//DBeeySr1Fg2pSIrZKHDf
+ qlKG3jSviyedfOgQMcCuV+GAJq9pJgjzC5GhtIp1zbC/1jueE48sxsv6N
+ TsPVcmx4gcHI/+7kyvepCelDiz4erZ9LKojA574op1yQNH8XTYnZdnVpQ
+ P1kVJjE0/dpVvVVK7wK3apEbSmN8PS943mgbb5gTc3K0NIcG/SiKflsMh Q==;
+X-CSE-ConnectionGUID: ioN22FwVTL+WIFt4DVcu/w==
+X-CSE-MsgGUID: CkcVfu20QnG7aYUlQvaGMA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="61931481"
+X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; d="scan'208";a="61931481"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Oct 2025 03:24:10 -0700
+X-CSE-ConnectionGUID: W4YvEiiNQL+JRNoFP0L6IQ==
+X-CSE-MsgGUID: LZl1bgzAQ1C4un7Z2dyI5w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,312,1751266800"; d="scan'208";a="179064899"
-Received: from unknown (HELO srv24..) ([10.138.182.231])
- by orviesa007.jf.intel.com with ESMTP; 03 Oct 2025 02:50:19 -0700
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Subject: [PATCH v6 2/2] net/idpf: enable AVX2 for split queue Tx
-Date: Fri,  3 Oct 2025 15:19:50 +0530
-Message-Id: <20251003094950.2818019-3-shaiq.wani@intel.com>
+Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
+ by fmviesa003.fm.intel.com with ESMTP; 03 Oct 2025 03:24:09 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>,
+ Timothy Miskell <timothy.miskell@intel.com>
+Subject: [PATCH v2 1/2] net/iavf: support VF initiated resets
+Date: Fri,  3 Oct 2025 10:23:58 +0000
+Message-Id: <20251003102359.823028-1-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251003094950.2818019-1-shaiq.wani@intel.com>
-References: <20250917052658.582872-1-shaiq.wani@intel.com/>
- <20251003094950.2818019-1-shaiq.wani@intel.com>
+In-Reply-To: <20250929143039.547207-1-ciara.loftus@intel.com>
+References: <20250929143039.547207-1-ciara.loftus@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,260 +59,192 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In case some CPUs don't support AVX512. Enable AVX2 for them to
-get better per-core performance.
+Introduce a function that allows a VF to request the PF to reset the VF
+and then subsequently reinitialise and restart the VF transparently.
+This is useful for example when the application detects that one of the
+queues have hung or any event where a reset is required and the PF is
+unlikely to trigger it.
 
-In the single queue model, the same descriptor queue is used by SW
-to post descriptors to the device and used by device to report completed
-descriptors to SW. While as the split queue model separates them into
-different queues for parallel processing and improved performance.
+This commit leverages the existing graceful reset recovery path that was
+introduced in commit 3e6a5d2d310a ("net/iavf: add devargs to enable VF
+auto-reset").
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+Signed-off-by: Timothy Miskell <timothy.miskell@intel.com>
 ---
- drivers/net/intel/idpf/idpf_common_rxtx.h     |   3 +
- .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 197 ++++++++++++++++++
- drivers/net/intel/idpf/idpf_rxtx.c            |   9 +
- 3 files changed, 209 insertions(+)
+v2:
+* Always perform the requested reset, regardless of whether the
+auto_reset devarg is set or not.
+* Don't use the event handler to call iavf_handle_hw_reset. Call it
+inline in the rte_pmd_iavf_reset function call.
+* Do not send VIRTCHNL_OP_RESET_VF to the adminq before the
+iavf_handle_hw_reset sequence. That message is already sent within the
+iavf_handle_hw_reset function during iavf_dev_reset.
+* Rename the function to rte_pmd_iavf_restore to reflect that it's not
+just a reset being performed, but a restoration afterwards too.
+---
+ drivers/net/intel/iavf/iavf.h         |  4 +++-
+ drivers/net/intel/iavf/iavf_ethdev.c  | 10 ++++++--
+ drivers/net/intel/iavf/iavf_vchnl.c   | 14 +++++++++++-
+ drivers/net/intel/iavf/meson.build    |  1 +
+ drivers/net/intel/iavf/rte_pmd_iavf.c | 33 +++++++++++++++++++++++++++
+ drivers/net/intel/iavf/rte_pmd_iavf.h | 13 +++++++++++
+ 6 files changed, 71 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/net/intel/iavf/rte_pmd_iavf.c
 
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
-index 87f6895c4c..3636d55272 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.h
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
-@@ -264,6 +264,9 @@ uint16_t idpf_dp_singleq_recv_pkts_avx2(void *rx_queue,
- 					struct rte_mbuf **rx_pkts,
- 					uint16_t nb_pkts);
- __rte_internal
-+uint16_t idpf_dp_splitq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				       uint16_t nb_pkts);
-+__rte_internal
- uint16_t idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue,
- 					struct rte_mbuf **tx_pkts,
- 					uint16_t nb_pkts);
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-index ae10ca981f..1d8f7dd0e3 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-@@ -800,3 +800,200 @@ idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index 435902fbc2..e38fa66d1a 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -563,6 +563,8 @@ int iavf_flow_sub_check(struct iavf_adapter *adapter,
+ 			struct iavf_fsub_conf *filter);
+ void iavf_dev_watchdog_enable(struct iavf_adapter *adapter);
+ void iavf_dev_watchdog_disable(struct iavf_adapter *adapter);
+-void iavf_handle_hw_reset(struct rte_eth_dev *dev);
++void iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset);
+ void iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change);
++bool is_iavf_supported(struct rte_eth_dev *dev);
++int iavf_request_restore(struct rte_eth_dev *dev);
+ #endif /* _IAVF_ETHDEV_H_ */
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 08c814725d..1d665f4af1 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -3096,7 +3096,7 @@ iavf_is_reset_detected(struct iavf_adapter *adapter)
+  * Handle hardware reset
+  */
+ void
+-iavf_handle_hw_reset(struct rte_eth_dev *dev)
++iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ {
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
+ 	struct iavf_adapter *adapter = dev->data->dev_private;
+@@ -3105,7 +3105,8 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev)
+ 	if (!dev->data->dev_started)
+ 		return;
  
- 	return nb_tx;
+-	if (!iavf_is_reset_detected(adapter)) {
++	/* If the reset is VF-initated, the reset will be started during iavf_dev_reset */
++	if (!vf_initiated_reset && !iavf_is_reset_detected(adapter)) {
+ 		PMD_DRV_LOG(DEBUG, "reset not start");
+ 		return;
+ 	}
+@@ -3212,6 +3213,11 @@ static struct rte_pci_driver rte_iavf_pmd = {
+ 	.remove = eth_iavf_pci_remove,
+ };
+ 
++bool is_iavf_supported(struct rte_eth_dev *dev)
++{
++	return !strcmp(dev->device->driver->name, rte_iavf_pmd.driver.name);
++}
++
+ RTE_PMD_REGISTER_PCI(net_iavf, rte_iavf_pmd);
+ RTE_PMD_REGISTER_PCI_TABLE(net_iavf, pci_id_iavf_map);
+ RTE_PMD_REGISTER_KMOD_DEP(net_iavf, "* igb_uio | vfio-pci");
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index b1b7a5bf94..1e3b4716b0 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -83,7 +83,7 @@ iavf_dev_event_handle(void *param __rte_unused)
+ 			struct iavf_adapter *adapter = pos->dev->data->dev_private;
+ 			if (pos->event == RTE_ETH_EVENT_INTR_RESET &&
+ 			    adapter->devargs.auto_reset) {
+-				iavf_handle_hw_reset(pos->dev);
++				iavf_handle_hw_reset(pos->dev, false);
+ 				rte_free(pos);
+ 				continue;
+ 			}
+@@ -2271,3 +2271,15 @@ iavf_get_phc_time(struct ci_rx_queue *rxq)
+ 	rte_spinlock_unlock(&vf->phc_time_aq_lock);
+ 	return err;
  }
 +
-+static __rte_always_inline void
-+idpf_splitq_scan_cq_ring(struct ci_tx_queue *cq)
++int
++iavf_request_restore(struct rte_eth_dev *dev)
 +{
-+	struct idpf_splitq_tx_compl_desc *compl_ring;
-+	struct ci_tx_queue *txq;
-+	uint16_t genid, txq_qid, cq_qid, i;
-+	uint8_t ctype;
++	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
 +
-+	cq_qid = cq->tx_tail;
++	vf->vf_reset = true;
++	iavf_set_no_poll(dev->data->dev_private, false);
++	iavf_handle_hw_reset(dev, true);
 +
-+	for (i = 0; i < IDPD_TXQ_SCAN_CQ_THRESH; i++) {
-+		if (cq_qid == cq->nb_tx_desc) {
-+			cq_qid = 0;
-+			cq->expected_gen_id ^= 1;  /* toggle generation bit */
-+		}
-+
-+		compl_ring = &cq->compl_ring[cq_qid];
-+
-+		genid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+			 IDPF_TXD_COMPLQ_GEN_M) >> IDPF_TXD_COMPLQ_GEN_S;
-+
-+		if (genid != cq->expected_gen_id)
-+			break;
-+
-+		ctype = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+			 IDPF_TXD_COMPLQ_COMPL_TYPE_M) >> IDPF_TXD_COMPLQ_COMPL_TYPE_S;
-+
-+		txq_qid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+			   IDPF_TXD_COMPLQ_QID_M) >> IDPF_TXD_COMPLQ_QID_S;
-+
-+		txq = cq->txqs[txq_qid - cq->tx_start_qid];
-+		if (ctype == IDPF_TXD_COMPLT_RS)
-+			txq->rs_compl_count++;
-+
-+		cq_qid++;
-+	}
-+
-+	cq->tx_tail = cq_qid;
++	return 0;
 +}
+diff --git a/drivers/net/intel/iavf/meson.build b/drivers/net/intel/iavf/meson.build
+index 0db94d6fe6..b39337733f 100644
+--- a/drivers/net/intel/iavf/meson.build
++++ b/drivers/net/intel/iavf/meson.build
+@@ -24,6 +24,7 @@ sources = files(
+         'iavf_tm.c',
+         'iavf_ipsec_crypto.c',
+         'iavf_fsub.c',
++        'rte_pmd_iavf.c',
+ )
+ 
+ if arch_subdir == 'x86'
+diff --git a/drivers/net/intel/iavf/rte_pmd_iavf.c b/drivers/net/intel/iavf/rte_pmd_iavf.c
+new file mode 100644
+index 0000000000..a9a0225282
+--- /dev/null
++++ b/drivers/net/intel/iavf/rte_pmd_iavf.c
+@@ -0,0 +1,33 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2010-2025 Intel Corporation
++ */
 +
-+static __rte_always_inline void
-+idpf_splitq_vtx1_avx2(struct idpf_flex_tx_sched_desc *txdp,
-+				struct rte_mbuf *pkt, uint64_t flags)
++#include <eal_export.h>
++
++#include "iavf.h"
++#include "rte_pmd_iavf.h"
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_iavf_restore, 25.11)
++int
++rte_pmd_iavf_restore(uint16_t port)
 +{
-+	uint64_t high_qw =
-+		IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE |
-+		((uint64_t)flags) |
-+		((uint64_t)pkt->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
++	struct rte_eth_dev *dev;
++	int ret;
 +
-+	__m128i descriptor = _mm_set_epi64x(high_qw,
-+						pkt->buf_iova + pkt->data_off);
-+	_mm_storeu_si128((__m128i *)txdp, descriptor);
++	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
++
++	dev = &rte_eth_devices[port];
++
++	if (!is_iavf_supported(dev)) {
++		PMD_DRV_LOG(ERR, "Cannot restore VF, port %u is not an IAVF device.", port);
++		return -ENOTSUP;
++	}
++
++	ret = iavf_request_restore(dev);
++	if (ret) {
++		PMD_DRV_LOG(ERR, "Request to restore VF failed for port %u", port);
++		return -1;
++	}
++
++	return 0;
 +}
+diff --git a/drivers/net/intel/iavf/rte_pmd_iavf.h b/drivers/net/intel/iavf/rte_pmd_iavf.h
+index 04b86a5dd7..50a8cd0070 100644
+--- a/drivers/net/intel/iavf/rte_pmd_iavf.h
++++ b/drivers/net/intel/iavf/rte_pmd_iavf.h
+@@ -96,6 +96,19 @@ extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_tcp_mask;
+ extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_ip_offset_mask;
+ extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_ipsec_crypto_said_mask;
+ 
++/**
++ * Request PF driver to initiate a PF-to-VF RESET and restore the device
++ * following the reset by reconfiguring and restarting the device. The
++ * port must be started before calling this function.
++ *
++ * @param port
++ *   The port identifier of the Ethernet device.
++ * @return
++ *   0 if successful, otherwise if a failure occurs
++ */
++__rte_experimental
++int rte_pmd_iavf_restore(uint16_t port);
 +
-+static inline void
-+idpf_splitq_vtx_avx2(struct idpf_flex_tx_sched_desc *txdp,
-+				struct rte_mbuf **pkt, uint16_t nb_pkts, uint64_t flags)
-+{
-+	const uint64_t hi_qw_tmpl = IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE |
-+		((uint64_t)flags);
-+
-+	/* align if needed */
-+	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
-+		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
-+		txdp++, pkt++, nb_pkts--;
-+	}
-+
-+	for (; nb_pkts >= IDPF_VPMD_DESCS_PER_LOOP;
-+					txdp += IDPF_VPMD_DESCS_PER_LOOP,
-+					pkt += IDPF_VPMD_DESCS_PER_LOOP,
-+					nb_pkts -= IDPF_VPMD_DESCS_PER_LOOP) {
-+		uint64_t hi_qw3 = hi_qw_tmpl |
-+			((uint64_t)pkt[3]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw2 = hi_qw_tmpl |
-+			((uint64_t)pkt[2]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw1 = hi_qw_tmpl |
-+			((uint64_t)pkt[1]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw0 = hi_qw_tmpl |
-+			((uint64_t)pkt[0]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+
-+		__m256i desc2_3 = _mm256_set_epi64x(hi_qw3,
-+			pkt[3]->buf_iova + pkt[3]->data_off,
-+			hi_qw2,
-+			pkt[2]->buf_iova + pkt[2]->data_off);
-+
-+		__m256i desc0_1 = _mm256_set_epi64x(hi_qw1,
-+			pkt[1]->buf_iova + pkt[1]->data_off,
-+			hi_qw0,
-+			pkt[0]->buf_iova + pkt[0]->data_off);
-+
-+		_mm256_storeu_si256((__m256i *)(txdp + 2), desc2_3);
-+		_mm256_storeu_si256((__m256i *)txdp, desc0_1);
-+	}
-+
-+	while (nb_pkts--) {
-+		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
-+		txdp++;
-+		pkt++;
-+	}
-+}
-+
-+static inline uint16_t
-+idpf_splitq_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+						uint16_t nb_pkts)
-+{
-+	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+	struct idpf_flex_tx_sched_desc *txdp;
-+	struct ci_tx_entry_vec *txep;
-+	uint16_t n, nb_commit, tx_id;
-+	uint64_t cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_EOP;
-+
-+	tx_id = txq->tx_tail;
-+
-+	/* restrict to max burst size */
-+	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
-+
-+	/* make sure we have enough free space */
-+	if (txq->nb_tx_free < txq->tx_free_thresh)
-+		ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
-+
-+	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
-+	nb_pkts = nb_commit;
-+	if (unlikely(nb_pkts == 0))
-+		return 0;
-+
-+	txdp = (struct idpf_flex_tx_sched_desc *)&txq->desc_ring[tx_id];
-+	txep = (void *)txq->sw_ring;
-+	txep += tx_id;
-+
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
-+
-+	n = (uint16_t)(txq->nb_tx_desc - tx_id);
-+	if (nb_commit >= n) {
-+		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
-+
-+		idpf_splitq_vtx_avx2(txdp, tx_pkts, n - 1, cmd_dtype);
-+		tx_pkts += (n - 1);
-+		txdp += (n - 1);
-+
-+		idpf_splitq_vtx1_avx2(txdp, *tx_pkts++, cmd_dtype);
-+
-+		nb_commit = (uint16_t)(nb_commit - n);
-+
-+		tx_id = 0;
-+		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
-+
-+		txdp = &txq->desc_ring[tx_id];
-+		txep = (void *)txq->sw_ring;
-+		txep += tx_id;
-+	}
-+
-+	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
-+
-+	idpf_splitq_vtx_avx2(txdp, tx_pkts, nb_commit, cmd_dtype);
-+
-+	tx_id = (uint16_t)(tx_id + nb_commit);
-+	if (tx_id > txq->tx_next_rs)
-+		txq->tx_next_rs =
-+		(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
-+
-+	txq->tx_tail = tx_id;
-+
-+	IDPF_PCI_REG_WRITE(txq->qtx_tail, txq->tx_tail);
-+
-+	return nb_pkts;
-+}
-+
-+uint16_t
-+idpf_dp_splitq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+					uint16_t nb_pkts)
-+{
-+	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+	uint16_t nb_tx = 0;
-+
-+	while (nb_pkts) {
-+		uint16_t ret, num;
-+		idpf_splitq_scan_cq_ring(txq->complq);
-+
-+		if (txq->rs_compl_count > txq->tx_free_thresh) {
-+			ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
-+			txq->rs_compl_count -= txq->tx_rs_thresh;
-+		}
-+
-+		num = (uint16_t)RTE_MIN(nb_pkts, txq->tx_rs_thresh);
-+		ret = idpf_splitq_xmit_fixed_burst_vec_avx2(tx_queue,
-+								&tx_pkts[nb_tx], num);
-+		nb_tx += ret;
-+		nb_pkts -= ret;
-+		if (ret < num)
-+			break;
-+	}
-+
-+	return nb_tx;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_splitq_xmit_pkts_avx2)
-diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
-index 1c725065df..6950fabb49 100644
---- a/drivers/net/intel/idpf/idpf_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_rxtx.c
-@@ -850,6 +850,15 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
- 				return;
- 			}
- #endif /* CC_AVX512_SUPPORT */
-+			if (tx_simd_width == RTE_VECT_SIMD_256) {
-+				PMD_DRV_LOG(NOTICE,
-+					    "Using Split AVX2 Vector Tx (port %d).",
-+					    dev->data->port_id);
-+				dev->tx_pkt_burst = idpf_dp_splitq_xmit_pkts_avx2;
-+				dev->tx_pkt_prepare = idpf_dp_prep_pkts;
-+				return;
-+			}
-+
- 		}
- 		PMD_DRV_LOG(NOTICE,
- 			    "Using Split Scalar Tx (port %d).",
+ /**
+  * The mbuf dynamic field pointer for flexible descriptor's extraction metadata.
+  */
 -- 
 2.34.1
 
