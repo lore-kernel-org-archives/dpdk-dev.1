@@ -2,70 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 995E9CAC5B0
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 19:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF6BCCA471
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Oct 2025 19:49:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 79C9740672;
-	Fri,  3 Oct 2025 21:27:23 +0200 (CEST)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
- [209.85.222.177])
- by mails.dpdk.org (Postfix) with ESMTP id 15891402B5
- for <dev@dpdk.org>; Fri,  3 Oct 2025 21:27:21 +0200 (CEST)
-Received: by mail-qk1-f177.google.com with SMTP id
- af79cd13be357-87a0801ba1aso184292685a.2
- for <dev@dpdk.org>; Fri, 03 Oct 2025 12:27:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1759519640; x=1760124440; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=7rB6x3a9FoiWmrW+mCeBMKYj9CGY9GENIC8ZYuYZnqA=;
- b=er5iJb58q4YBISpVHUXkZfYmfNf4++4Oca5osq5DD71Bmg5o7uLOFnpYmzn7HekBho
- uDbtt2G0FWineMKAjCPrlRAG1oJ6lEwSVF1mdObPOq8T99tg4lsyTjWY+VxzodzW5I4k
- //B5zgKm4m9WjLqSmnK89RwLrmieW9Jz3+T5M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759519640; x=1760124440;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=7rB6x3a9FoiWmrW+mCeBMKYj9CGY9GENIC8ZYuYZnqA=;
- b=l5f9WlaVyUlz8uQgyMO0AdJNEChvtctGnw6uYNa3z7sWUoQ6EB5JsK3/yVSPkbe1y+
- 9E3LvS8XaHPvBYG/OgFr3D/vEQRqNbsvro1O12ESZm8Uw691DoV5mJSW1TO6LMr4dNSj
- i0XO0wOBSzigpjDS9s9d09/3Tcno5MwIGBIdjjQN78UtGcdne1mKgd/3vciapv4gkvtM
- p5eY+3dffa+6PfKbmzZ5TdajoIReFZRDNJzsCFq0G/JFlbvOUV0a2U6QD9riwPyyUnB6
- W1iHbSQgvO519PY7TOC/mnakLSzlC8lNUdfICBuMw82Gf6M9bfIWN6ec+Txl+I6btCjD
- FiWg==
-X-Gm-Message-State: AOJu0YyuqFMdeUd9eu2STHmZ7FHjD35j0xxD/9PzvYgsOXh4owm0LVLG
- z4sGM1GrfCMANyFaj9Q7sLp2jgAmlzPOOkAbHw1lstURqO+SNCd2byz0wd3Zd4FfM7A=
-X-Gm-Gg: ASbGnctCLjrTOJdkCgM/EUfVQADJ1FziNgQ1OsAuu0O9qvT2XQd+v4GtVUev4PfwQdN
- yREhvDxBCpjOMMQa71DJ5Y4mkrpSFDmky8zk7FEvbMPoTrgPxdkYtRRV73CvrdQaw/vXB6akHXB
- k6uc8zuSu1WlE5qNoWYeCgSJKBUY8ZjwcNtIGbBaKhMPKnWyBVJ0bD3TmPBfvGqmPsJYb3phkDo
- yNll2xunXDzcqfR2DisB4Yh39RrOIS47rcsL+w5/1mtPduHED8QafTTtTBecg2zWNX4pJVsWIrI
- LTnVzGOB0QtqpJB5f+noGZogS1Eohp0XUswQpeBz0TlluKlQ2NSK07z7imlfAs4b0/lusrXyaRx
- nxPWTBopon9xwP2GGsFc3NbJBSaWIvyOTsqjMOzv5V7NHYlKg
-X-Google-Smtp-Source: AGHT+IH4TK4DBX80McAeeXyCbLFULI85e6fkP9OXBn9XqtEq+XQ5xLGjaAtkiukzd0mpEIShMPm2eg==
-X-Received: by 2002:a05:620a:414f:b0:849:84b9:e1e4 with SMTP id
- af79cd13be357-87a33d360demr510653485a.7.1759519640186; 
- Fri, 03 Oct 2025 12:27:20 -0700 (PDT)
-Received: from d121016.iol.unh.edu ([2606:4100:3880:1210::202])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-877735a0664sm492490785a.30.2025.10.03.12.27.19
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 03 Oct 2025 12:27:19 -0700 (PDT)
-From: Dean Marx <dmarx@iol.unh.edu>
-To: probb@iol.unh.edu, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
-Cc: dev@dpdk.org,
-	Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v2 2/2] dts: add virtio forwarding test suite
-Date: Fri,  3 Oct 2025 15:27:16 -0400
-Message-ID: <20251003192717.444490-2-dmarx@iol.unh.edu>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251003192717.444490-1-dmarx@iol.unh.edu>
-References: <20250916200458.259376-1-dmarx@iol.unh.edu>
- <20251003192717.444490-1-dmarx@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id 93318402BB;
+	Fri,  3 Oct 2025 21:49:06 +0200 (CEST)
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com
+ [205.220.168.131])
+ by mails.dpdk.org (Postfix) with ESMTP id 7992C402B5
+ for <dev@dpdk.org>; Fri,  3 Oct 2025 21:49:05 +0200 (CEST)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+ by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 593AifrP006105;
+ Fri, 3 Oct 2025 19:49:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+ cc:content-transfer-encoding:date:from:in-reply-to:message-id
+ :mime-version:references:subject:to; s=qcppdkim1; bh=8l/PJ10wAQe
+ vxhqkIVdaMMioXpmUNfCNYV/rZrEsuQ8=; b=Gotj0CRhlDh7/53YmC9AY+q97xx
+ QlEDMubwkVEd3glr2EaBdK5U+dRfU/wwVjWvhS4p8hZJdk8HA4Pnm5yYfhFsOL8S
+ 3pDC2I3sCBSY6vVJvTg5kqElrOe6TNnWTbD+isjFuE937XEUwv4VoN7U0HnvjjpQ
+ yGnKvkbvnsc1A21rnLug+L58wUuM4z5B9ATydSpU717t5+ZCNap0k+5D82iAHwAc
+ sj7m12Il/You76Qbhq1AehNzautgCmT11oBZDKXL4uPDYGPxcBwYkwgMZ8LsFS8z
+ vSMRkkmp/LzOA2qRN+Elr/X4BcI+3IcQXOgeY2khmL4n92wpiKSB2ieJKLA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com
+ [199.106.103.254])
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e851uuka-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 03 Oct 2025 19:49:04 +0000 (GMT)
+Received: from pps.filterd (NASANPPMTA03.qualcomm.com [127.0.0.1])
+ by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 593Jn3AB008197; 
+ Fri, 3 Oct 2025 19:49:03 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+ by NASANPPMTA03.qualcomm.com (PPS) with ESMTPS id 49g4rkjhq4-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 03 Oct 2025 19:49:03 +0000
+Received: from NASANPPMTA03.qualcomm.com (NASANPPMTA03.qualcomm.com
+ [127.0.0.1])
+ by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 593Jn35p008185;
+ Fri, 3 Oct 2025 19:49:03 GMT
+Received: from tbs-5gnr-mt-30 (tbs-5gnr-mt-30.qualcomm.com [10.239.80.165])
+ by NASANPPMTA03.qualcomm.com (PPS) with ESMTPS id 593Jn3TE008169
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 03 Oct 2025 19:49:03 +0000
+Received: by tbs-5gnr-mt-30 (Postfix, from userid 2316195)
+ id 00D7D400E0; Fri,  3 Oct 2025 13:49:02 -0600 (MDT)
+From: Sameer Vaze <svaze@qti.qualcomm.com>
+To: Sunila Sahu <ssahu@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
+ Ashish Gupta <ashishg@marvell.com>
+Cc: dev@dpdk.org, Sameer Vaze <svaze@qti.qualcomm.com>
+Subject: [PATCH v3 2/4] compress/zlib: support for dictionaries and PDCP
+ checksum
+Date: Fri,  3 Oct 2025 13:48:59 -0600
+Message-Id: <20251003194901.3375364-2-svaze@qti.qualcomm.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20251003194901.3375364-1-svaze@qti.qualcomm.com>
+References: <20251003165132.3201643-1-svaze@qti.qualcomm.com>
+ <20251003194901.3375364-1-svaze@qti.qualcomm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
+ signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
+ signatures=585085
+X-Authority-Analysis: v=2.4 cv=OJoqHCaB c=1 sm=1 tr=0 ts=68e028b0 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=OVecn4WgEKDgdfIVBRYA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMiBTYWx0ZWRfX5K0tce1AkZaM
+ 4/GOs+0tzVG0y6JU6RrkawiT0DXGKl6d2bL04ypyEge3FdF+pBS8BDSWqok6ROqeG04oRZ/Mevt
+ YieCR+vwwh/+pPNL8oMqZDFUHRm8Kht0oUpGX0pr+b3OUP8UYuGLL1ZbvHj1WPlReqSrm5GiXUB
+ C/H+fs3kqn6DuzoiMs2mw1qZCfELzjMVsWVgE+GLsp76jCKYktf4JMeBmbvZq4I2WJsmsx3eFt6
+ RF0nziVFSwF7pyY1ngZ7ylKOUnWU+v/m75TY1e6Ka4lSz+UyPNi0FSAIi9R7+RIMHO7HwRnvFrZ
+ TqRFZBWPOXH6hHI1KoK/Q89UQg2jBjP6YrLF2o73kYw+Wc4bpm2U4A+SMXCAHTq1zJ5CSnRmaZn
+ iUeJr7QBCa/HAwACfjQ3Lj8sPGbwJw==
+X-Proofpoint-ORIG-GUID: 3AXWzluhfk5ToqLLIClkTP1_gihIjjp7
+X-Proofpoint-GUID: 3AXWzluhfk5ToqLLIClkTP1_gihIjjp7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-03_06,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270032
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,219 +98,335 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add test suite covering virtio-user and vhost
-server/client forwarding scenarios with
-testpmd packet validation.
+Support to calculate PDCP checksums. Includes changes to
+pass in dictionaries. Adds support for sync flush
 
-Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
 ---
- doc/api/tests.TestSuite_virtio_fwd.rst |   8 ++
- dts/tests/TestSuite_virtio_fwd.py      | 180 +++++++++++++++++++++++++
- 2 files changed, 188 insertions(+)
- create mode 100644 doc/api/tests.TestSuite_virtio_fwd.rst
- create mode 100644 dts/tests/TestSuite_virtio_fwd.py
+v3:
+* Moved variable defintions to start of function
+* Added macros for nibble in double word
+* Removed extra lines
 
-diff --git a/doc/api/tests.TestSuite_virtio_fwd.rst b/doc/api/tests.TestSuite_virtio_fwd.rst
-new file mode 100644
-index 0000000000..782eddad2d
---- /dev/null
-+++ b/doc/api/tests.TestSuite_virtio_fwd.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
+ drivers/compress/zlib/zlib_pmd.c         | 168 +++++++++++++++++++++--
+ drivers/compress/zlib/zlib_pmd_private.h |   7 +
+ 2 files changed, 166 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/compress/zlib/zlib_pmd.c b/drivers/compress/zlib/zlib_pmd.c
+index 92e808e78c..26673851fa 100644
+--- a/drivers/compress/zlib/zlib_pmd.c
++++ b/drivers/compress/zlib/zlib_pmd.c
+@@ -4,6 +4,7 @@
+ 
+ #include <bus_vdev_driver.h>
+ #include <rte_common.h>
++#include <stdlib.h>
+ 
+ #include "zlib_pmd_private.h"
+ 
+@@ -15,6 +16,115 @@
+ 		(data = rte_pktmbuf_mtod(mbuf, uint8_t *)),	\
+ 		(len = rte_pktmbuf_data_len(mbuf)) : 0)
+ 
++#define BOTTOM_NIBBLE_OF_BYTE 0xf
++#define TOP_NIBBLE_OF_BYTE 0xf0
++#define BOTTOM_NIBBLE_OF_BYTES_IN_DOUBLE_WORD 0x0f0f0f0f
++#define TOP_NIBBLE_OF_BYTE_IN_DOUBLE_WORD 0xf0f0f0f0
 +
-+virtio_fwd Test Suite
-+===========================
++static void
++process_zlib_deflate_chksum(struct rte_comp_op *op,
++		z_stream *strm, enum rte_comp_checksum_type chksum)
++{
++	uint32_t dictionary_len = 0;
++	uint8_t *dictionary = malloc(DEFLATE_MAX_WINDOW_SIZE);
++	op->status = RTE_COMP_OP_STATUS_SUCCESS;
 +
-+.. automodule:: tests.TestSuite_virtio_fwd
-+   :members:
-+   :show-inheritance:
-\ No newline at end of file
-diff --git a/dts/tests/TestSuite_virtio_fwd.py b/dts/tests/TestSuite_virtio_fwd.py
-new file mode 100644
-index 0000000000..194bd24257
---- /dev/null
-+++ b/dts/tests/TestSuite_virtio_fwd.py
-@@ -0,0 +1,180 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 University of New Hampshire
++	switch (chksum) {
++	case RTE_COMP_CHECKSUM_3GPP_PDCP_UDC:
 +
-+"""Virtio forwarding test suite.
++		if (!dictionary) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_ERROR;
++			return;
++		}
 +
-+Verify vhost/virtio pvp and loopback topology functionalities.
-+"""
++		if (deflateGetDictionary(strm, dictionary, &dictionary_len)) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_CHECKSUM_VALIDATION_FAILED;
++			free(dictionary);
++			return;
++		}
 +
-+from scapy.layers.inet import IP
-+from scapy.layers.l2 import Ether
++		uint32_t dictionary_start = (uint32_t)(*dictionary);
++		uint32_t dictionary_end = (uint32_t)(*(dictionary + dictionary_len - 4));
++		uint32_t sum = (dictionary_start & BOTTOM_NIBBLE_OF_BYTES_IN_DOUBLE_WORD)
++			+ (dictionary_start & (TOP_NIBBLE_OF_BYTE_IN_DOUBLE_WORD >> 4))
++			+ (dictionary_end & BOTTOM_NIBBLE_OF_BYTES_IN_DOUBLE_WORD)
++			+ (dictionary_end & (TOP_NIBBLE_OF_BYTE_IN_DOUBLE_WORD >> 4));
++		uint8_t *sum_bytes = (uint8_t *)&sum;
 +
-+from api.capabilities import LinkTopology
-+from api.testpmd import TestPmd
-+from api.testpmd.config import SimpleForwardingModes
-+from framework.parser import TextParser
-+from framework.test_suite import TestSuite, func_test
-+from framework.testbed_model.capability import requires
-+from framework.testbed_model.linux_session import LinuxSession
-+from framework.testbed_model.virtual_device import VirtualDevice
++		op->output_chksum = ~(sum_bytes[0] + sum_bytes[1] + sum_bytes[2] + sum_bytes[3])
++			 & BOTTOM_NIBBLE_OF_BYTE;
++		break;
++	case RTE_COMP_CHECKSUM_NONE:
++		break;
++	case RTE_COMP_CHECKSUM_CRC32:
++	case RTE_COMP_CHECKSUM_ADLER32:
++	case RTE_COMP_CHECKSUM_CRC32_ADLER32:
++	default:
++		ZLIB_PMD_ERR("Checksum not supported");
++		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
++		free(dictionary);
++		return;
++	}
++	free(dictionary);
++}
 +
++static void
++process_zlib_inflate_chksum(struct rte_comp_op *op,
++		z_stream *strm,
++		enum rte_comp_checksum_type chksum)
++{
++	uint32_t dictionary_len = 0;
++	uint8_t *dictionary = malloc(DEFLATE_MAX_WINDOW_SIZE);
++	op->status = RTE_COMP_OP_STATUS_SUCCESS;
 +
-+@requires(topology_type=LinkTopology.TWO_LINKS)
-+class TestVirtioFwd(TestSuite):
-+    """Virtio forwarding test suite."""
++	switch (chksum) {
++	case RTE_COMP_CHECKSUM_3GPP_PDCP_UDC:
++		if (!dictionary) {
++			ZLIB_PMD_ERR("Unable to malloc dictionary");
++			op->status = RTE_COMP_OP_STATUS_ERROR;
++			return;
++		}
 +
-+    class ForwardingParsers:
-+        """Class for gathering Rx/Tx packets from testpmd stats."""
++		if (inflateGetDictionary(strm, dictionary, &dictionary_len)) {
++			ZLIB_PMD_ERR("Unable to fetch dictionary");
++			op->status = RTE_COMP_OP_STATUS_CHECKSUM_VALIDATION_FAILED;
++			free(dictionary);
++			return;
++		}
 +
-+        rx_packets = TextParser.find_int(r"RX-packets:\s*(\d+)")
-+        tx_packets = TextParser.find_int(r"TX-packets:\s*(\d+)")
++		uint32_t dictionary_start = (uint32_t)(*dictionary);
++		uint32_t dictionary_end = (uint32_t)(*(dictionary + dictionary_len - 4));
++		uint32_t sum = (dictionary_start & BOTTOM_NIBBLE_OF_BYTES_IN_DOUBLE_WORD)
++			+ (dictionary_start & (TOP_NIBBLE_OF_BYTE_IN_DOUBLE_WORD >> 4))
++			+ (dictionary_end & BOTTOM_NIBBLE_OF_BYTES_IN_DOUBLE_WORD)
++			+ (dictionary_end & (TOP_NIBBLE_OF_BYTE_IN_DOUBLE_WORD >> 4));
++		uint8_t *sum_bytes = (uint8_t *)&sum;
 +
-+    class vdevs:
-+        """Class containing virtio-user and vhost-user virtual devices."""
++		op->output_chksum = ~(sum_bytes[0] + sum_bytes[1] + sum_bytes[2] + sum_bytes[3])
++			 & BOTTOM_NIBBLE_OF_BYTE;
 +
-+        virtio_user = VirtualDevice(
-+            "net_virtio_user0,mac=00:01:02:03:04:05,path=/tmp/vhost-net,server=1"
-+        )
-+        vhost_user = VirtualDevice("eth_vhost0,iface=/tmp/vhost-net,client=1")
++		if (op->input_chksum != op->output_chksum) {
++			ZLIB_PMD_ERR("Checksum does not match");
++			op->status = RTE_COMP_OP_STATUS_CHECKSUM_VALIDATION_FAILED;
++			free(dictionary);
++			return;
++		}
++		break;
++	case RTE_COMP_CHECKSUM_NONE:
++		break;
++	case RTE_COMP_CHECKSUM_CRC32:
++	case RTE_COMP_CHECKSUM_ADLER32:
++	case RTE_COMP_CHECKSUM_CRC32_ADLER32:
++	default:
++		ZLIB_PMD_ERR("Checksum not supported");
++		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
++		free(dictionary);
++		return;
++	}
++}
 +
-+    @func_test
-+    def virtio_server(self) -> None:
-+        """Test virtio server packet transmission.
+ static void
+ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ {
+@@ -27,6 +137,9 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 	case RTE_COMP_FLUSH_FINAL:
+ 		fin_flush = Z_FINISH;
+ 		break;
++	case RTE_COMP_FLUSH_SYNC:
++		fin_flush = Z_SYNC_FLUSH;
++		break;
+ 	default:
+ 		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
+ 		ZLIB_PMD_ERR("Invalid flush value");
+@@ -49,6 +162,9 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 
+ 	strm->avail_out = rte_pktmbuf_data_len(mbuf_dst) - op->dst.offset;
+ 
++	uLong total_in_at_start = strm->total_in;
++	uLong total_out_at_start = strm->total_out;
 +
-+        Steps:
-+            * Launch a testpmd session with a vhost-user virtual device (client side).
-+            * Launch a testpmd session with a virtio-user virtual device (server side).
-+            * Set the forwarding mode to mac in both sessions.
-+            * Start packet forwarding on vhost session.
-+            * Send a burst of packets from the virtio session.
-+            * Stop packet forwarding on vhost session and collect Rx packet stats.
+ 	/* Set flush value to NO_FLUSH unless it is last mbuf */
+ 	flush = Z_NO_FLUSH;
+ 	/* Initialize status to SUCCESS */
+@@ -56,8 +172,8 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 
+ 	do {
+ 		/* Set flush value to Z_FINISH for last block */
+-		if ((op->src.length - strm->total_in) <= strm->avail_in) {
+-			strm->avail_in = (op->src.length - strm->total_in);
++		if ((op->src.length - (strm->total_in - total_in_at_start)) <= strm->avail_in) {
++			strm->avail_in = (op->src.length - (strm->total_in - total_in_at_start));
+ 			flush = fin_flush;
+ 		}
+ 		do {
+@@ -92,17 +208,18 @@ process_zlib_deflate(struct rte_comp_op *op, z_stream *strm)
+ 	/* Update op stats */
+ 	switch (op->status) {
+ 	case RTE_COMP_OP_STATUS_SUCCESS:
+-		op->consumed += strm->total_in;
++		op->consumed += strm->total_in - total_in_at_start;
+ 	/* Fall-through */
+ 	case RTE_COMP_OP_STATUS_OUT_OF_SPACE_TERMINATED:
+-		op->produced += strm->total_out;
++		op->produced += strm->total_out - total_out_at_start;
+ 		break;
+ 	default:
+ 		ZLIB_PMD_ERR("stats not updated for status:%d",
+ 				op->status);
+ 	}
+ 
+-	deflateReset(strm);
++	if (op->flush_flag != RTE_COMP_FLUSH_SYNC)
++		deflateReset(strm);
+ }
+ 
+ static void
+@@ -127,6 +244,9 @@ process_zlib_inflate(struct rte_comp_op *op, z_stream *strm)
+ 
+ 	strm->avail_out = rte_pktmbuf_data_len(mbuf_dst) - op->dst.offset;
+ 
++	uLong total_in_at_start = strm->total_in;
++	uLong total_out_at_start = strm->total_out;
 +
-+        Verify:
-+            * Vhost session receives packets from virtio session.
-+        """
-+        with (
-+            TestPmd(
-+                prefix="vhost",
-+                no_pci=True,
-+                memory_channels=4,
-+                vdevs=[self.vdevs.vhost_user],
-+            ) as vhost,
-+            TestPmd(
-+                prefix="virtio",
-+                no_pci=True,
-+                memory_channels=4,
-+                vdevs=[self.vdevs.virtio_user],
-+            ) as virtio,
-+        ):
-+            vhost.set_forward_mode(SimpleForwardingModes.mac)
-+            virtio.set_forward_mode(SimpleForwardingModes.mac)
+ 	/** Ignoring flush value provided from application for decompression */
+ 	flush = Z_NO_FLUSH;
+ 	/* initialize status to SUCCESS */
+@@ -178,17 +298,18 @@ process_zlib_inflate(struct rte_comp_op *op, z_stream *strm)
+ 	/* Update op stats */
+ 	switch (op->status) {
+ 	case RTE_COMP_OP_STATUS_SUCCESS:
+-		op->consumed += strm->total_in;
++		op->consumed += strm->total_in - total_in_at_start;
+ 	/* Fall-through */
+ 	case RTE_COMP_OP_STATUS_OUT_OF_SPACE_TERMINATED:
+-		op->produced += strm->total_out;
++		op->produced += strm->total_out - total_out_at_start;
+ 		break;
+ 	default:
+ 		ZLIB_PMD_ERR("stats not produced for status:%d",
+ 				op->status);
+ 	}
+ 
+-	inflateReset(strm);
++	if (op->flush_flag != RTE_COMP_FLUSH_SYNC)
++		inflateReset(strm);
+ }
+ 
+ /** Process comp operation for mbuf */
+@@ -203,10 +324,14 @@ process_zlib_op(struct zlib_qp *qp, struct rte_comp_op *op)
+ 			(op->dst.offset > rte_pktmbuf_data_len(op->m_dst))) {
+ 		op->status = RTE_COMP_OP_STATUS_INVALID_ARGS;
+ 		ZLIB_PMD_ERR("Invalid source or destination buffers or "
+-			     "invalid Operation requested");
++				  "invalid Operation requested");
+ 	} else {
+ 		private_xform = (struct zlib_priv_xform *)op->private_xform;
+ 		stream = &private_xform->stream;
++		stream->chksum(op, &stream->strm, stream->chksum_type);
++		if (op->status != RTE_COMP_OP_STATUS_SUCCESS)
++			return -1;
 +
-+            vhost.start()
-+            virtio.start_tx_first(burst_num=32)
+ 		stream->comp(op, &stream->strm);
+ 	}
+ 	/* whatever is out of op, put it into completion queue with
+@@ -232,6 +357,7 @@ zlib_set_stream_parameters(const struct rte_comp_xform *xform,
+ 	case RTE_COMP_COMPRESS:
+ 		stream->comp = process_zlib_deflate;
+ 		stream->free = deflateEnd;
++		stream->chksum = process_zlib_deflate_chksum;
+ 		/** Compression window bits */
+ 		switch (xform->compress.algo) {
+ 		case RTE_COMP_ALGO_DEFLATE:
+@@ -281,17 +407,30 @@ zlib_set_stream_parameters(const struct rte_comp_xform *xform,
+ 			ZLIB_PMD_ERR("Compression strategy not supported");
+ 			return -1;
+ 		}
 +
-+            forwarding_stats = vhost.stop()
++		/** Checksum used */
++		stream->chksum_type = xform->compress.chksum;
 +
-+            rx_packets = self.ForwardingParsers.rx_packets["TextParser_fn"](forwarding_stats) or 0
-+            tx_packets = self.ForwardingParsers.tx_packets["TextParser_fn"](forwarding_stats) or 0
+ 		if (deflateInit2(strm, level,
+ 					Z_DEFLATED, wbits,
+ 					DEF_MEM_LEVEL, strategy) != Z_OK) {
+ 			ZLIB_PMD_ERR("Deflate init failed");
+ 			return -1;
+ 		}
 +
-+            self.verify(
-+                rx_packets != 0 and tx_packets != 0,
-+                "Vhost session failed to receive packets from virtio session.",
-+            )
++		if (xform->compress.deflate.dictionary) {
++			if (deflateSetDictionary(strm, xform->compress.deflate.dictionary,
++					xform->compress.deflate.dictionary_len)) {
++				ZLIB_PMD_ERR("Deflate set dictionary failed");
++				return -1;
++			}
++		}
+ 		break;
+ 
+ 	case RTE_COMP_DECOMPRESS:
+ 		stream->comp = process_zlib_inflate;
+ 		stream->free = inflateEnd;
++		stream->chksum = process_zlib_inflate_chksum;
+ 		/** window bits */
+ 		switch (xform->decompress.algo) {
+ 		case RTE_COMP_ALGO_DEFLATE:
+@@ -302,10 +441,21 @@ zlib_set_stream_parameters(const struct rte_comp_xform *xform,
+ 			return -1;
+ 		}
+ 
++		/** Checksum used */
++		stream->chksum_type = xform->decompress.chksum;
 +
-+    @func_test
-+    def virtio_server_reconnect(self) -> None:
-+        """Test virtio server reconnection.
+ 		if (inflateInit2(strm, wbits) != Z_OK) {
+ 			ZLIB_PMD_ERR("Inflate init failed");
+ 			return -1;
+ 		}
 +
-+        Steps:
-+            * Launch a testpmd session with a vhost-user virtual device (client side).
-+            * Launch a testpmd session with a virtio-user virtual device (server side).
-+            * Close the virtio session and relaunch it.
-+            * Start packet forwarding on vhost session.
-+            * Send a burst of packets from the virtio session.
-+            * Stop packet forwarding on vhost session and collect Rx packet stats.
++		if (xform->decompress.inflate.dictionary) {
++			if (inflateSetDictionary(strm, xform->decompress.inflate.dictionary,
++					xform->decompress.inflate.dictionary_len)) {
++				ZLIB_PMD_ERR("inflate set dictionary failed");
++				return -1;
++			}
++		}
+ 		break;
+ 	default:
+ 		return -1;
+diff --git a/drivers/compress/zlib/zlib_pmd_private.h b/drivers/compress/zlib/zlib_pmd_private.h
+index fd8c4c55a4..f6bd948cc2 100644
+--- a/drivers/compress/zlib/zlib_pmd_private.h
++++ b/drivers/compress/zlib/zlib_pmd_private.h
+@@ -46,6 +46,9 @@ typedef void (*comp_func_t)(struct rte_comp_op *op, z_stream *strm);
+ 
+ typedef int (*comp_free_t)(z_stream *strm);
+ 
++typedef void (*chksum_func_t)
++		(struct rte_comp_op *op, z_stream *strm, enum rte_comp_checksum_type chksum);
 +
-+        Verify:
-+            * Vhost session receives packets from relaunched virtio session.
-+        """
-+        with TestPmd(
-+            prefix="vhost",
-+            no_pci=True,
-+            memory_channels=4,
-+            vdevs=[self.vdevs.vhost_user],
-+        ) as vhost:
-+            with TestPmd(
-+                prefix="virtio",
-+                no_pci=True,
-+                memory_channels=4,
-+                vdevs=[self.vdevs.virtio_user],
-+            ) as virtio:
-+                pass
-+            # end session and reconnect
-+            with TestPmd(
-+                prefix="virtio",
-+                no_pci=True,
-+                memory_channels=4,
-+                vdevs=[self.vdevs.virtio_user],
-+            ) as virtio:
-+                virtio.set_forward_mode(SimpleForwardingModes.mac)
-+                vhost.set_forward_mode(SimpleForwardingModes.mac)
-+
-+                vhost.start()
-+                virtio.start_tx_first(burst_num=32)
-+
-+                forwarding_stats = vhost.stop()
-+
-+                rx_packets = (
-+                    self.ForwardingParsers.rx_packets["TextParser_fn"](forwarding_stats) or 0
-+                )
-+                tx_packets = (
-+                    self.ForwardingParsers.tx_packets["TextParser_fn"](forwarding_stats) or 0
-+                )
-+
-+                self.verify(
-+                    rx_packets != 0 and tx_packets != 0,
-+                    "Vhost session failed to receive packets from virtio session.",
-+                )
-+
-+    @func_test
-+    def pvp_loop(self) -> None:
-+        """Test vhost/virtio physical-virtual-physical loop topology.
-+
-+        Steps:
-+            * Launch testpmd session with a physical NIC and virtio-user vdev
-+                connected to a vhost-net socket.
-+            * Configure the tap interface that is created with IP address and
-+                set link state to UP.
-+            * Launch second testpmd session with af_packet vdev connected to
-+                the tap interface.
-+            * Start packet forwarding on both testpmd sessions.
-+            * Send 100 packets to the physical interface from external tester.
-+            * Capture packets on the same physical interface.
-+
-+        Verify:
-+            * Physical interface receives all 100 sent packets.
-+        """
-+        self.sut_node = self._ctx.sut_node
-+        if not isinstance(self.sut_node.main_session, LinuxSession):
-+            self.verify(False, "Must be running on a Linux environment.")
-+        with TestPmd(
-+            prefix="virtio",
-+            vdevs=[VirtualDevice("virtio_user0,path=/dev/vhost-net,queues=1,queue_size=1024")],
-+        ) as virtio:
-+            self.sut_node.main_session.send_command("ip link set dev tap0 up", privileged=True)
-+            with TestPmd(
-+                prefix="vhost", no_pci=True, vdevs=[VirtualDevice("net_af_packet0,iface=tap0")]
-+            ) as vhost:
-+                virtio.set_forward_mode(SimpleForwardingModes.mac)
-+                vhost.set_forward_mode(SimpleForwardingModes.mac)
-+                vhost.start()
-+                virtio.start()
-+
-+                packet = Ether() / IP()
-+                packets = [packet] * 100
-+                captured_packets = self.send_packets_and_capture(packets)
-+
-+                self.verify(
-+                    len(captured_packets) >= 100, "Sent packets not received on physical interface."
-+                )
+ /** ZLIB Stream structure */
+ struct __rte_cache_aligned zlib_stream {
+ 	z_stream strm;
+@@ -54,6 +57,10 @@ struct __rte_cache_aligned zlib_stream {
+ 	/**< Operation (compression/decompression) */
+ 	comp_free_t free;
+ 	/**< Free Operation (compression/decompression) */
++	chksum_func_t chksum;
++	/**< Checksum Operation (compression/decompression) */
++	enum rte_comp_checksum_type chksum_type;
++	/**< Type of checksum to generate on the uncompressed data */
+ };
+ 
+ /** ZLIB private xform structure */
 -- 
-2.51.0
+2.31.1
 
