@@ -2,74 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23602CAC5BB
-	for <dpdk-dev@archiver.kernel.org>; Sun,  5 Oct 2025 16:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9A0CAC5BB
+	for <dpdk-dev@archiver.kernel.org>; Sun,  5 Oct 2025 16:40:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 03328402C4;
-	Sun,  5 Oct 2025 18:29:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3A042402E2;
+	Sun,  5 Oct 2025 18:40:14 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 36791402C1
- for <dev@dpdk.org>; Sun,  5 Oct 2025 18:29:16 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id DA4A8402C1
+ for <dev@dpdk.org>; Sun,  5 Oct 2025 18:40:12 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1759681755;
+ s=mimecast20190719; t=1759682412;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=9lX/i/ni1VuRETOkwHYN9U0Yj1XSlGKbikGXOV/Yg4g=;
- b=DT3NSO38CQMJEZBrCTtxeKyCvLsNn9DQ7TykYRLz11jO3k9YYBn2A6tMH4i9hJOpBCp/cP
- s/wr2rN4yev5No8D555ImtEkNiMvLS2DXyHsMYcxK5PkWZE/xlAMVq619t8l5odMo4I7Ps
- PMJQCqmIsy2uJHFUH/WY+2+ZqpgkRd4=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=RY5CUWdoSmULy2oX3a/g19clMF5wZHDxL/HuRhtGUVA=;
+ b=RIFGQMjLFBgacZmpja+L75nt3iYFW4mrfjhAB4Or6YM1I4MgPA10XfrzbvLg+ErMvu8+5T
+ BYbpKC4311wyV76Be5wiQEd1BI8IQUCIHHMJwQ/JNnLpcJZwT6ThxQwQf6yy5yuT5r8Qu7
+ RQamgus7Ea9DfXYdySBYtiQSAacbbhk=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-410-2gMo51phPSOs53SPq71ylQ-1; Sun, 05 Oct 2025 12:29:14 -0400
-X-MC-Unique: 2gMo51phPSOs53SPq71ylQ-1
-X-Mimecast-MFC-AGG-ID: 2gMo51phPSOs53SPq71ylQ_1759681753
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-36c983e4c21so17368981fa.1
- for <dev@dpdk.org>; Sun, 05 Oct 2025 09:29:13 -0700 (PDT)
+ us-mta-365-97Ipf4cyPjmgLXUbLFYtlw-1; Sun, 05 Oct 2025 12:40:10 -0400
+X-MC-Unique: 97Ipf4cyPjmgLXUbLFYtlw-1
+X-Mimecast-MFC-AGG-ID: 97Ipf4cyPjmgLXUbLFYtlw_1759682409
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-3654fd1a668so15471201fa.2
+ for <dev@dpdk.org>; Sun, 05 Oct 2025 09:40:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759681752; x=1760286552;
+ d=1e100.net; s=20230601; t=1759682409; x=1760287209;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=9lX/i/ni1VuRETOkwHYN9U0Yj1XSlGKbikGXOV/Yg4g=;
- b=hy5WVnhxPhH1I0UoGMVKEPihn3Sn5JpwsdsdJqVKd7S76QOAg8I7A71ehGyqYfI7x1
- LcmLTH2i+2tPqEkUoxv2mza3PQHcQIl4mkKqomD3yNxoaS9eJmcmebdud/1IUwHXLJC8
- K2Y4gX8Tbz7q7SgWpqAS0/bU0KK0aPU4qRH1Ft2XDHDl6qAJDsTnbDR1DGDkFe7alLh1
- pIx710x6ny+UQerGHx1ddzlygkZR+MJs0QkzOhKbY1l/ME8TD92qgKUHZDaZbvkT7aA9
- mPBtu3MUobbDPT1x6pjqoEX8PFBpUSp1Ajpgox4DHot3STA1tnXsFOnrtv3cxsdlGNlK
- ToPg==
-X-Gm-Message-State: AOJu0YzsiZu7kG9UwHSJpPf1pOuWuFQl/44RZ8jfbYY2S4JuIb+BhrUR
- QQmhQ5eHR9a6uSO0QVaR+RmugWne+sJZ0wVvhY0zK+HFIAVK8BV5ipysUJFtAKiDNS7gPUbPu23
- uw0uJu6eyWcf1XjYCcv90QFlFJP7MEooQOue7xW1NaUl+U8IpPtd2mxkkvrMEYtdC4UHgsrwvN6
- 2B/LTDByNhJLxGUzNBVrA=
-X-Gm-Gg: ASbGncsIciiZYdE6gN5vNWKy38mu0XDlunCE2o/gPvxlCFjPfASWJx0gQ5/jfsLqcCk
- 3ICbpgRtF7YwaLCE1bh7QXw185biuB4/W0BVHc/g/rRjC8IyhxyPzc+W4e5FMifLGw9MYrua93G
- fTNAon7ehvKgdrbbwtt+St+7Ih8ifq
-X-Received: by 2002:a05:651c:19aa:b0:367:74f5:6fc9 with SMTP id
- 38308e7fff4ca-374c386d34bmr27495721fa.32.1759681752526; 
- Sun, 05 Oct 2025 09:29:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFXBE86IfaYaNinp4teOZTwBcIRwrQKVNyJgqCcUA/3+ajhLvfzYGakQkEplUFKrAG2rTVVDjqLG0emuFhO6bE=
-X-Received: by 2002:a05:651c:19aa:b0:367:74f5:6fc9 with SMTP id
- 38308e7fff4ca-374c386d34bmr27495681fa.32.1759681752105; Sun, 05 Oct 2025
- 09:29:12 -0700 (PDT)
+ bh=RY5CUWdoSmULy2oX3a/g19clMF5wZHDxL/HuRhtGUVA=;
+ b=FEm/rIA0rWw2NedVUbqVjdFx1JSiUiwEJx+NlBsR7fYEeP9XhdwPJ4iFu8RPjrcofw
+ 5wUxaLrlA7dWY+oA4LnumlSoBGrlzq1LQr5LMmmc6xxep5swulBFz+OniZ2eiMkKkAOk
+ FawKs3Moytm3UP2WO7UPL9GJ/A7twmvIffw5e+dcCnVjyL73OqclaUid2lAJa1bxZQgU
+ Z2IlKNXZXB4qoXeB/wFseUtlRc7mfB4Qc7fdptH6wda4EC5FEE7j3T+0rESRNuaBYbRl
+ i+Llx5/GElcq0hdKTCC0/mYQy/+b6L/67XZDL2dK9f2ESFLQYN4CAyIumlxgZ18ub6d3
+ FuPg==
+X-Gm-Message-State: AOJu0YyqOJYx7CnnDuIAArsz8A7J3eOL6BjBJimfNxCcQ0FJtCL02RAi
+ Mp6sU00B9tGzYUdWsPVyoRQbcbeqqvexDaLxnxFTXknsEpLVwLszTKewUZftEFeYJ1U1fZZDVnq
+ LQSxaVgzYZPABry/ckL9+as9zdO6RzncBMsCSuLtBFL98hQhco7sMKfM7q8otVmCQMyrM/S9lDH
+ 8TtEyAnYcIhRlElvIDtiA=
+X-Gm-Gg: ASbGnctXtFMLwiodARaJAYGVhNVgTQpnBqM42ynso2W+hJcP0M5bBBScT89b5eynSh4
+ YIBiQHiSZTe6+trDYSUA9KxAOsFd+LI2kKay1Uy0jjazaTPMBh05AUxx1MrNeJhfuxP3hIpmXIh
+ E41AuhW5qEsrJzGUyoDDkUlO94+ZfC
+X-Received: by 2002:a05:651c:1b05:b0:356:839:56a with SMTP id
+ 38308e7fff4ca-374c37ef44emr28727651fa.25.1759682408682; 
+ Sun, 05 Oct 2025 09:40:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHB7CgArIv0t23ANHG1wiMpwjlW0WMiEKb0DLbNNg8YVaJg6EQGzY/MEeKkn9w2ovnMcGF88uKl4RMeqyfsXbg=
+X-Received: by 2002:a05:651c:1b05:b0:356:839:56a with SMTP id
+ 38308e7fff4ca-374c37ef44emr28727551fa.25.1759682408174; Sun, 05 Oct 2025
+ 09:40:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20251002165546.523435-1-david.marchand@redhat.com>
- <20251003065101.617467-1-david.marchand@redhat.com>
-In-Reply-To: <20251003065101.617467-1-david.marchand@redhat.com>
+References: <20220530134738.488602-1-zhichaox.zeng@intel.com>
+ <20220615060154.6905-1-zhichaox.zeng@intel.com>
+ <Yr2V/yvgbWB4l6xW@bricha3-MOBL.ger.corp.intel.com>
+In-Reply-To: <Yr2V/yvgbWB4l6xW@bricha3-MOBL.ger.corp.intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Sun, 5 Oct 2025 18:29:00 +0200
-X-Gm-Features: AS18NWDGtGngP0Zfc9X5H_05l9WlbJ9-XYTbjjDexYtdjf_HYkExRpNmkq5VAwY
-Message-ID: <CAJFAV8yQ0RHBPfVYMYfEAjmc+gmw8k9Kje8n8PHH=5gY+58=Ow@mail.gmail.com>
-Subject: Re: [PATCH v2] test/debug: fix crash with mlx5 devices
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, dsosnowski@nvidia.com, stable@dpdk.org, 
- Tyler Retzlaff <roretzla@linux.microsoft.com>, 
- Bruce Richardson <bruce.richardson@intel.com>
+Date: Sun, 5 Oct 2025 18:39:56 +0200
+X-Gm-Features: AS18NWD414UwrfKMdsRaZSZywoJQfGnOe_v5_1ZK6C3EgbYyDQt9v6bBCtGlbf0
+Message-ID: <CAJFAV8xS3_JMT1tpR=-MXL3zoLgWFg2kH6COxyoxLf8j8bL5eg@mail.gmail.com>
+Subject: Re: [PATCH v4] lib/eal: fix segfaults due to thread exit order
+To: Bruce Richardson <bruce.richardson@intel.com>, zhichaox.zeng@intel.com
+Cc: dev@dpdk.org, stable@dpdk.org, qiming.yang@intel.com, 
+ stephen@networkplumber.org, mb@smartsharesystems.com, 
+ Harman Kalra <hkalra@marvell.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: H1TlKDkSyxKzlpfsklgpG9Ebk2PRXe7mcUuwYn8FTPc_1759681753
+X-Mimecast-MFC-PROC-ID: u7cD361U_VPhl47NEAJxK_szeRkoapI3TLAPowkxbLg_1759682409
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -85,23 +86,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 3 Oct 2025 at 08:51, David Marchand <david.marchand@redhat.com> wrote:
+On Thu, 30 Jun 2022 at 14:24, Bruce Richardson
+<bruce.richardson@intel.com> wrote:
 >
-> Running rte_exit() in a forked process means that shared memory will be
-> released by the child process before the parent process does the same.
-> This issue has been seen recently when some GHA virtual machine (with
-> some mlx5 devices) runs the debug_autotest unit test.
->
-> Instead, run rte_panic() and rte_exit() from a new DPDK process spawned
-> like for other recursive unit tests.
->
-> Bugzilla ID: 1796
-> Fixes: af75078fece3 ("first public release")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> On Wed, Jun 15, 2022 at 02:01:54PM +0800, zhichaox.zeng@intel.com wrote:
+> > From: Zhichao Zeng <zhichaox.zeng@intel.com>
+> >
+> > The eal-intr-thread is not closed before memory cleanup in the
+> > process of exiting. There is a small probability that when the
+> > eal-intr-thread is about to use some pointers, the memory were
+> > just cleaned, which cause the segment fault error caught by ASan.
+> >
+> > This patch close the eal-intr-thread before memory cleanup when
+> > exiting to avoid segment fault. And add some atomic operations
+> > to avoid executing rte_eal_cleanup in the child process spawned
+> > by fork() in some test cases, e.g. debug_autotest of dpdk-test.
+> >
+> > Cc: stable@dpdk.org
 
-Applied, thanks for the reviews.
+I am not sure if the issue this patch tried to fix still exists.
+However, the problem around usage of fork() in the debug_autotest unit
+test is probably addressed with 2b403dd8fb37 ("test/debug: fix crash
+with mlx5 devices").
 
 
 -- 
