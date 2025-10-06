@@ -2,77 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 638B4CCA471
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 14:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62764CAC5B8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 14:34:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 67B1C402E2;
-	Mon,  6 Oct 2025 16:11:11 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 1CB83402B1
- for <dev@dpdk.org>; Mon,  6 Oct 2025 16:11:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1759759869;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=vp182qIQV25i5rr1Q9WyEqUYQlkikcxFrFcT8waksNw=;
- b=e9x2vgP3mljszdMBboGNjceZtrtKHVMML67rwAt0B2pkzgR+pJwR5D4fetC6M/yevnu1xM
- KPdIIlFoOnui00AlsOiqUJAgufiqcq3vp9hzqgOoMZhFQnvI9GqxuwaNd5ho7CeZFRHeqP
- DjJRMzunxbwtIogw/ZK8oI2xQexbH7s=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-185-pcgWaI5HNCadv8N0ZbvwWg-1; Mon, 06 Oct 2025 10:11:07 -0400
-X-MC-Unique: pcgWaI5HNCadv8N0ZbvwWg-1
-X-Mimecast-MFC-AGG-ID: pcgWaI5HNCadv8N0ZbvwWg_1759759865
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-3654fd1a668so18950871fa.2
- for <dev@dpdk.org>; Mon, 06 Oct 2025 07:11:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 72FEC402E2;
+	Mon,  6 Oct 2025 16:34:42 +0200 (CEST)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com
+ [209.85.215.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 640C9402B1
+ for <dev@dpdk.org>; Mon,  6 Oct 2025 16:34:40 +0200 (CEST)
+Received: by mail-pg1-f176.google.com with SMTP id
+ 41be03b00d2f7-b62fcddfa21so996216a12.1
+ for <dev@dpdk.org>; Mon, 06 Oct 2025 07:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1759761279; x=1760366079; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=JRIyA0c46U3DQyPf+z/KKeGZhqh1ZNcnuI9yPs7Miwc=;
+ b=ByGW7MMZhon+TgqYztXR9wbd5Ux+Ynu/dgcikevD2Llmasvh5zkn+Qqz3IeQbfufRO
+ 7MiWXxsN3F/bMUyyc7KHdz4JhvqAY5L8hEFRLdLbwVsCKfVMsuDbs+iaj2x6/7+wpy6x
+ g6MdoDw9lw8yjmPvCI2wAGVC9K0sbezxWUmTQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759759865; x=1760364665;
+ d=1e100.net; s=20230601; t=1759761279; x=1760366079;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=vp182qIQV25i5rr1Q9WyEqUYQlkikcxFrFcT8waksNw=;
- b=XLA/aA7pRuVdbS2a/IscsnWPHbKwkupAzWr4tV3KWQD9M2GbVbHEMXRCtXl9Q+px8V
- NTGpQcMN1UJwWk5wZdEfc6e2zCqJiYr6gmnQLG6LfjqCymKSvmPEp0XYtHjskedEa11r
- w/qYvNBJxljfG5y+yiYMP8vETXrPGKQUM0HHDHB0ooUtdS//8HhM227BgdvP+yE975ql
- jEm3Slgy3D9Widk5wo0E4v8FMEO5aOTsGvcnYwKIPSaqBcX+0mog4EhofQ1vVCYRVhWq
- aU4B9Wwbf9ETXpQD3jVZr3qvx3bSUv0iVgPjJHnXKdaqGXa7GSElWwQFhLUKn+72qkYa
- 4AQg==
-X-Gm-Message-State: AOJu0Yy4Qlhn4ciU9wseKTaoyajPRjEBJZgFZsMvDXLHmSBE37MbEufs
- Ey4F80rwLxoicXLUg7zDtK7/JZ8SIHSYbJrvt3eVGS7RurFPJ2UTkXknbR1sxEFfrg6LKVw8qCH
- Zh7KndE9bTvbRVrQ/yi1goXYks6aeVmxPrY5XSMimEB/vPdyaCG+Bryr/CGU29kKwlRXPMn3I3B
- UHarfpJfNykzSewdHtTKI=
-X-Gm-Gg: ASbGnctaTnlo+eGolBsaaJ2q/cpJGWF2sB7BNQ0z3TR1y1Y1KINZxUgz+1PRgARqWM0
- E6AqGHd+xNWgmHAhxH2xYk2hY5c/gZVix+Vo4oJ7IiJQcKaVX11qDm45Ygm8pT2zQ/h/3vLzMPa
- JIBHGCf1mzvCDO0CM86tbs5tX7bXOL
-X-Received: by 2002:a05:651c:504:b0:336:ceac:f3bf with SMTP id
- 38308e7fff4ca-374c36fe0a3mr35421401fa.13.1759759865089; 
- Mon, 06 Oct 2025 07:11:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIOJTG/6XOMzGRZbLS8H1bzZFGxRw+5FsYsa+MF9ZH30iVToP1Sum4KJUeVCopa8JsFDgr26nk/7tKElwYJ6M=
-X-Received: by 2002:a05:651c:504:b0:336:ceac:f3bf with SMTP id
- 38308e7fff4ca-374c36fe0a3mr35421201fa.13.1759759864447; Mon, 06 Oct 2025
- 07:11:04 -0700 (PDT)
+ bh=JRIyA0c46U3DQyPf+z/KKeGZhqh1ZNcnuI9yPs7Miwc=;
+ b=U8fg9XMr93eAu+4gsNvJRt9elT46GV4Mu2fAZ5D5SPsnIXj/clBoLc8tA4ghquD4wD
+ y4S9WyzfYUpRnjwMUEOBGz5vNa8T3IlrXkKy28Ch2v9fuaXAJlDkPffMzXRk6ypvBX+j
+ rZYi5mZAscnC6mR0MTSZFjpNxKqAGu+nNrkacSg7lR12Y5lEgF+zHJFy14EPEAtvXWsE
+ 78Url47CHqbPdKpCXGrYsOfPTMDjBKsRCWY1vxeo8ZTXY6gCWO5bm6r+UuWQEB3Z0SGj
+ +oV21xqcISww7f6w9Y7LN4iC6GAr/RliQdRBT2zzOQ/bvomy6TQHMp7exXuouqJgtDi1
+ OJRg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXzBi3js4ACLESETPDsPRhiGC6qFbSEd3wgdpKAWSxPBWSh+xppYIpSE7CuR9nutgQXvoc=@dpdk.org
+X-Gm-Message-State: AOJu0YyQUvB12YSElG3Eed5O4GjYeJcX0qPDk2Q4Nbr+fhTQEORRNXq6
+ P5YLixzDjOcaaKCBTXCPaHFcxbmuPZhDaiadLM0lZOvdZXhsafyBTTKQJGE1RTaLS3JmxNyoL3f
+ VaaDdOCj2kgqhIXuseq3PKOeupahsfnocRy8s4xbEZQ==
+X-Gm-Gg: ASbGncuGONcnhFqYiQ6H1vO2XDqVjU8hTHXtXwrOJcmtXKaf38x9TZJZ0VCXWJqYUE5
+ At+kmUAi3nD4g1Pd3KypkpyKBNDgBkfbw5WjOK+WO0bktpxjGb7oD481a2DZ7Ew3Xk1XZ9HJt0k
+ IpWNU/YK8iQTySD7jzxIWvWZ7OKSZ1dEu1L0LqzE+AixPSiuR8T122zwWzXWOIJVuVOZY9R1Ft0
+ 9zaVvujg/SPSJQphStJ0mGQHqn78YuQY53jpM8VicbMSw==
+X-Google-Smtp-Source: AGHT+IEoBi3GnigtVisUPAvmi0wJLWBAMBBcQBnRP/xgYcFWHtkOoZY2ymPL6nosw1HWWOY92or1IecAt+AucI3+gXI=
+X-Received: by 2002:a17:903:2b0f:b0:28e:7f4e:d694 with SMTP id
+ d9443c01a7336-28e9a61a8cfmr177859995ad.28.1759761279410; Mon, 06 Oct 2025
+ 07:34:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250520164025.2055721-1-bruce.richardson@intel.com>
- <20251003081510.1197166-1-bruce.richardson@intel.com>
-In-Reply-To: <20251003081510.1197166-1-bruce.richardson@intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 6 Oct 2025 16:10:52 +0200
-X-Gm-Features: AS18NWBLgemdR-lMf0_H4KlUG4s1INkeijLDVILC4-7VfV9YEPaEqkgVLLYuvMw
-Message-ID: <CAJFAV8yuo6vVSGKx4Cbs6Qqv9Y9dPsLteZtmN+Kr79BmnMqCbA@mail.gmail.com>
-Subject: Re: [PATCH v9 00/18] Simplify running with high-numbered CPUs
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
- Stephen Hemminger <stephen@networkplumber.org>,
- dpdk-techboard <techboard@dpdk.org>, 
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: A3M-xjVoU7SO2LHN3NLumaGwCTqrfUyscOiKU5grygI_1759759865
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+References: <CAJFAV8zLgkqEyifkG0t5f22pu+55PUXAKXdQXHHK7n2sxenTzg@mail.gmail.com>
+ <CAMw=ZnSVkkdF8_V54xWxDths7HyRcW_6Fu3kuiQ-tg2buScCeA@mail.gmail.com>
+ <CAJFAV8y196yO8OqBi9_EYp+sKHXk41pf5U=M-yym6fP3R_eP6Q@mail.gmail.com>
+In-Reply-To: <CAJFAV8y196yO8OqBi9_EYp+sKHXk41pf5U=M-yym6fP3R_eP6Q@mail.gmail.com>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Mon, 6 Oct 2025 10:34:05 -0400
+X-Gm-Features: AS18NWCov942aQlFlWndgy6AN9DnzMc8iFfWvb1wyNdQ4tvbAfhSiOqYQo2V57E
+Message-ID: <CAJvnSUCPDzafvJ=O2baX31asgRtGO==cd05+GXLdptn4qUnEjg@mail.gmail.com>
+Subject: Re: Build failure in OBS with openSUSE 15.6
+To: David Marchand <david.marchand@redhat.com>
+Cc: Luca Boccassi <luca.boccassi@gmail.com>, dev <dev@dpdk.org>, 
+ Thomas Monjalon <thomas@monjalon.net>, Kevin Traynor <ktraynor@redhat.com>, 
+ Aaron Conole <aconole@redhat.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Content-Type: multipart/alternative; boundary="000000000000f2f64506407e59be"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,93 +76,123 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 3 Oct 2025 at 10:15, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
+--000000000000f2f64506407e59be
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+This came up for the DPDK Community Lab a few months ago and we modified
+the DPDK OpenSuse Dockerfile to build and use a new version of gcc, per
+community request:
+
+-----------
+
+RUN update-alternatives --install /usr/bin/cc cc /usr/bin/gcc-14 100
+
+-----------
+
+It runs against our normal practice (test with the core build utilities the
+distro ships with) but it was the only way to continue to provide results
+for OpenSuse.
+
+On Mon, Oct 6, 2025 at 7:04=E2=80=AFAM David Marchand <david.marchand@redha=
+t.com>
+wrote:
+
+> On Mon, 6 Oct 2025 at 12:27, Luca Boccassi <luca.boccassi@gmail.com>
+> wrote:
+> > On Mon, 6 Oct 2025 at 08:43, David Marchand <david.marchand@redhat.com>
+> wrote:
+> > > We have a build failure in the openSUSE 15.6 job in OBS.
+> > >
+> https://build.opensuse.org/package/live_build_log/home:bluca:dpdk/dpdk/op=
+enSUSE_Leap_15.6/x86_64
+> > >
+> > > This failure is due to 4a04a346e7f3 ("vhost: simplify use of
+> > > pragmas"), which followed dd7fdfff9bc1 ("build: remove support for GC=
+C
+> > > < 8 and clang < 7").
+> > >
+> > > The openSUSE 15.6 job still uses
+> > > [   39s] C compiler for the host machine: cc (gcc 7.5.0 "cc (SUSE
+> Linux) 7.5.0")
+> > >
+> > > Is it possible to update to a more recent gcc?
+> > > Otherwise this test should be dropped.
+> >
+> > Hi, that's what Leap 15 ships with, so I've disabled the job since
+> > it's no longer supported.
+> > BTW I believe you have an account? Thomas and Kevin are already listed
+> > as maintainers so they can do these changes too, if you tell me your
+> > username I can add you as well, it's just a click in the repositories
+> > tab to enable/disable builds
 >
-> The ultimate of this patchset is to make it easier to run on systems
-> with large numbers of cores, by simplifying the process of using core
-> numbers >RTE_MAX_LCORE. The new EAL arg ``-remap-lcore-ids``, also
-> shortened to ``-R``, is added to DPDK to support this.
+> Thank you.
+> Ack, let's sync offlist.
 >
-> However, in order to add this new flag easily, the first dozen or more
-> patches rework the argument handling in EAL to simplify things, using
-> the argparse library for argument handling.
 >
-> When processing cmdline arguments in DPDK, we always do so with very
-> little context. So, for example, when processing the "-l" flag, we have
-> no idea whether there will be later a --proc-type=secondary flag. We
-> have all sorts of post-arg-processing checks in place to try and catch
-> these scenarios.
+> --
+> David Marchand
 >
-> To improve this situation, this patchset tries to simplify the handling
-> of argument processing, by explicitly doing an initial pass to collate
-> all arguments into a structure. Thereafter, the actual arg parsing is
-> done in a fixed order, meaning that e.g. when processing the
-> --main-lcore flag, we have already processed the service core flags. We
-> also can far quicker and easier check for conflicting options, since
-> they can all be checked for NULL/non-NULL in the arg structure
-> immediately after the struct has been populated.
 >
-> An additional benefit of this work is that the argument parsing for EAL
-> is much more centralised into common options and the options list file.
-> This single list with ifdefs makes it clear to the viewer what options
-> are common across OS's, vs what are unix-only or linux-only.
->
-> Once the cleanup and rework is done, adding the new options for
-> remapping cores becomes a lot simpler, since we can very easily check
-> for scenarios like multi-process and handle those appropriately.
->
-> V9: rebase to latest main. CI complains cannot apply v8 patches.
->
-> V8:
-> * dropped the final two patches from the series, dropping the new -L
->   option in favour of the -R modifier.
-> * reordered patch 11 to be with the other argparse patches (now patch 5)
-> * added patch 12, which uses macros to initialize the args structure
->   from the arguments header file, avoiding potential issues when we add
->   new args.
-> * simplified and consolidated lcore mask and core list parsing to always
->   work off cpusets rather than arrays of uint8
-> * enhanced debug printouts to also work better with cpusets and handle
->   core values in those sets >= RTE_MAX_LCORE
-> * for completeness, ensure the new -R option works for coremasks, and
->   for cases where no explicit core-list or coremask is specified.
 
-I was planning to merge the first part of the series (before reaching
-the cpuset rework and addition of remap option).
+--000000000000f2f64506407e59be
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I am facing two issues for which I prefer other's opinions.
+<div dir=3D"ltr">This came up for the DPDK Community Lab a few months ago a=
+nd we modified the DPDK OpenSuse Dockerfile to build and use a new version =
+of gcc, per community request:<br><br>-----------<br><br>RUN update-alterna=
+tives --install /usr/bin/cc cc /usr/bin/gcc-14 100<br><br>-----------<div><=
+br></div><div>It runs against our normal practice (test with the core build=
+ utilities the distro ships with) but it was the only way to continue to pr=
+ovide results for OpenSuse.</div></div><br><div class=3D"gmail_quote gmail_=
+quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Oct 6, 2025 =
+at 7:04=E2=80=AFAM David Marchand &lt;<a href=3D"mailto:david.marchand@redh=
+at.com">david.marchand@redhat.com</a>&gt; wrote:<br></div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rg=
+b(204,204,204);padding-left:1ex">On Mon, 6 Oct 2025 at 12:27, Luca Boccassi=
+ &lt;<a href=3D"mailto:luca.boccassi@gmail.com" target=3D"_blank">luca.bocc=
+assi@gmail.com</a>&gt; wrote:<br>
+&gt; On Mon, 6 Oct 2025 at 08:43, David Marchand &lt;<a href=3D"mailto:davi=
+d.marchand@redhat.com" target=3D"_blank">david.marchand@redhat.com</a>&gt; =
+wrote:<br>
+&gt; &gt; We have a build failure in the openSUSE 15.6 job in OBS.<br>
+&gt; &gt; <a href=3D"https://build.opensuse.org/package/live_build_log/home=
+:bluca:dpdk/dpdk/openSUSE_Leap_15.6/x86_64" rel=3D"noreferrer" target=3D"_b=
+lank">https://build.opensuse.org/package/live_build_log/home:bluca:dpdk/dpd=
+k/openSUSE_Leap_15.6/x86_64</a><br>
+&gt; &gt;<br>
+&gt; &gt; This failure is due to 4a04a346e7f3 (&quot;vhost: simplify use of=
+<br>
+&gt; &gt; pragmas&quot;), which followed dd7fdfff9bc1 (&quot;build: remove =
+support for GCC<br>
+&gt; &gt; &lt; 8 and clang &lt; 7&quot;).<br>
+&gt; &gt;<br>
+&gt; &gt; The openSUSE 15.6 job still uses<br>
+&gt; &gt; [=C2=A0 =C2=A039s] C compiler for the host machine: cc (gcc 7.5.0=
+ &quot;cc (SUSE Linux) 7.5.0&quot;)<br>
+&gt; &gt;<br>
+&gt; &gt; Is it possible to update to a more recent gcc?<br>
+&gt; &gt; Otherwise this test should be dropped.<br>
+&gt;<br>
+&gt; Hi, that&#39;s what Leap 15 ships with, so I&#39;ve disabled the job s=
+ince<br>
+&gt; it&#39;s no longer supported.<br>
+&gt; BTW I believe you have an account? Thomas and Kevin are already listed=
+<br>
+&gt; as maintainers so they can do these changes too, if you tell me your<b=
+r>
+&gt; username I can add you as well, it&#39;s just a click in the repositor=
+ies<br>
+&gt; tab to enable/disable builds<br>
+<br>
+Thank you.<br>
+Ack, let&#39;s sync offlist.<br>
+<br>
+<br>
+-- <br>
+David Marchand<br>
+<br>
+</blockquote></div>
 
-
-- First, I see a change in how non-option arguments are handled with
-the switch to argparse.
-$ ./build-mini/app/dpdk-test --no-huge -m 2048 -l 0,1 func_reentrancy_autotest
-ARGPARSE: too many positional arguments func_reentrancy_autotest!
-
-Passing the test name after -- does work, but it was working without
--- before the patch, so we are introducing a regression here.
-
-
-- Second, stopping at patch "eal: gather EAL args before processing",
-I see a crash in this same func_reentrancy_autotest unit test.
-
-Here, I would fix the unit test itself, as it passes a NULL argv[0]
-which is invalid according to the C standard.
-I fixed this unit test not so long ago (978ead0144c1
-("test/func_reentrancy: fix EAL init call")), but the fix is
-incomplete.
-And if you wonder why the CI did not catch this, the next patch hides
-the issue for the unit test, as the run_once flag gets set earlier,
-which makes rte_eal_init fail before evaluating argv[0].
-
-On the other hand, even if DPDK does not really care about argv[0]
-content (well, until eal_save_args is called and crashes), we are
-introducing a change in behavior for (arguably) non standard argv[0]
-== NULL, and some programs, which are not passing C library argv[] and
-instead building a argv[] array, may rely on this... ?
-
-
-
--- 
-David Marchand
-
+--000000000000f2f64506407e59be--
