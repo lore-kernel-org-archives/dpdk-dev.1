@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CE2CCA471
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 14:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A96CAC5B8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 14:51:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E91740667;
-	Mon,  6 Oct 2025 16:50:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 74C4E402E2;
+	Mon,  6 Oct 2025 16:51:41 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id B44C5402AF;
- Mon,  6 Oct 2025 16:50:20 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0347C402AF;
+ Mon,  6 Oct 2025 16:51:40 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 8ED8C202CC;
- Mon,  6 Oct 2025 16:50:20 +0200 (CEST)
-Content-class: urn:content-classes:recallmessage
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id CF80B202CC;
+ Mon,  6 Oct 2025 16:51:39 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: multipart/alternative;
- boundary="----_=_NextPart_001_01DC36D0.89A2A43C"
-Subject: Recall: Minutes of techboard meeting, 2025-10-01
-Date: Mon, 6 Oct 2025 16:50:18 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F654A2@smartserver.smartshare.dk>
-X-MS-Has-Attach: 
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: Use of TX offload flags MBUF_FAST_FREE and MULTI_SEGS
+Date: Mon, 6 Oct 2025 16:51:38 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F654A3@smartserver.smartshare.dk>
+In-Reply-To: <aN-Use5rigF3tQc9@bricha3-mobl1.ger.corp.intel.com>
 X-MimeOLE: Produced By Microsoft Exchange V6.5
+X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: Minutes of techboard meeting, 2025-10-01
-Thread-Index: Adw20ImidQT2YMcLT42vVllsfmLRHg==
-Priority: Urgent
-Expiry-Date: Wed, 8 Oct 2025 16:50:17 +0200
+Thread-Topic: Use of TX offload flags MBUF_FAST_FREE and MULTI_SEGS
+Thread-Index: Adw0Rp0aNcBqsJnpSuinX2U7NfkFnAChp3KQ
+References: <aN-Use5rigF3tQc9@bricha3-mobl1.ger.corp.intel.com>
 From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
 To: <dev@dpdk.org>, <techboard@dpdk.org>, <stephen@networkplumber.org>,
  "Thomas Monjalon" <thomas@monjalon.net>,
@@ -47,33 +48,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a multi-part message in MIME format.
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Friday, 3 October 2025 11.18
+> Subject: Minutes of techboard meeting, 2025-10-01
 
-------_=_NextPart_001_01DC36D0.89A2A43C
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+> * Use of FAST_FREE and multi-buffer/scattered mbuf flags
+>   - The flags for enabling fast-free and supporting multi-mbuf packets
+> are
+>     now documented incompatible
+>   - Previously they were not defined as incompatible, but that seems =
+to
+>     have been assumed for some usages.
+>   - Techboard discussed how best to resolve this incompatibility with
+>     regards to:
+>     - ensuring correctness
+>     - avoiding major churn to DPDK code
+>     - avoiding churn to end-user code
+>   - Options discussed:
+>     1 change definition back to not have the settings incompatible:
+> this
+>       necessitates checking drivers for correctness
+>     2 keep as explicitly incompatible and report error if both
+> specified:
+>       this could break end-user apps, and requires changes to example
+> apps
+>     3 drop the fast-free flag if multi-segment mbufs are also
+> specified:
+>       "hides" the issue, but probably minimises changes. Would need to
+>       decide whether the dropping of flag done in drivers vs ethdev
+> level.
+>       Pros and cons to both options. Needs clear documenting.
+>   - No firm decision reached, will discuss more over email.
 
-Morten Br=F8rup would like to recall the message, "Minutes of techboard =
-meeting, 2025-10-01".
+IMO, the patch [1] making MBUF_FAST_FREE and MULTI_SEGS explicitly =
+incompatible should be reverted, at least for RC1.
+That will take the project back to the state it was in before we started =
+this discussion.
+And all the examples broken by the patch (because they use both TX =
+offloads) will not need fixing.
 
-------_=_NextPart_001_01DC36D0.89A2A43C
-Content-Type: text/html;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+[1]: =
+https://patchwork.dpdk.org/project/dpdk/patch/20250803194218.683318-3-mb@=
+smartsharesystems.com/
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
-<HTML>
-<HEAD>
-<TITLE>Recall: Minutes of techboard meeting, 2025-10-01</TITLE>
-</HEAD>
-<BODY>
-<!-- Converted from text/plain format -->
-
-<P><FONT SIZE=3D2>Morten Br=F8rup would like to recall the message, =
-&quot;Minutes of techboard meeting, 2025-10-01&quot;.</FONT>
-</P>
-
-</BODY>
-</HTML>
-------_=_NextPart_001_01DC36D0.89A2A43C--
