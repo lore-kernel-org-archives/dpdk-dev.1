@@ -2,39 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9428CCA471
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 12:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BACCAC5B8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 12:45:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F03E6402D1;
-	Mon,  6 Oct 2025 14:43:14 +0200 (CEST)
-Received: from cstnet.cn (smtp87.cstnet.cn [159.226.251.87])
- by mails.dpdk.org (Postfix) with ESMTP id 9AF39402B1
- for <dev@dpdk.org>; Mon,  6 Oct 2025 14:43:12 +0200 (CEST)
-Received: from sunyuechi$iscas.ac.cn ( [42.58.231.158] ) by
- ajax-webmail-APP-17 (Coremail) ; Mon, 6 Oct 2025 20:43:08 +0800 (GMT+08:00)
-X-Originating-IP: [42.58.231.158]
-Date: Mon, 6 Oct 2025 20:43:08 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: sunyuechi@iscas.ac.cn
+	by mails.dpdk.org (Postfix) with ESMTP id 26C56402D1;
+	Mon,  6 Oct 2025 14:45:25 +0200 (CEST)
+Received: from mail-wm1-f102.google.com (mail-wm1-f102.google.com
+ [209.85.128.102])
+ by mails.dpdk.org (Postfix) with ESMTP id 8D508402B1
+ for <dev@dpdk.org>; Mon,  6 Oct 2025 14:45:23 +0200 (CEST)
+Received: by mail-wm1-f102.google.com with SMTP id
+ 5b1f17b1804b1-46e3af7889fso29964675e9.2
+ for <dev@dpdk.org>; Mon, 06 Oct 2025 05:45:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=6wind.com; s=google; t=1759754723; x=1760359523; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=01gOPC/KLVTlSwUziukd5E09bJVqZQDKeph1DsREltU=;
+ b=hc+tLkSM5Mgy6dvC1+dH4nI99xcbeWccLlCDh70uEGe9wxV8ew2XXogOvvqbkCX0sg
+ h1fv5DcSpy6yEt4smtwKDxRFQgxwD1cJhvp3dNoOeht2hVgRgoCscIp2ZQ1byiZrZL31
+ 8mKEdPxjlqdT7TEUBDa/+2hAPlFgBvcae6Kbbp5yUhOCkemgpoBa5QYcxZnwn55jCSck
+ NhIaZ2TiBquPztMMR5uIhy0lHB7B1KQbdQKCuQSxYINn0zxTKDqM9xlXKg96j7gaEPID
+ QtosiFkeB2Dql6XOPiZMKmFS2VfQwVRZQSC9gfeJB0r1P+ZDlQyQRFgQlMeeNajCa3Fu
+ xaOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1759754723; x=1760359523;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=01gOPC/KLVTlSwUziukd5E09bJVqZQDKeph1DsREltU=;
+ b=JfRKskNdvCAMl1nOWtOImejYHB7lL/OVVp4JLpL+RI8cboUggSSrWpqmJWY+o+vtpc
+ Ef1iKL7q75/IqpVs/y3wvTnlJvfdm1EJM3vj4XjAkum5Tsbzitc/Sq7pU9y+YP2tz3Y6
+ 4/f+3GQnVue8eo806WWzpwi1yn0S+XpTL3JHhmGCSTyW+mkQm0DViSB+Bao8q6mH+Kh2
+ KTXkxvmik0SjMyULK7j530N9hcgFm5joZ+uhNFkRGMG6zu5/KM3oR9WUjjHJXRyn0WET
+ EmsPAUpiDv/ZO31exgz10wH9E7Pck5/B1AZ3rXQEDf15oxMcFS27wZq5kUcjRXSTjZ48
+ 5sXw==
+X-Gm-Message-State: AOJu0YySigdXWk+QgRKGluj09jCRPapaX0VRuDjEbf13oN2IX8Mox2rG
+ 5dLJMglXvN1EHhMHnwhKeJRiSGRPpo0Oq5QdRnJQOnFC6J26QavZucdbUywdhi57rQkLmfmgPK3
+ 5kzimDJQwdvZ74MwtAOUCvApEvgNsAouNF+DUtJkZ5LF9+Q==
+X-Gm-Gg: ASbGncu5HfDc5Ol/mljIWprb3sExeZiYocBV5i5QUI8L2TgSiAbty0y7GjKZ6EEO99O
+ 6FS+yqDc7mOyqSsAHkh0giFScREJWupvb3Wk1CNShmbh5EHzoXQLYhQJ7wNm1SkoHCtJffqNoOK
+ 1VscE6f/4UNKpZL6tEI8I2fEEt8HRDUnMgs7RAWK5GWVqBr254JkM/DI8UhgKm0pXRVLODIe0c0
+ Hr10oAlfirxB+sibKNCH46E/oNyr1R3KredIjpuY39w89vsv22TOW+evQ0RWbXkxahBoG023q3Y
+ RckLtEoCPc1eB5GbLuen//yEngToqtMlUmq3dFOn19BzDgfMDR1hRcxfix5AmzbYJpjVN891AY4
+ kgvbcv/JQiYt5h9vXxCKATjBv
+X-Google-Smtp-Source: AGHT+IHLBus2BWFUc7n5TROBZZWvqrkU0pl2OXOewUXo2swPZqeqTtWgoQFcz/qwgdje2P8Z6jmcxuVN6uCF
+X-Received: by 2002:a05:600c:c178:b0:45d:f81d:eae7 with SMTP id
+ 5b1f17b1804b1-46e71168c41mr74856735e9.28.1759754722969; 
+ Mon, 06 Oct 2025 05:45:22 -0700 (PDT)
+Received: from smtpservice.6wind.com ([185.13.181.2])
+ by smtp-relay.gmail.com with ESMTP id
+ ffacd0b85a97d-4255d8e0babsm944332f8f.39.2025.10.06.05.45.22; 
+ Mon, 06 Oct 2025 05:45:22 -0700 (PDT)
+X-Relaying-Domain: 6wind.com
+Received: from localhost (vader.dev.6wind.com [10.17.1.39])
+ by smtpservice.6wind.com (Postfix) with ESMTP id 97A05116BA;
+ Mon,  6 Oct 2025 14:45:22 +0200 (CEST)
+From: Thierry Herbelot <thierry.herbelot@6wind.com>
 To: dev@dpdk.org
-Cc: =?UTF-8?Q?Stanis=C5=82aw_Kardach?= <stanislaw.kardach@gmail.com>, 
- "Bruce Richardson" <bruce.richardson@intel.com>
-Subject: Re: [PATCH] config/riscv: add rv64gcv cross compilation target
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
- 20240627(e6c6db66) Copyright (c) 2002-2025 www.mailtech.cn cnic.cn
-In-Reply-To: <20250923150734.2208125-1-sunyuechi@iscas.ac.cn>
-References: <20250923150734.2208125-1-sunyuechi@iscas.ac.cn>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+Cc: Thierry Herbelot <thierry.herbelot@6wind.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ David Marchand <david.marchand@redhat.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Olivier Matz <olivier.matz@6wind.com>
+Subject: [PATCH] net/intel/e1000: reduce the optimization level for gcc > 11
+Date: Mon,  6 Oct 2025 14:45:06 +0200
+Message-Id: <20251006124506.388456-1-thierry.herbelot@6wind.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Message-ID: <224af7e6.115d8.199b98c0ff2.Coremail.sunyuechi@iscas.ac.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: qgCowACnRLRdueNoy6wCAA--.22979W
-X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiCQ4HAmjjT1OUnwABsf
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
- CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
- daVFxhVjvjDU=
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,71 +85,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-SGksIGhvdyBpcyB0aGlzIHBhdGNoPwoKCiZndDsgLS0tLS3ljp/lp4vpgq7ku7YtLS0tLQomZ3Q7
-IOWPkeS7tuS6ujogc3VueXVlY2hpQGlzY2FzLmFjLmNuCiZndDsg5Y+R6YCB5pe26Ze0OiAyMDI1
-LTA5LTIzIDIzOjA3OjM0ICjmmJ/mnJ/kuowpCiZndDsg5pS25Lu25Lq6OiBkZXZAZHBkay5vcmcK
-Jmd0OyDmioTpgIE6ICJTdW4gWXVlY2hpIiA8c3VueXVlY2hpQGlzY2FzLmFjLmNuPiwgIlN0YW5p
-c8WCYXcgS2FyZGFjaCIgPHN0YW5pc2xhdy5rYXJkYWNoQGdtYWlsLmNvbT4sICJCcnVjZSBSaWNo
-YXJkc29uIiA8YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5jb20+CiZndDsg5Li76aKYOiBbUEFUQ0hd
-IGNvbmZpZy9yaXNjdjogYWRkIHJ2NjRnY3YgY3Jvc3MgY29tcGlsYXRpb24gdGFyZ2V0CiZndDsg
-CiZndDsgRnJvbTogU3VuIFl1ZWNoaSA8c3VueXVlY2hpQGlzY2FzLmFjLmNuPgomZ3Q7IAomZ3Q7
-IEFkZCBhIGNyb3NzIGZpbGUgZm9yIHJ2NjRnY3YsIGVuYWJsZSBpdCBpbiBkZXZ0b29scy90ZXN0
-LW1lc29uLWJ1aWxkcy5zaCwKJmd0OyBhbmQgdXBkYXRlIHRoZSBSSVNDLVYgY3Jvc3MtYnVpbGQg
-Z3VpZGUgdG8gc3VwcG9ydCB0aGUgdmVjdG9yIGV4dGVuc2lvbi4KJmd0OyAKJmd0OyBTaWduZWQt
-b2ZmLWJ5OiBTdW4gWXVlY2hpIDxzdW55dWVjaGlAaXNjYXMuYWMuY24+CiZndDsgLS0tCiZndDsg
-IGNvbmZpZy9yaXNjdi9tZXNvbi5idWlsZCAgICAgICAgICAgICAgICAgICAgICAgIHwgIDMgKyst
-CiZndDsgIGNvbmZpZy9yaXNjdi9yaXNjdjY0X3J2NjRnY3ZfbGludXhfZ2NjICAgICAgICAgIHwg
-MTcgKysrKysrKysrKysrKysrKysKJmd0OyAgZGV2dG9vbHMvdGVzdC1tZXNvbi1idWlsZHMuc2gg
-ICAgICAgICAgICAgICAgICAgfCAgNCArKysrCiZndDsgIC4uLi9saW51eF9nc2cvY3Jvc3NfYnVp
-bGRfZHBka19mb3JfcmlzY3YucnN0ICAgIHwgIDIgKysKJmd0OyAgNCBmaWxlcyBjaGFuZ2VkLCAy
-NSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCiZndDsgIGNyZWF0ZSBtb2RlIDEwMDY0NCBj
-b25maWcvcmlzY3YvcmlzY3Y2NF9ydjY0Z2N2X2xpbnV4X2djYwomZ3Q7IAomZ3Q7IGRpZmYgLS1n
-aXQgYS9jb25maWcvcmlzY3YvbWVzb24uYnVpbGQgYi9jb25maWcvcmlzY3YvbWVzb24uYnVpbGQK
-Jmd0OyBpbmRleCBmM2RhZWEwYzBlLi5hMDY0MjlhMWUyIDEwMDY0NAomZ3Q7IC0tLSBhL2NvbmZp
-Zy9yaXNjdi9tZXNvbi5idWlsZAomZ3Q7ICsrKyBiL2NvbmZpZy9yaXNjdi9tZXNvbi5idWlsZAom
-Z3Q7IEBAIC00Myw3ICs0Myw4IEBAIHZlbmRvcl9nZW5lcmljID0gewomZ3Q7ICAgICAgICAgIFsn
-UlRFX01BWF9OVU1BX05PREVTJywgMl0KJmd0OyAgICAgIF0sCiZndDsgICAgICAnYXJjaF9jb25m
-aWcnOiB7CiZndDsgLSAgICAgICAgJ2dlbmVyaWMnOiB7J21hY2hpbmVfYXJncyc6IFsnLW1hcmNo
-PXJ2NjRnYyddfQomZ3Q7ICsgICAgICAgICdnZW5lcmljJzogeydtYWNoaW5lX2FyZ3MnOiBbJy1t
-YXJjaD1ydjY0Z2MnXX0sCiZndDsgKyAgICAgICAgJ3J2NjRnY3YnOiB7J21hY2hpbmVfYXJncyc6
-IFsnLW1hcmNoPXJ2NjRnY3YnXX0sCiZndDsgICAgICB9CiZndDsgIH0KJmd0OyAgCiZndDsgZGlm
-ZiAtLWdpdCBhL2NvbmZpZy9yaXNjdi9yaXNjdjY0X3J2NjRnY3ZfbGludXhfZ2NjIGIvY29uZmln
-L3Jpc2N2L3Jpc2N2NjRfcnY2NGdjdl9saW51eF9nY2MKJmd0OyBuZXcgZmlsZSBtb2RlIDEwMDY0
-NAomZ3Q7IGluZGV4IDAwMDAwMDAwMDAuLmNjYzUxMTVkZWMKJmd0OyAtLS0gL2Rldi9udWxsCiZn
-dDsgKysrIGIvY29uZmlnL3Jpc2N2L3Jpc2N2NjRfcnY2NGdjdl9saW51eF9nY2MKJmd0OyBAQCAt
-MCwwICsxLDE3IEBACiZndDsgK1tiaW5hcmllc10KJmd0OyArYyA9IFsnY2NhY2hlJywgJ3Jpc2N2
-NjQtbGludXgtZ251LWdjYyddCiZndDsgK2NwcCA9IFsnY2NhY2hlJywgJ3Jpc2N2NjQtbGludXgt
-Z251LWcrKyddCiZndDsgK2FyID0gJ3Jpc2N2NjQtbGludXgtZ251LWFyJwomZ3Q7ICtzdHJpcCA9
-ICdyaXNjdjY0LWxpbnV4LWdudS1zdHJpcCcKJmd0OyArcGNhcC1jb25maWcgPSAnJwomZ3Q7ICsK
-Jmd0OyArW2hvc3RfbWFjaGluZV0KJmd0OyArc3lzdGVtID0gJ2xpbnV4JwomZ3Q7ICtjcHVfZmFt
-aWx5ID0gJ3Jpc2N2NjQnCiZndDsgK2NwdSA9ICdydjY0Z2N2JwomZ3Q7ICtlbmRpYW4gPSAnbGl0
-dGxlJwomZ3Q7ICsKJmd0OyArW3Byb3BlcnRpZXNdCiZndDsgK3ZlbmRvcl9pZCA9ICdnZW5lcmlj
-JwomZ3Q7ICthcmNoX2lkID0gJ3J2NjRnY3YnCiZndDsgK3BrZ19jb25maWdfbGliZGlyID0gJy91
-c3IvbGliL3Jpc2N2NjQtbGludXgtZ251L3BrZ2NvbmZpZycKJmd0OyBkaWZmIC0tZ2l0IGEvZGV2
-dG9vbHMvdGVzdC1tZXNvbi1idWlsZHMuc2ggYi9kZXZ0b29scy90ZXN0LW1lc29uLWJ1aWxkcy5z
-aAomZ3Q7IGluZGV4IDRmZmYxZjcxNzcuLjRmMDdmODRlYjAgMTAwNzU1CiZndDsgLS0tIGEvZGV2
-dG9vbHMvdGVzdC1tZXNvbi1idWlsZHMuc2gKJmd0OyArKysgYi9kZXZ0b29scy90ZXN0LW1lc29u
-LWJ1aWxkcy5zaAomZ3Q7IEBAIC0yOTAsNiArMjkwLDEwIEBAIGJ1aWxkIGJ1aWxkLXBwYzY0LXBv
-d2VyOC1nY2MgJGYgQUJJICR1c2Vfc2hhcmVkCiZndDsgIGY9JHNyY2Rpci9jb25maWcvcmlzY3Yv
-cmlzY3Y2NF9saW51eF9nY2MKJmd0OyAgYnVpbGQgYnVpbGQtcmlzY3Y2NC1nZW5lcmljLWdjYyAk
-ZiBBQkkgJHVzZV9zaGFyZWQKJmd0OyAgCiZndDsgKyMgUklTQy1WIHZlY3RvciAocnY2NGdjdikK
-Jmd0OyArZj0kc3JjZGlyL2NvbmZpZy9yaXNjdi9yaXNjdjY0X3J2NjRnY3ZfbGludXhfZ2NjCiZn
-dDsgK2J1aWxkIGJ1aWxkLXJpc2N2NjRfcnY2NGdjdl9nY2MgJGYgQUJJICR1c2Vfc2hhcmVkCiZn
-dDsgKwomZ3Q7ICAjIFRlc3QgaW5zdGFsbGF0aW9uIG9mIHRoZSB4ODYtZ2VuZXJpYyB0YXJnZXQs
-IHRvIGJlIHVzZWQgZm9yIGNoZWNraW5nCiZndDsgICMgdGhlIHNhbXBsZSBhcHBzIGJ1aWxkIHVz
-aW5nIHRoZSBwa2ctY29uZmlnIGZpbGUgZm9yIGNmbGFncyBhbmQgbGlicwomZ3Q7ICBsb2FkX2Vu
-diBjYwomZ3Q7IGRpZmYgLS1naXQgYS9kb2MvZ3VpZGVzL2xpbnV4X2dzZy9jcm9zc19idWlsZF9k
-cGRrX2Zvcl9yaXNjdi5yc3QgYi9kb2MvZ3VpZGVzL2xpbnV4X2dzZy9jcm9zc19idWlsZF9kcGRr
-X2Zvcl9yaXNjdi5yc3QKJmd0OyBpbmRleCA3ZDdmN2FjNzJiLi5iY2JhMTJhNjA0IDEwMDY0NAom
-Z3Q7IC0tLSBhL2RvYy9ndWlkZXMvbGludXhfZ3NnL2Nyb3NzX2J1aWxkX2RwZGtfZm9yX3Jpc2N2
-LnJzdAomZ3Q7ICsrKyBiL2RvYy9ndWlkZXMvbGludXhfZ3NnL2Nyb3NzX2J1aWxkX2RwZGtfZm9y
-X3Jpc2N2LnJzdAomZ3Q7IEBAIC0xMDgsNiArMTA4LDggQEAgQ3VycmVudGx5IHRoZSBmb2xsb3dp
-bmcgdGFyZ2V0cyBhcmUgc3VwcG9ydGVkOgomZ3Q7ICAKJmd0OyAgKiBHZW5lcmljIHJ2NjRnYyBJ
-U0E6IGBgY29uZmlnL3Jpc2N2L3Jpc2N2NjRfbGludXhfZ2NjYGAKJmd0OyAgCiZndDsgKyogUlY2
-NEdDViBJU0E6IGBgY29uZmlnL3Jpc2N2L3Jpc2N2NjRfcnY2NGdjdl9saW51eF9nY2NgYAomZ3Q7
-ICsKJmd0OyAgKiBTaUZpdmUgVTc0MCBTb0M6IGBgY29uZmlnL3Jpc2N2L3Jpc2N2NjRfc2lmaXZl
-X3U3NDBfbGludXhfZ2NjYGAKJmd0OyAgCiZndDsgIFRvIGFkZCBhIG5ldyB0YXJnZXQgc3VwcG9y
-dCwgYGBjb25maWcvcmlzY3YvbWVzb24uYnVpbGRgYCBoYXMgdG8gYmUgbW9kaWZpZWQgYnkKJmd0
-OyAtLSAKJmd0OyAyLjUxLjAKPC9zdW55dWVjaGlAaXNjYXMuYWMuY24+PC9zdW55dWVjaGlAaXNj
-YXMuYWMuY24+PC9icnVjZS5yaWNoYXJkc29uQGludGVsLmNvbT48L3N0YW5pc2xhdy5rYXJkYWNo
-QGdtYWlsLmNvbT48L3N1bnl1ZWNoaUBpc2Nhcy5hYy5jbj4=
+The e1000 PMD stopped working under Ubuntu-24.04 (using gcc-13) when
+compiled with -O3 (default level for all DPDK code). There is a crash
+when starting testpmd:
+
+(gdb) bt
+#0  rte_read32_relaxed (addr=0x1100800e00) at ../sources/lib/eal/include/generic/rte_io.h:290
+#1  rte_read32 (addr=0x1100800e00) at ../sources/lib/eal/include/generic/rte_io.h:345
+#2  e1000_read_addr (addr=0x1100800e00) at ../sources/drivers/net/intel/e1000/base/e1000_osdep.h:106
+#3  e1000_id_led_init_generic (hw=0x1586788c0) at ../sources/drivers/net/intel/e1000/base/e1000_mac.c:1844
+#4  0x000062aaf653c85f in e1000_init_hw_82540 (hw=0x1586788c0)
+    at ../sources/drivers/net/intel/e1000/base/e1000_82540.c:308
+#5  0x000062aaf6db8227 in em_hardware_init (hw=hw@entry=0x1586788c0)
+    at ../sources/drivers/net/intel/e1000/em_ethdev.c:920
+#6  0x000062aaf65340ff in em_hw_init (hw=0x1586788c0) at ../sources/drivers/net/intel/e1000/em_ethdev.c:445
+#7  eth_em_dev_init (eth_dev=eth_dev@entry=0x62aaff346000 <rte_eth_devices>)
+    at ../sources/drivers/net/intel/e1000/em_ethdev.c:314
+#8  0x000062aaf6db8b71 in rte_eth_dev_pci_generic_probe (private_data_size=11240,
+    dev_init=0x62aaf6db8310 <eth_em_dev_init>, pci_dev=0x62ab2853dd90) at ../sources/lib/ethdev/ethdev_pci.h:150
+#9  eth_em_pci_probe (pci_drv=<optimized out>, pci_dev=0x62ab2853dd90)
+    at ../sources/drivers/net/intel/e1000/em_ethdev.c:365
+#10 0x000062aaf646adf5 in rte_pci_probe_one_driver (dr=dr@entry=0x62aaf82d8020 <rte_em_pmd>,
+    dev=dev@entry=0x62ab2853dd90) at ../sources/drivers/bus/pci/pci_common.c:299
+#11 0x000062aaf6a15f7d in pci_probe_all_drivers (dev=0x62ab2853dd90) at ../sources/drivers/bus/pci/pci_common.c:383
+#12 pci_probe () at ../sources/drivers/bus/pci/pci_common.c:410
+#13 0x000062aaf7a485f3 in rte_bus_probe () at ../sources/lib/eal/common/eal_common_bus.c:84
+#14 0x000062aaf670585d in rte_eal_init (argc=argc@entry=146, argv=argv@entry=0x7fffca468898)
+    at ../sources/lib/eal/linux/eal.c:1253
+
+The crash is linked to the use of gcc-13: uner Ubuntu-24.04 testpmd
+compiled with gcc-11 from the same DPDK tree works as expected.
+
+The perfect solution would be for someone to investigate why the
+PMD crashes. However, this depends on Maintainer availability.
+
+A less-perfect solution is to reduce the optimization level
+(like another proposal for net/qede: see Link).
+
+Note: if more regressions are seen in less-frequently used PMDs,
+      maybe we should switch the default optimization level to -O1,
+      (tree-wide) and only rise the optimization level for actively
+      maintained PMDs, which are proven to work as expected with
+      higher optimization levels.
+
+Link: http://patches.dpdk.org/project/dpdk/patch/20250909054023.3263401-1-thierry.herbelot@6wind.com/
+Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
+---
+ drivers/net/intel/e1000/base/meson.build | 4 ++++
+ drivers/net/intel/e1000/meson.build      | 5 +++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/drivers/net/intel/e1000/base/meson.build b/drivers/net/intel/e1000/base/meson.build
+index 4fe86dc6df34..e3631f1adc27 100644
+--- a/drivers/net/intel/e1000/base/meson.build
++++ b/drivers/net/intel/e1000/base/meson.build
+@@ -22,3 +22,7 @@ base_sources = files(
+         'e1000_phy.c',
+         'e1000_vf.c',
+ )
++# testpmd crashes with gcc > 11 with compiling with default -O3 or -O2
++if (cc.get_id() == 'gcc' and cc.version().version_compare('>=12.0'))
++    base_cflags += '-O1'
++endif
+diff --git a/drivers/net/intel/e1000/meson.build b/drivers/net/intel/e1000/meson.build
+index 924fe4ecaef5..3a875d1555c2 100644
+--- a/drivers/net/intel/e1000/meson.build
++++ b/drivers/net/intel/e1000/meson.build
+@@ -23,3 +23,8 @@ if not is_windows
+                 'igc_txrx.c',
+         )
+ endif
++
++# testpmd crashes with gcc > 11 with compiling with default -O3 or -O2
++if (cc.get_id() == 'gcc' and cc.version().version_compare('>=12.0'))
++    cflags += '-O1'
++endif
+-- 
+2.39.2
+
