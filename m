@@ -2,79 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B95D3CAC5B8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 13:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCFCCCA471
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 13:03:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1590E402D1;
-	Mon,  6 Oct 2025 15:03:06 +0200 (CEST)
-Received: from mail-wm1-f101.google.com (mail-wm1-f101.google.com
- [209.85.128.101])
- by mails.dpdk.org (Postfix) with ESMTP id C337A402B1
- for <dev@dpdk.org>; Mon,  6 Oct 2025 15:03:04 +0200 (CEST)
-Received: by mail-wm1-f101.google.com with SMTP id
- 5b1f17b1804b1-46e3af7889fso30115105e9.2
- for <dev@dpdk.org>; Mon, 06 Oct 2025 06:03:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1759755784; x=1760360584; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=iRt66hpEbJmFfi2KmAC5Wk63Ylmljd8CX5RAzVfKy1o=;
- b=Kp28tpUyDZYCwWG9TME43K2qW/KTzyHblRPIDdodjFZP3G71Lsy012laM2FlrZ9FB2
- u8DH6HC980BdW/Zk0xxRut9kmNE7WN0rPWsO0JdzgnC8GpGyrjufcmkNTGJb0QbXtHtZ
- yZPRfbQViIbt5babWu3L/eRvfODSRpLt5TL47spnQqW+bN8O7VcaQAVxLmBvEd+FXjRW
- y9AjUZYd9IAc0gGeL1BDbQo+hXOOVhjYO7lEgbsuCEfw33CHPV7uQVdockcj1mhd1qHx
- KRukGSThLy1wr/iWCBFNUIHF4uI8MdwwJIsri9BlSRu/wk2LCt5RBufkyLivp7TV7SUa
- QD5Q==
+	by mails.dpdk.org (Postfix) with ESMTP id 0630340668;
+	Mon,  6 Oct 2025 15:03:22 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 535A240661
+ for <dev@dpdk.org>; Mon,  6 Oct 2025 15:03:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1759755799;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=OE3vockcU2KJvysTCz8mFRZjLynCyQdGlUkBhcvIVXE=;
+ b=RM3DDutZVwCtRRPAZzJ8uDfpcVTYYi5Dlv+JuCADWKkVelGW35/3ucgXiusrmWD6NBxvHq
+ KqENu1PglhntnliecxE279GRXF3Kn6LPszT2+jgt5YadH7TlwR2Z7P942zZKXO4S3nanly
+ GRD/zqx2PbeAthJWriBuI/+0gsdDcLs=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-274-tvuJfKA4Pjag8OaM-RCQ1g-1; Mon, 06 Oct 2025 09:03:18 -0400
+X-MC-Unique: tvuJfKA4Pjag8OaM-RCQ1g-1
+X-Mimecast-MFC-AGG-ID: tvuJfKA4Pjag8OaM-RCQ1g_1759755797
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-57cd230eb72so2946221e87.3
+ for <dev@dpdk.org>; Mon, 06 Oct 2025 06:03:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759755784; x=1760360584;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=iRt66hpEbJmFfi2KmAC5Wk63Ylmljd8CX5RAzVfKy1o=;
- b=p0jyvXRC9cwgWyCkE5f0BEOz9qsL5NQLp2DBoAp5pyx2m3frlxYHiVcAS16rSoK3GV
- EnAQ6XRYj3GF91alwHqn2KlEQXO3UMN36TuYUecaDvdVKbuXipAG/nsD4WhQ+onB5ef/
- fhnnz8hfO0yYEoTN4mVYzU+yVqaylHs1fcObMkcu2QlB28cBivUrYbycz60P7zhpxVw2
- HyN8r2gf5HyfTpmh8KA5TTh0xKMtEI3hkVBZEq5Yh2MbDzibxX872G4h1HPWq/ooSClm
- WC9s0OFQLBKRj+7sfWs3mR0QUiUWdauH6VMWY+dlZ0xAbX9Xks/n4KU89ni5O3xlpy2k
- ezSA==
-X-Gm-Message-State: AOJu0YxM8hbD2VHm3TiZMq279xk0eYR/JRNAw5oipHeCwDnSajvWqm8/
- rHQcWsDo0g7TQoXvgwXSlqMUm/Btx8abd3NCmHSZ0RgI/5JfEv2FB9790rst562YDOBhyOQTmbu
- Oohff7u1EoAw2b8YiM0+e5Ms8B8fWOkVpleYfxBJn5Idumg==
-X-Gm-Gg: ASbGncvLdzxTKYA1PLXCpHRTtWji3uHaWlItCAijSd6yTQlGsOV53g4OkmTI9umnZem
- Bm+hOUe0P9KfnLHMkj3zUsby/8M5QNNkYC+gQ/L/6QiYS2OvrHmDYRzm1tqUiOwmLorWRP3jiF0
- qgUME7MTlHEzxN6pQj/PVgxdanzjHJoiy+wKqzNPEbgS4p+YQE3T//sloUKZdppmSxD/l5EyF2Y
- OJ66LnfSUcK/AHQlbeynGf6bsn6j4IyK1SYhw8tTUnzg36UrHUSNhmcHKuqUKQT84TWLQcZob96
- aAECPt7dcRWvsb54tVC9mXNGXe9AanfO1C26XgnckvivSHSNSbhS1bjuzCEjquUfbVFol4uhnfv
- UX1gAdvp3sUzm9zbRoD38ZCnN
-X-Google-Smtp-Source: AGHT+IEkRhvZtGIpmizOgG7zPlzROqAX1V5CUU374ryCrRA+V6cxeogYyExINxNDbexI9+/avLL4ZSquj58A
-X-Received: by 2002:a05:600c:46cf:b0:45b:7b54:881 with SMTP id
- 5b1f17b1804b1-46e71111cd1mr74377675e9.1.1759755784260; 
- Mon, 06 Oct 2025 06:03:04 -0700 (PDT)
-Received: from smtpservice.6wind.com ([185.13.181.2])
- by smtp-relay.gmail.com with ESMTP id
- 5b1f17b1804b1-46e619a0f88sm18897775e9.7.2025.10.06.06.03.03; 
- Mon, 06 Oct 2025 06:03:04 -0700 (PDT)
-X-Relaying-Domain: 6wind.com
-Received: from localhost (vader.dev.6wind.com [10.17.1.39])
- by smtpservice.6wind.com (Postfix) with ESMTP id B580C116DB;
- Mon,  6 Oct 2025 15:03:03 +0200 (CEST)
-From: Thierry Herbelot <thierry.herbelot@6wind.com>
-To: dev@dpdk.org
-Cc: Thierry Herbelot <thierry.herbelot@6wind.com>,
- Thomas Monjalon <thomas@monjalon.net>,
- Bruce Richardson <bruce.richardson@intel.com>,
- David Marchand <david.marchand@redhat.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Olivier Matz <olivier.matz@6wind.com>
-Subject: [V2] net/intel/e1000: reduce the optimization level for gcc > 11
-Date: Mon,  6 Oct 2025 15:02:57 +0200
-Message-Id: <20251006130257.391200-1-thierry.herbelot@6wind.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20251006124506.388456-1-thierry.herbelot@6wind.com>
-References: <20251006124506.388456-1-thierry.herbelot@6wind.com>
+ d=1e100.net; s=20230601; t=1759755797; x=1760360597;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=OE3vockcU2KJvysTCz8mFRZjLynCyQdGlUkBhcvIVXE=;
+ b=elXO/fi9D7vH3TA3qHRJTexeq7FihHfJJMVCFMDcIl1xsV6q0fCV9rM6iH/V/Ou5FX
+ ufrPqj4RxEjCoZy/7qb0qrTXmwyFF2iyomNi4OG41584rhbri3YWvnY1zo0W7Qd56nR/
+ 59gYfZT9vag4LZG+F1jOHxMB+EH67TkkIGhE4QG7yNTEWlB0xtJ1H+meFdq3yrLIuf9O
+ 5ZnNVydWfJnZUUICPRguiaLGbqjAXIBdypJBGUWNSJKkQ03z2kFN6ommdREp+Du9eHkp
+ GoiY4Gh5PdxtkPJdi30kuo3vKmICC+qMckCklDteargjAbf+FQNBNJ+VguNJxLaNksTE
+ wsnw==
+X-Gm-Message-State: AOJu0Yxxv9JjKn3QJygxqxLkn8S3MdtljI8yUijKrcxFygHmbLJ8g/ub
+ H61MomnpII9+pppHwkfmqRUca+NAWjMKg4ivfU2IsiKg9cWRZOUG1rC4dL1GSiUSUMFqwl3N62T
+ FSxmi1l8dNXaYh4Pc1++pLkIgpDG8Lp1wP4j6N+IK3OX5FXI7JdKf6/7uGEddvvVvvaUCSKE01u
+ +qwI7giQs0zBtB64hf8yU=
+X-Gm-Gg: ASbGncsSf+4OebGhI5y/FT7vDPBXgr+h53Um9t3nWhlIOKOx+YNlONVa+K1F9rRTLuL
+ Zb6DRRV7V7Mj2fAKqaJYWpNC05tNPygvfM+gEZ1bA1HcwetCN8vqYoWh4dYKh8f9mEvzH6oZwwt
+ ck8HXOVLjzdY/UtrzhlRNOAenwmM/P
+X-Received: by 2002:a05:6512:b85:b0:57d:7343:3c6 with SMTP id
+ 2adb3069b0e04-58cb9a39359mr4458483e87.16.1759755796808; 
+ Mon, 06 Oct 2025 06:03:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUSO6EFghBOR2Qc2qdItb6pk4jBwtHkDNRttArKFM2CVW1K9jpDIRGk+fgkhfBDSm0q3hyA9GiBwTaS6skyec=
+X-Received: by 2002:a05:6512:b85:b0:57d:7343:3c6 with SMTP id
+ 2adb3069b0e04-58cb9a39359mr4458451e87.16.1759755796292; Mon, 06 Oct 2025
+ 06:03:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251006124506.388456-1-thierry.herbelot@6wind.com>
+ <CAJFAV8zvhYiOy=PuUctg8N7EyM6asQdDNpnx_Xc+WusCz02L+A@mail.gmail.com>
+ <8f14ef89-8f1a-42e7-8cf3-e609de32a98d@6wind.com>
+In-Reply-To: <8f14ef89-8f1a-42e7-8cf3-e609de32a98d@6wind.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 6 Oct 2025 15:03:04 +0200
+X-Gm-Features: AS18NWD-UK8_lIWQ8e0tBvNIjU20f1ZOx6DF1q1eVqbdTprzGb-gNoQ43jpWGuk
+Message-ID: <CAJFAV8yDgdeRLdrNdEM2y-0BgpnGkfRLRecczMEnDgshSPMgug@mail.gmail.com>
+Subject: Re: [PATCH] net/intel/e1000: reduce the optimization level for gcc >
+ 11
+To: Thierry Herbelot <thierry.herbelot@6wind.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, 
+ Olivier Matz <olivier.matz@6wind.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: svgZEXhAEJCpzxmSZE8_xQaf1avGgyR1NUYqgqA5kok_1759755797
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,84 +88,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The e1000 PMD stopped working under Ubuntu-24.04 (using gcc-13) when
-compiled with -O3 (default level for all DPDK code). There is a crash
-when starting testpmd:
+On Mon, 6 Oct 2025 at 15:01, Thierry Herbelot
+<thierry.herbelot@6wind.com> wrote:
+> We can not expect a random developer to sprinkle memory barriers in the
+> PMD until testpmd seems to be working.
 
-> (gdb) bt
-> #0  rte_read32_relaxed (addr=0x1100800e00) at ../sources/lib/eal/include/generic/rte_io.h:290
-> #1  rte_read32 (addr=0x1100800e00) at ../sources/lib/eal/include/generic/rte_io.h:345
-> #2  e1000_read_addr (addr=0x1100800e00) at ../sources/drivers/net/intel/e1000/base/e1000_osdep.h:106
-> #3  e1000_id_led_init_generic (hw=0x1586788c0) at ../sources/drivers/net/intel/e1000/base/e1000_mac.c:1844
-> #4  0x000062aaf653c85f in e1000_init_hw_82540 (hw=0x1586788c0)
->     at ../sources/drivers/net/intel/e1000/base/e1000_82540.c:308
-> #5  0x000062aaf6db8227 in em_hardware_init (hw=hw@entry=0x1586788c0)
->     at ../sources/drivers/net/intel/e1000/em_ethdev.c:920
-> #6  0x000062aaf65340ff in em_hw_init (hw=0x1586788c0) at ../sources/drivers/net/intel/e1000/em_ethdev.c:445
-> #7  eth_em_dev_init (eth_dev=eth_dev@entry=0x62aaff346000 <rte_eth_devices>)
->     at ../sources/drivers/net/intel/e1000/em_ethdev.c:314
-> #8  0x000062aaf6db8b71 in rte_eth_dev_pci_generic_probe (private_data_size=11240,
->     dev_init=0x62aaf6db8310 <eth_em_dev_init>, pci_dev=0x62ab2853dd90) at ../sources/lib/ethdev/ethdev_pci.h:150
-> #9  eth_em_pci_probe (pci_drv=<optimized out>, pci_dev=0x62ab2853dd90)
->     at ../sources/drivers/net/intel/e1000/em_ethdev.c:365
-> #10 0x000062aaf646adf5 in rte_pci_probe_one_driver (dr=dr@entry=0x62aaf82d8020 <rte_em_pmd>,
->     dev=dev@entry=0x62ab2853dd90) at ../sources/drivers/bus/pci/pci_common.c:299
-> #11 0x000062aaf6a15f7d in pci_probe_all_drivers (dev=0x62ab2853dd90) at ../sources/drivers/bus/pci/pci_common.c:383
-> #12 pci_probe () at ../sources/drivers/bus/pci/pci_common.c:410
-> #13 0x000062aaf7a485f3 in rte_bus_probe () at ../sources/lib/eal/common/eal_common_bus.c:84
-> #14 0x000062aaf670585d in rte_eal_init (argc=argc@entry=146, argv=argv@entry=0x7fffca468898)
->     at ../sources/lib/eal/linux/eal.c:1253
+Then random developer can report the issue and keep from trying to
+hide the issue which is not helping.
 
-The crash is linked to the use of gcc-13: under Ubuntu-24.04 testpmd
-compiled with gcc-11 from the same DPDK tree works as expected.
 
-The perfect solution would be for someone to investigate why the
-PMD crashes. However, this depends on Maintainer availability.
-
-A less-perfect solution is to reduce the optimization level
-(like another proposal for net/qede: see Link).
-
-Note: if more regressions are seen in less-frequently used PMDs,
-      maybe we should switch the default optimization level to -O1,
-      (tree-wide) and only rise the optimization level for actively
-      maintained PMDs, which are proven to work as expected with
-      higher optimization levels.
-
-Link: http://patches.dpdk.org/project/dpdk/patch/20250909054023.3263401-1-thierry.herbelot@6wind.com/
-Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
----
-V2: fix typo in the commit log
-    quote long error messages
----
- drivers/net/intel/e1000/base/meson.build | 4 ++++
- drivers/net/intel/e1000/meson.build      | 5 +++++
- 2 files changed, 9 insertions(+)
-
-diff --git a/drivers/net/intel/e1000/base/meson.build b/drivers/net/intel/e1000/base/meson.build
-index 4fe86dc6df34..e3631f1adc27 100644
---- a/drivers/net/intel/e1000/base/meson.build
-+++ b/drivers/net/intel/e1000/base/meson.build
-@@ -22,3 +22,7 @@ base_sources = files(
-         'e1000_phy.c',
-         'e1000_vf.c',
- )
-+# testpmd crashes with gcc > 11 with compiling with default -O3 or -O2
-+if (cc.get_id() == 'gcc' and cc.version().version_compare('>=12.0'))
-+    base_cflags += '-O1'
-+endif
-diff --git a/drivers/net/intel/e1000/meson.build b/drivers/net/intel/e1000/meson.build
-index 924fe4ecaef5..3a875d1555c2 100644
---- a/drivers/net/intel/e1000/meson.build
-+++ b/drivers/net/intel/e1000/meson.build
-@@ -23,3 +23,8 @@ if not is_windows
-                 'igc_txrx.c',
-         )
- endif
-+
-+# testpmd crashes with gcc > 11 with compiling with default -O3 or -O2
-+if (cc.get_id() == 'gcc' and cc.version().version_compare('>=12.0'))
-+    cflags += '-O1'
-+endif
 -- 
-2.39.2
+David Marchand
 
