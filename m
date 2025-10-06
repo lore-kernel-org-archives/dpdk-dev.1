@@ -2,76 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0940CCAC5B8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 11:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9428CCA471
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 12:43:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F11F402DD;
-	Mon,  6 Oct 2025 13:04:17 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id D70EF402B1
- for <dev@dpdk.org>; Mon,  6 Oct 2025 13:04:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1759748655;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=pOpJtoMQoEx9s4mbSwKXI5CGFkX1qAz/bzDhhHqjHNE=;
- b=Ct3QBoV7TgiaYyst++bNWItrpUMnRL3Da19Czg6WFKM62VUmodq0ouRl2WTsVDlYgL5h9I
- C+7QN2GwYTUyfI+Ma/rEfKtwKT3KwV8TSQ4EXxu0O5jLgKfS8mGzo8PS1MJ43WJgMM17Ge
- Q8rCdsZJHktcZOfFVYzLx7l2jSRO6sY=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-NcAdzNIfMdC7pkYCjsnjxA-1; Mon, 06 Oct 2025 07:04:13 -0400
-X-MC-Unique: NcAdzNIfMdC7pkYCjsnjxA-1
-X-Mimecast-MFC-AGG-ID: NcAdzNIfMdC7pkYCjsnjxA_1759748652
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-36c983e4c21so20554721fa.1
- for <dev@dpdk.org>; Mon, 06 Oct 2025 04:04:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759748652; x=1760353452;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=pOpJtoMQoEx9s4mbSwKXI5CGFkX1qAz/bzDhhHqjHNE=;
- b=FKvRCN2vLRhtwtC4OXnJIGN4C4mlYK5pPW27SWy0Xo8mAp5S3LIo/3rugk9JUHZOZj
- r92twPEOc5Ybbb/NcbNY1a+NCJMyXSaVBmz9u7oOGdeIrZLHFQCKYCX+YksGmOi4AhIP
- KuBwyIpL9XpXwmgEPJmPWdWfCIGqSmZtPWLIMrc2iE1XHC8v7MlSsiJE0FlZdcN04lRQ
- 1uMNTWaiSCnx22prPwccGW54YEPpGLtipapYD9N1xSjBoNaE5buz7+A9ElMn4fln7NB+
- d+jNbFVpxLcae3do4pUQBvE+RehR0yZW2zc3NlUnA0N7S+jYCJuysSMU8gcp5UQsucml
- 253A==
-X-Gm-Message-State: AOJu0YzUIFOsMbS8L+9bDFm8zfM1+Z70nHjNiskmYVAXlgNnsfsdOblD
- LWtA6molLK5r226W0kdPIbW/9+TnW2IlaS/3x7C5O8quZYZFOG37ruodVSaWWIT4O1tUX+Y6e/v
- Mn8SK9AJC1rmT4vBj5y1BKbhyeRCJV1SE2HDsM8cQSdBtmpB678fueek13MXH1S3VFVyWVK6FhF
- t8lN3w3y8nxeHY49tk2po=
-X-Gm-Gg: ASbGncsoY2ZTJQw+pr4cvGqR32+P7COi9ZIhCTGiCUKTHA8fmXm53qrykO7bYeOi34Y
- xUe6xSazCqyJ+w5Y1tGNS185XMoLyvwMWIVuar0I577zf3BjsAwfEogR7h876Tl0tFcYp2YKZHW
- PWEPggmvcfMMYYZ4X5l2r4EIBqBKYZ
-X-Received: by 2002:a05:651c:504:b0:336:ceac:f3bf with SMTP id
- 38308e7fff4ca-374c36fe0a3mr33587851fa.13.1759748651960; 
- Mon, 06 Oct 2025 04:04:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEsXH8xv9dVAaIYCr/GM0MPGay5sm95Vidm0rZu5Ntr0kW5lcXzbMvEDR/zt7K1QfYAuDYoFCSG2q/yDH/VJNU=
-X-Received: by 2002:a05:651c:504:b0:336:ceac:f3bf with SMTP id
- 38308e7fff4ca-374c36fe0a3mr33587671fa.13.1759748651464; Mon, 06 Oct 2025
- 04:04:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F03E6402D1;
+	Mon,  6 Oct 2025 14:43:14 +0200 (CEST)
+Received: from cstnet.cn (smtp87.cstnet.cn [159.226.251.87])
+ by mails.dpdk.org (Postfix) with ESMTP id 9AF39402B1
+ for <dev@dpdk.org>; Mon,  6 Oct 2025 14:43:12 +0200 (CEST)
+Received: from sunyuechi$iscas.ac.cn ( [42.58.231.158] ) by
+ ajax-webmail-APP-17 (Coremail) ; Mon, 6 Oct 2025 20:43:08 +0800 (GMT+08:00)
+X-Originating-IP: [42.58.231.158]
+Date: Mon, 6 Oct 2025 20:43:08 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: sunyuechi@iscas.ac.cn
+To: dev@dpdk.org
+Cc: =?UTF-8?Q?Stanis=C5=82aw_Kardach?= <stanislaw.kardach@gmail.com>, 
+ "Bruce Richardson" <bruce.richardson@intel.com>
+Subject: Re: [PATCH] config/riscv: add rv64gcv cross compilation target
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
+ 20240627(e6c6db66) Copyright (c) 2002-2025 www.mailtech.cn cnic.cn
+In-Reply-To: <20250923150734.2208125-1-sunyuechi@iscas.ac.cn>
+References: <20250923150734.2208125-1-sunyuechi@iscas.ac.cn>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-References: <CAJFAV8zLgkqEyifkG0t5f22pu+55PUXAKXdQXHHK7n2sxenTzg@mail.gmail.com>
- <CAMw=ZnSVkkdF8_V54xWxDths7HyRcW_6Fu3kuiQ-tg2buScCeA@mail.gmail.com>
-In-Reply-To: <CAMw=ZnSVkkdF8_V54xWxDths7HyRcW_6Fu3kuiQ-tg2buScCeA@mail.gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 6 Oct 2025 13:04:00 +0200
-X-Gm-Features: AS18NWAfQrJ34ibZ2VFuxdLbYk65ooQsKoAlSQi9U0FCFJSFGMqmUH1Ajx9xYms
-Message-ID: <CAJFAV8y196yO8OqBi9_EYp+sKHXk41pf5U=M-yym6fP3R_eP6Q@mail.gmail.com>
-Subject: Re: Build failure in OBS with openSUSE 15.6
-To: Luca Boccassi <luca.boccassi@gmail.com>
-Cc: dev <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, 
- Kevin Traynor <ktraynor@redhat.com>, Aaron Conole <aconole@redhat.com>, 
- Patrick Robb <probb@iol.unh.edu>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: AbzmaRsbtg3izu13kyBsr6BlG4Tf0A6s3OEoZQzG9CQ_1759748652
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <224af7e6.115d8.199b98c0ff2.Coremail.sunyuechi@iscas.ac.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: qgCowACnRLRdueNoy6wCAA--.22979W
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiCQ4HAmjjT1OUnwABsf
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+ CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+ daVFxhVjvjDU=
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,32 +48,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 6 Oct 2025 at 12:27, Luca Boccassi <luca.boccassi@gmail.com> wrote:
-> On Mon, 6 Oct 2025 at 08:43, David Marchand <david.marchand@redhat.com> wrote:
-> > We have a build failure in the openSUSE 15.6 job in OBS.
-> > https://build.opensuse.org/package/live_build_log/home:bluca:dpdk/dpdk/openSUSE_Leap_15.6/x86_64
-> >
-> > This failure is due to 4a04a346e7f3 ("vhost: simplify use of
-> > pragmas"), which followed dd7fdfff9bc1 ("build: remove support for GCC
-> > < 8 and clang < 7").
-> >
-> > The openSUSE 15.6 job still uses
-> > [   39s] C compiler for the host machine: cc (gcc 7.5.0 "cc (SUSE Linux) 7.5.0")
-> >
-> > Is it possible to update to a more recent gcc?
-> > Otherwise this test should be dropped.
->
-> Hi, that's what Leap 15 ships with, so I've disabled the job since
-> it's no longer supported.
-> BTW I believe you have an account? Thomas and Kevin are already listed
-> as maintainers so they can do these changes too, if you tell me your
-> username I can add you as well, it's just a click in the repositories
-> tab to enable/disable builds
-
-Thank you.
-Ack, let's sync offlist.
-
-
--- 
-David Marchand
-
+SGksIGhvdyBpcyB0aGlzIHBhdGNoPwoKCiZndDsgLS0tLS3ljp/lp4vpgq7ku7YtLS0tLQomZ3Q7
+IOWPkeS7tuS6ujogc3VueXVlY2hpQGlzY2FzLmFjLmNuCiZndDsg5Y+R6YCB5pe26Ze0OiAyMDI1
+LTA5LTIzIDIzOjA3OjM0ICjmmJ/mnJ/kuowpCiZndDsg5pS25Lu25Lq6OiBkZXZAZHBkay5vcmcK
+Jmd0OyDmioTpgIE6ICJTdW4gWXVlY2hpIiA8c3VueXVlY2hpQGlzY2FzLmFjLmNuPiwgIlN0YW5p
+c8WCYXcgS2FyZGFjaCIgPHN0YW5pc2xhdy5rYXJkYWNoQGdtYWlsLmNvbT4sICJCcnVjZSBSaWNo
+YXJkc29uIiA8YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5jb20+CiZndDsg5Li76aKYOiBbUEFUQ0hd
+IGNvbmZpZy9yaXNjdjogYWRkIHJ2NjRnY3YgY3Jvc3MgY29tcGlsYXRpb24gdGFyZ2V0CiZndDsg
+CiZndDsgRnJvbTogU3VuIFl1ZWNoaSA8c3VueXVlY2hpQGlzY2FzLmFjLmNuPgomZ3Q7IAomZ3Q7
+IEFkZCBhIGNyb3NzIGZpbGUgZm9yIHJ2NjRnY3YsIGVuYWJsZSBpdCBpbiBkZXZ0b29scy90ZXN0
+LW1lc29uLWJ1aWxkcy5zaCwKJmd0OyBhbmQgdXBkYXRlIHRoZSBSSVNDLVYgY3Jvc3MtYnVpbGQg
+Z3VpZGUgdG8gc3VwcG9ydCB0aGUgdmVjdG9yIGV4dGVuc2lvbi4KJmd0OyAKJmd0OyBTaWduZWQt
+b2ZmLWJ5OiBTdW4gWXVlY2hpIDxzdW55dWVjaGlAaXNjYXMuYWMuY24+CiZndDsgLS0tCiZndDsg
+IGNvbmZpZy9yaXNjdi9tZXNvbi5idWlsZCAgICAgICAgICAgICAgICAgICAgICAgIHwgIDMgKyst
+CiZndDsgIGNvbmZpZy9yaXNjdi9yaXNjdjY0X3J2NjRnY3ZfbGludXhfZ2NjICAgICAgICAgIHwg
+MTcgKysrKysrKysrKysrKysrKysKJmd0OyAgZGV2dG9vbHMvdGVzdC1tZXNvbi1idWlsZHMuc2gg
+ICAgICAgICAgICAgICAgICAgfCAgNCArKysrCiZndDsgIC4uLi9saW51eF9nc2cvY3Jvc3NfYnVp
+bGRfZHBka19mb3JfcmlzY3YucnN0ICAgIHwgIDIgKysKJmd0OyAgNCBmaWxlcyBjaGFuZ2VkLCAy
+NSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCiZndDsgIGNyZWF0ZSBtb2RlIDEwMDY0NCBj
+b25maWcvcmlzY3YvcmlzY3Y2NF9ydjY0Z2N2X2xpbnV4X2djYwomZ3Q7IAomZ3Q7IGRpZmYgLS1n
+aXQgYS9jb25maWcvcmlzY3YvbWVzb24uYnVpbGQgYi9jb25maWcvcmlzY3YvbWVzb24uYnVpbGQK
+Jmd0OyBpbmRleCBmM2RhZWEwYzBlLi5hMDY0MjlhMWUyIDEwMDY0NAomZ3Q7IC0tLSBhL2NvbmZp
+Zy9yaXNjdi9tZXNvbi5idWlsZAomZ3Q7ICsrKyBiL2NvbmZpZy9yaXNjdi9tZXNvbi5idWlsZAom
+Z3Q7IEBAIC00Myw3ICs0Myw4IEBAIHZlbmRvcl9nZW5lcmljID0gewomZ3Q7ICAgICAgICAgIFsn
+UlRFX01BWF9OVU1BX05PREVTJywgMl0KJmd0OyAgICAgIF0sCiZndDsgICAgICAnYXJjaF9jb25m
+aWcnOiB7CiZndDsgLSAgICAgICAgJ2dlbmVyaWMnOiB7J21hY2hpbmVfYXJncyc6IFsnLW1hcmNo
+PXJ2NjRnYyddfQomZ3Q7ICsgICAgICAgICdnZW5lcmljJzogeydtYWNoaW5lX2FyZ3MnOiBbJy1t
+YXJjaD1ydjY0Z2MnXX0sCiZndDsgKyAgICAgICAgJ3J2NjRnY3YnOiB7J21hY2hpbmVfYXJncyc6
+IFsnLW1hcmNoPXJ2NjRnY3YnXX0sCiZndDsgICAgICB9CiZndDsgIH0KJmd0OyAgCiZndDsgZGlm
+ZiAtLWdpdCBhL2NvbmZpZy9yaXNjdi9yaXNjdjY0X3J2NjRnY3ZfbGludXhfZ2NjIGIvY29uZmln
+L3Jpc2N2L3Jpc2N2NjRfcnY2NGdjdl9saW51eF9nY2MKJmd0OyBuZXcgZmlsZSBtb2RlIDEwMDY0
+NAomZ3Q7IGluZGV4IDAwMDAwMDAwMDAuLmNjYzUxMTVkZWMKJmd0OyAtLS0gL2Rldi9udWxsCiZn
+dDsgKysrIGIvY29uZmlnL3Jpc2N2L3Jpc2N2NjRfcnY2NGdjdl9saW51eF9nY2MKJmd0OyBAQCAt
+MCwwICsxLDE3IEBACiZndDsgK1tiaW5hcmllc10KJmd0OyArYyA9IFsnY2NhY2hlJywgJ3Jpc2N2
+NjQtbGludXgtZ251LWdjYyddCiZndDsgK2NwcCA9IFsnY2NhY2hlJywgJ3Jpc2N2NjQtbGludXgt
+Z251LWcrKyddCiZndDsgK2FyID0gJ3Jpc2N2NjQtbGludXgtZ251LWFyJwomZ3Q7ICtzdHJpcCA9
+ICdyaXNjdjY0LWxpbnV4LWdudS1zdHJpcCcKJmd0OyArcGNhcC1jb25maWcgPSAnJwomZ3Q7ICsK
+Jmd0OyArW2hvc3RfbWFjaGluZV0KJmd0OyArc3lzdGVtID0gJ2xpbnV4JwomZ3Q7ICtjcHVfZmFt
+aWx5ID0gJ3Jpc2N2NjQnCiZndDsgK2NwdSA9ICdydjY0Z2N2JwomZ3Q7ICtlbmRpYW4gPSAnbGl0
+dGxlJwomZ3Q7ICsKJmd0OyArW3Byb3BlcnRpZXNdCiZndDsgK3ZlbmRvcl9pZCA9ICdnZW5lcmlj
+JwomZ3Q7ICthcmNoX2lkID0gJ3J2NjRnY3YnCiZndDsgK3BrZ19jb25maWdfbGliZGlyID0gJy91
+c3IvbGliL3Jpc2N2NjQtbGludXgtZ251L3BrZ2NvbmZpZycKJmd0OyBkaWZmIC0tZ2l0IGEvZGV2
+dG9vbHMvdGVzdC1tZXNvbi1idWlsZHMuc2ggYi9kZXZ0b29scy90ZXN0LW1lc29uLWJ1aWxkcy5z
+aAomZ3Q7IGluZGV4IDRmZmYxZjcxNzcuLjRmMDdmODRlYjAgMTAwNzU1CiZndDsgLS0tIGEvZGV2
+dG9vbHMvdGVzdC1tZXNvbi1idWlsZHMuc2gKJmd0OyArKysgYi9kZXZ0b29scy90ZXN0LW1lc29u
+LWJ1aWxkcy5zaAomZ3Q7IEBAIC0yOTAsNiArMjkwLDEwIEBAIGJ1aWxkIGJ1aWxkLXBwYzY0LXBv
+d2VyOC1nY2MgJGYgQUJJICR1c2Vfc2hhcmVkCiZndDsgIGY9JHNyY2Rpci9jb25maWcvcmlzY3Yv
+cmlzY3Y2NF9saW51eF9nY2MKJmd0OyAgYnVpbGQgYnVpbGQtcmlzY3Y2NC1nZW5lcmljLWdjYyAk
+ZiBBQkkgJHVzZV9zaGFyZWQKJmd0OyAgCiZndDsgKyMgUklTQy1WIHZlY3RvciAocnY2NGdjdikK
+Jmd0OyArZj0kc3JjZGlyL2NvbmZpZy9yaXNjdi9yaXNjdjY0X3J2NjRnY3ZfbGludXhfZ2NjCiZn
+dDsgK2J1aWxkIGJ1aWxkLXJpc2N2NjRfcnY2NGdjdl9nY2MgJGYgQUJJICR1c2Vfc2hhcmVkCiZn
+dDsgKwomZ3Q7ICAjIFRlc3QgaW5zdGFsbGF0aW9uIG9mIHRoZSB4ODYtZ2VuZXJpYyB0YXJnZXQs
+IHRvIGJlIHVzZWQgZm9yIGNoZWNraW5nCiZndDsgICMgdGhlIHNhbXBsZSBhcHBzIGJ1aWxkIHVz
+aW5nIHRoZSBwa2ctY29uZmlnIGZpbGUgZm9yIGNmbGFncyBhbmQgbGlicwomZ3Q7ICBsb2FkX2Vu
+diBjYwomZ3Q7IGRpZmYgLS1naXQgYS9kb2MvZ3VpZGVzL2xpbnV4X2dzZy9jcm9zc19idWlsZF9k
+cGRrX2Zvcl9yaXNjdi5yc3QgYi9kb2MvZ3VpZGVzL2xpbnV4X2dzZy9jcm9zc19idWlsZF9kcGRr
+X2Zvcl9yaXNjdi5yc3QKJmd0OyBpbmRleCA3ZDdmN2FjNzJiLi5iY2JhMTJhNjA0IDEwMDY0NAom
+Z3Q7IC0tLSBhL2RvYy9ndWlkZXMvbGludXhfZ3NnL2Nyb3NzX2J1aWxkX2RwZGtfZm9yX3Jpc2N2
+LnJzdAomZ3Q7ICsrKyBiL2RvYy9ndWlkZXMvbGludXhfZ3NnL2Nyb3NzX2J1aWxkX2RwZGtfZm9y
+X3Jpc2N2LnJzdAomZ3Q7IEBAIC0xMDgsNiArMTA4LDggQEAgQ3VycmVudGx5IHRoZSBmb2xsb3dp
+bmcgdGFyZ2V0cyBhcmUgc3VwcG9ydGVkOgomZ3Q7ICAKJmd0OyAgKiBHZW5lcmljIHJ2NjRnYyBJ
+U0E6IGBgY29uZmlnL3Jpc2N2L3Jpc2N2NjRfbGludXhfZ2NjYGAKJmd0OyAgCiZndDsgKyogUlY2
+NEdDViBJU0E6IGBgY29uZmlnL3Jpc2N2L3Jpc2N2NjRfcnY2NGdjdl9saW51eF9nY2NgYAomZ3Q7
+ICsKJmd0OyAgKiBTaUZpdmUgVTc0MCBTb0M6IGBgY29uZmlnL3Jpc2N2L3Jpc2N2NjRfc2lmaXZl
+X3U3NDBfbGludXhfZ2NjYGAKJmd0OyAgCiZndDsgIFRvIGFkZCBhIG5ldyB0YXJnZXQgc3VwcG9y
+dCwgYGBjb25maWcvcmlzY3YvbWVzb24uYnVpbGRgYCBoYXMgdG8gYmUgbW9kaWZpZWQgYnkKJmd0
+OyAtLSAKJmd0OyAyLjUxLjAKPC9zdW55dWVjaGlAaXNjYXMuYWMuY24+PC9zdW55dWVjaGlAaXNj
+YXMuYWMuY24+PC9icnVjZS5yaWNoYXJkc29uQGludGVsLmNvbT48L3N0YW5pc2xhdy5rYXJkYWNo
+QGdtYWlsLmNvbT48L3N1bnl1ZWNoaUBpc2Nhcy5hYy5jbj4=
