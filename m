@@ -2,102 +2,120 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF66CAC5B8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 09:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 934BECAC5B8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 09:47:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8991D402DD;
-	Mon,  6 Oct 2025 11:45:08 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 697BF402B1
- for <dev@dpdk.org>; Mon,  6 Oct 2025 11:45:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1759743907;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=0+727SGRUDCMVKJEz7XkO+oCwCvXdaA1EqE6QXDUWe8=;
- b=QozusisIm39H2P5b3cMaf+Xv8hB40Z0ptdS3diDPqXSinkDdpo66vYnPsEGgKbXOik/lN1
- 6VslDa6Yr+6NMbVXGk9PrWhP3sjTQFd+0eIlw4S5GEenFPH4kkA+Izk8GehadfvtuVoE1w
- pn+ewm/E/nITimCAtgb/wVeoMqR1nUQ=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-372-QczmkyMsNL6ZA1gcC-j7Ng-1; Mon,
- 06 Oct 2025 05:45:03 -0400
-X-MC-Unique: QczmkyMsNL6ZA1gcC-j7Ng-1
-X-Mimecast-MFC-AGG-ID: QczmkyMsNL6ZA1gcC-j7Ng_1759743902
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id CC0A1195608C; Mon,  6 Oct 2025 09:45:02 +0000 (UTC)
-Received: from [10.44.22.30] (unknown [10.44.22.30])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 4FA2D180141C; Mon,  6 Oct 2025 09:45:00 +0000 (UTC)
-Message-ID: <34a49225-5664-451d-a215-daf0ec81feb6@redhat.com>
-Date: Mon, 6 Oct 2025 11:44:57 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id B9154402DD;
+	Mon,  6 Oct 2025 11:47:42 +0200 (CEST)
+Received: from SN4PR0501CU005.outbound.protection.outlook.com
+ (mail-southcentralusazon11011016.outbound.protection.outlook.com
+ [40.93.194.16]) by mails.dpdk.org (Postfix) with ESMTP id C22F1402B1
+ for <dev@dpdk.org>; Mon,  6 Oct 2025 11:47:41 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aquvCyynDPo8IVkC7zoYFbnAbHf6nFUML9h+n2wCRTEa7DfUKPdAZZBVlh3Bp0w4bncr7He3juxXP3mi6C5kgk9/LHdc5P/p6Isi1tfoii/HacClQjsBsMDSqaj/Gs/8S7LtW49dPkSmdMBig3Vyf5mgZmqf/MZlPrDVOHSugxZ7iPT+kCPpL3pN46tfM6xtd0G1f7VfyiKSkClqiKmcOpYjWNJWU/h/tcv2Pmdvc/VaxVC5IY/kpFAU+yWU4T72BVrXTRevFysNjtPHk+a/IuFaFFj3nfY3u8xuifed4evNL3xtjKREq/+uZekVKfBA1qaCzX/OMowqTkL1ezVErg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vYWpGBxfFpdTG43vEKHZcWJ9XIXui1cOC+SSDImptEA=;
+ b=CZ4vgEXs7PhddBT0KijBzgMqAoeixM5Wn+kaBUwjYySPodcZDz5Bozvv9T3GkuqQeAFdsZiZijUhvckQJLX9l4gWzK6pB3Y2bWB5pZjWZJIRSxOE6HZBbYF6Par2NshPJNnpm1NEv5vD/+NSfHGjmz9oGrsiU5TT/FEXTvnqAYK9cDUPWVEC+IWeWRhEbc3wtjNyMiNICHo76pll5Y2lxLmhvHr10xq4QntIj/tLDRb3G5tALBvvjrpZG0pbwdR1vtuWAyEtQbYcOlHRUTGdJEKq8Fo53RU/WL3oWsyBKqjE5MLdalmVBcgbB2JbsQBVYdcIoSguf1lBw1nkxeZgsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=smartsharesystems.com smtp.mailfrom=amd.com; 
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vYWpGBxfFpdTG43vEKHZcWJ9XIXui1cOC+SSDImptEA=;
+ b=xatYGJ230csiEJclpahO30nVLuwdMsuU6J3+544+sveVuT/f0eOfwVa0e2B7OSCIC2uGCOYCaNyAMgy40H7pp/KM/Io/csmTrYWXHLqI/7r68p9Ho24b9zkyCiJvXbwuPVFqtmg8xs8FIpJPRPVfNWDvf4e7whvhvIZNBkGfolA=
+Received: from MW4PR04CA0076.namprd04.prod.outlook.com (2603:10b6:303:6b::21)
+ by MW6PR12MB8664.namprd12.prod.outlook.com (2603:10b6:303:23c::16)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Mon, 6 Oct
+ 2025 09:47:33 +0000
+Received: from CO1PEPF000042A7.namprd03.prod.outlook.com
+ (2603:10b6:303:6b:cafe::e2) by MW4PR04CA0076.outlook.office365.com
+ (2603:10b6:303:6b::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.20 via Frontend Transport; Mon,
+ 6 Oct 2025 09:47:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CO1PEPF000042A7.mail.protection.outlook.com (10.167.243.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.9 via Frontend Transport; Mon, 6 Oct 2025 09:47:33 +0000
+Received: from epycpwr02.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 6 Oct
+ 2025 02:47:31 -0700
+From: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+To: <mb@smartsharesystems.com>, <david.marchand@redhat.com>,
+ <ktraynor@redhat.com>, <thomas@monjalon.net>,
+ <konstantin.ananyev@huawei.com>, <konstantin.v.ananyev@yandex.ru>,
+ <bruce.richardson@intel.com>, <maxime.coquelin@redhat.com>,
+ <aconole@redhat.com>, <ferruh.yigit@amd.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH] doc: document telemetry command name restrictions
+Date: Mon, 6 Oct 2025 09:47:12 +0000
+Message-ID: <20251006094712.180432-1-sivaprasad.tummala@amd.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: virtio_user exception path with external memory
-To: Pekka Riikonen <priikone@iki.fi>, dev@dpdk.org
-Cc: Chenbo Xia <chenbox@nvidia.com>
-References: <0e15cd8e9def8c16b15c028206a6d308@silc.fi>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
- 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
- Mwqu3GQ=
-In-Reply-To: <0e15cd8e9def8c16b15c028206a6d308@silc.fi>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Us-FDBoIAOLOxGvZtTW1FLd45tg0fULJRyR7OkaiOE8_1759743902
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042A7:EE_|MW6PR12MB8664:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44d9082e-771b-4165-6783-08de04bd5fa3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|82310400026|36860700013|376014|7416014|921020; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?iB7jQV5P5xjWn7UUPTGpGh0HfjolY/6YtLP0943TM6F5DPrrxPdkoZb8hTVy?=
+ =?us-ascii?Q?t2j4AxvDzC8x2+HLI93CnLR5L/RdQHc0u9gFDy6K2LnwYF3bPme50HzsqgF4?=
+ =?us-ascii?Q?c99H1PI4Bp9nOO9xURX9xUHHAqdO7fcTSu89Vj6b+rTTnhp3PYsKx+JeDS33?=
+ =?us-ascii?Q?AaoJkPBuBDP2HbgP7/EohhL3gDC0tqEnj7e/wmPTuVBEhq4ZyFUwHSB2l685?=
+ =?us-ascii?Q?MCW4aQJ5UcRzLwN6KwggRStEfUG/t/TIuaH0HQse9gCaB8A1ZnBFHLWa8mmt?=
+ =?us-ascii?Q?iOOsbjW3PJ8dk5mm+weq805ipEFmpsa69HNxnnJiEibWcgQM2e6pj7DMgeei?=
+ =?us-ascii?Q?bEJX8KZlfVWUjcETT/9McjV/dDFTwnviR1Yn6qiz0LhTiPCYH9WEn3L1YqW9?=
+ =?us-ascii?Q?xxjJkDXzJQMDA8wj+31aOwEMMKgTDOU0GBRueb3NCcCZy/bDC21f/rxup81C?=
+ =?us-ascii?Q?9i4janZqEaXcXhVG2zK4cif/Tgr7fMZEu+nrUujLIr060uCpklI7pef6/Joi?=
+ =?us-ascii?Q?Xmz8bcQHKDePoDO7najVnR4AHknRgGzLpM8MnzUDyLSTsp+KALLgOhGNNMt6?=
+ =?us-ascii?Q?2jTQLyI8EgsofAiwaVeuaTIjJysv9ParX33HV/qrg24GRkHKWQfkL+dRYAPU?=
+ =?us-ascii?Q?MEJvRXYN5aiognAOstF/+2q3JGfApkDPAyPIddbsWz4P3819l8GnxqENHnEj?=
+ =?us-ascii?Q?pUNpLssnJczYpc1kFVmwFEIC5BYJrnm5pmncXDRPWr6fgErH71b5Eqey/F4G?=
+ =?us-ascii?Q?oS2b1oFQLlg22FDDRiAeUV9kDSfVnAH7G8xwytsSxXNVs8K+tOBsQzuGphSd?=
+ =?us-ascii?Q?Prq2LvO2SbK8bxWFziV+HqqW6DPbejpZNXjj9fUsdzMusCC9VW32rTfKFznG?=
+ =?us-ascii?Q?xh9lpaI9y8+oXRUqFuSq6nsIz1d8+8nY9zNBB1uZ9jqa8XM9H+p26xmmcLCv?=
+ =?us-ascii?Q?Zp172rytHBXDnNyWfX9OIvWCS9I15JRmdsIZtsMofa9yDaJkac8ea9YcQPaH?=
+ =?us-ascii?Q?mAlp6WnnsjEkw5u/MBAIUafSKIZ1QU9+Vemlf3xbYGzjF6+WchuRLTgGuyOE?=
+ =?us-ascii?Q?gszozkV/gFVxsfOcxEcTvHv/H187AaLyfE7KGT+KF7KYuxP4xlQ1nN9B4BtY?=
+ =?us-ascii?Q?sd292gLN/xaEoqvq3k1z85eu0lW943e+lEMzDIIJSJ4Pp4xxLUlq8KeLw0ub?=
+ =?us-ascii?Q?vYCnNNDueIYJw7OdBq5En3fTUk91u2mx4mr/tmHRF2yHTomiMbo5PeDQtbF/?=
+ =?us-ascii?Q?ELnAPYwwmwBRGtozBtbWU7BXZaQbWWoOOBUMAk48ua7m3p/Ef1pXjL27XqCm?=
+ =?us-ascii?Q?DIlcNMvTQsXLQb8IL5P4iO9g6VLLiVzbB8BWOkWeZeK7LnEJ2jFMvOSzlytf?=
+ =?us-ascii?Q?pbjMJbksVe9qDsWAZK857zTKIkTgngtEEilH1PLqH0XY0+7kDwDpTKK5qaOa?=
+ =?us-ascii?Q?icg0Ugei/cMG6zX/giPpwO6Tjt6FLCguNEuSLVrSTWWoAdfKqqyZvv7ZOY6L?=
+ =?us-ascii?Q?kW5h7x7Fv8frCIYj8jtQjvm6cKoEP5iWVvuRIV56HAAkKaTNJwOhfWTbdVo4?=
+ =?us-ascii?Q?btYShmvVRVPxtpXwPo3FvxDyaBQHSFIa/rNKkhrM?=
+X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:CAL; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
+ SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(7416014)(921020);
+ DIR:OUT; SFP:1101; 
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2025 09:47:33.1727 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44d9082e-771b-4165-6783-08de04bd5fa3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
+ Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000042A7.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8664
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,82 +129,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Pekka,
+Telemetry command names must contain only alphanumeric characters
+(`A-Z`, `a-z`, `0-9`), underscore (`_`), and forward slash (`/`).
+Other characters, including hyphens (`-`), are not allowed and
+cause registration to fail.
 
-On 8/6/25 9:56 AM, Pekka Riikonen wrote:
-> 
-> It seems that currently it's not possible to use packet pools allocated 
-> with external memory with the virtio_user exception path use case, 
-> because it ignores extmem in virtio_user_mem_event_cb() (and also in the 
-> kernel backend in add_memseg_list()).  This is easy to test with testpmd 
-> with the --mp-alloc=xmemhuge or --mp-alloc=anon option (https:// 
-> doc.dpdk.org/guides/howto/virtio_user_as_exception_path.html).
-> 
-> The original commit that added the check (5282bb1c3 mem: allow memseg 
-> lists to be marked as external) talks about needing file descriptors in 
-> virtio that aren't available with extmem, but at least the kernel 
-> backend doesn't seem to need any.  The patch below fixes the issue for 
-> me with with the exception path.
-> 
-> So I'm wondering whether ignoring the extmem is actually needed, in this 
-> use case?
+This patch updates the documentation to explicitly state these
+restrictions and highlights the existing invalid example
+"/l3fwd-power/stats" (in l3fwd-power app).
 
-It might not be needed, but we would need to take care of not breaking 
-backends that does not support extmem.
+Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+---
+ doc/guides/prog_guide/telemetry_lib.rst | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Could you prepare a formal patch?
-
-Thanks,
-Maxime
-
-> 
-> ---
-> diff --git a/drivers/net/virtio/virtio_user/vhost_kernel.c b/drivers/ 
-> net/virtio/virtio_user/vhost_kernel.c
-> index e42bb35935..cd5b975675 100644
-> --- a/drivers/net/virtio/virtio_user/vhost_kernel.c
-> +++ b/drivers/net/virtio/virtio_user/vhost_kernel.c
-> @@ -189,9 +189,6 @@ add_memseg_list(const struct rte_memseg_list *msl, 
-> void *arg)
->       void *start_addr;
->       uint64_t len;
-> 
-> -    if (msl->external)
-> -        return 0;
-> -
->       if (vm->nregions >= max_regions)
->           return -1;
-> 
-> diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c b/drivers/ 
-> net/virtio/virtio_user/virtio_user_dev.c
-> index 187f81b066..d5204a64a7 100644
-> --- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
-> +++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
-> @@ -539,20 +539,14 @@ virtio_user_fill_intr_handle(struct 
-> virtio_user_dev *dev)
-> 
->   static void
->   virtio_user_mem_event_cb(enum rte_mem_event type __rte_unused,
-> -             const void *addr,
-> +             const void *addr __rte_unused,
->                size_t len __rte_unused,
->                void *arg)
->   {
->       struct virtio_user_dev *dev = arg;
-> -    struct rte_memseg_list *msl;
->       uint16_t i;
->       int ret = 0;
-> 
-> -    /* ignore externally allocated memory */
-> -    msl = rte_mem_virt2memseg_list(addr);
-> -    if (msl->external)
-> -        return;
-> -
->       pthread_mutex_lock(&dev->mutex);
-> 
->       if (dev->started == false)
-> ---
-> 
-> Pekka
-> 
+diff --git a/doc/guides/prog_guide/telemetry_lib.rst b/doc/guides/prog_guide/telemetry_lib.rst
+index 32f525a67f..6ae5067474 100644
+--- a/doc/guides/prog_guide/telemetry_lib.rst
++++ b/doc/guides/prog_guide/telemetry_lib.rst
+@@ -157,6 +157,10 @@ command. An example command being registered is shown below:
+     rte_telemetry_register_cmd("/example_lib/string_example", handle_string,
+             "Returns an example string. Takes no parameters");
+ 
++The command name **must consist only of alphanumeric characters (`A-Z`, `a-z`,
++`0-9`) and the special characters underscore (`_`) and forward slash (`/`)**.
++Any other characters, including spaces, are not permitted and will cause the
++command registration to fail.
+ 
+ Using Commands
+ --------------
+-- 
+2.43.0
 
