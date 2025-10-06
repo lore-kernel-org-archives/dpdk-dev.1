@@ -2,36 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 340FECCA471
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 14:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CE2CCA471
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 14:50:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 49EBD402B1;
-	Mon,  6 Oct 2025 16:49:08 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5E91740667;
+	Mon,  6 Oct 2025 16:50:22 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 07E08402AF
- for <dev@dpdk.org>; Mon,  6 Oct 2025 16:49:05 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B44C5402AF;
+ Mon,  6 Oct 2025 16:50:20 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C5A64202CC
- for <dev@dpdk.org>; Mon,  6 Oct 2025 16:49:05 +0200 (CEST)
-Content-class: urn:content-classes:message
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 8ED8C202CC;
+ Mon,  6 Oct 2025 16:50:20 +0200 (CEST)
+Content-class: urn:content-classes:recallmessage
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH] mbuf: optimize segment prefree
-Date: Mon, 6 Oct 2025 16:49:04 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F654A1@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20250827213535.21602-1-mb@smartsharesystems.com>
+Content-Type: multipart/alternative;
+ boundary="----_=_NextPart_001_01DC36D0.89A2A43C"
+Subject: Recall: Minutes of techboard meeting, 2025-10-01
+Date: Mon, 6 Oct 2025 16:50:18 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F654A2@smartserver.smartshare.dk>
 X-MS-Has-Attach: 
+X-MimeOLE: Produced By Microsoft Exchange V6.5
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] mbuf: optimize segment prefree
-Thread-Index: AdwXmods4H4ev7nXRxebdwhSzcT4TQfNWyAg
-References: <20250827213535.21602-1-mb@smartsharesystems.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: <dev@dpdk.org>
+Thread-Topic: Minutes of techboard meeting, 2025-10-01
+Thread-Index: Adw20ImidQT2YMcLT42vVllsfmLRHg==
+Priority: Urgent
+Expiry-Date: Wed, 8 Oct 2025 16:50:17 +0200
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: <dev@dpdk.org>, <techboard@dpdk.org>, <stephen@networkplumber.org>,
+ "Thomas Monjalon" <thomas@monjalon.net>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
+Cc: "Patrick Robb" <probb@iol.unh.edu>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -45,71 +47,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-UElORyBmb3IgcmV2aWV3Lg0KDQpPbmx5IHJlY2VpdmVkIGZlZWRiYWNrIGZyb20gU3RlcGhlbiBh
-Ym91dCB0aGUgR0NDIG9wdGltaXplZCBSVEVfTUJVRl9ESVJFQ1QoKSBtYWNybyBiZWluZyBjb21w
-bGV4LCBhbmQgY291bGQgYmUgYW4gaW5saW5lIGZ1bmN0aW9uIGluc3RlYWQuDQoNClZlbmxpZyBo
-aWxzZW4gLyBLaW5kIHJlZ2FyZHMsDQotTW9ydGVuIEJyw7hydXANCg0KDQo+IC0tLS0tT3JpZ2lu
-YWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE1vcnRlbiBCcsO4cnVwIFttYWlsdG86bWJAc21hcnRz
-aGFyZXN5c3RlbXMuY29tXQ0KPiBTZW50OiBXZWRuZXNkYXksIDI3IEF1Z3VzdCAyMDI1IDIzLjM2
-DQo+IFRvOiBkZXZAZHBkay5vcmcNCj4gQ2M6IE1vcnRlbiBCcsO4cnVwDQo+IFN1YmplY3Q6IFtQ
-QVRDSF0gbWJ1Zjogb3B0aW1pemUgc2VnbWVudCBwcmVmcmVlDQo+IA0KPiBFZWZhY3RvcmVkIHJ0
-ZV9wa3RtYnVmX3ByZWZyZWVfc2VnKCkgZm9yIGJvdGggcGVyZm9ybWFuY2UgYW5kDQo+IHJlYWRh
-YmlsaXR5Lg0KPiANCj4gV2l0aCB0aGUgb3B0aW1pemVkIFJURV9NQlVGX0RJUkVDVCgpIG1hY3Jv
-LCB0aGUgY29tbW9uIGxpa2VseSBjb2RlIHBhdGgNCj4gbm93IGZpdHMgd2l0aGluIG9uZSBpbnN0
-cnVjdGlvbiBjYWNoZSBsaW5lIG9uIHg4Ni02NCB3aGVuIGJ1aWx0IHdpdGgNCj4gR0NDLg0KPiAN
-Cj4gU2lnbmVkLW9mZi1ieTogTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNv
-bT4NCj4gLS0tDQo+ICBsaWIvbWJ1Zi9ydGVfbWJ1Zi5oICAgICAgfCA1MiArKysrKysrKysrKysr
-KysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ICBsaWIvbWJ1Zi9ydGVfbWJ1Zl9jb3JlLmgg
-fCAgOCArKysrKysrDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDI4IGluc2VydGlvbnMoKyksIDMyIGRl
-bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2xpYi9tYnVmL3J0ZV9tYnVmLmggYi9saWIv
-bWJ1Zi9ydGVfbWJ1Zi5oDQo+IGluZGV4IDA2YWI3NTAyYTUuLmY0YTM0ODU5N2YgMTAwNjQ0DQo+
-IC0tLSBhL2xpYi9tYnVmL3J0ZV9tYnVmLmgNCj4gKysrIGIvbGliL21idWYvcnRlX21idWYuaA0K
-PiBAQCAtMzEsNiArMzEsNyBAQA0KPiAgICogaHR0cDovL3d3dy5rb2hhbGEuY29tL3N0YXJ0L3Rj
-cGlwaXYyLmh0bWwNCj4gICAqLw0KPiANCj4gKyNpbmNsdWRlIDxzdGRib29sLmg+DQo+ICAjaW5j
-bHVkZSA8c3RkaW50Lmg+DQo+IA0KPiAgI2luY2x1ZGUgPHJ0ZV9jb21tb24uaD4NCj4gQEAgLTE0
-MjMsNDQgKzE0MjQsMzEgQEAgc3RhdGljIGlubGluZSBpbnQNCj4gX19ydGVfcGt0bWJ1Zl9waW5u
-ZWRfZXh0YnVmX2RlY3JlZihzdHJ1Y3QgcnRlX21idWYgKm0pDQo+ICBzdGF0aWMgX19ydGVfYWx3
-YXlzX2lubGluZSBzdHJ1Y3QgcnRlX21idWYgKg0KPiAgcnRlX3BrdG1idWZfcHJlZnJlZV9zZWco
-c3RydWN0IHJ0ZV9tYnVmICptKQ0KPiAgew0KPiAtCV9fcnRlX21idWZfc2FuaXR5X2NoZWNrKG0s
-IDApOw0KPiAtDQo+IC0JaWYgKGxpa2VseShydGVfbWJ1Zl9yZWZjbnRfcmVhZChtKSA9PSAxKSkg
-ew0KPiAtDQo+IC0JCWlmICghUlRFX01CVUZfRElSRUNUKG0pKSB7DQo+IC0JCQlydGVfcGt0bWJ1
-Zl9kZXRhY2gobSk7DQo+IC0JCQlpZiAoUlRFX01CVUZfSEFTX0VYVEJVRihtKSAmJg0KPiAtCQkJ
-ICAgIFJURV9NQlVGX0hBU19QSU5ORURfRVhUQlVGKG0pICYmDQo+IC0JCQkgICAgX19ydGVfcGt0
-bWJ1Zl9waW5uZWRfZXh0YnVmX2RlY3JlZihtKSkNCj4gLQkJCQlyZXR1cm4gTlVMTDsNCj4gLQkJ
-fQ0KPiAtDQo+IC0JCWlmIChtLT5uZXh0ICE9IE5VTEwpDQo+IC0JCQltLT5uZXh0ID0gTlVMTDsN
-Cj4gLQkJaWYgKG0tPm5iX3NlZ3MgIT0gMSkNCj4gLQkJCW0tPm5iX3NlZ3MgPSAxOw0KPiArCWJv
-b2wgcmVmY250X25vdF9vbmU7DQo+IA0KPiAtCQlyZXR1cm4gbTsNCj4gKwlfX3J0ZV9tYnVmX3Nh
-bml0eV9jaGVjayhtLCAwKTsNCj4gDQo+IC0JfSBlbHNlIGlmIChfX3J0ZV9tYnVmX3JlZmNudF91
-cGRhdGUobSwgLTEpID09IDApIHsNCj4gKwlyZWZjbnRfbm90X29uZSA9IHVubGlrZWx5KHJ0ZV9t
-YnVmX3JlZmNudF9yZWFkKG0pICE9IDEpOw0KPiArCWlmIChyZWZjbnRfbm90X29uZSAmJg0KPiAr
-CQlfX3J0ZV9tYnVmX3JlZmNudF91cGRhdGUobSwgLTEpICE9IDApDQo+ICsJCXJldHVybiBOVUxM
-Ow0KPiANCj4gLQkJaWYgKCFSVEVfTUJVRl9ESVJFQ1QobSkpIHsNCj4gLQkJCXJ0ZV9wa3RtYnVm
-X2RldGFjaChtKTsNCj4gLQkJCWlmIChSVEVfTUJVRl9IQVNfRVhUQlVGKG0pICYmDQo+IC0JCQkg
-ICAgUlRFX01CVUZfSEFTX1BJTk5FRF9FWFRCVUYobSkgJiYNCj4gLQkJCSAgICBfX3J0ZV9wa3Rt
-YnVmX3Bpbm5lZF9leHRidWZfZGVjcmVmKG0pKQ0KPiAtCQkJCXJldHVybiBOVUxMOw0KPiAtCQl9
-DQo+ICsJaWYgKHVubGlrZWx5KCFSVEVfTUJVRl9ESVJFQ1QobSkpKSB7DQo+ICsJCXJ0ZV9wa3Rt
-YnVmX2RldGFjaChtKTsNCj4gKwkJaWYgKFJURV9NQlVGX0hBU19FWFRCVUYobSkgJiYNCj4gKwkJ
-CVJURV9NQlVGX0hBU19QSU5ORURfRVhUQlVGKG0pICYmDQo+ICsJCQlfX3J0ZV9wa3RtYnVmX3Bp
-bm5lZF9leHRidWZfZGVjcmVmKG0pKQ0KPiArCQkJcmV0dXJuIE5VTEw7DQo+ICsJfQ0KPiANCj4g
-LQkJaWYgKG0tPm5leHQgIT0gTlVMTCkNCj4gLQkJCW0tPm5leHQgPSBOVUxMOw0KPiAtCQlpZiAo
-bS0+bmJfc2VncyAhPSAxKQ0KPiAtCQkJbS0+bmJfc2VncyA9IDE7DQo+ICsJaWYgKHJlZmNudF9u
-b3Rfb25lKQ0KPiAgCQlydGVfbWJ1Zl9yZWZjbnRfc2V0KG0sIDEpOw0KPiArCWlmIChtLT5uYl9z
-ZWdzICE9IDEpDQo+ICsJCW0tPm5iX3NlZ3MgPSAxOw0KPiArCWlmIChtLT5uZXh0ICE9IE5VTEwp
-DQo+ICsJCW0tPm5leHQgPSBOVUxMOw0KPiANCj4gLQkJcmV0dXJuIG07DQo+IC0JfQ0KPiAtCXJl
-dHVybiBOVUxMOw0KPiArCXJldHVybiBtOw0KPiAgfQ0KPiANCj4gIC8qKg0KPiBkaWZmIC0tZ2l0
-IGEvbGliL21idWYvcnRlX21idWZfY29yZS5oIGIvbGliL21idWYvcnRlX21idWZfY29yZS5oDQo+
-IGluZGV4IGEwZGYyNjViNWQuLmE1MjQyMjc0ZDcgMTAwNjQ0DQo+IC0tLSBhL2xpYi9tYnVmL3J0
-ZV9tYnVmX2NvcmUuaA0KPiArKysgYi9saWIvbWJ1Zi9ydGVfbWJ1Zl9jb3JlLmgNCj4gQEAgLTcx
-NSw2ICs3MTUsMTQgQEAgc3RydWN0IHJ0ZV9tYnVmX2V4dF9zaGFyZWRfaW5mbyB7DQo+ICAjZGVm
-aW5lIFJURV9NQlVGX0RJUkVDVChtYikgXA0KPiAgCSghKChtYiktPm9sX2ZsYWdzICYgKFJURV9N
-QlVGX0ZfSU5ESVJFQ1QgfCBSVEVfTUJVRl9GX0VYVEVSTkFMKSkpDQo+IA0KPiArLyogR0NDIG9u
-bHkgb3B0aW1pemVzIHNpbmdsZS1iaXQgTVNCIHRlc3RzIHRoaXMgd2F5LCBzbyBkbyBpdCBieSBo
-YW5kDQo+IHdpdGggbXVsdGktYml0LiAqLw0KPiArI2lmIGRlZmluZWQoUlRFX1RPT0xDSEFJTl9H
-Q0MpICYmIGRlZmluZWQoUlRFX0FSQ0hfWDg2KQ0KPiArI3VuZGVmIFJURV9NQlVGX0RJUkVDVA0K
-PiArI2RlZmluZSBSVEVfTUJVRl9ESVJFQ1QobWIpIFwNCj4gKwkoISgoKGNvbnN0IHVpbnQ4X3Qg
-KikobWIpKVtvZmZzZXRvZihzdHJ1Y3QgcnRlX21idWYsIG9sX2ZsYWdzKSArDQo+IDddICYgXA0K
-PiArCSh1aW50OF90KSgoUlRFX01CVUZfRl9JTkRJUkVDVCB8IFJURV9NQlVGX0ZfRVhURVJOQUwp
-ID4+IDU2KSkpDQo+ICsjZW5kaWYNCj4gKw0KPiAgLyoqIFVuaW5pdGlhbGl6ZWQgb3IgdW5zcGVj
-aWZpZWQgcG9ydC4gKi8NCj4gICNkZWZpbmUgUlRFX01CVUZfUE9SVF9JTlZBTElEIFVJTlQxNl9N
-QVgNCj4gIC8qKiBGb3IgYmFja3dhcmRzIGNvbXBhdGliaWxpdHkuICovDQo+IC0tDQo+IDIuNDMu
-MA0KDQo=
+This is a multi-part message in MIME format.
+
+------_=_NextPart_001_01DC36D0.89A2A43C
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+Morten Br=F8rup would like to recall the message, "Minutes of techboard =
+meeting, 2025-10-01".
+
+------_=_NextPart_001_01DC36D0.89A2A43C
+Content-Type: text/html;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Recall: Minutes of techboard meeting, 2025-10-01</TITLE>
+</HEAD>
+<BODY>
+<!-- Converted from text/plain format -->
+
+<P><FONT SIZE=3D2>Morten Br=F8rup would like to recall the message, =
+&quot;Minutes of techboard meeting, 2025-10-01&quot;.</FONT>
+</P>
+
+</BODY>
+</HTML>
+------_=_NextPart_001_01DC36D0.89A2A43C--
