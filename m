@@ -2,57 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3574CAC5B8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 09:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF66CAC5B8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 09:45:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ACF67402DD;
-	Mon,  6 Oct 2025 11:37:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8991D402DD;
+	Mon,  6 Oct 2025 11:45:08 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 74F9B402B1
- for <dev@dpdk.org>; Mon,  6 Oct 2025 11:37:46 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 697BF402B1
+ for <dev@dpdk.org>; Mon,  6 Oct 2025 11:45:07 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1759743465;
+ s=mimecast20190719; t=1759743907;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=4istMV6KOpZDxzQKOjjZdnRWx5we7+TybPMDzzFjt+Q=;
- b=GwEob/5swl0byPgU8DqUretkPnSnpywc869S1Jz/NbSzv5mbs+VHX8K3rqgwR0swEIzV9X
- w7qMFIny6JtI0JAzyY6pfiwjowYkWTeJlFMl7crFQ5j1yXV43OO9pv7fYfI4Ld/pfyor12
- 6PEkYZbzuLOyK05rgBpwnd47NpVHqy0=
+ bh=0+727SGRUDCMVKJEz7XkO+oCwCvXdaA1EqE6QXDUWe8=;
+ b=QozusisIm39H2P5b3cMaf+Xv8hB40Z0ptdS3diDPqXSinkDdpo66vYnPsEGgKbXOik/lN1
+ 6VslDa6Yr+6NMbVXGk9PrWhP3sjTQFd+0eIlw4S5GEenFPH4kkA+Izk8GehadfvtuVoE1w
+ pn+ewm/E/nITimCAtgb/wVeoMqR1nUQ=
 Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-692-a8hTSjH3NiKHEXdVv9PXKw-1; Mon,
- 06 Oct 2025 05:37:39 -0400
-X-MC-Unique: a8hTSjH3NiKHEXdVv9PXKw-1
-X-Mimecast-MFC-AGG-ID: a8hTSjH3NiKHEXdVv9PXKw_1759743458
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-372-QczmkyMsNL6ZA1gcC-j7Ng-1; Mon,
+ 06 Oct 2025 05:45:03 -0400
+X-MC-Unique: QczmkyMsNL6ZA1gcC-j7Ng-1
+X-Mimecast-MFC-AGG-ID: QczmkyMsNL6ZA1gcC-j7Ng_1759743902
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id E68F619560B2; Mon,  6 Oct 2025 09:37:37 +0000 (UTC)
+ id CC0A1195608C; Mon,  6 Oct 2025 09:45:02 +0000 (UTC)
 Received: from [10.44.22.30] (unknown [10.44.22.30])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 901C31956056; Mon,  6 Oct 2025 09:37:34 +0000 (UTC)
-Message-ID: <467f9bea-3649-44bd-ac9c-29f9d969a5b7@redhat.com>
-Date: Mon, 6 Oct 2025 11:37:31 +0200
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 4FA2D180141C; Mon,  6 Oct 2025 09:45:00 +0000 (UTC)
+Message-ID: <34a49225-5664-451d-a215-daf0ec81feb6@redhat.com>
+Date: Mon, 6 Oct 2025 11:44:57 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] vhost: fix a double fetch when dequeue offloading
-To: "Wangyunjian(wangyunjian,TongTu)" <wangyunjian@huawei.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, "chenbox@nvidia.com" <chenbox@nvidia.com>, 
- "Lilijun (Jerry)" <jerry.lilijun@huawei.com>,
- "xiawei (H)" <xiawei40@huawei.com>, wangzengyuan <wangzengyuan@huawei.com>,
- "stable@dpdk.org" <stable@dpdk.org>
-References: <91dc12662805a3867413940f856ba9454b91c579.1734588243.git.wangyunjian@huawei.com>
- <09058cfb25d7583f67d74f09cd36673f1b10f5ec.1734661755.git.wangyunjian@huawei.com>
- <20241220091052.68bb13ee@hermes.local>
- <dd21d206b0384a2db02d33d1cee860f1@huawei.com>
+Subject: Re: virtio_user exception path with external memory
+To: Pekka Riikonen <priikone@iki.fi>, dev@dpdk.org
+Cc: Chenbo Xia <chenbox@nvidia.com>
+References: <0e15cd8e9def8c16b15c028206a6d308@silc.fi>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  xsFNBFOEQQIBEADjNLYZZqghYuWv1nlLisptPJp+TSxE/KuP7x47e1Gr5/oMDJ1OKNG8rlNg
@@ -97,14 +90,14 @@ Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
  fxjSxjSO6rj4/MeenmlJw1yebzkX8ZmaSi8BHe+n6jTGEFNrbiOdWpJgc5yHIZZnwXaW54QT
  UhhSjDL1rV2B4F28w30jYmlRmm2RdN7iCZfbyP3dvFQTzQ4ySquuPkIGcOOHrvZzxbRjzMx1
  Mwqu3GQ=
-In-Reply-To: <dd21d206b0384a2db02d33d1cee860f1@huawei.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <0e15cd8e9def8c16b15c028206a6d308@silc.fi>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: IoXhvhdYdwcQePLXbobWm58TSo_qzfVYP26tu7_LxP0_1759743458
+X-Mimecast-MFC-PROC-ID: Us-FDBoIAOLOxGvZtTW1FLd45tg0fULJRyR7OkaiOE8_1759743902
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -118,144 +111,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Yunjian,
+Hi Pekka,
 
-On 2/13/25 1:22 PM, Wangyunjian(wangyunjian,TongTu) wrote:
+On 8/6/25 9:56 AM, Pekka Riikonen wrote:
 > 
->> -----Original Message-----
->> From: Stephen Hemminger [mailto:stephen@networkplumber.org]
->> Sent: Saturday, December 21, 2024 1:11 AM
->> To: Wangyunjian(wangyunjian,TongTu) <wangyunjian@huawei.com>
->> Cc: dev@dpdk.org; maxime.coquelin@redhat.com; chenbox@nvidia.com;
->> Lilijun (Jerry) <jerry.lilijun@huawei.com>; xiawei (H) <xiawei40@huawei.com>;
->> wangzengyuan <wangzengyuan@huawei.com>; stable@dpdk.org
->> Subject: Re: [PATCH v2 1/1] vhost: fix a double fetch when dequeue offloading
->>
->> On Fri, 20 Dec 2024 11:49:55 +0800
->> Yunjian Wang <wangyunjian@huawei.com> wrote:
->>
->>> The hdr->csum_start does two successive reads from user space to read a
->>> variable length data structure. The result overflow if the data structure
->>> changes between the two reads.
->>>
->>> To fix this, we can prevent double fetch issue by copying virtio_hdr to
->>> the temporary variable.
->>>
->>> Fixes: 4dc4e33ffa10 ("net/virtio: fix Rx checksum calculation")
->>> Cc: stable@dpdk.org
->>>
->>> Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
->>
->>
->> How about something like the following *untested*
+> It seems that currently it's not possible to use packet pools allocated 
+> with external memory with the virtio_user exception path use case, 
+> because it ignores extmem in virtio_user_mem_event_cb() (and also in the 
+> kernel backend in add_memseg_list()).  This is easy to test with testpmd 
+> with the --mp-alloc=xmemhuge or --mp-alloc=anon option (https:// 
+> doc.dpdk.org/guides/howto/virtio_user_as_exception_path.html).
 > 
-> I agree. Can you fix it?
+> The original commit that added the check (5282bb1c3 mem: allow memseg 
+> lists to be marked as external) talks about needing file descriptors in 
+> virtio that aren't available with extmem, but at least the kernel 
+> backend doesn't seem to need any.  The patch below fixes the issue for 
+> me with with the exception path.
+> 
+> So I'm wondering whether ignoring the extmem is actually needed, in this 
+> use case?
 
-As you were the initial poster, I suggest you implement it and test it
-by yourself.
+It might not be needed, but we would need to take care of not breaking 
+backends that does not support extmem.
 
-It is not too late for -rc2.
+Could you prepare a formal patch?
 
 Thanks,
 Maxime
 
-> Thanks,
-> Yunjian
 > 
->>
->> diff --git a/lib/vhost/virtio_net.c b/lib/vhost/virtio_net.c
->> index 69901ab3b5..c65cb639b2 100644
->> --- a/lib/vhost/virtio_net.c
->> +++ b/lib/vhost/virtio_net.c
->> @@ -2861,25 +2861,28 @@ vhost_dequeue_offload(struct virtio_net *dev,
->> struct virtio_net_hdr *hdr,
->>   	}
->>   }
->>
->> -static __rte_noinline void
->> +static inline int
->>   copy_vnet_hdr_from_desc(struct virtio_net_hdr *hdr,
->> -		struct buf_vector *buf_vec)
->> +			const struct buf_vector *buf_vec,
->> +			uint16_t nr_vec)
->>   {
->> -	uint64_t len;
->> -	uint64_t remain = sizeof(struct virtio_net_hdr);
->> -	uint64_t src;
->> -	uint64_t dst = (uint64_t)(uintptr_t)hdr;
->> +	size_t remain = sizeof(struct virtio_net_hdr);
->> +	uint8_t *dst = (uint8_t *)hdr;
->>
->> -	while (remain) {
->> -		len = RTE_MIN(remain, buf_vec->buf_len);
->> -		src = buf_vec->buf_addr;
->> -		rte_memcpy((void *)(uintptr_t)dst,
->> -				(void *)(uintptr_t)src, len);
->> +	while (remain > 0) {
->> +		size_t len = RTE_MIN(remain, buf_vec->buf_len);
->> +		const void *src = (const void *)(uintptr_t)buf_vec->buf_addr;
->>
->> +		if (unlikely(nr_vec == 0))
->> +			return -1;
->> +
->> +		memcpy(dst, src, len);
->>   		remain -= len;
->>   		dst += len;
->>   		buf_vec++;
->> +		--nr_vec;
->>   	}
->> +	return 0;
->>   }
->>
->>   static __rte_always_inline int
->> @@ -2908,16 +2911,12 @@ desc_to_mbuf(struct virtio_net *dev, struct
->> vhost_virtqueue *vq,
->>   	 */
->>
->>   	if (virtio_net_with_host_offload(dev)) {
->> -		if (unlikely(buf_vec[0].buf_len < sizeof(struct virtio_net_hdr))) {
->> -			/*
->> -			 * No luck, the virtio-net header doesn't fit
->> -			 * in a contiguous virtual area.
->> -			 */
->> -			copy_vnet_hdr_from_desc(&tmp_hdr, buf_vec);
->> -			hdr = &tmp_hdr;
->> -		} else {
->> -			hdr = (struct virtio_net_hdr *)((uintptr_t)buf_vec[0].buf_addr);
->> -		}
->> +		if (unlikely(copy_vnet_hdr_from_desc(&tmp_hdr, buf_vec, nr_vec) !=
->> 0))
->> +		    return -1;
->> +
->> +		/* ensure that compiler does not delay copy */
->> +		rte_compiler_barrier();
->> +		hdr = &tmp_hdr;
->>   	}
->>
->>   	for (vec_idx = 0; vec_idx < nr_vec; vec_idx++) {
->> @@ -3363,7 +3362,6 @@ virtio_dev_tx_batch_packed(struct virtio_net *dev,
->>   {
->>   	uint16_t avail_idx = vq->last_avail_idx;
->>   	uint32_t buf_offset = sizeof(struct virtio_net_hdr_mrg_rxbuf);
->> -	struct virtio_net_hdr *hdr;
->>   	uintptr_t desc_addrs[PACKED_BATCH_SIZE];
->>   	uint16_t ids[PACKED_BATCH_SIZE];
->>   	uint16_t i;
->> @@ -3382,8 +3380,12 @@ virtio_dev_tx_batch_packed(struct virtio_net *dev,
->>
->>   	if (virtio_net_with_host_offload(dev)) {
->>   		vhost_for_each_try_unroll(i, 0, PACKED_BATCH_SIZE) {
->> -			hdr = (struct virtio_net_hdr *)(desc_addrs[i]);
->> -			vhost_dequeue_offload(dev, hdr, pkts[i], legacy_ol_flags);
->> +			struct virtio_net_hdr hdr;
->> +
->> +			memcpy(&hdr, (void *)desc_addrs[i], sizeof(struct
->> virtio_net_hdr));
->> +			rte_compiler_barrier();
->> +
->> +			vhost_dequeue_offload(dev, &hdr, pkts[i], legacy_ol_flags);
->>   		}
->>   	}
->>
+> ---
+> diff --git a/drivers/net/virtio/virtio_user/vhost_kernel.c b/drivers/ 
+> net/virtio/virtio_user/vhost_kernel.c
+> index e42bb35935..cd5b975675 100644
+> --- a/drivers/net/virtio/virtio_user/vhost_kernel.c
+> +++ b/drivers/net/virtio/virtio_user/vhost_kernel.c
+> @@ -189,9 +189,6 @@ add_memseg_list(const struct rte_memseg_list *msl, 
+> void *arg)
+>       void *start_addr;
+>       uint64_t len;
+> 
+> -    if (msl->external)
+> -        return 0;
+> -
+>       if (vm->nregions >= max_regions)
+>           return -1;
+> 
+> diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c b/drivers/ 
+> net/virtio/virtio_user/virtio_user_dev.c
+> index 187f81b066..d5204a64a7 100644
+> --- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
+> +++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+> @@ -539,20 +539,14 @@ virtio_user_fill_intr_handle(struct 
+> virtio_user_dev *dev)
+> 
+>   static void
+>   virtio_user_mem_event_cb(enum rte_mem_event type __rte_unused,
+> -             const void *addr,
+> +             const void *addr __rte_unused,
+>                size_t len __rte_unused,
+>                void *arg)
+>   {
+>       struct virtio_user_dev *dev = arg;
+> -    struct rte_memseg_list *msl;
+>       uint16_t i;
+>       int ret = 0;
+> 
+> -    /* ignore externally allocated memory */
+> -    msl = rte_mem_virt2memseg_list(addr);
+> -    if (msl->external)
+> -        return;
+> -
+>       pthread_mutex_lock(&dev->mutex);
+> 
+>       if (dev->started == false)
+> ---
+> 
+> Pekka
 > 
 
