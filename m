@@ -2,67 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E0CCCA470
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 05:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 129FCCCA471
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Oct 2025 05:14:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 02FB8402E3;
-	Mon,  6 Oct 2025 07:14:12 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 7AFC2402E2
- for <dev@dpdk.org>; Mon,  6 Oct 2025 07:14:10 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5964rPwg014238
- for <dev@dpdk.org>; Sun, 5 Oct 2025 22:14:09 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 05C2740609;
+	Mon,  6 Oct 2025 07:14:17 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 17BD9402E2
+ for <dev@dpdk.org>; Mon,  6 Oct 2025 07:14:15 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5964ufpG006229
+ for <dev@dpdk.org>; Sun, 5 Oct 2025 22:14:15 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=Te5XRO9vI8K3ZT6jJOt2uxA
- F953dLiqnboX4BOJmy2c=; b=ZUf64vJFl8OGLoaI8DAlZdgDCnjSLJgAzLrpeo3
- xzzMQmJ6G9lJcNr9AFmrKU3QcdNcU3Va/XR03o2eu0yuUDj2BtYoBzeCHjNInEqe
- Or9+cjCKqw20OQaHKF8UmpP99SeAztM3qkpowdh9DDSCL1MEZtUyDrbuYTSReo7Z
- xOzSg9ilnXfiaDU8sU0p0B2zi2i/09dV61chxZMyliLGjuUXxr8wjy+Xu9pFVu2L
- xBsmgSMKSkriNOhVSCyhumLJiZoZMQlXIJ+Ueve3qLO1kq7vNqcCI9qhl/n1Zvia
- vp0HtzVYaGYuESglOPVViTMKugSW1Xev3wnOh2vHbr3pU6w==
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=u
+ 8MhyicfkPcdV0xyVi6TNtWz+cPOuslRebZiMWDoT88=; b=ONANYSjmFK+L5CAzK
+ q6RSWH3UAWvRaJwHNV+dCTC48yh0os7AobWZ+NXaM46JapE+nqFi9pVgvHsDfedk
+ FdxXD8XuxWK284V3EzzM/LdMSehFC1yFeU0l6rdS6yOcMvLlbj4EDBtMbetruq/Y
+ NRI6iVE38vMJraezNk1aq22YtJUuWuPA6Vg0xF8+pkCOe0FqgLXjgJq2wX0OhobP
+ wrzASfwUAPPgqDWwVD7HIO68BJCth9HdWZQdoTQGnIRCF/xB5VQmm2FkQKP4i6py
+ 2YIEk8F4R98ox9xqkSSE2laoX8ktW+maVorXCkuC/d0Fks5tphcj13GLHEYm0LDL
+ eQ+oQ==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49m74y80u7-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49m769g0ng-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Sun, 05 Oct 2025 22:14:09 -0700 (PDT)
+ for <dev@dpdk.org>; Sun, 05 Oct 2025 22:14:15 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Sun, 5 Oct 2025 22:14:18 -0700
+ 15.2.1544.25; Sun, 5 Oct 2025 22:14:23 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Sun, 5 Oct 2025 22:14:18 -0700
+ Transport; Sun, 5 Oct 2025 22:14:23 -0700
 Received: from localhost.localdomain (unknown [10.28.36.154])
- by maili.marvell.com (Postfix) with ESMTP id C94B13F705A;
- Sun,  5 Oct 2025 22:14:05 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 8127E3F705A;
+ Sun,  5 Oct 2025 22:14:10 -0700 (PDT)
 From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <dev@dpdk.org>, <jerinj@marvell.com>, Rakesh Kudurumalla
  <rkudurumalla@marvell.com>
-Subject: [PATCH 1/5] common/cnxk: add CPT CQ configuration
-Date: Mon, 6 Oct 2025 10:43:58 +0530
-Message-ID: <20251006051402.1387576-1-rkudurumalla@marvell.com>
+Subject: [PATCH 2/5] common/cnxk: add params to register IRQ handler
+Date: Mon, 6 Oct 2025 10:43:59 +0530
+Message-ID: <20251006051402.1387576-2-rkudurumalla@marvell.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251006051402.1387576-1-rkudurumalla@marvell.com>
+References: <20251006051402.1387576-1-rkudurumalla@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: s1xZoHX-61ZuRIxsnqjZgmU7FrhciYLx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA2MDAzNiBTYWx0ZWRfX7Ybneveqkpwl
- e3m1ipvd2YQIBCD+RDyGuic8dENLPYo4MPdd4aFIQcLGtrOuN8VoHcN1jV2eV4lvGAPNmHzRFiB
- hiPtnNY8Zb2RMviaEAq5Y7dTWJBE4CdAcrLWIaH3C6jlSMZyqdj1718DF99DF/0lhz5YQY5q+lL
- Ernwfi01rrht9pwSyvwIUvwFnleF3LfMkmSULrS5nW6su16y8J11UW559l3ul1dQKh8h7pC+wOp
- GJ6OiTkE2GhjouJjC9Mu8xRh14eR283Q3R8290Tyxm1UcZvmmDaOgKt8IwknpJzKaODqFXBcOkb
- 2dj+YioRRc1JMKlgEVXzMtDiGOJgoVZw20+7C3k2KXdBvnPIV8TopzYs2h8n2udzV+3h+jO7q5S
- CTV5dtJLDNN/t6Ms3da9h4LTJyQSdg==
-X-Authority-Analysis: v=2.4 cv=f6hFxeyM c=1 sm=1 tr=0 ts=68e35021 cx=c_pps
+X-Proofpoint-GUID: R4U1918xSrCnQ5iI4Yq2_OO81qlHWD72
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA2MDAzNyBTYWx0ZWRfXx4D7WYuwS2u1
+ /Rcml4FpmMjZDBzU+8mzQrZ+TXOnyPJOEfQdYSv1h9mC93xod+jLfHAtDjLfcg0FPqee6aOZ1lL
+ gNNXa6p2kjnfHfcIJzwk7gY4usl2OYwm0w4vNEvBCZRkUEA8+aJyFKGjseVkYHnJU+fE8Z4TpxY
+ Ti77kfKSqblrWny2oWEmWzbtOli3yusd22nEeFOy3bYakq18t5c1uGzS0UzYL0cxw59zUjOki18
+ HICL2xo8hqphfvogQWLSkthoTaSoecfsKBf8DGSrsEWaxDAvDXD9Tzt+f/omE5RQzn/jXxEhCao
+ F3vGyJ1N8e2XpEHhjYBKx7nZrT3I6dhXihAaw/khg0nby8ZzeeKJ/k6Bi2HHwcgPRbQ1ow3dlf0
+ +kQ9hFHrLaCKAhkDWsuwWexSYm8j6A==
+X-Authority-Analysis: v=2.4 cv=GsJPO01C c=1 sm=1 tr=0 ts=68e35027 cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=x6icFKpwvdMA:10 a=M5GUcnROAAAA:8 a=TsjYUoI9xJG_-VsspE0A:9
+ a=x6icFKpwvdMA:10 a=M5GUcnROAAAA:8 a=qOT6uCCeAQiegN0jZ0YA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: s1xZoHX-61ZuRIxsnqjZgmU7FrhciYLx
+X-Proofpoint-ORIG-GUID: R4U1918xSrCnQ5iI4Yq2_OO81qlHWD72
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-06_02,2025-10-02_03,2025-03-28_01
@@ -79,130 +82,282 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add new structures to used initialize and enable & disable
-CPT CQ
+modified cpt_lf_unregister_irqs cpt_lf_register_irqs()
+parameters to register and unregister call back handlers.
 
 Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 ---
- drivers/common/cnxk/hw/cpt.h | 77 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
+ drivers/common/cnxk/roc_cpt.c         | 53 ++++++++++++++-------------
+ drivers/common/cnxk/roc_cpt_priv.h    | 10 ++++-
+ drivers/common/cnxk/roc_nix_inl.c     |  6 +--
+ drivers/common/cnxk/roc_nix_inl_dev.c |  6 +--
+ 4 files changed, 42 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/common/cnxk/hw/cpt.h b/drivers/common/cnxk/hw/cpt.h
-index e542f3a3d4..19a1b87ae6 100644
---- a/drivers/common/cnxk/hw/cpt.h
-+++ b/drivers/common/cnxk/hw/cpt.h
-@@ -36,6 +36,10 @@
- #define CPT_LF_Q_SIZE		(0x100ull)
- #define CPT_LF_Q_INST_PTR	(0x110ull)
- #define CPT_LF_Q_GRP_PTR	(0x120ull)
-+#define CPT_LF_CQ_BASE		(0x200ull)
-+#define CPT_LF_CQ_SIZE		(0x210ull)
-+#define CPT_LF_CQ_PTR		(0x220ull)
-+#define CPT_LF_CQ_CTL		(0x230ull)
- #define CPT_LF_NQX(a)		(0x400ull | (uint64_t)(a) << 3)
- #define CPT_LF_CTX_CTL		(0x500ull)
- #define CPT_LF_CTX_FLUSH	(0x510ull)
-@@ -87,6 +91,24 @@ union cpt_eng_caps {
- 	};
- };
+diff --git a/drivers/common/cnxk/roc_cpt.c b/drivers/common/cnxk/roc_cpt.c
+index d1ba2b8858..9f67a3c78c 100644
+--- a/drivers/common/cnxk/roc_cpt.c
++++ b/drivers/common/cnxk/roc_cpt.c
+@@ -44,7 +44,7 @@ cpt_lf_misc_intr_enb_dis(struct roc_cpt_lf *lf, bool enb)
+ 			    lf->rbase + CPT_LF_MISC_INT_ENA_W1C);
+ }
  
-+union cpt_lf_cq_ctl {
-+	uint64_t u;
-+	struct cpt_lf_cq_ctl_s {
-+		uint64_t ena : 1;
-+		uint64_t fc_ena : 1;
-+		uint64_t fc_up_crossing : 1;
-+		uint64_t reserved_3_3 : 1;
-+		uint64_t fc_hyst_bits : 4;
-+		uint64_t reserved_8_15 : 8;
-+		uint64_t entry_size : 2;
-+		uint64_t reserved_18_23 : 6;
-+		uint64_t dq_ack_ena : 1;
-+		uint64_t cq_all : 1;
-+		uint64_t reserved_26_43 : 18;
-+		uint64_t busy_count : 20;
-+	} s;
-+};
-+
- union cpt_lf_ctl {
- 	uint64_t u;
- 	struct cpt_lf_ctl_s {
-@@ -161,6 +183,16 @@ union cpt_lf_q_inst_ptr {
- 	} s;
- };
+-static void
++void
+ cpt_lf_misc_irq(void *param)
+ {
+ 	struct roc_cpt_lf *lf = (struct roc_cpt_lf *)param;
+@@ -70,7 +70,7 @@ cpt_lf_misc_irq(void *param)
+ }
  
-+union cpt_lf_cq_ptr {
-+	uint64_t u;
-+	struct cpt_lf_cq_ptr_s {
-+		uint64_t count : 20;
-+		uint64_t reserved_20_31 : 12;
-+		uint64_t nq_ptr : 20;
-+		uint64_t reserved_52_63 : 12;
-+	} s;
-+};
-+
- union cpt_lf_q_base {
- 	uint64_t u;
- 	struct cpt_lf_q_base_s {
-@@ -180,6 +212,23 @@ union cpt_lf_q_size {
- 	} s;
- };
+ static int
+-cpt_lf_register_misc_irq(struct roc_cpt_lf *lf)
++cpt_lf_register_misc_irq(struct roc_cpt_lf *lf, misc_irq_cb_t misc_cb)
+ {
+ 	struct plt_pci_device *pci_dev = lf->pci_dev;
+ 	struct plt_intr_handle *handle;
+@@ -82,7 +82,7 @@ cpt_lf_register_misc_irq(struct roc_cpt_lf *lf)
+ 	/* Clear err interrupt */
+ 	cpt_lf_misc_intr_enb_dis(lf, false);
+ 	/* Set used interrupt vectors */
+-	rc = dev_irq_register(handle, cpt_lf_misc_irq, lf, vec);
++	rc = dev_irq_register(handle, misc_cb, lf, vec);
+ 	/* Enable all dev interrupt except for RQ_DISABLED */
+ 	cpt_lf_misc_intr_enb_dis(lf, true);
  
-+union cpt_lf_cq_base {
-+	uint64_t u;
-+	struct cpt_lf_cq_base_s {
-+		uint64_t reserved_0_6 : 7;
-+		uint64_t addr : 46;
-+		uint64_t reserved_53_63 : 11;
-+	} s;
-+};
-+
-+union cpt_lf_cq_size {
-+	uint64_t u;
-+	struct cpt_lf_cq_size_s {
-+		uint64_t size : 20;
-+		uint64_t reserved_20_63 : 44;
-+	} s;
-+};
-+
- union cpt_lf_misc_int {
- 	uint64_t u;
- 	struct cpt_lf_misc_int_s {
-@@ -297,6 +346,34 @@ struct cpt_inst_s {
- 	union cpt_inst_w7 w7;
- };
+@@ -90,7 +90,7 @@ cpt_lf_register_misc_irq(struct roc_cpt_lf *lf)
+ }
  
-+struct cpt_cq_s {
-+	union cpt_cq_w0 {
-+		struct {
-+			uint64_t compcode : 7;
-+			uint64_t doneint : 1;
-+			uint64_t uc_compcode : 8;
-+			uint64_t uc_info : 48;
-+		} s;
-+		uint64_t u64;
-+	} w0;
-+
-+	struct {
-+		uint64_t esn : 64;
-+	} w1;
-+
-+	union cpt_cq_w2 {
-+		struct {
-+			uint64_t fmt : 2;
-+			uint64_t rsv : 14;
-+			uint64_t uc_info2 : 48;
-+		} s;
-+	} w2;
-+
-+	struct {
-+		uint64_t comp_ptr : 64;
-+	} w3;
-+};
-+
- union cpt_res_s {
- 	struct cpt_cn20k_res_s {
- 		uint64_t compcode : 7;
+ static void
+-cpt_lf_unregister_misc_irq(struct roc_cpt_lf *lf)
++cpt_lf_unregister_misc_irq(struct roc_cpt_lf *lf, misc_irq_cb_t misc_cb)
+ {
+ 	struct plt_pci_device *pci_dev = lf->pci_dev;
+ 	struct plt_intr_handle *handle;
+@@ -101,7 +101,7 @@ cpt_lf_unregister_misc_irq(struct roc_cpt_lf *lf)
+ 	vec = lf->msixoff + CPT_LF_INT_VEC_MISC;
+ 	/* Clear err interrupt */
+ 	cpt_lf_misc_intr_enb_dis(lf, false);
+-	dev_irq_unregister(handle, cpt_lf_misc_irq, lf, vec);
++	dev_irq_unregister(handle, misc_cb, lf, vec);
+ }
+ 
+ static void
+@@ -134,7 +134,7 @@ cpt_lf_done_irq(void *param)
+ }
+ 
+ static int
+-cpt_lf_register_done_irq(struct roc_cpt_lf *lf)
++cpt_lf_register_done_irq(struct roc_cpt_lf *lf, done_irq_cb_t done_cb)
+ {
+ 	struct plt_pci_device *pci_dev = lf->pci_dev;
+ 	struct plt_intr_handle *handle;
+@@ -148,7 +148,7 @@ cpt_lf_register_done_irq(struct roc_cpt_lf *lf)
+ 	cpt_lf_done_intr_enb_dis(lf, false);
+ 
+ 	/* Set used interrupt vectors */
+-	rc = dev_irq_register(handle, cpt_lf_done_irq, lf, vec);
++	rc = dev_irq_register(handle, done_cb, lf, vec);
+ 
+ 	/* Enable done interrupt */
+ 	cpt_lf_done_intr_enb_dis(lf, true);
+@@ -157,7 +157,7 @@ cpt_lf_register_done_irq(struct roc_cpt_lf *lf)
+ }
+ 
+ static void
+-cpt_lf_unregister_done_irq(struct roc_cpt_lf *lf)
++cpt_lf_unregister_done_irq(struct roc_cpt_lf *lf, done_irq_cb_t done_cb)
+ {
+ 	struct plt_pci_device *pci_dev = lf->pci_dev;
+ 	struct plt_intr_handle *handle;
+@@ -169,11 +169,11 @@ cpt_lf_unregister_done_irq(struct roc_cpt_lf *lf)
+ 
+ 	/* Clear done interrupt */
+ 	cpt_lf_done_intr_enb_dis(lf, false);
+-	dev_irq_unregister(handle, cpt_lf_done_irq, lf, vec);
++	dev_irq_unregister(handle, done_cb, lf, vec);
+ }
+ 
+-static int
+-cpt_lf_register_irqs(struct roc_cpt_lf *lf)
++int
++cpt_lf_register_irqs(struct roc_cpt_lf *lf, misc_irq_cb_t misc_cb, done_irq_cb_t done_cb)
+ {
+ 	int rc;
+ 
+@@ -184,22 +184,22 @@ cpt_lf_register_irqs(struct roc_cpt_lf *lf)
+ 	}
+ 
+ 	/* Register lf err interrupt */
+-	rc = cpt_lf_register_misc_irq(lf);
++	rc = cpt_lf_register_misc_irq(lf, misc_cb);
+ 	if (rc)
+ 		plt_err("Error registering IRQs");
+ 
+-	rc = cpt_lf_register_done_irq(lf);
++	rc = cpt_lf_register_done_irq(lf, done_cb);
+ 	if (rc)
+ 		plt_err("Error registering IRQs");
+ 
+ 	return rc;
+ }
+ 
+-static void
+-cpt_lf_unregister_irqs(struct roc_cpt_lf *lf)
++void
++cpt_lf_unregister_irqs(struct roc_cpt_lf *lf, misc_irq_cb_t misc_cb, done_irq_cb_t done_cb)
+ {
+-	cpt_lf_unregister_misc_irq(lf);
+-	cpt_lf_unregister_done_irq(lf);
++	cpt_lf_unregister_misc_irq(lf, misc_cb);
++	cpt_lf_unregister_done_irq(lf, done_cb);
+ }
+ 
+ static void
+@@ -685,7 +685,7 @@ cpt_get_blkaddr(struct dev *dev)
+ }
+ 
+ int
+-cpt_lf_init(struct roc_cpt_lf *lf)
++cpt_lf_init(struct roc_cpt_lf *lf, bool skip_register_irq)
+ {
+ 	struct dev *dev = lf->dev;
+ 	uint64_t blkaddr;
+@@ -710,9 +710,11 @@ cpt_lf_init(struct roc_cpt_lf *lf)
+ 	/* Initialize instruction queue */
+ 	cpt_iq_init(lf);
+ 
+-	rc = cpt_lf_register_irqs(lf);
+-	if (rc)
+-		goto disable_iq;
++	if (!skip_register_irq) {
++		rc = cpt_lf_register_irqs(lf, cpt_lf_misc_irq, cpt_lf_done_irq);
++		if (rc)
++			goto disable_iq;
++	}
+ 
+ 	return 0;
+ 
+@@ -733,7 +735,7 @@ roc_cpt_lf_init(struct roc_cpt *roc_cpt, struct roc_cpt_lf *lf)
+ 	lf->msixoff = cpt->lf_msix_off[lf->lf_id];
+ 	lf->pci_dev = cpt->pci_dev;
+ 
+-	rc = cpt_lf_init(lf);
++	rc = cpt_lf_init(lf, false);
+ 	if (rc)
+ 		return rc;
+ 
+@@ -943,10 +945,11 @@ roc_cpt_iq_reset(struct roc_cpt_lf *lf)
+ }
+ 
+ void
+-cpt_lf_fini(struct roc_cpt_lf *lf)
++cpt_lf_fini(struct roc_cpt_lf *lf, bool skip_register_irq)
+ {
+ 	/* Unregister IRQ's */
+-	cpt_lf_unregister_irqs(lf);
++	if (!skip_register_irq)
++		cpt_lf_unregister_irqs(lf, cpt_lf_misc_irq, cpt_lf_done_irq);
+ 
+ 	/* Disable IQ */
+ 	roc_cpt_iq_disable(lf);
+@@ -977,7 +980,7 @@ roc_cpt_lf_fini(struct roc_cpt_lf *lf)
+ 	if (lf == NULL)
+ 		return;
+ 	lf->roc_cpt->lf[lf->lf_id] = NULL;
+-	cpt_lf_fini(lf);
++	cpt_lf_fini(lf, false);
+ }
+ 
+ int
+diff --git a/drivers/common/cnxk/roc_cpt_priv.h b/drivers/common/cnxk/roc_cpt_priv.h
+index 0bd956e373..c46ef143ab 100644
+--- a/drivers/common/cnxk/roc_cpt_priv.h
++++ b/drivers/common/cnxk/roc_cpt_priv.h
+@@ -18,14 +18,20 @@ roc_cpt_to_cpt_priv(struct roc_cpt *roc_cpt)
+ 	return (struct cpt *)&roc_cpt->reserved[0];
+ }
+ 
++typedef void (*misc_irq_cb_t)(void *params);
++typedef void (*done_irq_cb_t)(void *params);
+ int cpt_lfs_attach(struct dev *dev, uint8_t blkaddr, bool modify,
+ 		   uint16_t nb_lf);
+ int cpt_lfs_detach(struct dev *dev);
+ int cpt_lfs_alloc(struct dev *dev, uint8_t eng_grpmsk, uint8_t blk, bool inl_dev_sso,
+ 		  bool ctx_ilen_valid, uint8_t ctx_ilen, bool rxc_ena, uint16_t rx_inject_qp);
+ int cpt_lfs_free(struct dev *dev);
+-int cpt_lf_init(struct roc_cpt_lf *lf);
+-void cpt_lf_fini(struct roc_cpt_lf *lf);
++int cpt_lf_init(struct roc_cpt_lf *lf, bool skip_register_irq);
++void cpt_lf_fini(struct roc_cpt_lf *lf, bool skip_register_irq);
++int cpt_lf_register_irqs(struct roc_cpt_lf *lf, misc_irq_cb_t misc_cb, done_irq_cb_t done_cb);
++void cpt_lf_unregister_irqs(struct roc_cpt_lf *lf, misc_irq_cb_t misc_cb, done_irq_cb_t done_cb);
++void cpt_lf_cq_init(struct roc_cpt_lf *lf);
++void cpt_lf_misc_irq(void *params);
+ 
+ int cpt_lf_outb_cfg(struct dev *dev, uint16_t sso_pf_func, uint16_t nix_pf_func,
+ 		    uint8_t lf_id, bool ena);
+diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
+index c7637ddbdc..bc63f4ee62 100644
+--- a/drivers/common/cnxk/roc_nix_inl.c
++++ b/drivers/common/cnxk/roc_nix_inl.c
+@@ -1588,7 +1588,7 @@ roc_nix_inl_outb_init(struct roc_nix *roc_nix)
+ 		lf->pci_dev = nix->pci_dev;
+ 
+ 		/* Setup CPT LF instruction queue */
+-		rc = cpt_lf_init(lf);
++		rc = cpt_lf_init(lf, false);
+ 		if (rc) {
+ 			plt_err("Failed to initialize CPT LF, rc=%d", rc);
+ 			goto lf_fini;
+@@ -1678,7 +1678,7 @@ roc_nix_inl_outb_init(struct roc_nix *roc_nix)
+ 
+ lf_fini:
+ 	for (j = i - 1; j >= 0; j--)
+-		cpt_lf_fini(&lf_base[j]);
++		cpt_lf_fini(&lf_base[j], false);
+ 	plt_free(lf_base);
+ lf_free:
+ 	rc |= cpt_lfs_free(dev);
+@@ -1705,7 +1705,7 @@ roc_nix_inl_outb_fini(struct roc_nix *roc_nix)
+ 
+ 	/* Cleanup CPT LF instruction queue */
+ 	for (i = 0; i < nix->nb_cpt_lf; i++)
+-		cpt_lf_fini(&lf_base[i]);
++		cpt_lf_fini(&lf_base[i], false);
+ 
+ 	/* Free LF resources */
+ 	rc = cpt_lfs_free(dev);
+diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/roc_nix_inl_dev.c
+index 75d03c1077..dcfb893215 100644
+--- a/drivers/common/cnxk/roc_nix_inl_dev.c
++++ b/drivers/common/cnxk/roc_nix_inl_dev.c
+@@ -451,7 +451,7 @@ nix_inl_cpt_setup(struct nix_inl_dev *inl_dev, bool inl_dev_sso)
+ 		lf->msixoff = inl_dev->cpt_msixoff[i];
+ 		lf->pci_dev = inl_dev->pci_dev;
+ 
+-		rc = cpt_lf_init(lf);
++		rc = cpt_lf_init(lf, false);
+ 		if (rc) {
+ 			plt_err("Failed to initialize CPT LF, rc=%d", rc);
+ 			goto lf_free;
+@@ -477,7 +477,7 @@ nix_inl_cpt_setup(struct nix_inl_dev *inl_dev, bool inl_dev_sso)
+ 	return 0;
+ lf_fini:
+ 	for (i = 0; i < inl_dev->nb_cptlf; i++)
+-		cpt_lf_fini(&inl_dev->cpt_lf[i]);
++		cpt_lf_fini(&inl_dev->cpt_lf[i], false);
+ lf_free:
+ 	rc |= cpt_lfs_free(dev);
+ 	return rc;
+@@ -501,7 +501,7 @@ nix_inl_cpt_release(struct nix_inl_dev *inl_dev)
+ 
+ 	/* Cleanup CPT LF queue */
+ 	for (i = 0; i < inl_dev->nb_cptlf; i++)
+-		cpt_lf_fini(&inl_dev->cpt_lf[i]);
++		cpt_lf_fini(&inl_dev->cpt_lf[i], false);
+ 
+ 	/* Free LF resources */
+ 	rc = cpt_lfs_free(dev);
 -- 
 2.25.1
 
