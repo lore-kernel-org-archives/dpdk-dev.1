@@ -2,165 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2286DCCA476
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Oct 2025 07:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 113FFCCA476
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Oct 2025 07:58:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2EB66402A3;
-	Tue,  7 Oct 2025 09:47:34 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 900ED4027F;
- Tue,  7 Oct 2025 09:47:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759823252; x=1791359252;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=TdoT06mbDmu5s0NrfkEYzE/Bc8W30ujYgqzZ37MLtEs=;
- b=D/OuwhzoOpt2H0FYtKT8SPCbcAC1Pl++thFFEIOqfu4JZrTOo7+Fjjh+
- HWD8M1YB9xERXE4OIiQGNDmT/jNcc5LrWkCchwInhy3MFSRtE1PtR/PgW
- cBGsdUuOMRgD4SvMvrZVgfABQk/41o5wBGlElbXGomcUBjv8HcZw4L+Nk
- dJ2cTsmsgryljXfR2KwIAf9CeqrrQE8/3kVFAm0UG3vg0+d1hoetus7HK
- qyjnkaVMR/81dTz+6d8I9T7mOkHHUojLSqnrlomvfQ9aO1CHI7vrNJx77
- TlAAumM3eyziqRF9Q/KnSHt+bU7DM2lDCRrOrcAxZrlWucaLm+TuAG4/Y g==;
-X-CSE-ConnectionGUID: /RtFSBKuQ4+1g5FG70I/1A==
-X-CSE-MsgGUID: foYK2gUhSFWLxYancQXRpg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11574"; a="61709988"
-X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; d="scan'208";a="61709988"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Oct 2025 00:47:30 -0700
-X-CSE-ConnectionGUID: uNk850oPRrSav0COkOxlHQ==
-X-CSE-MsgGUID: xim49SFQQtCq4gO3UdZWYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,321,1751266800"; d="scan'208";a="180884957"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Oct 2025 00:47:30 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 7 Oct 2025 00:47:29 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 7 Oct 2025 00:47:29 -0700
-Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.11) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 7 Oct 2025 00:47:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vXN/P/4xzOFugjKyIfolblDp5QTpoX6+oi4TAmnV7Nh5q57TJjiTl+OQCdk0a2Y2wTwSPvBslRPjCk/mhLS0ku6Y64gsLKT1OeeBOKo06DE4aRto4DNtJR4uyIHYiN2GJL8/QhUpLBZOAY4axPPXt6DAk1v/kEcTVAe8clsVGhSCX5poiseep9MKsWmNJuAvJrlVIdsXm1SsCiofGwB9DJ8wJYWDQrkcAb5AKOfMbKr9XYvEoJ7R1FAMuvLzUImLRJzN+va7wKeO6nQ+RSGUaoUsYZdii159kHbaZdPSK7C4iscxXaCn0CbMqhZgzn+4b58++ZQFK7rNATVh6a+/iQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tVMmgyaCLgpRe/xw177qO4QHE9yQUE29wHAts1lc6TE=;
- b=OcAejNQx7nqy3FSxp77njFgGUP7SpZMco8yFgqvpmwRcgC0dYaF5nSxj9ieKh64CbCbHq2RPqkapKdq5o9Fp8IqccWQ8bsO0C8K4hfIv4ykx9H4mOgQAwLx4gA4p4MAz8AMdn3WihotFklz8dYdpW2epHjt/+J8U15V+FnNudSsVabJ3E79lJIT1evDGiFKBRAfxM1ZF4zJKIis00q0KLljmMKSuOt6OE10U2qXjnI2qvx+7yFOUrH4yMfFUTbq3CgJ7ceYvtufGDgqxVl+HYKXe6G0qNDQAULP/XUCKh7erCgXSNFLgurzC1x27I08hXBR39SuSDZUCDqMe0lw8Vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM3PPF291EF9BF1.namprd11.prod.outlook.com
- (2603:10b6:f:fc00::f15) by PH0PR11MB5904.namprd11.prod.outlook.com
- (2603:10b6:510:14e::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
- 2025 07:47:23 +0000
-Received: from DM3PPF291EF9BF1.namprd11.prod.outlook.com
- ([fe80::576b:ce1f:299d:677d]) by DM3PPF291EF9BF1.namprd11.prod.outlook.com
- ([fe80::576b:ce1f:299d:677d%4]) with mapi id 15.20.9137.017; Tue, 7 Oct 2025
- 07:47:23 +0000
-From: "Shetty, Praveen" <praveen.shetty@intel.com>
-To: "Richardson, Bruce" <bruce.richardson@intel.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: "stable@dpdk.org" <stable@dpdk.org>, "Zhang, Qi Z" <qi.z.zhang@intel.com>, 
- Yuying Zhang <yuying.zhang@intel.com>
-Subject: RE: [PATCH] net/cpfl: fix display of commands in the docs
-Thread-Topic: [PATCH] net/cpfl: fix display of commands in the docs
-Thread-Index: AQHcNHZF0dDm95Xfd0+2C77smUoutrS2U7MQ
-Date: Tue, 7 Oct 2025 07:47:23 +0000
-Message-ID: <DM3PPF291EF9BF1FE2D5C76005FEDDCDA199DE0A@DM3PPF291EF9BF1.namprd11.prod.outlook.com>
-References: <20251003145848.1675691-1-bruce.richardson@intel.com>
-In-Reply-To: <20251003145848.1675691-1-bruce.richardson@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM3PPF291EF9BF1:EE_|PH0PR11MB5904:EE_
-x-ms-office365-filtering-correlation-id: 295d0ace-1b21-4f68-b0a3-08de0575c0c4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700021;
-x-microsoft-antispam-message-info: =?us-ascii?Q?57x0fQb+yoHTUgERdDUT5tZSawVCNTEDfcP+Bm2KD6djo/fDtEBbbmzJ2NH/?=
- =?us-ascii?Q?cBxGkLPj2NyL3NJA6gZFj/wzieGffkqAoFwbqVkkKXNLsFaJuY0M2x8y9lqE?=
- =?us-ascii?Q?PGodcbZFag40T0k4wFU4yOfOORU2OZTgUkJmd9dgET1ozJ3ueDip5ZvkWj8+?=
- =?us-ascii?Q?97+FDa9H+eBAz+LuJd1q7x9qjlL63q/xDSE2C1+D7Xj2tBc7m7qq1sigdSsA?=
- =?us-ascii?Q?88HltHNmNESwAHqvhUSjPuhKbixOkWwYvwt/RtDV2qLdWr0oOm5CZyZC5JYq?=
- =?us-ascii?Q?zyAUczTLhozEQpVj7Jg7nRiiwn+2iEzDMxnhUJ+UelA1CYL76NTP7/MiQKCD?=
- =?us-ascii?Q?m56BZnZeoZD0lYH2yB5Mxa6hVBNbl2U1szw+vdJ9nz4dJ5gCF0lrgAoXCjjY?=
- =?us-ascii?Q?bVWqoSs0rAqSq1gFy6ngb+8wA3C5YfqEpbcZZsZ7DUxElG49tRmrjBVryNtE?=
- =?us-ascii?Q?DKTa5mUswUDucw6fzp6fn2iBSkf2H+QEXoSM74wq+sGObVJa3Q6LcGujNqmJ?=
- =?us-ascii?Q?9oiPgMonKQSmg3NUX/gfJDjBOhzbyIfgP8yqGDUTfYXnSTND810WYI3pKnz1?=
- =?us-ascii?Q?V87qr9xJTKmv6TRISfxXRvyXULh6I58zjxx0lP11XDqD1TMzfbfN3YAJLM69?=
- =?us-ascii?Q?iddOdR1GWekiN6gSFflLSGjFzJGhS2ekrgdloN9o3yAG+2ErbOhvGc/kEsih?=
- =?us-ascii?Q?ectzrcO9E9YcmSCKX1YDLk0iDu8SA+j+yhEM8Fb4O/NuS8KANwS26X/+07v7?=
- =?us-ascii?Q?NhRhC+eTcsxUV2IBJ7sNCOmrWBqQEsXKj72mO3DfBQ0MoIRL2ZPZM9ILEDoT?=
- =?us-ascii?Q?lJM45IKfPUjhAaRhiL9Z7th3q5ftqVuv+B872l8KHrgK+LRiKBvE+khwfQdz?=
- =?us-ascii?Q?64MNpXBnefhYKbCtCEsfBKUpV3Nq7wTNvwwBg0xS8R/H/MYNpVhg80c59SOl?=
- =?us-ascii?Q?/JizQXkdmz1mswEKG5/Wq1406enNWXtx/0genXZ3PPM73rBmNVZY9plu5a+K?=
- =?us-ascii?Q?f827e6/iV8wEAIh9GBeDu/efx0CudZsimuohdvNX891FF+EeVn8iFLx1JQSD?=
- =?us-ascii?Q?e6+UNwruSSR3DR8cLbU4yAsami1qbHFT/blSaoJZ0cN4y4O18/GMGKc5Bdm5?=
- =?us-ascii?Q?mHRrVSDAgSIiKwFNHLo4iWj/a/0+VnUPlsHv5h9V8TXi8f0kMwxiBYp/iaAI?=
- =?us-ascii?Q?M7scPtCqox4RoTObzGICiEpr1TgXKp4YbX4VmeBkuxc2bkAyHCX7nVMuAvkT?=
- =?us-ascii?Q?OwTqTTnksFp1NId9OXdwvM3WEdmZmWuuNj30uzkv9X+a86xM75k2d3TcgDuV?=
- =?us-ascii?Q?lIUvjDBRdvxYVVY1sY52BONOOJHIA8vFjUbl83kxUayw/wfMn9bSAtDttvTu?=
- =?us-ascii?Q?B327N1Mp0T7TDu49Y9BgqnsqlyJMtlMNC/fqdhc/EN3sKrZfOXij2tj6FKuT?=
- =?us-ascii?Q?nWVEkiNm3o0FChrHAGTRZ0JlZ7OAku4+kKeWVUa+qQcEO4g0iTfEVF1/IuKv?=
- =?us-ascii?Q?3TZ9w8HK77WjoTOZlb/96N8s9lrrhXCbHQNr?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM3PPF291EF9BF1.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(38070700021); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?o8CjgVGr1pNBIRTcqjiV9VNCk34KTGlY7aXhs2tmhszGIzaS2jE0qknDAW8g?=
- =?us-ascii?Q?qrs5a4FDPqVhB/7vH2vN7k9z6fghgJcBugiKqqPYaoESl0UE/kqsAWn5KxqU?=
- =?us-ascii?Q?rnaVHBGGvCohnvOhuw+N4KFgHfTQEt6u5HkzckG7pYLF2LUaBLiep8ijbHrE?=
- =?us-ascii?Q?NINJ56IZJ2+qnGOuVA3Yxa/MLrhFgoJnYn+bfjMLMJl61WMi1vQV9yu4VAR5?=
- =?us-ascii?Q?eyIxpqra1eLxzXGBmATcX3TfJvUEUzPKhb4PR5t6758ZIZubKnmav3DGIF7U?=
- =?us-ascii?Q?QEis/jg2jP1GFfVoK2z4QiCvdwJAo0M8+Cnu4TmdKFu8M6D0e3R2zPUW0iCO?=
- =?us-ascii?Q?BkJbqy/o9qs/j64/Jd4+S6I2R9OGBUb+c/Sc0C6m9LxuQwRQkVxzgv1ZDYi+?=
- =?us-ascii?Q?N9iAA30H3+CQxlRUL6qrmcmXpEpaoO9gvk1Dmq1CwBaob4ZPkNgnwNpkB406?=
- =?us-ascii?Q?PitVNCTkyJ25ayXxlCtcJ0VN3c+L2uFThO5MLcJcEyaurDE/F0AFkjXHi8NZ?=
- =?us-ascii?Q?G4jfhwm5qSHskzTvQXmCA8Pgtu0tNCBmCs9uuU1V1q7JCJm+GZ1zKkgz4Qr3?=
- =?us-ascii?Q?HVgWTSv+9rXBkyWGI/qviLtsDQC1kHnnvYA+U2Lz7DVqKdNsyR25AGNavFUA?=
- =?us-ascii?Q?TD+MOpZ3KQFJIaB5j/ivjjKCVgiqTuFV8Dg8HE/2RDmC6eWqQx/jF4igsTFq?=
- =?us-ascii?Q?bQyRC32ymDdkuAHN2o5ojJrE4Qe3YwVpWtA/ywyO9I9FspjlCG3k+fgu48YA?=
- =?us-ascii?Q?Dq+jockGA7gzuyqicubwkpsWMnIfFjZJBLkOaAHR+UtHuXCJ9y8efOeDcEdJ?=
- =?us-ascii?Q?vgfMet65y73xgjejb2Ib0eB9xrjfbtY+Pas4Ilf+buKs1WV98/p9SjqFyNC0?=
- =?us-ascii?Q?kuo2+dAweZS5ML064wFqPFhJHh5r61S80UdGGy/oTUePRE2X+9iEira2UN+8?=
- =?us-ascii?Q?UHpcmyxiobyvNPDf9Y2fBQV4uY51jJ/PHbMzkKUz++vimZG1i04r3KFH2MEX?=
- =?us-ascii?Q?XzZlOcItLUvvSwrVjeOTCmtt+9txGQQAxbtWosP7Pj43NnPxc2czJ8ILpnc1?=
- =?us-ascii?Q?rFQ12bMh0nf2RB+pB7lmrgsNAsmmeHFgEC63T8VCDWVXKqRdP7EpnuklWOUj?=
- =?us-ascii?Q?qCqWZazWg9rl38VF1Wlrfykh5RlxjejSf5TKF5CItBjGhXchBWFFxwM1MqDk?=
- =?us-ascii?Q?VwboVsbGk2EKf336SXrENXPFBIUXHy5KQ9uqPscPp4Ea7caVCAIWqyeyzdBa?=
- =?us-ascii?Q?BO3W7SVMRV2m8vW2XJPQhFO+qlFF2kI7eozu8kALpL3EGb8fhCLsoKM5H9Am?=
- =?us-ascii?Q?Uii5GGb5NNUcMBvmg60G8KYDTiBuYHLCWMrBpF5hJgjq0dVcZnNwLYmPrU8f?=
- =?us-ascii?Q?61ld1T5k3eLnEU3h8I3mO/2zyZvKc6pyoeLnivwrflRQ1oIXq+j2HYUygqXZ?=
- =?us-ascii?Q?tSj+Q/Pf8Bk+5+Fn62SlQ7x5p0dGhLCGAfvVN3lh56j5Lcu9ZmeoHM1aTPCn?=
- =?us-ascii?Q?OhfYKrOtOMQxFsKQq96AeYADTQaeKvLeTnY58JePVsTYHQFJKeAKU1iri1d6?=
- =?us-ascii?Q?X9FeyUcM6imUm5jApwhoG/KAHOuaE0EOuk9rk5fN?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id D5F414042E;
+	Tue,  7 Oct 2025 09:58:55 +0200 (CEST)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com
+ [209.85.217.41]) by mails.dpdk.org (Postfix) with ESMTP id 528CB402A3
+ for <dev@dpdk.org>; Tue,  7 Oct 2025 09:58:54 +0200 (CEST)
+Received: by mail-vs1-f41.google.com with SMTP id
+ ada2fe7eead31-574d36a8c11so2491621137.1
+ for <dev@dpdk.org>; Tue, 07 Oct 2025 00:58:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1759823933;
+ x=1760428733; darn=dpdk.org; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=iUDQg2eveLaLpckNxeBfIWLwcl35MWBo8HytgzlPHu8=;
+ b=1auOsgGYV6wKjxxHpW932rjiZa4ZlOv6wvwxLnH2DEqjX8r1IIr2uc2g7UBYflOE7e
+ 6oUdBHCDbjMk/tTm4lO+faGZ4LziNMRMlxLQ+cItsMxhV/f+J7d8mcnuxWSE1JdOoy8b
+ ZrN3Z3YbczGvU+VoJx6xIuld3rYZRNJplC4TibHY2ug09YX60gRol/qW9KvBPez49x4J
+ Nxe1lQ1W0FST5b6PIJnD6NNgH6WR9YmlNY2kmFuuML07a86VcC85TkH1KvWQMu2gugTt
+ +oDrdTJs7EAr8ZyPariG5056/2XOKh4j90JvC6dunqrZ1yK3EXMYZPFIp246TI0h/O2c
+ pywA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1759823933; x=1760428733;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=iUDQg2eveLaLpckNxeBfIWLwcl35MWBo8HytgzlPHu8=;
+ b=ohPVSFeoQ6PSplL4p+h8p1U+fTtAbA1OdgvdTYKIGOjRgDfvMxAOEoUhUazJzE68tm
+ uPq07QKfLsFC9l631ie3Y256qcI0vHrPlK6/Qi8+VIKg3Wi+1TMEiLWf1mX5pM8BIqrL
+ pz8dq7ru1fRx+xN9wk0bDrHV1smyILmAuJAYyYZg5VrTVwvSo/COG0NB4YoCxvTRKaiJ
+ FQ/LSWArMGRnEAP11NXe8LSlKLMo/0WR6kXN4oqc5KGbadKGjN5UA6lps0/ZmSTpddoz
+ H0ceR8UOJqDxq+TtwgkIEBzegX/+LhUxngl8p80K9i+okQXjoXJT1+HfYiXE0ga+78KH
+ MQnQ==
+X-Gm-Message-State: AOJu0YwdqhS9WqDY+ULtwA484CxuZI+qF/yKi1FTfkQACndVfa5e9ime
+ VCTfhRG64YW2sQzbAc8+y8JjhdA4JxZVlVNALeGVEjK588ZtIJlyL+seb7mclLujFZy79pHDMI1
+ WqgKSv8afNQUYPd+5bBIG4Dj3YoJxKfb7lH0M2O17Pw==
+X-Gm-Gg: ASbGncvsv8qC6ozHnfL852RAyBBvKr3GWviDvEVR2FeWZznRyNl8o6oT4yg5FCN8/nA
+ sQ/K/hI+BR0lklBNJ5wzPRayo/odo+5NzqGZtObEOvA4uzCFhPFg3ekoE0lx45KlT71ew7KBD9C
+ R541FLij62+cjoOIk5LCmuJO0hs5Gef3pTrQAcBvJTGDJyBNPIy2xQq+z6pPw0iReRlqVQJf4Sw
+ vmXMdeg7IYPzwiSMc2SYg3N/xDvzF0g
+X-Google-Smtp-Source: AGHT+IGyQbWyi+sRdX416ko2ty38QMEKsve5Z9qoL0T94+Ugty2/SY8Bunp8MPlo/ksGU8yXWhMUTGUH9qI+33rd6rc=
+X-Received: by 2002:a05:6102:80a9:b0:5d3:ff03:8f6a with SMTP id
+ ada2fe7eead31-5d41d12dc77mr5173724137.30.1759823933508; Tue, 07 Oct 2025
+ 00:58:53 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM3PPF291EF9BF1.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 295d0ace-1b21-4f68-b0a3-08de0575c0c4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Oct 2025 07:47:23.6462 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: C+vodAFCWqfxYzb75GY7isMAs5FexOzBLBvT7MwnsUFk/MqmKeyM7oBY4psCM0FGxv5jihhvna2FfGlOa7HYm2HS7UFP+cGNH2lk/9vXf40=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5904
-X-OriginatorOrg: intel.com
+References: <aN-Use5rigF3tQc9@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6549F@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6549F@smartserver.smartshare.dk>
+From: Stephen Hemminger <stephen@networkplumber.org>
+Date: Tue, 7 Oct 2025 09:58:43 +0200
+X-Gm-Features: AS18NWDeJfDVWhxNkHMpRjyPLW7YTc87F_86HvPt2y5GxNkWR_Z_UPnn99iFS7w
+Message-ID: <CAOaVG14WRb0YDk6UzzQ6zJ1iwjU2KFdMBVH6_Aypvq7yotYfSA@mail.gmail.com>
+Subject: Re: Minutes of techboard meeting, 2025-10-01
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: dev <dev@dpdk.org>, dpdk-techboard <techboard@dpdk.org>, 
+ Thomas Monjalon <thomas@monjalon.net>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, 
+ Patrick Robb <probb@iol.unh.edu>
+Content-Type: multipart/alternative; boundary="0000000000006c998606408cf0b5"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -174,52 +76,137 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The literal text of the commands to use were not displayed properly because=
- of a double ":" at the end of the preceding text, meaning that the ".. cod=
-e-block" marker got recognised as the literal text to include. Change the d=
-ouble colon to single, and also indent the line continuation in the multi-l=
-ine flow-create command.
+--0000000000006c998606408cf0b5
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 03f976012304 ("net/cpfl: adapt FXP to flow engine")
-Cc: stable@dpdk.org
+To help with definition of fast free flag, I would like the documentation
+to be better.
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- doc/guides/nics/cpfl.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Something like:
+Fast free flag allows driver to avoid expensive atomic operators on ref
+count and assume all mbufs in a burst are from the same pool.
 
-diff --git a/doc/guides/nics/cpfl.rst b/doc/guides/nics/cpfl.rst index 54a3=
-015aa0..bc42c524ea 100644
---- a/doc/guides/nics/cpfl.rst
-+++ b/doc/guides/nics/cpfl.rst
-@@ -218,14 +218,14 @@ low level hardware resources.
-       dpdk-testpmd -l 0,1 -a 0000:af:00.6,vport=3D[0-1],flow_parser=3D"ref=
-pkg.json" -- -i
-=20
- #. Create one flow to forward ETH-IPV4-TCP from I/O port to a local(CPF's)=
- vport. Flow should be created on
--   vport X. Group M should match fxp module. Action port_representor Y mea=
-ns forward packet to local vport Y::
-+   vport X. Group M should match fxp module. Action port_representor Y mea=
-ns forward packet to local vport Y:
-=20
-    .. code-block:: console
-=20
-       flow create X ingress group M pattern eth dst is 00:01:00:00:03:14 /=
- ipv4 src is 192.168.0.1 \
--      dst is 192.168.0.2 / tcp / end actions port_representor port_id Y / =
-end
-+         dst is 192.168.0.2 / tcp / end actions port_representor=20
-+ port_id Y / end
-=20
--#. Send a matched packet, and it should be displayed on PMD::
-+#. Send a matched packet, and it should be displayed on PMD:
-=20
-    .. code-block:: console
+Should also add debug asserts in drivers implenting fast free.
 
-Looks good to me - thanks Bruce!=20
-Acked-by: Praveen Shetty <praveen.shetty@intel.com>=20
+On Mon, Oct 6, 2025, 16:40 Morten Br=C3=B8rup <mb@smartsharesystems.com> wr=
+ote:
 
---
-2.48.1
+> > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> > Sent: Friday, 3 October 2025 11.18
+> > Subject: Minutes of techboard meeting, 2025-10-01
+>
+> > * Use of FAST_FREE and multi-buffer/scattered mbuf flags
+> >   - The flags for enabling fast-free and supporting multi-mbuf packets
+> > are
+> >     now documented incompatible
+> >   - Previously they were not defined as incompatible, but that seems to
+> >     have been assumed for some usages.
+> >   - Techboard discussed how best to resolve this incompatibility with
+> >     regards to:
+> >     - ensuring correctness
+> >     - avoiding major churn to DPDK code
+> >     - avoiding churn to end-user code
+> >   - Options discussed:
+> >     1 change definition back to not have the settings incompatible:
+> > this
+> >       necessitates checking drivers for correctness
+> >     2 keep as explicitly incompatible and report error if both
+> > specified:
+> >       this could break end-user apps, and requires changes to example
+> > apps
+> >     3 drop the fast-free flag if multi-segment mbufs are also
+> > specified:
+> >       "hides" the issue, but probably minimises changes. Would need to
+> >       decide whether the dropping of flag done in drivers vs ethdev
+> > level.
+> >       Pros and cons to both options. Needs clear documenting.
+> >   - No firm decision reached, will discuss more over email.
+>
+> IMO, the patch [1] making MBUF_FAST_FREE and MULTI_SEGS explicitly
+> incompatible should be reverted, at least for RC1.
+> That will take the project back to the state it was in before we started
+> this discussion.
+> And all the examples broken by the patch (because they use both TX
+> offloads) will not need fixing.
+>
+> [1]:
+> https://patchwork.dpdk.org/project/dpdk/patch/20250803194218.683318-3-mb@=
+smartsharesystems.com/
+>
+>
 
+--0000000000006c998606408cf0b5
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto">To help with definition of fast free flag, I would like t=
+he documentation to be better.<div dir=3D"auto"><br></div><div dir=3D"auto"=
+>Something like:</div><div dir=3D"auto">Fast free flag allows driver to avo=
+id expensive atomic operators on ref count and assume all mbufs in a burst =
+are from the same pool.</div><div dir=3D"auto"><br></div><div dir=3D"auto">=
+Should also add debug asserts in drivers implenting fast free.</div></div><=
+br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=
+=3D"gmail_attr">On Mon, Oct 6, 2025, 16:40 Morten Br=C3=B8rup &lt;<a href=
+=3D"mailto:mb@smartsharesystems.com">mb@smartsharesystems.com</a>&gt; wrote=
+:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.=
+8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">&gt; From: Bru=
+ce Richardson [mailto:<a href=3D"mailto:bruce.richardson@intel.com" target=
+=3D"_blank" rel=3D"noreferrer">bruce.richardson@intel.com</a>]<br>
+&gt; Sent: Friday, 3 October 2025 11.18<br>
+&gt; Subject: Minutes of techboard meeting, 2025-10-01<br>
+<br>
+&gt; * Use of FAST_FREE and multi-buffer/scattered mbuf flags<br>
+&gt;=C2=A0 =C2=A0- The flags for enabling fast-free and supporting multi-mb=
+uf packets<br>
+&gt; are<br>
+&gt;=C2=A0 =C2=A0 =C2=A0now documented incompatible<br>
+&gt;=C2=A0 =C2=A0- Previously they were not defined as incompatible, but th=
+at seems to<br>
+&gt;=C2=A0 =C2=A0 =C2=A0have been assumed for some usages.<br>
+&gt;=C2=A0 =C2=A0- Techboard discussed how best to resolve this incompatibi=
+lity with<br>
+&gt;=C2=A0 =C2=A0 =C2=A0regards to:<br>
+&gt;=C2=A0 =C2=A0 =C2=A0- ensuring correctness<br>
+&gt;=C2=A0 =C2=A0 =C2=A0- avoiding major churn to DPDK code<br>
+&gt;=C2=A0 =C2=A0 =C2=A0- avoiding churn to end-user code<br>
+&gt;=C2=A0 =C2=A0- Options discussed:<br>
+&gt;=C2=A0 =C2=A0 =C2=A01 change definition back to not have the settings i=
+ncompatible:<br>
+&gt; this<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0necessitates checking drivers for correctnes=
+s<br>
+&gt;=C2=A0 =C2=A0 =C2=A02 keep as explicitly incompatible and report error =
+if both<br>
+&gt; specified:<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0this could break end-user apps, and requires=
+ changes to example<br>
+&gt; apps<br>
+&gt;=C2=A0 =C2=A0 =C2=A03 drop the fast-free flag if multi-segment mbufs ar=
+e also<br>
+&gt; specified:<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;hides&quot; the issue, but probably mi=
+nimises changes. Would need to<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0decide whether the dropping of flag done in =
+drivers vs ethdev<br>
+&gt; level.<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0Pros and cons to both options. Needs clear d=
+ocumenting.<br>
+&gt;=C2=A0 =C2=A0- No firm decision reached, will discuss more over email.<=
+br>
+<br>
+IMO, the patch [1] making MBUF_FAST_FREE and MULTI_SEGS explicitly incompat=
+ible should be reverted, at least for RC1.<br>
+That will take the project back to the state it was in before we started th=
+is discussion.<br>
+And all the examples broken by the patch (because they use both TX offloads=
+) will not need fixing.<br>
+<br>
+[1]: <a href=3D"https://patchwork.dpdk.org/project/dpdk/patch/2025080319421=
+8.683318-3-mb@smartsharesystems.com/" rel=3D"noreferrer noreferrer" target=
+=3D"_blank">https://patchwork.dpdk.org/project/dpdk/patch/20250803194218.68=
+3318-3-mb@smartsharesystems.com/</a><br>
+<br>
+</blockquote></div>
+
+--0000000000006c998606408cf0b5--
