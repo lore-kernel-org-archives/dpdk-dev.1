@@ -2,71 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52427CAC5BB
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 10:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8658FCAC5BB
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 10:10:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8D975402A0;
-	Wed,  8 Oct 2025 12:00:00 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id DC4AD40297;
- Wed,  8 Oct 2025 11:59:58 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597NoLMg019231;
- Wed, 8 Oct 2025 02:59:58 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=2
- 27EvEeKZiWJm4L5NJ6zqkVOS8pkWIO1WrR/Z/maNsc=; b=bEalmdl8vvRtnA2kW
- 4RFYVDm7uuE0EGdV4BlsDiadaoNe+dfcj5hajvZnHQWTbVsmUpnitDZEx8v7rEa2
- XXFac0nkL9+HHfg29sCvgnnoqM/fHneAfvApSceIATi+Klmr0BTdxKw/PwfcahhT
- 80h7AG1fUStgvf6DkWG4tyajPmWP3S/riQhnpcz8DcMi4faJBATazsRIRx5k+Idz
- 8MUrDUROxWcIRKfUHl9k4VcMgq2BEBxJVLdkznOS7ee0meUqy8g9OmpE2DpDkJtk
- EY1bhWuHnPEYcPXFRvgVAK+goSTZMSh4aPLaDdh2/hAJDg4+E7IOVygls3Flslar
- jffTw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49ncv0h38w-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 08 Oct 2025 02:59:57 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 8 Oct 2025 03:00:06 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 8 Oct 2025 03:00:06 -0700
-Received: from ashishg.sclab.marvell.com (unknown [10.110.24.201])
- by maili.marvell.com (Postfix) with ESMTP id 973D15B693F;
- Wed,  8 Oct 2025 02:59:56 -0700 (PDT)
-From: <ashishg@marvell.com>
-To: <dev@dpdk.org>
-CC: <stable@dpdk.org>, <fanzhang.oss@gmail.com>, Ashish Gupta
- <ashishg@marvell.com>
-Subject: [PATCH v2] compressdev: update device ID validation check
-Date: Wed, 8 Oct 2025 09:59:41 +0000
-Message-ID: <20251008095950.3078552-1-ashishg@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251008074532.3066685-1-ashishg@marvell.com>
-References: <20251008074532.3066685-1-ashishg@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9C925402A0;
+	Wed,  8 Oct 2025 12:10:25 +0200 (CEST)
+Received: from fout-a3-smtp.messagingengine.com
+ (fout-a3-smtp.messagingengine.com [103.168.172.146])
+ by mails.dpdk.org (Postfix) with ESMTP id 00C7F40297
+ for <dev@dpdk.org>; Wed,  8 Oct 2025 12:10:23 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.phl.internal (Postfix) with ESMTP id 69F05EC03B5;
+ Wed,  8 Oct 2025 06:10:23 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Wed, 08 Oct 2025 06:10:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1759918223;
+ x=1760004623; bh=zM+LRkiYgPBEv2R2rsvxB/VP8I0pIVNVTj4fVQUMspA=; b=
+ I3CfbBXsit13lK5SoIHc40psea8jkogkuQoF6iGMqydnqoxor3fHPjq/wfSbe7g8
+ aFx/9Fb3qBvk0ZKu+hOo1v+O6I88u8Xz4Hww19mBqZN7PwhJtuE5/QDDaeiMcJ6A
+ ZZ3HeqBSE7BsDm2O3qbd5sCbvLgqO8eOPJilRC02J9NEP/++ZdyC9Mb+RsBuT3HU
+ pWPYh7om1V0Pw1ipearhlQlveIRNADgsW3TJVfsjFnQCch1X7gYY9Yw+sEL6ZCxH
+ AP+15QBjpJAsbVvcitPDkaj3OnlgL84VzbmZEawlog+fyfA/au7oJ3rtBZ3cDhSm
+ ud+KGYfIQRwV9+y1vz7knw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759918223; x=
+ 1760004623; bh=zM+LRkiYgPBEv2R2rsvxB/VP8I0pIVNVTj4fVQUMspA=; b=k
+ U+T9LPsvnBhs/PeBbfgJKMNwNlu9pSIEFk5ao/a/eQWQD1+gO4K8gBA2k4ocB8hB
+ UYczK1nK8NnQblWn56DHXR7vRuqcVYoctiAdb2y4EDVAaleJCeQETgWTcmIlGcAB
+ jx+tuhWTmVLg32vc2/g3onYmCfCwXiKPQpl46ync65KLcZ4VDr7FHZQ8JU9+qXcp
+ leErxuV10jkgDA89Vw/7lJV0cDWatQH9tP6bNNMFMiFBXToNha7Ky6LYAHzreann
+ VDDG5EiIQ2ZlhpAIneWIwGhV/DV+gYTym4aPwYaqYQM3xMwzlqJ7stnmoCFSUk/G
+ nB74qWa2yUFDCVNss1dBQ==
+X-ME-Sender: <xms:jjjmaHbMkLGHRqO7eflp1tJG2P-b9tzMWTGUsL3VhFnl8eB6ROqHOw>
+ <xme:jjjmaPVrHYexFAZO1TppmUHgk0MNOARpcyKpC1RXbUpPqEpenIi7IfC_OHwBZLbcI
+ igA46KOht7l1pydbQVX6gcoRNRLut0xOBiL61xBpXXdPddHZTsVxxw>
+X-ME-Received: <xmr:jjjmaFhdmkjkxvgMDFVUjKT5GN0rlOSVx9B5sDXs1KBmLKMQWwqi-cPi_0xgoF1yqoQKBYwz9qYVCzl6KC9n3EMItg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdeftdefucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehthhhivghrrhihrdhhvghrsggvlhhoth
+ esieifihhnugdrtghomhdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonhes
+ ihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtth
+ hopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthhtohep
+ shhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepoh
+ hlihhvihgvrhdrmhgrthiiseeifihinhgurdgtohhm
+X-ME-Proxy: <xmx:jjjmaNsPKO4qsApU2j5boJ3KqPo_7TL-Fg03y1q_5w3iDpB-LuGkUw>
+ <xmx:jjjmaO7c9DVXBaPFsIJQp9LjoArcZAVdKf1DZ1h-y8-UErpN3St_2Q>
+ <xmx:jjjmaBNVFevP7g2BdqaFD8ans0oJa3l1XPJKR-S29fDejX9akta1Gw>
+ <xmx:jjjmaEsafpCt86h-J_gS0-441ET2My-caQ55I2qF8_NoVWuF3_NxUg>
+ <xmx:jzjmaL9xU1_4iuTtBn3yXCS_EUBbOXt5Gm_YFebi0uFqn86phOnCh_FH>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 Oct 2025 06:10:21 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Thierry Herbelot <thierry.herbelot@6wind.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, David Marchand <david.marchand@redhat.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Olivier Matz <olivier.matz@6wind.com>
+Subject: Re: [V2] net/intel/e1000: reduce the optimization level for gcc > 11
+Date: Wed, 08 Oct 2025 12:10:20 +0200
+Message-ID: <4021689.xgJ6IN8ObU@thomas>
+In-Reply-To: <aOYi82c71qlZiazJ@bricha3-mobl1.ger.corp.intel.com>
+References: <20251006124506.388456-1-thierry.herbelot@6wind.com>
+ <20251006130257.391200-1-thierry.herbelot@6wind.com>
+ <aOYi82c71qlZiazJ@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDE4MiBTYWx0ZWRfX68xonmdCR+IU
- NG/TZIaOp215iqbOypknWg8dY/ZLGzWSQmXgYnvvmFrRPOte18H4Iwnthy5/U5tR0asv4C82h6n
- IFJA6IZyMNyYMoDNB/ZAzkyhdLppCYn62eymla6iRhgHUoa6r/jD2eQPRGoxELexVEYxBaHI7CN
- u8Ja7NowiaI+lVr1nsUgtp86FWcQp9+sN/Gy3j2/Ijn8+7NOZHcSr/lk1XqXGUtHx0uNTWhkZri
- o76a01J3FP4lN5ywjKiEmesRKgZfzeIqOAhpRFVaQsIV62SZCxirc0yJBjHWn9qWWHmz8LSJyie
- Z0+eJtzMatlDrSF//BLEeNMFWlPfp25z/ZBy90au3tSk1nP+6yJXeqwozia2CiIJXYVB59Cw13S
- CISVDZnqNj/PQgd580TS3KLoA26Pig==
-X-Proofpoint-ORIG-GUID: VtqkQlaQcnaEBCzPuLkNQbrES7srNlSG
-X-Authority-Analysis: v=2.4 cv=JeuxbEKV c=1 sm=1 tr=0 ts=68e6361d cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=x6icFKpwvdMA:10 a=M5GUcnROAAAA:8 a=nzEfcjhZ0GrmtaJz8NUA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: VtqkQlaQcnaEBCzPuLkNQbrES7srNlSG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_03,2025-10-06_01,2025-03-28_01
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,92 +95,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Ashish Gupta <ashishg@marvell.com>
+08/10/2025 10:38, Bruce Richardson:
+> On Mon, Oct 06, 2025 at 03:02:57PM +0200, Thierry Herbelot wrote:
+> > The e1000 PMD stopped working under Ubuntu-24.04 (using gcc-13) when
+> > compiled with -O3 (default level for all DPDK code). There is a crash
+> > when starting testpmd:
+> > 
+> > > (gdb) bt
+> > > #0  rte_read32_relaxed (addr=0x1100800e00) at ../sources/lib/eal/include/generic/rte_io.h:290
+> > > #1  rte_read32 (addr=0x1100800e00) at ../sources/lib/eal/include/generic/rte_io.h:345
+> > > #2  e1000_read_addr (addr=0x1100800e00) at ../sources/drivers/net/intel/e1000/base/e1000_osdep.h:106
+> > > #3  e1000_id_led_init_generic (hw=0x1586788c0) at ../sources/drivers/net/intel/e1000/base/e1000_mac.c:1844
+> > > #4  0x000062aaf653c85f in e1000_init_hw_82540 (hw=0x1586788c0)
+> > >     at ../sources/drivers/net/intel/e1000/base/e1000_82540.c:308
+> > > #5  0x000062aaf6db8227 in em_hardware_init (hw=hw@entry=0x1586788c0)
+> > >     at ../sources/drivers/net/intel/e1000/em_ethdev.c:920
+> > > #6  0x000062aaf65340ff in em_hw_init (hw=0x1586788c0) at ../sources/drivers/net/intel/e1000/em_ethdev.c:445
+> > > #7  eth_em_dev_init (eth_dev=eth_dev@entry=0x62aaff346000 <rte_eth_devices>)
+> > >     at ../sources/drivers/net/intel/e1000/em_ethdev.c:314
+> > > #8  0x000062aaf6db8b71 in rte_eth_dev_pci_generic_probe (private_data_size=11240,
+> > >     dev_init=0x62aaf6db8310 <eth_em_dev_init>, pci_dev=0x62ab2853dd90) at ../sources/lib/ethdev/ethdev_pci.h:150
+> > > #9  eth_em_pci_probe (pci_drv=<optimized out>, pci_dev=0x62ab2853dd90)
+> > >     at ../sources/drivers/net/intel/e1000/em_ethdev.c:365
+> > > #10 0x000062aaf646adf5 in rte_pci_probe_one_driver (dr=dr@entry=0x62aaf82d8020 <rte_em_pmd>,
+> > >     dev=dev@entry=0x62ab2853dd90) at ../sources/drivers/bus/pci/pci_common.c:299
+> > > #11 0x000062aaf6a15f7d in pci_probe_all_drivers (dev=0x62ab2853dd90) at ../sources/drivers/bus/pci/pci_common.c:383
+> > > #12 pci_probe () at ../sources/drivers/bus/pci/pci_common.c:410
+> > > #13 0x000062aaf7a485f3 in rte_bus_probe () at ../sources/lib/eal/common/eal_common_bus.c:84
+> > > #14 0x000062aaf670585d in rte_eal_init (argc=argc@entry=146, argv=argv@entry=0x7fffca468898)
+> > >     at ../sources/lib/eal/linux/eal.c:1253
+> > 
+> > The crash is linked to the use of gcc-13: under Ubuntu-24.04 testpmd
+> > compiled with gcc-11 from the same DPDK tree works as expected.
+> > 
+> > The perfect solution would be for someone to investigate why the
+> > PMD crashes. However, this depends on Maintainer availability.
+> > 
+> > A less-perfect solution is to reduce the optimization level
+> > (like another proposal for net/qede: see Link).
+> > 
+> Thanks for reporting the issue. I'd like to spend a little time trying to
+> really root cause the issue before applying this workaround patch. Can you
+> provide a bit more info about the setup you used when you hit this issue. I
+> expect a lot of use of e1000 driver is in virtualized setups, but can you
+> confirm if that was the case here, or were you using real hardware?
+> 
+> If we do have to apply this workaround fix of reducing optimization level,
+> I see you reduce optimization for both the base code and the DPDK-specific
+> driver code. Is it necessary to reduce optimization on both, or can we get
+> away with just reducing it on the DPDK part alone?
 
-nb_devs is incremented / decremented each time a compressdev is
-created/released. However, releasing device 1 incorrectly make device
-N invalid and inaccessible. Similarly when first half of the devices
-are released, rest half of the devices become inaccessible. This patch
-updates the validation check to ensure correct behavior.
+We are not sure the workaround will work with every compilers to come.
+Of course it is better to fix the root cause.
+If we cannot fix it in time, we can add this workaround in the release notes.
+But please, let's not apply it in the codebase.
 
-Signed-off-by: Ashish Gupta <ashishg@marvell.com>
----
-v2
-* additional updates
-* updated commit message
----
----
- lib/compressdev/rte_compressdev.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
-
-diff --git a/lib/compressdev/rte_compressdev.c b/lib/compressdev/rte_compressdev.c
-index 33de3f511b..790b2cd658 100644
---- a/lib/compressdev/rte_compressdev.c
-+++ b/lib/compressdev/rte_compressdev.c
-@@ -30,6 +30,17 @@ static struct rte_compressdev_global compressdev_globals = {
- };
- 
- RTE_EXPORT_SYMBOL(rte_compressdev_capability_get)
-+
-+static inline uint8_t
-+rte_compressdev_is_valid_device_data(uint8_t dev_id)
-+{
-+	if (dev_id >= RTE_COMPRESS_MAX_DEVS ||
-+			compressdev_globals.devs[dev_id].data == NULL)
-+		return 0;
-+
-+	return 1;
-+}
-+
- const struct rte_compressdev_capabilities *
- rte_compressdev_capability_get(uint8_t dev_id,
- 			enum rte_comp_algorithm algo)
-@@ -38,10 +49,11 @@ rte_compressdev_capability_get(uint8_t dev_id,
- 	struct rte_compressdev_info dev_info;
- 	int i = 0;
- 
--	if (dev_id >= compressdev_globals.nb_devs) {
-+	if (!rte_compressdev_is_valid_device_data(dev_id)) {
- 		COMPRESSDEV_LOG(ERR, "Invalid dev_id=%d", dev_id);
- 		return NULL;
- 	}
-+
- 	rte_compressdev_info_get(dev_id, &dev_info);
- 
- 	while ((capability = &dev_info.capabilities[i++])->algo !=
-@@ -109,7 +121,7 @@ rte_compressdev_is_valid_dev(uint8_t dev_id)
- {
- 	struct rte_compressdev *dev = NULL;
- 
--	if (dev_id >= compressdev_globals.nb_devs)
-+	if (!rte_compressdev_is_valid_device_data(dev_id))
- 		return 0;
- 
- 	dev = rte_compressdev_get_dev(dev_id);
-@@ -129,10 +141,10 @@ rte_compressdev_get_dev_id(const char *name)
- 	if (name == NULL)
- 		return -1;
- 
--	for (i = 0; i < compressdev_globals.nb_devs; i++)
--		if ((strcmp(compressdev_globals.devs[i].data->name, name)
--				== 0) &&
--				(compressdev_globals.devs[i].attached ==
-+	for (i = 0; i < compressdev_globals.max_devs; i++)
-+		if (compressdev_globals.devs[i].data != NULL &&
-+		    (strcmp(compressdev_globals.devs[i].data->name, name) == 0)
-+		    && (compressdev_globals.devs[i].attached ==
- 						RTE_COMPRESSDEV_ATTACHED))
- 			return i;
- 
-@@ -663,7 +675,7 @@ rte_compressdev_info_get(uint8_t dev_id, struct rte_compressdev_info *dev_info)
- {
- 	struct rte_compressdev *dev;
- 
--	if (dev_id >= compressdev_globals.nb_devs) {
-+	if (!rte_compressdev_is_valid_device_data(dev_id)) {
- 		COMPRESSDEV_LOG(ERR, "Invalid dev_id=%d", dev_id);
- 		return;
- 	}
--- 
-2.43.0
 
