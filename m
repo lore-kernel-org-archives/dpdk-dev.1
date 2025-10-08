@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A51A5CCA470
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 20:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AABB3CCA470
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 20:43:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7754E40653;
-	Wed,  8 Oct 2025 22:43:00 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0AFDE4066E;
+	Wed,  8 Oct 2025 22:43:02 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 86163402A8
- for <dev@dpdk.org>; Wed,  8 Oct 2025 22:42:58 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3F6C0402A8
+ for <dev@dpdk.org>; Wed,  8 Oct 2025 22:42:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759956179; x=1791492179;
+ t=1759956180; x=1791492180;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=EguIG9jlDorKPfkC4V78Od8t9bHszydRbAczBVDY/bc=;
- b=XDJL6w607MxAN2ebCCTovwZpdzXdqKYKdVE1MyS/pII4UglMTGFLME75
- +R/6vAyiecz2GJ0STLKThphTI8OGeuuFP/pqj9bigA/oNipAbK+Na1bYU
- 8V0AphXPb06z/VMV90Rfvw5+lMRTwkshX5e4uB/2+H0qFmfwjKTNEHH9G
- WwZsvVLW656yQc9n26ct/S3ZZimZM/mwGWf0xAD+WVTcTcvI3QMrFq3CI
- UIhpxBsHhk2RxplSH3ILKfmd3T95v++SfkHgY+6blarxk1CnPSrCugc2G
- d4yRSbFC4UldsgxYuGqFEk38Nn6nyuLW1wA30k0bfSdbWuwsvwokqYILm g==;
-X-CSE-ConnectionGUID: KvUca2w9Qcy2zrzl+sT4mg==
-X-CSE-MsgGUID: IdcNWq/9TCmphp+ubeZHmA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62079226"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="62079226"
+ bh=/HxFwF/qylJHh4tzWWnQPCN1LnPc60FCI4AnzzXb1Lw=;
+ b=CzaRBSZESMVHifCWwMOh9QMXcjPTmOxcDyjZUDx+U0/4j1KTfVteYoOS
+ nJ/MY+BWR6slXLM/9ECQisNgLMoTDqxbIH6VPayYY8c+QZnheUVsbalmm
+ 04nETJA/foGRxKYuu0aEnK5kbnOpqXiAsS76tKAdrAWNVuVRNHS7eQDcU
+ HVWd6z1GHBJMHOQ3k26zssC1xOtelq1woQCYAmVOzAjfYo2ZP1fXACsDK
+ J5etstB4OZPV1wfUgIHjAW1HBZn4iDWmrKK6Em8Ku/bHJ8IXeahBxQ5oG
+ Yk8SMJVoa67r8eTL+312dmSt0QLmkBTM9dS6yWi3WH2UCm2van0LgyFM9 A==;
+X-CSE-ConnectionGUID: YRNMoy1NRHmyQQez6fu7Gg==
+X-CSE-MsgGUID: tROqCZMnS8umjofWYnKo/w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62079230"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="62079230"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Oct 2025 13:42:58 -0700
-X-CSE-ConnectionGUID: i5UCaArmSSKVfUChcMLyPA==
-X-CSE-MsgGUID: iN1PWeO2RRKMab0gfAkMiw==
+ 08 Oct 2025 13:42:59 -0700
+X-CSE-ConnectionGUID: 1VnQidNxQQmZTCPNq/770Q==
+X-CSE-MsgGUID: wj8juoLiSO+3ZGeNKSRWyA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,214,1754982000"; d="scan'208";a="179790621"
+X-IronPort-AV: E=Sophos;i="6.19,214,1754982000"; d="scan'208";a="179790625"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 08 Oct 2025 13:42:57 -0700
+ by orviesa010.jf.intel.com with ESMTP; 08 Oct 2025 13:42:58 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v10 04/21] argparse: allow user-override of help printing
-Date: Wed,  8 Oct 2025 21:42:27 +0100
-Message-ID: <20251008204244.2288583-5-bruce.richardson@intel.com>
+Subject: [PATCH v10 05/21] argparse: add documentation on supported value types
+Date: Wed,  8 Oct 2025 21:42:28 +0100
+Message-ID: <20251008204244.2288583-6-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251008204244.2288583-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
@@ -61,102 +61,106 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the arguments passed to argparse include -h/--help then usage
-information is automatically printed. Provide the capability for the
-user to supply their own help function for this.
+The different value types supported by the argparse library are not
+discussed in the documentation, so add some reference material about
+them.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- doc/guides/prog_guide/argparse_lib.rst | 16 ++++++++++++++++
- doc/guides/rel_notes/release_25_11.rst |  7 +++++++
- lib/argparse/rte_argparse.c            |  5 ++++-
- lib/argparse/rte_argparse.h            |  7 ++++++-
- 4 files changed, 33 insertions(+), 2 deletions(-)
+ doc/guides/prog_guide/argparse_lib.rst | 73 +++++++++++++++++++++++++-
+ 1 file changed, 71 insertions(+), 2 deletions(-)
 
 diff --git a/doc/guides/prog_guide/argparse_lib.rst b/doc/guides/prog_guide/argparse_lib.rst
-index 9f11714890..b309260d20 100644
+index b309260d20..7868af5672 100644
 --- a/doc/guides/prog_guide/argparse_lib.rst
 +++ b/doc/guides/prog_guide/argparse_lib.rst
-@@ -24,6 +24,8 @@ Features and Capabilities
-   #. autosave: used for parsing known value types;
-   #. callback: will invoke user callback to parse.
+@@ -160,6 +160,75 @@ both use this way, the parsing is as follows:
+ - For argument ``ooo``, it is positional argument,
+   the ``ooo_val`` will be set to user input's value.
  
-+- Supports automatic help and usage information.
++Supported Value Types
++~~~~~~~~~~~~~~~~~~~~~
 +
- Usage Guide
- -----------
- 
-@@ -193,3 +195,17 @@ Then the user input could contain multiple ``--xyz`` arguments.
- 
-    The multiple times argument only support with optional argument
-    and must be parsed by callback way.
++The argparse library supports automatic parsing of several data types when using
++the autosave method. The parsed values are automatically converted from string
++input to the appropriate data type and stored in the ``val_saver`` field.
 +
-+Help and Usage Information
-+~~~~~~~~~~~~~~~~~~~~~~~~~~
++Integer Types
++^^^^^^^^^^^^^
 +
-+The argparse library supports automatic generation of help and usage information.
-+When the input arguments include ``-h`` or ``--help``,
-+it will print the usage information to standard output.
-+If the default help output is not what is wanted,
-+the user can provide a custom help printing function by setting the ``print_help`` field in the ``rte_argparse`` object.
-+(If this field is set to NULL, the default help printing function will be used.)
++The library supports parsing various integer types:
 +
-+If the custom help printing function wants to use the text produced by the default help function,
-+it can call the function ``rte_argparse_print_help()`` to get the help text printed to an output stream,
-+for example: stdout or stderr.
-diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
-index c3b94e1896..f73bab1227 100644
---- a/doc/guides/rel_notes/release_25_11.rst
-+++ b/doc/guides/rel_notes/release_25_11.rst
-@@ -76,6 +76,13 @@ New Features
-   * Added multi-process per port.
-   * Optimized code.
- 
-+* **Allow overriding the automatic usage/help generation in argparse library.**
++- ``RTE_ARGPARSE_VALUE_TYPE_INT`` - signed integer
++- ``RTE_ARGPARSE_VALUE_TYPE_U8`` - unsigned 8-bit integer
++- ``RTE_ARGPARSE_VALUE_TYPE_U16`` - unsigned 16-bit integer
++- ``RTE_ARGPARSE_VALUE_TYPE_U32`` - unsigned 32-bit integer
++- ``RTE_ARGPARSE_VALUE_TYPE_U64`` - unsigned 64-bit integer
 +
-+  The argparse library now supports overriding the automatic help text generation,
-+  by allowing the user to provide a custom function to generate the output text.
-+  The built-in help text function is available as a public function which can be reused by custom functions,
-+  if so desired.
++.. code-block:: C
 +
++   static int my_int;
++   static uint16_t my_port;
++   static uint32_t my_count;
++
++   static struct rte_argparse obj = {
++      .args = {
++         { "--number", "-n", "Integer value", &my_int, NULL, RTE_ARGPARSE_VALUE_REQUIRED, RTE_ARGPARSE_VALUE_TYPE_INT },
++         { "--port", "-p", "Port number", &my_port, NULL, RTE_ARGPARSE_VALUE_REQUIRED, RTE_ARGPARSE_VALUE_TYPE_U16 },
++         { "--count", "-c", "Count value", &my_count, (void *)1000, RTE_ARGPARSE_VALUE_OPTIONAL, RTE_ARGPARSE_VALUE_TYPE_U32 },
++         ARGPARSE_ARG_END(),
++      },
++   };
++
++String Type
++^^^^^^^^^^^
++
++String arguments are parsed using ``RTE_ARGPARSE_VALUE_TYPE_STR``.
++When using this type, the input value is saved to the provided pointer without any parsing or validation.
++
++.. code-block:: C
++
++   static const char *my_string;
++
++   static struct rte_argparse obj = {
++      .args = {
++         { "--name", "-n", "Name string", &my_string, NULL, RTE_ARGPARSE_VALUE_REQUIRED, RTE_ARGPARSE_VALUE_TYPE_STR },
++         ARGPARSE_ARG_END(),
++      },
++   };
++
++Boolean Type
++^^^^^^^^^^^^
++
++Boolean arguments are parsed using ``RTE_ARGPARSE_VALUE_TYPE_BOOL`` and accept the following input formats:
++
++- ``true``, ``false`` (case-sensitive)
++- ``1``, ``0`` (numeric format)
++
++.. code-block:: C
++
++   static bool my_flag;
++
++   static struct rte_argparse obj = {
++      .args = {
++         { "--enable", "-e", "Enable feature", &my_flag, NULL, RTE_ARGPARSE_VALUE_REQUIRED, RTE_ARGPARSE_VALUE_TYPE_BOOL },
++         ARGPARSE_ARG_END(),
++      },
++   };
++
+ Parsing by callback way
+ ~~~~~~~~~~~~~~~~~~~~~~~
  
- Removed Items
- -------------
-diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
-index f0c2c33178..2b5da5f1db 100644
---- a/lib/argparse/rte_argparse.c
-+++ b/lib/argparse/rte_argparse.c
-@@ -821,7 +821,10 @@ rte_argparse_parse(const struct rte_argparse *obj, int argc, char **argv)
- 		goto error;
+@@ -167,8 +236,8 @@ It could also choose to use callback to parse,
+ just define a unique index for the argument
+ and make the ``val_save`` field to be NULL also zero value-type.
  
- 	if (show_help) {
--		rte_argparse_print_help(stdout, obj);
-+		if (obj->print_help != NULL)
-+			obj->print_help(obj);
-+		else
-+			rte_argparse_print_help(stdout, obj);
- 		exit(0);
- 	}
+-In the above example, the arguments ``--ddd``/``--eee``/``--fff`` and ``ppp``
+-both use this way.
++In the example at the top of this section,
++the arguments ``--ddd``/``--eee``/``--fff`` and ``ppp`` all use this way.
  
-diff --git a/lib/argparse/rte_argparse.h b/lib/argparse/rte_argparse.h
-index baf278f6b9..63b49ba220 100644
---- a/lib/argparse/rte_argparse.h
-+++ b/lib/argparse/rte_argparse.h
-@@ -160,8 +160,13 @@ struct rte_argparse {
- 	rte_arg_parser_t callback;
- 	/** Opaque which used to invoke callback. */
- 	void *opaque;
-+	/**
-+	 * Function pointer for printing usage when -h is passed.
-+	 * If this is NULL, default printing function will be used.
-+	 */
-+	void (*print_help)(const struct rte_argparse *obj);
- 	/** Reserved field used for future extension. */
--	void *reserved[16];
-+	void *reserved[15];
- 	/** Arguments configuration. Must ended with ARGPARSE_ARG_END(). */
- 	struct rte_argparse_arg args[];
- };
+ Multiple times argument
+ ~~~~~~~~~~~~~~~~~~~~~~~
 -- 
 2.48.1
 
