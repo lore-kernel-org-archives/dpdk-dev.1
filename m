@@ -2,86 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADA2CCA470
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 07:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A06CAC5BB
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 08:00:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3F0A4060A;
-	Wed,  8 Oct 2025 09:53:05 +0200 (CEST)
-Received: from fout-a1-smtp.messagingengine.com
- (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id D710E40297;
- Wed,  8 Oct 2025 09:53:04 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id 5DF92EC0575;
- Wed,  8 Oct 2025 03:53:04 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Wed, 08 Oct 2025 03:53:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1759909984;
- x=1759996384; bh=5JhArw4hmvjpnGtjj7hxDeMvVEG6eEnW57MMG+8gTNw=; b=
- IHR7LYZKznxMj+vI/oselLsWZ9aHEeD0Xsp0Id1C5ceS4WO4iKi2YO9VX7MGLYVV
- YV9nKLdKkCLMAHFaoY0uZSfKmJs7Ib6jbSkAjp7lt3abqjylPWfydhPSqad8vcMK
- RGFH5VrPK7ySljrlYRtP0YgbfAvLPEJzW/q8HY1EHvLzD/oRY7Js6UHgVmntiTy7
- QB4VKtlDkoSjgIfFB0v1D82oYVWVd+oNZyQ/wMgy49Q/AiA6dDiCrRZjBEyzsQnK
- by59zSIYSeupAJqGBkXWY9ZquLCa/L+8gkaeSb5OSi7X0THyno8d+pR1+4ZBJ72t
- uiOzP8XyZbl2VYRM11cKWg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759909984; x=
- 1759996384; bh=5JhArw4hmvjpnGtjj7hxDeMvVEG6eEnW57MMG+8gTNw=; b=Q
- AnHirPGm9ougiRkyfEGsG1ZzaIfHyYAsGYvV21vo3zhztFp9voCf9rZffrseNufC
- dMORZrYhZRPCzJow1d71WqY3FOtLdRWA2I6RpLGmjUr6lJudIVY7eqUj5i5/BbDJ
- OVdDoNVb9ABhgU+DY8YcvtwdjVSdY/Jn8xTEMaWfzQl/TRdFPoquKfzLEW/jC8sL
- EimV/VxXQpRIRNlEwh91OHkl1gyAcibVaP/fic+peAJ1G+PRYubFHpnOty3DOuOX
- Qu+lGgQJMpx6CBTRAY1jWGfvrbtyILQZ7GgvgWTTQakNLFwlv8aBaxciVSi1q8yo
- QZXuZg3mhpY7CFBveGIkQ==
-X-ME-Sender: <xms:XxjmaPNKZEqxykreZFlBfZPqEaOz-loRCJzLAjnRQu-SbGctlMFrtA>
- <xme:XxjmaC6VCp6m30ogUApKmtNAlT27qKSyQMi8PDUj5S7Kajo_Iwb9ML57oU260MWAZ
- YmjCWJ0yDJZJiHq8fcOevUcn5JIgwbtERtFZ5od1VZtb-VZdSQgI5Q>
-X-ME-Received: <xmr:XxjmaJ0gKo1yjFJ3l9ndyKzh9oCZQ3TjXGtK8aUbaz3pMB5TClZ4MWAczrvFuZG-bODtRoUaubDCW2TsHGZl2OoLhA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutddvjeehucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgurdhmrghrtghhrghnugesrh
- gvughhrghtrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehi
- nhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtoh
- epshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohep
- thgvtghhsghorghrugesughpughkrdhorhhgpdhrtghpthhtohepmhgssehsmhgrrhhtsh
- hhrghrvghshihsthgvmhhsrdgtohhm
-X-ME-Proxy: <xmx:XxjmaDwyaiI__NOJ6wF1POi8BlQ1ejg_nH8VM46_NKitotZ0Upha6w>
- <xmx:XxjmaDumbLDAf1PORZQzuUXPbF4RilV9wvr84lewBmKH1t6laER6Uw>
- <xmx:XxjmaNw47QeDc5VEa8bpvzUl1pGs75bVkXHyFAm4waF5INyJ5qn6kg>
- <xmx:XxjmaOCsXBpX-e3-H8cQxVThRCpk6VtA9Jl4J-YzABlXK6mkiK8GjQ>
- <xmx:YBjmaADldYzbmulLmvPwgs3brbSaVHamz7_ISzbv_jrNiE_kUuHHWxzI>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 8 Oct 2025 03:53:02 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: David Marchand <david.marchand@redhat.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>,
- dpdk-techboard <techboard@dpdk.org>,
- Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Subject: Re: [PATCH v9 00/18] Simplify running with high-numbered CPUs
-Date: Wed, 08 Oct 2025 09:53:00 +0200
-Message-ID: <4032978.kC03pvyZki@thomas>
-In-Reply-To: <aOU8qESdjcs7Qkqi@bricha3-mobl1.ger.corp.intel.com>
-References: <20250520164025.2055721-1-bruce.richardson@intel.com>
- <CAJFAV8yuo6vVSGKx4Cbs6Qqv9Y9dPsLteZtmN+Kr79BmnMqCbA@mail.gmail.com>
- <aOU8qESdjcs7Qkqi@bricha3-mobl1.ger.corp.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+	by mails.dpdk.org (Postfix) with ESMTP id 8F062402A0;
+	Wed,  8 Oct 2025 10:00:17 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id AA4EA40297
+ for <dev@dpdk.org>; Wed,  8 Oct 2025 10:00:16 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4chQN75Y6Hz6L5NM;
+ Wed,  8 Oct 2025 15:57:43 +0800 (CST)
+Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
+ by mail.maildlp.com (Postfix) with ESMTPS id 026A11400DB;
+ Wed,  8 Oct 2025 16:00:16 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 8 Oct 2025 09:00:15 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Wed, 8 Oct 2025 09:00:15 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Wathsala Vithanage <wathsala.vithanage@arm.com>, Honnappa Nagarahalli
+ <honnappa.nagarahalli@arm.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Ola Liljedahl <ola.liljedahl@arm.com>,
+ Dhruv Tripathi <dhruv.tripathi@arm.com>
+Subject: RE: [PATCH v2 1/1] ring: safe partial ordering for head/tail update
+Thread-Topic: [PATCH v2 1/1] ring: safe partial ordering for head/tail update
+Thread-Index: AQHcM8PjEkYGhEvMM0eJIFohOEcAbbS36DDQ
+Date: Wed, 8 Oct 2025 08:00:14 +0000
+Message-ID: <cfc073b8137541f1be3e01650d6bcf14@huawei.com>
+References: <20251002174137.3612042-1-wathsala.vithanage@arm.com>
+ <20251002174137.3612042-2-wathsala.vithanage@arm.com>
+In-Reply-To: <20251002174137.3612042-2-wathsala.vithanage@arm.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.147.224]
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,93 +57,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-07/10/2025 18:15, Bruce Richardson:
-> On Mon, Oct 06, 2025 at 04:10:52PM +0200, David Marchand wrote:
-> > On Fri, 3 Oct 2025 at 10:15, Bruce Richardson
-> > <bruce.richardson@intel.com> wrote:
-> > >
-> > > The ultimate of this patchset is to make it easier to run on systems
-> > > with large numbers of cores, by simplifying the process of using core
-> > > numbers >RTE_MAX_LCORE. The new EAL arg ``-remap-lcore-ids``, also
-> > > shortened to ``-R``, is added to DPDK to support this.
-> > >
-> > > However, in order to add this new flag easily, the first dozen or more
-> > > patches rework the argument handling in EAL to simplify things, using
-> > > the argparse library for argument handling.
-> > >
-> > > When processing cmdline arguments in DPDK, we always do so with very
-> > > little context. So, for example, when processing the "-l" flag, we have
-> > > no idea whether there will be later a --proc-type=secondary flag. We
-> > > have all sorts of post-arg-processing checks in place to try and catch
-> > > these scenarios.
-> > >
-> > > To improve this situation, this patchset tries to simplify the handling
-> > > of argument processing, by explicitly doing an initial pass to collate
-> > > all arguments into a structure. Thereafter, the actual arg parsing is
-> > > done in a fixed order, meaning that e.g. when processing the
-> > > --main-lcore flag, we have already processed the service core flags. We
-> > > also can far quicker and easier check for conflicting options, since
-> > > they can all be checked for NULL/non-NULL in the arg structure
-> > > immediately after the struct has been populated.
-> > >
-> > > An additional benefit of this work is that the argument parsing for EAL
-> > > is much more centralised into common options and the options list file.
-> > > This single list with ifdefs makes it clear to the viewer what options
-> > > are common across OS's, vs what are unix-only or linux-only.
-> > >
-> > > Once the cleanup and rework is done, adding the new options for
-> > > remapping cores becomes a lot simpler, since we can very easily check
-> > > for scenarios like multi-process and handle those appropriately.
-> > >
-> > > V9: rebase to latest main. CI complains cannot apply v8 patches.
-> > >
-> > > V8:
-> > > * dropped the final two patches from the series, dropping the new -L
-> > >   option in favour of the -R modifier.
-> > > * reordered patch 11 to be with the other argparse patches (now patch 5)
-> > > * added patch 12, which uses macros to initialize the args structure
-> > >   from the arguments header file, avoiding potential issues when we add
-> > >   new args.
-> > > * simplified and consolidated lcore mask and core list parsing to always
-> > >   work off cpusets rather than arrays of uint8
-> > > * enhanced debug printouts to also work better with cpusets and handle
-> > >   core values in those sets >= RTE_MAX_LCORE
-> > > * for completeness, ensure the new -R option works for coremasks, and
-> > >   for cases where no explicit core-list or coremask is specified.
-> > 
-> > I was planning to merge the first part of the series (before reaching
-> > the cpuset rework and addition of remap option).
-> > 
-> > I am facing two issues for which I prefer other's opinions.
-> > 
-> > 
-> > - First, I see a change in how non-option arguments are handled with
-> > the switch to argparse.
-> > $ ./build-mini/app/dpdk-test --no-huge -m 2048 -l 0,1 func_reentrancy_autotest
-> > ARGPARSE: too many positional arguments func_reentrancy_autotest!
-> > 
-> > Passing the test name after -- does work, but it was working without
-> > -- before the patch, so we are introducing a regression here.
-> > 
-> 
-> Looking for input on how much we need to handle here.
-> 
-> The quick patch below adds support for ignoring trailing args in argparse,
-> which means that the command above would work. However, gnu getopt also
-> does argument reordering which means that this command works right now (on
-> linux anyway):
-> 
-> 	./build/app/dpdk-test -l 0,1 lcores_autotest --no-huge
-> 
-> since getopt moves the lcores_autotest to the end.
-> 
-> Is this behaviour what we need to emulate too, or is adding a flag to
-> ignore trailing args sufficient? [I'd tend toward it being sufficient - mixing
-> app args and EAL args together is not a great idea IMHO]
-
-I am in favor of being tolerant.
-I agree mixing args is not a great idea,
-but rejecting them is not really kind, and is a regression.
-
-
-
+DQoNCj4gVGhlIGZ1bmN0aW9uIF9fcnRlX3JpbmdfaGVhZHRhaWxfbW92ZV9oZWFkKCkgYXNzdW1l
+cyB0aGF0IHRoZSBiYXJyaWVyDQo+IChmZW5jZSkgYmV0d2VlbiB0aGUgbG9hZCBvZiB0aGUgaGVh
+ZCBhbmQgdGhlIGxvYWQtYWNxdWlyZSBvZiB0aGUNCj4gb3Bwb3NpbmcgdGFpbCBndWFyYW50ZWVz
+IHRoZSBmb2xsb3dpbmc6IGlmIGEgZmlyc3QgdGhyZWFkIHJlYWRzIHRhaWwNCj4gYW5kIHRoZW4g
+d3JpdGVzIGhlYWQgYW5kIGEgc2Vjb25kIHRocmVhZCByZWFkcyB0aGUgbmV3IHZhbHVlIG9mIGhl
+YWQNCj4gYW5kIHRoZW4gcmVhZHMgdGFpbCwgdGhlbiBpdCBzaG91bGQgb2JzZXJ2ZSB0aGUgc2Ft
+ZSAob3IgYSBsYXRlcikNCj4gdmFsdWUgb2YgdGFpbC4NCj4gDQo+IFRoaXMgYXNzdW1wdGlvbiBp
+cyBpbmNvcnJlY3QgdW5kZXIgdGhlIEMxMSBtZW1vcnkgbW9kZWwuIElmIHRoZSBiYXJyaWVyDQo+
+IChmZW5jZSkgaXMgaW50ZW5kZWQgdG8gZXN0YWJsaXNoIGEgdG90YWwgb3JkZXJpbmcgb2Ygcmlu
+ZyBvcGVyYXRpb25zLA0KPiBpdCBmYWlscyB0byBkbyBzby4gSW5zdGVhZCwgdGhlIGN1cnJlbnQg
+aW1wbGVtZW50YXRpb24gb25seSBlbmZvcmNlcyBhDQo+IHBhcnRpYWwgb3JkZXJpbmcsIHdoaWNo
+IGNhbiBsZWFkIHRvIHVuc2FmZSBpbnRlcmxlYXZpbmdzLiBJbiBwYXJ0aWN1bGFyLA0KPiBzb21l
+IHBhcnRpYWwgb3JkZXJzIGNhbiBjYXVzZSB1bmRlcmZsb3dzIGluIGZyZWUgc2xvdCBvciBhdmFp
+bGFibGUNCj4gZWxlbWVudCBjb21wdXRhdGlvbnMsIHBvdGVudGlhbGx5IHJlc3VsdGluZyBpbiBk
+YXRhIGNvcnJ1cHRpb24uDQo+IA0KPiBUaGUgaXNzdWUgbWFuaWZlc3RzIHdoZW4gYSBDUFUgZmly
+c3QgYWN0cyBhcyBhIHByb2R1Y2VyIGFuZCBsYXRlciBhcyBhDQo+IGNvbnN1bWVyLiBJbiB0aGlz
+IHNjZW5hcmlvLCB0aGUgYmFycmllciBhc3N1bXB0aW9uIG1heSBmYWlsIHdoZW4gYW5vdGhlcg0K
+PiBjb3JlIHRha2VzIHRoZSBjb25zdW1lciByb2xlLiBBIEhlcmQ3IGxpdG11cyB0ZXN0IGluIEMx
+MSBjYW4gZGVtb25zdHJhdGUNCj4gdGhpcyB2aW9sYXRpb24uIFRoZSBwcm9ibGVtIGhhcyBub3Qg
+YmVlbiB3aWRlbHkgb2JzZXJ2ZWQgc28gZmFyIGJlY2F1c2U6DQo+ICAgKGEpIG9uIHN0cm9uZyBt
+ZW1vcnkgbW9kZWxzIChlLmcuLCB4ODYtNjQpIHRoZSBhc3N1bXB0aW9uIGhvbGRzLCBhbmQNCj4g
+ICAoYikgb24gcmVsYXhlZCBtb2RlbHMgd2l0aCBSQ3NjIHNlbWFudGljcyB0aGUgb3JkZXJpbmcg
+aXMgc3RpbGwgc3Ryb25nDQo+ICAgICAgIGVub3VnaCB0byBwcmV2ZW50IGhhemFyZHMuDQo+IFRo
+ZSBwcm9ibGVtIGJlY29tZXMgdmlzaWJsZSBvbmx5IG9uIHdlYWtlciBtb2RlbHMsIHdoZW4gbG9h
+ZC1hY3F1aXJlIGlzDQo+IGltcGxlbWVudGVkIHdpdGggUkNwYyBzZW1hbnRpY3MgKGUuZy4gc29t
+ZSBBQXJjaDY0IENQVXMgd2hpY2ggc3VwcG9ydA0KPiB0aGUgTERBUFIgYW5kIExEQVBVUiBpbnN0
+cnVjdGlvbnMpLg0KPiANCj4gVGhyZWUgcG9zc2libGUgc29sdXRpb25zIGV4aXN0Og0KPiAgIDEu
+IFN0cmVuZ3RoZW4gb3JkZXJpbmcgYnkgdXBncmFkaW5nIHJlbGVhc2UvYWNxdWlyZSBzZW1hbnRp
+Y3MgdG8NCj4gICAgICBzZXF1ZW50aWFsIGNvbnNpc3RlbmN5LiBUaGlzIHJlcXVpcmVzIHVzaW5n
+IHNlcS1jc3QgZm9yIHN0b3JlcywNCj4gICAgICBsb2FkcywgYW5kIENBUyBvcGVyYXRpb25zLiBI
+b3dldmVyLCB0aGlzIGFwcHJvYWNoIGludHJvZHVjZXMgYQ0KPiAgICAgIHNpZ25pZmljYW50IHBl
+cmZvcm1hbmNlIHBlbmFsdHkgb24gcmVsYXhlZC1tZW1vcnkgYXJjaGl0ZWN0dXJlcy4NCj4gDQo+
+ICAgMi4gRXN0YWJsaXNoIGEgc2FmZSBwYXJ0aWFsIG9yZGVyIGJ5IGVuZm9yY2luZyBhIHBhaXIt
+d2lzZQ0KPiAgICAgIGhhcHBlbnMtYmVmb3JlIHJlbGF0aW9uc2hpcCBiZXR3ZWVuIHRocmVhZCBv
+ZiBzYW1lIHJvbGUgYnkgY2hhbmdpbmcNCj4gICAgICB0aGUgQ0FTIGFuZCB0aGUgcHJlY2VkaW5n
+IGxvYWQgb2YgdGhlIGhlYWQgYnkgY29udmVydGluZyB0aGVtIHRvDQo+ICAgICAgcmVsZWFzZSBh
+bmQgYWNxdWlyZSByZXNwZWN0aXZlbHkuIFRoaXMgYXBwcm9hY2ggbWFrZXMgdGhlIG9yaWdpbmFs
+DQo+ICAgICAgYmFycmllciBhc3N1bXB0aW9uIHVubmVjZXNzYXJ5IGFuZCBhbGxvd3MgaXRzIHJl
+bW92YWwuDQo+IA0KPiAgIDMuIFJldGFpbiBwYXJ0aWFsIG9yZGVyaW5nIGJ1dCBlbnN1cmUgb25s
+eSBzYWZlIHBhcnRpYWwgb3JkZXJzIGFyZQ0KPiAgICAgIGNvbW1pdHRlZC4gVGhpcyBjYW4gYmUg
+ZG9uZSBieSBkZXRlY3RpbmcgdW5kZXJmbG93IGNvbmRpdGlvbnMNCj4gICAgICAocHJvZHVjZXIg
+PCBjb25zdW1lcikgYW5kIHF1YXNoaW5nIHRoZSB1cGRhdGUgaW4gc3VjaCBjYXNlcy4NCj4gICAg
+ICBUaGlzIGFwcHJvYWNoIG1ha2VzIHRoZSBvcmlnaW5hbCBiYXJyaWVyIGFzc3VtcHRpb24gdW5u
+ZWNlc3NhcnkNCj4gICAgICBhbmQgYWxsb3dzIGl0cyByZW1vdmFsLg0KPiANCj4gVGhpcyBwYXRj
+aCBpbXBsZW1lbnRzIHNvbHV0aW9uICgyKSB0byBwcmVzZXJ2ZSB0aGUg4oCcZW5xdWV1ZSBhbHdh
+eXMNCj4gc3VjY2VlZHPigJ0gY29udHJhY3QgZXhwZWN0ZWQgYnkgZGVwZW5kZW50IGxpYnJhcmll
+cyAoZS5nLiwgbWVtcG9vbCkuDQo+IFdoaWxlIHNvbHV0aW9uICgzKSBvZmZlcnMgaGlnaGVyIHBl
+cmZvcm1hbmNlLCBhZG9wdGluZyBpdCBub3cgd291bGQNCj4gYnJlYWsgdGhhdCBhc3N1bXB0aW9u
+Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogV2F0aHNhbGEgVml0aGFuYWdlIDx3YXRoc2FsYS52aXRo
+YW5hZ2VAYXJtLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogT2xhIExpbGplZGFobCA8b2xhLmxpbGpl
+ZGFobEBhcm0uY29tPg0KPiBSZXZpZXdlZC1ieTogSG9ubmFwcGEgTmFnYXJhaGFsbGkgPGhvbm5h
+cHBhLm5hZ2FyYWhhbGxpQGFybS5jb20+DQo+IFJldmlld2VkLWJ5OiBEaHJ1diBUcmlwYXRoaSA8
+ZGhydXYudHJpcGF0aGlAYXJtLmNvbT4NCj4gLS0tDQo+ICBsaWIvcmluZy9ydGVfcmluZ19jMTFf
+cHZ0LmggfCA5ICsrKy0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwg
+NiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9saWIvcmluZy9ydGVfcmluZ19jMTFf
+cHZ0LmggYi9saWIvcmluZy9ydGVfcmluZ19jMTFfcHZ0LmgNCj4gaW5kZXggYjkzODhhZjBkYS4u
+OThjNjU4NGVkYiAxMDA2NDQNCj4gLS0tIGEvbGliL3JpbmcvcnRlX3JpbmdfYzExX3B2dC5oDQo+
+ICsrKyBiL2xpYi9yaW5nL3J0ZV9yaW5nX2MxMV9wdnQuaA0KPiBAQCAtNzgsMTQgKzc4LDExIEBA
+IF9fcnRlX3JpbmdfaGVhZHRhaWxfbW92ZV9oZWFkKHN0cnVjdCBydGVfcmluZ19oZWFkdGFpbA0K
+PiAqZCwNCj4gIAl1bnNpZ25lZCBpbnQgbWF4ID0gbjsNCj4gDQo+ICAJKm9sZF9oZWFkID0gcnRl
+X2F0b21pY19sb2FkX2V4cGxpY2l0KCZkLT5oZWFkLA0KPiAtCQkJcnRlX21lbW9yeV9vcmRlcl9y
+ZWxheGVkKTsNCj4gKwkJCXJ0ZV9tZW1vcnlfb3JkZXJfYWNxdWlyZSk7DQo+ICAJZG8gew0KPiAg
+CQkvKiBSZXNldCBuIHRvIHRoZSBpbml0aWFsIGJ1cnN0IGNvdW50ICovDQo+ICAJCW4gPSBtYXg7
+DQo+IA0KPiAtCQkvKiBFbnN1cmUgdGhlIGhlYWQgaXMgcmVhZCBiZWZvcmUgdGFpbCAqLw0KPiAt
+CQlydGVfYXRvbWljX3RocmVhZF9mZW5jZShydGVfbWVtb3J5X29yZGVyX2FjcXVpcmUpOw0KPiAt
+DQo+ICAJCS8qIGxvYWQtYWNxdWlyZSBzeW5jaHJvbml6ZSB3aXRoIHN0b3JlLXJlbGVhc2Ugb2Yg
+aHQtPnRhaWwNCj4gIAkJICogaW4gdXBkYXRlX3RhaWwuDQo+ICAJCSAqLw0KPiBAQCAtMTE1LDgg
+KzExMiw4IEBAIF9fcnRlX3JpbmdfaGVhZHRhaWxfbW92ZV9oZWFkKHN0cnVjdCBydGVfcmluZ19o
+ZWFkdGFpbA0KPiAqZCwNCj4gIAkJCS8qIG9uIGZhaWx1cmUsICpvbGRfaGVhZCBpcyB1cGRhdGVk
+ICovDQo+ICAJCQlzdWNjZXNzID0NCj4gcnRlX2F0b21pY19jb21wYXJlX2V4Y2hhbmdlX3N0cm9u
+Z19leHBsaWNpdCgNCj4gIAkJCQkJJmQtPmhlYWQsIG9sZF9oZWFkLCAqbmV3X2hlYWQsDQo+IC0J
+CQkJCXJ0ZV9tZW1vcnlfb3JkZXJfcmVsYXhlZCwNCj4gLQkJCQkJcnRlX21lbW9yeV9vcmRlcl9y
+ZWxheGVkKTsNCj4gKwkJCQkJcnRlX21lbW9yeV9vcmRlcl9hY3FfcmVsLA0KPiArCQkJCQlydGVf
+bWVtb3J5X29yZGVyX2FjcXVpcmUpOw0KPiAgCX0gd2hpbGUgKHVubGlrZWx5KHN1Y2Nlc3MgPT0g
+MCkpOw0KPiAgCXJldHVybiBuOw0KPiAgfQ0KPiAtLQ0KDQpMR1RNLCB0aG91Z2guIEkgdGhpbmsg
+dGhhdCB3ZSBhbHNvIG5lZWQgdG8gbWFrZSBzaW1pbGFyIGNoYW5nZXMgaW4NCnJ0ZV9yaW5nX2h0
+c19lbGVtX3B2dC5oIGFuZCBydGVfcmluZ19ydHNfZWxlbV9wdnQuaDoNCmZvciBDQVMgdXNlICdh
+Y3FfcmVsJyBvcmRlciBpbnN0ZWFkIG9mIHNpbXBsZSAnYWNxdWlyZScuICANCkxldCBtZSBrbm93
+IHdvdWxkIHlvdSBoYXZlIGEgYmFuZHdpZHRoIHRvIGRvIHRoYXQuDQoNCkFja2VkLWJ5OiBLb25z
+dGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPg0KVGVzdGVkLWJ5
+OiBLb25zdGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPg0KDQo+
+IDIuNDMuMA0KPiANCg0K
