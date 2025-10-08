@@ -2,67 +2,169 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C22D6CAC5BB
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 05:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123D0CAC5BB
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 06:01:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 841FF402A0;
-	Wed,  8 Oct 2025 07:41:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 07DE4402A0;
+	Wed,  8 Oct 2025 08:01:34 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 721F840297
- for <dev@dpdk.org>; Wed,  8 Oct 2025 07:41:09 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3E21840297
+ for <dev@dpdk.org>; Wed,  8 Oct 2025 08:01:32 +0200 (CEST)
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597NoLAU019231
- for <dev@dpdk.org>; Tue, 7 Oct 2025 22:41:08 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=2
- J24v8j+J1Jyu0PB/4BVj5wTlJhZk/3qH2CpfSl6VRo=; b=GhT+iYrAVdOzUiRBb
- 6rB3iMG2G8v8luKv9iMJArIWcmQEAbekenfsWJsdWVQpeXqTZA4+cmB/kAnRGTrK
- NS39fJuWGqHc98xkcx94F9tHhoF0sh69uDpsFKuCcbDcFxRtg3yLbYYWKG/84Asc
- d8pm8Hy0ghfSvlIGXG7s+OBgYfnpnfisGlvmK4ZfqUF2vcwMFHLDB/YE9c3RJWYV
- Tc6/Jy42EAY14uv/psMmFRoYIBWN+rG+B0y/UB1YKjT9j+atvPtNEx9oEvwxL2dt
- IN9By88EYSNqpiUbumYG1fvCOFhledsMOHS1sVDF6HXX6/uJl5OAOy5Iz51K0hy6
- 5uXkg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49ncv0ggfw-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 07 Oct 2025 22:41:08 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 7 Oct 2025 22:41:07 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 7 Oct 2025 22:41:07 -0700
-Received: from hyd11149.caveonetworks.com (unknown [10.29.44.105])
- by maili.marvell.com (Postfix) with ESMTP id 947543F7072;
- Tue,  7 Oct 2025 22:41:04 -0700 (PDT)
-From: Rupesh Chiluka <rchiluka@marvell.com>
-To: <dev@dpdk.org>
-CC: Rupesh Chiluka <rchiluka@marvell.com>
-Subject: [PATCH] app/crypto-perf: add ECDSA P192/P224/P521 support
-Date: Wed, 8 Oct 2025 11:10:59 +0530
-Message-ID: <20251008054059.3934959-1-rchiluka@marvell.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251003034233.2964182-1-rchiluka@marvell.com>
-References: <20251003034233.2964182-1-rchiluka@marvell.com>
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597NnIc2017483;
+ Tue, 7 Oct 2025 23:01:31 -0700
+Received: from mw6pr02cu001.outbound.protection.outlook.com
+ (mail-westus2azon11022087.outbound.protection.outlook.com [52.101.48.87])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49ncv0ghp1-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 07 Oct 2025 23:01:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=agWusR21/opIbhtWfJ/BJff9eRvnAUha4Mc72sds1UHL8oUHQtiuCvEBskuVa+ab5Y78oxktz2JGm1LwDH+mBaItHvhg0gW9yZQ05ELt4I0g8cCYq6wEI+pbVWdTJiKGT32HMimgMyNdnjXOCGiycwm5LljK4FBl3cyeXfweYifR2ETkeJru81rbMtX5z8QUDX/bXygo89HsvZ30lbhwNEHsfaUuIY5jQS86dNbwY6kOV0ofwQ1/bhzYZzg1nhJ3H9SYe9uh1TcnXVqweXo9Eu+JQ1rDSMHNXTUZLbup4FI/jAo7pFL860tyo8TE6wFQ1hQv3Zc4+L5KVSvxK6MARQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IGONN8zUf+Kdi+QPsUEQJOUKiyiRwnu1ZRwLVI1LHts=;
+ b=Z94vpJ5okc/OLIfo9HVr9WDNP4m8BezyqJhX7c+xyXXVlsCkvJLYpPVa9sMOAeDTadNYqmcwjKPfjabc5YKbA3Xauigx8Qupz6XZRIGdN+tsIpza+W/EC57ITnUAZDxGwts+eC99ESV8VpK4dfzA0MoYYDl4XM33T46Taag4y/JErk3RuhlOE8xO2pXaYXsXslBZzfUp3dm0tfifrevVenPEB5HLyhvl2PhztNPG5YZBdtFWjT8vDMg6CilOGSdui0P+AofeG7XM4eQ/jNpHsZeSyhG7cANHdPw8rNiNzT07ruxr9xeIab6MUs9usCnCkVckPB9NI1oF50aWIJeqOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IGONN8zUf+Kdi+QPsUEQJOUKiyiRwnu1ZRwLVI1LHts=;
+ b=FXnf08cmpW/992NPddSITwwRRHiN3VPB/4bur5CRRcrQP0EFizgAJ2qMWQHVLZJ8l9XCKMKDjmrAOZoEgApvt7ZgmOLmeKIoqSOtYkQRXqFUn6hl3RbR89Yrz5wqU+mTHkWBeFXWFhx0WpfGplvzFFmpIYHBtD/tW0om4pLDVHQ=
+Received: from PH0PR18MB4086.namprd18.prod.outlook.com (2603:10b6:510:3::9) by
+ SN7PR18MB3839.namprd18.prod.outlook.com (2603:10b6:806:f5::19) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9182.20; Wed, 8 Oct 2025 06:01:23 +0000
+Received: from PH0PR18MB4086.namprd18.prod.outlook.com
+ ([fe80::ed37:4ea0:6359:f717]) by PH0PR18MB4086.namprd18.prod.outlook.com
+ ([fe80::ed37:4ea0:6359:f717%5]) with mapi id 15.20.9182.017; Wed, 8 Oct 2025
+ 06:01:23 +0000
+From: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>
+To: Bruce Richardson <bruce.richardson@intel.com>, fengchengwen
+ <fengchengwen@huawei.com>, Kevin Laatz <kevin.laatz@intel.com>
+CC: Jerin Jacob <jerinj@marvell.com>, Vamsi Krishna Attunuru
+ <vattunuru@marvell.com>, "g.singh@nxp.com" <g.singh@nxp.com>,
+ "sachin.saxena@nxp.com" <sachin.saxena@nxp.com>, "hemant.agrawal@nxp.com"
+ <hemant.agrawal@nxp.com>, "fengchengwen@huawei.com"
+ <fengchengwen@huawei.com>, "kevin.laatz@intel.com" <kevin.laatz@intel.com>,
+ "conor.walsh@intel.com" <conor.walsh@intel.com>, Gowrishankar Muthukrishnan
+ <gmuthukrishn@marvell.com>, Vidya Sagar Velumuri <vvelumuri@marvell.com>,
+ "anatoly.burakov@intel.com" <anatoly.burakov@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+Subject: Re: [25.11 PATCH v3 0/5] Introduce DMA enqueue/dequeue operations
+Thread-Topic: [25.11 PATCH v3 0/5] Introduce DMA enqueue/dequeue operations
+Thread-Index: AQHcMrTzexClfQ/wYEy+Q4donQ3Hb7S3ys6F
+Date: Wed, 8 Oct 2025 06:01:23 +0000
+Message-ID: <PH0PR18MB4086F49CE6A43A252C7463D0DEE1A@PH0PR18MB4086.namprd18.prod.outlook.com>
+References: <20250519185604.5584-1-pbhagavatula@marvell.com>
+ <20250524091316.10056-1-pbhagavatula@marvell.com>
+ <aDQjDZowik8E7Jfh@bricha3-mobl1.ger.corp.intel.com>
+ <PH0PR18MB408699863CC25944A04C2F18DE6BA@PH0PR18MB4086.namprd18.prod.outlook.com>
+ <aNK3KPYmVmMKfFoH@bricha3-mobl1.ger.corp.intel.com>
+ <PH0PR18MB40863F1D0859F31AF051E164DE1AA@PH0PR18MB4086.namprd18.prod.outlook.com>
+In-Reply-To: <PH0PR18MB40863F1D0859F31AF051E164DE1AA@PH0PR18MB4086.namprd18.prod.outlook.com>
+Accept-Language: en-US, en-IN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR18MB4086:EE_|SN7PR18MB3839:EE_
+x-ms-office365-filtering-correlation-id: 5d1bc86a-0111-4534-1922-08de06301c40
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|366016|376014|38070700021;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?uI4ShgWd1zLbxfZYCeEZ4yHLyVbOvZPbXDR7wJuw8PURp0EOsmf1cX/LMS?=
+ =?iso-8859-1?Q?S4x3XivAQLcXcElr3fW5oIng3jvMRr5IXE59ylfTnubVAKNKVv80H74lrK?=
+ =?iso-8859-1?Q?7Vt1n5zTXXSIgaYGEUZDcqh5LsOWW4RYYzVJcvQcAFERcYpvZiWSAMPWpB?=
+ =?iso-8859-1?Q?qZ/8ATsy1RmsdPVNCSP83kTrDioumGWQY2FQYhQM2P4szRDQTd2UyI7HUe?=
+ =?iso-8859-1?Q?aZ6V9ZXO2fZT+h1cmZBJ/u3smKEVZjYH9YxBrecXWpLcU3NpJMIEbNdalj?=
+ =?iso-8859-1?Q?nxyas6K/NxLRXEnPgTSs2tK9/NKEfMm+s6Z1faEV2n7oigP/Zjal3LHJCf?=
+ =?iso-8859-1?Q?Kf4j3oOQ1DMELFXzJ3a9w/6TAqa7yXAqsEUffOtWqrTwRb9BM+5EwFncYS?=
+ =?iso-8859-1?Q?gIJIgRhPcZw3BwbKIC8s2uUXPIjYFlEbCWF3ldVC4gxg2TdymFSZfa3eF/?=
+ =?iso-8859-1?Q?cykYgO3ndopGMb2rElslXJGAzRd2OTk3CFnMBKuh49XMY1DLcl7zTOW4tI?=
+ =?iso-8859-1?Q?ESM5iV+/IQdryI/M4H3p/HP2Gg8nKYEGqdK5j7SZIJ99sWM7F9N4KHXAqX?=
+ =?iso-8859-1?Q?MoRG5beZNHer1Wn1Menj76YDxzdyA3aueHo2Lk3HO280xs2jns4HNefv43?=
+ =?iso-8859-1?Q?HchCQNgIXJ7mk0O1BEBslal7A1DAejS3u4R4aylqx7Qyx2P53yhye+tuTm?=
+ =?iso-8859-1?Q?q85EeOJzC6uPEEe9q0Wqlxx/R7Li+svN/NETTAN39zSbm7j18FwjjV6Edr?=
+ =?iso-8859-1?Q?0KGXC5KZHEuQFaZbFzLuy8HIfqTpOi7aieZfpDPoKaWWPFNLWZ3UglpdM1?=
+ =?iso-8859-1?Q?euYLUthPjiiNhWAx2m3mzC9UcsI6Yby7D8KzGguNmgWKudqgJu7lWPUYQ4?=
+ =?iso-8859-1?Q?gSeIWIp6/uLVDvASSDAaNSSQQO8Sn0/LGgfHUc3sFb2GSan1MokZGWU/PN?=
+ =?iso-8859-1?Q?2wcNs1zNjv94Yos5pgV66ebtTYgNZqf7ZG8mW3ij5BVCfgPechiiaIK1UD?=
+ =?iso-8859-1?Q?vqcd0M4Bt1qPdG/TSokPzxyXP7s/Kn+J82BiHzL/D1ncllHQDEXSAnkLb8?=
+ =?iso-8859-1?Q?ifaNAtUx3va3wfq44Y34H6zxei2Igdazp1bPRz5UB1+VUYjstKexr/AS4Y?=
+ =?iso-8859-1?Q?rkDXXvJx+HNaN+wcKRGWIYQsa3g7xt/DntCagaBLDRlOZ3hQWRh/hAkabi?=
+ =?iso-8859-1?Q?OLdX07f+Uipp+mHCuyp2PZ8y4LGw8uIfu3nCfw5XmkQnWY3xFnc+rUVEBX?=
+ =?iso-8859-1?Q?9VzrCP7QSgt/+4I3/0HO0RIg6PXPs2N5OQ0LUGxBrWZ2AxmLj0lLl0eiqS?=
+ =?iso-8859-1?Q?SgUtStmdg+RMNKAtTk9obZT+dbdaXyAEtoIH+XMsseqx9Y1cs1JGHdsof9?=
+ =?iso-8859-1?Q?L8+YBzKF8336/G1pYP44zdjqeCHBEYea75A98QXkMNBKc0gYG6nkcOhohj?=
+ =?iso-8859-1?Q?o/8OWzUxgoyn4eFOzuaF+knz47/f+0SSU3vHr+KHaFFKovcx64RtWr38vY?=
+ =?iso-8859-1?Q?ssflkPGTYOg8U9BT3QO5QEvSRROQzA+W8m1Taj5zjf6UwnqptT/jeKFY11?=
+ =?iso-8859-1?Q?W5umMkmqV6aqnjIU46r7AV9nnub3JcpN3wvkzUM/jMzmTeVNXg=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PH0PR18MB4086.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(38070700021); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?iawTFx/vR3k5k5gCYd7HuhpFf6VRuFWW0BjZJlvZFuqv4DmR0l491R5y1W?=
+ =?iso-8859-1?Q?qmstEecbZR4mFQXkg6gTiKv4JJNOKKp1BYcinLwnl+uqgKAUn/lZsXl7KG?=
+ =?iso-8859-1?Q?UwfSxf76LdxrcojdKIRA0cwzztkpYspoVjxI1cNb9H+gqUpvh3LsGU6yUz?=
+ =?iso-8859-1?Q?HeA98yI9qTo5XKO3oyOPP5EQiKfFnPN4CH3tgJlPt4YivQPyXw+pmqd30K?=
+ =?iso-8859-1?Q?2UCUXVMkFYFVOrJkPsh64jDCq/B+r0wh7Fs6tprhI6HYQ60ZCuCxdvp6JE?=
+ =?iso-8859-1?Q?9hd1VgBzPk4Q5l8S7Idb8OGY+yJsvsAl/i4ZcFwTD7S2faRvtFq2iTOmGO?=
+ =?iso-8859-1?Q?7TOQeaXpPZ9pvscXjeBWtnrG0APIsCPcFZ4QTHtENRTkmHd8Wrq55aw/54?=
+ =?iso-8859-1?Q?2wW2dUBKBc8eh7goGl13ClRG5qWfiToT0MqtJnLNB3Z6zejpvbGvA3HvYp?=
+ =?iso-8859-1?Q?6xd5WvVBUxgO1jd0qOaQR19yALdhD8iAhs+4/IpMrK5APe1xObckGVbRmu?=
+ =?iso-8859-1?Q?kp8gmIsPRJYmHtkwc4UTUDoEvPrwVijH3Y5X43ILtZoRk2F+84q/Xztn1D?=
+ =?iso-8859-1?Q?EbQ0a4uSq1WR1TganPhQ5mF4xDG5Kdudxpl74VRr2QFZDF657/xOw5TN5r?=
+ =?iso-8859-1?Q?Xdmq3nrkpyRzCAMU8/uMMvkYCNNCk3ztfXLMFVtcrguD0+rrj9Pq5ijckA?=
+ =?iso-8859-1?Q?VNQeCkxF4UaHJUDJtj4eqZ4JYUrBJWF1bLfpmlF6Fsc4ZC2qB7tVgWE4gO?=
+ =?iso-8859-1?Q?nbjBUBqTCIi55g/kIAY10hhT5aSi9gL13SB9GKuYGXCYu+WK2gipZcAr8D?=
+ =?iso-8859-1?Q?+Xoj5ZosTne+NgaizV2LAScDSy4gKQM3pIN0r93iS9nvMVca9LOR3/aDKn?=
+ =?iso-8859-1?Q?IHWUljhtnGA3j3qiKbmtNSzpuUCXFYE9AMmx6OKiqyhbd4a6jkW5fAzh2k?=
+ =?iso-8859-1?Q?jOuAx+yXaS7mwffAdxf4zRph1hoBL8yZ+xOQA3f1connuRpj8GyYohZeEc?=
+ =?iso-8859-1?Q?IAjXaabd9Xi7xbMP3DTJVOZANTfan+gaAvufpdsEwd+ph4uy63vXrkvIl/?=
+ =?iso-8859-1?Q?dFNGdNE6R1eOUF9VVTX8Qgu7PTNdX1Up9CVxcKEiBrzFxnoUSUG6wEZDCc?=
+ =?iso-8859-1?Q?2KyDJLVL11zkrkkN77HPu2JYsyXKi1N7lnzmPxry7A0EK+W0KPH1VprWzM?=
+ =?iso-8859-1?Q?gB40SYAZwkaVLmFYmyWarSeO/KTTUAvFPsUJ4roDcKA+ApeFVRW4FVEhVn?=
+ =?iso-8859-1?Q?oQLlDcVLYXH6TDb0gx/72spALtqIkFW1soCn+LhwHvHHed5a2OvYqYkURu?=
+ =?iso-8859-1?Q?1TRZyDEvJ6okgjSa3A3I6l4TAKlJ8SNnzlzrY97CrZGUf9uQMPLmy+6bzv?=
+ =?iso-8859-1?Q?nKDmoqKtyFN2fPxAXOw7B3LbhFLtsGjmCTBk507xxcv+spUKD+eJCGTUFX?=
+ =?iso-8859-1?Q?1+0CVUTnQpdqxDcICus+R+HeXJWuEwRL2Nsi/egQ4NY2bRsv+qXe/FZTUP?=
+ =?iso-8859-1?Q?QWRqOlGJl6fABl/Pza4I0ia6eKrwEtuYKzJ1FetqPpncnm20i8a7aIfo4E?=
+ =?iso-8859-1?Q?3We30kgHCfQvj/WKSmxJdFE9xZz4DHT1iOQNOVOgDoH3blVAXXUCslQNpJ?=
+ =?iso-8859-1?Q?UAuU6nXDB0VRdPRL7p6U6hY+GZIREXzy7a?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDE4MiBTYWx0ZWRfX8lMB6niURCSe
- l/ah10TTo3QOs+HTbZcTzycSuVQiuhkCMp8FqdCqNP0jfZhaUE9jSfEGQsfjcyGMp3ubB3xLWfX
- 0eVEvkzdVBUhtqUfsAsfGgczROnWq/KLkI0BLRRBtwPnXwbayl4U/Va8+0XMOFnS3Tbw0sqzHzb
- SCuBm65Ah3OIjhTsvSgoGIVg7+0LbdIP1I6d1g/nYnwFoa7AfEW7U46nSQEmGS/9syhtIG3z2ml
- nvfV4e70t4NdaFgVKONgSHDcaXtUhH9tQw20PqhOjrH/REZiP8D3L/hp8jhg6qVch0hLwc1IKTW
- 0IW7Ol0jyzwKIRomTTuV4ed72kErVS9xr91DE6yvnVoAX2t15XxtsTCPoR+2TeDUCuyYGZqv9l0
- 0DBfn6iJP6bTESBT2v8IBjQAF3Caew==
-X-Proofpoint-ORIG-GUID: vFiKofE4NmHmD6PsjoaKtd5tkqfPNEji
-X-Authority-Analysis: v=2.4 cv=JeuxbEKV c=1 sm=1 tr=0 ts=68e5f974 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=x6icFKpwvdMA:10 a=M5GUcnROAAAA:8 a=2GoupwNzwNddJfAKPi8A:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: vFiKofE4NmHmD6PsjoaKtd5tkqfPNEji
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4086.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d1bc86a-0111-4534-1922-08de06301c40
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2025 06:01:23.4860 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZJustZCF3bKQ7Htb03PiOwwj53pgPuBHTaAxqvo5FgakwQ/7E3Ta7sEkaWqAKd6bQB0RdYhIO+MLI/grIOVvMWL3Um4dplOfWMOLAzaFHKc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR18MB3839
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDE4MiBTYWx0ZWRfX+Bm3V1srkoDM
+ boC6PBeuf2YgJFXJ0+Wt2Pd7vATOXbf6pXuEgdO/1bcKdhSYNjY5C1DY+foFcrnUXMcUqfJcZY4
+ WFfPo1s3hXUNIi9ouU40oSULdWWigwbct8UU2/WV2y4PES1/czF6hxDqeAfw01ncz0vH+fwNTwF
+ uoB5USFX/8q/TxdvHehuh2Yd3I8ztnUCXYkt4Lk/dTkC6MvKDHNrb7NHcHfDXQSRKDfo5M/vaaW
+ iuyveXrtJWqalFJnUTo9gtYxC1pdWCBn/FxsA4mzHKAcM2SkSMzyTKkcWt/37GhZNdqpDgyVWwg
+ WgLA5H9F/K0yX0jLB4PmbKsFcmZKzpmg0tZd7VEB4psSz4bPr0ULOsaSwe5mquvXW/ex3yNluQw
+ IsXHX5D8F/VEqoey6tMPXt4cWmDfRg==
+X-Proofpoint-ORIG-GUID: CHWumhT8WmjCkp-UQfQrqk9e9_s3a6wG
+X-Authority-Analysis: v=2.4 cv=JeuxbEKV c=1 sm=1 tr=0 ts=68e5fe3b cx=c_pps
+ a=uG80++rjBOzHqXi85Z+aBw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=x6icFKpwvdMA:10 a=-AAbraWEqlQA:10 a=NEAV23lmAAAA:8 a=M5GUcnROAAAA:8
+ a=n-czGfdUKBKNmWcxkYIA:9 a=wPNLvfGTeEIA:10 a=OBjm3rFKGHvpk9ecZwUJ:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: CHWumhT8WmjCkp-UQfQrqk9e9_s3a6wG
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
@@ -79,730 +181,105 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for ECDSA SECP192R1, SECP224R1, SECP521R1 curve SIGN and
-VERIFY operations
-
-Signed-off-by: Rupesh Chiluka <rchiluka@marvell.com>
----
- app/test-crypto-perf/cperf_ops.c             | 116 ++++----
- app/test-crypto-perf/cperf_options.h         |   6 +
- app/test-crypto-perf/cperf_options_parsing.c |  32 ++-
- app/test-crypto-perf/cperf_test_common.c     |   3 +
- app/test-crypto-perf/cperf_test_vectors.c    | 273 +++++++++++++++++++
- app/test-crypto-perf/cperf_test_vectors.h    |   3 +
- app/test-crypto-perf/main.c                  |  46 +++-
- doc/guides/tools/cryptoperf.rst              |   3 +
- 8 files changed, 421 insertions(+), 61 deletions(-)
-
-diff --git a/app/test-crypto-perf/cperf_ops.c b/app/test-crypto-perf/cperf_ops.c
-index b04c523542..d3e35721ed 100644
---- a/app/test-crypto-perf/cperf_ops.c
-+++ b/app/test-crypto-perf/cperf_ops.c
-@@ -95,36 +95,46 @@ cperf_set_ops_asym_ecdsa(struct rte_crypto_op **ops,
- 	uint16_t i;
- 
- 	for (i = 0; i < nb_ops; i++) {
-+		const struct cperf_ecdsa_test_data *ecdsa_curve_data = NULL;
- 		struct rte_crypto_asym_op *asym_op = ops[i]->asym;
- 
- 		ops[i]->status = RTE_CRYPTO_OP_STATUS_NOT_PROCESSED;
- 		rte_crypto_op_attach_asym_session(ops[i], sess);
- 
- 		asym_op->ecdsa.op_type = options->asym_op_type;
--		if (options->op_type == CPERF_ASYM_SECP256R1) {
--			asym_op->ecdsa.message.data = options->secp256r1_data->message.data;
--			asym_op->ecdsa.message.length = options->secp256r1_data->message.length;
--
--			asym_op->ecdsa.k.data = options->secp256r1_data->k.data;
--			asym_op->ecdsa.k.length = options->secp256r1_data->k.length;
--
--			asym_op->ecdsa.r.data = options->secp256r1_data->sign_r.data;
--			asym_op->ecdsa.r.length = options->secp256r1_data->sign_r.length;
--			asym_op->ecdsa.s.data = options->secp256r1_data->sign_s.data;
--			asym_op->ecdsa.s.length = options->secp256r1_data->sign_s.length;
--		} else if (options->op_type == CPERF_ASYM_SECP384R1) {
--			asym_op->ecdsa.message.data = options->secp384r1_data->message.data;
--			asym_op->ecdsa.message.length = options->secp384r1_data->message.length;
--
--			asym_op->ecdsa.k.data = options->secp384r1_data->k.data;
--			asym_op->ecdsa.k.length = options->secp384r1_data->k.length;
--
--			asym_op->ecdsa.r.data = options->secp384r1_data->sign_r.data;
--			asym_op->ecdsa.r.length = options->secp384r1_data->sign_r.length;
--			asym_op->ecdsa.s.data = options->secp384r1_data->sign_s.data;
--			asym_op->ecdsa.s.length = options->secp384r1_data->sign_s.length;
-+
-+		switch (options->op_type) {
-+		case CPERF_ASYM_SECP192R1:
-+			ecdsa_curve_data = options->secp192r1_data;
-+			break;
-+		case CPERF_ASYM_SECP224R1:
-+			ecdsa_curve_data = options->secp224r1_data;
-+			break;
-+		case CPERF_ASYM_SECP256R1:
-+			ecdsa_curve_data = options->secp256r1_data;
-+			break;
-+		case CPERF_ASYM_SECP384R1:
-+			ecdsa_curve_data = options->secp384r1_data;
-+			break;
-+		case CPERF_ASYM_SECP521R1:
-+			ecdsa_curve_data = options->secp521r1_data;
-+			break;
-+		default:
-+			rte_panic("Unsupported ECDSA operation type %d\n",
-+				  options->op_type);
-+			break;
- 		}
- 
-+		asym_op->ecdsa.message.data = ecdsa_curve_data->message.data;
-+		asym_op->ecdsa.message.length = ecdsa_curve_data->message.length;
-+
-+		asym_op->ecdsa.k.data = ecdsa_curve_data->k.data;
-+		asym_op->ecdsa.k.length = ecdsa_curve_data->k.length;
-+
-+		asym_op->ecdsa.r.data = ecdsa_curve_data->sign_r.data;
-+		asym_op->ecdsa.r.length = ecdsa_curve_data->sign_r.length;
-+		asym_op->ecdsa.s.data = ecdsa_curve_data->sign_s.data;
-+		asym_op->ecdsa.s.length = ecdsa_curve_data->sign_s.length;
- 	}
- }
- 
-@@ -1078,6 +1088,7 @@ cperf_create_session(struct rte_mempool *sess_mp,
- 	const struct cperf_test_vector *test_vector,
- 	uint16_t iv_offset)
- {
-+	const struct cperf_ecdsa_test_data *ecdsa_curve_data = NULL;
- 	struct rte_crypto_sym_xform cipher_xform;
- 	struct rte_crypto_sym_xform auth_xform;
- 	struct rte_crypto_sym_xform aead_xform;
-@@ -1135,42 +1146,42 @@ cperf_create_session(struct rte_mempool *sess_mp,
- 		return asym_sess;
- 	}
- 
--	if (options->op_type == CPERF_ASYM_SECP256R1) {
--		xform.next = NULL;
--		xform.xform_type = RTE_CRYPTO_ASYM_XFORM_ECDSA;
--		xform.ec.curve_id = options->secp256r1_data->curve;
--		xform.ec.pkey.data = options->secp256r1_data->pkey.data;
--		xform.ec.pkey.length = options->secp256r1_data->pkey.length;
--		xform.ec.q.x.data = options->secp256r1_data->pubkey_qx.data;
--		xform.ec.q.x.length = options->secp256r1_data->pubkey_qx.length;
--		xform.ec.q.y.data = options->secp256r1_data->pubkey_qy.data;
--		xform.ec.q.y.length = options->secp256r1_data->pubkey_qy.length;
--
--		ret = rte_cryptodev_asym_session_create(dev_id, &xform,
--				sess_mp, &asym_sess);
--		if (ret < 0) {
--			RTE_LOG(ERR, USER1, "ECDSA P256 Asym session create failed\n");
--			return NULL;
--		}
--
--		return asym_sess;
-+	switch (options->op_type) {
-+	case CPERF_ASYM_SECP192R1:
-+		ecdsa_curve_data = options->secp192r1_data;
-+		break;
-+	case CPERF_ASYM_SECP224R1:
-+		ecdsa_curve_data = options->secp224r1_data;
-+		break;
-+	case CPERF_ASYM_SECP256R1:
-+		ecdsa_curve_data = options->secp256r1_data;
-+		break;
-+	case CPERF_ASYM_SECP384R1:
-+		ecdsa_curve_data = options->secp384r1_data;
-+		break;
-+	case CPERF_ASYM_SECP521R1:
-+		ecdsa_curve_data = options->secp521r1_data;
-+		break;
-+	default:
-+		rte_panic("Unsupported ECDSA operation type %d\n", options->op_type);
-+		break;
- 	}
- 
--	if (options->op_type == CPERF_ASYM_SECP384R1) {
-+	if (ecdsa_curve_data) {
- 		xform.next = NULL;
- 		xform.xform_type = RTE_CRYPTO_ASYM_XFORM_ECDSA;
--		xform.ec.curve_id = options->secp384r1_data->curve;
--		xform.ec.pkey.data = options->secp384r1_data->pkey.data;
--		xform.ec.pkey.length = options->secp384r1_data->pkey.length;
--		xform.ec.q.x.data = options->secp384r1_data->pubkey_qx.data;
--		xform.ec.q.x.length = options->secp384r1_data->pubkey_qx.length;
--		xform.ec.q.y.data = options->secp384r1_data->pubkey_qy.data;
--		xform.ec.q.y.length = options->secp384r1_data->pubkey_qy.length;
-+		xform.ec.curve_id = ecdsa_curve_data->curve;
-+		xform.ec.pkey.data = ecdsa_curve_data->pkey.data;
-+		xform.ec.pkey.length = ecdsa_curve_data->pkey.length;
-+		xform.ec.q.x.data = ecdsa_curve_data->pubkey_qx.data;
-+		xform.ec.q.x.length = ecdsa_curve_data->pubkey_qx.length;
-+		xform.ec.q.y.data = ecdsa_curve_data->pubkey_qy.data;
-+		xform.ec.q.y.length = ecdsa_curve_data->pubkey_qy.length;
- 
- 		ret = rte_cryptodev_asym_session_create(dev_id, &xform,
- 				sess_mp, &asym_sess);
- 		if (ret < 0) {
--			RTE_LOG(ERR, USER1, "ECDSA P384 Asym session create failed\n");
-+			RTE_LOG(ERR, USER1, "ECDSA Asym session create failed\n");
- 			return NULL;
- 		}
- 
-@@ -1519,10 +1530,11 @@ cperf_get_op_functions(const struct cperf_options *options,
- 	case CPERF_ASYM_RSA:
- 		op_fns->populate_ops = cperf_set_ops_asym_rsa;
- 		break;
-+	case CPERF_ASYM_SECP192R1:
-+	case CPERF_ASYM_SECP224R1:
- 	case CPERF_ASYM_SECP256R1:
--		op_fns->populate_ops = cperf_set_ops_asym_ecdsa;
--		break;
- 	case CPERF_ASYM_SECP384R1:
-+	case CPERF_ASYM_SECP521R1:
- 		op_fns->populate_ops = cperf_set_ops_asym_ecdsa;
- 		break;
- 	case CPERF_ASYM_ED25519:
-diff --git a/app/test-crypto-perf/cperf_options.h b/app/test-crypto-perf/cperf_options.h
-index 38621e28a0..428e8cb4f1 100644
---- a/app/test-crypto-perf/cperf_options.h
-+++ b/app/test-crypto-perf/cperf_options.h
-@@ -94,8 +94,11 @@ enum cperf_op_type {
- 	CPERF_IPSEC,
- 	CPERF_ASYM_MODEX,
- 	CPERF_ASYM_RSA,
-+	CPERF_ASYM_SECP192R1,
-+	CPERF_ASYM_SECP224R1,
- 	CPERF_ASYM_SECP256R1,
- 	CPERF_ASYM_SECP384R1,
-+	CPERF_ASYM_SECP521R1,
- 	CPERF_ASYM_ED25519,
- 	CPERF_ASYM_SM2,
- 	CPERF_TLS,
-@@ -177,8 +180,11 @@ struct cperf_options {
- 	uint8_t imix_distribution_count;
- 	struct cperf_modex_test_data *modex_data;
- 	uint16_t modex_len;
-+	struct cperf_ecdsa_test_data *secp192r1_data;
-+	struct cperf_ecdsa_test_data *secp224r1_data;
- 	struct cperf_ecdsa_test_data *secp256r1_data;
- 	struct cperf_ecdsa_test_data *secp384r1_data;
-+	struct cperf_ecdsa_test_data *secp521r1_data;
- 	struct cperf_eddsa_test_data *eddsa_data;
- 	struct cperf_sm2_test_data *sm2_data;
- 	enum rte_crypto_asym_op_type asym_op_type;
-diff --git a/app/test-crypto-perf/cperf_options_parsing.c b/app/test-crypto-perf/cperf_options_parsing.c
-index d13a7ab297..14e731586b 100644
---- a/app/test-crypto-perf/cperf_options_parsing.c
-+++ b/app/test-crypto-perf/cperf_options_parsing.c
-@@ -39,7 +39,9 @@ usage(char *progname)
- 		" --devtype TYPE: set crypto device type to use\n"
- 		" --low-prio-qp-mask mask: set low priority for queues set in mask(hex)\n"
- 		" --optype cipher-only / auth-only / cipher-then-auth / auth-then-cipher /\n"
--		"        aead / pdcp / docsis / ipsec / modex / rsa / secp256r1 / secp384r1 / eddsa / sm2 / tls-record : set operation type\n"
-+		"        aead / pdcp / docsis / ipsec / modex / rsa / secp192r1 /\n"
-+		"        secp224r1 / secp256r1 / secp384r1 / secp521r1 / eddsa / sm2 /\n"
-+		"        tls-record : set operation type\n"
- 		" --sessionless: enable session-less crypto operations\n"
- 		" --shared-session: share 1 session across all queue pairs on crypto device\n"
- 		" --out-of-place: enable out-of-place crypto operations\n"
-@@ -529,6 +531,14 @@ parse_op_type(struct cperf_options *opts, const char *arg)
- 			cperf_op_type_strs[CPERF_ASYM_RSA],
- 			CPERF_ASYM_RSA
- 		},
-+		{
-+			cperf_op_type_strs[CPERF_ASYM_SECP192R1],
-+			CPERF_ASYM_SECP192R1
-+		},
-+		{
-+			cperf_op_type_strs[CPERF_ASYM_SECP224R1],
-+			CPERF_ASYM_SECP224R1
-+		},
- 		{
- 			cperf_op_type_strs[CPERF_ASYM_SECP256R1],
- 			CPERF_ASYM_SECP256R1
-@@ -537,6 +547,10 @@ parse_op_type(struct cperf_options *opts, const char *arg)
- 			cperf_op_type_strs[CPERF_ASYM_SECP384R1],
- 			CPERF_ASYM_SECP384R1
- 		},
-+		{
-+			cperf_op_type_strs[CPERF_ASYM_SECP521R1],
-+			CPERF_ASYM_SECP521R1
-+		},
- 		{
- 			cperf_op_type_strs[CPERF_ASYM_ED25519],
- 			CPERF_ASYM_ED25519
-@@ -1153,8 +1167,11 @@ cperf_options_default(struct cperf_options *opts)
- 	opts->rsa_data = &rsa_pub_perf_data[0];
- 	opts->rsa_keytype = UINT8_MAX;
- 
-+	opts->secp192r1_data = &secp192r1_perf_data;
-+	opts->secp224r1_data = &secp224r1_perf_data;
- 	opts->secp256r1_data = &secp256r1_perf_data;
- 	opts->secp384r1_data = &secp384r1_perf_data;
-+	opts->secp521r1_data = &secp521r1_perf_data;
- 	opts->eddsa_data = &ed25519_perf_data;
- 	opts->sm2_data = &sm2_perf_data;
- 	opts->asym_op_type = RTE_CRYPTO_ASYM_OP_ENCRYPT;
-@@ -1639,6 +1656,19 @@ cperf_options_check(struct cperf_options *options)
- 		}
- 	}
- 
-+	if (options->op_type == CPERF_ASYM_SECP192R1 ||
-+		options->op_type == CPERF_ASYM_SECP224R1 ||
-+		options->op_type == CPERF_ASYM_SECP256R1 ||
-+		options->op_type == CPERF_ASYM_SECP384R1 ||
-+		options->op_type == CPERF_ASYM_SECP521R1) {
-+
-+		if (options->asym_op_type != RTE_CRYPTO_ASYM_OP_SIGN &&
-+			options->asym_op_type != RTE_CRYPTO_ASYM_OP_VERIFY) {
-+			RTE_LOG(ERR, USER1, "ECDSA operations only support sign and verify\n");
-+			return -EINVAL;
-+		}
-+	}
-+
- #ifdef RTE_LIB_SECURITY
- 	if (options->op_type == CPERF_DOCSIS) {
- 		if (check_docsis_buffer_length(options) < 0)
-diff --git a/app/test-crypto-perf/cperf_test_common.c b/app/test-crypto-perf/cperf_test_common.c
-index da0202a870..caf429b4d9 100644
---- a/app/test-crypto-perf/cperf_test_common.c
-+++ b/app/test-crypto-perf/cperf_test_common.c
-@@ -307,8 +307,11 @@ cperf_is_asym_test(const struct cperf_options *options)
- {
- 	if (options->op_type == CPERF_ASYM_MODEX ||
- 	    options->op_type == CPERF_ASYM_RSA ||
-+	    options->op_type == CPERF_ASYM_SECP192R1 ||
-+	    options->op_type == CPERF_ASYM_SECP224R1 ||
- 	    options->op_type == CPERF_ASYM_SECP256R1 ||
- 	    options->op_type == CPERF_ASYM_SECP384R1 ||
-+	    options->op_type == CPERF_ASYM_SECP521R1 ||
- 	    options->op_type == CPERF_ASYM_ED25519 ||
- 	    options->op_type == CPERF_ASYM_SM2)
- 		return true;
-diff --git a/app/test-crypto-perf/cperf_test_vectors.c b/app/test-crypto-perf/cperf_test_vectors.c
-index f1dedcd119..f4f856ff69 100644
---- a/app/test-crypto-perf/cperf_test_vectors.c
-+++ b/app/test-crypto-perf/cperf_test_vectors.c
-@@ -804,6 +804,98 @@ cperf_modex_test_data modex_perf_data[10] = {
- 	}
- };
- 
-+static uint8_t secp192r1_pkey[] = {
-+	0x24, 0xed, 0xd2, 0x2f, 0x7d, 0xdd, 0x6f, 0xa5,
-+	0xbc, 0x61, 0xfc, 0x06, 0x53, 0x47, 0x9a, 0xa4,
-+	0x08, 0x09, 0xef, 0x86, 0x5c, 0xf2, 0x7a, 0x47
-+};
-+
-+static uint8_t secp192r1_qx[] = {
-+	0x9b, 0xf1, 0x2d, 0x71, 0x74, 0xb7, 0x70, 0x8a,
-+	0x07, 0x6a, 0x38, 0xbc, 0x80, 0xaa, 0x28, 0x66,
-+	0x2f, 0x25, 0x1e, 0x2e, 0xd8, 0xd4, 0x14, 0xdc
-+};
-+
-+static uint8_t secp192r1_qy[] = {
-+	0x48, 0x54, 0xc8, 0xd0, 0x7d, 0xfc, 0x08, 0x82,
-+	0x4e, 0x9e, 0x47, 0x1c, 0xa2, 0xfe, 0xdc, 0xfc,
-+	0xff, 0x3d, 0xdc, 0xb0, 0x11, 0x57, 0x34, 0x98
-+};
-+
-+static uint8_t secp192r1_k[] = {
-+	0xa5, 0xc8, 0x17, 0xa2, 0x36, 0xa5, 0xf7, 0xfa,
-+	0xa3, 0x29, 0xb8, 0xec, 0xc3, 0xc5, 0x96, 0x68,
-+	0x7c, 0x71, 0xaa, 0xaf, 0x86, 0xc7, 0x70, 0x3e
-+};
-+
-+static uint8_t secp192r1_sign_r[] = {
-+	0x35, 0x4a, 0xba, 0xec, 0xf4, 0x36, 0x1f, 0xea,
-+	0x90, 0xc2, 0x9b, 0x91, 0x99, 0x88, 0x2e, 0xdf,
-+	0x85, 0x73, 0xe6, 0x86, 0xa8, 0x13, 0xef, 0xf8
-+};
-+
-+static uint8_t secp192r1_sign_s[] = {
-+	0x80, 0xf5, 0x00, 0x00, 0xac, 0x86, 0x11, 0x1c,
-+	0x9b, 0x30, 0x47, 0x38, 0x5a, 0x15, 0xd7, 0x8e,
-+	0x63, 0x2c, 0x58, 0xb7, 0x94, 0x9e, 0x82, 0xc1
-+};
-+
-+static uint8_t secp192r1_message[] = {
-+	0x5a, 0xe8, 0x31, 0x7d, 0x34, 0xd1, 0xe5, 0x95,
-+	0xe3, 0xfa, 0x72, 0x47, 0xdb, 0x80, 0xc0, 0xaf,
-+	0x43, 0x20, 0xcc, 0xe1, 0x11, 0x6d, 0xe1, 0x87,
-+	0xf8, 0xf7, 0xe2, 0xe0, 0x99, 0xc0, 0xd8, 0xd0
-+};
-+
-+static uint8_t secp224r1_pkey[] = {
-+	0x88, 0x8f, 0xc9, 0x92, 0x89, 0x3b, 0xdd, 0x8a,
-+	0xa0, 0x2c, 0x80, 0x76, 0x88, 0x32, 0x60, 0x5d,
-+	0x02, 0x0b, 0x81, 0xae, 0x0b, 0x25, 0x47, 0x41,
-+	0x54, 0xec, 0x89, 0xaa
-+};
-+
-+static uint8_t secp224r1_qx[] = {
-+	0x4c, 0x74, 0x1e, 0x4d, 0x20, 0x10, 0x36, 0x70,
-+	0xb7, 0x16, 0x1a, 0xe7, 0x22, 0x71, 0x08, 0x21,
-+	0x55, 0x83, 0x84, 0x18, 0x08, 0x43, 0x35, 0x33,
-+	0x8a, 0xc3, 0x8f, 0xa4
-+};
-+
-+static uint8_t secp224r1_qy[] = {
-+	0xdb, 0x79, 0x19, 0x15, 0x1a, 0xc2, 0x85, 0x87,
-+	0xb7, 0x2b, 0xad, 0x7a, 0xb1, 0x80, 0xec, 0x8e,
-+	0x95, 0xab, 0x9e, 0x2c, 0x8d, 0x81, 0xd9, 0xb9,
-+	0xd7, 0xe2, 0xe3, 0x83
-+};
-+
-+static uint8_t secp224r1_k[] = {
-+	0x06, 0xf7, 0xa5, 0x60, 0x07, 0x82, 0x54, 0x33,
-+	0xc4, 0xc6, 0x11, 0x53, 0xdf, 0x1a, 0x13, 0x5e,
-+	0xee, 0x2f, 0x38, 0xec, 0x68, 0x7b, 0x49, 0x2e,
-+	0xd4, 0x0d, 0x9c, 0x90
-+};
-+
-+static uint8_t secp224r1_sign_r[] = {
-+	0x09, 0x09, 0xc9, 0xb9, 0xca, 0xe8, 0xd2, 0x79,
-+	0x0e, 0x29, 0xdb, 0x6a, 0xfd, 0xb4, 0x5c, 0x04,
-+	0xf5, 0xb0, 0x72, 0xc4, 0xc2, 0x04, 0x10, 0xc7,
-+	0xdc, 0x9b, 0x67, 0x72
-+};
-+
-+static uint8_t secp224r1_sign_s[] = {
-+	0x29, 0x8f, 0x4f, 0xca, 0xe1, 0xfe, 0x27, 0x1d,
-+	0xa1, 0xe0, 0x34, 0x5d, 0x11, 0xd0, 0x7a, 0x1f,
-+	0xca, 0x43, 0xf5, 0x8a, 0xf4, 0xc1, 0x13, 0xb9,
-+	0x09, 0xee, 0xde, 0xa0
-+};
-+
-+static uint8_t secp224r1_message[] = {
-+	0x00, 0xc6, 0xfc, 0x53, 0xc1, 0x98, 0x6d, 0x19,
-+	0xa8, 0xa8, 0xb5, 0x80, 0xee, 0x55, 0x3d, 0xc1,
-+	0x24, 0x07, 0x45, 0xd7, 0x60, 0x64, 0x7d, 0x1c,
-+	0x0a, 0xdf, 0x44, 0x2c, 0x13, 0x3c, 0x7f, 0x56
-+};
-+
- static uint8_t secp256r1_pkey[] = {
- 	0x51, 0x9b, 0x42, 0x3d, 0x71, 0x5f, 0x8b, 0x58,
- 	0x1f, 0x4f, 0xa8, 0xee, 0x59, 0xf4, 0x77, 0x1a,
-@@ -914,6 +1006,85 @@ static uint8_t secp384r1_message[] = {
- 	0x3e, 0x18, 0xcd, 0x01, 0x7d, 0x7f, 0x3e, 0xd1
- };
- 
-+static uint8_t secp521r1_pkey[] = {
-+	0x01, 0xe8, 0xc0, 0x59, 0x96, 0xb8, 0x5e, 0x6f,
-+	0x3f, 0x87, 0x57, 0x12, 0xa0, 0x9c, 0x1b, 0x40,
-+	0x67, 0x2b, 0x5e, 0x7a, 0x78, 0xd5, 0x85, 0x2d,
-+	0xe0, 0x15, 0x85, 0xc5, 0xfb, 0x99, 0x0b, 0xf3,
-+	0x81, 0x2c, 0x32, 0x45, 0x53, 0x4a, 0x71, 0x43,
-+	0x89, 0xae, 0x90, 0x14, 0xd6, 0x77, 0xa4, 0x49,
-+	0xef, 0xd6, 0x58, 0x25, 0x4e, 0x61, 0x0d, 0xa8,
-+	0xe6, 0xca, 0xd3, 0x34, 0x14, 0xb9, 0xd3, 0x3e,
-+	0x0d, 0x7a
-+};
-+
-+static uint8_t secp521r1_qx[] = {
-+	0x00, 0x7d, 0x04, 0x2c, 0xa1, 0x94, 0x08, 0x52,
-+	0x4e, 0x68, 0xb9, 0x81, 0xf1, 0x41, 0x93, 0x51,
-+	0xe3, 0xb8, 0x47, 0x36, 0xc7, 0x7f, 0xe5, 0x8f,
-+	0xee, 0x7d, 0x11, 0x31, 0x7d, 0xf2, 0xe8, 0x50,
-+	0xd9, 0x60, 0xc7, 0xdd, 0x10, 0xd1, 0x0b, 0xa7,
-+	0x14, 0xc8, 0xa6, 0x09, 0xd1, 0x63, 0x50, 0x2b,
-+	0x79, 0xd6, 0x82, 0xe8, 0xbb, 0xec, 0xd4, 0xf5,
-+	0x25, 0x91, 0xd2, 0x74, 0x85, 0x33, 0xe4, 0x5a,
-+	0x86, 0x7a
-+};
-+
-+static uint8_t secp521r1_qy[] = {
-+	0x01, 0x97, 0xac, 0x64, 0x16, 0x11, 0x1c, 0xcf,
-+	0x98, 0x7d, 0x29, 0x04, 0x59, 0xeb, 0xc8, 0xad,
-+	0x9e, 0xc5, 0x6e, 0x49, 0x05, 0x9c, 0x99, 0x21,
-+	0x55, 0x53, 0x9a, 0x36, 0xa6, 0x26, 0x63, 0x1f,
-+	0x4a, 0x2d, 0x89, 0x16, 0x4b, 0x98, 0x51, 0x54,
-+	0xf2, 0xdd, 0xdc, 0x02, 0x81, 0xee, 0x5b, 0x51,
-+	0x78, 0x27, 0x1f, 0x3a, 0x76, 0xa0, 0x91, 0x4c,
-+	0x3f, 0xcd, 0x1f, 0x97, 0xbe, 0x8e, 0x83, 0x76,
-+	0xef, 0xb3
-+};
-+
-+static uint8_t secp521r1_k[] = {
-+	0x00, 0xdc, 0x8d, 0xaa, 0xac, 0xdd, 0xb8, 0xfd,
-+	0x2f, 0xf5, 0xc3, 0x4a, 0x5c, 0xe1, 0x83, 0xa4,
-+	0x22, 0x61, 0xad, 0x3c, 0x64, 0xdb, 0xfc, 0x09,
-+	0x5e, 0x58, 0x92, 0x43, 0x64, 0xdc, 0x47, 0xea,
-+	0x1c, 0x05, 0xe2, 0x59, 0x9a, 0xae, 0x91, 0x7c,
-+	0x2c, 0x95, 0xf4, 0x7d, 0x6b, 0xb3, 0x7d, 0xa0,
-+	0x08, 0xaf, 0x9f, 0x55, 0x73, 0x0d, 0xdb, 0xe4,
-+	0xd8, 0xde, 0xd2, 0x4f, 0x9e, 0x8d, 0xaa, 0x46,
-+	0xdb, 0x6a
-+};
-+
-+static uint8_t secp521r1_sign_r[] = {
-+	0x00, 0x9d, 0xd1, 0xf2, 0xa7, 0x16, 0x84, 0x3e,
-+	0xed, 0xec, 0x7a, 0x66, 0x45, 0xac, 0x83, 0x4d,
-+	0x43, 0x36, 0xe7, 0xb1, 0x8e, 0x35, 0x70, 0x1f,
-+	0x06, 0xca, 0xe9, 0xd6, 0xb2, 0x90, 0xd4, 0x14,
-+	0x91, 0x42, 0x47, 0x35, 0xf3, 0xb5, 0x7e, 0x82,
-+	0x9a, 0xd5, 0xde, 0x05, 0x5e, 0xae, 0xef, 0x17,
-+	0x78, 0xf0, 0x51, 0xc1, 0xee, 0x15, 0x2b, 0xf2,
-+	0x13, 0x1a, 0x08, 0x1e, 0x53, 0xdf, 0x2a, 0x56,
-+	0x7a, 0x8a
-+};
-+
-+static uint8_t secp521r1_sign_s[] = {
-+	0x00, 0x21, 0x48, 0xe8, 0x42, 0x8d, 0x70, 0xa7,
-+	0x2b, 0xc9, 0xfa, 0x98, 0x6c, 0x38, 0xc2, 0xc9,
-+	0x7d, 0xed, 0xa0, 0x42, 0x0f, 0x22, 0x2f, 0x9d,
-+	0xc9, 0x9d, 0x32, 0xc0, 0xac, 0xba, 0x69, 0x9d,
-+	0xc7, 0xba, 0x0a, 0x2b, 0x79, 0xce, 0x59, 0x99,
-+	0xff, 0x61, 0xbd, 0x0b, 0x23, 0x3c, 0x74, 0x4a,
-+	0x89, 0x3b, 0xc1, 0x05, 0xbc, 0xa5, 0xc2, 0x35,
-+	0x42, 0x3e, 0x53, 0x16, 0x12, 0xda, 0x65, 0xd7,
-+	0x2e, 0x62
-+};
-+
-+static uint8_t secp521r1_message[] = {
-+	0x53, 0xe6, 0x53, 0x7c, 0xb6, 0xea, 0x68, 0xae,
-+	0x47, 0xa8, 0x16, 0x11, 0xc2, 0x27, 0x56, 0xd7,
-+	0x70, 0xd7, 0xa3, 0x7e, 0x33, 0x6c, 0x3a, 0xf0,
-+	0xb0, 0x81, 0x4b, 0x04, 0xfa, 0x39, 0x43, 0x4b
-+};
-+
- static uint8_t ed25519_pkey[] = {
- 	0x4c, 0xcd, 0x08, 0x9b, 0x28, 0xff, 0x96, 0xda,
- 	0x9d, 0xb6, 0xc3, 0x46, 0xec, 0x11, 0x4e, 0x0f,
-@@ -1421,6 +1592,74 @@ uint8_t ipsec_plaintext[2048] = {
- 		0x75, 0x67, 0x00, 0x01
- };
- 
-+/** ECDSA secp192r1 elliptic curve test params */
-+struct
-+cperf_ecdsa_test_data secp192r1_perf_data = {
-+	.pubkey_qx = {
-+		.data = secp192r1_qx,
-+		.length = sizeof(secp192r1_qx),
-+	},
-+	.pubkey_qy = {
-+		.data = secp192r1_qy,
-+		.length = sizeof(secp192r1_qy),
-+	},
-+	.k = {
-+		.data = secp192r1_k,
-+		.length = sizeof(secp192r1_k),
-+	},
-+	.sign_r = {
-+		.data = secp192r1_sign_r,
-+		.length = sizeof(secp192r1_sign_r),
-+	},
-+	.sign_s = {
-+		.data = secp192r1_sign_s,
-+		.length = sizeof(secp192r1_sign_s),
-+	},
-+	.pkey = {
-+		.data = secp192r1_pkey,
-+		.length = sizeof(secp192r1_pkey),
-+	},
-+	.message = {
-+		.data = secp192r1_message,
-+		.length = sizeof(secp192r1_message),
-+	},
-+	.curve = RTE_CRYPTO_EC_GROUP_SECP192R1
-+};
-+
-+/** ECDSA secp224r1 elliptic curve test params */
-+struct
-+cperf_ecdsa_test_data secp224r1_perf_data = {
-+	.pubkey_qx = {
-+		.data = secp224r1_qx,
-+		.length = sizeof(secp224r1_qx),
-+	},
-+	.pubkey_qy = {
-+		.data = secp224r1_qy,
-+		.length = sizeof(secp224r1_qy),
-+	},
-+	.k = {
-+		.data = secp224r1_k,
-+		.length = sizeof(secp224r1_k),
-+	},
-+	.sign_r = {
-+		.data = secp224r1_sign_r,
-+		.length = sizeof(secp224r1_sign_r),
-+	},
-+	.sign_s = {
-+		.data = secp224r1_sign_s,
-+		.length = sizeof(secp224r1_sign_s),
-+	},
-+	.pkey = {
-+		.data = secp224r1_pkey,
-+		.length = sizeof(secp224r1_pkey),
-+	},
-+	.message = {
-+		.data = secp224r1_message,
-+		.length = sizeof(secp224r1_message),
-+	},
-+	.curve = RTE_CRYPTO_EC_GROUP_SECP224R1
-+};
-+
- /** ECDSA secp256r1 elliptic curve test params */
- struct
- cperf_ecdsa_test_data secp256r1_perf_data = {
-@@ -1489,6 +1728,40 @@ cperf_ecdsa_test_data secp384r1_perf_data = {
- 	.curve = RTE_CRYPTO_EC_GROUP_SECP384R1
- };
- 
-+/** ECDSA secp521r1 elliptic curve test params */
-+struct
-+cperf_ecdsa_test_data secp521r1_perf_data = {
-+	.pubkey_qx = {
-+		.data = secp521r1_qx,
-+		.length = sizeof(secp521r1_qx),
-+	},
-+	.pubkey_qy = {
-+		.data = secp521r1_qy,
-+		.length = sizeof(secp521r1_qy),
-+	},
-+	.k = {
-+		.data = secp521r1_k,
-+		.length = sizeof(secp521r1_k),
-+	},
-+	.sign_r = {
-+		.data = secp521r1_sign_r,
-+		.length = sizeof(secp521r1_sign_r),
-+	},
-+	.sign_s = {
-+		.data = secp521r1_sign_s,
-+		.length = sizeof(secp521r1_sign_s),
-+	},
-+	.pkey = {
-+		.data = secp521r1_pkey,
-+		.length = sizeof(secp521r1_pkey),
-+	},
-+	.message = {
-+		.data = secp521r1_message,
-+		.length = sizeof(secp521r1_message),
-+	},
-+	.curve = RTE_CRYPTO_EC_GROUP_SECP521R1
-+};
-+
- /* EdDSA 25519 elliptic curve test params */
- struct
- cperf_eddsa_test_data ed25519_perf_data = {
-diff --git a/app/test-crypto-perf/cperf_test_vectors.h b/app/test-crypto-perf/cperf_test_vectors.h
-index 5f2f6ab8af..d6f18268c4 100644
---- a/app/test-crypto-perf/cperf_test_vectors.h
-+++ b/app/test-crypto-perf/cperf_test_vectors.h
-@@ -177,8 +177,11 @@ extern uint8_t aad[];
- extern uint8_t digest[2048];
- 
- extern struct cperf_modex_test_data modex_perf_data[10];
-+extern struct cperf_ecdsa_test_data secp192r1_perf_data;
-+extern struct cperf_ecdsa_test_data secp224r1_perf_data;
- extern struct cperf_ecdsa_test_data secp256r1_perf_data;
- extern struct cperf_ecdsa_test_data secp384r1_perf_data;
-+extern struct cperf_ecdsa_test_data secp521r1_perf_data;
- extern struct cperf_eddsa_test_data ed25519_perf_data;
- extern struct cperf_sm2_test_data sm2_perf_data;
- extern struct cperf_rsa_test_data rsa_pub_perf_data[4];
-diff --git a/app/test-crypto-perf/main.c b/app/test-crypto-perf/main.c
-index 4f98e0172a..f63e892413 100644
---- a/app/test-crypto-perf/main.c
-+++ b/app/test-crypto-perf/main.c
-@@ -46,8 +46,11 @@ const char *cperf_op_type_strs[] = {
- 	[CPERF_IPSEC] = "ipsec",
- 	[CPERF_ASYM_MODEX] = "modex",
- 	[CPERF_ASYM_RSA] = "rsa",
-+	[CPERF_ASYM_SECP192R1] = "ecdsa_p192r1",
-+	[CPERF_ASYM_SECP224R1] = "ecdsa_p224r1",
- 	[CPERF_ASYM_SECP256R1] = "ecdsa_p256r1",
- 	[CPERF_ASYM_SECP384R1] = "ecdsa_p384r1",
-+	[CPERF_ASYM_SECP521R1] = "ecdsa_p521r1",
- 	[CPERF_ASYM_ED25519] = "eddsa_25519",
- 	[CPERF_ASYM_SM2] = "sm2",
- 	[CPERF_TLS] = "tls-record"
-@@ -234,8 +237,11 @@ cperf_initialize_cryptodev(struct cperf_options *opts, uint8_t *enabled_cdevs)
- 		};
- 
- 		switch (opts->op_type) {
-+		case CPERF_ASYM_SECP192R1:
-+		case CPERF_ASYM_SECP224R1:
- 		case CPERF_ASYM_SECP256R1:
- 		case CPERF_ASYM_SECP384R1:
-+		case CPERF_ASYM_SECP521R1:
- 		case CPERF_ASYM_ED25519:
- 		case CPERF_ASYM_SM2:
- 		case CPERF_ASYM_RSA:
-@@ -350,6 +356,15 @@ cperf_initialize_cryptodev(struct cperf_options *opts, uint8_t *enabled_cdevs)
- 	return enabled_cdev_count;
- }
- 
-+static void
-+set_ecdsa_key_null(struct cperf_ecdsa_test_data *curve_data)
-+{
-+	if (curve_data != NULL) {
-+		curve_data->k.data = NULL;
-+		curve_data->k.length = 0;
-+	}
-+}
-+
- static int
- cperf_verify_devices_capabilities(struct cperf_options *opts,
- 		uint8_t *enabled_cdevs, uint8_t nb_cryptodevs)
-@@ -393,8 +408,11 @@ cperf_verify_devices_capabilities(struct cperf_options *opts,
- 
- 		}
- 
--		if ((opts->op_type == CPERF_ASYM_SECP256R1) ||
--			(opts->op_type == CPERF_ASYM_SECP384R1)) {
-+		if ((opts->op_type == CPERF_ASYM_SECP192R1) ||
-+			(opts->op_type == CPERF_ASYM_SECP224R1) ||
-+			(opts->op_type == CPERF_ASYM_SECP256R1) ||
-+			(opts->op_type == CPERF_ASYM_SECP384R1) ||
-+			(opts->op_type == CPERF_ASYM_SECP521R1)) {
- 			asym_cap_idx.type = RTE_CRYPTO_ASYM_XFORM_ECDSA;
- 			asym_capability = rte_cryptodev_asym_capability_get(cdev_id, &asym_cap_idx);
- 			if (asym_capability == NULL)
-@@ -405,12 +423,24 @@ cperf_verify_devices_capabilities(struct cperf_options *opts,
- 				return -1;
- 
- 			if (asym_capability->internal_rng != 0) {
--				if (opts->op_type == CPERF_ASYM_SECP256R1) {
--					opts->secp256r1_data->k.data = NULL;
--					opts->secp256r1_data->k.length = 0;
--				} else {
--					opts->secp384r1_data->k.data = NULL;
--					opts->secp384r1_data->k.length = 0;
-+				switch (opts->op_type) {
-+				case CPERF_ASYM_SECP192R1:
-+					set_ecdsa_key_null(opts->secp192r1_data);
-+					break;
-+				case CPERF_ASYM_SECP224R1:
-+					set_ecdsa_key_null(opts->secp224r1_data);
-+					break;
-+				case CPERF_ASYM_SECP256R1:
-+					set_ecdsa_key_null(opts->secp256r1_data);
-+					break;
-+				case CPERF_ASYM_SECP384R1:
-+					set_ecdsa_key_null(opts->secp384r1_data);
-+					break;
-+				case CPERF_ASYM_SECP521R1:
-+					set_ecdsa_key_null(opts->secp521r1_data);
-+					break;
-+				default:
-+					break;
- 				}
- 			}
- 		}
-diff --git a/doc/guides/tools/cryptoperf.rst b/doc/guides/tools/cryptoperf.rst
-index c35f39d948..d7ee468e17 100644
---- a/doc/guides/tools/cryptoperf.rst
-+++ b/doc/guides/tools/cryptoperf.rst
-@@ -175,8 +175,11 @@ The following are the application command-line options:
-            pdcp
-            docsis
-            modex
-+           ecdsa_p192r1
-+           ecdsa_p224r1
-            ecdsa_p256r1
-            ecdsa_p384r1
-+           ecdsa_p521r1
-            eddsa_25519
-            rsa
-            sm2
--- 
-2.48.1
-
+@Fengchengwen, @Bruce, @Kevin=0A=
+=0A=
+Kindly review, since this is a library change we have to merge this before =
+rc1.=0A=
+=0A=
+Thanks,=0A=
+Pavan.=0A=
+=0A=
+>>> Hi Bruce,=0A=
+>>>=0A=
+>>> >On Sat, May 24, 2025 at 02:43:10PM +0530, <pbhagavatula@marvell.com> w=
+rote:=0A=
+>>> >> From: Pavan Nikhilesh <pbhagavatula@marvell.com>=0A=
+>>> >>=0A=
+>>> >> Introduce DMA enqueue/dequeue operations to the DMA device library.=
+=0A=
+>>> >>=0A=
+>>> >> Add configuration flags to rte_dma_config instead of boolean for=0A=
+>>> >> individual features.=0A=
+>>> >>=0A=
+>>> >> The enqueue/dequeue operations allow applications to communicate wit=
+h the=0A=
+>>> >> DMA device using the rte_dma_op structure, providing a more flexible=
+ and=0A=
+>>> >> efficient way to manage DMA operations.=0A=
+>>> >>=0A=
+>>> >=0A=
+>>> >While I have no really strong objections to this addition to the dmade=
+v=0A=
+>>> >API, I'd appreciate if you could explain WHY or how this method of wor=
+king=0A=
+>>> >is more efficient in your usecase? When designing the dmadev APIs=0A=
+>>> >originally, we looked at using both an enqueue-type API as well as the=
+=0A=
+>>> >implemented individual-op-based APIs. IIRC at that time testing showed=
+ that=0A=
+>>> >using the single ops directly was faster than using the enqueue APIs, =
+so=0A=
+>>> >I'm wondering what exactly has changed, or is different about your use=
+case?=0A=
+>>> >=0A=
+>>>=0A=
+>>> Here is an example where we see enqueue/dequeue ops to be useful especi=
+ally when=0A=
+>>> integrating with Graph library.=0A=
+>>>=0A=
+>>> We had to write an entire wrapper[1] for tracking sges with the current=
+ implementation=0A=
+>>> making our nodes[2] very complex.=0A=
+>>>=0A=
+>>=0A=
+>>Can you explain a bit more here. Why do you need the wrapper rather than=
+=0A=
+>>just tracking in a circular ring all the copies offloaded? How does havin=
+g=0A=
+>>an enqueue API make this better?=0A=
+>=0A=
+>This is what we already do in our wrapper.=0A=
+>We found it unnecessary overhead since, the driver already does this inter=
+nally=0A=
+>and we can leverage the existing functionality.=0A=
+>This also reduces the memory footprint as in the case below we use a lot o=
+f VCHANS.=0A=
+>=0A=
+>Instead of checking for completions and maintaining the circular ring, we =
+can spend=0A=
+>those cycles doing other things in the application.=0A=
+>=0A=
+>>Can you perhaps give a trivial example=0A=
+>>showing the difference it makes here? The examples you give below are=0A=
+>>rather long to understand quickly.=0A=
+>>=0A=
+>=0A=
+>The example below is a graph based application which currently uses the wr=
+apper implementation.=0A=
+>Which we want to swap with enq/deq ops to reduce overhead.=0A=
+>=0A=
+>Also, the ops descriptor already existes for eventdev subsystem, we are ju=
+st importing it to DMA=0A=
+>device and reusing it.=0A=
+>=0A=
+>>Thanks,=0A=
+>>/Bruce=0A=
+>>=0A=
+>>> [1]<https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__github.com_M=
+arvellEmbeddedProcessors_dao_blob_dao-2Ddevel_lib_common_dao-5Fdma.h&d=3DDw=
+IBAg&c=3DnKjWec2b6R0mOyPaz7xtfQ&r=3DE3SgYMjtKCMVsB-fmvgGV3o-g_fjLhk5Pupi9ij=
+ohpc&m=3DdXtUywAGV8Rir_dtqGP5J-tvRAxN9zQjmM96PeDo6Ke6QybID8eLdPbVwWzlgZFy&s=
+=3DQryV2vh2_mWEz5yS37615Xb1F6B-gQZHM1uZ3badxoU&e=3D>=0A=
+>>> [2]<https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__github.com_M=
+arvellEmbeddedProcessors_dao_blob_3f364261de91e355699bd9af20d60ea6459f7d67_=
+lib_virtio-5Fnet_virtio-5Fnet-5Fdeq-5Fext.c-23L51&d=3DDwIBAg&c=3DnKjWec2b6R=
+0mOyPaz7xtfQ&r=3DE3SgYMjtKCMVsB-fmvgGV3o-g_fjLhk5Pupi9ijohpc&m=3DdXtUywAGV8=
+Rir_dtqGP5J-tvRAxN9zQjmM96PeDo6Ke6QybID8eLdPbVwWzlgZFy&s=3DBl2X7g7xXg_XrWvV=
+IjPhMuIZuy3PG7tOM-Eje9i2ITA&e=3D>=0A=
+>>>=0A=
+>>> >/Bruce=0A=
+>>>=0A=
+>>> Thanks,=0A=
+>>> Pavan.=0A=
+>>>=0A=
+>=
