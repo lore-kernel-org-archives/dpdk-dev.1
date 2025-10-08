@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01630CCA470
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 20:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA05CAC5BB
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 20:43:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0AF9040671;
-	Wed,  8 Oct 2025 22:43:03 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0EE3D4067A;
+	Wed,  8 Oct 2025 22:43:04 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 9A14E40656
- for <dev@dpdk.org>; Wed,  8 Oct 2025 22:43:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 01EC240669
+ for <dev@dpdk.org>; Wed,  8 Oct 2025 22:43:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759956181; x=1791492181;
+ t=1759956182; x=1791492182;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=cTNlCNSnUeJ9wvWlGYXkJ4nrT7mmRkqTxlbZZ2bxIII=;
- b=V1VTWCc28npiAVBPaF2Mh59pshiSWArCL5TWzw4Pm3s+bUzXl1SUIxVB
- v/vZQNIjnfbBXATq6aLCknLZE70fsL98CnxJJhsahMBMx+q6mDZfyz4+C
- YCVT/0tSlQnFfWPllrfgV2ZogGb4xGvjea+iUxEv2WJOm7rSwpFqTdGmw
- G8OeILSRzBeSdBt8P/2G0Cv6jNwR6IN+YN14E+XVk6TojU8x22d9bfQ+H
- YOpTE0uq1qwKyy/Kvsn4SoWGWtdwiPJ51mPwRhEBcKh1t9wlTmXZitj7u
- BXoeMONp9baL3RlI42cgqBS3WcPF2s5Oom7BxW1jqkPtSREyNtZwmEI/s w==;
-X-CSE-ConnectionGUID: Gfw3MnFKSgaxXthYIQ6HvA==
-X-CSE-MsgGUID: K49PolIERzOw1DYjEEXg1w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62079234"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="62079234"
+ bh=JACOWtqkwIgZmjnmsLeqrpCRi9NvfTiOwJch3bkW7Zw=;
+ b=OMXDCZIkThmkxFs2y4HT7q7Gq1p3eLQ3FhP12kMbdOFtIjtddtwJkLx5
+ whsif+0vfBFrF8v57BPW58YIgZCw7hmFdZH+1s4u307nt6TgG4T1CkXS3
+ lTTDS9Iov5Sxq8nJx1NgaWhIetqu+XBbxxXtNE7BxayhBccu7+Lepipx4
+ HdzUevHBa2TQ93CJVgtmyDdQLC+t+1wVXoW+30ObVyGG52RanLtsDu1qf
+ 6qKZEFLCg+zZqhZwpwEWqh2rWKws4/Kaa3sjp9RAm0du4h+oIkqYCb/j0
+ g7HKb9BqOFVJ1q5v75SqvI7UeA8gb5N3l08G5Z+sYIy/N4rL2d/rSLQ5a A==;
+X-CSE-ConnectionGUID: Ji7eMZAUQCiSmsPNGb+/Bg==
+X-CSE-MsgGUID: AV2MFNsAT3yBYfbKvHc34A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62079236"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="62079236"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Oct 2025 13:43:00 -0700
-X-CSE-ConnectionGUID: Y/YX5FoNSgO8nLLASUMq1Q==
-X-CSE-MsgGUID: Xdne1iFNQMuR4d4L1krgTg==
+ 08 Oct 2025 13:43:02 -0700
+X-CSE-ConnectionGUID: gAwXpVIkRUKJx6+lt3hDqA==
+X-CSE-MsgGUID: 3MuKCiXBS7yD0Lbfjp106w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,214,1754982000"; d="scan'208";a="179790631"
+X-IronPort-AV: E=Sophos;i="6.19,214,1754982000"; d="scan'208";a="179790635"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 08 Oct 2025 13:42:59 -0700
+ by orviesa010.jf.intel.com with ESMTP; 08 Oct 2025 13:43:01 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v10 06/21] argparse: add support for parsing core lists
-Date: Wed,  8 Oct 2025 21:42:29 +0100
-Message-ID: <20251008204244.2288583-7-bruce.richardson@intel.com>
+Subject: [PATCH v10 07/21] argparse: allow optional flag reordering
+Date: Wed,  8 Oct 2025 21:42:30 +0100
+Message-ID: <20251008204244.2288583-8-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251008204244.2288583-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
@@ -61,397 +61,624 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Core lists are widely used in DPDK, so add support for parsing them.
+Allow argparse to behave like getopt in ignoring non-flag arguments and
+moving them to the end of the list. This will allow use in DPDK for EAL
+args where, for example:
+
+  ./dpdk-test -l 1,2 lcores_autotest --no-huge -- argparse_autotest
+
+will return from getopt processing in rte_eal_init as:
+
+  ./dpdk-test -l 1,2 --no-huge -- lcores_autotest argparse_autotest
+
+with EAL init function then replacing the "--" with argv[0] before
+returning to the app with the return value of 5, for the 5 args
+(including the "--") processed.
+
+Since this is a significant behavioural change for argparse, which,
+unlike getopt, has the idea of positional arguments, we place this
+behaviour behind a new flag for argparse. If this new
+"ignore_non_flag_args" option is set, then positional arguments are
+disallowed and getopt behaviour is used for non-flag args.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/test_argparse.c               | 188 +++++++++++++++++++++++++
- doc/guides/prog_guide/argparse_lib.rst |  32 +++++
- lib/argparse/rte_argparse.c            |  63 +++++++++
- lib/argparse/rte_argparse.h            |   2 +
- 4 files changed, 285 insertions(+)
+ app/test/test_argparse.c               | 376 +++++++++++++++++++++++++
+ doc/guides/prog_guide/argparse_lib.rst |  17 ++
+ lib/argparse/rte_argparse.c            |  62 +++-
+ lib/argparse/rte_argparse.h            |   6 +
+ 4 files changed, 453 insertions(+), 8 deletions(-)
 
 diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
-index 0a229752fa..c829ea75e4 100644
+index c829ea75e4..2f9b644493 100644
 --- a/app/test/test_argparse.c
 +++ b/app/test/test_argparse.c
-@@ -6,6 +6,7 @@
- #include <string.h>
- 
- #include <rte_argparse.h>
-+#include <rte_os.h>
- 
- #include "test.h"
- 
-@@ -500,6 +501,40 @@ test_argparse_opt_autosave_parse_int_of_optional_val(void)
+@@ -1070,6 +1070,371 @@ test_argparse_parse_type(void)
  	return 0;
  }
  
 +static int
-+test_argparse_opt_parse_corelist_of_required_val(void)
++test_argparse_ignore_non_flag_args_disabled(void)
 +{
 +	struct rte_argparse *obj;
-+	rte_cpuset_t val_cpuset;
-+	char *argv[3];
++	char *argv[6];
 +	int ret;
 +
-+	/* test with long option and single core - this is known to work */
++	/* Test that without ignore_non_flag_args, non-flag args cause an error */
 +	obj = test_argparse_init_obj();
-+	obj->args[0].name_long = "--corelist";
-+	obj->args[0].name_short = "-c";
-+	obj->args[0].val_saver = (void *)&val_cpuset;
++	obj->ignore_non_flag_args = false;
++	obj->args[0].val_saver = NULL;
++	obj->args[1].val_saver = NULL;
++	argv[0] = test_strdup(obj->prog_name);
++	argv[1] = test_strdup("-a");
++	argv[2] = test_strdup("nonflagvalue");
++	argv[3] = test_strdup("-x");
++	ret = rte_argparse_parse(obj, 4, argv);
++	TEST_ASSERT(ret == -EINVAL, "Argparse should fail with non-flag arg when flag is disabled!");
++
++	/* Test with non-flag args mixed with flags */
++	obj = test_argparse_init_obj();
++	obj->ignore_non_flag_args = false;
++	obj->args[0].val_saver = NULL;
++	obj->args[1].val_saver = NULL;
++	argv[0] = test_strdup(obj->prog_name);
++	argv[1] = test_strdup("nonflagvalue1");
++	argv[2] = test_strdup("-a");
++	argv[3] = test_strdup("-x");
++	argv[4] = test_strdup("nonflagvalue2");
++	ret = rte_argparse_parse(obj, 5, argv);
++	TEST_ASSERT(ret == -EINVAL, "Argparse should fail with non-flag args when flag is disabled!");
++
++	return 0;
++}
++
++static int
++test_argparse_ignore_non_flag_args_basic(void)
++{
++	struct rte_argparse *obj;
++	char *argv[8];
++	int ret;
++
++	/* Test basic reordering: ['app', '-a', 'nonflagvalue', '-x']
++	 * Should process -a and -x, return 2 processed args, move nonflagvalue to end
++	 */
++	obj = test_argparse_init_obj();
++	obj->ignore_non_flag_args = true;
++	obj->args[0].val_saver = NULL;
++	obj->args[1].val_saver = NULL;
++	argv[0] = test_strdup(obj->prog_name);
++	argv[1] = test_strdup("-a");
++	argv[2] = test_strdup("nonflagvalue");
++	argv[3] = test_strdup("-x");
++	ret = rte_argparse_parse(obj, 4, argv);
++	TEST_ASSERT(ret == 3, "Argparse should return 3 (processed all but 1 non-flag), got %d!",
++			ret);
++	TEST_ASSERT(strcmp(argv[3], "nonflagvalue") == 0,
++		"Non-flag arg should be moved to end, but argv[3]='%s'!", argv[3]);
++
++	/* Test with multiple non-flag args:
++	 * ['app', '-a', 'nonflag1', '-x', 'nonflag2']
++	 * Should process -a and -x, return 3, reorder to [..., 'nonflag1', 'nonflag2']
++	 */
++	obj = test_argparse_init_obj();
++	obj->ignore_non_flag_args = true;
++	obj->args[0].val_saver = NULL;
++	obj->args[1].val_saver = NULL;
++	argv[0] = test_strdup(obj->prog_name);
++	argv[1] = test_strdup("-a");
++	argv[2] = test_strdup("nonflag1");
++	argv[3] = test_strdup("-x");
++	argv[4] = test_strdup("nonflag2");
++	ret = rte_argparse_parse(obj, 5, argv);
++	TEST_ASSERT(ret == 3, "Argparse should return 3 (processed all but 2 non-flags), got %d!",
++			ret);
++	TEST_ASSERT(strcmp(argv[3], "nonflag1") == 0,
++		"First non-flag arg should be at position 3, but argv[3]='%s'!", argv[3]);
++	TEST_ASSERT(strcmp(argv[4], "nonflag2") == 0,
++		"Second non-flag arg should be at position 4, but argv[4]='%s'!", argv[4]);
++
++	return 0;
++}
++
++static int
++test_argparse_ignore_non_flag_args_with_values(void)
++{
++	struct rte_argparse *obj;
++	int val_a = 0, val_x = 0;
++	char *argv[10];
++	int ret;
++
++	/* Test with flags that take values:
++	 * ['app', '-a', 'avalue', 'nonflag1', '-x', 'xvalue', 'nonflag2']
++	 * Should process -a avalue and -x xvalue, move non-flags to end
++	 */
++	obj = test_argparse_init_obj();
++	obj->ignore_non_flag_args = true;
++	obj->args[0].val_saver = (void *)&val_a;
 +	obj->args[0].val_set = NULL;
 +	obj->args[0].value_required = RTE_ARGPARSE_VALUE_REQUIRED;
-+	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_CORELIST;
-+	obj->args[1].name_long = NULL;
++	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_INT;
++	obj->args[1].val_saver = (void *)&val_x;
++	obj->args[1].val_set = NULL;
++	obj->args[1].value_required = RTE_ARGPARSE_VALUE_REQUIRED;
++	obj->args[1].value_type = RTE_ARGPARSE_VALUE_TYPE_INT;
 +	argv[0] = test_strdup(obj->prog_name);
-+	argv[1] = test_strdup("--corelist");
-+	argv[2] = test_strdup("1,3-5");
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse(obj, 3, argv);
-+	TEST_ASSERT(ret == 3, "Argparse parse expect success!");
-+	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(3, &val_cpuset), "Core 3 should be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(4, &val_cpuset), "Core 4 should be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(5, &val_cpuset), "Core 5 should be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in corelist!");
++	argv[1] = test_strdup("-a");
++	argv[2] = test_strdup("100");
++	argv[3] = test_strdup("nonflag1");
++	argv[4] = test_strdup("-x");
++	argv[5] = test_strdup("200");
++	argv[6] = test_strdup("nonflag2");
++	ret = rte_argparse_parse(obj, 7, argv);
++	TEST_ASSERT(ret == 5, "Argparse should return 5 (app + 4 flag-related + 0 non-flags), got %d!",
++			ret);
++	TEST_ASSERT(val_a == 100, "Value for -a should be parsed correctly, got %d!", val_a);
++	TEST_ASSERT(val_x == 200, "Value for -x should be parsed correctly, got %d!", val_x);
++	TEST_ASSERT(strcmp(argv[5], "nonflag1") == 0,
++		"First non-flag arg should be at position 5, but argv[5]='%s'!", argv[5]);
++	TEST_ASSERT(strcmp(argv[6], "nonflag2") == 0,
++		"Second non-flag arg should be at position 6, but argv[6]='%s'!", argv[6]);
 +
 +	return 0;
 +}
 +
- static int
- opt_callback_parse_int_of_no_val(uint32_t index, const char *value, void *opaque)
- {
-@@ -782,6 +817,152 @@ test_argparse_pos_callback_parse_int(void)
- 	return 0;
- }
- 
 +static int
-+test_argparse_parse_type_corelist(void)
++test_argparse_ignore_non_flag_args_complex_order(void)
 +{
-+	char *corelist_valid_single = test_strdup("5");
-+	char *corelist_valid_multiple = test_strdup("0,1,5");
-+	char *corelist_valid_range = test_strdup("1-5");
-+	char *corelist_valid_mixed = test_strdup("0,1,5-10,12-16,18,20");
-+	char *corelist_valid_reverse_range = test_strdup("10-5");
-+	char *corelist_valid_initial_spaces = test_strdup("   1,2,5-7");
-+	char *corelist_valid_empty = test_strdup("");
-+	char *corelist_invalid_spaces = test_strdup(" 1 , 2 , 5-7 ");
-+	char *corelist_invalid_letters = test_strdup("1,a,3");
-+	char *corelist_invalid_range_incomplete = test_strdup("1-");
-+	char *corelist_invalid_range_double_dash = test_strdup("1--5");
-+	char *corelist_invalid_special_chars = test_strdup("1,2@3");
-+	char *corelist_invalid_comma_only = test_strdup(",");
-+	char *corelist_invalid_out_of_range = test_strdup("70000");
-+	rte_cpuset_t val_cpuset;
++	struct rte_argparse *obj;
++	int val_a = 0;
++	char *argv[10];
 +	int ret;
 +
-+	/* test valid single core */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_single,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (single core) failed!");
-+	TEST_ASSERT(CPU_ISSET(5, &val_cpuset), "Core 5 should be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(1, &val_cpuset), "Core 1 should not be set in corelist!");
-+
-+	/* test valid multiple cores */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_multiple,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (multiple cores) failed!");
-+	TEST_ASSERT(CPU_ISSET(0, &val_cpuset), "Core 0 should be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in corelist!");
-+	TEST_ASSERT(CPU_ISSET(5, &val_cpuset), "Core 5 should be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in corelist!");
-+	TEST_ASSERT(!CPU_ISSET(3, &val_cpuset), "Core 3 should not be set in corelist!");
-+
-+	/* test valid range */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_range,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (range) failed!");
-+	for (int i = 1; i <= 5; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 1-5!", i);
-+	TEST_ASSERT(!CPU_ISSET(0, &val_cpuset), "Core 0 should not be set in range 1-5!");
-+	TEST_ASSERT(!CPU_ISSET(6, &val_cpuset), "Core 6 should not be set in range 1-5!");
-+
-+	/* test valid mixed corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_mixed,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (mixed) failed!");
-+	TEST_ASSERT(CPU_ISSET(0, &val_cpuset), "Core 0 should be set in mixed corelist!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in mixed corelist!");
-+	for (int i = 5; i <= 10; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 5-10!", i);
-+	for (int i = 12; i <= 16; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset), "Core %d should be set in range 12-16!", i);
-+
-+	TEST_ASSERT(CPU_ISSET(18, &val_cpuset), "Core 18 should be set in mixed corelist!");
-+	TEST_ASSERT(CPU_ISSET(20, &val_cpuset), "Core 20 should be set in mixed corelist!");
-+	TEST_ASSERT(!CPU_ISSET(2, &val_cpuset), "Core 2 should not be set in mixed corelist!");
-+	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in mixed corelist!");
-+	TEST_ASSERT(!CPU_ISSET(17, &val_cpuset), "Core 17 should not be set in mixed corelist!");
-+	TEST_ASSERT(!CPU_ISSET(19, &val_cpuset), "Core 19 should not be set in mixed corelist!");
-+
-+	/* test valid reverse range (10-5 should be interpreted as 5-10) */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_reverse_range,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (reverse range) failed!");
-+	for (int i = 5; i <= 10; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset),
-+				"Core %d should be set in reverse range 10-5!", i);
-+	TEST_ASSERT(!CPU_ISSET(4, &val_cpuset), "Core 4 should not be set in reverse range 10-5!");
-+	TEST_ASSERT(!CPU_ISSET(11, &val_cpuset), "Core 11 should not be set in reverse range 10-5!");
-+
-+	/* test valid corelist with initial spaces only */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_initial_spaces,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (with initial spaces) failed!");
-+	TEST_ASSERT(CPU_ISSET(1, &val_cpuset), "Core 1 should be set in initial spaced corelist!");
-+	TEST_ASSERT(CPU_ISSET(2, &val_cpuset), "Core 2 should be set in initial spaced corelist!");
-+	for (int i = 5; i <= 7; i++)
-+		TEST_ASSERT(CPU_ISSET(i, &val_cpuset),
-+				"Core %d should be set in initial spaced range 5-7!", i);
-+
-+	/* test valid empty corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_valid_empty,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret == 0, "Argparse parse type for corelist (empty) failed!");
-+	/* Verify that no cores are set in empty corelist */
-+	for (int i = 0; i < CPU_SETSIZE; i++)
-+		TEST_ASSERT(!CPU_ISSET(i, &val_cpuset),
-+				"Core %d should not be set in empty corelist!", i);
-+
-+	/* test invalid corelist with spaces */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_spaces,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (with spaces) should have failed!");
-+
-+	/* test invalid corelist with letters */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_letters,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (with letters) should have failed!");
-+
-+	/* test invalid corelist with incomplete range */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_incomplete,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (incomplete range) should have failed!");
-+
-+	/* test invalid corelist with double dash */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_range_double_dash,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (double dash) should have failed!");
-+
-+	/* test invalid corelist with special characters */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_special_chars,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (special chars) should have failed!");
-+
-+	/* test invalid comma-only corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_comma_only,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (comma only) should have failed!");
-+
-+	/* test invalid out-of-range corelist */
-+	CPU_ZERO(&val_cpuset);
-+	ret = rte_argparse_parse_type(corelist_invalid_out_of_range,
-+			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
-+	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (out of range) should have failed!");
++	/* Test complex reordering matching example from requirements:
++	 * ['app', '-a', 'avalue', 'nonflag1', '-x', 'nonflag2']
++	 * Should become: ['app', '-a', 'avalue', '-x', 'nonflag1', 'nonflag2']
++	 */
++	obj = test_argparse_init_obj();
++	obj->ignore_non_flag_args = true;
++	obj->args[0].val_saver = (void *)&val_a;
++	obj->args[0].val_set = NULL;
++	obj->args[0].value_required = RTE_ARGPARSE_VALUE_REQUIRED;
++	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_INT;
++	obj->args[1].val_saver = NULL;
++	argv[0] = test_strdup(obj->prog_name);
++	argv[1] = test_strdup("-a");
++	argv[2] = test_strdup("50");
++	argv[3] = test_strdup("nonflag1");
++	argv[4] = test_strdup("-x");
++	argv[5] = test_strdup("nonflag2");
++	ret = rte_argparse_parse(obj, 6, argv);
++	TEST_ASSERT(ret == 4, "Argparse should return 4 (app + 3 flag-related), got %d!", ret);
++	TEST_ASSERT(val_a == 50, "Value for -a should be parsed correctly, got %d!", val_a);
++	/* Verify reordering */
++	TEST_ASSERT(strcmp(argv[4], "nonflag1") == 0,
++		"First non-flag should be at position 4, but argv[4]='%s'!", argv[4]);
++	TEST_ASSERT(strcmp(argv[5], "nonflag2") == 0,
++		"Second non-flag should be at position 5, but argv[5]='%s'!", argv[5]);
 +
 +	return 0;
 +}
 +
- static int
- test_argparse_parse_type(void)
- {
-@@ -880,6 +1061,12 @@ test_argparse_parse_type(void)
- 	ret = rte_argparse_parse_type(bool_numeric_invalid, RTE_ARGPARSE_VALUE_TYPE_BOOL,
- 			&val_bool);
- 	TEST_ASSERT(ret != 0, "Argparse parse type for bool (numeric invalid) passed unexpectedly!");
++static int
++test_argparse_ignore_non_flag_args_only_non_flags(void)
++{
++	struct rte_argparse *obj;
++	char *argv[5];
++	int ret;
 +
-+	/* test for corelist parsing */
-+	ret = test_argparse_parse_type_corelist();
-+	if (ret != 0)
-+		return ret;
++	/* Edge case: only non-flag args
++	 * ['app', 'nonflag1', 'nonflag2', 'nonflag3']
++	 * Should return 1 (only app name processed), argv unchanged
++	 */
++	obj = test_argparse_init_obj();
++	obj->ignore_non_flag_args = true;
++	obj->args[0].val_saver = NULL;
++	obj->args[1].val_saver = NULL;
++	argv[0] = test_strdup(obj->prog_name);
++	argv[1] = test_strdup("nonflag1");
++	argv[2] = test_strdup("nonflag2");
++	argv[3] = test_strdup("nonflag3");
++	ret = rte_argparse_parse(obj, 4, argv);
++	TEST_ASSERT(ret == 1, "Argparse should return 1 (only app name processed), got %d!", ret);
++	TEST_ASSERT(strcmp(argv[1], "nonflag1") == 0,
++		"First non-flag should remain at position 1, but argv[1]='%s'!", argv[1]);
++	TEST_ASSERT(strcmp(argv[2], "nonflag2") == 0,
++		"Second non-flag should remain at position 2, but argv[2]='%s'!", argv[2]);
++	TEST_ASSERT(strcmp(argv[3], "nonflag3") == 0,
++		"Third non-flag should remain at position 3, but argv[3]='%s'!", argv[3]);
 +
- 	return 0;
- }
++	return 0;
++}
++
++static int
++test_argparse_ignore_non_flag_args_no_non_flags(void)
++{
++	struct rte_argparse *obj;
++	char *argv[4];
++	int ret;
++
++	/* Edge case: no non-flag args, only flags
++	 * ['app', '-a', '-x']
++	 * Should process all args normally
++	 */
++	obj = test_argparse_init_obj();
++	obj->ignore_non_flag_args = true;
++	obj->args[0].val_saver = NULL;
++	obj->args[1].val_saver = NULL;
++	argv[0] = test_strdup(obj->prog_name);
++	argv[1] = test_strdup("-a");
++	argv[2] = test_strdup("-x");
++	ret = rte_argparse_parse(obj, 3, argv);
++	TEST_ASSERT(ret == 3, "Argparse should return 3 (all args processed), got %d!", ret);
++
++	return 0;
++}
++
++static int
++test_argparse_ignore_non_flag_args_with_double_dash(void)
++{
++	struct rte_argparse *obj;
++	char *argv[8];
++	int ret;
++
++	/* Test with -- separator:
++	 * ['app', '-a', 'nonflag1', '--', 'arg1', 'arg2']
++	 * Should process -a, stop at --, and move nonflag1 after --
++	 */
++	obj = test_argparse_init_obj();
++	obj->ignore_non_flag_args = true;
++	obj->args[0].val_saver = NULL;
++	obj->args[1].val_saver = NULL;
++	argv[0] = test_strdup(obj->prog_name);
++	argv[1] = test_strdup("-a");
++	argv[2] = test_strdup("nonflag1");
++	argv[3] = test_strdup("--");
++	argv[4] = test_strdup("arg1");
++	argv[5] = test_strdup("arg2");
++	ret = rte_argparse_parse(obj, 6, argv);
++	/* Should return position of first flag after -- */
++	TEST_ASSERT(ret == 3, "Argparse should return 3 (app + -a, stopped at --), got %d!", ret);
++	TEST_ASSERT(strcmp(argv[2], "--") == 0,
++		"-- should be moved to position 2, but argv[2]='%s'!", argv[2]);
++	TEST_ASSERT(strcmp(argv[3], "nonflag1") == 0,
++		"Non-flag should be moved after --, but argv[3]='%s'!", argv[3]);
++
++	return 0;
++}
++
++static int
++test_argparse_ignore_non_flag_args_leading_non_flags(void)
++{
++	struct rte_argparse *obj;
++	char *argv[7];
++	int ret;
++
++	/* Test with leading non-flag args:
++	 * ['app', 'nonflag1', 'nonflag2', '-a', '-x']
++	 * Should process -a and -x, move non-flags to end
++	 */
++	obj = test_argparse_init_obj();
++	obj->ignore_non_flag_args = true;
++	obj->args[0].val_saver = NULL;
++	obj->args[1].val_saver = NULL;
++	argv[0] = test_strdup(obj->prog_name);
++	argv[1] = test_strdup("nonflag1");
++	argv[2] = test_strdup("nonflag2");
++	argv[3] = test_strdup("-a");
++	argv[4] = test_strdup("-x");
++	ret = rte_argparse_parse(obj, 5, argv);
++	TEST_ASSERT(ret == 3, "Argparse should return 3 (app + 2 flags), got %d!", ret);
++	TEST_ASSERT(strcmp(argv[3], "nonflag1") == 0,
++		"First non-flag should be at position 3, but argv[3]='%s'!", argv[3]);
++	TEST_ASSERT(strcmp(argv[4], "nonflag2") == 0,
++		"Second non-flag should be at position 4, but argv[4]='%s'!", argv[4]);
++
++	return 0;
++}
++
++static int
++test_argparse_ignore_non_flag_args_trailing_non_flags(void)
++{
++	struct rte_argparse *obj;
++	char *argv[7];
++	int ret;
++
++	/* Test with trailing non-flag args:
++	 * ['app', '-a', '-x', 'nonflag1', 'nonflag2']
++	 * Should process -a and -x, non-flags already at end
++	 */
++	obj = test_argparse_init_obj();
++	obj->ignore_non_flag_args = true;
++	obj->args[0].val_saver = NULL;
++	obj->args[1].val_saver = NULL;
++	argv[0] = test_strdup(obj->prog_name);
++	argv[1] = test_strdup("-a");
++	argv[2] = test_strdup("-x");
++	argv[3] = test_strdup("nonflag1");
++	argv[4] = test_strdup("nonflag2");
++	ret = rte_argparse_parse(obj, 5, argv);
++	TEST_ASSERT(ret == 3, "Argparse should return 3 (app + 2 flags), got %d!", ret);
++	TEST_ASSERT(strcmp(argv[3], "nonflag1") == 0,
++		"First non-flag should remain at position 3, but argv[3]='%s'!", argv[3]);
++	TEST_ASSERT(strcmp(argv[4], "nonflag2") == 0,
++		"Second non-flag should remain at position 4, but argv[4]='%s'!", argv[4]);
++
++	return 0;
++}
++
++static int
++test_argparse_ignore_non_flag_args_with_positional(void)
++{
++	struct rte_argparse *obj;
++	char *argv[5];
++	int ret;
++
++	/* Test that ignore_non_flag_args cannot be used with positional args
++	 * This should fail during validation
++	 */
++	obj = test_argparse_init_obj();
++	obj->ignore_non_flag_args = true;
++	obj->args[0].name_long = "positional";
++	obj->args[0].name_short = NULL;
++	obj->args[0].val_saver = (void *)1;
++	obj->args[0].val_set = NULL;
++	obj->args[0].value_required = RTE_ARGPARSE_VALUE_REQUIRED;
++	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_INT;
++	argv[0] = test_strdup(obj->prog_name);
++	argv[1] = test_strdup("100");
++	ret = rte_argparse_parse(obj, 2, argv);
++	TEST_ASSERT(ret == -EINVAL,
++		"Argparse should fail when ignore_non_flag_args is used with positional args!");
++
++	return 0;
++}
++
++static int
++test_argparse_ignore_non_flag_args_short_and_long(void)
++{
++	struct rte_argparse *obj;
++	char *argv[8];
++	int ret;
++
++	/* Test with both short and long options:
++	 * ['app', '--abc', 'nonflag1', '-x', 'nonflag2']
++	 */
++	obj = test_argparse_init_obj();
++	obj->ignore_non_flag_args = true;
++	obj->args[0].val_saver = NULL;
++	obj->args[1].val_saver = NULL;
++	argv[0] = test_strdup(obj->prog_name);
++	argv[1] = test_strdup("--abc");
++	argv[2] = test_strdup("nonflag1");
++	argv[3] = test_strdup("-x");
++	argv[4] = test_strdup("nonflag2");
++	ret = rte_argparse_parse(obj, 5, argv);
++	TEST_ASSERT(ret == 3, "Argparse should return 3 (app + 2 flags), got %d!", ret);
++	TEST_ASSERT(strcmp(argv[3], "nonflag1") == 0,
++		"First non-flag should be at position 3, but argv[3]='%s'!", argv[3]);
++	TEST_ASSERT(strcmp(argv[4], "nonflag2") == 0,
++		"Second non-flag should be at position 4, but argv[4]='%s'!", argv[4]);
++
++	return 0;
++}
++
+ static struct unit_test_suite argparse_test_suite = {
+ 	.suite_name = "Argparse Unit Test Suite",
+ 	.setup = test_argparse_setup,
+@@ -1094,6 +1459,17 @@ static struct unit_test_suite argparse_test_suite = {
+ 		TEST_CASE(test_argparse_pos_autosave_parse_int),
+ 		TEST_CASE(test_argparse_pos_callback_parse_int),
+ 		TEST_CASE(test_argparse_parse_type),
++		TEST_CASE(test_argparse_ignore_non_flag_args_disabled),
++		TEST_CASE(test_argparse_ignore_non_flag_args_basic),
++		TEST_CASE(test_argparse_ignore_non_flag_args_with_values),
++		TEST_CASE(test_argparse_ignore_non_flag_args_complex_order),
++		TEST_CASE(test_argparse_ignore_non_flag_args_only_non_flags),
++		TEST_CASE(test_argparse_ignore_non_flag_args_no_non_flags),
++		TEST_CASE(test_argparse_ignore_non_flag_args_with_double_dash),
++		TEST_CASE(test_argparse_ignore_non_flag_args_leading_non_flags),
++		TEST_CASE(test_argparse_ignore_non_flag_args_trailing_non_flags),
++		TEST_CASE(test_argparse_ignore_non_flag_args_with_positional),
++		TEST_CASE(test_argparse_ignore_non_flag_args_short_and_long),
  
-@@ -900,6 +1087,7 @@ static struct unit_test_suite argparse_test_suite = {
- 		TEST_CASE(test_argparse_opt_autosave_parse_int_of_no_val),
- 		TEST_CASE(test_argparse_opt_autosave_parse_int_of_required_val),
- 		TEST_CASE(test_argparse_opt_autosave_parse_int_of_optional_val),
-+		TEST_CASE(test_argparse_opt_parse_corelist_of_required_val),
- 		TEST_CASE(test_argparse_opt_callback_parse_int_of_no_val),
- 		TEST_CASE(test_argparse_opt_callback_parse_int_of_required_val),
- 		TEST_CASE(test_argparse_opt_callback_parse_int_of_optional_val),
+ 		TEST_CASES_END() /**< NULL terminate unit test array */
+ 	}
 diff --git a/doc/guides/prog_guide/argparse_lib.rst b/doc/guides/prog_guide/argparse_lib.rst
-index 7868af5672..7882d910ab 100644
+index 7882d910ab..eff8f94a2d 100644
 --- a/doc/guides/prog_guide/argparse_lib.rst
 +++ b/doc/guides/prog_guide/argparse_lib.rst
-@@ -229,6 +229,38 @@ Boolean arguments are parsed using ``RTE_ARGPARSE_VALUE_TYPE_BOOL`` and accept t
-       },
-    };
+@@ -15,6 +15,8 @@ Features and Capabilities
  
-+Corelist Type
-+^^^^^^^^^^^^^
+ - Support parsing positional argument (which must take with required-value).
+ 
++- Support getopt-style argument reordering for non-flag arguments as an alternative to positional arguments.
 +
-+The argparse library supports automatic parsing of CPU core lists using the
-+``RTE_ARGPARSE_VALUE_TYPE_CORELIST`` value type. This feature allows users to
-+specify CPU cores in a flexible format similar to other DPDK applications.
+ - Support automatic generate usage information.
+ 
+ - Support issue errors when provide with invalid arguments.
+@@ -160,6 +162,21 @@ both use this way, the parsing is as follows:
+ - For argument ``ooo``, it is positional argument,
+   the ``ooo_val`` will be set to user input's value.
+ 
++Support of non-flag/positional arguments
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +
-+.. code-block:: C
++For arguments which are not flags (i.e. don't start with a hyphen '-'),
++there are two ways in which they can be handled by the library:
 +
-+   #include <rte_os.h>  /* for CPU set operations */
++#. Positional arguments: these are defined in the ``args`` array with a NULL ``short_name`` field,
++   and long_name field that does not start with a hyphen '-'.
++   They are parsed as required-value arguments.
 +
-+   static rte_cpuset_t cores;
++#. As ignored, or unhandled arguments: if the ``ignore_non_flag_args`` field in the ``rte_argparse`` object is set to true,
++   then any non-flag arguments will be ignored by the parser and moved to the end of the argument list.
++   In this mode, no positional arguments are allowed.
++   The return value from ``rte_argparse_parse()`` will indicate the position of the first ignored non-flag argument.
 +
-+   static struct rte_argparse obj = {
-+      .args = {
-+         { "--cores", "-c", "CPU cores to use", &cores, NULL, RTE_ARGPARSE_VALUE_REQUIRED, RTE_ARGPARSE_VALUE_TYPE_CORELIST },
-+         ARGPARSE_ARG_END(),
-+      },
-+   };
-+
-+The corelist parsing supports the following input formats:
-+
-+- **Single core**: ``--cores 5`` (sets core 5)
-+- **Multiple cores**: ``--cores 1,2,5`` (sets cores 1, 2, and 5)
-+- **Core ranges**: ``--cores 1-5`` (sets cores 1, 2, 3, 4, and 5)
-+- **Mixed format**: ``--cores 0,2-4,7`` (sets cores 0, 2, 3, 4, and 7)
-+- **Reverse ranges**: ``--cores 5-1`` (equivalent to 1-5, sets cores 1, 2, 3, 4, and 5)
-+- **Empty corelist**: ``--cores ""`` (sets no cores)
-+
-+The parsed result is stored in an ``rte_cpuset_t`` structure that can be used
-+with standard CPU set operations:
-+
- Parsing by callback way
- ~~~~~~~~~~~~~~~~~~~~~~~
+ Supported Value Types
+ ~~~~~~~~~~~~~~~~~~~~~
  
 diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
-index 2b5da5f1db..e4851bd046 100644
+index e4851bd046..26a1371f36 100644
 --- a/lib/argparse/rte_argparse.c
 +++ b/lib/argparse/rte_argparse.c
-@@ -5,9 +5,11 @@
- #include <errno.h>
- #include <stdlib.h>
- #include <string.h>
-+#include <ctype.h>
- 
- #include <eal_export.h>
- #include <rte_log.h>
-+#include <rte_os.h>
- 
- #include "rte_argparse.h"
- 
-@@ -53,6 +55,7 @@ is_valid_value_type_field(const struct rte_argparse_arg *arg)
- 	case RTE_ARGPARSE_VALUE_TYPE_U64:
- 	case RTE_ARGPARSE_VALUE_TYPE_STR:
- 	case RTE_ARGPARSE_VALUE_TYPE_BOOL:
-+	case RTE_ARGPARSE_VALUE_TYPE_CORELIST:
- 		return true;
- 	/* omit default case so compiler warns on any missing enum values */
+@@ -289,6 +289,13 @@ verify_argparse(const struct rte_argparse *obj, size_t *nb_args)
+ 		return -EINVAL;
  	}
-@@ -554,6 +557,64 @@ parse_arg_bool(const struct rte_argparse_arg *arg, const char *value)
- 	return 0;
+ 
++	for (idx = 0; idx < RTE_DIM(obj->reserved_flags); idx++) {
++		if (obj->reserved_flags[idx]) {
++			ARGPARSE_LOG(ERR, "reserved flags cannot be set!");
++			return -EINVAL;
++		}
++	}
++
+ 	for (idx = 0; idx < RTE_DIM(obj->reserved); idx++) {
+ 		if (obj->reserved[idx] != 0) {
+ 			ARGPARSE_LOG(ERR, "reserved field must be zero!");
+@@ -298,6 +305,10 @@ verify_argparse(const struct rte_argparse *obj, size_t *nb_args)
+ 
+ 	idx = 0;
+ 	while (obj->args[idx].name_long != NULL) {
++		if (is_arg_positional(&obj->args[idx]) && obj->ignore_non_flag_args) {
++			ARGPARSE_LOG(ERR, "Error validating argparse object: positional args are not allowed when ignore_non_flag_args is set!");
++			return -EINVAL;
++		}
+ 		ret = verify_argparse_arg(obj, idx);
+ 		if (ret != 0)
+ 			return ret;
+@@ -676,6 +687,8 @@ parse_args(const struct rte_argparse *obj, bool *arg_parsed,
+ 	const struct rte_argparse_arg *arg;
+ 	uint32_t position_index = 0;
+ 	const char *arg_name;
++	size_t n_args_to_move;
++	char **args_to_move;
+ 	uint32_t arg_idx;
+ 	char *curr_argv;
+ 	char *has_equal;
+@@ -683,6 +696,13 @@ parse_args(const struct rte_argparse *obj, bool *arg_parsed,
+ 	int ret;
+ 	int i;
+ 
++	n_args_to_move = 0;
++	args_to_move = calloc(argc, sizeof(args_to_move[0]));
++	if (args_to_move == NULL) {
++		ARGPARSE_LOG(ERR, "failed to allocate memory for internal flag processing!");
++		return -ENOMEM;
++	}
++
+ 	for (i = 1; i < argc; i++) {
+ 		curr_argv = argv[i];
+ 
+@@ -692,16 +712,23 @@ parse_args(const struct rte_argparse *obj, bool *arg_parsed,
+ 		}
+ 
+ 		if (curr_argv[0] != '-') {
++			if (obj->ignore_non_flag_args) {
++				/* Move non-flag args to args_to_move array. */
++				args_to_move[n_args_to_move++] = curr_argv;
++				argv[i] = NULL;
++				continue;
++			}
+ 			/* process positional parameters. */
+ 			position_index++;
+ 			if (position_index > position_count) {
+ 				ARGPARSE_LOG(ERR, "too many positional arguments %s!", curr_argv);
+-				return -EINVAL;
++				ret = -EINVAL;
++				goto err_out;
+ 			}
+ 			arg = find_position_arg(obj, position_index);
+ 			ret = parse_arg_val(obj, arg->name_long, arg, curr_argv);
+ 			if (ret != 0)
+-				return ret;
++				goto err_out;
+ 			continue;
+ 		}
+ 
+@@ -716,26 +743,30 @@ parse_args(const struct rte_argparse *obj, bool *arg_parsed,
+ 		arg = find_option_arg(obj, &arg_idx, curr_argv, has_equal, &arg_name);
+ 		if (arg == NULL || arg_name == NULL) {
+ 			ARGPARSE_LOG(ERR, "unknown argument %s!", curr_argv);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto err_out;
+ 		}
+ 
+ 		if (arg_parsed[arg_idx] && !arg_attr_flag_multi(arg)) {
+ 			ARGPARSE_LOG(ERR, "argument %s should not occur multiple times!", arg_name);
+-			return -EINVAL;
++			ret = -EINVAL;
++			goto err_out;
+ 		}
+ 
+ 		value = (has_equal != NULL ? has_equal + 1 : NULL);
+ 		if (arg->value_required == RTE_ARGPARSE_VALUE_NONE) {
+ 			if (value != NULL) {
+ 				ARGPARSE_LOG(ERR, "argument %s should not take value!", arg_name);
+-				return -EINVAL;
++				ret = -EINVAL;
++				goto err_out;
+ 			}
+ 		} else if (arg->value_required == RTE_ARGPARSE_VALUE_REQUIRED) {
+ 			if (value == NULL) {
+ 				if (i >= argc - 1) {
+ 					ARGPARSE_LOG(ERR, "argument %s doesn't have value!",
+ 							arg_name);
+-					return -EINVAL;
++					ret = -EINVAL;
++					goto err_out;
+ 				}
+ 				/* Set value and make i move next. */
+ 				value = argv[++i];
+@@ -746,13 +777,28 @@ parse_args(const struct rte_argparse *obj, bool *arg_parsed,
+ 
+ 		ret = parse_arg_val(obj, arg_name, arg, value);
+ 		if (ret != 0)
+-			return ret;
++			goto err_out;
+ 
+ 		/* This argument parsed success! then mark it parsed. */
+ 		arg_parsed[arg_idx] = true;
+ 	}
+ 
+-	return i;
++	ret = i;
++	if (n_args_to_move > 0) {
++		/* Close the gaps in argv array by moving elements down filling in the NULLs. */
++		int j = 1;
++		for (i = 1; i < ret; i++) {
++			if (argv[i] != NULL)
++				argv[j++] = argv[i];
++		}
++		ret = j; /* only return args actually handled */
++		/* Then put contents of the args_to_move array into the argv in the space left. */
++		for (i = 0; i < (int)n_args_to_move; i++)
++			argv[j++] = args_to_move[i];
++	}
++err_out:
++	free(args_to_move);
++	return ret;
  }
  
-+static int
-+parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
-+{
-+	rte_cpuset_t *cpuset = arg->val_saver;
-+	const char *last = value;
-+	int min = -1;
-+
-+	if (value == NULL) {
-+		*cpuset = *(rte_cpuset_t *)arg->val_set;
-+		return 0;
-+	}
-+
-+	CPU_ZERO(cpuset);
-+	while (*last != '\0') {
-+		char *end;
-+		int64_t idx;
-+		int32_t max;
-+
-+		while (isblank(*value))
-+			value++;
-+
-+		if (!isdigit(*value))
-+			return -1;
-+
-+		errno = 0;
-+		idx = strtol(value, &end, 10);
-+		last = end;
-+		if (errno || idx > UINT16_MAX)
-+			return -1;
-+
-+		if (*end == '-') {
-+			min = idx; /* start of range, move to next loop stage */
-+		} else if (*end == ',' || *end == '\0') {
-+			/* single value followed by comma or end (min is set only by '-') */
-+			if (min == -1) {
-+				min = max = idx;
-+			} else if (min > idx) {
-+				/* we have range from high to low */
-+				max = min;
-+				min = idx;
-+			} else {
-+				/* range from low to high */
-+				max = idx;
-+			}
-+
-+			for (; min <= max; min++)
-+				CPU_SET(min, cpuset);
-+
-+			min = -1; /* no longer in a range */
-+		} else {
-+			/* end is an unexpected character, return error */
-+			return -1;
-+		}
-+		value = last + 1;
-+	}
-+	return 0;
-+}
-+
- static int
- parse_arg_autosave(const struct rte_argparse_arg *arg, const char *value)
- {
-@@ -575,6 +636,8 @@ parse_arg_autosave(const struct rte_argparse_arg *arg, const char *value)
- 		return parse_arg_str(arg, value);
- 	case RTE_ARGPARSE_VALUE_TYPE_BOOL:
- 		return parse_arg_bool(arg, value);
-+	case RTE_ARGPARSE_VALUE_TYPE_CORELIST:
-+		return parse_arg_corelist(arg, value);
- 	/* omit default case so compiler warns on missing enum values */
- 	}
- 	return -EINVAL;
+ static uint32_t
 diff --git a/lib/argparse/rte_argparse.h b/lib/argparse/rte_argparse.h
-index 63b49ba220..991f084927 100644
+index 991f084927..ecf04396e9 100644
 --- a/lib/argparse/rte_argparse.h
 +++ b/lib/argparse/rte_argparse.h
-@@ -69,6 +69,8 @@ enum rte_argparse_value_type {
- 	RTE_ARGPARSE_VALUE_TYPE_STR,
- 	/** The argument's value is boolean flag type. */
- 	RTE_ARGPARSE_VALUE_TYPE_BOOL,
-+	/** The argument's value is a corelist */
-+	RTE_ARGPARSE_VALUE_TYPE_CORELIST,
- };
- 
- /** Additional flags which may be specified for each argument */
+@@ -158,6 +158,12 @@ struct rte_argparse {
+ 	const char *epilog;
+ 	/** Whether exit when error. */
+ 	bool exit_on_error;
++	/** behave like getopt and move non-flag args to the end, ignoring them otherwise.
++	 * If this flag is specified, no positional args are allowed.
++	 */
++	bool ignore_non_flag_args;
++	/* reserved for future flags/other use */
++	bool reserved_flags[6];
+ 	/** User callback for parsing arguments. */
+ 	rte_arg_parser_t callback;
+ 	/** Opaque which used to invoke callback. */
 -- 
 2.48.1
 
