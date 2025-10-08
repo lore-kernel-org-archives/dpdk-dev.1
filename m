@@ -2,65 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76025CCA470
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 09:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52427CAC5BB
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 10:00:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 926FD402A0;
-	Wed,  8 Oct 2025 11:46:02 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id EFC3540297;
- Wed,  8 Oct 2025 11:46:00 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5988HSZt012885;
- Wed, 8 Oct 2025 02:46:00 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 8D975402A0;
+	Wed,  8 Oct 2025 12:00:00 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id DC4AD40297;
+ Wed,  8 Oct 2025 11:59:58 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597NoLMg019231;
+ Wed, 8 Oct 2025 02:59:58 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=227EvEeKZiWJm4L5NJ6zqkV
- OS8pkWIO1WrR/Z/maNsc=; b=OEP9Ze4I94+egv5xI0zszDhGSkOh8RwpoDiZP1L
- jA7LNWY5dXwxWTsMzNz4rG+ulH4A0eKRTbAkTp4zwpgRnQR6cDS+apGF1l5cJ2Ur
- DSy0+u7gq/QpmOq1lGdW9zWiyXTTqlXAoivy3AwB76UsxIJRHX7Gbmnvh+OOVNCe
- 7oH3w1Fney/KkS1aLWJjXl95Nkbihthw0YW/QboPmYVjG0cPhk4i6xYU/PUmoXNL
- k8NVeMxyMS8JTtJYDGuwCIkM7vUT8gHQL0Tchwxjon2caV1qmVABGUV+3TfEMWiO
- XZR31iONR5kXJY4IWjYtQMqhPx6VDU+5HfMUuzsXQ3HVbMg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49nmag04nw-1
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=2
+ 27EvEeKZiWJm4L5NJ6zqkVOS8pkWIO1WrR/Z/maNsc=; b=bEalmdl8vvRtnA2kW
+ 4RFYVDm7uuE0EGdV4BlsDiadaoNe+dfcj5hajvZnHQWTbVsmUpnitDZEx8v7rEa2
+ XXFac0nkL9+HHfg29sCvgnnoqM/fHneAfvApSceIATi+Klmr0BTdxKw/PwfcahhT
+ 80h7AG1fUStgvf6DkWG4tyajPmWP3S/riQhnpcz8DcMi4faJBATazsRIRx5k+Idz
+ 8MUrDUROxWcIRKfUHl9k4VcMgq2BEBxJVLdkznOS7ee0meUqy8g9OmpE2DpDkJtk
+ EY1bhWuHnPEYcPXFRvgVAK+goSTZMSh4aPLaDdh2/hAJDg4+E7IOVygls3Flslar
+ jffTw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49ncv0h38w-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 08 Oct 2025 02:45:59 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ Wed, 08 Oct 2025 02:59:57 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 8 Oct 2025 02:45:58 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 8 Oct 2025 02:45:58 -0700
+ 15.2.1544.25; Wed, 8 Oct 2025 03:00:06 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Wed, 8 Oct 2025 03:00:06 -0700
 Received: from ashishg.sclab.marvell.com (unknown [10.110.24.201])
- by maili.marvell.com (Postfix) with ESMTP id 5EF2E5B693F;
- Wed,  8 Oct 2025 02:45:58 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 973D15B693F;
+ Wed,  8 Oct 2025 02:59:56 -0700 (PDT)
 From: <ashishg@marvell.com>
 To: <dev@dpdk.org>
 CC: <stable@dpdk.org>, <fanzhang.oss@gmail.com>, Ashish Gupta
  <ashishg@marvell.com>
-Subject: [PATCH] [v2] compressdev: update device ID validation check
-Date: Wed, 8 Oct 2025 09:45:24 +0000
-Message-ID: <20251008094555.3078441-1-ashishg@marvell.com>
+Subject: [PATCH v2] compressdev: update device ID validation check
+Date: Wed, 8 Oct 2025 09:59:41 +0000
+Message-ID: <20251008095950.3078552-1-ashishg@marvell.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251008074532.3066685-1-ashishg@marvell.com>
+References: <20251008074532.3066685-1-ashishg@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDA1NSBTYWx0ZWRfX4Prj505/kx2u
- zyYECC1htEe6+f1AepLI5xQuwUsknANHv/XmLsFOq5AMDd3Zd/IBwBfpYd8klZzRAbnUkEY3oUZ
- v2l5ZBduBkQUkmLXn4nkUGgicldUalAyMXPyEfr8Riip/NfyGwyBSUe0GTdGeFzZUDXWIXq0+bk
- JJZHJYCISFwOlnTwIzp/Suw2lttJWAtR29wHQwkrZthWfxOvYHPRd9uIlo6qbdd5lKgOPnhVUsE
- /+c0Z8anhhOq0+R+B95OYo8cJdgF2DDe6FilZ1nKfXr0SAFf+w469wK+zAOasljo799fzCmKgNQ
- xJoX4pXfB3yU3y4MyKlhIVsP3MrgzfFg3FDszeTxsqBWN4U+EBW9oTHAwM9/dqscarYouchWynC
- TKN1W3+Amo0oTPoyldXLXeDElsMBSA==
-X-Proofpoint-ORIG-GUID: tMqP-P6w8-DFG4fl98eD7giJgJGcMuoj
-X-Proofpoint-GUID: tMqP-P6w8-DFG4fl98eD7giJgJGcMuoj
-X-Authority-Analysis: v=2.4 cv=ar+/yCZV c=1 sm=1 tr=0 ts=68e632d7 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDE4MiBTYWx0ZWRfX68xonmdCR+IU
+ NG/TZIaOp215iqbOypknWg8dY/ZLGzWSQmXgYnvvmFrRPOte18H4Iwnthy5/U5tR0asv4C82h6n
+ IFJA6IZyMNyYMoDNB/ZAzkyhdLppCYn62eymla6iRhgHUoa6r/jD2eQPRGoxELexVEYxBaHI7CN
+ u8Ja7NowiaI+lVr1nsUgtp86FWcQp9+sN/Gy3j2/Ijn8+7NOZHcSr/lk1XqXGUtHx0uNTWhkZri
+ o76a01J3FP4lN5ywjKiEmesRKgZfzeIqOAhpRFVaQsIV62SZCxirc0yJBjHWn9qWWHmz8LSJyie
+ Z0+eJtzMatlDrSF//BLEeNMFWlPfp25z/ZBy90au3tSk1nP+6yJXeqwozia2CiIJXYVB59Cw13S
+ CISVDZnqNj/PQgd580TS3KLoA26Pig==
+X-Proofpoint-ORIG-GUID: VtqkQlaQcnaEBCzPuLkNQbrES7srNlSG
+X-Authority-Analysis: v=2.4 cv=JeuxbEKV c=1 sm=1 tr=0 ts=68e6361d cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=x6icFKpwvdMA:10 a=M5GUcnROAAAA:8 a=nzEfcjhZ0GrmtaJz8NUA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: VtqkQlaQcnaEBCzPuLkNQbrES7srNlSG
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-08_03,2025-10-06_01,2025-03-28_01
