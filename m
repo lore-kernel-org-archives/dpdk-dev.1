@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8658FCAC5BB
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 10:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA376CAC5BB
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 10:13:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9C925402A0;
-	Wed,  8 Oct 2025 12:10:25 +0200 (CEST)
-Received: from fout-a3-smtp.messagingengine.com
- (fout-a3-smtp.messagingengine.com [103.168.172.146])
- by mails.dpdk.org (Postfix) with ESMTP id 00C7F40297
- for <dev@dpdk.org>; Wed,  8 Oct 2025 12:10:23 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id 69F05EC03B5;
- Wed,  8 Oct 2025 06:10:23 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Wed, 08 Oct 2025 06:10:23 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 07BED402A0;
+	Wed,  8 Oct 2025 12:13:43 +0200 (CEST)
+Received: from fhigh-a8-smtp.messagingengine.com
+ (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mails.dpdk.org (Postfix) with ESMTP id 62B7E40297;
+ Wed,  8 Oct 2025 12:13:41 +0200 (CEST)
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id F0DB814001AB;
+ Wed,  8 Oct 2025 06:13:40 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-07.internal (MEProxy); Wed, 08 Oct 2025 06:13:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1759918223;
- x=1760004623; bh=zM+LRkiYgPBEv2R2rsvxB/VP8I0pIVNVTj4fVQUMspA=; b=
- I3CfbBXsit13lK5SoIHc40psea8jkogkuQoF6iGMqydnqoxor3fHPjq/wfSbe7g8
- aFx/9Fb3qBvk0ZKu+hOo1v+O6I88u8Xz4Hww19mBqZN7PwhJtuE5/QDDaeiMcJ6A
- ZZ3HeqBSE7BsDm2O3qbd5sCbvLgqO8eOPJilRC02J9NEP/++ZdyC9Mb+RsBuT3HU
- pWPYh7om1V0Pw1ipearhlQlveIRNADgsW3TJVfsjFnQCch1X7gYY9Yw+sEL6ZCxH
- AP+15QBjpJAsbVvcitPDkaj3OnlgL84VzbmZEawlog+fyfA/au7oJ3rtBZ3cDhSm
- ud+KGYfIQRwV9+y1vz7knw==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1759918420;
+ x=1760004820; bh=CUpctBJvT+0Vcrv6KZR5xD5CHghoPewINgpdyd9Sk9M=; b=
+ RprYa4sTzzYkaeOJX/GK+kt2gxb7J7USfB2/kGHo/A2O0lPGFr/FdSzzZKB9oO4D
+ hDbmDbcEk3up2Y8q6RtDJ7YGmHJrtkpIwo9e9LP4tiKMUmYDfW+CME3F68eyoImr
+ Wz+yoZJVSkZOe1ya2JJtEGRL0ag6NEJSt0b8QPc7lmMluoSIRSb+oQ0pbDycPsU+
+ YRvkb5lAHa1wUz4wdMzFN9NV5dKxw0c8FwahLwcEYwVFmiU4x/aNiAZMRavjHhhg
+ 5bA+uKoyDlOg1Mu0kOyQAmr2RBvbEujdklF760WZXZdTGhDRAhDSF+ZuYX5Tbqgf
+ vt9pK9s51YUuQpECRkIYFg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759918223; x=
- 1760004623; bh=zM+LRkiYgPBEv2R2rsvxB/VP8I0pIVNVTj4fVQUMspA=; b=k
- U+T9LPsvnBhs/PeBbfgJKMNwNlu9pSIEFk5ao/a/eQWQD1+gO4K8gBA2k4ocB8hB
- UYczK1nK8NnQblWn56DHXR7vRuqcVYoctiAdb2y4EDVAaleJCeQETgWTcmIlGcAB
- jx+tuhWTmVLg32vc2/g3onYmCfCwXiKPQpl46ync65KLcZ4VDr7FHZQ8JU9+qXcp
- leErxuV10jkgDA89Vw/7lJV0cDWatQH9tP6bNNMFMiFBXToNha7Ky6LYAHzreann
- VDDG5EiIQ2ZlhpAIneWIwGhV/DV+gYTym4aPwYaqYQM3xMwzlqJ7stnmoCFSUk/G
- nB74qWa2yUFDCVNss1dBQ==
-X-ME-Sender: <xms:jjjmaHbMkLGHRqO7eflp1tJG2P-b9tzMWTGUsL3VhFnl8eB6ROqHOw>
- <xme:jjjmaPVrHYexFAZO1TppmUHgk0MNOARpcyKpC1RXbUpPqEpenIi7IfC_OHwBZLbcI
- igA46KOht7l1pydbQVX6gcoRNRLut0xOBiL61xBpXXdPddHZTsVxxw>
-X-ME-Received: <xmr:jjjmaFhdmkjkxvgMDFVUjKT5GN0rlOSVx9B5sDXs1KBmLKMQWwqi-cPi_0xgoF1yqoQKBYwz9qYVCzl6KC9n3EMItg>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759918420; x=
+ 1760004820; bh=CUpctBJvT+0Vcrv6KZR5xD5CHghoPewINgpdyd9Sk9M=; b=o
+ oXPlDNfz4HpKOgdXz0fYAIudHdoQzlljSSReH8mMbiXq4CdWTdpl9g7t9mrfj3hv
+ WmqarAzS1vBMHBfjDArHynemJQ8yPttaiVQ6eXfinZ/lIewzXkuV0Y5niG2U747t
+ 6tefE7+f4XOuoBO67/N3roTg0GOhVpd+FJQTzzPqGXnL4P428arPOvGA/h4F+03t
+ L5XjtFSDswAkrU8CVQptSFJjBFSr5KpbT/Vs2t5PIM1aV9TyQYL4pk7ZY+VqbheI
+ 78sHih0N8VdLBHi5YKVKY6LH3CueTigeMe5SYu2DfT8YXCl8ikzTyZiq8xzliY+S
+ GtlV3BNM6TmfMU1oFgZUw==
+X-ME-Sender: <xms:VDnmaGO0m3bM1VHZkx48q-u4ivYBR_ezf2pZPobRYUngTPXCAAbzhA>
+ <xme:VDnmaN4ZnY0Ttxl4VBdagrE4T5tDMYQnoPEyQaxGT7ZfTMpfstCfqZwOGbBd-JXWd
+ AtoL3kadDNCBIfCkUbs86tEbNQ1OSwvExkdnln-ob8R_hLk58ErVQ>
+X-ME-Received: <xmr:VDnmaI2_AiSR1JEHX8QNKAJEKVIGZ0fBDlv190YkauBX6plykrrSJOYsyBXHBUpKuqIpO6irlnx8eE3BdmJgaFfKMQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdeftdefucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -52,33 +52,32 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdeftdefucetufdote
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
  hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehthhhivghrrhihrdhhvghrsggvlhhoth
- esieifihhnugdrtghomhdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonhes
- ihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtth
- hopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthhtohep
- shhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepoh
- hlihhvihgvrhdrmhgrthiiseeifihinhgurdgtohhm
-X-ME-Proxy: <xmx:jjjmaNsPKO4qsApU2j5boJ3KqPo_7TL-Fg03y1q_5w3iDpB-LuGkUw>
- <xmx:jjjmaO7c9DVXBaPFsIJQp9LjoArcZAVdKf1DZ1h-y8-UErpN3St_2Q>
- <xmx:jjjmaBNVFevP7g2BdqaFD8ans0oJa3l1XPJKR-S29fDejX9akta1Gw>
- <xmx:jjjmaEsafpCt86h-J_gS0-441ET2My-caQ55I2qF8_NoVWuF3_NxUg>
- <xmx:jzjmaL9xU1_4iuTtBn3yXCS_EUBbOXt5Gm_YFebi0uFqn86phOnCh_FH>
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
+ esihhnthgvlhdrtghomhdprhgtphhtthhopegtihgrrhgrrdhlohhfthhushesihhnthgv
+ lhdrtghomhdprhgtphhtthhopehtvggthhgsohgrrhguseguphgukhdrohhrghdprhgtph
+ htthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehtihhmohhthhihrdhmihhs
+ khgvlhhlsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:VDnmaGx-saAjV1B-C2M7PLMiyHQp28frCedkEzcpoJrdWavpuWyuHQ>
+ <xmx:VDnmaKs2e19nCjhB9cCdK9Y4u7wd16-JqyTIkIaGrMc4KqVWoCLuCg>
+ <xmx:VDnmaIxYJe7MGl7-7LpYTSRi0Am6vGDkvdlKBdrbh-GhJ7lFdQTxRw>
+ <xmx:VDnmaNBK-mKO9E_8KuPk6ISEUGoifLUApl8-fdtSgstrFSsARUKI3g>
+ <xmx:VDnmaMushDK9WjAK7GAT_7bgLpNpD0gUpkI4pSL2VVjqYUsj72rRlBP3>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 8 Oct 2025 06:10:21 -0400 (EDT)
+ 8 Oct 2025 06:13:39 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Thierry Herbelot <thierry.herbelot@6wind.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, David Marchand <david.marchand@redhat.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Olivier Matz <olivier.matz@6wind.com>
-Subject: Re: [V2] net/intel/e1000: reduce the optimization level for gcc > 11
-Date: Wed, 08 Oct 2025 12:10:20 +0200
-Message-ID: <4021689.xgJ6IN8ObU@thomas>
-In-Reply-To: <aOYi82c71qlZiazJ@bricha3-mobl1.ger.corp.intel.com>
-References: <20251006124506.388456-1-thierry.herbelot@6wind.com>
- <20251006130257.391200-1-thierry.herbelot@6wind.com>
- <aOYi82c71qlZiazJ@bricha3-mobl1.ger.corp.intel.com>
+To: "Richardson, Bruce" <bruce.richardson@intel.com>,
+ "Loftus, Ciara" <ciara.loftus@intel.com>
+Cc: techboard@dpdk.org, "dev@dpdk.org" <dev@dpdk.org>,
+ "Miskell, Timothy" <timothy.miskell@intel.com>,
+ "techboard@dpdk.org" <techboard@dpdk.org>
+Subject: Re: [PATCH 1/2] net/iavf: support VF initiated resets
+Date: Wed, 08 Oct 2025 12:13:38 +0200
+Message-ID: <3977268.0vhOF50zNu@thomas>
+In-Reply-To: <DM3PPF7D18F34A1B51E203D4A7A495540958EE4A@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
+References: <20250929143039.547207-1-ciara.loftus@intel.com>
+ <DM3PPF7D18F34A105FE85AAA7D7387DDD838EE6A@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
+ <DM3PPF7D18F34A1B51E203D4A7A495540958EE4A@DM3PPF7D18F34A1.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -95,59 +94,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-08/10/2025 10:38, Bruce Richardson:
-> On Mon, Oct 06, 2025 at 03:02:57PM +0200, Thierry Herbelot wrote:
-> > The e1000 PMD stopped working under Ubuntu-24.04 (using gcc-13) when
-> > compiled with -O3 (default level for all DPDK code). There is a crash
-> > when starting testpmd:
+03/10/2025 12:29, Loftus, Ciara:
+> > > > Introduce a function that allows a VF to request the PF to reset itself.
+> > > > This is useful for example when the application detects that one of the
+> > > > queues have hung or any event where a reset is required and the PF is
+> > > > unlikely to trigger it.
+> > > >
+[...]
+> > >
+> > > In general, I'm not a huge fan of adding driver-specific functions and I
+> > > feel like this should fit under the existing reset APIs in some way. That
+> > > should avoid the need to update (or such a big update) to testpmd, for
+> > > example.
+> > > Some thoughts here:
+> > >
+> > > 1. we could add a devarg to the driver to adjust whether reset does a
+> > >    "softer" reset of the VF just resetting itself, or a "hard" reset where the
+> > >    PF does a fuller reset of the VF.
+> > > 2. rather than a devarg, would do use a driver-specific function to adjust
+> > >    this behaviour. The difference here would be that the driver-specific
+> > >    function would be an init-time one rather than runtime, so the runtime of
+> > >    the app, like testpmd, would be generic.
+> > > 3. the most generic solution would be to add an additional parameter to the
+> > >    reset() function itself to specify a hard or soft reset. This would mean
+> > >    updating all drivers to handle the new parameter (shouldn't be hard, since
+> > >    it would be __rte_unused in all cases by default). This also opens up
+> > >    the possibility of other drivers - especially VFs - using it in the same
+> > >    way. We could actually document that the "hard" option "may be used by
+> > VF
+> > >    drivers to request a full reset of the VF by the PF".
 > > 
-> > > (gdb) bt
-> > > #0  rte_read32_relaxed (addr=0x1100800e00) at ../sources/lib/eal/include/generic/rte_io.h:290
-> > > #1  rte_read32 (addr=0x1100800e00) at ../sources/lib/eal/include/generic/rte_io.h:345
-> > > #2  e1000_read_addr (addr=0x1100800e00) at ../sources/drivers/net/intel/e1000/base/e1000_osdep.h:106
-> > > #3  e1000_id_led_init_generic (hw=0x1586788c0) at ../sources/drivers/net/intel/e1000/base/e1000_mac.c:1844
-> > > #4  0x000062aaf653c85f in e1000_init_hw_82540 (hw=0x1586788c0)
-> > >     at ../sources/drivers/net/intel/e1000/base/e1000_82540.c:308
-> > > #5  0x000062aaf6db8227 in em_hardware_init (hw=hw@entry=0x1586788c0)
-> > >     at ../sources/drivers/net/intel/e1000/em_ethdev.c:920
-> > > #6  0x000062aaf65340ff in em_hw_init (hw=0x1586788c0) at ../sources/drivers/net/intel/e1000/em_ethdev.c:445
-> > > #7  eth_em_dev_init (eth_dev=eth_dev@entry=0x62aaff346000 <rte_eth_devices>)
-> > >     at ../sources/drivers/net/intel/e1000/em_ethdev.c:314
-> > > #8  0x000062aaf6db8b71 in rte_eth_dev_pci_generic_probe (private_data_size=11240,
-> > >     dev_init=0x62aaf6db8310 <eth_em_dev_init>, pci_dev=0x62ab2853dd90) at ../sources/lib/ethdev/ethdev_pci.h:150
-> > > #9  eth_em_pci_probe (pci_drv=<optimized out>, pci_dev=0x62ab2853dd90)
-> > >     at ../sources/drivers/net/intel/e1000/em_ethdev.c:365
-> > > #10 0x000062aaf646adf5 in rte_pci_probe_one_driver (dr=dr@entry=0x62aaf82d8020 <rte_em_pmd>,
-> > >     dev=dev@entry=0x62ab2853dd90) at ../sources/drivers/bus/pci/pci_common.c:299
-> > > #11 0x000062aaf6a15f7d in pci_probe_all_drivers (dev=0x62ab2853dd90) at ../sources/drivers/bus/pci/pci_common.c:383
-> > > #12 pci_probe () at ../sources/drivers/bus/pci/pci_common.c:410
-> > > #13 0x000062aaf7a485f3 in rte_bus_probe () at ../sources/lib/eal/common/eal_common_bus.c:84
-> > > #14 0x000062aaf670585d in rte_eal_init (argc=argc@entry=146, argv=argv@entry=0x7fffca468898)
-> > >     at ../sources/lib/eal/linux/eal.c:1253
+> > Hi Bruce,
 > > 
-> > The crash is linked to the use of gcc-13: under Ubuntu-24.04 testpmd
-> > compiled with gcc-11 from the same DPDK tree works as expected.
-> > 
-> > The perfect solution would be for someone to investigate why the
-> > PMD crashes. However, this depends on Maintainer availability.
-> > 
-> > A less-perfect solution is to reduce the optimization level
-> > (like another proposal for net/qede: see Link).
-> > 
-> Thanks for reporting the issue. I'd like to spend a little time trying to
-> really root cause the issue before applying this workaround patch. Can you
-> provide a bit more info about the setup you used when you hit this issue. I
-> expect a lot of use of e1000 driver is in virtualized setups, but can you
-> confirm if that was the case here, or were you using real hardware?
+> > I did not make it clear in my commit messages the full purpose of this new API.
+> > Along with resetting the VF, the VF is also reconfigured and restarted
+> > transparently, using the existing iavf_handle_hw_reset implementation.
+> > While there is probably merit in extending the reset API to include a soft/hard
+> > reset flag, I would still need this new API to fulfil the purpose described above.
+> > If we wanted to make this generic I see two options:
+> > 1. extend the reset API to optionally reconfigure and restart
+> > 2. introduce a new generic API that performs a reset followed by a reconfigure
+> > and restart.
 > 
-> If we do have to apply this workaround fix of reducing optimization level,
-> I see you reduce optimization for both the base code and the DPDK-specific
-> driver code. Is it necessary to reduce optimization on both, or can we get
-> away with just reducing it on the DPDK part alone?
+> I've submitted a v2 and renamed the function to "restore" instead of "reset" to
+> better describe the behaviour of the function - not just resetting, but also
+> restoring configuration afterwards and restarting the device.
+> 
+> I agree that it would be best to avoid a driver-specific function like this. After some
+> thought I don't think we can extend the reset API to include this behaviour, the
+> reset API should probably leave the device in a reset state.
+> 
+> I'm wondering if the community would be in favour of creating a new ethdev API
+> for restoring/reinitialising a device. It would essentially comprise of reset,
+> reconfigure and queue setup, and optionally device start?
 
-We are not sure the workaround will work with every compilers to come.
-Of course it is better to fix the root cause.
-If we cannot fix it in time, we can add this workaround in the release notes.
-But please, let's not apply it in the codebase.
+It is confusing to add an API if it is a perfect overlap
+of what exists already.
+If you want to add a new API, you need to explain how it is different
+of a combination of reset/configure/start.
 
 
