@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 549ECCAC5BB
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 20:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8196DCAC5BB
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Oct 2025 20:44:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D0A9C40B98;
-	Wed,  8 Oct 2025 22:43:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DB1E840B91;
+	Wed,  8 Oct 2025 22:43:16 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id C92AE406FF
- for <dev@dpdk.org>; Wed,  8 Oct 2025 22:43:12 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5D4CC40B95
+ for <dev@dpdk.org>; Wed,  8 Oct 2025 22:43:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1759956193; x=1791492193;
+ t=1759956195; x=1791492195;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=zazgTLtq0MMabpg2WlRD4/ePPmfQk/jgN71FJzXnnrk=;
- b=W+fSo7s71S7Fwkg7RzpzaJnvLOyf+WvL7b0CVrXElP57U3QbvYc/2Cb0
- ifNT5zsuqQVn9Syu7WHmAfOPJ88V2LmwPpXsKlgHdHMhaq2veVD3atQPB
- DznFyelj8QgIWglFecDRehG7qkajp4DqL9AOhrYkDqu5GUSRtYTP9/puA
- WkpC8N6l0Fo7j6dUPrNBRUzTtAGZ1DQRwq6otN6Ibtjr4QUnI/a5JS8NT
- vhswS7sACzuR32RVmRULPzrmlaxJmXBtG8E0KLPxthk+ZPC4h6+xfW3TA
- B2kqsemSq+AJGLmYQOcuzdrTs2r9YAF1OMQs32rsPjjJwFupcyMSrROKF g==;
-X-CSE-ConnectionGUID: 2MHm9SUxRtKiB2DH8n8O0g==
-X-CSE-MsgGUID: Uyu8/YvAT5qhtgKLoOXeQg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62079258"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="62079258"
+ bh=mmVzz17kkkhCN6mjXvm55MXd7xQkQ/3rBYWnB+dGdj8=;
+ b=Vmb/yQFDCmwpJrmmCoXkIJHKrOZl11p3Mm67ElK1RglkLamVksRqcZQt
+ lT9bHhFzMxpq6kf/8HtsUcK+vuqNjllSM1Axxec1Y5oLZuceRGWrvQPic
+ Ct8COXZBRmDRIVQ5jwOnypUBfEYVJeB+442zuSNa+nNVyfyf8wBGFfbiw
+ 2ARhdHAmNukagiMoWeoiBacoyIPKr1c0GiTGDU3GO4LrzivYlVuQA4bs2
+ f5A+FilAu+D+zC1oscoSWnETWSxPhZH0JNH5DKnTtc4wK+9DXeX9UiL/w
+ i8Yn++TGiEP9Trx5nqvIY5vgOBqEPF+4GtCOHBfP4XgfqYQdP5EYNmxAN Q==;
+X-CSE-ConnectionGUID: Mo9ttBHHQbiKQ4qZW/d74A==
+X-CSE-MsgGUID: jSp+VFYmQvq3TaNxT+OZsw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62079262"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="62079262"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Oct 2025 13:43:13 -0700
-X-CSE-ConnectionGUID: I1M956ddQTmuNfxcPzXynQ==
-X-CSE-MsgGUID: 2iLVOJtCQPq8AXNOrTGdog==
+ 08 Oct 2025 13:43:14 -0700
+X-CSE-ConnectionGUID: LLa2X1XyQb+dVPOuRm+ghw==
+X-CSE-MsgGUID: x8vu/nztTnSgBHChKw7QHg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,214,1754982000"; d="scan'208";a="179790673"
+X-IronPort-AV: E=Sophos;i="6.19,214,1754982000"; d="scan'208";a="179790678"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 08 Oct 2025 13:43:12 -0700
+ by orviesa010.jf.intel.com with ESMTP; 08 Oct 2025 13:43:13 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v10 15/21] eal: automatically init arg list options
-Date: Wed,  8 Oct 2025 21:42:38 +0100
-Message-ID: <20251008204244.2288583-16-bruce.richardson@intel.com>
+Subject: [PATCH v10 16/21] eal: add internal fn for converting cpuset to string
+Date: Wed,  8 Oct 2025 21:42:39 +0100
+Message-ID: <20251008204244.2288583-17-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251008204244.2288583-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
@@ -61,93 +61,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The tailq list options from commandline require initialization before
-being used. This was being done by explicitly initing those values in
-the collate function. A better option is to do so using macros at time
-of structure definition, that way, adding a new list option does not
-require any other code changes to initialize it.
-
-Since we are now including the same header 3 times, and need to undefine
-the macros between inclusions, we simplify things by just doing the
-undef calls at the end of the included header.
+The existing "available_cores" function in eal_common_options.c has
+general code for converting a set of cores to a printable string.
+Generalize this code into an "eal_cpuset_to_str" function which takes a
+cpuset as parameter, and create a new "available_cores" function using
+this new utility function.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_common_options.c | 30 ++++++++++++-----------------
- lib/eal/common/eal_option_list.h    |  7 +++++++
- 2 files changed, 19 insertions(+), 18 deletions(-)
+ lib/eal/common/eal_common_options.c | 33 ++++++++++++++++++++++-------
+ lib/eal/common/eal_private.h        | 10 +++++++++
+ 2 files changed, 35 insertions(+), 8 deletions(-)
 
 diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index a29c84c675..8e17230c37 100644
+index 8e17230c37..3f26ecf513 100644
 --- a/lib/eal/common/eal_common_options.c
 +++ b/lib/eal/common/eal_common_options.c
-@@ -74,9 +74,19 @@ struct eal_init_args {
- 
- #define INCLUDE_ALL_ARG 1  /* for struct definition, include even unsupported values */
- #include "eal_option_list.h"
--#undef INCLUDE_ALL_ARG
- };
--struct eal_init_args args;
-+
-+/* define the structure itself, with initializers. Only the LIST_ARGS need init */
-+#define LIST_ARG(long, short, help_str, fieldname) .fieldname = TAILQ_HEAD_INITIALIZER(args.fieldname),
-+#define STR_ARG(long, short, help_str, fieldname)
-+#define OPT_STR_ARG(long, short, help_str, fieldname)
-+#define BOOL_ARG(long, short, help_str, fieldname)
-+#define STR_ALIAS(long, short, help_str, fieldname)
-+
-+struct eal_init_args args = {
-+	#include "eal_option_list.h"
-+};
-+#undef INCLUDE_ALL_ARG
- 
- /* an rte_argparse callback to append the argument to an arg_list
-  * in args. The index is the offset into the struct of the list.
-@@ -109,13 +119,6 @@ eal_usage(const struct rte_argparse *obj)
- 		rte_application_usage_hook(obj->prog_name);
+@@ -1571,8 +1571,8 @@ eal_parse_base_virtaddr(const char *arg)
  }
  
--/* undef the *_ARG macros before redefining to generate the argparse arg list */
--#undef LIST_ARG
--#undef STR_ARG
--#undef OPT_STR_ARG
--#undef BOOL_ARG
--#undef STR_ALIAS
--
- /* For arguments which have an arg_list type, they use callback (no val_saver),
-  * require a value, and have the SUPPORT_MULTI flag.
-  */
-@@ -217,15 +220,6 @@ eal_collate_args(int argc, char **argv)
- 	if (argc < 1 || argv == NULL || argv[0] == NULL)
- 		return -EINVAL;
+ /* caller is responsible for freeing the returned string */
+-static char *
+-available_cores(void)
++char *
++eal_cpuset_to_str(const rte_cpuset_t *cpuset)
+ {
+ 	char *str = NULL;
+ 	int previous;
+@@ -1580,13 +1580,13 @@ available_cores(void)
+ 	char *tmp;
+ 	int idx;
  
--	/* initialize the list of arguments */
--	memset(&args, 0, sizeof(args));
--	TAILQ_INIT(&args.allow);
--	TAILQ_INIT(&args.block);
--	TAILQ_INIT(&args.driver_path);
--	TAILQ_INIT(&args.log_level);
--	TAILQ_INIT(&args.trace);
--	TAILQ_INIT(&args.vdev);
--
- 	/* parse the arguments */
- 	eal_argparse.prog_name = argv[0];
- 	int retval = rte_argparse_parse(&eal_argparse, argc, argv);
-diff --git a/lib/eal/common/eal_option_list.h b/lib/eal/common/eal_option_list.h
-index 6a0c501680..f5c21c8376 100644
---- a/lib/eal/common/eal_option_list.h
-+++ b/lib/eal/common/eal_option_list.h
-@@ -88,3 +88,10 @@ STR_ALIAS("--socket-limit", NULL, "Alias for --numa-limit", numa_limit)
- STR_ARG("--vfio-intr", NULL, "VFIO interrupt mode (legacy|msi|msix)", vfio_intr)
- STR_ARG("--vfio-vf-token", NULL, "VF token (UUID) shared between SR-IOV PF and VFs", vfio_vf_token)
- #endif
+-	/* find the first available cpu */
+-	for (idx = 0; idx < RTE_MAX_LCORE; idx++) {
+-		if (eal_cpu_detected(idx) == 0)
++	/* find the first set cpu */
++	for (idx = 0; idx < CPU_SETSIZE; idx++) {
++		if (!CPU_ISSET(idx, cpuset))
+ 			continue;
+ 		break;
+ 	}
+-	if (idx >= RTE_MAX_LCORE)
++	if (idx >= CPU_SETSIZE)
+ 		return NULL;
+ 
+ 	/* first sequence */
+@@ -1595,8 +1595,8 @@ available_cores(void)
+ 	previous = idx;
+ 	sequence = 0;
+ 
+-	for (idx++ ; idx < RTE_MAX_LCORE; idx++) {
+-		if (eal_cpu_detected(idx) == 0)
++	for (idx++ ; idx < CPU_SETSIZE; idx++) {
++		if (!CPU_ISSET(idx, cpuset))
+ 			continue;
+ 
+ 		if (idx == previous + 1) {
+@@ -1639,6 +1639,23 @@ available_cores(void)
+ 	return str;
+ }
+ 
++/* caller is responsible for freeing the returned string */
++static char *
++available_cores(void)
++{
++	rte_cpuset_t cpuset;
++	int idx;
 +
-+/* undefine all used defines */
-+#undef LIST_ARG
-+#undef STR_ARG
-+#undef OPT_STR_ARG
-+#undef BOOL_ARG
-+#undef STR_ALIAS
++	/* build cpuset of available cores */
++	CPU_ZERO(&cpuset);
++	for (idx = 0; idx < RTE_MAX_LCORE; idx++) {
++		if (eal_cpu_detected(idx))
++			CPU_SET(idx, &cpuset);
++	}
++
++	return eal_cpuset_to_str(&cpuset);
++}
++
+ #define HUGE_UNLINK_NEVER "never"
+ 
+ static int
+diff --git a/lib/eal/common/eal_private.h b/lib/eal/common/eal_private.h
+index ab8b37b956..e032dd10c9 100644
+--- a/lib/eal/common/eal_private.h
++++ b/lib/eal/common/eal_private.h
+@@ -83,6 +83,16 @@ struct rte_config *rte_eal_get_configuration(void);
+  */
+ int eal_collate_args(int argc, char **argv);
+ 
++/**
++ * Convert an rte_cpuset_t to string form suitable for parsing by argparse.
++ *
++ * @param cpuset
++ *   The cpuset to convert to string form.
++ * @return
++ *   String representation of the cpuset (caller must free), or NULL on error.
++ */
++char *eal_cpuset_to_str(const rte_cpuset_t *cpuset);
++
+ /**
+  * Initialize the memzone subsystem (private to eal).
+  *
 -- 
 2.48.1
 
