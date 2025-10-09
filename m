@@ -2,38 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44ACFCCD185
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 11:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE01CCD184
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 13:01:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D16DA40A7A;
-	Thu,  9 Oct 2025 13:16:51 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 984AE40665
- for <dev@dpdk.org>; Thu,  9 Oct 2025 13:16:40 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 76501203F46;
- Thu,  9 Oct 2025 13:16:40 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 49626203F59;
- Thu,  9 Oct 2025 13:16:40 +0200 (CEST)
-Received: from lsv03379.swis.in-blr01.nxp.com (lsv03379.swis.in-blr01.nxp.com
- [92.120.147.188])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C1A011800085;
- Thu,  9 Oct 2025 19:16:39 +0800 (+08)
-From: vanshika.shukla@nxp.com
-To: dev@dpdk.org, Gagandeep Singh <g.singh@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>,
- Vanshika Shukla <vanshika.shukla@nxp.com>
-Subject: [v1 12/12] net/enetc: Add MAC and VLAN filter support
-Date: Thu,  9 Oct 2025 16:46:33 +0530
-Message-Id: <20251009111633.3585957-13-vanshika.shukla@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251009111633.3585957-1-vanshika.shukla@nxp.com>
-References: <20251009111633.3585957-1-vanshika.shukla@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 154B2402A3;
+	Thu,  9 Oct 2025 15:01:09 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 87E0940267
+ for <dev@dpdk.org>; Thu,  9 Oct 2025 15:01:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1760014868; x=1791550868;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=Qi7HjbC1tPsW2/CxAlWC5SxKEkpsCmXtXpVW+c1gqHo=;
+ b=CDfZKrwkYofuI+Ips08PiBz/UMCaIQ5zruVKKTlO25a5QsnLF8L4MdSv
+ cs4RDfmadAQo5uZBCevIAYNdXUr71ZyXKaU660gpq9P6uH95avaOksVAy
+ n3vEm0KO/IoAgmrFe5eaHepboehFEgcZsZ6bejc2L93ECCSXV7zn+xgzJ
+ Ytkkvn5TMUsPNNd0QDZ1OL8Ku6LE+suwNsc1IRaaErEhh4d3vhbuC9PgC
+ fUh7oX3F/hjRrFuO40umq/1QMYTIZAV0NGHYwTnDtmzQLMhEOLqOTQjbt
+ SvkI5gPS0SPRbQoQcWQP/WMZI/CfjTkxKOHuvSrkVKUKpS4j3lx3HmU+D g==;
+X-CSE-ConnectionGUID: LET4M2yVRnGdRrmLpLo6vQ==
+X-CSE-MsgGUID: /zY3yxoeT4aYpC5pTlCDhA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="79663040"
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="79663040"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Oct 2025 06:01:07 -0700
+X-CSE-ConnectionGUID: Mh5UsoEWSGe/G6X9+8rGVg==
+X-CSE-MsgGUID: ZTGaBNHlT4ip3i89mq7uJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="179951542"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by orviesa010.jf.intel.com with ESMTP; 09 Oct 2025 06:01:04 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: david.marchand@redhat.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v11 00/21]
+Date: Thu,  9 Oct 2025 14:00:35 +0100
+Message-ID: <20251009130056.2630343-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250520164025.2055721-1-bruce.richardson@intel.com>
+References: <20250520164025.2055721-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,356 +60,152 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vanshika Shukla <vanshika.shukla@nxp.com>
+The ultimate of this patchset is to make it easier to run on systems
+with large numbers of cores, by simplifying the process of using core
+numbers >RTE_MAX_LCORE. The new EAL arg ``-remap-lcore-ids``, also
+shortened to ``-R``, is added to DPDK to support this.
 
-Introduces support for:
+However, in order to add this new flag easily, the first dozen or more
+patches rework the argument handling in EAL to simplify things, using
+the argparse library for argument handling.
 
-- Up to 4 MAC addresses filtering
-- Up to 4 VLAN filters
+When processing cmdline arguments in DPDK, we always do so with very
+little context. So, for example, when processing the "-l" flag, we have
+no idea whether there will be later a --proc-type=secondary flag. We
+have all sorts of post-arg-processing checks in place to try and catch
+these scenarios.
 
-Enhances packet filtering capabilities for ENETC4 PMD.
+To improve this situation, this patchset tries to simplify the handling
+of argument processing, by explicitly doing an initial pass to collate
+all arguments into a structure. Thereafter, the actual arg parsing is
+done in a fixed order, meaning that e.g. when processing the
+--main-lcore flag, we have already processed the service core flags. We
+also can far quicker and easier check for conflicting options, since
+they can all be checked for NULL/non-NULL in the arg structure
+immediately after the struct has been populated.
 
-Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
----
- doc/guides/nics/features/enetc4.ini |   2 +
- drivers/net/enetc/base/enetc4_hw.h  |   3 +
- drivers/net/enetc/enetc.h           |  11 ++
- drivers/net/enetc/enetc4_vf.c       | 229 +++++++++++++++++++++++++++-
- 4 files changed, 244 insertions(+), 1 deletion(-)
+An additional benefit of this work is that the argument parsing for EAL
+is much more centralised into common options and the options list file.
+This single list with ifdefs makes it clear to the viewer what options
+are common across OS's, vs what are unix-only or linux-only.
 
-diff --git a/doc/guides/nics/features/enetc4.ini b/doc/guides/nics/features/enetc4.ini
-index 31a1955215..87425f45c9 100644
---- a/doc/guides/nics/features/enetc4.ini
-+++ b/doc/guides/nics/features/enetc4.ini
-@@ -9,6 +9,8 @@ Speed capabilities   = Y
- Link status          = Y
- Promiscuous mode     = Y
- Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+VLAN filter          = Y
- RSS hash             = Y
- Packet type parsing  = Y
- Basic stats          = Y
-diff --git a/drivers/net/enetc/base/enetc4_hw.h b/drivers/net/enetc/base/enetc4_hw.h
-index 2da779e351..e3eef6fe19 100644
---- a/drivers/net/enetc/base/enetc4_hw.h
-+++ b/drivers/net/enetc/base/enetc4_hw.h
-@@ -71,6 +71,9 @@ struct enetc_msg_swbd {
-  */
- #define ENETC4_MAC_MAXFRM_SIZE  2000
- 
-+/* Number of MAC Address Filter table entries */
-+#define ENETC4_MAC_ENTRIES      4
-+
- /* Port MAC 0/1 Maximum Frame Length Register */
- #define ENETC4_PM_MAXFRM(mac)		(0x5014 + (mac) * 0x400)
- 
-diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index ef0bcbb018..4f349e1f79 100644
---- a/drivers/net/enetc/enetc.h
-+++ b/drivers/net/enetc/enetc.h
-@@ -157,7 +157,10 @@ enum enetc_msg_cmd_class_id {
- /* Enum for command IDs */
- enum enetc_msg_cmd_id {
- 	ENETC_CMD_ID_SET_PRIMARY_MAC = 0,
-+	ENETC_MSG_ADD_EXACT_MAC_ENTRIES = 1,
- 	ENETC_CMD_ID_SET_MAC_PROMISCUOUS = 5,
-+	ENETC_MSG_ADD_EXACT_VLAN_ENTRIES = 0,
-+	ENETC_MSG_REMOVE_EXACT_VLAN_ENTRIES = 1,
- 	ENETC_CMD_ID_SET_VLAN_PROMISCUOUS = 4,
- 	ENETC_CMD_ID_GET_LINK_STATUS = 0,
- 	ENETC_CMD_ID_REGISTER_LINK_NOTIF = 1,
-@@ -169,6 +172,14 @@ enum mac_addr_status {
- 	ENETC_INVALID_MAC_ADDR = 0x0,
- 	ENETC_DUPLICATE_MAC_ADDR = 0X1,
- 	ENETC_MAC_ADDR_NOT_FOUND = 0X2,
-+	ENETC_MAC_FILTER_NO_RESOURCE = 0x3
-+};
-+
-+enum vlan_status {
-+	ENETC_INVALID_VLAN_ENTRY = 0x0,
-+	ENETC_DUPLICATE_VLAN_ENTRY = 0X1,
-+	ENETC_VLAN_ENTRY_NOT_FOUND = 0x2,
-+	ENETC_VLAN_NO_RESOURCE = 0x3
- };
- 
- enum link_status {
-diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index 22266188ee..fb27557378 100644
---- a/drivers/net/enetc/enetc4_vf.c
-+++ b/drivers/net/enetc/enetc4_vf.c
-@@ -17,6 +17,10 @@
- uint16_t enetc_crc_table[ENETC_CRC_TABLE_SIZE];
- bool enetc_crc_gen;
- 
-+/* Supported Rx offloads */
-+static uint64_t dev_vf_rx_offloads_sup =
-+	RTE_ETH_RX_OFFLOAD_VLAN_FILTER;
-+
- static void
- enetc_gen_crc_table(void)
- {
-@@ -53,6 +57,25 @@ enetc_crc_calc(uint16_t crc, const uint8_t *buffer, size_t len)
- 	return crc;
- }
- 
-+static int
-+enetc4_vf_dev_infos_get(struct rte_eth_dev *dev,
-+			struct rte_eth_dev_info *dev_info)
-+{
-+	int ret = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	ret = enetc4_dev_infos_get(dev, dev_info);
-+	if (ret)
-+		return ret;
-+
-+	dev_info->max_mtu = dev_info->max_rx_pktlen - (RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN);
-+	dev_info->max_mac_addrs = ENETC4_MAC_ENTRIES;
-+	dev_info->rx_offload_capa |= dev_vf_rx_offloads_sup;
-+
-+	return 0;
-+}
-+
- int
- enetc4_vf_dev_stop(struct rte_eth_dev *dev __rte_unused)
- {
-@@ -810,6 +833,201 @@ enetc4_vf_vlan_promisc(struct rte_eth_dev *dev, bool promisc_en)
- 	return err;
- }
- 
-+static int
-+enetc4_vf_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *addr,
-+			uint32_t index __rte_unused, uint32_t pool __rte_unused)
-+{
-+	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	struct enetc_msg_cmd_set_primary_mac *cmd;
-+	struct enetc_msg_swbd *msg;
-+	struct enetc_psi_reply_msg *reply_msg;
-+	int msg_size;
-+	int err = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	if (!rte_is_valid_assigned_ether_addr(addr))
-+		return -EINVAL;
-+
-+	reply_msg = rte_zmalloc(NULL, sizeof(*reply_msg), RTE_CACHE_LINE_SIZE);
-+	if (!reply_msg) {
-+		ENETC_PMD_ERR("Failed to alloc memory for reply_msg");
-+		return -ENOMEM;
-+	}
-+
-+	msg = rte_zmalloc(NULL, sizeof(*msg), RTE_CACHE_LINE_SIZE);
-+	if (!msg) {
-+		ENETC_PMD_ERR("Failed to alloc msg");
-+		err = -ENOMEM;
-+		rte_free(reply_msg);
-+		return err;
-+	}
-+
-+	msg_size = RTE_ALIGN(sizeof(struct enetc_msg_cmd_set_primary_mac),
-+			ENETC_VSI_PSI_MSG_SIZE);
-+	msg->vaddr = rte_zmalloc(NULL, msg_size, 0);
-+	if (!msg->vaddr) {
-+		ENETC_PMD_ERR("Failed to alloc memory for msg");
-+		rte_free(msg);
-+		rte_free(reply_msg);
-+		return -ENOMEM;
-+	}
-+	msg->dma = rte_mem_virt2iova((const void *)msg->vaddr);
-+	msg->size = msg_size;
-+	cmd = (struct enetc_msg_cmd_set_primary_mac *)msg->vaddr;
-+	memcpy(&cmd->addr.addr_bytes, addr, sizeof(struct rte_ether_addr));
-+	cmd->count = 1;
-+
-+	enetc_msg_vf_fill_common_hdr(msg, ENETC_CLASS_ID_MAC_FILTER,
-+			ENETC_MSG_ADD_EXACT_MAC_ENTRIES, 0, 0, 0);
-+
-+	/* send the command and wait */
-+	err = enetc4_msg_vsi_send(enetc_hw, msg);
-+	if (err) {
-+		ENETC_PMD_ERR("VSI message send error");
-+		goto end;
-+	}
-+
-+	enetc4_msg_vsi_reply_msg(enetc_hw, reply_msg);
-+
-+	if (reply_msg->class_id == ENETC_CLASS_ID_MAC_FILTER) {
-+		switch (reply_msg->status) {
-+		case ENETC_INVALID_MAC_ADDR:
-+			ENETC_PMD_ERR("Invalid MAC address");
-+			err = -EINVAL;
-+			break;
-+		case ENETC_DUPLICATE_MAC_ADDR:
-+			ENETC_PMD_ERR("Duplicate MAC address");
-+			err = -EINVAL;
-+			break;
-+		case ENETC_MAC_FILTER_NO_RESOURCE:
-+			ENETC_PMD_ERR("Not enough exact-match entries available");
-+			err = -EINVAL;
-+			break;
-+		default:
-+			err = -EINVAL;
-+			break;
-+		}
-+	}
-+
-+	if (err) {
-+		ENETC_PMD_ERR("VSI command execute error!");
-+		goto end;
-+	}
-+
-+end:
-+	/* free memory no longer required */
-+	rte_free(msg->vaddr);
-+	rte_free(reply_msg);
-+	rte_free(msg);
-+	return err;
-+}
-+
-+static int enetc4_vf_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
-+{
-+	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	struct enetc_msg_vlan_exact_filter *cmd;
-+	struct enetc_msg_swbd *msg;
-+	struct enetc_psi_reply_msg *reply_msg;
-+	int msg_size;
-+	int err = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	reply_msg = rte_zmalloc(NULL, sizeof(*reply_msg), RTE_CACHE_LINE_SIZE);
-+	if (!reply_msg) {
-+		ENETC_PMD_ERR("Failed to alloc memory for reply_msg");
-+		return -ENOMEM;
-+	}
-+
-+	msg = rte_zmalloc(NULL, sizeof(*msg), RTE_CACHE_LINE_SIZE);
-+	if (!msg) {
-+		ENETC_PMD_ERR("Failed to alloc msg");
-+		err = -ENOMEM;
-+		rte_free(reply_msg);
-+		return err;
-+	}
-+
-+	msg_size = RTE_ALIGN(sizeof(struct enetc_msg_vlan_exact_filter),
-+			ENETC_VSI_PSI_MSG_SIZE);
-+	msg->vaddr = rte_zmalloc(NULL, msg_size, 0);
-+	if (!msg->vaddr) {
-+		ENETC_PMD_ERR("Failed to alloc memory for msg");
-+		rte_free(msg);
-+		rte_free(reply_msg);
-+		return -ENOMEM;
-+	}
-+	msg->dma = rte_mem_virt2iova((const void *)msg->vaddr);
-+	msg->size = msg_size;
-+	cmd = (struct enetc_msg_vlan_exact_filter *)msg->vaddr;
-+	cmd->vlan_count = 1;
-+	cmd->vlan_id = vlan_id;
-+
-+	/* TPID 2-bit encoding value is taken from the H/W block guide:
-+	 *	00b Standard C-VLAN 0x8100
-+	 *	01b Standard S-VLAN 0x88A8
-+	 *	10b Custom VLAN as defined by CVLANR1[ETYPE]
-+	 *	11b Custom VLAN as defined by CVLANR2[ETYPE]
-+	 * Currently Standard C-VLAN is supported. To support others in future.
-+	 */
-+	cmd->tpid = 0;
-+
-+	if (on) {
-+		enetc_msg_vf_fill_common_hdr(msg, ENETC_CLASS_ID_VLAN_FILTER,
-+				ENETC_MSG_ADD_EXACT_VLAN_ENTRIES, 0, 0, 0);
-+	} else {
-+		enetc_msg_vf_fill_common_hdr(msg, ENETC_CLASS_ID_VLAN_FILTER,
-+				ENETC_MSG_REMOVE_EXACT_VLAN_ENTRIES, 0, 0, 0);
-+	}
-+
-+	/* send the command and wait */
-+	err = enetc4_msg_vsi_send(enetc_hw, msg);
-+	if (err) {
-+		ENETC_PMD_ERR("VSI message send error");
-+		goto end;
-+	}
-+
-+	enetc4_msg_vsi_reply_msg(enetc_hw, reply_msg);
-+
-+	if (reply_msg->class_id == ENETC_CLASS_ID_VLAN_FILTER) {
-+		switch (reply_msg->status) {
-+		case ENETC_INVALID_VLAN_ENTRY:
-+			ENETC_PMD_ERR("VLAN entry not valid");
-+			err = -EINVAL;
-+			break;
-+		case ENETC_DUPLICATE_VLAN_ENTRY:
-+			ENETC_PMD_ERR("Duplicated VLAN entry");
-+			err = -EINVAL;
-+			break;
-+		case ENETC_VLAN_ENTRY_NOT_FOUND:
-+			ENETC_PMD_ERR("VLAN entry not found");
-+			err = -EINVAL;
-+			break;
-+		case ENETC_VLAN_NO_RESOURCE:
-+			ENETC_PMD_ERR("Not enough exact-match entries available");
-+			err = -EINVAL;
-+			break;
-+		default:
-+			err = -EINVAL;
-+			break;
-+		}
-+	}
-+
-+	if (err) {
-+		ENETC_PMD_ERR("VSI command execute error!");
-+		goto end;
-+	}
-+
-+end:
-+	/* free memory no longer required */
-+	rte_free(msg->vaddr);
-+	rte_free(reply_msg);
-+	rte_free(msg);
-+	return err;
-+}
-+
- static int enetc4_vf_vlan_offload_set(struct rte_eth_dev *dev, int mask __rte_unused)
- {
- 	int err = 0;
-@@ -838,6 +1056,12 @@ static int enetc4_vf_vlan_offload_set(struct rte_eth_dev *dev, int mask __rte_un
- 	return 0;
- }
- 
-+static int
-+enetc4_vf_mtu_set(struct rte_eth_dev *dev __rte_unused, uint16_t mtu __rte_unused)
-+{
-+	return 0;
-+}
-+
- static int
- enetc4_vf_link_register_notif(struct rte_eth_dev *dev, bool enable)
- {
-@@ -901,14 +1125,17 @@ static const struct eth_dev_ops enetc4_vf_ops = {
- 	.dev_start            = enetc4_vf_dev_start,
- 	.dev_stop             = enetc4_vf_dev_stop,
- 	.dev_close            = enetc4_dev_close,
--	.dev_infos_get        = enetc4_dev_infos_get,
- 	.stats_get            = enetc4_vf_stats_get,
-+	.dev_infos_get        = enetc4_vf_dev_infos_get,
-+	.mtu_set              = enetc4_vf_mtu_set,
- 	.mac_addr_set         = enetc4_vf_set_mac_addr,
-+	.mac_addr_add	      = enetc4_vf_mac_addr_add,
- 	.promiscuous_enable   = enetc4_vf_promisc_enable,
- 	.promiscuous_disable  = enetc4_vf_promisc_disable,
- 	.allmulticast_enable  = enetc4_vf_multicast_enable,
- 	.allmulticast_disable = enetc4_vf_multicast_disable,
- 	.link_update	      = enetc4_vf_link_update,
-+	.vlan_filter_set      = enetc4_vf_vlan_filter_set,
- 	.vlan_offload_set     = enetc4_vf_vlan_offload_set,
- 	.rx_queue_setup       = enetc4_rx_queue_setup,
- 	.rx_queue_start       = enetc4_rx_queue_start,
--- 
-2.25.1
+Once the cleanup and rework is done, adding the new options for
+remapping cores becomes a lot simpler, since we can very easily check
+for scenarios like multi-process and handle those appropriately.
+
+
+V11:
+* fix issues flagged by unit tests in CI and subsequent testing:
+  - when passing in an lcore >= MAX_LCORES, return error rather than
+    ignoring it. (compatibility issue)
+  - return error when an invalid lcore set of "1-3-5" is passed in,
+    rather than just treating it as "3-5".
+
+V10:
+* add patch 2 to fix func_reentrancy test bug reported mid-way through
+  the series.
+* added patches 7 & 8 to resolve arg parsing compat issues:
+   - support reordering args to have non-flag parameters at the end so
+     we can e.g. mix autotest names in with EAL args
+   - support having optional params with single-letter args without
+     having to use "=" syntax, i.e. -l4 rather than -l=4
+* fixed issues with the final patch when the autodetected range of cores
+  was >RTE_MAX_LCORE
+
+V9: rebase to latest main. CI complains cannot apply v8 patches.
+
+V8:
+* dropped the final two patches from the series, dropping the new -L
+  option in favour of the -R modifier.
+* reordered patch 11 to be with the other argparse patches (now patch 5)
+* added patch 12, which uses macros to initialize the args structure
+  from the arguments header file, avoiding potential issues when we add
+  new args.
+* simplified and consolidated lcore mask and core list parsing to always
+  work off cpusets rather than arrays of uint8
+* enhanced debug printouts to also work better with cpusets and handle
+  core values in those sets >= RTE_MAX_LCORE
+* for completeness, ensure the new -R option works for coremasks, and
+  for cases where no explicit core-list or coremask is specified.
+
+V7:
+* expand the scope of the patchset beyond just cleanup to add in the
+  extra 3 patches for -L and --lcoreid-base option.
+
+V6:
+* Rebase to apply cleanly on latest main
+
+V5:
+* Resubmit of V4, which didn't get sent correctly, or picked up correctly
+  in patchwork.
+
+V4:
+* Updated patch 5 to auto-generate the arg struct definition from the same
+  list of defines used to construct the argument list.
+
+V3:
+* Added 3 new initial patches, one for minor build-system addition, and two
+  for functionality in argparse to allow the user-callback help function to
+  be maintained as we move to argparse.
+* Added doc updates in the first EAL patch adding the long options
+* Fixed ASAN issues by adding a patch to properly clean up EAL init - both
+  memory allocations and fixing the run-once flag
+* Put ifdefs around the linux-only or unix-only options in EAL patch 2
+* Updated args to handle numa-mem and numa-limit as equivalent socket-mem
+  and socket-limit
+
+Bruce Richardson (21):
+  build: add define for the OS environment name
+  test/func_reentrancy: fix args to EAL init call
+  argparse: export function to print help text for object
+  argparse: allow user-override of help printing
+  argparse: add documentation on supported value types
+  argparse: add support for parsing core lists
+  argparse: allow optional flag reordering
+  argparse: support parameters to short options without "="
+  eal: add long options for each short option
+  eal: define the EAL parameters in argparse format
+  eal: gather EAL args before processing
+  eal: ensure proper cleanup on EAL init failure
+  eal: combine parameter validation checks
+  eal: simplify handling of conflicting cmdline options
+  eal: automatically init arg list options
+  eal: add internal fn for converting cpuset to string
+  eal: use common cpuset to string function
+  eal: introduce lcore remapping option for coremasks
+  eal: rework internal coremask parsing to use cpu sets
+  eal: allow lcore ID remapping with core lists
+  eal: allow lcore remapping with autodetected core affinity
+
+ app/test/test_argparse.c                   |  702 ++++++++++
+ app/test/test_func_reentrancy.c            |    5 +-
+ config/meson.build                         |    1 +
+ doc/guides/contributing/design.rst         |    2 +-
+ doc/guides/linux_gsg/eal_args.include.rst  |   42 +-
+ doc/guides/prog_guide/argparse_lib.rst     |  138 +-
+ doc/guides/rel_notes/release_25_11.rst     |   18 +
+ drivers/event/dlb2/dlb2_priv.h             |    2 +-
+ drivers/event/dlb2/pf/base/dlb2_resource.c |   11 +-
+ lib/argparse/rte_argparse.c                |  183 ++-
+ lib/argparse/rte_argparse.h                |   29 +-
+ lib/eal/common/eal_common_lcore.c          |   13 +-
+ lib/eal/common/eal_common_memory.c         |    3 +-
+ lib/eal/common/eal_common_options.c        | 1440 +++++++++++---------
+ lib/eal/common/eal_common_thread.c         |   43 +-
+ lib/eal/common/eal_option_list.h           |   98 ++
+ lib/eal/common/eal_options.h               |  104 +-
+ lib/eal/common/eal_private.h               |   21 +
+ lib/eal/common/eal_thread.h                |   13 +-
+ lib/eal/freebsd/eal.c                      |  245 +---
+ lib/eal/include/rte_eal.h                  |   20 -
+ lib/eal/linux/eal.c                        |  470 +------
+ lib/eal/linux/eal_memory.c                 |    2 +-
+ lib/eal/meson.build                        |    2 +-
+ lib/eal/windows/eal.c                      |  156 +--
+ lib/meson.build                            |    1 +
+ 26 files changed, 2158 insertions(+), 1606 deletions(-)
+ create mode 100644 lib/eal/common/eal_option_list.h
+
+--
+2.48.1
 
