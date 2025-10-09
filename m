@@ -2,41 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2411CCD185
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 11:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C06CCD187
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 11:16:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1D7F140648;
-	Thu,  9 Oct 2025 13:16:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D9CB04065D;
+	Thu,  9 Oct 2025 13:16:39 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 237F440277
+ by mails.dpdk.org (Postfix) with ESMTP id A30F140277
  for <dev@dpdk.org>; Thu,  9 Oct 2025 13:16:36 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F3A12203F40;
- Thu,  9 Oct 2025 13:16:35 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 85CA9201F22;
+ Thu,  9 Oct 2025 13:16:36 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 940A5201F22;
- Thu,  9 Oct 2025 13:16:35 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 26D40201F3A;
+ Thu,  9 Oct 2025 13:16:36 +0200 (CEST)
 Received: from lsv03379.swis.in-blr01.nxp.com (lsv03379.swis.in-blr01.nxp.com
  [92.120.147.188])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7D5D018000A0;
- Thu,  9 Oct 2025 19:16:34 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2D1EE1800085;
+ Thu,  9 Oct 2025 19:16:35 +0800 (+08)
 From: vanshika.shukla@nxp.com
-To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Gagandeep Singh <g.singh@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>,
- Vanshika Shukla <vanshika.shukla@nxp.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org, Gagandeep Singh <g.singh@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>,
+ Vanshika Shukla <vanshika.shukla@nxp.com>
 Cc: Apeksha Gupta <apeksha.gupta@nxp.com>
-Subject: [v1 01/12] net/enetc: Add initial ENETC4 PMD driver support
-Date: Thu,  9 Oct 2025 16:46:22 +0530
-Message-Id: <20251009111633.3585957-2-vanshika.shukla@nxp.com>
+Subject: [v1 02/12] net/enetc: Add RX and TX queue APIs for ENETC4 PMD
+Date: Thu,  9 Oct 2025 16:46:23 +0530
+Message-Id: <20251009111633.3585957-3-vanshika.shukla@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20251009111633.3585957-1-vanshika.shukla@nxp.com>
 References: <20251009111633.3585957-1-vanshika.shukla@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
@@ -54,977 +50,600 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Apeksha Gupta <apeksha.gupta@nxp.com>
 
-This patch introduces a new ENETC4 PMD driver for NXP's i.MX95
-SoC, enabling basic network operations. Key features include:
+Introduces queue setup, release, start, and stop
+APIs for ENETC4 RX and TX queues, enabling:
 
-- Probe and teardown functions
-- Hardware initialization for both Virtual Functions (VFs)
-  and Physical Function (PF)
+- Queue configuration and initialization
+- Queue resource management (setup, release)
+- Queue operation control (start, stop)
 
 Signed-off-by: Apeksha Gupta <apeksha.gupta@nxp.com>
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
-Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
 ---
- MAINTAINERS                            |   3 +
- config/arm/arm64_imx_linux_gcc         |  17 ++
- config/arm/meson.build                 |  14 ++
- doc/guides/nics/enetc4.rst             |  92 ++++++++
- doc/guides/nics/features/enetc4.ini    |   9 +
- doc/guides/nics/index.rst              |   1 +
- doc/guides/rel_notes/release_24_11.rst |   4 +
- drivers/net/enetc/base/enetc4_hw.h     | 111 +++++++++
- drivers/net/enetc/base/enetc_hw.h      |   3 +-
- drivers/net/enetc/enetc.h              |  42 ++--
- drivers/net/enetc/enetc4_ethdev.c      | 297 +++++++++++++++++++++++++
- drivers/net/enetc/enetc4_vf.c          | 146 ++++++++++++
- drivers/net/enetc/enetc_ethdev.c       |   5 +-
- drivers/net/enetc/meson.build          |   4 +-
- 14 files changed, 726 insertions(+), 22 deletions(-)
- create mode 100644 config/arm/arm64_imx_linux_gcc
- create mode 100644 doc/guides/nics/enetc4.rst
- create mode 100644 doc/guides/nics/features/enetc4.ini
- create mode 100644 drivers/net/enetc/base/enetc4_hw.h
- create mode 100644 drivers/net/enetc/enetc4_ethdev.c
- create mode 100644 drivers/net/enetc/enetc4_vf.c
+ doc/guides/nics/features/enetc4.ini |   1 +
+ drivers/net/enetc/enetc.h           |  13 +
+ drivers/net/enetc/enetc4_ethdev.c   | 401 ++++++++++++++++++++++++++++
+ drivers/net/enetc/enetc4_vf.c       |   8 +
+ drivers/net/enetc/enetc_rxtx.c      |  32 ++-
+ 5 files changed, 452 insertions(+), 3 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1a2729be66..6614e5ad38 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -974,9 +974,12 @@ F: doc/guides/nics/features/dpaa2.ini
- NXP enetc
- M: Gagandeep Singh <g.singh@nxp.com>
- M: Sachin Saxena <sachin.saxena@oss.nxp.com>
-+M: Vanshika Shukla <vanshika.shukla@nxp.com>
- F: drivers/net/enetc/
- F: doc/guides/nics/enetc.rst
-+F: doc/guides/nics/enetc4.rst
- F: doc/guides/nics/features/enetc.ini
-+F: doc/guides/nics/features/enetc4.ini
- 
- NXP enetfec - EXPERIMENTAL
- M: Apeksha Gupta <apeksha.gupta@nxp.com>
-diff --git a/config/arm/arm64_imx_linux_gcc b/config/arm/arm64_imx_linux_gcc
-new file mode 100644
-index 0000000000..c876ae1d2b
---- /dev/null
-+++ b/config/arm/arm64_imx_linux_gcc
-@@ -0,0 +1,17 @@
-+[binaries]
-+c = ['ccache', 'aarch64-linux-gnu-gcc']
-+cpp = ['ccache', 'aarch64-linux-gnu-g++']
-+ar = 'aarch64-linux-gnu-ar'
-+as = 'aarch64-linux-gnu-as'
-+strip = 'aarch64-linux-gnu-strip'
-+pkgconfig = 'aarch64-linux-gnu-pkg-config'
-+pcap-config = ''
-+
-+[host_machine]
-+system = 'linux'
-+cpu_family = 'aarch64'
-+cpu = 'armv8.2-a'
-+endian = 'little'
-+
-+[properties]
-+platform = 'imx'
-diff --git a/config/arm/meson.build b/config/arm/meson.build
-index 665f3fa38f..f2567adf06 100644
---- a/config/arm/meson.build
-+++ b/config/arm/meson.build
-@@ -562,6 +562,18 @@ soc_hip10 = {
-     'numa': true
- }
- 
-+soc_imx = {
-+    'description': 'NXP IMX',
-+    'implementer': '0x41',
-+    'part_number': '0xd05',
-+    'flags': [
-+        ['RTE_MACHINE', '"armv8a"'],
-+        ['RTE_MAX_LCORE', 6],
-+        ['RTE_MAX_NUMA_NODES', 1],
-+    ],
-+    'numa': false,
-+}
-+
- soc_kunpeng920 = {
-     'description': 'HiSilicon Kunpeng 920',
-     'implementer': '0x48',
-@@ -746,6 +758,7 @@ graviton2:       AWS Graviton2
- graviton3:       AWS Graviton3
- graviton4:       AWS Graviton4
- hip10:           HiSilicon HIP10
-+imx:             NXP IMX
- kunpeng920:      HiSilicon Kunpeng 920
- kunpeng930:      HiSilicon Kunpeng 930
- n1sdp:           Arm Neoverse N1SDP
-@@ -788,6 +801,7 @@ socs = {
-     'graviton3': soc_graviton3,
-     'graviton4': soc_graviton4,
-     'hip10': soc_hip10,
-+    'imx': soc_imx,
-     'kunpeng920': soc_kunpeng920,
-     'kunpeng930': soc_kunpeng930,
-     'n1sdp': soc_n1sdp,
-diff --git a/doc/guides/nics/enetc4.rst b/doc/guides/nics/enetc4.rst
-new file mode 100644
-index 0000000000..f5e1df339f
---- /dev/null
-+++ b/doc/guides/nics/enetc4.rst
-@@ -0,0 +1,92 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+   Copyright 2024 NXP
-+
-+ENETC4 Poll Mode Driver
-+=======================
-+
-+The ENETC4 NIC PMD (**librte_net_enetc**) provides poll mode driver
-+support for the inbuilt NIC found in the **NXP i.MX95** SoC.
-+
-+More information can be found at `NXP Official Website
-+<https://www.nxp.com/products/processors-and-microcontrollers/arm-processors/i-mx-applications-processors/i-mx-9-processors/i-mx-95-applications-processor-family-high-performance-safety-enabled-platform-with-eiq-neutron-npu:iMX95>`_.
-+
-+This section provides an overview of the NXP ENETC4
-+and how it is integrated into the DPDK.
-+
-+Contents summary
-+
-+- ENETC4 overview
-+- Supported ENETC4 SoCs
-+- PCI bus driver
-+- NIC driver
-+- Prerequisites
-+- Driver compilation and testing
-+
-+ENETC4 Overview
-+---------------
-+
-+ENETC4 is a PCI Integrated End Point(IEP). IEP implements
-+peripheral devices in an SoC such that software sees them as PCIe device.
-+ENETC4 is an evolution of BDR(Buffer Descriptor Ring) based networking
-+IPs.
-+
-+This infrastructure simplifies adding support for IEP and facilitates in following:
-+
-+- Device discovery and location
-+- Resource requirement discovery and allocation (e.g. interrupt assignment,
-+  device register address)
-+- Event reporting
-+
-+Supported ENETC4 SoCs
-+---------------------
-+
-+- i.MX95
-+
-+NIC Driver (PMD)
-+----------------
-+
-+The ENETC4 PMD is a traditional DPDK PMD that bridges the RTE framework and
-+ENETC4 internal drivers, supporting both Virtual Functions (VFs) and
-+Physical Functions (PF). Key functionality includes:
-+
-+- Driver registration: The device vendor table is registered in the PCI subsystem.
-+- Device discovery: The RTE framework scans the PCI bus for connected devices, triggering the ENETC4 driver's probe function.
-+- Initialization: The probe function configures basic device registers and sets up Buffer Descriptor (BD) rings.
-+- Receive processing: Upon packet reception, the BD Ring status bit is set, facilitating packet processing.
-+- Transmission: Packet transmission precedes reception, ensuring efficient data transfer.
-+
-+Prerequisites
-+-------------
-+
-+There are three main pre-requisites for executing ENETC4 PMD on ENETC4
-+compatible boards:
-+
-+#. **ARM 64 Tool Chain**
-+
-+   For example, the `*aarch64* ARM Toolchain <https://developer.arm.com/-/media/Files/downloads/gnu/13.3.rel1/binrel/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu.tar.xz>`_.
-+
-+#. **Linux Kernel**
-+
-+   It can be obtained from `NXP's Github hosting <https://github.com/nxp-imx/linux-imx>`_.
-+
-+The following dependencies are not part of DPDK and must be installed
-+separately:
-+
-+- **NXP Linux LF**
-+
-+  NXP Linux Factory (LF) includes support for family
-+  of QorIQ® ARM-Architecture-based system on chip (SoC) processors
-+  and corresponding boards.
-+
-+  It includes the Linux board support packages (BSPs) for NXP SoCs,
-+  a fully operational tool chain, kernel and board specific modules.
-+
-+  i.MX LF release and related information can be obtained from:  `LF  <https://www.nxp.com/design/design-center/software/embedded-software/i-mx-software/embedded-linux-for-i-mx-applications-processors:IMXLINUX>`_
-+  Refer section: Linux Current Release.
-+
-+Driver compilation and testing
-+------------------------------
-+
-+Follow instructions available in the document
-+:ref:`compiling and testing a PMD for a NIC <pmd_build_and_test>`
-+to launch **testpmd**
 diff --git a/doc/guides/nics/features/enetc4.ini b/doc/guides/nics/features/enetc4.ini
-new file mode 100644
-index 0000000000..ca3b9ae992
---- /dev/null
+index ca3b9ae992..37b548dcab 100644
+--- a/doc/guides/nics/features/enetc4.ini
 +++ b/doc/guides/nics/features/enetc4.ini
-@@ -0,0 +1,9 @@
-+;
-+; Supported features of the 'enetc4' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Linux                = Y
-+ARMv8                = Y
-+Usage doc            = Y
-diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
-index 57d161c526..c6e9a3a71d 100644
---- a/doc/guides/nics/index.rst
-+++ b/doc/guides/nics/index.rst
-@@ -27,6 +27,7 @@ Network Interface Controller Drivers
-     e1000em
-     ena
-     enetc
-+    enetc4
-     enetfec
-     enic
-     fail_safe
-diff --git a/doc/guides/rel_notes/release_24_11.rst b/doc/guides/rel_notes/release_24_11.rst
-index 843d6500a2..84bdab4f6b 100644
---- a/doc/guides/rel_notes/release_24_11.rst
-+++ b/doc/guides/rel_notes/release_24_11.rst
-@@ -135,6 +135,10 @@ New Features
-   * Added SR-IOV VF support.
-   * Added recent 1400/14000 and 15000 models to the supported list.
- 
-+* **Added ENETC4 PMD**
-+
-+  * Added ENETC4 PMD for NXP i.MX95 platform.
-+
- * **Updated Marvell cnxk net driver.**
- 
-   * Added ethdev driver support for CN20K SoC.
-diff --git a/drivers/net/enetc/base/enetc4_hw.h b/drivers/net/enetc/base/enetc4_hw.h
-new file mode 100644
-index 0000000000..34a4ca3b02
---- /dev/null
-+++ b/drivers/net/enetc/base/enetc4_hw.h
-@@ -0,0 +1,111 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2024 NXP
-+ *
-+ * This header file defines the register offsets and bit fields
-+ * of ENETC4 PF and VFs.
-+ */
-+
-+#ifndef _ENETC4_HW_H_
-+#define _ENETC4_HW_H_
-+#include <rte_io.h>
-+
-+/* ENETC4 device IDs */
-+#define ENETC4_DEV_ID		0xe101
-+#define ENETC4_DEV_ID_VF	0xef00
-+#define PCI_VENDOR_ID_NXP	0x1131
-+
-+/***************************ENETC port registers**************************/
-+#define ENETC4_PMR		0x10
-+#define ENETC4_PMR_EN		(BIT(16) | BIT(17) | BIT(18))
-+
-+/* Port Station interface promiscuous MAC mode register */
-+#define ENETC4_PSIPMMR		0x200
-+#define PSIPMMR_SI0_MAC_UP	BIT(0)
-+#define PSIPMMR_SI_MAC_UP	(BIT(0) | BIT(1) | BIT(2))
-+#define PSIPMMR_SI0_MAC_MP	BIT(16)
-+#define PSIPMMR_SI_MAC_MP	(BIT(16) | BIT(17) | BIT(18))
-+
-+/* Port Station interface a primary MAC address registers */
-+#define ENETC4_PSIPMAR0(a)	((a) * 0x80 + 0x2000)
-+#define ENETC4_PSIPMAR1(a)	((a) * 0x80 + 0x2004)
-+
-+/* Port MAC address register 0/1 */
-+#define ENETC4_PMAR0		0x4020
-+#define ENETC4_PMAR1		0x4024
-+
-+/* Port operational register */
-+#define ENETC4_POR		0x4100
-+
-+/* Port traffic class a transmit maximum SDU register */
-+#define ENETC4_PTCTMSDUR(a)	((a) * 0x20 + 0x4208)
-+#define SDU_TYPE_MPDU		BIT(16)
-+
-+#define ENETC4_PM_CMD_CFG(mac)		(0x5008 + (mac) * 0x400)
-+#define PM_CMD_CFG_TX_EN		BIT(0)
-+#define PM_CMD_CFG_RX_EN		BIT(1)
-+
-+/* i.MX95 supports jumbo frame, but it is recommended to set the max frame
-+ * size to 2000 bytes.
-+ */
-+#define ENETC4_MAC_MAXFRM_SIZE  2000
-+
-+/* Port MAC 0/1 Maximum Frame Length Register */
-+#define ENETC4_PM_MAXFRM(mac)		(0x5014 + (mac) * 0x400)
-+
-+/* Config register to reset counters */
-+#define ENETC4_PM0_STAT_CONFIG		0x50e0
-+/* Stats Reset Bit */
-+#define ENETC4_CLEAR_STATS		BIT(2)
-+
-+/* Port MAC 0/1 Receive Ethernet Octets Counter */
-+#define ENETC4_PM_REOCT(mac)            (0x5100 + (mac) * 0x400)
-+
-+/* Port MAC 0/1 Receive Frame Error Counter */
-+#define ENETC4_PM_RERR(mac)		(0x5138 + (mac) * 0x400)
-+
-+/* Port MAC 0/1 Receive Dropped Packets Counter */
-+#define ENETC4_PM_RDRP(mac)		(0x5158 + (mac) * 0x400)
-+
-+/* Port MAC 0/1 Receive Packets Counter */
-+#define ENETC4_PM_RPKT(mac)		(0x5160 + (mac) * 0x400)
-+
-+/* Port MAC 0/1 Transmit Frame Error Counter */
-+#define ENETC4_PM_TERR(mac)		(0x5238 + (mac) * 0x400)
-+
-+/* Port MAC 0/1 Transmit Ethernet Octets Counter */
-+#define ENETC4_PM_TEOCT(mac)            (0x5200 + (mac) * 0x400)
-+
-+/* Port MAC 0/1 Transmit Packets Counter */
-+#define ENETC4_PM_TPKT(mac)		(0x5260 + (mac) * 0x400)
-+
-+/* Port MAC 0 Interface Mode Control Register */
-+#define ENETC4_PM_IF_MODE(mac)		(0x5300 + (mac) * 0x400)
-+#define PM_IF_MODE_IFMODE		(BIT(0) | BIT(1) | BIT(2))
-+#define IFMODE_XGMII			0
-+#define IFMODE_RMII			3
-+#define IFMODE_RGMII			4
-+#define IFMODE_SGMII			5
-+#define PM_IF_MODE_ENA			BIT(15)
-+
-+/* general register accessors */
-+#define enetc4_rd_reg(reg)	rte_read32((void *)(reg))
-+#define enetc4_wr_reg(reg, val)  rte_write32((val), (void *)(reg))
-+
-+#define enetc4_rd(hw, off)	 enetc4_rd_reg((size_t)(hw)->reg + (off))
-+#define enetc4_wr(hw, off, val)  enetc4_wr_reg((size_t)(hw)->reg + (off), val)
-+/* port register accessors - PF only */
-+#define enetc4_port_rd(hw, off)  enetc4_rd_reg((size_t)(hw)->port + (off))
-+#define enetc4_port_wr(hw, off, val) \
-+				enetc4_wr_reg((size_t)(hw)->port + (off), val)
-+/* BDR register accessors, see ENETC_BDR() */
-+#define enetc4_bdr_rd(hw, t, n, off) \
-+				enetc4_rd(hw, ENETC_BDR(t, n, off))
-+#define enetc4_bdr_wr(hw, t, n, off, val) \
-+				enetc4_wr(hw, ENETC_BDR(t, n, off), val)
-+#define enetc4_txbdr_rd(hw, n, off) enetc4_bdr_rd(hw, TX, n, off)
-+#define enetc4_rxbdr_rd(hw, n, off) enetc4_bdr_rd(hw, RX, n, off)
-+#define enetc4_txbdr_wr(hw, n, off, val) \
-+				enetc4_bdr_wr(hw, TX, n, off, val)
-+#define enetc4_rxbdr_wr(hw, n, off, val) \
-+				enetc4_bdr_wr(hw, RX, n, off, val)
-+#endif
-diff --git a/drivers/net/enetc/base/enetc_hw.h b/drivers/net/enetc/base/enetc_hw.h
-index 66fad58e5e..2d63c54db6 100644
---- a/drivers/net/enetc/base/enetc_hw.h
-+++ b/drivers/net/enetc/base/enetc_hw.h
-@@ -1,10 +1,11 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2018-2020 NXP
-+ * Copyright 2018-2024 NXP
-  */
- 
- #ifndef _ENETC_HW_H_
- #define _ENETC_HW_H_
- #include <rte_io.h>
-+#include <ethdev_pci.h>
- 
- #define BIT(x)		((uint64_t)1 << ((x)))
- 
+@@ -4,6 +4,7 @@
+ ; Refer to default.ini for the full list of available PMD features.
+ ;
+ [Features]
++Queue start/stop     = Y
+ Linux                = Y
+ ARMv8                = Y
+ Usage doc            = Y
 diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index 7163633bce..19e0fa3a07 100644
+index 19e0fa3a07..df831ce8d0 100644
 --- a/drivers/net/enetc/enetc.h
 +++ b/drivers/net/enetc/enetc.h
-@@ -1,18 +1,21 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2018-2019 NXP
-+ * Copyright 2018-2019,2024 NXP
-  */
+@@ -97,6 +97,19 @@ int enetc4_dev_configure(struct rte_eth_dev *dev);
+ int enetc4_dev_close(struct rte_eth_dev *dev);
+ int enetc4_dev_infos_get(struct rte_eth_dev *dev __rte_unused,
+ 			 struct rte_eth_dev_info *dev_info);
++int enetc4_rx_queue_setup(struct rte_eth_dev *dev, uint16_t rx_queue_id,
++			  uint16_t nb_rx_desc, unsigned int socket_id __rte_unused,
++			  const struct rte_eth_rxconf *rx_conf,
++			  struct rte_mempool *mb_pool);
++int enetc4_rx_queue_start(struct rte_eth_dev *dev, uint16_t qidx);
++int enetc4_rx_queue_stop(struct rte_eth_dev *dev, uint16_t qidx);
++void enetc4_rx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
++int enetc4_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
++			  uint16_t nb_desc, unsigned int socket_id __rte_unused,
++			  const struct rte_eth_txconf *tx_conf);
++int enetc4_tx_queue_start(struct rte_eth_dev *dev, uint16_t qidx);
++int enetc4_tx_queue_stop(struct rte_eth_dev *dev, uint16_t qidx);
++void enetc4_tx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
  
- #ifndef _ENETC_H_
- #define _ENETC_H_
- 
- #include <rte_time.h>
-+#include <ethdev_pci.h>
- 
-+#include "compat.h"
- #include "base/enetc_hw.h"
-+#include "enetc_logs.h"
- 
- #define PCI_VENDOR_ID_FREESCALE 0x1957
- 
- /* Max TX rings per ENETC. */
--#define MAX_TX_RINGS	2
-+#define MAX_TX_RINGS	1
- 
- /* Max RX rings per ENTEC. */
- #define MAX_RX_RINGS	1
-@@ -33,21 +36,11 @@
- #define ENETC_ETH_MAX_LEN (RTE_ETHER_MTU + \
- 		RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN)
- 
--/*
-- * upper_32_bits - return bits 32-63 of a number
-- * @n: the number we're accessing
-- *
-- * A basic shift-right of a 64- or 32-bit quantity.  Use this to suppress
-- * the "right shift count >= width of type" warning when that quantity is
-- * 32-bits.
-- */
--#define upper_32_bits(n) ((uint32_t)(((n) >> 16) >> 16))
-+/* eth name size */
-+#define ENETC_ETH_NAMESIZE	20
- 
--/*
-- * lower_32_bits - return bits 0-31 of a number
-- * @n: the number we're accessing
-- */
--#define lower_32_bits(n) ((uint32_t)(n))
-+/* size for marking hugepage non-cacheable */
-+#define SIZE_2MB	0x200000
- 
- #define ENETC_TXBD(BDR, i) (&(((struct enetc_tx_bd *)((BDR).bd_base))[i]))
- #define ENETC_RXBD(BDR, i) (&(((union enetc_rx_bd *)((BDR).bd_base))[i]))
-@@ -96,6 +89,20 @@ struct enetc_eth_adapter {
- #define ENETC_DEV_PRIVATE_TO_INTR(adapter) \
- 	(&((struct enetc_eth_adapter *)adapter)->intr)
- 
-+/*
-+ * ENETC4 function prototypes
-+ */
-+int enetc4_pci_remove(struct rte_pci_device *pci_dev);
-+int enetc4_dev_configure(struct rte_eth_dev *dev);
-+int enetc4_dev_close(struct rte_eth_dev *dev);
-+int enetc4_dev_infos_get(struct rte_eth_dev *dev __rte_unused,
-+			 struct rte_eth_dev_info *dev_info);
-+
-+/*
-+ * enetc4_vf function prototype
-+ */
-+int enetc4_vf_dev_stop(struct rte_eth_dev *dev);
-+
  /*
-  * RX/TX ENETC function prototypes
-  */
-@@ -104,8 +111,9 @@ uint16_t enetc_xmit_pkts(void *txq, struct rte_mbuf **tx_pkts,
- uint16_t enetc_recv_pkts(void *rxq, struct rte_mbuf **rx_pkts,
- 		uint16_t nb_pkts);
- 
--
- int enetc_refill_rx_ring(struct enetc_bdr *rx_ring, const int buff_cnt);
-+void enetc4_dev_hw_init(struct rte_eth_dev *eth_dev);
-+void print_ethaddr(const char *name, const struct rte_ether_addr *eth_addr);
- 
- static inline int
- enetc_bd_unused(struct enetc_bdr *bdr)
+  * enetc4_vf function prototype
 diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
-new file mode 100644
-index 0000000000..e96f390626
---- /dev/null
+index e96f390626..6f67eda24e 100644
+--- a/drivers/net/enetc/enetc4_ethdev.c
 +++ b/drivers/net/enetc/enetc4_ethdev.c
-@@ -0,0 +1,297 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2024 NXP
-+ */
-+
-+#include <stdbool.h>
-+#include <rte_random.h>
-+#include <dpaax_iova_table.h>
-+
-+#include "base/enetc4_hw.h"
-+#include "enetc_logs.h"
-+#include "enetc.h"
-+
+@@ -131,10 +131,305 @@ enetc4_dev_infos_get(struct rte_eth_dev *dev __rte_unused,
+ 	return 0;
+ }
+ 
 +static int
-+enetc4_dev_start(struct rte_eth_dev *dev)
++enetc4_alloc_txbdr(struct enetc_bdr *txr, uint16_t nb_desc)
 +{
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	uint32_t val;
++	int size;
 +
-+	PMD_INIT_FUNC_TRACE();
++	size = nb_desc * sizeof(struct enetc_swbd);
++	txr->q_swbd = rte_malloc(NULL, size, ENETC_BD_RING_ALIGN);
++	if (txr->q_swbd == NULL)
++		return -ENOMEM;
 +
-+	val = enetc4_port_rd(enetc_hw, ENETC4_PM_CMD_CFG(0));
-+	enetc4_port_wr(enetc_hw, ENETC4_PM_CMD_CFG(0),
-+		       val | PM_CMD_CFG_TX_EN | PM_CMD_CFG_RX_EN);
-+
-+	val = enetc4_port_rd(enetc_hw, ENETC4_PM_CMD_CFG(1));
-+	enetc4_port_wr(enetc_hw, ENETC4_PM_CMD_CFG(1),
-+		       val | PM_CMD_CFG_TX_EN | PM_CMD_CFG_RX_EN);
-+
-+	/* Enable port */
-+	val = enetc4_port_rd(enetc_hw, ENETC4_PMR);
-+	enetc4_port_wr(enetc_hw, ENETC4_PMR, val | ENETC4_PMR_EN);
-+
-+	/* Enable port transmit/receive */
-+	enetc4_port_wr(enetc_hw, ENETC4_POR, 0);
-+
-+	return 0;
-+}
-+
-+static int
-+enetc4_dev_stop(struct rte_eth_dev *dev)
-+{
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	uint32_t val;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	/* Disable port */
-+	val = enetc4_port_rd(enetc_hw, ENETC4_PMR);
-+	enetc4_port_wr(enetc_hw, ENETC4_PMR, val & (~ENETC4_PMR_EN));
-+
-+	val = enetc4_port_rd(enetc_hw, ENETC4_PM_CMD_CFG(0));
-+	enetc4_port_wr(enetc_hw, ENETC4_PM_CMD_CFG(0),
-+		      val & (~(PM_CMD_CFG_TX_EN | PM_CMD_CFG_RX_EN)));
-+
-+	val = enetc4_port_rd(enetc_hw, ENETC4_PM_CMD_CFG(1));
-+	enetc4_port_wr(enetc_hw, ENETC4_PM_CMD_CFG(1),
-+		      val & (~(PM_CMD_CFG_TX_EN | PM_CMD_CFG_RX_EN)));
-+
-+	return 0;
-+}
-+
-+static int
-+enetc4_mac_init(struct enetc_eth_hw *hw, struct rte_eth_dev *eth_dev)
-+{
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	uint32_t high_mac = 0;
-+	uint16_t low_mac = 0;
-+	char eth_name[ENETC_ETH_NAMESIZE];
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	/* Enabling Station Interface */
-+	enetc4_wr(enetc_hw, ENETC_SIMR, ENETC_SIMR_EN);
-+
-+	high_mac = (uint32_t)enetc4_port_rd(enetc_hw, ENETC4_PSIPMAR0(0));
-+	low_mac = (uint16_t)enetc4_port_rd(enetc_hw, ENETC4_PSIPMAR1(0));
-+
-+	if ((high_mac | low_mac) == 0) {
-+		ENETC_PMD_NOTICE("MAC is not available for this SI, "
-+				"set random MAC");
-+		rte_eth_random_addr(hw->mac.addr);
-+		high_mac = *(uint32_t *)hw->mac.addr;
-+		enetc4_port_wr(enetc_hw, ENETC4_PMAR0, high_mac);
-+		low_mac = *(uint16_t *)(hw->mac.addr + 4);
-+		enetc4_port_wr(enetc_hw, ENETC4_PMAR1, low_mac);
-+		print_ethaddr("New address: ",
-+			      (const struct rte_ether_addr *)hw->mac.addr);
-+	}
-+
-+	/* Allocate memory for storing MAC addresses */
-+	snprintf(eth_name, sizeof(eth_name), "enetc4_eth_%d", eth_dev->data->port_id);
-+	eth_dev->data->mac_addrs = rte_zmalloc(eth_name,
-+					RTE_ETHER_ADDR_LEN, 0);
-+	if (!eth_dev->data->mac_addrs) {
-+		ENETC_PMD_ERR("Failed to allocate %d bytes needed to "
-+			      "store MAC addresses",
-+			      RTE_ETHER_ADDR_LEN * 1);
++	size = nb_desc * sizeof(struct enetc_bdr);
++	txr->bd_base = rte_malloc(NULL, size, ENETC_BD_RING_ALIGN);
++	if (txr->bd_base == NULL) {
++		rte_free(txr->q_swbd);
++		txr->q_swbd = NULL;
 +		return -ENOMEM;
 +	}
-+
-+	/* Copy the permanent MAC address */
-+	rte_ether_addr_copy((struct rte_ether_addr *)hw->mac.addr,
-+			&eth_dev->data->mac_addrs[0]);
-+
-+	return 0;
-+}
-+
-+int
-+enetc4_dev_infos_get(struct rte_eth_dev *dev __rte_unused,
-+		    struct rte_eth_dev_info *dev_info)
-+{
-+	PMD_INIT_FUNC_TRACE();
-+	dev_info->rx_desc_lim = (struct rte_eth_desc_lim) {
-+		.nb_max = MAX_BD_COUNT,
-+		.nb_min = MIN_BD_COUNT,
-+		.nb_align = BD_ALIGN,
-+	};
-+	dev_info->tx_desc_lim = (struct rte_eth_desc_lim) {
-+		.nb_max = MAX_BD_COUNT,
-+		.nb_min = MIN_BD_COUNT,
-+		.nb_align = BD_ALIGN,
-+	};
-+	dev_info->max_rx_queues = MAX_RX_RINGS;
-+	dev_info->max_tx_queues = MAX_TX_RINGS;
-+	dev_info->max_rx_pktlen = ENETC4_MAC_MAXFRM_SIZE;
++	txr->bd_count = nb_desc;
++	txr->next_to_clean = 0;
++	txr->next_to_use = 0;
 +
 +	return 0;
 +}
 +
-+int
-+enetc4_dev_close(struct rte_eth_dev *dev)
++static void
++enetc4_free_bdr(struct enetc_bdr *rxr)
 +{
-+	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	int ret;
++	rte_free(rxr->bd_base);
++	rte_free(rxr->q_swbd);
++	rxr->q_swbd = NULL;
++	rxr->bd_base = NULL;
++}
 +
-+	PMD_INIT_FUNC_TRACE();
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return 0;
++static void
++enetc4_setup_txbdr(struct enetc_hw *hw, struct enetc_bdr *tx_ring)
++{
++	int idx = tx_ring->index;
++	phys_addr_t bd_address;
 +
-+	if (hw->device_id == ENETC4_DEV_ID_VF)
-+		ret = enetc4_vf_dev_stop(dev);
-+	else
-+		ret = enetc4_dev_stop(dev);
++	bd_address = (phys_addr_t)
++		     rte_mem_virt2iova((const void *)tx_ring->bd_base);
++	enetc4_txbdr_wr(hw, idx, ENETC_TBBAR0,
++		       lower_32_bits((uint64_t)bd_address));
++	enetc4_txbdr_wr(hw, idx, ENETC_TBBAR1,
++		       upper_32_bits((uint64_t)bd_address));
++	enetc4_txbdr_wr(hw, idx, ENETC_TBLENR,
++		       ENETC_RTBLENR_LEN(tx_ring->bd_count));
 +
-+	if (rte_eal_iova_mode() == RTE_IOVA_PA)
-+		dpaax_iova_table_depopulate();
-+
-+	return ret;
++	enetc4_txbdr_wr(hw, idx, ENETC_TBCIR, 0);
++	enetc4_txbdr_wr(hw, idx, ENETC_TBCISR, 0);
++	tx_ring->tcir = (void *)((size_t)hw->reg +
++			ENETC_BDR(TX, idx, ENETC_TBCIR));
++	tx_ring->tcisr = (void *)((size_t)hw->reg +
++			 ENETC_BDR(TX, idx, ENETC_TBCISR));
 +}
 +
 +int
-+enetc4_dev_configure(struct rte_eth_dev *dev)
++enetc4_tx_queue_setup(struct rte_eth_dev *dev,
++		     uint16_t queue_idx,
++		     uint16_t nb_desc,
++		     unsigned int socket_id __rte_unused,
++		     const struct rte_eth_txconf *tx_conf)
 +{
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	uint32_t max_len;
-+	uint32_t val;
++	int err = 0;
++	struct enetc_bdr *tx_ring;
++	struct rte_eth_dev_data *data = dev->data;
++	struct enetc_eth_adapter *priv =
++			ENETC_DEV_PRIVATE(data->dev_private);
 +
 +	PMD_INIT_FUNC_TRACE();
++	if (nb_desc > MAX_BD_COUNT)
++		return -1;
 +
-+	max_len = dev->data->dev_conf.rxmode.mtu + RTE_ETHER_HDR_LEN +
-+		  RTE_ETHER_CRC_LEN;
-+	enetc4_port_wr(enetc_hw, ENETC4_PM_MAXFRM(0), ENETC_SET_MAXFRM(max_len));
++	tx_ring = rte_zmalloc(NULL, sizeof(struct enetc_bdr), 0);
++	if (tx_ring == NULL) {
++		ENETC_PMD_ERR("Failed to allocate TX ring memory");
++		err = -ENOMEM;
++		return -1;
++	}
 +
-+	val = ENETC4_MAC_MAXFRM_SIZE | SDU_TYPE_MPDU;
-+	enetc4_port_wr(enetc_hw, ENETC4_PTCTMSDUR(0), val | SDU_TYPE_MPDU);
++	tx_ring->index = queue_idx;
++	err = enetc4_alloc_txbdr(tx_ring, nb_desc);
++	if (err)
++		goto fail;
++
++	tx_ring->ndev = dev;
++	enetc4_setup_txbdr(&priv->hw.hw, tx_ring);
++	data->tx_queues[queue_idx] = tx_ring;
++	if (!tx_conf->tx_deferred_start) {
++		/* enable ring */
++		enetc4_txbdr_wr(&priv->hw.hw, tx_ring->index,
++			       ENETC_TBMR, ENETC_TBMR_EN);
++		dev->data->tx_queue_state[tx_ring->index] =
++			       RTE_ETH_QUEUE_STATE_STARTED;
++	} else {
++		dev->data->tx_queue_state[tx_ring->index] =
++			       RTE_ETH_QUEUE_STATE_STOPPED;
++	}
 +
 +	return 0;
++fail:
++	rte_free(tx_ring);
++
++	return err;
 +}
 +
-+
-+
-+/*
-+ * The set of PCI devices this driver supports
-+ */
-+static const struct rte_pci_id pci_id_enetc4_map[] = {
-+	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_NXP, ENETC4_DEV_ID) },
-+	{ .vendor_id = 0, /* sentinel */ },
-+};
-+
-+/* Features supported by this driver */
-+static const struct eth_dev_ops enetc4_ops = {
-+	.dev_configure        = enetc4_dev_configure,
-+	.dev_start            = enetc4_dev_start,
-+	.dev_stop             = enetc4_dev_stop,
-+	.dev_close            = enetc4_dev_close,
-+	.dev_infos_get        = enetc4_dev_infos_get,
-+};
-+
-+/*
-+ * Storing the HW base addresses
-+ *
-+ * @param eth_dev
-+ *   - Pointer to the structure rte_eth_dev
-+ */
 +void
-+enetc4_dev_hw_init(struct rte_eth_dev *eth_dev)
++enetc4_tx_queue_release(struct rte_eth_dev *dev, uint16_t qid)
 +{
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(eth_dev->data->dev_private);
-+	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
++	void *txq = dev->data->tx_queues[qid];
 +
-+	eth_dev->rx_pkt_burst = &enetc_recv_pkts;
-+	eth_dev->tx_pkt_burst = &enetc_xmit_pkts;
++	if (txq == NULL)
++		return;
 +
-+	/* Retrieving and storing the HW base address of device */
-+	hw->hw.reg = (void *)pci_dev->mem_resource[0].addr;
-+	hw->device_id = pci_dev->id.device_id;
++	struct enetc_bdr *tx_ring = (struct enetc_bdr *)txq;
++	struct enetc_eth_hw *eth_hw =
++		ENETC_DEV_PRIVATE_TO_HW(tx_ring->ndev->data->dev_private);
++	struct enetc_hw *hw;
++	struct enetc_swbd *tx_swbd;
++	int i;
++	uint32_t val;
 +
-+	/* Calculating and storing the base HW addresses */
-+	hw->hw.port = (void *)((size_t)hw->hw.reg + ENETC_PORT_BASE);
-+	hw->hw.global = (void *)((size_t)hw->hw.reg + ENETC_GLOBAL_BASE);
-+}
++	/* Disable the ring */
++	hw = &eth_hw->hw;
++	val = enetc4_txbdr_rd(hw, tx_ring->index, ENETC_TBMR);
++	val &= (~ENETC_TBMR_EN);
++	enetc4_txbdr_wr(hw, tx_ring->index, ENETC_TBMR, val);
 +
-+/**
-+ * Initialisation of the enetc4 device
-+ *
-+ * @param eth_dev
-+ *   - Pointer to the structure rte_eth_dev
-+ *
-+ * @return
-+ *   - On success, zero.
-+ *   - On failure, negative value.
-+ */
-+
-+static int
-+enetc4_dev_init(struct rte_eth_dev *eth_dev)
-+{
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(eth_dev->data->dev_private);
-+	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-+	int error = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+	eth_dev->dev_ops = &enetc4_ops;
-+	enetc4_dev_hw_init(eth_dev);
-+
-+	error = enetc4_mac_init(hw, eth_dev);
-+	if (error != 0) {
-+		ENETC_PMD_ERR("MAC initialization failed");
-+		return -1;
++	/* clean the ring*/
++	i = tx_ring->next_to_clean;
++	tx_swbd = &tx_ring->q_swbd[i];
++	while (tx_swbd->buffer_addr != NULL) {
++		rte_pktmbuf_free(tx_swbd->buffer_addr);
++		tx_swbd->buffer_addr = NULL;
++		tx_swbd++;
++		i++;
++		if (unlikely(i == tx_ring->bd_count)) {
++			i = 0;
++			tx_swbd = &tx_ring->q_swbd[i];
++		}
 +	}
 +
-+	/* Set MTU */
-+	enetc_port_wr(&hw->hw, ENETC4_PM_MAXFRM(0),
-+		      ENETC_SET_MAXFRM(RTE_ETHER_MAX_LEN));
-+	eth_dev->data->mtu = RTE_ETHER_MAX_LEN - RTE_ETHER_HDR_LEN -
-+		RTE_ETHER_CRC_LEN;
-+
-+	if (rte_eal_iova_mode() == RTE_IOVA_PA)
-+		dpaax_iova_table_populate();
-+
-+	ENETC_PMD_DEBUG("port_id %d vendorID=0x%x deviceID=0x%x",
-+			eth_dev->data->port_id, pci_dev->id.vendor_id,
-+			pci_dev->id.device_id);
-+	return 0;
++	enetc4_free_bdr(tx_ring);
++	rte_free(tx_ring);
 +}
 +
 +static int
-+enetc4_dev_uninit(struct rte_eth_dev *eth_dev)
++enetc4_alloc_rxbdr(struct enetc_bdr *rxr, uint16_t nb_desc)
 +{
-+	PMD_INIT_FUNC_TRACE();
++	int size;
 +
-+	return enetc4_dev_close(eth_dev);
-+}
++	size = nb_desc * sizeof(struct enetc_swbd);
++	rxr->q_swbd = rte_malloc(NULL, size, ENETC_BD_RING_ALIGN);
++	if (rxr->q_swbd == NULL)
++		return -ENOMEM;
 +
-+static int
-+enetc4_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
-+			   struct rte_pci_device *pci_dev)
-+{
-+	return rte_eth_dev_pci_generic_probe(pci_dev,
-+					     sizeof(struct enetc_eth_adapter),
-+					     enetc4_dev_init);
-+}
-+
-+int
-+enetc4_pci_remove(struct rte_pci_device *pci_dev)
-+{
-+	return rte_eth_dev_pci_generic_remove(pci_dev, enetc4_dev_uninit);
-+}
-+
-+static struct rte_pci_driver rte_enetc4_pmd = {
-+	.id_table = pci_id_enetc4_map,
-+	.drv_flags = RTE_PCI_DRV_NEED_MAPPING,
-+	.probe = enetc4_pci_probe,
-+	.remove = enetc4_pci_remove,
-+};
-+
-+RTE_PMD_REGISTER_PCI(net_enetc4, rte_enetc4_pmd);
-+RTE_PMD_REGISTER_PCI_TABLE(net_enetc4, pci_id_enetc4_map);
-+RTE_PMD_REGISTER_KMOD_DEP(net_enetc4, "* vfio-pci");
-+RTE_LOG_REGISTER_DEFAULT(enetc4_logtype_pmd, NOTICE);
-diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-new file mode 100644
-index 0000000000..7996d6decb
---- /dev/null
-+++ b/drivers/net/enetc/enetc4_vf.c
-@@ -0,0 +1,146 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2024 NXP
-+ */
-+
-+#include <stdbool.h>
-+#include <rte_random.h>
-+#include <dpaax_iova_table.h>
-+#include "base/enetc4_hw.h"
-+#include "base/enetc_hw.h"
-+#include "enetc_logs.h"
-+#include "enetc.h"
-+
-+int
-+enetc4_vf_dev_stop(struct rte_eth_dev *dev __rte_unused)
-+{
-+	PMD_INIT_FUNC_TRACE();
-+
-+	return 0;
-+}
-+
-+static int
-+enetc4_vf_dev_start(struct rte_eth_dev *dev __rte_unused)
-+{
-+	PMD_INIT_FUNC_TRACE();
-+
-+	return 0;
-+}
-+
-+/*
-+ * The set of PCI devices this driver supports
-+ */
-+static const struct rte_pci_id pci_vf_id_enetc4_map[] = {
-+	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_NXP, ENETC4_DEV_ID_VF) },
-+	{ .vendor_id = 0, /* sentinel */ },
-+};
-+
-+/* Features supported by this driver */
-+static const struct eth_dev_ops enetc4_vf_ops = {
-+	.dev_configure        = enetc4_dev_configure,
-+	.dev_start            = enetc4_vf_dev_start,
-+	.dev_stop             = enetc4_vf_dev_stop,
-+	.dev_close            = enetc4_dev_close,
-+	.dev_infos_get        = enetc4_dev_infos_get,
-+};
-+
-+static int
-+enetc4_vf_mac_init(struct enetc_eth_hw *hw, struct rte_eth_dev *eth_dev)
-+{
-+	uint32_t *mac = (uint32_t *)hw->mac.addr;
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	uint32_t high_mac = 0;
-+	uint16_t low_mac = 0;
-+	char vf_eth_name[ENETC_ETH_NAMESIZE];
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	/* Enabling Station Interface */
-+	enetc4_wr(enetc_hw, ENETC_SIMR, ENETC_SIMR_EN);
-+	*mac = (uint32_t)enetc_rd(enetc_hw, ENETC_SIPMAR0);
-+	high_mac = (uint32_t)*mac;
-+	mac++;
-+	*mac = (uint16_t)enetc_rd(enetc_hw, ENETC_SIPMAR1);
-+	low_mac = (uint16_t)*mac;
-+
-+	if ((high_mac | low_mac) == 0) {
-+		char *first_byte;
-+		ENETC_PMD_NOTICE("MAC is not available for this SI, "
-+				 "set random MAC");
-+		mac = (uint32_t *)hw->mac.addr;
-+		*mac = (uint32_t)rte_rand();
-+		first_byte = (char *)mac;
-+		*first_byte &= 0xfe;    /* clear multicast bit */
-+		*first_byte |= 0x02;    /* set local assignment bit (IEEE802) */
-+		enetc4_port_wr(enetc_hw, ENETC4_PMAR0, *mac);
-+		mac++;
-+		*mac = (uint16_t)rte_rand();
-+		enetc4_port_wr(enetc_hw, ENETC4_PMAR1, *mac);
-+		print_ethaddr("New address: ",
-+			(const struct rte_ether_addr *)hw->mac.addr);
-+	}
-+
-+	/* Allocate memory for storing MAC addresses */
-+	snprintf(vf_eth_name, sizeof(vf_eth_name), "enetc4_vf_eth_%d", eth_dev->data->port_id);
-+	eth_dev->data->mac_addrs = rte_zmalloc(vf_eth_name,
-+					RTE_ETHER_ADDR_LEN, 0);
-+	if (!eth_dev->data->mac_addrs) {
-+		ENETC_PMD_ERR("Failed to allocate %d bytes needed to "
-+			      "store MAC addresses",
-+			      RTE_ETHER_ADDR_LEN * 1);
++	size = nb_desc * sizeof(struct enetc_bdr);
++	rxr->bd_base = rte_malloc(NULL, size, ENETC_BD_RING_ALIGN);
++	if (rxr->bd_base == NULL) {
++		rte_free(rxr->q_swbd);
++		rxr->q_swbd = NULL;
 +		return -ENOMEM;
 +	}
-+
-+	/* Copy the permanent MAC address */
-+	rte_ether_addr_copy((struct rte_ether_addr *)hw->mac.addr,
-+			     &eth_dev->data->mac_addrs[0]);
++	rxr->bd_count = nb_desc;
++	rxr->next_to_clean = 0;
++	rxr->next_to_use = 0;
++	rxr->next_to_alloc = 0;
 +
 +	return 0;
 +}
 +
-+static int
-+enetc4_vf_dev_init(struct rte_eth_dev *eth_dev)
++static void
++enetc4_setup_rxbdr(struct enetc_hw *hw, struct enetc_bdr *rx_ring,
++		  struct rte_mempool *mb_pool)
 +{
-+	struct enetc_eth_hw *hw =
-+			    ENETC_DEV_PRIVATE_TO_HW(eth_dev->data->dev_private);
-+	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-+	int error = 0;
++	int idx = rx_ring->index;
++	uint16_t buf_size;
++	phys_addr_t bd_address;
++
++	bd_address = (phys_addr_t)
++		     rte_mem_virt2iova((const void *)rx_ring->bd_base);
++
++	enetc4_rxbdr_wr(hw, idx, ENETC_RBBAR0,
++		       lower_32_bits((uint64_t)bd_address));
++	enetc4_rxbdr_wr(hw, idx, ENETC_RBBAR1,
++		       upper_32_bits((uint64_t)bd_address));
++	enetc4_rxbdr_wr(hw, idx, ENETC_RBLENR,
++		       ENETC_RTBLENR_LEN(rx_ring->bd_count));
++
++	rx_ring->mb_pool = mb_pool;
++	rx_ring->rcir = (void *)((size_t)hw->reg +
++			ENETC_BDR(RX, idx, ENETC_RBCIR));
++	enetc_refill_rx_ring(rx_ring, (enetc_bd_unused(rx_ring)));
++	buf_size = (uint16_t)(rte_pktmbuf_data_room_size(rx_ring->mb_pool) -
++		   RTE_PKTMBUF_HEADROOM);
++	enetc4_rxbdr_wr(hw, idx, ENETC_RBBSR, buf_size);
++	enetc4_rxbdr_wr(hw, idx, ENETC_RBPIR, 0);
++}
++
++int
++enetc4_rx_queue_setup(struct rte_eth_dev *dev,
++		     uint16_t rx_queue_id,
++		     uint16_t nb_rx_desc,
++		     unsigned int socket_id __rte_unused,
++		     const struct rte_eth_rxconf *rx_conf,
++		     struct rte_mempool *mb_pool)
++{
++	int err = 0;
++	struct enetc_bdr *rx_ring;
++	struct rte_eth_dev_data *data =  dev->data;
++	struct enetc_eth_adapter *adapter =
++			ENETC_DEV_PRIVATE(data->dev_private);
++	uint64_t rx_offloads = data->dev_conf.rxmode.offloads;
 +
 +	PMD_INIT_FUNC_TRACE();
-+	eth_dev->dev_ops = &enetc4_vf_ops;
-+	enetc4_dev_hw_init(eth_dev);
-+
-+	error = enetc4_vf_mac_init(hw, eth_dev);
-+	if (error != 0) {
-+		ENETC_PMD_ERR("MAC initialization failed!!");
++	if (nb_rx_desc > MAX_BD_COUNT)
 +		return -1;
++
++	rx_ring = rte_zmalloc(NULL, sizeof(struct enetc_bdr), 0);
++	if (rx_ring == NULL) {
++		ENETC_PMD_ERR("Failed to allocate RX ring memory");
++		err = -ENOMEM;
++		return err;
 +	}
 +
-+	if (rte_eal_iova_mode() == RTE_IOVA_PA)
-+		dpaax_iova_table_populate();
++	rx_ring->index = rx_queue_id;
++	err = enetc4_alloc_rxbdr(rx_ring, nb_rx_desc);
++	if (err)
++		goto fail;
 +
-+	ENETC_PMD_DEBUG("port_id %d vendorID=0x%x deviceID=0x%x",
-+			eth_dev->data->port_id, pci_dev->id.vendor_id,
-+			pci_dev->id.device_id);
++	rx_ring->ndev = dev;
++	enetc4_setup_rxbdr(&adapter->hw.hw, rx_ring, mb_pool);
++	data->rx_queues[rx_queue_id] = rx_ring;
++
++	if (!rx_conf->rx_deferred_start) {
++		/* enable ring */
++		enetc4_rxbdr_wr(&adapter->hw.hw, rx_ring->index, ENETC_RBMR,
++			       ENETC_RBMR_EN);
++		dev->data->rx_queue_state[rx_ring->index] =
++			       RTE_ETH_QUEUE_STATE_STARTED;
++	} else {
++		dev->data->rx_queue_state[rx_ring->index] =
++			       RTE_ETH_QUEUE_STATE_STOPPED;
++	}
++
++	rx_ring->crc_len = (uint8_t)((rx_offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC) ?
++				     RTE_ETHER_CRC_LEN : 0);
++	return 0;
++fail:
++	rte_free(rx_ring);
++
++	return err;
++}
++
++void
++enetc4_rx_queue_release(struct rte_eth_dev *dev, uint16_t qid)
++{
++	void *rxq = dev->data->rx_queues[qid];
++
++	if (rxq == NULL)
++		return;
++
++	struct enetc_bdr *rx_ring = (struct enetc_bdr *)rxq;
++	struct enetc_eth_hw *eth_hw =
++		ENETC_DEV_PRIVATE_TO_HW(rx_ring->ndev->data->dev_private);
++	struct enetc_swbd *q_swbd;
++	struct enetc_hw *hw;
++	uint32_t val;
++	int i;
++
++	/* Disable the ring */
++	hw = &eth_hw->hw;
++	val = enetc4_rxbdr_rd(hw, rx_ring->index, ENETC_RBMR);
++	val &= (~ENETC_RBMR_EN);
++	enetc4_rxbdr_wr(hw, rx_ring->index, ENETC_RBMR, val);
++
++	/* Clean the ring */
++	i = rx_ring->next_to_clean;
++	q_swbd = &rx_ring->q_swbd[i];
++	while (i != rx_ring->next_to_use) {
++		rte_pktmbuf_free(q_swbd->buffer_addr);
++		q_swbd->buffer_addr = NULL;
++		q_swbd++;
++		i++;
++		if (unlikely(i == rx_ring->bd_count)) {
++			i = 0;
++			q_swbd = &rx_ring->q_swbd[i];
++		}
++	}
++
++	enetc4_free_bdr(rx_ring);
++	rte_free(rx_ring);
++}
++
+ int
+ enetc4_dev_close(struct rte_eth_dev *dev)
+ {
+ 	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	uint16_t i;
+ 	int ret;
+ 
+ 	PMD_INIT_FUNC_TRACE();
+@@ -146,6 +441,18 @@ enetc4_dev_close(struct rte_eth_dev *dev)
+ 	else
+ 		ret = enetc4_dev_stop(dev);
+ 
++	for (i = 0; i < dev->data->nb_rx_queues; i++) {
++		enetc4_rx_queue_release(dev, i);
++		dev->data->rx_queues[i] = NULL;
++	}
++	dev->data->nb_rx_queues = 0;
++
++	for (i = 0; i < dev->data->nb_tx_queues; i++) {
++		enetc4_tx_queue_release(dev, i);
++		dev->data->tx_queues[i] = NULL;
++	}
++	dev->data->nb_tx_queues = 0;
++
+ 	if (rte_eal_iova_mode() == RTE_IOVA_PA)
+ 		dpaax_iova_table_depopulate();
+ 
+@@ -173,7 +480,93 @@ enetc4_dev_configure(struct rte_eth_dev *dev)
+ 	return 0;
+ }
+ 
++int
++enetc4_rx_queue_start(struct rte_eth_dev *dev, uint16_t qidx)
++{
++	struct enetc_eth_adapter *priv =
++			ENETC_DEV_PRIVATE(dev->data->dev_private);
++	struct enetc_bdr *rx_ring;
++	uint32_t rx_data;
++
++	PMD_INIT_FUNC_TRACE();
++	rx_ring = dev->data->rx_queues[qidx];
++	if (dev->data->rx_queue_state[qidx] == RTE_ETH_QUEUE_STATE_STOPPED) {
++		rx_data = enetc4_rxbdr_rd(&priv->hw.hw, rx_ring->index,
++					 ENETC_RBMR);
++		rx_data = rx_data | ENETC_RBMR_EN;
++		enetc4_rxbdr_wr(&priv->hw.hw, rx_ring->index, ENETC_RBMR,
++			       rx_data);
++		dev->data->rx_queue_state[qidx] = RTE_ETH_QUEUE_STATE_STARTED;
++	}
++
 +	return 0;
 +}
 +
-+static int
-+enetc4_vf_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
-+		    struct rte_pci_device *pci_dev)
++int
++enetc4_rx_queue_stop(struct rte_eth_dev *dev, uint16_t qidx)
 +{
-+	return rte_eth_dev_pci_generic_probe(pci_dev,
-+					     sizeof(struct enetc_eth_adapter),
-+					     enetc4_vf_dev_init);
++	struct enetc_eth_adapter *priv =
++			ENETC_DEV_PRIVATE(dev->data->dev_private);
++	struct enetc_bdr *rx_ring;
++	uint32_t rx_data;
++
++	PMD_INIT_FUNC_TRACE();
++	rx_ring = dev->data->rx_queues[qidx];
++	if (dev->data->rx_queue_state[qidx] == RTE_ETH_QUEUE_STATE_STARTED) {
++		rx_data = enetc4_rxbdr_rd(&priv->hw.hw, rx_ring->index,
++					 ENETC_RBMR);
++		rx_data = rx_data & (~ENETC_RBMR_EN);
++		enetc4_rxbdr_wr(&priv->hw.hw, rx_ring->index, ENETC_RBMR,
++			       rx_data);
++		dev->data->rx_queue_state[qidx] = RTE_ETH_QUEUE_STATE_STOPPED;
++	}
++
++	return 0;
 +}
 +
-+static struct rte_pci_driver rte_enetc4_vf_pmd = {
-+	.id_table = pci_vf_id_enetc4_map,
-+	.drv_flags = RTE_PCI_DRV_NEED_MAPPING,
-+	.probe = enetc4_vf_pci_probe,
-+	.remove = enetc4_pci_remove,
-+};
++int
++enetc4_tx_queue_start(struct rte_eth_dev *dev, uint16_t qidx)
++{
++	struct enetc_eth_adapter *priv =
++			ENETC_DEV_PRIVATE(dev->data->dev_private);
++	struct enetc_bdr *tx_ring;
++	uint32_t tx_data;
+ 
++	PMD_INIT_FUNC_TRACE();
++	tx_ring = dev->data->tx_queues[qidx];
++	if (dev->data->tx_queue_state[qidx] == RTE_ETH_QUEUE_STATE_STOPPED) {
++		tx_data = enetc4_txbdr_rd(&priv->hw.hw, tx_ring->index,
++					 ENETC_TBMR);
++		tx_data = tx_data | ENETC_TBMR_EN;
++		enetc4_txbdr_wr(&priv->hw.hw, tx_ring->index, ENETC_TBMR,
++			       tx_data);
++		dev->data->tx_queue_state[qidx] = RTE_ETH_QUEUE_STATE_STARTED;
++	}
 +
-+RTE_PMD_REGISTER_PCI(net_enetc4_vf, rte_enetc4_vf_pmd);
-+RTE_PMD_REGISTER_PCI_TABLE(net_enetc4_vf, pci_vf_id_enetc4_map);
-+RTE_PMD_REGISTER_KMOD_DEP(net_enetc4_vf, "* uio_pci_generic");
-+RTE_LOG_REGISTER_DEFAULT(enetc4_vf_logtype_pmd, NOTICE);
-diff --git a/drivers/net/enetc/enetc_ethdev.c b/drivers/net/enetc/enetc_ethdev.c
-index ffbecc407c..d7cba1ba83 100644
---- a/drivers/net/enetc/enetc_ethdev.c
-+++ b/drivers/net/enetc/enetc_ethdev.c
-@@ -1,9 +1,8 @@
++	return 0;
++}
++
++int
++enetc4_tx_queue_stop(struct rte_eth_dev *dev, uint16_t qidx)
++{
++	struct enetc_eth_adapter *priv =
++			ENETC_DEV_PRIVATE(dev->data->dev_private);
++	struct enetc_bdr *tx_ring;
++	uint32_t tx_data;
++
++	PMD_INIT_FUNC_TRACE();
++	tx_ring = dev->data->tx_queues[qidx];
++	if (dev->data->tx_queue_state[qidx] == RTE_ETH_QUEUE_STATE_STARTED) {
++		tx_data = enetc4_txbdr_rd(&priv->hw.hw, tx_ring->index,
++					 ENETC_TBMR);
++		tx_data = tx_data & (~ENETC_TBMR_EN);
++		enetc4_txbdr_wr(&priv->hw.hw, tx_ring->index, ENETC_TBMR,
++			       tx_data);
++		dev->data->tx_queue_state[qidx] = RTE_ETH_QUEUE_STATE_STOPPED;
++	}
++
++	return 0;
++}
+ 
+ /*
+  * The set of PCI devices this driver supports
+@@ -190,6 +583,14 @@ static const struct eth_dev_ops enetc4_ops = {
+ 	.dev_stop             = enetc4_dev_stop,
+ 	.dev_close            = enetc4_dev_close,
+ 	.dev_infos_get        = enetc4_dev_infos_get,
++	.rx_queue_setup       = enetc4_rx_queue_setup,
++	.rx_queue_start       = enetc4_rx_queue_start,
++	.rx_queue_stop        = enetc4_rx_queue_stop,
++	.rx_queue_release     = enetc4_rx_queue_release,
++	.tx_queue_setup       = enetc4_tx_queue_setup,
++	.tx_queue_start       = enetc4_tx_queue_start,
++	.tx_queue_stop        = enetc4_tx_queue_stop,
++	.tx_queue_release     = enetc4_tx_queue_release,
+ };
+ 
+ /*
+diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
+index 7996d6decb..0c68229a8d 100644
+--- a/drivers/net/enetc/enetc4_vf.c
++++ b/drivers/net/enetc/enetc4_vf.c
+@@ -41,6 +41,14 @@ static const struct eth_dev_ops enetc4_vf_ops = {
+ 	.dev_stop             = enetc4_vf_dev_stop,
+ 	.dev_close            = enetc4_dev_close,
+ 	.dev_infos_get        = enetc4_dev_infos_get,
++	.rx_queue_setup       = enetc4_rx_queue_setup,
++	.rx_queue_start       = enetc4_rx_queue_start,
++	.rx_queue_stop        = enetc4_rx_queue_stop,
++	.rx_queue_release     = enetc4_rx_queue_release,
++	.tx_queue_setup       = enetc4_tx_queue_setup,
++	.tx_queue_start       = enetc4_tx_queue_start,
++	.tx_queue_stop        = enetc4_tx_queue_stop,
++	.tx_queue_release     = enetc4_tx_queue_release,
+ };
+ 
+ static int
+diff --git a/drivers/net/enetc/enetc_rxtx.c b/drivers/net/enetc/enetc_rxtx.c
+index ea64c9f682..1fc5f11339 100644
+--- a/drivers/net/enetc/enetc_rxtx.c
++++ b/drivers/net/enetc/enetc_rxtx.c
+@@ -1,5 +1,5 @@
  /* SPDX-License-Identifier: BSD-3-Clause
 - * Copyright 2018-2020 NXP
 + * Copyright 2018-2024 NXP
   */
  
  #include <stdbool.h>
--#include <ethdev_pci.h>
- #include <rte_random.h>
- #include <dpaax_iova_table.h>
+@@ -11,6 +11,7 @@
+ #include "rte_memzone.h"
  
-@@ -145,7 +144,7 @@ enetc_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused)
- 	return rte_eth_linkstatus_set(dev, &link);
- }
+ #include "base/enetc_hw.h"
++#include "base/enetc4_hw.h"
+ #include "enetc.h"
+ #include "enetc_logs.h"
  
--static void
-+void
- print_ethaddr(const char *name, const struct rte_ether_addr *eth_addr)
- {
- 	char buf[RTE_ETHER_ADDR_FMT_SIZE];
-diff --git a/drivers/net/enetc/meson.build b/drivers/net/enetc/meson.build
-index 966dc694fc..6e00758a36 100644
---- a/drivers/net/enetc/meson.build
-+++ b/drivers/net/enetc/meson.build
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: BSD-3-Clause
--# Copyright 2018 NXP
-+# Copyright 2018,2024 NXP
+@@ -85,6 +86,12 @@ enetc_xmit_pkts(void *tx_queue,
+ 	int i, start, bds_to_use;
+ 	struct enetc_tx_bd *txbd;
+ 	struct enetc_bdr *tx_ring = (struct enetc_bdr *)tx_queue;
++	unsigned short buflen;
++	uint8_t *data;
++	int j;
++
++	struct enetc_eth_hw *hw =
++			ENETC_DEV_PRIVATE_TO_HW(tx_ring->ndev->data->dev_private);
  
- if not is_linux
-     build = false
-@@ -8,6 +8,8 @@ endif
+ 	i = tx_ring->next_to_use;
  
- deps += ['common_dpaax']
- sources = files(
-+	'enetc4_ethdev.c',
-+	'enetc4_vf.c',
-         'enetc_ethdev.c',
-         'enetc_rxtx.c',
- )
+@@ -95,6 +102,13 @@ enetc_xmit_pkts(void *tx_queue,
+ 	start = 0;
+ 	while (nb_pkts--) {
+ 		tx_ring->q_swbd[i].buffer_addr = tx_pkts[start];
++
++		if (hw->device_id == ENETC4_DEV_ID || hw->device_id == ENETC4_DEV_ID_VF) {
++			buflen = rte_pktmbuf_pkt_len(tx_ring->q_swbd[i].buffer_addr);
++			data = rte_pktmbuf_mtod(tx_ring->q_swbd[i].buffer_addr, void *);
++			for (j = 0; j <= buflen; j += RTE_CACHE_LINE_SIZE)
++				dcbf(data + j);
++		}
+ 		txbd = ENETC_TXBD(*tx_ring, i);
+ 		tx_swbd = &tx_ring->q_swbd[i];
+ 		txbd->frm_len = tx_pkts[start]->pkt_len;
+@@ -326,6 +340,12 @@ enetc_clean_rx_ring(struct enetc_bdr *rx_ring,
+ 	int cleaned_cnt, i, bd_count;
+ 	struct enetc_swbd *rx_swbd;
+ 	union enetc_rx_bd *rxbd;
++	uint32_t bd_status;
++	uint8_t *data;
++	uint32_t j;
++	struct enetc_eth_hw *hw =
++			ENETC_DEV_PRIVATE_TO_HW(rx_ring->ndev->data->dev_private);
++
+ 
+ 	/* next descriptor to process */
+ 	i = rx_ring->next_to_clean;
+@@ -351,9 +371,8 @@ enetc_clean_rx_ring(struct enetc_bdr *rx_ring,
+ 
+ 	cleaned_cnt = enetc_bd_unused(rx_ring);
+ 	rx_swbd = &rx_ring->q_swbd[i];
+-	while (likely(rx_frm_cnt < work_limit)) {
+-		uint32_t bd_status;
+ 
++	while (likely(rx_frm_cnt < work_limit)) {
+ 		bd_status = rte_le_to_cpu_32(rxbd->r.lstatus);
+ 		if (!bd_status)
+ 			break;
+@@ -366,6 +385,13 @@ enetc_clean_rx_ring(struct enetc_bdr *rx_ring,
+ 		rx_swbd->buffer_addr->ol_flags = 0;
+ 		enetc_dev_rx_parse(rx_swbd->buffer_addr,
+ 				   rxbd->r.parse_summary);
++
++		if (hw->device_id == ENETC4_DEV_ID || hw->device_id == ENETC4_DEV_ID_VF) {
++			data = rte_pktmbuf_mtod(rx_swbd->buffer_addr, void *);
++			for (j = 0; j <= rx_swbd->buffer_addr->pkt_len; j += RTE_CACHE_LINE_SIZE)
++				dccivac(data + j);
++		}
++
+ 		rx_pkts[rx_frm_cnt] = rx_swbd->buffer_addr;
+ 		cleaned_cnt++;
+ 		rx_swbd++;
 -- 
 2.25.1
 
