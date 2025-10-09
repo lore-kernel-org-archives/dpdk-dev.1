@@ -2,84 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3397CCD184
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D5A7CCD183
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:15:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3DF2440693;
-	Fri, 10 Oct 2025 00:15:37 +0200 (CEST)
-Received: from mail-ua1-f99.google.com (mail-ua1-f99.google.com
- [209.85.222.99]) by mails.dpdk.org (Postfix) with ESMTP id C0EA640663
- for <dev@dpdk.org>; Fri, 10 Oct 2025 00:15:35 +0200 (CEST)
-Received: by mail-ua1-f99.google.com with SMTP id
- a1e0cc1a2514c-930a1bacf0bso883152241.2
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:15:35 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B867A40697;
+	Fri, 10 Oct 2025 00:15:41 +0200 (CEST)
+Received: from mail-il1-f226.google.com (mail-il1-f226.google.com
+ [209.85.166.226])
+ by mails.dpdk.org (Postfix) with ESMTP id AAC48402AE
+ for <dev@dpdk.org>; Fri, 10 Oct 2025 00:15:39 +0200 (CEST)
+Received: by mail-il1-f226.google.com with SMTP id
+ e9e14a558f8ab-42d8ad71a51so16208095ab.1
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:15:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760048135; x=1760652935;
+ d=1e100.net; s=20230601; t=1760048139; x=1760652939;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=gHdDXJvZsIDFYvuzJRm9NaaB99g4ZuMXfT9K0RIWi6c=;
- b=HSR9gHS2DNTubAuZhKCyS6Rkv9v1LbhOGky1tR9Sa6oNV6tXH6ZzbZgZUGbTJNjNj7
- JFfHXNm8okboWZxyeX6dAnmwmuMXVnShyNG2uqY0pdj+Wh5GxKT6cs1OzRNoJUvmAnV6
- 8hFqE8sCSW5VN/12+VKc12RuxPu5ef8RRTm3ijKOevYCziPYgsMZDZSZ5Hz6Liir27Fx
- afOqd0Gov0yPxQCkM0ZFzLpcrF5TpHwLZUDxPuVoAJYk5WVffrv3Zt1vjo9uckMoPdA1
- sCi6F/GPIiXGbcgrs6EENlse6wiMfL/7J6ZliBjSJpe9eximEY5ibYU3DQ5/9J91Q8JF
- oLbw==
-X-Gm-Message-State: AOJu0Yy3lebuS7uANrrs99Un09NR5RYTHaabx6tDLAtBe/Tp1fvvISVS
- OTT3+6MJNVSrCVHuj96W9wNJZQZ9YnJo2GGJBxQAqxwu46TiYGPENXeQnjChbL7G7Fi7mlRT99D
- nfkvqCFI5Li3yhXVudKeD5uDtWu/hJ1IusJk+GFLAdg6BE95mdhGZ55QGopjLCdZy7mow/DKhSe
- 7oGOpHTHAw8GWE4xqGfNjk8487mdZXoDjrwTMwlpwAxctXrG73+HChIu56Li382Kbtvlkfcg==
-X-Gm-Gg: ASbGncspTdmMx2Zx5gHYNgAk5yuqoJiKQ4vsJokCPQ+qQjvswq3la2dmf9nhHjzyPtB
- M3aw+IjPQG0mAsWn6gVij/DB7rx+Y7MHrOeEOu+8oXSHtAdlymsiab9IM5aIolUnIMnKCJSJ9Cx
- rDddBba39xb1xpEfzhPK5k1bzLo1rBXONq/8rWVv7j4FDyJqYAvzyBE9HGJ4t3CAzz10ICDCPec
- pNBiN92LHco6w0OmADdPPIitFgw2Ymxiw9fkacG6rXnPLzuNF1I6va6s6OXveG54STkArSn8tUx
- IJB1Up/DNfGDDg+VEIpRBQJtsyPGVM1Xtnwt2q2/m0HljTr00x3AEEQVaFYMCwuv2VcrmdoNkqR
- v+Nmhpy2O9HxYXCglYUy+Ug5wVSUO9cvBfOz5wW9vHxti8/aUV2bQVLY6XfPuk0WVL7j/4VDSqA
- b7Vb9x
-X-Google-Smtp-Source: AGHT+IFRqlSu7Huk8mcJPR/HT8pVIr1hOOtefecGj29Nnx9kKdOg6au9LRS1FlhCCbvzUSmJty4EirGvWVQ9
-X-Received: by 2002:a05:6102:15a0:b0:5be:57a1:3eda with SMTP id
- ada2fe7eead31-5d5e21d6a79mr4847547137.2.1760048135011; 
- Thu, 09 Oct 2025 15:15:35 -0700 (PDT)
+ bh=pegLHa6YwTnUrKk2yUoAJjCwPPOmU9VVfLvOuNaLXSY=;
+ b=D4zk3hetHVsq/Uyx/GOSjIMczxNTm9k3vhT7ILju7MIB6eHzCBGZdBEUUnOoHtxS7N
+ zZh8XKjCl7LDvUC+JFvJpK1AdK08Zc8qY3Y5z8EDINGrLYi7bB1cWB6jKFXrXA759Wxz
+ XAANLe2565Yx77maCN8TejCCwp1eACwpjH17WIJqVavtzFvBqcDuF1T4k5jr7kquunvH
+ vhDvfEaf+qaPwVmnCqtRosBdkC5ILW9mgcH/bmDtH1VqzJyZhqLTjb6iiLIPgEmkY77o
+ qI0AftKTZQ78CifqIMCgekHfXFLhC9spkcIuFYS6CMe5nWDLjNRK+IeCQHENcFXBo3L0
+ 3cJw==
+X-Gm-Message-State: AOJu0YxPxKz8j9+G4eURyB7KrgZXc0btOezVeBZiKQ6bqPovTZK5ZHEo
+ I9jucabMtr+3fJGj/xn2+7Dg+JPJw4pzE0PNwzU2poDqsZfnBBacRNjSMyHpz3GuDf5LslE5bfv
+ JSkf4bGQzN6Rq2IPCoiod6NjTD3vvJiVBMtH9dK9D5hInHmFL3p3mi9IRwPQvZSzGdgxyhyk6te
+ QnuVhh0Yj3U5wo3x+HQ7nozCuvmveBURw2rFnOkUR8JkywRPmcGYh6fgKd5uxo9rX0P8h/lg==
+X-Gm-Gg: ASbGnctCtcJ+5/bA7uxWEepwJ5Zdyb0LwCLGAq2ghHj7edaoQ9s11kTzG44Lwb6iHcJ
+ 6xZ+Xj/daA8C5YPj2xlVHKCTcdz+LGoMjtIwBRzK4HjU3mzQXkSGdHa8VfexNnm/8n+Wib3ICou
+ QVs/uJ1picst3Jy2CeXnNJYWU1wZ4QPYaE2SFw4sluNp3LOTMFUiLW4w10sZsYDQVfTewT3pCct
+ tF9gvO8ZDgG+ol8ls9D/yJXLgLSp1qFhQKdCAccMv5sdwxz6jeQWQCqWbTqaKqiMdwJWELFXA5k
+ zqZu2zgHPezEuZnbfhUD4OQEac01sUAGX4XxhHgvSpzpGMXl/IKu07L75KrMFofO1uXByRn/CMs
+ ABj22Tqx3FLcWvfbgXooxWeDNerzYwALpyMme6risREeQlpwMLPiUEY9BtgmsmlV74b8NRvePZY
+ aFL5kU
+X-Google-Smtp-Source: AGHT+IEfehkvabkYO3WqhOTtwAG1RQHJkRevmB1af2OV1BZkGF37Qfxngmmh0eBha/bUhMCBsiZMFT71pGSg
+X-Received: by 2002:a05:6e02:23c3:b0:42f:8afa:326f with SMTP id
+ e9e14a558f8ab-42f8afa34damr83973045ab.19.1760048138840; 
+ Thu, 09 Oct 2025 15:15:38 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
+ (address-144-49-247-72.dlp.protect.broadcom.com. [144.49.247.72])
  by smtp-relay.gmail.com with ESMTPS id
- ada2fe7eead31-5d5fc8e3a19sm88114137.4.2025.10.09.15.15.34
+ e9e14a558f8ab-42f9034daa7sm2460365ab.30.2025.10.09.15.15.38
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 09 Oct 2025 15:15:35 -0700 (PDT)
+ Thu, 09 Oct 2025 15:15:38 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qv1-f72.google.com with SMTP id
- 6a1803df08f44-818bf399f8aso53502936d6.2
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:15:34 -0700 (PDT)
+Received: by mail-qv1-f69.google.com with SMTP id
+ 6a1803df08f44-78e5b6f1296so42380246d6.2
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:15:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1760048134; x=1760652934; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1760048137; x=1760652937; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=gHdDXJvZsIDFYvuzJRm9NaaB99g4ZuMXfT9K0RIWi6c=;
- b=TjwIjzTh1DkKd4m0HL+12n86Tc+y2hW+1JOnaWnN/uVeuYeI9mCH+nI8WIf5XXbYHl
- GhlVPkgLcOpRXwh7cTTckDNXCNgcAgY5YaT+ETjiWuFy7vol6fIEOIyrhNh0fowGkgzP
- 9Dj/APDzD0WpBckMtrORDF0LV52pup2T8qeEM=
-X-Received: by 2002:ad4:5505:0:b0:87b:ab40:ed72 with SMTP id
- 6a1803df08f44-87bab40ede4mr89880746d6.12.1760048133474; 
- Thu, 09 Oct 2025 15:15:33 -0700 (PDT)
-X-Received: by 2002:ad4:5505:0:b0:87b:ab40:ed72 with SMTP id
- 6a1803df08f44-87bab40ede4mr89880146d6.12.1760048132506; 
- Thu, 09 Oct 2025 15:15:32 -0700 (PDT)
+ bh=pegLHa6YwTnUrKk2yUoAJjCwPPOmU9VVfLvOuNaLXSY=;
+ b=XMsLasqpaCvYPudIC4Uu1Yi35cm32LD6OfExOPNfPhms/SnQ7vbaQqR/6ITA6w+MBT
+ SRivqkYb7NxtgsAM/WrljiLZtBG1EniZmqa22AyBR0iXLJ3bvAeucG5heL0AF21YdEbc
+ 95IfMN+v1dwFg4WAuaANUvW89OLTRSXKY6Gbc=
+X-Received: by 2002:ad4:5d61:0:b0:856:d1d4:d127 with SMTP id
+ 6a1803df08f44-87b21015405mr144239326d6.4.1760048136679; 
+ Thu, 09 Oct 2025 15:15:36 -0700 (PDT)
+X-Received: by 2002:ad4:5d61:0:b0:856:d1d4:d127 with SMTP id
+ 6a1803df08f44-87b21015405mr144238376d6.4.1760048135643; 
+ Thu, 09 Oct 2025 15:15:35 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.15.30
+ 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.15.34
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Thu, 09 Oct 2025 15:15:31 -0700 (PDT)
+ Thu, 09 Oct 2025 15:15:35 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com,
  Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Michael Baucom <michael.baucom@broadcom.com>,
  Shuanglin Wang <shuanglin.wang@broadcom.com>
-Subject: [PATCH v2 15/54] net/bnxt/tf_ulp: add support for tcam priority update
-Date: Thu,  9 Oct 2025 18:10:50 -0400
-Message-Id: <20251009221129.28256-16-manish.kurup@broadcom.com>
+Subject: [PATCH v2 16/54] net/bnxt/tf_ulp: hot upgrade support
+Date: Thu,  9 Oct 2025 18:10:51 -0400
+Message-Id: <20251009221129.28256-17-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251009221129.28256-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -102,465 +104,283 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-As part of the hot upgrade feature, added supported for TCAM
-entry's priority to be updated.
+Add support for hot upgrade for a generic application.  An
+application can start a backup application and add the same flows
+that has been offloaded in primary application and secondary
+application can take over primary application.
+
+Update the hwrm version to the correct version number, the
+corresponding code version for hot upgrade api got changed.
 
 Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Reviewed-by: Michael Baucom <michael.baucom@broadcom.com>
 Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
 ---
- drivers/net/bnxt/hsi_struct_def_dpdk.h   | 541 ++++++++++++++++++++---
- drivers/net/bnxt/tf_core/v3/tfc.h        |  27 ++
- drivers/net/bnxt/tf_core/v3/tfc_msg.c    |  32 ++
- drivers/net/bnxt/tf_core/v3/tfc_msg.h    |   6 +
- drivers/net/bnxt/tf_ulp/bnxt_ulp.h       |   3 +
- drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h |   3 +-
- drivers/net/bnxt/tf_ulp/ulp_def_rules.c  |  29 ++
- drivers/net/bnxt/tf_ulp/ulp_gen_tbl.c    |  24 +
- drivers/net/bnxt/tf_ulp/ulp_gen_tbl.h    |  12 +
- drivers/net/bnxt/tf_ulp/ulp_mapper.c     |  68 ++-
- drivers/net/bnxt/tf_ulp/ulp_mapper.h     |   8 +-
- drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c  |   1 +
- drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c |  36 ++
- 13 files changed, 729 insertions(+), 61 deletions(-)
+ drivers/net/bnxt/bnxt.h                       |   1 +
+ drivers/net/bnxt/bnxt_ethdev.c                |  37 +++
+ .../bnxt/hcapi/cfa_v3/include/cfa_resources.h |   8 +
+ drivers/net/bnxt/hsi_struct_def_dpdk.h        | 207 +++++++++++++-
+ drivers/net/bnxt/tf_core/v3/meson.build       |   1 +
+ drivers/net/bnxt/tf_core/v3/tfc.h             |  84 ++++++
+ drivers/net/bnxt/tf_core/v3/tfc_hot_upgrade.c | 142 ++++++++++
+ drivers/net/bnxt/tf_core/v3/tfc_msg.c         |  52 ++++
+ drivers/net/bnxt/tf_core/v3/tfc_msg.h         |   7 +
+ drivers/net/bnxt/tf_ulp/bnxt_ulp.h            |   3 +
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_flow.c       |  10 +
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c        |  42 ++-
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h      |  60 ++++
+ drivers/net/bnxt/tf_ulp/meson.build           |  56 +++-
+ drivers/net/bnxt/tf_ulp/ulp_mapper.c          |   4 +
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c      |   2 +-
+ drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c          |   7 +-
+ drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c      | 264 ++++++++++++++++++
+ drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.h      |  40 +++
+ 19 files changed, 1012 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/net/bnxt/tf_core/v3/tfc_hot_upgrade.c
+ create mode 100644 drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c
+ create mode 100644 drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.h
 
+diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
+index 72ac66b0db..00bdb53215 100644
+--- a/drivers/net/bnxt/bnxt.h
++++ b/drivers/net/bnxt/bnxt.h
+@@ -1061,6 +1061,7 @@ struct bnxt {
+ 	struct bnxt_flow_stat_info *flow_stat;
+ 	uint16_t		max_num_kflows;
+ 	uint8_t			app_id;
++	uint8_t			app_instance_id;
+ 	uint32_t		tx_cfa_action;
+ 	struct bnxt_ring_stats	*prev_rx_ring_stats;
+ 	struct bnxt_ring_stats	*prev_tx_ring_stats;
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index 0836be3b1e..7edfd8ca89 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -162,6 +162,9 @@ static const struct rte_eth_speed_lanes_capa speed_lanes_capa_tbl[] = {
+  */
+ #define BNXT_DEVARG_APP_ID_INVALID(val)			((val) > 255)
+ 
++/* app-instance-id = an non-negative 3-bit number */
++#define BNXT_DEVARG_APP_INSTANCE_ID_INVALID(val)	((val) > 8)
++
+ /*
+  * ieee-1588 = an non-negative 8-bit number
+  */
+@@ -6063,6 +6066,40 @@ bnxt_parse_devarg_cqe_mode(__rte_unused const char *key,
+ 	return 0;
+ }
+ 
++static int
++bnxt_parse_devarg_app_instance_id(__rte_unused const char *key,
++				  const char *value, void *opaque_arg)
++{
++	struct bnxt *bp = opaque_arg;
++	unsigned long app_instance_id;
++	char *end = NULL;
++
++	if (!opaque_arg) {
++		PMD_DRV_LOG_LINE(ERR,
++				 "Invalid param passed to app-instance-id devarg");
++		return -EINVAL;
++	}
++
++	app_instance_id = strtoul(value, &end, 10);
++	if (end == NULL || *end != '\0' ||
++	    (app_instance_id == ULONG_MAX && errno == ERANGE)) {
++		PMD_DRV_LOG_LINE(ERR,
++				 "Invalid parameter passed to instance devargs");
++		return -EINVAL;
++	}
++
++	if (BNXT_DEVARG_APP_INSTANCE_ID_INVALID(app_instance_id)) {
++		PMD_DRV_LOG_LINE(ERR, "Invalid app-instance-id(%d) devargs",
++				 (uint16_t)app_instance_id);
++		return -EINVAL;
++	}
++
++	bp->app_instance_id = app_instance_id;
++	PMD_DRV_LOG_LINE(INFO, "app_instance_id=%u feature enabled",
++			 (uint16_t)app_instance_id);
++	return 0;
++}
++
+ static int
+ bnxt_parse_devarg_app_id(__rte_unused const char *key,
+ 				 const char *value, void *opaque_arg)
+diff --git a/drivers/net/bnxt/hcapi/cfa_v3/include/cfa_resources.h b/drivers/net/bnxt/hcapi/cfa_v3/include/cfa_resources.h
+index d1d62738d3..ada9741dfa 100644
+--- a/drivers/net/bnxt/hcapi/cfa_v3/include/cfa_resources.h
++++ b/drivers/net/bnxt/hcapi/cfa_v3/include/cfa_resources.h
+@@ -194,6 +194,14 @@ enum cfa_resource_subtype_gim {
+ 	 CFA_RSUBTYPE_SM_MAX + CFA_RSUBTYPE_TSM_MAX + CFA_RSUBTYPE_TIM_MAX +   \
+ 	 CFA_RSUBTYPE_GIM_MAX)
+ 
++#define CFA_HOT_UPGRADE_APP_INSTANCE_MAX 4
++enum cfa_hot_upgrade_cmd_op {
++	CFA_HOT_UPGRADE_CMD_ALLOC = 1,
++	CFA_HOT_UPGRADE_CMD_FREE,
++	CFA_HOT_UPGRADE_CMD_GET,
++	CFA_HOT_UPGRADE_CMD_SET
++};
++
+ /**
+  * @}
+  */
 diff --git a/drivers/net/bnxt/hsi_struct_def_dpdk.h b/drivers/net/bnxt/hsi_struct_def_dpdk.h
-index 3a0c1fbdc2..de72e0e9e9 100644
+index de72e0e9e9..6e540359e3 100644
 --- a/drivers/net/bnxt/hsi_struct_def_dpdk.h
 +++ b/drivers/net/bnxt/hsi_struct_def_dpdk.h
-@@ -828,6 +828,18 @@ struct __rte_packed_begin cmd_nums {
- 	#define HWRM_UDCC_COMP_QCFG                       UINT32_C(0x25f)
- 	/* This command queries the status and statistics of the computation unit. */
- 	#define HWRM_UDCC_COMP_QUERY                      UINT32_C(0x260)
-+	/*
-+	 * This command is used to query the pfc watchdog max configurable
-+	 * timeout value.
-+	 */
-+	#define HWRM_QUEUE_PFCWD_TIMEOUT_QCAPS            UINT32_C(0x261)
-+	/* This command is used to set the PFC watchdog timeout value. */
-+	#define HWRM_QUEUE_PFCWD_TIMEOUT_CFG              UINT32_C(0x262)
-+	/*
-+	 * This command is used to query the current configured pfc watchdog
-+	 * timeout value.
-+	 */
-+	#define HWRM_QUEUE_PFCWD_TIMEOUT_QCFG             UINT32_C(0x263)
- 	/* Experimental */
- 	#define HWRM_TF                                   UINT32_C(0x2bc)
- 	/* Experimental */
-@@ -950,18 +962,10 @@ struct __rte_packed_begin cmd_nums {
- 	#define HWRM_TFC_TBL_SCOPE_CONFIG_GET             UINT32_C(0x39a)
- 	/* TruFlow command to query the resource usage state. */
- 	#define HWRM_TFC_RESC_USAGE_QUERY                 UINT32_C(0x39b)
--	/*
--	 * This command is used to query the pfc watchdog max configurable
--	 * timeout value.
--	 */
--	#define HWRM_QUEUE_PFCWD_TIMEOUT_QCAPS            UINT32_C(0x39c)
--	/* This command is used to set the PFC watchdog timeout value. */
--	#define HWRM_QUEUE_PFCWD_TIMEOUT_CFG              UINT32_C(0x39d)
--	/*
--	 * This command is used to query the current configured pfc watchdog
--	 * timeout value.
--	 */
--	#define HWRM_QUEUE_PFCWD_TIMEOUT_QCFG             UINT32_C(0x39e)
-+	/* TruFlow command to free resources for a global id. */
-+	#define HWRM_TFC_GLOBAL_ID_FREE                   UINT32_C(0x39c)
-+	/* TruFlow command to update the priority of one tcam entry. */
-+	#define HWRM_TFC_TCAM_PRI_UPDATE                  UINT32_C(0x39d)
+@@ -966,6 +966,8 @@ struct __rte_packed_begin cmd_nums {
+ 	#define HWRM_TFC_GLOBAL_ID_FREE                   UINT32_C(0x39c)
+ 	/* TruFlow command to update the priority of one tcam entry. */
+ 	#define HWRM_TFC_TCAM_PRI_UPDATE                  UINT32_C(0x39d)
++	/* TruFlow command to process hot upgrade requests. */
++	#define HWRM_TFC_HOT_UPGRADE_PROCESS              UINT32_C(0x3a0)
  	/* Experimental */
  	#define HWRM_SV                                   UINT32_C(0x400)
  	/* Flush any trace buffer data that has not been sent to the host. */
-@@ -1246,8 +1250,8 @@ struct __rte_packed_begin hwrm_err_output {
+@@ -1250,8 +1252,8 @@ struct __rte_packed_begin hwrm_err_output {
  #define HWRM_VERSION_MINOR 10
  #define HWRM_VERSION_UPDATE 3
  /* non-zero means beta version */
--#define HWRM_VERSION_RSVD 40
--#define HWRM_VERSION_STR "1.10.3.40"
-+#define HWRM_VERSION_RSVD 86
-+#define HWRM_VERSION_STR "1.10.3.86"
+-#define HWRM_VERSION_RSVD 86
+-#define HWRM_VERSION_STR "1.10.3.86"
++#define HWRM_VERSION_RSVD 87
++#define HWRM_VERSION_STR "1.10.3.87"
  
  /****************
   * hwrm_ver_get *
-@@ -12667,29 +12671,94 @@ struct __rte_packed_begin hwrm_async_event_cmpl_dbg_buf_producer {
- 		UINT32_C(0xffff)
- 	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_SFT \
- 		0
--	/* SRT trace. */
-+	/* SRT or APE trace. */
- 	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_SRT_TRACE \
- 		UINT32_C(0x0)
--	/* SRT2 trace. */
-+	/* SRT2 or AFM/Kong trace. */
- 	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_SRT2_TRACE \
- 		UINT32_C(0x1)
--	/* CRT trace. */
-+	/* CRT or ChiMP trace. */
- 	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_CRT_TRACE \
- 		UINT32_C(0x2)
--	/* CRT2 trace. */
-+	/* CRT2 or Bono trace. */
- 	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_CRT2_TRACE \
- 		UINT32_C(0x3)
- 	/* RIGP0 trace. */
- 	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_RIGP0_TRACE \
- 		UINT32_C(0x4)
--	/* L2 HWRM trace. */
-+	/* L2 or ChiMP HWRM trace. */
- 	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_L2_HWRM_TRACE \
- 		UINT32_C(0x5)
--	/* RoCE HWRM trace. */
-+	/* RoCE or Bono HWRM trace. */
- 	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_ROCE_HWRM_TRACE \
- 		UINT32_C(0x6)
-+	/* Context Accelerator CPU 0 trace. */
-+	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_CA0_TRACE \
-+		UINT32_C(0x7)
-+	/* Context Accelerator CPU 1 trace. */
-+	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_CA1_TRACE \
-+		UINT32_C(0x8)
-+	/* Context Accelerator CPU 2 trace. */
-+	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_CA2_TRACE \
-+		UINT32_C(0x9)
-+	/* RIGP1 trace. */
-+	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_RIGP1_TRACE \
-+		UINT32_C(0xa)
-+	/* AFM/Kong HWRM trace. */
-+	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_AFM_KONG_HWRM_TRACE \
-+		UINT32_C(0xb)
- 	#define HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_LAST \
--		HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_ROCE_HWRM_TRACE
-+		HWRM_ASYNC_EVENT_CMPL_DBG_BUF_PRODUCER_EVENT_DATA1_TYPE_AFM_KONG_HWRM_TRACE
-+} __rte_packed_end;
-+
-+/* hwrm_async_event_cmpl_peer_mmap_change (size:128b/16B) */
-+struct __rte_packed_begin hwrm_async_event_cmpl_peer_mmap_change {
-+	uint16_t	type;
-+	/*
-+	 * This field indicates the exact type of the completion.
-+	 * By convention, the LSB identifies the length of the
-+	 * record in 16B units. Even values indicate 16B
-+	 * records. Odd values indicate 32B
-+	 * records.
-+	 */
-+	#define HWRM_ASYNC_EVENT_CMPL_PEER_MMAP_CHANGE_TYPE_MASK \
-+		UINT32_C(0x3f)
-+	#define HWRM_ASYNC_EVENT_CMPL_PEER_MMAP_CHANGE_TYPE_SFT             0
-+	/* HWRM Asynchronous Event Information */
-+	#define HWRM_ASYNC_EVENT_CMPL_PEER_MMAP_CHANGE_TYPE_HWRM_ASYNC_EVENT \
-+		UINT32_C(0x2e)
-+	#define HWRM_ASYNC_EVENT_CMPL_PEER_MMAP_CHANGE_TYPE_LAST \
-+		HWRM_ASYNC_EVENT_CMPL_PEER_MMAP_CHANGE_TYPE_HWRM_ASYNC_EVENT
-+	/* Identifiers of events. */
-+	uint16_t	event_id;
-+	/*
-+	 * This async notification message is used to inform the driver
-+	 * that the memory mapping for a peer device is set. The driver
-+	 * will need to query using get_structured_data.
-+	 */
-+	#define HWRM_ASYNC_EVENT_CMPL_PEER_MMAP_CHANGE_EVENT_ID_PEER_MMAP_CHANGE \
-+		UINT32_C(0x4d)
-+	#define HWRM_ASYNC_EVENT_CMPL_PEER_MMAP_CHANGE_EVENT_ID_LAST \
-+		HWRM_ASYNC_EVENT_CMPL_PEER_MMAP_CHANGE_EVENT_ID_PEER_MMAP_CHANGE
-+	/* Event specific data. */
-+	uint32_t	event_data2;
-+	uint8_t	opaque_v;
-+	/*
-+	 * This value is written by the NIC such that it will be different
-+	 * for each pass through the completion queue. The even passes
-+	 * will write 1. The odd passes will write 0.
-+	 */
-+	#define HWRM_ASYNC_EVENT_CMPL_PEER_MMAP_CHANGE_V          UINT32_C(0x1)
-+	/* opaque is 7 b */
-+	#define HWRM_ASYNC_EVENT_CMPL_PEER_MMAP_CHANGE_OPAQUE_MASK \
-+		UINT32_C(0xfe)
-+	#define HWRM_ASYNC_EVENT_CMPL_PEER_MMAP_CHANGE_OPAQUE_SFT 1
-+	/* 8-lsb timestamp (100-msec resolution) */
-+	uint8_t	timestamp_lo;
-+	/* 16-lsb timestamp (100-msec resolution) */
-+	uint16_t	timestamp_hi;
-+	/* Event specific data */
-+	uint32_t	event_data1;
- } __rte_packed_end;
- 
- /* hwrm_async_event_cmpl_fw_trace_msg (size:128b/16B) */
-@@ -14990,9 +15059,7 @@ struct __rte_packed_begin hwrm_func_qcaps_output {
- 	/*
- 	 * The maximum number of VFs that can be
- 	 * allocated to the function. This is valid only on the
--	 * PF with SR-IOV enabled. 0xFF... (All Fs) if this
--	 * command is called on a PF with SR-IOV disabled or
--	 * on a VF.
-+	 * PF with SR-IOV enabled.
- 	 */
- 	uint16_t	max_vfs;
- 	/*
-@@ -23717,27 +23784,45 @@ struct __rte_packed_begin hwrm_func_backing_store_cfg_v2_input {
- 	/* XID partition context. */
- 	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_XID_PARTITION \
- 		UINT32_C(0x1d)
--	/* SRT trace. */
-+	/* SRT or APE trace. */
- 	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_SRT_TRACE \
- 		UINT32_C(0x1e)
--	/* SRT2 trace. */
-+	/* SRT2 or AFM/Kong trace. */
- 	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_SRT2_TRACE \
- 		UINT32_C(0x1f)
--	/* CRT trace. */
-+	/* CRT or ChiMP trace. */
- 	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_CRT_TRACE \
- 		UINT32_C(0x20)
--	/* CRT2 trace. */
-+	/* CRT2 or Bono trace. */
- 	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_CRT2_TRACE \
- 		UINT32_C(0x21)
- 	/* RIGP0 trace. */
- 	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_RIGP0_TRACE \
- 		UINT32_C(0x22)
--	/* L2 HWRM trace. */
-+	/* L2 or ChiMP HWRM trace. */
- 	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_L2_HWRM_TRACE \
- 		UINT32_C(0x23)
--	/* RoCE HWRM trace. */
-+	/* RoCE or Bono HWRM trace. */
- 	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_ROCE_HWRM_TRACE \
- 		UINT32_C(0x24)
-+	/* TimedTx pacing TQM ring. */
-+	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_TTX_PACING_TQM_RING \
-+		UINT32_C(0x25)
-+	/* Context Accelerator CPU 0 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_CA0_TRACE \
-+		UINT32_C(0x26)
-+	/* Context Accelerator CPU 1 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_CA1_TRACE \
-+		UINT32_C(0x27)
-+	/* Context Accelerator CPU 2 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_CA2_TRACE \
-+		UINT32_C(0x28)
-+	/* RIGP1 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_RIGP1_TRACE \
-+		UINT32_C(0x29)
-+	/* AFM/Kong HWRM trace. */
-+	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_AFM_KONG_HWRM_TRACE \
-+		UINT32_C(0x2a)
- 	/* Invalid type. */
- 	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_TYPE_INVALID \
- 		UINT32_C(0xffff)
-@@ -23877,6 +23962,21 @@ struct __rte_packed_begin hwrm_func_backing_store_cfg_v2_input {
- 	uint32_t	split_entry_2;
- 	/* Split entry #3. */
- 	uint32_t	split_entry_3;
-+	uint32_t	enables;
-+	/*
-+	 * This bit must be '1' for the next_bs_offset field to be
-+	 * configured.
-+	 */
-+	#define HWRM_FUNC_BACKING_STORE_CFG_V2_INPUT_ENABLES_NEXT_BS_OFFSET \
-+		UINT32_C(0x1)
-+	/*
-+	 * This field specifies the next byte offset of the backing store
-+	 * for the firmware to use. The driver can use this field to
-+	 * direct the firmware to resume the logging-to-host from
-+	 * the host buffer where the firmware was lastly written
-+	 * before it restarts, e.g. due to an error recovery.
-+	 */
-+	uint32_t	next_bs_offset;
- } __rte_packed_end;
- 
- /* hwrm_func_backing_store_cfg_v2_output (size:128b/16B) */
-@@ -23992,27 +24092,45 @@ struct __rte_packed_begin hwrm_func_backing_store_qcfg_v2_input {
- 	/* VF XID partition in-use table. */
- 	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_XID_PARTITION_TABLE \
- 		UINT32_C(0x1d)
--	/* SRT trace. */
-+	/* SRT or APE trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_SRT_TRACE \
- 		UINT32_C(0x1e)
--	/* SRT2 trace. */
-+	/* SRT2 or AFM/Kong trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_SRT2_TRACE \
- 		UINT32_C(0x1f)
--	/* CRT trace. */
-+	/* CRT or ChiMP trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_CRT_TRACE \
- 		UINT32_C(0x20)
--	/* CRT2 trace. */
-+	/* CRT2 or Bono trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_CRT2_TRACE \
- 		UINT32_C(0x21)
- 	/* RIGP0 trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_RIGP0_TRACE \
- 		UINT32_C(0x22)
--	/* L2 HWRM trace. */
-+	/* L2 or ChiMP HWRM trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_L2_HWRM_TRACE \
- 		UINT32_C(0x23)
--	/* RoCE HWRM trace. */
-+	/* RoCE or Bono HWRM trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_ROCE_HWRM_TRACE \
- 		UINT32_C(0x24)
-+	/* TimedTx pacing TQM ring. */
-+	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_TTX_PACING_TQM_RING \
-+		UINT32_C(0x25)
-+	/* Context Accelerator CPU 0 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_CA0_TRACE \
-+		UINT32_C(0x26)
-+	/* Context Accelerator CPU 1 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_CA1_TRACE \
-+		UINT32_C(0x27)
-+	/* Context Accelerator CPU 2 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_CA2_TRACE \
-+		UINT32_C(0x28)
-+	/* RIGP1 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_RIGP1_TRACE \
-+		UINT32_C(0x29)
-+	/* AFM/Kong HWRM trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_AFM_KONG_HWRM_TRACE \
-+		UINT32_C(0x2a)
- 	/* Invalid type. */
- 	#define HWRM_FUNC_BACKING_STORE_QCFG_V2_INPUT_TYPE_INVALID \
- 		UINT32_C(0xffff)
-@@ -24436,27 +24554,45 @@ struct __rte_packed_begin hwrm_func_backing_store_qcaps_v2_input {
- 	/* XID partition context. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_XID_PARTITION \
- 		UINT32_C(0x1d)
--	/* SRT trace. */
-+	/* SRT or APE trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_SRT_TRACE \
- 		UINT32_C(0x1e)
--	/* SRT2 trace. */
-+	/* SRT2 or AFM/Kong trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_SRT2_TRACE \
- 		UINT32_C(0x1f)
--	/* CRT trace. */
-+	/* CRT or ChiMP trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_CRT_TRACE \
- 		UINT32_C(0x20)
--	/* CRT2 trace. */
-+	/* CRT2 or Bono trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_CRT2_TRACE \
- 		UINT32_C(0x21)
- 	/* RIGP0 trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_RIGP0_TRACE \
- 		UINT32_C(0x22)
--	/* L2 HWRM trace. */
-+	/* L2 or ChiMP HWRM trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_L2_HWRM_TRACE \
- 		UINT32_C(0x23)
--	/* RoCE HWRM trace. */
-+	/* RoCE or Bono HWRM trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_ROCE_HWRM_TRACE \
- 		UINT32_C(0x24)
-+	/* TimedTx pacing TQM ring. */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_TTX_PACING_TQM_RING \
-+		UINT32_C(0x25)
-+	/* Context Accelerator CPU 0 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_CA0_TRACE \
-+		UINT32_C(0x26)
-+	/* Context Accelerator CPU 1 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_CA1_TRACE \
-+		UINT32_C(0x27)
-+	/* Context Accelerator CPU 2 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_CA2_TRACE \
-+		UINT32_C(0x28)
-+	/* RIGP1 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_RIGP1_TRACE \
-+		UINT32_C(0x29)
-+	/* AFM/Kong HWRM trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_AFM_KONG_HWRM_TRACE \
-+		UINT32_C(0x2a)
- 	/* Invalid type. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_INPUT_TYPE_INVALID \
- 		UINT32_C(0xffff)
-@@ -24531,27 +24667,45 @@ struct __rte_packed_begin hwrm_func_backing_store_qcaps_v2_output {
- 	/* XID partition context. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_XID_PARTITION \
- 		UINT32_C(0x1d)
--	/* SRT trace. */
-+	/* SRT or APE trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_SRT_TRACE \
- 		UINT32_C(0x1e)
--	/* SRT2 trace. */
-+	/* SRT2 or AFM/Kong trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_SRT2_TRACE \
- 		UINT32_C(0x1f)
--	/* CRT trace. */
-+	/* CRT or ChiMP trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_CRT_TRACE \
- 		UINT32_C(0x20)
--	/* CRT2 trace. */
-+	/* CRT2 or Bono trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_CRT2_TRACE \
- 		UINT32_C(0x21)
- 	/* RIGP0 trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_RIGP0_TRACE \
- 		UINT32_C(0x22)
--	/* L2 HWRM trace. */
-+	/* L2 or ChiMP HWRM trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_L2_HWRM_TRACE \
- 		UINT32_C(0x23)
--	/* RoCE HWRM trace. */
-+	/* RoCE or Bono HWRM trace. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_ROCE_HWRM_TRACE \
- 		UINT32_C(0x24)
-+	/* TimedTx pacing TQM ring. */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_TTX_PACING_TQM_RING \
-+		UINT32_C(0x25)
-+	/* Context Accelerator CPU 0 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_CA0_TRACE \
-+		UINT32_C(0x26)
-+	/* Context Accelerator CPU 1 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_CA1_TRACE \
-+		UINT32_C(0x27)
-+	/* Context Accelerator CPU 2 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_CA2_TRACE \
-+		UINT32_C(0x28)
-+	/* RIGP1 trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_RIGP1_TRACE \
-+		UINT32_C(0x29)
-+	/* AFM/Kong HWRM trace. */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_AFM_KONG_HWRM_TRACE \
-+		UINT32_C(0x2a)
- 	/* Invalid type. */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_TYPE_INVALID \
- 		UINT32_C(0xffff)
-@@ -24595,6 +24749,26 @@ struct __rte_packed_begin hwrm_func_backing_store_qcaps_v2_output {
- 	 */
- 	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_FLAGS_ROCE_QP_PSEUDO_STATIC_ALLOC \
- 		UINT32_C(0x8)
-+	/*
-+	 * When set, it indicates the region for this type is not a regular
-+	 * context memory but a memory for firmware text-based debug traces
-+	 * which consist of ASCII characters.
-+	 */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_FLAGS_FW_DBG_TRACE \
-+		UINT32_C(0x10)
-+	/*
-+	 * When set, it indicates the region for this type is not a regular
-+	 * context memory but a memory for firmware debug traces which
-+	 * consist of binary data.
-+	 */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_FLAGS_FW_BIN_DBG_TRACE \
-+		UINT32_C(0x20)
-+	/*
-+	 * When set, it indicates the support of configuring
-+	 * the next_bs_offset in hwrm_func_backing_store_cfg_v2.
-+	 */
-+	#define HWRM_FUNC_BACKING_STORE_QCAPS_V2_OUTPUT_FLAGS_NEXT_BS_OFFSET \
-+		UINT32_C(0x40)
- 	/*
- 	 * Bit map of the valid instances associated with the
- 	 * backing store type.
-@@ -62274,6 +62448,114 @@ struct __rte_packed_begin hwrm_tfc_resc_usage_query_output {
+@@ -41082,6 +41084,59 @@ struct __rte_packed_begin hwrm_queue_adptv_qos_rx_feature_cfg_output {
  	uint8_t	valid;
  } __rte_packed_end;
  
-+/****************************
-+ * hwrm_tfc_tcam_pri_update *
-+ ****************************/
++/* hwrm_queue_adptv_qos_rx_feature_cfg_cmd_err (size:64b/8B) */
++struct __rte_packed_begin hwrm_queue_adptv_qos_rx_feature_cfg_cmd_err {
++	/*
++	 * command specific error codes that goes to
++	 * the cmd_err field in Common HWRM Error Response.
++	 */
++	uint8_t	code;
++	/* Success */
++	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_SUCCESS \
++		UINT32_C(0x0)
++	/* Unknown error */
++	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_UNKNOWN \
++		UINT32_C(0x1)
++	/* Cannot configure TCs with interfaces up */
++	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_INTERFACES_UP \
++		UINT32_C(0x2)
++	/*
++	 * Configured TCs are less than the minimum required.
++	 * The minimum is 3 if RoCE is enabled, else 1.
++	 */
++	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_MIN_TCS \
++		UINT32_C(0x3)
++	/* Configured TCs are more than the maximum allowed */
++	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_MAX_TCS \
++		UINT32_C(0x4)
++	/* Configured TCs are not contiguous */
++	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_CONTIGUOUS_TCS \
++		UINT32_C(0x5)
++	/* Cannot configure TC that has a priority mapping */
++	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_COS_PRI_MAPPED \
++		UINT32_C(0x6)
++	/* Cannot configure TC that has a priority with pfc enabled */
++	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_COS_PRI_PFC_ENABLED \
++		UINT32_C(0x7)
++	/*
++	 * Cannot configure TCs 0-2 differently than TC 0 and 2 as
++	 * lossy and TC 1 as lossless.
++	 * A maximum of 4 TCs can be configured as lossless.
++	 * TCs 1, 3, 4, 5, 6, and 7 can be configured as lossless.
++	 */
++	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_DEFAULT_TCS_CANNOT_BE_CHANGED \
++		UINT32_C(0x8)
++	/*
++	 * Cannot configure more than 4 lossless TCs.
++	 * TCs 1, 3, 4, 5, 6, and 7 can be configured as lossless.
++	 */
++	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_MAX_LOSSLESS_TCS \
++		UINT32_C(0x9)
++	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_LAST \
++		HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_MAX_LOSSLESS_TCS
++	uint8_t	unused_0[7];
++} __rte_packed_end;
++
+ /****************************************
+  * hwrm_queue_adptv_qos_tx_feature_qcfg *
+  ****************************************/
+@@ -41397,6 +41452,59 @@ struct __rte_packed_begin hwrm_queue_adptv_qos_tx_feature_cfg_output {
+ 	uint8_t	valid;
+ } __rte_packed_end;
+ 
++/* hwrm_queue_adptv_qos_tx_feature_cfg_cmd_err (size:64b/8B) */
++struct __rte_packed_begin hwrm_queue_adptv_qos_tx_feature_cfg_cmd_err {
++	/*
++	 * command specific error codes that goes to
++	 * the cmd_err field in Common HWRM Error Response.
++	 */
++	uint8_t	code;
++	/* Success */
++	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_SUCCESS \
++		UINT32_C(0x0)
++	/* Unknown error */
++	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_UNKNOWN \
++		UINT32_C(0x1)
++	/* Cannot configure TCs with interfaces up */
++	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_INTERFACES_UP \
++		UINT32_C(0x2)
++	/*
++	 * Configured TCs are less than the minimum required.
++	 * The minimum is 3 if RoCE is enabled, else 1.
++	 */
++	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_MIN_TCS \
++		UINT32_C(0x3)
++	/* Configured TCs are more than the maximum allowed */
++	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_MAX_TCS \
++		UINT32_C(0x4)
++	/* Configured TCs are not contiguous */
++	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_CONTIGUOUS_TCS \
++		UINT32_C(0x5)
++	/* Cannot configure TC that has a priority mapping */
++	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_COS_PRI_MAPPED \
++		UINT32_C(0x6)
++	/* Cannot configure TC that has a priority with pfc enabled */
++	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_COS_PRI_PFC_ENABLED \
++		UINT32_C(0x7)
++	/*
++	 * Cannot configure TCs 0-2 differently than TC 0 and 2 as
++	 * lossy and TC 1 as lossless.
++	 * A maximum of 4 TCs can be configured as lossless.
++	 * TCs 1, 3, 4, 5, 6, and 7 can be configured as lossless.
++	 */
++	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_DEFAULT_TCS_CANNOT_BE_CHANGED \
++		UINT32_C(0x8)
++	/*
++	 * Cannot configure more than 4 lossless TCs.
++	 * TCs 1, 3, 4, 5, 6, and 7 can be configured as lossless.
++	 */
++	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_MAX_LOSSLESS_TCS \
++		UINT32_C(0x9)
++	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_LAST \
++		HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_MAX_LOSSLESS_TCS
++	uint8_t	unused_0[7];
++} __rte_packed_end;
++
+ /********************
+  * hwrm_queue_qcaps *
+  ********************/
+@@ -62556,6 +62664,101 @@ struct hwrm_tfc_tcam_pri_update_output {
+ 	uint8_t	valid;
+ } __rte_packed;
+ 
++/********************************
++ * hwrm_tfc_hot_upgrade_process *
++ ********************************/
 +
 +
-+/* hwrm_tfc_tcam_pri_update_input (size:256b/32B) */
-+struct hwrm_tfc_tcam_pri_update_input {
++/* hwrm_tfc_hot_upgrade_process_input (size:192b/24B) */
++struct hwrm_tfc_hot_upgrade_process_input {
 +	/* The HWRM command request type. */
 +	uint16_t	req_type;
 +	/*
@@ -603,44 +423,29 @@ index 3a0c1fbdc2..de72e0e9e9 100644
 +	 * for validation if the track type matches.
 +	 */
 +	uint16_t	sid;
-+	/* Logical TCAM ID. */
-+	uint16_t	tcam_id;
-+	/* Entry new priority. */
-+	uint16_t	priority;
-+	/* Control flags. */
-+	uint8_t	flags;
-+	/* Indicates the flow direction. */
-+	#define HWRM_TFC_TCAM_PRI_UPDATE_INPUT_FLAGS_DIR     UINT32_C(0x1)
-+	/* If this bit set to 0, then it indicates rx flow. */
-+	#define HWRM_TFC_TCAM_PRI_UPDATE_INPUT_FLAGS_DIR_RX    UINT32_C(0x0)
-+	/* If this bit is set to 1, then it indicates tx flow. */
-+	#define HWRM_TFC_TCAM_PRI_UPDATE_INPUT_FLAGS_DIR_TX    UINT32_C(0x1)
-+	#define HWRM_TFC_TCAM_PRI_UPDATE_INPUT_FLAGS_DIR_LAST \
-+		HWRM_TFC_TCAM_PRI_UPDATE_INPUT_FLAGS_DIR_TX
 +	/*
-+	 * Subtype of TCAM resource. See
-+	 * cfa_v3/include/cfa_resources.h.
++	 * The ID of an hot upgrade application. Will be used to track
++	 * sessions associated with this app.
 +	 */
-+	uint8_t	subtype;
-+	/* Describes the type of tracking id to be used */
-+	uint8_t	track_type;
-+	/* Invalid track type */
-+	#define HWRM_TFC_TCAM_PRI_UPDATE_INPUT_TRACK_TYPE_TRACK_TYPE_INVALID \
-+		UINT32_C(0x0)
-+	/* Tracked by session id */
-+	#define HWRM_TFC_TCAM_PRI_UPDATE_INPUT_TRACK_TYPE_TRACK_TYPE_SID \
-+		UINT32_C(0x1)
-+	/* Tracked by function id */
-+	#define HWRM_TFC_TCAM_PRI_UPDATE_INPUT_TRACK_TYPE_TRACK_TYPE_FID \
-+		UINT32_C(0x2)
-+	#define HWRM_TFC_TCAM_PRI_UPDATE_INPUT_TRACK_TYPE_LAST \
-+		HWRM_TFC_TCAM_PRI_UPDATE_INPUT_TRACK_TYPE_TRACK_TYPE_FID
++	uint8_t	app_id;
++	/* The hot-Up command. */
++	uint8_t	cmd;
++	/* Alloc a hot-up app entry and register a session for it */
++	#define HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_ALLOC     UINT32_C(0x1)
++	/* Free a hot-up session from hot-up app */
++	#define HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_FREE      UINT32_C(0x2)
++	/* Get the count of registered sessions for the hot-up app */
++	#define HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_GET       UINT32_C(0x4)
++	/* Set the active session for the hot-up app */
++	#define HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_SET       UINT32_C(0x8)
++	/* The count of sessions registered for the hot-up app */
++	uint8_t	cur_session_cnt;
 +	/* unused. */
-+	uint8_t	unused0[5];
++	uint8_t	unused0;
 +} __rte_packed;
 +
-+/* hwrm_tfc_tcam_pri_update_output (size:128b/16B) */
-+struct hwrm_tfc_tcam_pri_update_output {
++/* hwrm_tfc_hot_upgrade_process_output (size:128b/16B) */
++struct hwrm_tfc_hot_upgrade_process_output {
 +	/* The specific error status for the command. */
 +	uint16_t	error_code;
 +	/* The HWRM command request type. */
@@ -649,8 +454,10 @@ index 3a0c1fbdc2..de72e0e9e9 100644
 +	uint16_t	seq_id;
 +	/* The length of the response data in number of bytes. */
 +	uint16_t	resp_len;
++	/* The count of sessions registered for the hot-up application. */
++	uint8_t	session_cnt;
 +	/* unused. */
-+	uint8_t	unused0[7];
++	uint8_t	unused0[6];
 +	/*
 +	 * This field is used in Output records to indicate that the
 +	 * output is completely written to RAM. This field should be
@@ -665,223 +472,27 @@ index 3a0c1fbdc2..de72e0e9e9 100644
  /******************************
   * hwrm_tunnel_dst_port_query *
   ******************************/
-@@ -63557,9 +63839,14 @@ struct __rte_packed_begin hwrm_pcie_qstats_input {
- 	 */
- 	uint64_t	resp_addr;
- 	/*
--	 * The size of PCIe statistics block in bytes.
--	 * Firmware will DMA the PCIe statistics to
--	 * the host with this field size in the response.
-+	 * This field specifies the size of the host buffer for the
-+	 * statistics block. The actual size of the statistics block
-+	 * returned by FW will depend on the chip. Older chips will
-+	 * use the pcie_ctx_hw_stats structure and newer chips will
-+	 * use the superset pcie_ctx_hw_stats_v2 structure. The actual
-+	 * size of the data will be returned in the HWRM response and
-+	 * it will be smaller than or equal to the size specified in
-+	 * this field.
- 	 */
- 	uint16_t	pcie_stat_size;
- 	uint8_t	unused_0[6];
-@@ -63629,6 +63916,119 @@ struct __rte_packed_begin pcie_ctx_hw_stats {
- 	uint64_t	pcie_recovery_histogram;
- } __rte_packed_end;
- 
-+/*
-+ * Extended PCIe Statistics Format. This structure is a superset of
-+ * pcie_ctx_hw_stats, i.e. the fields between the two structures are
-+ * identical up to and including the pcie_recovery_histogram field.
-+ */
-+/* pcie_ctx_hw_stats_v2 (size:4096b/512B) */
-+struct pcie_ctx_hw_stats_v2 {
-+	/* Number of physical layer receiver errors */
-+	uint64_t	pcie_pl_signal_integrity;
-+	/* Number of DLLP CRC errors detected by Data Link Layer */
-+	uint64_t	pcie_dl_signal_integrity;
-+	/*
-+	 * Number of TLP LCRC and sequence number errors detected
-+	 * by Data Link Layer
-+	 */
-+	uint64_t	pcie_tl_signal_integrity;
-+	/* Number of times LTSSM entered Recovery state */
-+	uint64_t	pcie_link_integrity;
-+	/* Report number of TLP bits that have been transmitted in Mbps */
-+	uint64_t	pcie_tx_traffic_rate;
-+	/* Report number of TLP bits that have been received in Mbps */
-+	uint64_t	pcie_rx_traffic_rate;
-+	/* Number of DLLP bytes that have been transmitted */
-+	uint64_t	pcie_tx_dllp_statistics;
-+	/* Number of DLLP bytes that have been received */
-+	uint64_t	pcie_rx_dllp_statistics;
-+	/*
-+	 * Number of times spent in each phase of gen3
-+	 * equalization
-+	 */
-+	uint64_t	pcie_equalization_time;
-+	/* Records the last 16 transitions of the LTSSM */
-+	uint32_t	pcie_ltssm_histogram[4];
-+	/*
-+	 * Record the last 8 reasons on why LTSSM transitioned
-+	 * to Recovery
-+	 */
-+	uint64_t	pcie_recovery_histogram;
-+	/* The TL credit histogram counter buckets for non-posted-headers. */
-+	uint32_t	pcie_tl_credit_nph_histogram[8];
-+	/* The TL credit histogram counter buckets for posted-headers. */
-+	uint32_t	pcie_tl_credit_ph_histogram[8];
-+	/* The TL credit histogram counter buckets for posted-data. */
-+	uint32_t	pcie_tl_credit_pd_histogram[8];
-+	/*
-+	 * The most recently completed read request times (in microseconds)
-+	 * for the 4 tags.
-+	 */
-+	uint32_t	pcie_cmpl_latest_times[4];
-+	/* The longest read completion time (in microseconds). */
-+	uint32_t	pcie_cmpl_longest_time;
-+	/* The shortest read completion time (in microseconds). */
-+	uint32_t	pcie_cmpl_shortest_time;
-+	uint32_t	unused_0[2];
-+	/*
-+	 * This field represents an array of 4 most recent (in time) read
-+	 * completion headers for tags 0 to 3. Each header consists of 4
-+	 * words, in the following arrangement:
-+	 * | Word | Contains                            |
-+	 * | ---- | ------------------------------------|
-+	 * |   0  | The header bits 0 to 31.            |
-+	 * |   1  | The header bits 32 to 63.           |
-+	 * |   2  | The header bits 64 to 95.           |
-+	 * |   3  | Reserved.                           |
-+	 */
-+	uint32_t	pcie_cmpl_latest_headers[4][4];
-+	/*
-+	 * This field represents an array of 4 longest (in time) read
-+	 * completion headers for tags 0 to 3. Each header consists of 4
-+	 * words, in the following arrangement:
-+	 * | Word | Contains                            |
-+	 * | ---- | ------------------------------------|
-+	 * |   0  | The header bits 0 to 31.            |
-+	 * |   1  | The header bits 32 to 63.           |
-+	 * |   2  | The header bits 64 to 95.           |
-+	 * |   3  | Reserved.                           |
-+	 */
-+	uint32_t	pcie_cmpl_longest_headers[4][4];
-+	/*
-+	 * This field represents an array of 4 shortest (in time) read
-+	 * completion headers for tags 0 to 3. Each header consists of 4
-+	 * words, in the following arrangement:
-+	 * | Word | Contains                            |
-+	 * | ---- | ------------------------------------|
-+	 * |   0  | The header bits 0 to 31.            |
-+	 * |   1  | The header bits 32 to 63.           |
-+	 * |   2  | The header bits 64 to 95.           |
-+	 * |   3  | Reserved.                           |
-+	 */
-+	uint32_t	pcie_cmpl_shortest_headers[4][4];
-+	/* The PCIe write latency histogram data counter values. */
-+	uint32_t	pcie_wr_latency_histogram[12];
-+	/*
-+	 * The total count for all of the requests, less the ones in the
-+	 * buckets.
-+	 */
-+	uint32_t	pcie_wr_latency_all_normal_count;
-+	uint32_t	unused_1;
-+	/* The count of posted packets sent to the PCI-e. */
-+	uint64_t	pcie_posted_packet_count;
-+	/* The count of non-posted packets sent to the PCI-e. */
-+	uint64_t	pcie_non_posted_packet_count;
-+	/*
-+	 * The count of other packets (i.e. not posted or non-posted) sent to
-+	 * the PCI-e.
-+	 */
-+	uint64_t	pcie_other_packet_count;
-+	/* The count of blocked packets sent to the PCI-e. */
-+	uint64_t	pcie_blocked_packet_count;
-+	/* The count of completion packets sent to the PCI-e. */
-+	uint64_t	pcie_cmpl_packet_count;
-+} __rte_packed;
-+
- /****************************
-  * hwrm_stat_generic_qstats *
-  ****************************/
-@@ -64641,6 +65041,16 @@ struct __rte_packed_begin hwrm_nvm_write_input {
- 	 */
- 	#define HWRM_NVM_WRITE_INPUT_FLAGS_BATCH_LAST \
- 		UINT32_C(0x4)
-+	/*
-+	 * This flag can only be used when NIC is running a fastboot image.
-+	 * It has no effect when supplied to a non-fastboot image. Normally,
-+	 * all signed binaries must have the same CRID as the CRID programmed
-+	 * in the NIC SOTP. When the skip_crid_check flag is set, the CRID of
-+	 * the signed binary being written to the NVM does not have to match
-+	 * the CRID programmed in the SOTP of the NIC.
-+	 */
-+	#define HWRM_NVM_WRITE_INPUT_FLAGS_SKIP_CRID_CHECK \
-+		UINT32_C(0x8)
- 	/*
- 	 * The requested length of the allocated NVM for the item, in bytes.
- 	 * This value may be greater than or equal to the specified data
-@@ -68388,29 +68798,44 @@ struct __rte_packed_begin hwrm_dbg_log_buffer_flush_input {
- 	uint64_t	resp_addr;
- 	/* Type of trace buffer to flush. */
- 	uint16_t	type;
--	/* SRT trace. */
-+	/* SRT or APE trace. */
- 	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_SRT_TRACE \
- 		UINT32_C(0x0)
--	/* SRT2 trace. */
-+	/* SRT2 or AFM/Kong trace. */
- 	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_SRT2_TRACE \
- 		UINT32_C(0x1)
--	/* CRT trace. */
-+	/* CRT or ChiMP trace. */
- 	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_CRT_TRACE \
- 		UINT32_C(0x2)
--	/* CRT2 trace. */
-+	/* CRT2 or Bono trace. */
- 	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_CRT2_TRACE \
- 		UINT32_C(0x3)
- 	/* RIGP0 trace. */
- 	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_RIGP0_TRACE \
- 		UINT32_C(0x4)
--	/* L2 HWRM trace. */
-+	/* L2 or ChiMP HWRM trace. */
- 	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_L2_HWRM_TRACE \
- 		UINT32_C(0x5)
--	/* RoCE HWRM trace. */
-+	/* RoCE or Bono HWRM trace. */
- 	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_ROCE_HWRM_TRACE \
- 		UINT32_C(0x6)
-+	/* Context Accelerator CPU 0 trace. */
-+	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_CA0_TRACE \
-+		UINT32_C(0x7)
-+	/* Context Accelerator CPU 1 trace. */
-+	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_CA1_TRACE \
-+		UINT32_C(0x8)
-+	/* Context Accelerator CPU 2 trace. */
-+	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_CA2_TRACE \
-+		UINT32_C(0x9)
-+	/* RIGP1 trace. */
-+	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_RIGP1_TRACE \
-+		UINT32_C(0xa)
-+	/* AFM/Kong HWRM trace. */
-+	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_AFM_KONG_HWRM_TRACE \
-+		UINT32_C(0xb)
- 	#define HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_LAST \
--		HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_ROCE_HWRM_TRACE
-+		HWRM_DBG_LOG_BUFFER_FLUSH_INPUT_TYPE_AFM_KONG_HWRM_TRACE
- 	uint8_t	unused_1[2];
- 	/* Control flags. */
- 	uint32_t	flags;
+diff --git a/drivers/net/bnxt/tf_core/v3/meson.build b/drivers/net/bnxt/tf_core/v3/meson.build
+index 5f467d6e5e..159e7a2b17 100644
+--- a/drivers/net/bnxt/tf_core/v3/meson.build
++++ b/drivers/net/bnxt/tf_core/v3/meson.build
+@@ -31,4 +31,5 @@ sources += files(
+         'tfc_util.c',
+         'tfo.c',
+         'tfc_vf2pf_msg.c',
++        'tfc_hot_upgrade.c',
+ )
 diff --git a/drivers/net/bnxt/tf_core/v3/tfc.h b/drivers/net/bnxt/tf_core/v3/tfc.h
-index 0ede8f04a8..02f24106e7 100644
+index 02f24106e7..54c615edc3 100644
 --- a/drivers/net/bnxt/tf_core/v3/tfc.h
 +++ b/drivers/net/bnxt/tf_core/v3/tfc.h
-@@ -681,6 +681,33 @@ int tfc_tcam_get(struct tfc *tfcp, uint16_t fid,
- int tfc_tcam_free(struct tfc *tfcp, uint16_t fid,
- 		  const struct tfc_tcam_info *tcam_info);
- 
+@@ -1575,4 +1575,88 @@ int tfc_if_tbl_set(struct tfc *tfcp, uint16_t fid,
+ int tfc_if_tbl_get(struct tfc *tfcp, uint16_t fid,
+ 		   const struct tfc_if_tbl_info *tbl_info,
+ 		   uint8_t *data, uint8_t *data_sz_in_bytes);
++
 +/**
-+ * Update the TFC TCAM entry priority
++ * Get a TFC hot upgrade status and application instance count
 + *
 + * @param[in] tfcp
 + *   Pointer to TFC handle
@@ -889,406 +500,992 @@ index 0ede8f04a8..02f24106e7 100644
 + * @param[in] fid
 + *   FID - Function ID to be used
 + *
-+ * @param[in] tt
-+ *   Track type - either track by session or by function
++ * @param[in] app_inst_id
++ *   the applicatoin instance id.
 + *
-+ * @param[in] tcam_info
-+ *   All the information related to the requested index table entry (subtype/dir)
-+ *   including the id.
-+ *
-+ * @param[in] priority
-+ *  The priority of the tcam entry to be updated with.
++ * @param[out] app_inst_cnt
++ *   Pointer to the application instance count.
 + *
 + * @returns
 + *   0 for SUCCESS, negative error value for FAILURE (errno.h)
 + */
-+int tfc_tcam_priority_update(struct tfc *tfcp, uint16_t fid,
-+			     enum cfa_track_type tt,
-+			     const struct tfc_tcam_info *tcam_info,
-+			     uint16_t priority);
++int
++tfc_hot_up_app_inst_count(struct tfc *tfcp, uint16_t fid,
++			  uint8_t app_inst_id, uint8_t *app_inst_cnt);
 +
- /**
-  * @page TBM Table Scope
-  *
++/**
++ * Allocate and initialize the TFC hot upgrade state
++ *
++ * @param[in] tfcp
++ *   Pointer to TFC handle
++ *
++ * @param[in] fid
++ *   FID - Function ID to be used
++ *
++ * @param[in] app_inst_id
++ *   the application instance id.
++ *
++ * @param[in] app_inst_cnt
++ *   the application instance count.
++ *
++ * @param[out] session
++ *   the session count.
++ *
++ * @returns
++ *   0 for SUCCESS, negative error value for FAILURE (errno.h)
++ */
++int
++tfc_hot_up_app_inst_alloc(struct tfc *tfcp, uint16_t fid,
++			  uint8_t app_inst_id, uint8_t app_inst_cnt,
++			  uint8_t *session);
++/**
++ * Free the TFC hot upgrade state
++ *
++ * @param[in] tfcp
++ *   Pointer to TFC handle
++ *
++ * @param[in] fid
++ *   FID - Function ID to be used
++ *
++ * @param[in] app_inst_id
++ *   the application instance id.
++ *
++ * @returns
++ *   0 for SUCCESS, negative error value for FAILURE (errno.h)
++ */
++int
++tfc_hot_up_app_inst_free(struct tfc *tfcp, uint16_t fid, uint8_t app_inst_id);
++
++/**
++ * Set the TFC hot upgrade state to primary
++ *
++ * @param[in] tfcp
++ *   Pointer to TFC handle
++ *
++ * @param[in] fid
++ *   FID - Function ID to be used
++ *
++ * @param[in] app_inst_id
++ *   the application instance id.
++ *
++ * @returns
++ *   0 for SUCCESS, negative error value for FAILURE (errno.h)
++ */
++int
++tfc_hot_up_app_inst_set(struct tfc *tfcp, uint16_t fid, uint8_t app_inst_id);
++
+ #endif /* _TFC_H_ */
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_hot_upgrade.c b/drivers/net/bnxt/tf_core/v3/tfc_hot_upgrade.c
+new file mode 100644
+index 0000000000..a82c4ccd17
+--- /dev/null
++++ b/drivers/net/bnxt/tf_core/v3/tfc_hot_upgrade.c
+@@ -0,0 +1,142 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2019-2021 Broadcom
++ * All rights reserved.
++ */
++#include <stdio.h>
++#include "tfc.h"
++#include "bnxt.h"
++#include "tfc_msg.h"
++#include "tfc_util.h"
++
++static int
++tfc_hot_upgrade_validate(struct tfc *tfcp, uint8_t app_inst_id,
++			 uint16_t *sid)
++{
++	struct bnxt *bp;
++	int rc = -EINVAL;
++
++	if (tfcp == NULL) {
++		PMD_DRV_LOG_LINE(ERR, "Invalid tfcp pointer");
++		return rc;
++	}
++
++	if (tfcp->bp == NULL || tfcp->tfo == NULL) {
++		PMD_DRV_LOG_LINE(ERR, "tfcp not initialized");
++		return rc;
++	}
++	bp = tfcp->bp;
++
++	if (!BNXT_PF(bp) && !BNXT_VF_IS_TRUSTED(bp)) {
++		PMD_DRV_LOG_LINE(ERR, "bp not PF or trusted VF");
++		return rc;
++	}
++
++	if (app_inst_id > CFA_HOT_UPGRADE_APP_INSTANCE_MAX) {
++		PMD_DRV_LOG_LINE(ERR, "Invalid app instance: %u",
++				 app_inst_id);
++		return rc;
++	}
++
++	*sid = 0;
++	rc = tfo_sid_get(tfcp->tfo, sid);
++	if (rc)
++		PMD_DRV_LOG_LINE(ERR,
++				 "Failed to retrieve SID, rc:%d",
++				 rc);
++
++	return rc;
++}
++
++int
++tfc_hot_up_app_inst_count(struct tfc *tfcp, uint16_t fid,
++			  uint8_t app_inst_id, uint8_t *app_inst_cnt)
++{
++	uint16_t sid;
++	int rc = 0;
++
++	if (tfc_hot_upgrade_validate(tfcp, app_inst_id, &sid)) {
++		PMD_DRV_LOG_LINE(ERR, "failed validate for instance %u",
++				 app_inst_id);
++		return -EINVAL;
++	}
++
++	rc = tfc_msg_hot_upgrade_process(tfcp, fid, sid, app_inst_id,
++					 CFA_HOT_UPGRADE_CMD_GET, 0,
++					 app_inst_cnt);
++	if (rc)
++		PMD_DRV_LOG_LINE(ERR, "failed for app instance id %d err=%d",
++				 app_inst_id, rc);
++
++	return rc;
++}
++
++int
++tfc_hot_up_app_inst_alloc(struct tfc *tfcp, uint16_t fid,
++			  uint8_t app_inst_id, uint8_t app_inst_cnt,
++			  uint8_t *session)
++{
++	uint16_t sid;
++	int rc = 0;
++
++	if (tfc_hot_upgrade_validate(tfcp,  app_inst_id, &sid)) {
++		PMD_DRV_LOG_LINE(ERR, "failed validate for instance %u",
++				 app_inst_id);
++		return -EINVAL;
++	}
++
++	rc = tfc_msg_hot_upgrade_process(tfcp, fid, sid, app_inst_id,
++					 CFA_HOT_UPGRADE_CMD_ALLOC,
++					 app_inst_cnt, session);
++	if (rc)
++		PMD_DRV_LOG_LINE(ERR, "failed for app instance id %d err=%d",
++				 app_inst_id, rc);
++
++	return rc;
++}
++
++int
++tfc_hot_up_app_inst_free(struct tfc *tfcp, uint16_t fid,
++			 uint8_t app_inst_id)
++{
++	uint8_t session_cnt = 0;
++	uint16_t sid;
++	int rc = 0;
++
++	if (tfc_hot_upgrade_validate(tfcp,  app_inst_id, &sid)) {
++		PMD_DRV_LOG_LINE(ERR, "failed validate for instance %u",
++				 app_inst_id);
++		return -EINVAL;
++	}
++
++	rc = tfc_msg_hot_upgrade_process(tfcp, fid, sid, app_inst_id,
++					 CFA_HOT_UPGRADE_CMD_FREE,
++					 0, &session_cnt);
++	if (rc)
++		PMD_DRV_LOG_LINE(ERR, "failed for app instance id %d err=%d",
++				 app_inst_id, rc);
++
++	return rc;
++}
++
++int
++tfc_hot_up_app_inst_set(struct tfc *tfcp, uint16_t fid, uint8_t app_inst_id)
++{
++	uint8_t session_cnt = 0;
++	uint16_t sid;
++	int rc = 0;
++
++	if (tfc_hot_upgrade_validate(tfcp,  app_inst_id, &sid)) {
++		PMD_DRV_LOG_LINE(ERR, "failed validate for instance %u",
++				 app_inst_id);
++		return -EINVAL;
++	}
++
++	rc = tfc_msg_hot_upgrade_process(tfcp, fid, sid, app_inst_id,
++					 CFA_HOT_UPGRADE_CMD_SET,
++					 1, &session_cnt);
++	if (rc)
++		PMD_DRV_LOG_LINE(ERR, "failed for app instance id %d err=%d",
++				 app_inst_id, rc);
++
++	return rc;
++}
 diff --git a/drivers/net/bnxt/tf_core/v3/tfc_msg.c b/drivers/net/bnxt/tf_core/v3/tfc_msg.c
-index fb007a66f6..0a636a1677 100644
+index 0a636a1677..7ec7e9a054 100644
 --- a/drivers/net/bnxt/tf_core/v3/tfc_msg.c
 +++ b/drivers/net/bnxt/tf_core/v3/tfc_msg.c
-@@ -1183,6 +1183,38 @@ tfc_msg_tcam_free(struct tfc *tfcp, uint16_t fid, uint16_t sid,
+@@ -1319,3 +1319,55 @@ int tfc_msg_resc_usage_query(struct tfc *tfcp, uint16_t sid, enum cfa_dir dir,
  	return rc;
  }
- 
-+int
-+tfc_msg_tcam_prioriry_update(struct tfc *tfcp, uint16_t fid, uint16_t sid,
-+			     enum cfa_dir dir, enum cfa_track_type tt,
-+			     enum cfa_resource_subtype_tcam subtype,
-+			     uint16_t tcam_id, uint16_t priority)
-+{
-+	int rc = 0;
-+	struct bnxt *bp = tfcp->bp;
-+	struct hwrm_tfc_tcam_pri_update_input req = { 0 };
-+	struct hwrm_tfc_tcam_pri_update_output resp = { 0 };
+ #endif /* TF_FLOW_SCALE_QUERY */
 +
-+	req.flags = (dir == CFA_DIR_TX ?
-+		     HWRM_TFC_TCAM_SET_INPUT_FLAGS_DIR_TX :
-+		     HWRM_TFC_TCAM_SET_INPUT_FLAGS_DIR_RX);
++int
++tfc_msg_hot_upgrade_process(struct tfc *tfcp, uint16_t fid, uint16_t sid,
++			    uint8_t app_inst_id,
++			    enum cfa_hot_upgrade_cmd_op cmd_op,
++			    uint8_t cur_cnt,
++			    uint8_t *app_inst_cnt)
++{
++	struct hwrm_tfc_hot_upgrade_process_input req = { 0 };
++	struct hwrm_tfc_hot_upgrade_process_output resp = { 0 };
++	struct bnxt *bp = tfcp->bp;
++	int rc = 0;
 +
 +	rc = tfc_msg_set_fid(bp, fid, &req.fid);
 +	if (rc)
 +		return rc;
 +	req.sid = rte_le_to_cpu_16(sid);
-+	req.tcam_id = rte_le_to_cpu_16(tcam_id);
-+	req.subtype = (uint8_t)subtype;
-+	req.priority = rte_le_to_cpu_16(priority);
-+	req.track_type = (tt == CFA_TRACK_TYPE_FID ?
-+			  HWRM_TFC_TCAM_PRI_UPDATE_INPUT_TRACK_TYPE_TRACK_TYPE_FID :
-+			  HWRM_TFC_TCAM_PRI_UPDATE_INPUT_TRACK_TYPE_TRACK_TYPE_SID);
++	req.app_id = app_inst_id;
++	req.cur_session_cnt = cur_cnt;
 +
-+	rc = bnxt_hwrm_tf_message_direct(bp, false, HWRM_TFC_TCAM_PRI_UPDATE,
++	switch (cmd_op) {
++	case CFA_HOT_UPGRADE_CMD_ALLOC:
++		req.cmd = HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_ALLOC;
++		break;
++	case CFA_HOT_UPGRADE_CMD_FREE:
++		req.cmd = HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_FREE;
++		break;
++	case CFA_HOT_UPGRADE_CMD_GET:
++		req.cmd = HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_GET;
++		break;
++	case CFA_HOT_UPGRADE_CMD_SET:
++		req.cmd = HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_SET;
++		break;
++	default:
++		PMD_DRV_LOG_LINE(ERR, "invalid command opcode %u",
++				 cmd_op);
++		return -EINVAL;
++	}
++	rc = bnxt_hwrm_tf_message_direct(bp, false,
++					 HWRM_TFC_HOT_UPGRADE_PROCESS,
 +					 &req, sizeof(req), &resp,
 +					 sizeof(resp));
++	if (rc) {
++		PMD_DRV_LOG_LINE(ERR,
++				 "sid[%u]:instance[%u]:cmd_op[%u] failed",
++				 sid, app_inst_id, cmd_op);
++		return rc;
++	}
++
++	*app_inst_cnt = resp.session_cnt;
 +	return rc;
 +}
-+
- int
- tfc_msg_if_tbl_set(struct tfc *tfcp, uint16_t fid, uint16_t sid,
- 		   enum cfa_dir dir, enum cfa_resource_subtype_if_tbl subtype,
 diff --git a/drivers/net/bnxt/tf_core/v3/tfc_msg.h b/drivers/net/bnxt/tf_core/v3/tfc_msg.h
-index a03452f00a..2d1a6816c0 100644
+index 2d1a6816c0..3bf6b04a12 100644
 --- a/drivers/net/bnxt/tf_core/v3/tfc_msg.h
 +++ b/drivers/net/bnxt/tf_core/v3/tfc_msg.h
-@@ -154,6 +154,12 @@ tfc_msg_tcam_free(struct tfc *tfcp, uint16_t fid, uint16_t sid,
- 		 enum cfa_dir dir, enum cfa_resource_subtype_tcam subtype,
- 		 uint16_t tcam_id);
- 
-+int
-+tfc_msg_tcam_prioriry_update(struct tfc *tfcp, uint16_t fid, uint16_t sid,
-+			     enum cfa_dir dir, enum cfa_track_type tt,
-+			     enum cfa_resource_subtype_tcam subtype,
-+			     uint16_t tcam_id, uint16_t priority);
+@@ -174,3 +174,10 @@ tfc_msg_if_tbl_get(struct tfc *tfcp, uint16_t fid, uint16_t sid,
+ int tfc_msg_resc_usage_query(struct tfc *tfcp, uint16_t sid, enum cfa_dir dir,
+ 			     uint16_t *data_size, void *data);
+ #endif /* TF_FLOW_SCALE_QUERY  */
 +
- int
- tfc_msg_if_tbl_set(struct tfc *tfcp, uint16_t fid, uint16_t sid,
- 		   enum cfa_dir dir, enum cfa_resource_subtype_if_tbl subtype,
++int
++tfc_msg_hot_upgrade_process(struct tfc *tfcp, uint16_t fid, uint16_t sid,
++			    uint8_t app_inst_id,
++			    enum cfa_hot_upgrade_cmd_op cmd_op,
++			    uint8_t cur_cnt,
++			    uint8_t *app_inst_cnt);
 diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp.h
-index e0e31532fd..3a2745d405 100644
+index 3a2745d405..afd883df2c 100644
 --- a/drivers/net/bnxt/tf_ulp/bnxt_ulp.h
 +++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp.h
-@@ -327,4 +327,7 @@ bnxt_ulp_grp_miss_act_set(struct rte_eth_dev *dev,
- 			  const struct rte_flow_action actions[],
- 			  uint32_t *flow_id);
+@@ -139,6 +139,7 @@ struct bnxt_ulp_data {
+ 	uint32_t			max_def_priority;
+ 	uint32_t			min_flow_priority;
+ 	uint32_t			max_flow_priority;
++	uint32_t			ha_priority;
+ 	uint32_t			vxlan_port;
+ 	uint32_t			vxlan_gpe_port;
+ 	uint32_t			vxlan_ip_port;
+@@ -164,6 +165,8 @@ struct bnxt_ulp_data {
+ 	uint64_t			default_act_bits;
+ 	struct ulp_fc_tfc_stats_cache_entry *stats_cache;
+ 	struct bnxt_ulp_sc_info		*sc_info;
++	struct bnxt_ulp_tfc_ha_mgr_info *tfc_ha_info;
++	uint8_t				app_instance_id;
+ };
  
-+int32_t
-+bnxt_ulp_hot_upgrade_process(struct bnxt *bp);
+ enum bnxt_ulp_tfo_type {
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_flow.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_flow.c
+index 2c22582e1c..386ec57a08 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_flow.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_flow.c
+@@ -13,6 +13,7 @@
+ #include "ulp_fc_mgr.h"
+ #include "ulp_port_db.h"
+ #include "ulp_ha_mgr.h"
++#include "ulp_tfc_ha_mgr.h"
+ #include "ulp_tun.h"
+ #include <rte_malloc.h>
+ #include "ulp_template_db_tbl.h"
+@@ -92,8 +93,10 @@ bnxt_ulp_set_prio_attribute(struct ulp_rte_parser_params *params,
+ {
+ 	uint32_t max_p = bnxt_ulp_max_flow_priority_get(params->ulp_ctx);
+ 	uint32_t min_p = bnxt_ulp_min_flow_priority_get(params->ulp_ctx);
++	uint32_t hot_prio = bnxt_ulp_ha_priority_id_get(params->ulp_ctx);
+ 
+ 	if (max_p < min_p) {
++		min_p -= hot_prio;
+ 		if (unlikely(attr->priority > min_p || attr->priority < max_p)) {
+ 			BNXT_DRV_DBG(ERR, "invalid prio, not in range %u:%u\n",
+ 				     max_p, min_p);
+@@ -101,6 +104,7 @@ bnxt_ulp_set_prio_attribute(struct ulp_rte_parser_params *params,
+ 		}
+ 		params->priority = attr->priority;
+ 	} else {
++		max_p -= hot_prio;
+ 		if (unlikely(attr->priority > max_p || attr->priority < min_p)) {
+ 			BNXT_DRV_DBG(ERR, "invalid prio, not in range %u:%u\n",
+ 				     min_p, max_p);
+@@ -245,6 +249,12 @@ bnxt_ulp_init_mapper_params(struct bnxt_ulp_mapper_parms *mparms,
+ 				    1);
+ 	}
+ 
++	/* update the Hot upgrade flag */
++	if (bnxt_ulp_tfc_hot_upgrade_enabled(params->ulp_ctx) &&
++	    bnxt_ulp_tfc_hot_upgrade_is_secondary(params->ulp_ctx))
++		ULP_BITMAP_SET(mparms->cf_bitmap,
++			       BNXT_ULP_CF_BIT_HOT_UP_SECONDARY);
 +
- #endif /* _BNXT_ULP_H_ */
+ 	/* Update the socket direct flag */
+ 	if (ULP_BITMAP_ISSET(params->hdr_bitmap.bits,
+ 			     BNXT_ULP_HDR_BIT_SVIF_IGNORE)) {
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+index af3e82a6a7..385dd742d5 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+@@ -32,7 +32,7 @@
+ #include "ulp_matcher.h"
+ #include "ulp_port_db.h"
+ #include "ulp_tun.h"
+-#include "ulp_ha_mgr.h"
++#include "ulp_tfc_ha_mgr.h"
+ #include "bnxt_tf_pmd_shim.h"
+ #include "ulp_template_db_tbl.h"
+ #include "tfc_resources.h"
+@@ -546,6 +546,21 @@ ulp_tfc_cntxt_app_caps_init(struct bnxt *bp, uint8_t app_id, uint32_t dev_id)
+ 						  info[i].default_priority);
+ 		bnxt_ulp_max_def_priority_set(ulp_ctx,
+ 					      info[i].max_def_priority);
++
++		/* if hot upgrade is enabled */
++		if (bnxt_ulp_tfc_hot_upgrade_enabled(ulp_ctx)) {
++			uint32_t ha_prio = 0;
++
++			if (info[i].min_flow_priority >
++			    info[i].max_flow_priority)
++				ha_prio = info[i].min_flow_priority -
++					info[i].max_flow_priority;
++			else
++				ha_prio = info[i].max_flow_priority -
++					info[i].min_flow_priority;
++			ha_prio = ha_prio / 2;
++			bnxt_ulp_ha_priority_set(ulp_ctx, ha_prio);
++		}
+ 		bnxt_ulp_min_flow_priority_set(ulp_ctx,
+ 					       info[i].min_flow_priority);
+ 		bnxt_ulp_max_flow_priority_set(ulp_ctx,
+@@ -678,6 +693,16 @@ ulp_tfc_ctx_init(struct bnxt *bp,
+ 	}
+ 	BNXT_DRV_DBG(DEBUG, "Ulp initialized with app id %d\n", bp->app_id);
+ 
++	rc = bnxt_ulp_app_instance_id_set(bp->ulp_ctx, bp->app_instance_id);
++	if (rc) {
++		BNXT_DRV_DBG(ERR,
++			     "Unable to set app_instance_id for ULP init.\n");
++		goto error_deinit;
++	}
++	if (bp->app_instance_id)
++		BNXT_DRV_DBG(DEBUG, "Hot upgrade instance id %u\n",
++			     bp->app_instance_id);
++
+ 	rc = ulp_tfc_dparms_init(bp, bp->ulp_ctx, devid);
+ 	if (rc) {
+ 		BNXT_DRV_DBG(ERR, "Unable to init dparms for app(%x)/dev(%x)\n",
+@@ -875,19 +900,14 @@ static void
+ ulp_tfc_deinit(struct bnxt *bp,
+ 	       struct bnxt_ulp_session_state *session)
+ {
+-	bool ha_enabled;
+ 	uint16_t fid_cnt = 0;
+ 	int32_t rc;
+ 
+ 	if (!bp->ulp_ctx || !bp->ulp_ctx->cfg_data)
+ 		return;
+ 
+-	ha_enabled = bnxt_ulp_cntxt_ha_enabled(bp->ulp_ctx);
+-	if (ha_enabled) {
+-		rc = ulp_ha_mgr_close(bp->ulp_ctx);
+-		if (rc)
+-			BNXT_DRV_DBG(ERR, "Failed to close HA (%d)\n", rc);
+-	}
++	/* Delete the Hot upgrade manager */
++	ulp_tfc_hot_upgrade_mgr_deinit(bp->ulp_ctx);
+ 
+ 	/* Delete the Stats Counter Manager */
+ 	ulp_sc_mgr_deinit(bp->ulp_ctx);
+@@ -1050,6 +1070,12 @@ ulp_tfc_init(struct bnxt *bp,
+ 		goto jump_to_error;
+ 	}
+ 
++	rc = ulp_tfc_hot_upgrade_mgr_init(bp->ulp_ctx);
++	if (rc) {
++		BNXT_DRV_DBG(ERR, "Failed to initialize ulp hot upgrade mgr\n");
++		goto jump_to_error;
++	}
++
+ 	rc = bnxt_ulp_cntxt_dev_id_get(bp->ulp_ctx, &ulp_dev_id);
+ 	if (rc) {
+ 		BNXT_DRV_DBG(ERR, "Unable to get device id from ulp.\n");
 diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-index 08934eac3f..2cea9e5692 100644
+index 2cea9e5692..cb826b2c19 100644
 --- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
 +++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-@@ -1091,7 +1091,8 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
- 		BNXT_DRV_DBG(ERR, "Multi Instance Feature is enabled\n");
- 	if (bit & BNXT_ULP_FEATURE_BIT_SPECIAL_VXLAN)
- 		BNXT_DRV_DBG(ERR, "Special VXLAN Feature is enabled\n");
--
-+	if (bit & BNXT_ULP_FEATURE_BIT_HOT_UPGRADE)
-+		BNXT_DRV_DBG(ERR, "Hot Upgrade Feature is enabled\n");
- 
- 	*out_bits =  bit;
+@@ -1098,4 +1098,64 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
  	return 0;
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_def_rules.c b/drivers/net/bnxt/tf_ulp/ulp_def_rules.c
-index b7a893a04f..30cd944362 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_def_rules.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_def_rules.c
-@@ -993,3 +993,32 @@ bnxt_ulp_grp_miss_act_set(struct rte_eth_dev *dev,
- flow_error:
- 	return ret;
  }
-+
-+int32_t
-+bnxt_ulp_hot_upgrade_process(struct bnxt *bp)
+ 
++/* Function to set the tfc ha info into the context */
++static inline int32_t
++bnxt_ulp_cntxt_ptr2_tfc_ha_info_set(struct bnxt_ulp_context *ulp_ctx,
++				    struct bnxt_ulp_tfc_ha_mgr_info *ha_info)
 +{
-+	uint32_t flow_type = BNXT_ULP_TEMPLATE_HOT_UPGRADE;
-+	uint16_t port_id = bp->eth_dev->data->port_id;
-+	struct ulp_tlv_param param_list[] = {
-+		{
-+			.type = BNXT_ULP_DF_PARAM_TYPE_DEV_PORT_ID,
-+			.length = 2,
-+			.value = {(port_id >> 8) & 0xff, port_id & 0xff}
-+		},
-+		{
-+			.type = BNXT_ULP_DF_PARAM_TYPE_LAST,
-+			.length = 0,
-+			.value = {0}
-+		}
-+	};
-+
-+	if (!BNXT_CHIP_P7(bp))
-+		return -EPERM;
-+
-+	if (ulp_flow_template_process(bp, param_list, flow_type,
-+				      port_id, 0))
-+		return -EIO;
-+
-+	BNXT_DRV_DBG(DEBUG, "Hot upgrade operation performed\n");
++	if (unlikely(ulp_ctx == NULL || ulp_ctx->cfg_data == NULL)) {
++		BNXT_DRV_DBG(ERR, "Invalid ulp context data\n");
++		return -EINVAL;
++	}
++	ulp_ctx->cfg_data->tfc_ha_info = ha_info;
 +	return 0;
 +}
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_gen_tbl.c b/drivers/net/bnxt/tf_ulp/ulp_gen_tbl.c
-index c2ae3dc3a2..ac0a7e6db1 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_gen_tbl.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_gen_tbl.c
-@@ -626,3 +626,27 @@ ulp_gen_tbl_simple_list_search(struct ulp_mapper_gen_tbl_list *tbl_list,
- 	}
- 	return rc;
- }
 +
-+uint32_t
-+ulp_gen_tbl_simple_list_get_next(struct ulp_mapper_gen_tbl_list *tbl_list,
-+				 uint32_t *key_idx)
++/* Function to retrieve the tfc ha info from the context. */
++static inline struct bnxt_ulp_tfc_ha_mgr_info *
++bnxt_ulp_cntxt_ptr2_tfc_ha_info_get(struct bnxt_ulp_context *ulp_ctx)
 +{
-+	struct ulp_mapper_gen_tbl_cont *cont = &tbl_list->container;
-+	enum ulp_gen_list_search_flag rc = ULP_GEN_LIST_SEARCH_FULL;
-+	struct ulp_mapper_gen_tbl_entry ent = { 0 };
-+	uint32_t idx = *key_idx;
-+
-+	/* Check the given idx is a valid entry, if not get next one */
-+	while (idx < cont->num_elem) {
-+		ent.ref_count = &cont->ref_count[idx];
-+		/* check ref count not zero and exact key matches */
-+		if (ULP_GEN_TBL_REF_CNT(&ent)) {
-+			/* found the entry return */
-+			rc = ULP_GEN_LIST_SEARCH_FOUND;
-+			*key_idx = idx;
-+			break;
-+		}
-+		idx++;
-+	}
-+	return rc;
++	if (unlikely(ulp_ctx == NULL || ulp_ctx->cfg_data == NULL))
++		return NULL;
++	return ulp_ctx->cfg_data->tfc_ha_info;
 +}
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_gen_tbl.h b/drivers/net/bnxt/tf_ulp/ulp_gen_tbl.h
-index 2a6454bf9c..e88fd78acc 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_gen_tbl.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_gen_tbl.h
-@@ -219,4 +219,16 @@ uint32_t
- ulp_gen_tbl_simple_list_search(struct ulp_mapper_gen_tbl_list *tbl_list,
- 			       uint8_t *match_key,
- 			       uint32_t *key_idx);
 +
-+/*
-+ * Perform simple list iteration
-+ *
-+ * tbl_list [in] - pointer to the generic table list
-+ * key_idx [in/out] - returns key index .
-+ *
-+ * returns 2 on success.
-+ */
-+uint32_t
-+ulp_gen_tbl_simple_list_get_next(struct ulp_mapper_gen_tbl_list *tbl_list,
-+				 uint32_t *key_idx);
- #endif /* _ULP_EN_TBL_H_ */
++/* This function sets the app instance id */
++static inline int32_t
++bnxt_ulp_app_instance_id_set(struct bnxt_ulp_context *ulp_ctx,
++			     uint8_t app_instance_id)
++{
++	if (unlikely(!ulp_ctx))
++		return -EINVAL;
++	ulp_ctx->cfg_data->app_instance_id = app_instance_id;
++	return 0;
++}
++
++/* This function gets the app instance id */
++static inline uint8_t
++bnxt_ulp_app_instance_id_get(struct bnxt_ulp_context *ulp_ctx)
++{
++	if (unlikely(!ulp_ctx || !ulp_ctx->cfg_data))
++		return 0;
++	return ulp_ctx->cfg_data->app_instance_id;
++}
++
++static inline int
++bnxt_ulp_ha_priority_set(struct bnxt_ulp_context *ulp_ctx, uint32_t prio)
++{
++	if (unlikely(!ulp_ctx || !ulp_ctx->cfg_data))
++		return -EINVAL;
++
++	ulp_ctx->cfg_data->ha_priority = prio;
++	return 0;
++}
++
++static inline uint32_t
++bnxt_ulp_ha_priority_id_get(struct bnxt_ulp_context *ulp_ctx)
++{
++	if (unlikely(!ulp_ctx || !ulp_ctx->cfg_data))
++		return 0;
++	return ulp_ctx->cfg_data->ha_priority;
++}
++
+ #endif /* _BNXT_ULP_UTILS_H_ */
+diff --git a/drivers/net/bnxt/tf_ulp/meson.build b/drivers/net/bnxt/tf_ulp/meson.build
+index c8eb39f469..000b05ad0c 100644
+--- a/drivers/net/bnxt/tf_ulp/meson.build
++++ b/drivers/net/bnxt/tf_ulp/meson.build
+@@ -33,6 +33,60 @@ sources += files(
+         'ulp_fc_mgr_tf.c',
+         'ulp_alloc_tbl.c',
+         'ulp_sc_mgr.c',
+-        'ulp_sc_mgr_tfc.c')
++        'ulp_sc_mgr_tfc.c',
++        'ulp_tfc_ha_mgr.c')
++
++#include the templates for compile
++
++if get_option('bnxt_tf_template').contains('app19')
++includes += include_directories('app_19_templates')
++subdir('app_19_templates')
++cflags += '-DBNXT_TF_APP_ID=19'
++
++elif get_option('bnxt_tf_template').contains('app17')
++includes += include_directories('app_16_17_templates')
++subdir('app_16_17_templates')
++cflags += '-DBNXT_TF_APP_ID=17'
++
++elif get_option('bnxt_tf_template').contains('app16')
++includes += include_directories('app_16_17_templates')
++subdir('app_16_17_templates')
++cflags += '-DBNXT_TF_APP_ID=16'
++
++elif get_option('bnxt_tf_template').contains('app14')
++includes += include_directories('app_14_templates')
++subdir('app_14_templates')
++cflags += '-DBNXT_TF_APP_ID=14'
++
++elif get_option('bnxt_tf_template').contains('app13')
++includes += include_directories('app_13_templates')
++subdir('app_13_templates')
++cflags += '-DBNXT_TF_APP_ID=13'
++
++elif get_option('bnxt_tf_template').contains('app10')
++includes += include_directories('app_10_templates')
++subdir('app_10_templates')
++cflags += '-DBNXT_TF_APP_ID=10'
++
++elif get_option('bnxt_tf_template').contains('app11')
++includes += include_directories('app_11_templates')
++subdir('app_11_templates')
++cflags += '-DBNXT_TF_APP_ID=11'
++
++elif get_option('bnxt_tf_template').contains('app12')
++includes += include_directories('app_12_templates')
++subdir('app_12_templates')
++cflags += '-DBNXT_TF_APP_ID=12'
++
++elif get_option('bnxt_tf_template').contains('app15')
++includes += include_directories('app_15_templates')
++subdir('app_15_templates')
++cflags += '-DBNXT_TF_APP_ID=15'
++
++elif get_option('bnxt_tf_template').contains('app1')
++includes += include_directories('app_1_2_templates')
++subdir('app_1_2_templates')
++cflags += '-DBNXT_TF_APP_ID=1'
++endif
+ 
+ subdir('generic_templates')
 diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.c b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-index d545bd2fda..c463bce3d4 100644
+index c463bce3d4..1901845499 100644
 --- a/drivers/net/bnxt/tf_ulp/ulp_mapper.c
 +++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-@@ -2619,6 +2619,7 @@ ulp_mapper_gen_tbl_process(struct bnxt_ulp_mapper_parms *parms,
- 	uint32_t i, num_kflds = 0, key_index = 0, num_par_kflds = 0, pad = 0;
- 	uint32_t gen_tbl_miss = 1, fdb_write = 0;
- 	uint8_t *byte_data;
-+	uint64_t regval = 0;
- 	int32_t rc = 0;
- 
- 	/* Get the key fields list and build the key. */
-@@ -2725,7 +2726,9 @@ ulp_mapper_gen_tbl_process(struct bnxt_ulp_mapper_parms *parms,
- 							  &gen_tbl_ent)))
- 			return -EINVAL;
- 	} else if (gen_tbl_list->tbl_type ==
--		   BNXT_ULP_GEN_TBL_TYPE_SIMPLE_LIST) {
-+		   BNXT_ULP_GEN_TBL_TYPE_SIMPLE_LIST &&
-+		   tbl->tbl_opcode !=
-+		   BNXT_ULP_GENERIC_TBL_OPC_ITERATE) {
- 		list_srch = ulp_gen_tbl_simple_list_search(gen_tbl_list,
- 							   cache_key,
- 							   &key_index);
-@@ -2826,6 +2829,53 @@ ulp_mapper_gen_tbl_process(struct bnxt_ulp_mapper_parms *parms,
- 		fdb_write = 1;
- 		parms->shared_hndl = (uint64_t)tbl_idx << 32 | key_index;
- 		break;
-+	case BNXT_ULP_GENERIC_TBL_OPC_ITERATE:
-+		if (gen_tbl_list->tbl_type !=
-+		    BNXT_ULP_GEN_TBL_TYPE_SIMPLE_LIST) {
-+			BNXT_DRV_DBG(ERR, "%s: Invalid table opcode\n",
-+				     gen_tbl_list->gen_tbl_name);
-+			return -EINVAL;
-+		}
-+		/* read the gen table index */
-+		if (unlikely(ulp_regfile_read(parms->regfile,
-+					      tbl->tbl_operand,
-+					      &regval))) {
-+			BNXT_DRV_DBG(ERR,
-+				     "Fail to get tbl idx from regfile[%d].\n",
-+				     BNXT_ULP_RF_IDX_GENERIC_TBL_INDEX);
-+			return -EINVAL;
-+		}
-+		key_index = (uint32_t)rte_be_to_cpu_64(regval);
-+		/* get the next index from the simple list table */
-+		rc = ulp_gen_tbl_simple_list_get_next(gen_tbl_list, &key_index);
-+		if (rc == ULP_GEN_LIST_SEARCH_FOUND) {
-+			gen_tbl_miss = 0; /* entry exits */
-+			regval = key_index;
-+			(void)ulp_regfile_write(parms->regfile,
-+						tbl->tbl_operand,
-+						tfp_cpu_to_be_64(regval));
-+			g = &gen_tbl_ent;
-+			rc = ulp_mapper_gen_tbl_entry_get(gen_tbl_list,
-+							  key_index,
-+							  &gen_tbl_ent);
-+			if (rc)
-+				return rc;
-+
-+			/* scan the result list and update the regfile values */
-+			rc = ulp_mapper_tbl_ident_scan_ext(parms, tbl,
-+							   g->byte_data,
-+							   g->byte_data_size,
-+							   g->byte_order);
-+			if (unlikely(rc)) {
-+				BNXT_DRV_DBG(ERR, "Fail to scan ident list\n");
-+				return rc;
-+			}
-+
-+		} else {
-+			gen_tbl_miss = 1; /* no more entries */
-+		}
-+		fdb_write = 0;
-+		break;
- 	default:
- 		BNXT_DRV_DBG(ERR, "Invalid table opcode %x\n", tbl->tbl_opcode);
- 		return -EINVAL;
-@@ -3726,12 +3776,15 @@ ulp_mapper_func_info_process(struct bnxt_ulp_mapper_parms *parms,
- 	case BNXT_ULP_FUNC_OPC_HANDLE_TO_OFFSET:
- 	case BNXT_ULP_FUNC_OPC_VFR_MARK_SET:
- 	case BNXT_ULP_FUNC_OPC_BD_ACT_SET:
-+	case BNXT_ULP_FUNC_OPC_MTR_ID_TO_STATS_HANDLE:
-+	case BNXT_ULP_FUNC_OPC_TCAM_SET_PRIORITY:
- 		process_src1 = 1;
- 		process_src2 = 1;
- 		break;
- 	case BNXT_ULP_FUNC_OPC_NOT_NOT:
+@@ -3785,6 +3785,7 @@ ulp_mapper_func_info_process(struct bnxt_ulp_mapper_parms *parms,
  		process_src1 = 1;
  	case BNXT_ULP_FUNC_OPC_COND_LIST:
-+	case BNXT_ULP_FUNC_OPC_APP_PRIORITY:
+ 	case BNXT_ULP_FUNC_OPC_APP_PRIORITY:
++	case BNXT_ULP_FUNC_OPC_GET_HA_PRIORITY:
  		break;
  	case BNXT_ULP_FUNC_OPC_PORT_TABLE:
  		process_src1 = 1;
-@@ -3854,6 +3907,19 @@ ulp_mapper_func_info_process(struct bnxt_ulp_mapper_parms *parms,
- 						    (uint8_t *)&res2,
- 						    func_info->func_oper_size);
- 		return rc;
-+	case BNXT_ULP_FUNC_OPC_MTR_ID_TO_STATS_HANDLE:
-+		/* res1 is mtr_id, res2 is stats_id */
-+		return op->ulp_mapper_mtr_stats_hndl_set(parms, res1, res2);
-+	case BNXT_ULP_FUNC_OPC_APP_PRIORITY:
-+		res = parms->app_priority;
+@@ -3920,6 +3921,9 @@ ulp_mapper_func_info_process(struct bnxt_ulp_mapper_parms *parms,
+ 							    CFA_RSUBTYPE_TCAM_WC,
+ 							    (uint32_t)res1,
+ 							    (uint16_t)res2);
++	case BNXT_ULP_FUNC_OPC_GET_HA_PRIORITY:
++		res = bnxt_ulp_ha_priority_id_get(parms->ulp_ctx);
 +		break;
-+	case BNXT_ULP_FUNC_OPC_TCAM_SET_PRIORITY:
-+		return op->ulp_mapper_core_tcam_prio_update(parms,
-+							    tbl->direction,
-+							    tbl->track_type,
-+							    CFA_RSUBTYPE_TCAM_WC,
-+							    (uint32_t)res1,
-+							    (uint16_t)res2);
  	default:
  		BNXT_DRV_DBG(ERR, "invalid func code %u\n",
  			     func_info->func_opc);
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.h b/drivers/net/bnxt/tf_ulp/ulp_mapper.h
-index 79052664dd..a4a42ab84d 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.h
-@@ -103,6 +103,13 @@ struct ulp_mapper_core_ops {
- 	(*ulp_mapper_core_tcam_entry_free)(struct bnxt_ulp_context *ulp_ctx,
- 					   struct ulp_flow_db_res_params *res);
- 	int32_t
-+	(*ulp_mapper_core_tcam_prio_update)(struct bnxt_ulp_mapper_parms *parms,
-+					    uint8_t dir,
-+					    enum cfa_track_type tt,
-+					    enum cfa_resource_subtype_tcam type,
-+					    uint32_t tcam_id,
-+					    uint16_t priority);
-+	int32_t
- 	(*ulp_mapper_core_em_tbl_process)(struct bnxt_ulp_mapper_parms *parms,
- 					  struct bnxt_ulp_mapper_tbl_info *t,
- 					  void *error);
-@@ -110,7 +117,6 @@ struct ulp_mapper_core_ops {
- 	(*ulp_mapper_core_em_entry_free)(struct bnxt_ulp_context *ulp,
- 					 struct ulp_flow_db_res_params *res,
- 					 void *error);
--
- 	int32_t
- 	(*ulp_mapper_core_index_tbl_process)(struct bnxt_ulp_mapper_parms *parm,
- 					     struct bnxt_ulp_mapper_tbl_info
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
-index e548a6b91f..72d0f96573 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
-@@ -1368,6 +1368,7 @@ ulp_mapper_tf_mpc_batch_started(struct tfc_mpc_batch_info_t *batch_info __rte_un
- const struct ulp_mapper_core_ops ulp_mapper_tf_core_ops = {
- 	.ulp_mapper_core_tcam_tbl_process = ulp_mapper_tf_tcam_tbl_process,
- 	.ulp_mapper_core_tcam_entry_free = ulp_mapper_tf_tcam_entry_free,
-+	.ulp_mapper_core_tcam_prio_update = NULL,
- 	.ulp_mapper_core_em_tbl_process = ulp_mapper_tf_em_tbl_process,
- 	.ulp_mapper_core_em_entry_free = ulp_mapper_tf_em_entry_free,
- 	.ulp_mapper_core_index_tbl_process = ulp_mapper_tf_index_tbl_process,
 diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-index d4c03a2d74..046d2c5cf9 100644
+index 046d2c5cf9..20b1ac09fc 100644
 --- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
 +++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-@@ -1911,11 +1911,47 @@ ulp_mapper_tfc_mtr_stats_hndl_del(uint32_t mtr_id)
+@@ -316,7 +316,7 @@ ulp_mapper_tfc_tcam_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 		/* allocate the tcam entry, only need the length */
+ 		(void)ulp_blob_data_get(key, &key_sz_in_bits);
+ 		key_sz_in_words = ULP_BITS_2_BYTE(key_sz_in_bits);
+-		tfc_inf.dir = tbl->direction; /* PKB.need an api */
++		tfc_inf.dir = tbl->direction;
+ 		tfc_inf.rsubtype = tbl->resource_type;
+ 
+ 		rc = tfc_tcam_alloc(tfcp, fw_fid, tt, priority,
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
+index 6b6733133a..fc4207b36c 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
+@@ -158,6 +158,8 @@ ulp_sc_mgr_deinit(struct bnxt_ulp_context *ctxt)
+ 	if (!ulp_sc_info)
+ 		return -EINVAL;
+ 
++	ulp_sc_mgr_thread_cancel(ctxt);
++
+ 	if (ulp_sc_info->stats_cache_tbl)
+ 		rte_free(ulp_sc_info->stats_cache_tbl);
+ 
+@@ -208,11 +210,11 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
+ 				goto terminate;
+ 			rte_delay_us_block(ULP_SC_CTX_DELAY);
+ 		}
++		bnxt_ulp_cntxt_entry_release();
+ 
+ 		/* get the stats counter info block from ulp context */
+ 		ulp_sc_info = bnxt_ulp_cntxt_ptr2_sc_info_get(ctxt);
+ 		if (unlikely(!ulp_sc_info)) {
+-			bnxt_ulp_cntxt_entry_release();
+ 			goto terminate;
  		}
  
- 	return rc;
+@@ -247,7 +249,6 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
+ 				tfcp = bnxt_ulp_cntxt_tfcp_get(sce->ctxt);
+ 				if (unlikely(!tfcp)) {
+ 					bnxt_ulp_cntxt_release_fdb_lock(ctxt);
+-					bnxt_ulp_cntxt_entry_release();
+ 					goto terminate;
+ 				}
+ 
+@@ -307,7 +308,6 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
+ 				data += ULP_SC_PAGE_SIZE;
+ 			}
+ 		}
+-		bnxt_ulp_cntxt_entry_release();
+ 		/* Sleep to give any other threads opportunity to access ULP */
+ 		rte_delay_us_sleep(ULP_SC_PERIOD_US);
+ 	}
+@@ -400,6 +400,7 @@ void ulp_sc_mgr_thread_cancel(struct bnxt_ulp_context *ctxt)
+ 		return;
+ 
+ 	ulp_sc_info->flags &= ~ULP_FLAG_SC_THREAD;
++	pthread_cancel(ulp_sc_info->tid);
+ }
+ 
+ /*
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c
+new file mode 100644
+index 0000000000..be14b65804
+--- /dev/null
++++ b/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c
+@@ -0,0 +1,264 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2019-2024 Broadcom
++ * All rights reserved.
++ */
 +
-+static inline int32_t
-+ulp_mapper_tfc_tcam_prio_update(struct bnxt_ulp_mapper_parms *parms,
-+				uint8_t dir,
-+				enum cfa_track_type tt,
-+				enum cfa_resource_subtype_tcam rtype,
-+				uint32_t tcam_id,
-+				uint16_t priority)
++#include <rte_common.h>
++#include <rte_cycles.h>
++#include <rte_malloc.h>
++#include <rte_log.h>
++#include <rte_alarm.h>
++#include "bnxt.h"
++#include "bnxt_ulp.h"
++#include "bnxt_ulp_utils.h"
++#include "ulp_tfc_ha_mgr.h"
++#include "bnxt_ulp_tfc.h"
++
++#define ULP_HOT_UPGRADE_TIMER_SEC 2 /* in seconds */
++
++bool
++bnxt_ulp_tfc_hot_upgrade_enabled(struct bnxt_ulp_context *ulp_ctx)
 +{
-+	struct tfc *tfcp = NULL;
-+	struct tfc_tcam_info tcam_info = { 0 };
-+	uint16_t fw_fid = 0;
++	uint64_t feat_bits;
 +
-+	if (unlikely(bnxt_ulp_cntxt_fid_get(parms->ulp_ctx, &fw_fid))) {
-+		BNXT_DRV_DBG(ERR, "Failed to get func_id\n");
-+		return -EINVAL;
++	if (unlikely(ulp_ctx == NULL || ulp_ctx->cfg_data == NULL))
++		return false;
++
++	feat_bits = bnxt_ulp_feature_bits_get(ulp_ctx);
++
++	/* Both hot upgrade feature and devarg instance id must be configured */
++	if ((feat_bits & BNXT_ULP_FEATURE_BIT_HOT_UPGRADE) &&
++	    bnxt_ulp_app_instance_id_get(ulp_ctx))
++		return true;
++	return false;
++}
++
++bool
++bnxt_ulp_tfc_hot_upgrade_is_secondary(struct bnxt_ulp_context *ulp_ctx)
++{
++	struct bnxt_ulp_tfc_ha_mgr_info *ha_info;
++
++	if (unlikely(ulp_ctx == NULL || ulp_ctx->cfg_data == NULL))
++		return false;
++
++	ha_info = bnxt_ulp_cntxt_ptr2_tfc_ha_info_get(ulp_ctx);
++	if (ha_info == NULL)
++		return false;
++
++	if (ha_info->ha_state == ULP_TFC_HA_STATE_SECONDARY)
++		return true;
++	return false;
++}
++
++static void
++ulp_tfc_hot_upgrade_mgr_timer_cb(void *arg)
++{
++	struct bnxt_ulp_tfc_ha_mgr_info *ha_info;
++	struct bnxt_ulp_context *ulp_ctx = NULL;
++	uint8_t inst_id, inst_count = 0;
++	int32_t restart_timer = 1;
++	struct tfc *tfcp = NULL;
++	uint16_t fw_fid = 0;
++	int32_t rc = 0;
++
++	ulp_ctx = bnxt_ulp_cntxt_entry_acquire(arg);
++	if (ulp_ctx == NULL) {
++		rte_eal_alarm_set(US_PER_S * ULP_HOT_UPGRADE_TIMER_SEC,
++				  ulp_tfc_hot_upgrade_mgr_timer_cb, arg);
++		return;
 +	}
 +
-+	tfcp = bnxt_ulp_cntxt_tfcp_get(parms->ulp_ctx);
++	tfcp = bnxt_ulp_cntxt_tfcp_get(ulp_ctx);
++	if (unlikely(tfcp == NULL)) {
++		PMD_DRV_LOG_LINE(ERR, "Failed to get tfcp pointer");
++		goto cleanup;
++	}
++
++	if (unlikely(bnxt_ulp_cntxt_fid_get(ulp_ctx, &fw_fid))) {
++		BNXT_DRV_DBG(ERR, "Failed to get func_id\n");
++		goto cleanup;
++	}
++
++	inst_id = bnxt_ulp_app_instance_id_get(ulp_ctx);
++	if (unlikely(!inst_id)) {
++		BNXT_DRV_DBG(ERR, "Invalid instance id\n");
++		goto cleanup;
++	}
++
++	rc = tfc_hot_up_app_inst_count(tfcp, fw_fid, inst_id, &inst_count);
++	if (rc) {
++		BNXT_DRV_DBG(ERR, "Failed to get hot upgrade status\n");
++		goto cleanup;
++	}
++
++	/* Primary is no longer present */
++	if (inst_count == 1) {
++		ha_info = bnxt_ulp_cntxt_ptr2_tfc_ha_info_get(ulp_ctx);
++		if (ha_info == NULL) {
++			BNXT_DRV_DBG(ERR, "Failed to get ha_info\n");
++			goto cleanup;
++		}
++
++		BNXT_DRV_DBG(DEBUG, "Transition to Primary\n");
++		/* set the current instance as Primary */
++		ha_info->ha_state = ULP_TFC_HA_STATE_PRIMARY;
++		ha_info->app_inst_cnt = inst_count;
++
++		/* Move the tcam entries to lower priority */
++		rc = bnxt_ulp_hot_upgrade_process(ulp_ctx->bp);
++		if (rc)
++			BNXT_DRV_DBG(ERR, "Failed to update tcam entries\n");
++
++		/* set the primary session */
++		rc = tfc_hot_up_app_inst_set(tfcp, fw_fid, inst_id);
++		if (rc)
++			BNXT_DRV_DBG(ERR, "Failed to set as primary\n");
++		restart_timer = 0;
++	} else if (!inst_count) {
++		BNXT_DRV_DBG(ERR, "Invalid instance count\n");
++		restart_timer = 0;
++	}
++
++cleanup:
++	bnxt_ulp_cntxt_entry_release();
++	if (restart_timer)
++		rte_eal_alarm_set(US_PER_S * ULP_HOT_UPGRADE_TIMER_SEC,
++				  ulp_tfc_hot_upgrade_mgr_timer_cb, arg);
++	else
++		BNXT_DRV_DBG(DEBUG, "exiting tfc hot upgrade timer\n");
++}
++
++
++int32_t ulp_tfc_hot_upgrade_mgr_init(struct bnxt_ulp_context *ulp_ctx)
++{
++	uint8_t inst_id, inst_count = 0, session_cnt = 0;
++	struct bnxt_ulp_tfc_ha_mgr_info *ha_info;
++	struct tfc *tfcp = NULL;
++	uint16_t fw_fid = 0;
++	int32_t rc = 0;
++
++	if (!bnxt_ulp_tfc_hot_upgrade_enabled(ulp_ctx))
++		return rc;
++
++	tfcp = bnxt_ulp_cntxt_tfcp_get(ulp_ctx);
 +	if (unlikely(tfcp == NULL)) {
 +		PMD_DRV_LOG_LINE(ERR, "Failed to get tfcp pointer");
 +		return -EINVAL;
 +	}
-+	tcam_info.dir = (enum cfa_dir)dir;
-+	tcam_info.rsubtype = rtype;
-+	tcam_info.id = (uint16_t)tcam_id;
 +
-+	if (unlikely(!tfcp || tfc_tcam_priority_update(tfcp, fw_fid, tt,
-+						       &tcam_info,
-+						       priority))) {
-+		BNXT_DRV_DBG(ERR, "Unable to update tcam priority %u\n",
-+			     tcam_info.id);
++	if (unlikely(bnxt_ulp_cntxt_fid_get(ulp_ctx, &fw_fid))) {
++		BNXT_DRV_DBG(ERR, "Failed to get func_id\n");
 +		return -EINVAL;
 +	}
-+	return 0;
- }
- 
- const struct ulp_mapper_core_ops ulp_mapper_tfc_core_ops = {
- 	.ulp_mapper_core_tcam_tbl_process = ulp_mapper_tfc_tcam_tbl_process,
- 	.ulp_mapper_core_tcam_entry_free = ulp_mapper_tfc_tcam_entry_free,
-+	.ulp_mapper_core_tcam_prio_update = ulp_mapper_tfc_tcam_prio_update,
- 	.ulp_mapper_core_em_tbl_process = ulp_mapper_tfc_em_tbl_process,
- 	.ulp_mapper_core_em_entry_free = ulp_mapper_tfc_em_entry_free,
- 	.ulp_mapper_core_index_tbl_process = ulp_mapper_tfc_index_tbl_process,
++
++	ha_info = rte_zmalloc("ulp_ha_mgr_info", sizeof(*ha_info), 0);
++	if (!ha_info)
++		return -ENOMEM;
++
++	/* Add the HA info tbl to the ulp context. */
++	bnxt_ulp_cntxt_ptr2_tfc_ha_info_set(ulp_ctx, ha_info);
++
++	inst_id = bnxt_ulp_app_instance_id_get(ulp_ctx);
++	if (!inst_id) {
++		BNXT_DRV_DBG(ERR, "invalid instance id\n");
++		goto cleanup;
++	}
++
++	/* get the application instance count */
++	ha_info->app_inst_id = inst_id;
++	rc = tfc_hot_up_app_inst_count(tfcp, fw_fid, inst_id, &inst_count);
++	if (rc) {
++		BNXT_DRV_DBG(ERR, "Failed to get hot upgrade status\n");
++		goto cleanup;
++	}
++
++	/* if instance count is 2 or more then just exit */
++	if (inst_count >= 2) {
++		BNXT_DRV_DBG(ERR, "More than 2 instances, invalid setup\n");
++		goto cleanup;
++	}
++
++	/* Allocate the hot upgrade instance */
++	rc = tfc_hot_up_app_inst_alloc(tfcp, fw_fid, inst_id, inst_count,
++				       &session_cnt);
++	if (rc) {
++		BNXT_DRV_DBG(ERR, "Fail to alloc hot upgrade session\n");
++		goto cleanup;
++	}
++	/* If count is 1 then set as primary app */
++	if (session_cnt == 1) {
++		/* set the current instance as Primary */
++		ha_info->ha_state = ULP_TFC_HA_STATE_PRIMARY;
++		ha_info->app_inst_cnt = session_cnt;
++		BNXT_DRV_DBG(DEBUG, "setting application as Primary\n");
++	} else {
++		/* set the current instance as secondary */
++		ha_info->ha_state = ULP_TFC_HA_STATE_SECONDARY;
++		ha_info->app_inst_cnt = session_cnt;
++		BNXT_DRV_DBG(DEBUG, "setting application as Secondary\n");
++
++		/* Start the Hot upgrade poll timer */
++		rc = rte_eal_alarm_set(US_PER_S * ULP_HOT_UPGRADE_TIMER_SEC,
++				       ulp_tfc_hot_upgrade_mgr_timer_cb,
++				       (void *)ulp_ctx->cfg_data);
++	}
++
++	return rc;
++cleanup:
++	if (ha_info != NULL)
++		ulp_tfc_hot_upgrade_mgr_deinit(ulp_ctx);
++	return -EAGAIN;
++}
++
++static void
++ulp_tfc_ha_mgr_timer_cancel(struct bnxt_ulp_context *ulp_ctx)
++{
++	rte_eal_alarm_cancel(ulp_tfc_hot_upgrade_mgr_timer_cb,
++			     ulp_ctx->cfg_data);
++}
++
++void
++ulp_tfc_hot_upgrade_mgr_deinit(struct bnxt_ulp_context *ulp_ctx)
++{
++	struct bnxt_ulp_tfc_ha_mgr_info *ha_info;
++	struct tfc *tfcp = NULL;
++	uint16_t fw_fid = 0;
++	uint8_t inst_id;
++	int32_t rc = 0;
++
++	ha_info = bnxt_ulp_cntxt_ptr2_tfc_ha_info_get(ulp_ctx);
++	if (ha_info == NULL)
++		return;
++	bnxt_ulp_cntxt_ptr2_tfc_ha_info_set(ulp_ctx, NULL);
++
++	if (!bnxt_ulp_tfc_hot_upgrade_enabled(ulp_ctx))
++		return;
++
++	tfcp = bnxt_ulp_cntxt_tfcp_get(ulp_ctx);
++	if (unlikely(tfcp == NULL)) {
++		PMD_DRV_LOG_LINE(ERR, "Failed to get tfcp pointer");
++		return;
++	}
++
++	if (unlikely(bnxt_ulp_cntxt_fid_get(ulp_ctx, &fw_fid))) {
++		BNXT_DRV_DBG(ERR, "Failed to get func_id\n");
++		return;
++	}
++
++	inst_id = bnxt_ulp_app_instance_id_get(ulp_ctx);
++	if (unlikely(!inst_id)) {
++		BNXT_DRV_DBG(ERR, "Failed to get instance id\n");
++		return;
++	}
++
++	rc = tfc_hot_up_app_inst_free(tfcp, fw_fid, inst_id);
++	if (rc)
++		BNXT_DRV_DBG(ERR, "Fail to free hot upgrade session:%u\n",
++			     inst_id);
++
++	/* disable the hot upgrade timer */
++	if (ha_info->ha_state == ULP_TFC_HA_STATE_SECONDARY)
++		ulp_tfc_ha_mgr_timer_cancel(ulp_ctx);
++
++	rte_free(ha_info);
++}
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.h b/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.h
+new file mode 100644
+index 0000000000..44cbf56c0a
+--- /dev/null
++++ b/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.h
+@@ -0,0 +1,40 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2014-2024 Broadcom
++ * All rights reserved.
++ */
++
++#ifndef _ULP_TFC_HA_MGR_H_
++#define _ULP_TFC_HA_MGR_H_
++
++#include "bnxt_ulp.h"
++
++enum ulp_tfc_ha_mgr_state {
++	ULP_TFC_HA_STATE_INVALID = 0,
++	ULP_TFC_HA_STATE_PRIMARY,
++	ULP_TFC_HA_STATE_SECONDARY,
++	ULP_TFC_HA_STATE_MAX,
++};
++
++struct bnxt_ulp_tfc_ha_mgr_info {
++	enum ulp_tfc_ha_mgr_state ha_state;
++	uint32_t app_inst_id;
++	uint32_t app_inst_cnt;
++};
++
++bool
++bnxt_ulp_tfc_hot_upgrade_enabled(struct bnxt_ulp_context *ulp_ctx);
++
++bool
++bnxt_ulp_tfc_hot_upgrade_is_secondary(struct bnxt_ulp_context *ulp_ctx);
++
++int32_t
++ulp_tfc_hot_upgrade_mgr_init(struct bnxt_ulp_context *ulp_ctx);
++
++void
++ulp_tfc_hot_upgrade_mgr_deinit(struct bnxt_ulp_context *ulp_ctx);
++
++int32_t
++ulp_ha_mgr_state_get(struct bnxt_ulp_context *ulp_ctx,
++		     enum ulp_ha_mgr_state *state);
++
++#endif /* _ULP_TFC_HA_MGR_H_*/
 -- 
 2.39.5 (Apple Git-154)
 
