@@ -2,84 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C85CCD183
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87628CCD183
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:18:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5594F40E45;
-	Fri, 10 Oct 2025 00:16:36 +0200 (CEST)
-Received: from mail-yx1-f99.google.com (mail-yx1-f99.google.com
- [74.125.224.99]) by mails.dpdk.org (Postfix) with ESMTP id CFCC740E44
- for <dev@dpdk.org>; Fri, 10 Oct 2025 00:16:34 +0200 (CEST)
-Received: by mail-yx1-f99.google.com with SMTP id
- 956f58d0204a3-6353e91a04aso1528301d50.2
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 13F18406BB;
+	Fri, 10 Oct 2025 00:16:38 +0200 (CEST)
+Received: from mail-pg1-f227.google.com (mail-pg1-f227.google.com
+ [209.85.215.227])
+ by mails.dpdk.org (Postfix) with ESMTP id 3A33D4067A
+ for <dev@dpdk.org>; Fri, 10 Oct 2025 00:16:36 +0200 (CEST)
+Received: by mail-pg1-f227.google.com with SMTP id
+ 41be03b00d2f7-b5515eaefceso1229998a12.2
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760048194; x=1760652994;
+ d=1e100.net; s=20230601; t=1760048195; x=1760652995;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=LSIjNApd9Nkw+fs6CduYC6akGiAmnRNol514g3YNUQI=;
- b=AYgN9kskWNcstu3nsb84h3SnnZSoa0K7Zqx6oSbW2N7rfSEnKH4KkU2VdcoCUlDUsR
- 3xi+fAJIrdTjSuWeKQ3KoZlHI57OWVqaEqVmmui+1fUbGLhm7bXtpGQuE9coDTdWUG8q
- dEYpDcDdFP9/jRI9I7pjGZKQ0HhXzdkTNM2qhXCbq2iZY1o0FHioTHNPvBUZWD3Q8E8V
- RTS0Wt5evTjx0I8jXN0cGaBV9AQhjq95egbZ+XFW/JfDBZSCg+sxN87MJQrYz1KFx9MK
- aR3BX+ZFlNVUyYMFgP8vGPAPlWYX2+/JdeZBgPkSazhl0/LDaCv3a1A2c/g87dMOu1UD
- 79sw==
-X-Gm-Message-State: AOJu0YzAgvslqfhxoY8fIDhFkqAqIkTxdHcmNijRW5U0tMrQY6c4820c
- AUVRievw4CAd8koapgLiurwpR5gk5BIviIZ/8ZMANLH8wJAO7mTyyycz8Qs7w28WwCPJiJd6lN6
- Tx/tJ+APRSL5DJe2lCUKro+7LsubhnUCEFZq7N+SoSrKrWiPoc+3lqCq132nXPPmKdbmhR2lhq7
- ohfm9rf6wv6mhY50+Ey3k5OdNmTwdnu0zvBr/FrdrCnXeyOGS7izgBe3ZcMBXyE8KcjB30rw==
-X-Gm-Gg: ASbGnct2X2j6PsEo58UG8dqZBi18l1kJeDPZeUNwW/JckSbI8aqfgu/2Emxr99ynOhg
- MA20vYs/2kb4tXse4P/dvttXZ9aYndZEA+v3VrzGM3b9X4CK8e7kSIG+R7xPmu0vQKZT3uts6VO
- 4Z9Fv65bLTsWDDtm1bOcrbzB3t29OlzEqrmkp5WSIXLTNV1JM3d9lM3TS5g3Lu0qclTN7xjyswp
- /RhjeMbIR/mN4YYj5jxsgLCicvG4M8eOvaIlPQcQff2X0WmJIeT/PiLwsWcrroGBs/sqfjtPY0k
- JcTMx5c7aLbmWasnsRc/aR+8V5592SF28+5FH6hgiiLJYsq4+DYq48B6WKkTeDa/ChAaKSDChFy
- NgfATXLnNHTpHyM5W0qEFJvW+/rnUhtrtFNOd6wnZOZqPlQggWlJCjt1pmzKEj8fstiDuuXyQSo
- Ao7lVw
-X-Google-Smtp-Source: AGHT+IHpDoiy9CAaC/GwkfkiiR7oSQ0MV+Ui8684ZhX+WvCZtgSjsCFa5iVdLbdq7FYA8/ybgV3TsOrbCKkC
-X-Received: by 2002:a05:690c:a088:10b0:781:64f:2b22 with SMTP id
- 00721157ae682-781064f3620mr17020987b3.68.1760048193924; 
- Thu, 09 Oct 2025 15:16:33 -0700 (PDT)
+ bh=6r7Qif1e6qR0S1W944y6YqfDW70xyXuCLOdv23P+g6w=;
+ b=enyuucUdnwPDtWbB3yAA0NdyxiQJpAIIvB91mAldYYKWvP+6ffkp5EOkvEguPJl7jp
+ xII5bG5B7TSGCvKYwSH11DZYbW9+4D2vy7dRf68vXVoDqpK5Tz2lOvqShCNK6pl+wcmZ
+ mxfYc7bE7lCmZrZbzdk52yLeK6e7BySfXLRaM6U6mbIjThfSYTY4yxAqishRYsaIrz+y
+ I9XKCfMFm8MmXHh/HMra/nScSSCsU+3JDihWPp0v/V1TxIeiRtyldGn4NZcp5WhYP4Qc
+ udkWmnTk0wgfE2OsgO1ikgNIuFjJ2VsCxZQk7dQCjKJGZ46DXD1aHT62SK7K7rrTA+Ar
+ H4MA==
+X-Gm-Message-State: AOJu0YyzYw5HzYwTsplTTu+AwXC49ilY6i5ZMxdqaSGJcS88es9tUYi5
+ /M9jbzgPzxRznMvy9Z1ShlkkjJlmTGd+xxFNK3v2/kzhJMh7sh2hYGmmZkwyPIyloIdffPWwc3t
+ cmODJqjArd3YKRyMj5RvVeJuf814nigB800+cDlit/9W1VkR8d19pBJbn8C2+vxN7Boj8zbT5wk
+ 2ih+rNlOIBv4F5cX4jkvXvn2VF8ddORokh//lQ4XyBJ0FFzP4ZplyemIXxD2JqpDzIrr9NLg==
+X-Gm-Gg: ASbGnctM3JDCLtS2zbnOZhmDll8WJwwMI9dHkBqJzZ75xGR3jUoNdepixA/HbIwQMua
+ aARhP8xe0Ekc/tbQJrRsYhSEjypIVkQYsENbmC6E6m4kZxZxH+fETGd6fv67ljg775Wee40kaKF
+ wA5tBzUNlpaAInrEa/qrgxUnyOPh+7Y37irT/+3fO8ttgMgo+S6JYweW9pGdAJFl6WZR/aVeOTh
+ Ji7XuqfMV2TZf68t1othZJuq+LS0/HwuIh19RuVowB3egSOPjIyxIXMfO9J5ELON2DAXMyrgKsl
+ bXf6wTP79l4GzjqT5obpy1qSoNRKm1uqlwzUj2k+fyXxqeajImUeCmJJeFEYWameFE9LDiKCV/s
+ 00MR30GQC8QvAtQ8zwGTwBobCMT59+LtV+wiNOD6QV+aq1h8ko4pWQGJLJHNgmL658wX2E5eDDj
+ mYLgCR1Ng=
+X-Google-Smtp-Source: AGHT+IHI7koeqd/v8zXKjgpTPoWQcALWFxhf98l8/M8i8nArRwRgwzl3zh4QsT0w2JzDq5lGGllM942T+dHv
+X-Received: by 2002:a05:6a20:1588:b0:2ec:f29:1005 with SMTP id
+ adf61e73a8af0-32da8139317mr11523238637.16.1760048195334; 
+ Thu, 09 Oct 2025 15:16:35 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
+ (address-144-49-247-119.dlp.protect.broadcom.com. [144.49.247.119])
  by smtp-relay.gmail.com with ESMTPS id
- 00721157ae682-78106cf9a95sm372557b3.4.2025.10.09.15.16.32
+ 41be03b00d2f7-b678df59072sm41018a12.14.2025.10.09.15.16.34
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 09 Oct 2025 15:16:33 -0700 (PDT)
+ Thu, 09 Oct 2025 15:16:35 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qt1-f199.google.com with SMTP id
- d75a77b69052e-4e002f413e4so27458801cf.2
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:32 -0700 (PDT)
+Received: by mail-qv1-f69.google.com with SMTP id
+ 6a1803df08f44-78ea15d3583so47762356d6.1
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1760048192; x=1760652992; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1760048194; x=1760652994; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=LSIjNApd9Nkw+fs6CduYC6akGiAmnRNol514g3YNUQI=;
- b=Y7InhGVsw4Fssr35peA64g6IrAV9eAoth5LcFhFPUsXRX7hqjI2EUXSgVbEJano0LH
- C7PIRRxjUf9Mc5DF5RSufQ5tMd4q2I966bGEYFEqG5UqhbLdimR2Fhze+X/0r4vo/OjO
- Ci4yQV+Diye431ACitDy1ID2u2RwVbZ+hGC7s=
-X-Received: by 2002:ac8:740d:0:b0:4e4:8c6e:4945 with SMTP id
- d75a77b69052e-4e6ead57f9cmr91446931cf.40.1760048192211; 
- Thu, 09 Oct 2025 15:16:32 -0700 (PDT)
-X-Received: by 2002:ac8:740d:0:b0:4e4:8c6e:4945 with SMTP id
- d75a77b69052e-4e6ead57f9cmr91446651cf.40.1760048191550; 
- Thu, 09 Oct 2025 15:16:31 -0700 (PDT)
+ bh=6r7Qif1e6qR0S1W944y6YqfDW70xyXuCLOdv23P+g6w=;
+ b=akQiRjmxjcOeUJoT52x4miqUDCtMxCNoWKPGhOfL82k5nP8p8jHRnHhq6Vgo9o05Pk
+ IbGwKj31NlSslSyYBZgohzDER0gjBe+ZtAr9I8KbUSb7o/9lFLQMehVyabS7OpCcsrCL
+ KGG/Y8N6TT0+ZGKjI8cXOSTUGicP/pwnWI+fo=
+X-Received: by 2002:a05:6214:260e:b0:70f:ac13:f04d with SMTP id
+ 6a1803df08f44-87b2106d71emr147821756d6.23.1760048193617; 
+ Thu, 09 Oct 2025 15:16:33 -0700 (PDT)
+X-Received: by 2002:a05:6214:260e:b0:70f:ac13:f04d with SMTP id
+ 6a1803df08f44-87b2106d71emr147821306d6.23.1760048193002; 
+ Thu, 09 Oct 2025 15:16:33 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.16.30
+ 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.16.32
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Thu, 09 Oct 2025 15:16:31 -0700 (PDT)
+ Thu, 09 Oct 2025 15:16:32 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com,
- Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
-Subject: [PATCH v2 44/54] net/bnxt: truflow remove RTE devarg processing for
- mpc=1
-Date: Thu,  9 Oct 2025 18:11:19 -0400
-Message-Id: <20251009221129.28256-45-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com
+Subject: [PATCH v2 45/54] net/bnxt: add meson build options for TruFlow
+Date: Thu,  9 Oct 2025 18:11:20 -0400
+Message-Id: <20251009221129.28256-46-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251009221129.28256-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -100,98 +99,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
+Add meson options for
+1. TF template
+2. TF feature bits
 
-Now as the mpc is initialized for P7 platform regardless
-of mpc=1 devarg, RTE and bnxt argument processing APIs
-for mpc devarg are redundant. This patch removes such RTE
-and bnxt APIs. The "mpc=1" devarg is now invalid and should
-not be used while launching an application.
-
-Before:
-     ./dpdk-testpmd -c 0xff -a 0000:0a:00.0,mpc=1,app-id=0
-After:
-     ./dpdk-testpmd -c 0xff -a 0000:0a:00.0,app-id=0
-
-Signed-off-by: Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
+Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
 Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 ---
- drivers/net/bnxt/bnxt.h        |  3 ---
- drivers/net/bnxt/bnxt_ethdev.c | 19 ++++---------------
- 2 files changed, 4 insertions(+), 18 deletions(-)
+ meson_options.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
-index 90352d537c..83ae151066 100644
---- a/drivers/net/bnxt/bnxt.h
-+++ b/drivers/net/bnxt/bnxt.h
-@@ -854,9 +854,6 @@ struct bnxt {
- 	((bp)->flags2 & BNXT_FLAGS2_MULTIROOT_EN)
- 
- #define	BNXT_FLAGS2_COMPRESSED_RX_CQE		BIT(5)
--#define	BNXT_FLAGS2_USE_MPC			BIT(6)
--#define BNXT_USE_MPC(bp)			\
--	((bp)->flags2 & BNXT_FLAGS2_USE_MPC)
- #define	BNXT_FLAGS2_REP_MODE			BIT(7)
- #define BNXT_REP_MODE_EN(bp)			\
- 	((bp)->flags2 & BNXT_FLAGS2_REP_MODE)
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index c92e335a51..854c8b7371 100644
---- a/drivers/net/bnxt/bnxt_ethdev.c
-+++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -152,11 +152,6 @@ static const struct rte_eth_speed_lanes_capa speed_lanes_capa_tbl[] = {
-  */
- #define BNXT_DEVARG_CQE_MODE_INVALID(val)		((val) > 1)
- 
--/*
-- * mpc = an non-negative 8-bit number
-- */
--#define BNXT_DEVARG_MPC_INVALID(val)			((val) > 1)
--
- /*
-  * app-id = an non-negative 8-bit number
-  */
-@@ -207,7 +202,6 @@ static const struct rte_eth_speed_lanes_capa speed_lanes_capa_tbl[] = {
- #define BNXT_DEVARG_REP_FC_F2R_INVALID(rep_fc_f2r)	((rep_fc_f2r) > 1)
- 
- int bnxt_cfa_code_dynfield_offset = -1;
--unsigned long mpc;
- 
- /*
-  * max_num_kflows must be >= 32
-@@ -1759,8 +1753,7 @@ static int bnxt_dev_stop(struct rte_eth_dev *eth_dev)
- 	/* Process any remaining notifications in default completion queue */
- 	bnxt_int_handler(eth_dev);
- 
--	if (mpc != 0)
--		bnxt_mpc_close(bp);
-+	bnxt_mpc_close(bp);
- 
- 	bnxt_shutdown_nic(bp);
- 	bnxt_hwrm_if_change(bp, false);
-@@ -1856,11 +1849,9 @@ int bnxt_dev_start_op(struct rte_eth_dev *eth_dev)
- 	if (rc)
- 		goto error;
- 
--	if (mpc != 0) {
--		rc = bnxt_mpc_open(bp);
--		if (rc != 0)
--			PMD_DRV_LOG_LINE(DEBUG, "MPC open failed");
--	}
-+	rc = bnxt_mpc_open(bp);
-+	if (rc != 0)
-+		PMD_DRV_LOG_LINE(DEBUG, "MPC open failed");
- 
- 	rc = bnxt_alloc_prev_ring_stats(bp);
- 	if (rc)
-@@ -7213,8 +7204,6 @@ static bool bnxt_enable_ulp(struct bnxt *bp)
- 	/* not enabling ulp for cli and no truflow apps */
- 	if (BNXT_TRUFLOW_EN(bp) && bp->app_id != 254 &&
- 	    bp->app_id != 255) {
--		if (BNXT_CHIP_P7(bp) && !mpc)
--			return false;
- 		return true;
- 	}
- 	return false;
+diff --git a/meson_options.txt b/meson_options.txt
+index e28d24054c..3354ef2b4f 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -58,3 +58,7 @@ option('tests', type: 'boolean', value: true, description:
+        'build unit tests')
+ option('use_hpet', type: 'boolean', value: false, description:
+        'use HPET timer in EAL')
++option('bnxt_tf_template', type: 'string', value: 'default', description:
++       'Truflow template selection')
++option('bnxt_tf_feat_bits', type: 'integer', value: 0, description:
++       'Truflow feature bits')
 -- 
 2.39.5 (Apple Git-154)
 
