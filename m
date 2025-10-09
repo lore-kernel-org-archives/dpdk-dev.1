@@ -2,49 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE01CCD184
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 13:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A13DACCD184
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 13:01:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 154B2402A3;
-	Thu,  9 Oct 2025 15:01:09 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0CB1940611;
+	Thu,  9 Oct 2025 15:01:10 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 87E0940267
- for <dev@dpdk.org>; Thu,  9 Oct 2025 15:01:07 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4BD7C40267
+ for <dev@dpdk.org>; Thu,  9 Oct 2025 15:01:08 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1760014868; x=1791550868;
+ t=1760014869; x=1791550869;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=Qi7HjbC1tPsW2/CxAlWC5SxKEkpsCmXtXpVW+c1gqHo=;
- b=CDfZKrwkYofuI+Ips08PiBz/UMCaIQ5zruVKKTlO25a5QsnLF8L4MdSv
- cs4RDfmadAQo5uZBCevIAYNdXUr71ZyXKaU660gpq9P6uH95avaOksVAy
- n3vEm0KO/IoAgmrFe5eaHepboehFEgcZsZ6bejc2L93ECCSXV7zn+xgzJ
- Ytkkvn5TMUsPNNd0QDZ1OL8Ku6LE+suwNsc1IRaaErEhh4d3vhbuC9PgC
- fUh7oX3F/hjRrFuO40umq/1QMYTIZAV0NGHYwTnDtmzQLMhEOLqOTQjbt
- SvkI5gPS0SPRbQoQcWQP/WMZI/CfjTkxKOHuvSrkVKUKpS4j3lx3HmU+D g==;
-X-CSE-ConnectionGUID: LET4M2yVRnGdRrmLpLo6vQ==
-X-CSE-MsgGUID: /zY3yxoeT4aYpC5pTlCDhA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="79663040"
-X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="79663040"
+ bh=6DgX2Oz92RSyYqiVVJmLE82m4QpP3C0nWu7kicAI6ZU=;
+ b=MY4Cl0JR45SU2Dgh/OLh+oM1Av/QKoZBC3D2dBJKxNRvo2uWS2l3HHFB
+ pGMDCWL9hv4Eio2mJC/SIb1eIyJTHhI4jIufEfSUSmiDP9IPvefI1psYw
+ gJdtEZFeKVsv5WOQWjNMrzcvoDUtuYclqcEEVIymSBCYGwuIHOybkJpVK
+ BCvNcNGIbatFyLK+CderWnsBpl7m4buHffNt8nKIzbWRNiF123mvQmuUi
+ MXjIL0PXZ2of/CFqyU0nt5C5NjmQYYNr9qy+kXzRKH79jOx7hUccCoV7H
+ KVj9YatVWxuKo2+VOxcT3StvXDjcRH264cL02TRToyzEA5pnI5Y2x/fzJ g==;
+X-CSE-ConnectionGUID: lq47e0ViQGGGjv1+/YaZaA==
+X-CSE-MsgGUID: vos2wwDzRwqRitpNj/op8Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="79663043"
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="79663043"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
  09 Oct 2025 06:01:07 -0700
-X-CSE-ConnectionGUID: Mh5UsoEWSGe/G6X9+8rGVg==
-X-CSE-MsgGUID: ZTGaBNHlT4ip3i89mq7uJw==
+X-CSE-ConnectionGUID: GjXj/89hQPaZz4VgubMRoA==
+X-CSE-MsgGUID: d30E4yPDT5aUzgaN0KAgjA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="179951542"
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="179951565"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 09 Oct 2025 06:01:04 -0700
+ by orviesa010.jf.intel.com with ESMTP; 09 Oct 2025 06:01:06 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v11 00/21]
-Date: Thu,  9 Oct 2025 14:00:35 +0100
-Message-ID: <20251009130056.2630343-1-bruce.richardson@intel.com>
+Subject: [PATCH v11 01/21] build: add define for the OS environment name
+Date: Thu,  9 Oct 2025 14:00:36 +0100
+Message-ID: <20251009130056.2630343-2-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250520164025.2055721-1-bruce.richardson@intel.com>
+In-Reply-To: <20251009130056.2630343-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
+ <20251009130056.2630343-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -60,152 +61,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The ultimate of this patchset is to make it easier to run on systems
-with large numbers of cores, by simplifying the process of using core
-numbers >RTE_MAX_LCORE. The new EAL arg ``-remap-lcore-ids``, also
-shortened to ``-R``, is added to DPDK to support this.
+Introduce a string define for the currently running OS, or execution
+environment.
 
-However, in order to add this new flag easily, the first dozen or more
-patches rework the argument handling in EAL to simplify things, using
-the argparse library for argument handling.
+Originally, with old make build system, CONFIG_RTE_EXEC_ENV used to hold
+this name string, but the variable seems to have been missed in the
+meson build system, until commit cadb255e25d6 ("eal: add OS defines for
+C conditional checks") which introduced the RTE_EXEC_ENV for a different
+purpose. Now we can fix the docs with the new name reference.
 
-When processing cmdline arguments in DPDK, we always do so with very
-little context. So, for example, when processing the "-l" flag, we have
-no idea whether there will be later a --proc-type=secondary flag. We
-have all sorts of post-arg-processing checks in place to try and catch
-these scenarios.
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ config/meson.build                 | 1 +
+ doc/guides/contributing/design.rst | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-To improve this situation, this patchset tries to simplify the handling
-of argument processing, by explicitly doing an initial pass to collate
-all arguments into a structure. Thereafter, the actual arg parsing is
-done in a fixed order, meaning that e.g. when processing the
---main-lcore flag, we have already processed the service core flags. We
-also can far quicker and easier check for conflicting options, since
-they can all be checked for NULL/non-NULL in the arg structure
-immediately after the struct has been populated.
-
-An additional benefit of this work is that the argument parsing for EAL
-is much more centralised into common options and the options list file.
-This single list with ifdefs makes it clear to the viewer what options
-are common across OS's, vs what are unix-only or linux-only.
-
-Once the cleanup and rework is done, adding the new options for
-remapping cores becomes a lot simpler, since we can very easily check
-for scenarios like multi-process and handle those appropriately.
-
-
-V11:
-* fix issues flagged by unit tests in CI and subsequent testing:
-  - when passing in an lcore >= MAX_LCORES, return error rather than
-    ignoring it. (compatibility issue)
-  - return error when an invalid lcore set of "1-3-5" is passed in,
-    rather than just treating it as "3-5".
-
-V10:
-* add patch 2 to fix func_reentrancy test bug reported mid-way through
-  the series.
-* added patches 7 & 8 to resolve arg parsing compat issues:
-   - support reordering args to have non-flag parameters at the end so
-     we can e.g. mix autotest names in with EAL args
-   - support having optional params with single-letter args without
-     having to use "=" syntax, i.e. -l4 rather than -l=4
-* fixed issues with the final patch when the autodetected range of cores
-  was >RTE_MAX_LCORE
-
-V9: rebase to latest main. CI complains cannot apply v8 patches.
-
-V8:
-* dropped the final two patches from the series, dropping the new -L
-  option in favour of the -R modifier.
-* reordered patch 11 to be with the other argparse patches (now patch 5)
-* added patch 12, which uses macros to initialize the args structure
-  from the arguments header file, avoiding potential issues when we add
-  new args.
-* simplified and consolidated lcore mask and core list parsing to always
-  work off cpusets rather than arrays of uint8
-* enhanced debug printouts to also work better with cpusets and handle
-  core values in those sets >= RTE_MAX_LCORE
-* for completeness, ensure the new -R option works for coremasks, and
-  for cases where no explicit core-list or coremask is specified.
-
-V7:
-* expand the scope of the patchset beyond just cleanup to add in the
-  extra 3 patches for -L and --lcoreid-base option.
-
-V6:
-* Rebase to apply cleanly on latest main
-
-V5:
-* Resubmit of V4, which didn't get sent correctly, or picked up correctly
-  in patchwork.
-
-V4:
-* Updated patch 5 to auto-generate the arg struct definition from the same
-  list of defines used to construct the argument list.
-
-V3:
-* Added 3 new initial patches, one for minor build-system addition, and two
-  for functionality in argparse to allow the user-callback help function to
-  be maintained as we move to argparse.
-* Added doc updates in the first EAL patch adding the long options
-* Fixed ASAN issues by adding a patch to properly clean up EAL init - both
-  memory allocations and fixing the run-once flag
-* Put ifdefs around the linux-only or unix-only options in EAL patch 2
-* Updated args to handle numa-mem and numa-limit as equivalent socket-mem
-  and socket-limit
-
-Bruce Richardson (21):
-  build: add define for the OS environment name
-  test/func_reentrancy: fix args to EAL init call
-  argparse: export function to print help text for object
-  argparse: allow user-override of help printing
-  argparse: add documentation on supported value types
-  argparse: add support for parsing core lists
-  argparse: allow optional flag reordering
-  argparse: support parameters to short options without "="
-  eal: add long options for each short option
-  eal: define the EAL parameters in argparse format
-  eal: gather EAL args before processing
-  eal: ensure proper cleanup on EAL init failure
-  eal: combine parameter validation checks
-  eal: simplify handling of conflicting cmdline options
-  eal: automatically init arg list options
-  eal: add internal fn for converting cpuset to string
-  eal: use common cpuset to string function
-  eal: introduce lcore remapping option for coremasks
-  eal: rework internal coremask parsing to use cpu sets
-  eal: allow lcore ID remapping with core lists
-  eal: allow lcore remapping with autodetected core affinity
-
- app/test/test_argparse.c                   |  702 ++++++++++
- app/test/test_func_reentrancy.c            |    5 +-
- config/meson.build                         |    1 +
- doc/guides/contributing/design.rst         |    2 +-
- doc/guides/linux_gsg/eal_args.include.rst  |   42 +-
- doc/guides/prog_guide/argparse_lib.rst     |  138 +-
- doc/guides/rel_notes/release_25_11.rst     |   18 +
- drivers/event/dlb2/dlb2_priv.h             |    2 +-
- drivers/event/dlb2/pf/base/dlb2_resource.c |   11 +-
- lib/argparse/rte_argparse.c                |  183 ++-
- lib/argparse/rte_argparse.h                |   29 +-
- lib/eal/common/eal_common_lcore.c          |   13 +-
- lib/eal/common/eal_common_memory.c         |    3 +-
- lib/eal/common/eal_common_options.c        | 1440 +++++++++++---------
- lib/eal/common/eal_common_thread.c         |   43 +-
- lib/eal/common/eal_option_list.h           |   98 ++
- lib/eal/common/eal_options.h               |  104 +-
- lib/eal/common/eal_private.h               |   21 +
- lib/eal/common/eal_thread.h                |   13 +-
- lib/eal/freebsd/eal.c                      |  245 +---
- lib/eal/include/rte_eal.h                  |   20 -
- lib/eal/linux/eal.c                        |  470 +------
- lib/eal/linux/eal_memory.c                 |    2 +-
- lib/eal/meson.build                        |    2 +-
- lib/eal/windows/eal.c                      |  156 +--
- lib/meson.build                            |    1 +
- 26 files changed, 2158 insertions(+), 1606 deletions(-)
- create mode 100644 lib/eal/common/eal_option_list.h
-
---
+diff --git a/config/meson.build b/config/meson.build
+index ca63ee10b1..b8c1f127a2 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -20,6 +20,7 @@ foreach env, id:exec_envs
+     dpdk_conf.set10('RTE_EXEC_ENV_IS_' + env.to_upper(), (exec_env == env))
+ endforeach
+ dpdk_conf.set('RTE_EXEC_ENV', exec_envs[exec_env])
++dpdk_conf.set_quoted('RTE_EXEC_ENV_NAME', exec_env)
+ dpdk_conf.set('RTE_EXEC_ENV_' + exec_env.to_upper(), 1)
+ 
+ # MS linker requires special treatment.
+diff --git a/doc/guides/contributing/design.rst b/doc/guides/contributing/design.rst
+index b724177ba1..5517613424 100644
+--- a/doc/guides/contributing/design.rst
++++ b/doc/guides/contributing/design.rst
+@@ -50,7 +50,7 @@ Per Execution Environment Sources
+ 
+ The following macro options can be used:
+ 
+-* ``RTE_EXEC_ENV`` is a string that contains the name of the executive environment.
++* ``RTE_EXEC_ENV_NAME`` is a string that contains the name of the executive environment.
+ * ``RTE_EXEC_ENV_FREEBSD``, ``RTE_EXEC_ENV_LINUX`` or ``RTE_EXEC_ENV_WINDOWS`` are defined only if we are building for this execution environment.
+ 
+ Mbuf features
+-- 
 2.48.1
 
