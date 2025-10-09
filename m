@@ -2,83 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC18BCCD183
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D7DCCD183
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:18:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84D7D40E4C;
-	Fri, 10 Oct 2025 00:16:41 +0200 (CEST)
-Received: from mail-pj1-f97.google.com (mail-pj1-f97.google.com
- [209.85.216.97]) by mails.dpdk.org (Postfix) with ESMTP id 3A37240E68
- for <dev@dpdk.org>; Fri, 10 Oct 2025 00:16:40 +0200 (CEST)
-Received: by mail-pj1-f97.google.com with SMTP id
- 98e67ed59e1d1-3322e63602eso2080835a91.0
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B06FE40E28;
+	Fri, 10 Oct 2025 00:16:43 +0200 (CEST)
+Received: from mail-yw1-f228.google.com (mail-yw1-f228.google.com
+ [209.85.128.228])
+ by mails.dpdk.org (Postfix) with ESMTP id 3546840E2C
+ for <dev@dpdk.org>; Fri, 10 Oct 2025 00:16:42 +0200 (CEST)
+Received: by mail-yw1-f228.google.com with SMTP id
+ 00721157ae682-780fe73e337so11897497b3.1
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760048199; x=1760652999;
+ d=1e100.net; s=20230601; t=1760048201; x=1760653001;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=cG2iYYV+RJvIBDHq3EIy50ByhQrPorNWKVqHo+mf7yw=;
- b=qzEbQDhUIO1RjGLVbJ6RFkpv2vaYvikx8Xa5lLBu3pwDsbCbZLLnHe6fkRUQEvNfe2
- QuLOF4hBjuBSwZ6TJJX7S38ra2hND5rqkyl9HgFFH08H+k+KsmFuwgFL19HEzlad08SU
- IkPBMFeOkN/rZO1VTyr/OGPKqCNx4dc5rAMQZkLlrHUz/fv7B4OXGmGAykxfq4ZJLE1S
- dF0KVRTiJ/VMPnsej5wh/Cm8mUc98QNVO6UIEn5W2XZOfJajbB+ylpRoB8TAVEbXeOcO
- PWL7Gl2GdaeqcbipiCDHAKepj8NT30gN5k78dK4jBAYmTd1baHi5vuV2QVmpAC0Kk7d8
- jv4Q==
-X-Gm-Message-State: AOJu0YwtsnZbGyVMi0cjt3Ik+W89dzity65NGqSfIuvDDr3HxPYXlMFG
- OJD6WZw5sQpTW1UZOoL0Of+iijAlO1gZkey3kg/Oqfao1lqmyfpQ79X7E3NMsX0YrkyyVCqj8Lh
- kwwueFuleTX8DkYC5fs8PClsnaiKsCEk8bDH4//aXEv49xrCFCtdZAeaZK2zha+w1bzrjQCezMc
- rsVzkslx5i4WiPyxKmuRJgsiFuUIziGgN/LJ8srYxQMEzKs1+Zkrq5gxYvAUg2rhDz5ubV5g==
-X-Gm-Gg: ASbGncvyoOZRwLAiwHpWu3bRUCgeoxSzB6sSNWzRv/RGHlqzfBo//4xqTIwuQvRvMem
- 2Aue/vV/GRKjfORrv3xwOpzcwpbKf+0RuAKDGZjNcfHRRW5qKic/2Va2LXqRItWXy9NfHjwWmLB
- uTvcpC9qyyj0psCsOLktsIW5kCWdIkH0Gn9RTc8d7/o0++eoM1mcL2eUKJ6232BOigSPL1Z4qLU
- VgUICVXHtr4w2nXo/TfrjGF12q41hD1Y7ka07JifgudusWTvJs+Guyw+lL9TljEDVPueTf6uYx0
- W3LHZwVKFyHbJOwDYlggaIOXP+PvQVGqt2waTmeF83HiwOLjt4hkIgTRCgZ1xQlJ8CTjM0LJBKY
- Nj0o70f71T7SBgcYPETDQciUsuT3lK86P/iaVxBYM5aOEnD11/+pmndrFSv1HMDPk68gbk0glwo
- 4QXwZDmGM=
-X-Google-Smtp-Source: AGHT+IFjQYvgOg5W5Q7S1l8yhC6UaPzQqepWmIVm4G05eUtN7S2znaj934BIOz/EuhpyXGQd2cxx9bUer6L6
-X-Received: by 2002:a17:903:2d1:b0:277:3488:787e with SMTP id
- d9443c01a7336-29027356933mr118234465ad.12.1760048199229; 
- Thu, 09 Oct 2025 15:16:39 -0700 (PDT)
+ bh=5KGpGEz5P1y4nWuNa5ksdPca7HqUHJl8C/KPOIKGt50=;
+ b=vpF4Yz3WokwZQOoZKWiKK+RQE3bXdJsOhchj8M6isB19IxJMY344+cmAMOMg4dJ0vz
+ 9VuegxCDhWf9sHuoDKz04tlHhvSbZQhi5dvh/CJvzmJl/i1szfkWE+gv7rd0W/DtRdjF
+ LfX4inNUXWFlRrN+5NtSBKgQ2575jkjk7gSmGRxFocwEdBUzLNmA6GoUH8o291o/DuFG
+ OdRf4DDolmA9RtxyzG2u0ziwpTVG+mlxr2L5zWglDBlk+HVs+hLBk5N+HbC1wRQMMx/u
+ FpcrFbLYwpRi147gCQK3HtsEoQrJhmj1zBsuRT6CvfpIq3ShFrElG+iHNL7B844wimwb
+ moAw==
+X-Gm-Message-State: AOJu0Yx4H/7u3fYkdcJ2jCYL4Q1SNp73QZrSvyoUvM2RviaDa/QZNlUJ
+ uFQPmh6yEkpQxA2EDHmk0SKtbilPAx2Ra+VEZH2fxJ/OkWYcRmUNAsnWlf0SQOkbdUdHLMIL9zP
+ xqX1+H5gemC38lHsOhTmAbRiTydD3Jl2hrJSyf1in4zJNVXvPwM1Q5gDbkN0US7fR+AP9lUPwvx
+ 3u9xit34An7Ozwu5Su2rn3P4WAWxmq9Dg+rvxxjw+PSkoQlzvsesxlWeIexLkJ8cFeY0/9fQ==
+X-Gm-Gg: ASbGncvx1T6tF9L+b2iK2qfTHBfyDWVOk7L1L/ipJlf2BltSdzIK+PEWcPqGJbmR/3X
+ Mnal/djXByn2yJv5cx6CSi8d1BShUu39DsinJfzmu7o5Yk/cwEtBk7+09iOa8aLogA7E+REMb4p
+ NkMMn6TEqmpifDnN/2kogzHH+WK851/iKWNmiJ7qxthEoJ2XHbgeSFMHq+J2hKQt1OFHcQxwS/Q
+ TbVgDC05kAEMf2YrekOsKuTFWKJKsPYujAwN3TXYPsHQ4Rqozudpd6DPGXMmBKiOXhTPA+xp33d
+ htFIcEGyzJxqTZjOeYmDM8IxcIyWphWIhQkMWnkZ8hlxNBRYANXS3T4B8lI5M2vx9NgKd8sCvqm
+ 633s4aj0YpjWR0QX0x+rRfIhvwwiR+ah4kCibO35QuFe0Z/txDB5ho5fMi4GC+FhQp7Obya+t23
+ w3tk6KYb8=
+X-Google-Smtp-Source: AGHT+IFZkZ+u/J5ODu+aKtfGMoGqFCYLGE/K0H3cqTtZpO2OhexuNEoto478W9Yk9v8EhtFb02dw6VNORdSW
+X-Received: by 2002:a05:690c:ec6:b0:750:bb77:4433 with SMTP id
+ 00721157ae682-780e1424f14mr104692047b3.19.1760048201496; 
+ Thu, 09 Oct 2025 15:16:41 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-118.dlp.protect.broadcom.com. [144.49.247.118])
+ (address-144-49-247-119.dlp.protect.broadcom.com. [144.49.247.119])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-29034f2dd65sm3211905ad.58.2025.10.09.15.16.38
+ 00721157ae682-78106fac206sm434797b3.17.2025.10.09.15.16.41
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 09 Oct 2025 15:16:39 -0700 (PDT)
+ Thu, 09 Oct 2025 15:16:41 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qk1-f198.google.com with SMTP id
- af79cd13be357-8645d39787bso694138085a.2
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:38 -0700 (PDT)
+Received: by mail-qv1-f70.google.com with SMTP id
+ 6a1803df08f44-78e45d71f05so37158456d6.2
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1760048198; x=1760652998; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1760048200; x=1760653000; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=cG2iYYV+RJvIBDHq3EIy50ByhQrPorNWKVqHo+mf7yw=;
- b=HDN6VyjTC0eyUbulmUeuyPCBmb5H/+Wo+wYN4/iZTug/OofIwkM0b+oYfMFwIDB6+2
- YwADc0FcnmQ2ohv6m8Xy082aemJ28bPmkCqBnHOf5m7/1hJFbqiIZoL9JGJFuWBSEU6c
- aaDkHxBhgPBivzsa6WjsE9JJ11IKrkadUc3lc=
-X-Received: by 2002:a05:6214:246f:b0:787:5934:697 with SMTP id
- 6a1803df08f44-87b2103c5dbmr124989256d6.8.1760048197203; 
- Thu, 09 Oct 2025 15:16:37 -0700 (PDT)
-X-Received: by 2002:a05:6214:246f:b0:787:5934:697 with SMTP id
- 6a1803df08f44-87b2103c5dbmr124988726d6.8.1760048196602; 
- Thu, 09 Oct 2025 15:16:36 -0700 (PDT)
+ bh=5KGpGEz5P1y4nWuNa5ksdPca7HqUHJl8C/KPOIKGt50=;
+ b=HruiGim8VfdZlTMUVPfLILQq0Ke1r7Y8dXBOk4mxIHslOUu2yooosRMn4VyjKfMWmn
+ IrPx3Btc7+PoJTqYG4QqaBRcp/WHYmFwPZ8nwQByRRkAMuHQR5TneGvFIYW+3NXeh1Td
+ HQMIy3aLfn43qfVQD/cSsSDV8Dbwzo8EN9w/0=
+X-Received: by 2002:a05:6214:529b:b0:80e:327d:be66 with SMTP id
+ 6a1803df08f44-87b2efb93f7mr136132066d6.39.1760048200389; 
+ Thu, 09 Oct 2025 15:16:40 -0700 (PDT)
+X-Received: by 2002:a05:6214:529b:b0:80e:327d:be66 with SMTP id
+ 6a1803df08f44-87b2efb93f7mr136131486d6.39.1760048199901; 
+ Thu, 09 Oct 2025 15:16:39 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.16.35
+ 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.16.38
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Thu, 09 Oct 2025 15:16:36 -0700 (PDT)
+ Thu, 09 Oct 2025 15:16:39 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com, Shahaji Bhosle <shahaji.bhosle@broadcom.com>,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Subject: [PATCH v2 47/54] net/bnxt/tf_ulp: truflow add pf action handler
-Date: Thu,  9 Oct 2025 18:11:22 -0400
-Message-Id: <20251009221129.28256-48-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Shahaji Bhosle <shahaji.bhosle@broadcom.com>
+Subject: [PATCH v2 48/54] net/bnxt/tf_ulp: add support for unicast only feature
+Date: Thu,  9 Oct 2025 18:11:23 -0400
+Message-Id: <20251009221129.28256-49-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251009221129.28256-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -99,80 +101,97 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-Update pf action handler callback to use parent PF vnic
+Added support for unicast only feature bit in the truflow application.
+This enables the application to not receive broadcast, multicast or
+unknown mac addresses to the ports that are participating in the
+application.
 
-Signed-off-by: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
-Reviewed-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Reviewed-by: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/ulp_rte_parser.c | 42 ++++++++++++++++--------
- 1 file changed, 28 insertions(+), 14 deletions(-)
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c          | 5 +++++
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c         | 5 +++++
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h       | 2 ++
+ drivers/net/bnxt/tf_ulp/ulp_def_rules.c        | 3 ---
+ drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h | 3 ++-
+ 5 files changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-index ceda1ff5ef..82baf722cd 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-@@ -2946,30 +2946,44 @@ int32_t
- ulp_rte_pf_act_handler(const struct rte_flow_action *action_item __rte_unused,
- 		       struct ulp_rte_parser_params *params)
- {
-+	struct bnxt *bp;
- 	uint32_t port_id;
--	uint32_t ifindex;
--	enum bnxt_ulp_intf_type intf_type;
-+	enum bnxt_ulp_direction_type dir;
-+	struct ulp_rte_act_prop *act = &params->act_prop;
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
+index 3228bf4f99..9d32217a21 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
+@@ -475,6 +475,11 @@ ulp_tf_cntxt_app_caps_init(struct bnxt *bp,
+ 					      &ulp_ctx->cfg_data->feature_bits))
+ 			return -EINVAL;
  
- 	/* Get the port id of the current device */
- 	port_id = ULP_COMP_FLD_IDX_RD(params, BNXT_ULP_CF_IDX_INCOMING_IF);
- 
--	/* Get the port db ifindex */
--	if (ulp_port_db_dev_port_to_ulp_index(params->ulp_ctx, port_id,
--					      &ifindex)) {
--		BNXT_DRV_DBG(ERR, "Invalid port id\n");
-+	params->port_id = port_id;
-+	bp = bnxt_pmd_get_bp(params->port_id);
-+	if (bp == NULL) {
-+		BNXT_DRV_DBG(ERR, "Invalid bp");
- 		return BNXT_TF_RC_ERROR;
- 	}
- 
--	/* Check the port is PF port */
--	intf_type = ulp_port_db_port_type_get(params->ulp_ctx, ifindex);
--	if (intf_type != BNXT_ULP_INTF_TYPE_PF) {
--		BNXT_DRV_DBG(ERR, "Port is not a PF port\n");
-+	ULP_COMP_FLD_IDX_WR(params, BNXT_ULP_CF_IDX_ACT_PORT_TYPE, BNXT_ULP_INTF_TYPE_PF);
++		if ((ulp_ctx->cfg_data->feature_bits &
++		     BNXT_ULP_FEATURE_BIT_UNICAST_ONLY))
++			ulp_ctx->cfg_data->ulp_flags |=
++			BNXT_ULP_APP_UNICAST_ONLY;
 +
-+	/* Get the direction */
-+	dir = ULP_COMP_FLD_IDX_RD(params, BNXT_ULP_CF_IDX_DIRECTION);
-+	if (dir == BNXT_ULP_DIR_EGRESS) {
-+		BNXT_DRV_DBG(ERR, "Invalid direction");
- 		return BNXT_TF_RC_ERROR;
-+	} else {
-+		uint16_t pid_s = bp->parent->vnic;
-+		uint32_t pid = pid_s;
-+		pid = rte_cpu_to_be_32(pid);
-+		memcpy(&act->act_details[BNXT_ULP_ACT_PROP_IDX_VNIC],
-+		       &pid, BNXT_ULP_ACT_PROP_SZ_VNIC);
-+		/*
-+		 * Update appropriate port (A/B) VNIC based on multi-port
-+		 * indication.
-+		 */
-+		ULP_COMP_FLD_IDX_WR(params, BNXT_ULP_CF_IDX_MP_VNIC_A, pid_s);
- 	}
--	/* Update the action properties */
--	ULP_COMP_FLD_IDX_WR(params, BNXT_ULP_CF_IDX_ACT_PORT_TYPE, intf_type);
--	return ulp_rte_parser_act_port_set(params, ifindex, false,
--					   BNXT_ULP_DIR_INVALID);
-+
-+	/* Update the action port set bit */
-+	ULP_COMP_FLD_IDX_WR(params, BNXT_ULP_CF_IDX_ACT_PORT_IS_SET, 1);
-+	return BNXT_TF_RC_SUCCESS;
- }
+ 		bnxt_ulp_cntxt_ptr2_default_class_bits_set(ulp_ctx,
+ 							   info[i].default_class_bits);
+ 		bnxt_ulp_cntxt_ptr2_default_act_bits_set(ulp_ctx,
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+index 7271cbb863..fc713e95da 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+@@ -562,6 +562,11 @@ ulp_tfc_cntxt_app_caps_init(struct bnxt *bp, uint8_t app_id, uint32_t dev_id)
+ 					      &ulp_ctx->cfg_data->feature_bits))
+ 			return -EINVAL;
  
- /* Function to handle the parsing of RTE Flow action VF. */
++		if ((ulp_ctx->cfg_data->feature_bits &
++		     BNXT_ULP_FEATURE_BIT_UNICAST_ONLY))
++			ulp_ctx->cfg_data->ulp_flags |=
++			BNXT_ULP_APP_UNICAST_ONLY;
++
+ 		bnxt_ulp_default_app_priority_set(ulp_ctx,
+ 						  info[i].default_priority);
+ 		bnxt_ulp_max_def_priority_set(ulp_ctx,
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
+index baff9ef049..73ed3803de 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
+@@ -1097,6 +1097,8 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
+ 		BNXT_DRV_DBG(ERR, "Socket Direct Feature is enabled");
+ 	if (bit & BNXT_ULP_FEATURE_BIT_NON_VFR_MODE)
+ 		BNXT_DRV_DBG(ERR, "Non VFR Feature is enabled");
++	if (bit & BNXT_ULP_FEATURE_BIT_UNICAST_ONLY)
++		BNXT_DRV_DBG(ERR, "Unicast only Feature is enabled");
+ 
+ 	*out_bits =  bit;
+ 	return 0;
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_def_rules.c b/drivers/net/bnxt/tf_ulp/ulp_def_rules.c
+index 30cd944362..4d96882087 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_def_rules.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_def_rules.c
+@@ -829,9 +829,6 @@ bnxt_ulp_promisc_mode_set(struct bnxt *bp, uint8_t enable)
+ 	    !bp->ulp_ctx)
+ 		return rc;
+ 
+-	if (!BNXT_CHIP_P5(bp))
+-		return rc;
+-
+ 	port_id = bp->eth_dev->data->port_id;
+ 	info = &bp->ulp_ctx->cfg_data->df_rule_info[port_id];
+ 
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h b/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
+index d63862ffba..4e9b11e437 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
++++ b/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
+@@ -914,7 +914,8 @@ enum bnxt_ulp_feature_bit {
+ 	BNXT_ULP_FEATURE_BIT_SPECIAL_VXLAN = 0x00000020,
+ 	BNXT_ULP_FEATURE_BIT_HOT_UPGRADE = 0x00000040,
+ 	BNXT_ULP_FEATURE_BIT_GLOBAL_TBL_SCOPE = 0x00000080,
+-	BNXT_ULP_FEATURE_BIT_NON_VFR_MODE = 0x00000100
++	BNXT_ULP_FEATURE_BIT_NON_VFR_MODE = 0x00000100,
++	BNXT_ULP_FEATURE_BIT_UNICAST_ONLY = 0x00000200
+ };
+ 
+ enum bnxt_ulp_flow_dir_bitmask {
 -- 
 2.39.5 (Apple Git-154)
 
