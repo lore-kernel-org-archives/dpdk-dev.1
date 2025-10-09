@@ -2,86 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D5A7CCD183
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF025CCD184
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:15:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B867A40697;
-	Fri, 10 Oct 2025 00:15:41 +0200 (CEST)
-Received: from mail-il1-f226.google.com (mail-il1-f226.google.com
- [209.85.166.226])
- by mails.dpdk.org (Postfix) with ESMTP id AAC48402AE
- for <dev@dpdk.org>; Fri, 10 Oct 2025 00:15:39 +0200 (CEST)
-Received: by mail-il1-f226.google.com with SMTP id
- e9e14a558f8ab-42d8ad71a51so16208095ab.1
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:15:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2D9B240A72;
+	Fri, 10 Oct 2025 00:15:43 +0200 (CEST)
+Received: from mail-pg1-f225.google.com (mail-pg1-f225.google.com
+ [209.85.215.225])
+ by mails.dpdk.org (Postfix) with ESMTP id 5CF9E406B4
+ for <dev@dpdk.org>; Fri, 10 Oct 2025 00:15:42 +0200 (CEST)
+Received: by mail-pg1-f225.google.com with SMTP id
+ 41be03b00d2f7-b60971c17acso1231299a12.3
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:15:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760048139; x=1760652939;
+ d=1e100.net; s=20230601; t=1760048141; x=1760652941;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=pegLHa6YwTnUrKk2yUoAJjCwPPOmU9VVfLvOuNaLXSY=;
- b=D4zk3hetHVsq/Uyx/GOSjIMczxNTm9k3vhT7ILju7MIB6eHzCBGZdBEUUnOoHtxS7N
- zZh8XKjCl7LDvUC+JFvJpK1AdK08Zc8qY3Y5z8EDINGrLYi7bB1cWB6jKFXrXA759Wxz
- XAANLe2565Yx77maCN8TejCCwp1eACwpjH17WIJqVavtzFvBqcDuF1T4k5jr7kquunvH
- vhDvfEaf+qaPwVmnCqtRosBdkC5ILW9mgcH/bmDtH1VqzJyZhqLTjb6iiLIPgEmkY77o
- qI0AftKTZQ78CifqIMCgekHfXFLhC9spkcIuFYS6CMe5nWDLjNRK+IeCQHENcFXBo3L0
- 3cJw==
-X-Gm-Message-State: AOJu0YxPxKz8j9+G4eURyB7KrgZXc0btOezVeBZiKQ6bqPovTZK5ZHEo
- I9jucabMtr+3fJGj/xn2+7Dg+JPJw4pzE0PNwzU2poDqsZfnBBacRNjSMyHpz3GuDf5LslE5bfv
- JSkf4bGQzN6Rq2IPCoiod6NjTD3vvJiVBMtH9dK9D5hInHmFL3p3mi9IRwPQvZSzGdgxyhyk6te
- QnuVhh0Yj3U5wo3x+HQ7nozCuvmveBURw2rFnOkUR8JkywRPmcGYh6fgKd5uxo9rX0P8h/lg==
-X-Gm-Gg: ASbGnctCtcJ+5/bA7uxWEepwJ5Zdyb0LwCLGAq2ghHj7edaoQ9s11kTzG44Lwb6iHcJ
- 6xZ+Xj/daA8C5YPj2xlVHKCTcdz+LGoMjtIwBRzK4HjU3mzQXkSGdHa8VfexNnm/8n+Wib3ICou
- QVs/uJ1picst3Jy2CeXnNJYWU1wZ4QPYaE2SFw4sluNp3LOTMFUiLW4w10sZsYDQVfTewT3pCct
- tF9gvO8ZDgG+ol8ls9D/yJXLgLSp1qFhQKdCAccMv5sdwxz6jeQWQCqWbTqaKqiMdwJWELFXA5k
- zqZu2zgHPezEuZnbfhUD4OQEac01sUAGX4XxhHgvSpzpGMXl/IKu07L75KrMFofO1uXByRn/CMs
- ABj22Tqx3FLcWvfbgXooxWeDNerzYwALpyMme6risREeQlpwMLPiUEY9BtgmsmlV74b8NRvePZY
- aFL5kU
-X-Google-Smtp-Source: AGHT+IEfehkvabkYO3WqhOTtwAG1RQHJkRevmB1af2OV1BZkGF37Qfxngmmh0eBha/bUhMCBsiZMFT71pGSg
-X-Received: by 2002:a05:6e02:23c3:b0:42f:8afa:326f with SMTP id
- e9e14a558f8ab-42f8afa34damr83973045ab.19.1760048138840; 
- Thu, 09 Oct 2025 15:15:38 -0700 (PDT)
+ bh=h4AylXlH4WkXjfFfeqY8eCwFh20Z9D6E5To2ff0e2EI=;
+ b=AhKqJkDGFGinBBqerXHAYbwJxd2T7H8SIcKlaTYjP9IXGOj4T7slOv8ZUXFOmuQfxY
+ 3ZdsVN5DGq4v4hgfw304RSLhbbnNUH7N/l9w90Et0uEv0w9limGAn2I9lZAvOdV91S0O
+ mJgCoOVBmpXZeMpoRUCkH5XvuS+n8q3Ej4X5bMvhjB91h41vRbQqrDz6kbJc1O/tFm+d
+ q01GwCPap42wpfJZ4ZdUIc/sWKBTj5rpwlarVOA1C1zIePzJj7u84DWlSGzopYt8K5AB
+ rlsI7BApxIDJGpoEBlCSXvzKSrv7NB6kpNAAX5nlEgG3gdodQD7l5KOML5f5qeI96xzw
+ dcLQ==
+X-Gm-Message-State: AOJu0YwU2SZeMGleY8OlSNxh+4rC8bHbmvyyEgbEGyoL3BsT72nzIdgs
+ xEWRvjrDucyHeVpEkAQ9elWb5SVZ4hOdV7Y37t+N3ZUQJ3YxlsfRiAEQPYEQzFwyYFwrpegvI8E
+ NTO4Sqt9b/sVZKTBNcx62OzXQeP87xeshYJ8ETCA1FpAUabPuUeSXsqpaxg8e3nhwZW9TH+DmUU
+ IMXxQHHmpfP9CEdC557zOSjyb204gPfs3PG1QfJ6iXuwpx/PTGCbB894jODUmbKGhJDBEF2g==
+X-Gm-Gg: ASbGnctkkDZsdlSDeQh+cByak4bZp1pm+4zoQaZkgDhBdh7vj7mdLKFXN7JrQGoS3Nk
+ uOEuTpEE00fzTd0FDhHYCFvmzt/z4dUwUVTcKTHvMzjlg9QL+a28TjyqApZM8nlpj7RG9meaQhM
+ 8r5/Io8yit8z+3yi/cUgryDGNwPIYuAABC845V5BXYUPs1iEcdhHwG30abEI4rUeI7FSPh1oRC+
+ oNTiUBZaqODkgFu+epgzsW7wQYpkFfp3V3Mx+g8Q/N0yNjgP9hhw8taig9B3ye+6GFRyVeK/l5N
+ LT6aG/qF+gGXjZoZ75pxbAEFWcbUcTthe0OrrpBpUa4HyVsHnBcE9JIWx9I3v3jFlyWzV7QX4vR
+ XJjeA+H/nQJjLBmncRBpMgXGCvyRu5+ksTtrvUu67XAx+wJl5O+5PuzhxaZKBrvfQiRI0fVqGzX
+ 8pK2N57wc=
+X-Google-Smtp-Source: AGHT+IEBSrnzWEa9VoRKIbV1i5qBByOr8b2Qb3KMEWELli+qt9k9PUTecsFkLYR+TlT0lHmKGeyuZiOVdSUS
+X-Received: by 2002:a17:902:ce0e:b0:275:6baa:d9 with SMTP id
+ d9443c01a7336-290272e38b6mr123008605ad.40.1760048141497; 
+ Thu, 09 Oct 2025 15:15:41 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-72.dlp.protect.broadcom.com. [144.49.247.72])
+ (address-144-49-247-118.dlp.protect.broadcom.com. [144.49.247.118])
  by smtp-relay.gmail.com with ESMTPS id
- e9e14a558f8ab-42f9034daa7sm2460365ab.30.2025.10.09.15.15.38
+ d9443c01a7336-29034f2dd0asm3281705ad.57.2025.10.09.15.15.41
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 09 Oct 2025 15:15:38 -0700 (PDT)
+ Thu, 09 Oct 2025 15:15:41 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qv1-f69.google.com with SMTP id
- 6a1803df08f44-78e5b6f1296so42380246d6.2
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:15:38 -0700 (PDT)
+Received: by mail-qv1-f72.google.com with SMTP id
+ 6a1803df08f44-81d800259e3so28927566d6.3
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:15:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1760048137; x=1760652937; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1760048140; x=1760652940; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=pegLHa6YwTnUrKk2yUoAJjCwPPOmU9VVfLvOuNaLXSY=;
- b=XMsLasqpaCvYPudIC4Uu1Yi35cm32LD6OfExOPNfPhms/SnQ7vbaQqR/6ITA6w+MBT
- SRivqkYb7NxtgsAM/WrljiLZtBG1EniZmqa22AyBR0iXLJ3bvAeucG5heL0AF21YdEbc
- 95IfMN+v1dwFg4WAuaANUvW89OLTRSXKY6Gbc=
-X-Received: by 2002:ad4:5d61:0:b0:856:d1d4:d127 with SMTP id
- 6a1803df08f44-87b21015405mr144239326d6.4.1760048136679; 
- Thu, 09 Oct 2025 15:15:36 -0700 (PDT)
-X-Received: by 2002:ad4:5d61:0:b0:856:d1d4:d127 with SMTP id
- 6a1803df08f44-87b21015405mr144238376d6.4.1760048135643; 
- Thu, 09 Oct 2025 15:15:35 -0700 (PDT)
+ bh=h4AylXlH4WkXjfFfeqY8eCwFh20Z9D6E5To2ff0e2EI=;
+ b=e0sLdJ5QjRwBqMCuUAIwb4uNUSVXCMmZiy1gY4FuEuq3Bh+dYbFoa4Wix8ozXTvwfE
+ WlVZ3mCcAjLw7hNODYsBnz5Puz2zncj0WXQK2aCYxmnrFzhtMdjqor9F4rDseZyYjmTe
+ AIkyzYJCnBCCt2He6bLdB6la2OUtFdkbe7sT8=
+X-Received: by 2002:a05:6214:1c4c:b0:820:8fa6:130e with SMTP id
+ 6a1803df08f44-87b074cdb2dmr112983686d6.0.1760048139508; 
+ Thu, 09 Oct 2025 15:15:39 -0700 (PDT)
+X-Received: by 2002:a05:6214:1c4c:b0:820:8fa6:130e with SMTP id
+ 6a1803df08f44-87b074cdb2dmr112983296d6.0.1760048138871; 
+ Thu, 09 Oct 2025 15:15:38 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.15.34
+ 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.15.37
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Thu, 09 Oct 2025 15:15:35 -0700 (PDT)
+ Thu, 09 Oct 2025 15:15:37 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Michael Baucom <michael.baucom@broadcom.com>,
- Shuanglin Wang <shuanglin.wang@broadcom.com>
-Subject: [PATCH v2 16/54] net/bnxt/tf_ulp: hot upgrade support
-Date: Thu,  9 Oct 2025 18:10:51 -0400
-Message-Id: <20251009221129.28256-17-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com, Farah Smith <farah.smith@broadcom.com>,
+ Peter Spreadborough <peter.spreadborough@broadcom.com>
+Subject: [PATCH v2 17/54] net/bnxt/tf_core: tcam manager logical id free
+Date: Thu,  9 Oct 2025 18:10:52 -0400
+Message-Id: <20251009221129.28256-18-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251009221129.28256-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -102,1390 +100,156 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+From: Farah Smith <farah.smith@broadcom.com>
 
-Add support for hot upgrade for a generic application.  An
-application can start a backup application and add the same flows
-that has been offloaded in primary application and secondary
-application can take over primary application.
+Remove code allocating entry 0 during initialization as it is
+not required. 0 is a valid entry.  Update session_bmp naming to
+more descriptive logical_id_bmp.  The data structure
+cfa_tcam_mgr_data is per session.  Within the cfa_tcam_mgr_data,
+logical ids for TCAM entries are allocated from a global pool.
 
-Update the hwrm version to the correct version number, the
-corresponding code version for hot upgrade api got changed.
-
-Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Reviewed-by: Michael Baucom <michael.baucom@broadcom.com>
-Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
+Signed-off-by: Farah Smith <farah.smith@broadcom.com>
+Reviewed-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
 ---
- drivers/net/bnxt/bnxt.h                       |   1 +
- drivers/net/bnxt/bnxt_ethdev.c                |  37 +++
- .../bnxt/hcapi/cfa_v3/include/cfa_resources.h |   8 +
- drivers/net/bnxt/hsi_struct_def_dpdk.h        | 207 +++++++++++++-
- drivers/net/bnxt/tf_core/v3/meson.build       |   1 +
- drivers/net/bnxt/tf_core/v3/tfc.h             |  84 ++++++
- drivers/net/bnxt/tf_core/v3/tfc_hot_upgrade.c | 142 ++++++++++
- drivers/net/bnxt/tf_core/v3/tfc_msg.c         |  52 ++++
- drivers/net/bnxt/tf_core/v3/tfc_msg.h         |   7 +
- drivers/net/bnxt/tf_ulp/bnxt_ulp.h            |   3 +
- drivers/net/bnxt/tf_ulp/bnxt_ulp_flow.c       |  10 +
- drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c        |  42 ++-
- drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h      |  60 ++++
- drivers/net/bnxt/tf_ulp/meson.build           |  56 +++-
- drivers/net/bnxt/tf_ulp/ulp_mapper.c          |   4 +
- drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c      |   2 +-
- drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c          |   7 +-
- drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c      | 264 ++++++++++++++++++
- drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.h      |  40 +++
- 19 files changed, 1012 insertions(+), 15 deletions(-)
- create mode 100644 drivers/net/bnxt/tf_core/v3/tfc_hot_upgrade.c
- create mode 100644 drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c
- create mode 100644 drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.h
+ drivers/net/bnxt/tf_core/cfa_tcam_mgr.c       | 35 +++++++------------
+ .../net/bnxt/tf_core/cfa_tcam_mgr_device.h    |  6 ++--
+ drivers/net/bnxt/tf_core/cfa_tcam_mgr_p4.c    |  2 +-
+ drivers/net/bnxt/tf_core/cfa_tcam_mgr_p58.c   |  2 +-
+ 4 files changed, 19 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
-index 72ac66b0db..00bdb53215 100644
---- a/drivers/net/bnxt/bnxt.h
-+++ b/drivers/net/bnxt/bnxt.h
-@@ -1061,6 +1061,7 @@ struct bnxt {
- 	struct bnxt_flow_stat_info *flow_stat;
- 	uint16_t		max_num_kflows;
- 	uint8_t			app_id;
-+	uint8_t			app_instance_id;
- 	uint32_t		tx_cfa_action;
- 	struct bnxt_ring_stats	*prev_rx_ring_stats;
- 	struct bnxt_ring_stats	*prev_tx_ring_stats;
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index 0836be3b1e..7edfd8ca89 100644
---- a/drivers/net/bnxt/bnxt_ethdev.c
-+++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -162,6 +162,9 @@ static const struct rte_eth_speed_lanes_capa speed_lanes_capa_tbl[] = {
-  */
- #define BNXT_DEVARG_APP_ID_INVALID(val)			((val) > 255)
- 
-+/* app-instance-id = an non-negative 3-bit number */
-+#define BNXT_DEVARG_APP_INSTANCE_ID_INVALID(val)	((val) > 8)
-+
- /*
-  * ieee-1588 = an non-negative 8-bit number
-  */
-@@ -6063,6 +6066,40 @@ bnxt_parse_devarg_cqe_mode(__rte_unused const char *key,
- 	return 0;
- }
- 
-+static int
-+bnxt_parse_devarg_app_instance_id(__rte_unused const char *key,
-+				  const char *value, void *opaque_arg)
-+{
-+	struct bnxt *bp = opaque_arg;
-+	unsigned long app_instance_id;
-+	char *end = NULL;
-+
-+	if (!opaque_arg) {
-+		PMD_DRV_LOG_LINE(ERR,
-+				 "Invalid param passed to app-instance-id devarg");
-+		return -EINVAL;
-+	}
-+
-+	app_instance_id = strtoul(value, &end, 10);
-+	if (end == NULL || *end != '\0' ||
-+	    (app_instance_id == ULONG_MAX && errno == ERANGE)) {
-+		PMD_DRV_LOG_LINE(ERR,
-+				 "Invalid parameter passed to instance devargs");
-+		return -EINVAL;
-+	}
-+
-+	if (BNXT_DEVARG_APP_INSTANCE_ID_INVALID(app_instance_id)) {
-+		PMD_DRV_LOG_LINE(ERR, "Invalid app-instance-id(%d) devargs",
-+				 (uint16_t)app_instance_id);
-+		return -EINVAL;
-+	}
-+
-+	bp->app_instance_id = app_instance_id;
-+	PMD_DRV_LOG_LINE(INFO, "app_instance_id=%u feature enabled",
-+			 (uint16_t)app_instance_id);
-+	return 0;
-+}
-+
- static int
- bnxt_parse_devarg_app_id(__rte_unused const char *key,
- 				 const char *value, void *opaque_arg)
-diff --git a/drivers/net/bnxt/hcapi/cfa_v3/include/cfa_resources.h b/drivers/net/bnxt/hcapi/cfa_v3/include/cfa_resources.h
-index d1d62738d3..ada9741dfa 100644
---- a/drivers/net/bnxt/hcapi/cfa_v3/include/cfa_resources.h
-+++ b/drivers/net/bnxt/hcapi/cfa_v3/include/cfa_resources.h
-@@ -194,6 +194,14 @@ enum cfa_resource_subtype_gim {
- 	 CFA_RSUBTYPE_SM_MAX + CFA_RSUBTYPE_TSM_MAX + CFA_RSUBTYPE_TIM_MAX +   \
- 	 CFA_RSUBTYPE_GIM_MAX)
- 
-+#define CFA_HOT_UPGRADE_APP_INSTANCE_MAX 4
-+enum cfa_hot_upgrade_cmd_op {
-+	CFA_HOT_UPGRADE_CMD_ALLOC = 1,
-+	CFA_HOT_UPGRADE_CMD_FREE,
-+	CFA_HOT_UPGRADE_CMD_GET,
-+	CFA_HOT_UPGRADE_CMD_SET
-+};
-+
- /**
-  * @}
-  */
-diff --git a/drivers/net/bnxt/hsi_struct_def_dpdk.h b/drivers/net/bnxt/hsi_struct_def_dpdk.h
-index de72e0e9e9..6e540359e3 100644
---- a/drivers/net/bnxt/hsi_struct_def_dpdk.h
-+++ b/drivers/net/bnxt/hsi_struct_def_dpdk.h
-@@ -966,6 +966,8 @@ struct __rte_packed_begin cmd_nums {
- 	#define HWRM_TFC_GLOBAL_ID_FREE                   UINT32_C(0x39c)
- 	/* TruFlow command to update the priority of one tcam entry. */
- 	#define HWRM_TFC_TCAM_PRI_UPDATE                  UINT32_C(0x39d)
-+	/* TruFlow command to process hot upgrade requests. */
-+	#define HWRM_TFC_HOT_UPGRADE_PROCESS              UINT32_C(0x3a0)
- 	/* Experimental */
- 	#define HWRM_SV                                   UINT32_C(0x400)
- 	/* Flush any trace buffer data that has not been sent to the host. */
-@@ -1250,8 +1252,8 @@ struct __rte_packed_begin hwrm_err_output {
- #define HWRM_VERSION_MINOR 10
- #define HWRM_VERSION_UPDATE 3
- /* non-zero means beta version */
--#define HWRM_VERSION_RSVD 86
--#define HWRM_VERSION_STR "1.10.3.86"
-+#define HWRM_VERSION_RSVD 87
-+#define HWRM_VERSION_STR "1.10.3.87"
- 
- /****************
-  * hwrm_ver_get *
-@@ -41082,6 +41084,59 @@ struct __rte_packed_begin hwrm_queue_adptv_qos_rx_feature_cfg_output {
- 	uint8_t	valid;
- } __rte_packed_end;
- 
-+/* hwrm_queue_adptv_qos_rx_feature_cfg_cmd_err (size:64b/8B) */
-+struct __rte_packed_begin hwrm_queue_adptv_qos_rx_feature_cfg_cmd_err {
-+	/*
-+	 * command specific error codes that goes to
-+	 * the cmd_err field in Common HWRM Error Response.
-+	 */
-+	uint8_t	code;
-+	/* Success */
-+	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_SUCCESS \
-+		UINT32_C(0x0)
-+	/* Unknown error */
-+	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_UNKNOWN \
-+		UINT32_C(0x1)
-+	/* Cannot configure TCs with interfaces up */
-+	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_INTERFACES_UP \
-+		UINT32_C(0x2)
-+	/*
-+	 * Configured TCs are less than the minimum required.
-+	 * The minimum is 3 if RoCE is enabled, else 1.
-+	 */
-+	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_MIN_TCS \
-+		UINT32_C(0x3)
-+	/* Configured TCs are more than the maximum allowed */
-+	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_MAX_TCS \
-+		UINT32_C(0x4)
-+	/* Configured TCs are not contiguous */
-+	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_CONTIGUOUS_TCS \
-+		UINT32_C(0x5)
-+	/* Cannot configure TC that has a priority mapping */
-+	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_COS_PRI_MAPPED \
-+		UINT32_C(0x6)
-+	/* Cannot configure TC that has a priority with pfc enabled */
-+	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_COS_PRI_PFC_ENABLED \
-+		UINT32_C(0x7)
-+	/*
-+	 * Cannot configure TCs 0-2 differently than TC 0 and 2 as
-+	 * lossy and TC 1 as lossless.
-+	 * A maximum of 4 TCs can be configured as lossless.
-+	 * TCs 1, 3, 4, 5, 6, and 7 can be configured as lossless.
-+	 */
-+	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_DEFAULT_TCS_CANNOT_BE_CHANGED \
-+		UINT32_C(0x8)
-+	/*
-+	 * Cannot configure more than 4 lossless TCs.
-+	 * TCs 1, 3, 4, 5, 6, and 7 can be configured as lossless.
-+	 */
-+	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_MAX_LOSSLESS_TCS \
-+		UINT32_C(0x9)
-+	#define HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_LAST \
-+		HWRM_QUEUE_ADPTV_QOS_RX_FEATURE_CFG_CMD_ERR_CODE_MAX_LOSSLESS_TCS
-+	uint8_t	unused_0[7];
-+} __rte_packed_end;
-+
- /****************************************
-  * hwrm_queue_adptv_qos_tx_feature_qcfg *
-  ****************************************/
-@@ -41397,6 +41452,59 @@ struct __rte_packed_begin hwrm_queue_adptv_qos_tx_feature_cfg_output {
- 	uint8_t	valid;
- } __rte_packed_end;
- 
-+/* hwrm_queue_adptv_qos_tx_feature_cfg_cmd_err (size:64b/8B) */
-+struct __rte_packed_begin hwrm_queue_adptv_qos_tx_feature_cfg_cmd_err {
-+	/*
-+	 * command specific error codes that goes to
-+	 * the cmd_err field in Common HWRM Error Response.
-+	 */
-+	uint8_t	code;
-+	/* Success */
-+	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_SUCCESS \
-+		UINT32_C(0x0)
-+	/* Unknown error */
-+	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_UNKNOWN \
-+		UINT32_C(0x1)
-+	/* Cannot configure TCs with interfaces up */
-+	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_INTERFACES_UP \
-+		UINT32_C(0x2)
-+	/*
-+	 * Configured TCs are less than the minimum required.
-+	 * The minimum is 3 if RoCE is enabled, else 1.
-+	 */
-+	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_MIN_TCS \
-+		UINT32_C(0x3)
-+	/* Configured TCs are more than the maximum allowed */
-+	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_MAX_TCS \
-+		UINT32_C(0x4)
-+	/* Configured TCs are not contiguous */
-+	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_CONTIGUOUS_TCS \
-+		UINT32_C(0x5)
-+	/* Cannot configure TC that has a priority mapping */
-+	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_COS_PRI_MAPPED \
-+		UINT32_C(0x6)
-+	/* Cannot configure TC that has a priority with pfc enabled */
-+	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_COS_PRI_PFC_ENABLED \
-+		UINT32_C(0x7)
-+	/*
-+	 * Cannot configure TCs 0-2 differently than TC 0 and 2 as
-+	 * lossy and TC 1 as lossless.
-+	 * A maximum of 4 TCs can be configured as lossless.
-+	 * TCs 1, 3, 4, 5, 6, and 7 can be configured as lossless.
-+	 */
-+	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_DEFAULT_TCS_CANNOT_BE_CHANGED \
-+		UINT32_C(0x8)
-+	/*
-+	 * Cannot configure more than 4 lossless TCs.
-+	 * TCs 1, 3, 4, 5, 6, and 7 can be configured as lossless.
-+	 */
-+	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_MAX_LOSSLESS_TCS \
-+		UINT32_C(0x9)
-+	#define HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_LAST \
-+		HWRM_QUEUE_ADPTV_QOS_TX_FEATURE_CFG_CMD_ERR_CODE_MAX_LOSSLESS_TCS
-+	uint8_t	unused_0[7];
-+} __rte_packed_end;
-+
- /********************
-  * hwrm_queue_qcaps *
-  ********************/
-@@ -62556,6 +62664,101 @@ struct hwrm_tfc_tcam_pri_update_output {
- 	uint8_t	valid;
- } __rte_packed;
- 
-+/********************************
-+ * hwrm_tfc_hot_upgrade_process *
-+ ********************************/
-+
-+
-+/* hwrm_tfc_hot_upgrade_process_input (size:192b/24B) */
-+struct hwrm_tfc_hot_upgrade_process_input {
-+	/* The HWRM command request type. */
-+	uint16_t	req_type;
-+	/*
-+	 * The completion ring to send the completion event on. This should
-+	 * be the NQ ID returned from the `nq_alloc` HWRM command.
-+	 */
-+	uint16_t	cmpl_ring;
-+	/*
-+	 * The sequence ID is used by the driver for tracking multiple
-+	 * commands. This ID is treated as opaque data by the firmware and
-+	 * the value is returned in the `hwrm_resp_hdr` upon completion.
-+	 */
-+	uint16_t	seq_id;
-+	/*
-+	 * The target ID of the command:
-+	 * * 0x0-0xFFF8 - The function ID
-+	 * * 0xFFF8-0xFFFC, 0xFFFE - Reserved for internal processors
-+	 * * 0xFFFD - Reserved for user-space HWRM interface
-+	 * * 0xFFFF - HWRM
-+	 */
-+	uint16_t	target_id;
-+	/*
-+	 * A physical address pointer pointing to a host buffer that the
-+	 * command's response data will be written. This can be either a host
-+	 * physical address (HPA) or a guest physical address (GPA) and must
-+	 * point to a physically contiguous block of memory.
-+	 */
-+	uint64_t	resp_addr;
-+	/*
-+	 * Function ID.
-+	 * If running on a trusted VF or PF, the fid field can be used to
-+	 * specify that the function is a non-trusted VF of the parent PF.
-+	 * If this command is used for the target_id itself, this field is
-+	 * set to 0xffff. A non-trusted VF cannot specify a valid FID in this
-+	 * field.
-+	 */
-+	uint16_t	fid;
-+	/*
-+	 * Session id associated with the firmware. Will be used
-+	 * for validation if the track type matches.
-+	 */
-+	uint16_t	sid;
-+	/*
-+	 * The ID of an hot upgrade application. Will be used to track
-+	 * sessions associated with this app.
-+	 */
-+	uint8_t	app_id;
-+	/* The hot-Up command. */
-+	uint8_t	cmd;
-+	/* Alloc a hot-up app entry and register a session for it */
-+	#define HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_ALLOC     UINT32_C(0x1)
-+	/* Free a hot-up session from hot-up app */
-+	#define HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_FREE      UINT32_C(0x2)
-+	/* Get the count of registered sessions for the hot-up app */
-+	#define HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_GET       UINT32_C(0x4)
-+	/* Set the active session for the hot-up app */
-+	#define HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_SET       UINT32_C(0x8)
-+	/* The count of sessions registered for the hot-up app */
-+	uint8_t	cur_session_cnt;
-+	/* unused. */
-+	uint8_t	unused0;
-+} __rte_packed;
-+
-+/* hwrm_tfc_hot_upgrade_process_output (size:128b/16B) */
-+struct hwrm_tfc_hot_upgrade_process_output {
-+	/* The specific error status for the command. */
-+	uint16_t	error_code;
-+	/* The HWRM command request type. */
-+	uint16_t	req_type;
-+	/* The sequence ID from the original command. */
-+	uint16_t	seq_id;
-+	/* The length of the response data in number of bytes. */
-+	uint16_t	resp_len;
-+	/* The count of sessions registered for the hot-up application. */
-+	uint8_t	session_cnt;
-+	/* unused. */
-+	uint8_t	unused0[6];
-+	/*
-+	 * This field is used in Output records to indicate that the
-+	 * output is completely written to RAM. This field should be
-+	 * read as '1' to indicate that the output has been
-+	 * completely written. When writing a command completion or
-+	 * response to an internal processor, the order of writes has
-+	 * to be such that this field is written last.
-+	 */
-+	uint8_t	valid;
-+} __rte_packed;
-+
- /******************************
-  * hwrm_tunnel_dst_port_query *
-  ******************************/
-diff --git a/drivers/net/bnxt/tf_core/v3/meson.build b/drivers/net/bnxt/tf_core/v3/meson.build
-index 5f467d6e5e..159e7a2b17 100644
---- a/drivers/net/bnxt/tf_core/v3/meson.build
-+++ b/drivers/net/bnxt/tf_core/v3/meson.build
-@@ -31,4 +31,5 @@ sources += files(
-         'tfc_util.c',
-         'tfo.c',
-         'tfc_vf2pf_msg.c',
-+        'tfc_hot_upgrade.c',
- )
-diff --git a/drivers/net/bnxt/tf_core/v3/tfc.h b/drivers/net/bnxt/tf_core/v3/tfc.h
-index 02f24106e7..54c615edc3 100644
---- a/drivers/net/bnxt/tf_core/v3/tfc.h
-+++ b/drivers/net/bnxt/tf_core/v3/tfc.h
-@@ -1575,4 +1575,88 @@ int tfc_if_tbl_set(struct tfc *tfcp, uint16_t fid,
- int tfc_if_tbl_get(struct tfc *tfcp, uint16_t fid,
- 		   const struct tfc_if_tbl_info *tbl_info,
- 		   uint8_t *data, uint8_t *data_sz_in_bytes);
-+
-+/**
-+ * Get a TFC hot upgrade status and application instance count
-+ *
-+ * @param[in] tfcp
-+ *   Pointer to TFC handle
-+ *
-+ * @param[in] fid
-+ *   FID - Function ID to be used
-+ *
-+ * @param[in] app_inst_id
-+ *   the applicatoin instance id.
-+ *
-+ * @param[out] app_inst_cnt
-+ *   Pointer to the application instance count.
-+ *
-+ * @returns
-+ *   0 for SUCCESS, negative error value for FAILURE (errno.h)
-+ */
-+int
-+tfc_hot_up_app_inst_count(struct tfc *tfcp, uint16_t fid,
-+			  uint8_t app_inst_id, uint8_t *app_inst_cnt);
-+
-+/**
-+ * Allocate and initialize the TFC hot upgrade state
-+ *
-+ * @param[in] tfcp
-+ *   Pointer to TFC handle
-+ *
-+ * @param[in] fid
-+ *   FID - Function ID to be used
-+ *
-+ * @param[in] app_inst_id
-+ *   the application instance id.
-+ *
-+ * @param[in] app_inst_cnt
-+ *   the application instance count.
-+ *
-+ * @param[out] session
-+ *   the session count.
-+ *
-+ * @returns
-+ *   0 for SUCCESS, negative error value for FAILURE (errno.h)
-+ */
-+int
-+tfc_hot_up_app_inst_alloc(struct tfc *tfcp, uint16_t fid,
-+			  uint8_t app_inst_id, uint8_t app_inst_cnt,
-+			  uint8_t *session);
-+/**
-+ * Free the TFC hot upgrade state
-+ *
-+ * @param[in] tfcp
-+ *   Pointer to TFC handle
-+ *
-+ * @param[in] fid
-+ *   FID - Function ID to be used
-+ *
-+ * @param[in] app_inst_id
-+ *   the application instance id.
-+ *
-+ * @returns
-+ *   0 for SUCCESS, negative error value for FAILURE (errno.h)
-+ */
-+int
-+tfc_hot_up_app_inst_free(struct tfc *tfcp, uint16_t fid, uint8_t app_inst_id);
-+
-+/**
-+ * Set the TFC hot upgrade state to primary
-+ *
-+ * @param[in] tfcp
-+ *   Pointer to TFC handle
-+ *
-+ * @param[in] fid
-+ *   FID - Function ID to be used
-+ *
-+ * @param[in] app_inst_id
-+ *   the application instance id.
-+ *
-+ * @returns
-+ *   0 for SUCCESS, negative error value for FAILURE (errno.h)
-+ */
-+int
-+tfc_hot_up_app_inst_set(struct tfc *tfcp, uint16_t fid, uint8_t app_inst_id);
-+
- #endif /* _TFC_H_ */
-diff --git a/drivers/net/bnxt/tf_core/v3/tfc_hot_upgrade.c b/drivers/net/bnxt/tf_core/v3/tfc_hot_upgrade.c
-new file mode 100644
-index 0000000000..a82c4ccd17
---- /dev/null
-+++ b/drivers/net/bnxt/tf_core/v3/tfc_hot_upgrade.c
-@@ -0,0 +1,142 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2019-2021 Broadcom
-+ * All rights reserved.
-+ */
-+#include <stdio.h>
-+#include "tfc.h"
-+#include "bnxt.h"
-+#include "tfc_msg.h"
-+#include "tfc_util.h"
-+
-+static int
-+tfc_hot_upgrade_validate(struct tfc *tfcp, uint8_t app_inst_id,
-+			 uint16_t *sid)
-+{
-+	struct bnxt *bp;
-+	int rc = -EINVAL;
-+
-+	if (tfcp == NULL) {
-+		PMD_DRV_LOG_LINE(ERR, "Invalid tfcp pointer");
-+		return rc;
-+	}
-+
-+	if (tfcp->bp == NULL || tfcp->tfo == NULL) {
-+		PMD_DRV_LOG_LINE(ERR, "tfcp not initialized");
-+		return rc;
-+	}
-+	bp = tfcp->bp;
-+
-+	if (!BNXT_PF(bp) && !BNXT_VF_IS_TRUSTED(bp)) {
-+		PMD_DRV_LOG_LINE(ERR, "bp not PF or trusted VF");
-+		return rc;
-+	}
-+
-+	if (app_inst_id > CFA_HOT_UPGRADE_APP_INSTANCE_MAX) {
-+		PMD_DRV_LOG_LINE(ERR, "Invalid app instance: %u",
-+				 app_inst_id);
-+		return rc;
-+	}
-+
-+	*sid = 0;
-+	rc = tfo_sid_get(tfcp->tfo, sid);
-+	if (rc)
-+		PMD_DRV_LOG_LINE(ERR,
-+				 "Failed to retrieve SID, rc:%d",
-+				 rc);
-+
-+	return rc;
-+}
-+
-+int
-+tfc_hot_up_app_inst_count(struct tfc *tfcp, uint16_t fid,
-+			  uint8_t app_inst_id, uint8_t *app_inst_cnt)
-+{
-+	uint16_t sid;
-+	int rc = 0;
-+
-+	if (tfc_hot_upgrade_validate(tfcp, app_inst_id, &sid)) {
-+		PMD_DRV_LOG_LINE(ERR, "failed validate for instance %u",
-+				 app_inst_id);
-+		return -EINVAL;
-+	}
-+
-+	rc = tfc_msg_hot_upgrade_process(tfcp, fid, sid, app_inst_id,
-+					 CFA_HOT_UPGRADE_CMD_GET, 0,
-+					 app_inst_cnt);
-+	if (rc)
-+		PMD_DRV_LOG_LINE(ERR, "failed for app instance id %d err=%d",
-+				 app_inst_id, rc);
-+
-+	return rc;
-+}
-+
-+int
-+tfc_hot_up_app_inst_alloc(struct tfc *tfcp, uint16_t fid,
-+			  uint8_t app_inst_id, uint8_t app_inst_cnt,
-+			  uint8_t *session)
-+{
-+	uint16_t sid;
-+	int rc = 0;
-+
-+	if (tfc_hot_upgrade_validate(tfcp,  app_inst_id, &sid)) {
-+		PMD_DRV_LOG_LINE(ERR, "failed validate for instance %u",
-+				 app_inst_id);
-+		return -EINVAL;
-+	}
-+
-+	rc = tfc_msg_hot_upgrade_process(tfcp, fid, sid, app_inst_id,
-+					 CFA_HOT_UPGRADE_CMD_ALLOC,
-+					 app_inst_cnt, session);
-+	if (rc)
-+		PMD_DRV_LOG_LINE(ERR, "failed for app instance id %d err=%d",
-+				 app_inst_id, rc);
-+
-+	return rc;
-+}
-+
-+int
-+tfc_hot_up_app_inst_free(struct tfc *tfcp, uint16_t fid,
-+			 uint8_t app_inst_id)
-+{
-+	uint8_t session_cnt = 0;
-+	uint16_t sid;
-+	int rc = 0;
-+
-+	if (tfc_hot_upgrade_validate(tfcp,  app_inst_id, &sid)) {
-+		PMD_DRV_LOG_LINE(ERR, "failed validate for instance %u",
-+				 app_inst_id);
-+		return -EINVAL;
-+	}
-+
-+	rc = tfc_msg_hot_upgrade_process(tfcp, fid, sid, app_inst_id,
-+					 CFA_HOT_UPGRADE_CMD_FREE,
-+					 0, &session_cnt);
-+	if (rc)
-+		PMD_DRV_LOG_LINE(ERR, "failed for app instance id %d err=%d",
-+				 app_inst_id, rc);
-+
-+	return rc;
-+}
-+
-+int
-+tfc_hot_up_app_inst_set(struct tfc *tfcp, uint16_t fid, uint8_t app_inst_id)
-+{
-+	uint8_t session_cnt = 0;
-+	uint16_t sid;
-+	int rc = 0;
-+
-+	if (tfc_hot_upgrade_validate(tfcp,  app_inst_id, &sid)) {
-+		PMD_DRV_LOG_LINE(ERR, "failed validate for instance %u",
-+				 app_inst_id);
-+		return -EINVAL;
-+	}
-+
-+	rc = tfc_msg_hot_upgrade_process(tfcp, fid, sid, app_inst_id,
-+					 CFA_HOT_UPGRADE_CMD_SET,
-+					 1, &session_cnt);
-+	if (rc)
-+		PMD_DRV_LOG_LINE(ERR, "failed for app instance id %d err=%d",
-+				 app_inst_id, rc);
-+
-+	return rc;
-+}
-diff --git a/drivers/net/bnxt/tf_core/v3/tfc_msg.c b/drivers/net/bnxt/tf_core/v3/tfc_msg.c
-index 0a636a1677..7ec7e9a054 100644
---- a/drivers/net/bnxt/tf_core/v3/tfc_msg.c
-+++ b/drivers/net/bnxt/tf_core/v3/tfc_msg.c
-@@ -1319,3 +1319,55 @@ int tfc_msg_resc_usage_query(struct tfc *tfcp, uint16_t sid, enum cfa_dir dir,
- 	return rc;
- }
- #endif /* TF_FLOW_SCALE_QUERY */
-+
-+int
-+tfc_msg_hot_upgrade_process(struct tfc *tfcp, uint16_t fid, uint16_t sid,
-+			    uint8_t app_inst_id,
-+			    enum cfa_hot_upgrade_cmd_op cmd_op,
-+			    uint8_t cur_cnt,
-+			    uint8_t *app_inst_cnt)
-+{
-+	struct hwrm_tfc_hot_upgrade_process_input req = { 0 };
-+	struct hwrm_tfc_hot_upgrade_process_output resp = { 0 };
-+	struct bnxt *bp = tfcp->bp;
-+	int rc = 0;
-+
-+	rc = tfc_msg_set_fid(bp, fid, &req.fid);
-+	if (rc)
-+		return rc;
-+	req.sid = rte_le_to_cpu_16(sid);
-+	req.app_id = app_inst_id;
-+	req.cur_session_cnt = cur_cnt;
-+
-+	switch (cmd_op) {
-+	case CFA_HOT_UPGRADE_CMD_ALLOC:
-+		req.cmd = HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_ALLOC;
-+		break;
-+	case CFA_HOT_UPGRADE_CMD_FREE:
-+		req.cmd = HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_FREE;
-+		break;
-+	case CFA_HOT_UPGRADE_CMD_GET:
-+		req.cmd = HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_GET;
-+		break;
-+	case CFA_HOT_UPGRADE_CMD_SET:
-+		req.cmd = HWRM_TFC_HOT_UPGRADE_PROCESS_INPUT_CMD_SET;
-+		break;
-+	default:
-+		PMD_DRV_LOG_LINE(ERR, "invalid command opcode %u",
-+				 cmd_op);
-+		return -EINVAL;
-+	}
-+	rc = bnxt_hwrm_tf_message_direct(bp, false,
-+					 HWRM_TFC_HOT_UPGRADE_PROCESS,
-+					 &req, sizeof(req), &resp,
-+					 sizeof(resp));
-+	if (rc) {
-+		PMD_DRV_LOG_LINE(ERR,
-+				 "sid[%u]:instance[%u]:cmd_op[%u] failed",
-+				 sid, app_inst_id, cmd_op);
-+		return rc;
-+	}
-+
-+	*app_inst_cnt = resp.session_cnt;
-+	return rc;
-+}
-diff --git a/drivers/net/bnxt/tf_core/v3/tfc_msg.h b/drivers/net/bnxt/tf_core/v3/tfc_msg.h
-index 2d1a6816c0..3bf6b04a12 100644
---- a/drivers/net/bnxt/tf_core/v3/tfc_msg.h
-+++ b/drivers/net/bnxt/tf_core/v3/tfc_msg.h
-@@ -174,3 +174,10 @@ tfc_msg_if_tbl_get(struct tfc *tfcp, uint16_t fid, uint16_t sid,
- int tfc_msg_resc_usage_query(struct tfc *tfcp, uint16_t sid, enum cfa_dir dir,
- 			     uint16_t *data_size, void *data);
- #endif /* TF_FLOW_SCALE_QUERY  */
-+
-+int
-+tfc_msg_hot_upgrade_process(struct tfc *tfcp, uint16_t fid, uint16_t sid,
-+			    uint8_t app_inst_id,
-+			    enum cfa_hot_upgrade_cmd_op cmd_op,
-+			    uint8_t cur_cnt,
-+			    uint8_t *app_inst_cnt);
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp.h
-index 3a2745d405..afd883df2c 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp.h
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp.h
-@@ -139,6 +139,7 @@ struct bnxt_ulp_data {
- 	uint32_t			max_def_priority;
- 	uint32_t			min_flow_priority;
- 	uint32_t			max_flow_priority;
-+	uint32_t			ha_priority;
- 	uint32_t			vxlan_port;
- 	uint32_t			vxlan_gpe_port;
- 	uint32_t			vxlan_ip_port;
-@@ -164,6 +165,8 @@ struct bnxt_ulp_data {
- 	uint64_t			default_act_bits;
- 	struct ulp_fc_tfc_stats_cache_entry *stats_cache;
- 	struct bnxt_ulp_sc_info		*sc_info;
-+	struct bnxt_ulp_tfc_ha_mgr_info *tfc_ha_info;
-+	uint8_t				app_instance_id;
- };
- 
- enum bnxt_ulp_tfo_type {
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_flow.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_flow.c
-index 2c22582e1c..386ec57a08 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_flow.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_flow.c
-@@ -13,6 +13,7 @@
- #include "ulp_fc_mgr.h"
- #include "ulp_port_db.h"
- #include "ulp_ha_mgr.h"
-+#include "ulp_tfc_ha_mgr.h"
- #include "ulp_tun.h"
- #include <rte_malloc.h>
- #include "ulp_template_db_tbl.h"
-@@ -92,8 +93,10 @@ bnxt_ulp_set_prio_attribute(struct ulp_rte_parser_params *params,
+diff --git a/drivers/net/bnxt/tf_core/cfa_tcam_mgr.c b/drivers/net/bnxt/tf_core/cfa_tcam_mgr.c
+index 89ca6814e5..c527750041 100644
+--- a/drivers/net/bnxt/tf_core/cfa_tcam_mgr.c
++++ b/drivers/net/bnxt/tf_core/cfa_tcam_mgr.c
+@@ -914,9 +914,8 @@ cfa_tcam_mgr_bitmap_alloc(struct tf *tfp __rte_unused,
+ 			  struct cfa_tcam_mgr_data *tcam_mgr_data)
  {
- 	uint32_t max_p = bnxt_ulp_max_flow_priority_get(params->ulp_ctx);
- 	uint32_t min_p = bnxt_ulp_min_flow_priority_get(params->ulp_ctx);
-+	uint32_t hot_prio = bnxt_ulp_ha_priority_id_get(params->ulp_ctx);
+ 	struct tfp_calloc_parms cparms;
+-	uint64_t session_bmp_size;
+-	struct bitalloc *session_bmp;
+-	int32_t first_idx;
++	uint64_t logical_id_bmp_size;
++	struct bitalloc *logical_id_bmp;
+ 	int max_entries;
+ 	int rc;
  
- 	if (max_p < min_p) {
-+		min_p -= hot_prio;
- 		if (unlikely(attr->priority > min_p || attr->priority < max_p)) {
- 			BNXT_DRV_DBG(ERR, "invalid prio, not in range %u:%u\n",
- 				     max_p, min_p);
-@@ -101,6 +104,7 @@ bnxt_ulp_set_prio_attribute(struct ulp_rte_parser_params *params,
- 		}
- 		params->priority = attr->priority;
- 	} else {
-+		max_p -= hot_prio;
- 		if (unlikely(attr->priority > max_p || attr->priority < min_p)) {
- 			BNXT_DRV_DBG(ERR, "invalid prio, not in range %u:%u\n",
- 				     min_p, max_p);
-@@ -245,6 +249,12 @@ bnxt_ulp_init_mapper_params(struct bnxt_ulp_mapper_parms *mparms,
- 				    1);
- 	}
+@@ -924,11 +923,11 @@ cfa_tcam_mgr_bitmap_alloc(struct tf *tfp __rte_unused,
+ 		return -CFA_TCAM_MGR_ERR_CODE(INVAL);
  
-+	/* update the Hot upgrade flag */
-+	if (bnxt_ulp_tfc_hot_upgrade_enabled(params->ulp_ctx) &&
-+	    bnxt_ulp_tfc_hot_upgrade_is_secondary(params->ulp_ctx))
-+		ULP_BITMAP_SET(mparms->cf_bitmap,
-+			       BNXT_ULP_CF_BIT_HOT_UP_SECONDARY);
-+
- 	/* Update the socket direct flag */
- 	if (ULP_BITMAP_ISSET(params->hdr_bitmap.bits,
- 			     BNXT_ULP_HDR_BIT_SVIF_IGNORE)) {
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-index af3e82a6a7..385dd742d5 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-@@ -32,7 +32,7 @@
- #include "ulp_matcher.h"
- #include "ulp_port_db.h"
- #include "ulp_tun.h"
--#include "ulp_ha_mgr.h"
-+#include "ulp_tfc_ha_mgr.h"
- #include "bnxt_tf_pmd_shim.h"
- #include "ulp_template_db_tbl.h"
- #include "tfc_resources.h"
-@@ -546,6 +546,21 @@ ulp_tfc_cntxt_app_caps_init(struct bnxt *bp, uint8_t app_id, uint32_t dev_id)
- 						  info[i].default_priority);
- 		bnxt_ulp_max_def_priority_set(ulp_ctx,
- 					      info[i].max_def_priority);
-+
-+		/* if hot upgrade is enabled */
-+		if (bnxt_ulp_tfc_hot_upgrade_enabled(ulp_ctx)) {
-+			uint32_t ha_prio = 0;
-+
-+			if (info[i].min_flow_priority >
-+			    info[i].max_flow_priority)
-+				ha_prio = info[i].min_flow_priority -
-+					info[i].max_flow_priority;
-+			else
-+				ha_prio = info[i].max_flow_priority -
-+					info[i].min_flow_priority;
-+			ha_prio = ha_prio / 2;
-+			bnxt_ulp_ha_priority_set(ulp_ctx, ha_prio);
-+		}
- 		bnxt_ulp_min_flow_priority_set(ulp_ctx,
- 					       info[i].min_flow_priority);
- 		bnxt_ulp_max_flow_priority_set(ulp_ctx,
-@@ -678,6 +693,16 @@ ulp_tfc_ctx_init(struct bnxt *bp,
- 	}
- 	BNXT_DRV_DBG(DEBUG, "Ulp initialized with app id %d\n", bp->app_id);
+ 	max_entries = tcam_mgr_data->cfa_tcam_mgr_max_entries;
+-	session_bmp_size = (sizeof(uint64_t) *
++	logical_id_bmp_size = (sizeof(uint64_t) *
+ 				(((max_entries - 1) / sizeof(uint64_t)) + 1));
  
-+	rc = bnxt_ulp_app_instance_id_set(bp->ulp_ctx, bp->app_instance_id);
-+	if (rc) {
-+		BNXT_DRV_DBG(ERR,
-+			     "Unable to set app_instance_id for ULP init.\n");
-+		goto error_deinit;
-+	}
-+	if (bp->app_instance_id)
-+		BNXT_DRV_DBG(DEBUG, "Hot upgrade instance id %u\n",
-+			     bp->app_instance_id);
-+
- 	rc = ulp_tfc_dparms_init(bp, bp->ulp_ctx, devid);
+ 	cparms.nitems = 1;
+-	cparms.size = session_bmp_size;
++	cparms.size = logical_id_bmp_size;
+ 	cparms.alignment = 0;
+ 	rc = tfp_calloc(&cparms);
  	if (rc) {
- 		BNXT_DRV_DBG(ERR, "Unable to init dparms for app(%x)/dev(%x)\n",
-@@ -875,19 +900,14 @@ static void
- ulp_tfc_deinit(struct bnxt *bp,
- 	       struct bnxt_ulp_session_state *session)
- {
--	bool ha_enabled;
- 	uint16_t fid_cnt = 0;
- 	int32_t rc;
+@@ -939,23 +938,15 @@ cfa_tcam_mgr_bitmap_alloc(struct tf *tfp __rte_unused,
+ 		return -CFA_TCAM_MGR_ERR_CODE(NOMEM);
+ 	}
  
- 	if (!bp->ulp_ctx || !bp->ulp_ctx->cfg_data)
- 		return;
+-	session_bmp = (struct bitalloc *)cparms.mem_va;
+-	rc = ba_init(session_bmp, max_entries, true);
++	logical_id_bmp = (struct bitalloc *)cparms.mem_va;
++	rc = ba_init(logical_id_bmp, max_entries, true);
  
--	ha_enabled = bnxt_ulp_cntxt_ha_enabled(bp->ulp_ctx);
--	if (ha_enabled) {
--		rc = ulp_ha_mgr_close(bp->ulp_ctx);
--		if (rc)
--			BNXT_DRV_DBG(ERR, "Failed to close HA (%d)\n", rc);
+-	tcam_mgr_data->session_bmp = session_bmp;
+-	tcam_mgr_data->session_bmp_size = max_entries;
+-
+-	/* Allocate first index to avoid idx 0 */
+-	first_idx = ba_alloc(tcam_mgr_data->session_bmp);
+-	if (first_idx == BA_FAIL) {
+-		tfp_free(tcam_mgr_data->session_bmp);
+-		tcam_mgr_data->session_bmp = NULL;
+-		return -CFA_TCAM_MGR_ERR_CODE(NOSPC);
 -	}
-+	/* Delete the Hot upgrade manager */
-+	ulp_tfc_hot_upgrade_mgr_deinit(bp->ulp_ctx);
++	tcam_mgr_data->logical_id_bmp = logical_id_bmp;
++	tcam_mgr_data->logical_id_bmp_size = max_entries;
  
- 	/* Delete the Stats Counter Manager */
- 	ulp_sc_mgr_deinit(bp->ulp_ctx);
-@@ -1050,6 +1070,12 @@ ulp_tfc_init(struct bnxt *bp,
- 		goto jump_to_error;
- 	}
+ 	TFP_DRV_LOG(DEBUG,
+ 		    "session bitmap size is %" PRIX64 "\n",
+-		    tcam_mgr_data->session_bmp_size);
++		    tcam_mgr_data->logical_id_bmp_size);
  
-+	rc = ulp_tfc_hot_upgrade_mgr_init(bp->ulp_ctx);
-+	if (rc) {
-+		BNXT_DRV_DBG(ERR, "Failed to initialize ulp hot upgrade mgr\n");
-+		goto jump_to_error;
-+	}
-+
- 	rc = bnxt_ulp_cntxt_dev_id_get(bp->ulp_ctx, &ulp_dev_id);
- 	if (rc) {
- 		BNXT_DRV_DBG(ERR, "Unable to get device id from ulp.\n");
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-index 2cea9e5692..cb826b2c19 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-@@ -1098,4 +1098,64 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
  	return 0;
  }
+@@ -1135,7 +1126,7 @@ static int cfa_tcam_mgr_free_entries(struct tf *tfp)
+ 	 * may not be of the same type, resulting in errors.
+ 	 */
  
-+/* Function to set the tfc ha info into the context */
-+static inline int32_t
-+bnxt_ulp_cntxt_ptr2_tfc_ha_info_set(struct bnxt_ulp_context *ulp_ctx,
-+				    struct bnxt_ulp_tfc_ha_mgr_info *ha_info)
-+{
-+	if (unlikely(ulp_ctx == NULL || ulp_ctx->cfg_data == NULL)) {
-+		BNXT_DRV_DBG(ERR, "Invalid ulp context data\n");
-+		return -EINVAL;
-+	}
-+	ulp_ctx->cfg_data->tfc_ha_info = ha_info;
-+	return 0;
-+}
-+
-+/* Function to retrieve the tfc ha info from the context. */
-+static inline struct bnxt_ulp_tfc_ha_mgr_info *
-+bnxt_ulp_cntxt_ptr2_tfc_ha_info_get(struct bnxt_ulp_context *ulp_ctx)
-+{
-+	if (unlikely(ulp_ctx == NULL || ulp_ctx->cfg_data == NULL))
-+		return NULL;
-+	return ulp_ctx->cfg_data->tfc_ha_info;
-+}
-+
-+/* This function sets the app instance id */
-+static inline int32_t
-+bnxt_ulp_app_instance_id_set(struct bnxt_ulp_context *ulp_ctx,
-+			     uint8_t app_instance_id)
-+{
-+	if (unlikely(!ulp_ctx))
-+		return -EINVAL;
-+	ulp_ctx->cfg_data->app_instance_id = app_instance_id;
-+	return 0;
-+}
-+
-+/* This function gets the app instance id */
-+static inline uint8_t
-+bnxt_ulp_app_instance_id_get(struct bnxt_ulp_context *ulp_ctx)
-+{
-+	if (unlikely(!ulp_ctx || !ulp_ctx->cfg_data))
-+		return 0;
-+	return ulp_ctx->cfg_data->app_instance_id;
-+}
-+
-+static inline int
-+bnxt_ulp_ha_priority_set(struct bnxt_ulp_context *ulp_ctx, uint32_t prio)
-+{
-+	if (unlikely(!ulp_ctx || !ulp_ctx->cfg_data))
-+		return -EINVAL;
-+
-+	ulp_ctx->cfg_data->ha_priority = prio;
-+	return 0;
-+}
-+
-+static inline uint32_t
-+bnxt_ulp_ha_priority_id_get(struct bnxt_ulp_context *ulp_ctx)
-+{
-+	if (unlikely(!ulp_ctx || !ulp_ctx->cfg_data))
-+		return 0;
-+	return ulp_ctx->cfg_data->ha_priority;
-+}
-+
- #endif /* _BNXT_ULP_UTILS_H_ */
-diff --git a/drivers/net/bnxt/tf_ulp/meson.build b/drivers/net/bnxt/tf_ulp/meson.build
-index c8eb39f469..000b05ad0c 100644
---- a/drivers/net/bnxt/tf_ulp/meson.build
-+++ b/drivers/net/bnxt/tf_ulp/meson.build
-@@ -33,6 +33,60 @@ sources += files(
-         'ulp_fc_mgr_tf.c',
-         'ulp_alloc_tbl.c',
-         'ulp_sc_mgr.c',
--        'ulp_sc_mgr_tfc.c')
-+        'ulp_sc_mgr_tfc.c',
-+        'ulp_tfc_ha_mgr.c')
-+
-+#include the templates for compile
-+
-+if get_option('bnxt_tf_template').contains('app19')
-+includes += include_directories('app_19_templates')
-+subdir('app_19_templates')
-+cflags += '-DBNXT_TF_APP_ID=19'
-+
-+elif get_option('bnxt_tf_template').contains('app17')
-+includes += include_directories('app_16_17_templates')
-+subdir('app_16_17_templates')
-+cflags += '-DBNXT_TF_APP_ID=17'
-+
-+elif get_option('bnxt_tf_template').contains('app16')
-+includes += include_directories('app_16_17_templates')
-+subdir('app_16_17_templates')
-+cflags += '-DBNXT_TF_APP_ID=16'
-+
-+elif get_option('bnxt_tf_template').contains('app14')
-+includes += include_directories('app_14_templates')
-+subdir('app_14_templates')
-+cflags += '-DBNXT_TF_APP_ID=14'
-+
-+elif get_option('bnxt_tf_template').contains('app13')
-+includes += include_directories('app_13_templates')
-+subdir('app_13_templates')
-+cflags += '-DBNXT_TF_APP_ID=13'
-+
-+elif get_option('bnxt_tf_template').contains('app10')
-+includes += include_directories('app_10_templates')
-+subdir('app_10_templates')
-+cflags += '-DBNXT_TF_APP_ID=10'
-+
-+elif get_option('bnxt_tf_template').contains('app11')
-+includes += include_directories('app_11_templates')
-+subdir('app_11_templates')
-+cflags += '-DBNXT_TF_APP_ID=11'
-+
-+elif get_option('bnxt_tf_template').contains('app12')
-+includes += include_directories('app_12_templates')
-+subdir('app_12_templates')
-+cflags += '-DBNXT_TF_APP_ID=12'
-+
-+elif get_option('bnxt_tf_template').contains('app15')
-+includes += include_directories('app_15_templates')
-+subdir('app_15_templates')
-+cflags += '-DBNXT_TF_APP_ID=15'
-+
-+elif get_option('bnxt_tf_template').contains('app1')
-+includes += include_directories('app_1_2_templates')
-+subdir('app_1_2_templates')
-+cflags += '-DBNXT_TF_APP_ID=1'
-+endif
+-	while ((entry_id = ba_find_next_inuse_free(tcam_mgr_data->session_bmp,
++	while ((entry_id = ba_find_next_inuse_free(tcam_mgr_data->logical_id_bmp,
+ 						   0)) >= 0) {
+ 		free_parms.id = entry_id;
+ 		free_parms.type = CFA_TCAM_MGR_TBL_TYPE_MAX;
+@@ -1405,7 +1396,7 @@ static int cfa_tcam_mgr_alloc_entry(struct tf *tfp __rte_unused,
+ 	int32_t free_idx;
  
- subdir('generic_templates')
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.c b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-index c463bce3d4..1901845499 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-@@ -3785,6 +3785,7 @@ ulp_mapper_func_info_process(struct bnxt_ulp_mapper_parms *parms,
- 		process_src1 = 1;
- 	case BNXT_ULP_FUNC_OPC_COND_LIST:
- 	case BNXT_ULP_FUNC_OPC_APP_PRIORITY:
-+	case BNXT_ULP_FUNC_OPC_GET_HA_PRIORITY:
- 		break;
- 	case BNXT_ULP_FUNC_OPC_PORT_TABLE:
- 		process_src1 = 1;
-@@ -3920,6 +3921,9 @@ ulp_mapper_func_info_process(struct bnxt_ulp_mapper_parms *parms,
- 							    CFA_RSUBTYPE_TCAM_WC,
- 							    (uint32_t)res1,
- 							    (uint16_t)res2);
-+	case BNXT_ULP_FUNC_OPC_GET_HA_PRIORITY:
-+		res = bnxt_ulp_ha_priority_id_get(parms->ulp_ctx);
-+		break;
- 	default:
- 		BNXT_DRV_DBG(ERR, "invalid func code %u\n",
- 			     func_info->func_opc);
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-index 046d2c5cf9..20b1ac09fc 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-@@ -316,7 +316,7 @@ ulp_mapper_tfc_tcam_tbl_process(struct bnxt_ulp_mapper_parms *parms,
- 		/* allocate the tcam entry, only need the length */
- 		(void)ulp_blob_data_get(key, &key_sz_in_bits);
- 		key_sz_in_words = ULP_BITS_2_BYTE(key_sz_in_bits);
--		tfc_inf.dir = tbl->direction; /* PKB.need an api */
-+		tfc_inf.dir = tbl->direction;
- 		tfc_inf.rsubtype = tbl->resource_type;
+ 	/* Scan bitmap to get the free pool */
+-	free_idx = ba_alloc(tcam_mgr_data->session_bmp);
++	free_idx = ba_alloc(tcam_mgr_data->logical_id_bmp);
+ 	if (free_idx == BA_FAIL) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 				 "Table full (session)");
+@@ -1423,10 +1414,10 @@ static int cfa_tcam_mgr_free_entry(struct tf *tfp __rte_unused,
+ {
+ 	int rc = 0;
  
- 		rc = tfc_tcam_alloc(tfcp, fw_fid, tt, priority,
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-index 6b6733133a..fc4207b36c 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-@@ -158,6 +158,8 @@ ulp_sc_mgr_deinit(struct bnxt_ulp_context *ctxt)
- 	if (!ulp_sc_info)
- 		return -EINVAL;
+-	if (entry_id >= tcam_mgr_data->session_bmp_size)
++	if (entry_id >= tcam_mgr_data->logical_id_bmp_size)
+ 		return -CFA_TCAM_MGR_ERR_CODE(INVAL);
  
-+	ulp_sc_mgr_thread_cancel(ctxt);
-+
- 	if (ulp_sc_info->stats_cache_tbl)
- 		rte_free(ulp_sc_info->stats_cache_tbl);
+-	rc = ba_free(tcam_mgr_data->session_bmp, entry_id);
++	rc = ba_free(tcam_mgr_data->logical_id_bmp, entry_id);
+ 	if (rc)
+ 		return rc;
  
-@@ -208,11 +210,11 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
- 				goto terminate;
- 			rte_delay_us_block(ULP_SC_CTX_DELAY);
- 		}
-+		bnxt_ulp_cntxt_entry_release();
+diff --git a/drivers/net/bnxt/tf_core/cfa_tcam_mgr_device.h b/drivers/net/bnxt/tf_core/cfa_tcam_mgr_device.h
+index 9d7f560e7b..1b5803f021 100644
+--- a/drivers/net/bnxt/tf_core/cfa_tcam_mgr_device.h
++++ b/drivers/net/bnxt/tf_core/cfa_tcam_mgr_device.h
+@@ -123,8 +123,10 @@ struct cfa_tcam_mgr_data {
+ 		cfa_tcam_mgr_tables[TF_DIR_MAX][CFA_TCAM_MGR_TBL_TYPE_MAX];
+ 	void *table_rows;
+ 	struct cfa_tcam_mgr_entry_data *entry_data;
+-	struct bitalloc *session_bmp;
+-	uint64_t session_bmp_size;
++	/* Logical ids assigned for all TCAM types */
++	struct bitalloc *logical_id_bmp;
++	/* Sum of all TCAM entries allocated  */
++	uint64_t logical_id_bmp_size;
+ 	void *row_tables[TF_DIR_MAX][TF_TCAM_TBL_TYPE_MAX];
+ 	void *rx_row_data;
+ 	void *tx_row_data;
+diff --git a/drivers/net/bnxt/tf_core/cfa_tcam_mgr_p4.c b/drivers/net/bnxt/tf_core/cfa_tcam_mgr_p4.c
+index ddc2728785..55b6b96439 100644
+--- a/drivers/net/bnxt/tf_core/cfa_tcam_mgr_p4.c
++++ b/drivers/net/bnxt/tf_core/cfa_tcam_mgr_p4.c
+@@ -374,7 +374,7 @@ static void cfa_tcam_mgr_data_free(struct tf_session *tfs)
  
- 		/* get the stats counter info block from ulp context */
- 		ulp_sc_info = bnxt_ulp_cntxt_ptr2_sc_info_get(ctxt);
- 		if (unlikely(!ulp_sc_info)) {
--			bnxt_ulp_cntxt_entry_release();
- 			goto terminate;
- 		}
+ 	tfp_free(tcam_mgr_data->table_rows);
+ 	tfp_free(tcam_mgr_data->entry_data);
+-	tfp_free(tcam_mgr_data->session_bmp);
++	tfp_free(tcam_mgr_data->logical_id_bmp);
+ 	cfa_tcam_mgr_row_data_free(tcam_mgr_data);
  
-@@ -247,7 +249,6 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
- 				tfcp = bnxt_ulp_cntxt_tfcp_get(sce->ctxt);
- 				if (unlikely(!tfcp)) {
- 					bnxt_ulp_cntxt_release_fdb_lock(ctxt);
--					bnxt_ulp_cntxt_entry_release();
- 					goto terminate;
- 				}
+ 	tfp_free(tcam_mgr_data);
+diff --git a/drivers/net/bnxt/tf_core/cfa_tcam_mgr_p58.c b/drivers/net/bnxt/tf_core/cfa_tcam_mgr_p58.c
+index d5725f92e0..5b7e469e8a 100644
+--- a/drivers/net/bnxt/tf_core/cfa_tcam_mgr_p58.c
++++ b/drivers/net/bnxt/tf_core/cfa_tcam_mgr_p58.c
+@@ -372,7 +372,7 @@ static void cfa_tcam_mgr_data_free(struct tf_session *tfs)
  
-@@ -307,7 +308,6 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
- 				data += ULP_SC_PAGE_SIZE;
- 			}
- 		}
--		bnxt_ulp_cntxt_entry_release();
- 		/* Sleep to give any other threads opportunity to access ULP */
- 		rte_delay_us_sleep(ULP_SC_PERIOD_US);
- 	}
-@@ -400,6 +400,7 @@ void ulp_sc_mgr_thread_cancel(struct bnxt_ulp_context *ctxt)
- 		return;
+ 	tfp_free(tcam_mgr_data->table_rows);
+ 	tfp_free(tcam_mgr_data->entry_data);
+-	tfp_free(tcam_mgr_data->session_bmp);
++	tfp_free(tcam_mgr_data->logical_id_bmp);
+ 	cfa_tcam_mgr_row_data_free(tcam_mgr_data);
  
- 	ulp_sc_info->flags &= ~ULP_FLAG_SC_THREAD;
-+	pthread_cancel(ulp_sc_info->tid);
- }
- 
- /*
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c
-new file mode 100644
-index 0000000000..be14b65804
---- /dev/null
-+++ b/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c
-@@ -0,0 +1,264 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2019-2024 Broadcom
-+ * All rights reserved.
-+ */
-+
-+#include <rte_common.h>
-+#include <rte_cycles.h>
-+#include <rte_malloc.h>
-+#include <rte_log.h>
-+#include <rte_alarm.h>
-+#include "bnxt.h"
-+#include "bnxt_ulp.h"
-+#include "bnxt_ulp_utils.h"
-+#include "ulp_tfc_ha_mgr.h"
-+#include "bnxt_ulp_tfc.h"
-+
-+#define ULP_HOT_UPGRADE_TIMER_SEC 2 /* in seconds */
-+
-+bool
-+bnxt_ulp_tfc_hot_upgrade_enabled(struct bnxt_ulp_context *ulp_ctx)
-+{
-+	uint64_t feat_bits;
-+
-+	if (unlikely(ulp_ctx == NULL || ulp_ctx->cfg_data == NULL))
-+		return false;
-+
-+	feat_bits = bnxt_ulp_feature_bits_get(ulp_ctx);
-+
-+	/* Both hot upgrade feature and devarg instance id must be configured */
-+	if ((feat_bits & BNXT_ULP_FEATURE_BIT_HOT_UPGRADE) &&
-+	    bnxt_ulp_app_instance_id_get(ulp_ctx))
-+		return true;
-+	return false;
-+}
-+
-+bool
-+bnxt_ulp_tfc_hot_upgrade_is_secondary(struct bnxt_ulp_context *ulp_ctx)
-+{
-+	struct bnxt_ulp_tfc_ha_mgr_info *ha_info;
-+
-+	if (unlikely(ulp_ctx == NULL || ulp_ctx->cfg_data == NULL))
-+		return false;
-+
-+	ha_info = bnxt_ulp_cntxt_ptr2_tfc_ha_info_get(ulp_ctx);
-+	if (ha_info == NULL)
-+		return false;
-+
-+	if (ha_info->ha_state == ULP_TFC_HA_STATE_SECONDARY)
-+		return true;
-+	return false;
-+}
-+
-+static void
-+ulp_tfc_hot_upgrade_mgr_timer_cb(void *arg)
-+{
-+	struct bnxt_ulp_tfc_ha_mgr_info *ha_info;
-+	struct bnxt_ulp_context *ulp_ctx = NULL;
-+	uint8_t inst_id, inst_count = 0;
-+	int32_t restart_timer = 1;
-+	struct tfc *tfcp = NULL;
-+	uint16_t fw_fid = 0;
-+	int32_t rc = 0;
-+
-+	ulp_ctx = bnxt_ulp_cntxt_entry_acquire(arg);
-+	if (ulp_ctx == NULL) {
-+		rte_eal_alarm_set(US_PER_S * ULP_HOT_UPGRADE_TIMER_SEC,
-+				  ulp_tfc_hot_upgrade_mgr_timer_cb, arg);
-+		return;
-+	}
-+
-+	tfcp = bnxt_ulp_cntxt_tfcp_get(ulp_ctx);
-+	if (unlikely(tfcp == NULL)) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to get tfcp pointer");
-+		goto cleanup;
-+	}
-+
-+	if (unlikely(bnxt_ulp_cntxt_fid_get(ulp_ctx, &fw_fid))) {
-+		BNXT_DRV_DBG(ERR, "Failed to get func_id\n");
-+		goto cleanup;
-+	}
-+
-+	inst_id = bnxt_ulp_app_instance_id_get(ulp_ctx);
-+	if (unlikely(!inst_id)) {
-+		BNXT_DRV_DBG(ERR, "Invalid instance id\n");
-+		goto cleanup;
-+	}
-+
-+	rc = tfc_hot_up_app_inst_count(tfcp, fw_fid, inst_id, &inst_count);
-+	if (rc) {
-+		BNXT_DRV_DBG(ERR, "Failed to get hot upgrade status\n");
-+		goto cleanup;
-+	}
-+
-+	/* Primary is no longer present */
-+	if (inst_count == 1) {
-+		ha_info = bnxt_ulp_cntxt_ptr2_tfc_ha_info_get(ulp_ctx);
-+		if (ha_info == NULL) {
-+			BNXT_DRV_DBG(ERR, "Failed to get ha_info\n");
-+			goto cleanup;
-+		}
-+
-+		BNXT_DRV_DBG(DEBUG, "Transition to Primary\n");
-+		/* set the current instance as Primary */
-+		ha_info->ha_state = ULP_TFC_HA_STATE_PRIMARY;
-+		ha_info->app_inst_cnt = inst_count;
-+
-+		/* Move the tcam entries to lower priority */
-+		rc = bnxt_ulp_hot_upgrade_process(ulp_ctx->bp);
-+		if (rc)
-+			BNXT_DRV_DBG(ERR, "Failed to update tcam entries\n");
-+
-+		/* set the primary session */
-+		rc = tfc_hot_up_app_inst_set(tfcp, fw_fid, inst_id);
-+		if (rc)
-+			BNXT_DRV_DBG(ERR, "Failed to set as primary\n");
-+		restart_timer = 0;
-+	} else if (!inst_count) {
-+		BNXT_DRV_DBG(ERR, "Invalid instance count\n");
-+		restart_timer = 0;
-+	}
-+
-+cleanup:
-+	bnxt_ulp_cntxt_entry_release();
-+	if (restart_timer)
-+		rte_eal_alarm_set(US_PER_S * ULP_HOT_UPGRADE_TIMER_SEC,
-+				  ulp_tfc_hot_upgrade_mgr_timer_cb, arg);
-+	else
-+		BNXT_DRV_DBG(DEBUG, "exiting tfc hot upgrade timer\n");
-+}
-+
-+
-+int32_t ulp_tfc_hot_upgrade_mgr_init(struct bnxt_ulp_context *ulp_ctx)
-+{
-+	uint8_t inst_id, inst_count = 0, session_cnt = 0;
-+	struct bnxt_ulp_tfc_ha_mgr_info *ha_info;
-+	struct tfc *tfcp = NULL;
-+	uint16_t fw_fid = 0;
-+	int32_t rc = 0;
-+
-+	if (!bnxt_ulp_tfc_hot_upgrade_enabled(ulp_ctx))
-+		return rc;
-+
-+	tfcp = bnxt_ulp_cntxt_tfcp_get(ulp_ctx);
-+	if (unlikely(tfcp == NULL)) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to get tfcp pointer");
-+		return -EINVAL;
-+	}
-+
-+	if (unlikely(bnxt_ulp_cntxt_fid_get(ulp_ctx, &fw_fid))) {
-+		BNXT_DRV_DBG(ERR, "Failed to get func_id\n");
-+		return -EINVAL;
-+	}
-+
-+	ha_info = rte_zmalloc("ulp_ha_mgr_info", sizeof(*ha_info), 0);
-+	if (!ha_info)
-+		return -ENOMEM;
-+
-+	/* Add the HA info tbl to the ulp context. */
-+	bnxt_ulp_cntxt_ptr2_tfc_ha_info_set(ulp_ctx, ha_info);
-+
-+	inst_id = bnxt_ulp_app_instance_id_get(ulp_ctx);
-+	if (!inst_id) {
-+		BNXT_DRV_DBG(ERR, "invalid instance id\n");
-+		goto cleanup;
-+	}
-+
-+	/* get the application instance count */
-+	ha_info->app_inst_id = inst_id;
-+	rc = tfc_hot_up_app_inst_count(tfcp, fw_fid, inst_id, &inst_count);
-+	if (rc) {
-+		BNXT_DRV_DBG(ERR, "Failed to get hot upgrade status\n");
-+		goto cleanup;
-+	}
-+
-+	/* if instance count is 2 or more then just exit */
-+	if (inst_count >= 2) {
-+		BNXT_DRV_DBG(ERR, "More than 2 instances, invalid setup\n");
-+		goto cleanup;
-+	}
-+
-+	/* Allocate the hot upgrade instance */
-+	rc = tfc_hot_up_app_inst_alloc(tfcp, fw_fid, inst_id, inst_count,
-+				       &session_cnt);
-+	if (rc) {
-+		BNXT_DRV_DBG(ERR, "Fail to alloc hot upgrade session\n");
-+		goto cleanup;
-+	}
-+	/* If count is 1 then set as primary app */
-+	if (session_cnt == 1) {
-+		/* set the current instance as Primary */
-+		ha_info->ha_state = ULP_TFC_HA_STATE_PRIMARY;
-+		ha_info->app_inst_cnt = session_cnt;
-+		BNXT_DRV_DBG(DEBUG, "setting application as Primary\n");
-+	} else {
-+		/* set the current instance as secondary */
-+		ha_info->ha_state = ULP_TFC_HA_STATE_SECONDARY;
-+		ha_info->app_inst_cnt = session_cnt;
-+		BNXT_DRV_DBG(DEBUG, "setting application as Secondary\n");
-+
-+		/* Start the Hot upgrade poll timer */
-+		rc = rte_eal_alarm_set(US_PER_S * ULP_HOT_UPGRADE_TIMER_SEC,
-+				       ulp_tfc_hot_upgrade_mgr_timer_cb,
-+				       (void *)ulp_ctx->cfg_data);
-+	}
-+
-+	return rc;
-+cleanup:
-+	if (ha_info != NULL)
-+		ulp_tfc_hot_upgrade_mgr_deinit(ulp_ctx);
-+	return -EAGAIN;
-+}
-+
-+static void
-+ulp_tfc_ha_mgr_timer_cancel(struct bnxt_ulp_context *ulp_ctx)
-+{
-+	rte_eal_alarm_cancel(ulp_tfc_hot_upgrade_mgr_timer_cb,
-+			     ulp_ctx->cfg_data);
-+}
-+
-+void
-+ulp_tfc_hot_upgrade_mgr_deinit(struct bnxt_ulp_context *ulp_ctx)
-+{
-+	struct bnxt_ulp_tfc_ha_mgr_info *ha_info;
-+	struct tfc *tfcp = NULL;
-+	uint16_t fw_fid = 0;
-+	uint8_t inst_id;
-+	int32_t rc = 0;
-+
-+	ha_info = bnxt_ulp_cntxt_ptr2_tfc_ha_info_get(ulp_ctx);
-+	if (ha_info == NULL)
-+		return;
-+	bnxt_ulp_cntxt_ptr2_tfc_ha_info_set(ulp_ctx, NULL);
-+
-+	if (!bnxt_ulp_tfc_hot_upgrade_enabled(ulp_ctx))
-+		return;
-+
-+	tfcp = bnxt_ulp_cntxt_tfcp_get(ulp_ctx);
-+	if (unlikely(tfcp == NULL)) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to get tfcp pointer");
-+		return;
-+	}
-+
-+	if (unlikely(bnxt_ulp_cntxt_fid_get(ulp_ctx, &fw_fid))) {
-+		BNXT_DRV_DBG(ERR, "Failed to get func_id\n");
-+		return;
-+	}
-+
-+	inst_id = bnxt_ulp_app_instance_id_get(ulp_ctx);
-+	if (unlikely(!inst_id)) {
-+		BNXT_DRV_DBG(ERR, "Failed to get instance id\n");
-+		return;
-+	}
-+
-+	rc = tfc_hot_up_app_inst_free(tfcp, fw_fid, inst_id);
-+	if (rc)
-+		BNXT_DRV_DBG(ERR, "Fail to free hot upgrade session:%u\n",
-+			     inst_id);
-+
-+	/* disable the hot upgrade timer */
-+	if (ha_info->ha_state == ULP_TFC_HA_STATE_SECONDARY)
-+		ulp_tfc_ha_mgr_timer_cancel(ulp_ctx);
-+
-+	rte_free(ha_info);
-+}
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.h b/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.h
-new file mode 100644
-index 0000000000..44cbf56c0a
---- /dev/null
-+++ b/drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2014-2024 Broadcom
-+ * All rights reserved.
-+ */
-+
-+#ifndef _ULP_TFC_HA_MGR_H_
-+#define _ULP_TFC_HA_MGR_H_
-+
-+#include "bnxt_ulp.h"
-+
-+enum ulp_tfc_ha_mgr_state {
-+	ULP_TFC_HA_STATE_INVALID = 0,
-+	ULP_TFC_HA_STATE_PRIMARY,
-+	ULP_TFC_HA_STATE_SECONDARY,
-+	ULP_TFC_HA_STATE_MAX,
-+};
-+
-+struct bnxt_ulp_tfc_ha_mgr_info {
-+	enum ulp_tfc_ha_mgr_state ha_state;
-+	uint32_t app_inst_id;
-+	uint32_t app_inst_cnt;
-+};
-+
-+bool
-+bnxt_ulp_tfc_hot_upgrade_enabled(struct bnxt_ulp_context *ulp_ctx);
-+
-+bool
-+bnxt_ulp_tfc_hot_upgrade_is_secondary(struct bnxt_ulp_context *ulp_ctx);
-+
-+int32_t
-+ulp_tfc_hot_upgrade_mgr_init(struct bnxt_ulp_context *ulp_ctx);
-+
-+void
-+ulp_tfc_hot_upgrade_mgr_deinit(struct bnxt_ulp_context *ulp_ctx);
-+
-+int32_t
-+ulp_ha_mgr_state_get(struct bnxt_ulp_context *ulp_ctx,
-+		     enum ulp_ha_mgr_state *state);
-+
-+#endif /* _ULP_TFC_HA_MGR_H_*/
+ 	tfp_free(tcam_mgr_data);
 -- 
 2.39.5 (Apple Git-154)
 
