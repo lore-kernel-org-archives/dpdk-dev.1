@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F72CCD187
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 11:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06261CCD185
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 11:17:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5CB8B40673;
-	Thu,  9 Oct 2025 13:16:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E136D4065B;
+	Thu,  9 Oct 2025 13:16:44 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 872B5402A3
- for <dev@dpdk.org>; Thu,  9 Oct 2025 13:16:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 057B640611
+ for <dev@dpdk.org>; Thu,  9 Oct 2025 13:16:38 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6AB1D201F2C;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DEAB4201F2F;
  Thu,  9 Oct 2025 13:16:37 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 35DB7201F22;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A9418201F22;
  Thu,  9 Oct 2025 13:16:37 +0200 (CEST)
 Received: from lsv03379.swis.in-blr01.nxp.com (lsv03379.swis.in-blr01.nxp.com
  [92.120.147.188])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A47931800085;
- Thu,  9 Oct 2025 19:16:36 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 23C2F180008F;
+ Thu,  9 Oct 2025 19:16:37 +0800 (+08)
 From: vanshika.shukla@nxp.com
 To: dev@dpdk.org, Gagandeep Singh <g.singh@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>,
  Vanshika Shukla <vanshika.shukla@nxp.com>
 Cc: Apeksha Gupta <apeksha.gupta@nxp.com>
-Subject: [v1 05/12] net/enetc: Add basic statistics
-Date: Thu,  9 Oct 2025 16:46:26 +0530
-Message-Id: <20251009111633.3585957-6-vanshika.shukla@nxp.com>
+Subject: [v1 06/12] net/enetc: Add packet type parsing support
+Date: Thu,  9 Oct 2025 16:46:27 +0530
+Message-Id: <20251009111633.3585957-7-vanshika.shukla@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20251009111633.3585957-1-vanshika.shukla@nxp.com>
 References: <20251009111633.3585957-1-vanshika.shukla@nxp.com>
@@ -50,170 +50,151 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Apeksha Gupta <apeksha.gupta@nxp.com>
 
-Introduces basic statistics collection for ENETC4 PMD, including:
+Introduces packet type parsing for ENETC4 PMD, supporting:
 
-- Packet transmit/receive counts
-- Byte transmit/receive counts
-- Error counters (TX/RX drops, errors)
+- RTE_PTYPE_L2_ETHER (Ethernet II)
+- RTE_PTYPE_L3_IPV4 (IPv4)
+- RTE_PTYPE_L3_IPV6 (IPv6)
+- RTE_PTYPE_L4_TCP (TCP)
+- RTE_PTYPE_L4_UDP (UDP)
+- RTE_PTYPE_L4_SCTP (SCTP)
+- RTE_PTYPE_L4_ICMP (ICMP)
+- RTE_PTYPE_L4_FRAG (IPv4/IPv6 fragmentation)
+- RTE_PTYPE_TUNNEL_ESP (ESP tunneling)
 
 Signed-off-by: Apeksha Gupta <apeksha.gupta@nxp.com>
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
  doc/guides/nics/features/enetc4.ini |  1 +
- drivers/net/enetc/base/enetc4_hw.h  |  7 +++++
- drivers/net/enetc/base/enetc_hw.h   |  5 +++-
- drivers/net/enetc/enetc4_ethdev.c   | 42 +++++++++++++++++++++++++++++
- drivers/net/enetc/enetc4_vf.c       | 24 +++++++++++++++++
- 5 files changed, 78 insertions(+), 1 deletion(-)
+ drivers/net/enetc/base/enetc_hw.h   |  5 +++++
+ drivers/net/enetc/enetc.h           |  2 ++
+ drivers/net/enetc/enetc4_ethdev.c   | 23 +++++++++++++++++++++++
+ drivers/net/enetc/enetc4_vf.c       |  1 +
+ drivers/net/enetc/enetc_rxtx.c      | 10 ++++++++++
+ 6 files changed, 42 insertions(+)
 
 diff --git a/doc/guides/nics/features/enetc4.ini b/doc/guides/nics/features/enetc4.ini
-index 55b3b95953..e814852d2d 100644
+index e814852d2d..3356475317 100644
 --- a/doc/guides/nics/features/enetc4.ini
 +++ b/doc/guides/nics/features/enetc4.ini
 @@ -4,6 +4,7 @@
  ; Refer to default.ini for the full list of available PMD features.
  ;
  [Features]
-+Basic stats          = Y
++Packet type parsing  = Y
+ Basic stats          = Y
  L3 checksum offload  = Y
  L4 checksum offload  = Y
- Queue start/stop     = Y
-diff --git a/drivers/net/enetc/base/enetc4_hw.h b/drivers/net/enetc/base/enetc4_hw.h
-index 114d27f34b..874cdc4775 100644
---- a/drivers/net/enetc/base/enetc4_hw.h
-+++ b/drivers/net/enetc/base/enetc4_hw.h
-@@ -103,6 +103,13 @@
- #define IFMODE_SGMII			5
- #define PM_IF_MODE_ENA			BIT(15)
- 
-+/* Station interface statistics */
-+#define ENETC4_SIROCT0           0x300
-+#define ENETC4_SIRFRM0           0x308
-+#define ENETC4_SITOCT0           0x320
-+#define ENETC4_SITFRM0           0x328
-+#define ENETC4_SITDFCR           0x340
-+
- /* general register accessors */
- #define enetc4_rd_reg(reg)	rte_read32((void *)(reg))
- #define enetc4_wr_reg(reg, val)  rte_write32((val), (void *)(reg))
 diff --git a/drivers/net/enetc/base/enetc_hw.h b/drivers/net/enetc/base/enetc_hw.h
-index 3cdfe23fc0..3208d91bc5 100644
+index 3208d91bc5..10bd3c050c 100644
 --- a/drivers/net/enetc/base/enetc_hw.h
 +++ b/drivers/net/enetc/base/enetc_hw.h
-@@ -278,7 +278,10 @@ union enetc_rx_bd {
- 		union {
- 			struct {
- 				uint16_t flags;
--				uint16_t error;
-+				uint8_t error;
-+				uint8_t resv:6;
-+				uint8_t r:1;
-+				uint8_t f:1;
- 			};
- 			uint32_t lstatus;
- 		};
+@@ -196,6 +196,7 @@ enum enetc_bdr_type {TX, RX};
+ #define ENETC_PKT_TYPE_ETHER            0x0060
+ #define ENETC_PKT_TYPE_IPV4             0x0000
+ #define ENETC_PKT_TYPE_IPV6             0x0020
++#define ENETC_PKT_TYPE_IPV6_EXT         0x0080
+ #define ENETC_PKT_TYPE_IPV4_TCP \
+ 			(0x0010 | ENETC_PKT_TYPE_IPV4)
+ #define ENETC_PKT_TYPE_IPV6_TCP \
+@@ -208,6 +209,10 @@ enum enetc_bdr_type {TX, RX};
+ 			(0x0013 | ENETC_PKT_TYPE_IPV4)
+ #define ENETC_PKT_TYPE_IPV6_SCTP \
+ 			(0x0013 | ENETC_PKT_TYPE_IPV6)
++#define ENETC_PKT_TYPE_IPV4_FRAG \
++			(0x0001 | ENETC_PKT_TYPE_IPV4)
++#define ENETC_PKT_TYPE_IPV6_FRAG \
++			(0x0001 | ENETC_PKT_TYPE_IPV6_EXT | ENETC_PKT_TYPE_IPV6)
+ #define ENETC_PKT_TYPE_IPV4_ICMP \
+ 			(0x0003 | ENETC_PKT_TYPE_IPV4)
+ #define ENETC_PKT_TYPE_IPV6_ICMP \
+diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
+index ab9e6cbd6b..8a63f55aa1 100644
+--- a/drivers/net/enetc/enetc.h
++++ b/drivers/net/enetc/enetc.h
+@@ -116,6 +116,8 @@ int enetc4_tx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ int enetc4_tx_queue_start(struct rte_eth_dev *dev, uint16_t qidx);
+ int enetc4_tx_queue_stop(struct rte_eth_dev *dev, uint16_t qidx);
+ void enetc4_tx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
++const uint32_t *enetc4_supported_ptypes_get(struct rte_eth_dev *dev __rte_unused,
++			size_t *no_of_elements);
+ 
+ /*
+  * enetc4_vf function prototype
 diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
-index 0eb9551b63..0f711a4bfb 100644
+index 0f711a4bfb..b4bf7e4e63 100644
 --- a/drivers/net/enetc/enetc4_ethdev.c
 +++ b/drivers/net/enetc/enetc4_ethdev.c
-@@ -439,6 +439,46 @@ enetc4_rx_queue_release(struct rte_eth_dev *dev, uint16_t qid)
- 	rte_free(rx_ring);
- }
- 
-+static
-+int enetc4_stats_get(struct rte_eth_dev *dev,
-+		    struct rte_eth_stats *stats)
-+{
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+
-+	/*
-+	 * Total received packets, bad + good, if we want to get counters
-+	 * of only good received packets then use ENETC4_PM_RFRM,
-+	 * ENETC4_PM_TFRM registers.
-+	 */
-+	stats->ipackets = enetc4_port_rd(enetc_hw, ENETC4_PM_RPKT(0));
-+	stats->opackets = enetc4_port_rd(enetc_hw, ENETC4_PM_TPKT(0));
-+	stats->ibytes =  enetc4_port_rd(enetc_hw, ENETC4_PM_REOCT(0));
-+	stats->obytes = enetc4_port_rd(enetc_hw, ENETC4_PM_TEOCT(0));
-+	/*
-+	 * Dropped + Truncated packets, use ENETC4_PM_RDRNTP(0) for without
-+	 * truncated packets
-+	 */
-+	stats->imissed = enetc4_port_rd(enetc_hw, ENETC4_PM_RDRP(0));
-+	stats->ierrors = enetc4_port_rd(enetc_hw, ENETC4_PM_RERR(0));
-+	stats->oerrors = enetc4_port_rd(enetc_hw, ENETC4_PM_TERR(0));
-+
-+	return 0;
-+}
-+
-+static int
-+enetc4_stats_reset(struct rte_eth_dev *dev)
-+{
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+
-+	enetc4_port_wr(enetc_hw, ENETC4_PM0_STAT_CONFIG, ENETC4_CLEAR_STATS);
-+
-+	return 0;
-+}
-+
- int
- enetc4_dev_close(struct rte_eth_dev *dev)
- {
-@@ -623,6 +663,8 @@ static const struct eth_dev_ops enetc4_ops = {
- 	.dev_stop             = enetc4_dev_stop,
- 	.dev_close            = enetc4_dev_close,
- 	.dev_infos_get        = enetc4_dev_infos_get,
-+	.stats_get            = enetc4_stats_get,
-+	.stats_reset          = enetc4_stats_reset,
- 	.rx_queue_setup       = enetc4_rx_queue_setup,
- 	.rx_queue_start       = enetc4_rx_queue_start,
- 	.rx_queue_stop        = enetc4_rx_queue_stop,
-diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index 0c68229a8d..0d35fc2e1c 100644
---- a/drivers/net/enetc/enetc4_vf.c
-+++ b/drivers/net/enetc/enetc4_vf.c
-@@ -26,6 +26,29 @@ enetc4_vf_dev_start(struct rte_eth_dev *dev __rte_unused)
+@@ -648,6 +648,28 @@ enetc4_tx_queue_stop(struct rte_eth_dev *dev, uint16_t qidx)
  	return 0;
  }
  
-+static int
-+enetc4_vf_stats_get(struct rte_eth_dev *dev,
-+		    struct rte_eth_stats *stats)
++const uint32_t *
++enetc4_supported_ptypes_get(struct rte_eth_dev *dev __rte_unused,
++			    size_t *no_of_elements)
 +{
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	struct enetc_bdr *rx_ring;
-+	uint8_t i;
-+
 +	PMD_INIT_FUNC_TRACE();
-+	stats->ipackets = enetc4_rd(enetc_hw, ENETC4_SIRFRM0);
-+	stats->opackets = enetc4_rd(enetc_hw, ENETC4_SITFRM0);
-+	stats->ibytes = enetc4_rd(enetc_hw, ENETC4_SIROCT0);
-+	stats->obytes = enetc4_rd(enetc_hw, ENETC4_SITOCT0);
-+	stats->oerrors = enetc4_rd(enetc_hw, ENETC4_SITDFCR);
-+	for (i = 0; i < dev->data->nb_rx_queues; i++) {
-+		rx_ring = dev->data->rx_queues[i];
-+		stats->ierrors += rx_ring->ierrors;
-+	}
-+	return 0;
++	static const uint32_t ptypes[] = {
++		RTE_PTYPE_L2_ETHER,
++		RTE_PTYPE_L3_IPV4,
++		RTE_PTYPE_L3_IPV6,
++		RTE_PTYPE_L4_TCP,
++		RTE_PTYPE_L4_UDP,
++		RTE_PTYPE_L4_SCTP,
++		RTE_PTYPE_L4_ICMP,
++		RTE_PTYPE_L4_FRAG,
++		RTE_PTYPE_TUNNEL_ESP,
++		RTE_PTYPE_UNKNOWN
++	};
++
++	*no_of_elements = RTE_DIM(ptypes);
++	return ptypes;
 +}
 +
  /*
   * The set of PCI devices this driver supports
   */
-@@ -41,6 +64,7 @@ static const struct eth_dev_ops enetc4_vf_ops = {
- 	.dev_stop             = enetc4_vf_dev_stop,
- 	.dev_close            = enetc4_dev_close,
- 	.dev_infos_get        = enetc4_dev_infos_get,
-+	.stats_get            = enetc4_vf_stats_get,
- 	.rx_queue_setup       = enetc4_rx_queue_setup,
- 	.rx_queue_start       = enetc4_rx_queue_start,
- 	.rx_queue_stop        = enetc4_rx_queue_stop,
+@@ -673,6 +695,7 @@ static const struct eth_dev_ops enetc4_ops = {
+ 	.tx_queue_start       = enetc4_tx_queue_start,
+ 	.tx_queue_stop        = enetc4_tx_queue_stop,
+ 	.tx_queue_release     = enetc4_tx_queue_release,
++	.dev_supported_ptypes_get = enetc4_supported_ptypes_get,
+ };
+ 
+ /*
+diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
+index 0d35fc2e1c..360bb0c710 100644
+--- a/drivers/net/enetc/enetc4_vf.c
++++ b/drivers/net/enetc/enetc4_vf.c
+@@ -73,6 +73,7 @@ static const struct eth_dev_ops enetc4_vf_ops = {
+ 	.tx_queue_start       = enetc4_tx_queue_start,
+ 	.tx_queue_stop        = enetc4_tx_queue_stop,
+ 	.tx_queue_release     = enetc4_tx_queue_release,
++	.dev_supported_ptypes_get = enetc4_supported_ptypes_get,
+ };
+ 
+ static int
+diff --git a/drivers/net/enetc/enetc_rxtx.c b/drivers/net/enetc/enetc_rxtx.c
+index 6680b46103..a2b8153085 100644
+--- a/drivers/net/enetc/enetc_rxtx.c
++++ b/drivers/net/enetc/enetc_rxtx.c
+@@ -389,6 +389,16 @@ enetc_dev_rx_parse(struct rte_mbuf *m, uint16_t parse_results)
+ 				 RTE_PTYPE_L3_IPV6 |
+ 				 RTE_PTYPE_L4_ICMP;
+ 		return;
++	case ENETC_PKT_TYPE_IPV4_FRAG:
++		m->packet_type = RTE_PTYPE_L2_ETHER |
++				 RTE_PTYPE_L3_IPV4 |
++				 RTE_PTYPE_L4_FRAG;
++		return;
++	case ENETC_PKT_TYPE_IPV6_FRAG:
++		m->packet_type = RTE_PTYPE_L2_ETHER |
++				 RTE_PTYPE_L3_IPV6 |
++				 RTE_PTYPE_L4_FRAG;
++		return;
+ 	/* More switch cases can be added */
+ 	default:
+ 		enetc_slow_parsing(m, parse_results);
 -- 
 2.25.1
 
