@@ -2,85 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0CE9CCD183
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88DE7CCD183
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:12:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3022F4067C;
-	Fri, 10 Oct 2025 00:12:16 +0200 (CEST)
-Received: from mail-yw1-f226.google.com (mail-yw1-f226.google.com
- [209.85.128.226])
- by mails.dpdk.org (Postfix) with ESMTP id 19E674066E
- for <dev@dpdk.org>; Fri, 10 Oct 2025 00:12:12 +0200 (CEST)
-Received: by mail-yw1-f226.google.com with SMTP id
- 00721157ae682-71d601859f5so14866357b3.0
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:12:12 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DECE54069F;
+	Fri, 10 Oct 2025 00:12:18 +0200 (CEST)
+Received: from mail-pj1-f100.google.com (mail-pj1-f100.google.com
+ [209.85.216.100])
+ by mails.dpdk.org (Postfix) with ESMTP id D38AA40676
+ for <dev@dpdk.org>; Fri, 10 Oct 2025 00:12:14 +0200 (CEST)
+Received: by mail-pj1-f100.google.com with SMTP id
+ 98e67ed59e1d1-3322e6360bbso1434972a91.0
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:12:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760047931; x=1760652731;
+ d=1e100.net; s=20230601; t=1760047934; x=1760652734;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=O8awvPmoGY/dQQXwjK9SPQZOiFtuSD/X/fXdrTTHrXw=;
- b=IXJoPyG+MeBQggHZZir0wOOyyTtXB2J6tFXnijBwya67pAg60CdWONwLJUaZTt+Hxh
- cTc5uN0+g0e8/ZcUVX9sIMbN7enfuiIfXDXBh2E8rWmPhZIFsfbXko/6LQoFpzjrVBwo
- BoDV1XQxmeYihSj6Xo0+ysOGBz9s2lPVcMUSS2d0eeItesw9XKAaTJAuUA5HhzXSty5B
- Ja1WPmztgHKJXOCK0nSPbneRSukq9xNNXz6CO/zv+cdYmgD6iNqgsX+FM6PDfFTBqOxc
- +QEj8D5wAGr1mRvw77ysSj6Pl2f/kHm0a66dMhuRA1QNZ7ME+zZdXlPpVhh0pY2pT/Q3
- QoOw==
-X-Gm-Message-State: AOJu0Yz5fjwVztVQDMCj6oSFUt3N/xUEPSizXmHGLyTbT/91vWbz6vKW
- /0qQxWwQUF2flFbMrJA4s5oQFR9bCyTYkeKgxTYS0agsEaz6vT+J40JxHhD8v4pfugihVahOuYP
- ZrI2fo4oUNU3DynT+ESv4u+okISqee3IEJcPNETj41qOZPXrE1mFX04G0h7gUPDNe4LvbaH5LGV
- kY60uxAwKeb0HXgVdMI2ySMPjFK2Us96EnCKSy3f/hMEXQH0brYQYRlyknMau02oonOyLh4A==
-X-Gm-Gg: ASbGncvifreS5XM+OEmYpaWaPwLpHUiONuLOulwZbWZhJLl+mMagsxhNgGerhWpOdBZ
- 7xbZBZQn58+Z2fTjA1V5ILMZuy3DEBtuDu3BvqxtoPFoqeM1sEd80bZZPxjgs/JO1tBe+ADbsZq
- mUolM71beqEY1kOXwECE7Io8wQKV5p+ZM1vjsOrfLXg1GRS9UsZDCYEMx0e1Nvvi63796fyWXbw
- 18U4FVwwFZW1PK9oDbZeBE/bcgLrScLWIG1mUKPAqrYU/Z9LanKfUwCARKIN/1+RJe6z2cob2QX
- IxyaUtbfH8UwEZYU8e1oSxnpMwjTxEbMx2KUmBAQoucMva10kyWFw1ZQYPNyN46W9gidow2cTBF
- N5HMX6dZCnlVUPKxBoug219iB3sDHZLRkNaBbHQSftO6SPSr+PrpowMdfUs8MCq5s9NkfDbKBca
- jUUc21
-X-Google-Smtp-Source: AGHT+IGPKUAGtMXXoPABtb7dmAMZWq5ZhP/DTvGfoQdjT9+wx5ztR4dV8e1jJBkBxqFRarSb9ly0pmZJvOEL
-X-Received: by 2002:a05:690c:4a01:b0:764:b3c2:8241 with SMTP id
- 00721157ae682-780e173e250mr102733407b3.28.1760047931167; 
- Thu, 09 Oct 2025 15:12:11 -0700 (PDT)
+ bh=p7IzjS1s0bNef64GLMBRSJvVqao76Vm81Z7YtWhUduU=;
+ b=AibULj0LXVJm9hOvef4ZQC5koc3OZyJFJyOTELmpLgM08hpL9fVSTPQGrKBLfIeUF0
+ eCpnbMaiUMOEPAapVYMQayp6QMqotdgkY5ftlZbGSjAcobrpfzHwD76p4PRKqxr9Glbd
+ gACq0OU6ZFfOszCCQOXBrSY1JJYo9Ml4eLHKhAcSzzVbyTCNU2b+q3pKyRHkJ/yFnWP8
+ 40xn4QZCSj03FwjSHMGKA3nY4JPgNOwVRvj9PgmZ48S/HRwoOuMHACgIBBbVajGGVwlR
+ Bx25IXHVxFbNda343yCI0Vnr/bqArAY4g6fJwoEB85WaqEfrM6yvheUG4s5TA00Wk16t
+ zPzQ==
+X-Gm-Message-State: AOJu0YwL4/c2hDIRN9rCUqwg7FUS7nyGI/o7EEHGo1TCaugfksu8LDkC
+ i6+l3I7V9cESUcVMNgQrSjCJ8KxZ0+LWV9Pkp327bz1E++flenh2SjUp3UgixsoXq0nviCKMhHI
+ NW2mnePTbBgzcNKftMTE3dcd8cNnGKX2fixke+9PFqXkissHhzHXnrq0GqgrD2Y6z3T+SiOBS0t
+ t/Ql84PfvGv07pVWaZeg0/A89jz1v3+ivf3Ayfcknq7e/I+riHHUgCAGUV2UPbYb64U07sjQ==
+X-Gm-Gg: ASbGncvS3wR9j+JoXIbgbkrNeFWyRtKvtDffZylT0Nl+RG1V6+oXNTr5x9HYfUCYgvK
+ r2O/NRBclZsMguF+l0CI5uK0OFKIGztauaDfStAypGeObV+eMJ2JL4d7I4w+NMV/t4FhaYbJtSq
+ 9eQ++8VF/i7jeOQHnsLs9Tnnv7/+HW/ySklCcrOzNTeaN5DMayXlBfNyqtJ/ACuW3u75Bvrt0a4
+ u/dw3KdObSuJjF551tuqIhq9ebB07e8nfHrsmbWHgmHGTE80UjPx2pHFKg63EYKXA5uuXAHJLav
+ MRJrhOPwsNu7rJcmOQYZDmBpf7JBlxG22NJgrnGlHYIaq4DovRihZUhVvtDGEwKv1CF5CuNYxD9
+ u4RoVhDhijPEr/dH28JNnDL4yZyhBwTbrWPiH3Nmfa8jpKArAMQ9vhUXhxm1dpv2f7WwNvu6zFq
+ lb3ZhT
+X-Google-Smtp-Source: AGHT+IHmu05rl33ATEwOC8dd7YzybTn6jKJ08WgNb16+pSDGBH0X0i8Ndf0TPb47O8Wlr+z44OiPqq97P0bB
+X-Received: by 2002:a17:90b:1651:b0:330:ba05:a799 with SMTP id
+ 98e67ed59e1d1-33b5111708amr12681025a91.16.1760047933836; 
+ Thu, 09 Oct 2025 15:12:13 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
+ (address-144-49-247-72.dlp.protect.broadcom.com. [144.49.247.72])
  by smtp-relay.gmail.com with ESMTPS id
- 00721157ae682-7810701208fsm439027b3.29.2025.10.09.15.12.10
+ 98e67ed59e1d1-33b626cf798sm60327a91.6.2025.10.09.15.12.13
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 09 Oct 2025 15:12:11 -0700 (PDT)
+ Thu, 09 Oct 2025 15:12:13 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
 Received: by mail-qv1-f72.google.com with SMTP id
- 6a1803df08f44-818bf399f8aso53360486d6.2
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:12:10 -0700 (PDT)
+ 6a1803df08f44-79a3c16b276so46142556d6.0
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:12:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1760047930; x=1760652730; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1760047932; x=1760652732; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=O8awvPmoGY/dQQXwjK9SPQZOiFtuSD/X/fXdrTTHrXw=;
- b=EbHYbq03a8YrCIs+aRAjEp9C0qq77x2uenL8oWMeP+EM6kfZ2Cw8SyCj2guuqEbuPa
- C4CnMulsa6h0L6n0aOj7WzvTo4rl/+UpyPD2Q4dSt8tlR+HXVtGegFz7I+7tfd6RqOBd
- h59ARpj6Bu8nOC7bxqVk3plMPBClV+qAI4snY=
-X-Received: by 2002:a05:6214:d4e:b0:7fd:2bc6:6cb0 with SMTP id
- 6a1803df08f44-87b2ef4f033mr116973416d6.55.1760047930105; 
- Thu, 09 Oct 2025 15:12:10 -0700 (PDT)
-X-Received: by 2002:a05:6214:d4e:b0:7fd:2bc6:6cb0 with SMTP id
- 6a1803df08f44-87b2ef4f033mr116972906d6.55.1760047929509; 
- Thu, 09 Oct 2025 15:12:09 -0700 (PDT)
+ bh=p7IzjS1s0bNef64GLMBRSJvVqao76Vm81Z7YtWhUduU=;
+ b=TcYwgQdtwBlhXT30AOu/bM1lvGw38nKAju9cnecnNXC/G1lsfqBOzAdm0o6NPorRY2
+ nML7TZUPTpJ5GpfubNdKx7XKH1I4oG6gb3KehqQyivCeQE3nVAvtd5HsOM9pUvGSEV7Q
+ fT+DmjoTbhXjL/ksTVw/ga5WkN/t0p49xHguk=
+X-Received: by 2002:a05:6214:1c84:b0:879:b1ac:ba56 with SMTP id
+ 6a1803df08f44-87b2ef3421dmr121335266d6.40.1760047931804; 
+ Thu, 09 Oct 2025 15:12:11 -0700 (PDT)
+X-Received: by 2002:a05:6214:1c84:b0:879:b1ac:ba56 with SMTP id
+ 6a1803df08f44-87b2ef3421dmr121334826d6.40.1760047931109; 
+ Thu, 09 Oct 2025 15:12:11 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.12.08
+ 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.12.10
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Thu, 09 Oct 2025 15:12:09 -0700 (PDT)
+ Thu, 09 Oct 2025 15:12:10 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com, Farah Smith <farah.smith@broadcom.com>,
- Peter Spreadborough <peter.spreadborough@broadcom.com>
-Subject: [PATCH v2 07/54] net/bnxt/tf_core: thor2 TF table scope sizing
- adjustments
-Date: Thu,  9 Oct 2025 18:10:42 -0400
-Message-Id: <20251009221129.28256-8-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Michael Baucom <michael.baucom@broadcom.com>
+Subject: [PATCH v2 08/54] net/bnxt/tf_ulp: add support for global identifiers
+Date: Thu,  9 Oct 2025 18:10:43 -0400
+Message-Id: <20251009221129.28256-9-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251009221129.28256-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -101,68 +101,621 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Farah Smith <farah.smith@broadcom.com>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-In order for the pool size to be calculated correctly flow counts
-must be updated to the next power of 2 so that the pool_size_exp
-shift can be used correctly without losing pool entries due to
-rounding errors.  Also, max_pools must be a power of 2 for same
-reasons.
+Added support in the mapper to enable global identifier
+allocations.
 
-Signed-off-by: Farah Smith <farah.smith@broadcom.com>
-Reviewed-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Reviewed-by: Michael Baucom <michael.baucom@broadcom.com>
 ---
- drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/net/bnxt/hsi_struct_def_dpdk.h      | 164 ++++++++++++++------
+ drivers/net/bnxt/tf_core/v3/tfc_global_id.c |  42 ++++-
+ drivers/net/bnxt/tf_core/v3/tfc_tcam.c      |  55 +++++++
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h    |   2 +
+ drivers/net/bnxt/tf_ulp/ulp_mapper.c        |  89 +++++++++--
+ drivers/net/bnxt/tf_ulp/ulp_mapper.h        |  11 ++
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c     |   2 +
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c    |  64 ++++++++
+ 8 files changed, 370 insertions(+), 59 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-index 88863ed6ad..e7b82eee49 100644
---- a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-+++ b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-@@ -86,6 +86,8 @@ static int calc_lkup_rec_cnt(uint32_t flow_cnt, uint16_t key_sz_in_bytes,
- 	unsigned int flow_adj;	  /* flow_cnt adjusted for factor */
- 	unsigned int key_rec_cnt;
+diff --git a/drivers/net/bnxt/hsi_struct_def_dpdk.h b/drivers/net/bnxt/hsi_struct_def_dpdk.h
+index f089813a68..3a0c1fbdc2 100644
+--- a/drivers/net/bnxt/hsi_struct_def_dpdk.h
++++ b/drivers/net/bnxt/hsi_struct_def_dpdk.h
+@@ -61178,32 +61178,6 @@ struct __rte_packed_begin hwrm_tfc_idx_tbl_free_output {
+ 	uint8_t	valid;
+ } __rte_packed_end;
  
-+	flow_cnt = 1 << next_pow2(flow_cnt);
+-/* TruFlow resources request for a global id. */
+-/* tfc_global_id_hwrm_req (size:64b/8B) */
+-struct __rte_packed_begin tfc_global_id_hwrm_req {
+-	/* Type of the resource, defined in enum cfa_resource_type HCAPI RM. */
+-	uint16_t	rtype;
+-	/* Indicates the flow direction in type of cfa_dir. */
+-	uint16_t	dir;
+-	/* Subtype of the resource type. */
+-	uint16_t	subtype;
+-	/* Number of the type of resources. */
+-	uint16_t	cnt;
+-} __rte_packed_end;
+-
+-/* The reserved resources for the global id. */
+-/* tfc_global_id_hwrm_rsp (size:64b/8B) */
+-struct __rte_packed_begin tfc_global_id_hwrm_rsp {
+-	/* Type of the resource, defined in enum cfa_resource_type HCAPI RM. */
+-	uint16_t	rtype;
+-	/* Indicates the flow direction in type of cfa_dir. */
+-	uint16_t	dir;
+-	/* Subtype of the resource type. */
+-	uint16_t	subtype;
+-	/* The global id that the resources reserved for. */
+-	uint16_t	id;
+-} __rte_packed_end;
+-
+ /****************************
+  * hwrm_tfc_global_id_alloc *
+  ****************************/
+@@ -61248,30 +61222,36 @@ struct __rte_packed_begin hwrm_tfc_global_id_alloc_input {
+ 	 * field.
+ 	 */
+ 	uint16_t	fid;
+-	/* Firmware session id returned when HWRM_TF_SESSION_OPEN is sent. */
++	/*
++	 * Session associated with function requesting the global identifier
++	 * resource.
++	 */
+ 	uint16_t	sid;
+-	/* Global domain id. */
+-	uint16_t	global_id;
+ 	/*
+-	 * Defines the array size of the provided req_addr and
+-	 * resv_addr array buffers. Should be set to the number of
+-	 * request entries.
++	 * Firmware CFA Resource Type, for definitions see
++	 * cfa_v3/include/cfa_resources.h.
+ 	 */
+-	uint16_t	req_cnt;
++	uint16_t	rtype;
+ 	/*
+-	 * This is the DMA address for the request input data array
+-	 * buffer. Array is of tfc_global_id_hwrm_req type. Size of the
+-	 * array buffer is provided by the 'req_cnt' field in this
+-	 * message.
++	 * Firmware CFA Resource Subtype, for definitions see
++	 * cfa_v3/include/cfa_resources.h
+ 	 */
+-	uint64_t	req_addr;
++	uint8_t	subtype;
++	/* Control flags. */
++	uint8_t	flags;
++	/* Indicates the flow direction. */
++	#define HWRM_TFC_GLOBAL_ID_ALLOC_INPUT_FLAGS_DIR     UINT32_C(0x1)
++	/* If this bit set to 0, then it indicates rx flow. */
++	#define HWRM_TFC_GLOBAL_ID_ALLOC_INPUT_FLAGS_DIR_RX    UINT32_C(0x0)
++	/* If this bit is set to 1, then it indicates tx flow. */
++	#define HWRM_TFC_GLOBAL_ID_ALLOC_INPUT_FLAGS_DIR_TX    UINT32_C(0x1)
++	#define HWRM_TFC_GLOBAL_ID_ALLOC_INPUT_FLAGS_DIR_LAST \
++		HWRM_TFC_GLOBAL_ID_ALLOC_INPUT_FLAGS_DIR_TX
+ 	/*
+-	 * This is the DMA address for the resc output data array
+-	 * buffer. Array is of tfc_global_id_hwrm_rsp type. Size of the array
+-	 * buffer is provided by the 'req_cnt' field in this
+-	 * message.
++	 * Context id of the resource. This is opaque to FW and used to
++	 * uniquely map the identifier.
+ 	 */
+-	uint64_t	resc_addr;
++	uint8_t	context_id[16];
+ } __rte_packed_end;
+ 
+ /* hwrm_tfc_global_id_alloc_output (size:128b/16B) */
+@@ -61285,12 +61265,10 @@ struct __rte_packed_begin hwrm_tfc_global_id_alloc_output {
+ 	/* The length of the response data in number of bytes. */
+ 	uint16_t	resp_len;
+ 	/*
+-	 * Size of the returned hwrm_tfc_global_id_req data array. The value
+-	 * cannot exceed the req_cnt defined by the input msg. The data
+-	 * array is returned using the resv_addr specified DMA
+-	 * address also provided by the input msg.
++	 * returns the allocated global id, it could be identifier
++	 * based on the request.
+ 	 */
+-	uint16_t	rsp_cnt;
++	uint16_t	global_id;
+ 	/* Non-zero if this is the first allocation for the global ID. */
+ 	uint8_t	first;
+ 	/* unused. */
+@@ -61306,6 +61284,96 @@ struct __rte_packed_begin hwrm_tfc_global_id_alloc_output {
+ 	uint8_t	valid;
+ } __rte_packed_end;
+ 
++/***************************
++ * hwrm_tfc_global_id_free *
++ ***************************/
 +
- 	switch (factor) {
- 	case TFC_TBL_SCOPE_BUCKET_FACTOR_1:
- 		flow_adj = flow_cnt;
-@@ -924,6 +926,12 @@ int tfc_tbl_scope_size_query(struct tfc *tfcp,
- 		return -EINVAL;
++
++/* hwrm_tfc_global_id_free_input (size:256b/32B) */
++struct __rte_packed_begin hwrm_tfc_global_id_free_input {
++	/* The HWRM command request type. */
++	uint16_t	req_type;
++	/*
++	 * The completion ring to send the completion event on. This should
++	 * be the NQ ID returned from the `nq_alloc` HWRM command.
++	 */
++	uint16_t	cmpl_ring;
++	/*
++	 * The sequence ID is used by the driver for tracking multiple
++	 * commands. This ID is treated as opaque data by the firmware and
++	 * the value is returned in the `hwrm_resp_hdr` upon completion.
++	 */
++	uint16_t	seq_id;
++	/*
++	 * The target ID of the command:
++	 * * 0x0-0xFFF8 - The function ID
++	 * * 0xFFF8-0xFFFC, 0xFFFE - Reserved for internal processors
++	 * * 0xFFFD - Reserved for user-space HWRM interface
++	 * * 0xFFFF - HWRM
++	 */
++	uint16_t	target_id;
++	/*
++	 * A physical address pointer pointing to a host buffer that the
++	 * command's response data will be written. This can be either a host
++	 * physical address (HPA) or a guest physical address (GPA) and must
++	 * point to a physically contiguous block of memory.
++	 */
++	uint64_t	resp_addr;
++	/*
++	 * Function ID.
++	 * If running on a trusted VF or PF, the fid field can be used to
++	 * specify that the function is a non-trusted VF of the parent PF.
++	 * If this command is used for the target_id itself, this field is
++	 * set to 0xffff. A non-trusted VF cannot specify a valid FID in this
++	 * field.
++	 */
++	uint16_t	fid;
++	/*
++	 * Session associated with function requesting the global identifier
++	 * resource.
++	 */
++	uint16_t	sid;
++	/*
++	 * Firmware CFA Resource Type, for definitions see
++	 * cfa_v3/include/cfa_resources.h.
++	 */
++	uint16_t	rtype;
++	/*
++	 * Firmware CFA Resource Subtype, for definitions see
++	 * cfa_v3/include/cfa_resources.h
++	 */
++	uint8_t	subtype;
++	/* Indicates the flow direction. */
++	uint8_t	dir;
++	/* Global id of the resource. */
++	uint16_t	global_id;
++	/* unused. */
++	uint8_t	unused0[6];
++} __rte_packed_end;
++
++/* hwrm_tfc_global_id_free_output (size:128b/16B) */
++struct __rte_packed_begin hwrm_tfc_global_id_free_output {
++	/* The specific error status for the command. */
++	uint16_t	error_code;
++	/* The HWRM command request type. */
++	uint16_t	req_type;
++	/* The sequence ID from the original command. */
++	uint16_t	seq_id;
++	/* The length of the response data in number of bytes. */
++	uint16_t	resp_len;
++	/* unused. */
++	uint8_t	unused0[7];
++	/*
++	 * This field is used in Output records to indicate that the output
++	 * is completely written to RAM. This field should be read as '1'
++	 * to indicate that the output has been completely written.
++	 * When writing a command completion or response to an internal
++	 * processor, the order of writes has to be such that this field
++	 * is written last.
++	 */
++	uint8_t	valid;
++} __rte_packed_end;
++
+ /*********************
+  * hwrm_tfc_tcam_set *
+  *********************/
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_global_id.c b/drivers/net/bnxt/tf_core/v3/tfc_global_id.c
+index 4c90afaee1..ec1b2f728f 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_global_id.c
++++ b/drivers/net/bnxt/tf_core/v3/tfc_global_id.c
+@@ -51,7 +51,45 @@ int tfc_global_id_alloc(struct tfc *tfcp, uint16_t fid,
+ 		return rc;
  	}
  
-+	if (parms->max_pools != next_pow2(parms->max_pools)) {
-+		PMD_DRV_LOG(ERR, "%s: Invalid max_pools %u not pow2\n",
-+			    __func__, parms->max_pools);
+-	rc = tfc_msg_global_id_alloc(tfcp, fid, sid, domain_id, req_cnt,
+-				     req, rsp, rsp_cnt, first);
++	rc = tfc_msg_global_id_alloc(tfcp, fid, sid, req, rsp, first);
++	return rc;
++}
++
++int tfc_global_id_free(struct tfc *tfcp, uint16_t fid,
++		       const struct tfc_global_id_req *req)
++{
++	int rc = 0;
++	struct bnxt *bp;
++	uint16_t sid;
++
++	if (tfcp == NULL) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid tfcp pointer", __func__);
 +		return -EINVAL;
 +	}
 +
- 	for (dir = CFA_DIR_RX; dir < CFA_DIR_MAX; dir++) {
- 		rc = calc_lkup_rec_cnt(parms->flow_cnt[dir],
- 				       parms->key_sz_in_bytes[dir],
-@@ -941,7 +949,8 @@ int tfc_tbl_scope_size_query(struct tfc *tfcp,
- 			break;
- 
- 		rc = calc_pool_sz_exp(&parms->lkup_pool_sz_exp[dir],
--				      parms->lkup_rec_cnt[dir],
-+				      parms->lkup_rec_cnt[dir] -
-+				      (1 << parms->static_bucket_cnt_exp[dir]),
- 				      parms->max_pools);
- 		if (rc)
- 			break;
-@@ -1033,6 +1042,11 @@ int tfc_tbl_scope_mem_alloc(struct tfc *tfcp, uint16_t fid, uint8_t tsid,
- 		PMD_DRV_LOG_LINE(ERR, "tsid(%d) not allocated", tsid);
- 		return -EINVAL;
- 	}
-+	if (parms->max_pools != next_pow2(parms->max_pools)) {
-+		PMD_DRV_LOG(ERR, "%s: Invalid max_pools %u not pow2\n", __func__,
-+			    parms->max_pools);
++	if (tfcp->bp == NULL || tfcp->tfo == NULL) {
++		PMD_DRV_LOG_LINE(ERR, "%s: tfcp not initialized", __func__);
 +		return -EINVAL;
 +	}
++
++	if (req == NULL) {
++		PMD_DRV_LOG_LINE(ERR, "%s: global_id req is NULL", __func__);
++		return -EINVAL;
++	}
++
++	bp = tfcp->bp;
++	if (!BNXT_PF(bp) && !BNXT_VF_IS_TRUSTED(bp)) {
++		PMD_DRV_LOG_LINE(ERR, "%s: bp not PF or trusted VF", __func__);
++		return -EINVAL;
++	}
++
++	rc = tfo_sid_get(tfcp->tfo, &sid);
++	if (rc) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Failed to retrieve SID, rc:%s",
++			    __func__, strerror(-rc));
++		return rc;
++	}
++
++	rc = tfc_msg_global_id_free(tfcp, fid, sid, req);
+ 	return rc;
+ }
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_tcam.c b/drivers/net/bnxt/tf_core/v3/tfc_tcam.c
+index 2497929671..054431be12 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_tcam.c
++++ b/drivers/net/bnxt/tf_core/v3/tfc_tcam.c
+@@ -297,3 +297,58 @@ int tfc_tcam_free(struct tfc *tfcp, uint16_t fid, const struct tfc_tcam_info *tc
+ 				 strerror(-rc));
+ 	return rc;
+ }
++
++int tfc_tcam_priority_update(struct tfc *tfcp, uint16_t fid,
++			     enum cfa_track_type tt,
++			     const struct tfc_tcam_info *tcam_info,
++			     uint16_t priority)
++{
++	int rc = 0;
++	struct bnxt *bp;
++	uint16_t sid;
++
++	if (tfcp == NULL) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid tfcp pointer", __func__);
++		return -EINVAL;
++	}
++
++	if (tfcp->bp == NULL || tfcp->tfo == NULL) {
++		PMD_DRV_LOG_LINE(ERR, "%s: tfcp not initialized", __func__);
++		return -EINVAL;
++	}
++	bp = tfcp->bp;
++
++	if (tcam_info == NULL) {
++		PMD_DRV_LOG_LINE(ERR, "%s: tcam_info is NULL", __func__);
++		return -EINVAL;
++	}
++
++	if (tcam_info->rsubtype >= CFA_RSUBTYPE_TCAM_MAX) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid tcam subtype: %d", __func__,
++				 tcam_info->rsubtype);
++		return -EINVAL;
++	}
++
++	if (!BNXT_PF(bp) && !BNXT_VF_IS_TRUSTED(bp)) {
++		PMD_DRV_LOG_LINE(ERR, "%s: bp not PF or trusted VF", __func__);
++		return -EINVAL;
++	}
++
++	rc = tfo_sid_get(tfcp->tfo, &sid);
++	if (rc) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Failed to retrieve SID, rc:%s",
++				 __func__, strerror(-rc));
++		return rc;
++	}
++
++	rc = tfc_msg_tcam_prioriry_update(tfcp, fid, sid, tcam_info->dir, tt,
++					  tcam_info->rsubtype, tcam_info->id,
++					  priority);
++	if (rc)
++		PMD_DRV_LOG_LINE(ERR, "%s: update failed: %s:%s %d %s", __func__,
++				 tfc_dir_2_str(tcam_info->dir),
++				 tfc_tcam_2_str(tcam_info->rsubtype), tcam_info->id,
++				 strerror(-rc));
++
++	return rc;
++}
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
+index e6f316539c..c8b6f544ca 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
+@@ -1088,6 +1088,8 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
+ 		BNXT_DRV_DBG(ERR, "Port Mac Address Feature is enabled\n");
+ 	if (bit & BNXT_ULP_FEATURE_BIT_MULTI_TUNNEL_FLOW)
+ 		BNXT_DRV_DBG(ERR, "Multi Tunnel Flow Feature is enabled\n");
++	if (bit & BNXT_ULP_FEATURE_BIT_MULTI_INSTANCE)
++		BNXT_DRV_DBG(ERR, "Multi Instance Feature is enabled\n");
  
- 	/* Normalize page size to a power of 2 */
- 	page_sz = 1 << next_pow2(parms->pbl_page_sz_in_bytes);
+ 	*out_bits =  bit;
+ 	return 0;
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.c b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
+index 4829ae41d1..d58899bdb1 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
+@@ -729,11 +729,13 @@ ulp_mapper_tbl_ident_scan_ext(struct bnxt_ulp_mapper_parms *parms,
+ static int32_t
+ ulp_mapper_ident_process(struct bnxt_ulp_mapper_parms *parms,
+ 			 struct bnxt_ulp_mapper_tbl_info *tbl,
++			 struct ulp_blob *key __rte_unused,
+ 			 struct bnxt_ulp_mapper_ident_info *ident,
+ 			 uint16_t *val)
+ {
+ 	const struct ulp_mapper_core_ops *op = parms->mapper_data->mapper_oper;
+ 	struct ulp_flow_db_res_params fid_parms = { 0 };
++	bool global = false;
+ 	uint64_t id = 0;
+ 	int32_t idx;
+ 	int rc;
+@@ -742,14 +744,25 @@ ulp_mapper_ident_process(struct bnxt_ulp_mapper_parms *parms,
+ 	fid_parms.resource_func = ident->resource_func;
+ 	fid_parms.resource_type = ident->ident_type;
+ 	fid_parms.critical_resource = tbl->critical_resource;
+-	ulp_flow_db_shared_session_set(&fid_parms, tbl->session_type);
+ 
+-	rc = op->ulp_mapper_core_ident_alloc_process(parms->ulp_ctx,
+-						     tbl->session_type,
+-						     ident->ident_type,
+-						     tbl->direction,
+-						     tbl->track_type,
+-						     &id);
++	if (tbl->resource_func == BNXT_ULP_RESOURCE_FUNC_GLOBAL_IDENTIFIER)
++		global = true;
++
++	if (!global) {
++		ulp_flow_db_shared_session_set(&fid_parms, tbl->session_type);
++		rc = op->ulp_mapper_core_ident_alloc_process(parms->ulp_ctx,
++							     tbl->session_type,
++							     ident->ident_type,
++							     tbl->direction,
++							     tbl->track_type,
++							     &id);
++	} else {
++		rc = op->ulp_mapper_core_global_ident_alloc(parms->ulp_ctx,
++							    ident->ident_type,
++							    tbl->direction,
++							    &id);
++	}
++
+ 	if (unlikely(rc)) {
+ 		BNXT_DRV_DBG(ERR, "identifier process failed\n");
+ 		return rc;
+@@ -781,7 +794,11 @@ ulp_mapper_ident_process(struct bnxt_ulp_mapper_parms *parms,
+ 
+ error:
+ 	/* Need to free the identifier */
+-	op->ulp_mapper_core_ident_free(parms->ulp_ctx, &fid_parms);
++	if (!global)
++		op->ulp_mapper_core_ident_free(parms->ulp_ctx, &fid_parms);
++	else
++		op->ulp_mapper_core_global_ident_free(parms->ulp_ctx,
++						      &fid_parms);
+ 	return rc;
+ }
+ 
+@@ -2413,7 +2430,7 @@ ulp_mapper_tcam_tbl_ident_alloc(struct bnxt_ulp_mapper_parms *parms,
+ 
+ 	idents = ulp_mapper_ident_fields_get(parms, tbl, &num_idents);
+ 	for (i = 0; i < num_idents; i++) {
+-		if (unlikely(ulp_mapper_ident_process(parms, tbl,
++		if (unlikely(ulp_mapper_ident_process(parms, tbl, NULL,
+ 						      &idents[i], NULL)))
+ 			return -EINVAL;
+ 	}
+@@ -3006,6 +3023,55 @@ ulp_mapper_stats_cache_tbl_res_free(struct bnxt_ulp_context *ulp,
+ 	return 0;
+ }
+ 
++static int32_t
++ulp_mapper_global_identifier_process(struct bnxt_ulp_mapper_parms *parms,
++				     struct bnxt_ulp_mapper_tbl_info *tbl)
++{
++	int32_t rc = 0;
++	struct bnxt_ulp_mapper_ident_info *idents;
++	struct bnxt_ulp_mapper_key_info	*kflds;
++	struct ulp_blob key;
++	uint32_t num_idents;
++	uint32_t num_kflds;
++	uint32_t i;
++
++	/* check the table opcode  */
++	if (tbl->tbl_opcode != BNXT_ULP_GLOBAL_IDENTIFIER_TBL_OPC_ALLOC) {
++		BNXT_DRV_DBG(ERR, "Invalid global ident table opcode %d\n",
++			     tbl->tbl_opcode);
++		return -EINVAL;
++	}
++
++	/* Create the key blob */
++	if (unlikely(ulp_blob_init(&key, tbl->blob_key_bit_size,
++				   BNXT_ULP_BYTE_ORDER_BE))) {
++		BNXT_DRV_DBG(ERR, "blob init failed.\n");
++		return -EINVAL;
++	}
++
++	kflds = ulp_mapper_key_fields_get(parms, tbl, &num_kflds);
++	for (i = 0; i < num_kflds; i++) {
++		rc = ulp_mapper_field_opc_process(parms, tbl->direction,
++						  &kflds[i].field_info_spec,
++						  &key, 1, "Global Id Context");
++		if (unlikely(rc)) {
++			BNXT_DRV_DBG(ERR, "Key field set failed %s\n",
++				     kflds[i].field_info_spec.description);
++			return rc;
++		}
++	}
++
++	/* Get the identifiers to process it */
++	idents = ulp_mapper_ident_fields_get(parms, tbl, &num_idents);
++	for (i = 0; i < num_idents; i++) {
++		if (unlikely(ulp_mapper_ident_process(parms, tbl, &key,
++						      &idents[i], NULL)))
++			return -EINVAL;
++	}
++
++	return rc;
++}
++
+ /* Free the vnic resource */
+ static int32_t
+ ulp_mapper_vnic_tbl_res_free(struct bnxt_ulp_context *ulp __rte_unused,
+@@ -4211,6 +4277,9 @@ ulp_mapper_tbls_process(struct bnxt_ulp_mapper_parms *parms, void *error)
+ 		case BNXT_ULP_RESOURCE_FUNC_STATS_CACHE:
+ 			rc = ulp_mapper_stats_cache_tbl_process(parms, tbl);
+ 			break;
++		case BNXT_ULP_RESOURCE_FUNC_GLOBAL_IDENTIFIER:
++			rc = ulp_mapper_global_identifier_process(parms, tbl);
++			break;
+ 		default:
+ 			BNXT_DRV_DBG(ERR, "Unexpected mapper resource %d\n",
+ 				     tbl->resource_func);
+@@ -4353,6 +4422,8 @@ ulp_mapper_resource_free(struct bnxt_ulp_context *ulp,
+ 		rc = ulp_mapper_stats_cache_tbl_res_free(ulp,
+ 							 fid);
+ 		break;
++	case BNXT_ULP_RESOURCE_FUNC_GLOBAL_IDENTIFIER:
++		rc = mapper_op->ulp_mapper_core_global_ident_free(ulp, res);
+ 	default:
+ 		break;
+ 	}
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.h b/drivers/net/bnxt/tf_ulp/ulp_mapper.h
+index f9a407cd84..2bcfc6ef1b 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper.h
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.h
+@@ -147,6 +147,17 @@ struct ulp_mapper_core_ops {
+ 	int32_t
+ 	(*ulp_mapper_core_ident_free)(struct bnxt_ulp_context *ulp_ctx,
+ 				      struct ulp_flow_db_res_params *res);
++
++	int32_t
++	(*ulp_mapper_core_global_ident_alloc)(struct bnxt_ulp_context *ulp_ctx,
++					      uint16_t ident_type,
++					      uint8_t direction,
++					      uint64_t *identifier_id);
++
++	int32_t
++	(*ulp_mapper_core_global_ident_free)(struct bnxt_ulp_context *ulp_ctx,
++					     struct ulp_flow_db_res_params *r);
++
+ 	uint32_t
+ 	(*ulp_mapper_core_dyn_tbl_type_get)(struct bnxt_ulp_mapper_parms *parms,
+ 					    struct bnxt_ulp_mapper_tbl_info *t,
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
+index e755591716..e548a6b91f 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
+@@ -1377,6 +1377,8 @@ const struct ulp_mapper_core_ops ulp_mapper_tf_core_ops = {
+ 	.ulp_mapper_core_if_tbl_process = ulp_mapper_tf_if_tbl_process,
+ 	.ulp_mapper_core_ident_alloc_process = ulp_mapper_tf_ident_alloc,
+ 	.ulp_mapper_core_ident_free = ulp_mapper_tf_ident_free,
++	.ulp_mapper_core_global_ident_alloc = NULL,
++	.ulp_mapper_core_global_ident_free = NULL,
+ 	.ulp_mapper_core_dyn_tbl_type_get = ulp_mapper_tf_dyn_tbl_type_get,
+ 	.ulp_mapper_core_index_tbl_alloc_process =
+ 		ulp_mapper_tf_index_tbl_alloc_process,
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
+index db7aa22c57..3db98fa160 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
+@@ -1636,6 +1636,68 @@ ulp_mapper_tfc_ident_free(struct bnxt_ulp_context *ulp_ctx,
+ 	return rc;
+ }
+ 
++static int32_t
++ulp_mapper_tfc_global_ident_alloc(struct bnxt_ulp_context *ulp_ctx,
++				  uint16_t ident_type,
++				  uint8_t direction,
++				  uint64_t *identifier_id)
++{
++	struct tfc *tfcp = NULL;
++	struct tfc_global_id_req glb_req = { 0 };
++	struct tfc_global_id glb_rsp = { 0 };
++	uint16_t fw_fid = 0;
++	uint16_t rsp_cnt;
++	int32_t rc = 0;
++	bool first = false;
++
++	if (unlikely(bnxt_ulp_cntxt_fid_get(ulp_ctx, &fw_fid))) {
++		BNXT_DRV_DBG(ERR, "Failed to get func_id\n");
++		return -EINVAL;
++	}
++
++	tfcp = bnxt_ulp_cntxt_tfcp_get(ulp_ctx);
++	if (unlikely(tfcp == NULL)) {
++		BNXT_DRV_DBG(ERR, "Failed to get tfcp pointer\n");
++		return -EINVAL;
++	}
++
++	glb_req.rtype = CFA_RTYPE_IDENT;
++	glb_req.dir = direction;
++	glb_req.cnt = 1;
++	glb_req.rsubtype = ident_type;
++
++	rc = tfc_global_id_alloc(tfcp, fw_fid, 1, 1, &glb_req, &glb_rsp, &rsp_cnt, &first);
++	if (unlikely(rc != 0)) {
++		BNXT_DRV_DBG(ERR, "alloc failed %d\n", rc);
++		return rc;
++	}
++	*identifier_id = glb_rsp.id;
++
++	return rc;
++}
++
++static int32_t
++ulp_mapper_tfc_global_ident_free(struct bnxt_ulp_context *ulp_ctx,
++				 struct ulp_flow_db_res_params *res)
++{
++	struct tfc *tfcp = NULL;
++	int32_t rc = 0;
++	uint16_t fw_fid = 0;
++
++	if (unlikely(bnxt_ulp_cntxt_fid_get(ulp_ctx, &fw_fid))) {
++		BNXT_DRV_DBG(ERR, "Failed to get func_id\n");
++		return -EINVAL;
++	}
++
++	tfcp = bnxt_ulp_cntxt_tfcp_get(ulp_ctx);
++	if (unlikely(tfcp == NULL)) {
++		BNXT_DRV_DBG(ERR, "Failed to get tfcp pointer\n");
++		return -EINVAL;
++	}
++
++	return rc;
++}
++
+ static inline int32_t
+ ulp_mapper_tfc_tcam_entry_free(struct bnxt_ulp_context *ulp,
+ 			       struct ulp_flow_db_res_params *res)
+@@ -1849,6 +1911,8 @@ const struct ulp_mapper_core_ops ulp_mapper_tfc_core_ops = {
+ 	.ulp_mapper_core_if_tbl_process = ulp_mapper_tfc_if_tbl_process,
+ 	.ulp_mapper_core_ident_alloc_process = ulp_mapper_tfc_ident_alloc,
+ 	.ulp_mapper_core_ident_free = ulp_mapper_tfc_ident_free,
++	.ulp_mapper_core_global_ident_alloc = ulp_mapper_tfc_global_ident_alloc,
++	.ulp_mapper_core_global_ident_free = ulp_mapper_tfc_global_ident_free,
+ 	.ulp_mapper_core_dyn_tbl_type_get = ulp_mapper_tfc_dyn_tbl_type_get,
+ 	.ulp_mapper_core_index_tbl_alloc_process =
+ 		ulp_mapper_tfc_index_tbl_alloc_process,
 -- 
 2.39.5 (Apple Git-154)
 
