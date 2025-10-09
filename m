@@ -1,89 +1,90 @@
 Return-Path: <dev-bounces@dpdk.org>
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE719CAC5B8
-	for <dpdk-dev@archiver.kernel.org>; Tue, 30 Sep 2025 07:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 910F0CCA476
+	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Oct 2025 07:08:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8348640B9D;
-	Tue, 30 Sep 2025 09:05:36 +0200 (CEST)
-Received: from mail-pf1-f227.google.com (mail-pf1-f227.google.com
- [209.85.210.227])
- by mails.dpdk.org (Postfix) with ESMTP id 97335402A2
- for <dev@dpdk.org>; Tue, 30 Sep 2025 02:36:43 +0200 (CEST)
-Received: by mail-pf1-f227.google.com with SMTP id
- d2e1a72fcca58-781206cce18so3516879b3a.0
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9DC8840647;
+	Fri, 10 Oct 2025 09:08:18 +0200 (CEST)
+Received: from mail-pl1-f226.google.com (mail-pl1-f226.google.com
+ [209.85.214.226])
+ by mails.dpdk.org (Postfix) with ESMTP id C748E40661
+ for <dev@dpdk.org>; Fri, 10 Oct 2025 00:12:06 +0200 (CEST)
+Received: by mail-pl1-f226.google.com with SMTP id
+ d9443c01a7336-2698384978dso10519305ad.0
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:12:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1759192603; x=1759797403;
+ d=1e100.net; s=20230601; t=1760047926; x=1760652726;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
  bh=7IYHa0OBe8hwOQOgehONyaWdm10C2RWGrapw19ogww4=;
- b=jLHxmIy2R/qIEp587RkmQOJSpeTKKxZpihPsLCWkQioEAlcVsvM8zh8XVWDoJNRRZZ
- mhNtwVJV+sym5WQn5Vuk5hkqZdUMR81le1M5E0ax6KlMLXYC7973CYXhTCQEiLVtRpst
- wMBgNA+NN9nxUonTp9phQFkickSOruYlc1mOH0qFcZhzppaVJMcTtqgKW8E2rLdbuaGw
- YRxaQ1QLOs9RfsBRBCM/Nguaw4EoLNMKjHFDqp+unofc3nEvhe21ExQBIDEJ4Xn8eQwm
- a2jYuSeCss77Lbk7rseLdZ1ktKcjJwgQm7qD9uBbpOtcgj8ttDqNflnDlXqA09qAE1sQ
- qYVQ==
-X-Gm-Message-State: AOJu0YxdOgAbbQDNSkaCcYrniq1xG+3D/jljGHE1GSBGcEC6M21kY99V
- 0j3UlG3z1dMep3uF6Q4vaVz7YVwW2P8tqX3ncAzWwVG6XZiPaQFRnp63P+WIn+kYvteqd48/YFu
- sRMmBZJPKLvcdxsqqL+UovfaTVnELy8pa4AWQ0IvvI/TvBEmw5R4sGaQY5qYpFzcTEmxlwN7atI
- OeyNEQind1prHuo+drHPl6FX9JF/sFvSrMft4UJMLavVS9xxi1ziyFOiP95oigPM8hXB3oEg==
-X-Gm-Gg: ASbGncsCvmcBTRm+6v1udvq90YQU16LU0gg8chVV2e3MlNBfC5pKW5zIfOhgEEvJB88
- 9eyfZbom0lV9K55tRe3w5URhXVRHOe22UnfygZuXKTLjGUrAuInoKNxX+j/s0ievRt2xobIGsgP
- gAEknZm6YOi+0xyl8NRWFRhY2UDyqzYt5D5h6SJCj/cT1H6xte7yUIqqz6ypy2ATE0fIepJ/MtL
- nsE9bd1uo06E1km/054kQUUctGsM0op6vs98chE7GJo/lX4Ue4RFBsh9yOA0OaIV1vNwIdFzh5X
- lPpTIeMIFcTsstr5ZysSk1zerOKCyty9pZuo5pa1ImJ9FTet6/oQn+4KVP7jNG0arTtYYIZj61M
- tthbvEx7QawOfwoPXshK2IvrVDr2jf/n++Hw9wl4sDQmX+dK8Q+xFrj2Z1TgFuEzzAkEx+4krU7
- GDkA==
-X-Google-Smtp-Source: AGHT+IHriUhjdM8ZU8e2jnj7ioGvgAzRSLoW5JsW0cI/lWcz3YMwIlKzUCaITmQPCvKqhWYc7mrNL7kNrYnE
-X-Received: by 2002:a05:6a21:9983:b0:243:fe1e:2f95 with SMTP id
- adf61e73a8af0-317625f5f67mr3318866637.6.1759192602351; 
- Mon, 29 Sep 2025 17:36:42 -0700 (PDT)
+ b=T5fKL4DJIlu8byQbDnJc66LgKT//X/RDsfMDrIeIeffhaLTmLsWD8me6nMq9Idy0+v
+ Uf+8VP8CPfjyXrlW0co1k6m4zQ/IyaYrTaxDRQr72Dtv1rueQD4X2q+QPZiTE/6FkTwK
+ cN52NeuvNtwsds5lyP7kEe8XV/wyGRRhDx0amRxUetUHE+IbkXOmLIyNpyG1VUTEmpTL
+ BnFx249oFLwi7rK7O3vNpkV/k4adgrr/L075ZX+5iLNm1U2jMQGLlV7zgxfSQOt/yt1f
+ 9a4objVbXd3svKns8DkmDTvNL91/NyTqTLh1eWvMvFIz6MBC5A60/NsPj8aevma29k9p
+ eCVA==
+X-Gm-Message-State: AOJu0YzHzpxCXE2e8DwTPG8L4TZveK3s/TLnc7Jao5fFCNKItv2nY9e0
+ Qz8PBgoL+mX/4eGJk6k9Jkf+Go5yh36/PJ2xM95OoFTwyv/uWbQNfwbrXUOx1IYo8PL8HIpmcnr
+ 9qCrUf0AjKxNkLAZs8mq0sk+h/txxZ2+K2nZDaZzU03FIxVnW+g+HMojqxoukTZZ+K6zYIzc2HR
+ b/4SE79GeI7QTkCNCHwy8Ky6omMJbpFBAzKfW+8c9BzD0LO/KdP295J25UnD7M5nvxYr2iOw==
+X-Gm-Gg: ASbGncs0ApeV2iQCL2GlB9DM/JErxOWiHBNKHF/O/PXP53rtrk27bnvqe1bBfkQ8CDv
+ bmWxEi+eLKetzHHyvfHxym0XicI1aBEO6DaIFIybxAQTpor/nR3i0En6Ll2BLaMCCA0bdMHxWLp
+ RMKZnaeNbCnNT9yJqBUge439IQ+jB6/+WEUmDK2lkNG+UmkKFoS2fgJcrG9vcWPxmZBFl1+eQQO
+ TI8WQ0tH6mH/N24cGdk+EExsbQXbqOtSxMSmrBmSPT4pSu7n2tGdpWxJk8ebolaBqRKmvEXg/Ed
+ 2gMqtxpwHMrJbPBT/mKT3B4r4Cuam+pxexLdsxQEbiwtc7js6zy1kE4fpyU8OHo7xbuw1uTCJY0
+ TFWMVLkkDhP/iX2+w6Giv59a9byZ/sAkFGpX4g2Ts6NXIwvMEulxBI9f2QkB54a3/algrkH4LXW
+ vSQnC2
+X-Google-Smtp-Source: AGHT+IEN4v1oF5yI9qkQYv/Zh0nuGjOFzvRZ/4/ba1yJZivbS3lBx5w/F6VCfKTzxQE6TDuTEMo1kTe0jtVq
+X-Received: by 2002:a17:903:1a2b:b0:28e:7e7e:fb6f with SMTP id
+ d9443c01a7336-290272167d8mr107398615ad.10.1760047925521; 
+ Thu, 09 Oct 2025 15:12:05 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
+ (address-144-49-247-72.dlp.protect.broadcom.com. [144.49.247.72])
  by smtp-relay.gmail.com with ESMTPS id
- 41be03b00d2f7-b57c55b9144sm580315a12.15.2025.09.29.17.36.35
+ d9443c01a7336-29034eee7f4sm3052845ad.38.2025.10.09.15.11.58
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 29 Sep 2025 17:36:42 -0700 (PDT)
+ Thu, 09 Oct 2025 15:12:05 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pf1-f198.google.com with SMTP id
- d2e1a72fcca58-78108268ea3so3828957b3a.1
- for <dev@dpdk.org>; Mon, 29 Sep 2025 17:36:34 -0700 (PDT)
+Received: by mail-qv1-f71.google.com with SMTP id
+ 6a1803df08f44-7946137e7c2so65303766d6.0
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:11:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1759192593; x=1759797393; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1760047917; x=1760652717; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
  bh=7IYHa0OBe8hwOQOgehONyaWdm10C2RWGrapw19ogww4=;
- b=MkQKb+qa23d44xBba/BBufxuTJcbtRSselcjSONZQs+bshpY6069tlp19Zj7E2vEDD
- D/7d+4z5F0/escJenexX0JgVHqk+ktCQfNfBK/Ijf5S69YhVCGGyrSjNhwBbRLv5RrFr
- NsJyraTsScZHUXj1vVE6Dw1Hkwph1+5jkGpdU=
-X-Received: by 2002:a05:6a21:e082:b0:2c5:6682:d9a with SMTP id
- adf61e73a8af0-31772a1e0b1mr3217169637.28.1759192591350; 
- Mon, 29 Sep 2025 17:36:31 -0700 (PDT)
-X-Received: by 2002:a05:6a21:e082:b0:2c5:6682:d9a with SMTP id
- adf61e73a8af0-31772a1e0b1mr3216983637.28.1759192588298; 
- Mon, 29 Sep 2025 17:36:28 -0700 (PDT)
+ b=LmG81DsdD4+swUed4F/0cRelWUHg9aDDWsVYNvi3N21vYAGV4ZlftaLE9uKW23oqxz
+ DttyM7Qqou01DVg+CVlFbaizXI74jMJOqg0T/Na0hsCVtysUSob1cnaafuKGrPJUZ2yH
+ Ymm1oQvPOUV9TzsEEFrvA/BoS9DLGc1FdpmvY=
+X-Received: by 2002:ad4:5ba3:0:b0:777:2f9d:71ca with SMTP id
+ 6a1803df08f44-87b2ef37345mr113981876d6.56.1760047915303; 
+ Thu, 09 Oct 2025 15:11:55 -0700 (PDT)
+X-Received: by 2002:ad4:5ba3:0:b0:777:2f9d:71ca with SMTP id
+ 6a1803df08f44-87b2ef37345mr113980076d6.56.1760047912425; 
+ Thu, 09 Oct 2025 15:11:52 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b57c53bb97dsm12234825a12.9.2025.09.29.17.36.23
+ 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.11.48
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Mon, 29 Sep 2025 17:36:26 -0700 (PDT)
+ Thu, 09 Oct 2025 15:11:49 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com
-Subject: [PATCH 01/54] net/bnxt/tf_ulp: add bnxt app data for 25.11
-Date: Mon, 29 Sep 2025 20:35:11 -0400
-Message-Id: <20250930003604.87108-2-manish.kurup@broadcom.com>
+Subject: [PATCH v2 01/54] net/bnxt/tf_ulp: add bnxt app data for 25.11
+Date: Thu,  9 Oct 2025 18:10:36 -0400
+Message-Id: <20251009221129.28256-2-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250930003604.87108-1-manish.kurup@broadcom.com>
+In-Reply-To: <20251009221129.28256-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
+ <20251009221129.28256-1-manish.kurup@broadcom.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
-X-Mailman-Approved-At: Tue, 30 Sep 2025 09:05:07 +0200
+X-Mailman-Approved-At: Fri, 10 Oct 2025 09:08:00 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
