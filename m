@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78953CCD185
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 13:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D3DCCD185
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 13:02:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1AC36406B4;
-	Thu,  9 Oct 2025 15:01:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id ADA3C40A6C;
+	Thu,  9 Oct 2025 15:01:20 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 27ED64067A
- for <dev@dpdk.org>; Thu,  9 Oct 2025 15:01:17 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 970514067E
+ for <dev@dpdk.org>; Thu,  9 Oct 2025 15:01:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1760014878; x=1791550878;
+ t=1760014879; x=1791550879;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=G7YtvljH9L46dDAXYqXelMWkm8m7a/cjH3rvv/Uqfxo=;
- b=n7X0grCHKb0Z6itVawGtACTtRcDhCLcm+buApnkSB7G3MU1tdVMQpkiB
- hYuBMwg9WkJ0iHchRb6gQYncuEm9AK/YzOeWhod5okB+obtcXDst8RZJf
- u4F+gJ08SPAJKyBovrJsWXygh4uNKJylbRl0V742WTbzNcQ/qQhqoGgjv
- pC4UuCHrKporRPMTnR7pX0dGOtGSDvnDDZc9I2FhtzOD11OqeTiWDFkfl
- w/hg5W69AeTuNBrAUbzekRRh2+HMds+TCAa+b7CDXaEuhEdkb+EpfvdTx
- xxMDX2u7Pre8CWxEbwSbTNz/BoXAkuYr18Nx0d7F24Bwyo6PsYX2ewDCg Q==;
-X-CSE-ConnectionGUID: uYRXyYgfQVmtJQfzduX/Ng==
-X-CSE-MsgGUID: I93xtiF8Sqi04rax8V2zZg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="79663087"
-X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="79663087"
+ bh=KFeN5qVIW+IdPSsx6MSn7k+Hji1hIpJQ0HyMztXC9gQ=;
+ b=HOPaTm7O5o4nRLctoSXJTyRWxoyNyhYwxLqnQXznONqlmdQmEv7ZuJIb
+ g+o2l7yiDt8u8kydGMw8WFk1KAacikEGdpae6h5ipg3Oga9W8hrzFofpw
+ R1DGGhvcrQT6NSMtVa6g2GqhMt3FAZsECtJcvn73lXoCLFYhZgflrFb5+
+ JAblI1yINfC6MZnE6kJUGupNJ4Gz50LJUdvsKQRF7kPF0zm8cC36kJ3pt
+ xWnD7BUSjN+dMElH1/cOYKo9b1dY+Da4aZgS5UJGnmY6LEWlW+KbWfwIO
+ BFlj0L2ym+HBJOPIILf+BkV+OirLKhftRXE+6olZrZTtJEm9FOhybih9X w==;
+X-CSE-ConnectionGUID: W5WH5kBtQLCyDTkqct0Kdw==
+X-CSE-MsgGUID: 3hoe2pTpQPmb+p8kv87K+Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="79663101"
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="79663101"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2025 06:01:17 -0700
-X-CSE-ConnectionGUID: kOK+6iiJTL+E9XrN7zhF1w==
-X-CSE-MsgGUID: 7ObnGxamRMixR6AbcZYvWA==
+ 09 Oct 2025 06:01:18 -0700
+X-CSE-ConnectionGUID: d8rspRztTkGBRsEP6VJHqQ==
+X-CSE-MsgGUID: g5TM36WmTbeXtS3Q+6KlHA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="179951609"
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="179951616"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 09 Oct 2025 06:01:15 -0700
+ by orviesa010.jf.intel.com with ESMTP; 09 Oct 2025 06:01:17 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v11 08/21] argparse: support parameters to short options
- without "="
-Date: Thu,  9 Oct 2025 14:00:43 +0100
-Message-ID: <20251009130056.2630343-9-bruce.richardson@intel.com>
+Subject: [PATCH v11 09/21] eal: add long options for each short option
+Date: Thu,  9 Oct 2025 14:00:44 +0100
+Message-ID: <20251009130056.2630343-10-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251009130056.2630343-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
@@ -62,206 +61,152 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When passing an optional parameter to a argparse argument, the only way
-to do so has been to pass the argument using "=arg" on the end of the
-option, for example "--foo=bar". However, for short options, i.e. those
-of the form "-x", this requirement is unusual as getopt also supports
-taking additional characters after the option as the parameter, e.g.
-"-xarg".
+To simplify future rework of the EAL arg handling, add a long-option
+equivalent for each short option that doesn't already have one.
 
-Add support for this form of parameter for short options to argparse.
+When updating the docs with the new long options, standardize the format
+of options which have both short and long variants, and drop the
+deprecated service-coremask option from the docs, rather than adding its
+new long option.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/test_argparse.c    | 131 ++++++++++++++++++++++++++++++++++++
- lib/argparse/rte_argparse.c |  10 +--
- 2 files changed, 137 insertions(+), 4 deletions(-)
+ doc/guides/linux_gsg/eal_args.include.rst | 20 ++++++++------------
+ lib/eal/common/eal_common_options.c       |  8 ++++++++
+ lib/eal/common/eal_options.h              | 16 ++++++++++++++++
+ 3 files changed, 32 insertions(+), 12 deletions(-)
 
-diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
-index cce637ce22..71a85ea960 100644
---- a/app/test/test_argparse.c
-+++ b/app/test/test_argparse.c
-@@ -1442,6 +1442,136 @@ test_argparse_ignore_non_flag_args_short_and_long(void)
- 	return 0;
- }
+diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
+index 9ced54af40..0b17879d42 100644
+--- a/doc/guides/linux_gsg/eal_args.include.rst
++++ b/doc/guides/linux_gsg/eal_args.include.rst
+@@ -4,7 +4,7 @@
+ Lcore-related options
+ ~~~~~~~~~~~~~~~~~~~~~
  
-+static int
-+test_argparse_short_opt_value_without_equal(void)
-+{
-+	struct rte_argparse *obj;
-+	int val_saver = 0;
-+	char *argv[3];
-+	int ret;
-+
-+	/* Test short option with required value using -a3 syntax (no '=') */
-+	obj = test_argparse_init_obj();
-+	obj->args[0].name_long = "--test-long";
-+	obj->args[0].name_short = "-t";
-+	obj->args[0].val_saver = (void *)&val_saver;
-+	obj->args[0].val_set = NULL;
-+	obj->args[0].value_required = RTE_ARGPARSE_VALUE_REQUIRED;
-+	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_INT;
-+	obj->args[1].name_long = NULL;
-+	argv[0] = test_strdup(obj->prog_name);
-+	argv[1] = test_strdup("-t42");
-+	ret = rte_argparse_parse(obj, 2, argv);
-+	TEST_ASSERT(ret == 2, "Argparse parse with -t42 expect success, got %d!", ret);
-+	TEST_ASSERT(val_saver == 42, "Argparse parse -t42 should set value to 42, got %d!",
-+			val_saver);
-+
-+	/* Test short option with optional value using -t100 syntax (no '=') */
-+	obj = test_argparse_init_obj();
-+	obj->args[0].name_long = "--test-long";
-+	obj->args[0].name_short = "-t";
-+	obj->args[0].val_saver = (void *)&val_saver;
-+	obj->args[0].val_set = (void *)99;
-+	obj->args[0].value_required = RTE_ARGPARSE_VALUE_OPTIONAL;
-+	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_INT;
-+	obj->args[1].name_long = NULL;
-+	val_saver = 0;
-+	argv[0] = test_strdup(obj->prog_name);
-+	argv[1] = test_strdup("-t123");
-+	ret = rte_argparse_parse(obj, 2, argv);
-+	TEST_ASSERT(ret == 2, "Argparse parse with -t123 expect success, got %d!", ret);
-+	TEST_ASSERT(val_saver == 123, "Argparse parse -t123 should set value to 123, got %d!",
-+			val_saver);
-+
-+	/* Test that -t alone with optional value uses default */
-+	obj = test_argparse_init_obj();
-+	obj->args[0].name_long = "--test-long";
-+	obj->args[0].name_short = "-t";
-+	obj->args[0].val_saver = (void *)&val_saver;
-+	obj->args[0].val_set = (void *)99;
-+	obj->args[0].value_required = RTE_ARGPARSE_VALUE_OPTIONAL;
-+	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_INT;
-+	obj->args[1].name_long = NULL;
-+	val_saver = 0;
-+	argv[0] = test_strdup(obj->prog_name);
-+	argv[1] = test_strdup("-t");
-+	ret = rte_argparse_parse(obj, 2, argv);
-+	TEST_ASSERT(ret == 2, "Argparse parse with -t expect success, got %d!", ret);
-+	TEST_ASSERT(val_saver == 99, "Argparse parse -t should use default 99, got %d!",
-+			val_saver);
-+
-+	/* Test short option with '=' still works */
-+	obj = test_argparse_init_obj();
-+	obj->args[0].name_long = "--test-long";
-+	obj->args[0].name_short = "-t";
-+	obj->args[0].val_saver = (void *)&val_saver;
-+	obj->args[0].val_set = NULL;
-+	obj->args[0].value_required = RTE_ARGPARSE_VALUE_REQUIRED;
-+	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_INT;
-+	obj->args[1].name_long = NULL;
-+	val_saver = 0;
-+	argv[0] = test_strdup(obj->prog_name);
-+	argv[1] = test_strdup("-t=55");
-+	ret = rte_argparse_parse(obj, 2, argv);
-+	TEST_ASSERT(ret == 2, "Argparse parse with -t=55 expect success, got %d!", ret);
-+	TEST_ASSERT(val_saver == 55, "Argparse parse -t=55 should set value to 55, got %d!",
-+			val_saver);
-+
-+	/* Test that long option with value works with '=' */
-+	obj = test_argparse_init_obj();
-+	obj->args[0].name_long = "--test-long";
-+	obj->args[0].name_short = "-t";
-+	obj->args[0].val_saver = (void *)&val_saver;
-+	obj->args[0].val_set = (void *)88;
-+	obj->args[0].value_required = RTE_ARGPARSE_VALUE_OPTIONAL;
-+	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_INT;
-+	obj->args[1].name_long = NULL;
-+	val_saver = 0;
-+	argv[0] = test_strdup(obj->prog_name);
-+	argv[1] = test_strdup("--test-long=66");
-+	ret = rte_argparse_parse(obj, 2, argv);
-+	TEST_ASSERT(ret == 2, "Argparse parse with --test-long=66 expect success, got %d!", ret);
-+	TEST_ASSERT(val_saver == 66, "Argparse parse --test-long=66 should set value to 66, got %d!",
-+			val_saver);
-+
-+	/* Test short option with string value without '=' */
-+	const char *str_saver = NULL;
-+	obj = test_argparse_init_obj();
-+	obj->args[0].name_long = "--test-string";
-+	obj->args[0].name_short = "-s";
-+	obj->args[0].val_saver = (void *)&str_saver;
-+	obj->args[0].val_set = NULL;
-+	obj->args[0].value_required = RTE_ARGPARSE_VALUE_REQUIRED;
-+	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_STR;
-+	obj->args[1].name_long = NULL;
-+	argv[0] = test_strdup(obj->prog_name);
-+	argv[1] = test_strdup("-shello");
-+	ret = rte_argparse_parse(obj, 2, argv);
-+	TEST_ASSERT(ret == 2, "Argparse parse with -shello expect success, got %d!", ret);
-+	TEST_ASSERT(str_saver != NULL && strcmp(str_saver, "hello") == 0,
-+		"Argparse parse -shello should set string to 'hello', got '%s'!",
-+		str_saver ? str_saver : "(null)");
-+
-+	/* Test short option with negative number without '=' */
-+	obj = test_argparse_init_obj();
-+	obj->args[0].name_long = "--test-long";
-+	obj->args[0].name_short = "-t";
-+	obj->args[0].val_saver = (void *)&val_saver;
-+	obj->args[0].val_set = NULL;
-+	obj->args[0].value_required = RTE_ARGPARSE_VALUE_REQUIRED;
-+	obj->args[0].value_type = RTE_ARGPARSE_VALUE_TYPE_INT;
-+	obj->args[1].name_long = NULL;
-+	val_saver = 0;
-+	argv[0] = test_strdup(obj->prog_name);
-+	argv[1] = test_strdup("-t-42");
-+	ret = rte_argparse_parse(obj, 2, argv);
-+	TEST_ASSERT(ret == 2, "Argparse parse with -t-42 expect success, got %d!", ret);
-+	TEST_ASSERT(val_saver == -42, "Argparse parse -t-42 should set value to -42, got %d!",
-+			val_saver);
-+
-+	return 0;
-+}
-+
- static struct unit_test_suite argparse_test_suite = {
- 	.suite_name = "Argparse Unit Test Suite",
- 	.setup = test_argparse_setup,
-@@ -1477,6 +1607,7 @@ static struct unit_test_suite argparse_test_suite = {
- 		TEST_CASE(test_argparse_ignore_non_flag_args_trailing_non_flags),
- 		TEST_CASE(test_argparse_ignore_non_flag_args_with_positional),
- 		TEST_CASE(test_argparse_ignore_non_flag_args_short_and_long),
-+		TEST_CASE(test_argparse_short_opt_value_without_equal),
+-*   ``-l/--lcores <core list>``
++*   ``-l, --lcores <core list>``
  
- 		TEST_CASES_END() /**< NULL terminate unit test array */
- 	}
-diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
-index 1e320749b4..cc16ba6edc 100644
---- a/lib/argparse/rte_argparse.c
-+++ b/lib/argparse/rte_argparse.c
-@@ -693,7 +693,6 @@ parse_args(const struct rte_argparse *obj, bool *arg_parsed,
- 	char **args_to_move;
- 	uint32_t arg_idx;
- 	char *curr_argv;
--	char *has_equal;
- 	char *value;
- 	int ret;
- 	int i;
-@@ -740,9 +739,11 @@ parse_args(const struct rte_argparse *obj, bool *arg_parsed,
- 			continue;
- 		}
+     List of cores to run on
  
--		has_equal = strchr(curr_argv, '=');
-+		value = strchr(curr_argv, '=');
-+		if (value == NULL && curr_argv[1] != '-' && strlen(curr_argv) > 2)
-+			value = &curr_argv[2];
- 		arg_name = NULL;
--		arg = find_option_arg(obj, &arg_idx, curr_argv, has_equal, &arg_name);
-+		arg = find_option_arg(obj, &arg_idx, curr_argv, value, &arg_name);
- 		if (arg == NULL || arg_name == NULL) {
- 			ARGPARSE_LOG(ERR, "unknown argument %s!", curr_argv);
- 			ret = -EINVAL;
-@@ -755,7 +756,8 @@ parse_args(const struct rte_argparse *obj, bool *arg_parsed,
- 			goto err_out;
- 		}
+@@ -71,11 +71,7 @@ Lcore-related options
  
--		value = (has_equal != NULL ? has_equal + 1 : NULL);
-+		if (value != NULL && value[0] == '=')
-+			value++; /* skip '=' */
- 		if (arg->value_required == RTE_ARGPARSE_VALUE_NONE) {
- 			if (value != NULL) {
- 				ARGPARSE_LOG(ERR, "argument %s should not take value!", arg_name);
+     Core ID that is used as main.
+ 
+-*   ``-s <service core mask>``
+-
+-    Hexadecimal bitmask of cores to be used as service cores.
+-
+-*   ``-S <service core list>``
++*   ``-S, --service-corelist <service core list>``
+ 
+     List of cores to be used as service cores.
+ 
+@@ -108,7 +104,7 @@ Device-related options
+ 
+        --vdev 'net_pcap0,rx_pcap=input.pcap,tx_pcap=output.pcap'
+ 
+-*   ``-d <path to shared object or directory>``
++*   ``-d, --driver-path <path to shared object or directory>``
+ 
+     Load external drivers. An argument can be a single shared object file, or a
+     directory containing multiple driver shared objects. Multiple -d options are
+@@ -134,15 +130,15 @@ Multiprocessing-related options
+ Memory-related options
+ ~~~~~~~~~~~~~~~~~~~~~~
+ 
+-*   ``-n <number of channels>``
++*   ``-n, --memory-channels <number of channels>``
+ 
+     Set the number of memory channels to use.
+ 
+-*   ``-r <number of ranks>``
++*   ``-r, --memory-ranks <number of ranks>``
+ 
+     Set the number of memory ranks (auto-detected by default).
+ 
+-*   ``-m <megabytes>``
++*   ``-m, --memory-size <megabytes>``
+ 
+     Amount of memory to preallocate at startup.
+ 
+@@ -236,11 +232,11 @@ Debugging options
+ Other options
+ ~~~~~~~~~~~~~
+ 
+-*   ``-h``, ``--help``
++*   ``-h, --help``
+ 
+     Display help message listing all EAL parameters.
+ 
+-*   ``-v``
++*   ``-v, --version``
+ 
+     Display the version information on startup.
+ 
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index 2f91b96190..675745d610 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -66,7 +66,9 @@ eal_short_options[] =
+ const struct option
+ eal_long_options[] = {
+ 	{OPT_BASE_VIRTADDR,     1, NULL, OPT_BASE_VIRTADDR_NUM    },
++	{OPT_COREMASK,          1, NULL, OPT_COREMASK_NUM        },
+ 	{OPT_CREATE_UIO_DEV,    0, NULL, OPT_CREATE_UIO_DEV_NUM   },
++	{OPT_DRIVER_PATH,       1, NULL, OPT_DRIVER_PATH_NUM     },
+ 	{OPT_FILE_PREFIX,       1, NULL, OPT_FILE_PREFIX_NUM      },
+ 	{OPT_HELP,              0, NULL, OPT_HELP_NUM             },
+ 	{OPT_HUGE_DIR,          1, NULL, OPT_HUGE_DIR_NUM         },
+@@ -76,6 +78,11 @@ eal_long_options[] = {
+ 	{OPT_LOG_COLOR,		2, NULL, OPT_LOG_COLOR_NUM	  },
+ 	{OPT_LOG_LEVEL,         1, NULL, OPT_LOG_LEVEL_NUM        },
+ 	{OPT_LOG_TIMESTAMP,     2, NULL, OPT_LOG_TIMESTAMP_NUM    },
++	{OPT_MEMORY_CHANNELS,   1, NULL, OPT_MEMORY_CHANNELS_NUM },
++	{OPT_MEMORY_RANKS,      1, NULL, OPT_MEMORY_RANKS_NUM    },
++	{OPT_MEMORY_SIZE,       1, NULL, OPT_MEMORY_SIZE_NUM     },
++	{OPT_SERVICE_CORELIST,  1, NULL, OPT_SERVICE_CORELIST_NUM },
++	{OPT_SERVICE_COREMASK,  1, NULL, OPT_SERVICE_COREMASK_NUM },
+ 	{OPT_TRACE,             1, NULL, OPT_TRACE_NUM            },
+ 	{OPT_TRACE_DIR,         1, NULL, OPT_TRACE_DIR_NUM        },
+ 	{OPT_TRACE_BUF_SIZE,    1, NULL, OPT_TRACE_BUF_SIZE_NUM   },
+@@ -109,6 +116,7 @@ eal_long_options[] = {
+ 	{OPT_NO_TELEMETRY,      0, NULL, OPT_NO_TELEMETRY_NUM     },
+ 	{OPT_FORCE_MAX_SIMD_BITWIDTH, 1, NULL, OPT_FORCE_MAX_SIMD_BITWIDTH_NUM},
+ 	{OPT_HUGE_WORKER_STACK, 2, NULL, OPT_HUGE_WORKER_STACK_NUM     },
++	{OPT_VERSION,           0, NULL, OPT_VERSION_NUM         },
+ 
+ 	{0,                     0, NULL, 0                        }
+ };
+diff --git a/lib/eal/common/eal_options.h b/lib/eal/common/eal_options.h
+index 7a56aa3810..6ef45559f0 100644
+--- a/lib/eal/common/eal_options.h
++++ b/lib/eal/common/eal_options.h
+@@ -17,8 +17,24 @@ enum {
+ 	OPT_DEV_ALLOW_NUM       = 'a',
+ #define OPT_DEV_BLOCK         "block"
+ 	OPT_DEV_BLOCK_NUM      = 'b',
++#define OPT_COREMASK          "coremask"
++	OPT_COREMASK_NUM       = 'c',
++#define OPT_DRIVER_PATH       "driver-path"
++	OPT_DRIVER_PATH_NUM    = 'd',
+ #define OPT_LCORES            "lcores"
+ 	OPT_LCORES_NUM         = 'l',
++#define OPT_MEMORY_SIZE       "memory-size"
++	OPT_MEMORY_SIZE_NUM    = 'm',
++#define OPT_MEMORY_CHANNELS   "memory-channels"
++	OPT_MEMORY_CHANNELS_NUM = 'n',
++#define OPT_MEMORY_RANKS     "memory-ranks"
++	OPT_MEMORY_RANKS_NUM   = 'r',
++#define OPT_SERVICE_COREMASK  "service-coremask"
++	OPT_SERVICE_COREMASK_NUM = 's',
++#define OPT_SERVICE_CORELIST  "service-corelist"
++	OPT_SERVICE_CORELIST_NUM = 'S',
++#define OPT_VERSION           "version"
++	OPT_VERSION_NUM        = 'v',
+ 
+ 	/* first long only option value must be >= 256, so that we won't
+ 	 * conflict with short options */
 -- 
 2.48.1
 
