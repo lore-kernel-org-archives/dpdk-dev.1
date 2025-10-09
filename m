@@ -2,160 +2,169 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 755F6CCD184
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 16:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E29ACCD184
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 16:50:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9AB4A402A0;
-	Thu,  9 Oct 2025 18:41:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 63413402A0;
+	Thu,  9 Oct 2025 18:50:04 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 7F0B340267
- for <dev@dpdk.org>; Thu,  9 Oct 2025 18:41:49 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5E8EB40267
+ for <dev@dpdk.org>; Thu,  9 Oct 2025 18:50:02 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1760028109; x=1791564109;
+ t=1760028602; x=1791564602;
  h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=rLck2KIgMcZy0mu1gl+TpwBcAJ0v3hLPzKTt/71gato=;
- b=bKYoAZp7IRYeNymFDn5S4uNIU//QEbe9JSRHQ56W9l9CBHyV16+fPw+J
- a8KRmlhA3ZFEm05EUHNb4dSmZbgfKgqlgQyU+yqrR/WSahMs0c2mBXq9O
- Z68F3Ves5roG1oDcyw7Yuz/mX1Y9F81/MZAyZB5Ii5N3BUJy8O0z9KRYg
- 0GXhvuxYYrIrKXZKVWv7+OPLaymP5cZ93P7STzGa3045662G7d02oJE0D
- Kc9S3NnhgTrfCzMu8hO5jG4/y59CDITDCIL0dXrLKDTs32VRaSx/I83Vp
- adibhBD5p3DoIOen1mha0GwVnEC8CTWn+MwRONElmfSs7r4XDQSco+88H Q==;
-X-CSE-ConnectionGUID: oCxNXkP7RNKFJ+IgUCKl7g==
-X-CSE-MsgGUID: ls2h7ZnaR6uibxxXw2nX6g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="73673401"
-X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; d="scan'208";a="73673401"
+ content-transfer-encoding:in-reply-to:mime-version;
+ bh=xXN/TXrJRODOFo3mWhGX64qfRZAyyyvXZr3jP1OiILY=;
+ b=IzHqVPt9KxdzRpTihF+iFLdCxVnk74IgOvEKBAKROu5iOv5znz6tQnvR
+ MH/Tlhfkxri/zlIIhdpyphmxyVG9bf61aj4WGUUtCC8oeJwtWIlVQqoj2
+ v5MwS+0NigPYDChlhds4308MsTuMyLHMhzpv/epCpjUHIdeDb2VKnOOud
+ udEAEYA8/oFcqH2yu0bIWuX/4F0ksmNqGt/vg3fXlq+6w7aaXQhdmBLdd
+ zpQmXZ5iSMuCsYY97ULdypmw4crzmWj9ujfYb6lpQadIaUQQxHPKhDiJc
+ dOPVAjs47WoJWSbdhmAatuHCu4+DLz00X8b5w/uY5ozGJXvp1yerRYDiX w==;
+X-CSE-ConnectionGUID: PaWIDAr1Q4WR/0ACyUsAJg==
+X-CSE-MsgGUID: io7V80L1TcSFqi2BW9K/+Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="73674356"
+X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; d="scan'208";a="73674356"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2025 09:41:48 -0700
-X-CSE-ConnectionGUID: 1AA0E+PBSkuE8ImUI/oBCA==
-X-CSE-MsgGUID: jojeJ80FQsWO7Y0WrXqkZw==
+ 09 Oct 2025 09:50:01 -0700
+X-CSE-ConnectionGUID: rqDKX/+xQBidcLW3tMthVA==
+X-CSE-MsgGUID: ny5ybVY3SySIA3VNp/2nzQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; d="scan'208";a="181183602"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; d="scan'208";a="181186319"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2025 09:41:47 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ 09 Oct 2025 09:50:01 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 9 Oct 2025 09:41:47 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ 15.2.2562.27; Thu, 9 Oct 2025 09:50:00 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 9 Oct 2025 09:41:47 -0700
-Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.71) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ 15.2.2562.27 via Frontend Transport; Thu, 9 Oct 2025 09:50:00 -0700
+Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.3) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 9 Oct 2025 09:41:46 -0700
+ 15.2.2562.27; Thu, 9 Oct 2025 09:50:00 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FMYW9+og3LbQPCEoy0Tf/N2NRMTfyjIax1GDY7IVEeUG0x9IZYjHYnEVyS05eG2QahlAVe0chAo2pWgjhSoI07/Q0aqmeJOvjqrJODe/hE7D985hPn1gO/3Zs/3MIlwms/0we9sSsUAKpzBKjEabvDQrLpfeXEfgR/GpVGJQagh68Cya8I1Oo0MFQUAOpy6PA6kMa5V44GEW+8lDk45AtCXz9ej2Wvm4EuIUnilrQWbX0y0rX3DxfVJzTkzqzVGIm94mP1/zCU9nY+qKoAR8McBo9PCw9KWXE2FeadRsP4MESjQU4Hc0MiX8gTMK+qFoKi1rEmFnVK16kidCOeAk8g==
+ b=qKe04C+jGPGgcyWhE0lTir3N+s1voU5tBJ/zGIHkNa1QR041G9eKuk0Qyi3yyQcpRw2lMV0EQmgyy6YBWg3Eof/7x/bhrFmDHIwl60TGlep+1bm5XI7GFJy44wjHigTqfGddU1zciAltJvoKoKY2fV8d71hcRNgW4cWUXrgUiH23ycJkAZUYAxZvu1Ap2MwvEx5juKmF5g4PxC5DdRNuFquj/Insho1gz67BDDg9zhxagNDCXKCVFqeAgjd3sJP0cdPa92pEIC7ZzkVxUxfH7bOk+RIDRoWvXrq4yxp5F/PFlIahZAggalglu5okYoh8AMJvCuKD8vjSJyWKv9o6/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SsZJBodYmXs9kcuixS0prxwlsDj8AiCmTjqK/+jZZ/k=;
- b=pmarD05hLHC38LVVzyoS3kKi6kf3LnLCDXz5hcbAJbM12i9lJnwno0HVX7tZi1/rkbFqqK/pJPkSqMlTS2hL0pFRKlk3w8Jzys3/1+1wHa+JKn0iwy98c/E78YzQSpEjmkD4Hpb52zpgdzE1BWhQbIyUkwc3hZe8ut7fcrP/hG3tPq6ab+9PGw8+tjtio6sYVg+1//HPD6jKXI89dEtyuztFKf8yAEcqU8oO39Ybzw0/35iQw6qY8eZ4ykLa0S/WRQ2/OHmgGdHvmUq+kJYXzmq3XaX2thpnoIhPL2DNBOOPjld2VyHQvftaQ4KmhLT0bIMOnJUTZPp5z3vziW3Twg==
+ bh=KaS4An4vEbDlcRX33tsANXQjA/00B8iLaBBcusKOdHM=;
+ b=OULQ15TGsCsq/Ux6TRk79acJBly5Kp8rRjvM58y2gKT25R6fjhV+0euHHru6hGdizDT+8MVkcgnWZAdNAYY2vgBtfLXupfTK0K6CC88MUWSmwkUXboxFvjAnXGpFAPHkm4qsyLKEUTjy7dBXTuCslBS7evIvJiTbZoyoRh3cq6CmkXcAcgtJwFDVqFCs1ApE24zQ9Rp6TnC+a5M0uR5zq3O4zhrHF+MNBRXQS/KQiO2+FuY6kzyaCY5UpA0/sL7hjb37J8z9v54Utbj7AkZTvcsDMCTe3TONU/McsXbQVfZcy/1RkhnrI+Lp+XxK4yOY9Z70ANyXRD7jo435c6Q4OA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by LV8PR11MB8534.namprd11.prod.outlook.com (2603:10b6:408:1f7::6) with
+ by CH3PR11MB7276.namprd11.prod.outlook.com (2603:10b6:610:14b::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Thu, 9 Oct
- 2025 16:41:40 +0000
+ 2025 16:49:53 +0000
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9203.007; Thu, 9 Oct 2025
- 16:41:40 +0000
-Date: Thu, 9 Oct 2025 17:41:35 +0100
+ 16:49:53 +0000
+Date: Thu, 9 Oct 2025 17:49:47 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: Shreesh Adiga <16567adigashreesh@gmail.com>
-CC: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, Jasvinder Singh
- <jasvinder.singh@intel.com>, <dev@dpdk.org>
-Subject: Re: [PATCH] net/crc: reduce usage of static arrays in net_crc_sse.c
-Message-ID: <aOflvyl1Ow9N7Mve@bricha3-mobl1.ger.corp.intel.com>
-References: <20250716103439.831760-1-16567adigashreesh@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
+CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Stephen Hemminger
+ <stephen@networkplumber.org>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>, Ivan Malov <ivan.malov@arknetworks.am>,
+ Chengwen Feng <fengchengwen@huawei.com>
+Subject: Re: [PATCH v8 1/3] mbuf: de-inline sanity checking a reinitialized
+ mbuf
+Message-ID: <aOfnq0bx0py_XTQz@bricha3-mobl1.ger.corp.intel.com>
+References: <20250821150250.16959-1-mb@smartsharesystems.com>
+ <20250823063002.24326-1-mb@smartsharesystems.com>
+ <20250823063002.24326-2-mb@smartsharesystems.com>
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
-In-Reply-To: <20250716103439.831760-1-16567adigashreesh@gmail.com>
-X-ClientProxiedBy: DB3PR06CA0036.eurprd06.prod.outlook.com (2603:10a6:8:1::49)
- To DS0PR11MB7309.namprd11.prod.outlook.com
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250823063002.24326-2-mb@smartsharesystems.com>
+X-ClientProxiedBy: DUZP191CA0052.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:4fa::15) To DS0PR11MB7309.namprd11.prod.outlook.com
  (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|LV8PR11MB8534:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1792cf81-6fbc-4242-5e11-08de0752b87f
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CH3PR11MB7276:EE_
+X-MS-Office365-Filtering-Correlation-Id: c47fb0b0-6a72-431d-9114-08de0753de60
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?YFe45p4boNyzHn3c/c33SVoQ7Iu7rCP5Uvvvutu0lIs1sDrdK9GYTRD5oiQL?=
- =?us-ascii?Q?nx0GqYKXWNQRaSyDUEJWkRC5lUjNklOzyjCMXU67nOEn+WHG6Pq+DRyuu50h?=
- =?us-ascii?Q?3EFGVryzWgCwomqjcA9vCre8FRXrtPAREy1cIQbDc9CGWxgME9mf/KKS+d6z?=
- =?us-ascii?Q?v8wB0RCc1hzQ7nRkKyRsJsFzWi4SFWtCu+2QE3FLnKBjcWyj5HHUeJQ1fxtw?=
- =?us-ascii?Q?H3gKRh5y0Sw5sHIUyIJpKBqMDrX2vfIXndpp9uLjQwPgla1aPal5Tx5RbAwx?=
- =?us-ascii?Q?UhZ/PRsnas0nnLPEQ8C9c0Mg4Zli68sQFfh/iHZkBYQ/WbsfTuC4bJnxkZ5M?=
- =?us-ascii?Q?V0XP0tf+p8V6G/XP+4gPiLInPKeIzRofUOwQ3sYDObbmkN/QffopPEGCj9PV?=
- =?us-ascii?Q?jZtGHr6l3xinZxQQ9IRWbxZYP6yrAf+m/cMjyHwzNAXLGF7M5/x0Zq0rJ4Y+?=
- =?us-ascii?Q?+8ic/uXVFQYW2pSIBhmh2OqZaKdswCaIHP5UxWEOE2IBiCDpj6GCVB3mVPol?=
- =?us-ascii?Q?wpbMrbzJXgJu5k69hDxmqQgTHpVXD+/PAo5ryrQiF+L5hTwHexzZmx6Atamt?=
- =?us-ascii?Q?zyqfs/6URxpjdAfPrv23AyFz03Qw+PKeBH82lLxbOKmi2w1WK03HwBOe4X15?=
- =?us-ascii?Q?rrM5GsX2gyz6iPSC3MmVFSgZZ5SELygh/AxLHDGrCj4iBsrW95v5VpWyOB/b?=
- =?us-ascii?Q?n8yqF/5NBO5Jw17Tar1pQzK0HsLSCenmdtz/9UUCHZgQPlL0zG/Diikg6ebb?=
- =?us-ascii?Q?wiJ1LX6/zVfG4uzqFIBZJLusdH0Nx6G2h4gxO8g3LLvAHRhfp0a24lSQVuHL?=
- =?us-ascii?Q?oe/rn9UjdMTZUdJqdojtpQSz3BiOwiROCL4gko72UXPG4SsMOwibNLxVwTaU?=
- =?us-ascii?Q?YPGKNHhIZ2f+hW/VZazpxxLeORqseNFxKeD4kj1wMwMdcmy3oEDh/CAuC/o+?=
- =?us-ascii?Q?qJBkbigDsJ0QPjaw7WHE4nr1+CBM4JE44EL3YFkGMenQiCE/f0S3SD7/P8dq?=
- =?us-ascii?Q?mIJUAHzgev7M8yTMwAGPq5QJtN0r9Bm4D5QENCaO74aUJ98cbBXWuNBdeIcs?=
- =?us-ascii?Q?tpNu2NI6YDsHprQbA8XfJH3m1CQyip1lR7VxBrmaQsrw+2AVwbF+qstIA8G1?=
- =?us-ascii?Q?3tn5eFwm6d1J3M1pSHDLewzIqfWAN4rgMcYLWsFh0lTxHRn2KY9xB3+6rmXv?=
- =?us-ascii?Q?4QbKVrMZR1h5/dZIa4KOuiMaHJXQscoAnMm4uxqLt27D25SSKY4sAH2Z+tpF?=
- =?us-ascii?Q?dm5FHeVp3vO5OwknTqXVJhEsk0rxwPdbLVkq23Iu89ysrEj3Lu3I4VuOIN0d?=
- =?us-ascii?Q?xRVns1Ufk3GRG4wR75xnZVOaThwNlVFetX0kLdsY2iph2Xqrj1KDTwnyJJb9?=
- =?us-ascii?Q?o+UOpF557wiPO3mNhz/GlW14yCRNStik9sD7ryhf6xVg6/vAnPk6fHEUNM15?=
- =?us-ascii?Q?asN5VJId/9K2TCN2aYDm4QvyfhAwIpX0?=
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?nP37cELTZ9plOXsEgXUlHX7hWeChYsPQvc1B2WyLe2AvRVMMbAPWAAiqGH?=
+ =?iso-8859-1?Q?qs+mwaKm2k9gIgzlKG7isujqY1wzdJopgb3Vx6mVdb+eDnu30VOKS2acE1?=
+ =?iso-8859-1?Q?hTctrzeIStB/yJozzEw3uRD1CZJpRtz1wl59d+SFtbBdDGXVGeJ+6TrQie?=
+ =?iso-8859-1?Q?ruypHUXsQc1v6r6oL+Q1x1QtQlLfbNRFjjCZK6tqUpjyV4ZzsB4KtCtFfd?=
+ =?iso-8859-1?Q?WWKmXWlkuTOw2P6Ua/8gMHkYZX+ijU5DzIcNYsm5k0W0sHGeDbrpCQ4Pdz?=
+ =?iso-8859-1?Q?JPJdt6vv6iV1chCzMjDmn1Z+4R39rkzmUzHnM9PivNAi11QtV55NMd6AUw?=
+ =?iso-8859-1?Q?YLe4f/tR+OejlG/dk2j265E+NgLEjRfuI7sGgonYd/+HhM5YhaUIWVnob1?=
+ =?iso-8859-1?Q?cZOtkMYFz3W9JKXdlZTQQW1hrWNG+iNIsS3rQbKZl7Vv91MXhdUELGrwQE?=
+ =?iso-8859-1?Q?tcyAYjsr5Lf1KfgdZVDKTHgztnf8dbijeGX8K1wQxLeomVTBOYrTNg0fZS?=
+ =?iso-8859-1?Q?E/X9bKTS63yTjrKY7ZUGWm1/KGJCl9T2BXvr9KjQPZRJQsrcr7pWJY43/d?=
+ =?iso-8859-1?Q?sIWKDzJFC4HfgALlL6zQvbV22QoAsanVJSpchg/ugXDxkqG67CkhOppFkD?=
+ =?iso-8859-1?Q?28OvVS/aXzaVSsZnUjQNDotevuDNeiP5v9kyR9UJ8Xm3Tq4fe8UvlZ0Ey6?=
+ =?iso-8859-1?Q?hq/wsodV9+ISqn6iqckvxo/1/xvKkA48lVWNRug/8vwxnM9tV8hkPrBZ5+?=
+ =?iso-8859-1?Q?PM7u2537Snweqd+Yfb86HJ5ZGGlZTbC14rgFBsAPUqSII/SCdbNoRgXXeu?=
+ =?iso-8859-1?Q?kEY2sfMKm9+h4ZXoonpU0GmKiTjS85jJfacFTg8NktmQYvk6pu/WfZQM97?=
+ =?iso-8859-1?Q?IU/s4ogZpqMtpd+PUod7GFxkKLver4J8eE+WLJ6p22oQDdw60noJ6//JKL?=
+ =?iso-8859-1?Q?vkZ+0OorOjDrjsv+DxQW7tHIcqrPd2F4EBlUAhD7vzAXlttdmAkDF2qyae?=
+ =?iso-8859-1?Q?5p9Z7GUT7POIWts29YxvolMYzcKwOY29zXWQE+7ofXbCcKXmrimzFTy2I9?=
+ =?iso-8859-1?Q?zB/SxIOJVAAjLVL01iiHbDA8049w1h3fDHQgVjN7cN86DbvGK2LQ3E+xPO?=
+ =?iso-8859-1?Q?iSpIT64ahlSZPJcUIeoDxcJCCisGbho794H6yUHiLkNvS+jTlSj2qfd7wt?=
+ =?iso-8859-1?Q?Fc9fU2VcD2/cFq5t7+cz+MVHUaf2UWdu4sre12ixL4eAN4pNzixP6IY5BD?=
+ =?iso-8859-1?Q?jDRWfrJ2fhh9UvHLF/4g7qD9a/iBF2j9IFfmVeJfDWFzsBoeISTF1znIIb?=
+ =?iso-8859-1?Q?JXn1Cw1TTbroKUqO8llB7JWvSufJWJ0UHc2GB3mnJBjYtdmCKnxUZOdJfm?=
+ =?iso-8859-1?Q?XDG+nUd4+ZdXCtGdcwu5hh0Za7r97A3bGITs1p+Jdj0/WVB5xMkQcbUQpU?=
+ =?iso-8859-1?Q?bMgM20JRcbt2LSAWNR/BkP4+v40eGLD3G9GqMlPxCA6n7/ZV7d6o88Q2no?=
+ =?iso-8859-1?Q?YD2Xj0yRs4FwW0muMUUeBj?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(7053199007); DIR:OUT; SFP:1101; 
+ SFS:(13230040)(366016)(376014)(1800799024)(7053199007); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bYsnt1jdsreo28POkfZBxUK86FB6QWgDUix8NYkJuLXTQE08xDciLVTVc9t/?=
- =?us-ascii?Q?rDeVquWbWYWmb2mMztdDYo5Rctocbfu6gy8olxzdzv2In8dvnf8hP1FunMz/?=
- =?us-ascii?Q?Gw4QfybWcb5m3ZJvgqD9soPwCRSDbfCYY4mck4Usa5/YR0PxjuLHPgYsUBL/?=
- =?us-ascii?Q?d3WxSJgZst28LPrP8zoSoOp1QaT52GX0b0QF6ZjLJBvjthGGJz8tZJqqne5I?=
- =?us-ascii?Q?pvtBNz7WNVHOR0OV8OsRAgIVW7k5dE/OWE2LIK9hIbzY7eKGWQZi+wIAL5M2?=
- =?us-ascii?Q?oDx97Nx4eKU+k7atWf2knt78B+rYazIV7luvq9mt8xgsEhKEfxOBSLyhbRKu?=
- =?us-ascii?Q?0yGdyqFqYgFqZj/KnDDJ8Nz9ud8XDjNUzzCi/LQaKwU8zK6P3/hyD3SWeYJZ?=
- =?us-ascii?Q?nF2NL0/Hz1ax7m56trPToWJLv8U/xkd03X/KtdqcGQnlvpFM6hb+lmOOifag?=
- =?us-ascii?Q?C4hQSxH7IsAToBvIyT1DrAc4BU21tAijtLfGY+S/u0YUcE59TDwK9QbbzmoJ?=
- =?us-ascii?Q?76V7jjYmTK0soMrbXFE4yNQElmZNAxiv96hwq/2kPvwCS1Lsmkc930lTw2dK?=
- =?us-ascii?Q?8xuBiGqvr1jMbWOHToO5+uiKV3PwAn//EKoK/P59jvP2Ns/iqlPwb7cU3ycA?=
- =?us-ascii?Q?yj1PvoBwvhyjkxegp4uQGtmax6znVqOTMG1pE3uUyK0fIwhMUzZYNHqbHA5X?=
- =?us-ascii?Q?U7Beg13PoaBKuXbtsRGjmRTaDugIQ8etC1PMEiJ+N74W37lpt8XSvj2AaclB?=
- =?us-ascii?Q?89wfMemlWp+n2Bd4FyRzS9oAIWntex/3L7ebbyggxUm9kTILpc5y7YYTxmrZ?=
- =?us-ascii?Q?U/oj/0Nch2BjegR3rfy8xtZbAKPhVt8QqzndpWCbeUhMHMhcYqmB5msLCJAS?=
- =?us-ascii?Q?1PLM+mvLrvHOJ2EwPqs3D6OOjDUE0k7UNbhd04dzYNJKTxOFcA0G/Fm4M1iu?=
- =?us-ascii?Q?ywBhe2kPcrbpqxoMW9Uroh818AitHzDpcon6qDI/+D0yCrDhd4aEzSuvp50E?=
- =?us-ascii?Q?M3xD/auzIHu4MZazw43/7BRzNGhSoPFxa71iTvOa9LXX3KoNxAUHKGWOVTXO?=
- =?us-ascii?Q?NMbbP+TtRUuZKVHrzmupcwBydWkpmtexdzH2ROvIvnlW/PqVWPhEZDFQOXmt?=
- =?us-ascii?Q?Ua058pspusbkgkRmvfxb4EfWZk63XSBANAN5ORZeqWbDX2wDdg5NaeygksfK?=
- =?us-ascii?Q?Fq8JkTRpbSNXNcVDrVS8KtixcVhlFIlTjmw3UOHG3JAfhFY6f4EOmbyul88s?=
- =?us-ascii?Q?pz5AhUxUHVWDWaK8zfd0pi19wxMYJqu3BiNUncWXlbDOoiepy62Nqxkp87bn?=
- =?us-ascii?Q?g1W8Ia4P5eSw4NFPfELoLwJ4XkU8+GUt9VjZCbhQjbEuR2C3I1kW9v+q6N5U?=
- =?us-ascii?Q?ggva9k+bPGzNucm+10szIhqxcaQIHdh53SFqeaEkxDnVYyQPN9X75E/wsDZT?=
- =?us-ascii?Q?dF4a0pls6vfGx+bm5riBQhG1QPOcCjVhczz7CeDHDNH8VTW4IDtByl6YANuh?=
- =?us-ascii?Q?pMcDW6/v91RBvDPk4gc2w8HoiQpvraM7OGEP9uD/6MA+Vn/ygKDmZgkBUgdo?=
- =?us-ascii?Q?+gUJJyvj4VD7NshSP46wvm2W7aBbSkeZN8lGvUJyy5YAXWyie3F+7bayvvu3?=
- =?us-ascii?Q?9w=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1792cf81-6fbc-4242-5e11-08de0752b87f
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?a70SA6ICwxIG+GrTzBkGqemFMiQyqN0pCIWvF/dIOeqIg//MPikmskCdII?=
+ =?iso-8859-1?Q?2xVu5QbW0/ILC6uZp8DSWFX1U9TWb2fIY9AYImnZDRD8kAEh+bCUKp87NR?=
+ =?iso-8859-1?Q?LR3KxkiM1gR/4xNjLwTYz1HbqiKkrUIiHdRRgiqM9LJNADQSzj1UpQWWRM?=
+ =?iso-8859-1?Q?yMdqOzKbvm3u2yahOL7vrpCnYJmhmuUbUeXryKzocHWm4HK+LhMI/XDqhA?=
+ =?iso-8859-1?Q?i2Tw672hF8brMkOo8l8Md4f5J2uvnN+Z7iVJogF4LNys2/7O1OJjRgrExD?=
+ =?iso-8859-1?Q?Fr4ZjrqBH9CqzkU6hoGyRZahqofzbS5CB6xnk5OGZE5eu0yk/u+y3bcBx8?=
+ =?iso-8859-1?Q?oOjvXg55bFtpXG/vfT9aWQqo+1/bMCNwC9ch3YGEBDMRlofCarKr7D3PZm?=
+ =?iso-8859-1?Q?77unsdFty6wnWuP5pzgFO+k21TCPQtfv8nZXtxbyl6ytuQVAfKq1gO1nNP?=
+ =?iso-8859-1?Q?EukKq9PhdUlh5G83eLwQpTcW4JRZAVQuvJGEJZP6FVolqMgfj3UEDydwTB?=
+ =?iso-8859-1?Q?Sc1kkCdgBJeO6ZmmsIJlBAEwPFYLpy7BgOjDD8VkE6wxHFylIdzy13kegD?=
+ =?iso-8859-1?Q?QGq0sKfeeekTseTIVDjnQL2x8HmSP376EFogxyN8U9SmrV9rHOqluPZ08T?=
+ =?iso-8859-1?Q?XTwV6KYp+rs/Wnma9BbFdaFUH55vVim95Gp5azpqTZhUE1gxWN1MBqUg32?=
+ =?iso-8859-1?Q?Gv//zZiaI2v+x196IRwMPtQY4y+yyid1ZmFymcVM2/9sP+jLy3MAkszPpB?=
+ =?iso-8859-1?Q?Dcf+K/kKda4UdG6lZgw1+DXb/siTKNO2Q+XmMVIAr/HTt8TxrkAk68WLI+?=
+ =?iso-8859-1?Q?4VR3AUIqFhl+rSJjUj3oOiRWqDrCsxWhMfOVxCaFrYJNxqgIwV+5A+8KBX?=
+ =?iso-8859-1?Q?w40Kk9kBKwICsEKrH34Ql03hrYDlbZYu5kLbVmTyh9yyi+FyrdvaaZzD0e?=
+ =?iso-8859-1?Q?1kY1wUQznXLfv90jpVNPJ5ysfURKG+P6KEXaE7PgKQbbc6JcMztA5lA7G9?=
+ =?iso-8859-1?Q?Xj+VuN5f9qBtaUaEO13vnHOb65rUfltJ1wPaJIDE9xwqTNc67kb9lWJSiw?=
+ =?iso-8859-1?Q?bBwonOqQ9KO+6JiK+VXMwPcChG6cIFBR692oWJMeOfqLIYN7VFGi/2KCCL?=
+ =?iso-8859-1?Q?7ubccwyn3aS98i0AfIuv+kLw/FlDZtcelFRe9D2mcGp8GVdsu592MnfF1A?=
+ =?iso-8859-1?Q?7p+77mHgg+JuD5huhP/zGyLqcC8G+DBdf6rn9Aql3/0D+wphVtia4oOzod?=
+ =?iso-8859-1?Q?4NOZw3DF3+t4c7UXvUa9SnPIKmYSRKnxClLgOlZ66nEgJIMnAK76kfdhWD?=
+ =?iso-8859-1?Q?gb3HadO8Zoq+3gZiXg5IGdvPtoXkv4iei3wSx2lLiZDWxdooYF2Z6DPmc1?=
+ =?iso-8859-1?Q?XYUlEj9xl6Q2Vy8kEET2PHe6/y5GKhnNPSZ7TnUQ1P0RxW+521g90VRovU?=
+ =?iso-8859-1?Q?DZgYH1PQhMwmyq2GDnP49+45DhQVlEaYHifCSfDrY6nT5RX7MLsuRGnvFP?=
+ =?iso-8859-1?Q?GCWi/x9XhNDd/MfgI4ZP/ft5tC0nUiejeprFY0PEgLVseI894NxBrtrkN0?=
+ =?iso-8859-1?Q?kRgiNJffKahEJ19bq9iJkr7egygAHpd6aJDmVLiXJZ0Kq0wI665/CPzQHv?=
+ =?iso-8859-1?Q?qqeSSndas39o3Oj5nDxXXC5wsNmudMRsV8p85FcDiMsgDp4aMRxcjOVw?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c47fb0b0-6a72-431d-9114-08de0753de60
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 16:41:40.0645 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 16:49:53.0139 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SchXupZr27v4IN7iH1hyoFXRvB/mdPywZRr5SZvjhPryiz3F44fM8G6p2Ed0QF2T+1+XxyFWuvqgyeb6jz0uaDky3m6wfhNL8ubjzrRNPvA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8534
+X-MS-Exchange-CrossTenant-UserPrincipalName: OYsZzRuY+JNngfq8j5VP60NujoFAXhB9Hd01FafVVi/wIiK11RjSHo3Yd3u68Z3SWjaAkPIwNtQGvxeU2ZkJe8R77x4PATZbDdxzj9iVfUM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7276
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -170,108 +179,162 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Jul 16, 2025 at 04:04:39PM +0530, Shreesh Adiga wrote:
-> Replace the clearing of lower 32 bits of XMM register with blend of
-> zero register.
-> Replace the clearing of upper 64 bits of XMM register with _mm_move_epi64.
-> Clang is able to optimize away the AND + memory operand with the
-> above sequence, however GCC is still emitting the code for AND with
-> memory operands which is being explicitly eliminated here.
+On Sat, Aug 23, 2025 at 06:30:00AM +0000, Morten Brørup wrote:
+> Sanity checking a reinitialized mbuf (a.k.a. raw mbuf) has been refactored
+> to follow the same design pattern as sanity checking a normal mbuf, and
+> now depends on RTE_LIBRTE_MBUF_DEBUG instead of RTE_ENABLE_ASSERT.
 > 
-> Additionally replace the 48 byte crc_xmm_shift_tab with the contents of
-> shf_table which is 32 bytes, achieving the same functionality.
+> The details of the changes are as follows:
 > 
-> Signed-off-by: Shreesh Adiga <16567adigashreesh@gmail.com>
+> Non-inlined functions rte_mbuf_raw_sanity_check() and rte_mbuf_raw_check()
+> have been added.
+> They do for a reinitialized mbuf what rte_mbuf_sanity_check() and
+> rte_mbuf_check() do for a normal mbuf.
+> They basically check the same conditions as __rte_mbuf_raw_sanity_check()
+> previously did, but use "if (!condition) rte_panic(message)" instead of
+> RTE_ASSERT(), so they don't depend on RTE_ENABLE_ASSERT.
+> 
+> The inline function __rte_mbuf_raw_sanity_check() has been replaced
+> by the new macro __rte_mbuf_raw_sanity_check_mp(), which either calls
+> rte_mbuf_raw_sanity_check() or does nothing, depending on
+> RTE_LIBRTE_MBUF_DEBUG, just like the __rte_mbuf_sanity_check() macro does
+> for a normal mbuf.
+> 
+> Note that the new macro __rte_mbuf_raw_sanity_check_mp() takes an optional
+> mempool parameter to verify that the mbuf belongs to the expected mbuf
+> pool.
+> This addition is mainly relevant for sanity checking reinitialized mbufs
+> freed directly into a given mempool by a PMD when using
+> RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE.
+> 
+> The macro __rte_mbuf_raw_sanity_check() has been kept for backwards API
+> compatibility.
+> It simply calls __rte_mbuf_raw_sanity_check_mp() without specifying a
+> mempool.
+> 
+> Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+> Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 > ---
->  lib/net/net_crc_sse.c | 30 +++++++-----------------------
->  1 file changed, 7 insertions(+), 23 deletions(-)
+
+Looks ok to me, one comment inline below.
+
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+
+> v3:
+> * Removed experimental status for the new functions.
+>   Experimental is optional for new symbols, to allow for future API
+>   changes. But this has been around for a long time. (Stephen Hemminger)
+> * Consequentially, the added build check for ALLOW_EXPERIMENTAL_API with
+>   RTE_LIBRTE_MBUF_DEBUG is no longer needed, and was removed.
+> v2:
+> * Added explicit build check for ALLOW_EXPERIMENTAL_API being enabled when
+>   RTE_LIBRTE_MBUF_DEBUG is enabled, with descriptive error message if not
+>   so. (Ivan Malov)
+> * Fixed typo in patch description.
+> ---
+>  lib/mbuf/rte_mbuf.c | 61 ++++++++++++++++++++++++++++
+>  lib/mbuf/rte_mbuf.h | 96 +++++++++++++++++++++++++++------------------
+>  2 files changed, 119 insertions(+), 38 deletions(-)
 > 
-
-See inline below. Changes to the reduce_64_to_32 look ok, I don't know
-enough to understand fully the other changes you made. Maybe split the
-patch into two patches for review and merge separately?
-
-/Bruce
-
-> diff --git a/lib/net/net_crc_sse.c b/lib/net/net_crc_sse.c
-> index 112dc94ac1..eec854e587 100644
-> --- a/lib/net/net_crc_sse.c
-> +++ b/lib/net/net_crc_sse.c
-> @@ -96,20 +96,13 @@ crcr32_reduce_128_to_64(__m128i data128, __m128i precomp)
->  static __rte_always_inline uint32_t
->  crcr32_reduce_64_to_32(__m128i data64, __m128i precomp)
->  {
-> -	static const alignas(16) uint32_t mask1[4] = {
-> -		0xffffffff, 0xffffffff, 0x00000000, 0x00000000
-> -	};
-> -
-> -	static const alignas(16) uint32_t mask2[4] = {
-> -		0x00000000, 0xffffffff, 0xffffffff, 0xffffffff
-> -	};
->  	__m128i tmp0, tmp1, tmp2;
->  
-> -	tmp0 = _mm_and_si128(data64, _mm_load_si128((const __m128i *)mask2));
-> +	tmp0 = _mm_blend_epi16(_mm_setzero_si128(), data64, 252);
-
-Minor nit: 252 would be better in hex to make it clearer that it's the
-lower two bits are unset. Even better, how about switching the operands so
-that the constant is just "3", which is clearer again.
-
->  
->  	tmp1 = _mm_clmulepi64_si128(tmp0, precomp, 0x00);
->  	tmp1 = _mm_xor_si128(tmp1, tmp0);
-> -	tmp1 = _mm_and_si128(tmp1, _mm_load_si128((const __m128i *)mask1));
-> +	tmp1 = _mm_move_epi64(tmp1);
->  
-
-This change LGTM.
-
->  	tmp2 = _mm_clmulepi64_si128(tmp1, precomp, 0x10);
->  	tmp2 = _mm_xor_si128(tmp2, tmp1);
-> @@ -118,13 +111,11 @@ crcr32_reduce_64_to_32(__m128i data64, __m128i precomp)
->  	return _mm_extract_epi32(tmp2, 2);
+> diff --git a/lib/mbuf/rte_mbuf.c b/lib/mbuf/rte_mbuf.c
+> index 9e7731a8a2..af39c13cf7 100644
+> --- a/lib/mbuf/rte_mbuf.c
+> +++ b/lib/mbuf/rte_mbuf.c
+> @@ -373,6 +373,67 @@ rte_pktmbuf_pool_create_extbuf(const char *name, unsigned int n,
+>  	return mp;
 >  }
 >  
-> -static const alignas(16) uint8_t crc_xmm_shift_tab[48] = {
-> -	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-> -	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-> +static const alignas(16) uint8_t crc_xmm_shift_tab[32] = {
-> +	0x00, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
-> +	0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,
->  	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-> -	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-> -	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-> -	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
-> +	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
->  };
+> +/* do some sanity checks on a reinitialized mbuf: panic if it fails */
+> +RTE_EXPORT_SYMBOL(rte_mbuf_raw_sanity_check)
+> +void
+> +rte_mbuf_raw_sanity_check(const struct rte_mbuf *m, const struct rte_mempool *mp)
+> +{
+> +	const char *reason;
+> +
+> +	if (rte_mbuf_raw_check(m, mp, &reason))
+> +		rte_panic("%s\n", reason);
+> +}
+> +
+> +RTE_EXPORT_SYMBOL(rte_mbuf_raw_check)
+> +int rte_mbuf_raw_check(const struct rte_mbuf *m, const struct rte_mempool *mp,
+> +		   const char **reason)
+> +{
+> +	/* check sanity */
+> +	if (rte_mbuf_check(m, 0, reason) == -1)
+> +		return -1;
+> +
+> +	/* check initialized */
+> +	if (rte_mbuf_refcnt_read(m) != 1) {
+> +		*reason = "uninitialized ref cnt";
+> +		return -1;
+> +	}
+> +	if (m->next != NULL) {
+> +		*reason = "uninitialized next ptr";
+> +		return -1;
+> +	}
+> +	if (m->nb_segs != 1) {
+> +		*reason = "uninitialized nb_segs";
+> +		return -1;
+> +	}
+> +	if (RTE_MBUF_CLONED(m)) {
+> +		*reason = "cloned";
+> +		return -1;
+> +	}
+> +	if (RTE_MBUF_HAS_EXTBUF(m)) {
+> +		if (!RTE_MBUF_HAS_PINNED_EXTBUF(m)) {
+> +			*reason = "external buffer not pinned";
+> +			return -1;
+> +		}
+> +
+> +		uint16_t cnt = rte_mbuf_ext_refcnt_read(m->shinfo);
+> +		if ((cnt == 0) || (cnt == UINT16_MAX)) {
+> +			*reason = "pinned external buffer bad ref cnt";
+> +			return -1;
+> +		}
+> +		if (cnt != 1) {
+> +			*reason = "pinned external buffer uninitialized ref cnt";
+> +			return -1;
+> +		}
+> +	}
+> +
+> +	if (mp != NULL && m->pool != mp) {
+> +		*reason = "wrong mbuf pool";
+> +		return -1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /* do some sanity checks on a mbuf: panic if it fails */
+>  RTE_EXPORT_SYMBOL(rte_mbuf_sanity_check)
+>  void
+> diff --git a/lib/mbuf/rte_mbuf.h b/lib/mbuf/rte_mbuf.h
+> index 06ab7502a5..552cda1ae5 100644
+> --- a/lib/mbuf/rte_mbuf.h
+> +++ b/lib/mbuf/rte_mbuf.h
+> @@ -339,11 +339,17 @@ rte_pktmbuf_priv_flags(struct rte_mempool *mp)
 >  
+>  #ifdef RTE_LIBRTE_MBUF_DEBUG
+>  
+> +/**  check reinitialized mbuf type in debug mode */
+> +#define __rte_mbuf_raw_sanity_check_mp(m, mp) rte_mbuf_raw_sanity_check(m, mp)
+> +
+>  /**  check mbuf type in debug mode */
+>  #define __rte_mbuf_sanity_check(m, is_h) rte_mbuf_sanity_check(m, is_h)
+>  
+>  #else /*  RTE_LIBRTE_MBUF_DEBUG */
+>  
+> +/**  check reinitialized mbuf type in debug mode */
 
-Can you perhaps explain how changing this table doesn't break existing uses
-of the table as it now is in the code? Specifically, does xmm_shift_left
-function not now have different behaviour?
+This is in release mode, not debug mode. Comment below seems wrong too.
 
->  /**
-> @@ -216,19 +207,12 @@ crc32_eth_calc_pclmulqdq(
->  			0x80808080, 0x80808080, 0x80808080, 0x80808080
->  		};
+> +#define __rte_mbuf_raw_sanity_check_mp(m, mp) do { } while (0)
+> +
+>  /**  check mbuf type in debug mode */
+>  #define __rte_mbuf_sanity_check(m, is_h) do { } while (0)
 >  
-> -		const alignas(16) uint8_t shf_table[32] = {
-> -			0x00, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
-> -			0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,
-> -			0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-> -			0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
-> -		};
-> -
->  		__m128i last16, a, b;
->  
->  		last16 = _mm_loadu_si128((const __m128i *)&data[data_len - 16]);
->  
->  		temp = _mm_loadu_si128((const __m128i *)
-> -			&shf_table[data_len & 15]);
-> +			&crc_xmm_shift_tab[data_len & 15]);
->  		a = _mm_shuffle_epi8(fold, temp);
->  
->  		temp = _mm_xor_si128(temp,
-> -- 
-> 2.49.1
-> 
+> @@ -513,6 +519,46 @@ rte_mbuf_ext_refcnt_update(struct rte_mbuf_ext_shared_info *shinfo,
+>  } while (0)
+
+<snip>
