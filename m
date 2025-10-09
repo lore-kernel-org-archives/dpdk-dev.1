@@ -2,83 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31051CCD184
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC18BCCD183
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:18:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C81740B9B;
-	Fri, 10 Oct 2025 00:16:39 +0200 (CEST)
-Received: from mail-pl1-f226.google.com (mail-pl1-f226.google.com
- [209.85.214.226])
- by mails.dpdk.org (Postfix) with ESMTP id B250140E54
- for <dev@dpdk.org>; Fri, 10 Oct 2025 00:16:37 +0200 (CEST)
-Received: by mail-pl1-f226.google.com with SMTP id
- d9443c01a7336-2897522a1dfso14375735ad.1
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 84D7D40E4C;
+	Fri, 10 Oct 2025 00:16:41 +0200 (CEST)
+Received: from mail-pj1-f97.google.com (mail-pj1-f97.google.com
+ [209.85.216.97]) by mails.dpdk.org (Postfix) with ESMTP id 3A37240E68
+ for <dev@dpdk.org>; Fri, 10 Oct 2025 00:16:40 +0200 (CEST)
+Received: by mail-pj1-f97.google.com with SMTP id
+ 98e67ed59e1d1-3322e63602eso2080835a91.0
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760048197; x=1760652997;
+ d=1e100.net; s=20230601; t=1760048199; x=1760652999;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=MRsENC4Viidj19eJaPgx+JkoWlc3pPOeodcuteLCIgY=;
- b=TAd45hLGEUr0HbIwNhghH1QvdhU+F/DKO9O70+SMXIs5H/PJT6lXphbmJco6fdeCBw
- 5R4KpuwwvsiiyREHmpU/Chf3StMfHhdEI4t7o2N9x8L3VmTdDmELMnPFkv3K/LQh6T59
- PrlvazInHBvSPGq+t+isDvetB2zqun0o1VS8agEZzyfUfwChbukDEK1CmVSnpJO0q0Sv
- Xw0EixsAnRbcNox6uIS/JDGEWHDFLF63A5YssQeUC5Q7nUR5Ol96J/JfWU/uMPGxk2Uj
- JJoOpkyFZH/iPRmTzfXUwpnj3n1aTAN1yl+5JuvTwFFOkh1JSWQXErE/ZV3NFGHxSg4Y
- +tHQ==
-X-Gm-Message-State: AOJu0YxHsm+VFJM+onfTmDZrgxopzXJWYdXaP3VNF+F2q2HPcbN1X45g
- WrxvN+cxsMSZ2MV8jBg0LOhaFZNcbUFR6/hf4Lei7KCDGEdtI33W0pAA66J4ETmpyRzv6KiZy4b
- B6OTTMR9VHKlqhOEiyoPTapPm0ZKDuVkXhsJYwtpYXRAQEO5uQxK70LM3+L5XmrS70+M6J9Bzl0
- 9pQg76Q7OOi2lVQmJxY0sFEcZ66OoBQdg3Npz252VwAYIkMy1fpi+6HZJEkS2fN6euLy5kyA==
-X-Gm-Gg: ASbGncsnWylTFu7ART017wEyp6v7gGQRypLtH+tBnH8P0ZgqDzfSP3yfJYVMtm6cffu
- V43J8pVMJdm5306FkCOFGeh3Jt4jkCNykR0yWIBr5OKGeyoMcCgCkApR/Gx+LE1AW2ZTjZJURww
- lRZkl5aiObQg3BgAMtW3fcGcxUgRZ+RxfQO/FZcW3PjXPOnoOENdEfiO2wlJOcVYz5PFp30Gtva
- rvGsxpocl+SgbbzdEY+WpzXxciMg3fhtz0G184uJMLwGhXShR2qEoigX3blIazoEzt8qjUmwx6K
- FNozdrW2EsnsbnbdR4QGItUqHcnykbqOfs6JDELyDQS74FHeReKF1H0SlZmiryP0Eu8E8zTGKDC
- Pna+Aak/EID0Ffye4kymyeMluLyIPHt0//vxYdi+mY3CwjP6jBH+L0XBzYPtXv87K4BD1SCY6ke
- RPhJvh0jY=
-X-Google-Smtp-Source: AGHT+IEihaIDHPB5dNqWj4aOzHDIh1/CuQlMQwop34MM26bQ2Y3uiZM81d76rwiO46sMuP7J8uAuwBwKDRgy
-X-Received: by 2002:a17:902:e883:b0:271:fead:9930 with SMTP id
- d9443c01a7336-290272f835amr138083305ad.59.1760048196735; 
- Thu, 09 Oct 2025 15:16:36 -0700 (PDT)
+ bh=cG2iYYV+RJvIBDHq3EIy50ByhQrPorNWKVqHo+mf7yw=;
+ b=qzEbQDhUIO1RjGLVbJ6RFkpv2vaYvikx8Xa5lLBu3pwDsbCbZLLnHe6fkRUQEvNfe2
+ QuLOF4hBjuBSwZ6TJJX7S38ra2hND5rqkyl9HgFFH08H+k+KsmFuwgFL19HEzlad08SU
+ IkPBMFeOkN/rZO1VTyr/OGPKqCNx4dc5rAMQZkLlrHUz/fv7B4OXGmGAykxfq4ZJLE1S
+ dF0KVRTiJ/VMPnsej5wh/Cm8mUc98QNVO6UIEn5W2XZOfJajbB+ylpRoB8TAVEbXeOcO
+ PWL7Gl2GdaeqcbipiCDHAKepj8NT30gN5k78dK4jBAYmTd1baHi5vuV2QVmpAC0Kk7d8
+ jv4Q==
+X-Gm-Message-State: AOJu0YwtsnZbGyVMi0cjt3Ik+W89dzity65NGqSfIuvDDr3HxPYXlMFG
+ OJD6WZw5sQpTW1UZOoL0Of+iijAlO1gZkey3kg/Oqfao1lqmyfpQ79X7E3NMsX0YrkyyVCqj8Lh
+ kwwueFuleTX8DkYC5fs8PClsnaiKsCEk8bDH4//aXEv49xrCFCtdZAeaZK2zha+w1bzrjQCezMc
+ rsVzkslx5i4WiPyxKmuRJgsiFuUIziGgN/LJ8srYxQMEzKs1+Zkrq5gxYvAUg2rhDz5ubV5g==
+X-Gm-Gg: ASbGncvyoOZRwLAiwHpWu3bRUCgeoxSzB6sSNWzRv/RGHlqzfBo//4xqTIwuQvRvMem
+ 2Aue/vV/GRKjfORrv3xwOpzcwpbKf+0RuAKDGZjNcfHRRW5qKic/2Va2LXqRItWXy9NfHjwWmLB
+ uTvcpC9qyyj0psCsOLktsIW5kCWdIkH0Gn9RTc8d7/o0++eoM1mcL2eUKJ6232BOigSPL1Z4qLU
+ VgUICVXHtr4w2nXo/TfrjGF12q41hD1Y7ka07JifgudusWTvJs+Guyw+lL9TljEDVPueTf6uYx0
+ W3LHZwVKFyHbJOwDYlggaIOXP+PvQVGqt2waTmeF83HiwOLjt4hkIgTRCgZ1xQlJ8CTjM0LJBKY
+ Nj0o70f71T7SBgcYPETDQciUsuT3lK86P/iaVxBYM5aOEnD11/+pmndrFSv1HMDPk68gbk0glwo
+ 4QXwZDmGM=
+X-Google-Smtp-Source: AGHT+IFjQYvgOg5W5Q7S1l8yhC6UaPzQqepWmIVm4G05eUtN7S2znaj934BIOz/EuhpyXGQd2cxx9bUer6L6
+X-Received: by 2002:a17:903:2d1:b0:277:3488:787e with SMTP id
+ d9443c01a7336-29027356933mr118234465ad.12.1760048199229; 
+ Thu, 09 Oct 2025 15:16:39 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-119.dlp.protect.broadcom.com. [144.49.247.119])
+ (address-144-49-247-118.dlp.protect.broadcom.com. [144.49.247.118])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-29034f2dcb5sm3376055ad.50.2025.10.09.15.16.36
+ d9443c01a7336-29034f2dd65sm3211905ad.58.2025.10.09.15.16.38
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 09 Oct 2025 15:16:36 -0700 (PDT)
+ Thu, 09 Oct 2025 15:16:39 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qt1-f200.google.com with SMTP id
- d75a77b69052e-4df60ea7a1bso51924931cf.2
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:35 -0700 (PDT)
+Received: by mail-qk1-f198.google.com with SMTP id
+ af79cd13be357-8645d39787bso694138085a.2
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1760048195; x=1760652995; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1760048198; x=1760652998; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=MRsENC4Viidj19eJaPgx+JkoWlc3pPOeodcuteLCIgY=;
- b=WDdlUpDjh+GAte7huTU0Hy39RX/wPEuvXFPfaVnuN58/4ndJoLKAd2rFE0QVHRF75w
- DY1yWkiFGDU/PIqzLzS0OiGfoOSzGefcXuEsjiegC+eXFAcsusg98W2r2Sb0kHrkv/wi
- O+C06ueabZ2cbAaS4jD1aCWYG1Ft5MgdzHfm0=
-X-Received: by 2002:ac8:5a55:0:b0:4e5:8088:e7c3 with SMTP id
- d75a77b69052e-4e6eacccc41mr129553771cf.9.1760048194982; 
- Thu, 09 Oct 2025 15:16:34 -0700 (PDT)
-X-Received: by 2002:ac8:5a55:0:b0:4e5:8088:e7c3 with SMTP id
- d75a77b69052e-4e6eacccc41mr129553301cf.9.1760048194476; 
- Thu, 09 Oct 2025 15:16:34 -0700 (PDT)
+ bh=cG2iYYV+RJvIBDHq3EIy50ByhQrPorNWKVqHo+mf7yw=;
+ b=HDN6VyjTC0eyUbulmUeuyPCBmb5H/+Wo+wYN4/iZTug/OofIwkM0b+oYfMFwIDB6+2
+ YwADc0FcnmQ2ohv6m8Xy082aemJ28bPmkCqBnHOf5m7/1hJFbqiIZoL9JGJFuWBSEU6c
+ aaDkHxBhgPBivzsa6WjsE9JJ11IKrkadUc3lc=
+X-Received: by 2002:a05:6214:246f:b0:787:5934:697 with SMTP id
+ 6a1803df08f44-87b2103c5dbmr124989256d6.8.1760048197203; 
+ Thu, 09 Oct 2025 15:16:37 -0700 (PDT)
+X-Received: by 2002:a05:6214:246f:b0:787:5934:697 with SMTP id
+ 6a1803df08f44-87b2103c5dbmr124988726d6.8.1760048196602; 
+ Thu, 09 Oct 2025 15:16:36 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.16.33
+ 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.16.35
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Thu, 09 Oct 2025 15:16:34 -0700 (PDT)
+ Thu, 09 Oct 2025 15:16:36 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com
-Subject: [PATCH v2 46/54] net/bnxt: truflow HSI struct fixes
-Date: Thu,  9 Oct 2025 18:11:21 -0400
-Message-Id: <20251009221129.28256-47-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com, Shahaji Bhosle <shahaji.bhosle@broadcom.com>,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Subject: [PATCH v2 47/54] net/bnxt/tf_ulp: truflow add pf action handler
+Date: Thu,  9 Oct 2025 18:11:22 -0400
+Message-Id: <20251009221129.28256-48-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251009221129.28256-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -99,125 +99,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix struct definitions in HSI to add __rte_packed_end
+From: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
 
-Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
+Update pf action handler callback to use parent PF vnic
+
+Signed-off-by: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
 Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
+Reviewed-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 ---
- drivers/net/bnxt/hsi_struct_def_dpdk.h | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ drivers/net/bnxt/tf_ulp/ulp_rte_parser.c | 42 ++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/bnxt/hsi_struct_def_dpdk.h b/drivers/net/bnxt/hsi_struct_def_dpdk.h
-index 866fc5379d..06c61cba8f 100644
---- a/drivers/net/bnxt/hsi_struct_def_dpdk.h
-+++ b/drivers/net/bnxt/hsi_struct_def_dpdk.h
-@@ -24521,7 +24521,7 @@ struct __rte_packed_begin ts_split_entries {
- 	/* Indicates the region is locked in the cache */
- 	uint8_t	locked;
- 	uint32_t	rsvd2[2];
--} __rte_packed;
-+} __rte_packed_end;
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
+index ceda1ff5ef..82baf722cd 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
+@@ -2946,30 +2946,44 @@ int32_t
+ ulp_rte_pf_act_handler(const struct rte_flow_action *action_item __rte_unused,
+ 		       struct ulp_rte_parser_params *params)
+ {
++	struct bnxt *bp;
+ 	uint32_t port_id;
+-	uint32_t ifindex;
+-	enum bnxt_ulp_intf_type intf_type;
++	enum bnxt_ulp_direction_type dir;
++	struct ulp_rte_act_prop *act = &params->act_prop;
  
- /*
-  * Common structure to cast crypto key split entries. This casting is
-@@ -45077,7 +45077,7 @@ struct __rte_packed_begin hwrm_vnic_plcmodes_cfg_output {
- } __rte_packed_end;
+ 	/* Get the port id of the current device */
+ 	port_id = ULP_COMP_FLD_IDX_RD(params, BNXT_ULP_CF_IDX_INCOMING_IF);
  
- /* hwrm_vnic_plcmodes_cfg_cmd_err (size:64b/8B) */
--struct hwrm_vnic_plcmodes_cfg_cmd_err {
-+struct __rte_packed_begin hwrm_vnic_plcmodes_cfg_cmd_err {
- 	/*
- 	 * command specific error codes that goes to
- 	 * the cmd_err field in common HWRM Error Response.
-@@ -45092,7 +45092,7 @@ struct hwrm_vnic_plcmodes_cfg_cmd_err {
- 	#define HWRM_VNIC_PLCMODES_CFG_CMD_ERR_CODE_LAST \
- 		HWRM_VNIC_PLCMODES_CFG_CMD_ERR_CODE_INVALID_HDS_THRESHOLD
- 	uint8_t	unused_0[7];
--} __rte_packed;
-+} __rte_packed_end;
+-	/* Get the port db ifindex */
+-	if (ulp_port_db_dev_port_to_ulp_index(params->ulp_ctx, port_id,
+-					      &ifindex)) {
+-		BNXT_DRV_DBG(ERR, "Invalid port id\n");
++	params->port_id = port_id;
++	bp = bnxt_pmd_get_bp(params->port_id);
++	if (bp == NULL) {
++		BNXT_DRV_DBG(ERR, "Invalid bp");
+ 		return BNXT_TF_RC_ERROR;
+ 	}
  
- /***************************
-  * hwrm_vnic_plcmodes_qcfg *
-@@ -62717,7 +62717,7 @@ struct __rte_packed_begin hwrm_tfc_resc_usage_query_output {
+-	/* Check the port is PF port */
+-	intf_type = ulp_port_db_port_type_get(params->ulp_ctx, ifindex);
+-	if (intf_type != BNXT_ULP_INTF_TYPE_PF) {
+-		BNXT_DRV_DBG(ERR, "Port is not a PF port\n");
++	ULP_COMP_FLD_IDX_WR(params, BNXT_ULP_CF_IDX_ACT_PORT_TYPE, BNXT_ULP_INTF_TYPE_PF);
++
++	/* Get the direction */
++	dir = ULP_COMP_FLD_IDX_RD(params, BNXT_ULP_CF_IDX_DIRECTION);
++	if (dir == BNXT_ULP_DIR_EGRESS) {
++		BNXT_DRV_DBG(ERR, "Invalid direction");
+ 		return BNXT_TF_RC_ERROR;
++	} else {
++		uint16_t pid_s = bp->parent->vnic;
++		uint32_t pid = pid_s;
++		pid = rte_cpu_to_be_32(pid);
++		memcpy(&act->act_details[BNXT_ULP_ACT_PROP_IDX_VNIC],
++		       &pid, BNXT_ULP_ACT_PROP_SZ_VNIC);
++		/*
++		 * Update appropriate port (A/B) VNIC based on multi-port
++		 * indication.
++		 */
++		ULP_COMP_FLD_IDX_WR(params, BNXT_ULP_CF_IDX_MP_VNIC_A, pid_s);
+ 	}
+-	/* Update the action properties */
+-	ULP_COMP_FLD_IDX_WR(params, BNXT_ULP_CF_IDX_ACT_PORT_TYPE, intf_type);
+-	return ulp_rte_parser_act_port_set(params, ifindex, false,
+-					   BNXT_ULP_DIR_INVALID);
++
++	/* Update the action port set bit */
++	ULP_COMP_FLD_IDX_WR(params, BNXT_ULP_CF_IDX_ACT_PORT_IS_SET, 1);
++	return BNXT_TF_RC_SUCCESS;
+ }
  
- 
- /* hwrm_tfc_tcam_pri_update_input (size:256b/32B) */
--struct hwrm_tfc_tcam_pri_update_input {
-+struct __rte_packed_begin hwrm_tfc_tcam_pri_update_input {
- 	/* The HWRM command request type. */
- 	uint16_t	req_type;
- 	/*
-@@ -62794,10 +62794,10 @@ struct hwrm_tfc_tcam_pri_update_input {
- 		HWRM_TFC_TCAM_PRI_UPDATE_INPUT_TRACK_TYPE_TRACK_TYPE_FID
- 	/* unused. */
- 	uint8_t	unused0[5];
--} __rte_packed;
-+} __rte_packed_end;
- 
- /* hwrm_tfc_tcam_pri_update_output (size:128b/16B) */
--struct hwrm_tfc_tcam_pri_update_output {
-+struct __rte_packed_begin hwrm_tfc_tcam_pri_update_output {
- 	/* The specific error status for the command. */
- 	uint16_t	error_code;
- 	/* The HWRM command request type. */
-@@ -62817,7 +62817,7 @@ struct hwrm_tfc_tcam_pri_update_output {
- 	 * to be such that this field is written last.
- 	 */
- 	uint8_t	valid;
--} __rte_packed;
-+} __rte_packed_end;
- 
- /********************************
-  * hwrm_tfc_hot_upgrade_process *
-@@ -62825,7 +62825,7 @@ struct hwrm_tfc_tcam_pri_update_output {
- 
- 
- /* hwrm_tfc_hot_upgrade_process_input (size:192b/24B) */
--struct hwrm_tfc_hot_upgrade_process_input {
-+struct __rte_packed_begin hwrm_tfc_hot_upgrade_process_input {
- 	/* The HWRM command request type. */
- 	uint16_t	req_type;
- 	/*
-@@ -62887,10 +62887,10 @@ struct hwrm_tfc_hot_upgrade_process_input {
- 	uint8_t	cur_session_cnt;
- 	/* unused. */
- 	uint8_t	unused0;
--} __rte_packed;
-+} __rte_packed_end;
- 
- /* hwrm_tfc_hot_upgrade_process_output (size:128b/16B) */
--struct hwrm_tfc_hot_upgrade_process_output {
-+struct __rte_packed_begin hwrm_tfc_hot_upgrade_process_output {
- 	/* The specific error status for the command. */
- 	uint16_t	error_code;
- 	/* The HWRM command request type. */
-@@ -62912,7 +62912,7 @@ struct hwrm_tfc_hot_upgrade_process_output {
- 	 * to be such that this field is written last.
- 	 */
- 	uint8_t	valid;
--} __rte_packed;
-+} __rte_packed_end;
- 
- /******************************
-  * hwrm_tunnel_dst_port_query *
-@@ -64280,7 +64280,7 @@ struct __rte_packed_begin pcie_ctx_hw_stats {
-  * identical up to and including the pcie_recovery_histogram field.
-  */
- /* pcie_ctx_hw_stats_v2 (size:4096b/512B) */
--struct pcie_ctx_hw_stats_v2 {
-+struct __rte_packed_begin pcie_ctx_hw_stats_v2 {
- 	/* Number of physical layer receiver errors */
- 	uint64_t	pcie_pl_signal_integrity;
- 	/* Number of DLLP CRC errors detected by Data Link Layer */
-@@ -64385,7 +64385,7 @@ struct pcie_ctx_hw_stats_v2 {
- 	uint64_t	pcie_blocked_packet_count;
- 	/* The count of completion packets sent to the PCI-e. */
- 	uint64_t	pcie_cmpl_packet_count;
--} __rte_packed;
-+} __rte_packed_end;
- 
- /****************************
-  * hwrm_stat_generic_qstats *
+ /* Function to handle the parsing of RTE Flow action VF. */
 -- 
 2.39.5 (Apple Git-154)
 
