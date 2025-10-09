@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E05CCD184
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 13:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A9D8CCD184
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 13:03:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C4B7140DD8;
-	Thu,  9 Oct 2025 15:01:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B292A40DF5;
+	Thu,  9 Oct 2025 15:01:36 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 712EA4066E
- for <dev@dpdk.org>; Thu,  9 Oct 2025 15:01:33 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id AB8A640DCD
+ for <dev@dpdk.org>; Thu,  9 Oct 2025 15:01:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1760014894; x=1791550894;
+ t=1760014895; x=1791550895;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=pjdhac/kFPiqez5xcyymWuqBVqhNfPINhEvXOvmr7eE=;
- b=awlzu7H5qBULcMVJ65CeI0MpB3hyqnbXzGPs9S844Qvh/GsKDO3wDIoI
- 75oKeaTwwSXJK1As5BOp84443sD8Jy3homi8A4lrDrx8fNQqxYqHDtmn8
- s9jT+AcPf0yRS4Ts2iTfmMBvwLpSgVXuedNaSbFa7U/URmiRe0z9SVsgv
- Gxyz+TRMpETW9uv8qvb63QLURshUNiHJC1ldK86/QmiP1+C3e993JMnFc
- ucK7CweoyxxDMTZ6SOPc9EwXhzgl7jfmsYfl0JvpQf1HIytk43QepCSPv
- jLszGwYhBS1dzoCIqiHAhieSw7ao85PJ7GG/Hbz0Gh12uFbWZDGpJdhpp A==;
-X-CSE-ConnectionGUID: KzB9mnCHQyCPdjK/941TvQ==
-X-CSE-MsgGUID: BPJWTpN5SbeeRonWVoc88g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="79663156"
-X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="79663156"
+ bh=PTGZNoXQu8EgHYpc6bUY/Dn6DhgHpB0dk2w1C9l9KEU=;
+ b=biBorvR2c0soyoHymi4pkRXP409IuHAIae73V2qan8hOAt7s383i1i0l
+ LFr1AMPFnp+FPU9ApphpvkMMj4u3/vN+bbAfDhf991qopDgU27KEEN9Af
+ FJjeBj/ahdPI1sJm/zqd+W7AZ9uVWHrAiIrVtwWVTh8JC3icpWtJhP0xH
+ D/0GiNMmyP7mUsdbrCPvlVED0zszw9Ho3zTf4PQRLFnpTf8xEamOrBc3J
+ Ns3pdJNx8rgpq0BwuBEi/aABC96TjLX0P5skc3cyzQXUMmR6BcTeH0oG6
+ tGAsHy93gIYaGDGeu1XvC7VZ5j4q+2CzNQ2VP1k+Cvy12+1d6/Zqs2Vgn w==;
+X-CSE-ConnectionGUID: WWil7CWgStaZBx7Oii0+8A==
+X-CSE-MsgGUID: oNMIqoHvTS+ElUAXTUI14Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="79663161"
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="79663161"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Oct 2025 06:01:33 -0700
-X-CSE-ConnectionGUID: LKnlrTbFRdW22j1QOe3Guw==
-X-CSE-MsgGUID: 5XavNF/2Rx+9m4nA4W1I5A==
+ 09 Oct 2025 06:01:35 -0700
+X-CSE-ConnectionGUID: 7++7QBlORaG7jh8TXxarJA==
+X-CSE-MsgGUID: 3jWoBpQZT/mOt1hx58V4Dw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="179951668"
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; d="scan'208";a="179951673"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 09 Oct 2025 06:01:31 -0700
+ by orviesa010.jf.intel.com with ESMTP; 09 Oct 2025 06:01:33 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v11 19/21] eal: rework internal coremask parsing to use cpu
- sets
-Date: Thu,  9 Oct 2025 14:00:54 +0100
-Message-ID: <20251009130056.2630343-20-bruce.richardson@intel.com>
+Subject: [PATCH v11 20/21] eal: allow lcore ID remapping with core lists
+Date: Thu,  9 Oct 2025 14:00:55 +0100
+Message-ID: <20251009130056.2630343-21-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251009130056.2630343-1-bruce.richardson@intel.com>
 References: <20250520164025.2055721-1-bruce.richardson@intel.com>
@@ -62,222 +61,115 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than working off arrays of lcore values, update the coremask
-handling to use rte_cpuset_t. The use of the array provides no
-additional value for coremasks, since the order of the bits set will
-always be from lowest core number to highest, making the tracking of
-what core was 0, 1, 2 etc. pointless.
-
-As part of this change, move the prototype for the parse_coremask
-function from rte_eal.h to eal_options.h, for two reasons:
-
-1. This is an internal function that should not be used by apps and so
-   there is no need to have it in a public header.
-2. If the compilation command is run without the _GNU_SOURCE flag, we
-   miss definitions from sched.h and so get build errors for the
-   rte_cpuset_t type when compiling examples against an installed DPDK.
+Allow the "-R" flag to be used with core lists so that we can specify
+lists with core ids >= RTE_MAX_LCORE in them, e.g. -l 140-148. In order
+to do so, we limit the use of the "@" symbol for per-core remapping when
+specifying a core list for automatic/global remapping, rather than
+dealing with the situation of some cores being manually remapped and
+others automatically.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/event/dlb2/dlb2_priv.h             |  2 +-
- drivers/event/dlb2/pf/base/dlb2_resource.c | 11 ++++----
- lib/eal/common/eal_common_options.c        | 30 ++++++++--------------
- lib/eal/common/eal_options.h               |  2 ++
- lib/eal/include/rte_eal.h                  | 22 ----------------
- 5 files changed, 19 insertions(+), 48 deletions(-)
+ doc/guides/linux_gsg/eal_args.include.rst | 22 +++++++++++++++++
+ doc/guides/rel_notes/release_25_11.rst    | 11 +++++++++
+ lib/eal/common/eal_common_options.c       | 29 ++++++++++++++++++++---
+ 3 files changed, 59 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/event/dlb2/dlb2_priv.h b/drivers/event/dlb2/dlb2_priv.h
-index 6e0a5bc936..607b4d24d0 100644
---- a/drivers/event/dlb2/dlb2_priv.h
-+++ b/drivers/event/dlb2/dlb2_priv.h
-@@ -750,7 +750,7 @@ void dlb2_event_build_hcws(struct dlb2_port *qm_port,
- 			   uint8_t *queue_id);
+diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
+index 0b17879d42..4a3c4d9b5f 100644
+--- a/doc/guides/linux_gsg/eal_args.include.rst
++++ b/doc/guides/linux_gsg/eal_args.include.rst
+@@ -67,6 +67,28 @@ Lcore-related options
+     At a given instance only one core option ``--lcores``, ``-l`` or ``-c`` can
+     be used.
  
- /* Extern functions */
--extern int rte_eal_parse_coremask(const char *coremask, int *cores, bool limit_range);
-+extern int rte_eal_parse_coremask(const char *coremask, rte_cpuset_t *cpuset, bool limit_range);
++*  ``-R, --remap-lcore-ids [<start lcore id>]``
++
++   Enable automatic remapping of lcore-ids to a contiguous set starting from 0,
++   or from a user-provided value.
++
++   When this flag is passed, the lcores specified by core mask or core list options
++   are taken as the physical cores on which the application will run,
++   and one thread will be started per core, with sequential lcore-ids.
++
++   For example: ``dpdk-test -l 20-24 -R``
++   will start 5 threads with lcore-ids 0 to 4 on physical cores 20 to 24.
++
++   Another example: ``dpdk-test -l 140-144 -R=10``
++   will start 5 threads with lcore-ids 10 to 14 on physical cores 140 to 144.
++
++.. note::
++
++    When using with the ``--lcores`` option, only simple core lists are allowed.
++    The ``@`` symbol to bind lcores to physical cpus,
++    and the use of ``()`` for core groupings,
++    are not allowed when ``-R`` or ``--remap-lcore-ids`` is also used.
++
+ *   ``--main-lcore <core ID>``
  
- /* Extern globals */
- extern struct process_local_port_data dlb2_port[][DLB2_NUM_PORT_TYPES];
-diff --git a/drivers/event/dlb2/pf/base/dlb2_resource.c b/drivers/event/dlb2/pf/base/dlb2_resource.c
-index 6742c470f1..490dcaf7dd 100644
---- a/drivers/event/dlb2/pf/base/dlb2_resource.c
-+++ b/drivers/event/dlb2/pf/base/dlb2_resource.c
-@@ -922,28 +922,29 @@ dlb2_resource_probe(struct dlb2_hw *hw, const void *probe_args)
- {
- 	const struct dlb2_devargs *args = (const struct dlb2_devargs *)probe_args;
- 	const char *mask = args ? args->producer_coremask : NULL;
--	int cpu = 0, cnt = 0, cores[CPU_SETSIZE], i;
-+	rte_cpuset_t cpuset;
-+	int cpu = 0, cnt = 0, i, set_count = 0;
+     Core ID that is used as main.
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index f73bab1227..4443ebbe92 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -55,6 +55,17 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
  
- 	if (args) {
- 		mask = (const char *)args->producer_coremask;
- 	}
++* **Added automatic lcore-id remapping option.**
++
++  Added the EAL option ``--remap-lcore-ids`` or ``-R``
++  to enable automatic remapping of lcore-ids to a contiguous set starting from 0,
++  or from a user-provided value.
++  When this flag is passed, the lcores specified by core mask or core list options
++  are taken as the physical cores on which the application will run,
++  and one thread will be started per core, with sequential lcore-ids.
++  For example: ``dpdk-test -l 140-144 -R``
++  will start 5 threads with lcore-ids 0 to 4 on physical cores 140 to 144.
++
+ * **Added speed 800G.**
  
--	if (mask && rte_eal_parse_coremask(mask, cores, true)) {
-+	if (mask && rte_eal_parse_coremask(mask, &cpuset, true)) {
- 		DLB2_HW_ERR(hw, ": Invalid producer coremask=%s\n", mask);
- 		return -1;
- 	}
- 
- 	hw->num_prod_cores = 0;
- 	for (i = 0; i < RTE_MAX_LCORE; i++) {
--		bool is_pcore = (mask && cores[i] != -1);
-+		bool is_pcore = (mask && CPU_ISSET(i, &cpuset));
- 
- 		if (rte_lcore_is_enabled(i)) {
- 			if (is_pcore) {
- 				/*
- 				 * Populate the producer cores from parsed
--				 * coremask
-+				 * coremask using the set_count as index.
- 				 */
--				hw->prod_core_list[cores[i]] = i;
-+				hw->prod_core_list[set_count++] = i;
- 				hw->num_prod_cores++;
- 
- 			} else if ((++cnt == DLB2_EAL_PROBE_CORE ||
+   Added Ethernet link speed for 800 Gb/s as it is well standardized in IEEE,
 diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 139f116d1b..2bcb50bbee 100644
+index 2bcb50bbee..9f460d1740 100644
 --- a/lib/eal/common/eal_common_options.c
 +++ b/lib/eal/common/eal_common_options.c
-@@ -842,7 +842,7 @@ eal_parse_service_coremask(const char *coremask)
- }
- 
- static int
--update_lcore_config(int *cores, bool remap, uint16_t remap_base)
-+update_lcore_config(const rte_cpuset_t *cpuset, bool remap, uint16_t remap_base)
- {
- 	struct rte_config *cfg = rte_eal_get_configuration();
- 	unsigned int count = 0;
-@@ -856,9 +856,9 @@ update_lcore_config(int *cores, bool remap, uint16_t remap_base)
- 		lcore_config[i].core_index = -1;
- 	}
- 
--	/* now go through the core mask */
-+	/* now go through the cpuset */
- 	for (i = 0; i < CPU_SETSIZE; i++) {
--		if (cores[i] != -1) {
-+		if (CPU_ISSET(i, cpuset)) {
- 			if (eal_cpu_detected(i) == 0) {
- 				EAL_LOG(ERR, "lcore %u unavailable", i);
- 				ret = -1;
-@@ -867,7 +867,7 @@ update_lcore_config(int *cores, bool remap, uint16_t remap_base)
- 			if (!remap)
- 				lcore_id = i;
- 			cfg->lcore_role[lcore_id] = ROLE_RTE;
--			lcore_config[lcore_id].core_index = cores[i];
-+			lcore_config[lcore_id].core_index = count;
- 			CPU_ZERO(&lcore_config[lcore_id].cpuset);
- 			CPU_SET(i, &lcore_config[lcore_id].cpuset);
- 			EAL_LOG(DEBUG, "lcore %u mapped to physical core %u", lcore_id, i);
-@@ -920,7 +920,7 @@ check_core_list(int *lcores, unsigned int count)
- 
- RTE_EXPORT_INTERNAL_SYMBOL(rte_eal_parse_coremask)
- int
--rte_eal_parse_coremask(const char *coremask, int *cores, bool limit_range)
-+rte_eal_parse_coremask(const char *coremask, rte_cpuset_t *cpuset, bool limit_range)
- {
- 	const char *coremask_orig = coremask;
- 	int lcores[CPU_SETSIZE];
-@@ -929,8 +929,7 @@ rte_eal_parse_coremask(const char *coremask, int *cores, bool limit_range)
- 	int val;
- 	char c;
- 
--	for (idx = 0; idx < CPU_SETSIZE; idx++)
--		cores[idx] = -1;
-+	CPU_ZERO(cpuset);
- 	idx = 0;
- 
- 	EAL_LOG(WARNING, "'-c <coremask>' option is deprecated, and will be removed in a future release");
-@@ -976,6 +975,7 @@ rte_eal_parse_coremask(const char *coremask, int *cores, bool limit_range)
- 					return -1;
- 				}
- 				lcores[count++] = idx;
-+				CPU_SET(idx, cpuset);
- 			}
+@@ -1938,9 +1938,32 @@ eal_parse_args(void)
  		}
- 	}
-@@ -989,16 +989,6 @@ rte_eal_parse_coremask(const char *coremask, int *cores, bool limit_range)
- 	if (limit_range && check_core_list(lcores, count) != 0)
- 		return -1;
- 
--	/*
--	 * Now that we've got a list of cores no longer than RTE_MAX_LCORE,
--	 * and no lcore in that list is greater than RTE_MAX_LCORE, populate
--	 * the cores array.
--	 */
--	do {
--		count--;
--		cores[lcores[count]] = count;
--	} while (count != 0);
--
- 	return 0;
- }
- 
-@@ -1932,13 +1922,13 @@ eal_parse_args(void)
- 
- 	/* parse the core list arguments */
- 	if (args.coremask != NULL) {
--		int lcore_indexes[CPU_SETSIZE];
-+		rte_cpuset_t cpuset;
- 
--		if (rte_eal_parse_coremask(args.coremask, lcore_indexes, !remap_lcores) < 0) {
-+		if (rte_eal_parse_coremask(args.coremask, &cpuset, !remap_lcores) < 0) {
- 			EAL_LOG(ERR, "invalid coremask syntax");
- 			return -1;
+ 		core_parsed = 1;
+ 	} else if (args.lcores != NULL) {
+-		if (eal_parse_lcores(args.lcores) < 0) {
+-			EAL_LOG(ERR, "invalid lcore list: '%s'", args.lcores);
+-			return -1;
++		if (!remap_lcores) {
++			if (eal_parse_lcores(args.lcores) < 0) {
++				EAL_LOG(ERR, "invalid lcore list: '%s'", args.lcores);
++				return -1;
++			}
++		} else {
++			rte_cpuset_t cpuset;
++
++			if (strchr(args.lcores, '@') != NULL || strchr(args.lcores, '(') != NULL) {
++				EAL_LOG(ERR, "cannot use '@' or core groupings '()' in lcore list when remapping lcores");
++				return -1;
++			}
++			if (rte_argparse_parse_type(args.lcores,
++					RTE_ARGPARSE_VALUE_TYPE_CORELIST, &cpuset) != 0) {
++				EAL_LOG(ERR, "Error parsing lcore list: '%s'", args.lcores);
++				return -1;
++			}
++
++			if (update_lcore_config(&cpuset, remap_lcores, lcore_id_base) < 0) {
++				char *available = available_cores();
++
++				EAL_LOG(ERR, "invalid coremask '%s', please check specified cores are part of %s",
++						args.coremask, available);
++				free(available);
++				return -1;
++			}
  		}
--		if (update_lcore_config(lcore_indexes, remap_lcores, lcore_id_base) < 0) {
-+		if (update_lcore_config(&cpuset, remap_lcores, lcore_id_base) < 0) {
- 			char *available = available_cores();
- 
- 			EAL_LOG(ERR, "invalid coremask '%s', please check specified cores are part of %s",
-diff --git a/lib/eal/common/eal_options.h b/lib/eal/common/eal_options.h
-index 4a8a0f1df7..f5e7905609 100644
---- a/lib/eal/common/eal_options.h
-+++ b/lib/eal/common/eal_options.h
-@@ -20,5 +20,7 @@ int eal_save_args(int argc, char **argv);
- void eal_clean_saved_args(void);
- int handle_eal_info_request(const char *cmd, const char *params __rte_unused,
- 		struct rte_tel_data *d);
-+__rte_internal
-+int rte_eal_parse_coremask(const char *coremask, rte_cpuset_t *cpuset, bool limit_range);
- 
- #endif /* EAL_OPTIONS_H */
-diff --git a/lib/eal/include/rte_eal.h b/lib/eal/include/rte_eal.h
-index bc58254ece..619b8fbade 100644
---- a/lib/eal/include/rte_eal.h
-+++ b/lib/eal/include/rte_eal.h
-@@ -491,28 +491,6 @@ rte_eal_mbuf_user_pool_ops(void);
- const char *
- rte_eal_get_runtime_dir(void);
- 
--/**
-- * Convert a string describing a mask of core ids into an array of core ids.
-- *
-- * On success, the passed array is filled with the orders of the core ids
-- * present in the mask (-1 indicating that a core id is absent).
-- * For example, passing a 0xa coremask results in cores[1] = 0, cores[3] = 1,
-- * and the rest of the array is set to -1.
-- *
-- * @param coremask
-- *   A string describing a mask of core ids.
-- * @param cores
-- *   An array where to store the core ids orders.
-- *   This array must be at least CPU_SETSIZE large.
-- * @param limit_range
-- *   If set, return an error if any cores in the mask are >= RTE_MAX_LCORE.
-- * @return
-- *   0 on success, -1 if the string content was invalid.
-- */
--__rte_internal
--int
--rte_eal_parse_coremask(const char *coremask, int *cores, bool limit_range);
--
- #ifdef __cplusplus
- }
- #endif
+ 		core_parsed = 1;
+ 	}
 -- 
 2.48.1
 
