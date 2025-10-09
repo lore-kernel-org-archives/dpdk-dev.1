@@ -2,87 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DA1CCD184
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40667CCD184
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Oct 2025 22:18:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 243D840DF8;
-	Fri, 10 Oct 2025 00:16:33 +0200 (CEST)
-Received: from mail-pj1-f100.google.com (mail-pj1-f100.google.com
- [209.85.216.100])
- by mails.dpdk.org (Postfix) with ESMTP id DAD9040E31
- for <dev@dpdk.org>; Fri, 10 Oct 2025 00:16:31 +0200 (CEST)
-Received: by mail-pj1-f100.google.com with SMTP id
- 98e67ed59e1d1-339d7c4039aso1482539a91.0
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:31 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 427EF40E42;
+	Fri, 10 Oct 2025 00:16:34 +0200 (CEST)
+Received: from mail-pf1-f226.google.com (mail-pf1-f226.google.com
+ [209.85.210.226])
+ by mails.dpdk.org (Postfix) with ESMTP id 2B1C440E31
+ for <dev@dpdk.org>; Fri, 10 Oct 2025 00:16:33 +0200 (CEST)
+Received: by mail-pf1-f226.google.com with SMTP id
+ d2e1a72fcca58-781251eec51so1270991b3a.3
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760048191; x=1760652991;
+ d=1e100.net; s=20230601; t=1760048192; x=1760652992;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=7O0q2HyM4GTrzmKAh1MoIZWWaXw+xyJ0JG4jLWcsGB4=;
- b=wDqM1Ui+rwsZKBsbIZj9o0raDtQohcNRAJO/7BoWS2qJdgNQeY32ggfjyMMp+Nqkhn
- p2HY8vKEucixNOPZJiKjH0iLz4PHecOKJuRiSnQdThbbswfDahSprsMpoGKv59Snc0nE
- xxXa5nV93+JDXzmfGED25+UgIVgLZk7usZn4mBa2MWs74e1Dc7DC68/NhhM4szFGMjQp
- 4T+aqxN+extEnTG/RnPO5bXcrbanaeOWamkeYK5CTjfwM7X3/wLmg0pNyHI9W/P3Ve4+
- o0+xi/eWwT6ETN6SRPvHKjWLgJWlwckrZdDwstcRB/6hDDNEIHYKhIWFitXbHdBbG3Ig
- Y7iw==
-X-Gm-Message-State: AOJu0YxtgdAo7R+Qtdh6nJMV0JFLTggCDpK6pM2Ds9ARkG4UsQNgibK8
- e1tgwo0eejhGcD312HgPpH47QiatHMzK3vgCiFsLdvql89wIJHvpd4FnEOxS3MKw0pBSFT98CjU
- aEFj7EDr4Y8atxxMKKA7vy94p4i1+t+LEFxESH9DUh3xibqtvdJepaFfGpso35esFU6bogzg5Cw
- CeUnLGppJsR3M+oc2BelUOlVpUM6Xlanyo67E7+iugNZfjZ96wWa0Yu8fUiLM8QzluqSU+HA==
-X-Gm-Gg: ASbGncvnN/3tHutpTONExm/lhEoKIoeFQTtv5MO86Dl988QEGZ4MkZ/Z3LOyFk1gnBt
- YC1lXbzvqSAWbgJFsHpP5DxL7gDcY+49IWtryXSOuYnxRTr7ijyq7VPSquy4rCUGAThnCbUlxVj
- 4aWOqvtLLMLgKLXf2GCVMMQAhdyOCemfHYlfJByQVwm/myY7zhvpwRB7CS46tjTtzJrfOexMZo4
- jI7k3w8urXsIuZDXIbDJ0qieYkKaYz7A9U3Bu7geBRVi+KNkc6s7b0YqgJWiLXJbMmqFfLZRdRN
- 5DLnoENBrKnsyozHobG+1AH8Paiijf8ya5hWfT0Ks9Seno7DjhDWFHgntTfm5U73y7Fv0YONpZg
- ilg54yP85OEawnVBYjbwcZ+sWmjumJ/FOJiArjqZkTSouFzyHZOwxN0dVS8bN9XVu8oOcg0r857
- S42q4k
-X-Google-Smtp-Source: AGHT+IHCBC4SORGJNgfqZfheJe6wTSQBSIK+L5doJlpTHYhlPp7ZeQgDdCuz6nOHSI6MjrMj1tMtxq6RYA1a
-X-Received: by 2002:a17:90b:1645:b0:32e:7340:a7f7 with SMTP id
- 98e67ed59e1d1-33b511174bamr10691683a91.2.1760048190927; 
- Thu, 09 Oct 2025 15:16:30 -0700 (PDT)
+ bh=RUMCy9vUsf2u1cQUB1qdeOGfxUAAfafRJuPx7RcgqUk=;
+ b=JhGMR8JD8L8AMqRrS8svacNokn0rZy2kwwzMy6DtohYnbH4PiAr4BEHcNeBajuU4IT
+ IDN5pbSuRZ3TdntZgPPx+Y0zUTCoMVHijQx0xkkqDqHDnupHEqTObtw8qDL9UTb55f+8
+ +S8vnLJsnu+arvaUFjSUu3d+i7mSW/yz/uICJRRc7Lb96yTP0olOMCcaOpKBmCty9Isv
+ zPHuz9CRrjfry8w4XMw6vyGTJeRDspSNB8Sw5E2U6RsbeyueszYBREddKQ+Y7Bda6yWF
+ lAp8tuoPHMCmKOcR1wiJ5T/HWNdYW+IixuG4pRx3/fHcY5Rc2p73tpMysU8MA8GxdvpR
+ KrUA==
+X-Gm-Message-State: AOJu0YxueVZhRkrnI23SmuKib3TlteFLg4qw4tN8iW21XTI6zYkxI5O6
+ O1WgXYNl464G/vIwpR+26jwkULVmOqjzmXvTphdbx5lyaK+gTZWmCCgA1kLC3glGYHt0GVA5lCQ
+ gUZoFzIkjMaClmegFLMHgfrTHVfgjFuf2O76oNeL4ObyUDXSuOPm1g6/t0Em4pzkcV8FMnSe47Q
+ s8YuBP8PSYUhT11wptzZnTVVCWPPnybEYNUBd3aW/ssLKGu8XVHThgR71mXB0XPmzXvZvsyw==
+X-Gm-Gg: ASbGnctmNNQ/1hUN9DVzmLLKCcjZ95WLumJhpaglHKqMCWcVYVZKGlcONIajIM4ghDm
+ bhB0epsvEcqUf3l5KFpJhlT1aUX3VVDz7Nz8kCbpFhD9s3sf/j1yU6ihnhHyOF+1TaGOatBA1jC
+ JHJpH+WdiQHtqDyd+fS8NXcdcHjg8+HMexUMvaK6l0BzUEgxFEm5l6ogJpFRxITIKkTap6tVGcI
+ R54IQAk3EIFeXg5Adsz83dz1+RCOC70u+7mcrpa+F9/mzqrh/xp/7CHPY16MjKz2mNBqY9CXcNX
+ iQ7E4Ok/HsQjVYW8w6pgPTTeHg8IxVpv8qIT9myIhbXZbJfX+hPHKtDV6+Ad7qKz/vElOyOfcf0
+ 5l7XtjDqQI6mYNOJ01Ft+SOiqX9Cozux57oOB3WzyrT7Q6DanoPl5J+1ZZ0BPxyMcO2EL92s0qc
+ JQ4vFc
+X-Google-Smtp-Source: AGHT+IHu0oH2xHrzuIHq3Uin2PqZWUBBs0w4hlf5aboyRRxXUOfbX7jhQQ45oFu1QzFgw37pf3wizUY2rHwA
+X-Received: by 2002:a05:6a20:3c8e:b0:2ea:f131:e25e with SMTP id
+ adf61e73a8af0-32da83e54b6mr11685194637.47.1760048192152; 
+ Thu, 09 Oct 2025 15:16:32 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
+ (address-144-49-247-72.dlp.protect.broadcom.com. [144.49.247.72])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-33b61a1d3e7sm92344a91.2.2025.10.09.15.16.30
+ 41be03b00d2f7-b678de04d5bsm42068a12.7.2025.10.09.15.16.31
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 09 Oct 2025 15:16:30 -0700 (PDT)
+ Thu, 09 Oct 2025 15:16:32 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qv1-f70.google.com with SMTP id
- 6a1803df08f44-78efb3e2738so44968546d6.3
- for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:30 -0700 (PDT)
+Received: by mail-qt1-f197.google.com with SMTP id
+ d75a77b69052e-4df60ea7a1bso51922331cf.2
+ for <dev@dpdk.org>; Thu, 09 Oct 2025 15:16:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1760048189; x=1760652989; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1760048190; x=1760652990; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7O0q2HyM4GTrzmKAh1MoIZWWaXw+xyJ0JG4jLWcsGB4=;
- b=M05JLC3B18sghKUH/Z2UHmoJrcqWzEmBuwYLk8KyV0N/LvAuNbvnAMNKCitdTsAXxs
- wRDWGr4HHGHB/zMe/ctu59l1dUoi3+Y4Cu6BCsj0GLIZrhymx5C50oVrppLupRi4Ni2G
- 2+XNKaJdPEVSYCKklRwh7zKFrrgdiqOLYWams=
-X-Received: by 2002:a05:6214:5199:b0:720:3cd9:1f7e with SMTP id
- 6a1803df08f44-87b1bb42849mr121694666d6.0.1760048189259; 
- Thu, 09 Oct 2025 15:16:29 -0700 (PDT)
-X-Received: by 2002:a05:6214:5199:b0:720:3cd9:1f7e with SMTP id
- 6a1803df08f44-87b1bb42849mr121694236d6.0.1760048188650; 
- Thu, 09 Oct 2025 15:16:28 -0700 (PDT)
+ bh=RUMCy9vUsf2u1cQUB1qdeOGfxUAAfafRJuPx7RcgqUk=;
+ b=Jf4ENQEVv2+RTymA5avVv00ySYh5/X99E9F250pVZD+Hyy7BHuO9SSL3rcCdqwvADQ
+ OD8attZ4UxGQIVZ3wkljVKbehnIgPweEwT3wQYD9ZLV0Qn6DbMfRyU9t1IPprxyffE6N
+ gvMwqhIfwUM9yao84RhNvHl/IEi4PDAIifxQY=
+X-Received: by 2002:a05:622a:5914:b0:4b7:9add:76cd with SMTP id
+ d75a77b69052e-4e6ead4bdadmr133118001cf.42.1760048190619; 
+ Thu, 09 Oct 2025 15:16:30 -0700 (PDT)
+X-Received: by 2002:a05:622a:5914:b0:4b7:9add:76cd with SMTP id
+ d75a77b69052e-4e6ead4bdadmr133117551cf.42.1760048190158; 
+ Thu, 09 Oct 2025 15:16:30 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.16.27
+ 6a1803df08f44-87bc3479344sm4189986d6.17.2025.10.09.15.16.29
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Thu, 09 Oct 2025 15:16:27 -0700 (PDT)
+ Thu, 09 Oct 2025 15:16:29 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Somnath Kotur <somnath.kotur@broadcom.com>,
- Peter Spreadborough <peter.spreadborough@broadcom.com>,
- Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-Subject: [PATCH v2 42/54] net/bnxt: packet drop after port stop and start
-Date: Thu,  9 Oct 2025 18:11:17 -0400
-Message-Id: <20251009221129.28256-43-manish.kurup@broadcom.com>
+ Peter Spreadborough <peter.spreadborough@broadcom.com>
+Subject: [PATCH v2 43/54] net/bnxt/tf_core: fix truflow crash on memory
+ allocation failure
+Date: Thu,  9 Oct 2025 18:11:18 -0400
+Message-Id: <20251009221129.28256-44-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251009221129.28256-1-manish.kurup@broadcom.com>
 References: <20250930003604.87108-1-manish.kurup@broadcom.com>
@@ -103,53 +101,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+From: Peter Spreadborough <peter.spreadborough@broadcom.com>
 
-The packets are getting dropped if some of the queues are configured
-to stop and if the bnxt driver is reset due to port stop all and
-port start all then when the bnxt driver comes up, the driver is
-overwriting the queue configuration to operationally started
-instead of stopping the queues that was previously stopped. The
-stopped queues were getting added to the rss context resulting in
-the packet drops.
+A backing store table allocation failed due to lack of memory and
+resulted in a crash because the result of the allocation was not
+checked for validity.
 
-Added a fix to address this issue, the rxq structure is not cleared
-during the stop and start process and retains the context, that flag
-is used to set the queue state. Thus stopped queues shall not be added
-to the rss context on recovery from a stop and start. The queues that
-were configured to be stopped have to explicitly started to see
-traffic on those queues.
-
-Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Reviewed-by: Somnath Kotur <somnath.kotur@broadcom.com>
-Reviewed-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
-Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
+Signed-off-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
+Reviewed-by: Manish Kurup <manish.kurup@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_ethdev.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index efecbba2c3..c92e335a51 100644
---- a/drivers/net/bnxt/bnxt_ethdev.c
-+++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -925,11 +925,13 @@ static int bnxt_start_nic(struct bnxt *bp)
- 	for (j = 0; j < bp->rx_nr_rings; j++) {
- 		struct bnxt_rx_queue *rxq = bp->rx_queues[j];
- 
-+		__rte_assume(j < RTE_MAX_QUEUES_PER_PORT);
-+		/* If not deferred start then change only the state of the */
-+		/* queue based on the queue rx_started flag */
- 		if (!rxq->rx_deferred_start) {
--			__rte_assume(j < RTE_MAX_QUEUES_PER_PORT);
--			bp->eth_dev->data->rx_queue_state[j] =
-+			if (rxq->rx_started)
-+				bp->eth_dev->data->rx_queue_state[j] =
- 				RTE_ETH_QUEUE_STATE_STARTED;
--			rxq->rx_started = true;
- 		}
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
+index b229f07596..878f62c115 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
++++ b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
+@@ -505,6 +505,8 @@ static int alloc_link_pbl(struct tfc_ts_mem_cfg *mem_cfg, uint32_t page_size,
+ 								RTE_MEMZONE_SIZE_HINT_ONLY |
+ 								RTE_MEMZONE_IOVA_CONTIG,
+ 								page_size);
++		if (!mem_cfg->ts_mz.mz)
++			return -ENOMEM;
  	}
- 
+ 	memset(mem_cfg->ts_mz.mz->addr, 0, mem_cfg->ts_mz.mz->len);
+ 	mem_cfg->ts_mz.page_count = total_pages;
 -- 
 2.39.5 (Apple Git-154)
 
