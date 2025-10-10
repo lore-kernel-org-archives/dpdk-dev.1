@@ -2,66 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2074BCCA476
-	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Oct 2025 14:32:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B347CCA476
+	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Oct 2025 14:46:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9EC94021E;
-	Fri, 10 Oct 2025 16:32:09 +0200 (CEST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com
- [209.85.218.42]) by mails.dpdk.org (Postfix) with ESMTP id C15314003C
- for <dev@dpdk.org>; Fri, 10 Oct 2025 16:32:08 +0200 (CEST)
-Received: by mail-ej1-f42.google.com with SMTP id
- a640c23a62f3a-b3d5088259eso305479566b.1
- for <dev@dpdk.org>; Fri, 10 Oct 2025 07:32:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1760106728; x=1760711528; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=TRxCZGcCcgqFQnT+u43nZuD3+Nh48IXCNP40ttOeV/w=;
- b=mlK6JjeyjeI06+jXR5KoZlSPOA+FTJp+vhuR3OJtdODv35cODSt9TK16qz//RC+2B0
- Swb8Ynzk/I0l9Ouu2s5CCcXMfFTrYIPr0mOL9esjPdaAxg5giVNwRAjiSYK9+F1NcKOF
- GyrrGclb02M23W/tPPFGThZBdZR2U/TZBfPWWCCJ9+r2iJsFSRWMM/oP0Jrx2JoHqRi7
- BTh829AX7ehx3Nt5Bsg8RijJW2ZmAtVFBdpZzCwVpekOd1aLh7ZovYfc6aN5lyhZdCdd
- Hsta/93roRawE/5cfPM/qOtW+wIU/0sGR235P/endAVz7/q+yh1xsxIeiEWMP05CDszM
- 07Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760106728; x=1760711528;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=TRxCZGcCcgqFQnT+u43nZuD3+Nh48IXCNP40ttOeV/w=;
- b=XJeTyoY4V+WuMeMyBumL8AzxgeBuZc8bmOOo3+WiSsP7jyvATe2DRp9mcTHf9WsAEk
- y0LnBUTpHETID2rOYV243OHtTAWweuZuNUS82jefU+naLDczfIAAv3owiH/6SFO3iAQX
- fxQzo5+xwR1oipGDkMZMoA1rbuxKEOU+oA8w/q+n+FB1kzSIPMUIR4mBLhEkddgUtYZp
- 7wF/pBT94Jtobd0uj6+SKuhfxpN+qbIUMiASEoI/hqizvSB195yU9xmiqVxx6a3d/kr2
- 2P0xdDJQZkWkTXp/ZlL2mX8I4RmCM7ayjNKGHQf1W7T8rPsGpfd76WM1MK/5Ny1Fp6GP
- liCw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUKMWGEA/f+AWuYKKDMerYMr+rw8qIfkBR+BvvjkwXqxFsvDiYu1gO+WGeK5pWWyqYvG3I=@dpdk.org
-X-Gm-Message-State: AOJu0YzFti3vz/vUSdDBc+GX6VRDwUaPTOGFJH2DBK1+VVI/Xw9uFxI/
- +5deAfB9cra3t6VEFkAUfUAEMATKvtY02++NWJsQcPfpEdf7bYY7FwbGIZYd7zYVBKTdpydDnTg
- G4syFn4cWGDj+ZnT8SEpowLaXtaeEwuZLadYu
-X-Gm-Gg: ASbGncutoSZzNENg/DDxDYALGggD7WWETwn72yLLUhgA7hJWugeJ+jv0dH25C6mInhv
- VaPgK3sk5ftEg1vPsHbGWIH6VsL/rrrMp0htHArF/x+0cS2gb41oyOZzt2WC67kcdZBBLT+jPTn
- 46hQN5b+1CYvOJ4NoODWq2XhZdsDtpSpOBGOW9JZZvf2dtNyvnZWF7N6oyrJuOoC6ARUKmZUm1x
- yQfXE5zEpmD/uXMcE77iZIFa8CMx5jxQjYQ
-X-Google-Smtp-Source: AGHT+IEQG7qzCe9yZfgCZbpTgZtYSB1kbBlT1fJLXcLNQg6d/RGu3r6u9JyZUFG1iDg/sQNwuT6UZvixsTokUBNWJ0g=
-X-Received: by 2002:a17:906:6a2a:b0:b42:7c2:1f9f with SMTP id
- a640c23a62f3a-b50acc1aa50mr1326987966b.62.1760106728014; Fri, 10 Oct 2025
- 07:32:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3B1634021E;
+	Fri, 10 Oct 2025 16:46:40 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 5DB2E4003C
+ for <dev@dpdk.org>; Fri, 10 Oct 2025 16:46:38 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59AAsVSk000866;
+ Fri, 10 Oct 2025 07:46:37 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=C
+ VsMjCZxwGfdrBanfr+kquMu1OglTcTvtKV0JYcjQ4I=; b=DyWz1+/aykcg2ywSB
+ J2So02RedN/UBLUjLNRfM976TJ8/BdzXAc7rTa/nV2SuCMujJT63lODy1ER6Aged
+ lovopKaNfcfmPV30JbuBlEoOFD2VkHwMi8ey3eBFklZfwbFYHNSwio6ptQ0+QU24
+ lULergP96lp5UnJHqZUNX13hkIGHmv+HqKjY3SvVu213mMXUugGZ26q3JGDU5zwr
+ JIDAZd8LpLNxjHkFG6xE2LlCDMPhAkvvKmIGge3+dN3xClJJ5Swab9S7jVf7mEq8
+ x8nJv+tExPwl4aJyEvS8UNjuT7f20M3BoPL3dgCtVK9UgVvlbMdL7VdmXEBEm7E6
+ wQMZQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49ppt21b5q-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 10 Oct 2025 07:46:37 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 10 Oct 2025 07:46:45 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Fri, 10 Oct 2025 07:46:45 -0700
+Received: from cavium-VAMSI-BM.. (unknown [10.28.36.156])
+ by maili.marvell.com (Postfix) with ESMTP id 96DA75E6865;
+ Fri, 10 Oct 2025 07:46:33 -0700 (PDT)
+From: Vamsi Krishna <vattunuru@marvell.com>
+To: <dev@dpdk.org>, <fengchengwen@huawei.com>
+CC: <thomas@monjalon.net>, <bruce.richardson@intel.com>,
+ <anatoly.burakov@intel.com>, <kevin.laatz@intel.com>,
+ <jerinj@marvell.com>, <vattunuru@marvell.com>
+Subject: [PATCH v2 1/1] lib/dma: introduce inter-process and inter-OS DMA
+Date: Fri, 10 Oct 2025 20:16:31 +0530
+Message-ID: <20251010144631.713063-1-vattunuru@marvell.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250901123341.2665186-1-vattunuru@marvell.com>
+References: <20250901123341.2665186-1-vattunuru@marvell.com>
 MIME-Version: 1.0
-References: <20250716103439.831760-1-16567adigashreesh@gmail.com>
- <aOflvyl1Ow9N7Mve@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aOflvyl1Ow9N7Mve@bricha3-mobl1.ger.corp.intel.com>
-From: Shreesh Adiga <16567adigashreesh@gmail.com>
-Date: Fri, 10 Oct 2025 20:01:56 +0530
-X-Gm-Features: AS18NWD9vHIvp1GPKtQ-96fMebEm_wiUXDYj3FohrSTkKytosk48jxiqELU4jVo
-Message-ID: <CA+-x59YPCR_xGNoiJNy0AvFuZUrtjMeUhxD0GoGhAg-KJEm7MA@mail.gmail.com>
-Subject: Re: [PATCH] net/crc: reduce usage of static arrays in net_crc_sse.c
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>, 
- Jasvinder Singh <jasvinder.singh@intel.com>, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000004a4fc50640cec844"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA5MDE0MyBTYWx0ZWRfX3DBN5pQKEsCc
+ uZenB3IZmCG4fIGLdSbO481X8BNlT1bqTp3Egwek+V6QxT8HTCChSOZwc4P0AymnwcJpnGOviK8
+ b0vlRrfh7GIIjJ6xNYSDtgRv4S7V1rIORq4wICQowxLfdFrMiDFtNXh8alogZueybieLzDJFr7V
+ kJ2V+wcPs0JnPIzU5LsmgHl3jqxMjYiwfOwk4cUjpmK7YXYskTEmLatSs0PR3Or2zwxM24aZGvM
+ ZxqHGSclZ6GyBjWdKtAl8AjSbcK/QZfB0054sHj9owkQieqiScwgHeJ+bZ8mph01Lx/WSb+D8n1
+ 7R1mY4TdFT1PsT/i9ZynIBNJc4EiiS4ISRPwlPoiiwQRQJChRcJA7mkZ27b4wOdIT5oMYFXjFgC
+ xe1bzaW/nSUP2jfcjpSjC2un2T3hRg==
+X-Proofpoint-ORIG-GUID: oLOf2jI7nDAQALhVr1qufssqU5zX6uj-
+X-Authority-Analysis: v=2.4 cv=d4/4CBjE c=1 sm=1 tr=0 ts=68e91c4d cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=x6icFKpwvdMA:10 a=M5GUcnROAAAA:8 a=84wi6ZIy9pvBVeDFkUwA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: oLOf2jI7nDAQALhVr1qufssqU5zX6uj-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-10_03,2025-10-06_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,358 +81,185 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000004a4fc50640cec844
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Vamsi Attunuru <vattunuru@marvell.com>
 
-On Thu, Oct 9, 2025 at 10:11=E2=80=AFPM Bruce Richardson <bruce.richardson@=
-intel.com>
-wrote:
+Modern DMA hardware supports data transfers between multiple DMA
+devices, facilitating data communication across isolated domains,
+containers, or operating systems. These DMA transfers function as
+standard memory-to-memory operations, but with source or destination
+addresses residing in different process or OS address space. The
+exchange of these addresses between processes is handled through
+private driver mechanism, which are beyond the scope of this
+specification change.
 
-> On Wed, Jul 16, 2025 at 04:04:39PM +0530, Shreesh Adiga wrote:
-> > Replace the clearing of lower 32 bits of XMM register with blend of
-> > zero register.
-> > Replace the clearing of upper 64 bits of XMM register with
-> _mm_move_epi64.
-> > Clang is able to optimize away the AND + memory operand with the
-> > above sequence, however GCC is still emitting the code for AND with
-> > memory operands which is being explicitly eliminated here.
-> >
-> > Additionally replace the 48 byte crc_xmm_shift_tab with the contents of
-> > shf_table which is 32 bytes, achieving the same functionality.
-> >
-> > Signed-off-by: Shreesh Adiga <16567adigashreesh@gmail.com>
-> > ---
-> >  lib/net/net_crc_sse.c | 30 +++++++-----------------------
-> >  1 file changed, 7 insertions(+), 23 deletions(-)
-> >
->
-> See inline below. Changes to the reduce_64_to_32 look ok, I don't know
-> enough to understand fully the other changes you made. Maybe split the
-> patch into two patches for review and merge separately?
->
-> /Bruce
->
-> > diff --git a/lib/net/net_crc_sse.c b/lib/net/net_crc_sse.c
-> > index 112dc94ac1..eec854e587 100644
-> > --- a/lib/net/net_crc_sse.c
-> > +++ b/lib/net/net_crc_sse.c
-> > @@ -96,20 +96,13 @@ crcr32_reduce_128_to_64(__m128i data128, __m128i
-> precomp)
-> >  static __rte_always_inline uint32_t
-> >  crcr32_reduce_64_to_32(__m128i data64, __m128i precomp)
-> >  {
-> > -     static const alignas(16) uint32_t mask1[4] =3D {
-> > -             0xffffffff, 0xffffffff, 0x00000000, 0x00000000
-> > -     };
-> > -
-> > -     static const alignas(16) uint32_t mask2[4] =3D {
-> > -             0x00000000, 0xffffffff, 0xffffffff, 0xffffffff
-> > -     };
-> >       __m128i tmp0, tmp1, tmp2;
-> >
-> > -     tmp0 =3D _mm_and_si128(data64, _mm_load_si128((const __m128i
-> *)mask2));
-> > +     tmp0 =3D _mm_blend_epi16(_mm_setzero_si128(), data64, 252);
->
-> Minor nit: 252 would be better in hex to make it clearer that it's the
-> lower two bits are unset. Even better, how about switching the operands s=
-o
-> that the constant is just "3", which is clearer again.
->
-Okay I will update it with your suggestion in the next patch.
+This commit introduces new capability flags to advertise driver support
+for inter-process and inter-OS domain DMA transfers. It adds a mechanism
+to specify source and destination handlers via the vchan configuration.
+Until standardized control-plane APIs are defined for various categories
+of DMA devices, these handler details can be exchanged through private
+driver mechanisms.
 
+Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+---
+V2 changes:
+* Seperate out the control-plane APIs
+* Address v0 review comments
+* Add validation checks
+* Rename the enums
 
-> >
-> >       tmp1 =3D _mm_clmulepi64_si128(tmp0, precomp, 0x00);
-> >       tmp1 =3D _mm_xor_si128(tmp1, tmp0);
-> > -     tmp1 =3D _mm_and_si128(tmp1, _mm_load_si128((const __m128i *)mask=
-1));
-> > +     tmp1 =3D _mm_move_epi64(tmp1);
-> >
->
-> This change LGTM.
->
-> >       tmp2 =3D _mm_clmulepi64_si128(tmp1, precomp, 0x10);
-> >       tmp2 =3D _mm_xor_si128(tmp2, tmp1);
-> > @@ -118,13 +111,11 @@ crcr32_reduce_64_to_32(__m128i data64, __m128i
-> precomp)
-> >       return _mm_extract_epi32(tmp2, 2);
-> >  }
-> >
-> > -static const alignas(16) uint8_t crc_xmm_shift_tab[48] =3D {
-> > -     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-> > -     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-> > +static const alignas(16) uint8_t crc_xmm_shift_tab[32] =3D {
-> > +     0x00, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
-> > +     0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,
-> >       0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-> > -     0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-> > -     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-> > -     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
-> > +     0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
-> >  };
-> >
->
-> Can you perhaps explain how changing this table doesn't break existing us=
-es
-> of the table as it now is in the code? Specifically, does xmm_shift_left
-> function not now have different behaviour?
->
-Sure, crc_xmm_shift_tab is only used inside xmm_shift_left which is only
-used when
-the total data_len is < 16. We call xmm_shift_left(fold, 8 - data_len) when
-len <=3D 4 and
-xmm_shift_left(fold, 16 - data_len) when 5 <=3D len <=3D 15. This results i=
-n
-accessing
-crc_xmm_shift_tab between 1 and 31, i.e. element 0 is never accessed.
+ lib/dmadev/rte_dmadev.c       | 19 ++++++++++++
+ lib/dmadev/rte_dmadev.h       | 56 +++++++++++++++++++++++++++++++++++
+ lib/dmadev/rte_dmadev_trace.h |  3 ++
+ 3 files changed, 78 insertions(+)
 
-Now if we take a specific case of xmm_shift_left(fold, 10), then previously
-the shuffle register
-would get loaded with (crc_xmm_shift_tab + 16 - 10) which would be
-crc_xmm_shift_tab + 6:
-{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x01,
-0x02, 0x03, 0x04, 0x05} which
-when used with PSHUFB would result in first 10 bytes of reg being 0 and the
-lower 6
-elements moving left: {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, d1, d2, d3, d4, d5,
-d6}. The 0 get inserted
-because PSHUFB with index > 0x7f (MSB set) results in 0.
+diff --git a/lib/dmadev/rte_dmadev.c b/lib/dmadev/rte_dmadev.c
+index 17ee0808a9..23864dcb00 100644
+--- a/lib/dmadev/rte_dmadev.c
++++ b/lib/dmadev/rte_dmadev.c
+@@ -659,6 +659,21 @@ rte_dma_vchan_setup(int16_t dev_id, uint16_t vchan,
+ 		RTE_DMA_LOG(ERR, "Device %d vchan out range!", dev_id);
+ 		return -EINVAL;
+ 	}
++	if (conf->direction != RTE_DMA_DIR_MEM_TO_MEM &&
++	    conf->domain.domain_type != RTE_DMA_INTER_DOMAIN_NONE) {
++		RTE_DMA_LOG(ERR, "Device %d direction and inter domain are invalid!", dev_id);
++		return -EINVAL;
++	}
++	if (conf->domain.domain_type == RTE_DMA_INTER_OS_DOMAIN &&
++	    !(dev_info.dev_capa & RTE_DMA_CAPA_INTER_OS_DOMAIN)) {
++		RTE_DMA_LOG(ERR, "Device %d does not support inter os domain", dev_id);
++		return -EINVAL;
++	}
++	if (conf->domain.domain_type == RTE_DMA_INTER_PROCESS_DOMAIN &&
++	    !(dev_info.dev_capa & RTE_DMA_CAPA_INTER_PROCESS_DOMAIN)) {
++		RTE_DMA_LOG(ERR, "Device %d does not support inter process domain", dev_id);
++		return -EINVAL;
++	}
+ 	if (conf->direction != RTE_DMA_DIR_MEM_TO_MEM &&
+ 	    conf->direction != RTE_DMA_DIR_MEM_TO_DEV &&
+ 	    conf->direction != RTE_DMA_DIR_DEV_TO_MEM &&
+@@ -805,6 +820,8 @@ dma_capability_name(uint64_t capability)
+ 		{ RTE_DMA_CAPA_HANDLES_ERRORS, "handles_errors" },
+ 		{ RTE_DMA_CAPA_M2D_AUTO_FREE,  "m2d_auto_free"  },
+ 		{ RTE_DMA_CAPA_PRI_POLICY_SP,  "pri_policy_sp" },
++		{ RTE_DMA_CAPA_INTER_PROCESS_DOMAIN, "inter_process_domain" },
++		{ RTE_DMA_CAPA_INTER_OS_DOMAIN, "inter_os_domain" },
+ 		{ RTE_DMA_CAPA_OPS_COPY,    "copy"    },
+ 		{ RTE_DMA_CAPA_OPS_COPY_SG, "copy_sg" },
+ 		{ RTE_DMA_CAPA_OPS_FILL,    "fill"    },
+@@ -1014,6 +1031,8 @@ dmadev_handle_dev_info(const char *cmd __rte_unused,
+ 	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_HANDLES_ERRORS);
+ 	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_M2D_AUTO_FREE);
+ 	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_PRI_POLICY_SP);
++	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_INTER_PROCESS_DOMAIN);
++	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_INTER_OS_DOMAIN);
+ 	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_OPS_COPY);
+ 	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_OPS_COPY_SG);
+ 	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_OPS_FILL);
+diff --git a/lib/dmadev/rte_dmadev.h b/lib/dmadev/rte_dmadev.h
+index 550dbfbf75..12c249ec00 100644
+--- a/lib/dmadev/rte_dmadev.h
++++ b/lib/dmadev/rte_dmadev.h
+@@ -265,6 +265,18 @@ int16_t rte_dma_next_dev(int16_t start_dev_id);
+  * known from 'nb_priorities' field in struct rte_dma_info.
+  */
+ #define RTE_DMA_CAPA_PRI_POLICY_SP	RTE_BIT64(8)
++/** Support inter-process DMA transfers.
++ *
++ * When this bit is set, the DMA device can perform memory transfers between
++ * different process memory spaces.
++ */
++#define RTE_DMA_CAPA_INTER_PROCESS_DOMAIN	RTE_BIT64(9)
++/** Support inter-OS domain DMA transfers.
++ *
++ * The DMA device can perform memory transfers across different operating
++ * system domains.
++ */
++#define RTE_DMA_CAPA_INTER_OS_DOMAIN		RTE_BIT64(10)
+ 
+ /** Support copy operation.
+  * This capability start with index of 32, so that it could leave gap between
+@@ -418,8 +430,13 @@ int rte_dma_close(int16_t dev_id);
+  */
+ enum rte_dma_direction {
+ 	/** DMA transfer direction - from memory to memory.
++	 * When the device supports inter-process or inter-OS domain transfers,
++	 * the field `domain_type` in `struct rte_dma_vchan_conf::domain` specifies
++	 * the type of domain. For memory-to-memory transfers within the same domain
++	 * or process, `domain_type` should be set to `RTE_DMA_INTER_DOMAIN_NONE`.
+ 	 *
+ 	 * @see struct rte_dma_vchan_conf::direction
++	 * @see struct rte_dma_inter_domain_param::domain_type
+ 	 */
+ 	RTE_DMA_DIR_MEM_TO_MEM,
+ 	/** DMA transfer direction - from memory to device.
+@@ -564,6 +581,36 @@ struct rte_dma_auto_free_param {
+ 	uint64_t reserved[2];
+ };
+ 
++/**
++ * Inter-DMA transfer domain type.
++ *
++ * This enum defines the types of transfer domains applicable to DMA operations.
++ * It helps categorize whether a DMA transfer is occurring within the same domain,
++ * across different processes, or between distinct operating system domains.
++ *
++ * @see struct rte_dma_inter_domain_param:domain_type
++ */
++enum rte_dma_inter_domain_type {
++	RTE_DMA_INTER_DOMAIN_NONE, /**< No inter-domain transfer; standard DMA within same domain */
++	RTE_DMA_INTER_PROCESS_DOMAIN, /**< Transfer occurs between different user-space processes */
++	RTE_DMA_INTER_OS_DOMAIN, /**< Transfer spans across different operating system domains. */
++};
++
++/**
++ * Parameters for inter-process or inter-OS DMA transfers.
++ *
++ * This structure defines the parameters required to perform DMA transfers
++ * across different domains, such as between processes or operating systems.
++ * It includes the domain type and handler identifiers for both the source
++ * and destination domains.
++ */
++struct rte_dma_inter_domain_param {
++	enum rte_dma_inter_domain_type domain_type; /**< Type of inter-domain. */
++	uint16_t src_handler; /**< Source domain handler identifier. */
++	uint16_t dst_handler; /**< Destination domain handler identifier. */
++	uint64_t reserved[2]; /**< Reserved for future fields. */
++};
++
+ /**
+  * A structure used to configure a virtual DMA channel.
+  *
+@@ -601,6 +648,15 @@ struct rte_dma_vchan_conf {
+ 	 * @see struct rte_dma_auto_free_param
+ 	 */
+ 	struct rte_dma_auto_free_param auto_free;
++	/** Parameters for inter-process or inter-OS domain DMA transfers. This field
++	 * specifies the source and destination domain handlers required  for DMA
++	 * operations that span across different processes or operating system domains.
++	 *
++	 * @see RTE_DMA_CAPA_INTER_PROCESS_DOMAIN
++	 * @see RTE_DMA_CAPA_INTER_OS_DOMAIN
++	 * @see struct rte_dma_inter_domain_param
++	 */
++	struct rte_dma_inter_domain_param domain;
+ };
+ 
+ /**
+diff --git a/lib/dmadev/rte_dmadev_trace.h b/lib/dmadev/rte_dmadev_trace.h
+index 1de92655f2..12ea9d53f6 100644
+--- a/lib/dmadev/rte_dmadev_trace.h
++++ b/lib/dmadev/rte_dmadev_trace.h
+@@ -79,6 +79,9 @@ RTE_TRACE_POINT(
+ 	rte_trace_point_emit_int(conf->dst_port.port_type);
+ 	rte_trace_point_emit_u64(conf->dst_port.pcie.val);
+ 	rte_trace_point_emit_ptr(conf->auto_free.m2d.pool);
++	rte_trace_point_emit_int(conf->domain.domain_type);
++	rte_trace_point_emit_u16(conf->domain.src_handler);
++	rte_trace_point_emit_u16(conf->domain.dst_handler);
+ 	rte_trace_point_emit_int(ret);
+ )
+ 
+-- 
+2.34.1
 
-Now since we have replaced the contents of crc_xmm_shift_tab
-with shf_table, we will load:
-{0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f, 0x00, 0x01,
-0x02, 0x03, 0x04, 0x05}
-into the index register. Since the first 10 elements have MSB set, PSHUFB
-will again result in the
-same vector above with first 10 elements being zeroes and the 6 moving left
-as intended.
-Since xmm_shift_left is called with num between 11 and 1, we don't
-access crc_xmm_shift_tab[0]
-and the remaining elements 0x8{i} behave identically to 0xff when used with
-PSHUFB. Thus
-the xmm_shift_left behavior for currently used num values inside this file
-has identical behavior.
-
-
->
-> >  /**
-> > @@ -216,19 +207,12 @@ crc32_eth_calc_pclmulqdq(
-> >                       0x80808080, 0x80808080, 0x80808080, 0x80808080
-> >               };
-> >
-> > -             const alignas(16) uint8_t shf_table[32] =3D {
-> > -                     0x00, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
-> > -                     0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,
-> > -                     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-> > -                     0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
-> > -             };
-> > -
-> >               __m128i last16, a, b;
-> >
-> >               last16 =3D _mm_loadu_si128((const __m128i *)&data[data_le=
-n -
-> 16]);
-> >
-> >               temp =3D _mm_loadu_si128((const __m128i *)
-> > -                     &shf_table[data_len & 15]);
-> > +                     &crc_xmm_shift_tab[data_len & 15]);
-> >               a =3D _mm_shuffle_epi8(fold, temp);
-> >
-> >               temp =3D _mm_xor_si128(temp,
-> > --
-> > 2.49.1
-> >
->
-
---0000000000004a4fc50640cec844
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Oct 9, =
-2025 at 10:11=E2=80=AFPM Bruce Richardson &lt;<a href=3D"mailto:bruce.richa=
-rdson@intel.com">bruce.richardson@intel.com</a>&gt; wrote:<br></div><blockq=
-uote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1p=
-x solid rgb(204,204,204);padding-left:1ex">On Wed, Jul 16, 2025 at 04:04:39=
-PM +0530, Shreesh Adiga wrote:<br>
-&gt; Replace the clearing of lower 32 bits of XMM register with blend of<br=
->
-&gt; zero register.<br>
-&gt; Replace the clearing of upper 64 bits of XMM register with _mm_move_ep=
-i64.<br>
-&gt; Clang is able to optimize away the AND + memory operand with the<br>
-&gt; above sequence, however GCC is still emitting the code for AND with<br=
->
-&gt; memory operands which is being explicitly eliminated here.<br>
-&gt; <br>
-&gt; Additionally replace the 48 byte crc_xmm_shift_tab with the contents o=
-f<br>
-&gt; shf_table which is 32 bytes, achieving the same functionality.<br>
-&gt; <br>
-&gt; Signed-off-by: Shreesh Adiga &lt;<a href=3D"mailto:16567adigashreesh@g=
-mail.com" target=3D"_blank">16567adigashreesh@gmail.com</a>&gt;<br>
-&gt; ---<br>
-&gt;=C2=A0 lib/net/net_crc_sse.c | 30 +++++++-----------------------<br>
-&gt;=C2=A0 1 file changed, 7 insertions(+), 23 deletions(-)<br>
-&gt; <br>
-<br>
-See inline below. Changes to the reduce_64_to_32 look ok, I don&#39;t know<=
-br>
-enough to understand fully the other changes you made. Maybe split the<br>
-patch into two patches for review and merge separately?<br>
-<br>
-/Bruce<br>
-<br>
-&gt; diff --git a/lib/net/net_crc_sse.c b/lib/net/net_crc_sse.c<br>
-&gt; index 112dc94ac1..eec854e587 100644<br>
-&gt; --- a/lib/net/net_crc_sse.c<br>
-&gt; +++ b/lib/net/net_crc_sse.c<br>
-&gt; @@ -96,20 +96,13 @@ crcr32_reduce_128_to_64(__m128i data128, __m128i p=
-recomp)<br>
-&gt;=C2=A0 static __rte_always_inline uint32_t<br>
-&gt;=C2=A0 crcr32_reduce_64_to_32(__m128i data64, __m128i precomp)<br>
-&gt;=C2=A0 {<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0static const alignas(16) uint32_t mask1[4] =3D {<=
-br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00xffffffff, 0xfffffff=
-f, 0x00000000, 0x00000000<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0};<br>
-&gt; -<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0static const alignas(16) uint32_t mask2[4] =3D {<=
-br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00x00000000, 0xfffffff=
-f, 0xffffffff, 0xffffffff<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0};<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0__m128i tmp0, tmp1, tmp2;<br>
-&gt;=C2=A0 <br>
-&gt; -=C2=A0 =C2=A0 =C2=A0tmp0 =3D _mm_and_si128(data64, _mm_load_si128((co=
-nst __m128i *)mask2));<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0tmp0 =3D _mm_blend_epi16(_mm_setzero_si128(), dat=
-a64, 252);<br>
-<br>
-Minor nit: 252 would be better in hex to make it clearer that it&#39;s the<=
-br>
-lower two bits are unset. Even better, how about switching the operands so<=
-br>
-that the constant is just &quot;3&quot;, which is clearer again.<br></block=
-quote><div>Okay I will update it with your suggestion in the next patch.=C2=
-=A0</div><div><br></div><blockquote class=3D"gmail_quote" style=3D"margin:0=
-px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-<br>
-&gt;=C2=A0 <br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0tmp1 =3D _mm_clmulepi64_si128(tmp0, precomp,=
- 0x00);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0tmp1 =3D _mm_xor_si128(tmp1, tmp0);<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0tmp1 =3D _mm_and_si128(tmp1, _mm_load_si128((cons=
-t __m128i *)mask1));<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0tmp1 =3D _mm_move_epi64(tmp1);<br>
-&gt;=C2=A0 <br>
-<br>
-This change LGTM.<br>
-<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0tmp2 =3D _mm_clmulepi64_si128(tmp1, precomp,=
- 0x10);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0tmp2 =3D _mm_xor_si128(tmp2, tmp1);<br>
-&gt; @@ -118,13 +111,11 @@ crcr32_reduce_64_to_32(__m128i data64, __m128i p=
-recomp)<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0return _mm_extract_epi32(tmp2, 2);<br>
-&gt;=C2=A0 }<br>
-&gt;=C2=A0 <br>
-&gt; -static const alignas(16) uint8_t crc_xmm_shift_tab[48] =3D {<br>
-&gt; -=C2=A0 =C2=A0 =C2=A00xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,<b=
-r>
-&gt; -=C2=A0 =C2=A0 =C2=A00xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,<b=
-r>
-&gt; +static const alignas(16) uint8_t crc_xmm_shift_tab[32] =3D {<br>
-&gt; +=C2=A0 =C2=A0 =C2=A00x00, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,<b=
-r>
-&gt; +=C2=A0 =C2=A0 =C2=A00x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,<b=
-r>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A00x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x=
-07,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A00x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,<b=
-r>
-&gt; -=C2=A0 =C2=A0 =C2=A00xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,<b=
-r>
-&gt; -=C2=A0 =C2=A0 =C2=A00xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff<br=
->
-&gt; +=C2=A0 =C2=A0 =C2=A00x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f<br=
->
-&gt;=C2=A0 };<br>
-&gt;=C2=A0 <br>
-<br>
-Can you perhaps explain how changing this table doesn&#39;t break existing =
-uses<br>
-of the table as it now is in the code? Specifically, does xmm_shift_left<br=
->
-function not now have different behaviour?<br></blockquote><div>Sure,=C2=A0=
-crc_xmm_shift_tab is only used inside=C2=A0xmm_shift_left which is only use=
-d when</div><div>the total data_len is &lt; 16. We call=C2=A0xmm_shift_left=
-(fold, 8 - data_len) when len &lt;=3D 4 and</div><div>xmm_shift_left(fold, =
-16 - data_len) when 5 &lt;=3D len &lt;=3D 15. This results in accessing</di=
-v><div>crc_xmm_shift_tab between 1 and 31, i.e. element 0 is never accessed=
-.</div><div><br></div><div>Now if we take a specific case of xmm_shift_left=
-(fold, 10), then previously the shuffle register</div><div>would get loaded=
- with=C2=A0(crc_xmm_shift_tab + 16 - 10) which would be crc_xmm_shift_tab=
-=C2=A0+ 6:</div><div>{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,=
- 0xff, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05} which</div><div>when used with P=
-SHUFB would result in first 10 bytes of reg being 0 and the lower 6</div><d=
-iv>elements moving left: {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, d1, d2, d3, d4, d5,=
- d6}. The 0 get inserted</div><div>because PSHUFB with index &gt; 0x7f (MSB=
- set) results in 0.</div><div><br></div><div>Now since we have replaced the=
- contents of=C2=A0crc_xmm_shift_tab with=C2=A0shf_table, we will load:</div=
-><div>{0x86, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f, 0x00, 0x=
-01, 0x02, 0x03, 0x04, 0x05}</div><div>into the index register. Since the fi=
-rst 10 elements have MSB set, PSHUFB will again result in the=C2=A0</div><d=
-iv>same vector above=C2=A0with first 10 elements being zeroes and the 6 mov=
-ing left as intended.</div><div>Since=C2=A0xmm_shift_left is called with nu=
-m between 11 and 1, we don&#39;t access=C2=A0crc_xmm_shift_tab[0]</div><div=
->and the remaining elements 0x8{i} behave identically to 0xff when used wit=
-h PSHUFB. Thus</div><div>the=C2=A0xmm_shift_left behavior for currently use=
-d num values inside this file has identical behavior.</div><div>=C2=A0</div=
-><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border=
--left:1px solid rgb(204,204,204);padding-left:1ex">
-<br>
-&gt;=C2=A0 /**<br>
-&gt; @@ -216,19 +207,12 @@ crc32_eth_calc_pclmulqdq(<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A00x80808080, 0x80808080, 0x80808080, 0x80808080<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0};<br>
-&gt;=C2=A0 <br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0const alignas(16) uin=
-t8_t shf_table[32] =3D {<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A00x00, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A00x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A00x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A00x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0};<br>
-&gt; -<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__m128i last16, =
-a, b;<br>
-&gt;=C2=A0 <br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0last16 =3D _mm_l=
-oadu_si128((const __m128i *)&amp;data[data_len - 16]);<br>
-&gt;=C2=A0 <br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0temp =3D _mm_loa=
-du_si128((const __m128i *)<br>
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0&amp;shf_table[data_len &amp; 15]);<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0&amp;crc_xmm_shift_tab[data_len &amp; 15]);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0a =3D _mm_shuffl=
-e_epi8(fold, temp);<br>
-&gt;=C2=A0 <br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0temp =3D _mm_xor=
-_si128(temp,<br>
-&gt; -- <br>
-&gt; 2.49.1<br>
-&gt; <br>
-</blockquote></div></div>
-
---0000000000004a4fc50640cec844--
