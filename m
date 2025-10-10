@@ -2,54 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32517CAC5BB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Oct 2025 07:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FC0CAC5BB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Oct 2025 07:01:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 06C724028C;
-	Fri, 10 Oct 2025 09:01:35 +0200 (CEST)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTP id 41CDE40285
- for <dev@dpdk.org>; Fri, 10 Oct 2025 09:01:31 +0200 (CEST)
-X-QQ-mid: zesmtpgz5t1760079686t6f9002fe
-X-QQ-Originating-IP: 3a8ybQwGNWZKlxdq+3kW0n4hOSqh/AHnZE63kC77sGY=
+	by mails.dpdk.org (Postfix) with ESMTP id 059F1402C3;
+	Fri, 10 Oct 2025 09:01:39 +0200 (CEST)
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+ by mails.dpdk.org (Postfix) with ESMTP id 79BAE402C3;
+ Fri, 10 Oct 2025 09:01:36 +0200 (CEST)
+X-QQ-mid: zesmtpgz5t1760079689tfefdb249
+X-QQ-Originating-IP: 2AMGXDblbpu2s6UuuOKEoGAm6BY2Ey4iJoLgWugPPOw=
 Received: from sunshaojie-Precision-5820-Tower ( [203.174.112.180])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Fri, 10 Oct 2025 15:01:24 +0800 (CST)
+ id ; Fri, 10 Oct 2025 15:01:27 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16597163795429758471
-EX-QQ-RecipientCnt: 4
+X-BIZMAIL-ID: 9894306512829593228
+EX-QQ-RecipientCnt: 6
 From: Wenbo Cao <caowenbo@mucse.com>
-To: stephen@networkplumber.org
+To: stephen@networkplumber.org, Wenbo Cao <caowenbo@mucse.com>,
+ Ferruh Yigit <ferruh.yigit@amd.com>
 Cc: dev@dpdk.org,
 	yaojun@mucse.com,
-	Wenbo Cao <caowenbo@mucse.com>
-Subject: [PATCH v3 0/4] [v3]drivers/net/rnp fixed Coverity issue
-Date: Fri, 10 Oct 2025 15:01:18 +0800
-Message-Id: <20251010070122.161401-1-caowenbo@mucse.com>
+	stable@dpdk.org
+Subject: [PATCH v3 1/4] net/rnp: add check firmware respond info
+Date: Fri, 10 Oct 2025 15:01:19 +0800
+Message-Id: <20251010070122.161401-2-caowenbo@mucse.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251010070122.161401-1-caowenbo@mucse.com>
+References: <20251010070122.161401-1-caowenbo@mucse.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz5a-0
-X-QQ-XMAILINFO: M+okR60L6L4Zk2c/MNhpW7Z7I4JEFfdbMcwgL0hXvtG08uqTZ1dVlGeV
- sAQOk5Bg1+ooOsLGtCxFpx5ryvJnX2yGuCjwNVG7mIzJYEKSc+WE1Zk2nf9u/BH5MTqsLYC
- v/3l9pP96KqYEpjX8DUo6NhXJIojKmsWgiARF1tPo4hkddW1rzxklITmYyIVlY+DzRixLyt
- 7/hJDhAGIRE9rW6xJ6h6/H60eDbKeT1XuyLSvZp2Oiqjvi4K159BhTTVyfOpljkT0T8ESdq
- toHEiu8U5ogFvAn5WuJ1dlYMSnzsX5n3K6VUA18dNDVxOQEYFYqy2WDZNguHsEXgDrCtNMD
- MKWAHF3p4iTtN/ufo3s2lwaUJ2NtKggsM+M2f7WismhE/9QJw8FaUl0Lyuh2H15hUbpKk0W
- y39bcxeslaqZhsbOjPYrU6BAh7EFx71UoVN9R3IETbiuJ5+Gv9C6pG09Kg8WAamz+ukuySE
- h5fi8vWJbdLhL7XUpGCBPL5k2OQa/XSxpSXHnOvVAI+6VrdD3+3rrcNB9baXB7YoNEupB9z
- 0b4G/uTRBskUWnPI6XhcDWSqtibtXFI/u6GFSat4ksHYZaFMgXB7jDCwPlWzXLeOchQZ+wR
- zBTi3DV6jitxExsUM37Ui0mKQQm+JGiAFFaFVO6KZ5FgKWKieoKs0evautu1VN/daRvgrJu
- +CYN03w9eOV1ne5TfhAty991Ugu0qTPlqNdfildsaBWBXlgHcMvp8PCxsuIiOBc9iDonzho
- N65qYaaZwe2fPxLhDeILrRtpdpDHa3FRel8bw0HqYq1HIx9/y8nd5ufpfw6X5Z4tyZF8kYr
- DJN7twk5p8bVZobpSGqjwh264DLx3khkZBWzxr8DDeVaq50Jj4wqG1nBk8dWqPpjtrs3Rip
- HLRbt1d4Qcb3yQJYTO131quqj6Kzkg7kTQXR4tdsHZxoMx8H9ImuiMzPgHY2JvTrIqH2qr4
- LsU/BN2H8jV8MmKmfT2W0ttFCg3t3LdjBcq1infnMZ1LEh1mWJ1GoSfrRx/TVIZLMxBA6GR
- vupGCYa6Q2Hq2JJDwP+gbtOeR4r6gF92FuQDsDgazdnr46rOWh7PzqMo6FE+pYrAHUr6vhM
- c+hNn5KYdki
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-XMAILINFO: N+zv///MAAEkBtQRmcwCurrIOJUJEhy1Z2gKffvFqLfnIYglm2F+Fg7t
+ XDT5fzGlJNpv+qRzbW/sG/NWcC/X1A+XbfIkSB9lczGtxZVw+Nuvieer/gg3ubACy3SMiD6
+ 3vYYlEm7fiYqNEspDYf42ww/CZYuhi0NDBRtfp17vglCoyxSBNiANb1+tLVHd7jg3VtYKsb
+ EYzHjeqSKgjjYa/ogA5yAU9oD07Ln0WZpd4pnDUFRjz3lqAYYSlIrbxcXrpvTi/NkTz/tyX
+ dZ3T/70qLBNmOlSrGjNHjzQ59GPvQHmE2E7lN2EbN1C7VhtXSnXibRXiXaAz9zkAMwFTT9Z
+ q57lClhbi8buD4woMBXfK1kR6NbgJ+EILKuN0y1vqpNdtfA13zNTDY8/PhjsYfuF+0aPyP5
+ 8ibxzPjssIOhvjKOdqahPEZEcwidsnY73wFAhaoPq3CQMn+dEo2GfHsxNq82RaAqeLXesW/
+ BAg60kEgL09ixwpr5M+jaWJd/tD48OSSctyF8XP6AbXWzkmwDQDqLfTogz8axGPZ9g91bXW
+ /eDDBnciNXeSBleksYybUNEa4YoPic5+BBMY+xMJS2Rs64USKisKroBOkQsvc27++K++Nka
+ fwKHuQ10sLJm8o3O/gpPoOabgBmdgH75ML3wJHEx1y9HXN8BRmxMZtewFBzdwxCvnmdGHN2
+ mXo5e6okGfoKP4LMP7zfUVLlUKi8u3+7ags1G8MqahSOZA0AJmjYdbF5JIL3Yw1TtarBRkF
+ vWSHyRQFqJQAt2LG3jUI+1X7YRIjB0iPuDioi3MO+o1TcRAakexJ6mxqD18gHo4a54X0gvA
+ v+l8LzCusff40s3J7IpExiaOUvqFUVaLw9OiwcBVGH+Ejp5zjy4g3nBZ7OK852IXPZ+bbtZ
+ jaIASXqfYwhKqwWifXsAIX0zmpyH9ZXnnQJKDObeSRz9fsv8h3LWlq4+TSw0WOyAdYN+hEM
+ f31+i3xsDwHnTK+8OVGanhui9QY9xxLTF/uJW3zaZBIQf6G09OdaZj/M0N2Te+6XWHaa3Ke
+ 8fwn0mRNonU7K4hpzOvJHoLSS59o+o4SyI78C4jkJkeugpAHX4SSQQ2QQp3fXt6qJGHmyTv
+ w==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -64,35 +67,102 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset primarily optimizes the robustness of code logic and
-resolves anomalies in TSO segmentation.
+Add logic checks at critical points to detect potentially illegal
+firmware information, preventing subsequent logic exceptions.
 
-v3:
-  * fixed no-lsc base api memory overflow.
-v2:
-  * Optimized logical portability per Stephen Hemminger's suggestions
-v1:
-  * fixed complie issue
-v0:
-  *:fixed the below issue:
-  	Coverity issue: 468860,468866,468858
-	Fixes: 4530e70f1e32 ("net/rnp: support Tx TSO offload")
-	Fixes: 52dfb84e14be ("net/rnp: add device init and uninit")
-	Fixes: 52aae4ed4ffb ("net/rnp: add device capabilities")
-  *:fixed 64k tso
+Fixes: 52aae4ed4ffb ("net/rnp: add device capabilities")
+Fixes: 52dfb84e14be ("net/rnp: add device init and uninit")
+Cc: stable@dpdk.org
 
-Wenbo Cao (4):
-  net/rnp: add check firmware respond info
-  net/rnp: fix Tunnel-TSO VLAN header untrusted loop bound
-  net/rnp: fix TSO segmentation for packets of 64KB
-  net/rnp: resolve coredump caused by memory overflow
+Signed-off-by: Wenbo Cao <caowenbo@mucse.com>
+Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/net/rnp/base/rnp_mbx_fw.c | 17 +++++++++++++++--
+ drivers/net/rnp/rnp_ethdev.c      | 16 ++++++++--------
+ 2 files changed, 23 insertions(+), 10 deletions(-)
 
- drivers/net/rnp/base/rnp_mbx_fw.c |  19 ++++-
- drivers/net/rnp/rnp_ethdev.c      |  16 ++--
- drivers/net/rnp/rnp_rxtx.c        | 118 +++++++++++++++++++++++-------
- drivers/net/rnp/rnp_rxtx.h        |   1 +
- 4 files changed, 118 insertions(+), 36 deletions(-)
-
+diff --git a/drivers/net/rnp/base/rnp_mbx_fw.c b/drivers/net/rnp/base/rnp_mbx_fw.c
+index 3e7cf7f9ad..7ae8763a4a 100644
+--- a/drivers/net/rnp/base/rnp_mbx_fw.c
++++ b/drivers/net/rnp/base/rnp_mbx_fw.c
+@@ -230,6 +230,7 @@ rnp_fw_get_phy_capability(struct rnp_eth_port *port,
+ 	return 0;
+ }
+ 
++#define RNP_MAX_LANE_MASK	(0xf)
+ int rnp_mbx_fw_get_capability(struct rnp_eth_port *port)
+ {
+ 	struct rnp_phy_abilities_rep ability;
+@@ -252,17 +253,29 @@ int rnp_mbx_fw_get_capability(struct rnp_eth_port *port)
+ 		hw->nic_mode = ability.nic_mode;
+ 		/* get phy<->lane mapping info */
+ 		lane_cnt = rte_popcount32(hw->lane_mask);
++		if (lane_cnt > RNP_MAX_PORT_OF_PF) {
++			RNP_PMD_LOG(ERR, "firmware invalid lane_mask");
++			return -EINVAL;
++		}
+ 		temp_mask = hw->lane_mask;
++		if (temp_mask == 0 || temp_mask > RNP_MAX_LANE_MASK) {
++			RNP_PMD_LOG(ERR, "lane_mask is invalid 0x%.2x", temp_mask);
++			return -EINVAL;
++		}
+ 		if (ability.e.ports_is_sgmii_valid)
+ 			is_sgmii_bits = ability.e.lane_is_sgmii;
+ 		for (idx = 0; idx < lane_cnt; idx++) {
+ 			hw->phy_port_ids[idx] = port_ids[idx];
+-			lane_bit = ffs(temp_mask) - 1;
++			if (temp_mask == 0) {
++				RNP_PMD_LOG(ERR, "temp_mask is zero at idx=%d", idx);
++				return -EINVAL;
++			}
++			lane_bit = rte_ffs32(temp_mask) - 1;
+ 			lane_idx = port_ids[idx] % lane_cnt;
+ 			hw->lane_of_port[lane_idx] = lane_bit;
+ 			is_sgmii = lane_bit & is_sgmii_bits ? 1 : 0;
+ 			hw->lane_is_sgmii[lane_idx] = is_sgmii;
+-			temp_mask &= ~RTE_BIT32(lane_bit);
++			temp_mask &= ~(1ULL << lane_bit);
+ 		}
+ 		hw->max_port_num = lane_cnt;
+ 	}
+diff --git a/drivers/net/rnp/rnp_ethdev.c b/drivers/net/rnp/rnp_ethdev.c
+index de1c077f61..24eb0b16dd 100644
+--- a/drivers/net/rnp/rnp_ethdev.c
++++ b/drivers/net/rnp/rnp_ethdev.c
+@@ -751,17 +751,17 @@ rnp_get_speed_caps(struct rte_eth_dev *dev)
+ {
+ 	struct rnp_eth_port *port = RNP_DEV_TO_PORT(dev);
+ 	uint32_t speed_cap = 0;
+-	uint32_t i = 0, speed;
+ 	uint32_t support_link;
+-	uint32_t link_types;
++	uint32_t speed = 0;
++	int bit_pos = 0;
+ 
+ 	support_link = port->attr.phy_meta.supported_link;
+-	link_types = rte_popcount64(support_link);
+-	if (!link_types)
++	if (support_link == 0)
+ 		return 0;
+-	for (i = 0; i < link_types; i++) {
+-		speed = ffs(support_link) - 1;
+-		switch (RTE_BIT32(speed)) {
++	while (support_link) {
++		bit_pos = rte_ffs32(support_link) - 1;
++		speed = RTE_BIT32(bit_pos);
++		switch (speed) {
+ 		case RNP_SPEED_CAP_10M_FULL:
+ 			speed_cap |= RTE_ETH_LINK_SPEED_10M;
+ 			break;
+@@ -789,7 +789,7 @@ rnp_get_speed_caps(struct rte_eth_dev *dev)
+ 		default:
+ 			speed_cap |= 0;
+ 		}
+-		support_link &= ~RTE_BIT32(speed);
++		support_link &= ~speed;
+ 	}
+ 	if (!port->attr.phy_meta.link_autoneg)
+ 		speed_cap |= RTE_ETH_LINK_SPEED_FIXED;
 -- 
 2.34.1
 
