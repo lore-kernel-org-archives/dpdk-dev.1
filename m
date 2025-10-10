@@ -2,40 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65075CCD185
-	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Oct 2025 13:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F06CCD185
+	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Oct 2025 13:23:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9EBA8402A0;
-	Fri, 10 Oct 2025 15:23:34 +0200 (CEST)
-Received: from cstnet.cn (smtp87.cstnet.cn [159.226.251.87])
- by mails.dpdk.org (Postfix) with ESMTP id E28C54027A
- for <dev@dpdk.org>; Fri, 10 Oct 2025 15:23:32 +0200 (CEST)
-Received: from sunyuechi$iscas.ac.cn ( [42.58.228.253] ) by
- ajax-webmail-APP-17 (Coremail) ; Fri, 10 Oct 2025 21:23:30 +0800
- (GMT+08:00)
-X-Originating-IP: [42.58.228.253]
-Date: Fri, 10 Oct 2025 21:23:30 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: sunyuechi@iscas.ac.cn
-To: "Thomas Monjalon" <thomas@monjalon.net>
-Cc: dev@dpdk.org, "Stanislaw Kardach" <stanislaw.kardach@gmail.com>
-Subject: Re: Re: [PATCH] maintainers: update for RISC-V
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
- 20240627(e6c6db66) Copyright (c) 2002-2025 www.mailtech.cn cnic.cn
-In-Reply-To: <50b65476.5d78.19995b2390e.Coremail.sunyuechi@iscas.ac.cn>
-References: <tencent_7559D52E8BB321BEE2D7B90CAC9A30759E07@qq.com>
- <50b65476.5d78.19995b2390e.Coremail.sunyuechi@iscas.ac.cn>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	by mails.dpdk.org (Postfix) with ESMTP id 0C6D740672;
+	Fri, 10 Oct 2025 15:23:51 +0200 (CEST)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com
+ [209.85.128.53]) by mails.dpdk.org (Postfix) with ESMTP id DB58040672
+ for <dev@dpdk.org>; Fri, 10 Oct 2025 15:23:49 +0200 (CEST)
+Received: by mail-wm1-f53.google.com with SMTP id
+ 5b1f17b1804b1-46e3af7889fso11570785e9.2
+ for <dev@dpdk.org>; Fri, 10 Oct 2025 06:23:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=6wind.com; s=google; t=1760102629; x=1760707429; darn=dpdk.org;
+ h=content-transfer-encoding:in-reply-to:from:content-language
+ :references:cc:to:subject:user-agent:mime-version:date:message-id
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=jbO97MW2T9IbimW+rewgEVdECk9nlwGV5axgwXC1u+g=;
+ b=MTapforfTnvbOK0AYdOshNxTTjX1vRQAS8oxr3KblZU8wV8teTTeXJc/18D39Kk9n1
+ 3bediblcUmPbQHf+el/kf+wU2Ecm8p5ZD4b/eBVU4y3iGVazw2cedelA0GTwGA7y2D6G
+ pFC79yYwLY0VlCtxc+3AA6CO+ckVoNBfdUOVwNuvtm3g3449WP/fyJy+dPwvqvAc6z6u
+ 6ofh7rTrwteJzk6Iydr8ZDB7qik9vqai1EFvl0nAJbuFcifZO9xooFVdieKxZCWAVhPj
+ +/naB3Pf05TL9FUaDppuzdbHRwJGEz9YZUgRqgp6BxDPQf3C0zxG6jOUFIPE9mnHlYvZ
+ LW0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1760102629; x=1760707429;
+ h=content-transfer-encoding:in-reply-to:from:content-language
+ :references:cc:to:subject:user-agent:mime-version:date:message-id
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=jbO97MW2T9IbimW+rewgEVdECk9nlwGV5axgwXC1u+g=;
+ b=FpIahCnMzSZ+E6/ZmcK0OZAiRpw1sPBzDvqQwbc/zMRAsgl7kiEr49wcKjtiTUHvxz
+ XYknvvO5fcbRK+ebxZCMxftXT7lzPQt9/Iq6187awKXdTWtddLzCS97RpQCpTYyL4UU7
+ Jduj7yJooDpQRQRE5iXHuZdO/dxIJmSohl13iWIyUflOwslnnoRW4NW3VG4xUAbi2Yar
+ 7YdfYJFBCEzDEcCezqsGHqK9d3iBerBr+lE9r6HkQJr9FyX1o9HzqJWOpr4jh3gx9KWJ
+ zg6V65ooP48/ndEjVR6kR3BZ+xuj9skAh+BWkNuIcspTl/1M8hQ0vFFOroBL0QjpnaYE
+ 545Q==
+X-Gm-Message-State: AOJu0YydTEoEc6KzUQ62QPrD0GsUcfNB1bKBTeNE1aqznZquaD18dJ5l
+ 3VdaNVZAD4fEP5jJ8wELD00efE2O8fmG5mfYcY9Ngl9SC9QquvB0XA/L6hcJ0H9f4w==
+X-Gm-Gg: ASbGncvEAHf1b7qFzN7RdMeGt69hixCZ2efP//5jcE77sYNnnufcoKoBcZ/eObIFvnd
+ ZhQHXBKzbOKWVOlJnSYYpz/PnVnLiz9RvG5M8itN5WY+mIm+6FVauLAsnc8ollj8YLK5FDKIyeS
+ LJAda85rmlgyct6S+D9uaNeBhhLMJrJ0Uflhw26IZ51Pbkh8oxFwB77PR6krRaLJprhIupluoDG
+ TYwWiHlAMduEcl1wJV7rJeKSaDvmTxypul/K8wdAu4kWrpV/BFzsek4lSDaaFzMelFShIc2XsHc
+ XRTrYTc0vFrJ765CKthughDLB3vi3Rxuxapn42SkG7yhBA84bR6Bu1pgvRs0tZgGvEa55CgnqRD
+ cOD0zdsJ1UdkqKI8WJhMI5nofyercToaRqkWhWR6o4FF73Gr+axOQo32S
+X-Google-Smtp-Source: AGHT+IH+tjFzgQ5/r23d78SAUUaPtRkCynJNG8VIhU5z4Ovp8CJhBhtrNP0I3Kr+lSKTBE4VDVEsnw==
+X-Received: by 2002:a05:600c:1f84:b0:46e:4cd3:7d54 with SMTP id
+ 5b1f17b1804b1-46fa9aef45fmr80314105e9.18.1760102629462; 
+ Fri, 10 Oct 2025 06:23:49 -0700 (PDT)
+Received: from [10.17.1.39] ([185.13.181.2]) by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-46fb49be017sm45620505e9.13.2025.10.10.06.23.46
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Fri, 10 Oct 2025 06:23:46 -0700 (PDT)
+Message-ID: <795fdbeb-918c-4b35-9811-746b5df719c5@6wind.com>
+Date: Fri, 10 Oct 2025 15:23:45 +0200
 MIME-Version: 1.0
-Message-ID: <3f429955.1c168.199ce4a76fd.Coremail.sunyuechi@iscas.ac.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: qgCowADnhLTSCOloB_EDAA--.35688W
-X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiBwoLAmjo14LBlgABsH
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
- CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
- daVFxhVjvjDU=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [V2] net/intel/e1000: reduce the optimization level for gcc > 11
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
+ David Marchand <david.marchand@redhat.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Olivier Matz <olivier.matz@6wind.com>
+References: <20251006124506.388456-1-thierry.herbelot@6wind.com>
+ <20251006130257.391200-1-thierry.herbelot@6wind.com>
+ <aOkIFu1EtAcgId22@bricha3-mobl1.ger.corp.intel.com>
+Content-Language: en-US
+From: Thierry Herbelot <thierry.herbelot@6wind.com>
+In-Reply-To: <aOkIFu1EtAcgId22@bricha3-mobl1.ger.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,39 +84,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-SGksIGhvdyBpcyB0aGlzIHBhdGNoPwoKCiZndDsgLS0tLS3ljp/lp4vpgq7ku7YtLS0tLQomZ3Q7
-IOWPkeS7tuS6ujogc3VueXVlY2hpQGlzY2FzLmFjLmNuCiZndDsg5Y+R6YCB5pe26Ze0OiAyMDI1
-LTA5LTI5IDIxOjM4OjI5ICjmmJ/mnJ/kuIApCiZndDsg5pS25Lu25Lq6OiAiVGhvbWFzIE1vbmph
-bG9uIiA8dGhvbWFzQG1vbmphbG9uLm5ldD4KJmd0OyDmioTpgIE6IGRldkBkcGRrLm9yZywgIlN0
-YW5pc2xhdyBLYXJkYWNoIiA8c3RhbmlzbGF3LmthcmRhY2hAZ21haWwuY29tPgomZ3Q7IOS4u+mi
-mDogUmU6IFtQQVRDSF0gbWFpbnRhaW5lcnM6IHVwZGF0ZSBmb3IgUklTQy1WCiZndDsgCiZndDsg
-SGksIEkgbm90aWNlZCB0aGF0IHRoaXMgcGF0Y2ggd2FzIG5vdCBjY+KAmWQgdG8gU3RhbmlzbGF3
-IEthcmRhY2gsIAomZ3Q7IHNvIEnigJl2ZSBhZGRlZCBoaW0gYW5kIGp1c3Qgd2FudGVkIHRvIGdp
-dmUgYSBnZW50bGUgcGluZyB0byBzZWUgaWYgeW91IGFncmVlLiAgCiZndDsgSWYgdGhpcyBwaW5n
-IGlzIHRvbyBlYXJseSwgcGxlYXNlIGZlZWwgZnJlZSB0byBpZ25vcmUgaXQuCiZndDsgCiZndDsg
-CiZndDsgJmd0OyAtLS0tLeWOn+Wni+mCruS7ti0tLS0tCiZndDsgJmd0OyDlj5Hku7bkuro6IHVr
-N2JAZm94bWFpbC5jb20KJmd0OyAmZ3Q7IOWPkemAgeaXtumXtDogMjAyNS0wOS0yMCAwMzozMDow
-NiAo5pif5pyf5YWtKQomZ3Q7ICZndDsg5pS25Lu25Lq6OiBkZXZAZHBkay5vcmcKJmd0OyAmZ3Q7
-IOaKhOmAgTogIlN1biBZdWVjaGkiIDxzdW55dWVjaGlAaXNjYXMuYWMuY24+LCAiVGhvbWFzIE1v
-bmphbG9uIiA8dGhvbWFzQG1vbmphbG9uLm5ldD4KJmd0OyAmZ3Q7IOS4u+mimDogW1BBVENIXSBt
-YWludGFpbmVyczogdXBkYXRlIGZvciBSSVNDLVYKJmd0OyAmZ3Q7IAomZ3Q7ICZndDsgRnJvbTog
-U3VuIFl1ZWNoaSA8c3VueXVlY2hpQGlzY2FzLmFjLmNuPgomZ3Q7ICZndDsgCiZndDsgJmd0OyBB
-ZGQgbXlzZWxmIGFzIG1haW50YWluZXIgZm9yIFJJU0MtVi4KJmd0OyAmZ3Q7IAomZ3Q7ICZndDsg
-U2lnbmVkLW9mZi1ieTogU3VuIFl1ZWNoaSA8c3VueXVlY2hpQGlzY2FzLmFjLmNuPgomZ3Q7ICZn
-dDsgLS0tCiZndDsgJmd0OyAgTUFJTlRBSU5FUlMgfCAyICstCiZndDsgJmd0OyAgMSBmaWxlIGNo
-YW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCiZndDsgJmd0OyAKJmd0OyAmZ3Q7
-IGRpZmYgLS1naXQgYS9NQUlOVEFJTkVSUyBiL01BSU5UQUlORVJTCiZndDsgJmd0OyBpbmRleCAx
-YTI3MjliZTY2Li5kZjFkMjk1ZjkzIDEwMDY0NAomZ3Q7ICZndDsgLS0tIGEvTUFJTlRBSU5FUlMK
-Jmd0OyAmZ3Q7ICsrKyBiL01BSU5UQUlORVJTCiZndDsgJmd0OyBAQCAtMzM3LDEwICszMzcsMTAg
-QEAgRjogZXhhbXBsZXMvY29tbW9uL2FsdGl2ZWMvCiZndDsgJmd0OyAgCiZndDsgJmd0OyAgUklT
-Qy1WCiZndDsgJmd0OyAgTTogU3RhbmlzxYJhdyBLYXJkYWNoIDxzdGFuaXNsYXcua2FyZGFjaEBn
-bWFpbC5jb20+CiZndDsgJmd0OyArTTogU3VuIFl1ZWNoaSA8c3VueXVlY2hpQGlzY2FzLmFjLmNu
-PgomZ3Q7ICZndDsgIEY6IGNvbmZpZy9yaXNjdi8KJmd0OyAmZ3Q7ICBGOiBkb2MvZ3VpZGVzL2xp
-bnV4X2dzZy9jcm9zc19idWlsZF9kcGRrX2Zvcl9yaXNjdi5yc3QKJmd0OyAmZ3Q7ICBGOiBsaWIv
-ZWFsL3Jpc2N2LwomZ3Q7ICZndDsgLU06IFN1biBZdWVjaGkgPHN1bnl1ZWNoaUBpc2Nhcy5hYy5j
-bj4KJmd0OyAmZ3Q7ICBGOiBsaWIvKiovKnJ2dioKJmd0OyAmZ3Q7ICAKJmd0OyAmZ3Q7ICBJbnRl
-bCB4ODYKJmd0OyAmZ3Q7IC0tIAomZ3Q7ICZndDsgMi41MS4wCiZndDsgPC9zdW55dWVjaGlAaXNj
-YXMuYWMuY24+PC9zdW55dWVjaGlAaXNjYXMuYWMuY24+PC9zdGFuaXNsYXcua2FyZGFjaEBnbWFp
-bC5jb20+PC9zdW55dWVjaGlAaXNjYXMuYWMuY24+PC9zdW55dWVjaGlAaXNjYXMuYWMuY24+PC90
-aG9tYXNAbW9uamFsb24ubmV0Pjwvc3VueXVlY2hpQGlzY2FzLmFjLmNuPgo8L3N0YW5pc2xhdy5r
-YXJkYWNoQGdtYWlsLmNvbT48L3Rob21hc0Btb25qYWxvbi5uZXQ+
+On 10/10/25 15:20, Bruce Richardson wrote:
+> On Mon, Oct 06, 2025 at 03:02:57PM +0200, Thierry Herbelot wrote:
+>> The e1000 PMD stopped working under Ubuntu-24.04 (using gcc-13) when
+>> compiled with -O3 (default level for all DPDK code). There is a crash
+>> when starting testpmd:
+>>
+>>> (gdb) bt
+>>> #0  rte_read32_relaxed (addr=0x1100800e00) at ../sources/lib/eal/include/generic/rte_io.h:290
+>>> #1  rte_read32 (addr=0x1100800e00) at ../sources/lib/eal/include/generic/rte_io.h:345
+>>> #2  e1000_read_addr (addr=0x1100800e00) at ../sources/drivers/net/intel/e1000/base/e1000_osdep.h:106
+>>> #3  e1000_id_led_init_generic (hw=0x1586788c0) at ../sources/drivers/net/intel/e1000/base/e1000_mac.c:1844
+>>> #4  0x000062aaf653c85f in e1000_init_hw_82540 (hw=0x1586788c0)
+>>>      at ../sources/drivers/net/intel/e1000/base/e1000_82540.c:308
+>>> #5  0x000062aaf6db8227 in em_hardware_init (hw=hw@entry=0x1586788c0)
+>>>      at ../sources/drivers/net/intel/e1000/em_ethdev.c:920
+>>> #6  0x000062aaf65340ff in em_hw_init (hw=0x1586788c0) at ../sources/drivers/net/intel/e1000/em_ethdev.c:445
+>>> #7  eth_em_dev_init (eth_dev=eth_dev@entry=0x62aaff346000 <rte_eth_devices>)
+>>>      at ../sources/drivers/net/intel/e1000/em_ethdev.c:314
+>>> #8  0x000062aaf6db8b71 in rte_eth_dev_pci_generic_probe (private_data_size=11240,
+>>>      dev_init=0x62aaf6db8310 <eth_em_dev_init>, pci_dev=0x62ab2853dd90) at ../sources/lib/ethdev/ethdev_pci.h:150
+>>> #9  eth_em_pci_probe (pci_drv=<optimized out>, pci_dev=0x62ab2853dd90)
+>>>      at ../sources/drivers/net/intel/e1000/em_ethdev.c:365
+>>> #10 0x000062aaf646adf5 in rte_pci_probe_one_driver (dr=dr@entry=0x62aaf82d8020 <rte_em_pmd>,
+>>>      dev=dev@entry=0x62ab2853dd90) at ../sources/drivers/bus/pci/pci_common.c:299
+>>> #11 0x000062aaf6a15f7d in pci_probe_all_drivers (dev=0x62ab2853dd90) at ../sources/drivers/bus/pci/pci_common.c:383
+>>> #12 pci_probe () at ../sources/drivers/bus/pci/pci_common.c:410
+>>> #13 0x000062aaf7a485f3 in rte_bus_probe () at ../sources/lib/eal/common/eal_common_bus.c:84
+>>> #14 0x000062aaf670585d in rte_eal_init (argc=argc@entry=146, argv=argv@entry=0x7fffca468898)
+>>>      at ../sources/lib/eal/linux/eal.c:1253
+>>
+>> The crash is linked to the use of gcc-13: under Ubuntu-24.04 testpmd
+>> compiled with gcc-11 from the same DPDK tree works as expected.
+>>
+>> The perfect solution would be for someone to investigate why the
+>> PMD crashes. However, this depends on Maintainer availability.
+>>
+> Hi,
+> 
+> can you test with [1]. It's still a workaround while we investigate more,
+> but a less severe one!
+
+Hello,
+
+Thanks for the quick turnaround.
+The compilation is ongoing. I will post ASAP, when the test has run.
+
+	Thierry>
+> /Bruce
+> 
+> [1] https://patches.dpdk.org/project/dpdk/patch/20251010125848.965340-1-ciara.loftus@intel.com/
+
+-- 
+Thierry Herbelot
+
