@@ -2,66 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E38CCD185
-	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Oct 2025 18:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B402ACCD185
+	for <dpdk-dev@archiver.kernel.org>; Sat, 11 Oct 2025 02:53:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D5874021E;
-	Fri, 10 Oct 2025 20:42:08 +0200 (CEST)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com
- [209.85.128.181])
- by mails.dpdk.org (Postfix) with ESMTP id 370CE4003C
- for <dev@dpdk.org>; Fri, 10 Oct 2025 20:42:06 +0200 (CEST)
-Received: by mail-yw1-f181.google.com with SMTP id
- 00721157ae682-780fe73e337so23410437b3.1
- for <dev@dpdk.org>; Fri, 10 Oct 2025 11:42:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1760121725; x=1760726525; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=7yyeJLZ2FpxSZbVwtIRLjVtZlYAUD4jyA+O+WUhHkQg=;
- b=i3f1Mmg6ydIivYhWYNqMUp8Uv5+HNXGEpUYMMSlK+BfFL00zfgTI87ovHn+oFYp8Dw
- e3qcz1HwY+JZ/qdlZT3+sfWN+IOwmWWkKMjdbRc2n0AzruLX51kt/blt+oKn/0cnX1il
- kHqlMovIa5+5ptZATT68mYqgVJQ34LMN0HcbM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760121725; x=1760726525;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=7yyeJLZ2FpxSZbVwtIRLjVtZlYAUD4jyA+O+WUhHkQg=;
- b=jKfpfBvRgkxGVtQYJYaQRiaLst/KOhDPDw5Do9oGBEGENwA3KKoFYDkoZ3/yrJw8EB
- bWFcyPWtbFwBh2uyp4C2aSaoFt+zhwYFjHY9dWokU0nKXzp7jC998JlKBkMnGITwqR5V
- ctkQS+At+zR+tB4vlQbkaJQf8y/3ORHlqTwF5ASgGfhaBUZUgmY8BRdhOjnZTO4+9ZKZ
- c4dKP680LdscAZcLDrmGID/CRX7ZprnLOXx2uISBYVozbdcFhuw9Kb1rzL8fXGOGU+YQ
- iSdEpb6Lx3iqsdvTLcj2OwbJPHp+Z1EOdWr1QizdOGRuDrB83OCKAgGG1SP/EFo0haUU
- LxJw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVK4hL4TTqGQqEt3Z5gr8QN3QxXbbTZb4iBH7l8QQ7ayV7/LFcBEQK9X5apdvDzYosSDAU=@dpdk.org
-X-Gm-Message-State: AOJu0YxV5kjmJP8aDJNAADIyeN036mICG54ojzugWu7ciPv24Vl8Ecix
- MtYkCO40PUrQVtrmIwvWXCyowDoE7JxKSZ2B870u2wJk0BRbf4b+RGUO38c3ebpGlSm2zqOYK3w
- f/+cyCpHW3shXPBUqHvfF3dYNqEprU9SFfkW2e0zNFA==
-X-Gm-Gg: ASbGncsLbf8e1fjd0734twuoPwd5Ka+qjhkOMVs9w06I0GMthC2S8FTy19GeClz1xyy
- 5KFZV3Vl9xBTK+IaIZlgWukULp4rTBmXElDb/pgnoGTIztVYDTENeo0El54KzPG00ZhxzO1u1zX
- v35MBn02LHL+66c04IaSV/Jldnk6GnjFlY0SibUHptSMJjzFbPj2PT/jH+W1ttqqXBAhY4TPA+9
- X3eX2aFS6AEo7/7Ot6D9vGUWQL1xn/bX3PUjJ3OSvZFEwVgyOo=
-X-Google-Smtp-Source: AGHT+IGdwhuFetdcMKGhPHZV+Xo4ZSZnVxmiFkterXJIZ1DwWgrdgKUdws4cpaCLs0wuuWamkoi2/k7eq/TpB588NeE=
-X-Received: by 2002:a05:690e:245:b0:63c:f5a6:f2f1 with SMTP id
- 956f58d0204a3-63cf5a70632mr97885d50.67.1760121725472; Fri, 10 Oct 2025
- 11:42:05 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 901D84021E;
+	Sat, 11 Oct 2025 04:53:08 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id DC7E14003C
+ for <dev@dpdk.org>; Sat, 11 Oct 2025 04:53:06 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id B999B48906; Sat, 11 Oct 2025 04:53:06 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/testpmd Bug 1799] [dpdk-25.11-rc0]
+ ipv4_reassembly/test_send_2K_frames_split_in_4_and_1K_maxflows: Cannot
+ configure device:
+Date: Sat, 11 Oct 2025 02:53:06 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: testpmd
+X-Bugzilla-Version: 25.07
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: daxuex.gao@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1799-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-References: <20250423194011.1447679-1-npratte@iol.unh.edu>
- <20251001231659.2297751-1-probb@iol.unh.edu>
- <20251001231659.2297751-4-probb@iol.unh.edu>
-In-Reply-To: <20251001231659.2297751-4-probb@iol.unh.edu>
-From: Dean Marx <dmarx@iol.unh.edu>
-Date: Fri, 10 Oct 2025 14:41:54 -0400
-X-Gm-Features: AS18NWAaG-wKiQFA8VY-vnnIl7p1iDxVjC6SW7uG44BAvDxXT0nCGRl5bfnjd1s
-Message-ID: <CABD7UXPUHkzJUwQiL_VvNPdNrvtQmc-kty6iEkdFM+30NxZ5iQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] dts: add performance test functions to test suite
- API
-To: Patrick Robb <probb@iol.unh.edu>
-Cc: Luca.Vizzarro@arm.com, dev@dpdk.org, Paul.Szczepanek@arm.com, 
- abailey@iol.unh.edu, Nicholas Pratte <npratte@iol.unh.edu>
-Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,4 +56,155 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Tested-by: Dean Marx <dmarx@iol.unh.edu>
+http://bugs.dpdk.org/show_bug.cgi?id=3D1799
+
+            Bug ID: 1799
+           Summary: [dpdk-25.11-rc0]
+                    ipv4_reassembly/test_send_2K_frames_split_in_4_and_1K_
+                    maxflows: Cannot configure device:
+           Product: DPDK
+           Version: 25.07
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: testpmd
+          Assignee: dev@dpdk.org
+          Reporter: daxuex.gao@intel.com
+  Target Milestone: ---
+
+Environment
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+DPDK version: 25.11.0-rc0: 2b403dd8fb
+OS: Ubuntu Fedora Linux 42/Linux 6.14.0-63.fc42.x86_64
+Compiler: gcc version 15.2.1
+Hardware platform: Intel(R) Xeon(R) Platinum 8490H
+NIC hardware: Intel Corporation Ethernet Controller XXV710 for 25GbE SFP28
+[8086:158b]
+NIC firmware:=20
+ driver: vfio-pci
+ kdriver: 2.28.10
+ firmware-version: 9.55 0x8000fe4c 1.3862.0
+
+
+Test Setup
+Steps to reproduce
+List the steps to reproduce the issue.
+
+1.dut:
+# dpdk-devbind.py -b vfio-pci  0000:1f:00.0 0000:1f:00.1
+# ./x86_64-native-linuxapp-gcc/examples/dpdk-ip_reassembly  -l 1 -n 4 -a
+0000:1f:00.0 -a 0000:1f:00.1  --file-prefix=3Ddpdk_380038_20251011153916   =
+   --=20
+-p 0x1 --maxflows=3D1024 --flowttl=3D10s
+
+2.Show the output from the previous commands.
+# ./x86_64-native-linuxapp-gcc/examples/dpdk-ip_reassembly  -l 1 -n 4 -a
+0000:1f:00.0 -a 0000:1f:00.1  --file-prefix=3Ddpdk_380038_20251011153916   =
+   --=20
+-p 0x1 --maxflows=3D1024 --flowttl=3D10s
+EAL: Detected CPU lcores: 240
+EAL: Detected NUMA nodes: 4
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/dpdk_380038_20251011153916/mp_socket
+EAL: Selected IOVA mode 'VA'
+EAL: 1024 hugepages of size 2097152 reserved, but no mounted hugetlbfs found
+for that size
+EAL: VFIO support initialized
+EAL: Using IOMMU type 1 (Type 1)
+IP_RSMBL: Creating LPM table on socket 0
+IP_RSMBL: Creating LPM6 table on socket 0
+IPFRAG: rte_ip_frag_table_create: allocated of 8388736 bytes at socket 0
+Initializing port 0 ... Port 0 modified RSS hash function based on hardware
+support,requested:0xa38c configured:0x228c
+ETHDEV: id=3D0 offload clash, MULTI_SEGS vs MBUF_FAST_FREE
+
+EAL: Error - exiting with code: 1
+Cannot configure device: err=3D-22, port=3D0
+
+
+Expected Result
+# ./x86_64-native-linuxapp-gcc/examples/dpdk-ip_reassembly  -l 1 -n 4 -a
+0000:1f:00.0 -a 0000:1f:00.1  --file-prefix=3Ddpdk_380038_20251011153916   =
+   --=20
+-p 0x1 --maxflows=3D1024 --flowttl=3D10s
+EAL: Detected CPU lcores: 240
+EAL: Detected NUMA nodes: 4
+EAL: Detected static linkage of DPDK
+EAL: Multi-process socket /var/run/dpdk/dpdk_380038_20251011153916/mp_socket
+EAL: Selected IOVA mode 'VA'
+EAL: 1024 hugepages of size 2097152 reserved, but no mounted hugetlbfs found
+for that size
+EAL: VFIO support initialized
+EAL: Using IOMMU type 1 (Type 1)
+IP_RSMBL: Creating LPM table on socket 0
+IP_RSMBL: Creating LPM6 table on socket 0
+IPFRAG: rte_ip_frag_table_create: allocated of 8388736 bytes at socket 0
+Initializing port 0 ... Port 0 modified RSS hash function based on hardware
+support,requested:0xa38c configured:0x228c
+ Address:3C:FD:FE:CF:33:74
+txq=3D1,0,0
+
+Skipping disabled port 1
+
+IP_RSMBL: Socket 0: adding route 100.10.0.0/16 (port 0)
+IP_RSMBL: Socket 0: adding route 100.20.0.0/16 (port 1)
+IP_RSMBL: Socket 0: adding route 100.30.0.0/16 (port 2)
+IP_RSMBL: Socket 0: adding route 100.40.0.0/16 (port 3)
+IP_RSMBL: Socket 0: adding route 100.50.0.0/16 (port 4)
+IP_RSMBL: Socket 0: adding route 100.60.0.0/16 (port 5)
+IP_RSMBL: Socket 0: adding route 100.70.0.0/16 (port 6)
+IP_RSMBL: Socket 0: adding route 100.80.0.0/16 (port 7)
+IP_RSMBL: Socket 0: adding route 0101:0101:0101:0101:0101:0101:0101:0101/48
+(port 0)
+IP_RSMBL: Socket 0: adding route 0201:0101:0101:0101:0101:0101:0101:0101/48
+(port 1)
+IP_RSMBL: Socket 0: adding route 0301:0101:0101:0101:0101:0101:0101:0101/48
+(port 2)
+IP_RSMBL: Socket 0: adding route 0401:0101:0101:0101:0101:0101:0101:0101/48
+(port 3)
+IP_RSMBL: Socket 0: adding route 0501:0101:0101:0101:0101:0101:0101:0101/48
+(port 4)
+IP_RSMBL: Socket 0: adding route 0601:0101:0101:0101:0101:0101:0101:0101/48
+(port 5)
+IP_RSMBL: Socket 0: adding route 0701:0101:0101:0101:0101:0101:0101:0101/48
+(port 6)
+
+Checking link status
+done
+Port 0 Link up at 10 Gbps FDX Autoneg
+IP_RSMBL: entering main loop on lcore 1
+IP_RSMBL:  -- lcoreid=3D1 portid=3D0
+^C -- lcoreid=3D1 portid=3D0 frag tbl stat:
+
+
+Regression
+Is this issue a regression: (Y/N)Y
+
+Bad commit:
+commit fdb840367cf0d6abeb17b05623679b8d1ea4c902
+Author: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+Date:   Sun Aug 3 19:42:18 2025 +0000
+
+    ethdev: reject conflicting Tx offload configurations
+
+    When an ethdev port is configured for fast mbuf release, the driver can
+    use a Tx burst function relying on the fast mbuf release preconditions.
+    Thus, also configuring this port or a queue on the port for transmitting
+    segmented packets is prohibited.
+    Checks for these conflicting configurations have been added to the ethd=
+ev
+    library, so the drivers don't have to implement them.
+
+    Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+    Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+    Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+    Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+
+lib/ethdev/rte_ethdev.c | 37 +++++++++++++++++++++++++++++++++++++
+1 file changed, 37 insertions(+)
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
