@@ -2,70 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F01A3CCA476
-	for <dpdk-dev@archiver.kernel.org>; Sat, 11 Oct 2025 11:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E168CCD184
+	for <dpdk-dev@archiver.kernel.org>; Sun, 12 Oct 2025 01:49:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5C004021F;
-	Sat, 11 Oct 2025 13:32:16 +0200 (CEST)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
- [209.85.214.181])
- by mails.dpdk.org (Postfix) with ESMTP id 17966400EF
- for <dev@dpdk.org>; Sat, 11 Oct 2025 13:32:16 +0200 (CEST)
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-2680cf68265so22013775ad.2
- for <dev@dpdk.org>; Sat, 11 Oct 2025 04:32:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1760182335; x=1760787135; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=RPfDxC1KxipnSDW7d5GKHNQO6+NyDq+TGjeHJL6I6Xs=;
- b=X0jTukbLVWUjly+jTLE5EK66akG0ocLNdabN9VClIJMjZeacBM+orHuCoMIHiBhWc9
- VY1pTZjrhGzi37n9WtG6htlu7CPLUKl0U9C70G5kgyU10YEn+Cjt955ui8z66kkV5YYP
- GhhS+7kjc0nJrkJG6D2EtFPbBHShaCw6idNzlZGGs6o2tuDsui5IoGejwEKXzBzi5Zcm
- 5WZJLCw4Z0qBLg0TTvsQil0nj7YQ15XhiURPNcrquyzzpcn54urff32P+MRAUDcLPtGZ
- Foh3z99Dsh5UivQ/pG9Y89kytF6nS6XdckhBuGsqwQdekCp8OiHbYLJZCYiM8aW/rwPv
- U+hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760182335; x=1760787135;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=RPfDxC1KxipnSDW7d5GKHNQO6+NyDq+TGjeHJL6I6Xs=;
- b=awjnZ+/DIKFrQHoDQw5FKv5aYC0ICErSO6mXWKepjQxIzZuooaweLedPzaWFUWCZlM
- UPns5Wy3INsmr716hKlu6kxwPpWrQ9BRH27ZPFSZpUYveDHYqrUE8g3tAP1foktmt9mS
- kzkeUIdpIITjKsD7M0IHg1/UblwsYuSrrE4emkNW2fMmTxjL2WhPC+/WPVwKGzamSUHR
- 8ZScV3yXMhnIZHFkEl08Emhw6TgyXpRhZuydSfO665CGC2Z/nrCgzZ1Ff805u40uaWt/
- P4Am+zyWG6OoQa76xpS6UQgaEIDUZDtl+8PQOF05pdyytjGPONYDsCMR6++Ee+aXNH7L
- eT8Q==
-X-Gm-Message-State: AOJu0YwRP9akbFO4HwVgmT8OOGMWPqhdFsuC4L6gAckV40UEcvupSpNM
- xhr/pMuX6UqSec4jwN69tEG1KnKbT1CeFciS7WWrddzR+OEuhIIx8v4W
-X-Gm-Gg: ASbGncta7H69UIRq6b0mOyQ4vC4oyyf5pCfF+1ABfV15HNyyVsRB5FsZ0ZOLks0JktG
- Den8ofbGC95xdLgziLRiHo2HqMHwo5N587ixap75CU6Ep5RnJg3IGzJdsrBpzJAPNREjmvYLG38
- q+xmMtsuZuWebBaJwsDakaew+TMACyH4K4RNlzv3lpLPRBtfzm5tT/mKp51iq1sefRYN40IvUpl
- iXy0SK1NATVmqTRyrZCA9X4a0yXPAHxCpjU4i3HBnCFv5h6KOsP0/xf1jn+E0rkRHFXCdBBBXv0
- c5BKvauQZLHeDvSObg3OAnQv4i1HxUIu7H6+jlwCmeGX11uiCEmAbxcsDDMWFV4CjuKgCrjFFfh
- luWM2So+YCPj5NXD9ioT5WQG6tf3GMwBBWS0xgnd4btKFw67KCj2it81mCh1qqVFgiAFEYnRHr9
- Y=
-X-Google-Smtp-Source: AGHT+IES8UhBhHnT9HUNO1r68o7KM/8VK8qg5HFIO8fKWEvrRG9DSLc2fw+0jfApqBJRk0KeSSPSbg==
-X-Received: by 2002:a17:903:3847:b0:24a:fab6:d15a with SMTP id
- d9443c01a7336-29027240d1bmr206479485ad.20.1760182334993; 
- Sat, 11 Oct 2025 04:32:14 -0700 (PDT)
-Received: from localhost.localdomain ([49.204.145.40])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-29034f08de5sm82413305ad.83.2025.10.11.04.32.13
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 11 Oct 2025 04:32:14 -0700 (PDT)
-From: Shreesh Adiga <16567adigashreesh@gmail.com>
-To: Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- Jasvinder Singh <jasvinder.singh@intel.com>
-Cc: dev@dpdk.org
-Subject: [PATCH] net/crc: reduce usage of static arrays in net_crc_sse.c
-Date: Sat, 11 Oct 2025 16:59:34 +0530
-Message-ID: <20251011113202.937991-1-16567adigashreesh@gmail.com>
-X-Mailer: git-send-email 2.49.1
+	by mails.dpdk.org (Postfix) with ESMTP id D0F6C4026F;
+	Sun, 12 Oct 2025 03:49:39 +0200 (CEST)
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com
+ [113.46.200.217])
+ by mails.dpdk.org (Postfix) with ESMTP id 928EF4021F
+ for <dev@dpdk.org>; Sun, 12 Oct 2025 03:49:38 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=QNIrWzoS33Sd15VCkOpNTFs2KU8+u/npMWQatOvlqsM=;
+ b=T15iVijD11qgk8TO7NJk1vf00cmFARbX7D0qWoTedC7tHouf2piLIyewGt4K0Lw4BfWLXE3xJ
+ lL7mNfh2RX7tbTItFQNwy6Q8nVrtft+6+DYCthyBQxh8o6v1w7kjo742OWvYeUqM6c75Hz0SReG
+ B2q29e1gLBdOMb0gYwV592g=
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+ by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4ckk0X1XcXzcb0X;
+ Sun, 12 Oct 2025 09:48:44 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 7DDEF140278;
+ Sun, 12 Oct 2025 09:49:36 +0800 (CST)
+Received: from [10.82.125.119] (10.82.125.119) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sun, 12 Oct 2025 09:49:35 +0800
+Message-ID: <85e63937-4c1e-48f4-8052-214af37987e9@huawei.com>
+Date: Sun, 12 Oct 2025 09:49:35 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.1
+Subject: Re: [PATCH v2 1/1] lib/dma: introduce inter-process and inter-OS DMA
+To: Vamsi Krishna <vattunuru@marvell.com>, <dev@dpdk.org>
+CC: <thomas@monjalon.net>, <bruce.richardson@intel.com>,
+ <anatoly.burakov@intel.com>, <kevin.laatz@intel.com>, <jerinj@marvell.com>
+References: <20250901123341.2665186-1-vattunuru@marvell.com>
+ <20251010144631.713063-1-vattunuru@marvell.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20251010144631.713063-1-vattunuru@marvell.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.82.125.119]
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,97 +59,202 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace the clearing of lower 32 bits of XMM register with blend of
-zero register.
-Remove the clearing of upper 64 bits of tmp1 as it is redundant.
-tmp1 after clearing upper bits was being xor with tmp2 before the
-bits 96:65 from tmp2 were returned. The xor operation of bits 96:65
-remains unchanged due to tmp1 having bits 96:64 cleared to 0.
-After removing the xor operation, the clearing of upper 64 bits of tmp1
-becomes redundant and hence can be removed.
-Clang is able to optimize away the AND + memory operand with the
-above sequence, however GCC is still emitting the code for AND with
-memory operands which is being explicitly eliminated here.
+On 2025/10/10 22:46, Vamsi Krishna wrote:
+> From: Vamsi Attunuru <vattunuru@marvell.com>
+>
+> Modern DMA hardware supports data transfers between multiple DMA
+> devices, facilitating data communication across isolated domains,
+> containers, or operating systems. These DMA transfers function as
+> standard memory-to-memory operations, but with source or destination
+> addresses residing in different process or OS address space. The
+> exchange of these addresses between processes is handled through
+> private driver mechanism, which are beyond the scope of this
+> specification change.
+>
+> This commit introduces new capability flags to advertise driver support
+> for inter-process and inter-OS domain DMA transfers. It adds a mechanism
+> to specify source and destination handlers via the vchan configuration.
+> Until standardized control-plane APIs are defined for various categories
+> of DMA devices, these handler details can be exchanged through private
+> driver mechanisms.
+>
+> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+> ---
+> V2 changes:
+> * Seperate out the control-plane APIs
+> * Address v0 review comments
+> * Add validation checks
+> * Rename the enums
+>
+>   lib/dmadev/rte_dmadev.c       | 19 ++++++++++++
+>   lib/dmadev/rte_dmadev.h       | 56 +++++++++++++++++++++++++++++++++++
+>   lib/dmadev/rte_dmadev_trace.h |  3 ++
+>   3 files changed, 78 insertions(+)
+>
+> diff --git a/lib/dmadev/rte_dmadev.c b/lib/dmadev/rte_dmadev.c
+> index 17ee0808a9..23864dcb00 100644
+> --- a/lib/dmadev/rte_dmadev.c
+> +++ b/lib/dmadev/rte_dmadev.c
+> @@ -659,6 +659,21 @@ rte_dma_vchan_setup(int16_t dev_id, uint16_t vchan,
+>   		RTE_DMA_LOG(ERR, "Device %d vchan out range!", dev_id);
+>   		return -EINVAL;
+>   	}
+> +	if (conf->direction != RTE_DMA_DIR_MEM_TO_MEM &&
+> +	    conf->domain.domain_type != RTE_DMA_INTER_DOMAIN_NONE) {
+> +		RTE_DMA_LOG(ERR, "Device %d direction and inter domain are invalid!", dev_id);
 
-Additionally replace the 48 byte crc_xmm_shift_tab with the contents of
-shf_table which is 32 bytes, achieving the same functionality.
+how about "Device %d inter domain only support memory-to-memory transfer" ?
 
-Signed-off-by: Shreesh Adiga <16567adigashreesh@gmail.com>
----
-Changes since v1:
-Reversed the operands in the blend operation for readability.
-Removed tmp1 operations that are not affecting the result and hence
-avoid clearing the upper 64 bits for tmp1.
+so could be:
 
- lib/net/net_crc_sse.c | 30 ++++++------------------------
- 1 file changed, 6 insertions(+), 24 deletions(-)
+if (conf->domain.type != RTE_DMA_INTER_DOMAIN_NONE &&
 
-diff --git a/lib/net/net_crc_sse.c b/lib/net/net_crc_sse.c
-index 112dc94ac1..e590aeb5ac 100644
---- a/lib/net/net_crc_sse.c
-+++ b/lib/net/net_crc_sse.c
-@@ -96,35 +96,24 @@ crcr32_reduce_128_to_64(__m128i data128, __m128i precomp)
- static __rte_always_inline uint32_t
- crcr32_reduce_64_to_32(__m128i data64, __m128i precomp)
- {
--	static const alignas(16) uint32_t mask1[4] = {
--		0xffffffff, 0xffffffff, 0x00000000, 0x00000000
--	};
--
--	static const alignas(16) uint32_t mask2[4] = {
--		0x00000000, 0xffffffff, 0xffffffff, 0xffffffff
--	};
- 	__m128i tmp0, tmp1, tmp2;
+     conf->direction != RTE_DMA_DIR_MEM_TO_MEM)
 
--	tmp0 = _mm_and_si128(data64, _mm_load_si128((const __m128i *)mask2));
-+	tmp0 = _mm_blend_epi16(data64, _mm_setzero_si128(), 0x3);
 
- 	tmp1 = _mm_clmulepi64_si128(tmp0, precomp, 0x00);
- 	tmp1 = _mm_xor_si128(tmp1, tmp0);
--	tmp1 = _mm_and_si128(tmp1, _mm_load_si128((const __m128i *)mask1));
+> +		return -EINVAL;
+> +	}
+> +	if (conf->domain.domain_type == RTE_DMA_INTER_OS_DOMAIN &&
+> +	    !(dev_info.dev_capa & RTE_DMA_CAPA_INTER_OS_DOMAIN)) {
+> +		RTE_DMA_LOG(ERR, "Device %d does not support inter os domain", dev_id);
+> +		return -EINVAL;
+> +	}
+> +	if (conf->domain.domain_type == RTE_DMA_INTER_PROCESS_DOMAIN &&
+> +	    !(dev_info.dev_capa & RTE_DMA_CAPA_INTER_PROCESS_DOMAIN)) {
+> +		RTE_DMA_LOG(ERR, "Device %d does not support inter process domain", dev_id);
+> +		return -EINVAL;
+> +	}
+>   	if (conf->direction != RTE_DMA_DIR_MEM_TO_MEM &&
+>   	    conf->direction != RTE_DMA_DIR_MEM_TO_DEV &&
+>   	    conf->direction != RTE_DMA_DIR_DEV_TO_MEM &&
+> @@ -805,6 +820,8 @@ dma_capability_name(uint64_t capability)
+>   		{ RTE_DMA_CAPA_HANDLES_ERRORS, "handles_errors" },
+>   		{ RTE_DMA_CAPA_M2D_AUTO_FREE,  "m2d_auto_free"  },
+>   		{ RTE_DMA_CAPA_PRI_POLICY_SP,  "pri_policy_sp" },
+> +		{ RTE_DMA_CAPA_INTER_PROCESS_DOMAIN, "inter_process_domain" },
+> +		{ RTE_DMA_CAPA_INTER_OS_DOMAIN, "inter_os_domain" },
+>   		{ RTE_DMA_CAPA_OPS_COPY,    "copy"    },
+>   		{ RTE_DMA_CAPA_OPS_COPY_SG, "copy_sg" },
+>   		{ RTE_DMA_CAPA_OPS_FILL,    "fill"    },
+> @@ -1014,6 +1031,8 @@ dmadev_handle_dev_info(const char *cmd __rte_unused,
+>   	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_HANDLES_ERRORS);
+>   	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_M2D_AUTO_FREE);
+>   	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_PRI_POLICY_SP);
+> +	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_INTER_PROCESS_DOMAIN);
+> +	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_INTER_OS_DOMAIN);
+>   	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_OPS_COPY);
+>   	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_OPS_COPY_SG);
+>   	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_OPS_FILL);
+> diff --git a/lib/dmadev/rte_dmadev.h b/lib/dmadev/rte_dmadev.h
+> index 550dbfbf75..12c249ec00 100644
+> --- a/lib/dmadev/rte_dmadev.h
+> +++ b/lib/dmadev/rte_dmadev.h
+> @@ -265,6 +265,18 @@ int16_t rte_dma_next_dev(int16_t start_dev_id);
+>    * known from 'nb_priorities' field in struct rte_dma_info.
+>    */
+>   #define RTE_DMA_CAPA_PRI_POLICY_SP	RTE_BIT64(8)
+> +/** Support inter-process DMA transfers.
+> + *
+> + * When this bit is set, the DMA device can perform memory transfers between
+> + * different process memory spaces.
+> + */
+> +#define RTE_DMA_CAPA_INTER_PROCESS_DOMAIN	RTE_BIT64(9)
+> +/** Support inter-OS domain DMA transfers.
+> + *
+> + * The DMA device can perform memory transfers across different operating
+> + * system domains.
+> + */
+> +#define RTE_DMA_CAPA_INTER_OS_DOMAIN		RTE_BIT64(10)
+>   
+>   /** Support copy operation.
+>    * This capability start with index of 32, so that it could leave gap between
+> @@ -418,8 +430,13 @@ int rte_dma_close(int16_t dev_id);
+>    */
+>   enum rte_dma_direction {
+>   	/** DMA transfer direction - from memory to memory.
+> +	 * When the device supports inter-process or inter-OS domain transfers,
+> +	 * the field `domain_type` in `struct rte_dma_vchan_conf::domain` specifies
+> +	 * the type of domain. For memory-to-memory transfers within the same domain
+> +	 * or process, `domain_type` should be set to `RTE_DMA_INTER_DOMAIN_NONE`.
+>   	 *
+>   	 * @see struct rte_dma_vchan_conf::direction
+> +	 * @see struct rte_dma_inter_domain_param::domain_type
+>   	 */
+>   	RTE_DMA_DIR_MEM_TO_MEM,
+>   	/** DMA transfer direction - from memory to device.
+> @@ -564,6 +581,36 @@ struct rte_dma_auto_free_param {
+>   	uint64_t reserved[2];
+>   };
+>   
+> +/**
+> + * Inter-DMA transfer domain type.
+> + *
+> + * This enum defines the types of transfer domains applicable to DMA operations.
+> + * It helps categorize whether a DMA transfer is occurring within the same domain,
+> + * across different processes, or between distinct operating system domains.
+> + *
+> + * @see struct rte_dma_inter_domain_param:domain_type
+> + */
+> +enum rte_dma_inter_domain_type {
+> +	RTE_DMA_INTER_DOMAIN_NONE, /**< No inter-domain transfer; standard DMA within same domain */
+> +	RTE_DMA_INTER_PROCESS_DOMAIN, /**< Transfer occurs between different user-space processes */
+> +	RTE_DMA_INTER_OS_DOMAIN, /**< Transfer spans across different operating system domains. */
 
- 	tmp2 = _mm_clmulepi64_si128(tmp1, precomp, 0x10);
--	tmp2 = _mm_xor_si128(tmp2, tmp1);
- 	tmp2 = _mm_xor_si128(tmp2, tmp0);
+please place the comment before the definition.
 
- 	return _mm_extract_epi32(tmp2, 2);
- }
+> +};
+> +
+> +/**
+> + * Parameters for inter-process or inter-OS DMA transfers.
+> + *
+> + * This structure defines the parameters required to perform DMA transfers
+> + * across different domains, such as between processes or operating systems.
+> + * It includes the domain type and handler identifiers for both the source
+> + * and destination domains.
+> + */
+> +struct rte_dma_inter_domain_param {
+> +	enum rte_dma_inter_domain_type domain_type; /**< Type of inter-domain. */
 
--static const alignas(16) uint8_t crc_xmm_shift_tab[48] = {
--	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
--	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-+static const alignas(16) uint8_t crc_xmm_shift_tab[32] = {
-+	0x00, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
-+	0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,
- 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
--	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
--	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
--	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
-+	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
- };
+please rename domian_type to type because we are in domain context.
 
- /**
-@@ -216,19 +205,12 @@ crc32_eth_calc_pclmulqdq(
- 			0x80808080, 0x80808080, 0x80808080, 0x80808080
- 		};
+> +	uint16_t src_handler; /**< Source domain handler identifier. */
+> +	uint16_t dst_handler; /**< Destination domain handler identifier. */
+> +	uint64_t reserved[2]; /**< Reserved for future fields. */
+> +};
+> +
+>   /**
+>    * A structure used to configure a virtual DMA channel.
+>    *
+> @@ -601,6 +648,15 @@ struct rte_dma_vchan_conf {
+>   	 * @see struct rte_dma_auto_free_param
+>   	 */
+>   	struct rte_dma_auto_free_param auto_free;
+> +	/** Parameters for inter-process or inter-OS domain DMA transfers. This field
+> +	 * specifies the source and destination domain handlers required  for DMA
 
--		const alignas(16) uint8_t shf_table[32] = {
--			0x00, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
--			0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f,
--			0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
--			0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
--		};
--
- 		__m128i last16, a, b;
+two spaces before 'for DMA'
 
- 		last16 = _mm_loadu_si128((const __m128i *)&data[data_len - 16]);
-
- 		temp = _mm_loadu_si128((const __m128i *)
--			&shf_table[data_len & 15]);
-+			&crc_xmm_shift_tab[data_len & 15]);
- 		a = _mm_shuffle_epi8(fold, temp);
-
- 		temp = _mm_xor_si128(temp,
---
-2.49.1
-
+> +	 * operations that span across different processes or operating system domains.
+> +	 *
+> +	 * @see RTE_DMA_CAPA_INTER_PROCESS_DOMAIN
+> +	 * @see RTE_DMA_CAPA_INTER_OS_DOMAIN
+> +	 * @see struct rte_dma_inter_domain_param
+> +	 */
+> +	struct rte_dma_inter_domain_param domain;
+>   };
+>   
+>   /**
+> diff --git a/lib/dmadev/rte_dmadev_trace.h b/lib/dmadev/rte_dmadev_trace.h
+> index 1de92655f2..12ea9d53f6 100644
+> --- a/lib/dmadev/rte_dmadev_trace.h
+> +++ b/lib/dmadev/rte_dmadev_trace.h
+> @@ -79,6 +79,9 @@ RTE_TRACE_POINT(
+>   	rte_trace_point_emit_int(conf->dst_port.port_type);
+>   	rte_trace_point_emit_u64(conf->dst_port.pcie.val);
+>   	rte_trace_point_emit_ptr(conf->auto_free.m2d.pool);
+> +	rte_trace_point_emit_int(conf->domain.domain_type);
+> +	rte_trace_point_emit_u16(conf->domain.src_handler);
+> +	rte_trace_point_emit_u16(conf->domain.dst_handler);
+>   	rte_trace_point_emit_int(ret);
+>   )
+>   
