@@ -2,37 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E553CCD184
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 03:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8493DCCD187
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 03:04:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D9E7940661;
-	Mon, 13 Oct 2025 05:03:30 +0200 (CEST)
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com
- [113.46.200.218])
- by mails.dpdk.org (Postfix) with ESMTP id 72D0E4021E
- for <dev@dpdk.org>; Mon, 13 Oct 2025 05:02:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 19F964066B;
+	Mon, 13 Oct 2025 05:03:32 +0200 (CEST)
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com
+ [113.46.200.227])
+ by mails.dpdk.org (Postfix) with ESMTP id 299944013F
+ for <dev@dpdk.org>; Mon, 13 Oct 2025 05:02:51 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=FtiBhoxZYJYQMPKO9kMcb+FWSujImc3agSuVuXHV+II=;
- b=YcoHphrNlTiGfWS0V8ZHfICd9DjRiwotHVpPCCBduOm8Cb1eJ90U9wYbS1oluAX6pGf25d5UW
- yY40cF9CjYtXm0ycWOwCLfeO1OveSM1S+41iYuuYZE5uVz+9Yjnv6cB2YF7S/8r8a4fQKafCjVj
- n+X9UjLzHcD8TYAaVOB5KOM=
-Received: from mail.maildlp.com (unknown [172.19.162.254])
- by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4clMZZ54n4zpStj;
- Mon, 13 Oct 2025 11:01:58 +0800 (CST)
+ bh=ApxL6EMwYHDj1WqnhGqUjWRFiVoQ1Bv8NQzOhzFqabs=;
+ b=qUkFUU4P21WcRIqzxRHNqf9CaVmNgyWEMal5n3eH1k9biiAsaW8lwtfWX2lnT+DdYf4gmYT8q
+ S7lZG3wqWzc87nDWYnQ/RhE/+V+RCUltXUbItoz5rk4FoxYpvkNzU0rQj6XzTgWyjBaurS6ypub
+ Kjg263g3hQhvOU2rZhFkx7U=
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+ by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4clMZg2ZXDznTW3;
+ Mon, 13 Oct 2025 11:02:03 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 64A1918048E;
+ by mail.maildlp.com (Postfix) with ESMTPS id B23C21A016C;
  Mon, 13 Oct 2025 11:02:49 +0800 (CST)
 Received: from localhost.localdomain (10.50.163.32) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 13 Oct 2025 11:02:48 +0800
+ 15.2.1544.11; Mon, 13 Oct 2025 11:02:49 +0800
 From: Chengwen Feng <fengchengwen@huawei.com>
 To: <thomas@monjalon.net>, <honest.jiang@foxmail.com>
 CC: <dev@dpdk.org>, <liuyonglong@huawei.com>, <vattunuru@marvell.com>
-Subject: [PATCH v3 12/13] app/dma-perf: fix on-flight DMA when verify data
-Date: Mon, 13 Oct 2025 11:02:35 +0800
-Message-ID: <20251013030236.3861-13-fengchengwen@huawei.com>
+Subject: [PATCH v3 13/13] app/dma-perf: fix wrong stage to stop dmadev
+Date: Mon, 13 Oct 2025 11:02:36 +0800
+Message-ID: <20251013030236.3861-14-fengchengwen@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20251013030236.3861-1-fengchengwen@huawei.com>
 References: <20250811105430.55791-1-fengchengwen@huawei.com>
@@ -55,121 +55,101 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There maybe on-flight DMA when verify_data() because the DMA device
-may still working when worker exit.
-
-This commit add wait DMA complete stage before worker exit.
+The benchmark do stop-dmadev at last, it has two problem:
+1. it still invoke stop-dmadev when something wrong before
+   config-dmadev.
+2. the dmadev may working but the memory are freed.
 
 Fixes: 623dc9364dc6 ("app/dma-perf: introduce DMA performance test")
 Cc: stable@dpdk.org
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- app/test-dma-perf/benchmark.c | 54 +++++++++++++++++++++++------------
- 1 file changed, 35 insertions(+), 19 deletions(-)
+ app/test-dma-perf/benchmark.c | 36 +++++++++++++++++++++++++----------
+ 1 file changed, 26 insertions(+), 10 deletions(-)
 
 diff --git a/app/test-dma-perf/benchmark.c b/app/test-dma-perf/benchmark.c
-index ab2bf0cbf5..8e755c2afa 100644
+index 8e755c2afa..4bdd3ca598 100644
 --- a/app/test-dma-perf/benchmark.c
 +++ b/app/test-dma-perf/benchmark.c
-@@ -19,7 +19,6 @@
- #define MAX_DMA_CPL_NB 255
- 
- #define TEST_WAIT_U_SECOND 10000
--#define POLL_MAX 1000
- 
- #define CSV_LINE_DMA_FMT "Scenario %u,%u,%s,%u,%u,%u,%u,%.2lf,%" PRIu64 ",%.3lf,%.3lf\n"
- #define CSV_LINE_CPU_FMT "Scenario %u,%u,NA,NA,NA,%u,%u,%.2lf,%" PRIu64 ",%.3lf,%.3lf\n"
-@@ -282,6 +281,39 @@ do_dma_submit_and_poll(uint16_t dev_id, uint64_t *async_cnt,
- 	worker_info->total_cpl += nr_cpl;
+@@ -763,6 +763,25 @@ verify_data(struct test_configure *cfg, struct rte_mbuf **srcs, struct rte_mbuf
+ 	return 0;
  }
  
-+static int
-+do_dma_submit_and_wait_cpl(uint16_t dev_id, uint64_t async_cnt)
++static void
++stop_dev(struct test_configure *cfg, bool *stopped)
 +{
-+#define MAX_WAIT_MSEC	1000
-+#define MAX_POLL	1000
-+	enum rte_dma_vchan_status st;
-+	uint32_t poll_cnt = 0;
-+	uint32_t wait_ms = 0;
-+	uint16_t nr_cpl;
++	struct lcore_dma_map_t *lcore_dma_map;
++	uint32_t i;
 +
-+	rte_dma_submit(dev_id, 0);
++	if (*stopped)
++		return;
 +
-+	if (rte_dma_vchan_status(dev_id, 0, &st) < 0) {
-+		rte_delay_ms(MAX_WAIT_MSEC);
-+		goto wait_cpl;
++	if (cfg->test_type == TEST_TYPE_DMA_MEM_COPY) {
++		for (i = 0; i < cfg->num_worker; i++) {
++			lcore_dma_map = &cfg->dma_config[i].lcore_dma_map;
++			printf("Stopping dmadev %d\n", lcore_dma_map->dma_id);
++			rte_dma_stop(lcore_dma_map->dma_id);
++		}
 +	}
-+
-+	while (st == RTE_DMA_VCHAN_ACTIVE && wait_ms++ < MAX_WAIT_MSEC) {
-+		rte_delay_ms(1);
-+		rte_dma_vchan_status(dev_id, 0, &st);
-+	}
-+
-+wait_cpl:
-+	while ((async_cnt > 0) && (poll_cnt++ < MAX_POLL)) {
-+		nr_cpl = rte_dma_completed(dev_id, 0, MAX_DMA_CPL_NB, NULL, NULL);
-+		async_cnt -= nr_cpl;
-+	}
-+	if (async_cnt > 0)
-+		PRINT_ERR("Error: wait DMA %u failed!\n", dev_id);
-+
-+	return async_cnt == 0 ? 0 : -1;
++	*stopped = true;
 +}
 +
- static inline int
- do_dma_plain_mem_copy(void *p)
+ int
+ mem_copy_benchmark(struct test_configure *cfg)
  {
-@@ -293,10 +325,8 @@ do_dma_plain_mem_copy(void *p)
- 	const uint32_t buf_size = para->buf_size;
- 	struct rte_mbuf **srcs = para->srcs;
- 	struct rte_mbuf **dsts = para->dsts;
--	uint16_t nr_cpl;
- 	uint64_t async_cnt = 0;
- 	uint32_t i;
--	uint32_t poll_cnt = 0;
- 	int ret;
+@@ -778,6 +797,7 @@ mem_copy_benchmark(struct test_configure *cfg)
+ 	float bandwidth, bandwidth_total;
+ 	unsigned int lcore_id = 0;
+ 	uint32_t avg_cycles_total;
++	bool dev_stopped = false;
+ 	uint32_t avg_cycles = 0;
+ 	float mops, mops_total;
+ 	float memory = 0;
+@@ -840,7 +860,7 @@ mem_copy_benchmark(struct test_configure *cfg)
+ 		    vchan_dev->tdir == RTE_DMA_DIR_MEM_TO_DEV) {
+ 			if (attach_ext_buffer(vchan_dev, lcores[i], cfg->is_sg,
+ 					      (nr_sgsrc/nb_workers), (nr_sgdst/nb_workers)) < 0)
+-				goto out;
++				goto stop_dev;
+ 		}
  
- 	worker_info->stop_flag = false;
-@@ -327,13 +357,7 @@ do_dma_plain_mem_copy(void *p)
- 			break;
+ 		rte_eal_remote_launch(get_work_function(cfg), (void *)(lcores[i]), lcore_id);
+@@ -875,6 +895,8 @@ mem_copy_benchmark(struct test_configure *cfg)
+ 
+ 	rte_eal_mp_wait_lcore();
+ 
++	stop_dev(cfg, &dev_stopped);
++
+ 	ret = verify_data(cfg, srcs, dsts, nr_buf);
+ 	if (ret != 0)
+ 		goto out;
+@@ -900,8 +922,10 @@ mem_copy_benchmark(struct test_configure *cfg)
+ 	output_csv(CSV_TOTAL_LINE_FMT, cfg->scenario_id, nr_buf, memory * nb_workers,
+ 			(avg_cycles_total * (float) 1.0) / nb_workers, bandwidth_total, mops_total);
+ 
+-out:
++stop_dev:
++	stop_dev(cfg, &dev_stopped);
+ 
++out:
+ 	for (k = 0; k < nb_workers; k++) {
+ 		struct rte_mbuf **sbuf = NULL, **dbuf = NULL;
+ 		vchan_dev = &cfg->dma_config[k].vchan_dev;
+@@ -955,13 +979,5 @@ mem_copy_benchmark(struct test_configure *cfg)
+ 		lcores[i] = NULL;
  	}
  
--	rte_dma_submit(dev_id, 0);
--	while ((async_cnt > 0) && (poll_cnt++ < POLL_MAX)) {
--		nr_cpl = rte_dma_completed(dev_id, 0, MAX_DMA_CPL_NB, NULL, NULL);
--		async_cnt -= nr_cpl;
+-	if (cfg->test_type == TEST_TYPE_DMA_MEM_COPY) {
+-		for (i = 0; i < nb_workers; i++) {
+-			lcore_dma_map = &cfg->dma_config[i].lcore_dma_map;
+-			printf("Stopping dmadev %d\n", lcore_dma_map->dma_id);
+-			rte_dma_stop(lcore_dma_map->dma_id);
+-		}
 -	}
 -
--	return 0;
-+	return do_dma_submit_and_wait_cpl(dev_id, async_cnt);
+ 	return ret;
  }
- 
- static inline int
-@@ -349,8 +373,6 @@ do_dma_sg_mem_copy(void *p)
- 	const uint16_t dev_id = para->dev_id;
- 	uint32_t nr_buf = para->nr_buf;
- 	uint64_t async_cnt = 0;
--	uint32_t poll_cnt = 0;
--	uint16_t nr_cpl;
- 	uint32_t i, j;
- 	int ret;
- 
-@@ -386,13 +408,7 @@ do_dma_sg_mem_copy(void *p)
- 			break;
- 	}
- 
--	rte_dma_submit(dev_id, 0);
--	while ((async_cnt > 0) && (poll_cnt++ < POLL_MAX)) {
--		nr_cpl = rte_dma_completed(dev_id, 0, MAX_DMA_CPL_NB, NULL, NULL);
--		async_cnt -= nr_cpl;
--	}
--
--	return 0;
-+	return do_dma_submit_and_wait_cpl(dev_id, async_cnt);
- }
- 
- static inline int
 -- 
 2.17.1
 
