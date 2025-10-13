@@ -2,153 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D62A7CCD185
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 07:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC81CCD185
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 07:53:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 260564021E;
-	Mon, 13 Oct 2025 09:08:42 +0200 (CEST)
-Received: from AM0PR02CU008.outbound.protection.outlook.com
- (mail-westeuropeazon11013047.outbound.protection.outlook.com [52.101.72.47])
- by mails.dpdk.org (Postfix) with ESMTP id 73FE94013F
- for <dev@dpdk.org>; Mon, 13 Oct 2025 09:08:40 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rkJBmN0Crggre9lnl2MIGD3FoGape4sp+bhXmCAP9FV29u9wH2kgn4/J9fC3qrA2mHybdDjKuh4EyEW4w7veE8063k+8iBCL58ij1AVycn5wiCo2DxpPupYH+h/bTG0fWKaCixhyaXdD4hd2bt8lgn4Srh+vNi34hyk4DPhp+X7JfIUenk4Ly8YQdxzLPfGtVlCrfGwyeGoVMjTgycd6FC4juixpqMUt6IrqRSWfOMgTXeIG8lFazZEsN0fciktEJpFnuCyXMRWkZpRViJd6fLkdIlyh22LcT5NSmVUx9v5e9E1VfjhaTj4t7DD64tMTz6KaWecgDJvwjCJ1Zfat7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6RC/x6FYidk1jL6/kCLoBVohBFcym5IpBuzC2AqRzR4=;
- b=WLUkMt9lh9Iwf/SvY4jpgyYo+m4DBZ3f3aeZ+rAJQzq/OjM6QYmZXH4l1w601T57cPjfIEIpRKFQLwnRxMEW9g4mmVvR2Ul4f0SujlOz7PdOrcPWQGhGJpWLJwydlgzbaa0m8KDONuiHnpoBd3VCtOjYeaTMVcSGvGTlD+8u7uk5ICfEA3e6BUW+uFtUUfa0YA8GJ8IFiZoRENXVxFyyLQMvEq0yzUP5PE5qy0ljdCdvCwUnndXLo8MJ8pMNgcGI+ifCK54ZjbTu+Ylr3emAUMxVxK4KslPV28PcZRmyHZD/o+5s2F5Mu9vaOHeYyD+LFJLkEpBNMoGUVt9GqwZw/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6RC/x6FYidk1jL6/kCLoBVohBFcym5IpBuzC2AqRzR4=;
- b=hY4zdoyRaZ9GtI1otnhhgszcfLtzqLUmCrSv1x/RELN+hxdxrPSP4MHkWS7Ds5agZb4YrkTppg8QS8CEmh0xSf9U3iIjUcIW3WlFyhqSSDd3aJ3OYmUDp0abuFxEgyvoFvHdGzfAw2mOQoIqZXJcbwefVrVGaxRciXIMHWyHLUyLhbYie3bagXcCjaHzH2SGQLkbRDagCSXQplLR4mpauxB616Rbeos5xZh6BCdbW4ZwF/jBk1yaEGrUz7KaH+sRx/Gso2aGYEf0a0QLrNQKsdflUR/mSTFJ/sAJWI4qadq+H3pIG+l212j4+htNZ4jlFE9bX/5hxm+oMygjW7Qd9w==
-Received: from AS8PR04MB8198.eurprd04.prod.outlook.com (2603:10a6:20b:3b0::14)
- by PA4PR04MB9590.eurprd04.prod.outlook.com (2603:10a6:102:26f::13)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Mon, 13 Oct
- 2025 07:08:39 +0000
-Received: from AS8PR04MB8198.eurprd04.prod.outlook.com
- ([fe80::c52d:9751:36a3:78f9]) by AS8PR04MB8198.eurprd04.prod.outlook.com
- ([fe80::c52d:9751:36a3:78f9%6]) with mapi id 15.20.9203.009; Mon, 13 Oct 2025
- 07:08:38 +0000
-From: Gagandeep Singh <G.Singh@nxp.com>
-To: "Hemant Agrawal (OSS)" <hemant.agrawal@oss.nxp.com>, "dev@dpdk.org"
- <dev@dpdk.org>, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
- <sachin.saxena@nxp.com>
-CC: Vanshika Shukla <vanshika.shukla@nxp.com>
-Subject: RE: [PATCH v2 5/5] net/dpaa: Fix coverity issue
-Thread-Topic: [PATCH v2 5/5] net/dpaa: Fix coverity issue
-Thread-Index: AQHcOA0DpAXCNFNuxkCCyAU5+Cgv3rS5k9kAgAYcKsA=
-Date: Mon, 13 Oct 2025 07:08:38 +0000
-Message-ID: <AS8PR04MB81987B4C79A51D99A35A00DFE1EAA@AS8PR04MB8198.eurprd04.prod.outlook.com>
-References: <20251007050012.2432449-1-g.singh@nxp.com>
- <20251008043519.2461707-1-g.singh@nxp.com>
- <20251008043519.2461707-6-g.singh@nxp.com>
- <87aaf909-e17c-47c7-a83e-acf61d2fdb03@oss.nxp.com>
-In-Reply-To: <87aaf909-e17c-47c7-a83e-acf61d2fdb03@oss.nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR04MB8198:EE_|PA4PR04MB9590:EE_
-x-ms-office365-filtering-correlation-id: 241ff165-5c80-4c7b-937a-08de0a275598
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|19092799006|7053199007|38070700021; 
-x-microsoft-antispam-message-info: =?utf-8?B?UnpoY1F0MFcrcDFRQWJrWHpEdUtlcE96enJ2M3Y1UlRRa0ErL014UnpqTGFh?=
- =?utf-8?B?UkowbVhsYmd3NFZKdTZ1T0g3eU8wQit3c1dtK3lzaU1maTM5VlIwT2lFQXY0?=
- =?utf-8?B?T094SjhwS2lOd3JITWdhNGw2VTM2RUpwL1NPTUJ1TFBaN0pEWEt3cy9nSHUw?=
- =?utf-8?B?M0tna1FDblNHSHRHZ203STNCZjl3VE41cjZUUkxtWWNKbUw2N1pacFBxRWIw?=
- =?utf-8?B?QkJDaWd0M3B5WGd5UzZZZUJ1QndYbW1qRjRidnN6ZDJrTGtDU3JuWkZzS3Y0?=
- =?utf-8?B?YUFsMjBhV0NMblF2TVA2UVphVmF4d2JCcWF1U2xyT1E4ZXdnTEZFaXpIOEVM?=
- =?utf-8?B?NXEvNThyazU5NXdEOERKYjhyUkRQZWNmNlF2U0YxY2NjNmQxN2ZNVC9VYXhB?=
- =?utf-8?B?UHpzbitYSkFRV0pRRVZ4bFBleXBVcnpBV2w0b3A0bm91UGM1OXdTQnhleUpH?=
- =?utf-8?B?TlBtNHIxVDVJb0Z3VTNqVGRlS1Q4UWh3MGJZSllBMU02MCtYbmZWeVJId0xp?=
- =?utf-8?B?RUozTHBHZlRVVE44Sm14ZUJXcmk2Z2JJWlB5WXJxTlY3SUgvMjd0ZzhwbE9Q?=
- =?utf-8?B?WmN0eGxIMU1PdmQxODNEVzBoaENwRFVvc1ZwSFRRb1RzK2RNcGRMbVI4Rzk1?=
- =?utf-8?B?VGVRNjhSbUxOTjluc1AwSGpLdzhZaEQrY0dtR01JQ2hxSnFjVmMyeE1Nam9P?=
- =?utf-8?B?OWt5c2tEWUtMbDk3dGNYSnVUM2xuTFZmdVFtN09UTG5tMkw1aEJsUy9BNXpB?=
- =?utf-8?B?RUNKTDduRWxDTVQ1cjloajM1RThNVGtWS1NvUlFMaThBWmw5VUVnRGk4NmRG?=
- =?utf-8?B?TmovTGRVSlYvV3dBbHgrV1ZoYWFKYStHQ0xGN1pwSUNicDY4VG8zMUhOZk1m?=
- =?utf-8?B?aktxQmN1Wms1cE1kVjZyenI5ajdiVEUvTFduMUlzU3p4WkNSZ0wrVDRoc0R1?=
- =?utf-8?B?QkFrS1B5b09Fcloxd2JYSGxUUUd4cmNiYytKWFJ5N3FvVDViUTlFa2UvVVB6?=
- =?utf-8?B?QkgxK2ZDR3dvQW1RSGd4TjllOWNSWldEaDFsMDZZVUdSRmNZN3hIOGo1WlFT?=
- =?utf-8?B?SXI1cUY2N0lVZ2wyVFRHMEhzYUI4UXlHVWg1Vi85eTRZdndKYjlYMFQzK0Z3?=
- =?utf-8?B?bXhvT1VGcUV2ZStheFU5YlRGR01pOCtEYzBBbXpmbHNheDJwTWVBWHAwbDJL?=
- =?utf-8?B?N1B2YWpySUQrejFhajkybjdLSk1CV1NFaUpwR1VXemt5SEx2UjMybUJXdDlK?=
- =?utf-8?B?VGZLa1dsVWdvMjJ6ajRhV0pwVGhqRWovaTNRZFg1MEthSGhZbmJKa3p0c2tl?=
- =?utf-8?B?VEdDNTNJaGVBQllnYWNBZ1RjaXU5SUUwd29ZZlZBNWJaSFpNYXVTaC9KdHJ2?=
- =?utf-8?B?d0lrTTBVWWJNZGtoeVJQS2h6N1BMZkNxUUN0Y0xwVWtLdnAwZmoxSEhtUnNY?=
- =?utf-8?B?WXo5WkYyTGlWckduQi9zdnIwbXNFSkd6KzFIN2poNkVaRm1NSG1MbHFIR1RV?=
- =?utf-8?B?VytkT1RROGRPM09Kb2ljcWtYYzdTSjBrRklMV2xOKzUyK3lwZkg4QmttT3hC?=
- =?utf-8?B?bkxtVnB4amdzNGYvRjZySldNMmdkNkhGY1ZSRFp0NkpMcWVLdjB4ZlpFa1J1?=
- =?utf-8?B?ZUZqdDk2Z095VHFNV0xyS0RGOGlJYStuK3V2SDJnYVRIUWwwdEhZemhWNXJq?=
- =?utf-8?B?Z0VaTHQ5bmNFQm5XWFpRNTdGZUFFWTMrRk5WR08wZDNlRmh1N0M5OHNmMlpx?=
- =?utf-8?B?cWlDa0hEZXZud2lZSFFuWFlQUzA5enJqcE5EY0Fza2IrQmtBQjcvNWpjR2Uw?=
- =?utf-8?B?aFB4eDdodUZiVlpvaWNESmwveExaeXNJS1g4dmRGTlViakNwUzhQdjJTcFdV?=
- =?utf-8?B?Sjc1S01valFRU2l2c1hKTWFCTEQ2WmU2OXBwS1FIbUtuNlY1elc2M3Zrd2dy?=
- =?utf-8?Q?2j2zobPMZh1tcH3Fw+DDKh2O8SgJxG7X?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:AS8PR04MB8198.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(19092799006)(7053199007)(38070700021);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cTk2bWJJNm11QTFsZnE5clJqaW1CV1gyajdKMG1rUElSOHVHYnFaMnJVWkpr?=
- =?utf-8?B?am81VXFaQnFTM0hIYkZDV3IzVFlPMVBpY3hBZVRqOHBUTEgzaFlyeHNIQkpX?=
- =?utf-8?B?UEpCclE3MTVwL29qOElzZU5TbEF0WkZtTDhYNWpmMkh3K252QUpJVHc2NUVF?=
- =?utf-8?B?QU9JNDBSNjRYUkNOeUU3UitqMklBUDhlbnFMOForT3NJOGI2Mk1WbkV0RTJD?=
- =?utf-8?B?amdWV3g0TDNSdUlnMFNTMHYxdkNTZ2JyNk5PMWlhejJGMFFHbUt1RlVCQUgz?=
- =?utf-8?B?Z09BR1FCWVFBTGpEVTNYVGdTSzRFSW5VUm1FRTN4aXVsVzBvSDEyWkMvV0hl?=
- =?utf-8?B?K2dVQ2d1WUs0cXY0ZFNPcGNMZURWWnNpTDZJT0tLc1g1K1djSW11LzBPa1Bw?=
- =?utf-8?B?WnF3ZGt2cGMvaFBkQjRqUU9uVTJGSncvMWIvSjZheExMWEtVd0xKekNFdWhB?=
- =?utf-8?B?U0ZxNEtpTzBwT0JwYlhCSXhUMUVtemJlUnE1by9RMThMZ0c3WmxTVEYxMjJ6?=
- =?utf-8?B?ZTBVRGN4SWdoVDBuMDg5dE9ZTFhoQlcyb05GQ1VLckhPTjBsTmdMNDM2b3Y0?=
- =?utf-8?B?NXNWWEk4aEVYc1VFQkd4WGRVbzg5amlYa0ZwT3lNb2VXQ1NRVUxxQUkyNndv?=
- =?utf-8?B?MXBtY2R1cDF4TFo3VndORTZIS0FVaGlsVklGOCs5UDJGVnJRV0loN2JWL0Yz?=
- =?utf-8?B?dnNUN1E4RFZkWG9leEVFZ0ZRaHFCSVpZSWNhKzhLVlBjWEVYS1dzTjdpNGRo?=
- =?utf-8?B?WEF0TkRoK1QybFR2WVhjS2dkOXYyM2JsU016dVpENG5HRTFGTjNPUGdnem9i?=
- =?utf-8?B?c0FyT0E4eXlaVSs5dkVmMjRGM1FCTko1dE5VSVI4SUt3NThnc3p2VXJBeC9D?=
- =?utf-8?B?YnVQeVdkTXJSZGlLWi9qbzBMRHBVcEJ6ZGo2Wi93bW43OTBnb2VabEV0eTZP?=
- =?utf-8?B?VXlTMVdDVWRuNWpqSjN0V2s4aWJyZnFrMi9sTkJ2Skc2dnRCemE1NHUwZHNQ?=
- =?utf-8?B?Y2JISlZpeUNLb1lhd3BzU1dKR0dSZmxCdVl1b1puWGZ3YnJlSGxMKzB6Sjky?=
- =?utf-8?B?UVRRQ0dmYzdKaGxlS3prRW0yNmdrL3h6VnhPRkJLTWdKeXhxK283czRSL2pw?=
- =?utf-8?B?MDVCai9zaVB1VHlNbGdMRTN1VXhYV01aTHBXSnNQVmZ0aHF6N1JmQks3Vnlo?=
- =?utf-8?B?SHJTWUE2R0x6UjNZQkpjZ1o2UUh4SjZBbC83MzV1ZThqSUg0RVZyM3dpWURu?=
- =?utf-8?B?aHdHb0dIVXdSb1lKK3dGRkJEZ05mYTlQODRtdHZvdXdFV05GTGo1bWtPdHRv?=
- =?utf-8?B?TGFqN0xwL0t2NUdkYXRmQkNTSU5ES2pENmVHd0J4V3Q3cHNWZEg0STh4R0NZ?=
- =?utf-8?B?U05KZ1p2L2ZkaDRtYWJma0NPTkRVbHFqQnR5NVVqNDVmc0cxZFU4S0pBV05y?=
- =?utf-8?B?VFIwMm5DODFrNm05QjgyRGVLWE5DOEZWTmdHVlk3TDZXQVNQOXUxQjlCUCt2?=
- =?utf-8?B?V0lkNjQyVUdUZzRrZjQvMlNQelBhRnkxZ2V2a1kvVWVVZEpFUVlpRFVVaGFQ?=
- =?utf-8?B?REtCUHVObFBvdG80d0U0c3huY3drWkUzMndXaVBOVndPWm1Zd0g4NStyRTZ6?=
- =?utf-8?B?U3ZDY2Y0QVVrdUFsbkNYWkV2VG1YVytQN2ZDb0E5cjNDZlRVV0FVdmZ2bU1N?=
- =?utf-8?B?TSs5cmJDWFgwenBFMUQ4RmRsUTR0N0hZUnl1UWJSejFySGNrVUtYNkxpWHd3?=
- =?utf-8?B?WFBpZzlLQVFkUFpQaDBKRzJqSE9uTUxVSjVNVTl3WnY5c0o3Y1ZMaHlvUFNs?=
- =?utf-8?B?SGlIZlhLeW5VaTVMN3VuMzF0dzBZaEVTWkVySEp5SFVmVDV3WnI1T3huOEsw?=
- =?utf-8?B?YTJoR1I2cS9SNm9TeXFNVkZlNUs0c0RySFJaaGZtYkxaeUhmaHJ3SDlaTGNO?=
- =?utf-8?B?UElBSXJnREJSZ0NmUzlWQXVXQmtoWTdiYWcyV25Jc2N5TVBxNXpUKy8zQXNC?=
- =?utf-8?B?cEFaUm02ZndST2lZTEVlRCs4ckNyVnREMk1EQUc5OGxmTVljY0UwdUVYdTFM?=
- =?utf-8?B?S0JNVkVlVitvZ1ZHaU9SanBkK29LS0orRy9CdGVFYWlQbDMzSENxV2QwbHdU?=
- =?utf-8?Q?fKSA=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id E4F384021E;
+	Mon, 13 Oct 2025 09:52:59 +0200 (CEST)
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com
+ [113.46.200.221])
+ by mails.dpdk.org (Postfix) with ESMTP id 7EB194013F
+ for <dev@dpdk.org>; Mon, 13 Oct 2025 09:52:57 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=Ze9IZE6dDmU7efJU29xhykflF0ibx2VSGU67RWu708E=;
+ b=v8NcMFjR1feXfz28FQ51vPDCPAouBf//b5YDrINQhx/dcG7IgmiKIij3m4YBkhCaLArFib7fH
+ 7JkI8YqaYAdbRVpwQJfxdNDAgFwvef0csb5jLIzwuD+M0Fwgx+Uqos8aCOb+z8YgOtOCQkMQg1Y
+ WxNxoEFlzYWHu/wAzozDn8E=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+ by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4clV1v13hwzRhR7;
+ Mon, 13 Oct 2025 15:52:35 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 51CF5180087;
+ Mon, 13 Oct 2025 15:52:54 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 13 Oct 2025 15:52:53 +0800
+Message-ID: <8e1d0411-5d9c-4af1-840e-ece661c08e2f@huawei.com>
+Date: Mon, 13 Oct 2025 15:52:53 +0800
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8198.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 241ff165-5c80-4c7b-937a-08de0a275598
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Oct 2025 07:08:38.8676 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qrpRxABhT8JHyJ1YwA8qWl/mCEIOJF5rHkdVEJ9wS/r5KiHFlhR7WUOlBiPEAhRa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9590
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] lib/dma: introduce inter-process and inter-OS DMA
+To: Vamsi Krishna <vattunuru@marvell.com>, <dev@dpdk.org>
+CC: <thomas@monjalon.net>, <bruce.richardson@intel.com>,
+ <anatoly.burakov@intel.com>, <kevin.laatz@intel.com>, <jerinj@marvell.com>
+References: <--in-reply-to=20251010144631.713063-1-vattunuru@marvell.com>
+ <20251013042136.1727540-1-vattunuru@marvell.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20251013042136.1727540-1-vattunuru@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -162,35 +58,219 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-SGkNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBIZW1hbnQgQWdyYXdh
-bCAoT1NTKSA8aGVtYW50LmFncmF3YWxAb3NzLm54cC5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBP
-Y3RvYmVyIDksIDIwMjUgMzoxOSBQTQ0KPiBUbzogR2FnYW5kZWVwIFNpbmdoIDxHLlNpbmdoQG54
-cC5jb20+OyBkZXZAZHBkay5vcmc7IEhlbWFudCBBZ3Jhd2FsDQo+IDxoZW1hbnQuYWdyYXdhbEBu
-eHAuY29tPjsgU2FjaGluIFNheGVuYSA8c2FjaGluLnNheGVuYUBueHAuY29tPg0KPiBDYzogVmFu
-c2hpa2EgU2h1a2xhIDx2YW5zaGlrYS5zaHVrbGFAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQ
-QVRDSCB2MiA1LzVdIG5ldC9kcGFhOiBGaXggY292ZXJpdHkgaXNzdWUNCj4gDQo+IA0KPiBPbiAw
-OC0xMC0yMDI1IDEwOjA1LCBHYWdhbmRlZXAgU2luZ2ggd3JvdGU6DQo+ID4gRnJvbTogVmFuc2hp
-a2EgU2h1a2xhIDx2YW5zaGlrYS5zaHVrbGFAbnhwLmNvbT4NCj4gPg0KPiA+IEZpeCBSZXNvdXJj
-ZSBsZWFrIENJRDozNjI3ODcgaXNzdWUgcmVwb3J0ZWQgYnkgZXh0ZXJuYWwgY292ZXJpdHkgdG9v
-bC4NCj4gDQo+IFRoaXMgaXMgaW50ZXJuYWwgTlhQIGNvdmVyaXR5IGlzc3VlP8KgIGNhbiB5b3Ug
-YWxzbyBhZGQgZGV0YWlscyBhYm91dCB0aGUgaXNzdWUgaGVyZT8NCj4gDQpObywgVGhpcyBpc3N1
-ZSBpcyByZXBvcnRlZCBieSBEUERLIENvdmVyaXR5IHNjYW4gdG9vbDogaHR0cHM6Ly9zY2FuNC5z
-Y2FuLmNvdmVyaXR5LmNvbS8jL3Byb2plY3Qtdmlldy82ODg2OC8xMDA3NT9zZWxlY3RlZElzc3Vl
-PTM2Mjc4Nw0KSSB3aWxsIGFkZCBtb3JlIGRldGFpbHMgaW4gY29tbWl0Lg0KDQo+IA0KPiA+DQo+
-ID4gU2lnbmVkLW9mZi1ieTogVmFuc2hpa2EgU2h1a2xhIDx2YW5zaGlrYS5zaHVrbGFAbnhwLmNv
-bT4NCj4gPiAtLS0NCj4gPiAgIGRyaXZlcnMvbmV0L2RwYWEvZHBhYV9mbG93LmMgfCA2ICsrKy0t
-LQ0KPiA+ICAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkN
-Cj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9kcGFhL2RwYWFfZmxvdy5jIGIvZHJp
-dmVycy9uZXQvZHBhYS9kcGFhX2Zsb3cuYw0KPiA+IGluZGV4IDJhMjJiMjNjOGYuLjQxN2I5YjZm
-YmIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9uZXQvZHBhYS9kcGFhX2Zsb3cuYw0KPiA+ICsr
-KyBiL2RyaXZlcnMvbmV0L2RwYWEvZHBhYV9mbG93LmMNCj4gPiBAQCAtMSw1ICsxLDUgQEANCj4g
-PiAgIC8qIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBCU0QtMy1DbGF1c2UNCj4gPiAtICogQ29w
-eXJpZ2h0IDIwMTctMjAxOSwyMDIxLTIwMjQgTlhQDQo+ID4gKyAqIENvcHlyaWdodCAyMDE3LTIw
-MTksMjAyMS0yMDI1IE5YUA0KPiA+ICAgICovDQo+ID4NCj4gPiAgIC8qIFN5c3RlbSBoZWFkZXJz
-ICovDQo+ID4gQEAgLTg4OSw5ICs4ODksOSBAQCBpbnQgZHBhYV9mbV9pbml0KHZvaWQpDQo+ID4g
-ICAJLyogRk0gUENEIEVuYWJsZSAqLw0KPiA+ICAgCXJldCA9IGZtX3BjZF9lbmFibGUocGNkX2hh
-bmRsZSk7DQo+ID4gICAJaWYgKHJldCkgew0KPiA+IC0JCWZtX2Nsb3NlKGZtYW5faGFuZGxlKTsN
-Cj4gPiAtCQlmbV9wY2RfY2xvc2UocGNkX2hhbmRsZSk7DQo+ID4gICAJCURQQUFfUE1EX0VSUigi
-Zm1fcGNkX2VuYWJsZTogRmFpbGVkIik7DQo+ID4gKwkJZm1fcGNkX2Nsb3NlKHBjZF9oYW5kbGUp
-Ow0KPiA+ICsJCWZtX2Nsb3NlKGZtYW5faGFuZGxlKTsNCj4gPiAgIAkJcmV0dXJuIC0xOw0KPiA+
-ICAgCX0NCj4gPg0K
+with below comment fixed:
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+
+On 10/13/2025 12:21 PM, Vamsi Krishna wrote:
+> From: Vamsi Attunuru <vattunuru@marvell.com>
+> 
+> Modern DMA hardware supports data transfers between multiple DMA
+> devices, facilitating data communication across isolated domains,
+> containers, or operating systems. These DMA transfers function as
+> standard memory-to-memory operations, but with source or destination
+> addresses residing in different process or OS address space. The
+> exchange of these addresses between processes is handled through
+> private driver mechanism, which are beyond the scope of this
+> specification change.
+> 
+> This commit introduces new capability flags to advertise driver support
+> for inter-process and inter-OS domain DMA transfers. It adds a mechanism
+> to specify source and destination handlers via the vchan configuration.
+> Until standardized control-plane APIs are defined for various categories
+> of DMA devices, these handler details can be exchanged through private
+> driver mechanisms.
+> 
+> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+> ---
+> V3 changes:
+> * Fix v2 review comments
+> V2 changes:
+> * Seperate out the control-plane APIs
+> * Address v0 review comments
+> * Add validation checks
+> * Rename the enums
+> 
+>  lib/dmadev/rte_dmadev.c       | 19 +++++++++++
+>  lib/dmadev/rte_dmadev.h       | 59 +++++++++++++++++++++++++++++++++++
+>  lib/dmadev/rte_dmadev_trace.h |  3 ++
+>  3 files changed, 81 insertions(+)
+> 
+> diff --git a/lib/dmadev/rte_dmadev.c b/lib/dmadev/rte_dmadev.c
+> index 17ee0808a9..d6792449bf 100644
+> --- a/lib/dmadev/rte_dmadev.c
+> +++ b/lib/dmadev/rte_dmadev.c
+> @@ -659,6 +659,21 @@ rte_dma_vchan_setup(int16_t dev_id, uint16_t vchan,
+>  		RTE_DMA_LOG(ERR, "Device %d vchan out range!", dev_id);
+>  		return -EINVAL;
+>  	}
+> +	if (conf->domain.type != RTE_DMA_INTER_DOMAIN_NONE &&
+> +	    conf->direction != RTE_DMA_DIR_MEM_TO_MEM) {
+> +		RTE_DMA_LOG(ERR, "Device %d inter domain only support mem-to-mem transfer", dev_id);
+> +		return -EINVAL;
+> +	}
+> +	if (conf->domain.type == RTE_DMA_INTER_OS_DOMAIN &&
+> +	    !(dev_info.dev_capa & RTE_DMA_CAPA_INTER_OS_DOMAIN)) {
+> +		RTE_DMA_LOG(ERR, "Device %d does not support inter os domain", dev_id);
+> +		return -EINVAL;
+> +	}
+> +	if (conf->domain.type == RTE_DMA_INTER_PROCESS_DOMAIN &&
+> +	    !(dev_info.dev_capa & RTE_DMA_CAPA_INTER_PROCESS_DOMAIN)) {
+> +		RTE_DMA_LOG(ERR, "Device %d does not support inter process domain", dev_id);
+> +		return -EINVAL;
+> +	}
+>  	if (conf->direction != RTE_DMA_DIR_MEM_TO_MEM &&
+>  	    conf->direction != RTE_DMA_DIR_MEM_TO_DEV &&
+>  	    conf->direction != RTE_DMA_DIR_DEV_TO_MEM &&
+> @@ -805,6 +820,8 @@ dma_capability_name(uint64_t capability)
+>  		{ RTE_DMA_CAPA_HANDLES_ERRORS, "handles_errors" },
+>  		{ RTE_DMA_CAPA_M2D_AUTO_FREE,  "m2d_auto_free"  },
+>  		{ RTE_DMA_CAPA_PRI_POLICY_SP,  "pri_policy_sp" },
+> +		{ RTE_DMA_CAPA_INTER_PROCESS_DOMAIN, "inter_process_domain" },
+> +		{ RTE_DMA_CAPA_INTER_OS_DOMAIN, "inter_os_domain" },
+>  		{ RTE_DMA_CAPA_OPS_COPY,    "copy"    },
+>  		{ RTE_DMA_CAPA_OPS_COPY_SG, "copy_sg" },
+>  		{ RTE_DMA_CAPA_OPS_FILL,    "fill"    },
+> @@ -1014,6 +1031,8 @@ dmadev_handle_dev_info(const char *cmd __rte_unused,
+>  	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_HANDLES_ERRORS);
+>  	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_M2D_AUTO_FREE);
+>  	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_PRI_POLICY_SP);
+> +	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_INTER_PROCESS_DOMAIN);
+> +	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_INTER_OS_DOMAIN);
+>  	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_OPS_COPY);
+>  	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_OPS_COPY_SG);
+>  	ADD_CAPA(dma_caps, dev_capa, RTE_DMA_CAPA_OPS_FILL);
+> diff --git a/lib/dmadev/rte_dmadev.h b/lib/dmadev/rte_dmadev.h
+> index 550dbfbf75..4f735bb0c9 100644
+> --- a/lib/dmadev/rte_dmadev.h
+> +++ b/lib/dmadev/rte_dmadev.h
+> @@ -265,6 +265,18 @@ int16_t rte_dma_next_dev(int16_t start_dev_id);
+>   * known from 'nb_priorities' field in struct rte_dma_info.
+>   */
+>  #define RTE_DMA_CAPA_PRI_POLICY_SP	RTE_BIT64(8)
+> +/** Support inter-process DMA transfers.
+> + *
+> + * When this bit is set, the DMA device can perform memory transfers between
+> + * different process memory spaces.
+> + */
+> +#define RTE_DMA_CAPA_INTER_PROCESS_DOMAIN	RTE_BIT64(9)
+> +/** Support inter-OS domain DMA transfers.
+> + *
+> + * The DMA device can perform memory transfers across different operating
+> + * system domains.
+> + */
+> +#define RTE_DMA_CAPA_INTER_OS_DOMAIN		RTE_BIT64(10)
+>  
+>  /** Support copy operation.
+>   * This capability start with index of 32, so that it could leave gap between
+> @@ -418,8 +430,13 @@ int rte_dma_close(int16_t dev_id);
+>   */
+>  enum rte_dma_direction {
+>  	/** DMA transfer direction - from memory to memory.
+> +	 * When the device supports inter-process or inter-OS domain transfers,
+> +	 * the field `type` in `struct rte_dma_vchan_conf::domain` specifies the
+> +	 * type of domain. For memory-to-memory transfers within the same domain
+> +	 * or process, `type` should be set to `RTE_DMA_INTER_DOMAIN_NONE`.
+>  	 *
+>  	 * @see struct rte_dma_vchan_conf::direction
+> +	 * @see struct rte_dma_inter_domain_param::type
+>  	 */
+>  	RTE_DMA_DIR_MEM_TO_MEM,
+>  	/** DMA transfer direction - from memory to device.
+> @@ -564,6 +581,39 @@ struct rte_dma_auto_free_param {
+>  	uint64_t reserved[2];
+>  };
+>  
+> +/**
+> + * Inter-DMA transfer domain type.
+> + *
+> + * This enum defines the types of transfer domains applicable to DMA operations.
+> + * It helps categorize whether a DMA transfer is occurring within the same domain,
+> + * across different processes, or between distinct operating system domains.
+> + *
+> + * @see struct rte_dma_inter_domain_param:type
+> + */
+> +enum rte_dma_inter_domain_type {
+> +	/**< No inter-domain transfer; standard DMA within same domaini. */
+> +	RTE_DMA_INTER_DOMAIN_NONE,
+> +	/**< Transfer occurs between different user-space processes. */
+> +	RTE_DMA_INTER_PROCESS_DOMAIN,
+> +	/**< Transfer spans across different operating system domains. */
+> +	RTE_DMA_INTER_OS_DOMAIN,
+
+If comment located before define, it should prefix with ** not **<
+
+
+> +};
+> +
+> +/**
+> + * Parameters for inter-process or inter-OS DMA transfers.
+> + *
+> + * This structure defines the parameters required to perform DMA transfers
+> + * across different domains, such as between processes or operating systems.
+> + * It includes the domain type and handler identifiers for both the source
+> + * and destination domains.
+
+I think we could add more comment about how to config use the src/dst handler.
+as I comment in before mail:
+
+It's mean local process if the src/dst_handler is zero?
+for example, I setup a inter-os domain param, if the src_handle is none zero and dst_handle is zero,
+then all DMA copy will from another OS to local process.
+     all DMA fill will write to local process.
+
+If the src_handle is zero and dst_handle is non-zero,
+then all DMA copy will from local process to another OS domain
+     all DMA fill will write to another OS domain.
+
+If both src_handle and dst_handle is non-zero,
+then all DMA copy will from another OS to another OS domain
+     all DMA fill will write to another OS domain.
+
+> + */
+> +struct rte_dma_inter_domain_param {
+> +	enum rte_dma_inter_domain_type type; /**< Type of inter-domain. */
+> +	uint16_t src_handler; /**< Source domain handler identifier. */
+> +	uint16_t dst_handler; /**< Destination domain handler identifier. */
+> +	uint64_t reserved[2]; /**< Reserved for future fields. */
+
+Please move above comment before define to keep the whole header-file consistency.
+
+> +};
+> +
+>  /**
+>   * A structure used to configure a virtual DMA channel.
+>   *
+> @@ -601,6 +651,15 @@ struct rte_dma_vchan_conf {
+>  	 * @see struct rte_dma_auto_free_param
+>  	 */
+>  	struct rte_dma_auto_free_param auto_free;
+> +	/** Parameters for inter-process or inter-OS domain DMA transfers. This field
+> +	 * specifies the source and destination domain handlers required for DMA
+> +	 * operations that span across different processes or operating system domains.
+> +	 *
+> +	 * @see RTE_DMA_CAPA_INTER_PROCESS_DOMAIN
+> +	 * @see RTE_DMA_CAPA_INTER_OS_DOMAIN
+> +	 * @see struct rte_dma_inter_domain_param
+> +	 */
+> +	struct rte_dma_inter_domain_param domain;
+>  };
+>  
+>  /**
+> diff --git a/lib/dmadev/rte_dmadev_trace.h b/lib/dmadev/rte_dmadev_trace.h
+> index 1de92655f2..fa619c4090 100644
+> --- a/lib/dmadev/rte_dmadev_trace.h
+> +++ b/lib/dmadev/rte_dmadev_trace.h
+> @@ -79,6 +79,9 @@ RTE_TRACE_POINT(
+>  	rte_trace_point_emit_int(conf->dst_port.port_type);
+>  	rte_trace_point_emit_u64(conf->dst_port.pcie.val);
+>  	rte_trace_point_emit_ptr(conf->auto_free.m2d.pool);
+> +	rte_trace_point_emit_int(conf->domain.type);
+> +	rte_trace_point_emit_u16(conf->domain.src_handler);
+> +	rte_trace_point_emit_u16(conf->domain.dst_handler);
+>  	rte_trace_point_emit_int(ret);
+>  )
+>  
+
+BTW: please add the UT (test_dmadev_api.c) for above vchan_setup modify, this could be another commit I think.
+
+
