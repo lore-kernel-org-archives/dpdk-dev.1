@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B314CCD184
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 03:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E553CCD184
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 03:04:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AFADB402DB;
-	Mon, 13 Oct 2025 05:03:29 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D9E7940661;
+	Mon, 13 Oct 2025 05:03:30 +0200 (CEST)
 Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com
  [113.46.200.218])
- by mails.dpdk.org (Postfix) with ESMTP id E11E9402A8
- for <dev@dpdk.org>; Mon, 13 Oct 2025 05:02:49 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 72D0E4021E
+ for <dev@dpdk.org>; Mon, 13 Oct 2025 05:02:50 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=LXYkuEGUJS4zfWz91fomAowroq8iqYKp92IQR06tDXA=;
- b=BlVkjo0Q7uH5Oa2rwXWXyNmvGgrL5Kzx8A/ptEd31EvuqouxG+najI+0MtxJQ3kk2F9UEt8wX
- mAHW8mEjFzuH/eY8Z4HwzS/bTQck8B3dvHMKUs60oPIFhIIR2xmSjGmf3/wCGv6lrKpShntIiJv
- QRANjpY3AnNByMGfDkY41wM=
+ bh=FtiBhoxZYJYQMPKO9kMcb+FWSujImc3agSuVuXHV+II=;
+ b=YcoHphrNlTiGfWS0V8ZHfICd9DjRiwotHVpPCCBduOm8Cb1eJ90U9wYbS1oluAX6pGf25d5UW
+ yY40cF9CjYtXm0ycWOwCLfeO1OveSM1S+41iYuuYZE5uVz+9Yjnv6cB2YF7S/8r8a4fQKafCjVj
+ n+X9UjLzHcD8TYAaVOB5KOM=
 Received: from mail.maildlp.com (unknown [172.19.162.254])
- by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4clMZY6lJVzpStj;
- Mon, 13 Oct 2025 11:01:57 +0800 (CST)
+ by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4clMZZ54n4zpStj;
+ Mon, 13 Oct 2025 11:01:58 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 9C86118048E;
- Mon, 13 Oct 2025 11:02:48 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 64A1918048E;
+ Mon, 13 Oct 2025 11:02:49 +0800 (CST)
 Received: from localhost.localdomain (10.50.163.32) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -30,9 +30,9 @@ Received: from localhost.localdomain (10.50.163.32) by
 From: Chengwen Feng <fengchengwen@huawei.com>
 To: <thomas@monjalon.net>, <honest.jiang@foxmail.com>
 CC: <dev@dpdk.org>, <liuyonglong@huawei.com>, <vattunuru@marvell.com>
-Subject: [PATCH v3 10/13] app/dma-perf: support specific error info
-Date: Mon, 13 Oct 2025 11:02:33 +0800
-Message-ID: <20251013030236.3861-11-fengchengwen@huawei.com>
+Subject: [PATCH v3 12/13] app/dma-perf: fix on-flight DMA when verify data
+Date: Mon, 13 Oct 2025 11:02:35 +0800
+Message-ID: <20251013030236.3861-13-fengchengwen@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20251013030236.3861-1-fengchengwen@huawei.com>
 References: <20250811105430.55791-1-fengchengwen@huawei.com>
@@ -55,186 +55,121 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-If some entry was not provided in section, it will be segment fault
-in original impl. For example:
-	dpdk-test-dma-perf --config ./config.ini
-	config file parsing...
-	Segmentation fault (core dumped)
+There maybe on-flight DMA when verify_data() because the DMA device
+may still working when worker exit.
 
-This commit support specific error information, the new output (e.g.):
-	dpdk-test-dma-perf --config ./config.ini
-	config file parsing...
-	Error: can't get entry 'dst_numa_node' in section 'case1'
+This commit add wait DMA complete stage before worker exit.
+
+Fixes: 623dc9364dc6 ("app/dma-perf: introduce DMA performance test")
+Cc: stable@dpdk.org
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-Acked-by: Vamsi Attunuru <vattunuru@marvell.com>
 ---
- app/test-dma-perf/main.c | 67 +++++++++++++++-------------------------
- 1 file changed, 25 insertions(+), 42 deletions(-)
+ app/test-dma-perf/benchmark.c | 54 +++++++++++++++++++++++------------
+ 1 file changed, 35 insertions(+), 19 deletions(-)
 
-diff --git a/app/test-dma-perf/main.c b/app/test-dma-perf/main.c
-index 084efbe9bb..5a7a8072eb 100644
---- a/app/test-dma-perf/main.c
-+++ b/app/test-dma-perf/main.c
-@@ -158,6 +158,18 @@ run_test(uint32_t case_id, struct test_configure *case_cfg)
- 	}
+diff --git a/app/test-dma-perf/benchmark.c b/app/test-dma-perf/benchmark.c
+index ab2bf0cbf5..8e755c2afa 100644
+--- a/app/test-dma-perf/benchmark.c
++++ b/app/test-dma-perf/benchmark.c
+@@ -19,7 +19,6 @@
+ #define MAX_DMA_CPL_NB 255
+ 
+ #define TEST_WAIT_U_SECOND 10000
+-#define POLL_MAX 1000
+ 
+ #define CSV_LINE_DMA_FMT "Scenario %u,%u,%s,%u,%u,%u,%u,%.2lf,%" PRIu64 ",%.3lf,%.3lf\n"
+ #define CSV_LINE_CPU_FMT "Scenario %u,%u,NA,NA,NA,%u,%u,%.2lf,%" PRIu64 ",%.3lf,%.3lf\n"
+@@ -282,6 +281,39 @@ do_dma_submit_and_poll(uint16_t dev_id, uint64_t *async_cnt,
+ 	worker_info->total_cpl += nr_cpl;
  }
  
-+/* Exit process if the entry couldn't find in the section. */
-+static const char *
-+get_cfgfile_entry(struct rte_cfgfile *cfgfile, const char *section_name, const char *entry_name)
++static int
++do_dma_submit_and_wait_cpl(uint16_t dev_id, uint64_t async_cnt)
 +{
-+	const char *entry = rte_cfgfile_get_entry(cfgfile, section_name, entry_name);
-+	if (entry == NULL) {
-+		printf("Error: can't get entry '%s' in section '%s'\n", entry_name, section_name);
-+		exit(1);
++#define MAX_WAIT_MSEC	1000
++#define MAX_POLL	1000
++	enum rte_dma_vchan_status st;
++	uint32_t poll_cnt = 0;
++	uint32_t wait_ms = 0;
++	uint16_t nr_cpl;
++
++	rte_dma_submit(dev_id, 0);
++
++	if (rte_dma_vchan_status(dev_id, 0, &st) < 0) {
++		rte_delay_ms(MAX_WAIT_MSEC);
++		goto wait_cpl;
 +	}
-+	return entry;
++
++	while (st == RTE_DMA_VCHAN_ACTIVE && wait_ms++ < MAX_WAIT_MSEC) {
++		rte_delay_ms(1);
++		rte_dma_vchan_status(dev_id, 0, &st);
++	}
++
++wait_cpl:
++	while ((async_cnt > 0) && (poll_cnt++ < MAX_POLL)) {
++		nr_cpl = rte_dma_completed(dev_id, 0, MAX_DMA_CPL_NB, NULL, NULL);
++		async_cnt -= nr_cpl;
++	}
++	if (async_cnt > 0)
++		PRINT_ERR("Error: wait DMA %u failed!\n", dev_id);
++
++	return async_cnt == 0 ? 0 : -1;
 +}
 +
- static int
- parse_lcore(struct test_configure *test_case, const char *value)
+ static inline int
+ do_dma_plain_mem_copy(void *p)
  {
-@@ -165,9 +177,6 @@ parse_lcore(struct test_configure *test_case, const char *value)
- 	char *input;
- 	struct lcore_dma_map_t *lcore_dma_map;
- 
--	if (test_case == NULL || value == NULL)
--		return -1;
--
- 	len = strlen(value);
- 	input = (char *)malloc((len + 1) * sizeof(char));
- 	strlcpy(input, value, len + 1);
-@@ -195,9 +204,7 @@ static void
- parse_cpu_config(struct test_configure *test_case, int case_id,
- 		     struct rte_cfgfile *cfgfile, char *section_name)
- {
--	const char *lcore;
--
--	lcore = rte_cfgfile_get_entry(cfgfile, section_name, "lcore");
-+	const char *lcore = get_cfgfile_entry(cfgfile, section_name, "lcore");
- 	int lcore_ret = parse_lcore(test_case, lcore);
- 	if (lcore_ret < 0) {
- 		printf("parse lcore error in case %d.\n", case_id);
-@@ -213,9 +220,6 @@ parse_entry(const char *value, struct test_configure_entry *entry)
- 	int args_nr = -1;
+@@ -293,10 +325,8 @@ do_dma_plain_mem_copy(void *p)
+ 	const uint32_t buf_size = para->buf_size;
+ 	struct rte_mbuf **srcs = para->srcs;
+ 	struct rte_mbuf **dsts = para->dsts;
+-	uint16_t nr_cpl;
+ 	uint64_t async_cnt = 0;
+ 	uint32_t i;
+-	uint32_t poll_cnt = 0;
  	int ret;
  
--	if (value == NULL || entry == NULL)
--		goto out;
--
- 	strncpy(input, value, 254);
- 	if (*input == '\0')
- 		goto out;
-@@ -294,7 +298,7 @@ parse_dma_config(struct test_configure *test_case, int case_id,
- 	int args_nr;
- 	int i;
- 
--	ring_size_str = rte_cfgfile_get_entry(cfgfile, section_name, "dma_ring_size");
-+	ring_size_str = get_cfgfile_entry(cfgfile, section_name, "dma_ring_size");
- 	args_nr = parse_entry(ring_size_str, &test_case->ring_size);
- 	if (args_nr < 0) {
- 		printf("parse error in case %d.\n", case_id);
-@@ -305,13 +309,11 @@ parse_dma_config(struct test_configure *test_case, int case_id,
- 
- 	src_sges_str = rte_cfgfile_get_entry(cfgfile, section_name, "dma_src_sge");
- 	if (src_sges_str != NULL)
--		test_case->nb_src_sges = (int)atoi(rte_cfgfile_get_entry(cfgfile,
--						section_name, "dma_src_sge"));
-+		test_case->nb_src_sges = (int)atoi(src_sges_str);
- 
- 	dst_sges_str = rte_cfgfile_get_entry(cfgfile, section_name, "dma_dst_sge");
- 	if (dst_sges_str != NULL)
--		test_case->nb_dst_sges = (int)atoi(rte_cfgfile_get_entry(cfgfile,
--						section_name, "dma_dst_sge"));
-+		test_case->nb_dst_sges = (int)atoi(dst_sges_str);
- 
- 	if ((src_sges_str != NULL && dst_sges_str == NULL) ||
- 	    (src_sges_str == NULL && dst_sges_str != NULL)) {
-@@ -327,7 +329,7 @@ parse_dma_config(struct test_configure *test_case, int case_id,
- 		test_case->is_sg = true;
+ 	worker_info->stop_flag = false;
+@@ -327,13 +357,7 @@ do_dma_plain_mem_copy(void *p)
+ 			break;
  	}
  
--	kick_batch_str = rte_cfgfile_get_entry(cfgfile, section_name, "kick_batch");
-+	kick_batch_str = get_cfgfile_entry(cfgfile, section_name, "kick_batch");
- 	args_nr = parse_entry(kick_batch_str, &test_case->kick_batch);
- 	if (args_nr < 0) {
- 		printf("parse error in case %d.\n", case_id);
-@@ -385,11 +387,7 @@ parse_global_config(struct rte_cfgfile *cfgfile)
- 		return -1;
+-	rte_dma_submit(dev_id, 0);
+-	while ((async_cnt > 0) && (poll_cnt++ < POLL_MAX)) {
+-		nr_cpl = rte_dma_completed(dev_id, 0, MAX_DMA_CPL_NB, NULL, NULL);
+-		async_cnt -= nr_cpl;
+-	}
+-
+-	return 0;
++	return do_dma_submit_and_wait_cpl(dev_id, async_cnt);
+ }
+ 
+ static inline int
+@@ -349,8 +373,6 @@ do_dma_sg_mem_copy(void *p)
+ 	const uint16_t dev_id = para->dev_id;
+ 	uint32_t nr_buf = para->nr_buf;
+ 	uint64_t async_cnt = 0;
+-	uint32_t poll_cnt = 0;
+-	uint16_t nr_cpl;
+ 	uint32_t i, j;
+ 	int ret;
+ 
+@@ -386,13 +408,7 @@ do_dma_sg_mem_copy(void *p)
+ 			break;
  	}
  
--	entry = rte_cfgfile_get_entry(cfgfile, GLOBAL_SECTION_NAME, "eal_args");
--	if (entry == NULL) {
--		printf("Error: GLOBAL section must have 'eal_args' entry!\n");
--		return -1;
+-	rte_dma_submit(dev_id, 0);
+-	while ((async_cnt > 0) && (poll_cnt++ < POLL_MAX)) {
+-		nr_cpl = rte_dma_completed(dev_id, 0, MAX_DMA_CPL_NB, NULL, NULL);
+-		async_cnt -= nr_cpl;
 -	}
-+	entry = get_cfgfile_entry(cfgfile, GLOBAL_SECTION_NAME, "eal_args");
- 	args = strdup(entry);
- 	if (args == NULL) {
- 		printf("Error: dup GLOBAL 'eal_args' failed!\n");
-@@ -401,18 +399,10 @@ parse_global_config(struct rte_cfgfile *cfgfile)
- 		global_cfg.eal_argv[i + 1] = tokens[i];
- 	global_cfg.eal_argc = i + 1;
- 
--	entry = rte_cfgfile_get_entry(cfgfile, GLOBAL_SECTION_NAME, "cache_flush");
--	if (entry == NULL) {
--		printf("Error: GLOBAL section don't has 'cache_flush' entry!\n");
--		return -1;
--	}
-+	entry = get_cfgfile_entry(cfgfile, GLOBAL_SECTION_NAME, "cache_flush");
- 	global_cfg.cache_flush = (uint8_t)atoi(entry);
- 
--	entry = rte_cfgfile_get_entry(cfgfile, GLOBAL_SECTION_NAME, "test_seconds");
--	if (entry == NULL) {
--		printf("Error: GLOBAL section don't has 'test_seconds' entry!\n");
--		return -1;
--	}
-+	entry = get_cfgfile_entry(cfgfile, GLOBAL_SECTION_NAME, "test_seconds");
- 	global_cfg.test_secs = (uint16_t)atoi(entry);
- 
- 	return 0;
-@@ -457,14 +447,7 @@ load_configs(const char *path)
- 		}
- 
- 		test_case->is_valid = true;
--		case_type = rte_cfgfile_get_entry(cfgfile, section_name, "type");
--		if (case_type == NULL) {
--			printf("Error: No case type in case %d, the test will be finished here.\n",
--				i + 1);
--			test_case->is_valid = false;
--			continue;
--		}
 -
-+		case_type = get_cfgfile_entry(cfgfile, section_name, "type");
- 		if (strcmp(case_type, DMA_MEM_COPY) == 0) {
- 			test_case->test_type = TEST_TYPE_DMA_MEM_COPY;
- 		} else if (strcmp(case_type, CPU_MEM_COPY) == 0) {
-@@ -475,12 +458,12 @@ load_configs(const char *path)
- 			continue;
- 		}
+-	return 0;
++	return do_dma_submit_and_wait_cpl(dev_id, async_cnt);
+ }
  
--		test_case->src_numa_node = (int)atoi(rte_cfgfile_get_entry(cfgfile,
-+		test_case->src_numa_node = (int)atoi(get_cfgfile_entry(cfgfile,
- 								section_name, "src_numa_node"));
--		test_case->dst_numa_node = (int)atoi(rte_cfgfile_get_entry(cfgfile,
-+		test_case->dst_numa_node = (int)atoi(get_cfgfile_entry(cfgfile,
- 								section_name, "dst_numa_node"));
- 		nb_vp = 0;
--		mem_size_str = rte_cfgfile_get_entry(cfgfile, section_name, "mem_size");
-+		mem_size_str = get_cfgfile_entry(cfgfile, section_name, "mem_size");
- 		args_nr = parse_entry(mem_size_str, &test_case->mem_size);
- 		if (args_nr < 0) {
- 			printf("parse error in case %d.\n", i + 1);
-@@ -489,7 +472,7 @@ load_configs(const char *path)
- 		} else if (args_nr == 4)
- 			nb_vp++;
- 
--		buf_size_str = rte_cfgfile_get_entry(cfgfile, section_name, "buf_size");
-+		buf_size_str = get_cfgfile_entry(cfgfile, section_name, "buf_size");
- 		args_nr = parse_entry(buf_size_str, &test_case->buf_size);
- 		if (args_nr < 0) {
- 			printf("parse error in case %d.\n", i + 1);
+ static inline int
 -- 
 2.17.1
 
