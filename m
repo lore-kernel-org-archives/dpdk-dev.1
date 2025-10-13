@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 125E6CCA476
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 07:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E4FCCA476
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 07:01:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7C0B94068E;
-	Mon, 13 Oct 2025 09:00:34 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+	by mails.dpdk.org (Postfix) with ESMTP id 7E68C4064C;
+	Mon, 13 Oct 2025 09:00:37 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id C9BF7402CB;
- Mon, 13 Oct 2025 09:00:32 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59CNSNgK000545;
- Mon, 13 Oct 2025 00:00:32 -0700
+ by mails.dpdk.org (Postfix) with ESMTP id 9FEDE4066F
+ for <dev@dpdk.org>; Mon, 13 Oct 2025 09:00:36 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59CNu3iw003130
+ for <dev@dpdk.org>; Mon, 13 Oct 2025 00:00:35 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=e
- 6/Y9WghJqywPHKmgZl47FYYkNd0nnB526fyiy0M/yA=; b=Z/qOusKAWLHGTGnKM
- qNERcfTAvsxeb25ag3XWmxh6DcAKrE2xrZgoPr0P3cuVz/JI+SesR06srS1ob4g9
- mJdx2PwcI1ZKZjmPM/6EGVSRLS3rUJfimEZfi23jn9YkdHT4sTInO7WOea0n24SB
- trnUr316VvXoAoyy8kqVfHU2Is8HEDr8s64J4qBo+RYe7JOi3TTqn1vVoqx8qmt+
- ACp1hxKXiz3hAfcJ5ScpKcnlyzBLex9hy3XSUVInoL5Pae0WjrPEHRD+i87F1M00
- sQryY96igNUG4XXKeo+fWAMubyWgX1dEznKgqvTvfeIrZ00vrZIkXNw77dV60vRf
- 4CCiQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49rp1jrmkm-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 13 Oct 2025 00:00:31 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=i
+ jGNASFa/Q9Y1vamTUiXHisJkRSnHU7juXBBQoRv29g=; b=GwF+jDnf0zgHGWp94
+ Ow7oK9FiaaTkvJevqAjB5AfNI85gvmDP/4yvDjpCx18HBOdHb7mZHiHsaZP31yTD
+ yswcXA9nIowJIkUjGpIV/PrWfPFW74gjKavpM5Lnc1l/Bqkp/1nLUT7/q0gHMWoc
+ zQoT5XnDFhHy7U7aX2/F21ogDux3HETk+VqsJasroOZ/SBdzkFe7XrPr8P6ZlEU1
+ DJvCtOo+DET7HSTYxVQoEMQoudE0e1Vca1qh5oWDldqqFSSkivVSsfnjghe2uQND
+ bwHlOCuuVMmeqxwTl+JGaNbkoxCqmpvZZFifMBxHoFdQ+W5PmO1GHbqypb1NV/Rs
+ iN4Mw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49rp1s8meq-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Mon, 13 Oct 2025 00:00:35 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 13 Oct 2025 00:00:41 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 13 Oct 2025 00:00:41 -0700
+ 15.2.1544.25; Mon, 13 Oct 2025 00:00:46 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Mon, 13 Oct 2025 00:00:45 -0700
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id 88E153F70C1;
- Mon, 13 Oct 2025 00:00:28 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id C09073F7072;
+ Mon, 13 Oct 2025 00:00:31 -0700 (PDT)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <jerinj@marvell.com>, <dev@dpdk.org>, <stable@dpdk.org>
-Subject: [PATCH v2 12/19] common/cnxk: fix max number of SQB bufs in clean up
-Date: Mon, 13 Oct 2025 12:29:42 +0530
-Message-ID: <20251013065949.200414-12-ndabilpuram@marvell.com>
+CC: <jerinj@marvell.com>, <dev@dpdk.org>
+Subject: [PATCH v2 13/19] common/cnxk: add support for SQ resize
+Date: Mon, 13 Oct 2025 12:29:43 +0530
+Message-ID: <20251013065949.200414-13-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251013065949.200414-1-ndabilpuram@marvell.com>
 References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
@@ -53,19 +53,19 @@ References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: I_ZfNNGjMP-uNQzmPj0ELXjvIbSKdLX0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDEyNSBTYWx0ZWRfX0DcfArTQtNKp
- xZ6BjcfdbxjieQL+jUpUfCQCLVyT5vKhRYQMWuBW4zyG8jxqd8eHKwVC9Q1FxCpBEDdyHzSOhMt
- KOmfy70fK0JeQerMwa7N+7qiyw/2REcIs5TzEj9YRpm/pA49VdcTqB52dEq8TRFlX4CRjQHAT62
- HS8QedUoJdDurHlrWvPwqZ6+cYk1Nl4qukGm2su1D5TU8FqT2dnKI30xB3yzW9vz/JhIaO03/dn
- DQN1yvmmIjcrxKHLS+WIbzVXrnduB4xzrWnlZMkJ3voFhVrYRc2l78454aqEe8dyv3/wmgw5+Va
- CqceiWP9re5LTCuM0pefbz/gD/AlSEGwfmQykYdANDe2AvdmO/cC6FwNb8Rw/92t1+S6RuNi6jX
- tG+56vfCFwyCSBoFp9YxCzoMLwf1UA==
-X-Authority-Analysis: v=2.4 cv=Utdu9uwB c=1 sm=1 tr=0 ts=68eca38f cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=x6icFKpwvdMA:10 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8 a=3m7XhV8NHwqQqn6gr2kA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-GUID: I_ZfNNGjMP-uNQzmPj0ELXjvIbSKdLX0
+X-Proofpoint-ORIG-GUID: EHQMj6cBSt-AngXfnDqfDkp5-y5SCRjF
+X-Authority-Analysis: v=2.4 cv=ENQLElZC c=1 sm=1 tr=0 ts=68eca393 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=x6icFKpwvdMA:10 a=M5GUcnROAAAA:8 a=BIG-wxp43RnHP4roqUMA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDEyNSBTYWx0ZWRfXwiRBsbSsYeqx
+ G/PXs1qDUnW/FA3fhi8iUJt13qX1kzJ3BofTgBGmEfqEHrVX0GVQRrzxOjujEfRUpoNHqfNFG3V
+ /ejSaxL4ZE72ZLp8DQ1fREZpyUSbopjtjsdY+tfsGfZPlTTi5FRpRuX91KYj7PmCrXQJJ/V+Mbu
+ /fWP9KlHDb2l1o4J6aFwLWRB2ae8ypi4r8iUILPcRxopUCEKm4kUng106onQifQltv/WuQj4dHJ
+ EPrWxFZeUlzbngOXVS5LAmAoJYX9QDgPdhaGA8LKqW4ni0gS8ySBUU0VOMi9CEtLa4/Wl0TZmdG
+ o1HRwYNKMpVVl5rckobMBHw72mSCtkQ/UT8AQELKSYA7fS5pb4oOUt6eJmwLhYB3xZvdKQyXtQn
+ eQd/cUbph6++/wc9ededU0+kZl5miw==
+X-Proofpoint-GUID: EHQMj6cBSt-AngXfnDqfDkp5-y5SCRjF
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-13_03,2025-10-06_01,2025-03-28_01
@@ -82,42 +82,533 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Sunil Kumar Kori <skori@marvell.com>
+Add support for SQ resize by making SQB mem allocated
+in chunks of SQB size.
 
-By default, SQB pool is created with max (512 buffers) +
-extra threshold buffers and aura limit is set to 512 + thr.
-
-But while clean up, aura limit is reset to MAX (512 buffers)
-only before destroying the pool.
-
-Hence while destroying the pool, only 512 buffers are cleaned
-from aura and extra threshold buffers are left as it is.
-
-At later stage if same SQB pool is created then H/W
-throws error for extra threshold buffers that it is already
-in pool.
-
-Fixes: 780f90e951a5 ("common/cnxk: restore NIX SQB pool limit before destroy")
-Cc: stable@dpdk.org
-
-Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
+Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
 ---
- drivers/common/cnxk/roc_nix_queue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/common/cnxk/roc_nix.h                 |   3 +
+ drivers/common/cnxk/roc_nix_queue.c           | 389 ++++++++++++++++--
+ .../common/cnxk/roc_platform_base_symbols.c   |   1 +
+ 3 files changed, 366 insertions(+), 27 deletions(-)
 
+diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
+index 274ece68a9..41a8576fca 100644
+--- a/drivers/common/cnxk/roc_nix.h
++++ b/drivers/common/cnxk/roc_nix.h
+@@ -399,6 +399,7 @@ struct roc_nix_sq {
+ 	bool cq_ena;
+ 	uint8_t fc_hyst_bits;
+ 	/* End of Input parameters */
++	uint16_t sqes_per_sqb;
+ 	uint16_t sqes_per_sqb_log2;
+ 	struct roc_nix *roc_nix;
+ 	uint64_t aura_handle;
+@@ -495,6 +496,7 @@ struct roc_nix {
+ 	uint16_t inb_cfg_param2;
+ 	bool force_tail_drop;
+ 	bool dis_xqe_drop;
++	bool sq_resize_ena;
+ 	/* End of input parameters */
+ 	/* LMT line base for "Per Core Tx LMT line" mode*/
+ 	uintptr_t lmt_base;
+@@ -993,6 +995,7 @@ int __roc_api roc_nix_sq_ena_dis(struct roc_nix_sq *sq, bool enable);
+ void __roc_api roc_nix_sq_head_tail_get(struct roc_nix *roc_nix, uint16_t qid,
+ 					uint32_t *head, uint32_t *tail);
+ int __roc_api roc_nix_sq_cnt_update(struct roc_nix_sq *sq, bool enable);
++int __roc_api roc_nix_sq_resize(struct roc_nix_sq *sq, uint32_t nb_desc);
+ 
+ /* PTP */
+ int __roc_api roc_nix_ptp_rx_ena_dis(struct roc_nix *roc_nix, int enable);
 diff --git a/drivers/common/cnxk/roc_nix_queue.c b/drivers/common/cnxk/roc_nix_queue.c
-index 356367624f..8737728dd5 100644
+index 8737728dd5..3f11aa89fc 100644
 --- a/drivers/common/cnxk/roc_nix_queue.c
 +++ b/drivers/common/cnxk/roc_nix_queue.c
-@@ -2057,7 +2057,7 @@ roc_nix_sq_fini(struct roc_nix_sq *sq)
- 	/* Restore limit to max SQB count that the pool was created
+@@ -1430,42 +1430,77 @@ roc_nix_cq_fini(struct roc_nix_cq *cq)
+ 	return 0;
+ }
+ 
+-static int
+-sqb_pool_populate(struct roc_nix *roc_nix, struct roc_nix_sq *sq)
++static uint16_t
++sqes_per_sqb_calc(uint16_t sqb_size, enum roc_nix_sq_max_sqe_sz max_sqe_sz)
+ {
+-	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
+-	uint16_t sqes_per_sqb, count, nb_sqb_bufs, thr;
+-	struct npa_pool_s pool;
+-	struct npa_aura_s aura;
+-	uint64_t blk_sz;
+-	uint64_t iova;
+-	int rc;
++	uint16_t sqes_per_sqb;
+ 
+-	blk_sz = nix->sqb_size;
+-	if (sq->max_sqe_sz == roc_nix_maxsqesz_w16)
+-		sqes_per_sqb = (blk_sz / 8) / 16;
++	if (max_sqe_sz == roc_nix_maxsqesz_w16)
++		sqes_per_sqb = (sqb_size / 8) / 16;
+ 	else
+-		sqes_per_sqb = (blk_sz / 8) / 8;
++		sqes_per_sqb = (sqb_size / 8) / 8;
+ 
+ 	/* Reserve One SQE in each SQB to hold pointer for next SQB */
+ 	sqes_per_sqb -= 1;
++	return sqes_per_sqb;
++}
++
++static uint16_t
++sq_desc_to_sqb(struct nix *nix, uint16_t sqes_per_sqb, uint32_t nb_desc)
++{
++	struct roc_nix *roc_nix = nix_priv_to_roc_nix(nix);
++	uint16_t nb_sqb_bufs;
++
++	nb_desc = PLT_MAX(512U, nb_desc);
++	nb_sqb_bufs = PLT_DIV_CEIL(nb_desc, sqes_per_sqb);
+ 
+-	sq->nb_desc = PLT_MAX(512U, sq->nb_desc);
+-	nb_sqb_bufs = PLT_DIV_CEIL(sq->nb_desc, sqes_per_sqb);
+-	thr = PLT_DIV_CEIL((nb_sqb_bufs * ROC_NIX_SQB_THRESH), 100);
+ 	nb_sqb_bufs += NIX_SQB_PREFETCH;
+ 	/* Clamp up the SQB count */
+ 	nb_sqb_bufs = PLT_MAX(NIX_DEF_SQB, nb_sqb_bufs);
+ 	nb_sqb_bufs = PLT_MIN(roc_nix->max_sqb_count, (uint16_t)nb_sqb_bufs);
+ 
+-	sq->nb_sqb_bufs = nb_sqb_bufs;
+-	sq->sqes_per_sqb_log2 = (uint16_t)plt_log2_u32(sqes_per_sqb);
+-	sq->nb_sqb_bufs_adj = nb_sqb_bufs;
++	return nb_sqb_bufs;
++}
+ 
++static uint16_t
++sqb_slack_adjust(struct nix *nix, uint16_t nb_sqb_bufs, bool sq_cnt_ena)
++{
++	struct roc_nix *roc_nix = nix_priv_to_roc_nix(nix);
++	uint16_t thr;
++
++	thr = PLT_DIV_CEIL((nb_sqb_bufs * ROC_NIX_SQB_THRESH), 100);
+ 	if (roc_nix->sqb_slack)
+ 		nb_sqb_bufs += roc_nix->sqb_slack;
+-	else if (!sq->sq_cnt_ptr)
++	else if (!sq_cnt_ena)
+ 		nb_sqb_bufs += PLT_MAX((int)thr, (int)ROC_NIX_SQB_SLACK_DFLT);
++	return nb_sqb_bufs;
++}
++
++static int
++sqb_pool_populate(struct roc_nix *roc_nix, struct roc_nix_sq *sq)
++{
++	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
++	uint16_t sqes_per_sqb, count, nb_sqb_bufs;
++	struct npa_pool_s pool;
++	struct npa_aura_s aura;
++	uint64_t blk_sz;
++	uint64_t iova;
++	int rc;
++
++	blk_sz = nix->sqb_size;
++	sqes_per_sqb = sqes_per_sqb_calc(blk_sz, sq->max_sqe_sz);
++
++	/* Translate desc count to SQB count */
++	nb_sqb_bufs = sq_desc_to_sqb(nix, sqes_per_sqb, sq->nb_desc);
++
++	sq->sqes_per_sqb = sqes_per_sqb;
++	sq->sqes_per_sqb_log2 = (uint16_t)plt_log2_u32(sqes_per_sqb);
++	sq->nb_sqb_bufs_adj = nb_sqb_bufs;
++	sq->nb_sqb_bufs = nb_sqb_bufs;
++
++	/* Add slack to SQB's */
++	nb_sqb_bufs = sqb_slack_adjust(nix, nb_sqb_bufs, !!sq->sq_cnt_ptr);
++
+ 	/* Explicitly set nat_align alone as by default pool is with both
+ 	 * nat_align and buf_offset = 1 which we don't want for SQB.
+ 	 */
+@@ -1520,6 +1555,96 @@ sqb_pool_populate(struct roc_nix *roc_nix, struct roc_nix_sq *sq)
+ 	return rc;
+ }
+ 
++static int
++sqb_pool_dyn_populate(struct roc_nix *roc_nix, struct roc_nix_sq *sq)
++{
++	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
++	uint16_t count, nb_sqb_bufs;
++	uint16_t max_sqb_count;
++	struct npa_pool_s pool;
++	struct npa_aura_s aura;
++	uint16_t sqes_per_sqb;
++	uint64_t blk_sz;
++	uint64_t iova;
++	int rc;
++
++	blk_sz = nix->sqb_size;
++	sqes_per_sqb = sqes_per_sqb_calc(blk_sz, sq->max_sqe_sz);
++
++	/* Translate desc count to SQB count */
++	nb_sqb_bufs = sq_desc_to_sqb(nix, sqes_per_sqb, sq->nb_desc);
++
++	sq->sqes_per_sqb_log2 = (uint16_t)plt_log2_u32(sqes_per_sqb);
++	sq->sqes_per_sqb = sqes_per_sqb;
++	sq->nb_sqb_bufs_adj = nb_sqb_bufs;
++	sq->nb_sqb_bufs = nb_sqb_bufs;
++
++	/* Add slack to SQB's */
++	nb_sqb_bufs = sqb_slack_adjust(nix, nb_sqb_bufs, !!sq->sq_cnt_ptr);
++
++	/* Explicitly set nat_align alone as by default pool is with both
++	 * nat_align and buf_offset = 1 which we don't want for SQB.
++	 */
++	memset(&pool, 0, sizeof(struct npa_pool_s));
++	pool.nat_align = 0;
++
++	memset(&aura, 0, sizeof(aura));
++	if (!sq->sq_cnt_ptr)
++		aura.fc_ena = 1;
++	if (roc_model_is_cn9k() || roc_errata_npa_has_no_fc_stype_ststp())
++		aura.fc_stype = 0x0; /* STF */
++	else
++		aura.fc_stype = 0x3; /* STSTP */
++	aura.fc_addr = (uint64_t)sq->fc;
++	aura.fc_hyst_bits = sq->fc_hyst_bits & 0xF;
++	max_sqb_count = sqb_slack_adjust(nix, roc_nix->max_sqb_count, false);
++	rc = roc_npa_pool_create(&sq->aura_handle, blk_sz, max_sqb_count, &aura, &pool, 0);
++	if (rc)
++		goto fail;
++
++	roc_npa_buf_type_update(sq->aura_handle, ROC_NPA_BUF_TYPE_SQB, 1);
++	roc_npa_aura_op_cnt_set(sq->aura_handle, 0, nb_sqb_bufs);
++
++	/* Fill the initial buffers */
++	for (count = 0; count < nb_sqb_bufs; count++) {
++		iova = (uint64_t)plt_zmalloc(blk_sz, ROC_ALIGN);
++		if (!iova) {
++			rc = -ENOMEM;
++			goto nomem;
++		}
++		plt_io_wmb();
++
++		roc_npa_aura_op_free(sq->aura_handle, 0, iova);
++	}
++
++	if (roc_npa_aura_op_available_wait(sq->aura_handle, nb_sqb_bufs, 0) != nb_sqb_bufs) {
++		plt_err("Failed to free all pointers to the pool");
++		rc = NIX_ERR_NO_MEM;
++		goto npa_fail;
++	}
++
++	/* Update aura count */
++	roc_npa_aura_limit_modify(sq->aura_handle, nb_sqb_bufs);
++	roc_npa_pool_op_range_set(sq->aura_handle, 0, UINT64_MAX);
++	sq->aura_sqb_bufs = nb_sqb_bufs;
++
++	return rc;
++npa_fail:
++nomem:
++	while (count) {
++		iova = roc_npa_aura_op_alloc(sq->aura_handle, 0);
++		if (!iova)
++			break;
++		plt_free((uint64_t *)iova);
++		count--;
++	}
++	if (count)
++		plt_err("Failed to recover %u SQB's", count);
++	roc_npa_pool_destroy(sq->aura_handle);
++fail:
++	return rc;
++}
++
+ static int
+ sq_cn9k_init(struct nix *nix, struct roc_nix_sq *sq, uint32_t rr_quantum,
+ 	     uint16_t smq)
+@@ -1768,10 +1893,10 @@ sq_cn10k_fini(struct nix *nix, struct roc_nix_sq *sq)
+ 		return rc;
+ 	}
+ 
+-	if (aq->sq.smq_pend)
++	if (rsp->sq.smq_pend)
+ 		plt_err("SQ has pending SQE's");
+ 
+-	count = aq->sq.sqb_count;
++	count = rsp->sq.sqb_count;
+ 	sqes_per_sqb = 1 << sq->sqes_per_sqb_log2;
+ 	/* Free SQB's that are used */
+ 	sqb_buf = (void *)rsp->sq.head_sqb;
+@@ -1939,6 +2064,7 @@ int
+ roc_nix_sq_init(struct roc_nix *roc_nix, struct roc_nix_sq *sq)
+ {
+ 	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
++	bool sq_resize_ena = roc_nix->sq_resize_ena;
+ 	struct mbox *m_box = (&nix->dev)->mbox;
+ 	uint16_t qid, smq = UINT16_MAX;
+ 	uint32_t rr_quantum = 0;
+@@ -1964,7 +2090,10 @@ roc_nix_sq_init(struct roc_nix *roc_nix, struct roc_nix_sq *sq)
+ 		goto fail;
+ 	}
+ 
+-	rc = sqb_pool_populate(roc_nix, sq);
++	if (sq_resize_ena)
++		rc = sqb_pool_dyn_populate(roc_nix, sq);
++	else
++		rc = sqb_pool_populate(roc_nix, sq);
+ 	if (rc)
+ 		goto nomem;
+ 
+@@ -2014,19 +2143,38 @@ roc_nix_sq_init(struct roc_nix *roc_nix, struct roc_nix_sq *sq)
+ 	return rc;
+ }
+ 
++static void
++nix_sqb_mem_dyn_free(uint64_t aura_handle, uint16_t count)
++{
++	uint64_t iova;
++
++	/* Recover SQB's and free them back */
++	while (count) {
++		iova = roc_npa_aura_op_alloc(aura_handle, 0);
++		if (!iova)
++			break;
++		plt_free((uint64_t *)iova);
++		count--;
++	}
++	if (count)
++		plt_err("Failed to recover %u SQB's", count);
++}
++
+ int
+ roc_nix_sq_fini(struct roc_nix_sq *sq)
+ {
+-	struct nix *nix;
+-	struct mbox *mbox;
++	struct roc_nix *roc_nix = sq->roc_nix;
++	bool sq_resize_ena = roc_nix->sq_resize_ena;
+ 	struct ndc_sync_op *ndc_req;
++	struct mbox *mbox;
++	struct nix *nix;
+ 	uint16_t qid;
+ 	int rc = 0;
+ 
+ 	if (sq == NULL)
+ 		return NIX_ERR_PARAM;
+ 
+-	nix = roc_nix_to_nix_priv(sq->roc_nix);
++	nix = roc_nix_to_nix_priv(roc_nix);
+ 	mbox = (&nix->dev)->mbox;
+ 
+ 	qid = sq->qid;
+@@ -2058,14 +2206,201 @@ roc_nix_sq_fini(struct roc_nix_sq *sq)
  	 * for aura drain to succeed.
  	 */
--	roc_npa_aura_limit_modify(sq->aura_handle, NIX_MAX_SQB);
-+	roc_npa_aura_limit_modify(sq->aura_handle, sq->aura_sqb_bufs);
+ 	roc_npa_aura_limit_modify(sq->aura_handle, sq->aura_sqb_bufs);
++
++	if (sq_resize_ena)
++		nix_sqb_mem_dyn_free(sq->aura_handle, sq->aura_sqb_bufs);
++
  	rc |= roc_npa_pool_destroy(sq->aura_handle);
  	plt_free(sq->fc);
- 	plt_free(sq->sqe_mem);
+-	plt_free(sq->sqe_mem);
++	if (!sq_resize_ena)
++		plt_free(sq->sqe_mem);
+ 	nix->sqs[qid] = NULL;
+ 
+ 	return rc;
+ }
+ 
++static int
++sqb_aura_dyn_expand(struct roc_nix_sq *sq, uint16_t count)
++{
++	struct nix *nix = roc_nix_to_nix_priv(sq->roc_nix);
++	uint64_t *sqbs = NULL;
++	uint16_t blk_sz;
++	int i;
++
++	blk_sz = nix->sqb_size;
++	sqbs = calloc(1, count * sizeof(uint64_t *));
++	if (!sqbs)
++		return -ENOMEM;
++
++	for (i = 0; i < count; i++) {
++		sqbs[i] = (uint64_t)plt_zmalloc(blk_sz, ROC_ALIGN);
++		if (!sqbs[i])
++			break;
++	}
++
++	if (i != count) {
++		i = i - 1;
++		for (; i >= 0; i--)
++			plt_free((void *)sqbs[i]);
++		free(sqbs);
++		return -ENOMEM;
++	}
++
++	plt_io_wmb();
++
++	/* Add new buffers to sqb aura */
++	for (i = 0; i < count; i++)
++		roc_npa_aura_op_free(sq->aura_handle, 0, sqbs[i]);
++	free(sqbs);
++
++	/* Adjust SQ info */
++	sq->nb_sqb_bufs += count;
++	sq->nb_sqb_bufs_adj += count;
++	sq->aura_sqb_bufs += count;
++	return 0;
++}
++
++static int
++sqb_aura_dyn_contract(struct roc_nix_sq *sq, uint16_t count)
++{
++	struct nix *nix = roc_nix_to_nix_priv(sq->roc_nix);
++	struct dev *dev = &nix->dev;
++	struct ndc_sync_op *ndc_req;
++	uint64_t *sqbs = NULL;
++	struct mbox *mbox;
++	uint64_t timeout; /* 10's of usec */
++	uint64_t cycles;
++	int i, rc;
++
++	mbox = dev->mbox;
++	/* Sync NDC-NIX-TX for LF */
++	ndc_req = mbox_alloc_msg_ndc_sync_op(mbox_get(mbox));
++	if (ndc_req == NULL) {
++		mbox_put(mbox);
++		return -EFAULT;
++	}
++
++	ndc_req->nix_lf_tx_sync = 1;
++	rc = mbox_process(mbox);
++	if (rc) {
++		mbox_put(mbox);
++		return rc;
++	}
++	mbox_put(mbox);
++
++	/* Wait for enough time based on shaper min rate */
++	timeout = (sq->nb_desc * roc_nix_max_pkt_len(sq->roc_nix) * 8 * 1E5);
++	/* Wait for worst case scenario of this SQ being last priority
++	 * and so have to wait for all other SQ's drain out by their own.
++	 */
++	timeout = timeout * nix->nb_tx_queues;
++	timeout = timeout / nix->tm_rate_min;
++	if (!timeout)
++		timeout = 10000;
++	cycles = (timeout * 10 * plt_tsc_hz()) / (uint64_t)1E6;
++	cycles += plt_tsc_cycles();
++
++	sqbs = calloc(1, count * sizeof(uint64_t *));
++	if (!sqbs)
++		return -ENOMEM;
++
++	i = 0;
++	while (i < count && plt_tsc_cycles() < cycles) {
++		sqbs[i] = roc_npa_aura_op_alloc(sq->aura_handle, 0);
++		if (sqbs[i])
++			i++;
++		else
++			plt_delay_us(1);
++	}
++
++	if (i != count) {
++		plt_warn("SQ %u busy, unable to recover %u SQB's(%u desc)", sq->qid, count,
++			 count * sq->sqes_per_sqb);
++
++		/* Restore the SQB aura state and return */
++		i--;
++		for (; i >= 0; i--)
++			roc_npa_aura_op_free(sq->aura_handle, 0, sqbs[i]);
++		free(sqbs);
++		return -EAGAIN;
++	}
++
++	/* Extracted necessary SQB's, on free them */
++	for (i = 0; i < count; i++)
++		plt_free((void *)sqbs[i]);
++	free(sqbs);
++
++	/* Adjust SQ info */
++	sq->nb_sqb_bufs -= count;
++	sq->nb_sqb_bufs_adj -= count;
++	sq->aura_sqb_bufs -= count;
++	return 0;
++}
++
++int
++roc_nix_sq_resize(struct roc_nix_sq *sq, uint32_t nb_desc)
++{
++	struct roc_nix *roc_nix = sq->roc_nix;
++	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
++	uint16_t aura_sqb_bufs, nb_sqb_bufs, sqes_per_sqb;
++	int64_t *regaddr;
++	uint64_t wdata;
++	uint16_t diff;
++	int rc;
++
++	if (!roc_nix->sq_resize_ena)
++		return -ENOTSUP;
++
++	sqes_per_sqb = sq->sqes_per_sqb;
++
++	/* Calculate new nb_sqb_bufs */
++	nb_sqb_bufs = sq_desc_to_sqb(nix, sqes_per_sqb, nb_desc);
++	aura_sqb_bufs = sqb_slack_adjust(nix, nb_sqb_bufs, !!sq->sq_cnt_ptr);
++
++	if (aura_sqb_bufs == sq->aura_sqb_bufs)
++		return 0;
++
++	/* Issue atomic op to make sure all inflight LMTST's are complete
++	 * assuming no new submissions will take place.
++	 */
++	wdata = ((uint64_t)sq->qid) << 32;
++	regaddr = (int64_t *)(nix->base + NIX_LF_SQ_OP_STATUS);
++	roc_atomic64_add_nosync(wdata, regaddr);
++
++	/* Expand or Contract SQB aura */
++	if (aura_sqb_bufs > sq->aura_sqb_bufs) {
++		/* Increase the limit */
++		roc_npa_aura_limit_modify(sq->aura_handle, aura_sqb_bufs);
++		diff = aura_sqb_bufs - sq->aura_sqb_bufs;
++		roc_npa_aura_op_cnt_set(sq->aura_handle, 1, diff);
++
++		rc = sqb_aura_dyn_expand(sq, diff);
++	} else {
++		diff = sq->aura_sqb_bufs - aura_sqb_bufs;
++		rc = sqb_aura_dyn_contract(sq, diff);
++
++		/* Decrease the limit */
++		if (!rc) {
++			roc_npa_aura_limit_modify(sq->aura_handle, aura_sqb_bufs);
++			roc_npa_aura_op_cnt_set(sq->aura_handle, 1, -(int64_t)diff);
++		}
++	}
++
++	plt_io_wmb();
++	if (!rc) {
++		sq->nb_desc = nb_desc;
++		if (sq->sq_cnt_ptr)
++			plt_atomic_store_explicit((uint64_t __rte_atomic *)sq->sq_cnt_ptr, nb_desc,
++						  plt_memory_order_release);
++		*(uint64_t *)sq->fc = roc_npa_aura_op_cnt_get(sq->aura_handle);
++	} else {
++		roc_npa_aura_limit_modify(sq->aura_handle, sq->aura_sqb_bufs);
++	}
++
++	plt_io_wmb();
++	return rc;
++}
++
+ void
+ roc_nix_cq_head_tail_get(struct roc_nix *roc_nix, uint16_t qid, uint32_t *head,
+ 			 uint32_t *tail)
+diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/common/cnxk/roc_platform_base_symbols.c
+index f8d6fdd8df..138009198e 100644
+--- a/drivers/common/cnxk/roc_platform_base_symbols.c
++++ b/drivers/common/cnxk/roc_platform_base_symbols.c
+@@ -348,6 +348,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_fini)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_cq_init)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_cq_fini)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_sq_init)
++RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_sq_resize)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_sq_fini)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_cq_head_tail_get)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_sq_head_tail_get)
 -- 
 2.34.1
 
