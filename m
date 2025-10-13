@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A44CCD183
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 09:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9433CCA476
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 09:12:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3B6E240651;
-	Mon, 13 Oct 2025 11:12:11 +0200 (CEST)
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com
- [113.46.200.225])
- by mails.dpdk.org (Postfix) with ESMTP id A7BB5402CC
- for <dev@dpdk.org>; Mon, 13 Oct 2025 11:12:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1FABE40657;
+	Mon, 13 Oct 2025 11:12:12 +0200 (CEST)
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com
+ [113.46.200.221])
+ by mails.dpdk.org (Postfix) with ESMTP id CD860402E0
+ for <dev@dpdk.org>; Mon, 13 Oct 2025 11:12:05 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=qsfZbFdQQtdiSjD19kxBhTMX27SkfKU1dyJDnEztuvA=;
- b=O5VPxJ0UpNkCehmBaMp4xqBpUTTiUPBEfFuYqujRes6e7C6mMqTuIsHa54MrRQapY7ClHLjO1
- +QD++HapNVCcrNF21UACYh1hl9v/RHD8VSMde/9u3jJ6LKFgB8EriL5wrFDRatpTvFPCjiihE2G
- QBtdNLTPzcvR2iwI6kQ2rWk=
-Received: from mail.maildlp.com (unknown [172.19.88.214])
- by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4clWnF3R9wz1K97v;
- Mon, 13 Oct 2025 17:11:45 +0800 (CST)
+ bh=DA4BVdoNExQMomM3RzVNEUXQmvM3x4f/R2/ZKHKvcYw=;
+ b=On/spDtiSQlfY0OrucuZwHoYKVKzNSJA1nycllwE30/gaRwrYMvRFCMXRhNNSwT+wES4pv+/7
+ /+3Yq5q5Bgtqb7RjApxFdHvmVYMUG1sJy9dEMnDVmNPlERoDs6bYYv4hdG3r6F2DsLBsm3JxQA2
+ fmvydlW3P2Endh8ZYHuo4ws=
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+ by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4clWnD6BCKzRhR7;
+ Mon, 13 Oct 2025 17:11:44 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id D02F31A016C;
- Mon, 13 Oct 2025 17:12:03 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 17FAE140258;
+ Mon, 13 Oct 2025 17:12:04 +0800 (CST)
 Received: from localhost.localdomain (10.50.163.32) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -30,9 +30,9 @@ Received: from localhost.localdomain (10.50.163.32) by
 From: Chengwen Feng <fengchengwen@huawei.com>
 To: <thomas@monjalon.net>
 CC: <dev@dpdk.org>, <liuyonglong@huawei.com>
-Subject: [PATCH v4 1/4] dma/acc: add probe and remove
-Date: Mon, 13 Oct 2025 17:11:54 +0800
-Message-ID: <20251013091157.1145-2-fengchengwen@huawei.com>
+Subject: [PATCH v4 2/4] dma/acc: add control path ops
+Date: Mon, 13 Oct 2025 17:11:55 +0800
+Message-ID: <20251013091157.1145-3-fengchengwen@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20251013091157.1145-1-fengchengwen@huawei.com>
 References: <20250827092729.10719-1-fengchengwen@huawei.com>
@@ -55,430 +55,285 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch adds probe and remove operation for accelerator DMA driver.
+This commit adds control path ops for accelerator DMA driver.
 
 Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- MAINTAINERS                  |   4 +
- drivers/dma/acc/acc_dmadev.c | 289 +++++++++++++++++++++++++++++++++++
- drivers/dma/acc/acc_dmadev.h |  55 +++++++
- drivers/dma/acc/meson.build  |  21 +++
- drivers/dma/meson.build      |   1 +
- 5 files changed, 370 insertions(+)
- create mode 100644 drivers/dma/acc/acc_dmadev.c
- create mode 100644 drivers/dma/acc/acc_dmadev.h
- create mode 100644 drivers/dma/acc/meson.build
+ drivers/dma/acc/acc_dmadev.c | 185 +++++++++++++++++++++++++++++++++++
+ drivers/dma/acc/acc_dmadev.h |  42 ++++++++
+ 2 files changed, 227 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1a2729be66..37a5e1c476 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1366,6 +1366,10 @@ M: Chengwen Feng <fengchengwen@huawei.com>
- F: drivers/dma/hisilicon/
- F: doc/guides/dmadevs/hisilicon.rst
- 
-+HiSilicon Accelerator DMA
-+M: Chengwen Feng <fengchengwen@huawei.com>
-+F: drivers/dma/acc/
-+
- Marvell CNXK DPI DMA
- M: Vamsi Attunuru <vattunuru@marvell.com>
- T: git://dpdk.org/next/dpdk-next-net-mrvl
 diff --git a/drivers/dma/acc/acc_dmadev.c b/drivers/dma/acc/acc_dmadev.c
-new file mode 100644
-index 0000000000..fb9718312e
---- /dev/null
+index fb9718312e..8a43d8b2dc 100644
+--- a/drivers/dma/acc/acc_dmadev.c
 +++ b/drivers/dma/acc/acc_dmadev.c
-@@ -0,0 +1,289 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 2025 HiSilicon Technologies Co., Ltd. All rights reserved.
-+ */
-+
-+#include <errno.h>
-+#include <inttypes.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+
-+#include <rte_byteorder.h>
-+#include <rte_eal.h>
-+#include <rte_io.h>
-+#include <rte_kvargs.h>
-+#include <rte_log.h>
-+#include <rte_malloc.h>
-+
-+#include <rte_dmadev_pmd.h>
-+
-+#include "acc_dmadev.h"
-+
-+RTE_LOG_REGISTER_DEFAULT(acc_dma_logtype, INFO);
-+#define RTE_LOGTYPE_ACC_DMA acc_dma_logtype
-+#define ACC_DMA_LOG(level, ...) \
-+	RTE_LOG_LINE_PREFIX(level, ACC_DMA, "%s(): ", __func__, __VA_ARGS__)
-+#define ACC_DMA_DEV_LOG(hw, level, ...) \
-+	RTE_LOG_LINE_PREFIX(level, ACC_DMA, "%s %s(): ", \
-+		(hw)->data->dev_name RTE_LOG_COMMA __func__, __VA_ARGS__)
-+#define ACC_DMA_DEBUG(hw, ...) \
-+	ACC_DMA_DEV_LOG(hw, DEBUG, __VA_ARGS__)
-+#define ACC_DMA_INFO(hw, ...) \
-+	ACC_DMA_DEV_LOG(hw, INFO, __VA_ARGS__)
-+#define ACC_DMA_WARN(hw, ...) \
-+	ACC_DMA_DEV_LOG(hw, WARNING, __VA_ARGS__)
-+#define ACC_DMA_ERR(hw, ...) \
-+	ACC_DMA_DEV_LOG(hw, ERR, __VA_ARGS__)
-+
-+static void
-+acc_dma_gen_dev_name(const struct rte_uacce_device *uacce_dev,
-+		     uint16_t queue_id, char *dev_name, size_t size)
-+{
-+	memset(dev_name, 0, size);
-+	(void)snprintf(dev_name, size, "%s-dma%u", uacce_dev->device.name, queue_id);
-+}
-+
-+static void
-+acc_dma_gen_dev_prefix(const struct rte_uacce_device *uacce_dev, char *dev_name, size_t size)
-+{
-+	memset(dev_name, 0, size);
-+	(void)snprintf(dev_name, size, "%s-dma", uacce_dev->device.name);
-+}
-+
+@@ -34,6 +34,190 @@ RTE_LOG_REGISTER_DEFAULT(acc_dma_logtype, INFO);
+ #define ACC_DMA_ERR(hw, ...) \
+ 	ACC_DMA_DEV_LOG(hw, ERR, __VA_ARGS__)
+ 
 +static int
-+acc_dma_get_qp_info(struct acc_dma_dev *hw)
++acc_dma_info_get(const struct rte_dma_dev *dev,
++		 struct rte_dma_info *dev_info,
++		 uint32_t info_sz)
 +{
-+#define CMD_QM_GET_QP_CTX	_IOWR('H', 10, struct acc_dma_qp_contex)
-+#define CMD_QM_GET_QP_INFO	_IOWR('H', 11, struct acc_dma_qp_info)
-+#define QP_ALG_TYPE		2
-+	struct acc_dma_qp_contex {
-+		uint16_t id;
-+		uint16_t qc_type;
-+	} qp_ctx;
-+	struct acc_dma_qp_info {
-+		uint32_t sqe_size;
-+		uint16_t sq_depth;
-+		uint16_t cq_depth;
-+		uint64_t reserved;
-+	} qp_info;
-+	int ret;
++	struct acc_dma_dev *hw = dev->data->dev_private;
 +
-+	memset(&qp_ctx, 0, sizeof(qp_ctx));
-+	qp_ctx.qc_type = QP_ALG_TYPE;
-+	ret = rte_uacce_queue_ioctl(&hw->qctx, CMD_QM_GET_QP_CTX, &qp_ctx);
-+	if (ret != 0) {
-+		ACC_DMA_ERR(hw, "get qm qp context fail!");
-+		return -EINVAL;
-+	}
-+	hw->sqn = qp_ctx.id;
++	RTE_SET_USED(info_sz);
 +
-+	memset(&qp_info, 0, sizeof(qp_info));
-+	ret = rte_uacce_queue_ioctl(&hw->qctx, CMD_QM_GET_QP_INFO, &qp_info);
-+	if (ret != 0) {
-+		ACC_DMA_ERR(hw, "get qm qp info fail!");
-+		return -EINVAL;
-+	}
-+	if ((qp_info.sq_depth & (qp_info.sq_depth - 1)) != 0) {
-+		ACC_DMA_ERR(hw, "sq depth is not 2's power!");
-+		return -EINVAL;
-+	}
-+	hw->sqe_size = qp_info.sqe_size;
-+	hw->sq_depth = qp_info.sq_depth;
-+	hw->cq_depth = qp_info.cq_depth;
-+	hw->sq_depth_mask = hw->sq_depth - 1;
++	dev_info->dev_capa = RTE_DMA_CAPA_MEM_TO_MEM |
++			     RTE_DMA_CAPA_SVA |
++			     RTE_DMA_CAPA_OPS_COPY |
++			     RTE_DMA_CAPA_OPS_FILL;
++	dev_info->max_vchans = 1;
++	dev_info->max_desc = hw->sq_depth;
++	dev_info->min_desc = hw->sq_depth;
 +
 +	return 0;
 +}
 +
 +static int
-+acc_dma_create(struct rte_uacce_device *uacce_dev, uint16_t queue_id)
++acc_dma_configure(struct rte_dma_dev *dev,
++		  const struct rte_dma_conf *conf,
++		  uint32_t conf_sz)
 +{
-+	char name[RTE_DEV_NAME_MAX_LEN];
-+	struct rte_dma_dev *dev;
-+	struct acc_dma_dev *hw;
++	RTE_SET_USED(dev);
++	RTE_SET_USED(conf);
++	RTE_SET_USED(conf_sz);
++	return 0;
++}
++
++static int
++acc_dma_start(struct rte_dma_dev *dev)
++{
++	struct acc_dma_dev *hw = dev->data->dev_private;
 +	int ret;
 +
-+	acc_dma_gen_dev_name(uacce_dev, queue_id, name, sizeof(name));
-+	dev = rte_dma_pmd_allocate(name, uacce_dev->device.numa_node,
-+				   sizeof(struct acc_dma_dev));
-+	if (dev == NULL) {
-+		ACC_DMA_LOG(ERR, "%s allocate dmadev fail!", name);
-+		return -ENOMEM;
++	if ((*hw->sq_status != 0) || (*hw->cq_status != 0)) {
++		ACC_DMA_ERR(hw, "detect dev is abnormal!");
++		return -EIO;
 +	}
 +
-+	dev->device = &uacce_dev->device;
-+	dev->fp_obj->dev_private = dev->data->dev_private;
-+
-+	hw = dev->data->dev_private;
-+	hw->data = dev->data; /* make sure ACC_DMA_DEBUG/INFO/WARN/ERR was available. */
-+
-+	ret = rte_uacce_queue_alloc(uacce_dev, &hw->qctx);
-+	if (ret != 0) {
-+		ACC_DMA_ERR(hw, "alloc queue fail!");
-+		goto release_dma_pmd;
++	if (hw->started) {
++		hw->ridx = 0;
++		hw->cridx = 0;
++		return 0;
 +	}
 +
-+	ret = acc_dma_get_qp_info(hw);
-+	if (ret != 0)
-+		goto free_uacce_queue;
++	memset(hw->sqe, 0, hw->sqe_size * hw->sq_depth);
++	memset(hw->cqe, 0, sizeof(struct acc_dma_cqe) * hw->cq_depth);
++	memset(hw->status, 0, sizeof(uint16_t) * hw->sq_depth);
++	hw->ridx = 0;
++	hw->cridx = 0;
++	hw->sq_head = 0;
++	hw->sq_tail = 0;
++	hw->cq_sq_head = 0;
++	hw->avail_sqes = hw->sq_depth - ACC_DMA_SQ_GAP_NUM - 1;
++	hw->cq_head = 0;
++	hw->cqs_completed = 0;
++	hw->cqe_vld = 1;
++	hw->submitted = 0;
++	hw->completed = 0;
++	hw->errors = 0;
++	hw->invalid_lens = 0;
++	hw->qfulls = 0;
 +
-+	hw->io_base = rte_uacce_queue_mmap(&hw->qctx, RTE_UACCE_QFRT_MMIO);
-+	if (hw->io_base == NULL) {
-+		ACC_DMA_ERR(hw, "mmap MMIO region fail!");
-+		ret = -EINVAL;
-+		goto free_uacce_queue;
++	ret = rte_uacce_queue_start(&hw->qctx);
++	if (ret == 0)
++		hw->started = true;
++
++	return ret;
++}
++
++static int
++acc_dma_stop(struct rte_dma_dev *dev)
++{
++	struct acc_dma_dev *hw = dev->data->dev_private;
++
++	if ((*hw->sq_status != 0) || (*hw->cq_status != 0)) {
++		/* This indicates that the dev is abnormal. The correct error handling
++		 * is to close the dev (so that kernel module will perform error handling)
++		 * and apply for a new dev.
++		 * If an error code is returned here, the dev cannot be closed. Therefore,
++		 * zero is returned and an error trace is added.
++		 */
++		ACC_DMA_ERR(hw, "detect dev is abnormal!");
++		return 0;
 +	}
-+	hw->doorbell_reg = (void *)((uintptr_t)hw->io_base + ACC_DMA_DOORBELL_OFFSET);
-+
-+	hw->dus_base = rte_uacce_queue_mmap(&hw->qctx, RTE_UACCE_QFRT_DUS);
-+	if (hw->dus_base == NULL) {
-+		ACC_DMA_ERR(hw, "mmap DUS region fail!");
-+		ret = -EINVAL;
-+		goto unmap_mmio;
-+	}
-+	hw->sqe = hw->dus_base;
-+	hw->cqe = (void *)((uintptr_t)hw->dus_base + hw->sqe_size * hw->sq_depth);
-+	hw->sq_status = (uint32_t *)((uintptr_t)hw->dus_base +
-+			uacce_dev->qfrt_sz[RTE_UACCE_QFRT_DUS] - sizeof(uint32_t));
-+	hw->cq_status = hw->sq_status - 1;
-+
-+	hw->status = rte_zmalloc_socket(NULL, sizeof(uint16_t) * hw->sq_depth,
-+					RTE_CACHE_LINE_SIZE, uacce_dev->numa_node);
-+	if (hw->status == NULL) {
-+		ACC_DMA_ERR(hw, "malloc status region fail!");
-+		ret = -ENOMEM;
-+		goto unmap_dus;
-+	}
-+
-+	dev->state = RTE_DMA_DEV_READY;
-+	ACC_DMA_DEBUG(hw, "create dmadev %s success!", name);
 +
 +	return 0;
++}
 +
-+unmap_dus:
++static int
++acc_dma_close(struct rte_dma_dev *dev)
++{
++	struct acc_dma_dev *hw = dev->data->dev_private;
++	/* The dmadev already stopped */
++	rte_free(hw->status);
 +	rte_uacce_queue_unmap(&hw->qctx, RTE_UACCE_QFRT_DUS);
-+unmap_mmio:
 +	rte_uacce_queue_unmap(&hw->qctx, RTE_UACCE_QFRT_MMIO);
-+free_uacce_queue:
 +	rte_uacce_queue_free(&hw->qctx);
-+release_dma_pmd:
-+	rte_dma_pmd_release(name);
-+	return ret;
++	return 0;
 +}
 +
 +static int
-+acc_dma_parse_queues(const char *key, const char *value, void *extra_args)
++acc_dma_vchan_setup(struct rte_dma_dev *dev, uint16_t vchan,
++		    const struct rte_dma_vchan_conf *conf,
++		    uint32_t conf_sz)
 +{
-+	struct acc_dma_config *config = extra_args;
-+	uint64_t val;
-+	char *end;
++	RTE_SET_USED(dev);
++	RTE_SET_USED(vchan);
++	RTE_SET_USED(conf);
++	RTE_SET_USED(conf_sz);
++	return 0;
++}
 +
-+	RTE_SET_USED(key);
++static int
++acc_dma_stats_get(const struct rte_dma_dev *dev, uint16_t vchan,
++		  struct rte_dma_stats *stats,
++		  uint32_t stats_sz)
++{
++	struct acc_dma_dev *hw = dev->data->dev_private;
 +
-+	errno = 0;
-+	val = strtoull(value, &end, 0);
-+	if (errno == ERANGE || value == end || *end != '\0' || val == 0) {
-+		ACC_DMA_LOG(ERR, "%s invalid queues! set to default one queue!",
-+			    config->dev->name);
-+		config->queues = ACC_DMA_DEFAULT_QUEUES;
-+	} else if (val > config->avail_queues) {
-+		ACC_DMA_LOG(WARNING, "%s exceed available queues! set to available queues %u",
-+			     config->dev->name, config->avail_queues);
-+		config->queues = config->avail_queues;
-+	} else {
-+		config->queues = val;
-+	}
++	RTE_SET_USED(vchan);
++	RTE_SET_USED(stats_sz);
++	stats->submitted = hw->submitted;
++	stats->completed = hw->completed;
++	stats->errors    = hw->errors;
 +
 +	return 0;
 +}
 +
 +static int
-+acc_dma_parse_devargs(struct rte_uacce_device *uacce_dev, struct acc_dma_config *config)
++acc_dma_stats_reset(struct rte_dma_dev *dev, uint16_t vchan)
 +{
-+	struct rte_kvargs *kvlist;
-+	int avail_queues;
++	struct acc_dma_dev *hw = dev->data->dev_private;
 +
-+	avail_queues = rte_uacce_avail_queues(uacce_dev);
-+	if (avail_queues <= 0) {
-+		ACC_DMA_LOG(ERR, "%s don't have available queues!", uacce_dev->name);
-+		return -EINVAL;
-+	}
-+	config->dev = uacce_dev;
-+	config->avail_queues = avail_queues <= UINT16_MAX ? avail_queues : UINT16_MAX;
-+
-+	if (uacce_dev->device.devargs == NULL)
-+		return 0;
-+
-+	kvlist = rte_kvargs_parse(uacce_dev->device.devargs->args, NULL);
-+	if (kvlist == NULL)
-+		return 0;
-+
-+	(void)rte_kvargs_process(kvlist, ACC_DMA_DEVARG_QUEUES, &acc_dma_parse_queues, config);
-+
-+	rte_kvargs_free(kvlist);
++	RTE_SET_USED(vchan);
++	hw->submitted    = 0;
++	hw->completed    = 0;
++	hw->errors       = 0;
++	hw->invalid_lens = 0;
++	hw->io_errors    = 0;
++	hw->qfulls       = 0;
 +
 +	return 0;
 +}
 +
 +static int
-+acc_dma_probe(struct rte_uacce_driver *dr, struct rte_uacce_device *uacce_dev)
++acc_dma_dump(const struct rte_dma_dev *dev, FILE *f)
 +{
-+	struct acc_dma_config config = { .queues = ACC_DMA_DEFAULT_QUEUES };
-+	int ret = 0;
-+	uint32_t i;
++	struct acc_dma_dev *hw = dev->data->dev_private;
 +
-+	RTE_SET_USED(dr);
-+
-+	ret = acc_dma_parse_devargs(uacce_dev, &config);
-+	if (ret != 0)
-+		return ret;
-+
-+	for (i = 0; i < config.queues; i++) {
-+		ret = acc_dma_create(uacce_dev, i);
-+		if (ret != 0) {
-+			ACC_DMA_LOG(ERR, "%s create dmadev No.%u failed!", uacce_dev->name, i);
-+			break;
-+		}
-+	}
-+
-+	if (ret != 0 && i > 0) {
-+		ACC_DMA_LOG(WARNING, "%s probed %u dmadev, can't probe more!", uacce_dev->name, i);
-+		ret = 0;
-+	}
-+
-+	return ret;
-+}
-+
-+static int
-+acc_dma_remove(struct rte_uacce_device *uacce_dev)
-+{
-+	char name[RTE_DEV_NAME_MAX_LEN];
-+	struct rte_dma_info info;
-+	int i = 0;
-+	int ret;
-+
-+	acc_dma_gen_dev_prefix(uacce_dev, name, sizeof(name));
-+	RTE_DMA_FOREACH_DEV(i) {
-+		ret = rte_dma_info_get(i, &info);
-+		if (ret != 0)
-+			continue;
-+		if (strncmp(info.dev_name, name, strlen(name)) == 0)
-+			rte_dma_pmd_release(info.dev_name);
-+	}
++	fprintf(f, "  sqn: %u sq_status: %s cq_status: %s\n"
++		"  sqe_size: %u sq_depth: %u sq_depth_mask: %u cq_depth: %u\n",
++		hw->sqn, (*hw->sq_status != 0) ? "ERR" : "OK",
++		(*hw->cq_status != 0) ? "ERR" : "OK",
++		hw->sqe_size, hw->sq_depth, hw->sq_depth_mask, hw->cq_depth);
++	fprintf(f, "  ridx: %u cridx: %u\n"
++		"  sq_head: %u sq_tail: %u cq_sq_head: %u avail_sqes: %u\n"
++		"  cq_head: %u cqs_completed: %u cqe_vld: %u\n",
++		hw->ridx, hw->cridx,
++		hw->sq_head, hw->sq_tail, hw->cq_sq_head, hw->avail_sqes,
++		hw->cq_head, hw->cqs_completed, hw->cqe_vld);
++	fprintf(f, "  submitted: %" PRIu64 " completed: %" PRIu64 " errors: %" PRIu64
++		" invalid_lens: %" PRIu64 " io_errors: %" PRIu64 " qfulls: %" PRIu64 "\n",
++		hw->submitted, hw->completed, hw->errors, hw->invalid_lens,
++		hw->io_errors, hw->qfulls);
 +
 +	return 0;
 +}
 +
-+static const struct rte_uacce_id acc_dma_id_table[] = {
-+	{ "hisi_qm_v5", "udma" },
-+	{ .dev_api = NULL, },
++static const struct rte_dma_dev_ops acc_dmadev_ops = {
++	.dev_info_get     = acc_dma_info_get,
++	.dev_configure    = acc_dma_configure,
++	.dev_start        = acc_dma_start,
++	.dev_stop         = acc_dma_stop,
++	.dev_close        = acc_dma_close,
++	.vchan_setup      = acc_dma_vchan_setup,
++	.stats_get        = acc_dma_stats_get,
++	.stats_reset      = acc_dma_stats_reset,
++	.dev_dump         = acc_dma_dump,
 +};
 +
-+static struct rte_uacce_driver acc_dma_pmd_drv = {
-+	.id_table = acc_dma_id_table,
-+	.probe = acc_dma_probe,
-+	.remove = acc_dma_remove,
-+};
-+
-+RTE_PMD_REGISTER_UACCE(dma_acc, acc_dma_pmd_drv);
-+RTE_PMD_REGISTER_PARAM_STRING(dma_acc,
-+			ACC_DMA_DEVARG_QUEUES "=<uint16> ");
+ static void
+ acc_dma_gen_dev_name(const struct rte_uacce_device *uacce_dev,
+ 		     uint16_t queue_id, char *dev_name, size_t size)
+@@ -111,6 +295,7 @@ acc_dma_create(struct rte_uacce_device *uacce_dev, uint16_t queue_id)
+ 	}
+ 
+ 	dev->device = &uacce_dev->device;
++	dev->dev_ops = &acc_dmadev_ops;
+ 	dev->fp_obj->dev_private = dev->data->dev_private;
+ 
+ 	hw = dev->data->dev_private;
 diff --git a/drivers/dma/acc/acc_dmadev.h b/drivers/dma/acc/acc_dmadev.h
-new file mode 100644
-index 0000000000..9a1000fa41
---- /dev/null
+index 9a1000fa41..6e65aad279 100644
+--- a/drivers/dma/acc/acc_dmadev.h
 +++ b/drivers/dma/acc/acc_dmadev.h
-@@ -0,0 +1,55 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 2025 HiSilicon Technologies Co., Ltd. All rights reserved.
-+ */
+@@ -13,6 +13,9 @@
+ #define ACC_DMA_DEVARG_QUEUES		"queues"
+ #define ACC_DMA_DEFAULT_QUEUES		1
+ 
++#define ACC_DMA_CQ_DOORBELL_PACE	64
++#define ACC_DMA_SQ_GAP_NUM		ACC_DMA_CQ_DOORBELL_PACE
 +
-+#ifndef ACC_DMADEV_H
-+#define ACC_DMADEV_H
-+
-+#include <bus_uacce_driver.h>
-+#include <rte_bitops.h>
-+#include <rte_common.h>
-+#include <rte_dmadev_pmd.h>
-+
-+#define ACC_DMA_DEVARG_QUEUES		"queues"
-+#define ACC_DMA_DEFAULT_QUEUES		1
-+
-+struct acc_dma_config {
-+	uint16_t queues;
-+
-+	/* The following fields are config contexts. */
-+	struct rte_uacce_device *dev;
-+	uint16_t avail_queues;
-+};
-+
-+#define ACC_DMA_DOORBELL_OFFSET		0x1000u
-+
-+struct acc_dma_sqe {};
-+struct acc_dma_cqe {};
-+
-+struct acc_dma_dev {
-+	struct acc_dma_sqe *sqe;
-+	struct acc_dma_cqe *cqe;
-+	uint16_t *status;             /* the completion status array of SQEs. */
-+
-+	volatile void *doorbell_reg;  /**< register address for doorbell. */
-+	volatile uint32_t *sq_status; /**< SQ status pointer. */
-+	volatile uint32_t *cq_status; /**< CQ status pointer. */
-+
-+	uint16_t sqn;           /**< SQ global number, inited when created. */
-+	uint16_t sq_depth_mask; /**< SQ depth - 1, the SQ depth is power of 2. */
-+
-+	uint16_t cq_depth;      /**< CQ depth, inited when created. */
+ struct acc_dma_config {
+ 	uint16_t queues;
+ 
+@@ -38,7 +41,45 @@ struct acc_dma_dev {
+ 	uint16_t sqn;           /**< SQ global number, inited when created. */
+ 	uint16_t sq_depth_mask; /**< SQ depth - 1, the SQ depth is power of 2. */
+ 
++	uint16_t ridx;  /**< ring index which will assign to the next request. */
++	uint16_t cridx; /**< ring index which returned by completed APIs. */
 +
 +	/**
-+	 * The following fields are not accessed in the I/O path, so they are
-+	 * placed at the end.
++	 * SQE array management fields:
++	 *
++	 *  -----------------------------------------------------
++	 *  | SQE0 | SQE1 | SQE2 |   ...  | SQEx | ... | SQEn-1 |
++	 *  -----------------------------------------------------
++	 *     ^             ^               ^
++	 *     |             |               |
++	 *   sq_head     cq_sq_head       sq_tail
++	 *
++	 *  sq_head: next index to the oldest completed request, this filed was
++	 *           updated by completed* APIs.
++	 *  sq_tail: index of the next new request, this field was updated by
++	 *           copy or fill API.
++	 *  cq_sq_head: next index of index that has been completed by hardware,
++	 *              this filed was updated by completed* APIs.
++	 *
++	 *  [sq_head, cq_sq_head): the SQEs that hardware already completed.
++	 *  [cq_sq_head, sq_tail): the SQEs that hardware processing.
 +	 */
-+	struct rte_dma_dev_data *data;
-+	struct rte_uacce_qcontex qctx;
-+	void *io_base;
-+	void *dus_base;
-+	uint32_t sqe_size;
-+	uint16_t sq_depth;
-+};
++	uint16_t sq_head;
++	uint16_t sq_tail;
++	uint16_t cq_sq_head;
++	uint16_t avail_sqes;
 +
-+#endif /* ACC_DMADEV_H */
-diff --git a/drivers/dma/acc/meson.build b/drivers/dma/acc/meson.build
-new file mode 100644
-index 0000000000..8a1bad5281
---- /dev/null
-+++ b/drivers/dma/acc/meson.build
-@@ -0,0 +1,21 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright (c) 2025 HiSilicon Technologies Co., Ltd. All rights reserved.
+ 	uint16_t cq_depth;      /**< CQ depth, inited when created. */
++	uint16_t cq_head;       /**< CQ index for next scans. */
++	uint16_t cqs_completed; /**< accumulated number of completed CQs. */
++	uint8_t  cqe_vld;       /**< valid bit for CQE, will change for every round. */
 +
-+if not is_linux
-+    build = false
-+    reason = 'only supported on Linux'
-+    subdir_done()
-+endif
-+
-+if (arch_subdir != 'x86' and arch_subdir != 'arm') or (not dpdk_conf.get('RTE_ARCH_64'))
-+    build = false
-+    reason = 'only supported on x86_64 and aarch64'
-+    subdir_done()
-+endif
-+
-+deps += ['bus_uacce', 'dmadev']
-+sources = files(
-+        'acc_dmadev.c',
-+)
-+
-+require_iova_in_mbuf = false
-diff --git a/drivers/dma/meson.build b/drivers/dma/meson.build
-index 358132759a..eeab0ec361 100644
---- a/drivers/dma/meson.build
-+++ b/drivers/dma/meson.build
-@@ -2,6 +2,7 @@
- # Copyright 2021 HiSilicon Limited
++	uint64_t submitted;
++	uint64_t completed;
++	uint64_t errors;
++	uint64_t invalid_lens;
++	uint64_t io_errors;
++	uint64_t qfulls;
  
- drivers = [
-+        'acc',
-         'cnxk',
-         'dpaa',
-         'dpaa2',
+ 	/**
+ 	 * The following fields are not accessed in the I/O path, so they are
+@@ -50,6 +91,7 @@ struct acc_dma_dev {
+ 	void *dus_base;
+ 	uint32_t sqe_size;
+ 	uint16_t sq_depth;
++	bool started;
+ };
+ 
+ #endif /* ACC_DMADEV_H */
 -- 
 2.17.1
 
