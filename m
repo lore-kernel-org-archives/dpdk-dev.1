@@ -2,51 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7F0CCA476
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 07:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1EF2CCD185
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 07:02:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4CF5D409FA;
-	Mon, 13 Oct 2025 09:00:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3810040662;
+	Mon, 13 Oct 2025 09:00:57 +0200 (CEST)
 Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 838604021E;
- Mon, 13 Oct 2025 09:00:51 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1141140A6D;
+ Mon, 13 Oct 2025 09:00:55 +0200 (CEST)
 Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59D0UPb4001365;
- Mon, 13 Oct 2025 00:00:50 -0700
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59CNSNgW000545;
+ Mon, 13 Oct 2025 00:00:55 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=8
- L8e2MrXclTppenAambg9J3Fuq8PrCfyKrCqp90BlJI=; b=KvybWvMLn8CWdrAaW
- 6czW2LYy0tOjOB42HGQc6fBGDcEymZhRYGwZotejzcMYw+VlWGq3HAmLep1otWm9
- NsDoKb44/MiV6mH48IQ6/kOJwS+dP44uektX6jXPBTT7D4FjQf1puNbRzpYtJrNd
- weQkt3e1eLSuvJG1QvUrdwSwNJWtcbf3yWLduuJ0YtN8BKKq8Bd4EGnB4+1zAb3s
- IUtXnrWWLmR0JdOoYtVkcunjCKcxQPdCyzaAqyy4QTBPevJRCoerYsPhby7/r//S
- lCPx4jjooNrDDv8Dge/XV9tVAljk3x2Rut4S+CAci7zCn2u5rnCzJwWD9j4RoWM+
- VLqQw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49rp1jrmpj-1
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=Q
+ I3mQkuryNp1Ngn71QVqv+DOCOd18BJuRChfkypgiJs=; b=dKxR1ZCbMRFoQHi0r
+ NAoJBTpR3YNOY2Jp0yh2sCFvNnEtAuuIbE30GcMpOrIH3alhZjtukRi7qE27QnJg
+ kEmQKbYknmpT75SLWweQqBTbAEFPDmzkZhGRJSqvF05V5qlDWIN4+S9gyJJ8w8z2
+ goPDEt46o6of+b3bTjjwVC1zTaJe5S3qPyQEMsl1ufATcSRhWsF4Dp+jdYKg0K6k
+ cWEq3ylHhSLkS2/L9b6tSey9jk2LYzEXi1a5gyt0wuGPVBJwNwNlcBW30MKTmKtg
+ EIHP2AiWvkq3P0lNifUV2DTtYflVu7bhn/3nZTWKAL3bJZVmNGOoHg+gAaI+/75c
+ 8T0rw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49rp1jrmpr-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 13 Oct 2025 00:00:50 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ Mon, 13 Oct 2025 00:00:54 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 13 Oct 2025 00:00:59 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 13 Oct 2025 00:00:59 -0700
+ 15.2.1544.25; Mon, 13 Oct 2025 00:01:05 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Mon, 13 Oct 2025 00:01:05 -0700
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id 2709F3F70C1;
- Mon, 13 Oct 2025 00:00:46 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 62DDC3F7072;
+ Mon, 13 Oct 2025 00:00:50 -0700 (PDT)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
-To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <jerinj@marvell.com>, <dev@dpdk.org>, <stable@dpdk.org>
-Subject: [PATCH v2 18/19] common/cnxk: fix error handling on inline inbound
- setup
-Date: Mon, 13 Oct 2025 12:29:48 +0530
-Message-ID: <20251013065949.200414-18-ndabilpuram@marvell.com>
+To: Thomas Monjalon <thomas@monjalon.net>, Nithin Dabilpuram
+ <ndabilpuram@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, "Sunil
+ Kumar Kori" <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ "Harman Kalra" <hkalra@marvell.com>
+CC: <jerinj@marvell.com>, <dev@dpdk.org>, Aarnav JP <ajp@marvell.com>,
+ <stable@dpdk.org>
+Subject: [PATCH v2 19/19] drivers: fix Klocwork issues
+Date: Mon, 13 Oct 2025 12:29:49 +0530
+Message-ID: <20251013065949.200414-19-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251013065949.200414-1-ndabilpuram@marvell.com>
 References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
@@ -54,19 +55,21 @@ References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: MiE8lWXwp9KrHwGYprx7Wy5Y5hZBW1l-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDEyNSBTYWx0ZWRfXykXf/pQyrr8v
- HuG9z3gm7uVTHuE9z06Q2RWu5pIZV5K5m8F6sO1aMA0JxU7OWr7NRH5NBj9q9N62ospzPYtZJDQ
- BI/xdy53oOcUolLbW7wXcHgrVwCKpLYea4RPUIXGkzXdGWgVnTLKdeksZZ2iIOyRh2jGZGPpXe6
- gwM+RVtX4J5hhytNSQyYnhblUinmcdbOTWcxlW3c15VYc6VfDQPPtXpgQFnZum4OxJdJUGRX/76
- 0VKmxxNphpm1IxbdtkzWZeOCVk/kjW9EEY7FN5KE8g6WSif6MuJ8ZbHVY7iqRCe2WcnOjVSSRFf
- dPm9u+2k0W2GAbrSeKBsuttf9FFQlxUllVIQc8HlVHHD9TZ5muHlXRCgIeopdz3l8NRvjXxAceT
- m2F004C892c/3TlirI+TtZTJR1+m3Q==
-X-Authority-Analysis: v=2.4 cv=Utdu9uwB c=1 sm=1 tr=0 ts=68eca3a2 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=x6icFKpwvdMA:10 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8 a=Np0JFEGaXBVNt86ZIjUA:9
- a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: MiE8lWXwp9KrHwGYprx7Wy5Y5hZBW1l-
+X-Proofpoint-ORIG-GUID: SSShG5iCPwwDGbskaSjb6MzMl9u40Ff0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDEyNSBTYWx0ZWRfX16CfRelorVxM
+ 9P4wyeBgwYghzHguhhSsBSOr8Y5OYVylWT4iLkNZAKLomaOL3ceL5Ssgzcb9Z9dmrb7AYjH9CWi
+ tEe26gTZFms7nSoYcmslvtA8NAA6EECdC8bWM+uoyxNBayTIVpj4ob+akB3Gdb5NjjZW6ZDq3fW
+ gs/kg7UgRElY048hyTVC6XG13HiBTN0SiIfi6djRE5Hp65EsyQZ7BtBtzAOE/C9KuCIQgLuF4id
+ kbkKDcshEakRwfYjvIQcwpNY9SIkscbXeKA7OCCgy/ecwtPuNyWCXJicSePQFIGCVovipkhhENa
+ F2prZd2N/reuaQHcr4HcqKa1YLjWz7qQKjwhs6jXVQ5zd8U1+1DfCE0IOS2rC2SyhOvnWRKjNi5
+ eB9Hxy8f0vrWEOBYsPghmuPcMFW66w==
+X-Authority-Analysis: v=2.4 cv=Utdu9uwB c=1 sm=1 tr=0 ts=68eca3a6 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=x6icFKpwvdMA:10 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8 a=02K0Y2VpAAAA:8
+ a=yBKhqCqsAAAA:8 a=20KFwNOVAAAA:8 a=lOrjXhgRObHz-F5jIjYA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22 a=SVpKTQGeYiyENV88YW8K:22
+ a=u5H4eTi2zCHWd_3L5ZMT:22
+X-Proofpoint-GUID: SSShG5iCPwwDGbskaSjb6MzMl9u40Ff0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-13_03,2025-10-06_01,2025-03-28_01
@@ -83,28 +86,129 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix issue reported by kloc work.
+From: Aarnav JP <ajp@marvell.com>
+
+fixed klocwork suggested issues in
+cnxk component of drivers module
+
+Fixes: db5744d3cd23 ("common/cnxk: support NIX debug for CN20K")
+Fixes: 3c31a7485172 ("common/cnxk: config CPT result address for CN20K")
+Fixes: 4b8eb5bd6627 ("common/cnxk: reserve CPT LF for Rx inject")
 Fixes: f410059baac6 ("common/cnxk: support inline inbound queue")
+Fixes: 47cca253d605 ("net/cnxk: support Rx inject")
+Fixes: ac35d4bf4cd6 ("net/cnxk: support ingress meter pre-color")
 Cc: stable@dpdk.org
 
-Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
+Signed-off-by: Aarnav JP <ajp@marvell.com>
 ---
- drivers/common/cnxk/roc_nix_inl_dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .mailmap                            |  1 +
+ drivers/common/cnxk/roc_nix_debug.c |  4 ++--
+ drivers/common/cnxk/roc_nix_inl.c   | 13 ++++++-------
+ drivers/net/cnxk/cn10k_ethdev_sec.c |  2 ++
+ drivers/net/cnxk/cnxk_ethdev_mtr.c  |  8 +++++++-
+ 5 files changed, 18 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/roc_nix_inl_dev.c
-index 75d03c1077..38ff96334e 100644
---- a/drivers/common/cnxk/roc_nix_inl_dev.c
-+++ b/drivers/common/cnxk/roc_nix_inl_dev.c
-@@ -244,7 +244,7 @@ nix_inl_inb_queue_setup(struct nix_inl_dev *inl_dev, uint8_t slot_id)
- 	if (!cpt_req) {
- 		rc |= -ENOSPC;
- 	} else {
--		nix_req->enable = false;
-+		cpt_req->enable = 0;
- 		rc |= mbox_process(mbox);
+diff --git a/.mailmap b/.mailmap
+index 0b043cb0c0..01ede7bc2b 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1,4 +1,5 @@
+ Aakash Sasidharan <asasidharan@marvell.com>
++Aarnav JP <ajp@marvell.com>
+ Aaro Koskinen <aaro.koskinen@nsn.com>
+ Aaron Campbell <aaron@arbor.net>
+ Aaron Conole <aconole@redhat.com>
+diff --git a/drivers/common/cnxk/roc_nix_debug.c b/drivers/common/cnxk/roc_nix_debug.c
+index f9294e693b..11994bf131 100644
+--- a/drivers/common/cnxk/roc_nix_debug.c
++++ b/drivers/common/cnxk/roc_nix_debug.c
+@@ -769,8 +769,8 @@ nix_lf_rq_dump(__io struct nix_cn20k_rq_ctx_s *ctx, FILE *file)
+ 
+ 	nix_dump(file, "W2: xqe_hdr_split \t\t%d\nW2: xqe_imm_copy \t\t%d",
+ 		 ctx->xqe_hdr_split, ctx->xqe_imm_copy);
+-	nix_dump(file, "W2: band_prof_id\t\t%d\n",
+-		 ((ctx->band_prof_id_h << 10) | ctx->band_prof_id_l));
++	nix_dump(file, "W2: band_prof_id\t\t0x%" PRIx64 "\n",
++		 (uint64_t)((ctx->band_prof_id_h << 10) | ctx->band_prof_id_l));
+ 	nix_dump(file, "W2: xqe_imm_size \t\t%d\nW2: later_skip \t\t\t%d",
+ 		 ctx->xqe_imm_size, ctx->later_skip);
+ 	nix_dump(file, "W2: sso_bp_ena\t\t%d\n", ctx->sso_bp_ena);
+diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
+index a5fc33b5c9..9135c1c172 100644
+--- a/drivers/common/cnxk/roc_nix_inl.c
++++ b/drivers/common/cnxk/roc_nix_inl.c
+@@ -581,7 +581,7 @@ nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
+ 	struct nix_inl_dev *inl_dev = NULL;
+ 	uint64_t max_sa = 1, sa_pow2_sz;
+ 	uint64_t sa_idx_w, lenm1_max;
+-	uint64_t res_addr_offset;
++	uint64_t res_addr_offset = 0;
+ 	uint64_t def_cptq = 0;
+ 	size_t inb_sa_sz = 1;
+ 	uint8_t profile_id;
+@@ -626,12 +626,11 @@ nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
+ 		inl_dev = idev->nix_inl_dev;
+ 		if (inl_dev->nb_inb_cptlfs)
+ 			def_cptq = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id];
++		res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
++		if (res_addr_offset)
++			res_addr_offset |= (1UL << 56);
  	}
- cpt_cfg_fail:
+ 
+-	res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
+-	if (res_addr_offset)
+-		res_addr_offset |= (1UL << 56);
+-
+ 	lf_cfg->enable = 1;
+ 	lf_cfg->profile_id = profile_id;
+ 	lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id];
+@@ -850,12 +849,12 @@ roc_nix_inl_inb_rx_inject_enable(struct roc_nix *roc_nix, bool inb_inl_dev)
+ 
+ 	if (inb_inl_dev) {
+ 		inl_dev = idev->nix_inl_dev;
+-		if (inl_dev && inl_dev->attach_cptlf && inl_dev->rx_inj_ena &&
++		if (inl_dev && inl_dev->attach_cptlf && inl_dev->rx_inj_ena && roc_nix &&
+ 		    roc_nix->rx_inj_ena)
+ 			return true;
+ 	}
+ 
+-	return roc_nix->rx_inj_ena;
++	return roc_nix ? roc_nix->rx_inj_ena : 0;
+ }
+ 
+ uint32_t
+diff --git a/drivers/net/cnxk/cn10k_ethdev_sec.c b/drivers/net/cnxk/cn10k_ethdev_sec.c
+index 110630596e..5ecdc2b463 100644
+--- a/drivers/net/cnxk/cn10k_ethdev_sec.c
++++ b/drivers/net/cnxk/cn10k_ethdev_sec.c
+@@ -1336,6 +1336,8 @@ cn10k_eth_sec_rx_inject_config(void *device, uint16_t port_id, bool enable)
+ 	roc_idev_nix_rx_inject_set(port_id, enable);
+ 
+ 	inl_lf = roc_nix_inl_inb_inj_lf_get(nix);
++	if (!inl_lf)
++		return -ENOTSUP;
+ 	sa_base = roc_nix_inl_inb_sa_base_get(nix, dev->inb.inl_dev);
+ 
+ 	inj_cfg = &dev->inj_cfg;
+diff --git a/drivers/net/cnxk/cnxk_ethdev_mtr.c b/drivers/net/cnxk/cnxk_ethdev_mtr.c
+index edeca6dcc3..992e2d446e 100644
+--- a/drivers/net/cnxk/cnxk_ethdev_mtr.c
++++ b/drivers/net/cnxk/cnxk_ethdev_mtr.c
+@@ -1261,7 +1261,13 @@ nix_mtr_config_map(struct cnxk_meter_node *mtr, struct roc_nix_bpf_cfg *cfg)
+ 
+ 	cfg->alg = alg_map[profile->profile.alg];
+ 	cfg->lmode = profile->profile.packet_mode;
+-	cfg->icolor = color_map[mtr->params.default_input_color];
++	int idx = mtr->params.default_input_color;
++
++	/* Index validation */
++	if (idx >= RTE_COLORS)
++		cfg->icolor = ROC_NIX_BPF_COLOR_GREEN;
++	else
++		cfg->icolor = color_map[idx];
+ 
+ 	switch (RTE_MTR_COLOR_IN_PROTO_OUTER_IP) {
+ 	case RTE_MTR_COLOR_IN_PROTO_OUTER_IP:
 -- 
 2.34.1
 
