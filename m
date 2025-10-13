@@ -2,84 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5C5CCD183
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 18:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AF5CCD183
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 20:09:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B82F8402AE;
-	Mon, 13 Oct 2025 20:39:22 +0200 (CEST)
-Received: from fout-b5-smtp.messagingengine.com
- (fout-b5-smtp.messagingengine.com [202.12.124.148])
- by mails.dpdk.org (Postfix) with ESMTP id F1E40402A0
- for <dev@dpdk.org>; Mon, 13 Oct 2025 20:39:21 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfout.stl.internal (Postfix) with ESMTP id 062971D00101;
- Mon, 13 Oct 2025 14:39:20 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-05.internal (MEProxy); Mon, 13 Oct 2025 14:39:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760380760;
- x=1760467160; bh=kauKSc1pItDECUOnUaWfej42cfYXpVRCfznMb/KVFMM=; b=
- Rbipq+QE50ggLJyqoRWdxtk3zHQc6mPPsuOlO5MMCE80Ypj7yjyWPfITirhCE9N+
- yKiZl8/hT4d/MtVg/eqZ3wmK9k0Xcj8AOjOKza5nhp21LRAloK1Yvg1tA1tZzcJB
- 7jr9tix+bJnIe8OUxxDSKlxE1Vbf8vfEGGLQJMNOvutqTZBpS+phO9Lls/VpajTu
- 32OWQdzPqNrZIbFFojYRx7gDPql2MxtyCu8f+vc5O1mw090z9uiFRnBwguAQlrLK
- KnYgQcjCgNWByJpms14c8C7jxvbKLHR2zNzaXs2fcEumvVSVloeKiFAl4nu6oXkV
- 9Yx8DLcmmL17lHum4dH6IQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760380760; x=
- 1760467160; bh=kauKSc1pItDECUOnUaWfej42cfYXpVRCfznMb/KVFMM=; b=Y
- 0LxqtYhbQafXdOnlf1eJeqmZeZS60rGXa0flwZtJ6OKPCm63TKhqJXONHOjWP76M
- DbHkWW2gPfm5Wr5nMJ8YkohaVu5pwFkxxbggYYb8KjlFw8O1DP/MpOWHyj/Hcu1z
- 5dF6jyXkpVBA9MeX3mzUvzZ5zr0zGvBESYPEoGJjSpGAZgLxiqqkjk4uysbT1Le7
- wQLSwowQc3o+glPN7RoLsLpsmLRi6OJKhx4DanUUofnc9HJoof7PAaMLBGwAT953
- ry9jke8rgomOUseUUTEaQDPq7OoG/L2yfy5PW/bfM001xPH1q7jJ648t/yBJh97O
- xb2W9IssY6fGEgqvRG8bg==
-X-ME-Sender: <xms:WEftaOI__m-k3QFDbFjy7-2f0euMOM3k1pchtMorF0orRWJf4fPCNw>
- <xme:WEftaPGY-gAhsrgvFBMjPn7TqeHK-hcWyqsl8BIaW9Eud2Dk3qx0lfDb0JaK6UTjy
- hIxtw_Dgju1Y80k4ewAbXFlAfA-9Hbb8uHCacGr-7Li3pjS1IFd5Q>
-X-ME-Received: <xmr:WEftaKTsgOIWltT0H8qXD0BCIkV6n8bV-vher8wOeoR2ddc8EokmuI5p4rOR5ZRAyuvQTaMQwK3tO4uohJh9jjrpYQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduudekfeelucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
- leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihsh
- htvghmshdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthho
- pehshhhpvghrvghtiiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggthhgvsh
- hlrghvohesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghr
- ughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifoh
- hrkhhplhhumhgsvghrrdhorhhg
-X-ME-Proxy: <xmx:WEftaDdbIZzrHZbwhs49POpPcukafhLsCB0j2VqKxsaU0tkeZUE3Rg>
- <xmx:WEftaBqbnoPBZlIYX2ODFuKMpAjhDwtL6teyHZRMBMsEeb5ffeJKkA>
- <xmx:WEftaM_VxvU2PfbewppGY0yYLtJSgRQ1zQmAhUt7bJ2ZuF0msbHVPg>
- <xmx:WEftaFfSCk1uBYWI4hSa7jvelhigdUod84taRqNDpo84RdnecGB1LQ>
- <xmx:WEftaD0p-xUg94rb4ZNtbsGCix6_sjb39e6k5K7D5Os1VR9XsnJQFtXE>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 13 Oct 2025 14:39:19 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, Shani Peretz <shperetz@nvidia.com>, viacheslavo@nvidia.com, 
- bruce.richardson@intel.com, stephen@networkplumber.org
-Subject: Re: [PATCH v3 2/5] mbuf: record mbuf operations history
-Date: Mon, 13 Oct 2025 20:39:18 +0200
-Message-ID: <40546840.10thIPus4b@thomas>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6548D@smartserver.smartshare.dk>
+	by mails.dpdk.org (Postfix) with ESMTP id 11787402A0;
+	Mon, 13 Oct 2025 22:09:04 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id B52C240288
+ for <dev@dpdk.org>; Mon, 13 Oct 2025 22:09:02 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 659D9206E5;
+ Mon, 13 Oct 2025 22:09:02 +0200 (CEST)
+Content-class: urn:content-classes:message
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v3 2/5] mbuf: record mbuf operations history
+Date: Mon, 13 Oct 2025 22:08:59 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F654C1@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <40546840.10thIPus4b@thomas>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v3 2/5] mbuf: record mbuf operations history
+Thread-Index: Adw8cLJA8iCS6K7ZSbqYHyOAwLO9dwACIJaQ
 References: <20250616072910.113042-1-shperetz@nvidia.com>
  <20250930233828.3999565-3-thomas@monjalon.net>
  <98CBD80474FA8B44BF855DF32C47DC35F6548D@smartserver.smartshare.dk>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+ <40546840.10thIPus4b@thomas>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Thomas Monjalon" <thomas@monjalon.net>
+Cc: <dev@dpdk.org>, "Shani Peretz" <shperetz@nvidia.com>,
+ <viacheslavo@nvidia.com>, <bruce.richardson@intel.com>,
+ <stephen@networkplumber.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,107 +51,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-02/10/2025 09:37, Morten Br=C3=B8rup:
-> > +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_mbuf_history_dump_mempool, 25.11)
-> > +void rte_mbuf_history_dump_mempool(FILE *f, struct rte_mempool *mp)
-> > +{
-> > +#if !RTE_MBUF_HISTORY_DEBUG
-> > +      RTE_SET_USED(f);
-> > +      RTE_SET_USED(mp);
-> > +      MBUF_LOG(INFO, "mbuf history recorder is not enabled");
-> > +#else
-> > +      if (f =3D=3D NULL) {
-> > +              MBUF_LOG(ERR, "Invalid mbuf dump file.");
-> > +              return;
-> > +      }
-> > +      if (mp =3D=3D NULL) {
-> > +              fprintf(f, "ERROR: Invalid mempool pointer\n");
->=20
-> Should be MBUF_LOG(ERR, ...), not fprintf().
->=20
-> > +              return;
-> > +      }
-> > +      if (rte_mbuf_history_field_offset < 0) {
-> > +              fprintf(f, "WARNING: mbuf history not initialized. Call
-> > rte_mbuf_history_init() first.\n");
->=20
-> Should be MBUF_LOG(ERR, ...), not fprintf().
->=20
-> > +              return;
-> > +      }
->=20
-> Since the type of objects held in a mempool is not identifiable as mbufs,=
- you should check that (mp->elt_size >=3D sizeof(struct rte_mbuf)). Imagine=
- some non-mbuf mempool holding 64 byte sized objects, and rte_mbuf_history_=
-field_offset being in the second cache line.
->=20
-> You might want to log an error if called directly, and silently skip of c=
-alled from rte_mbuf_history_dump_all(), so suggest adding a wrapper when ca=
-lling this function through rte_mempool_walk().
-
-Yes good idea.
-
-> > +      mbuf_history_get_stats(mp, f);
-> > +#endif
-> > +}
-> [...]
->=20
-> > +/**
-> > + * Mark an mbuf with a history event.
-> > + *
-> > + * @param m
-> > + *   Pointer to the mbuf.
-> > + * @param op
-> > + *   The operation to record.
-> > + */
-> > +static inline void rte_mbuf_history_mark(struct rte_mbuf *m, uint32_t
-> > op)
-> > +{
-> > +#if !RTE_MBUF_HISTORY_DEBUG
-> > +      RTE_SET_USED(m);
-> > +      RTE_SET_USED(op);
-> > +#else
-> > +      RTE_ASSERT(rte_mbuf_history_field_offset >=3D 0);
-> > +      RTE_ASSERT(op < RTE_MBUF_HISTORY_OP_MAX);
-> > +      if (unlikely (m =3D=3D NULL))
-> > +              return;
-> > +
-> > +      rte_mbuf_history_t *history_field =3D RTE_MBUF_DYNFIELD(m,
-> > +                      rte_mbuf_history_field_offset, rte_mbuf_history_=
-t *);
-> > +      uint64_t history =3D rte_atomic_load_explicit(history_field,
-> > rte_memory_order_acquire);
-> > +      history =3D (history << RTE_MBUF_HISTORY_BITS) | op;
-> > +      rte_atomic_store_explicit(history_field, history,
-> > rte_memory_order_release);
->=20
-> This is not thread safe.
-> Some other thread can race to update history_field after this thread load=
-s it, so when this tread stores the updated history, the other thread's his=
-tory update is overwritten and lost.
-
-You're right.
-I suppose this change was to align with the atomic read operation
-done in the "get" function.
-
-> To make it thread safe, you must use a CAS operation and start over if it=
- failed.
-
-By "failed", you mean if the previous value returned by the CAS operation
-is different of what we used earlier to build our new value?
-
-I suggest this:
-
-    rte_mbuf_history_t *history_field =3D RTE_MBUF_DYNFIELD(m,
-            rte_mbuf_history_field_offset, rte_mbuf_history_t *);
-    uint64_t old_history =3D rte_atomic_load_explicit(history_field,
-            rte_memory_order_acquire);
-    uint64_t new_history;
-    do {
-        new_history =3D (old_history << RTE_MBUF_HISTORY_BITS) | op;
-    } while (!rte_atomic_compare_exchange_weak_explicit(history_field,
-            &old_history, new_history,
-            rte_memory_order_release, rte_memory_order_relaxed));
-
-
-
+PiBGcm9tOiBUaG9tYXMgTW9uamFsb24gW21haWx0bzp0aG9tYXNAbW9uamFsb24ubmV0XQ0KPiBT
+ZW50OiBNb25kYXksIDEzIE9jdG9iZXIgMjAyNSAyMC4zOQ0KPiANCj4gMDIvMTAvMjAyNSAwOToz
+NywgTW9ydGVuIEJyw7hydXA6DQo+ID4gPiArUlRFX0VYUE9SVF9FWFBFUklNRU5UQUxfU1lNQk9M
+KHJ0ZV9tYnVmX2hpc3RvcnlfZHVtcF9tZW1wb29sLA0KPiAyNS4xMSkNCj4gPiA+ICt2b2lkIHJ0
+ZV9tYnVmX2hpc3RvcnlfZHVtcF9tZW1wb29sKEZJTEUgKmYsIHN0cnVjdCBydGVfbWVtcG9vbA0K
+PiAqbXApDQo+ID4gPiArew0KPiA+ID4gKyNpZiAhUlRFX01CVUZfSElTVE9SWV9ERUJVRw0KPiA+
+ID4gKyAgICAgIFJURV9TRVRfVVNFRChmKTsNCj4gPiA+ICsgICAgICBSVEVfU0VUX1VTRUQobXAp
+Ow0KPiA+ID4gKyAgICAgIE1CVUZfTE9HKElORk8sICJtYnVmIGhpc3RvcnkgcmVjb3JkZXIgaXMg
+bm90IGVuYWJsZWQiKTsNCj4gPiA+ICsjZWxzZQ0KPiA+ID4gKyAgICAgIGlmIChmID09IE5VTEwp
+IHsNCj4gPiA+ICsgICAgICAgICAgICAgIE1CVUZfTE9HKEVSUiwgIkludmFsaWQgbWJ1ZiBkdW1w
+IGZpbGUuIik7DQo+ID4gPiArICAgICAgICAgICAgICByZXR1cm47DQo+ID4gPiArICAgICAgfQ0K
+PiA+ID4gKyAgICAgIGlmIChtcCA9PSBOVUxMKSB7DQo+ID4gPiArICAgICAgICAgICAgICBmcHJp
+bnRmKGYsICJFUlJPUjogSW52YWxpZCBtZW1wb29sIHBvaW50ZXJcbiIpOw0KPiA+DQo+ID4gU2hv
+dWxkIGJlIE1CVUZfTE9HKEVSUiwgLi4uKSwgbm90IGZwcmludGYoKS4NCj4gPg0KPiA+ID4gKyAg
+ICAgICAgICAgICAgcmV0dXJuOw0KPiA+ID4gKyAgICAgIH0NCj4gPiA+ICsgICAgICBpZiAocnRl
+X21idWZfaGlzdG9yeV9maWVsZF9vZmZzZXQgPCAwKSB7DQo+ID4gPiArICAgICAgICAgICAgICBm
+cHJpbnRmKGYsICJXQVJOSU5HOiBtYnVmIGhpc3Rvcnkgbm90IGluaXRpYWxpemVkLg0KPiBDYWxs
+DQo+ID4gPiBydGVfbWJ1Zl9oaXN0b3J5X2luaXQoKSBmaXJzdC5cbiIpOw0KPiA+DQo+ID4gU2hv
+dWxkIGJlIE1CVUZfTE9HKEVSUiwgLi4uKSwgbm90IGZwcmludGYoKS4NCj4gPg0KPiA+ID4gKyAg
+ICAgICAgICAgICAgcmV0dXJuOw0KPiA+ID4gKyAgICAgIH0NCj4gPg0KPiA+IFNpbmNlIHRoZSB0
+eXBlIG9mIG9iamVjdHMgaGVsZCBpbiBhIG1lbXBvb2wgaXMgbm90IGlkZW50aWZpYWJsZSBhcw0K
+PiBtYnVmcywgeW91IHNob3VsZCBjaGVjayB0aGF0IChtcC0+ZWx0X3NpemUgPj0gc2l6ZW9mKHN0
+cnVjdCBydGVfbWJ1ZikpLg0KPiBJbWFnaW5lIHNvbWUgbm9uLW1idWYgbWVtcG9vbCBob2xkaW5n
+IDY0IGJ5dGUgc2l6ZWQgb2JqZWN0cywgYW5kDQo+IHJ0ZV9tYnVmX2hpc3RvcnlfZmllbGRfb2Zm
+c2V0IGJlaW5nIGluIHRoZSBzZWNvbmQgY2FjaGUgbGluZS4NCg0KPGZlYXR1cmUgY3JlZXA+DQpZ
+b3UgY2FuIGNoZWNrIG1vcmUgcHJvcGVydGllcyBvZiB0aGUgbWVtcG9vbCB0byBpZGVudGlmeSBt
+YnVmIG1lbXBvb2xzLCBzZWVraW5nIGluc3BpcmF0aW9uIGZyb20gdGhlIFJURV9BU1NFUlQoKSdz
+IGluIHJ0ZV9wa3RtYnVmX3Bvb2xfaW5pdCgpOg0KaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20v
+ZHBkay92MjUuMDcvc291cmNlL2xpYi9tYnVmL3J0ZV9tYnVmLmMjTDM1DQo8L2ZlYXR1cmUgY3Jl
+ZXA+DQoNCj4gPg0KPiA+IFlvdSBtaWdodCB3YW50IHRvIGxvZyBhbiBlcnJvciBpZiBjYWxsZWQg
+ZGlyZWN0bHksIGFuZCBzaWxlbnRseSBza2lwDQo+IG9mIGNhbGxlZCBmcm9tIHJ0ZV9tYnVmX2hp
+c3RvcnlfZHVtcF9hbGwoKSwgc28gc3VnZ2VzdCBhZGRpbmcgYSB3cmFwcGVyDQo+IHdoZW4gY2Fs
+bGluZyB0aGlzIGZ1bmN0aW9uIHRocm91Z2ggcnRlX21lbXBvb2xfd2FsaygpLg0KPiANCj4gWWVz
+IGdvb2QgaWRlYS4NCj4gDQo+ID4gPiArICAgICAgbWJ1Zl9oaXN0b3J5X2dldF9zdGF0cyhtcCwg
+Zik7DQo+ID4gPiArI2VuZGlmDQo+ID4gPiArfQ0KPiA+IFsuLi5dDQo+ID4NCj4gPiA+ICsvKioN
+Cj4gPiA+ICsgKiBNYXJrIGFuIG1idWYgd2l0aCBhIGhpc3RvcnkgZXZlbnQuDQo+ID4gPiArICoN
+Cj4gPiA+ICsgKiBAcGFyYW0gbQ0KPiA+ID4gKyAqICAgUG9pbnRlciB0byB0aGUgbWJ1Zi4NCj4g
+PiA+ICsgKiBAcGFyYW0gb3ANCj4gPiA+ICsgKiAgIFRoZSBvcGVyYXRpb24gdG8gcmVjb3JkLg0K
+PiA+ID4gKyAqLw0KPiA+ID4gK3N0YXRpYyBpbmxpbmUgdm9pZCBydGVfbWJ1Zl9oaXN0b3J5X21h
+cmsoc3RydWN0IHJ0ZV9tYnVmICptLA0KPiB1aW50MzJfdA0KPiA+ID4gb3ApDQo+ID4gPiArew0K
+PiA+ID4gKyNpZiAhUlRFX01CVUZfSElTVE9SWV9ERUJVRw0KPiA+ID4gKyAgICAgIFJURV9TRVRf
+VVNFRChtKTsNCj4gPiA+ICsgICAgICBSVEVfU0VUX1VTRUQob3ApOw0KPiA+ID4gKyNlbHNlDQo+
+ID4gPiArICAgICAgUlRFX0FTU0VSVChydGVfbWJ1Zl9oaXN0b3J5X2ZpZWxkX29mZnNldCA+PSAw
+KTsNCj4gPiA+ICsgICAgICBSVEVfQVNTRVJUKG9wIDwgUlRFX01CVUZfSElTVE9SWV9PUF9NQVgp
+Ow0KPiA+ID4gKyAgICAgIGlmICh1bmxpa2VseSAobSA9PSBOVUxMKSkNCj4gPiA+ICsgICAgICAg
+ICAgICAgIHJldHVybjsNCj4gPiA+ICsNCj4gPiA+ICsgICAgICBydGVfbWJ1Zl9oaXN0b3J5X3Qg
+Kmhpc3RvcnlfZmllbGQgPSBSVEVfTUJVRl9EWU5GSUVMRChtLA0KPiA+ID4gKyAgICAgICAgICAg
+ICAgICAgICAgICBydGVfbWJ1Zl9oaXN0b3J5X2ZpZWxkX29mZnNldCwNCj4gcnRlX21idWZfaGlz
+dG9yeV90ICopOw0KPiA+ID4gKyAgICAgIHVpbnQ2NF90IGhpc3RvcnkgPSBydGVfYXRvbWljX2xv
+YWRfZXhwbGljaXQoaGlzdG9yeV9maWVsZCwNCj4gPiA+IHJ0ZV9tZW1vcnlfb3JkZXJfYWNxdWly
+ZSk7DQo+ID4gPiArICAgICAgaGlzdG9yeSA9IChoaXN0b3J5IDw8IFJURV9NQlVGX0hJU1RPUllf
+QklUUykgfCBvcDsNCj4gPiA+ICsgICAgICBydGVfYXRvbWljX3N0b3JlX2V4cGxpY2l0KGhpc3Rv
+cnlfZmllbGQsIGhpc3RvcnksDQo+ID4gPiBydGVfbWVtb3J5X29yZGVyX3JlbGVhc2UpOw0KPiA+
+DQo+ID4gVGhpcyBpcyBub3QgdGhyZWFkIHNhZmUuDQo+ID4gU29tZSBvdGhlciB0aHJlYWQgY2Fu
+IHJhY2UgdG8gdXBkYXRlIGhpc3RvcnlfZmllbGQgYWZ0ZXIgdGhpcyB0aHJlYWQNCj4gbG9hZHMg
+aXQsIHNvIHdoZW4gdGhpcyB0cmVhZCBzdG9yZXMgdGhlIHVwZGF0ZWQgaGlzdG9yeSwgdGhlIG90
+aGVyDQo+IHRocmVhZCdzIGhpc3RvcnkgdXBkYXRlIGlzIG92ZXJ3cml0dGVuIGFuZCBsb3N0Lg0K
+PiANCj4gWW91J3JlIHJpZ2h0Lg0KPiBJIHN1cHBvc2UgdGhpcyBjaGFuZ2Ugd2FzIHRvIGFsaWdu
+IHdpdGggdGhlIGF0b21pYyByZWFkIG9wZXJhdGlvbg0KPiBkb25lIGluIHRoZSAiZ2V0IiBmdW5j
+dGlvbi4NCj4gDQo+ID4gVG8gbWFrZSBpdCB0aHJlYWQgc2FmZSwgeW91IG11c3QgdXNlIGEgQ0FT
+IG9wZXJhdGlvbiBhbmQgc3RhcnQgb3Zlcg0KPiBpZiBpdCBmYWlsZWQuDQo+IA0KPiBCeSAiZmFp
+bGVkIiwgeW91IG1lYW4gaWYgdGhlIHByZXZpb3VzIHZhbHVlIHJldHVybmVkIGJ5IHRoZSBDQVMN
+Cj4gb3BlcmF0aW9uDQo+IGlzIGRpZmZlcmVudCBvZiB3aGF0IHdlIHVzZWQgZWFybGllciB0byBi
+dWlsZCBvdXIgbmV3IHZhbHVlPw0KPiANCj4gSSBzdWdnZXN0IHRoaXM6DQo+IA0KPiAgICAgcnRl
+X21idWZfaGlzdG9yeV90ICpoaXN0b3J5X2ZpZWxkID0gUlRFX01CVUZfRFlORklFTEQobSwNCj4g
+ICAgICAgICAgICAgcnRlX21idWZfaGlzdG9yeV9maWVsZF9vZmZzZXQsIHJ0ZV9tYnVmX2hpc3Rv
+cnlfdCAqKTsNCj4gICAgIHVpbnQ2NF90IG9sZF9oaXN0b3J5ID0gcnRlX2F0b21pY19sb2FkX2V4
+cGxpY2l0KGhpc3RvcnlfZmllbGQsDQo+ICAgICAgICAgICAgIHJ0ZV9tZW1vcnlfb3JkZXJfYWNx
+dWlyZSk7DQo+ICAgICB1aW50NjRfdCBuZXdfaGlzdG9yeTsNCj4gICAgIGRvIHsNCj4gICAgICAg
+ICBuZXdfaGlzdG9yeSA9IChvbGRfaGlzdG9yeSA8PCBSVEVfTUJVRl9ISVNUT1JZX0JJVFMpIHwg
+b3A7DQo+ICAgICB9IHdoaWxlICghcnRlX2F0b21pY19jb21wYXJlX2V4Y2hhbmdlX3dlYWtfZXhw
+bGljaXQoaGlzdG9yeV9maWVsZCwNCj4gICAgICAgICAgICAgJm9sZF9oaXN0b3J5LCBuZXdfaGlz
+dG9yeSwNCj4gICAgICAgICAgICAgcnRlX21lbW9yeV9vcmRlcl9yZWxlYXNlLCBydGVfbWVtb3J5
+X29yZGVyX3JlbGF4ZWQpKTsNCg0KWWVzLCB0aGF0IHdhcyB0aGUgdGhyZWFkIHNhZmV0eSBjb25j
+ZXB0IEkgd2FzIGxvb2tpbmcgZm9yLg0KDQpTbWFsbCBidWdmaXg6IHJ0ZV9tZW1vcnlfb3JkZXJf
+cmVsYXhlZCBzaG91bGQgYmUgcnRlX21lbW9yeV9vcmRlcl9hY3F1aXJlICh3aGVuIHRoZSBDQVMg
+Y29tcGFyaXNvbiBmYWlscyksIGxpa2Ugd2hlbiBmaXJzdCBsb2FkaW5nIG9sZF9oaXN0b3J5IHdp
+dGggcnRlX2F0b21pY19sb2FkX2V4cGxpY2l0KCkuDQoNCkFsc28sIGNvbnNpZGVyIGFkZGluZyB1
+bmxpa2VseTogImRvIHsuLi59IHdoaWxlICh1bmxpa2VseSghQ0FTKC4uLikpKTsiLg0KDQo=
