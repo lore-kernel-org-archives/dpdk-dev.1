@@ -2,51 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C5ACCD185
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 18:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CCADCCD185
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 18:09:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C470140611;
-	Mon, 13 Oct 2025 20:05:32 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id D0BC740288
- for <dev@dpdk.org>; Mon, 13 Oct 2025 20:05:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1760378730; x=1791914730;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=9Unl+OYdrEcvJXLyQRCp9CTS9TxXli4bvCEDWXUxpeM=;
- b=ZQSyvJmmRXSmT9XSMDYpmDO6vwMmxLWLicSsbnZblnwP+xgQZF8OAJfu
- wtcpQIaoIGC8INuK0NwLvcsGPvX7NYUjuYZnFQ8GfMjlOijaB4dzM4g4k
- CvWLMjTj5rgx+0uWeql5bepxzTqqpNZ56skk6sPEwiyC5U6tYU2jbLSg/
- fm0jeKnxqkbJQ4xPlY1UOYlY9z7bNXGWjajqADc9DZcejalOOnAyF8EbD
- 9ywbSyw0/peN+e/JTXilt8F/dnugT2MmY13Esj5ti++7bRwJtTDKDLnHQ
- uMVd9vAp1g1Cy0W0DdRUuNVZwyKucWvIuuPr0PTsWjlC6ZWcJH+J02OoD w==;
-X-CSE-ConnectionGUID: FTfWmDxcTGatZYhKsNt+Yg==
-X-CSE-MsgGUID: DCtA6yTiRFOseaZhu2pdjw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="73208649"
-X-IronPort-AV: E=Sophos;i="6.19,226,1754982000"; d="scan'208";a="73208649"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Oct 2025 11:05:29 -0700
-X-CSE-ConnectionGUID: k9l+RVf/T7WmQK5Ii4Iu2A==
-X-CSE-MsgGUID: 1+W9XLZwSOeBg0ZEV0bKxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,226,1754982000"; d="scan'208";a="181468880"
-Received: from silpixa00401176.ir.intel.com ([10.20.224.212])
- by orviesa007.jf.intel.com with ESMTP; 13 Oct 2025 11:05:28 -0700
-From: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com,
-	anatoly.burakov@intel.com
-Subject: [PATCH v6 3/3] net/ice: add PFC statistics
-Date: Mon, 13 Oct 2025 18:05:23 +0000
-Message-ID: <20251013180523.61468-4-vladimir.medvedkin@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251013180523.61468-1-vladimir.medvedkin@intel.com>
-References: <20251003124037.342760-1-vladimir.medvedkin@intel.com>
- <20251013180523.61468-1-vladimir.medvedkin@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A30DC402AE;
+	Mon, 13 Oct 2025 20:09:51 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id BB72E402A0
+ for <dev@dpdk.org>; Mon, 13 Oct 2025 20:09:49 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 234DA106F;
+ Mon, 13 Oct 2025 11:09:41 -0700 (PDT)
+Received: from [10.122.3.60] (unknown [10.122.3.60])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AF9C53F738;
+ Mon, 13 Oct 2025 11:09:48 -0700 (PDT)
+Message-ID: <566b4c6c-f081-4db8-bc8b-2a576a82e1c3@arm.com>
+Date: Mon, 13 Oct 2025 13:09:48 -0500
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] ring: safe partial ordering for head/tail update
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Ola Liljedahl <ola.liljedahl@arm.com>,
+ Dhruv Tripathi <dhruv.tripathi@arm.com>
+References: <20251002174137.3612042-1-wathsala.vithanage@arm.com>
+ <20251002174137.3612042-2-wathsala.vithanage@arm.com>
+ <cfc073b8137541f1be3e01650d6bcf14@huawei.com>
+Content-Language: en-US
+From: Wathsala Vithanage <wathsala.vithanage@arm.com>
+In-Reply-To: <cfc073b8137541f1be3e01650d6bcf14@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -61,94 +46,112 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Expose PFC statistics in xstats.
 
-Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
----
- drivers/net/intel/ice/ice_ethdev.c | 63 ++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+On 10/8/25 03:00, Konstantin Ananyev wrote:
+>
+>> The function __rte_ring_headtail_move_head() assumes that the barrier
+>> (fence) between the load of the head and the load-acquire of the
+>> opposing tail guarantees the following: if a first thread reads tail
+>> and then writes head and a second thread reads the new value of head
+>> and then reads tail, then it should observe the same (or a later)
+>> value of tail.
+>>
+>> This assumption is incorrect under the C11 memory model. If the barrier
+>> (fence) is intended to establish a total ordering of ring operations,
+>> it fails to do so. Instead, the current implementation only enforces a
+>> partial ordering, which can lead to unsafe interleavings. In particular,
+>> some partial orders can cause underflows in free slot or available
+>> element computations, potentially resulting in data corruption.
+>>
+>> The issue manifests when a CPU first acts as a producer and later as a
+>> consumer. In this scenario, the barrier assumption may fail when another
+>> core takes the consumer role. A Herd7 litmus test in C11 can demonstrate
+>> this violation. The problem has not been widely observed so far because:
+>>    (a) on strong memory models (e.g., x86-64) the assumption holds, and
+>>    (b) on relaxed models with RCsc semantics the ordering is still strong
+>>        enough to prevent hazards.
+>> The problem becomes visible only on weaker models, when load-acquire is
+>> implemented with RCpc semantics (e.g. some AArch64 CPUs which support
+>> the LDAPR and LDAPUR instructions).
+>>
+>> Three possible solutions exist:
+>>    1. Strengthen ordering by upgrading release/acquire semantics to
+>>       sequential consistency. This requires using seq-cst for stores,
+>>       loads, and CAS operations. However, this approach introduces a
+>>       significant performance penalty on relaxed-memory architectures.
+>>
+>>    2. Establish a safe partial order by enforcing a pair-wise
+>>       happens-before relationship between thread of same role by changing
+>>       the CAS and the preceding load of the head by converting them to
+>>       release and acquire respectively. This approach makes the original
+>>       barrier assumption unnecessary and allows its removal.
+>>
+>>    3. Retain partial ordering but ensure only safe partial orders are
+>>       committed. This can be done by detecting underflow conditions
+>>       (producer < consumer) and quashing the update in such cases.
+>>       This approach makes the original barrier assumption unnecessary
+>>       and allows its removal.
+>>
+>> This patch implements solution (2) to preserve the “enqueue always
+>> succeeds” contract expected by dependent libraries (e.g., mempool).
+>> While solution (3) offers higher performance, adopting it now would
+>> break that assumption.
+>>
+>> Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+>> Signed-off-by: Ola Liljedahl <ola.liljedahl@arm.com>
+>> Reviewed-by: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>
+>> Reviewed-by: Dhruv Tripathi <dhruv.tripathi@arm.com>
+>> ---
+>>   lib/ring/rte_ring_c11_pvt.h | 9 +++------
+>>   1 file changed, 3 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/lib/ring/rte_ring_c11_pvt.h b/lib/ring/rte_ring_c11_pvt.h
+>> index b9388af0da..98c6584edb 100644
+>> --- a/lib/ring/rte_ring_c11_pvt.h
+>> +++ b/lib/ring/rte_ring_c11_pvt.h
+>> @@ -78,14 +78,11 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail
+>> *d,
+>>   	unsigned int max = n;
+>>
+>>   	*old_head = rte_atomic_load_explicit(&d->head,
+>> -			rte_memory_order_relaxed);
+>> +			rte_memory_order_acquire);
+>>   	do {
+>>   		/* Reset n to the initial burst count */
+>>   		n = max;
+>>
+>> -		/* Ensure the head is read before tail */
+>> -		rte_atomic_thread_fence(rte_memory_order_acquire);
+>> -
+>>   		/* load-acquire synchronize with store-release of ht->tail
+>>   		 * in update_tail.
+>>   		 */
+>> @@ -115,8 +112,8 @@ __rte_ring_headtail_move_head(struct rte_ring_headtail
+>> *d,
+>>   			/* on failure, *old_head is updated */
+>>   			success =
+>> rte_atomic_compare_exchange_strong_explicit(
+>>   					&d->head, old_head, *new_head,
+>> -					rte_memory_order_relaxed,
+>> -					rte_memory_order_relaxed);
+>> +					rte_memory_order_acq_rel,
+>> +					rte_memory_order_acquire);
+>>   	} while (unlikely(success == 0));
+>>   	return n;
+>>   }
+>> --
+> LGTM, though. I think that we also need to make similar changes in
+> rte_ring_hts_elem_pvt.h and rte_ring_rts_elem_pvt.h:
+> for CAS use 'acq_rel' order instead of simple 'acquire'.
+> Let me know would you have a bandwidth to do that.
 
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index 582fc469fe..3b3d54fb78 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -389,6 +389,46 @@ static const struct ice_xstats_name_off ice_hw_port_strings[] = {
- 	{"rx_xon_packets", offsetof(struct ice_hw_port_stats, link_xon_rx)},
- 	{"tx_xoff_packets", offsetof(struct ice_hw_port_stats, link_xoff_tx)},
- 	{"rx_xoff_packets", offsetof(struct ice_hw_port_stats, link_xoff_rx)},
-+	{"priority_xon_rx_tc0", offsetof(struct ice_hw_port_stats, priority_xon_rx[0])},
-+	{"priority_xon_rx_tc1", offsetof(struct ice_hw_port_stats, priority_xon_rx[1])},
-+	{"priority_xon_rx_tc2", offsetof(struct ice_hw_port_stats, priority_xon_rx[2])},
-+	{"priority_xon_rx_tc3", offsetof(struct ice_hw_port_stats, priority_xon_rx[3])},
-+	{"priority_xon_rx_tc4", offsetof(struct ice_hw_port_stats, priority_xon_rx[4])},
-+	{"priority_xon_rx_tc5", offsetof(struct ice_hw_port_stats, priority_xon_rx[5])},
-+	{"priority_xon_rx_tc6", offsetof(struct ice_hw_port_stats, priority_xon_rx[6])},
-+	{"priority_xon_rx_tc7", offsetof(struct ice_hw_port_stats, priority_xon_rx[7])},
-+	{"priority_xoff_rx_tc0", offsetof(struct ice_hw_port_stats, priority_xoff_rx[0])},
-+	{"priority_xoff_rx_tc1", offsetof(struct ice_hw_port_stats, priority_xoff_rx[1])},
-+	{"priority_xoff_rx_tc2", offsetof(struct ice_hw_port_stats, priority_xoff_rx[2])},
-+	{"priority_xoff_rx_tc3", offsetof(struct ice_hw_port_stats, priority_xoff_rx[3])},
-+	{"priority_xoff_rx_tc4", offsetof(struct ice_hw_port_stats, priority_xoff_rx[4])},
-+	{"priority_xoff_rx_tc5", offsetof(struct ice_hw_port_stats, priority_xoff_rx[5])},
-+	{"priority_xoff_rx_tc6", offsetof(struct ice_hw_port_stats, priority_xoff_rx[6])},
-+	{"priority_xoff_rx_tc7", offsetof(struct ice_hw_port_stats, priority_xoff_rx[7])},
-+	{"priority_xon_tx_tc0", offsetof(struct ice_hw_port_stats, priority_xon_tx[0])},
-+	{"priority_xon_tx_tc1", offsetof(struct ice_hw_port_stats, priority_xon_tx[1])},
-+	{"priority_xon_tx_tc2", offsetof(struct ice_hw_port_stats, priority_xon_tx[2])},
-+	{"priority_xon_tx_tc3", offsetof(struct ice_hw_port_stats, priority_xon_tx[3])},
-+	{"priority_xon_tx_tc4", offsetof(struct ice_hw_port_stats, priority_xon_tx[4])},
-+	{"priority_xon_tx_tc5", offsetof(struct ice_hw_port_stats, priority_xon_tx[5])},
-+	{"priority_xon_tx_tc6", offsetof(struct ice_hw_port_stats, priority_xon_tx[6])},
-+	{"priority_xon_tx_tc7", offsetof(struct ice_hw_port_stats, priority_xon_tx[7])},
-+	{"priority_xoff_tx_tc0", offsetof(struct ice_hw_port_stats, priority_xoff_tx[0])},
-+	{"priority_xoff_tx_tc1", offsetof(struct ice_hw_port_stats, priority_xoff_tx[1])},
-+	{"priority_xoff_tx_tc2", offsetof(struct ice_hw_port_stats, priority_xoff_tx[2])},
-+	{"priority_xoff_tx_tc3", offsetof(struct ice_hw_port_stats, priority_xoff_tx[3])},
-+	{"priority_xoff_tx_tc4", offsetof(struct ice_hw_port_stats, priority_xoff_tx[4])},
-+	{"priority_xoff_tx_tc5", offsetof(struct ice_hw_port_stats, priority_xoff_tx[5])},
-+	{"priority_xoff_tx_tc6", offsetof(struct ice_hw_port_stats, priority_xoff_tx[6])},
-+	{"priority_xoff_tx_tc7", offsetof(struct ice_hw_port_stats, priority_xoff_tx[7])},
-+	{"priority_xon_2_xoff_tc0", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[0])},
-+	{"priority_xon_2_xoff_tc1", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[1])},
-+	{"priority_xon_2_xoff_tc2", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[2])},
-+	{"priority_xon_2_xoff_tc3", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[3])},
-+	{"priority_xon_2_xoff_tc4", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[4])},
-+	{"priority_xon_2_xoff_tc5", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[5])},
-+	{"priority_xon_2_xoff_tc6", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[6])},
-+	{"priority_xon_2_xoff_tc7", offsetof(struct ice_hw_port_stats, priority_xon_2_xoff[7])},
- 	{"rx_size_64_packets", offsetof(struct ice_hw_port_stats, rx_size_64)},
- 	{"rx_size_65_to_127_packets", offsetof(struct ice_hw_port_stats,
- 		rx_size_127)},
-@@ -6641,6 +6681,29 @@ ice_read_stats_registers(struct ice_pf *pf, struct ice_hw *hw)
- 	/* GLPRT_MSPDC not supported */
- 	/* GLPRT_XEC not supported */
- 
-+	for (int i = 0; i < ICE_MAX_TRAFFIC_CLASS; i++) {
-+		ice_stat_update_40(hw, GLPRT_PXONRXC_H(hw->port_info->lport, i),
-+			   GLPRT_PXONRXC(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xon_rx[i],
-+			   &ns->priority_xon_rx[i]);
-+		ice_stat_update_40(hw, GLPRT_PXONTXC_H(hw->port_info->lport, i),
-+			   GLPRT_PXONTXC(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xon_tx[i],
-+			   &ns->priority_xon_tx[i]);
-+		ice_stat_update_40(hw, GLPRT_PXOFFRXC_H(hw->port_info->lport, i),
-+			   GLPRT_PXOFFRXC(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xoff_rx[i],
-+			   &ns->priority_xoff_rx[i]);
-+		ice_stat_update_40(hw, GLPRT_PXOFFTXC_H(hw->port_info->lport, i),
-+			   GLPRT_PXOFFTXC(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xoff_tx[i],
-+			   &ns->priority_xoff_tx[i]);
-+		ice_stat_update_40(hw, GLPRT_RXON2OFFCNT_H(hw->port_info->lport, i),
-+			   GLPRT_RXON2OFFCNT(hw->port_info->lport, i),
-+			   pf->offset_loaded, &os->priority_xon_2_xoff[i],
-+			   &ns->priority_xon_2_xoff[i]);
-+	}
-+
- 	pf->offset_loaded = true;
- 
- 	if (pf->main_vsi)
--- 
-2.43.0
+My bad, I forgot those two cases. I will send a v3.
 
+-- wathsala
+
+>
+> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+> Tested-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+>
+>> 2.43.0
+>>
