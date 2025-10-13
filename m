@@ -2,121 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F71CCD185
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 05:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C473CCA476
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Oct 2025 07:00:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 34FAE4021E;
-	Mon, 13 Oct 2025 07:52:20 +0200 (CEST)
-Received: from PH0PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11011040.outbound.protection.outlook.com [40.107.208.40])
- by mails.dpdk.org (Postfix) with ESMTP id 531AE4013F;
- Mon, 13 Oct 2025 07:52:19 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UqBe+o/ygzghCLXb5Hgjb8cwuR0V22g5GfXprACKmsNovsVb++znEUOSAjDmnNEo26Mqw9fXgAbSV5wPvCXpCeVwS2fOzZuRSvU95DEMkhV+BNv9kznIn2YC1z0TvwIfO5fBQKwIG4EtYil8LQFOGPweQDubPe/v1P5pqdexukOxmzYXWdIEgLSLKP+/zhet+58GfhEOiweW7mVLPyhw73Ntphzj3B5YMleIrWayswibAT9UWv33M8PzZkEY4cJx2CKkmn3Gyf3ijUOw0w+RdZ3rcwjIrcWQ7hjHUuf5VFAdmEWWDxW/kiZAw5dYEM5mhYyrFD9YodpmZSteVc6+PA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+o6d1N2I8+cw8fvHcr1vZDTFyR/rJkMnjDRLBlH/KPA=;
- b=C/iTJ0AqXL2plocCccpQ4R7aKBndPJYJveVYXKguOx5D6tspMZdxSdkhHr00f2d7NRp/icnlnim+pXkRP/x9ovtb9JuMVkRJJiv3trZeNmAKNj6vL9LG/I3JvLat8Vvams8qY5ejLw3JMc85qI/dHbM/iH+LjaVq88CyWjbrZGSbJDJU7lMZ1Qrt9Nz75IcDguGwRb/a2Kl+en6CxypEyfD6lDf5INjH8q4meCo9gxDylUwgT9Hc1koghpyoJIpOJy7Ost4EHEMU/M6K9aQ9oSCNLdx9CX9udYZp6wzqwdIRZleOqhneHKqLjMP5VAJGxcST+ImxXJV+/kM0g9BRuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+o6d1N2I8+cw8fvHcr1vZDTFyR/rJkMnjDRLBlH/KPA=;
- b=XwJVaf7u5NAMvcf+hUXlHTLuKDCEPxtdzJv7w3cA8Yv98J/5KxULNSYVRQbPl9cc7YHwlt+RN4m6KdsvDZTibcptRvMvW6jiNo4SYv31Is3hVuo0CMTVrMnGvPKPXlmEWOVu2Q5iAlTAUwRKvxhsDiVxuaaxcVm1z3wC1vGmYEU=
-Received: from BL1P223CA0006.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:2c4::11)
- by CH3PR12MB8709.namprd12.prod.outlook.com (2603:10b6:610:17c::20)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Mon, 13 Oct
- 2025 05:52:15 +0000
-Received: from BN2PEPF0000449E.namprd02.prod.outlook.com
- (2603:10b6:208:2c4:cafe::ac) by BL1P223CA0006.outlook.office365.com
- (2603:10b6:208:2c4::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.12 via Frontend Transport; Mon,
- 13 Oct 2025 05:52:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BN2PEPF0000449E.mail.protection.outlook.com (10.167.243.149) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.7 via Frontend Transport; Mon, 13 Oct 2025 05:52:15 +0000
-Received: from epycpwr02.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Sun, 12 Oct
- 2025 22:52:14 -0700
-From: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-To: <david.hunt@intel.com>, <anatoly.burakov@intel.com>, <jerinj@marvell.com>, 
- <radu.nicolau@intel.com>, <gakhil@marvell.com>,
- <cristian.dumitrescu@intel.com>, <ferruh.yigit@amd.com>,
- <konstantin.ananyev@huawei.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: [PATCH v2] eal/x86: enable timeout in AMD power monitor
-Date: Mon, 13 Oct 2025 05:51:57 +0000
-Message-ID: <20251013055158.3037400-1-sivaprasad.tummala@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251013031619.2988915-1-sivaprasad.tummala@amd.com>
-References: <20251013031619.2988915-1-sivaprasad.tummala@amd.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2A8404021E;
+	Mon, 13 Oct 2025 09:00:01 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 142254013F
+ for <dev@dpdk.org>; Mon, 13 Oct 2025 08:59:59 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59CNgmBk023055
+ for <dev@dpdk.org>; Sun, 12 Oct 2025 23:59:58 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=U
+ DuJ7lxYVJk/n4ry0ozguR99CyHLzaiMh88B2eCQJFs=; b=eyPXEDPT6LYUFRmAp
+ QCXFCCWVF871X+6hQD0nN2FyClTGzxjB5WisbLPAOjnb+SaoYQN1QxeuxD7tk5hq
+ 0TmbM5zlZIhenIL561PR3GBHxoeO24gNFZI+BzekoxX0c3OyEcvjiuejzshCg8bN
+ 7z/InwDryvCSyPd9/w7PLjxmdn0Sbk6u4pX5fadW7kHqsQAViEIqJ+SonCiysAyS
+ SM6zdpcLQb97AlC30gFzNiXqmSpRNmFH4+Fh7kN+x2cvqlZOHSCXdNLN5QaCEFpV
+ GxMVqMU5B293vQqXHhWAfii/k2j42D04Tv6+65qICCPyzj5zfVXfArD/KahOagaL
+ 19rYQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49rp1jrmd5-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Sun, 12 Oct 2025 23:59:58 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 13 Oct 2025 00:00:07 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Mon, 13 Oct 2025 00:00:07 -0700
+Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
+ by maili.marvell.com (Postfix) with ESMTP id 018733F7072;
+ Sun, 12 Oct 2025 23:59:54 -0700 (PDT)
+From: Nithin Dabilpuram <ndabilpuram@marvell.com>
+To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <jerinj@marvell.com>, <dev@dpdk.org>
+Subject: [PATCH v2 01/19] common/cnxk: add new TM tree for SDP interface
+Date: Mon, 13 Oct 2025 12:29:31 +0530
+Message-ID: <20251013065949.200414-1-ndabilpuram@marvell.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250901073036.1381560-1-ndabilpuram@marvell.com>
+References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF0000449E:EE_|CH3PR12MB8709:EE_
-X-MS-Office365-Filtering-Correlation-Id: b34fdb36-9c99-406a-9c84-08de0a1ca994
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|82310400026|1800799024|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?6uD1L/94CKbk9fPEwKzKBwMdxdab0rsUP0q9hd3HK0BuMBIOPSgAvRQAGF4O?=
- =?us-ascii?Q?juapvknHvV/aoC6woKFoSe1cPwyiaQD8q0dAJO0HUP1KKt+7xdMg/MM+kC4f?=
- =?us-ascii?Q?FBXcUmjB3rcuECblZTzuhGXMzkJQlKNaHJWV1Dwhmn3GLyY9CVwQoXaFcKoV?=
- =?us-ascii?Q?GTxuEoEY6sKyPnDjMBXUBrCKPxpAJJ2y2Jc/eCChKn4AbL0QspFzkbRx0UUN?=
- =?us-ascii?Q?Ut59RC25rCFBZ5jGbctJhksTx+SNNNZSjId+fdYq4g+np98FdexF0dhcNrBp?=
- =?us-ascii?Q?CWU0xrEYgP6QLSG5em3GeTGIADb3ApH63IJz5YbYeQrdzdvLmizHN5uz1IBL?=
- =?us-ascii?Q?FnOUyRyy8cokKmH8FvBoakRoFZOptDAFl8tOXn/lNL47m5SM9Nglff4MDLri?=
- =?us-ascii?Q?RZatRnmMqLXMulODvr+aDetHqk9vaDfmYQbzwW2KNXPU/eZ1KuBKHN7rghEH?=
- =?us-ascii?Q?AQk2O15ukNv3aI5gLRB9c91WJkAzSc6qh3VCVcJeQyuVhcoaauEXRXjJrRcN?=
- =?us-ascii?Q?O2ohHWJrueaPTn27uPgecM4kY8HVpBwaRB8tBrM+oAFNWMsKzCQ1JXXYCvBw?=
- =?us-ascii?Q?bGhaUlVWO+ap6iH3sz+e7QeIojDsarINQ2RZB7RgkrZSHRvUkGNzAbIgD5PP?=
- =?us-ascii?Q?scfZYU0Azs3HBb+nceT44/NXHm0rzahMz6MBy6xD4l9p/rl50n83Kb6AJFWY?=
- =?us-ascii?Q?88U+a7II/pejFaVy0AzN0LvNF/GMVbkO0WBCGevZaDsYvGrL+kkjEm5LSpKf?=
- =?us-ascii?Q?/qATimFAvazSd6o61QPIkWManT/IboJnvGgQeB3G3ae+bzWir7phpFBEra+C?=
- =?us-ascii?Q?87x9RkpFS00nhFedoWNUZyVvRJPKHh7rIsgHnbnvS3OlnEAdwA2Px348i/k4?=
- =?us-ascii?Q?DYSEcb/NXznJAH9xTRFd3/Avofi87uFind15GI/ZII1MDciu09fMZwZYXal7?=
- =?us-ascii?Q?SdDO7CG2ncTLZ+wPn2AU596TJ9vNpd7ozefQkZy0AWOgMxmlyyJdHOtqZFVM?=
- =?us-ascii?Q?JEM+G6mlHSvVJaKyqqpVILogYASGkgIjnAKGiLGwpu9sewSUWfn5ldHyMIjr?=
- =?us-ascii?Q?MkETdJuu8VOUbs9AU3241pWT1hLg+IlM2UWQ2C2/SHDCAVrrgCarKPoXtbXG?=
- =?us-ascii?Q?HVPAsbh6rL+/z8L34E0hvn4LHneS6SlGSQvt8KWHMhUVJaM9z0pmA25vqRr3?=
- =?us-ascii?Q?lRqX7R2H5AfeKE9USMJduA+hVrpHaO5wdJx+ayl75OXOnVeduO/8q01vD0MR?=
- =?us-ascii?Q?w7zS+UPvlMAbKodbv3HsCepr6B5frJZNQBF2fsZZ6vKQnAK0Hr/pPX+yR/WL?=
- =?us-ascii?Q?KpgVXg4PmpyTPYWU9QyeelSIi+Y5xs/IzGR/v8tWM2llmpa02xb5+Ui5qiNK?=
- =?us-ascii?Q?gSz6Sb7lGq0TU6vtYfQ1oIAAy11BkCUG5TVVzLeSndxAlomO2P6BVZ6k5fzw?=
- =?us-ascii?Q?FLtD8HUuTdu2xgMP0NBuuStkKplvKMtbOx7lp9qVa5Peynh0PuvZi28CaPqK?=
- =?us-ascii?Q?QbwthESL2dMyZGdq5VHiCCiairxplgRW+HWRloy9cWREjp//aHSOr6Asillv?=
- =?us-ascii?Q?K62aUkVe+13zy7kJhqc=3D?=
-X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:CAL; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2025 05:52:15.3213 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b34fdb36-9c99-406a-9c84-08de0a1ca994
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
- Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN2PEPF0000449E.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8709
+X-Proofpoint-ORIG-GUID: akGsUWW-a1o9Fzq8RbjSgHsPntet173e
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDEyMDEyNSBTYWx0ZWRfX20Z7hvrA+BPC
+ Ug/yY74+qVnBXvuhvfOVAZVgKC3XX6/dLAtV853rzbMeSdGm3kuh4qd2kAO5mi6HHU7I51GcnWI
+ K8blCRBQmU8eXt2E/QBG5S7TWaNkduB1VFa3zRRPBkb+kIS8QtxeNHEmwrJGojZx+iRIGVsx2SM
+ x4i8PPYONWtnPJHS2TPQV5+MfcKn46D6i84e0GEeIom4FhxnxabOugnnfANphX3j1jkYc/7sBYq
+ xIrdEjjaZd3IETyWNWCYKPcWp7Kr2mrjIKyanrcC1mtb2UtdJqwvk3YRDtyTAvR2euoF9J6CeVT
+ 3HCwwPoFBA5M9mEduS/LypW7lWUXj8tzHgkvVTTXvax3asFDaRsiD5L4qH0V5tITJl7afBo9iUP
+ L+2elMr5qXCKgoNgfIxDaZcret9MsQ==
+X-Authority-Analysis: v=2.4 cv=Utdu9uwB c=1 sm=1 tr=0 ts=68eca36e cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=x6icFKpwvdMA:10 a=M5GUcnROAAAA:8 a=N1rwnyxQk5nB-LrYttQA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: akGsUWW-a1o9Fzq8RbjSgHsPntet173e
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-13_03,2025-10-06_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -130,47 +81,265 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Previously, the AMD power monitor implementation did not enable the
-timeout, causing the lcore to remain in a wait state until an external
-monitoring event occurred or an interrupt was received.
+From: Satha Rao <skoteshwar@marvell.com>
 
-This patch enables the timeout-based exit condition, allowing
-the lcore to automatically wake up after the specified period.
-The maximum supported timeout value is 2^32 - 1.
+Create a new default tree for the SDP interface if more than one TX
+queue is requested. This helps to backpressure each queue independently
+when they are created with separate channels.
 
-Fixes: c7ed1ce04704 ("eal/x86: add power intrinsics for AMD")
-Cc: stable@dpdk.org
-
-Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-
-v2:
-1. fixed asm compilation error.
+Signed-off-by: Satha Rao <skoteshwar@marvell.com>
 ---
- lib/eal/x86/rte_power_intrinsics.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/common/cnxk/roc_nix.h                 |   2 +
+ drivers/common/cnxk/roc_nix_priv.h            |   2 +
+ drivers/common/cnxk/roc_nix_tm.c              | 158 ++++++++++++++++++
+ drivers/common/cnxk/roc_nix_tm_ops.c          |   5 +-
+ drivers/common/cnxk/roc_nix_tm_utils.c        |   2 +-
+ .../common/cnxk/roc_platform_base_symbols.c   |   1 +
+ 6 files changed, 168 insertions(+), 2 deletions(-)
 
-diff --git a/lib/eal/x86/rte_power_intrinsics.c b/lib/eal/x86/rte_power_intrinsics.c
-index 489ad3983f..8a5f222aea 100644
---- a/lib/eal/x86/rte_power_intrinsics.c
-+++ b/lib/eal/x86/rte_power_intrinsics.c
-@@ -89,14 +89,14 @@ static void amd_monitorx(volatile void *addr)
- 
- static void amd_mwaitx(const uint64_t timeout)
- {
--	RTE_SET_USED(timeout);
- #if defined(RTE_TOOLCHAIN_MSVC) || defined(__MWAITX__)
--	_mm_mwaitx(0, 0, 0);
-+	_mm_mwaitx(2, 0, (uint32_t)timeout);
- #else
- 	asm volatile(".byte 0x0f, 0x01, 0xfb;"
- 			: /* ignore rflags */
- 			: "a"(0), /* enter C1 */
--			"c"(0)); /* no time-out */
-+			"b"((uint32_t)timeout),
-+			"c"(2)); /* enable time-out */
- #endif
+diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
+index a9cdc42617..a156d83200 100644
+--- a/drivers/common/cnxk/roc_nix.h
++++ b/drivers/common/cnxk/roc_nix.h
+@@ -596,6 +596,7 @@ enum roc_nix_tm_tree {
+ 	ROC_NIX_TM_DEFAULT = 0,
+ 	ROC_NIX_TM_RLIMIT,
+ 	ROC_NIX_TM_PFC,
++	ROC_NIX_TM_SDP,
+ 	ROC_NIX_TM_USER,
+ 	ROC_NIX_TM_TREE_MAX,
+ };
+@@ -768,6 +769,7 @@ int __roc_api roc_nix_tm_lvl_cnt_get(struct roc_nix *roc_nix);
+ int __roc_api roc_nix_tm_lvl_have_link_access(struct roc_nix *roc_nix, int lvl);
+ int __roc_api roc_nix_tm_prepare_rate_limited_tree(struct roc_nix *roc_nix);
+ int __roc_api roc_nix_tm_pfc_prepare_tree(struct roc_nix *roc_nix);
++int __roc_api roc_nix_tm_sdp_prepare_tree(struct roc_nix *roc_nix);
+ bool __roc_api roc_nix_tm_is_user_hierarchy_enabled(struct roc_nix *nix);
+ int __roc_api roc_nix_tm_tree_type_get(struct roc_nix *nix);
+ int __roc_api roc_nix_tm_mark_config(struct roc_nix *roc_nix,
+diff --git a/drivers/common/cnxk/roc_nix_priv.h b/drivers/common/cnxk/roc_nix_priv.h
+index dc3450a3d4..d7ea3c6be2 100644
+--- a/drivers/common/cnxk/roc_nix_priv.h
++++ b/drivers/common/cnxk/roc_nix_priv.h
+@@ -387,6 +387,8 @@ nix_tm_tree2str(enum roc_nix_tm_tree tree)
+ 		return "Rate Limit Tree";
+ 	else if (tree == ROC_NIX_TM_PFC)
+ 		return "PFC Tree";
++	else if (tree == ROC_NIX_TM_SDP)
++		return "SDP Tree";
+ 	else if (tree == ROC_NIX_TM_USER)
+ 		return "User Tree";
+ 	return "???";
+diff --git a/drivers/common/cnxk/roc_nix_tm.c b/drivers/common/cnxk/roc_nix_tm.c
+index abfe80978b..2771fd8fc4 100644
+--- a/drivers/common/cnxk/roc_nix_tm.c
++++ b/drivers/common/cnxk/roc_nix_tm.c
+@@ -1890,6 +1890,164 @@ roc_nix_tm_pfc_prepare_tree(struct roc_nix *roc_nix)
+ 	return rc;
  }
  
++int
++roc_nix_tm_sdp_prepare_tree(struct roc_nix *roc_nix)
++{
++	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
++	uint32_t nonleaf_id = nix->nb_tx_queues;
++	uint32_t tl2_node_id, tl3_node_id;
++	uint8_t leaf_lvl, lvl, lvl_start;
++	struct nix_tm_node *node = NULL;
++	uint32_t parent, i;
++	int rc = -ENOMEM;
++
++	parent = ROC_NIX_TM_NODE_ID_INVALID;
++	leaf_lvl = (nix_tm_have_tl1_access(nix) ? ROC_TM_LVL_QUEUE : ROC_TM_LVL_SCH4);
++
++	/* TL1 node */
++	node = nix_tm_node_alloc();
++	if (!node)
++		goto error;
++
++	node->id = nonleaf_id;
++	node->parent_id = parent;
++	node->priority = 0;
++	node->weight = NIX_TM_DFLT_RR_WT;
++	node->shaper_profile_id = ROC_NIX_TM_SHAPER_PROFILE_NONE;
++	node->lvl = ROC_TM_LVL_ROOT;
++	node->tree = ROC_NIX_TM_SDP;
++	node->rel_chan = NIX_TM_CHAN_INVALID;
++
++	rc = nix_tm_node_add(roc_nix, node);
++	if (rc)
++		goto error;
++
++	parent = nonleaf_id;
++	nonleaf_id++;
++
++	lvl_start = ROC_TM_LVL_SCH1;
++	if (roc_nix_is_pf(roc_nix)) {
++		/* TL2 node */
++		rc = -ENOMEM;
++		node = nix_tm_node_alloc();
++		if (!node)
++			goto error;
++
++		node->id = nonleaf_id;
++		node->parent_id = parent;
++		node->priority = 0;
++		node->weight = NIX_TM_DFLT_RR_WT;
++		node->shaper_profile_id = ROC_NIX_TM_SHAPER_PROFILE_NONE;
++		node->lvl = ROC_TM_LVL_SCH1;
++		node->tree = ROC_NIX_TM_SDP;
++		node->rel_chan = NIX_TM_CHAN_INVALID;
++
++		rc = nix_tm_node_add(roc_nix, node);
++		if (rc)
++			goto error;
++
++		lvl_start = ROC_TM_LVL_SCH2;
++		tl2_node_id = nonleaf_id;
++		nonleaf_id++;
++	} else {
++		tl2_node_id = parent;
++	}
++
++	/* Allocate TL3 node */
++	rc = -ENOMEM;
++	node = nix_tm_node_alloc();
++	if (!node)
++		goto error;
++
++	node->id = nonleaf_id;
++	node->parent_id = tl2_node_id;
++	node->priority = 0;
++	node->weight = NIX_TM_DFLT_RR_WT;
++	node->shaper_profile_id = ROC_NIX_TM_SHAPER_PROFILE_NONE;
++	node->lvl = lvl_start;
++	node->tree = ROC_NIX_TM_SDP;
++	node->rel_chan = NIX_TM_CHAN_INVALID;
++
++	rc = nix_tm_node_add(roc_nix, node);
++	if (rc)
++		goto error;
++
++	tl3_node_id = nonleaf_id;
++	nonleaf_id++;
++	lvl_start++;
++
++	for (i = 0; i < nix->nb_tx_queues; i++) {
++		parent = tl3_node_id;
++		rc = -ENOMEM;
++		node = nix_tm_node_alloc();
++		if (!node)
++			goto error;
++
++		node->id = nonleaf_id;
++		node->parent_id = parent;
++		node->priority = 0;
++		node->weight = NIX_TM_DFLT_RR_WT;
++		node->shaper_profile_id = ROC_NIX_TM_SHAPER_PROFILE_NONE;
++		node->lvl = lvl_start;
++		node->tree = ROC_NIX_TM_SDP;
++		/* For SDP, if BP enabled use channel to PAUSE the corresponding queue */
++		node->rel_chan = (i % nix->tx_chan_cnt);
++
++		rc = nix_tm_node_add(roc_nix, node);
++		if (rc)
++			goto error;
++
++		parent = nonleaf_id;
++		nonleaf_id++;
++
++		lvl = (nix_tm_have_tl1_access(nix) ? ROC_TM_LVL_SCH4 : ROC_TM_LVL_SCH3);
++
++		rc = -ENOMEM;
++		node = nix_tm_node_alloc();
++		if (!node)
++			goto error;
++
++		node->id = nonleaf_id;
++		node->parent_id = parent;
++		node->priority = 0;
++		node->weight = NIX_TM_DFLT_RR_WT;
++		node->shaper_profile_id = ROC_NIX_TM_SHAPER_PROFILE_NONE;
++		node->lvl = lvl;
++		node->tree = ROC_NIX_TM_SDP;
++		node->rel_chan = NIX_TM_CHAN_INVALID;
++
++		rc = nix_tm_node_add(roc_nix, node);
++		if (rc)
++			goto error;
++
++		parent = nonleaf_id;
++		nonleaf_id++;
++
++		rc = -ENOMEM;
++		node = nix_tm_node_alloc();
++		if (!node)
++			goto error;
++
++		node->id = i;
++		node->parent_id = parent;
++		node->priority = 0;
++		node->weight = NIX_TM_DFLT_RR_WT;
++		node->shaper_profile_id = ROC_NIX_TM_SHAPER_PROFILE_NONE;
++		node->lvl = leaf_lvl;
++		node->tree = ROC_NIX_TM_SDP;
++		node->rel_chan = NIX_TM_CHAN_INVALID;
++
++		rc = nix_tm_node_add(roc_nix, node);
++		if (rc)
++			goto error;
++	}
++
++	return 0;
++error:
++	nix_tm_node_free(node);
++	return rc;
++}
++
+ int
+ nix_tm_free_resources(struct roc_nix *roc_nix, uint32_t tree_mask, bool hw_only)
+ {
+diff --git a/drivers/common/cnxk/roc_nix_tm_ops.c b/drivers/common/cnxk/roc_nix_tm_ops.c
+index b89f08ac66..951c310a56 100644
+--- a/drivers/common/cnxk/roc_nix_tm_ops.c
++++ b/drivers/common/cnxk/roc_nix_tm_ops.c
+@@ -1035,7 +1035,10 @@ roc_nix_tm_init(struct roc_nix *roc_nix)
+ 	}
+ 
+ 	/* Prepare default tree */
+-	rc = nix_tm_prepare_default_tree(roc_nix);
++	if (roc_nix_is_sdp(roc_nix) && (nix->nb_tx_queues > 1))
++		rc = roc_nix_tm_sdp_prepare_tree(roc_nix);
++	else
++		rc = nix_tm_prepare_default_tree(roc_nix);
+ 	if (rc) {
+ 		plt_err("failed to prepare default tm tree, rc=%d", rc);
+ 		return rc;
+diff --git a/drivers/common/cnxk/roc_nix_tm_utils.c b/drivers/common/cnxk/roc_nix_tm_utils.c
+index 4a09cc2aae..eaf6f9e4c7 100644
+--- a/drivers/common/cnxk/roc_nix_tm_utils.c
++++ b/drivers/common/cnxk/roc_nix_tm_utils.c
+@@ -582,7 +582,7 @@ nix_tm_topology_reg_prep(struct nix *nix, struct nix_tm_node *node,
+ 
+ 		/* Configure TL4 to send to SDP channel instead of CGX/LBK */
+ 		if (nix->sdp_link) {
+-			relchan = nix->tx_chan_base & 0xff;
++			relchan = (nix->tx_chan_base & 0xff) + node->rel_chan;
+ 			plt_tm_dbg("relchan=%u schq=%u tx_chan_cnt=%u", relchan, schq,
+ 				   nix->tx_chan_cnt);
+ 			reg[k] = NIX_AF_TL4X_SDP_LINK_CFG(schq);
+diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/common/cnxk/roc_platform_base_symbols.c
+index 7f0fe601ad..cc35c46456 100644
+--- a/drivers/common/cnxk/roc_platform_base_symbols.c
++++ b/drivers/common/cnxk/roc_platform_base_symbols.c
+@@ -221,6 +221,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_cq_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_sq_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_tm_dump)
++RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_tm_sdp_prepare_tree)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_dev_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_outb_cpt_lfs_dump)
 -- 
-2.43.0
+2.34.1
 
