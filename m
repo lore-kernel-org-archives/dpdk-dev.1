@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 357CFCCD18D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 12:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16125CCD18D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 12:36:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6BBE9402AE;
-	Tue, 14 Oct 2025 14:36:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 67D0D40656;
+	Tue, 14 Oct 2025 14:36:33 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 2AD2840288
+ by mails.dpdk.org (Postfix) with ESMTP id B744840288
  for <dev@dpdk.org>; Tue, 14 Oct 2025 14:36:30 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1760445390; x=1791981390;
+ t=1760445391; x=1791981391;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=70QyDoePauC9t6avm3WPEt+K6LQV3XIPw4/tmuQNDpI=;
- b=j1YQWNU7lbXtyD3KWb0/AmfdkJIqH1tk9DDIPMuf/nL6FPN36Io3p8dz
- sY5TJ7gZYOuS6OsjtS7ruwVWFi/HHUVUBzf7vcI9fa51FSQhw8o7oEiGV
- euQtTCYhKJkI1T/CVSD4f1Vm/lAt6MCkdoQxL+MVe8u/8CxuDtmDxkISd
- VTAKDxCRG8VH7PYoVdgFqP5Edpca550qP8C5kvGGzW3pG5EXXak4GjUOz
- yQJB1GJJul3bnnG4iC+LRBdymQPDs+ZPjFya3ENwYoS2fVEsAbwv5RLVs
- nDJfvtXi9p6iyntKbxDr0/sj95BHlhRqzaqSnhG16K3+1nZrqzlSgkpyF Q==;
-X-CSE-ConnectionGUID: QfMOzV5wQMC8TZ3AnPyIow==
-X-CSE-MsgGUID: s7Gl2GDwTAWhvV3C0XxojA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62308159"
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; d="scan'208";a="62308159"
+ bh=LTN4Ay/bFQ9W/ishPZey+U4c6puV50H8TkfQmCpsTCQ=;
+ b=FoAdx9qW/N5tEoW2UdKpAcQt9uMPgdjDcQpiC5854cWgKnsa6GyeGpt9
+ p3MMUosTG8Tl2kqXyVZEE/qucVA/r/GunW1pJW4j33VjL/070uz94f58k
+ 0Mescj9Hfyru4XR3QV2Ykw+Ur5iL2+pK7MTpHBK/59YXrtdhC7/nyl3YU
+ LsT+UrxmzdpW0Wjgc0U7G3kxKjNt6CdsUvG8jo04ZiFCI6tbw33X2CZN+
+ TVIGTKXNu70u/XbzwWaDYNSQY9ge9T9m1DCtIXdzRfkZ/os0gAU/SSFNn
+ nx4uPOIpGRiv5AyzqL/bLRiQPb/gMgpXKT5mg5yT+pUd7BcryRS6Fwz/C Q==;
+X-CSE-ConnectionGUID: 29tE6PfXQcec752hQsGn4Q==
+X-CSE-MsgGUID: hgBGp987RPW/BwPVTVR62Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62308160"
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; d="scan'208";a="62308160"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Oct 2025 05:36:29 -0700
-X-CSE-ConnectionGUID: 4swfZqdGStGJdMWvbvwqLw==
-X-CSE-MsgGUID: 8Sn25HpkQS+flkZL+yBpRQ==
+ 14 Oct 2025 05:36:30 -0700
+X-CSE-ConnectionGUID: txtkfT93QDya4DU/UEDiiQ==
+X-CSE-MsgGUID: Gq/cDCIJRHGvAgw9aD48vQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; d="scan'208";a="181093724"
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; d="scan'208";a="181093729"
 Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by orviesa010.jf.intel.com with ESMTP; 14 Oct 2025 05:36:28 -0700
+ by orviesa010.jf.intel.com with ESMTP; 14 Oct 2025 05:36:30 -0700
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>,
- Timothy Miskell <timothy.miskell@intel.com>
-Subject: [PATCH v4 1/2] net/iavf: support VF initiated resets
-Date: Tue, 14 Oct 2025 12:36:23 +0000
-Message-Id: <20251014123624.1413473-1-ciara.loftus@intel.com>
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH v4 2/2] net/iavf: add reinit command to testpmd
+Date: Tue, 14 Oct 2025 12:36:24 +0000
+Message-Id: <20251014123624.1413473-2-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251009102835.926479-1-ciara.loftus@intel.com>
+In-Reply-To: <20251014123624.1413473-1-ciara.loftus@intel.com>
 References: <20251009102835.926479-1-ciara.loftus@intel.com>
+ <20251014123624.1413473-1-ciara.loftus@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -60,164 +60,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce a function that allows a VF to request the PF to reset the VF
-and then subsequently reinitialise and restart the VF transparently.
-This is useful for example when the application detects that one of the
-queues have hung or any event where a reset is required and the PF is
-unlikely to trigger it.
-
-This commit leverages the existing graceful reset recovery path that was
-introduced in commit 3e6a5d2d310a ("net/iavf: add devargs to enable VF
-auto-reset").
+This patch adds an IAVF testpmd command "port reinit <port_id>" which
+will send a request to the PF to reset the given VF, followed by the
+VF then reinitialising and restarting itself.
 
 Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
-Signed-off-by: Timothy Miskell <timothy.miskell@intel.com>
 ---
 v4:
-* Move the new reinit function to an existing file instead of creating
-a new one.
 * Rename restore -> reinit
-
-v3:
-* Don't set the "vf_reset" flag before iavf_handle_hw_reset. It is only
-for cases when the PF has initiated the reset.
-
-v2:
-* Always perform the requested reset, regardless of whether the
-auto_reset devarg is set or not.
-* Don't use the event handler to call iavf_handle_hw_reset. Call it
-inline in the rte_pmd_iavf_reset function call.
-* Do not send VIRTCHNL_OP_RESET_VF to the adminq before the
-iavf_handle_hw_reset sequence. That message is already sent within the
-iavf_handle_hw_reset function during iavf_dev_reset.
-* Rename the function to rte_pmd_iavf_restore to reflect that it's not
-just a reset being performed, but a restoration afterwards too.
 ---
- drivers/net/intel/iavf/iavf.h         |  3 ++-
- drivers/net/intel/iavf/iavf_ethdev.c  | 30 +++++++++++++++++++++++++--
- drivers/net/intel/iavf/iavf_vchnl.c   |  2 +-
- drivers/net/intel/iavf/rte_pmd_iavf.h | 13 ++++++++++++
- 4 files changed, 44 insertions(+), 4 deletions(-)
+ drivers/net/intel/iavf/iavf_testpmd.c | 51 +++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 435902fbc2..3552db7e06 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -563,6 +563,7 @@ int iavf_flow_sub_check(struct iavf_adapter *adapter,
- 			struct iavf_fsub_conf *filter);
- void iavf_dev_watchdog_enable(struct iavf_adapter *adapter);
- void iavf_dev_watchdog_disable(struct iavf_adapter *adapter);
--void iavf_handle_hw_reset(struct rte_eth_dev *dev);
-+void iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset);
- void iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change);
-+bool is_iavf_supported(struct rte_eth_dev *dev);
- #endif /* _IAVF_ETHDEV_H_ */
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 08c814725d..95e5832f03 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -28,6 +28,7 @@
- #include <rte_malloc.h>
- #include <rte_memzone.h>
- #include <dev_driver.h>
-+#include <eal_export.h>
- 
- #include "iavf.h"
- #include "iavf_rxtx.h"
-@@ -3096,7 +3097,7 @@ iavf_is_reset_detected(struct iavf_adapter *adapter)
-  * Handle hardware reset
-  */
- void
--iavf_handle_hw_reset(struct rte_eth_dev *dev)
-+iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
- 	struct iavf_adapter *adapter = dev->data->dev_private;
-@@ -3105,7 +3106,7 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev)
- 	if (!dev->data->dev_started)
- 		return;
- 
--	if (!iavf_is_reset_detected(adapter)) {
-+	if (!vf_initiated_reset && !iavf_is_reset_detected(adapter)) {
- 		PMD_DRV_LOG(DEBUG, "reset not start");
- 		return;
- 	}
-@@ -3141,6 +3142,26 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev)
- 	return;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_iavf_reinit, 25.11)
-+int
-+rte_pmd_iavf_reinit(uint16_t port)
-+{
-+	struct rte_eth_dev *dev;
-+
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
-+
-+	dev = &rte_eth_devices[port];
-+
-+	if (!is_iavf_supported(dev)) {
-+		PMD_DRV_LOG(ERR, "Cannot reinit VF, port %u is not an IAVF device.", port);
-+		return -ENOTSUP;
-+	}
-+
-+	iavf_handle_hw_reset(dev, true);
-+
-+	return 0;
-+}
-+
- void
- iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change)
- {
-@@ -3212,6 +3233,11 @@ static struct rte_pci_driver rte_iavf_pmd = {
- 	.remove = eth_iavf_pci_remove,
+diff --git a/drivers/net/intel/iavf/iavf_testpmd.c b/drivers/net/intel/iavf/iavf_testpmd.c
+index 775179fc01..4731d0b61b 100644
+--- a/drivers/net/intel/iavf/iavf_testpmd.c
++++ b/drivers/net/intel/iavf/iavf_testpmd.c
+@@ -69,6 +69,52 @@ static cmdline_parse_inst_t cmd_enable_tx_lldp = {
+ 	},
  };
  
-+bool is_iavf_supported(struct rte_eth_dev *dev)
++struct cmd_reinit_result {
++	cmdline_fixed_string_t port;
++	cmdline_fixed_string_t reinit;
++	portid_t port_id;
++};
++
++static cmdline_parse_token_string_t cmd_reinit_port =
++	TOKEN_STRING_INITIALIZER(struct cmd_reinit_result,
++		port, "port");
++static cmdline_parse_token_string_t cmd_reinit_reinit =
++	TOKEN_STRING_INITIALIZER(struct cmd_reinit_result,
++		reinit, "reinit");
++static cmdline_parse_token_num_t cmd_reinit_port_id =
++	TOKEN_NUM_INITIALIZER(struct cmd_reinit_result,
++		port_id, RTE_UINT16);
++
++static void
++cmd_reinit_parsed(void *parsed_result,
++	__rte_unused struct cmdline *cl, __rte_unused void *data)
 +{
-+	return !strcmp(dev->device->driver->name, rte_iavf_pmd.driver.name);
++	struct cmd_reinit_result *res = parsed_result;
++	int ret;
++
++	if (port_id_is_invalid(res->port_id, ENABLED_WARN))
++		return;
++
++	ret = rte_pmd_iavf_reinit(res->port_id);
++	if (ret < 0)
++		fprintf(stderr, "Request to reinit VF failed for port %u: %s\n",
++			res->port_id, rte_strerror(-ret));
++	else
++		printf("VF reinit requested for port %u\n", res->port_id);
 +}
 +
- RTE_PMD_REGISTER_PCI(net_iavf, rte_iavf_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_iavf, pci_id_iavf_map);
- RTE_PMD_REGISTER_KMOD_DEP(net_iavf, "* igb_uio | vfio-pci");
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index b1b7a5bf94..460035d772 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -83,7 +83,7 @@ iavf_dev_event_handle(void *param __rte_unused)
- 			struct iavf_adapter *adapter = pos->dev->data->dev_private;
- 			if (pos->event == RTE_ETH_EVENT_INTR_RESET &&
- 			    adapter->devargs.auto_reset) {
--				iavf_handle_hw_reset(pos->dev);
-+				iavf_handle_hw_reset(pos->dev, false);
- 				rte_free(pos);
- 				continue;
- 			}
-diff --git a/drivers/net/intel/iavf/rte_pmd_iavf.h b/drivers/net/intel/iavf/rte_pmd_iavf.h
-index 04b86a5dd7..dea1bd2789 100644
---- a/drivers/net/intel/iavf/rte_pmd_iavf.h
-+++ b/drivers/net/intel/iavf/rte_pmd_iavf.h
-@@ -96,6 +96,19 @@ extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_tcp_mask;
- extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_ip_offset_mask;
- extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_ipsec_crypto_said_mask;
- 
-+/**
-+ * Request PF driver to initiate a PF-to-VF RESET and restore the device
-+ * following the reset by reconfiguring and restarting the device. The
-+ * port must be started before calling this function.
-+ *
-+ * @param port
-+ *   The port identifier of the Ethernet device.
-+ * @return
-+ *   0 if successful, otherwise if a failure occurs
-+ */
-+__rte_experimental
-+int rte_pmd_iavf_reinit(uint16_t port);
++static cmdline_parse_inst_t cmd_reinit = {
++	.f = cmd_reinit_parsed,
++	.data = NULL,
++	.help_str = "port reinit <port_id>",
++	.tokens = {
++		(void *)&cmd_reinit_port,
++		(void *)&cmd_reinit_reinit,
++		(void *)&cmd_reinit_port_id,
++		NULL,
++	},
++};
 +
- /**
-  * The mbuf dynamic field pointer for flexible descriptor's extraction metadata.
-  */
+ static struct testpmd_driver_commands iavf_cmds = {
+ 	.commands = {
+ 	{
+@@ -76,6 +122,11 @@ static struct testpmd_driver_commands iavf_cmds = {
+ 		"set tx lldp (on|off)\n"
+ 		"    Set iavf Tx lldp packet(currently only supported on)\n\n",
+ 	},
++	{
++		&cmd_reinit,
++		"port reinit (port_id)\n"
++		"    Send a request to the PF to reset the VF, then restore the port\n\n",
++	},
+ 	{ NULL, NULL },
+ 	},
+ };
 -- 
 2.34.1
 
