@@ -2,84 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB6ECCD184
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 12:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 357CFCCD18D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 12:36:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 04072402AE;
-	Tue, 14 Oct 2025 14:32:05 +0200 (CEST)
-Received: from fhigh-b7-smtp.messagingengine.com
- (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
- by mails.dpdk.org (Postfix) with ESMTP id 4DDDC40288
- for <dev@dpdk.org>; Tue, 14 Oct 2025 14:32:03 +0200 (CEST)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 5027D7A0044;
- Tue, 14 Oct 2025 08:32:02 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-10.internal (MEProxy); Tue, 14 Oct 2025 08:32:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760445122;
- x=1760531522; bh=uI3WtWK2p5jXjXJBORw+qqs/XNFyyaxw7Ej2/vjIQMM=; b=
- HLYlNfvbqSBrm+JubZnPqrfYTJ9f9eEmM3s763IGqdRAAU7+zB4lcL848TPJp7uq
- CJ/aOT7ENg3p5S1Fk7Do3mFPQ6gN87nmYUhUHjZHVPaSrCmivHaDrEdXZW/7p2a4
- eN0xtOW7OuH5uKyaTCrbCHCLhjKEbifc6YAdcm91IeJx6hyDD+xwaK/+zUkE2bEh
- wjl2PHYADFNumj7Dbql5P7VXRyJ2AvxhNdA1bAj8SVuMn9/vAluJ9JlSvGLYR+gS
- qONH77btlLzrztau8ZnsrFbGVRwzsXD9dQ/1lm1VxrS/eyTxwF6x29+An+LfRw1r
- ZD1LoygKdY68RJlF/fsSaw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760445122; x=
- 1760531522; bh=uI3WtWK2p5jXjXJBORw+qqs/XNFyyaxw7Ej2/vjIQMM=; b=v
- E/ytUS7yHooOpaJvURgO5k9w+j8Or5sgehGvX4tBwLhyaRgm1ql4sbWuTXfOTnm9
- 4eiUEqLFM+K7YczOiyoXaT8hbTGnm1Ry6wgQ8l4K7SUc0IifDnxJ0HqrqDB8TZG1
- EnncDbO4dTib/qxr6aebHEm3UVRv+3SUWtTrYCsyyevhHeiouOy7SDSFhmSInHH1
- ZLddqcQDLCZ0EjauZMjEeThoHjrnoo70gWXQX+EYHaQ0yPkn0ngJKDQCUJJ4mUmK
- q5LyUZAvP8oNJ05s1VVMDm6drptJN4Uosp88fJFZXlqgcqljjQTPn7SmPD9j/L3u
- Va6YetnTyXATpcu6iqF+Q==
-X-ME-Sender: <xms:wULuaBzKlHZOLLtqZcyyXNurT0EeoJevtp5PEZz8xCy27HmPYTahVg>
- <xme:wULuaKOPu8hogtKtcMZ1w64qqXKEpvPoh4HLpXLMHZ_35jUGju3xuNTDDOjOdXJTn
- rLPRUjQF1BnkM5kSKe9-pq1MFrzCsm-8OAitNIMqVKPki35e5Wk>
-X-ME-Received: <xmr:wULuaG7iZRWNOgLZJknqlveXG5yCwnWeeblao7oKQsj-8XQE3dfMddMeI9ss0ifTRRxxNmBOwiYBeojlYNNQ-HOs-w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddtheegucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
- leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihsh
- htvghmshdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthho
- pehshhhpvghrvghtiiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggthhgvsh
- hlrghvohesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghr
- ughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifoh
- hrkhhplhhumhgsvghrrdhorhhg
-X-ME-Proxy: <xmx:wULuaDl-qb7ehKmRHqIBI64DSjpL-gRYY8zgxtiMfiWce-03r4vJFQ>
- <xmx:wULuaPRO4YjImYBBIbQ3s4PWlrNxbk9sS-IEZDHTSPg3R-5IdBqCXQ>
- <xmx:wULuaKFFu_n_4Eg_ycORAPLyyB7JlDEjBb4efH_DdaB0-pGYCLwxRA>
- <xmx:wULuaMEaLcquO_cGN-KTBxooOac14G1vZaVhJqCXEoDZuIqQWTsMRQ>
- <xmx:wkLuaCda-lqzOG2YxNrOlzWVrvfXVPvxvHF9RPb3_DeVwQAwMZ_GNBqx>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 14 Oct 2025 08:32:00 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, shperetz@nvidia.com, viacheslavo@nvidia.com,
- bruce.richardson@intel.com, stephen@networkplumber.org
-Subject: Re: [PATCH v5 3/7] mbuf: record mbuf operations history
-Date: Tue, 14 Oct 2025 14:31:59 +0200
-Message-ID: <4348674.RUnXabflUD@thomas>
-In-Reply-To: <2949753.n0HT0TaD9V@thomas>
-References: <20250616072910.113042-1-shperetz@nvidia.com>
- <98CBD80474FA8B44BF855DF32C47DC35F654C7@smartserver.smartshare.dk>
- <2949753.n0HT0TaD9V@thomas>
+	by mails.dpdk.org (Postfix) with ESMTP id 6BBE9402AE;
+	Tue, 14 Oct 2025 14:36:31 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 2AD2840288
+ for <dev@dpdk.org>; Tue, 14 Oct 2025 14:36:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1760445390; x=1791981390;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=70QyDoePauC9t6avm3WPEt+K6LQV3XIPw4/tmuQNDpI=;
+ b=j1YQWNU7lbXtyD3KWb0/AmfdkJIqH1tk9DDIPMuf/nL6FPN36Io3p8dz
+ sY5TJ7gZYOuS6OsjtS7ruwVWFi/HHUVUBzf7vcI9fa51FSQhw8o7oEiGV
+ euQtTCYhKJkI1T/CVSD4f1Vm/lAt6MCkdoQxL+MVe8u/8CxuDtmDxkISd
+ VTAKDxCRG8VH7PYoVdgFqP5Edpca550qP8C5kvGGzW3pG5EXXak4GjUOz
+ yQJB1GJJul3bnnG4iC+LRBdymQPDs+ZPjFya3ENwYoS2fVEsAbwv5RLVs
+ nDJfvtXi9p6iyntKbxDr0/sj95BHlhRqzaqSnhG16K3+1nZrqzlSgkpyF Q==;
+X-CSE-ConnectionGUID: QfMOzV5wQMC8TZ3AnPyIow==
+X-CSE-MsgGUID: s7Gl2GDwTAWhvV3C0XxojA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="62308159"
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; d="scan'208";a="62308159"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 Oct 2025 05:36:29 -0700
+X-CSE-ConnectionGUID: 4swfZqdGStGJdMWvbvwqLw==
+X-CSE-MsgGUID: 8Sn25HpkQS+flkZL+yBpRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,228,1754982000"; d="scan'208";a="181093724"
+Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
+ by orviesa010.jf.intel.com with ESMTP; 14 Oct 2025 05:36:28 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>,
+ Timothy Miskell <timothy.miskell@intel.com>
+Subject: [PATCH v4 1/2] net/iavf: support VF initiated resets
+Date: Tue, 14 Oct 2025 12:36:23 +0000
+Message-Id: <20251014123624.1413473-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251009102835.926479-1-ciara.loftus@intel.com>
+References: <20251009102835.926479-1-ciara.loftus@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,29 +60,164 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-14/10/2025 14:03, Thomas Monjalon:
-> 14/10/2025 11:59, Morten Br=C3=B8rup:
-> > From: Thomas Monjalon [mailto:thomas@monjalon.net]
-> > > @@ -667,6 +672,7 @@ rte_mbuf_raw_free(struct rte_mbuf *m)
-> > >  {
-> > >  	__rte_mbuf_raw_sanity_check(m);
-> > >  	rte_mempool_put(m->pool, m);
-> > > +	rte_mbuf_history_mark(m, RTE_MBUF_HISTORY_OP_LIB_FREE);
-> >=20
-> > Fix: For improved race protection, mark the mbuf before actually freein=
-g it, like this:
-> >  	__rte_mbuf_raw_sanity_check(m);
-> > +	rte_mbuf_history_mark(m, RTE_MBUF_HISTORY_OP_LIB_FREE);
-> >  	rte_mempool_put(m->pool, m);
->=20
-> The race is about a debugging mark.
-> The benefit of marking after is that the last mark is the upper level,
-> so we can easily distinguish between a free initiated by the app or the P=
-MD.
+Introduce a function that allows a VF to request the PF to reset the VF
+and then subsequently reinitialise and restart the VF transparently.
+This is useful for example when the application detects that one of the
+queues have hung or any event where a reset is required and the PF is
+unlikely to trigger it.
 
-I've messed up with another consideration.
-Here we are in the mbuf lib, so the lowest level.
-You're right it is better to mark RTE_MBUF_HISTORY_OP_LIB_FREE
-before freeing effectively.
+This commit leverages the existing graceful reset recovery path that was
+introduced in commit 3e6a5d2d310a ("net/iavf: add devargs to enable VF
+auto-reset").
 
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+Signed-off-by: Timothy Miskell <timothy.miskell@intel.com>
+---
+v4:
+* Move the new reinit function to an existing file instead of creating
+a new one.
+* Rename restore -> reinit
+
+v3:
+* Don't set the "vf_reset" flag before iavf_handle_hw_reset. It is only
+for cases when the PF has initiated the reset.
+
+v2:
+* Always perform the requested reset, regardless of whether the
+auto_reset devarg is set or not.
+* Don't use the event handler to call iavf_handle_hw_reset. Call it
+inline in the rte_pmd_iavf_reset function call.
+* Do not send VIRTCHNL_OP_RESET_VF to the adminq before the
+iavf_handle_hw_reset sequence. That message is already sent within the
+iavf_handle_hw_reset function during iavf_dev_reset.
+* Rename the function to rte_pmd_iavf_restore to reflect that it's not
+just a reset being performed, but a restoration afterwards too.
+---
+ drivers/net/intel/iavf/iavf.h         |  3 ++-
+ drivers/net/intel/iavf/iavf_ethdev.c  | 30 +++++++++++++++++++++++++--
+ drivers/net/intel/iavf/iavf_vchnl.c   |  2 +-
+ drivers/net/intel/iavf/rte_pmd_iavf.h | 13 ++++++++++++
+ 4 files changed, 44 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index 435902fbc2..3552db7e06 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -563,6 +563,7 @@ int iavf_flow_sub_check(struct iavf_adapter *adapter,
+ 			struct iavf_fsub_conf *filter);
+ void iavf_dev_watchdog_enable(struct iavf_adapter *adapter);
+ void iavf_dev_watchdog_disable(struct iavf_adapter *adapter);
+-void iavf_handle_hw_reset(struct rte_eth_dev *dev);
++void iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset);
+ void iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change);
++bool is_iavf_supported(struct rte_eth_dev *dev);
+ #endif /* _IAVF_ETHDEV_H_ */
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 08c814725d..95e5832f03 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -28,6 +28,7 @@
+ #include <rte_malloc.h>
+ #include <rte_memzone.h>
+ #include <dev_driver.h>
++#include <eal_export.h>
+ 
+ #include "iavf.h"
+ #include "iavf_rxtx.h"
+@@ -3096,7 +3097,7 @@ iavf_is_reset_detected(struct iavf_adapter *adapter)
+  * Handle hardware reset
+  */
+ void
+-iavf_handle_hw_reset(struct rte_eth_dev *dev)
++iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ {
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
+ 	struct iavf_adapter *adapter = dev->data->dev_private;
+@@ -3105,7 +3106,7 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev)
+ 	if (!dev->data->dev_started)
+ 		return;
+ 
+-	if (!iavf_is_reset_detected(adapter)) {
++	if (!vf_initiated_reset && !iavf_is_reset_detected(adapter)) {
+ 		PMD_DRV_LOG(DEBUG, "reset not start");
+ 		return;
+ 	}
+@@ -3141,6 +3142,26 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev)
+ 	return;
+ }
+ 
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_iavf_reinit, 25.11)
++int
++rte_pmd_iavf_reinit(uint16_t port)
++{
++	struct rte_eth_dev *dev;
++
++	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
++
++	dev = &rte_eth_devices[port];
++
++	if (!is_iavf_supported(dev)) {
++		PMD_DRV_LOG(ERR, "Cannot reinit VF, port %u is not an IAVF device.", port);
++		return -ENOTSUP;
++	}
++
++	iavf_handle_hw_reset(dev, true);
++
++	return 0;
++}
++
+ void
+ iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change)
+ {
+@@ -3212,6 +3233,11 @@ static struct rte_pci_driver rte_iavf_pmd = {
+ 	.remove = eth_iavf_pci_remove,
+ };
+ 
++bool is_iavf_supported(struct rte_eth_dev *dev)
++{
++	return !strcmp(dev->device->driver->name, rte_iavf_pmd.driver.name);
++}
++
+ RTE_PMD_REGISTER_PCI(net_iavf, rte_iavf_pmd);
+ RTE_PMD_REGISTER_PCI_TABLE(net_iavf, pci_id_iavf_map);
+ RTE_PMD_REGISTER_KMOD_DEP(net_iavf, "* igb_uio | vfio-pci");
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index b1b7a5bf94..460035d772 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -83,7 +83,7 @@ iavf_dev_event_handle(void *param __rte_unused)
+ 			struct iavf_adapter *adapter = pos->dev->data->dev_private;
+ 			if (pos->event == RTE_ETH_EVENT_INTR_RESET &&
+ 			    adapter->devargs.auto_reset) {
+-				iavf_handle_hw_reset(pos->dev);
++				iavf_handle_hw_reset(pos->dev, false);
+ 				rte_free(pos);
+ 				continue;
+ 			}
+diff --git a/drivers/net/intel/iavf/rte_pmd_iavf.h b/drivers/net/intel/iavf/rte_pmd_iavf.h
+index 04b86a5dd7..dea1bd2789 100644
+--- a/drivers/net/intel/iavf/rte_pmd_iavf.h
++++ b/drivers/net/intel/iavf/rte_pmd_iavf.h
+@@ -96,6 +96,19 @@ extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_tcp_mask;
+ extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_ip_offset_mask;
+ extern uint64_t rte_pmd_ifd_dynflag_proto_xtr_ipsec_crypto_said_mask;
+ 
++/**
++ * Request PF driver to initiate a PF-to-VF RESET and restore the device
++ * following the reset by reconfiguring and restarting the device. The
++ * port must be started before calling this function.
++ *
++ * @param port
++ *   The port identifier of the Ethernet device.
++ * @return
++ *   0 if successful, otherwise if a failure occurs
++ */
++__rte_experimental
++int rte_pmd_iavf_reinit(uint16_t port);
++
+ /**
+  * The mbuf dynamic field pointer for flexible descriptor's extraction metadata.
+  */
+-- 
+2.34.1
 
