@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF6BCCD187
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 10:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 868FECCD184
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 10:47:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CE573402D3;
-	Tue, 14 Oct 2025 12:46:03 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 2EDFB402AE
- for <dev@dpdk.org>; Tue, 14 Oct 2025 12:46:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CB0BA402D3;
+	Tue, 14 Oct 2025 12:47:14 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 9CF91402AE
+ for <dev@dpdk.org>; Tue, 14 Oct 2025 12:47:13 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1760438762; x=1791974762;
+ t=1760438834; x=1791974834;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
  bh=zlDGkZ3PvnSlFb6M891NDq5p8gmyliZcsFjmfcWRMHA=;
- b=MFAbpYYt3gVbZtV8c6hFAi5n0h9sh+DianOKUuy053V34D88Nc9oyzEy
- xnmb5oYmNEzoIL9bB1grnQdZycQykDuJLnIeBljkRa0lZ7zw1j6hroEua
- Nc0zByd5UpA+Bl9mrSwJ+B2hRoQQV0jQnxLjodQ37CqsSNIC7E9gJVUFw
- 7W36qRRYQz6C8DL1vVnxZoORLUuYHv9kLlKgzgUQ5JOzwwJoeZbpYr5XB
- c65lu3HCJHVXTa63QnmqLh5bFWbhTvxVXn05rFrDneN+oeguT1GNiiOrl
- 0sPnMbEAWt7c6KT6GCPHvpRyCrax7YhyHfNL9vw+4SH29nro6BQSawtey A==;
-X-CSE-ConnectionGUID: Eqjeq+YPTAGjdf9BybZK5Q==
-X-CSE-MsgGUID: eb12hds0RgqDsZ8iZclcpg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62505251"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="62505251"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Oct 2025 03:46:01 -0700
-X-CSE-ConnectionGUID: hBBgpM2WTLiGd+/qf3Uc6w==
-X-CSE-MsgGUID: HUR4ckwBRTCcHUzOByu9Tg==
+ b=mmsQel5H8IskQnc5lQkTDb1nxXXOAppOD6+WZ4uQ/UAPo5O+fGP4+a++
+ LriAjCVFwgULQBKvR0K0ERCKnwcQYAlqmXqLSeRZUvtUxYvcZqpGLPRR8
+ gjUgJjLVHrv5yCKGmMxBhwKTOomiworXsBOOG1cNtL/xx+wWHMZV+VSv8
+ j+iqF/saWM2oMaJlmLiIQhmYlzhqBPuVb4AcVzTvwL13spGX5yuJU/RBU
+ mVIg2Fp6wB3lzLutsyDBlFgWIGoO8J7wPcGU6K2+XWMJtP8vuZu7++hqK
+ HeeFC023AVwwZUHvyXlD9VffWJhk0VZAlNF2KqIxlYdwhkwQnRun7qz8I w==;
+X-CSE-ConnectionGUID: U4vigUP5Tki+zjwhqj3f3A==
+X-CSE-MsgGUID: rJ4Z0jiNTZqHVxE9oTUK2g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="66450553"
+X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="66450553"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 Oct 2025 03:47:13 -0700
+X-CSE-ConnectionGUID: R3GAsyweSyqaNKW7z7CPuQ==
+X-CSE-MsgGUID: AjJCVlsST1SY+v6fFat5IA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="186271265"
+X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="181660401"
 Received: from unknown (HELO sprmax19..) ([10.138.182.140])
- by fmviesa005.fm.intel.com with ESMTP; 14 Oct 2025 03:45:59 -0700
+ by orviesa007.jf.intel.com with ESMTP; 14 Oct 2025 03:47:10 -0700
 From: Venkatesh Vemula <venkatesh.vemula@intel.com>
 To: dev@dpdk.org, aman.deep.singh@intel.com, shaiq.wani@intel.com,
  david.marchand@redhat.com, bruce.richardson@intel.com
 Subject: [PATCH v7 0/2] net/intel: add IDPF PCI class ID support
-Date: Tue, 14 Oct 2025 16:14:41 +0530
-Message-Id: <20251014104443.459197-1-venkatesh.vemula@intel.com>
+Date: Tue, 14 Oct 2025 16:15:09 +0530
+Message-Id: <20251014104511.459215-1-venkatesh.vemula@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250919145125.113028-1-venkatesh.vemula@intel.com>
 References: <20250919145125.113028-1-venkatesh.vemula@intel.com>
