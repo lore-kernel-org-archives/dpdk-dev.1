@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0916CCD184
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 07:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 181C4CCD187
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 07:23:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CABC940DF8;
-	Tue, 14 Oct 2025 09:20:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E5DDC40E0B;
+	Tue, 14 Oct 2025 09:20:38 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 11076402A0
+ by mails.dpdk.org (Postfix) with ESMTP id 9107840288
  for <dev@dpdk.org>; Tue, 14 Oct 2025 08:40:41 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ECFA51A1C2B;
- Tue, 14 Oct 2025 08:40:40 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 758FD1A1C32;
+ Tue, 14 Oct 2025 08:40:41 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C0E391A1C30;
- Tue, 14 Oct 2025 08:40:40 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 38C451A1C30;
+ Tue, 14 Oct 2025 08:40:41 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2FA45180009C;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 991D21800091;
  Tue, 14 Oct 2025 14:40:40 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: dev@dpdk.org,
 	stephen@networkplumber.org,
 	david.marchand@redhat.com
 Cc: Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: [PATCH 10/15] drivers: dpaa2 upgrade fslmc base FW to 10.39.0
-Date: Tue, 14 Oct 2025 12:10:30 +0530
-Message-ID: <20251014064035.1312896-11-prashant.gupta_3@nxp.com>
+Subject: [PATCH 11/15] net/dpaa2: replace global variable to driver flag
+Date: Tue, 14 Oct 2025 12:10:31 +0530
+Message-ID: <20251014064035.1312896-12-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251014064035.1312896-1-prashant.gupta_3@nxp.com>
 References: <20251014064035.1312896-1-prashant.gupta_3@nxp.com>
@@ -51,592 +51,191 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 
-This patch upgrades the MC firmware release API compatibility
-to 10.39.0.
-the main changes are:
-dpni - dpmac stats APIs
-RTC - default 1588 clock config support
+This patch replaces the various global variable with
+driver specific flag and align.
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/fslmc/bus_fslmc_driver.h |  1 +
- drivers/bus/fslmc/mc/dpbp.c          | 78 +++++++++++++++++++++++++++-
- drivers/bus/fslmc/mc/dprc.c          |  2 +
- drivers/bus/fslmc/mc/fsl_dpbp.h      | 41 ++++++++++++++-
- drivers/bus/fslmc/mc/fsl_dpmng.h     |  4 +-
- drivers/bus/fslmc/mc/fsl_dprc.h      |  1 +
- drivers/net/dpaa2/dpaa2_mux.c        |  8 +--
- drivers/net/dpaa2/mc/dpkg.c          |  7 ++-
- drivers/net/dpaa2/mc/dprtc.c         | 38 +++++++++++++-
- drivers/net/dpaa2/mc/fsl_dpdmux.h    | 13 +++--
- drivers/net/dpaa2/mc/fsl_dpkg.h      |  7 ++-
- drivers/net/dpaa2/mc/fsl_dpni.h      | 29 +++++++++--
- drivers/net/dpaa2/mc/fsl_dprtc.h     | 39 +++++++++++++-
- drivers/net/dpaa2/mc/fsl_dprtc_cmd.h |  7 ++-
- 14 files changed, 249 insertions(+), 26 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 29 +++++++++++++++----------
+ drivers/net/dpaa2/dpaa2_ethdev.h | 36 +++++++++++++++++++-------------
+ drivers/net/dpaa2/dpaa2_rxtx.c   |  4 ++--
+ 3 files changed, 42 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/bus/fslmc/bus_fslmc_driver.h b/drivers/bus/fslmc/bus_fslmc_driver.h
-index 442de1a3fb..928193f0c0 100644
---- a/drivers/bus/fslmc/bus_fslmc_driver.h
-+++ b/drivers/bus/fslmc/bus_fslmc_driver.h
-@@ -81,6 +81,7 @@ enum rte_dpaa2_dev_type {
- 	DPAA2_MPORTAL,  /**< DPMCP type device */
- 	DPAA2_QDMA,     /**< DPDMAI type device */
- 	DPAA2_MUX,	/**< DPDMUX type device */
-+	DPAA2_SW,       /**< DPSW type device */
- 	DPAA2_DPRTC,	/**< DPRTC type device */
- 	DPAA2_DPRC,	/**< DPRC type device */
- 	DPAA2_MAC,	/**< DPMAC type device */
-diff --git a/drivers/bus/fslmc/mc/dpbp.c b/drivers/bus/fslmc/mc/dpbp.c
-index 08f24d33e8..5529a1fe9c 100644
---- a/drivers/bus/fslmc/mc/dpbp.c
-+++ b/drivers/bus/fslmc/mc/dpbp.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-  *
-  * Copyright 2013-2016 Freescale Semiconductor Inc.
-- * Copyright 2016-2017 NXP
-+ * Copyright 2016-2017, 2025 NXP
-  *
-  */
- #include <fsl_mc_sys.h>
-@@ -362,3 +362,79 @@ int dpbp_get_num_free_bufs(struct fsl_mc_io *mc_io,
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+index 529856f704..56c23e4717 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.c
++++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+@@ -73,9 +73,6 @@ bool dpaa2_enable_ts[RTE_MAX_ETHPORTS];
+ uint64_t dpaa2_timestamp_rx_dynflag;
+ int dpaa2_timestamp_dynfield_offset = -1;
  
- 	return 0;
- }
-+
-+/**
-+ * dpbp_set_notifications() - Set notifications towards software
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPBP object
-+ * @cfg:	notifications configuration
-+ *
-+ * Return:	'0' on Success; Error code otherwise.
-+ */
-+RTE_EXPORT_INTERNAL_SYMBOL(dpbp_set_notifications)
-+int dpbp_set_notifications(struct fsl_mc_io *mc_io,
-+	uint32_t cmd_flags,
-+	uint16_t token,
-+	struct dpbp_notification_cfg *cfg)
-+{
-+	struct dpbp_cmd_set_notifications *cmd_params;
-+	struct mc_command cmd = { 0 };
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPBP_CMDID_SET_NOTIFICATIONS,
-+			cmd_flags, token);
-+	cmd_params = (struct dpbp_cmd_set_notifications *)cmd.params;
-+	cmd_params->depletion_entry = cpu_to_le32(cfg->depletion_entry);
-+	cmd_params->depletion_exit = cpu_to_le32(cfg->depletion_exit);
-+	cmd_params->surplus_entry = cpu_to_le32(cfg->surplus_entry);
-+	cmd_params->surplus_exit = cpu_to_le32(cfg->surplus_exit);
-+	cmd_params->options = cpu_to_le32(cfg->options);
-+	cmd_params->message_ctx = cpu_to_le64(cfg->message_ctx);
-+	cmd_params->message_iova = cpu_to_le64(cfg->message_iova);
-+
-+	/* send command to mc*/
-+	return mc_send_command(mc_io, &cmd);
-+}
-+
-+/**
-+ * dpbp_get_notifications() - Get the notifications configuration
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPBP object
-+ * @cfg:	notifications configuration
-+ *
-+ * Return:	'0' on Success; Error code otherwise.
-+ */
-+RTE_EXPORT_INTERNAL_SYMBOL(dpbp_get_notifications)
-+int dpbp_get_notifications(struct fsl_mc_io *mc_io,
-+	uint32_t cmd_flags,
-+	uint16_t token,
-+	struct dpbp_notification_cfg *cfg)
-+{
-+	struct dpbp_rsp_get_notifications *rsp_params;
-+	struct mc_command cmd = { 0 };
-+	int err;
-+
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPBP_CMDID_GET_NOTIFICATIONS,
-+			  cmd_flags,
-+			  token);
-+
-+	/* send command to mc*/
-+	err = mc_send_command(mc_io, &cmd);
-+	if (err)
-+		return err;
-+
-+	/* retrieve response parameters */
-+	rsp_params = (struct dpbp_rsp_get_notifications *)cmd.params;
-+	cfg->depletion_entry = le32_to_cpu(rsp_params->depletion_entry);
-+	cfg->depletion_exit = le32_to_cpu(rsp_params->depletion_exit);
-+	cfg->surplus_entry = le32_to_cpu(rsp_params->surplus_entry);
-+	cfg->surplus_exit = le32_to_cpu(rsp_params->surplus_exit);
-+	cfg->options = le32_to_cpu(rsp_params->options);
-+	cfg->message_ctx = le64_to_cpu(rsp_params->message_ctx);
-+	cfg->message_iova = le64_to_cpu(rsp_params->message_iova);
-+
-+	return 0;
-+}
-diff --git a/drivers/bus/fslmc/mc/dprc.c b/drivers/bus/fslmc/mc/dprc.c
-index 491081c7c8..5f04ead20c 100644
---- a/drivers/bus/fslmc/mc/dprc.c
-+++ b/drivers/bus/fslmc/mc/dprc.c
-@@ -8,6 +8,7 @@
- #include <fsl_mc_cmd.h>
- #include <fsl_dprc.h>
- #include <fsl_dprc_cmd.h>
-+#include <eal_export.h>
+-/* Enable error queue */
+-bool dpaa2_enable_err_queue;
+-
+ bool dpaa2_print_parser_result;
  
- /** @addtogroup dprc
-  * @{
-@@ -90,6 +91,7 @@ int dprc_close(struct fsl_mc_io *mc_io,
-  *
-  * Return:     '0' on Success; -ENAVAIL if connection does not exist.
-  */
-+RTE_EXPORT_INTERNAL_SYMBOL(dprc_get_connection)
- int dprc_get_connection(struct fsl_mc_io *mc_io,
- 			uint32_t cmd_flags,
- 			uint16_t token,
-diff --git a/drivers/bus/fslmc/mc/fsl_dpbp.h b/drivers/bus/fslmc/mc/fsl_dpbp.h
-index 8a021f55f1..c79b511715 100644
---- a/drivers/bus/fslmc/mc/fsl_dpbp.h
-+++ b/drivers/bus/fslmc/mc/fsl_dpbp.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-  *
-  * Copyright 2013-2016 Freescale Semiconductor Inc.
-- * Copyright 2016-2017 NXP
-+ * Copyright 2016-2017, 2025 NXP
-  *
-  */
- #ifndef __FSL_DPBP_H
-@@ -16,6 +16,34 @@
- 
- struct fsl_mc_io;
- 
-+/**
-+ * struct dpbp_notification_cfg - Structure representing DPBP notifications
-+ *	towards software
-+ * @depletion_entry: below this threshold the pool is "depleted";
-+ *	set it to '0' to disable it
-+ * @depletion_exit: greater than or equal to this threshold the pool exit its
-+ *	"depleted" state
-+ * @surplus_entry: above this threshold the pool is in "surplus" state;
-+ *	set it to '0' to disable it
-+ * @surplus_exit: less than or equal to this threshold the pool exit its
-+ *	"surplus" state
-+ * @message_iova: MUST be given if either 'depletion_entry' or 'surplus_entry'
-+ *	is not '0' (enable); I/O virtual address (must be in DMA-able memory),
-+ *	must be 16B aligned.
-+ * @message_ctx: The context that will be part of the BPSCN message and will
-+ *	be written to 'message_iova'
-+ * @options: Mask of available options; use 'DPBP_NOTIF_OPT_<X>' values
-+ */
-+struct dpbp_notification_cfg {
-+	uint32_t depletion_entry;
-+	uint32_t depletion_exit;
-+	uint32_t surplus_entry;
-+	uint32_t surplus_exit;
-+	uint64_t message_iova;
-+	uint64_t message_ctx;
-+	uint32_t options;
-+};
-+
- __rte_internal
- int dpbp_open(struct fsl_mc_io *mc_io,
- 	      uint32_t cmd_flags,
-@@ -25,7 +53,18 @@ int dpbp_open(struct fsl_mc_io *mc_io,
- int dpbp_close(struct fsl_mc_io *mc_io,
- 	       uint32_t cmd_flags,
- 	       uint16_t token);
-+__rte_internal
-+int dpbp_set_notifications(struct fsl_mc_io *mc_io,
-+		uint32_t cmd_flags,
-+		uint16_t token,
-+		struct dpbp_notification_cfg *cfg);
-+__rte_internal
-+int dpbp_get_notifications(struct fsl_mc_io *mc_io,
-+		uint32_t cmd_flags,
-+		uint16_t token,
-+		struct dpbp_notification_cfg *cfg);
- 
-+#define DPBP_NOTIF_OPT_WRIOP               0x00010000
- /**
-  * struct dpbp_cfg - Structure representing DPBP configuration
-  * @options:	place holder
-diff --git a/drivers/bus/fslmc/mc/fsl_dpmng.h b/drivers/bus/fslmc/mc/fsl_dpmng.h
-index dfa51b3a86..a7578766e0 100644
---- a/drivers/bus/fslmc/mc/fsl_dpmng.h
-+++ b/drivers/bus/fslmc/mc/fsl_dpmng.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-  *
-  * Copyright 2013-2015 Freescale Semiconductor Inc.
-- * Copyright 2017-2023 NXP
-+ * Copyright 2017-2024 NXP
-  *
-  */
- #ifndef __FSL_DPMNG_H
-@@ -20,7 +20,7 @@ struct fsl_mc_io;
-  * Management Complex firmware version information
-  */
- #define MC_VER_MAJOR 10
--#define MC_VER_MINOR 37
-+#define MC_VER_MINOR 39
- 
- /**
-  * struct mc_version
-diff --git a/drivers/bus/fslmc/mc/fsl_dprc.h b/drivers/bus/fslmc/mc/fsl_dprc.h
-index 177210c2d4..8c9e482d26 100644
---- a/drivers/bus/fslmc/mc/fsl_dprc.h
-+++ b/drivers/bus/fslmc/mc/fsl_dprc.h
-@@ -37,6 +37,7 @@ struct dprc_endpoint {
- 	uint16_t if_id;
- };
- 
-+__rte_internal
- int dprc_get_connection(struct fsl_mc_io *mc_io,
- 			uint32_t cmd_flags,
- 			uint16_t token,
-diff --git a/drivers/net/dpaa2/dpaa2_mux.c b/drivers/net/dpaa2/dpaa2_mux.c
-index 1908d1e865..9bb1bbca38 100644
---- a/drivers/net/dpaa2/dpaa2_mux.c
-+++ b/drivers/net/dpaa2/dpaa2_mux.c
-@@ -524,10 +524,12 @@ dpaa2_create_dpdmux_device(int vdev_fd __rte_unused,
- 				      __func__);
- 			goto init_err;
- 		}
--		skip_reset_flags = DPDMUX_SKIP_DEFAULT_INTERFACE
--			| DPDMUX_SKIP_UNICAST_RULES | DPDMUX_SKIP_MULTICAST_RULES;
-+		skip_reset_flags = DPDMUX_SKIP_MODIFY_DEFAULT_INTERFACE
-+			| DPDMUX_SKIP_UNICAST_RULES | DPDMUX_SKIP_MULTICAST_RULES |
-+			DPDMUX_SKIP_RESET_DEFAULT_INTERFACE;
- 	} else {
--		skip_reset_flags = DPDMUX_SKIP_DEFAULT_INTERFACE;
-+		skip_reset_flags = DPDMUX_SKIP_MODIFY_DEFAULT_INTERFACE |
-+			DPDMUX_SKIP_RESET_DEFAULT_INTERFACE;
+ #define MAX_NB_RX_DESC		11264
+@@ -507,7 +504,7 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
+ 			goto fail;
  	}
  
- 	ret = dpdmux_get_api_version(&dpdmux_dev->dpdmux, CMD_PRI_LOW,
-diff --git a/drivers/net/dpaa2/mc/dpkg.c b/drivers/net/dpaa2/mc/dpkg.c
-index 5db3d092c1..280c1b0764 100644
---- a/drivers/net/dpaa2/mc/dpkg.c
-+++ b/drivers/net/dpaa2/mc/dpkg.c
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-  *
-- * Copyright 2017-2021, 2023 NXP
-+ * Copyright 2017-2021, 2023-2024 NXP
-  *
-  */
- #include <fsl_mc_sys.h>
-@@ -20,8 +20,7 @@
-  *	- dpkg_prepare_key_cfg()
-  */
- int
--dpkg_prepare_key_cfg(const struct dpkg_profile_cfg *cfg,
--	void *key_cfg_buf)
-+dpkg_prepare_key_cfg(const struct dpkg_profile_cfg *cfg, uint8_t *key_cfg_buf)
- {
- 	int i, j;
- 	struct dpni_ext_set_rx_tc_dist *dpni_ext;
-@@ -30,7 +29,7 @@ dpkg_prepare_key_cfg(const struct dpkg_profile_cfg *cfg,
- 	if (cfg->num_extracts > DPKG_MAX_NUM_OF_EXTRACTS)
- 		return -EINVAL;
+-	if (dpaa2_enable_err_queue) {
++	if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
+ 		priv->rx_err_vq = rte_zmalloc("dpni_rx_err",
+ 			sizeof(struct dpaa2_queue), 0);
+ 		if (!priv->rx_err_vq) {
+@@ -584,7 +581,7 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
+ 		priv->rx_vq[i--] = NULL;
+ 	}
  
--	dpni_ext = key_cfg_buf;
-+	dpni_ext = (struct dpni_ext_set_rx_tc_dist *)key_cfg_buf;
- 	dpni_ext->num_extracts = cfg->num_extracts;
+-	if (dpaa2_enable_err_queue) {
++	if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
+ 		dpaa2_q = priv->rx_err_vq;
+ 		dpaa2_queue_storage_free(dpaa2_q, RTE_MAX_LCORE);
+ 	}
+@@ -1331,7 +1328,7 @@ dpaa2_dev_start(struct rte_eth_dev *dev)
+ 		dpaa2_q->fqid = qid.fqid;
+ 	}
  
- 	for (i = 0; i < cfg->num_extracts; i++) {
-diff --git a/drivers/net/dpaa2/mc/dprtc.c b/drivers/net/dpaa2/mc/dprtc.c
-index 36e62eb0c3..18f23e2fe3 100644
---- a/drivers/net/dpaa2/mc/dprtc.c
-+++ b/drivers/net/dpaa2/mc/dprtc.c
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-- * Copyright 2019-2021 NXP
-+ * Copyright 2019-2024 NXP
-  */
- #include <fsl_mc_sys.h>
- #include <fsl_mc_cmd.h>
-@@ -329,6 +329,42 @@ int dprtc_set_clock_offset(struct fsl_mc_io *mc_io,
- 	return mc_send_command(mc_io, &cmd);
- }
+-	if (dpaa2_enable_err_queue) {
++	if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
+ 		ret = dpni_get_queue(dpni, CMD_PRI_LOW, priv->token,
+ 				     DPNI_QUEUE_RX_ERR, 0, 0, &cfg, &qid);
+ 		if (ret) {
+@@ -2797,6 +2794,17 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 	dpni_dev->regs = dpaa2_get_mcp_ptr(MC_PORTAL_INDEX);
+ 	eth_dev->process_private = dpni_dev;
  
-+/**
-+ * dprtc_get_clock_offset() - Gets the clock's offset
-+ * (usually relative to another clock).
-+ *
-+ * @mc_io:	Pointer to MC portal's I/O object
-+ * @cmd_flags:	Command flags; one or more of 'MC_CMD_FLAG_'
-+ * @token:	Token of DPRTC object
-+ * @offset:	Returned clock offset (in nanoseconds).
-+ *
-+ * Return:	'0' on Success; Error code otherwise.
-+ */
-+int dprtc_get_clock_offset(struct fsl_mc_io *mc_io,
-+			   uint32_t cmd_flags,
-+			   uint16_t token,
-+			   int64_t *offset)
-+{
-+	struct dprtc_rsp_get_clock_offset *rsp_params;
-+	struct mc_command cmd = { 0 };
-+	int err;
++	/* RX no prefetch mode? */
++	if (dpaa2_get_devargs(dev->devargs, DRIVER_NO_PREFETCH_MODE)) {
++		priv->flags |= DPAA2_NO_PREFETCH_RX;
++		DPAA2_PMD_INFO("No RX prefetch mode");
++	}
 +
-+	/* prepare command */
-+	cmd.header = mc_encode_cmd_header(DPRTC_CMDID_GET_CLOCK_OFFSET,
-+					  cmd_flags,
-+					  token);
++	if (dpaa2_get_devargs(dev->devargs, DRIVER_LOOPBACK_MODE)) {
++		priv->flags |= DPAA2_RX_LOOPBACK_MODE;
++		DPAA2_PMD_INFO("Rx loopback mode");
++	}
 +
-+	/* send command to mc*/
-+	err = mc_send_command(mc_io, &cmd);
-+	if (err)
-+		return err;
-+
-+	rsp_params = (struct dprtc_rsp_get_clock_offset *)cmd.params;
-+	*offset = le64_to_cpu(rsp_params->offset);
-+
-+	return 0;
-+}
-+
- /**
-  * dprtc_set_freq_compensation() - Sets a new frequency compensation value.
-  *
-diff --git a/drivers/net/dpaa2/mc/fsl_dpdmux.h b/drivers/net/dpaa2/mc/fsl_dpdmux.h
-index 97b09e59f9..2db4abf234 100644
---- a/drivers/net/dpaa2/mc/fsl_dpdmux.h
-+++ b/drivers/net/dpaa2/mc/fsl_dpdmux.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-  *
-  * Copyright 2013-2016 Freescale Semiconductor Inc.
-- * Copyright 2018-2023 NXP
-+ * Copyright 2018-2024 NXP
-  *
+ 	/* For secondary processes, the primary has done all the work */
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
+ 		/* In case of secondary, only burst and ops API need to be
+@@ -2804,10 +2812,9 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 		 */
+ 		eth_dev->dev_ops = &dpaa2_ethdev_ops;
+ 		eth_dev->rx_queue_count = dpaa2_dev_rx_queue_count;
+-		if (dpaa2_get_devargs(dev->devargs, DRIVER_LOOPBACK_MODE))
++		if (priv->flags & DPAA2_RX_LOOPBACK_MODE)
+ 			eth_dev->rx_pkt_burst = dpaa2_dev_loopback_rx;
+-		else if (dpaa2_get_devargs(dev->devargs,
+-					DRIVER_NO_PREFETCH_MODE))
++		else if (priv->flags & DPAA2_NO_PREFETCH_RX)
+ 			eth_dev->rx_pkt_burst = dpaa2_dev_rx;
+ 		else
+ 			eth_dev->rx_pkt_burst = dpaa2_dev_prefetch_rx;
+@@ -2898,8 +2905,8 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 	}
+ 
+ 	if (dpaa2_get_devargs(dev->devargs, DRIVER_ERROR_QUEUE)) {
+-		dpaa2_enable_err_queue = 1;
+-		DPAA2_PMD_INFO("Enable DMA error checks");
++		priv->flags |= DPAAX_RX_ERROR_QUEUE_FLAG;
++		DPAA2_PMD_INFO("Enable error queue");
+ 	}
+ 
+ 	if (getenv("DPAA2_PRINT_RX_PARSER_RESULT"))
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
+index c4133f604f..f4adb76bb6 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.h
++++ b/drivers/net/dpaa2/dpaa2_ethdev.h
+@@ -68,26 +68,36 @@
+ /* Enable TX Congestion control support
+  * default is disable
   */
- #ifndef __FSL_DPDMUX_H
-@@ -53,6 +53,9 @@ int dpdmux_close(struct fsl_mc_io *mc_io,
-  */
- #define DPDMUX_IRQ_EVENT_LINK_CHANGED	0x0001
+-#define DPAA2_TX_CGR_OFF	0x01
++#define DPAA2_TX_CGR_OFF	RTE_BIT32(0)
  
-+/* DPDMUX_IRQ_EVENT_ENDPOINT_CHANGED - indicates a change in endpoint */
-+#define DPDMUX_IRQ_EVENT_ENDPOINT_CHANGED	0x0002
+ /* Disable RX tail drop, default is enable */
+-#define DPAA2_RX_TAILDROP_OFF	0x04
++#define DPAA2_RX_TAILDROP_OFF	RTE_BIT32(2)
 +
- /**
-  * enum dpdmux_manip - DPDMUX manipulation operations
-  * @DPDMUX_MANIP_NONE:	No manipulation on frames
-@@ -143,15 +146,15 @@ int dpdmux_reset(struct fsl_mc_io *mc_io,
- 		 uint16_t token);
- 
- /**
-- *Setting 1 DPDMUX_RESET will not reset default interface
-+ *Setting 1 DPDMUX_RESET will not modify default interface after reset
-  */
--#define DPDMUX_SKIP_DEFAULT_INTERFACE	0x01
-+#define DPDMUX_SKIP_MODIFY_DEFAULT_INTERFACE	0x01
- /**
-- *Setting 1 DPDMUX_RESET will not reset unicast rules
-+ *Setting 2 DPDMUX_RESET will not reset unicast rules
-  */
- #define DPDMUX_SKIP_UNICAST_RULES	0x02
- /**
-- *Setting 1 DPDMUX_RESET will not reset multicast rules
-+ *Setting 3 DPDMUX_RESET will not reset multicast rules
-  */
- #define DPDMUX_SKIP_MULTICAST_RULES	0x04
- /**
-diff --git a/drivers/net/dpaa2/mc/fsl_dpkg.h b/drivers/net/dpaa2/mc/fsl_dpkg.h
-index 834c765513..19fbae224b 100644
---- a/drivers/net/dpaa2/mc/fsl_dpkg.h
-+++ b/drivers/net/dpaa2/mc/fsl_dpkg.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-  * Copyright 2013-2015 Freescale Semiconductor Inc.
-- * Copyright 2016-2023 NXP
-+ * Copyright 2016-2024 NXP
-  *
-  */
- #ifndef __FSL_DPKG_H_
-@@ -180,8 +180,7 @@ struct dpni_ext_set_rx_tc_dist {
- 	struct dpni_dist_extract extracts[DPKG_MAX_NUM_OF_EXTRACTS];
- };
- 
--int
--dpkg_prepare_key_cfg(const struct dpkg_profile_cfg *cfg,
--	void *key_cfg_buf);
-+int dpkg_prepare_key_cfg(const struct dpkg_profile_cfg *cfg,
-+			 uint8_t *key_cfg_buf);
- 
- #endif /* __FSL_DPKG_H_ */
-diff --git a/drivers/net/dpaa2/mc/fsl_dpni.h b/drivers/net/dpaa2/mc/fsl_dpni.h
-index 8d28b8ce76..f7e4c226ed 100644
---- a/drivers/net/dpaa2/mc/fsl_dpni.h
-+++ b/drivers/net/dpaa2/mc/fsl_dpni.h
-@@ -296,6 +296,9 @@ int dpni_reset(struct fsl_mc_io *mc_io,
-  */
- #define DPNI_IRQ_EVENT_LINK_CHANGED		0x00000001
- 
-+/* DPNI_IRQ_EVENT_ENDPOINT_CHANGED - indicates a change in endpoint */
-+#define DPNI_IRQ_EVENT_ENDPOINT_CHANGED       0x00000002
++/* Disable prefetch Rx mode to get exact requested packets */
++#define DPAA2_NO_PREFETCH_RX	RTE_BIT32(3)
 +
- int dpni_set_irq_enable(struct fsl_mc_io *mc_io,
- 			uint32_t cmd_flags,
- 			uint16_t token,
-@@ -574,8 +577,9 @@ int dpni_set_buffer_layout(struct fsl_mc_io *mc_io,
-  * @DPNI_OFF_RX_L4_CSUM: Rx L4 checksum validation
-  * @DPNI_OFF_TX_L3_CSUM: Tx L3 checksum generation
-  * @DPNI_OFF_TX_L4_CSUM: Tx L4 checksum generation
-- * @DPNI_OPT_FLCTYPE_HASH: flow context will be generated by WRIOP for AIOP or
-- *			   for CPU
-+ * @DPNI_OPT_FLCTYPE_HASH: flow context will be generated by WRIOP for AIOP or for CPU
-+ * @DPNI_HEADER_STASHING: frame header will be stashed by WRIOP in core cache
-+ * @DPNI_PAYLOAD_STASHING: frame payload will be stashed by WRIOP in core cache
++/* Driver level loop mode to simply transmit the ingress traffic */
++#define DPAA2_RX_LOOPBACK_MODE	RTE_BIT32(4)
++
++/* HW loopback the egress traffic to self ingress*/
++#define DPAA2_TX_MAC_LOOPBACK_MODE	RTE_BIT32(5)
++
++#define DPAA2_TX_SERDES_LOOPBACK_MODE	RTE_BIT32(6)
++
++#define DPAA2_TX_DPNI_LOOPBACK_MODE	RTE_BIT32(7)
++
+ /* Tx confirmation enabled */
+-#define DPAA2_TX_CONF_ENABLE	0x08
++#define DPAA2_TX_CONF_ENABLE	RTE_BIT32(8)
+ 
+ /* Tx dynamic confirmation enabled,
+  * only valid with Tx confirmation enabled.
   */
- enum dpni_offload {
- 	DPNI_OFF_RX_L3_CSUM,
-@@ -631,6 +635,7 @@ int dpni_get_tx_data_offset(struct fsl_mc_io *mc_io,
- 			    uint16_t *data_offset);
+-#define DPAA2_TX_DYNAMIC_CONF_ENABLE	0x10
+-/* DPDMUX index for DPMAC */
+-#define DPAA2_DPDMUX_DPMAC_IDX 0
+-
+-/* HW loopback the egress traffic to self ingress*/
+-#define DPAA2_TX_MAC_LOOPBACK_MODE 0x20
++#define DPAA2_TX_DYNAMIC_CONF_ENABLE	RTE_BIT32(9)
  
- #define DPNI_STATISTICS_CNT		7
-+#define DPNI_STATISTICS_32_CNT		14
+-#define DPAA2_TX_SERDES_LOOPBACK_MODE 0x40
++#define DPAAX_RX_ERROR_QUEUE_FLAG	RTE_BIT32(11)
  
- /**
-  * union dpni_statistics - Union describing the DPNI statistics
-@@ -986,7 +991,18 @@ struct dpni_tx_schedule_cfg {
-  * struct dpni_tx_priorities_cfg - Structure representing transmission
-  *					priorities for DPNI TCs
-  * @channel_idx: channel to perform the configuration
-- * @tc_sched:	An array of traffic-classes
-+ * @tc_sched: An array of traffic-classes which should be used in the
-+ * following way:
-+ *   - If max_tx_tcs <= 8: the tc_sched[n] struct will host the configuration
-+ *   requested for TC#n
-+ *   - If max_tx_tcs > 8: the tc_sched[n] struct will host the configuration
-+ *   requeted for TC#(8 + n). In this case, the first 8 TCs are configured by
-+ *   MC in strict priority order and cannot be changed.
-+ *   The only accepted configuration in this case is:
-+ *    - TCs [8-12) will be part of WEIGHTED_A group
-+ *    - TCs [12-16) will be part of WEIGHTED_B group
-+ *   Any other configuration will get rejected by the MC firmware. The
-+ *   delta_bandwidth for each TC can be used as usual.
-  * @prio_group_A: Priority of group A
-  * @prio_group_B: Priority of group B
-  * @separate_groups: Treat A and B groups as separate
-@@ -1949,6 +1965,10 @@ int dpni_get_custom_tpid(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t t
-  *	@peer_delay: For peer-to-peer transparent clocks add this value to the
-  *		correction field in addition to the transient time update. The
-  *		value expresses nanoseconds.
-+ *	@ptp_onestep_reg_base: 1588 SINGLE_STEP register base address. This address
-+ *			  is used to update directly the register contents.
-+ *			  User has to create an address mapping for it.
-+ *			  It's used  in dpni_get_single_step_cfg only.
-  */
- struct dpni_single_step_cfg {
- 	uint8_t en;
-@@ -2020,4 +2040,7 @@ int dpni_get_mac_statistics(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_
- int dpni_get_mac_speed_capability(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
- 				  uint32_t *speed_cap);
+-#define DPAA2_TX_DPNI_LOOPBACK_MODE 0x80
++/* DPDMUX index for DPMAC */
++#define DPAA2_DPDMUX_DPMAC_IDX 0
  
-+int dpni_get_mac_statistics(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
-+			    uint64_t iova_cnt, uint64_t iova_values, uint32_t num_cnt);
-+
- #endif /* __FSL_DPNI_H */
-diff --git a/drivers/net/dpaa2/mc/fsl_dprtc.h b/drivers/net/dpaa2/mc/fsl_dprtc.h
-index 84ab158444..06ff8ecb19 100644
---- a/drivers/net/dpaa2/mc/fsl_dprtc.h
-+++ b/drivers/net/dpaa2/mc/fsl_dprtc.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-- * Copyright 2019-2021 NXP
-+ * Copyright 2019-2024 NXP
-  */
- #ifndef __FSL_DPRTC_H
- #define __FSL_DPRTC_H
-@@ -11,6 +11,38 @@
+ #define DPAA2_TX_LOOPBACK_MODE \
+ 	(DPAA2_TX_MAC_LOOPBACK_MODE | \
+@@ -167,8 +177,6 @@ extern const struct rte_flow_ops dpaa2_flow_ops;
  
- struct fsl_mc_io;
+ extern const struct rte_tm_ops dpaa2_tm_ops;
  
-+/**
-+ * Number of irq's
-+ */
-+#define DPRTC_MAX_IRQ_NUM			1
-+#define DPRTC_IRQ_INDEX				0
-+
-+/**
-+ * Interrupt event masks:
-+ */
-+
-+/**
-+ * Interrupt event mask indicating alarm event had occurred
-+ */
-+#define DPRTC_EVENT_ALARM			0x40000000
-+/**
-+ * Interrupt event mask indicating periodic pulse 1 event had occurred
-+ */
-+#define DPRTC_EVENT_PPS				0x08000000
-+/**
-+ * Interrupt event mask indicating periodic pulse 2 event had occurred
-+ */
-+#define DPRTC_EVENT_PPS2            0x04000000
-+/**
-+ * Interrupt event mask indicating External trigger 1 new timestamp sample event had occurred
-+ */
-+#define DPRTC_EVENT_ETS1			0x00800000
-+/**
-+ * Interrupt event mask indicating External trigger 2 new timestamp sample event had occurred
-+ */
-+#define DPRTC_EVENT_ETS2			0x00400000
-+
-+
- int dprtc_open(struct fsl_mc_io *mc_io,
- 	       uint32_t cmd_flags,
- 	       int dprtc_id,
-@@ -61,6 +93,11 @@ int dprtc_set_clock_offset(struct fsl_mc_io *mc_io,
- 			   uint16_t token,
- 			   int64_t offset);
+-extern bool dpaa2_enable_err_queue;
+-
+ extern bool dpaa2_print_parser_result;
  
-+int dprtc_get_clock_offset(struct fsl_mc_io *mc_io,
-+			   uint32_t cmd_flags,
-+			   uint16_t token,
-+			   int64_t *offset);
-+
- int dprtc_set_freq_compensation(struct fsl_mc_io *mc_io,
- 		  uint32_t cmd_flags,
- 		  uint16_t token,
-diff --git a/drivers/net/dpaa2/mc/fsl_dprtc_cmd.h b/drivers/net/dpaa2/mc/fsl_dprtc_cmd.h
-index 61aaa4daab..eaefe18460 100644
---- a/drivers/net/dpaa2/mc/fsl_dprtc_cmd.h
-+++ b/drivers/net/dpaa2/mc/fsl_dprtc_cmd.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-- * Copyright 2019-2021 NXP
-+ * Copyright 2019-2024 NXP
-  */
- #include <fsl_mc_sys.h>
- #ifndef _FSL_DPRTC_CMD_H
-@@ -42,6 +42,7 @@
- #define DPRTC_CMDID_CLEAR_EXT_TRIGGER		DPRTC_CMD(0x1d9)
- #define DPRTC_CMDID_GET_EXT_TRIGGER_TIMESTAMP	DPRTC_CMD(0x1dA)
- #define DPRTC_CMDID_SET_FIPER_LOOPBACK	DPRTC_CMD(0x1dB)
-+#define DPRTC_CMDID_GET_CLOCK_OFFSET		DPRTC_CMD(0x1dC)
+ #define DPAA2_FAPR_SIZE \
+@@ -384,7 +392,7 @@ struct dpaa2_dev_priv {
+ 	struct dpaa2_bp_list *bp_list; /**<Attached buffer pool list */
+ 	void *tx_conf_vq[MAX_TX_QUEUES * DPAA2_MAX_CHANNELS];
+ 	void *rx_err_vq;
+-	uint8_t flags; /*dpaa2 config flags */
++	uint32_t flags; /*dpaa2 config flags */
+ 	uint8_t max_mac_filters;
+ 	uint8_t max_vlan_filters;
+ 	uint8_t num_rx_tc;
+diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
+index 7caccfa469..8f932be635 100644
+--- a/drivers/net/dpaa2/dpaa2_rxtx.c
++++ b/drivers/net/dpaa2/dpaa2_rxtx.c
+@@ -753,7 +753,7 @@ dpaa2_dev_prefetch_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  
- /* Macros for accessing command fields smaller than 1byte */
- #define DPRTC_MASK(field)        \
-@@ -78,6 +79,10 @@ struct dprtc_cmd_set_clock_offset {
- 	uint64_t offset;
- };
+ 	q_storage = dpaa2_q->q_storage[rte_lcore_id()];
  
-+struct dprtc_rsp_get_clock_offset {
-+	uint64_t offset;
-+};
-+
- struct dprtc_get_freq_compensation {
- 	uint32_t freq_compensation;
- };
+-	if (unlikely(dpaa2_enable_err_queue))
++	if (unlikely(priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG))
+ 		dump_err_pkts(priv->rx_err_vq);
+ 
+ 	if (unlikely(!DPAA2_PER_LCORE_ETHRX_DPIO)) {
+@@ -994,7 +994,7 @@ dpaa2_dev_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 	struct rte_eth_dev_data *eth_data = dpaa2_q->eth_data;
+ 	struct dpaa2_dev_priv *priv = eth_data->dev_private;
+ 
+-	if (unlikely(dpaa2_enable_err_queue))
++	if (unlikely(priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG))
+ 		dump_err_pkts(priv->rx_err_vq);
+ 
+ 	if (unlikely(!DPAA2_PER_LCORE_DPIO)) {
 -- 
 2.43.0
 
