@@ -2,57 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF16CCD18E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 09:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2F3CCD184
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 09:43:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D6F91402AE;
-	Tue, 14 Oct 2025 11:34:57 +0200 (CEST)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
- by mails.dpdk.org (Postfix) with ESMTP id 7FDEA402A8
- for <dev@dpdk.org>; Tue, 14 Oct 2025 11:34:54 +0200 (CEST)
-X-QQ-mid: Yeas6t1760434489t525t47152
-Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
- [36.27.111.193])
-X-QQ-SSF: 0000000000000000000000000000000
-From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
-X-BIZMAIL-ID: 939140110284822884
-To: "'Stephen Hemminger'" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>, "'Jiawen Wu'" <jiawenwu@trustnetic.com>,
- "'Jian Wang'" <jianwang@trustnetic.com>
-References: <20250418094131.24136-1-zaiyuwang@trustnetic.com>	<20250626080221.22488-1-zaiyuwang@trustnetic.com>	<20250626080221.22488-5-zaiyuwang@trustnetic.com>
- <20250803094255.18afa192@hermes.local>
-In-Reply-To: <20250803094255.18afa192@hermes.local>
-Subject: RE: [PATCH v3 04/15] net/txgbe: add basic link configuration for
- Amber-Lite NICs
-Date: Tue, 14 Oct 2025 17:34:48 +0800
-Message-ID: <000c01dc3ced$c8aed910$5a0c8b30$@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 09DF1402AE;
+	Tue, 14 Oct 2025 11:43:34 +0200 (CEST)
+Received: from fout-a3-smtp.messagingengine.com
+ (fout-a3-smtp.messagingengine.com [103.168.172.146])
+ by mails.dpdk.org (Postfix) with ESMTP id DF3D4402A8
+ for <dev@dpdk.org>; Tue, 14 Oct 2025 11:43:31 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.phl.internal (Postfix) with ESMTP id 38C57EC021E;
+ Tue, 14 Oct 2025 05:43:31 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Tue, 14 Oct 2025 05:43:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1760435011;
+ x=1760521411; bh=hfF9pP2mb9kU7QgHRBXaji84kp8eI0lv2u/wRiFgwTk=; b=
+ Ly/kG4UzfIEN3T4YJ60ocYlUBO/VSb1OZ8l3J1MvYdIfNkwXwQoajnAaqW/7dTNj
+ Vxb6QBOAUP1t110u9y8sIEm2soFZa4Bm94dGbumziGGKIz67pM8uDs12fcXpZCuo
+ +XmSDzfB4jt8/RexrrlB+dYW9hayz8bGmZ9rhlho60qTJ/Pgv/8LbrrIzQ3OLZXM
+ /ZRXlcGZKHloJ7zmFvap54JVwQXn1kGPnM634ERhxaJ68fNbipEN1XrdCIsAZ2F3
+ EME7PqvY51QnCv05+ucYJyO/4eEIjnWspNTDSbbGfcnbYp6Oo7J2GBVXp9xaaxiE
+ gB3MpWHeKf03J02YsokbnA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760435011; x=
+ 1760521411; bh=hfF9pP2mb9kU7QgHRBXaji84kp8eI0lv2u/wRiFgwTk=; b=w
+ vimiO8VHO0tFE/GkqL6pPy6lUGm/yAfhSkVBXvTn5Z6EEtIsm33a0JFDgRswc/FV
+ h/aZituj+aiU6/UagKKEfwDnYYI8b1oOPhnXaqQ/8wEIHzOT1jwhdoVsV7reTC32
+ xM2etjw6PxtLtJfbUc73VRxSohKw+BGycylsNBx7by3BmDgeUiRCcxXbqE/4bDMO
+ JuqNk4KNw75v8WWj2p11hgLMe7ClbZn/UTlGW8j2WxZVg6XgQEghe+g1vBypE6tl
+ gi5VexhRbFsOAZYXzXhzczKbatAJXaQlYFlDAGEKhsuHm2cqhStDCJxok7D0ydC/
+ HyyMzeFYFDuOqQDrEJrKg==
+X-ME-Sender: <xms:QhvuaKhNOMRA2jnChNqmoLSE8aSyB0xWnYY6a56pemo-6cyiv1Q1qA>
+ <xme:QhvuaF8fzvcXG0tL7cyzCmEzuQBafCT6K-HbNtt-mD3mZnGgyWB7snjbVblwMXFzz
+ 5zhiIQUneuz1YATSO9OAnRrcU38UDJW6zUfGIKJRchRklowbnqFpA>
+X-ME-Received: <xmr:QhvuaBEsjw4i5ziaBBYqp6zJpd8cD5xxRMimwceqfICnMm3vL6LhZ-sALRc2_3c4WL2JKsS4iyn_p2QIWyszdVlG7g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddtvddtucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
+ leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihsh
+ htvghmshdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthho
+ pehshhhpvghrvghtiiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggthhgvsh
+ hlrghvohesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghr
+ ughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifoh
+ hrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtoheprghmrghnrdguvggvphdrshhinhhg
+ hhesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:QhvuaIkNBzGNi4sQG4SwzZNGdWXBRLd-HgPXp-kgIZD-puyWHW25GQ>
+ <xmx:QhvuaFa1uWnjFN1YaGbEXvnnzcpbAQDqbSk9yuC7XddbWT4POCMDoA>
+ <xmx:QhvuaNHn9CoO8zr3eE4snqv19GJf9odLwoIs6YimmVc1PJ95iEAiuA>
+ <xmx:QhvuaGJO7YxGTe7ti-cgAJXUJh17n7WXTWAkCqUqxym4cFdhvJdMgQ>
+ <xmx:QxvuaIbhYwvivHhG50N54qU0wH3WYcDPUvisajdLrshPf_yWWrY2KTId>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 14 Oct 2025 05:43:29 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org, shperetz@nvidia.com, viacheslavo@nvidia.com,
+ bruce.richardson@intel.com, stephen@networkplumber.org,
+ Aman Singh <aman.deep.singh@intel.com>
+Subject: Re: [PATCH v5 6/7] app/testpmd: add commands to dump mbuf history
+Date: Tue, 14 Oct 2025 11:43:28 +0200
+Message-ID: <3472245.88bMQJbFj6@thomas>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F654C5@smartserver.smartshare.dk>
+References: <20250616072910.113042-1-shperetz@nvidia.com>
+ <20251014070517.922137-7-thomas@monjalon.net>
+ <98CBD80474FA8B44BF855DF32C47DC35F654C5@smartserver.smartshare.dk>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: zh-cn
-Thread-Index: AQKiC98C7jrCga9wsmi8xZSIVafTeAMcNZ41AuUP7TwA9C0hobL+FVaw
-X-QQ-SENDSIZE: 520
-Feedback-ID: Yeas:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: OI/LFjtEDwi4s5+eDq+o8O2eVjDDWS86bW0zY+uw4OqOoH4lE6Pb0f8g
- I33deD6E1rBQKaUpH+QxeDvNOxVqrbeU8zVFB3APT2lNaaGoaOZBVJFDEyJT3p7ZJunhTa1
- IBePwAap3GBbaY1mpILFFAB+vN28SuSSrzw6G/PJqJ8tLhcC2hZGmeOlDLEc7w0PAeAETLK
- BIRFkMMzJE91ukIyLwtQoWVSzNLdfbhPiEi1/Hzp59+hxMA/sUQ4LKznUJ4wDGmK6yORHjx
- MXJGh7jQDGI0ctut/UvoZ7oHmxj/6ZSdcZBdqBC40J2CSUWLcL9lD7IcJMI8Ap2RkBAexrT
- U41qrk4wPUR4epIhsR2e1jYDqRUjo7Wj4qCzNbpd7hx3UFgVFSPsIScmbVQ/y9Ryslr7pJ6
- 1FmYq36KYp0BHcpFxPhe1JzmTFJB4pfZLqh1TiYew2EcNU/8nwBUl/b642CV0dUHTk171or
- tT0MmWawFuX5d21LeFZYYyq/Y2M5ge7mS13KnCXj3qOiE0V9TY12ioYqEbG1AE2UM2eLigH
- z/qFbL8LlCnFNEO7RZOV4FDDpk+kL/TnqO56Ea9VGYjsgUwegT8Gjt2ua3HHjY1IduH4MMN
- OkemyqGCi2uW0iOUOSYAJzdbEqIpzLIFtKmyEVGoOo72UhzzoyUYOLAcsFxdQ+K2caLevhz
- hsQbbNZMn08yX9H06y/7QrkzKEn+DAcKBo8eCoEbem2JXngz6qDAhXHVy25oLK0TwmImqGQ
- HXWys+Iv1AXSnoYDFILRGDbf5sVumy1Jy7d7ySN7t4LYVvTibn3asj4P6MkxuPKWoi+y+Y1
- yeo9CWNte0AmUpIa1mGnG+f1HyGCoBcQRbDN07qqU3iZdsCT5pM/NwAAXuWYE0pJYBMxcVZ
- 6n2B2mmO0V0sP/dlDrQMwhWS/fKRz+33luNY1cFZvzXNHS/rOu2G2TDtTDe11Lh3mRZxtng
- PtfchBIpfWWQtnvBK7nVsWinPr+Hbh1fZf9HMNd1Eaki+JXXYK4aNo5qV2sC9A+Z5lc71Y2
- HT2IRBLHwFrEKNa3L3
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,41 +95,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Monday, August 4, 2025 12:43 AM
-> To: Zaiyu Wang <zaiyuwang@trustnetic.com>
-> Cc: dev@dpdk.org; Jiawen Wu <jiawenwu@trustnetic.com>; Jian Wang
-> <jianwang@trustnetic.com>
-> Subject: Re: [PATCH v3 04/15] net/txgbe: add basic link configuration for
-> Amber-Lite NICs
-> 
-> On Thu, 26 Jun 2025 16:02:09 +0800
-> Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
-> 
-> > Due to Amber-Lite's significant differences from our 10G NICs, we
-> > split link configuration components (setup_link, check_link, etc.)
-> > into new files.
-> >
-> > Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
-> > ---
-> 
-> This does not apply cleanly to current main (or next-net) branch.
-> Looks like there is some fuzz (file offset) changes.
-> 
-> Rather than me trying to fix, and potentially breaking the driver; please
-resubmit.
-> 
-Hi Stephen,
+14/10/2025 10:45, Morten Br=C3=B8rup:
+> > From: Thomas Monjalon [mailto:thomas@monjalon.net]
+> > Sent: Tuesday, 14 October 2025 08.59
+> >=20
+> > Dump the mbuf history to the console or to a file.
+> >=20
+> > The dump will contain:
+> > - Operation history for each mbuf
+> > - Summary and statistics about all mbufs
+> >=20
+> > Dump the history of all mbufs:
+> > 	testpmd> dump mbuf history all [file]
+> >=20
+> > Dump the history of one mbuf pool:
+> > 	testpmd> dump mbuf history mempool <mp_name> [file]
+> >=20
+> > Dump the history of one mbuf:
+> > 	testpmd> dump mbuf history one <mbuf_addr> [file]
+>=20
+> The "one" seems superfluous. I think this would suffice:
+> 	testpmd> dump mbuf history <mbuf_addr> [file]
 
-My apologies for the late follow-up on my previous patchset.
+It's not superfluous :)
+Without it, the cmdline library cannot distinguish easily
+between
+	dump mbuf history <mbuf_addr> [file]
+and
+	dump mbuf history mempool <mp_name>
 
-I've addressed the fuzz issue as well as the other review comments, and
-resubmitted a new version of the patchset two weeks ago. It now applies
-cleanly to the main branch.
 
-Could you please take a look when you have a moment? We would really
-appreciate if it could be considered for the 25.11 release.
-
-Thanks for your time and consideration.
 
