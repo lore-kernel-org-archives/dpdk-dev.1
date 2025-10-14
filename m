@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE50CCD184
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 10:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 301F4CCD187
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 10:47:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D25CF40656;
-	Tue, 14 Oct 2025 12:47:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 090C840661;
+	Tue, 14 Oct 2025 12:47:20 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 327484064C
- for <dev@dpdk.org>; Tue, 14 Oct 2025 12:47:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 293DE40661
+ for <dev@dpdk.org>; Tue, 14 Oct 2025 12:47:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1760438835; x=1791974835;
+ t=1760438838; x=1791974838;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=vEvwpIC5sWdmPr/zlmLaIvh3njRlbfqg43416unm8wY=;
- b=Dja2T7bkCz9GFxD5tN9dmC68wbaWReMy3Rk0+2PWA6gLCqLJo+yoSP7M
- 4Eo+RwakNuCEzGaSPRoedlt4Z7grJEoKfNLL8EOCH/PXT7Fj+pxWAZZQy
- NmURJ4K3fSF+NbATx9Lk2Rzgv0w1g+ogsgGz1irEGmYYH203N684DE1bw
- mlBlc81UvScQRuYNTPVbQdiUYFLszA5DyRryyUD68NlDm8412HJb3HKco
- 5irZ+3Y2e8gm4/2vTEOVEuyoTPClFbucuM91Sh0tvAaS5gbHDQ93sXpc6
- AE9IrP5yx9y5vN7mX+skuMWqZhIPmyzo2acEoA8xzIm8Nxxuw6fERtqUT A==;
-X-CSE-ConnectionGUID: qv32FjrtRE24VBF64jn84g==
-X-CSE-MsgGUID: o/6RE4j4TzWuhCFnqeDLzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="66450558"
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="66450558"
+ bh=7itTdoPVkiHUPndna1NpMhBb/c2xQ84iZmMwUf4fqDI=;
+ b=PYOkkZjjukL6MOybotaHxk+1gi2kmWiifRrfJ0e9H/ABoYjylh94+e1a
+ NskXNVLZvQpLWNGsrrtSdquRWhg0Hazv3Uu4+NadQUSSAlSOo/f9zU3jw
+ oLI0iLoLsdW8aq6Tldr3KEe+N/4yckwSZ355kWCovCifL43sXPYF7eTDh
+ zgJXf2K0zXnf0CU7C9MYf1XqNKelp15mVQNaC6Xat4wru0LIr5SLVJEGW
+ qojAwGR7zcR5T9en08GpGB98bIGIEMzTFwedX0pg5Sm7B2BL15NDZbGsM
+ QsnrcVrRdrJGdAoMrB8+0ozaqUyeBENY7KrLjQmndeFH5tzRooOSzU4Ba Q==;
+X-CSE-ConnectionGUID: effh0ygLSAq8vNT0Kd4paw==
+X-CSE-MsgGUID: M3LZFe5CRMiC6IGdV804vw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="66450562"
+X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="66450562"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Oct 2025 03:47:15 -0700
-X-CSE-ConnectionGUID: lgOZO/x5Qvq1zk88Pp7vdA==
-X-CSE-MsgGUID: VUWLivZMQyiJOvF6zOAc7A==
+ 14 Oct 2025 03:47:18 -0700
+X-CSE-ConnectionGUID: 0/dCu+74QeaZyUtqnPtdUA==
+X-CSE-MsgGUID: FpgE+d2FTwGGvcXe/dr29Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="181660408"
+X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="181660540"
 Received: from unknown (HELO sprmax19..) ([10.138.182.140])
- by orviesa007.jf.intel.com with ESMTP; 14 Oct 2025 03:47:13 -0700
+ by orviesa007.jf.intel.com with ESMTP; 14 Oct 2025 03:47:15 -0700
 From: Venkatesh Vemula <venkatesh.vemula@intel.com>
 To: dev@dpdk.org, aman.deep.singh@intel.com, shaiq.wani@intel.com,
  david.marchand@redhat.com, bruce.richardson@intel.com
-Subject: [PATCH v7 1/2] net/idpf: add IDPF PCI class ID support
-Date: Tue, 14 Oct 2025 16:15:10 +0530
-Message-Id: <20251014104511.459215-2-venkatesh.vemula@intel.com>
+Subject: [PATCH v7 2/2] net/cpfl: added CPFL devID for MMG
+Date: Tue, 14 Oct 2025 16:15:11 +0530
+Message-Id: <20251014104511.459215-3-venkatesh.vemula@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251014104511.459215-1-venkatesh.vemula@intel.com>
 References: <20250919145125.113028-1-venkatesh.vemula@intel.com>
@@ -60,107 +60,112 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Current IDPF supports only the MEV device IDs. MMG has new set of
-device IDs and same might be the case for the future devices. Instead
-of adding new device IDs every time, make use of the IDPF PCI class
-ID(0x20001) to differentiate between PF and VF.
-
-Write and read the VF_ARQBAL register to find if the current device is
-a PF or a VF.
+CPFL changes added to new CPFL device id for MMG.
+rebased to next-net-intel-for-next-net and fixed conflict
+and compiler issue.
+changed macro name IDPF_DEVICE_ID_CPF to CPFL_DEV_ID_MEV
 
 Signed-off-by: Venkatesh Vemula <venkatesh.vemula@intel.com>
 ---
- drivers/net/intel/idpf/idpf_common_device.c | 20 ++++++++++++++++++--
- drivers/net/intel/idpf/idpf_common_device.h | 18 ++++++++++++++++++
- drivers/net/intel/idpf/idpf_ethdev.c        |  1 +
- 3 files changed, 37 insertions(+), 2 deletions(-)
+ .mailmap                             |  1 +
+ drivers/net/intel/cpfl/cpfl_ethdev.c | 13 +++++++------
+ drivers/net/intel/cpfl/cpfl_ethdev.h |  5 +++--
+ 3 files changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/intel/idpf/idpf_common_device.c b/drivers/net/intel/idpf/idpf_common_device.c
-index 8c637a2fb6..24ee00db23 100644
---- a/drivers/net/intel/idpf/idpf_common_device.c
-+++ b/drivers/net/intel/idpf/idpf_common_device.c
-@@ -130,7 +130,7 @@ idpf_init_mbx(struct idpf_hw *hw)
- 	struct idpf_ctlq_info *ctlq;
- 	int ret = 0;
+diff --git a/.mailmap b/.mailmap
+index 0dcd8fce3a..7c121cf5ba 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1665,6 +1665,7 @@ Venkata Suresh Kumar P <venkata.suresh.kumar.p@intel.com>
+ Venkat Duvvuru <venkatkumar.duvvuru@broadcom.com>
+ Venkatesh Nuthula <venki497@gmail.com>
+ Venkatesh Srinivas <venkateshs@google.com>
++Venkatesh Vemula <venkatesh.vemula@intel.com>
+ Venkateshwarlu Nalla <venkatn@marvell.com>
+ Venkat Koppula <venkat.koppula@caviumnetworks.com>
+ Venkat Kumar Ande <venkatkumar.ande@amd.com>
+diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c b/drivers/net/intel/cpfl/cpfl_ethdev.c
+index 110678e312..5fc1825391 100644
+--- a/drivers/net/intel/cpfl/cpfl_ethdev.c
++++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
+@@ -1702,7 +1702,7 @@ cpfl_handle_vchnl_event_msg(struct cpfl_adapter_ext *adapter, uint8_t *msg, uint
+ 	}
  
--	if (hw->device_id == IDPF_DEV_ID_SRIOV || hw->device_id == IXD_DEV_ID_VCPF)
-+	if (idpf_is_vf_device(hw))
- 		ret = idpf_ctlq_init(hw, IDPF_CTLQ_NUM, vf_ctlq_info);
+ 	/* ignore if it is ctrl vport */
+-	if (adapter->base.hw.device_id == IDPF_DEV_ID_CPF &&
++	if (adapter->base.hw.device_id == CPFL_DEV_ID_MEV &&
+ 			adapter->ctrl_vport.base.vport_id == vc_event->vport_id)
+ 		return;
+ 
+@@ -2288,7 +2288,7 @@ cpfl_ctrl_path_close(struct cpfl_adapter_ext *adapter)
+ {
+ 	cpfl_stop_cfgqs(adapter);
+ 	cpfl_remove_cfgqs(adapter);
+-	if (adapter->base.hw.device_id == IDPF_DEV_ID_CPF)
++	if (adapter->base.hw.device_id == CPFL_DEV_ID_MEV)
+ 		idpf_vc_vport_destroy(&adapter->ctrl_vport.base);
  	else
- 		ret = idpf_ctlq_init(hw, IDPF_CTLQ_NUM, pf_ctlq_info);
-@@ -389,7 +389,7 @@ idpf_adapter_init(struct idpf_adapter *adapter)
- 	struct idpf_hw *hw = &adapter->hw;
+ 		vcpf_del_queues(adapter);
+@@ -2299,7 +2299,7 @@ cpfl_ctrl_path_open(struct cpfl_adapter_ext *adapter)
+ {
  	int ret;
  
--	if (hw->device_id == IDPF_DEV_ID_SRIOV || hw->device_id == IXD_DEV_ID_VCPF) {
-+	if (idpf_is_vf_device(hw)) {
- 		ret = idpf_check_vf_reset_done(hw);
- 	} else {
- 		idpf_reset_pf(hw);
-@@ -443,6 +443,22 @@ idpf_adapter_init(struct idpf_adapter *adapter)
- 	return ret;
+-	if (adapter->base.hw.device_id == IDPF_DEV_ID_CPF) {
++	if (adapter->base.hw.device_id == CPFL_DEV_ID_MEV) {
+ 		ret = cpfl_vc_create_ctrl_vport(adapter);
+ 		if (ret) {
+ 			PMD_INIT_LOG(ERR, "Failed to create control vport");
+@@ -2328,7 +2328,7 @@ cpfl_ctrl_path_open(struct cpfl_adapter_ext *adapter)
+ 	ret = cpfl_cfgq_setup(adapter);
+ 	if (ret) {
+ 		PMD_INIT_LOG(ERR, "Failed to setup control queues");
+-		if (adapter->base.hw.device_id == IDPF_DEV_ID_CPF)
++		if (adapter->base.hw.device_id == CPFL_DEV_ID_MEV)
+ 			goto err_cfgq_setup;
+ 		else
+ 			goto err_del_cfg;
+@@ -2354,7 +2354,7 @@ cpfl_ctrl_path_open(struct cpfl_adapter_ext *adapter)
+ 	cpfl_remove_cfgqs(adapter);
+ err_cfgq_setup:
+ err_init_ctrl_vport:
+-	if (adapter->base.hw.device_id == IDPF_DEV_ID_CPF)
++	if (adapter->base.hw.device_id == CPFL_DEV_ID_MEV)
+ 		idpf_vc_vport_destroy(&adapter->ctrl_vport.base);
+ err_del_cfg:
+ 	vcpf_del_queues(adapter);
+@@ -2868,7 +2868,8 @@ cpfl_dev_vport_init(struct rte_eth_dev *dev, void *init_params)
  }
  
-+#define IDPF_VF_TEST_VAL		0xFEED0000
-+
-+/**
-+ * idpf_is_vf_device - Helper to find if it is a VF/PF device
-+ * @hw: idpf_hw struct
-+ *
-+ * Return: 1 for VF device, 0 for PF device.
-+ */
-+bool idpf_is_vf_device(struct idpf_hw *hw)
-+{
-+	if (hw->device_id == IDPF_DEV_ID_SRIOV  || hw->device_id == IXD_DEV_ID_VCPF)
-+		return 1;
-+	IDPF_WRITE_REG(hw, VF_ARQBAL, IDPF_VF_TEST_VAL);
-+	return IDPF_READ_REG(hw, VF_ARQBAL) == IDPF_VF_TEST_VAL;
-+}
-+
- RTE_EXPORT_INTERNAL_SYMBOL(idpf_adapter_deinit)
- int
- idpf_adapter_deinit(struct idpf_adapter *adapter)
-diff --git a/drivers/net/intel/idpf/idpf_common_device.h b/drivers/net/intel/idpf/idpf_common_device.h
-index b12bb8d9fc..c32dcfbb12 100644
---- a/drivers/net/intel/idpf/idpf_common_device.h
-+++ b/drivers/net/intel/idpf/idpf_common_device.h
-@@ -46,6 +46,24 @@
- 	 (((p)->proto_id_count ? ((p)->proto_id_count - 1) : 0) * sizeof((p)->proto_id[0])))
- 
- #define VCPF_CFGQ_VPORT_ID               0xFFFFFFFF
-+/** Macro used to help building up tables of device IDs with PCI class */
-+#define IDPF_PCI_CLASS(cls)          \
-+	.class_id = (cls),      \
-+	.vendor_id = RTE_PCI_ANY_ID,  \
-+	.device_id = RTE_PCI_ANY_ID,  \
-+	.subsystem_vendor_id = RTE_PCI_ANY_ID, \
-+	.subsystem_device_id = RTE_PCI_ANY_ID
-+
-+/* PCI Class network ethernet */
-+#define PCI_BASE_CLASS_NETWORK_ETHERNET 0x02
-+#define PCI_SUB_BASE_CLASS_NETWORK_ETHERNET 0x00
-+
-+#define IDPF_NETWORK_ETHERNET_PROGIF				0x01
-+#define IDPF_CLASS_NETWORK_ETHERNET_PROGIF			\
-+(PCI_BASE_CLASS_NETWORK_ETHERNET << 16 | PCI_SUB_BASE_CLASS_NETWORK_ETHERNET << 8 |  \
-+IDPF_NETWORK_ETHERNET_PROGIF)
-+
-+bool idpf_is_vf_device(struct idpf_hw *hw);
- 
- enum idpf_rx_func_type {
- 	IDPF_RX_DEFAULT,
-diff --git a/drivers/net/intel/idpf/idpf_ethdev.c b/drivers/net/intel/idpf/idpf_ethdev.c
-index c04842c9df..411871beeb 100644
---- a/drivers/net/intel/idpf/idpf_ethdev.c
-+++ b/drivers/net/intel/idpf/idpf_ethdev.c
-@@ -1315,6 +1315,7 @@ idpf_dev_vport_init(struct rte_eth_dev *dev, void *init_params)
- static const struct rte_pci_id pci_id_idpf_map[] = {
- 	{ RTE_PCI_DEVICE(IDPF_INTEL_VENDOR_ID, IDPF_DEV_ID_PF) },
- 	{ RTE_PCI_DEVICE(IDPF_INTEL_VENDOR_ID, IDPF_DEV_ID_SRIOV) },
-+	{ IDPF_PCI_CLASS(IDPF_CLASS_NETWORK_ETHERNET_PROGIF) },
+ static const struct rte_pci_id pci_id_cpfl_map[] = {
+-	{ RTE_PCI_DEVICE(IDPF_INTEL_VENDOR_ID, IDPF_DEV_ID_CPF) },
++	{ RTE_PCI_DEVICE(IDPF_INTEL_VENDOR_ID, CPFL_DEV_ID_MEV) },
++	{ RTE_PCI_DEVICE(IDPF_INTEL_VENDOR_ID, CPFL_DEV_ID_MMG) },
  	{ .vendor_id = 0, /* sentinel */ },
  };
  
+diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.h b/drivers/net/intel/cpfl/cpfl_ethdev.h
+index be73e05a0e..e05a0901d5 100644
+--- a/drivers/net/intel/cpfl/cpfl_ethdev.h
++++ b/drivers/net/intel/cpfl/cpfl_ethdev.h
+@@ -59,7 +59,8 @@
+ #define CPFL_ALARM_INTERVAL	50000 /* us */
+ 
+ /* Device IDs */
+-#define IDPF_DEV_ID_CPF			0x1453
++#define CPFL_DEV_ID_MMG			0x11E0
++#define CPFL_DEV_ID_MEV			0x1453
+ #define VIRTCHNL2_QUEUE_GROUP_P2P	0x100
+ 
+ #define CPFL_HOST_ID_NUM	2
+@@ -339,7 +340,7 @@ cpfl_get_vsi_id(struct cpfl_itf *itf)
+ 
+ 		return repr->vport_info->vport.info.vsi_id;
+ 	} else if (itf->type == CPFL_ITF_TYPE_VPORT) {
+-		if (itf->adapter->base.hw.device_id == IDPF_DEV_ID_CPF) {
++		if (itf->adapter->base.hw.device_id == CPFL_DEV_ID_MEV) {
+ 			vport_id = ((struct cpfl_vport *)itf)->base.vport_id;
+ 
+ 			vport_identity.func_type = CPCHNL2_FTYPE_LAN_PF;
 -- 
 2.34.1
 
