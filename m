@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B79AFCCD187
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 07:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6875ECCD187
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 07:21:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A3C1C40A6F;
-	Tue, 14 Oct 2025 09:20:22 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 8CD54402A0
- for <dev@dpdk.org>; Tue, 14 Oct 2025 08:00:50 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 709B2201B0A;
- Tue, 14 Oct 2025 08:00:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E4B8C40A73;
+	Tue, 14 Oct 2025 09:20:23 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 3C2D0402CE
+ for <dev@dpdk.org>; Tue, 14 Oct 2025 08:00:51 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1C6391A1BEF;
+ Tue, 14 Oct 2025 08:00:51 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 39EF6201AEA;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DB8621A1BE7;
  Tue, 14 Oct 2025 08:00:50 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5864B18000AF;
- Tue, 14 Oct 2025 14:00:49 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5F44F1800093;
+ Tue, 14 Oct 2025 14:00:50 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: dev@dpdk.org,
 	stephen@networkplumber.org,
 	david.marchand@redhat.com
-Cc: Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: [PATCH 11/15] net/dpaa2: replace global variable to driver flag
-Date: Tue, 14 Oct 2025 11:30:41 +0530
-Message-ID: <20251014060045.1304694-12-prashant.gupta_3@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH 14/15] net/dpaa2: add eCPRI header and message dump
+Date: Tue, 14 Oct 2025 11:30:44 +0530
+Message-ID: <20251014060045.1304694-15-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251014060045.1304694-1-prashant.gupta_3@nxp.com>
 References: <20251014060045.1304694-1-prashant.gupta_3@nxp.com>
@@ -49,193 +49,180 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
+From: Jun Yang <jun.yang@nxp.com>
 
-This patch replaces the various global variable with
-driver specific flag and align.
+Dump ECPRI header over ethernet/vlan/udp.
+Dump message contents according to various types.
+ECPRI are set to parser result areas by softparser.
 
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_ethdev.c | 29 +++++++++++++++----------
- drivers/net/dpaa2/dpaa2_ethdev.h | 36 +++++++++++++++++++-------------
- drivers/net/dpaa2/dpaa2_rxtx.c   |  4 ++--
- 3 files changed, 42 insertions(+), 27 deletions(-)
+ drivers/net/dpaa2/dpaa2_parse_dump.h | 124 +++++++++++++++++++++++++++
+ 1 file changed, 124 insertions(+)
 
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index 529856f704..56c23e4717 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -73,9 +73,6 @@ bool dpaa2_enable_ts[RTE_MAX_ETHPORTS];
- uint64_t dpaa2_timestamp_rx_dynflag;
- int dpaa2_timestamp_dynfield_offset = -1;
- 
--/* Enable error queue */
--bool dpaa2_enable_err_queue;
--
- bool dpaa2_print_parser_result;
- 
- #define MAX_NB_RX_DESC		11264
-@@ -507,7 +504,7 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
- 			goto fail;
+diff --git a/drivers/net/dpaa2/dpaa2_parse_dump.h b/drivers/net/dpaa2/dpaa2_parse_dump.h
+index 78fd3b768c..bcab3bf0cb 100644
+--- a/drivers/net/dpaa2/dpaa2_parse_dump.h
++++ b/drivers/net/dpaa2/dpaa2_parse_dump.h
+@@ -74,6 +74,122 @@ struct dpaa2_fapr_field_info support_dump_fields[] = {
  	}
+ };
  
--	if (dpaa2_enable_err_queue) {
-+	if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
- 		priv->rx_err_vq = rte_zmalloc("dpni_rx_err",
- 			sizeof(struct dpaa2_queue), 0);
- 		if (!priv->rx_err_vq) {
-@@ -584,7 +581,7 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
- 		priv->rx_vq[i--] = NULL;
- 	}
- 
--	if (dpaa2_enable_err_queue) {
-+	if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
- 		dpaa2_q = priv->rx_err_vq;
- 		dpaa2_queue_storage_free(dpaa2_q, RTE_MAX_LCORE);
- 	}
-@@ -1331,7 +1328,7 @@ dpaa2_dev_start(struct rte_eth_dev *dev)
- 		dpaa2_q->fqid = qid.fqid;
- 	}
- 
--	if (dpaa2_enable_err_queue) {
-+	if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
- 		ret = dpni_get_queue(dpni, CMD_PRI_LOW, priv->token,
- 				     DPNI_QUEUE_RX_ERR, 0, 0, &cfg, &qid);
- 		if (ret) {
-@@ -2797,6 +2794,17 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 	dpni_dev->regs = dpaa2_get_mcp_ptr(MC_PORTAL_INDEX);
- 	eth_dev->process_private = dpni_dev;
- 
-+	/* RX no prefetch mode? */
-+	if (dpaa2_get_devargs(dev->devargs, DRIVER_NO_PREFETCH_MODE)) {
-+		priv->flags |= DPAA2_NO_PREFETCH_RX;
-+		DPAA2_PMD_INFO("No RX prefetch mode");
-+	}
++static inline void
++dpaa2_print_ecpri(struct dpaa2_fapr_array *fapr)
++{
++	uint8_t ecpri_type;
++	struct rte_ecpri_combined_msg_hdr ecpri_msg;
 +
-+	if (dpaa2_get_devargs(dev->devargs, DRIVER_LOOPBACK_MODE)) {
-+		priv->flags |= DPAA2_RX_LOOPBACK_MODE;
-+		DPAA2_PMD_INFO("Rx loopback mode");
-+	}
++	ecpri_type = fapr->pr[DPAA2_FAFE_PSR_OFFSET];
++	if ((ecpri_type >> 1) > 7) {
++		DPAA2_PR_PRINT("Invalid ECPRI type(0x%02x)\r\n",
++			ecpri_type);
++	} else {
++		DPAA2_PR_PRINT("ECPRI type %d present\r\n",
++			ecpri_type >> 1);
++		if (ecpri_type == ECPRI_FAFE_TYPE_0 ||
++			ecpri_type == ECPRI_FAFE_TYPE_1) {
++			/* Type 0 is identical to type1*/
++			ecpri_msg.type0.pc_id =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 1];
++			ecpri_msg.type0.pc_id =
++				ecpri_msg.type0.pc_id << 8;
++			ecpri_msg.type0.pc_id |=
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET];
 +
- 	/* For secondary processes, the primary has done all the work */
- 	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
- 		/* In case of secondary, only burst and ops API need to be
-@@ -2804,10 +2812,9 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 		 */
- 		eth_dev->dev_ops = &dpaa2_ethdev_ops;
- 		eth_dev->rx_queue_count = dpaa2_dev_rx_queue_count;
--		if (dpaa2_get_devargs(dev->devargs, DRIVER_LOOPBACK_MODE))
-+		if (priv->flags & DPAA2_RX_LOOPBACK_MODE)
- 			eth_dev->rx_pkt_burst = dpaa2_dev_loopback_rx;
--		else if (dpaa2_get_devargs(dev->devargs,
--					DRIVER_NO_PREFETCH_MODE))
-+		else if (priv->flags & DPAA2_NO_PREFETCH_RX)
- 			eth_dev->rx_pkt_burst = dpaa2_dev_rx;
++			ecpri_msg.type0.seq_id =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 3];
++			ecpri_msg.type0.seq_id =
++				ecpri_msg.type0.seq_id << 8;
++			ecpri_msg.type0.seq_id |=
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 2];
++
++			DPAA2_PR_PRINT("pc_id(0x%04x) seq_id(0x%04x)\r\n",
++				rte_be_to_cpu_16(ecpri_msg.type0.pc_id),
++				rte_be_to_cpu_16(ecpri_msg.type0.seq_id));
++		} else if (ecpri_type == ECPRI_FAFE_TYPE_2) {
++			ecpri_msg.type2.rtc_id =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 1];
++			ecpri_msg.type2.rtc_id =
++				ecpri_msg.type2.rtc_id << 8;
++			ecpri_msg.type2.rtc_id |=
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET];
++
++			ecpri_msg.type2.seq_id =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 3];
++			ecpri_msg.type2.seq_id =
++				ecpri_msg.type2.seq_id << 8;
++			ecpri_msg.type2.seq_id |=
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 2];
++
++			DPAA2_PR_PRINT("rtc_id(0x%04x) seq_id(0x%04x)\r\n",
++				rte_be_to_cpu_16(ecpri_msg.type2.rtc_id),
++				rte_be_to_cpu_16(ecpri_msg.type2.seq_id));
++		} else if (ecpri_type == ECPRI_FAFE_TYPE_3) {
++			DPAA2_PR_PRINT("ECPRI type3 extract not support\r\n");
++		} else if (ecpri_type == ECPRI_FAFE_TYPE_4) {
++			ecpri_msg.type4.rma_id =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET];
++			ecpri_msg.type4.rw =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 1] >> 4;
++			ecpri_msg.type4.rr =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 1] & 0xf;
++
++			ecpri_msg.type4.ele_id =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 3];
++			ecpri_msg.type4.ele_id =
++				ecpri_msg.type4.ele_id << 8;
++			ecpri_msg.type4.ele_id |=
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 2];
++
++			DPAA2_PR_PRINT("rma_id(0x%02x) rw(0x%02x)",
++				ecpri_msg.type4.rma_id, ecpri_msg.type4.rw);
++			DPAA2_PR_PRINT(" rr(0x%02x) ele_id(0x%04x)\r\n",
++				ecpri_msg.type4.rr,
++				rte_be_to_cpu_16(ecpri_msg.type4.ele_id));
++		} else if (ecpri_type == ECPRI_FAFE_TYPE_5) {
++			ecpri_msg.type5.msr_id =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET];
++			ecpri_msg.type5.act_type =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 1];
++
++			DPAA2_PR_PRINT("rma_id(0x%02x) rw(0x%02x)\r\n",
++				ecpri_msg.type5.msr_id,
++				ecpri_msg.type5.act_type);
++		} else if (ecpri_type == ECPRI_FAFE_TYPE_6) {
++			ecpri_msg.type6.rst_id =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 1];
++			ecpri_msg.type6.rst_id =
++				ecpri_msg.type6.rst_id << 8;
++			ecpri_msg.type6.rst_id |=
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET];
++
++			ecpri_msg.type6.rst_op =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 2];
++
++			DPAA2_PR_PRINT("rst_id(0x%04x) rst_op(0x%02x)\r\n",
++				rte_be_to_cpu_16(ecpri_msg.type6.rst_id),
++				ecpri_msg.type6.rst_op);
++		} else if (ecpri_type == ECPRI_FAFE_TYPE_7) {
++			ecpri_msg.type7.evt_id =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET];
++			ecpri_msg.type7.evt_type =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 1];
++			ecpri_msg.type7.seq =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 2];
++			ecpri_msg.type7.number =
++				fapr->pr[DPAA2_ECPRI_MSG_OFFSET + 3];
++
++			DPAA2_PR_PRINT("evt_id(0x%02x) evt_type(0x%02x)",
++				ecpri_msg.type7.evt_id,
++				ecpri_msg.type7.evt_type);
++			DPAA2_PR_PRINT(" seq(0x%02x) number(0x%02x)\r\n",
++				ecpri_msg.type7.seq,
++				ecpri_msg.type7.number);
++		}
++	}
++}
++
+ static inline void
+ dpaa2_print_faf(struct dpaa2_fapr_array *fapr)
+ {
+@@ -82,6 +198,7 @@ dpaa2_print_faf(struct dpaa2_fapr_array *fapr)
+ 	int i, byte_pos, bit_pos, vxlan = 0, vxlan_vlan = 0;
+ 	struct rte_ether_hdr vxlan_in_eth;
+ 	uint16_t vxlan_vlan_tci;
++	int ecpri = 0;
+ 
+ 	for (i = 0; i < faf_bit_len; i++) {
+ 		faf_bits[i].position = i;
+@@ -111,6 +228,8 @@ dpaa2_print_faf(struct dpaa2_fapr_array *fapr)
+ 			faf_bits[i].name = "UDP Present";
+ 		else if (i == FAF_TCP_FRAM)
+ 			faf_bits[i].name = "TCP Present";
++		else if (i == FAFE_ECPRI_FRAM)
++			faf_bits[i].name = "ECPRI Present";
  		else
- 			eth_dev->rx_pkt_burst = dpaa2_dev_prefetch_rx;
-@@ -2898,8 +2905,8 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 			faf_bits[i].name = "Check RM for this unusual frame";
+ 	}
+@@ -124,6 +243,8 @@ dpaa2_print_faf(struct dpaa2_fapr_array *fapr)
+ 				faf_bits[i].position, faf_bits[i].name);
+ 			if (i == FAF_VXLAN_FRAM)
+ 				vxlan = 1;
++			else if (i == FAFE_ECPRI_FRAM)
++				ecpri = 1;
+ 		}
  	}
  
- 	if (dpaa2_get_devargs(dev->devargs, DRIVER_ERROR_QUEUE)) {
--		dpaa2_enable_err_queue = 1;
--		DPAA2_PMD_INFO("Enable DMA error checks");
-+		priv->flags |= DPAAX_RX_ERROR_QUEUE_FLAG;
-+		DPAA2_PMD_INFO("Enable error queue");
+@@ -192,6 +313,9 @@ dpaa2_print_faf(struct dpaa2_fapr_array *fapr)
+ 				vxlan_vlan_tci);
+ 		}
  	}
- 
- 	if (getenv("DPAA2_PRINT_RX_PARSER_RESULT"))
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index c4133f604f..f4adb76bb6 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.h
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -68,26 +68,36 @@
- /* Enable TX Congestion control support
-  * default is disable
-  */
--#define DPAA2_TX_CGR_OFF	0x01
-+#define DPAA2_TX_CGR_OFF	RTE_BIT32(0)
- 
- /* Disable RX tail drop, default is enable */
--#define DPAA2_RX_TAILDROP_OFF	0x04
-+#define DPAA2_RX_TAILDROP_OFF	RTE_BIT32(2)
 +
-+/* Disable prefetch Rx mode to get exact requested packets */
-+#define DPAA2_NO_PREFETCH_RX	RTE_BIT32(3)
-+
-+/* Driver level loop mode to simply transmit the ingress traffic */
-+#define DPAA2_RX_LOOPBACK_MODE	RTE_BIT32(4)
-+
-+/* HW loopback the egress traffic to self ingress*/
-+#define DPAA2_TX_MAC_LOOPBACK_MODE	RTE_BIT32(5)
-+
-+#define DPAA2_TX_SERDES_LOOPBACK_MODE	RTE_BIT32(6)
-+
-+#define DPAA2_TX_DPNI_LOOPBACK_MODE	RTE_BIT32(7)
-+
- /* Tx confirmation enabled */
--#define DPAA2_TX_CONF_ENABLE	0x08
-+#define DPAA2_TX_CONF_ENABLE	RTE_BIT32(8)
++	if (ecpri)
++		dpaa2_print_ecpri(fapr);
+ }
  
- /* Tx dynamic confirmation enabled,
-  * only valid with Tx confirmation enabled.
-  */
--#define DPAA2_TX_DYNAMIC_CONF_ENABLE	0x10
--/* DPDMUX index for DPMAC */
--#define DPAA2_DPDMUX_DPMAC_IDX 0
--
--/* HW loopback the egress traffic to self ingress*/
--#define DPAA2_TX_MAC_LOOPBACK_MODE 0x20
-+#define DPAA2_TX_DYNAMIC_CONF_ENABLE	RTE_BIT32(9)
- 
--#define DPAA2_TX_SERDES_LOOPBACK_MODE 0x40
-+#define DPAAX_RX_ERROR_QUEUE_FLAG	RTE_BIT32(11)
- 
--#define DPAA2_TX_DPNI_LOOPBACK_MODE 0x80
-+/* DPDMUX index for DPMAC */
-+#define DPAA2_DPDMUX_DPMAC_IDX 0
- 
- #define DPAA2_TX_LOOPBACK_MODE \
- 	(DPAA2_TX_MAC_LOOPBACK_MODE | \
-@@ -167,8 +177,6 @@ extern const struct rte_flow_ops dpaa2_flow_ops;
- 
- extern const struct rte_tm_ops dpaa2_tm_ops;
- 
--extern bool dpaa2_enable_err_queue;
--
- extern bool dpaa2_print_parser_result;
- 
- #define DPAA2_FAPR_SIZE \
-@@ -384,7 +392,7 @@ struct dpaa2_dev_priv {
- 	struct dpaa2_bp_list *bp_list; /**<Attached buffer pool list */
- 	void *tx_conf_vq[MAX_TX_QUEUES * DPAA2_MAX_CHANNELS];
- 	void *rx_err_vq;
--	uint8_t flags; /*dpaa2 config flags */
-+	uint32_t flags; /*dpaa2 config flags */
- 	uint8_t max_mac_filters;
- 	uint8_t max_vlan_filters;
- 	uint8_t num_rx_tc;
-diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
-index 7caccfa469..8f932be635 100644
---- a/drivers/net/dpaa2/dpaa2_rxtx.c
-+++ b/drivers/net/dpaa2/dpaa2_rxtx.c
-@@ -753,7 +753,7 @@ dpaa2_dev_prefetch_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 
- 	q_storage = dpaa2_q->q_storage[rte_lcore_id()];
- 
--	if (unlikely(dpaa2_enable_err_queue))
-+	if (unlikely(priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG))
- 		dump_err_pkts(priv->rx_err_vq);
- 
- 	if (unlikely(!DPAA2_PER_LCORE_ETHRX_DPIO)) {
-@@ -994,7 +994,7 @@ dpaa2_dev_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	struct rte_eth_dev_data *eth_data = dpaa2_q->eth_data;
- 	struct dpaa2_dev_priv *priv = eth_data->dev_private;
- 
--	if (unlikely(dpaa2_enable_err_queue))
-+	if (unlikely(priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG))
- 		dump_err_pkts(priv->rx_err_vq);
- 
- 	if (unlikely(!DPAA2_PER_LCORE_DPIO)) {
+ static inline void
 -- 
 2.43.0
 
