@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2D5CCD184
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 10:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E58CCD184
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 10:18:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B63440662;
-	Tue, 14 Oct 2025 12:17:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 18DF440673;
+	Tue, 14 Oct 2025 12:17:45 +0200 (CEST)
 Received: from AM0PR83CU005.outbound.protection.outlook.com
- (mail-westeuropeazon11010048.outbound.protection.outlook.com [52.101.69.48])
- by mails.dpdk.org (Postfix) with ESMTP id 41EB240678
- for <dev@dpdk.org>; Tue, 14 Oct 2025 12:17:41 +0200 (CEST)
+ (mail-westeuropeazon11010003.outbound.protection.outlook.com [52.101.69.3])
+ by mails.dpdk.org (Postfix) with ESMTP id E4E344067C
+ for <dev@dpdk.org>; Tue, 14 Oct 2025 12:17:43 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pA1XRUYL9zS+8l1ivHMFWOQf0rqcjTU3wlaB3nGLTaU91XaDdZJbeWUCUJilP0QiCbe/LzFf9bpsgbZjev9TzL29Z5zBbhza1WfksQd0pA3qIvobc6FY8PBKdoPqncfw9N7ElOilhvbJkd+GURyfb6icK3F8sGChphRHLmjdWoGAenZrqVOb3w2r0eo8aUzpNbvUVzTd3lnyJHxh4OC8EuJJYrmcoSCGxdMvdc4/fnF2Gws4w6SZ9PZCDmEibdYR3S5srqJsJis6H8nGlWRUefAlPaMXk6A5s/g4mgRqK+kHwwX2eigr+1FR7zXIpQftIdwivZloOoMsaBiYoIe/pQ==
+ b=u7Fc3GRy9a1h/QneE2F+uw9w+mljum/jueq1UlBZsLypUKOdHSkFjcvU+7cLNjJdr67Dw17CFiTDH0qPgo0mWbPhoQ956zJ6w4VimsJaiPzR3Aq4ZJCVwhK/dMQNhafZTKWKmGaXKbCq6/4KwyHqIPRxQxxSwae/LP3PGUUKkqiGTkrGVZsSjD+OzY6yzXFoxkdhQR/cnDKjCeDlmTPxx+QyWQ6zNEMthJX/XObxy3bmuDBlE/CALBDCoK0Kper5TpP1MMMSIH2lLQayP+uHzyPXuLItFY08N+TBcYTmftrqnTu7UrMEj8MoV07EHKskG8VKW9fwPSONj2BpDOPBMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dZRBmqEN20PCoSJKfb/E6kzl3Cu8UmLHFAaEkK8BTc0=;
- b=HPocplGCGdgg0bsfGOvZVugmnCKpEDPg4Cdlvmek/j06BnyI4mQ7A9WLHqq5jIV2xz/S6ejgJX2J8I4sZnmkxLPf2/kPISc7Mo/hC9oumN4+CzzWzzaeh8lkAm8lDA9ZQX6ovnaPbQhlJholOyy7RKELbqOvutm9OsJIt36JCJZ7iqaSaFKPBTXctpxiLXhuZecepg5jPGm42xZFcx6B+06u9VvMju8oZp1byDVx7mugMyVyfUTS0CsMXLtt8Z04xkmwEft+bt9BLeJCRkIbaW+kOGVgp0raTkm/rIVY4ZT27EyiQy+52igWgew3Zkh4u5Ezwcg9aGdLVfP8k7zrAg==
+ bh=7D4dEr11fdoH4LbXnGYrm/tNbu2v79hHX3b1rf/jVOM=;
+ b=j6elrn08CA0peTwRX/yOTTsUUrmTdqDUt2uPDWm4txj5XZWxJe9r0zLKVtdzUmdBvMunH/URHYFRnjM80nKHHtCdr0DOqQ5sng8u1OyTQH0N1317iYuLyz+wHpUIk6Mz8RrMwz8zh0iwsDfkXnAU3ZCB/iPgCT+mYb8lDEsLPKvP7vkjSkVaCuw51giKqTAM9z4OTS0ER4B4buwGRSIomsuhUHpLH3dyQrj3QaSkRvQ2yg+qLehwiY5xyex4QD346rEflEImS7ZAdVaer+KGBhugvsQWWn2v0ICx8tvBaoKEPY4j8MqMC50FKaw4NngaITj3e44sJpMlS9l06nzwAA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dZRBmqEN20PCoSJKfb/E6kzl3Cu8UmLHFAaEkK8BTc0=;
- b=EA0cbjcc6Eh3FJDIZeppUpBzK2PiDBZXhcAhM+O5VCYYmlOH03m79chS0qelniOvDWS1HEZkaw+2J3EbOLyplgdZFMYOzIoCxfSw/QqNBUZ67ZydY8TyKi8EySmbwVPFDPmmUy4O4uSQIWhlx/E6K6M5Shdvhfn+xXWWv9RGobxYy6FudgGW+5ShhF8hTzpkssgbgFraD8abFAQSg0SgYiBkOs1XZCHUZ1jMr8rkE1cXKITuCqzv266VX1HZCzL7ElSr8D6bcJNdsSiJkqWAP0vzJZMiplfEHQVLVNQ8rP5FIcxdBgKG8zcNm1wSSYF6E/8JXLWRexIav9MQi8AvoQ==
+ bh=7D4dEr11fdoH4LbXnGYrm/tNbu2v79hHX3b1rf/jVOM=;
+ b=R0uwJzCr9VgAXj6euHd/p+zUUgtaEYxlcKUyYsjw+Ks8+57pIypiDrwG/KnmtimPBYFRq4rSmAsW084AGsHRt1SNe2vhyKoJVlxhkhV9Zps7RYWRnlFC3Nbij0RtSjfweX7kLpNCbjtqOKykYf2zQp1FVZduGssiv5Igu7HA48GPQn3+eq/cWFhFdQmjXvPIE+L1cMeJlZ5jmgAg1Pek7LY+6hz/CpvCIkk0V/0EC5QPru0r99wCxZRb/ABajBek1+RsLD7vazBMur+RjRN5ShKaJbQKcSHVtT3e0z1Oe4SjdkbOJ8CtCb/42In106cbUnaFrsOEeGlRBt/BUoVMDA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com (2603:10a6:20b:3b0::14)
  by VI0PR04MB11746.eurprd04.prod.outlook.com (2603:10a6:800:2ec::14)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
- 2025 10:17:39 +0000
+ 2025 10:17:42 +0000
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::c52d:9751:36a3:78f9]) by AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::c52d:9751:36a3:78f9%6]) with mapi id 15.20.9228.009; Tue, 14 Oct 2025
- 10:17:39 +0000
+ 10:17:41 +0000
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v3 3/5] bus/dpaa: Disable qman Invalid Enqueue State interrupt
-Date: Tue, 14 Oct 2025 15:47:14 +0530
-Message-Id: <20251014101716.2885563-4-g.singh@nxp.com>
+Subject: [PATCH v3 4/5] bus/dpaa: Set max push RXQ number
+Date: Tue, 14 Oct 2025 15:47:15 +0530
+Message-Id: <20251014101716.2885563-5-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20251014101716.2885563-1-g.singh@nxp.com>
 References: <20251008043519.2461707-1-g.singh@nxp.com>
@@ -55,78 +55,78 @@ X-ClientProxiedBy: SI2PR02CA0018.apcprd02.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS8PR04MB8198:EE_|VI0PR04MB11746:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2594eea7-d6ec-4287-08f2-08de0b0ae737
+X-MS-Office365-Filtering-Correlation-Id: 1ab78527-7130-4479-ac5d-08de0b0ae888
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|1800799024|376014|52116014|366016|19092799006|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?99BKyTMIehPNBv5NCC2b0zwH0bClVVx6wk/ljvQwue9tN/eCq2KTKtLHvQEI?=
- =?us-ascii?Q?3wkB7eeIfI9WFmzOvJMVyqgZysHzqh4dfZZY90sUGAf9RZ6nenR+t07u0PlI?=
- =?us-ascii?Q?CIEFSe35TXlup0s53IkN3KpEyYbGrQvzDi76+p7Xo3n77E1Vf6fEtNp4ER1o?=
- =?us-ascii?Q?nvOfn5TNPC8cxcKFiUpxCe5QX/O9O1By2R98Pc21TyqK6JGD0NfVXNTdLLea?=
- =?us-ascii?Q?QSFDHmwlQC760cTWfcF66WxmHeK5sLmAbgw6xJnripv0isZ03fsKFCZhz0m3?=
- =?us-ascii?Q?rP/o31UN9fkA5bEJ6DWG/B3tKBhOxJuIvGUk/ZjnxORyH/mHNtbxw8D0htYv?=
- =?us-ascii?Q?NohmcLn6Kc47GF/SnpHaTp9KVzWV+r9dhdBjnLK5qDVCQ4lWjlQmZOpyMKuZ?=
- =?us-ascii?Q?guw/xE7IrCbVfwVqm8qtqzgcxL/OyyJ2+IQj7bl6jdWFL+A4xR8EJexbdpaN?=
- =?us-ascii?Q?e/TctzJZkah1+FmglWl3t80/Dtjha5BQWOJDRR5Cl9Iybc3p87CyW3ACW1UJ?=
- =?us-ascii?Q?1i59BHiDyOmbiUnWUiuVgPgYdeU49xn81J9nYal1yGCFWlKoicfXdGrgb4hM?=
- =?us-ascii?Q?8MRJaLcV7HvuY0VjyMlWWyyBoc9BKEUUNhjQ0jMKAFbfcMbOGCnkO4syXZFa?=
- =?us-ascii?Q?MN1GFfhJt5QRFGvd+cnjX6pIRnAkonIz0rSKDNQHDeOZuWQw6H+DEKry6wI4?=
- =?us-ascii?Q?xGDYl2qOKZ3GneCi2KHEB/lS0n2C+2xxB2Z4Pn0Bo2fgMaOpf21af70lGmhW?=
- =?us-ascii?Q?RgIz0Inl/TTjY16r1kb7kmWxamot4/AgON+WzTM06M9uk0GvQIHRSd6TaWmR?=
- =?us-ascii?Q?iz2iM/ZDYMjXQzwgSp6qaDiIkkcU35fTigHctymNkaBpBpAq91FUXrbMnoFd?=
- =?us-ascii?Q?hNj6iXyJHe3aHbJi0fJXvgPNIic2nStYgswwtPl44vrpIucDGYIenYSYqPLs?=
- =?us-ascii?Q?H244DZCENtol08zV+7nPP3ip+8zLpQdiv/dCQwEDb1zKPSUzwtaB+4RQnl5D?=
- =?us-ascii?Q?fP9flQFwmncJK0BwUXU/4gJDZhWophaciN1wlwfvtWzNb/jy7wxdIoTkZhdY?=
- =?us-ascii?Q?kS9GwQLW9cC0uT+JzqwNaxiH/tW5IFME3ncIxQxXvJocbo5gj+SKYiwTyJYz?=
- =?us-ascii?Q?+O9s+mk/1YXyss/1lNLUSdEMmmaUL167g0AYfcdR9rYSHxJ6GFGCLPtHQDAQ?=
- =?us-ascii?Q?0xDdZu5FjzrPr7u9kWr4kNkLRWZCi2gKkQDn7jBpwsLJs6gmq6tX6UIfFQA5?=
- =?us-ascii?Q?i3AJhHK9JMIgipu6+WDEB7drTzzQ4clX8ipTT2SEIP4ihdhizTOssYmX1Tt7?=
- =?us-ascii?Q?C5CUJzGFCrVmkkt5637BYzVu7FwXLchhoKqRLCRWYb9M6foxumniCqcNDqRs?=
- =?us-ascii?Q?2EaQ1ZXvBPzXQOZKv5+ruEghzAV9uzjMDvTLTkpznUcyiJCZkVR3Ulrsy/DP?=
- =?us-ascii?Q?Zw63eeEJtKa6aSN2vsNdkbwu82fv/LVuD9FTjrOg6+4Yk+TQQH3/4+OAec4N?=
- =?us-ascii?Q?uJHgpJUS0yD+pn9f78ZB56Mw7lmaPvyAYFXa?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Ni9/r+eZanXrhG/6qj0AHT0Ly1/ev/WfvA/6n2ZxJ+HErSV+y23+tmaB92Jz?=
+ =?us-ascii?Q?8KDUuEArB89b+xy3VQRBgW1yuw5/MHVNccCsKj265N77Wmm+ihaF30x8KA29?=
+ =?us-ascii?Q?FhNqp8lP5vUgD5fAYZH/CtFRZZRp1MeVqpVTLEZ2xmytegXOQbczEQk64Ok6?=
+ =?us-ascii?Q?pDlzfXhaSnNMwLlZRvEGSv4lAylDmQi7v1Zo2Yx06RRLq5Okd8JfLxSxK9R/?=
+ =?us-ascii?Q?iL9tTbJGkuBm10VK23JXa7hPE7C2ruNCkRw8WcEbMsG9dbDW9cqrl+/wKPD1?=
+ =?us-ascii?Q?c/eF0mtbosn1z8M3epvOBSmpaaSWi2m8yLfeVrjs/3xDO+vvjr1dJrn+85CO?=
+ =?us-ascii?Q?q08EhCzD9N38vcvxDWeABzdi1zVQLEjP0UdaelhybnU4watV7NSulG7lDa0J?=
+ =?us-ascii?Q?tfEhh1PnwT24hoLoHbfEzlpXZxFuuFyS11sYuVq7Qv0p4YgNOCjM2aDwod3E?=
+ =?us-ascii?Q?hekbNzRZCXPcErvArKu05ImrJIf9i7BO+mTmlcwe5F1IWXr3uNt97lmcIpun?=
+ =?us-ascii?Q?Llh/Q2N2O5113mv/0qTMd/eutCvGIKKfoe4mAVddTeMqf/nTP5j6z2XuzmYg?=
+ =?us-ascii?Q?c7TCIqEx9o3FS+AjuJ7Z/qIMqcD3bS/qizUwanl/tiKRsnUXasj9mLnDfdC1?=
+ =?us-ascii?Q?Gaa9v/Mp7nMSfuyEvENZZPEJ/Y3jTI3yj/7LyLgmJjAhjbdaBKasXXtoqKjq?=
+ =?us-ascii?Q?Lufep0YrIFA3Y73S18dAA8i3cVd5elPJTMZEtuETh/u42yLoh1HXPE9c6s47?=
+ =?us-ascii?Q?K50V901sA7cBIuBHNSA9Xh6usNKpeHNbkrjhrGnYOWP1pobxLE+ngkRO4Thk?=
+ =?us-ascii?Q?zYnGlj99Qvu0jss6Yij0rqmknBUy7+u6Jcizy77okjEkgBnggclsVSZf/LZp?=
+ =?us-ascii?Q?A7zONOS7MMHDlRdEk8ZhgfPImSccCuqatqhm5aHS6Jf+uPiNsl5FGLYcg4O1?=
+ =?us-ascii?Q?+fXUPrniwT3XTo0xJPgwjMIWm677KXv8ok4/jms7YDFvsYrsKgALpGC1ny79?=
+ =?us-ascii?Q?RXhnFefoBAX8FLmrEawPJlqfSQwERRbhTG6m5Bc+UVn2F5eosbZhboGdA5hB?=
+ =?us-ascii?Q?wh4+zh/bz9PjN4X3aL1b95OPeqeCPYJsWp3yC0Uq5rQqJCIu4KnQ7NawEB1F?=
+ =?us-ascii?Q?5zAwhS1nXYBRmRmwaJQ33yrU7tOGvfSG+qoXbnREHcVcF948yETCJ1XvMsKO?=
+ =?us-ascii?Q?caftIAfP+JGyRLKZy26NxV9bwXMyuPcWQqMLpivs6eDqoo3nU3F7SLUMTPHJ?=
+ =?us-ascii?Q?41soUbmSHGKrsX4W7r60Ve2+qroKr1M5z2RYGk+ehPmcr21e7BQYI07m00vi?=
+ =?us-ascii?Q?vUmNof01trOCC5aSEOwFIew7x/vP424O87aooHxvkp+UTSGAS6VRBpc8s+DY?=
+ =?us-ascii?Q?hPvG/6u1O1Gqgk5S51Oh+HY3BeIsJMZBJlsMxXsXVvopcGZf2VIriUryUnCo?=
+ =?us-ascii?Q?7/I8qM8H7cdWVpaD8wONpmSyug6V7Kpa6/bpJXbxUK3xHtbnTWnjf4F81aYF?=
+ =?us-ascii?Q?MuHydZPt2bNp3fbBezGNvDhgM637//4gSJCs?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:AS8PR04MB8198.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(1800799024)(376014)(52116014)(366016)(19092799006)(38350700014);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?C0do4Iddn91azfrxYqYFoRkWWVqTAE1Kdl6qsy5BpjeWZVUgVDrKZwIHM5nQ?=
- =?us-ascii?Q?d7+742Ek/vdrTL+kNOAVBBg5Hk8+ZwjMY/wsBohyNSDFK6LpEyEATCjTEhYM?=
- =?us-ascii?Q?m+DfDI/qPHGFiFvwNfwtnTjgP4nl/m4SzYY4xBfgJdG6kmzfzkPAuXkagGkK?=
- =?us-ascii?Q?sgxMaafwU27Q6PyGx7BTjomVMKKMQo/RXSlaJcvRz1aC1ryI/eyVAiXVktwu?=
- =?us-ascii?Q?Emsx+eRyQILUOfYTJK8O48+nwY1vlhkKbKdykBlNsJFQ4+jBVn0A9pPf9csT?=
- =?us-ascii?Q?Z4Quu9mwvyqIOSIpoBjCWvDu8Q4xF15pE+NguM1RNAZsK3S+zgIYe7rEgC8p?=
- =?us-ascii?Q?CLBYjk3BhJnf75NaIz+KTcXqOOqUgU8Xl2LHcxPs6rTfsGsH+m1Lx5cnlbal?=
- =?us-ascii?Q?Y+isTVql8YlyqYdsy+nldkoBkK6IUcnJ1DiFmgNDsBN94jGiVVx4RKJpvcFO?=
- =?us-ascii?Q?q9+n747PRyADbhAH0hmLXKhjzEyC2DeW1PHP9n0S6h9JoHXnUQrCHa7MTE5l?=
- =?us-ascii?Q?YMKDtuSLYNwtX1vZhYRO19unjT1+pRiX8wxutEKLV1M1Bl8ehSfFdDWahgSR?=
- =?us-ascii?Q?jBtdlTt9fokhXBqCeJni/fRO21dE2wl/K2j76m0zlxrbz/J+9Gr8GaKWjZNE?=
- =?us-ascii?Q?JJiy+XaHdfvyFCOkamh2bfGdLkWxWg4Bj4RMo2/ObVcVViRc9Jnh52ohadRf?=
- =?us-ascii?Q?GJ8c/5isOfPoBrVoJPtzn9WGDr07vxghTZkY+MZAu0I54CCKR1zQ5RnDJEvI?=
- =?us-ascii?Q?2Dd/wSJCPRgtqu0GCrH/PuADmzdW2sII8W0bq4ipVkv1GhJN0P/tSWNbw3u5?=
- =?us-ascii?Q?Zlw2PtTFRn/8b0qwLrAlbkB9kL76755cdQZlT+hyh7HqRSopc81rGeZsC64S?=
- =?us-ascii?Q?YtfTRW0UBjqzw3+LlpsRfIR9GVVAPK1dyYtI0GDINvbsnLBSCyVEnVm1Ydlp?=
- =?us-ascii?Q?17WAF0aStm1O/M/Nt6eTrBwZhVgqZQocp9NLzKZ7AzIiIk1idZehSFQ8n+8V?=
- =?us-ascii?Q?BKbwnMuJwTlrroIEB88CIcH7dtMpy5LEHTUaieftAYm8/nJ/sRhol1fjwoaF?=
- =?us-ascii?Q?RLD0mlKQFswjK1mTq+fnTv5lTzSF1CDwOzKVggaL+1H1FwdtVXld+rQCUaiT?=
- =?us-ascii?Q?U4S/6EJ7jOQYKXH4oBN5Csoj06j2jzWvGXMIlO9ojtJZoC+duPUFavg65hjR?=
- =?us-ascii?Q?xjMomVogqVdh1dUqOYCG8sm9rjv30QlynTGorajaec9qQ3wjzQboKXoXJYQo?=
- =?us-ascii?Q?NdFPCFhzFBhUzpME5SGH+1fO2VShlQVpcQiP3Ql7YWRS+EqeKH3cgaqvHtA7?=
- =?us-ascii?Q?JjCZmJZA3eiP5m9udh8KE4jUDijXEtdJxb+vjTYKqs4Oe41Ao52Cdu8PytWp?=
- =?us-ascii?Q?4E2k49A9swxcYkZFHs3VOYApqd4rd2on1AXk548cjU3E3bnKP/BBALJQn983?=
- =?us-ascii?Q?fEUqhH4CdCh7HU2NAmoEM9xfUt0SUpKfQo7A/oKl+5lUosxiWXjXLvr1vjI3?=
- =?us-ascii?Q?AgBSwZbN3u/aeruha5azM5xDIAi0rVXKxybjf0DA3TFQgwqCJOBF2TGUYEKn?=
- =?us-ascii?Q?39OXv57vi3RBHLz8OtI=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?NjpR7Nr22NoYdIuN0HC24EpION6wYqY8SNeUwJ0jvi5B8Pyndo6ziLwNQKuc?=
+ =?us-ascii?Q?zkA8ruY7C1AY8OyJagvzVYecT779yqf0Ej5xDIV4nRqgL5InkAXCqHuQT8JB?=
+ =?us-ascii?Q?HET7i0O43lI6yaZcOfub/WCRyxCM+tgzzx8ePmSz6Vu0N4I/K6UuCwl4hBed?=
+ =?us-ascii?Q?dhFS2rkdAbdXTopFP2c8825r/cU6pVeoJm9ajGSJRt4EfbM4ZAwyyF4U1ei1?=
+ =?us-ascii?Q?m/8Ddbd5XNdQembEUCH2gnzoUaS1/tL+zE0QpPai5JwGtLW283/EvzVuCpIk?=
+ =?us-ascii?Q?HyaIyD7BXJuqnts5kILEnIgsuOcuZWyX7//EwCNhTr7Y8FV7QZYDN+l8G8Hw?=
+ =?us-ascii?Q?pbo5vFr4RBiLjvwbfOz81QYMg/PO86rKaz5lDOIg32ERFeT3rBAtUnW58a38?=
+ =?us-ascii?Q?tAiaREXvs+zgxrBrnoWt9qgxuTQ57KjH612ruZW3esOovoWqs/dLuz0Z9zov?=
+ =?us-ascii?Q?dmTl7jvaAem7Qcez6GPW1hFQy7Ld+yPxicG5k8JCMpmer0doreNAs/Q4EsIT?=
+ =?us-ascii?Q?8yzcY6UW7F/dsWGwFvTI9rxCREFmFjYcewHp9XvYiXX6d58k42GKR8Rzw2m3?=
+ =?us-ascii?Q?g4YBDeoEUFLVszHQ+6zj6dH/nzjIk/Ddoktd9ferqLXUqkeoEP8z1diZt45R?=
+ =?us-ascii?Q?ereDvSm/F2g4WX9oWDJJTzldQHM5ytS74Fe+Q0+I7y9EJMTqWta8evJ72vwi?=
+ =?us-ascii?Q?QBvWguNCu+RK1RVUG4CkToDy5bmPB5kDwrgSHscuTSb2asVbc7dFUGOdDpfq?=
+ =?us-ascii?Q?YTETg4GhwkAz1bHB9hbGKaAbcU4pec6uN+21pJXxmgG0hOWIpJRjeuJd8c8r?=
+ =?us-ascii?Q?M4SnykRCE5zGxtpUYg1qlgnBkO3yX2uV+cR+sp5GmHsJXJEeCgfezpf+7dsu?=
+ =?us-ascii?Q?X39S9PaLamk71AbQIv8wIB/Ju9SaK1gldTLDsnCqGEaG7QBmZJ8j1K9HEXYT?=
+ =?us-ascii?Q?IBroPxyqRzwqiIZHq+kOicsVLJayc0EWnWUNyoX0YikMh11c1Fj8CBFQZkXJ?=
+ =?us-ascii?Q?1SwRQtr+bBoU+RJVbmQS+6WR8LOH8N+dch8FBf6YlVH2nnawATWiuh418hVN?=
+ =?us-ascii?Q?O5qKHBS6S3A2TT8FSLdSjUUxRfHCDBpoO/eJ3dpOw4d7V7Gc417Ap5jSdOQQ?=
+ =?us-ascii?Q?vqJbYLh2HPKk/JszL6guBX9OdedVRC63TOoR/Do1I+9jRBBSbsuVQsS6elRa?=
+ =?us-ascii?Q?ttFS02m+IC1ZUuqgFYbN99P6jHL6rCnY1WN3OxTh5nmbVLNOCgG06rBSHxmb?=
+ =?us-ascii?Q?SDjokFfiS9I6bFmHega80tmiUoxstzfyz8OUL05hh2vF6diTrkwFBP6rLZTj?=
+ =?us-ascii?Q?AIqSU1MWvx57GqXE2DfaOwLCKXGuiBU96czI/OhvfG9M9x7uIV4nwGo4nRN9?=
+ =?us-ascii?Q?ekApgpyu6OSk/tKMfSmiSSLgXTRZXa8A16YEKahqR2POvHkFu8MaoKGJocTU?=
+ =?us-ascii?Q?e+i43gq5rJewQzHLJRTXJVkwCZfNdbNrc5wvhOhRF7rga+OKmXTsZo4et1tw?=
+ =?us-ascii?Q?zdDJjG0XFI2MtNV6hr2ICvAen3QUOCF55zXXnf4l4SA59K3l3dy42ULmEP1d?=
+ =?us-ascii?Q?ACCjEzeOh6QJ4AOarTU=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2594eea7-d6ec-4287-08f2-08de0b0ae737
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ab78527-7130-4479-ac5d-08de0b0ae888
 X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8198.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 10:17:39.2179 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 10:17:41.5417 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z34k5TweJ74Ouk7O/g+McDUwfPbzFQ3CdyXWHLooGSoXXimL00PaKbPp4HrGhUil
+X-MS-Exchange-CrossTenant-UserPrincipalName: Fy7ZQvldzDDDmaZEMe6LbVR7vPfPT2WGnB1j0O+0XLUYU5MtAcz2v1bUiF/RVcNh
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11746
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -143,70 +143,255 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-ShareMAC port is still alive after dpdk process quits but RXQ setup
-in dpdk process is in invalid state. If high loading ingress traffic
-hits the FMan PCD then it's en-queued to the RXQ to generate frequent
-interrupts. This causes system stuck.
-User can disable this kind of interrupt by env to avoid this issue:
-export DPAA_QMAN_IESR_ISR_DISABLE=1
+Max push queue number is bus level number affecting all dpaa devices.
+Move the configuration from PMD driver to bus driver.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/qman_driver.c | 27 ++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ drivers/bus/dpaa/bus_dpaa_driver.h |  6 ++++
+ drivers/bus/dpaa/dpaa_bus.c        | 51 ++++++++++++++++++++++++++++++
+ drivers/net/dpaa/dpaa_ethdev.c     | 51 ++++++++----------------------
+ 3 files changed, 70 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/qman_driver.c b/drivers/bus/dpaa/base/qbman/qman_driver.c
-index cdce6b777b..dc84260731 100644
---- a/drivers/bus/dpaa/base/qbman/qman_driver.c
-+++ b/drivers/bus/dpaa/base/qbman/qman_driver.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-  *
-  * Copyright 2008-2016 Freescale Semiconductor Inc.
-- * Copyright 2017-2022 NXP
-+ * Copyright 2017-2022, 2025 NXP
-  *
-  */
+diff --git a/drivers/bus/dpaa/bus_dpaa_driver.h b/drivers/bus/dpaa/bus_dpaa_driver.h
+index 976f356699..cca0543432 100644
+--- a/drivers/bus/dpaa/bus_dpaa_driver.h
++++ b/drivers/bus/dpaa/bus_dpaa_driver.h
+@@ -249,6 +249,12 @@ struct fm_eth_port_cfg *dpaa_get_eth_port_cfg(int dev_id);
+ __rte_internal
+ uint32_t dpaa_soc_ver(void);
  
-@@ -32,6 +32,29 @@ static __thread struct dpaa_ioctl_portal_map map = {
- 	.type = dpaa_portal_qman
++__rte_internal
++int dpaa_push_queue_num_update(void);
++
++__rte_internal
++uint16_t dpaa_push_queue_max_num(void);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
+index 1a35aa52df..d9830b68ca 100644
+--- a/drivers/bus/dpaa/dpaa_bus.c
++++ b/drivers/bus/dpaa/dpaa_bus.c
+@@ -50,6 +50,13 @@
+ #define DPAA_SVR_MASK 0xffff0000
+ #define RTE_PRIORITY_102 102
+ 
++#define DPAA_PUSH_RXQ_NUM_ARG "dpaa_push_rxq_num"
++/* At present we allow up to 4 push mode queues as default - as each of
++ * this queue need dedicated portal and we are short of portals.
++ */
++#define DPAA_MAX_PUSH_MODE_QUEUE 8
++#define DPAA_DEFAULT_PUSH_MODE_QUEUE 4
++
+ struct rte_dpaa_bus {
+ 	struct rte_bus bus;
+ 	TAILQ_HEAD(, rte_dpaa_device) device_list;
+@@ -57,6 +64,8 @@ struct rte_dpaa_bus {
+ 	int device_count;
+ 	int detected;
+ 	uint32_t svr_ver;
++	uint16_t max_push_rxq_num;
++	RTE_ATOMIC(uint16_t) push_rxq_num;
  };
  
-+#define REG_ERR_IER 0x0e04
-+#define QM_EIRQ_IESI 0x00000004
-+
-+static void dpaa_qm_iesr_irq_control(void)
+ static struct rte_dpaa_bus rte_dpaa_bus;
+@@ -91,6 +100,34 @@ dpaa_get_eth_port_cfg(int dev_id)
+ 	return &dpaa_netcfg->port_cfg[dev_id];
+ }
+ 
++RTE_EXPORT_INTERNAL_SYMBOL(dpaa_push_queue_num_update)
++int
++dpaa_push_queue_num_update(void)
 +{
-+	char *env = getenv("DPAA_QMAN_IESR_ISR_DISABLE");
-+	uint32_t val;
++	int ret = false;
++	uint16_t current, new_val;
 +
-+	if (!qman_ccsr_map) {
-+		pr_err("qman CCSR not mapped!\n");
-+		return;
++	current = rte_atomic_load_explicit(&rte_dpaa_bus.push_rxq_num,
++					   rte_memory_order_acquire);
++	if (current < rte_dpaa_bus.max_push_rxq_num) {
++		new_val = current + 1;
++		if (rte_atomic_compare_exchange_strong_explicit(&rte_dpaa_bus.push_rxq_num,
++				&current, new_val,
++				rte_memory_order_release,
++				rte_memory_order_acquire))
++			ret = true;
 +	}
 +
-+	val = in_be32((void *)((uintptr_t)qman_ccsr_map + REG_ERR_IER));
-+
-+	if (!env || atoi(env) == 0)
-+		val = val | QM_EIRQ_IESI;
-+	else
-+		val = val & (~((uint32_t)QM_EIRQ_IESI));
-+
-+	out_be32((void *)((uintptr_t)qman_ccsr_map + REG_ERR_IER), val);
++	return ret;
 +}
 +
- u16 dpaa_get_qm_channel_caam(void)
- {
- 	return qm_channel_caam;
-@@ -343,6 +366,8 @@ int qman_global_init(void)
- 		return -EINVAL;
++RTE_EXPORT_INTERNAL_SYMBOL(dpaa_push_queue_max_num)
++uint16_t
++dpaa_push_queue_max_num(void)
++{
++	return rte_dpaa_bus.max_push_rxq_num;
++}
++
+ static int
+ compare_dpaa_devices(struct rte_dpaa_device *dev1,
+ 		     struct rte_dpaa_device *dev2)
+@@ -681,6 +718,7 @@ rte_dpaa_bus_probe(void)
+ 	uint32_t svr_ver;
+ 	int probe_all = rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
+ 	static int process_once;
++	char *penv;
+ 
+ 	/* If DPAA bus is not present nothing needs to be done */
+ 	if (!rte_dpaa_bus.detected)
+@@ -709,6 +747,18 @@ rte_dpaa_bus_probe(void)
+ 			rte_dpaa_bus.svr_ver);
  	}
  
-+	dpaa_qm_iesr_irq_control();
++	/* Disabling the default push mode for LS1043A */
++	if (rte_dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
++		rte_dpaa_bus.max_push_rxq_num = 0;
++		return 0;
++	}
 +
- 	clk = of_get_property(dt_node, "clock-frequency", NULL);
- 	if (!clk)
- 		pr_warn("Can't find Qman clock frequency\n");
++	penv = getenv("DPAA_PUSH_QUEUES_NUMBER");
++	if (penv)
++		rte_dpaa_bus.max_push_rxq_num = atoi(penv);
++	if (rte_dpaa_bus.max_push_rxq_num > DPAA_MAX_PUSH_MODE_QUEUE)
++		rte_dpaa_bus.max_push_rxq_num = DPAA_MAX_PUSH_MODE_QUEUE;
++
+ 	/* Device list creation is only done once */
+ 	if (!process_once) {
+ 		rte_dpaa_bus_dev_build();
+@@ -947,6 +997,7 @@ static struct rte_dpaa_bus rte_dpaa_bus = {
+ 		.dev_iterate = dpaa_bus_dev_iterate,
+ 		.cleanup = dpaa_bus_cleanup,
+ 	},
++	.max_push_rxq_num = DPAA_DEFAULT_PUSH_MODE_QUEUE,
+ 	.device_list = TAILQ_HEAD_INITIALIZER(rte_dpaa_bus.device_list),
+ 	.driver_list = TAILQ_HEAD_INITIALIZER(rte_dpaa_bus.driver_list),
+ 	.device_count = 0,
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 43aab98339..0baf5c03fa 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -89,16 +89,6 @@ static int fmc_q = 1;	/* Indicates the use of static fmc for distribution */
+ static int default_q;	/* use default queue - FMC is not executed*/
+ bool dpaa_enable_recv_err_pkts; /* Enable main queue to receive error packets */
+ 
+-/* At present we only allow up to 4 push mode queues as default - as each of
+- * this queue need dedicated portal and we are short of portals.
+- */
+-#define DPAA_MAX_PUSH_MODE_QUEUE       8
+-#define DPAA_DEFAULT_PUSH_MODE_QUEUE   4
+-
+-static int dpaa_push_mode_max_queue = DPAA_DEFAULT_PUSH_MODE_QUEUE;
+-static int dpaa_push_queue_idx; /* Queue index which are in push mode*/
+-
+-
+ /* Per RX FQ Taildrop in frame count */
+ static unsigned int td_threshold = CGR_RX_PERFQ_THRESH;
+ 
+@@ -1113,7 +1103,7 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	struct qman_fq *rxq = &dpaa_intf->rx_queues[queue_idx];
+ 	struct qm_mcc_initfq opts = {0};
+ 	u32 ch_id, flags = 0;
+-	int ret;
++	int ret, set_push_rxq = false;
+ 	u32 buffsz = rte_pktmbuf_data_room_size(mp) - RTE_PKTMBUF_HEADROOM;
+ 	uint32_t max_rx_pktlen;
+ 
+@@ -1214,12 +1204,12 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 		DPAA_PMD_DEBUG("if:%s sg_on = %d, max_frm =%d", dpaa_intf->name,
+ 			       fman_if_get_sg_enable(fif), max_rx_pktlen);
+ 	/* checking if push mode only, no error check for now */
+-	if (!rxq->is_static &&
+-	    dpaa_push_mode_max_queue > dpaa_push_queue_idx) {
++	if (!rxq->is_static)
++		set_push_rxq = dpaa_push_queue_num_update();
++	if (set_push_rxq) {
+ 		struct qman_portal *qp;
+ 		int q_fd;
+ 
+-		dpaa_push_queue_idx++;
+ 		opts.we_mask = QM_INITFQ_WE_FQCTRL | QM_INITFQ_WE_CONTEXTA;
+ 		opts.fqd.fq_ctrl = QM_FQCTRL_AVOIDBLOCK |
+ 				   QM_FQCTRL_CTXASTASHING |
+@@ -1269,7 +1259,7 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 		qp = fsl_qman_fq_portal_create(&q_fd);
+ 		if (!qp) {
+ 			DPAA_PMD_ERR("Unable to alloc fq portal");
+-			return -1;
++			return -EIO;
+ 		}
+ 		rxq->qp = qp;
+ 
+@@ -1279,19 +1269,19 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 			struct rte_device *rdev = dev->device;
+ 
+ 			dpaa_dev = container_of(rdev, struct rte_dpaa_device,
+-						device);
++				device);
+ 			dev->intr_handle = dpaa_dev->intr_handle;
+ 			if (rte_intr_vec_list_alloc(dev->intr_handle,
+-					NULL, dpaa_push_mode_max_queue)) {
++					NULL, dpaa_push_queue_max_num())) {
+ 				DPAA_PMD_ERR("intr_vec alloc failed");
+ 				return -ENOMEM;
+ 			}
+ 			if (rte_intr_nb_efd_set(dev->intr_handle,
+-					dpaa_push_mode_max_queue))
++					dpaa_push_queue_max_num()))
+ 				return -rte_errno;
+ 
+ 			if (rte_intr_max_intr_set(dev->intr_handle,
+-					dpaa_push_mode_max_queue))
++					dpaa_push_queue_max_num()))
+ 				return -rte_errno;
+ 		}
+ 
+@@ -1339,9 +1329,8 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_eth_eventq_attach)
+ int
+ dpaa_eth_eventq_attach(const struct rte_eth_dev *dev,
+-		int eth_rx_queue_id,
+-		u16 ch_id,
+-		const struct rte_event_eth_rx_adapter_queue_conf *queue_conf)
++	int eth_rx_queue_id, u16 ch_id,
++	const struct rte_event_eth_rx_adapter_queue_conf *queue_conf)
+ {
+ 	int ret;
+ 	u32 flags = 0;
+@@ -1349,10 +1338,10 @@ dpaa_eth_eventq_attach(const struct rte_eth_dev *dev,
+ 	struct qman_fq *rxq = &dpaa_intf->rx_queues[eth_rx_queue_id];
+ 	struct qm_mcc_initfq opts = {0};
+ 
+-	if (dpaa_push_mode_max_queue) {
++	if (dpaa_push_queue_max_num() > 0) {
+ 		DPAA_PMD_WARN("PUSH mode q and EVENTDEV are not compatible");
+ 		DPAA_PMD_WARN("PUSH mode already enabled for first %d queues.",
+-			      dpaa_push_mode_max_queue);
++			dpaa_push_queue_max_num());
+ 		DPAA_PMD_WARN("To disable set DPAA_PUSH_QUEUES_NUMBER to 0");
+ 	}
+ 
+@@ -2581,20 +2570,6 @@ rte_dpaa_probe(struct rte_dpaa_driver *dpaa_drv,
+ 			}
+ 		}
+ 
+-		/* disabling the default push mode for LS1043 */
+-		if (dpaa_soc_ver() == SVR_LS1043A_FAMILY)
+-			dpaa_push_mode_max_queue = 0;
+-
+-		/* if push mode queues to be enabled. Currently we are allowing
+-		 * only one queue per thread.
+-		 */
+-		if (getenv("DPAA_PUSH_QUEUES_NUMBER")) {
+-			dpaa_push_mode_max_queue =
+-					atoi(getenv("DPAA_PUSH_QUEUES_NUMBER"));
+-			if (dpaa_push_mode_max_queue > DPAA_MAX_PUSH_MODE_QUEUE)
+-			    dpaa_push_mode_max_queue = DPAA_MAX_PUSH_MODE_QUEUE;
+-		}
+-
+ 		is_global_init = 1;
+ 	}
+ 
 -- 
 2.25.1
 
