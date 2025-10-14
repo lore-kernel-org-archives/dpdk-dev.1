@@ -2,46 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA85CCD18E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 08:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DE7CCD18E
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 08:45:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E117440613;
-	Tue, 14 Oct 2025 10:45:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EC21040611;
+	Tue, 14 Oct 2025 10:45:39 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id B987D4060B
- for <dev@dpdk.org>; Tue, 14 Oct 2025 10:45:36 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 559DB40288;
+ Tue, 14 Oct 2025 10:45:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1760431537; x=1791967537;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=El+J4QUB/dta7v92w7FNtBk7gIKhqlzTXZl1vtUy0XI=;
- b=A/fr9/C3YBY/ZXhVOjPyCQMyn2e2ZVe+YKoqz3kSGYKco5poC2+CBaeP
- yU5XAfZKCT4H/GzlOlxAcbHdnfr3CMxDnSicG9aAnRfMPnW9otrvrHi6a
- Gnh4UZCw/qYBzghkZeDO8iygrR7zy34yiwXV/sOvX+eqLj9kvAu3kkAVR
- W4xyOQmK9LCZYMH+sRoar4ZsnDvQt66jPmWS4XSDmrKTDcz0pJgGfr/Qz
- pq1iCVLDjUe0U+BptPpPVE8VuALyprmSXDwkP6sgbTcoS6DknTQ0n6sdt
- NpN9spuJEpLSC1OCWOkoGmFBb29JH9OoixnlscuXxPRwDLDvRGdLnetsk Q==;
-X-CSE-ConnectionGUID: yKkk3YCqRNC9SXBXkagpCw==
-X-CSE-MsgGUID: 70xOL8ZIQ7eEvgfQgZ5jKQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="61796248"
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="61796248"
+ t=1760431538; x=1791967538;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=5XogHaTpdCnAS8GiSLjUZ1S0IeeBV5e3GTdgH9YpAxA=;
+ b=lFJH1m8rs6iV2JAwsr/c3KN2SF48t2R/4ETu2UU4kGALYF/JCU5DE1j5
+ ZN0o4z/pNXDRv4xTLSHuvQmbfYrzbdX910pZfx7duHBsOAyHuCXruEXHA
+ qZLxxQMg+6CTyrtom3jOIGDp2+J0G/iHSGzi2yFVzhvz459qu4nERHJSp
+ RY3yIyjKAsdBMSeAc2seeqG5A3C1iyO42iLNnklIVr+wqLcrpn+J2nwSs
+ NHXyHwJBj/RzeqbT1KAEyHhRJ3JProZkm8S33DGCGUqhuCXuwts2ndcqm
+ 3QHfXwt8+rScX59g2+GOiAJD8xeNaycmjjO0j4UwfXr7WT6QFKbU93nun g==;
+X-CSE-ConnectionGUID: XJfVMibESTizUmThkQJgag==
+X-CSE-MsgGUID: kkZh8OloQmuMQJnEBtMSwA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="61796249"
+X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="61796249"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 Oct 2025 01:45:36 -0700
-X-CSE-ConnectionGUID: OFuO2K3UT3Wmt/1xJjk40w==
-X-CSE-MsgGUID: IC6cT+a1S1Kwx2wzSPnQPw==
+ 14 Oct 2025 01:45:37 -0700
+X-CSE-ConnectionGUID: 0jM1SfpTSUeJ2z528jYV2Q==
+X-CSE-MsgGUID: gCuLB8IDRlav9hjanGLl8A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="181630640"
+X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="181630647"
 Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by orviesa007.jf.intel.com with ESMTP; 14 Oct 2025 01:45:35 -0700
+ by orviesa007.jf.intel.com with ESMTP; 14 Oct 2025 01:45:36 -0700
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH 0/6] net/intel: fixes and improvements to rx path selection
-Date: Tue, 14 Oct 2025 08:45:11 +0000
-Message-Id: <20251014084517.1407407-1-ciara.loftus@intel.com>
+Cc: Ciara Loftus <ciara.loftus@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH 1/6] net/intel: fix Rx vector capability detection
+Date: Tue, 14 Oct 2025 08:45:12 +0000
+Message-Id: <20251014084517.1407407-2-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251014084517.1407407-1-ciara.loftus@intel.com>
+References: <20251014084517.1407407-1-ciara.loftus@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -57,30 +60,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series contains a number of fixes and improvements to
-the logic concerned with selecting an rx path in the intel
-drivers. The first three patches are fixes that affect the
-iavf driver. The final three patches reformat the arrays in
-the i40e iavf and ice drivers that hold information for each
-Rx path that are used in the common selection process, in an
-attempt to improve readability.
+The common function for detecting whether an rxq could use a vector
+rx path would automatically disqualify rx queues that had the
+timestamp offload enabled. This was incorrect behaviour because the
+iavf driver which uses this common function supports timestamp offload
+on its vector paths. Fix this by removing the conditional check for
+timestamp offload.
 
-Ciara Loftus (6):
-  net/intel: fix Rx vector capability detection
-  net/iavf: fix Rx paths feature definitions
-  net/iavf: fix Rx path selection for scalar flex bulk alloc
-  net/iavf: reformat the Rx path infos array
-  net/i40e: reformat the Rx path infos array
-  net/ice: reformat the Rx path infos array
+Fixes: 9eb60580d155 ("net/intel: extract common Rx vector criteria")
+Cc: stable@dpdk.org
 
- drivers/net/intel/common/rx.h      |   5 +-
- drivers/net/intel/i40e/i40e_rxtx.c | 126 +++++++++----
- drivers/net/intel/iavf/iavf.h      |   1 +
- drivers/net/intel/iavf/iavf_rxtx.c | 285 +++++++++++++++++++++--------
- drivers/net/intel/iavf/iavf_rxtx.h |   1 -
- drivers/net/intel/ice/ice_rxtx.c   | 124 +++++++++----
- 6 files changed, 401 insertions(+), 141 deletions(-)
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+---
+ drivers/net/intel/common/rx.h | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/net/intel/common/rx.h b/drivers/net/intel/common/rx.h
+index 741808f573..d3e4492ff1 100644
+--- a/drivers/net/intel/common/rx.h
++++ b/drivers/net/intel/common/rx.h
+@@ -235,9 +235,8 @@ ci_rxq_vec_capable(uint16_t nb_desc, uint16_t rx_free_thresh, uint64_t offloads)
+ 			(nb_desc % rx_free_thresh) != 0)
+ 		return false;
+ 
+-	/* no driver supports timestamping or buffer split on vector path */
+-	if ((offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) ||
+-			(offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT))
++	/* no driver supports buffer split on vector path */
++	if (offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)
+ 		return false;
+ 
+ 	return true;
 -- 
 2.34.1
 
