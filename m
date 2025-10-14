@@ -2,83 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9612CCD18D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 12:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB9ECCD184
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 12:41:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3021B4067B;
-	Tue, 14 Oct 2025 14:41:04 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4AF624068A;
+	Tue, 14 Oct 2025 14:41:07 +0200 (CEST)
 Received: from fout-b8-smtp.messagingengine.com
  (fout-b8-smtp.messagingengine.com [202.12.124.151])
- by mails.dpdk.org (Postfix) with ESMTP id F339D4067E
- for <dev@dpdk.org>; Tue, 14 Oct 2025 14:41:02 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfout.stl.internal (Postfix) with ESMTP id 520B41D0016D;
- Tue, 14 Oct 2025 08:41:02 -0400 (EDT)
+ by mails.dpdk.org (Postfix) with ESMTP id E7FEC4068A
+ for <dev@dpdk.org>; Tue, 14 Oct 2025 14:41:05 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfout.stl.internal (Postfix) with ESMTP id 2B7341D0016D;
+ Tue, 14 Oct 2025 08:41:05 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Tue, 14 Oct 2025 08:41:02 -0400
+ by phl-compute-04.internal (MEProxy); Tue, 14 Oct 2025 08:41:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760445662;
- x=1760532062; bh=oV2z2aV+9cwG1EIoLU2LEFARNpIaGlyrRJn8lssg3RE=; b=
- ctsXiMw2vVFMrz2Keuv6WUHZDWcQ7Ar1Tm7CPPhDVTEpPF3mkvAcr4RorXWghvx/
- CI+IP5mX1T3h5Ofxc+7UiLzPWbYX5t57Hp4mN43P+Ret/48RqMBebLDcueJXTmFi
- 53NhZh8o4zGNOA/NvEqXMl4l1Mxf7UDaHCqC++mYYvg6MiEJx5wUjFxjDGkRuaGE
- 7K3JvbkISCw6LAorTHCsjOHlXJO00rlNK3+0UwKZSHBeP4sDE3CUUy/dbuitZVtS
- QS3QtJWVwGe+MIWnj/AzUpxWHjJf2cP3QXtmgXPeOEwiu8kCa2EWFSjG/xZm77aU
- ljODdccDIyEP8oLMhAortg==
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to; s=fm2; t=1760445665; x=
+ 1760532065; bh=/jGfHMudWxJ74bs557G44vGu6kyv4OdpiN3FjE+hbpw=; b=E
+ HsGu0NV4u37D6Jtpz2MOIncU2Zve0Y8/mB64aWVRYRzlCfFHma04kAwu1jyuRV6x
+ +Fv7d/JZPnfcSOc1vvjgQULe/Q/qjmXhFjnaFYXI6ry6E6/+0/z2Ey+LytOCLQZ3
+ wzc1gKOC6Fb0ryT9v+BKadPioSic3xgBGYAwxL/okLR3liZqYcOE6oGS/E45eMJz
+ xAUArFUixyFWfa5bn0O9H4qw5rn7hPWnl+/I6hCCIojBCYUhmSwhJ+YcC1niZgE5
+ sUjilGc4r9c2PDOGN0GbslU7anz0qZGr3hNCNvdWAO5i1NMD95XhNU8ml8+R6WY1
+ aCNXr9ewCSX5z1JBEMz8g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760445662; x=
- 1760532062; bh=oV2z2aV+9cwG1EIoLU2LEFARNpIaGlyrRJn8lssg3RE=; b=j
- fDh5hiGGerXBpx6whREn4TkVqtUEEVTU9YwSs//PuhpHdmCXq8iPxtc954HWsS3F
- n1Zt9nH9gFqG5Gxgj6oU0XK14tZvYwiiSZRuFl5F2HQ5wSUOBPuGv7YmI5rLIywH
- 2lhYl0laaUS1XijaQpZCTj87ywzlpUWfdQwy44UDIOVdExKTJK9/5cdhMBXhLcmO
- LE5k6WbeHWY5RsLKfKeZb3zM6RM1GrGp5an4XbHEUB5hAMJOwkLEvy/LvfEsGC0P
- +a/fnWwGBtmoMqQSJiYmXCOWTJlL5BfGBe162W4zzsMMn+tlOnWaDRHMu+gM3KYh
- p3AEKifgwCeV+fGNLVOJA==
-X-ME-Sender: <xms:3UTuaNQ_y3ctb-1F14x2LbHUYFsgEIEIfDNjJReQd5HD7mFB_uHKFQ>
- <xme:3UTuaPv-TlDs4QjamHgbfhFwsxANohK_R6xGcr2JFz1UNuohBirr3j1ZCqN7koVYc
- shnf0G3B3oiReA8dTMBGgxj3C3CbHWcLgWDsiT64oZTi0e547knKw>
-X-ME-Received: <xmr:3UTuaOZaVTrcdRcIC2flKC12huU5U22RxhMuu0dUatfMYUEGSw9Szikl17Qug95XbBmuJvYt1jlyxL9W6Hjry-DLct3PqAw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddtheeiucetufdoteggodetrf
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:in-reply-to:message-id:mime-version:references
+ :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+ :x-me-sender:x-sasl-enc; s=fm2; t=1760445665; x=1760532065; bh=/
+ jGfHMudWxJ74bs557G44vGu6kyv4OdpiN3FjE+hbpw=; b=ZcPHuwFsXrEPGcqN9
+ CTJ7spJ+++T+hDDtfBaHb5oL+iPTPFahRUMhKIbRx3fYj9ypJ1RC4fDeKDRT+HsR
+ C2ZrhwwxMc4NPPmg1JHk6GkwHbgxB7Ugn4441UaZG6xWyBKI5A4obiIdmnq5+Rlg
+ /1GMmkkh+C1sMASzZilZXJGXeXQwuYC7kw1nDQdpOpE2Zre5BK/JCoeTyz/af6n5
+ adz0kQ51Ev5ZLW6vX0CunyOZ2BKwplqpGTEZ2XEI+KWR3EIVkISR0Aqvr0qqD+Fh
+ zev0JKZNW/9uEkhlxSUb/p+lcO6qngDEP5wbA+v2ftr1Nnt6LyJsaas0SP9rl/5x
+ EVFxw==
+X-ME-Sender: <xms:4ETuaDEynz-f36pgC77ejjT3GFYXXKuRUU71QlxtOE98cS9DnuIF_A>
+ <xme:4ETuaLSDPHC9fErPaT8UN8C-W2TgVWDc3sMj3SZj-nazAS6HG_QqW1SoV2BUkZMrO
+ J5O65bxYttn3rQMjmHE9vaYBOq_zMNo2XRz6EZWvW3tETe5YMZe1w>
+X-ME-Received: <xmr:4ETuaEJCELgpIbuQ1iJ7Zt54v_7Y_Cjmq5vQeAJbQETC7cpXb2Nb9prydX-yppT4PTFbDXLSd0DG5-sCy0spzH6CuX0xHWw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvddtheehucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfgggtgfesthekre
- dtredtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshes
- mhhonhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeduudejieekteehtedtvd
- evheeivdehvdevuefhfeegieevteeuffettefhteehieenucffohhmrghinhepfihikhhi
- phgvughirgdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
- hlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthho
- peeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
- dprhgtphhtthhopehshhhpvghrvghtiiesnhhvihguihgrrdgtohhmpdhrtghpthhtohep
- vhhirggthhgvshhlrghvohesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsghruhgtvg
- drrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepmhgssehsmhgr
- rhhtshhhrghrvghshihsthgvmhhsrdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnh
- gvthifohhrkhhplhhumhgsvghrrdhorhhg
-X-ME-Proxy: <xmx:3UTuaFGZe71pfSjzG8pdpo8dZicTGxOlu4EqBYPwXjO26lqI8A0tuQ>
- <xmx:3UTuaCxozpZEEEiwZsD20rKVzk6ay9ajVQbOdQ5JIhS6JHw1QBqAYg>
- <xmx:3UTuaHlS97svvuxPOpLIBrsZ7Q2IksT5yXCgS2zzhMaKtvG5CKy0Cw>
- <xmx:3UTuaLmiaJiyGWeIV-po-2XEOvGFh-KNc3TauCxdR1hDY68feHgf2Q>
- <xmx:3kTuaB-I-oAMEUfZOvtPHIj0Tf3815TEcMsO2OWrtJ3gR-HJTIRc18LU>
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
+ hfeilefhtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
+ htthhopehshhhpvghrvghtiiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggt
+ hhgvshhlrghvohesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitg
+ hhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepmhgssehsmhgrrhhtshhh
+ rghrvghshihsthgvmhhsrdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifoh
+ hrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtoheprghnughrvgifrdhrhigstghhvghn
+ khhosehokhhtvghtlhgrsghsrdhruh
+X-ME-Proxy: <xmx:4ETuaGaGGUqnN2EDWylNAtnCMbmGv29Pr-F1CqQh2mUXNIv5tk2WVg>
+ <xmx:4ETuaG-56cDJl3xuV0u1XHJ8FgaS8XVcjwgj7sD7fv7HdtLxWPs2mg>
+ <xmx:4ETuaHYcIeOVZyrg1nqt6wq_c2pJQm4oP2GDa8ZTPtbjdcdn2RnOsQ>
+ <xmx:4ETuaKP2J00PG25LkVQRPwmuax2ZWKO7kkx9pyqD9glulJs_n6VfzA>
+ <xmx:4UTuaOHVh9uJPmwd2KfkTpgziiRq1telgtIlGGVT_kpWiU3BwAMQDR90>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 14 Oct 2025 08:41:00 -0400 (EDT)
+ 14 Oct 2025 08:41:03 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
 Cc: shperetz@nvidia.com, viacheslavo@nvidia.com, bruce.richardson@intel.com,
- mb@smartsharesystems.com, stephen@networkplumber.org
-Subject: [PATCH v6 3/7] mbuf: record mbuf operations history
-Date: Tue, 14 Oct 2025 14:33:36 +0200
-Message-ID: <20251014124046.1032293-4-thomas@monjalon.net>
+ mb@smartsharesystems.com, stephen@networkplumber.org,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v6 4/7] ethdev: mark mbufs in burst functions
+Date: Tue, 14 Oct 2025 14:33:37 +0200
+Message-ID: <20251014124046.1032293-5-thomas@monjalon.net>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251014124046.1032293-1-thomas@monjalon.net>
 References: <20250616072910.113042-1-shperetz@nvidia.com>
  <20251014124046.1032293-1-thomas@monjalon.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -95,690 +96,52 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Shani Peretz <shperetz@nvidia.com>
 
-This feature is designed to monitor the lifecycle of mbufs
-as they move between the application and the PMD.
-It will allow to track the operations and transitions
-of each mbuf throughout the system, helping in debugging
-and understanding objects flow.
-
-As a debug feature impacting the data path, it is disabled by default.
-
-The implementation uses a dynamic field to store a 64-bit
-atomic history value in each mbuf. Each operation is represented
-by a 4-bit value, allowing up to 16 operations to be tracked.
-Atomic operations ensure thread safety for cloned mbufs accessed
-by multiple lcores. The dynamic field is automatically initialized
-when the first mbuf pool is created.
-
-Some operations done in the mbuf library are marked.
-More operations from other libraries or the application can be marked.
+Mark the Rx/Tx steps in mbufs for debugging.
+It has no performance impact if mbuf history is disabled (by default).
 
 Signed-off-by: Shani Peretz <shperetz@nvidia.com>
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
 ---
- config/rte_config.h                     |   1 +
- doc/guides/howto/debug_troubleshoot.rst |   6 +
- doc/guides/prog_guide/mbuf_lib.rst      |   7 +
- doc/guides/rel_notes/release_25_11.rst  |   6 +
- lib/mbuf/mbuf_history.c                 | 229 ++++++++++++++++++++++++
- lib/mbuf/meson.build                    |   2 +
- lib/mbuf/rte_mbuf.c                     |   4 +
- lib/mbuf/rte_mbuf.h                     |  15 +-
- lib/mbuf/rte_mbuf_dyn.h                 |  18 ++
- lib/mbuf/rte_mbuf_history.h             | 203 +++++++++++++++++++++
- 10 files changed, 490 insertions(+), 1 deletion(-)
- create mode 100644 lib/mbuf/mbuf_history.c
- create mode 100644 lib/mbuf/rte_mbuf_history.h
+ lib/ethdev/rte_ethdev.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/config/rte_config.h b/config/rte_config.h
-index 05344e2619..aee137717b 100644
---- a/config/rte_config.h
-+++ b/config/rte_config.h
-@@ -64,6 +64,7 @@
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index d23c143eed..5e250e5083 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -6336,6 +6336,8 @@ rte_eth_rx_burst(uint16_t port_id, uint16_t queue_id,
  
- /* mbuf defines */
- #define RTE_MBUF_DEFAULT_MEMPOOL_OPS "ring_mp_mc"
-+/* RTE_MBUF_HISTORY_DEBUG is not set */
+ 	nb_rx = p->rx_pkt_burst(qd, rx_pkts, nb_pkts);
  
- /* ether defines */
- #define RTE_MAX_QUEUES_PER_PORT 1024
-diff --git a/doc/guides/howto/debug_troubleshoot.rst b/doc/guides/howto/debug_troubleshoot.rst
-index df69fa8bcc..16feeb1e54 100644
---- a/doc/guides/howto/debug_troubleshoot.rst
-+++ b/doc/guides/howto/debug_troubleshoot.rst
-@@ -217,6 +217,12 @@ Memory objects close to NUMA :numref:`dtg_mempool`.
-      desired value and frequently uses ``rte_pktmbuf_prefree_seg`` and does
-      not release MBUF back to mempool.
- 
-+   The mbuf lifecycle can be tracked
-+   by defining the compilation flag ``RTE_MBUF_HISTORY_DEBUG``.
-+   Then the libraries will mark the mbufs,
-+   and more marks can be added in the application.
-+   Some dump functions must be used to collect the history.
++	rte_mbuf_history_mark_bulk(rx_pkts, nb_rx, RTE_MBUF_HISTORY_OP_RX);
 +
- #. Lower performance between the pipeline processing stages can be
- 
-    * The NUMA instance for packets or objects from NIC, mempool, and ring
-diff --git a/doc/guides/prog_guide/mbuf_lib.rst b/doc/guides/prog_guide/mbuf_lib.rst
-index badc0f3501..ae72eecc61 100644
---- a/doc/guides/prog_guide/mbuf_lib.rst
-+++ b/doc/guides/prog_guide/mbuf_lib.rst
-@@ -273,6 +273,13 @@ perform sanity checks (such as buffer corruption, bad type, and so on).
- When ``RTE_ENABLE_ASSERT`` is enabled,
- more basic checks are done in many functions.
- 
-+When ``RTE_MBUF_HISTORY_DEBUG`` is enabled,
-+the mbuf lifecycle is tracked.
-+More marks can be added by the application
-+by calling functions like ``rte_mbuf_history_mark_bulk()``.
-+Then the history can be stored in a file
-+by calling functions like ``rte_mbuf_history_dump_all()``.
-+
- 
- Use Cases
- ---------
-diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
-index c3b94e1896..6854090096 100644
---- a/doc/guides/rel_notes/release_25_11.rst
-+++ b/doc/guides/rel_notes/release_25_11.rst
-@@ -60,6 +60,12 @@ New Features
-   Added Ethernet link speed for 800 Gb/s as it is well standardized in IEEE,
-   and some devices already support this speed.
- 
-+* **Added mbuf tracking for debug.**
-+
-+  Added history dynamic field in mbuf (disabled by default)
-+  to store successive states of the mbuf lifecycle.
-+  Some functions were added to dump statistics.
-+
- * **Updated NXP DPAA2 ethernet driver.**
- 
-   * Enabled software taildrop for ordered queues.
-diff --git a/lib/mbuf/mbuf_history.c b/lib/mbuf/mbuf_history.c
-new file mode 100644
-index 0000000000..0746bc6f1a
---- /dev/null
-+++ b/lib/mbuf/mbuf_history.c
-@@ -0,0 +1,229 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2024 NVIDIA Corporation & Affiliates
-+ */
-+
-+#include <rte_errno.h>
-+#include <eal_export.h>
-+#include <rte_bitops.h>
-+#include <rte_mempool.h>
-+
-+#include "rte_mbuf_history.h"
-+#include "rte_mbuf_dyn.h"
-+#include "rte_mbuf.h"
-+#include "mbuf_log.h"
-+
-+/* Dynamic field offset */
-+RTE_EXPORT_SYMBOL(rte_mbuf_history_field_offset);
-+int rte_mbuf_history_field_offset = -1;
-+
-+#ifdef RTE_MBUF_HISTORY_DEBUG
-+
-+#define HISTORY_LAST_MASK (RTE_BIT64(RTE_MBUF_HISTORY_BITS) - 1)
-+
-+/* Dynamic field definition for mbuf history */
-+static const struct rte_mbuf_dynfield mbuf_dynfield_history = {
-+	.name = RTE_MBUF_DYNFIELD_HISTORY_NAME,
-+	.size = sizeof(rte_mbuf_history_t),
-+	.align = RTE_ALIGN(sizeof(rte_mbuf_history_t), 8),
-+};
-+
-+/* Context structure for statistics counting and history printing */
-+struct count_and_print_ctx {
-+	uint64_t *stats;
-+	FILE *f;
-+};
-+
-+static uint64_t
-+mbuf_history_get(const struct rte_mbuf *m)
-+{
-+	if (rte_mbuf_history_field_offset < 0 || m == NULL)
-+		return 0;
-+
-+	rte_mbuf_history_t *history = RTE_MBUF_DYNFIELD(m,
-+			rte_mbuf_history_field_offset, rte_mbuf_history_t *);
-+
-+	return rte_atomic_load_explicit(history, rte_memory_order_acquire);
-+}
-+
-+static int
-+mbuf_history_print(FILE *f, const struct rte_mbuf *m, uint64_t history)
-+{
-+	return fprintf(f, "mbuf %p: %016" PRIx64 "\n", m, history);
-+}
-+
-+static void
-+mbuf_history_count_stats_and_print(struct rte_mempool *mp __rte_unused,
-+		void *opaque, void *obj, unsigned obj_idx __rte_unused)
-+{
-+	struct count_and_print_ctx *ctx = (struct count_and_print_ctx *)opaque;
-+	struct rte_mbuf *m = (struct rte_mbuf *)obj;
-+	uint64_t history;
-+	enum rte_mbuf_history_op last_op;
-+
-+	if (obj == NULL || ctx == NULL || ctx->stats == NULL || ctx->f == NULL)
-+		return;
-+
-+	history = mbuf_history_get(m);
-+	/* Extract the most recent operation */
-+	last_op = history & HISTORY_LAST_MASK;
-+	RTE_ASSERT(last_op < RTE_MBUF_HISTORY_OP_MAX);
-+	RTE_BUILD_BUG_ON(HISTORY_LAST_MASK + 1 < RTE_MBUF_HISTORY_OP_MAX);
-+
-+	ctx->stats[last_op]++;
-+	ctx->stats[RTE_MBUF_HISTORY_OP_MAX]++; /* total */
-+
-+	if (history != 0)
-+		mbuf_history_print(ctx->f, m, history);
-+}
-+
-+static void
-+mbuf_history_get_stats(struct rte_mempool *mp, FILE *f)
-+{
-+	uint64_t stats[RTE_MBUF_HISTORY_OP_MAX + 1] = {0};
-+	struct count_and_print_ctx ctx = {
-+		.stats = stats,
-+		.f = f
-+	};
-+
-+	if (mp->elt_size < sizeof(struct rte_mbuf)) {
-+		MBUF_LOG(ERR, "Invalid mempool element size (less than mbuf)");
-+		return;
-+	}
-+
-+	if (f == NULL)
-+		return;
-+
-+	/* Output mempool header */
-+	fprintf(f, "mempool <%s>@%p\n", mp->name, mp);
-+
-+	/* Single pass: collect statistics and print mbuf history */
-+	rte_mempool_obj_iter(mp, mbuf_history_count_stats_and_print, &ctx);
-+
-+	/* Calculate total allocated mbufs */
-+	uint64_t total_allocated =
-+		stats[RTE_MBUF_HISTORY_OP_LIB_ALLOC] +
-+		stats[RTE_MBUF_HISTORY_OP_PMD_ALLOC] +
-+		stats[RTE_MBUF_HISTORY_OP_APP_ALLOC] +
-+		stats[RTE_MBUF_HISTORY_OP_RX] +
-+		stats[RTE_MBUF_HISTORY_OP_TX] +
-+		stats[RTE_MBUF_HISTORY_OP_TX_PREP] +
-+		stats[RTE_MBUF_HISTORY_OP_TX_BUSY] +
-+		stats[RTE_MBUF_HISTORY_OP_ENQUEUE] +
-+		stats[RTE_MBUF_HISTORY_OP_DEQUEUE];
-+
-+	/* Print statistics summary */
-+	fprintf(f, "  populated = %u\n", mp->populated_size);
-+	fprintf(f, "  never allocated = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_NEVER]);
-+	fprintf(f, "  lib free = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_LIB_FREE]);
-+	fprintf(f, "  PMD free = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_PMD_FREE]);
-+	fprintf(f, "  app free = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_APP_FREE]);
-+	fprintf(f, "  allocated = %" PRIu64 "\n", total_allocated);
-+	fprintf(f, "  lib alloc = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_LIB_ALLOC]);
-+	fprintf(f, "  PMD alloc = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_PMD_ALLOC]);
-+	fprintf(f, "  app alloc = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_APP_ALLOC]);
-+	fprintf(f, "  Rx = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_RX]);
-+	fprintf(f, "  Tx = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_TX]);
-+	fprintf(f, "  Tx prep = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_TX_PREP]);
-+	fprintf(f, "  Tx busy = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_TX_BUSY]);
-+	fprintf(f, "  enqueue = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_ENQUEUE]);
-+	fprintf(f, "  dequeue = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_DEQUEUE]);
-+	fprintf(f, "  user defined 1 = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_USR1]);
-+	fprintf(f, "  user defined 2 = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_USR2]);
-+	fprintf(f, "  counted total = %" PRIu64 "\n", stats[RTE_MBUF_HISTORY_OP_MAX]);
-+}
-+
-+static void
-+mbuf_history_get_stats_walking(struct rte_mempool *mp, void *arg)
-+{
-+	if (mp->elt_size < sizeof(struct rte_mbuf))
-+		return; /* silently ignore while walking in all mempools */
-+
-+	mbuf_history_get_stats(mp, arg);
-+}
-+
-+#endif /* RTE_MBUF_HISTORY_DEBUG */
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_mbuf_history_dump, 25.11)
-+void rte_mbuf_history_dump(FILE *f, const struct rte_mbuf *m)
-+{
-+#ifndef RTE_MBUF_HISTORY_DEBUG
-+	RTE_SET_USED(f);
-+	RTE_SET_USED(m);
-+	MBUF_LOG(INFO, "mbuf history recorder is not enabled");
-+#else
-+	if (f == NULL) {
-+		MBUF_LOG(ERR, "Invalid mbuf dump file");
-+		return;
-+	}
-+	if (m == NULL) {
-+		MBUF_LOG(ERR, "Invalid mbuf pointer");
-+		return;
-+	}
-+	if (rte_mbuf_history_field_offset < 0) {
-+		MBUF_LOG(WARNING, "mbuf history not initialized, call rte_mbuf_history_init()");
-+		return;
-+	}
-+	mbuf_history_print(f, m, mbuf_history_get(m));
-+#endif
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_mbuf_history_dump_mempool, 25.11)
-+void rte_mbuf_history_dump_mempool(FILE *f, struct rte_mempool *mp)
-+{
-+#ifndef RTE_MBUF_HISTORY_DEBUG
-+	RTE_SET_USED(f);
-+	RTE_SET_USED(mp);
-+	MBUF_LOG(INFO, "mbuf history recorder is not enabled");
-+#else
-+	if (f == NULL) {
-+		MBUF_LOG(ERR, "Invalid mbuf dump file");
-+		return;
-+	}
-+	if (mp == NULL) {
-+		MBUF_LOG(ERR, "Invalid mempool pointer");
-+		return;
-+	}
-+	if (rte_mbuf_history_field_offset < 0) {
-+		MBUF_LOG(WARNING, "mbuf history not initialized, call rte_mbuf_history_init()");
-+		return;
-+	}
-+	mbuf_history_get_stats(mp, f);
-+#endif
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_mbuf_history_dump_all, 25.11)
-+void rte_mbuf_history_dump_all(FILE *f)
-+{
-+#ifndef RTE_MBUF_HISTORY_DEBUG
-+	RTE_SET_USED(f);
-+	MBUF_LOG(INFO, "mbuf history recorder is not enabled");
-+#else
-+	if (f == NULL) {
-+		MBUF_LOG(ERR, "Invalid mbuf dump file");
-+		return;
-+	}
-+	if (rte_mbuf_history_field_offset < 0) {
-+		MBUF_LOG(WARNING, "mbuf history not initialized, call rte_mbuf_history_init()");
-+		return;
-+	}
-+	fprintf(f, "mbuf history statistics:\n");
-+	rte_mempool_walk(mbuf_history_get_stats_walking, f);
-+#endif
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_mbuf_history_init, 25.11)
-+void rte_mbuf_history_init(void)
-+{
-+#ifdef RTE_MBUF_HISTORY_DEBUG
-+	if (rte_mbuf_history_field_offset >= 0) {
-+		/* already initialized */
-+		return;
-+	}
-+
-+	rte_mbuf_history_field_offset = rte_mbuf_dynfield_register(&mbuf_dynfield_history);
-+	if (rte_mbuf_history_field_offset < 0) {
-+		MBUF_LOG(ERR, "Failed to register mbuf history dynamic field: %s\n",
-+			rte_strerror(rte_errno));
-+	}
-+#endif
-+}
-diff --git a/lib/mbuf/meson.build b/lib/mbuf/meson.build
-index 0435c5e628..a394db2b19 100644
---- a/lib/mbuf/meson.build
-+++ b/lib/mbuf/meson.build
-@@ -2,6 +2,7 @@
- # Copyright(c) 2017 Intel Corporation
- 
- sources = files(
-+        'mbuf_history.c',
-         'rte_mbuf.c',
-         'rte_mbuf_ptype.c',
-         'rte_mbuf_pool_ops.c',
-@@ -13,5 +14,6 @@ headers = files(
-         'rte_mbuf_ptype.h',
-         'rte_mbuf_pool_ops.h',
-         'rte_mbuf_dyn.h',
-+        'rte_mbuf_history.h',
- )
- deps += ['mempool']
-diff --git a/lib/mbuf/rte_mbuf.c b/lib/mbuf/rte_mbuf.c
-index 22d7cfc475..d2fcb5db19 100644
---- a/lib/mbuf/rte_mbuf.c
-+++ b/lib/mbuf/rte_mbuf.c
-@@ -41,6 +41,8 @@ rte_pktmbuf_pool_init(struct rte_mempool *mp, void *opaque_arg)
- 		   sizeof(struct rte_pktmbuf_pool_private));
- 	RTE_ASSERT(mp->elt_size >= sizeof(struct rte_mbuf));
- 
-+	rte_mbuf_history_init();
-+
- 	/* if no structure is provided, assume no mbuf private area */
- 	user_mbp_priv = opaque_arg;
- 	if (user_mbp_priv == NULL) {
-@@ -499,6 +501,8 @@ void rte_pktmbuf_free_bulk(struct rte_mbuf **mbufs, unsigned int count)
- 	struct rte_mbuf *m, *m_next, *pending[RTE_PKTMBUF_FREE_PENDING_SZ];
- 	unsigned int idx, nb_pending = 0;
- 
-+	rte_mbuf_history_mark_bulk(mbufs, count, RTE_MBUF_HISTORY_OP_LIB_FREE);
-+
- 	for (idx = 0; idx < count; idx++) {
- 		m = mbufs[idx];
- 		if (unlikely(m == NULL))
-diff --git a/lib/mbuf/rte_mbuf.h b/lib/mbuf/rte_mbuf.h
-index 06ab7502a5..95a4f9841b 100644
---- a/lib/mbuf/rte_mbuf.h
-+++ b/lib/mbuf/rte_mbuf.h
-@@ -40,6 +40,7 @@
- #include <rte_branch_prediction.h>
- #include <rte_mbuf_ptype.h>
- #include <rte_mbuf_core.h>
-+#include <rte_mbuf_history.h>
- 
- #ifdef __cplusplus
- extern "C" {
-@@ -607,6 +608,9 @@ static inline struct rte_mbuf *rte_mbuf_raw_alloc(struct rte_mempool *mp)
- 	if (rte_mempool_get(mp, &ret.ptr) < 0)
- 		return NULL;
- 	__rte_mbuf_raw_sanity_check(ret.m);
-+
-+	rte_mbuf_history_mark(ret.m, RTE_MBUF_HISTORY_OP_LIB_ALLOC);
-+
- 	return ret.m;
- }
- 
-@@ -642,9 +646,13 @@ static __rte_always_inline int
- rte_mbuf_raw_alloc_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigned int count)
- {
- 	int rc = rte_mempool_get_bulk(mp, (void **)mbufs, count);
--	if (likely(rc == 0))
-+	if (likely(rc == 0)) {
- 		for (unsigned int idx = 0; idx < count; idx++)
- 			__rte_mbuf_raw_sanity_check(mbufs[idx]);
-+	}
-+
-+	rte_mbuf_history_mark_bulk(mbufs, count, RTE_MBUF_HISTORY_OP_LIB_ALLOC);
-+
- 	return rc;
- }
- 
-@@ -666,6 +674,7 @@ static __rte_always_inline void
- rte_mbuf_raw_free(struct rte_mbuf *m)
- {
- 	__rte_mbuf_raw_sanity_check(m);
-+	rte_mbuf_history_mark(m, RTE_MBUF_HISTORY_OP_LIB_FREE);
- 	rte_mempool_put(m->pool, m);
- }
- 
-@@ -703,6 +712,8 @@ rte_mbuf_raw_free_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigned
- 		__rte_mbuf_raw_sanity_check(m);
+ #ifdef RTE_ETHDEV_RXTX_CALLBACKS
+ 	{
+ 		void *cb;
+@@ -6688,8 +6690,15 @@ rte_eth_tx_burst(uint16_t port_id, uint16_t queue_id,
  	}
+ #endif
  
-+	rte_mbuf_history_mark_bulk(mbufs, count, RTE_MBUF_HISTORY_OP_LIB_FREE);
++	uint16_t requested_pkts = nb_pkts;
++	rte_mbuf_history_mark_bulk(tx_pkts, nb_pkts, RTE_MBUF_HISTORY_OP_TX);
 +
- 	rte_mempool_put_bulk(mp, (void **)mbufs, count);
+ 	nb_pkts = p->tx_pkt_burst(qd, tx_pkts, nb_pkts);
+ 
++	if (requested_pkts > nb_pkts)
++		rte_mbuf_history_mark_bulk(tx_pkts + nb_pkts,
++				requested_pkts - nb_pkts, RTE_MBUF_HISTORY_OP_TX_BUSY);
++
+ 	rte_ethdev_trace_tx_burst(port_id, queue_id, (void **)tx_pkts, nb_pkts);
+ 	return nb_pkts;
+ }
+@@ -6785,6 +6794,8 @@ rte_eth_tx_prepare(uint16_t port_id, uint16_t queue_id,
+ 	}
+ #endif
+ 
++	rte_mbuf_history_mark_bulk(tx_pkts, nb_pkts, RTE_MBUF_HISTORY_OP_TX_PREP);
++
+ 	return p->tx_pkt_prepare(qd, tx_pkts, nb_pkts);
  }
  
-@@ -1013,6 +1024,8 @@ static inline int rte_pktmbuf_alloc_bulk(struct rte_mempool *pool,
- 	if (unlikely(rc))
- 		return rc;
- 
-+	rte_mbuf_history_mark_bulk(mbufs, count, RTE_MBUF_HISTORY_OP_LIB_ALLOC);
-+
- 	/* To understand duff's device on loop unwinding optimization, see
- 	 * https://en.wikipedia.org/wiki/Duff's_device.
- 	 * Here while() loop is used rather than do() while{} to avoid extra
-diff --git a/lib/mbuf/rte_mbuf_dyn.h b/lib/mbuf/rte_mbuf_dyn.h
-index 865c90f579..dc1d4f146a 100644
---- a/lib/mbuf/rte_mbuf_dyn.h
-+++ b/lib/mbuf/rte_mbuf_dyn.h
-@@ -69,6 +69,7 @@
- #include <stdio.h>
- #include <stdint.h>
- 
-+#include <rte_stdatomic.h>
- 
- #ifdef __cplusplus
- extern "C" {
-@@ -240,6 +241,23 @@ void rte_mbuf_dyn_dump(FILE *out);
-  * and parameters together.
-  */
- 
-+/**
-+ * The mbuf history dynamic field provides lifecycle tracking
-+ * for mbuf objects through the system.
-+ * It records a fixed set of predefined operations for debugging.
-+ */
-+#define RTE_MBUF_DYNFIELD_HISTORY_NAME "rte_mbuf_dynfield_history"
-+
-+/**
-+ * Type for mbuf history dynamic field.
-+ *
-+ * Use atomic operations to support cloned mbufs
-+ * accessed simultaneously by multiple lcores.
-+ *
-+ * The size is 64-bit for better performance on modern systems.
-+ */
-+typedef RTE_ATOMIC(uint64_t) rte_mbuf_history_t;
-+
- /*
-  * The metadata dynamic field provides some extra packet information
-  * to interact with RTE Flow engine. The metadata in sent mbufs can be
-diff --git a/lib/mbuf/rte_mbuf_history.h b/lib/mbuf/rte_mbuf_history.h
-new file mode 100644
-index 0000000000..f5f95a0c60
---- /dev/null
-+++ b/lib/mbuf/rte_mbuf_history.h
-@@ -0,0 +1,203 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2024 NVIDIA Corporation & Affiliates
-+ */
-+
-+#ifndef _RTE_MBUF_HISTORY_H_
-+#define _RTE_MBUF_HISTORY_H_
-+
-+/**
-+ * @file
-+ *
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * These functions allow to track history of mbuf objects using a dynamic field.
-+ *
-+ * It tracks the lifecycle of mbuf objects through the system
-+ * with a fixed set of predefined events to maintain performance.
-+ *
-+ * The history is stored as an atomic value (64-bit) in a dynamic field of the mbuf,
-+ * with each event encoded in 4 bits, allowing up to 16 events to be tracked.
-+ * Atomic operations ensure thread safety for cloned mbufs accessed by multiple lcores.
-+ */
-+
-+#include <rte_common.h>
-+#include <rte_debug.h>
-+
-+#include <rte_mbuf_dyn.h>
-+
-+/* Forward declaration to avoid circular dependency. */
-+struct rte_mbuf;
-+struct rte_mempool;
-+
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
-+/**
-+ * Number of bits for each history operation.
-+ */
-+#define RTE_MBUF_HISTORY_BITS 4
-+
-+/**
-+ * Maximum number of history operations that can be stored.
-+ */
-+#define RTE_MBUF_HISTORY_MAX (sizeof(rte_mbuf_history_t) * 8 / RTE_MBUF_HISTORY_BITS)
-+
-+/**
-+ * History operation types.
-+ */
-+enum rte_mbuf_history_op {
-+	RTE_MBUF_HISTORY_OP_NEVER     =  0, /**< Initial state - never allocated */
-+	RTE_MBUF_HISTORY_OP_LIB_FREE  =  1, /**< Freed back to pool */
-+	RTE_MBUF_HISTORY_OP_PMD_FREE  =  2, /**< Freed by PMD */
-+	RTE_MBUF_HISTORY_OP_APP_FREE  =  3, /**< Freed by application */
-+	RTE_MBUF_HISTORY_OP_LIB_ALLOC =  4, /**< Allocation in mbuf library */
-+	RTE_MBUF_HISTORY_OP_PMD_ALLOC =  5, /**< Allocated by PMD for Rx */
-+	RTE_MBUF_HISTORY_OP_APP_ALLOC =  6, /**< Allocated by application */
-+	RTE_MBUF_HISTORY_OP_RX        =  7, /**< Received */
-+	RTE_MBUF_HISTORY_OP_TX        =  8, /**< Sent */
-+	RTE_MBUF_HISTORY_OP_TX_PREP   =  9, /**< Being prepared before Tx */
-+	RTE_MBUF_HISTORY_OP_TX_BUSY   = 10, /**< Returned due to Tx busy */
-+	RTE_MBUF_HISTORY_OP_ENQUEUE   = 11, /**< Enqueued for processing */
-+	RTE_MBUF_HISTORY_OP_DEQUEUE   = 12, /**< Dequeued for processing */
-+	/*                              13,      reserved for future */
-+	RTE_MBUF_HISTORY_OP_USR2      = 14, /**< Application-defined event 2 */
-+	RTE_MBUF_HISTORY_OP_USR1      = 15, /**< Application-defined event 1 */
-+	RTE_MBUF_HISTORY_OP_MAX       = 16, /**< Maximum number of operation types */
-+};
-+
-+/**
-+ * Global offset for the history dynamic field (set during initialization).
-+ */
-+extern int rte_mbuf_history_field_offset;
-+
-+/**
-+ * Initialize the mbuf history system.
-+ *
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * This function registers the dynamic field for mbuf history tracking.
-+ * It should be called once during application initialization.
-+ *
-+ * Note: This function is called by rte_pktmbuf_pool_create,
-+ * so explicit invocation is usually not required.
-+ */
-+__rte_experimental
-+void rte_mbuf_history_init(void);
-+
-+/**
-+ * Mark an mbuf with a history event.
-+ *
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * @param m
-+ *   Pointer to the mbuf.
-+ * @param op
-+ *   The operation to record.
-+ */
-+static inline void rte_mbuf_history_mark(struct rte_mbuf *m, enum rte_mbuf_history_op op)
-+{
-+#ifndef RTE_MBUF_HISTORY_DEBUG
-+	RTE_SET_USED(m);
-+	RTE_SET_USED(op);
-+#else
-+	RTE_ASSERT(rte_mbuf_history_field_offset >= 0);
-+	RTE_ASSERT(op < RTE_MBUF_HISTORY_OP_MAX);
-+	if (unlikely(m == NULL))
-+		return;
-+
-+	rte_mbuf_history_t *history_field = RTE_MBUF_DYNFIELD(m,
-+			rte_mbuf_history_field_offset, rte_mbuf_history_t *);
-+	uint64_t old_history = rte_atomic_load_explicit(history_field,
-+			rte_memory_order_acquire);
-+	uint64_t new_history;
-+	do {
-+		new_history = (old_history << RTE_MBUF_HISTORY_BITS) | op;
-+	} while (unlikely(!rte_atomic_compare_exchange_weak_explicit(history_field,
-+			&old_history, new_history,
-+			rte_memory_order_release, rte_memory_order_acquire)));
-+#endif
-+}
-+
-+/**
-+ * Mark multiple mbufs with a history event.
-+ *
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * @param mbufs
-+ *   Array of mbuf pointers.
-+ * @param count
-+ *   Number of mbufs to mark.
-+ * @param op
-+ *   The operation to record.
-+ */
-+static inline void rte_mbuf_history_mark_bulk(struct rte_mbuf * const *mbufs,
-+		unsigned int count, enum rte_mbuf_history_op op)
-+{
-+#ifndef RTE_MBUF_HISTORY_DEBUG
-+	RTE_SET_USED(mbufs);
-+	RTE_SET_USED(count);
-+	RTE_SET_USED(op);
-+#else
-+	RTE_ASSERT(rte_mbuf_history_field_offset >= 0);
-+	RTE_ASSERT(op < RTE_MBUF_HISTORY_OP_MAX);
-+	if (unlikely(mbufs == NULL))
-+		return;
-+
-+	while (count--)
-+		rte_mbuf_history_mark(*mbufs++, op);
-+#endif
-+}
-+
-+/**
-+ * Dump mbuf history for a single mbuf to a file.
-+ *
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * @param f
-+ *   File pointer to write the history to.
-+ * @param m
-+ *   Pointer to the mbuf to dump history for.
-+ */
-+__rte_experimental
-+void rte_mbuf_history_dump(FILE *f, const struct rte_mbuf *m);
-+
-+/**
-+ * Dump mbuf history statistics for a single mempool to a file.
-+ *
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * @param f
-+ *   File pointer to write the history statistics to.
-+ * @param mp
-+ *   Pointer to the mempool to dump history for.
-+ */
-+__rte_experimental
-+void rte_mbuf_history_dump_mempool(FILE *f, struct rte_mempool *mp);
-+
-+/**
-+ * Dump mbuf history statistics for all mempools to a file.
-+ *
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * @param f
-+ *   File pointer to write the history statistics to.
-+ */
-+__rte_experimental
-+void rte_mbuf_history_dump_all(FILE *f);
-+
-+#ifdef __cplusplus
-+}
-+#endif
-+
-+#endif /* _RTE_MBUF_HISTORY_H_ */
 -- 
 2.51.0
 
