@@ -2,35 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0529CCD187
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 07:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A847BCCD187
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 07:22:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 259AB40B8C;
-	Tue, 14 Oct 2025 09:20:26 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 310E140B90;
+	Tue, 14 Oct 2025 09:20:27 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 7D1A0402CE
- for <dev@dpdk.org>; Tue, 14 Oct 2025 08:00:51 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C7C9A40288
+ for <dev@dpdk.org>; Tue, 14 Oct 2025 08:40:36 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 630301A1BE0;
- Tue, 14 Oct 2025 08:00:51 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A5E761A06C3;
+ Tue, 14 Oct 2025 08:40:36 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2EA1D1A1BE1;
- Tue, 14 Oct 2025 08:00:51 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 71CAD1A1C22;
+ Tue, 14 Oct 2025 08:40:36 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B20501800086;
- Tue, 14 Oct 2025 14:00:50 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A413E1800093;
+ Tue, 14 Oct 2025 14:40:35 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: dev@dpdk.org,
 	stephen@networkplumber.org,
 	david.marchand@redhat.com
-Subject: [PATCH 15/15] net/dpaa2: add Policer stats for each TC
-Date: Tue, 14 Oct 2025 11:30:45 +0530
-Message-ID: <20251014060045.1304694-16-prashant.gupta_3@nxp.com>
+Subject: [PATCH 00/15] dpaa2: Fixes and enhancements for DPMAC, stats,
+ and parser
+Date: Tue, 14 Oct 2025 12:10:20 +0530
+Message-ID: <20251014064035.1312896-1-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251014060045.1304694-1-prashant.gupta_3@nxp.com>
-References: <20251014060045.1304694-1-prashant.gupta_3@nxp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
@@ -48,181 +47,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support of Policer stats for each TC.
-Also dpmac stats are supported for MC version > 10.39.0
+From: Prashant Gupta <nxg06376@lsv03583.swis.in-blr01.nxp.com>
 
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
----
- drivers/net/dpaa2/dpaa2_ethdev.c | 117 ++++++++++++++++++++++++++-----
- 1 file changed, 101 insertions(+), 16 deletions(-)
+This patch series introduces a set of improvements and bug fixes for the DPAA2 Ethernet driver. Key highlights include:
 
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index 5b72243346..be86fcb853 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -104,6 +104,46 @@ static const struct rte_dpaa2_xstats_name_off dpaa2_xstats_strings[] = {
- 	{"egress_confirmed_frames", 2, 4},
- 	{"cgr_reject_frames", 4, 0},
- 	{"cgr_reject_bytes", 4, 1},
-+	{"TC_0_policer_cnt_red", 5, 0},
-+	{"TC_0_policer_cnt_yellow", 5, 1},
-+	{"TC_0_policer_cnt_green", 5, 2},
-+	{"TC_0_policer_cnt_re_red", 5, 3},
-+	{"TC_0_policer_cnt_re_yellow", 5, 4},
-+	{"TC_1_policer_cnt_red", 6, 0},
-+	{"TC_1_policer_cnt_yellow", 6, 1},
-+	{"TC_1_policer_cnt_green", 6, 2},
-+	{"TC_1_policer_cnt_re_red", 6, 3},
-+	{"TC_1_policer_cnt_re_yellow", 6, 4},
-+	{"TC_2_policer_cnt_red", 7, 0},
-+	{"TC_2_policer_cnt_yellow", 7, 1},
-+	{"TC_2_policer_cnt_green", 7, 2},
-+	{"TC_2_policer_cnt_re_red", 7, 3},
-+	{"TC_2_policer_cnt_re_yellow", 7, 4},
-+	{"TC_3_policer_cnt_red", 8, 0},
-+	{"TC_3_policer_cnt_yellow", 8, 1},
-+	{"TC_3_policer_cnt_green", 8, 2},
-+	{"TC_3_policer_cnt_re_red", 8, 3},
-+	{"TC_3_policer_cnt_re_yellow", 8, 4},
-+	{"TC_4_policer_cnt_red", 9, 0},
-+	{"TC_4_policer_cnt_yellow", 9, 1},
-+	{"TC_4_policer_cnt_green", 9, 2},
-+	{"TC_4_policer_cnt_re_red", 9, 3},
-+	{"TC_4_policer_cnt_re_yellow", 9, 4},
-+	{"TC_5_policer_cnt_red", 10, 0},
-+	{"TC_5_policer_cnt_yellow", 10, 1},
-+	{"TC_5_policer_cnt_green", 10, 2},
-+	{"TC_5_policer_cnt_re_red", 10, 3},
-+	{"TC_5_policer_cnt_re_yellow", 10, 4},
-+	{"TC_6_policer_cnt_red", 11, 0},
-+	{"TC_6_policer_cnt_yellow", 11, 1},
-+	{"TC_6_policer_cnt_green", 11, 2},
-+	{"TC_6_policer_cnt_re_red", 11, 3},
-+	{"TC_6_policer_cnt_re_yellow", 11, 4},
-+	{"TC_7_policer_cnt_red", 12, 0},
-+	{"TC_7_policer_cnt_yellow", 12, 1},
-+	{"TC_7_policer_cnt_green", 12, 2},
-+	{"TC_7_policer_cnt_re_red", 12, 3},
-+	{"TC_7_policer_cnt_re_yellow", 12, 4},
- 	{"mac_rx_64 bytes", 0, 0},
- 	{"mac_rx_65-127 bytes", 0, 0},
- 	{"mac_rx_128-255 bytes", 0, 0},
-@@ -1841,6 +1881,11 @@ dpaa2_dev_mac_setup_stats(struct rte_eth_dev *dev)
- 	priv->cnt_values_dma_mem = NULL;
- }
- 
-+/*
-+ * dpaa2_dev_xstats_get(): Get counters of dpni and dpmac.
-+ * MAC (mac_*) counters are supported on MC version > 10.39.0
-+ * TC_x_policer_* counters are supported only when Policer is enable.
-+ */
- static int
- dpaa2_dev_xstats_get(struct rte_eth_dev *dev,
- 	struct rte_eth_xstat *xstats, unsigned int n)
-@@ -1848,10 +1893,13 @@ dpaa2_dev_xstats_get(struct rte_eth_dev *dev,
- 	struct fsl_mc_io *dpni = (struct fsl_mc_io *)dev->process_private;
- 	unsigned int i = 0, j = 0, num = RTE_DIM(dpaa2_xstats_strings);
- 	struct dpaa2_dev_priv *priv = dev->data->dev_private;
--	union dpni_statistics value[5] = {};
-+	union dpni_statistics value[13] = {};
-+	struct mc_version mc_ver_info = {0};
-+	struct dpni_rx_tc_policing_cfg cfg;
- 	uint8_t page_id, stats_id;
- 	uint64_t *cnt_values;
- 	int32_t retcode;
-+	int16_t tc;
- 
- 	if (n < num)
- 		return num;
-@@ -1888,6 +1936,27 @@ dpaa2_dev_xstats_get(struct rte_eth_dev *dev,
- 			break;
- 		}
- 	}
-+
-+	for (tc = 0; tc < priv->num_rx_tc; tc++) {
-+		retcode = dpni_get_rx_tc_policing(dpni, CMD_PRI_LOW,
-+						  priv->token, tc,
-+						  &cfg);
-+		if (retcode) {
-+			DPAA2_PMD_ERR("Error to get the policer rule: %d", retcode);
-+			goto err;
-+		}
-+
-+		/* get policer stats if policer is enabled */
-+		if (cfg.mode != 0) {
-+			/* Get Counters from page_5*/
-+			retcode = dpni_get_statistics(dpni, CMD_PRI_LOW,
-+						      priv->token, 5, tc,
-+						      &value[(tc + 5)]);
-+			if (retcode)
-+				goto err;
-+		}
-+	}
-+
- 	while (i < (num - DPAA2_MAC_NUM_STATS)) {
- 		xstats[i].id = i;
- 		page_id = dpaa2_xstats_strings[i].page_id;
-@@ -1896,29 +1965,45 @@ dpaa2_dev_xstats_get(struct rte_eth_dev *dev,
- 		i++;
- 	}
- 
--	dpaa2_dev_mac_setup_stats(dev);
--	retcode = dpni_get_mac_statistics(dpni, CMD_PRI_LOW, priv->token,
--					  priv->cnt_idx_iova, priv->cnt_values_iova,
--					  DPAA2_MAC_NUM_STATS);
--	if (retcode) {
--		DPAA2_PMD_WARN("MAC (mac_*) counters are not supported!!");
-+	if (mc_get_version(dpni, CMD_PRI_LOW, &mc_ver_info))
-+		DPAA2_PMD_WARN("Unable to obtain MC version");
-+
-+	/* mac_statistics supported on MC version > 10.39.0 */
-+	if (mc_ver_info.major >= MC_VER_MAJOR &&
-+	    mc_ver_info.minor >= MC_VER_MINOR &&
-+	    mc_ver_info.revision > 0) {
-+		dpaa2_dev_mac_setup_stats(dev);
-+		retcode = dpni_get_mac_statistics(dpni, CMD_PRI_LOW, priv->token,
-+						  priv->cnt_idx_iova,
-+						  priv->cnt_values_iova,
-+						  DPAA2_MAC_NUM_STATS);
-+		if (retcode) {
-+			while (i >= (num - DPAA2_MAC_NUM_STATS) && i < num) {
-+				xstats[i].id = i;
-+				xstats[i].value = 0;
-+				i++;
-+			}
-+		}
-+		if (!retcode) {
-+			cnt_values = priv->cnt_values_dma_mem;
-+			while (i >= (num - DPAA2_MAC_NUM_STATS) && i < num) {
-+				/* mac counters value */
-+				xstats[i].id = i;
-+				xstats[i].value = rte_le_to_cpu_64(*cnt_values++);
-+				i++;
-+			}
-+		}
- 		rte_free(priv->cnt_values_dma_mem);
- 		rte_free(priv->cnt_idx_dma_mem);
-+		priv->cnt_idx_dma_mem = NULL;
-+		priv->cnt_values_dma_mem = NULL;
-+	} else {
- 		while (i >= (num - DPAA2_MAC_NUM_STATS) && i < num) {
- 			xstats[i].id = i;
- 			xstats[i].value = 0;
- 			i++;
- 		}
- 	}
--	if (!retcode) {
--		cnt_values = priv->cnt_values_dma_mem;
--		while (i >= (num - DPAA2_MAC_NUM_STATS) && i < num) {
--			/* mac counters value */
--			xstats[i].id = i;
--			xstats[i].value = rte_le_to_cpu_64(*cnt_values++);
--			i++;
--		}
--	}
- 
- 	return i;
- err:
+- Fixes for checksum parsing and error queue buffer handling
+- Enhancements to flow rule resizing and parser result prefetching
+- Addition of DPMAC MC header support and Policer statistics per traffic class
+- Support for eCPRI header/message dump and DPMAC counters
+- Upgrade of fslmc base firmware to version 10.39.0
+- Introduction of devargs to drop parse-failed packets in hardware
+
+These changes improve robustness, observability, and performance of the DPAA2 driver stack.
+
+
+Brick Yang (2):
+  net/dpaa2: fix L3/L4 csum results in packet parse
+  net/dpaa2: fix to recv packets with additional parse errors
+
+Hemant Agrawal (3):
+  drivers: dpaa2 upgrade fslmc base FW to 10.39.0
+  net/dpaa2: replace global variable to driver flag
+  net/dpaa2: add devargs to drop parse packets in HW
+
+Ioana Ciornei (1):
+  net/dpaa2: setup the speed cap based on the actual MAC
+
+Jun Yang (4):
+  net/dpaa2: fix error frame dump issue
+  net/dpaa2: fix flow rule's resizing issue
+  net/dpaa2: optimize to prefetch next parser result
+  net/dpaa2: add eCPRI header and message dump
+
+Prashant Gupta (4):
+  net/dpaa2: fix uninitialized variable issue
+  net/dpaa2: fix to free buffers from error queue
+  net/dpaa2: add dpmac MC header file
+  net/dpaa2: add Policer stats for each TC
+
+Vanshika Shukla (1):
+  net/dpaa2: support dpmac counters in stats
+
+ .mailmap                                     |   1 +
+ doc/guides/nics/dpaa2.rst                    |   4 +
+ doc/guides/rel_notes/release_25_11.rst       |   3 +
+ drivers/bus/fslmc/bus_fslmc_driver.h         |   1 +
+ drivers/bus/fslmc/mc/dpbp.c                  |  78 ++-
+ drivers/bus/fslmc/mc/dprc.c                  |   2 +
+ drivers/bus/fslmc/mc/fsl_dpbp.h              |  41 +-
+ drivers/bus/fslmc/mc/fsl_dpmng.h             |   4 +-
+ drivers/bus/fslmc/mc/fsl_dprc.h              |   1 +
+ drivers/net/dpaa2/base/dpaa2_hw_dpni.c       |   3 +-
+ drivers/net/dpaa2/base/dpaa2_hw_dpni_annot.h |  10 +-
+ drivers/net/dpaa2/dpaa2_ethdev.c             | 350 +++++++++++-
+ drivers/net/dpaa2/dpaa2_ethdev.h             |  65 ++-
+ drivers/net/dpaa2/dpaa2_flow.c               | 123 ++++-
+ drivers/net/dpaa2/dpaa2_mux.c                |   8 +-
+ drivers/net/dpaa2/dpaa2_parse_dump.h         | 124 +++++
+ drivers/net/dpaa2/dpaa2_rxtx.c               | 124 +++--
+ drivers/net/dpaa2/mc/dpkg.c                  |   7 +-
+ drivers/net/dpaa2/mc/dpni.c                  |  50 +-
+ drivers/net/dpaa2/mc/dprtc.c                 |  38 +-
+ drivers/net/dpaa2/mc/fsl_dpdmux.h            |  13 +-
+ drivers/net/dpaa2/mc/fsl_dpkg.h              |   7 +-
+ drivers/net/dpaa2/mc/fsl_dpmac.h             | 526 +++++++++++++++++++
+ drivers/net/dpaa2/mc/fsl_dpni.h              |  37 +-
+ drivers/net/dpaa2/mc/fsl_dpni_cmd.h          |  15 +-
+ drivers/net/dpaa2/mc/fsl_dprtc.h             |  39 +-
+ drivers/net/dpaa2/mc/fsl_dprtc_cmd.h         |   7 +-
+ 27 files changed, 1518 insertions(+), 163 deletions(-)
+ create mode 100644 drivers/net/dpaa2/mc/fsl_dpmac.h
+
 -- 
-2.43.0
+2.25.1
 
