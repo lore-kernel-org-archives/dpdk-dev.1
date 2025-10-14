@@ -2,42 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D7ECCD187
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 08:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA85CCD18E
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Oct 2025 08:45:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC8BF402A8;
-	Tue, 14 Oct 2025 10:45:32 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 0212C40288
- for <dev@dpdk.org>; Tue, 14 Oct 2025 10:45:31 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id CB8B3206E5;
- Tue, 14 Oct 2025 10:45:30 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id E117440613;
+	Tue, 14 Oct 2025 10:45:38 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id B987D4060B
+ for <dev@dpdk.org>; Tue, 14 Oct 2025 10:45:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1760431537; x=1791967537;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=El+J4QUB/dta7v92w7FNtBk7gIKhqlzTXZl1vtUy0XI=;
+ b=A/fr9/C3YBY/ZXhVOjPyCQMyn2e2ZVe+YKoqz3kSGYKco5poC2+CBaeP
+ yU5XAfZKCT4H/GzlOlxAcbHdnfr3CMxDnSicG9aAnRfMPnW9otrvrHi6a
+ Gnh4UZCw/qYBzghkZeDO8iygrR7zy34yiwXV/sOvX+eqLj9kvAu3kkAVR
+ W4xyOQmK9LCZYMH+sRoar4ZsnDvQt66jPmWS4XSDmrKTDcz0pJgGfr/Qz
+ pq1iCVLDjUe0U+BptPpPVE8VuALyprmSXDwkP6sgbTcoS6DknTQ0n6sdt
+ NpN9spuJEpLSC1OCWOkoGmFBb29JH9OoixnlscuXxPRwDLDvRGdLnetsk Q==;
+X-CSE-ConnectionGUID: yKkk3YCqRNC9SXBXkagpCw==
+X-CSE-MsgGUID: 70xOL8ZIQ7eEvgfQgZ5jKQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11581"; a="61796248"
+X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="61796248"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 Oct 2025 01:45:36 -0700
+X-CSE-ConnectionGUID: OFuO2K3UT3Wmt/1xJjk40w==
+X-CSE-MsgGUID: IC6cT+a1S1Kwx2wzSPnQPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,227,1754982000"; d="scan'208";a="181630640"
+Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
+ by orviesa007.jf.intel.com with ESMTP; 14 Oct 2025 01:45:35 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH 0/6] net/intel: fixes and improvements to rx path selection
+Date: Tue, 14 Oct 2025 08:45:11 +0000
+Message-Id: <20251014084517.1407407-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v5 6/7] app/testpmd: add commands to dump mbuf history
-Date: Tue, 14 Oct 2025 10:45:27 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F654C5@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20251014070517.922137-7-thomas@monjalon.net>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v5 6/7] app/testpmd: add commands to dump mbuf history
-Thread-Index: Adw82PboKKVO1OfiTrSQN3yoXTkLpwADT9cw
-References: <20250616072910.113042-1-shperetz@nvidia.com>
- <20251014070517.922137-1-thomas@monjalon.net>
- <20251014070517.922137-7-thomas@monjalon.net>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Thomas Monjalon" <thomas@monjalon.net>,
-	<dev@dpdk.org>
-Cc: <shperetz@nvidia.com>, <viacheslavo@nvidia.com>,
- <bruce.richardson@intel.com>, <stephen@networkplumber.org>,
- "Aman Singh" <aman.deep.singh@intel.com>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,32 +57,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Thomas Monjalon [mailto:thomas@monjalon.net]
-> Sent: Tuesday, 14 October 2025 08.59
->=20
-> Dump the mbuf history to the console or to a file.
->=20
-> The dump will contain:
-> - Operation history for each mbuf
-> - Summary and statistics about all mbufs
->=20
-> Dump the history of all mbufs:
-> 	testpmd> dump mbuf history all [file]
->=20
-> Dump the history of one mbuf pool:
-> 	testpmd> dump mbuf history mempool <mp_name> [file]
->=20
-> Dump the history of one mbuf:
-> 	testpmd> dump mbuf history one <mbuf_addr> [file]
+This series contains a number of fixes and improvements to
+the logic concerned with selecting an rx path in the intel
+drivers. The first three patches are fixes that affect the
+iavf driver. The final three patches reformat the arrays in
+the i40e iavf and ice drivers that hold information for each
+Rx path that are used in the common selection process, in an
+attempt to improve readability.
 
-The "one" seems superfluous. I think this would suffice:
-	testpmd> dump mbuf history <mbuf_addr> [file]
+Ciara Loftus (6):
+  net/intel: fix Rx vector capability detection
+  net/iavf: fix Rx paths feature definitions
+  net/iavf: fix Rx path selection for scalar flex bulk alloc
+  net/iavf: reformat the Rx path infos array
+  net/i40e: reformat the Rx path infos array
+  net/ice: reformat the Rx path infos array
 
->=20
-> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
-> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> ---
+ drivers/net/intel/common/rx.h      |   5 +-
+ drivers/net/intel/i40e/i40e_rxtx.c | 126 +++++++++----
+ drivers/net/intel/iavf/iavf.h      |   1 +
+ drivers/net/intel/iavf/iavf_rxtx.c | 285 +++++++++++++++++++++--------
+ drivers/net/intel/iavf/iavf_rxtx.h |   1 -
+ drivers/net/intel/ice/ice_rxtx.c   | 124 +++++++++----
+ 6 files changed, 401 insertions(+), 141 deletions(-)
 
-With or without suggested change,
-Acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
+-- 
+2.34.1
 
