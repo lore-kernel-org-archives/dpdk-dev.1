@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED6F1CCD185
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 18:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02732CCD199
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 18:12:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 477E040E3B;
-	Wed, 15 Oct 2025 20:01:20 +0200 (CEST)
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com
- [209.85.222.171])
- by mails.dpdk.org (Postfix) with ESMTP id E74B040E31
- for <dev@dpdk.org>; Wed, 15 Oct 2025 20:01:18 +0200 (CEST)
-Received: by mail-qk1-f171.google.com with SMTP id
- af79cd13be357-856222505eeso921831085a.1
- for <dev@dpdk.org>; Wed, 15 Oct 2025 11:01:18 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4EB8940A76;
+	Wed, 15 Oct 2025 20:12:59 +0200 (CEST)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
+ [209.85.215.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 25BA240273
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 20:12:58 +0200 (CEST)
+Received: by mail-pg1-f178.google.com with SMTP id
+ 41be03b00d2f7-b5579235200so4353758a12.3
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 11:12:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760551278;
- x=1761156078; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760551977;
+ x=1761156777; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=E2RlYoyI0b75BZ1jbhS/b9SFGTYkH1Tzw1ahawiQiG4=;
- b=mKJu6bvDNXz69aKV3mdFxAdxeOOswpvHVKCvxBfUMcOpV1x99i6XsFcj/Vxn+QuasR
- ymSHM29uj+tK2PxXZB6w490N0TBAbhdLdWp9kqLt0ooJOJSwGcYqNxcMKnRoWhs7fWex
- 0HKAEyfH2AQsM6fDU03DZbOx2PqEYR89LWiq9VzBTCXHvvCF9J6gQo8pluaQ+zU6Hzbb
- IbpQUBrGzKmN63MXmLPoBEYeKiB9I8EzzSXEhBy03FdDPewxeqeMYRxHxZRiiXoSpJZm
- Jk6/it7lbe3VRJD9ugcXYXgSGtIY5bRFbd0MUHej/vPjma7U00o9UZuivE3r5FU3W+WL
- JPpg==
+ bh=1EHEqWCSJSyCppahkSUH1uApzUNzdsrVzGY5+90pXsI=;
+ b=ff89jY6uyJthNFtCgTYtSbJoRfAdQc3Qy7qukoQL4Z8cOV6aJ3aDQNni99pJHwin7w
+ XEB9M7DYZDF5t3+Ph6kEpdJ7Z+3TtwWgoOcfoBvSiyWznI39/OpYpKRW9dJ0vu9FkN9l
+ wP/L/UtUiQ8R+bUUjZ3CFcmJx/f77W9PzcXO689VKyi61brOixzfXkpGB81PgDArQeqE
+ 3Oe9AabEVINF3/ypuhbmObAl1ddbMxLqo1PeumWE5vcV0BOjIndMecfzu+TAZHHI6O/Y
+ 9ztB8zNuijKpfeOY3yClGHySSTwnT/9+hmsDFhdqsPGrQPaUHb9R7O31ULbtxX+LYJ11
+ G5ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760551278; x=1761156078;
+ d=1e100.net; s=20230601; t=1760551977; x=1761156777;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=E2RlYoyI0b75BZ1jbhS/b9SFGTYkH1Tzw1ahawiQiG4=;
- b=NBdMgs5dG/aypzZMJudcXNf9jLlEKmw/0h5ZBGWu4intzkoEiFpvkkIhqepaDVTyXB
- ObJ7c/uowC03E7/0yNlZ4tBDyZHvalY7EAepBBgIt3P6LtIm6xga4qzRvYj3Fv6nS8u3
- wIfBul2FqOtsH+RAJXOotIy9Y0UwxvQxlagaAWv2TRV9j9Vt2hvV5vFnW2/5XnpPherH
- AinptzGzouWJortIODeC7qM8lXo/X8eynREDc6S9Dgn/AdtJ48Y1+LS4xf9u8G0qA+KA
- QXdomX/yCHl4f1G395sdThYLHqCwfXAB2LAvaO4zUMFXRuE4vEosnDGEYNw9CiuFD769
- O1gg==
-X-Gm-Message-State: AOJu0YzIBxxwaFSxmfWM5zxrP/0Yp/+nuhio/X8ejOHJzUPkEMrfbDqY
- gJHVwgP+ZyvXNlZ7roLF4fukZSIjoXYooFgdBCiClOtReSTen/RP/YOfl7uUzop6SEE=
-X-Gm-Gg: ASbGncuSc/lYXs2UhKfR5Ej7Z6VqLhmjkY2pEyjtgDxI2CQlpzJ1YONFr//VKQh/Dcm
- eMyqyPLdUP4fD7LK/fOSzUyzLcsgGYs4Z90tojnA4Lm/HNI0PS0WVKqgS9mHMGI695gQfqSK5AW
- CMzHAbSYucHX6SSRfsnugAXtKjt5M6CNU/OcU1lcDjQR/Ca3gf5GLqXAMSrEO+F6Eg8t+TN0yCY
- 66PbEeDqQYrtG529guPIH/zC9/WlhXruSVqrLH52aVhVTmunh5NKyeMPMHrRSA3gGd5h9W/Cydn
- bXCvays5h57Tyy3uXlJlPkMZpyyDJhpJzLGKohD+Ykh55IaSlwXcFKu6iFViD6cwsz+bkkV4dsa
- Xv+KmrKPtxPQffBVEBE1KgGeZ4ZFzp4OKFK/okBeLXYK1Xpz0C2ByRpzTxhJG4UPAINV79R+C2r
- FCpaDOJPQj8AD8xf6CgmlMFjIF0/fr
-X-Google-Smtp-Source: AGHT+IFuEN9TsjLBlovz33cBBZTf/qfvQwhfaxXeg7v2zkN/kEsQ7oDCPAZKx4+fnDX8X3uclJblzQ==
-X-Received: by 2002:ac8:58cd:0:b0:4df:6b24:ebee with SMTP id
- d75a77b69052e-4e6ead62ec0mr406974961cf.58.1760551277880; 
- Wed, 15 Oct 2025 11:01:17 -0700 (PDT)
+ bh=1EHEqWCSJSyCppahkSUH1uApzUNzdsrVzGY5+90pXsI=;
+ b=EiXtSffvb/5xkA3B2bac7a7WeQtBQ6UVbAa1n+wgqpG+6q7tfVTtG0NoxwA6QXLXtW
+ waZKZce3ZpOp2YCYsdY95zTwi8nxvh0JOQP8xS2Q1vpqxmRHNZz4zPYUyHqn3NMIIp45
+ /O8aZIvrEPi+xZMvbBHeZtsYdQ+f1VFkrgvjmxyoYr1gpCDx9zU1v3xISsHAuM2m9DAo
+ 4gDE2kafWWwUoJn2LEqLDK3yZgJsSI7E/+0wPskyqNGdGoIPVGzWhO4AFM/8dcXnMQtA
+ KKdbhUL2rZGoNUUPm5k29uaPp76cvWZVbJnalxfk8ItyfBW4H1HPPiYZUVcoT1vTwMzo
+ 5QnA==
+X-Gm-Message-State: AOJu0YwwL/HsuscdVD8VOJfB6FVsL0y6ZfzlSFczfCto4cxE8zz9Yne0
+ wNtGdEzRfQ4i4vhSvl5qsz+Xo6Fta59yfGm6eCyKcR8GbsgGQvzwXZmxW6HBVkxSWAc=
+X-Gm-Gg: ASbGncvPmGbjXsNr7aLYEJ3SdOrMb3zU8Hb/BbYZ3fzScE2I+Tbic1ZeU+tYdJCZght
+ Do2tunP8DzntCcdwTdWBcM5Ih/0Nide4+DzhnkqPegDZG+zzuQxq1e0ETTMx9kgtcPOTJcXrlyJ
+ 1gk2lDZp4eIzsvyIqnoYSvv1j1kmiBA6yxo8JVRq6ZGVpbeQ7WlHE9rc1rXU2kL8wOyvRr1R86a
+ F6K56IFd9mCjsq7dXJFQRygg3iPo7NZc6zxV46tnDRz3esqPz+Rxll+yOljH1d+1httrXLztdFk
+ QWcIMrqF8Y72ArJ5rQUMEALM1BFXnQvjURLRx56Wdc7TmI6jVq8K/uHVy3695wiaAbvPjVpyy88
+ s5xX7ucZSIZ/yN1dL2wCtfg3VM7//EQob3WGXYzmIel6DUAOgoNGbt3LzrcgHINgB7T8485cOip
+ sz40LUVV0IZnfC5lu52dhcNrh40i1o
+X-Google-Smtp-Source: AGHT+IFmDwzxDBPQORhGZtISpcj6phun88byxRUX/QUfPmQ7bz92pU3mcpnW+vP79Up4mUaq+HGKTQ==
+X-Received: by 2002:a17:902:d50f:b0:278:9051:8ea9 with SMTP id
+ d9443c01a7336-290272dc4a7mr407673175ad.40.1760551977094; 
+ Wed, 15 Oct 2025 11:12:57 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4e88c640298sm10758011cf.9.2025.10.15.11.01.16
+ d9443c01a7336-2909930a756sm3144055ad.14.2025.10.15.11.12.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 15 Oct 2025 11:01:17 -0700 (PDT)
-Date: Wed, 15 Oct 2025 10:27:46 -0700
+ Wed, 15 Oct 2025 11:12:56 -0700 (PDT)
+Date: Wed, 15 Oct 2025 11:12:54 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Vamsi Krishna <vattunuru@marvell.com>
-Cc: <dev@dpdk.org>, <fengchengwen@huawei.com>, <thomas@monjalon.net>,
- <bruce.richardson@intel.com>, <anatoly.burakov@intel.com>,
- <kevin.laatz@intel.com>, <jerinj@marvell.com>
-Subject: Re: [PATCH v3 1/1] lib/dma: introduce inter-process and inter-OS DMA
-Message-ID: <20251015102746.41daeb3b@hermes.local>
-In-Reply-To: <20251013042136.1727540-1-vattunuru@marvell.com>
-References: <--in-reply-to=20251010144631.713063-1-vattunuru@marvell.com>
- <20251013042136.1727540-1-vattunuru@marvell.com>
+To: Shai Brandes <shaibran@amazon.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [PATCH 00/21] net/ena: Release 2.14.0
+Message-ID: <20251015111254.4d04167f@hermes.local>
+In-Reply-To: <20251015070707.340-1-shaibran@amazon.com>
+References: <20251015070707.340-1-shaibran@amazon.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,24 +81,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 13 Oct 2025 09:51:36 +0530
-Vamsi Krishna <vattunuru@marvell.com> wrote:
+On Wed, 15 Oct 2025 10:06:46 +0300
+Shai Brandes <shaibran@amazon.com> wrote:
 
-> +	if (conf->domain.type != RTE_DMA_INTER_DOMAIN_NONE &&
-> +	    conf->direction != RTE_DMA_DIR_MEM_TO_MEM) {
-> +		RTE_DMA_LOG(ERR, "Device %d inter domain only support mem-to-mem transfer", dev_id);
-> +		return -EINVAL;
-> +	}
-> +	if (conf->domain.type == RTE_DMA_INTER_OS_DOMAIN &&
-> +	    !(dev_info.dev_capa & RTE_DMA_CAPA_INTER_OS_DOMAIN)) {
-> +		RTE_DMA_LOG(ERR, "Device %d does not support inter os domain", dev_id);
-> +		return -EINVAL;
-> +	}
-> +	if (conf->domain.type == RTE_DMA_INTER_PROCESS_DOMAIN &&
-> +	    !(dev_info.dev_capa & RTE_DMA_CAPA_INTER_PROCESS_DOMAIN)) {
-> +		RTE_DMA_LOG(ERR, "Device %d does not support inter process domain", dev_id);
-> +		return -EINVAL;
-> +	}
+> This patchset includes an upgrade of the ENA HAL,
+> introduces a new feature, and addresses three bug fixes.
+> Based on repository: dpdk-next-net; branch: origin/main; hash: 1d627ea13a
+> 
+> Thank you in advance to the net maintainers and community members
+> for your time and effort reviewing the code.
+> 
+> Best regards,
+> Shai Brandes
+> AWS Elastic Network Adapter team
+> 
+> Shai Brandes (21):
+>   net/ena/base: optimize Tx desc fields setting
+>   net/ena/base: rework admin timeout handling
+>   net/ena/base: add extended Tx cdesc support
+>   net/ena/base: add IO ring helper functions
+>   net/ena/base: add lost interrupt indication
+>   net/ena/base: add Rx cdesc dump on bad request ID
+>   net/ena: add Rx HW timestamping support
+>   net/ena: rework sanity checks
+>   net/ena: add verification of DMA address width
+>   net/ena: fix PCI BAR mapping on 64K page size
+>   net/ena: style and comment changes
+>   net/ena/base: rework log format
+>   net/ena/base: add phc error statistics
+>   net/ena/base: remove redundant zeroing of Tx desc
+>   net/ena/base: style changes in hal
+>   net/ena/base: improve admin logging
+>   net/ena/base: remove redundant if sentence
+>   net/ena/base: fix unsafe memcpy on invalid memory
+>   net/ena/base: optimize branch prediction
+>   net/ena/base: change return type and improve logging
+>   net/ena: upgrade driver version to 2.14.0
+> 
+>  doc/guides/nics/ena.rst                       |   4 +
+>  doc/guides/rel_notes/release_25_11.rst        |   5 +
+>  drivers/net/ena/base/ena_com.c                | 346 ++++++++++++------
+>  drivers/net/ena/base/ena_com.h                |  63 +++-
+>  .../net/ena/base/ena_defs/ena_admin_defs.h    |  44 +++
+>  .../net/ena/base/ena_defs/ena_eth_io_defs.h   |  12 +-
+>  drivers/net/ena/base/ena_eth_com.c            | 218 +++++++----
+>  drivers/net/ena/base/ena_eth_com.h            |  59 +--
+>  drivers/net/ena/base/ena_plat_dpdk.h          |  24 +-
+>  drivers/net/ena/ena_ethdev.c                  | 140 ++++++-
+>  drivers/net/ena/ena_ethdev.h                  |  19 +-
+>  drivers/net/ena/ena_rss.c                     |   2 +
+>  12 files changed, 693 insertions(+), 243 deletions(-)
+> 
 
-Why is dev_id of type int16_t, seems like a limiting and poor choice.
-Would expect it to be unsigned and 32 bits?
+There are some merge conflicts (common problem) on the release notes.
+Recommend that in future, release note changes be last or standalone patch.
+
