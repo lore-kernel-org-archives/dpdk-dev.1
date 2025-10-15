@@ -2,45 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 640F2CCD193
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 22:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1BDCCD185
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 23:09:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6EF1E402DE;
-	Thu, 16 Oct 2025 00:42:55 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 3EF8440273
- for <dev@dpdk.org>; Thu, 16 Oct 2025 00:42:54 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 2584E48948; Thu, 16 Oct 2025 00:42:54 +0200 (CEST)
-From: bugzilla@dpdk.org
+	by mails.dpdk.org (Postfix) with ESMTP id A909C4060F;
+	Thu, 16 Oct 2025 01:09:38 +0200 (CEST)
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
+ [209.85.215.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 0450C40273
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 01:09:36 +0200 (CEST)
+Received: by mail-pg1-f180.google.com with SMTP id
+ 41be03b00d2f7-b5a631b9c82so34820a12.1
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 16:09:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760569776;
+ x=1761174576; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=js/x0H8wpp5/D3WWqUCr44lmLK9urduxQlFoHyKwY4w=;
+ b=SDg/Te5oEJnURtO82paKI57ph2dxw/DmlltAp8NQtY4PMt0zmmbqE/TgwWzrBvjLI3
+ HoiINIm5HKa8C+C4meC6ZiwM7GiVJtOLc+bn8RjlITWod70ug1mFa9I4zFOen+S7fwIw
+ 6pZcan+UTsK0sRH02Yjfuw9J9uOMh2ph0xgL6HkJUyMVbTgswtrZXxODo76v7wIAdfWQ
+ fGd9KxE7Xt6OHFJuR7bZDX9eWaBCpSP0hl1Gqo4Q9mnHZEqLgsxkUpqIB1uYliv9mN6S
+ QLAl8phWJy0LJJfZDzDoQmKdM/XkXadehTHA16BAmNZkumdLgPKGEbtLK3PZHO2G/jpR
+ nWzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1760569776; x=1761174576;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=js/x0H8wpp5/D3WWqUCr44lmLK9urduxQlFoHyKwY4w=;
+ b=Txi/IX12925b3xHuuSZx33rnr8g/xkuxjCOzI3Jrzpk0u6bTfZTjKJ5QgM0iKkRDai
+ 2TBVKcmAzsxrGCKCsedgLGRdepmE5BOx9q9bndwo6KAcflZHmDCKKPYtCadcTO5/bxy9
+ B2elxS5flrrW88VdppX44ldeQ80Z8z9fk8AksZPiWSHyItm38Z3B2BUgNN6ZqtVwCHzJ
+ hsea6RN8/04Zwoi1IYuwsxLvIXEff2zD7bHSTAlI/3XOgxrwNvbL4sZWfO1qQpp35+gZ
+ vvZjg0iYSAWAC59bGyq7pySKg/gElW/ZDSFBJmFCOxMM1Ktex6ZLhw7h3PvJrP+nomAu
+ 0MTw==
+X-Gm-Message-State: AOJu0YxPe9Wa+kA2qwfkqt0ZCl+/SSb51EIZP2jVYWS7hHV4260R4iyl
+ ixzqe/5KMLotIxH/5d+IXUYUozKRoSvd4A51zwqrRJpzwmnsQM7EWqTMtGnc902186YZMqTxr6S
+ hS3umO80=
+X-Gm-Gg: ASbGncuLv+uT9EoinxCtB2bFOLmJkkEENDr2gf8bzBeQ9DJuMvCMfMWiwWb/hyWXMZx
+ RarPYEffzdYYJVgyLS2+I1DUx212BQSdQbp/OEG6rkNmwggAyRfOuiybWG8dKVykvTDaBxo6Kog
+ 7+Z8PkmhFdeHHWMGOcqrIKOLLCBK29wNZG8iUygqd3QsP/ogq2ua16gY2qRRSyG7RemoHFlqFP6
+ 9dWLAbUyVn+j7jnxuWNqrsKJnBtrDW/elDMwrKwqO++ylIebuIQR+Gzuw72i8sqBu/zAuuZvJRb
+ bJuxXKPn9CrIMrDlpxEQAeOThfhBqIABvTcfTOqf2QXiX1sjmGq4+ucG/wsv6nVtjvI8qiObwlU
+ utOhBgSWrxmF24VOaz2vhP9HZ93MTgYb868oQu1uwKvaJVzHx0C0MOcKPSWPNMNR0fZq43UwG1Y
+ HKwquytVyzLkXcQAN1NzifaakQvtwu2aBteJSAeELPZlGBGv6nAA==
+X-Google-Smtp-Source: AGHT+IGY6HQSodJ7+dtV084+oUy+g9HbGYXAYJJ1peQj3xdpgrMMqNJVNhM13y+fs5vKrBVzzhZXtA==
+X-Received: by 2002:a17:903:8c8:b0:28e:cc75:15f8 with SMTP id
+ d9443c01a7336-290272df709mr405621705ad.46.1760569775991; 
+ Wed, 15 Oct 2025 16:09:35 -0700 (PDT)
+Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-29099a7de45sm7600155ad.54.2025.10.15.16.09.35
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 15 Oct 2025 16:09:35 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1802] bnxt PMD potential name conflicts
-Date: Wed, 15 Oct 2025 22:42:54 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 25.07
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: minor
-X-Bugzilla-Who: stephen@networkplumber.org
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1802-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [RFT 0/3] net/dpaa2: global symbol fixes
+Date: Wed, 15 Oct 2025 16:07:36 -0700
+Message-ID: <20251015230933.875860-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,56 +79,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1802
+While looking at how some PMD's are sloppy about exporting global symbol
+names, found that dpaa2 driver was defining some  globals that could
+cause problems.
 
-            Bug ID: 1802
-           Summary: bnxt PMD potential name conflicts
-           Product: DPDK
-           Version: 25.07
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: minor
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: stephen@networkplumber.org
-  Target Milestone: ---
+These need to be tested on real hardware.
 
-The bnxt PMD exposes lots of symbols which do not use consistent prefix of
-bnxt_ which could cause conflicts with user code and other PMD's when
-statically linked.
+Stephen Hemminger (3):
+  net/dpaa2: remove unused frame array
+  net/dpaa2: make local array static
+  net/dpaa2: make total rx descriptors per device
 
-bnxt :
-0000000000000008 B mpc
-00000000000002a0 D fec_mode
-00000000000000c0 D link_speeds2_tbl
-0000000000000000 D link_speeds_tbl
-00000000000002e0 D link_status_str
-0000000000000300 D media_type
-0000000000000280 D signal_mode
-0000000000007570 T vf_vnic_set_rxmask_cb
-0000000000000050 T hweight32
+ drivers/net/dpaa2/dpaa2_ethdev.c  |   9 +--
+ drivers/net/dpaa2/dpaa2_ethdev.h  |   1 +
+ drivers/net/dpaa2/dpaa2_sparser.c | 119 +-----------------------------
+ 3 files changed, 6 insertions(+), 123 deletions(-)
 
-0000000000000000 B bit
-0000000000000000 D lfsr
-0000000000000000 T rand16
-0000000000000040 T rand32
-0000000000000060 T rand_init
-00000000000000f0 T stack_dump
-0000000000000000 T stack_init
-0000000000000050 T stack_is_empty
-0000000000000060 T stack_is_full
-0000000000000030 T stack_items
-00000000000000b0 T stack_pop
-0000000000000070 T stack_push
-0000000000000040 T stack_size
-0000000000000000 D mod_data
-0000000000000370 T next_pow2
-0000000000000390 T prev_pow2
-00000000000003b0 T roundup32
-00000000000003c0 T roundup64
+-- 
+2.47.3
 
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
