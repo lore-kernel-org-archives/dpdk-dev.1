@@ -2,85 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC12CCD18E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 09:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18292CCD18E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 09:08:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CE745410D4;
-	Wed, 15 Oct 2025 11:05:45 +0200 (CEST)
-Received: from mail-pg1-f225.google.com (mail-pg1-f225.google.com
- [209.85.215.225])
- by mails.dpdk.org (Postfix) with ESMTP id 1713D42789
- for <dev@dpdk.org>; Wed, 15 Oct 2025 11:05:44 +0200 (CEST)
-Received: by mail-pg1-f225.google.com with SMTP id
- 41be03b00d2f7-b49c1c130c9so4004775a12.0
- for <dev@dpdk.org>; Wed, 15 Oct 2025 02:05:44 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6CA1240EA5;
+	Wed, 15 Oct 2025 11:05:48 +0200 (CEST)
+Received: from mail-qv1-f98.google.com (mail-qv1-f98.google.com
+ [209.85.219.98]) by mails.dpdk.org (Postfix) with ESMTP id 731234278E
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 11:05:46 +0200 (CEST)
+Received: by mail-qv1-f98.google.com with SMTP id
+ 6a1803df08f44-7ea50f94045so10610466d6.1
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 02:05:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760519143; x=1761123943;
+ d=1e100.net; s=20230601; t=1760519146; x=1761123946;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=ZuLGH3yY0QftvblPy2/QYDcK1QBuOY3rdtImcr+3JJY=;
- b=GO0S51dViyXdUAU8wNe04yvek9W7EbYVExofQtvWHYpCNdS09ctUuNcPECInp5JsyS
- td3ou045tWYVRNr3qSC9aCAzIF6ow46Kg2tGbEE4lrp+CuBycOm8anVDoqk7/Xks8AyJ
- eYGQSTtOkbyRcia3fDESMBn6eaJSHdlT3FbnXrP9v5G1YZftIU1Zfch468NvfBYZMnCI
- Y3+/srE/2153cAzBOdTzD6K8of2PdcpwTYEPYEUoPa/ioGNiARH1rcPrZA6utyDYET2X
- HnGnMYRjT8G0dnMzweZkBK+MKezBJVEXkcObBwoXG8fZWatm5vX9x3PltgFHdmhiFAUC
- BU0g==
-X-Gm-Message-State: AOJu0Yxevcq0u767SuFCYsZYyuOJfQTqNga74QhFADdFWu+9bKw8oPRL
- d4au5b3BcP/J2k0Rja82ZQmiePdXKSfqPpsYHjjG875hrAM5vyWOUKB5ymdXJrD+r5xaMuL32BQ
- QS7dT6l7cmuOAZg1kx3ZBBwNAaSUAdKa543luJHeomsEvSNWwWoemdGIANX7YQP+RzuFd8+2Ty3
- lZmp+jQ7We06fBs43QtChyhaihsoOFlDjevV0mVwkO5KlWtjhTJsDXycRZDAeBvqYIgB2TRg==
-X-Gm-Gg: ASbGnctosxjW5ilo+YCj49hNI30ofoYkjyztRbq3WKE1YZDK/JEVFSNxzXcbchufJHh
- wDtmvoZx2/VJZTZk3IsrYwLv33OQGpX4oJFhDaQQlQSAdNmzNdmBSxRQb7+cM9ZDjg+00Tf1h1E
- eUmgEL1QGl7sG6JLJtxoyMdWPktrQLI4+WhQIv3crhJOoXfqIwGbACnEZGHVb+YAGyJ4YbekQxO
- 3z0NtksGNUYTRkohTeeoYzN/c4WXLEVBBDY+ZE/DOYqob2RYdXDKEo5w1GK29RLst+9rLqLwNFg
- cgx6d6onOUreWu7LITjW65Ftu9XgGlqDFQ4KwuT8Co4NbZx02HvxTfMwo7PjixJLRZIxOIUp1ZI
- /nlXvC78q2WP7XFehyB8xKYQBwTtpQEc+sF0DURBDIASIVbgJHbrSnDaUKG5y1YKiBqQoxCvGOO
- ak2cDsEA1vbdC/T3YHS0wqDvw80NUOcgWEzqaz
-X-Google-Smtp-Source: AGHT+IHXIQtDRwYSDTqfyGckOe3LYBRBkL/DvUvxVF0so2u9ZBbdSVqf7+jFuvQUh4WxdjP8Ngt7kxqK3y7I
-X-Received: by 2002:a17:902:e54b:b0:258:c13d:9b1a with SMTP id
- d9443c01a7336-290272dcdaemr376776215ad.41.1760519143165; 
- Wed, 15 Oct 2025 02:05:43 -0700 (PDT)
+ bh=vSQycHDM32mrtttv3nmlh7ZMucY0ow1cKgN0wNmYGCo=;
+ b=q02rlPzj8Opm7nI2fCX9OvztZk45BqXswWN8rZjV0HBNdSsJNlUj5WSg+gK3CqDgfH
+ ILp1/lWohKfck7kIwocKLLOEoMCuKTFfaaTVhvTQcCbZWxCM3PEakPrnXkxvR+iSp5jV
+ +cPct3mbsA6vPRm6f7VU/8sGF8tCq/f/n1GkwFoF9PikFN1CCQs5+74gL5O9zAMTlR5+
+ Y3cOneIh3z6zvFet7xz5I1D7OBQ1cXy6ntTlvYzDf8k53PMdu8I8nH+m6dbYEa94ZSW4
+ cLtIC7J6v/Kd1kIVzaVLOYolBnpI28kd3UizNwpU10M7S2vFSJm4f7YyrST/AcC3dYM8
+ PaWQ==
+X-Gm-Message-State: AOJu0YzoAwZaRlqXlGw7EVQ0RUB0+z8NEiaWqX7G+k7SUGPVB1CP5/6w
+ RwZfXQzzoCXDVOnH75bLu5FGPyOD5iCZNCAqi2QjIbbw2sZAGny5XWTDo4WkmUCM41dSccrkSFW
+ p7Q/qhYvb8McTQDI0RD4zEMcvSqjT0Zi7UWsiZzPCnoUYQb+MsfkoOjR9mP5gZAIWSOo5FC9Qi1
+ HAaBITWA+YRoBH/ozvav0mVbnvx33tfB+kVEimnC1QZJffHjM+XgVtrg+LGtTWvIZWBiHeIw==
+X-Gm-Gg: ASbGncubFZZDnkroCsoLIA18SlQNCQfkxlUJepzOThEu3tdstog3lKLrBrkvCVnNsVW
+ w8z4Juvzkrzp8YcQeItkAjN0maqr4gGGNHDIaZIrqCrqj86G1RTjIWEoi1eFg0wOAQJIuJkDNyz
+ O00GHSUOtmRlGzQtmqYu1WQ/NfLGEoRsRsrWONt3nTfPp8QDUvjaJPaMc7llui3CBmiQfRjq5iv
+ 4xV333GOenAM/gKm4c+j3n0AbosikgpHLAvSBJVot4UlmgLPHbHh1tP6ZRXbaXTScdMacgkXnb+
+ F6wh1zgs8rEktJih/V6n3kIixfvyX5TT2vQW2yHrIPdfpohene4aPBqXjEK6ZyRX2o+Be//Ogs5
+ 7Li/mTG0ZUAGetPRZEqpJ5SAxtmTcCpGgjjAyB+fXaUJlJ42Vf3PEAGFVGeaI6DFsDJXht9G4
+X-Google-Smtp-Source: AGHT+IEECNnKde/raGiky9zHFKRouQjN+wmPU5q58nlHqz5XcNB3WgCTcu3jmMUgEjzq5sVoYvGtgobJf8sx
+X-Received: by 2002:a05:622a:118d:b0:4b7:aa1a:eb1b with SMTP id
+ d75a77b69052e-4e6f397978fmr393646971cf.2.1760519145700; 
+ Wed, 15 Oct 2025 02:05:45 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-117.dlp.protect.broadcom.com. [144.49.247.117])
+ (address-144-49-247-1.dlp.protect.broadcom.com. [144.49.247.1])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-29034f5e7d7sm15140725ad.63.2025.10.15.02.05.42
+ 6a1803df08f44-87c01222859sm1905086d6.15.2025.10.15.02.05.45
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 15 Oct 2025 02:05:43 -0700 (PDT)
+ Wed, 15 Oct 2025 02:05:45 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pf1-f199.google.com with SMTP id
- d2e1a72fcca58-7810912fc31so9397165b3a.3
- for <dev@dpdk.org>; Wed, 15 Oct 2025 02:05:42 -0700 (PDT)
+Received: by mail-pl1-f197.google.com with SMTP id
+ d9443c01a7336-267fa90a2fbso10712715ad.1
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 02:05:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1760519141; x=1761123941; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1760519144; x=1761123944; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ZuLGH3yY0QftvblPy2/QYDcK1QBuOY3rdtImcr+3JJY=;
- b=g/Lt6EGULWZSvS8dWUmkow2gMkNkYrZMVr0y+etcC7PWIROP6gxByzSoNIUU9MAJhK
- 6bjYs1Cm7XZ8B7Zj0tCkTfaR+KNzdUQpZW6iui+Q4CTpmBNqLpMjm269dVD1xeX+O5vu
- Dyfbc64NaYuPN5hSsbqh/Lvc7cWI1n0sy4HLU=
-X-Received: by 2002:a05:6a00:3d54:b0:781:be:277e with SMTP id
- d2e1a72fcca58-7938513618fmr30776531b3a.4.1760519141050; 
- Wed, 15 Oct 2025 02:05:41 -0700 (PDT)
-X-Received: by 2002:a05:6a00:3d54:b0:781:be:277e with SMTP id
- d2e1a72fcca58-7938513618fmr30776497b3a.4.1760519140382; 
- Wed, 15 Oct 2025 02:05:40 -0700 (PDT)
+ bh=vSQycHDM32mrtttv3nmlh7ZMucY0ow1cKgN0wNmYGCo=;
+ b=c/BVLzfz+b6325+McqAF3XA09s3hsx4KXt0HLi3aLq5TT1VXcFlw98L3LL1fjCwBtD
+ sCDdtTL+BC2/2+1ZfFOGME2SfnvkmyuKvZIM1CNKeqK8PRjK/kxIB4QbT3lCSX7f6TDp
+ eBCwIRF+fKjmWvPKmKJXLhVS13PTK1CF80Ob0=
+X-Received: by 2002:a05:6a20:2583:b0:2ab:a456:9b09 with SMTP id
+ adf61e73a8af0-32da8f7b6d7mr38749525637.15.1760519143426; 
+ Wed, 15 Oct 2025 02:05:43 -0700 (PDT)
+X-Received: by 2002:a05:6a20:2583:b0:2ab:a456:9b09 with SMTP id
+ adf61e73a8af0-32da8f7b6d7mr38749467637.15.1760519142653; 
+ Wed, 15 Oct 2025 02:05:42 -0700 (PDT)
 Received: from localhost.localdomain ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7992bc12a8asm17832412b3a.34.2025.10.15.02.05.38
+ d2e1a72fcca58-7992bc12a8asm17832412b3a.34.2025.10.15.02.05.41
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 15 Oct 2025 02:05:39 -0700 (PDT)
+ Wed, 15 Oct 2025 02:05:42 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Shuanglin Wang <shuanglin.wang@broadcom.com>
-Subject: [PATCH v3 53/54] net/bnxt: add support for truflow promiscuous mode
-Date: Wed, 15 Oct 2025 05:00:23 -0400
-Message-Id: <20251015090024.32250-54-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com
+Subject: [PATCH v3 54/54] net/bnxt/tf_ulp: remove Truflow DEBUG code
+Date: Wed, 15 Oct 2025 05:00:24 -0400
+Message-Id: <20251015090024.32250-55-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251015090024.32250-1-manish.kurup@broadcom.com>
 References: <20251009221129.28256-1-manish.kurup@broadcom.com>
@@ -101,51 +97,606 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+This commit cleans up TruFlow debug/non-production prints
 
-The truflow application support promiscuous mode to enable
-or disable receiving the packets with unknown destination mac addresses.
-
-Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
+Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
+Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_ethdev.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/net/bnxt/bnxt_hwrm.c               | 23 -------
+ drivers/net/bnxt/tf_ulp/bnxt_tf_common.h   |  5 --
+ drivers/net/bnxt/tf_ulp/bnxt_tf_pmd_shim.c |  6 --
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c      |  5 --
+ drivers/net/bnxt/tf_ulp/ulp_alloc_tbl.c    |  4 --
+ drivers/net/bnxt/tf_ulp/ulp_def_rules.c    |  6 --
+ drivers/net/bnxt/tf_ulp/ulp_flow_db.c      |  6 --
+ drivers/net/bnxt/tf_ulp/ulp_mapper.c       | 38 ------------
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c    | 71 ----------------------
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c   | 71 ----------------------
+ drivers/net/bnxt/tf_ulp/ulp_matcher.c      |  9 ---
+ 11 files changed, 244 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index 854c8b7371..f37136c8f4 100644
---- a/drivers/net/bnxt/bnxt_ethdev.c
-+++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -2161,9 +2161,15 @@ static int bnxt_promiscuous_enable_op(struct rte_eth_dev *eth_dev)
- 	old_flags = vnic->flags;
- 	vnic->flags |= BNXT_VNIC_INFO_PROMISC;
- 	rc = bnxt_hwrm_cfa_l2_set_rx_mask(bp, vnic, 0, NULL);
--	if (rc != 0)
-+	if (rc != 0) {
- 		vnic->flags = old_flags;
+diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
+index 939f35e3da..4d693da1d5 100644
+--- a/drivers/net/bnxt/bnxt_hwrm.c
++++ b/drivers/net/bnxt/bnxt_hwrm.c
+@@ -2868,29 +2868,6 @@ static uint32_t bnxt_sanitize_rss_type(struct bnxt *bp, uint32_t types)
+ 	return hwrm_type;
+ }
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-static int
+-bnxt_hwrm_vnic_rss_qcfg_p5(struct bnxt *bp)
+-{
+-	struct hwrm_vnic_rss_qcfg_output *resp = bp->hwrm_cmd_resp_addr;
+-	struct hwrm_vnic_rss_qcfg_input req = {0};
+-	int rc;
 -
-+		return rc;
-+	}
-+	rc = bnxt_ulp_promisc_mode_set(bp, 1);
-+	if (rc != 0) {
-+		vnic->flags = old_flags;
-+		rc = bnxt_hwrm_cfa_l2_set_rx_mask(bp, vnic, 0, NULL);
-+	}
+-	HWRM_PREP(&req, HWRM_VNIC_RSS_QCFG, BNXT_USE_CHIMP_MB);
+-	/* vnic_id and rss_ctx_idx must be set to INVALID to read the
+-	 * global hash mode.
+-	 */
+-	req.vnic_id = rte_cpu_to_le_16(BNXT_DFLT_VNIC_ID_INVALID);
+-	req.rss_ctx_idx = rte_cpu_to_le_16(BNXT_RSS_CTX_IDX_INVALID);
+-	rc = bnxt_hwrm_send_message(bp, &req, sizeof(req),
+-				    BNXT_USE_CHIMP_MB);
+-	HWRM_CHECK_RESULT();
+-	HWRM_UNLOCK();
+-	PMD_DRV_LOG_LINE(DEBUG, "RSS QCFG: Hash level %d", resp->hash_mode_flags);
+-
+-	return rc;
+-}
+-#endif
+ 
+ static int
+ bnxt_hwrm_vnic_rss_cfg_p5(struct bnxt *bp, struct bnxt_vnic_info *vnic)
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_tf_common.h b/drivers/net/bnxt/tf_ulp/bnxt_tf_common.h
+index 7fc70a3603..8e487d9a0e 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_tf_common.h
++++ b/drivers/net/bnxt/tf_ulp/bnxt_tf_common.h
+@@ -14,11 +14,6 @@
+ #define BNXT_DRV_DBG(lvl, fmt, ...) \
+ 	RTE_LOG(lvl, BNXT, "%s(): " fmt, __func__, ## __VA_ARGS__)
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#define BNXT_DRV_INF(fmt, ...)	RTE_LOG(INFO, fmt, ## __VA_ARGS__)
+-#else
+-#define BNXT_DRV_INF(fmt, ...)
+-#endif
+ 
+ #define BNXT_ULP_EM_FLOWS			8192
+ #define BNXT_ULP_1M_FLOWS			1000000
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_tf_pmd_shim.c b/drivers/net/bnxt/tf_ulp/bnxt_tf_pmd_shim.c
+index 5854f13447..bfd5f4b230 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_tf_pmd_shim.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_tf_pmd_shim.c
+@@ -16,9 +16,6 @@
+ #include "bnxt_hwrm.h"
+ #include "bnxt_tf_common.h"
+ #include "bnxt_tf_pmd_shim.h"
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#include "ulp_template_debug_proto.h"
+-#endif
+ 
+ 
+ int
+@@ -617,9 +614,6 @@ bnxt_pmd_global_tunnel_set(struct bnxt_ulp_context *ulp_ctx,
+ 			    port_id, rc);
+ 		return rc;
+ 	}
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-	ulp_mapper_global_register_tbl_dump(type, udp_port);
+-#endif
+ 	if (udp_port)
+ 		bnxt_pmd_global_reg_data_to_hndl(port_id, lupar_id,
+ 						 type, udp_port, handle);
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
+index 9d32217a21..a69bdc7b7e 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
+@@ -948,11 +948,6 @@ ulp_tf_eem_tbl_scope_init(struct bnxt *bp)
+ 		return rc;
+ 	}
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-	BNXT_DRV_DBG(DEBUG, "TableScope=0x%0x %d\n",
+-		     params.tbl_scope_id,
+-		     params.tbl_scope_id);
+-#endif
+ 
+ 	rc = bnxt_ulp_cntxt_tbl_scope_id_set(bp->ulp_ctx, params.tbl_scope_id);
+ 	if (rc) {
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_alloc_tbl.c b/drivers/net/bnxt/tf_ulp/ulp_alloc_tbl.c
+index f09d072ef3..ac83e42514 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_alloc_tbl.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_alloc_tbl.c
+@@ -10,10 +10,6 @@
+ #include "ulp_alloc_tbl.h"
+ #include "bnxt_ulp_utils.h"
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#include "ulp_template_debug_proto.h"
+-#include "ulp_tf_debug.h"
+-#endif
+ 
+ /* Retrieve the allocator table  initialization parameters for the tbl_idx */
+ static const struct bnxt_ulp_allocator_tbl_params*
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_def_rules.c b/drivers/net/bnxt/tf_ulp/ulp_def_rules.c
+index 4d96882087..8ff3c24993 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_def_rules.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_def_rules.c
+@@ -960,12 +960,6 @@ bnxt_ulp_grp_miss_act_set(struct rte_eth_dev *dev,
+ 	/* Perform the rte flow post process */
+ 	bnxt_ulp_rte_parser_post_process(&params);
+ 
+-#ifdef	RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef	RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_PARSER
+-	/* Dump the rte flow action */
+-	ulp_parser_act_info_dump(&params);
+-#endif
+-#endif
+ 
+ 	ret = ulp_matcher_action_match(&params, &params.act_tmpl);
+ 	if (unlikely(ret != BNXT_TF_RC_SUCCESS))
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_flow_db.c b/drivers/net/bnxt/tf_ulp/ulp_flow_db.c
+index 46f5a96baf..57f11d02ae 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_flow_db.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_flow_db.c
+@@ -532,9 +532,6 @@ ulp_flow_db_fid_alloc(struct bnxt_ulp_context *ulp_ctxt,
+ 	if (flow_type == BNXT_ULP_FDB_TYPE_REGULAR)
+ 		ulp_flow_db_func_id_set(flow_db, *fid, func_id);
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-	BNXT_DRV_DBG(DEBUG, "flow_id = %u:%u allocated\n", flow_type, *fid);
+-#endif
+ 	/* return success */
+ 	return 0;
+ }
+@@ -805,9 +802,6 @@ ulp_flow_db_fid_free(struct bnxt_ulp_context *ulp_ctxt,
+ 	if (flow_type == BNXT_ULP_FDB_TYPE_REGULAR)
+ 		ulp_flow_db_func_id_set(flow_db, fid, 0);
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-	BNXT_DRV_DBG(DEBUG, "flow_id = %u:%u freed\n", flow_type, fid);
+-#endif
+ 	/* all good, return success */
+ 	return 0;
+ }
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.c b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
+index 9cda3b355b..0ff952950b 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
+@@ -653,12 +653,6 @@ ulp_mapper_priority_opc_process(struct bnxt_ulp_mapper_parms *parms,
+ 		rc = -EINVAL;
+ 		break;
+ 	}
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	if (!rc)
+-		BNXT_DRV_DBG(DEBUG, "Tcam priority = 0x%x\n", *priority);
+-#endif
+-#endif
  	return rc;
  }
  
-@@ -2185,6 +2191,11 @@ static int bnxt_promiscuous_disable_op(struct rte_eth_dev *eth_dev)
- 	if (bp->vnic_info == NULL)
- 		return 0;
+@@ -1504,13 +1498,6 @@ ulp_mapper_key_recipe_alloc(struct bnxt_ulp_context *ulp_ctx,
+ 			BNXT_DRV_DBG(ERR, "Unable to alloc key recipe\n");
+ 			return NULL;
+ 		}
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	BNXT_DRV_INF("Alloc key recipe [%s]:[%s] = 0x%X\n",
+-		     (dir == BNXT_ULP_DIRECTION_INGRESS) ? "rx" : "tx",
+-		     ulp_mapper_key_recipe_type_to_str(stype), recipe_id);
+-#endif
+-#endif
+ 	} else if (alloc_only) {
+ 		BNXT_DRV_DBG(ERR, "Recipe ID (%d) already allocated\n",
+ 			     recipe_id);
+@@ -1554,13 +1541,6 @@ ulp_mapper_key_recipe_free(struct bnxt_ulp_context *ulp_ctx,
+ 	}
+ 	rte_free(recipes[index]);
+ 	recipes[index] = NULL;
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	BNXT_DRV_INF("Free key recipe [%s]:[%s] = 0x%X\n",
+-		     (dir == BNXT_ULP_DIRECTION_INGRESS) ? "rx" : "tx",
+-		     ulp_mapper_key_recipe_type_to_str(stype), index);
+-#endif
+-#endif
+ 	return 0;
+ }
  
-+	if (bnxt_ulp_promisc_mode_set(bp, 0)) {
-+		PMD_DRV_LOG_LINE(ERR, "Unable to disable promiscuous mode");
-+		return -EINVAL;
-+	}
-+
- 	vnic = bnxt_get_default_vnic(bp);
+@@ -1768,13 +1748,6 @@ ulp_mapper_key_recipe_field_opc_process(struct bnxt_ulp_mapper_parms *parms,
+ 			}
+ 		}
+ 	}
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	if (*written && is_key)
+-		BNXT_DRV_DBG(DEBUG, "%-20s bits = %-3d\n", fld->description,
+-			     fld->field_bit_size);
+-#endif
+-#endif
+ 	return rc;
+ }
  
- 	old_flags = vnic->flags;
+@@ -3064,11 +3037,6 @@ ulp_mapper_stats_cache_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 			     rc);
+ 		return rc;
+ 	}
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	BNXT_DRV_DBG(DEBUG, "flow id =0x%x\n", parms->flow_id);
+-#endif
+-#endif
+ 	return rc;
+ }
+ 
+@@ -4039,12 +4007,6 @@ ulp_mapper_func_info_process(struct bnxt_ulp_mapper_parms *parms,
+ 			     func_info->func_dst_opr);
+ 		return -EINVAL;
+ 	}
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	BNXT_DRV_DBG(DEBUG, "write the %" PRIX64 " into func_opc %u\n", res,
+-		     func_info->func_dst_opr);
+-#endif
+-#endif
+ 
+ 	return rc;
+ }
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
+index 3960be4e48..f17fb6e3b2 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
+@@ -11,10 +11,6 @@
+ #include "bnxt_ulp_utils.h"
+ #include "bnxt_ulp_tf.h"
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#include "ulp_template_debug_proto.h"
+-#include "ulp_tf_debug.h"
+-#endif
+ 
+ /* Internal function to write the tcam entry */
+ static int32_t
+@@ -50,9 +46,6 @@ ulp_mapper_tf_tcam_tbl_entry_write(struct bnxt_ulp_mapper_parms *parms,
+ 			     tf_dir_2_str(sparms.dir), sparms.idx);
+ 		return -EIO;
+ 	}
+-	BNXT_DRV_INF("tcam[%s][%s][%x] write success.\n",
+-		     tf_tcam_tbl_2_str(sparms.tcam_tbl_type),
+-		     tf_dir_2_str(sparms.dir), sparms.idx);
+ 
+ 	/* Mark action */
+ 	rc = ulp_mapper_mark_act_ptr_process(parms, tbl);
+@@ -61,11 +54,6 @@ ulp_mapper_tf_tcam_tbl_entry_write(struct bnxt_ulp_mapper_parms *parms,
+ 		return rc;
+ 	}
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	ulp_mapper_tcam_entry_dump("TCAM", idx, tbl, key, mask, data);
+-#endif
+-#endif
+ 	return rc;
+ }
+ 
+@@ -353,11 +341,6 @@ ulp_mapper_tf_em_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 		BNXT_DRV_DBG(ERR, "Failed to build the result blob\n");
+ 		return rc;
+ 	}
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	ulp_mapper_result_dump("EM Result", tbl, &data);
+-#endif
+-#endif
+ 	if (dparms->em_dynamic_pad_en) {
+ 		uint32_t abits = dparms->em_blk_align_bits;
+ 
+@@ -372,11 +355,6 @@ ulp_mapper_tf_em_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 		ulp_blob_pad_align(&data, abits);
+ 
+ 		ulp_blob_perform_byte_reverse(&data, ULP_BITS_2_BYTE(abits));
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	ulp_mapper_result_dump("EM Merged Result", tbl, &data);
+-#endif
+-#endif
+ 	}
+ 
+ 	/* do the transpose for the internal EM keys */
+@@ -389,11 +367,6 @@ ulp_mapper_tf_em_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 		}
+ 		tmplen = ulp_blob_data_len_get(&key);
+ 		ulp_blob_perform_byte_reverse(&key, ULP_BITS_2_BYTE(tmplen));
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	ulp_mapper_result_dump("EM Key Transpose", tbl, &key);
+-#endif
+-#endif
+ 	}
+ 
+ 	rc = bnxt_ulp_cntxt_tbl_scope_id_get(parms->ulp_ctx,
+@@ -444,12 +417,6 @@ ulp_mapper_tf_em_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 		return rc;
+ 	}
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	ulp_mapper_em_dump("EM", &key, &data, &iparms);
+-	/* tf_dump_tables(tfp, iparms.tbl_scope_id); */
+-#endif
+-#endif
+ 	/* Mark action process */
+ 	if (mtype == BNXT_ULP_FLOW_MEM_TYPE_EXT &&
+ 	    tbl->resource_type == TF_MEM_EXTERNAL)
+@@ -852,9 +819,6 @@ ulp_mapper_tf_index_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 				     sparms.idx, rc);
+ 			goto error;
+ 		}
+-		BNXT_DRV_INF("Index table[%s][%s][%x] write successful.\n",
+-			     tf_tbl_type_2_str(sparms.type),
+-			     tf_dir_2_str(sparms.dir), sparms.idx);
+ 
+ 		/* Calculate action record size */
+ 		if (tbl->resource_type == TF_TBL_TYPE_EXT) {
+@@ -1032,10 +996,6 @@ ulp_mapper_tf_if_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 			     iftbl_params.idx, rc);
+ 		return rc;
+ 	}
+-	BNXT_DRV_INF("Set table[%s][%s][%x] success.\n",
+-		     tf_if_tbl_2_str(iftbl_params.type),
+-		     tf_dir_2_str(iftbl_params.dir),
+-		     iftbl_params.idx);
+ 
+ 	/*
+ 	 * TBD: Need to look at the need to store idx in flow db for restore
+@@ -1073,13 +1033,6 @@ ulp_mapper_tf_ident_alloc(struct bnxt_ulp_context *ulp_ctx,
+ 		return rc;
+ 	}
+ 	*identifier_id = iparms.id;
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	BNXT_DRV_INF("Allocated Identifier [%s]:[%s] = 0x%X\n",
+-		     tf_dir_2_str(iparms.dir),
+-		     tf_ident_2_str(iparms.ident_type), iparms.id);
+-#endif
+-#endif
+ 	return rc;
+ }
+ 
+@@ -1104,14 +1057,6 @@ ulp_mapper_tf_ident_free(struct bnxt_ulp_context *ulp_ctx,
+ 	free_parms.id = res->resource_hndl;
+ 
+ 	(void)tf_free_identifier(tfp, &free_parms);
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	BNXT_DRV_INF("Freed Identifier [%s]:[%s] = 0x%X\n",
+-		     tf_dir_2_str(free_parms.dir),
+-		     tf_ident_2_str(free_parms.ident_type),
+-		     (uint32_t)free_parms.id);
+-#endif
+-#endif
+ 	return rc;
+ }
+ 
+@@ -1219,14 +1164,6 @@ ulp_mapper_tf_index_entry_free(struct bnxt_ulp_context *ulp,
+ 	if (fparms.type == TF_TBL_TYPE_FULL_ACT_RECORD)
+ 		(void)ulp_mapper_clear_full_action_record(tfp, ulp, &fparms);
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	BNXT_DRV_INF("Free index table [%s]:[%s] = 0x%X\n",
+-		     tf_dir_2_str(fparms.dir),
+-		     tf_tbl_type_2_str(fparms.type),
+-		     (uint32_t)fparms.idx);
+-#endif
+-#endif
+ 	return tf_free_tbl_entry(tfp, &fparms);
+ }
+ 
+@@ -1267,14 +1204,6 @@ ulp_mapper_tf_index_tbl_alloc_process(struct bnxt_ulp_context *ulp,
+ 
+ 	*index = aparms.idx;
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-		BNXT_DRV_DBG(DEBUG, "Allocated Table Index [%s][%s] = 0x%04x\n",
+-			     tf_tbl_type_2_str(aparms.type),
+-			     tf_dir_2_str(aparms.dir),
+-			     aparms.idx);
+-#endif
+-#endif
+ 	return rc;
+ }
+ 
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
+index 0f967b838d..f99698a1d8 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
+@@ -12,11 +12,6 @@
+ #include "bnxt_ulp_utils.h"
+ #include "tfc_action_handle.h"
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#include "ulp_template_debug_proto.h"
+-#include "ulp_tf_debug.h"
+-#include "tfc_debug.h"
+-#endif
+ 
+ #define BNXT_METER_MAX_NUM 1024
+ static struct bnxt_mtr_stats_id_map mtr_stats[BNXT_METER_MAX_NUM];
+@@ -80,11 +75,6 @@ ulp_mapper_tfc_tcam_tbl_entry_write(struct bnxt_ulp_mapper_parms *parms,
+ 		return rc;
+ 	}
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	ulp_mapper_tcam_entry_dump("TCAM", idx, tbl, key, mask, remap);
+-#endif
+-#endif
+ 	return rc;
+ }
+ 
+@@ -293,11 +283,6 @@ ulp_mapper_tfc_tcam_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 		key = &tkey;
+ 		mask = &tmask;
+ 	}
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	ulp_mapper_tcam_entry_dump("TCAM", 0, tbl, key, mask, &data);
+-#endif
+-#endif
+ 
+ 	if (alloc_tcam) {
+ 		tfcp = bnxt_ulp_cntxt_tfcp_get(parms->ulp_ctx);
+@@ -531,11 +516,6 @@ ulp_mapper_tfc_em_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 	ulp_blob_pad_push(&key, align_len_bits);
+ 	key_len = ULP_BITS_2_BYTE(ulp_blob_data_len_get(&key));
+ 	ulp_blob_perform_byte_reverse(&key, key_len);
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	ulp_mapper_result_dump("EM Key", tbl, &key);
+-#endif
+-#endif
+ 	/* Create the result data blob */
+ 	rc = ulp_mapper_tbl_result_build(parms, tbl, &data, "EM Result");
+ 	if (unlikely(rc)) {
+@@ -546,11 +526,6 @@ ulp_mapper_tfc_em_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 	key_len = ULP_BITS_2_BYTE(ulp_blob_data_len_get(&data));
+ 	ulp_blob_perform_byte_reverse(&data, key_len);
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	ulp_mapper_result_dump("EM Result", tbl, &data);
+-#endif
+-#endif
+ 	rc = ulp_blob_append(&key, &data, 0, dparms->em_blk_align_bits);
+ 	if (unlikely(rc)) {
+ 		BNXT_DRV_DBG(ERR, "EM Failed to append the result to key(%d)",
+@@ -566,11 +541,6 @@ ulp_mapper_tfc_em_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 	if (unlikely(rc))
+ 		return rc;
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	ulp_mapper_result_dump("EM Merged Result", tbl, &key);
+-#endif
+-#endif
+ 	iparms.dir		 = tbl->direction;
+ 	iparms.lkup_key_data	 = ulp_blob_data_get(&key, &tmplen);
+ 	iparms.lkup_key_sz_words = ULP_BITS_TO_32_BYTE_WORD(tmplen);
+@@ -644,11 +614,6 @@ ulp_mapper_tfc_em_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 		return rc;
+ 	}
+ 
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	ulp_mapper_tfc_em_dump("EM", &key, &iparms);
+-#endif
+-#endif
+ 	/* Mark action process */
+ 	rc = ulp_mapper_mark_gfid_process(parms, tbl, *iparms.flow_handle);
+ 	if (unlikely(rc)) {
+@@ -1082,14 +1047,6 @@ ulp_mapper_tfc_index_entry_free(struct bnxt_ulp_context *ulp_ctx,
+ 
+ 	/* TBD: check to see if the memory needs to be cleaned as well*/
+ 	rc = tfc_idx_tbl_free(tfcp, fw_fid, &tbl_info);
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	if (!rc)
+-		BNXT_DRV_DBG(DEBUG, "Freed Index [%s]:[%s] = 0x%X\n",
+-		     tfc_dir_2_str(tbl_info.dir),
+-		     tfc_idx_tbl_2_str(tbl_info.rsubtype), tbl_info.id);
+-#endif
+-#endif
+ 	return rc;
+ }
+ 
+@@ -1585,13 +1542,6 @@ ulp_mapper_tfc_ident_alloc(struct bnxt_ulp_context *ulp_ctx,
+ 		return rc;
+ 	}
+ 	*identifier_id = ident_info.id;
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	BNXT_DRV_INF("Allocated Identifier [%s]:[%s] = 0x%X\n",
+-		     tfc_dir_2_str(direction),
+-		     tfc_ident_2_str(ident_info.rsubtype), ident_info.id);
+-#endif
+-#endif
+ 
+ 	return rc;
+ }
+@@ -1625,13 +1575,6 @@ ulp_mapper_tfc_ident_free(struct bnxt_ulp_context *ulp_ctx,
+ 		BNXT_DRV_DBG(ERR, "free failed %d\n", rc);
+ 		return rc;
+ 	}
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	BNXT_DRV_DBG(DEBUG, "Freed Identifier [%s]:[%s] = 0x%X\n",
+-		     tfc_dir_2_str(ident_info.dir),
+-		     tfc_ident_2_str(ident_info.rsubtype), ident_info.id);
+-#endif
+-#endif
+ 
+ 	return rc;
+ }
+@@ -1739,13 +1682,6 @@ ulp_mapper_tfc_tcam_entry_free(struct bnxt_ulp_context *ulp,
+ 			    tcam_info.id);
+ 		return -EINVAL;
+ 	}
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	BNXT_DRV_DBG(DEBUG, "Freed TCAM [%s]:[%s] = 0x%X\n",
+-		     tfc_dir_2_str(tcam_info.dir),
+-		     tfc_tcam_2_str(tcam_info.rsubtype), tcam_info.id);
+-#endif
+-#endif
+ 	return 0;
+ }
+ 
+@@ -1804,13 +1740,6 @@ ulp_mapper_tfc_index_tbl_alloc_process(struct bnxt_ulp_context *ulp,
+ 	}
+ 
+ 	*index = tbl_info.id;
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG_MAPPER
+-	BNXT_DRV_DBG(DEBUG, "Allocated Table Index [%s][%s] = 0x%04x\n",
+-		     tfc_idx_tbl_2_str(table_type), tfc_dir_2_str(direction),
+-		     tbl_info.id);
+-#endif
+-#endif
+ 	return rc;
+ }
+ 
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_matcher.c b/drivers/net/bnxt/tf_ulp/ulp_matcher.c
+index 4b2e185278..f739cdf2a3 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_matcher.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_matcher.c
+@@ -225,12 +225,6 @@ ulp_matcher_pattern_match(struct ulp_rte_parser_params *params,
+ 
+ error:
+ 	BNXT_DRV_DBG(DEBUG, "Did not find any matching template\n");
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-	BNXT_DRV_DBG(DEBUG,
+-		     "hid:%x,Hdr:%" PRIX64 " Fld:%" PRIX64 " SFl:%" PRIX64 "\n",
+-		     class_match_idx, params->hdr_bitmap.bits,
+-		     params->fld_bitmap.bits, params->fld_s_bitmap.bits);
+-#endif
+ 	*class_id = 0;
+ 	return BNXT_TF_RC_ERROR;
+ }
+@@ -326,9 +320,6 @@ ulp_matcher_action_match(struct ulp_rte_parser_params *params,
+ 	return BNXT_TF_RC_SUCCESS;
+ error:
+ 	BNXT_DRV_DBG(DEBUG, "Did not find any matching action template\n");
+-#ifdef RTE_LIBRTE_BNXT_TRUFLOW_DEBUG
+-	BNXT_DRV_DBG(DEBUG, "Hdr:%" PRIX64 "\n", params->act_bitmap.bits);
+-#endif
+ 	*act_id = 0;
+ 	return BNXT_TF_RC_ERROR;
+ }
 -- 
 2.39.5 (Apple Git-154)
 
