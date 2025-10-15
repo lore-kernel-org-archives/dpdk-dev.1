@@ -2,84 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F980CCD18E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 09:03:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6383CCD193
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 09:03:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C2CAC40696;
-	Wed, 15 Oct 2025 11:03:47 +0200 (CEST)
-Received: from mail-io1-f100.google.com (mail-io1-f100.google.com
- [209.85.166.100])
- by mails.dpdk.org (Postfix) with ESMTP id D6A4C40276
- for <dev@dpdk.org>; Wed, 15 Oct 2025 11:03:46 +0200 (CEST)
-Received: by mail-io1-f100.google.com with SMTP id
- ca18e2360f4ac-938de0df471so574882239f.2
- for <dev@dpdk.org>; Wed, 15 Oct 2025 02:03:46 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 02C0540DCA;
+	Wed, 15 Oct 2025 11:03:54 +0200 (CEST)
+Received: from mail-oa1-f100.google.com (mail-oa1-f100.google.com
+ [209.85.160.100])
+ by mails.dpdk.org (Postfix) with ESMTP id 62B5E40B94
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 11:03:53 +0200 (CEST)
+Received: by mail-oa1-f100.google.com with SMTP id
+ 586e51a60fabf-35ba7c71bfdso2921432fac.3
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 02:03:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760519026; x=1761123826;
+ d=1e100.net; s=20230601; t=1760519032; x=1761123832;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=Pe0x3Whxiu5wBpiNXotThqNfqBYV2gNWYO001+aguvE=;
- b=AvRUyjGt/pnd7Nfa5oUo6zOrtfzQe9w282e5SMjUfH7UqbxLoPsGF0iDpzhz8HcF0P
- CHFt411E7mCoIbWkYBpKrAyH53kKGBKXKiiL3JfNmoo5Ec7KnjhIPgM5xDMQ+XESmXMe
- TMs7UPWIz6sOcK7PMFQB9w9mTQwUiqyZeFgsfxqDmy+z/L+e896b5ur3X4/fIXlYXFBU
- 3pMbipPD1HRdv3nN+6HA1jt2gKGioVnBK6xRwZ7dLzY5IF/9Ss3fnpf2W82FBoNtjTFo
- 84NAj849QnsQg6mr2uMHG7YzhNFxRL9YPLpqYm1XusxHvlVzmMW5QIix5TKUCbVI6UnM
- cnAA==
-X-Gm-Message-State: AOJu0YxnUwVAYeHrt8rmzY9qw6XFiI+aKyqBg0sWLYqf92GpY7rWhJzu
- vWPMO7WJi0a8laO9/njSHHbbZIcNlWfPoUzOSE+iHO/pP19Fn7x4PALms/21XouphzYgc1+VBLe
- BGh1gW06pkxGb+cReHahXlfvvrz066l6EJJqCLOjunB9AEht1zqs8+94by1qrRaasbq2/A8kwZ1
- Q+9S4Ubtlvr6DhT4vIlW3cyBbABQD+8KkwrH7d4R/soUzQrzLbiFXb7PTrZbMVbb7SHGhvnA==
-X-Gm-Gg: ASbGncvRc7ojcNp1GNV8sF+inzr68AibLEyeMjux4HhEGiNjl3GwLZqRaKEx/GXNVJ6
- Z1SFhlg1ZX4HbAUh1EB4kKBAPGP+bpwp8oTqEjE9YsA/WvuFljt5sv+bfxOUlem60kLdVP7aUG3
- lMPfAM1UBj+ZCrTnvI5lh1fczjJpeaypaB9erFDrTn9DsCPssQ5RF1uIaEb6k90Ix/GHAihfkvo
- 34GigsPVYQhEH9Yg+RDtLz959Pw2cu1oZX6nYi3Kzjb0GdzajMA/KvtNjaUtvNOMbzpFiskkqcx
- s4e25tNu2eZ3rDY/XCmLpgAg6SO9dIFZqGtu6lo1b6IcKNpff4O/0hl9UlnqsImyI70mEINFtwH
- Z6h9d7GnJFeappss5jhgEWrOmXX0AqVujpmMgWRhWZpgb87SW+8FbQ2EoseOrU0ewe7Xe+KXv8Q
- 9UaA==
-X-Google-Smtp-Source: AGHT+IECmLTlbp6IftMkg38q8Bwp29WE8sulb3jj/+MYjBg23gufJFKfhuKsCcknKuU8gTWWVkKjkt8pButT
-X-Received: by 2002:a05:6e02:19cf:b0:430:aec5:9bf3 with SMTP id
- e9e14a558f8ab-430aec59e6fmr8672905ab.30.1760519026088; 
- Wed, 15 Oct 2025 02:03:46 -0700 (PDT)
+ bh=tG5Na/fogn9Ok5ZrBXJdy+bDvZYRR8UTEo3Vhj9VXlU=;
+ b=tRZessa6lqZR+PWtQQDKqZROT6JNxcspJTc+yM366rj8NJdsi2JnrdjrbJIgIvByO8
+ HVwloF8v31NQ97O6nvV2jVtmAiVRVCLcT/vMCu4FlSXgnr2RVGIkEA6JogaAulJ9VYC5
+ IEU+x+PN7L3C4PIBP/jwuEK8XxIKmF7cAWbSYZItejfiFcUPZrhHK/1NnQLx8UhRaYBm
+ G1fw3yaj+ULlHaHENz3JZDHGYascBpIoM9HHPpYI4g3JazynN8ntMPmG5FePR50YfdNG
+ CQ2H2kOzf4YaSWUWTfFbf4x4h1XoFwhrwEWS94VUgDJnyq+b7uYSS6b1o5E1ydKXSZ6k
+ Y+0A==
+X-Gm-Message-State: AOJu0YygBmZrMzyaDjSAx6HL5w5CzQV6mNOJixHW1z5O/L2/CTr06pk4
+ mJW8SuTQev4hhemSHyj+tGTv87zHCQsU4Xv9sqM5/6cMFeYpF4WTvszz5uIB7ye1z88VwelFmo9
+ uU/GcR1yZB/zGERO6ht9CGmTGgJQK/RaBWS/dHDWTgmZnhn0K8DO7q9dGE/Yd5VmQhdexWLIoIT
+ rEZIjfJxU37cWYlGFDRf3GZuMViYVndRd6uFfmKVcAMMjUh21ebyC6cDBZYq9Q69W88EeRVQ==
+X-Gm-Gg: ASbGncspePha0vV5Siv11f39/cJMK7gceGyQdRkXJ6MVSQfFRRWtRXDQ5T09LAIbC9Z
+ b8V/7ObnXbvzCdWsXJkhv/zkY0KJYKajy2tmxoAxmXqM4UeHgppRvtYXAB30ZRQou0XcBA8sCgK
+ sqWF+Dusv0TSf7Z0lW1rsBG7zYPsxPN2Gx2fORwsqFWNLtSF04/ZtKeusrJCNsyiM6qCp+u/qHZ
+ KMYeR2b2zN7aEI/ySH8cbm0QpY5vJneKLjsxr2glRnKWQTmXyvkU6PnPKeiocvn/RdShlnjK7Ap
+ 1HzArELMTEqFKlYO2OUYp28zPbuvIrATaMqRwcbxJWRqBR4IcCMLjXm8Ldq8FquZvtowRO8JdBY
+ RuUUw3au5kovXYf0v9agKTw+FuPBh5TeIMepuSDD3yPmQ0ivf+UXp5sDj6UARRD0VBgcXs5v2
+X-Google-Smtp-Source: AGHT+IE/uS+23xAv0VEFG4S2R+dPUlQNfFWd4Ip2NYbEByuISoMqc2iZUtUYTMO4qTUMc9qBTyEkyiU2gEcQ
+X-Received: by 2002:a05:6870:d298:b0:345:b0cb:d097 with SMTP id
+ 586e51a60fabf-3c0f5d12deemr13621494fac.4.1760519032561; 
+ Wed, 15 Oct 2025 02:03:52 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-119.dlp.protect.broadcom.com. [144.49.247.119])
+ (address-144-49-247-1.dlp.protect.broadcom.com. [144.49.247.1])
  by smtp-relay.gmail.com with ESMTPS id
- 8926c6da1cb9f-58f71469861sm1284574173.23.2025.10.15.02.03.45
+ 586e51a60fabf-3c8c8b7eda7sm1399872fac.7.2025.10.15.02.03.51
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 15 Oct 2025 02:03:46 -0700 (PDT)
+ Wed, 15 Oct 2025 02:03:52 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pf1-f198.google.com with SMTP id
- d2e1a72fcca58-7810af03a63so17894330b3a.3
- for <dev@dpdk.org>; Wed, 15 Oct 2025 02:03:45 -0700 (PDT)
+Received: by mail-pf1-f200.google.com with SMTP id
+ d2e1a72fcca58-782063922ceso8846423b3a.0
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 02:03:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1760519024; x=1761123824; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1760519030; x=1761123830; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Pe0x3Whxiu5wBpiNXotThqNfqBYV2gNWYO001+aguvE=;
- b=BVxbXqG9dIub3im9eh4TKmGqoXXRupgqVyvpGExDFTIaOW/6ijpCELoifpAy27LDvt
- 9CkVyGZlsjzvWo2O+pf33AUc4yqyzSmlbfqqXbFwy6GRAJ0elVk66uXKWTwQJpVLquy9
- k5kTAOVMIUzml8Zu17ze7Wpy1f3Fclhaep6nk=
-X-Received: by 2002:a05:6a00:2e13:b0:781:1771:c12c with SMTP id
- d2e1a72fcca58-7938269d8b7mr34992833b3a.0.1760519024131; 
- Wed, 15 Oct 2025 02:03:44 -0700 (PDT)
-X-Received: by 2002:a05:6a00:2e13:b0:781:1771:c12c with SMTP id
- d2e1a72fcca58-7938269d8b7mr34992784b3a.0.1760519023443; 
- Wed, 15 Oct 2025 02:03:43 -0700 (PDT)
+ bh=tG5Na/fogn9Ok5ZrBXJdy+bDvZYRR8UTEo3Vhj9VXlU=;
+ b=g4tXf2t4jnDTBZ3o/zvwbSoprKGYbSZM1ErAEviSl2sIx+Knx0KNi7u+fT3uV2N8da
+ py5fCSeR548nv4UKKubNKO6Yao2Y42vYVZnwMW6ordoCuDf19wlxkHjqTZDpnUtnchLD
+ AH7YDlNurIggCTaynAz+upC5Hjr+1kaEi0UFU=
+X-Received: by 2002:aa7:8881:0:b0:781:171c:54e3 with SMTP id
+ d2e1a72fcca58-79385136265mr34707629b3a.2.1760519029856; 
+ Wed, 15 Oct 2025 02:03:49 -0700 (PDT)
+X-Received: by 2002:aa7:8881:0:b0:781:171c:54e3 with SMTP id
+ d2e1a72fcca58-79385136265mr34707600b3a.2.1760519029296; 
+ Wed, 15 Oct 2025 02:03:49 -0700 (PDT)
 Received: from localhost.localdomain ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7992bc12a8asm17832412b3a.34.2025.10.15.02.03.42
+ d2e1a72fcca58-7992bc12a8asm17832412b3a.34.2025.10.15.02.03.47
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 15 Oct 2025 02:03:43 -0700 (PDT)
+ Wed, 15 Oct 2025 02:03:48 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com, Smitha Pisupati <smitha.pisupati@broadcom.com>,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Subject: [PATCH v3 12/54] net/bnxt/tf_ulp: add support for special vxlan
-Date: Wed, 15 Oct 2025 04:59:42 -0400
-Message-Id: <20251015090024.32250-13-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Shahaji Bhosle <shahaji.bhosle@broadcom.com>
+Subject: [PATCH v3 13/54] net/bnxt/tf_ulp: increase shared pool size to 32
+Date: Wed, 15 Oct 2025 04:59:43 -0400
+Message-Id: <20251015090024.32250-14-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251015090024.32250-1-manish.kurup@broadcom.com>
 References: <20251009221129.28256-1-manish.kurup@broadcom.com>
@@ -100,47 +100,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Smitha Pisupati <smitha.pisupati@broadcom.com>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-Some special vxlan packets have extra padding bytes between
-the vxlan header and inner eth header. Thor2 is required to
-forward those packets as is, and not drop them.
+Increased the shared pool size for table scopes from 8 to 32.
+So that 32 instances of application can be created.
 
-To make this possible, following changes were made:
-1. Don't check on the l2 header type in the default template
-2. Based on a feature bit called special_vxlan, enable the support
-to pass the special packets. With feature bits disabled, normal vxlan
-should still pass.
-
-Signed-off-by: Smitha Pisupati <smitha.pisupati at broadcom.com>
-Reviewed-by: Manish Kurup <manish.kurup@broadcom.com>
-Reviewed-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Reviewed-by: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-index c8b6f544ca..08934eac3f 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-@@ -1069,7 +1069,6 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
- #else
- 	uint64_t bit = 0;
- #endif
--
- 	*out_bits = 0;
- 	if ((feat_bits | bit) != feat_bits) {
- 		BNXT_DRV_DBG(ERR, "Invalid TF feature bit is set %" PRIu64 "\n",
-@@ -1090,6 +1089,9 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
- 		BNXT_DRV_DBG(ERR, "Multi Tunnel Flow Feature is enabled\n");
- 	if (bit & BNXT_ULP_FEATURE_BIT_MULTI_INSTANCE)
- 		BNXT_DRV_DBG(ERR, "Multi Instance Feature is enabled\n");
-+	if (bit & BNXT_ULP_FEATURE_BIT_SPECIAL_VXLAN)
-+		BNXT_DRV_DBG(ERR, "Special VXLAN Feature is enabled\n");
-+
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+index 55adceb59f..af3e82a6a7 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+@@ -373,7 +373,7 @@ ulp_tfc_tbl_scope_init(struct bnxt *bp)
+ 	if ((feat_bits & BNXT_ULP_FEATURE_BIT_MULTI_INSTANCE)) {
+ 		if (!BNXT_PF(bp)) {
+ 			shared = true;
+-			max_pools = 8;
++			max_pools = 32;
+ 		}
+ 	}
  
- 	*out_bits =  bit;
- 	return 0;
 -- 
 2.39.5 (Apple Git-154)
 
