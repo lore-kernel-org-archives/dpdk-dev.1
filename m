@@ -2,65 +2,151 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E6CCCD185
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 15:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49DEBCCD185
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 15:36:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E85B40E13;
-	Wed, 15 Oct 2025 17:35:15 +0200 (CEST)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
- [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id B5C1540DD3
- for <dev@dpdk.org>; Wed, 15 Oct 2025 17:35:14 +0200 (CEST)
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-339e71ccf48so9379767a91.3
- for <dev@dpdk.org>; Wed, 15 Oct 2025 08:35:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1760542514; x=1761147314; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=WQpIZ8pqZhozBtGVI7s7p+k71fZiJinqFTDvz9sOtew=;
- b=fflbBa5k74M0HLWqxDZjG/Fo5GqXiE6YD9fbADgsee1MMQOKKN7KRUFQX93iLk7uh1
- CadzAEl8MNGQgZT/BvruXvYK7m1HkPwW/HfRXoEbViCQodsvv2rAQdakjhpSJU1zK6OC
- vmpKnaaRtg89lb3m7H4s97rFx1Ndq7nKXbVw4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760542514; x=1761147314;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=WQpIZ8pqZhozBtGVI7s7p+k71fZiJinqFTDvz9sOtew=;
- b=OKhz0BvOW+fj5nxd+Gvjt0/YUxme1Tr8Xy7W7dGwFXLEU3kPjB2Q0B61AXotE0uDG9
- J+WU5wZrzr9udJAnOoSuVy1rHC3AI2StS4oczxq4uRtSYwHWLuEm9P3yOKeVYWFwauEp
- g/Nsq6kpybLmDs78rwegv9TCe5i8WCHZ3na1AEC/1yr1zOJl9t+n+bbW7fmOwSYok+SM
- s2Z4aFVRbHijF0QCZEcObRYeT3HmNzLCcZNqpnraRTDHClIfALAQKztadYbGEolWRAZX
- 456pLiyavt7x4HJp6DhE2BJ9fg/xHbSqtnQVI1fFs1m5M9gG4Dv7tFEbd4r9GAdWS8rR
- 7XyA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWXcg3xBD3JHOzqdXizepYODbzDAVoEgsiMWnHFgN+8u7lVOSogQKfLYl2cXLVz2iFYBIc=@dpdk.org
-X-Gm-Message-State: AOJu0YxZOMNcisF6CHEL0yloFKbtIh22s/7GahcUI550YhUwHLW6e85B
- OgRC/RNQR76Y16fbXN/RNMV+e9ix1BVA/+YYiGhHSDIThT7tiJyKFNrRO282JOsCcfxdivadEuq
- EDxS44NkW9gO2RSmuYApKyIeXc9LlnzXDrcsYRrdhEw==
-X-Gm-Gg: ASbGnctzdmFScmZvdrGifEcFyj/wj2pYZ2SvCx+RgsOl+f8oKladGnY2SGG9ZQyA5O/
- dcksDqqe/116ygqmWBh427eyGDLiNOtluYB3wixlZnmIoncidco2A7c5hVlrgdL2flU5fV2Ww6v
- Ay+zTIESLEv/Ib9FEz18sU/yp5IX24nfIwpy67ppEQLK46XS5f4CbGt/52ICEMh+Gq/Ob86avQw
- EDWy81yNxOiWvJN91257Nd02q5xntlg1NJ27Pb2K/gYYGUUjjzpFfcWRpPdXOsPo6Kjxg==
-X-Google-Smtp-Source: AGHT+IEEIY7RZ7mXgPcTH/Q04HhLTS+6PKUpjfx24KUzP5CRcEN7NtNukEG+JOs+7p/f6OzAE6yRWMcvYqKit7+TtAM=
-X-Received: by 2002:a17:902:ea04:b0:270:ea84:3242 with SMTP id
- d9443c01a7336-29027373b53mr446447175ad.15.1760542513619; Wed, 15 Oct 2025
- 08:35:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9A1BF40E28;
+	Wed, 15 Oct 2025 17:36:06 +0200 (CEST)
+Received: from AS8PR04CU009.outbound.protection.outlook.com
+ (mail-westeuropeazon11011056.outbound.protection.outlook.com [52.101.70.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 0EEEE40273;
+ Wed, 15 Oct 2025 17:36:06 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lUyWj8TtHnMiIe09zQPTjAgZX4Zvu+wpzuRW4xFamQb8RQ1VZOsFH7HOYB9vygTZri0/isC4xEXSLQMeTRgpbBM+peV7Yu5YlwRJ9PSLhATkR10GX9ntYO9y96MWj+B5ufEh8I+8hqOXmvCHgsfibDZGFZ7h2/jzQiV72wtpW/CQH6jiJr5KSFpQ+tqF2nnU9rolPfrTSca89ayN55YLrfJnPiF4Glw4yWWNUc47UTH6RokENmRAsPgSLi96uvzDBFgsjz8DC+HifECV2Q74u0ji0MldSIOfqgGZ1WWvZfmt56pedSxrsU5PjOsuQdKCR/K0YxxafARDP+k8Rr4EZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tJOLk8c1zYJAQbgnkTwu/6VQRmrDYR6skIC4hARp1Uw=;
+ b=mCkouZLKGTmzXem1Er/opvbjPNasWqf+dm3HGNe6/r9cO8lpNvUWtwHJt566C7MVULg5hU3Mr/LTmIIbvu+3bwCEHGkZK9Y0b43MPWn1wwhu15QL76g4llOTGiLe2roO+fARWQbu+JS/u2hEmEA+Hjd7DGv5f/yfAzhNjwrGuC4PKCwIvWbeLisVW/DY7TKnc4NTEh/ORabifUseUvT2bK35h2m5sr7ZtnU1djVapMkdOMd1q9ggnbqw4t+IShsDOd+/d1MnE7Py2mY88RYfXFHt1myA9OlcDhy1U78aUa+WM9mNpJAUaVXXULYQb/AHgoe4+8X92rH5TSmJ7Yv7QQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com; 
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tJOLk8c1zYJAQbgnkTwu/6VQRmrDYR6skIC4hARp1Uw=;
+ b=RS3IjDoevPW05Pti4DHh8smDzLPkZRmrtnn/91M/8aB2hghqsYMcX/ZsLKsWWuqmBa+RCH8DrisZjikljRw/8SN746m8pj/AC8Ff3yuxocN8cxHyYvRPzLesX/eu4Nu2wGgA+gQ5+auUr/yT6a++sEICTOJ3Aiqlk78SCJkY6Js4ztEI3mE2vSO7D3SzXkXREuLpiecmFyL5y7dVf6QmHA9hs5ZdMCr1ku5fhD+kcepwkNWgj36vt/fFMa/664if31igzL2lJF+VGyCssXgqvREiXK0JnaahGBiu9BcAAUF+ar+cLIgr8KPbIQnBb8haQgkCmL51KC36ZajkF5svQA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB9328.eurprd04.prod.outlook.com (2603:10a6:102:2b6::15)
+ by AM7PR04MB6805.eurprd04.prod.outlook.com (2603:10a6:20b:dc::16)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Wed, 15 Oct
+ 2025 15:36:04 +0000
+Received: from PAXPR04MB9328.eurprd04.prod.outlook.com
+ ([fe80::f268:adb3:8817:15e1]) by PAXPR04MB9328.eurprd04.prod.outlook.com
+ ([fe80::f268:adb3:8817:15e1%4]) with mapi id 15.20.9228.010; Wed, 15 Oct 2025
+ 15:36:04 +0000
+Message-ID: <07f30dcc-aef3-48f4-9ff7-6232882e2d47@oss.nxp.com>
+Date: Wed, 15 Oct 2025 21:05:56 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/15] net/dpaa2: fix to recv packets with additional
+ parse errors
+To: Prashant Gupta <prashant.gupta_3@nxp.com>, dev@dpdk.org,
+ stephen@networkplumber.org, david.marchand@redhat.com
+Cc: stable@dpdk.org, Brick Yang <brick.yang@nxp.com>
+References: <20251014064035.1312896-1-prashant.gupta_3@nxp.com>
+ <20251014064035.1312896-5-prashant.gupta_3@nxp.com>
+Content-Language: en-US
+From: Hemant Agrawal <hemant.agrawal@oss.nxp.com>
+In-Reply-To: <20251014064035.1312896-5-prashant.gupta_3@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR04CA0164.apcprd04.prod.outlook.com (2603:1096:4::26)
+ To PAXPR04MB9328.eurprd04.prod.outlook.com (2603:10a6:102:2b6::15)
 MIME-Version: 1.0
-References: <20250902114327.48185-1-abailey@iol.unh.edu>
- <20250929170606.216623-1-abailey@iol.unh.edu>
- <20250929170606.216623-4-abailey@iol.unh.edu>
-In-Reply-To: <20250929170606.216623-4-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 15 Oct 2025 11:34:29 -0400
-X-Gm-Features: AS18NWAuhLM7QMUX7DEOTD5hEjK5P8eox8c4Y_qKvlF-Q45l7dYNpNP3Es_iquE
-Message-ID: <CAJvnSUCyDjCiwCS2PaocmC3yXHJchoW68YBE3aCiN34nigxjEQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] dts: update tx_offload test from old dts
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, dev@dpdk.org, dmarx@iol.unh.edu, 
- ivan.malov@arknetworks.am,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Content-Type: multipart/alternative; boundary="00000000000022f4460641343f4b"
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9328:EE_|AM7PR04MB6805:EE_
+X-MS-Office365-Filtering-Correlation-Id: 023f48e2-f1cd-407f-315a-08de0c008d24
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0; ARA:13230040|19092799006|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZlRELzVlQkFSZHJ0SkRyYnBRTUhvUXlMemZPVDRITDE3eFBYT1psVVZUN1lU?=
+ =?utf-8?B?aHRCZWxPcStmUzQ5K0xwRi9ELzl3UTRFbWdWc0VRYmd4VjBCMGpMa1d4bzAw?=
+ =?utf-8?B?RTdGNUVUcm1Ia1RDdS9jU2JDb3ppOUs5SnVVOGMzYTJFZjNxS1NOQXoyU3Ew?=
+ =?utf-8?B?b0pSNm12SmhlNEdBaE9VWjJWNjNoKzRlRnlVQWtMUjlqaGpMU0VKcnlPM3Iy?=
+ =?utf-8?B?dU1qWGs3VnBmSGk3K0J6aHpJUHE2NngwL3UvRnhLbFpOdkNRL1RnbDlZbjBl?=
+ =?utf-8?B?TERpcnpURHRwbXFwa01aRERWYnJ3RVFtU1JJbUlKQ0JkVHQwRTJyMm5TQ2Zy?=
+ =?utf-8?B?eCs1TldLYkJoUEpEZC9aSVJER0lJV1ZEMUdJaCtNSDNVcXQ4cVc5Y09ZZGFh?=
+ =?utf-8?B?NXVxdEF2QmZWTDZNT2pmMVRTWk4yaE9STUpXdSsweHhnZTNDaFRsNWo0bGZU?=
+ =?utf-8?B?NjFicXFGaUM1anNpUmxBdFFnQUJsa2xlTXhTWldQMUxUcFA5K01RaTNMSGY0?=
+ =?utf-8?B?S3p0MXdwaW9qQk5jN3ZIOE5FQnc0bEVrekFFeUkwMnJJWEtySEllSXFqOE54?=
+ =?utf-8?B?bWJxNGQzb2E2QkFLRnlMUHNacDIzWkJjbjBQREVaTGRHWlNXT1l5NmdsRnZJ?=
+ =?utf-8?B?S1plb0M3L2tlN2RWaWdsSmc3V0VzVS9udnl0MXRabHBYTTh1Q1ZIWDhrWkcr?=
+ =?utf-8?B?VGJOQzZqY1hzUFlLMW9maGtHckVlblNzcEw4dE1TbUt3WFFZWS8zUmFoRjNP?=
+ =?utf-8?B?b1VtazB0OWVNYndyZ0kvbjVBS1pWZ25wd0ZJcmYvYUxkOFVuTHUwL3NmOWhJ?=
+ =?utf-8?B?SURDZ3BMZzV4bytGaVFaUWViSDYweEZqQS9XZVFhcEV3REVuZTIrVzhxOHVj?=
+ =?utf-8?B?ZnRtSVRpM2hMNTU1bUtnYXhwL01jUStEbStJU2N1SEJhQndBZmxOZlF6WXNx?=
+ =?utf-8?B?TjJ5UFJvTXIrS3M4NjZGRlVKRU02UitMZ0g5dHlrTmk0c1ppck41VFRjMGhQ?=
+ =?utf-8?B?eXpPQ25qU295TTZCKzFiRWZvNXhnL0lweHEzSlYrUVg1S2JZTy9rdU9hSmV3?=
+ =?utf-8?B?anh0ZndqbW82RXhJaE9QNk8ya1l4WVRkRnlVdURBdWFLSklCdXZkZnFsSm50?=
+ =?utf-8?B?Q1VXcGlUZ29BNWV1ajZqZTRCZk5JeVN6REdRVG9PaW80NENVanJHN0grSU1D?=
+ =?utf-8?B?U2ZZelJYTkRidEF0NTVPT3NpRFBGdXJxODNUVkJCNW9iaGVLbDFuVU16bGV2?=
+ =?utf-8?B?SlYzdVFlbVlhYVRjMXpCcUp4VmtBaHpCUm5TZzNLM1VyYlBDZk9MUmhRQ29z?=
+ =?utf-8?B?N0FDWXg5bDYwMjFaTVQwY0VVTjNlbjdrcDlFTTZwaWlreXRPUVV0eXE1OHND?=
+ =?utf-8?B?VzI1RFJmWmN6TElQQ2NtUzh1SlRKaGdEb2FCbzJ5b1luTGdyeTZOWUVReWJP?=
+ =?utf-8?B?eHpMcVJOK3JhaDAvaTc1MTNhczBKaEx4SVo3YUJxMHpKaDNHUUZwK1RacUFF?=
+ =?utf-8?B?TXdIWE5ETlZnVVo1a04vUjVlNVJJaC9WVmtaYXBQQStVVU1PWWlHZW9QWHdh?=
+ =?utf-8?B?NUJiWmkwME41YnRkUjVGeGE1N3l3ZXBBUXBkTWlnNm4xWmJMYkt4ZE9NSlBX?=
+ =?utf-8?B?L2dzWCtrYVZCbkZORTFMQ0YzU25BNDRFZ3hYdVZXcE0wMXgzeTFTK3hMcGZZ?=
+ =?utf-8?B?N0xwOC9yU2tkYXBBN1dseUxYL0lJS1AzTDdSUkF5ZXFDdmt5RlJlQTRTVWxo?=
+ =?utf-8?B?TWxLTWtBQjZXY0N4bzZzWEhsbG11ZXZMMlRQZlNMaHdZa2M3b3JiOURQb2Yz?=
+ =?utf-8?B?OWErcEUrcmxKS0VBWCtHMmFMSVRsUzZhNmViUzRDTE9SaFphRGdqT2tBY2ts?=
+ =?utf-8?B?aEt4TGhJK05ZUDdiRk0xdnlJTTJPMkh4TzFEeS94RkRDUmFjbGJGS2dEMXNT?=
+ =?utf-8?Q?GIEfobmzQDNVrDUr5uG0EX/kVJnWlswe?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PAXPR04MB9328.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(19092799006)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MFNQVnJMQmVsK2pCSGY3MmNYNllTakRETWYrYk9nTVQ5UmtST1AvdS9rTmhm?=
+ =?utf-8?B?eXlJa29GeElJSkQ0RmZZU3NZc3VQSGNQNjFvWTdxWERjV3pKeXE0RXcvZURj?=
+ =?utf-8?B?SkNRTUNpSnpMYVdUbzhMK0VDYnlnKzhmUTd0S0FZdXZlN3lGRE14VGNibUFU?=
+ =?utf-8?B?bVlpVXE1N00ySjZRcXp3QTF1dWxiMnhwYjZFdVlOK2VzQ1ZnKzl1ekdsdnU0?=
+ =?utf-8?B?TXArSk4vT0sraFdYM291M1BhQWtQZWFJOUR2R09Ga1Ewb2lxdlZBMHk5Yndv?=
+ =?utf-8?B?MG5TaGRQdWhhREZSajdnRFlNRnhidU1ZUXVBNHJaMnFEN0NGV0ZYQWZrUk1h?=
+ =?utf-8?B?R0lKelZKK1JkbzRZQWNhL0YvS0FlOTlBQTBndTVIdEVMMXZFaytqZmVMdkgy?=
+ =?utf-8?B?b3JQZFVsYVVCbUVJeU5RVG05QjFFM2hER0NYRzJkSGovUFU4L0JWOWw1bkVr?=
+ =?utf-8?B?cUlhS0dWUDRPRllwZVJUaW5xMlJpUllEQURqTFZjTnoxWFU0SnNXV3RiZU5I?=
+ =?utf-8?B?TXEzeDV4cUpuS293cTJnY3g4eEtpSVZTRVhhcitiV0dFTG8xNWE2cXc0bGtl?=
+ =?utf-8?B?ZEFESjJ1dnRUSlppUytFYVk2NGVlYzRhVnljckVnRXViUDRHellEVEltTnFl?=
+ =?utf-8?B?NUVHUndrUmE2OTEyOGZqSzlzcWVxZjRJVG5VQzd0YXd1N3owS1BYY2Fxamli?=
+ =?utf-8?B?R0xDZEEvM2tkWm5vVUtvQVhQTW8rYVI2QlZja1dlWjlFZTFUVHlRODBhL3Rz?=
+ =?utf-8?B?aFc4REp6MEM0cS9HdHdndWZnTDBLM0g0cFhmVzUzQkRUVmxEQ2ZYekVWZ3hw?=
+ =?utf-8?B?dHFjQUpoNWcyMmN0bHpJbUV4NmNHeks0QXRaZ0VoRDRTVHcvNWdaSVRSUVkv?=
+ =?utf-8?B?WHNvY0tkZnpCQXBsazF0STZRMERuSUFZMXJQakF4SWNrS01EMHJ2bEdIMnZ5?=
+ =?utf-8?B?LytVdUt5UUs4TVcxUVdDMzdhMVFIbVBaVmxubVk4eGpRTUQrWjQxTEk5UWhr?=
+ =?utf-8?B?eHhCaVFybUZvNWVscmloY3hCY3dOSm9XdXNDaElsUldHL1E2ZmlST2dHWlI3?=
+ =?utf-8?B?dFhXZWVaMkVsZ292TVF0VlRXU05RYkpBQkNsbGkxaGU5aFFKVGQyWlV3bVVF?=
+ =?utf-8?B?eHJvUkhaL1Z5WjFNYXk4SFh4Z1BRd2Q2OUdSc3dJclZjWDYwdkNqeXp1MDU4?=
+ =?utf-8?B?bnZUVVJQMEV3cDJFM1o3WWRJVzN5N2Jydi9RSEFxS0dGVXQzVEJ5dnJPVEU2?=
+ =?utf-8?B?bW5qbWhYY1Q1dUh3Z3ZKT3VCOWgxdFJhNUZJNkI3SFVBZFozcDg0WVhFN2I5?=
+ =?utf-8?B?S1p3NldBWm83dGpySmNYakVZU2pMNzJvWmJYc09wS2JjY1dYUCtLMDJiTk9m?=
+ =?utf-8?B?WndUQ0Qzd0FDUEd0cUs1Zkg4VWorSGIyVzZKNkt6WmpJOU9zcnhXb2lJYVFr?=
+ =?utf-8?B?cUZVU0pLMVYyaDlXQ1Fmckc2Ky84RU9JWmFQRzdTUTY3NjNCSmFzdW92UHF2?=
+ =?utf-8?B?S2RaZ2ZYWlB3eWd2eUpjZzRyb3hZcmhFL1BFRlAvQkFGa1RHK2E5L1R6di9l?=
+ =?utf-8?B?aUFMVzFsa1RHYnl5WHZaaTBybXQxNEpHc1BOQVhnMUU2MGhFRzNtMVVrN05w?=
+ =?utf-8?B?Ty84ZjRsOW1VSzFweU9sU3dYbU92SzRNYk8zc3FTcHVVZGdneHk0R2RxY0tC?=
+ =?utf-8?B?ZlBrVmEvdHYxK1Y1NHo4Yk1mcHNKM045bWx1dEhxeDVzZkpVNC9lMnUzcFYx?=
+ =?utf-8?B?c3ZHdGRxNUJNVmszczR0bzVIeitLM2pVVEtuZUFyVzJEeXlPL29MTzkzUzN4?=
+ =?utf-8?B?TUI3U21icDFZUXgwT2RPaGlHeDZWY2FpVjBvTHFpbzJWTk9wZFlEUnJrSW9z?=
+ =?utf-8?B?ak1QQnJ0MER4SmNOMG1TQzJzNmYzYTdQOWI1Qy96bEhvZkhQbGo2SVlad0tt?=
+ =?utf-8?B?UWg2NHF3R0ZaY1I3SHI4SVczbllYbWI1dTlpS2YwaUIvK0t2cmpSdVo4ZjNM?=
+ =?utf-8?B?bDd4S3o0eVVOVk5NbllMc2hXcXFxaSt1WmUxUDFFSHZDUlRURXlUM2NnNlpv?=
+ =?utf-8?B?MUpGYkdvUCsvVDRVNlY2NUc5Z290QVUwSzNLUWo5MWFHN2IrdzFscFo3TEFU?=
+ =?utf-8?B?bUdOdHN0NUFSVWg4VyttbC85eW9iTmJFLzJ1dy90WkJDVVBNL3hRaFI2cEZM?=
+ =?utf-8?B?M3c9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 023f48e2-f1cd-407f-315a-08de0c008d24
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9328.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 15:36:04.4683 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AnJiyoHuJe//oUd57k7+/Qz8mqoEQln2kXqfwhmzBo0KGoAUsfQ5/1XgnQWwqokjeAzQLreovAVUI9eYZQUdeQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6805
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -74,441 +160,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000022f4460641343f4b
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Based on a vote from DPDK tech board today, mbuf_fast_free will remain
-enabled by default for 25.11. That means this testsuite needs to be
-reversed, i.e. check that mbuf_fast_free is enabled by default, then
-attempt to disable and check it's disabled, then attempt to enable and
-check that it's enabled.
-
-Otherwise, the series looks good. If you can submit a new version based on
-my comment above, we can merge to next-dts.
-
-On Mon, Sep 29, 2025 at 1:06=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu>=
- wrote:
-
-> Currently, the RX/TX offload test in old DTS expects the TX ports to be
-> initially configured to use mbuf fast free. This is no longer the case
-> and must be updated to assume mbuf fast free is not initially utilized
-> by capable NICs. Add updated test suite to test mbuf fast free
-> configuration.
+On 14-10-2025 12:10, Prashant Gupta wrote:
+> [Some people who received this message don't often get email from prashant.gupta_3@nxp.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
 >
-> Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+> From: Brick Yang <brick.yang@nxp.com>
+>
+> Also receive packets with HW parser length errors.
+> Thus this option allow to let HW drop packets for any kind of parser
+> errors.
+You meant *not drop*  ?
+> Fixes: 4690a6114ff6 ("net/dpaa2: enable error queues optionally")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Brick Yang <brick.yang@nxp.com>
 > ---
->  doc/api/dts/tests.TestSuite_rx_tx_offload.rst |   8 ++
->  dts/tests/TestSuite_rx_tx_offload.py          | 126 ++++++++++++++++++
->  2 files changed, 134 insertions(+)
->  create mode 100644 doc/api/dts/tests.TestSuite_rx_tx_offload.rst
->  create mode 100644 dts/tests/TestSuite_rx_tx_offload.py
+>   drivers/net/dpaa2/dpaa2_ethdev.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/doc/api/dts/tests.TestSuite_rx_tx_offload.rst
-> b/doc/api/dts/tests.TestSuite_rx_tx_offload.rst
-> new file mode 100644
-> index 0000000000..27834a74da
-> --- /dev/null
-> +++ b/doc/api/dts/tests.TestSuite_rx_tx_offload.rst
-> @@ -0,0 +1,8 @@
-> +.. SPDX-License-Identifier: BSD-3-Clause
-> +
-> +rx_tx_offload Test Suite
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +.. automodule:: tests.TestSuite_rx_tx_offload
-> +   :members:
-> +   :show-inheritance:
-> diff --git a/dts/tests/TestSuite_rx_tx_offload.py
-> b/dts/tests/TestSuite_rx_tx_offload.py
-> new file mode 100644
-> index 0000000000..19a8e507f2
-> --- /dev/null
-> +++ b/dts/tests/TestSuite_rx_tx_offload.py
-> @@ -0,0 +1,126 @@
-> +# SPDX-License-Identifier: BSD-3-Clause
-> +# Copyright(c) 2025 University of New Hampshire
-> +
-> +"""RX TX offload test suite.
-> +
-> +Test the testpmd feature of configuring RX and TX offloads.
-> +"""
-> +
-> +from api.capabilities import NicCapability, requires_nic_capability
-> +from api.testpmd import TestPmd
-> +from api.testpmd.types import (
-> +    OffloadConfiguration,
-> +    RxTxLiteralSwitch,
-> +)
-> +from framework.test_suite import TestSuite, func_test
-> +
-> +
-> +class TestRxTxOffload(TestSuite):
-> +    """RX/TX offload test suite."""
-> +
-> +    def _check_config(
-> +        self,
-> +        testpmd: TestPmd,
-> +        port_offload: str | None,
-> +        rxtx: RxTxLiteralSwitch,
-> +        port_id: int,
-> +        /,
-> +        queue_offload: list[str | None] | None =3D None,
-> +        verify: bool =3D True,
-> +    ) -> bool:
-> +        config: OffloadConfiguration =3D testpmd.get_offload_config(rxtx=
-,
-> port_id, verify)
-> +        if config.port.name !=3D port_offload:
-> +            return False
-> +
-> +        if queue_offload:
-> +            for i, q in enumerate(config.queues):
-> +                if q.name !=3D queue_offload[i]:
-> +                    return False
-> +        return True
-> +
-> +    def _set_all_queues_mbuf_fast_free(
-> +        self, testpmd: TestPmd, on: bool, port_id: int, num_queues: int,
-> /, verify: bool =3D True
-> +    ) -> None:
-> +        for i in range(num_queues):
-> +            testpmd.set_queue_mbuf_fast_free(on, port_id, i, verify)
-> +
-> +    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_MBUF_FAST_FRE=
-E)
-> +    @func_test
-> +    def test_mbuf_fast_free_configuration_per_port(self) -> None:
-> +        """Ensure mbuf_fast_free can be configured with testpmd per port=
-.
-> +
-> +        Steps:
-> +            * Start up testpmd shell.
-> +            * Toggle mbuf_fast_free on per port.
-> +            * Toggle mbuf_fast_free off per port.
-> +
-> +        Verify:
-> +            * Mbuf_fast_free starts disabled.
-> +            * Mbuf_fast_free can be configured on per port.
-> +            * Mbuf_fast_free can be configured off per port.
-> +        """
-> +        with TestPmd() as testpmd:
-> +            verify =3D True
-> +            port_id =3D 0
-> +            testpmd.start_all_ports()
-> +
-> +            # Ensure MBUF_FAST_FREE is disabled by default and verify
-> +            self.verify(
-> +                self._check_config(testpmd, None, "tx", port_id,
-> verify=3Dverify),
-> +                "MBUF_FAST_FREE enabled on port start.",
-> +            )
-> +            # Enable MBUF_FAST_FREE per port and verify
-> +            testpmd.set_port_mbuf_fast_free(True, port_id, verify)
-> +            self.verify(
-> +                self._check_config(testpmd, "MBUF_FAST_FREE", "tx",
-> port_id, verify=3Dverify),
-> +                "Failed to enable MBUF_FAST_FREE on port.",
-> +            )
-> +            # Disable MBUF_FAST_FREE per port and verify
-> +            testpmd.set_port_mbuf_fast_free(False, port_id, verify)
-> +            self.verify(
-> +                self._check_config(testpmd, None, "tx", port_id,
-> verify=3Dverify),
-> +                "Failed to disable MBUF_FAST_FREE on port.",
-> +            )
-> +
-> +
-> @requires_nic_capability(NicCapability.QUEUE_TX_OFFLOAD_MBUF_FAST_FREE)
-> +    @func_test
-> +    def test_mbuf_fast_free_configuration_per_queue(self) -> None:
-> +        """Ensure mbuf_fast_free can be configured with testpmd.
-> +
-> +        Steps:
-> +            * Start up testpmd shell.
-> +            * Toggle mbuf_fast_free on per queue.
-> +            * Toggle mbuf_fast_free off per queue.
-> +
-> +        Verify:
-> +            * Mbuf_fast_free starts disabled.
-> +            * Mbuf_fast_free can be configured on per queue.
-> +            * Mbuf_fast_free can be configured off per queue.
-> +        """
-> +        with TestPmd() as testpmd:
-> +            verify =3D True
-> +            port_id =3D 0
-> +            num_queues =3D 4
-> +            queue_off: list[str | None] | None =3D [None] * num_queues
-> +            queue_on: list[str | None] | None =3D ["MBUF_FAST_FREE"] *
-> num_queues
-> +
-> +            testpmd.set_ports_queues(num_queues)
-> +            testpmd.start_all_ports()
-> +
-> +            # Ensure mbuf_fast_free is disabled by default on port and
-> queues
-> +            self.verify(
-> +                self._check_config(testpmd, None, "tx", port_id,
-> queue_off, verify=3Dverify),
-> +                "MBUF_FAST_FREE enabled on queue start.",
-> +            )
-> +            # Enable mbuf_fast_free per queue and verify
-> +            self._set_all_queues_mbuf_fast_free(testpmd, True, port_id,
-> num_queues, verify)
-> +            self.verify(
-> +                self._check_config(testpmd, None, "tx", port_id,
-> queue_on, verify),
-> +                "Failed to enable MBUF_FAST_FREE on all queues.",
-> +            )
-> +            # Disable mbuf_fast_free per queue and verify
-> +            self._set_all_queues_mbuf_fast_free(testpmd, False, port_id,
-> num_queues, verify)
-> +            self.verify(
-> +                self._check_config(testpmd, None, "tx", port_id,
-> queue_off, verify),
-> +                "Failed to disable MBUF_FAST_FREE on all queues.",
-> +            )
+> diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+> index 41678ce09b..0fd577c448 100644
+> --- a/drivers/net/dpaa2/dpaa2_ethdev.c
+> +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+> @@ -1240,7 +1240,7 @@ dpaa2_dev_start(struct rte_eth_dev *dev)
+>                  err_cfg.errors = DPNI_ERROR_L3CE | DPNI_ERROR_L4CE;
+>
+>                  /* if packet with parse error are not to be dropped */
+> -               err_cfg.errors |= DPNI_ERROR_PHE;
+> +               err_cfg.errors |= DPNI_ERROR_PHE | DPNI_ERROR_BLE;
+>
+>                  err_cfg.error_action = DPNI_ERROR_ACTION_CONTINUE;
+>          }
 > --
-> 2.50.1
+> 2.43.0
 >
->
-
---00000000000022f4460641343f4b
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Based on a vote from DPDK tech board today, mbuf_fast_free=
- will remain enabled by default for 25.11. That means this testsuite needs =
-to be reversed, i.e. check that mbuf_fast_free is enabled by default, then =
-attempt to disable and check it&#39;s disabled, then attempt to enable=C2=
-=A0and check that it&#39;s enabled.<div><br></div><div>Otherwise, the serie=
-s looks good. If you can submit a new version based on my comment above, we=
- can merge to next-dts.</div></div><br><div class=3D"gmail_quote gmail_quot=
-e_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Sep 29, 2025 at =
-1:06=E2=80=AFPM Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu">ab=
-ailey@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote"=
- style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);p=
-adding-left:1ex">Currently, the RX/TX offload test in old DTS expects the T=
-X ports to be<br>
-initially configured to use mbuf fast free. This is no longer the case<br>
-and must be updated to assume mbuf fast free is not initially utilized<br>
-by capable NICs. Add updated test suite to test mbuf fast free<br>
-configuration.<br>
-<br>
-Signed-off-by: Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu" tar=
-get=3D"_blank">abailey@iol.unh.edu</a>&gt;<br>
----<br>
-=C2=A0doc/api/dts/tests.TestSuite_rx_tx_offload.rst |=C2=A0 =C2=A08 ++<br>
-=C2=A0dts/tests/TestSuite_rx_tx_offload.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 | 126 ++++++++++++++++++<br>
-=C2=A02 files changed, 134 insertions(+)<br>
-=C2=A0create mode 100644 doc/api/dts/tests.TestSuite_rx_tx_offload.rst<br>
-=C2=A0create mode 100644 dts/tests/TestSuite_rx_tx_offload.py<br>
-<br>
-diff --git a/doc/api/dts/tests.TestSuite_rx_tx_offload.rst b/doc/api/dts/te=
-sts.TestSuite_rx_tx_offload.rst<br>
-new file mode 100644<br>
-index 0000000000..27834a74da<br>
---- /dev/null<br>
-+++ b/doc/api/dts/tests.TestSuite_rx_tx_offload.rst<br>
-@@ -0,0 +1,8 @@<br>
-+.. SPDX-License-Identifier: BSD-3-Clause<br>
-+<br>
-+rx_tx_offload Test Suite<br>
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<b=
-r>
-+<br>
-+.. automodule:: tests.TestSuite_rx_tx_offload<br>
-+=C2=A0 =C2=A0:members:<br>
-+=C2=A0 =C2=A0:show-inheritance:<br>
-diff --git a/dts/tests/TestSuite_rx_tx_offload.py b/dts/tests/TestSuite_rx_=
-tx_offload.py<br>
-new file mode 100644<br>
-index 0000000000..19a8e507f2<br>
---- /dev/null<br>
-+++ b/dts/tests/TestSuite_rx_tx_offload.py<br>
-@@ -0,0 +1,126 @@<br>
-+# SPDX-License-Identifier: BSD-3-Clause<br>
-+# Copyright(c) 2025 University of New Hampshire<br>
-+<br>
-+&quot;&quot;&quot;RX TX offload test suite.<br>
-+<br>
-+Test the testpmd feature of configuring RX and TX offloads.<br>
-+&quot;&quot;&quot;<br>
-+<br>
-+from api.capabilities import NicCapability, requires_nic_capability<br>
-+from api.testpmd import TestPmd<br>
-+from api.testpmd.types import (<br>
-+=C2=A0 =C2=A0 OffloadConfiguration,<br>
-+=C2=A0 =C2=A0 RxTxLiteralSwitch,<br>
-+)<br>
-+from framework.test_suite import TestSuite, func_test<br>
-+<br>
-+<br>
-+class TestRxTxOffload(TestSuite):<br>
-+=C2=A0 =C2=A0 &quot;&quot;&quot;RX/TX offload test suite.&quot;&quot;&quot=
-;<br>
-+<br>
-+=C2=A0 =C2=A0 def _check_config(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd: TestPmd,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 port_offload: str | None,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 rxtx: RxTxLiteralSwitch,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 port_id: int,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 /,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 queue_offload: list[str | None] | None =3D Non=
-e,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 verify: bool =3D True,<br>
-+=C2=A0 =C2=A0 ) -&gt; bool:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 config: OffloadConfiguration =3D testpmd.get_o=
-ffload_config(rxtx, port_id, verify)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if <a href=3D"http://config.port.name" rel=3D"=
-noreferrer" target=3D"_blank">config.port.name</a> !=3D port_offload:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return False<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if queue_offload:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for i, q in enumerate(config.que=
-ues):<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if <a href=3D"http=
-://q.name" rel=3D"noreferrer" target=3D"_blank">q.name</a> !=3D queue_offlo=
-ad[i]:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 retu=
-rn False<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 return True<br>
-+<br>
-+=C2=A0 =C2=A0 def _set_all_queues_mbuf_fast_free(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 self, testpmd: TestPmd, on: bool, port_id: int=
-, num_queues: int, /, verify: bool =3D True<br>
-+=C2=A0 =C2=A0 ) -&gt; None:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 for i in range(num_queues):<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd.set_queue_mbuf_fast_free=
-(on, port_id, i, verify)<br>
-+<br>
-+=C2=A0 =C2=A0 @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_MBUF_=
-FAST_FREE)<br>
-+=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def test_mbuf_fast_free_configuration_per_port(self) -&gt; N=
-one:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Ensure mbuf_fast_free can be=
- configured with testpmd per port.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Start up testpmd shell.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Toggle mbuf_fast_free on per p=
-ort.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Toggle mbuf_fast_free off per =
-port.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Mbuf_fast_free starts disabled=
-.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Mbuf_fast_free can be configur=
-ed on per port.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Mbuf_fast_free can be configur=
-ed off per port.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 with TestPmd() as testpmd:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 verify =3D True<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 port_id =3D 0<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd.start_all_ports()<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 # Ensure MBUF_FAST_FREE is disab=
-led by default and verify<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.verify(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self._check_config=
-(testpmd, None, &quot;tx&quot;, port_id, verify=3Dverify),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;MBUF_FAST_FR=
-EE enabled on port start.&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 # Enable MBUF_FAST_FREE per port=
- and verify<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd.set_port_mbuf_fast_free(=
-True, port_id, verify)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.verify(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self._check_config=
-(testpmd, &quot;MBUF_FAST_FREE&quot;, &quot;tx&quot;, port_id, verify=3Dver=
-ify),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;Failed to en=
-able MBUF_FAST_FREE on port.&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 # Disable MBUF_FAST_FREE per por=
-t and verify<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd.set_port_mbuf_fast_free(=
-False, port_id, verify)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.verify(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self._check_config=
-(testpmd, None, &quot;tx&quot;, port_id, verify=3Dverify),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;Failed to di=
-sable MBUF_FAST_FREE on port.&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+<br>
-+=C2=A0 =C2=A0 @requires_nic_capability(NicCapability.QUEUE_TX_OFFLOAD_MBUF=
-_FAST_FREE)<br>
-+=C2=A0 =C2=A0 @func_test<br>
-+=C2=A0 =C2=A0 def test_mbuf_fast_free_configuration_per_queue(self) -&gt; =
-None:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Ensure mbuf_fast_free can be=
- configured with testpmd.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Start up testpmd shell.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Toggle mbuf_fast_free on per q=
-ueue.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Toggle mbuf_fast_free off per =
-queue.<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Mbuf_fast_free starts disabled=
-.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Mbuf_fast_free can be configur=
-ed on per queue.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Mbuf_fast_free can be configur=
-ed off per queue.<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 with TestPmd() as testpmd:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 verify =3D True<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 port_id =3D 0<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 num_queues =3D 4<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 queue_off: list[str | None] | No=
-ne =3D [None] * num_queues<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 queue_on: list[str | None] | Non=
-e =3D [&quot;MBUF_FAST_FREE&quot;] * num_queues<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd.set_ports_queues(num_que=
-ues)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd.start_all_ports()<br>
-+<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 # Ensure mbuf_fast_free is disab=
-led by default on port and queues<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.verify(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self._check_config=
-(testpmd, None, &quot;tx&quot;, port_id, queue_off, verify=3Dverify),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;MBUF_FAST_FR=
-EE enabled on queue start.&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 # Enable mbuf_fast_free per queu=
-e and verify<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self._set_all_queues_mbuf_fast_f=
-ree(testpmd, True, port_id, num_queues, verify)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.verify(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self._check_config=
-(testpmd, None, &quot;tx&quot;, port_id, queue_on, verify),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;Failed to en=
-able MBUF_FAST_FREE on all queues.&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 # Disable mbuf_fast_free per que=
-ue and verify<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self._set_all_queues_mbuf_fast_f=
-ree(testpmd, False, port_id, num_queues, verify)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self.verify(<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 self._check_config=
-(testpmd, None, &quot;tx&quot;, port_id, queue_off, verify),<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;Failed to di=
-sable MBUF_FAST_FREE on all queues.&quot;,<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
--- <br>
-2.50.1<br>
-<br>
-</blockquote></div>
-
---00000000000022f4460641343f4b--
