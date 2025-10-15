@@ -2,74 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD42CCD193
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 11:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E75ABCCD193
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 11:46:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E24D54066F;
-	Wed, 15 Oct 2025 13:45:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1089540A82;
+	Wed, 15 Oct 2025 13:46:28 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5137040276
- for <dev@dpdk.org>; Wed, 15 Oct 2025 13:45:52 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 9D7C840276
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 13:46:25 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1760528751;
+ s=mimecast20190719; t=1760528784;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=r7lC/EJuz9t6WvbNJCuAvun4U27aySSl2ERVrYUXrAM=;
- b=Spc4z32oJE/HaR1Fv+7AMRhK04H3vBcMQa1Cq/++VhfT0zmDi6+OXhW9nnNxtUWJmsh5rb
- veaGET+ndu4kCR/1l4+864EsnOB6mppxEoaX6/PRPkx/Thp89SiemecDR1/YgsHsASOkiC
- laS3O8/2Rje+I7L/ToBYh2n5fVP3BNY=
+ bh=BHPyASfnvDXwQzVrI9fV8nyZFG1yulab4JSfeUJmDZs=;
+ b=gpYYi1/hhW+mwZy17xIH0pq3hY1HoKRFMq0MXC1YHYhZF0VVCIaeAFbLPye8GFWW4b2atV
+ PL+RKjYYxvLDYjBo6EgBy9pBC0riA2gcjnr3iuckSPyUcLRSiNlcHGrnvjz/FMCYD8sgjG
+ CmU61TXrxNjICSaZzEa96iV9w50MJI0=
 Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
  [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-218-VrCUdi7DOQS238LVxro8rQ-1; Wed, 15 Oct 2025 07:45:50 -0400
-X-MC-Unique: VrCUdi7DOQS238LVxro8rQ-1
-X-Mimecast-MFC-AGG-ID: VrCUdi7DOQS238LVxro8rQ_1760528749
+ us-mta-191-HjusmUvGOYCLZtaCnoM89w-1; Wed, 15 Oct 2025 07:46:22 -0400
+X-MC-Unique: HjusmUvGOYCLZtaCnoM89w-1
+X-Mimecast-MFC-AGG-ID: HjusmUvGOYCLZtaCnoM89w_1760528781
 Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-585b4444460so3811123e87.3
- for <dev@dpdk.org>; Wed, 15 Oct 2025 04:45:50 -0700 (PDT)
+ 2adb3069b0e04-57a8a75cb30so3440986e87.2
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 04:46:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760528749; x=1761133549;
+ d=1e100.net; s=20230601; t=1760528781; x=1761133581;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=r7lC/EJuz9t6WvbNJCuAvun4U27aySSl2ERVrYUXrAM=;
- b=CT3Q7HD4o/V2pvs8ix8NcCWtaEaCG5RXQJENjh2VTw3qSKB+Ig/xVT8/l7TLGtPiS6
- 3wMMRiYVTm1ytGtuuPNWQrNpUB0Xx/29+alGbRNlLKTQv9xawS2cAt+8j8kZijW4xBAJ
- mBzmX+JQkUx87krYnNSQ8j+gE0QBHKWK6luwQv7cRaJ9fz3C3Dqg/ihaNL8/dtneEOLk
- bbfMhiBFjERcJsIKxgj6Md5tMG8Vo6P/yWV9CZXrSaflNPOhXzGM3j2z3W5ih2WDfGpO
- yF2jns3dhH1rJUarIZPp5GNIrWTat1mATM1+2hKmgSyFaPDHoTBhIIJ7PLDDOcqyQx3+
- bOjA==
-X-Gm-Message-State: AOJu0YwJ/1cyUCqVpfskr+b6Pe9CM9+xTDx21xuOOe4aRPyu/Yo8QzO2
- KN+NcLW8H7qo4fUSd5EuLHaG3KNJhS8dGeutso3L07k/Y+h+IESzJHfB+6YFUakWwjBp2p2mOEC
- 4eGp9NlvG2WZxzWhpZUX1Yy4k8CnQSMZKyHNY8Xa4NPa5u7UsotDnRSE5iDrDI8H8nC+7z3Ul2F
- 3/RyVbdXVqGlYQUfhMI3A=
-X-Gm-Gg: ASbGnctFBBo0qY27z0LAmnBhL7/5Ph6lXTkB8X98Z0wK0yIODUe3Qa8HryVOF57eZXX
- Dsx3MLBri3hk+x3AFXNEFfP604jx6+z07N5CeYZ6qYgJ2lbcVpu7RrgkcwS4dXdouVFpJGt1k1x
- mpDRFapbyLFtX97WiA4/0=
-X-Received: by 2002:a05:6512:318b:b0:57d:d62e:b205 with SMTP id
- 2adb3069b0e04-5906dc0fd8emr7694495e87.18.1760528748774; 
- Wed, 15 Oct 2025 04:45:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIvUjGrJVI8Xo/pBsnYPXk6tww6XGl/aIDK+w7gmdFLCGqlGFsseEHGXZ3yfbeHtgtZSMjnJlZemaQwQD0+uc=
-X-Received: by 2002:a05:6512:318b:b0:57d:d62e:b205 with SMTP id
- 2adb3069b0e04-5906dc0fd8emr7694486e87.18.1760528748383; Wed, 15 Oct 2025
- 04:45:48 -0700 (PDT)
+ bh=BHPyASfnvDXwQzVrI9fV8nyZFG1yulab4JSfeUJmDZs=;
+ b=XoMN6cDetogvbaELXdsxcbYnH2JHVXL1AoF4FvY1EwKHF7I+9JcxiFirWyA+tt8opk
+ /UlWQKllV8e2CCB6HbBhJ07NN2bq1UsptFu0+hl0c6KhKAH8/pPstdr+EYKTU3IMnqrp
+ VLjbyka/bbwsfEmwinPbN/amdXEfKUTN3wfaPLtPf/wZ1FXaWpZZMhQS1l4uexEWjpRE
+ PNpVZ3jiFAcGXbZrl7H9Nsj2AyWMCvL7eb0Tr18AzjIQUR/qnsfBCpmaYMc43p86FS0V
+ CK2e980ihtx99W/gnG1NwOX/EL8XsVjS3qoUvuOQ/e9wi2talOvlpn9spodfXjoTGSXT
+ n4vA==
+X-Gm-Message-State: AOJu0Yxs5uzDGPuCcKWxWXCRIVMvQVdcsrh2dq/97QBU0O6eJy/cw6rx
+ jFJ360Kv/8XUpoq0eN6ii2CB232YhO3NYHjf8LBMqREwnxzLp/TFMoTCcF5L5q7oFUvS9Op006m
+ 8NwRhzJOHlizaSRVuq4PCIUN0OmK4SHQ1FOfokpvECmnbHxQPQipBwwVY6nzHVbIlCzBmB6ps8G
+ YZPTnKSh0tqr/qRwVdXzg=
+X-Gm-Gg: ASbGncsJUctjuSVbTjkVyE3+Z3o1zX95E7DgUcK7l0F34XX8qXgkRPuGN5lK+6sgXFm
+ 1R5/h1/JSR2eItXx1OJ19f9hDYVRY+2QAHHMmzcWnQgdgiiuseytbyUIfGvsyxKnCZUVnc8IFAD
+ 3RVxDyo4ZgjPh8EUaKg8M=
+X-Received: by 2002:a05:6512:33d3:b0:57b:8315:7e13 with SMTP id
+ 2adb3069b0e04-5906de9b684mr8566463e87.57.1760528781050; 
+ Wed, 15 Oct 2025 04:46:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGBzbFZeN+sMrJUAW2zhlR/AK+oFQhC8RAEHbxcHGVZ66/iBR6B4Q7lT6IPcx42SRNYXGzS2ziDcsRcdZy8AU4=
+X-Received: by 2002:a05:6512:33d3:b0:57b:8315:7e13 with SMTP id
+ 2adb3069b0e04-5906de9b684mr8566453e87.57.1760528780654; Wed, 15 Oct 2025
+ 04:46:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20250619115445.257679-1-hengqi.chen@gmail.com>
- <CAEyhmHRs6mwW-uc8XzK6HKRNn8ZnyMrpiBsQE7fdSsMuhxqrUA@mail.gmail.com>
-In-Reply-To: <CAEyhmHRs6mwW-uc8XzK6HKRNn8ZnyMrpiBsQE7fdSsMuhxqrUA@mail.gmail.com>
+References: <20250619121209.329493-1-hengqi.chen@gmail.com>
+In-Reply-To: <20250619121209.329493-1-hengqi.chen@gmail.com>
 From: Maxime Coquelin <mcoqueli@redhat.com>
-Date: Wed, 15 Oct 2025 13:45:37 +0200
-X-Gm-Features: AS18NWA-vJxGv1FSFuPu6l6HLBXS5cnGKVDbFkojSY9MjWSPWYHt8kbtSe61nbg
-Message-ID: <CAO55csyBWv=w5AuAP1DGR=TtzUfW8wv0qCPgVZ-Mso7h4y=UGA@mail.gmail.com>
-Subject: Re: [PATCH] net/virtio: Implement {rxq,txq}_info_get callbacks
+Date: Wed, 15 Oct 2025 13:46:09 +0200
+X-Gm-Features: AS18NWBo2rKfJoEllkCzyBxsIsialmhjgMBezydCBeDU3DAHRgoLn3u4zGBTAZo
+Message-ID: <CAO55csxdrgRcEVotDCHg69yHRFj_yOL1JDZp0z=TymQpZ6+4-w@mail.gmail.com>
+Subject: Re: [PATCH] net/virtio: Drop unused VTNET_SQ_CQ_QUEUE_IDX
 To: Hengqi Chen <hengqi.chen@gmail.com>
 Cc: dev@dpdk.org, Maxime Coquelin <maxime.coquelin@redhat.com>, 
  Chenbo Xia <chenbox@nvidia.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ibhJk8YENQOTfmKPUwNn8Oqm5unb1Egj6-JQPzZekA8_1760528749
+X-Mimecast-MFC-PROC-ID: 1Lcr-36O9td2h1W13F7RDv_JiTGJ254KDoIrsPAJ8gc_1760528781
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -86,26 +85,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Jul 2, 2025 at 2:17=E2=80=AFPM Hengqi Chen <hengqi.chen@gmail.com> =
-wrote:
+On Thu, Jun 19, 2025 at 2:12=E2=80=AFPM Hengqi Chen <hengqi.chen@gmail.com>=
+ wrote:
 >
-> Hi Maxime, Chenbo,
+> The VTNET_SQ_CQ_QUEUE_IDX is orphaned, drop it.
 >
-> Gentle ping on this. Does this change make sense ?
+> Signed-off-by: Hengqi Chen <hengqi.chen@gmail.com>
+> ---
+>  drivers/net/virtio/virtqueue.h | 1 -
+>  1 file changed, 1 deletion(-)
 >
-> On Thu, Jun 19, 2025 at 7:55=E2=80=AFPM Hengqi Chen <hengqi.chen@gmail.co=
-m> wrote:
-> >
-> > Currently, there are no ways to retrieve the queue size
-> > set by vhost backend. Implement the {rxq,txq}_info_get
-> > callbacks so that DPDK applications can use the queue
-> > size to setup mempool properly.
-> >
-> > Signed-off-by: Hengqi Chen <hengqi.chen@gmail.com>
-> > ---
-> >  drivers/net/virtio/virtio_ethdev.c | 24 ++++++++++++++++++++++++
-> >  1 file changed, 24 insertions(+)
-> >
 Applied to next-virtio/for-next-net.
 
 Thanks,
