@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7759CCD185
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 19:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2C5CCD195
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 19:11:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1334B40E2D;
-	Wed, 15 Oct 2025 21:10:16 +0200 (CEST)
-Received: from fout-b2-smtp.messagingengine.com
- (fout-b2-smtp.messagingengine.com [202.12.124.145])
- by mails.dpdk.org (Postfix) with ESMTP id A636540273
- for <dev@dpdk.org>; Wed, 15 Oct 2025 21:10:13 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.stl.internal (Postfix) with ESMTP id BE5EB1D0010D;
- Wed, 15 Oct 2025 15:10:12 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Wed, 15 Oct 2025 15:10:12 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 3E11A40E2F;
+	Wed, 15 Oct 2025 21:11:29 +0200 (CEST)
+Received: from fhigh-b2-smtp.messagingengine.com
+ (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+ by mails.dpdk.org (Postfix) with ESMTP id 5D1E240273
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 21:11:27 +0200 (CEST)
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 8F7377A0112;
+ Wed, 15 Oct 2025 15:11:26 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-10.internal (MEProxy); Wed, 15 Oct 2025 15:11:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760555412;
- x=1760641812; bh=TtmeaKf5HQaWMi+BhavHMPIahzK6iM9Lrj00aYWQodY=; b=
- EuIWIW5Hiuop1Sq3nlLTj41HVT8b+eqoDEfLzDHOVXoU1lcbUQg7RWvPFfUafnje
- xKmJ/M5XTsyhxni9c/jhlLECkG6l41jFkJLyUt8KptB/dsUaCRrIFIdqdSukcWPB
- ht61zuB5LKG5Hh9wrvlcdP1Kh4kZog0GY3IJ6/nA3kEuIc82O8oDNCiUS7PFdq3W
- QDBE984zIdzT9FwNeaK7aEV6rdWRSPke7daed9kYK9gMCmHsgM+Jr9oL7Fj88gpZ
- VYZRimwJHzxE46r7tSGSILyjSsV+48Z9I6HTfV4H7DXEnLprgDrvpmFXZdOV/Xah
- nN3YUnrYO3x6nQy8U/s7fA==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1760555486;
+ x=1760641886; bh=D2y1ZKt0x4nwuVtw9959jEQNJXZIFiGrDmRlyLXCPIw=; b=
+ Mt9zqGH2XR+ZzrYwJBX2+zm5RZO+2L6EVpJosdqv/KJZHRC2Pw89zpbj7q7ffh01
+ biuv6qWFXalkQ+bgojEowTgoa62jvNaw0jWQY+aqQ7xA3CAtebgdbFy+ojH2/U/u
+ MrxvLz8p+VU3UG3ag+sMMdlJdxSzduNYwF1p9KFIx5KalTo7iIHsKQNzszH+INTl
+ 7Z5pOTkoNxfpP+aa8/zcdJy5qOPiTvcQQTJILjZAhhuswtia+NQkEiLYo5vLNEnW
+ 7Uuk/JTgkHG4Z1k1z2idH+3pxer+iKSgIZ0KdtgZQGiIX8Xyz7Fn4D+x06FyhNku
+ DlZnHGTBw8TW8nxTFeHefw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760555412; x=
- 1760641812; bh=TtmeaKf5HQaWMi+BhavHMPIahzK6iM9Lrj00aYWQodY=; b=K
- HtTEOY/FmSPB2hweE5KJlG5IWAwHZOtxC8iVVE9tSst9qwnzBQbC2EL+vKKrt9M3
- D+QJTYIqXFJsnXvmz8fPpxMm5JAVcvWEL2erbuPKC6Sz1ntvohvCWxnlsKC+mP4m
- EXZ7YR339qinX/5h/FdN69cikEd81jMvagn3TiUwNCQWV5zg3SvYdykGojjjaLpc
- xeZbhbBLeVNgaTvqMG2z28YfSgmymxQThjlq+plZtxb2VlD2MZTj17Ih2uLRmIWH
- UFVUi9xwxoqAjHsZ0z9RcCtHpGu5qABckRgecDDboFyC3zw0koxOgO+0+qHmVZRm
- CpC1UvrmWux+ZN1aOKBIg==
-X-ME-Sender: <xms:k_HvaExFB3HYgLFxYJf2-KJ3lrGM-8soDMhtKwRXAs55IYTUNUoeqQ>
- <xme:k_HvaDPomgHS004PQoCvxLCkPbh1uJ17qTFGnCQsuyw5fxxwmqgoZHS6MIoelDztj
- 1_dklXcmYvV73Oa9c4Dufw0JBdQcWboO-4jZGtOFEVZVoQeVVCF9g>
-X-ME-Received: <xmr:k_HvaFUmnzIO4P05KM19syRVgsClKPP2UCxGoKuHFxdEPf1doKCmNj3Wldw97itMUHrSCOUL6DIZwsS3cLwioqy3Pg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdegvdduucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760555486; x=
+ 1760641886; bh=D2y1ZKt0x4nwuVtw9959jEQNJXZIFiGrDmRlyLXCPIw=; b=X
+ hg4hus3XB7aMlgoGE3qGzHMrqdBuZlzfrVi3AxeeRoMyNphdjriqPh9kArA06Upx
+ /r948bh+pH+zkj3fkwq+BVv3Wx6TpTq1fQwOwBVgp3nfbhxwDxVdE3fx6s6naees
+ +E/0CbJjlURqXqHorQrkW6PtZGZNblcAR02Hw9kQqy1ROYUoflIs0c6r38Y39RZh
+ IPF2LD9zku9FHtlW9PpuHc9NemJD4BPeLkTTtF+QZ8/S6BWVMhjGWHwGsm1usJi6
+ ymme/j1jKJqgyyLMIWjTQKHnIrAmLCbs8XY2pAPRd31REXF4avpNiRaUpwh0ufNZ
+ /IL1WOcaq3MCkx4rHPJOw==
+X-ME-Sender: <xms:3fHvaJEK3U5471x70zWAixuCSjX_gkEaevI0IYWt84iEtoDlpqEuMA>
+ <xme:3fHvaJTkdzY_L9GXy-2dKgs6q4l_yT_fsD6couWYLGZq3StJr71T4ofoHHpdt0tod
+ AvQKv1FiRgy_xlhMKl3jcg0zog4OrdqHZ7L31Ou8SKV6LZ-gEO1IA>
+X-ME-Received: <xmr:3fHvaKLB4QbjZHUjgUY_BXWayY9kxsoP7xTYVeLsRNQdGh0Tdn0CA82Cury6cxIf4rwC0iIquJ42aJN5fON-yiFqvA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdegvddvucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
@@ -57,28 +57,28 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdegvdduucetufdote
  thhopehshhhpvghrvghtiiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepvhhirggthh
  gvshhlrghvohesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghh
  rghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepmhgssehsmhgrrhhtshhhrg
- hrvghshihsthgvmhhsrdgtohhmpdhrtghpthhtoheprghmrghnrdguvggvphdrshhinhhg
- hhesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:lPHvaH20XZWyNvOgudnOung2CBOwNOOAkUJ6WTrsn7L6_HDLr-Ltgg>
- <xmx:lPHvaDoDjn1jZM9Ugem2pFMG_1NU7-1LAqutFu9EjExuG-IM5pngeg>
- <xmx:lPHvaOXphOBolSkRwm2fp6OnEDEB9ecSV9xG7vrcSFuczx7qk3-VCg>
- <xmx:lPHvaOYojH-LxwTwulI7OLV4ekWd8dki0rrknNNfEXz2cKZe43NUlQ>
- <xmx:lPHvaLrM4voObNcYpcve1hIJyyr7yxBEl11STjTy0pZnBVDUX3nHTicU>
+ hrvghshihsthgvmhhsrdgtohhmpdhrtghpthhtoheprhhjrghrrhihsehrvgguhhgrthdr
+ tghomh
+X-ME-Proxy: <xmx:3fHvaEYCPb7HLdA0_Nd4SVXSEH5_hE3_H8m1utaMqeJfZpD0JSb2Xg>
+ <xmx:3fHvaM-30Id30DbOvUb3Sq9fAWjHO0UiAG7qTYsYwAsaFbnfOyDXWw>
+ <xmx:3fHvaFarhdwpvo_Xtl7uRSp_WYzf-8RBTOl_bi-z1oQStf26Mqn2zw>
+ <xmx:3fHvaAMM1svqKJCAAAy9601pZwdylknzCQlQ9wQ6eL-K68bct3XM3A>
+ <xmx:3vHvaCD-FdvX61CIinOiq1oAIOOjEmSiQrtYQCoigTZfX4UQwwB6bT0Z>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Oct 2025 15:10:10 -0400 (EDT)
+ 15 Oct 2025 15:11:24 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Stephen Hemminger <stephen@networkplumber.org>
 Cc: dev@dpdk.org, shperetz@nvidia.com, viacheslavo@nvidia.com,
  bruce.richardson@intel.com, mb@smartsharesystems.com,
- Aman Singh <aman.deep.singh@intel.com>
-Subject: Re: [PATCH v6 5/7] app/testpmd: use space separator in dump commands
-Date: Wed, 15 Oct 2025 21:10:09 +0200
-Message-ID: <8614129.gsGJI6kyIV@thomas>
-In-Reply-To: <20251015105207.288a5b94@hermes.local>
+ Robin Jarry <rjarry@redhat.com>
+Subject: Re: [PATCH v6 7/7] usertools/mbuf: parse mbuf history dump
+Date: Wed, 15 Oct 2025 21:11:23 +0200
+Message-ID: <2946607.ECZNHGQPT7@thomas>
+In-Reply-To: <20251015105025.573f5d3b@hermes.local>
 References: <20250616072910.113042-1-shperetz@nvidia.com>
- <20251014124046.1032293-6-thomas@monjalon.net>
- <20251015105207.288a5b94@hermes.local>
+ <20251014124046.1032293-8-thomas@monjalon.net>
+ <20251015105025.573f5d3b@hermes.local>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -95,33 +95,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-15/10/2025 19:52, Stephen Hemminger:
-> On Tue, 14 Oct 2025 14:33:38 +0200
+15/10/2025 19:50, Stephen Hemminger:
+> On Tue, 14 Oct 2025 14:33:40 +0200
 > Thomas Monjalon <thomas@monjalon.net> wrote:
 > 
-> > @@ -9099,7 +9123,6 @@ dump_struct_sizes(void)
-> >  #undef DUMP_SIZE
-> >  }
-> >  
-> > -
-> >  /* Dump the socket memory statistics on console */
-> >  static void
-> >  dump_socket_mem(FILE *f)
-> > @@ -9114,7 +9137,6 @@ dump_socket_mem(FILE *f)
-> >  	static size_t last_allocs;
-> >  	static size_t last_total;
-> >  
-> > -
-> >  	for (i = 0; i < RTE_MAX_NUMA_NODES; i++) {
-> >  		if (rte_malloc_get_socket_stats(i, &socket_stats) ||
-> >  		    !socket_stats.heap_totalsz_bytes)
+> > From: Shani Peretz <shperetz@nvidia.com>
+> > 
+> > Add a Python script that parses the history dump of mbufs
+> > generated by rte_mbuf_history_dump() and related functions,
+> > and presents it in a human-readable format.
+> > 
+> > If an operation ID is repeated, such as in the case of a double free,
+> > it will be highlighted in red and listed at the end of the file.
+> > 
+> > Signed-off-by: Shani Peretz <shperetz@nvidia.com>
 > 
-> Unrelated whitespace changes in patches are discouraged.
+> Minor stuff.
+> 
+> $ flake8 --max-line-length=100 dpdk-mbuf-history-parser.py 
+> dpdk-mbuf-history-parser.py:14:1: F401 'sys' imported but unused
+> dpdk-mbuf-history-parser.py:29:27: E203 whitespace before ':'
 
-It is quite related given this patch is about dump commands,
-including this dump_socket_mem().
-But yes, no other lines are changed in this specific function.
-Do you really think removing extra blank lines is bad in this case?
+Interesting, thanks.
+
+I'm a bit lost about Python linters.
+I ran black, should I run flake8 + black? something else?
 
 
 
