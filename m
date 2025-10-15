@@ -2,79 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D646CCD193
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 10:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C29CCD18E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 11:10:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 85DA44065F;
-	Wed, 15 Oct 2025 12:24:36 +0200 (CEST)
-Received: from fhigh-b5-smtp.messagingengine.com
- (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
- by mails.dpdk.org (Postfix) with ESMTP id 8CD9440430
- for <dev@dpdk.org>; Wed, 15 Oct 2025 12:24:34 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.stl.internal (Postfix) with ESMTP id B7D907A01EC;
- Wed, 15 Oct 2025 06:24:33 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Wed, 15 Oct 2025 06:24:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760523873;
- x=1760610273; bh=bx9h8Xg+rwTWczdehLPt6cQPOQEl8u0byqKvGRAvLcs=; b=
- Z8XXAgSpXAOA/rf8loAFCz3zwcl8F2W6DC070r6MI5DCTOSNGzEFV0DMwLMXjN6Y
- YvbjjkGCtSLnR0t1UtusAXz5ar+yPGSiqrXMXj0j40DBmMegrI39onG4MzaXRJRW
- 8AmH/PoPxXfKNRd+QDvRzKWJBGoo4zV4otMrHcrYNBPiASDMAxxPG6SyvLaXmgw1
- TvNvj+LLHublLLWxqWeGmi/IPMroPU20Ymq5l87wornJMe3JXQEULSE8f8MtveWe
- GzAKUP9rXE46aD2+QmPNnGE6we7LV/Vs6TnV50sKsDCgJ4/Ps4BpEogR+/R43CDo
- BFZPqkAcIlFEgIh9zwCbwA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760523873; x=
- 1760610273; bh=bx9h8Xg+rwTWczdehLPt6cQPOQEl8u0byqKvGRAvLcs=; b=K
- m7UlbFRk1qykFe1zgrkWOTVz3nF+lcH6VH8lZd6/YsIZoYPPXm2MbXsCimTcbcsh
- hLveqn6cwfnvA8LxSIndQvwKDNSGsvBQv819drXufSue9YJhkhjs/rtPpZkh7Lif
- ohAkL9VgRxnRKhLizFUX4QioOy6uv2dtPHvbwCohBwbhiTEbrzu2EuLChpku7LXC
- 1syPEX6parrcfdIXQap3ewy2FYjCtSc8CVk3rBXzw4p/zB/IBw9vaSwGIZf/Tfat
- g+w8pWRUZQKcJ7s8UdoTwq6YmnyahwfIYT52T8X/xvemxZo2Ngug4/12xBQ2WaWo
- si405iYglLThg3UFeXFJg==
-X-ME-Sender: <xms:YXbvaCqkQlVQ9-uMmk5m1szsNJRWjaStRx1EncHgAm3GpK2uK0uR6g>
- <xme:YXbvaAwjJ_rXYgwdB0ZueYSeQbNtgPbCtp0789wCpnaHVMz2P3ay6uC_alDT2mpVf
- nVvU_B9CJMwDmybH2N4JJ1GAJkfdt00S3DHWeB7fMoLOjr7Js1B>
-X-ME-Received: <xmr:YXbvaPK9CdE5mSlmwthWAfDETnENyeebR2PFQ8H4ZryU4djw4u7_CVrIbjw2VGgoc1Z4cT9fvnbdUqBOiw0W-oA9-A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdefudeiucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehfvghnghgthhgvnhhgfigvnheshhhurg
- ifvghirdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
- sghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepkh
- gvvhhinhdrlhgrrghtiiesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:YXbvaKIMFBx2hRT780i_9wetXGG9cSRCDQLM-3a58t3dqKxTdOGpDQ>
- <xmx:YXbvaMv6JIcDfR5f6f7qxVrrYMWLpMjlmVD92sZLGowDbIhi5UklWg>
- <xmx:YXbvaHQ4VdrRgW8hI2ZNx_w6diB-6e9EACTYDuB4pMvLXeUFrMfSdg>
- <xmx:YXbvaCN3Mtd2_Z283B94ly9TWOrFetofEh6Tl0iIInh2jbjNORttcw>
- <xmx:YXbvaDCitNV0uJPFajVvmxcIXeK2qI0rnrwUKEPZ8pfhez93wdNzPOXb>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Oct 2025 06:24:32 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Chengwen Feng <fengchengwen@huawei.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, kevin.laatz@intel.com
-Subject: Re: [PATCH 0/2] bugfix and enhance for DMA test
-Date: Wed, 15 Oct 2025 12:24:31 +0200
-Message-ID: <2580558.CrzyxZ31qj@thomas>
-In-Reply-To: <20250827012829.40752-1-fengchengwen@huawei.com>
-References: <20250827012829.40752-1-fengchengwen@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3850A4042E;
+	Wed, 15 Oct 2025 13:10:32 +0200 (CEST)
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com
+ [113.46.200.226])
+ by mails.dpdk.org (Postfix) with ESMTP id 1EC2640276
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 13:10:29 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=JZ1TYAID4x2q2RJHXHoE3TObvSPjIh2Sggfhcc4gRIY=;
+ b=rYU7LAfFYxOyvUkwHHcgzXxFKS259jphHX7YTFlrZl0e9rmKvJoJEZVC265ujrCsFfPecdVf1
+ xG0KNdYm9PDyuBFHuqUozBjtNix9Zi/HDxwz2FUNt0h8IK9GgyHZ/fLA8978Qw95vBjcdqzbRYe
+ OAdYTrqYJESmj+GEeO23AD0=
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+ by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cmpJv1rMfzKm6m;
+ Wed, 15 Oct 2025 19:10:07 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 79B4A140295;
+ Wed, 15 Oct 2025 19:10:27 +0800 (CST)
+Received: from [10.82.20.40] (10.82.20.40) by kwepemk500009.china.huawei.com
+ (7.202.194.94) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 15 Oct
+ 2025 19:10:23 +0800
+Message-ID: <57df6dc3-aa82-3c2d-3980-7c5ef7b900fb@huawei.com>
+Date: Wed, 15 Oct 2025 19:10:23 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.1
+Subject: Re: [PATCH v4 4/4] dma/acc: add doc
+To: Thomas Monjalon <thomas@monjalon.net>
+CC: <dev@dpdk.org>, <liuyonglong@huawei.com>
+References: <20250827092729.10719-1-fengchengwen@huawei.com>
+ <20251013091157.1145-1-fengchengwen@huawei.com>
+ <20251013091157.1145-5-fengchengwen@huawei.com> <4548489.fW5hKsROvD@thomas>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <4548489.fW5hKsROvD@thomas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.82.20.40]
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,15 +59,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-27/08/2025 03:28, Chengwen Feng:
-> This patchset contains one bugfix (some case never fail) and one
-> enhance (support auto adapt ringsize).
-> 
-> Chengwen Feng (2):
->   test/dma: fix some testcase never fail
->   test/dma: support auto adapt ringsize
+On 2025/10/15 18:05, Thomas Monjalon wrote:
+> 13/10/2025 11:11, Chengwen Feng:
+>> +HISILICON Accelerator DMA Driver
+>> +================================
+>> +
+>> +Kunpeng SoC has an internal accelerator unit which includes zip function, and
+>> +the zip also supports data copy and fill. This driver exposes this capability to
+>> +DPDK application.
+> How is it different of drivers/dma/hisilicon/ ?
+>
+> "
+> Kunpeng SoC has an internal DMA unit which can be used by application
+> to accelerate data copies.
+> "
+>
+> If it is the same hardware (Kunpeng),
+> I recommend having a single driver, or a single directory.
+> Also we already have a driver named "acc" in baseband.
 
-Applied, thanks.
+
+they belong to different hardware IP of Kunpeng platform, /dma/hisilicon 
+is the PCIE subsystem DMA's driver, while this acc is the 
+Accelerator(ZIP) subsystem DMA's driver.  they don't exist in the same 
+specific Kunpeng Soc.
+
+a single driver will add complex.
+
+as for a single directory, should we do for all vendor?  I see there 
+are  dpaa and dpaa2, ioat and idxd both belong to vendor platform.
+
+if there are no rule to have same name with different subsystem driver, 
+I prefer keep it.
 
 
-
+>
+>
