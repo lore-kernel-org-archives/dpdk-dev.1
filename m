@@ -2,134 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A146CCD18E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 09:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53959CCD193
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 09:54:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F6BD402E1;
-	Wed, 15 Oct 2025 11:44:54 +0200 (CEST)
-Received: from AM0PR83CU005.outbound.protection.outlook.com
- (mail-westeuropeazon11010038.outbound.protection.outlook.com [52.101.69.38])
- by mails.dpdk.org (Postfix) with ESMTP id E91FE40276;
- Wed, 15 Oct 2025 11:44:52 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VyXkAfDytmxfSgx/VL7O/06vjpBBueJjPGYYLSViJl8K/rIHyPNFAqZSrP+GT9itBbGuH6ynIIh2vIQo1ZP7Oc1TGqX9L944wc2YffLP0ZSX6TVyCx+A0F3m6hfqaVjkG5VprZ/oFDwUZ//df54zxh9Vmn13yBG5htq5hpwcq6xO1tFfBPlAYEeWE/1FiiDpqq1hY2IkZr3xrBKkrhEHLjlDN5M1Yjx5lJhMsXMgu+VB82YCALgPEONhe7n8rb8wWnPxp7UANoracMhC8zpBBVId9GWLyK4/d/9Q+cZpPJHq/Y6PcnC3FzF6Y2JoI7+u9l464u4f4040D7lDnvj8+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QuSdmbTTYN41ftLTPFF/dg7wZ1sGD2MUYxElLlKIkDg=;
- b=UZKQB6ajjgM5Me5oDlCnMzztnz4ba/+abHIrxicUc8aJOzmdqBVw6JHMCauPh9RwRExPTqCuK9w0Ls6QgXYNg1WTG2mfUZjROb3UG82g6sStSWScQBeS3LAcrMHgTxoEquyoj4vva5TYA4wvpnpTNpdQm2g/109a2DtgiOearJKHdOkHn59cnDHE+FGMNLQ/24s7+HW2d3cS8c+61o4fz1ZIopRrYoY1U3qSkbEhMk3sxp1lewA1M5MOflubSBDCkMSMIbFHkPlUtXU2P+Au3GXhQERoDjQ7r9Fl584KbGRonPdnGldzngTrIP3xIY5xyyiG6ne6CghVP0caeaRbYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QuSdmbTTYN41ftLTPFF/dg7wZ1sGD2MUYxElLlKIkDg=;
- b=MKE60HeFBqgKoJ8TOc8gCd7px/np5//9loEC8jAaqHV3L9o+7YTLqchjgkh9wrtniJclGci2VDYNxGIEw045LxlHBCDZ8b57AmShmrugy/170in6tfl+jobzWAO38xB5wbxgQoTJeVG5M8u8/uPOXqtKiqArgxlVlnK1ljBvZ6dYFrIpVn17ZfqfEsHUtabBS7SUG7L7zXxX2wYFhttMhAxZ2BqR7A8y+Q6WRziBuNWi5SYtcW7wIpajwiw3PhBNiSOioRQC9YhAQImrpH+LN0mt0Fc9AuzNexEUjzlATeb+uUlH7CRCx1mX83vahR4PVSk9U0xdJs9hp/VdK2wjWw==
-Received: from AS8PR04MB8293.eurprd04.prod.outlook.com (2603:10a6:20b:3fa::19)
- by VI0PR04MB10831.eurprd04.prod.outlook.com (2603:10a6:800:25e::8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.12; Wed, 15 Oct
- 2025 09:44:49 +0000
-Received: from AS8PR04MB8293.eurprd04.prod.outlook.com
- ([fe80::44ae:6a51:3b80:4418]) by AS8PR04MB8293.eurprd04.prod.outlook.com
- ([fe80::44ae:6a51:3b80:4418%6]) with mapi id 15.20.9228.010; Wed, 15 Oct 2025
- 09:44:49 +0000
-From: Prashant Gupta <prashant.gupta_3@nxp.com>
-To: "dev@dpdk.org" <dev@dpdk.org>, "users@dpdk.org" <users@dpdk.org>
-Subject: DevX UAR allocation failure on ConnectX-5 (MT27800) with DPDK 22.11.7
-Thread-Topic: DevX UAR allocation failure on ConnectX-5 (MT27800) with DPDK
- 22.11.7
-Thread-Index: Adw9lCH4K0B+HWh9SYKK5ZixcnFDuAAJC0JQ
-Date: Wed, 15 Oct 2025 09:44:49 +0000
-Message-ID: <AS8PR04MB82933143CF52A473CF05B0A0E5E8A@AS8PR04MB8293.eurprd04.prod.outlook.com>
-References: <DB9PR04MB8300AD6E2DD7ADD25C0C4F1FE5E8A@DB9PR04MB8300.eurprd04.prod.outlook.com>
-In-Reply-To: <DB9PR04MB8300AD6E2DD7ADD25C0C4F1FE5E8A@DB9PR04MB8300.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR04MB8293:EE_|VI0PR04MB10831:EE_
-x-ms-office365-filtering-correlation-id: d064326a-7df5-40ad-d705-08de0bcf7bc9
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|19092799006|8096899003|38070700021; 
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?F0JYWPyMCuZQf7HOy2nJZpVjWHpyxAiE/bkGZDAVQOJhHkXXaKo/w/meAd?=
- =?iso-8859-1?Q?S5o+f25/DEAX8RKgBzzLKE/HSIgMQjQX7T/iEMg1zU5RJQi/KIN7RdeIRd?=
- =?iso-8859-1?Q?wy2lDgyl/Hus8go0Stn9d+Pxjfz8lhb5kpV1a5gNEo1lA2VJnMa9aLDGSf?=
- =?iso-8859-1?Q?zc0yCRDFjA82QBJ2NxcYJZIgulmuJYa/HhO2nNeYwJKoXjOdAUq0dFodjW?=
- =?iso-8859-1?Q?gREH66/sz4r2/IVLfH8Y9ADKENFli+B1C6ktVJAB804Fm46d6oFpG/zKpH?=
- =?iso-8859-1?Q?ytc72C0jEe344316/xJ2QEW7dyAIuBWO3wFEEmHaYYzz3N13Ye4FI3xLr0?=
- =?iso-8859-1?Q?+HiwXWBolSEHjcyXy4ZHLimogeUFDlo8Rkh1yW9sqYzvRTjRVmxL7CT8AC?=
- =?iso-8859-1?Q?iVWbl+Q1KxG0NsqfB4Ka2C8fz4Q3Vp2RWW78+7dTurv2ID594ZZaV8UyT4?=
- =?iso-8859-1?Q?Ltc4YnxvUUctz5zQ7a199F3M3Fmy+TU/Scx3q+9zW/oMIia/Rw5l64WzP1?=
- =?iso-8859-1?Q?89momhkXvwXwyMRNPyKIsEwgXD7TsyyAWMJ+T8RdSAnxoiPJcaMHGvp6i0?=
- =?iso-8859-1?Q?IyVr+yYwoApLl+pFmE4McSiUGR4qeCMix8oZ4gfMR/H/0SsNp1TS/z3pr8?=
- =?iso-8859-1?Q?mqCae0hZD3fMJDEy8drtGa/ZOVth41x7zBhRsVI5OSfumM3q5NoF/5nqGk?=
- =?iso-8859-1?Q?zLo4Q0tVxdzYaXMvo50U1cpah9DaXUVAxUOOyrwbsRLm3RyfkaJUYZ6gKa?=
- =?iso-8859-1?Q?U7NFxTPkC0zN8R9hcD31/A4jFM88JRG8VNp6Xk/anFR9rPq8n7OA458rEm?=
- =?iso-8859-1?Q?UvkRU64uOdnIqj5c4HNy+2kQ9Zbiw5lYY0KMdBpr4R3yuaWJszrZ6/I/7c?=
- =?iso-8859-1?Q?k6mze4Dk8Ek8ZqEWARpfhiVzdhhcNjwooz9c2IsG3PfLKay0uE5ZzVkMKG?=
- =?iso-8859-1?Q?mr7EBvCGAlZB4SnsjYGG9H9Ib89LXpd0lWtZ7iN9iO9l4TCRkBOMnPlp9f?=
- =?iso-8859-1?Q?R8RZNSforM7fYOZX9f/TmTU8k3DwgI4ws/0w7MVItDszFyIHtMXsXtCfja?=
- =?iso-8859-1?Q?ulmiLBWRo6mjWVOv4/9JQP1zVVg6cHK54Pli2GfCETv9TG3pmWinIJPwV8?=
- =?iso-8859-1?Q?8VDti3M3KhnuBacIwQAogO4gvFtGC0L6/dQ934VJmS0gSWbb8vChqElhdC?=
- =?iso-8859-1?Q?ChJmLwkEPePeIq0UDh9I3Et6RxVYZ8Zkkw3GFiro1sVAJrw9wPVQhgof82?=
- =?iso-8859-1?Q?AgfpXhgIOM/FzHYwkAYtBZXFFs3s63ocj0Q1z0KRTkUYuy8NOEnHwA0lDK?=
- =?iso-8859-1?Q?3JW+6v1fBd5LmBD+5J60o+I7SMvxWomO8e6a8J0R5HPyrU7kg4+72EzQDG?=
- =?iso-8859-1?Q?KzCoPTEDw2AId12L08EawM1fmCzZSO/AnRApxnqEfkY8I7N77JMlOEUtrE?=
- =?iso-8859-1?Q?B1Yp+8RHeEuYMI3M731zOF5NsIbaLT0LPxe2o/EvWEOkNVkpvMLGL33iLt?=
- =?iso-8859-1?Q?DQaNuefRKX/kkTmFdu3pF70zwd1kozhLZ0t+mLviCn4OBgEII3GO+//bUm?=
- =?iso-8859-1?Q?raHTt4O5Cenhpz5PRqEFXD/hwbm/?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:AS8PR04MB8293.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(19092799006)(8096899003)(38070700021);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?TXBb4uxH437/8ma3KR6v8dQ3/byw4/MJ06jZBEt7YC+QLq89UL+G5Hn8Vy?=
- =?iso-8859-1?Q?HL3nDq+CjpxZVEzDMvEXhFtlkVTloWcWjOWx6KYPfHHpwPdpYncuquuA6V?=
- =?iso-8859-1?Q?eG91Nw8z1C9zMuq8GC5rZZUDleo+PS8KCclcMMH6ASwCT4N7/N0DPIPdHc?=
- =?iso-8859-1?Q?bEAUyuriCoeCagBWPGl+VZQSQpyKNtbOcFpF4UGMrkeq8diObllCkDLxjI?=
- =?iso-8859-1?Q?g7xYH3O1HQkdzQB/lVKz+K2NVUizjEpTaNwYHccGQ+p36qcM9+prBib1aW?=
- =?iso-8859-1?Q?R9I1uUrpLj9rMjdsqOddLXsvubenqrlCgQx9Giyl4l1JpVu8tMMmyClYX3?=
- =?iso-8859-1?Q?xxrysb48EiyBkdk9yfLkSp5VVN1FAjUALLgHNQDN/6p9yE2U0QDuyEPI0X?=
- =?iso-8859-1?Q?50PcjCltU3hdrAUX3UxVNB1hv+n+7JZUAJWE2y8d7I6rN62ao5N2ncpcQI?=
- =?iso-8859-1?Q?gK2/qBu9G2e8L8mCS5oTDMtqAB9W+Th9tsvH68TnMweE14LIkMwSg4EIhk?=
- =?iso-8859-1?Q?OnsP5au4qgRETihItl54Z/L5bz852X58nUIafNrmYdtPZ35orqUSddqNI9?=
- =?iso-8859-1?Q?9jM97xnDmExW4aj6Z8Rh5dXpOiO63aL0Juq68W4KWSYjtfQrWe2rpaERFX?=
- =?iso-8859-1?Q?25/fx825gxgSL9ZjEk8wV7Ht+I6iiEAeEz7dAfjMi924K8UTMbk1gWLShM?=
- =?iso-8859-1?Q?2CgsbA5uPoZkU5D/lQdfByTflEgtiaDyTpTJEc6rOjI+2sn/BftOXsUAWU?=
- =?iso-8859-1?Q?qRoAjsYGylov4eWCq+XcJehEKav6Li54ICuVp74seAy/ty6Yy/qBkm5rtT?=
- =?iso-8859-1?Q?9/+RsMNvabYXizBQxunzWtPjlnqACk3R4c39O2MT8w2BQfNJ8z47wwlzEf?=
- =?iso-8859-1?Q?HP8rN1ReD1JU+M86jKFT9o6+hxtBZaUO3zP1PwYNcijm8ekKsxYHGxJ85Y?=
- =?iso-8859-1?Q?PShzbogMJi/36A8ShVmEYJfin4zYYept01HYHjpQIZ0m0CNwX968zEfy4O?=
- =?iso-8859-1?Q?VxSIzHJly3WZZ4gJu8y3NMfsDdX9uiM2M6l904mHJnVW04R1FDtmfVjEnR?=
- =?iso-8859-1?Q?jsWjqIS2pSJpsDwE7nvq6mwPSR95WTf4ju70Nm6a9yujDGIpyzufojcWD6?=
- =?iso-8859-1?Q?7crMqewZ6N8AtVNBWMg2d2jsr7Boq9rYnF082XpHI/QUBpGNdHz0FSsyAF?=
- =?iso-8859-1?Q?UeOTyk5oejoQwqkbJ90G6W4c1K/u7evzNECdOGfK/YyNe02ipgEGwHXlsd?=
- =?iso-8859-1?Q?KV9C7QBcur05Xxmz0e36Gq8qa0+TshYntov5e3x6H8Hydtm7kCO/u8fkrw?=
- =?iso-8859-1?Q?wJqEgpqKeug5EqwsEm0PYPAtwY2abQr4Gvle6BzxXDGC8Ok1b4KqusXqgu?=
- =?iso-8859-1?Q?zDRfrpMijjHQeFSjhGONZy3y00ouFSnSPWj477BimvEY8DpCRtzShGqtPz?=
- =?iso-8859-1?Q?XczR5PESqolBIqB4ulNnk/1OMYybcK0MdGLSl3CoEdnoW+idaMqIMlg4ml?=
- =?iso-8859-1?Q?slUbZSBacDNe3hA01yzn5Q+Rua5J1QANP4A2XJYSknsssWDmb2FcwvFW4p?=
- =?iso-8859-1?Q?k9uMsRR49tavyncvPnzjFMcGxbwIbMEBxStOkg0k6+3kox9njLQ+zUIqMm?=
- =?iso-8859-1?Q?PDhGqNgeC/3k+Q0PWn+x2VDz2QYpZjxxsS?=
-Content-Type: multipart/alternative;
- boundary="_000_AS8PR04MB82933143CF52A473CF05B0A0E5E8AAS8PR04MB8293eurp_"
+	by mails.dpdk.org (Postfix) with ESMTP id 8E6DC40669;
+	Wed, 15 Oct 2025 11:54:00 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id ABEB640276
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 11:53:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1760522038;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=KOMuxsUfOpqKaxQzizLxndty2UImfrkHm79f+0r4KnM=;
+ b=QbjU5mLJps+rnih/MU9Kvh0nDOCmL2e3+mkOrvpuksqB1OeRS4Lg29tJj/Tk6NPX65bvbM
+ g54ecF1onhnwSeZ9pTeo5vlqjtD/YV6UncVl1cR1hs2ABg3sBIeYv8zjoXYdZUO0Vovcun
+ MCqgFGFnziE8yvixiOTBVxhDCXeh1IA=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-692-XQ-GvMvVPRypmZPVTaiLEQ-1; Wed,
+ 15 Oct 2025 05:53:56 -0400
+X-MC-Unique: XQ-GvMvVPRypmZPVTaiLEQ-1
+X-Mimecast-MFC-AGG-ID: XQ-GvMvVPRypmZPVTaiLEQ_1760522036
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 9761C1954208; Wed, 15 Oct 2025 09:53:55 +0000 (UTC)
+Received: from ringo.home (unknown [10.45.224.186])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 6957C19560AD; Wed, 15 Oct 2025 09:53:54 +0000 (UTC)
+From: Robin Jarry <rjarry@redhat.com>
+To: dev@dpdk.org,
+	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH dpdk v2] fib6: implement RCU rule reclamation
+Date: Wed, 15 Oct 2025 11:53:48 +0200
+Message-ID: <20251015095347.333685-2-rjarry@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8293.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d064326a-7df5-40ad-d705-08de0bcf7bc9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2025 09:44:49.5882 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RR156AwbhZk9oP8tjYgd7fFgQ3ZtKmhNsQ8dL2vvVg9VXuLqGyStSStp+TWRwArlzXVpDZ24bbrYkG8LhqNCqRdvGWz0HI9IxpJGs9gIOlQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10831
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 32MDdnINxRsFev8u4O1WQeBE-6G6h2rWW2SfX9cL8Jw_1760522036
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -143,305 +63,552 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_AS8PR04MB82933143CF52A473CF05B0A0E5E8AAS8PR04MB8293eurp_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Currently, for the TRIE algorithm, the tbl8 group is freed even though
+the readers might be using the tbl8 group entries. The freed tbl8 group
+can be reallocated quickly. As a result, lookup may be performed
+incorrectly.
 
-Hi DPDK Community,
+To address that, RCU QSBR is integrated for safe tbl8 group reclamation.
 
-I'm currently working with dpdk-22.11 ( also tried current 24.07) and facin=
-g an issue when initializing 2=D725G Mellanox NICs (MT27800 Family [Connect=
-X-5]) on ARM based system.
+Cc: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Signed-off-by: Robin Jarry <rjarry@redhat.com>
+---
 
-During device probing, I see the following errors:
+Notes:
+    v2:
+    
+    - Fixed typos in docstrings.
+    - Tests depend on: http://patches.dpdk.org/project/dpdk/list/?series=36356
 
-EAL: Probe PCI driver: mlx5_pci (15b3:1017) device: 0001:01:00.0 (socket -1=
-)
-mlx5_common: Failed to allocate DevX UAR (BF/NC)
-mlx5_common: Failed to allocate UAR.
-mlx5_net: Failed to prepare Tx DevX UAR.
-mlx5_net: probe of PCI device 0001:01:00.0 aborted after encountering an er=
-ror: Operation not permitted
+ app/test/test_fib6.c | 214 +++++++++++++++++++++++++++++++++++++++++++
+ lib/fib/rte_fib6.c   |  15 +++
+ lib/fib/rte_fib6.h   |  52 +++++++++++
+ lib/fib/trie.c       |  89 ++++++++++++++++--
+ lib/fib/trie.h       |   8 ++
+ 5 files changed, 371 insertions(+), 7 deletions(-)
 
-Interestingly, the same setup works fine with 2=D7100G MT28800 Family [Conn=
-ectX-5 Ex] NICs.
-Also this 2x25G cards work well with Linux kernel.  The issue is only with =
-DPDK binding.
+diff --git a/app/test/test_fib6.c b/app/test/test_fib6.c
+index 79220a88b112..843a4086c1cf 100644
+--- a/app/test/test_fib6.c
++++ b/app/test/test_fib6.c
+@@ -11,6 +11,7 @@
+ #include <rte_log.h>
+ #include <rte_rib6.h>
+ #include <rte_fib6.h>
++#include <rte_malloc.h>
+ 
+ #include "test.h"
+ 
+@@ -22,6 +23,8 @@ static int32_t test_free_null(void);
+ static int32_t test_add_del_invalid(void);
+ static int32_t test_get_invalid(void);
+ static int32_t test_lookup(void);
++static int32_t test_invalid_rcu(void);
++static int32_t test_fib_rcu_sync_rw(void);
+ 
+ #define MAX_ROUTES	(1 << 16)
+ /** Maximum number of tbl8 for 2-byte entries */
+@@ -387,6 +390,215 @@ test_lookup(void)
+ 	return TEST_SUCCESS;
+ }
+ 
++/*
++ * rte_fib6_rcu_qsbr_add positive and negative tests.
++ *  - Add RCU QSBR variable to FIB
++ *  - Add another RCU QSBR variable to FIB
++ *  - Check returns
++ */
++int32_t
++test_invalid_rcu(void)
++{
++	struct rte_fib6 *fib = NULL;
++	struct rte_fib6_conf config = { 0 };
++	size_t sz;
++	struct rte_rcu_qsbr *qsv;
++	struct rte_rcu_qsbr *qsv2;
++	int32_t status;
++	struct rte_fib6_rcu_config rcu_cfg = {0};
++	uint64_t def_nh = 100;
++
++	config.max_routes = MAX_ROUTES;
++	config.rib_ext_sz = 0;
++	config.default_nh = def_nh;
++
++	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
++
++	/* Create RCU QSBR variable */
++	sz = rte_rcu_qsbr_get_memsize(RTE_MAX_LCORE);
++	qsv = (struct rte_rcu_qsbr *)rte_zmalloc_socket(NULL, sz, RTE_CACHE_LINE_SIZE,
++		SOCKET_ID_ANY);
++	RTE_TEST_ASSERT(qsv != NULL, "Can not allocate memory for RCU\n");
++
++	status = rte_rcu_qsbr_init(qsv, RTE_MAX_LCORE);
++	RTE_TEST_ASSERT(status == 0, "Can not initialize RCU\n");
++
++	rcu_cfg.v = qsv;
++
++	/* adding rcu to RTE_FIB6_DUMMY FIB type */
++	config.type = RTE_FIB6_DUMMY;
++	rcu_cfg.mode = RTE_FIB6_QSBR_MODE_SYNC;
++	status = rte_fib6_rcu_qsbr_add(fib, &rcu_cfg);
++	RTE_TEST_ASSERT(status == -ENOTSUP,
++		"rte_fib6_rcu_qsbr_add returned wrong error status when called with DUMMY type FIB\n");
++	rte_fib6_free(fib);
++
++	config.type = RTE_FIB6_TRIE;
++	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
++	config.trie.num_tbl8 = MAX_TBL8;
++	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
++
++	/* Call rte_fib6_rcu_qsbr_add without fib or config */
++	status = rte_fib6_rcu_qsbr_add(NULL, &rcu_cfg);
++	RTE_TEST_ASSERT(status == -EINVAL, "RCU added without fib\n");
++	status = rte_fib6_rcu_qsbr_add(fib, NULL);
++	RTE_TEST_ASSERT(status == -EINVAL, "RCU added without config\n");
++
++	/* Invalid QSBR mode */
++	rcu_cfg.mode = 2;
++	status = rte_fib6_rcu_qsbr_add(fib, &rcu_cfg);
++	RTE_TEST_ASSERT(status == -EINVAL, "RCU added with incorrect mode\n");
++
++	rcu_cfg.mode = RTE_FIB6_QSBR_MODE_DQ;
++
++	/* Attach RCU QSBR to FIB to check for double attach */
++	status = rte_fib6_rcu_qsbr_add(fib, &rcu_cfg);
++	RTE_TEST_ASSERT(status == 0, "Can not attach RCU to FIB\n");
++
++	/* Create and attach another RCU QSBR to FIB table */
++	qsv2 = (struct rte_rcu_qsbr *)rte_zmalloc_socket(NULL, sz, RTE_CACHE_LINE_SIZE,
++		SOCKET_ID_ANY);
++	RTE_TEST_ASSERT(qsv2 != NULL, "Can not allocate memory for RCU\n");
++
++	rcu_cfg.v = qsv2;
++	rcu_cfg.mode = RTE_FIB6_QSBR_MODE_SYNC;
++	status = rte_fib6_rcu_qsbr_add(fib, &rcu_cfg);
++	RTE_TEST_ASSERT(status == -EEXIST, "Secondary RCU was mistakenly attached\n");
++
++	rte_fib6_free(fib);
++	rte_free(qsv);
++	rte_free(qsv2);
++
++	return TEST_SUCCESS;
++}
++
++static struct rte_fib6 *g_fib;
++static struct rte_rcu_qsbr *g_v;
++static struct rte_ipv6_addr g_ip = RTE_IPV6(0x2001, 0xabcd, 0, 0, 0, 0, 0, 1);
++static volatile uint8_t writer_done;
++/* Report quiescent state interval every 1024 lookups. Larger critical
++ * sections in reader will result in writer polling multiple times.
++ */
++#define QSBR_REPORTING_INTERVAL 1024
++#define WRITER_ITERATIONS	512
++
++/*
++ * Reader thread using rte_fib6 data structure with RCU.
++ */
++static int
++test_fib_rcu_qsbr_reader(void *arg)
++{
++	int i;
++	uint64_t next_hop_return = 0;
++
++	RTE_SET_USED(arg);
++	/* Register this thread to report quiescent state */
++	rte_rcu_qsbr_thread_register(g_v, 0);
++	rte_rcu_qsbr_thread_online(g_v, 0);
++
++	do {
++		for (i = 0; i < QSBR_REPORTING_INTERVAL; i++)
++			rte_fib6_lookup_bulk(g_fib, &g_ip, &next_hop_return, 1);
++
++		/* Update quiescent state */
++		rte_rcu_qsbr_quiescent(g_v, 0);
++	} while (!writer_done);
++
++	rte_rcu_qsbr_thread_offline(g_v, 0);
++	rte_rcu_qsbr_thread_unregister(g_v, 0);
++
++	return 0;
++}
++
++/*
++ * rte_fib6_rcu_qsbr_add sync mode functional test.
++ * 1 Reader and 1 writer. They cannot be in the same thread in this test.
++ *  - Create FIB which supports 1 tbl8 group at max
++ *  - Add RCU QSBR variable with sync mode to FIB
++ *  - Register a reader thread. Reader keeps looking up a specific rule.
++ *  - Writer keeps adding and deleting a specific rule with depth=28 (> 24)
++ */
++int32_t
++test_fib_rcu_sync_rw(void)
++{
++	struct rte_fib6_conf config = { 0 };
++	size_t sz;
++	int32_t status;
++	uint32_t i, next_hop;
++	uint8_t depth;
++	struct rte_fib6_rcu_config rcu_cfg = {0};
++	uint64_t def_nh = 100;
++
++	if (rte_lcore_count() < 2) {
++		printf("Not enough cores for %s, expecting at least 2\n", __func__);
++		return TEST_SKIPPED;
++	}
++
++	config.max_routes = MAX_ROUTES;
++	config.rib_ext_sz = 0;
++	config.default_nh = def_nh;
++	config.type = RTE_FIB6_TRIE;
++	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
++	config.trie.num_tbl8 = 1;
++
++	g_fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	RTE_TEST_ASSERT(g_fib != NULL, "Failed to create FIB\n");
++
++	/* Create RCU QSBR variable */
++	sz = rte_rcu_qsbr_get_memsize(1);
++	g_v = (struct rte_rcu_qsbr *)rte_zmalloc_socket(NULL, sz, RTE_CACHE_LINE_SIZE,
++		SOCKET_ID_ANY);
++	RTE_TEST_ASSERT(g_v != NULL, "Can not allocate memory for RCU\n");
++
++	status = rte_rcu_qsbr_init(g_v, 1);
++	RTE_TEST_ASSERT(status == 0, "Can not initialize RCU\n");
++
++	rcu_cfg.v = g_v;
++	rcu_cfg.mode = RTE_FIB6_QSBR_MODE_SYNC;
++	/* Attach RCU QSBR to FIB table */
++	status = rte_fib6_rcu_qsbr_add(g_fib, &rcu_cfg);
++	RTE_TEST_ASSERT(status == 0, "Can not attach RCU to FIB\n");
++
++	writer_done = 0;
++	/* Launch reader thread */
++	rte_eal_remote_launch(test_fib_rcu_qsbr_reader, NULL, rte_get_next_lcore(-1, 1, 0));
++
++	depth = 28;
++	next_hop = 1;
++	status = rte_fib6_add(g_fib, &g_ip, depth, next_hop);
++	if (status != 0) {
++		printf("%s: Failed to add rule\n", __func__);
++		goto error;
++	}
++
++	/* Writer update */
++	for (i = 0; i < WRITER_ITERATIONS; i++) {
++		status = rte_fib6_delete(g_fib, &g_ip, depth);
++		if (status != 0) {
++			printf("%s: Failed to delete rule at iteration %d\n", __func__, i);
++			goto error;
++		}
++
++		status = rte_fib6_add(g_fib, &g_ip, depth, next_hop);
++		if (status != 0) {
++			printf("%s: Failed to add rule at iteration %d\n", __func__, i);
++			goto error;
++		}
++	}
++
++error:
++	writer_done = 1;
++	/* Wait until reader exited. */
++	rte_eal_mp_wait_lcore();
++
++	rte_fib6_free(g_fib);
++	rte_free(g_v);
++
++	return status == 0 ? TEST_SUCCESS : TEST_FAILED;
++}
++
+ static struct unit_test_suite fib6_fast_tests = {
+ 	.suite_name = "fib6 autotest",
+ 	.setup = NULL,
+@@ -397,6 +609,8 @@ static struct unit_test_suite fib6_fast_tests = {
+ 	TEST_CASE(test_add_del_invalid),
+ 	TEST_CASE(test_get_invalid),
+ 	TEST_CASE(test_lookup),
++	TEST_CASE(test_invalid_rcu),
++	TEST_CASE(test_fib_rcu_sync_rw),
+ 	TEST_CASES_END()
+ 	}
+ };
+diff --git a/lib/fib/rte_fib6.c b/lib/fib/rte_fib6.c
+index 93a1c7197b26..dffcbdf657e8 100644
+--- a/lib/fib/rte_fib6.c
++++ b/lib/fib/rte_fib6.c
+@@ -346,3 +346,18 @@ rte_fib6_select_lookup(struct rte_fib6 *fib,
+ 		return -EINVAL;
+ 	}
+ }
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_fib6_rcu_qsbr_add, 25.07)
++int
++rte_fib6_rcu_qsbr_add(struct rte_fib6 *fib, struct rte_fib6_rcu_config *cfg)
++{
++	if (fib == NULL || cfg == NULL)
++		return -EINVAL;
++
++	switch (fib->type) {
++	case RTE_FIB6_TRIE:
++		return trie_rcu_qsbr_add(fib->dp, cfg, fib->name);
++	default:
++		return -ENOTSUP;
++	}
++}
+diff --git a/lib/fib/rte_fib6.h b/lib/fib/rte_fib6.h
+index 625df1fa6b7b..4527328bf00d 100644
+--- a/lib/fib/rte_fib6.h
++++ b/lib/fib/rte_fib6.h
+@@ -19,6 +19,7 @@
+ 
+ #include <rte_common.h>
+ #include <rte_ip6.h>
++#include <rte_rcu_qsbr.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -34,6 +35,19 @@ extern "C" {
+ struct rte_fib6;
+ struct rte_rib6;
+ 
++/** @internal Default RCU defer queue entries to reclaim in one go. */
++#define RTE_FIB6_RCU_DQ_RECLAIM_MAX     16
++/** @internal Default RCU defer queue size. */
++#define RTE_FIB6_RCU_DQ_RECLAIM_SZ      128
++
++/** RCU reclamation modes */
++enum rte_fib6_qsbr_mode {
++	/** Create defer queue for reclaim. */
++	RTE_FIB6_QSBR_MODE_DQ = 0,
++	/** Use blocking mode reclaim. No defer queue created. */
++	RTE_FIB6_QSBR_MODE_SYNC
++};
++
+ /** Type of FIB struct */
+ enum rte_fib6_type {
+ 	RTE_FIB6_DUMMY,		/**< RIB6 tree based FIB */
+@@ -85,6 +99,26 @@ struct rte_fib6_conf {
+ 	};
+ };
+ 
++/** FIB RCU QSBR configuration structure. */
++struct rte_fib6_rcu_config {
++	/** RCU QSBR variable. */
++	struct rte_rcu_qsbr *v;
++	/** Mode of RCU QSBR. See RTE_FIB6_QSBR_MODE_*.
++	 * Default: RTE_FIB6_QSBR_MODE_DQ, create defer queue for reclaim.
++	 */
++	enum rte_fib6_qsbr_mode mode;
++	/** RCU defer queue size.
++	 * Default: RTE_FIB6_RCU_DQ_RECLAIM_SZ.
++	 */
++	uint32_t dq_size;
++	/** Threshold to trigger auto reclaim. */
++	uint32_t reclaim_thd;
++	/** Max entries to reclaim in one go.
++	 * Default: RTE_FIB6_RCU_DQ_RECLAIM_MAX.
++	 */
++	uint32_t reclaim_max;
++};
++
+ /**
+  * Free an FIB object.
+  *
+@@ -220,6 +254,24 @@ rte_fib6_get_rib(struct rte_fib6 *fib);
+ int
+ rte_fib6_select_lookup(struct rte_fib6 *fib, enum rte_fib6_lookup_type type);
+ 
++/**
++ * Associate RCU QSBR variable with a FIB object.
++ *
++ * @param fib
++ *   FIB object handle
++ * @param cfg
++ *   RCU QSBR configuration
++ * @return
++ *   0 on success
++ *   -EINVAL - invalid pointer
++ *   -EEXIST - already added QSBR
++ *   -ENOMEM - memory allocation failure
++ *   -ENOTSUP - not supported by configured dataplane algorithm
++ */
++__rte_experimental
++int
++rte_fib6_rcu_qsbr_add(struct rte_fib6 *fib, struct rte_fib6_rcu_config *cfg);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/lib/fib/trie.c b/lib/fib/trie.c
+index 6427920c5833..7a5cfe66b495 100644
+--- a/lib/fib/trie.c
++++ b/lib/fib/trie.c
+@@ -13,6 +13,7 @@
+ 
+ #include <rte_rib6.h>
+ #include <rte_fib6.h>
++#include "fib_log.h"
+ #include "trie.h"
+ 
+ #ifdef CC_AVX512_SUPPORT
+@@ -160,6 +161,12 @@ tbl8_alloc(struct rte_trie_tbl *dp, uint64_t nh)
+ 	uint8_t		*tbl8_ptr;
+ 
+ 	tbl8_idx = tbl8_get(dp);
++
++	/* If there are no tbl8 groups try to reclaim one. */
++	if (unlikely(tbl8_idx == -ENOSPC && dp->dq &&
++			!rte_rcu_qsbr_dq_reclaim(dp->dq, 1, NULL, NULL, NULL)))
++		tbl8_idx = tbl8_get(dp);
++
+ 	if (tbl8_idx < 0)
+ 		return tbl8_idx;
+ 	tbl8_ptr = get_tbl_p_by_idx(dp->tbl8,
+@@ -170,6 +177,23 @@ tbl8_alloc(struct rte_trie_tbl *dp, uint64_t nh)
+ 	return tbl8_idx;
+ }
+ 
++static void
++tbl8_cleanup_and_free(struct rte_trie_tbl *dp, uint64_t tbl8_idx)
++{
++	uint8_t *ptr = (uint8_t *)dp->tbl8 + (tbl8_idx * TRIE_TBL8_GRP_NUM_ENT << dp->nh_sz);
++
++	memset(ptr, 0, TRIE_TBL8_GRP_NUM_ENT << dp->nh_sz);
++	tbl8_put(dp, tbl8_idx);
++}
++
++static void
++__rcu_qsbr_free_resource(void *p, void *data, unsigned int n __rte_unused)
++{
++	struct rte_trie_tbl *dp = p;
++	uint64_t tbl8_idx = *(uint64_t *)data;
++	tbl8_cleanup_and_free(dp, tbl8_idx);
++}
++
+ static void
+ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
+ {
+@@ -191,8 +215,6 @@ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
+ 				return;
+ 		}
+ 		write_to_dp(par, nh, dp->nh_sz, 1);
+-		for (i = 0; i < TRIE_TBL8_GRP_NUM_ENT; i++)
+-			ptr16[i] = 0;
+ 		break;
+ 	case RTE_FIB6_TRIE_4B:
+ 		ptr32 = &((uint32_t *)dp->tbl8)[tbl8_idx *
+@@ -205,8 +227,6 @@ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
+ 				return;
+ 		}
+ 		write_to_dp(par, nh, dp->nh_sz, 1);
+-		for (i = 0; i < TRIE_TBL8_GRP_NUM_ENT; i++)
+-			ptr32[i] = 0;
+ 		break;
+ 	case RTE_FIB6_TRIE_8B:
+ 		ptr64 = &((uint64_t *)dp->tbl8)[tbl8_idx *
+@@ -219,11 +239,18 @@ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
+ 				return;
+ 		}
+ 		write_to_dp(par, nh, dp->nh_sz, 1);
+-		for (i = 0; i < TRIE_TBL8_GRP_NUM_ENT; i++)
+-			ptr64[i] = 0;
+ 		break;
+ 	}
+-	tbl8_put(dp, tbl8_idx);
++
++	if (dp->v == NULL) {
++		tbl8_cleanup_and_free(dp, tbl8_idx);
++	} else if (dp->rcu_mode == RTE_FIB6_QSBR_MODE_SYNC) {
++		rte_rcu_qsbr_synchronize(dp->v, RTE_QSBR_THRID_INVALID);
++		tbl8_cleanup_and_free(dp, tbl8_idx);
++	} else { /* RTE_FIB6_QSBR_MODE_DQ */
++		if (rte_rcu_qsbr_dq_enqueue(dp->dq, &tbl8_idx))
++			FIB_LOG(ERR, "Failed to push QSBR FIFO");
++	}
+ }
+ 
+ #define BYTE_SIZE	8
+@@ -695,7 +722,55 @@ trie_free(void *p)
+ {
+ 	struct rte_trie_tbl *dp = (struct rte_trie_tbl *)p;
+ 
++	rte_rcu_qsbr_dq_delete(dp->dq);
+ 	rte_free(dp->tbl8_pool);
+ 	rte_free(dp->tbl8);
+ 	rte_free(dp);
+ }
++
++int
++trie_rcu_qsbr_add(struct rte_trie_tbl *dp, struct rte_fib6_rcu_config *cfg,
++	const char *name)
++{
++	struct rte_rcu_qsbr_dq_parameters params = {0};
++	char rcu_dq_name[RTE_RCU_QSBR_DQ_NAMESIZE];
++
++	if (dp == NULL || cfg == NULL)
++		return -EINVAL;
++
++	if (dp->v != NULL)
++		return -EEXIST;
++
++	switch (cfg->mode) {
++	case RTE_FIB6_QSBR_MODE_DQ:
++		/* Init QSBR defer queue. */
++		snprintf(rcu_dq_name, sizeof(rcu_dq_name),
++			"FIB_RCU_%s", name);
++		params.name = rcu_dq_name;
++		params.size = cfg->dq_size;
++		if (params.size == 0)
++			params.size = RTE_FIB6_RCU_DQ_RECLAIM_SZ;
++		params.trigger_reclaim_limit = cfg->reclaim_thd;
++		params.max_reclaim_size = cfg->reclaim_max;
++		if (params.max_reclaim_size == 0)
++			params.max_reclaim_size = RTE_FIB6_RCU_DQ_RECLAIM_MAX;
++		params.esize = sizeof(uint64_t);
++		params.free_fn = __rcu_qsbr_free_resource;
++		params.p = dp;
++		params.v = cfg->v;
++		dp->dq = rte_rcu_qsbr_dq_create(&params);
++		if (dp->dq == NULL) {
++			FIB_LOG(ERR, "FIB6 defer queue creation failed");
++			return -ENOMEM;
++		}
++	case RTE_FIB6_QSBR_MODE_SYNC:
++		/* No other things to do. */
++		break;
++	default:
++		return -EINVAL;
++	}
++	dp->rcu_mode = cfg->mode;
++	dp->v = cfg->v;
++
++	return 0;
++}
+diff --git a/lib/fib/trie.h b/lib/fib/trie.h
+index bcb161702b49..c34cc2c05731 100644
+--- a/lib/fib/trie.h
++++ b/lib/fib/trie.h
+@@ -38,6 +38,10 @@ struct rte_trie_tbl {
+ 	uint64_t	*tbl8;		/**< tbl8 table. */
+ 	uint32_t	*tbl8_pool;	/**< bitmap containing free tbl8 idxes*/
+ 	uint32_t	tbl8_pool_pos;
++	/* RCU config. */
++	enum rte_fib6_qsbr_mode rcu_mode; /**< Blocking, defer queue. */
++	struct rte_rcu_qsbr *v; /**< RCU QSBR variable. */
++	struct rte_rcu_qsbr_dq *dq; /**< RCU QSBR defer queue. */
+ 	/* tbl24 table. */
+ 	alignas(RTE_CACHE_LINE_SIZE) uint64_t	tbl24[];
+ };
+@@ -143,4 +147,8 @@ int
+ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
+ 	uint8_t depth, uint64_t next_hop, int op);
+ 
++int
++trie_rcu_qsbr_add(struct rte_trie_tbl *dp, struct rte_fib6_rcu_config *cfg,
++	const char *name);
++
+ #endif /* _TRIE_H_ */
+-- 
+2.51.0
 
-When I enable kernel prints, UAR allocation appears successful, suggesting =
-the issue may be DevX-specific on MT27800.
-
-I'd appreciate any guidance on:
-
-  *   Known limitations or configuration differences between MT27800 and MT=
-28800
-  *   Whether DevX should be disabled explicitly for MT27800 (e.g., MLX5_DE=
-VX=3D0)
-  *   Any firmware or kernel dependencies that might affect DevX support
-
-Thanks in advance for your help.
-
-Best Regards,
-Prashant Gupta
-
-
---_000_AS8PR04MB82933143CF52A473CF05B0A0E5E8AAS8PR04MB8293eurp_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
-osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
-xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
-//www.w3.org/TR/REC-html40">
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
-<style><!--
-/* Font Definitions */
-@font-face
-	{font-family:Wingdings;
-	panose-1:5 0 0 0 0 0 0 0 0 0;}
-@font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;}
-@font-face
-	{font-family:DengXian;
-	panose-1:2 1 6 0 3 1 1 1 1 1;}
-@font-face
-	{font-family:Aptos;}
-@font-face
-	{font-family:"\@DengXian";
-	panose-1:2 1 6 0 3 1 1 1 1 1;}
-/* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
-	font-size:12.0pt;
-	font-family:"Aptos",sans-serif;
-	mso-ligatures:standardcontextual;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	font-size:10.0pt;
-	mso-ligatures:none;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
-div.WordSection1
-	{page:WordSection1;}
-/* List Definitions */
-@list l0
-	{mso-list-id:92480478;
-	mso-list-template-ids:1961779660;}
-@list l0:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:36.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l0:level2
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:72.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:"Courier New";
-	mso-bidi-font-family:"Times New Roman";}
-@list l0:level3
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:108.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Wingdings;}
-@list l0:level4
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:144.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Wingdings;}
-@list l0:level5
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:180.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Wingdings;}
-@list l0:level6
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:216.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Wingdings;}
-@list l0:level7
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:252.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Wingdings;}
-@list l0:level8
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:288.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Wingdings;}
-@list l0:level9
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0A7;
-	mso-level-tab-stop:324.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Wingdings;}
-@list l1
-	{mso-list-id:594049191;
-	mso-list-template-ids:-66712978;}
-@list l1:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:36.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l1:level2
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:72.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l1:level3
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:108.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l1:level4
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:144.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l1:level5
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:180.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l1:level6
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:216.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l1:level7
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:252.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l1:level8
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:288.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l1:level9
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:324.0pt;
-	mso-level-number-position:left;
-	text-indent:-18.0pt;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-ol
-	{margin-bottom:0cm;}
-ul
-	{margin-bottom:0cm;}
---></style><!--[if gte mso 9]><xml>
-<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
-</xml><![endif]--><!--[if gte mso 9]><xml>
-<o:shapelayout v:ext=3D"edit">
-<o:idmap v:ext=3D"edit" data=3D"1" />
-</o:shapelayout></xml><![endif]-->
-</head>
-<body lang=3D"EN-IN" link=3D"#467886" vlink=3D"#96607D" style=3D"word-wrap:=
-break-word">
-<div class=3D"WordSection1">
-<p class=3D"MsoNormal">Hi DPDK Community,<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">I'm currently working with dpdk-22.11 ( also tried c=
-urrent 24.07) and facing an issue when initializing 2=D725G Mellanox NICs (=
-MT27800 Family [ConnectX-5]) on ARM based system.
-<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">During device probing, I see the following errors:<o=
-:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal"><span style=3D"color:red">EAL: Probe PCI driver: mlx=
-5_pci (15b3:1017) device: 0001:01:00.0 (socket -1)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"color:red">mlx5_common: Failed to all=
-ocate DevX UAR (BF/NC)<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"color:red">mlx5_common: Failed to all=
-ocate UAR.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"color:red">mlx5_net: Failed to prepar=
-e Tx DevX UAR.<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><span style=3D"color:red">mlx5_net: probe of PCI dev=
-ice 0001:01:00.0 aborted after encountering an error: Operation not permitt=
-ed<o:p></o:p></span></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Interestingly, the same setup works fine with 2=D710=
-0G MT28800 Family [ConnectX-5 Ex] NICs.
-<o:p></o:p></p>
-<p class=3D"MsoNormal">Also this 2x25G cards work well with Linux kernel.&n=
-bsp; The issue is only with DPDK binding.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">When I enable kernel prints, UAR allocation appears =
-successful, suggesting the issue may be DevX-specific on MT27800.<o:p></o:p=
-></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">I'd appreciate any guidance on:<o:p></o:p></p>
-<ul style=3D"margin-top:0cm" type=3D"disc">
-<li class=3D"MsoNormal" style=3D"mso-list:l0 level1 lfo3">Known limitations=
- or configuration differences between MT27800 and MT28800<o:p></o:p></li><l=
-i class=3D"MsoNormal" style=3D"mso-list:l0 level1 lfo3">Whether DevX should=
- be disabled explicitly for MT27800 (e.g., MLX5_DEVX=3D0)<o:p></o:p></li><l=
-i class=3D"MsoNormal" style=3D"mso-list:l0 level1 lfo3">Any firmware or ker=
-nel dependencies that might affect DevX support<o:p></o:p></li></ul>
-<p class=3D"MsoNormal" style=3D"margin-left:36.0pt"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Thanks in advance for your help.<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-<p class=3D"MsoNormal">Best Regards,<o:p></o:p></p>
-<p class=3D"MsoNormal">Prashant Gupta<o:p></o:p></p>
-<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
-</div>
-</body>
-</html>
-
---_000_AS8PR04MB82933143CF52A473CF05B0A0E5E8AAS8PR04MB8293eurp_--
