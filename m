@@ -2,74 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 417ABCCD18E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 14:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A32CCD192
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 14:46:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D64F40613;
-	Wed, 15 Oct 2025 16:29:13 +0200 (CEST)
-Received: from fout-b7-smtp.messagingengine.com
- (fout-b7-smtp.messagingengine.com [202.12.124.150])
- by mails.dpdk.org (Postfix) with ESMTP id 8942040273
- for <dev@dpdk.org>; Wed, 15 Oct 2025 16:29:11 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.stl.internal (Postfix) with ESMTP id C46051D001AE;
- Wed, 15 Oct 2025 10:29:10 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Wed, 15 Oct 2025 10:29:10 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id D668F402D3;
+	Wed, 15 Oct 2025 16:46:53 +0200 (CEST)
+Received: from fout-b8-smtp.messagingengine.com
+ (fout-b8-smtp.messagingengine.com [202.12.124.151])
+ by mails.dpdk.org (Postfix) with ESMTP id 8F11D40273;
+ Wed, 15 Oct 2025 16:46:52 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.stl.internal (Postfix) with ESMTP id 9ED481D0013F;
+ Wed, 15 Oct 2025 10:46:51 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Wed, 15 Oct 2025 10:46:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760538550;
- x=1760624950; bh=YAzs3rqc1fWf4tQ76k7rxLd7jxqARBZvOaDbOsoQ980=; b=
- CxG6lP4nONp272jRBGOOIwu3FB4HmhgZUUt9xVru88WawduCKElhwuigDMMYvDV1
- lVsOPtPZFw3XrvYDgjAimFj3qka2+6hckcwyNVnO6HBnsHKmm4pqDw+bn8HBiu1A
- 96+8Pn1ropbnUzIHVE1BSgDtJmFKO+OcUm+I8zTVKDwSQspMX3adRYO3rZOShCPA
- j41TJZn2u3iWJUcj0OV7doGWN61WreREEHvB/JZmgwa/wXb6imnVlwdvNeCgw7CZ
- iVIqF2tVQevFz2TBNvAzQvciDhAWrcRs0UvKstBoYUWIIyrulum1oWpbUxrBR0HC
- hU8lqoC6k06hsgGoELwqTg==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1760539611;
+ x=1760626011; bh=0TxhM+Jlb01ewSLxn53FsQ2/oTA4qQeXmTnD4d9/ibc=; b=
+ KqexcvZB9fmAKqGVydNfK41BnYqGoPzulfmgdZS7EOgEro6BvNIq/bpMjGSIZ6qW
+ +0kigYVaOki3yO+Etj0C3tWeS3r9GFOMbFPJruhKlijvXGyEXT2v2fcpFtWLlbky
+ UjDy7QiobBeyz7DwkjnBVJVAVRcA3RHfF9Qz6MlwHME11EKdqmLzfYBvOru0bfoI
+ mufhWkptcxNeQ1z+n0/xTqQuXYZg/GnPRBScLBFvT00EFzk3mxSZOxqjJOvallha
+ jhRToSeUoEhIIKz8EJSqYxQRHLcu8eWCQ0HiV/7MEK+9Rg6OMFx+xGPMEeZ2BOI2
+ ig+CENlJecUrR3ZvsS4cUw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760538550; x=
- 1760624950; bh=YAzs3rqc1fWf4tQ76k7rxLd7jxqARBZvOaDbOsoQ980=; b=x
- fpJTnXoGcA4BIHPtK6UEVvOLIsrGVNd6QykGuK4EpBcGYOVKl5VWJyxGe+SAJOnM
- ThsCGUdDjQgIDO5mbnOU1ouQ/RSb9penYI7yuDBtFhD9wPzo4nX1cBJ6yl6Th1Bj
- 2+IivbM1tAZ/LiApiDFKdgu+t051m0Vi4aWVs8sf5GEoxNZiiuRPOOy5uP/uOxzs
- Oum1CmwS5xNNbscITh98AMvCfQrQioDCZ8v/PKTsVzUKZy1/WDA1RMQ18gTU3vak
- iCbFVudeY7nQxIk2pR2SqVMjQOuZKi9GCtb43Rd+tOyEu+WsXbRr2sijuHKygQtu
- 3D3lfVn9hy5IeBw+ADWiw==
-X-ME-Sender: <xms:tq_vaChBNh34ml78_P8Y2G1QOpaHRCBhLWUUJfqFPompIOdmRqMb0w>
- <xme:tq_vaPWaLrHDmJSaGPL4xkBVZOwjRaVzqbNl75nj9-m_LlbUb7_-RbEJslAaFbIq_
- g_BmHouqgdWAkUbS4k2dKMo18njrCvOZ0hGxZqDvkDMC6kFGESQ>
-X-ME-Received: <xmr:tq_vaM0h666M7XFdx5ou1yYBgGfg0juYOgVsyJnjXKrc6a7Kge9add0oJagMfWw9Q8n3Z_Kw4sbEI1FXGOhSNvOFFA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdefieehucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760539611; x=
+ 1760626011; bh=0TxhM+Jlb01ewSLxn53FsQ2/oTA4qQeXmTnD4d9/ibc=; b=t
+ m+mlhi91Oq5WSZBG8wbDFQSGPL7qcpOxc4M4bM4N5uyH51b25E4zBKleQC6z4m49
+ 3AAAdevNS6uGxTDvDQTfFZFG4TAl0uHVRxhvs5Gc84o+LcoWmVBHly+e39g2Exuw
+ LhHdX0Wjv/eDnJe6xRItnPBJxBM0twXMhqm8vvVkn6pnPFmrRbShpaujnPV1yaTv
+ 5GYCGBJGyaIV9cWUS+Jq06H5LyYm6bK6ylS4CtKeVb+inMG6ObqPqWf6WWxY0I6+
+ UbR6meq9KbZ8MarjH94JbLI5++xHFsAsYhQ5EEgxpPwuVopwQjLPX9RZeXlY78bA
+ GQhxoZuUr8qBxPrnDlOrg==
+X-ME-Sender: <xms:2rPvaKQxEWdCD1E5vJhqrWBcUR30yUVJZEhFYrTD4bDxyqC98yNvAA>
+ <xme:2rPvaFzyHSlMWGE4zKlAAshBBT1Z62Ou5nZDgijc91Lin99wpZsMrxHRSySz0rdqY
+ yunbZTnxy7e6HMcJDIaau8Hmx0Clods2yI2AAqD0JYdP5bjljY1>
+X-ME-Received: <xmr:2rPvaCpCDzIqFqBWVEm0eP8ZNzhcFjSyEHxdwlovUC_NPG4h8zdI9QKj7GHQ2Z8fms9v1DNzZeNVrsPhaFlw2r-Z9Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdefieelucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
- esihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:tq_vaNExC4KnbTsjws7a4ug-lE9btgZo9LZFZE4YwAx00ZrQNT-1eQ>
- <xmx:tq_vaCjyeswSSLXIn_WNjAvpgAQEhRZ_p0QSAR5x_xr17rnoOACDaw>
- <xmx:tq_vaA9Uo5qN6mxUp6CbxAkPB9Sf0Jiag2Iny3wrxHfDSF9Nb7B0Vg>
- <xmx:tq_vaBrCqv6k_4jQWPeQfMQYkUsphxZqCh1oWvWQTiHp8DwZsXWN6g>
- <xmx:tq_vaHKFGHC0Kq-vekXLih215sXRQM_zFsy-7zHg_TATOZjlGG14EsiB>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeduuddp
+ mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhivhgrphhrrghsrggurdhtuhhmmh
+ grlhgrsegrmhgurdgtohhmpdhrtghpthhtohepuggrvhhiugdrhhhunhhtsehinhhtvghl
+ rdgtohhmpdhrtghpthhtohepjhgvrhhinhhjsehmrghrvhgvlhhlrdgtohhmpdhrtghpth
+ htoheprhgrughurdhnihgtohhlrghusehinhhtvghlrdgtohhmpdhrtghpthhtohepghgr
+ khhhihhlsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtoheptghrihhsthhirghnrdguuh
+ hmihhtrhgvshgtuhesihhnthgvlhdrtghomhdprhgtphhtthhopehfvghrrhhuhhdrhihi
+ ghhithesrghmugdrtghomhdprhgtphhtthhopehkohhnshhtrghnthhinhdrrghnrghnhi
+ gvvheshhhurgifvghirdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:2rPvaI34GjP50xQXyLrFIM1x-C8cb7lWuAf8R-v-TlpqIZnv8khrfQ>
+ <xmx:2rPvaCxEQe_0BN8QpbLF6s-tfk1y7Yk8JgzTNqErVJyeLhrFhRQVVg>
+ <xmx:2rPvaMgUEuVYCULgPFgz8_9n_lUWWIryGh4osjEwGSff5AzLV9wUGA>
+ <xmx:2rPvaNrMDFdunhk8cYK8gyA29ygY-W0xnlByD37Cz80bQSpqNEiW-Q>
+ <xmx:27PvaNgMjAdjdx7iTOfrquf1KGG7CftI5RuTne7CV-j-SyWyuhxtps_Z>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Oct 2025 10:29:09 -0400 (EDT)
+ 15 Oct 2025 10:46:49 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH 0/3] Use cross-platform rte_basename function
-Date: Wed, 15 Oct 2025 16:29:08 +0200
-Message-ID: <4790695.6PsWsQAL7t@thomas>
-In-Reply-To: <20250806133833.3236170-1-bruce.richardson@intel.com>
-References: <20250806133833.3236170-1-bruce.richardson@intel.com>
+To: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+Cc: david.hunt@intel.com, jerinj@marvell.com, radu.nicolau@intel.com,
+ gakhil@marvell.com, cristian.dumitrescu@intel.com, ferruh.yigit@amd.com,
+ konstantin.ananyev@huawei.com, dev@dpdk.org, stable@dpdk.org,
+ "Burakov, Anatoly" <anatoly.burakov@intel.com>
+Subject: Re: [PATCH v2] eal/x86: enable timeout in AMD power monitor
+Date: Wed, 15 Oct 2025 16:46:47 +0200
+Message-ID: <3976740.KgjxqYA5nG@thomas>
+In-Reply-To: <39c5c720-4c30-435b-ac28-96b2cd10afb3@intel.com>
+References: <20251013031619.2988915-1-sivaprasad.tummala@amd.com>
+ <20251013055158.3037400-1-sivaprasad.tummala@amd.com>
+ <39c5c720-4c30-435b-ac28-96b2cd10afb3@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -86,10 +97,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Bruce Richardson (3):
->   app: use cross-platform basename function
->   eal: use common basename function
->   dma/idxd: use DPDK basename function
+14/10/2025 10:56, Burakov, Anatoly:
+> On 10/13/2025 7:51 AM, Sivaprasad Tummala wrote:
+> > Previously, the AMD power monitor implementation did not enable the
+> > timeout, causing the lcore to remain in a wait state until an external
+> > monitoring event occurred or an interrupt was received.
+> > 
+> > This patch enables the timeout-based exit condition, allowing
+> > the lcore to automatically wake up after the specified period.
+> > The maximum supported timeout value is 2^32 - 1.
+> > 
+> > Fixes: c7ed1ce04704 ("eal/x86: add power intrinsics for AMD")
+> > Cc: stable@dpdk.org
+> > 
+> > Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+> 
+> Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
 Applied, thanks.
 
