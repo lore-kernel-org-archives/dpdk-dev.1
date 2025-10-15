@@ -2,58 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9892CCD18E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 07:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6B5CCD18E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 07:17:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 283A040A6B;
-	Wed, 15 Oct 2025 09:16:47 +0200 (CEST)
-Received: from pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com
- (pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.77.92])
- by mails.dpdk.org (Postfix) with ESMTP id 1D756402CA;
- Wed, 15 Oct 2025 09:16:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 57762406B4;
+	Wed, 15 Oct 2025 09:17:06 +0200 (CEST)
+Received: from pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com
+ (pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com
+ [35.155.198.111])
+ by mails.dpdk.org (Postfix) with ESMTP id 6A3AD406A2
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 09:17:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
- t=1760512605; x=1792048605;
+ t=1760512624; x=1792048624;
  h=from:to:cc:subject:date:message-id:mime-version;
- bh=CnUK1MryJ+8cDWx0ExBMwdD2bApZgICFyPEtRus7GDs=;
- b=VvFjNI1nW3z1PWhK8eYlHNFUHG7p8RNE0B7gT7S4V1xKoJUwGpML+g/H
- 0xAuQwV0t7b8C1QoQqvns+JIfdttjdOOYnTLoCIoRGiRgEiQyUZ1PhaAY
- UfInhsovLhc4/f6uVYNSwI5kaNugZXkZ2xP07egPfBjr1alwig/fDyZkj
- 7ieP8LVRy8LHvWtb1VboJByzVZ2afa5AAIzUNE23RzVckmWEj2z3FyEx4
- w5w4atEQeeNy0oVt0gaGGuCBPf++fRDQDsZLvDLjNfYExdemp5XwrgqY8
- Xdns4TZTyXMV1PsFjDRs6Uy+2tw8OuWOC35LYrXYqvAFo+ba8W7eX43SC A==;
-X-CSE-ConnectionGUID: 8MJ65GIjS5KNro2DW/sbkw==
-X-CSE-MsgGUID: F3ojUX95TmKEZLaHqt/uZA==
+ bh=AX9U0v/P1t8MDzR0RtZMDbtYF4VsyJIyWE45VQVzljc=;
+ b=nt5n4UUse6kimpMIWK12honheZIPKpXCrj+4OIH89AIrQnO2vENVP8QY
+ VCBn59NtYUSSRjvCDzws/l8ov2VSvqRiwTaRxfd9wIemNVDM+VV8LQRXV
+ 2uzhjzucFy2Ve7vTDgFtqtq8y5vkesS1ti83mPKPNb+Ebg4wSOwBSNuwe
+ O71QFRrSXhq65d8AOiQpcnSZORcRBl74xYWMR8sI5mWIV9MuWqNGVZsp6
+ KEuyKEYcoNnbApD3/kfXsUXsPqEwqs5NEoAWjVeQM+fpY8rVw1q3Lkgzr
+ LtP+q8wykiM4seCp5EzCZdjlNoqbQcQ3COGfeDt+aTrA7wpN+LKTkgDSe A==;
+X-CSE-ConnectionGUID: RzhafVs7SEyHTIJTy2ovig==
+X-CSE-MsgGUID: GO5UjXK9QGeYKW1KnyiVYw==
 X-IronPort-AV: E=Sophos;i="6.19,230,1754956800"; 
-   d="scan'208";a="4915491"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO
- smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
- by internal-pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com with
- ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 07:16:44 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [205.251.233.51:4024]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.20.71:2525]
+   d="scan'208";a="4801538"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO
+ smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+ by internal-pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com with
+ ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 07:16:59 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [205.251.233.51:30842]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.32.215:2525]
  with esmtp (Farcaster)
- id e6fbebe4-ed00-4419-a845-52cd100946b7; Wed, 15 Oct 2025 07:16:44 +0000 (UTC)
-X-Farcaster-Flow-ID: e6fbebe4-ed00-4419-a845-52cd100946b7
+ id 92120293-20c7-4363-a863-acc3fbaace48; Wed, 15 Oct 2025 07:16:59 +0000 (UTC)
+X-Farcaster-Flow-ID: 92120293-20c7-4363-a863-acc3fbaace48
 Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 15 Oct 2025 07:16:36 +0000
+ Wed, 15 Oct 2025 07:16:59 +0000
 Received: from HFA15-CG15235BS.amazon.com (10.1.213.14) by
  EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 15 Oct 2025 07:16:34 +0000
+ Wed, 15 Oct 2025 07:16:57 +0000
 From: Shai Brandes <shaibran@amazon.com>
 To: <stephen@networkplumber.org>
-CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>, <stable@dpdk.org>
-Subject: [PATCH 18/21] net/ena/base: fix unsafe memcpy on invalid memory
-Date: Wed, 15 Oct 2025 10:16:25 +0300
-Message-ID: <20251015071625.1139-1-shaibran@amazon.com>
+CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>
+Subject: [PATCH 19/21] net/ena/base: optimize branch prediction
+Date: Wed, 15 Oct 2025 10:16:47 +0300
+Message-ID: <20251015071647.1188-1-shaibran@amazon.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.1.213.14]
-X-ClientProxiedBy: EX19D046UWB002.ant.amazon.com (10.13.139.181) To
+X-ClientProxiedBy: EX19D043UWC002.ant.amazon.com (10.13.139.222) To
  EX19D001UWA001.ant.amazon.com (10.13.138.214)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -68,40 +69,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The return status check was placed after a memcpy operation,
-which could result in copying from an invalid memory region
-if the feature fetch failed.
+Add likely/unlikely compiler hints to optimize conditional logic
 
-Fixes: b68309be44c0 ("net/ena/base: update communication layer for the ENAv2")
-Cc: stable@dpdk.org
 Signed-off-by: Shai Brandes <shaibran@amazon.com>
 Reviewed-by: Amit Bernstein <amitbern@amazon.com>
 Reviewed-by: Yosef Raisman <yraisman@amazon.com>
 ---
- drivers/net/ena/base/ena_com.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ena/base/ena_eth_com.c | 4 ++--
+ drivers/net/ena/base/ena_eth_com.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ena/base/ena_com.c b/drivers/net/ena/base/ena_com.c
-index b4437f532b..b003167bed 100644
---- a/drivers/net/ena/base/ena_com.c
-+++ b/drivers/net/ena/base/ena_com.c
-@@ -2476,13 +2476,13 @@ int ena_com_get_dev_attr_feat(struct ena_com_dev *ena_dev,
- 	} else {
- 		rc = ena_com_get_feature(ena_dev, &get_resp,
- 					 ENA_ADMIN_MAX_QUEUES_NUM, 0);
-+		if (rc)
-+			return rc;
-+
- 		memcpy(&get_feat_ctx->max_queues, &get_resp.u.max_queue,
- 		       sizeof(get_resp.u.max_queue));
- 		ena_dev->tx_max_header_size =
- 			get_resp.u.max_queue.max_header_size;
--
--		if (rc)
--			return rc;
- 	}
+diff --git a/drivers/net/ena/base/ena_eth_com.c b/drivers/net/ena/base/ena_eth_com.c
+index 653df389c4..8a019b3451 100644
+--- a/drivers/net/ena/base/ena_eth_com.c
++++ b/drivers/net/ena/base/ena_eth_com.c
+@@ -241,7 +241,7 @@ static void *get_tx_sq_desc(struct ena_com_io_sq *io_sq)
+ {
+ 	void *tx_desc;
  
- 	rc = ena_com_get_feature(ena_dev, &get_resp,
+-	if (io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_DEV)
++	if (likely(io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_DEV))
+ 		return get_sq_desc_llq(io_sq);
+ 
+ 	tx_desc = get_sq_desc_regular_queue(io_sq);
+@@ -291,7 +291,7 @@ static int ena_com_sq_update_reqular_queue_tail(struct ena_com_io_sq *io_sq)
+ 
+ static int ena_com_sq_update_tail(struct ena_com_io_sq *io_sq)
+ {
+-	if (io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_DEV)
++	if (likely(io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_DEV))
+ 		return ena_com_sq_update_llq_tail(io_sq);
+ 
+ 	return ena_com_sq_update_reqular_queue_tail(io_sq);
+diff --git a/drivers/net/ena/base/ena_eth_com.h b/drivers/net/ena/base/ena_eth_com.h
+index f25e26840d..1fc92ffb55 100644
+--- a/drivers/net/ena/base/ena_eth_com.h
++++ b/drivers/net/ena/base/ena_eth_com.h
+@@ -110,7 +110,7 @@ static inline bool ena_com_sq_have_enough_space(struct ena_com_io_sq *io_sq,
+ {
+ 	int temp;
+ 
+-	if (io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_HOST)
++	if (unlikely(io_sq->mem_queue_type == ENA_ADMIN_PLACEMENT_POLICY_HOST))
+ 		return ena_com_free_q_entries(io_sq) >= required_buffers;
+ 
+ 	/* This calculation doesn't need to be 100% accurate. So to reduce
 -- 
 2.17.1
 
