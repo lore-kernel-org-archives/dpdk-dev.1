@@ -2,84 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C42CCD194
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 16:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F26CCD185
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 16:53:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5888440A84;
-	Wed, 15 Oct 2025 18:37:24 +0200 (CEST)
-Received: from fhigh-b8-smtp.messagingengine.com
- (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
- by mails.dpdk.org (Postfix) with ESMTP id C782140273
- for <dev@dpdk.org>; Wed, 15 Oct 2025 18:37:22 +0200 (CEST)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
- by mailfhigh.stl.internal (Postfix) with ESMTP id CA5E07A009F;
- Wed, 15 Oct 2025 12:37:21 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-09.internal (MEProxy); Wed, 15 Oct 2025 12:37:22 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id B015C4060C;
+	Wed, 15 Oct 2025 18:53:57 +0200 (CEST)
+Received: from fhigh-b1-smtp.messagingengine.com
+ (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+ by mails.dpdk.org (Postfix) with ESMTP id 7D89940273
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 18:53:55 +0200 (CEST)
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 9E4C17A012D;
+ Wed, 15 Oct 2025 12:53:54 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-10.internal (MEProxy); Wed, 15 Oct 2025 12:53:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760546241;
- x=1760632641; bh=RQBRZmSiB0JonoVNfH/vM0+K9mpir85EzopBXazSVW4=; b=
- XxWC2XB+0m+XDrk0qoBFYfc4Xebu8QzDPpgftMzrM3s7pIoE6x8A3am9uzAgRfDA
- 0mH1QW3IngFAryajdX/zDg3wbTMXk44MiVJSpfUSZU0v8bXZ1mXIi1LB7cVr9QmV
- f+xc1GEMKhfTaV4wHFdVuh+YKzssAb4nht6o7yD1YWhXbfD2Gg+iFCGYu1m5p6AA
- qTQV237GtSBu/B8g7jHm9wmUaaNlQdfs/IFTYXaaqicVGZmM4UmHWOQ2njJmAS+/
- uTlaQZ3CPiKrz7EYbwwLzIxfgiK3TBUyjqjvqvFiefniA2IEe6Cwuo/uS0AA92Jf
- h26jhgRGNYTJ+V5BJEUo/w==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1760547234;
+ x=1760633634; bh=+eEMJNjLtZsbZ5qb+zfiL9Yd89whZJa54MU6iHcdhDU=; b=
+ SW5iTh7iRmt5nbeEUJnbsK2Tuzyk4rZVPz7HcbGtazKhzjLQkN3E3Q0yZGdWmORG
+ YJp7pX+vdxbECA5ibKTxgcwEBJx0FYigljXSuUnhAXLmTxsacHkDj4IwG17y/jsW
+ FaKNbYJVfED9+q2jS/wydeEJ2nFriiEYPnMKZt2Q/JV/L3gHMRcgYID/aR1aWbrX
+ sE6UskZKjNq9s1jxJKiX8kMny2GMDvEXXurwd3iy00S6Zp0FrJ0AcQWXWaHBsJnN
+ YHGred7eZK08jYtk0AZcVShxvLxVEViES07Y9FJTSm9+PBY81cmiQwb5KEyAjZy1
+ 7xFccjn7sp0/uEMcBa+t3A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760546241; x=
- 1760632641; bh=RQBRZmSiB0JonoVNfH/vM0+K9mpir85EzopBXazSVW4=; b=O
- MjZj/Mw0lvQZqm8hPJ+KN+ht5Kf+jX84iN5n39VmwqPKLc5qsTDhRe224oCkuqfR
- MgiNVe3/gYknBSMsZPLXnz8vZ1yiBQo3Husx/hYdwaD30bl2e1frfpOgBUckEKzp
- gtizM/596mnbb8GoUJk5V9Mp20rkD4xU5kx/uVH+FUCAD/oJxGTj/MCbaT9rEjFw
- FNeBZAZuAZvzaz4W+XPMe9Y1E2AutVmg2jEm4f8O46mRqGZs2sarLsVsTxcxUNhy
- WEkAKtjTf6pHskp65Q23uypUjhgJbhmbHscZD0+WNCWnBjF2TnrD3XBuFVi0DvAx
- PcA8UQFitLgef4OyV27lg==
-X-ME-Sender: <xms:wM3vaJRpMJrasOpcfmzNrviFQNHh3owAIqrme_Q7oGr6Gvhls3HXAA>
- <xme:wM3vaNsKGGF4gq-mScZLx6IJx4xUMmiaCAAj3NgFajNsTcdDd5EhhfoyZgcTJIIOJ
- -GdfKnRInLaBMlWXYGoloBRAohWGdxUsBsn1tg7_G0HYH2hRzQkcA>
-X-ME-Received: <xmr:wM3vaN3X6epAapc-kmg-3R0ctUPNXJ4RrODxGZdCbOcpPLkz9tu3zckK4vrvqTmAUv1ANSlkSYMlUQh-uP3EuxOkMA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdefleduucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760547234; x=
+ 1760633634; bh=+eEMJNjLtZsbZ5qb+zfiL9Yd89whZJa54MU6iHcdhDU=; b=p
+ JDShx9pqmL/q3vIAWlQXK9JjQJVthOev5oJS6vshCAJl23onUnqsyEVIb50cTDUq
+ pdVZugbbykQtcaJIH8lnBnJ2CrKTKMc8qkMRh4sNiJ96kWKN4GTVEXuW1aWQarRz
+ 948X6wjzrzPgEUWAYSD/d+blEEG8mKrHQuBfVpOYi/xSSm6zCaba1S2I7Jbi+4w/
+ P8AHGtloYACLU6ewodbh9zpjczd20jAyKRnXen/dXPEqEuKjmaaGHzHWEmio+E1A
+ fi6+a20+rtMXzWQUM7pd8iLyvk8Z/YWmxyXFuDzg1bSuklOGpIYP9qf4MQmWVT/r
+ 8m2njrbZipVRixVR6FuqA==
+X-ME-Sender: <xms:odHvaA4m3r-Y9Nen47QEeYRjAlYDvIxNrAAI7_ejHXVEqMpUuW9xIQ>
+ <xme:odHvaCBJQIvvD31_u4xIqhJWtXBjm_sV3tJ3m08gp-FDf3eir0RwB1SnlaBr8zt1Z
+ h2SunUjmW6istf3RedQM0CowmtIywhOBa_FivjWh87LP4apoes-DA>
+X-ME-Received: <xmr:odHvaHbsZKNXet8TPNvc-ANKIUim6nDMwdtrrwxn1DmchbRjmZQuo12JFb_TWYKg3JrjW4plXccAO3fJlQNgJazrzA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdefleegucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeekfeehfedtgedtjeehueeutdfgleefieevkeeikeelkefflefgtdev
- ieehheffudenucffohhmrghinhepughpughkrdhorhhgnecuvehluhhsthgvrhfuihiivg
- eptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdr
- nhgvthdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
- epkhgrihdrjhhisehinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdho
- rhhgpdhrtghpthhtohepghgrkhhhihhlsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtoh
- epkhhonhhsthgrnhhtihhnrdgrnhgrnhihvghvsehhuhgrfigvihdrtghomhdprhgtphht
- thhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtth
- hopehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphhtthho
- pehmsgesshhmrghrthhshhgrrhgvshihshhtvghmshdrtghomh
-X-ME-Proxy: <xmx:wM3vaGV7C8JvtAndE5CQq6IVveid3XyqbFPJApiiG0kg0T8zun7i9Q>
- <xmx:wM3vaAIkIDLYInZPaAbZhw9THgwzdDrNChsMHxbKIlZPnakvzYOiWQ>
- <xmx:wM3vaA2PkLRjySHDCfnHPvUxBT5Y7Lo55mznfcAAuxMRgo5c78Y78A>
- <xmx:wM3vaO5qwy_2YRiXsGjUL_hYQDNcVf8-t4RW4WSH3hjZOZKLkU0Rtw>
- <xmx:wc3vaCkW_HppAdLeEJsxIkB_JZe5k64D_H5GICmSZh0wLJM37hyXJBHb>
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehjfhhrvggvsehfrhgvvggsshgurdhorh
+ hgpdhrtghpthhtoheprghnrghtohhlhidrsghurhgrkhhovhesihhnthgvlhdrtghomhdp
+ rhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprh
+ gtphhtthhopeguvghvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:odHvaNZyYfJsuG_t1FutryokLUxrDUHbH5d6PcL_cz6l_9GxwrRyWg>
+ <xmx:odHvaO823J_HC0oO0jx0RDHNBatTQYL4bm_ohIYT39XYMaohKziIRQ>
+ <xmx:odHvaMgrkqmXvEhjg2H182_SLWOki4cDSkYD4cC0GNfgf3lLBTq1bg>
+ <xmx:odHvaOeJMwCpkNwpsS6MhPKVRRtlmeD4pok7hLdenFfV8lckCz6IUg>
+ <xmx:otHvaM0ifqdLfwBG-cmlMx4KmP0TOXYrJdVd0OL68FkDjAdT4Nr_JAS_>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Oct 2025 12:37:19 -0400 (EDT)
+ 15 Oct 2025 12:53:53 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Kai Ji <kai.ji@intel.com>
-Cc: dev@dpdk.org, gakhil@marvell.com, konstantin.ananyev@huawei.com,
- bruce.richardson@intel.com, stephen@networkplumber.org,
- mb@smartsharesystems.com
-Subject: Re: [dpdk-dev v6 2/2] crypto/ipsec-mb: use constant-time memory
- comparison
-Date: Wed, 15 Oct 2025 18:37:17 +0200
-Message-ID: <29399600.gRfpFWEtPU@thomas>
-In-Reply-To: <20251002153229.98158-2-kai.ji@intel.com>
-References: <20251001153242.55987-1-kai.ji@intel.com>
- <20251002153229.98158-1-kai.ji@intel.com>
- <20251002153229.98158-2-kai.ji@intel.com>
+To: Jake Freeland <jfree@freebsd.org>
+Cc: Anatoly Burakov <anatoly.burakov@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org
+Subject: Re: [PATCH v2 0/3] EAL memory fixes
+Date: Wed, 15 Oct 2025 18:53:51 +0200
+Message-ID: <3242560.9Mp67QZiUf@thomas>
+In-Reply-To: <20250814213246.4141803-1-jfree@FreeBSD.org>
+References: <20250814213246.4141803-1-jfree@FreeBSD.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -96,22 +89,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-02/10/2025 17:32, Kai Ji:
-> Replace memcmp() with rte_timingsafe_memcmp() in cryptographic
-> authentication verification operations across iipsec-mb drivers.
-> 
-> Note: OpenSSL crypto driver already uses CRYPTO_memcmp() which
-> provides equivalent timing attack resistance and is left unchanged.
-> 
-> Note: scheduler driver memcmp stays unchanged as its not secret data
-> comparison and actually faster with no timing attack risk.
-> 
-> Bugzilla ID: 1773
-> https://bugs.dpdk.org/show_bug.cgi?id=1773
-> 
-> Signed-off-by: Kai Ji <kai.ji@intel.com>
+Hello,
 
-Applied with few minor edits, thanks.
+14/08/2025 23:32, Jake Freeland:
+> Hi there,
+> 
+> This patchset contains a number of EAL-specific memory fixes that I've
+> made over the last year. Two pertain to FreeBSD, one pertains to Linux.
 
+Your patches have been reviewed, please could you reply to the comments?
+
+Thank you
 
 
