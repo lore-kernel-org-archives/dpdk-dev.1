@@ -2,86 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B64CCD193
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 20:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89434CCD185
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 22:04:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CD4CF40E68;
-	Wed, 15 Oct 2025 22:00:03 +0200 (CEST)
-Received: from fhigh-b2-smtp.messagingengine.com
- (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
- by mails.dpdk.org (Postfix) with ESMTP id 3027240273
- for <dev@dpdk.org>; Wed, 15 Oct 2025 22:00:02 +0200 (CEST)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 734137A005A;
- Wed, 15 Oct 2025 16:00:01 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-09.internal (MEProxy); Wed, 15 Oct 2025 16:00:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760558401;
- x=1760644801; bh=AT/V76Oje2i/dW2YuCvUHjunjnb6yYAhJNRblNHsv/s=; b=
- QG3MDJiCc9efwJnxIIZfoTlVPfsWz/Q9DcrGCoXbLYs3mrx3GXrbs6IgtKsri9yW
- GR2GueXJtb70p6zAAckDhuILiUdzNDj9RLaoBjeL1VH/3rxuwdY5VHdwBfoeYXSh
- u4Fx+/+XV+Y8Dy72QlNBHCKSXjMNAOdYFP329rle7qBeNf7hHRL1hdQ1ecYogixM
- 72LGeeh6bey7Lv+Ee2vTOgFfL5F34LGZ1KHk2bdIKeBS8ZHWy7sPoMqacACOlkVc
- l70DxpYhsZ5YckprDa7uV7GfRBR9j2+6nXrG1bQ8lppjeVmvj6YZdNLu5P9pobeZ
- fxxqwH4gbnPPEPDqOu/tDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760558401; x=
- 1760644801; bh=AT/V76Oje2i/dW2YuCvUHjunjnb6yYAhJNRblNHsv/s=; b=F
- nur1fyXHJBiRhn+HxZ57YJMq5MNQSJtYmuLmFlI2WLPXwnLQWhAk4pqHkKTXQ/X+
- fhCKJxV2xFDxCdDs2jg+TG1AYZR9TbxCXIQJBfA1S4XY7V+rztjCGCKWQ78qGAY6
- n5XltQ1gaCmcvVsxcl07bpP0C8YmrBK2uwGNPi74OCVm/fKkpyHZ4Am5nE0M17zx
- 537kF98LYDnlwlHHuALWtx3tAhJL9GXu7prDYrvW7EyX7VAexqIQa7qbGQWlRqcC
- bkWXIVrTjm9u6sWS9+p4L9tLoqVva+nyxYCC6MvZ7JA4G6QlX5Gob/zqC1fPTXwl
- QRFI/0zvAEAe+0SP6dTEA==
-X-ME-Sender: <xms:QP3vaJhSU4oLzy6-ObBMv2SU8thSWKLYPZ73PMBwY_985rYL6P4ESA>
- <xme:QP3vaI_Z_kSsObl4KuyXb9jLlfs-nJhGXX_lzrgLSDxyBQohjoTN0GKkNGtVwiUVP
- d7yl_2dFFxs6s1mP9f0AKWvpmqi2d6371yBE9iWoRcMAlfGKq5oog>
-X-ME-Received: <xmr:QP3vaIGS1fcG_NUbQFf4GfjbB8fejS7AXzR4Eo02l7KYV4nS9PhDCuaJatfaLqGWAWFkEulhjBA52mW8L8VfY8A1nw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdegfedvucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopegtfhhonhhtrghinhesrhgvughhrghtrd
- gtohhmpdhrtghpthhtohephigrnhiihhhirhhunhgpudeifeesudeifedrtghomhdprhgt
- phhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehkihhrrghnkhhumhgrrh
- hksehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepnhgurggsihhlphhurhgrmhesmhgr
- rhhvvghllhdrtghomhdprhgtphhtthhopehguhhvvghntgdrghhulhgtvgesghhmrghilh
- drtghomhdprhgtphhtthhopehjvghrihhnjhesmhgrrhhvvghllhdrtghomh
-X-ME-Proxy: <xmx:QP3vaDlLSVM047GlP-bImByNR0xebztmGrNbPc6xgrR_hMPR99T95A>
- <xmx:QP3vaEYZmgHYZZm4RJQikLnN0vHN1zRJzECwwxbo4iLsgn177RBN1Q>
- <xmx:QP3vaAEVibA_aMjrCPIh70-lfsSASmjPtPMKahfxqx5weDIpLBFOZQ>
- <xmx:QP3vaNKr3dVel08I-X6uCHDyUs4tXIBZRynD6MXxvzfVGkP_L9Zscw>
- <xmx:Qf3vaJWaO9dyuBHByR1ZnK9IUo8WKXh0CuTyNhS76OpK00H2BJ5uNfpi>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Oct 2025 15:59:59 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Christophe Fontaine <cfontain@redhat.com>
-Cc: Zhirun Yan <yanzhirun_163@163.com>, dev@dpdk.org,
- Kiran Kumar Kokkilagadda <kirankumark@marvell.com>,
- Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>,
- Guvenc Gulce <guvenc.gulce@gmail.com>, Jerin Jacob <jerinj@marvell.com>
-Subject: Re: [EXTERNAL] Re: [PATCH 0/2] graph: dispatch mode improvements
-Date: Wed, 15 Oct 2025 21:59:58 +0200
-Message-ID: <17969458.Ash8RoxBsO@thomas>
-In-Reply-To: <BY3PR18MB478556F4158B03FC20BB7A4BC81CA@BY3PR18MB4785.namprd18.prod.outlook.com>
-References: <20250723165001.11162-1-cfontain@redhat.com>
- <2836217.eGJsNajkDb@thomas>
- <BY3PR18MB478556F4158B03FC20BB7A4BC81CA@BY3PR18MB4785.namprd18.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 44E99402C5;
+	Thu, 16 Oct 2025 00:04:06 +0200 (CEST)
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
+ [209.85.215.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 5C04C40273
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 00:04:05 +0200 (CEST)
+Received: by mail-pg1-f180.google.com with SMTP id
+ 41be03b00d2f7-b6a0a7f3a47so21485a12.1
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 15:04:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760565844;
+ x=1761170644; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=c3Aoq0z81aEDqs2NQRhqKi0Phf1WPTlAb0kjdVpOptA=;
+ b=a3fWQt3VNVWd5IxLy6MFFD+idFXEbG/ztqdo+LC3MDNkeT73K0mGCBKh7WoQ/USxgh
+ 0Qr7U8b8VawJZmiV9njJeWldr/lHVh/CoHHQacq3UJsVqj069BK9RDfLyXa4wjgIJyum
+ /9RyL7vf8ZfEFX5hstUW1aoAbIpnv4/+fg843xa5DAq5ARjxIS0X11xk4WnNtrG3Awbi
+ YXmeF9bMsd6HUgQ9n3K9f1gkd50YhqfThcYUCNsI7DVgd5+xrrYbKgEoFaLBAN7j77B9
+ 0qCevj9hf5mhb+CQt4lXhKjwnZP+JV6g1qVzCrF8H3jf0m42kCMJgC7jQtNACOXrnCwV
+ pH+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1760565844; x=1761170644;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=c3Aoq0z81aEDqs2NQRhqKi0Phf1WPTlAb0kjdVpOptA=;
+ b=lQ2oLSvd2mlkxH4da1hWVAXRxHQtLfLODxsgajAEOZfdn+EL4c1Xf+tVJbnYMK7Wg7
+ vsz2b0u8Ozoaf/73+TFcCWLOnhAI7hhVcM6xAOCZ9a1wqUq7sLFTQm7X/pUiHv+zaaXS
+ AAam1C2SEKow8ivchpXrLAoHB+0JAtJi04by1NbkiyBKM5i+Lx04Lsj+UkQ/b9WQ0Ga3
+ mAVBeUyaBlFrpeyQYb7vsHFezLNfL+anX0EyIUNBcvOMDb2kILtvqhAwOioTld5oy+32
+ RB5ZkZ58txjgP4474iFO5LES4148eLwqNiROIUdRQ29b5d/cJ/UvkC5tuDfTE/+Z37be
+ LkyA==
+X-Gm-Message-State: AOJu0YzZJJIhYlFQmIwHwz4C4u0ED2z4jgCY6Lnf52Hf8RFgJy1C5wLK
+ ssWvFhXxH3VV7OjeAnc0Mz9nzsj0/cnmNFd5PqLUZFWhqd/raIU7q60b95AWJQavYWFNyTusrIV
+ Pu8QbXJ0=
+X-Gm-Gg: ASbGncuYV2RHicgrPmzEsID3hpVAi+NNR6SV9c7MN24MHqCc/d4gVVinQXh6/Oq3Ihl
+ TK8N49gTaYsiXj7ap64XE3pFZmDFTbNPasH/u1mlwHybOx869VshLQXWg2FlZJZUuKtYk0aU3Yg
+ BXSHWgsbiJ8vhvlL096NhVpHfmaCsxDNtG5AS9Rn5q4/ZYdHhSelXZ1HF+i+QLiHEWLvX1qwlbt
+ wiZ1x1j3SUojUDkGRXBp5gnpmDWbDnmsRR20PwCFYZdNK+QdrA+RUP/mtbboGcz3OJnmZuQqQL9
+ Z1mTQBZMNzCFJlgi3HkKx3s8EzGzIKBkR8sQl4NgXfnkupD7nn+YXAN2d3tHuNPsVxP3BT5Xhze
+ zI7mEADOk/TEiCJssgOZSJ4udvKduYfJasnONjg/RxIJFnn8KPaZXHuJuHmens+IjYHb4C9532U
+ Bjz4Y9s1W1m5NpqAyEce+HLtgtltYtVDED1UK8+fsQRhJzQPS1kWB3
+X-Google-Smtp-Source: AGHT+IFsHQURGc7oOj8wu61AhICELy/TPEcVN6Jrii6+JDAeH2G42uOmsmHcDHni+bX8CzjO3Yx1YA==
+X-Received: by 2002:a17:903:2c06:b0:24b:4a9a:703a with SMTP id
+ d9443c01a7336-29027373d80mr415476585ad.17.1760565844089; 
+ Wed, 15 Oct 2025 15:04:04 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2909930a3d3sm6867185ad.20.2025.10.15.15.04.03
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 15 Oct 2025 15:04:03 -0700 (PDT)
+Date: Wed, 15 Oct 2025 15:04:01 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v4 00/20] Wangxun new NIC support
+Message-ID: <20251015150401.60b5cc80@hermes.local>
+In-Reply-To: <20250930095953.18508-1-zaiyuwang@trustnetic.com>
+References: <20250418094131.24136-1-zaiyuwang@trustnetic.com>
+ <20250930095953.18508-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,23 +83,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-24/09/2025 16:30, Jerin Jacob:
-> From: Thomas Monjalon <thomas@monjalon.net>
-> > 23/07/2025 18:49, Christophe Fontaine:
-> > > Small series to improve dispatch mode for lib/graph.
-> > > In order to run an instance of the graph in a control thread (slow
-> > > path defined as nodes) in addition to the datapath thread, we need:
-> > >   - the ability to run graph_walk on an non-eal thread
-> > >   - a signaling mechanism to wake up the control thread
-> > 
-> > Should I expect a review before merging? Someone?
+On Tue, 30 Sep 2025 17:59:32 +0800
+Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
+
+> We have released a new NIC series: Amber-Lite, with two models
+> supporting 10G/25G and 40G rates. Due to minimal hardware 
+> differences from existing 10G NICs, it remains supported within
+> the txgbe driver.
 > 
-> @Zhirun Yan The changes are for mcore dispatch, please review.
+> Zaiyu Wang (20):
+>   net/txgbe: add basic information for Amber-Lite 25G/40G NICs
+>   net/txgbe: add new SW-FW mailbox interface
+>   net/txgbe: add identification support for new SFP/QSFP modules
+>   net/txgbe: rename raptor to sp for Sapphire-specific code
+>   net/txgbe: add basic link configuration for Amber-Lite NICs
+>   net/txgbe: add support for PHY configuration via SW-FW mailbox
+>   net/txgbe: add RX&TX support for Amber-Lite NICs
+>   net/txgbe: add hardware reset change for Amber-Lite NICs
+>   net/txgbe: add MAC reconfiguration to avoid packet loss
+>   net/txgbe: add TX head Write-Back mode for Amber-Lite NICs
+>   net/txgbe: add RX desc merge mode for Amber-Lite NICs
+>   net/txgbe: add FEC support for Amber-Lite 25G NICs
+>   net/txgbe: add GPIO configuration
+>   net/txgbe: disable unstable features
+>   net/txgbe: add support for TX laser enable/disable
+>   net/txgbe: add support for TX queue rate limiting
+>   net/txgbe: add support for getting PHY ID
+>   net/txgbe: add thermal sensor configuration for Amber-Lite NICs
+>   net/txgbe: add RSS for Amber-Lite NICs
+>   doc: update for txgbe
+> 
+>  doc/guides/nics/txgbe.rst                 |   8 +-
+>  drivers/net/txgbe/base/meson.build        |   2 +
+>  drivers/net/txgbe/base/txgbe_aml.c        | 354 ++++++++++++++++++++
+>  drivers/net/txgbe/base/txgbe_aml.h        |  22 ++
+>  drivers/net/txgbe/base/txgbe_aml40.c      | 160 +++++++++
+>  drivers/net/txgbe/base/txgbe_aml40.h      |  20 ++
+>  drivers/net/txgbe/base/txgbe_devids.h     |   9 +
+>  drivers/net/txgbe/base/txgbe_eeprom.c     |   7 +-
+>  drivers/net/txgbe/base/txgbe_eeprom.h     |   2 +
+>  drivers/net/txgbe/base/txgbe_hw.c         | 365 ++++++++++++++++----
+>  drivers/net/txgbe/base/txgbe_hw.h         |  15 +-
+>  drivers/net/txgbe/base/txgbe_mng.c        | 184 +++++++++-
+>  drivers/net/txgbe/base/txgbe_mng.h        |  34 +-
+>  drivers/net/txgbe/base/txgbe_osdep.h      |   2 +
+>  drivers/net/txgbe/base/txgbe_phy.c        | 127 ++++++-
+>  drivers/net/txgbe/base/txgbe_phy.h        |  24 ++
+>  drivers/net/txgbe/base/txgbe_regs.h       | 103 +++++-
+>  drivers/net/txgbe/base/txgbe_type.h       |  70 +++-
+>  drivers/net/txgbe/base/txgbe_vf.c         |   2 +-
+>  drivers/net/txgbe/txgbe_ethdev.c          | 390 ++++++++++++++++++++--
+>  drivers/net/txgbe/txgbe_ethdev.h          |   2 +-
+>  drivers/net/txgbe/txgbe_ethdev_vf.c       |   2 +-
+>  drivers/net/txgbe/txgbe_flow.c            |   2 +-
+>  drivers/net/txgbe/txgbe_rxtx.c            | 203 ++++++++---
+>  drivers/net/txgbe/txgbe_rxtx.h            |   3 +
+>  drivers/net/txgbe/txgbe_rxtx_vec_common.h |  27 +-
+>  26 files changed, 1937 insertions(+), 202 deletions(-)
+>  create mode 100644 drivers/net/txgbe/base/txgbe_aml.c
+>  create mode 100644 drivers/net/txgbe/base/txgbe_aml.h
+>  create mode 100644 drivers/net/txgbe/base/txgbe_aml40.c
+>  create mode 100644 drivers/net/txgbe/base/txgbe_aml40.h
 
-No news after 3 weeks.
-
-> In general, changes looks good to me.
-
-Applied, thanks.
-
-
+Please add (as follow on patch) short summary for release notes for 25.11
