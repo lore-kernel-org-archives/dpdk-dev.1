@@ -2,80 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0962BCCD18E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 10:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 885D7CCD193
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 10:07:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F21A40654;
-	Wed, 15 Oct 2025 12:05:50 +0200 (CEST)
-Received: from fhigh-b4-smtp.messagingengine.com
- (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
- by mails.dpdk.org (Postfix) with ESMTP id 4694140276
- for <dev@dpdk.org>; Wed, 15 Oct 2025 12:05:49 +0200 (CEST)
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
- by mailfhigh.stl.internal (Postfix) with ESMTP id AA7267A01E4;
- Wed, 15 Oct 2025 06:05:48 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-12.internal (MEProxy); Wed, 15 Oct 2025 06:05:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760522748;
- x=1760609148; bh=aR38FyInqvTDExinT2EX1lq5n+a7UAu1WKtjcIqo+mY=; b=
- cZDNnLiVyBCPIjY3AgnjCHAfnE39nq51VBM7od9YIqGs5qOZFtbCyvMLBVE8h3jJ
- vPJ8+eQSWrZA6swEsgc7CNQJgcp+BiOrK6P7D354j9ENJAd3FhIdYvzAuXSmmXIt
- AGRfRivt72q3EgXCRofCSFjXGPV43llFvpIBOlcgsRczshcuCLnmq+c21EM1U6Jt
- mn4BF76hnSGeCkJHo4bNMBCEEdjmG8waV3ODd2cwVPJ0LoQ8oppDMIRooay09Q8C
- p2hc++wBuGQB+vXIeCayz0chFX2SqDZ6M4lcn0h4Tmq7JUW16V/Pi3bB9/genDxj
- C0Ruoj5K9lz84tCO7f7NQw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760522748; x=
- 1760609148; bh=aR38FyInqvTDExinT2EX1lq5n+a7UAu1WKtjcIqo+mY=; b=t
- QLsl4MfTonSy+f2KsNymLvB57ckq/m7iuT2J/cvOktR/oxxme6wCuTccwHcw1yB4
- s284gUSIaDR4t5KdNcpAr++Fa0pS23/2e8hDArgw4Rg9at3zSLC4QeHcmx5mt8BM
- qWs4SKODTV/5b/XuUitHHvb4t9MWDFRTyVptGKAVK6QiUnZBugXUnVU764vCcr91
- 3d3zXu6oZ9ZwoBZpqBKRndyqir9u6LjC0yyG/BFv7AcMgoKAM2+nBC/4oOhRyw4P
- 9XIDiCiyq4yALIArRIRGzmSsx3lCwkaevFCeHr6rjyofeZQiTfI7+oP+mGkTuNel
- i0wkpd2RWXMJuCtgftQ2Q==
-X-ME-Sender: <xms:-3HvaL41zLPI2RGY7R9ZM7rvcwO365zZjr8UHCs0NLVnOQrLTawqZQ>
- <xme:-3HvaFOB-_IsOgoXZ-ThaK6iEcdpf5kB8ATA2v0Fh7JZBd0VTgblsoj5JsjM6ywj2
- 7GKNkdgds82zWUCdav4uMO8xjdqUPpe-T5q5d_O8AFyyDTAAucq>
-X-ME-Received: <xmr:-3HvaBlVX3mORGZXulrGwI6tS49on8RiU4DGDtercUilH1_qPhtIrgNgPw7VH-ABmu0OQYyFQBRfpSOs16-n1i5p2Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdefudefucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehfvghnghgthhgvnhhgfigvnheshhhurg
- ifvghirdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
- lhhiuhihohhnghhlohhngheshhhurgifvghirdgtohhm
-X-ME-Proxy: <xmx:-3HvaESp6SabrgUaDvTnqxGfaF_JllwbN6Vqe3WDaI6_TVZ3lH7Lhw>
- <xmx:-3HvaFAyvrbAJkU9OxHzBM-mZXUwwMDlV9ouMLwHFMgm8YxkJ2kblw>
- <xmx:-3HvaLTPuVoLLYqGfCTZkkStH13FbERqkKqSMSjPqlFvKNpNx7wscw>
- <xmx:-3HvaDqjCo7ZVHjQJ-_ep69EF5tGVRGxlLq2n1h1lrI-7Dv-_6tzdw>
- <xmx:_HHvaN5dLQclMaj0aFXmR26n-yUP2pIP5N4f67ncfIsqBAGHdbjXzFiq>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Oct 2025 06:05:47 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Chengwen Feng <fengchengwen@huawei.com>
-Cc: dev@dpdk.org, liuyonglong@huawei.com
-Subject: Re: [PATCH v4 4/4] dma/acc: add doc
-Date: Wed, 15 Oct 2025 12:05:45 +0200
-Message-ID: <4548489.fW5hKsROvD@thomas>
-In-Reply-To: <20251013091157.1145-5-fengchengwen@huawei.com>
-References: <20250827092729.10719-1-fengchengwen@huawei.com>
- <20251013091157.1145-1-fengchengwen@huawei.com>
- <20251013091157.1145-5-fengchengwen@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 8E7A3402C9;
+	Wed, 15 Oct 2025 12:07:33 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 6F731402C9
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 12:07:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1760522851; x=1792058851;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=uWWZFzdV7qYQltkEu21vjzPlet5LNdwYLHu08L9ctnE=;
+ b=JCy0QbB/M3yaLHGIwtfWbMqscx/+TpEdUHWSYcrzeMJ/Cjo37oR461G/
+ 36PX/pyraGb4AQ8BwZEBV+fJrILNO2Q3U4UmQBx/5xKPJ1ZA8IeGu4bB0
+ iqa80KKD/RZPG0Lps5cg0MFyeKnQdWlL7jz4QQX8ttu9K7zAHv3scIf2R
+ kY1QXxyx30Nhrgg4YqIHbgZqbYzw/y1WXzcK5ERJEX/zLN+MaxjC9eH3h
+ KP/7t4RRZjZ/oPbgsSSvgGIxj/5Uo+MgkudmPrVcLCfaNR6oSD7GQ5hk/
+ bCznzcqO+MWLxknMyAJsAUjfa1TPOATT+CH4n30IxaxWAADBliT6l/pLO g==;
+X-CSE-ConnectionGUID: qf0cEQ7GRL2NG64i8uB7NA==
+X-CSE-MsgGUID: RDyuOFcxRi+elXGMyjTEIQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11582"; a="73371771"
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; d="scan'208";a="73371771"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Oct 2025 03:07:30 -0700
+X-CSE-ConnectionGUID: y1DjH7mHSky8HjWyGTTLRg==
+X-CSE-MsgGUID: xeF/3+b6S4uWew6wkdKaTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,231,1754982000"; d="scan'208";a="181262588"
+Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
+ by orviesa006.jf.intel.com with ESMTP; 15 Oct 2025 03:07:29 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH v2 0/7] net/intel: fixes and improvements to rx path selection
+Date: Wed, 15 Oct 2025 10:07:16 +0000
+Message-Id: <20251015100723.1603296-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251014084517.1407407-1-ciara.loftus@intel.com>
+References: <20251014084517.1407407-1-ciara.loftus@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,23 +59,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-13/10/2025 11:11, Chengwen Feng:
-> +HISILICON Accelerator DMA Driver
-> +================================
-> +
-> +Kunpeng SoC has an internal accelerator unit which includes zip function, and
-> +the zip also supports data copy and fill. This driver exposes this capability to
-> +DPDK application.
+This series contains a number of fixes and improvements to the logic
+concerned with selecting an rx path in the intel drivers.
 
-How is it different of drivers/dma/hisilicon/ ?
+Patch 1 fixes incorrect behaviour in the ci_rxq_vec_capable function
+which would disqualify rxqs that have the timestamp offload enabled from
+selecting vector paths. This was incorrect because iavf vector paths
+support timestamp offload.
 
-"
-Kunpeng SoC has an internal DMA unit which can be used by application
-to accelerate data copies.
-"
+Patch 2 removes a reduntant check from the ci_rxq_vec_capable function
+that disqualifies rxqs that have the buffer split offload enabled from
+selecting vector paths. This check is performed during the common rx
+path selection for three of the drivers and during dev_configure for the
+fourth, so the check in ci_rxq_vec_capable is unneeded. Although it is
+similar this patch was kept separate from patch 1 because it is only
+relevant after the three aformention drivers adopted the common rx path
+selection infrastructure, whereas patch 1 is a fix for an issue that
+existed prior to that.
 
-If it is the same hardware (Kunpeng),
-I recommend having a single driver, or a single directory.
-Also we already have a driver named "acc" in baseband.
+Patches 3 and 4 make fixes to the iavf rx path definitions, ensuring the
+correct offloads and features are defined for all paths.
 
+The final three patches reformat the arrays in the i40e iavf and ice
+drivers that hold information for each Rx path that are used in the
+common selection process, in an attempt to improve readability.
+
+v2:
+* Added a new patch (2) that removes the reduntant check for the buffer
+split offload in the common function.
+* Removed the useless defines IAVF_RX_NO_OFFLOADS and ICE_RX_NO_OFFLOADS
+* Use a newline for closing braces in the rx path infos arrays
+* Let a simd width of zero represent scalar paths instead of 64 which
+lessens the number of fields that need to be initialised for scalar path
+definitions
+
+Ciara Loftus (7):
+  net/intel: fix Rx vector capability detection
+  net/intel: remove redundant Rx offload check
+  net/iavf: fix Rx paths feature definitions
+  net/iavf: fix Rx path selection for scalar flex bulk alloc
+  net/iavf: reformat the Rx path infos array
+  net/i40e: reformat the Rx path infos array
+  net/ice: reformat the Rx path infos array
+
+ drivers/net/intel/common/rx.h                 |   7 +-
+ drivers/net/intel/i40e/i40e_rxtx.c            | 149 ++++++--
+ drivers/net/intel/i40e/i40e_rxtx_vec_common.h |   2 +-
+ drivers/net/intel/iavf/iavf.h                 |   1 +
+ drivers/net/intel/iavf/iavf_rxtx.c            | 335 ++++++++++++++----
+ drivers/net/intel/iavf/iavf_rxtx.h            |   2 -
+ drivers/net/intel/ice/ice_rxtx.c              | 147 ++++++--
+ drivers/net/intel/ice/ice_rxtx.h              |   1 -
+ drivers/net/intel/ice/ice_rxtx_vec_common.h   |   2 +-
+ .../net/intel/ixgbe/ixgbe_rxtx_vec_common.c   |   2 +-
+ 10 files changed, 498 insertions(+), 150 deletions(-)
+
+-- 
+2.34.1
 
