@@ -2,54 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE649CCD18E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 07:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9A9CCD18E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 07:07:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C7ACB40653;
-	Wed, 15 Oct 2025 09:07:28 +0200 (CEST)
-Received: from pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com
- (pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.77.92])
- by mails.dpdk.org (Postfix) with ESMTP id 48A0C40647
- for <dev@dpdk.org>; Wed, 15 Oct 2025 09:07:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id F060D40661;
+	Wed, 15 Oct 2025 09:07:30 +0200 (CEST)
+Received: from pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com
+ (pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com
+ [44.246.68.102]) by mails.dpdk.org (Postfix) with ESMTP id 1D52940657
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 09:07:28 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
- t=1760512045; x=1792048045;
+ t=1760512049; x=1792048049;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version;
- bh=q5ihB1Pke+C1eczzr7PyxPGcQbCdaeEBXdeghxix0mU=;
- b=V2MnXok3cVpez3ZhWrr6F/96uMb0R8j+p5QDHth2lMDxhjBZigRZsBQV
- iFoVaC3r29+JQS8JAc4kjUHyjiml8Ngm1gnZC+QRfnz8iIq7eNiIyac3P
- MuNz9YLs28hmcWn5+P2DD9OZiGR8uAAk97Z3TAQs7VdeR2z5lfRMQJx3G
- PcYa07PQ+VDvxuFk63ZQ9E25cSfo3uVjVlVWuaC5G44FFjpOa0Pzfq2RN
- TDrmiYruLueouqeAUaSfuHp8p+IXDST+xPDym6Ya1nR9JrmHIU8WQvQuu
- i6TsyMlBoMmlKYxJ4VOVpCBHfNaA6W9uy1PCqhYo3UOpEkFmET5THOJMs A==;
-X-CSE-ConnectionGUID: 26xjA8zxQiaClaPk8xkldg==
-X-CSE-MsgGUID: wfCj6EtwQMmBusOHcM042Q==
+ bh=Rq1ZaRIKUzmp2hmEbEjywmRyDrABC6gSmh1QNn8xQH8=;
+ b=F3uffKcgOb3bw8Q2ALLdAKaNc9gSn/brvZ0Nu7Vyh8gq8wy4uqO0KPFg
+ YPdh1z6T7YO6AgAGeGHI0BFzrv2yW3r/FWDgVt2+dXAkp7RA6alDO3Aki
+ fnl1QFZnaxhoTD7j5rFWuF4oS3HLvR8g7uLO7Xe8tE6DVfbFDBSZ0Jxpj
+ U+tuA8/oXJ38tnXEQUahjMhdqzHWI1osjECmWo7uz6V8/5fnSxZm+hj8n
+ s5wdg8Kn5WcdOPVSxDS5pzstp1wcAkYM4G2IRzuVBfBLZ9KacFeoiXdep
+ UooJC+JUhi6DtrcwjBKEh03nmqcglHBQ3T2dlpSmoigAvjf1Dg5Hbq9vg Q==;
+X-CSE-ConnectionGUID: rHE/6kkORRG7Of+ygBu6HA==
+X-CSE-MsgGUID: A+hBNMb3SLugpcXIn7tbnw==
 X-IronPort-AV: E=Sophos;i="6.19,230,1754956800"; 
-   d="scan'208";a="4915028"
+   d="scan'208";a="4918359"
 Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO
  smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
- by internal-pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com with
+ by internal-pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com with
  ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 07:07:24 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [205.251.233.234:21586]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.57.112:2525]
+Received: from EX19MTAUWB002.ant.amazon.com [205.251.233.111:23532]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.13.233:2525]
  with esmtp (Farcaster)
- id da5b1004-67cd-4873-9e78-3be07149d1ba; Wed, 15 Oct 2025 07:07:24 +0000 (UTC)
-X-Farcaster-Flow-ID: da5b1004-67cd-4873-9e78-3be07149d1ba
+ id e35421c7-36f8-49fc-97f2-b016632f9b4c; Wed, 15 Oct 2025 07:07:23 +0000 (UTC)
+X-Farcaster-Flow-ID: e35421c7-36f8-49fc-97f2-b016632f9b4c
 Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 15 Oct 2025 07:07:24 +0000
+ Wed, 15 Oct 2025 07:07:22 +0000
 Received: from HFA15-CG15235BS.amazon.com (10.1.213.14) by
  EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 15 Oct 2025 07:07:23 +0000
+ Wed, 15 Oct 2025 07:07:21 +0000
 From: Shai Brandes <shaibran@amazon.com>
 To: <stephen@networkplumber.org>
 CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>
-Subject: [PATCH 02/21] net/ena/base: rework admin timeout handling
-Date: Wed, 15 Oct 2025 10:06:48 +0300
-Message-ID: <20251015070707.340-3-shaibran@amazon.com>
+Subject: [PATCH 01/21] net/ena/base: optimize Tx desc fields setting
+Date: Wed, 15 Oct 2025 10:06:47 +0300
+Message-ID: <20251015070707.340-2-shaibran@amazon.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20251015070707.340-1-shaibran@amazon.com>
 References: <20251015070707.340-1-shaibran@amazon.com>
@@ -71,245 +71,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The admin queue (AQ) consists of a submission queue (SQ)
-and a completion queue (CQ), sharing a command context
-object per request.
-Each command is identified by a unique ID, used by both the
-driver and the device to track completion status.
-
-In polling mode, the submitting thread polls the CQ until the
-command completes or times out.
-In interrupt mode, the thread sleeps until an IRQ signals
-completion or timeout occurs.
-
-If a timeout happens in interrupt mode, the thread begins
-polling the CQ itself which might lead to:
-- stale or NULL pointer access if resources are freed prematurely
-- corrupted queue head counters due to concurrent updates
-
-This patch introduces a manual spin lock using atomics to serialize
-access to shared resources.
-The lock avoids blocking in interrupt context and ensures safe command
-completion handling.
-
-The patch also defers updating the command status until completion
-processing is done, preventing premature access to partially updated data.
-
-The atomic operation were reworked as the DPDK has deprecated the legacy
-rte_atomic32_xxx apis in favor of c11-compliant atomic operations.
+Instead of erasing tx descriptor and later set all fields using or,
+use set for the first value of each field of the descriptor.
 
 Signed-off-by: Shai Brandes <shaibran@amazon.com>
 Reviewed-by: Amit Bernstein <amitbern@amazon.com>
 Reviewed-by: Yosef Raisman <yraisman@amazon.com>
 ---
- drivers/net/ena/base/ena_com.c       | 74 ++++++++++++++++++----------
- drivers/net/ena/base/ena_com.h       |  1 +
- drivers/net/ena/base/ena_plat_dpdk.h | 22 +++++++--
- 3 files changed, 67 insertions(+), 30 deletions(-)
+ drivers/net/ena/base/ena_eth_com.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/net/ena/base/ena_com.c b/drivers/net/ena/base/ena_com.c
-index 1a93d22b71..75145a0b3f 100644
---- a/drivers/net/ena/base/ena_com.c
-+++ b/drivers/net/ena/base/ena_com.c
-@@ -474,26 +474,38 @@ static void ena_com_handle_single_admin_completion(struct ena_com_admin_queue *a
- 		return;
- 	}
- 
--	if (!comp_ctx->occupied)
--		return;
-+	if (comp_ctx->user_cqe)
-+		memcpy(comp_ctx->user_cqe, (void *)cqe, comp_ctx->comp_size);
- 
--	comp_ctx->status = ENA_CMD_COMPLETED;
- 	comp_ctx->comp_status = cqe->acq_common_descriptor.status;
- 
--	if (comp_ctx->user_cqe)
--		memcpy(comp_ctx->user_cqe, (void *)cqe, comp_ctx->comp_size);
-+	/* Make sure that the response is filled in before reporting completion */
-+	smp_wmb();
-+	comp_ctx->status = ENA_CMD_COMPLETED;
-+	/* Ensure status is written before waking waiting thread */
-+	smp_wmb();
- 
- 	if (!admin_queue->polling)
- 		ENA_WAIT_EVENT_SIGNAL(comp_ctx->wait_event);
- }
- 
--static void ena_com_handle_admin_completion(struct ena_com_admin_queue *admin_queue)
-+static void ena_com_handle_admin_completion(struct ena_com_admin_queue *admin_queue,
-+					    bool busy_poll_ownership)
- {
- 	struct ena_admin_acq_entry *cqe = NULL;
- 	u16 comp_num = 0;
- 	u16 head_masked;
- 	u8 phase;
- 
-+	/* Only try to acquire ownership once if busy_poll_ownership is false. This
-+	 * is to prevent two threads fighting over ownership concurrently. The boolean
-+	 * allows to distinguish the thread with the higher priority
-+	 */
-+	while (!ATOMIC32_CMP_EXCHANGE(&admin_queue->polling_for_completions, 0, 1)) {
-+		if (!busy_poll_ownership)
-+			return;
-+	}
+diff --git a/drivers/net/ena/base/ena_eth_com.c b/drivers/net/ena/base/ena_eth_com.c
+index c6668238e5..c4fee7bb3c 100644
+--- a/drivers/net/ena/base/ena_eth_com.c
++++ b/drivers/net/ena/base/ena_eth_com.c
+@@ -516,26 +516,25 @@ int ena_com_prepare_tx(struct ena_com_io_sq *io_sq,
+ 	desc = get_sq_desc(io_sq);
+ 	if (unlikely(!desc))
+ 		return ENA_COM_FAULT;
+-	memset(desc, 0x0, sizeof(struct ena_eth_io_tx_desc));
 +
- 	head_masked = admin_queue->cq.head & (admin_queue->q_depth - 1);
- 	phase = admin_queue->cq.phase;
++	desc->len_ctrl = ENA_FIELD_PREP((u32)io_sq->phase,
++					ENA_ETH_IO_TX_DESC_PHASE_MASK,
++					ENA_ETH_IO_TX_DESC_PHASE_SHIFT);
  
-@@ -522,6 +534,8 @@ static void ena_com_handle_admin_completion(struct ena_com_admin_queue *admin_qu
- 	admin_queue->cq.phase = phase;
- 	admin_queue->sq.head += comp_num;
- 	admin_queue->stats.completed_cmd += comp_num;
-+
-+	ATOMIC32_SET_RELEASE(&admin_queue->polling_for_completions, 0);
- }
+ 	/* Set first desc when we don't have meta descriptor */
+ 	if (!have_meta)
+ 		desc->len_ctrl |= ENA_ETH_IO_TX_DESC_FIRST_MASK;
  
- static int ena_com_comp_status_to_errno(struct ena_com_admin_queue *admin_queue,
-@@ -570,7 +584,7 @@ static int ena_com_wait_and_process_admin_cq_polling(struct ena_comp_ctx *comp_c
+-	desc->buff_addr_hi_hdr_sz |= ENA_FIELD_PREP((u32)header_len,
+-						    ENA_ETH_IO_TX_DESC_HEADER_LENGTH_MASK,
+-						    ENA_ETH_IO_TX_DESC_HEADER_LENGTH_SHIFT);
+-
+-	desc->len_ctrl |= ENA_FIELD_PREP((u32)io_sq->phase,
+-					 ENA_ETH_IO_TX_DESC_PHASE_MASK,
+-					 ENA_ETH_IO_TX_DESC_PHASE_SHIFT);
++	desc->buff_addr_hi_hdr_sz = ENA_FIELD_PREP((u32)header_len,
++						   ENA_ETH_IO_TX_DESC_HEADER_LENGTH_MASK,
++						   ENA_ETH_IO_TX_DESC_HEADER_LENGTH_SHIFT);
  
- 	while (1) {
- 		ENA_SPINLOCK_LOCK(admin_queue->q_lock, flags);
--		ena_com_handle_admin_completion(admin_queue);
-+		ena_com_handle_admin_completion(admin_queue, true);
- 		ENA_SPINLOCK_UNLOCK(admin_queue->q_lock, flags);
+ 	desc->len_ctrl |= ENA_ETH_IO_TX_DESC_COMP_REQ_MASK;
  
- 		if (comp_ctx->status != ENA_CMD_SUBMITTED)
-@@ -793,32 +807,33 @@ static int ena_com_wait_and_process_admin_cq_interrupts(struct ena_comp_ctx *com
- 	 */
- 	if (unlikely(comp_ctx->status == ENA_CMD_SUBMITTED)) {
- 		ENA_SPINLOCK_LOCK(admin_queue->q_lock, flags);
--		ena_com_handle_admin_completion(admin_queue);
-+		ena_com_handle_admin_completion(admin_queue, true);
- 		admin_queue->stats.no_completion++;
- 		ENA_SPINLOCK_UNLOCK(admin_queue->q_lock, flags);
+ 	/* Bits 0-9 */
+-	desc->meta_ctrl |= ENA_FIELD_PREP((u32)ena_tx_ctx->req_id,
+-					  ENA_ETH_IO_TX_DESC_REQ_ID_LO_MASK,
+-					  ENA_ETH_IO_TX_DESC_REQ_ID_LO_SHIFT);
++	desc->meta_ctrl = ENA_FIELD_PREP((u32)ena_tx_ctx->req_id,
++					 ENA_ETH_IO_TX_DESC_REQ_ID_LO_MASK,
++					 ENA_ETH_IO_TX_DESC_REQ_ID_LO_SHIFT);
  
--		if (comp_ctx->status == ENA_CMD_COMPLETED) {
--			admin_queue->is_missing_admin_interrupt = true;
--			ena_trc_err(admin_queue->ena_dev,
--				    "The ena device sent a completion but the driver didn't receive a MSI-X interrupt (cmd %d), autopolling mode is %s\n",
--				    comp_ctx->cmd_opcode, admin_queue->auto_polling ? "ON" : "OFF");
--			/* Check if fallback to polling is enabled */
--			if (admin_queue->auto_polling)
--				admin_queue->polling = true;
--		} else {
-+		ret = ENA_COM_TIMER_EXPIRED;
-+		/* Now that the admin queue has been polled, check whether the
-+		 * request was fulfilled by the device
-+		 */
-+		if (comp_ctx->status != ENA_CMD_COMPLETED) {
- 			ena_trc_err(admin_queue->ena_dev,
- 				    "The ena device didn't send a completion for the admin cmd %d status %d\n",
- 				    comp_ctx->cmd_opcode, comp_ctx->status);
-+			goto close_aq;
- 		}
--		/* Check if shifted to polling mode.
--		 * This will happen if there is a completion without an interrupt
--		 * and autopolling mode is enabled. Continuing normal execution in such case
-+
-+		admin_queue->is_missing_admin_interrupt = true;
-+
-+		ena_trc_err(admin_queue->ena_dev,
-+			    "The ena device sent a completion but the driver didn't receive a MSI-X interrupt (cmd %d), autopolling mode is %s\n",
-+			    comp_ctx->cmd_opcode, admin_queue->auto_polling ? "ON" : "OFF");
-+		/* If fallback to polling is not enabled, missing an interrupt
-+		 * is considered an error
- 		 */
--		if (!admin_queue->polling) {
--			admin_queue->running_state = false;
--			ret = ENA_COM_TIMER_EXPIRED;
--			goto err;
--		}
-+		if (!admin_queue->auto_polling)
-+			goto close_aq;
-+
-+		ena_com_set_admin_polling_mode(admin_queue->ena_dev, true);
- 	} else if (unlikely(comp_ctx->status == ENA_CMD_ABORTED)) {
- 		ena_trc_err(admin_queue->ena_dev, "Command was aborted\n");
- 		ENA_SPINLOCK_LOCK(admin_queue->q_lock, flags);
-@@ -829,8 +844,14 @@ static int ena_com_wait_and_process_admin_cq_interrupts(struct ena_comp_ctx *com
- 	}
- 
- 	ret = ena_com_comp_status_to_errno(admin_queue, comp_ctx->comp_status);
-+	comp_ctxt_release(admin_queue, comp_ctx);
-+
-+	return ret;
-+close_aq:
-+	admin_queue->running_state = false;
- err:
- 	comp_ctxt_release(admin_queue, comp_ctx);
-+
- 	return ret;
- }
- 
-@@ -2107,6 +2128,7 @@ int ena_com_admin_init(struct ena_com_dev *ena_dev,
- 	admin_queue->curr_cmd_id = 0;
- 
- 	ATOMIC32_SET(&admin_queue->outstanding_cmds, 0);
-+	ATOMIC32_SET(&admin_queue->polling_for_completions, 0);
- 
- 	ENA_SPINLOCK_INIT(admin_queue->q_lock);
- 
-@@ -2394,7 +2416,7 @@ int ena_com_get_dev_attr_feat(struct ena_com_dev *ena_dev,
- 
- void ena_com_admin_q_comp_intr_handler(struct ena_com_dev *ena_dev)
- {
--	ena_com_handle_admin_completion(&ena_dev->admin_queue);
-+	ena_com_handle_admin_completion(&ena_dev->admin_queue, false);
- }
- 
- /* ena_handle_specific_aenq_event:
-diff --git a/drivers/net/ena/base/ena_com.h b/drivers/net/ena/base/ena_com.h
-index 1c752327dc..6b9a780755 100644
---- a/drivers/net/ena/base/ena_com.h
-+++ b/drivers/net/ena/base/ena_com.h
-@@ -226,6 +226,7 @@ struct ena_com_admin_queue {
- 
- 	/* Indicate if the admin queue should poll for completion */
- 	bool polling;
-+	ena_atomic32_t polling_for_completions;
- 
- 	/* Define if fallback to polling mode should occur */
- 	bool auto_polling;
-diff --git a/drivers/net/ena/base/ena_plat_dpdk.h b/drivers/net/ena/base/ena_plat_dpdk.h
-index 3b574f888a..18c6837566 100644
---- a/drivers/net/ena/base/ena_plat_dpdk.h
-+++ b/drivers/net/ena/base/ena_plat_dpdk.h
-@@ -74,6 +74,10 @@ typedef uint64_t dma_addr_t;
- #define mmiowb rte_io_wmb
- #define __iomem
- 
-+#define smp_wmb rte_smp_wmb
-+#define smp_rmb rte_smp_rmb
-+#define smp_mb rte_smp_mb
-+
- #ifndef READ_ONCE
- #define READ_ONCE(var) (*((volatile typeof(var) *)(&(var))))
- #endif
-@@ -267,10 +271,20 @@ ena_mem_alloc_coherent(struct rte_eth_dev_data *data, size_t size,
- #define ENA_REG_READ32(bus, reg)					       \
- 	__extension__ ({ (void)(bus); rte_read32_relaxed((reg)); })
- 
--#define ATOMIC32_INC(i32_ptr) rte_atomic32_inc(i32_ptr)
--#define ATOMIC32_DEC(i32_ptr) rte_atomic32_dec(i32_ptr)
--#define ATOMIC32_SET(i32_ptr, val) rte_atomic32_set(i32_ptr, val)
--#define ATOMIC32_READ(i32_ptr) rte_atomic32_read(i32_ptr)
-+#define ATOMIC32_INC(i32_ptr)									\
-+	rte_atomic_fetch_add_explicit(&(i32_ptr)->cnt, 1, rte_memory_order_seq_cst)
-+#define ATOMIC32_DEC(i32_ptr)									\
-+	rte_atomic_fetch_sub_explicit(&(i32_ptr)->cnt, 1, rte_memory_order_seq_cst)
-+#define ATOMIC32_SET(i32_ptr, val)								\
-+	rte_atomic_store_explicit(&(i32_ptr)->cnt, val, rte_memory_order_seq_cst)
-+#define ATOMIC32_SET_RELEASE(i32_ptr, val)							\
-+	do {											\
-+		rte_atomic_thread_fence(rte_memory_order_release);				\
-+		rte_atomic_store_explicit(&(i32_ptr)->cnt, val, rte_memory_order_seq_cst);	\
-+	} while (0)
-+#define ATOMIC32_READ(i32_ptr) rte_atomic_load_explicit(&(i32_ptr)->cnt, rte_memory_order_seq_cst)
-+#define ATOMIC32_CMP_EXCHANGE(I32_PTR, OLD, NEW) \
-+	rte_atomic32_cmpset((volatile uint32_t *)(I32_PTR), OLD, NEW)
- 
- #define msleep(x) rte_delay_us(x * 1000)
- #define udelay(x) rte_delay_us(x)
+ 	desc->meta_ctrl |= ENA_FIELD_PREP(ena_tx_ctx->df,
+ 					  ENA_ETH_IO_TX_DESC_DF_MASK,
 -- 
 2.17.1
 
