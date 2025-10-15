@@ -2,71 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66FECCD193
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 22:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DFA9CCD193
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 22:11:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DCCF140F1A;
-	Thu, 16 Oct 2025 00:10:51 +0200 (CEST)
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com
- [209.85.222.179])
- by mails.dpdk.org (Postfix) with ESMTP id 9D300410D2
- for <dev@dpdk.org>; Thu, 16 Oct 2025 00:10:50 +0200 (CEST)
-Received: by mail-qk1-f179.google.com with SMTP id
- af79cd13be357-88e4704a626so11597585a.0
- for <dev@dpdk.org>; Wed, 15 Oct 2025 15:10:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2A0D6410EA;
+	Thu, 16 Oct 2025 00:10:55 +0200 (CEST)
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com
+ [209.85.219.48]) by mails.dpdk.org (Postfix) with ESMTP id 6196E40DF6
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 00:10:53 +0200 (CEST)
+Received: by mail-qv1-f48.google.com with SMTP id
+ 6a1803df08f44-87c103928ffso1736446d6.1
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 15:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760566250;
- x=1761171050; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760566253;
+ x=1761171053; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=027Gxg4QCSPwyUYlGT84VbJX4PBXsTSH42jc6FG7Y6M=;
- b=LBEe3nUAEGLeGpVoh4NO4klpwd9oUQXv+iH9kGaI/ugNGhLdpSO0TI9lg8qfEGIXSH
- SFjeTo3BTL+Jv82H0Kr6XgYPsnfg0Hv5NVwh0jMogJ+ztOoyPd/nfyo55Y6i3Imft1kW
- Zk/bu/p5zcnYznGksM/SfTuT8qDkMAFEmxehgjuBaPx7GAqGqlose4KYHRWNhlRJY2Aq
- SW0S8Xy55aS0Z0+2PeGXvjk3SgpQ92/alq+MhmFFEA5qVUq6CCgjeWcKrT/Py1L65xFJ
- 039NWn91T9KtJ10Vex0qXbQXXx3xWfY2ZVUbWR70CZtVcQILbxvHseLAZdFooObTTjwm
- nYlw==
+ bh=lTpfDdXu1OcNuw4Mmf2+tlHdrU8naAIA60GxqbaZQMQ=;
+ b=oz2/rXzAtih1hym7jf7aJcYl5ZFjuU3FfYsrt2kDSyT6GN+kjOGbXTSE+c+JF4daa/
+ 9BvLu4MMl7WVgXwkIQLR9h3/k2Rb2L8mMkAiXeCZ41YULIbE80+uIEVXSo4+AfMe8AMd
+ BreD/ZWfr8YO+snaf4qxjTHGsdkdNQ70WgyQoDfx7OhSW7JagyyNZ9exJWpJGxm9010+
+ GxqENmtCknTjrIWJBMf2PQt7/elDXeg7B/wcCzCXvVkQTT16t0uw7Tezwczp0DpPKbdO
+ hmTIK2Qz/91zpSC1q13U1OadFWPXILbBn2tFZcUrR9YPgBkP8oMKaww4Szt5YYFAfP8a
+ 3Oew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760566250; x=1761171050;
+ d=1e100.net; s=20230601; t=1760566253; x=1761171053;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=027Gxg4QCSPwyUYlGT84VbJX4PBXsTSH42jc6FG7Y6M=;
- b=oQYmC7B3qL+yFWw2adL91DpFKpGwx/nvGzb4WYYqaZxROV+0g2D8s5m/M903nfHQ0v
- NeepRlM0oRNZAynPOuNz+pGSTHbEpbh8erZXdwtE81PALR/28SF6WA2Cg1ynlZHlTJJn
- QeOeLEQNuAmQVvFGed7e6Mf5wMW5IcyvL1Hpz3K0GghnCYe+q4micMn30HPXEhMO3Osk
- ETLDwIz5b04LaYUSnPqunGeliuuFCUyaZApmoSXtsDI0kZ9s/fgjMI/THlZAZ0Ncr0Jy
- w50kqd0urez3zuJtPmKWmA8woivtwuqVTydKpZbTrgpWMflnl5OA6F5627T/eejl+vAX
- gPKg==
-X-Gm-Message-State: AOJu0YzkV0kOT7XgSdXdOWEbDvNKJ3EXwV6OD1GBTqT9hYfNdUqBtxZd
- NNK2ssIgw5mDjk+prBHGmOcemWWdriysUkNC2FxTbkfyPZrudzsijaT+V45zojX3dfc=
-X-Gm-Gg: ASbGncvzzINEioU06IlfuZv+W8LNRVlQgv5JX0g5WZaQY6KrVSneO2G8kTrrn3XueZY
- /rRmqKulevXGmcHu3ZAG6tEnb4nx13laSzsfYiAE26zeE5UXHplJVytQSVWscicR6lfmp5gtA8R
- zLUzmCRqtDv/RnEa6jhC6t5sjO+Jld/KIiIoetgFFAPAgr4sEgza7QTP5qDzkElhV9wacTyr1GM
- 0ddi8yXa2LaG5Q0DoGSRMhtzNCvsQzpKshIAJGE8rcAH0T/YEqnrGqi1fA5C9W4deayTm0Jnuq9
- l0WHtnY4/uYZ2ED8yYPky9FTfOmbvMf8C3i9b1sf4A0nJEjXXOR6BXoeJqSDD+I7NGC6U+hk1+Z
- rE9e1tpz+0IiAWbc9kLJMUNL9v6Q/rTA6NqDacOIo0eXuIlA87l2gy8dzXKP1+prVT8+NfQJD8G
- Wc7KEwDiIQvpibB/nZxaFw5NLydHpMlxRn9GvRbFWh5Ucnc7e7SfwCU8i/tqzbeYk=
-X-Google-Smtp-Source: AGHT+IFMb+e6/YwkkTrfCSLMuxvGr/a8T0Flnv3vMDBd13fpxL/do186mtIxB3ZbdDZb69P195sK/Q==
-X-Received: by 2002:a05:622a:5c17:b0:4e5:6d3e:d769 with SMTP id
- d75a77b69052e-4e6eacbbf38mr403112411cf.7.1760566249878; 
- Wed, 15 Oct 2025 15:10:49 -0700 (PDT)
+ bh=lTpfDdXu1OcNuw4Mmf2+tlHdrU8naAIA60GxqbaZQMQ=;
+ b=QMcA/6XW/Hh+ZPjTKasnH6oZxHOk5tWIvuf7TGV5s+aMYkbFpJaUIiCcjrJ5W8EexD
+ OC6/6L1jnwUq2tcSjF6sUr+eBrM4QJjDMN3jmsxdgnm1yMd97a0aoQkDHR72wGtPy6j/
+ qp9QvAl1QQD6pd2c4EL25SvbHOaZyYnXgOszjdVI1fY14UV3JPXrKI7EOD7wf/0CH201
+ f1WfVFpV7cl7g2inFHJah2t3GottSt3Tfax3qMddrqzjuxt3L1hyR5X3Of41k0w8msXe
+ eKAtEycrtmqHUb4+3jvw1eq6awMw7GftlnQth7JZ7AG2qBp9WE02sj9mC1FQ+Zl/c89j
+ yL2Q==
+X-Gm-Message-State: AOJu0Yx362j21iPqiRa3zjzJfW9wLAvOfdA4pP75wNozHK5QRzxS9Yf0
+ nWo+1Z4MNLhjVdEtq9DEXqacxltTNJ8jWZzcDl8RqD67AyKyvOCMzMVjUEcmggf+VAM=
+X-Gm-Gg: ASbGnct23L3VlNOPgHv86+Dxi11gfR9YCEOaVxf5VI3L6QKq7VSvLIDldz9t5IN9V/U
+ 9o0i/joFuGiqvPTpk4qETq9ynm2sUGdHaa4SvQInwAetbs3gC4kjLYYDpQ2eF7TQ8Hc26H35UfU
+ itEwF1nkn6Rda3KLo1YpgR4wo7pNSaMHaCP8r94LKpnN6A9q23+4bzCnHg0MV76TPUfY/qs4+Xm
+ kzkIx/fVrF+Vdqfnif7vubx9br5+DrJ7LXEGyRDO6phFRY/jn585YLIMVhTGYn49jjV5zIWrKme
+ LEKOUVMNNkvnkZg1vgEdKK+hWPKxrMnUGDqpP637Ss+JejkAHqjB2MkfqHei87FWG/0lpEVDL3z
+ EMsuxQWh9ZSeiSrixZSc8yWwRTvEEkbDovN8/8/1vZZIFOjJsR/95e+Hg9qyySWaCpZWxnMGnae
+ E+2pAHeJJhJvmfXyDo35bXCXA43Llf8zDZfvdp44oyBIVDQlgD2YfH
+X-Google-Smtp-Source: AGHT+IFVa/1+c23Q/rTK2VDmUdHZF5NpKPufbbw65Cx6RTKPNIb7CSHEY8xenDzW3wMiCOXI3OxpMA==
+X-Received: by 2002:ac8:5d4f:0:b0:4e8:8722:4ec6 with SMTP id
+ d75a77b69052e-4e8872250b5mr43791471cf.61.1760566252735; 
+ Wed, 15 Oct 2025 15:10:52 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-4e881c577e6sm27732021cf.7.2025.10.15.15.10.48
+ d75a77b69052e-4e881c577e6sm27732021cf.7.2025.10.15.15.10.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 15 Oct 2025 15:10:49 -0700 (PDT)
-Date: Wed, 15 Oct 2025 14:36:28 -0700
+ Wed, 15 Oct 2025 15:10:52 -0700 (PDT)
+Date: Wed, 15 Oct 2025 14:34:21 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: vanshika.shukla@nxp.com
-Cc: dev@dpdk.org, Gagandeep Singh <g.singh@nxp.com>, Sachin Saxena
- <sachin.saxena@nxp.com>, Apeksha Gupta <apeksha.gupta@nxp.com>
-Subject: Re: [v1 02/12] net/enetc: Add RX and TX queue APIs for ENETC4 PMD
-Message-ID: <20251015143628.36799601@hermes.local>
-In-Reply-To: <20251009111633.3585957-3-vanshika.shukla@nxp.com>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, Wathsala Vithanage
+ <wathsala.vithanage@arm.com>, Bruce Richardson
+ <bruce.richardson@intel.com>, Gagandeep Singh <g.singh@nxp.com>, Sachin
+ Saxena <sachin.saxena@nxp.com>, Anatoly Burakov
+ <anatoly.burakov@intel.com>, Apeksha Gupta <apeksha.gupta@nxp.com>
+Subject: Re: [v1 01/12] net/enetc: Add initial ENETC4 PMD driver support
+Message-ID: <20251015143421.2da77870@hermes.local>
+In-Reply-To: <20251009111633.3585957-2-vanshika.shukla@nxp.com>
 References: <20251009111633.3585957-1-vanshika.shukla@nxp.com>
- <20251009111633.3585957-3-vanshika.shukla@nxp.com>
+ <20251009111633.3585957-2-vanshika.shukla@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,21 +85,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu,  9 Oct 2025 16:46:23 +0530
+On Thu,  9 Oct 2025 16:46:22 +0530
 vanshika.shukla@nxp.com wrote:
 
-> +int
-> +enetc4_tx_queue_setup(struct rte_eth_dev *dev,
-> +		     uint16_t queue_idx,
-> +		     uint16_t nb_desc,
-> +		     unsigned int socket_id __rte_unused,
-> +		     const struct rte_eth_txconf *tx_conf)
-> +{
-> +	int err = 0;
+> From: Apeksha Gupta <apeksha.gupta@nxp.com>
+> 
+> This patch introduces a new ENETC4 PMD driver for NXP's i.MX95
+> SoC, enabling basic network operations. Key features include:
+> 
+> - Probe and teardown functions
+> - Hardware initialization for both Virtual Functions (VFs)
+>   and Physical Function (PF)
+> 
+> Signed-off-by: Apeksha Gupta <apeksha.gupta@nxp.com>
+> Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+> Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
+> ---
+>  MAINTAINERS                            |   3 +
+>  config/arm/arm64_imx_linux_gcc         |  17 ++
+>  config/arm/meson.build                 |  14 ++
+>  doc/guides/nics/enetc4.rst             |  92 ++++++++
+>  doc/guides/nics/features/enetc4.ini    |   9 +
+>  doc/guides/nics/index.rst              |   1 +
+>  doc/guides/rel_notes/release_24_11.rst |   4 +
 
-Unnecessary initialization. Don't see where err is used except
-after malloc failure (goto fail).
-
-Better to not initialize if not needed so compiler can generate
-warnings.
-
+Release notes are in wrong place. This is for 25.11 release.
