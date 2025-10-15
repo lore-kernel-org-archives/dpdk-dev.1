@@ -2,84 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55743CCD18E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 09:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC12CCD18E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 09:08:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9123A40EE3;
-	Wed, 15 Oct 2025 11:05:43 +0200 (CEST)
-Received: from mail-vk1-f225.google.com (mail-vk1-f225.google.com
- [209.85.221.225])
- by mails.dpdk.org (Postfix) with ESMTP id 79B9940EE3
- for <dev@dpdk.org>; Wed, 15 Oct 2025 11:05:41 +0200 (CEST)
-Received: by mail-vk1-f225.google.com with SMTP id
- 71dfb90a1353d-54aa0792200so4493448e0c.3
- for <dev@dpdk.org>; Wed, 15 Oct 2025 02:05:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CE745410D4;
+	Wed, 15 Oct 2025 11:05:45 +0200 (CEST)
+Received: from mail-pg1-f225.google.com (mail-pg1-f225.google.com
+ [209.85.215.225])
+ by mails.dpdk.org (Postfix) with ESMTP id 1713D42789
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 11:05:44 +0200 (CEST)
+Received: by mail-pg1-f225.google.com with SMTP id
+ 41be03b00d2f7-b49c1c130c9so4004775a12.0
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 02:05:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760519141; x=1761123941;
+ d=1e100.net; s=20230601; t=1760519143; x=1761123943;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=43CqHR8ycl/y1ykZ7SnL+pJuAlxVxNN54MNbu/Frzco=;
- b=SGvu2UFnxUuwmeQEh8Xcd0z/WG3ycOjs29+g6YELEPxlW/ItaXbFRjhwuT7PV2IlFc
- vD6N8uA+zEu8B/Ygxw7IqTbOx0bh9+vWoo9/03XVf5cCEM9nlBsvMGtrU8vtEo6La4Rb
- sDkqZb/W3rfkpUNAo9OjQ/bweCIWQFxqBxoNM3QGCbUp1cDo8Yjh23ZrT1at2lt2YnnN
- Kny1Q3TiyCvJKQrODsyH+3/qV7JtI4dEFkq1ct/hsWbZNT41HN/ZRJ7dd3yaVeEOFwQV
- FK+A7j/yidDDfy3/t9cy9uwM+Q2VuenxWY4EWI9Exc2jOEVqOsyEW1PSr8OU7H2Illnx
- BTSg==
-X-Gm-Message-State: AOJu0YxsuIK+sMiIPgXWqvPQmFjANwJ42iniyR/+hqFDD7FMCWs5E+0q
- wbN4IWY0DzQo3dKkb4Qi5pshUOu6ynDmM+UqpbnNKLRPGKxGZSc9ESpenn8T3PJM6TEPFCTKzZu
- 7b/YAtOhCqG2/FXYwIrNYSMfT9NoxcX5OfgJAXxXVuY9cQfICkCSpACVqG1qECnHOVnSs++tiJf
- 43ITxoZIGe2+hrGgAATnoCfPHBPdRSh3o95nwqZxBY0BEfJbWkSEykglZ2W/FkwIkCn/wQjw==
-X-Gm-Gg: ASbGncuHDHHTmN1v3JHSdLoTosWgERbHMU5likfomfu5TDYSI0Ak66p6Xg9LcAHI+hI
- eYtcjts+BIuIgQX9ULRhro2BC0RUZKsZQ/3FGk8OsMYf7fOPdjJHo4QCg13N8OE8HWOIa5o3s5z
- sHWPrne4ZgppoZtVulq6jbNI4QO0KGiO3kgXT8QV1HGw2Ml8YOFcDdjnqYPCaApr7F5ml4KXotm
- dMIvaZDq04b4bW2prXA/zHsT/KbSW+eLc0pQfGpsrJXKxdUGYPgzh/LY92pGtc15ZFyklLBreJT
- LgqMK3fOvAfjLSsAoqRQL7yhXmY5L6rJ5rRWgeWWbESwg5rFXggXf8Hpd8DBKJwoi9Rj+AMVugK
- 4YApWZfd2Kel3zP0DPdLXiQZRp3Ozo/+WkfWZ8WCOpr/3Fp6txVI5qIiUgzae/oeppEYX2GSwsd
- s=
-X-Google-Smtp-Source: AGHT+IGvTZyIh2CxpqcFo5g0ux11RBoCBb7Nmwxt2ukTLgbfJLX5d77sGE1lWr+vpwApq1kToDRs3r5PNLYq
-X-Received: by 2002:a05:6122:2209:b0:539:3bb5:e4d6 with SMTP id
- 71dfb90a1353d-554b8a82a3fmr9162622e0c.1.1760519140760; 
- Wed, 15 Oct 2025 02:05:40 -0700 (PDT)
+ bh=ZuLGH3yY0QftvblPy2/QYDcK1QBuOY3rdtImcr+3JJY=;
+ b=GO0S51dViyXdUAU8wNe04yvek9W7EbYVExofQtvWHYpCNdS09ctUuNcPECInp5JsyS
+ td3ou045tWYVRNr3qSC9aCAzIF6ow46Kg2tGbEE4lrp+CuBycOm8anVDoqk7/Xks8AyJ
+ eYGQSTtOkbyRcia3fDESMBn6eaJSHdlT3FbnXrP9v5G1YZftIU1Zfch468NvfBYZMnCI
+ Y3+/srE/2153cAzBOdTzD6K8of2PdcpwTYEPYEUoPa/ioGNiARH1rcPrZA6utyDYET2X
+ HnGnMYRjT8G0dnMzweZkBK+MKezBJVEXkcObBwoXG8fZWatm5vX9x3PltgFHdmhiFAUC
+ BU0g==
+X-Gm-Message-State: AOJu0Yxevcq0u767SuFCYsZYyuOJfQTqNga74QhFADdFWu+9bKw8oPRL
+ d4au5b3BcP/J2k0Rja82ZQmiePdXKSfqPpsYHjjG875hrAM5vyWOUKB5ymdXJrD+r5xaMuL32BQ
+ QS7dT6l7cmuOAZg1kx3ZBBwNAaSUAdKa543luJHeomsEvSNWwWoemdGIANX7YQP+RzuFd8+2Ty3
+ lZmp+jQ7We06fBs43QtChyhaihsoOFlDjevV0mVwkO5KlWtjhTJsDXycRZDAeBvqYIgB2TRg==
+X-Gm-Gg: ASbGnctosxjW5ilo+YCj49hNI30ofoYkjyztRbq3WKE1YZDK/JEVFSNxzXcbchufJHh
+ wDtmvoZx2/VJZTZk3IsrYwLv33OQGpX4oJFhDaQQlQSAdNmzNdmBSxRQb7+cM9ZDjg+00Tf1h1E
+ eUmgEL1QGl7sG6JLJtxoyMdWPktrQLI4+WhQIv3crhJOoXfqIwGbACnEZGHVb+YAGyJ4YbekQxO
+ 3z0NtksGNUYTRkohTeeoYzN/c4WXLEVBBDY+ZE/DOYqob2RYdXDKEo5w1GK29RLst+9rLqLwNFg
+ cgx6d6onOUreWu7LITjW65Ftu9XgGlqDFQ4KwuT8Co4NbZx02HvxTfMwo7PjixJLRZIxOIUp1ZI
+ /nlXvC78q2WP7XFehyB8xKYQBwTtpQEc+sF0DURBDIASIVbgJHbrSnDaUKG5y1YKiBqQoxCvGOO
+ ak2cDsEA1vbdC/T3YHS0wqDvw80NUOcgWEzqaz
+X-Google-Smtp-Source: AGHT+IHXIQtDRwYSDTqfyGckOe3LYBRBkL/DvUvxVF0so2u9ZBbdSVqf7+jFuvQUh4WxdjP8Ngt7kxqK3y7I
+X-Received: by 2002:a17:902:e54b:b0:258:c13d:9b1a with SMTP id
+ d9443c01a7336-290272dcdaemr376776215ad.41.1760519143165; 
+ Wed, 15 Oct 2025 02:05:43 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
+ (address-144-49-247-117.dlp.protect.broadcom.com. [144.49.247.117])
  by smtp-relay.gmail.com with ESMTPS id
- 71dfb90a1353d-554d7ff0ea3sm1750677e0c.5.2025.10.15.02.05.39
+ d9443c01a7336-29034f5e7d7sm15140725ad.63.2025.10.15.02.05.42
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 15 Oct 2025 02:05:40 -0700 (PDT)
+ Wed, 15 Oct 2025 02:05:43 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pf1-f197.google.com with SMTP id
- d2e1a72fcca58-780f914b5a4so8770991b3a.1
- for <dev@dpdk.org>; Wed, 15 Oct 2025 02:05:39 -0700 (PDT)
+Received: by mail-pf1-f199.google.com with SMTP id
+ d2e1a72fcca58-7810912fc31so9397165b3a.3
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 02:05:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1760519138; x=1761123938; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1760519141; x=1761123941; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=43CqHR8ycl/y1ykZ7SnL+pJuAlxVxNN54MNbu/Frzco=;
- b=Zy1Xxbt7EkuoU6x0WfVZfulcUu2FSn9gm2LbR5CaWMefLdXtq2SBGHLIRkgrtAJphk
- 6x2y/nPKS+k4TlIJLiVrbi3a2eCZtJvM8JEr9V94P94JKX2CxIFadzcgMEYMp6thkiRj
- +Ie7Y/M+8MoUkxZh6GUEq8B4HWEdK+W8BYkwA=
-X-Received: by 2002:a05:6a00:17a7:b0:781:8832:9159 with SMTP id
- d2e1a72fcca58-79385709429mr31050641b3a.4.1760519138557; 
- Wed, 15 Oct 2025 02:05:38 -0700 (PDT)
-X-Received: by 2002:a05:6a00:17a7:b0:781:8832:9159 with SMTP id
- d2e1a72fcca58-79385709429mr31050589b3a.4.1760519137741; 
- Wed, 15 Oct 2025 02:05:37 -0700 (PDT)
+ bh=ZuLGH3yY0QftvblPy2/QYDcK1QBuOY3rdtImcr+3JJY=;
+ b=g/Lt6EGULWZSvS8dWUmkow2gMkNkYrZMVr0y+etcC7PWIROP6gxByzSoNIUU9MAJhK
+ 6bjYs1Cm7XZ8B7Zj0tCkTfaR+KNzdUQpZW6iui+Q4CTpmBNqLpMjm269dVD1xeX+O5vu
+ Dyfbc64NaYuPN5hSsbqh/Lvc7cWI1n0sy4HLU=
+X-Received: by 2002:a05:6a00:3d54:b0:781:be:277e with SMTP id
+ d2e1a72fcca58-7938513618fmr30776531b3a.4.1760519141050; 
+ Wed, 15 Oct 2025 02:05:41 -0700 (PDT)
+X-Received: by 2002:a05:6a00:3d54:b0:781:be:277e with SMTP id
+ d2e1a72fcca58-7938513618fmr30776497b3a.4.1760519140382; 
+ Wed, 15 Oct 2025 02:05:40 -0700 (PDT)
 Received: from localhost.localdomain ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7992bc12a8asm17832412b3a.34.2025.10.15.02.05.36
+ d2e1a72fcca58-7992bc12a8asm17832412b3a.34.2025.10.15.02.05.38
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 15 Oct 2025 02:05:37 -0700 (PDT)
+ Wed, 15 Oct 2025 02:05:39 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com, Shahaji Bhosle <shahaji.bhosle@broadcom.com>,
- Farah Smith <farah.smith@broadcom.com>
-Subject: [PATCH v3 52/54] net/bnxt/tf_ulp: add feature bit rx miss handling
-Date: Wed, 15 Oct 2025 05:00:22 -0400
-Message-Id: <20251015090024.32250-53-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Shuanglin Wang <shuanglin.wang@broadcom.com>
+Subject: [PATCH v3 53/54] net/bnxt: add support for truflow promiscuous mode
+Date: Wed, 15 Oct 2025 05:00:23 -0400
+Message-Id: <20251015090024.32250-54-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251015090024.32250-1-manish.kurup@broadcom.com>
 References: <20251009221129.28256-1-manish.kurup@broadcom.com>
@@ -100,66 +101,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-Added a new feature bit to all applications to send the miss
-packets to parent PF.
+The truflow application support promiscuous mode to enable
+or disable receiving the packets with unknown destination mac addresses.
 
-Signed-off-by: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
-Reviewed-by: Farah Smith <farah.smith@broadcom.com>
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h       | 9 ++++++++-
- drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h | 4 +++-
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ drivers/net/bnxt/bnxt_ethdev.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-index 73ed3803de..4741fd9cb5 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-@@ -1070,11 +1070,16 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
- 	uint64_t bit = 0;
- #endif
- 	*out_bits = 0;
-+
- 	if ((feat_bits | bit) != feat_bits) {
- 		BNXT_DRV_DBG(ERR, "Invalid TF feature bit is set %" PRIu64 "\n",
- 			     bit);
- 		return -EINVAL;
- 	}
-+
-+	if (!bit)
-+		return 0;
-+
- 	if ((bit & BNXT_ULP_FEATURE_BIT_PARENT_DMAC) &&
- 	    (bit & BNXT_ULP_FEATURE_BIT_PORT_DMAC)) {
- 		BNXT_DRV_DBG(ERR, "Invalid both Port and Parent Mac set\n");
-@@ -1099,8 +1104,10 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
- 		BNXT_DRV_DBG(ERR, "Non VFR Feature is enabled");
- 	if (bit & BNXT_ULP_FEATURE_BIT_UNICAST_ONLY)
- 		BNXT_DRV_DBG(ERR, "Unicast only Feature is enabled");
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index 854c8b7371..f37136c8f4 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -2161,9 +2161,15 @@ static int bnxt_promiscuous_enable_op(struct rte_eth_dev *eth_dev)
+ 	old_flags = vnic->flags;
+ 	vnic->flags |= BNXT_VNIC_INFO_PROMISC;
+ 	rc = bnxt_hwrm_cfa_l2_set_rx_mask(bp, vnic, 0, NULL);
+-	if (rc != 0)
++	if (rc != 0) {
+ 		vnic->flags = old_flags;
 -
-+	if (bit & BNXT_ULP_FEATURE_BIT_RX_MISS_SEND_TO_PF)
-+		BNXT_DRV_DBG(ERR, "Rx miss send to parent PF Feature is enabled");
- 	*out_bits =  bit;
-+
- 	return 0;
++		return rc;
++	}
++	rc = bnxt_ulp_promisc_mode_set(bp, 1);
++	if (rc != 0) {
++		vnic->flags = old_flags;
++		rc = bnxt_hwrm_cfa_l2_set_rx_mask(bp, vnic, 0, NULL);
++	}
+ 	return rc;
  }
  
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h b/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
-index 4e9b11e437..6a2d31cf8d 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
-@@ -915,7 +915,9 @@ enum bnxt_ulp_feature_bit {
- 	BNXT_ULP_FEATURE_BIT_HOT_UPGRADE = 0x00000040,
- 	BNXT_ULP_FEATURE_BIT_GLOBAL_TBL_SCOPE = 0x00000080,
- 	BNXT_ULP_FEATURE_BIT_NON_VFR_MODE = 0x00000100,
--	BNXT_ULP_FEATURE_BIT_UNICAST_ONLY = 0x00000200
-+	BNXT_ULP_FEATURE_BIT_UNICAST_ONLY = 0x00000200,
-+	BNXT_ULP_FEATURE_BIT_REDIRECT_ONLY = 0x00000400,
-+	BNXT_ULP_FEATURE_BIT_RX_MISS_SEND_TO_PF = 0x00000800
- };
+@@ -2185,6 +2191,11 @@ static int bnxt_promiscuous_disable_op(struct rte_eth_dev *eth_dev)
+ 	if (bp->vnic_info == NULL)
+ 		return 0;
  
- enum bnxt_ulp_flow_dir_bitmask {
++	if (bnxt_ulp_promisc_mode_set(bp, 0)) {
++		PMD_DRV_LOG_LINE(ERR, "Unable to disable promiscuous mode");
++		return -EINVAL;
++	}
++
+ 	vnic = bnxt_get_default_vnic(bp);
+ 
+ 	old_flags = vnic->flags;
 -- 
 2.39.5 (Apple Git-154)
 
