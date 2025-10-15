@@ -2,88 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1C8CCD193
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 09:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B947CCD193
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 09:32:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C4DF40612;
-	Wed, 15 Oct 2025 11:13:29 +0200 (CEST)
-Received: from fhigh-b4-smtp.messagingengine.com
- (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
- by mails.dpdk.org (Postfix) with ESMTP id 5489240276
- for <dev@dpdk.org>; Wed, 15 Oct 2025 11:13:27 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 6B11C7A01CA;
- Wed, 15 Oct 2025 05:13:26 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Wed, 15 Oct 2025 05:13:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760519606;
- x=1760606006; bh=EEFphoLL4mTYsLMtpzkXkBFjwHGtE5dGJYMU6c93IwU=; b=
- AuSwKn4rmNoqixFg5Z+ENn8hCkCe71V7o2ERwKH4FK+c+ytcowJBOAmZN+tca+a4
- wYmOSf4kZ2vDbq1xCE8VSd6KPehzSG0P4NpZnlFWUcHA2mRRvxDEtfKYhfZY5dLO
- XHK1nisp0UaFlsTOKVsZ6LxU+CR8ak3Jxpwsxzchqrbj/qN/74lai6b7L2BoV3Pa
- efJKb4yyQMJvqUCLDuoOx6ojqDfGVPswk0RUdrgWYCx3Yap16QaubNo6SQmGoulH
- QWzAiF8g+d7/Wlpt8h35NMf50R2Mrx+30zS8MwQwxThNKfVGgUUy/AQblHtzyUZs
- sR5gI+dm+f+3QpGepKDGLg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760519606; x=
- 1760606006; bh=EEFphoLL4mTYsLMtpzkXkBFjwHGtE5dGJYMU6c93IwU=; b=i
- UQB+punjdyr1zVDY/avQ5bGkuqTRd+8GuTAswXDj6qk54SDloEH/zCQEW7W9/jyl
- 0+rnPUgvXpvWsPYNaX++6LnpK4bV4UmoxAZEosBfKkQdPr9TCWXAHQPXhsEUTIbv
- C7QRI6M3gYwqIRBvZqHEqSNRaBYFuzLhve0jp/DaTQ7XT1KTSpHPb9iWLjHn0tmc
- MzlHnbQancr4aYig3eZJjrGhGW+cbvOXPIENvdOh+bURmzv9/ZFeeOtS1pn5v51w
- 167KG+VZZ4J/Zy6zWNYyKSZGGzNRcdxE1Zl+7aoTPGLgVNweKmAnN6v43u+2DfGO
- NraBKIxB43WNdpsnPHR8g==
-X-ME-Sender: <xms:tWXvaIqPYxgafwmxz68ir3MJjys0zNPBfIPcZwUpiXrCNbuGZN6w2w>
- <xme:tWXvaONYsHIvdOuDQra5llEAQt2jE--msYATtD2gUBPydl8mwrsJH7Y4vrWisyafR
- PAu12QivZXnxyN6JekkTXcGWaEAGHwsHgIFEkmCodeK6lTWm1w>
-X-ME-Received: <xmr:tWXvaBhesfIc5YCcgZljTMYNVZmuyILINgz563DC0jZKXBbJZYcwpTm_5n-v6CVCR5EDuK6Z8BMVLN9Wj3rdER9CHw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdeftddvucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertd
- dttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
- ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevff
- fgtdegkeeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgep
- tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
- gvthdpnhgspghrtghpthhtohepudehpdhmohguvgepshhmthhpohhuthdprhgtphhtthho
- pehpsghhrghgrghvrghtuhhlrgesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopehjvg
- hrihhnjhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhr
- ghdprhgtphhtthhopehvrghtthhunhhurhhusehmrghrvhgvlhhlrdgtohhmpdhrtghpth
- htohepghdrshhinhhghhesnhigphdrtghomhdprhgtphhtthhopehsrggthhhinhdrshgr
- gigvnhgrsehngihprdgtohhmpdhrtghpthhtohephhgvmhgrnhhtrdgrghhrrgifrghlse
- hngihprdgtohhmpdhrtghpthhtohepfhgvnhhgtghhvghnghifvghnsehhuhgrfigvihdr
- tghomhdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtg
- homh
-X-ME-Proxy: <xmx:tWXvaCYgD39InS_wKFKtKPBrpvuv4KjzkSg_ilEXtFItr9wJ9K_IcQ>
- <xmx:tWXvaFhlFoq-hBw6caN-uPSsqUJuCVGlfyoJ8-uecj_dDqmCb0GS8A>
- <xmx:tWXvaEZL6y72cx26836Ok_ot56cLZOpDeISOo7WC96TIwCu3Ojh98w>
- <xmx:tWXvaLOQHiXrylDA8981wUb6VgEMNTlhRTQmwsJkAdyq4mShw9DqEg>
- <xmx:tmXvaKhXDbTFZngu7LclhIEhoPdbgFlT525rHtl76nEWbAM9Yd_Fh9Nm>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Oct 2025 05:13:23 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Pavan Nikhilesh <pbhagavatula@marvell.com>
-Cc: jerinj@marvell.com, dev@dpdk.org, vattunuru@marvell.com, g.singh@nxp.com, 
- sachin.saxena@nxp.com, hemant.agrawal@nxp.com, fengchengwen@huawei.com,
- bruce.richardson@intel.com, kevin.laatz@intel.com, conor.walsh@intel.com,
- gmuthukrishn@marvell.com, vvelumuri@marvell.com, anatoly.burakov@intel.com,
- dev@dpdk.org
-Subject: Re: [25.11 PATCH v3 0/5] Introduce DMA enqueue/dequeue operations
-Date: Wed, 15 Oct 2025 11:13:21 +0200
-Message-ID: <2993583.yKrmzQ4Hd0@thomas>
-In-Reply-To: <20250524091316.10056-1-pbhagavatula@marvell.com>
-References: <20250519185604.5584-1-pbhagavatula@marvell.com>
- <20250524091316.10056-1-pbhagavatula@marvell.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 2D77F406B6;
+	Wed, 15 Oct 2025 11:32:25 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 1B4BD402E1
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 11:32:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1760520742;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=hDnjADbkZ0R1pgXz/mlZ7yxQKxqiz5uLZCFxoKqads8=;
+ b=d2boP75L9zN9bhTryyyupU1ojuRcQyVZpbKk1V2fWZu/VJJnJIiksiupQyn0J6t7aST+9B
+ cBJO8aJI01M2NHJc66G0t1EZ9AAWQM+U7+4fmLtzH8LSV4MEXORnQQHcgOeng1faPRm/ev
+ Io9RXlGRPbz/bBQM1UN1WxQfDF11K5Y=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-544-Tq9l6ta0P96BxXKFlkzezw-1; Wed, 15 Oct 2025 05:32:21 -0400
+X-MC-Unique: Tq9l6ta0P96BxXKFlkzezw-1
+X-Mimecast-MFC-AGG-ID: Tq9l6ta0P96BxXKFlkzezw_1760520740
+Received: by mail-wm1-f70.google.com with SMTP id
+ 5b1f17b1804b1-46e44b9779eso35877875e9.1
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 02:32:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1760520740; x=1761125540;
+ h=in-reply-to:references:user-agent:subject:to:from:cc:message-id
+ :date:content-transfer-encoding:mime-version:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=hDnjADbkZ0R1pgXz/mlZ7yxQKxqiz5uLZCFxoKqads8=;
+ b=kM/OWZ6cUcAk29N3lpTkfzD8albn/V44mZR3d6DeQ+bThT4rIM9YQWQra0dHQsvIvE
+ Ubbcdo3ohAHGyqWP3DJT75Ptt0P0l8ntBmxw634Sy9Wq23PpJLxggUKGwYce+wbdy4p6
+ W6A/Y5dPASSxeWLqH2xV0jqx/Olv3LQEFcjwtL2T9sCJeCsoArmDanpYMEo/1lbegOoe
+ qB1+GDr19Nvg+iWQP+Su7nCXlZWyS/qlkAyCX+yCAKlYinYiP8+BbKnrUDinLFmKaWgY
+ 9pC0bj9ded4deRp2tT1YAqb9FmRBB8+4inPvKdXXaMo7FJOD9vMQgGiDE83ZvZxFxC0r
+ C9Ew==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWd3oMTkri6dGf620kzLJOaVQFuhHmxq+aolwBcy0QwQyGT1LZSEQ9abdjqhthsLsaySvc=@dpdk.org
+X-Gm-Message-State: AOJu0YyG5NEYhe5uDDAOm8rCIvUD58HOuQ21Cbi01OSnnrXt+EiVvyTY
+ pPR+N291+GPgGiDxQCxPu2IlPwu16Ix4oc+yy/kqso+RGU4FvLHQ0BXUmH1MfZ+MI7amO5LoXJa
+ aPUMjt92/myrkHyxtxgG10mjK2FJOLG96qJFcep1etajL
+X-Gm-Gg: ASbGncsUgMG97LrLtMVI/Y491mQuO7rbRh7xEQVcagUmMrP5QQgv+hJh1/xpaD3bU3z
+ rvrnJ2s2tFH9PLQz2wtM5uZYHByLPufg5yvyqpLI24YOc/g8BsQe5rXrK95qsz9L2mkFf/rJ6Jv
+ dvt1dcXmumViucX6XnjlX/knWZC4j3qs8voz/J5tsQ93GPsAkuM/WtSrESnZ1iDk8FGQF0hPAD+
+ EDSSEFV/3NxFwiLMACI+t/L6t4HXxjhEkesSTemOP++rcTo423h7p9LK7WSIwTQhDq/mOVLKSxp
+ hc4iJn9hBgt0Y75zz/tjMzG5VrCj5liv0RuISs3LD65cwRvHcJg4CI4XUWYiZuqNh6wW+EgPRQ2
+ uzgcErPWHj1ybT32uZgVUmQ==
+X-Received: by 2002:a05:600c:35cf:b0:46f:b42e:e360 with SMTP id
+ 5b1f17b1804b1-46fb42ee424mr129039765e9.40.1760520739880; 
+ Wed, 15 Oct 2025 02:32:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGenaXMx0qWBdkx/UyunBR1JSqsXIi592G9WgGTo0S3jBu4f2eb+PE0MP1XDbm6vvpJVdjnQQ==
+X-Received: by 2002:a05:600c:35cf:b0:46f:b42e:e360 with SMTP id
+ 5b1f17b1804b1-46fb42ee424mr129039535e9.40.1760520739420; 
+ Wed, 15 Oct 2025 02:32:19 -0700 (PDT)
+Received: from localhost (2a01cb00021ec0002e23edbec21b0e73.ipv6.abo.wanadoo.fr.
+ [2a01:cb00:21e:c000:2e23:edbe:c21b:e73])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-47101c2359fsm19673825e9.11.2025.10.15.02.32.18
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Wed, 15 Oct 2025 02:32:19 -0700 (PDT)
+Mime-Version: 1.0
+Date: Wed, 15 Oct 2025 11:32:18 +0200
+Message-Id: <DDISIM2MXWBU.2A2Q7M4D9H733@redhat.com>
+Cc: <stable@dpdk.org>
+From: "Robin Jarry" <rjarry@redhat.com>
+To: "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>, <dev@dpdk.org>
+Subject: Re: [PATCH 1/2] fib6: fix memory leak on delete operation
+User-Agent: aerc/0.21.0-9-ga57e783008e9
+References: <20251014181755.114300-1-vladimir.medvedkin@intel.com>
+In-Reply-To: <20251014181755.114300-1-vladimir.medvedkin@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: je2Kq8ptRNaRvGSuizZwbftGJc-RAU4DHgMs8nyTtHY_1760520740
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,19 +94,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-24/05/2025 11:13, pbhagavatula@marvell.com:
-> Pavan Nikhilesh (5):
->   dmadev: add enqueue dequeue operations
->   test/dma: add enqueue dequeue operations
->   app/dma-perf: add option to measure enq deq ops
->   dma/cnxk: implement enqueue dequeue ops
->   eventdev: refactor DMA adapter ops
+Vladimir Medvedkin, Oct 14, 2025 at 20:17:
+> When deleting a prefix, the first attempt to get next prefix cannot
+> return NULL as we will at a minimum get the prefix we are trying to
+> delete, whereas we were rather interested in whether there are other
+> prefixes within the same subtree, not counting the prefix we are
+> deleting. To address this, we check if we have found the exact prefix we
+> started with, and perform another search to see if there are more
+> prefixes to be found.
+>
+> In addition to that, doing the searches with _COVER rather than _ALL is
+> incorrect, because if we are doing search with _COVER rather than _ALL, w=
+e
+> do not dive into the tree to find more specific prefixes within the
+> prefix we are going to delete, and thus will not notice if our subtree
+> also has more specific prefixes. To fix it, perform first (and
+> subsequent) searches with _ALL rather than _COVER.
+>
+> Finally, when we hit the "tmp =3D=3D NULL" branch (meaning, when we are
+> deleting the only node that exists in our subtree), we know that the
+> rib6_lookup will always return us the node that we are trying to delete,
+> but this is incorrect because further code will consider this to be our
+> parent node. Address this by doing another search to find the parent of
+> the current node.
+>
+> Fixes: c3e12e0f0354 ("fib: add dataplane algorithm for IPv6")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 
-There was no review after many pings.
-It is adding a complete new API which gives some performance boosts
-in some cases, and it is experimental.
-Let's try it for real, and don't hesitate to amend it.
+Tested-by: Robin Jarry <rjarry@redhat.com>
 
-Applied, thanks.
+--=20
+Robin
 
+> Use extra care when cleaning on stairs.
 
