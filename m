@@ -2,49 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD0BCCD18E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 07:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6BD7CCD18E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 07:32:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2134840693;
-	Wed, 15 Oct 2025 09:28:17 +0200 (CEST)
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com
- [113.46.200.218])
- by mails.dpdk.org (Postfix) with ESMTP id 827A640687;
- Wed, 15 Oct 2025 09:28:15 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=0DjxYFkdMQqwvmlKj5Tu2S8DdSsQ2tWcDXx+3dYyPBA=;
- b=2vjVRjv+t/M8DgLScbbHqfzisqtwps5Tz0R28b/JPRp3S47TmM4Piga1nug4i2oFr1vt/Q3t4
- L9Zsh5Y8Xm6VFgNdIBjOa3SE7DSw9YCnftyOJLmu0A98kycE7XAvUjwKg2eW8PO0tLi9N/1gYXi
- wLsxQPLCJ0qW5+IdsqvO/9Y=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
- by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4cmjMq5T4BzpTKx;
- Wed, 15 Oct 2025 15:27:19 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 331941400E3;
- Wed, 15 Oct 2025 15:28:14 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 15 Oct 2025 15:28:13 +0800
-Message-ID: <7cb7e6cb-1183-41dc-a1a0-67c1d025124e@huawei.com>
-Date: Wed, 15 Oct 2025 15:28:13 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id CFBBD40652;
+	Wed, 15 Oct 2025 09:32:28 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id BC8C2402C3
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 09:32:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1760513547;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=SSUVJ5t0QQK+yWKhgkmX/8lmieGK1wNpQy64zp57mEQ=;
+ b=gmHWSGoa3IsWaTmDrTgxPuCQ0UUEaTtnKx9DjAI7+1dmUq9R3wVgWTkmcVFziJFT/3Rs4E
+ i8eHEmGgTggnZzPsIpMP58V/ccL3VoieNX4P5u4MESUs9iUwATlvQiYgIg71h1OX7uSOEw
+ YIvd2Hl+XeX4g6K3OHtRju2+n+fu0yc=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-88-KUOMt-yGM4CI8XmhQYb2fg-1; Wed, 15 Oct 2025 03:32:26 -0400
+X-MC-Unique: KUOMt-yGM4CI8XmhQYb2fg-1
+X-Mimecast-MFC-AGG-ID: KUOMt-yGM4CI8XmhQYb2fg_1760513545
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-57875e2885eso5085517e87.2
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 00:32:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1760513544; x=1761118344;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=SSUVJ5t0QQK+yWKhgkmX/8lmieGK1wNpQy64zp57mEQ=;
+ b=HNZEUbPdUd6WpsFzwzlJedkZT3rhuT7GWxTptvxp9NV/MID8AIW94/2ZIT5/QcJtjm
+ vGmo+VXhEHQBQoAM8llptv23uSadyXPwDJYvjIFpU6yHwBSiK9V041EYiuiAzyLVTJUB
+ eESIRRmdWhxrkNZmlSgNLpy224KTwZv6UI/H+cR8ICMeTXjNZtPhInUAHmrxqJ9ibPpW
+ mYZgOjy7I46KGXjItn8mDywq/M8Pp0QTNbC1m2spjqD+MwUZvXXhSjYHoaQv5fmIIAtf
+ T60fz2vP8r56lmzE1XjYta5PG6BYlu4fffY1HvzztsJWW2aQWzNiZYYfOYtjRMllfC29
+ 2YMQ==
+X-Gm-Message-State: AOJu0Yzz+ubiOF01NhcXBiVDssEc2rWkPdgkZfYLgBWs2lbmeHUCYjyd
+ 4tLyL5FkvZI8FuFbxp56xFaoQyrJBWcPLEVg3xIizrGK7VVw34om3CUDHdBWpnUr5Do799t+GaI
+ V/cFee4smCVczenZndWUFtLlw9ttjCu1jzc9dyqilsoA5n9IoNyhCGiZl64Ai34aLXlkNtb3hly
+ tZtiCKFxwcdTas9cPL2zU=
+X-Gm-Gg: ASbGnctooXoHBu64l7FU8cW+jp6d1u4OXC1z5bE5ON9BXJS69GYj3o4TGIF76IbFrGz
+ XkGcRY9LlUDhV7zvqQk2dBsrJDWdTj2v3HIq9BI7Lsp815bBfNd1Qou41LULdgJT3zoqIoYKG0r
+ PjLUQ2ljP6XwOwfJSRv6M=
+X-Received: by 2002:ac2:5685:0:b0:58a:fa11:b7a1 with SMTP id
+ 2adb3069b0e04-5906dc16d75mr8377288e87.24.1760513544586; 
+ Wed, 15 Oct 2025 00:32:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHOAl/yd3V/dLIbqy36BuzlgWinp5tt/hbNRL5ocagLd2ASajxiQ1ucDf9+ocd1MKiCOQmP46P5r/DdWeNvcEQ=
+X-Received: by 2002:ac2:5685:0:b0:58a:fa11:b7a1 with SMTP id
+ 2adb3069b0e04-5906dc16d75mr8377280e87.24.1760513544137; Wed, 15 Oct 2025
+ 00:32:24 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 02/21] test/func_reentrancy: fix args to EAL init call
-To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
-CC: <david.marchand@redhat.com>, <stable@dpdk.org>
-References: <20250520164025.2055721-1-bruce.richardson@intel.com>
- <20251009130056.2630343-1-bruce.richardson@intel.com>
- <20251009130056.2630343-3-bruce.richardson@intel.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20251009130056.2630343-3-bruce.richardson@intel.com>
+References: <20251008090444.2689652-1-pravin.bathija@dell.com>
+ <20251008090444.2689652-2-pravin.bathija@dell.com>
+In-Reply-To: <20251008090444.2689652-2-pravin.bathija@dell.com>
+From: Maxime Coquelin <mcoqueli@redhat.com>
+Date: Wed, 15 Oct 2025 09:32:12 +0200
+X-Gm-Features: AS18NWAz3oeDT-qjhIlro_0xlgr2tn0zKM4ps7WKvUAhh0Q9U0DdEZRKee3kBBs
+Message-ID: <CAO55csx8bxi6LDi81XSaN2o1SNHFVBnQG5Emewv-nRcy8yWr0Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] vhost: add define for configure mem slot
+To: Pravin M Bathija <pravin.bathija@dell.com>
+Cc: dev@dpdk.org, pravin.m.bathija.dev@gmail.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: V4x3kbF089PiaU_gREhst98lt3xyZ7fAQQpgOCCx7fc_1760513545
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,15 +85,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+On Wed, Oct 8, 2025 at 11:05=E2=80=AFAM Pravin M Bathija
+<pravin.bathija@dell.com> wrote:
+>
+> * add user to mailmap file
+> * add define for configure memory slots
+>
+> Signed-off-By: Pravin M Bathija <pravin.bathija@dell.com>
+> ---
+>  .mailmap              | 1 +
+>  lib/vhost/rte_vhost.h | 4 ++++
+>  2 files changed, 5 insertions(+)
+>
 
-On 10/9/2025 9:00 PM, Bruce Richardson wrote:
-> The unit test for EAL init was passing in a NULL argv[0] value which is
-> invalid. Update to have a valid string for argv[0].
-> 
-> Fixes: 104a92bd026f ("app: add reentrancy tests")
-> Fixes: 978ead0144c1 ("test/func_reentrancy: fix EAL init call")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+
+Thanks,
+Maxime
 
