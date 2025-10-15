@@ -2,60 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B281CCCD18E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 12:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8A7CCD18E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 12:09:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A6BE40EDB;
-	Wed, 15 Oct 2025 14:09:33 +0200 (CEST)
-Received: from pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com
- (pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com
- [35.155.198.111])
- by mails.dpdk.org (Postfix) with ESMTP id 751E340273;
- Wed, 15 Oct 2025 14:09:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6A5B1410D5;
+	Wed, 15 Oct 2025 14:09:55 +0200 (CEST)
+Received: from pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com
+ (pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com
+ [44.246.68.102]) by mails.dpdk.org (Postfix) with ESMTP id 08F5940273
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 14:09:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
- t=1760530171; x=1792066171;
+ t=1760530194; x=1792066194;
  h=from:to:cc:subject:date:message-id:mime-version;
- bh=X6DxD+SaS6DRGktxJ6V5W5FA14AVba7PwCEjS4IOzNE=;
- b=K78ZLGOHaETRGhlgO5YjMhDjK/3Uq1px+gwIQeGvKW9PEehbXoQmpW2m
- Tha9ZPy3v/HMBBBCi9+Gk6KDtFOYbbxpAYZjlTn69FGQsp/oB/rQPQz3e
- FxeAfUkcBQ4JVwQjN4aMp/JcVuwfvFne0zwv41nYWZbvPIBxjiAkNiRWI
- CU+v6oJ0ZAgLQgZz3MJpc04cDFnQV5yH1R249Wkno6HgFXHfWsQ/uP2ON
- dz2XBd7wzBXqOwzW+7+tMvd4UhgQqpMoxCZvuxZQ7qifN1SmA1V020R0q
- b97pVvul3LLF5o0T8N9b4yLFoP3jKhXH7le/pFsq93U8mFrWH+sIHzpxM A==;
-X-CSE-ConnectionGUID: NBvtH8/mT5qwwAaRz5XnrQ==
-X-CSE-MsgGUID: /5xKB/aITfyTfGmlZnEESg==
+ bh=NKzslwMe/OZCTle6Rgn01zWjOUc4/IgN//BztuQExsI=;
+ b=B+kE4xbygVkJWbvUe0IWlBtCojLYFRWBZWZoSlrU98nHR0jPB7DQhNTQ
+ m/LLuD8pcXjp0d9po06AbgmIJ6N5MMc5URNwbNtm5n4XAb4S2S+NdDi9z
+ y7Iu0ej8mHPVFHlmVgB9gGAScpR+BcyaT3eHTvmI+UE3KeFQtwUJ2+srL
+ ghhGTc/PoJMWj6Jn1Tfj9Clp0WiWgcp70CoUAMT380+QaMf1m2skNDHes
+ 07PjVXLKJdBtfp4rh3+twL6vvef2cNeEBmeQdCnZkiHj/EZTggt2JGvdX
+ WQMlzSJIRyu0ejT0WKVmpLuX3aJ9xtXtyY0pyjj4oSnvtU/I3NnymzkYL Q==;
+X-CSE-ConnectionGUID: twDcHshLTCauU7UYMIqPiA==
+X-CSE-MsgGUID: qsS28GY9Q5St+/UioKAQcw==
 X-IronPort-AV: E=Sophos;i="6.19,231,1754956800"; 
-   d="scan'208";a="4813536"
-Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO
- smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
- by internal-pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com with
- ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 12:09:30 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [205.251.233.236:9192]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.59.122:2525]
+   d="scan'208";a="4931357"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO
+ smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+ by internal-pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com with
+ ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2025 12:09:51 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [205.251.233.105:9143]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.28.168:2525]
  with esmtp (Farcaster)
- id 05097ed0-a99f-40d0-b5b7-cca2ef652fcb; Wed, 15 Oct 2025 12:09:30 +0000 (UTC)
-X-Farcaster-Flow-ID: 05097ed0-a99f-40d0-b5b7-cca2ef652fcb
+ id 1f7ebd01-adfe-4e71-8e43-d8e1ba18b2c9; Wed, 15 Oct 2025 12:09:51 +0000 (UTC)
+X-Farcaster-Flow-ID: 1f7ebd01-adfe-4e71-8e43-d8e1ba18b2c9
 Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 15 Oct 2025 12:09:30 +0000
+ Wed, 15 Oct 2025 12:09:51 +0000
 Received: from HFA15-CG15235BS.amazon.com (10.1.213.14) by
  EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 15 Oct 2025 12:09:28 +0000
+ Wed, 15 Oct 2025 12:09:49 +0000
 From: Shai Brandes <shaibran@amazon.com>
 To: <stephen@networkplumber.org>
-CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>, <stable@dpdk.org>,
- Amit Bernstein <amitbern@amazon.com>
-Subject: [PATCH v2 09/20] net/ena: fix PCI BAR mapping on 64K page size
-Date: Wed, 15 Oct 2025 15:09:16 +0300
-Message-ID: <20251015120916.2632-1-shaibran@amazon.com>
+CC: <dev@dpdk.org>, Shai Brandes <shaibran@amazon.com>, Amit Bernstein
+ <amitbern@amazon.com>
+Subject: [PATCH v2 10/20] net/ena: style and comment changes
+Date: Wed, 15 Oct 2025 15:09:39 +0300
+Message-ID: <20251015120939.2681-1-shaibran@amazon.com>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.1.213.14]
-X-ClientProxiedBy: EX19D044UWA004.ant.amazon.com (10.13.139.7) To
+X-ClientProxiedBy: EX19D041UWB002.ant.amazon.com (10.13.139.179) To
  EX19D001UWA001.ant.amazon.com (10.13.138.214)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -70,107 +69,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 64K page systems, DPDK `pci_uio` driver aligns the physical address
-to a 64K boundary before assigning a virtual address.
-If the original physical BAR address is not 64K-aligned,
-this adjustment leads to an incorrect mapping.
+This patch makes several changes to improve
+the style and of the driver's code by adding
+comment and line breaks.
 
-This patch ensures the BAR virtual address received in the driver accounts
-for both PAGE size and BAR physical offset to correctly map each BAR.
-The fix is compatible for every PAGE size, applies to every used BAR,
-and supports both 32/64 bit DPDK builds.
-
-Example issue:
-- BAR0 physical address: 0x80208000 (not 64K-aligned)
-- DPDK aligned physical address: 0x80208000 -> 0x80200000
-  (masking 0x8000 offset)
-- DPDK mapped physical to virtual address: 0x80200000 -> 0x1140000000
-- Driver accessed BAR0 virtual address = 0x1140000000
-  (causing init failure)
-- Resolution is to add correct offset to driver BAR0 address:
-  0x1140000000 + 0x8000
-
-Fixes: 1173fca25af9 ("ena: add polling-mode driver")
-Cc: stable@dpdk.org
 Signed-off-by: Amit Bernstein <amitbern@amazon.com>
 Signed-off-by: Shai Brandes <shaibran@amazon.com>
 Reviewed-by: Yosef Raisman <yraisman@amazon.com>
 ---
- doc/guides/rel_notes/release_25_11.rst |  1 +
- drivers/net/ena/ena_ethdev.c           | 28 ++++++++++++++++++++++----
- 2 files changed, 25 insertions(+), 4 deletions(-)
+ drivers/net/ena/ena_ethdev.c | 7 +++----
+ drivers/net/ena/ena_ethdev.h | 1 -
+ drivers/net/ena/ena_rss.c    | 2 ++
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
-index a8fbd0a483..9a9eea371d 100644
---- a/doc/guides/rel_notes/release_25_11.rst
-+++ b/doc/guides/rel_notes/release_25_11.rst
-@@ -58,6 +58,7 @@ New Features
- * **Updated Amazon ENA (Elastic Network Adapter) net driver.**
- 
-   * Added support for retrieving HW timestamps for Rx packets with nanosecond resolution.
-+  * Fixed PCI BAR mapping on 64K page size.
- 
- * **Added speed 800G.**
- 
 diff --git a/drivers/net/ena/ena_ethdev.c b/drivers/net/ena/ena_ethdev.c
-index 5147a754b2..aaa4feb11b 100644
+index aaa4feb11b..3274ecfb46 100644
 --- a/drivers/net/ena/ena_ethdev.c
 +++ b/drivers/net/ena/ena_ethdev.c
-@@ -9,6 +9,7 @@
- #include <rte_version.h>
- #include <rte_net.h>
- #include <rte_kvargs.h>
-+#include <rte_eal_paging.h>
- 
- #include "ena_ethdev.h"
- #include "ena_logs.h"
-@@ -2364,6 +2365,24 @@ static int ena_init_once(void)
- 	return 0;
- }
- 
-+/*
-+ * Returns PCI BAR virtual address.
-+ * If the physical address is not page-aligned,
-+ * adjusts the virtual address by the page offset.
-+ * Assumes page size is a power of 2.
-+ */
-+static void *pci_bar_addr(struct rte_pci_device *dev, uint32_t bar)
-+{
-+	const struct rte_mem_resource *res = &dev->mem_resource[bar];
-+	size_t offset = res->phys_addr % rte_mem_page_size();
-+	void *vaddr = RTE_PTR_ADD(res->addr, offset);
+@@ -31,6 +31,8 @@
+ #define GET_L4_HDR_LEN(mbuf)					\
+ 	((rte_pktmbuf_mtod_offset(mbuf,	struct rte_tcp_hdr *,	\
+ 		mbuf->l3_len + mbuf->l2_len)->data_off) >> 4)
 +
-+	PMD_INIT_LOG_LINE(INFO, "PCI BAR [%u]: phys_addr=0x%" PRIx64 ", addr=%p, offset=0x%zx, adjusted_addr=%p",
-+		bar, res->phys_addr, res->addr, offset, vaddr);
-+
-+	return vaddr;
-+}
-+
- static int eth_ena_dev_init(struct rte_eth_dev *eth_dev)
- {
- 	struct ena_calc_queue_size_ctx calc_queue_ctx = { 0 };
-@@ -2409,16 +2428,17 @@ static int eth_ena_dev_init(struct rte_eth_dev *eth_dev)
++/* return val clamped to the [min, max] range */
+ #define CLAMP_VAL(val, min, max)					\
+ 	(RTE_MIN(RTE_MAX((val), (typeof(val))(min)), (typeof(val))(max)))
  
- 	intr_handle = pci_dev->intr_handle;
- 
--	adapter->regs = pci_dev->mem_resource[ENA_REGS_BAR].addr;
--	adapter->dev_mem_base = pci_dev->mem_resource[ENA_MEM_BAR].addr;
--
-+	adapter->regs = pci_bar_addr(pci_dev, ENA_REGS_BAR);
- 	if (!adapter->regs) {
- 		PMD_INIT_LOG_LINE(CRIT, "Failed to access registers BAR(%d)",
- 			     ENA_REGS_BAR);
- 		return -ENXIO;
+@@ -918,6 +920,7 @@ static inline void ena_indirect_table_release(struct ena_adapter *adapter)
+ 		adapter->indirect_table = NULL;
  	}
+ }
++
+ static int ena_close(struct rte_eth_dev *dev)
+ {
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+@@ -952,14 +955,10 @@ static int ena_close(struct rte_eth_dev *dev)
+ 	ena_indirect_table_release(adapter);
+ 	rte_free(adapter->drv_stats);
+ 	adapter->drv_stats = NULL;
 -
- 	ena_dev->reg_bar = adapter->regs;
+ 	ena_com_set_admin_running_state(ena_dev, false);
+-
+ 	ena_com_rss_destroy(ena_dev);
+-
+ 	ena_com_delete_debug_area(ena_dev);
+ 	ena_com_delete_host_info(ena_dev);
+-
+ 	ena_com_abort_admin_commands(ena_dev);
+ 	ena_com_wait_for_abort_completion(ena_dev);
+ 	ena_com_admin_destroy(ena_dev);
+diff --git a/drivers/net/ena/ena_ethdev.h b/drivers/net/ena/ena_ethdev.h
+index 6a3b004653..3a66d79384 100644
+--- a/drivers/net/ena/ena_ethdev.h
++++ b/drivers/net/ena/ena_ethdev.h
+@@ -29,7 +29,6 @@
+ #define ENA_RX_BUF_MIN_SIZE	1400
+ #define ENA_DEFAULT_RING_SIZE	1024
+ 
+-
+ #define ENA_MIN_MTU		128
+ 
+ #define ENA_MMIO_DISABLE_REG_READ	BIT(0)
+diff --git a/drivers/net/ena/ena_rss.c b/drivers/net/ena/ena_rss.c
+index 45578189b9..0af1879dc4 100644
+--- a/drivers/net/ena/ena_rss.c
++++ b/drivers/net/ena/ena_rss.c
+@@ -56,6 +56,7 @@ size_t ena_rss_get_indirection_table_size(struct ena_adapter *adapter)
+ 	adapter->indirect_table_size = (1UL << ena_dev->rss.tbl_log_size);
+ 	return adapter->indirect_table_size;
+ }
 +
-+	/* Memory BAR may be NULL on non LLQ supported devices */
-+	adapter->dev_mem_base = pci_bar_addr(pci_dev, ENA_MEM_BAR);
+ void ena_rss_key_fill(void *key, size_t size)
+ {
+ 	static bool key_generated;
+@@ -512,6 +513,7 @@ int ena_rss_configure(struct ena_adapter *adapter)
+ 	tbl_size = ena_rss_get_indirection_table_size(adapter);
+ 	if (!tbl_size)
+ 		return 0;
 +
- 	/* Pass device data as a pointer which can be passed to the IO functions
- 	 * by the ena_com (for example - the memory allocation).
- 	 */
+ 	/* Restart the indirection table. The number of queues could change
+ 	 * between start/stop calls, so it must be reinitialized with default
+ 	 * values.
 -- 
 2.17.1
 
