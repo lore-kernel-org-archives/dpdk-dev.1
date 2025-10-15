@@ -2,85 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A32CCD192
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 14:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64BE8CCD194
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 15:05:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D668F402D3;
-	Wed, 15 Oct 2025 16:46:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 499FB40649;
+	Wed, 15 Oct 2025 17:05:30 +0200 (CEST)
 Received: from fout-b8-smtp.messagingengine.com
  (fout-b8-smtp.messagingengine.com [202.12.124.151])
- by mails.dpdk.org (Postfix) with ESMTP id 8F11D40273;
- Wed, 15 Oct 2025 16:46:52 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.stl.internal (Postfix) with ESMTP id 9ED481D0013F;
- Wed, 15 Oct 2025 10:46:51 -0400 (EDT)
+ by mails.dpdk.org (Postfix) with ESMTP id 3DD6F40273
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 17:05:29 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfout.stl.internal (Postfix) with ESMTP id 711981D000B2;
+ Wed, 15 Oct 2025 11:05:28 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Wed, 15 Oct 2025 10:46:51 -0400
+ by phl-compute-04.internal (MEProxy); Wed, 15 Oct 2025 11:05:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760539611;
- x=1760626011; bh=0TxhM+Jlb01ewSLxn53FsQ2/oTA4qQeXmTnD4d9/ibc=; b=
- KqexcvZB9fmAKqGVydNfK41BnYqGoPzulfmgdZS7EOgEro6BvNIq/bpMjGSIZ6qW
- +0kigYVaOki3yO+Etj0C3tWeS3r9GFOMbFPJruhKlijvXGyEXT2v2fcpFtWLlbky
- UjDy7QiobBeyz7DwkjnBVJVAVRcA3RHfF9Qz6MlwHME11EKdqmLzfYBvOru0bfoI
- mufhWkptcxNeQ1z+n0/xTqQuXYZg/GnPRBScLBFvT00EFzk3mxSZOxqjJOvallha
- jhRToSeUoEhIIKz8EJSqYxQRHLcu8eWCQ0HiV/7MEK+9Rg6OMFx+xGPMEeZ2BOI2
- ig+CENlJecUrR3ZvsS4cUw==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1760540728;
+ x=1760627128; bh=UasyHj6SLrwoTzXZ7Z6Xhn1/pD9pMgwa2liD5PxTyPQ=; b=
+ goWtc6sASrlpsZAHlQEOCZS8jjvzXmf8axAZL7DeklQVhGA5hEYvl+pKdI8kviJ+
+ xEtwi+mH/HiPYuqwabeW54uutdP9LQh5b2IhyhyPD4n0DPZwW1hDAC9RrL8G9HV9
+ 5B/nF/5GC9OqyhqVnAb6Ez5sP9YC7sKrxHPMrQE7DvxPXgqWob98z5fGYqzYLijZ
+ fPJe7Pxet7DI4uW1JNuX1+JeD15GidhcT1gvIRxeAi3pcgr/nxBYx54vwXY2G1FX
+ VrwFvTOtaElbhnrfswM5T5c3g6w53Rivhzi9/cr88ItBe+XdKIdS7oUko2YuzNHL
+ Rp0UY5gNcUYNbA8Mb3ygvA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760539611; x=
- 1760626011; bh=0TxhM+Jlb01ewSLxn53FsQ2/oTA4qQeXmTnD4d9/ibc=; b=t
- m+mlhi91Oq5WSZBG8wbDFQSGPL7qcpOxc4M4bM4N5uyH51b25E4zBKleQC6z4m49
- 3AAAdevNS6uGxTDvDQTfFZFG4TAl0uHVRxhvs5Gc84o+LcoWmVBHly+e39g2Exuw
- LhHdX0Wjv/eDnJe6xRItnPBJxBM0twXMhqm8vvVkn6pnPFmrRbShpaujnPV1yaTv
- 5GYCGBJGyaIV9cWUS+Jq06H5LyYm6bK6ylS4CtKeVb+inMG6ObqPqWf6WWxY0I6+
- UbR6meq9KbZ8MarjH94JbLI5++xHFsAsYhQ5EEgxpPwuVopwQjLPX9RZeXlY78bA
- GQhxoZuUr8qBxPrnDlOrg==
-X-ME-Sender: <xms:2rPvaKQxEWdCD1E5vJhqrWBcUR30yUVJZEhFYrTD4bDxyqC98yNvAA>
- <xme:2rPvaFzyHSlMWGE4zKlAAshBBT1Z62Ou5nZDgijc91Lin99wpZsMrxHRSySz0rdqY
- yunbZTnxy7e6HMcJDIaau8Hmx0Clods2yI2AAqD0JYdP5bjljY1>
-X-ME-Received: <xmr:2rPvaCpCDzIqFqBWVEm0eP8ZNzhcFjSyEHxdwlovUC_NPG4h8zdI9QKj7GHQ2Z8fms9v1DNzZeNVrsPhaFlw2r-Z9Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdefieelucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760540728; x=
+ 1760627128; bh=UasyHj6SLrwoTzXZ7Z6Xhn1/pD9pMgwa2liD5PxTyPQ=; b=n
+ C9UaBxGhPsnw0UN9X6bY0GtAbo/39NA9uHSg3oDvwJkNqw9fU9wzcPkm+vndDE1q
+ Piwv2wL3ZZmgUNvLdaauaEPHfl41dgnvzZ89P+YLfA6ZH3Uvy4KB+Mw+r62asZwq
+ sOgggVqB66/mhSz36q9l66JSl7CbjUD/p1S2Yqqp46YqfF2jqIZaeS3+FmEvfFps
+ lSf5Y1drCS+CkC1k4/aTJ3ER8Rz3HjcpVZc75irCByVfeWzv2wgwCv9lsBsaD186
+ U1oquoSXWQuGVuLoFl2xtf0XyAXaPbU/JRzAqK18tYL8XqyzC8fHeWE6rCJQOeqe
+ IVHqNqVyT1f1hQmqAs5rA==
+X-ME-Sender: <xms:N7jvaF1-VpDPNYhh9Bs1uQngNbkJNmEcLHZcMi1dADjICIxPQ-NQLA>
+ <xme:N7jvaHB6R90nVdCD5xL9Le-8u7A3EKnt8Lx8lxlpVl3p9pgD6U3DE9lk6lXCgg73T
+ 65l0yzRzVN659hyGE_nkwt5NIHSgCXu1PcGYdMwrR-_gEabENWM>
+X-ME-Received: <xmr:N7jvaE44uHzWkOKJ9CnBWbyyvcGvhBVzCyndW-9yW2MYdEnlYykO9acnu5L2t1DVJ2g1xB4z8BPEKYwOZwkfH0QyKA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdefjedvucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeduuddp
- mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhivhgrphhrrghsrggurdhtuhhmmh
- grlhgrsegrmhgurdgtohhmpdhrtghpthhtohepuggrvhhiugdrhhhunhhtsehinhhtvghl
- rdgtohhmpdhrtghpthhtohepjhgvrhhinhhjsehmrghrvhgvlhhlrdgtohhmpdhrtghpth
- htoheprhgrughurdhnihgtohhlrghusehinhhtvghlrdgtohhmpdhrtghpthhtohepghgr
- khhhihhlsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtoheptghrihhsthhirghnrdguuh
- hmihhtrhgvshgtuhesihhnthgvlhdrtghomhdprhgtphhtthhopehfvghrrhhuhhdrhihi
- ghhithesrghmugdrtghomhdprhgtphhtthhopehkohhnshhtrghnthhinhdrrghnrghnhi
- gvvheshhhurgifvghirdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
-X-ME-Proxy: <xmx:2rPvaI34GjP50xQXyLrFIM1x-C8cb7lWuAf8R-v-TlpqIZnv8khrfQ>
- <xmx:2rPvaCxEQe_0BN8QpbLF6s-tfk1y7Yk8JgzTNqErVJyeLhrFhRQVVg>
- <xmx:2rPvaMgUEuVYCULgPFgz8_9n_lUWWIryGh4osjEwGSff5AzLV9wUGA>
- <xmx:2rPvaNrMDFdunhk8cYK8gyA29ygY-W0xnlByD37Cz80bQSpqNEiW-Q>
- <xmx:27PvaNgMjAdjdx7iTOfrquf1KGG7CftI5RuTne7CV-j-SyWyuhxtps_Z>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehnkhhishhhohhrsehmrghrvhgvlhhlrd
+ gtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepshgrtghh
+ ihhnrdhsrgigvghnrgesnhigphdrtghomhdprhgtphhtthhopehhvghmrghnthdrrghgrh
+ grfigrlhesnhigphdrtghomhdprhgtphhtthhopehshhhrvgihrghnshhhrdhjrghinhes
+ nhigphdrtghomhdprhgtphhtthhopehjvghrihhnjhesmhgrrhhvvghllhdrtghomhdprh
+ gtphhtthhopegrshgvkhhhrghrsehmrghrvhgvlhhlrdgtohhm
+X-ME-Proxy: <xmx:N7jvaIIRvCcCb9VhHjT_ZXWj2G1hT6-wxeBCsc5txXsj0ndKN9nHMA>
+ <xmx:N7jvaFsc6q11ZTRJOyY7-3KGOJ_7uhnijg4HRSOB85lX46I8hdyelQ>
+ <xmx:N7jvaPJCu_4giQc2JQkKKi1q71_7NwuXul11b9GgFQKyqzvKkYFY2w>
+ <xmx:N7jvaG_BrY5plSXTVtUBxjH0n2wLrKtDLV2OiMemPgNG7wyv7BqV6Q>
+ <xmx:OLjvaFig_g5Q2yMIOjcKD4lojmBTiYKry88nAR5TTnX-n2ZSGqnIIJkR>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Oct 2025 10:46:49 -0400 (EDT)
+ 15 Oct 2025 11:05:26 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-Cc: david.hunt@intel.com, jerinj@marvell.com, radu.nicolau@intel.com,
- gakhil@marvell.com, cristian.dumitrescu@intel.com, ferruh.yigit@amd.com,
- konstantin.ananyev@huawei.com, dev@dpdk.org, stable@dpdk.org,
- "Burakov, Anatoly" <anatoly.burakov@intel.com>
-Subject: Re: [PATCH v2] eal/x86: enable timeout in AMD power monitor
-Date: Wed, 15 Oct 2025 16:46:47 +0200
-Message-ID: <3976740.KgjxqYA5nG@thomas>
-In-Reply-To: <39c5c720-4c30-435b-ac28-96b2cd10afb3@intel.com>
-References: <20251013031619.2988915-1-sivaprasad.tummala@amd.com>
- <20251013055158.3037400-1-sivaprasad.tummala@amd.com>
- <39c5c720-4c30-435b-ac28-96b2cd10afb3@intel.com>
+To: Nawal Kishor <nkishor@marvell.com>
+Cc: dev@dpdk.org, Sachin Saxena <sachin.saxena@nxp.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Shreyansh Jain <shreyansh.jain@nxp.com>, jerinj@marvell.com,
+ asekhar@marvell.com
+Subject: Re: [PATCH] rawdev: fix device ID retrieval function prototype
+Date: Wed, 15 Oct 2025 17:05:25 +0200
+Message-ID: <2509677.g5d078U9FE@thomas>
+In-Reply-To: <20250924055654.1986682-1-nkishor@marvell.com>
+References: <20250924055654.1986682-1-nkishor@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -97,24 +93,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-14/10/2025 10:56, Burakov, Anatoly:
-> On 10/13/2025 7:51 AM, Sivaprasad Tummala wrote:
-> > Previously, the AMD power monitor implementation did not enable the
-> > timeout, causing the lcore to remain in a wait state until an external
-> > monitoring event occurred or an interrupt was received.
-> > 
-> > This patch enables the timeout-based exit condition, allowing
-> > the lcore to automatically wake up after the specified period.
-> > The maximum supported timeout value is 2^32 - 1.
-> > 
-> > Fixes: c7ed1ce04704 ("eal/x86: add power intrinsics for AMD")
-> > Cc: stable@dpdk.org
-> > 
-> > Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-> 
-> Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
+24/09/2025 07:56, Nawal Kishor:
+> Fixed rte_rawdev_get_dev_id() function prototype and its usage.
 
-Applied, thanks.
+What? Why?
 
+[...]
+> -uint16_t
+> +int
+>  rte_rawdev_get_dev_id(const char *name);
+
+Other functions handle dev_id as uint16_t, so why changing this function?
 
 
