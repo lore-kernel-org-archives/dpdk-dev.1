@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A216FCCD185
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 17:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF428CCD185
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 17:52:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C265B40665;
-	Wed, 15 Oct 2025 19:50:30 +0200 (CEST)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
- [209.85.210.180])
- by mails.dpdk.org (Postfix) with ESMTP id 7725240273
- for <dev@dpdk.org>; Wed, 15 Oct 2025 19:50:29 +0200 (CEST)
-Received: by mail-pf1-f180.google.com with SMTP id
- d2e1a72fcca58-78af3fe5b17so5508494b3a.2
- for <dev@dpdk.org>; Wed, 15 Oct 2025 10:50:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F28E240A4B;
+	Wed, 15 Oct 2025 19:52:12 +0200 (CEST)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com
+ [209.85.210.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 6EDD040273
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 19:52:11 +0200 (CEST)
+Received: by mail-pf1-f176.google.com with SMTP id
+ d2e1a72fcca58-78af743c232so6259518b3a.1
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 10:52:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760550628;
- x=1761155428; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760550730;
+ x=1761155530; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=nRGpOLPfv9oP9EW+BSZSj7TurftqbQ5M/+hUdgOSaZs=;
- b=W+8NyHRTMxRj5sPQ9xJwg/05dntVew6InZh3KwbnN4jQ3TndSoma+HvSOhEPCTmV2l
- D7ZwUggd/7lbZR1Wbmuo7jZdh0SjgFbRC8K9ogp48Q4tqAZH4DKp4fDJ6dUZqIcm9J0h
- BetENtRvfoUR8d0hjFm+IR1ezdzNs6Wm57bl9nVoLirHCE5UJ0t7HDon04ILT0FsJyZi
- EZeXGJ7Yn5M9yA0bkkvYAhjyyzwJv+byjgFupgom7nKo/Wclyc5nkIftB8qgMPlP5zLj
- 4aJ17+QSJat2yDKqfNX94Dapx+nr3jsCsF57sjnbUMJ/jf0eDOo0t0yhKJD3t9+5fSi+
- J5JA==
+ bh=7i/A8RXXmlhPL/Yj1lDhAVzrcoUiAAf3jUpgIHc/cSo=;
+ b=ey4BVnayQG1OtXr/kF87WUMGqgw/nHq6IM4jSWnWjfOs7PYuNUmWlejilLHHELu3Et
+ cidDFs4IjPsD//y9TYP+VUCWppMsLF/wHfYcKjX21aHJEskJmQyOzhEse4QxbKOR+YFP
+ GRg98MSda5ltPEEZ/v6ab+B0BSt4jjO/Z/prBqnh73p252zojq3eVsTFyYOwPUuENdJU
+ u+XZb8Z5Rly7tXozryHsGh6ctkemPecSKu+cTjA1CnogSOeog2/ooC5CK2Cc2g331wf0
+ nx8WFk2vyxcugG3u4jAc0Dm4qVyxq3umGx/qndAaMrBpC3NzMbnXJ+mGD2IcRZ9iuT+S
+ NrSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760550628; x=1761155428;
+ d=1e100.net; s=20230601; t=1760550730; x=1761155530;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=nRGpOLPfv9oP9EW+BSZSj7TurftqbQ5M/+hUdgOSaZs=;
- b=HoaVJvrEvN/xZxHxJvdTC/u1VkUILe++QPaXhwIRhKMzI05L0qbEvo96Ev95kNtQ/R
- qjFhUr1yJ80wUQpvblpHlvFeXmMVaDJIPEGd8RAA0FlzEQZ3olTBz5g4V+PJbp1iGFXP
- w/9GXIg/y6x5DtEPgzgeXuz1u0wgZ733+/yB/kCBkz28Eban9EVLhwbUljCETAXCIuqd
- iTrSmRo1lcjTdtmRGAXbB70i+mtYKfteTPWro+iR7YTysq3Mt7TVw0NyKNhizKzhoJV9
- mNMrqtY+uQ3uG4FKCvbzA/cpDFxugGhIByMUzKroxsB/IwikIihGHQm/edgpyK1oStM/
- kErg==
-X-Gm-Message-State: AOJu0YyLkhUMiWy3mXYe1lGNSw9hxLdeZIknjqcuNjI0vYhLhRKnoEin
- mZP5g4cIdrh+TXh1k2H6KnXpNgwSU3s/Tt1uVYG6Mugkiw7j8YyYwhnk9Eu6Sa3TQcY=
-X-Gm-Gg: ASbGncsJQ/BDadYtr6cta6+Gob4czOas3OxcNxGRQR8l/IpL1Mdb5LtdQODKF9AOJpO
- ZxpBixOr+Jhxa5mexgnx6Jt3H4pe6ZHebbPK9liwKaE/4oSAaaLncTaA3POw8cTzNjts8sKlhgx
- M0FIddNkVRBzW2d2JEVtHrYHy0EkTt79XKe4pIi/LejEKLW45uuVxOSzs4zfHDxkD9GAD7F9w7/
- Eip5SX5lNKATbgL0mh5KgA+EowVd7i2Du7xaueXdpewYB07a/KkOjwnktPlhZI4w+CLLQfQpW+1
- NTmXvJtEgNpW7Quc0D+9whDhSm3+fErQeMAOO97/DMU6wTDpfynS8bh7jN1uGR9A9mfIqQpgLU9
- JtjHQJaO7GRSvqIgwGPXm/963f+oD6jb8Vgv8yabtWIj5siP+CzG68MO0ZSJQxk6sD2gDGdsPO/
- UcB7A4RhgVN4Giys/asRKfqEGl7Rrd
-X-Google-Smtp-Source: AGHT+IHZab6bSDzw7EpxImKxv1U3Jqp2rTqhoNJMsJpp7zeqCpfejLRxq5+tAiwdgBm69GNW8Irz+w==
-X-Received: by 2002:a05:6a20:3d91:b0:2c6:cdcc:5dc0 with SMTP id
- adf61e73a8af0-32da81304f8mr41121467637.16.1760550628451; 
- Wed, 15 Oct 2025 10:50:28 -0700 (PDT)
+ bh=7i/A8RXXmlhPL/Yj1lDhAVzrcoUiAAf3jUpgIHc/cSo=;
+ b=U5bbWjbPKbsB4hB9mnDLTPvf+Y8Ka4NXEBi3nR3LCJlyBfy5AxiYyfZpEGf17b97YM
+ /oK/i3ZUTzbXV6PE8YQ3vYamauqlGx6yGiYn32aaGjCI5FXqW1mwmLCg++9fM9F79cGh
+ 9jG0fqn5uG8+plq6UegjASxPjGVlL90+ZzeVBeaGk1/JT5fsmPhUIUUBBS4sJKOKAY56
+ 4xjrwyyZjd7Emcm7fNEuhHgpqBkhDJFH49zfNov+c7tQCwDtyc0obmcr4oZ5uZUQ12Iu
+ o9GqsqguLQz8d1iGM2TVYqp5HeAFLGwjrCy5Sjsq+c6tW8o/VfkR/4JSgD7eTPOlG8kS
+ lrWw==
+X-Gm-Message-State: AOJu0YzWYLHz204TLfu2kijzvt0SVctKoVR05ywQ5FbcPubDAdnHqdED
+ JqFLZA1HRbpTDJlShCb+cwsO1oXD6S2/HKD8DDocx/DPZV5Kfkz4E8LO2Ejcn7t8Uq8=
+X-Gm-Gg: ASbGncsSNxK9+KyxKfU7RAjOo6pFCTfvsraXZ/AIjk2HeKc3/A+3E1GoCj0Tm2kPuys
+ 931pgdYb3kajUU5RH2B8oh4JaB2B65YhnZ8tyxVh3T8udpkOUMCDO9+LVekCBMxYcCZCLNU71Qf
+ oDYKSasZ4Gi1MmdWhQ7fHasyVLbX1L0mSAx23K++qQ77ASmlaxYNKGT6D9aFm/s8hYU9liRrznz
+ OlMyO08gEvt03AcAF7nnJmz0NxMrTnxrOxLyyTiU9aDHowgG1tO/BioZ1QrtxghyZKxJlXISoGr
+ Asu27JSWb3kTkPm/hLGNwaMS5bQURJ6BW0UCNTpg4M6YQkNJDblGhF4d4RODojR9U5ZFVNDssih
+ QVcUV/kevrk64ya/fgY885YXWkgFtBDRUWazI0NxGWYsPMe5GruTyIwWCYqc2dRv0So1dGdnoQm
+ oKWxwZbqC2QbT3QNjr5Q==
+X-Google-Smtp-Source: AGHT+IGrd47dbr00f/Ts/DQh085/48kCICEFlaae+9fd7hffHvtT18gjjawb6oVFKiCIJgJQkXDEhA==
+X-Received: by 2002:a05:6a20:6a08:b0:334:99f9:ff45 with SMTP id
+ adf61e73a8af0-33499fa0f51mr113365637.57.1760550730383; 
+ Wed, 15 Oct 2025 10:52:10 -0700 (PDT)
 Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b6a22b7b2e2sm217745a12.25.2025.10.15.10.50.27
+ d2e1a72fcca58-7992b060b66sm19684282b3a.8.2025.10.15.10.52.09
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 15 Oct 2025 10:50:28 -0700 (PDT)
-Date: Wed, 15 Oct 2025 10:50:25 -0700
+ Wed, 15 Oct 2025 10:52:10 -0700 (PDT)
+Date: Wed, 15 Oct 2025 10:52:07 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Thomas Monjalon <thomas@monjalon.net>
 Cc: dev@dpdk.org, shperetz@nvidia.com, viacheslavo@nvidia.com,
- bruce.richardson@intel.com, mb@smartsharesystems.com, Robin Jarry
- <rjarry@redhat.com>
-Subject: Re: [PATCH v6 7/7] usertools/mbuf: parse mbuf history dump
-Message-ID: <20251015105025.573f5d3b@hermes.local>
-In-Reply-To: <20251014124046.1032293-8-thomas@monjalon.net>
+ bruce.richardson@intel.com, mb@smartsharesystems.com, Aman Singh
+ <aman.deep.singh@intel.com>
+Subject: Re: [PATCH v6 5/7] app/testpmd: use space separator in dump commands
+Message-ID: <20251015105207.288a5b94@hermes.local>
+In-Reply-To: <20251014124046.1032293-6-thomas@monjalon.net>
 References: <20250616072910.113042-1-shperetz@nvidia.com>
  <20251014124046.1032293-1-thomas@monjalon.net>
- <20251014124046.1032293-8-thomas@monjalon.net>
+ <20251014124046.1032293-6-thomas@monjalon.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,23 +85,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 14 Oct 2025 14:33:40 +0200
+On Tue, 14 Oct 2025 14:33:38 +0200
 Thomas Monjalon <thomas@monjalon.net> wrote:
 
-> From: Shani Peretz <shperetz@nvidia.com>
-> 
-> Add a Python script that parses the history dump of mbufs
-> generated by rte_mbuf_history_dump() and related functions,
-> and presents it in a human-readable format.
-> 
-> If an operation ID is repeated, such as in the case of a double free,
-> it will be highlighted in red and listed at the end of the file.
-> 
-> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
+> @@ -9099,7 +9123,6 @@ dump_struct_sizes(void)
+>  #undef DUMP_SIZE
+>  }
+>  
+> -
+>  /* Dump the socket memory statistics on console */
+>  static void
+>  dump_socket_mem(FILE *f)
+> @@ -9114,7 +9137,6 @@ dump_socket_mem(FILE *f)
+>  	static size_t last_allocs;
+>  	static size_t last_total;
+>  
+> -
+>  	for (i = 0; i < RTE_MAX_NUMA_NODES; i++) {
+>  		if (rte_malloc_get_socket_stats(i, &socket_stats) ||
+>  		    !socket_stats.heap_totalsz_bytes)
 
-Minor stuff.
-
-$ flake8 --max-line-length=100 dpdk-mbuf-history-parser.py 
-dpdk-mbuf-history-parser.py:14:1: F401 'sys' imported but unused
-dpdk-mbuf-history-parser.py:29:27: E203 whitespace before ':'
-
+Unrelated whitespace changes in patches are discouraged.
