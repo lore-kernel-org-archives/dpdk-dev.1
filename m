@@ -2,84 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7364CCD193
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 09:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BCECCD193
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Oct 2025 09:01:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4CE9D40BA4;
-	Wed, 15 Oct 2025 11:01:17 +0200 (CEST)
-Received: from mail-pl1-f227.google.com (mail-pl1-f227.google.com
- [209.85.214.227])
- by mails.dpdk.org (Postfix) with ESMTP id E09C540B9B
- for <dev@dpdk.org>; Wed, 15 Oct 2025 11:01:15 +0200 (CEST)
-Received: by mail-pl1-f227.google.com with SMTP id
- d9443c01a7336-28e7cd6dbc0so73103185ad.0
- for <dev@dpdk.org>; Wed, 15 Oct 2025 02:01:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B80AC40DC9;
+	Wed, 15 Oct 2025 11:01:22 +0200 (CEST)
+Received: from mail-io1-f99.google.com (mail-io1-f99.google.com
+ [209.85.166.99]) by mails.dpdk.org (Postfix) with ESMTP id 2832740C35
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 11:01:21 +0200 (CEST)
+Received: by mail-io1-f99.google.com with SMTP id
+ ca18e2360f4ac-930a6c601b3so613312439f.3
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 02:01:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760518875; x=1761123675;
+ d=1e100.net; s=20230601; t=1760518880; x=1761123680;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=xy8fyI5PwrU/pq00OAq0TWPhL0atJCWcLPoRZgDf7Os=;
- b=HOVANK3iDONLDyJPcXLZFUtdyM6vRQP50V+Nm5XadPj3Qbx0HaaXWx743GdEQF+XPB
- epqrBBfeKyTSCc2qkwInRB8DdGQCVjORgVibe0EPF43LLIOH/CeFTVF1BsNr23tkATiP
- ZwPQ+Cov7kiZTJPZYd+otLEbZYdWsTHbfN9cZh0MuX25JTbFAsXMclJe+T8JhM01Yzf+
- EDLX2+d7xuqY2hpQ3Kl0njKGgAVONFV1taUqvczi2eriHjyN4PXQlapPz0HZL6yITl1/
- v76qc1MnP8Yw5aj0tYlbuB1ONFZQIYMx2c7x2S0mizb6VWOJSWmqxD01IBGxI7CTmf7y
- WEbA==
-X-Gm-Message-State: AOJu0Yz3Crhc5sYCgJuauWKNeBD/sL9txI0bH+iLuqWAeV00kPy/vv14
- NhgFduBBoVir7KZlFW3IJAEqaGDJgZDhumpdoYnBd2t4MXwSkp2wi62IAfrmVABrqOEjX+W9qL9
- mPCCzkwLna6GBXlVpIF505v4yAB4UDtlwXB30PK/porFawAyEN9hRzfKlo77VARVSL7srU+DVos
- LQcGCu6NrmBUi6Jv8MotrozlAarOm+AJADyAtxPnXNMr+NzJ9PvFYQKyVTjI9mK8AenSbJHg==
-X-Gm-Gg: ASbGncv4/aqXnkGG+pTgnaueJJzbi5M+Cn9crju6r+rfwpQs+TXTAR+A63iiUgCiiVf
- nk1Ogi88P3hO+ystD9SP1fmM4l7KTLJgWBwfOqCSd3SX99VfFZrau2cG2nV9ZnBwVBzejJH5X+C
- o7d773mzOqTnXp9kiZ9OBJnbMUcqSh9nDX+SgJbcleqVVa5/4haJ13OQoWXx3UcR86yV73ML7uv
- UEaR+UDhuy2t/GzpKqxvUzsOA5yi2oE3pFvQhqkVEANIFt1cFA+1JGptiHfxjJYg2EoxCaDcBvH
- 2H+EzbaF9TIPmQuQlwsjhvUQl1zgsHQ4PVU3VXFEh351a4FjovcgTIKYEqBlA5BKE3+4SQ32a1G
- L4dPLs0EZXW9VrWDAH92X3U6e4AQJk4fuiY6lPz/6BZq2axa7i3O8dvCPN58mQCeK6p5iFITx+V
- E=
-X-Google-Smtp-Source: AGHT+IHXRBw8AE5fnVTaQsz+ROlH61RcGDMl8h6f9sSutRqdMGSOzkbhsNfldbTKrvpP8d2X0YMPfSaeHTGM
-X-Received: by 2002:a17:903:1b4d:b0:28e:9a74:7b58 with SMTP id
- d9443c01a7336-290273ecbb7mr335793095ad.31.1760518874731; 
- Wed, 15 Oct 2025 02:01:14 -0700 (PDT)
+ bh=XR80NAAp81LcFYSWQ60clg3AbHriMDJnZXM5rypO5V0=;
+ b=PpokGRPdFix4os7UwiFvwnNejWEttpD/LCOuk+xuu6smUH2l8b4269RPxw42xnXIzY
+ vx/zbXhmsOl71l+pym4vq82Vd2Yc95c2VZVYTNOhXlylpHldIyW2Cw/Emi8PdxwzdQua
+ tvx8drxfP1Jx9hD0ujqG4A2aFqCOFUic42D2REbBIu3psfqfPoaZYjIOZNZa7gLXpyC/
+ ryDq7fQTr30VubvZgjItJEOA/xx1pi0zk6HvSdbzUF0JXh8eFu81Zgpx//PtVqq9sgil
+ v++GewCE3REkkk3mSUymukk1Vo1yHAiIupOhKanubzQZMgGUrCs/8ipQWJUckJ1z3D2t
+ dyBA==
+X-Gm-Message-State: AOJu0YyE770//LHXjnT8xvueJHzzxKsQ0l2c9BX7WrMHBIN3ayc8LckT
+ I13QH40RgxVepPM9GOdp0GXpNidezGXw6V3kCld11sTcE9vuxrIwQdQI6/0IZEtiuUlxhKNiwEw
+ p34zoKNI82hkatTuI/mVLsgcbgWfgrpIT6tKEHq3hyOMdp0meRXpP/Xwxhy9N4DI2NO0ITqVNfh
+ 8fTqbRgvuTnmFmM+uBxgth3UqqRUk2NDty2f9oHv7CY5dAYpfCmCxYHycNyfsByAUTrOP2fw==
+X-Gm-Gg: ASbGncttkc5Lc1tFDCAE5uBhxyRfw1q6HTjr/0/8zYrVwpHgHb6PQfJ6AedwTwZdq9T
+ fqCOSh/mnXYu511OSLUMrG2ZbfDNmdvbhuMiwXyVLiCgQjUzI5R20H0X2zGKW96YAyvS/do6lhN
+ agLn3CiFlZh/w3GxSibBSeFX2HQnbmPGTI3X494y42FIwsZg7+Vmd79zrAc+FD7YGQV8UGlajT9
+ 2LQSl1bedqPjkXHADdxrPSknj2chSny3sVMe0Jw6VDapJkg3vSYjaV0yW3Qd4V5hGVVhGAnh5mB
+ heT74yCRSfCm1ydAPzRX86XuZ0KcoqKhYgdiD65x6mx8R5A4KvHOoc3mspZEEYwMOG+MD6bUbiI
+ Waoe8UbdCSRB6Rs8Se+FVscIu+XPgFB4gFKl5pOTuOu0Prm6dFruaYFEQk1Jr0lX3BlIvz4K5
+X-Google-Smtp-Source: AGHT+IElZBXqpn1/jx6/w8Zw/r3nnmW8G/JkhMga9pF9cmCXj/LNxY6vbu8wVvH1//rh3acBq3xpzyvyUu1S
+X-Received: by 2002:a05:6602:1483:b0:913:48f3:27a3 with SMTP id
+ ca18e2360f4ac-93bd1994a84mr3595271239f.14.1760518880385; 
+ Wed, 15 Oct 2025 02:01:20 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
+ (address-144-49-247-1.dlp.protect.broadcom.com. [144.49.247.1])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-29034ef023esm14576195ad.36.2025.10.15.02.01.14
+ ca18e2360f4ac-93e25a4c78esm94322939f.11.2025.10.15.02.01.19
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 15 Oct 2025 02:01:14 -0700 (PDT)
+ Wed, 15 Oct 2025 02:01:20 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pf1-f198.google.com with SMTP id
- d2e1a72fcca58-7811a602576so13495304b3a.0
- for <dev@dpdk.org>; Wed, 15 Oct 2025 02:01:13 -0700 (PDT)
+Received: by mail-pf1-f197.google.com with SMTP id
+ d2e1a72fcca58-78102ba5966so9807210b3a.2
+ for <dev@dpdk.org>; Wed, 15 Oct 2025 02:01:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1760518872; x=1761123672; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1760518877; x=1761123677; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=xy8fyI5PwrU/pq00OAq0TWPhL0atJCWcLPoRZgDf7Os=;
- b=cWnh1AmwkJMgBbCtaAet4U/mVQ/vejtr1CZP4gnA3DEs5kxBfUXjUxmMz/tOEVY4PJ
- wjb7YVQv4Xml0rEEfIKonAg2vV97haeCcZpgzo3YqUVtCy+m6AQt7KfI24Xd3vzi0RUa
- XLSxQX64A/AavLwGq3T10k9bboP+I8UW5PxUA=
-X-Received: by 2002:a05:6a00:9292:b0:781:2401:74f5 with SMTP id
- d2e1a72fcca58-79387e0501fmr34807570b3a.29.1760518872423; 
- Wed, 15 Oct 2025 02:01:12 -0700 (PDT)
-X-Received: by 2002:a05:6a00:9292:b0:781:2401:74f5 with SMTP id
- d2e1a72fcca58-79387e0501fmr34807493b3a.29.1760518871600; 
- Wed, 15 Oct 2025 02:01:11 -0700 (PDT)
+ bh=XR80NAAp81LcFYSWQ60clg3AbHriMDJnZXM5rypO5V0=;
+ b=Suib4avtu+LE8zoUYYUjviQuX+WQukIPSjae1w/nHZOHbed5NJXSG3ejDhXXVI0muT
+ A5t4cYVWld2ls6P25wwxfmKQRk9mpCsvYI65fWQ2rLi0DhT3SPS5tmgaezM6+lUwmc2T
+ OMn2d9GK3e5o/Sv15jbcbx9ZIc3do3PfQmI8A=
+X-Received: by 2002:a05:6a00:4f86:b0:76b:c9b9:a11b with SMTP id
+ d2e1a72fcca58-793851362d8mr28999909b3a.3.1760518876981; 
+ Wed, 15 Oct 2025 02:01:16 -0700 (PDT)
+X-Received: by 2002:a05:6a00:4f86:b0:76b:c9b9:a11b with SMTP id
+ d2e1a72fcca58-793851362d8mr28999853b3a.3.1760518876213; 
+ Wed, 15 Oct 2025 02:01:16 -0700 (PDT)
 Received: from localhost.localdomain ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7992bc12a8asm17832412b3a.34.2025.10.15.02.01.09
+ d2e1a72fcca58-7992bc12a8asm17832412b3a.34.2025.10.15.02.01.12
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 15 Oct 2025 02:01:10 -0700 (PDT)
+ Wed, 15 Oct 2025 02:01:15 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com, Jay Ding <jay.ding@broadcom.com>,
- Michael Baucom <michael.baucom@broadcom.com>
-Subject: [PATCH v3 04/54] net/bnxt/tf_ulp: add meter stats support for Thor2
-Date: Wed, 15 Oct 2025 04:59:34 -0400
-Message-Id: <20251015090024.32250-5-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com, Farah Smith <farah.smith@broadcom.com>,
+ Jay Ding <jay.ding@broadcom.com>
+Subject: [PATCH v3 05/54] net/bnxt/tf_core: dynamic UPAR support for THOR2
+Date: Wed, 15 Oct 2025 04:59:35 -0400
+Message-Id: <20251015090024.32250-6-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251015090024.32250-1-manish.kurup@broadcom.com>
 References: <20251009221129.28256-1-manish.kurup@broadcom.com>
@@ -100,472 +98,560 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jay Ding <jay.ding@broadcom.com>
+Changes to support Dynamic UPAR APIs on THOR2.
+1. TF core changes
+2. ULP Mapper changes
+3. RTE parser changes
+4. Add 128B encap table type string
 
-A CFA stats counter is created with each meter by default but is
-only activated when the meter is attached to a non-tunnel flow
-because the tunnel flow may use the stats pointer for other purpose.
-
-Only the green and red/drop packet/byte stats are supported.
-
-Signed-off-by: Jay Ding <jay.ding@broadcom.com>
-Reviewed-by: Michael Baucom <michael.baucom@broadcom.com>
+Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
+Reviewed-by: Farah Smith <farah.smith@broadcom.com>
+Reviewed-by: Jay Ding <jay.ding@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c | 45 ++++++++++++-----
- drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c     | 46 +++++++++++++++++
- drivers/net/bnxt/tf_ulp/ulp_fc_mgr.h     | 11 +++++
- drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tf.c  |  3 +-
- drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tfc.c | 63 ++++++++++++++++++++----
- drivers/net/bnxt/tf_ulp/ulp_flow_db.h    |  6 +++
- drivers/net/bnxt/tf_ulp/ulp_mapper.c     |  9 ----
- drivers/net/bnxt/tf_ulp/ulp_mapper.h     | 24 +++++++++
- drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c  |  5 +-
- drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c | 54 +++++++++++++++++++-
- 10 files changed, 234 insertions(+), 32 deletions(-)
+ .../bnxt/hcapi/cfa_v3/include/cfa_resources.h |  25 +++-
+ drivers/net/bnxt/tf_core/tf_util.c            |   2 +
+ drivers/net/bnxt/tf_core/v3/tfc.h             |   1 +
+ drivers/net/bnxt/tf_core/v3/tfc_idx_tbl.c     |  51 +++++---
+ drivers/net/bnxt/tf_core/v3/tfc_msg.c         | 121 +++++++++++++++++-
+ drivers/net/bnxt/tf_core/v3/tfc_msg.h         |  13 +-
+ drivers/net/bnxt/tf_core/v3/tfc_util.c        |   2 +
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c      |  29 +++++
+ 8 files changed, 213 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
-index 591bde96e8..bc48e35c00 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
-@@ -42,7 +42,6 @@
-  * Meter init status
-  */
- int bnxt_mtr_initialized;
--
- int32_t
- bnxt_flow_mtr_init(struct bnxt *bp __rte_unused)
- {
-@@ -542,6 +541,7 @@ bnxt_flow_mtr_destroy(struct rte_eth_dev *dev,
- 	uint16_t func_id;
- 	int ret;
- 	uint32_t tmp_mtr_id;
-+	const struct ulp_mapper_core_ops *oper;
+diff --git a/drivers/net/bnxt/hcapi/cfa_v3/include/cfa_resources.h b/drivers/net/bnxt/hcapi/cfa_v3/include/cfa_resources.h
+index 7408859a53..d1d62738d3 100644
+--- a/drivers/net/bnxt/hcapi/cfa_v3/include/cfa_resources.h
++++ b/drivers/net/bnxt/hcapi/cfa_v3/include/cfa_resources.h
+@@ -94,7 +94,18 @@ enum cfa_resource_subtype_idx_tbl {
+ 	CFA_RSUBTYPE_IDX_TBL_EM_FKB,       /**< EM FKB table        */
+ 	CFA_RSUBTYPE_IDX_TBL_WC_FKB,       /**< WC TCAM FKB table   */
+ 	CFA_RSUBTYPE_IDX_TBL_EM_FKB_MASK,  /**< EM FKB Mask table   */
+-	CFA_RSUBTYPE_IDX_TBL_MAX
++	CFA_RSUBTYPE_IDX_TBL_MAX,
++	/*
++	 * Resource subtypes that come after this point are handled "specially"
++	 * by code in the TFC core and firmware layers. This #define loses
++	 * significance after the Mapper TFC layer.
++	 */
++	CFA_RSUBTYPE_IDX_TBL_DYN_UPAR,     /**< Dynamic UPAR table  */
++	/*
++	 * MAX value for custom index tables, i.e. tables that are handled
++	 * specially by firmware or layers below mapper.
++	 */
++	CFA_RSUBTYPE_CUSTOM_IDX_TBL_MAX
+ };
  
- 	if (!bnxt_mtr_initialized)
- 		return -rte_mtr_error_set(error, ENOTSUP,
-@@ -750,17 +750,40 @@ bnxt_flow_mtr_stats_update(struct rte_eth_dev *dev __rte_unused,
-  * Read meter statistics.
-  */
- static int
--bnxt_flow_mtr_stats_read(struct rte_eth_dev *dev __rte_unused,
--			   uint32_t mtr_id __rte_unused,
--			   struct rte_mtr_stats *stats __rte_unused,
--			   uint64_t *stats_mask __rte_unused,
--			   int clear __rte_unused,
--			   struct rte_mtr_error *error)
-+bnxt_flow_mtr_stats_read(struct rte_eth_dev *dev,
-+			 uint32_t mtr_id,
-+			 struct rte_mtr_stats *stats,
-+			 uint64_t *stats_mask,
-+			 int clear,
-+			 struct rte_mtr_error *error)
- {
--	return -rte_mtr_error_set(error, ENOTSUP,
--				  RTE_MTR_ERROR_TYPE_UNSPECIFIED,
--				  NULL,
--				  "Meter_stats_read not supported yet");
-+	int rc = 0;
-+	struct bnxt_ulp_context *ulp_ctx;
-+
-+	ulp_ctx = bnxt_ulp_eth_dev_ptr2_cntxt_get(dev);
-+	if (unlikely(!ulp_ctx)) {
-+		BNXT_DRV_DBG(ERR, "ULP context is not initialized\n");
-+		goto error;
-+	}
-+
-+	memset(stats, 0, sizeof(*stats));
-+	rc = ulp_mtr_query_count_get(ulp_ctx, mtr_id, clear, stats);
-+	if (unlikely(rc))
-+		goto error;
-+
-+	*stats_mask = 0;
-+	*stats_mask |= RTE_MTR_STATS_N_PKTS_GREEN;
-+	*stats_mask |= RTE_MTR_STATS_N_PKTS_RED;
-+	*stats_mask |= RTE_MTR_STATS_N_PKTS_DROPPED;
-+	*stats_mask |= RTE_MTR_STATS_N_BYTES_GREEN;
-+	*stats_mask |= RTE_MTR_STATS_N_BYTES_RED;
-+	*stats_mask |= RTE_MTR_STATS_N_BYTES_DROPPED;
-+
-+	return rc;
-+error:
-+	return -rte_mtr_error_set(error, EINVAL,
-+				  RTE_MTR_ERROR_TYPE_STATS, NULL,
-+				  "Failed to query meter.");
- }
+ /**
+@@ -132,6 +143,18 @@ enum cfa_resource_subtype_if_tbl {
+ 	CFA_RSUBTYPE_IF_TBL_MAX
+ };
  
- static const struct rte_mtr_ops bnxt_flow_mtr_ops = {
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c
-index f9d069f4e1..4be2703740 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c
-@@ -627,6 +627,52 @@ int ulp_fc_mgr_query_count_get(struct bnxt_ulp_context *ctxt,
- 	return rc;
++/**
++ * Resource sub-types for CFA_BLKTYPE_IDX_TBL
++ */
++enum cfa_resource_blktype_idx_tbl {
++	CFA_IDX_TBL_BLKTYPE_CFA = 0,
++	CFA_IDX_TBL_BLKTYPE_RXP,
++	CFA_IDX_TBL_BLKTYPE_RE_GPARSE,
++	CFA_IDX_TBL_BLKTYPE_TE_GPARSE,
++	CFA_IDX_TBL_BLKTYPE_LAST = CFA_IDX_TBL_BLKTYPE_TE_GPARSE,
++	CFA_IDX_TBL_BLKTYPE_MAX
++};
++
+ /**
+  * Resource sub-types for CFA_RTYPE_CMM
+  */
+diff --git a/drivers/net/bnxt/tf_core/tf_util.c b/drivers/net/bnxt/tf_core/tf_util.c
+index 8ce8238b4a..16aea7204c 100644
+--- a/drivers/net/bnxt/tf_core/tf_util.c
++++ b/drivers/net/bnxt/tf_core/tf_util.c
+@@ -85,6 +85,8 @@ tf_tbl_type_2_str(enum tf_tbl_type tbl_type)
+ 		return "Encap 32B";
+ 	case TF_TBL_TYPE_ACT_ENCAP_64B:
+ 		return "Encap 64B";
++	case TF_TBL_TYPE_ACT_ENCAP_128B:
++		return "Encap 128B";
+ 	case TF_TBL_TYPE_ACT_SP_SMAC:
+ 		return "Source Properties SMAC";
+ 	case TF_TBL_TYPE_ACT_SP_SMAC_IPV4:
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc.h b/drivers/net/bnxt/tf_core/v3/tfc.h
+index 4176aa01bd..1c7eb51c8c 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc.h
++++ b/drivers/net/bnxt/tf_core/v3/tfc.h
+@@ -372,6 +372,7 @@ struct tfc_idx_tbl_info {
+ 	enum cfa_resource_subtype_idx_tbl rsubtype; /**< resource subtype */
+ 	enum cfa_dir dir; /**< direction rx/tx */
+ 	uint16_t id; /**< alloc/free index */
++	enum cfa_resource_blktype_idx_tbl blktype; /**< block type */
+ };
+ 
+ /**
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_idx_tbl.c b/drivers/net/bnxt/tf_core/v3/tfc_idx_tbl.c
+index c8d64c5418..3311b9df65 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_idx_tbl.c
++++ b/drivers/net/bnxt/tf_core/v3/tfc_idx_tbl.c
+@@ -15,6 +15,9 @@
+ #include "tfc_msg.h"
+ #include "tfc_util.h"
+ 
++#define BLKTYPE_IS_CFA(blktype) \
++		(CFA_IDX_TBL_BLKTYPE_CFA == (blktype))
++
+ int tfc_idx_tbl_alloc(struct tfc *tfcp, uint16_t fid,
+ 		      enum cfa_track_type tt,
+ 		      struct tfc_idx_tbl_info *tbl_info)
+@@ -48,9 +51,10 @@ int tfc_idx_tbl_alloc(struct tfc *tfcp, uint16_t fid,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (tbl_info->rsubtype >= CFA_RSUBTYPE_IDX_TBL_MAX) {
+-		PMD_DRV_LOG_LINE(ERR, "Invalid idx tbl subtype: %d",
+-				 tbl_info->rsubtype);
++	if (BLKTYPE_IS_CFA(tbl_info->blktype) &&
++	    tbl_info->rsubtype >= CFA_RSUBTYPE_IDX_TBL_MAX) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid idx tbl subtype: %d",
++				 __func__, tbl_info->rsubtype);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -68,7 +72,8 @@ int tfc_idx_tbl_alloc(struct tfc *tfcp, uint16_t fid,
+ 	}
+ 
+ 	rc = tfc_msg_idx_tbl_alloc(tfcp, fid, sid, tt, tbl_info->dir,
+-				   tbl_info->rsubtype, &tbl_info->id);
++				   tbl_info->rsubtype, &tbl_info->id,
++				   tbl_info->blktype);
+ 	if (rc)
+ 		PMD_DRV_LOG_LINE(ERR, "hwrm failed: %s:%s %s",
+ 				 tfc_dir_2_str(tbl_info->dir),
+@@ -118,9 +123,10 @@ int tfc_idx_tbl_alloc_set(struct tfc *tfcp, uint16_t fid,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (tbl_info->rsubtype >= CFA_RSUBTYPE_IDX_TBL_MAX) {
+-		PMD_DRV_LOG_LINE(ERR, "Invalid idx tbl subtype: %d",
+-				 tbl_info->rsubtype);
++	if (BLKTYPE_IS_CFA(tbl_info->blktype) &&
++	    tbl_info->rsubtype >= CFA_RSUBTYPE_IDX_TBL_MAX) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid idx tbl subtype: %d",
++				 __func__, tbl_info->rsubtype);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -143,7 +149,8 @@ int tfc_idx_tbl_alloc_set(struct tfc *tfcp, uint16_t fid,
+ 
+ 	rc = tfc_msg_idx_tbl_alloc_set(tfcp, fid, sid, tt, tbl_info->dir,
+ 				       tbl_info->rsubtype, data,
+-				       data_sz_in_bytes, &tbl_info->id);
++				       data_sz_in_bytes, &tbl_info->id,
++				       tbl_info->blktype);
+ 	if (rc)
+ 		PMD_DRV_LOG_LINE(ERR, "hwrm failed: %s:%s %s",
+ 				 tfc_dir_2_str(tbl_info->dir),
+@@ -181,8 +188,9 @@ int tfc_idx_tbl_set(struct tfc *tfcp, uint16_t fid,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (tbl_info->rsubtype >= CFA_RSUBTYPE_IDX_TBL_MAX) {
+-		PMD_DRV_LOG_LINE(ERR, "Invalid idx tbl subtype: %d",
++	if (BLKTYPE_IS_CFA(tbl_info->blktype) &&
++	    tbl_info->rsubtype >= CFA_RSUBTYPE_IDX_TBL_MAX) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid idx tbl subtype: %d", __func__,
+ 				 tbl_info->rsubtype);
+ 		return -EINVAL;
+ 	}
+@@ -202,7 +210,8 @@ int tfc_idx_tbl_set(struct tfc *tfcp, uint16_t fid,
+ 
+ 	rc = tfc_msg_idx_tbl_set(tfcp, fid, sid, tbl_info->dir,
+ 				 tbl_info->rsubtype, tbl_info->id,
+-				 data, data_sz_in_bytes);
++				 data, data_sz_in_bytes,
++				 tbl_info->blktype);
+ 	if (rc)
+ 		PMD_DRV_LOG_LINE(ERR, "hwrm failed: %s:%s %d %s",
+ 				 tfc_dir_2_str(tbl_info->dir),
+@@ -240,9 +249,10 @@ int tfc_idx_tbl_get(struct tfc *tfcp, uint16_t fid,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (tbl_info->rsubtype >= CFA_RSUBTYPE_IDX_TBL_MAX) {
+-		PMD_DRV_LOG_LINE(ERR, "Invalid idx tbl subtype: %d",
+-				 tbl_info->rsubtype);
++	if (BLKTYPE_IS_CFA(tbl_info->blktype) &&
++	    tbl_info->rsubtype >= CFA_RSUBTYPE_IDX_TBL_MAX) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid idx tbl subtype: %d",
++				 __func__, tbl_info->rsubtype);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -261,7 +271,8 @@ int tfc_idx_tbl_get(struct tfc *tfcp, uint16_t fid,
+ 
+ 	rc = tfc_msg_idx_tbl_get(tfcp, fid, sid, tbl_info->dir,
+ 				 tbl_info->rsubtype, tbl_info->id,
+-				 data, data_sz_in_bytes);
++				 data, data_sz_in_bytes,
++				 tbl_info->blktype);
+ 	if (rc)
+ 		PMD_DRV_LOG_LINE(ERR, "hwrm failed: %s:%s %d %s",
+ 				 tfc_dir_2_str(tbl_info->dir),
+@@ -297,9 +308,10 @@ int tfc_idx_tbl_free(struct tfc *tfcp, uint16_t fid,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (tbl_info->rsubtype >= CFA_RSUBTYPE_IDX_TBL_MAX) {
+-		PMD_DRV_LOG_LINE(ERR, "Invalid idx tbl subtype: %d",
+-				 tbl_info->rsubtype);
++	if (BLKTYPE_IS_CFA(tbl_info->blktype) &&
++	    tbl_info->rsubtype >= CFA_RSUBTYPE_IDX_TBL_MAX) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid idx tbl subtype: %d",
++				 __func__, tbl_info->rsubtype);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -317,7 +329,8 @@ int tfc_idx_tbl_free(struct tfc *tfcp, uint16_t fid,
+ 	}
+ 
+ 	rc = tfc_msg_idx_tbl_free(tfcp, fid, sid, tbl_info->dir,
+-				  tbl_info->rsubtype, tbl_info->id);
++				  tbl_info->rsubtype, tbl_info->id,
++				  tbl_info->blktype);
+ 	if (rc)
+ 		PMD_DRV_LOG_LINE(ERR, "hwrm failed: %s:%s %d %s",
+ 				 tfc_dir_2_str(tbl_info->dir),
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_msg.c b/drivers/net/bnxt/tf_core/v3/tfc_msg.c
+index ef64707233..2ad0b386fa 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_msg.c
++++ b/drivers/net/bnxt/tf_core/v3/tfc_msg.c
+@@ -61,6 +61,79 @@ static int tfc_msg_set_fid(struct bnxt *bp, uint16_t req_fid, uint16_t *msg_fid)
+ 	return 0;
  }
  
 +/*
-+ * Fill the rte_mtr_stats 'mtr_count' argument passed
-+ * in the rte_mtr_stats_read() with the values obtained
-+ * through CFA table get.
-+ *
-+ * ctxt [in] The ulp context for the flow counter manager
-+ *
-+ * mtr_id [in] The SW meter ID
-+ *
-+ * count [out] The rte_mtr_stats 'mtr_count' that is set
-+ *
++ * Lookup table to map TFC local blocktype values to HWRM equivalents. Does
++ * this on a per HWRM command basis.
 + */
-+int ulp_mtr_query_count_get(struct bnxt_ulp_context *ctxt,
-+			    uint32_t mtr_id,
-+			    int clear,
-+			    struct rte_mtr_stats *mtr_count)
-+{
-+	int rc = 0;
-+	struct bnxt_ulp_fc_info *ulp_fc_info;
-+	const struct bnxt_ulp_fc_core_ops *fc_ops;
-+	struct ulp_flow_db_res_params params;
-+	uint32_t session_type = 0;
-+	uint8_t dir = 0;
-+	const struct ulp_mapper_core_ops *oper;
-+
-+	ulp_fc_info = bnxt_ulp_cntxt_ptr2_fc_info_get(ctxt);
-+	if (!ulp_fc_info)
-+		return -ENODEV;
-+
-+	oper = ulp_mapper_data_oper_get(ctxt);
-+	if (!oper)
-+		return -ENODEV;
-+	rc = oper->ulp_mapper_mtr_stats_hndl_get(mtr_id, &params.resource_hndl);
-+	if (rc)
-+		return rc;
-+
-+	fc_ops = ulp_fc_info->fc_ops;
-+	if (!fc_ops || !fc_ops->ulp_mtr_stat_get)
-+		return -ENODEV;
-+
-+	rc = fc_ops->ulp_mtr_stat_get(ctxt, dir, session_type,
-+				      params.resource_hndl, clear, mtr_count);
-+
-+	return rc;
-+}
-+
- /*
-  * Set the parent flow if it is SW accumulation counter entry.
-  *
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.h b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.h
-index 0b81be7af9..d80d2e4e9d 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.h
-@@ -36,6 +36,13 @@ struct bnxt_ulp_fc_core_ops {
- 	(*ulp_flow_stats_accum_update)(struct bnxt_ulp_context *ctxt,
- 				       struct bnxt_ulp_fc_info *ulp_fc_info,
- 				       struct bnxt_ulp_device_params *dparms);
-+	int32_t
-+	(*ulp_mtr_stat_get)(struct bnxt_ulp_context *ctxt,
-+			    uint8_t direction,
-+			    uint32_t session_type,
-+			    uint64_t handle,
-+			    int32_t clear,
-+			    struct rte_mtr_stats *mtr_count);
- };
- 
- struct sw_acc_counter {
-@@ -186,6 +193,10 @@ bool ulp_fc_mgr_thread_isstarted(struct bnxt_ulp_context *ctxt);
- int ulp_fc_mgr_query_count_get(struct bnxt_ulp_context *ulp_ctx,
- 			       uint32_t flow_id,
- 			       struct rte_flow_query_count *count);
-+int ulp_mtr_query_count_get(struct bnxt_ulp_context *ulp_ctx,
-+			    uint32_t mtr_id,
-+			    int clear,
-+			    struct rte_mtr_stats *count);
- 
- /*
-  * Set the parent flow if in the SW accumulator table entry
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tf.c b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tf.c
-index 60a7073514..65737f0cde 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tf.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tf.c
-@@ -255,5 +255,6 @@ ulp_fc_tf_flow_stat_get(struct bnxt_ulp_context *ctxt,
- 
- const struct bnxt_ulp_fc_core_ops ulp_fc_tf_core_ops = {
- 	.ulp_flow_stat_get = ulp_fc_tf_flow_stat_get,
--	.ulp_flow_stats_accum_update = ulp_fc_tf_update_accum_stats
-+	.ulp_flow_stats_accum_update = ulp_fc_tf_update_accum_stats,
-+	.ulp_mtr_stat_get = NULL,
- };
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tfc.c
-index 4a1d0bf3df..d1b374e603 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tfc.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tfc.c
-@@ -26,6 +26,8 @@
-  */
- #define ULP_FC_TFC_PKT_CNT_OFFS 0
- #define ULP_FC_TFC_BYTE_CNT_OFFS 1
-+#define ULP_FC_TFC_PKT_MTR_DROP_CNT_OFFS 2
-+#define ULP_FC_TFC_BYTE_MTR_DROP_CNT_OFFS 3
- #define ULP_TFC_CNTR_READ_BYTES 32
- #define ULP_TFC_CNTR_ALIGN 32
- #define ULP_TFC_ACT_WORD_SZ 32
-@@ -56,11 +58,12 @@ static uint8_t *data;
- static uint64_t virt2iova_data;
- 
- static int32_t
--ulp_fc_tfc_flow_stat_get(struct bnxt_ulp_context *ctxt,
--			 uint8_t direction,
--			 uint32_t session_type __rte_unused,
--			 uint64_t handle,
--			 struct rte_flow_query_count *count)
-+ulp_fc_tfc_stat_get(struct bnxt_ulp_context *ctxt,
-+		    uint8_t direction,
-+		    uint32_t session_type __rte_unused,
-+		    uint64_t handle,
-+		    struct rte_flow_query_count *count,
-+		    struct rte_mtr_stats *mtr_drop_count)
- {
- 	uint16_t data_size = ULP_TFC_CNTR_READ_BYTES;
- 	struct tfc_cmm_clr cmm_clr = { 0 };
-@@ -102,11 +105,15 @@ ulp_fc_tfc_flow_stat_get(struct bnxt_ulp_context *ctxt,
- 	cmm_info.act_handle = handle;
- 	cmm_info.dir = (enum cfa_dir)direction;
- 	/* Read and Clear the hw stat if requested */
--	if (count->reset) {
-+	if (count && count->reset) {
- 		cmm_clr.clr = true;
- 		cmm_clr.offset_in_byte = 0;
- 		cmm_clr.sz_in_byte = sizeof(data64[ULP_FC_TFC_PKT_CNT_OFFS]) +
- 			sizeof(data64[ULP_FC_TFC_BYTE_CNT_OFFS]);
-+		if (mtr_drop_count) {
-+			cmm_clr.sz_in_byte += sizeof(data64[ULP_FC_TFC_PKT_MTR_DROP_CNT_OFFS]);
-+			cmm_clr.sz_in_byte += sizeof(data64[ULP_FC_TFC_BYTE_MTR_DROP_CNT_OFFS]);
-+		}
- 	}
- 	rc = tfc_act_get(tfcp, NULL, &cmm_info, &cmm_clr, &virt2iova_data, &word_size);
- 	if (rc) {
-@@ -115,19 +122,57 @@ ulp_fc_tfc_flow_stat_get(struct bnxt_ulp_context *ctxt,
- 			     handle);
- 		return rc;
- 	}
--	if (data64[ULP_FC_TFC_PKT_CNT_OFFS]) {
-+	if (count && data64[ULP_FC_TFC_PKT_CNT_OFFS]) {
- 		count->hits_set = 1;
- 		count->hits = data64[ULP_FC_TFC_PKT_CNT_OFFS];
- 	}
--	if (data64[ULP_FC_TFC_BYTE_CNT_OFFS]) {
-+	if (count && data64[ULP_FC_TFC_BYTE_CNT_OFFS]) {
- 		count->bytes_set = 1;
- 		count->bytes = data64[ULP_FC_TFC_BYTE_CNT_OFFS];
- 	}
- 
-+	if (mtr_drop_count) {
-+		mtr_drop_count->n_pkts[RTE_COLOR_GREEN] = data64[ULP_FC_TFC_PKT_CNT_OFFS];
-+		mtr_drop_count->n_bytes[RTE_COLOR_GREEN] = data64[ULP_FC_TFC_BYTE_CNT_OFFS];
-+		mtr_drop_count->n_pkts_dropped = data64[ULP_FC_TFC_PKT_MTR_DROP_CNT_OFFS];
-+		mtr_drop_count->n_pkts[RTE_COLOR_RED] = data64[ULP_FC_TFC_PKT_MTR_DROP_CNT_OFFS];
-+		mtr_drop_count->n_bytes_dropped = data64[ULP_FC_TFC_BYTE_MTR_DROP_CNT_OFFS];
-+		mtr_drop_count->n_bytes[RTE_COLOR_RED] = data64[ULP_FC_TFC_BYTE_MTR_DROP_CNT_OFFS];
-+	}
-+
- 	return rc;
- }
- 
-+static int32_t
-+ulp_fc_tfc_flow_stat_get(struct bnxt_ulp_context *ctxt,
-+			 uint8_t direction,
-+			 uint32_t session_type,
-+			 uint64_t handle,
-+			 struct rte_flow_query_count *count)
-+{
-+	return ulp_fc_tfc_stat_get(ctxt, direction, session_type, handle, count, NULL);
-+}
-+
-+static int32_t
-+ulp_fc_tfc_mtr_stat_get(struct bnxt_ulp_context *ctxt,
-+			uint8_t direction,
-+			uint32_t session_type,
-+			uint64_t handle,
-+			int32_t clear,
-+			struct rte_mtr_stats *mtr_count)
-+{
-+	struct rte_flow_query_count count;
-+
-+	if (clear)
-+		count.reset = 1;
-+	else
-+		count.reset = 0;
-+
-+	return ulp_fc_tfc_stat_get(ctxt, direction, session_type, handle, &count, mtr_count);
-+}
-+
- const struct bnxt_ulp_fc_core_ops ulp_fc_tfc_core_ops = {
- 	.ulp_flow_stat_get = ulp_fc_tfc_flow_stat_get,
--	.ulp_flow_stats_accum_update = ulp_fc_tfc_update_accum_stats
-+	.ulp_flow_stats_accum_update = ulp_fc_tfc_update_accum_stats,
-+	.ulp_mtr_stat_get = ulp_fc_tfc_mtr_stat_get
- };
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_flow_db.h b/drivers/net/bnxt/tf_ulp/ulp_flow_db.h
-index 4301094cfe..f0a677b64b 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_flow_db.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_flow_db.h
-@@ -91,6 +91,12 @@ struct ulp_flow_db_res_params {
- 	uint64_t			resource_hndl;
- };
- 
-+struct bnxt_mtr_stats_id_map {
-+	bool valid;
-+	uint32_t mtr_id;
-+	uint64_t stats_hndl;
++enum tfc_hwrm_idx_tbl_cmds {
++	IDX_TBL_ALLOC,
++	IDX_TBL_ALLOC_SET,
++	IDX_TBL_SET,
++	IDX_TBL_GET,
++	IDX_TBL_FREE,
++	IDX_TBL_LAST = IDX_TBL_FREE,
++	IDX_TBL_MAX
 +};
 +
- /*
-  * Initialize the flow database. Memory is allocated in this
-  * call and assigned to the flow database.
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.c b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-index c06d849883..4829ae41d1 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
-@@ -71,15 +71,6 @@ bnxt_ulp_mapper_ops_get(struct bnxt *bp)
- 	return func_ops;
- }
- 
--static const struct ulp_mapper_core_ops *
--ulp_mapper_data_oper_get(struct bnxt_ulp_context *ulp_ctx)
--{
--	struct bnxt_ulp_mapper_data *m_data;
--
--	m_data = (struct bnxt_ulp_mapper_data *)ulp_ctx->cfg_data->mapper_data;
--	return m_data->mapper_oper;
--}
--
- static const char *
- ulp_mapper_tmpl_name_str(enum bnxt_ulp_template_type tmpl_type)
- {
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.h b/drivers/net/bnxt/tf_ulp/ulp_mapper.h
-index d1dec6c2bd..f9a407cd84 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.h
-@@ -170,8 +170,26 @@ struct ulp_mapper_core_ops {
- 	int
- 	(*ulp_mapper_mpc_batch_end)(struct tfc *tfcp,
- 				    struct tfc_mpc_batch_info_t *batch_info);
++#define CMD_TO_HWRM_BLKT(tfc_cmd, blktype)	\
++		HWRM_TFC_##tfc_cmd##_INPUT_BLKTYPE_BLKTYPE_##blktype
 +
-+	int32_t
-+	(*ulp_mapper_mtr_stats_hndl_set)(struct bnxt_ulp_mapper_parms *parms,
-+					 uint32_t mtr_id,
-+					 uint64_t stats_hndl);
-+	int32_t
-+	(*ulp_mapper_mtr_stats_hndl_get)(uint32_t mtr_id, uint64_t *stats_hndl);
++uint8_t cfa_res_to_hwrm_blkt_lkup_tbl[IDX_TBL_MAX][CFA_IDX_TBL_BLKTYPE_MAX] = {
++	[IDX_TBL_ALLOC] = {
++		CMD_TO_HWRM_BLKT(IDX_TBL_ALLOC, CFA),
++		CMD_TO_HWRM_BLKT(IDX_TBL_ALLOC, RXP),
++		CMD_TO_HWRM_BLKT(IDX_TBL_ALLOC, RE_GPARSE),
++		CMD_TO_HWRM_BLKT(IDX_TBL_ALLOC, TE_GPARSE),
++	},
++	[IDX_TBL_ALLOC_SET] = {
++		CMD_TO_HWRM_BLKT(IDX_TBL_ALLOC_SET, CFA),
++		CMD_TO_HWRM_BLKT(IDX_TBL_ALLOC_SET, RXP),
++		CMD_TO_HWRM_BLKT(IDX_TBL_ALLOC_SET, RE_GPARSE),
++		CMD_TO_HWRM_BLKT(IDX_TBL_ALLOC_SET, TE_GPARSE),
++	},
++	[IDX_TBL_SET] = {
++		CMD_TO_HWRM_BLKT(IDX_TBL_SET, CFA),
++		CMD_TO_HWRM_BLKT(IDX_TBL_SET, RXP),
++		CMD_TO_HWRM_BLKT(IDX_TBL_SET, RE_GPARSE),
++		CMD_TO_HWRM_BLKT(IDX_TBL_SET, TE_GPARSE),
++	},
++	[IDX_TBL_GET] = {
++		CMD_TO_HWRM_BLKT(IDX_TBL_GET, CFA),
++		CMD_TO_HWRM_BLKT(IDX_TBL_GET, RXP),
++		CMD_TO_HWRM_BLKT(IDX_TBL_GET, RE_GPARSE),
++		CMD_TO_HWRM_BLKT(IDX_TBL_GET, TE_GPARSE),
++	},
++	[IDX_TBL_FREE] = {
++		CMD_TO_HWRM_BLKT(IDX_TBL_FREE, CFA),
++		CMD_TO_HWRM_BLKT(IDX_TBL_FREE, RXP),
++		CMD_TO_HWRM_BLKT(IDX_TBL_FREE, RE_GPARSE),
++		CMD_TO_HWRM_BLKT(IDX_TBL_FREE, TE_GPARSE),
++	},
++};
 +
-+	int
-+	(*ulp_mapper_mtr_stats_hndl_del)(uint32_t mtr_id);
- };
- 
-+static inline const struct ulp_mapper_core_ops *
-+ulp_mapper_data_oper_get(struct bnxt_ulp_context *ulp_ctx) {
-+	struct bnxt_ulp_mapper_data *m_data;
-+
-+	m_data = (struct bnxt_ulp_mapper_data *)ulp_ctx->cfg_data->mapper_data;
-+	return m_data->mapper_oper;
-+}
-+
- extern const struct ulp_mapper_core_ops ulp_mapper_tf_core_ops;
- extern const struct ulp_mapper_core_ops ulp_mapper_tfc_core_ops;
- 
-@@ -302,6 +320,12 @@ ulp_mapper_init(struct bnxt_ulp_context	*ulp_ctx);
- void
- ulp_mapper_deinit(struct bnxt_ulp_context *ulp_ctx);
- 
-+int
-+ulp_mapper_get_mtr_stats_hndl(uint32_t mtr_id, uint64_t *stats_ptr);
-+
-+int
-+ulp_mapper_del_mtr_stats_hndl(uint32_t mtr_id);
-+
- #ifdef TF_FLOW_SCALE_QUERY
- int32_t
- ulp_resc_usage_sync(struct bnxt_ulp_context *ulp_ctx);
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
-index 53497c164a..e755591716 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
-@@ -1385,5 +1385,8 @@ const struct ulp_mapper_core_ops ulp_mapper_tf_core_ops = {
- 	.ulp_mapper_core_handle_to_offset = ulp_mapper_tf_handle_to_offset,
- 	.ulp_mapper_mpc_batch_started = ulp_mapper_tf_mpc_batch_started,
- 	.ulp_mapper_mpc_batch_start = ulp_mapper_tf_mpc_batch_start,
--	.ulp_mapper_mpc_batch_end = ulp_mapper_tf_mpc_batch_end
-+	.ulp_mapper_mpc_batch_end = ulp_mapper_tf_mpc_batch_end,
-+	.ulp_mapper_mtr_stats_hndl_set = NULL,
-+	.ulp_mapper_mtr_stats_hndl_get = NULL,
-+	.ulp_mapper_mtr_stats_hndl_del = NULL
- };
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-index cbe9aa01c9..388ebea7ee 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
-@@ -1759,6 +1759,55 @@ ulp_mapper_tfc_mpc_batch_start(struct tfc_mpc_batch_info_t *batch_info)
- 	return tfc_mpc_batch_start(batch_info);
- }
- 
-+static int32_t
-+ulp_mapper_tfc_mtr_stats_hndl_set(struct bnxt_ulp_mapper_parms *parms __rte_unused,
-+				  uint32_t mtr_id, uint64_t stats_hndl)
++/*
++ * Maps TFC local blocktype values to HWRM equivalents. This function is
++ * required as each HWRM idx_tbl msg (alloc, alloc_set, get_set, free) has
++ * their own #defines, even though the values are the same across messages.
++ * Using this macro maps the appropriate TFC block type correctly to its HWRM
++ * msg relative equivalent. Returns an ERROR value if either idxtbl cmd OR
++ * blocktype is invalid.
++ */
++#define HWRM_BLKTYPE_ERR	0xff
++static uint8_t
++cfa_res_to_hwrm_blkt_lkup(enum cfa_resource_blktype_idx_tbl blktype,
++			  enum tfc_hwrm_idx_tbl_cmds idxtbl_cmd)
 +{
-+	int32_t i, rc = -ENOMEM;
-+
-+	for (i = 0; i < BNXT_METER_MAX_NUM; i++)
-+		if (!mtr_stats[i].valid) {
-+			mtr_stats[i].mtr_id = mtr_id;
-+			mtr_stats[i].stats_hndl = stats_hndl;
-+			mtr_stats[i].valid = true;
-+			rc = 0;
-+			break;
-+		}
-+
-+	return rc;
-+}
-+
-+static int32_t
-+ulp_mapper_tfc_mtr_stats_hndl_get(uint32_t mtr_id, uint64_t *stats_hndl)
-+{
-+	int32_t i, rc = -EINVAL;
-+
-+	for (i = 0; i < BNXT_METER_MAX_NUM; i++) {
-+		if (mtr_stats[i].valid && mtr_stats[i].mtr_id == mtr_id) {
-+			*stats_hndl = mtr_stats[i].stats_hndl;
-+			rc = 0;
-+			break;
-+		}
++	if ((idxtbl_cmd) > IDX_TBL_LAST ||
++	    (blktype) > CFA_IDX_TBL_BLKTYPE_LAST) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid blocktype [%u]",
++				 __func__, (blktype));
++		return -EINVAL;
 +	}
 +
-+	return rc;
++	return cfa_res_to_hwrm_blkt_lkup_tbl[idxtbl_cmd][blktype];
 +}
 +
-+static int32_t
-+ulp_mapper_tfc_mtr_stats_hndl_del(uint32_t mtr_id)
-+{
-+	int32_t i, rc = -EINVAL;
+ /**
+  * Allocates a DMA buffer that can be used for message transfer.
+  *
+@@ -406,7 +479,7 @@ int
+ tfc_msg_idx_tbl_alloc(struct tfc *tfcp, uint16_t fid, uint16_t sid,
+ 		      enum cfa_track_type tt, enum cfa_dir dir,
+ 		      enum cfa_resource_subtype_idx_tbl subtype,
+-		      uint16_t *id)
++		      uint16_t *id, enum cfa_resource_blktype_idx_tbl blktype)
+ 
+ {
+ 	int rc = 0;
+@@ -430,7 +503,13 @@ tfc_msg_idx_tbl_alloc(struct tfc *tfcp, uint16_t fid, uint16_t sid,
+ 	if (rc)
+ 		return rc;
+ 	req.sid = rte_le_to_cpu_16(sid);
+-	req.subtype = rte_le_to_cpu_16(subtype);
++	req.subtype = (uint8_t)subtype;
++	req.blktype = cfa_res_to_hwrm_blkt_lkup(blktype, IDX_TBL_ALLOC);
++	if (req.blktype == HWRM_BLKTYPE_ERR) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid blocktype [%u]",
++				 __func__, blktype);
++		return -EINVAL;
++	}
+ 
+ 	rc = bnxt_hwrm_tf_message_direct(bp, false, HWRM_TFC_IDX_TBL_ALLOC,
+ 					 &req, sizeof(req), &resp, sizeof(resp));
+@@ -446,7 +525,7 @@ tfc_msg_idx_tbl_alloc_set(struct tfc *tfcp, uint16_t fid, uint16_t sid,
+ 			  enum cfa_track_type tt, enum cfa_dir dir,
+ 			  enum cfa_resource_subtype_idx_tbl subtype,
+ 			  const uint32_t *dev_data, uint8_t data_size,
+-			  uint16_t *id)
++			  uint16_t *id, enum cfa_resource_blktype_idx_tbl blktype)
+ 
+ {
+ 	int rc = 0;
+@@ -473,6 +552,13 @@ tfc_msg_idx_tbl_alloc_set(struct tfc *tfcp, uint16_t fid, uint16_t sid,
+ 		return rc;
+ 	req.sid = rte_le_to_cpu_16(sid);
+ 	req.subtype = rte_le_to_cpu_16(subtype);
++	req.blktype = cfa_res_to_hwrm_blkt_lkup(blktype, IDX_TBL_ALLOC_SET);
++	if (req.blktype == HWRM_BLKTYPE_ERR) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid blocktype [%u]",
++				 __func__, blktype);
++		return -EINVAL;
++	}
 +
-+	for (i = 0; i < BNXT_METER_MAX_NUM; i++)
-+		if (mtr_stats[i].valid && mtr_stats[i].mtr_id == mtr_id) {
-+			mtr_stats[i].valid = false;
-+			rc = 0;
-+			break;
+ 	req.data_size = rte_le_to_cpu_16(data_size);
+ 
+ 	if (req.data_size >= sizeof(req.dev_data)) {
+@@ -504,7 +590,8 @@ int
+ tfc_msg_idx_tbl_set(struct tfc *tfcp, uint16_t fid,
+ 		    uint16_t sid, enum cfa_dir dir,
+ 		    enum cfa_resource_subtype_idx_tbl subtype, uint16_t id,
+-		    const uint32_t *dev_data, uint8_t data_size)
++		    const uint32_t *dev_data, uint8_t data_size,
++		    enum cfa_resource_blktype_idx_tbl blktype)
+ {
+ 	int rc = 0;
+ 	struct bnxt *bp = tfcp->bp;
+@@ -526,6 +613,13 @@ tfc_msg_idx_tbl_set(struct tfc *tfcp, uint16_t fid,
+ 	req.sid = rte_le_to_cpu_16(sid);
+ 	req.idx_tbl_id = rte_le_to_cpu_16(id);
+ 	req.subtype = rte_le_to_cpu_16(subtype);
++	req.blktype = cfa_res_to_hwrm_blkt_lkup(blktype, IDX_TBL_SET);
++	if (req.blktype == HWRM_BLKTYPE_ERR) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid blocktype [%u]",
++				 __func__, blktype);
++		return -EINVAL;
++	}
++
+ 	req.data_size = rte_le_to_cpu_16(data_size);
+ 	rc = tfc_msg_alloc_dma_buf(&buf, data_size);
+ 	if (rc)
+@@ -555,7 +649,8 @@ int
+ tfc_msg_idx_tbl_get(struct tfc *tfcp, uint16_t fid,
+ 		    uint16_t sid, enum cfa_dir dir,
+ 		    enum cfa_resource_subtype_idx_tbl subtype, uint16_t id,
+-		    uint32_t *dev_data, uint8_t *data_size)
++		    uint32_t *dev_data, uint8_t *data_size,
++		    enum cfa_resource_blktype_idx_tbl blktype)
+ {
+ 	int rc = 0;
+ 	struct bnxt *bp = tfcp->bp;
+@@ -576,6 +671,13 @@ tfc_msg_idx_tbl_get(struct tfc *tfcp, uint16_t fid,
+ 	req.sid = rte_cpu_to_le_16(sid);
+ 	req.idx_tbl_id = rte_cpu_to_le_16(id);
+ 	req.subtype = rte_cpu_to_le_16(subtype);
++	req.blktype = cfa_res_to_hwrm_blkt_lkup(blktype, IDX_TBL_GET);
++	if (req.blktype == HWRM_BLKTYPE_ERR) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid blocktype [%u]",
++				 __func__, blktype);
++		return -EINVAL;
++	}
++
+ 	req.buffer_size = rte_cpu_to_le_16(*data_size);
+ 
+ 	rc = tfc_msg_alloc_dma_buf(&buf, *data_size);
+@@ -600,7 +702,8 @@ tfc_msg_idx_tbl_get(struct tfc *tfcp, uint16_t fid,
+ int
+ tfc_msg_idx_tbl_free(struct tfc *tfcp, uint16_t fid,
+ 		     uint16_t sid, enum cfa_dir dir,
+-		     enum cfa_resource_subtype_idx_tbl subtype, uint16_t id)
++		     enum cfa_resource_subtype_idx_tbl subtype, uint16_t id,
++		     enum cfa_resource_blktype_idx_tbl blktype)
+ {
+ 	struct bnxt *bp = tfcp->bp;
+ 	struct hwrm_tfc_idx_tbl_free_input req = { 0 };
+@@ -620,6 +723,12 @@ tfc_msg_idx_tbl_free(struct tfc *tfcp, uint16_t fid,
+ 	req.sid = rte_cpu_to_le_16(sid);
+ 	req.idx_tbl_id = rte_cpu_to_le_16(id);
+ 	req.subtype = rte_cpu_to_le_16(subtype);
++	req.blktype = cfa_res_to_hwrm_blkt_lkup(blktype, IDX_TBL_FREE);
++	if (req.blktype == HWRM_BLKTYPE_ERR) {
++		PMD_DRV_LOG_LINE(ERR, "%s: Invalid blocktype [%u]",
++				 __func__, blktype);
++		return -EINVAL;
++	}
+ 
+ 	return bnxt_hwrm_tf_message_direct(bp, false, HWRM_TFC_IDX_TBL_FREE,
+ 					   &req, sizeof(req), &resp, sizeof(resp));
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_msg.h b/drivers/net/bnxt/tf_core/v3/tfc_msg.h
+index a8dcacc9f0..635c656e8f 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_msg.h
++++ b/drivers/net/bnxt/tf_core/v3/tfc_msg.h
+@@ -46,31 +46,34 @@ int
+ tfc_msg_idx_tbl_alloc(struct tfc *tfcp, uint16_t fid, uint16_t sid,
+ 		      enum cfa_track_type tt, enum cfa_dir dir,
+ 		      enum cfa_resource_subtype_idx_tbl rsubtype,
+-		      uint16_t *id);
++		      uint16_t *id, enum cfa_resource_blktype_idx_tbl blktype);
+ 
+ int
+ tfc_msg_idx_tbl_alloc_set(struct tfc *tfcp, uint16_t fid, uint16_t sid,
+ 			  enum cfa_track_type tt, enum cfa_dir dir,
+ 			  enum cfa_resource_subtype_idx_tbl subtype,
+ 			  const uint32_t *dev_data, uint8_t data_size,
+-			  uint16_t *id);
++			  uint16_t *id, enum cfa_resource_blktype_idx_tbl blktype);
+ 
+ int
+ tfc_msg_idx_tbl_set(struct tfc *tfcp, uint16_t fid,
+ 		    uint16_t sid, enum cfa_dir dir,
+ 		    enum cfa_resource_subtype_idx_tbl subtype,
+-		    uint16_t id, const uint32_t *dev_data, uint8_t data_size);
++		    uint16_t id, const uint32_t *dev_data,
++		    uint8_t data_size, enum cfa_resource_blktype_idx_tbl blktype);
+ 
+ int
+ tfc_msg_idx_tbl_get(struct tfc *tfcp, uint16_t fid,
+ 		    uint16_t sid, enum cfa_dir dir,
+ 		    enum cfa_resource_subtype_idx_tbl subtype,
+-		    uint16_t id, uint32_t *dev_data, uint8_t *data_size);
++		    uint16_t id, uint32_t *dev_data,
++		    uint8_t *data_size, enum cfa_resource_blktype_idx_tbl blktype);
+ 
+ int
+ tfc_msg_idx_tbl_free(struct tfc *tfcp, uint16_t fid,
+ 		     uint16_t sid, enum cfa_dir dir,
+-		     enum cfa_resource_subtype_idx_tbl subtype, uint16_t id);
++		     enum cfa_resource_subtype_idx_tbl subtype,
++		     uint16_t id, enum cfa_resource_blktype_idx_tbl blktype);
+ 
+ int tfc_msg_global_id_alloc(struct tfc *tfcp, uint16_t fid, uint16_t sid,
+ 			    enum tfc_domain_id domain_id, uint16_t req_cnt,
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_util.c b/drivers/net/bnxt/tf_core/v3/tfc_util.c
+index cd784245e5..d3229bd104 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_util.c
++++ b/drivers/net/bnxt/tf_core/v3/tfc_util.c
+@@ -92,6 +92,8 @@ tfc_idx_tbl_2_str(enum cfa_resource_subtype_idx_tbl tbl_stype)
+ 		return "idx_tbl_range_prof";
+ 	case CFA_RSUBTYPE_IDX_TBL_RANGE_ENTRY:
+ 		return "idx_tbl_range_entry";
++	case CFA_RSUBTYPE_IDX_TBL_DYN_UPAR:
++		return "idx_tbl_dyn_upar";
+ 	default:
+ 		return "Invalid idx tbl subtype";
+ 	}
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
+index 388ebea7ee..db7aa22c57 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
+@@ -18,6 +18,15 @@
+ #include "tfc_debug.h"
+ #endif
+ 
++#define BNXT_METER_MAX_NUM 1024
++static struct bnxt_mtr_stats_id_map mtr_stats[BNXT_METER_MAX_NUM];
++
++static uint32_t CFA_RESTYPE_TO_BLKT(uint8_t idx_tbl_restype)
++{
++	return (idx_tbl_restype > CFA_RSUBTYPE_IDX_TBL_MAX) ?
++			CFA_IDX_TBL_BLKTYPE_RXP : CFA_IDX_TBL_BLKTYPE_CFA;
++}
++
+ /* Internal function to write the tcam entry */
+ static int32_t
+ ulp_mapper_tfc_tcam_tbl_entry_write(struct bnxt_ulp_mapper_parms *parms,
+@@ -857,6 +866,7 @@ ulp_mapper_tfc_index_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 		index = rte_be_to_cpu_64(regval);
+ 		tbl_info.dir = tbl->direction;
+ 		tbl_info.rsubtype = tbl->resource_type;
++		tbl_info.blktype = CFA_RESTYPE_TO_BLKT(tbl->resource_type);
+ 		tbl_info.id = index;
+ 		/* Nothing has been pushed to blob, so push bit_size */
+ 		tmplen = ulp_blob_pad_push(&data, bit_size);
+@@ -910,6 +920,22 @@ ulp_mapper_tfc_index_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 	if (alloc) {
+ 		tbl_info.dir = tbl->direction;
+ 		tbl_info.rsubtype = tbl->resource_type;
++		tbl_info.blktype = CFA_RESTYPE_TO_BLKT(tbl->resource_type);
++		/*
++		 * Read back the operand and pass it into the
++		 * alloc command if its a Dyn UPAR table.
++		 */
++		if (tbl_info.blktype == CFA_IDX_TBL_BLKTYPE_RXP) {
++			if (ulp_regfile_read(parms->regfile,
++					     tbl->tbl_operand, &regval)) {
++				BNXT_DRV_DBG(ERR,
++					     "Failed to get tbl idx from regfile[%d]\n",
++					     tbl->tbl_operand);
++				return -EINVAL;
++			}
++			tbl_info.rsubtype = rte_be_to_cpu_64(regval);
 +		}
 +
-+	return rc;
-+}
-+
- const struct ulp_mapper_core_ops ulp_mapper_tfc_core_ops = {
- 	.ulp_mapper_core_tcam_tbl_process = ulp_mapper_tfc_tcam_tbl_process,
- 	.ulp_mapper_core_tcam_entry_free = ulp_mapper_tfc_tcam_entry_free,
-@@ -1779,5 +1828,8 @@ const struct ulp_mapper_core_ops ulp_mapper_tfc_core_ops = {
- 	.ulp_mapper_core_handle_to_offset = ulp_mapper_tfc_handle_to_offset,
- 	.ulp_mapper_mpc_batch_start = ulp_mapper_tfc_mpc_batch_start,
- 	.ulp_mapper_mpc_batch_started = ulp_mapper_tfc_mpc_batch_started,
--	.ulp_mapper_mpc_batch_end = ulp_mapper_tfc_mpc_batch_end
-+	.ulp_mapper_mpc_batch_end = ulp_mapper_tfc_mpc_batch_end,
-+	.ulp_mapper_mtr_stats_hndl_set = ulp_mapper_tfc_mtr_stats_hndl_set,
-+	.ulp_mapper_mtr_stats_hndl_get = ulp_mapper_tfc_mtr_stats_hndl_get,
-+	.ulp_mapper_mtr_stats_hndl_del = ulp_mapper_tfc_mtr_stats_hndl_del
- };
+ 		rc =  tfc_idx_tbl_alloc(tfcp, fw_fid, tt, &tbl_info);
+ 		if (unlikely(rc)) {
+ 			BNXT_DRV_DBG(ERR, "Alloc table[%s][%s] failed rc=%d\n",
+@@ -971,6 +997,7 @@ ulp_mapper_tfc_index_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 		data_p = ulp_blob_data_get(&data, &tmplen);
+ 		tbl_info.dir = tbl->direction;
+ 		tbl_info.rsubtype = tbl->resource_type;
++		tbl_info.blktype = CFA_RESTYPE_TO_BLKT(tbl->resource_type);
+ 		tbl_info.id = index;
+ 		wordlen = ULP_BITS_2_BYTE(tmplen);
+ 		rc = tfc_idx_tbl_set(tfcp, fw_fid, &tbl_info,
+@@ -1021,6 +1048,7 @@ ulp_mapper_tfc_index_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 	 * write to the entry or link the flow
+ 	 */
+ 
++	tbl_info.blktype = CFA_RESTYPE_TO_BLKT(tbl->resource_type);
+ 	if (tfc_idx_tbl_free(tfcp, fw_fid, &tbl_info))
+ 		BNXT_DRV_DBG(ERR, "Failed to free index entry on failure\n");
+ 	return rc;
+@@ -1050,6 +1078,7 @@ ulp_mapper_tfc_index_entry_free(struct bnxt_ulp_context *ulp_ctx,
+ 	tbl_info.dir = (enum cfa_dir)res->direction;
+ 	tbl_info.rsubtype = res->resource_type;
+ 	tbl_info.id = (uint16_t)res->resource_hndl;
++	tbl_info.blktype = CFA_RESTYPE_TO_BLKT(res->resource_type);
+ 
+ 	/* TBD: check to see if the memory needs to be cleaned as well*/
+ 	rc = tfc_idx_tbl_free(tfcp, fw_fid, &tbl_info);
 -- 
 2.39.5 (Apple Git-154)
 
