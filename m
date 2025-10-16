@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BDACCD194
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 11:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D116CCD194
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 11:20:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8D9E2427CB;
-	Thu, 16 Oct 2025 13:19:53 +0200 (CEST)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTP id B7F7C41153
- for <dev@dpdk.org>; Thu, 16 Oct 2025 13:19:51 +0200 (CEST)
-X-QQ-mid: esmtpsz17t1760613587taafa73a1
-X-QQ-Originating-IP: w8fUznaB40GXHZK34rcayuzLhn4gRkc6bFlE28+oQiA=
+	by mails.dpdk.org (Postfix) with ESMTP id 1885141157;
+	Thu, 16 Oct 2025 13:19:58 +0200 (CEST)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+ by mails.dpdk.org (Postfix) with ESMTP id 1F243427CE
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 13:19:53 +0200 (CEST)
+X-QQ-mid: esmtpsz17t1760613589t014be0e4
+X-QQ-Originating-IP: 4Kr4Jjl3A5FS7rPZAG+K62d+lWZXQ/5TipM0maEZMOY=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.206.160.146])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Thu, 16 Oct 2025 19:19:45 +0800 (CST)
+ id ; Thu, 16 Oct 2025 19:19:48 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3112923781158726510
+X-BIZMAIL-ID: 12618692580200686206
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, Jiawen Wu <jiawenwu@trustnetic.com>,
  Jian Wang <jianwang@trustnetic.com>
-Subject: [PATCH v5 12/21] net/txgbe: add FEC support for Amber-Lite 25G NICs
-Date: Thu, 16 Oct 2025 19:17:26 +0800
-Message-Id: <20251016111736.25372-13-zaiyuwang@trustnetic.com>
+Subject: [PATCH v5 13/21] net/txgbe: add GPIO configuration
+Date: Thu, 16 Oct 2025 19:17:27 +0800
+Message-Id: <20251016111736.25372-14-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20251016111736.25372-1-zaiyuwang@trustnetic.com>
 References: <20250418094131.24136-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: NvH2zBBgt3uTJNfPZVi2BGWeGuyng6UHi+RME82hd1sCeQgSu3PCfsqF
- JpZoyRzNUwNF5NuBIaVipB3+/WYZrkZ3nRlpSH9ZRJiYX+QhRdDFe95lSk+AvHg0+hUxfoV
- IxGSW0rG2ZrHLAQrUxOEJrGTowwRN7dUi47is8zrM3w9BBEfq3ZX6kbA7lX9p5TWDKRrdas
- L9VTewTXuHGE2B4jhIvei8tuXWBtRVCfzUBtFD8v4wbWL1FcFYCgNHV94Q3KqYTmEJnxmsn
- AXFVh+g2fpY2T9xGnxl6jHiFVe+Vj3iP0enxEAm3rBu4l67bimz5Ei7JpQcLoBL9cZhRHUt
- B4XlKw3tyNpwJ7JVyvrSQZ1ZDYfj/w/IC4Oyol/VrRkC9F4BGSuF4rkGBKKKBIbrHcSNB7a
- VW2lc3R3smn+ympNsqV1dgFzSwyQ65JTHA6TC/7Sm7w5n1TkyFRu/SjjVXPqPxTNXq87tKo
- LdV2nNM5lIoZXbeqHZ+34Y4DTM5vdmEsHMnU506EEGqn/Z/cjG16aZ0NoYfqXcpudX9LCak
- 0vL8SVuPaQbWJPnwOgyC2t33h1X8wZNXP9YRMXH+1Ar1Y0InEd69te2BbS5oyJUyOITKdHY
- QZtxFzVglftjnLdXFvul5Qrt4lMz114lUJ2PuSLW6lp4BAZoSi2sLGUHd+Aelh/NhWDyOmx
- wCVggniv0HWK6LBvI6CO3tI/9osl/PusJBPmS9Z/huxG4cfeqg4BIEYwFv0L+TuXDtddY7d
- MLbJX0n17+yaYVD0arlw45o8Kek7keuz/PwbxtQd2OpE/gp+2NupEhng6HbKdKCHdv/B23U
- 4nBqd8wCnKyKK/UrKVRzi4XKzVVy+AOtmZfGC1h3hUnlOh0+ExnpGwRvYcmM7WavwpeLFX1
- yI5aPBphMD3mfprgObx04Ol4Caz78gQMs0E1bcphP4DhoMpKqdX2VXWj+m62YqsX0ffBrfg
- TuRMWBYApztQ/VRM7vubQ+eYLV+tVY1sEfYKYYprfV7KTJqqtR9Jlq1aoliAQgF/B93w1AU
- RE8gIfwzRsq4EViOyX/HqIkTL8tAbS9o9rsbvrzE+4ZoYaj7NZN6kbN5gkxCmRh1yM42evL
- VZ6E93chVr4
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-XMAILINFO: MZChPk4K8ikNHUPV/rG05AJOqSYZm0m2wOI5/vb2cieWkEIohcq6zDLk
+ FJHxzLxzmjPazZkfMQa2OmL4XcZvdxjMePXFVZUMzsv9OQf0tCHXjN8MagDIYswWID4R9PS
+ yHQSXs9fk882LPt00La2l7mtrU0jEgCZ/y2Q7HZaPL0QyRLFcQDiJB2p8uez8qYj1tB5/4N
+ XrNakZawAdGbQsNoe29TzkTeNiNLV29MpMYAjmAcWN+HYxgFoiDvU881Hcr9NMaO4Y+M+7m
+ HUyYwbn3ADA7U1V4EZJO26PRyaWUOaEKHT1wf4nXeMeCSQOwOf1sptppDZ7diq53FYFKRXt
+ 44OYEZuJla+WsqMoQWPBb/bc6RuqvU2HlUHun8ho+sjY1Xcjfo8vgmF1Kdyq6qlevbIdMJQ
+ lmRWy+FszawRxnKOGwXniPhl0k/pjc7NPK7J6Z2UpNTSjyeO+RGM6U6aI/M88p30TI++b2F
+ cL2zCew2vRWxIe+32lVWjaxCrV1l+1kC9Ml94/2ot9ni19/OoJpr3RsWdXd3N4iiFYoYLt1
+ xCnSRIDrpjRbxNTZVNdeJwZqFgevR2fEgbQThJPWPoVSFrLV8KaQOTMyrX6vd2mhuZTJeLR
+ I05Rx3L5eDjFkGgbAuLBBnRHrMirgGZVQT2L3EyQGLQ5rIidQiPvvu/j5/rz615PBKg12IG
+ PE95oTplcVFFrXRn5zi0P3pnBk/AKECNWbDrLqpRMExwyirBGqRk+2Kf57D8wNbDOskclcQ
+ WfJJEgBp5RMG3DkgLo1Mp4DTokMwA2l9273HpzihPunrIVNu2yx2lBEhCVMfazzX8mdKqro
+ XDf8HZimqT8J/pFSpbxMbktXA6tD/c2Vs0KyH9TSImo3SyYgMiUSM8T5EIubU5Ut1PsRB2e
+ I+DehEprWOv6qyRPPNVGWb6WBBM8vI5TP/mPcoJ8rPqCfU1AXjZGeAcRZG+Tgt21PcbkcxZ
+ FE4zz9FpTdYaNBbADoyxkgW2yIff6eOiO0BLZH250pc5FIRoh7D4xlKamBLCE/ADkLnVX1y
+ dzY5JADSvsaXdcafhenHZryYSyXuIe8I7pz4dI93extuskM5wUeBeU7cdTl3Bn3LyyuHBS3
+ SeUnsv1rB75
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,267 +66,199 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Amber-Lite 25G NICs support four FEC modes (off, baser, rs, auto).
-The driver implements standard interfaces (fec_get_capability,
-fec_get, fec_set) to allow manual configuration. The default FEC
-mode is set to 'auto'.
+Add GPIO configuration for Amber-Lite NICs to match design differences
+from 10G NICs: The Amber-Lite NIC requires additional setup steps
+compared to 10G NICs to ensure proper functionality of features
+SFP module detection.
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml.c  |  27 ++++++-
- drivers/net/txgbe/base/txgbe_hw.c   |   3 +
- drivers/net/txgbe/base/txgbe_mng.c  |   2 +-
- drivers/net/txgbe/base/txgbe_phy.h  |   1 +
- drivers/net/txgbe/base/txgbe_type.h |   2 +
- drivers/net/txgbe/txgbe_ethdev.c    | 121 ++++++++++++++++++++++++++++
- 6 files changed, 154 insertions(+), 2 deletions(-)
+ drivers/net/txgbe/base/txgbe_regs.h |   2 +
+ drivers/net/txgbe/txgbe_ethdev.c    | 111 ++++++++++++++++++++++++++++
+ 2 files changed, 113 insertions(+)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
-index 3283d3f56c..867cf4c2d3 100644
---- a/drivers/net/txgbe/base/txgbe_aml.c
-+++ b/drivers/net/txgbe/base/txgbe_aml.c
-@@ -131,6 +131,26 @@ u32 txgbe_get_media_type_aml(struct txgbe_hw *hw)
- 	return media_type;
- }
- 
-+static int
-+txgbe_phy_fec_get(struct txgbe_hw *hw)
-+{
-+	int value = 0;
-+
-+	rte_spinlock_lock(&hw->phy_lock);
-+	value = rd32_epcs(hw, SR_PMA_RS_FEC_CTRL);
-+	rte_spinlock_unlock(&hw->phy_lock);
-+	if (value & 0x4)
-+		return TXGBE_PHY_FEC_RS;
-+
-+	rte_spinlock_lock(&hw->phy_lock);
-+	value = rd32_epcs(hw, SR_PMA_KR_FEC_CTRL);
-+	rte_spinlock_unlock(&hw->phy_lock);
-+	if (value & 0x1)
-+		return TXGBE_PHY_FEC_BASER;
-+
-+	return TXGBE_PHY_FEC_OFF;
-+}
-+
- void txgbe_wait_for_link_up_aml(struct txgbe_hw *hw, u32 speed)
- {
- 	u32 link_speed = TXGBE_LINK_SPEED_UNKNOWN;
-@@ -184,7 +204,12 @@ s32 txgbe_setup_mac_link_aml(struct txgbe_hw *hw,
- 	status = hw->mac.check_link(hw, &link_speed, &link_up,
- 				    autoneg_wait_to_complete);
- 
--	if (link_speed == speed && link_up)
-+	if (link_up && speed == TXGBE_LINK_SPEED_25GB_FULL)
-+		hw->cur_fec_link = txgbe_phy_fec_get(hw);
-+
-+	if (link_speed == speed && link_up &&
-+	   !(speed == TXGBE_LINK_SPEED_25GB_FULL &&
-+	   !(hw->fec_mode & hw->cur_fec_link)))
- 		return status;
- 
- 	if (speed & TXGBE_LINK_SPEED_25GB_FULL)
-diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
-index 6d3b917bbf..cbf7aafe7f 100644
---- a/drivers/net/txgbe/base/txgbe_hw.c
-+++ b/drivers/net/txgbe/base/txgbe_hw.c
-@@ -338,6 +338,9 @@ s32 txgbe_init_hw(struct txgbe_hw *hw)
- 
- 	txgbe_disable_lldp(hw);
- 
-+	/* Init fec mode to 'AUTO' */
-+	hw->fec_mode = TXGBE_PHY_FEC_AUTO;
-+
- 	/* Reset the hardware */
- 	status = hw->mac.reset_hw(hw);
- 	if (status == 0 || status == TXGBE_ERR_SFP_NOT_PRESENT) {
-diff --git a/drivers/net/txgbe/base/txgbe_mng.c b/drivers/net/txgbe/base/txgbe_mng.c
-index 782e86e1fa..05eb07c0e2 100644
---- a/drivers/net/txgbe/base/txgbe_mng.c
-+++ b/drivers/net/txgbe/base/txgbe_mng.c
-@@ -613,7 +613,7 @@ s32 txgbe_hic_ephy_set_link(struct txgbe_hw *hw, u8 speed, u8 autoneg, u8 duplex
- 	buffer.hdr.buf_len = sizeof(struct txgbe_hic_ephy_setlink) - sizeof(struct txgbe_hic_hdr);
- 	buffer.hdr.cmd_or_resp.cmd_resv = FW_CEM_CMD_RESERVED;
- 
--	buffer.fec_mode = TXGBE_PHY_FEC_AUTO;
-+	buffer.fec_mode = hw->fec_mode;
- 	buffer.speed = speed;
- 	buffer.autoneg = autoneg;
- 	buffer.duplex = duplex;
-diff --git a/drivers/net/txgbe/base/txgbe_phy.h b/drivers/net/txgbe/base/txgbe_phy.h
-index c02be3cc34..f1849c8400 100644
---- a/drivers/net/txgbe/base/txgbe_phy.h
-+++ b/drivers/net/txgbe/base/txgbe_phy.h
-@@ -40,6 +40,7 @@
- #define   SR_PMA_KR_LD_CESTS_RR		MS16(15, 0x1)
- #define SR_PMA_KR_FEC_CTRL              0x0100AB
- #define   SR_PMA_KR_FEC_CTRL_EN		MS16(0, 0x1)
-+#define SR_PMA_RS_FEC_CTRL              0x0100C8
- #define SR_MII_MMD_CTL                  0x1F0000
- #define   SR_MII_MMD_CTL_AN_EN              0x1000
- #define   SR_MII_MMD_CTL_RESTART_AN         0x0200
-diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
-index 03e5bd489d..c5f51b3ade 100644
---- a/drivers/net/txgbe/base/txgbe_type.h
-+++ b/drivers/net/txgbe/base/txgbe_type.h
-@@ -848,6 +848,8 @@ struct txgbe_hw {
- 	/*amlite: new SW-FW mbox */
- 	u8 swfw_index;
- 	rte_atomic32_t swfw_busy;
-+	u32 fec_mode;
-+	u32 cur_fec_link;
- };
- 
- struct txgbe_backplane_ability {
+diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
+index e050941992..00c41a5b86 100644
+--- a/drivers/net/txgbe/base/txgbe_regs.h
++++ b/drivers/net/txgbe/base/txgbe_regs.h
+@@ -1631,6 +1631,8 @@ enum txgbe_5tuple_protocol {
+ #define TXGBE_GPIOINTEN                 0x014830
+ #define TXGBE_GPIOINTMASK               0x014834
+ #define TXGBE_GPIOINTTYPE               0x014838
++#define TXGBE_GPIO_INT_POLARITY         0x01483C
++#define   TXGBE_GPIO_INT_POLARITY_3     MS(3, 0x1)
+ #define TXGBE_GPIOINTSTAT               0x014840
+ #define TXGBE_GPIORAWINTSTAT            0x014844
+ #define TXGBE_GPIOEOI                   0x01484C
 diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 13d1d6924d..dc190fbc1a 100644
+index dc190fbc1a..e6694f7fc2 100644
 --- a/drivers/net/txgbe/txgbe_ethdev.c
 +++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -2806,9 +2806,31 @@ txgbe_dev_detect_sfp(void *param)
+@@ -353,11 +353,33 @@ txgbe_enable_intr(struct rte_eth_dev *dev)
  {
- 	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
+ 	struct txgbe_interrupt *intr = TXGBE_DEV_INTR(dev);
  	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
-+	u32 value = 0;
- 	s32 err;
++	uint32_t gpie;
  
-+	if (hw->mac.type == txgbe_mac_aml40) {
-+		value = rd32(hw, TXGBE_GPIOEXT);
-+		if (value & TXGBE_SFP1_MOD_PRST_LS) {
-+			err = TXGBE_ERR_SFP_NOT_PRESENT;
-+			goto out;
-+		}
-+	}
+ 	wr32(hw, TXGBE_IENMISC, intr->mask_misc);
+ 	wr32(hw, TXGBE_IMC(0), TXGBE_IMC_MASK);
+ 	wr32(hw, TXGBE_IMC(1), TXGBE_IMC_MASK);
+ 	txgbe_flush(hw);
 +
++	/* To avoid gpio intr lost, enable pcie intr first. Then enable gpio intr. */
 +	if (hw->mac.type == txgbe_mac_aml) {
-+		value = rd32(hw, TXGBE_GPIOEXT);
-+		if (value & TXGBE_SFP1_MOD_ABS_LS) {
-+			err = TXGBE_ERR_SFP_NOT_PRESENT;
-+			goto out;
-+		}
++		gpie = rd32(hw, TXGBE_GPIOINTEN);
++		gpie |= TXGBE_GPIOBIT_2 | TXGBE_GPIOBIT_3 | TXGBE_GPIOBIT_6;
++		wr32(hw, TXGBE_GPIOINTEN, gpie);
++
++		gpie = rd32(hw, TXGBE_GPIOINTTYPE);
++		gpie |= TXGBE_GPIOBIT_2 | TXGBE_GPIOBIT_3 | TXGBE_GPIOBIT_6;
++		wr32(hw, TXGBE_GPIOINTTYPE, gpie);
 +	}
 +
-+	/* wait for sfp module ready*/
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
-+		msec_delay(200);
++	if (hw->mac.type == txgbe_mac_aml40) {
++		gpie = rd32(hw, TXGBE_GPIOINTEN);
++		gpie |= TXGBE_GPIOBIT_4;
++		wr32(hw, TXGBE_GPIOINTEN, gpie);
 +
- 	err = hw->phy.identify_sfp(hw);
-+out:
- 	if (err == TXGBE_ERR_SFP_NOT_SUPPORTED) {
- 		PMD_DRV_LOG(ERR, "Unsupported SFP+ module type was detected.");
- 	} else if (err == TXGBE_ERR_SFP_NOT_PRESENT) {
-@@ -5642,6 +5664,102 @@ txgbe_clear_all_l2_tn_filter(struct rte_eth_dev *dev)
- 	return 0;
++		gpie = rd32(hw, TXGBE_GPIOINTTYPE);
++		gpie |= TXGBE_GPIOBIT_4;
++		wr32(hw, TXGBE_GPIOINTTYPE, gpie);
++	}
  }
  
-+static int txgbe_fec_get_capa_speed_to_fec(struct rte_eth_fec_capa *speed_fec_capa)
-+{
-+	int num = 2;
-+
-+	if (speed_fec_capa) {
-+		speed_fec_capa[0].speed = RTE_ETH_SPEED_NUM_10G;
-+		speed_fec_capa[0].capa = RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC);
-+		speed_fec_capa[1].speed = RTE_ETH_SPEED_NUM_25G;
-+		speed_fec_capa[1].capa = RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC) |
-+					 RTE_ETH_FEC_MODE_CAPA_MASK(AUTO) |
-+					 RTE_ETH_FEC_MODE_CAPA_MASK(BASER) |
-+					 RTE_ETH_FEC_MODE_CAPA_MASK(RS);
-+	}
-+
-+	return num;
-+}
-+
-+static int txgbe_fec_get_capability(struct rte_eth_dev *dev,
-+				    struct rte_eth_fec_capa *speed_fec_capa,
-+				    unsigned int num)
-+{
-+	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
-+	u8 num_entries;
-+
-+	if (hw->mac.type != txgbe_mac_aml)
-+		return -EOPNOTSUPP;
-+
-+	num_entries = txgbe_fec_get_capa_speed_to_fec(NULL);
-+	if (!speed_fec_capa || num < num_entries)
-+		return num_entries;
-+
-+	return txgbe_fec_get_capa_speed_to_fec(speed_fec_capa);
-+}
-+
-+static int txgbe_fec_get(struct rte_eth_dev *dev, uint32_t *fec_capa)
-+{
-+	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
-+	u32 speed = 0;
-+	bool negotiate = false;
-+	u32 curr_fec_mode;
-+
-+	hw->mac.get_link_capabilities(hw, &speed, &negotiate);
-+
-+	if (hw->mac.type != txgbe_mac_aml ||
-+	  !(speed & TXGBE_LINK_SPEED_25GB_FULL))
-+		return -EOPNOTSUPP;
-+
-+	if (hw->fec_mode == TXGBE_PHY_FEC_AUTO)
-+		curr_fec_mode = RTE_ETH_FEC_MODE_CAPA_MASK(AUTO);
-+	else if (hw->fec_mode == TXGBE_PHY_FEC_RS)
-+		curr_fec_mode = RTE_ETH_FEC_MODE_CAPA_MASK(RS);
-+	else if (hw->fec_mode == TXGBE_PHY_FEC_BASER)
-+		curr_fec_mode = RTE_ETH_FEC_MODE_CAPA_MASK(BASER);
-+	else
-+		curr_fec_mode = RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC);
-+
-+	*fec_capa = curr_fec_mode;
-+	return 0;
-+}
-+
-+static int txgbe_fec_set(struct rte_eth_dev *dev, u32 fec_capa)
-+{
-+	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
-+	u32 orig_fec_mode = hw->fec_mode;
-+	bool negotiate = false;
-+	u32 speed = 0;
-+
-+	hw->mac.get_link_capabilities(hw, &speed, &negotiate);
-+
-+	if (hw->mac.type != txgbe_mac_aml ||
-+	  !(speed & TXGBE_LINK_SPEED_25GB_FULL))
-+		return -EOPNOTSUPP;
-+
-+	if (!fec_capa)
-+		return -EINVAL;
-+
-+	if (fec_capa & RTE_ETH_FEC_MODE_CAPA_MASK(AUTO))
-+		hw->fec_mode = TXGBE_PHY_FEC_AUTO;
-+
-+	if (fec_capa & RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC))
-+		hw->fec_mode = TXGBE_PHY_FEC_OFF;
-+
-+	if (fec_capa & RTE_ETH_FEC_MODE_CAPA_MASK(BASER))
-+		hw->fec_mode = TXGBE_PHY_FEC_BASER;
-+
-+	if (fec_capa & RTE_ETH_FEC_MODE_CAPA_MASK(RS))
-+		hw->fec_mode = TXGBE_PHY_FEC_RS;
-+
-+	if (hw->fec_mode != orig_fec_mode) {
-+		txgbe_dev_setup_link_alarm_handler(dev);
-+		txgbe_dev_link_update(dev, 0);
-+	}
-+
-+	return 0;
-+}
-+
- static const struct eth_dev_ops txgbe_eth_dev_ops = {
- 	.dev_configure              = txgbe_dev_configure,
- 	.dev_infos_get              = txgbe_dev_info_get,
-@@ -5718,6 +5836,9 @@ static const struct eth_dev_ops txgbe_eth_dev_ops = {
- 	.udp_tunnel_port_del        = txgbe_dev_udp_tunnel_port_del,
- 	.tm_ops_get                 = txgbe_tm_ops_get,
- 	.tx_done_cleanup            = txgbe_dev_tx_done_cleanup,
-+	.fec_get_capability         = txgbe_fec_get_capability,
-+	.fec_get                    = txgbe_fec_get,
-+	.fec_set                    = txgbe_fec_set,
- };
+ static void
+@@ -1711,6 +1733,7 @@ txgbe_dev_start(struct rte_eth_dev *dev)
+ 	uint16_t vf, idx;
+ 	uint32_t *link_speeds;
+ 	struct txgbe_tm_conf *tm_conf = TXGBE_DEV_TM_CONF(dev);
++	u32 links_reg;
  
- RTE_PMD_REGISTER_PCI(net_txgbe, rte_txgbe_pmd);
+ 	PMD_INIT_FUNC_TRACE();
+ 
+@@ -1892,6 +1915,44 @@ txgbe_dev_start(struct rte_eth_dev *dev)
+ 	if (err)
+ 		goto error;
+ 
++	if (hw->mac.type == txgbe_mac_aml) {
++		links_reg = rd32(hw, TXGBE_PORT);
++		if (links_reg & TXGBE_PORT_LINKUP) {
++			if (links_reg & TXGBE_CFG_PORT_ST_AML_LINK_25G) {
++				wr32(hw, TXGBE_MACTXCFG,
++					(rd32(hw, TXGBE_MACTXCFG) &
++					~TXGBE_MAC_TX_CFG_AML_SPEED_MASK) |
++					TXGBE_MAC_TX_CFG_AML_SPEED_25G);
++			} else if (links_reg & TXGBE_CFG_PORT_ST_AML_LINK_10G) {
++				wr32(hw, TXGBE_MACTXCFG,
++					(rd32(hw, TXGBE_MACTXCFG) &
++					~TXGBE_MAC_TX_CFG_AML_SPEED_MASK) |
++					TXGBE_MAC_TX_CFG_AML_SPEED_10G);
++			}
++		}
++
++		/* amlite: restart gpio */
++		wr32(hw, TXGBE_GPIODIR, TXGBE_GPIOBIT_0 | TXGBE_GPIOBIT_1 |
++					TXGBE_GPIOBIT_4 | TXGBE_GPIOBIT_5);
++		wr32(hw, TXGBE_GPIODATA, TXGBE_GPIOBIT_4 | TXGBE_GPIOBIT_5);
++		msleep(10);
++		wr32(hw, TXGBE_GPIODATA, TXGBE_GPIOBIT_0);
++		wr32m(hw, TXGBE_GPIO_INT_POLARITY, TXGBE_GPIO_INT_POLARITY_3, 0x0);
++	} else if (hw->mac.type == txgbe_mac_aml40) {
++		links_reg = rd32(hw, TXGBE_PORT);
++		if (links_reg & TXGBE_PORT_LINKUP) {
++			if (links_reg & TXGBE_CFG_PORT_ST_AML_LINK_40G) {
++				wr32(hw, TXGBE_MACTXCFG,
++					(rd32(hw, TXGBE_MACTXCFG) &
++					~TXGBE_MAC_TX_CFG_AML_SPEED_MASK) |
++					TXGBE_MAC_TX_CFG_AML_SPEED_40G);
++			}
++		}
++
++		wr32(hw, TXGBE_GPIODIR, TXGBE_GPIOBIT_0 | TXGBE_GPIOBIT_1
++							| TXGBE_GPIOBIT_3);
++		wr32(hw, TXGBE_GPIODATA, TXGBE_GPIOBIT_1);
++	}
+ skip_link_setup:
+ 
+ 	if (rte_intr_allow_others(intr_handle)) {
+@@ -1989,6 +2050,10 @@ txgbe_dev_stop(struct rte_eth_dev *dev)
+ 	for (vf = 0; vfinfo != NULL && vf < pci_dev->max_vfs; vf++)
+ 		vfinfo[vf].clear_to_send = false;
+ 
++	if (hw->mac.type == txgbe_mac_aml)
++		wr32m(hw, TXGBE_AML_EPCS_MISC_CTL,
++			  TXGBE_AML_LINK_STATUS_OVRD_EN, 0x0);
++
+ 	txgbe_dev_clear_queues(dev);
+ 
+ 	/* Clear stored conf */
+@@ -2868,6 +2933,27 @@ txgbe_dev_sfp_event(struct rte_eth_dev *dev)
+ 		intr->flags |= TXGBE_FLAG_NEED_LINK_UPDATE;
+ 	}
+ 
++	if (hw->mac.type == txgbe_mac_aml40) {
++		if (reg & TXGBE_GPIOBIT_4) {
++			wr32(hw, TXGBE_GPIOEOI, TXGBE_GPIOBIT_4);
++			rte_eal_alarm_set(1000 * 100, txgbe_dev_detect_sfp, dev);
++		}
++	} else if (hw->mac.type == txgbe_mac_sp || hw->mac.type == txgbe_mac_aml) {
++		if (reg & TXGBE_GPIOBIT_0)
++			wr32(hw, TXGBE_GPIOEOI, TXGBE_GPIOBIT_0);
++		if (reg & TXGBE_GPIOBIT_2) {
++			wr32(hw, TXGBE_GPIOEOI, TXGBE_GPIOBIT_2);
++			rte_eal_alarm_set(1000 * 100, txgbe_dev_detect_sfp, dev);
++		}
++		if (reg & TXGBE_GPIOBIT_3) {
++			wr32(hw, TXGBE_GPIOEOI, TXGBE_GPIOBIT_3);
++			intr->flags |= TXGBE_FLAG_NEED_LINK_UPDATE;
++		}
++		if (reg & TXGBE_GPIOBIT_6) {
++			wr32(hw, TXGBE_GPIOEOI, TXGBE_GPIOBIT_6);
++			intr->flags |= TXGBE_FLAG_NEED_LINK_UPDATE;
++		}
++	}
+ 	wr32(hw, TXGBE_GPIOINTMASK, 0);
+ }
+ 
+@@ -3045,6 +3131,9 @@ txgbe_dev_link_update_share(struct rte_eth_dev *dev,
+ 	}
+ 
+ 	if (link_up == 0) {
++		if (hw->mac.type == txgbe_mac_aml)
++			wr32m(hw, TXGBE_GPIO_INT_POLARITY,
++				  TXGBE_GPIO_INT_POLARITY_3, 0x0);
+ 		if ((hw->subsystem_device_id & 0xFF) ==
+ 				TXGBE_DEV_ID_KR_KX_KX4) {
+ 			hw->mac.bp_down_event(hw);
+@@ -3131,6 +3220,28 @@ txgbe_dev_link_update_share(struct rte_eth_dev *dev,
+ 		wr32(hw, TXGBE_MAC_WDG_TIMEOUT, reg);
+ 	}
+ 
++	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
++		reg = rd32(hw, TXGBE_PORT);
++		if (reg & TXGBE_PORT_LINKUP) {
++			if (reg & TXGBE_CFG_PORT_ST_AML_LINK_40G) {
++				wr32(hw, TXGBE_MACTXCFG,
++					(rd32(hw, TXGBE_MACTXCFG) &
++					~TXGBE_MAC_TX_CFG_AML_SPEED_MASK) | TXGBE_MACTXCFG_TXE |
++					TXGBE_MAC_TX_CFG_AML_SPEED_40G);
++			} else if (reg & TXGBE_CFG_PORT_ST_AML_LINK_25G) {
++				wr32(hw, TXGBE_MACTXCFG,
++					(rd32(hw, TXGBE_MACTXCFG) &
++					~TXGBE_MAC_TX_CFG_AML_SPEED_MASK) | TXGBE_MACTXCFG_TXE |
++					TXGBE_MAC_TX_CFG_AML_SPEED_25G);
++			} else if (reg & TXGBE_CFG_PORT_ST_AML_LINK_10G) {
++				wr32(hw, TXGBE_MACTXCFG,
++					(rd32(hw, TXGBE_MACTXCFG) &
++					~TXGBE_MAC_TX_CFG_AML_SPEED_MASK) | TXGBE_MACTXCFG_TXE |
++					TXGBE_MAC_TX_CFG_AML_SPEED_10G);
++			}
++		}
++	}
++
+ 	return rte_eth_linkstatus_set(dev, &link);
+ }
+ 
 -- 
 2.21.0.windows.1
 
