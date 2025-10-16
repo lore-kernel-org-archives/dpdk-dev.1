@@ -2,78 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 404F1CCD199
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 16:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 139F2CCD199
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 16:08:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1FD7C42797;
-	Thu, 16 Oct 2025 18:01:46 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 140EA41148
- for <dev@dpdk.org>; Thu, 16 Oct 2025 18:01:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1760630503;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=LvHDvJozMzHMD+9Occ7DtXcuyX5yzVna0pZxqDJWcMg=;
- b=bUENLX1u4MN35Tpudb+AFfUlknc1dcFY9I/yd0R4A+G8VJkQYv8jQe7bofTSJ8wzDkfKPe
- 9O0Gh7W5YM0i2+KdwE7XBjXDeu5rOzRV67pONaW8MVwtQ7LPLrDKXFnoVGQFDilxNz/9Gc
- FdIs8ubxkOdVljSMWVidDs+RZIVcG4U=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-247-a9Kcl7P8Oc2tcaKlFwscoQ-1; Thu, 16 Oct 2025 12:01:41 -0400
-X-MC-Unique: a9Kcl7P8Oc2tcaKlFwscoQ-1
-X-Mimecast-MFC-AGG-ID: a9Kcl7P8Oc2tcaKlFwscoQ_1760630500
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-35f62a3c170so4720551fa.0
- for <dev@dpdk.org>; Thu, 16 Oct 2025 09:01:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1CEA940A67;
+	Thu, 16 Oct 2025 18:08:51 +0200 (CEST)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
+ [209.85.210.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 295014026D
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 18:08:50 +0200 (CEST)
+Received: by mail-pf1-f175.google.com with SMTP id
+ d2e1a72fcca58-78af743c232so877759b3a.1
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 09:08:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760630929;
+ x=1761235729; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=rQYhPFN/K+RJh45lnHF46BtpzTrhj689S1nNYAdJiAw=;
+ b=O53e/2oYPUJMGiQEBeIwKKrscs3GKlzKazfrD5XBCpTpoDUSIwfaJuaIm7TffioMF9
+ 5i+KTGmwkSlYFLGUqHcpM7cAUi2I/wnaKu+xBhPs7yLNI8frf3MCs40PoCKLJa4p87jX
+ lLMV4QUmHoqbJvNssIqngkyxY2hlRtfEcG8DfJTCfbX1Xfi54hdFA9TlojGpS6xYTUfU
+ cCFAe2VhRZXAbl2aL/abqSKrOGlIYUO+jopwuUoEHamM5Y8sZPGwRUcBhdUZDlWz4nLo
+ QdcQKJJuU0QgcTQuhFtg6kQTJsyWsuaTif5s7hMeKeFa+Z0xrN9u/EtSmIL/QtWwAWfQ
+ vIxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760630499; x=1761235299;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1760630929; x=1761235729;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=LvHDvJozMzHMD+9Occ7DtXcuyX5yzVna0pZxqDJWcMg=;
- b=e3FB2ty+bEn0+FlnItMfg8Hbz//739VKr75pPPlJP+1Ps6wn2+WiOmEz5McjWWgf2L
- 4RfQIjvvjk52v8sB9so8EXgRhuyuQoSqikl0GpxaJolCNGcApaHhHnO/GsOGThe8uGDj
- e0mo80z4Vdi+FYtct3gGOpMSySgQMLZyrTdDdSfXHV1UGAwUg4R0WN+8uFbm+PACE9QO
- UXUIVv/qPzuCFgg85i3/2G1n9K6Qzl8eviniu9BrrSb7XSZ+wlaa654cDTeZXE63ecJo
- xwuvhAaU7aqQqpE6ag/yq576dDeKmU0045WtEh6KvcP881JZfpxeW6Sm0RcWFuNpna6c
- GrNw==
-X-Gm-Message-State: AOJu0YxqQLRy8Y8sUi/VZ+2Hez/Phu4F4KzIsM+yrCoUAePIB7/L4UWQ
- mWq7XddEtn9aENTjxne9BjhAU1B4vS3L/t4qe3CydJgxQk8I5CxLPMRvwpEW4tprm1hSYXAKyDk
- odYvUeQnJUyPutXlhf2SbLnz1X6qT79ISCatnRtsMGGt52GETil8xGwhKZ1MFVCHX5TYbn80f9z
- 5+15vBYYMIjX8PZgRWA+k=
-X-Gm-Gg: ASbGncugMvApTIMBI3ORqqVNmTn9kk1L8hdJcudFZIkyjwSydJzrWqDxv591TQZR0OF
- WwyGO3i29T8x9JRIUtVE9wwLsHrp0eLxKtNZ5mlCWTrV1+Yq5fynjJCPy5byhbR4zDGkT+dW5Vl
- cDCaHLdm/iYYf04rFQjovxzebozAF3sY4QWG3sph6ZJaXwLAEGx4VvZQ==
-X-Received: by 2002:a05:651c:908:b0:372:8c3e:2641 with SMTP id
- 38308e7fff4ca-3779782d19bmr2384191fa.10.1760630497905; 
- Thu, 16 Oct 2025 09:01:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHfS+PPVTs0kI5Oqx26paQEL84qEAFpM1P1fr3ih+8HeNIscJvKgDBrsfRJjmYn0caGJG38Dn6lFT+5mfFcjzI=
-X-Received: by 2002:a05:651c:908:b0:372:8c3e:2641 with SMTP id
- 38308e7fff4ca-3779782d19bmr2384001fa.10.1760630497374; Thu, 16 Oct 2025
- 09:01:37 -0700 (PDT)
+ bh=rQYhPFN/K+RJh45lnHF46BtpzTrhj689S1nNYAdJiAw=;
+ b=fdkLmT99dsy3iGowrNDicyzb0mJyyXGrzWa+sw0hGsN9qm5sXf9/iMEFuMP/E240lg
+ RPWQFY6O3FZEvk3cSU6t4n4cNnZmxGt+TTBx4BzgNjE1Fnk2UJ2fbi4/ogpv1mt1LacO
+ qv4Yq7FdSd1ZWYKiYmOifvQju+7sirA6smuPkwCRHjB64TBul8uKrVPR5fMBl2/q19RK
+ leHSXliWt5k3ln9qqA6CUIO76IeJCIdmpHlLmDCAdfnpnf+dDUs7WzrdWqVJd0qgcMDy
+ Z4uHAMeU8YXxSK/1QF5zzxt2f1Tk+QDQuj54D4NMebWmZov3kuuwTr5CmOW6c0KN42Vx
+ KAHQ==
+X-Gm-Message-State: AOJu0YyLPq0tt21fe4A1TaouwLA2WVhjdeIOSQtnqvEN23R+SYQslGIh
+ qFqDgpcTuQt35BV1IZhh3wYkkX7N4p8IuxE9PNtlMbhqfVr+zoV/6xT2b8fdjaqeZxjQ7HDkayd
+ IgG6HjtY=
+X-Gm-Gg: ASbGncsoB4/drz8Bii8c5f/vc55R1Hx8Mzi1tqAWVynD2+FWVFbph/DZ4Nt2KY0RVgp
+ O2AyOZdH0aQsnGuDzK/Sahv5+AvU0zu1Thyh0sbj7dPbZBgwELEil1LPzkWhKiLGNXhcs5kSvJs
+ 6FfTuCZCClGbOJ7biSbtkI4oHESM3qSvbtC0bSHGYZneqqCoUyjbcUERotOfH3YE94ooRcRk+sR
+ Dvnnn+6alhfUAZRYg1BPBl+tcZ4pRnPkcmGhS3IGPtE3urEoo4Az5JNeNFCdpdyIvbZbMQUKC1e
+ g6H4ba2cjiN9CrOq9XBTYTj3lDiaKgo/y2fQY88LOa59VjD1JBj+2JrQNzNdWBV8JfZnrt7Bd/9
+ tb0wqmdZCj0FghKLBS3BW+d1LmWSeq2Qt+B/skTdjFY918wgadDYuFxN0UidlPMVmoUru4gqD0r
+ VgCuH0UXmR/YWh4YA7fbP4fEoeUUsr/26uzr7axJqepJCde2dhUKo4
+X-Google-Smtp-Source: AGHT+IFKJXpAzEj88D0KNXPRA/5e+OoU8GtRuNlANbx2/m3qwKxZnbm4+I8SXhC2mbPG9jJanl9d9A==
+X-Received: by 2002:a17:903:11ce:b0:273:3f62:6eca with SMTP id
+ d9443c01a7336-290c9ca804emr6198615ad.18.1760630929064; 
+ Thu, 16 Oct 2025 09:08:49 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-29099aba4f5sm34477505ad.91.2025.10.16.09.08.48
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 16 Oct 2025 09:08:48 -0700 (PDT)
+Date: Thu, 16 Oct 2025 09:08:46 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Shai Brandes <shaibran@amazon.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [PATCH v2 13/20] net/ena/base: remove redundant zeroing of Tx desc
+Message-ID: <20251016090846.1ad2be40@hermes.local>
+In-Reply-To: <20251015121042.2828-1-shaibran@amazon.com>
+References: <20251015121042.2828-1-shaibran@amazon.com>
 MIME-Version: 1.0
-References: <20250527223642.31577-1-nicolas.chautru@intel.com>
- <20250527223642.31577-3-nicolas.chautru@intel.com>
- <CAO55csz8z6FX3QWFxeLj6wxn38FD_ax9TsAJ_BSopLsbAiVgiA@mail.gmail.com>
-In-Reply-To: <CAO55csz8z6FX3QWFxeLj6wxn38FD_ax9TsAJ_BSopLsbAiVgiA@mail.gmail.com>
-From: Maxime Coquelin <mcoqueli@redhat.com>
-Date: Thu, 16 Oct 2025 18:01:25 +0200
-X-Gm-Features: AS18NWCHSosMgkLdrnu_A1uBAYtBORRWtXuD4w3UifjdbJBmdQicmLS7T1sncUQ
-Message-ID: <CAO55cszNS=L0J_7=TDJukDd0EapR9aOnTtdL1AgRU1DdNUuesQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] baseband/acc: add trace points per operation
-To: Nicolas Chautru <nicolas.chautru@intel.com>
-Cc: dev@dpdk.org, maxime.coquelin@redhat.com, hemant.agrawal@nxp.com, 
- hernan.vargas@intel.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: BymSAZYD8JNaWuK_-Q6lH6tSYEJdZH_PvAE5fp-UhEQ_1760630500
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,75 +82,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Oct 16, 2025 at 5:44=E2=80=AFPM Maxime Coquelin <mcoqueli@redhat.co=
-m> wrote:
->
-> Hi Nicolas,
->
-> On Wed, May 28, 2025 at 12:36=E2=80=AFAM Nicolas Chautru
-> <nicolas.chautru@intel.com> wrote:
-> >
-> > Add the details of the operation parameters into
-> > trace when that operation is rejected by the PMD.
-> >
-> > Signed-off-by: Nicolas Chautru <nicolas.chautru@intel.com>
-> > ---
-> >  drivers/baseband/acc/acc_common.h | 1 +
-> >  drivers/baseband/acc/vrb_trace.h  | 4 ++--
-> >  2 files changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/baseband/acc/acc_common.h b/drivers/baseband/acc/a=
-cc_common.h
-> > index 4880444450..3d411cd25f 100644
-> > --- a/drivers/baseband/acc/acc_common.h
-> > +++ b/drivers/baseband/acc/acc_common.h
-> > @@ -700,6 +700,7 @@ acc_error_log(struct acc_queue *q, void *op, uint8_=
-t acc_error_idx, const char *
-> >
-> >         rte_bbdev_vrb_trace_error(0, rte_bbdev_op_type_str(q->op_type),
-> >                         acc_error_string[acc_error_idx]);
-> > +       rte_bbdev_ops_trace(op, q->op_type);
-> >
-> >         va_end(args);
-> >  }
-> > diff --git a/drivers/baseband/acc/vrb_trace.h b/drivers/baseband/acc/vr=
-b_trace.h
-> > index 0bbfdc47d1..c9ae239fec 100644
-> > --- a/drivers/baseband/acc/vrb_trace.h
-> > +++ b/drivers/baseband/acc/vrb_trace.h
-> > @@ -11,7 +11,7 @@ extern "C" {
-> >
-> >  #include <rte_trace_point.h>
-> >
-> > -RTE_TRACE_POINT_FP(
-> > +RTE_TRACE_POINT(
-> >         rte_bbdev_vrb_trace_error,
-> >         RTE_TRACE_POINT_ARGS(uint8_t dev_id, const char *op_string, con=
-st char *err_string),
-> >         rte_trace_point_emit_u8(dev_id);
-> > @@ -19,7 +19,7 @@ RTE_TRACE_POINT_FP(
-> >         rte_trace_point_emit_string(err_string);
-> >  )
-> >
-> > -RTE_TRACE_POINT_FP(
-> > +RTE_TRACE_POINT(
-> >         rte_bbdev_vrb_trace_queue_error,
-> >         RTE_TRACE_POINT_ARGS(uint8_t qg_id, uint8_t aq_id, const char *=
-str),
-> >         rte_trace_point_emit_u8(qg_id);
->
-> Maybe worth expanding in the commit message that from now on, the
-> trace will be emitted systematically,
-> i.e. without having to build with RTE_ENABLE_TRACE_FP set?
->
-> It can be done while applying.
+On Wed, 15 Oct 2025 15:10:42 +0300
+Shai Brandes <shaibran@amazon.com> wrote:
 
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+> +/* There is an assumption in function get_tx_sq_desc() that both descriptors have the same size */
+> +_Static_assert(sizeof(struct ena_eth_io_tx_meta_desc) == (sizeof(struct ena_eth_io_tx_desc)),
+> +	       "ena_eth_io_tx_meta_desc should be the same size as ena_eth_io_tx_desc");
+> +static void *get_tx_sq_desc(struct ena_com_io_sq *io_sq)
 
-> Thanks,
-> Maxime
->
-> > --
-> > 2.34.1
-> >
-
+In general DPDK code is using static_assert instead _Static_assert
+could this be used here?
