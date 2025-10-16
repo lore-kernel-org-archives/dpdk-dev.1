@@ -2,31 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D2CCCD183
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 10:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63723CCD19E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 10:29:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CEB8D427B3;
-	Thu, 16 Oct 2025 12:28:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 006144279C;
+	Thu, 16 Oct 2025 12:28:21 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 32AE441140
+ by mails.dpdk.org (Postfix) with ESMTP id C5C1441149
  for <dev@dpdk.org>; Thu, 16 Oct 2025 12:28:11 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 195401A26D3;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AB4711A270E;
  Thu, 16 Oct 2025 12:28:11 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D98861A26F1;
- Thu, 16 Oct 2025 12:28:10 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 766801A26F1;
+ Thu, 16 Oct 2025 12:28:11 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 72DAB18000A0;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0524E180007B;
  Thu, 16 Oct 2025 18:28:10 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: dev@dpdk.org,
 	stephen@networkplumber.org
-Subject: [PATCH v2 08/15] net/dpaa2: add dpmac MC header file
-Date: Thu, 16 Oct 2025 15:57:58 +0530
-Message-ID: <20251016102805.2453687-9-prashant.gupta_3@nxp.com>
+Cc: Ioana Ciornei <ioana.ciornei@nxp.com>
+Subject: [PATCH v2 10/15] net/dpaa2: setup the speed cap based on the actual
+ MAC
+Date: Thu, 16 Oct 2025 15:58:00 +0530
+Message-ID: <20251016102805.2453687-11-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251016102805.2453687-1-prashant.gupta_3@nxp.com>
 References: <20251014064035.1312896-1-prashant.gupta_3@nxp.com>
@@ -47,486 +49,293 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch upgrades the MC firmware release API compatibility
-to 10.39.0. Added mc/fsl_dpmac.h file.
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
 
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
+Previously, the speed_capa field from struct rte_eth_dev_info was
+populated with all possible speeds that the MACs on the system could
+sustain. What this meant is that the bitmap of speed capability did not
+reflect what the MAC could do in the current circumstance.
+
+Fix this by using the newly added MC command
+dpni_get_mac_speed_capability() which returns a bitmap of
+enum dpmac_link_speed. Since the MC API is a newly added one, we check
+for the DPNI version to determine is we can use the API, if not the code
+will fallback to the procedure used up until now.
+
+Also, we interogate the MC firmware only at probe time to get the needed
+into and then we store the information in the private structure to
+use it any time .dev_infos_get() is called.
+
+Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 ---
- drivers/net/dpaa2/mc/fsl_dpmac.h | 465 +++++++++++++++++++++++++++++++
- 1 file changed, 465 insertions(+)
- create mode 100644 drivers/net/dpaa2/mc/fsl_dpmac.h
+ drivers/net/dpaa2/dpaa2_ethdev.c    | 87 ++++++++++++++++++++++++++---
+ drivers/net/dpaa2/dpaa2_ethdev.h    | 12 ++++
+ drivers/net/dpaa2/mc/dpni.c         | 21 +++++++
+ drivers/net/dpaa2/mc/fsl_dpmac.h    | 15 +++++
+ drivers/net/dpaa2/mc/fsl_dpni.h     |  5 +-
+ drivers/net/dpaa2/mc/fsl_dpni_cmd.h |  4 ++
+ 6 files changed, 134 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+index 5c4c0ae462..529856f704 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.c
++++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+@@ -290,6 +290,79 @@ dpaa2_fw_version_get(struct rte_eth_dev *dev,
+ 		return 0;
+ }
+ 
++static uint32_t dpaa2_speed_to_rte_link_speed(enum dpmac_link_speed dpmac_speed)
++{
++	switch (dpmac_speed) {
++	case DPMAC_LINK_SPEED_10M:
++		return RTE_ETH_LINK_SPEED_10M;
++	case DPMAC_LINK_SPEED_100M:
++		return RTE_ETH_LINK_SPEED_100M;
++	case DPMAC_LINK_SPEED_1G:
++		return RTE_ETH_LINK_SPEED_1G;
++	case DPMAC_LINK_SPEED_2_5G:
++		return RTE_ETH_LINK_SPEED_2_5G;
++	case DPMAC_LINK_SPEED_5G:
++		return RTE_ETH_LINK_SPEED_5G;
++	case DPMAC_LINK_SPEED_10G:
++		return RTE_ETH_LINK_SPEED_10G;
++	case DPMAC_LINK_SPEED_25G:
++		return RTE_ETH_LINK_SPEED_25G;
++	case DPMAC_LINK_SPEED_40G:
++		return RTE_ETH_LINK_SPEED_40G;
++	case DPMAC_LINK_SPEED_50G:
++		return RTE_ETH_LINK_SPEED_50G;
++	case DPMAC_LINK_SPEED_100G:
++		return RTE_ETH_LINK_SPEED_100G;
++	default:
++		return 0;
++	}
++}
++
++static uint32_t dpaa2_dev_get_speed_capability(struct rte_eth_dev *dev)
++{
++	struct fsl_mc_io *dpni = (struct fsl_mc_io *)dev->process_private;
++	struct dpaa2_dev_priv *priv = dev->data->dev_private;
++	enum dpmac_link_speed speed;
++	uint32_t dpmac_speed_cap;
++	uint32_t speed_capa = 0;
++	int ret;
++
++	/* The dpni_get_mac_supported_eth_if() API is only available starting
++	 * with DPNI ver 8.6.
++	 */
++	if (dpaa2_dev_cmp_dpni_ver(priv, DPNI_GET_MAC_SUPPORTED_IFS_VER_MAJOR,
++				   DPNI_GET_MAC_SUPPORTED_IFS_VER_MINOR) < 0)
++		goto fallback;
++
++	if (priv->ep_dev_type != DPAA2_MAC)
++		goto fallback;
++
++	ret = dpni_get_mac_speed_capability(dpni, CMD_PRI_LOW, priv->token,
++					    &dpmac_speed_cap);
++	if (ret < 0) {
++		DPAA2_PMD_WARN("dpni_get_mac_speed_capability() failed with %d", ret);
++		goto fallback;
++	}
++	for (speed = DPMAC_LINK_SPEED_10M; speed < DPMAC_LINK_SPEED_MAX; speed++) {
++		if ((dpmac_speed_cap & (1 << speed)) == 0)
++			continue;
++
++		speed_capa |= dpaa2_speed_to_rte_link_speed(speed);
++	}
++
++	return speed_capa;
++
++fallback:
++	speed_capa = RTE_ETH_LINK_SPEED_1G | RTE_ETH_LINK_SPEED_2_5G |
++		RTE_ETH_LINK_SPEED_10G;
++
++	if (dpaa2_svr_family == SVR_LX2160A)
++		speed_capa |= RTE_ETH_LINK_SPEED_25G | RTE_ETH_LINK_SPEED_40G |
++			RTE_ETH_LINK_SPEED_50G | RTE_ETH_LINK_SPEED_100G;
++
++	return speed_capa;
++}
++
+ static int
+ dpaa2_dev_info_get(struct rte_eth_dev *dev,
+ 	struct rte_eth_dev_info *dev_info)
+@@ -307,9 +380,6 @@ dpaa2_dev_info_get(struct rte_eth_dev *dev,
+ 					dev_rx_offloads_nodis;
+ 	dev_info->tx_offload_capa = dev_tx_offloads_sup |
+ 					dev_tx_offloads_nodis;
+-	dev_info->speed_capa = RTE_ETH_LINK_SPEED_1G |
+-			RTE_ETH_LINK_SPEED_2_5G |
+-			RTE_ETH_LINK_SPEED_10G;
+ 	dev_info->dev_capa &= ~RTE_ETH_DEV_CAPA_FLOW_RULE_KEEP;
+ 
+ 	dev_info->max_hash_mac_addrs = 0;
+@@ -326,12 +396,7 @@ dpaa2_dev_info_get(struct rte_eth_dev *dev,
+ 	dev_info->default_txportconf.ring_size = CONG_ENTER_TX_THRESHOLD;
+ 	dev_info->default_rxportconf.ring_size = DPAA2_RX_DEFAULT_NBDESC;
+ 
+-	if (dpaa2_svr_family == SVR_LX2160A) {
+-		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_25G |
+-				RTE_ETH_LINK_SPEED_40G |
+-				RTE_ETH_LINK_SPEED_50G |
+-				RTE_ETH_LINK_SPEED_100G;
+-	}
++	dev_info->speed_capa = priv->speed_capa;
+ 
+ 	return 0;
+ }
+@@ -1130,6 +1195,7 @@ dpaa2_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
+ 		/*todo -= add more types */
+ 		RTE_PTYPE_L2_ETHER,
+ 		RTE_PTYPE_L3_IPV4,
++
+ 		RTE_PTYPE_L3_IPV4_EXT,
+ 		RTE_PTYPE_L3_IPV6,
+ 		RTE_PTYPE_L3_IPV6_EXT,
+@@ -2976,6 +3042,9 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 	DPAA2_PMD_INFO("%s: netdev created, connected to %s",
+ 		eth_dev->data->name, dpaa2_dev->ep_name);
+ 
++
++	priv->speed_capa = dpaa2_dev_get_speed_capability(eth_dev);
++
+ 	return 0;
+ init_err:
+ 	dpaa2_dev_close(eth_dev);
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
+index 6026b378a7..c4133f604f 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.h
++++ b/drivers/net/dpaa2/dpaa2_ethdev.h
+@@ -400,6 +400,7 @@ struct dpaa2_dev_priv {
+ 
+ 	uint16_t dpni_ver_major;
+ 	uint16_t dpni_ver_minor;
++	uint32_t speed_capa;
+ 
+ 	enum rte_dpaa2_dev_type ep_dev_type;   /**< Endpoint Device Type */
+ 	uint16_t ep_object_id;                 /**< Endpoint DPAA2 Object ID */
+@@ -436,6 +437,17 @@ struct dpaa2_dev_priv {
+ 	LIST_HEAD(shaper_profiles, dpaa2_tm_shaper_profile) shaper_profiles;
+ };
+ 
++#define DPNI_GET_MAC_SUPPORTED_IFS_VER_MAJOR	8
++#define DPNI_GET_MAC_SUPPORTED_IFS_VER_MINOR	6
++
++static inline int dpaa2_dev_cmp_dpni_ver(struct dpaa2_dev_priv *priv,
++					 uint16_t ver_major, uint16_t ver_minor)
++{
++	if (priv->dpni_ver_major == ver_major)
++		return priv->dpni_ver_minor - ver_minor;
++	return priv->dpni_ver_major - ver_major;
++}
++
+ int dpaa2_distset_to_dpkg_profile_cfg(uint64_t req_dist_set,
+ 				      struct dpkg_profile_cfg *kg_cfg);
+ 
+diff --git a/drivers/net/dpaa2/mc/dpni.c b/drivers/net/dpaa2/mc/dpni.c
+index f651f29b02..a1f168dd04 100644
+--- a/drivers/net/dpaa2/mc/dpni.c
++++ b/drivers/net/dpaa2/mc/dpni.c
+@@ -3493,6 +3493,7 @@ int dpni_sp_enable(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
+ 	/* send command to MC */
+ 	return mc_send_command(mc_io, &cmd);
+ }
++
+ /**
+  * dpni_get_mac_statistics() - Get statistics on the connected DPMAC objects
+  * @mc_io:       Pointer to opaque I/O object
+@@ -3520,3 +3521,23 @@ int dpni_get_mac_statistics(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_
+ 
+ 	return mc_send_command(mc_io, &cmd);
+ }
++
++int dpni_get_mac_speed_capability(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
++				  uint32_t *speed_cap)
++{
++	struct dpni_rsp_mac_speed_cap *rsp_params;
++	struct mc_command cmd = { 0 };
++	int err;
++
++	cmd.header = mc_encode_cmd_header(DPNI_CMDID_GET_MAC_SPEED_CAPABILITY,
++					  cmd_flags, token);
++
++	err = mc_send_command(mc_io, &cmd);
++	if (err)
++		return err;
++
++	rsp_params = (struct dpni_rsp_mac_speed_cap *)cmd.params;
++	*speed_cap = le32_to_cpu(rsp_params->speed_cap);
++
++	return 0;
++}
 diff --git a/drivers/net/dpaa2/mc/fsl_dpmac.h b/drivers/net/dpaa2/mc/fsl_dpmac.h
-new file mode 100644
-index 0000000000..41eca47cfa
---- /dev/null
+index 375d646cfc..61d7573a4b 100644
+--- a/drivers/net/dpaa2/mc/fsl_dpmac.h
 +++ b/drivers/net/dpaa2/mc/fsl_dpmac.h
-@@ -0,0 +1,465 @@
-+/* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
-+ *
-+ * Copyright 2013-2016 Freescale Semiconductor Inc.
-+ * Copyright 2018-2025 NXP
-+ *
-+ */
+@@ -67,6 +67,21 @@ enum dpmac_eth_if {
+ 	DPMAC_ETH_IF_1000BASEX,
+ 	DPMAC_ETH_IF_USXGMII,
+ };
 +
-+#ifndef __FSL_DPMAC_H
-+#define __FSL_DPMAC_H
-+
-+/** @addtogroup dpmac Data Path MAC API
-+ * Contains initialization APIs and runtime control APIs for DPMAC
-+ * @{
-+ */
-+
-+struct fsl_mc_io;
-+
-+int dpmac_open(struct fsl_mc_io *mc_io,
-+	       uint32_t cmd_flags,
-+	       int dpmac_id,
-+	       uint16_t *token);
-+
-+int dpmac_close(struct fsl_mc_io *mc_io,
-+		uint32_t cmd_flags,
-+		uint16_t token);
-+
-+/**
-+ * enum dpmac_link_type -  DPMAC link type
-+ * @DPMAC_LINK_TYPE_NONE: No link
-+ * @DPMAC_LINK_TYPE_FIXED: Link is fixed type
-+ * @DPMAC_LINK_TYPE_PHY: Link by PHY ID
-+ * @DPMAC_LINK_TYPE_BACKPLANE: Backplane link type
-+ */
-+enum dpmac_link_type {
-+	DPMAC_LINK_TYPE_NONE,
-+	DPMAC_LINK_TYPE_FIXED,
-+	DPMAC_LINK_TYPE_PHY,
-+	DPMAC_LINK_TYPE_BACKPLANE
++enum dpmac_link_speed {
++	DPMAC_LINK_SPEED_10M = 0,
++	DPMAC_LINK_SPEED_100M,
++	DPMAC_LINK_SPEED_1G,
++	DPMAC_LINK_SPEED_2_5G,
++	DPMAC_LINK_SPEED_5G,
++	DPMAC_LINK_SPEED_10G,
++	DPMAC_LINK_SPEED_25G,
++	DPMAC_LINK_SPEED_40G,
++	DPMAC_LINK_SPEED_50G,
++	DPMAC_LINK_SPEED_100G,
++	DPMAC_LINK_SPEED_MAX,
 +};
 +
-+/**
-+ * enum dpmac_eth_if - DPMAC Ethrnet interface
-+ * @DPMAC_ETH_IF_MII: MII interface
-+ * @DPMAC_ETH_IF_RMII: RMII interface
-+ * @DPMAC_ETH_IF_SMII: SMII interface
-+ * @DPMAC_ETH_IF_GMII: GMII interface
-+ * @DPMAC_ETH_IF_RGMII: RGMII interface
-+ * @DPMAC_ETH_IF_SGMII: SGMII interface
-+ * @DPMAC_ETH_IF_QSGMII: QSGMII interface
-+ * @DPMAC_ETH_IF_XAUI: XAUI interface
-+ * @DPMAC_ETH_IF_XFI: XFI interface
-+ * @DPMAC_ETH_IF_CAUI: CAUI interface
-+ * @DPMAC_ETH_IF_1000BASEX: 1000BASEX interface
-+ * @DPMAC_ETH_IF_USXGMII: USXGMII interface
-+ */
-+enum dpmac_eth_if {
-+	DPMAC_ETH_IF_MII,
-+	DPMAC_ETH_IF_RMII,
-+	DPMAC_ETH_IF_SMII,
-+	DPMAC_ETH_IF_GMII,
-+	DPMAC_ETH_IF_RGMII,
-+	DPMAC_ETH_IF_SGMII,
-+	DPMAC_ETH_IF_QSGMII,
-+	DPMAC_ETH_IF_XAUI,
-+	DPMAC_ETH_IF_XFI,
-+	DPMAC_ETH_IF_CAUI,
-+	DPMAC_ETH_IF_1000BASEX,
-+	DPMAC_ETH_IF_USXGMII,
+ /*
+  * @DPMAC_FEC_NONE: RS-FEC (enabled by default) is disabled
+  * @DPMAC_FEC_RS: RS-FEC (Clause 91) mode configured
+diff --git a/drivers/net/dpaa2/mc/fsl_dpni.h b/drivers/net/dpaa2/mc/fsl_dpni.h
+index 1a12ed3c3c..5a0482129f 100644
+--- a/drivers/net/dpaa2/mc/fsl_dpni.h
++++ b/drivers/net/dpaa2/mc/fsl_dpni.h
+@@ -1,7 +1,7 @@
+ /* SPDX-License-Identifier: (BSD-3-Clause OR GPL-2.0)
+  *
+  * Copyright 2013-2016 Freescale Semiconductor Inc.
+- * Copyright 2016-2023 NXP
++ * Copyright 2016-2025 NXP
+  *
+  */
+ #ifndef __FSL_DPNI_H
+@@ -2040,4 +2040,7 @@ int dpni_get_mac_statistics(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_
+ int dpni_get_mac_statistics(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
+ 			    uint64_t iova_cnt, uint64_t iova_values, uint32_t num_cnt);
+ 
++int dpni_get_mac_speed_capability(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
++				  uint32_t *speed_cap);
++
+ #endif /* __FSL_DPNI_H */
+diff --git a/drivers/net/dpaa2/mc/fsl_dpni_cmd.h b/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
+index f653f2c0e4..cf4558d540 100644
+--- a/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
++++ b/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
+@@ -132,6 +132,7 @@
+ #define DPNI_CMDID_SET_QUEUE_TX_CONFIRMATION_MODE	DPNI_CMD(0x281)
+ #define DPNI_CMDID_GET_QUEUE_TX_CONFIRMATION_MODE	DPNI_CMD(0x282)
+ #define DPNI_CMDID_GET_MAC_STATISTICS			DPNI_CMD(0x283)
++#define DPNI_CMDID_GET_MAC_SPEED_CAPABILITY		DPNI_CMD(0x284)
+ 
+ /* Macros for accessing command fields smaller than 1byte */
+ #define DPNI_MASK(field)	\
+@@ -1031,5 +1032,8 @@ struct dpni_cmd_get_mac_statistics {
+ 	uint32_t num_cnt;
+ };
+ 
++struct dpni_rsp_mac_speed_cap {
++	uint32_t speed_cap;
 +};
-+/*
-+ * @DPMAC_FEC_NONE: RS-FEC (enabled by default) is disabled
-+ * @DPMAC_FEC_RS: RS-FEC (Clause 91) mode configured
-+ * @DPMAC_FEC_FC: FC-FEC (Clause 74) mode configured (not yet supported)
-+ */
-+enum dpmac_fec_mode {
-+	DPMAC_FEC_NONE,
-+	DPMAC_FEC_RS,
-+	DPMAC_FEC_FC,
-+};
-+
-+/* serdes sfi/custom settings feature internals
-+ * @SERDES_CFG_DEFAULT: the default configuration.
-+ * @SERDES_CFG_SFI: default operating mode for XFI interfaces
-+ * @SERDES_CFG_CUSTOM: It allows the user to manually configure the type of equalization,
-+ *	amplitude, preq and post1q settings. Can be used with all interfaces except RGMII.
-+ */
-+enum serdes_eq_cfg_mode {
-+	SERDES_CFG_DEFAULT = 0,
-+	SERDES_CFG_SFI,
-+	SERDES_CFG_CUSTOM,
-+};
-+
-+/**
-+ * struct dpmac_cfg - Structure representing DPMAC configuration
-+ * @mac_id:	Represents the Hardware MAC ID; in case of multiple WRIOP,
-+ *		the MAC IDs are continuous.
-+ *		For example:  2 WRIOPs, 16 MACs in each:
-+ *				MAC IDs for the 1st WRIOP: 1-16,
-+ *				MAC IDs for the 2nd WRIOP: 17-32.
-+ */
-+struct dpmac_cfg {
-+	uint16_t mac_id;
-+};
-+
-+int dpmac_create(struct fsl_mc_io *mc_io,
-+		 uint16_t dprc_token,
-+		 uint32_t cmd_flags,
-+		 const struct dpmac_cfg *cfg,
-+		 uint32_t *obj_id);
-+
-+int dpmac_destroy(struct fsl_mc_io *mc_io,
-+		  uint16_t dprc_token,
-+		  uint32_t cmd_flags,
-+		  uint32_t object_id);
-+
-+/**
-+ * DPMAC IRQ Index and Events
-+ */
-+
-+/**
-+ * IRQ index
-+ */
-+#define DPMAC_IRQ_INDEX				0
-+/**
-+ * IRQ event - indicates a change in link state
-+ */
-+#define DPMAC_IRQ_EVENT_LINK_CFG_REQ		0x00000001
-+/**
-+ * IRQ event - Indicates that the link state changed
-+ */
-+#define DPMAC_IRQ_EVENT_LINK_CHANGED		0x00000002
-+/**
-+ * IRQ event - The object requests link up
-+ */
-+#define DPMAC_IRQ_EVENT_LINK_UP_REQ			0x00000004
-+/**
-+ * IRQ event - The object requests link down
-+ */
-+#define DPMAC_IRQ_EVENT_LINK_DOWN_REQ		0x00000008
-+/**
-+ * IRQ event - indicates a change in endpoint
-+ */
-+#define DPMAC_IRQ_EVENT_ENDPOINT_CHANGED	0x00000010
-+
-+int dpmac_set_irq_enable(struct fsl_mc_io *mc_io,
-+			 uint32_t cmd_flags,
-+			 uint16_t token,
-+			 uint8_t irq_index,
-+			 uint8_t en);
-+
-+int dpmac_get_irq_enable(struct fsl_mc_io *mc_io,
-+			 uint32_t cmd_flags,
-+			 uint16_t token,
-+			 uint8_t irq_index,
-+			 uint8_t *en);
-+
-+int dpmac_set_irq_mask(struct fsl_mc_io *mc_io,
-+		       uint32_t cmd_flags,
-+		       uint16_t token,
-+		       uint8_t irq_index,
-+		       uint32_t mask);
-+
-+int dpmac_get_irq_mask(struct fsl_mc_io *mc_io,
-+		       uint32_t cmd_flags,
-+		       uint16_t token,
-+		       uint8_t irq_index,
-+		       uint32_t *mask);
-+
-+int dpmac_get_irq_status(struct fsl_mc_io *mc_io,
-+			 uint32_t cmd_flags,
-+			 uint16_t token,
-+			 uint8_t irq_index,
-+			 uint32_t *status);
-+
-+int dpmac_clear_irq_status(struct fsl_mc_io *mc_io,
-+			   uint32_t cmd_flags,
-+			   uint16_t token,
-+			   uint8_t irq_index,
-+			   uint32_t status);
-+
-+/**
-+ * @brief	Inter-Frame Gap mode
-+ *
-+ * LAN/WAN uses different Inter-Frame Gap mode
-+ */
-+enum dpmac_ifg_mode {
-+	DPMAC_IFG_MODE_FIXED,
-+	/*!< IFG length represents number of octets in steps of 4 */
-+	DPMAC_IFG_MODE_STRETCHED
-+	/*!< IFG length represents the stretch factor */
-+};
-+
-+/**
-+ * @brief Structure representing Inter-Frame Gap mode configuration
-+ */
-+struct dpmac_ifg_cfg {
-+	enum dpmac_ifg_mode ipg_mode; /*!< WAN/LAN mode */
-+	uint8_t ipg_length; /*!< IPG Length, default value is 0xC */
-+};
-+
-+/**
-+ * @brief Structure used to read through MDIO
-+ */
-+struct dpmac_mdio_read {
-+	uint8_t cl45; /*!< Clause 45 */
-+	uint8_t phy_addr; /*!< MDIO PHY address */
-+	uint16_t reg; /*!< PHY register */
-+};
-+
-+/**
-+ * @brief Structure used to write through MDIO
-+ */
-+struct dpmac_mdio_write {
-+	uint8_t cl45; /*!< Clause 45 */
-+	uint8_t phy_addr; /*!< MDIO PHY address */
-+	uint16_t reg; /*!< PHY register */
-+	uint16_t data; /*!< Data to be written */
-+};
-+
-+#define DPMAC_SET_PARAMS_IFG 0x1
-+
-+/**
-+ * struct serdes_eq_settings - Structure  SerDes equalization settings
-+ * cfg: serdes sfi/custom/default settings feature internals
-+ * @eq_type: Number of levels of TX equalization
-+ * @sgn_preq: Precursor sign indicating direction of eye closure
-+ * @eq_preq: Drive strength of TX full swing transition bit to precursor
-+ * @sgn_post1q: First post-cursor sign indicating direction of eye closure
-+ * @eq_post1q: Drive strength of full swing transition bit to first post-cursor
-+ * @eq_amp_red: Overall transmit amplitude reduction
-+ */
-+struct serdes_eq_settings {
-+	enum serdes_eq_cfg_mode cfg;
-+	int eq_type;
-+	int sgn_preq;
-+	int eq_preq;
-+	int sgn_post1q;
-+	int eq_post1q;
-+	int eq_amp_red;
-+};
-+
-+/**
-+ * struct dpmac_attr - Structure representing DPMAC attributes
-+ * @id:		DPMAC object ID
-+ * @max_rate:	Maximum supported rate - in Mbps
-+ * @eth_if:	Ethernet interface
-+ * @link_type:	link type
-+ * @fec_mode:	FEC mode - Configurable only for 25G interfaces
-+ * serdes_cfg:	SerDes equalization settings
-+ */
-+struct dpmac_attr {
-+	uint16_t id;
-+	uint32_t max_rate;
-+	enum dpmac_eth_if eth_if;
-+	enum dpmac_link_type link_type;
-+	enum dpmac_fec_mode fec_mode;
-+	struct serdes_eq_settings serdes_cfg;
-+	struct dpmac_ifg_cfg ifg_cfg;
-+};
-+
-+int dpmac_get_attributes(struct fsl_mc_io *mc_io,
-+			 uint32_t cmd_flags,
-+			 uint16_t token,
-+			 struct dpmac_attr *attr);
-+
-+int dpmac_set_params(struct fsl_mc_io *mc_io,
-+		       uint32_t cmd_flags,
-+		       uint16_t token,
-+			   uint32_t flags,
-+			   struct dpmac_ifg_cfg ifg_cfg);
-+
-+int dpmac_get_mac_addr(struct fsl_mc_io *mc_io,
-+			   uint32_t cmd_flags,
-+			   uint16_t token,
-+			   uint8_t mac_addr[6]);
-+
-+/**
-+ * DPMAC link configuration/state options
-+ */
-+
-+/**
-+ * Enable auto-negotiation
-+ */
-+#define DPMAC_LINK_OPT_AUTONEG		0x0000000000000001ULL
-+/**
-+ * Enable half-duplex mode
-+ */
-+#define DPMAC_LINK_OPT_HALF_DUPLEX	0x0000000000000002ULL
-+/**
-+ * Enable pause frames
-+ */
-+#define DPMAC_LINK_OPT_PAUSE		0x0000000000000004ULL
-+/**
-+ * Enable a-symmetric pause frames
-+ */
-+#define DPMAC_LINK_OPT_ASYM_PAUSE	0x0000000000000008ULL
-+/**
-+ * Advertise 10MB full duplex
-+ */
-+#define DPMAC_ADVERTISED_10BASET_FULL           0x0000000000000001ULL
-+/**
-+ * Advertise 100MB full duplex
-+ */
-+#define DPMAC_ADVERTISED_100BASET_FULL          0x0000000000000002ULL
-+/**
-+ * Advertise 1GB full duplex
-+ */
-+#define DPMAC_ADVERTISED_1000BASET_FULL         0x0000000000000004ULL
-+/**
-+ * Advertise auto-negotiation enable
-+ */
-+#define DPMAC_ADVERTISED_AUTONEG                0x0000000000000008ULL
-+/**
-+ * Advertise 10GB full duplex
-+ */
-+#define DPMAC_ADVERTISED_10000BASET_FULL        0x0000000000000010ULL
-+/**
-+ * Advertise 2.5GB full duplex
-+ */
-+#define DPMAC_ADVERTISED_2500BASEX_FULL         0x0000000000000020ULL
-+/**
-+ * Advertise 5GB full duplex
-+ */
-+#define DPMAC_ADVERTISED_5000BASET_FULL         0x0000000000000040ULL
-+
-+/**
-+ * struct dpmac_link_cfg - Structure representing DPMAC link configuration
-+ * @rate: Link's rate - in Mbps
-+ * @options: Enable/Disable DPMAC link cfg features (bitmap)
-+ * @advertising: Speeds that are advertised for autoneg (bitmap)
-+ */
-+struct dpmac_link_cfg {
-+	uint32_t rate;
-+	uint64_t options;
-+	uint64_t advertising;
-+};
-+
-+int dpmac_get_link_cfg(struct fsl_mc_io *mc_io,
-+		       uint32_t cmd_flags,
-+		       uint16_t token,
-+		       struct dpmac_link_cfg *cfg);
-+
-+/**
-+ * struct dpmac_link_state - DPMAC link configuration request
-+ * @rate: Rate in Mbps
-+ * @options: Enable/Disable DPMAC link cfg features (bitmap)
-+ * @up: Link state
-+ * @state_valid: Ignore/Update the state of the link
-+ * @supported: Speeds capability of the phy (bitmap)
-+ * @advertising: Speeds that are advertised for autoneg (bitmap)
-+ */
-+struct dpmac_link_state {
-+	uint32_t rate;
-+	uint64_t options;
-+	int up;
-+	int state_valid;
-+	uint64_t supported;
-+	uint64_t advertising;
-+};
-+
-+int dpmac_set_link_state(struct fsl_mc_io *mc_io,
-+			 uint32_t cmd_flags,
-+			 uint16_t token,
-+			 struct dpmac_link_state *link_state);
-+
-+/**
-+ * enum dpmac_counter - DPMAC counter types
-+ * @DPMAC_CNT_ING_FRAME_64: counts 64-bytes frames, good or bad.
-+ * @DPMAC_CNT_ING_FRAME_127: counts 65- to 127-bytes frames, good or bad.
-+ * @DPMAC_CNT_ING_FRAME_255: counts 128- to 255-bytes frames, good or bad.
-+ * @DPMAC_CNT_ING_FRAME_511: counts 256- to 511-bytes frames, good or bad.
-+ * @DPMAC_CNT_ING_FRAME_1023: counts 512- to 1023-bytes frames, good or bad.
-+ * @DPMAC_CNT_ING_FRAME_1518: counts 1024- to 1518-bytes frames, good or bad.
-+ * @DPMAC_CNT_ING_FRAME_1519_MAX: counts 1519-bytes frames and larger
-+ *				  (up to max frame length specified),
-+ *				  good or bad.
-+ * @DPMAC_CNT_ING_FRAG: counts frames which are shorter than 64 bytes received
-+ *			with a wrong CRC
-+ * @DPMAC_CNT_ING_JABBER: counts frames longer than the maximum frame length
-+ *			  specified, with a bad frame check sequence.
-+ * @DPMAC_CNT_ING_FRAME_DISCARD: counts dropped frames due to internal errors.
-+ *				 Occurs when a receive FIFO overflows.
-+ *				 Includes also frames truncated as a result of
-+ *				 the receive FIFO overflow.
-+ * @DPMAC_CNT_ING_ALIGN_ERR: counts frames with an alignment error
-+ *			     (optional used for wrong SFD).
-+ * @DPMAC_CNT_EGR_UNDERSIZED: counts frames transmitted that was less than 64
-+ *			      bytes long with a good CRC.
-+ * @DPMAC_CNT_ING_OVERSIZED: counts frames longer than the maximum frame length
-+ *			     specified, with a good frame check sequence.
-+ * @DPMAC_CNT_ING_VALID_PAUSE_FRAME: counts valid pause frames (regular and PFC)
-+ * @DPMAC_CNT_EGR_VALID_PAUSE_FRAME: counts valid pause frames transmitted
-+ *				     (regular and PFC).
-+ * @DPMAC_CNT_ING_BYTE: counts bytes received except preamble for all valid
-+ *			frames and valid pause frames.
-+ * @DPMAC_CNT_ING_MCAST_FRAME: counts received multicast frames.
-+ * @DPMAC_CNT_ING_BCAST_FRAME: counts received broadcast frames.
-+ * @DPMAC_CNT_ING_ALL_FRAME: counts each good or bad frames received.
-+ * @DPMAC_CNT_ING_UCAST_FRAME: counts received unicast frames.
-+ * @DPMAC_CNT_ING_ERR_FRAME: counts frames received with an error
-+ *			     (except for undersized/fragment frame).
-+ * @DPMAC_CNT_EGR_BYTE: counts bytes transmitted except preamble for all valid
-+ *			frames and valid pause frames transmitted.
-+ * @DPMAC_CNT_EGR_MCAST_FRAME: counts transmitted multicast frames.
-+ * @DPMAC_CNT_EGR_BCAST_FRAME: counts transmitted broadcast frames.
-+ * @DPMAC_CNT_EGR_UCAST_FRAME: counts transmitted unicast frames.
-+ * @DPMAC_CNT_EGR_ERR_FRAME: counts frames transmitted with an error.
-+ * @DPMAC_CNT_ING_GOOD_FRAME: counts frames received without error, including
-+ *			      pause frames.
-+ * @DPMAC_CNT_EGR_GOOD_FRAME: counts frames transmitted without error, including
-+ *			      pause frames.
-+ */
-+enum dpmac_counter {
-+	DPMAC_CNT_ING_FRAME_64,
-+	DPMAC_CNT_ING_FRAME_127,
-+	DPMAC_CNT_ING_FRAME_255,
-+	DPMAC_CNT_ING_FRAME_511,
-+	DPMAC_CNT_ING_FRAME_1023,
-+	DPMAC_CNT_ING_FRAME_1518,
-+	DPMAC_CNT_ING_FRAME_1519_MAX,
-+	DPMAC_CNT_ING_FRAG,
-+	DPMAC_CNT_ING_JABBER,
-+	DPMAC_CNT_ING_FRAME_DISCARD,
-+	DPMAC_CNT_ING_ALIGN_ERR,
-+	DPMAC_CNT_EGR_UNDERSIZED,
-+	DPMAC_CNT_ING_OVERSIZED,
-+	DPMAC_CNT_ING_VALID_PAUSE_FRAME,
-+	DPMAC_CNT_EGR_VALID_PAUSE_FRAME,
-+	DPMAC_CNT_ING_BYTE,
-+	DPMAC_CNT_ING_MCAST_FRAME,
-+	DPMAC_CNT_ING_BCAST_FRAME,
-+	DPMAC_CNT_ING_ALL_FRAME,
-+	DPMAC_CNT_ING_UCAST_FRAME,
-+	DPMAC_CNT_ING_ERR_FRAME,
-+	DPMAC_CNT_EGR_BYTE,
-+	DPMAC_CNT_EGR_MCAST_FRAME,
-+	DPMAC_CNT_EGR_BCAST_FRAME,
-+	DPMAC_CNT_EGR_UCAST_FRAME,
-+	DPMAC_CNT_EGR_ERR_FRAME,
-+	DPMAC_CNT_ING_GOOD_FRAME,
-+	DPMAC_CNT_EGR_GOOD_FRAME
-+};
-+
-+int dpmac_get_counter(struct fsl_mc_io *mc_io,
-+		      uint32_t cmd_flags,
-+		      uint16_t token,
-+		      enum dpmac_counter  type,
-+		      uint64_t *counter);
-+
-+int dpmac_get_api_version(struct fsl_mc_io *mc_io,
-+			  uint32_t cmd_flags,
-+			  uint16_t *major_ver,
-+			  uint16_t *minor_ver);
-+
-+int dpmac_reset(struct fsl_mc_io *mc_io,
-+		uint32_t cmd_flags,
-+		uint16_t token);
-+
-+int dpmac_set_protocol(struct fsl_mc_io *mc_io, uint32_t cmd_flags,
-+		       uint16_t token, enum dpmac_eth_if protocol);
-+
-+int dpmac_get_statistics(struct fsl_mc_io *mc_io, uint32_t cmd_flags, uint16_t token,
-+			 uint64_t iova_cnt, uint64_t iova_values, uint32_t num_cnt);
-+
-+#endif /* __FSL_DPMAC_H */
+ #pragma pack(pop)
+ #endif /* _FSL_DPNI_CMD_H */
 -- 
 2.43.0
 
