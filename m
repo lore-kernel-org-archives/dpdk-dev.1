@@ -2,74 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BD2CCD183
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 16:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B09CCD199
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 16:39:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C458441140;
-	Thu, 16 Oct 2025 18:16:00 +0200 (CEST)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id CECD34026D
- for <dev@dpdk.org>; Thu, 16 Oct 2025 18:15:59 +0200 (CEST)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-2681660d604so12307315ad.0
- for <dev@dpdk.org>; Thu, 16 Oct 2025 09:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760631359;
- x=1761236159; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=lMqUODv6UzUhScGw438aaW02kV30MusyeuEXCT+nXbM=;
- b=vu9eW7xz62EmZVd2M3+HaqPFtsFXrYm8ZfdICA3xwvpieq7x4rg0W1Bvq3HeO5zwV6
- C/C1vpGDzQDSEc+IwNvyjsLu7edahwr0s7/jgqpiwk68sL6soJgyd8ZmHHSde1NvEjQQ
- innSqVjxw+wyhjGFUBio+1WsOo6kUD/uBAx6YG5wmEpoaoIUMFgSgELSPc/1YGDSZYt/
- 5fEht32oT92DySOnp/cNVJmfhbKY0iFTLioI343CvtjMSCII2zy1XjYnkMci3ATChPVd
- r4nqQAvwRaqncZ8BSpMmIE6vvFOSDvA8QwaVyT9IQe2Fxs5BUKyGDwOKVk8yKiUku7I/
- gz9A==
+	by mails.dpdk.org (Postfix) with ESMTP id F082C42796;
+	Thu, 16 Oct 2025 18:39:25 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 9A1FF4026D
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 18:39:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1760632764;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=0VLn/eg/wZsUQ0s+Ewra9wCUGgTyDEcs02BB6p14BOs=;
+ b=MnFyQtzWryCexQpkvBfx7puOBePn7OAF8LT6mxG8jEnfgBWowwBPK/PmYw40yudlHSI9oa
+ ZzDCvDyO5CPjzmXMOsJyg/YBa9fV0tYEQlBZ1uB95oBfxOwYJzy4FgilQZFP2DMkGgyOFR
+ pLTG2P7Ua4ng5bClhKbAGclJwshKVxM=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-345-EJruwAPbOmKfHm85L9R7Xg-1; Thu, 16 Oct 2025 12:39:22 -0400
+X-MC-Unique: EJruwAPbOmKfHm85L9R7Xg-1
+X-Mimecast-MFC-AGG-ID: EJruwAPbOmKfHm85L9R7Xg_1760632761
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-57893a7d7b6so932098e87.1
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 09:39:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760631359; x=1761236159;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1760632761; x=1761237561;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=lMqUODv6UzUhScGw438aaW02kV30MusyeuEXCT+nXbM=;
- b=X+88HJP23gBYJMtCFjNC/JYEXor96cHTk7niZIjQxxMl2D+8D17LTV3BQ6UmUwQqlg
- 2TmN/9uekK7M0xpTBNzG1OkDyvOmhRsTaCHEzvOtJ1PQbdZkQ94JKLCEEuAc7xz+WbMH
- YBW88eQG0uyh+sjZwg0sxX2RqDM+5LRgyvJS6Xuryt8mO4bfuJhovn9ngiCrChlOPT2i
- Cvl47Q1emWP20ioY+AaeUQ2qMTw+Mbf6lqWqJvmD/oGATRg9nyeB4G00fqGBdJa/XEan
- MYxjPKQtkIt+sLHVjzRlyBvBR1ukoREff6xyVwZIgCSgtk/J9VuGiWhVr1yef+iX9dXw
- u3jg==
+ bh=0VLn/eg/wZsUQ0s+Ewra9wCUGgTyDEcs02BB6p14BOs=;
+ b=JfWIbS/odkHYEZfFax688Wdf8eMIA6B9OBArH8p3ML1u6n5SNKHuvmVcGxE+WX3MzU
+ x6h7JzDAGXbJ0H6PGzcG2vsg6YcLf18r/ptMFezPQmppWgm31Sv79A2LcjXd46AALyyG
+ xp6gxU4XYT90H0bzc4QCA5n3hHscCKBx5ID77kQ3pfnc4CKoEGgDuGY43sRyzxyrOHDT
+ nOMYE32vcEf44rxNShV0SAn4H9hNUZfgyEFHwa3qm1NdWyz618Bg19b6QcLRo1ZFLZoV
+ WzFjn17cLV/g37WHVMtSVuzcuA0xXrAvvFUtUuRuXKR/PJBQ5SPEd8Z7YHnm7hKPSf+r
+ fh3w==
 X-Forwarded-Encrypted: i=1;
- AJvYcCULUMfZyj6mzZGNixVIFvaYAlYneuknQRhSR7DzWp/fBdtx08ruRyM0LdE1/Qd8t17PUMs=@dpdk.org
-X-Gm-Message-State: AOJu0Yzoi4/zFrY5Up8C6CgrRlXqNwXt1S/QZ8DAT5B75tW5b+FAzHfC
- YPATH3UzLTLKDnCFx/skybnLa1sLt+3SdZesX2nOCa0ptLoI372MPU3eXT0hXydo2H0=
-X-Gm-Gg: ASbGncsWO0jlvhCQExaT2uWFAlhW3s+a+MqXKgf0bYiSXDLqcxGY9m9FBCesjFAaK2j
- 0eIwEjjGhy5+wkQojHcsg00ZhZ4PQ6pneQ98sFqvtJTC6YwIR6KnByRsagnlNqaqn5bcbcBvwEy
- dfQ4000PCFrXJsKya7nEtDd/BjWZcZLe6qti5vGdd7vsrKZJc5GnGMGquFPU+p/SsGv3TsbggkT
- m1WMivt9LigsvWiCpsQzYjv4DCDqavYyyBFbCVfsjFsx7AZj/Z9lvNwQp0pybbGoqyEuCSmtqgR
- o8UKCifTqCA67LG6mWS2bcREpJ4BJzyzayDmD5e3+quqxkNsOsZHBKdlT64MG0XECUymVLOwPng
- VS4EEddzAL2qQvufCxjdcZiOKMctl3NT1kaCx9BwkiS0zdKvbeCQR2zJ//ul5pSjd1mLpm2/A3v
- Q9tECpl8AXRoBaN7FBPicjb1gLgDeKPv2cyW78XNqo0DR075JmnPWFfTFzygeV7ug=
-X-Google-Smtp-Source: AGHT+IHl5kyqZ30pmXs9nDqlC6/E+beXJMWLSUeGVz79q+scw/42J5oZnBKQhYtWABRcDpGdUv3HFQ==
-X-Received: by 2002:a17:902:db0b:b0:24c:d6c6:c656 with SMTP id
- d9443c01a7336-290c9c8a84bmr5928135ad.4.1760631358955; 
- Thu, 16 Oct 2025 09:15:58 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-29099a7d1bbsm34946175ad.65.2025.10.16.09.15.58
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 16 Oct 2025 09:15:58 -0700 (PDT)
-Date: Thu, 16 Oct 2025 09:15:56 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
-Cc: wang.junlong1@zte.com.cn, yang.yonggang@zte.com.cn, dev@dpdk.org
-Subject: Re: [PATCH v1] net/zxdh: support multiple PF process flow table
-Message-ID: <20251016091556.05c370d9@hermes.local>
-In-Reply-To: <20250924082331.39962-1-zhang.tianhao2@zte.com.cn>
-References: <20250924082331.39962-1-zhang.tianhao2@zte.com.cn>
+ AJvYcCVROkdARShV2rYeWmDtSOoEL1fbblCuZ7pNAXELCGaJa6WRVt+VQr8j6+YRQTZNO/ZWdeE=@dpdk.org
+X-Gm-Message-State: AOJu0YwU2xF/GkkNvS+BQ/CwvvKTRYa+tqhObXkk4BiQjzvhC/XRuPpA
+ gMBHxaRRUIcT4XLdBBp3qPFfZTiEV+tMY2R13UqOjxNbBf7kYMbcDyK9T6kRxiUy+MWe7IJyV8/
+ XqQT1Agm9GRyjubz1lm641vXgoqNvv7f++WbJYJSHnmCVyUsPsP9vWd9u6gbw5eMWGWCVEWUeKk
+ sCVj5RLlJCroxPFPggYJI=
+X-Gm-Gg: ASbGncteUFt+wTxEfJXKzm4+kCEzJiNPXO7Hjh5yBCIjln+WipEuPnr3f4AkCGurHUY
+ lR7O/FxMX6CtxerfhGEbDSltb76tRwgfC2TsZWN4MBD3H2FKqc15UvRdchxvEEdDPbKr3L9cLoQ
+ pl5rhQAy4d/0VfoeAnl0s8pKqdAjHz5e0CWqM/+jBMzg1H4hoITpTpHg==
+X-Received: by 2002:a05:6512:3f1d:b0:590:651b:10d8 with SMTP id
+ 2adb3069b0e04-591d850c3e9mr235193e87.20.1760632761012; 
+ Thu, 16 Oct 2025 09:39:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFF+38zI1uS/qlN/wgTx1gjabzpSY1gia4GmYI2Sh/hu0kJZEz0gkBQ1UljLkTUcIXjZDZV6pQC2DSn2cT03FE=
+X-Received: by 2002:a05:6512:3f1d:b0:590:651b:10d8 with SMTP id
+ 2adb3069b0e04-591d850c3e9mr235169e87.20.1760632760554; Thu, 16 Oct 2025
+ 09:39:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250826194324.95284-1-nicolas.chautru@intel.com>
+ <edc47274-feee-4177-b973-704ce84d11e2@oss.nxp.com>
+In-Reply-To: <edc47274-feee-4177-b973-704ce84d11e2@oss.nxp.com>
+From: Maxime Coquelin <mcoqueli@redhat.com>
+Date: Thu, 16 Oct 2025 18:39:09 +0200
+X-Gm-Features: AS18NWDGcpWww-z8qMT9hfLlbQXoyV13nsLWXwYkKoXJn6RkVUdT5iZ3h-LvsHQ
+Message-ID: <CAO55csxSAgO-R9djGcqJ-uegzV3cCQahR5qJ5Z6a6_+MFnAmXg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] doc: bbdev clarifications
+To: Hemant Agrawal <hemant.agrawal@oss.nxp.com>
+Cc: Nicolas Chautru <nicolas.chautru@intel.com>, dev@dpdk.org,
+ maxime.coquelin@redhat.com, 
+ hemant.agrawal@nxp.com, hernan.vargas@intel.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Swowru8-CwuM0zoFFiW2zaWE_HD1cawmuoTigzpP0vM_1760632761
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,12 +89,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 24 Sep 2025 16:23:31 +0800
-Tianhao Zhang <zhang.tianhao2@zte.com.cn> wrote:
+On Fri, Aug 29, 2025 at 7:08=E2=80=AFAM Hemant Agrawal
+<hemant.agrawal@oss.nxp.com> wrote:
+>
+> Series-
+>
+> Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+>
+> On 27-08-2025 01:13, Nicolas Chautru wrote:
+> > Hi,
+> > Some minor clarifications to document based on
+> > feedback from users.
+> > Thanks
+> > Nic
+> >
+> > Nicolas Chautru (2):
+> >    doc: clarify CB vs TB level device support
+> >    doc: clarify the window index usage in bbdev
+> >
+> >   doc/guides/bbdevs/acc100.rst        | 1 +
+> >   doc/guides/bbdevs/fpga_5gnr_fec.rst | 1 +
+> >   doc/guides/bbdevs/fpga_lte_fec.rst  | 1 +
+> >   doc/guides/bbdevs/vrb1.rst          | 1 +
+> >   doc/guides/bbdevs/vrb2.rst          | 2 ++
+> >   doc/guides/prog_guide/bbdev.rst     | 7 +++++--
+> >   6 files changed, 11 insertions(+), 2 deletions(-)
+> >
+>
 
-> Support multiple PF process flow table.
-> 
-> Signed-off-by: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
+Applied to next-baseband/for-main
 
-Your email is not in .mailmap which we keep up to date in DPDK.
-Can I add that when merging?
+Thanks,
+Maxime
+
