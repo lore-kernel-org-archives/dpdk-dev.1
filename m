@@ -2,38 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD5DCCD183
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 10:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E96CCD194
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 11:19:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 00B2A427D4;
-	Thu, 16 Oct 2025 12:28:30 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 3D9C84275B
- for <dev@dpdk.org>; Thu, 16 Oct 2025 12:28:13 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 247021A26D3;
- Thu, 16 Oct 2025 12:28:13 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E2B931A2711;
- Thu, 16 Oct 2025 12:28:12 +0200 (CEST)
-Received: from lsv031405.swis.in-blr01.nxp.com
- (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7B9C9180007D;
- Thu, 16 Oct 2025 18:28:12 +0800 (+08)
-From: Prashant Gupta <prashant.gupta_3@nxp.com>
-To: dev@dpdk.org,
-	stephen@networkplumber.org
-Subject: [PATCH v2 15/15] net/dpaa2: add Policer stats for each TC
-Date: Thu, 16 Oct 2025 15:58:05 +0530
-Message-ID: <20251016102805.2453687-16-prashant.gupta_3@nxp.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251016102805.2453687-1-prashant.gupta_3@nxp.com>
-References: <20251014064035.1312896-1-prashant.gupta_3@nxp.com>
- <20251016102805.2453687-1-prashant.gupta_3@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 773FD40A77;
+	Thu, 16 Oct 2025 13:19:22 +0200 (CEST)
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+ by mails.dpdk.org (Postfix) with ESMTP id DA7E240BA5
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 13:19:19 +0200 (CEST)
+X-QQ-mid: esmtpsz17t1760613553tdd65fb07
+X-QQ-Originating-IP: 1U4oiS56thLShRYEixFCkzFbmSphmiwoV/XBG9GP4hY=
+Received: from DSK-zaiyuwang.trustnetic.com ( [115.206.160.146])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Thu, 16 Oct 2025 19:19:11 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 14747554848895732516
+EX-QQ-RecipientCnt: 2
+From: Zaiyu Wang <zaiyuwang@trustnetic.com>
+To: dev@dpdk.org
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Subject: [PATCH v5 00/21] Wangxun new NIC support
+Date: Thu, 16 Oct 2025 19:17:14 +0800
+Message-Id: <20251016111736.25372-1-zaiyuwang@trustnetic.com>
+X-Mailer: git-send-email 2.21.0.windows.1
+In-Reply-To: <20250418094131.24136-1-zaiyuwang@trustnetic.com>
+References: <20250418094131.24136-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: MbbI5maliJ7oNdLG+mFah1+UqPB5K9+vQdWp4nQ8XxWy95Fe9Sv2yitb
+ cJJQ1EOcJVWqTnuZkEXqd9pdycrNtr8T29+mdKP8I4YJlgWIhdZ+LG20iYBQy2nJeeq09M+
+ 9jX1a2O8+dqRIkWf7XFInolQmtlANycj5geo8Ke33tjJ7vA5CnzwIvkIJdPDu633/taDw6b
+ 4NMYr0zSufLuOMEwIZobVOv6LcC3pJRffgct9Tmlyul+SWOC6WcRZap/oK5Y0npCJ25jeIF
+ DxdgSSJU7avTn2uAApKcNBEDdzzW0IEZzrfJfMgWCiWPhZ0fKxsoBQ+uwnfCGXGdJMV2Y9S
+ HZgCToQTbhBuRDUFIgVNhB9W1dKKckHPtsZkpVmIHYTb84lcyb+RrKVlqnIe1i+Vr3/xO2i
+ UtuODZJ/RcQ1U4HQbQA01ruLGoHfJq/+UU+LSU3XJv6OdACZANXSVvNUm1qKtPkotjDCmbX
+ vLnRtRW3f4Tyvc35PwFWzmt3z+wQfOcyx4FKEnWojaiqsqcPCeQ54xktJuzqq2NYzjipheL
+ Q6esOJcyq0mynfh0DshdhJugJNjzPG4yeq7A1QNoBey877bexPLbUsUHM1ujUoklafJIGFS
+ DNXyA7U9FzWtKmqcWO0zTnQPtJs1CUJzGdc6NxuNt0AhUsBvgJOOswHLUuwb0UCpDEE1O5J
+ 2BESST4MhQLBlRSJ5QaY7FckN7uh5XzjQwNA7w+MzYTFX0nSE2csPAunWWXBR+qDOojkTUR
+ 7FIHxaEzkln/i/ScnV/bC/Kz4ZWm9zXpxg6zPp8bKatUYzY6cBFxn1eoT0LXRVZne4QcNFH
+ /DP0jLIO2mfplbtjtbfy57Kkduzf2HbgIPcfxbHeCK9E55YhkJn2wgTW9ah1RCmEId1GoRJ
+ IwNg3+SMoxfhmsGIyI2xznqszH+XupYLab7UAWmFEUxHXJBHyKvvlVG8GMDQQ3GxRwV2d7k
+ C3tpoypz8yRI6KLAY4+GgPOlIMnl4bZkA+VA9I/U7CviXWCRcNeG7PN6jasfXaj+NsyLT3z
+ XQS/yEK8BhkskwEzJjXHxwsjIPeEgXY5B2KG+jDRyHUI/yvEGKoEBa5p/hpRorqRKkWCEaa
+ g==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,181 +65,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support of Policer stats for each TC.
-Also dpmac stats are supported for MC version > 10.39.0
+We have released a new NIC series: Amber-Lite, with two models
+supporting 10G/25G and 40G rates. Due to minimal hardware differences
+from existing 10G NICs, it remains supported within the txgbe driver.
 
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_ethdev.c | 117 ++++++++++++++++++++++++++-----
- 1 file changed, 101 insertions(+), 16 deletions(-)
+v5:
+ - update txgbe guides, add more usage instructions
+ - add a short summary into 25.11 release notes
+---
 
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index 5b72243346..be86fcb853 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -104,6 +104,46 @@ static const struct rte_dpaa2_xstats_name_off dpaa2_xstats_strings[] = {
- 	{"egress_confirmed_frames", 2, 4},
- 	{"cgr_reject_frames", 4, 0},
- 	{"cgr_reject_bytes", 4, 1},
-+	{"TC_0_policer_cnt_red", 5, 0},
-+	{"TC_0_policer_cnt_yellow", 5, 1},
-+	{"TC_0_policer_cnt_green", 5, 2},
-+	{"TC_0_policer_cnt_re_red", 5, 3},
-+	{"TC_0_policer_cnt_re_yellow", 5, 4},
-+	{"TC_1_policer_cnt_red", 6, 0},
-+	{"TC_1_policer_cnt_yellow", 6, 1},
-+	{"TC_1_policer_cnt_green", 6, 2},
-+	{"TC_1_policer_cnt_re_red", 6, 3},
-+	{"TC_1_policer_cnt_re_yellow", 6, 4},
-+	{"TC_2_policer_cnt_red", 7, 0},
-+	{"TC_2_policer_cnt_yellow", 7, 1},
-+	{"TC_2_policer_cnt_green", 7, 2},
-+	{"TC_2_policer_cnt_re_red", 7, 3},
-+	{"TC_2_policer_cnt_re_yellow", 7, 4},
-+	{"TC_3_policer_cnt_red", 8, 0},
-+	{"TC_3_policer_cnt_yellow", 8, 1},
-+	{"TC_3_policer_cnt_green", 8, 2},
-+	{"TC_3_policer_cnt_re_red", 8, 3},
-+	{"TC_3_policer_cnt_re_yellow", 8, 4},
-+	{"TC_4_policer_cnt_red", 9, 0},
-+	{"TC_4_policer_cnt_yellow", 9, 1},
-+	{"TC_4_policer_cnt_green", 9, 2},
-+	{"TC_4_policer_cnt_re_red", 9, 3},
-+	{"TC_4_policer_cnt_re_yellow", 9, 4},
-+	{"TC_5_policer_cnt_red", 10, 0},
-+	{"TC_5_policer_cnt_yellow", 10, 1},
-+	{"TC_5_policer_cnt_green", 10, 2},
-+	{"TC_5_policer_cnt_re_red", 10, 3},
-+	{"TC_5_policer_cnt_re_yellow", 10, 4},
-+	{"TC_6_policer_cnt_red", 11, 0},
-+	{"TC_6_policer_cnt_yellow", 11, 1},
-+	{"TC_6_policer_cnt_green", 11, 2},
-+	{"TC_6_policer_cnt_re_red", 11, 3},
-+	{"TC_6_policer_cnt_re_yellow", 11, 4},
-+	{"TC_7_policer_cnt_red", 12, 0},
-+	{"TC_7_policer_cnt_yellow", 12, 1},
-+	{"TC_7_policer_cnt_green", 12, 2},
-+	{"TC_7_policer_cnt_re_red", 12, 3},
-+	{"TC_7_policer_cnt_re_yellow", 12, 4},
- 	{"mac_rx_64 bytes", 0, 0},
- 	{"mac_rx_65-127 bytes", 0, 0},
- 	{"mac_rx_128-255 bytes", 0, 0},
-@@ -1841,6 +1881,11 @@ dpaa2_dev_mac_setup_stats(struct rte_eth_dev *dev)
- 	priv->cnt_values_dma_mem = NULL;
- }
- 
-+/*
-+ * dpaa2_dev_xstats_get(): Get counters of dpni and dpmac.
-+ * MAC (mac_*) counters are supported on MC version > 10.39.0
-+ * TC_x_policer_* counters are supported only when Policer is enable.
-+ */
- static int
- dpaa2_dev_xstats_get(struct rte_eth_dev *dev,
- 	struct rte_eth_xstat *xstats, unsigned int n)
-@@ -1848,10 +1893,13 @@ dpaa2_dev_xstats_get(struct rte_eth_dev *dev,
- 	struct fsl_mc_io *dpni = (struct fsl_mc_io *)dev->process_private;
- 	unsigned int i = 0, j = 0, num = RTE_DIM(dpaa2_xstats_strings);
- 	struct dpaa2_dev_priv *priv = dev->data->dev_private;
--	union dpni_statistics value[5] = {};
-+	union dpni_statistics value[13] = {};
-+	struct mc_version mc_ver_info = {0};
-+	struct dpni_rx_tc_policing_cfg cfg;
- 	uint8_t page_id, stats_id;
- 	uint64_t *cnt_values;
- 	int32_t retcode;
-+	int16_t tc;
- 
- 	if (n < num)
- 		return num;
-@@ -1888,6 +1936,27 @@ dpaa2_dev_xstats_get(struct rte_eth_dev *dev,
- 			break;
- 		}
- 	}
-+
-+	for (tc = 0; tc < priv->num_rx_tc; tc++) {
-+		retcode = dpni_get_rx_tc_policing(dpni, CMD_PRI_LOW,
-+						  priv->token, tc,
-+						  &cfg);
-+		if (retcode) {
-+			DPAA2_PMD_ERR("Error to get the policer rule: %d", retcode);
-+			goto err;
-+		}
-+
-+		/* get policer stats if policer is enabled */
-+		if (cfg.mode != 0) {
-+			/* Get Counters from page_5*/
-+			retcode = dpni_get_statistics(dpni, CMD_PRI_LOW,
-+						      priv->token, 5, tc,
-+						      &value[(tc + 5)]);
-+			if (retcode)
-+				goto err;
-+		}
-+	}
-+
- 	while (i < (num - DPAA2_MAC_NUM_STATS)) {
- 		xstats[i].id = i;
- 		page_id = dpaa2_xstats_strings[i].page_id;
-@@ -1896,29 +1965,45 @@ dpaa2_dev_xstats_get(struct rte_eth_dev *dev,
- 		i++;
- 	}
- 
--	dpaa2_dev_mac_setup_stats(dev);
--	retcode = dpni_get_mac_statistics(dpni, CMD_PRI_LOW, priv->token,
--					  priv->cnt_idx_iova, priv->cnt_values_iova,
--					  DPAA2_MAC_NUM_STATS);
--	if (retcode) {
--		DPAA2_PMD_WARN("MAC (mac_*) counters are not supported!!");
-+	if (mc_get_version(dpni, CMD_PRI_LOW, &mc_ver_info))
-+		DPAA2_PMD_WARN("Unable to obtain MC version");
-+
-+	/* mac_statistics supported on MC version > 10.39.0 */
-+	if (mc_ver_info.major >= MC_VER_MAJOR &&
-+	    mc_ver_info.minor >= MC_VER_MINOR &&
-+	    mc_ver_info.revision > 0) {
-+		dpaa2_dev_mac_setup_stats(dev);
-+		retcode = dpni_get_mac_statistics(dpni, CMD_PRI_LOW, priv->token,
-+						  priv->cnt_idx_iova,
-+						  priv->cnt_values_iova,
-+						  DPAA2_MAC_NUM_STATS);
-+		if (retcode) {
-+			while (i >= (num - DPAA2_MAC_NUM_STATS) && i < num) {
-+				xstats[i].id = i;
-+				xstats[i].value = 0;
-+				i++;
-+			}
-+		}
-+		if (!retcode) {
-+			cnt_values = priv->cnt_values_dma_mem;
-+			while (i >= (num - DPAA2_MAC_NUM_STATS) && i < num) {
-+				/* mac counters value */
-+				xstats[i].id = i;
-+				xstats[i].value = rte_le_to_cpu_64(*cnt_values++);
-+				i++;
-+			}
-+		}
- 		rte_free(priv->cnt_values_dma_mem);
- 		rte_free(priv->cnt_idx_dma_mem);
-+		priv->cnt_idx_dma_mem = NULL;
-+		priv->cnt_values_dma_mem = NULL;
-+	} else {
- 		while (i >= (num - DPAA2_MAC_NUM_STATS) && i < num) {
- 			xstats[i].id = i;
- 			xstats[i].value = 0;
- 			i++;
- 		}
- 	}
--	if (!retcode) {
--		cnt_values = priv->cnt_values_dma_mem;
--		while (i >= (num - DPAA2_MAC_NUM_STATS) && i < num) {
--			/* mac counters value */
--			xstats[i].id = i;
--			xstats[i].value = rte_le_to_cpu_64(*cnt_values++);
--			i++;
--		}
--	}
- 
- 	return i;
- err:
+Zaiyu Wang (21):
+  net/txgbe: add basic information for Amber-Lite 25G/40G NICs
+  net/txgbe: add new SW-FW mailbox interface
+  net/txgbe: add identification support for new SFP/QSFP modules
+  net/txgbe: rename raptor to sp for Sapphire-specific code
+  net/txgbe: add basic link configuration for Amber-Lite NICs
+  net/txgbe: add support for PHY configuration via SW-FW mailbox
+  net/txgbe: add RX&TX support for Amber-Lite NICs
+  net/txgbe: add hardware reset change for Amber-Lite NICs
+  net/txgbe: add MAC reconfiguration to avoid packet loss
+  net/txgbe: add TX head Write-Back mode for Amber-Lite NICs
+  net/txgbe: add RX desc merge mode for Amber-Lite NICs
+  net/txgbe: add FEC support for Amber-Lite 25G NICs
+  net/txgbe: add GPIO configuration
+  net/txgbe: disable unstable features
+  net/txgbe: add support for TX laser enable/disable
+  net/txgbe: add support for TX queue rate limiting
+  net/txgbe: add support for getting PHY ID
+  net/txgbe: add thermal sensor configuration for Amber-Lite NICs
+  net/txgbe: add RSS for Amber-Lite NICs
+  doc: update for txgbe guides
+  doc: update release notes for Wangxun txgbe driver
+
+ doc/guides/nics/txgbe.rst                 |  31 +-
+ doc/guides/rel_notes/release_25_11.rst    |   7 +
+ drivers/net/txgbe/base/meson.build        |   2 +
+ drivers/net/txgbe/base/txgbe_aml.c        | 354 ++++++++++++++++++++
+ drivers/net/txgbe/base/txgbe_aml.h        |  22 ++
+ drivers/net/txgbe/base/txgbe_aml40.c      | 160 +++++++++
+ drivers/net/txgbe/base/txgbe_aml40.h      |  20 ++
+ drivers/net/txgbe/base/txgbe_devids.h     |   9 +
+ drivers/net/txgbe/base/txgbe_eeprom.c     |   7 +-
+ drivers/net/txgbe/base/txgbe_eeprom.h     |   2 +
+ drivers/net/txgbe/base/txgbe_hw.c         | 365 ++++++++++++++++----
+ drivers/net/txgbe/base/txgbe_hw.h         |  15 +-
+ drivers/net/txgbe/base/txgbe_mng.c        | 184 +++++++++-
+ drivers/net/txgbe/base/txgbe_mng.h        |  34 +-
+ drivers/net/txgbe/base/txgbe_osdep.h      |   2 +
+ drivers/net/txgbe/base/txgbe_phy.c        | 127 ++++++-
+ drivers/net/txgbe/base/txgbe_phy.h        |  24 ++
+ drivers/net/txgbe/base/txgbe_regs.h       | 103 +++++-
+ drivers/net/txgbe/base/txgbe_type.h       |  70 +++-
+ drivers/net/txgbe/base/txgbe_vf.c         |   2 +-
+ drivers/net/txgbe/txgbe_ethdev.c          | 390 ++++++++++++++++++++--
+ drivers/net/txgbe/txgbe_ethdev.h          |   2 +-
+ drivers/net/txgbe/txgbe_ethdev_vf.c       |   2 +-
+ drivers/net/txgbe/txgbe_flow.c            |   2 +-
+ drivers/net/txgbe/txgbe_rxtx.c            | 203 ++++++++---
+ drivers/net/txgbe/txgbe_rxtx.h            |   3 +
+ drivers/net/txgbe/txgbe_rxtx_vec_common.h |  27 +-
+ 27 files changed, 1967 insertions(+), 202 deletions(-)
+ create mode 100644 drivers/net/txgbe/base/txgbe_aml.c
+ create mode 100644 drivers/net/txgbe/base/txgbe_aml.h
+ create mode 100644 drivers/net/txgbe/base/txgbe_aml40.c
+ create mode 100644 drivers/net/txgbe/base/txgbe_aml40.h
+
 -- 
-2.43.0
+2.21.0.windows.1
 
