@@ -2,162 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03704CCD183
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 06:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD19CCD194
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 08:01:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B23FD4065A;
-	Thu, 16 Oct 2025 08:56:47 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 5D50240269
- for <dev@dpdk.org>; Thu, 16 Oct 2025 08:56:46 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59FHvTqd024824;
- Wed, 15 Oct 2025 23:56:45 -0700
-Received: from sn4pr2101cu001.outbound.protection.outlook.com
- (mail-southcentralusazon11022143.outbound.protection.outlook.com
- [40.93.195.143])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49t5pfb5t5-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 15 Oct 2025 23:56:45 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bgYI+3pDO6VLInPzASo8pYCIY314hOmellWyLWAieJuB006xX2RkHBuFC7tgDoQ4DfyJk2NW6CcZ0zeU0B8DhxHC72cki6x7DFyA2RGkSexarNFwHcVigggHq6XWlJh2X+3MUV4CVxBgW4ilPYlrNLK31LtoAH/vK8xMb5tgwdDE2LE5gfDAmXV1bPUazYwEAOLMC0cMrcNUbyIZFYxAhoVc6fy/NwHyHukJ8nlIcORtvd2qtcMnsznO5lqp/xDaRfnwaaE/b7h7OX1/7E7XT+CvxYsiRmhLwsZFRi7u+FR30cBRXY4+dgn2JBqHrvngCXaogA7XvlFmMF4GI34mCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zEIerr0oC1XaFTOSBKPjLMRyCEljWyf4FgBsiYriqPY=;
- b=VgiBbQs9WcdXh5iQAMeQxa8ZmBC8DROekGtSL8tOZ4/V6F3JkR5NYuKeeBEJUQuGXoBkHrszsZwSO7m5EJVDRqlUAgwy4mrKhpLJTT0P4JrelaaMjINgENc/8vEI6BCk8KYnG52AtVZ4a4z50bvxMwyyHT+HtVY51jPEdp0IMtFRMhwVQlS4W993VgR0it9WZGsTpWpVjmDaE/bPYELZnFa0Cb2qjk4t6uSuDKzJAD32EPa92IXKLB+wVQi0qci6TL7wsbrBK0uztxrgM7eSaZ6YXplPrPBe9ErO4pCpPUZ1RmpckoMsS/J6WKNi2H9ia6TrrUoSK9ToyBbECADRJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zEIerr0oC1XaFTOSBKPjLMRyCEljWyf4FgBsiYriqPY=;
- b=TLYIwqXooO1Tv2/mcgg1kS3vaOBO/kl1Ra7SyKlFq2cJTjN7mT9VPAaEF+4X1PEv9a+IsCpuJVCazsb5zHR7U8qGIEyc4zAeTKcU7oRJvEFF6PtDeMkUmkki8lBUdDTqwuxmwLsYZX1t4Daspu6DsEVK6FzGiz3ieSKIs8vVHOA=
-Received: from DS0PR18MB5270.namprd18.prod.outlook.com (2603:10b6:8:121::22)
- by BY3PR18MB4641.namprd18.prod.outlook.com (2603:10b6:a03:3c4::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.12; Thu, 16 Oct
- 2025 06:56:42 +0000
-Received: from DS0PR18MB5270.namprd18.prod.outlook.com
- ([fe80::dcd7:929b:416e:2425]) by DS0PR18MB5270.namprd18.prod.outlook.com
- ([fe80::dcd7:929b:416e:2425%4]) with mapi id 15.20.9203.015; Thu, 16 Oct 2025
- 06:56:42 +0000
-From: Nawal Kishor <nkishor@marvell.com>
-To: Thomas Monjalon <thomas@monjalon.net>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Sachin Saxena <sachin.saxena@nxp.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>, Shreyansh Jain
- <shreyansh.jain@nxp.com>, Jerin Jacob <jerinj@marvell.com>,
- Ashwin Sekhar T K <asekhar@marvell.com>
-Subject: Re: [PATCH] rawdev: fix device ID retrieval function prototype
-Thread-Topic: [PATCH] rawdev: fix device ID retrieval function prototype
-Thread-Index: AQHcPmoHnELC7cB02EWjW4P3KUc1EQ==
-Date: Thu, 16 Oct 2025 06:56:42 +0000
-Message-ID: <DS0PR18MB52705A2144204E371DDC6EC4B2E9A@DS0PR18MB5270.namprd18.prod.outlook.com>
-References: <20250924055654.1986682-1-nkishor@marvell.com>
- <2509677.g5d078U9FE@thomas>
-In-Reply-To: <2509677.g5d078U9FE@thomas>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS0PR18MB5270:EE_|BY3PR18MB4641:EE_
-x-ms-office365-filtering-correlation-id: ea536665-ed48-4be2-3784-08de0c8129f7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|366016|376014|38070700021;
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?BMX7drVZqiFjANM3fBzPDIiRB4ugkaTusuCwSqEhcxfajkjMgkdzQfuyTB?=
- =?iso-8859-1?Q?0pu0mSh2bz0/Bzj30iViiAGu4zwrvxC59kGJlY57Ghulm4d2BHJhVN4MPh?=
- =?iso-8859-1?Q?P7uz9lwE+gAvHHeQdbyEbgxjO08ZrSghm4P9cjw2ch1Kc7gY/PBNCScLqZ?=
- =?iso-8859-1?Q?nRTun45qB5MZkFK4qcZlH1MbimCiHM9hFaTrs1lx81ZM5EL+CMiHKEN1jN?=
- =?iso-8859-1?Q?uf08gDtMqmcmtEfm2+/zPAdLEZPmKNci8aPHDpA++qTbyX7uAxR9mtGC81?=
- =?iso-8859-1?Q?BMrWNz+sUzl6n4zJFrxczwDHyHiJA1ViMwe+GH3PcKIQf92OEgUCREMyy/?=
- =?iso-8859-1?Q?m6EK/B8gDkiafmHGAZgoLQXgsPQPJA0MY7UC/NSighRv3CsLTLaEIzo0WF?=
- =?iso-8859-1?Q?qrRikCmARVKojHeYh+Y3gXCT0obS2COeuKzkqaCENt3aEP46Zo0q+1akQ3?=
- =?iso-8859-1?Q?qoGTIcZECt27D0hWCdC7hX6CDjA2LvZaDAl8NLJ1E8ridp2O6j3Ay4q6Ks?=
- =?iso-8859-1?Q?Dt7FgTofegH4Kjwtzw7X+DMBCQqkxuRegeRtTeAHGb9ARKwPpCsclPxY0b?=
- =?iso-8859-1?Q?U15wcSeEaSo9zsnUvuZ1iJRgzlgR2+AEEIG4KJtM6vUv87QDIY+Hpu450h?=
- =?iso-8859-1?Q?5QRlecaNmX+8iZTcfpOZhHT82OJ61kYJkAmo5Dj8E3f3QW2hmlTU4TmYHD?=
- =?iso-8859-1?Q?C1l7umJ5a8SAMQ/nQI/YRDR91QOOp8N9xB2XeM3rq7ebVJUyQpbmmbaud4?=
- =?iso-8859-1?Q?H5wKC2JsGyT/+Inc3KLL9s0wf5jxNRT0D+9RFFeCkAGzrDs+pI38FEUu8r?=
- =?iso-8859-1?Q?i7+8L4nTDFCbqXxh2yseu6D4tgWusFuy6L5N8OHy8MPqR0hygT4UaqcnRd?=
- =?iso-8859-1?Q?PO+5DtSlU0Bzpgylc5SbIq5S0eWKyj/fwiwrYSrSResyZnDSxF3RBYwp04?=
- =?iso-8859-1?Q?kwrzIYR4075QuGFsBbFsV+EIAZDNfqTwVz9perlQTVbTqJQAj1yMOCX7yA?=
- =?iso-8859-1?Q?t8YU5nto3Zqmb+Zlz5kAq4dY2ETFzez6XMd9RBOw/j/rl07ToBjC4cMg49?=
- =?iso-8859-1?Q?aI+S0pj1FdIy5RhuYNaJ1XDtQaY0j1ivZQpzRnFQg+kDimoox+fcMaVmNl?=
- =?iso-8859-1?Q?uQ2EL9sP7O3MjXAjiFwv4WED2MFqfDfUlEJOH0tYpOLFOjLqYUd/h0cFkc?=
- =?iso-8859-1?Q?B8Bg79tyUWupDPBnSu8g/Zkfbtih+kVJaRDzGW0VNkzpkKISgMqsaJtbgo?=
- =?iso-8859-1?Q?AQoA2uOQOMYP3ikRuv2fokHACaMb0sX3JGFB+JZsiuAN0Sp/1vmqfu80kP?=
- =?iso-8859-1?Q?Z6IeWoPlZcD89s5icGYz+f+5vyv2wLZ7qmZ5ho8W+tOzwhvnV6cHBdMnyN?=
- =?iso-8859-1?Q?1svZzOdEUPOA+MSxs5aX6/chilxFMaYqRRWvYctONAbHczobyCCov3Jpty?=
- =?iso-8859-1?Q?T5TRm4/ACYjRZi72GuHvUBDGZlHv5Y/x5H8677+jhu05ykNUdE/JE6D4aZ?=
- =?iso-8859-1?Q?gBoDZe53M0tBJ9uATdlP+z24MqZsUiUgxd+KpkhEyitRpmsGM+Ctqz3cp2?=
- =?iso-8859-1?Q?Ga/p6G8F7AKFHSBlyX337hj2FtwE?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR18MB5270.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(38070700021); DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?+4oawlBxywKRT93TZOggonTCTLRHdDeB+hGOlqpnc7efwfPeeBq9Po5xT1?=
- =?iso-8859-1?Q?Kd8nk6KGS7BeJd8BxGr+NcISCS1tWXU75ekWFoL9jClyg4n9LV7Dd9GBBB?=
- =?iso-8859-1?Q?LhV/hEgmQRtHl3mIzQQ5o1oQSbspEVWQjsEVwgyRFq15Z/kBGV2XDEafG6?=
- =?iso-8859-1?Q?V55aHOe1JLmCYLJ/FHqk7MB1HO4i/1u/Kj5VYjhO3F3CawSzt/SnuEX+3X?=
- =?iso-8859-1?Q?n+QmwYlKpkHBb0LgKda9XdWVLR+NZmkZbHvoIFU60RXqLlptrmGbTNP+Uw?=
- =?iso-8859-1?Q?KHFOO1n6YUcdkrtek+hCV5mgyhy2s6xUWW95kONG2kPE57CBI3R6Cq5RuO?=
- =?iso-8859-1?Q?tLbMPkkEev7DB8q+l9a/v45mnZX4GmIcsRZHqhqxohdC9M9qqO2c1KCZya?=
- =?iso-8859-1?Q?F80YXw6eRdxSO3V6k1hWSZNjk1WfsrNrWISNO45PYG2SXKkMcqB09icim6?=
- =?iso-8859-1?Q?ejpCnBsAmT+AcUe7anq0RdK+llamv3KRZkGtEby9p5IbAOLt7hQkrZFdMz?=
- =?iso-8859-1?Q?oF3N99NOODN5xaLkqOfK6RXI38/Yj7A0grdT/8RtGYMhVN13LZb+7ZP8iB?=
- =?iso-8859-1?Q?yv2Ob+WY82eU5Gz8bwpN0ZgvkuvzBusSdEO7AMAdtY9GYgaaLUt8wxf3po?=
- =?iso-8859-1?Q?S9neR/dgAbsjsY8YQjN/GcFBu/vSfxx105NvQIOEYGZjSFKSIkSoJ85ShZ?=
- =?iso-8859-1?Q?QAhd3OCfasbTdfp+QBWmwy/563g1pJnKjg7TZwl02+YaWHZA/T+oUmHH8Y?=
- =?iso-8859-1?Q?+Cum68epojeevU0vzNw7OnTlEew81XnmQj9AWVOqAy3hgktotPqyOp7B16?=
- =?iso-8859-1?Q?FhBOry/vf1cJyVYxPyFW+8WaDJl4eBPVTYTot7mLz1QaMoCGmutyxNVWeu?=
- =?iso-8859-1?Q?cD/j9BFVc9dsDXFJfmjF1YIOf4oTKsXOg5sKzg+U1Ejs7dvO/lqN53/4Z0?=
- =?iso-8859-1?Q?sUkKhqqY5XfFnUZTaugSMPeoeL1SvcYZcQUaKhVRsX98XMwnDDaQr41upy?=
- =?iso-8859-1?Q?mh6DysVhfSEtdf7xAc9BNho6yXZCiMynyart25blHi1miGCPpSeLDHdbgw?=
- =?iso-8859-1?Q?su0QJm7hyxzTJyHvKB5Cf17JcDOFmrgGaTijOKjs2xVAsBt4MoGMTbLHmi?=
- =?iso-8859-1?Q?Sq4lEpNrX+5ixZnzU0LKyjuXv848pHqWUCqmz4odVU45vI4u+3iY3jp05D?=
- =?iso-8859-1?Q?p0tjg7aUV8alfR/BGomVeMpHKS29aEb7ZPz+xki6ZPOxL0c0Z+V5fgMYg6?=
- =?iso-8859-1?Q?0mbkCESL95G4fZUp/JEiN1iyU0/YGw5dgSMCSEjM0UHL9Tkpa980Zd05T2?=
- =?iso-8859-1?Q?yRF7xRee36m8Fz1JOAxZhG5wEdpdDs+nkZaa2F3OrQkb7G9J9h85jCfZ5z?=
- =?iso-8859-1?Q?hP339mKGJdpSBtOlggtCIYK8XJ1/+aik1FU+6rZhF8PuZOxck3HEW64YNN?=
- =?iso-8859-1?Q?M/7+6NMnbzFPQT/41mFid5crAyUE3FP9lNNMs1Syhs0b/1XrVe0Hxwg1I5?=
- =?iso-8859-1?Q?goYS8XCWsh5oFiyG/YWRn7fcmTOp+S/wkL1FayxoAFzn6EJCnbWuhMYh9X?=
- =?iso-8859-1?Q?DOjA3efQTMpcImNqfqKS0J7FDi7J6QzEOniciMiLR5kwNqQTx3BNPpSWG9?=
- =?iso-8859-1?Q?wlXn2yJ2029vE=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 055B34066B;
+	Thu, 16 Oct 2025 10:01:44 +0200 (CEST)
+Received: from out28-2.mail.aliyun.com (out28-2.mail.aliyun.com [115.124.28.2])
+ by mails.dpdk.org (Postfix) with ESMTP id 968C0402CD
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 10:01:41 +0200 (CEST)
+Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
+ fp:SMTPD_---.f.zFc.m_1760601698 cluster:ay29) by smtp.aliyun-inc.com;
+ Thu, 16 Oct 2025 16:01:38 +0800
+From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+To: dimon.zhao@nebula-matrix.com,
+	dev@dpdk.org
+Cc: Thomas Monjalon <thomas@monjalon.net>, Kyo Liu <kyo.liu@nebula-matrix.com>,
+ Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: [PATCH v13 01/17] net/nbl: add doc and minimum nbl build framework
+Date: Thu, 16 Oct 2025 01:01:12 -0700
+Message-Id: <20251016080128.3133579-2-dimon.zhao@nebula-matrix.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251016080128.3133579-1-dimon.zhao@nebula-matrix.com>
+References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
+ <20251016080128.3133579-1-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR18MB5270.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea536665-ed48-4be2-3784-08de0c8129f7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2025 06:56:42.7518 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fbZUuUqPuBuwrXPmtdIHtLv+gzyCBrLS0cLi2tLbaZeoYVXPKCOTrOwuevFXGRT9k7Os+KTKN0WfUMcuTPIAUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY3PR18MB4641
-X-Proofpoint-GUID: zA86MkShuIdWj5IwQp-D1i_R2KYryeP-
-X-Proofpoint-ORIG-GUID: zA86MkShuIdWj5IwQp-D1i_R2KYryeP-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE1MDA0MCBTYWx0ZWRfXwiGpDEj4P3nj
- 8qhWapdafYNis9yWEwtZFwN+iDG3322+6IHSHDmvmdYILVxvgcRwb6o5Hg5EObiSuAjCmqqnHDL
- ltfm2VTNXIli29yb7cmM1Jrwo8X5yHuWUHHR0icjC/sYRXmnFyE+o3LRfwi6HNyFJe3XgttoAq+
- hc2Jaq4/hWF4obBQ3RpXxiRheKUyyG3myGCU+iu1WS0bpfT3qLy4WqBwgGftTm36+lXaingpnoF
- Swvod2rFVYUAHhFoiOXoeP6M5mmD6IzsvRf+W6dc7qLoBlOswX+kCN/hwXUX39pH4OWyv5lm83m
- xXmzcHhE18JlohoxoGEhmjmkuuuLfaQioKjdSfzntGS1iH9TQecwgTqhK+MspEUKfcunS/wPV6h
- ocri/eZ0TXzTULXHGkHjUa2ZpRCSiQ==
-X-Authority-Analysis: v=2.4 cv=Juj8bc4C c=1 sm=1 tr=0 ts=68f0972d cx=c_pps
- a=ZgU9I8B0O1PKiENeC86Haw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=x6icFKpwvdMA:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=jG3QfLYGZn9O_5ORLNgA:9 a=wPNLvfGTeEIA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-16_01,2025-10-13_01,2025-03-28_01
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -171,23 +40,315 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-=0A=
->> Fixed rte_rawdev_get_dev_id() function prototype and its usage.=0A=
->=0A=
->What? Why?=0A=
-=0A=
->[...]=0A=
->> -uint16_t=0A=
->> +int=0A=
->> =A0rte_rawdev_get_dev_id(const char *name);=0A=
-=0A=
->Other functions handle dev_id as uint16_t, so why changing this function?=
-=0A=
-=0A=
-The spec says that rte_rawdev_get_dev_id() returns negative number in case =
-of failure.=0A=
-But in the definition it is returning uint16_t which will never be negative=
-, hence changed it to int.=0A=
-=0A=
-If this is not acceptable, what fix will you suggest?=0A=
-=0A=
+add minimum PMD code, doc and build infrastructure for nbl driver.
+
+Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+---
+ .mailmap                                      |  4 +
+ MAINTAINERS                                   |  9 ++
+ doc/guides/nics/features/nbl.ini              | 31 +++++++
+ doc/guides/nics/index.rst                     |  1 +
+ doc/guides/nics/nbl.rst                       | 87 +++++++++++++++++++
+ doc/guides/rel_notes/release_25_11.rst        |  4 +
+ drivers/net/meson.build                       |  1 +
+ drivers/net/nbl/meson.build                   | 11 +++
+ drivers/net/nbl/nbl_ethdev.c                  |  3 +
+ .../net/nbl/nbl_include/nbl_product_base.h    | 31 +++++++
+ 10 files changed, 182 insertions(+)
+ create mode 100644 doc/guides/nics/features/nbl.ini
+ create mode 100644 doc/guides/nics/nbl.rst
+ create mode 100644 drivers/net/nbl/meson.build
+ create mode 100644 drivers/net/nbl/nbl_ethdev.c
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
+
+diff --git a/.mailmap b/.mailmap
+index 38961aece7..0afd3fee6f 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -375,6 +375,7 @@ Diana Wang <na.wang@corigine.com>
+ Didier Pallard <didier.pallard@6wind.com>
+ Dilshod Urazov <dilshod.urazov@oktetlabs.ru>
+ Dima Ruinskiy <dima.ruinskiy@intel.com>
++Dimon Zhao <dimon.zhao@nebula-matrix.com>
+ Ding Zhi <zhi.ding@6wind.com>
+ Diogo Behrens <diogo.behrens@huawei.com>
+ Dirk-Holger Lenz <dirk.lenz@ng4t.com>
+@@ -860,6 +861,7 @@ Kumar Amber <kumar.amber@intel.com>
+ Kumara Parameshwaran <kumaraparamesh92@gmail.com> <kparameshwar@vmware.com>
+ Kumar Sanghvi <kumaras@chelsio.com>
+ Kyle Larose <klarose@sandvine.com>
++Kyo Liu <kyo.liu@nebula-matrix.com>
+ Lance Richardson <lance.richardson@broadcom.com>
+ Laszlo Ersek <lersek@redhat.com>
+ Laura Stroe <laura.stroe@intel.com>
+@@ -874,6 +876,7 @@ Lei Gong <arei.gonglei@huawei.com>
+ Lei Ji <jilei8@huawei.com>
+ Lei Yao <lei.a.yao@intel.com>
+ Leonid Myravjev <myravjev@amicon.ru>
++Leon Yu <leon.yu@nebula-matrix.com>
+ Leo Xu <yongquanx@nvidia.com>
+ Leszek Zygo <leszek.zygo@intel.com>
+ Levend Sayar <levendsayar@gmail.com>
+@@ -1393,6 +1396,7 @@ Saikrishna Edupuganti <saikrishna.edupuganti@intel.com>
+ Saleh Alsouqi <salehals@nvidia.com> <salehals@mellanox.com>
+ Salem Sol <salems@nvidia.com>
+ Sam Andrew <samandrew@microsoft.com>
++Sam Chen <sam.chen@nebula-matrix.com>
+ Sameh Gobriel <sameh.gobriel@intel.com>
+ Sam Grove <sam.grove@sifive.com>
+ Samik Gupta <samik.gupta@broadcom.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ad02128ca1..1f08899870 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1018,6 +1018,15 @@ F: drivers/net/rnp/
+ F: doc/guides/nics/rnp.rst
+ F: doc/guides/nics/features/rnp.ini
+ 
++Nebulamatrix nbl
++M: Dimon Zhao <dimon.zhao@nebula-matrix.com>
++M: Kyo Liu<kyo.liu@nebula-matrix.com>
++M: Leon Yu <leon.yu@nebula-matrix.com>
++M: Sam Chen <sam.chen@nebula-matrix.com>
++F: drivers/net/nbl
++F: doc/guides/nics/nbl.rst
++F: doc/guides/nics/features/nbl.ini
++
+ Realtek r8169
+ M: Howard Wang <howard_wang@realsil.com.cn>
+ M: Chunhao Lin <hau@realtek.com>
+diff --git a/doc/guides/nics/features/nbl.ini b/doc/guides/nics/features/nbl.ini
+new file mode 100644
+index 0000000000..90ec593759
+--- /dev/null
++++ b/doc/guides/nics/features/nbl.ini
+@@ -0,0 +1,31 @@
++;
++; Supported features of the 'nbl' network poll mode driver.
++;
++; Refer to default.ini for the full list of available PMD features.
++;
++[Features]
++Speed capabilities   = Y
++Link speed configuration = Y
++Link status          = Y
++FEC                  = Y
++Queue start/stop     = Y
++Burst mode info      = Y
++MTU update           = Y
++Scattered Rx         = Y
++TSO                  = Y
++Promiscuous mode     = Y
++Allmulticast mode    = Y
++Unicast MAC filter   = Y
++RSS reta update      = Y
++VLAN filter          = Y
++VLAN offload         = P
++L3 checksum offload  = P
++L4 checksum offload  = P
++Basic stats          = Y
++Extended stats       = Y
++Stats per queue      = Y
++FW version           = Y
++Module EEPROM dump   = Y
++Linux                = Y
++ARMv8                = Y
++x86-64               = Y
+diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
+index 1a1e3a6825..14276a366c 100644
+--- a/doc/guides/nics/index.rst
++++ b/doc/guides/nics/index.rst
+@@ -51,6 +51,7 @@ Network Interface Controller Drivers
+     mvneta
+     mvpp2
+     netvsc
++    nbl
+     nfb
+     nfp
+     ngbe
+diff --git a/doc/guides/nics/nbl.rst b/doc/guides/nics/nbl.rst
+new file mode 100644
+index 0000000000..fa5dfaecdc
+--- /dev/null
++++ b/doc/guides/nics/nbl.rst
+@@ -0,0 +1,87 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++   Copyright 2025 Nebulamatrix Technology Co., Ltd
++
++NBL Poll Mode Driver
++====================
++
++The NBL PMD (**librte_net_nbl**) provides poll mode driver support for
++10/25/50/100/200 Gbps Nebulamatrix Series Network Adapters.
++
++
++Features
++--------
++
++Features of the NBL PMD are:
++
++- Multiple queues for TX and RX
++- Receiver Side Scaling (RSS). Currently does not support user-configured RSS and only supports packet spraying via RSS.
++- Jumbo frames
++
++
++Supported NICs
++--------------
++
++The following Nebulamatrix device models are supported by the same nbl driver:
++
++  - S1205CQ-A00CHT
++  - S1105AS-A00CHT
++  - S1055AS-A00CHT
++  - S1052AS-A00CHT
++  - S1051AS-A00CHT
++  - S1045XS-A00CHT
++  - S1205CQ-A00CSP
++  - S1055AS-A00CSP
++  - S1052AS-A00CSP
++
++
++Linux Prerequisites
++~~~~~~~~~~~~~~~~~~~
++
++This driver relies on kernel drivers for resources allocations and initialization.
++The following dependencies are not part of DPDK and must be installed separately:
++
++- **Kernel modules**
++
++  They provide low level device drivers that manage actual hardware initialization
++  and resources sharing with user-space processes.
++
++  Unlike most other PMDs, these modules must remain loaded and bound to
++  their devices:
++
++  - ``nbl_core``: hardware driver managing Ethernet kernel network devices.
++
++Because the nbl_core kernel driver code has not been upstreamed to the Linux kernel community, it cannot be provided by standard Linux distributions.
++However, the nbl_core kernel driver has been upstreamed to the openEuler and Anolis communities. You can obtain the nbl_core code from the following links:
++
++openEuler community:
++https://gitee.com/openeuler/kernel/pulls/11667
++
++Anolis community:
++https://gitee.com/anolis/cloud-kernel/pulls/5185
++https://gitee.com/anolis/cloud-kernel/pulls/5059
++
++Alternatively, you can contact us to obtain the nbl_core code and installation package.
++
++
++Prerequisites
++-------------
++
++- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>`
++  to setup the basic DPDK environment.
++
++- Learn about `Nebulamatrix Series NICs
++  <https://www.nebula-matrix.com/main>`_.
++
++
++Multiple Processes
++~~~~~~~~~~~~~~~~~~
++
++The NBL PMD does not support Multiple Processes.
++
++
++Limitations or Known Issues
++---------------------------
++
++32-bit architectures are not supported.
++
++Windows and BSD are not supported yet.
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index 7e376e56b2..bbc60fc506 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -121,6 +121,10 @@ New Features
+ 
+   * Added network driver for the Huawei SPx series Network Adapters.
+ 
++* **Added Nebulamatrix nbl net driver.**
++
++  * Added the PMD for Nebulamatrix NICs.
++
+ 
+ Removed Items
+ -------------
+diff --git a/drivers/net/meson.build b/drivers/net/meson.build
+index 2d32068ed2..c7dae4ad27 100644
+--- a/drivers/net/meson.build
++++ b/drivers/net/meson.build
+@@ -41,6 +41,7 @@ drivers = [
+         'mlx5',
+         'mvneta',
+         'mvpp2',
++        'nbl',
+         'netvsc',
+         'nfb',
+         'nfp',
+diff --git a/drivers/net/nbl/meson.build b/drivers/net/nbl/meson.build
+new file mode 100644
+index 0000000000..68c045a48c
+--- /dev/null
++++ b/drivers/net/nbl/meson.build
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright 2025 NebulaMatrix Technology Co., Ltd.
++
++if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
++    build = false
++    reason = 'only supported on 64bit Linux'
++endif
++
++sources = files(
++        'nbl_ethdev.c',
++)
+diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
+new file mode 100644
+index 0000000000..3ad8e4033a
+--- /dev/null
++++ b/drivers/net/nbl/nbl_ethdev.c
+@@ -0,0 +1,3 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
+diff --git a/drivers/net/nbl/nbl_include/nbl_product_base.h b/drivers/net/nbl/nbl_include/nbl_product_base.h
+new file mode 100644
+index 0000000000..648278b094
+--- /dev/null
++++ b/drivers/net/nbl/nbl_include/nbl_product_base.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#ifndef _NBL_DEF_PRODUCT_BASE_H_
++#define _NBL_DEF_PRODUCT_BASE_H_
++
++#include "nbl_include.h"
++
++struct nbl_product_core_ops {
++	int (*hw_init)(void *p);
++	void (*hw_remove)(void *p);
++	int (*res_init)(void *p, struct rte_eth_dev *eth_dev);
++	void (*res_remove)(void *p);
++	int (*chan_init)(void *p);
++	void (*chan_remove)(void *p);
++};
++
++struct nbl_product_dev_ops {
++	int (*dev_init)(void *adapter);
++	void (*dev_uninit)(void *adapter);
++	int (*dev_start)(void *adapter);
++	void (*dev_stop)(void *adapter);
++};
++
++struct nbl_product_dispatch_ops {
++	int (*dispatch_init)(void *mgt);
++	int (*dispatch_uninit)(void *mgt);
++};
++
++#endif
+-- 
+2.34.1
+
