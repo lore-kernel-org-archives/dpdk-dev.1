@@ -2,63 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55646CCD194
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 11:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A850CCCD194
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 11:33:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 15A79410E8;
-	Thu, 16 Oct 2025 13:32:50 +0200 (CEST)
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com
- [209.85.215.170])
- by mails.dpdk.org (Postfix) with ESMTP id 0A05640A71
- for <dev@dpdk.org>; Thu, 16 Oct 2025 13:32:49 +0200 (CEST)
-Received: by mail-pg1-f170.google.com with SMTP id
- 41be03b00d2f7-b49c1c130c9so351374a12.0
- for <dev@dpdk.org>; Thu, 16 Oct 2025 04:32:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1760614368; x=1761219168; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=6gE4EXQJ1chArXV6QmEsy39DWEUgEdjML2ggVWWBRRg=;
- b=ZRA+tf2BugRnenAYc+Bs3dedghx1WfEjHaAQkx2/TWJXQ1JV8oqk/GAN53NOYI9rwN
- R+bZeFTCEGUExTH7wMFht7csbtAQbvsHRuEpbEH0yUAmhe3V/BSMpL5OUtnTRD108ZjT
- RC8iPW4Yygst/IVc8Z2eupXSu6CSNi1n1LYI4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760614368; x=1761219168;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=6gE4EXQJ1chArXV6QmEsy39DWEUgEdjML2ggVWWBRRg=;
- b=CKVRKGlKgFtxvorshUBCdxfTLhVdHlGiJJ7uEKaO9MrIJSGSkmWz2clxDbrPy8h8ql
- aeJPZCXu5ugBTM6i8oFKI2+2SDIOdMIB4sKomiGdK7dEqkiSGaForfTeWVuLeM7B4Ugs
- PRgB3kfJG2xqZKw2mJ2sWAq8EGU63Z0RC0hQVccI9FVRM+Or0AEhKYUUOjFIuRbBT/4M
- f6Jh0PRx5+KaNlCWFjv0uwdPjV+JTdf3Afn+GYbUawyoiljwWhMgqJJTDlJwun0bweGk
- +GPlDzEzSD/WN5OF/5I8fiaLphWx6iQZqBr4BciOyMXX6XG5Gsb9ohXbvUINM3SUUSJw
- JZeQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWRwEVyFApOfI0YTgGOTSAFCNfo8gwRxrszLMrEryTmBdlVBG6ANCFmlGOQbUNbFSlWUdU=@dpdk.org
-X-Gm-Message-State: AOJu0Yxmc81U+UWa+WuCvUThHTURZviMlTd95JVWc7DFc9D5EZQxOY40
- RMCAWLW1rz0puIDmXmgbudMThnQfj0xxbcVX70CGLw80tLvkg6dlU45uiTHmwktD7aKra0joMU1
- +BMieti8Q/xk3lzodkbNWE0Hok6K3kl9D2tZ64pwfxA==
-X-Gm-Gg: ASbGncvcTdcGTDEeaeie7P1fTSi4sz7qLhCS/pvQCCz4gBvYQxchCTxei4fKGuuhXBg
- pt8AXpuzEeeLlnkoDDBXgiC4vcaQ/s0CE4Q+vwynkl7IHvetYswI7PNTxAgJtxjLuFaQiS9cKug
- JUHydgHInh4vU/lcm0dPPFNmckAP81tvfGybm0tn48C3PSbtIPMDHg3FQ07Rn/sJlaqSH9zcU/N
- /H8j4QBXUc/YpM+W3fopTCSDNrEolnZHwKoCWjZW594pnib1+A+p8y8nrwdq1diKlI4Ujuc4kPq
- u+SmrPxcVTnY7jzc
-X-Google-Smtp-Source: AGHT+IHXP0193LYnVzKJv4Xc/RotQ+cw0GgERGFfUZUCSQm5c4buPov/CwkRbJspixUXOZJcqfQU2e3intqQsQorfEI=
-X-Received: by 2002:a17:903:2c06:b0:27e:dc53:d239 with SMTP id
- d9443c01a7336-290272b547bmr407320425ad.35.1760614367922; Thu, 16 Oct 2025
- 04:32:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0DAA741149;
+	Thu, 16 Oct 2025 13:33:00 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id A91D840EE4
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 13:32:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1760614379; x=1792150379;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=S0KFo0Lvj56z4ks3YsLxBsv4dzSN9cJecsQt2GyEOY0=;
+ b=bDfeWZvp5QhCaUxsGR3iO0gpV2yz7k9dtO/eWyQFmfSmdgb2EH39otBc
+ /DOaOmYzSn5K1DnbfzmXquHBOREO2LLdSFw80Y1d5W0392BbZD5yy7OFj
+ uWAkmixQZyuNBVdOVtVipeJFqrthnJOD/j3mMgbWQFctTze3CKueBlMo9
+ wjV5LlNN1XVFaUxT+8zYfcPKFK+dMCXVYISWS24/lBqQX8T1a2nkgPM/+
+ G80zqJdowf8sARpjZldCe9KPPCxFjTATLWxKu9eOYQt/Yqyq1gOB7Dquq
+ SV5NOpfgkNBo9FWaz8eQN9YMVEEUM5TBif0MT0JCLLJb1obagD7ARj941 g==;
+X-CSE-ConnectionGUID: yvJV2OmpSC++g0oG/3Ihow==
+X-CSE-MsgGUID: GML527aoQu+H4CkIUVsxrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="66634250"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="66634250"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Oct 2025 04:32:54 -0700
+X-CSE-ConnectionGUID: CixkzAe7SwqYtMyNQYz5DQ==
+X-CSE-MsgGUID: gB8gSPUhQtKAS/Fayweycg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,234,1754982000"; d="scan'208";a="186444166"
+Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
+ by orviesa003.jf.intel.com with ESMTP; 16 Oct 2025 04:32:53 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH] net/iavf: ensure no polling during VF initiated reset
+Date: Thu, 16 Oct 2025 11:32:24 +0000
+Message-Id: <20251016113224.1652880-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20251016090948.836029-1-zhoumin@loongson.cn>
-In-Reply-To: <20251016090948.836029-1-zhoumin@loongson.cn>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 16 Oct 2025 07:32:02 -0400
-X-Gm-Features: AS18NWCyGBDaxxNA2uhN8yAhCxi3Ch3XFAqpLDx1uCK-g_qIfqpp1S1yfGMrgIc
-Message-ID: <CAJvnSUCqYoRQg29ovs+r7CQH=wnJQMMLusi_oJthvXA6oa4aEQ@mail.gmail.com>
-Subject: Re: [PATCH v1] maintainers: update for LoongArch
-To: Min Zhou <zhoumin@loongson.cn>
-Cc: thomas@monjalon.net, maobibo@loongson.cn, dev@dpdk.org, ci@dpdk.org
-Content-Type: multipart/alternative; boundary="000000000000fc9d4e064144f9a3"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,83 +57,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000fc9d4e064144f9a3
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Ensure that the datapath functions will not poll during a vf initiated
+reset. Otherwise the datapath could access freed resources and cause a
+core dump. Achieve this by ensuring that the no-poll-on-link-down devarg
+is set when trying to reinit a started device. If it's not set, suggest
+stopping the port before the reinit.
 
-Hi Min Zhou,
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+---
+ drivers/net/intel/iavf/iavf_ethdev.c | 40 +++++++++++++++++++++-------
+ 1 file changed, 30 insertions(+), 10 deletions(-)
 
-Will Bibi be responsible for maintaining the Loongarch CI testing going
-forward, or are you retaining that responsibility? Thanks.
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 95e5832f03..72d79447e1 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -3102,13 +3102,18 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
+ 	struct iavf_adapter *adapter = dev->data->dev_private;
+ 	int ret;
++	bool restart_device = false;
+ 
+-	if (!dev->data->dev_started)
+-		return;
++	if (vf_initiated_reset) {
++		restart_device = dev->data->dev_started;
++	} else {
++		if (!dev->data->dev_started)
++			return;
+ 
+-	if (!vf_initiated_reset && !iavf_is_reset_detected(adapter)) {
+-		PMD_DRV_LOG(DEBUG, "reset not start");
+-		return;
++		if (!iavf_is_reset_detected(adapter)) {
++			PMD_DRV_LOG(DEBUG, "reset not start");
++			return;
++		}
+ 	}
+ 
+ 	vf->in_reset_recovery = true;
+@@ -3125,12 +3130,14 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ 
+ 	iavf_dev_xstats_reset(dev);
+ 
+-	/* start the device */
+-	ret = iavf_dev_start(dev);
+-	if (ret)
+-		goto error;
++	if (!vf_initiated_reset || restart_device) {
++		/* start the device */
++		ret = iavf_dev_start(dev);
++		if (ret)
++			goto error;
+ 
+-	dev->data->dev_started = 1;
++		dev->data->dev_started = 1;
++	}
+ 	goto exit;
+ 
+ error:
+@@ -3147,6 +3154,7 @@ int
+ rte_pmd_iavf_reinit(uint16_t port)
+ {
+ 	struct rte_eth_dev *dev;
++	struct iavf_adapter *adapter;
+ 
+ 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
+ 
+@@ -3157,6 +3165,18 @@ rte_pmd_iavf_reinit(uint16_t port)
+ 		return -ENOTSUP;
+ 	}
+ 
++	if (!dev->data->dev_configured) {
++		PMD_DRV_LOG(ERR, "Cannot reinit unconfigured port %u.", port);
++		return -EINVAL;
++	}
++
++	adapter = dev->data->dev_private;
++	if (dev->data->dev_started && !adapter->devargs.no_poll_on_link_down) {
++		PMD_DRV_LOG(ERR, "Cannot reinit started port %u. Either stop the port or enable "
++				"no-poll-on-link-down in devargs.", port);
++		return -EINVAL;
++	}
++
+ 	iavf_handle_hw_reset(dev, true);
+ 
+ 	return 0;
+-- 
+2.34.1
 
-On Thu, Oct 16, 2025 at 5:46=E2=80=AFAM Min Zhou <zhoumin@loongson.cn> wrot=
-e:
-
-> Update maintainers for LoongArch architecture.
->
-> Signed-off-by: Min Zhou <zhoumin@loongson.cn>
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 1a2729be66..7abe482e7d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -320,7 +320,7 @@ F: examples/*/*_neon.*
->  F: examples/common/neon/
->
->  LoongArch
-> -M: Min Zhou <zhoumin@loongson.cn>
-> +M: Bibo Mao <maobibo@loongson.cn>
->  F: config/loongarch/
->  F: doc/guides/linux_gsg/cross_build_dpdk_for_loongarch.rst
->  F: lib/eal/loongarch/
-> --
-> 2.27.0
->
->
-
---000000000000fc9d4e064144f9a3
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">Hi Min Zhou,<div><br></div><div>Will Bibi be responsible f=
-or maintaining the Loongarch CI testing going forward, or are you retaining=
- that responsibility? Thanks.</div></div><br><div class=3D"gmail_quote gmai=
-l_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Oct 16, 20=
-25 at 5:46=E2=80=AFAM Min Zhou &lt;<a href=3D"mailto:zhoumin@loongson.cn">z=
-houmin@loongson.cn</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote=
-" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
-padding-left:1ex">Update maintainers for LoongArch architecture.<br>
-<br>
-Signed-off-by: Min Zhou &lt;<a href=3D"mailto:zhoumin@loongson.cn" target=
-=3D"_blank">zhoumin@loongson.cn</a>&gt;<br>
-Signed-off-by: Bibo Mao &lt;<a href=3D"mailto:maobibo@loongson.cn" target=
-=3D"_blank">maobibo@loongson.cn</a>&gt;<br>
----<br>
-=C2=A0MAINTAINERS | 2 +-<br>
-=C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
-<br>
-diff --git a/MAINTAINERS b/MAINTAINERS<br>
-index 1a2729be66..7abe482e7d 100644<br>
---- a/MAINTAINERS<br>
-+++ b/MAINTAINERS<br>
-@@ -320,7 +320,7 @@ F: examples/*/*_neon.*<br>
-=C2=A0F: examples/common/neon/<br>
-<br>
-=C2=A0LoongArch<br>
--M: Min Zhou &lt;<a href=3D"mailto:zhoumin@loongson.cn" target=3D"_blank">z=
-houmin@loongson.cn</a>&gt;<br>
-+M: Bibo Mao &lt;<a href=3D"mailto:maobibo@loongson.cn" target=3D"_blank">m=
-aobibo@loongson.cn</a>&gt;<br>
-=C2=A0F: config/loongarch/<br>
-=C2=A0F: doc/guides/linux_gsg/cross_build_dpdk_for_loongarch.rst<br>
-=C2=A0F: lib/eal/loongarch/<br>
--- <br>
-2.27.0<br>
-<br>
-</blockquote></div>
-
---000000000000fc9d4e064144f9a3--
