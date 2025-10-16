@@ -2,55 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BC6CCD199
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 20:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE86CCD199
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 20:36:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 361CE427D0;
-	Thu, 16 Oct 2025 22:36:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3AA97427E9;
+	Thu, 16 Oct 2025 22:36:19 +0200 (CEST)
 Received: from fhigh-a4-smtp.messagingengine.com
  (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
- by mails.dpdk.org (Postfix) with ESMTP id 5650C427D9
- for <dev@dpdk.org>; Thu, 16 Oct 2025 22:36:16 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 0EA531400187;
- Thu, 16 Oct 2025 16:36:16 -0400 (EDT)
+ by mails.dpdk.org (Postfix) with ESMTP id 70B314026D
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 22:36:18 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 297EF140018F;
+ Thu, 16 Oct 2025 16:36:18 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-05.internal (MEProxy); Thu, 16 Oct 2025 16:36:16 -0400
+ by phl-compute-01.internal (MEProxy); Thu, 16 Oct 2025 16:36:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760646976;
- x=1760733376; bh=ezdeVU9jkmvH6Zsbi7vs4EHmPvLVLTnNgZfwAv49LMk=; b=
- R0HRHL7hsNp96o94N+Fkl4Sy3BHYaT/xSB2KKJkil6mBEI55HemEVZZrEndvHenW
- hO+3F8JBH83F/bBhbJUY/nou2qpYvdJljOfviFy29a85RbDnFj5QHYUv1dM0/qkT
- bJ08MqI9+xE8ah0IXirctsd0fs8dD59eL5e/XDdUNFdP7JfwvyihtYkPiO78o3by
- IGgd/c4TcFPCBKkn+J/UyVW16uh8mLhBAB/07XA6Ync/fIyII2hUA46TsSrZKaeL
- b1nGdDwW/btLyhlsiL+wMHAzcZIIbXKOwgdQO//orF1sLfGvWRE4gBmJXhh3tes0
- 21urTLP66Mk5GnMObc7+QQ==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1760646978;
+ x=1760733378; bh=1FFhlSUSAs/rJnxldBg4IQxhSoJ5USpHTK1aCbSWvNg=; b=
+ MOfYoqENirKkGCnk8SgrRAqd/8VhgABaZxe3AOt+1V37Wqp7eA6y6S2dKEAXCG8X
+ Kpq+VnOEk+dAY/fZlT0AvhuE8+NBZysA3NYdtXvALZw7/NxmwDy9eviYXbCjVhQg
+ jCUdK5vNu+fJINXJTOWI4+D+2fScps3Mu1ljauHivU+hseSitTPs/jru/75eyP/u
+ 1+0BWJskTRYUiwm/cKt8NghHFt6Ci4TLPAfreqgjvNh5u+9agfrUedQTLc6+BrCd
+ 4Vl3baUciwr5wgt8fC15+F/HiALyRgPxgfnAZjBgD/LSasL02/Au+/ie6azospQZ
+ +3iRQxaX+aglLeWzMjNALg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760646976; x=
- 1760733376; bh=ezdeVU9jkmvH6Zsbi7vs4EHmPvLVLTnNgZfwAv49LMk=; b=i
- kLP143cu5JEHnlSmKYgqfeZccJ8n15rjBVHdcKgaJ43OUrtljYBmpFV1+h5P39gk
- ApJo/K2VWAs+A5bpYj+Gtq4gNntvxD+S2FI9XD9rSqz7qFSJ6ypZpPac4UsHbc37
- nw9WaA103YGczdYLkT0yf7+0vIWfohCzedpXhig+qaY5vZ8BYUIDjFkJX9L1Kk0g
- kZx7fgrB8NF00IGe5NALwaG7hZVVNvNcBOiGUYdT6yF3k9pCJmvbcrJE+TOZaX2U
- enyA4sChnTs9kZflk70Wn2n9B4Kq5dRj+y28YMVIC8YHVr3b4Q6SY9bCBYsX1nPk
- zBBPjSjrx2Lc8LPy52d9Q==
-X-ME-Sender: <xms:P1fxaNCPIT6wIfL7qkuVxFbqbTtFKFrc3TC_ymjkupjsl7sWo6jbuw>
- <xme:P1fxaGc6bx4DYCvJOanxCvQi8CeopukAzFyMVMHyUkxcaMzR3asblx9MyquwkEgMp
- 8aQY9YtZVEuUlrJZJD-Djv95vYJEhjoXhzrStuYyVxeFuryOZVnig>
-X-ME-Received: <xmr:P1fxaHne0BoAe0dc439Tq-K2NYxBeE32QzDKeAQjP7t9nWfMHIRPGMAa6UmklLknoSEUQ3Xy5rQA7pz1neUb6JMDbhICtEM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdejvdejucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760646978; x=
+ 1760733378; bh=1FFhlSUSAs/rJnxldBg4IQxhSoJ5USpHTK1aCbSWvNg=; b=D
+ CgSAk8ZXNL3EbPcNpS7i1mqumSwteHriMJb8hp0QgmftxyRcKx55u1fuHXfYR8Do
+ /dKTq4EHCDvgh7stwRE1hvNFmG/IbodpZOZWK2Hb46nLbrq0PubOFAnWqHG9FghI
+ nOG0K+hhaIoZ++QTeaBhAt15hW/EQpKn9Zk+WrBSzZA9j6vipVUD8VgIr6co7fLg
+ HDQg7UelxJbaZ4M6uq+MzckXr9eWUUc4klwBP5Jwt1UPfGTg3dIg8AspVj2VZOcx
+ xYt+g8cNppEgQreOsB9yWirnKkAito/IR5SPqN6x//4XXnIeMCJJQsNX0wob6QJZ
+ qCllFEbjE+Puh6jGVvxew==
+X-ME-Sender: <xms:QVfxaBmxJhzLypJTFQVF5Q_INu_VQSEHCQJT1rANd75gRv9Jl2E6Xw>
+ <xme:QVfxaHz80T8jfi8VMEwTrD8fBYMGmDQkuPdFz0mZ_Yl0tjq2rKhqkBSyYqxQB2noK
+ JRTMMJjwr9qCI5_yRaP2_CIYoechJ9AVqm_YSX3v8QK2h4VhV4YFKo>
+X-ME-Received: <xmr:QVfxaGpfmC0rqw5cBV5XzBeLg8PNy_Mdz98MEAwrlvHY9hvFuN5on0I0dSCfcmoy9LKQwb9g6CXg4MGHSzQI74aKZWzaQ9c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdejvdeiucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkofgjfhggtgfgsehtkeertdertdejnecuhfhrohhmpefvhhhomhgr
  shcuofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecugg
  ftrfgrthhtvghrnheptdeiffffgeefteelhfekueetueduffejgfelvedtieejudekgfev
- heetheehgeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+ heetheehgeejnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrh
  homhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepjedp
  mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtg
  hpthhtohepshhhphgvrhgvthiisehnvhhiughirgdrtghomhdprhgtphhtthhopehvihgr
@@ -59,22 +59,22 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdejvdejucetufdote
  hhgrrhgvshihshhtvghmshdrtghomhdprhgtphhtthhopehsthgvphhhvghnsehnvghtfi
  horhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopegrmhgrnhdruggvvghprdhsihhn
  ghhhsehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:P1fxaNFzKRfiM2yNmorelVC_jA1sbH02C7u3kLrbI8aAyjZTkaSzQQ>
- <xmx:P1fxaP7xowhsBJYj_afDkqbyQFgIw78u7CjhqYVexvSNdRqC2LIc9g>
- <xmx:P1fxaFmrD-Jf27rws_SY7LgyDjG7AVkeLWJEFRjgbfrf40MoRDvMhg>
- <xmx:P1fxaEq_XsC4Z7THrxCSPGzFjPkSgfXPAScbQsyGYv0rxYFtFzQKNg>
- <xmx:QFfxaE6uLS-D_to30ylQHKybvKIqicePpyt5D5N2TjU8ZZmtAecEl-gC>
+X-ME-Proxy: <xmx:QVfxaG7gHzBhxsDckMEX-YcsoT2SYydDX0zNVHTMNIKw4sFbbKwXRQ>
+ <xmx:QVfxaNc-4VXAV4P567WTYNTB1GXhicNqDQRu7X5gg4KCs7VCl4z5uQ>
+ <xmx:QVfxaL5ZQN7_7Wd1B7qnAfAn4GV5ohmGIn6moRismvYFaS9XcvuNGw>
+ <xmx:QVfxaEu-4zgmLqmy5R1yWY1Ik2TI2uQzaRV0Ssj0gpLlA-M9GNkvHA>
+ <xmx:QlfxaPtR1WaPlWwKWzq2eEbOA5dJY4W3jSDNOUljsDxIDIS94ZjMjSM9>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 16 Oct 2025 16:36:14 -0400 (EDT)
+ 16 Oct 2025 16:36:16 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
 Cc: shperetz@nvidia.com, viacheslavo@nvidia.com, bruce.richardson@intel.com,
  mb@smartsharesystems.com, stephen@networkplumber.org,
  Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v7 5/7] app/testpmd: use space separator in dump commands
-Date: Thu, 16 Oct 2025 22:34:43 +0200
-Message-ID: <20251016203557.2554678-6-thomas@monjalon.net>
+Subject: [PATCH v7 6/7] app/testpmd: add commands to dump mbuf history
+Date: Thu, 16 Oct 2025 22:34:44 +0200
+Message-ID: <20251016203557.2554678-7-thomas@monjalon.net>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251016203557.2554678-1-thomas@monjalon.net>
 References: <20250616072910.113042-1-shperetz@nvidia.com>
@@ -95,417 +95,228 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In order to make dump commands look like other commands
-which have keywords separated with space,
-replace these commands:
-	- dump_physmem
-	- dump_socket_mem
-	- dump_memzone
-	- dump_struct_sizes
-	- dump_ring [name]
-	- dump_mempool [name]
-	- dump_devargs
-	- dump_lcores
-	- dump_trace
-	- dump_log_types
-with these ones:
-	- dump physmem
-	- dump socket_mem
-	- dump memzone
-	- dump struct_sizes
-	- dump ring [name]
-	- dump mempool [name]
-	- dump devargs
-	- dump lcores
-	- dump trace
-	- dump log_types
+Dump the mbuf history to the console or to a file.
 
-Both parsing functions (with and without name argument)
-are merged together.
+The dump will contain:
+- Operation history for each mbuf
+- Summary and statistics about all mbufs
 
-The function cmd_dump_init() is removed
-as it seems useless to define tokens at runtime.
+Dump the history of all mbufs:
+	testpmd> dump mbuf history all [file]
 
-Trace is explicitly warned as not supported on Windows,
-because #ifndef in the tokens is not possible with MSVC.
+Dump the history of one mbuf:
+	testpmd> dump mbuf history <mbuf_addr> [file]
 
+Dump the history of one mbuf pool:
+	testpmd> dump mbuf pool history <mp_name> [file]
+
+Signed-off-by: Shani Peretz <shperetz@nvidia.com>
 Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 Acked-by: Morten Brørup <mb@smartsharesystems.com>
 ---
- app/test-pmd/cmdline.c                      | 196 +++++++++-----------
- doc/guides/testpmd_app_ug/testpmd_funcs.rst |  20 +-
- 2 files changed, 99 insertions(+), 117 deletions(-)
+ app/test-pmd/cmdline.c                      | 143 ++++++++++++++++++++
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst |  13 ++
+ 2 files changed, 156 insertions(+)
 
 diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 7803e14bdc..d332236924 100644
+index d332236924..9205bc8573 100644
 --- a/app/test-pmd/cmdline.c
 +++ b/app/test-pmd/cmdline.c
-@@ -266,34 +266,34 @@ static void cmd_help_long_parsed(void *parsed_result,
- 			"show port (port_id) flow_ctrl"
- 			"	Show flow control info of a port.\n\n"
+@@ -40,6 +40,7 @@
+ #include <rte_gro.h>
+ #endif
+ #include <rte_mbuf_dyn.h>
++#include <rte_mbuf_history.h>
+ #include <rte_trace.h>
  
--			"dump_physmem\n"
-+			"dump physmem\n"
- 			"    Dumps all physical memory segment layouts\n\n"
- 
--			"dump_socket_mem\n"
-+			"dump socket_mem\n"
- 			"    Dumps the memory usage of all sockets\n\n"
- 
--			"dump_memzone\n"
-+			"dump memzone\n"
- 			"    Dumps the layout of all memory zones\n\n"
- 
--			"dump_struct_sizes\n"
-+			"dump struct_sizes\n"
- 			"    Dumps the size of all memory structures\n\n"
- 
--			"dump_ring\n"
-+			"dump ring [name]\n"
- 			"    Dumps the status of all or specific element in DPDK rings\n\n"
- 
--			"dump_mempool\n"
-+			"dump mempool [name]\n"
- 			"    Dumps the statistics of all or specific memory pool\n\n"
- 
--			"dump_devargs\n"
-+			"dump devargs\n"
- 			"    Dumps the user device list\n\n"
- 
--			"dump_lcores\n"
-+			"dump lcores\n"
- 			"    Dumps the logical cores list\n\n"
- 
--			"dump_trace\n"
-+			"dump trace\n"
- 			"    Dumps the tracing data to the folder according to the current EAL settings\n\n"
- 
--			"dump_log_types\n"
-+			"dump log_types\n"
+ #include <cmdline_rdline.h>
+@@ -296,6 +297,15 @@ static void cmd_help_long_parsed(void *parsed_result,
+ 			"dump log_types\n"
  			"    Dumps the log level for all the dpdk modules\n\n"
  
++			"dump mbuf history all [file_name]\n"
++			"    Dumps the mbuf history for all mempools\n\n"
++
++			"dump mbuf history <mbuf_addr> [file_name]\n"
++			"    Dumps the history for a specific mbuf (use 0x<address> format)\n\n"
++
++			"dump mbuf pool history <mempool_name> [file_name]\n"
++			"    Dumps the history for a specific mempool\n\n"
++
  			"show port (port_id) speed_lanes capabilities"
-@@ -9085,9 +9085,33 @@ static cmdline_parse_inst_t cmd_cfg_tunnel_udp_port = {
+ 			"	Show speed lanes capabilities of a port.\n\n"
+ 		);
+@@ -9243,6 +9253,135 @@ static cmdline_parse_inst_t cmd_dump_named = {
+ 	},
+ };
  
- /* ******************************************************************************** */
- 
--struct cmd_dump_result {
-+struct cmd_dump_simple_result {
- 	cmdline_fixed_string_t dump;
++struct cmd_dump_mbuf_history_result {
++	cmdline_fixed_string_t dump;
++	cmdline_fixed_string_t mbuf;
++	cmdline_fixed_string_t history;
 +	cmdline_fixed_string_t obj;
 +	cmdline_fixed_string_t name;
- };
-+static cmdline_parse_token_string_t cmd_dump_simple_dump =
-+	TOKEN_STRING_INITIALIZER(struct cmd_dump_simple_result, dump, "dump");
-+static cmdline_parse_token_string_t cmd_dump_simple_obj =
-+	TOKEN_STRING_INITIALIZER(struct cmd_dump_simple_result, obj,
-+		"physmem#"
-+		"socket_mem#"
-+		"memzone#"
-+		"struct_sizes#"
-+		"ring#"
-+		"mempool#"
-+		"devargs#"
-+		"lcores#"
-+		"trace#"
-+		"log_types"
-+);
-+static cmdline_parse_token_string_t cmd_dump_named_obj =
-+	TOKEN_STRING_INITIALIZER(struct cmd_dump_simple_result, obj,
-+		"ring#"
-+		"mempool#"
-+);
-+static cmdline_parse_token_string_t cmd_dump_named_name =
-+	TOKEN_STRING_INITIALIZER(struct cmd_dump_simple_result, name, NULL);
- 
- static void
- dump_struct_sizes(void)
-@@ -9099,7 +9123,6 @@ dump_struct_sizes(void)
- #undef DUMP_SIZE
- }
- 
--
- /* Dump the socket memory statistics on console */
- static void
- dump_socket_mem(FILE *f)
-@@ -9114,7 +9137,6 @@ dump_socket_mem(FILE *f)
- 	static size_t last_allocs;
- 	static size_t last_total;
- 
--
- 	for (i = 0; i < RTE_MAX_NUMA_NODES; i++) {
- 		if (rte_malloc_get_socket_stats(i, &socket_stats) ||
- 		    !socket_stats.heap_totalsz_bytes)
-@@ -9149,113 +9171,74 @@ dump_socket_mem(FILE *f)
- 	last_total = total;
- }
- 
--static void cmd_dump_parsed(void *parsed_result,
--			    __rte_unused struct cmdline *cl,
--			    __rte_unused void *data)
-+static void cmd_dump_simple_parsed(void *parsed_result,
++	cmdline_fixed_string_t addr;
++	cmdline_fixed_string_t file;
++};
++static cmdline_parse_token_string_t cmd_dump_mbuf_history_dump =
++	TOKEN_STRING_INITIALIZER(struct cmd_dump_mbuf_history_result, dump, "dump");
++static cmdline_parse_token_string_t cmd_dump_mbuf_history_mbuf =
++	TOKEN_STRING_INITIALIZER(struct cmd_dump_mbuf_history_result, mbuf, "mbuf");
++static cmdline_parse_token_string_t cmd_dump_mbuf_history_history =
++	TOKEN_STRING_INITIALIZER(struct cmd_dump_mbuf_history_result, history, "history");
++static cmdline_parse_token_string_t cmd_dump_mbuf_history_obj =
++	TOKEN_STRING_INITIALIZER(struct cmd_dump_mbuf_history_result, obj, NULL);
++static cmdline_parse_token_string_t cmd_dump_mbuf_history_pool =
++	TOKEN_STRING_INITIALIZER(struct cmd_dump_mbuf_history_result, obj, "pool");
++static cmdline_parse_token_string_t cmd_dump_mbuf_history_name =
++	TOKEN_STRING_INITIALIZER(struct cmd_dump_mbuf_history_result, name, NULL);
++static cmdline_parse_token_string_t cmd_dump_mbuf_history_file =
++	TOKEN_STRING_INITIALIZER(struct cmd_dump_mbuf_history_result, file, NULL);
++
++static void cmd_dump_mbuf_history_parsed(void *parsed_result,
 +		struct cmdline *cl,
 +		__rte_unused void *data)
- {
--	struct cmd_dump_result *res = parsed_result;
-+	struct cmd_dump_simple_result *res = parsed_result;
- 
--	if (!strcmp(res->dump, "dump_physmem"))
-+	if (strcmp(res->obj, "physmem") == 0)
- 		rte_dump_physmem_layout(stdout);
--	else if (!strcmp(res->dump, "dump_socket_mem"))
-+	else if (strcmp(res->obj, "socket_mem") == 0)
- 		dump_socket_mem(stdout);
--	else if (!strcmp(res->dump, "dump_memzone"))
-+	else if (strcmp(res->obj, "memzone") == 0)
- 		rte_memzone_dump(stdout);
--	else if (!strcmp(res->dump, "dump_struct_sizes"))
-+	else if (strcmp(res->obj, "struct_sizes") == 0)
- 		dump_struct_sizes();
--	else if (!strcmp(res->dump, "dump_ring"))
--		rte_ring_list_dump(stdout);
--	else if (!strcmp(res->dump, "dump_mempool"))
--		rte_mempool_list_dump(stdout);
--	else if (!strcmp(res->dump, "dump_devargs"))
-+	else if (strcmp(res->obj, "ring") == 0) {
-+		if (strcmp(res->name, "") == 0) {
-+			rte_ring_list_dump(stdout);
-+		} else {
-+			struct rte_ring *r;
-+			r = rte_ring_lookup(res->name);
-+			if (r == NULL) {
-+				cmdline_printf(cl, "Cannot find ring\n");
-+				return;
-+			}
-+			rte_ring_dump(stdout, r);
++{
++	struct cmd_dump_mbuf_history_result *res = parsed_result;
++	FILE *out = stdout;
++
++	if (strcmp(res->file, "") != 0) {
++		out = fopen(res->file, "w");
++		if (out == NULL) {
++			cmdline_printf(cl,
++					"Failed to open file '%s'\n",
++					res->file);
++			return;
 +		}
-+	} else if (strcmp(res->obj, "mempool") == 0) {
-+		if (strcmp(res->name, "") == 0) {
-+			rte_mempool_list_dump(stdout);
-+		} else {
-+			struct rte_mempool *mp;
-+			mp = rte_mempool_lookup(res->name);
-+			if (mp == NULL) {
-+				cmdline_printf(cl, "Cannot find mempool\n");
-+				return;
-+			}
-+			rte_mempool_dump(stdout, mp);
++	}
++
++	if (strcmp(res->obj, "all") == 0) {
++		rte_mbuf_history_dump_all(out);
++		if (out != stdout)
++			cmdline_printf(cl,
++					"Dump written in '%s'\n",
++					res->file);
++	} else if (strcmp(res->obj, "pool") == 0) {
++		struct rte_mempool *mp = rte_mempool_lookup(res->name);
++		if (mp == NULL) {
++			cmdline_printf(cl,
++					"Failed to find mempool '%s'\n",
++					res->name);
++			return;
 +		}
-+	} else if (strcmp(res->obj, "devargs") == 0)
- 		rte_devargs_dump(stdout);
--	else if (!strcmp(res->dump, "dump_lcores"))
-+	else if (strcmp(res->obj, "lcores") == 0)
- 		rte_lcore_dump(stdout);
--#ifndef RTE_EXEC_ENV_WINDOWS
--	else if (!strcmp(res->dump, "dump_trace"))
-+	else if (strcmp(res->obj, "trace") == 0)
-+#ifdef RTE_EXEC_ENV_WINDOWS
-+		cmdline_printf(cl, "trace is not supported on Windows\n");
-+#else
- 		rte_trace_save();
- #endif
--	else if (!strcmp(res->dump, "dump_log_types"))
-+	else if (strcmp(res->obj, "log_types") == 0)
- 		rte_log_dump(stdout);
- }
++		rte_mbuf_history_dump_mempool(out, mp);
++		if (out != stdout)
++			cmdline_printf(cl,
++					"Dump for mempool '%s' written in '%s'\n",
++					res->name, res->file);
++	} else {
++		struct rte_mbuf *mbuf;
++		uintptr_t mbuf_addr;
++		if (sscanf(res->obj, "0x%" SCNxPTR, &mbuf_addr) != 1) {
++			cmdline_printf(cl,
++					"Invalid mbuf pointer format. Use 0x<address>\n");
++			return;
++		}
++		mbuf = (struct rte_mbuf *)mbuf_addr;
++		rte_mbuf_history_dump(out, mbuf);
++		if (out != stdout)
++			cmdline_printf(cl,
++					"Dump for mbuf '%p' written in '%s'\n",
++					mbuf, res->file);
++	}
++
++	if (out != stdout)
++		fclose(out);
++}
++
++static cmdline_parse_inst_t cmd_dump_mbuf_history_stdout = {
++	.f = cmd_dump_mbuf_history_parsed,
++	.help_str = "dump mbuf history all|<address>",
++	.tokens = {
++		(void *)&cmd_dump_mbuf_history_dump,
++		(void *)&cmd_dump_mbuf_history_mbuf,
++		(void *)&cmd_dump_mbuf_history_history,
++		(void *)&cmd_dump_mbuf_history_obj,
++		NULL,
++	},
++};
++static cmdline_parse_inst_t cmd_dump_mbuf_history_to_file = {
++	.f = cmd_dump_mbuf_history_parsed,
++	.help_str = "dump mbuf history all|<address> [file]",
++	.tokens = {
++		(void *)&cmd_dump_mbuf_history_dump,
++		(void *)&cmd_dump_mbuf_history_mbuf,
++		(void *)&cmd_dump_mbuf_history_history,
++		(void *)&cmd_dump_mbuf_history_obj,
++		(void *)&cmd_dump_mbuf_history_file,
++		NULL,
++	},
++};
++static cmdline_parse_inst_t cmd_dump_mbuf_pool_history_stdout = {
++	.f = cmd_dump_mbuf_history_parsed,
++	.help_str = "dump mbuf pool history <name>",
++	.tokens = {
++		(void *)&cmd_dump_mbuf_history_dump,
++		(void *)&cmd_dump_mbuf_history_mbuf,
++		(void *)&cmd_dump_mbuf_history_pool,
++		(void *)&cmd_dump_mbuf_history_history,
++		(void *)&cmd_dump_mbuf_history_name,
++		NULL,
++	},
++};
++static cmdline_parse_inst_t cmd_dump_mbuf_pool_history_to_file = {
++	.f = cmd_dump_mbuf_history_parsed,
++	.help_str = "dump mbuf pool history <name> [file]",
++	.tokens = {
++		(void *)&cmd_dump_mbuf_history_dump,
++		(void *)&cmd_dump_mbuf_history_mbuf,
++		(void *)&cmd_dump_mbuf_history_pool,
++		(void *)&cmd_dump_mbuf_history_history,
++		(void *)&cmd_dump_mbuf_history_name,
++		(void *)&cmd_dump_mbuf_history_file,
++		NULL,
++	},
++};
++
+ /* *** Filters Control *** */
  
--static cmdline_parse_token_string_t cmd_dump_dump =
--	TOKEN_STRING_INITIALIZER(struct cmd_dump_result, dump,
--		"" /* defined at init */);
--
--static void
--cmd_dump_init(void)
--{
--	cmd_dump_dump.string_data.str =
--		"dump_physmem#"
--		"dump_memzone#"
--		"dump_socket_mem#"
--		"dump_struct_sizes#"
--		"dump_ring#"
--		"dump_mempool#"
--		"dump_devargs#"
--		"dump_lcores#"
--#ifndef RTE_EXEC_ENV_WINDOWS
--		"dump_trace#"
--#endif
--		"dump_log_types";
--}
--
--static cmdline_parse_inst_t cmd_dump = {
--	.f = cmd_dump_parsed,  /* function to call */
--	.data = NULL,      /* 2nd arg of func */
--	.help_str = "Dump status",
--	.tokens = {        /* token list, NULL terminated */
--		(void *)&cmd_dump_dump,
-+static cmdline_parse_inst_t cmd_dump_simple = {
-+	.f = cmd_dump_simple_parsed,
-+	.help_str = "Dump objects",
-+	.tokens = {
-+		(void *)&cmd_dump_simple_dump,
-+		(void *)&cmd_dump_simple_obj,
- 		NULL,
- 	},
- };
--
--/* ******************************************************************************** */
--
--struct cmd_dump_one_result {
--	cmdline_fixed_string_t dump;
--	cmdline_fixed_string_t name;
--};
--
--static void cmd_dump_one_parsed(void *parsed_result, struct cmdline *cl,
--				__rte_unused void *data)
--{
--	struct cmd_dump_one_result *res = parsed_result;
--
--	if (!strcmp(res->dump, "dump_ring")) {
--		struct rte_ring *r;
--		r = rte_ring_lookup(res->name);
--		if (r == NULL) {
--			cmdline_printf(cl, "Cannot find ring\n");
--			return;
--		}
--		rte_ring_dump(stdout, r);
--	} else if (!strcmp(res->dump, "dump_mempool")) {
--		struct rte_mempool *mp;
--		mp = rte_mempool_lookup(res->name);
--		if (mp == NULL) {
--			cmdline_printf(cl, "Cannot find mempool\n");
--			return;
--		}
--		rte_mempool_dump(stdout, mp);
--	}
--}
--
--static cmdline_parse_token_string_t cmd_dump_one_dump =
--	TOKEN_STRING_INITIALIZER(struct cmd_dump_one_result, dump,
--				 "dump_ring#dump_mempool");
--
--static cmdline_parse_token_string_t cmd_dump_one_name =
--	TOKEN_STRING_INITIALIZER(struct cmd_dump_one_result, name, NULL);
--
--static cmdline_parse_inst_t cmd_dump_one = {
--	.f = cmd_dump_one_parsed,  /* function to call */
--	.data = NULL,      /* 2nd arg of func */
--	.help_str = "dump_ring|dump_mempool <name>: Dump one ring/mempool",
--	.tokens = {        /* token list, NULL terminated */
--		(void *)&cmd_dump_one_dump,
--		(void *)&cmd_dump_one_name,
-+static cmdline_parse_inst_t cmd_dump_named = {
-+	.f = cmd_dump_simple_parsed,
-+	.help_str = "dump ring|mempool <name>: Dump one ring/mempool",
-+	.tokens = {
-+		(void *)&cmd_dump_simple_dump,
-+		(void *)&cmd_dump_named_obj,
-+		(void *)&cmd_dump_named_name,
- 		NULL,
- 	},
- };
-@@ -14035,8 +14018,8 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
- 	&cmd_config_rss_hash_key,
- 	&cmd_config_rss_hash_algo,
+ #define IPV4_ADDR_TO_UINT(ip_addr, ip) \
+@@ -14020,6 +14159,10 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
  	&cmd_cleanup_txq_mbufs,
--	&cmd_dump,
--	&cmd_dump_one,
-+	&cmd_dump_simple,
-+	&cmd_dump_named,
+ 	&cmd_dump_simple,
+ 	&cmd_dump_named,
++	&cmd_dump_mbuf_history_stdout,
++	&cmd_dump_mbuf_history_to_file,
++	&cmd_dump_mbuf_pool_history_stdout,
++	&cmd_dump_mbuf_pool_history_to_file,
  	&cmd_flow,
  	&cmd_show_port_meter_cap,
  	&cmd_add_port_meter_profile_srtcm,
-@@ -14169,7 +14152,6 @@ init_cmdline(void)
- 	/* initialize non-constant commands */
- 	cmd_set_fwd_mode_init();
- 	cmd_set_fwd_retry_mode_init();
--	cmd_dump_init();
- 
- 	count = 0;
- 	for (i = 0; builtin_ctx[i] != NULL; i++)
 diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index 24e1cb05f7..23a4a86cc3 100644
+index 23a4a86cc3..e423abd40e 100644
 --- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
 +++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -569,70 +569,70 @@ dump physmem
+@@ -634,6 +634,19 @@ Dumps the log level for all the dpdk modules::
  
- Dumps all physical memory segment layouts::
+    testpmd> dump log_types
  
--   testpmd> dump_physmem
-+   testpmd> dump physmem
- 
- dump memzone
- ~~~~~~~~~~~~
- 
- Dumps the layout of all memory zones::
- 
--   testpmd> dump_memzone
-+   testpmd> dump memzone
- 
- dump socket memory
- ~~~~~~~~~~~~~~~~~~
- 
- Dumps the memory usage of all sockets::
- 
--   testpmd> dump_socket_mem
-+   testpmd> dump socket_mem
- 
- dump struct size
- ~~~~~~~~~~~~~~~~
- 
- Dumps the size of all memory structures::
- 
--   testpmd> dump_struct_sizes
-+   testpmd> dump struct_sizes
- 
- dump ring
- ~~~~~~~~~
- 
- Dumps the status of all or specific element in DPDK rings::
- 
--   testpmd> dump_ring [ring_name]
-+   testpmd> dump ring [ring_name]
- 
- dump mempool
- ~~~~~~~~~~~~
- 
- Dumps the statistics of all or specific memory pool::
- 
--   testpmd> dump_mempool [mempool_name]
-+   testpmd> dump mempool [mempool_name]
- 
- dump devargs
- ~~~~~~~~~~~~
- 
- Dumps the user device list::
- 
--   testpmd> dump_devargs
-+   testpmd> dump devargs
- 
- dump lcores
- ~~~~~~~~~~~
- 
- Dumps the logical cores list::
- 
--   testpmd> dump_lcores
-+   testpmd> dump lcores
- 
- dump trace
- ~~~~~~~~~~
- 
- Dumps the tracing data to the folder according to the current EAL settings::
- 
--   testpmd> dump_trace
-+   testpmd> dump trace
- 
- dump log types
- ~~~~~~~~~~~~~~
- 
- Dumps the log level for all the dpdk modules::
- 
--   testpmd> dump_log_types
-+   testpmd> dump log_types
- 
++dump mbuf history
++~~~~~~~~~~~~~~~~~
++
++The mbuf history is tracked
++if enabled at compilation with ``RTE_MBUF_HISTORY_DEBUG``.
++
++This tracking can be displayed or saved to a file
++for all mbufs or specific ones selected by pointer or mempool name::
++
++   testpmd> dump mbuf history all [file]
++   testpmd> dump mbuf history <mbuf_addr> [file]
++   testpmd> dump mbuf pool history <mp_name> [file]
++
  show (raw_encap|raw_decap)
  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
 -- 
 2.51.0
 
