@@ -2,75 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 960A1CCD194
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 08:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94397CCD183
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Oct 2025 08:08:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E4BD4402D6;
-	Thu, 16 Oct 2025 10:05:39 +0200 (CEST)
-Received: from mail-wm1-f100.google.com (mail-wm1-f100.google.com
- [209.85.128.100])
- by mails.dpdk.org (Postfix) with ESMTP id ACEE6402D6
- for <dev@dpdk.org>; Thu, 16 Oct 2025 10:05:38 +0200 (CEST)
-Received: by mail-wm1-f100.google.com with SMTP id
- 5b1f17b1804b1-46e37d10ed2so3002645e9.2
- for <dev@dpdk.org>; Thu, 16 Oct 2025 01:05:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1760601938; x=1761206738; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=zTPoXrrja3eS1W8OYddjdqcxRb5htzHobSy4Qaa3pDY=;
- b=WjJFn9lAurF5Fb8h4a9fbn0emhTk6oT7nNiZ0m5K4xmpk1ExNFUISo4BmqFKsILfWO
- Yxo8VhifY5zVzUxCccR5iedn+xSuZsrOwB6KYjVVWzN20Us1XSq2iSEMXDQMGMHp4DZy
- XBZkl94nObFapKKwKaPMzk7siRBI65bo4KOakNDb4lsiQan1aAt/RYIJL6XsaZvkkD3e
- 6tqQgg/4MXsXOcs1iBxp/KxCIz9F7Q4jFGU2pRSpwxM4qKc4/y1MYfMA+Z9BShpBgH5Z
- SOwB9UxdbnRc++gYRXWYNc5EtqVV783Z0K0/VbiNQojZdkh39fUsO0qo5QNdqbddBef8
- AZJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760601938; x=1761206738;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=zTPoXrrja3eS1W8OYddjdqcxRb5htzHobSy4Qaa3pDY=;
- b=UWsnfSinj2s34XVNWa0jBBm3m2os1YJwJs9KsLpVFtVBa28pKqhzPenrRIdA4nQeIS
- gENjuPdXtUHfCvaB1C0LRtKKZWuBjf6a2P2cHBuJT+XL23M44F6QOVQ+5M1+vt0w19wa
- mXhFtI7yp/qi0H+jbFQQaQ2sOHChNMyCiq/F7kEt1QrNswY5kS7DSX49yvZiB6RGeKkG
- n7tNgXp2WMVx89LkMbysXx2Wk7WQKTUz5e7yzDvdcek4X884WM0Mq+n294kauXQEUJbt
- RqIjiR/mKLz7YeARkmrsWtqv94XziWB9yrQnFKRuQ+BHDBmWvSozOmQzFYmEIFe3d3bh
- jEzg==
-X-Gm-Message-State: AOJu0YxF5AFWWThWEW5aiIAVD1Qz7YNo3DvFvPyScvMgh7sJO/lHMFA/
- zLqyiJfqi747mkts6bC7b6fvYd6G/F4Fj9sqbNJb9R2EM0CKWPLWHxz3hFHf4VwVHfy3pB8KcZc
- 4VRFbJoSK6us55rJhEYlYlCZi6iJCSGZUtuk=
-X-Gm-Gg: ASbGncvkf2Vo0Cgpukw0uTIxZlGTShMsjyV3Hjc8F4aR9AMhbbGKimRIEhkmZWRsrM8
- jYkmT0quhfMVbA2IkSN2FD/aFZsFvwWhwPZ4xUaOoIb5N4BbV3wJhTXXNTzb+228g4WtskFLf2R
- PukDrIkAWl18wfRc0PKUWj2MXqrWqTiTlfDB3wxmGMub/6/ZDibwd6O6qDDIPCBp3pHyQbYn9yP
- Y/fDPE3K7txLEpmwZ6suqpkjLs6ls7L3OMI1G5qlE3rJlzcSYeOoZVb7rPxgdrzaldA+KmAewlz
- KAHAmMt53+dx2eP3mlzCrjfQE0oa1cFn4QD6miMf+QH1mcn/hzaRSL/2gHrNev3kHOagOWmP2G1
- jQ68eDC8ZFJR2RuKehWqX3aDMk+qp07hCSLtTXQzAVouX8hDUMc/aXw==
-X-Google-Smtp-Source: AGHT+IErG+Dy67gqvk5kqBCTNZ6vCnNlL9m/cxKtssAo/ImAxNQ/igUWWZ1pSaPS04/JoYmxO0Htud5G/ZtL
-X-Received: by 2002:a05:600d:41ee:b0:471:152a:e566 with SMTP id
- 5b1f17b1804b1-471152ae95fmr2243225e9.13.1760601938068; 
- Thu, 16 Oct 2025 01:05:38 -0700 (PDT)
-Received: from smtpservice.6wind.com ([185.13.181.2])
- by smtp-relay.gmail.com with ESMTP id
- 5b1f17b1804b1-47114459d3esm324955e9.13.2025.10.16.01.05.37; 
- Thu, 16 Oct 2025 01:05:38 -0700 (PDT)
-X-Relaying-Domain: 6wind.com
-Received: from localhost (vader.dev.6wind.com [10.17.1.39])
- by smtpservice.6wind.com (Postfix) with ESMTP id BE99F11FAC;
- Thu, 16 Oct 2025 10:05:37 +0200 (CEST)
-From: Thierry Herbelot <thierry.herbelot@6wind.com>
-To: dev@dpdk.org
-Cc: Thierry Herbelot <thierry.herbelot@6wind.com>,
- Thomas Monjalon <thomas@monjalon.net>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>, stable@dpdk.org,
- Olivier Matz <olivier.matz@6wind.com>
-Subject: [PATCH] config/arm: fix inconsistency for Neoverse N2
-Date: Thu, 16 Oct 2025 10:05:33 +0200
-Message-Id: <20251016080533.535266-1-thierry.herbelot@6wind.com>
-X-Mailer: git-send-email 2.39.2
+	by mails.dpdk.org (Postfix) with ESMTP id E166340684;
+	Thu, 16 Oct 2025 10:08:30 +0200 (CEST)
+Received: from fhigh-b2-smtp.messagingengine.com
+ (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+ by mails.dpdk.org (Postfix) with ESMTP id A1049402C3
+ for <dev@dpdk.org>; Thu, 16 Oct 2025 10:08:29 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id BC4807A0083;
+ Thu, 16 Oct 2025 04:08:28 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-02.internal (MEProxy); Thu, 16 Oct 2025 04:08:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1760602108;
+ x=1760688508; bh=rmSLtW50DCiMVBsx1jtGRfhViPVCLmfUcXJ4UHjRZXo=; b=
+ Qdo8sAnUXmmjEGeVbNrKqwCQhlvA0+nwE7Mm0Ez69R1ANDo78tSWvqmJGi80mNhz
+ 2/7Ce0VqkLqFsycP9n9luSO4gUwcsb2XV51LuuxQ+gIDPS4ICSmJtrwK6G5E9yh9
+ Da+HX9GY5VGT4L+ryhobBlgHWGh3BvzqJd+YzFliEKD5KBxEmZq2NQQeC3a0sfMu
+ E3MKc65v3RQaWYR4vE+hQWRVNp0SyEotUhCuLT8XqCT22wrTTe71X0Cz9JRAplDH
+ +mkz8/fixeOqgETpP/LMjKynMo4RcwWB06bKI1zkNKIS80yO/umou+VTkuMEZW9X
+ oeZtXbe6i9LRd3feEpcZ+Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760602108; x=
+ 1760688508; bh=rmSLtW50DCiMVBsx1jtGRfhViPVCLmfUcXJ4UHjRZXo=; b=f
+ qROCsvbViC9ELmoDFTfvMYBYRoqonCPE/6aTlXkHx1h644BlCzr3oxOeGIYWi6oQ
+ rehQsnk4QwwIYh0GL84HgwbzxQlFoNQUDRRnz0zE+qeg1mMOfEZwSrfiUDx78G5z
+ Elja22afhI/cFO1C1xPIoRAKpOW+tr1aeP800S6WeIGVeJ3qix/RBsqV0bdMIVJ+
+ 59Z0lanPeZ9OjH4HsF7/o4pdj5FNm5669ISCak0v/VlI2NCAygoS54Ohj1+a5u7w
+ ARbv4+p4XMk5U6lD4pel/cW6QdU1NRwKiPn5xba83laLoRlkfz0yiotcaARYtnfH
+ EbVjDLqHZl4+wNIR/v+VQ==
+X-ME-Sender: <xms:_KfwaLwRCWGkBPN1Rqk5wT1TU5BgVCMAYD2lHwuOMlWEwCtOOik40Q>
+ <xme:_KfwaOOTS2eFea--gspebS51z9TISQDM8HkrnZosBJMbcBdDCOp8xpfbiBEeb2hln
+ FAGv6O-VsuS3iF6VmMf3i5AnPS8Mfe0OVxYSsV-4YY0wtpVuspc7tQ>
+X-ME-Received: <xmr:_KfwaEVgWB_KX25p3bhFBNiCdu02I9R5WgEvDMymzMCgEl_5ypxrMJlwr-PzOmiaQAhctSpH2MQbCNVOQXdJsBLicg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdehjeekucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehnkhhishhhohhrsehmrghrvhgvlhhlrd
+ gtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepshgrtghh
+ ihhnrdhsrgigvghnrgesnhigphdrtghomhdprhgtphhtthhopehhvghmrghnthdrrghgrh
+ grfigrlhesnhigphdrtghomhdprhgtphhtthhopehshhhrvgihrghnshhhrdhjrghinhes
+ nhigphdrtghomhdprhgtphhtthhopehjvghrihhnjhesmhgrrhhvvghllhdrtghomhdprh
+ gtphhtthhopegrshgvkhhhrghrsehmrghrvhgvlhhlrdgtohhm
+X-ME-Proxy: <xmx:_KfwaK3_iFMvaoBusPWB4O9Wg02CgvbgExkzCLqHV8KLjcowpQOnqA>
+ <xmx:_KfwaKomykvsxeyE_2kZ6yjukINcBbB65uw3HnoY8t_-kNwjVkl1zw>
+ <xmx:_KfwaJWgNoPdocDKkyOAT5jKa6HBnVeRTCHOFhrmOD1UUImmWYC1EQ>
+ <xmx:_KfwaNYRmXlrt80pI_nynpsz4tT5-IuXCmtdB7fUKIJhw9MVM8o9dA>
+ <xmx:_KfwaAsScQuvde3Y6_j90RCJXm6HdUVhHX_G47xYwDKm6_qRw3yKjRV4>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 16 Oct 2025 04:08:27 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Nawal Kishor <nkishor@marvell.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Sachin Saxena <sachin.saxena@nxp.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Shreyansh Jain <shreyansh.jain@nxp.com>, Jerin Jacob <jerinj@marvell.com>,
+ Ashwin Sekhar T K <asekhar@marvell.com>
+Subject: Re: [PATCH] rawdev: fix device ID retrieval function prototype
+Date: Thu, 16 Oct 2025 10:08:24 +0200
+Message-ID: <3733472.U7HbjWM52l@thomas>
+In-Reply-To: <DS0PR18MB52705A2144204E371DDC6EC4B2E9A@DS0PR18MB5270.namprd18.prod.outlook.com>
+References: <20250924055654.1986682-1-nkishor@marvell.com>
+ <2509677.g5d078U9FE@thomas>
+ <DS0PR18MB52705A2144204E371DDC6EC4B2E9A@DS0PR18MB5270.namprd18.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,28 +95,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Configuration for hex code '0xd49' enables two NUMA nodes.
-Then, the corresponding 'soc_n2' should allow 'numa'.
+16/10/2025 08:56, Nawal Kishor:
+> 
+> >> Fixed rte_rawdev_get_dev_id() function prototype and its usage.
+> >
+> >What? Why?
+> 
+> >[...]
+> >> -uint16_t
+> >> +int
+> >>  rte_rawdev_get_dev_id(const char *name);
+> 
+> >Other functions handle dev_id as uint16_t, so why changing this function?
+> 
+> The spec says that rte_rawdev_get_dev_id() returns negative number in case of failure.
+> But in the definition it is returning uint16_t which will never be negative, hence changed it to int.
+> 
+> If this is not acceptable, what fix will you suggest?
 
-Fixes: ea85ed1f6882 ("config/arm: increase nodes and cores for Neoverse N2")
-Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
----
- config/arm/meson.build | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You should change to int16_t for all rawdev id parameters.
 
-diff --git a/config/arm/meson.build b/config/arm/meson.build
-index 665f3fa38fcf..316f23941996 100644
---- a/config/arm/meson.build
-+++ b/config/arm/meson.build
-@@ -590,7 +590,7 @@ soc_n2 = {
-     'description': 'Arm Neoverse N2',
-     'implementer': '0x41',
-     'part_number': '0xd49',
--    'numa': false
-+    'numa': true
- }
- 
- soc_n3 = {
--- 
-2.39.2
 
