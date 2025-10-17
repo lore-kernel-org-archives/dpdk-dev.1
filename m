@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 898A7CCD184
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 04:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC9BCCD199
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 04:49:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 75753427B9;
-	Fri, 17 Oct 2025 06:49:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0296842D35;
+	Fri, 17 Oct 2025 06:49:13 +0200 (CEST)
 Received: from AM0PR02CU008.outbound.protection.outlook.com
- (mail-westeuropeazon11013042.outbound.protection.outlook.com [52.101.72.42])
- by mails.dpdk.org (Postfix) with ESMTP id B6A13427AF
- for <dev@dpdk.org>; Fri, 17 Oct 2025 06:49:09 +0200 (CEST)
+ (mail-westeuropeazon11013018.outbound.protection.outlook.com [52.101.72.18])
+ by mails.dpdk.org (Postfix) with ESMTP id C06E4427B9
+ for <dev@dpdk.org>; Fri, 17 Oct 2025 06:49:10 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UCNtjCSLtLWgOMoDX5ygfsyJ6ABMPLd+L9b9VY5k9hGon9qt0TWmpt0DvjVzTDyVXF7MXvxKbaq5mmir3PqguRp8B8YBnBOcb0NewYbKgRAmslcBB5S6j7uhbGW8II6RxGW+12wq5CZd3O44Fs5tdLPj7w9ZdOD00K3zHrU0Zf6bXd0NgYexgcp6Wno3j5TANHOd0GyFFMXAIXuk+vg6iKE4hnhu53N2Iw24S/RlW2EW7iq+3EDKRZ5KUb8ku27j43oA9tMKY59/4Je/0/XQgGue+cruVuX+FpJM7HYSZp6Kt3wQua9op7KyDiSup5jAlEP22IBn6rLR103J9BKB4Q==
+ b=aqCLC8zGMzcp+8uxZppPZjR29reNxCpEZSPMF/BxBQspJDqRnTycucWWxjcnDjfA57+yC1CXmAWptnQcDiDJHdc+CrkcFvsU8A15nHAz2zt11Q1sZXxw/QgUFuBafFKRoxbmy3c5q58kZm8yl3a2qqEma3xJiX5dO/TZPOTLcw/bH1XukDJoJvw+szenPb65tQGUw8OfKBq1KWCZZKwLs+7mFk9FbH0Dp2/pcQmfy/nqvYysZuQhchaaVT9Kv9pYS1+ikDf40n+aaOAwExSm8sX7Jz5gGfqPiM0Quxvdxyn7jOv/FtkzB401eqK/wv6ioNP57HKR5rWJ64Ofjbu50A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jZr/19TFzzx3eM4bOjg1db9PChjfTAPXjIFLO8dLYtc=;
- b=RiQEyluKc5r2oljK2daWlwCsxuxVVFVaoQrSPcWYmUoe3Vj1kroFnjRbaUtnhR8xzwCZP36hjZ/Jf2cbmkkr+97/xCzkhCr9V9gdtKkp3veS0dmOSuqIfMuq4nYm2dnrgqgUayF1EMgnJqs7SXc5OT1yqACfDdjQ3T/V+D5k+bRchyAi8BDA62z30MrHU5CzMpcSVHGwvUJQOx9iLD+AqQEC3yjJSw4FhHBOvNKxBd4GVJRzK2IBqD6wkf3ICuuySVCCEYWAH+m2eBQSFmnM+MZdv4Y6bVjbtiZG136ikXRDaLZcrj7IIvwnos5ObTkxbci0gBPAHmU/6v1pT3RhEg==
+ bh=oYvQnSQI3VKXeMJkPowqtV84IRNJ6RyrNEI4pN3ayPU=;
+ b=RadXVjCCEJKeITeamXi8orlqeHYni/hIP2xMTXboJl0Xg8AmreV/vT8HmqCHfPS/oBh7V1+/AJ+ASNiIiM4HT8tKLgSfp7wokRI33CKkzNrFTetmprX6sqNrVR0WDajYv3cvrJXsC8QpAsVD9Leq6y4w2O63luzhNI//cEXhowEjGjFDv/35FR9dkMHw37Hx+bypQTHBFWYlUGgMno+K94FDh2l3Wb+/xJerHXqC5m6/DAwgryrBSsQTkZKeUzRGkrjjT0pTC4ufCi39VUVe5t/tF5cecbMAoBDEyK30bKT6FDmN5uny0mSs7IhPVmBGO/+z87CrnPylUhtJgaDROQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jZr/19TFzzx3eM4bOjg1db9PChjfTAPXjIFLO8dLYtc=;
- b=VcWW8nF/Q7WbC/sLTFlWTknEoHc1YeJg7QMOCE49vsG6S9qON2NgwBKAeeMHWUT6Km80cYRwDFiy068inS8dJxv36JrgKe5Xwdp2OuiXdg94qBe/V0WZSln5KSHhCB64Qh/imw2ixxgs3MBHKKWuxR30NS9qu+kfL+9Lpqnpik/NaIPsS7OUUTgQcEfoVyxiK1dt4iQiv4WDzY2nXjLe3mRi2doHlWcHAShwrWPPBwVmSh1/zoKId49bpcfV0wC29PpbVValiQ/NyRowP1mT8ECPMRiD8S6oidB2uWsYILTZRPvXCNoNRnaT8YA07CtLpjDJjhgxFR30mdKvhV/UZg==
+ bh=oYvQnSQI3VKXeMJkPowqtV84IRNJ6RyrNEI4pN3ayPU=;
+ b=JP9la+f0V9TDZ9e4JmF/iS12oy+k/bsrX4sm13HVQSxSo3FCgX8Z75d9BDcOrEA0UIPg/OIs/REyAauebFrCtbrhaUXNCsuh9rH+/hNra5X3/zozwS0Qr5ASpLPhZMoNSEgmdQmY/xQXWPCFur0oNFBO7xWPtIoDhD+hFAwOTCsRNpb+O/7rnyGC3sOO3AqIOdKrTTpGSsDPJglCzP6lW7HLoX11PMVvBTRl9Z4p3EEE3IcRID7rBcgUcMRcn3ivLJS62242bD67+qeFFe5JBofMoRYDCKMsBkSTcZjnTDJASW5LdTbETqE1G7rujVjbomtTLvoYHvhNNkaTBJAhPw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com (2603:10a6:20b:3b0::14)
  by PAXPR04MB8254.eurprd04.prod.outlook.com (2603:10a6:102:1cd::24)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Fri, 17 Oct
- 2025 04:49:05 +0000
+ 2025 04:49:09 +0000
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::c52d:9751:36a3:78f9]) by AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::c52d:9751:36a3:78f9%6]) with mapi id 15.20.9228.012; Fri, 17 Oct 2025
- 04:49:05 +0000
+ 04:49:09 +0000
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Geoff Thorpe <geoff.thorpe@nxp.com>,
- Shreyansh Jain <shreyansh.jain@nxp.com>, Roy Pledge <roy.pledge@nxp.com>
-Subject: [PATCH v5 1/6] bus/dpaa: fix and add FQ shutdown
-Date: Fri, 17 Oct 2025 10:18:43 +0530
-Message-Id: <20251017044848.3269627-2-g.singh@nxp.com>
+ Sachin Saxena <sachin.saxena@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH v5 3/6] net/dpaa: Support IEEE1588 by timesync API
+Date: Fri, 17 Oct 2025 10:18:45 +0530
+Message-Id: <20251017044848.3269627-4-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20251017044848.3269627-1-g.singh@nxp.com>
 References: <20251017044256.3264737-1-g.singh@nxp.com>
@@ -55,78 +55,78 @@ X-ClientProxiedBy: SI1PR02CA0023.apcprd02.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS8PR04MB8198:EE_|PAXPR04MB8254:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4707eb60-9b2f-4ffd-8832-08de0d388032
+X-MS-Office365-Filtering-Correlation-Id: 8aca1a44-8c1e-4fe0-9746-08de0d3882b2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|1800799024|376014|19092799006|52116014|366016|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?bnzdHVTl2Pg2049+DOf8EvBoq4Nf36aDT0dbfTiDMruvXMLYwqsdYlYFV3VU?=
- =?us-ascii?Q?iESscUe1Jp6KTKl26Io9EF/MGCwE834GBn/PP/ubvCdGHLg9WbINJ0nwMiel?=
- =?us-ascii?Q?FR+FJwfxBq16VsbIGgIb3WJv5i2/BNSSHobYCVMdZgIiUEt6e7NjGfzmbgLC?=
- =?us-ascii?Q?A8qLcfxZl460m1dP6ZSTxCpGFEH5p2CIwUbA2Fv3Vb2HBN8YnRFyo/RVHZxg?=
- =?us-ascii?Q?1J6+j7N7Dgl4qAJzyQogI8ply9l0u5gVqPozF50Gv60iwsLB1bAXWH8xAjzN?=
- =?us-ascii?Q?vzJbXKsuopZ0m26dndiIffKEjFC1lHa+UwlP2coqa1FzqHXAoLjHeWMe2KKK?=
- =?us-ascii?Q?S0AbMYvcz/qijjMd7n2huH1aR/hX3Pp8XfFzp9NbsntvS3vggbdcddsU2QBG?=
- =?us-ascii?Q?vPQIrFj28O/g/LNGgsGblSueoM5Or0Hh92UmIuNT+4ahAh8F1dSicY3SByiy?=
- =?us-ascii?Q?wuDptU3Kcfn8jtD1bhfT03S+nYNz8EWOcuYHp8ExJM9cop/vwbDNmM5skayM?=
- =?us-ascii?Q?Zt1xLIEdCAGGe7o9ESq9k95Aok14tan4MoJ3Fn7+er7hHEMZwsLSxLN2LSRJ?=
- =?us-ascii?Q?882of2KkpTDFF0GjfF+o+vuLgE8cM0iovlz4jBMlJoT5rzm6IvMx3J2w5Hat?=
- =?us-ascii?Q?5hzG8QKyd9HnsQ8OBEE+htBXDLq7HyLLBWECTQdXGnIaFGqxb7McdgJdnGgU?=
- =?us-ascii?Q?lperMDFd8xwFEAs4CJBdDsPRh1uJB3IemgzM6a6KlhcMwcwT6RWFkST6Awyx?=
- =?us-ascii?Q?nwHuf5cJ/XLguZtuJ0Sd17gVHIv3+uKj3aIbHlrr/Jcbs96Wvoq+VgEjnrTS?=
- =?us-ascii?Q?peyAvV71bt79EL+8grqAqtBO2W3/rciwoQHXuck6PIG9maIVw7pRW+DB4unk?=
- =?us-ascii?Q?YlvG4ZAled/BqEVwTrIuViFqACGL+co6AzyUreoelg8rUcHDXY7OUTJ/akFR?=
- =?us-ascii?Q?QIVqEtOg9XC1MdRmKH6wsTswjiFgUfBEqd4YNs4HLAmmLIe2lUNv6i22VIjM?=
- =?us-ascii?Q?5rBP5BvqKBw9J1HQBIxC1Y/yttD0n0KIuc1uSCn/0v6EUZzenZAENGYsitph?=
- =?us-ascii?Q?mnD8s80fuenMAfBui3hlWVMH2skMFInW3hJec/Oiv2wNmeg6El9pukhplFe1?=
- =?us-ascii?Q?2pdyiAkTUEtBU7EnLJTJ44rIiB1L2lITFiUkxv+qZED99atQ1pNLqx5dLe9w?=
- =?us-ascii?Q?orT6IDT0eREzknzLBDTp+aE8ArWdSTILETn3A3GAkFEN3i7cksWZA/RS2Egl?=
- =?us-ascii?Q?vg93UcWK2+Z8s9PQYcxDofkHPQSKqToHmnYFh3rHLl4aE7ANyAGtiUuQ6GaX?=
- =?us-ascii?Q?3oU2bjHVU/FbZBZgQU64BR2kL+T08vW2RvyEM29U1spczThmNZgdgJPXVF2W?=
- =?us-ascii?Q?HicIpiPD2VzLthXCPVUun3O8cYKRnbsMhnA21GVQ0hb3Qkkha69Fc8AUa4C+?=
- =?us-ascii?Q?whcMIItKvw63SfcLhiMehvY+Ixkz7ClXsCWcWlr3Jur73t1GXG8Ax3ns3AmJ?=
- =?us-ascii?Q?7kzKzYIOpBOluXAtF776ACQvMFKRoIz8XmED?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Ib3AIrdck+lfpvDvzsCNSk5KMZHoqYL4yim4Ogae5iHM4ejmjkaeXw+rJiCQ?=
+ =?us-ascii?Q?xojCtfsmCWhnq1EfKHNOBrHOK5NQNn/vIpYc1RKy5+gQK9oFM2/p5xZrcmli?=
+ =?us-ascii?Q?LasdBdpcMBcfy+SC2JI6fmOhegqoS3dMxuu1zbwrIGeUDLgFeoylwYn8Nyw9?=
+ =?us-ascii?Q?KJUbnosgBgEq06xU+IH0BrmgbUdkF8SzFLFvwETdO0R9+xZ3QlXBXKfku9o+?=
+ =?us-ascii?Q?GWrvqCSm4Oq/DLcUErsIjB31P4a8viuvZTAqfBlHW9QgOp6uO7Zs+TrO40+b?=
+ =?us-ascii?Q?GveDPh2GQ+MgLdqbrTYYhYFF8BiOBFBX7ZExD/F8zZ5lhQhEEX6w6xHM9Z1i?=
+ =?us-ascii?Q?+RbuApHZH11Fx4wbVCvwCMNnWLQQXx5He/7S0IL1xnFflsOrR1oqfYNQLyQH?=
+ =?us-ascii?Q?g+yXpH7rkWsoeZ80UxpANsshFRM8y4/fwrY73t3ZBhkTHGDrDDtED8zoJNM5?=
+ =?us-ascii?Q?4zaiGm2I8ndXtj1n/+YK/UGjPHhH29WlmTarXRWA5DaRjOi9uFG9P3i22eu0?=
+ =?us-ascii?Q?RN0KNJ8tML0juFElHtYedTpWgiC98YQZeP3eEFPwVzASAMihPmoUGUeWm83C?=
+ =?us-ascii?Q?QmOmmhtfZ6wq9cpUFF5pqABsXlOAXumdP6CjdtQYXiS/t881fXBpbNV4+B3N?=
+ =?us-ascii?Q?fcGH/CiTQnLDuXoDis2/vUU4IL1egon52HmSBNG6IvHhV4+fIt8HZOHqKPVM?=
+ =?us-ascii?Q?d2cqIPL6gqSMmMYXCKiI4vTMlp3q8de7HYvhOpnhiQBaMr1tmsj42zyx4dgs?=
+ =?us-ascii?Q?gWMTSPmmUpWJ80oWsKe7LQ4ADMFN3jNgZoJygjHAudHQ1a75VuKCv0fJuLpa?=
+ =?us-ascii?Q?8TKjKAmmVIKsJvlc6ETwhjf0nxusDU0UHnjD50ZEYh1dvMLZCVfvRYTxGvS+?=
+ =?us-ascii?Q?jCqYu2USjaSihQits99otG8lt5YCC5iRqIZFcVkUQHJR7BIdzSaglS8TKiDj?=
+ =?us-ascii?Q?EmsD6rmeS4QbLjO0xeGbR8IGD7sU3nX3bswFp50IngwKgy+TdCepf7Ea1qdU?=
+ =?us-ascii?Q?DVxS6oxvCCh73leOzFV8Eikxhv2yLjCg0blNexwglLIDnN7BUAaRZiBJIoel?=
+ =?us-ascii?Q?xkMbb9VjokR6xRWp0jXz4lM8OUboXHCoibpi9tNckl8ykR6z9Zt7EMoMHZOz?=
+ =?us-ascii?Q?QEtHB7Dj637pR8snzDHBKt0UMObvngpi6gCxkR2CrJ/m1lVK3RRshf3wPsoJ?=
+ =?us-ascii?Q?xJJKjKq/yICse+SwOEKaZoAC/BNL+nW0E4fld6kmJzsxPWycbl9+SNcvF1h2?=
+ =?us-ascii?Q?G8A0TuHVKqJ9GE9PNQMR8Nmx0A+GVKmv0kpWKm0vVs6bDSuTuUI/7h9MNsan?=
+ =?us-ascii?Q?3dYJN/NMlyOH4u8eJvdnSLdfL7qiLLMvdEjSeAT3XP9dxFfzxX5XsutH1+Wa?=
+ =?us-ascii?Q?CFIFNiMvQEM1A+pinP0eIY2PsJOh5aBZAuH36jMSgM52OkQXnojKHaRC+TEu?=
+ =?us-ascii?Q?lnjDfX1TugOF6zHSurw8TC+uZALEvZp9PzsFbt8gstCHGOl8t0M5n5XsVDhB?=
+ =?us-ascii?Q?WMqqny2CZ4fxURibfPcIU0ttb4kvFK9vfuIS?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:AS8PR04MB8198.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(1800799024)(376014)(19092799006)(52116014)(366016)(38350700014);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DBq4E5xo+wkIBJKESByMnnakl+zIr3TagGPsP4Z7jFE69r6LLw0VE384D7BR?=
- =?us-ascii?Q?JV+oWaeVLu8LEqatBfgnX0i4E7aDd5TAJVjsEHgZrzPWVxqGsXmypK9UpWEA?=
- =?us-ascii?Q?Szd5U0vrjrWPAKu40AKGyl51vb+tXQhJimS3KJj/P1ARW6gjJoa36KVZGYN1?=
- =?us-ascii?Q?66oAb91Uoif1DKerYEPDKqEmasUvncW4YiZnx41UIH/9bUn4fqjcGUdElPcD?=
- =?us-ascii?Q?/QPHq0O2qudJO0ZemLV2moqYGAcN1sh2UnxjjHMHC4T/FxCWY+xHQRWR4Ism?=
- =?us-ascii?Q?Yx56gvV1+Za5Suiv2m3hU3fjO9UexYxrqjzwqLh+MWRkNUgItae6CGStNr4H?=
- =?us-ascii?Q?7sARyWkMO/zGyQsJOgbXkYnyQkP4gGnz9D9Zc/eZkF+Ag2rbmod6FQfl1cd/?=
- =?us-ascii?Q?PaSLtSX+XKLSW+qNz3ltbMCOKEEwikkiB0PCQJzefFQ+2hSFPFWfk9CHfmyR?=
- =?us-ascii?Q?V8tKw4U5buEg4ADifamOhrDYETfvwgQ/GuX5Bq3xjCshxUkWCEzVwswr+r6g?=
- =?us-ascii?Q?PeMMOx305BvApZRr4rVxZ0wS+pnwqHgwequCCxxQOMcXCSr/OAs9+CC892ii?=
- =?us-ascii?Q?tEN2KYrPqX1YqpaNMDiPHMx0B0g8L9ZsZF6ftRDhI+ywwlQBDtErp7t2/7xj?=
- =?us-ascii?Q?q2dwfzHF1XU2jzf3vnCh9TEX+SofuCmfTzIW/n3SQ53DSKbaMAvOciwIidYv?=
- =?us-ascii?Q?0ObkOHNRZMc3CEJigg9+50rOGzi867g7yk/WyqJhsQ3puV4FzM+iK2adJ/kF?=
- =?us-ascii?Q?gU6vre+y0eZSttW3YePZJeZCsEMtMPX06EWo4x4NAE88YHyohZwqCwtMrW/z?=
- =?us-ascii?Q?9j/YYvkhXv5+z1X/RDxrzqDuo19eTEEIrV3DIfzAQvThFsbtOjkzDAUx8he1?=
- =?us-ascii?Q?Js86RPNtP84DTbca7x6mOzsS4mZL3xfSOwgbRzSFY2TBtyepdlKp23IxSMhi?=
- =?us-ascii?Q?DlfiGk0bDagNYizaF94JLloGEF7Jtc5/trAW1Xb+C1EDzWREwQGOr++t0Io5?=
- =?us-ascii?Q?6wOIgazRO4txbnOJt67Gmx3hVMHNwPD14YaWRSfx6SlmvonSFzrd1A3z7keG?=
- =?us-ascii?Q?iX3GAji9F8mk9q6OPPAn5inpIn9rYeEdcWVVPDOgQSYMGhgKLhnOcwDotw6c?=
- =?us-ascii?Q?bNCHo+uGwobo40MV0G4AHHHOzYc4bf8soQYYeTGhpZbl9YmY87K1XLiTgrMX?=
- =?us-ascii?Q?lnKWBik1psQOEQD48wRJ+fiZvKcM+JNOtvvnvuhNvdpiaH1LWJR5G9w2B3g1?=
- =?us-ascii?Q?8LvddyaTh8Hc4moBZXfS1BjMKu8omWuoTr+8O3++oWF4OYds5Kfo4leoTeN0?=
- =?us-ascii?Q?U/pNWS46E1k9KsmVpVLgjNHMnsyeqlFMrUzn97TjeRcFfSm88GXxJYdrtfkI?=
- =?us-ascii?Q?Q2DlSZTpz6Axiyn7IJjMqkggw7KsKoa3qY4M1gkGcc5eQe1GEFxd0+E6QUax?=
- =?us-ascii?Q?mUI51m7SwZmtxecJJ5HU9aMg3BdrX6Ein26dbEtn6+383V/hb5ZaHSQmxOne?=
- =?us-ascii?Q?PQtsuY4kwzSQR7MunV0y2QpHJXHWrU2WKEjsqoH3CZOgQtdxhAP43Q16mjIY?=
- =?us-ascii?Q?eR92WDtPNDoIDh0QFRQ=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7cSWhcYgjEWNi2M4adI4kAq9Aa5GKoRklXu+togIgnyXe3hw0kjG8Za3Xcko?=
+ =?us-ascii?Q?MUMTvUhj39V1grp9Rdg39Bt1/+jj9mP5jp7iE70h0l0RUiilg5NSNJ2hL7Sh?=
+ =?us-ascii?Q?ZpJP1CJ6RiLi5ZIzy8aa1daATZOPEQ22c+tWne9CNQmvT10vzwhW3bHlLOo4?=
+ =?us-ascii?Q?JahIgObL2uhHd4rnsi9Cox7ufEaYOjYK0GX3OBaOY8ltiB8fT0t42x0nPJUD?=
+ =?us-ascii?Q?3/Hq4xNxeSddEmbDgqTcc/h3jli6k+Cm9j/lG3KoQIF5nU8Xdt2MpMNcBmuU?=
+ =?us-ascii?Q?DruE8bMP5SK1gXJktPMfv/bWWIGwkxXOv/c43BJk7fmwMt8EiBK9gqTv16Km?=
+ =?us-ascii?Q?fp4s3Ug9Ds7liHtd1JIHRv8wkxOk6Bhr+8EFgbzAa2RZTLF30QZkfnlEl/EH?=
+ =?us-ascii?Q?9Fws+LFblTUXIvA3ZTrJMJeEqJv3NtbzXbfTdVSvFeQKo+llxkGpuJy3CfEv?=
+ =?us-ascii?Q?z2o+FcdxlHLmTmWqsM3F2wVaon/FyEz4IsXnDEV1wvWEkIO/5DS4BYbs/tTE?=
+ =?us-ascii?Q?x2TTF+Tw7A6UpsjOU5m7qo1h8pPUXNm9ML60FYcd86IrqqRurQyjZ/7BqQaY?=
+ =?us-ascii?Q?CG/lQeP1ICqAlYB1BrBrwdCBnb8DoP+vz/MQZX49OJ9uoi7MxKzg5BRUtZbN?=
+ =?us-ascii?Q?AndOwrvbIURow0a5Sah9iZbn8isawEj4MWqTmc2qD98iFwruM1OOKZb9aKcl?=
+ =?us-ascii?Q?k1yqdT3Hl74FRCb9kL9HCfAVtOZ69tgFRmiT56yHcJNyvu5X5BkmcIu7kXl/?=
+ =?us-ascii?Q?woNXXcLR5wlU04z+fnnC5Jx3iLzygn+mfm4aoPqfRi6oiZBg7pGA+j9g9xFh?=
+ =?us-ascii?Q?E6Kc0AvJzwBvnQVB/Xg5vS3g7hpgkOzRn0VyuAr9x0GmWR4IOXb14vdZQDnM?=
+ =?us-ascii?Q?VyrFUy08E4BU6tBYE9mj6AsPyIEYRygFxkZInJTr1iE+2F3aZHUohcabX9lH?=
+ =?us-ascii?Q?RSPNg5qBfR7prFxdVzl8f2bufmnVIvvpmZVPIJqbEkDLFMw/McebuP4BgBg8?=
+ =?us-ascii?Q?LiSy1U/oADej6W4j1828Nt7xFyRYsvLiI4Z1Q88FNFI+7uO2zPMxaiwGEEWl?=
+ =?us-ascii?Q?BBcGsGs9C/w5Co5a1sQi1HrgzrG/bd84zCvhcj1MEavgCFL7NvAVbuXb9CjV?=
+ =?us-ascii?Q?DoewVZcjT5rXZm8BoOkhBNXOnzotbOmVeSU39Mx15BDH5Lom33kEqxR12g9a?=
+ =?us-ascii?Q?7jZEVq1gMXeHz6u2lKHcUoq6/f7m6o9MlXaFXVmEzkLZTbJeNc2kDhVeJbWN?=
+ =?us-ascii?Q?fwf+8f45lRGQbf3gxrMcE2QU1PqELGS1fm5QnmoDFOzMmTri7nXYm1fXcrat?=
+ =?us-ascii?Q?T6jKoU99PN30kZD2ZZc+XdF6aiuZbgLyh2pFFdwQsNO1AXpI7VYu78O9Vr5D?=
+ =?us-ascii?Q?owX0OfmxoQF5JRlp2JRc3W/dIDcD2/fpzb/rvXrs+8cLzT4uWtoGH1mdMjEp?=
+ =?us-ascii?Q?EBBF///HcLAJ1pZQ8or67Ru9JPKHC4ZL/3IinM/hOS5qEUcA+yumpXtper4/?=
+ =?us-ascii?Q?h7pMJzgNKvcbJUsxnLgkQiVWgnnhiKxYVF79BSm5MMCKdrRWFy5teuZ5qq/t?=
+ =?us-ascii?Q?iJEdmXCjTAwDX+BU/i2GOhX7+r9UD3sc8SqBtIPK?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4707eb60-9b2f-4ffd-8832-08de0d388032
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8aca1a44-8c1e-4fe0-9746-08de0d3882b2
 X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8198.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 04:49:05.6309 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 04:49:09.7392 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OFg73eV83v5kiHO6KIRaD5wQlciMgz+ODq5JsKPA4wwueyReO/2wxdOQKsPcM1Di
+X-MS-Exchange-CrossTenant-UserPrincipalName: qvGVN3YRssjRpNK5I7UuvzcGxet27N159Os5sU1P4tgSr0GhPARkGiBze+nD63up
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8254
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -141,515 +141,736 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-fixing and adding a FQ shutdown functionality to ensure
-proper cleanup of frame queues during queue setup. This helps
-reset the queues reliably and prevents potential resource leaks or
-stale state issues.
+From: Jun Yang <jun.yang@nxp.com>
 
-Fixes: c47ff048b99a ("bus/dpaa: add QMAN driver core routines")
+Enable IEEE1588 by timesync API instead of devargs.
+DPAA1 HW parser has no capability to identify ptp packets
+from ingress traffic, remove ptp identification code from
+driver RX callback which impacts performance significantly.
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/qman.c  | 367 ++++++++++++++++++----------
- drivers/bus/dpaa/include/fsl_qman.h |   1 +
- drivers/net/dpaa/dpaa_ethdev.c      |   3 +
- 3 files changed, 236 insertions(+), 135 deletions(-)
+ doc/guides/nics/dpaa.rst            |  3 -
+ drivers/bus/dpaa/base/qbman/qman.c  | 18 +++---
+ drivers/bus/dpaa/include/fsl_qman.h |  5 +-
+ drivers/common/dpaax/dpaax_ptp.h    | 95 +++++++++++++++++++++++++++++
+ drivers/net/dpaa/dpaa_ethdev.c      | 15 ++---
+ drivers/net/dpaa/dpaa_ethdev.h      | 13 ++--
+ drivers/net/dpaa/dpaa_ptp.c         | 50 ++++++++++++---
+ drivers/net/dpaa/dpaa_rxtx.c        | 93 +++++++++++++---------------
+ drivers/net/dpaa/dpaa_rxtx.h        |  2 +-
+ 9 files changed, 204 insertions(+), 90 deletions(-)
+ create mode 100644 drivers/common/dpaax/dpaax_ptp.h
 
+diff --git a/doc/guides/nics/dpaa.rst b/doc/guides/nics/dpaa.rst
+index 8cd57b21f3..8ffe31ce32 100644
+--- a/doc/guides/nics/dpaa.rst
++++ b/doc/guides/nics/dpaa.rst
+@@ -275,9 +275,6 @@ for details.
+       Done
+       testpmd>
+ 
+-* Use dev arg option ``drv_ieee1588=1`` to enable IEEE 1588 support
+-  at driver level, e.g. ``dpaa:fm1-mac3,drv_ieee1588=1``.
+-
+ * Use dev arg option ``recv_err_pkts=1`` to receive all packets including error packets
+   and thus disabling hardware based packet handling at driver level,
+   e.g. ``dpaa:fm1-mac3,recv_err_pkts=1``.
 diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
-index 60087c55a1..7c5ccc51bc 100644
+index d6b2a58eaa..76a1d93032 100644
 --- a/drivers/bus/dpaa/base/qbman/qman.c
 +++ b/drivers/bus/dpaa/base/qbman/qman.c
-@@ -10,7 +10,8 @@
- #include <bus_dpaa_driver.h>
- #include <rte_eventdev.h>
- #include <rte_byteorder.h>
--
-+#include <rte_dpaa_logs.h>
-+#include <eal_export.h>
- #include <dpaa_bits.h>
+@@ -1232,14 +1232,14 @@ u16 qman_affine_channel(int cpu)
+ 	return affine_channels[cpu];
+ }
  
- /* Compilation constants */
-@@ -532,6 +533,41 @@ qman_init_portal(struct qman_portal *portal,
- 	 * config, everything that follows depends on it and "config" is more
- 	 * for (de)reference
- 	 */
-+	p->addr.ce = c->addr_virt[DPAA_PORTAL_CE];
-+	p->addr.ci = c->addr_virt[DPAA_PORTAL_CI];
-+	/*
-+	 * If CI-stashing is used, the current defaults use a threshold of 3,
-+	 * and stash with high-than-DQRR priority.
-+	 */
-+	if (qm_eqcr_init(p, qm_eqcr_pvb,
-+			 portal->use_eqcr_ci_stashing, 1)) {
-+		DPAA_BUS_ERR("Qman EQCR initialisation failed");
-+		goto fail_eqcr;
-+	}
-+	if (qm_dqrr_init(p, c, qm_dqrr_dpush, qm_dqrr_pvb,
-+			 qm_dqrr_cdc, DQRR_MAXFILL)) {
-+		DPAA_BUS_ERR("Qman DQRR initialisation failed");
-+		goto fail_dqrr;
-+	}
-+	if (qm_mr_init(p, qm_mr_pvb, qm_mr_cci)) {
-+		DPAA_BUS_ERR("Qman MR initialisation failed");
-+		goto fail_mr;
-+	}
-+	if (qm_mc_init(p)) {
-+		DPAA_BUS_ERR("Qman MC initialisation failed");
-+		goto fail_mc;
+-unsigned int qman_portal_poll_rx(unsigned int poll_limit,
+-				 void **bufs,
+-				 struct qman_portal *p)
++uint32_t
++qman_portal_poll_rx(uint32_t poll_limit, void **bufs,
++	struct qman_portal *p, struct qman_fq_cb *cb)
+ {
+ 	struct qm_portal *portal = &p->p;
+ 	register struct qm_dqrr *dqrr = &portal->dqrr;
+ 	struct qm_dqrr_entry *dq[QM_DQRR_SIZE], *shadow[QM_DQRR_SIZE];
+-	struct qman_fq *fq;
++	struct qman_fq *fq[QM_DQRR_SIZE];
+ 	unsigned int limit = 0, rx_number = 0;
+ 	uint32_t consume = 0;
+ 
+@@ -1273,12 +1273,12 @@ unsigned int qman_portal_poll_rx(unsigned int poll_limit,
+ 
+ 		/* SDQCR: context_b points to the FQ */
+ #ifdef CONFIG_FSL_QMAN_FQ_LOOKUP
+-		fq = qman_fq_lookup_table[dq[rx_number]->contextB];
++		fq[rx_number] = qman_fq_lookup_table[dq[rx_number]->contextB];
+ #else
+-		fq = (void *)dq[rx_number]->contextB;
++		fq[rx_number] = (void *)dq[rx_number]->contextB;
+ #endif
+-		if (fq->cb.dqrr_prepare)
+-			fq->cb.dqrr_prepare(shadow[rx_number],
++		if (fq[rx_number]->cb.dqrr_prepare)
++			fq[rx_number]->cb.dqrr_prepare(shadow[rx_number],
+ 					    &bufs[rx_number]);
+ 
+ 		consume |= (1 << (31 - DQRR_PTR2IDX(shadow[rx_number])));
+@@ -1287,7 +1287,7 @@ unsigned int qman_portal_poll_rx(unsigned int poll_limit,
+ 	} while (++limit < poll_limit);
+ 
+ 	if (rx_number)
+-		fq->cb.dqrr_dpdk_pull_cb(&fq, shadow, bufs, rx_number);
++		cb->dqrr_dpdk_pull_cb(fq, shadow, bufs, rx_number);
+ 
+ 	/* Consume all the DQRR enries together */
+ 	qm_out(DQRR_DCAP, (1 << 8) | consume);
+diff --git a/drivers/bus/dpaa/include/fsl_qman.h b/drivers/bus/dpaa/include/fsl_qman.h
+index 9bc4fc26b7..0494ad709d 100644
+--- a/drivers/bus/dpaa/include/fsl_qman.h
++++ b/drivers/bus/dpaa/include/fsl_qman.h
+@@ -1393,8 +1393,9 @@ int qman_fq_portal_irqsource_remove(struct qman_portal *p, u32 bits);
+ u16 qman_affine_channel(int cpu);
+ 
+ __rte_internal
+-unsigned int qman_portal_poll_rx(unsigned int poll_limit,
+-				 void **bufs, struct qman_portal *q);
++uint32_t
++qman_portal_poll_rx(uint32_t poll_limit, void **bufs,
++	struct qman_portal *p, struct qman_fq_cb *cb);
+ 
+ /**
+  * qman_set_vdq - Issue a volatile dequeue command
+diff --git a/drivers/common/dpaax/dpaax_ptp.h b/drivers/common/dpaax/dpaax_ptp.h
+new file mode 100644
+index 0000000000..b73c16c986
+--- /dev/null
++++ b/drivers/common/dpaax/dpaax_ptp.h
+@@ -0,0 +1,95 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 NXP
++ */
++
++#ifndef _DPAAX_PTP_H_
++#define _DPAAX_PTP_H_
++#include <stdlib.h>
++#include <rte_ether.h>
++#include <rte_ip.h>
++#include <rte_udp.h>
++
++#define UDP_PTP_EVENT_DST_PORT 319
++#define UDP_PTP_GENERAL_DST_PORT 320
++
++struct __rte_packed_begin rte_dpaax_ptp_header {
++	uint8_t tsmt;  /* transportSpecific | messageType */
++	uint8_t ver;   /* reserved          | versionPTP  */
++	rte_be16_t msg_len;
++	uint8_t domain_number;
++	uint8_t rsv;
++	uint8_t flags[2];
++	rte_be64_t correction;
++	uint8_t unused[];
++} __rte_packed_end;
++
++static inline struct rte_dpaax_ptp_header *
++dpaax_timesync_ptp_parse_header(struct rte_mbuf *buf,
++	uint16_t *ts_offset, int *is_udp)
++{
++	struct rte_ether_hdr *eth = rte_pktmbuf_mtod(buf, void *);
++	void *next_hdr;
++	rte_be16_t ether_type;
++	struct rte_vlan_hdr *vlan;
++	struct rte_ipv4_hdr *ipv4;
++	struct rte_ipv6_hdr *ipv6;
++	struct rte_udp_hdr *udp;
++	struct rte_dpaax_ptp_header *ptp = NULL;
++	uint16_t offset = offsetof(struct rte_dpaax_ptp_header, correction);
++
++	if (is_udp)
++		*is_udp = false;
++
++	offset += sizeof(struct rte_ether_hdr);
++	if (eth->ether_type == htons(RTE_ETHER_TYPE_1588)) {
++		ptp = (void *)(eth + 1);
++		goto quit;
 +	}
 +
-+	/* Reset portal before use */
-+	DPAA_BUS_DEBUG("Reset portal = %p", p);
-+	qm_dqrr_sdqcr_set(p, 0);
-+	qm_eqcr_cce_update(p);
-+	qm_eqcr_cce_update(p);
-+	qm_mc_finish(p);
-+	qm_mr_finish(p);
-+	qm_dqrr_finish(p);
-+	qm_eqcr_finish(p);
++	if (eth->ether_type == htons(RTE_ETHER_TYPE_VLAN)) {
++		vlan = (void *)(eth + 1);
++		ether_type = vlan->eth_proto;
++		next_hdr = (void *)(vlan + 1);
++		offset += sizeof(struct rte_vlan_hdr);
++		if (ether_type == htons(RTE_ETHER_TYPE_1588)) {
++			ptp = next_hdr;
++			goto quit;
++		}
++	} else {
++		ether_type = eth->ether_type;
++		next_hdr = (void *)(eth + 1);
++	}
 +
- 	p->addr.ce = c->addr_virt[DPAA_PORTAL_CE];
- 	p->addr.ci = c->addr_virt[DPAA_PORTAL_CI];
- 	/*
-@@ -2660,39 +2696,128 @@ int qman_delete_cgr(struct qman_cgr *cgr)
++	if (ether_type == htons(RTE_ETHER_TYPE_IPV4)) {
++		ipv4 = next_hdr;
++		offset += sizeof(struct rte_ipv4_hdr);
++		if (ipv4->next_proto_id != IPPROTO_UDP)
++			return NULL;
++		udp = (void *)(ipv4 + 1);
++		goto parse_udp;
++	} else if (ether_type == htons(RTE_ETHER_TYPE_IPV6)) {
++		ipv6 = next_hdr;
++		offset += sizeof(struct rte_ipv6_hdr);
++		if (ipv6->proto != IPPROTO_UDP)
++			return NULL;
++		udp = (void *)(ipv6 + 1);
++		goto parse_udp;
++	} else {
++		return NULL;
++	}
++parse_udp:
++	offset += sizeof(struct rte_udp_hdr);
++	if (udp->dst_port != UDP_PTP_EVENT_DST_PORT &&
++		udp->dst_port != UDP_PTP_GENERAL_DST_PORT)
++		return NULL;
++	ptp = (void *)(udp + 1);
++	if (is_udp)
++		*is_udp = true;
++quit:
++	if (ts_offset)
++		*ts_offset = offset;
++
++	return ptp;
++}
++
++#endif /* _DPAAX_PTP_H_ */
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 30a0c97a8b..43aab98339 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -52,7 +52,6 @@
+ #include <process.h>
+ #include <fmlib/fm_ext.h>
+ 
+-#define DRIVER_IEEE1588         "drv_ieee1588"
+ #define CHECK_INTERVAL          100  /* 100ms */
+ #define MAX_REPEAT_TIME         90   /* 9s (90 * 100ms) in total */
+ #define DRIVER_RECV_ERR_PKTS      "recv_err_pkts"
+@@ -88,7 +87,6 @@ static uint64_t dev_tx_offloads_nodis =
+ static int is_global_init;
+ static int fmc_q = 1;	/* Indicates the use of static fmc for distribution */
+ static int default_q;	/* use default queue - FMC is not executed*/
+-int dpaa_ieee_1588;	/* use to indicate if IEEE 1588 is enabled for the driver */
+ bool dpaa_enable_recv_err_pkts; /* Enable main queue to receive error packets */
+ 
+ /* At present we only allow up to 4 push mode queues as default - as each of
+@@ -1998,6 +1996,7 @@ static int dpaa_tx_queue_init(struct qman_fq *fq,
+ 		}
+ 	};
+ 	int ret;
++	struct dpaa_if *dpaa_intf = fq->dpaa_intf;
+ 
+ 	ret = qman_create_fq(0, QMAN_FQ_FLAG_DYNAMIC_FQID |
+ 			     QMAN_FQ_FLAG_TO_DCPORTAL, fq);
+@@ -2011,7 +2010,7 @@ static int dpaa_tx_queue_init(struct qman_fq *fq,
+ 	opts.fqd.dest.wq = DPAA_IF_TX_PRIORITY;
+ 	opts.fqd.fq_ctrl = QM_FQCTRL_PREFERINCACHE;
+ 	opts.fqd.context_b = 0;
+-	if (dpaa_ieee_1588) {
++	if (dpaa_intf->ts_enable) {
+ 		opts.fqd.context_a.lo = 0;
+ 		opts.fqd.context_a.hi =
+ 			fman_intf->fman->dealloc_bufs_mask_hi;
+@@ -2063,7 +2062,7 @@ static int dpaa_tx_queue_init(struct qman_fq *fq,
  	return ret;
  }
  
--int qman_shutdown_fq(u32 fqid)
-+#define GENMASK(h, l) \
-+	(((~0U) >> (sizeof(unsigned int) * 8 - ((h) - (l) + 1))) << (l))
-+
-+/* 'fqid' is a 24-bit field in every h/w descriptor */
-+#define QM_FQID_MASK    GENMASK(23, 0)
-+#define qm_fqid_set(p, v) ((p)->fqid = cpu_to_be32((v) & QM_FQID_MASK))
-+#define qm_fqid_get(p)    (be32_to_cpu((p)->fqid) & QM_FQID_MASK)
-+
-+static int
-+_qm_mr_consume_and_match_verb(struct qm_portal *p, int v)
-+{
-+	const struct qm_mr_entry *msg;
-+	int found = 0;
-+
-+	qm_mr_pvb_update(p);
-+	msg = qm_mr_current(p);
-+	while (msg) {
-+		if ((msg->ern.verb & QM_MR_VERB_TYPE_MASK) == v)
-+			found = 1;
-+		qm_mr_next(p);
-+		qm_mr_cci_consume_to_current(p);
-+		qm_mr_pvb_update(p);
-+		msg = qm_mr_current(p);
-+	}
-+	return found;
-+}
-+
-+static int
-+_qm_dqrr_consume_and_match(struct qm_portal *p, u32 fqid, int s,
-+		bool wait)
-+{
-+	const struct qm_dqrr_entry *dqrr;
-+	int found = 0;
-+
-+	do {
-+		qm_dqrr_pvb_update(p);
-+		dqrr = qm_dqrr_current(p);
-+		if (!dqrr)
-+			cpu_relax();
-+	} while (wait && !dqrr);
-+
-+	while (dqrr) {
-+		if (qm_fqid_get(dqrr) == fqid && (dqrr->stat & s))
-+			found = 1;
-+
-+		qm_dqrr_cdc_consume_1ptr(p, dqrr, 0);
-+		qm_dqrr_pvb_update(p);
-+		qm_dqrr_next(p);
-+		dqrr = qm_dqrr_current(p);
-+	}
-+	return found;
-+}
-+
-+#define QM_MCR_TIMEOUT                  10000   /* us */
-+
-+static inline int
-+qm_mc_result_timeout(struct qm_portal *portal,
-+		     struct qm_mc_result **mcr)
-+{
-+	int timeout = QM_MCR_TIMEOUT;
-+
-+	do {
-+		*mcr = qm_mc_result(portal);
-+		if (*mcr)
-+			break;
-+		usleep(1);
-+	} while (--timeout);
-+
-+	return timeout;
-+}
-+
-+#define qm_mr_drain(p, V) \
-+	_qm_mr_consume_and_match_verb(p, QM_MR_VERB_##V)
-+
-+#define qm_dqrr_drain(p, f, S) \
-+	_qm_dqrr_consume_and_match(p, f, QM_DQRR_STAT_##S, false)
-+
-+#define qm_dqrr_drain_wait(p, f, S) \
-+	_qm_dqrr_consume_and_match(p, f, QM_DQRR_STAT_##S, true)
-+
-+#define qm_dqrr_drain_nomatch(p) \
-+	_qm_dqrr_consume_and_match(p, 0, 0, false)
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(qman_shutdown_fq)
+-static int
 +int
-+qman_shutdown_fq(u32 fqid)
+ dpaa_tx_conf_queue_init(struct qman_fq *fq)
  {
- 	struct qman_portal *p;
--	struct qm_portal *low_p;
- 	struct qm_mc_command *mcc;
- 	struct qm_mc_result *mcr;
-+	int orl_empty, drain = 0, ret = 0;
-+	u32 res;
- 	u8 state;
--	int orl_empty, fq_empty, drain = 0;
--	u32 result;
- 	u32 channel, wq;
- 	u16 dest_wq;
+ 	struct qm_mcc_initfq opts = {0};
+@@ -2261,9 +2260,6 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 	dpaa_intf->ifid = dev_id;
+ 	dpaa_intf->cfg = cfg;
  
-+	DPAA_BUS_DEBUG("In shutdown for queue = %x", fqid);
- 	p = get_affine_portal();
--	low_p = &p->p;
+-	if (dpaa_get_devargs(dev->devargs, DRIVER_IEEE1588))
+-		dpaa_ieee_1588 = 1;
 -
- 	/* Determine the state of the FQID */
--	mcc = qm_mc_start(low_p);
-+	mcc = qm_mc_start(&p->p);
- 	mcc->queryfq_np.fqid = cpu_to_be32(fqid);
--	qm_mc_commit(low_p, QM_MCC_VERB_QUERYFQ_NP);
--	while (!(mcr = qm_mc_result(low_p)))
--		cpu_relax();
--	DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) == QM_MCR_VERB_QUERYFQ_NP);
-+	qm_mc_commit(&p->p, QM_MCC_VERB_QUERYFQ_NP);
-+	if (!qm_mc_result_timeout(&p->p, &mcr)) {
-+		DPAA_BUS_ERR("QUERYFQ_NP timeout");
-+		ret = -ETIMEDOUT;
-+		goto out;
-+	}
- 	state = mcr->queryfq_np.state & QM_MCR_NP_STATE_MASK;
--	if (state == QM_MCR_NP_STATE_OOS)
--		return 0; /* Already OOS, no need to do anymore checks */
-+	if (state == QM_MCR_NP_STATE_OOS) {
-+		DPAA_BUS_ERR("Already in OOS");
-+		goto out; /* Already OOS, no need to do anymore checks */
-+	}
+ 	if (dpaa_get_devargs(dev->devargs, DRIVER_RECV_ERR_PKTS))
+ 		dpaa_enable_recv_err_pkts = 1;
  
- 	/* Query which channel the FQ is using */
--	mcc = qm_mc_start(low_p);
-+	mcc = qm_mc_start(&p->p);
- 	mcc->queryfq.fqid = cpu_to_be32(fqid);
--	qm_mc_commit(low_p, QM_MCC_VERB_QUERYFQ);
--	while (!(mcr = qm_mc_result(low_p)))
--		cpu_relax();
--	DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) == QM_MCR_VERB_QUERYFQ);
-+	qm_mc_commit(&p->p, QM_MCC_VERB_QUERYFQ);
-+	if (!qm_mc_result_timeout(&p->p, &mcr)) {
-+		DPAA_BUS_ERR("QUERYFQ timeout");
-+		ret = -ETIMEDOUT;
-+		goto out;
-+	}
+@@ -2432,14 +2428,14 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 		if (dpaa_intf->cgr_tx)
+ 			dpaa_intf->cgr_tx[loop].cgrid = cgrid_tx[loop];
  
- 	/* Need to store these since the MCR gets reused */
- 	dest_wq = be16_to_cpu(mcr->queryfq.fqd.dest_wq);
-@@ -2704,177 +2829,149 @@ int qman_shutdown_fq(u32 fqid)
- 	case QM_MCR_NP_STATE_TRU_SCHED:
- 	case QM_MCR_NP_STATE_ACTIVE:
- 	case QM_MCR_NP_STATE_PARKED:
-+		DPAA_BUS_DEBUG("In shutdown state is %d", state);
- 		orl_empty = 0;
--		mcc = qm_mc_start(low_p);
-+		mcc = qm_mc_start(&p->p);
- 		mcc->alterfq.fqid = cpu_to_be32(fqid);
--		qm_mc_commit(low_p, QM_MCC_VERB_ALTER_RETIRE);
--		while (!(mcr = qm_mc_result(low_p)))
--			cpu_relax();
--		DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) ==
--			   QM_MCR_VERB_ALTER_RETIRE);
--		result = mcr->result; /* Make a copy as we reuse MCR below */
-+		qm_mc_commit(&p->p, QM_MCC_VERB_ALTER_RETIRE);
-+		if (!qm_mc_result_timeout(&p->p, &mcr)) {
-+			DPAA_BUS_ERR("ALTER_RETIRE timeout");
-+			ret = -ETIMEDOUT;
-+			goto out;
++		dpaa_intf->tx_queues[loop].dpaa_intf = dpaa_intf;
+ 		ret = dpaa_tx_queue_init(&dpaa_intf->tx_queues[loop],
+ 			fman_intf,
+ 			dpaa_intf->cgr_tx ? &dpaa_intf->cgr_tx[loop] : NULL);
+ 		if (ret)
+ 			goto free_tx;
+-		dpaa_intf->tx_queues[loop].dpaa_intf = dpaa_intf;
+ 
+-		if (dpaa_ieee_1588) {
++		if (dpaa_intf->ts_enable) {
+ 			ret = dpaa_tx_conf_queue_init(&dpaa_intf->tx_conf_queues[loop]);
+ 			if (ret)
+ 				goto free_tx;
+@@ -2731,6 +2727,5 @@ static struct rte_dpaa_driver rte_dpaa_pmd = {
+ 
+ RTE_PMD_REGISTER_DPAA(net_dpaa, rte_dpaa_pmd);
+ RTE_PMD_REGISTER_PARAM_STRING(net_dpaa,
+-		DRIVER_IEEE1588 "=<int>"
+ 		DRIVER_RECV_ERR_PKTS "=<int>");
+ RTE_LOG_REGISTER_DEFAULT(dpaa_logtype_pmd, NOTICE);
+diff --git a/drivers/net/dpaa/dpaa_ethdev.h b/drivers/net/dpaa/dpaa_ethdev.h
+index be9398004f..f400030a5c 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.h
++++ b/drivers/net/dpaa/dpaa_ethdev.h
+@@ -119,7 +119,6 @@ enum {
+ #define FMC_FILE "/tmp/fmc.bin"
+ 
+ extern struct rte_mempool *dpaa_tx_sg_pool;
+-extern int dpaa_ieee_1588;
+ 
+ /* PMD related logs */
+ extern int dpaa_logtype_pmd;
+@@ -154,10 +153,12 @@ struct dpaa_if {
+ 	void *netenv_handle;
+ 	void *scheme_handle[2];
+ 	uint32_t scheme_count;
++	int ts_enable;
+ 	/*stores timestamp of last received packet on dev*/
+ 	uint64_t rx_timestamp;
+ 	/*stores timestamp of last received tx confirmation packet on dev*/
+ 	uint64_t tx_timestamp;
++	uint64_t tx_old_timestamp;
+ 	/* stores pointer to next tx_conf queue that should be processed,
+ 	 * it corresponds to last packet transmitted
+ 	 */
+@@ -244,6 +245,9 @@ struct dpaa_if_rx_bmi_stats {
+ 	uint32_t fmbm_rbdc;		/**< Rx Buffers Deallocate Counter*/
+ };
+ 
++int
++dpaa_tx_conf_queue_init(struct qman_fq *fq);
++
+ int
+ dpaa_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
+ 		struct timespec *timestamp);
+@@ -256,18 +260,17 @@ dpaa_timesync_disable(struct rte_eth_dev *dev);
+ 
+ int
+ dpaa_timesync_read_time(struct rte_eth_dev *dev,
+-		struct timespec *timestamp);
++	struct timespec *timestamp);
+ 
+ int
+ dpaa_timesync_write_time(struct rte_eth_dev *dev,
+-		const struct timespec *timestamp);
++	const struct timespec *timestamp);
+ int
+ dpaa_timesync_adjust_time(struct rte_eth_dev *dev, int64_t delta);
+ 
+ int
+ dpaa_timesync_read_rx_timestamp(struct rte_eth_dev *dev,
+-		struct timespec *timestamp,
+-		uint32_t flags __rte_unused);
++	struct timespec *timestamp, uint32_t flags __rte_unused);
+ 
+ uint8_t
+ fm_default_vsp_id(struct fman_if *fif);
+diff --git a/drivers/net/dpaa/dpaa_ptp.c b/drivers/net/dpaa/dpaa_ptp.c
+index 8482666745..e9b332c571 100644
+--- a/drivers/net/dpaa/dpaa_ptp.c
++++ b/drivers/net/dpaa/dpaa_ptp.c
+@@ -17,20 +17,40 @@
+ #include <dpaa_rxtx.h>
+ 
+ int
+-dpaa_timesync_enable(struct rte_eth_dev *dev __rte_unused)
++dpaa_timesync_enable(struct rte_eth_dev *dev)
+ {
++	struct dpaa_if *dpaa_intf = dev->data->dev_private;
++	int loop, ret = 0;
++
++	for (loop = 0; loop < MAX_DPAA_CORES; loop++) {
++		if (!dpaa_intf->tx_queues[loop].tx_conf_queue) {
++			ret = dpaa_tx_conf_queue_init(&dpaa_intf->tx_conf_queues[loop]);
++			if (ret)
++				break;
++			dpaa_intf->tx_conf_queues[loop].dpaa_intf = dpaa_intf;
++			dpaa_intf->tx_queues[loop].tx_conf_queue = &dpaa_intf->tx_conf_queues[loop];
 +		}
-+		res = mcr->result; /* Make a copy as we reuse MCR below */
- 
--		if (result == QM_MCR_RESULT_PENDING) {
--			/* Need to wait for the FQRN in the message ring, which
-+		if (res == QM_MCR_RESULT_OK)
-+			drain_mr_fqrni(&p->p);
++	}
 +
-+		if (res == QM_MCR_RESULT_PENDING) {
-+			/*
-+			 * Need to wait for the FQRN in the message ring, which
- 			 * will only occur once the FQ has been drained.  In
- 			 * order for the FQ to drain the portal needs to be set
- 			 * to dequeue from the channel the FQ is scheduled on
- 			 */
--			const struct qm_mr_entry *msg;
--			const struct qm_dqrr_entry *dqrr = NULL;
- 			int found_fqrn = 0;
--			__maybe_unused u16 dequeue_wq = 0;
- 
- 			/* Flag that we need to drain FQ */
- 			drain = 1;
- 
-+			__maybe_unused u16 dequeue_wq = 0;
- 			if (channel >= qm_channel_pool1 &&
--			    channel < (u16)(qm_channel_pool1 + 15)) {
-+				channel < (u16)(qm_channel_pool1 + 15)) {
- 				/* Pool channel, enable the bit in the portal */
- 				dequeue_wq = (channel -
--					      qm_channel_pool1 + 1) << 4 | wq;
-+						qm_channel_pool1 + 1) << 4 | wq;
- 			} else if (channel < qm_channel_pool1) {
- 				/* Dedicated channel */
- 				dequeue_wq = wq;
- 			} else {
--				pr_info("Cannot recover FQ 0x%x,"
--					" it is scheduled on channel 0x%x",
-+				DPAA_BUS_ERR("Can't recover FQ 0x%x, ch: 0x%x",
- 					fqid, channel);
--				return -EBUSY;
-+				ret = -EBUSY;
-+				goto out;
- 			}
- 			/* Set the sdqcr to drain this channel */
- 			if (channel < qm_channel_pool1)
--				qm_dqrr_sdqcr_set(low_p,
-+				qm_dqrr_sdqcr_set(&p->p,
- 						  QM_SDQCR_TYPE_ACTIVE |
--					  QM_SDQCR_CHANNELS_DEDICATED);
-+						  QM_SDQCR_CHANNELS_DEDICATED);
- 			else
--				qm_dqrr_sdqcr_set(low_p,
-+				qm_dqrr_sdqcr_set(&p->p,
- 						  QM_SDQCR_TYPE_ACTIVE |
- 						  QM_SDQCR_CHANNELS_POOL_CONV
- 						  (channel));
--			while (!found_fqrn) {
-+			do {
- 				/* Keep draining DQRR while checking the MR*/
--				qm_dqrr_pvb_update(low_p);
--				dqrr = qm_dqrr_current(low_p);
--				while (dqrr) {
--					qm_dqrr_cdc_consume_1ptr(
--						low_p, dqrr, 0);
--					qm_dqrr_pvb_update(low_p);
--					qm_dqrr_next(low_p);
--					dqrr = qm_dqrr_current(low_p);
--				}
-+				qm_dqrr_drain_nomatch(&p->p);
- 				/* Process message ring too */
--				qm_mr_pvb_update(low_p);
--				msg = qm_mr_current(low_p);
--				while (msg) {
--					if ((msg->ern.verb &
--					     QM_MR_VERB_TYPE_MASK)
--					    == QM_MR_VERB_FQRN)
--						found_fqrn = 1;
--					qm_mr_next(low_p);
--					qm_mr_cci_consume_to_current(low_p);
--					qm_mr_pvb_update(low_p);
--					msg = qm_mr_current(low_p);
--				}
-+				found_fqrn = qm_mr_drain(&p->p,
-+							FQRN);
- 				cpu_relax();
--			}
-+			} while (!found_fqrn);
-+			/* Restore SDQCR */
-+			qm_dqrr_sdqcr_set(&p->p,
-+					p->sdqcr);
- 		}
--		if (result != QM_MCR_RESULT_OK &&
--		    result !=  QM_MCR_RESULT_PENDING) {
--			/* error */
--			pr_err("qman_retire_fq failed on FQ 0x%x,"
--			       " result=0x%x\n", fqid, result);
--			return -1;
-+		if (res != QM_MCR_RESULT_OK &&
-+		    res != QM_MCR_RESULT_PENDING) {
-+			DPAA_BUS_ERR("retire_fq failed: FQ 0x%x, res=0x%x",
-+				      fqid, res);
-+			ret = -EIO;
-+			goto out;
- 		}
- 		if (!(mcr->alterfq.fqs & QM_MCR_FQS_ORLPRESENT)) {
--			/* ORL had no entries, no need to wait until the
--			 * ERNs come in.
-+			/*
-+			 * ORL had no entries, no need to wait until the
-+			 * ERNs come in
- 			 */
- 			orl_empty = 1;
- 		}
--		/* Retirement succeeded, check to see if FQ needs
--		 * to be drained.
-+		/*
-+		 * Retirement succeeded, check to see if FQ needs
-+		 * to be drained
- 		 */
- 		if (drain || mcr->alterfq.fqs & QM_MCR_FQS_NOTEMPTY) {
- 			/* FQ is Not Empty, drain using volatile DQ commands */
--			fq_empty = 0;
- 			do {
--				const struct qm_dqrr_entry *dqrr = NULL;
- 				u32 vdqcr = fqid | QM_VDQCR_NUMFRAMES_SET(3);
- 
--				qm_dqrr_vdqcr_set(low_p, vdqcr);
--
--				/* Wait for a dequeue to occur */
--				while (dqrr == NULL) {
--					qm_dqrr_pvb_update(low_p);
--					dqrr = qm_dqrr_current(low_p);
--					if (!dqrr)
--						cpu_relax();
--				}
--				/* Process the dequeues, making sure to
--				 * empty the ring completely.
-+				qm_dqrr_vdqcr_set(&p->p, vdqcr);
-+				/*
-+				 * Wait for a dequeue and process the dequeues,
-+				 * making sure to empty the ring completely
- 				 */
--				while (dqrr) {
--					if (dqrr->fqid == fqid &&
--					    dqrr->stat & QM_DQRR_STAT_FQ_EMPTY)
--						fq_empty = 1;
--					qm_dqrr_cdc_consume_1ptr(low_p,
--								 dqrr, 0);
--					qm_dqrr_pvb_update(low_p);
--					qm_dqrr_next(low_p);
--					dqrr = qm_dqrr_current(low_p);
--				}
--			} while (fq_empty == 0);
-+			} while (!qm_dqrr_drain_wait(&p->p, fqid, FQ_EMPTY));
- 		}
--		qm_dqrr_sdqcr_set(low_p, 0);
--
--		/* Wait for the ORL to have been completely drained */
--		while (orl_empty == 0) {
--			const struct qm_mr_entry *msg;
--
--			qm_mr_pvb_update(low_p);
--			msg = qm_mr_current(low_p);
--			while (msg) {
--				if ((msg->ern.verb & QM_MR_VERB_TYPE_MASK) ==
--				    QM_MR_VERB_FQRL)
--					orl_empty = 1;
--				qm_mr_next(low_p);
--				qm_mr_cci_consume_to_current(low_p);
--				qm_mr_pvb_update(low_p);
--				msg = qm_mr_current(low_p);
--			}
-+		while (!orl_empty) {
-+			/* Wait for the ORL to have been completely drained */
-+			orl_empty = qm_mr_drain(&p->p, FQRL);
- 			cpu_relax();
- 		}
--		mcc = qm_mc_start(low_p);
-+		mcc = qm_mc_start(&p->p);
- 		mcc->alterfq.fqid = cpu_to_be32(fqid);
--		qm_mc_commit(low_p, QM_MCC_VERB_ALTER_OOS);
--		while (!(mcr = qm_mc_result(low_p)))
--			cpu_relax();
--		DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) ==
--			   QM_MCR_VERB_ALTER_OOS);
-+		qm_mc_commit(&p->p, QM_MCC_VERB_ALTER_OOS);
-+		if (!qm_mc_result_timeout(&p->p, &mcr)) {
-+			DPAA_BUS_ERR("OOS Timeout");
-+			ret = -ETIMEDOUT;
-+			goto out;
-+		}
++	if (ret)
++		return ret;
 +
- 		if (mcr->result != QM_MCR_RESULT_OK) {
--			pr_err(
--			"OOS after drain Failed on FQID 0x%x, result 0x%x\n",
--			       fqid, mcr->result);
--			return -1;
-+			DPAA_BUS_ERR("OOS after drain fail: FQ 0x%x (0x%x)",
-+				      fqid, mcr->result);
-+			ret = -EIO;
-+			goto out;
- 		}
--		return 0;
-+		break;
- 
- 	case QM_MCR_NP_STATE_RETIRED:
- 		/* Send OOS Command */
--		mcc = qm_mc_start(low_p);
-+		mcc = qm_mc_start(&p->p);
- 		mcc->alterfq.fqid = cpu_to_be32(fqid);
--		qm_mc_commit(low_p, QM_MCC_VERB_ALTER_OOS);
--		while (!(mcr = qm_mc_result(low_p)))
--			cpu_relax();
--		DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) ==
--			   QM_MCR_VERB_ALTER_OOS);
--		if (mcr->result) {
--			pr_err("OOS Failed on FQID 0x%x\n", fqid);
--			return -1;
-+		qm_mc_commit(&p->p, QM_MCC_VERB_ALTER_OOS);
-+		if (!qm_mc_result_timeout(&p->p, &mcr)) {
-+			DPAA_BUS_ERR("In RTEIRED to OOS timeout");
-+			ret = -ETIMEDOUT;
-+			goto out;
- 		}
--		return 0;
- 
-+		if (mcr->result != QM_MCR_RESULT_OK) {
-+			DPAA_BUS_ERR("OOS fail: FQ 0x%x (0x%x)",
-+				      fqid, mcr->result);
-+			ret = -EIO;
-+			goto out;
-+		}
-+		break;
-+
-+	case QM_MCR_NP_STATE_OOS:
-+		/*  Done */
-+		break;
-+
-+	default:
-+		ret = -EIO;
- 	}
--	return -1;
-+
-+out:
-+	return ret;
++	dpaa_intf->ts_enable = true;
+ 	return 0;
  }
-diff --git a/drivers/bus/dpaa/include/fsl_qman.h b/drivers/bus/dpaa/include/fsl_qman.h
-index 71d5b16878..9bc4fc26b7 100644
---- a/drivers/bus/dpaa/include/fsl_qman.h
-+++ b/drivers/bus/dpaa/include/fsl_qman.h
-@@ -1894,6 +1894,7 @@ static inline void qman_release_fqid(u32 fqid)
  
- void qman_seed_fqid_range(u32 fqid, unsigned int count);
- 
-+__rte_internal
- int qman_shutdown_fq(u32 fqid);
- 
- /**
-diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 34b691fde7..30a0c97a8b 100644
---- a/drivers/net/dpaa/dpaa_ethdev.c
-+++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -1134,6 +1134,9 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 	DPAA_PMD_INFO("Rx queue setup for queue index: %d fq_id (0x%x)",
- 			queue_idx, rxq->fqid);
- 
-+	/* Shutdown FQ before configure */
-+	qman_shutdown_fq(rxq->fqid);
+ int
+-dpaa_timesync_disable(struct rte_eth_dev *dev __rte_unused)
++dpaa_timesync_disable(struct rte_eth_dev *dev)
+ {
++	struct dpaa_if *dpaa_intf = dev->data->dev_private;
 +
- 	if (!fif->num_profiles) {
- 		if (dpaa_intf->bp_info && dpaa_intf->bp_info->bp &&
- 			dpaa_intf->bp_info->mp != mp) {
++	dpaa_intf->ts_enable = false;
+ 	return 0;
+ }
+ 
+ int
+ dpaa_timesync_read_time(struct rte_eth_dev *dev,
+-					struct timespec *timestamp)
++	struct timespec *timestamp)
+ {
+ 	uint32_t *tmr_cnt_h, *tmr_cnt_l;
+ 	struct fman_if *fif;
+@@ -50,7 +70,7 @@ dpaa_timesync_read_time(struct rte_eth_dev *dev,
+ 
+ int
+ dpaa_timesync_write_time(struct rte_eth_dev *dev,
+-					const struct timespec *ts)
++	const struct timespec *ts)
+ {
+ 	uint32_t *tmr_cnt_h, *tmr_cnt_l;
+ 	struct fman_if *fif;
+@@ -88,15 +108,21 @@ dpaa_timesync_adjust_time(struct rte_eth_dev *dev, int64_t delta)
+ 
+ int
+ dpaa_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
+-						struct timespec *timestamp)
++	struct timespec *timestamp)
+ {
+ 	struct dpaa_if *dpaa_intf = dev->data->dev_private;
++	int read_count = 10000;
+ 
+-	if (dpaa_intf->next_tx_conf_queue) {
+-		while (!dpaa_intf->tx_timestamp)
++	if (dpaa_intf->ts_enable && dpaa_intf->next_tx_conf_queue) {
++		while (dpaa_intf->tx_timestamp == dpaa_intf->tx_old_timestamp) {
+ 			dpaa_eth_tx_conf(dpaa_intf->next_tx_conf_queue);
++			if (read_count <= 0)
++				return -EAGAIN;
++			read_count--;
++		}
++		dpaa_intf->tx_old_timestamp = dpaa_intf->tx_timestamp;
+ 	} else {
+-		return -1;
++		return -ENOTSUP;
+ 	}
+ 	*timestamp = rte_ns_to_timespec(dpaa_intf->tx_timestamp);
+ 
+@@ -105,10 +131,14 @@ dpaa_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
+ 
+ int
+ dpaa_timesync_read_rx_timestamp(struct rte_eth_dev *dev,
+-						struct timespec *timestamp,
+-						uint32_t flags __rte_unused)
++	struct timespec *timestamp, uint32_t flags __rte_unused)
+ {
+ 	struct dpaa_if *dpaa_intf = dev->data->dev_private;
++
++	if (!dpaa_intf->ts_enable)
++		return -ENOTSUP;
++
+ 	*timestamp = rte_ns_to_timespec(dpaa_intf->rx_timestamp);
++
+ 	return 0;
+ }
+diff --git a/drivers/net/dpaa/dpaa_rxtx.c b/drivers/net/dpaa/dpaa_rxtx.c
+index 4dca63ea7e..c5e393159a 100644
+--- a/drivers/net/dpaa/dpaa_rxtx.c
++++ b/drivers/net/dpaa/dpaa_rxtx.c
+@@ -45,6 +45,7 @@
+ #include <fsl_qman.h>
+ #include <fsl_bman.h>
+ #include <dpaa_of.h>
++#include <dpaax_ptp.h>
+ #include <netcfg.h>
+ 
+ #ifdef RTE_LIBRTE_DPAA_DEBUG_DRIVER
+@@ -234,12 +235,11 @@ dpaa_slow_parsing(struct rte_mbuf *m,
+ 		m->packet_type |= RTE_PTYPE_L4_SCTP;
+ }
+ 
+-static inline void dpaa_eth_packet_info(struct rte_mbuf *m, void *fd_virt_addr)
++static inline void
++dpaa_eth_packet_info(struct dpaa_if *dpaa_intf, struct rte_mbuf *m,
++	struct annotations_t *annot)
+ {
+-	struct annotations_t *annot = GET_ANNOTATIONS(fd_virt_addr);
+ 	uint64_t prs = *((uintptr_t *)(&annot->parse)) & DPAA_PARSE_MASK;
+-	struct rte_ether_hdr *eth_hdr =
+-		rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
+ 
+ 	DPAA_DP_LOG(DEBUG, " Parsing mbuf: %p with annotations: %p", m, annot);
+ 
+@@ -360,9 +360,11 @@ static inline void dpaa_eth_packet_info(struct rte_mbuf *m, void *fd_virt_addr)
+ 		m->ol_flags |= RTE_MBUF_F_RX_VLAN;
+ 	/* Packet received without stripping the vlan */
+ 
+-	if (eth_hdr->ether_type == htons(RTE_ETHER_TYPE_1588)) {
+-		m->ol_flags |= RTE_MBUF_F_RX_IEEE1588_PTP;
+-		m->ol_flags |= RTE_MBUF_F_RX_IEEE1588_TMST;
++	if (unlikely(dpaa_intf->ts_enable)) {
++		if (dpaax_timesync_ptp_parse_header(m, NULL, NULL)) {
++			m->ol_flags |= RTE_MBUF_F_RX_IEEE1588_PTP;
++			m->ol_flags |= RTE_MBUF_F_RX_IEEE1588_TMST;
++		}
+ 	}
+ }
+ 
+@@ -468,7 +470,7 @@ dpaa_unsegmented_checksum(struct rte_mbuf *mbuf, struct qm_fd *fd_arr)
+ }
+ 
+ static struct rte_mbuf *
+-dpaa_eth_sg_to_mbuf(const struct qm_fd *fd, uint32_t ifid)
++dpaa_eth_sg_to_mbuf(struct dpaa_if *dpaa_intf, const struct qm_fd *fd)
+ {
+ 	struct dpaa_bp_info *bp_info = DPAA_BPID_TO_POOL_INFO(fd->bpid);
+ 	struct rte_mbuf *first_seg, *prev_seg, *cur_seg, *temp;
+@@ -499,7 +501,7 @@ dpaa_eth_sg_to_mbuf(const struct qm_fd *fd, uint32_t ifid)
+ 			(void **)&first_seg, 1, 1);
+ #endif
+ 
+-	first_seg->port = ifid;
++	first_seg->port = dpaa_intf->ifid;
+ 	first_seg->nb_segs = 1;
+ 	first_seg->ol_flags = 0;
+ 	prev_seg = first_seg;
+@@ -529,7 +531,7 @@ dpaa_eth_sg_to_mbuf(const struct qm_fd *fd, uint32_t ifid)
+ 	DPAA_DP_LOG(DEBUG, "Received an SG frame len =%d, num_sg =%d",
+ 			first_seg->pkt_len, first_seg->nb_segs);
+ 
+-	dpaa_eth_packet_info(first_seg, vaddr);
++	dpaa_eth_packet_info(dpaa_intf, first_seg, GET_ANNOTATIONS(vaddr));
+ #ifdef RTE_LIBRTE_MEMPOOL_DEBUG
+ 	rte_mempool_check_cookies(rte_mempool_from_obj((void *)temp),
+ 			(void **)&temp, 1, 1);
+@@ -540,7 +542,7 @@ dpaa_eth_sg_to_mbuf(const struct qm_fd *fd, uint32_t ifid)
+ }
+ 
+ static inline struct rte_mbuf *
+-dpaa_eth_fd_to_mbuf(const struct qm_fd *fd, uint32_t ifid)
++dpaa_eth_fd_to_mbuf(struct dpaa_if *dpaa_intf, const struct qm_fd *fd)
+ {
+ 	struct rte_mbuf *mbuf;
+ 	struct dpaa_bp_info *bp_info = DPAA_BPID_TO_POOL_INFO(fd->bpid);
+@@ -551,7 +553,7 @@ dpaa_eth_fd_to_mbuf(const struct qm_fd *fd, uint32_t ifid)
+ 	uint32_t length;
+ 
+ 	if (unlikely(format == qm_fd_sg))
+-		return dpaa_eth_sg_to_mbuf(fd, ifid);
++		return dpaa_eth_sg_to_mbuf(dpaa_intf, fd);
+ 
+ 	offset = (fd->opaque & DPAA_FD_OFFSET_MASK) >> DPAA_FD_OFFSET_SHIFT;
+ 	length = fd->opaque & DPAA_FD_LENGTH_MASK;
+@@ -569,7 +571,7 @@ dpaa_eth_fd_to_mbuf(const struct qm_fd *fd, uint32_t ifid)
+ 	mbuf->data_len = length;
+ 	mbuf->pkt_len = length;
+ 
+-	mbuf->port = ifid;
++	mbuf->port = dpaa_intf->ifid;
+ 	mbuf->nb_segs = 1;
+ 	mbuf->ol_flags = 0;
+ 	mbuf->next = NULL;
+@@ -578,7 +580,7 @@ dpaa_eth_fd_to_mbuf(const struct qm_fd *fd, uint32_t ifid)
+ 	rte_mempool_check_cookies(rte_mempool_from_obj((void *)mbuf),
+ 			(void **)&mbuf, 1, 1);
+ #endif
+-	dpaa_eth_packet_info(mbuf, mbuf->buf_addr);
++	dpaa_eth_packet_info(dpaa_intf, mbuf, GET_ANNOTATIONS(mbuf->buf_addr));
+ 
+ 	return mbuf;
+ }
+@@ -670,11 +672,11 @@ dpaa_rx_cb_no_prefetch(struct qman_fq **fq, struct qm_dqrr_entry **dqrr,
+ 		}
+ 
+ 		fd = &dqrr[i]->fd;
+-		dpaa_intf = fq[0]->dpaa_intf;
++		dpaa_intf = fq[i]->dpaa_intf;
+ 		format = (fd->opaque & DPAA_FD_FORMAT_MASK) >>
+ 				DPAA_FD_FORMAT_SHIFT;
+ 		if (unlikely(format == qm_fd_sg)) {
+-			bufs[i] = dpaa_eth_sg_to_mbuf(fd, dpaa_intf->ifid);
++			bufs[i] = dpaa_eth_sg_to_mbuf(dpaa_intf, fd);
+ 			continue;
+ 		}
+ 
+@@ -696,13 +698,11 @@ dpaa_rx_cb_no_prefetch(struct qman_fq **fq, struct qm_dqrr_entry **dqrr,
+ 		rte_mempool_check_cookies(rte_mempool_from_obj((void *)mbuf),
+ 			(void **)&mbuf, 1, 1);
+ #endif
+-		dpaa_eth_packet_info(mbuf, mbuf->buf_addr);
+-		dpaa_display_frame_info(fd, fq[0]->fqid, true);
+-		if (dpaa_ieee_1588) {
+-			annot = GET_ANNOTATIONS(mbuf->buf_addr);
+-			dpaa_intf->rx_timestamp =
+-				rte_cpu_to_be_64(annot->timestamp);
+-		}
++		annot = GET_ANNOTATIONS(mbuf->buf_addr);
++		dpaa_eth_packet_info(dpaa_intf, mbuf, annot);
++		dpaa_display_frame_info(fd, fq[i]->fqid, true);
++		if (unlikely(dpaa_intf->ts_enable))
++			dpaa_intf->rx_timestamp = rte_be_to_cpu_64(annot->timestamp);
+ 	}
+ }
+ 
+@@ -720,11 +720,11 @@ dpaa_rx_cb(struct qman_fq **fq, struct qm_dqrr_entry **dqrr,
+ 
+ 	for (i = 0; i < num_bufs; i++) {
+ 		fd = &dqrr[i]->fd;
+-		dpaa_intf = fq[0]->dpaa_intf;
++		dpaa_intf = fq[i]->dpaa_intf;
+ 		format = (fd->opaque & DPAA_FD_FORMAT_MASK) >>
+ 				DPAA_FD_FORMAT_SHIFT;
+ 		if (unlikely(format == qm_fd_sg)) {
+-			bufs[i] = dpaa_eth_sg_to_mbuf(fd, dpaa_intf->ifid);
++			bufs[i] = dpaa_eth_sg_to_mbuf(dpaa_intf, fd);
+ 			continue;
+ 		}
+ 
+@@ -746,13 +746,11 @@ dpaa_rx_cb(struct qman_fq **fq, struct qm_dqrr_entry **dqrr,
+ 		rte_mempool_check_cookies(rte_mempool_from_obj((void *)mbuf),
+ 			(void **)&mbuf, 1, 1);
+ #endif
+-		dpaa_eth_packet_info(mbuf, mbuf->buf_addr);
+-		dpaa_display_frame_info(fd, fq[0]->fqid, true);
+-		if (dpaa_ieee_1588) {
+-			annot = GET_ANNOTATIONS(mbuf->buf_addr);
+-			dpaa_intf->rx_timestamp =
+-				rte_cpu_to_be_64(annot->timestamp);
+-		}
++		annot = GET_ANNOTATIONS(mbuf->buf_addr);
++		dpaa_eth_packet_info(dpaa_intf, mbuf, annot);
++		dpaa_display_frame_info(fd, fq[i]->fqid, true);
++		if (unlikely(dpaa_intf->ts_enable))
++			dpaa_intf->rx_timestamp = rte_be_to_cpu_64(annot->timestamp);
+ 	}
+ }
+ 
+@@ -787,7 +785,7 @@ dpaa_eth_queue_portal_rx(struct qman_fq *fq,
+ 		fq->qp_initialized = 1;
+ 	}
+ 
+-	return qman_portal_poll_rx(nb_bufs, (void **)bufs, fq->qp);
++	return qman_portal_poll_rx(nb_bufs, (void **)bufs, fq->qp, &fq->cb);
+ }
+ 
+ enum qman_cb_dqrr_result
+@@ -797,11 +795,10 @@ dpaa_rx_cb_parallel(void *event,
+ 		    const struct qm_dqrr_entry *dqrr,
+ 		    void **bufs)
+ {
+-	u32 ifid = ((struct dpaa_if *)fq->dpaa_intf)->ifid;
+ 	struct rte_mbuf *mbuf;
+ 	struct rte_event *ev = (struct rte_event *)event;
+ 
+-	mbuf = dpaa_eth_fd_to_mbuf(&dqrr->fd, ifid);
++	mbuf = dpaa_eth_fd_to_mbuf(fq->dpaa_intf, &dqrr->fd);
+ 	ev->event_ptr = (void *)mbuf;
+ 	ev->flow_id = fq->ev.flow_id;
+ 	ev->sub_event_type = fq->ev.sub_event_type;
+@@ -825,11 +822,10 @@ dpaa_rx_cb_atomic(void *event,
+ 		  void **bufs)
+ {
+ 	u8 index;
+-	u32 ifid = ((struct dpaa_if *)fq->dpaa_intf)->ifid;
+ 	struct rte_mbuf *mbuf;
+ 	struct rte_event *ev = (struct rte_event *)event;
+ 
+-	mbuf = dpaa_eth_fd_to_mbuf(&dqrr->fd, ifid);
++	mbuf = dpaa_eth_fd_to_mbuf(fq->dpaa_intf, &dqrr->fd);
+ 	ev->event_ptr = (void *)mbuf;
+ 	ev->flow_id = fq->ev.flow_id;
+ 	ev->sub_event_type = fq->ev.sub_event_type;
+@@ -900,7 +896,7 @@ dpaa_eth_err_queue(struct qman_fq *fq)
+ 			dpaa_display_frame_info(fd, debug_fq->fqid,
+ 				i == DPAA_DEBUG_FQ_RX_ERROR);
+ 
+-			mbuf = dpaa_eth_fd_to_mbuf(fd, dpaa_intf->ifid);
++			mbuf = dpaa_eth_fd_to_mbuf(dpaa_intf, fd);
+ 			rte_pktmbuf_free(mbuf);
+ 			qman_dqrr_consume(debug_fq, dq);
+ 		} while (debug_fq->flags & QMAN_FQ_STATE_VDQCR);
+@@ -908,13 +904,12 @@ dpaa_eth_err_queue(struct qman_fq *fq)
+ }
+ #endif
+ 
+-uint16_t dpaa_eth_queue_rx(void *q,
+-			   struct rte_mbuf **bufs,
+-			   uint16_t nb_bufs)
++uint16_t
++dpaa_eth_queue_rx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
+ {
+ 	struct qman_fq *fq = q;
+ 	struct qm_dqrr_entry *dq;
+-	uint32_t num_rx = 0, ifid = ((struct dpaa_if *)fq->dpaa_intf)->ifid;
++	uint32_t num_rx = 0;
+ 	int num_rx_bufs, ret;
+ 	uint32_t vdqcr_flags = 0;
+ 	struct annotations_t *annot;
+@@ -959,11 +954,11 @@ uint16_t dpaa_eth_queue_rx(void *q,
+ 		dq = qman_dequeue(fq);
+ 		if (!dq)
+ 			continue;
+-		bufs[num_rx++] = dpaa_eth_fd_to_mbuf(&dq->fd, ifid);
++		bufs[num_rx++] = dpaa_eth_fd_to_mbuf(dpaa_intf, &dq->fd);
+ 		dpaa_display_frame_info(&dq->fd, fq->fqid, true);
+-		if (dpaa_ieee_1588) {
++		if (unlikely(dpaa_intf->ts_enable)) {
+ 			annot = GET_ANNOTATIONS(bufs[num_rx - 1]->buf_addr);
+-			dpaa_intf->rx_timestamp = rte_cpu_to_be_64(annot->timestamp);
++			dpaa_intf->rx_timestamp = rte_be_to_cpu_64(annot->timestamp);
+ 		}
+ 		qman_dqrr_consume(fq, dq);
+ 	} while (fq->flags & QMAN_FQ_STATE_VDQCR);
+@@ -1314,10 +1309,9 @@ dpaa_eth_queue_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
+ 
+ 	DPAA_DP_LOG(DEBUG, "Transmitting %d buffers on queue: %p", nb_bufs, q);
+ 
+-	if (dpaa_ieee_1588) {
++	if (unlikely(dpaa_intf->ts_enable)) {
+ 		dpaa_intf->next_tx_conf_queue = fq_txconf;
+ 		dpaa_eth_tx_conf(fq_txconf);
+-		dpaa_intf->tx_timestamp = 0;
+ 	}
+ 
+ 	while (nb_bufs) {
+@@ -1326,7 +1320,7 @@ dpaa_eth_queue_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
+ 		for (loop = 0; loop < frames_to_send; loop++) {
+ 			mbuf = *(bufs++);
+ 			fd_arr[loop].cmd = 0;
+-			if (dpaa_ieee_1588) {
++			if (unlikely(dpaa_intf->ts_enable)) {
+ 				fd_arr[loop].cmd |= DPAA_FD_CMD_FCO |
+ 					qman_fq_fqid(fq_txconf);
+ 				fd_arr[loop].cmd |= DPAA_FD_CMD_RPD |
+@@ -1481,8 +1475,7 @@ dpaa_eth_tx_conf(void *q)
+ 
+ 			if (mbuf->ol_flags & RTE_MBUF_F_TX_IEEE1588_TMST) {
+ 				annot = GET_ANNOTATIONS(mbuf->buf_addr);
+-				dpaa_intf->tx_timestamp =
+-					rte_cpu_to_be_64(annot->timestamp);
++				dpaa_intf->tx_timestamp = rte_be_to_cpu_64(annot->timestamp);
+ 			}
+ 			dpaa_display_frame_info(&dq->fd, fq->fqid, true);
+ 			qman_dqrr_consume(fq, dq);
+diff --git a/drivers/net/dpaa/dpaa_rxtx.h b/drivers/net/dpaa/dpaa_rxtx.h
+index edb29788fb..233339a488 100644
+--- a/drivers/net/dpaa/dpaa_rxtx.h
++++ b/drivers/net/dpaa/dpaa_rxtx.h
+@@ -239,7 +239,7 @@ struct __rte_packed_begin dpaa_eth_parse_results_t {
+ struct annotations_t {
+ 	uint8_t reserved[DEFAULT_RX_ICEOF];
+ 	struct dpaa_eth_parse_results_t parse;	/**< Pointer to Parsed result*/
+-	uint64_t timestamp;
++	rte_be64_t timestamp;
+ 	uint64_t hash;			/**< Hash Result */
+ };
+ 
 -- 
 2.25.1
 
