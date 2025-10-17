@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C40D2CCD195
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 13:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0B4CCD195
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 13:56:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 35EEA42DA6;
-	Fri, 17 Oct 2025 15:56:30 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8F4B342DBB;
+	Fri, 17 Oct 2025 15:56:31 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 0003240269
- for <dev@dpdk.org>; Fri, 17 Oct 2025 15:56:27 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id AD33840269
+ for <dev@dpdk.org>; Fri, 17 Oct 2025 15:56:28 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1760709388; x=1792245388;
+ t=1760709389; x=1792245389;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=iCX+VNmx9VxsQ60tVx6KHPII4U4JwJwGjTJDB4I9OWw=;
- b=e0RGlyvJMKP/H2eZbKtvbQewDLt1vWLTV/alpHuaSZwhK/tzZiXKL5PT
- 6Hv5tdW1EDLRmU5fpcjfgjQB5xrWrxqLxLvvTD7mbcLAmA5bRIYjrOGSN
- MCrPYrXqKojvDca1F8aSsZNUcQ+Ifjcs9YIOZk8xMDU+1VeKK+JkbiNNQ
- iQuFd4H2Q/+lynaEofsnjYC3ULuhga0QQvNyJaYno4NDHKG3cd4R6ZQWS
- ZmpKoQuj7lI5SKEeJ+SBRafVrhkcyz2Dal/fpWFM5Sk7Zu4fGL7Mm3isM
- BobIER+f50SdghiEcfzApYfR043DFwBBoz0TqKMMziPaP/QfKJpia6vkF Q==;
-X-CSE-ConnectionGUID: olUq9+x4T76iZhTzdsuIzw==
-X-CSE-MsgGUID: bTF2lu/SRPS5nm02bP3GoA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="73522788"
-X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; d="scan'208";a="73522788"
+ bh=MMQ6I0LN48EUIaUZb+rAvOh5HtjUdmf/U+dh3ugp6S4=;
+ b=BDLEXkXVc2yzuLYuckUXT/mUEFRDCI8k5sOB2EiabLvfpYbiGeV9Uxow
+ lcb9Thw2W/ODUIIdA2lF4yBEMovENQT4lw95ebX7pVGg553zPlu1xXgxi
+ EnHf5LMMWv70q5dKWm1a0WitrDEW3YGBUj3ACINrnJgtyJY1TLwsnARDs
+ mTVW3E0WP2p9T1Df79Rl6+iLyMHY8/XC7hVtSdpWQoFUcBmPnzZf5Sy1E
+ AONeV7jO+FwDuNxBkHA0+aAQgbSIE18euRFRyO9NElRZ9SuqRqc9FPh+J
+ XwZyU2MZQeonF8M4rQZci6Cfz483ntFpWLUgtOPrAQXzAXIyn09P/xJJg A==;
+X-CSE-ConnectionGUID: YO3WZWuYQFKQWOYX6shJAw==
+X-CSE-MsgGUID: RgXo6KTuSuObqCmk29Yzrg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="73522790"
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; d="scan'208";a="73522790"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Oct 2025 06:56:27 -0700
-X-CSE-ConnectionGUID: DZdMsFZ+RL6VtesKArWb1g==
-X-CSE-MsgGUID: TyEwU3qtRc+42o0vCQzb8Q==
+ 17 Oct 2025 06:56:28 -0700
+X-CSE-ConnectionGUID: drl/hebmQBS8HDo/hF9GdA==
+X-CSE-MsgGUID: anFkt+cUSsOoHqCuJ9E38Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; d="scan'208";a="181878245"
+X-IronPort-AV: E=Sophos;i="6.19,236,1754982000"; d="scan'208";a="181878251"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 17 Oct 2025 06:56:27 -0700
+ by orviesa006.jf.intel.com with ESMTP; 17 Oct 2025 06:56:28 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 1/2] usertools/dpdk-telemetry: correct script formatting
-Date: Fri, 17 Oct 2025 14:56:21 +0100
-Message-ID: <20251017135622.1152341-2-bruce.richardson@intel.com>
+Subject: [PATCH 2/2] usertools/dpdk-telemetry-client: correct script formatting
+Date: Fri, 17 Oct 2025 14:56:22 +0100
+Message-ID: <20251017135622.1152341-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251017135622.1152341-1-bruce.richardson@intel.com>
 References: <20251017135622.1152341-1-bruce.richardson@intel.com>
@@ -59,79 +59,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Auto-format the dpdk-telemetry script using "black" tool, to ensure it
-meets default DPDK python formatting style.
+Auto-format the dpdk-telemetry-client script using "black" tool, to
+ensure it meets default DPDK python formatting style.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- usertools/dpdk-telemetry.py | 90 +++++++++++++++++++++----------------
- 1 file changed, 51 insertions(+), 39 deletions(-)
+ usertools/dpdk-telemetry-client.py | 49 +++++++++++++++++-------------
+ 1 file changed, 28 insertions(+), 21 deletions(-)
 
-diff --git a/usertools/dpdk-telemetry.py b/usertools/dpdk-telemetry.py
-index b025f86731..d428a3b707 100755
---- a/usertools/dpdk-telemetry.py
-+++ b/usertools/dpdk-telemetry.py
-@@ -18,13 +18,13 @@
+diff --git a/usertools/dpdk-telemetry-client.py b/usertools/dpdk-telemetry-client.py
+index e3bb1c9ee0..f65d2e0be4 100755
+--- a/usertools/dpdk-telemetry-client.py
++++ b/usertools/dpdk-telemetry-client.py
+@@ -9,13 +9,13 @@
  
- # global vars
- TELEMETRY_VERSION = "v2"
--SOCKET_NAME = 'dpdk_telemetry.{}'.format(TELEMETRY_VERSION)
+ BUFFER_SIZE = 200000
+ 
+-METRICS_REQ = "{\"action\":0,\"command\":\"ports_all_stat_values\",\"data\":null}"
+-API_REG = "{\"action\":1,\"command\":\"clients\",\"data\":{\"client_path\":\""
+-API_UNREG = "{\"action\":2,\"command\":\"clients\",\"data\":{\"client_path\":\""
+-GLOBAL_METRICS_REQ = "{\"action\":0,\"command\":\"global_stat_values\",\"data\":null}"
++METRICS_REQ = '{"action":0,"command":"ports_all_stat_values","data":null}'
++API_REG = '{"action":1,"command":"clients","data":{"client_path":"'
++API_UNREG = '{"action":2,"command":"clients","data":{"client_path":"'
++GLOBAL_METRICS_REQ = '{"action":0,"command":"global_stat_values","data":null}'
+ DEFAULT_FP = "/var/run/dpdk/default_client"
 -DEFAULT_PREFIX = 'rte'
-+SOCKET_NAME = "dpdk_telemetry.{}".format(TELEMETRY_VERSION)
+-RUNTIME_SOCKET_NAME = 'telemetry'
 +DEFAULT_PREFIX = "rte"
- CMDS = []
++RUNTIME_SOCKET_NAME = "telemetry"
  
  
- def read_socket(sock, buf_len, echo=True, pretty=False):
--    """ Read data from socket and return it in JSON format """
-+    """Read data from socket and return it in JSON format"""
-     reply = sock.recv(buf_len).decode()
-     try:
-         ret = json.loads(reply)
-@@ -39,11 +39,11 @@ def read_socket(sock, buf_len, echo=True, pretty=False):
+ class Socket:
+@@ -56,8 +56,7 @@ def getFilepath(self, file_path):
+         self.file_path = file_path
  
+     def setRunpath(self, file_prefix):
+-        self.run_path = os.path.join(get_dpdk_runtime_dir(file_prefix),
+-                                     RUNTIME_SOCKET_NAME)
++        self.run_path = os.path.join(get_dpdk_runtime_dir(file_prefix), RUNTIME_SOCKET_NAME)
  
- def get_app_name(pid):
--    """ return the app name for a given PID, for printing """
--    proc_cmdline = os.path.join('/proc', str(pid), 'cmdline')
-+    """return the app name for a given PID, for printing"""
-+    proc_cmdline = os.path.join("/proc", str(pid), "cmdline")
-     try:
-         with open(proc_cmdline) as f:
--            argv0 = f.read(1024).split('\0')[0]
-+            argv0 = f.read(1024).split("\0")[0]
-             return os.path.basename(argv0)
-     except IOError as e:
-         # ignore file not found errors
-@@ -53,41 +53,40 @@ def get_app_name(pid):
+     def register(self):
+         # Connects a client to DPDK-instance
+@@ -69,7 +68,7 @@ def register(self):
+             print("Error - Socket binding error: " + str(msg) + "\n")
+         self.socket.recv_fd.settimeout(2)
+         self.socket.send_fd.connect(self.run_path)
+-        JSON = (API_REG + self.file_path + "\"}}")
++        JSON = API_REG + self.file_path + '"}}'
+         self.socket.send_fd.sendall(JSON.encode())
  
+         self.socket.recv_fd.listen(1)
+@@ -77,7 +76,7 @@ def register(self):
  
- def find_sockets(path):
--    """ Find any possible sockets to connect to and return them """
--    return glob.glob(os.path.join(path, SOCKET_NAME + '*'))
-+    """Find any possible sockets to connect to and return them"""
-+    return glob.glob(os.path.join(path, SOCKET_NAME + "*"))
+     def unregister(self):
+         # Unregister a given client
+-        self.socket.client_fd.send((API_UNREG + self.file_path + "\"}}").encode())
++        self.socket.client_fd.send((API_UNREG + self.file_path + '"}}').encode())
+         self.socket.client_fd.close()
  
- 
- def print_socket_options(prefix, paths):
--    """ Given a set of socket paths, give the commands needed to connect """
-+    """Given a set of socket paths, give the commands needed to connect"""
-     cmd = sys.argv[0]
-     if prefix != DEFAULT_PREFIX:
-         cmd += " -f " + prefix
-     for s in sorted(paths):
-         sock_name = os.path.basename(s)
-         if sock_name.endswith(TELEMETRY_VERSION):
--            print("- {}  # Connect with '{}'".format(os.path.basename(s),
--                                                     cmd))
-+            print("- {}  # Connect with '{}'".format(os.path.basename(s), cmd))
-         else:
--            print("- {}  # Connect with '{} -i {}'".format(os.path.basename(s),
--                                                           cmd,
--                                                           s.split(':')[-1]))
-+            print(
-+                "- {}  # Connect with '{} -i {}'".format(os.path.basename(s), cmd, s.split(":")[-1])
-+            )
+     def requestMetrics(self):
+@@ -133,25 +132,33 @@ def interactiveMenu(self, sleep_time):
  
  
  def get_dpdk_runtime_dir(fp):
@@ -153,74 +141,14 @@ index b025f86731..d428a3b707 100755
 +    return os.path.join(run_dir, "dpdk", fp)
  
  
- def list_fp():
--    """ List all available file-prefixes to user """
--    path = get_dpdk_runtime_dir('')
-+    """List all available file-prefixes to user"""
-+    path = get_dpdk_runtime_dir("")
-     sockets = glob.glob(os.path.join(path, "*", SOCKET_NAME + "*"))
-     prefixes = []
-     if not sockets:
-@@ -98,18 +97,17 @@ def list_fp():
-         prefixes.append(os.path.relpath(os.path.dirname(s), start=path))
-     for p in sorted(set(prefixes)):
-         print(p)
--        print_socket_options(p, glob.glob(os.path.join(path, p,
--                                                       SOCKET_NAME + "*")))
-+        print_socket_options(p, glob.glob(os.path.join(path, p, SOCKET_NAME + "*")))
- 
- 
- def handle_socket(args, path):
--    """ Connect to socket and handle user input """
--    prompt = ''  # this evaluates to false in conditions
-+    """Connect to socket and handle user input"""
-+    prompt = ""  # this evaluates to false in conditions
-     sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
-     global CMDS
- 
-     if os.isatty(sys.stdin.fileno()):
--        prompt = '--> '
-+        prompt = "--> "
-         print("Connecting to " + path)
-     try:
-         sock.connect(path)
-@@ -142,7 +140,7 @@ def handle_socket(args, path):
-     try:
-         text = input(prompt).strip()
-         while text != "quit":
--            if text.startswith('/'):
-+            if text.startswith("/"):
-                 sock.send(text.encode())
-                 read_socket(sock, output_buf_len, pretty=prompt)
-             text = input(prompt).strip()
-@@ -153,8 +151,8 @@ def handle_socket(args, path):
- 
- 
- def readline_complete(text, state):
--    """ Find any matching commands from the list based on user input """
--    all_cmds = ['quit'] + CMDS
-+    """Find any matching commands from the list based on user input"""
-+    all_cmds = ["quit"] + CMDS
-     if text:
-         matches = [c for c in all_cmds if c.startswith(text)]
-     else:
-@@ -163,17 +161,31 @@ def readline_complete(text, state):
- 
- 
  if __name__ == "__main__":
--    readline.parse_and_bind('tab: complete')
-+    readline.parse_and_bind("tab: complete")
-     readline.set_completer(readline_complete)
--    readline.set_completer_delims(readline.get_completer_delims().replace('/', ''))
-+    readline.set_completer_delims(readline.get_completer_delims().replace("/", ""))
  
+     sleep_time = 1
      parser = argparse.ArgumentParser()
 -    parser.add_argument('-f', '--file-prefix', default=DEFAULT_PREFIX,
 -                        help='Provide file-prefix for DPDK runtime directory')
--    parser.add_argument('-i', '--instance', default='0', type=int,
--                        help='Provide instance number for DPDK application')
--    parser.add_argument('-l', '--list', action="store_true", default=False,
--                        help='List all possible file-prefixes and exit')
+-    parser.add_argument('sock_path', nargs='?', default=DEFAULT_FP,
+-                        help='Provide socket file path connected by legacy client')
 +    parser.add_argument(
 +        "-f",
 +        "--file-prefix",
@@ -228,22 +156,14 @@ index b025f86731..d428a3b707 100755
 +        help="Provide file-prefix for DPDK runtime directory",
 +    )
 +    parser.add_argument(
-+        "-i",
-+        "--instance",
-+        default="0",
-+        type=int,
-+        help="Provide instance number for DPDK application",
-+    )
-+    parser.add_argument(
-+        "-l",
-+        "--list",
-+        action="store_true",
-+        default=False,
-+        help="List all possible file-prefixes and exit",
++        "sock_path",
++        nargs="?",
++        default=DEFAULT_FP,
++        help="Provide socket file path connected by legacy client",
 +    )
      args = parser.parse_args()
-     if args.list:
-         list_fp()
+ 
+     client = Client()
 -- 
 2.48.1
 
