@@ -2,74 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAE5CCD195
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 15:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC95ACCD195
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 16:10:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 93F1142DD3;
-	Fri, 17 Oct 2025 17:59:43 +0200 (CEST)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
- [209.85.210.170])
- by mails.dpdk.org (Postfix) with ESMTP id 45EC142DD5
- for <dev@dpdk.org>; Fri, 17 Oct 2025 17:59:42 +0200 (CEST)
-Received: by mail-pf1-f170.google.com with SMTP id
- d2e1a72fcca58-77f67ba775aso2939792b3a.3
- for <dev@dpdk.org>; Fri, 17 Oct 2025 08:59:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760716781;
- x=1761321581; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=2jHunm+1/i/udJXQm8cqdA59qcWhqQRnXtCB4jwFriI=;
- b=xGTt6Rf6emC4bL+CSj1a7FHIaMjO3mQpaAmFGyiVGaybhQxuzpX9eLJlAJkYaHAkZj
- QwTrlEt4sJ7qGTVm54RSqwpmMgVespWFeLIPE+bizMF07mivgzJEiDxY+RHj/b6x86HC
- YQwJJP73L0JSFuqacWen4jLkNT+ZnDIKtB0zPVQXJGUj/IowCs+BoUqqeufEZTCyfi5H
- VEr1o3M92n4uj8X9qypr04xhZdhJFP+VDLNZLah9SYfyLJAIh3YbXIWjrlV28R8mdQPV
- qRQJnekv7PNQDpzTGd1DH36tAdYMHw/BqEyltie4Zh7OpcQe4L7LB5FTHbrob5K487OM
- OzwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760716781; x=1761321581;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=2jHunm+1/i/udJXQm8cqdA59qcWhqQRnXtCB4jwFriI=;
- b=MW8bL7CHjtZDxBxggamXX5MwsyX054IT97k55BcvJMQMqosNwnP+D/E+EQS6AHg2Qp
- 65N27Pzk/b5ksmkiN3/c+OR89T9InJ0E3ja+m3MD75WfNXgff8zpXV23aSHA2nP2fAg3
- JUuUSLdGf48Chok2IFrtimvDQ711m9Ap6p2Js7WfAxCeL9xkO+fl0ngoGiZFJIVRKzZU
- Rq23npj6GyHqGchg+j8e4aOdUGbQp0tXH9yUL7yynsvkkncomsvfqwzTc5zB4SMa/t44
- ec7UwT/DOhPi2ykwfrtZZco5/kt9mScHn97DgJHoFLTelr+MNqavcrXVH97L/kavk5Wi
- AGlw==
-X-Gm-Message-State: AOJu0YzCONgW5T6KIGDYJbnG/7IGn0agL/hpN6NGvT0cR/noKynWBn7g
- ja/tcZa6c3aDXvvVexaik/iL/POzWI0juMdlEACUeGMQUYhqerejzFuSpggUJIfZOEY=
-X-Gm-Gg: ASbGncvAb4iazoiYKCiuLF23SDGbSBZec8xV35pY2Hv61vu4MTT7UZt8rNaas0l+x23
- MkJaPyZRH0p/+T0b10Mpp3CV6pOJlUoLiTsqornXDnAY+swpwzyyQaSX409+HTbYflbu1fOxigs
- HcmxlovkquhmPzVE0Vw9gH13OdIezo7QyHhrrlDC5igWsAq1QKT+2+YuCYWiB+bT4YpPCfnTaUB
- tcF7cNsj+4ibxf1Ovu5NneOUxEAn20PvdEfl9ocFhNHkLz61MHumzk1kuUoQ+GM9yYzdBbKdtpj
- 88HOXisXKmWsjtj+e4pRFbpA1b7XqoqrGl4ykk1CO0Kh3BpTlDbFispWX6H7Wtg0C/uN1+TINaH
- lwy7ruVxRr4pZWKoJz6e17rNH1lKvIgAudL/4qX+9vKG+AOhqod227Mt6XLCN7o2YencsQigZrg
- elHygW6dJ+25y7PsX87awpXgYvXcJoGsKMf1tgXWD1u70kSm7Omg==
-X-Google-Smtp-Source: AGHT+IF3iIOxjG845txy0W2T+Tzm9BchKwNUYd2YXZ7gmm1LwDgDHOlCoGmUh+sUSgenbRFmXy9Xxw==
-X-Received: by 2002:a05:6a00:2308:b0:792:52ab:d9fe with SMTP id
- d2e1a72fcca58-7a220440d9fmr5096306b3a.0.1760716781296; 
- Fri, 17 Oct 2025 08:59:41 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7992b060a38sm26542041b3a.5.2025.10.17.08.59.40
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 17 Oct 2025 08:59:41 -0700 (PDT)
-Date: Fri, 17 Oct 2025 16:38:54 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org, Keith Wiles <keith.wiles@intel.com>, Pascal Mazon
- <pascal.mazon@6wind.com>, stable@dpdk.org
-Subject: Re: [PATCH dpdk] net/tap: fix interrupt callback crash after failed
- start
-Message-ID: <20251017163854.2bd86108@phoenix.lan>
-In-Reply-To: <20251017121946.421658-2-rjarry@redhat.com>
-References: <20251017121946.421658-2-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E5B56427BE;
+	Fri, 17 Oct 2025 18:10:35 +0200 (CEST)
+Received: from fhigh-a8-smtp.messagingengine.com
+ (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mails.dpdk.org (Postfix) with ESMTP id D2A8B400D7
+ for <dev@dpdk.org>; Fri, 17 Oct 2025 18:10:34 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 4EFB1140021E;
+ Fri, 17 Oct 2025 12:10:34 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-05.internal (MEProxy); Fri, 17 Oct 2025 12:10:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1760717434;
+ x=1760803834; bh=43EqL0cnnkufM8JHiGDXrBDMT+R7MG07TTtPu7fzOVw=; b=
+ HKuRbH88j2DoqQZdekMece2cYc4NU7pfpD//wKQEQv9JN1G9hQs+bSvv8FfZlV36
+ SAFYnx8tseHayauh0XRfUxBEx1Ea6bNhjBF38SZbBLjmtJpujv3SXJUNsBBAQimT
+ VeJYpVa8U/cIQ2+mcIUg22/DoPKzm+7IQJCXIb3FU0m2mLVXvnkDfBC6W8TrAFQb
+ 04jxDbaAc3+3sNZXlHMbGnr/g4ap1xYyGHWCJtbOaOBSsXogLM3SM3r1W5QCROcO
+ N6VWQO0xtSFP16C0aByzzisFNVqQuEh5Bz0FyJpD1xjirVoJ5MCiNXnbfVAyv+E2
+ 8DInqFsUg9uwFFQX5MuLAQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760717434; x=
+ 1760803834; bh=43EqL0cnnkufM8JHiGDXrBDMT+R7MG07TTtPu7fzOVw=; b=w
+ w2LiJOh7mDOFsQAmAeyceMP9Da5bACXp2hx4yH9vNKOhvMlYEXJq/cW5ZXsnBTCX
+ pDT/UIrk3LJAoo2bdoBlvckRMXKICgoQnUdPCXlnMmoXMgOk/x99qzLC6XVR/NTv
+ NmJ+zzG1RrHBs5P80NDLvRD4CAUMApCNnLRcgJC9rggaqHvYLz1pSFZ24lcK+T9y
+ S8VxjEo78blILZBWmK0xLFyj55ovjWD4cWJvdpXQy6TLWskZ2uLDwCs8VAOlFPgG
+ rlqpKoYmQsI1ZagkvREreeVlma43M9mfUsdGOtZ91OYx3ajk9XQLzVE02c4zw6sJ
+ ozWtUU+0BehdQhUTzdrXw==
+X-ME-Sender: <xms:eWryaHScYXv53NO9ZRLIkNy_pXAcREgYsoyTdeFlG0zMaPydQ4Sc6Q>
+ <xme:eWryaBsvDBK1AXaS13qc_pjENaNkLOiZqMJfy6F-QGTGFArg9odxhcHLFNakvfP3o
+ y9mQaXOFHpcki-eWmKcojeo5_ajQ-SVbJ0NfrvznlES3G1K2VA3gQ>
+X-ME-Received: <xmr:eWryaIaYn85vOhBveIx8buu-QQU5bXmYjthWZyaSEnR1Ym5X63WmX9nT9JbVgfHGl4MjNjFzFMgK9ddyI6geQL_ssw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdelieduucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertd
+ dttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
+ ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevff
+ fgtdegkeeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgep
+ tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
+ gvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+ uggvvhesughpughkrdhorhhgpdhrtghpthhtohepshhhphgvrhgvthiisehnvhhiughirg
+ drtghomhdprhgtphhtthhopehvihgrtghhvghslhgrvhhosehnvhhiughirgdrtghomhdp
+ rhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprh
+ gtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihshhtvghmshdrtghomhdprhgtphht
+ thhopehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrgh
+X-ME-Proxy: <xmx:eWryaHGW9SNZYMaJEM-nylh_DN6_ZC3LISrt62tu-XfqYOntBkOahQ>
+ <xmx:eWryaMzuqeuxvlBnCRNwjE7FIFv-l8uyjWXd-TYjS8-WhT6CZgIrjA>
+ <xmx:eWryaJlk4_PsEeu7f3eIRKsO1gOn7xlLV7lxCNaBFh-fhN5Tp3o1hw>
+ <xmx:eWryaFkatfX81hUq0x4_uyXh32VNNHVXPgtgxLirNPS_BlW2pmoEcA>
+ <xmx:emryaL_HDFJRVAZWU5KEaKaRx5eCeqJbBezhjikfYbhJ3h-0kCdsvt_U>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 17 Oct 2025 12:10:32 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: shperetz@nvidia.com, viacheslavo@nvidia.com, bruce.richardson@intel.com,
+ mb@smartsharesystems.com, stephen@networkplumber.org
+Subject: Re: [PATCH v7 0/7] add mbuf debug capabilities
+Date: Fri, 17 Oct 2025 18:10:30 +0200
+Message-ID: <4494855.FjKLVJYuhi@thomas>
+In-Reply-To: <20251016203557.2554678-1-thomas@monjalon.net>
+References: <20250616072910.113042-1-shperetz@nvidia.com>
+ <20251016203557.2554678-1-thomas@monjalon.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,42 +91,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 17 Oct 2025 14:19:47 +0200
-Robin Jarry <rjarry@redhat.com> wrote:
+16/10/2025 22:34, Thomas Monjalon:
+> History is added to mbuf for debugging.
+> 
+> This series set some marks in mbuf allocation/freeing and ethdev Rx/Tx.
+> More marks could be added in other libraries.
+> Drivers could benefit a finer debugging by marking alloc/free calls,
+> in addition to marks already done in the mbuf library.
+> Even better, the application could add its own marks.
+> 
+> As part of this series, mbuf statistics can be dumped,
+> and a Python script will help to parse mbuf history.
 
-> After moving a tap linux net device to a different namespace,
-> tap_link_set_up fails with an -ENODEV error. Indeed it relies on an
-> ioctl call using the interface name as argument:
-> 
-> 	/* with ifr->ifrn_name = "dtapX" */
-> 	ioctl(pmd->ioctl_sock, SIOCGIFFLAGS, ifr)
-> 
-> This causes rte_eth_dev_stop() to do nothing since the device is not
-> seen as started. And then, when removing the device, the interrupt
-> callbacks are left there.
-> 
-> If they are invoked, they will be so with a "freed" device pointer:
-> 
-> Thread 2 "dpdk-intr" hit Breakpoint 1, tap_dev_intr_handler
->     at ../drivers/net/tap/rte_eth_tap.c:1689
-> 1689            struct pmd_internals *pmd = dev->data->dev_private;
-> (gdb) p *dev
-> $2 = {
->   ...
->   data = 0x0,
->   ...
->   state = RTE_ETH_DEV_UNUSED,
->   security_ctx = 0x0
-> }
-> 
-> This causes a crash when dereferencing the data pointer.
-> 
-> When tap_link_set_up fails, ensure to unregister the interrupt callbacks
-> that were just reinstalled.
-> 
-> Cc: stable@dpdk.org
-> Fixes: c0bddd3a057f ("net/tap: add link status notification")
-> 
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
+Applied
+It is an experimental debug feature.
+It would be interesting to get some test feedback
+about how much it is useful and what can be improved.
 
-Queued to next-net
+
+
