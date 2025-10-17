@@ -2,71 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1201DCCD199
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 15:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FDECCD195
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 15:02:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F61E427E4;
-	Fri, 17 Oct 2025 17:02:48 +0200 (CEST)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
- [209.85.214.177])
- by mails.dpdk.org (Postfix) with ESMTP id 29A03400D7
- for <dev@dpdk.org>; Fri, 17 Oct 2025 17:02:46 +0200 (CEST)
-Received: by mail-pl1-f177.google.com with SMTP id
- d9443c01a7336-267facf9b58so14326895ad.2
- for <dev@dpdk.org>; Fri, 17 Oct 2025 08:02:46 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7C63042DDC;
+	Fri, 17 Oct 2025 17:02:49 +0200 (CEST)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 30BD4400D7
+ for <dev@dpdk.org>; Fri, 17 Oct 2025 17:02:47 +0200 (CEST)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-29226bc4bafso5125025ad.0
+ for <dev@dpdk.org>; Fri, 17 Oct 2025 08:02:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760713365;
- x=1761318165; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760713366;
+ x=1761318166; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Qzdi8kIp6sEnmiFIQVaItw81m6S/RSM9hI24cSlzR8k=;
- b=Gj4btn3canjCDxTavf2Tafif1Cy/tW86DbwS+kZmGtKEik09R0caHTvZoBh8k9Qqwj
- +8t0+p1G3MSCe3i3DkZEC8vjDWNhXsgY9oMa0iug4UU0bPop6IQd7DF4DqBk38DeOASd
- M2SPKXiprDTUy6c6QbtKD8fI0w8K62lv7B9FA8QfLjQY9j6AwdMgd+Z/zhCeRakSdQU5
- Xx4rswZF+CY+oIw+2uIQgnNwWEuK8yEfSg0RP/v6ISqU5/xEeR+OzmIv0wauCspxvD8n
- rIkmrenamKntjZCnr1B7tGSkRwuoAKcYRjU555N90sNyXqoPeHH9/39VcDEfC0aq3fOW
- 1igA==
+ bh=OxAeNxXIN3oOF0XVXMQCM7FsK3290kzDxIMHQXChHhU=;
+ b=gsS45DQ+/FZHGquFpLvCk+XQszSBIVlVOl0k94fE/LRUVknw7e+0Pd5ZhTzCMAjScX
+ ShGDlcFRsC7/YZ4CSbEL7BM+BEpfShUTXTvTeyuI0qoboa2Hn2OWeBjicazBnEDaa8Kb
+ Jblg2J/1/QSkYLHppdng/Nu7qw1Gy4+M/X07XahKukeXjjJnO0+IGXieyrfLOBgvz4wn
+ z6rbfhh1oWTKEHCDytUIY9YPPoS0e04Wc2/PnkOUK/ALOViP/Rvc0E2pJGTxeK9Kmhso
+ DsrYBntbnGj43hVib3UdN+zwGc04f8kzz6VSBpgmBQr8xKyfqd8vp+trQji5OQxGYs//
+ 6Xng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760713365; x=1761318165;
+ d=1e100.net; s=20230601; t=1760713366; x=1761318166;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=Qzdi8kIp6sEnmiFIQVaItw81m6S/RSM9hI24cSlzR8k=;
- b=N3vYBiOXCymXmsCQmBGNogp9Ye7rDru68scaaTLiqqbK1IdfKjWWjWsOZip6s+Qz4x
- fzuBg4vA1ngy4a+rqlvn8H2TzHNyYVY2hkvO0JPiKib/mpvGOq7u701P/w+4mKIK7oyX
- JpTr15ZfYPHvRMerZCQH4c1l1CmA+GCpHitp/sYxqxFPkVHv1hWiIHb1XU3SsH5UVug5
- a0gRkx99Fx984HqJzdUjTQ+mnNG0xrvkyiYOtetqVxJUtNJh8eyiF+x+QiDyQ/AItDDj
- eKLfNopK5O3jycqbCCbCWQ2Jw1i1vWRgnCZ2YhL/O5FDbehIHMuogHQUsuBn4HZyz6Aw
- d2Xg==
-X-Gm-Message-State: AOJu0YwMZQb74cdLV1fPfQK76dR8yt4TjkImsk5rsJgamjG1UlvMsJHG
- wb6ZKsnzSkP1uuojY7Nlt0YXTBO8VsqbVyXvdm63TT0wFBbN5xE4YsRrYoKDD30XZcMoPxARpeY
- om6wEHTk=
-X-Gm-Gg: ASbGncvM7hRFxsQZTsorg/crxoGjLhqJXUoZsAqRdaPXpRSwY43v7XFKNty70Qrxcy3
- r3KzFqwSCyI+xd9ZMpKP49iKZcA5zUn9FN7DZhkULeDMnz76ge4VoNjqxnp2jem097pfgEUJJyh
- ggY5vuzNGzqIDz2iWxbk4zPafeNMWz7XrSZ/7mOMnoBNZJAc9sW1O9j+BN4e1uanLrFE8H9gkl+
- +aifSh67ZqlzNYXJUdPmAt7UD5cNs7h62cUxqAyazxN+bFJ7ImHlSRxLibo6isTDMqITh2vgXKj
- KGvERv8LgsLQQQebCO4Z9lhgDOQjRbXAt41hufYFZB55TNvEHduwzJee+2NcQk90gzGQ3zYjfXd
- difNt/rjwD99/rE93zXxMgVQTIhVRD/l46o2xTsSvE4GZQatiPICMSh0BRtiB/aSoZuBw9kpR7F
- DpgPnh4aeg44unVeKFssBOnpRP901Q+wO0NOXhzvCBslxUhLZPzA==
-X-Google-Smtp-Source: AGHT+IG4anA5rNlH2kVsKLZ5Mx+AFRzcU+8UfcHtUORFjnc/QAH0IPm5S6m58Wch8AisWlxMoChzDg==
-X-Received: by 2002:a17:902:ea03:b0:28e:7567:3c45 with SMTP id
- d9443c01a7336-290c9c897damr59351195ad.9.1760713364648; 
- Fri, 17 Oct 2025 08:02:44 -0700 (PDT)
+ bh=OxAeNxXIN3oOF0XVXMQCM7FsK3290kzDxIMHQXChHhU=;
+ b=RrjbE6Kqklj2BeaQ3c1vBFkGsTcYDnRWgChhNOaoO2RTvbIFXPed6qH51LDo++nrr4
+ Z6auBZzbsiAPwPT05SmX25OzTTsYn3tW8dfMCR03NMQow0l9exjxZG3pUMehr+ybb0m+
+ T/z116bx+sJ7r1m8RVcEt0i14MZxlGEZGvKzTdCMT7O7cnktzJK6yapKqhGW1Hq4TuE9
+ yyGoU6KuzXzkuF1ECEryloW2fT6yoQIzW9i7jtIbJslR7wbTRVQxpRCC7byG6bcaBcuK
+ GHBVf+7r/UyyxAdiHMdHsF0wLWgG4M+ZKdLpjgvlqfP1Dk1zME2D+e0PQhgMTWZYCTMZ
+ s98Q==
+X-Gm-Message-State: AOJu0YxHw0lCDjoLp68Bd3WNas7cJNonnd1wFpX3ISBWtUZwbybr7i8G
+ jDUZTVmXmmyCjaIBAtn8D44jOAKNmpadwamqF/q62/mKA53oD1F2PQlyIDlOfsgHxEW4UaxVQuO
+ yRiF4/b8=
+X-Gm-Gg: ASbGnctp3OBsFErDSJB6JX0z4WWmumaYBmx62d+yDVMNSqFiv5kp/lthONbW20iUc5g
+ RJmVUdhKSSzD8WlTdv6CFHSedHmWEydWCr1WNZvON/oVzLi1fiLBDFcRZFUC5pFbOl0lFTIpObA
+ mrXpgWnOc/D1YuhBhVKlcBHjJx3DmydMmeaFFsy1Ku6TMLQQ/FrzmoHPpHa1ThpuWiIgY0NMpTk
+ TmTbuWlojrYOfp2HZBsOxinesqPO0Fl79vi7MVDKd4/p9Ac146aTMB46jzr1BvB/FZ42v6hJTv5
+ syOROJLfpamwDBZoPtEJnJWkQgj0xyrDzcWcLo4naL02wPYK1fH4oksu+2ig4fQy8vbnhTD2Jz4
+ N3522mPFD2+fNQT8GVg+fhPXshZn/xx87WcxFRgSbDTmy69sgsCCU19ImgLbq9ugUdTSWSsJq6O
+ XLqOS1ffslWFYPhJDay9ha0wktdFMK5WLhMVPCPmo8V6kOm4VbjQ==
+X-Google-Smtp-Source: AGHT+IH43JaqCsGF+Dg3g3sp3fOqNdl9z8W/tp37+DLwmkqQaVKU8i5EzNWGKg7gbWgE1DxG5GswRg==
+X-Received: by 2002:a17:902:e88e:b0:24b:25f:5f81 with SMTP id
+ d9443c01a7336-290c9ca72bcmr57384575ad.17.1760713366292; 
+ Fri, 17 Oct 2025 08:02:46 -0700 (PDT)
 Received: from hermes.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2909930a72esm66700475ad.21.2025.10.17.08.02.43
+ d9443c01a7336-2909930a72esm66700475ad.21.2025.10.17.08.02.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 17 Oct 2025 08:02:44 -0700 (PDT)
+ Fri, 17 Oct 2025 08:02:45 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 0/8] avoid unnecessary use of comma operator
-Date: Fri, 17 Oct 2025 08:02:01 -0700
-Message-ID: <20251017150241.28511-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Chengwen Feng <fengchengwen@huawei.com>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [PATCH v5 1/8] eal: replace unnecessary comma operator
+Date: Fri, 17 Oct 2025 08:02:02 -0700
+Message-ID: <20251017150241.28511-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250312232739.228295-1-stephen@networkplumber.org>
+In-Reply-To: <20251017150241.28511-1-stephen@networkplumber.org>
 References: <20250312232739.228295-1-stephen@networkplumber.org>
+ <20251017150241.28511-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -83,38 +90,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Clang has ability to detect suspicious use of comma operator
-where a semicolon would have the same effect.
-Easy enough to fix in DPDK code.
+Use of comma as statement separator is discouraged and
+reported as warning by clang with -Wcomma
 
-v5 - rebase to current main
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+Acked-by: Morten Brørup <mb@smartsharesystems.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ lib/eal/common/rte_malloc.c | 4 ++--
+ lib/eal/linux/eal_alarm.c   | 6 ++++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-Stephen Hemminger (8):
-  eal: replace unnecessary comma operator
-  ipsec: replace unnecessary comma operator
-  test: replace unnecessary comma operators
-  app/testpmd: replace comma operator with bracket
-  examples: remove unnecessary use of comma operator
-  net/bnx2x: remove unnecessary comma operator
-  net/bnxt: remove unnecessary use of comma operator
-  config: enable comma warnings
-
- app/test-pmd/cmdline_flow.c                |  6 ++++--
- app/test-pmd/config.c                      | 10 ++++++----
- app/test/test_compressdev.c                |  4 ++--
- app/test/test_link_bonding_rssconf.c       |  2 +-
- app/test/test_thash.c                      |  7 +++----
- config/meson.build                         |  1 +
- drivers/meson.build                        |  2 +-
- drivers/net/bnx2x/bnx2x.c                  |  4 ++--
- drivers/net/bnxt/tf_core/tf_msg.c          |  4 ++--
- examples/l2fwd-event/l2fwd_event_generic.c |  2 +-
- examples/l3fwd/l3fwd_event_generic.c       |  2 +-
- lib/eal/common/rte_malloc.c                |  4 ++--
- lib/eal/linux/eal_alarm.c                  |  6 ++++--
- lib/ipsec/misc.h                           |  8 +++-----
- 14 files changed, 33 insertions(+), 29 deletions(-)
-
+diff --git a/lib/eal/common/rte_malloc.c b/lib/eal/common/rte_malloc.c
+index 3a86c19490..388e5a63b6 100644
+--- a/lib/eal/common/rte_malloc.c
++++ b/lib/eal/common/rte_malloc.c
+@@ -202,8 +202,8 @@ rte_realloc_socket(void *ptr, size_t size, unsigned int align, int socket)
+ 	}
+ 
+ 	user_size = size;
+-
+-	size = RTE_CACHE_LINE_ROUNDUP(size), align = RTE_CACHE_LINE_ROUNDUP(align);
++	size = RTE_CACHE_LINE_ROUNDUP(size);
++	align = RTE_CACHE_LINE_ROUNDUP(align);
+ 
+ 	/* check requested socket id and alignment matches first, and if ok,
+ 	 * see if we can resize block
+diff --git a/lib/eal/linux/eal_alarm.c b/lib/eal/linux/eal_alarm.c
+index eb6a21d4f0..a1433eb867 100644
+--- a/lib/eal/linux/eal_alarm.c
++++ b/lib/eal/linux/eal_alarm.c
+@@ -125,8 +125,10 @@ eal_alarm_callback(void *arg __rte_unused)
+ 		atime.it_value.tv_sec = ap->time.tv_sec;
+ 		atime.it_value.tv_nsec = ap->time.tv_usec * NS_PER_US;
+ 		/* perform borrow for subtraction if necessary */
+-		if (now.tv_nsec > (ap->time.tv_usec * NS_PER_US))
+-			atime.it_value.tv_sec--, atime.it_value.tv_nsec += US_PER_S * NS_PER_US;
++		if (now.tv_nsec > (ap->time.tv_usec * NS_PER_US)) {
++			atime.it_value.tv_sec--;
++			atime.it_value.tv_nsec += US_PER_S * NS_PER_US;
++		}
+ 
+ 		atime.it_value.tv_sec -= now.tv_sec;
+ 		atime.it_value.tv_nsec -= now.tv_nsec;
 -- 
 2.47.3
 
