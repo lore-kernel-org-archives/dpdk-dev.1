@@ -2,163 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4584CCD195
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 08:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE30CCD195
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 09:05:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A851427E5;
-	Fri, 17 Oct 2025 10:59:48 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 5EFF4427DA
- for <dev@dpdk.org>; Fri, 17 Oct 2025 10:59:46 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GNSbQs025546;
- Fri, 17 Oct 2025 01:59:45 -0700
-Received: from ch5pr02cu005.outbound.protection.outlook.com
- (mail-northcentralusazon11022094.outbound.protection.outlook.com
- [40.107.200.94])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 49uadnh52y-2
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 17 Oct 2025 01:59:45 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K7JzCwS+5+MnrBxK+kBVfJKfTrWX86II/7yIZmpZxqE7PyIZihyxvR6GendE2jdravXmr4Ut7A3uDqZA1/hcQZJzTN3VgVyCNEJT6SAcLGYI4Wz++hvRzK8w9iyX0a4mIomcjX8bphN0eBAhAuHn7aPZqXA8Udd3nGWju5M8kWdqSKEYpGDhKeVuzXgp3H4YOwR4jNLPJa1r/vBRqwL4He5n+KBIZ98wyUelwOaPE85hOSXlDPbgE32MfKcmWG4GDB4jqT7e3sxsWcSLdDxrULBpgHIyQTl4tvxIlhZcsk/M9wSvf0ihqG8B54ygJJOn31zckUI7x83BiL5OoX9Thw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QJRfDkIYLVTEC5i60KYn8oVw9sNKXj3z/LL3B+cc22g=;
- b=bn21V9GslDiv2QoGbiJ3KaukMLrU/igPCeHspFPav6dziz7Zsx7Wi4szyUrV2svH/KM4LroJPakBZfU6aWRh7HpWRCigNdqgiOpyQuUfjDypM3oyQA+YAmzP06dsxC+6cllN19urQZwdlvk3Rg/pWYL4AfE7FJOHEE9bn5VMXmAqfa+ZRCEV1kGO9Zg4k/ax7VO2fAlPgZ0BMxumFj3Ws/jlbu3XVgW91/m5cjoPtitlVIL9WVVQuL2YmqOTM0FwzA85PTW8e2CpwTariPNPxsc0vindJne4U7RvSzPOqFdfGTgIlxsUArbVq5osjJqSn1DgodM3+o0Zg8X+HGifvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QJRfDkIYLVTEC5i60KYn8oVw9sNKXj3z/LL3B+cc22g=;
- b=lXpb14Lf2o4c1Zmax7e3/4xbqeZbZ5q8ZBZtLYmJgxPGOGZPeh+le8DogUOCK7v0C57ocRw9g9c6E8AOucqJ0U7cj0q6IAfWpj/L9969x4mTumsovSxwJfvxrvlx2h5CS5hwm9p3nDlwmfLMmlr174nfl/SjYcFypTvTsy/1kMU=
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com (2603:10b6:5:359::9) by
- SA0PR18MB3471.namprd18.prod.outlook.com (2603:10b6:806:71::16) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.13; Fri, 17 Oct 2025 08:59:41 +0000
-Received: from CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::a2df:a596:cfe:17]) by CO6PR18MB4484.namprd18.prod.outlook.com
- ([fe80::a2df:a596:cfe:17%2]) with mapi id 15.20.9228.011; Fri, 17 Oct 2025
- 08:59:41 +0000
-From: Akhil Goyal <gakhil@marvell.com>
-To: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>, "dev@dpdk.org"
- <dev@dpdk.org>, Jay Zhou <jianjay.zhou@huawei.com>, Fan Zhang
- <fanzhang.oss@gmail.com>
-CC: Anoob Joseph <anoobj@marvell.com>, Gowrishankar Muthukrishnan
- <gmuthukrishn@marvell.com>, "stable@dpdk.org" <stable@dpdk.org>
-Subject: RE: [PATCH v2] crypto/virtio: free memory used by op cookies
-Thread-Topic: [PATCH v2] crypto/virtio: free memory used by op cookies
-Thread-Index: AQHcOmi47Q8IX4VAoEyHDe1bc4gNFLTGE9MQ
-Date: Fri, 17 Oct 2025 08:59:41 +0000
-Message-ID: <CO6PR18MB448476CDAEC78F4AAB1A7936D8F6A@CO6PR18MB4484.namprd18.prod.outlook.com>
-References: <20251011043238.1508-1-gmuthukrishn@marvell.com>
- <20251011043706.1554-1-gmuthukrishn@marvell.com>
-In-Reply-To: <20251011043706.1554-1-gmuthukrishn@marvell.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO6PR18MB4484:EE_|SA0PR18MB3471:EE_
-x-ms-office365-filtering-correlation-id: 57cc2d2b-fe4b-4406-4ce6-08de0d5b8293
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|366016|1800799024|38070700021|7053199007; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?03KIu20194R5g3Va1nBY/U1bxMacuaRiTqJR2LqeQ+2sIfpb+toHG4FNA9lT?=
- =?us-ascii?Q?RSnJpFb9XVbq5Wz1sbXhdfE20Lc97QxMdkbO+C07LQYGZlchwjDK+A8TCi2z?=
- =?us-ascii?Q?yPiN1JYE6a3Vssu1NNGPJ5cZObtMtCnyfmrK0HCubPwDA5vxZpivqNiRMsbE?=
- =?us-ascii?Q?K5CqxIXnAJJoy/wtuPetMel1/XCt//K462DpJxXyUkZ085WDYlVJ7cxXMV6G?=
- =?us-ascii?Q?9lk9vqthYJkyyn3BLhohhaKH5fLEd1897LxFueX62qT4Cjd+ya107s/iHaA/?=
- =?us-ascii?Q?tmoAPlL23lygx+ApBZBy1i6awMDK2fvxhhExrtvMutUUIik96Ej13KaK6wAG?=
- =?us-ascii?Q?pq2oB0rR8viRVj+NTmRFGS7nwjK//oAlohYpsniQ03s/+oEowr10BvIEoMOP?=
- =?us-ascii?Q?PhjYMXxPaS098hT/AEJPjZSV/iQBIfMwURlSHx1t5xIsmNJhNVSvP321KKjb?=
- =?us-ascii?Q?8Z8Juk0J6O01EOBHKf1Y6d87lSd+NTuX9eZ37RkTm8iQYJf+XLDaFhL8x1HO?=
- =?us-ascii?Q?uB8s97f+PhsTrHflfmCo/9qEFpsbNBgYwF1YZhkqfBtIeRWRRtWlGR3skUd1?=
- =?us-ascii?Q?O4t9OS4NesRAxVFEnMxJdGJRLtTj8eHaUS8kiFsf2wDvcxheDTWkHT7dJUaT?=
- =?us-ascii?Q?XUd0j6+w0205V548ewe95gUvPmrEqf9mCXfoRfWdV3ng0CXQ40pfvl5xPMWM?=
- =?us-ascii?Q?K21U+z3kjipNMr0GaR2gKspvtSTyeQ+u6x+wvLm2mhhNmiQNux1yy8g9sRNf?=
- =?us-ascii?Q?ghn41WNO4+D83aHfXuQHCi0gG0RhgUnCZVFtYZcBs6Tpb8aeZlacmBQjtx+D?=
- =?us-ascii?Q?WmIvCZZUJKl2+YzzoJLCteYxp7mlvMhytRtnBvUAp5eaDqS15+dkd/zAdVwM?=
- =?us-ascii?Q?S+xjfpDUi4gvE4ZVU8hSZPeUPREodOlKNtak68sFDuQtK32h/1vtOnmfyLVl?=
- =?us-ascii?Q?OhB2YbY1C+78YMHVWGG+0eQLl3ZAYm8GNLB84jKZzs6qyCz9ddSel6I31BKI?=
- =?us-ascii?Q?l/xx9wfN1NGOjZZMvRY3a8f5Vd2fehOjX4XoCR08uerwmz9ly40WqgjeZG0P?=
- =?us-ascii?Q?nUSKpXvBv65t9fvxwcdK6lfoV9cgYKQSHWJk9f+mpiQnrJFDb/y65oRVuW/8?=
- =?us-ascii?Q?O9COI1n4thhhEVfNGCP/fOjheOaFMjPzoDMep2EOetxgVG8iZChRrKuae8aK?=
- =?us-ascii?Q?UuDfN8X3H3LeE7f+FX6aV4rVACFIjyXjV+dF2TkJZn01oXddYBjAAWpOduQz?=
- =?us-ascii?Q?DDxwX2Rsv++S390RxdVXbjZNePUITiMojd6jF+D9rHdAVPAN91PtiXngN8jA?=
- =?us-ascii?Q?3UZfyS+WJY+xBbWD/tfPdpNAzFv8AYs7uqFqc/jy6TVSWKsFOLMVuBuE/V79?=
- =?us-ascii?Q?rjc+VnEOszHysBooMtuWZobLl/myQs9Z3ohtgIot7Q8X7DGHHdHCFflZoTRA?=
- =?us-ascii?Q?qEYv8tPdN5l3lfxy66A4fVYxoS4eaqBxEE772vTMxl6evne/DoePapzYfYdz?=
- =?us-ascii?Q?iomo5Mru+VlOH7OurpfVmkzPKzIbMB0Bcmij?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CO6PR18MB4484.namprd18.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(38070700021)(7053199007); DIR:OUT;
- SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?+I1mZq3cwGZdAUs6Rvv0w418oO3ERS9uatHSqKgn5Y5L/eslpcBFy8hXb1Gx?=
- =?us-ascii?Q?qDWMpNwp69itZAcKOx9GaCm0mRhOjHYUXge4yTxePB7CxrTA8GzGvEcUihSk?=
- =?us-ascii?Q?PaBzYPKJFkf3RFMm9PeX0CKSsllMLhElvetHHW3rqEOH7jFsP9HwurekKqZV?=
- =?us-ascii?Q?NR//mrbPVYvIj4uPLg1AcriZOH2OyuozJO14oQwREnC+FPlwOC/SE2Y9kqHv?=
- =?us-ascii?Q?SfjMNJL2pzIth9gMJghFDItOWl+xBAeime/ADhwFIleROettY+4kkBo3sL1r?=
- =?us-ascii?Q?kTcwZp13lCzYStgJ1P+SaIAw6ZP6ElpM6M9FtD2QpARp8Y9JuhxeMachFFh3?=
- =?us-ascii?Q?DKxiOFwSfAaMIR5aKWrTmwvF6zR48IjRJ20BgXgHCsxrEY728inm3zW5MV9z?=
- =?us-ascii?Q?XD/S8Mr/H1/ZIo/8V/bmUZUpaw6yOIU7XOrvwU87H3ydbHeNP57IXDCfy0ao?=
- =?us-ascii?Q?wiOY+e8jsSrNmkPbQgmlhzaOkrEd2aOD1/1EAcPTMtwJM1Pevq+uNz6sSGUo?=
- =?us-ascii?Q?4N9v2x60ccukSY6tC1TluKmESiGN8pnWVGZ9xZCTBinaBVgFLWNYcggvUQmW?=
- =?us-ascii?Q?SNROAHXzX5yvMT6Fj+oKfDD2OYxP9WGLe3tmzde+LV/n/5M7BOiO5umFcXaX?=
- =?us-ascii?Q?LofC+MUM4zDnywr8nPxfBL3PpVivibP+bNRMPU/oZYMrj5JoFGtqao/tuqkZ?=
- =?us-ascii?Q?AlJ/jHUDJEcyvV2ij7pWyZZYlfIRGKNfi/602PlarknNcvNp+Phv9Fu7P10Q?=
- =?us-ascii?Q?7k1Gucq/3Cz37djpJ1ML5htbxzfww/MdMyuQTtcAJx4TKft5ebvhXpBeNE+u?=
- =?us-ascii?Q?wRSov5Uu7KKDJ/BZxoICRL68FH9ZFVWoqYm+x/PMq1Y2YGNwvBjy1wTmmVkr?=
- =?us-ascii?Q?gSYfQGDHfuSqB2nKmDVyFz9EmICX64IHv0NSoUA8T9Nnn9qCjQjAAL8t65U4?=
- =?us-ascii?Q?DesxVB3bobp8+pG7b39rQRsUudeRs+FQT59VvYZnTBWaLGWmTXQTCkAlR47p?=
- =?us-ascii?Q?mkBJozuLiJVBnRxdrehiGxyl9FQbqSXp9tRKScjqVgD2oJhjyqKM5IreapLj?=
- =?us-ascii?Q?+iG3+R0Rns9B/IwUFjhSlcnNVNmibswMMqNNsKmhOwHqmECUW6rUjM9QlDoZ?=
- =?us-ascii?Q?Kg6VLmmJOniCITyapjPwAIubdmGjPub/WvFLLjFStX1x/JNxJwTYQ4SgquoB?=
- =?us-ascii?Q?V0B6y/0J3KMnBNBo7kM1nxArVcSfQNbEtmBKhbMx5SBQrs01ng2T7bfHYjKK?=
- =?us-ascii?Q?NN3BZPwjcOVqr6sglChxryBms33jarAE4S7KF0vPpj2dWt2SyJSPHG4YNlAU?=
- =?us-ascii?Q?Kqgzg6kO3v/3q6cgvIpaSI4XryRAlQvRW+ctq/tYy8BSCDrIPGSj+VvO967V?=
- =?us-ascii?Q?ZOfDQqnVYc2yVvJZ3RCSUBuJ6G3weEzA7xkPTpwHfVg7zOyij5lLteCo8WXG?=
- =?us-ascii?Q?ijTv5h0zOOjsuaQ9DLPvtLIkiulpgAWQPv9U387I+O70GbTZDsculUG+qAVM?=
- =?us-ascii?Q?/ZB0WIkPDIrnXp7FIZBRQmFg7oFi08+Sro9vgw59JVkKDcH87VgPnk0Nmzq4?=
- =?us-ascii?Q?SHOZcUKKWcLb5crTGyc=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 07ACD427D9;
+	Fri, 17 Oct 2025 11:05:05 +0200 (CEST)
+Received: from fhigh-a4-smtp.messagingengine.com
+ (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+ by mails.dpdk.org (Postfix) with ESMTP id E67F040B8F
+ for <dev@dpdk.org>; Fri, 17 Oct 2025 11:05:03 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 57C2014000FF;
+ Fri, 17 Oct 2025 05:05:03 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-04.internal (MEProxy); Fri, 17 Oct 2025 05:05:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1760691903;
+ x=1760778303; bh=9T7tSBHPL3CxAdPLHoPyvznu+QsIIRAunNhob/yg/U8=; b=
+ dZudNV1u3qISe1uARJlbB+yqIWMF48q9CqDy87f3PeK+zyTg6hb3UAQHMsgOvdhK
+ Jy7TGRUG6jrQjRqs3j93b+l4BV5y/a7vAcybViK0jnKQpR2PA38w/rZ5mgwjqU+i
+ SuHuDiacCF4gmlDHWATcC4fVOPpDxnXOu3bq2h4JUmWWsY/D8yal3FC3B0voOFTO
+ 7srFJzpnNbFw2x62pptfywlITsIiA1pX81ly+DouNR5KuOwt/6F2C6h3FlXLMr43
+ aksKFhL3fNaC/2AzLwSUL3KetIy4jVABZLPbbTp2YfKXJ0q4t6n7asaEg2j2VWqy
+ /yuNpu3XkusZHtd7VFE9zA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760691903; x=
+ 1760778303; bh=9T7tSBHPL3CxAdPLHoPyvznu+QsIIRAunNhob/yg/U8=; b=i
+ Ldgh7BqjVOyP+tPXWcF/fg2Lk0G72gGBHD2fQvgTkfCWbjR7jk/WlVLCZZsPhDKk
+ R363k4JmdVt25vVcxGLpS/gunjszsipBIsObYvDbkakggBw4RHoKg9XEleGXsMyU
+ IYtzXjDyFrzi3M9nI09DZM+A6wa652wqT0Nk3wMjXxPMAcKZpFHAeR3z7KkmL17z
+ a0cWvtkFuwdnT+M9uC57OY0Q38/2s51UAtVoSbftPnKf8PbUvgrOxhtXIEBuRoy5
+ C+e8BTPaCXuvGMgP6fvSeYewK418mpF2eWu6Tb6fh3vl/DCfeeEK9FMVxDCjIGMz
+ NPUwnEsRDa7K/rnWwTAXQ==
+X-ME-Sender: <xms:vgbyaK-2Z5mz8uiHLiLPtZX2G7zCHInR4DTKqQ4iImZbSFv8GkMU1Q>
+ <xme:vgbyaFohzjnod4cQWwzVM5kXLM8oWakxfTuSnJMnmVUkdK-sF7biUN8kYbhV8CTVb
+ 1_dRzuqexj06Kku_J2mpZ0iCwjLurlVyNgvBkZ9AsAy5FvkeXo1Jw>
+X-ME-Received: <xmr:vgbyaPCFu6fN5S22cz1VNBn5SQ3jWwEntUO7A9QVIJsV81SdVAMUqMKro1v1BINSFRPjaKDzvEqwLZwwPhzx6BAYMg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduvdekjeeiucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehtughushiihihnshhkihesmhgrrhhvvg
+ hllhdrtghomhdprhgtphhtthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrght
+ rdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrd
+ gtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepjhgvrhhi
+ nhhjsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepmhgssehsmhgrrhhtshhhrghrvg
+ hshihsthgvmhhsrdgtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhrkhhp
+ lhhumhgsvghrrdhorhhg
+X-ME-Proxy: <xmx:vgbyaHyrO33Yp3V_ApK4YuQK6cjL4crylojecRQnwc8HmknVO7hNuA>
+ <xmx:vgbyaM1HDXhV_Hk5SYsAZiIYZCb3Y6JRnAHyMJ1lxGz7gcP0Wgd3iA>
+ <xmx:vgbyaHwu1ZEFZcJlnmv86S0kwnls8BD6x2pCPKl9nWld4HJz69b4Sg>
+ <xmx:vgbyaDEHjUlGYhM34ED_GJN75g2WdmVq-iUxO0aD2ON-iYz_FBNkyQ>
+ <xmx:vwbyaEdDHuAFsDDU07F3P9mdY0iU9QY0xAZgEabXDK2wBUAsbvIvJbtP>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 17 Oct 2025 05:05:00 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Tomasz Duszynski <tduszynski@marvell.com>
+Cc: David Marchand <david.marchand@redhat.com>, bruce.richardson@intel.com,
+ dev@dpdk.org, jerinj@marvell.com, mb@smartsharesystems.com,
+ stephen@networkplumber.org
+Subject: Re: [PATCH v10 03/10] lib/pmu: quiesce rte_pmu_read deprecation
+ warning in chkincs
+Date: Fri, 17 Oct 2025 11:04:59 +0200
+Message-ID: <4661587.2iPT33SAM4@thomas>
+In-Reply-To: <CAJFAV8wGnXv4gO+0pf3e6gw0ahFH7q0JbMfiaGDjY9hBBX=_Pw@mail.gmail.com>
+References: <20250808112758.454346-1-tduszynski@marvell.com>
+ <20251017065825.3242639-1-tduszynski@marvell.com>
+ <CAJFAV8wGnXv4gO+0pf3e6gw0ahFH7q0JbMfiaGDjY9hBBX=_Pw@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR18MB4484.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57cc2d2b-fe4b-4406-4ce6-08de0d5b8293
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2025 08:59:41.7019 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2whb5Qujn25mGxZJl/707KVc8/hoiP6XnBem81GnQO0VBKBKzvZDDLGxeTRWYZ5djM3/PDUPiyAs6XNIsyXeSA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR18MB3471
-X-Authority-Analysis: v=2.4 cv=Yc2wJgRf c=1 sm=1 tr=0 ts=68f20581 cx=c_pps
- a=t88XDKUlDquqCT1Kmp1J9g==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8 a=i0EeH86SAAAA:8 a=pGLkceISAAAA:8
- a=41FOEo2km_KvhD3iu9YA:9 a=CjuIK1q_8ugA:10 a=OBjm3rFKGHvpk9ecZwUJ:22
- a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-GUID: y6a4M7Z82D2kaHzouv74bdQE2Vr5dFyL
-X-Proofpoint-ORIG-GUID: y6a4M7Z82D2kaHzouv74bdQE2Vr5dFyL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE2MDE3NyBTYWx0ZWRfXwNBubHgOVL19
- iMNphNG9mUQCGX6wbsl7GpL8ZpfPyaav7LRLm2815619yLgb4EQ/bNOhuYpFIP69tw4T4Lab3Lj
- u+5tuT4OGtrL+Ypa2P9v8d6n/pGMJ1yniA0SqRkduc9Ei4tNI3HnoIHKqgq7YUfmmcXylZ/hSSI
- CX8VIkj31zEL2qjewUzGQZVXayY3qKeLmQr0g2fWCw4Q0LaC65lx7jDV/naw5bSVU+kW1+qY0SO
- 8ck7ubjouyW1mBf7KhJ1kV5yoEVUSl6lEIiqiHocK168BmjS1ycb5u62gRH2rr3+A2VlAti6l2X
- z1NOUF1Znkmwo3LQuZEeVpyYKPhJ0PrXeMvSo9fEYiHiag/9unH0C493ZI2dNh5DBuVd80SxlDt
- 9Z0gfE6AyDLvKAzXB+VvzKDYXB1Q9w==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-17_03,2025-10-13_01,2025-03-28_01
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -172,24 +96,122 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Hello Tomasz,
+
+Recently David has improved the checks on headers.
+We would like to see a new revision
+(with the approach described below by David)
+passing in the CI with the new checks.
+
+Thanks
 
 
-> -----Original Message-----
-> From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-> Sent: Saturday, October 11, 2025 10:07 AM
-> To: dev@dpdk.org; Akhil Goyal <gakhil@marvell.com>; Jay Zhou
-> <jianjay.zhou@huawei.com>; Fan Zhang <fanzhang.oss@gmail.com>
-> Cc: Anoob Joseph <anoobj@marvell.com>; Gowrishankar Muthukrishnan
-> <gmuthukrishn@marvell.com>; stable@dpdk.org
-> Subject: [PATCH v2] crypto/virtio: free memory used by op cookies
->=20
-> Free memory used by virt queue op cookies in dev close.
->=20
-> Fixes: 6f0175ff53e0 ("crypto/virtio: support basic PMD ops")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-> ---
-> V2:
->  - patch description updated.
-Applied to dpdk-next-crypto
+17/10/2025 10:45, David Marchand:
+> On Fri, 17 Oct 2025 at 08:58, Tomasz Duszynski <tduszynski@marvell.com> wrote:
+> >
+> > > > > > Add a dummy rte_pmu_read() definition for chkincs when
+> > > > > > ALLOW_EXPERIMENTAL_API is not defined to suppress warnings from
+> > > > > > use of experimental APIs in tracepoints.
+> > > > > >
+> > > > > > Fixes: 960c43184c4d ("pmu: introduce library for reading PMU events")
+> > > > > >
+> > > > > > Signed-off-by: Tomasz Duszynski <tduszynski@marvell.com>
+> > > > > > ---
+> > > > > >  lib/pmu/rte_pmu.h | 4 ++++
+> > > > > >  1 file changed, 4 insertions(+)
+> > > > > >
+> > > > > > diff --git a/lib/pmu/rte_pmu.h b/lib/pmu/rte_pmu.h
+> > > > > > index 57b634ecd8..84a5d522d1 100644
+> > > > > > --- a/lib/pmu/rte_pmu.h
+> > > > > > +++ b/lib/pmu/rte_pmu.h
+> > > > > > @@ -232,6 +232,10 @@ rte_pmu_read(unsigned int index)
+> > > > > >
+> > > > > >         return __rte_pmu_read_userpage(group->mmap_pages[index]);
+> > > > > >  }
+> > > > > > +/* quiesce warnings produced by chkincs */
+> > > > > > +#ifndef ALLOW_EXPERIMENTAL_API
+> > > > > > +#define rte_pmu_read(pc) ({ RTE_SET_USED(pc); 0; })
+> > > > > > +#endif
+> > > > >
+> > > > > Seems like an awkward solution I would rather that fix chkincs
+> > > > > or restructure this.
+> > > > >
+> > > > > The way you are doing it will cause the checks for use
+> > > > > of experimental API to not work.
+> > > >
+> > > > No matter how I shuffle things around, the experimental API keeps getting called from
+> > > > non-experimental code, so those warnings will show up.. Fixing chkincs would mean telling it to
+> > > > skip checks for this library, which is basically what I'm already doing here.
+> > > >
+> > > > Dropping experimental tag feels too soon. The library still needs some time to bake.
+> > > >
+> > > > So, unless anyone has got other ideas, which is the better trade off here: yanking experimental
+> > > > tags or tweaking chkincs to ignore the library checks?
+> > >
+> 
+> What we have been doing in other libraries is to hide calls to
+> experimental symbols in inline helpers, which is the issue here,
+> right?
+> Then add a RTE_VERIFY(false) so that an abort is triggered at runtime
+> in case an application called this helper.
+> 
+> See a3e126fd58d1 ("bitset: fix build for GCC without experimental
+> API") for example.
+> 
+> 
+> I see the same #define hiding for __rte_pmu_enable_group and
+> __rte_pmu_read_userpage.
+> Something like below should be applied on main before looking at this
+> new series.
+> 
+> $ git diff
+> diff --git a/lib/pmu/rte_pmu.h b/lib/pmu/rte_pmu.h
+> index 57b634ecd8..fcf125a908 100644
+> --- a/lib/pmu/rte_pmu.h
+> +++ b/lib/pmu/rte_pmu.h
+> @@ -31,6 +31,7 @@
+>  #include <rte_branch_prediction.h>
+>  #include <rte_common.h>
+>  #include <rte_compat.h>
+> +#include <rte_debug.h>
+>  #include <rte_lcore.h>
+> 
+>  #define RTE_PMU_SUPPORTED
+> @@ -181,12 +182,6 @@ __rte_experimental
+>  int
+>  rte_pmu_add_event(const char *name);
+> 
+> -/* quiesce warnings produced by chkincs caused by calling internal
+> functions directly */
+> -#ifndef ALLOW_EXPERIMENTAL_API
+> -#define __rte_pmu_enable_group(group) ({ RTE_SET_USED(group); 0; })
+> -#define __rte_pmu_read_userpage(pc) ({ RTE_SET_USED(pc); 0; })
+> -#endif
+> -
+>  /**
+>   * @warning
+>   * @b EXPERIMENTAL: this API may change without prior notice.
+> @@ -211,6 +206,7 @@ __rte_experimental
+>  static __rte_always_inline uint64_t
+>  rte_pmu_read(unsigned int index)
+>  {
+> +#ifdef ALLOW_EXPERIMENTAL_API
+>         unsigned int lcore_id = rte_lcore_id();
+>         struct rte_pmu_event_group *group;
+> 
+> @@ -231,6 +227,10 @@ rte_pmu_read(unsigned int index)
+>         }
+> 
+>         return __rte_pmu_read_userpage(group->mmap_pages[index]);
+> +#else
+> +       RTE_SET_USED(index);
+> +       RTE_VERIFY(false);
+> +#endif
+>  }
+> 
+>  #ifdef __cplusplus
+
+
+
+
+
