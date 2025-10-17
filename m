@@ -2,128 +2,181 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB959CCD19F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 16:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3D5CCD199
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 16:40:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 03C2342D76;
-	Fri, 17 Oct 2025 18:34:27 +0200 (CEST)
-Received: from MW6PR02CU001.outbound.protection.outlook.com
- (mail-westus2azon11012055.outbound.protection.outlook.com [52.101.48.55])
- by mails.dpdk.org (Postfix) with ESMTP id D7953400D7
- for <dev@dpdk.org>; Fri, 17 Oct 2025 18:34:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DDD6E4281D;
+	Fri, 17 Oct 2025 18:40:52 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 28951400D7
+ for <dev@dpdk.org>; Fri, 17 Oct 2025 18:40:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1760719251; x=1792255251;
+ h=date:from:to:cc:subject:message-id:references:
+ content-transfer-encoding:in-reply-to:mime-version;
+ bh=R9RuTIi7l0WhsN6I0TMWnUeua2VxsI1SstTO0cSPYN8=;
+ b=mU97KQwQYqTfmRYVbhfW2BdQjG/EP3I0GY+DIEyxr2olT8JMfLghwl6G
+ kbxIqVX3DDDFEi2bXUCySzT6Wgr+436Noc7+OeZYF6F/5uxc2yopuE/Yp
+ J9OAzccDLoUHr/x5Nvm6TSQLN48iMzmPIMEBk/9vkDkZD8pQ4URtsPoCE
+ IPr6nugj1uU91PL+M9q1ZN08Vpc6Sh+MjYgpGzYgqJHOD0t+l3u1XCG04
+ duC2tqmZVfGjX+QTGh5smy+rIB72vvlQnGNWsEOu7CWuZDASoe0x48FC9
+ rnosFq6RaRP8zPl0eEwZEFgYuuhUPSnQlMUuT7a0jJ39kzeP2CCuOyfdo Q==;
+X-CSE-ConnectionGUID: wiTiOniAQNuZlZLbAsPh3Q==
+X-CSE-MsgGUID: MaKJ7QPkRJSoCwqWpnIKFA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11585"; a="73536883"
+X-IronPort-AV: E=Sophos;i="6.19,237,1754982000"; d="scan'208";a="73536883"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Oct 2025 09:40:50 -0700
+X-CSE-ConnectionGUID: K5dqaiK7QtOKjGJLQNYojw==
+X-CSE-MsgGUID: G+AH+7sERlq1s5Fz/3NDXg==
+X-ExtLoop1: 1
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Oct 2025 09:40:50 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 17 Oct 2025 09:40:50 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 17 Oct 2025 09:40:49 -0700
+Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.8) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 17 Oct 2025 09:40:49 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R6/5iAaE5aLlc2N5E6v0XJnt15RxYgxwOSm1rt9H67pAPP9yzuU7QuZVtwnumiCcESJCaR+RoowzlUChMqJZsfgZs6wTVrKrUGy3BdBfyCD0uzpT6xyUjfJCU9s0cTYYcFQ+FpISRQY6mOU7jxrEHJ1U6C9fJdryHK6AHtSS5pz/ROkkYPGef6JGbLpRScBDWt3caN/gEl/XQ/v4PYxvr/EMUqhiBhf2WSJm8It0Q+GFc3dwHVCSIESYFL44YHIQjBNhAsHa9ikAF24Hsxz9KCFRvZsmOzCt/8vHF4vbmtaqcyljojamlYb+7tTK3RYb7sAXv0a5YEOWcX2EeM93Xw==
+ b=mtAtJC1nxs4XYwNj9u5fn6RLs6TIFt2a5r/qT1QH5DdmIKTuRfrrPDmgoTHYDmrM3HrmeG9FNpz9E4/0f7M/j+9dwCPMsRlU79rT4LOAbO9qUTpwXjfsNRqs4ICLO+lu733mSvFE/qOr8rsVSnb4EneJ9mG9jB52KOnwlqP2ewTiKkuS+GjENEhFj44n8oX7IhHhbEhVhWmXXGrmvrjVlZ5IDAKLPYxVqGV5+TYkbL2Bk7Tg1Qgm5GqyGpHWGAUNt89y8kXKkxyEMXTiQjW382XGDDbPu1wBawOwMHb3rx57WTaQbduqI0ICtd4wlcZ+84C2K/W+iNkRbNHvKgYHwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6USWGyRX9qV3OtsDSl680mqguQH6BpXrfRzjjqZ2dtY=;
- b=T0yncGDJVc4zDMRVN1gxRVngc+vXG/ovdAXvmZXdM+Mq7uJjdAC2bXxoPC1Ok5OwlsO3tL4/HQTkiHoXNNUgrE+f1mQVkvqtVhnzkDRknzTAn98s+2nkahS6zri9QH6Ye7VBILTTeCmUl1Qy3DiIBaFFre2cGi13Kp0Xd4BM+jVm+/Rt+XBY4AwZN5l/dsV6wETTTt3pDHry054EU572kovZGSOxyz5M7cR7bBlfhChfBgYYLIOJqxQIBNC3U3XXbyluzU+eAOIzmaO3Mj/WI+H9+JUifq97IGk/3sXRSOi6ocGeo9RkGAtyxDgAL9oXOsTIQAQwhQZbz/A887Y9Lw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6USWGyRX9qV3OtsDSl680mqguQH6BpXrfRzjjqZ2dtY=;
- b=wM4egGGcyKOYJg9+ZWpecLdYBm5UGefY/YQzfu76Rw8kkBaMD69FmsMycZZByeu4xwHxXNlpzzMhJK5qUaity/4L5cTqb3hyUjPf2qxAAyrP9amaWUhbqShEWUgKapOdRyqIRL/Sq6yNuTKCOAJUYGt5qdDUxI4TdKFwgTmOVwA=
-Received: from SJ0PR05CA0106.namprd05.prod.outlook.com (2603:10b6:a03:334::21)
- by SA3PR12MB8761.namprd12.prod.outlook.com (2603:10b6:806:312::15)
- with Microsoft SMTP Server (version=TLS1_2,
+ bh=RLurUyXIrnR/tiw1YbeXjRNBkZ5wUJuWZQr2B5ewVAk=;
+ b=IlpkCGQxl0NYqZLA0K0SDplkufMGZ2b8SBRDBzOcCUpvlWpRyZ4WlGehH7hyAOMYDRSEAcNM1T7PIjjT4j6gD2uwjG9iuWvTFurND2TdQRilMbqNpuXfFz/Ixkwpua0Wy9TyE255Mmb8rAurwlyTlw343khJnWR3LfS4xVOPZDcFtZlR/cvxIGCCSqmCLJl8YPooFzL7+D5pdJF9CMk9BpiddMDU708ekPfYwDy7J5jGM3n8yPjK9NDFsF9asdrTUtZF1fJLePW6M0B9QHbnb/8BCQKmkBP40R4vNJq/rXw3YpizoixzSegpjgKAnMA0iAKqEULHONIVvJCIyA+t5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by PH0PR11MB4933.namprd11.prod.outlook.com (2603:10b6:510:33::13) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.13; Fri, 17 Oct
- 2025 16:34:23 +0000
-Received: from CO1PEPF000066ED.namprd05.prod.outlook.com
- (2603:10b6:a03:334:cafe::20) by SJ0PR05CA0106.outlook.office365.com
- (2603:10b6:a03:334::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.10 via Frontend Transport; Fri,
- 17 Oct 2025 16:34:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CO1PEPF000066ED.mail.protection.outlook.com (10.167.249.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9253.7 via Frontend Transport; Fri, 17 Oct 2025 16:34:22 +0000
-Received: from epycpwr02.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 17 Oct
- 2025 09:34:21 -0700
-From: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-To: <david.hunt@intel.com>, <honnappa.nagarahalli@arm.com>,
+ 2025 16:40:42 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9228.012; Fri, 17 Oct 2025
+ 16:40:41 +0000
+Date: Fri, 17 Oct 2025 17:40:35 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+CC: <david.hunt@intel.com>, <honnappa.nagarahalli@arm.com>,
  <anatoly.burakov@intel.com>, <jerinj@marvell.com>, <radu.nicolau@intel.com>,
  <gakhil@marvell.com>, <cristian.dumitrescu@intel.com>,
- <ferruh.yigit@amd.com>, <konstantin.ananyev@huawei.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH] test/ring_perf: add optional cross L3 core selection
-Date: Fri, 17 Oct 2025 16:34:04 +0000
-Message-ID: <20251017163407.845502-1-sivaprasad.tummala@amd.com>
-X-Mailer: git-send-email 2.43.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+ <ferruh.yigit@amd.com>, <konstantin.ananyev@huawei.com>, <dev@dpdk.org>
+Subject: Re: [PATCH] test/ring_perf: add optional cross L3 core selection
+Message-ID: <aPJxg1EpxkkcV83f@bricha3-mobl1.ger.corp.intel.com>
+References: <20251017163407.845502-1-sivaprasad.tummala@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
+In-Reply-To: <20251017163407.845502-1-sivaprasad.tummala@amd.com>
+X-ClientProxiedBy: DUZPR01CA0026.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46b::20) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
+MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000066ED:EE_|SA3PR12MB8761:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42a38af7-e775-4173-2470-08de0d9b075e
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH0PR11MB4933:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0ef5c00b-4c92-4144-c96f-08de0d9be8bf
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|82310400026|36860700013|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?TVgzTTQvdFkvVCtjZ2QxakNqT24xTm82V0g2L0IraUtvb1R5UmRUaDhyYnJt?=
- =?utf-8?B?Z1phUG1yek8wTWhycFQydEthZGxxanpSekVEeHRqV3JqNXBOem9KSFNuOExY?=
- =?utf-8?B?NmRSODJQSXNGa3ZOeFlqV2RicXpWRThtQjQ0Y2VJUjdNb3dpU0REdGJWWFNs?=
- =?utf-8?B?SHVYZUVySmlTQjd1T25EcHBTWFQrMkJLby94U3dhR0VBZWVHNE5LUXJLc2J3?=
- =?utf-8?B?RlhFaERsbTBreTQ1Z1BySzNGc1FERXlXVUROSUtjOTRqR05GQW1aaDJDcDlQ?=
- =?utf-8?B?MktuOCt1SUJWSEpPbVF5MnVlWndMY3lqTHhRNE9PQ2d0VmU3V2tyanBJQy9U?=
- =?utf-8?B?UjZlNy9Xd2s5SWgwZU5pdnRFcFQ2N0JZb0FHQmJ3V25GSXFlM256bFRpSzRk?=
- =?utf-8?B?R1I2bDluNFhkTHNLbmRIeDYzb0d4TFFGZk5pYURyNkxjWmhYeEcvSlFEaElI?=
- =?utf-8?B?TEcrMzc5VWJmVDN3RjNPUXcwWW5GNGhGb0VXeU16cHpSQjVlaXRzU24zSk54?=
- =?utf-8?B?NXgzbDRDRkFYTjg5WmpJMGZEcWJ5U3NqZHg2MGliajY0TUUrNThwbnFTMHBz?=
- =?utf-8?B?SnBDUlJlcUttRWVVdjdURWxHbWJkTHB1bmN1VzIxbnM3TkdQdlZ3MjFDbnNY?=
- =?utf-8?B?bkpOaEJrYWlGVXhHTW9GQlpTWm52b0JBTlUvZ1dyMmxoWEc5bEsxbytRK1NS?=
- =?utf-8?B?VjdxM1NURFc4cXIyektmRFBmZEwxNGpoaytBTnl3NzJ6aThUVkxOL2J0VDJ3?=
- =?utf-8?B?OHRDYjgwaGtOdXFGc205elRiUzB3aVp1SnZkRFFLTXArZnYwWHRZMHJvYlQ2?=
- =?utf-8?B?V1ZGRWhHUUJQbUc4UlFpSFhld0dXZGg5NC9pc2NycFlzL2l6V0ZsV1B6Mnlj?=
- =?utf-8?B?YllnckhDb2pXeS9HcEIzSUFVNzk5YUR2T3JQb3NmcUxCQ0taK0ZiOGpMZmlD?=
- =?utf-8?B?N3FjQWU3b0tVL0VBUnNrQWdmWWtSV1RSekZTaTZwb3k3YU51M2VaWW82dWhl?=
- =?utf-8?B?WklTOHg0UXZHMzNqWlRIL1lMRDMwMjZIbHJROUV1ajdaQmtSdWRrcVBqT1pn?=
- =?utf-8?B?RWhndW0zYVZPc0RSaHY4ZzkzcVc2QXllbEV6YXh2NXVab3ZMUFErZisyb3VY?=
- =?utf-8?B?WlFoYjlHUHJxdE5kK3ZvRTdQT1VWa3hEemxVaHZkcE8vMU5UUzA4aW11SXI2?=
- =?utf-8?B?ZUhTelVVaWhWQTUzU0ExRFU4c3BFMUhpdTNUa29rRHdzOVh4TVJma1ZkdStZ?=
- =?utf-8?B?N2VQMjR0OTBlL2RRYTZSWWNyT2JYUVo4WE1rL1hqc2NXMnQ3RTFrZUFERysr?=
- =?utf-8?B?R1NhajBwT2RwZ2xWSWRSbFhmblFkTnRWelRrR3BWeStSVVhQc2ZHaFJ1MjE4?=
- =?utf-8?B?Q0k5QUZZUUp6eGlGSHZzdXV1Z0NHalBuUXFFMUU3Sy93QmpmdERCOXc5bkJn?=
- =?utf-8?B?OXpWK3QxR1ZqZE1LSDFUTVpKWURBNytDQkZyUGJDWUh2d3ovQ0w5emF0R2Fw?=
- =?utf-8?B?SnVINStvbjhreVpSeExtcXdLYy9EbXd2SnRqQmlIYnJsRkg3TEVwQ1BDYnNX?=
- =?utf-8?B?Um01RnZRalJteDdjUGNQSXNQNEwzdUhvNDBac2Z5YUp6UVlTUUtYSXdSaEhT?=
- =?utf-8?B?b3NtOUNoOGFuNnQ2QkRIMmNQNVl3ZmtLdFlCaVlMZzJuVUR0bjFFMjQ5RGlr?=
- =?utf-8?B?T2ZJck42aHBSbVZOWE00MzNtQTQwc09PL1J5V2xxWlI2UHBvT2xoT2ozb1pV?=
- =?utf-8?B?MWNDK3R2T05leUdoaHBLc1FJbXEvTTI5ODVjQStlM3UrcEJGd3FWOHZvcDJo?=
- =?utf-8?B?VGFLM2poaDdsMzlrdndrR3h1bnRsRlJ3U0RBSWs2MkxnSVVwM2piejIrdGpQ?=
- =?utf-8?B?U0ZkUW4rV1hGVzhwMkhSUlFXMDkxTHd4RGJUMEpuSHNnOW82bkRjeklqTVVo?=
- =?utf-8?B?aEhIWGJRd0w1UWkrYkl5dVlnVVY5ZE1OL2hyaUhycXVOc2NmTTRMUGIyODZz?=
- =?utf-8?B?SzhwNEVBc1RhbWRaME53VDJSZTFoRTQ1K3dFMmFBUnRwQWczK1BDbnN6WlRi?=
- =?utf-8?B?Z2wyUzY5Q2ZuU0hDc25EYjE1T0JGc2xnQmFPOTUvV0RlM0lvM2hudzJrTGVD?=
- =?utf-8?Q?juQY=3D?=
-X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:CAL; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 16:34:22.6548 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42a38af7-e775-4173-2470-08de0d9b075e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
- Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000066ED.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8761
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Q25ZQWFIYURwRmNqcDIyVzhSS3pBVDc2N3YrNmlmeDdDM0hyc09FdHQvQXgw?=
+ =?utf-8?B?elBnNGpidzA3Mmk0UUJqd3ZBUkpZdS9zZ21PTy8zOFM4WHpaWTB6ZHYvM3Bj?=
+ =?utf-8?B?KzE0Q1VoZ043a3NyRHN6Ly9hdnlsdjNPUTAycWZ4L1dDS0ppZlJrTS8wbm1B?=
+ =?utf-8?B?NVRkNW4zT3I4ZHV5WmF4cE1HRm82YkE4eGpFN0JaM0RFQW0wWklBOUFtUmFi?=
+ =?utf-8?B?VDRkUVplSDBORFl4ZU83MWEzbFJDSUtXaGVDakdxRm5uNitxSFJhSW1SbDUw?=
+ =?utf-8?B?Q2NFYlNnbk92ZDNZVlBmbjBWTDNROXlnTWVnL2pFbzE4SjdKSnRQZDNzRHp0?=
+ =?utf-8?B?WWJZa3NLOHorM0tvQjQ3dE1LVmMyempyUUFhMDQvRklPSWxQVTZZUkNyTCtM?=
+ =?utf-8?B?b0pwUXhiWDBNY3VNcyttTWh4elBEVWJRWms1Y09oZVQrRjB5Q2dOODR2Rnlq?=
+ =?utf-8?B?WEdKV09xeVYyM1FqMm9PbDNodFFrU1RWZ2IwczloVWJOSGVjV3hVYzk1VjY5?=
+ =?utf-8?B?MmhnV0h4eWJnUjJKWTdScUhuVVhTM1JBM1VXcm4zMkFlZ0xIM2VlWFpmSFJo?=
+ =?utf-8?B?dC8xeFZlemtKVWsxYklmaGduOEJrOGdZL2F5UFN3bG5EY3U2aHRSLzJIVnFR?=
+ =?utf-8?B?TW1maGl0aHR3cU9ZRVRuWk9HbDl2K3F1akYrZ3BhTXhaYWtWaS9HT2tkbzBT?=
+ =?utf-8?B?MXBZNmJ4LzMyQmRxUTNyMiticVJkN2NMMldYR3gvLzdPMUMwMXdkei9CeHZV?=
+ =?utf-8?B?UGM0MFdweFA1bXUvT3VGRFpMNEJUdFZVWTI3MU9jMWx2L1VnRXJIRzU5UXBO?=
+ =?utf-8?B?MjBGTW9McVdtVkZzMTNDMUplSFZhUXpUdCtYNVpTRjZSaVd6eWVpR241NCtT?=
+ =?utf-8?B?MnVtVllDNXVkV1V0WnUwUy9FMXp4Qy9JSDhLZmt3UVIvdzFvcUVUb2RNckI4?=
+ =?utf-8?B?dkJ1ZzE3Wm1Jb29va2hMcFVieXIwK1VrZUZHRXNESlRGRFAzZk9GYlNjSDZ1?=
+ =?utf-8?B?VktCUFNlZ3NmT1RvY1FubFduSDVnNnNTRUppbDFJNDJ6dnRSTmtUT1pRVmxz?=
+ =?utf-8?B?TktSQTJock8rcmtScXFyOG9QRU1jQW04ZmxoNS9wSmwrYUQ4c2NTTXpJRjJs?=
+ =?utf-8?B?bndSNEs0bEwvR2tXNDRxaEhPcUxaTjFBZllBMm8vUTJJSE5janFVcE4xblpu?=
+ =?utf-8?B?NkFIdGtjVnYzTEpuMHUxVjNyN09jK1hUbWxuWlJHMS8wTkFKakJ2UHpVZk5T?=
+ =?utf-8?B?WVhiRThiVm55UWw3UHM3akd4Wk5ITTk4c0hYbDBzOXBMcjQ4VUpuMksvVzg5?=
+ =?utf-8?B?bS9JS2RialBCTTRCc0dvblJnR3N2N21CMlR5NkxOanZ0ZWloMnpxQitJcDIy?=
+ =?utf-8?B?UUhpUGRZVWlCbmt2OGVmMTBzd3lZRkp3SUZpZ1ZxSGJBaFE3TkFya3plYzlS?=
+ =?utf-8?B?MmcwMWxkbUJlaTl2SXpmMWZXYzAyMld0RU1sZVRNTHYxSWZOeEFPZUNKL281?=
+ =?utf-8?B?Z28zSHFvNmYwcForcm0xanYvbmJvSkVFMkdsMVZxTDcxN1p0QTllUFpTZ3FF?=
+ =?utf-8?B?bEhPZlFkcElUZXNDb2tLbGtmeEZXcWJBYmZsSDZPaDBSUmRzR0ZKdWpaZzli?=
+ =?utf-8?B?emc0bmszZ05rL0hhMkRXUEt2aGpEakZFd2J6TFpsL24vWDJrSUhNMkJLaHFX?=
+ =?utf-8?B?b2theWFOOFNEazdxSEtNcDhnRXZYUXBqTXI3VXB2MWgrRHVtZUJ5STlGbU9z?=
+ =?utf-8?B?dDJ5R0ZxMk85ZHQ0OXJYdEVnM1duckVjM0c3My9CNGFUY0haS1A4b2RRd2dN?=
+ =?utf-8?B?am43OGsxYmpZSFFMakdqTnhTNnJ5SVpjcnU4TEh6TGpMczNwQXlWNjJxQUd1?=
+ =?utf-8?B?dkJMbzdkT1lHSzNEbGlWZU96MllVdnlEQ1k2bElJYXlpUE9wRnhZamxqclF3?=
+ =?utf-8?Q?kM4mueX0WFlsPz9BvfFlKw03vuUml7YT?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dW1sQU9FUUk5d1VlbHBJOEsyOHY4WXJ2SHBrVSs1bVZjM0REWGljL3pMbnhu?=
+ =?utf-8?B?bWlOM2VReHpFZFEyb3ZGSzJibTJwQWpDQXlxMDBJbE9sUnV4UnY2ekNuM3E0?=
+ =?utf-8?B?UUltK3BSVnhDdmpZc01tZVNPUjJCN01xTVJyaWhVNFNKcTh0dG4zR2dMSm1Z?=
+ =?utf-8?B?cGRqV0J3R2dVa0JKMXhiejJUb3VYaGR4OFI5RmJPZ1NtTE9NVHBSbjR0c29s?=
+ =?utf-8?B?Q1BRMnQyR3NFMUUxdWVScWpGTG1mSXpYa0RqRVZNcDArRWFUMWExaVd3R3dx?=
+ =?utf-8?B?Ynp0a09wQW1RQWd3WGxsZWFuZ2RqcXBxVE1jWkhJZlRpOGRyYTJpcjFkMXB0?=
+ =?utf-8?B?Tk42eExEUGRvZGs2SUxNZUZ1RFowKzdUR0t6RThRTUZaa2RxamlGKyt4VWZu?=
+ =?utf-8?B?aDREVUxLN1h5MHdFcmxIUTlQR2ZyU0owYlJZNVk3czIwNWxWUmllV2Q0Qkhp?=
+ =?utf-8?B?WWU1MzQzSDJYUTEwbWNOL2d0SS9kU2NrSkMzRWVPeWJzN0x1eXhNb2NvcTJv?=
+ =?utf-8?B?NlNWREE4TGtyYkVwVmpremo3eFI5Sm9mMHpIQVBQckxHVk14UzNHQUNFa1lI?=
+ =?utf-8?B?b1pkUXFQU2NGWkEvOWJhUmx6QnBLWS85N1RJcG90cllIbk11dmFoS3R5RWJV?=
+ =?utf-8?B?R1BzSzN6dDRRQ2JWZUFvQkRQL1FxTjRhWUVidVVFUDF5NUJORGpRbzdLeW1v?=
+ =?utf-8?B?eDFyRGw2M0hISTN1eDB1eXhlanBsOTBmMC94dEtJeG1OR1MxVnhsK25FUUp1?=
+ =?utf-8?B?ci9teURkdGg2R1k5Y0ZMR2hNYU9mV1RpTElITkZaRnJKR1NoZURZYnlBVnhu?=
+ =?utf-8?B?NVRnZEtMSFdnMHMwcnVvME5DMU80UUp3d0NmQW05Q3laWkdYZWJ5akZIRkln?=
+ =?utf-8?B?dnVSSm5RYURVV2ZybzREdlRCMnNsNWZEdy9BaFBjSjRmb1pERTQ5RG5jNTVw?=
+ =?utf-8?B?TUk1Y292MWhqZGdGMyt1TDY5Vjh4Mkp2QksrbXNHSHFlQzJRV2NISk5VQzVs?=
+ =?utf-8?B?T0srcXhMdkpPMlBSNmRUZXFCZ2FzeE5ITjJSdWpIWkk2NHBuOTl1d09vbnow?=
+ =?utf-8?B?c0U5SUR0LzBLRFpvSTdvN3M5aFhxNXNFLzEzU2MxMk9OUnMxeFpyNWVWVElV?=
+ =?utf-8?B?K0c0bllCVFdWdml1ZWNiVXRCU1JoNU45NDZLNkhyRlFRdkJRc2lUMU5EdkQv?=
+ =?utf-8?B?UEN5aGRvZTIyYXRSYXFTOGlMRmt5L2RJQlFacHZUallTL2M1Zjg3RDBxODZw?=
+ =?utf-8?B?a0dZanpjWCswamN0QS84US84UnJuT3JBcTBFd1ExY01RRFJpYkNyamdZQmFO?=
+ =?utf-8?B?b0NqMjhKbmdLR3M4Wm9CdWlDM3JRK3Urc2NWbEI3em9nbnp0ZTZ6cDIyd1FU?=
+ =?utf-8?B?dkxUSy9SSktuTUZXUnkwMnBjMVFGNkdyVTJlL1MrMWR5aWtLMzhybVIrWHpv?=
+ =?utf-8?B?eDAxdkhjdWQ0VStCZVpKdGs4YjlpQmltTm02VU9nVVhBQzZUTTF4a3J3eGNR?=
+ =?utf-8?B?R1FHOGh4Titwa3l2c09wNk1ydWRxN2NqdXFrT0lwTU93ekdaL3VlNUE5ZFYy?=
+ =?utf-8?B?b09ONXY1eXpQUWwyMnVJcmd3ODRnUjBqU3BrL1YzZVl1T2NnUW9Fbk9wT0tE?=
+ =?utf-8?B?N1RwQW0zTGo5Q1lzeWdka2NOeWZMQmx0RWQzdDByWWtmdmoyUzl2YWlMaGww?=
+ =?utf-8?B?SUVYMXdzZmd4Uk43SE5hcE9zSHFtTjlOOVQyUTRsWTBETEcwRWt0NE5XcUg3?=
+ =?utf-8?B?WEd3aWRPakhFNHdLVEpMZmVYRXo2TFc1WEFHRklPNlZBOXRESndxTFFFa01N?=
+ =?utf-8?B?b0h3RTRxQkVnbHNtcnZPMzNtblY5bE5Rem1rb3pKUVEzaVUvZ1FIbDRwSGYz?=
+ =?utf-8?B?NWlOcUZjTkdEcG9oa2xuMHhLaGNsdVpEc0o5aEZpRkNRWUVIYld0d2toZXd0?=
+ =?utf-8?B?Q3YwaGhGa3RBNmJ5VngwR2hpMzBMVnhFdFhXUCswYTZNd0xvNFNST0VzcHRL?=
+ =?utf-8?B?T21RNVpKVnhrd1FHRTVmZDlNNzAxYlBhRUkxNEtGWlhESXE4a2p6TUY1RGoz?=
+ =?utf-8?B?MmNoclM2M2RWKys3ZHlwRE5SUXZHOVNhSU4xa2xoK3V5SnFyaWkyUk0zdjVK?=
+ =?utf-8?B?Q3JPc09oVXYwcUF0VXBxTjZlUCtyUlFwUU5wdDJ6Sm9QeExjcHBWWmxLd1Jz?=
+ =?utf-8?B?cmc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ef5c00b-4c92-4144-c96f-08de0d9be8bf
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 16:40:41.3145 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cH9/Pm0GGoL0aJ64iK0jmzTKJ2EMl1a/ApEi/B59VVvKin2klgxZL+x6FdwfOJoYv3hOuYfn0yBA4CkC94y69yb0VI97K7Ddran7PDlWshQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4933
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -137,142 +190,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enhances test_ring_perf to optionally select two cores on
-the same socket but on different L3 caches using hwloc.
+On Fri, Oct 17, 2025 at 04:34:04PM +0000, Sivaprasad Tummala wrote:
+> Enhances test_ring_perf to optionally select two cores on
+> the same socket but on different L3 caches using hwloc.
+> 
+> This allows performance characterization of ring library
+> on processors with split L3 cache architectures, providing
+> more realistic measurements of inter-core communication
+> and cache effects.
+> 
+> The feature is conditional on hwloc being present, ensuring
+> builds succeed on systems without hwloc.
+> 
+> Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+> ---
+>  app/test/test_ring_perf.c | 75 +++++++++++++++++++++++++++++++++++++++
+>  config/meson.build        |  8 +++++
+>  2 files changed, 83 insertions(+)
+> 
+> diff --git a/app/test/test_ring_perf.c b/app/test/test_ring_perf.c
 
-This allows performance characterization of ring library
-on processors with split L3 cache architectures, providing
-more realistic measurements of inter-core communication
-and cache effects.
+<snip>
 
-The feature is conditional on hwloc being present, ensuring
-builds succeed on systems without hwloc.
+> diff --git a/config/meson.build b/config/meson.build
+> index b8c1f127a2..75630254f2 100644
+> --- a/config/meson.build
+> +++ b/config/meson.build
+> @@ -313,6 +313,14 @@ else
+>      add_project_arguments('-include', 'rte_config.h', language: 'c')
+>  endif
+>  
+> +hwloc_dep = dependency('hwloc', required : false)
+> +if hwloc_dep.found()
+> +  add_project_arguments('-DHAVE_HWLOC=1', language : 'c')
+> +  add_project_link_arguments('-lhwloc', language: 'c')
+> +  dpdk_extra_ldflags += '-lhwloc'
+> +  message('hwloc found — enabling L3 cache–aware topology support')
+> +endif
+> +
 
-Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
----
- app/test/test_ring_perf.c | 75 +++++++++++++++++++++++++++++++++++++++
- config/meson.build        |  8 +++++
- 2 files changed, 83 insertions(+)
+Hi,
 
-diff --git a/app/test/test_ring_perf.c b/app/test/test_ring_perf.c
-index 9a2a481458..2003949649 100644
---- a/app/test/test_ring_perf.c
-+++ b/app/test/test_ring_perf.c
-@@ -15,6 +15,10 @@
- #include "test.h"
- #include "test_ring.h"
- 
-+#ifdef HAVE_HWLOC
-+#include <hwloc.h>
-+#endif /* HAVE_HWLOC */
-+
- /*
-  * Ring performance test cases, measures performance of various operations
-  * using rdtsc for legacy and 16B size ring elements.
-@@ -122,6 +126,69 @@ get_two_cores(struct lcore_pair *lcp)
- 	return 1;
- }
- 
-+#ifdef HAVE_HWLOC
-+
-+#if HWLOC_API_VERSION < 0x20000
-+#define hwloc_get_next_obj_cpuset_by_type_compat(t, s, ty, p) \
-+	hwloc_get_next_obj_covering_cpuset_by_type(t, ty, p, s)
-+#else
-+#define hwloc_get_next_obj_cpuset_by_type_compat(t, s, ty, p) \
-+	hwloc_get_next_obj_covering_cpuset_by_type(t, s, ty, p)
-+#endif
-+
-+static int
-+get_l3_cache_id(unsigned int cpu_id)
-+{
-+	hwloc_bitmap_t cpuset = hwloc_bitmap_alloc();
-+	hwloc_topology_t topo;
-+	hwloc_obj_t obj;
-+	int l3_id = -1;
-+
-+	if (hwloc_topology_init(&topo) < 0 ||
-+		hwloc_topology_load(topo) < 0) {
-+		hwloc_bitmap_free(cpuset);
-+		return -1;
-+	}
-+
-+	hwloc_bitmap_only(cpuset, cpu_id);
-+
-+	obj = hwloc_get_next_obj_cpuset_by_type_compat(
-+		topo, cpuset, HWLOC_OBJ_L3CACHE, NULL);
-+
-+	if (obj)
-+		l3_id = (int)obj->logical_index;
-+
-+	hwloc_bitmap_free(cpuset);
-+	hwloc_topology_destroy(topo);
-+
-+	return l3_id;
-+}
-+
-+static int
-+get_two_l3caches(struct lcore_pair *lcp)
-+{
-+	unsigned int id1, id2;
-+	unsigned int c1, c2, s1, s2;
-+	RTE_LCORE_FOREACH(id1) {
-+		RTE_LCORE_FOREACH(id2) {
-+			if (id1 == id2)
-+				continue;
-+
-+			c1 = get_l3_cache_id(id1);
-+			c2 = get_l3_cache_id(id2);
-+			s1 = rte_lcore_to_socket_id(id1);
-+			s2 = rte_lcore_to_socket_id(id2);
-+			if ((c1 != c2) && (s1 == s2)) {
-+				lcp->c1 = id1;
-+				lcp->c2 = id2;
-+				return 0;
-+			}
-+		}
-+	}
-+	return 1;
-+}
-+#endif /* HAVE_HWLOC */
-+
- static int
- get_two_sockets(struct lcore_pair *lcp)
- {
-@@ -483,6 +550,14 @@ test_ring_perf_esize_run_on_two_cores(
- 		if (run_on_core_pair(&cores, param1, param2) < 0)
- 			return -1;
- 	}
-+#ifdef HAVE_HWLOC
-+	if (get_two_l3caches(&cores) == 0) {
-+		printf("\n### Testing using two cores on same socket"
-+			" with different L3 caches ###\n");
-+		if (run_on_core_pair(&cores, param1, param2) < 0)
-+			return -1;
-+	}
-+#endif /* HAVE_HWLOC */
- 	if (get_two_sockets(&cores) == 0) {
- 		printf("\n### Testing using two NUMA nodes ###\n");
- 		if (run_on_core_pair(&cores, param1, param2) < 0)
-diff --git a/config/meson.build b/config/meson.build
-index b8c1f127a2..75630254f2 100644
---- a/config/meson.build
-+++ b/config/meson.build
-@@ -313,6 +313,14 @@ else
-     add_project_arguments('-include', 'rte_config.h', language: 'c')
- endif
- 
-+hwloc_dep = dependency('hwloc', required : false)
-+if hwloc_dep.found()
-+  add_project_arguments('-DHAVE_HWLOC=1', language : 'c')
-+  add_project_link_arguments('-lhwloc', language: 'c')
-+  dpdk_extra_ldflags += '-lhwloc'
-+  message('hwloc found — enabling L3 cache–aware topology support')
-+endif
-+
- # enable extra warnings and disable any unwanted warnings
- # -Wall is added by default at warning level 1, and -Wextra
- # at warning level 2 (DPDK default)
--- 
-2.43.0
+I think this is the wrong place to put this. This will make the whole DPDK
+build depend on hwloc and add it to the pkg-config file.
 
+Instead, it's only the unit test binary that actually has the dependency,
+based on this patch, so just add the dep there, and add it to the cflags
+for that component only.
+
+/Bruce
