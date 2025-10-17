@@ -2,46 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A66DCCD184
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 04:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 898A7CCD184
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 04:49:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6013A427AF;
-	Fri, 17 Oct 2025 06:49:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 75753427B9;
+	Fri, 17 Oct 2025 06:49:11 +0200 (CEST)
 Received: from AM0PR02CU008.outbound.protection.outlook.com
- (mail-westeuropeazon11013038.outbound.protection.outlook.com [52.101.72.38])
- by mails.dpdk.org (Postfix) with ESMTP id B92FF40DD7
- for <dev@dpdk.org>; Fri, 17 Oct 2025 06:49:08 +0200 (CEST)
+ (mail-westeuropeazon11013042.outbound.protection.outlook.com [52.101.72.42])
+ by mails.dpdk.org (Postfix) with ESMTP id B6A13427AF
+ for <dev@dpdk.org>; Fri, 17 Oct 2025 06:49:09 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FWRIMB17qHKzJoB1pteR47RUOHHQklK3Ai4q8DZzn30nc9ArN6k5m3PBtSLjJAuXajJxTgNAc+IT/0lorUNom9swQKiFmUvpp4cgjJs1w3j2MtG/mzeQ3K1A6eizzML3ZjTk9/4UBezDamvZBChbWGiR2FerFcTZrWFvNgxsGqa3sqSMXKflSQiBAVD3RSVV/AWgNpy7UhWDMV3anIRVrynYlfQjtEyVKxGHW7wLVmpfYOSrO7tsaV8mMFwBsaVw/XTwdsTIlKEPngyJKna9D+XbVjrhJd0toD1TLhE+4DCZZItGP0upk+1DloJc7f/jN6PL0NlcY0YLHI/eI4nYgw==
+ b=UCNtjCSLtLWgOMoDX5ygfsyJ6ABMPLd+L9b9VY5k9hGon9qt0TWmpt0DvjVzTDyVXF7MXvxKbaq5mmir3PqguRp8B8YBnBOcb0NewYbKgRAmslcBB5S6j7uhbGW8II6RxGW+12wq5CZd3O44Fs5tdLPj7w9ZdOD00K3zHrU0Zf6bXd0NgYexgcp6Wno3j5TANHOd0GyFFMXAIXuk+vg6iKE4hnhu53N2Iw24S/RlW2EW7iq+3EDKRZ5KUb8ku27j43oA9tMKY59/4Je/0/XQgGue+cruVuX+FpJM7HYSZp6Kt3wQua9op7KyDiSup5jAlEP22IBn6rLR103J9BKB4Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S1jeEcJfUoA80kH9M3osKdOvWHqCVt2+31Bc+blrfCA=;
- b=GdQul9Eo2aDetkQbcEyFVubuHMwtGe9D7vDcxVd2vF4aPans9d/dTxgr0r0BYT7HbIDzW1Ll6CBs3vl/w0TgILK5BLcawA79bgWavzXGOfb7l4+LB9M48mXqrl8LQ+RdUCrbeQunoVuK/BUMVyNpqmPJEw0kXZMqQC7lgn5rk3OlL1G+3cgevLQr4NS09XodYgsAqxkaHjwg/n1eFilsp3oQTcN2baYNr8zlrsXnK8J0VAetF3PWBtMTYQLTIR1nDwYLNYl3gdrn3XMeESxBkj8F78qMIN49wPs7m0J6U7uvj+S+0TdH5j3lNFhdyp9ClDLF4Yyi0UObADsUjhHd4g==
+ bh=jZr/19TFzzx3eM4bOjg1db9PChjfTAPXjIFLO8dLYtc=;
+ b=RiQEyluKc5r2oljK2daWlwCsxuxVVFVaoQrSPcWYmUoe3Vj1kroFnjRbaUtnhR8xzwCZP36hjZ/Jf2cbmkkr+97/xCzkhCr9V9gdtKkp3veS0dmOSuqIfMuq4nYm2dnrgqgUayF1EMgnJqs7SXc5OT1yqACfDdjQ3T/V+D5k+bRchyAi8BDA62z30MrHU5CzMpcSVHGwvUJQOx9iLD+AqQEC3yjJSw4FhHBOvNKxBd4GVJRzK2IBqD6wkf3ICuuySVCCEYWAH+m2eBQSFmnM+MZdv4Y6bVjbtiZG136ikXRDaLZcrj7IIvwnos5ObTkxbci0gBPAHmU/6v1pT3RhEg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S1jeEcJfUoA80kH9M3osKdOvWHqCVt2+31Bc+blrfCA=;
- b=b1corwfa7K+YSZ7gDwkgp9HdLD2r1Unrz6/TsJd423wwN5hFyyUACkChsBSUHFHwnQWHdsrULNckKcNCKMv9CX1YrFyqm9jvW9CrRNzWHsYbb0QZVNKDxcL8FNbtskKljcsyZrbmpQxO9d/+xOGWSt0LeXaSMcocPPFC5rgJnA36lObHv/O/Jz+x+XjB+FU0dZxhpUJBb3pDvwT7+k/bPe20ntWfq1vug61eVJaDiQ8FZZEt+lFsO3bX8bg1l32Z4/ys1GVN7N6w6GM70hOoeGoiCHHo9QCdOxGAj5lF7ixeresLmlwqPYEDXfR+sIO+Do9F5//F5ib7EjziHHe3yQ==
+ bh=jZr/19TFzzx3eM4bOjg1db9PChjfTAPXjIFLO8dLYtc=;
+ b=VcWW8nF/Q7WbC/sLTFlWTknEoHc1YeJg7QMOCE49vsG6S9qON2NgwBKAeeMHWUT6Km80cYRwDFiy068inS8dJxv36JrgKe5Xwdp2OuiXdg94qBe/V0WZSln5KSHhCB64Qh/imw2ixxgs3MBHKKWuxR30NS9qu+kfL+9Lpqnpik/NaIPsS7OUUTgQcEfoVyxiK1dt4iQiv4WDzY2nXjLe3mRi2doHlWcHAShwrWPPBwVmSh1/zoKId49bpcfV0wC29PpbVValiQ/NyRowP1mT8ECPMRiD8S6oidB2uWsYILTZRPvXCNoNRnaT8YA07CtLpjDJjhgxFR30mdKvhV/UZg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com (2603:10a6:20b:3b0::14)
  by PAXPR04MB8254.eurprd04.prod.outlook.com (2603:10a6:102:1cd::24)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Fri, 17 Oct
- 2025 04:49:07 +0000
+ 2025 04:49:05 +0000
 Received: from AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::c52d:9751:36a3:78f9]) by AS8PR04MB8198.eurprd04.prod.outlook.com
  ([fe80::c52d:9751:36a3:78f9%6]) with mapi id 15.20.9228.012; Fri, 17 Oct 2025
- 04:49:07 +0000
+ 04:49:05 +0000
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>
-Subject: [PATCH v5 2/6] bus/dpaa: imrpove DPAA bus qman logging
-Date: Fri, 17 Oct 2025 10:18:44 +0530
-Message-Id: <20251017044848.3269627-3-g.singh@nxp.com>
+ Sachin Saxena <sachin.saxena@nxp.com>, Geoff Thorpe <geoff.thorpe@nxp.com>,
+ Shreyansh Jain <shreyansh.jain@nxp.com>, Roy Pledge <roy.pledge@nxp.com>
+Subject: [PATCH v5 1/6] bus/dpaa: fix and add FQ shutdown
+Date: Fri, 17 Oct 2025 10:18:43 +0530
+Message-Id: <20251017044848.3269627-2-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20251017044848.3269627-1-g.singh@nxp.com>
 References: <20251017044256.3264737-1-g.singh@nxp.com>
@@ -54,78 +55,78 @@ X-ClientProxiedBy: SI1PR02CA0023.apcprd02.prod.outlook.com
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AS8PR04MB8198:EE_|PAXPR04MB8254:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e11ee30-2566-47c9-89a8-08de0d38815c
+X-MS-Office365-Filtering-Correlation-Id: 4707eb60-9b2f-4ffd-8832-08de0d388032
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|1800799024|376014|19092799006|52116014|366016|38350700014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?nGqSC009Zyw06lco9XyeeN6XqG1lM6DIZrlco1+guzPQDMPXpYDYYlWDgy9T?=
- =?us-ascii?Q?IK5YqXwHBMDCQwm5iMG9IbV0l1I/x15bz36sJ9H6s1qdFjhFINo4cEB/0OV/?=
- =?us-ascii?Q?bcpc3qOcy+AFIWcX6sepjGJaOlHd+PmofQiRzGDLOy+iLDBTsiJ0eYmGager?=
- =?us-ascii?Q?/sZVleEjoTsBpQP2brr7tlxm4qpuz3tAVOzDEVXuI27/TJDqVdeR+DkzR08X?=
- =?us-ascii?Q?TC17Q4sNYW9w8KTBESV+PjDpQiArdA+spOPTvYuKeL2u651JA0hmvcgvGxyu?=
- =?us-ascii?Q?uIeG1Ax8YyJs8qIDq+mLYkYcY3B7hKm3cVjQds6vf2ZVmhTEjUM4WQAdRIFQ?=
- =?us-ascii?Q?hzfMjpIuYD/M/TtZEAQhUzRCPWmuJPdho8hbfPSoqAMVJqE+rOgs0DkcduQP?=
- =?us-ascii?Q?/gVXv+bahVpJhvawXpXpJdrIdXzLcmOzdyvSfX5X0AfPEy2vEX7WoUOVDLqw?=
- =?us-ascii?Q?wE3Muerb2WNhc3buAiswvlccnVRBMAToHi+rGDB5sanzoPMKyLZE9fpy0LZU?=
- =?us-ascii?Q?kKd6xYOg7rtEnSg4/pEDQ/jHPX2E1gYNxmRJ3922CuPjm5c3HA14pH6Ni+H5?=
- =?us-ascii?Q?ksiRkYnmhr/qa7K2phIaoXhQRIuGwmhikEVc/ST6CaJcN5PaHNPZg5qrkAAY?=
- =?us-ascii?Q?1v4yEgog9mkCuzMxNpkjRoGkTpwk8A7Jzbje4/l3cvQVwnGc+HvlFcxzyZ8u?=
- =?us-ascii?Q?Ju83Bc/FU+KiYpsLETj85AF3VJuYy9eBPXwuyNrZANYsdlXMYVyTExy8koAV?=
- =?us-ascii?Q?fCIFgRXkxez8b2RkhVVjCMBgiTAhsXoDX/oSQj6w1wN+VG72JM3thVBy7BRC?=
- =?us-ascii?Q?QdQvsgA/qZ2oIFC1r6aU8QJkJlmnTmVsl1qWbZ/7CxNPbR6IGRrE8NoNBWqT?=
- =?us-ascii?Q?hbNTNDw2z72sHUGk4diA1r0iWy12HjG205qbLqP8TS4QUYHdskRGfMu5VUps?=
- =?us-ascii?Q?PrSD1dAY8Vu1u0xpJ6gs70JwG2jfs1PJXDEvytv31Wn5QExAt1Vo1Jn+8hib?=
- =?us-ascii?Q?eCnH2fiq1LWFhvG6aiZ+8NjfWglZmevV8F+VPegscTGsCBNonr5uxfTgPTSb?=
- =?us-ascii?Q?dhRBWqMZFlNmmz7XX4YbiYNfwgg3UwbWgtnZj7WQNKMhYLmQfrtCN24gaMj7?=
- =?us-ascii?Q?dpgZTeckbSWvrRlzCNPIt2+Vmm4FkjMiN8bsPaB048PK3PAtWlSbg5TJCuai?=
- =?us-ascii?Q?YhRRL4/sQA6MQbdhbhWr5xtvVOiZHnBcK+irPaGcRohc/459Azyi8Eu66bJt?=
- =?us-ascii?Q?zXgYQIwOPSSpqaMSveiaoslQ7rabdOnuNfL+az/qtTNtRTrTeC4VLL/JR9j4?=
- =?us-ascii?Q?Y840U3Y8LlyU0tPmTlL6keAi5/Fc40KLgfIeh0gcmCt7RWE8o0XOQRA15KZ+?=
- =?us-ascii?Q?zxhkgQRSV5VOPN1yHt3b+Y76O8a1R9r7ZyH4MY2coYwqEUHkTHbeZYm2P/r/?=
- =?us-ascii?Q?rizjT6o+kunYoaZfBRwfsFHAz/q6lF76rXAQ2rNocJu6GmTwbFuAMQ+1623M?=
- =?us-ascii?Q?HpKvAa4dLXaj7qp3gYJbDUCzkHR185eW/Vk6?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?bnzdHVTl2Pg2049+DOf8EvBoq4Nf36aDT0dbfTiDMruvXMLYwqsdYlYFV3VU?=
+ =?us-ascii?Q?iESscUe1Jp6KTKl26Io9EF/MGCwE834GBn/PP/ubvCdGHLg9WbINJ0nwMiel?=
+ =?us-ascii?Q?FR+FJwfxBq16VsbIGgIb3WJv5i2/BNSSHobYCVMdZgIiUEt6e7NjGfzmbgLC?=
+ =?us-ascii?Q?A8qLcfxZl460m1dP6ZSTxCpGFEH5p2CIwUbA2Fv3Vb2HBN8YnRFyo/RVHZxg?=
+ =?us-ascii?Q?1J6+j7N7Dgl4qAJzyQogI8ply9l0u5gVqPozF50Gv60iwsLB1bAXWH8xAjzN?=
+ =?us-ascii?Q?vzJbXKsuopZ0m26dndiIffKEjFC1lHa+UwlP2coqa1FzqHXAoLjHeWMe2KKK?=
+ =?us-ascii?Q?S0AbMYvcz/qijjMd7n2huH1aR/hX3Pp8XfFzp9NbsntvS3vggbdcddsU2QBG?=
+ =?us-ascii?Q?vPQIrFj28O/g/LNGgsGblSueoM5Or0Hh92UmIuNT+4ahAh8F1dSicY3SByiy?=
+ =?us-ascii?Q?wuDptU3Kcfn8jtD1bhfT03S+nYNz8EWOcuYHp8ExJM9cop/vwbDNmM5skayM?=
+ =?us-ascii?Q?Zt1xLIEdCAGGe7o9ESq9k95Aok14tan4MoJ3Fn7+er7hHEMZwsLSxLN2LSRJ?=
+ =?us-ascii?Q?882of2KkpTDFF0GjfF+o+vuLgE8cM0iovlz4jBMlJoT5rzm6IvMx3J2w5Hat?=
+ =?us-ascii?Q?5hzG8QKyd9HnsQ8OBEE+htBXDLq7HyLLBWECTQdXGnIaFGqxb7McdgJdnGgU?=
+ =?us-ascii?Q?lperMDFd8xwFEAs4CJBdDsPRh1uJB3IemgzM6a6KlhcMwcwT6RWFkST6Awyx?=
+ =?us-ascii?Q?nwHuf5cJ/XLguZtuJ0Sd17gVHIv3+uKj3aIbHlrr/Jcbs96Wvoq+VgEjnrTS?=
+ =?us-ascii?Q?peyAvV71bt79EL+8grqAqtBO2W3/rciwoQHXuck6PIG9maIVw7pRW+DB4unk?=
+ =?us-ascii?Q?YlvG4ZAled/BqEVwTrIuViFqACGL+co6AzyUreoelg8rUcHDXY7OUTJ/akFR?=
+ =?us-ascii?Q?QIVqEtOg9XC1MdRmKH6wsTswjiFgUfBEqd4YNs4HLAmmLIe2lUNv6i22VIjM?=
+ =?us-ascii?Q?5rBP5BvqKBw9J1HQBIxC1Y/yttD0n0KIuc1uSCn/0v6EUZzenZAENGYsitph?=
+ =?us-ascii?Q?mnD8s80fuenMAfBui3hlWVMH2skMFInW3hJec/Oiv2wNmeg6El9pukhplFe1?=
+ =?us-ascii?Q?2pdyiAkTUEtBU7EnLJTJ44rIiB1L2lITFiUkxv+qZED99atQ1pNLqx5dLe9w?=
+ =?us-ascii?Q?orT6IDT0eREzknzLBDTp+aE8ArWdSTILETn3A3GAkFEN3i7cksWZA/RS2Egl?=
+ =?us-ascii?Q?vg93UcWK2+Z8s9PQYcxDofkHPQSKqToHmnYFh3rHLl4aE7ANyAGtiUuQ6GaX?=
+ =?us-ascii?Q?3oU2bjHVU/FbZBZgQU64BR2kL+T08vW2RvyEM29U1spczThmNZgdgJPXVF2W?=
+ =?us-ascii?Q?HicIpiPD2VzLthXCPVUun3O8cYKRnbsMhnA21GVQ0hb3Qkkha69Fc8AUa4C+?=
+ =?us-ascii?Q?whcMIItKvw63SfcLhiMehvY+Ixkz7ClXsCWcWlr3Jur73t1GXG8Ax3ns3AmJ?=
+ =?us-ascii?Q?7kzKzYIOpBOluXAtF776ACQvMFKRoIz8XmED?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:AS8PR04MB8198.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(1800799024)(376014)(19092799006)(52116014)(366016)(38350700014);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?7dcePI90CfZYjWprGDh8YMd0IEY8FRvWUBuXk2KnU1+8uI54gyqQiyctrpUf?=
- =?us-ascii?Q?yuAI86DiK5MWhtezfLxtCrp8hcNedIIDFPfN60R7ajCiuPiU8E1HFIIkROg0?=
- =?us-ascii?Q?rZRHP0zMULD2mNyhxzGIeqz+6O/n/4sIET6nqZSdaUeZGjYrSboDt0EeA8Gj?=
- =?us-ascii?Q?H2m31Vtu5KzW5ftWOgt436iGsxmXKjVjvsHTqRFUO4JgNlPxw8CB0wEgoy5l?=
- =?us-ascii?Q?euyklc/fayh8UmM7DfEJx5GjXmWxFtU77Wh2E0jsJAf9NrAHHgCFEBoYRxmy?=
- =?us-ascii?Q?qPUVivKjr2V0SaBSEr7HNJH+50SpI3pdEbysfnhE5u9x37FKJ6tQUU0AsF/G?=
- =?us-ascii?Q?PaPM8dIWtC6oDagOEM5dCdDOI2MCV85yiwVUgmH+wyjyMMFfvS17y8Nk49p1?=
- =?us-ascii?Q?c5GMNUQIRf5rwN8p1gdLcDwQh+YyoY2nJIf8poEQKUkdCFOPBZMEe02Mx8ow?=
- =?us-ascii?Q?IrGSwP2+2PhgWmAkbpfaZqWMfjoKPsJ5Dz9QhUmDUxPfkdpnLduSqyjaORq5?=
- =?us-ascii?Q?wbKp5mM++v3kREgEFmizl1AcLOCuclxbShzqPvxQCQPFLKZBCwB0hnRa7a7F?=
- =?us-ascii?Q?z6t8rvkeFhdWG+jnf72FvBigzuBv/Gn/lJifNOOhAwsMkgjc+DBh3PdSQyjx?=
- =?us-ascii?Q?g+h9CeJTLEdRFgzZsekKwD0xOUS5gy+CtpvQi/UncDkOcGDZsEBtaIpQ25AK?=
- =?us-ascii?Q?HdvJGOu/0BzIj6fC71LunZiA0Eq1EUAn8aIN3+b5SMxWfqnL+BiyI67om3Pt?=
- =?us-ascii?Q?QT4vnE+28wxGiyAhce+R8HaQXg/uQNTEHQGxNDfnL5DfozbkgVRr33olB4I9?=
- =?us-ascii?Q?HTCskPJzhTDNPqREb23WdBLOLp8ah8bRzmvpp4/M60oVbA1voi4IhbdYFEDv?=
- =?us-ascii?Q?AlQ/wwvpChZQhfgIzBfdirpGFb0Bb3RgKAF1gK28/vtltvBkiEuI4MKNfANj?=
- =?us-ascii?Q?Yqlsu0rPvCY+Cw5Fz7n1pj/DGn7tR9ZViDPPVf/oiJ2fqZyS+n60M3xThLqT?=
- =?us-ascii?Q?+VZAcSN7voZ7Hb6lSgeTZn55/cO635GpuoXfwdwD/wgji3susfRK9L868bTU?=
- =?us-ascii?Q?jTRnqHrJ1OIxKy+7urllbti5lUvWh53obHbisHE5JAe9rM3bfPXnSVX1tRxP?=
- =?us-ascii?Q?6Cm1sAWHOpgC14hZ1EqRClhxuBLZQi2+V84DHN3ENQ8VDVqLMVxz84RxU6FY?=
- =?us-ascii?Q?9vgzGnmhgmJEvoEAWS8j8okmTNwafe4CQ7EKdGJe5k9f5sWDEgQq01rGEsiG?=
- =?us-ascii?Q?VplVktT2XL/LhuAERhMkVt79be9+ScCQNRPo0HLp4z1hQcyhwGIKB9tLW5BY?=
- =?us-ascii?Q?DbVRD8gfH3QSCTGG9rpUi+FNR4/CDXJskY8EJxmzjcD1dzx3F10DWxjkoTJg?=
- =?us-ascii?Q?97jsSbegZQ7iawxxYhmwFQ4aqdetEeqsIQ8TjFPzhDtypdhjN2F3EuwT/nyn?=
- =?us-ascii?Q?KFe456lsb2EoVSZ5NqXuhFX88MJwg/IWUZzx9Qb1hfW3baqIU4nryvRb/xoN?=
- =?us-ascii?Q?0BT84vWrihKs7AvqMeHs+gln6Bo0zVa5b09bNKBqwFEn12p+WrO2AlWfm+TN?=
- =?us-ascii?Q?25ZBUtUsnlM5C1gdZm5bWFHCZAIRtezhxo8uj4fK?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DBq4E5xo+wkIBJKESByMnnakl+zIr3TagGPsP4Z7jFE69r6LLw0VE384D7BR?=
+ =?us-ascii?Q?JV+oWaeVLu8LEqatBfgnX0i4E7aDd5TAJVjsEHgZrzPWVxqGsXmypK9UpWEA?=
+ =?us-ascii?Q?Szd5U0vrjrWPAKu40AKGyl51vb+tXQhJimS3KJj/P1ARW6gjJoa36KVZGYN1?=
+ =?us-ascii?Q?66oAb91Uoif1DKerYEPDKqEmasUvncW4YiZnx41UIH/9bUn4fqjcGUdElPcD?=
+ =?us-ascii?Q?/QPHq0O2qudJO0ZemLV2moqYGAcN1sh2UnxjjHMHC4T/FxCWY+xHQRWR4Ism?=
+ =?us-ascii?Q?Yx56gvV1+Za5Suiv2m3hU3fjO9UexYxrqjzwqLh+MWRkNUgItae6CGStNr4H?=
+ =?us-ascii?Q?7sARyWkMO/zGyQsJOgbXkYnyQkP4gGnz9D9Zc/eZkF+Ag2rbmod6FQfl1cd/?=
+ =?us-ascii?Q?PaSLtSX+XKLSW+qNz3ltbMCOKEEwikkiB0PCQJzefFQ+2hSFPFWfk9CHfmyR?=
+ =?us-ascii?Q?V8tKw4U5buEg4ADifamOhrDYETfvwgQ/GuX5Bq3xjCshxUkWCEzVwswr+r6g?=
+ =?us-ascii?Q?PeMMOx305BvApZRr4rVxZ0wS+pnwqHgwequCCxxQOMcXCSr/OAs9+CC892ii?=
+ =?us-ascii?Q?tEN2KYrPqX1YqpaNMDiPHMx0B0g8L9ZsZF6ftRDhI+ywwlQBDtErp7t2/7xj?=
+ =?us-ascii?Q?q2dwfzHF1XU2jzf3vnCh9TEX+SofuCmfTzIW/n3SQ53DSKbaMAvOciwIidYv?=
+ =?us-ascii?Q?0ObkOHNRZMc3CEJigg9+50rOGzi867g7yk/WyqJhsQ3puV4FzM+iK2adJ/kF?=
+ =?us-ascii?Q?gU6vre+y0eZSttW3YePZJeZCsEMtMPX06EWo4x4NAE88YHyohZwqCwtMrW/z?=
+ =?us-ascii?Q?9j/YYvkhXv5+z1X/RDxrzqDuo19eTEEIrV3DIfzAQvThFsbtOjkzDAUx8he1?=
+ =?us-ascii?Q?Js86RPNtP84DTbca7x6mOzsS4mZL3xfSOwgbRzSFY2TBtyepdlKp23IxSMhi?=
+ =?us-ascii?Q?DlfiGk0bDagNYizaF94JLloGEF7Jtc5/trAW1Xb+C1EDzWREwQGOr++t0Io5?=
+ =?us-ascii?Q?6wOIgazRO4txbnOJt67Gmx3hVMHNwPD14YaWRSfx6SlmvonSFzrd1A3z7keG?=
+ =?us-ascii?Q?iX3GAji9F8mk9q6OPPAn5inpIn9rYeEdcWVVPDOgQSYMGhgKLhnOcwDotw6c?=
+ =?us-ascii?Q?bNCHo+uGwobo40MV0G4AHHHOzYc4bf8soQYYeTGhpZbl9YmY87K1XLiTgrMX?=
+ =?us-ascii?Q?lnKWBik1psQOEQD48wRJ+fiZvKcM+JNOtvvnvuhNvdpiaH1LWJR5G9w2B3g1?=
+ =?us-ascii?Q?8LvddyaTh8Hc4moBZXfS1BjMKu8omWuoTr+8O3++oWF4OYds5Kfo4leoTeN0?=
+ =?us-ascii?Q?U/pNWS46E1k9KsmVpVLgjNHMnsyeqlFMrUzn97TjeRcFfSm88GXxJYdrtfkI?=
+ =?us-ascii?Q?Q2DlSZTpz6Axiyn7IJjMqkggw7KsKoa3qY4M1gkGcc5eQe1GEFxd0+E6QUax?=
+ =?us-ascii?Q?mUI51m7SwZmtxecJJ5HU9aMg3BdrX6Ein26dbEtn6+383V/hb5ZaHSQmxOne?=
+ =?us-ascii?Q?PQtsuY4kwzSQR7MunV0y2QpHJXHWrU2WKEjsqoH3CZOgQtdxhAP43Q16mjIY?=
+ =?us-ascii?Q?eR92WDtPNDoIDh0QFRQ=3D?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e11ee30-2566-47c9-89a8-08de0d38815c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4707eb60-9b2f-4ffd-8832-08de0d388032
 X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8198.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 04:49:07.5101 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2025 04:49:05.6309 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bJmt0Ls6aof/m9lLHAaNJZ0QHYtGVVccCqzqMC/W2kM21xIh/w2K6rPs2eDEt+HU
+X-MS-Exchange-CrossTenant-UserPrincipalName: OFg73eV83v5kiHO6KIRaD5wQlciMgz+ODq5JsKPA4wwueyReO/2wxdOQKsPcM1Di
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8254
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -140,287 +141,515 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-update logging to use DPAA_BUS_XXX instead
-of pr_xxx for better consistency and clarity in error
-reporting within the DPAA bus subsystem.
+fixing and adding a FQ shutdown functionality to ensure
+proper cleanup of frame queues during queue setup. This helps
+reset the queues reliably and prevents potential resource leaks or
+stale state issues.
+
+Fixes: c47ff048b99a ("bus/dpaa: add QMAN driver core routines")
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/qman.c | 74 +++++++++++++++++-------------
- 1 file changed, 41 insertions(+), 33 deletions(-)
+ drivers/bus/dpaa/base/qbman/qman.c  | 367 ++++++++++++++++++----------
+ drivers/bus/dpaa/include/fsl_qman.h |   1 +
+ drivers/net/dpaa/dpaa_ethdev.c      |   3 +
+ 3 files changed, 236 insertions(+), 135 deletions(-)
 
 diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
-index 7c5ccc51bc..d6b2a58eaa 100644
+index 60087c55a1..7c5ccc51bc 100644
 --- a/drivers/bus/dpaa/base/qbman/qman.c
 +++ b/drivers/bus/dpaa/base/qbman/qman.c
-@@ -138,7 +138,7 @@ static inline int table_push_fq(struct qman_portal *p, struct qman_fq *fq)
- 	int ret = fqtree_push(&p->retire_table, fq);
+@@ -10,7 +10,8 @@
+ #include <bus_dpaa_driver.h>
+ #include <rte_eventdev.h>
+ #include <rte_byteorder.h>
+-
++#include <rte_dpaa_logs.h>
++#include <eal_export.h>
+ #include <dpaa_bits.h>
  
- 	if (ret)
--		pr_err("ERROR: double FQ-retirement %d\n", fq->fqid);
-+		DPAA_BUS_ERR("ERROR: double FQ-retirement %d", fq->fqid);
+ /* Compilation constants */
+@@ -532,6 +533,41 @@ qman_init_portal(struct qman_portal *portal,
+ 	 * config, everything that follows depends on it and "config" is more
+ 	 * for (de)reference
+ 	 */
++	p->addr.ce = c->addr_virt[DPAA_PORTAL_CE];
++	p->addr.ci = c->addr_virt[DPAA_PORTAL_CI];
++	/*
++	 * If CI-stashing is used, the current defaults use a threshold of 3,
++	 * and stash with high-than-DQRR priority.
++	 */
++	if (qm_eqcr_init(p, qm_eqcr_pvb,
++			 portal->use_eqcr_ci_stashing, 1)) {
++		DPAA_BUS_ERR("Qman EQCR initialisation failed");
++		goto fail_eqcr;
++	}
++	if (qm_dqrr_init(p, c, qm_dqrr_dpush, qm_dqrr_pvb,
++			 qm_dqrr_cdc, DQRR_MAXFILL)) {
++		DPAA_BUS_ERR("Qman DQRR initialisation failed");
++		goto fail_dqrr;
++	}
++	if (qm_mr_init(p, qm_mr_pvb, qm_mr_cci)) {
++		DPAA_BUS_ERR("Qman MR initialisation failed");
++		goto fail_mr;
++	}
++	if (qm_mc_init(p)) {
++		DPAA_BUS_ERR("Qman MC initialisation failed");
++		goto fail_mc;
++	}
++
++	/* Reset portal before use */
++	DPAA_BUS_DEBUG("Reset portal = %p", p);
++	qm_dqrr_sdqcr_set(p, 0);
++	qm_eqcr_cce_update(p);
++	qm_eqcr_cce_update(p);
++	qm_mc_finish(p);
++	qm_mr_finish(p);
++	qm_dqrr_finish(p);
++	qm_eqcr_finish(p);
++
+ 	p->addr.ce = c->addr_virt[DPAA_PORTAL_CE];
+ 	p->addr.ci = c->addr_virt[DPAA_PORTAL_CI];
+ 	/*
+@@ -2660,39 +2696,128 @@ int qman_delete_cgr(struct qman_cgr *cgr)
  	return ret;
  }
  
-@@ -162,12 +162,12 @@ int qman_setup_fq_lookup_table(size_t num_entries)
- 	/* Allocate 1 more entry since the first entry is not used */
- 	qman_fq_lookup_table = vmalloc((num_entries * sizeof(void *)));
- 	if (!qman_fq_lookup_table) {
--		pr_err("QMan: Could not allocate fq lookup table\n");
-+		DPAA_BUS_ERR("QMan: Could not allocate fq lookup table");
- 		return -ENOMEM;
- 	}
- 	memset(qman_fq_lookup_table, 0, num_entries * sizeof(void *));
- 	qman_fq_lookup_table_size = num_entries;
--	pr_debug("QMan: Allocated lookup table at %p, entry count %lu\n",
-+	DPAA_BUS_ERR("QMan: Allocated lookup table at %p, entry count %lu",
- 		qman_fq_lookup_table,
- 			(unsigned long)qman_fq_lookup_table_size);
- 	return 0;
-@@ -350,7 +350,8 @@ static int drain_mr_fqrni(struct qm_portal *p)
- 	}
- 	if ((msg->ern.verb & QM_MR_VERB_TYPE_MASK) != QM_MR_VERB_FQRNI) {
- 		/* We aren't draining anything but FQRNIs */
--		pr_err("Found verb 0x%x in MR\n", msg->ern.verb);
-+		DPAA_BUS_ERR("Found verb 0x%x and after mask = 0x%x in MR",
-+			msg->ern.verb, msg->ern.verb & QM_MR_VERB_TYPE_MASK);
- 		return -1;
- 	}
- 	qm_mr_next(p);
-@@ -424,11 +425,11 @@ static inline void qm_eqcr_finish(struct qm_portal *portal)
- 	DPAA_ASSERT(!eqcr->busy);
- #endif
- 	if (pi != EQCR_PTR2IDX(eqcr->cursor))
--		pr_crit("losing uncommitted EQCR entries\n");
-+		DPAA_BUS_ERR("losing uncommitted EQCR entries");
- 	if (ci != eqcr->ci)
--		pr_crit("missing existing EQCR completions\n");
-+		DPAA_BUS_ERR("missing existing EQCR completions");
- 	if (eqcr->ci != EQCR_PTR2IDX(eqcr->cursor))
--		pr_crit("EQCR destroyed unquiesced\n");
-+		DPAA_BUS_ERR("EQCR destroyed unquiesced");
- }
- 
- static inline int qm_dqrr_init(struct qm_portal *portal,
-@@ -478,7 +479,7 @@ static inline void qm_dqrr_finish(struct qm_portal *portal)
- #ifdef RTE_LIBRTE_DPAA_HWDEBUG
- 	if ((dqrr->cmode != qm_dqrr_cdc) &&
- 	    (dqrr->ci != DQRR_PTR2IDX(dqrr->cursor)))
--		pr_crit("Ignoring completed DQRR entries\n");
-+		DPAA_BUS_WARN("Ignoring completed DQRR entries");
- #endif
- }
- 
-@@ -576,30 +577,33 @@ qman_init_portal(struct qman_portal *portal,
- 	 */
- 	if (qm_eqcr_init(p, qm_eqcr_pvb,
- 			 portal->use_eqcr_ci_stashing, 1)) {
--		pr_err("Qman EQCR initialisation failed\n");
-+		DPAA_BUS_ERR("Qman EQCR initialisation failed");
- 		goto fail_eqcr;
- 	}
- 	if (qm_dqrr_init(p, c, qm_dqrr_dpush, qm_dqrr_pvb,
- 			 qm_dqrr_cdc, DQRR_MAXFILL)) {
--		pr_err("Qman DQRR initialisation failed\n");
-+		DPAA_BUS_ERR("Qman DQRR initialisation failed");
- 		goto fail_dqrr;
- 	}
- 	if (qm_mr_init(p, qm_mr_pvb, qm_mr_cci)) {
--		pr_err("Qman MR initialisation failed\n");
-+		DPAA_BUS_ERR("Qman MR initialisation failed");
- 		goto fail_mr;
- 	}
- 	if (qm_mc_init(p)) {
--		pr_err("Qman MC initialisation failed\n");
-+		DPAA_BUS_ERR("Qman MC initialisation failed");
- 		goto fail_mc;
- 	}
- 
+-int qman_shutdown_fq(u32 fqid)
++#define GENMASK(h, l) \
++	(((~0U) >> (sizeof(unsigned int) * 8 - ((h) - (l) + 1))) << (l))
 +
- 	/* static interrupt-gating controls */
- 	qm_dqrr_set_ithresh(p, 0);
- 	qm_mr_set_ithresh(p, 0);
- 	qm_isr_set_iperiod(p, 0);
- 	portal->cgrs = kmalloc(2 * sizeof(*cgrs), GFP_KERNEL);
--	if (!portal->cgrs)
-+	if (!portal->cgrs) {
-+		DPAA_BUS_ERR("CGRS allocation fails");
- 		goto fail_cgrs;
++/* 'fqid' is a 24-bit field in every h/w descriptor */
++#define QM_FQID_MASK    GENMASK(23, 0)
++#define qm_fqid_set(p, v) ((p)->fqid = cpu_to_be32((v) & QM_FQID_MASK))
++#define qm_fqid_get(p)    (be32_to_cpu((p)->fqid) & QM_FQID_MASK)
++
++static int
++_qm_mr_consume_and_match_verb(struct qm_portal *p, int v)
++{
++	const struct qm_mr_entry *msg;
++	int found = 0;
++
++	qm_mr_pvb_update(p);
++	msg = qm_mr_current(p);
++	while (msg) {
++		if ((msg->ern.verb & QM_MR_VERB_TYPE_MASK) == v)
++			found = 1;
++		qm_mr_next(p);
++		qm_mr_cci_consume_to_current(p);
++		qm_mr_pvb_update(p);
++		msg = qm_mr_current(p);
 +	}
- 	/* initial snapshot is no-depletion */
- 	qman_cgrs_init(&portal->cgrs[1]);
- 	if (cgrs)
-@@ -616,6 +620,7 @@ qman_init_portal(struct qman_portal *portal,
- 	portal->dqrr_disable_ref = 0;
- 	portal->cb_dc_ern = NULL;
- 	sprintf(buf, "qportal-%d", c->channel);
-+	DPAA_BUS_DEBUG("PORTAL ID = %d and %p",  c->channel, p);
- 	dpa_rbtree_init(&portal->retire_table);
- 	isdr = 0xffffffff;
- 	qm_isr_disable_write(p, isdr);
-@@ -625,7 +630,7 @@ qman_init_portal(struct qman_portal *portal,
- 	snprintf(portal->irqname, MAX_IRQNAME, IRQNAME, c->cpu);
- 	if (request_irq(c->irq, portal_isr, 0, portal->irqname,
- 			portal)) {
--		pr_err("request_irq() failed\n");
-+		DPAA_BUS_ERR("request_irq() failed");
- 		goto fail_irq;
- 	}
++	return found;
++}
++
++static int
++_qm_dqrr_consume_and_match(struct qm_portal *p, u32 fqid, int s,
++		bool wait)
++{
++	const struct qm_dqrr_entry *dqrr;
++	int found = 0;
++
++	do {
++		qm_dqrr_pvb_update(p);
++		dqrr = qm_dqrr_current(p);
++		if (!dqrr)
++			cpu_relax();
++	} while (wait && !dqrr);
++
++	while (dqrr) {
++		if (qm_fqid_get(dqrr) == fqid && (dqrr->stat & s))
++			found = 1;
++
++		qm_dqrr_cdc_consume_1ptr(p, dqrr, 0);
++		qm_dqrr_pvb_update(p);
++		qm_dqrr_next(p);
++		dqrr = qm_dqrr_current(p);
++	}
++	return found;
++}
++
++#define QM_MCR_TIMEOUT                  10000   /* us */
++
++static inline int
++qm_mc_result_timeout(struct qm_portal *portal,
++		     struct qm_mc_result **mcr)
++{
++	int timeout = QM_MCR_TIMEOUT;
++
++	do {
++		*mcr = qm_mc_result(portal);
++		if (*mcr)
++			break;
++		usleep(1);
++	} while (--timeout);
++
++	return timeout;
++}
++
++#define qm_mr_drain(p, V) \
++	_qm_mr_consume_and_match_verb(p, QM_MR_VERB_##V)
++
++#define qm_dqrr_drain(p, f, S) \
++	_qm_dqrr_consume_and_match(p, f, QM_DQRR_STAT_##S, false)
++
++#define qm_dqrr_drain_wait(p, f, S) \
++	_qm_dqrr_consume_and_match(p, f, QM_DQRR_STAT_##S, true)
++
++#define qm_dqrr_drain_nomatch(p) \
++	_qm_dqrr_consume_and_match(p, 0, 0, false)
++
++RTE_EXPORT_INTERNAL_SYMBOL(qman_shutdown_fq)
++int
++qman_shutdown_fq(u32 fqid)
+ {
+ 	struct qman_portal *p;
+-	struct qm_portal *low_p;
+ 	struct qm_mc_command *mcc;
+ 	struct qm_mc_result *mcr;
++	int orl_empty, drain = 0, ret = 0;
++	u32 res;
+ 	u8 state;
+-	int orl_empty, fq_empty, drain = 0;
+-	u32 result;
+ 	u32 channel, wq;
+ 	u16 dest_wq;
  
-@@ -634,19 +639,22 @@ qman_init_portal(struct qman_portal *portal,
- 	qm_isr_disable_write(p, isdr);
- 	ret = qm_eqcr_get_fill(p);
- 	if (ret) {
--		pr_err("Qman EQCR unclean\n");
-+		DPAA_BUS_ERR("Qman EQCR unclean");
- 		goto fail_eqcr_empty;
- 	}
- 	isdr &= ~(QM_PIRQ_DQRI | QM_PIRQ_MRI);
- 	qm_isr_disable_write(p, isdr);
- 	if (qm_dqrr_current(p)) {
--		pr_err("Qman DQRR unclean\n");
-+		DPAA_BUS_ERR("Qman DQRR unclean");
- 		qm_dqrr_cdc_consume_n(p, 0xffff);
- 	}
- 	if (qm_mr_current(p) && drain_mr_fqrni(p)) {
- 		/* special handling, drain just in case it's a few FQRNIs */
--		if (drain_mr_fqrni(p))
-+		DPAA_BUS_ERR("Draining MR FQRNI");
-+		if (drain_mr_fqrni(p)) {
-+			DPAA_BUS_ERR("Draining MR FQRNI fails");
- 			goto fail_dqrr_mr_empty;
++	DPAA_BUS_DEBUG("In shutdown for queue = %x", fqid);
+ 	p = get_affine_portal();
+-	low_p = &p->p;
+-
+ 	/* Determine the state of the FQID */
+-	mcc = qm_mc_start(low_p);
++	mcc = qm_mc_start(&p->p);
+ 	mcc->queryfq_np.fqid = cpu_to_be32(fqid);
+-	qm_mc_commit(low_p, QM_MCC_VERB_QUERYFQ_NP);
+-	while (!(mcr = qm_mc_result(low_p)))
+-		cpu_relax();
+-	DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) == QM_MCR_VERB_QUERYFQ_NP);
++	qm_mc_commit(&p->p, QM_MCC_VERB_QUERYFQ_NP);
++	if (!qm_mc_result_timeout(&p->p, &mcr)) {
++		DPAA_BUS_ERR("QUERYFQ_NP timeout");
++		ret = -ETIMEDOUT;
++		goto out;
++	}
+ 	state = mcr->queryfq_np.state & QM_MCR_NP_STATE_MASK;
+-	if (state == QM_MCR_NP_STATE_OOS)
+-		return 0; /* Already OOS, no need to do anymore checks */
++	if (state == QM_MCR_NP_STATE_OOS) {
++		DPAA_BUS_ERR("Already in OOS");
++		goto out; /* Already OOS, no need to do anymore checks */
++	}
+ 
+ 	/* Query which channel the FQ is using */
+-	mcc = qm_mc_start(low_p);
++	mcc = qm_mc_start(&p->p);
+ 	mcc->queryfq.fqid = cpu_to_be32(fqid);
+-	qm_mc_commit(low_p, QM_MCC_VERB_QUERYFQ);
+-	while (!(mcr = qm_mc_result(low_p)))
+-		cpu_relax();
+-	DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) == QM_MCR_VERB_QUERYFQ);
++	qm_mc_commit(&p->p, QM_MCC_VERB_QUERYFQ);
++	if (!qm_mc_result_timeout(&p->p, &mcr)) {
++		DPAA_BUS_ERR("QUERYFQ timeout");
++		ret = -ETIMEDOUT;
++		goto out;
++	}
+ 
+ 	/* Need to store these since the MCR gets reused */
+ 	dest_wq = be16_to_cpu(mcr->queryfq.fqd.dest_wq);
+@@ -2704,177 +2829,149 @@ int qman_shutdown_fq(u32 fqid)
+ 	case QM_MCR_NP_STATE_TRU_SCHED:
+ 	case QM_MCR_NP_STATE_ACTIVE:
+ 	case QM_MCR_NP_STATE_PARKED:
++		DPAA_BUS_DEBUG("In shutdown state is %d", state);
+ 		orl_empty = 0;
+-		mcc = qm_mc_start(low_p);
++		mcc = qm_mc_start(&p->p);
+ 		mcc->alterfq.fqid = cpu_to_be32(fqid);
+-		qm_mc_commit(low_p, QM_MCC_VERB_ALTER_RETIRE);
+-		while (!(mcr = qm_mc_result(low_p)))
+-			cpu_relax();
+-		DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) ==
+-			   QM_MCR_VERB_ALTER_RETIRE);
+-		result = mcr->result; /* Make a copy as we reuse MCR below */
++		qm_mc_commit(&p->p, QM_MCC_VERB_ALTER_RETIRE);
++		if (!qm_mc_result_timeout(&p->p, &mcr)) {
++			DPAA_BUS_ERR("ALTER_RETIRE timeout");
++			ret = -ETIMEDOUT;
++			goto out;
 +		}
- 	}
- 	/* Success */
- 	portal->config = c;
-@@ -688,7 +696,7 @@ qman_alloc_global_portal(struct qm_portal_config *q_pcfg)
- 			return &global_portals[i];
- 		}
- 	}
--	pr_err("No portal available (%x)\n", MAX_GLOBAL_PORTALS);
-+	DPAA_BUS_ERR("No portal available (%x)", MAX_GLOBAL_PORTALS);
++		res = mcr->result; /* Make a copy as we reuse MCR below */
  
- 	return NULL;
- }
-@@ -857,7 +865,7 @@ qman_ern_poll_free(void)
- 		fd = &swapped_msg.ern.fd;
+-		if (result == QM_MCR_RESULT_PENDING) {
+-			/* Need to wait for the FQRN in the message ring, which
++		if (res == QM_MCR_RESULT_OK)
++			drain_mr_fqrni(&p->p);
++
++		if (res == QM_MCR_RESULT_PENDING) {
++			/*
++			 * Need to wait for the FQRN in the message ring, which
+ 			 * will only occur once the FQ has been drained.  In
+ 			 * order for the FQ to drain the portal needs to be set
+ 			 * to dequeue from the channel the FQ is scheduled on
+ 			 */
+-			const struct qm_mr_entry *msg;
+-			const struct qm_dqrr_entry *dqrr = NULL;
+ 			int found_fqrn = 0;
+-			__maybe_unused u16 dequeue_wq = 0;
  
- 		if (unlikely(verb & 0x20)) {
--			pr_warn("HW ERN notification, Nothing to do\n");
-+			DPAA_BUS_WARN("HW ERN notification, Nothing to do");
- 		} else {
- 			if ((fd->bpid & 0xff) != 0xff)
- 				qman_free_mbuf_cb(fd);
-@@ -963,13 +971,13 @@ static u32 __poll_portal_slow(struct qman_portal *p, u32 is)
- 					static int warn_once;
+ 			/* Flag that we need to drain FQ */
+ 			drain = 1;
  
- 					if (!warn_once) {
--						pr_crit("Leaking DCP ERNs!\n");
-+						DPAA_BUS_WARN("Leaking DCP ERNs!");
- 						warn_once = 1;
- 					}
- 				}
- 				break;
- 			default:
--				pr_crit("Invalid MR verb 0x%02x\n", verb);
-+				DPAA_BUS_ERR("Invalid MR verb 0x%02x", verb);
++			__maybe_unused u16 dequeue_wq = 0;
+ 			if (channel >= qm_channel_pool1 &&
+-			    channel < (u16)(qm_channel_pool1 + 15)) {
++				channel < (u16)(qm_channel_pool1 + 15)) {
+ 				/* Pool channel, enable the bit in the portal */
+ 				dequeue_wq = (channel -
+-					      qm_channel_pool1 + 1) << 4 | wq;
++						qm_channel_pool1 + 1) << 4 | wq;
+ 			} else if (channel < qm_channel_pool1) {
+ 				/* Dedicated channel */
+ 				dequeue_wq = wq;
+ 			} else {
+-				pr_info("Cannot recover FQ 0x%x,"
+-					" it is scheduled on channel 0x%x",
++				DPAA_BUS_ERR("Can't recover FQ 0x%x, ch: 0x%x",
+ 					fqid, channel);
+-				return -EBUSY;
++				ret = -EBUSY;
++				goto out;
  			}
- 		} else {
- 			/* Its a software ERN */
-@@ -1508,7 +1516,7 @@ int qman_create_fq(u32 fqid, u32 flags, struct qman_fq *fq)
- 	fq->cgr_groupid = 0;
- #ifdef CONFIG_FSL_QMAN_FQ_LOOKUP
- 	if (unlikely(find_empty_fq_table_entry(&fq->key, fq))) {
--		pr_info("Find empty table entry failed\n");
-+		DPAA_BUS_ERR("Find empty table entry failed");
- 		return -ENOMEM;
- 	}
- 	fq->qman_fq_lookup_table = qman_fq_lookup_table;
-@@ -1524,7 +1532,7 @@ int qman_create_fq(u32 fqid, u32 flags, struct qman_fq *fq)
- 		cpu_relax();
- 	DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) == QM_MCC_VERB_QUERYFQ);
- 	if (mcr->result != QM_MCR_RESULT_OK) {
--		pr_err("QUERYFQ failed: %s\n", mcr_result_str(mcr->result));
-+		DPAA_BUS_ERR("QUERYFQ failed: %s", mcr_result_str(mcr->result));
- 		goto err;
- 	}
- 	fqd = mcr->queryfq.fqd;
-@@ -1536,7 +1544,7 @@ int qman_create_fq(u32 fqid, u32 flags, struct qman_fq *fq)
- 		cpu_relax();
- 	DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) == QM_MCC_VERB_QUERYFQ_NP);
- 	if (mcr->result != QM_MCR_RESULT_OK) {
--		pr_err("QUERYFQ_NP failed: %s\n", mcr_result_str(mcr->result));
-+		DPAA_BUS_ERR("QUERYFQ_NP failed: %s", mcr_result_str(mcr->result));
- 		goto err;
- 	}
- 	np = mcr->queryfq_np;
-@@ -2062,7 +2070,7 @@ int qman_query_wq(u8 query_dedicated, struct qm_mcr_querywq *wq)
- 			wq->wq_len[i] = be32_to_cpu(mcr->querywq.wq_len[i]);
- 	}
- 	if (res != QM_MCR_RESULT_OK) {
--		pr_err("QUERYWQ failed: %s\n", mcr_result_str(res));
-+		DPAA_BUS_ERR("QUERYWQ failed: %s", mcr_result_str(res));
- 		return -EIO;
- 	}
- 	return 0;
-@@ -2089,7 +2097,7 @@ int qman_testwrite_cgr(struct qman_cgr *cgr, u64 i_bcnt,
- 	if (res == QM_MCR_RESULT_OK)
- 		*result = mcr->cgrtestwrite;
- 	if (res != QM_MCR_RESULT_OK) {
--		pr_err("CGR TEST WRITE failed: %s\n", mcr_result_str(res));
-+		DPAA_BUS_ERR("CGR TEST WRITE failed: %s", mcr_result_str(res));
- 		return -EIO;
- 	}
- 	return 0;
-@@ -2113,7 +2121,7 @@ int qman_query_cgr(struct qman_cgr *cgr, struct qm_mcr_querycgr *cgrd)
- 	if (res == QM_MCR_RESULT_OK)
- 		*cgrd = mcr->querycgr;
- 	if (res != QM_MCR_RESULT_OK) {
--		pr_err("QUERY_CGR failed: %s\n", mcr_result_str(res));
-+		DPAA_BUS_ERR("QUERY_CGR failed: %s", mcr_result_str(res));
- 		return -EIO;
- 	}
- 	cgrd->cgr.wr_parm_g.word =
-@@ -2147,7 +2155,7 @@ int qman_query_congestion(struct qm_mcr_querycongestion *congestion)
- 	if (res == QM_MCR_RESULT_OK)
- 		*congestion = mcr->querycongestion;
- 	if (res != QM_MCR_RESULT_OK) {
--		pr_err("QUERY_CONGESTION failed: %s\n", mcr_result_str(res));
-+		DPAA_BUS_ERR("QUERY_CONGESTION failed: %s", mcr_result_str(res));
- 		return -EIO;
- 	}
- 	for (i = 0; i < ARRAY_SIZE(congestion->state.state); i++)
-@@ -2590,7 +2598,7 @@ int qman_create_cgr(struct qman_cgr *cgr, u32 flags,
- 		/* we can't go back, so proceed and return success, but screen
- 		 * and wail to the log file.
+ 			/* Set the sdqcr to drain this channel */
+ 			if (channel < qm_channel_pool1)
+-				qm_dqrr_sdqcr_set(low_p,
++				qm_dqrr_sdqcr_set(&p->p,
+ 						  QM_SDQCR_TYPE_ACTIVE |
+-					  QM_SDQCR_CHANNELS_DEDICATED);
++						  QM_SDQCR_CHANNELS_DEDICATED);
+ 			else
+-				qm_dqrr_sdqcr_set(low_p,
++				qm_dqrr_sdqcr_set(&p->p,
+ 						  QM_SDQCR_TYPE_ACTIVE |
+ 						  QM_SDQCR_CHANNELS_POOL_CONV
+ 						  (channel));
+-			while (!found_fqrn) {
++			do {
+ 				/* Keep draining DQRR while checking the MR*/
+-				qm_dqrr_pvb_update(low_p);
+-				dqrr = qm_dqrr_current(low_p);
+-				while (dqrr) {
+-					qm_dqrr_cdc_consume_1ptr(
+-						low_p, dqrr, 0);
+-					qm_dqrr_pvb_update(low_p);
+-					qm_dqrr_next(low_p);
+-					dqrr = qm_dqrr_current(low_p);
+-				}
++				qm_dqrr_drain_nomatch(&p->p);
+ 				/* Process message ring too */
+-				qm_mr_pvb_update(low_p);
+-				msg = qm_mr_current(low_p);
+-				while (msg) {
+-					if ((msg->ern.verb &
+-					     QM_MR_VERB_TYPE_MASK)
+-					    == QM_MR_VERB_FQRN)
+-						found_fqrn = 1;
+-					qm_mr_next(low_p);
+-					qm_mr_cci_consume_to_current(low_p);
+-					qm_mr_pvb_update(low_p);
+-					msg = qm_mr_current(low_p);
+-				}
++				found_fqrn = qm_mr_drain(&p->p,
++							FQRN);
+ 				cpu_relax();
+-			}
++			} while (!found_fqrn);
++			/* Restore SDQCR */
++			qm_dqrr_sdqcr_set(&p->p,
++					p->sdqcr);
+ 		}
+-		if (result != QM_MCR_RESULT_OK &&
+-		    result !=  QM_MCR_RESULT_PENDING) {
+-			/* error */
+-			pr_err("qman_retire_fq failed on FQ 0x%x,"
+-			       " result=0x%x\n", fqid, result);
+-			return -1;
++		if (res != QM_MCR_RESULT_OK &&
++		    res != QM_MCR_RESULT_PENDING) {
++			DPAA_BUS_ERR("retire_fq failed: FQ 0x%x, res=0x%x",
++				      fqid, res);
++			ret = -EIO;
++			goto out;
+ 		}
+ 		if (!(mcr->alterfq.fqs & QM_MCR_FQS_ORLPRESENT)) {
+-			/* ORL had no entries, no need to wait until the
+-			 * ERNs come in.
++			/*
++			 * ORL had no entries, no need to wait until the
++			 * ERNs come in
+ 			 */
+ 			orl_empty = 1;
+ 		}
+-		/* Retirement succeeded, check to see if FQ needs
+-		 * to be drained.
++		/*
++		 * Retirement succeeded, check to see if FQ needs
++		 * to be drained
  		 */
--		pr_crit("CGR HW state partially modified\n");
-+		DPAA_BUS_ERR("CGR HW state partially modified");
- 		ret = 0;
- 		goto release_lock;
- 	}
-@@ -2610,7 +2618,7 @@ int qman_create_cgr_to_dcp(struct qman_cgr *cgr, u32 flags, u16 dcp_portal,
- 	int ret;
+ 		if (drain || mcr->alterfq.fqs & QM_MCR_FQS_NOTEMPTY) {
+ 			/* FQ is Not Empty, drain using volatile DQ commands */
+-			fq_empty = 0;
+ 			do {
+-				const struct qm_dqrr_entry *dqrr = NULL;
+ 				u32 vdqcr = fqid | QM_VDQCR_NUMFRAMES_SET(3);
  
- 	if ((qman_ip_rev & 0xFF00) < QMAN_REV30) {
--		pr_warn("QMan version doesn't support CSCN => DCP portal\n");
-+		DPAA_BUS_WARN("QMan version doesn't support CSCN => DCP portal");
- 		return -EINVAL;
- 	}
- 	/* We have to check that the provided CGRID is within the limits of the
-@@ -2657,9 +2665,9 @@ int qman_delete_cgr(struct qman_cgr *cgr)
- 	struct qman_portal *p = get_affine_portal();
+-				qm_dqrr_vdqcr_set(low_p, vdqcr);
+-
+-				/* Wait for a dequeue to occur */
+-				while (dqrr == NULL) {
+-					qm_dqrr_pvb_update(low_p);
+-					dqrr = qm_dqrr_current(low_p);
+-					if (!dqrr)
+-						cpu_relax();
+-				}
+-				/* Process the dequeues, making sure to
+-				 * empty the ring completely.
++				qm_dqrr_vdqcr_set(&p->p, vdqcr);
++				/*
++				 * Wait for a dequeue and process the dequeues,
++				 * making sure to empty the ring completely
+ 				 */
+-				while (dqrr) {
+-					if (dqrr->fqid == fqid &&
+-					    dqrr->stat & QM_DQRR_STAT_FQ_EMPTY)
+-						fq_empty = 1;
+-					qm_dqrr_cdc_consume_1ptr(low_p,
+-								 dqrr, 0);
+-					qm_dqrr_pvb_update(low_p);
+-					qm_dqrr_next(low_p);
+-					dqrr = qm_dqrr_current(low_p);
+-				}
+-			} while (fq_empty == 0);
++			} while (!qm_dqrr_drain_wait(&p->p, fqid, FQ_EMPTY));
+ 		}
+-		qm_dqrr_sdqcr_set(low_p, 0);
+-
+-		/* Wait for the ORL to have been completely drained */
+-		while (orl_empty == 0) {
+-			const struct qm_mr_entry *msg;
+-
+-			qm_mr_pvb_update(low_p);
+-			msg = qm_mr_current(low_p);
+-			while (msg) {
+-				if ((msg->ern.verb & QM_MR_VERB_TYPE_MASK) ==
+-				    QM_MR_VERB_FQRL)
+-					orl_empty = 1;
+-				qm_mr_next(low_p);
+-				qm_mr_cci_consume_to_current(low_p);
+-				qm_mr_pvb_update(low_p);
+-				msg = qm_mr_current(low_p);
+-			}
++		while (!orl_empty) {
++			/* Wait for the ORL to have been completely drained */
++			orl_empty = qm_mr_drain(&p->p, FQRL);
+ 			cpu_relax();
+ 		}
+-		mcc = qm_mc_start(low_p);
++		mcc = qm_mc_start(&p->p);
+ 		mcc->alterfq.fqid = cpu_to_be32(fqid);
+-		qm_mc_commit(low_p, QM_MCC_VERB_ALTER_OOS);
+-		while (!(mcr = qm_mc_result(low_p)))
+-			cpu_relax();
+-		DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) ==
+-			   QM_MCR_VERB_ALTER_OOS);
++		qm_mc_commit(&p->p, QM_MCC_VERB_ALTER_OOS);
++		if (!qm_mc_result_timeout(&p->p, &mcr)) {
++			DPAA_BUS_ERR("OOS Timeout");
++			ret = -ETIMEDOUT;
++			goto out;
++		}
++
+ 		if (mcr->result != QM_MCR_RESULT_OK) {
+-			pr_err(
+-			"OOS after drain Failed on FQID 0x%x, result 0x%x\n",
+-			       fqid, mcr->result);
+-			return -1;
++			DPAA_BUS_ERR("OOS after drain fail: FQ 0x%x (0x%x)",
++				      fqid, mcr->result);
++			ret = -EIO;
++			goto out;
+ 		}
+-		return 0;
++		break;
  
- 	if (cgr->chan != p->config->channel) {
--		pr_crit("Attempting to delete cgr from different portal than"
--			" it was create: create 0x%x, delete 0x%x\n",
--			cgr->chan, p->config->channel);
-+		DPAA_BUS_ERR("Attempting to delete cgr from different portal than"
-+			     " it was create: create 0x%x, delete 0x%x",
-+			     cgr->chan, p->config->channel);
- 		ret = -EINVAL;
- 		goto put_portal;
+ 	case QM_MCR_NP_STATE_RETIRED:
+ 		/* Send OOS Command */
+-		mcc = qm_mc_start(low_p);
++		mcc = qm_mc_start(&p->p);
+ 		mcc->alterfq.fqid = cpu_to_be32(fqid);
+-		qm_mc_commit(low_p, QM_MCC_VERB_ALTER_OOS);
+-		while (!(mcr = qm_mc_result(low_p)))
+-			cpu_relax();
+-		DPAA_ASSERT((mcr->verb & QM_MCR_VERB_MASK) ==
+-			   QM_MCR_VERB_ALTER_OOS);
+-		if (mcr->result) {
+-			pr_err("OOS Failed on FQID 0x%x\n", fqid);
+-			return -1;
++		qm_mc_commit(&p->p, QM_MCC_VERB_ALTER_OOS);
++		if (!qm_mc_result_timeout(&p->p, &mcr)) {
++			DPAA_BUS_ERR("In RTEIRED to OOS timeout");
++			ret = -ETIMEDOUT;
++			goto out;
+ 		}
+-		return 0;
+ 
++		if (mcr->result != QM_MCR_RESULT_OK) {
++			DPAA_BUS_ERR("OOS fail: FQ 0x%x (0x%x)",
++				      fqid, mcr->result);
++			ret = -EIO;
++			goto out;
++		}
++		break;
++
++	case QM_MCR_NP_STATE_OOS:
++		/*  Done */
++		break;
++
++	default:
++		ret = -EIO;
  	}
+-	return -1;
++
++out:
++	return ret;
+ }
+diff --git a/drivers/bus/dpaa/include/fsl_qman.h b/drivers/bus/dpaa/include/fsl_qman.h
+index 71d5b16878..9bc4fc26b7 100644
+--- a/drivers/bus/dpaa/include/fsl_qman.h
++++ b/drivers/bus/dpaa/include/fsl_qman.h
+@@ -1894,6 +1894,7 @@ static inline void qman_release_fqid(u32 fqid)
+ 
+ void qman_seed_fqid_range(u32 fqid, unsigned int count);
+ 
++__rte_internal
+ int qman_shutdown_fq(u32 fqid);
+ 
+ /**
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 34b691fde7..30a0c97a8b 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -1134,6 +1134,9 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	DPAA_PMD_INFO("Rx queue setup for queue index: %d fq_id (0x%x)",
+ 			queue_idx, rxq->fqid);
+ 
++	/* Shutdown FQ before configure */
++	qman_shutdown_fq(rxq->fqid);
++
+ 	if (!fif->num_profiles) {
+ 		if (dpaa_intf->bp_info && dpaa_intf->bp_info->bp &&
+ 			dpaa_intf->bp_info->mp != mp) {
 -- 
 2.25.1
 
