@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D46CCD195
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 09:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB48CCD19A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 09:20:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B2B3142DC5;
-	Fri, 17 Oct 2025 11:19:47 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 4FB7442D0B
+	by mails.dpdk.org (Postfix) with ESMTP id D896942DD1;
+	Fri, 17 Oct 2025 11:19:48 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id AB21942D0B
  for <dev@dpdk.org>; Fri, 17 Oct 2025 11:19:36 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3339D200D88;
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 914501A0E24;
  Fri, 17 Oct 2025 11:19:36 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F1B46200E59;
- Fri, 17 Oct 2025 11:19:35 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 659B41A32FF;
+ Fri, 17 Oct 2025 11:19:36 +0200 (CEST)
 Received: from lsv03379.swis.in-blr01.nxp.com (lsv03379.swis.in-blr01.nxp.com
  [92.120.147.188])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 741CC180007B;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DD5BB180009C;
  Fri, 17 Oct 2025 17:19:35 +0800 (+08)
 From: vanshika.shukla@nxp.com
 To: dev@dpdk.org, Gagandeep Singh <g.singh@nxp.com>,
  Sachin Saxena <sachin.saxena@nxp.com>,
  Vanshika Shukla <vanshika.shukla@nxp.com>
-Subject: [v2 10/12] net/enetc: Add link status notification support
-Date: Fri, 17 Oct 2025 14:49:27 +0530
-Message-Id: <20251017091929.2723044-11-vanshika.shukla@nxp.com>
+Subject: [v2 11/12] net/enetc: Add MAC and VLAN filter support
+Date: Fri, 17 Oct 2025 14:49:28 +0530
+Message-Id: <20251017091929.2723044-12-vanshika.shukla@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20251017091929.2723044-1-vanshika.shukla@nxp.com>
 References: <20251009111633.3585957-1-vanshika.shukla@nxp.com>
@@ -50,363 +50,354 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Vanshika Shukla <vanshika.shukla@nxp.com>
 
-This patch supports link event notifications for ENETC4 PMD, enabling:
+Introduces support for:
 
-- Link up/down event notifications
-- Notification of link speed changes
+- Up to 4 MAC addresses filtering
+- Up to 4 VLAN filters
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Enhances packet filtering capabilities for ENETC4 PMD.
+
 Signed-off-by: Vanshika Shukla <vanshika.shukla@nxp.com>
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- doc/guides/nics/features/enetc4.ini |   1 +
- drivers/net/enetc/base/enetc4_hw.h  |   9 +-
- drivers/net/enetc/enetc.h           |   3 +
- drivers/net/enetc/enetc4_ethdev.c   |  16 ++-
- drivers/net/enetc/enetc4_vf.c       | 215 +++++++++++++++++++++++++++-
- 5 files changed, 239 insertions(+), 5 deletions(-)
+ doc/guides/nics/features/enetc4.ini |   2 +
+ drivers/net/enetc/base/enetc4_hw.h  |   3 +
+ drivers/net/enetc/enetc.h           |  11 ++
+ drivers/net/enetc/enetc4_vf.c       | 229 +++++++++++++++++++++++++++-
+ 4 files changed, 244 insertions(+), 1 deletion(-)
 
 diff --git a/doc/guides/nics/features/enetc4.ini b/doc/guides/nics/features/enetc4.ini
-index 78b06e9841..31a1955215 100644
+index 31a1955215..87425f45c9 100644
 --- a/doc/guides/nics/features/enetc4.ini
 +++ b/doc/guides/nics/features/enetc4.ini
-@@ -4,6 +4,7 @@
- ; Refer to default.ini for the full list of available PMD features.
- ;
- [Features]
-+Link status event    = Y
- Speed capabilities   = Y
+@@ -9,6 +9,8 @@ Speed capabilities   = Y
  Link status          = Y
  Promiscuous mode     = Y
+ Allmulticast mode    = Y
++Unicast MAC filter   = Y
++VLAN filter          = Y
+ RSS hash             = Y
+ Packet type parsing  = Y
+ Basic stats          = Y
 diff --git a/drivers/net/enetc/base/enetc4_hw.h b/drivers/net/enetc/base/enetc4_hw.h
-index b9dcbf7e59..f2c5d6069e 100644
+index f2c5d6069e..9685e7e1e5 100644
 --- a/drivers/net/enetc/base/enetc4_hw.h
 +++ b/drivers/net/enetc/base/enetc4_hw.h
-@@ -130,7 +130,14 @@ struct enetc_msg_swbd {
- #define ENETC4_SITFRM0           0x328
- #define ENETC4_SITDFCR           0x340
+@@ -73,6 +73,9 @@ struct enetc_msg_swbd {
+  */
+ #define ENETC4_MAC_MAXFRM_SIZE  2000
  
--/* VSI MSG Registers */
-+/* Station interface interrupts */
-+#define ENETC4_SIMSIVR           0xA30
-+#define ENETC4_VSIIER            0xA00
-+#define ENETC4_VSIIDR            0xA08
-+#define ENETC4_VSIIER_MRIE       BIT(9)
-+#define ENETC4_SI_INT_IDX        0
++/* Number of MAC Address Filter table entries */
++#define ENETC4_MAC_ENTRIES      4
 +
-+/* VSI Registers */
- #define ENETC4_VSIMSGSR  0x204   /* RO */
- #define ENETC4_VSIMSGSR_MB       BIT(0)
- #define ENETC4_VSIMSGSR_MS       BIT(1)
+ /* Port MAC 0/1 Maximum Frame Length Register */
+ #define ENETC4_PM_MAXFRM(mac)		(0x5014 + (mac) * 0x400)
+ 
 diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index 6ee4cabe35..4382d76484 100644
+index 4382d76484..09168c90db 100644
 --- a/drivers/net/enetc/enetc.h
 +++ b/drivers/net/enetc/enetc.h
-@@ -160,6 +160,8 @@ enum enetc_msg_cmd_id {
+@@ -157,7 +157,10 @@ enum enetc_msg_cmd_class_id {
+ /* Enum for command IDs */
+ enum enetc_msg_cmd_id {
+ 	ENETC_CMD_ID_SET_PRIMARY_MAC = 0,
++	ENETC_MSG_ADD_EXACT_MAC_ENTRIES = 1,
  	ENETC_CMD_ID_SET_MAC_PROMISCUOUS = 5,
++	ENETC_MSG_ADD_EXACT_VLAN_ENTRIES = 0,
++	ENETC_MSG_REMOVE_EXACT_VLAN_ENTRIES = 1,
  	ENETC_CMD_ID_SET_VLAN_PROMISCUOUS = 4,
  	ENETC_CMD_ID_GET_LINK_STATUS = 0,
-+	ENETC_CMD_ID_REGISTER_LINK_NOTIF = 1,
-+	ENETC_CMD_ID_UNREGISTER_LINK_NOTIF = 2,
- 	ENETC_CMD_ID_GET_LINK_SPEED = 0
+ 	ENETC_CMD_ID_REGISTER_LINK_NOTIF = 1,
+@@ -169,6 +172,14 @@ enum mac_addr_status {
+ 	ENETC_INVALID_MAC_ADDR = 0x0,
+ 	ENETC_DUPLICATE_MAC_ADDR = 0X1,
+ 	ENETC_MAC_ADDR_NOT_FOUND = 0X2,
++	ENETC_MAC_FILTER_NO_RESOURCE = 0x3
++};
++
++enum vlan_status {
++	ENETC_INVALID_VLAN_ENTRY = 0x0,
++	ENETC_DUPLICATE_VLAN_ENTRY = 0X1,
++	ENETC_VLAN_ENTRY_NOT_FOUND = 0x2,
++	ENETC_VLAN_NO_RESOURCE = 0x3
  };
  
-@@ -279,6 +281,7 @@ const uint32_t *enetc4_supported_ptypes_get(struct rte_eth_dev *dev __rte_unused
-  * enetc4_vf function prototype
-  */
- int enetc4_vf_dev_stop(struct rte_eth_dev *dev);
-+int enetc4_vf_dev_intr(struct rte_eth_dev *eth_dev, bool enable);
- 
- /*
-  * RX/TX ENETC function prototypes
-diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
-index 3286b463e7..988c60aa68 100644
---- a/drivers/net/enetc/enetc4_ethdev.c
-+++ b/drivers/net/enetc/enetc4_ethdev.c
-@@ -556,10 +556,13 @@ enetc4_dev_close(struct rte_eth_dev *dev)
- 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
- 		return 0;
- 
--	if (hw->device_id == ENETC4_DEV_ID_VF)
-+	if (hw->device_id == ENETC4_DEV_ID_VF) {
-+		if (dev->data->dev_conf.intr_conf.lsc != 0)
-+			enetc4_vf_dev_intr(dev, false);
- 		ret = enetc4_vf_dev_stop(dev);
--	else
-+	} else {
- 		ret = enetc4_dev_stop(dev);
-+	}
- 
- 	if (dev->data->nb_rx_queues > 1) {
- 		/* Disable RSS */
-@@ -670,6 +673,15 @@ enetc4_dev_configure(struct rte_eth_dev *dev)
- 
- 	enetc4_port_wr(enetc_hw, ENETC4_PARCSCR, checksum);
- 
-+	/* Enable interrupts */
-+	if (hw->device_id == ENETC4_DEV_ID_VF) {
-+		if (dev->data->dev_conf.intr_conf.lsc != 0) {
-+			ret = enetc4_vf_dev_intr(dev, true);
-+			if (ret)
-+				ENETC_PMD_WARN("Failed to setup link interrupts");
-+		}
-+	}
-+
- 	/* Disable and reset RX and TX rings */
- 	for (i = 0; i < dev->data->nb_rx_queues; i++)
- 		enetc4_rxbdr_wr(enetc_hw, i, ENETC_RBMR, ENETC_BMR_RESET);
+ enum link_status {
 diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index d7de1cc273..a6b411468a 100644
+index a6b411468a..376e2a3a76 100644
 --- a/drivers/net/enetc/enetc4_vf.c
 +++ b/drivers/net/enetc/enetc4_vf.c
-@@ -144,6 +144,69 @@ enetc4_msg_vsi_reply_msg(struct enetc_hw *enetc_hw, struct enetc_psi_reply_msg *
- 	reply_msg->status = status;
- }
+@@ -17,6 +17,10 @@
+ uint16_t enetc_crc_table[ENETC_CRC_TABLE_SIZE];
+ bool enetc_crc_gen;
  
-+static void
-+enetc4_msg_get_psi_msg(struct enetc_hw *enetc_hw, struct enetc_psi_reply_msg *reply_msg)
-+{
-+	int vsimsgrr;
-+	int8_t class_id = 0;
-+	uint8_t status = 0;
++/* Supported Rx offloads */
++static uint64_t dev_vf_rx_offloads_sup =
++	RTE_ETH_RX_OFFLOAD_VLAN_FILTER;
 +
-+	vsimsgrr = enetc_rd(enetc_hw, ENETC4_VSIMSGRR);
-+
-+	/* Extracting 8 bits of message result in class_id */
-+	class_id |= ((ENETC_SIMSGSR_GET_MC(vsimsgrr) >> 8) & 0xff);
-+
-+	/* Extracting 4 bits of message result in status */
-+	status |= ((ENETC_SIMSGSR_GET_MC(vsimsgrr) >> 4) & 0xf);
-+
-+	reply_msg->class_id = class_id;
-+	reply_msg->status = status;
-+}
-+
-+static void
-+enetc4_process_psi_msg(struct rte_eth_dev *eth_dev, struct enetc_hw *enetc_hw)
-+{
-+	struct enetc_psi_reply_msg *msg;
-+	struct rte_eth_link link;
-+	int ret = 0;
-+
-+	msg = rte_zmalloc(NULL, sizeof(*msg), RTE_CACHE_LINE_SIZE);
-+	if (!msg) {
-+		ENETC_PMD_ERR("Failed to alloc memory for msg");
-+		return;
-+	}
-+
-+	rte_eth_linkstatus_get(eth_dev, &link);
-+	enetc4_msg_get_psi_msg(enetc_hw, msg);
-+
-+	if (msg->class_id == ENETC_CLASS_ID_LINK_STATUS) {
-+		switch (msg->status) {
-+		case ENETC_LINK_UP:
-+			ENETC_PMD_DEBUG("Link is up");
-+			link.link_status = RTE_ETH_LINK_UP;
-+			break;
-+		case ENETC_LINK_DOWN:
-+			ENETC_PMD_DEBUG("Link is down");
-+			link.link_status = RTE_ETH_LINK_DOWN;
-+			break;
-+		default:
-+			ENETC_PMD_ERR("Unknown link status 0x%x", msg->status);
-+			break;
-+		}
-+		ret = rte_eth_linkstatus_set(eth_dev, &link);
-+		if (!ret)
-+			ENETC_PMD_DEBUG("Link status has been changed");
-+
-+		/* Process user registered callback */
-+		rte_eth_dev_callback_process(eth_dev,
-+			RTE_ETH_EVENT_INTR_LSC, NULL);
-+	} else {
-+		ENETC_PMD_ERR("Wrong message 0x%x", msg->class_id);
-+	}
-+
-+	rte_free(msg);
-+}
-+
- static int
- enetc4_msg_vsi_send(struct enetc_hw *enetc_hw, struct enetc_msg_swbd *msg)
+ static void
+ enetc_gen_crc_table(void)
  {
-@@ -775,6 +838,55 @@ static int enetc4_vf_vlan_offload_set(struct rte_eth_dev *dev, int mask __rte_un
- 	return 0;
+@@ -53,6 +57,25 @@ enetc_crc_calc(uint16_t crc, const uint8_t *buffer, size_t len)
+ 	return crc;
  }
  
 +static int
-+enetc4_vf_link_register_notif(struct rte_eth_dev *dev, bool enable)
++enetc4_vf_dev_infos_get(struct rte_eth_dev *dev,
++			struct rte_eth_dev_info *dev_info)
++{
++	int ret = 0;
++
++	PMD_INIT_FUNC_TRACE();
++
++	ret = enetc4_dev_infos_get(dev, dev_info);
++	if (ret)
++		return ret;
++
++	dev_info->max_mtu = dev_info->max_rx_pktlen - (RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN);
++	dev_info->max_mac_addrs = ENETC4_MAC_ENTRIES;
++	dev_info->rx_offload_capa |= dev_vf_rx_offloads_sup;
++
++	return 0;
++}
++
+ int
+ enetc4_vf_dev_stop(struct rte_eth_dev *dev __rte_unused)
+ {
+@@ -810,6 +833,201 @@ enetc4_vf_vlan_promisc(struct rte_eth_dev *dev, bool promisc_en)
+ 	return err;
+ }
+ 
++static int
++enetc4_vf_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *addr,
++			uint32_t index __rte_unused, uint32_t pool __rte_unused)
 +{
 +	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
 +	struct enetc_hw *enetc_hw = &hw->hw;
++	struct enetc_msg_cmd_set_primary_mac *cmd;
 +	struct enetc_msg_swbd *msg;
-+	struct rte_eth_link link;
++	struct enetc_psi_reply_msg *reply_msg;
 +	uint32_t msg_size;
 +	int err = 0;
-+	uint8_t cmd;
 +
 +	PMD_INIT_FUNC_TRACE();
-+	memset(&link, 0, sizeof(struct rte_eth_link));
++
++	if (!rte_is_valid_assigned_ether_addr(addr))
++		return -EINVAL;
++
++	reply_msg = rte_zmalloc(NULL, sizeof(*reply_msg), RTE_CACHE_LINE_SIZE);
++	if (!reply_msg) {
++		ENETC_PMD_ERR("Failed to alloc memory for reply_msg");
++		return -ENOMEM;
++	}
++
 +	msg = rte_zmalloc(NULL, sizeof(*msg), RTE_CACHE_LINE_SIZE);
 +	if (!msg) {
 +		ENETC_PMD_ERR("Failed to alloc msg");
 +		err = -ENOMEM;
++		rte_free(reply_msg);
 +		return err;
 +	}
 +
-+	msg_size = RTE_ALIGN(sizeof(struct enetc_msg_cmd_get_link_status), ENETC_VSI_PSI_MSG_SIZE);
++	msg_size = RTE_ALIGN(sizeof(struct enetc_msg_cmd_set_primary_mac),
++			ENETC_VSI_PSI_MSG_SIZE);
 +	msg->vaddr = rte_zmalloc(NULL, msg_size, 0);
 +	if (!msg->vaddr) {
 +		ENETC_PMD_ERR("Failed to alloc memory for msg");
 +		rte_free(msg);
++		rte_free(reply_msg);
 +		return -ENOMEM;
 +	}
-+
 +	msg->dma = rte_mem_virt2iova((const void *)msg->vaddr);
 +	msg->size = msg_size;
-+	if (enable)
-+		cmd = ENETC_CMD_ID_REGISTER_LINK_NOTIF;
-+	else
-+		cmd = ENETC_CMD_ID_UNREGISTER_LINK_NOTIF;
-+	enetc_msg_vf_fill_common_hdr(msg, ENETC_CLASS_ID_LINK_STATUS,
-+			cmd, 0, 0, 0);
++	cmd = (struct enetc_msg_cmd_set_primary_mac *)msg->vaddr;
++	memcpy(&cmd->addr.addr_bytes, addr, sizeof(struct rte_ether_addr));
++	cmd->count = 1;
++
++	enetc_msg_vf_fill_common_hdr(msg, ENETC_CLASS_ID_MAC_FILTER,
++			ENETC_MSG_ADD_EXACT_MAC_ENTRIES, 0, 0, 0);
 +
 +	/* send the command and wait */
 +	err = enetc4_msg_vsi_send(enetc_hw, msg);
-+	if (err)
-+		ENETC_PMD_ERR("VSI msg error for link status notification");
++	if (err) {
++		ENETC_PMD_ERR("VSI message send error");
++		goto end;
++	}
 +
++	enetc4_msg_vsi_reply_msg(enetc_hw, reply_msg);
++
++	if (reply_msg->class_id == ENETC_CLASS_ID_MAC_FILTER) {
++		switch (reply_msg->status) {
++		case ENETC_INVALID_MAC_ADDR:
++			ENETC_PMD_ERR("Invalid MAC address");
++			err = -EINVAL;
++			break;
++		case ENETC_DUPLICATE_MAC_ADDR:
++			ENETC_PMD_ERR("Duplicate MAC address");
++			err = -EINVAL;
++			break;
++		case ENETC_MAC_FILTER_NO_RESOURCE:
++			ENETC_PMD_ERR("Not enough exact-match entries available");
++			err = -EINVAL;
++			break;
++		default:
++			err = -EINVAL;
++			break;
++		}
++	}
++
++	if (err) {
++		ENETC_PMD_ERR("VSI command execute error!");
++		goto end;
++	}
++
++end:
 +	/* free memory no longer required */
 +	rte_free(msg->vaddr);
++	rte_free(reply_msg);
 +	rte_free(msg);
-+
 +	return err;
 +}
 +
- /*
-  * The set of PCI devices this driver supports
-  */
-@@ -866,6 +978,45 @@ enetc4_vf_mac_init(struct enetc_eth_hw *hw, struct rte_eth_dev *eth_dev)
++static int enetc4_vf_vlan_filter_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
++{
++	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	struct enetc_hw *enetc_hw = &hw->hw;
++	struct enetc_msg_vlan_exact_filter *cmd;
++	struct enetc_msg_swbd *msg;
++	struct enetc_psi_reply_msg *reply_msg;
++	uint32_t msg_size;
++	int err = 0;
++
++	PMD_INIT_FUNC_TRACE();
++
++	reply_msg = rte_zmalloc(NULL, sizeof(*reply_msg), RTE_CACHE_LINE_SIZE);
++	if (!reply_msg) {
++		ENETC_PMD_ERR("Failed to alloc memory for reply_msg");
++		return -ENOMEM;
++	}
++
++	msg = rte_zmalloc(NULL, sizeof(*msg), RTE_CACHE_LINE_SIZE);
++	if (!msg) {
++		ENETC_PMD_ERR("Failed to alloc msg");
++		err = -ENOMEM;
++		rte_free(reply_msg);
++		return err;
++	}
++
++	msg_size = RTE_ALIGN(sizeof(struct enetc_msg_vlan_exact_filter),
++			ENETC_VSI_PSI_MSG_SIZE);
++	msg->vaddr = rte_zmalloc(NULL, msg_size, 0);
++	if (!msg->vaddr) {
++		ENETC_PMD_ERR("Failed to alloc memory for msg");
++		rte_free(msg);
++		rte_free(reply_msg);
++		return -ENOMEM;
++	}
++	msg->dma = rte_mem_virt2iova((const void *)msg->vaddr);
++	msg->size = msg_size;
++	cmd = (struct enetc_msg_vlan_exact_filter *)msg->vaddr;
++	cmd->vlan_count = 1;
++	cmd->vlan_id = vlan_id;
++
++	/* TPID 2-bit encoding value is taken from the H/W block guide:
++	 *	00b Standard C-VLAN 0x8100
++	 *	01b Standard S-VLAN 0x88A8
++	 *	10b Custom VLAN as defined by CVLANR1[ETYPE]
++	 *	11b Custom VLAN as defined by CVLANR2[ETYPE]
++	 * Currently Standard C-VLAN is supported. To support others in future.
++	 */
++	cmd->tpid = 0;
++
++	if (on) {
++		enetc_msg_vf_fill_common_hdr(msg, ENETC_CLASS_ID_VLAN_FILTER,
++				ENETC_MSG_ADD_EXACT_VLAN_ENTRIES, 0, 0, 0);
++	} else {
++		enetc_msg_vf_fill_common_hdr(msg, ENETC_CLASS_ID_VLAN_FILTER,
++				ENETC_MSG_REMOVE_EXACT_VLAN_ENTRIES, 0, 0, 0);
++	}
++
++	/* send the command and wait */
++	err = enetc4_msg_vsi_send(enetc_hw, msg);
++	if (err) {
++		ENETC_PMD_ERR("VSI message send error");
++		goto end;
++	}
++
++	enetc4_msg_vsi_reply_msg(enetc_hw, reply_msg);
++
++	if (reply_msg->class_id == ENETC_CLASS_ID_VLAN_FILTER) {
++		switch (reply_msg->status) {
++		case ENETC_INVALID_VLAN_ENTRY:
++			ENETC_PMD_ERR("VLAN entry not valid");
++			err = -EINVAL;
++			break;
++		case ENETC_DUPLICATE_VLAN_ENTRY:
++			ENETC_PMD_ERR("Duplicated VLAN entry");
++			err = -EINVAL;
++			break;
++		case ENETC_VLAN_ENTRY_NOT_FOUND:
++			ENETC_PMD_ERR("VLAN entry not found");
++			err = -EINVAL;
++			break;
++		case ENETC_VLAN_NO_RESOURCE:
++			ENETC_PMD_ERR("Not enough exact-match entries available");
++			err = -EINVAL;
++			break;
++		default:
++			err = -EINVAL;
++			break;
++		}
++	}
++
++	if (err) {
++		ENETC_PMD_ERR("VSI command execute error!");
++		goto end;
++	}
++
++end:
++	/* free memory no longer required */
++	rte_free(msg->vaddr);
++	rte_free(reply_msg);
++	rte_free(msg);
++	return err;
++}
++
+ static int enetc4_vf_vlan_offload_set(struct rte_eth_dev *dev, int mask __rte_unused)
+ {
+ 	int err = 0;
+@@ -838,6 +1056,12 @@ static int enetc4_vf_vlan_offload_set(struct rte_eth_dev *dev, int mask __rte_un
  	return 0;
  }
  
-+static void
-+enetc_vf_enable_mr_int(struct enetc_hw *hw, bool en)
++static int
++enetc4_vf_mtu_set(struct rte_eth_dev *dev __rte_unused, uint16_t mtu __rte_unused)
 +{
-+	uint32_t val;
-+
-+	val = enetc_rd(hw, ENETC4_VSIIER);
-+	val &= ~ENETC4_VSIIER_MRIE;
-+	val |= (en) ? ENETC4_VSIIER_MRIE : 0;
-+	enetc_wr(hw, ENETC4_VSIIER, val);
-+	ENETC_PMD_DEBUG("Interrupt enable status (VSIIER) = 0x%x", val);
-+}
-+
-+static void
-+enetc4_dev_interrupt_handler(void *param)
-+{
-+	struct rte_eth_dev *eth_dev = (struct rte_eth_dev *)param;
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(eth_dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	uint32_t status;
-+
-+	/* Disable interrupts before process */
-+	enetc_vf_enable_mr_int(enetc_hw, false);
-+
-+	status = enetc_rd(enetc_hw, ENETC4_VSIIDR);
-+	ENETC_PMD_DEBUG("Got INTR VSIIDR status = 0x%0x", status);
-+	/* Check for PSI to VSI message interrupt */
-+	if (!(status & ENETC4_VSIIER_MRIE)) {
-+		ENETC_PMD_ERR("Interrupt is not PSI to VSI");
-+		goto intr_clear;
-+	}
-+
-+	enetc4_process_psi_msg(eth_dev, enetc_hw);
-+intr_clear:
-+	/* Clear Interrupts */
-+	enetc_wr(enetc_hw, ENETC4_VSIIDR, 0xffffffff);
-+	enetc_vf_enable_mr_int(enetc_hw, true);
++	return 0;
 +}
 +
  static int
- enetc4_vf_dev_init(struct rte_eth_dev *eth_dev)
+ enetc4_vf_link_register_notif(struct rte_eth_dev *dev, bool enable)
  {
-@@ -913,14 +1064,74 @@ enetc4_vf_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
- 					     enetc4_vf_dev_init);
- }
- 
-+int
-+enetc4_vf_dev_intr(struct rte_eth_dev *eth_dev, bool enable)
-+{
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(eth_dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-+	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
-+	int ret = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+	if (!(intr_handle && rte_intr_fd_get(intr_handle))) {
-+		ENETC_PMD_ERR("No INTR handle");
-+		return -1;
-+	}
-+	if (enable) {
-+		/* if the interrupts were configured on this devices*/
-+		ret = rte_intr_callback_register(intr_handle,
-+				enetc4_dev_interrupt_handler, eth_dev);
-+		if (ret) {
-+			ENETC_PMD_ERR("Failed to register INTR callback %d", ret);
-+			return ret;
-+		}
-+		/* set one IRQ entry for PSI-to-VSI messaging */
-+		/* Vector index 0 */
-+		enetc_wr(enetc_hw, ENETC4_SIMSIVR, ENETC4_SI_INT_IDX);
-+
-+		/* enable uio/vfio intr/eventfd mapping */
-+		ret = rte_intr_enable(intr_handle);
-+		if (ret) {
-+			ENETC_PMD_ERR("Failed to enable INTR %d", ret);
-+			goto intr_enable_fail;
-+		}
-+
-+		/* Enable message received interrupt */
-+		enetc_vf_enable_mr_int(enetc_hw, true);
-+		ret = enetc4_vf_link_register_notif(eth_dev, true);
-+		if (ret) {
-+			ENETC_PMD_ERR("Failed to register link notifications %d", ret);
-+			goto disable;
-+		}
-+
-+		return ret;
-+	}
-+
-+	ret = enetc4_vf_link_register_notif(eth_dev, false);
-+	if (ret)
-+		ENETC_PMD_WARN("Failed to un-register link notification %d", ret);
-+disable:
-+	enetc_vf_enable_mr_int(enetc_hw, false);
-+	ret = rte_intr_disable(intr_handle);
-+	if (ret)
-+		ENETC_PMD_WARN("Failed to disable INTR %d", ret);
-+intr_enable_fail:
-+	rte_intr_callback_unregister(intr_handle,
-+			enetc4_dev_interrupt_handler, eth_dev);
-+
-+	return ret;
-+}
-+
- static struct rte_pci_driver rte_enetc4_vf_pmd = {
- 	.id_table = pci_vf_id_enetc4_map,
--	.drv_flags = RTE_PCI_DRV_NEED_MAPPING,
-+	.drv_flags = RTE_PCI_DRV_NEED_MAPPING | RTE_PCI_DRV_INTR_LSC,
- 	.probe = enetc4_vf_pci_probe,
- 	.remove = enetc4_pci_remove,
- };
- 
- RTE_PMD_REGISTER_PCI(net_enetc4_vf, rte_enetc4_vf_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_enetc4_vf, pci_vf_id_enetc4_map);
--RTE_PMD_REGISTER_KMOD_DEP(net_enetc4_vf, "* uio_pci_generic");
-+RTE_PMD_REGISTER_KMOD_DEP(net_enetc4_vf, "* igb_uio | uio_pci_generic");
- RTE_LOG_REGISTER_DEFAULT(enetc4_vf_logtype_pmd, NOTICE);
+@@ -901,14 +1125,17 @@ static const struct eth_dev_ops enetc4_vf_ops = {
+ 	.dev_start            = enetc4_vf_dev_start,
+ 	.dev_stop             = enetc4_vf_dev_stop,
+ 	.dev_close            = enetc4_dev_close,
+-	.dev_infos_get        = enetc4_dev_infos_get,
+ 	.stats_get            = enetc4_vf_stats_get,
++	.dev_infos_get        = enetc4_vf_dev_infos_get,
++	.mtu_set              = enetc4_vf_mtu_set,
+ 	.mac_addr_set         = enetc4_vf_set_mac_addr,
++	.mac_addr_add	      = enetc4_vf_mac_addr_add,
+ 	.promiscuous_enable   = enetc4_vf_promisc_enable,
+ 	.promiscuous_disable  = enetc4_vf_promisc_disable,
+ 	.allmulticast_enable  = enetc4_vf_multicast_enable,
+ 	.allmulticast_disable = enetc4_vf_multicast_disable,
+ 	.link_update	      = enetc4_vf_link_update,
++	.vlan_filter_set      = enetc4_vf_vlan_filter_set,
+ 	.vlan_offload_set     = enetc4_vf_vlan_offload_set,
+ 	.rx_queue_setup       = enetc4_rx_queue_setup,
+ 	.rx_queue_start       = enetc4_rx_queue_start,
 -- 
 2.25.1
 
