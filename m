@@ -2,76 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19743CCD195
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 18:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E40CCD199
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Oct 2025 20:32:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DDE7B42E49;
-	Fri, 17 Oct 2025 20:15:59 +0200 (CEST)
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
- [209.85.215.173])
- by mails.dpdk.org (Postfix) with ESMTP id F270242E47
- for <dev@dpdk.org>; Fri, 17 Oct 2025 20:15:58 +0200 (CEST)
-Received: by mail-pg1-f173.google.com with SMTP id
- 41be03b00d2f7-b5579235200so1408423a12.3
- for <dev@dpdk.org>; Fri, 17 Oct 2025 11:15:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5C43642759;
+	Fri, 17 Oct 2025 22:32:05 +0200 (CEST)
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
+ [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id AC0EE400D7
+ for <dev@dpdk.org>; Fri, 17 Oct 2025 22:32:03 +0200 (CEST)
+Received: by mail-qv1-f54.google.com with SMTP id
+ 6a1803df08f44-87c167c0389so35484106d6.3
+ for <dev@dpdk.org>; Fri, 17 Oct 2025 13:32:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760724958;
- x=1761329758; darn=dpdk.org; 
+ d=iol.unh.edu; s=unh-iol; t=1760733123; x=1761337923; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=YVKEl++4CzhuaRoKLO3E7JjlmwAd5A7YPbibvI+G/9o=;
- b=fhcIqDlZDtHAIMBLo36UthLO+1gD0ZBjw0k911nN3qhcYQ2z1sQIprPluv3xtEo22W
- yrC3T4ZWYBipzvdurLTxzo61WMVKNu3e5oWMeaTjPFlc8PbIHNdUYx7FWvrER6aBjHT3
- Tqr/8iBZwRrJolX+DJMaKLfJ1czHfRjKhzzm4eOwh2xqwpXd0QFxLD5NbLl+XX2GT6tq
- Bdz/oXpXDLiiqtMNUsSo3U0yTyGg9mLZHLq8BSsEK4LywFmI9PeuSTSegafQf9pPELKu
- zJadH16Nk2mbEOmwPoH8KoD5mDn5uwVSA42TNmwyT1ZAj0pPy1D7YOM+kBzDV9xSwm8D
- 0ISw==
+ bh=MhV+QpD4m8p9uAzvLm7m35XVNep3szOVzw+9xYXgapE=;
+ b=cPRXMg8HZnZevBgLHe1Js5G8kyjDGbpFslmUK75e/R37OFJOGFbsjLvelAgYfcRm6T
+ KIuLH0Nf4+QN1Z37VKg/HpnYu/xnezGBUKP57PW161OFowrCG8bTbxXNfLiSutdMZlyj
+ wCs4oLf0hz6TJIPELNtVMA5+Q+pUN27zW5qas=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760724958; x=1761329758;
+ d=1e100.net; s=20230601; t=1760733123; x=1761337923;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=YVKEl++4CzhuaRoKLO3E7JjlmwAd5A7YPbibvI+G/9o=;
- b=ofnEpd3c5XhpFOHE2l6MrTBxsNy59fKPzqTwV9GMSgqdkBGx6h2X9Xxf9XK+jJ38YK
- CWaxgiQJGq4xNOajtR3aA+r4s6Ize1NgUfM3fzGgkx5PtrokBekx1DBXXHEG9E4ETUtZ
- BFGQoz272EOnq1b8oO6NPCzs0fQwgC7v+YWoaFn2cobA3lQKCJHeZtxBjoDPA6nOTu5E
- cFZAhYPizA+VFNqiNAsXSMNpSoEOV2UVmopmBFKSHCXbfb5zeo5L4NgLU/+oMciE/Jv2
- aoDX6gUU77rbBk0BMDSC7j/ajfteunyeDPct696RHXSeAFyro3+9eunfkmwB/k2dAFGk
- mPbw==
-X-Gm-Message-State: AOJu0Yxa3YbKLDKwbmPh7paYN3ifmF4vXAIrJ/5ApBU4P9hW1CMDQStC
- chd/5BocFBUdKEBAGhaV/yuu/0FG0CbyE+Sl2jwVgcdVcZsr1RqqpJpywqWKLysVLVXvLQ9fEoQ
- xzclzQuA=
-X-Gm-Gg: ASbGncuHZJIoKkteoVPPyf5WfLwfAqHZ2/VKTEMrNew57JJ5iOkN7lcN1YKrfeK697m
- xJti/6y8/gkBQRKHaa1L976hdtHMBlnkSVHqM5LWOc16zD8PiK1UelG9D5nwrgIHPMcoapTPHwf
- 2dL5oZe5rQReazjGQUl/0E7oqNqeqpzXzvS2WNVW7G3SY0GVkGvgmSwa2ML9JMIlTIb4cJa5m3n
- i6E0yjcx+v+39fpGaf+Flvln3TcDjNaP4G2yuQjvMrHjTdpo8rIQuybNkw5l2VsEnLTAmQf7b3O
- pO5fp0ghHZ427QDd4cy+Lm4b5Y1AP8RbTyCVJsSo0fFUHjJ3IqybyrhTA2QbzhP34GKoJtPxC0i
- qwD69JYN2yPHqQe/VRIFvGhRkeUFUD5r/2tfHPdDVkJeSQE+xSQfcxw619wy1UK/qH7HQ5kkvcJ
- Pe8lj3SFCS8BV2ay1rsu0NRhUk/xGhbmorMY/S6vE=
-X-Google-Smtp-Source: AGHT+IGzIN/gPL/i37pTZohvOqoFKlcnt0YT5PygYdzWoWvL8x/qGiJtgpqBLDmEg6PGHo3dExFwKA==
-X-Received: by 2002:a17:903:1d1:b0:264:ee2:c3f5 with SMTP id
- d9443c01a7336-290c9cbcca1mr61346675ad.19.1760724957928; 
- Fri, 17 Oct 2025 11:15:57 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=MhV+QpD4m8p9uAzvLm7m35XVNep3szOVzw+9xYXgapE=;
+ b=d9ggdrI4WKwvgapyRv72RWSl3T3igP7jfW3VV0ypwOkT717YXllM3QBwccRoyS3IBR
+ 2f7HGJU4XwZZ+xQRxs2AYbQKTpJmrSMVZSbA88+GOEQ1xzAcXFNyYenJWvdEf93NRFD4
+ PRvJYmGlDFcEdC+6yhj9XkGeKN6iOqHj5YuS7fIINPeXwaPv+2pxNL0BsiFNpCmOv7VH
+ JKnrb+nEfu4cbnpA0/LSvPDZD++z+1OMY+08Cl0S/dmUzTbtU6RmsOKe/yTNocKaxElF
+ AeEcaz7soQmlvoG7b/Obxbxuwqr3s4X0CYPJtotFxFVgp0dBDWCXFdfDK7W2lvQy+2aT
+ ebdg==
+X-Gm-Message-State: AOJu0YwXBFizE34D35bsY5nB9SXSbgMcHvBZ7v72SOmrX8HqBrE9vHye
+ FueXS23/nf38oEIPjTlB8bmz5XYp9BDw/VfiQ4gg/wvvdkSYQbNed7f2F9dInTipThA=
+X-Gm-Gg: ASbGnctKaC8/fWInTZ6+wJtVXOYGcHUXRoEAkexGoLjfp7ugyMNfXWsMRcOkCk/1b3p
+ +HwGcVYWvjhbDX1wZbEpb0t9/kMK40d61TDk2dRqXyjIW9M3XZ4A2I3VS3s8bZKp27L2Yb0RM3F
+ /e7lGr92l6K77pziI4KrhVqZAI4UrkeWqmcgl3yLvZsAB4/25kRgBgaFJOHwutsM3gKvzQUKZB6
+ 4NcHSOMUtLi8dy9vWmo13WAA581VEc4JfvchK0xqXPDrciMovK69UBxucZJeShxNoKzHzH3Fxiz
+ iU2gcVKvHnRbDon3a1HB/GwaJoVsVcgdh0yn+CA6suHCafRWfwpiDPhJxckd0v/fUlBWPDFyE3s
+ pQh23x+TUA2pQ4SOL5F5mGwifK/Yo1qHkxiPRYnadw+IvFBFWn3UfXmBz5efHbEpZ0wZpqDeV1h
+ jpcA==
+X-Google-Smtp-Source: AGHT+IFAfFTA6QAH1sXiFSPCgbbz4kagbWY6sPrSqkehyqrlMFzqLyJt0LV8hwwX/5p4YedJb2H7FQ==
+X-Received: by 2002:ac8:5f91:0:b0:4e8:91bb:2636 with SMTP id
+ d75a77b69052e-4e89d3712cfmr68950081cf.52.1760733122954; 
+ Fri, 17 Oct 2025 13:32:02 -0700 (PDT)
+Received: from d121016.iol.unh.edu ([2606:4100:3880:1210::27b])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-29246ebcdefsm1825405ad.16.2025.10.17.11.15.57
+ d75a77b69052e-4e8aaf34307sm5294531cf.1.2025.10.17.13.32.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 17 Oct 2025 11:15:57 -0700 (PDT)
-Date: Fri, 17 Oct 2025 18:52:36 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Gagandeep Singh <g.singh@nxp.com>
-Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
- <sachin.saxena@nxp.com>, Jun Yang <jun.yang@nxp.com>
-Subject: Re: [PATCH v5 5/6] bus/dpaa: Set max push RXQ number
-Message-ID: <20251017185236.05ba6d9b@phoenix.lan>
-In-Reply-To: <20251017044848.3269627-6-g.singh@nxp.com>
-References: <20251017044256.3264737-1-g.singh@nxp.com>
- <20251017044848.3269627-1-g.singh@nxp.com>
- <20251017044848.3269627-6-g.singh@nxp.com>
+ Fri, 17 Oct 2025 13:32:01 -0700 (PDT)
+From: Dean Marx <dmarx@iol.unh.edu>
+To: probb@iol.unh.edu, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
+Cc: dev@dpdk.org,
+	Dean Marx <dmarx@iol.unh.edu>
+Subject: [PATCH v2 1/2] dts: add QinQ strip and VLAN extend to testpmd shell
+Date: Fri, 17 Oct 2025 16:31:58 -0400
+Message-ID: <20251017203159.557830-1-dmarx@iol.unh.edu>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250717205718.108826-1-dmarx@iol.unh.edu>
+References: <20250717205718.108826-1-dmarx@iol.unh.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,21 +78,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 17 Oct 2025 10:18:47 +0530
-Gagandeep Singh <g.singh@nxp.com> wrote:
+Add QinQ strip and VLAN extend methods to TestPmdShell class.
 
->  
-> +	/* Disabling the default push mode for LS1043A */
-> +	if (rte_dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
-> +		rte_dpaa_bus.max_push_rxq_num = 0;
-> +		return 0;
-> +	}
-> +
-> +	penv = getenv("DPAA_PUSH_QUEUES_NUMBER");
-> +	if (penv)
-> +		rte_dpaa_bus.max_push_rxq_num = atoi(penv);
-> +	if (rte_dpaa_bus.max_push_rxq_num > DPAA_MAX_PUSH_MODE_QUEUE)
-> +		rte_dpaa_bus.max_push_rxq_num = DPAA_MAX_PUSH_MODE_QUEUE;
+Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+---
+ dts/api/testpmd/__init__.py | 52 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-Please don't use environment variables for configuration.
-We have devargs for that.
+diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
+index a060ab5639..1c5b1d58b3 100644
+--- a/dts/api/testpmd/__init__.py
++++ b/dts/api/testpmd/__init__.py
+@@ -733,6 +733,58 @@ def set_vlan_filter(self, port: int, enable: bool, verify: bool = True) -> None:
+                     filter on port {port}"""
+                 )
+ 
++    def set_vlan_extend(self, port: int, enable: bool, verify: bool = True) -> None:
++        """Set vlan extend.
++
++        Args:
++            port: The port number to enable VLAN extend on.
++            enable: Enable extend on `port` if :data:`True`, otherwise disable it.
++            verify: If :data:`True`, the output of the command and show port info
++                is scanned to verify that vlan extend was set successfully.
++
++        Raises:
++            InteractiveCommandExecutionError: If `verify` is :data:`True` and extend
++                fails to update.
++        """
++        extend_cmd_output = self.send_command(f"vlan set extend {'on' if enable else 'off'} {port}")
++        if verify:
++            vlan_settings = self.show_port_info(port_id=port).vlan_offload
++            if enable ^ (vlan_settings is not None and VLANOffloadFlag.EXTEND in vlan_settings):
++                self._logger.debug(
++                    f"""Failed to {"enable" if enable else "disable"}
++                                   extend on port {port}: \n{extend_cmd_output}"""
++                )
++                raise InteractiveCommandExecutionError(
++                    f"""Failed to {"enable" if enable else "disable"} extend on port {port}"""
++                )
++
++    def set_qinq_strip(self, port: int, enable: bool, verify: bool = True) -> None:
++        """Set QinQ strip.
++
++        Args:
++            port: The port number to enable QinQ strip on.
++            enable: Enable stripping on `port` if :data:`True`, otherwise disable it.
++            verify: If :data:`True`, the output of the command and show port info
++                is scanned to verify that QinQ strip was set successfully.
++
++        Raises:
++            InteractiveCommandExecutionError: If `verify` is :data:`True` and QinQ strip
++                fails to update.
++        """
++        qinq_cmd_output = self.send_command(
++            f"vlan set qinq_strip {'on' if enable else 'off'} {port}"
++        )
++        if verify:
++            vlan_settings = self.show_port_info(port_id=port).vlan_offload
++            if enable ^ (vlan_settings is not None and VLANOffloadFlag.QINQ_STRIP in vlan_settings):
++                self._logger.debug(
++                    f"Failed to {"enable" if enable else "disable"}"
++                    f"QinQ strip on port {port}: \n{qinq_cmd_output}"
++                )
++                raise InteractiveCommandExecutionError(
++                    f"Failed to {"enable" if enable else "disable"} QinQ strip on port {port}"
++                )
++
+     def set_mac_address(self, port: int, mac_address: str, verify: bool = True) -> None:
+         """Set port's MAC address.
+ 
+-- 
+2.51.0
+
