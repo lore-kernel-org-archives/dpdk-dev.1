@@ -2,86 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CEDCCD195
-	for <dpdk-dev@archiver.kernel.org>; Sat, 18 Oct 2025 15:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A28CCD195
+	for <dpdk-dev@archiver.kernel.org>; Sat, 18 Oct 2025 16:17:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4AAA74021E;
-	Sat, 18 Oct 2025 17:55:15 +0200 (CEST)
-Received: from fout-b4-smtp.messagingengine.com
- (fout-b4-smtp.messagingengine.com [202.12.124.147])
- by mails.dpdk.org (Postfix) with ESMTP id 92F2D4013F
- for <dev@dpdk.org>; Sat, 18 Oct 2025 17:55:13 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfout.stl.internal (Postfix) with ESMTP id 857ED1D0008B;
- Sat, 18 Oct 2025 11:55:12 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Sat, 18 Oct 2025 11:55:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760802912;
- x=1760889312; bh=KEjvbc9s4e9HSGjgSxPHRO5FFiZ44Gk8wE2VNWF0MAE=; b=
- buprsIcXFc51Zu5JoGx/psibeMZAzU1X1uomM8ufJELaxaOR9nxLFrsobJ6ZPG/I
- ng0H/dKYrSO8MxZXfnhMgIOTvLn41qTx4UE1p09q9AUUJ1i9KtxtlKQtEB6bWbU5
- UglVTQdP7uzJI02ZBgUa7RxNnxjodPdstis8UK3yoY4FWIowhn1m1NEUm7vcUwSz
- YwJxa45Rrat6mN9VIIBqAfgUkfa9NqwoG18o5BPEYfPomhTQL7BBAed/bWrJZMiv
- 38/mGuytImYQy2w3qvE4JqVcgaXUVpKzFCNN7YfegHs1Blq10avP1bKXdQHnD4c3
- yv1o2DLOrz+FrVXndRxNiA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760802912; x=
- 1760889312; bh=KEjvbc9s4e9HSGjgSxPHRO5FFiZ44Gk8wE2VNWF0MAE=; b=r
- P9UQ5VE9VoMstLuv6m+dcI9fUz8MjzJk1io/YZcPwSBMU4U77wSqBVyGO9kpIfYp
- bhcqFq7l0UKGwO3kwKH/dJSAqclq45Zru+s3nnoVovHpcJlUSEdslKWMLCxRw3sp
- m+V8FutE5GrBH00aha/bBKUWbGuUY8TR8JZxYJad4j9ax63Nu0HAKPhHrGUTsJ9z
- +ifTNu7jNkqRxvgDgIlE4emQRMfV4lKAGu39J9QP75GnmKXtfuYuIQUeGILzhQR7
- VEr92aYJ3yYl7cLP88McRoCOssdYGkbg+LrqP/RNTNBdsuYQXi3gyz/s/P79yV9J
- sM5AU10ohwcqVT8Wmve4w==
-X-ME-Sender: <xms:X7jzaKM8YQqplUMryZtg4F1J3KTcXVJcm6uEe3VYD5FAcPAuC3nI8g>
- <xme:X7jzaDCjclou60PyqwL30MeD1ByveGRPVLw9M65H8qmaR7hbHYQaYrGRJdBStZou7
- NdDyYs-QbXzsVLhNZ3BGeaf4VnFicbLdqc8wsYEgef5CQKH_djr0A>
-X-ME-Received: <xmr:X7jzaBL3hgWhhjxVOh9i9xyvzAhPiGbMkQZxGnR8FH4h0I7525OBHL__W_GBGlIr51gnKXBbIYOIlIQZsLf7eBDeRw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufedvgeeiucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertd
- dttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
- ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevff
- fgtdegkeeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgep
- tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
- gvthdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
- vhgrthhtuhhnuhhruhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopeguvghvseguph
- gukhdrohhrghdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhnthgv
- lhdrtghomhdprhgtphhtthhopegrnhgrthholhihrdgsuhhrrghkohhvsehinhhtvghlrd
- gtohhmpdhrtghpthhtohepkhgvvhhinhdrlhgrrghtiiesihhnthgvlhdrtghomhdprhgt
- phhtthhopehjvghrihhnjhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopehsthgvph
- hhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopehfvghnghgt
- hhgvnhhgfigvnheshhhurgifvghirdgtohhm
-X-ME-Proxy: <xmx:X7jzaMNZcovQ6bbu93J-lKX5RgWQKnRMbBLPYwAkTLYAeQsvnP42Eg>
- <xmx:X7jzaP4npolwlWvPQfmosCP1UEjf-fMLKr5tIRC9qSFin6znXtvV6w>
- <xmx:X7jzaO5YvnqFCRYSP7L_iOeQIgw5bccGi5T3IlxMVnWQYfT8bp8g8w>
- <xmx:X7jzaNE_mM5KgoOLiU7wmEzmR8qLoMp_UZ1si111xazZqrvGdtAWKQ>
- <xmx:YLjzaD-Z5X8IFi85Hl5IMERqtvjwnrQdbSF1x8dZl9vl7LCZuO_N11mV>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 18 Oct 2025 11:55:10 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Vamsi Krishna <vattunuru@marvell.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, anatoly.burakov@intel.com,
- kevin.laatz@intel.com, jerinj@marvell.com, stephen@networkplumber.org,
- fengchengwen <fengchengwen@huawei.com>
-Subject: Re: [PATCH v4 1/1] lib/dma: introduce inter-process and inter-OS DMA
-Date: Sat, 18 Oct 2025 17:55:09 +0200
-Message-ID: <5076338.MSiuQNM8U4@thomas>
-In-Reply-To: <b0ba957e-c147-2a55-283b-281063235bba@huawei.com>
-References: <20251013042136.1727540-1-vattunuru@marvell.com>
- <20251017054210.3105218-1-vattunuru@marvell.com>
- <b0ba957e-c147-2a55-283b-281063235bba@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 55418406BC;
+	Sat, 18 Oct 2025 18:17:16 +0200 (CEST)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com
+ [209.85.210.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 3D7424013F
+ for <dev@dpdk.org>; Sat, 18 Oct 2025 18:17:14 +0200 (CEST)
+Received: by mail-pf1-f182.google.com with SMTP id
+ d2e1a72fcca58-782bfd0a977so2255329b3a.3
+ for <dev@dpdk.org>; Sat, 18 Oct 2025 09:17:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760804233;
+ x=1761409033; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=2YmYIIRuAtmFwrKDlRO8kHmbeooaQicWysrXtWS3zDs=;
+ b=t6KPGA9qaR5Jr7g0VTEy1c4SsGFJmoL2gmfnoDXhXmmm/Ugs6vXn9cuACT7K/iB5hE
+ KDW6dSNKHDjQxhyfI1hmgpc7ACUPgt7IedIkzAehfyHFdaNeSwc0myXn8SqUpccFvQai
+ 8LHC2FhXpxGTHZFkSycudHJejpqnWHBvzgdhK1zvvPSVWUkDc/nPoKdGorV6DJDbsrUN
+ X69HKSu3NXUU1tUti+c6mSkLBqxk8AdaVZ0sSDdNuBzWr/We3lagTjmwl7XJYaAID11t
+ VnZh8u/26cc8BKh3jEUlv8EyiGas51h+xYI7T8oVkoPZr8Halk8VSs/RBGn8163hlWwh
+ U/aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1760804233; x=1761409033;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=2YmYIIRuAtmFwrKDlRO8kHmbeooaQicWysrXtWS3zDs=;
+ b=VYxlt3c9tIpFdq7fgFTbHf20rPf2VqPKSEcuuXJHzkGGW9k32UW/x90G1wZFVI5SWa
+ 0oo+wUPxiAyPmWFFBIQCvSg84bEvlfJ49gmJnmCH5hdaRQvjFOiPOI195wqsUQmfaaND
+ /ajm4833F7qihl/SSbibS+VL0hiE+a4TEh2CxuDhZU/ZGVv15JvA2e2d8hA4v2Vpv9vA
+ UFfrTXbdux8BKlSqAxLb1sMAJY6EJzOXMkej2YYotBPeBtY4IifIoOCu1ORf3nqqxeZp
+ wHTdX0iBG2YI6X+rITDi+ylkgBrzegZtlUaFRmP2P77pIiCvqEA/drZ0XTn8VyDfSEc5
+ cASQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUF3jx9rSd9hnPrm+HCgcVi1SPQNdbIA9jmAcKbRW9NuKDb1w2LRIDS3dgrdZR6uKoi2GI=@dpdk.org
+X-Gm-Message-State: AOJu0Yx16ZQxfSQOCAhsCTY/9QXzMLfHkMFasFu5wO12pfPpyPdqUG4/
+ XTKgxrsKYSVBgpxPUGLQyJsJZ54wXNJW46fDWmqQUzYVTZHJduuU1I7KVwVm/jDo1MM=
+X-Gm-Gg: ASbGncugy07y7ulMNFlJ2xZgd6CfTe2mAX9fCI4ae+P/KYF4vjyWC+oMtn7Dx1UHoRh
+ eGsbFM+CHlRUzFLEDmc7OX9ORPQ9pkbuHSB6Wl9+i25raLhrC9FMyqSyHt0eKlqV9AJ+qzSZp1Z
+ z+iwanG4uOd8CYpFgjh5zv387lt5kAN73N2esvuiYFj7EbtY3uqAG8fG7fXLSbxJqxRSW3QsddR
+ gKCjGZo1GzwIA1ptY0Lo3kNPUTADqGAwaWxN3BghKEraA31Nx5QlwHxCdLGDBk/LYRO7Vp6ZIDw
+ WidbsCn32djz0yAvuLvuzGD3QkzHdAjl2ZP/t5AE9uLJHKiYcgsBpI2kHIFrSxumrdvuHVGDjgE
+ vLNNDwluQPjkAUyAxim477d6GqGWYdTu3bYDYlmgI+X9g2fl2ILwKpvpjJe76w5afSrASVpLJzG
+ V1aUxglVWaW8GwPdQE/8r4V4gRqJqkuZ+Z/mROGY5eRO6m9e6uwv8jf0zfrgNc
+X-Google-Smtp-Source: AGHT+IEAuEJXseVvWpFtJ+Pu9GvkB8Hb81dzlJHdZPRg23YMsfWxiWMRBek4WdASHcOAsPQY/yDWTw==
+X-Received: by 2002:a05:6a20:4311:b0:246:d43a:3856 with SMTP id
+ adf61e73a8af0-334a857d6f3mr9158986637.22.1760804233209; 
+ Sat, 18 Oct 2025 09:17:13 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 41be03b00d2f7-b6a7668fb57sm3098326a12.17.2025.10.18.09.17.12
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 18 Oct 2025 09:17:12 -0700 (PDT)
+Date: Sat, 18 Oct 2025 09:17:10 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
+Cc: wang.junlong1@zte.com.cn, yang.yonggang@zte.com.cn, dev@dpdk.org
+Subject: Re: [PATCH v1] net/zxdh: support multiple PF process flow table
+Message-ID: <20251018091710.230a15c8@phoenix.lan>
+In-Reply-To: <20250924082331.39962-1-zhang.tianhao2@zte.com.cn>
+References: <20250924082331.39962-1-zhang.tianhao2@zte.com.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,26 +83,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> > Modern DMA hardware supports data transfers between multiple DMA
-> > devices, facilitating data communication across isolated domains,
-> > containers, or operating systems. These DMA transfers function as
-> > standard memory-to-memory operations, but with source or destination
-> > addresses residing in different process or OS address space. The
-> > exchange of these addresses between processes is handled through
-> > private driver mechanism, which are beyond the scope of this
-> > specification change.
-> >
-> > This commit introduces new capability flags to advertise driver support
-> > for inter-process and inter-OS domain DMA transfers. It adds a mechanism
-> > to specify source and destination handlers via the vchan configuration.
-> > Until standardized control-plane APIs are defined for various categories
-> > of DMA devices, these handler details can be exchanged through private
-> > driver mechanisms.
-> >
-> > Signed-off-by: Vamsi Attunuru<vattunuru@marvell.com>
-> Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+On Wed, 24 Sep 2025 16:23:31 +0800
+Tianhao Zhang <zhang.tianhao2@zte.com.cn> wrote:
 
-Added release notes and applied, thanks.
+> Support multiple PF process flow table.
+> 
+> Signed-off-by: Tianhao Zhang <zhang.tianhao2@zte.com.cn>
+> ---
 
-
-
+Queued in next-net
