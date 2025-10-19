@@ -2,74 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56ADBCCD195
-	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 16:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 213C6CCD184
+	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 16:58:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C99142E1C;
-	Sun, 19 Oct 2025 18:57:42 +0200 (CEST)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
- [209.85.214.179])
- by mails.dpdk.org (Postfix) with ESMTP id 41D6742DC3
- for <dev@dpdk.org>; Sun, 19 Oct 2025 18:57:38 +0200 (CEST)
-Received: by mail-pl1-f179.google.com with SMTP id
- d9443c01a7336-290aaff555eso34222405ad.2
- for <dev@dpdk.org>; Sun, 19 Oct 2025 09:57:38 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 93F1C42E46;
+	Sun, 19 Oct 2025 18:57:43 +0200 (CEST)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
+ [209.85.214.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 4986342DDE
+ for <dev@dpdk.org>; Sun, 19 Oct 2025 18:57:39 +0200 (CEST)
+Received: by mail-pl1-f173.google.com with SMTP id
+ d9443c01a7336-290dc63fabbso22287395ad.0
+ for <dev@dpdk.org>; Sun, 19 Oct 2025 09:57:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760893057;
- x=1761497857; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760893058;
+ x=1761497858; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=UwIpDiQsfb1LJw4fMx3rsfUiIKyc1zOAJqotNzQ/iIQ=;
- b=A1eY+9vPRcz96P3S1WaAORcwZfTOxX7CGJFAB4Mln0ZVs43j+6vCE7n4DNPTA8fc8b
- 6Q2uGqnIHN2aamdP8yap6QjiKf7pxIUk48eEZ3ItGwnP4JF2ZJcrFYiyY7qtJA4D0RNG
- yMtIHRpjEtqJhxuwLWoV+hDIjDAPcYToebxh2QH02Wi/H4XQZMSnUYfckkyUudX99KHd
- ZaVA03b4/ZrAnGNaxZIzC52reXJMlm3m6FDqIpwmSYEhNsI729mVffpoa6OOkRw7aIdW
- 04PSNvv8IUpTyN75irhu1d+Zw2dVn0nnglU8moAbR5VfU7w4as8e4eRFy7TvqQ/pudxz
- JXFA==
+ bh=TLQVPjprVJZBMp1YSBB8l2fBZ//N4IBcB6boO58uflc=;
+ b=21+fOG/GDYy+xdWl7bxtQNHgBcrPkI+yRbmJdFU/dnzgWB1eN+FWvtmWPbZg6XhDun
+ AmAqgG1X5KHfMqL/PRNp3nus1Jz+GAnu9N/VHECf27Pnw4kdKPZd0j6CqQKtNdRJs1yb
+ 2homVgrBKKMU4BSCt5ECtLUFm87p2t+CYRnDyaV1wJTyzlc0yH2u3788vA5DlST3eq1r
+ Uljf0/hovZPptCcA3j3LG7xmbarnvJfHIrw1mrZMe66kfhGX0PwT3Sx3TKmCJWIcAqUo
+ U2oIrHJoa6rG52mbFLwsP6OZplCEUClE/U/kzqHUv1ZPluf9puib+HPoDH53sf2mwJXa
+ kMyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760893057; x=1761497857;
+ d=1e100.net; s=20230601; t=1760893058; x=1761497858;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=UwIpDiQsfb1LJw4fMx3rsfUiIKyc1zOAJqotNzQ/iIQ=;
- b=YE44+xtfPVLhOXWlQXj1/RrguVIRRKbgxYSRbAeIniBXwfpVLZhD1dnrCBzYabu+Cj
- HcpokxXyi3e21wwh0d6Odaa47zvvSTpnh1vW0Ve/MvVvqHhmJcwyEyOI7HUpF/lLS/JO
- N8IaFxaAuzevxmO4BG5GU0fc1NgtAGHnEAMq4sskAS9SSmqcQRh21p+EZjS3yF+bAdyI
- zBgb6xc3QnXE3P7ULTpvhPlk8MvP+GSxbdT0qsOqcEhrgaA+VN6vUUJ/WbrrMwpYB50t
- zPCSYSCwrBQFHYEV8EoNdMWjxUiCty3EDANPDFnmBlP9qg5SUI9ipMvsJ6Ct1NYab1mF
- aneg==
-X-Gm-Message-State: AOJu0YzBVcRxkeMrgRdr67+pyCNoegFdIADs+781FjdcifRei7IZdqml
- g30P7xhnljO5BFzyWirN8piM8wUd+KbnHqunV9dN15hDRuwjk1xU1VQwJxsk4Pwm9on1r7geOrv
- kFN/1KGA=
-X-Gm-Gg: ASbGnctUDMltxqg3+fMXIV23TtLQcmi4FOLFFlwarP4qVsmEIGlElH/PQtZkY5y8KPP
- e4W8RB91UO6yJwlI1KpT2GlplrRDB99onK6SzUFSOFFEl7P4rkMsiObNORpWuENZ/t1Vne8rmWI
- P46tXY33hwa5z+CtYK4FQM+oypqUVHyEBfSkUJDlPIsP6mIQPJrMWk3GPEhyK4EghKpJJtZp7fL
- gVcXQnspKC6tP5mua64B9vZSL6IY1vHeVfvkXJoSNgpfJ7fLd3j/S/I63G/poGpe+8TR5MbIxQK
- KVKEBaAfAc0j5ldzGOkROMoGNYvtjPUMgvXxpEytegH+fvKMn89PcDt8NmAPWno9MieeqhXbsa5
- 3Z215Gpz2b0Hymhea5vGleNT+F1LX6xM4rlEUtO7TMNmYLGd9+ATnhFslkX9XXhRVsnhvhF+RgT
- nu5W/uqBagmpDfVMhWeixh/f2AAAC44hC2Frlp490=
-X-Google-Smtp-Source: AGHT+IFY/CodZIW0qngiL/n7U5MQ76Mpn664E4TSvOs1sINlcJx/l8YAfoA/Yxkv9NUYzBms6TR/Cw==
-X-Received: by 2002:a17:903:350d:b0:267:9a29:7800 with SMTP id
- d9443c01a7336-290ccad7623mr119834895ad.59.1760893057500; 
- Sun, 19 Oct 2025 09:57:37 -0700 (PDT)
+ bh=TLQVPjprVJZBMp1YSBB8l2fBZ//N4IBcB6boO58uflc=;
+ b=euarLmmfJlfA8G6vgV9o9AImWBnaVcNCu9ObChky2/JhnL8KHz4sCC4LLrMkibQu3O
+ kASkcD5y6EMxno2xiplqgwhxn/CRDZFpCcv8/7DC7Y6exc62C95xMfJb9j8MJ0wpOF6G
+ QwnwuPx275ogEnkec/yDFsbSnd4n+IGosgOfnBDx8GEDV0HwzR0y+GBEjVmsB/8pNq9E
+ DDDJ1vnnlijT9QbJUtYY+8kMLcNliunGeMaYDXATr7znqITx7gx6IEHKRALAHm1ujLEx
+ esTjqhM53yU6xiaDS2qxZm2ce/GMunF/FgEQ8b185By5szRiBwjHy908kssPl+2UD4Zf
+ lX3g==
+X-Gm-Message-State: AOJu0YwikbCEd98v5mZ7vouaI1SR4oQTLsg2hgFnpcWrJyoKtkBxq50A
+ qz9E6Af7nUeuoT7GlWEFbdEvXaExkKn7Cyn2tAi9QXKu6iClpLgg7OzQxUXHOMzDm6OTFAz85Qa
+ KsJ8Tst4=
+X-Gm-Gg: ASbGncuJMBaWYs9AczgK64ZZhpTIDTQERuCEOimnAdmnkBOhTTlUmMxU9NyafAw7i8R
+ iqsBPXBPHSp0sPY0pLRyNpUPmGhwDX6E0R0L4yv+ZLAs4QWqPm1QgTV/Xq+hBsFKrzGzZriW91E
+ KigDNVwV6/YvG6hJU5ZJWM30BNsRAFwfbPkmlDUszJPPemmSWHBnMAtvx8W01Xg6cDje31W+1yk
+ 6WzeEEYrtpCCStyDYGmuIYaLpOiY6LFGokpUwAQSFSCYwqKspJuGLmLXR62nSGLNnaQN/oqE/FG
+ JTh2bRxQz04nJgncEr6ftfwqTLJCvSSweZw2OSxT8P0RMHZotK9QIzxyI22chpnjS7T3B72DgC8
+ ClLmLmydX8dwFja1gilkyCOai1ygBFLv/YBia3npzH7ILwQQXp5o+P4fr06MHnbf0iaUYr4W3g0
+ gUlKgmfZLDZBzkVydprc03Aeef6p2ak/gsCzLdHwUMDQpvRzDilw==
+X-Google-Smtp-Source: AGHT+IF3b/n9Ytd/wmxE8ilQTVTyThaELdKkC7huhByJ+CPU1yvvr84iOzGsx0GzksVM45PVYcuSTA==
+X-Received: by 2002:a17:902:d2c9:b0:286:74e3:3889 with SMTP id
+ d9443c01a7336-290cba42e4fmr151016275ad.55.1760893058323; 
+ Sun, 19 Oct 2025 09:57:38 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2924721b6fdsm56940455ad.118.2025.10.19.09.57.36
+ d9443c01a7336-2924721b6fdsm56940455ad.118.2025.10.19.09.57.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
  Sun, 19 Oct 2025 09:57:37 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH v3 7/8] pdump: remove use of VLA
-Date: Sun, 19 Oct 2025 09:56:14 -0700
-Message-ID: <20251019165728.164929-8-stephen@networkplumber.org>
+Subject: [PATCH v3 8/8] doc: update documentation on pdump library
+Date: Sun, 19 Oct 2025 09:56:15 -0700
+Message-ID: <20251019165728.164929-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251019165728.164929-1-stephen@networkplumber.org>
 References: <250811213632.16023-1-stephen@networkplumber.org>
  <20251019165728.164929-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -84,65 +85,387 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace variable length array with alloca.
+The documentation was missing some of the API, and had some
+awkward wording. With the help of ChatGPT, update it and make
+it more concise.
+
+Add a release note
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/pdump/meson.build |  2 --
- lib/pdump/rte_pdump.c | 12 ++++++++----
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ doc/guides/prog_guide/img/pdump_overview.svg | 135 ++++++++++++++
+ doc/guides/prog_guide/pdump_lib.rst          | 183 ++++++++++++-------
+ doc/guides/rel_notes/release_25_11.rst       |   5 +
+ 3 files changed, 255 insertions(+), 68 deletions(-)
+ create mode 100644 doc/guides/prog_guide/img/pdump_overview.svg
 
-diff --git a/lib/pdump/meson.build b/lib/pdump/meson.build
-index 553dfdd5e6..da8d51b616 100644
---- a/lib/pdump/meson.build
-+++ b/lib/pdump/meson.build
-@@ -7,8 +7,6 @@ if is_windows
-     subdir_done()
- endif
- 
--cflags += no_wvla_cflag
--
- sources = files('rte_pdump.c')
- headers = files('rte_pdump.h')
- deps += ['ethdev', 'bpf', 'pcapng']
-diff --git a/lib/pdump/rte_pdump.c b/lib/pdump/rte_pdump.c
-index b95f7f863d..d201997b75 100644
---- a/lib/pdump/rte_pdump.c
-+++ b/lib/pdump/rte_pdump.c
-@@ -144,17 +144,21 @@ pdump_copy(uint16_t port_id, uint16_t queue,
- 	unsigned int i;
- 	int ring_enq;
- 	uint16_t d_pkts = 0;
--	struct rte_mbuf *dup_bufs[nb_pkts];
-+	struct rte_mbuf **dup_bufs;
- 	struct rte_ring *ring;
- 	struct rte_mempool *mp;
- 	struct rte_mbuf *p;
--	uint64_t rcs[nb_pkts];
-+	uint64_t *rcs = NULL;
- 
--	if (cbs->filter)
-+	if (cbs->filter) {
-+		rcs = alloca(sizeof(uint64_t) * nb_pkts);
- 		rte_bpf_exec_burst(cbs->filter, (void **)pkts, rcs, nb_pkts);
-+	}
- 
- 	ring = cbs->ring;
- 	mp = cbs->mp;
-+	dup_bufs = alloca(sizeof(struct rte_mbuf *) * nb_pkts);
+diff --git a/doc/guides/prog_guide/img/pdump_overview.svg b/doc/guides/prog_guide/img/pdump_overview.svg
+new file mode 100644
+index 0000000000..537de49669
+--- /dev/null
++++ b/doc/guides/prog_guide/img/pdump_overview.svg
+@@ -0,0 +1,135 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!-- SPDX-License-Identifier: BSD-3-Clause -->
++<!-- Copyright (c) 2025 Stephen Hemminger -->
++<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
++<!-- Created with ChatGPT  -->
 +
- 	for (i = 0; i < nb_pkts; i++) {
- 		/*
- 		 * This uses same BPF return value convention as socket filter
-@@ -162,7 +166,7 @@ pdump_copy(uint16_t port_id, uint16_t queue,
- 		 * if program returns zero
- 		 * then packet doesn't match the filter (will be ignored).
- 		 */
--		if (cbs->filter && rcs[i] == 0) {
-+		if (rcs != NULL && rcs[i] == 0) {
- 			rte_atomic_fetch_add_explicit(&stats->filtered,
- 					   1, rte_memory_order_relaxed);
- 			continue;
++<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1080" viewBox="0 0 1200 1080">
++  <defs>
++    <marker id="arrowBlue" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
++      <polygon points="0,0 12,4 0,8" fill="#0066cc"/>
++    </marker>
++    <marker id="arrowThinBlue" markerWidth="10" markerHeight="6" refX="9" refY="3" orient="auto">
++      <polygon points="0,0 10,3 0,6" fill="#3399ff"/>
++    </marker>
++    <marker id="arrowRed" markerWidth="12" markerHeight="8" refX="10" refY="4" orient="auto">
++      <polygon points="0,0 12,4 0,8" fill="#cc0000"/>
++    </marker>
++    <marker id="arrowThinRed" markerWidth="10" markerHeight="6" refX="9" refY="3" orient="auto">
++      <polygon points="0,0 10,3 0,6" fill="#ff3333"/>
++    </marker>
++    <style>
++      .lane-title { font: 700 20px system-ui, sans-serif; fill: #234; }
++      .lifeline { stroke: #9db3cc; stroke-dasharray: 6 6; stroke-width: 2; }
++      .step { fill: #fff; stroke: #517fa4; stroke-width: 1.5; rx: 8; ry: 8; }
++      .step text, .note text { font: 13px ui-monospace, monospace; fill: #102030; }
++      .note { fill: #fff9e6; stroke: #d9b54a; stroke-width: 1.2; rx: 8; ry: 8; }
++      .msg-blue { stroke: #0066cc; stroke-width: 2.2; marker-end: url(#arrowBlue); fill: none; }
++      .msg-thin-blue { stroke: #3399ff; stroke-width: 2; marker-end: url(#arrowThinBlue); fill: none; }
++      .msg-red { stroke: #cc0000; stroke-width: 2.2; marker-end: url(#arrowRed); fill: none; }
++      .msg-thin-red { stroke: #ff3333; stroke-width: 2; marker-end: url(#arrowThinRed); fill: none; }
++      .label { font: 14px ui-monospace, monospace; fill: #0d2238; }
++      .small { font-size: 12px; fill: #334b63; }
++    </style>
++  </defs>
++
++  <!-- Lanes -->
++  <rect x="30" y="20" width="340" height="1040" fill="#e6f0ff" stroke="#8aa4c2" stroke-width="2" rx="20" ry="20"/>
++  <text class="lane-title" x="200" y="52" text-anchor="middle">Capture Process</text>
++  <rect x="430" y="20" width="340" height="1040" fill="#e8f8e8" stroke="#8aa4c2" stroke-width="2" rx="20" ry="20"/>
++  <text class="lane-title" x="600" y="52" text-anchor="middle">Primary Process</text>
++  <rect x="830" y="20" width="340" height="1040" fill="#f9f9f9" stroke="#8aa4c2" stroke-width="2" rx="20" ry="20"/>
++  <text class="lane-title" x="1000" y="52" text-anchor="middle">Secondary Processes</text>
++
++  <!-- Lifelines -->
++  <line class="lifeline" x1="200" y1="70" x2="200" y2="1040"/>
++  <line class="lifeline" x1="600" y1="70" x2="600" y2="1040"/>
++  <line class="lifeline" x1="1000" y1="70" x2="1000" y2="1040"/>
++
++  <!-- Startup -->
++  <g transform="translate(80,90)">
++    <rect class="step" x="0" y="0" width="240" height="40"/>
++    <text x="12" y="25" class="label">rte_eal_init()</text>
++    <rect class="step" x="0" y="52" width="240" height="40"/>
++    <text x="12" y="77" class="label">rte_pdump_init()</text>
++  </g>
++  <g transform="translate(480,90)">
++    <rect class="step" x="0" y="0" width="240" height="40"/>
++    <text x="12" y="25" class="label">rte_eal_init()</text>
++    <rect class="step" x="0" y="52" width="240" height="40"/>
++    <text x="12" y="77" class="label">rte_pdump_init()</text>
++  </g>
++  <g transform="translate(880,90)">
++    <rect class="step" x="0" y="0" width="240" height="40"/>
++    <text x="12" y="25" class="label">rte_eal_init()</text>
++    <rect class="step" x="0" y="52" width="240" height="40"/>
++    <text x="12" y="77" class="label">rte_pdump_init()</text>
++  </g>
++
++  <!-- Enable sequence (Blue) -->
++  <line class="msg-blue" x1="200" y1="220" x2="600" y2="220"/>
++  <text class="label" x="400" y="212" text-anchor="middle">rte_pdump_enable()</text>
++  <rect class="note" x="260" y="230" width="280" height="36"/>
++  <text x="274" y="253" class="small">uses rte_mp_request() to message primary</text>
++
++  <g transform="translate(480,280)">
++    <rect class="step" x="0" y="0" width="240" height="96"/>
++    <text x="12" y="24" class="label">pdump_server()</text>
++    <text x="20" y="46" class="small">• enable RX/TX callbacks</text>
++    <text x="20" y="64" class="small">• send ACK to capture</text>
++    <text x="20" y="82" class="small">• forward request to all secondaries</text>
++  </g>
++  <line class="msg-thin-blue" x1="600" y1="330" x2="200" y2="330"/>
++  <text class="label" x="400" y="322" text-anchor="middle">ACK</text>
++  <line class="msg-blue" x1="600" y1="380" x2="1000" y2="380"/>
++  <text class="label" x="800" y="372" text-anchor="middle">forward enable request</text>
++
++  <g transform="translate(880,420)">
++    <rect class="step" x="0" y="0" width="240" height="78"/>
++    <text x="12" y="22" class="label">pdump_server()</text>
++    <text x="20" y="42" class="small">• register RX/TX callbacks</text>
++    <text x="20" y="60" class="small">• send response</text>
++  </g>
++  <line class="msg-thin-blue" x1="1000" y1="520" x2="600" y2="520"/>
++  <text class="label" x="800" y="512" text-anchor="middle">response</text>
++
++  <g transform="translate(480,560)">
++    <rect class="step" x="0" y="0" width="240" height="56"/>
++    <text x="12" y="24" class="label">collect responses</text>
++    <text x="12" y="44" class="small">from secondary processes</text>
++  </g>
++
++  <!-- Packet capture running -->
++  <g transform="translate(480,640)">
++    <rect class="step" x="-300" y="0" width="840" height="50"/>
++    <text x="120" y="30" class="label" text-anchor="middle">Packet capture in progress...</text>
++  </g>
++
++  <!-- Shutdown sequence (Red) -->
++  <line class="msg-red" x1="200" y1="720" x2="600" y2="720"/>
++  <text class="label" x="400" y="712" text-anchor="middle">rte_pdump_disable()</text>
++
++  <g transform="translate(480,760)">
++    <rect class="step" x="0" y="0" width="240" height="80"/>
++    <text x="12" y="24" class="label">pdump_server()</text>
++    <text x="20" y="46" class="small">• remove RX/TX callbacks</text>
++    <text x="20" y="64" class="small">• forward disable to secondaries</text>
++  </g>
++
++  <line class="msg-red" x1="600" y1="820" x2="1000" y2="820"/>
++  <text class="label" x="800" y="812" text-anchor="middle">forward disable request</text>
++
++  <g transform="translate(880,860)">
++    <rect class="step" x="0" y="0" width="240" height="60"/>
++    <text x="12" y="24" class="label">pdump_server()</text>
++    <text x="20" y="46" class="small">• remove RX/TX callbacks</text>
++  </g>
++
++  <line class="msg-thin-red" x1="1000" y1="940" x2="600" y2="940"/>
++  <text class="label" x="800" y="932" text-anchor="middle">response</text>
++
++  <g transform="translate(480,980)">
++    <rect class="step" x="0" y="0" width="240" height="40"/>
++    <text x="12" y="25" class="label">collect disable responses</text>
++  </g>
++</svg>
+diff --git a/doc/guides/prog_guide/pdump_lib.rst b/doc/guides/prog_guide/pdump_lib.rst
+index 07b9f39d09..5183756d9e 100644
+--- a/doc/guides/prog_guide/pdump_lib.rst
++++ b/doc/guides/prog_guide/pdump_lib.rst
+@@ -4,90 +4,137 @@
+ Packet Capture Library
+ ======================
+ 
+-The DPDK ``pdump`` library provides a framework for packet capturing in DPDK.
+-The library does the complete copy of the Rx and Tx mbufs to a new mempool and
+-hence it slows down the performance of the applications, so it is recommended
+-to use this library for debugging purposes.
++The DPDK ``pdump`` library provides a framework for capturing packets within DPDK applications.
++It enables a **secondary process** to monitor packets being processed by both
++**primary** or **secondary** processes.
+ 
+-The library uses a generic multi process channel to facilitate communication
+-between primary and secondary process for enabling/disabling packet capture on
+-ports.
++Overview
++--------
+ 
+-The library provides the following APIs to initialize the packet capture framework, to enable
+-or disable the packet capture, and to uninitialize it.
++The library uses a  multi-process channel to facilitate communication
++between the primary and secondary processes. This mechanism allows enabling
++or disabling packet capture on specific ports or queues.
+ 
+-* ``rte_pdump_init()``:
+-  This API initializes the packet capture framework.
++.. _figure_pdump_overview:
+ 
+-* ``rte_pdump_enable()``:
+-  This API enables the packet capture on a given port and queue.
++.. figure:: img/pdump_overview.*
+ 
+-* ``rte_pdump_enable_bpf()``
+-  This API enables the packet capture on a given port and queue.
+-  It also allows setting an optional filter using DPDK BPF interpreter
+-  and setting the captured packet length.
++   Packet Capture enable and disable sequence
+ 
+-* ``rte_pdump_enable_by_deviceid()``:
+-  This API enables the packet capture on a given device id (``vdev name or pci address``) and queue.
++API Reference
++-------------
+ 
+-* ``rte_pdump_enable_bpf_by_deviceid()``
+-  This API enables the packet capture on a given device id (``vdev name or pci address``) and queue.
+-  It also allows setting an optional filter using DPDK BPF interpreter
+-  and setting the captured packet length.
++The library exposes APIs for:
+ 
+-* ``rte_pdump_disable()``:
+-  This API disables the packet capture on a given port and queue.
++* Initializing and uninitializing the packet capture framework.
++* Enabling and disabling packet capture.
++* Applying optional filters and limiting captured packet length.
+ 
+-* ``rte_pdump_disable_by_deviceid()``:
+-  This API disables the packet capture on a given device id (``vdev name or pci address``) and queue.
+ 
+-* ``rte_pdump_uninit()``:
+-  This API uninitializes the packet capture framework.
++.. function:: int rte_pdump_init(void)
+ 
++   Initialize the packet capture framework.
++
++.. function:: int rte_pdump_enable(uint16_t port_id, uint16_t queue, uint32_t flags)
++
++   Enable packet capture on the specified port and queue.
++
++.. function:: int rte_pdump_enable_bpf(uint16_t port_id, uint16_t queue, const struct rte_bpf_program *bpf, uint32_t snaplen)
++
++   Enable packet capture on the specified port and queue with an optional
++   BPF packet filter and a limit on the captured packet length.
++
++.. function:: int rte_pdump_enable_by_deviceid(const char *device_id, uint16_t queue, uint32_t flags)
++
++   Enable packet capture on the specified device ID (``vdev`` name or PCI address)
++   and queue.
++
++.. function:: int rte_pdump_enable_bpf_by_deviceid(const char *device_id, uint16_t queue, const struct rte_bpf_program *bpf, uint32_t snaplen)
++
++   Enable packet capture on the specified device ID (``vdev`` name or PCI address)
++   and queue, with optional filtering and captured packet length limit.
++
++.. function:: int rte_pdump_disable(uint16_t port_id, uint16_t queue)
++
++   Disable packet capture on the specified port and queue.
++   This applies to the current process and all other processes.
++
++.. function:: int rte_pdump_disable_by_deviceid(const char *device_id, uint16_t queue)
++
++   Disable packet capture on the specified device ID (``vdev`` name or PCI address)
++   and queue.
++
++.. function:: int rte_pdump_uninit(void)
++
++   Uninitialize the packet capture framework for this process.
++
++.. function:: int rte_pdump_stats(uint16_t port_id, struct rte_dump_stats *stats)
++
++   Reports the number of packets captured, filtered, and missed.
++   Packets maybe missed due to mbuf pool being exhausted or the ring being full.
+ 
+ Operation
+ ---------
+ 
+-The primary process using ``librte_pdump`` is responsible for initializing the packet
+-capture framework. The packet capture framework, as part of its initialization, creates the
+-multi process channel to facilitate communication with secondary process, so the
+-secondary process ``app/pdump`` tool is responsible for enabling and disabling the packet capture on ports.
++All processes using ``librte_pdump`` must initialize the packet capture framework
++before use. This initialization is required in both the primary and secondary processes.
++
++DPDK provides the following utilities that use this library:
++
++* ``app/dpdk-dumpcap``
++* ``app/pdump``
+ 
+ Implementation Details
+ ----------------------
+ 
+-The library API ``rte_pdump_init()``, initializes the packet capture framework by creating the multi process
+-channel using ``rte_mp_action_register()`` API. The primary process will listen to secondary process requests
+-to enable or disable the packet capture over the multi process channel.
+-
+-The library APIs ``rte_pdump_enable()`` and ``rte_pdump_enable_by_deviceid()`` enables the packet capture.
+-For the calls to these APIs from secondary process, the library creates the "pdump enable" request and sends
+-the request to the primary process over the multi process channel. The primary process takes this request
+-and enables the packet capture by registering the Ethernet RX and TX callbacks for the given port or device_id
+-and queue combinations. Then the primary process will mirror the packets to the new mempool and enqueue them to
+-the rte_ring that secondary process have passed to these APIs.
+-
+-The packet ring supports one of two formats.
+-The default format enqueues copies of the original packets into the rte_ring.
+-If the ``RTE_PDUMP_FLAG_PCAPNG`` is set, the mbuf data is extended
+-with header and trailer to match the format of Pcapng enhanced packet block.
+-The enhanced packet block has meta-data such as the timestamp, port and queue
+-the packet was captured on.
+-It is up to the application consuming the packets from the ring
+-to select the format desired.
+-
+-The library APIs ``rte_pdump_disable()`` and ``rte_pdump_disable_by_deviceid()`` disables the packet capture.
+-For the calls to these APIs from secondary process, the library creates the "pdump disable" request and sends
+-the request to the primary process over the multi process channel. The primary process takes this request and
+-disables the packet capture by removing the Ethernet RX and TX callbacks for the given port or device_id and
+-queue combinations.
+-
+-The library API ``rte_pdump_uninit()``, uninitializes the packet capture framework by calling ``rte_mp_action_unregister()``
+-function.
+-
+-
+-Use Case: Packet Capturing
+---------------------------
+-
+-The DPDK ``app/dpdk-dumpcap`` utility uses this library
+-to capture packets in DPDK.
++``rte_pdump_init()`` creates the multi-process channel by calling
++``rte_mp_action_register()``.
++
++The primary process listens for requests from secondary processes to
++enable or disable packet capture over the multi-process channel.
++
++When a secondary process calls ``rte_pdump_enable()`` or
++``rte_pdump_enable_by_deviceid()``, the library sends a "pdump enable" request
++to the primary process. The primary process then:
++
++1. Receives the request over the multi-process channel.
++2. Registers Ethernet Rx and Tx callbacks for the specified port.
++3. Forwards the request to other secondary processes (if any)
++
++
++FAQ
++---
++
++* What is the performance impact of pdump?
++
++Setting up pdump with ``rte_pdump_init`` has no impact,
++there are no changes in the fast path.
++When pdump is enabled, the Tx and Rx fast path functions
++callbacks make a copy of the mbufs and enqueue them. This will impact
++performance. The effect can be reduced by filtering to only
++see the packets of interest and using the snaplen parameter
++to only copy the needed headers.
++
++* What happens if process does not call pdump init?
++
++If application does not call ``rte_pdump_init`` then the request
++to enable (in the capture command) will timeout and an error is returned.
++
++* Where do packets go?
++
++Packets captured are placed in the ring passed in ``rte_pdump_enable``.
++The capture application must dequeue these mbuf's and free them.
++
++* Why is copy required?
++
++A copy is used instead of incrementing the reference count because
++on transmit the device maybe using fast free which does not use refcounts;
++and on receive the application may modify the incoming packet.
++
++* What about offloads?
++
++The offload flags of the original mbuf are copied to the ring.
++It is up to the capture application to handle flags like VLAN stripping
++as necessary. Packets are captured before passing to driver and hardware
++so the actual packet on the wire maybe segmented or encapsulated based
++on the offload flags.
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index 17d2deaa07..a47c9ad89d 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -107,6 +107,11 @@ New Features
+   The built-in help text function is available as a public function which can be reused by custom functions,
+   if so desired.
+ 
++* **Added packet capture (pdump) for secondary process.**
++
++  Added multi-process support to allow packets sent and received by secondary
++  process to be visible in packet capture.
++
+ 
+ Removed Items
+ -------------
 -- 
 2.51.0
 
