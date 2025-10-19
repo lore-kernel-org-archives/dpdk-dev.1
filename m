@@ -2,69 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF67CCD184
-	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 16:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A810CCD195
+	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 16:57:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D49142B71;
-	Sun, 19 Oct 2025 18:57:35 +0200 (CEST)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id 1A8794013F
+	by mails.dpdk.org (Postfix) with ESMTP id 5266942D90;
+	Sun, 19 Oct 2025 18:57:36 +0200 (CEST)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id EB5A1410F1
  for <dev@dpdk.org>; Sun, 19 Oct 2025 18:57:33 +0200 (CEST)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-2907948c1d2so38634935ad.3
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-28e7cd6dbc0so44935665ad.0
  for <dev@dpdk.org>; Sun, 19 Oct 2025 09:57:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760893052;
- x=1761497852; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760893053;
+ x=1761497853; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=BtKP8ewtordDXjE6jbl7Fh+Lo2Ck/eF/FAuVrDMlThs=;
- b=RdKmcIUlRLZCN916yRY5ACjDgQws1UbIkgPnb6hc4cAGHZaGCeTNULO9bKk9etYZgY
- oiw/0wtXAiRDu8ezdtMa8/TMWDhhA56iISJ2pjUycgubo0G/f0RV+3x7nN8ravv6UG3D
- o7zi7YNdv2MGtNQk/clTE2+12YIwJxxdwye4c70pAAX5uccCGmlQzwHXP71qUmCrTH0l
- GTFWg4HPIcPVWos4s82Q4y6dWw2Wjk5m0b1di0ql7Rv4ACeyupGOFVbpr9w7N9Di99cG
- SyMVb/KzN3RYn+iq15swFI4OFQZM146aq2wXxP238td9+WWrdmayJLr4cHT57BQYTulY
- eMGg==
+ bh=40lnV69UwbIVxryHObxRQHARRLz50lT+fAtg323Hyng=;
+ b=C3wIx6IBhr7JPMIp5A0COI6yZ0jv39EYdiPWeexE1VAZ/5m41xi+lRp6Hw9B8syMQf
+ DkqmTaFVqM6DrPxCbIcIeC4KF/jhm23s1kcXdzPlN8yXeivQsw2rRtLSn2uMvHDbJwa3
+ s2deDC3HjaB045b3Xt8K4WjL9vmzXl2y09RWH6BhMREynrt8wR5/1g9x4WUnSEnlA06j
+ Gr/fb/QUDxP+lV6I6JYoJTvdupPyfccUoufI2bD0UI2Mn7Ad0hbUmHdzZt0GtOZQsC7H
+ +5uc1WP/54kZJHK0M0lq8UiQS6+O3xw2ssBCh7fYZVsge66DaiLH7kFEn7jEDR4p4oBu
+ ya4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760893052; x=1761497852;
+ d=1e100.net; s=20230601; t=1760893053; x=1761497853;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=BtKP8ewtordDXjE6jbl7Fh+Lo2Ck/eF/FAuVrDMlThs=;
- b=S6mHpPIgpFYrMbvXsljVyAqXdRb4stl0lj1eEsG8mZG/lX+swNTMs5IvLZIEJpVKwX
- KUiueesrcnSKLgpvcfHvWcwPOsmLQJYdWt0p+nW1xvZqyxpaYh6KSsqd8lrJuXSFIl/p
- Ry1I9NgmJUGC1PMoHGxyqOJy7wJnB+JdJ/07U42ZIZJZW4DLPGatHMzmdcpCj7E7Hw2/
- PsHPoyvp/gkO65+wBw8IS5/gc8ob9Ps/TX5eMrX7cWGfKkDDIOU/EiOYs9QSOK58A7BX
- FScPIA7kztr/k2CvtyWAoG9lV/Ul8qPCilyAbBUm8NRM9H1CClqzVWBFwUwxbcdjXhkD
- mrZA==
-X-Gm-Message-State: AOJu0Yz5ln4UdZoj3t0lqMXxnZOzHHPx/28wjl+UbnvU6sCcTbzZdSx8
- 69Ntpc+nHSrhMDNLFKXMAx1uGl33VP5EqKfQpUqUYySMVUHESdlm/NKoAHGMt1jjdNYCGauoDGI
- P4fP8GCM=
-X-Gm-Gg: ASbGncsUxj4XJMJkmiFsuAVibsA8+cCobIRnwFTLNC/TC+byeLmDzHGUzW7MKiwTUi9
- Y/Qm2+7F7P7xawdwGcQM0BFsrhLnzYgMbJAhLg/gZM5u3e1zIPRZkzcBo3BehpnFKV/jRooPAKb
- hxoFw3D4NZDaxOyFh3WlLsuX79jUlH6gxkm08v3jsRwK25gCzloenzWdFdVxVVvnIpoYRG37stR
- SuJIxBztCfkffkK41bPGhLdEM5SRVBx1hltZ4QraDjwwcXskOk4IBzvcWXrzBZ6StfrRRHXeUra
- zvdX4PKF81qqeM4BuikSQoiOK0zSwqpZnsBgAD5J0INg9ari2ZfmRXW19bAX8JaqoYBqz4wSrpv
- fcRXOEjIzg5bb3w++su3KLOvRg3xDR9Hm8uxkRrojPJpxxeoODYSTQSeHplF5C91qocvAFlpQpP
- DzMU/upIiQFb/bI6F6qn0ADLa0tYOC1QOnniKNpbWwYksLRSP1iw==
-X-Google-Smtp-Source: AGHT+IGj9awIrrUm9iU6bBRx/x0U8e2yguOBk438oueGITSb3q94tbmkRlupfUGH6BDyoFn3LQVHyw==
-X-Received: by 2002:a17:903:1746:b0:24e:e5c9:ecf7 with SMTP id
- d9443c01a7336-290caf846d4mr115559035ad.34.1760893052225; 
- Sun, 19 Oct 2025 09:57:32 -0700 (PDT)
+ bh=40lnV69UwbIVxryHObxRQHARRLz50lT+fAtg323Hyng=;
+ b=UjdeW8gfrehLkx+4/IuU2sB4HcXhb0JTkGNghIfdGoB7kDPTKe8TM6ApbOWFzlHlGa
+ aKI6Rsrg80U8ZdZEvRUA87gEgYnH3NaGOJ8f3BFFvV1kXgNNQ3OSod4Rx4kcdfnrflyR
+ Qiu+QiJSI4lu5GZAg/IHP0VCkCBNmpncQZ67id3Qyp15Eti4zHdn35/l7Y5A6RDKOniv
+ ycdDezylpCOdW9jxZmTMu8nu9J0n0Fq54On+uK4QeK4kps/TQYItGjth1BSz/7MltyN/
+ mMc+4rmk8KWkmD1p2qVz/Yq4fd1cf0f+s78Qnj3KckWb/UK82pwmePvwQzykKqOQcRRQ
+ ilzA==
+X-Gm-Message-State: AOJu0Yw0yeIKMTmT1qU/9uC8MrhQx+CkKOdV0lFIEN4Bob3g/jRYOyqy
+ MPEkbOlDtvHJiIQGNh2srXRJGRm351ANpDawzWXP6eWu2mGXo6z9p9gnM5hod9BZhS2/FSN1Zdg
+ Y/gukJD0=
+X-Gm-Gg: ASbGncthiGcHi2mauC5jfD3bCAyYmJ0uZkLJ8+fS8GUIIKlUwth7GYLMN1Rz3WVH0WQ
+ Gj5KFGecK9pkMfp4yDHvYwfforrplbCF2nX+QqFHVnMHQJ0vmdJr9gZIwrMm5KV6WPZm5rVowNI
+ RmFZ14w021uNFn1j04W12o0Bmj6bg8gVjo2IirGX1PDZJhYh9MRRLRavQHMFR+99dFABXPd0QCH
+ Wi0vapkZYGl9vzSM1srk0kCkIj9Wnd/kwzhNKYL3SvnbuFc4x0sZ3G2cVfLyMMKt+jy0sYUERCt
+ ma1tpBH1GG9/BwBU84x9Keww2hEY5ZaqH1P3guREoDwr8AGfpOmRz+BYaalPvB2O9+PptA2RMZi
+ FkO+U6oeTIuF36y3ihMTmqjYI6eRdudx+J4ELd46GfwaBDJromx4zX8jBjrcpS/B/LaR/SMd51l
+ Y5Z49Funa1zDvG72BWernqTpFGU6yWVokRGyZIuMu+tJODIoyZ4Q==
+X-Google-Smtp-Source: AGHT+IHWwRRp4X4fFPZP9L4XTHbDrJvqi/fyEzBUlVpRob5QIkw04Fvh1kpnMpDUwK7gniL0jtTSTQ==
+X-Received: by 2002:a17:903:2b0d:b0:272:f9c3:31f7 with SMTP id
+ d9443c01a7336-290cbe2ae83mr122545415ad.50.1760893053116; 
+ Sun, 19 Oct 2025 09:57:33 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2924721b6fdsm56940455ad.118.2025.10.19.09.57.31
+ d9443c01a7336-2924721b6fdsm56940455ad.118.2025.10.19.09.57.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 19 Oct 2025 09:57:31 -0700 (PDT)
+ Sun, 19 Oct 2025 09:57:32 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH v3 1/8] dumpcap: handle primary process exit
-Date: Sun, 19 Oct 2025 09:56:08 -0700
-Message-ID: <20251019165728.164929-2-stephen@networkplumber.org>
+ Reshma Pattan <reshma.pattan@intel.com>,
+ Suanming Mou <suanmingm@nvidia.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v3 2/8] pdump: handle primary process exit
+Date: Sun, 19 Oct 2025 09:56:09 -0700
+Message-ID: <20251019165728.164929-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251019165728.164929-1-stephen@networkplumber.org>
 References: <250811213632.16023-1-stephen@networkplumber.org>
@@ -89,29 +91,39 @@ to cleanup resources. Instead just exit after closing the
 capture file.
 
 Bugzilla ID: 1760
-Fixes: cbb44143be74 ("app/dumpcap: add new packet capture application")
+Fixes: a99a311ba101 ("app/pdump: exit with primary process")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/dumpcap/main.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ app/pdump/main.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
-index e5ba36350b..3621c0ebe3 100644
---- a/app/dumpcap/main.c
-+++ b/app/dumpcap/main.c
-@@ -1059,6 +1059,10 @@ int main(int argc, char **argv)
- 	else
- 		pcap_dump_close(out.dumper);
+diff --git a/app/pdump/main.c b/app/pdump/main.c
+index fa85859703..1741d7e709 100644
+--- a/app/pdump/main.c
++++ b/app/pdump/main.c
+@@ -1028,13 +1028,15 @@ main(int argc, char **argv)
+ 	dump_packets();
  
+ 	disable_primary_monitor();
+-	cleanup_pdump_resources();
++
+ 	/* dump debug stats */
+ 	print_pdump_stats();
+ 
+-	ret = rte_eal_cleanup();
+-	if (ret)
+-		printf("Error from rte_eal_cleanup(), %d\n", ret);
 +	/* If primary has exited, do not try and communicate with it */
 +	if (!rte_eal_primary_proc_alive(NULL))
 +		return 0;
-+
- 	cleanup_pdump_resources();
  
- 	rte_ring_free(r);
+-	return 0;
++	cleanup_pdump_resources();
++
++	return rte_eal_cleanup() ? EXIT_FAILURE : 0;
+ }
 -- 
 2.51.0
 
