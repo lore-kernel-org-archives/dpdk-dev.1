@@ -2,45 +2,91 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2090BCCD184
-	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 18:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4955CCD184
+	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 20:22:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC68A402B9;
-	Sun, 19 Oct 2025 20:45:30 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 8724B400D5
- for <dev@dpdk.org>; Sun, 19 Oct 2025 20:45:29 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 523BB202CC;
- Sun, 19 Oct 2025 20:45:28 +0200 (CEST)
-Content-class: urn:content-classes:message
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v8 3/3] mbuf: optimize reset of reinitialized mbufs
-Date: Sun, 19 Oct 2025 20:45:26 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F654DD@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <2602540.zToM8qfIzz@thomas>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v8 3/3] mbuf: optimize reset of reinitialized mbufs
-Thread-Index: AdxBGbWow+ZRBez0Qoil9ep/fLNgVQADlxTA
+	by mails.dpdk.org (Postfix) with ESMTP id 881BB402BE;
+	Sun, 19 Oct 2025 22:22:22 +0200 (CEST)
+Received: from fout-b6-smtp.messagingengine.com
+ (fout-b6-smtp.messagingengine.com [202.12.124.149])
+ by mails.dpdk.org (Postfix) with ESMTP id 5FA0B400D5
+ for <dev@dpdk.org>; Sun, 19 Oct 2025 22:22:21 +0200 (CEST)
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+ by mailfout.stl.internal (Postfix) with ESMTP id 345161D00041;
+ Sun, 19 Oct 2025 16:22:20 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-09.internal (MEProxy); Sun, 19 Oct 2025 16:22:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1760905340;
+ x=1760991740; bh=jnoBK4DaWcTAovPIF2OJ8Mkbt/vhlIOregsSsA6g7ZU=; b=
+ Xgkv6sk6VdEmurU38qEOR8Z2umnaQjK+SflZyqnBx8eYL+QpdyJ6vFI3tIKDTcAW
+ cObW9n0Amlkq4G61nRcI1+b7sAKe75WcUbc0w+RR9hwv6m3055Qk2Fd+eVGuj68Y
+ Fog2cFeB121fYrwAxHDcxvzdRgxcihsQaUAAQEhi2RY2c4zQEu0Ao5y64Pvlw0N9
+ +RveV+1zg4MagzqfdqW5xP2F2hJb54lkZLIj85RzonvQMXMl8WBnMe3DfWxC4YWl
+ kt0hBmSHNf9wWsBVnpjmi5hrWYN7g4M6JZ9ef2x8MJRH75O9zkcMwnvp6lElvncG
+ 0edJX0ODARn6Fvpd71WFWA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760905340; x=
+ 1760991740; bh=jnoBK4DaWcTAovPIF2OJ8Mkbt/vhlIOregsSsA6g7ZU=; b=K
+ j9Nyx0uHqGQ18wATJneD1aIj5AfyJrG0yUWVFor7tzCwo5DH3LAtlVjddxpqBCoV
+ 7QYNyw9NwiJt6dkQZ1iGkWC3jcqvS00v43t2bXGgmxbU5hLS6JKLDLPZHpBg2OUA
+ AWGptJUJtJFtEPIQNvSTeY5/K/fFKB0S8gQ/Re4BSzPOWydifg/JJLU7GArkSzps
+ 3AIKz914ys6GWNoadeExPdTylyIB2rq+YNmsz55yAnNpVbfLPs6Z+zHMEd9X0VRS
+ s4gxXNSnz1h4+gvfAZ5E6np0739eE/epcde5VFZM0gNbJdai5Wz6fQGJ9uN0oH6m
+ YCFVsXXQ+YaZXxuo8mdWA==
+X-ME-Sender: <xms:ekj1aE3155M_Jo0vZcOLUWZcFodeec45hCgOctnTrheowO07jwRDHQ>
+ <xme:ekj1aJL_b5t0tCX-6SZiuNmcWHLfScYhQCeY1HVHE1KO_FRzL9H7h5JCYFTJzaBnW
+ lT_E2ealEGZt5HedHRbxTipUQgqoAoISenvWWjM33hHkfI56EJkHw>
+X-ME-Received: <xmr:ekj1aMxYv3j3fF3ANlVbQTun_07GFg3DFPOpZCYYpH2PDw4yFtJwmiJ495vNnpwiBlyJmqJsyoOnJSVcw4GDsarVxg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeehkeekucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
+ leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeekpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihsh
+ htvghmshdrtghomhdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhn
+ thgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhope
+ hsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopehk
+ ohhnshhtrghnthhinhdrrghnrghnhigvvheshhhurgifvghirdgtohhmpdhrtghpthhtoh
+ eprghnughrvgifrdhrhigstghhvghnkhhosehokhhtvghtlhgrsghsrdhruhdprhgtphht
+ thhopehivhgrnhdrmhgrlhhovhesrghrkhhnvghtfihorhhkshdrrghmpdhrtghpthhtoh
+ epfhgvnhhgtghhvghnghifvghnsehhuhgrfigvihdrtghomh
+X-ME-Proxy: <xmx:ekj1aPURuaX0z4FIe7ufNgkk4yM1y0_vZtLJ2mF-z-hbUXjjNR8Wrw>
+ <xmx:ekj1aEiBV23asPuuHtUBr9H6l_D-NvtXKcS1WFSXgYADJl1X3U1Jjg>
+ <xmx:ekj1aHDZsT8okS2jdS-l9Cq1sd5HJxzi1tCNHjs29nWARekG3HJZlg>
+ <xmx:ekj1aCvDkqNelUO6fOpZi3_NW8H74johjlu9tOReQ788WwbS6tAthg>
+ <xmx:fEj1aJLDN38me9iXEDd1_bR4B6nlFOXIW7jydKl0FAAUu6_9btb4DyuA>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 19 Oct 2025 16:22:17 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Ivan Malov <ivan.malov@arknetworks.am>,
+ Chengwen Feng <fengchengwen@huawei.com>
+Subject: Re: [PATCH v8 1/3] mbuf: de-inline sanity checking a reinitialized
+ mbuf
+Date: Sun, 19 Oct 2025 22:22:15 +0200
+Message-ID: <3781106.TQGk6oTFT5@thomas>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F654B8@smartserver.smartshare.dk>
 References: <20250821150250.16959-1-mb@smartsharesystems.com>
- <aOftoMl0edarmSGB@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F654B7@smartserver.smartshare.dk>
- <2602540.zToM8qfIzz@thomas>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Thomas Monjalon" <thomas@monjalon.net>
-Cc: "Bruce Richardson" <bruce.richardson@intel.com>, <dev@dpdk.org>,
- "Stephen Hemminger" <stephen@networkplumber.org>,
- "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
- "Ivan Malov" <ivan.malov@arknetworks.am>,
- "Chengwen Feng" <fengchengwen@huawei.com>
+ <3916365.44csPzL39Z@thomas>
+ <98CBD80474FA8B44BF855DF32C47DC35F654B8@smartserver.smartshare.dk>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,49 +100,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBUaG9tYXMgTW9uamFsb24gW21haWx0bzp0aG9tYXNAbW9uamFsb24ubmV0XQ0KPiBT
-ZW50OiBTdW5kYXksIDE5IE9jdG9iZXIgMjAyNSAxOC41OQ0KPiANCj4gMDkvMTAvMjAyNSAxOToz
-NSwgTW9ydGVuIEJyw7hydXA6DQo+ID4gPiBGcm9tOiBCcnVjZSBSaWNoYXJkc29uIFttYWlsdG86
-YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5jb21dDQo+ID4gPiA+ICsJCW0tPnBrdF9sZW4gPSAwOw0K
-PiA+ID4gPiArCQltLT50eF9vZmZsb2FkID0gMDsNCj4gPiA+ID4gKwkJbS0+dmxhbl90Y2kgPSAw
-Ow0KPiA+ID4gPiArCQltLT52bGFuX3RjaV9vdXRlciA9IDA7DQo+ID4gPiA+ICsJCW0tPnBvcnQg
-PSBSVEVfTUJVRl9QT1JUX0lOVkFMSUQ7DQo+ID4gPg0KPiA+ID4gSGF2ZSB5b3UgY29uc2lkZXJl
-ZCBkb2luZyBhbGwgaW5pdGlhbGl6YXRpb24gdXNpbmcgNjQtYml0IHN0b3Jlcz8NCj4gSXQncw0K
-PiA+ID4gZ2VuZXJhbGx5IGNoZWFwZXIgdG8gZG8gYSBzaW5nbGUgNjQtYml0IHN0b3JlIHRoYW4g
-ZS5nLiBzZXQgb2YgMTYtDQo+IGJpdA0KPiA+ID4gb25lcy4NCj4gPg0KPiA+IFRoZSBjb2RlIGlz
-IGJhc2ljYWxseSBjb3B5LXBhc3RlIGZyb20gcnRlX3BrdG1idWZfcmVzZXQoKS4NCj4gPiBJIGtl
-cHQgaXQgdGhlIHNhbWUgd2F5IGZvciByZWFkYWJpbGl0eS4NCj4gPg0KPiA+ID4gVGhpcyBhbHNv
-IG1lYW5zIHRoYXQgd2UgY291bGQgcmVtb3ZlIHRoZSByZXN0cmljdGlvbiBvbiBoYXZpbmcNCj4g
-cmVmY250DQo+ID4gPiBhbmQNCj4gPiA+IG5iX3NlZ3MgYWxyZWFkeSBzZXQuIEFzIGluIFBNRHMs
-IGEgc2luZ2xlIHN0b3JlIGNhbiBpbml0IGRhdGFfb2ZmLA0KPiA+ID4gcmVmX2NudCwNCj4gPiA+
-IG5iX3NlZ3MgYW5kIHBvcnQuDQo+ID4NCj4gPiBZZXMsIEkgaGF2ZSBnaXZlbiB0aGUgY29uY2Vw
-dCBhIGxvdCBvZiB0aG91Z2h0IGFscmVhZHkuDQo+ID4gSWYgd2UgZGlkbid0IHJlcXVpcmUgbWJ1
-ZnMgcmVzaWRpbmcgaW4gdGhlIG1lbXBvb2wgdG8gaGF2ZSBhbnkgZmllbGRzDQo+IGluaXRpYWxp
-emVkLCBzcGVjaWZpY2FsbHkgIm5leHQiIGFuZCAibmJfc2VncyIsIGl0IHdvdWxkIGltcHJvdmUN
-Cj4gcGVyZm9ybWFuY2UgZm9yIGRyaXZlcnMgZnJlZWluZyBtYnVmcyBiYWNrIHRvIHRoZSBtZW1w
-b29sLCBiZWNhdXNlDQo+IHdyaXRpbmcgdG8gdGhlIG1idWZzIHdvdWxkIG5vIGxvbmdlciBiZSBy
-ZXF1aXJlZCBhdCB0aGF0IHBvaW50OyB0aGUNCj4gbWJ1ZnMgY291bGQgc2ltcGx5IGJlIGZyZWVk
-IGJhY2sgdG8gdGhlIG1lbXBvb2wuIEluc3RlYWQsIHdlIHdvdWxkDQo+IHJlcXVpcmUgdGhlIGRy
-aXZlciB0byBpbml0aWFsaXplIHRoZXNlIGZpZWxkcyAtIHdoaWNoIGl0IHByb2JhYmx5IGRvZXMN
-Cj4gb24gUlggYW55d2F5LCBpZiBpdCBzdXBwb3J0cyBzZWdtZW50ZWQgcGFja2V0cy4NCj4gPiBC
-dXQgSSBjb25zaWRlciB0aGlzIGNvbmNlcHQgYSBtYWpvciBBUEkgY2hhbmdlLCBhbHNvIGFmZmVj
-dGluZw0KPiBhcHBsaWNhdGlvbnMgYXNzdW1pbmcgdGhhdCB0aGVzZSBmaWVsZHMgYXJlIGluaXRp
-YWxpemVkIHdoZW4gYWxsb2NhdGluZw0KPiByYXcgbWJ1ZnMgZnJvbSB0aGUgbWVtcG9vbC4gU28g
-SSBoYXZlbid0IHB1cnN1ZWQgaXQuDQo+ID4NCj4gPiA+DQo+ID4gPiBTaW1pbGFybHkgZm9yIHBh
-Y2tldF90eXBlIGFuZCBwa3RfbGVuLCBhbmQgZGF0YV9sZW4vdmxhbl90Y2kgYW5kDQo+IHJzcw0K
-PiA+ID4gZmllbGRzDQo+ID4gPiBldGMuIEZvciBtYXggcGVyZm9ybWFuY2UsIHRoZSB3aG9sZSBv
-ZiB0aGUgbWJ1ZiBjbGVhcmVkIGhlcmUgY2FuIGJlDQo+ID4gPiBkb25lIGluDQo+ID4gPiA0MCBi
-eXRlcywgb3IgNSA2NC1iaXQgc3RvcmVzLiBJZiB3ZSBkbyB0aGUgc3RvcmVzIGluIG9yZGVyLA0K
-PiBwb3NzaWJseQ0KPiA+ID4gdGhlDQo+ID4gPiBjb21waWxlciBjYW4gZXZlbiBvcHBvcnR1bmlz
-dGljYWxseSBjb2FsZXNjZSBtb3JlIHN0b3Jlcywgc28gd2UNCj4gY291bGQNCj4gPiA+IGV2ZW4N
-Cj4gPiA+IGVuZCB1cCBnZXR0aW5nIDEyOC1iaXQgb3IgbGFyZ2VyIHN0b3JlcyBkZXBlbmRpbmcg
-b24gdGhlIElTQQ0KPiBjb21waWxlZA0KPiA+ID4gZm9yLg0KPiA+ID4gW01heWJlIHRoZSBjb21w
-aWxlciB3aWxsIGRvIHRoaXMgZXZlbiBpZiB0aGV5IGFyZSBub3QgaW4gb3JkZXIsIGJ1dA0KPiBJ
-J2QNCj4gPiA+IGxpa2UgdG8gbWF4aW1pemUgbXkgY2hhbmNlcyBoZXJlISA6LSldDQo+IA0KPiBN
-b3J0ZW4sIHlvdSBkaWRuJ3QgcmVwbHkgdG8gdGhpcy4NCj4gQ2FuIHdlIG9wdGltaXplIG1vcmUg
-d2l0aCBiaWcgc3RvcmVzPw0KPiANCg0KSSBkaWQgcmVwbHk6DQpodHRwczovL2luYm94LmRwZGsu
-b3JnL2Rldi85OENCRDgwNDc0RkE4QjQ0QkY4NTVERjMyQzQ3REMzNUY2NTRCQkBzbWFydHNlcnZl
-ci5zbWFydHNoYXJlLmRrLw0KDQpFc3NlbnRpYWxseSwgaXQncyBhIGRpZmZlcmVudCB0eXBlIG9m
-IG9wdGltaXphdGlvbiwgd2hpY2ggc2hvdWxkIGFsc28gYmUgYXBwbGllZCB0byBydGVfcGt0bWJ1
-Zl9yZXNldCgpLg0KSSBoYXZlIHBvc3Rwb25lZCBzdWNoIG9wdGltaXphdGlvbiBmb3IgbGF0ZXIu
-IERvbid0IGhhdmUgdGltZSB0byBkbyBpdCBwcm9wZXJseSBub3cuDQoNCi1Nb3J0ZW4NCg0K
+09/10/2025 19:55, Morten Br=C3=B8rup:
+> > From: Thomas Monjalon [mailto:thomas@monjalon.net]
+> > Sent: Thursday, 9 October 2025 19.29
+> >=20
+> > 09/10/2025 19:12, Morten Br=C3=B8rup:
+> > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> > > > On Sat, Aug 23, 2025 at 06:30:00AM +0000, Morten Br=C3=B8rup wrote:
+> > > > > +/**  check reinitialized mbuf type in debug mode */
+> > > >
+> > > > This is in release mode, not debug mode. Comment below seems wrong
+> > too.
+> > >
+> > > Yes, I noticed the comment was present in both debug and release
+> > mode,
+> > > which I couldn't understand. So I guessed it was for Doxygen or some
+> > other parser.
+> > > I have seen weird stuff for Doxygen, e.g. "#ifdef __DOXYGEN__"
+> > > for documenting a function [1],
+> > > so I didn't attempt to understand the reason for it,
+> > > but just followed the same pattern.
+> >=20
+> > Hum, as a maintainer, I would prefer you try to understand, or ask
+> > please.
+> > Note: we can use Slack for such questions.
+>=20
+> Point taken. Good guidance!
+> I'll try to broaden my scope of knowledge to include preprocessing for Do=
+xygen.
+>=20
+> > __DOXYGEN__ is defined only by Doxygen,
+> > so any code inside #ifdef __DOXYGEN__ is for documentation only.
+> > It was supposed to be used in lib/eal/include/generic
+> > for functions which are really defined inline per CPU implementation.
+>=20
+> Yes, I get that.
+> But I don't get - when there are two definitions of a macro -
+> why is the same comment/documentation present in both instances?
+
+Because the author had no better idea I suppose.
+
+
+> And if the instances have different comments/documentation,
+> how is that reflected in the documentation output from Doxygen?
+
+You can have only one instance of a symbol in Doxygen.
+
+
+> In this specific case, how should the code look to both
+> 1) get the wanted Doxygen documentation output,
+
+#if defined RTE_LIBRTE_MBUF_DEBUG || defined __DOXYGEN__
+
+/** Check reinitialized mbuf type in debug mode. */
+#define __rte_mbuf_raw_sanity_check_mp(m, mp) rte_mbuf_raw_sanity_check(m, =
+mp)
+/** Check mbuf type in debug mode. */
+#define __rte_mbuf_sanity_check(m, is_h) rte_mbuf_sanity_check(m, is_h)
+
+#else /* !RTE_LIBRTE_MBUF_DEBUG */
+
+#define __rte_mbuf_raw_sanity_check_mp(m, mp) do { } while (0)
+#define __rte_mbuf_sanity_check(m, is_h) do { } while (0)
+
+#endif /* RTE_LIBRTE_MBUF_DEBUG */
+
+
+> and 2) have relevant comments inline in the source code for both instance=
+s?
+
+No need to comment in release mode, it is not relevant for debug macros.
+
+
