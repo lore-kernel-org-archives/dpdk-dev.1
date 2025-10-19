@@ -2,68 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FECDCCD184
-	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 16:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5002CCD184
+	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 16:57:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1BA92402AC;
-	Sun, 19 Oct 2025 18:05:18 +0200 (CEST)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id 0EF414013F
- for <dev@dpdk.org>; Sun, 19 Oct 2025 18:05:15 +0200 (CEST)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-290aaff555eso33970265ad.2
- for <dev@dpdk.org>; Sun, 19 Oct 2025 09:05:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F420E427CE;
+	Sun, 19 Oct 2025 18:57:33 +0200 (CEST)
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com
+ [209.85.215.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 5E68B4013F
+ for <dev@dpdk.org>; Sun, 19 Oct 2025 18:57:32 +0200 (CEST)
+Received: by mail-pg1-f172.google.com with SMTP id
+ 41be03b00d2f7-b608df6d2a0so3183949a12.1
+ for <dev@dpdk.org>; Sun, 19 Oct 2025 09:57:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760889915;
- x=1761494715; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=cAnzgJG+EZ7gYB6it8mNtuvGawNI48qaoHq7coFGb4Q=;
- b=y0mYFwR6YOxwmmcEKydouRY8YfOCtH8Kn0yrus3vt3060JUURM4Vygb4D3ys5E9XAR
- LLK0hmARE3cHwJZ2zAz0GHHVfjIEWzpHdkHFku+XLU8GI0R36N+TVGXwCOmkZ1fTRi65
- SxqWYSBLKZjzQDTfWu9KAlGVJ8+9wgiBGLeuaBbQ9oB/nRBtlB0uLeMyFwXDMgbs1pzp
- 7Dneiy+2AS+mGX2JTQsUHrF3IdTk6Gd71Pbii1PJj60HJpLiSuBz5PbuDMYY9NUCpFoy
- JxX78PGsyF4HMzJr59FVMptZj6U13VJKyUJxs3WiW2XKaBPXmo0PVfTzD89CIpOQ/59r
- E7CQ==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760893051;
+ x=1761497851; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=bCUaDkR1TQsccPHsVbdGO+p1YP5ROe9SuNgjYJNi6ck=;
+ b=xlokiFDooK+ULN1zq0hXO8bzDmm185ZSzc1ppcPMKXUvwibLtpPipc8UVH14ywRVq4
+ e0HWdL/LR7j+vDisYX3NBL448oui7OhLricwscc5lwZqvbPncqv1x+YbfXDeUUwwgg9a
+ Rv+H5qtTJBmLRDeJSxl+zsDN1fVus6CmKm25bagJ0HNA0AR0WxGQ+uP5xJYRwUZ+d0X7
+ qGu0tSFzsCsovn75/zVUQkpSXN71fBFGBJVa5M53FbTh5zgxXelf2s4ajyP0jFcdVvFh
+ 5qLfaexFGddY6wGExIoOv1QBqY/w0RtXdnPjb+blXZkA62tVcJxjcvZm+DFmIPpquBfl
+ +Cfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760889915; x=1761494715;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=cAnzgJG+EZ7gYB6it8mNtuvGawNI48qaoHq7coFGb4Q=;
- b=bk7+zhdZ1lgQQQbtNp+73rj2YMzDiHlenBF3C+cja/opMdZpgnWqLoZL6fq6/8iZkn
- v3lQCMwasIj0O0MzFYLOYD/qP9+ll6XGvO3Z3QB3UkfBqVUn27kEKVEl9AkzQhi29y8Y
- y4AbH/tXOYAqLsHF9Mg/Gf9VyLz8x5+8/1DZt2XEo/meY3Y8o3Kt4BEju6U3azdvKUkb
- mMCOtE6NkhtTUW27dejYDttamX445xHk9eNN35JxKWSC2RUGwyLdtTm4BKuB0AlZVV99
- 1rv1BJ87qaucPpsIG6+gBK5Rp0fvtiJ+6MvAIZu+V+qW/Iq+dUedraETUERnZ/uBaeAe
- YrBQ==
-X-Gm-Message-State: AOJu0YxRIbWVxgZluy65X5iZx3YjtWkZFAssjzlWhHKzx9vohCqS/3eY
- uVBVjf4tLZWWIoOhgBkkKOmRqNFNXxqtYFm3uJunBlN03MINNUi3b5B+tN0WaFWUCZWPLCL2npw
- irX87vhE=
-X-Gm-Gg: ASbGncth6ICjQCPaBzemsHFwzGJ3CP0cj8qxvcnByuN3Mkw3uM6IjEekWu9Tnn5xash
- cBH3arlvMTAOuTOcunacDRLp3jCad1dAdjH6BU4a96PP1KDRJlFlrCZLL6IULI3NeRIQMjlr31l
- UJ7DxRK50C3M0SpWgTqZsxOchZK5ddJQYkZSQd64VLFU/Fn5X721gHxc6Dzd+dU7+EucaYCNz1W
- hN21AUTbueZY91MR7fS9sFKTGDGceZeOchgHx8L+h1Nv2zpAUF9w7SNjTj3fKl5UW3pVzIuxLKA
- GlsPBxPjKjJABjroDgj8HmLf7oCT37Pda5OfyKrE8Y/Ej77FdpzIgglTrKVPwzZsS3TmaQ6CbtG
- haqaF9JYwMyp7MaKPiM4pC0SBtlLV7F0e65NUjL6h0v2Tj2AEMbID1YoO2Paacs202GSjHHB4VX
- j1hDCzkQKv1zWitWjXw/L09o4NQOJhpVYC/PLTlKQorjVhrCXskw==
-X-Google-Smtp-Source: AGHT+IEyMF9aUsf6Tc+kr7oi2MiTcclfkBcxtPevoyPW/2VVJpjxx1PUvgasXiQqC8bkFBlOcTTubg==
-X-Received: by 2002:a17:902:db11:b0:240:48f4:40f7 with SMTP id
- d9443c01a7336-290cba4efc9mr148677735ad.39.1760889914902; 
- Sun, 19 Oct 2025 09:05:14 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1760893051; x=1761497851;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=bCUaDkR1TQsccPHsVbdGO+p1YP5ROe9SuNgjYJNi6ck=;
+ b=V/LSB1w1tfL3fnGozAr/7VIfDW+HrsGl4A3lg739qYFziWpSwG13eEIESqOQX37Vht
+ ZyD1KvZ4f04LMF705IBxDKHzdrU+Z8irkwS4GQzG7yA2uk88x4rXl7/M0cC/ViJf7WBk
+ fx19aP2uaBcvYyhAhMYk/KRRma0M9Z22dl5sPdLByiXGDeT3xPdihNCBVV8RlGf8yoxs
+ iCJEVVoeaqxIFTEU34tyfbi3tOIengJqzMweYcHSGQnvda792WfiZdFaHZWLZC0iGdnb
+ csK01xIZZFhVmbUdLiZvxAFfOrIS28qp9iAqa31EMatW0CBvn9YGGIUuB8JjJvsYmc3X
+ Xkqg==
+X-Gm-Message-State: AOJu0Yw13CO5nwVVDzzCfp5wu8+7QWEiulwrnef9DUZRXkZsHr1aqN9l
+ VpFc/mq70pntwk0zbMFzusNbFaO0P44ERXDrMDF/mAY3RjC+lCY+f+B/as86sQowzTwADq6FU2g
+ U3gygV4A=
+X-Gm-Gg: ASbGnctSxYL2azGdRxNH0Y9gXalxJliPl1/McKWWkU5VTGOj2DYc2Vp+83+LEOFTxE1
+ tWLMe+aX9PHjE30QE/sC+BmTgDfGWC0G1QWq6sGQB2Wrvh4/za8N7guummE44CuC5dJk1g157ME
+ 5K9F0xLD6Mr0mFcn+kXuxV0ufcsOOivtfyGEd1JSAjfyYiRO8n5o471aHEJwK3OAG80lgE1ldAR
+ 9TNHhfYdKxHeripHSea4998F6fk+UD9cX2QPNaRN2pcG43OOyBFIuWLXn+Q3X5HDGeiazMrHX9Z
+ KhSI/2qX41E98TUQFwuyru2pRYx46MazMqMEUrIytcH5aTVcKvIyRgRL7pnQNTvCOToOWGYDyvN
+ yEhn4gMJKl15Mtn2lGHAJDNRwllRyQbMSAyj++35rjHXJwedd7Pw6N8NfTTJ5HtI9H3936hV+NO
+ Msokuq021a7eAJcKk9egM8UpA63HPcfvpM90qghiFNbjtIrAIo1g==
+X-Google-Smtp-Source: AGHT+IF+n4bjiuCe5L1tNx4x/HJ4Etfu6t3RJF82SYxaM//hFJYMjYXaOHcdQ9AvCOgvbpQ0rGtxpg==
+X-Received: by 2002:a17:902:ce12:b0:28e:7fce:6685 with SMTP id
+ d9443c01a7336-290cb94792amr120769025ad.32.1760893051333; 
+ Sun, 19 Oct 2025 09:57:31 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-33ba9270049sm4966856a91.0.2025.10.19.09.05.14
+ d9443c01a7336-2924721b6fdsm56940455ad.118.2025.10.19.09.57.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 19 Oct 2025 09:05:14 -0700 (PDT)
+ Sun, 19 Oct 2025 09:57:30 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: david.marchand@redhat.com, Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH] devtools: fix awk regular expression
-Date: Sun, 19 Oct 2025 09:05:11 -0700
-Message-ID: <20251019160511.18173-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 0/8] packet capture bugfix and improvements
+Date: Sun, 19 Oct 2025 09:56:07 -0700
+Message-ID: <20251019165728.164929-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <250811213632.16023-1-stephen@networkplumber.org>
+References: <250811213632.16023-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -79,49 +82,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The latest version of awk (in Debian testing) will give a warning
-about invalid regular expression error.
+This patch series addresses the problem of packet capture when
+the secondary process is sending/receiving by using the same
+mechanism as hot plug.  It also fixes some bugs on shutdown
+of dumpcap (and pdump).
 
-	awk: line 6: regular expression compile failed (syntax error ^* or ^+)
-	^+++ b/
+The documentation has been updated and improved as well.
 
-Fix by using additional backslash escape.
+v3 - add release note
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- devtools/checkpatches.sh | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Stephen Hemminger (8):
+  dumpcap: handle primary process exit
+  pdump: handle primary process exit
+  pdump: fix races in callbacks
+  dumpcap: handle pdump requests from primary
+  pdump: handle pdump requests from primary
+  pdump: forward callback enable to secondary
+  pdump: remove use of VLA
+  doc: update documentation on pdump library
 
-diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
-index 9fb8fd0a07..646d5d1513 100755
---- a/devtools/checkpatches.sh
-+++ b/devtools/checkpatches.sh
-@@ -320,10 +320,10 @@ check_experimental_tags() { # <patch>
- 		current_file = "";
- 		ret = 0;
- 	}
--	/^+++ b\// {
-+	/^\+++ b\// {
- 		current_file = $2;
- 	}
--	/^+.*__rte_experimental/ {
-+	/^\+.*__rte_experimental/ {
- 		if (current_file ~ ".c$" ) {
- 			print "Please only put __rte_experimental tags in " \
- 				"headers ("current_file")";
-@@ -350,10 +350,10 @@ check_internal_tags() { # <patch>
- 		current_file = "";
- 		ret = 0;
- 	}
--	/^+++ b\// {
-+	/^\+++ b\// {
- 		current_file = $2;
- 	}
--	/^+.*__rte_internal/ {
-+	/^\+.*__rte_internal/ {
- 		if (current_file ~ ".c$" ) {
- 			print "Please only put __rte_internal tags in " \
- 				"headers ("current_file")";
+ app/dumpcap/main.c                           |  14 +
+ app/pdump/main.c                             |  16 +-
+ doc/guides/prog_guide/img/pdump_overview.svg | 135 +++++++++
+ doc/guides/prog_guide/pdump_lib.rst          | 183 ++++++++-----
+ doc/guides/rel_notes/release_25_11.rst       |   5 +
+ lib/pdump/meson.build                        |   2 -
+ lib/pdump/rte_pdump.c                        | 273 ++++++++++++++++---
+ 7 files changed, 519 insertions(+), 109 deletions(-)
+ create mode 100644 doc/guides/prog_guide/img/pdump_overview.svg
+
 -- 
 2.51.0
 
