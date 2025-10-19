@@ -2,71 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A810CCD195
-	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 16:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB56ACCD195
+	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 16:57:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5266942D90;
-	Sun, 19 Oct 2025 18:57:36 +0200 (CEST)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
- [209.85.214.170])
- by mails.dpdk.org (Postfix) with ESMTP id EB5A1410F1
- for <dev@dpdk.org>; Sun, 19 Oct 2025 18:57:33 +0200 (CEST)
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-28e7cd6dbc0so44935665ad.0
- for <dev@dpdk.org>; Sun, 19 Oct 2025 09:57:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AC33042DCE;
+	Sun, 19 Oct 2025 18:57:37 +0200 (CEST)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTP id D639D410F1
+ for <dev@dpdk.org>; Sun, 19 Oct 2025 18:57:34 +0200 (CEST)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-2698d47e776so26667705ad.1
+ for <dev@dpdk.org>; Sun, 19 Oct 2025 09:57:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760893053;
- x=1761497853; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760893054;
+ x=1761497854; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=40lnV69UwbIVxryHObxRQHARRLz50lT+fAtg323Hyng=;
- b=C3wIx6IBhr7JPMIp5A0COI6yZ0jv39EYdiPWeexE1VAZ/5m41xi+lRp6Hw9B8syMQf
- DkqmTaFVqM6DrPxCbIcIeC4KF/jhm23s1kcXdzPlN8yXeivQsw2rRtLSn2uMvHDbJwa3
- s2deDC3HjaB045b3Xt8K4WjL9vmzXl2y09RWH6BhMREynrt8wR5/1g9x4WUnSEnlA06j
- Gr/fb/QUDxP+lV6I6JYoJTvdupPyfccUoufI2bD0UI2Mn7Ad0hbUmHdzZt0GtOZQsC7H
- +5uc1WP/54kZJHK0M0lq8UiQS6+O3xw2ssBCh7fYZVsge66DaiLH7kFEn7jEDR4p4oBu
- ya4Q==
+ bh=QpFwMpjjpWhm9/3oSxBY7IrnOg8PAjv60ibsMe/RgpM=;
+ b=QiJ+woCUEVwhbTqL13S0NR8yVK2RnrazkaiP7oByfwvJ+Jxs7huo1Wwd2BL8oRX2T/
+ h2G6wIAo11es7/5Llvi1QjfLHGyyusqT+WIC+JQqFlt3Raz0oxXUCH2tf50kaANfOnSa
+ ZK4FTaWcYdSIdw6MGgyYUWj9DDdYlSgf81ihNoUyWOjwR79u+RCf08kcBuSRLVkFBTji
+ 8fXs7h1IMP8tMeWdbwxkY53Rp6OFH7UJePGFeFPsMuoGZo8mtHPrUzz2EyF7yZ2uXJLH
+ jSRO670hFF2Oy6+s5j/SBfYn+du7c26Hgvgbxm+KKGCqUkOZyiyFdeO47yNBjO2D5Crw
+ V/mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760893053; x=1761497853;
+ d=1e100.net; s=20230601; t=1760893054; x=1761497854;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=40lnV69UwbIVxryHObxRQHARRLz50lT+fAtg323Hyng=;
- b=UjdeW8gfrehLkx+4/IuU2sB4HcXhb0JTkGNghIfdGoB7kDPTKe8TM6ApbOWFzlHlGa
- aKI6Rsrg80U8ZdZEvRUA87gEgYnH3NaGOJ8f3BFFvV1kXgNNQ3OSod4Rx4kcdfnrflyR
- Qiu+QiJSI4lu5GZAg/IHP0VCkCBNmpncQZ67id3Qyp15Eti4zHdn35/l7Y5A6RDKOniv
- ycdDezylpCOdW9jxZmTMu8nu9J0n0Fq54On+uK4QeK4kps/TQYItGjth1BSz/7MltyN/
- mMc+4rmk8KWkmD1p2qVz/Yq4fd1cf0f+s78Qnj3KckWb/UK82pwmePvwQzykKqOQcRRQ
- ilzA==
-X-Gm-Message-State: AOJu0Yw0yeIKMTmT1qU/9uC8MrhQx+CkKOdV0lFIEN4Bob3g/jRYOyqy
- MPEkbOlDtvHJiIQGNh2srXRJGRm351ANpDawzWXP6eWu2mGXo6z9p9gnM5hod9BZhS2/FSN1Zdg
- Y/gukJD0=
-X-Gm-Gg: ASbGncthiGcHi2mauC5jfD3bCAyYmJ0uZkLJ8+fS8GUIIKlUwth7GYLMN1Rz3WVH0WQ
- Gj5KFGecK9pkMfp4yDHvYwfforrplbCF2nX+QqFHVnMHQJ0vmdJr9gZIwrMm5KV6WPZm5rVowNI
- RmFZ14w021uNFn1j04W12o0Bmj6bg8gVjo2IirGX1PDZJhYh9MRRLRavQHMFR+99dFABXPd0QCH
- Wi0vapkZYGl9vzSM1srk0kCkIj9Wnd/kwzhNKYL3SvnbuFc4x0sZ3G2cVfLyMMKt+jy0sYUERCt
- ma1tpBH1GG9/BwBU84x9Keww2hEY5ZaqH1P3guREoDwr8AGfpOmRz+BYaalPvB2O9+PptA2RMZi
- FkO+U6oeTIuF36y3ihMTmqjYI6eRdudx+J4ELd46GfwaBDJromx4zX8jBjrcpS/B/LaR/SMd51l
- Y5Z49Funa1zDvG72BWernqTpFGU6yWVokRGyZIuMu+tJODIoyZ4Q==
-X-Google-Smtp-Source: AGHT+IHWwRRp4X4fFPZP9L4XTHbDrJvqi/fyEzBUlVpRob5QIkw04Fvh1kpnMpDUwK7gniL0jtTSTQ==
-X-Received: by 2002:a17:903:2b0d:b0:272:f9c3:31f7 with SMTP id
- d9443c01a7336-290cbe2ae83mr122545415ad.50.1760893053116; 
+ bh=QpFwMpjjpWhm9/3oSxBY7IrnOg8PAjv60ibsMe/RgpM=;
+ b=L5GbXODp13i8WzDVrQCv9DtbGuZxBREtkj1NWjMTAgJ+0RMtJBYCtgbzjWHVU6cf9e
+ JIH/PDPFPGe6JFKqxOpGDRRHnXZ5Fr+iml9aZAnICIqfWuFKBEL7gJf9hZ49rJKJXG88
+ VUjnIuZeaGclC+tuN/shiWlFcxmcUk1TcKH8khVyA3eecAZYAXxs8sMsp1Mh3n9Q6BQi
+ RZLNGZR2yXa/QnU3QmhMDDcysBJpV2ZBuVLOopXSxPtIeSiQgOA2mHoRHPDWVvKMQf+Y
+ oblerz4g6V18m1tpgAPU+itUdUQjICg546C9h0MsKJnfPU5TR+JqMBZNYZUQirypachj
+ lZlw==
+X-Gm-Message-State: AOJu0YzRhSm4STSydTFFcROEEid5jBeOb4Sbt5X6vJzVKT4VVpJhz9Cw
+ nOT6yy9arAfVrbfnN7TDn7Kzh9/VlYTXAXYHFlAfhPAQP6roILmwLtRBW3qo1B8ivwbhigagUn2
+ 02cJevdg=
+X-Gm-Gg: ASbGncsFtcN0wvUTvBTsa/c8n2KuBYhNXCcZ1hy/EB/WYrVIKs6zkNGZfKp/Q34FCZY
+ 1eod0VfkU6d5HWmoSfV6YA24K4E7UdiBbcOwSs4BjWbxH7TvZ+YKNCY71PtJ78XiAGWp2+InO2X
+ 19XZQwQuW6ImnpJA2OBrIQ1WwuKAntxP+P8WrIfJ+kouvAW30FUeV0dLehpilx8T4EMbNRAkzcM
+ I6YLIhOsWuXHyDejWym1jV/blSDoohQrYXhYkJbHXF+NkdeGvb3SLW/bE3u//SZ9N6Fe+7V63sm
+ Hobz16fM3K0iOuJkNcqZVdsT6mS0wpiVbv030iRyQZ7j/q0eoqhYzZw2ej7rbS5lzb99cP8KQpY
+ Nx0qTGNtSbcOQm9o4Blgfz/03C7BBN8g1igV0816Or3ae0HPGVgIw8DwewOq3wpHx4A5rIGsDe0
+ OPSKPYI5zKLqK+zh+YAFtYHTNc4O4rsP9oj73XXcg=
+X-Google-Smtp-Source: AGHT+IHdy/QIxkZ9KKFF7cwpIeb8aXRbldiTB0vGAoGYZavq2hR27cLlXGx8js/auoej20kwmJyDfQ==
+X-Received: by 2002:a17:903:3d0d:b0:24f:8286:9e5d with SMTP id
+ d9443c01a7336-290d14e83ddmr121278355ad.26.1760893053943; 
  Sun, 19 Oct 2025 09:57:33 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2924721b6fdsm56940455ad.118.2025.10.19.09.57.32
+ d9443c01a7336-2924721b6fdsm56940455ad.118.2025.10.19.09.57.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 19 Oct 2025 09:57:32 -0700 (PDT)
+ Sun, 19 Oct 2025 09:57:33 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Reshma Pattan <reshma.pattan@intel.com>,
- Suanming Mou <suanmingm@nvidia.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v3 2/8] pdump: handle primary process exit
-Date: Sun, 19 Oct 2025 09:56:09 -0700
-Message-ID: <20251019165728.164929-3-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Reshma Pattan <reshma.pattan@intel.com>
+Subject: [PATCH v3 3/8] pdump: fix races in callbacks
+Date: Sun, 19 Oct 2025 09:56:10 -0700
+Message-ID: <20251019165728.164929-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251019165728.164929-1-stephen@networkplumber.org>
 References: <250811213632.16023-1-stephen@networkplumber.org>
@@ -86,44 +84,141 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-If primary process exits, then it is not possible (or needed)
-to cleanup resources. Instead just exit after closing the
-capture file.
-
-Bugzilla ID: 1760
-Fixes: a99a311ba101 ("app/pdump: exit with primary process")
-Cc: stable@dpdk.org
+The pdump callback can race with other cpu's in the datapath.
+Handle this by using reference counts and LSB in manner
+similar to seqcount and bpf code.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/pdump/main.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ lib/pdump/rte_pdump.c | 48 +++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 46 insertions(+), 2 deletions(-)
 
-diff --git a/app/pdump/main.c b/app/pdump/main.c
-index fa85859703..1741d7e709 100644
---- a/app/pdump/main.c
-+++ b/app/pdump/main.c
-@@ -1028,13 +1028,15 @@ main(int argc, char **argv)
- 	dump_packets();
+diff --git a/lib/pdump/rte_pdump.c b/lib/pdump/rte_pdump.c
+index ba75b828f2..bfd63fa8c2 100644
+--- a/lib/pdump/rte_pdump.c
++++ b/lib/pdump/rte_pdump.c
+@@ -12,6 +12,7 @@
+ #include <rte_memzone.h>
+ #include <rte_errno.h>
+ #include <rte_string_fns.h>
++#include <rte_pause.h>
+ #include <rte_pcapng.h>
  
- 	disable_primary_monitor();
--	cleanup_pdump_resources();
+ #include "rte_pdump.h"
+@@ -62,6 +63,7 @@ static struct pdump_rxtx_cbs {
+ 	const struct rte_bpf *filter;
+ 	enum pdump_version ver;
+ 	uint32_t snaplen;
++	RTE_ATOMIC(uint32_t) use_count;
+ } rx_cbs[RTE_MAX_ETHPORTS][RTE_MAX_QUEUES_PER_PORT],
+ tx_cbs[RTE_MAX_ETHPORTS][RTE_MAX_QUEUES_PER_PORT];
+ 
+@@ -78,6 +80,36 @@ static struct {
+ 	const struct rte_memzone *mz;
+ } *pdump_stats;
+ 
++static void
++pdump_cb_wait(struct pdump_rxtx_cbs *cbs)
++{
++	/* make sure the data loads happens before the use count load */
++	rte_atomic_thread_fence(rte_memory_order_acquire);
 +
- 	/* dump debug stats */
- 	print_pdump_stats();
- 
--	ret = rte_eal_cleanup();
--	if (ret)
--		printf("Error from rte_eal_cleanup(), %d\n", ret);
-+	/* If primary has exited, do not try and communicate with it */
-+	if (!rte_eal_primary_proc_alive(NULL))
-+		return 0;
- 
--	return 0;
-+	cleanup_pdump_resources();
++	/* wait until use_count is even (not in use) */
++	RTE_WAIT_UNTIL_MASKED(&cbs->use_count, 1, ==, 0, rte_memory_order_relaxed);
++}
 +
-+	return rte_eal_cleanup() ? EXIT_FAILURE : 0;
++static __rte_always_inline void
++pdump_cb_hold(struct pdump_rxtx_cbs *cbs)
++{
++	uint32_t count = cbs->use_count + 1;
++
++	rte_atomic_store_explicit(&cbs->use_count, count, rte_memory_order_relaxed);
++
++	/* prevent stores after this from happening before the use_count update */
++	rte_atomic_thread_fence(rte_memory_order_release);
++}
++
++static __rte_always_inline void
++pdump_cb_release(struct pdump_rxtx_cbs *cbs)
++{
++	uint32_t count = cbs->use_count + 1;
++
++	/* Synchronizes-with the load acquire in pdump_cb_wait */
++	rte_atomic_store_explicit(&cbs->use_count, count, rte_memory_order_release);
++}
++
+ /* Create a clone of mbuf to be placed into ring. */
+ static void
+ pdump_copy(uint16_t port_id, uint16_t queue,
+@@ -146,11 +178,14 @@ pdump_rx(uint16_t port, uint16_t queue,
+ 	struct rte_mbuf **pkts, uint16_t nb_pkts,
+ 	uint16_t max_pkts __rte_unused, void *user_params)
+ {
+-	const struct pdump_rxtx_cbs *cbs = user_params;
++	struct pdump_rxtx_cbs *cbs = user_params;
+ 	struct rte_pdump_stats *stats = &pdump_stats->rx[port][queue];
+ 
++	pdump_cb_hold(cbs);
+ 	pdump_copy(port, queue, RTE_PCAPNG_DIRECTION_IN,
+ 		   pkts, nb_pkts, cbs, stats);
++	pdump_cb_release(cbs);
++
+ 	return nb_pkts;
  }
+ 
+@@ -158,14 +193,18 @@ static uint16_t
+ pdump_tx(uint16_t port, uint16_t queue,
+ 		struct rte_mbuf **pkts, uint16_t nb_pkts, void *user_params)
+ {
+-	const struct pdump_rxtx_cbs *cbs = user_params;
++	struct pdump_rxtx_cbs *cbs = user_params;
+ 	struct rte_pdump_stats *stats = &pdump_stats->tx[port][queue];
+ 
++	pdump_cb_hold(cbs);
+ 	pdump_copy(port, queue, RTE_PCAPNG_DIRECTION_OUT,
+ 		   pkts, nb_pkts, cbs, stats);
++	pdump_cb_release(cbs);
++
+ 	return nb_pkts;
+ }
+ 
++
+ static int
+ pdump_register_rx_callbacks(enum pdump_version ver,
+ 			    uint16_t end_q, uint16_t port, uint16_t queue,
+@@ -186,6 +225,7 @@ pdump_register_rx_callbacks(enum pdump_version ver,
+ 					port, qid);
+ 				return -EEXIST;
+ 			}
++			cbs->use_count = 0;
+ 			cbs->ver = ver;
+ 			cbs->ring = ring;
+ 			cbs->mp = mp;
+@@ -218,6 +258,7 @@ pdump_register_rx_callbacks(enum pdump_version ver,
+ 					-ret);
+ 				return ret;
+ 			}
++			pdump_cb_wait(cbs);
+ 			cbs->cb = NULL;
+ 		}
+ 	}
+@@ -246,6 +287,7 @@ pdump_register_tx_callbacks(enum pdump_version ver,
+ 					port, qid);
+ 				return -EEXIST;
+ 			}
++			cbs->use_count = 0;
+ 			cbs->ver = ver;
+ 			cbs->ring = ring;
+ 			cbs->mp = mp;
+@@ -277,6 +319,8 @@ pdump_register_tx_callbacks(enum pdump_version ver,
+ 					-ret);
+ 				return ret;
+ 			}
++
++			pdump_cb_wait(cbs);
+ 			cbs->cb = NULL;
+ 		}
+ 	}
 -- 
 2.51.0
 
