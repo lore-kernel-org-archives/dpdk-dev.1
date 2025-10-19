@@ -2,71 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 469BACCD184
-	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 20:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 124EECCD184
+	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 20:41:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 43BFC410DF;
-	Sun, 19 Oct 2025 22:41:11 +0200 (CEST)
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com
- [209.85.215.169])
- by mails.dpdk.org (Postfix) with ESMTP id D6084400D5
- for <dev@dpdk.org>; Sun, 19 Oct 2025 22:41:09 +0200 (CEST)
-Received: by mail-pg1-f169.google.com with SMTP id
- 41be03b00d2f7-b6271ea3a6fso2361045a12.0
- for <dev@dpdk.org>; Sun, 19 Oct 2025 13:41:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 76F9B427C6;
+	Sun, 19 Oct 2025 22:41:14 +0200 (CEST)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 1506B400D5
+ for <dev@dpdk.org>; Sun, 19 Oct 2025 22:41:11 +0200 (CEST)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-290dc630a07so16276235ad.1
+ for <dev@dpdk.org>; Sun, 19 Oct 2025 13:41:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760906469;
- x=1761511269; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1760906470;
+ x=1761511270; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=nVUKW8QaGkX5ASWt0cQbVhRbJdzJ7Yyw7kbUFuDi8OE=;
- b=YwXsECJJzZbKKZB5NdkDI+XcooLLGMIZaaP4X3ESRsJBBx4bzzYPZUTPDfdwnuUXw5
- t6v6alG+3ZEcmd2FZw/fYizpUBhdfIWQsCRL6qL0iCKqDsXvE+yi/HucAyAgB7tW/WNd
- T2lNMJm0l4C6wSJeB2qCW1XHMY2U3av0Oiyhw20Qcdof74yerVlOxVU3Vy7BUarvMF5Z
- QYccwftg9VHfdeBEFMMQBzZyjNj3ZOUAAWoVMk0tJOLBQJ/1PVXSAuuB/TtCDZTGI09q
- +ztiS39NbdP8KZ8GBf4JU63IvF3bQs+mqS2LEL44WO+YQbumGcGyEB+SK22XRZx2uMED
- GAqw==
+ bh=0KSFZFqzYjSCeAKKZ7675WKpw9N2xk/TLUgQVGxjhLk=;
+ b=nOlNhhoIk3vj1cEvD5tvoqtgGgw3rAonebPEotCwSE50gEpy3IzQBxxKhHGDvhIRIO
+ 5pPyO61/eFdeA3/jo6tlmY1e40VwJusoCcJGi7CKRysisaGp/PIFR76p9VJZPHHZYYWJ
+ AVLEMWRO9KhWKz6TWxqWMz57AC+DKpX0U3bqFTFaQysBNFD+F+tmoULjGGLngnw1rxXN
+ WSfP6vZ2Y8nSFtel0PezJdnamPiZvoyb18IwJSM14Oh2yi/QygnBaEUc0mJ268rZa++L
+ 3xHc88f9rcqa/utewtyc32JgpHT5CIPIEyEWs1lt9xUUxpEB6jeQkM8jLI9Wv14aDEWe
+ QN8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1760906469; x=1761511269;
+ d=1e100.net; s=20230601; t=1760906470; x=1761511270;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=nVUKW8QaGkX5ASWt0cQbVhRbJdzJ7Yyw7kbUFuDi8OE=;
- b=YmNIHMn6OFUiqMS1qL6iVfFt0POv9Q3UNuWgyK2qoTl785PpUyObKg92PdGLlq+P7P
- MEsDhTFCZ0pGvb5wQbuabdLlFJxCAbk6ySLz9iwsGwItiMfrB2Y3UwbYzj9M5ytP2EFv
- QcRTMkseco7HfeM7GBRTwCmEL+VEHPSplSfVIYIbA5rJAJWaEstQHmcm6PczlJS3h1rd
- Eu6kX9sIAgJTv0JGS6tN9gfi2ovhOhXrMK2Qc4Vz4r41HAcvLpgoY4rdOBWASktx6Xl5
- wS9VxUG48V3iCvphSO4DVG4uv+IbxzjYwmxVUFf5iVYzLqBbRSCWBjoshAthBAWYrqKQ
- 69MQ==
-X-Gm-Message-State: AOJu0Yw0AeuHoiwf/4kRVdVJBHMit4j1vwJN9Mwxr1Xq73On1NSJC2gy
- YEwCPE5fSXSxF9vV5FrqgCmW0T4K9thrlVCaAG6f3ym29dkz/COeF/4pZnF/dM6Ss87aQSt1HN0
- pZCk1Qic=
-X-Gm-Gg: ASbGncsk9SVLqA5pO+A8x2Gaasv8O0T90RBR6KUJ4vdN6yPVkqcJSuHuj3nEYyqLhF8
- rEBEvWXiXvzymhETNE+vNhMF+bU8GVigNRYi0GQ6nw99IrtT/rnJCCAZBzdx1AsVuq/4WJkFxQK
- Ebv1Vej1+nWR5hd8VpderGN1AjhjNhcOsZ8gu8gIwh4Q+t+6jwPZoTpTeCR1BZTxRwXqXOmc0ha
- dawDaOoilj5UI/jAREhlCDLbMpErCb0QfUbWRLbo6icv0Bgh24nHkeMRqiQ5BqGWo0wHyynf+PH
- rBR0gUIF1VvFEycjTbHKta2Yd5minli/7BULb0cT4B0NCE8DTq0rFBczMm5jItxek53IRCYzPW3
- LIYNiLqfLQi3kNxu7PbffOgzcJFlFN8XbdMI1TYZpkzZiTmNuFTvWviH2JqmoblcVNNuQunKNUT
- KwwwX4QGiiokAyU6Wf49rR3lwBn+0T/KMUKQghnrdGzYwVtYhaDQ==
-X-Google-Smtp-Source: AGHT+IFmYMxDmDPSs+brXFthMnArR38OSFealehruIL5YHO0hmmUoZVPkFTKwTFda8y2UUTy+5e0aQ==
-X-Received: by 2002:a17:903:3806:b0:24c:bc02:788b with SMTP id
- d9443c01a7336-290cb27d765mr133039395ad.44.1760906468793; 
- Sun, 19 Oct 2025 13:41:08 -0700 (PDT)
+ bh=0KSFZFqzYjSCeAKKZ7675WKpw9N2xk/TLUgQVGxjhLk=;
+ b=aFHUiVqMgMtEcnwLe+0LUBW91PLjeRjeFq8xUhOVMx+a8hvzRQr9zHEzZuWIk71/GV
+ SOzfnbT+W3wuTYpyHECAWX7ZmxqPAbE5ZKcSFZTHldGgSXj2Kn3uYg+cqAQLg6MtP2QY
+ pNSFx25iOhgo2VOJfIqugpGDBuUCxiZJijsPvKTgni9St1tiWm8Fb/jpbiM4oCk6y5nJ
+ yz0Q6j3zgD/TaY+8eoV1Hw8v8yel5hv6mEIyNmzPACe4r3sLq1AF5loGeIL2ShE/ILxV
+ 3K6tSlSWZtFOVd+ymeC3P/DnZOZ67TKys2SptdVGKC3zzpxWSVJRfqSA7EHbHgFEzTqh
+ IHHw==
+X-Gm-Message-State: AOJu0YwbLegr0JPsskW/BI4wGnf0otq2VgJoB6+X/ioh1UvBGlOCey/J
+ /4OwFK/iRMFiFjGhH2gg/oNEKP3AEsUSgsg8QMbJ9UjhcZ+6V9SjgbIDnhioiuQeojgaUgv4HDE
+ 7NuFc+IU=
+X-Gm-Gg: ASbGncsyl6EIRwYhpQb686DWLup+xkbksk97UkHn1yUhmiNIJIO9f7qjL8RY7OWkLcC
+ DSx+9ekMQpugucF8EZor3Uk43cyK/xGy3nJDyk8vdi/HJWBNj/rUgIj5O2pVG2iIvYoilryjSlH
+ tj8SxXalceuPBD3HPgxgcGi9oINiVJeEYAnszQvPyENIM/4Qif3bq3RvZ4wIYdrwV+gBjr+qHi9
+ MlHN3E7fIZN4PEr9ogzIvMEuQh0zyo5b3bqOP8qEnt+ngpiv3iI36kUuhKdgamm+Bk2h7UGTGdk
+ Bea023p1sQnDWChf29qOZG0DERsGTHzM/IitPnBsp/Cd1gInrmaSlX8xK9saPwdufSlaVie3ioY
+ 5KAzX3qpzHq3kerX99tDf6zV3749dLFuQI07HL/RPx0kFTkA+/HpDCteXH06ULs2hW1ZO+Ntmi7
+ oc/Pf6ymRuhRrCQzIcvzsSDdBAvceKJyv0KbpygjGJ0uaMvuXYCA==
+X-Google-Smtp-Source: AGHT+IEMUGE0m+K/RbW4zjVMtWnK1smRn0Yrn4V6nWHQGSef/xeEUkGiAIXwz1rbwI2Q/wDH59Yzpw==
+X-Received: by 2002:a17:902:fc44:b0:27e:f16f:618b with SMTP id
+ d9443c01a7336-290ca4f9b44mr106214595ad.24.1760906470196; 
+ Sun, 19 Oct 2025 13:41:10 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-292472194b2sm60571935ad.103.2025.10.19.13.41.07
+ d9443c01a7336-292472194b2sm60571935ad.103.2025.10.19.13.41.09
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 19 Oct 2025 13:41:08 -0700 (PDT)
+ Sun, 19 Oct 2025 13:41:09 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 0/2] minor bpf improvements
-Date: Sun, 19 Oct 2025 13:39:57 -0700
-Message-ID: <20251019204106.29043-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH v2 1/2] bpf: add allocation annotations to functions
+Date: Sun, 19 Oct 2025 13:39:58 -0700
+Message-ID: <20251019204106.29043-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251019170040.166372-1-stephen@networkplumber.org>
+In-Reply-To: <20251019204106.29043-1-stephen@networkplumber.org>
 References: <20251019170040.166372-1-stephen@networkplumber.org>
+ <20251019204106.29043-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,19 +84,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Minor update to BPF. Add allocation annotation and remove VLA.
+In commit 80da7efbb4c4 ("eal: annotate allocation functions")
+helper macros were added to provide compiler information to
+detect misuse of alloc/free combinations. This covered many
+of the functions in DPDK but missed the case of data allocated
+by BPF load functions.
 
-v2 - fix build on FreeBsd
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/bpf/rte_bpf.h | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-Stephen Hemminger (2):
-  bpf: add allocation annotations to functions
-  bpf: remove dependency on vla
-
- lib/bpf/bpf_pkt.c   | 16 +++++++++-------
- lib/bpf/meson.build |  2 --
- lib/bpf/rte_bpf.h   | 11 ++++++++---
- 3 files changed, 17 insertions(+), 12 deletions(-)
-
+diff --git a/lib/bpf/rte_bpf.h b/lib/bpf/rte_bpf.h
+index 80ebb0210f..309d84bc51 100644
+--- a/lib/bpf/rte_bpf.h
++++ b/lib/bpf/rte_bpf.h
+@@ -18,6 +18,7 @@
+ 
+ #include <rte_common.h>
+ #include <rte_mbuf.h>
++#include <rte_malloc.h>
+ #include <bpf_def.h>
+ 
+ #ifdef __cplusplus
+@@ -128,7 +129,8 @@ rte_bpf_destroy(struct rte_bpf *bpf);
+  *   - ENOMEM - can't reserve enough memory
+  */
+ struct rte_bpf *
+-rte_bpf_load(const struct rte_bpf_prm *prm);
++rte_bpf_load(const struct rte_bpf_prm *prm)
++	__rte_malloc __rte_dealloc(rte_bpf_destroy, 1);
+ 
+ /**
+  * Create a new eBPF execution context and load BPF code from given ELF
+@@ -152,7 +154,9 @@ rte_bpf_load(const struct rte_bpf_prm *prm);
+  */
+ struct rte_bpf *
+ rte_bpf_elf_load(const struct rte_bpf_prm *prm, const char *fname,
+-		const char *sname);
++		const char *sname)
++	__rte_malloc __rte_dealloc(rte_bpf_destroy, 1);
++
+ /**
+  * Execute given BPF bytecode.
+  *
+@@ -228,7 +232,8 @@ struct bpf_program;
+  *   - ENOTSUP - operation not supported
+  */
+ struct rte_bpf_prm *
+-rte_bpf_convert(const struct bpf_program *prog);
++rte_bpf_convert(const struct bpf_program *prog)
++	__rte_malloc __rte_dealloc_free;
+ 
+ #ifdef __cplusplus
+ }
 -- 
 2.51.0
 
