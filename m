@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F75CCD193
-	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 14:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEABCCCD199
+	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 14:53:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 03F34402D1;
-	Mon, 20 Oct 2025 16:24:12 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B109C40276;
+	Mon, 20 Oct 2025 16:53:10 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id DB5F040276
- for <dev@dpdk.org>; Mon, 20 Oct 2025 16:24:09 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.186.231])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cqyJJ287Dz6M4KG;
- Mon, 20 Oct 2025 22:20:32 +0800 (CST)
-Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
- by mail.maildlp.com (Postfix) with ESMTPS id 5E0981402FC;
- Mon, 20 Oct 2025 22:24:09 +0800 (CST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 82E60400D6
+ for <dev@dpdk.org>; Mon, 20 Oct 2025 16:53:09 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cqyyH2msJz6L4t4;
+ Mon, 20 Oct 2025 22:49:59 +0800 (CST)
+Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
+ by mail.maildlp.com (Postfix) with ESMTPS id 92816140373;
+ Mon, 20 Oct 2025 22:53:06 +0800 (CST)
 Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
+ dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 20 Oct 2025 15:24:09 +0100
+ 15.2.1544.11; Mon, 20 Oct 2025 15:53:06 +0100
 Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
  dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Mon, 20 Oct 2025 15:24:08 +0100
+ Mon, 20 Oct 2025 15:53:06 +0100
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>,
- "dev@dpdk.org" <dev@dpdk.org>, Stephen Hemminger
- <stephen@networkplumber.org>, Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: RE: [PATCH v2] mbuf: optimize segment prefree
-Thread-Topic: [PATCH v2] mbuf: optimize segment prefree
-Thread-Index: AQHcQbomPMgC99SVqEqWL05IZT5b7LTLFsDQ
-Date: Mon, 20 Oct 2025 14:24:08 +0000
-Message-ID: <3d8e07b304524c1b868078cf7cf4c9de@huawei.com>
-References: <20250827213535.21602-1-mb@smartsharesystems.com>
- <20251020120202.80114-1-mb@smartsharesystems.com>
-In-Reply-To: <20251020120202.80114-1-mb@smartsharesystems.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+Subject: RE: [PATCH v2 1/2] bpf: add allocation annotations to functions
+Thread-Topic: [PATCH v2 1/2] bpf: add allocation annotations to functions
+Thread-Index: AQHcQTi8yUX2a4ubQkeic/7SNBg8NLTLH+Yw
+Date: Mon, 20 Oct 2025 14:53:06 +0000
+Message-ID: <ccddf99e58ff48a1bf44a6308a6595ea@huawei.com>
+References: <20251019170040.166372-1-stephen@networkplumber.org>
+ <20251019204106.29043-1-stephen@networkplumber.org>
+ <20251019204106.29043-2-stephen@networkplumber.org>
+In-Reply-To: <20251019204106.29043-2-stephen@networkplumber.org>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
 x-originating-ip: [10.206.138.220]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -56,89 +56,73 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQo+IA0KPiBSZWZhY3RvcmVkIHJ0ZV9wa3RtYnVmX3ByZWZyZWVfc2VnKCkgZm9yIGJvdGggcGVy
-Zm9ybWFuY2UgYW5kIHJlYWRhYmlsaXR5Lg0KPiANCj4gV2l0aCB0aGUgb3B0aW1pemVkIFJURV9N
-QlVGX0RJUkVDVCgpIG1hY3JvLCB0aGUgY29tbW9uIGxpa2VseSBjb2RlIHBhdGgNCj4gbm93IGZp
-dHMgd2l0aGluIG9uZSBpbnN0cnVjdGlvbiBjYWNoZSBsaW5lIG9uIHg4Ni02NCB3aGVuIGJ1aWx0
-IHdpdGggR0NDLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0
-c2hhcmVzeXN0ZW1zLmNvbT4NCj4gLS0tDQo+IHYyOg0KPiAqIEZpeGVkIHR5cG8gaW4gY29tbWl0
-IGRlc2NyaXB0aW9uLg0KPiAqIEZpeGVkIGluZGVudGF0aW9uLg0KPiAqIEFkZGVkIGRldGFpbGVk
-IGRlc2NyaXB0aW9uIHRvIHRoZSBvcHRpbWl6ZWQgUlRFX01CVUZfRElSRUNUKCkgbWFjcm8uDQo+
-ICAgKFN0ZXBoZW4gSGVtbWluZ2VyKQ0KPiAqIEFkZGVkIHN0YXRpY19hc3NlcnQoKSB0byB2ZXJp
-ZnkgdGhhdCB0aGUgb3B0aW1pemVkIFJURV9NQlVGX0RJUkVDVCgpDQo+ICAgbWFjcm8gaXMgdmFs
-aWQsIHNwZWNpZmljYWxseSB0aGF0IHRoZSB0ZXN0ZWQgYml0cyBhcmUgaW4gdGhlIE1TQiBvZiB0
-aGUNCj4gICA2NC1iaXQgZmllbGQuDQo+IC0tLQ0KPiAgbGliL21idWYvcnRlX21idWYuaCAgICAg
-IHwgNTEgKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAgbGliL21i
-dWYvcnRlX21idWZfY29yZS5oIHwgMjcgKysrKysrKysrKysrKysrKysrKysrDQo+ICAyIGZpbGVz
-IGNoYW5nZWQsIDQ2IGluc2VydGlvbnMoKyksIDMyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAt
-LWdpdCBhL2xpYi9tYnVmL3J0ZV9tYnVmLmggYi9saWIvbWJ1Zi9ydGVfbWJ1Zi5oDQo+IGluZGV4
-IDNkZjIyMTI1ZGUuLjIwMDQzOTFmNTcgMTAwNjQ0DQo+IC0tLSBhL2xpYi9tYnVmL3J0ZV9tYnVm
-LmgNCj4gKysrIGIvbGliL21idWYvcnRlX21idWYuaA0KPiBAQCAtMzEsNiArMzEsNyBAQA0KPiAg
-ICogaHR0cDovL3d3dy5rb2hhbGEuY29tL3N0YXJ0L3RjcGlwaXYyLmh0bWwNCj4gICAqLw0KPiAN
-Cj4gKyNpbmNsdWRlIDxzdGRib29sLmg+DQo+ICAjaW5jbHVkZSA8c3RkaW50Lmg+DQo+IA0KPiAg
-I2luY2x1ZGUgPHJ0ZV9jb21tb24uaD4NCj4gQEAgLTE0NTgsNDQgKzE0NTksMzAgQEAgc3RhdGlj
-IGlubGluZSBpbnQNCj4gX19ydGVfcGt0bWJ1Zl9waW5uZWRfZXh0YnVmX2RlY3JlZihzdHJ1Y3Qg
-cnRlX21idWYgKm0pDQo+ICBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSBzdHJ1Y3QgcnRlX21i
-dWYgKg0KPiAgcnRlX3BrdG1idWZfcHJlZnJlZV9zZWcoc3RydWN0IHJ0ZV9tYnVmICptKQ0KPiAg
-ew0KPiAtCV9fcnRlX21idWZfc2FuaXR5X2NoZWNrKG0sIDApOw0KPiAtDQo+IC0JaWYgKGxpa2Vs
-eShydGVfbWJ1Zl9yZWZjbnRfcmVhZChtKSA9PSAxKSkgew0KPiAtDQo+IC0JCWlmICghUlRFX01C
-VUZfRElSRUNUKG0pKSB7DQo+IC0JCQlydGVfcGt0bWJ1Zl9kZXRhY2gobSk7DQo+IC0JCQlpZiAo
-UlRFX01CVUZfSEFTX0VYVEJVRihtKSAmJg0KPiAtCQkJICAgIFJURV9NQlVGX0hBU19QSU5ORURf
-RVhUQlVGKG0pICYmDQo+IC0JCQkgICAgX19ydGVfcGt0bWJ1Zl9waW5uZWRfZXh0YnVmX2RlY3Jl
-ZihtKSkNCj4gLQkJCQlyZXR1cm4gTlVMTDsNCj4gLQkJfQ0KPiAtDQo+IC0JCWlmIChtLT5uZXh0
-ICE9IE5VTEwpDQo+IC0JCQltLT5uZXh0ID0gTlVMTDsNCj4gLQkJaWYgKG0tPm5iX3NlZ3MgIT0g
-MSkNCj4gLQkJCW0tPm5iX3NlZ3MgPSAxOw0KPiArCWJvb2wgcmVmY250X25vdF9vbmU7DQo+IA0K
-PiAtCQlyZXR1cm4gbTsNCj4gKwlfX3J0ZV9tYnVmX3Nhbml0eV9jaGVjayhtLCAwKTsNCj4gDQo+
-IC0JfSBlbHNlIGlmIChfX3J0ZV9tYnVmX3JlZmNudF91cGRhdGUobSwgLTEpID09IDApIHsNCj4g
-KwlyZWZjbnRfbm90X29uZSA9IHVubGlrZWx5KHJ0ZV9tYnVmX3JlZmNudF9yZWFkKG0pICE9IDEp
-Ow0KPiArCWlmIChyZWZjbnRfbm90X29uZSAmJiBfX3J0ZV9tYnVmX3JlZmNudF91cGRhdGUobSwg
-LTEpICE9IDApDQo+ICsJCXJldHVybiBOVUxMOw0KPiANCj4gLQkJaWYgKCFSVEVfTUJVRl9ESVJF
-Q1QobSkpIHsNCj4gLQkJCXJ0ZV9wa3RtYnVmX2RldGFjaChtKTsNCj4gLQkJCWlmIChSVEVfTUJV
-Rl9IQVNfRVhUQlVGKG0pICYmDQo+IC0JCQkgICAgUlRFX01CVUZfSEFTX1BJTk5FRF9FWFRCVUYo
-bSkgJiYNCj4gLQkJCSAgICBfX3J0ZV9wa3RtYnVmX3Bpbm5lZF9leHRidWZfZGVjcmVmKG0pKQ0K
-PiAtCQkJCXJldHVybiBOVUxMOw0KPiAtCQl9DQo+ICsJaWYgKHVubGlrZWx5KCFSVEVfTUJVRl9E
-SVJFQ1QobSkpKSB7DQo+ICsJCXJ0ZV9wa3RtYnVmX2RldGFjaChtKTsNCj4gKwkJaWYgKFJURV9N
-QlVGX0hBU19FWFRCVUYobSkgJiYNCj4gKwkJCQlSVEVfTUJVRl9IQVNfUElOTkVEX0VYVEJVRiht
-KSAmJg0KPiArCQkJCV9fcnRlX3BrdG1idWZfcGlubmVkX2V4dGJ1Zl9kZWNyZWYobSkpDQo+ICsJ
-CQlyZXR1cm4gTlVMTDsNCj4gKwl9DQo+IA0KPiAtCQlpZiAobS0+bmV4dCAhPSBOVUxMKQ0KPiAt
-CQkJbS0+bmV4dCA9IE5VTEw7DQo+IC0JCWlmIChtLT5uYl9zZWdzICE9IDEpDQo+IC0JCQltLT5u
-Yl9zZWdzID0gMTsNCj4gKwlpZiAocmVmY250X25vdF9vbmUpDQo+ICAJCXJ0ZV9tYnVmX3JlZmNu
-dF9zZXQobSwgMSk7DQo+ICsJaWYgKG0tPm5iX3NlZ3MgIT0gMSkNCj4gKwkJbS0+bmJfc2VncyA9
-IDE7DQo+ICsJaWYgKG0tPm5leHQgIT0gTlVMTCkNCj4gKwkJbS0+bmV4dCA9IE5VTEw7DQo+IA0K
-PiAtCQlyZXR1cm4gbTsNCj4gLQl9DQo+IC0JcmV0dXJuIE5VTEw7DQo+ICsJcmV0dXJuIG07DQo+
-ICB9DQo+IA0KPiAgLyoqDQo+IGRpZmYgLS1naXQgYS9saWIvbWJ1Zi9ydGVfbWJ1Zl9jb3JlLmgg
-Yi9saWIvbWJ1Zi9ydGVfbWJ1Zl9jb3JlLmgNCj4gaW5kZXggYTBkZjI2NWI1ZC4uNDFmNDBlMTk2
-NyAxMDA2NDQNCj4gLS0tIGEvbGliL21idWYvcnRlX21idWZfY29yZS5oDQo+ICsrKyBiL2xpYi9t
-YnVmL3J0ZV9tYnVmX2NvcmUuaA0KPiBAQCAtNzE1LDYgKzcxNSwzMyBAQCBzdHJ1Y3QgcnRlX21i
-dWZfZXh0X3NoYXJlZF9pbmZvIHsNCj4gICNkZWZpbmUgUlRFX01CVUZfRElSRUNUKG1iKSBcDQo+
-ICAJKCEoKG1iKS0+b2xfZmxhZ3MgJiAoUlRFX01CVUZfRl9JTkRJUkVDVCB8DQo+IFJURV9NQlVG
-X0ZfRVhURVJOQUwpKSkNCj4gDQo+ICsjaWYgZGVmaW5lZChSVEVfVE9PTENIQUlOX0dDQykgJiYg
-ZGVmaW5lZChSVEVfQVJDSF9YODYpDQo+ICsvKiBPcHRpbWl6YXRpb24gZm9yIGNvZGUgc2l6ZS4N
-Cj4gKyAqIEdDQyBvbmx5IG9wdGltaXplcyBzaW5nbGUtYml0IE1TQiB0ZXN0cyB0aGlzIHdheSwg
-c28gd2UgZG8gaXQgYnkgaGFuZCB3aXRoDQo+IG11bHRpLWJpdC4NCj4gKyAqDQo+ICsgKiBUaGUg
-ZmxhZ3MgUlRFX01CVUZfRl9JTkRJUkVDVCBhbmQgUlRFX01CVUZfRl9FWFRFUk5BTCBhcmUgYm90
-aCBpbg0KPiB0aGUgTVNCIG9mIHRoZQ0KPiArICogNjQtYml0IG9sX2ZsYWdzIGZpZWxkLCBzbyB3
-ZSBvbmx5IGNvbXBhcmUgdGhpcyBvbmUgYnl0ZSBpbnN0ZWFkIG9mIGFsbCA2NCBiaXRzLg0KPiAr
-ICogT24gbGl0dGxlIGVuZGlhbiBhcmNoaXRlY3R1cmUsIHRoZSBNU0Igb2YgYSA2NC1iaXQgaW50
-ZWdlciBpcyBhdCBieXRlIG9mZmVzdCA3Lg0KPiArICoNCj4gKyAqIE5vdGU6IFRlc3RlZCB1c2lu
-ZyBHQ0MgdmVyc2lvbiAxNi4wLjAgMjAyNTEwMTkgKGV4cGVyaW1lbnRhbCkuDQo+ICsgKg0KPiAr
-ICogV2l0aG91dCB0aGlzIG9wdGltaXphdGlvbiwgR0NDIGdlbmVyYXRlcyAxNyBieXRlcyBvZiBp
-bnN0cnVjdGlvbnM6DQo+ICsgKiAgICAgIG1vdmFicyByYXgsMHg2MDAwMDAwMDAwMDAwMDAwICAg
-ICAgIC8vIDEwIGJ5dGVzDQo+ICsgKiAgICAgIGFuZCAgICByYXgsUVdPUkQgUFRSIFtyZGkrMHgx
-OF0gICAgIC8vIDQgYnl0ZXMNCj4gKyAqICAgICAgc2V0ZSAgIGFsICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgLy8gMyBieXRlcw0KPiArICogV2l0aCB0aGlzIG9wdGltaXphdGlvbiwgR0NDIGdl
-bmVyYXRlcyBvbmx5IDcgYnl0ZXMgb2YgaW5zdHJ1Y3Rpb25zOg0KPiArICogICAgICB0ZXN0ICAg
-QllURSBQVFIgW3JkaSsweDFmXSwweDYwICAgICAvLyA0IGJ5dGVzDQo+ICsgKiAgICAgIHNldGUg
-ICBhbCAgICAgICAgICAgICAgICAgICAgICAgICAgIC8vIDMgYnl0ZXMNCj4gKyAqLw0KPiArI3Vu
-ZGVmIFJURV9NQlVGX0RJUkVDVA0KPiArI2RlZmluZSBSVEVfTUJVRl9ESVJFQ1QobWIpIFwNCj4g
-KwkoISgoKGNvbnN0IHVpbnQ4X3QgKikobWIpKVtvZmZzZXRvZihzdHJ1Y3QgcnRlX21idWYsIG9s
-X2ZsYWdzKSArIDddICYgXA0KPiArCSh1aW50OF90KSgoUlRFX01CVUZfRl9JTkRJUkVDVCB8IFJU
-RV9NQlVGX0ZfRVhURVJOQUwpID4+ICg3ICoNCj4gOCkpKSkNCj4gK3N0YXRpY19hc3NlcnQoKChS
-VEVfTUJVRl9GX0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRFUk5BTCkgPj4gKDcgKiA4KSkNCj4g
-PDwgKDcgKiA4KSA9PQ0KPiArCShSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRF
-Uk5BTCksDQo+ICsJIlJURV9NQlVGX0ZfSU5ESVJFQ1QgYW5kL29yIFJURV9NQlVGX0ZfRVhURVJO
-QUwgYXJlIG5vdCBpbg0KPiBNU0IuIik7DQo+ICsjZW5kaWYNCj4gKw0KPiAgLyoqIFVuaW5pdGlh
-bGl6ZWQgb3IgdW5zcGVjaWZpZWQgcG9ydC4gKi8NCj4gICNkZWZpbmUgUlRFX01CVUZfUE9SVF9J
-TlZBTElEIFVJTlQxNl9NQVgNCj4gIC8qKiBGb3IgYmFja3dhcmRzIGNvbXBhdGliaWxpdHkuICov
-DQo+IC0tDQoNCkFja2VkLWJ5OiBLb25zdGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnll
-dkBodWF3ZWkuY29tPg0KDQo+IDIuNDMuMA0KDQo=
+
+
+> -----Original Message-----
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Sent: Sunday, October 19, 2025 9:40 PM
+> To: dev@dpdk.org
+> Cc: Stephen Hemminger <stephen@networkplumber.org>; Konstantin Ananyev
+> <konstantin.ananyev@huawei.com>
+> Subject: [PATCH v2 1/2] bpf: add allocation annotations to functions
+>=20
+> In commit 80da7efbb4c4 ("eal: annotate allocation functions")
+> helper macros were added to provide compiler information to
+> detect misuse of alloc/free combinations. This covered many
+> of the functions in DPDK but missed the case of data allocated
+> by BPF load functions.
+>=20
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  lib/bpf/rte_bpf.h | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/lib/bpf/rte_bpf.h b/lib/bpf/rte_bpf.h
+> index 80ebb0210f..309d84bc51 100644
+> --- a/lib/bpf/rte_bpf.h
+> +++ b/lib/bpf/rte_bpf.h
+> @@ -18,6 +18,7 @@
+>=20
+>  #include <rte_common.h>
+>  #include <rte_mbuf.h>
+> +#include <rte_malloc.h>
+>  #include <bpf_def.h>
+>=20
+>  #ifdef __cplusplus
+> @@ -128,7 +129,8 @@ rte_bpf_destroy(struct rte_bpf *bpf);
+>   *   - ENOMEM - can't reserve enough memory
+>   */
+>  struct rte_bpf *
+> -rte_bpf_load(const struct rte_bpf_prm *prm);
+> +rte_bpf_load(const struct rte_bpf_prm *prm)
+> +	__rte_malloc __rte_dealloc(rte_bpf_destroy, 1);
+>=20
+>  /**
+>   * Create a new eBPF execution context and load BPF code from given ELF
+> @@ -152,7 +154,9 @@ rte_bpf_load(const struct rte_bpf_prm *prm);
+>   */
+>  struct rte_bpf *
+>  rte_bpf_elf_load(const struct rte_bpf_prm *prm, const char *fname,
+> -		const char *sname);
+> +		const char *sname)
+> +	__rte_malloc __rte_dealloc(rte_bpf_destroy, 1);
+> +
+>  /**
+>   * Execute given BPF bytecode.
+>   *
+> @@ -228,7 +232,8 @@ struct bpf_program;
+>   *   - ENOTSUP - operation not supported
+>   */
+>  struct rte_bpf_prm *
+> -rte_bpf_convert(const struct bpf_program *prog);
+> +rte_bpf_convert(const struct bpf_program *prog)
+> +	__rte_malloc __rte_dealloc_free;
+>=20
+>  #ifdef __cplusplus
+>  }
+> --
+
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+
+> 2.51.0
+
