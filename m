@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D21C0CCD199
-	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C071CCD19F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:37:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E6185406BB;
-	Mon, 20 Oct 2025 18:36:41 +0200 (CEST)
-Received: from egress-ip11b.ess.de.barracuda.com
- (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
- by mails.dpdk.org (Postfix) with ESMTP id 22641402D3
- for <dev@dpdk.org>; Mon, 20 Oct 2025 18:36:34 +0200 (CEST)
-Received: from AS8PR04CU009.outbound.protection.outlook.com
- (mail-westeuropeazon11021094.outbound.protection.outlook.com [52.101.70.94])
- by mx-outbound16-221.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
- cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Mon, 20 Oct 2025 16:36:32 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id 5BE2840BA0;
+	Mon, 20 Oct 2025 18:36:44 +0200 (CEST)
+Received: from egress-ip42a.ess.de.barracuda.com
+ (egress-ip42a.ess.de.barracuda.com [18.185.115.201])
+ by mails.dpdk.org (Postfix) with ESMTP id D5AFC40672
+ for <dev@dpdk.org>; Mon, 20 Oct 2025 18:36:37 +0200 (CEST)
+Received: from MRWPR03CU001.outbound.protection.outlook.com
+ (mail-francesouthazon11021105.outbound.protection.outlook.com
+ [40.107.130.105]) by mx-outbound9-130.eu-central-1a.ess.aws.cudaops.com
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+ Mon, 20 Oct 2025 16:36:35 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l2Z+LPPS0NXQLEr69gbOsjQMltpJiX35d698OT65JEND0miYGrZuh5m8WtAgxdMfDPwm9nkJ1EsYKJ9p4qcVQk9BWVOmT8CY5GbFy3jjx2+ueKdah7hh8Wsj+64NbCJEM7i6KcTaw/MWuU6WkN0IJDBPB0rAzNRVPCaEmKAOKvIkEYWfzD+lo2BnieffvXxS8bVE7pFnZvZPK+JFU/41ALSkHzmJzkYFN97K+lBNwl2+VetgodA9E+Onm/pzfZCu58udxRRhD9rBvHz0AFYEkmicLnOMfZTtSTT2QRYTDdMrzwA/aMtC4Fc7/paPDpDDOPNPI1dcI0KaRSY9vPVf1Q==
+ b=qH02ltmGdWWu8CI9jnKXFXnlxwpCc6e5v6ePLR7+BCDhyL8/g0dmxC9oTHCTXmNWSrXD22h1VcjOh6RJq+3jsrAmq0rZiNhz/ioJe37e5VK/xhRgUnQiKTMWZYp+fEO20s47rizoxaXTRCB5xp8C2JOHzvypdeFJ+7zfprGFZzj8NYGgcAlevjhseFiSkjkmxQBiMTvc81kb6ocxWaL04RjBaOZxVaLJOC3Cnpj2B++9uce9JR/U3nJjaI6DzbZAjeCh8HeXB9q28pHgthpx31eE8UAHp6RPg1tfvnNNX16Tp4Oazu82N7WXDJyKI9Vhcoi1imJOWywwIXTr3ELAvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BO6OUAEr4TkJS+jCwxt6Swrvhs3gascSHLxN19sRxxM=;
- b=DSdIXpdMKFgZFSuAe21LzDkmIAYZUuT0xgH2vQUULsFDsBxKD+6NELKJsnAsRD7KKED1dZjw23FaEef0ZqBwpj/LcaOS4EViFRbaBFi6naXt1D5CS+kOF8qClvgrXerVieq2ZIt4Vqcmrung2U0NlmHr4C4EQWuZOpr8sQ538sU/K4wJguQBhftVsYvqP+Zj55/Bi6uUs1/AsNC7WYkwYDEg5hMRKS+LmxrkHjoh7xoYUQ2dDUaHmv35H/3vKkj67TAIt8jCUxueScXoWe29K68Ev+cO7C9Vke3Pb0nity2RK1EptXMVTRB9j8Mv4dA1db3kWOD5tWMPVy3m+jc23Q==
+ bh=EF7iv9UsIbafGGj4Fi1eSy0lKGhKOV4B9B6zCvKy7WQ=;
+ b=ELMYp61GL7+NroUyE27rqpxrO7m7oSBUpYjElo2G0XS5Lpt6Yg2IvDUUYd2XynOr82n74BAL6V0EOrXSQOhP/WmSry573TjK3KJBsiammIW9zHRbtyxDMt/2feekVcujSHG5Q++nkL7wQBUzcNgws+vCf8OPGoVVU4OXhZ7tu46oZ9lQjLr9Q8Tz4PFq8Qgsu/PGJCcTyY6kHFs+xApt/Rr6SD5rd2iND48+FmfaJpGTIwMtbB9XpOYJ+Zs0iDTCsqH3Ejzss+Y2ao261kJGOLw0ZaoxcLkrx83JrZNg6uPbUwMlyVeMifk2K2qr1O2i6npUbfVOMaXfuSqdqzAXsQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,16 +30,16 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BO6OUAEr4TkJS+jCwxt6Swrvhs3gascSHLxN19sRxxM=;
- b=KVVfvAM/XLe9PqTaRlK+Vo32Y/EM7EeG2rm2lDliW8BNtlxwfGpUyXHqVGbYl0u6RnIItgYa15OPP0Upc+0mYWg2VmebgNkFdlUazqSknGo8vCNUMAbmnjyjAKN6G55Dha6JIVfSIywkjc84HvoNkV66mdnZQf70eH9gA/6W9q8=
-Received: from AS4P191CA0027.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:5d9::10)
- by AM9P190MB1298.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:26e::8) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=EF7iv9UsIbafGGj4Fi1eSy0lKGhKOV4B9B6zCvKy7WQ=;
+ b=DOS9FuaJZJz5/4Vffg+XTKPuERcSUf8NKU1TD1ZzZ9088vrO+y6uJUpdORkWYWn/jw5PDY+WUpmAGI1OST4j/3l/yi937XyO9ReEoZ1ZffVLJmvwFOi9AWCSo+mfnAQCleay3xFOB/lFblILfd7PoP7Z8/GJ0CSkb2slaaXh/N0=
+Received: from AS4P191CA0025.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:5d9::15)
+ by AS1P190MB1774.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:4a8::15)
+ with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.11; Mon, 20 Oct
- 2025 16:36:30 +0000
+ 2025 16:36:34 +0000
 Received: from AMS0EPF0000019B.eurprd05.prod.outlook.com
- (2603:10a6:20b:5d9:cafe::b9) by AS4P191CA0027.outlook.office365.com
- (2603:10a6:20b:5d9::10) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:20b:5d9:cafe::87) by AS4P191CA0025.outlook.office365.com
+ (2603:10a6:20b:5d9::15) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.16 via Frontend Transport; Mon,
  20 Oct 2025 16:36:28 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  AMS0EPF0000019B.mail.protection.outlook.com (10.167.16.247) with Microsoft
- SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:36:30
+ SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:36:34
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v1 05/24] net/ntnic: migrate adapter mon thread to service
-Date: Mon, 20 Oct 2025 18:35:56 +0200
-Message-ID: <20251020163620.282312-6-sil-plv@napatech.com>
+Subject: [PATCH v1 10/24] net/ntnic: remove unused functions
+Date: Mon, 20 Oct 2025 18:36:01 +0200
+Message-ID: <20251020163620.282312-11-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20251020163620.282312-1-sil-plv@napatech.com>
 References: <20250908141740.1312268-2-sil-plv@napatech.com>
@@ -67,72 +67,71 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF0000019B:EE_|AM9P190MB1298:EE_
+X-MS-TrafficTypeDiagnostic: AMS0EPF0000019B:EE_|AS1P190MB1774:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 147b6808-4b55-439c-a52f-08de0ff6d2bb
+X-MS-Office365-Filtering-Correlation-Id: 6f07f34c-7b27-4e74-392d-08de0ff6d4ec
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700013|376014|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?4pGu+Ns5K7LQTzxHsKLwuWt/jaB/I4vMEICIPF3aAsyZ3mX10eC6ZVE0nsfk?=
- =?us-ascii?Q?SmFIUDLsduEyiy6ne2FjvzgaGwhyVEPFCHpEIaODT1YM+GuwmwpTLjsgVWWe?=
- =?us-ascii?Q?T5QYUndVHcHRnNvPpARzC4VSQowGdYFykQGABfonMNEq93Twhc3x8myxyW+3?=
- =?us-ascii?Q?jAOvFP8DdXh5zuAyrd+nsVpH1j3+QJyEwm4LnuRlzx9h1hSWBmbevKpROmrj?=
- =?us-ascii?Q?RCrGrQTwsFoivBdIh0RzKrtAd7ypxaM3oG/AGs/87PmlSfdM6ucrwOJ5hEqc?=
- =?us-ascii?Q?bM3oI4LkvT2Yhvd7ug4rQsbSAhS3VpI7Z7cGhAijAkaE1sMmk1uPubyJtUzs?=
- =?us-ascii?Q?/EwBjGo9lBSidf2ph1Qd0/BaDo45UNZrdz1d0d5WDLoh6cahVf0WNmvfVAG5?=
- =?us-ascii?Q?sJFXIQ0FrIWQfpN2Dy4UWyAI96ub43GG1NDn07wjjP9hoUP2QNnP8szMZsUP?=
- =?us-ascii?Q?SV3nNWGicXpg60KBEh7EqD5ROH4wmglS/yXI7sP9KEgwlL3OMXwcNdvPonOA?=
- =?us-ascii?Q?XjbQdlZvcg9GzGUvyDjSGVhhRnj0Yfb1JNXZh/TJoqEYeWmzUcGZwKdYT/+w?=
- =?us-ascii?Q?6RfQhmTitD69aQ/aBB2Wtn6RsYctHacq4ZxWQwgDtZJnb2BCHFXfiWbv3lXw?=
- =?us-ascii?Q?QlQVdbVzqfhiZe2uA0BcmY+2Hr7wC78tIQX4A/zuVMoWhHjjEmJHra/9ZhfR?=
- =?us-ascii?Q?xpQxo1MFKMVJfhzdgDwjVgXK6CBs1mp6YZ9S0VV5CSpKhcz9JxrXEJVHa6EI?=
- =?us-ascii?Q?0V7dAqv4EBmwbznb5vbUYHMHd8V1yAXQcfqXUpwc0Np4OO/LnBpfqMC/hZ+I?=
- =?us-ascii?Q?Ees+TneaIQ9Dc4iv+pwytt5RnWn5b2qt/umdQ8ls0DEunm9JSKrMM7Hf0WPD?=
- =?us-ascii?Q?aJ5PHl7iPkd1GZWxJ7B01V6sk5Re3o6otIRubN4FGX30gW/Z5sdm/3S4OxNF?=
- =?us-ascii?Q?elWbohMfYhlY+BQFhbiIxEbcetc+XEZLmJTcOu0HK1Ki/GCHAdL+58u3Uqt4?=
- =?us-ascii?Q?s122lakEV1wn9nJNWSq+pHSIeG9ssfjFWZyUd8ScTSYPlMZVve9ZYJeVg/p7?=
- =?us-ascii?Q?bHRZSn6Q7UllHPPQHZM4lKura2IDoZ0gvHdqmDcy3T/SXLTXOiqKMz+mh7e1?=
- =?us-ascii?Q?SKOq4Xjc711VgDdS3o1bO1GMybvbMFWshBaVGPi6c3YbQsTEhP45RnDcG7KK?=
- =?us-ascii?Q?oE18tz71rGLuN0N10H1P8B6HV7ABd26BOvwGXhhkZRi+UMxyl6zrVQIrfSra?=
- =?us-ascii?Q?gFOF0oT+7L7l81q0++wje6/n+2z1UK9oHmOZTmE6sgBjwHXbNnrCpKidhfsj?=
- =?us-ascii?Q?bR9JMC2GlfoJzhkWorGGilgLaFPPC4mqb/WeFM0oPxdA0wrVAa4Dle8RX9jn?=
- =?us-ascii?Q?r0WGVQRFNFJFDV3VRVWeTOrdN6z+8dHOEKlwGN2TwvDEySsIvcjXKQMw36UC?=
- =?us-ascii?Q?pVbs6w8z78M480fSSDgHZdTlaBOEGlbHoDh23KMSIE9MQol0nWTc1pNyxHIQ?=
- =?us-ascii?Q?8uerf7QQG9exSqbuO4vByFowQrrPNpJE8gHLVFVns6psRTdLGKKNg0ox6QH9?=
- =?us-ascii?Q?9Izfgh0SIuZG7PeQsRo=3D?=
+ ARA:13230040|1800799024|376014|36860700013|82310400026; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?mIOS1cGpm5uC3q5lGeSO7CsRXnvchzGpgW/S3mD88fuD5Wxa05Y55WlaG2Ry?=
+ =?us-ascii?Q?rhydXgEEmWWUZaCqjXqJH4VcWdm4+yH6bSey0fLW9oQJW3fZFpLilSasP3bs?=
+ =?us-ascii?Q?8ZH+1P08VD+xVCijbiyLSAcD6NUJpHPH8Jii6gN2Z3RXDWisdB5iAseqoMz1?=
+ =?us-ascii?Q?341voq8HLH7qGcJJ8109BGpObwFY97k0jyQ0XWtikP8SOXBu/k47dE+F+D3q?=
+ =?us-ascii?Q?T1L4fgnRe0iZ9sKW3EJR3KClUL/t6qiIvfAa1ils155y0SNo1lO/d99TKeQ1?=
+ =?us-ascii?Q?ra2eq15sDbKCQ94DA6zNhDy76z/P3074AdcN0wMxrhjrjNxcaTZ77CrPy0wP?=
+ =?us-ascii?Q?CmBuDrLcVWJRLa/UTZ+0CAWuxbctj7o3ATceMxZp554Z1paoj9sC/iX2VVVm?=
+ =?us-ascii?Q?ajKzB0Q2QIeETTyNdKUfEFs10965wHkwIBfG/YdBRT1iUJX2uLRE64zQfnx8?=
+ =?us-ascii?Q?S12Hz1qwwMI9YbkxLK44EHNRMcPE2aPIaxFi/i9JVoaAcDma+GPhRDewJF8U?=
+ =?us-ascii?Q?5a/UbM80oaUj5CP3+PKZu4bDciCYm0vXoa6XS0oFTxodhcAHDjRTvgqgLv5z?=
+ =?us-ascii?Q?JchlXw+nNptkUPIMr2h/QnaFUTy5zgm1528r2KPNfLtPyPfJtL30qvRrgWkn?=
+ =?us-ascii?Q?bm5EYiCGPCv/vv7pUnAry5+VSN/uOufj14c8rFWbqCRYl5gR8MjfjVkkZWsq?=
+ =?us-ascii?Q?5ZXUFI86RpGvD+VCHObVBZfI9ZABTNx+WqMYzhbIvK6A07SqPfVjeWuMaVDi?=
+ =?us-ascii?Q?I7siq3N38HKYjdBG7teL9pBPayXmXizrYPbZrRUIGAFYL/Gv6rla59kXL/gp?=
+ =?us-ascii?Q?FJAI24kVzDNXy6RTl1pqdg/52fyQupYdbcCFiRYj9uwdedU8TIfmqKokHNZF?=
+ =?us-ascii?Q?HnlZ9zwve2j74o7GLQ5ntxtY4+XY9waAkegnDr/p1hTKpWXy7EGtbE64EyXU?=
+ =?us-ascii?Q?tDk5KbLdXmL7TImzrMk+BdVPnI2P26tR9ZNEYzcxFuq3wfZrf22/eApGGWhE?=
+ =?us-ascii?Q?LFVlF+UdHTsx1IXO0CSU4A01gFQHLeQp8NPCOUVzsFQddSDAXN8D1bZfn2sC?=
+ =?us-ascii?Q?yvkEtH3sHcJkb5dKJ1yEvYEIfPQBvUnWneVpE0vB5bu3bC7iY7vN+qEg5zAw?=
+ =?us-ascii?Q?EBP0uhUQe1jMuOy9irZ8k6oEGTM2MrYogVKBwKRrxGYu7OhntFJUA5pw3ThU?=
+ =?us-ascii?Q?dBu2KiBNMo3lpUQ2rY74dNjKIjQfr2zmg7+5lmso9snyxhz0Q8/XPyKLoc+c?=
+ =?us-ascii?Q?Wh9cuPKYG7sultCXrtV8YQbExzNJ9eJiacwaCPmF3Z/McFkbOB2QxQaFJljz?=
+ =?us-ascii?Q?IPhOmf8LF4vY7yVeV4YAJUvDYpScPN4UxATwO7SBcyG3NN3KEWYtudQZYjYz?=
+ =?us-ascii?Q?yqAVOnCjcHtSDQrujYpt2G7zJQo077c98H9aEgEx9xTem2ozD9DLY1CF7ptz?=
+ =?us-ascii?Q?ZyiiBBgnZAhF67Bf8Y0jbgR8hXuK4cNeFOeluym8i9QlYN3uZLshYGK7Wkxg?=
+ =?us-ascii?Q?piUI3EVJJP/q67UbA46Cp4IfP0o8quU6BlkeCSyZ/yPRnzbR2qz0HAHAYaEa?=
+ =?us-ascii?Q?GAcDjFjtKuRrdG63iPc=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);
+ CAT:NONE; SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: wsOtcvUV0UsXv2m7ZSpAD+mnfsuyicnP21bINWgDXiIHHj+l6IuX+f1BOY4zOy6dSziD6gMlBC1F3XcPTbiYxqmF0xcj7gQ+I3jijGY516KpDv0c00NFANPl28sQtlfgO3Ras2wlh+URVgBENhu/i6D6HK98O7B8Kjly6U/8PIRYXSMFGuY7/TDCwnandRWp1qC6eTTOShDIHX3GS4NDLis6/HUDPIJHERNZYIttUIOHHLKoYXTfNFA9FA4xR9nPcvcSfCqTYqItVw/08Zh9SsgpuY2fvj3NqLkyg8NXeSsxuDaCpPhk3t8/n0KuO997k4yngPxkcYU7zpc8x0FZHBBSEyH6VW7nUNXckRV7o/j17UdStcsg4jhfPGkzETczH3NecdNhpijL+WnwUgCAyv3hTPy6ASrWfgPdmbiSlH1KWkUu8heBMCaIQB9hQvDvqqcAsWGqYgtXgngnFHg8QwY6YKsSQL/vqryFhw34nle9bfhgj9Z8ELoh4spOpKoj0LbUN+IhTcs/88JU1BdZooP3ljH/OtYBvpOlLH+LlRDgRO25mjrcMrUgCDsGWbk2KxvRTpGVYRTdlkREQBNSGfHtlytCl5J4/mW7jGeXScwlq3YTIot6NhuAmrEGGA6GhwNHK2FqMQTj/iBgk+AENHRf88FSn6Jh7oeWBKntFJQ=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: uU87RCs9pe/VU+MLRWAoJhGuSIlbnxo3MzhelC3+LrYTdjg5KH2DVZQhEk9q0YnsM7UBW/gwuWyWpEHNXpCxI2BqCBn8DCm4ok4PriaCT7YTvHLC2se/S3Sisj1ai0Lwo+z8ygJKCmTB7WzFl4R7NlZAwXtwbqXN4/oEhYp94MZVduzj0/6yy7yqdn0uMNRG6dEW27xHOfkwGwe2ONXYBDfFluWH498qXOax4GCd7RG2E44AKR1SEJRcvkNOqeEoUDGTGmpG2IV76YXotw25qhbHBfdET50/pizCAajrZNb5HtfTTZr6K7BvrWJytuGyWshXSxyDVC2pfN4tqqahgRUxVcr7r2fBKfiDPsRGSiIRz1kWSQDcuktWSQzFbjTPuxNCmoJKpGYytSzlpFT7zDwsle6+cvnWyE/fwA58xBzdFfEs3MV8gmiSLTMsyZ7v3IQj4HbQvee4s+wqEotmPEySJzrrMVv7zv+37z51c5rdEfgg/NUovCL2/H7tJx7rSsXJEMkZqfnOXrVEUOE7fzIJWjr+zFkPI7lbv4A9LKSiE8YLSmrvHykaQGtzzWG2zI/6YAi75MGz+azuZBo9wFjSyG43YbHRt3ZxrvZ7RGWNrTekzLnJgbD0SEVz1m4l7J/DI11zjTduk336/np2G7lMCQNN+1ts5Gwji3JZsq8=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:36:30.3977 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 147b6808-4b55-439c-a52f-08de0ff6d2bb
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:36:34.0683 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f07f34c-7b27-4e74-392d-08de0ff6d4ec
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AMS0EPF0000019B.eurprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9P190MB1298
-X-BESS-ID: 1760978191-304317-25451-11745-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1P190MB1774
+X-BESS-ID: 1760978195-302434-10213-72805-1
 X-BESS-VER: 2019.1_20251001.1803
-X-BESS-Apparent-Source-IP: 52.101.70.94
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkaWRhaWQGYGUNTCyMTczMw4Nd
- XE0MTQ0tzEJNHIODkpzdAgJSktxcjCQqk2FgBeFZrMQgAAAA==
-X-BESS-Outbound-Spam-Score: 0.50
+X-BESS-Apparent-Source-IP: 40.107.130.105
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoamBuZGQGYGUNQ80cQg0dggLQ
+ 0oZGGcZGCalJZiapxkZGxubm5smZSiVBsLAPda2vxCAAAA
+X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.268348 [from 
- cloudscan22-122.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan22-174.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
- 0.50 BSF_RULE7568M          META: Custom Rule 7568M 
  0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS113687 scores of
- KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS113687 scores of
+ KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -147,894 +146,511 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The adapter monitor service is responsible for link state management.
+Remove unused functions from various files in the ntnic PMD.
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- drivers/net/ntnic/adapter/nt4ga_adapter.c     |  25 +-
- .../net/ntnic/include/common_adapter_defs.h   |  15 -
- drivers/net/ntnic/include/nt4ga_adapter.h     |   3 -
- drivers/net/ntnic/include/ntnic_stat.h        |   2 +-
- drivers/net/ntnic/include/ntos_drv.h          |   2 +-
- .../link_mgmt/link_100g/nt4ga_link_100g.c     | 303 +++++++++--------
- .../link_agx_100g/nt4ga_agx_link_100g.c       | 306 ++++++++++--------
- drivers/net/ntnic/ntutil/nt_service.c         |   6 +
- drivers/net/ntnic/rte_pmd_ntnic.h             |   1 +
- 9 files changed, 334 insertions(+), 329 deletions(-)
- delete mode 100644 drivers/net/ntnic/include/common_adapter_defs.h
+ drivers/net/ntnic/nthw/core/nthw_hif.c        | 90 -------------------
+ drivers/net/ntnic/nthw/core/nthw_mac_pcs.c    | 11 ---
+ drivers/net/ntnic/nthw/core/nthw_pcie3.c      | 87 ------------------
+ .../net/ntnic/nthw/core/nthw_pcm_nt400dxx.c   |  5 --
+ drivers/net/ntnic/nthw/core/nthw_rpf.c        | 14 ---
+ .../ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c   |  6 --
+ .../net/ntnic/nthw/model/nthw_fpga_model.c    | 86 ------------------
+ drivers/net/ntnic/ntutil/nt_util.c            | 51 -----------
+ 8 files changed, 350 deletions(-)
 
-diff --git a/drivers/net/ntnic/adapter/nt4ga_adapter.c b/drivers/net/ntnic/adapter/nt4ga_adapter.c
-index 526ecc8089..363874c85f 100644
---- a/drivers/net/ntnic/adapter/nt4ga_adapter.c
-+++ b/drivers/net/ntnic/adapter/nt4ga_adapter.c
-@@ -5,6 +5,7 @@
+diff --git a/drivers/net/ntnic/nthw/core/nthw_hif.c b/drivers/net/ntnic/nthw/core/nthw_hif.c
+index 2899c3706b..015dee1bcf 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_hif.c
++++ b/drivers/net/ntnic/nthw/core/nthw_hif.c
+@@ -217,96 +217,6 @@ int nthw_hif_trigger_sample_time(nthw_hif_t *p)
+ 	return 0;
+ }
  
- #include <rte_thread.h>
- 
-+#include "nt_service.h"
- #include "ntlog.h"
- #include "nthw_fpga.h"
- #include "ntnic_mod_reg.h"
-@@ -12,28 +13,6 @@
- /*
-  * Global variables shared by NT adapter types
-  */
--rte_thread_t monitor_tasks[NUM_ADAPTER_MAX];
--volatile int monitor_task_is_running[NUM_ADAPTER_MAX];
--
--/*
-- * Signal-handler to stop all monitor threads
-- */
--static void stop_monitor_tasks(int signum)
+-static int nthw_hif_get_stat(nthw_hif_t *p, uint32_t *p_rx_cnt, uint32_t *p_tx_cnt,
+-	uint32_t *p_ref_clk_cnt, uint32_t *p_tg_unit_size, uint32_t *p_tg_ref_freq,
+-	uint64_t *p_tags_in_use, uint64_t *p_rd_err, uint64_t *p_wr_err)
 -{
--	const size_t N = ARRAY_SIZE(monitor_task_is_running);
--	size_t i;
+-	*p_rx_cnt = nthw_field_get_updated(p->mp_fld_stat_rx_counter);
+-	*p_tx_cnt = nthw_field_get_updated(p->mp_fld_stat_tx_counter);
 -
--	/* Stop all monitor tasks */
--	for (i = 0; i < N; i++) {
--		const int is_running = monitor_task_is_running[i];
--		monitor_task_is_running[i] = 0;
+-	*p_ref_clk_cnt = nthw_field_get_updated(p->mp_fld_stat_ref_clk_ref_clk);
 -
--		if (signum == -1 && is_running != 0) {
--			rte_thread_join(monitor_tasks[i], NULL);
--			memset(&monitor_tasks[i], 0, sizeof(monitor_tasks[0]));
--		}
--	}
+-	*p_tg_unit_size = NTHW_TG_CNT_SIZE;
+-	*p_tg_ref_freq = p->mn_fpga_hif_ref_clk_freq;
+-
+-	*p_tags_in_use = (p->mp_fld_status_tags_in_use
+-			? nthw_field_get_updated(p->mp_fld_status_tags_in_use)
+-			: 0);
+-
+-	*p_rd_err =
+-		(p->mp_fld_status_rd_err ? nthw_field_get_updated(p->mp_fld_status_rd_err) : 0);
+-	*p_wr_err =
+-		(p->mp_fld_status_wr_err ? nthw_field_get_updated(p->mp_fld_status_wr_err) : 0);
+-
+-	return 0;
 -}
- 
- static int nt4ga_adapter_show_info(struct adapter_info_s *p_adapter_info, FILE *pfh)
- {
-@@ -255,7 +234,7 @@ static int nt4ga_adapter_deinit(struct adapter_info_s *p_adapter_info)
- 	int i;
- 	int res = -1;
- 
--	stop_monitor_tasks(-1);
-+	nthw_service_del(RTE_NTNIC_SERVICE_ADAPTER_MON);
- 
- 	/* Nt4ga Deinit Filter */
- 	nt4ga_filter_t *p_filter = &p_adapter_info->nt4ga_filter;
-diff --git a/drivers/net/ntnic/include/common_adapter_defs.h b/drivers/net/ntnic/include/common_adapter_defs.h
-deleted file mode 100644
-index 6ed9121f0f..0000000000
---- a/drivers/net/ntnic/include/common_adapter_defs.h
-+++ /dev/null
-@@ -1,15 +0,0 @@
--/*
-- * SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2023 Napatech A/S
-- */
 -
--#ifndef _COMMON_ADAPTER_DEFS_H_
--#define _COMMON_ADAPTER_DEFS_H_
+-static int nthw_hif_get_stat_rate(nthw_hif_t *p, uint64_t *p_pci_rx_rate, uint64_t *p_pci_tx_rate,
+-	uint64_t *p_ref_clk_cnt, uint64_t *p_tags_in_use,
+-	uint64_t *p_rd_err_cnt, uint64_t *p_wr_err_cnt)
+-{
+-	uint32_t rx_cnt, tx_cnt, ref_clk_cnt, tg_unit_size, tg_ref_freq;
+-	uint64_t n_tags_in_use, n_rd_err, n_wr_err;
 -
--/*
-- * Declarations shared by NT adapter types.
-- */
--#define NUM_ADAPTER_MAX (8)
--#define NUM_ADAPTER_PORTS_MAX (128)
+-	nthw_hif_get_stat(p, &rx_cnt, &tx_cnt, &ref_clk_cnt, &tg_unit_size, &tg_ref_freq,
+-		&n_tags_in_use, &n_rd_err, &n_wr_err);
 -
--#endif	/* _COMMON_ADAPTER_DEFS_H_ */
-diff --git a/drivers/net/ntnic/include/nt4ga_adapter.h b/drivers/net/ntnic/include/nt4ga_adapter.h
-index 7396b8ab65..6c701b601f 100644
---- a/drivers/net/ntnic/include/nt4ga_adapter.h
-+++ b/drivers/net/ntnic/include/nt4ga_adapter.h
-@@ -47,8 +47,5 @@ typedef struct adapter_info_s {
- 	int n_tx_host_buffers;
- } adapter_info_t;
- 
--extern rte_thread_t monitor_tasks[NUM_ADAPTER_MAX];
--extern volatile int monitor_task_is_running[NUM_ADAPTER_MAX];
+-	*p_tags_in_use = n_tags_in_use;
 -
- 
- #endif	/* _NT4GA_ADAPTER_H_ */
-diff --git a/drivers/net/ntnic/include/ntnic_stat.h b/drivers/net/ntnic/include/ntnic_stat.h
-index 1b53f6c347..928c629fb2 100644
---- a/drivers/net/ntnic/include/ntnic_stat.h
-+++ b/drivers/net/ntnic/include/ntnic_stat.h
-@@ -6,7 +6,7 @@
- #ifndef NTNIC_STAT_H_
- #define NTNIC_STAT_H_
- 
--#include "common_adapter_defs.h"
-+#include "ntos_drv.h"
- #include "nthw_rmc.h"
- #include "nthw_rpf.h"
- #include "nthw_fpga_model.h"
-diff --git a/drivers/net/ntnic/include/ntos_drv.h b/drivers/net/ntnic/include/ntos_drv.h
-index e6e46f8cc1..f353a5eca8 100644
---- a/drivers/net/ntnic/include/ntos_drv.h
-+++ b/drivers/net/ntnic/include/ntos_drv.h
-@@ -20,7 +20,7 @@
- #define NUM_MAC_ADDRS_PER_PORT (16U)
- #define NUM_MULTICAST_ADDRS_PER_PORT (16U)
- 
--#define NUM_ADAPTER_MAX (8)
-+#define NUM_ADAPTER_MAX (1)
- #define NUM_ADAPTER_PORTS_MAX (2)
- 
- 
-diff --git a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
-index adb187d322..21e95d84bd 100644
---- a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
-+++ b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
-@@ -9,6 +9,7 @@
- #include "ntlog.h"
- #include "i2c_nim.h"
- #include "ntnic_mod_reg.h"
-+#include "nt_service.h"
- 
- /*
-  * Swap tx/rx polarity
-@@ -478,170 +479,178 @@ static int _port_init(adapter_info_t *drv, nthw_fpga_t *fpga, int port)
-  */
- static int _common_ptp_nim_state_machine(void *data)
- {
--	adapter_info_t *drv = (adapter_info_t *)data;
--	fpga_info_t *fpga_info = &drv->fpga_info;
--	nt4ga_link_t *link_info = &drv->nt4ga_link;
--	nthw_fpga_t *fpga = fpga_info->mp_fpga;
--	const int adapter_no = drv->adapter_no;
--	const int nb_ports = fpga_info->n_phy_ports;
--	uint32_t last_lpbk_mode[NUM_ADAPTER_PORTS_MAX];
-+	static adapter_info_t *drv;
-+	static nt4ga_link_t *link_info;
-+	static nthw_fpga_t *fpga;
-+	static int nb_ports;
-+	static nim_i2c_ctx_t *nim_ctx;
-+	static link_state_t *link_state;
-+	static nthw_mac_pcs_t *mac_pcs;
-+	static nthw_gpio_phy_t *gpio_phy;
-+	static uint32_t last_lpbk_mode[NUM_ADAPTER_PORTS_MAX];
-+
-+	struct nt_service *adapter_mon_srv = nthw_service_get_info(RTE_NTNIC_SERVICE_ADAPTER_MON);
-+	RTE_ASSERT(adapter_mon_srv != NULL);
-+
-+	if (!NT_SERVICE_GET_STATE(adapter_mon_srv)) {
-+		drv = (adapter_info_t *)data;
-+		RTE_ASSERT(drv != NULL);
-+
-+		fpga_info_t *fpga_info = &drv->fpga_info;
-+		int adapter_no = drv->adapter_no;
-+
-+		link_info = &drv->nt4ga_link;
-+		fpga = fpga_info->mp_fpga;
-+		nb_ports = fpga_info->n_phy_ports;
-+
-+		if (!fpga) {
-+			NT_LOG(ERR, NTNIC, "%s: fpga is NULL", drv->mp_adapter_id_str);
-+			return -1;
-+		}
- 
--	nim_i2c_ctx_t *nim_ctx;
--	link_state_t *link_state;
--	nthw_mac_pcs_t *mac_pcs;
--	nthw_gpio_phy_t *gpio_phy;
-+		RTE_ASSERT(adapter_no >= 0 && adapter_no < NUM_ADAPTER_MAX);
-+		nim_ctx = link_info->u.var100g.nim_ctx;
-+		link_state = link_info->link_state;
-+		mac_pcs = link_info->u.var100g.mac_pcs100g;
-+		gpio_phy = link_info->u.var100g.gpio_phy;
- 
--	if (!fpga) {
--		NT_LOG(ERR, NTNIC, "%s: fpga is NULL", drv->mp_adapter_id_str);
--		goto NT4GA_LINK_100G_MON_EXIT;
+-	if (n_rd_err)
+-		(*p_rd_err_cnt)++;
+-
+-	if (n_wr_err)
+-		(*p_wr_err_cnt)++;
+-
+-	if (ref_clk_cnt) {
+-		uint64_t rx_rate;
+-		uint64_t tx_rate;
+-
+-		*p_ref_clk_cnt = ref_clk_cnt;
+-
+-		rx_rate = ((uint64_t)rx_cnt * tg_unit_size * tg_ref_freq) / (uint64_t)ref_clk_cnt;
+-		*p_pci_rx_rate = rx_rate;
+-
+-		tx_rate = ((uint64_t)tx_cnt * tg_unit_size * tg_ref_freq) / (uint64_t)ref_clk_cnt;
+-		*p_pci_tx_rate = tx_rate;
+-
+-	} else {
+-		*p_pci_rx_rate = 0;
+-		*p_pci_tx_rate = 0;
+-		*p_ref_clk_cnt = 0;
 -	}
-+		memset(last_lpbk_mode, 0, sizeof(last_lpbk_mode));
- 
--	RTE_ASSERT(adapter_no >= 0 && adapter_no < NUM_ADAPTER_MAX);
--	nim_ctx = link_info->u.var100g.nim_ctx;
--	link_state = link_info->link_state;
--	mac_pcs = link_info->u.var100g.mac_pcs100g;
--	gpio_phy = link_info->u.var100g.gpio_phy;
-+		NT_LOG(DBG, NTNIC, "%s: link state machine running...", drv->mp_adapter_id_str);
- 
--	monitor_task_is_running[adapter_no] = 1;
--	memset(last_lpbk_mode, 0, sizeof(last_lpbk_mode));
-+		NT_LOG(INF, NTNIC, "Adapter monitor service started on lcore %i", rte_lcore_id());
-+		adapter_mon_srv->lcore = rte_lcore_id();
-+		NT_SERVICE_SET_STATE(adapter_mon_srv, true);
-+		return 0;
-+	}
- 
--	if (monitor_task_is_running[adapter_no])
--		NT_LOG(DBG, NTNIC, "%s: link state machine running...", drv->mp_adapter_id_str);
-+	int i;
-+	static bool reported_link[NUM_ADAPTER_PORTS_MAX] = { false };
- 
--	while (monitor_task_is_running[adapter_no]) {
--		int i;
--		static bool reported_link[NUM_ADAPTER_PORTS_MAX] = { false };
-+	for (i = 0; i < nb_ports; i++) {
-+		link_state_t new_link_state;
-+		const bool is_port_disabled = link_info->port_action[i].port_disable;
-+		const bool was_port_disabled = link_state[i].link_disabled;
-+		const bool disable_port = is_port_disabled && !was_port_disabled;
-+		const bool enable_port = !is_port_disabled && was_port_disabled;
- 
--		for (i = 0; i < nb_ports; i++) {
--			link_state_t new_link_state;
--			const bool is_port_disabled = link_info->port_action[i].port_disable;
--			const bool was_port_disabled = link_state[i].link_disabled;
--			const bool disable_port = is_port_disabled && !was_port_disabled;
--			const bool enable_port = !is_port_disabled && was_port_disabled;
-+		if (!rte_service_runstate_get(adapter_mon_srv->id))	/* stop quickly */
-+			break;
- 
--			if (!monitor_task_is_running[adapter_no])	/* stop quickly */
--				break;
-+		/* Has the administrative port state changed? */
-+		RTE_ASSERT(!(disable_port && enable_port));
-+
-+		if (disable_port) {
-+			memset(&link_state[i], 0, sizeof(link_state[i]));
-+			link_info->link_info[i].link_speed = NT_LINK_SPEED_UNKNOWN;
-+			link_state[i].link_disabled = true;
-+			reported_link[i] = false;
-+			/* Turn off laser and LED, etc. */
-+			(void)_create_nim(drv, i, false);
-+			NT_LOG(DBG, NTNIC, "%s: Port %i is disabled",
-+				drv->mp_port_id_str[i], i);
-+			continue;
-+		}
- 
--			/* Has the administrative port state changed? */
--			RTE_ASSERT(!(disable_port && enable_port));
 -
--			if (disable_port) {
--				memset(&link_state[i], 0, sizeof(link_state[i]));
--				link_info->link_info[i].link_speed = NT_LINK_SPEED_UNKNOWN;
--				link_state[i].link_disabled = true;
--				reported_link[i] = false;
--				/* Turn off laser and LED, etc. */
--				(void)_create_nim(drv, i, false);
--				NT_LOG(DBG, NTNIC, "%s: Port %i is disabled",
--					drv->mp_port_id_str[i], i);
--				continue;
--			}
-+		if (enable_port) {
-+			link_state[i].link_disabled = false;
-+			NT_LOG(DBG, NTNIC, "%s: Port %i is enabled",
-+				drv->mp_port_id_str[i], i);
-+		}
- 
--			if (enable_port) {
--				link_state[i].link_disabled = false;
--				NT_LOG(DBG, NTNIC, "%s: Port %i is enabled",
--					drv->mp_port_id_str[i], i);
-+		if (is_port_disabled)
-+			continue;
-+
-+		if (link_info->port_action[i].port_lpbk_mode != last_lpbk_mode[i]) {
-+			/* Loopback mode has changed. Do something */
-+			if (!_nim_is_present(&gpio_phy[i], (uint8_t)i)) {
-+				/*
-+				 * If there is no Nim present, we need to initialize the
-+				 * port anyway
-+				 */
-+				_port_init(drv, fpga, i);
- 			}
- 
--			if (is_port_disabled)
--				continue;
-+			NT_LOG(INF, NTNIC, "%s: Loopback mode changed=%u",
-+				drv->mp_port_id_str[i],
-+				link_info->port_action[i].port_lpbk_mode);
-+			_set_loopback(drv,
-+				&mac_pcs[i],
-+				i,
-+				link_info->port_action[i].port_lpbk_mode,
-+				last_lpbk_mode[i]);
- 
--			if (link_info->port_action[i].port_lpbk_mode != last_lpbk_mode[i]) {
--				/* Loopback mode has changed. Do something */
--				if (!_nim_is_present(&gpio_phy[i], (uint8_t)i)) {
--					/*
--					 * If there is no Nim present, we need to initialize the
--					 * port anyway
--					 */
--					_port_init(drv, fpga, i);
--				}
+-	return 0;
+-}
 -
--				NT_LOG(INF, NTNIC, "%s: Loopback mode changed=%u",
--					drv->mp_port_id_str[i],
--					link_info->port_action[i].port_lpbk_mode);
--				_set_loopback(drv,
--					&mac_pcs[i],
--					i,
--					link_info->port_action[i].port_lpbk_mode,
--					last_lpbk_mode[i]);
+-static int nthw_hif_stat_req_enable(nthw_hif_t *p)
+-{
+-	nthw_field_set_all(p->mp_fld_stat_ctrl_ena);
+-	nthw_field_set_all(p->mp_fld_stat_ctrl_req);
+-	nthw_field_flush_register(p->mp_fld_stat_ctrl_req);
+-	return 0;
+-}
 -
--				if (link_info->port_action[i].port_lpbk_mode == 1)
--					link_state[i].link_up = true;
+-static int nthw_hif_stat_req_disable(nthw_hif_t *p)
+-{
+-	nthw_field_clr_all(p->mp_fld_stat_ctrl_ena);
+-	nthw_field_set_all(p->mp_fld_stat_ctrl_req);
+-	nthw_field_flush_register(p->mp_fld_stat_ctrl_req);
+-	return 0;
+-}
 -
--				last_lpbk_mode[i] = link_info->port_action[i].port_lpbk_mode;
--				continue;
--			}
-+			if (link_info->port_action[i].port_lpbk_mode == 1)
-+				link_state[i].link_up = true;
- 
--			(void)_link_state_build(drv, &mac_pcs[i], &gpio_phy[i], i, &new_link_state,
--				is_port_disabled);
-+			last_lpbk_mode[i] = link_info->port_action[i].port_lpbk_mode;
-+			continue;
-+		}
- 
--			if (!new_link_state.nim_present) {
--				if (link_state[i].nim_present) {
--					NT_LOG(INF, NTNIC, "%s: NIM module removed",
--						drv->mp_port_id_str[i]);
--				}
-+		(void)_link_state_build(drv, &mac_pcs[i], &gpio_phy[i], i, &new_link_state,
-+			is_port_disabled);
- 
--				link_state[i] = new_link_state;
--				continue;
-+		if (!new_link_state.nim_present) {
-+			if (link_state[i].nim_present) {
-+				NT_LOG(INF, NTNIC, "%s: NIM module removed",
-+					drv->mp_port_id_str[i]);
- 			}
- 
--			/* NIM module is present */
--			if (new_link_state.lh_nim_absent || !link_state[i].nim_present) {
--				sfp_nim_state_t new_state;
-+			link_state[i] = new_link_state;
-+			continue;
-+		}
- 
--				NT_LOG(DBG, NTNIC, "%s: NIM module inserted",
--					drv->mp_port_id_str[i]);
-+		/* NIM module is present */
-+		if (new_link_state.lh_nim_absent || !link_state[i].nim_present) {
-+			sfp_nim_state_t new_state;
-+
-+			NT_LOG(DBG, NTNIC, "%s: NIM module inserted",
-+				drv->mp_port_id_str[i]);
- 
--				if (_port_init(drv, fpga, i)) {
--					NT_LOG(ERR, NTNIC,
--						"%s: Failed to initialize NIM module",
--						drv->mp_port_id_str[i]);
--					continue;
--				}
+-static int nthw_hif_end_point_cntrs_sample(nthw_hif_t *p, struct nthw_hif_end_point_counters *epc)
+-{
+-	RTE_ASSERT(epc);
 -
--				if (nthw_nim_state_build(&nim_ctx[i], &new_state)) {
--					NT_LOG(ERR, NTNIC, "%s: Cannot read basic NIM data",
--						drv->mp_port_id_str[i]);
--					continue;
--				}
+-	/* Get stat rate and maintain rx/tx min/max */
+-	nthw_hif_get_stat_rate(p, &epc->cur_tx, &epc->cur_rx, &epc->n_ref_clk_cnt,
+-		&epc->n_tags_in_use, &epc->n_rd_err, &epc->n_wr_err);
 -
--				RTE_ASSERT(new_state.br); /* Cannot be zero if NIM is present */
--				NT_LOG(DBG, NTNIC,
--					"%s: NIM id = %u (%s), br = %u, vendor = '%s', pn = '%s', sn='%s'",
--					drv->mp_port_id_str[i], nim_ctx->nim_id,
--					nthw_nim_id_to_text(nim_ctx->nim_id),
--					(unsigned int)new_state.br, nim_ctx->vendor_name,
--					nim_ctx->prod_no, nim_ctx->serial_no);
+-	return 0;
+-}
 -
--				(void)_link_state_build(drv, &mac_pcs[i], &gpio_phy[i], i,
--					&link_state[i], is_port_disabled);
+ int nthw_hif_read_test_reg(nthw_hif_t *p, uint8_t test_reg, uint32_t *p_value)
+ {
+ 	uint32_t data;
+diff --git a/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c b/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
+index a8d66268ff..4a7b7b9549 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
++++ b/drivers/net/ntnic/nthw/core/nthw_mac_pcs.c
+@@ -429,17 +429,6 @@ void nthw_mac_pcs_set_tx_sel_host(nthw_mac_pcs_t *p, bool enable)
+ 		nthw_field_clr_flush(p->mp_fld_phymac_misc_tx_sel_host);
+ }
+ 
+-static void nthw_mac_pcs_set_tx_sel_tfg(nthw_mac_pcs_t *p, bool enable)
+-{
+-	nthw_field_get_updated(p->mp_fld_phymac_misc_tx_sel_tfg);
 -
--				NT_LOG(DBG, NTNIC, "%s: NIM module initialized",
-+			if (_port_init(drv, fpga, i)) {
-+				NT_LOG(ERR, NTNIC,
-+					"%s: Failed to initialize NIM module",
- 					drv->mp_port_id_str[i]);
- 				continue;
- 			}
- 
--			if (reported_link[i] != new_link_state.link_up) {
--				NT_LOG(INF, NTNIC, "%s: link is %s", drv->mp_port_id_str[i],
--					(new_link_state.link_up ? "up" : "down"));
--				link_info->link_info[i].link_speed =
--					(new_link_state.link_up ? NT_LINK_SPEED_100G
--						: NT_LINK_SPEED_UNKNOWN);
--				link_state[i].link_up = new_link_state.link_up;
--				reported_link[i] = new_link_state.link_up;
-+			if (nthw_nim_state_build(&nim_ctx[i], &new_state)) {
-+				NT_LOG(ERR, NTNIC, "%s: Cannot read basic NIM data",
-+					drv->mp_port_id_str[i]);
-+				continue;
- 			}
- 
--			check_link_state(drv, &mac_pcs[i]);
--		}	/* end-for */
-+			RTE_ASSERT(new_state.br); /* Cannot be zero if NIM is present */
-+			NT_LOG(DBG, NTNIC,
-+				"%s: NIM id = %u (%s), br = %u, vendor = '%s', pn = '%s', sn='%s'",
-+				drv->mp_port_id_str[i], nim_ctx->nim_id,
-+				nthw_nim_id_to_text(nim_ctx->nim_id),
-+				(unsigned int)new_state.br, nim_ctx->vendor_name,
-+				nim_ctx->prod_no, nim_ctx->serial_no);
- 
--		if (monitor_task_is_running[adapter_no])
--			nt_os_wait_usec(5 * 100000U);	/* 5 x 0.1s = 0.5s */
--	}
-+			(void)_link_state_build(drv, &mac_pcs[i], &gpio_phy[i], i,
-+				&link_state[i], is_port_disabled);
- 
--NT4GA_LINK_100G_MON_EXIT:
-+			NT_LOG(DBG, NTNIC, "%s: NIM module initialized",
-+				drv->mp_port_id_str[i]);
-+			continue;
-+		}
- 
--	NT_LOG(DBG, NTNIC, "%s: Stopped NT4GA 100 Gbps link monitoring thread.",
--		drv->mp_adapter_id_str);
-+		if (reported_link[i] != new_link_state.link_up) {
-+			NT_LOG(INF, NTNIC, "%s: link is %s", drv->mp_port_id_str[i],
-+				(new_link_state.link_up ? "up" : "down"));
-+			link_info->link_info[i].link_speed =
-+				(new_link_state.link_up ? NT_LINK_SPEED_100G
-+					: NT_LINK_SPEED_UNKNOWN);
-+			link_state[i].link_up = new_link_state.link_up;
-+			reported_link[i] = new_link_state.link_up;
-+		}
-+
-+		check_link_state(drv, &mac_pcs[i]);
-+	}	/* end-for */
-+
-+	if (rte_service_runstate_get(adapter_mon_srv->id))
-+		nt_os_wait_usec(5 * 100000U);	/* 5 x 0.1s = 0.5s */
+-	if (enable)
+-		nthw_field_set_flush(p->mp_fld_phymac_misc_tx_sel_tfg);
+-
+-	else
+-		nthw_field_clr_flush(p->mp_fld_phymac_misc_tx_sel_tfg);
+-}
+-
+ void nthw_mac_pcs_set_ts_eop(nthw_mac_pcs_t *p, bool enable)
+ {
+ 	if (p->mp_fld_phymac_misc_ts_eop) {
+diff --git a/drivers/net/ntnic/nthw/core/nthw_pcie3.c b/drivers/net/ntnic/nthw/core/nthw_pcie3.c
+index 2953896759..763bf9e554 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_pcie3.c
++++ b/drivers/net/ntnic/nthw/core/nthw_pcie3.c
+@@ -168,90 +168,3 @@ int nthw_pcie3_trigger_sample_time(nthw_pcie3_t *p)
  
  	return 0;
  }
-@@ -649,11 +658,9 @@ static int _common_ptp_nim_state_machine(void *data)
- /*
-  * Userland NIM state machine
-  */
--static uint32_t nt4ga_link_100g_mon(void *data)
-+static int nt4ga_link_100g_mon(void *data)
- {
--	(void)_common_ptp_nim_state_machine(data);
+-
+-static int nthw_pcie3_stat_req_enable(nthw_pcie3_t *p)
+-{
+-	nthw_field_set_all(p->mp_fld_stat_ctrl_ena);
+-	nthw_field_set_all(p->mp_fld_stat_ctrl_req);
+-	nthw_field_flush_register(p->mp_fld_stat_ctrl_req);
+-	return 0;
+-}
+-
+-static int nthw_pcie3_stat_req_disable(nthw_pcie3_t *p)
+-{
+-	nthw_field_clr_all(p->mp_fld_stat_ctrl_ena);
+-	nthw_field_set_all(p->mp_fld_stat_ctrl_req);
+-	nthw_field_flush_register(p->mp_fld_stat_ctrl_req);
+-	return 0;
+-}
+-
+-static int nthw_pcie3_get_stat(nthw_pcie3_t *p, uint32_t *p_rx_cnt, uint32_t *p_tx_cnt,
+-	uint32_t *p_ref_clk_cnt, uint32_t *p_tg_unit_size, uint32_t *p_tg_ref_freq,
+-	uint32_t *p_tag_use_cnt, uint32_t *p_rq_rdy_cnt, uint32_t *p_rq_vld_cnt)
+-{
+-	*p_rx_cnt = nthw_field_get_updated(p->mp_fld_stat_rx_counter);
+-	*p_tx_cnt = nthw_field_get_updated(p->mp_fld_stat_tx_counter);
+-
+-	*p_ref_clk_cnt = nthw_field_get_updated(p->mp_fld_stat_ref_clk_ref_clk);
+-
+-	*p_tg_unit_size = NTHW_TG_CNT_SIZE;
+-	*p_tg_ref_freq = NTHW_TG_REF_FREQ;
+-
+-	*p_tag_use_cnt = nthw_field_get_updated(p->mp_fld_status0_tags_in_use);
+-
+-	*p_rq_rdy_cnt = nthw_field_get_updated(p->mp_fld_stat_rq_rdy_counter);
+-	*p_rq_vld_cnt = nthw_field_get_updated(p->mp_fld_stat_rq_vld_counter);
 -
 -	return 0;
-+	return _common_ptp_nim_state_machine(data);
- }
- 
- /*
-@@ -710,11 +717,21 @@ static int nt4ga_link_100g_ports_init(struct adapter_info_s *p_adapter_info, nth
- 		}
- 	}
- 
--	/* Create state-machine thread */
-+	/* Create state-machine service */
- 	if (res == 0) {
--		if (!monitor_task_is_running[adapter_no]) {
--			res = rte_thread_create(&monitor_tasks[adapter_no], NULL,
--					nt4ga_link_100g_mon, p_adapter_info);
-+		struct rte_service_spec adapter_monitor_service = {
-+			.name = "ntnic-adapter-monitor",
-+			.callback = nt4ga_link_100g_mon,
-+			.socket_id = SOCKET_ID_ANY,
-+			.capabilities = RTE_SERVICE_CAP_MT_SAFE,
-+			.callback_userdata = p_adapter_info,
-+		};
-+
-+		res = nthw_service_add(&adapter_monitor_service, RTE_NTNIC_SERVICE_ADAPTER_MON);
-+		if (res) {
-+			NT_LOG(ERR, NTNIC, "%s: Failed to create adapter monitor service",
-+				p_adapter_info->mp_adapter_id_str);
-+			return res;
- 		}
- 	}
- 
-diff --git a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-index 75a7504510..c8b7912e26 100644
---- a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-+++ b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
-@@ -13,6 +13,7 @@
- #include "nim_defines.h"
- #include "nthw_gfg.h"
- #include "nthw_phy_tile.h"
-+#include "nt_service.h"
- 
- typedef enum {
- 	LOOPBACK_HOST_NONE,
-@@ -768,179 +769,186 @@ static int _port_init(adapter_info_t *p_info, nthw_fpga_t *fpga, int port)
- /*
-  * Link state machine
-  */
--static void *_common_ptp_nim_state_machine(void *data)
-+static int _common_ptp_nim_state_machine(void *data)
- {
--	adapter_info_t *drv = (adapter_info_t *)data;
--	fpga_info_t *fpga_info = &drv->fpga_info;
--	nt4ga_link_t *link_info = &drv->nt4ga_link;
--	nthw_fpga_t *fpga = fpga_info->mp_fpga;
--	const int adapter_no = drv->adapter_no;
--	const int nb_ports = fpga_info->n_phy_ports;
--	uint32_t last_lpbk_mode[NUM_ADAPTER_PORTS_MAX];
--	/* link_state_t new_link_state; */
+-}
 -
--	link_state_t *link_state = link_info->link_state;
--	nim_i2c_ctx_t *nim_ctx = link_info->u.var_a100g.nim_ctx;
-+	static adapter_info_t *drv;
-+	static nt4ga_link_t *link_info;
-+	static nthw_fpga_t *fpga;
-+	static int nb_ports;
-+	static link_state_t *link_state;
-+	static nim_i2c_ctx_t *nim_ctx;
-+	static uint32_t last_lpbk_mode[NUM_ADAPTER_PORTS_MAX];
-+
-+	struct nt_service *adapter_mon_srv = nthw_service_get_info(RTE_NTNIC_SERVICE_ADAPTER_MON);
-+	RTE_ASSERT(adapter_mon_srv != NULL);
-+
-+	if (!NT_SERVICE_GET_STATE(adapter_mon_srv)) {
-+		drv = (adapter_info_t *)data;
-+		RTE_ASSERT(drv != NULL);
-+
-+		fpga_info_t *fpga_info = &drv->fpga_info;
-+		link_info = &drv->nt4ga_link;
-+		fpga = fpga_info->mp_fpga;
-+		int adapter_no = drv->adapter_no;
-+
-+		nb_ports = fpga_info->n_phy_ports;
-+		link_state = link_info->link_state;
-+		nim_ctx = link_info->u.var_a100g.nim_ctx;
-+
-+		if (!fpga) {
-+			NT_LOG(ERR, NTNIC, "%s: fpga is NULL", drv->mp_adapter_id_str);
-+			return -1;
-+		}
- 
--	if (!fpga) {
--		NT_LOG(ERR, NTNIC, "%s: fpga is NULL", drv->mp_adapter_id_str);
--		goto NT4GA_LINK_100G_MON_EXIT;
+-static int nthw_pcie3_get_stat_rate(nthw_pcie3_t *p, uint64_t *p_pci_rx_rate,
+-	uint64_t *p_pci_tx_rate,
+-	uint64_t *p_ref_clk_cnt, uint64_t *p_tag_use_cnt,
+-	uint64_t *p_pci_nt_bus_util, uint64_t *p_pci_xil_bus_util)
+-{
+-	uint32_t rx_cnt, tx_cnt, ref_clk_cnt;
+-	uint32_t tg_unit_size, tg_ref_freq;
+-	uint32_t tag_use_cnt, rq_rdy_cnt, rq_vld_cnt;
+-
+-	nthw_pcie3_get_stat(p, &rx_cnt, &tx_cnt, &ref_clk_cnt, &tg_unit_size, &tg_ref_freq,
+-		&tag_use_cnt, &rq_rdy_cnt, &rq_vld_cnt);
+-
+-	if (ref_clk_cnt) {
+-		uint64_t nt_bus_util, xil_bus_util;
+-		uint64_t rx_rate, tx_rate;
+-
+-		rx_rate = ((uint64_t)rx_cnt * tg_unit_size * tg_ref_freq) / (uint64_t)ref_clk_cnt;
+-		*p_pci_rx_rate = rx_rate;
+-
+-		tx_rate = ((uint64_t)tx_cnt * tg_unit_size * tg_ref_freq) / (uint64_t)ref_clk_cnt;
+-		*p_pci_tx_rate = tx_rate;
+-
+-		*p_ref_clk_cnt = ref_clk_cnt;
+-
+-		*p_tag_use_cnt = tag_use_cnt;
+-
+-		nt_bus_util = ((uint64_t)rq_vld_cnt * 1000000ULL) / (uint64_t)ref_clk_cnt;
+-		*p_pci_nt_bus_util = nt_bus_util;
+-		xil_bus_util = ((uint64_t)rq_rdy_cnt * 1000000ULL) / (uint64_t)ref_clk_cnt;
+-		*p_pci_xil_bus_util = xil_bus_util;
+-
+-	} else {
+-		*p_ref_clk_cnt = 0;
+-		*p_pci_nt_bus_util = 0;
+-		*p_pci_xil_bus_util = 0;
 -	}
-+		RTE_ASSERT(adapter_no >= 0 && adapter_no < NUM_ADAPTER_MAX);
- 
--	RTE_ASSERT(adapter_no >= 0 && adapter_no < NUM_ADAPTER_MAX);
-+		memset(last_lpbk_mode, 0, sizeof(last_lpbk_mode));
- 
--	monitor_task_is_running[adapter_no] = 1;
--	memset(last_lpbk_mode, 0, sizeof(last_lpbk_mode));
-+		/* Initialize link state */
-+		for (int i = 0; i < nb_ports; i++) {
-+			link_state[i].link_disabled = true;
-+			link_state[i].nim_present = false;
-+			link_state[i].lh_nim_absent = true;
-+			link_state[i].link_up = false;
-+			link_state[i].link_state = NT_LINK_STATE_UNKNOWN;
-+			link_state[i].link_state_latched = NT_LINK_STATE_UNKNOWN;
-+		}
- 
--	/* Initialize link state */
--	for (int i = 0; i < nb_ports; i++) {
--		link_state[i].link_disabled = true;
--		link_state[i].nim_present = false;
--		link_state[i].lh_nim_absent = true;
--		link_state[i].link_up = false;
--		link_state[i].link_state = NT_LINK_STATE_UNKNOWN;
--		link_state[i].link_state_latched = NT_LINK_STATE_UNKNOWN;
-+		NT_LOG(INF, NTNIC, "Adapter monitor service started on lcore %i", rte_lcore_id());
-+		adapter_mon_srv->lcore = rte_lcore_id();
-+		NT_SERVICE_SET_STATE(adapter_mon_srv, true);
-+		return 0;
- 	}
- 
--	if (monitor_task_is_running[adapter_no])
--		NT_LOG(DBG, NTNIC, "%s: link state machine running...", drv->mp_adapter_id_str);
-+	int i;
-+	static bool reported_link[NUM_ADAPTER_PORTS_MAX] = { false };
- 
--	while (monitor_task_is_running[adapter_no]) {
--		int i;
--		static bool reported_link[NUM_ADAPTER_PORTS_MAX] = { false };
-+	for (i = 0; i < nb_ports; i++) {
-+		const bool is_port_disabled = link_info->port_action[i].port_disable;
-+		const bool was_port_disabled = link_state[i].link_disabled;
-+		const bool disable_port = is_port_disabled && !was_port_disabled;
-+		const bool enable_port = !is_port_disabled && was_port_disabled;
- 
--		for (i = 0; i < nb_ports; i++) {
--			const bool is_port_disabled = link_info->port_action[i].port_disable;
--			const bool was_port_disabled = link_state[i].link_disabled;
--			const bool disable_port = is_port_disabled && !was_port_disabled;
--			const bool enable_port = !is_port_disabled && was_port_disabled;
--
--			if (!monitor_task_is_running[adapter_no])
--				break;
--
--			/*
--			 * Has the administrative port state changed?
--			 */
--			RTE_ASSERT(!(disable_port && enable_port));
--
--			if (disable_port) {
--				memset(&link_state[i], 0, sizeof(link_state[i]));
--				link_state[i].link_disabled = true;
--				link_state[i].lh_nim_absent = true;
--				reported_link[i] = false;
--				port_disable(drv, i);
--				NT_LOG(INF, NTNIC, "%s: Port %i is disabled",
--					drv->mp_port_id_str[i], i);
--				continue;
--			}
-+		if (!rte_service_runstate_get(adapter_mon_srv->id))
-+			break;
- 
--			if (enable_port) {
--				link_state[i].link_disabled = false;
--				NT_LOG(DBG, NTNIC, "%s: Port %i is enabled",
--					drv->mp_port_id_str[i], i);
--			}
-+		/*
-+		 * Has the administrative port state changed?
-+		 */
-+		RTE_ASSERT(!(disable_port && enable_port));
-+
-+		if (disable_port) {
-+			memset(&link_state[i], 0, sizeof(link_state[i]));
-+			link_state[i].link_disabled = true;
-+			link_state[i].lh_nim_absent = true;
-+			reported_link[i] = false;
-+			port_disable(drv, i);
-+			NT_LOG(INF, NTNIC, "%s: Port %i is disabled",
-+				drv->mp_port_id_str[i], i);
-+			continue;
-+		}
- 
--			if (is_port_disabled)
--				continue;
-+		if (enable_port) {
-+			link_state[i].link_disabled = false;
-+			NT_LOG(DBG, NTNIC, "%s: Port %i is enabled",
-+				drv->mp_port_id_str[i], i);
-+		}
- 
--			if (link_info->port_action[i].port_lpbk_mode != last_lpbk_mode[i]) {
--				/* Loopback mode has changed. Do something */
--				if (!nim_is_present(&nim_ctx[i], i)) {
--					/*
--					 * If there is no Nim present, we need to initialize the
--					 * port  anyway
--					 */
--					_port_init(drv, fpga, i);
--				}
--
--				set_loopback(drv,
--					i,
--					link_info->port_action[i].port_lpbk_mode,
--					last_lpbk_mode[i]);
--
--				if (link_info->port_action[i].port_lpbk_mode == 1)
--					link_state[i].link_up = true;
--
--				last_lpbk_mode[i] = link_info->port_action[i].port_lpbk_mode;
--				continue;
-+		if (is_port_disabled)
-+			continue;
-+
-+		if (link_info->port_action[i].port_lpbk_mode != last_lpbk_mode[i]) {
-+			/* Loopback mode has changed. Do something */
-+			if (!nim_is_present(&nim_ctx[i], i)) {
-+				/*
-+				 * If there is no Nim present, we need to initialize the
-+				 * port  anyway
-+				 */
-+				_port_init(drv, fpga, i);
- 			}
- 
--			get_link_state(drv, nim_ctx, &link_state[i], i);
--			link_state[i].link_disabled = is_port_disabled;
-+			set_loopback(drv,
-+				i,
-+				link_info->port_action[i].port_lpbk_mode,
-+				last_lpbk_mode[i]);
- 
--			if (!link_state[i].nim_present) {
--				if (!link_state[i].lh_nim_absent) {
--					NT_LOG(INF, NTNIC, "%s: NIM module removed",
--						drv->mp_port_id_str[i]);
--					reported_link[i] = false;
--					link_state[i].link_up = false;
--					link_state[i].lh_nim_absent = true;
-+			if (link_info->port_action[i].port_lpbk_mode == 1)
-+				link_state[i].link_up = true;
- 
--				} else {
--					NT_LOG(DBG, NTNIC, "%s: No NIM module, skip",
--						drv->mp_port_id_str[i]);
--				}
-+			last_lpbk_mode[i] = link_info->port_action[i].port_lpbk_mode;
-+			continue;
-+		}
- 
--				continue;
--			}
-+		get_link_state(drv, nim_ctx, &link_state[i], i);
-+		link_state[i].link_disabled = is_port_disabled;
- 
--			/*
--			 * NIM module is present
--			 */
--			if (link_state[i].lh_nim_absent && link_state[i].nim_present) {
--				sfp_nim_state_t new_state;
--				NT_LOG(INF, NTNIC, "%s: NIM module inserted",
-+		if (!link_state[i].nim_present) {
-+			if (!link_state[i].lh_nim_absent) {
-+				NT_LOG(INF, NTNIC, "%s: NIM module removed",
- 					drv->mp_port_id_str[i]);
-+				reported_link[i] = false;
-+				link_state[i].link_up = false;
-+				link_state[i].lh_nim_absent = true;
- 
--				if (_port_init(drv, fpga, i)) {
--					NT_LOG(ERR, NTNIC,
--						"%s: Failed to initialize NIM module",
--						drv->mp_port_id_str[i]);
--					continue;
--				}
-+			} else {
-+				NT_LOG(DBG, NTNIC, "%s: No NIM module, skip",
-+					drv->mp_port_id_str[i]);
-+			}
- 
--				if (nthw_nim_state_build(&nim_ctx[i], &new_state)) {
--					NT_LOG(ERR, NTNIC, "%s: Cannot read basic NIM data",
--						drv->mp_port_id_str[i]);
--					continue;
--				}
-+			continue;
-+		}
- 
--				RTE_ASSERT(new_state.br); /* Cannot be zero if NIM is present */
--				NT_LOG(DBG, NTNIC,
--					"%s: NIM id = %u (%s), br = %u, vendor = '%s', pn = '%s', sn='%s'",
--					drv->mp_port_id_str[i], nim_ctx[i].nim_id,
--					nthw_nim_id_to_text(nim_ctx[i].nim_id),
--					(unsigned int)new_state.br, nim_ctx[i].vendor_name,
--					nim_ctx[i].prod_no, nim_ctx[i].serial_no);
--				link_state[i].lh_nim_absent = false;
--				NT_LOG(DBG, NTNIC, "%s: NIM module initialized",
-+		/*
-+		 * NIM module is present
-+		 */
-+		if (link_state[i].lh_nim_absent && link_state[i].nim_present) {
-+			sfp_nim_state_t new_state;
-+			NT_LOG(INF, NTNIC, "%s: NIM module inserted",
-+				drv->mp_port_id_str[i]);
-+
-+			if (_port_init(drv, fpga, i)) {
-+				NT_LOG(ERR, NTNIC,
-+					"%s: Failed to initialize NIM module",
- 					drv->mp_port_id_str[i]);
- 				continue;
- 			}
- 
--			if (reported_link[i] != link_state[i].link_up) {
--				NT_LOG(INF, NTNIC, "%s: link is %s", drv->mp_port_id_str[i],
--					(link_state[i].link_up ? "up" : "down"));
--				reported_link[i] = link_state[i].link_up;
--				set_link_state(drv, nim_ctx, &link_state[i], i);
-+			if (nthw_nim_state_build(&nim_ctx[i], &new_state)) {
-+				NT_LOG(ERR, NTNIC, "%s: Cannot read basic NIM data",
-+					drv->mp_port_id_str[i]);
-+				continue;
- 			}
-+
-+			RTE_ASSERT(new_state.br); /* Cannot be zero if NIM is present */
-+			NT_LOG(DBG, NTNIC,
-+				"%s: NIM id = %u (%s), br = %u, vendor = '%s', pn = '%s', sn='%s'",
-+				drv->mp_port_id_str[i], nim_ctx[i].nim_id,
-+				nthw_nim_id_to_text(nim_ctx[i].nim_id),
-+				(unsigned int)new_state.br, nim_ctx[i].vendor_name,
-+				nim_ctx[i].prod_no, nim_ctx[i].serial_no);
-+			link_state[i].lh_nim_absent = false;
-+			NT_LOG(DBG, NTNIC, "%s: NIM module initialized",
-+				drv->mp_port_id_str[i]);
-+			continue;
- 		}
- 
--		if (monitor_task_is_running[adapter_no])
--			nt_os_wait_usec(5 * 100000U);	/*  5 x 0.1s = 0.5s */
-+		if (reported_link[i] != link_state[i].link_up) {
-+			NT_LOG(INF, NTNIC, "%s: link is %s", drv->mp_port_id_str[i],
-+				(link_state[i].link_up ? "up" : "down"));
-+			reported_link[i] = link_state[i].link_up;
-+			set_link_state(drv, nim_ctx, &link_state[i], i);
-+		}
- 	}
- 
--NT4GA_LINK_100G_MON_EXIT:
--	NT_LOG(DBG, NTNIC, "%s: Stopped NT4GA 100 Gbps link monitoring thread.",
--		drv->mp_adapter_id_str);
--	return NULL;
-+	if (rte_service_runstate_get(adapter_mon_srv->id))
-+		nt_os_wait_usec(5 * 100000U);	/*  5 x 0.1s = 0.5s */
-+
-+	return 0;
- }
- 
--static uint32_t nt4ga_agx_link_100g_mon(void *data)
-+static int nt4ga_agx_link_100g_mon(void *data)
- {
--	(void)_common_ptp_nim_state_machine(data);
 -
 -	return 0;
-+	return _common_ptp_nim_state_machine(data);
+-}
+-
+-static int nthw_pcie3_end_point_counters_sample_post(nthw_pcie3_t *p,
+-	struct nthw_hif_end_point_counters *epc)
+-{
+-	NT_LOG_DBGX(DBG, NTHW);
+-	RTE_ASSERT(epc);
+-	nthw_pcie3_get_stat_rate(p, &epc->cur_tx, &epc->cur_rx, &epc->n_ref_clk_cnt,
+-		&epc->n_tags_in_use, &epc->cur_pci_nt_util,
+-		&epc->cur_pci_xil_util);
+-	return 0;
+-}
+diff --git a/drivers/net/ntnic/nthw/core/nthw_pcm_nt400dxx.c b/drivers/net/ntnic/nthw/core/nthw_pcm_nt400dxx.c
+index 9004ebef06..e98378e154 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_pcm_nt400dxx.c
++++ b/drivers/net/ntnic/nthw/core/nthw_pcm_nt400dxx.c
+@@ -68,11 +68,6 @@ bool nthw_pcm_nt400dxx_get_ts_pll_locked_stat(nthw_pcm_nt400dxx_t *p)
+ 	return nthw_field_get_updated(p->mp_fld_stat_ts_pll_locked) != 0;
  }
  
+-static bool nthw_pcm_nt400dxx_get_ts_pll_locked_latch(nthw_pcm_nt400dxx_t *p)
+-{
+-	return nthw_field_get_updated(p->mp_fld_latch_ts_pll_locked) != 0;
+-}
+-
+ void nthw_pcm_nt400dxx_set_ts_pll_locked_latch(nthw_pcm_nt400dxx_t *p, uint32_t val)
+ {
+ 	nthw_field_update_register(p->mp_fld_latch_ts_pll_locked);
+diff --git a/drivers/net/ntnic/nthw/core/nthw_rpf.c b/drivers/net/ntnic/nthw/core/nthw_rpf.c
+index 6f06601de8..7184aedc04 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_rpf.c
++++ b/drivers/net/ntnic/nthw/core/nthw_rpf.c
+@@ -20,11 +20,6 @@ nthw_rpf_t *nthw_rpf_new(void)
+ 	return p;
+ }
+ 
+-static void nthw_rpf_delete(nthw_rpf_t *p)
+-{
+-	free(p);
+-}
+-
+ int nthw_rpf_init(nthw_rpf_t *p, nthw_fpga_t *p_fpga, int n_instance)
+ {
+ 	nthw_module_t *p_mod = nthw_fpga_query_module(p_fpga, MOD_RPF, n_instance);
+@@ -67,15 +62,6 @@ int nthw_rpf_init(nthw_rpf_t *p, nthw_fpga_t *p_fpga, int n_instance)
+ 	return 0;
+ }
+ 
+-static void nthw_rpf_administrative_block(nthw_rpf_t *p)
+-{
+-	/* block all MAC ports */
+-	nthw_register_update(p->mp_reg_control);
+-	nthw_field_set_val_flush32(p->mp_fld_control_pen, 0);
+-
+-	p->m_administrative_block = true;
+-}
+-
+ void nthw_rpf_block(nthw_rpf_t *p)
+ {
+ 	nthw_register_update(p->mp_reg_control);
+diff --git a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c
+index d55adc6687..1862d77350 100644
+--- a/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c
++++ b/drivers/net/ntnic/nthw/flow_api/hw_mod/hw_mod_tpe.c
+@@ -402,12 +402,6 @@ static int hw_mod_tpe_ifr_counters_mod(struct flow_api_backend_s *be, enum hw_tp
+ 	return 0;
+ }
+ 
+-static int hw_mod_tpe_ifr_counters_set(struct flow_api_backend_s *be, enum hw_tpe_e field,
+-	int index, uint32_t value)
+-{
+-	return hw_mod_tpe_ifr_counters_mod(be, field, index, &value, 0);
+-}
+-
+ int hw_mod_tpe_ifr_counters_get(struct flow_api_backend_s *be, enum hw_tpe_e field, int index,
+ 	uint32_t *value)
+ {
+diff --git a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
+index 3655c86f51..0b8958c4c1 100644
+--- a/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
++++ b/drivers/net/ntnic/nthw/model/nthw_fpga_model.c
+@@ -228,11 +228,6 @@ static void nthw_field_init(nthw_field_t *p, nthw_register_t *p_reg,
+ 	}
+ }
+ 
+-static void nthw_field_reset(const nthw_field_t *p)
+-{
+-	nthw_field_set_val32(p, (uint32_t)p->mn_reset_val);
+-}
+-
  /*
-@@ -1009,12 +1017,24 @@ int nt4ga_agx_link_100g_ports_init(struct adapter_info_s *p_adapter_info, nthw_f
+  * Register
+  */
+@@ -467,20 +462,6 @@ static void nthw_fpga_model_init(nthw_fpga_t *p, nthw_fpga_prod_init_s *p_init,
  	}
+ }
  
- 	/*
--	 * Create state-machine thread
-+	 * Create state-machine service
- 	 */
+-static void nthw_fpga_set_debug_mode(nthw_fpga_t *p, int debug_mode)
+-{
+-	int i;
+-
+-	p->m_debug_mode = debug_mode;
+-
+-	for (i = 0; i < p->mn_modules; i++) {
+-		nthw_module_t *p_mod = p->mpa_modules[i];
+-
+-		if (p_mod)
+-			nthw_module_set_debug_mode(p_mod, debug_mode);
+-	}
+-}
+-
+ static nthw_module_t *nthw_fpga_lookup_module(const nthw_fpga_t *p, nthw_id_t id, int instance)
+ {
+ 	int i;
+@@ -612,19 +593,6 @@ uint32_t nthw_register_get_address(const nthw_register_t *p)
+ 	return p->mn_addr;
+ }
  
--	if (!monitor_task_is_running[adapter_no]) {
--		res = rte_thread_create(&monitor_tasks[adapter_no], NULL,
--				nt4ga_agx_link_100g_mon, p_adapter_info);
-+	if (res == 0) {
-+		struct rte_service_spec adapter_monitor_service = {
-+						.name = "ntnic-adapter_agx-monitor",
-+						.callback = nt4ga_agx_link_100g_mon,
-+						.socket_id = SOCKET_ID_ANY,
-+						.capabilities = RTE_SERVICE_CAP_MT_SAFE,
-+						.callback_userdata = p_adapter_info,
-+		};
-+
-+		res = nthw_service_add(&adapter_monitor_service, RTE_NTNIC_SERVICE_ADAPTER_MON);
-+		if (res) {
-+			NT_LOG(ERR, NTNIC, "%s: Failed to create adapter monitor service",
-+				p_adapter_info->mp_adapter_id_str);
-+			return res;
-+		}
+-static void nthw_register_reset(const nthw_register_t *p)
+-{
+-	int i;
+-	nthw_field_t *p_field = NULL;
+-
+-	for (i = 0; i < p->mn_fields; i++) {
+-		p_field = p->mpa_fields[i];
+-
+-		if (p_field)
+-			nthw_field_reset(p_field);
+-	}
+-}
+-
+ static nthw_field_t *nthw_register_lookup_field(const nthw_register_t *p, nthw_id_t id)
+ {
+ 	int i;
+@@ -667,16 +635,6 @@ nthw_field_t *nthw_register_get_field(const nthw_register_t *p, nthw_id_t id)
+ 	return p_field;
+ }
+ 
+-static int nthw_register_get_bit_width(const nthw_register_t *p)
+-{
+-	return p->mn_bit_width;
+-}
+-
+-static int nthw_register_get_debug_mode(const nthw_register_t *p)
+-{
+-	return p->mn_debug_mode;
+-}
+-
+ /*
+  * NOTE: do not set debug on fields - as register operation dumps typically are enough
+  */
+@@ -750,28 +708,6 @@ static int nthw_register_write_data(const nthw_register_t *p, uint32_t cnt)
+ 	return rc;
+ }
+ 
+-static void nthw_register_get_val(const nthw_register_t *p, uint32_t *p_data, uint32_t len)
+-{
+-	uint32_t i;
+-
+-	if (len == (uint32_t)-1 || len > p->mn_len)
+-		len = p->mn_len;
+-
+-	RTE_ASSERT(len <= p->mn_len);
+-	RTE_ASSERT(p_data);
+-
+-	for (i = 0; i < len; i++)
+-		p_data[i] = p->mp_shadow[i];
+-}
+-
+-static uint32_t nthw_register_get_val32(const nthw_register_t *p)
+-{
+-	uint32_t val = 0;
+-
+-	nthw_register_get_val(p, &val, 1);
+-	return val;
+-}
+-
+ void nthw_register_update(const nthw_register_t *p)
+ {
+ 	if (p && p->mn_type != NTHW_FPGA_REG_TYPE_WO) {
+@@ -806,15 +742,6 @@ void nthw_register_update(const nthw_register_t *p)
  	}
+ }
  
- 	return res;
-diff --git a/drivers/net/ntnic/ntutil/nt_service.c b/drivers/net/ntnic/ntutil/nt_service.c
-index 9f22ee2bba..c39771acc2 100644
---- a/drivers/net/ntnic/ntutil/nt_service.c
-+++ b/drivers/net/ntnic/ntutil/nt_service.c
-@@ -36,6 +36,12 @@ static struct nt_service g_nt_services[RTE_NTNIC_SERVICE_MAX] = {
- 		.lcore = RTE_MAX_LCORE,
- 		.initialized = false,
- 	},
-+	[RTE_NTNIC_SERVICE_ADAPTER_MON] = {
-+		.tag = RTE_NTNIC_SERVICE_ADAPTER_MON,
-+		.id = NT_SERVICE_UNKNOWN_ID,
-+		.lcore = RTE_MAX_LCORE,
-+		.initialized = false,
-+	},
- };
+-static uint32_t nthw_register_get_val_updated32(const nthw_register_t *p)
+-{
+-	uint32_t val = 0;
+-
+-	nthw_register_update(p);
+-	nthw_register_get_val(p, &val, 1);
+-	return val;
+-}
+-
+ void nthw_register_make_dirty(nthw_register_t *p)
+ {
+ 	uint32_t i;
+@@ -877,19 +804,6 @@ void nthw_register_flush(const nthw_register_t *p, uint32_t cnt)
+ 	}
+ }
  
- inline struct nt_service *nthw_service_get_info(const enum rte_ntnic_service_tag tag)
-diff --git a/drivers/net/ntnic/rte_pmd_ntnic.h b/drivers/net/ntnic/rte_pmd_ntnic.h
-index 1a68cb8e37..08e7958acd 100644
---- a/drivers/net/ntnic/rte_pmd_ntnic.h
-+++ b/drivers/net/ntnic/rte_pmd_ntnic.h
-@@ -45,6 +45,7 @@ enum rte_ntnic_service_tag {
- 	RTE_NTNIC_SERVICE_STAT = 1,
- 	RTE_NTNIC_SERVICE_PORT_0_EVENT = 2,
- 	RTE_NTNIC_SERVICE_PORT_1_EVENT = 3,
-+	RTE_NTNIC_SERVICE_ADAPTER_MON = 4,
- 	RTE_NTNIC_SERVICE_MAX
- };
+-static void nthw_register_clr(nthw_register_t *p)
+-{
+-	if (p->mp_shadow) {
+-		memset(p->mp_shadow, 0, p->mn_len * sizeof(uint32_t));
+-		nthw_register_make_dirty(p);
+-	}
+-}
+-
+-static int nthw_field_get_debug_mode(const nthw_field_t *p)
+-{
+-	return p->mn_debug_mode;
+-}
+-
+ int nthw_field_get_bit_width(const nthw_field_t *p)
+ {
+ 	return p->mn_bit_width;
+diff --git a/drivers/net/ntnic/ntutil/nt_util.c b/drivers/net/ntnic/ntutil/nt_util.c
+index c4a49d8358..18133570bb 100644
+--- a/drivers/net/ntnic/ntutil/nt_util.c
++++ b/drivers/net/ntnic/ntutil/nt_util.c
+@@ -85,24 +85,6 @@ struct nt_dma_s *nt_dma_alloc(uint64_t size, uint64_t align, int numa)
+ 	return vfio_addr;
+ }
  
+-static void nt_dma_free(struct nt_dma_s *vfio_addr)
+-{
+-	NT_LOG(DBG, GENERAL, "VFIO DMA free addr=%" PRIX64 ", iova=%" PRIX64 ", size=%" PRIX64,
+-		vfio_addr->addr, vfio_addr->iova, vfio_addr->size);
+-
+-	int res = vfio_cb.vfio_dma_unmap(0, (void *)vfio_addr->addr, vfio_addr->iova,
+-			vfio_addr->size);
+-
+-	if (res != 0) {
+-		NT_LOG(WRN, GENERAL,
+-			"VFIO DMA free FAILED addr=%" PRIX64 ", iova=%" PRIX64 ", size=%" PRIX64,
+-			vfio_addr->addr, vfio_addr->iova, vfio_addr->size);
+-	}
+-
+-	rte_free((void *)(vfio_addr->addr));
+-	rte_free(vfio_addr);
+-}
+-
+ /* NOTE: please note the difference between RTE_ETH_SPEED_NUM_xxx and RTE_ETH_LINK_SPEED_xxx */
+ int nt_link_speed_to_eth_speed_num(enum nt_link_speed_e nt_link_speed)
+ {
+@@ -180,39 +162,6 @@ uint32_t nt_link_speed_capa_to_eth_speed_capa(int nt_link_speed_capa)
+ 	return eth_speed_capa;
+ }
+ 
+-/* Converts link speed provided in Mbps to NT specific definitions.*/
+-static nt_link_speed_t nthw_convert_link_speed(int link_speed_mbps)
+-{
+-	switch (link_speed_mbps) {
+-	case 10:
+-		return NT_LINK_SPEED_10M;
+-
+-	case 100:
+-		return NT_LINK_SPEED_100M;
+-
+-	case 1000:
+-		return NT_LINK_SPEED_1G;
+-
+-	case 10000:
+-		return NT_LINK_SPEED_10G;
+-
+-	case 40000:
+-		return NT_LINK_SPEED_40G;
+-
+-	case 100000:
+-		return NT_LINK_SPEED_100G;
+-
+-	case 50000:
+-		return NT_LINK_SPEED_50G;
+-
+-	case 25000:
+-		return NT_LINK_SPEED_25G;
+-
+-	default:
+-		return NT_LINK_SPEED_UNKNOWN;
+-	}
+-}
+-
+ int nt_link_duplex_to_eth_duplex(enum nt_link_duplex_e nt_link_duplex)
+ {
+ 	int eth_link_duplex = 0;
 -- 
 2.45.0
 
