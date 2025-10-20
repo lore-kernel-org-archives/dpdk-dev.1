@@ -2,81 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B24CCD195
-	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Oct 2025 21:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E43EFCCD193
+	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 04:11:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7D0F040DD2;
-	Sun, 19 Oct 2025 23:27:48 +0200 (CEST)
-Received: from fout-b6-smtp.messagingengine.com
- (fout-b6-smtp.messagingengine.com [202.12.124.149])
- by mails.dpdk.org (Postfix) with ESMTP id F2B91400D5;
- Sun, 19 Oct 2025 23:27:46 +0200 (CEST)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfout.stl.internal (Postfix) with ESMTP id 04DC51D00023;
- Sun, 19 Oct 2025 17:27:45 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Sun, 19 Oct 2025 17:27:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1760909265;
- x=1760995665; bh=KEjzzjQDJRC0gq9gBd/64r4taTzlfX3x1G2Om8HzSm8=; b=
- emrXobU5lWTcKANXcnkNQW4sjRij5AJhWxPomfB7NI6bCUKTJH9tOc6LuyYT2lP+
- lka+C8bu+z6DvtHKMQq4iXYk7bWayaETrcqVZaXOyF0Hz/Tqcv8h7jLpiMiEtmXq
- /Y+bX35r1tHwiCAar0rZRk6MSkERVTJcPohgy9HehVYgP+aCUhTH5UyMn6JzybUW
- iD9+s83WHIQmkruuAiVkZikHDdnb+Lo2p4VnA5E9slK8FV3Q6LzEgZqDnaU9CKt3
- Bj0ApDBO/tigABwvwnN88Zn4+wvQR2umHG/ci4/0ar+vi/zODcB8krcj5TXnvUlq
- +zKG1+NpaRSoldVUNdSJpQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1760909265; x=
- 1760995665; bh=KEjzzjQDJRC0gq9gBd/64r4taTzlfX3x1G2Om8HzSm8=; b=o
- nwzxJSMM+79J3gFqjxSCC9z0V3KQPV8XPHYlft6x5WIWHxhnhY4GmX1H49DAeanp
- /adTWPVhqD0hyXa14SbEAzPbd/+sgtVHN3KCuNb3RIwYXpT18lGdFfaMf2tXCYvx
- Khq5e/NdtoD5kjM0RkxU3YiN19XFGxtxXbunfPsrsB41xVKI2tPy6je8yE+Fy28W
- N2tH2S2pLh8qNC2JrnfMFZjEHs7bJt96wkEzfsAOymZjyYSbISRo60B+TuA0/aAk
- 4jOSRYsKarvlgwoRRzs1CyRicHwI3PjJOC0q3pjLc0JEkILPZ0YCDPXFAO2N0wSk
- CzS4QHRFgM3zDO9F4sECQ==
-X-ME-Sender: <xms:0Vf1aMPgmYm6moMjAOJ-i9cozjR_HNhBOYBGzaK47HR3xmisuXzC2w>
- <xme:0Vf1aDFmyS5suRbAnsNExxvILVP-GzKKuUXorNzfKGLsRyospo1Uz02oN3WV2RjZf
- brnJgnvIAScEIOaFLtbMUSVbO5GIxBFgxC8-Vhl4a5WhNDkyZrBOg>
-X-ME-Received: <xmr:0Vf1aLOSj_5r2z0B4DLYZQvZj5OJ18QfRLoZ7iSjeE4AEIL2BxDhuomHVCBS4Y7Kq5o9-MmVxHWiRdSxycX1stJHOw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddufeeitddvucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehvlhgrughimhhirhdrmhgvughvvggukh
- hinhesihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgt
- phhtthhopehsthgrsghlvgesughpughkrdhorhhgpdhrtghpthhtoheprhhjrghrrhihse
- hrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:0Vf1aM8IITtEfNI3Oz6wgdVIaGr_6hHwob0qWQ6JAXHRVkMN3NZIQw>
- <xmx:0Vf1aPTHuOkGt6PMTDkmD8SjMR_4keVVuKaP_KZ-CfvESIxu0pFgyA>
- <xmx:0Vf1aOloYk37dM5WhdoHjvrtw2LioNE3VW2-0pLqlqjlLWRUFnqIug>
- <xmx:0Vf1aPQ2Nc-XutfiBrL0X6IND1q6fsKEUSKj5wVkF0oMVosxE7FUPA>
- <xmx:0Vf1aKJtdvBD2PVhBiy9X9r21zh4wgQjxln1wdbL5kimfwKGkkNE52FM>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 19 Oct 2025 17:27:44 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Robin Jarry <rjarry@redhat.com>
-Subject: Re: [PATCH 2/2] fib6: fix tbl8 allocation check logic
-Date: Sun, 19 Oct 2025 23:27:43 +0200
-Message-ID: <8963590.eFmWaWnqpD@thomas>
-In-Reply-To: <DDISITO3VISA.3ER8HBDM4WX4Y@redhat.com>
-References: <20251014181755.114300-1-vladimir.medvedkin@intel.com>
- <20251014181755.114300-2-vladimir.medvedkin@intel.com>
- <DDISITO3VISA.3ER8HBDM4WX4Y@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E974340E5A;
+	Mon, 20 Oct 2025 06:11:15 +0200 (CEST)
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
+ [113.46.200.222])
+ by mails.dpdk.org (Postfix) with ESMTP id 16661400D5
+ for <dev@dpdk.org>; Mon, 20 Oct 2025 06:11:13 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=oi+0snYJE3t3LFBaAmeBp42sYpD6oxCO3M+3wXqW3mQ=;
+ b=rJDN+ZjNsvrf1kmQxPPeRY398rAdjy11gw9CBDpheudxqU9FYjuL4j4cttguLnapiL8NHpadg
+ 4OQ7tBHLGlmEqcEjCWQiLNL8JE/zIMruQamkAqYxCnUzwhJ+Bwp02RJ+deZgvSFVSBI6F9GCvBW
+ bCHHLp5Sy+AlTgovmcxxND0=
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+ by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4cqhmm4l2VzLlVc;
+ Mon, 20 Oct 2025 12:10:48 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id DBF4D1A0188;
+ Mon, 20 Oct 2025 12:11:11 +0800 (CST)
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 20 Oct 2025 12:11:11 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>, <honest.jiang@foxmail.com>
+CC: <dev@dpdk.org>, <liuyonglong@huawei.com>, <vattunuru@marvell.com>
+Subject: [PATCH v4 00/14] bugfix and refactor of dma-perf
+Date: Mon, 20 Oct 2025 12:10:51 +0800
+Message-ID: <20251020041105.1590-1-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20250811105430.55791-1-fengchengwen@huawei.com>
+References: <20250811105430.55791-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
+X-Originating-IP: [10.50.163.32]
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,19 +54,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-15/10/2025 11:32, Robin Jarry:
-> Vladimir Medvedkin, Oct 14, 2025 at 20:17:
-> > Currently if there were 'n' preallocated tbl8 entries only 'n - 1' were
-> > able to be used. Fix the logic allowing to use all preallocated tbl8
-> > entries.
-> >
-> > Fixes: c3e12e0f0354 ("fib: add dataplane algorithm for IPv6")
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-> 
-> Tested-by: Robin Jarry <rjarry@redhat.com>
+This patchset contain one bugfix and refactor commits for
+test-dma-perf application.
 
-Series applied, thanks.
+Chengwen Feng (14):
+  app/dma-perf: fix use-after-free
+  app/dma-perf: add global section for config file
+  app/dma-perf: use argparse lib to parse argument
+  app/dma-perf: refactor output csv
+  app/dma-perf: support list DMA devices
+  app/dma-perf: add more global config
+  app/dma-perf: remove invalid or redundant field
+  app/dma-perf: refactor load config function
+  app/dma-perf: refactor benchmark function
+  app/dma-perf: support specific error info
+  app/dma-perf: fix segment fault with large size
+  app/dma-perf: fix on-flight DMA when verify data
+  app/dma-perf: fix wrong stage to stop dmadev
+  app/dma-perf: refactor benchmark function
 
+---
+v4: rebase to latest upstream.
+    add one more refactor commit.
+v3: add min/max desc when list DMA devices
+    add three bugfix commit (11~13) that recently found
+v2: fix global argv[0] not prog name.
+    friendly remide if there are no dmadev when list-dma.
+    add ack from Vamsi Attunuru.
+
+ app/test-dma-perf/benchmark.c | 479 ++++++++++++++++-----------
+ app/test-dma-perf/config.ini  |  36 +--
+ app/test-dma-perf/main.c      | 594 ++++++++++++++++++----------------
+ app/test-dma-perf/main.h      |  28 +-
+ app/test-dma-perf/meson.build |   2 +-
+ doc/guides/tools/dmaperf.rst  |  57 ++--
+ 6 files changed, 671 insertions(+), 525 deletions(-)
+
+-- 
+2.17.1
 
