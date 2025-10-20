@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66704CCD199
-	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C580CCD19F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:43:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B6F594067D;
-	Mon, 20 Oct 2025 18:43:47 +0200 (CEST)
-Received: from egress-ip42a.ess.de.barracuda.com
- (egress-ip42a.ess.de.barracuda.com [18.185.115.201])
- by mails.dpdk.org (Postfix) with ESMTP id A8CFA40654
+	by mails.dpdk.org (Postfix) with ESMTP id C6B8C40A82;
+	Mon, 20 Oct 2025 18:43:48 +0200 (CEST)
+Received: from egress-ip42b.ess.de.barracuda.com
+ (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
+ by mails.dpdk.org (Postfix) with ESMTP id E511A4065C
  for <dev@dpdk.org>; Mon, 20 Oct 2025 18:43:43 +0200 (CEST)
-Received: from AM0PR02CU008.outbound.protection.outlook.com
- (mail-westeuropeazon11023083.outbound.protection.outlook.com [52.101.72.83])
- by mx-outbound11-211.eu-central-1a.ess.aws.cudaops.com (version=TLSv1.2
+Received: from AS8PR04CU009.outbound.protection.outlook.com
+ (mail-westeuropeazon11021113.outbound.protection.outlook.com [52.101.70.113])
+ by mx-outbound47-33.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Mon, 20 Oct 2025 16:43:42 +0000
+ Mon, 20 Oct 2025 16:43:43 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TJmK8RlST7aPdpjbTvXkD4jFBLFF5uNjc+h4wQiWmxDcMph/UqySwu54nxwXr2cjRSBkkOIRNCTTO3Bzys0/CrNgN2ZBbKGf3WVY4z0uXw+tNb5+Gypq/3WGWPJ15ieRJON1XqLH7nxQK160ABRS4MvsYwCV9RPED5/MLPu03msbp8k3ifEBE2vWaBWnZbh4JZqNsDyxKtNbmJnIFL+5uBX2JTOiJML51Volx8eT561tlAlKM7TZssLvyFcxS4P/t9sLiL5/Ug6HDeYDfY04j0FModCNgxSMDoOezgUE/N/npdsAytxRyWMcKU6hapbihFQhmJQCgd7OXPRIolPxbg==
+ b=iNrO8DzvXVYZmujD8+vfa7yTd+0tAC7z1R4iYRPAToRel+lTjxGkvuvicHARtp3Faj2MjvfOpZSHhaX13tYPRsVBA3HgbJaMha2QrGB5UZxZ4GnOrhdY8UB1JwBPNN9NhbbNXL4IqHVJo2I9jZQqlcxxxGFZaunzHDr01cKmGtWFDfRkEgFr2hTcUGaMcTm4WwYvIE6mFetebF6cPUMCn+dshLbDA//cFPniYVcsZMeNLNiZCxIESkJcj0yd6L/eZ7NoEDWyr7wlnM8eanVcX2nNXWS1rsmsXdHkz4uiLS+3Oxp5yoUyg2PjS4sY92PSvPW0kGYXnBIDnaOIjC/GUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2dXc25lljN6+l4itacgZAQl9fOAV4GYy7u3jBMuOnns=;
- b=zWkgxBBc9w6XYgNNH/heR8mWtwKOgfsE1HWSM7wz2qCEaGaA9LtnXD5GMzcKeIvgPKVGj0VoxoLhYHxYi/eWhSeLA6hNba3o36vwdOSRFuKzWP+x0zEZjdGtOvNZqEetz6kKUcB4nW3fiTBJ3isaZ2tHR5iMIwp9Horn+9g5h8sCYJJhauOlYmiKsZq1ZIZqyXtMbo6FNkeahbGtRsx4dne0mBGdXPpgEOpjEr/cWgPcYb6Wb3TD2udQNZBW1xv/RQKaBbd5MPgM2Foq8kBfDN99/Jmn3Zdz+Y/DPTUxb1l25P1nR8nuGjWPUWPoxteW+/bi3BwhPlKk0h2i3uym0w==
+ bh=jehF2W3peIwFRqCuwS4PEVKPoAo7U6Ib2p8d42vYKBQ=;
+ b=NXJNJs/lmn4n58D0mAHZlyXc4fhC1VJRRCGeo5ySM1rarlCT0I/MkD2UmXwZJjITmae5ZH23w2/Jz3TDOrvk+foB2DmvAZ8eLKxd6spoJA7KlOeRgpDv2/RqIBUGgdwaaciPXb8HGDoiGDdK+Z9lini80uMbz4df6IrT6VuT6qgqS/Nopi2xubFsBfyRo791wECobpUhnIQ3cgUtSAa8DqSO7uqtA8hLlg47YL48MR/V86uCvhNewg20vrqbyviwKvHEJhH80RTGqVb0hQhkNvYc9MK7lfY6hzRsPmS6imD5AL8Cy9Y5FZHYDnmou0/ie6JDODLpKYvHUHHYCeeH/A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2dXc25lljN6+l4itacgZAQl9fOAV4GYy7u3jBMuOnns=;
- b=hv9+tdVsGxTMXXLPyg/lXX29RsVy4lYfw+eOMOWbquiupWcXgrmDRp5n2h/akht4tZKQG5DfR+c59Ogj5jD4gdaFh7ClsW0MzHoI4W09xLlIAmXB0MV1CzC+38TQs8mIYX2SwkPCaYmvUWjVlVL7gwncfzJIssar21GvfRCJzjs=
-Received: from DUZPR01CA0027.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:46b::14) by PR3P190MB0985.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:102:90::18) with Microsoft SMTP Server (version=TLS1_2,
+ bh=jehF2W3peIwFRqCuwS4PEVKPoAo7U6Ib2p8d42vYKBQ=;
+ b=R064QPfR2WSLNzMkEUc0OlkDZdExgeh8tIXMby67ZZKoITZlq8v70DY33f3y1HeHfHD96ZPSbpMpG5EmS8xat/v7wgn3mhp2oUgIAqYqCslCURi7q+exQa5hcB+OhT2OChtCCH4A1BMFOrirnsDpSwaMuoAzETEoADL6kMPsfCA=
+Received: from DUZPR01CA0026.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46b::20) by PA4P190MB1328.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:102:109::6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Mon, 20 Oct
- 2025 16:43:40 +0000
+ 2025 16:43:41 +0000
 Received: from DU6PEPF0000B61F.eurprd02.prod.outlook.com
- (2603:10a6:10:46b:cafe::3d) by DUZPR01CA0027.outlook.office365.com
- (2603:10a6:10:46b::14) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:10:46b:cafe::ae) by DUZPR01CA0026.outlook.office365.com
+ (2603:10a6:10:46b::20) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.17 via Frontend Transport; Mon,
- 20 Oct 2025 16:44:31 +0000
+ 20 Oct 2025 16:44:00 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  DU6PEPF0000B61F.mail.protection.outlook.com (10.167.8.134) with Microsoft
- SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:43:40
+ SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:43:41
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v2 01/21] net/ntnic: add stubs for init NT400D11
-Date: Mon, 20 Oct 2025 18:43:10 +0200
-Message-ID: <20251020164336.283664-2-sil-plv@napatech.com>
+Subject: [PATCH v2 02/21] net/ntnic: add reset setup for NT400D11
+Date: Mon, 20 Oct 2025 18:43:11 +0200
+Message-ID: <20251020164336.283664-3-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20251020164336.283664-1-sil-plv@napatech.com>
 References: <20251001151018.250671-21-sil-plv@napatech.com>
@@ -67,72 +67,72 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF0000B61F:EE_|PR3P190MB0985:EE_
+X-MS-TrafficTypeDiagnostic: DU6PEPF0000B61F:EE_|PA4P190MB1328:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 81232a80-239e-40b3-17c6-08de0ff7d31c
+X-MS-Office365-Filtering-Correlation-Id: cd6b6faa-0268-4631-dcd9-08de0ff7d36c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|1800799024|376014|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?f7eJ1wG8/iqWRHhXfqlUravkS8Y9XMPf79T2uxbJT4XzH4Gihx8MfGi4F7mT?=
- =?us-ascii?Q?pd5VZBZXQ6DA5Fv0zTfWD4v8qdXnz4/yI5OGhO6EOF+KRDbkDBXJg+Grulyg?=
- =?us-ascii?Q?3mLsNzJ3ESC+S+2KA+wadx3tPHRlchcUotUCUPRGkkVOBPitZLAiNQdpEOQj?=
- =?us-ascii?Q?JOXceVYyK+TVWJoESvEv3EQFhFTvpRve7ksMBx0WpyQEc93zEV7qAgb2WyjL?=
- =?us-ascii?Q?75EvyRtE302aueYpsmo5EygwYyq7jK5aoV4GOjkYSEHt3Fv1ihKNbtROYLiy?=
- =?us-ascii?Q?P8FlPhCrdsM39mHt91ZJBZVC6j+viXEJxiTw8xnlRBq0d8MC1x9QI1VPIPv9?=
- =?us-ascii?Q?CQrfHh3x10rC/OKXOkj6KnQ3ozHFHEeiVTa7ROuH+03fmbCn/DgSzkKOn/h3?=
- =?us-ascii?Q?20MJyttCwVOperpE7mPTgu/KD0OXdiTfsBalaET7ncza1q1keAtg5aGnVdpV?=
- =?us-ascii?Q?VBu/ZRfEHoYSB4xwQZn4pYZ9DTl0YAvxSVk4oCXYncIGX7Z2J0BKvkxDylI7?=
- =?us-ascii?Q?b+nhZpJcwUQMGYNTW/za7QrZPDeJQ9jcg/1g+x4R3pJMTlc+k9sRVzdyWiFn?=
- =?us-ascii?Q?nJ1BYAvfB8kwhbzM5MRWjvs6kwO/yHIGApUekB/NFH1KtPGrCbXQTv6J8Glh?=
- =?us-ascii?Q?clMwzCMrEC2oCrcx4adUJR6mdPhu7rW4rDRRCWVK1NGsQJUPveGUfwlJjYkH?=
- =?us-ascii?Q?372uKjxm0QrrLxq4pOHIeeknOkHVCXXGEKLdOl51fQ3DyfQ7HbBBlwU7KHsE?=
- =?us-ascii?Q?esbVjM67hGxUfEv5JososEB4QMI4w98QyM/ciR/uIa/D3tefCz4uZph7EOVZ?=
- =?us-ascii?Q?pdqA0NebvL29i/Udi1swcZXi53qHB2rLT2PpHHqLMFNLQsAZTatPimvje5tf?=
- =?us-ascii?Q?DclfQRpTc9nZQ22U/AMSnMCW5QGll44nWV2eDQt7sfAY9m4mIwZOCTcRbGFy?=
- =?us-ascii?Q?gwLyqo3irsy8tVd/Ulgh62Dz2JQLAhaXgXUvRcuRWUs0Q/ILs/mA1RepOw6u?=
- =?us-ascii?Q?vFdyD8UwpMams4bq5k/vAzVeF3sIUa5DjZWPNcmn6ZT/9FVzx0RCh3LQRJVh?=
- =?us-ascii?Q?0w7UEiRvm8zbGcNXKBZvvw2tzA+RMPx3WqRDN647we017cSkdAQ5cGXC8TVW?=
- =?us-ascii?Q?aLOlhhrjuk9eFny+jbMAXopdpLrbJp5DTMukF9xAXOpwvN7mqbaGC1Uucj8r?=
- =?us-ascii?Q?5b1e1L1Ge38k8WZm2Z1doX4zS1vrQP6HFuWoveT2sSGaXWABwB81LpJ8VqC0?=
- =?us-ascii?Q?0pY7etxFqWfoQLtlIOktZu6uDUpmu+OrzLedZ/e2EFp3SGnhTcInf80Rv/Zl?=
- =?us-ascii?Q?xXPDb8LJdg1k6/lko3PKFOnpvufFZJQfiRcTveVz3SB4honHFnm1TWj3nsfi?=
- =?us-ascii?Q?EwPGmxNaZ44PKuTGWlseU1SydUfFVjaP0DP2dmsFcVvyoRCACaUO6UZSGpLs?=
- =?us-ascii?Q?EGjSeuZku4/84Ro7LNiAUH296k0P56mh0f3Tv/vHpHd+Rmr0sfNEDImLTCIG?=
- =?us-ascii?Q?NI742ZmKbBrxqtzR1HgruBlI8xzFhePjOHIFUOk8Hb8kXTa6KZdJzbfJ3C7V?=
- =?us-ascii?Q?zZtk2H6IlGP1QnMZGtQ=3D?=
+ ARA:13230040|36860700013|82310400026|1800799024|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?isR6aKM1FDy6Sgr8aNRFqe8Ls1nQpsFViVUbYyw0HyyxPoeP3cfG7hR0+bi7?=
+ =?us-ascii?Q?Ypq1gsWt6fR5Erx0o5SVFT+WesSkv38izlbyAsq0nfWds6smPriDFXVC/9h4?=
+ =?us-ascii?Q?D6XCC84JRATo999MCI8oVEQR8IbXPuL4bKio9jaChC7IKa7t9oCPhGSV6y6a?=
+ =?us-ascii?Q?npnhITMcOThLBU9yR9q71o2Uso4fkbSViPWLqPoYTtBj46Al7f8J9++ZzJB6?=
+ =?us-ascii?Q?yaym2ZESbCxEgjC6r+NM60618osLpFyotBjbhsQwkXfMTi09bFXnU1NXHbJB?=
+ =?us-ascii?Q?OEgtbs6gQjI+qVB7l0EBhQ//5CfMZy6ziXMDXdMERFolb8Dwed15K22Go07h?=
+ =?us-ascii?Q?x8Q1vz86OyvbeAjgmdB4NKhc+VrQVcDLl1LlMBdfJC2YunqpvTQY42DhOCFa?=
+ =?us-ascii?Q?xbri37LgPys92ou6ejMODZL20U4SdkeoEBW5EMZ9kZEifJfs6bR/ujyj6R+k?=
+ =?us-ascii?Q?aaEBwIf/64ZiyKylQiaAtHQ2SaBdTJQNhS9z3Q2fyYc4KSr7xa9mU8u/Ea3f?=
+ =?us-ascii?Q?My9+vKonPFoMJa3/dO70zU6m+QN37WtqI04iDQ9TTWRfQ3m5iLaFhzJO/Nxn?=
+ =?us-ascii?Q?pen2FDdzfU8gh+CPdXSrXHSK1pXeT3BH1jE6SDg9Qi38DCzv8Kc0v8vGyztm?=
+ =?us-ascii?Q?7H2z8Q6dUznwb9VjI8Yl334hepyvM51KnL2VBOTX6yhWkt1+Bs+KfNvuLUaH?=
+ =?us-ascii?Q?/y9+Ik29TjZwtowZuYRahs8ebh2RGUm0eAtXs53FaXCN9spK1c9ESBEIkCA/?=
+ =?us-ascii?Q?dXBCDkXD3kgZ4tQNkKMTEm+gzsqIZnhFPfPEiwIYZ0puzihxA8mf8hdxWSem?=
+ =?us-ascii?Q?HHSap5jk9QhisUZQ5n+eEjsGkfwpAli4KQWFISwhG3UyVXlP0TX2GxJKeQ+u?=
+ =?us-ascii?Q?8vhBi2NBXwMoEltRnYF5yZQ6tlj+msjIJd8D0O/d1+rdcb9Cw7VpUxyX2TmX?=
+ =?us-ascii?Q?5loZjhmbix0uE29+NRwqFETNdGJVINjK3PfBOMEUFikXxtJGT8z876aKr5qc?=
+ =?us-ascii?Q?Gs5leIYhzfNxmTk/UczdL0epmOkNSNe4gtbQ7KHzbN8AXP1rhfshpmncq2L/?=
+ =?us-ascii?Q?/vHaLCn909HITpWZ8WkVHOk6PHXh/VQ6TzKdptgwh5wSO+kA+uzE78ZPNquX?=
+ =?us-ascii?Q?065gRrFHFPiNRw9cbsBNJmP4lFFjaxLaUdNgnsYCn0Gvauc5MBVSWqRHctpw?=
+ =?us-ascii?Q?yVLL8GbbdivE/yWZ04pzUattQoU12Eq92RCRFVBNLsVxG03X7/BGOGEIvSNX?=
+ =?us-ascii?Q?GNFXmmFgw8buLj23Wbta+TZuKoZgzhTvw5Xv5F9hiPWmmX9Uy3ls8a8RZgsL?=
+ =?us-ascii?Q?dv/kcHMKGsuK0rWCAWp1syGk/Pub9GhdYwGV8VdVGXPLxLWJPsRT1CIZ5qx9?=
+ =?us-ascii?Q?g4aanRQv3zpN3dl3kiYG+GhqJD5J7ZlWV4EleHyxBHx3ar8y3Y3Go7+kuE+V?=
+ =?us-ascii?Q?pnKJFI/a7vanR5bGn8CzGxt4B3pPxqr97iOUeX+d11+7K7BSloBeYlxkolDh?=
+ =?us-ascii?Q?fgBjkBSEw/3ZKL8JlRq/ExLLWwg1n3SmLK0XfwJ5wexAMaacwwTEWVmP6CgS?=
+ =?us-ascii?Q?aB/To6yVR73Wu3GEG9c=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);
+ CAT:NONE; SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: pdc0D5JUOmZREp3NNgMHdU8g2ACVNWTXYyHazW5CZS8oyOCAIKi3BIhGmXoUd/CTptICqZYkdhjsd8Ed0xMfVS96W+Y/LFYDrN0jA1ZmlEj51DR7r0zzQ+JeqCE1dQeH/y9yfMFvddRYQ22GB062Y7NvfLnTTy5m1jIhlNnoCHpxi6AhsKy+bXkFRSQMppHB49uSGFa2sTvksCuxGdd77EZW/kGcAwkuxILRBveqQEeLrnZkO/GTS8Eo4WRmVBe6BxUrGikkqlg+1c1+59u6GGEAT2eHnf4fOAMwRynUUWe61bUrQ+//H9QnbmBDsi1TioDsnURaMp/1kjILLTr7+EoOxE3bdrsO+dwbvQJeWFjkfgaAhhWSiRZMGHfN0bHAxVu7w87VFV11pHK334YudVxK69pYKDpxeSbo2BivhZlwvhGnOvW200o+Y2QSLqM1BvTrovfO6lyV4/ZhNDfHEHfVqhgX6B5Z8TWChaS7rOX7TpeCdAhfdpTgXDy1CDUem4hcyM1WET3F0WjNJJmIcIbx6T+aZ7YaBM62rdoC6qiPR1FA3CqYTLpTI4pBxNrrIR3nhZySt+paVfcsyqXbA36fTR5+1cICRPlzQ+IwvMtrUpk5bql/zeFSCv7riJYsM9m3erX7/TI3CzcxGXZ7FUSCt3bgWYrhe+lgvGAwIlo=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: ggXDfbD6QadswVK/0SRDDsmBJiQK858+6itcBCHmfXaaLqR4zNZ242FbVv5/l2klxxEQYaxKyzweztz2sh+XWDY9ioBrxLnHpoYlXDsOXzNpVeCOkxdtDN3pbvDWn+aXHm483TGB/C2zi17F75h+oCvBX37mhpIVJ/Jx3XeLgJn8L+MicwzDx71InB27enAB5nzxEmGdJqXdAVyfHIKVsSjeTbZIXnRF1keuIPnxTSM2oEvfSDSwleuUG7/M6ztmCA8niy1NkHsCT48uDXFmYNBWbqGF2RJOhW9+iEhVU4HVun+zCFj/24jmBbct5QSjyEWxm6xGSeBkIio9c5Yu3OKbmwjiHvMHQ/v/hoEI8CXcglIuefftCpl4cYl4YRwluTU4rm0ciuxBPorkkpyCPpU13lwtLFtJ/Um/gDXz8D7fBzeYAHyjq7WUX727lZWykRJTmB3exHjpDR7RVvHlACf7qzPnB9j77IwiAtA76Q8QdvJlNWB7eBqw4v72DLL8GP8aQP+bbkLvp7J3qwAC3sB5WbZh0qxI356+x2q7p7LyO/ouJbYJAgKUUaspbtCIhgXjs5yJlgEFW42/wd96JG1vH7rgI4UTrC3FuRF8YdK2rQcL/e5y4zcxhLj4eKXTdawQxQCj31ixtaGmrU5aZNxHX6BepMSY4J5IRP/3s+U=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:43:40.4935 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81232a80-239e-40b3-17c6-08de0ff7d31c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:43:41.0232 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd6b6faa-0268-4631-dcd9-08de0ff7d36c
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU6PEPF0000B61F.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3P190MB0985
-X-BESS-ID: 1760978622-303027-28475-63641-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4P190MB1328
+X-BESS-ID: 1760978623-312065-25065-118143-1
 X-BESS-VER: 2019.1_20251001.1803
-X-BESS-Apparent-Source-IP: 52.101.72.83
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVpZG5uZAVgZQMMnQzMDc3CzV0s
- LSyNjQxNzYyNLU1CzNDMhISTIytlSqjQUA3fQY5kEAAAA=
-X-BESS-Outbound-Spam-Score: 0.01
+X-BESS-Apparent-Source-IP: 52.101.70.113
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVmZmJhZAVgZQMNkoMTHV2CzJwD
+ LZzMIg1czcONnSwsICKJZqZmmZlKxUGwsAob2IsUEAAAA=
+X-BESS-Outbound-Spam-Score: 0.50
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.268348 [from 
- cloudscan22-181.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan17-205.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
+ 0.50 BSF_RULE7568M          META: Custom Rule 7568M 
  0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
- 0.01 BSF_SC7_SG0146_1       META: Custom rule SG0146_1 
-X-BESS-Outbound-Spam-Status: SCORE=0.01 using account:ESS113687 scores of
- KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND, BSF_SC7_SG0146_1
+X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS113687 scores of
+ KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -147,279 +147,179 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add stubs for NT400D11 init functions.
-These stubs will be replaced with actual implementations in future commits.
+Add base register initialization.
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- doc/guides/nics/ntnic.rst                     |  6 +++
- drivers/net/ntnic/adapter/nt4ga_adapter.c     |  3 +-
- drivers/net/ntnic/meson.build                 |  1 +
- .../nthw/core/nt400dxx/nthw_fpga_nt400dxx.c   | 41 +++++++++++++++++++
- .../core/nt400dxx/reset/nthw_fpga_rst9569.c   | 27 ++++++++++++
- drivers/net/ntnic/nthw/core/nthw_fpga.c       |  1 +
- drivers/net/ntnic/nthw/nthw_platform.c        |  3 ++
- drivers/net/ntnic/nthw/nthw_platform_drv.h    |  2 +
- drivers/net/ntnic/ntnic_ethdev.c              |  1 +
- drivers/net/ntnic/ntnic_mod_reg.c             | 15 +++++++
- drivers/net/ntnic/ntnic_mod_reg.h             |  9 ++++
- 11 files changed, 108 insertions(+), 1 deletion(-)
- create mode 100644 drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
+ .../nthw/core/nt400dxx/nthw_fpga_nt400dxx.c   |  2 +-
+ .../core/nt400dxx/reset/nthw_fpga_rst9569.c   | 54 ++++++++++++++++++-
+ .../ntnic/nthw/supported/nthw_fpga_mod_defs.h |  1 +
+ .../ntnic/nthw/supported/nthw_fpga_reg_defs.h |  1 +
+ .../supported/nthw_fpga_reg_defs_rst9569.h    | 35 ++++++++++++
+ drivers/net/ntnic/ntnic_mod_reg.h             |  3 +-
+ 6 files changed, 93 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/net/ntnic/nthw/supported/nthw_fpga_reg_defs_rst9569.h
 
-diff --git a/doc/guides/nics/ntnic.rst b/doc/guides/nics/ntnic.rst
-index a173eaa2ac..5375d89a2d 100644
---- a/doc/guides/nics/ntnic.rst
-+++ b/doc/guides/nics/ntnic.rst
-@@ -27,6 +27,10 @@ Supported NICs
- 
-     - FPGA ID 9563 (Inline Flow Management)
- 
-+- NT400D11 2x100G SmartNIC
-+
-+    - FPGA ID 9569 (Inline Flow Management)
-+
- - NT400D13 2x100G SmartNIC
- 
-     - FPGA ID 9574 (Inline Flow Management)
-@@ -34,6 +38,8 @@ Supported NICs
- All information about NT200A02 and NT400D13 can be found by links below:
- 
- - https://www.napatech.com/products/nt200a02-smartnic-inline/
-+- https://www.napatech.com/products/nt400d11-smartnic-programmable/
-+- https://www.napatech.com/products/nt400d13-smartnic-programmable/
- - https://www.napatech.com/support/resources/data-sheets/link-inline-software-for-napatech/
- 
- 
-diff --git a/drivers/net/ntnic/adapter/nt4ga_adapter.c b/drivers/net/ntnic/adapter/nt4ga_adapter.c
-index 6d8547483f..4599f78e3f 100644
---- a/drivers/net/ntnic/adapter/nt4ga_adapter.c
-+++ b/drivers/net/ntnic/adapter/nt4ga_adapter.c
-@@ -172,10 +172,11 @@ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
- 
- 			res = link_ops->link_init(p_adapter_info, p_fpga);
- 			break;
-+		case 9569: /* NT400D11 (Intel Agilex FPGA) */
- 		case 9574: /* NT400D13 (Intel Agilex FPGA) */
- 			link_ops = nthw_get_agx_100g_link_ops();
- 			if (link_ops == NULL) {
--				NT_LOG(ERR, NTNIC, "NT400D11 100G link module uninitialized");
-+				NT_LOG(ERR, NTNIC, "NT400Dxx 100G link module uninitialized");
- 				res = -1;
- 				break;
- 			}
-diff --git a/drivers/net/ntnic/meson.build b/drivers/net/ntnic/meson.build
-index 785ac4836d..038c7d90f6 100644
---- a/drivers/net/ntnic/meson.build
-+++ b/drivers/net/ntnic/meson.build
-@@ -47,6 +47,7 @@ sources = files(
-         'nthw/core/nt400dxx/nthw_fpga_nt400dxx.c',
-         'nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c',
-         'nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c',
-+        'nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c',
-         'nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c',
-         'nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c',
-         'nthw/core/nthw_fpga.c',
 diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c b/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
-index cc4bee9d4d..99b317d916 100644
+index 99b317d916..8ae06417b8 100644
 --- a/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
 +++ b/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
-@@ -113,6 +113,7 @@ static int nthw_fpga_nt400dxx_init_sub_systems(struct fpga_info_s *p_fpga_info)
- static int nthw_fpga_nt400dxx_init(struct fpga_info_s *p_fpga_info)
- {
- 	RTE_ASSERT(p_fpga_info);
-+	struct rst9569_ops *rst9569_ops = NULL;
- 	struct rst9574_ops *rst9574_ops = NULL;
+@@ -132,7 +132,7 @@ static int nthw_fpga_nt400dxx_init(struct fpga_info_s *p_fpga_info)
+ 			return -1;
+ 		}
  
- 	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
-@@ -123,6 +124,29 @@ static int nthw_fpga_nt400dxx_init(struct fpga_info_s *p_fpga_info)
- 	RTE_ASSERT(p_fpga);
+-		res = rst9569_ops->nthw_fpga_rst9569_setup();
++		res = rst9569_ops->nthw_fpga_rst9569_setup(p_fpga, &rst);
  
- 	switch (p_fpga_info->n_fpga_prod_id) {
-+	case 9569:
-+		rst9569_ops = nthw_get_rst9569_ops();
-+
-+		if (rst9569_ops == NULL) {
-+			NT_LOG(ERR, NTHW, "%s: RST 9569 NOT INCLUDED", p_adapter_id_str);
-+			return -1;
-+		}
-+
-+		res = rst9569_ops->nthw_fpga_rst9569_setup();
-+
-+		if (res) {
-+			NT_LOG(ERR,
-+				NTHW,
-+				"%s: %s: FPGA=%04d Failed to create reset module res=%d",
-+				p_adapter_id_str,
-+				__func__,
-+				p_fpga_info->n_fpga_prod_id,
-+				res);
-+			return res;
-+		}
-+
-+		break;
-+
- 	case 9574:
- 		rst9574_ops = nthw_get_rst9574_ops();
- 
-@@ -183,6 +207,23 @@ static int nthw_fpga_nt400dxx_init(struct fpga_info_s *p_fpga_info)
- 
- 		/* reset specific */
- 	switch (p_fpga_info->n_fpga_prod_id) {
-+	case 9569:
-+		if (rst9569_ops)
-+			res = rst9569_ops->nthw_fpga_rst9569_init();
-+
-+		if (res) {
-+			NT_LOG(ERR,
-+				NTHW,
-+				"%s: %s: FPGA=%04d - Failed to reset 9569 modules res=%d",
-+				p_adapter_id_str,
-+				__func__,
-+				p_fpga_info->n_fpga_prod_id,
-+				res);
-+			return res;
-+		}
-+
-+		break;
-+
- 	case 9574:
- 		res = rst9574_ops->nthw_fpga_rst9574_init(p_fpga_info, &rst);
- 
+ 		if (res) {
+ 			NT_LOG(ERR,
 diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
-new file mode 100644
-index 0000000000..3d1c09fe2d
---- /dev/null
+index 3d1c09fe2d..254703bae9 100644
+--- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
 +++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
-@@ -0,0 +1,27 @@
+@@ -4,10 +4,62 @@
+  */
+ 
+ #include "ntnic_mod_reg.h"
++#include "nthw_register.h"
++#include "nthw_drv.h"
+ 
+ 
+-static int nthw_fpga_rst9569_setup(void)
++static int nthw_fpga_rst9569_setup(nthw_fpga_t *p_fpga, struct nthw_fpga_rst_nt400dxx *const p)
+ {
++	RTE_ASSERT(p_fpga);
++	RTE_ASSERT(p);
++
++	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
++	const int n_fpga_product_id = p_fpga->mn_product_id;
++	const int n_fpga_version = p_fpga->mn_fpga_version;
++	const int n_fpga_revision = p_fpga->mn_fpga_revision;
++
++	nthw_module_t *p_mod_rst;
++	nthw_register_t *p_curr_reg;
++
++	p->n_fpga_product_id = n_fpga_product_id;
++	p->n_fpga_version = n_fpga_version;
++	p->n_fpga_revision = n_fpga_revision;
++
++	NT_LOG(DBG, NTHW, "%s: %s: FPGA reset setup: FPGA %04d-%02d-%02d", p_adapter_id_str,
++		__func__, n_fpga_product_id, n_fpga_version, n_fpga_revision);
++
++	p_mod_rst = nthw_fpga_query_module(p_fpga, MOD_RST9569, 0);
++
++	if (p_mod_rst == NULL) {
++		NT_LOG(ERR, NTHW, "%s: RST %d: no such instance", p_adapter_id_str, 0);
++		return -1;
++	}
++
++	/* RST register field pointers */
++	p_curr_reg = nthw_module_get_register(p_mod_rst, RST9569_RST);
++	p->p_fld_rst_sys = nthw_register_get_field(p_curr_reg, RST9569_RST_SYS);
++	p->p_fld_rst_ddr4 = nthw_register_get_field(p_curr_reg, RST9569_RST_DDR4);
++	p->p_fld_rst_phy_ftile = nthw_register_get_field(p_curr_reg, RST9569_RST_PHY_FTILE);
++	nthw_register_update(p_curr_reg);
++
++	p_curr_reg = nthw_module_get_register(p_mod_rst, RST9569_STAT);
++	p->p_fld_stat_ddr4_calib_complete =
++		nthw_register_get_field(p_curr_reg, RST9569_STAT_DDR4_CALIB_COMPLETE);
++	p->p_fld_stat_phy_ftile_rst_done =
++		nthw_register_get_field(p_curr_reg, RST9569_STAT_PHY_FTILE_RST_DONE);
++	p->p_fld_stat_phy_ftile_rdy =
++		nthw_register_get_field(p_curr_reg, RST9569_STAT_PHY_FTILE_RDY);
++	nthw_register_update(p_curr_reg);
++
++	p_curr_reg = nthw_module_get_register(p_mod_rst, RST9569_LATCH);
++	p->p_fld_latch_ddr4_calib_complete =
++		nthw_register_get_field(p_curr_reg, RST9569_LATCH_DDR4_CALIB_COMPLETE);
++	p->p_fld_latch_phy_ftile_rst_done =
++		nthw_register_get_field(p_curr_reg, RST9569_LATCH_PHY_FTILE_RST_DONE);
++	p->p_fld_latch_phy_ftile_rdy =
++		nthw_register_get_field(p_curr_reg, RST9569_LATCH_PHY_FTILE_RDY);
++	nthw_register_update(p_curr_reg);
++
+ 	return 0;
+ };
+ 
+diff --git a/drivers/net/ntnic/nthw/supported/nthw_fpga_mod_defs.h b/drivers/net/ntnic/nthw/supported/nthw_fpga_mod_defs.h
+index e2a98a737a..8d5837bac1 100644
+--- a/drivers/net/ntnic/nthw/supported/nthw_fpga_mod_defs.h
++++ b/drivers/net/ntnic/nthw/supported/nthw_fpga_mod_defs.h
+@@ -51,6 +51,7 @@
+ #define MOD_RPF (0x8d30dcddUL)
+ #define MOD_RPP_LR (0xba7f945cUL)
+ #define MOD_RST9563 (0x385d6d1dUL)
++#define MOD_RST9569 (0xd8888403UL)
+ #define MOD_RST9574 (0xbf22c9ffUL)
+ #define MOD_SDC (0xd2369530UL)
+ #define MOD_SLC (0x1aef1f38UL)
+diff --git a/drivers/net/ntnic/nthw/supported/nthw_fpga_reg_defs.h b/drivers/net/ntnic/nthw/supported/nthw_fpga_reg_defs.h
+index 5b824ef3e5..c16beb5faf 100644
+--- a/drivers/net/ntnic/nthw/supported/nthw_fpga_reg_defs.h
++++ b/drivers/net/ntnic/nthw/supported/nthw_fpga_reg_defs.h
+@@ -50,6 +50,7 @@
+ #include "nthw_fpga_reg_defs_rpl.h"
+ #include "nthw_fpga_reg_defs_rpp_lr.h"
+ #include "nthw_fpga_reg_defs_rst9563.h"
++#include "nthw_fpga_reg_defs_rst9569.h"
+ #include "nthw_fpga_reg_defs_rst9574.h"
+ #include "nthw_fpga_reg_defs_sdc.h"
+ #include "nthw_fpga_reg_defs_tsm.h"
+diff --git a/drivers/net/ntnic/nthw/supported/nthw_fpga_reg_defs_rst9569.h b/drivers/net/ntnic/nthw/supported/nthw_fpga_reg_defs_rst9569.h
+new file mode 100644
+index 0000000000..27e52b0b85
+--- /dev/null
++++ b/drivers/net/ntnic/nthw/supported/nthw_fpga_reg_defs_rst9569.h
+@@ -0,0 +1,35 @@
 +/*
 + * SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2025 Napatech A/S
 + */
 +
-+#include "ntnic_mod_reg.h"
++/*
++ * nthw_fpga_reg_defs_rst9569.h
++ *
++ * Auto-generated file - do *NOT* edit
++ *
++ */
 +
++#ifndef _NTHW_FPGA_REG_DEFS_RST9569_
++#define _NTHW_FPGA_REG_DEFS_RST9569_
 +
-+static int nthw_fpga_rst9569_setup(void)
-+{
-+	return 0;
-+};
++/* RST9569 */
++#define NTHW_MOD_RST9569 (0xd8888403UL)
++#define RST9569_LATCH (0x93ac825dUL)
++#define RST9569_LATCH_DDR4_CALIB_COMPLETE (0xf7a3f47eUL)
++#define RST9569_LATCH_PHY_FTILE_RDY (0xf189f59cUL)
++#define RST9569_LATCH_PHY_FTILE_RST_DONE (0x237710edUL)
++#define RST9569_RST (0x7cda32a2UL)
++#define RST9569_RST_DDR4 (0x215e3dadUL)
++#define RST9569_RST_PHY_FTILE (0xd633010bUL)
++#define RST9569_RST_SYS (0x74a18159UL)
++#define RST9569_STAT (0xce6f562UL)
++#define RST9569_STAT_DDR4_CALIB_COMPLETE (0x80a181a3UL)
++#define RST9569_STAT_PHY_FTILE_RDY (0x5bf72501UL)
++#define RST9569_STAT_PHY_FTILE_RST_DONE (0x26325becUL)
 +
-+static int nthw_fpga_rst9569_init(void)
-+{
-+	return 0;
-+}
++#endif  /* _NTHW_FPGA_REG_DEFS_RST9569_ */
 +
-+static struct rst9569_ops rst9569_ops = {
-+	.nthw_fpga_rst9569_init = nthw_fpga_rst9569_init,
-+	.nthw_fpga_rst9569_setup = nthw_fpga_rst9569_setup,
-+};
-+
-+void nthw_rst9569_ops_init(void)
-+{
-+	nthw_reg_rst9569_ops(&rst9569_ops);
-+}
-diff --git a/drivers/net/ntnic/nthw/core/nthw_fpga.c b/drivers/net/ntnic/nthw/core/nthw_fpga.c
-index 24cfb6c284..7ec33aff2d 100644
---- a/drivers/net/ntnic/nthw/core/nthw_fpga.c
-+++ b/drivers/net/ntnic/nthw/core/nthw_fpga.c
-@@ -440,6 +440,7 @@ int nthw_fpga_init(struct fpga_info_s *p_fpga_info)
- 			res = nt200a0x_ops->nthw_fpga_nt200a0x_init(p_fpga_info);
- 		break;
- 
-+	case NT_HW_ADAPTER_ID_NT400D11:
- 	case NT_HW_ADAPTER_ID_NT400D13:
- 		if (nt400dxx_ops != NULL)
- 			res = nt400dxx_ops->nthw_fpga_nt400dxx_init(p_fpga_info);
-diff --git a/drivers/net/ntnic/nthw/nthw_platform.c b/drivers/net/ntnic/nthw/nthw_platform.c
-index 6f2582d6fe..83e1b38563 100644
---- a/drivers/net/ntnic/nthw/nthw_platform.c
-+++ b/drivers/net/ntnic/nthw/nthw_platform.c
-@@ -11,6 +11,9 @@ nthw_adapter_id_t nthw_platform_get_adapter_id(const uint16_t n_pci_device_id)
- 	case NT_HW_PCI_DEVICE_ID_NT200A02:
- 		return NT_HW_ADAPTER_ID_NT200A02;
- 
-+	case NT_HW_PCI_DEVICE_ID_NT400D11:
-+		return NT_HW_ADAPTER_ID_NT400D11;
-+
- 	case NT_HW_PCI_DEVICE_ID_NT400D13:
- 		return NT_HW_ADAPTER_ID_NT400D13;
- 
-diff --git a/drivers/net/ntnic/nthw/nthw_platform_drv.h b/drivers/net/ntnic/nthw/nthw_platform_drv.h
-index db2bc05180..a861c8dd7b 100644
---- a/drivers/net/ntnic/nthw/nthw_platform_drv.h
-+++ b/drivers/net/ntnic/nthw/nthw_platform_drv.h
-@@ -10,11 +10,13 @@
- 
- #define NT_HW_PCI_VENDOR_ID (0x18f4)
- #define NT_HW_PCI_DEVICE_ID_NT200A02 (0x1C5)
-+#define NT_HW_PCI_DEVICE_ID_NT400D11 (0x215)
- #define NT_HW_PCI_DEVICE_ID_NT400D13 (0x295)
- 
- enum nthw_adapter_id_e {
- 	NT_HW_ADAPTER_ID_UNKNOWN = 0,
- 	NT_HW_ADAPTER_ID_NT200A02,
-+	NT_HW_ADAPTER_ID_NT400D11,
- 	NT_HW_ADAPTER_ID_NT400D13,
- };
- 
-diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
-index 42aa2d4095..01b3fe00ef 100644
---- a/drivers/net/ntnic/ntnic_ethdev.c
-+++ b/drivers/net/ntnic/ntnic_ethdev.c
-@@ -84,6 +84,7 @@ static const char *const valid_arguments[] = {
- 
- static const struct rte_pci_id nthw_pci_id_map[] = {
- 	{ RTE_PCI_DEVICE(NT_HW_PCI_VENDOR_ID, NT_HW_PCI_DEVICE_ID_NT200A02) },
-+	{ RTE_PCI_DEVICE(NT_HW_PCI_VENDOR_ID, NT_HW_PCI_DEVICE_ID_NT400D11) },
- 	{ RTE_PCI_DEVICE(NT_HW_PCI_VENDOR_ID, NT_HW_PCI_DEVICE_ID_NT400D13) },
- 	{
- 		.vendor_id = 0,
-diff --git a/drivers/net/ntnic/ntnic_mod_reg.c b/drivers/net/ntnic/ntnic_mod_reg.c
-index 00eb07f848..ab29a2d816 100644
---- a/drivers/net/ntnic/ntnic_mod_reg.c
-+++ b/drivers/net/ntnic/ntnic_mod_reg.c
-@@ -193,6 +193,21 @@ struct rst9574_ops *nthw_get_rst9574_ops(void)
- 	return rst9574_ops;
- }
- 
-+static struct rst9569_ops *rst9569_ops;
-+
-+void nthw_reg_rst9569_ops(struct rst9569_ops *ops)
-+{
-+	rst9569_ops = ops;
-+}
-+
-+struct rst9569_ops *nthw_get_rst9569_ops(void)
-+{
-+	if (rst9569_ops == NULL)
-+		nthw_rst9569_ops_init();
-+
-+	return rst9569_ops;
-+}
-+
- static struct rst_nt400dxx_ops *rst_nt400dxx_ops;
- 
- void nthw_reg_rst_nt400dxx_ops(struct rst_nt400dxx_ops *ops)
++/*
++ * Auto-generated file - do *NOT* edit
++ */
 diff --git a/drivers/net/ntnic/ntnic_mod_reg.h b/drivers/net/ntnic/ntnic_mod_reg.h
-index b534b09234..62f69d239d 100644
+index 62f69d239d..a4ea4f8f76 100644
 --- a/drivers/net/ntnic/ntnic_mod_reg.h
 +++ b/drivers/net/ntnic/ntnic_mod_reg.h
-@@ -269,6 +269,15 @@ struct rst9574_ops {
- 		struct nthw_fpga_rst_nt400dxx *const p);
+@@ -271,7 +271,8 @@ struct rst9574_ops {
+ 
+ struct rst9569_ops {
+ 	int (*nthw_fpga_rst9569_init)(void);
+-	int (*nthw_fpga_rst9569_setup)(void);
++	int (*nthw_fpga_rst9569_setup)(nthw_fpga_t *p_fpga,
++		struct nthw_fpga_rst_nt400dxx *const p);
  };
  
-+struct rst9569_ops {
-+	int (*nthw_fpga_rst9569_init)(void);
-+	int (*nthw_fpga_rst9569_setup)(void);
-+};
-+
-+void nthw_reg_rst9569_ops(struct rst9569_ops *ops);
-+struct rst9569_ops *nthw_get_rst9569_ops(void);
-+void nthw_rst9569_ops_init(void);
-+
- void nthw_reg_rst9574_ops(struct rst9574_ops *ops);
- struct rst9574_ops *nthw_get_rst9574_ops(void);
- void nthw_rst9574_ops_init(void);
+ void nthw_reg_rst9569_ops(struct rst9569_ops *ops);
 -- 
 2.45.0
 
