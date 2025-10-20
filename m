@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F86CCCD19F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC80CCD19F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:45:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D957442DFA;
-	Mon, 20 Oct 2025 18:44:13 +0200 (CEST)
-Received: from egress-ip42a.ess.de.barracuda.com
- (egress-ip42a.ess.de.barracuda.com [18.185.115.201])
- by mails.dpdk.org (Postfix) with ESMTP id 657F340E27
+	by mails.dpdk.org (Postfix) with ESMTP id 066B842E53;
+	Mon, 20 Oct 2025 18:44:15 +0200 (CEST)
+Received: from egress-ip11a.ess.de.barracuda.com
+ (egress-ip11a.ess.de.barracuda.com [18.184.203.234])
+ by mails.dpdk.org (Postfix) with ESMTP id 03BB440ECF
  for <dev@dpdk.org>; Mon, 20 Oct 2025 18:43:54 +0200 (CEST)
-Received: from AM0PR83CU005.outbound.protection.outlook.com
- (mail-westeuropeazon11020113.outbound.protection.outlook.com [52.101.69.113])
- by mx-outbound11-211.eu-central-1a.ess.aws.cudaops.com (version=TLSv1.2
- cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Mon, 20 Oct 2025 16:43:53 +0000
+Received: from DUZPR83CU001.outbound.protection.outlook.com
+ (mail-northeuropeazon11022119.outbound.protection.outlook.com
+ [52.101.66.119]) by mx-outbound11-211.eu-central-1a.ess.aws.cudaops.com
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+ Mon, 20 Oct 2025 16:43:54 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UePMdAJaKTzv7PstaahyH79vLdogbxZldrlWj39PftMrbGO/uRdkX8UWTz8B+54FtuTCl7DPEQro3RTiOU7ZktFuZszFHiIyn9TrF1C/1Htu9q+1UWJ6Zg/Tpf/3S0PjLBbr5EpGl+hcnRWv6RkmwREgCNBjcuhPm2PIY4EPscUYKZoDmkmeYHDd/6rtEt4Z39tbD7WRnznmGsNqXIuXOaL7WH5uFKoIh49d9FchOLzLtNKJGwS2pD4xBYbU48dWf8EpCsOH7v0DMhhHGuVEkPRpA5EqLG7Dgf4juD4FSLH3UVpLLncOndSpWwNW7Ss+hDyMEApYTJzqUISpiCs8Cg==
+ b=VftzCJoFrIw+m3TG6jbjSi9zORl/9JaB++rjzZ41Sw9qMe7cE79yiCDF4L4h7ySxIiNIxPYjSKzP19PKijgc+uHtjJSFwLnfibk67S6B/ulCg636QWZOXTTCWQd4HHHVVpiPg1Ic0ibRDhZiOEgVD9A9SPfEZZZ4ryzWNVKdqE66fGWVz1s7TumWfbOkAMQCn8X0Ym8A67XdbLYObrv72/3BlkZyzcE6jRXT1zUT9kIPYbIjkfhgmGPwtIE3RIoN2rwyZSYGNPJMP0l+m+BqR6oZT7eYXFGEZTy/3qNbfx2RSjrKjvabgIeJj8m6GXqiS4OJr/FVp8Qh7ExIiL4i5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v9exQVg3M2INBD5BpUlagXzlUwcr9POojQhQ5rIMuEo=;
- b=h9t9JFL6b7zaQnH+BtQwyTeBUYagVt0ew9SgoZkE0yRZdUOqqCKuiUTqex/XxRj/egoRcgdLI679DTYbPgSQErm+uiuKZeeJ786WP+3JJHFvsedlCe5OGc/S0SpcmbFIwvEeuVbyHRVyNt+3soQ7FixERTBFnIAbU8TDcw++4PzLzuhSsy5Tue8o8tQo2nYVvIm9shgJANPZu166ZaqvtYgP7QBm+gYWPxGN0i7NPeHs3m9j8rAooQh9jWybEVe/UwT52NgkQoJXXRt4gpjPuniOI8nm1wHcAISHpB2lmgHCjGq/K/Uxc5sn8sm8gu+g+jZ7hsN0m+WeLS7x7oAInA==
+ bh=Z9Q23eD046qRmgVWxEOckjtuDJpVewlrSREG7uHEQR0=;
+ b=lkIwl7QwblAutrvOR/1NF70kL+XbG+8uJ7oMD9AHfaZi0kcrcqzXFYtAXLbi+9GmrWfATQAHmbd5NJawZ6v3LF73PWq+Fysvs9BU8YJjlEZvYCcjlym0hsPDf0jctaJejhtjKXbQJTPdARNx4z0coigBTldZ+QEz30udh/XILZplRnIJVgD0zmpyCH+C5GRb1eL6/e+zTFyVKkfMNYsFSGG9I7PHe5uJnMEvomtAg8itah5l7v/FHjmRyaKgCfRch4xL/jRSM2t8V32HVUC/VHDcCF6bjGj/NX68UQQ3FUqUL3TBkyGq06VnBG387mUxKGAtlpxQyLC8RN03J1X5sw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v9exQVg3M2INBD5BpUlagXzlUwcr9POojQhQ5rIMuEo=;
- b=HZPR3VCFBkcMXGLgn0+tdA5gfkJoysi/mqVp7r/XF9yyLs9m+6U8KNa0ZQsQ0a69C7jUc4LHLx337lLSeuIOtqBqFZ45sGwyKczDow7oUX5kmTb/8cYelmHJ87DQY0AFUnT7fRGAhRYBsus+tZSR9EuhptEfeg3Yi9aNE1MsnkY=
-Received: from DUZPR01CA0023.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:46b::17) by PA4P190MB1309.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:102:105::17) with Microsoft SMTP Server (version=TLS1_2,
+ bh=Z9Q23eD046qRmgVWxEOckjtuDJpVewlrSREG7uHEQR0=;
+ b=l9LbkhQqf7hoDATRB6N47f1M4yZ1IlGj1RblWJ/KqsPmDqZZ+WEz1pHg90P6BwQ3tWlpZhH9+83EI3hNwnpdCazmrTBj/l00Dr8ntAA8Hle0v7dv4XdTagAbKkmPIqCHF0uuiASAlBtgF7q1sZM8IbLIUDAgQiXgiYOqnZxaJzE=
+Received: from DUZPR01CA0018.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46b::6) by GVXP190MB1848.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:150:6e::6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.11; Mon, 20 Oct
- 2025 16:43:52 +0000
+ 2025 16:43:50 +0000
 Received: from DU6PEPF0000B61F.eurprd02.prod.outlook.com
- (2603:10a6:10:46b:cafe::84) by DUZPR01CA0023.outlook.office365.com
- (2603:10a6:10:46b::17) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:10:46b:cafe::6a) by DUZPR01CA0018.outlook.office365.com
+ (2603:10a6:10:46b::6) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.17 via Frontend Transport; Mon,
- 20 Oct 2025 16:44:24 +0000
+ 20 Oct 2025 16:44:15 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,82 +50,91 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  DU6PEPF0000B61F.mail.protection.outlook.com (10.167.8.134) with Microsoft
- SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:43:51
+ SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:43:50
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v2 16/21] net/ntnic: add flow pull
-Date: Mon, 20 Oct 2025 18:43:25 +0200
-Message-ID: <20251020164336.283664-17-sil-plv@napatech.com>
+Subject: [PATCH v2 14/21] net/ntnic: add handling exception path option
+Date: Mon, 20 Oct 2025 18:43:23 +0200
+Message-ID: <20251020164336.283664-15-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20251020164336.283664-1-sil-plv@napatech.com>
 References: <20251001151018.250671-21-sil-plv@napatech.com>
  <20251020164336.283664-1-sil-plv@napatech.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF0000B61F:EE_|PA4P190MB1309:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 3c7be50a-36cf-4fb7-af7a-08de0ff7d9f7
+X-MS-TrafficTypeDiagnostic: DU6PEPF0000B61F:EE_|GVXP190MB1848:EE_
+X-MS-Office365-Filtering-Correlation-Id: 26b98653-c617-432f-a4c6-08de0ff7d8c6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|1800799024|36860700013|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?tpOXz4QSzRKSbCGr+zHVPDPpOsB4lx9mjUvTfIelxOedwsFj2Ydov88Swvf6?=
- =?us-ascii?Q?SHkvRWIl8AqOEZ/L2lVP3Ih8Vgyq8D63VIna4V0nOWPjvzGszNO7KB4MuDRE?=
- =?us-ascii?Q?CHgiOItsdQ2Yl2kxrJk0bB3ts6S8ZNNEV9jDY+sDDdtsWQyiTheppbWeV3ri?=
- =?us-ascii?Q?8CC3Hs/d6HiOtFNylSHuIzWh+QKkK9Ua/BMV1ogp+eUtdzYPfNN2erPECPvg?=
- =?us-ascii?Q?wqsAU8CnIQ/G4qeElt/V7xEoL6yOJdttjT+/ROrmBsFl6B6Xh63qn+AFD3D/?=
- =?us-ascii?Q?aWRYmf/pG/z108bBSD+0JFfAnwY2YoVP1kebuEUJ6j5igZ+E8k9MaEUd5lYL?=
- =?us-ascii?Q?qW0zK4VpBQW6HETHstEk6Eopy8bBh4NWjaRY0ig3YoUDXxPrBoyKumI+eFz+?=
- =?us-ascii?Q?Yyn1giyjqH9llS8WnNgH8kpvUNZlzD/I1XG6L4oHr5lgua6rqRjNyUuoXXFN?=
- =?us-ascii?Q?Li+PDZVmlDYHohFa2Oq2yT71RxIl7+FiKWlFw10Ghc3stQkPVuBa2MeurHrz?=
- =?us-ascii?Q?umWSRfGkVhS0t18aOvjkiVWmNuDcIlM9Z0bZV08ypC8+ILivMsmHE+803kgW?=
- =?us-ascii?Q?TUwUdh5EoGjx51G4LyMnnSKurnF8k7JreKeCqlNN6pRms/+6bPzeYMVlNouz?=
- =?us-ascii?Q?Nf+PbUQe9+wTWS6zIZzkaUVY1+zVJrNK0T+L+Ja0B4ABV4y2BFqYo/sva2Ji?=
- =?us-ascii?Q?nnQUYVXBFK2dbwovWzuoNnxPs3kpNdvvppahwddKEFw7Vae8TS5je3bdQfW4?=
- =?us-ascii?Q?IabRJCjRafmRVu7aTpFMjSzsgbLXSrWmiuw9PzRMVprJjVkjnrtbP0jPnri9?=
- =?us-ascii?Q?TgsImV2kEqPQbqRCzTCGCIJRPSsG2Mk55nKbBYzCDoLOXA2akRPirTPc+caR?=
- =?us-ascii?Q?NYx2Mb1ld5nkRHQkUq1tMZOEjEWWtAmA8vTeRHZS71fBOSv16m5v0UbICWgx?=
- =?us-ascii?Q?sqjHpT8IzPLgAit+gkIPB9AE/hGsij62VmyWkxxoKexHTI55JrKDohLJ4vsN?=
- =?us-ascii?Q?wVxLiUnmHKOVLtvlO6xlt92CRQpncb11z3J6LhLP8azffx7Uk5JqtH62IKYO?=
- =?us-ascii?Q?2Bcer/fa2othcs3K60Tq/mz/NwDuj9HqH1jJDyln9+IMDn3hbSazKwr8V/0X?=
- =?us-ascii?Q?fQHWPix4S56Hhyj5NOtmOFibYqcOhMpEK01CBrmIaaJo+Ga3eivSqSRxp6ff?=
- =?us-ascii?Q?WblkInQu5tQRfJngC7bJh1ExrjFtjSV6aAWap+ylm/uYmU9BWaZM2AVM3ctQ?=
- =?us-ascii?Q?oK6nFodeYCFaZY09Zbi9DzKTrOUvqeIWacREOGc4mY3QQXR33zyi8DGi/tFw?=
- =?us-ascii?Q?aTD77A84F4nWbwdy8ADw/QVtNyMaQxlyt9sdW940RNusuGdi/mhGacsfa8GO?=
- =?us-ascii?Q?IKsKRzQ/p1klqE8NYI82wdrq0lPpHqCf8WJrmlch03VOA8/hZTdIGLfDt14d?=
- =?us-ascii?Q?1IDjp3C54tsgqPAwkUUpVCVQeaKEO6blOmW/dDT6sEXUmAsPTXO8FoIOSR1z?=
- =?us-ascii?Q?NNkkEdgQ8Zxco6BSgQ5RkMXzrnfKBzSyDpXfIiSrXTS9MRT/rekoKJS2eJi6?=
- =?us-ascii?Q?IiFXrPa4RbhIAh0xfkU=3D?=
+ ARA:13230040|376014|82310400026|36860700013|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?SUd0UmRTbnRGNHA0WE9hQXdzMGtBUVlydEhCUHI0Y2pjUTJvUkZ0UEVtVEdK?=
+ =?utf-8?B?L0NmakpVdXBMTnNzNTE5UzdlQjNHR1RHQ295NWdDZGdSMDRxNjhrN0xONFZu?=
+ =?utf-8?B?K1oybTdZU2QyNXBkemNnRHJVN3pLVWZYYllpZDM2bFVIdkpndFRwS2U4RVMv?=
+ =?utf-8?B?Rm5Ud3R3TE5YT3pMMld0R0RlVFB3b3FYZmNwSUxjeE95ZGVYejJDQ0VraUZo?=
+ =?utf-8?B?TlUzczczbWEwd29kak1nZFZQcjVwWEpQK29xWFJ5YzNPZUE2ZTFUL0NDVFRy?=
+ =?utf-8?B?SnJLVi9KcWZySkdkcjdpeUNwOE9IOTY3bzUzT3JYOWEwNWF1NitDY3BhYng2?=
+ =?utf-8?B?dUs3VzVRVXZDNUdZSGg3RnJTK3M2VFZ0VEtsZUJJZnpyTW1nY213QzlJNnpo?=
+ =?utf-8?B?VGRiRnhhd0I2emdGcjdrTlJHTytzRkJYZFkwYWVmdUMvRDV2NW1RYThIUXlt?=
+ =?utf-8?B?b2tIb3M1OWllaStFL09rczJSd1N6b1k4alFRNXJkRGxOdWFSMUR6SE5FTnVU?=
+ =?utf-8?B?di9aRU42KzlPNEt5ZDB3a3A0ZVhWdlE2QWEvcFUzY0FiMmVrZFhFSmh3OTEw?=
+ =?utf-8?B?U0tuSnp4RTJIUmtXUHVYR1MzUm5tT3d2NDB5Wks2YWx2clBQejRYeCs0Rjl6?=
+ =?utf-8?B?UlVtNmY5U1laSXdaM0d1enpiMUdqZHBoNEg2RjZ2ZmlQeHlMZ1lnaUJoMWt4?=
+ =?utf-8?B?S0dMb0VBaGpUSkljNUs0S3Z4cGRxQmNPWk9vbXNaVWVCWnptMlBzR1JXOUtt?=
+ =?utf-8?B?L21LSnhBSmEvZTVqb3lqRytQUCttRWY3TU80SzFTSlFsWkNxWGJjN0diU0p0?=
+ =?utf-8?B?UXZ5U3MxSUp4a2N1cGNldjRReHk1S0hXNCtEeTcrZnJuZzhGV1pGK054NU1P?=
+ =?utf-8?B?SjJOdE90aVVZTzJ5WW01Zk1zSm01bmNyVzRrVXRwTWR6czk2UVdGN1BqSGty?=
+ =?utf-8?B?c0lQQTNqeU0yY2JhUGNMWWNFMjl3bDdUeWN5NFJJZW1FbWRZQ0dYQlhNQ1d5?=
+ =?utf-8?B?TnQwYVhBQi9SbGFUV0hLOE1HUU54TE1XeHdaNzI4T081ellqYWdRU0lTYldI?=
+ =?utf-8?B?VUVGbEtMbmNDVmxWUy9ESlN0R3dWSHhHeGlJV1FzMWRlL25HeEZUNXVVaFpP?=
+ =?utf-8?B?N0syMUVTdmdvQXZkZGZvZDRkMWU5eUpCc0JCOHlKekVYWXFQdUduajJzMGxa?=
+ =?utf-8?B?L253Z0w0NkxSSnpSaGtzVkUvZjVZdXFETUkvK0JrcUt0NTYwRm5JWkp6ekhD?=
+ =?utf-8?B?TjYwcndxOEhVQ203U0k0NU44N25tTWhHTXM0V3gvRTFyeXp5OVJ1U3JMbHEv?=
+ =?utf-8?B?QmlXdGJWZ3ZoendlUXN6bHdQYUtSZ3BQUjNtQ2daaWhaYlVTL29RT2ZDZ29K?=
+ =?utf-8?B?VjZVSkhBbjRXN1Ryb3h3TEd4Mk9sS0twTUxIVE52Y0t6aGl4WTc3eVVRYzI1?=
+ =?utf-8?B?clIya3JjQ1lNMS8vbW9PT2ZveUdDV2ZreDBaY1pCRjVha1ZjY2ZHVHVvU2pj?=
+ =?utf-8?B?MWVxMUNqeUpGK0I3VVBpLzRnVDE2K3J0TFJXKzhMNlNEOFJvRzJmMDYzcS90?=
+ =?utf-8?B?Wkxwd2Jtdi9HSUVzTlRvekExMXZXczhGd1lKTGdZZFZob21jRUZHaGNoMHdQ?=
+ =?utf-8?B?MlNFRXFuQ0hleUdYVDJXWVlRVXphU0FVMlpWRWNoemZ6eitnSTNOaXh2bmt6?=
+ =?utf-8?B?VURHRHVvUnRVelJRRk95TUxvaE5ZaDliTi9NaG5RMCtIN09OL2VkRUNWalJY?=
+ =?utf-8?B?Z2pYMDBlakQxQWFEeFRseUVodGY1RGhiRDdHak1Tcmd0Z0dsa2hDVXArV05R?=
+ =?utf-8?B?ZTc1V0FPY2dUMnBKU1BFQnc2cjBOeU53NFE3UkhFUmduUVp0QS8xVnB4RWJJ?=
+ =?utf-8?B?UXlpNEF2dEZqVGhncnJYSmgyRGlETUxOVTZaZmVTSUxRMml2a3BINEQ3RElw?=
+ =?utf-8?B?U3lLc1BKMzZmc01YaVoySDJEMTBPaHJnQk5jUzNwdVlRNkdiSjNzSVRXZUhl?=
+ =?utf-8?B?SDQ2VngxYVlCYVlHUC9uKzdpT3ZDMWdsenJkWFFPQUh4M3d4amJvRmRJN1pY?=
+ =?utf-8?B?N0EwZGVCdXZMRTNlSWhUbkl1RlFnbUxJQjgrSDFIQ3YzQ0NjVXptM0o4bUdG?=
+ =?utf-8?Q?w028=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);
+ CAT:NONE; SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 0LVPSqQP/1qK/nsCdTVyBzxbN4+/b7FnB6DfISLWjCP0XJZl9Xzl9SHUuPiwbVqm7BgSnzdASRf1wTzmxxD5ZUfDtRpC5nC79Af6HxpOwlBCVGrv8rFe6Fn5ESByt0wQ7GRocHVGrPMhBidhu/yaLKBr7buYfartn6I1/c3/6WU9icyPvSDFBXDd7bT7zP/8Y9PluIsPi33vXJ0uq+/JkSq7PoobGqO9+YTErWemOOFN8Ds+4lYj5DOfy/fpaTgaCUVe70coSZuw8gR3OxOHQbnvbmGQio0Z7KzYHSFtB45dcp50JkufNBt9el/N0IWPBwGPSBQoP27aHicdaN2gnBFs0gDMoQMIXTgweb99EorYFgCIw062uY2lb3IwuSf+/qqUzsHAyXdQ96n55yX+cmI5H5SZd2PQ5VmZ2vXqVZvuqWFunAQ/1Xne04E1XDioB3Ay4em6eEvhtoYa9+1+yrT8bR+XVaR6wd0dUarl3ULRp+35CCcgRhssx4Df+KT/JD+FoJUS2JzDczN2rNloV2DGuusPyLTvGLmyo+nlLK1T1/QhMfSD3iP7j0hLQ6vFbqFDvzJXUoysN3mNfJi6Swge1y4nZpgpzGP58CIQ7EgzSY6Lc/UhE6T/dNNULjpEpY+oDP3CAKYFj7K0LBSbZaqi20NYSIrm9uEguiE71ek=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: myVduMVc5LoMODnC12kgPgG53RhAQlkOKF2axgX3x05s2MxqKHgjPug70tFw5cPFPtoI6OE3KIrV/Xrkj5fC4zthQIxq4DG6MVPYWgWZftvoOnbcBEAHl0K83bfTCO4UjaUlMeT897EHHzqIhksxWegnAq1NcLis2LOHBCKZVTp69onvXCu9ByoXf4f78/wmSHcfNP8jWw5INU6+sT2aHzbWdloB1fm5rUrjwhLzM4S4FTi0S56zDITBYbWDIPlALYi7ux6Taj2OTN/5SqpPXI9jNfSUX937gz8AQdPFoBMHT43p1GPSideZIXm6TAlHBdpt44ERRcLlnltRXYDgP0qmvHNUdYkl2lmxtBuScjHLzIO7N34XJe3vS4x1RGYp9Fx2HQOo7kBCPD3ZB119YLEiv/FMuwo5jx+zr7FNw+L/MzMPrFeKbGQB4O8EpTTyGS04oTjG3FjjL4l3jzfepPKgxRjI4plAcW17o16B7DlVEdx6ZAcr+7RnOMbo/GOC3xfTffCR8oZjcAdhdmFV38PttnjUQgNkxyhK2pWrutbYbiAZFpH/UyIuASIZr9RUApJBA1p6LPdpcYpzlLf9INnqoRxVF6HHWUIu9zeztpRykgRhz3aBzFpp/FS0quYwy/qa2929MPirrxx77ZcxiaWnGe5sXKN6ajtqj8gHwB4=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:43:51.9941 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c7be50a-36cf-4fb7-af7a-08de0ff7d9f7
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:43:50.0003 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26b98653-c617-432f-a4c6-08de0ff7d8c6
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU6PEPF0000B61F.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4P190MB1309
-X-BESS-ID: 1760978633-303027-28482-63644-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXP190MB1848
+X-BESS-ID: 1760978634-303027-28481-63652-1
 X-BESS-VER: 2019.1_20251001.1803
-X-BESS-Apparent-Source-IP: 52.101.69.113
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVhYW5mZAVgZQMNkwLdXcxNgsyT
- zFwsDYMMnCzMjMNDExydAkMdHQLMlQqTYWAN5+aLlBAAAA
+X-BESS-Apparent-Source-IP: 52.101.66.119
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkaG5oZAVgZQ0Mwg2dLU0tIg2c
+ zA3DDNNCXVLNXIwDLF0sg8ycjQ2NxCqTYWAHYa/19BAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.268348 [from 
- cloudscan12-246.eu-central-1a.ess.aws.cudaops.com]
+ cloudscan19-215.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -146,222 +155,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implemented the eth_flow_pull function to handle
-flow pull for ntnic driver.
+Enable exception path for unmatched packets to go through queue 0.
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- drivers/net/ntnic/nthw/flow_api/flow_api.c    | 15 +++++++++
- .../flow_api/profile_inline/flm_evt_queue.c   | 14 ++++++++
- .../flow_api/profile_inline/flm_evt_queue.h   |  1 +
- .../profile_inline/flow_api_profile_inline.c  | 33 +++++++++++++++++++
- .../profile_inline/flow_api_profile_inline.h  |  3 ++
- drivers/net/ntnic/ntnic_filter/ntnic_filter.c | 29 ++++++++++++++++
- drivers/net/ntnic/ntnic_mod_reg.h             |  6 ++++
- 7 files changed, 101 insertions(+)
+ doc/guides/nics/ntnic.rst        |  9 +++++++++
+ drivers/net/ntnic/ntnic_ethdev.c | 21 +++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_api.c b/drivers/net/ntnic/nthw/flow_api/flow_api.c
-index 3e45db67d7..4adf847f33 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_api.c
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_api.c
-@@ -1214,6 +1214,20 @@ static int flow_async_destroy(struct flow_eth_dev *dev, uint32_t queue_id,
- 	return profile_inline_ops->nthw_flow_async_destroy_profile_inline(dev, queue_id,
- 		op_attr, flow, user_data, error);
- }
-+
-+static int flow_pull(struct flow_eth_dev *dev, uint16_t caller_id, uint32_t queue_id,
-+	struct rte_flow_op_result res[], uint16_t n_res, struct rte_flow_error *error)
-+{
-+	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
-+	if (profile_inline_ops == NULL) {
-+		NT_LOG(ERR, FILTER, "profile_inline module uninitialized");
-+		return -1;
-+	}
-+
-+	return profile_inline_ops->nthw_flow_pull_profile_inline(dev, caller_id,
-+		queue_id, res, n_res, error);
-+}
-+
- int nthw_flow_get_flm_stats(struct flow_nic_dev *ndev, uint64_t *data, uint64_t size)
- {
- 	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
-@@ -1274,6 +1288,7 @@ static const struct flow_filter_ops ops = {
- 	.flow_template_table_destroy = flow_template_table_destroy,
- 	.flow_async_create = flow_async_create,
- 	.flow_async_destroy = flow_async_destroy,
-+	.flow_pull = flow_pull,
+diff --git a/doc/guides/nics/ntnic.rst b/doc/guides/nics/ntnic.rst
+index 5375d89a2d..01b6dca652 100644
+--- a/doc/guides/nics/ntnic.rst
++++ b/doc/guides/nics/ntnic.rst
+@@ -136,6 +136,15 @@ Multiple arguments for the same device are separated by ‘,’ comma.
  
- 	/*
- 	 * Other
-diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.c
-index 42da580235..4693671809 100644
---- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.c
-+++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.c
-@@ -289,3 +289,17 @@ int nthw_flm_inf_queue_get(uint8_t port, bool remote, struct flm_info_event_s *o
+    By default, the value is set to 1.
  
- 	return -ENOENT;
- }
++``exception_path`` parameter [int]
 +
-+int nthw_flm_sta_queue_get(uint8_t port, bool remote, struct flm_status_event_s *obj)
-+{
-+	struct rte_ring **stat_q = remote ? stat_q_remote : stat_q_local;
++   Enable exception path for unmatched packets to go through queue 0.
 +
-+	if (port >= (remote ? MAX_STAT_RMT_QUEUES : MAX_STAT_LCL_QUEUES))
-+		return -1;
++   To enable exception_path::
 +
-+	if (stat_q[port] == NULL)
-+		if (flm_evt_queue_create(port, remote ? FLM_STAT_REMOTE : FLM_STAT_LOCAL) == NULL)
-+			return -1;
++      -a <domain>:<bus>:00.0,exception_path=1
 +
-+	return rte_ring_sc_dequeue_elem(stat_q[port], obj, FLM_STAT_ELEM_SIZE);
-+}
-diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.h b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.h
-index 1be02c6750..db309bfb6e 100644
---- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.h
-+++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flm_evt_queue.h
-@@ -51,5 +51,6 @@ void nthw_flm_inf_sta_queue_free_all(uint8_t caller);
- void nthw_flm_inf_queue_put(uint8_t port, bool remote, struct flm_info_event_s *obj);
- int nthw_flm_inf_queue_get(uint8_t port, bool remote, struct flm_info_event_s *obj);
- int nthw_flm_sta_queue_put(uint8_t port, bool remote, struct flm_status_event_s *obj);
-+int nthw_flm_sta_queue_get(uint8_t port, bool remote, struct flm_status_event_s *obj);
++   By default, the value is set to 0.
  
- #endif	/* _FLM_EVT_QUEUE_H_ */
-diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-index 19c552bcd4..a7f96cf451 100644
---- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-+++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-@@ -5400,6 +5400,38 @@ int nthw_flow_async_destroy_profile_inline(struct flow_eth_dev *dev, uint32_t qu
- 	return 0;
- }
+ Logging and Debugging
+ ---------------------
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index 01b3fe00ef..29508888a3 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -73,11 +73,13 @@ uint64_t rte_tsc_freq;
+ #define ETH_DEV_NTNIC_HELP_ARG "help"
+ #define ETH_DEV_NTHW_RXQUEUES_ARG "rxqs"
+ #define ETH_DEV_NTHW_TXQUEUES_ARG "txqs"
++#define ETH_DEV_NTHW_EXCEPTION_PATH_ARG "exception_path"
  
-+int nthw_flow_pull_profile_inline(struct flow_eth_dev *dev,
-+							uint16_t caller_id,
-+							uint32_t queue_id,
-+							struct rte_flow_op_result res[],
-+							uint16_t n_res,
-+							struct rte_flow_error *error)
-+{
-+	(void)dev;
-+	(void)queue_id;
-+	(void)error;
-+	struct flm_status_event_s obj;
-+	struct flow_handle *fh;
-+	int count = 0;
-+	uint8_t port = 0;
-+	bool remote_caller = is_remote_caller(caller_id, &port);
-+
-+	for (int i = 0; i < n_res; i++) {
-+		if (nthw_flm_sta_queue_get(port, remote_caller, &obj) != 0)
-+			break;
-+
-+		fh = obj.flow;
-+		if (fh->type != FLOW_HANDLE_TYPE_FLM || !fh->flm_async)
-+			continue;
-+
-+		res[i].status = obj.learn_done ? RTE_FLOW_OP_SUCCESS : RTE_FLOW_OP_ERROR;
-+		res[i].user_data = fh->user_data;
-+		count++;
-+	}
-+
-+	return count;
-+}
-+
- static const struct profile_inline_ops ops = {
- 	/*
- 	 * Management
-@@ -5438,6 +5470,7 @@ static const struct profile_inline_ops ops = {
- 		nthw_flow_template_table_destroy_profile_inline,
- 	.nthw_flow_async_create_profile_inline = nthw_flow_async_create_profile_inline,
- 	.nthw_flow_async_destroy_profile_inline = nthw_flow_async_destroy_profile_inline,
-+	.nthw_flow_pull_profile_inline = nthw_flow_pull_profile_inline,
- 	/*
- 	 * NT Flow FLM Meter API
- 	 */
-diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.h b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.h
-index 2c2d0e2fbf..86e867b728 100644
---- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.h
-+++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.h
-@@ -123,6 +123,9 @@ int nthw_flow_async_destroy_profile_inline(struct flow_eth_dev *dev, uint32_t qu
- 	const struct rte_flow_op_attr *op_attr, struct flow_handle *flow,
- 	void *user_data, struct rte_flow_error *error);
- 
-+int nthw_flow_pull_profile_inline(struct flow_eth_dev *dev, uint16_t caller_id, uint32_t queue_id,
-+	struct rte_flow_op_result res[], uint16_t n_res, struct rte_flow_error *error);
-+
- int nthw_flow_info_get_profile_inline(struct flow_eth_dev *dev, uint8_t caller_id,
- 	struct rte_flow_port_info *port_info,
- 	struct rte_flow_queue_info *queue_info, struct rte_flow_error *error);
-diff --git a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
-index 124d9a5b67..044f2e55d9 100644
---- a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
-+++ b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
-@@ -1173,6 +1173,34 @@ static int eth_flow_async_destroy(struct rte_eth_dev *dev, uint32_t queue_id,
- 	return res;
- }
- 
-+static int
-+eth_flow_pull(struct rte_eth_dev *eth_dev,
-+				uint32_t queue_id,
-+				struct rte_flow_op_result op_result[],
-+				uint16_t n_res,
-+				struct rte_flow_error *error)
-+
-+{
-+	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
-+	if (flow_filter_ops == NULL) {
-+		NT_LOG(ERR, FILTER, "flow_filter module uninitialized");
-+		return -1;
-+	}
-+
-+	struct pmd_internals *internals = eth_dev->data->dev_private;
-+
-+	error->type = RTE_FLOW_ERROR_TYPE_NONE;
-+	error->message = "none";
-+
-+	/* Main application caller_id is port_id shifted above VDPA ports */
-+	uint16_t caller_id = get_caller_id(eth_dev->data->port_id);
-+
-+	int res = flow_filter_ops->flow_pull(internals->flw_dev, caller_id, queue_id,
-+				op_result, n_res, error);
-+
-+	return res;
-+}
-+
- static int poll_statistics(struct pmd_internals *internals)
- {
- 	int flow;
-@@ -1365,6 +1393,7 @@ void nthw_dev_flow_init(void)
- static struct rte_flow_fp_ops async_dev_flow_ops = {
- 	.async_create = eth_flow_async_create,
- 	.async_destroy = eth_flow_async_destroy,
-+	.pull = eth_flow_pull,
+ static const char *const valid_arguments[] = {
+ 	ETH_DEV_NTNIC_HELP_ARG,
+ 	ETH_DEV_NTHW_RXQUEUES_ARG,
+ 	ETH_DEV_NTHW_TXQUEUES_ARG,
++	ETH_DEV_NTHW_EXCEPTION_PATH_ARG,
+ 	NULL,
  };
  
- void nthw_dev_fp_flow_init(void)
-diff --git a/drivers/net/ntnic/ntnic_mod_reg.h b/drivers/net/ntnic/ntnic_mod_reg.h
-index fa511e78cd..241fcabddb 100644
---- a/drivers/net/ntnic/ntnic_mod_reg.h
-+++ b/drivers/net/ntnic/ntnic_mod_reg.h
-@@ -397,6 +397,9 @@ struct profile_inline_ops {
- 		struct flow_handle *flow, void *user_data,
- 		struct rte_flow_error *error);
- 
-+	int (*nthw_flow_pull_profile_inline)(struct flow_eth_dev *dev, uint16_t caller_id,
-+		uint32_t queue_id, struct rte_flow_op_result res[],
-+		uint16_t n_res, struct rte_flow_error *error);
- 	/*
- 	 * Stats
- 	 */
-@@ -560,6 +563,9 @@ struct flow_filter_ops {
- 		const struct rte_flow_op_attr *op_attr, struct flow_handle *flow,
- 		void *user_data, struct rte_flow_error *error);
- 
-+	int (*flow_pull)(struct flow_eth_dev *dev, uint16_t caller_id, uint32_t queue_id,
-+		struct rte_flow_op_result res[], uint16_t n_res, struct rte_flow_error *error);
+@@ -2260,6 +2262,25 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 			NT_LOG_DBGX(DBG, NTNIC, "devargs: %s=%u",
+ 				ETH_DEV_NTHW_TXQUEUES_ARG, nb_tx_queues);
+ 		}
 +
- 	int (*flow_info_get)(struct flow_eth_dev *dev, uint8_t caller_id,
- 		struct rte_flow_port_info *port_info, struct rte_flow_queue_info *queue_info,
- 		struct rte_flow_error *error);
++		kvargs_count = rte_kvargs_count(kvlist, ETH_DEV_NTHW_EXCEPTION_PATH_ARG);
++
++		if (kvargs_count != 0) {
++			assert(kvargs_count == 1);
++			res = rte_kvargs_process(kvlist, ETH_DEV_NTHW_EXCEPTION_PATH_ARG,
++					&nthw_string_to_u32, &exception_path);
++
++			if (res < 0) {
++				NT_LOG_DBGX(ERR, NTNIC,
++					"problem with command line arguments: res=%d", res);
++				return -1;
++			}
++
++			NT_LOG_DBGX(DBG, NTNIC, "devargs: %s=%u",
++				ETH_DEV_NTHW_EXCEPTION_PATH_ARG, exception_path);
++		}
++
++		rte_kvargs_free(kvlist);
+ 	}
+ 
+ 
 -- 
 2.45.0
 
