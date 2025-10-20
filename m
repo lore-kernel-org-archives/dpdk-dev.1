@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10226CCD199
-	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:39:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22108CCD19F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:39:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6392D40E64;
-	Mon, 20 Oct 2025 18:36:58 +0200 (CEST)
-Received: from egress-ip11b.ess.de.barracuda.com
- (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
- by mails.dpdk.org (Postfix) with ESMTP id A64D040BA0
+	by mails.dpdk.org (Postfix) with ESMTP id 5DC0840EE7;
+	Mon, 20 Oct 2025 18:36:59 +0200 (CEST)
+Received: from egress-ip11a.ess.de.barracuda.com
+ (egress-ip11a.ess.de.barracuda.com [18.184.203.234])
+ by mails.dpdk.org (Postfix) with ESMTP id F08CB40C35
  for <dev@dpdk.org>; Mon, 20 Oct 2025 18:36:43 +0200 (CEST)
 Received: from MRWPR03CU001.outbound.protection.outlook.com
- (mail-francesouthazon11021073.outbound.protection.outlook.com
- [40.107.130.73]) by mx-outbound47-33.eu-central-1c.ess.aws.cudaops.com
+ (mail-francesouthazon11021136.outbound.protection.outlook.com
+ [40.107.130.136]) by mx-outbound44-20.eu-central-1c.ess.aws.cudaops.com
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
  Mon, 20 Oct 2025 16:36:42 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zPu6y4yNANdlyJWvWjguXQFJP+gi7/Zj7amNpjInC3/Iotl6juHmXmPXISy0z5lC5gla1NGGtdb1CZIyet5jplivP9bltvqdEZbtbbH4TRArAt62B+mvdwTU4K9nCvQtlYRnUUsi96cQH0mu8N6KgO6vB+9Zu8BvVrlsX8Fa5y14xHE63Of0NAQlVOZYJS8Di454S5JRyysYpSNGtLRYxgDRNn5c1sbMaUtlacP421W255+nd9mduAfnQU3QhxM2fM2gPT63jAf4mTAZQgjM4LADTQyXpyH5eiePCnFxypZMMzgi5uq6EkPGVz/Ixj75MFluaOQVtrEQ1ia8+Bj5gQ==
+ b=ram1Jb0AtUkFYhcQIhMY8TFQlvw5BcRk/FKvr7x/+T6lkYEjaejEq8vNgKS4RksbUICkCFN7yBINTcki4ztnjbl6iNDoOHTaFbg2aLLAC4LcgcyIxoQiDlG4YRn4ZsyKUXTEL2lhDJcRrgPhD+cShaasQaO/Ae7oUuCVhg2DnCIB5/ZavQDLChz+GGswaGLzeal22LwsoE2Mxbh3wHK2ttp3YjGIu7QrNMPFsFFnPiUnPZKAJ4HPEnjU+iBeFlzAMKXTBtg3RyjRGJgdNSnqGqRvPTJBdniQwFtbjdGSc8aH8Dc9woXmjLHwy6gPXkZ12BpownJJhrlN+sH6kymgXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dS8zvUWdqpFX8ssniW8zlkKdatz1gAS/qOgz92/SN4A=;
- b=Dzte9NzxZL3Vk82k8PV6SzqWZRqNtDhy2WdHkAS+YNIyk5yjZH/Z6F25dV64iIaY9qAsabqJUhnEQQves9n4OOp1Gq08+mEI8SylvMd1rkUpVDu75+f4J21GIZpWHcijioWKKow4LHroY5JtdYodmfeBkxisb3iR2BRDOXXnKBjZ4X+eYeuK9Hj5WnEH2ojwbV5vjNtkT2+PLaHAp47CSu6Gp8J4txlQW9Ty4PZl25pt+1oL32/amQO5YzgZdlnzsD55qIy6ScwjEQPQA4WOFwqdDbkvRoJW30zWBpj3HuUCvBju5+Il/uHyCHPgofSo0lgTU6xfdMTIzBtBp2M4iQ==
+ bh=MXiI46OtNaaZdWrslOcAuved9nHv6jnMMjx/bxmgnig=;
+ b=VmCl26DDEZCv54WXhpjxJo7es13Sjr1TuQbVJCXagrlPDcM0HXgETfbns5kZafqaM0jToMrmhH/cavvXsQa8eOxTNg6S90RRaSvqb/SQsd+JaRHvVrzom9yHPn59RratMP22RnK0cQeWNhFjIsJ6/EntMNcieevlV1KfqtXv/f3g0YTHqMIZB9uZFoZhWmpJKQXPagEI2WK/HeC3dMh8PPUcrw4KXfa843czMRkqzQZGpOLZiZHEVFcvQVn8CmAWwKWwgu8hsJg4WpIPHpljOd/HiW/XbCElC85yoOkPGUdVdfbE+LWfsri9tXOgv3SteT8b0gKIxbldEOux90WYNw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dS8zvUWdqpFX8ssniW8zlkKdatz1gAS/qOgz92/SN4A=;
- b=Ubj1UINO6/Zt32XmDcEAWM6MI8p+7UD70MnHKjRaUggNBEDAzLS6aM8l4ANEEjUuJ3oeEJ7EKJLPkHRMJn4+Z0MvGE0UkpGr1ymuFRRwLIGOT8oY6ju3diY8rOou8oC4NeoIFd7d6i987BK2lLvoPZrLFqv+feDd8+pAfpqJJkE=
+ bh=MXiI46OtNaaZdWrslOcAuved9nHv6jnMMjx/bxmgnig=;
+ b=QL7aUb3PRKsV/3tU4t1Uo017qWsEYD67m7g3FSReRg7ezy+xv4NWHar3Jh0i1CKkdWeV+1DBGAfU4s2EJktg8RVAeVZFBqVTmTbDpNf47wu07WzozY1b2qAFZpVpCddLWhCCW2LkuQry37gWalEkQ3JwYKufkGZCUytHEf/5k6M=
 Received: from AS4P191CA0025.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:5d9::15)
- by VI0P190MB2105.EURP190.PROD.OUTLOOK.COM (2603:10a6:800:24a::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.10; Mon, 20 Oct
- 2025 16:36:39 +0000
+ by AS8P190MB1934.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:524::14)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.11; Mon, 20 Oct
+ 2025 16:36:41 +0000
 Received: from AMS0EPF0000019B.eurprd05.prod.outlook.com
- (2603:10a6:20b:5d9:cafe::51) by AS4P191CA0025.outlook.office365.com
+ (2603:10a6:20b:5d9:cafe::96) by AS4P191CA0025.outlook.office365.com
  (2603:10a6:20b:5d9::15) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.16 via Frontend Transport; Mon,
- 20 Oct 2025 16:36:34 +0000
+ 20 Oct 2025 16:36:35 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  AMS0EPF0000019B.mail.protection.outlook.com (10.167.16.247) with Microsoft
- SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:36:39
+ SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:36:40
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v1 18/24] net/ntnic: change prefix set to prefix nthw
-Date: Mon, 20 Oct 2025 18:36:09 +0200
-Message-ID: <20251020163620.282312-19-sil-plv@napatech.com>
+Subject: [PATCH v1 20/24] net/ntnic: rename register ops function
+Date: Mon, 20 Oct 2025 18:36:11 +0200
+Message-ID: <20251020163620.282312-21-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20251020163620.282312-1-sil-plv@napatech.com>
 References: <20250908141740.1312268-2-sil-plv@napatech.com>
@@ -67,71 +67,72 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF0000019B:EE_|VI0P190MB2105:EE_
+X-MS-TrafficTypeDiagnostic: AMS0EPF0000019B:EE_|AS8P190MB1934:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 3c9dd704-2ea1-4311-c857-08de0ff6d83a
+X-MS-Office365-Filtering-Correlation-Id: 4fbfc9b0-fad9-4cc6-cd73-08de0ff6d8f8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|376014|36860700013|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?a72MEeONP9nGpfF+M01ZExTOiITCZaTTVQHfMqgA6IOgElb7RmcTkUyyXf1d?=
- =?us-ascii?Q?/tHPNWCM59+k3vnIqXzjTc/uh92DyUe4peBDfOtZD0HUZC09uf3SzLeWXarP?=
- =?us-ascii?Q?9zZnzPMWa55IMBp7aeob4hnsXGYbpoBEPuAD3EmOpHgygbjYqGXJlOhBKt6n?=
- =?us-ascii?Q?aAQyBYmsF3gGB05WpwsdTPAwC378ENMHYu9sKK7twGGARrJiRfkcTXMUi9cF?=
- =?us-ascii?Q?IPnpio9G1X2eI8PpaKhIvuCywdoRhArN6uDdpX5SspeBDvSoC21z0NyYQm81?=
- =?us-ascii?Q?B32xQQKziwLt3dzz+9BZXX2x01EDg69g7f0JGfhbCnnZMrxxVPwNcNq+7UKw?=
- =?us-ascii?Q?+pAn1r9d1NdSZ8+5STU1vrC2zbIHbsYpRfBj7lyt/lTr3kF0zyr5sjQmcwqs?=
- =?us-ascii?Q?zomvaAvPKtWlKVK7KktW6un7u35jz2qG0tmpwYYbIe8HGSuFhK9rBgn9c1SB?=
- =?us-ascii?Q?iI2gCSkJyfF0HZ+TvSwdLytUNaSHKxsrUwHilZDcwXdqqxVZk8ICSIZxGsZ5?=
- =?us-ascii?Q?QMLrKKTJxCVoK0FUHRhSGHny8s8Ac+hXADC9HUnqp5I2Bz/u9l9AG28xzITH?=
- =?us-ascii?Q?idC3zKZJ7B5dcKKpnO7iWVlrtC+2tBsacnALiwWOSMDC9XOqE7qSdLbVzAEg?=
- =?us-ascii?Q?H0gXwGs+ZRbCwaMkMoRgA/MsBiZ1jjdL0vfOzqOlWvURJ/sjcSfKj9mK+8/d?=
- =?us-ascii?Q?on1JKK8iRGpkQ2u0apzoWUxKRob0sBwL6Krt4lf+7tSHMO3nblttHYm4VMz2?=
- =?us-ascii?Q?0RU9TOso/fdwX7JjOvtJ4T82zhq07951FXjRwdxGXiWkwexzfd3ybVlwD+ba?=
- =?us-ascii?Q?u8vuD1V79H8K0jarUGpTPrSQwpRuLcdvkkTC1Yn+Hp6pqT0aEMlfUnlSb7eD?=
- =?us-ascii?Q?CYNov4V/PDDrOiRbAhUqAyEzwa+ehxm1sJQtyO1k3Rt9Kw8i/CVk45cfwgB8?=
- =?us-ascii?Q?MWB0TUQgbJka9A6J8LL5JwJVDYgUmF9IBGfqD9LhOsh/WgZNQRbyUge9zxiK?=
- =?us-ascii?Q?pGW9ULAXZLE1FtUcqwuIcuO5BkceSaiGJP5UH53FTd+GN2PpWFohe/iDZQmS?=
- =?us-ascii?Q?m4yzuRRroOXzIeSdrAC5tQMhLTpM9jIJHk3Ss9wShYrGoai+qtAdeb7HvBHY?=
- =?us-ascii?Q?5hfQna9djfVQw4aEZCApfHPu11nFKmHUeCWZToI3MogB6/FOKNUJ6FwJ+458?=
- =?us-ascii?Q?mek5a0NoGl903+FEm+Xy0jpLjDo6nLJQJspDX1eHnqK3Dwardcx6qdHCy0Df?=
- =?us-ascii?Q?NalME9pgNwM4kbR63c4X28uCH4RAzy1/x1VpKwvmD7wJwUM2BF6RWrT8D6hM?=
- =?us-ascii?Q?EufYL4pJr8ls9VKyad8DJpkqB31Rxql6V0o6eLW7JhIek4Ax48MnL2PO7pQg?=
- =?us-ascii?Q?ljGVsyCWEGJClQfBt/TKeXiFdx4K/A46jzi+txRfT10/e6rxWduJEYLx7sDL?=
- =?us-ascii?Q?wI4PxZKCAVWhySBy1vLZMlFrbJ+0JnRqsXgrHceOw7c5jNA3W7Oc7t85F4ED?=
- =?us-ascii?Q?sL6XlvREgK/ZCfE6HLKa9lzvuP3OihCKd9GwK1nea0rMcvcRSHZ5nVF7HhxU?=
- =?us-ascii?Q?y0VEqb60sGkrzAFEn1g=3D?=
+ ARA:13230040|82310400026|36860700013|376014|1800799024; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?hLlPLW8i/kkdmJ6IsZK92dpJRVBsWBq7eB+ymCK00sqheYNEuqtK1BpkQBl7?=
+ =?us-ascii?Q?9U7DsEjQQ+KaHo+zr5IrINBXHVutOfT0fQTbDo/wjMc5rsxuESgAaBPG0uR1?=
+ =?us-ascii?Q?I3Ip3CyrSniS1CZXObKRIKIs12rhTqGRNtgyb6q5IcV15ophpMnxaztnY+TX?=
+ =?us-ascii?Q?XMyNPRE7hsuV7ZEOiBgmcMfWPQzgNLkUl30ooWG2+lLRply/ALAHSNk6MQSr?=
+ =?us-ascii?Q?mq2IU6JCc8Del6WRzp9IdkMXC4xQjhegShfC9egqIETG4ow6hfUUcrGXlj7t?=
+ =?us-ascii?Q?xUBQWDASIQOPJtkAMGaLrkX5Yayq0CycVxaYnuddSYqlG6tN+5g1/dTb8gUL?=
+ =?us-ascii?Q?mdKF93doOYsKXKybT23OXaBYMogeJcbdUonZ8g56dzhgOGUXY3WYIkvJVEnL?=
+ =?us-ascii?Q?kdeQFyx9cHCnZfLrG9AfJg5PyU+wYTd0UROWdLx/t0chgSMpKBml8YPtGNA6?=
+ =?us-ascii?Q?lanyKSe0fu8t+c/gJndDdoLoYfQILYXduIbLYPh9tZPSycag//aiJTMrATI1?=
+ =?us-ascii?Q?ejhGCaFuuxW/b9WFZ6nlcSOWf7lm8kDZ8/lPfr3s19qSjUAbNjBeSpSP6cFZ?=
+ =?us-ascii?Q?OiEby+A+Nn0VAq9uTT7KD6PggCFxP7mGiQEZYlMlzEkb9KIz9G6SM0eo4vsX?=
+ =?us-ascii?Q?XRlEy1JLhN/CTUKXQ2rRlqxBb1EZfGSBAHe+W0Frb0RXUWpsXB2STZY0MDO+?=
+ =?us-ascii?Q?ckruMgt421hd76ilrhU6MxX4EklCw6j9D3NMlhP1UPqpyBPKZcjdU3Hqsvd+?=
+ =?us-ascii?Q?mLXD/foL3l5P4yNCONhFkbdHhxXUO4X4oDcyQN9GW0CpGZAD6oZiwqOOpqAR?=
+ =?us-ascii?Q?VGXKy1fzFfca4hkFkyFjSTvHk9IEeGrNWLe1vtzsaGEDeKQ6UXpAnbnHJVSq?=
+ =?us-ascii?Q?6S/yB94bEuhrqFBj6K5+ghBvgYEhIuxUYU8Niqkp8fY9/eLWIiwAm0CLqXyl?=
+ =?us-ascii?Q?Fbwo1R7MfVVjcyJwfwrj+WXISdkJ8OXZ8gpN78G85cvcqni4eMUVSSrOHxaM?=
+ =?us-ascii?Q?SfzeGtLgEonk+L4igMoju0cqs6Say1acZWEPySJutknHP49aT9BzR95dlf2K?=
+ =?us-ascii?Q?CMIUBSjQjrWJwLIasxWbhs5DGo0JQOwP+IvvwKcFboWkk42J47NRY4oVwUw3?=
+ =?us-ascii?Q?Ie+6/zyd+I76rqbj9eLUNYxryc5CIvybRlAeH9HNQhURwXEwOp5RXRvx6ijn?=
+ =?us-ascii?Q?EkQFIcZoN3ikBLDmIMswZTwwWreMLZweKfkRWRM+oLxHwWygXGJCIjaieckJ?=
+ =?us-ascii?Q?E6lenOig8MWJY+TtYtqDLwigykCVCDMhPj94TKc6/V6S/Y4voPu6JvsussGS?=
+ =?us-ascii?Q?FFmsLYCfyOxRaWUKxtLnWTR2rs6SRXGpIuxEQbP532F6pPNhWRJTiJDVujPl?=
+ =?us-ascii?Q?sCLukGCxF7v1pZooLjRZat1r9JSnPvDYuBsIA8bYaUSC+NhCxWvHrzesYwu8?=
+ =?us-ascii?Q?UJHEaIaeGLiXGfYosc8Bd32c4BA7OxKPYkaxKbhgL8Dhpf3viPHsTDrg6tcm?=
+ =?us-ascii?Q?0MPtjHTtWCM+2hVwfj320ry71+sDQR2GY4KfavZgBioCc/7dbUp1Vkf2BIEL?=
+ =?us-ascii?Q?LEj7rTZlVlAYttlylWw=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);
+ CAT:NONE; SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: g1vUEdF6oRTZ53+bj6KUyn+8fd92zKmKF55nLTWTnD7K9mGZ/UTRL16/Wm048JfnOnjErsamgYAXjqZ3P0we2OEPGUr1/TFuwdHhTL+y4qem/zEJ6rLid36KEgzP7AN7x5rtH/Xpnbgj7fQQpnsAyl5B3CQflKfbT80RudEg8c7gKp4NvWFsmnduXy2Xm6AxRIVIgL5JHZgCOIriOFyQqAqsBcD35lgkCGSxyBNeb7K2cAv23rWNVvonbv3i2Pri3/ixV4rsaY0xhZBuon95/Esn1m5lH55tWlv8p3SBLMOoMI4GiWPnIXFMyrq9zLYtUqxBDOltN6jTDVpKBCj7hii2H6HrOOmgRr6NKgU1KR0XMXMREF8IXgHeuwmtfM7YFrk86rUwYNCU0Irr0a8K5t7timD6r9J/nVXt122E32J8+rkb1OA2PtxiNPL599avxLkFST4JqOIfVQmZylWDtuATJFF3v8AjJZQSCf6dtKMt4Z8Pfq7KYFpl+GhUadYfrhg4qq57kFgTtU/TtOgC6OSJGDytehZAiGzWxTlbwAXH1bi1hfrHP7LJ2nCY/e5blhZ4z76QBskf8HkwyVQ/pR1cEN19Fvnf5/GOyEYkQ115CHr2XzCDrJ880wmp7GxDM08gT3de6c1+t8IrJx6O20s3vqejR0hyPd6XEM8WhIQ=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: ebI7ciz930XUWXrSEZsoQY2OVkJN5WpxwwXubIMY2G0n8vFvvSCrNXJdwlDfvp3nEpqWpzuk5JS83iBW5Wf8BbGajde4mLr+hqTBLN2ijmzwDDcO+WJv3JGrlxLMEExPliL02T78eKvNsBIWsNMX7350LbxGOtP0q0NPUrobSfuCPLlu90IlYXKPHJ+twa7qhNX4tqeY6PC7zGq3mIN8nk2m/lWIR9LdhEbjaLFieSOGK/tmFnOVu1WoGZbZi22quRFUt/XiHN/USw+Xk/XzRYjAixOsOoSGEOK+I23iubs6PRnFr1Ftj3nKvcTVdzFux8auBOHypIb/THrqWjUSzTufVfdfy90hPM9EFoqsHMkJaAaB3rq9nZkd00fP01KMsRfh1k3q8Mxu35cFa4nKa7Q63fghOxrVdSxqCP3VFHB+1jm9jEGsSXA8WlnM2vEvcsLjO9y4Vxx5LR6b7CfhMAbEas/6ic+EuTRSYk+BOXjHr2BwpTgVFR8n/BLujOxYEwjLbLSwt86W1SJ6MLU6T923GFClcMmeDpBaRW7V1BOMEbsnkitTj+v8xkbI/eel6RGeeI1oeYHL8JskJmIjS2g7b4IBiBG4ZVFE8H8a1Loe7irbeZ7ppG815vslIcl44vSHJsM+/FqqJ9KC1FYIhqTg4Huw1HQCsG3Aeg/ytfY=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:36:39.6187 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c9dd704-2ea1-4311-c857-08de0ff6d83a
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:36:40.8614 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4fbfc9b0-fad9-4cc6-cd73-08de0ff6d8f8
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AMS0EPF0000019B.eurprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0P190MB2105
-X-BESS-ID: 1760978202-312065-25064-118011-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8P190MB1934
+X-BESS-ID: 1760978202-311284-32701-8205-1
 X-BESS-VER: 2019.1_20251001.1803
-X-BESS-Apparent-Source-IP: 40.107.130.73
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoamBsbmQGYGUDQtMTXZJNE00T
- I11cg8OcUkLdHMPMnCxNIkySjV0ijFUKk2FgDWpK7iQgAAAA==
-X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Apparent-Source-IP: 40.107.130.136
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkbGlqaWQGYGUDQ51cLC3CDJNN
+ k40dTSKMnYMs3UJDHJ1Cg1LdE4JS0pWak2FgAcZcadQgAAAA==
+X-BESS-Outbound-Spam-Score: 0.50
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.268348 [from 
- cloudscan20-186.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan12-246.eu-central-1a.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
+ 0.50 BSF_RULE7568M          META: Custom Rule 7568M 
  0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS113687 scores of
- KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS113687 scores of
+ KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -146,401 +147,647 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Change setter functions prefix from set_ to nthw_set_ for DBS module
+Add prefix nthw_ to register ops function to follow naming convention.
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c | 50 +++++++++----------
- drivers/net/ntnic/include/ntnic_dbs.h         | 22 ++++----
- drivers/net/ntnic/nthw/dbs/nthw_dbs.c         | 22 ++++----
- 3 files changed, 47 insertions(+), 47 deletions(-)
+ drivers/net/ntnic/adapter/nt4ga_adapter.c     |  2 +-
+ .../net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c |  2 +-
+ drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c |  2 +-
+ .../link_mgmt/link_100g/nt4ga_link_100g.c     |  2 +-
+ .../link_agx_100g/nt4ga_agx_link_100g.c       |  2 +-
+ drivers/net/ntnic/link_mgmt/nt4ga_link.c      |  2 +-
+ .../net/ntnic/nthw/core/include/nthw_fpga.h   |  4 +-
+ .../clock_profiles/nthw_fpga_clk9563.c        |  2 +-
+ .../nthw/core/nt200a0x/nthw_fpga_nt200a0x.c   |  2 +-
+ .../core/nt200a0x/reset/nthw_fpga_rst9563.c   |  2 +-
+ .../nt200a0x/reset/nthw_fpga_rst_nt200a0x.c   |  2 +-
+ .../nthw/core/nt400dxx/nthw_fpga_nt400dxx.c   |  2 +-
+ .../core/nt400dxx/reset/nthw_fpga_rst9574.c   |  2 +-
+ .../nt400dxx/reset/nthw_fpga_rst_nt400dxx.c   |  2 +-
+ drivers/net/ntnic/nthw/core/nthw_fpga.c       |  4 +-
+ drivers/net/ntnic/nthw/flow_api/flow_api.c    |  2 +-
+ .../nthw/flow_api/flow_backend/flow_backend.c |  2 +-
+ .../profile_inline/flow_api_profile_inline.c  |  2 +-
+ .../net/ntnic/nthw/ntnic_meter/ntnic_meter.c  |  2 +-
+ drivers/net/ntnic/ntnic_filter/ntnic_filter.c |  6 +--
+ drivers/net/ntnic/ntnic_mod_reg.c             | 38 +++++++++----------
+ drivers/net/ntnic/ntnic_mod_reg.h             | 38 +++++++++----------
+ drivers/net/ntnic/ntnic_xstats/ntnic_xstats.c |  2 +-
+ 23 files changed, 63 insertions(+), 63 deletions(-)
 
+diff --git a/drivers/net/ntnic/adapter/nt4ga_adapter.c b/drivers/net/ntnic/adapter/nt4ga_adapter.c
+index 98725879b9..5295387fa8 100644
+--- a/drivers/net/ntnic/adapter/nt4ga_adapter.c
++++ b/drivers/net/ntnic/adapter/nt4ga_adapter.c
+@@ -283,5 +283,5 @@ static const struct adapter_ops ops = {
+ 
+ void nthw_adapter_init(void)
+ {
+-	register_adapter_ops(&ops);
++	nthw_reg_adapter_ops(&ops);
+ }
+diff --git a/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c b/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
+index 9d0d77dcc8..aca88c6635 100644
+--- a/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
++++ b/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
+@@ -596,5 +596,5 @@ static struct nt4ga_stat_ops ops = {
+ void nt4ga_stat_ops_init(void)
+ {
+ 	NT_LOG_DBGX(DBG, NTNIC, "Stat module was initialized");
+-	register_nt4ga_stat_ops(&ops);
++	nthw_reg_nt4ga_stat_ops(&ops);
+ }
 diff --git a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
-index 7b2e2e53fc..3257233545 100644
+index 3257233545..0fa597d777 100644
 --- a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
 +++ b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
-@@ -198,7 +198,7 @@ static void dbs_init_tx_queue(nthw_dbs_t *p_nthw_dbs, uint32_t queue, uint32_t s
- 		nthw_get_tx_init(p_nthw_dbs, &init, &dummy, &busy);
- 	} while (busy != 0);
- 
--	set_tx_init(p_nthw_dbs, start_idx, start_ptr, INIT_QUEUE, queue);
-+	nthw_set_tx_init(p_nthw_dbs, start_idx, start_ptr, INIT_QUEUE, queue);
- 
- 	do {
- 		nthw_get_tx_init(p_nthw_dbs, &init, &dummy, &busy);
-@@ -221,14 +221,14 @@ static int nthw_virt_queue_init(struct fpga_info_s *p_fpga_info)
- 	if (p_nthw_dbs == NULL)
- 		return -1;
- 
--	res = dbs_init(NULL, p_fpga, 0);/* Check that DBS exists in FPGA */
-+	res = nthw_dbs_init(NULL, p_fpga, 0);/* Check that DBS exists in FPGA */
- 
- 	if (res) {
- 		free(p_nthw_dbs);
- 		return res;
- 	}
- 
--	res = dbs_init(p_nthw_dbs, p_fpga, 0);	/* Create DBS module */
-+	res = nthw_dbs_init(p_nthw_dbs, p_fpga, 0);	/* Create DBS module */
- 
- 	if (res) {
- 		free(p_nthw_dbs);
-@@ -242,7 +242,7 @@ static int nthw_virt_queue_init(struct fpga_info_s *p_fpga_info)
- 		txvq[i].usage = NTHW_VIRTQ_UNUSED;
- 	}
- 
--	dbs_reset(p_nthw_dbs);
-+	nthw_dbs_reset(p_nthw_dbs);
- 
- 	for (i = 0; i < NT_DBS_RX_QUEUES_MAX; ++i)
- 		dbs_init_rx_queue(p_nthw_dbs, i, 0, 0);
-@@ -382,8 +382,8 @@ static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
- 	 * 3. Configure the DBS.RX_DR_DATA memory; good idea to initialize all
- 	 * DBS_RX_QUEUES entries.
- 	 */
--	if (set_rx_dr_data(p_nthw_dbs, index, (uint64_t)desc_struct_phys_addr, host_id, qs, header,
--			0) != 0) {
-+	if (nthw_set_rx_dr_data(p_nthw_dbs, index, (uint64_t)desc_struct_phys_addr,
-+		host_id, qs, header, 0) != 0) {
- 		return NULL;
- 	}
- 
-@@ -398,9 +398,9 @@ static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
- 	int_enable = 0;
- 	vec = 0;
- 	istk = 0;
--	NT_LOG_DBGX(DBG, NTNIC, "set_rx_uw_data int=0 irq_vector=%i", irq_vector);
-+	NT_LOG_DBGX(DBG, NTNIC, "nthw_set_rx_uw_data int=0 irq_vector=%i", irq_vector);
- 
--	if (set_rx_uw_data(p_nthw_dbs, index,
-+	if (nthw_set_rx_uw_data(p_nthw_dbs, index,
- 			(uint64_t)used_struct_phys_addr,
- 			host_id, qs, 0, int_enable, vec, istk) != 0) {
- 		return NULL;
-@@ -414,7 +414,7 @@ static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
- 	 *    at a later time (after we have enabled vfio interrupts in the kernel).
- 	 */
- 	if (irq_vector < 0) {
--		if (set_rx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr,
-+		if (nthw_set_rx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr,
- 				RX_AM_DISABLE, host_id, 0,
- 				0) != 0) {
- 			return NULL;
-@@ -432,7 +432,7 @@ static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
- 	 *  good idea to initialize all DBS_RX_QUEUES entries.
- 	 */
- 	uint32_t enable = rx_deferred_start ? RX_AM_DISABLE : RX_AM_ENABLE;
--	if (set_rx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr, enable,
-+	if (nthw_set_rx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr, enable,
- 			host_id, 0, irq_vector >= 0 ? 1 : 0) != 0) {
- 		return NULL;
- 	}
-@@ -520,7 +520,7 @@ static int dbs_internal_release_rx_virt_queue(struct nthw_virt_queue *rxvq)
- 	/* Clear UW */
- 	rxvq->used_struct_phys_addr = NULL;
- 
--	if (set_rx_uw_data(p_nthw_dbs, rxvq->index, (uint64_t)rxvq->used_struct_phys_addr,
-+	if (nthw_set_rx_uw_data(p_nthw_dbs, rxvq->index, (uint64_t)rxvq->used_struct_phys_addr,
- 			rxvq->host_id, 0, PACKED(rxvq->vq_type), 0, 0, 0) != 0) {
- 		return -1;
- 	}
-@@ -528,7 +528,7 @@ static int dbs_internal_release_rx_virt_queue(struct nthw_virt_queue *rxvq)
- 	/* Disable AM */
- 	rxvq->am_enable = RX_AM_DISABLE;
- 
--	if (set_rx_am_data(p_nthw_dbs,
-+	if (nthw_set_rx_am_data(p_nthw_dbs,
- 			rxvq->index,
- 			(uint64_t)rxvq->avail_struct_phys_addr,
- 			rxvq->am_enable,
-@@ -546,7 +546,7 @@ static int dbs_internal_release_rx_virt_queue(struct nthw_virt_queue *rxvq)
- 	rxvq->avail_struct_phys_addr = NULL;
- 	rxvq->host_id = 0;
- 
--	if (set_rx_am_data(p_nthw_dbs,
-+	if (nthw_set_rx_am_data(p_nthw_dbs,
- 			rxvq->index,
- 			(uint64_t)rxvq->avail_struct_phys_addr,
- 			rxvq->am_enable,
-@@ -558,7 +558,7 @@ static int dbs_internal_release_rx_virt_queue(struct nthw_virt_queue *rxvq)
- 	/* Clear DR */
- 	rxvq->desc_struct_phys_addr = NULL;
- 
--	if (set_rx_dr_data(p_nthw_dbs,
-+	if (nthw_set_rx_dr_data(p_nthw_dbs,
- 			rxvq->index,
- 			(uint64_t)rxvq->desc_struct_phys_addr,
- 			rxvq->host_id,
-@@ -602,7 +602,7 @@ static int dbs_internal_release_tx_virt_queue(struct nthw_virt_queue *txvq)
- 	/* Clear UW */
- 	txvq->used_struct_phys_addr = NULL;
- 
--	if (set_tx_uw_data(p_nthw_dbs, txvq->index, (uint64_t)txvq->used_struct_phys_addr,
-+	if (nthw_set_tx_uw_data(p_nthw_dbs, txvq->index, (uint64_t)txvq->used_struct_phys_addr,
- 			txvq->host_id, 0, PACKED(txvq->vq_type), 0, 0, 0,
- 			txvq->in_order) != 0) {
- 		return -1;
-@@ -611,7 +611,7 @@ static int dbs_internal_release_tx_virt_queue(struct nthw_virt_queue *txvq)
- 	/* Disable AM */
- 	txvq->am_enable = TX_AM_DISABLE;
- 
--	if (set_tx_am_data(p_nthw_dbs,
-+	if (nthw_set_tx_am_data(p_nthw_dbs,
- 			txvq->index,
- 			(uint64_t)txvq->avail_struct_phys_addr,
- 			txvq->am_enable,
-@@ -629,7 +629,7 @@ static int dbs_internal_release_tx_virt_queue(struct nthw_virt_queue *txvq)
- 	txvq->avail_struct_phys_addr = NULL;
- 	txvq->host_id = 0;
- 
--	if (set_tx_am_data(p_nthw_dbs,
-+	if (nthw_set_tx_am_data(p_nthw_dbs,
- 			txvq->index,
- 			(uint64_t)txvq->avail_struct_phys_addr,
- 			txvq->am_enable,
-@@ -644,7 +644,7 @@ static int dbs_internal_release_tx_virt_queue(struct nthw_virt_queue *txvq)
- 	txvq->port = 0;
- 	txvq->header = 0;
- 
--	if (set_tx_dr_data(p_nthw_dbs,
-+	if (nthw_set_tx_dr_data(p_nthw_dbs,
- 			txvq->index,
- 			(uint64_t)txvq->desc_struct_phys_addr,
- 			txvq->host_id,
-@@ -713,8 +713,8 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
- 	 * 3. Configure the DBS.TX_DR_DATA memory; good idea to initialize all
- 	 *    DBS_TX_QUEUES entries.
- 	 */
--	if (set_tx_dr_data(p_nthw_dbs, index, (uint64_t)desc_struct_phys_addr, host_id, qs, port,
--			header, 0) != 0) {
-+	if (nthw_set_tx_dr_data(p_nthw_dbs, index, (uint64_t)desc_struct_phys_addr,
-+			host_id, qs, port, header, 0) != 0) {
- 		return NULL;
- 	}
- 
-@@ -730,7 +730,7 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
- 	vec = 0;
- 	istk = 0;
- 
--	if (set_tx_uw_data(p_nthw_dbs, index,
-+	if (nthw_set_tx_uw_data(p_nthw_dbs, index,
- 			(uint64_t)used_struct_phys_addr,
- 			host_id, qs, 0, int_enable, vec, istk, in_order) != 0) {
- 		return NULL;
-@@ -740,7 +740,7 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
- 	 * 2. Configure the DBS.TX_AM_DATA memory and enable the queues you plan to use;
- 	 *    good idea to initialize all DBS_TX_QUEUES entries.
- 	 */
--	if (set_tx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr, TX_AM_DISABLE,
-+	if (nthw_set_tx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr, TX_AM_DISABLE,
- 			host_id, 0, irq_vector >= 0 ? 1 : 0) != 0) {
- 		return NULL;
- 	}
-@@ -764,7 +764,7 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
- 	 */
- 	if (irq_vector < 0) {
- 		uint32_t enable = tx_deferred_start ? TX_AM_DISABLE : TX_AM_ENABLE;
--		if (set_tx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr,
-+		if (nthw_set_tx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr,
- 				enable, host_id, 0, 0) != 0) {
- 			return NULL;
- 		}
-@@ -1127,12 +1127,12 @@ nthw_setup_mngd_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
- 
- static int nthw_switch_rx_virt_queue(nthw_dbs_t *p_nthw_dbs, uint32_t index, uint32_t enable)
+@@ -1451,5 +1451,5 @@ static struct sg_ops_s sg_ops = {
+ void nthw_sg_init(void)
  {
--	return set_rx_am_data_enable(p_nthw_dbs, index, enable);
-+	return nthw_set_rx_am_data_enable(p_nthw_dbs, index, enable);
+ 	NT_LOG(INF, NTNIC, "SG ops initialized");
+-	register_sg_ops(&sg_ops);
++	nthw_reg_sg_ops(&sg_ops);
  }
+diff --git a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
+index 2c7a88aed9..914d1c206c 100644
+--- a/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
++++ b/drivers/net/ntnic/link_mgmt/link_100g/nt4ga_link_100g.c
+@@ -747,5 +747,5 @@ static struct link_ops_s link_100g_ops = {
  
- static int nthw_switch_tx_virt_queue(nthw_dbs_t *p_nthw_dbs, uint32_t index, uint32_t enable)
+ void nthw_link_100g_init(void)
  {
--	return set_tx_am_data_enable(p_nthw_dbs, index, enable);
-+	return nthw_set_tx_am_data_enable(p_nthw_dbs, index, enable);
+-	register_100g_link_ops(&link_100g_ops);
++	nthw_reg_100g_link_ops(&link_100g_ops);
  }
+diff --git a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
+index b700a9e76e..1387bb4148 100644
+--- a/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
++++ b/drivers/net/ntnic/link_mgmt/link_agx_100g/nt4ga_agx_link_100g.c
+@@ -37,7 +37,7 @@ static struct link_ops_s link_agx_100g_ops = {
  
- static uint16_t nthw_get_rx_packets(struct nthw_virt_queue *rxvq,
-diff --git a/drivers/net/ntnic/include/ntnic_dbs.h b/drivers/net/ntnic/include/ntnic_dbs.h
-index c35a7cb99b..3de7206ccb 100644
---- a/drivers/net/ntnic/include/ntnic_dbs.h
-+++ b/drivers/net/ntnic/include/ntnic_dbs.h
-@@ -233,8 +233,8 @@ struct nthw_dbs_s {
- typedef struct nthw_dbs_s nthw_dbs_t;
- 
- nthw_dbs_t *nthw_dbs_new(void);
--int dbs_init(nthw_dbs_t *p, nthw_fpga_t *p_fpga, int n_instance);
--void dbs_reset(nthw_dbs_t *p);
-+int nthw_dbs_init(nthw_dbs_t *p, nthw_fpga_t *p_fpga, int n_instance);
-+void nthw_dbs_reset(nthw_dbs_t *p);
- 
- int nthw_set_rx_control(nthw_dbs_t *p,
- 	uint32_t last_queue,
-@@ -253,30 +253,30 @@ int nthw_set_tx_control(nthw_dbs_t *p,
- int nthw_set_rx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
- 	uint32_t queue);
- int nthw_get_rx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy);
--int set_tx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
-+int nthw_set_tx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
- 	uint32_t queue);
- int nthw_get_tx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *busy);
- int nthw_set_rx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue);
- int nthw_get_rx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy);
- int nthw_set_tx_idle(nthw_dbs_t *p, uint32_t idle, uint32_t queue);
- int nthw_get_tx_idle(nthw_dbs_t *p, uint32_t *idle, uint32_t *queue, uint32_t *busy);
--int set_rx_am_data(nthw_dbs_t *p,
-+int nthw_set_rx_am_data(nthw_dbs_t *p,
- 	uint32_t index,
- 	uint64_t guest_physical_address,
- 	uint32_t enable,
- 	uint32_t host_id,
- 	uint32_t packed,
- 	uint32_t int_enable);
--int set_rx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable);
--int set_tx_am_data(nthw_dbs_t *p,
-+int nthw_set_rx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable);
-+int nthw_set_tx_am_data(nthw_dbs_t *p,
- 	uint32_t index,
- 	uint64_t guest_physical_address,
- 	uint32_t enable,
- 	uint32_t host_id,
- 	uint32_t packed,
- 	uint32_t int_enable);
--int set_tx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable);
--int set_rx_uw_data(nthw_dbs_t *p,
-+int nthw_set_tx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable);
-+int nthw_set_rx_uw_data(nthw_dbs_t *p,
- 	uint32_t index,
- 	uint64_t guest_physical_address,
- 	uint32_t host_id,
-@@ -285,7 +285,7 @@ int set_rx_uw_data(nthw_dbs_t *p,
- 	uint32_t int_enable,
- 	uint32_t vec,
- 	uint32_t istk);
--int set_tx_uw_data(nthw_dbs_t *p,
-+int nthw_set_tx_uw_data(nthw_dbs_t *p,
- 	uint32_t index,
- 	uint64_t guest_physical_address,
- 	uint32_t host_id,
-@@ -295,14 +295,14 @@ int set_tx_uw_data(nthw_dbs_t *p,
- 	uint32_t vec,
- 	uint32_t istk,
- 	uint32_t in_order);
--int set_rx_dr_data(nthw_dbs_t *p,
-+int nthw_set_rx_dr_data(nthw_dbs_t *p,
- 	uint32_t index,
- 	uint64_t guest_physical_address,
- 	uint32_t host_id,
- 	uint32_t queue_size,
- 	uint32_t header,
- 	uint32_t packed);
--int set_tx_dr_data(nthw_dbs_t *p,
-+int nthw_set_tx_dr_data(nthw_dbs_t *p,
- 	uint32_t index,
- 	uint64_t guest_physical_address,
- 	uint32_t host_id,
-diff --git a/drivers/net/ntnic/nthw/dbs/nthw_dbs.c b/drivers/net/ntnic/nthw/dbs/nthw_dbs.c
-index da64dbab48..25989d170b 100644
---- a/drivers/net/ntnic/nthw/dbs/nthw_dbs.c
-+++ b/drivers/net/ntnic/nthw/dbs/nthw_dbs.c
-@@ -76,7 +76,7 @@ nthw_dbs_t *nthw_dbs_new(void)
- 	return p;
- }
- 
--int dbs_init(nthw_dbs_t *p, nthw_fpga_t *p_fpga, int n_instance)
-+int nthw_dbs_init(nthw_dbs_t *p, nthw_fpga_t *p_fpga, int n_instance)
+ void link_agx_100g_init(void)
  {
- 	nthw_module_t *mod = nthw_fpga_query_module(p_fpga, MOD_DBS, n_instance);
- 
-@@ -369,7 +369,7 @@ static int dbs_reset_tx_control(nthw_dbs_t *p)
- 	return 0;
+-	register_agx_100g_link_ops(&link_agx_100g_ops);
++	nthw_reg_agx_100g_link_ops(&link_agx_100g_ops);
  }
  
--void dbs_reset(nthw_dbs_t *p)
-+void nthw_dbs_reset(nthw_dbs_t *p)
+ /*
+diff --git a/drivers/net/ntnic/link_mgmt/nt4ga_link.c b/drivers/net/ntnic/link_mgmt/nt4ga_link.c
+index 5ddbb9f1fd..5e6be42398 100644
+--- a/drivers/net/ntnic/link_mgmt/nt4ga_link.c
++++ b/drivers/net/ntnic/link_mgmt/nt4ga_link.c
+@@ -210,5 +210,5 @@ static const struct port_ops ops = {
+ 
+ void nthw_port_init(void)
  {
- 	int i;
- 	dbs_reset_rx_control(p);
-@@ -462,7 +462,7 @@ int nthw_get_rx_init(nthw_dbs_t *p, uint32_t *init, uint32_t *queue, uint32_t *b
- 	return 0;
+-	register_port_ops(&ops);
++	nthw_reg_port_ops(&ops);
  }
+diff --git a/drivers/net/ntnic/nthw/core/include/nthw_fpga.h b/drivers/net/ntnic/nthw/core/include/nthw_fpga.h
+index fb47807a2f..b86865b24f 100644
+--- a/drivers/net/ntnic/nthw/core/include/nthw_fpga.h
++++ b/drivers/net/ntnic/nthw/core/include/nthw_fpga.h
+@@ -32,7 +32,7 @@ struct nt200a0x_ops {
+ 	int (*nthw_fpga_nt200a0x_init)(struct fpga_info_s *p_fpga_info);
+ };
  
--int set_tx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
-+int nthw_set_tx_init(nthw_dbs_t *p, uint32_t start_idx, uint32_t start_ptr, uint32_t init,
- 	uint32_t queue)
+-void register_nt200a0x_ops(struct nt200a0x_ops *ops);
++void nthw_reg_nt200a0x_ops(struct nt200a0x_ops *ops);
+ struct nt200a0x_ops *get_nt200a0x_ops(void);
+ void nt200a0x_ops_init(void);
+ 
+@@ -40,7 +40,7 @@ struct nt400dxx_ops {
+ 	int (*nthw_fpga_nt400dxx_init)(struct fpga_info_s *p_fpga_info);
+ };
+ 
+-void register_nt400dxx_ops(struct nt400dxx_ops *ops);
++void nthw_reg_nt400dxx_ops(struct nt400dxx_ops *ops);
+ struct nt400dxx_ops *get_nt400dxx_ops(void);
+ void nt400dxx_ops_init(void);
+ 
+diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/clock_profiles/nthw_fpga_clk9563.c b/drivers/net/ntnic/nthw/core/nt200a0x/clock_profiles/nthw_fpga_clk9563.c
+index e50094c6fa..eeca816899 100644
+--- a/drivers/net/ntnic/nthw/core/nt200a0x/clock_profiles/nthw_fpga_clk9563.c
++++ b/drivers/net/ntnic/nthw/core/nt200a0x/clock_profiles/nthw_fpga_clk9563.c
+@@ -35,7 +35,7 @@ static struct clk9563_ops ops = { .get_n_data_9563_si5340_nt200a02_u23_v5 =
+ 
+ void clk9563_ops_init(void)
  {
- 	if (p->mp_reg_tx_init_val) {
-@@ -601,7 +601,7 @@ static void flush_rx_am_data(nthw_dbs_t *p, uint32_t index)
- 	nthw_register_flush(p->mp_reg_rx_avail_monitor_data, 1);
+-	register_clk9563_ops(&ops);
++	nthw_reg_clk9563_ops(&ops);
  }
  
--int set_rx_am_data(nthw_dbs_t *p,
-+int nthw_set_rx_am_data(nthw_dbs_t *p,
- 	uint32_t index,
- 	uint64_t guest_physical_address,
- 	uint32_t enable,
-@@ -618,7 +618,7 @@ int set_rx_am_data(nthw_dbs_t *p,
- 	return 0;
- }
- 
--int set_rx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable)
-+int nthw_set_rx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable)
+ #undef si5340_revd_registers
+diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/nthw_fpga_nt200a0x.c b/drivers/net/ntnic/nthw/core/nt200a0x/nthw_fpga_nt200a0x.c
+index bf7a2760a4..739b1aab85 100644
+--- a/drivers/net/ntnic/nthw/core/nt200a0x/nthw_fpga_nt200a0x.c
++++ b/drivers/net/ntnic/nthw/core/nt200a0x/nthw_fpga_nt200a0x.c
+@@ -72,5 +72,5 @@ static struct nt200a0x_ops nt200a0x_ops = { .nthw_fpga_nt200a0x_init = nthw_fpga
+ void nt200a0x_ops_init(void)
  {
- 	if (!p->mp_reg_rx_avail_monitor_data)
- 		return -ENOTSUP;
-@@ -673,7 +673,7 @@ static void flush_tx_am_data(nthw_dbs_t *p, uint32_t index)
- 	nthw_register_flush(p->mp_reg_tx_avail_monitor_data, 1);
+ 	NT_LOG(DBG, NTHW, "NT200A0X OPS INIT");
+-	register_nt200a0x_ops(&nt200a0x_ops);
++	nthw_reg_nt200a0x_ops(&nt200a0x_ops);
  }
- 
--int set_tx_am_data(nthw_dbs_t *p,
-+int nthw_set_tx_am_data(nthw_dbs_t *p,
- 	uint32_t index,
- 	uint64_t guest_physical_address,
- 	uint32_t enable,
-@@ -690,7 +690,7 @@ int set_tx_am_data(nthw_dbs_t *p,
- 	return 0;
- }
- 
--int set_tx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable)
-+int nthw_set_tx_am_data_enable(nthw_dbs_t *p, uint32_t index, uint32_t enable)
+diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
+index 918ac71a43..a345f163bb 100644
+--- a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
++++ b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
+@@ -236,5 +236,5 @@ static struct rst9563_ops rst9563_ops = { .nthw_fpga_rst9563_init = nthw_fpga_rs
+ void rst9563_ops_init(void)
  {
- 	if (!p->mp_reg_tx_avail_monitor_data)
- 		return -ENOTSUP;
-@@ -796,7 +796,7 @@ static void flush_rx_uw_data(nthw_dbs_t *p, uint32_t index)
- 	nthw_register_flush(p->mp_reg_rx_used_writer_data, 1);
+ 	NT_LOG(DBG, NTHW, "RST9563 OPS INIT");
+-	register_rst9563_ops(&rst9563_ops);
++	nthw_reg_rst9563_ops(&rst9563_ops);
+ }
+diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c
+index 34527b0cca..4a2fca5f19 100644
+--- a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c
++++ b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst_nt200a0x.c
+@@ -578,5 +578,5 @@ static struct rst_nt200a0x_ops rst_nt200a0x_ops = { .nthw_fpga_rst_nt200a0x_init
+ void rst_nt200a0x_ops_init(void)
+ {
+ 	NT_LOG(DBG, NTHW, "RST NT200A0X OPS INIT");
+-	register_rst_nt200a0x_ops(&rst_nt200a0x_ops);
++	nthw_reg_rst_nt200a0x_ops(&rst_nt200a0x_ops);
+ }
+diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c b/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
+index e7c9fec10d..234da0da33 100644
+--- a/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
++++ b/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
+@@ -215,5 +215,5 @@ static struct nt400dxx_ops nt400dxx_ops = { .nthw_fpga_nt400dxx_init = nthw_fpga
+ 
+ void nt400dxx_ops_init(void)
+ {
+-	register_nt400dxx_ops(&nt400dxx_ops);
++	nthw_reg_nt400dxx_ops(&nt400dxx_ops);
+ }
+diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
+index 28769e3aa5..36d2c46fc6 100644
+--- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
++++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9574.c
+@@ -373,5 +373,5 @@ static struct rst9574_ops rst9574_ops = {
+ 
+ void rst9574_ops_init(void)
+ {
+-	register_rst9574_ops(&rst9574_ops);
++	nthw_reg_rst9574_ops(&rst9574_ops);
+ }
+diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
+index d158135c17..67c562627d 100644
+--- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
++++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst_nt400dxx.c
+@@ -423,5 +423,5 @@ static struct rst_nt400dxx_ops rst_nt400dxx_ops = {
+ 
+ void rst_nt400dxx_ops_init(void)
+ {
+-	register_rst_nt400dxx_ops(&rst_nt400dxx_ops);
++	nthw_reg_rst_nt400dxx_ops(&rst_nt400dxx_ops);
+ }
+diff --git a/drivers/net/ntnic/nthw/core/nthw_fpga.c b/drivers/net/ntnic/nthw/core/nthw_fpga.c
+index f9ae466383..f18069e492 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_fpga.c
++++ b/drivers/net/ntnic/nthw/core/nthw_fpga.c
+@@ -557,7 +557,7 @@ int nthw_fpga_shutdown(struct fpga_info_s *p_fpga_info)
+ 
+ static struct nt200a0x_ops *nt200a0x_ops;
+ 
+-void register_nt200a0x_ops(struct nt200a0x_ops *ops)
++void nthw_reg_nt200a0x_ops(struct nt200a0x_ops *ops)
+ {
+ 	nt200a0x_ops = ops;
+ }
+@@ -571,7 +571,7 @@ struct nt200a0x_ops *get_nt200a0x_ops(void)
+ 
+ static struct nt400dxx_ops *nt400dxx_ops;
+ 
+-void register_nt400dxx_ops(struct nt400dxx_ops *ops)
++void nthw_reg_nt400dxx_ops(struct nt400dxx_ops *ops)
+ {
+ 	nt400dxx_ops = ops;
+ }
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_api.c b/drivers/net/ntnic/nthw/flow_api/flow_api.c
+index dee2ee137a..b737589e14 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_api.c
++++ b/drivers/net/ntnic/nthw/flow_api/flow_api.c
+@@ -1283,5 +1283,5 @@ static const struct flow_filter_ops ops = {
+ 
+ void nthw_init_flow_filter(void)
+ {
+-	register_flow_filter_ops(&ops);
++	nthw_reg_flow_filter_ops(&ops);
+ }
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_backend/flow_backend.c b/drivers/net/ntnic/nthw/flow_api/flow_backend/flow_backend.c
+index 8144e25540..567b735f1e 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_backend/flow_backend.c
++++ b/drivers/net/ntnic/nthw/flow_api/flow_backend/flow_backend.c
+@@ -2277,5 +2277,5 @@ static const struct flow_backend_ops ops = {
+ 
+ void nthw_flow_backend_init(void)
+ {
+-	register_flow_backend_ops(&ops);
++	nthw_reg_flow_backend_ops(&ops);
+ }
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+index a1f9e3addf..3f80e0f945 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
+@@ -5446,5 +5446,5 @@ static const struct profile_inline_ops ops = {
+ 
+ void nthw_profile_inline_init(void)
+ {
+-	register_profile_inline_ops(&ops);
++	nthw_reg_profile_inline_ops(&ops);
+ }
+diff --git a/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c b/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
+index 303c2cd51a..a2c37774fe 100644
+--- a/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
++++ b/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
+@@ -485,5 +485,5 @@ static struct meter_ops_s meter_ops = {
+ void nthw_meter_init(void)
+ {
+ 	NT_LOG(DBG, NTNIC, "Meter ops initialized");
+-	register_meter_ops(&meter_ops);
++	nthw_reg_meter_ops(&meter_ops);
+ }
+diff --git a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
+index f498551e8d..2d0d0ea54f 100644
+--- a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
++++ b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
+@@ -1291,7 +1291,7 @@ static const struct ntnic_filter_ops ntnic_filter_ops = {
+ 
+ void ntnic_filter_init(void)
+ {
+-	register_ntnic_filter_ops(&ntnic_filter_ops);
++	nthw_reg_filter_ops(&ntnic_filter_ops);
  }
  
--int set_rx_uw_data(nthw_dbs_t *p,
-+int nthw_set_rx_uw_data(nthw_dbs_t *p,
- 	uint32_t index,
- 	uint64_t guest_physical_address,
- 	uint32_t host_id,
-@@ -923,7 +923,7 @@ static void flush_tx_uw_data(nthw_dbs_t *p, uint32_t index)
- 	nthw_register_flush(p->mp_reg_tx_used_writer_data, 1);
+ static const struct rte_flow_ops dev_flow_ops = {
+@@ -1313,7 +1313,7 @@ static const struct rte_flow_ops dev_flow_ops = {
+ 
+ void nthw_dev_flow_init(void)
+ {
+-	register_dev_flow_ops(&dev_flow_ops);
++	nthw_reg_dev_flow_ops(&dev_flow_ops);
  }
  
--int set_tx_uw_data(nthw_dbs_t *p,
-+int nthw_set_tx_uw_data(nthw_dbs_t *p,
- 	uint32_t index,
- 	uint64_t guest_physical_address,
- 	uint32_t host_id,
-@@ -1019,7 +1019,7 @@ static void flush_rx_dr_data(nthw_dbs_t *p, uint32_t index)
- 	nthw_register_flush(p->mp_reg_rx_descriptor_reader_data, 1);
+ static struct rte_flow_fp_ops async_dev_flow_ops = {
+@@ -1323,5 +1323,5 @@ static struct rte_flow_fp_ops async_dev_flow_ops = {
+ 
+ void nthw_dev_fp_flow_init(void)
+ {
+-	register_dev_fp_flow_ops(&async_dev_flow_ops);
++	nthw_reg_dev_fp_flow_ops(&async_dev_flow_ops);
+ }
+diff --git a/drivers/net/ntnic/ntnic_mod_reg.c b/drivers/net/ntnic/ntnic_mod_reg.c
+index 36aee48818..be872aa090 100644
+--- a/drivers/net/ntnic/ntnic_mod_reg.c
++++ b/drivers/net/ntnic/ntnic_mod_reg.c
+@@ -7,7 +7,7 @@
+ 
+ static struct sg_ops_s *sg_ops;
+ 
+-void register_sg_ops(struct sg_ops_s *ops)
++void nthw_reg_sg_ops(struct sg_ops_s *ops)
+ {
+ 	sg_ops = ops;
+ }
+@@ -24,7 +24,7 @@ const struct sg_ops_s *get_sg_ops(void)
+  */
+ static struct meter_ops_s *meter_ops;
+ 
+-void register_meter_ops(struct meter_ops_s *ops)
++void nthw_reg_meter_ops(struct meter_ops_s *ops)
+ {
+ 	meter_ops = ops;
+ }
+@@ -42,7 +42,7 @@ const struct meter_ops_s *get_meter_ops(void)
+  */
+ static const struct ntnic_filter_ops *ntnic_filter_ops;
+ 
+-void register_ntnic_filter_ops(const struct ntnic_filter_ops *ops)
++void nthw_reg_filter_ops(const struct ntnic_filter_ops *ops)
+ {
+ 	ntnic_filter_ops = ops;
+ }
+@@ -57,7 +57,7 @@ const struct ntnic_filter_ops *get_ntnic_filter_ops(void)
+ 
+ static struct link_ops_s *link_100g_ops;
+ 
+-void register_100g_link_ops(struct link_ops_s *ops)
++void nthw_reg_100g_link_ops(struct link_ops_s *ops)
+ {
+ 	link_100g_ops = ops;
+ }
+@@ -74,7 +74,7 @@ const struct link_ops_s *get_100g_link_ops(void)
+  */
+ static struct link_ops_s *link_agx_100g_ops;
+ 
+-void register_agx_100g_link_ops(struct link_ops_s *ops)
++void nthw_reg_agx_100g_link_ops(struct link_ops_s *ops)
+ {
+ 	link_agx_100g_ops = ops;
+ }
+@@ -88,7 +88,7 @@ const struct link_ops_s *get_agx_100g_link_ops(void)
+ 
+ static const struct port_ops *port_ops;
+ 
+-void register_port_ops(const struct port_ops *ops)
++void nthw_reg_port_ops(const struct port_ops *ops)
+ {
+ 	port_ops = ops;
+ }
+@@ -102,7 +102,7 @@ const struct port_ops *get_port_ops(void)
+ 
+ static const struct nt4ga_stat_ops *nt4ga_stat_ops;
+ 
+-void register_nt4ga_stat_ops(const struct nt4ga_stat_ops *ops)
++void nthw_reg_nt4ga_stat_ops(const struct nt4ga_stat_ops *ops)
+ {
+ 	nt4ga_stat_ops = ops;
+ }
+@@ -117,7 +117,7 @@ const struct nt4ga_stat_ops *get_nt4ga_stat_ops(void)
+ 
+ static const struct adapter_ops *adapter_ops;
+ 
+-void register_adapter_ops(const struct adapter_ops *ops)
++void nthw_reg_adapter_ops(const struct adapter_ops *ops)
+ {
+ 	adapter_ops = ops;
+ }
+@@ -131,7 +131,7 @@ const struct adapter_ops *get_adapter_ops(void)
+ 
+ static struct clk9563_ops *clk9563_ops;
+ 
+-void register_clk9563_ops(struct clk9563_ops *ops)
++void nthw_reg_clk9563_ops(struct clk9563_ops *ops)
+ {
+ 	clk9563_ops = ops;
+ }
+@@ -145,7 +145,7 @@ struct clk9563_ops *get_clk9563_ops(void)
+ 
+ static struct rst_nt200a0x_ops *rst_nt200a0x_ops;
+ 
+-void register_rst_nt200a0x_ops(struct rst_nt200a0x_ops *ops)
++void nthw_reg_rst_nt200a0x_ops(struct rst_nt200a0x_ops *ops)
+ {
+ 	rst_nt200a0x_ops = ops;
+ }
+@@ -159,7 +159,7 @@ struct rst_nt200a0x_ops *get_rst_nt200a0x_ops(void)
+ 
+ static struct rst9563_ops *rst9563_ops;
+ 
+-void register_rst9563_ops(struct rst9563_ops *ops)
++void nthw_reg_rst9563_ops(struct rst9563_ops *ops)
+ {
+ 	rst9563_ops = ops;
+ }
+@@ -173,14 +173,14 @@ struct rst9563_ops *get_rst9563_ops(void)
+ 
+ static const struct flow_backend_ops *flow_backend_ops;
+ 
+-void register_flow_backend_ops(const struct flow_backend_ops *ops)
++void nthw_reg_flow_backend_ops(const struct flow_backend_ops *ops)
+ {
+ 	flow_backend_ops = ops;
  }
  
--int set_rx_dr_data(nthw_dbs_t *p,
-+int nthw_set_rx_dr_data(nthw_dbs_t *p,
- 	uint32_t index,
- 	uint64_t guest_physical_address,
- 	uint32_t host_id,
-@@ -1121,7 +1121,7 @@ static void flush_tx_dr_data(nthw_dbs_t *p, uint32_t index)
- 	nthw_register_flush(p->mp_reg_tx_descriptor_reader_data, 1);
- }
+ static struct rst9574_ops *rst9574_ops;
  
--int set_tx_dr_data(nthw_dbs_t *p,
-+int nthw_set_tx_dr_data(nthw_dbs_t *p,
- 	uint32_t index,
- 	uint64_t guest_physical_address,
- 	uint32_t host_id,
+-void register_rst9574_ops(struct rst9574_ops *ops)
++void nthw_reg_rst9574_ops(struct rst9574_ops *ops)
+ {
+ 	rst9574_ops = ops;
+ }
+@@ -195,7 +195,7 @@ struct rst9574_ops *get_rst9574_ops(void)
+ 
+ static struct rst_nt400dxx_ops *rst_nt400dxx_ops;
+ 
+-void register_rst_nt400dxx_ops(struct rst_nt400dxx_ops *ops)
++void nthw_reg_rst_nt400dxx_ops(struct rst_nt400dxx_ops *ops)
+ {
+ 	rst_nt400dxx_ops = ops;
+ }
+@@ -218,7 +218,7 @@ const struct flow_backend_ops *get_flow_backend_ops(void)
+ 
+ static const struct profile_inline_ops *profile_inline_ops;
+ 
+-void register_profile_inline_ops(const struct profile_inline_ops *ops)
++void nthw_reg_profile_inline_ops(const struct profile_inline_ops *ops)
+ {
+ 	profile_inline_ops = ops;
+ }
+@@ -233,7 +233,7 @@ const struct profile_inline_ops *get_profile_inline_ops(void)
+ 
+ static const struct flow_filter_ops *flow_filter_ops;
+ 
+-void register_flow_filter_ops(const struct flow_filter_ops *ops)
++void nthw_reg_flow_filter_ops(const struct flow_filter_ops *ops)
+ {
+ 	flow_filter_ops = ops;
+ }
+@@ -248,7 +248,7 @@ const struct flow_filter_ops *get_flow_filter_ops(void)
+ 
+ static const struct rte_flow_fp_ops *dev_fp_flow_ops;
+ 
+-void register_dev_fp_flow_ops(const struct rte_flow_fp_ops *ops)
++void nthw_reg_dev_fp_flow_ops(const struct rte_flow_fp_ops *ops)
+ {
+ 	dev_fp_flow_ops = ops;
+ }
+@@ -263,7 +263,7 @@ const struct rte_flow_fp_ops *get_dev_fp_flow_ops(void)
+ 
+ static const struct rte_flow_ops *dev_flow_ops;
+ 
+-void register_dev_flow_ops(const struct rte_flow_ops *ops)
++void nthw_reg_dev_flow_ops(const struct rte_flow_ops *ops)
+ {
+ 	dev_flow_ops = ops;
+ }
+@@ -278,7 +278,7 @@ const struct rte_flow_ops *get_dev_flow_ops(void)
+ 
+ static struct ntnic_xstats_ops *ntnic_xstats_ops;
+ 
+-void register_ntnic_xstats_ops(struct ntnic_xstats_ops *ops)
++void nthw_reg_xstats_ops(struct ntnic_xstats_ops *ops)
+ {
+ 	ntnic_xstats_ops = ops;
+ }
+diff --git a/drivers/net/ntnic/ntnic_mod_reg.h b/drivers/net/ntnic/ntnic_mod_reg.h
+index 59eb5ab69f..26c8723afa 100644
+--- a/drivers/net/ntnic/ntnic_mod_reg.h
++++ b/drivers/net/ntnic/ntnic_mod_reg.h
+@@ -119,7 +119,7 @@ struct sg_ops_s {
+ 	int (*nthw_virt_queue_init)(struct fpga_info_s *p_fpga_info);
+ };
+ 
+-void register_sg_ops(struct sg_ops_s *ops);
++void nthw_reg_sg_ops(struct sg_ops_s *ops);
+ const struct sg_ops_s *get_sg_ops(void);
+ void nthw_sg_init(void);
+ 
+@@ -128,7 +128,7 @@ struct meter_ops_s {
+ 	int (*eth_mtr_ops_get)(struct rte_eth_dev *eth_dev, void *ops);
+ };
+ 
+-void register_meter_ops(struct meter_ops_s *ops);
++void nthw_reg_meter_ops(struct meter_ops_s *ops);
+ const struct meter_ops_s *get_meter_ops(void);
+ void nthw_meter_init(void);
+ 
+@@ -139,7 +139,7 @@ struct ntnic_filter_ops {
+ 	int (*poll_statistics)(struct pmd_internals *internals);
+ };
+ 
+-void register_ntnic_filter_ops(const struct ntnic_filter_ops *ops);
++void nthw_reg_filter_ops(const struct ntnic_filter_ops *ops);
+ const struct ntnic_filter_ops *get_ntnic_filter_ops(void);
+ void ntnic_filter_init(void);
+ 
+@@ -147,11 +147,11 @@ struct link_ops_s {
+ 	int (*link_init)(struct adapter_info_s *p_adapter_info, nthw_fpga_t *p_fpga);
+ };
+ 
+-void register_100g_link_ops(struct link_ops_s *ops);
++void nthw_reg_100g_link_ops(struct link_ops_s *ops);
+ const struct link_ops_s *get_100g_link_ops(void);
+ void nthw_link_100g_init(void);
+ 
+-void register_agx_100g_link_ops(struct link_ops_s *ops);
++void nthw_reg_agx_100g_link_ops(struct link_ops_s *ops);
+ const struct link_ops_s *get_agx_100g_link_ops(void);
+ void link_agx_100g_init(void);
+ 
+@@ -207,7 +207,7 @@ struct port_ops {
+ 	int (*tx_power)(struct adapter_info_s *p, int port, bool disable);
+ };
+ 
+-void register_port_ops(const struct port_ops *ops);
++void nthw_reg_port_ops(const struct port_ops *ops);
+ const struct port_ops *get_port_ops(void);
+ void nthw_port_init(void);
+ 
+@@ -218,7 +218,7 @@ struct nt4ga_stat_ops {
+ 		nt4ga_stat_t *p_nt4ga_stat);
+ };
+ 
+-void register_nt4ga_stat_ops(const struct nt4ga_stat_ops *ops);
++void nthw_reg_nt4ga_stat_ops(const struct nt4ga_stat_ops *ops);
+ const struct nt4ga_stat_ops *get_nt4ga_stat_ops(void);
+ void nt4ga_stat_ops_init(void);
+ 
+@@ -229,7 +229,7 @@ struct adapter_ops {
+ 	int (*show_info)(struct adapter_info_s *p_adapter_info, FILE *pfh);
+ };
+ 
+-void register_adapter_ops(const struct adapter_ops *ops);
++void nthw_reg_adapter_ops(const struct adapter_ops *ops);
+ const struct adapter_ops *get_adapter_ops(void);
+ void nthw_adapter_init(void);
+ 
+@@ -238,7 +238,7 @@ struct clk9563_ops {
+ 	const clk_profile_data_fmt2_t *(*get_p_data_9563_si5340_nt200a02_u23_v5)(void);
+ };
+ 
+-void register_clk9563_ops(struct clk9563_ops *ops);
++void nthw_reg_clk9563_ops(struct clk9563_ops *ops);
+ struct clk9563_ops *get_clk9563_ops(void);
+ void clk9563_ops_init(void);
+ 
+@@ -249,7 +249,7 @@ struct rst_nt200a0x_ops {
+ 		const struct nthw_fpga_rst_nt200a0x *p);
+ };
+ 
+-void register_rst_nt200a0x_ops(struct rst_nt200a0x_ops *ops);
++void nthw_reg_rst_nt200a0x_ops(struct rst_nt200a0x_ops *ops);
+ struct rst_nt200a0x_ops *get_rst_nt200a0x_ops(void);
+ void rst_nt200a0x_ops_init(void);
+ 
+@@ -258,7 +258,7 @@ struct rst9563_ops {
+ 		struct nthw_fpga_rst_nt200a0x *const p);
+ };
+ 
+-void register_rst9563_ops(struct rst9563_ops *ops);
++void nthw_reg_rst9563_ops(struct rst9563_ops *ops);
+ struct rst9563_ops *get_rst9563_ops(void);
+ void rst9563_ops_init(void);
+ 
+@@ -269,7 +269,7 @@ struct rst9574_ops {
+ 		struct nthw_fpga_rst_nt400dxx *const p);
+ };
+ 
+-void register_rst9574_ops(struct rst9574_ops *ops);
++void nthw_reg_rst9574_ops(struct rst9574_ops *ops);
+ struct rst9574_ops *get_rst9574_ops(void);
+ void rst9574_ops_init(void);
+ 
+@@ -278,7 +278,7 @@ struct rst_nt400dxx_ops {
+ 	int (*nthw_fpga_rst_nt400dxx_reset)(struct fpga_info_s *p_fpga_info);
+ };
+ 
+-void register_rst_nt400dxx_ops(struct rst_nt400dxx_ops *ops);
++void nthw_reg_rst_nt400dxx_ops(struct rst_nt400dxx_ops *ops);
+ struct rst_nt400dxx_ops *get_rst_nt400dxx_ops(void);
+ void rst_nt400dxx_ops_init(void);
+ 
+@@ -288,7 +288,7 @@ struct flow_backend_ops {
+ 	void (*bin_flow_backend_done)(void *be_dev);
+ };
+ 
+-void register_flow_backend_ops(const struct flow_backend_ops *ops);
++void nthw_reg_flow_backend_ops(const struct flow_backend_ops *ops);
+ const struct flow_backend_ops *get_flow_backend_ops(void);
+ void nthw_flow_backend_init(void);
+ 
+@@ -446,7 +446,7 @@ struct profile_inline_ops {
+ 	int (*nthw_flow_set_mtu_inline)(struct flow_eth_dev *dev, uint32_t port, uint16_t mtu);
+ };
+ 
+-void register_profile_inline_ops(const struct profile_inline_ops *ops);
++void nthw_reg_profile_inline_ops(const struct profile_inline_ops *ops);
+ const struct profile_inline_ops *get_profile_inline_ops(void);
+ void nthw_profile_inline_init(void);
+ 
+@@ -559,15 +559,15 @@ struct flow_filter_ops {
+ 		struct rte_flow_error *error);
+ };
+ 
+-void register_dev_fp_flow_ops(const struct rte_flow_fp_ops *ops);
++void nthw_reg_dev_fp_flow_ops(const struct rte_flow_fp_ops *ops);
+ const struct rte_flow_fp_ops *get_dev_fp_flow_ops(void);
+ void nthw_dev_fp_flow_init(void);
+ 
+-void register_dev_flow_ops(const struct rte_flow_ops *ops);
++void nthw_reg_dev_flow_ops(const struct rte_flow_ops *ops);
+ const struct rte_flow_ops *get_dev_flow_ops(void);
+ void nthw_dev_flow_init(void);
+ 
+-void register_flow_filter_ops(const struct flow_filter_ops *ops);
++void nthw_reg_flow_filter_ops(const struct flow_filter_ops *ops);
+ const struct flow_filter_ops *get_flow_filter_ops(void);
+ void nthw_init_flow_filter(void);
+ 
+@@ -591,7 +591,7 @@ struct ntnic_xstats_ops {
+ 		uint8_t port);
+ };
+ 
+-void register_ntnic_xstats_ops(struct ntnic_xstats_ops *ops);
++void nthw_reg_xstats_ops(struct ntnic_xstats_ops *ops);
+ struct ntnic_xstats_ops *get_ntnic_xstats_ops(void);
+ void ntnic_xstats_ops_init(void);
+ 
+diff --git a/drivers/net/ntnic/ntnic_xstats/ntnic_xstats.c b/drivers/net/ntnic/ntnic_xstats/ntnic_xstats.c
+index a26cf5a07a..1ebf1b8eb5 100644
+--- a/drivers/net/ntnic/ntnic_xstats/ntnic_xstats.c
++++ b/drivers/net/ntnic/ntnic_xstats/ntnic_xstats.c
+@@ -822,5 +822,5 @@ static struct ntnic_xstats_ops ops = {
+ void ntnic_xstats_ops_init(void)
+ {
+ 	NT_LOG_DBGX(DBG, NTNIC, "xstats module was initialized");
+-	register_ntnic_xstats_ops(&ops);
++	nthw_reg_xstats_ops(&ops);
+ }
 -- 
 2.45.0
 
