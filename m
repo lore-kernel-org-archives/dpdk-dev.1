@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7AC0CCD19F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C685CCD199
+	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:44:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4DF3410D0;
-	Mon, 20 Oct 2025 18:44:08 +0200 (CEST)
-Received: from egress-ip42b.ess.de.barracuda.com
- (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id B767640A7F
+	by mails.dpdk.org (Postfix) with ESMTP id 9C56540E8A;
+	Mon, 20 Oct 2025 18:44:09 +0200 (CEST)
+Received: from egress-ip11b.ess.de.barracuda.com
+ (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 90029406B8
  for <dev@dpdk.org>; Mon, 20 Oct 2025 18:43:48 +0200 (CEST)
-Received: from AM0PR02CU008.outbound.protection.outlook.com
- (mail-westeuropeazon11023103.outbound.protection.outlook.com [52.101.72.103])
- by mx-outbound16-13.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
+Received: from AM0PR83CU005.outbound.protection.outlook.com
+ (mail-westeuropeazon11020140.outbound.protection.outlook.com [52.101.69.140])
+ by mx-outbound16-221.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
  cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Mon, 20 Oct 2025 16:43:48 +0000
+ Mon, 20 Oct 2025 16:43:47 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=muKLuf2EfHHLU1yIRpaCKP2CqFUd57ZWnIoxBQlklEtW1Ge06Lf+VRoemYbm+c1crPsYcsyx3rnMOGGH5dLNXSH7ra6c9cZUSb8vzr7OT6gfekSyo2kDhI8s2og3NTeNe4uaqsBKCG9egWEipAcHofdk3gs1BlX3pTCf5eADBLd0hta0skKxcAL+bn2zvljfAIrsbzp4zdKGUqSZ9RRkwGY1zvEhz/eb7Uyy8BAh3XC2Mtzr7a+R4jnV8o49xzaqyyv1hj4KTZxzARJb/gjssIDPGq6ZjFa29IQtE0CfXdPouYJZq/CfAL+J9UqhTP8aFgDPQoJK2+VqQytj2vf+zA==
+ b=smTIQGfB4xyVCWvuZOdLbhGYs7hyxzFRQH809ZuvWnJiLDyPUOKSY4abZWW6aYWwVaKPACGrNcW57OQgmEJEZzwuI4NTIKwFcT9aEZO0zsFc1dAdweSsygYESX3CS5QQdvMo852MLxopKUO9fTIO6GBtqkfDQhavWg94BtB6jeB3h9ayQymkThLPkLT2dIhP4y4aC8mLiIdY1N5ZcU9olOUXfZZCI8X8wZelJaV9+e5Ffv4wThUOe51ikaJw2zwjyJ+ukrE2qhIai7Qg68Uzd67mR/SXB0Hp28PsXBAGguKHwhB8hvdIVdglNC42WnKVvCgpMORf7es1ndSoZEsuyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MWwWprbEBRSOxORP4LRNj7gxqAU5zUKefrBbHXYrBTM=;
- b=pgOI/MOQBqQ2EfTqCzjNX0IZMWY59pDgrmzgrHQFokoVY23RzzsET+6J314kQ+D1FtXE3sXzm0MG85FA78M4yZoIE66jF6Cid3AqhdrhyRiLm0Y3M1R6KLkAukufZcuM3E+LgrUlNJRE8sbjAYqOz8tFbo+51Sx6K1i6kDSGD4wBEnPXLuzDbfGoMnYLR6fBBlYzYZsRRjHYpLKndH09cXM299YCOyqKNtrUAj/9T3BRKuykKNJSvKmcpRKIKzMtAQRWpHG91ldQL9ojBXcSWrIdt3K9mQvJvSkm/GvLOxBNBD1fKb4hrtIhxNaxByOs4sv++IeCUQ5mCK7F+k365Q==
+ bh=6g8YFpLbxsUhzG+zjo6X68g/v/MztfjZ3om3d1mt+Xg=;
+ b=UJwam+1/Ngft+dq5mT42BOfrsgTsIpc6483NXKjpQhGp+NE5fdVdhKIxmKOE6HNyk1NKcJsw+mgiOpwEcFfUmAKed/z9kgnSYOflRs2BcGtO5My+IrKipsAeN9LJpO/NrJBjboCDbLVbu8B7Xl9rXeSSFzxWQtB9OdpNZz8ZJPyzRu0f4kYObJgg6mgzgIBLublqd2Isz3mkmLCBXA7xj1Oxw746aZ0PGRgaKHyCw3smOk4sjJ8fm6RQ8pgjWU+aviwoJrdXtofvf7j6GH7PL/HPov9oU3eC0x9w0ub8FLmozriFm7SfwUUh9RePgpoxygwr5t6sYGkuH3SyXA5fXQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MWwWprbEBRSOxORP4LRNj7gxqAU5zUKefrBbHXYrBTM=;
- b=DXVvla2RDFB9Rtu0sUa1j/1CVv1N5xZ9dkH7i4W29LlktkFIyJ0Kd7Sx9PgV8C+pXTfwxGHYrdU3i/b/C5nIQnnS/QyLP/edcJA5Z6a7qHI86DGzUtTrmV0lusWVCpBuZtcrHYZ8sENcZgt8KjooR8jxjNQHDmefY090P/wdh+g=
-Received: from DUZPR01CA0022.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:46b::12) by PA2P190MB2127.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:102:403::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Mon, 20 Oct
+ bh=6g8YFpLbxsUhzG+zjo6X68g/v/MztfjZ3om3d1mt+Xg=;
+ b=ArG31+88sdXLtTL8foU8a5osD2EzzI8Vgi2ycV60BL3cKClTdQSpY+EWuy2E5s5lycOuMYo3skixGwVSHSavJzwv8u14p/jnfDQVra9PLKCQt1LfVgEfAJDFGBsj1HDmOjif8HM4YHOaJ471rC7IRMsuRV9gYW8ECCoxH92W7Vc=
+Received: from DUZPR01CA0020.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46b::16) by AS8P190MB2005.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:20b:52f::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.11; Mon, 20 Oct
  2025 16:43:46 +0000
 Received: from DU6PEPF0000B61F.eurprd02.prod.outlook.com
- (2603:10a6:10:46b:cafe::bd) by DUZPR01CA0022.outlook.office365.com
- (2603:10a6:10:46b::12) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:10:46b:cafe::1b) by DUZPR01CA0020.outlook.office365.com
+ (2603:10a6:10:46b::16) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.17 via Frontend Transport; Mon,
- 20 Oct 2025 16:44:20 +0000
+ 20 Oct 2025 16:44:49 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  DU6PEPF0000B61F.mail.protection.outlook.com (10.167.8.134) with Microsoft
- SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:43:46
+ SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:43:45
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v2 10/21] net/ntnic: add reset init stage 8 for NT400D11
-Date: Mon, 20 Oct 2025 18:43:19 +0200
-Message-ID: <20251020164336.283664-11-sil-plv@napatech.com>
+Subject: [PATCH v2 09/21] net/ntnic: add reset init stage 7 for NT400D11
+Date: Mon, 20 Oct 2025 18:43:18 +0200
+Message-ID: <20251020164336.283664-10-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20251020164336.283664-1-sil-plv@napatech.com>
 References: <20251001151018.250671-21-sil-plv@napatech.com>
@@ -67,65 +67,65 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF0000B61F:EE_|PA2P190MB2127:EE_
+X-MS-TrafficTypeDiagnostic: DU6PEPF0000B61F:EE_|AS8P190MB2005:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 2d66d005-f504-42c0-a27a-08de0ff7d6c1
+X-MS-Office365-Filtering-Correlation-Id: 109169d3-97c2-4d73-7d14-08de0ff7d64f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|36860700013|1800799024|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?/rrHuqsZpMc5+kP5bXcxb5l/6Uqj7U/jwtOquCKew6SEDFGYvJUfETQJ+KfF?=
- =?us-ascii?Q?sLPsWUrbc7TqhAgq6mEqxOGtc2P4amF1k+E7T8BmPhMUWJ6ps6blf0sTGbvl?=
- =?us-ascii?Q?Mt9E56NU7Nqb/cQ63fJJ9+R2pibMU4z0KfJbmBJ3tR4YKEccXHP1oxWvQ+hh?=
- =?us-ascii?Q?Su/REVmiAxnDojTr2ADwqqbMSeXco9VkD4+JsKcGsYWx9K3FZSVXOA/SShgZ?=
- =?us-ascii?Q?YVP9fwMLIGzaQ6M+X2IPVCB96dcXS0ZCMQwcibOdnlEGl6JGNqWeQb/Fm5pa?=
- =?us-ascii?Q?Zh8E1TEDUUHoJ8SdRnL6mv47ykhhyiO8oo2VkbCyOFyyJSd5mQq2TLzNTK8K?=
- =?us-ascii?Q?OENPGAdWkLt95eUckJoB2X6Rafc+3M44t1oy26mA7z65cpmvpknCDNsnHwZa?=
- =?us-ascii?Q?NNxh4trTTA1HhxB4utF8wbfMOVWDoAo/xaZgiI5vMf+7eLBaYHkBfYSfdxD1?=
- =?us-ascii?Q?KYI2GYjDtz5DlTC/vjCjD0SrbctyF3YldmL+zd8AQos2z64+05Z8z0PhMoNp?=
- =?us-ascii?Q?m/GD1nfWERV0DhP/d7agfJ+oJqnRcoRWh0kXQt3BEmKMn2ZUMRVyMgnX34kq?=
- =?us-ascii?Q?bV1VjozrDl+PAHp9d8BH0qQfm9LBXuElT/eOYV4hWU7+LM+jWugZzYYBElVj?=
- =?us-ascii?Q?s8Y11+/0oR1JS4nutjW8mjsgnH0C13ygosVEqAhwMvzgHosK8OdQL4FRGOS4?=
- =?us-ascii?Q?gWKzeO426VpRiSQVuwjkStfe+ok6mP0FolIxO9nLjhMdOTKNeVqAxs0AotvY?=
- =?us-ascii?Q?Rb45w83Rv70e7AAR8JuH75wLnm0Mr3Nb2cZjdiIJkRT6/MDIwv0dSQ6RJkXY?=
- =?us-ascii?Q?o44MJKj2DNT4514buQmpm66eVInY2OG+Gk2va5xQLcjXdoy0wvGDsCMT//ST?=
- =?us-ascii?Q?wlEKCNWpqSGRSh98rkTWnOJd9zzk2oXZ2uHVvEhevi4vTeFFPK0ScZYvAdEV?=
- =?us-ascii?Q?b9cjyCElAS1FdpMrxzJGmyDZU5PE1UqVkP8wUSy/G+viav/VvuindazX/pzT?=
- =?us-ascii?Q?S560WyaapfVhbzvDQlBxrL0GT1q5QGsuBvAB1BMBGmoQEl2X4WdPY0dcomqT?=
- =?us-ascii?Q?U8wiNBkA1GquRk4GflrWkJjDOBhM4lgJ3nmC4vD360P9KxUHlLMHfM3ulgfr?=
- =?us-ascii?Q?+SvBwYtm59281LoYziz/4Aao8qs3TGU4vhE9d/Tt4A6Qf70+YAEBhF8soNm1?=
- =?us-ascii?Q?ZoufFECfFC3C8ebQ5PHR7FFrmY7qvgdQvL25GnK5Yx419tyjl1Vk9jIEDnDT?=
- =?us-ascii?Q?bYpMSzQLFC90NdKj4RNZrGHkQFolG8kXFrJN6/n460UxTAtSnGXpdQ3CJect?=
- =?us-ascii?Q?mmGcvP80Sym5w0kWaqiZHKcY3w09HcR6ohXjhdhHX6vjGHfbZVb8CVfsOOWz?=
- =?us-ascii?Q?s4CLpW5l9zpLsRPUeEkziwZZLC9NbhhC622WK5A5/rgIGEoInby8A77wDBBD?=
- =?us-ascii?Q?C1anUq1iVtdXDCi0nFZfH7PZTc42w7RAMwh4xkmqAdTXOriv1ZJay+CujR6J?=
- =?us-ascii?Q?FgBQRkvkV0CBAVs6lWOlu0vLeashlz1wV6Qkz2R9m45fqnfko/Ycq3vgNDOn?=
- =?us-ascii?Q?TVku1lk1nv3bld5QMhU=3D?=
+ ARA:13230040|36860700013|82310400026|1800799024|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?3DTJ7/4008myHzUgnpOda/qKf8nrgng11QQCEyYo6HkjoVi76kP2sV6KtIXT?=
+ =?us-ascii?Q?nGbl1///D85cBCC69VmfQ/s6vT9MQN05YgXiJILBAPBWT/sR4J5mITvJF/P8?=
+ =?us-ascii?Q?wE84YJAi1Ldoju9X/wFkv6hj0db4uF4hhDkJiUDh8LPDs/k55yLFqLSxKnxy?=
+ =?us-ascii?Q?qcxO4NxQstGevcOPlGAcvZ7VT4lmYqWQuz4LeXsDhxCnr0QbU4RQVmcVXhEg?=
+ =?us-ascii?Q?0tOPNPvS0NIPy8dDXKCBq+qXq7hHAFcbVEHXE1zYUo5QIX0+rK5vn+CyI8or?=
+ =?us-ascii?Q?ndvUtlO1iy36/NpJ/Nw0NIUFAfxRr1hHo6fz8dov2ho8C1BbdERnkQIfq0FW?=
+ =?us-ascii?Q?7nuvpsl78zqgXbckf86tkxGtwnbHekOARwIsEwk0i4Sde3dDqoQsSnqOH8gM?=
+ =?us-ascii?Q?SeYES+sNLMCjwy242YC2dFIlYeOU2QqGtHqnr4K0TOUEStZj3BXRb3x4/LML?=
+ =?us-ascii?Q?glirf14E2yqPbdeTPb3QI89M0E/6L9Slgn1lVeefj+pS9hRoL4Xlysbo8UuL?=
+ =?us-ascii?Q?h+FRzJ69qZvhERLMXNeqMN83BgsubeA1jgstQEFtBQyMUi5zcUem+P8Wgkt+?=
+ =?us-ascii?Q?USOLtQSBSze+Ss8MLjxfznY7y4cQM8tq6vBY2Lnd+KUXE3jf4QJCax8AysQ8?=
+ =?us-ascii?Q?NOTVbU9ApGRj9Aio/pvbADE2IHnT9xFY2X1AzCzPeR2LUxvDD7Gb34twkWmz?=
+ =?us-ascii?Q?WlziPJ6z3qUesaKPJIN9rVtc+REmR8RQKSRTd4o6mr0B4pPH83/QwaL/PYCx?=
+ =?us-ascii?Q?9Pc6yc7ErKGy52T9MYMyab19szduT5kalfwup+clqPzk/b8Ni3wCeEkXCJDi?=
+ =?us-ascii?Q?c8sZqUylH2ZG9L7FnaTiKHsxfN8YCieAi/ruBL+vR/WptJwESFPAjZEo8Tai?=
+ =?us-ascii?Q?oT9AcVbs+sWCBsgdyS/3zFG4W5hrtehCv8fufFPHxa+xXC5tyABG13HX1eOS?=
+ =?us-ascii?Q?OoVrYfuFrrNyufImmrH9G1hFMJ3pX4bwIi12SysGr5lX6nQGxkRouKW/YEXU?=
+ =?us-ascii?Q?F67RTKj6Ns1lFW5oH+Ax+PSQLy7D2wxKHyl0hqxakc/jaa2d2Fw/qrUlQsjH?=
+ =?us-ascii?Q?ObrAtOk35R/oHTlpSfKKMgFTgKhiYJfkipkJBZL6KkcN8gi4lQW5yGd3ArzO?=
+ =?us-ascii?Q?2vfCexAF1KWKbaToUEoSuXf4mZWEm85I0mbu8ePcwnl232cZz1bBNPPuCdg/?=
+ =?us-ascii?Q?RsZlpVR4MVNsyICVMdp3sFwa3PXrOr6/DWceEoeR7fIMbJ9z48vr1ztBGSn/?=
+ =?us-ascii?Q?Fb64kjcs238W/F/i1f4jS239rQ5GHqKEdTIABcLK0GIbM2q+LCWFLfPKJjUP?=
+ =?us-ascii?Q?u3hp2y0rXHOVpV45cawy2qTYpx1Mui5Y4r4QDTxgYJeyjfgShnEcecethrHJ?=
+ =?us-ascii?Q?JHMjvHv1ZEqNRbTDqBT+cnY0JWdUPN5rtPf8PdnEQh/JqKUdux0hgX5J5Tdh?=
+ =?us-ascii?Q?67qtPjgVOuF3u8fiZMNr8/VU5wHi06oMjqjHIT5NFTkfc19QfaX2Y9Ev0f7u?=
+ =?us-ascii?Q?Q39t1p1oH74mT2/aY2/U7TMimBa+ejRM1Bcm1Fv6XszQO0/tyibFxChJg91n?=
+ =?us-ascii?Q?b6qWA17coL6SwL4GOSI=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);
+ CAT:NONE; SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: yUDt04YFMsY2/LIz4eo5VhX2ry8v/RU1LT43IDCU8kT1CWKJedH6YgLhk7BilUIewsA83ZGs6VUEhZfKTA0XLX19CeD7MdgpBmMYvS7QS0AoV71AaA5lC6CRgCJl4jkn9KAvAsk0ZGbS8Z6CzCCUzyU9tppXnzVbTqpQimN0ulDADlwd0yCn83aYyLGdTWIjb784PZvsoEmeynPwb7LEK206e8Ev3xAITde4KQz9T9wLTeWqEj8WlQD4m4tRCtSIp387vmTyYUFYmib3VJgECVvHVQgDYhVms/XtHOXUt2VJuSvNp8WLEM79J/y+C57HYaUY7ZlH5+OiNnd/+t3N7HkUBdX86OwUPSqfTD5BYQRu1Wic6DXGfK3nJW7vLJOOSO+wHGTIjL9300Pvc661MLHXJClyI0el+kjEbgSMtrcEYp44nKewUUUp3oZ1Ya1nSmHm2ZDTD5+te1faarTqRdTM2MUT+SJ5WjBtwPjDPLqpT3KGKQLDw6oAb7jEUxmZRhYfCQLcwC0gxs6ui5BLK8N/m1Uf1ov59AfeCwFy5sZzma3xVMpv8r2bt2A0s38qzyx+dMR360POsSOWqzt7M9JyTMOn8fKRKNAqmbyrHDyCpJ/DF3hJt2NPS3Sw87smG7Q6PnJzDTvnv5gc6zj+spcP6FrywF8w0L8SmbiALX4=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: G+NW5HG00wJnocHpsmnGFzwKkV5ixXnAdiLWh8IQ0cQHkEVCFXInP8EZJXEFkQ6ITMb+5FrhitBYczdRtUON5/VAH3IPWGYOu7JbU2UKYhqRnuJuumYJVn/v0V6Hl+p1jdeOBHzhxO6tj4lJ+GjNzUP8s9gjt26iR3oc3BNJB+d2fLW6wa7lOZp3C58AKKJ96Q6cjwCzdlC30Gc3mK6UcHkHBT1U/q9ljLt+qIA1c5Dj6uA2G5dA72OwVzTden/gUG1wy3BjSrCR2wLzp844MBgDri/fjAkDrrvVDPLuWi3/BNCH04Nd30NGjc2l8L0ERO8baXt5VS52oXVKvM6VLF1JBuJtQ206F9zZcs34A2iOlrD7+ufRncGUCqh1GPJlWBdepEkLWJWxCcJ/QrP9bjYTh7aXvxNNUHvVkv97abmSlFd7sdgjCeAyNajdYfWC86fep94wIHp5bUWbnAnIsOqV2g1EfUY4J9J6XOV7X5Nb/O/gJKVRz7PrGky0n2XaNHpT/pRSVN6vtopLMKdosZRpTsD7+HVppsLvcrHrqqeWwIeQ9v8KOApZA62WEG1SlTFhKdEqSMfOi56YtM9uJCUS3ZYZ5y6NRyG5e+K71Z4Vq+ORu8TzUDIWBQP+nvk20fdwilBIa4tcuCwh+YO4xt9j9VEWIvzTRY7fEgLBlA8=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:43:46.6102 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d66d005-f504-42c0-a27a-08de0ff7d6c1
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:43:45.8638 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 109169d3-97c2-4d73-7d14-08de0ff7d64f
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU6PEPF0000B61F.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2P190MB2127
-X-BESS-ID: 1760978628-304109-7614-117820-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8P190MB2005
+X-BESS-ID: 1760978627-304317-25453-11878-1
 X-BESS-VER: 2019.1_20251001.1803
-X-BESS-Apparent-Source-IP: 52.101.72.103
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVobGRuZAVgZQMNUgLcXAwtDI3M
- DM0DI1yTQ1OSXZ3MjANDEJyDEzNlOqjQUA7qZbe0EAAAA=
+X-BESS-Apparent-Source-IP: 52.101.69.140
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKViYGJuZAVgZQ0DLZMtkk0cDcyM
+ jYwNjA3NAi0dTYMNksxSDVMMkkzcJYqTYWADolv69BAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.268348 [from 
- cloudscan18-209.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan19-215.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -146,41 +146,136 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add De-assert SYS reset
+add waiting while PHY_FTILE ready.
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- .../ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../core/nt400dxx/reset/nthw_fpga_rst9569.c   | 90 ++++++++++++++++++-
+ 1 file changed, 88 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
-index 29e32ffb22..f2b064f054 100644
+index 5ddf0a093e..29e32ffb22 100644
 --- a/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
 +++ b/drivers/net/ntnic/nthw/core/nt400dxx/reset/nthw_fpga_rst9569.c
-@@ -73,6 +73,12 @@ static void nthw_fpga_rst9569_set_default_rst_values(struct nthw_fpga_rst_nt400d
- 	nthw_field_set_val_flush32(p->p_fld_rst_phy_ftile, 1);
+@@ -100,6 +100,11 @@ static bool nthw_fpga_rst9569_get_phy_ftile_rst_done_stat(struct nthw_fpga_rst_n
+ 	return nthw_field_get_updated(p->p_fld_stat_phy_ftile_rst_done) != 0;
  }
  
-+static void nthw_fpga_rst9569_sys_rst(struct nthw_fpga_rst_nt400dxx *const p, uint32_t val)
++static bool nthw_fpga_rst9569_get_phy_ftile_rdy_stat(struct nthw_fpga_rst_nt400dxx *const p)
 +{
-+	nthw_field_update_register(p->p_fld_rst_sys);
-+	nthw_field_set_val_flush32(p->p_fld_rst_sys, val);
++	return nthw_field_get_updated(p->p_fld_stat_phy_ftile_rdy) != 0;
 +}
 +
- static void nthw_fpga_rst9569_ddr4_rst(struct nthw_fpga_rst_nt400dxx *const p, uint32_t val)
+ static bool nthw_fpga_rst9569_get_ddr4_calib_complete_latch(struct nthw_fpga_rst_nt400dxx *const p)
  {
- 	nthw_field_update_register(p->p_fld_rst_ddr4);
-@@ -345,6 +351,10 @@ static int nthw_fpga_rst9569_product_reset(struct fpga_info_s *p_fpga_info,
- 		}
- 	} while (!success);
- 
-+	/* (8) De-assert SYS reset: */
-+	NT_LOG(DBG, NTHW, "%s: %s: De-asserting SYS reset", p_adapter_id_str, __func__);
-+	nthw_fpga_rst9569_sys_rst(p_rst, 0);
-+
+ 	return nthw_field_get_updated(p->p_fld_latch_ddr4_calib_complete) != 0;
+@@ -155,6 +160,40 @@ static int nthw_fpga_rst9569_wait_ddr4_calibration_complete(struct fpga_info_s *
  	return 0;
  }
  
++static int nthw_fpga_rst9569_wait_phy_ftile_rdy(struct fpga_info_s *p_fpga_info,
++	struct nthw_fpga_rst_nt400dxx *p_rst)
++{
++	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
++	uint32_t complete;
++	uint32_t timeout;
++
++	/* 5: wait until PHY_FTILE reset done */
++	NT_LOG(DBG, NTHW, "%s: %s: PHY FTILE ready", p_adapter_id_str, __func__);
++	timeout = 50000;/* initial timeout must be set to 5 sec. */
++
++	do {
++		complete = nthw_fpga_rst9569_get_phy_ftile_rdy_stat(p_rst);
++
++		if (!complete) {
++			nthw_os_wait_usec(100);
++
++		} else {
++			NT_LOG(DBG, NTHW, "%s: PHY FTILE ready, margin to timeout %u",
++				p_adapter_id_str, timeout);
++		}
++
++		timeout--;
++
++		if (timeout == 0) {
++			NT_LOG_DBGX(ERR, NTHW, "%s: Timeout waiting for PHY FTILE ready",
++				p_adapter_id_str);
++			return -1;
++		}
++	} while (!complete);
++
++	return 0;
++}
++
+ static int nthw_fpga_rst9569_wait_phy_ftile_rst_done(struct fpga_info_s *p_fpga_info,
+ 	struct nthw_fpga_rst_nt400dxx *p_rst)
+ {
+@@ -232,7 +271,8 @@ static int nthw_fpga_rst9569_product_reset(struct fpga_info_s *p_fpga_info,
+ 			p_adapter_id_str, __func__);
+ 	}
+ 
+-	bool success = true;
++	int tries = 0;
++	bool success = false;
+ 
+ 	do {
+ 		/* Only wait for ftile rst done if ftile is indeed in reset. */
+@@ -256,8 +296,54 @@ static int nthw_fpga_rst9569_product_reset(struct fpga_info_s *p_fpga_info,
+ 
+ 		nthw_os_wait_usec(10000);
+ 
+-	} while (!success);
++		/* (7) Wait until PHY_FTILE ready */
++		if (nthw_fpga_rst9569_wait_phy_ftile_rdy(p_fpga_info, p_rst) == -1) {
++			if (++tries >= 5) {
++				/* Give up */
++				NT_LOG_DBGX(ERR, NTHW, "%s: PHY_TILE not ready after %u attempts",
++					p_adapter_id_str, tries);
++				return res;
++			}
+ 
++			/* Try to recover with as little effort as possible */
++			nthw_phy_tile_t *p_phy_tile = p_fpga_info->mp_nthw_agx.p_phy_tile;
++
++			for (uint8_t i = 0; i < nthw_phy_tile_get_no_intfs(p_phy_tile); i++) {
++				/* Also consider TX_PLL_LOCKED == 0 */
++				if (!nthw_phy_tile_get_port_status_tx_lanes_stable(p_phy_tile,
++					i)) {
++					success = false;
++					NT_LOG_DBGX(WRN, NTHW,
++						"%s: PHY_TILE Intf %u TX_LANES_STABLE == FALSE",
++						p_adapter_id_str, i);
++
++					/* Active low */
++					nthw_phy_tile_set_port_config_rst(p_phy_tile, i, 0);
++					int32_t count = 1000;
++
++					do {
++						nthw_os_wait_usec(1000);
++					} while
++					(!nthw_phy_tile_get_port_status_reset_ack(p_phy_tile, i) &&
++						(--count > 0));
++
++					if (count <= 0) {
++						NT_LOG(ERR, NTHW,
++							"%s: IntfNo %u: Time-out waiting for PortStatusResetAck",
++							p_adapter_id_str, i);
++					}
++
++					/* Active low */
++					nthw_phy_tile_set_port_config_rst(p_phy_tile, i, 1);
++					nthw_os_wait_usec(20000);
++				}
++			}
++
++		} else {
++			NT_LOG_DBGX(DBG, NTHW, "%s: PHY_TILE ready", p_adapter_id_str);
++			success = true;
++		}
++	} while (!success);
+ 
+ 	return 0;
+ }
 -- 
 2.45.0
 
