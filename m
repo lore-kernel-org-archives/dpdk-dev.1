@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC76BCCD199
-	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8D1CCD199
+	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:39:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 97D0A42D55;
-	Mon, 20 Oct 2025 18:37:02 +0200 (CEST)
-Received: from egress-ip11a.ess.de.barracuda.com
- (egress-ip11a.ess.de.barracuda.com [18.184.203.234])
- by mails.dpdk.org (Postfix) with ESMTP id B8E7440B97
- for <dev@dpdk.org>; Mon, 20 Oct 2025 18:36:45 +0200 (CEST)
-Received: from AM0PR02CU008.outbound.protection.outlook.com
- (mail-westeuropeazon11023085.outbound.protection.outlook.com [52.101.72.85])
- by mx-outbound9-130.eu-central-1a.ess.aws.cudaops.com (version=TLSv1.2
- cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Mon, 20 Oct 2025 16:36:44 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id 80ED342D8C;
+	Mon, 20 Oct 2025 18:37:03 +0200 (CEST)
+Received: from egress-ip42b.ess.de.barracuda.com
+ (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
+ by mails.dpdk.org (Postfix) with ESMTP id 9815E40B97
+ for <dev@dpdk.org>; Mon, 20 Oct 2025 18:36:46 +0200 (CEST)
+Received: from GVXPR05CU001.outbound.protection.outlook.com
+ (mail-swedencentralazon11023106.outbound.protection.outlook.com
+ [52.101.83.106]) by mx-outbound16-13.eu-central-1b.ess.aws.cudaops.com
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+ Mon, 20 Oct 2025 16:36:43 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QBUlaeBoiyJtWGYyD8uG5/dM9JhVB+1VXQQIlhmBR9Jx+aNt0OZ+aX0z0xrAUmSEVknHlo3+3bkiAGVtTXrabl7IhiMh9uAgoWbVVthKmile4k7JwAZWAUA5W1k5ys6rnwgyPalPWRRCZq7dJg+5OoUyVHjZumicGD+AvxpG0Bd+SAAi52PlYLaV8VlQsgkh/7QbkRxxd7R4mhLJgLFqcOWvj6ae0Kyso4c74cjusd+jDtZdBiKdpI6PVxmmdHcleqrQ3H4ZflUod/s/E69n2Qx2oujrNtngtEpTU1QFGoU8n8EmLbvg65AwdVZ0FiG0pGqvGYA9BtKTKQQq/toFGg==
+ b=YCRhggpq/8J8E05Mk71cxSWk8Ucy41leW1sClW+r2yGGDaItIlab3pfG7MpabWHE6oGCcsbULc1v6iUSsII1Yea3d61N00JYkwrgyL70E3BXLZGM/EbWK1j94F7Eeyw9TTEISOAJTiYaSMwux9x/dVyXG6LINSOkq8QGSiwM/vCO8ttj7OtmIe2/e/md9TfDTlIbvF/lmZ6q9Nc+4bFrOebbpgIdk1xbPZECovON6JVynoJH7nl/0F2q2Tji4KlRB8zLkvhSq06ME2XPBUV+xOaSWUAK/0zjNfpxtbarcMwZb40cUSuKZsLt3kpOExxsWzsmHy8PfmXjMx3+4kahbA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jvfCU7oHVj8/jLplMSp80Zcwv3zix7T1v39DmjtXMiA=;
- b=EIXbsDf+KdPApSvakHi7y2CiAAltS4FyoYfvraoAvwO3dvht787BnlULODOIV6ELVXWwih6sqQDpYSvwKt86UK4U1jB0enjveSH0xdxxLoPYaqx3yhqRvOlqDp8u7AtaAnrOJCiQa1tLVlk8HA5H3qAamyCNAHAdHdVwBPViyx5Cr/FHs+Dru2GQu9UM4woTZTHg9Cy/artRflZDRuSHzDTMa5Kw0HknGhME5gVIeUnKRSMoIxfVM4wEYis5KGX/SOL+x9gccGc4nVwrpr0D3YSXH7USTz3eKVToUGWuEsNtJ0UZRW75BOEMF/4UG7whvYX9fXTnV7NSQ0kbEaUzHQ==
+ bh=78JIDf6SeUdN4JsQkMvuHwnKmzYTekZkxKBnzjsK6LM=;
+ b=F2Iom/sJmytKBjEuKyxM59heoSchvt1g44+aG4NtNd8RNuheRLZT9TToJS3u+nZc9c4zYkWgZRcPKxg5zO9NoU9JT4J5fVEwXmOGZhh+X40XQ16s/1REz9GaMBx43pk7zrFhJpa+OwasejLrMDBghtXD8+Ulg9xaOEgbxaY9TjdnjqLO27CRj+9ma/APNM7jfIkeOmw3Kkf3xOi8KWEcu1NkY3KPxg5/mxFH6YixqIohYM/dwZSJ+2qv56TCf7SnJicZgVou6xjOFC7BFAGzF2jWSl4XaDmlcfri8OuXc6ujuACR7A+EVWOGVFcNN4pnhnp6959JqNG7gPEGern9Xw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jvfCU7oHVj8/jLplMSp80Zcwv3zix7T1v39DmjtXMiA=;
- b=KfMsa4wVwvt8satquRArslGEJtRAz+NrIu8Op52yZfT7OYh2A1e7D+5FW4W5JjTDBa6eUmNCLq24pNsoZFmfai6NtWH+w7J6dQOJSEAdr2fPWppnsFVatB8yRswLZkbN/m9rAyknbe7GkNTCwJszmGo1C615i+OGduoZcDPa6Xg=
-Received: from AS4P191CA0016.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:5d9::11)
- by AS8P190MB1936.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:521::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.11; Mon, 20 Oct
- 2025 16:36:43 +0000
+ bh=78JIDf6SeUdN4JsQkMvuHwnKmzYTekZkxKBnzjsK6LM=;
+ b=ClxKRqyt2eUlUL7IKGK6Ud+B61rAZxv/VVfk0XmJ2/H07TW1OcjMP44cElT5uWHEv2FCEJ+T4p8Iy+s3ZZBtfTt7DZk+UWV00ou+v3qoYCiNz9uZb3G7c46VzVDC1JEDKS0HCDVeVfPLbeuoJW4CrL3DOioJuNQkHh/aM90Iw9E=
+Received: from AS4P191CA0022.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:5d9::13)
+ by AM8P190MB0945.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:1d0::21)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.9; Mon, 20 Oct
+ 2025 16:36:41 +0000
 Received: from AMS0EPF0000019B.eurprd05.prod.outlook.com
- (2603:10a6:20b:5d9:cafe::7e) by AS4P191CA0016.outlook.office365.com
- (2603:10a6:20b:5d9::11) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:20b:5d9:cafe::45) by AS4P191CA0022.outlook.office365.com
+ (2603:10a6:20b:5d9::13) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.16 via Frontend Transport; Mon,
- 20 Oct 2025 16:36:43 +0000
+ 20 Oct 2025 16:36:37 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,15 +50,15 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  AMS0EPF0000019B.mail.protection.outlook.com (10.167.16.247) with Microsoft
- SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:36:43
+ SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:36:41
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v1 24/24] net/ntnic: rename table ID functions
-Date: Mon, 20 Oct 2025 18:36:15 +0200
-Message-ID: <20251020163620.282312-25-sil-plv@napatech.com>
+Subject: [PATCH v1 21/24] net/ntnic: rename get ops functions
+Date: Mon, 20 Oct 2025 18:36:12 +0200
+Message-ID: <20251020163620.282312-22-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20251020163620.282312-1-sil-plv@napatech.com>
 References: <20250908141740.1312268-2-sil-plv@napatech.com>
@@ -67,71 +67,72 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF0000019B:EE_|AS8P190MB1936:EE_
+X-MS-TrafficTypeDiagnostic: AMS0EPF0000019B:EE_|AM8P190MB0945:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 681d9eba-f6de-4959-1a2a-08de0ff6da51
+X-MS-Office365-Filtering-Correlation-Id: 1429b72d-9334-46b0-e927-08de0ff6d944
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700013|376014|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?qBDRoBMEvttx/JXieOaYe9kiuOZp78kSWW2SgCC2OMBh7DjBFsW5V+JoUh2g?=
- =?us-ascii?Q?UYsh2f8DfxK6A8HWt4qC2gw7Lj84wb4xebWCAl8jpuc2OI/5NpTWaLdbwR5J?=
- =?us-ascii?Q?YWn9YV5wVZrucKC2spMSVFORxjkYbwE8LIir9LQPeX7oIq3shHRnTGW2Upxh?=
- =?us-ascii?Q?dvmQ3vGlW2jXiMllJVn7IGgwqQIBxdD0E7wqs5ehOwVVMEQlNHXQz0pKz/xT?=
- =?us-ascii?Q?XpqBPV1CiUCctcUDWDnFrL3rV8IIxFfJCt4PPGf5whwHkvu0vLKoy/N8YEgF?=
- =?us-ascii?Q?PuA25lRyK+DFIHRuJr5qXIqNhp1oveQjO6jt0TVVT+wbBxna2p9r+0dYDFlX?=
- =?us-ascii?Q?eG43JYyaAqHa7xIVXBok8/Enclni9H3jU3tXcp5RZK6JimPsNBSA70vy8hWi?=
- =?us-ascii?Q?ndmaTCCvPdbe95tlZNjbR8G7hL3iMuVfpNrZ9xWtqg+yc266ABZlO/8ltiQN?=
- =?us-ascii?Q?XBp7ME5OaaPGxFuu/XYWo4bRN1TQ/8ExWdwKko1JoYAyjOr5stMKE59PO/wd?=
- =?us-ascii?Q?UoF1q7mEwlqVXlZo8XfpJ8SKriUqSfycfG2Y2dcLKgv93ag+Nz3vH9B3quxM?=
- =?us-ascii?Q?NShQ1/8reo4F9KjVRJejCjLNP3CIB3/9WgaGCiuwHYP9AAr85XvidJEwKW1I?=
- =?us-ascii?Q?rMl6WsVQ2T/JsOV8qT7+agYXyhAkBGKZiCn7pUPDAHBktcfhzWAMim9P+HPf?=
- =?us-ascii?Q?gXfhH/DNvJygtlPAv0ygPjfJaBRlV3+aL3kv/gHa2pjECuUgrzRZpzkJGGpJ?=
- =?us-ascii?Q?O+y8Lk3G7l0BzqXq487Xd3S9hxE7pbxv9eIkxfpZJXUCJZhyJ1sQkCldxzna?=
- =?us-ascii?Q?UE4mY990Ea+d4woo+JUjofSs6F+3h1nEuevcBRzKj29GiEZfOU530utq/n6D?=
- =?us-ascii?Q?g6W5Si7upYzRLP1ZdYtawhIz6q7hVN0RXA6OyCuJ5dCBfLIx9Mtb+Z+h1s2/?=
- =?us-ascii?Q?FVouIXxhUIuHGyf+85bv/r3m3VmDnDM2UEFMURgu7HN0lzE4kuNtDrlVh9g7?=
- =?us-ascii?Q?95gyZ56j5bXB4AR9ebHiwD8wNGEXfPMeoPIC/ruKogTOI7Z/Mfb8p5t/tDz4?=
- =?us-ascii?Q?sMy7zdUY8vLbCXkIOL64lQHQ7HRr7jgPMMYRj8PMMw6BzFxXRg/mRhMsW6O+?=
- =?us-ascii?Q?GHSsebbvozyHBHtHFVJS4ZBjFLWtz/CLEA2BJ/VUje53xTRm5PnoCfjbympT?=
- =?us-ascii?Q?auYjCDozaDSJm8aVBi1uiqZHsI+i1hyz1hB1TgVxdtVSIan+MWXNFndo2DPh?=
- =?us-ascii?Q?Josc9CM9aWq2DtQWrECWSMbEX3/5bjSCcsu6FAxQ6CMC9v1O+JbhteQ7qyxm?=
- =?us-ascii?Q?6lAmdDaBJyFNfj82lpWlR7TtS0+yJxMqVwpKVGLnZZEX/C52CJKIn17lQ+vi?=
- =?us-ascii?Q?VE5SAWf1qcdbRoqQsK1wNPGiXrPAnROXJLd80Mdsd5uZ3mDe1FjcJc/fOVuL?=
- =?us-ascii?Q?Lgcs92Wi7cd5wTKPjPlaK1etAO1xe3n2Yo0w8J1Rs6gTdHdWapyvcImIWFN3?=
- =?us-ascii?Q?dW40pxt//UKTHV0YNYImbJP6fqZKuCY7Ynim/YdNX1C7ZFFHJxQjU2b678oh?=
- =?us-ascii?Q?ScKeoKT0mOU+tXNAY1Q=3D?=
+ ARA:13230040|36860700013|1800799024|82310400026|376014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ZTS/x22L087vu6I7i1I9684os85fFaBlM6zqU9EPTPfmD1gBleBsVdLwO0kH?=
+ =?us-ascii?Q?vh5juBZb/o2R+HL227Hc4ug4ef0MFKNhyfkaH5MLyDRERBZW2YLLdZNFW2Eh?=
+ =?us-ascii?Q?OXxy/Aanc4xkQLmZ8EGeK/qrlOoUkTZiZk8jGxbyQ8WZ5RSXWUqKIo7NPQA2?=
+ =?us-ascii?Q?SicHwIGCZItZHXG78eMwvCZ6kKYMzgxzdTHtd7i35nejWAvSHWbGzFXQWdNx?=
+ =?us-ascii?Q?izg403vGdpfxHQDH3zXOV2+RVtAGHgQS35AXgDwX1MgZIgQJpW5aaaO011wA?=
+ =?us-ascii?Q?ym3C3o1Qrn1DHkSSa0n6AwamNvI8gI5wvf8r7PFTuONhy3zOF0dxRjvx9PHh?=
+ =?us-ascii?Q?nBV/YP9ULdfNNjwWdXQ24fg1rFqQcI8q7eaV88zvCN3iH0l2MMEL4hESydPk?=
+ =?us-ascii?Q?Koz3qLRxJeOjklxowzWFT4bR9AhJqm6tgBg0ZafIYZmp97iLMzXd6Q86qCUY?=
+ =?us-ascii?Q?sHGkB803WtTc9X73VbnHofMo/1sg50tTstT8XNiKtS6H2bncWa+i8itqz8rg?=
+ =?us-ascii?Q?85LzVlWjS8B13EKNZbU1VcWZzbWk0GbJDZOsIRyjIEYxNV+OIX2KY3Kp+FHc?=
+ =?us-ascii?Q?Z5Z/Isayo/uRXt3TXxpwwucCFB32DzU7DLd3rIYg+jAX3CJVlAQbAKFZKWRV?=
+ =?us-ascii?Q?zwrFOvOu9wXEXG5DbHy6eLp9XneNZb9jt1HzFc1qUHf9hkpEKMMRvTStkcMw?=
+ =?us-ascii?Q?arnmjxlq65bJ2ahuKmnzboKTF1n+IqW3iFmoaJcu5tqzxbiJrt2LrsKBUcuG?=
+ =?us-ascii?Q?Iz9FnWhvUKzpM4qHA6yGtiaie5vfD4LsxqFKA8h5YF9QIDvfrCB+TG6Sndu+?=
+ =?us-ascii?Q?wH7kwLlJfFCrC/m7t6hI8k2w0TwKrYFyFnprJD6A/WEZ11v6Ihku0YerBKtd?=
+ =?us-ascii?Q?AGKWjTjz5cHRNrjB4xChoKWdCNNBxeHlGG/PreV2jsnRQiGiuIdrdhNPDHuO?=
+ =?us-ascii?Q?dW4RSN5T18CnQ6X/6sLf+sUM0Nc0NC/tHqwmY4spqLIl54w3ctp7UFBACgHq?=
+ =?us-ascii?Q?SgmHVXeADsrncvyfbLSRpOnNXqzyuv/YqWEO3qilOWNkN6WbNkun1hQUZyDc?=
+ =?us-ascii?Q?2uYCaDgrWGgP5m5fbc7TQLf+0VqZBPsPpeYLb/IwjJ/4GCHYseZneVT7/x7F?=
+ =?us-ascii?Q?XnRF9iBs3zscUEmqLcLOrCtNxDeCG6af19cPAUsOPGgAO465WWhKN0Sib1wE?=
+ =?us-ascii?Q?Hh0BUahRf/vcbhAHoKQSj98m5NydYiQ+s8JHQIgzY/ResgLkZX+t3RBlHI+D?=
+ =?us-ascii?Q?hbgGiVBTjqrDhyEpLt3YZaZDbWlqpXLH1FOaC7WeArGPBYdAaePIv9u6+Z/F?=
+ =?us-ascii?Q?886iKHReVefvLtf1mB5MCk4Xo4gQN5cHAZ6pJwII3B/e0MoFY1pp+zXLdVcw?=
+ =?us-ascii?Q?5nfawU8hsX3xWeRP7l+3jsZqD1P/m6o1WbF0Y8iv4jQjCJnI1pa+Wk3TggBy?=
+ =?us-ascii?Q?kttb7TJQZvJjkju4nCkgxwZ+bBqdylglC7qy8kZkYg3MpdIhYpR+Qkuq5phR?=
+ =?us-ascii?Q?lR/jSB4N7TbrdfnxfiIC/4UD1Vqw5friS82hCZZATRw2+NwGuMXaTGNTDTf3?=
+ =?us-ascii?Q?Sc7dVrnpV1fGDEdmkYA=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);
+ CAT:NONE; SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 1LlrLSWqftqb9oBNc6zwGgrVQgHwJv3i24TT4Q/WMTBxEuM6/pIGOoYcwgV39cZGsMHYnBaGrZHFlzikmU+pC1JMy29/trk4pOJoUrBLpSrXyVMJgRRbeSWctHAzexwbSMI0kpZjKxDqdKmmZ7b+edcTHSadMpE46kxrAZFZhzTPFyKa4BBUYNqDbLqkyy2o8HNnPPEEzCMNXEujVVp6XtzlF0t/UgaLopSqedt8x4yfHP0DhR1mZuLRBKt87T0jxjmaow1rLqAPvprcqLcKN07BZ28YV+zQ0k+0pwcOYi+5xxhdsn8gBkcxev7XXYx7f1XUeDH+J4RKSo+pCvlpJugf9OfMUVQXGLFRae530nhakScztqENfsuxXpjfbK47JRKXp6tiL2B7mMRjLbg8Bhx5dHV9BOVy/kruoKACJOWKxEOsMhgBfPeKC85p4c2LbUtjaFFdXWh/BZ6kV/8nXaoe0jrFgHrfaai0DKANnpO0ewQq8U1TniWZWn2d2qK34RD25ObZTXCDalHX7EPXRsDIv0DqjmgtQTDQxFCy2YaOsvI+9ZpkfYiPSVIpvtr0RzgkRP/PHnFKg3drAkfpVlq8flmB2D8V4YASta7ZRrG926sC3mM54zmCDutSS83I4bWOxAh1wEI7MbAXY8eY1mYg7BLPb+yEu2XPqH8SblE=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: whOchiIEvEQRVWZdieqH0zvapfFc/4QBbDmeTggWiRLuslmHw2xLEmLT0gReV+m/WPhWsjp9IokFocM6nQa6n4VFdxc12oaUsA8nAjINhZD/wYYhch1EpGEWHrfuvzSKo8aesWkL2w44AhbX0N0plRoggWVEMDLRyiyt44HS3FPlB6IXJLLUa50YxoR3D7OcQK9NrW8qQOSdGSpdMz8DUm9PM/i0qjo/Bj4hPL0c+fsPquLf93lFP89mP2qRr6b5C5zYNEythpwfsKsNtcACG50HQmtMfEI9W6Yj/3Ym3YG9q+YoeLO1iW9kgWZSpLq4E1Cd9zGQCfMqdVG5n8bwJ+HBMM22khF1Yl2nqvXKGFHOnpFM1NcNPlah25xxK7dRGWLdJUVwhYbh7uqdIbr8UATRPsyLATjLRtnwugtlz4FlUqhvS2bhCO0SAxlMoI6bdeuVKAXTZCcRMEspPOuktKjOEJHDwBLUXIfgN5Yya6Y5TVIzpMESjNYcAE1FU0zr5KpBsfwzzGTyfPfdkZlzT0s0QhRKmPPjaVgZ29oRU9CLr26sTIHdC07kv44wNOheQDnCJ6F157eKYH33wc2idJpBUXgGARFg+dCX1muziMbSxu9eZuVm+Rq6SftddTNiQZLo3uMBm+sazELFqiESE0KHJaRX+BXZbfCnBX1Wnzg=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:36:43.1212 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 681d9eba-f6de-4959-1a2a-08de0ff6da51
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:36:41.3641 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1429b72d-9334-46b0-e927-08de0ff6d944
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AMS0EPF0000019B.eurprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8P190MB1936
-X-BESS-ID: 1760978204-302434-10213-72808-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8P190MB0945
+X-BESS-ID: 1760978203-304109-7613-117692-1
 X-BESS-VER: 2019.1_20251001.1803
-X-BESS-Apparent-Source-IP: 52.101.72.85
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVmYmxmZAVgZQ0MQozTDFyMgoyd
- LA0NIiyTIxxdTANMXMyCzF0DwxMTlFqTYWAGoBvopBAAAA
-X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Apparent-Source-IP: 52.101.83.106
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVqZGhuamQGYGUDTV0iDRIDnR2N
+ IwJSXRzNTU2DDJOCk11czCMtnC2DTVQqk2FgBDoaSMQgAAAA==
+X-BESS-Outbound-Spam-Score: 0.50
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.268348 [from 
- cloudscan22-7.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan16-189.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
+ 0.50 BSF_RULE7568M          META: Custom Rule 7568M 
  0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS113687 scores of
- KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS113687 scores of
+ KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
 X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -146,163 +147,1247 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Extent table id functions with prefix nthw_.
+Add prefix nthw_ to get ops functions to follow naming convention.
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- drivers/net/ntnic/nthw/flow_api/flow_id_table.c  | 10 +++++-----
- drivers/net/ntnic/nthw/flow_api/flow_id_table.h  | 10 +++++-----
- .../profile_inline/flow_api_profile_inline.c     | 16 ++++++++--------
- 3 files changed, 18 insertions(+), 18 deletions(-)
+ drivers/net/ntnic/adapter/nt4ga_adapter.c     | 10 ++--
+ .../net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c |  4 +-
+ .../net/ntnic/nthw/core/include/nthw_fpga.h   |  4 +-
+ .../nthw/core/nt200a0x/nthw_fpga_nt200a0x.c   |  4 +-
+ .../core/nt200a0x/reset/nthw_fpga_rst9563.c   |  4 +-
+ .../nthw/core/nt400dxx/nthw_fpga_nt400dxx.c   |  4 +-
+ drivers/net/ntnic/nthw/core/nthw_fpga.c       |  8 +--
+ drivers/net/ntnic/nthw/flow_api/flow_api.c    | 42 +++++++--------
+ drivers/net/ntnic/nthw/flow_api/flow_filter.c |  4 +-
+ .../net/ntnic/nthw/ntnic_meter/ntnic_meter.c  | 18 +++----
+ drivers/net/ntnic/ntnic_ethdev.c              | 54 +++++++++----------
+ drivers/net/ntnic/ntnic_filter/ntnic_filter.c | 32 +++++------
+ drivers/net/ntnic/ntnic_mod_reg.c             | 38 ++++++-------
+ drivers/net/ntnic/ntnic_mod_reg.h             | 38 ++++++-------
+ 14 files changed, 132 insertions(+), 132 deletions(-)
 
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_id_table.c b/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
-index f22796597f..f7c983fb9f 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_id_table.c
-@@ -64,7 +64,7 @@ static inline uint32_t ntnic_id_table_array_pop_free_id(struct ntnic_id_table_da
- 	return id;
- }
+diff --git a/drivers/net/ntnic/adapter/nt4ga_adapter.c b/drivers/net/ntnic/adapter/nt4ga_adapter.c
+index 5295387fa8..6d8547483f 100644
+--- a/drivers/net/ntnic/adapter/nt4ga_adapter.c
++++ b/drivers/net/ntnic/adapter/nt4ga_adapter.c
+@@ -52,7 +52,7 @@ static int nt4ga_adapter_show_info(struct adapter_info_s *p_adapter_info, FILE *
  
--void *ntnic_id_table_create(void)
-+void *nthw_id_table_create(void)
+ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
  {
- 	struct ntnic_id_table_data *handle = calloc(1, sizeof(struct ntnic_id_table_data));
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
  
-@@ -74,7 +74,7 @@ void *ntnic_id_table_create(void)
- 	return handle;
- }
+ 	if (flow_filter_ops == NULL)
+ 		NT_LOG(ERR, NTNIC, "%s: flow_filter module uninitialized", __func__);
+@@ -162,7 +162,7 @@ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
+ 		switch (fpga_info->n_fpga_prod_id) {
+ 		/* NT200A01: 2x100G (Xilinx) */
+ 		case 9563:	/* NT200A02 (Cap) */
+-			link_ops = get_100g_link_ops();
++			link_ops = nthw_get_100g_link_ops();
  
--void ntnic_id_table_destroy(void *id_table)
-+void nthw_id_table_destroy(void *id_table)
- {
- 	struct ntnic_id_table_data *handle = id_table;
- 
-@@ -84,7 +84,7 @@ void ntnic_id_table_destroy(void *id_table)
- 	free(id_table);
- }
- 
--uint32_t ntnic_id_table_get_id(void *id_table, union flm_handles flm_h, uint8_t caller_id,
-+uint32_t nthw_id_table_get_id(void *id_table, union flm_handles flm_h, uint8_t caller_id,
- 	uint8_t type)
- {
- 	struct ntnic_id_table_data *handle = id_table;
-@@ -106,7 +106,7 @@ uint32_t ntnic_id_table_get_id(void *id_table, union flm_handles flm_h, uint8_t
- 	return new_id;
- }
- 
--void ntnic_id_table_free_id(void *id_table, uint32_t id)
-+void nthw_id_table_free_id(void *id_table, uint32_t id)
- {
- 	struct ntnic_id_table_data *handle = id_table;
- 
-@@ -129,7 +129,7 @@ void ntnic_id_table_free_id(void *id_table, uint32_t id)
- 	rte_spinlock_unlock(&handle->mtx);
- }
- 
--void ntnic_id_table_find(void *id_table, uint32_t id, union flm_handles *flm_h, uint8_t *caller_id,
-+void nthw_id_table_find(void *id_table, uint32_t id, union flm_handles *flm_h, uint8_t *caller_id,
- 	uint8_t *type)
- {
- 	struct ntnic_id_table_data *handle = id_table;
-diff --git a/drivers/net/ntnic/nthw/flow_api/flow_id_table.h b/drivers/net/ntnic/nthw/flow_api/flow_id_table.h
-index edb4f42729..99789955bc 100644
---- a/drivers/net/ntnic/nthw/flow_api/flow_id_table.h
-+++ b/drivers/net/ntnic/nthw/flow_api/flow_id_table.h
-@@ -13,14 +13,14 @@ union flm_handles {
- 	void *p;
- };
- 
--void *ntnic_id_table_create(void);
--void ntnic_id_table_destroy(void *id_table);
-+void *nthw_id_table_create(void);
-+void nthw_id_table_destroy(void *id_table);
- 
--uint32_t ntnic_id_table_get_id(void *id_table, union flm_handles flm_h, uint8_t caller_id,
-+uint32_t nthw_id_table_get_id(void *id_table, union flm_handles flm_h, uint8_t caller_id,
- 	uint8_t type);
--void ntnic_id_table_free_id(void *id_table, uint32_t id);
-+void nthw_id_table_free_id(void *id_table, uint32_t id);
- 
--void ntnic_id_table_find(void *id_table, uint32_t id, union flm_handles *flm_h, uint8_t *caller_id,
-+void nthw_id_table_find(void *id_table, uint32_t id, union flm_handles *flm_h, uint8_t *caller_id,
- 	uint8_t *type);
- 
- #endif	/* FLOW_ID_TABLE_H_ */
-diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-index 3f80e0f945..d9c10a8eab 100644
---- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-+++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline.c
-@@ -211,7 +211,7 @@ static int flow_mtr_create_meter(struct flow_eth_dev *dev,
- 
- 	union flm_handles flm_h;
- 	flm_h.idx = mtr_id;
--	uint32_t flm_id = ntnic_id_table_get_id(dev->ndev->id_table_handle, flm_h, caller_id, 2);
-+	uint32_t flm_id = nthw_id_table_get_id(dev->ndev->id_table_handle, flm_h, caller_id, 2);
- 
- 	learn_record->sw9 = flm_id;
- 	learn_record->kid = 1;
-@@ -327,7 +327,7 @@ static int flow_mtr_destroy_meter(struct flow_eth_dev *dev, uint8_t caller_id, u
- 	mtr_stat[mtr_id].n_pkt_base = 0;
- 	mtr_stat[mtr_id].buckets = NULL;
- 
--	ntnic_id_table_free_id(dev->ndev->id_table_handle, flm_id);
-+	nthw_id_table_free_id(dev->ndev->id_table_handle, flm_id);
- 
- 	nthw_flm_lrn_queue_release_write_buffer(flm_lrn_queue_arr);
- 
-@@ -431,7 +431,7 @@ static void flm_mtr_read_inf_records(struct flow_eth_dev *dev, uint32_t *data, u
- 		uint8_t caller_id;
- 		uint8_t type;
- 		union flm_handles flm_h;
--		ntnic_id_table_find(dev->ndev->id_table_handle, inf_data->id, &flm_h, &caller_id,
-+		nthw_id_table_find(dev->ndev->id_table_handle, inf_data->id, &flm_h, &caller_id,
- 			&type);
- 
- 		/* Check that received record hold valid meter statistics */
-@@ -507,7 +507,7 @@ static void flm_mtr_read_sta_records(struct flow_eth_dev *dev, uint32_t *data, u
- 		uint8_t caller_id;
- 		uint8_t type;
- 		union flm_handles flm_h;
--		ntnic_id_table_find(dev->ndev->id_table_handle, sta_data->id, &flm_h, &caller_id,
-+		nthw_id_table_find(dev->ndev->id_table_handle, sta_data->id, &flm_h, &caller_id,
- 			&type);
- 
- 		if (type == 1) {
-@@ -958,14 +958,14 @@ static int flm_flow_programming(struct flow_handle *fh, uint32_t flm_op)
- 	if (flm_op == NT_FLM_OP_LEARN) {
- 		union flm_handles flm_h;
- 		flm_h.p = fh;
--		fh->flm_id = ntnic_id_table_get_id(fh->dev->ndev->id_table_handle, flm_h,
-+		fh->flm_id = nthw_id_table_get_id(fh->dev->ndev->id_table_handle, flm_h,
- 			fh->caller_id, 1);
+ 			if (link_ops == NULL) {
+ 				NT_LOG(ERR, NTNIC, "NT200A02 100G link module uninitialized");
+@@ -173,7 +173,7 @@ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
+ 			res = link_ops->link_init(p_adapter_info, p_fpga);
+ 			break;
+ 		case 9574: /* NT400D13 (Intel Agilex FPGA) */
+-			link_ops = get_agx_100g_link_ops();
++			link_ops = nthw_get_agx_100g_link_ops();
+ 			if (link_ops == NULL) {
+ 				NT_LOG(ERR, NTNIC, "NT400D11 100G link module uninitialized");
+ 				res = -1;
+@@ -197,7 +197,7 @@ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
+ 		}
  	}
  
- 	uint32_t flm_id = fh->flm_id;
+-	const struct nt4ga_stat_ops *nt4ga_stat_ops = get_nt4ga_stat_ops();
++	const struct nt4ga_stat_ops *nt4ga_stat_ops = nthw_get_nt4ga_stat_ops();
  
- 	if (flm_op == NT_FLM_OP_UNLEARN) {
--		ntnic_id_table_free_id(fh->dev->ndev->id_table_handle, flm_id);
-+		nthw_id_table_free_id(fh->dev->ndev->id_table_handle, flm_id);
+ 	if (nt4ga_stat_ops != NULL) {
+ 		/* Nt4ga Stat init/setup */
+@@ -223,7 +223,7 @@ static int nt4ga_adapter_init(struct adapter_info_s *p_adapter_info)
  
- 		if (rte_atomic_load_explicit(&fh->learn_ignored, rte_memory_order_seq_cst) == 1)
- 			return 0;
-@@ -4057,7 +4057,7 @@ int nthw_init_flow_mgmnt_of_ndev_profile_inline(struct flow_nic_dev *ndev)
+ static int nt4ga_adapter_deinit(struct adapter_info_s *p_adapter_info)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
  
- 		nthw_mod_flm_pst_flush(&ndev->be, 0, ALL_ENTRIES);
+ 	if (flow_filter_ops == NULL)
+ 		NT_LOG(ERR, NTNIC, "%s: flow_filter module uninitialized", __func__);
+diff --git a/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c b/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
+index aca88c6635..0f7e1f2b00 100644
+--- a/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
++++ b/drivers/net/ntnic/adapter/nt4ga_stat/nt4ga_stat.c
+@@ -191,7 +191,7 @@ static int nt4ga_stat_setup(struct adapter_info_s *p_adapter_info)
+ 		return -1;
+ 	}
  
--		ndev->id_table_handle = ntnic_id_table_create();
-+		ndev->id_table_handle = nthw_id_table_create();
+-	if (get_flow_filter_ops() != NULL) {
++	if (nthw_get_flow_filter_ops() != NULL) {
+ 		struct flow_nic_dev *ndev = p_adapter_info->nt4ga_filter.mp_flow_device;
+ 		p_nt4ga_stat->flm_stat_ver = ndev->be.flm.ver;
+ 		p_nt4ga_stat->mp_stat_structs_flm = calloc(1, sizeof(struct flm_counters_v1));
+@@ -244,7 +244,7 @@ static int nt4ga_stat_collect_cap_v1_stats(struct adapter_info_s *p_adapter_info
+ 	uint32_t *p_stat_dma_virtual)
+ {
+ 	(void)p_adapter_info;
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
  
- 		if (ndev->id_table_handle == NULL)
- 			goto err_exit0;
-@@ -4132,7 +4132,7 @@ int nthw_done_flow_mgmnt_of_ndev_profile_inline(struct flow_nic_dev *ndev)
- 		free(ndev->flm_mtr_handle);
+ 	if (flow_filter_ops == NULL || p_nt4ga_stat == NULL)
+ 		return -1;
+diff --git a/drivers/net/ntnic/nthw/core/include/nthw_fpga.h b/drivers/net/ntnic/nthw/core/include/nthw_fpga.h
+index b86865b24f..9838ad3c07 100644
+--- a/drivers/net/ntnic/nthw/core/include/nthw_fpga.h
++++ b/drivers/net/ntnic/nthw/core/include/nthw_fpga.h
+@@ -33,7 +33,7 @@ struct nt200a0x_ops {
+ };
  
- 		nthw_flow_group_handle_destroy(&ndev->group_handle);
--		ntnic_id_table_destroy(ndev->id_table_handle);
-+		nthw_id_table_destroy(ndev->id_table_handle);
+ void nthw_reg_nt200a0x_ops(struct nt200a0x_ops *ops);
+-struct nt200a0x_ops *get_nt200a0x_ops(void);
++struct nt200a0x_ops *nthw_get_nt200a0x_ops(void);
+ void nt200a0x_ops_init(void);
  
- 		nthw_mod_cat_cfn_set(&ndev->be, HW_CAT_CFN_PRESET_ALL, 0, 0, 0);
- 		nthw_mod_cat_cfn_flush(&ndev->be, 0, 1);
+ struct nt400dxx_ops {
+@@ -41,7 +41,7 @@ struct nt400dxx_ops {
+ };
+ 
+ void nthw_reg_nt400dxx_ops(struct nt400dxx_ops *ops);
+-struct nt400dxx_ops *get_nt400dxx_ops(void);
++struct nt400dxx_ops *nthw_get_nt400dxx_ops(void);
+ void nt400dxx_ops_init(void);
+ 
+ #endif	/* __NTHW_FPGA_H__ */
+diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/nthw_fpga_nt200a0x.c b/drivers/net/ntnic/nthw/core/nt200a0x/nthw_fpga_nt200a0x.c
+index 739b1aab85..371177c14f 100644
+--- a/drivers/net/ntnic/nthw/core/nt200a0x/nthw_fpga_nt200a0x.c
++++ b/drivers/net/ntnic/nthw/core/nt200a0x/nthw_fpga_nt200a0x.c
+@@ -15,7 +15,7 @@ static int nthw_fpga_nt200a0x_init(struct fpga_info_s *p_fpga_info)
+ 	const char *const p_adapter_id_str = p_fpga_info->mp_adapter_id_str;
+ 	struct nthw_fpga_rst_nt200a0x rst;
+ 	int res = -1;
+-	const struct rst_nt200a0x_ops *rst_nt200a0x_ops = get_rst_nt200a0x_ops();
++	const struct rst_nt200a0x_ops *rst_nt200a0x_ops = nthw_get_rst_nt200a0x_ops();
+ 
+ 	if (rst_nt200a0x_ops == NULL) {
+ 		NT_LOG(ERR, NTHW, "RST NT200A0X NOT INCLUDED");
+@@ -32,7 +32,7 @@ static int nthw_fpga_nt200a0x_init(struct fpga_info_s *p_fpga_info)
+ 	}
+ 
+ 	bool included = true;
+-	struct rst9563_ops *rst9563_ops = get_rst9563_ops();
++	struct rst9563_ops *rst9563_ops = nthw_get_rst9563_ops();
+ 
+ 	/* reset specific */
+ 	switch (p_fpga_info->n_fpga_prod_id) {
+diff --git a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
+index a345f163bb..f3a28e801e 100644
+--- a/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
++++ b/drivers/net/ntnic/nthw/core/nt200a0x/reset/nthw_fpga_rst9563.c
+@@ -160,7 +160,7 @@ static int nthw_fpga_rst9563_clock_synth_init(nthw_fpga_t *p_fpga,
+ 	const char *const p_adapter_id_str = p_fpga->p_fpga_info->mp_adapter_id_str;
+ 	const int n_fpga_product_id = p_fpga->mn_product_id;
+ 	int res;
+-	const struct clk9563_ops *clk9563_ops = get_clk9563_ops();
++	const struct clk9563_ops *clk9563_ops = nthw_get_clk9563_ops();
+ 
+ 	if (clk9563_ops == NULL) {
+ 		NT_LOG(INF, NTNIC, "CLK9563 module not included");
+@@ -220,7 +220,7 @@ static int nthw_fpga_rst9563_init(struct fpga_info_s *p_fpga_info,
+ 		return res;
+ 	}
+ 
+-	const struct rst_nt200a0x_ops *rst_ops = get_rst_nt200a0x_ops();
++	const struct rst_nt200a0x_ops *rst_ops = nthw_get_rst_nt200a0x_ops();
+ 	res = rst_ops != NULL ? rst_ops->nthw_fpga_rst_nt200a0x_reset(p_fpga, p_rst) : -1;
+ 
+ 	if (res) {
+diff --git a/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c b/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
+index 234da0da33..1f87e36d08 100644
+--- a/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
++++ b/drivers/net/ntnic/nthw/core/nt400dxx/nthw_fpga_nt400dxx.c
+@@ -124,7 +124,7 @@ static int nthw_fpga_nt400dxx_init(struct fpga_info_s *p_fpga_info)
+ 
+ 	switch (p_fpga_info->n_fpga_prod_id) {
+ 	case 9574:
+-		rst9574_ops = get_rst9574_ops();
++		rst9574_ops = nthw_get_rst9574_ops();
+ 
+ 		if (rst9574_ops == NULL) {
+ 			NT_LOG(ERR, NTHW, "%s: RST 9574 NOT INCLUDED", p_adapter_id_str);
+@@ -148,7 +148,7 @@ static int nthw_fpga_nt400dxx_init(struct fpga_info_s *p_fpga_info)
+ 		return -1;
+ 	}
+ 
+-	struct rst_nt400dxx_ops *rst_nt400dxx_ops = get_rst_nt400dxx_ops();
++	struct rst_nt400dxx_ops *rst_nt400dxx_ops = nthw_get_rst_nt400dxx_ops();
+ 
+ 	if (rst_nt400dxx_ops == NULL) {
+ 		NT_LOG(ERR, NTHW, "RST NT400DXX NOT INCLUDED");
+diff --git a/drivers/net/ntnic/nthw/core/nthw_fpga.c b/drivers/net/ntnic/nthw/core/nthw_fpga.c
+index f18069e492..0e1f686b4f 100644
+--- a/drivers/net/ntnic/nthw/core/nthw_fpga.c
++++ b/drivers/net/ntnic/nthw/core/nthw_fpga.c
+@@ -431,8 +431,8 @@ int nthw_fpga_init(struct fpga_info_s *p_fpga_info)
+ 	nthw_rac_rab_flush(p_nthw_rac);
+ 	p_fpga_info->mp_nthw_rac = p_nthw_rac;
+ 
+-	struct nt200a0x_ops *nt200a0x_ops = get_nt200a0x_ops();
+-	struct nt400dxx_ops *nt400dxx_ops = get_nt400dxx_ops();
++	struct nt200a0x_ops *nt200a0x_ops = nthw_get_nt200a0x_ops();
++	struct nt400dxx_ops *nt400dxx_ops = nthw_get_nt400dxx_ops();
+ 
+ 	switch (p_fpga_info->n_nthw_adapter_id) {
+ 	case NT_HW_ADAPTER_ID_NT200A02:
+@@ -562,7 +562,7 @@ void nthw_reg_nt200a0x_ops(struct nt200a0x_ops *ops)
+ 	nt200a0x_ops = ops;
+ }
+ 
+-struct nt200a0x_ops *get_nt200a0x_ops(void)
++struct nt200a0x_ops *nthw_get_nt200a0x_ops(void)
+ {
+ 	if (nt200a0x_ops == NULL)
+ 		nt200a0x_ops_init();
+@@ -576,7 +576,7 @@ void nthw_reg_nt400dxx_ops(struct nt400dxx_ops *ops)
+ 	nt400dxx_ops = ops;
+ }
+ 
+-struct nt400dxx_ops *get_nt400dxx_ops(void)
++struct nt400dxx_ops *nthw_get_nt400dxx_ops(void)
+ {
+ 	if (nt400dxx_ops == NULL)
+ 		nt400dxx_ops_init();
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_api.c b/drivers/net/ntnic/nthw/flow_api/flow_api.c
+index b737589e14..3e45db67d7 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_api.c
++++ b/drivers/net/ntnic/nthw/flow_api/flow_api.c
+@@ -292,7 +292,7 @@ static struct flow_handle *flow_create(struct flow_eth_dev *dev __rte_unused,
+ 	const struct rte_flow_action action[] __rte_unused,
+ 	struct rte_flow_error *error __rte_unused)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, FILTER, "%s: profile_inline module uninitialized", __func__);
+@@ -306,7 +306,7 @@ static struct flow_handle *flow_create(struct flow_eth_dev *dev __rte_unused,
+ static int flow_destroy(struct flow_eth_dev *dev __rte_unused,
+ 	struct flow_handle *flow __rte_unused,	struct rte_flow_error *error __rte_unused)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, FILTER, "%s: profile_inline module uninitialized", __func__);
+@@ -318,7 +318,7 @@ static int flow_destroy(struct flow_eth_dev *dev __rte_unused,
+ 
+ static int flow_flush(struct flow_eth_dev *dev, uint16_t caller_id, struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline module uninitialized");
+@@ -333,7 +333,7 @@ static int flow_actions_update(struct flow_eth_dev *dev,
+ 	const struct rte_flow_action action[],
+ 	struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline module uninitialized");
+@@ -378,7 +378,7 @@ static int nic_remove_eth_port_dev(struct flow_nic_dev *ndev, struct flow_eth_de
+ 
+ static int nthw_flow_delete_eth_dev(struct flow_eth_dev *eth_dev)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, FILTER, "%s: profile_inline module uninitialized", __func__);
+@@ -453,7 +453,7 @@ static int nthw_flow_delete_eth_dev(struct flow_eth_dev *eth_dev)
+ 
+ static void flow_ndev_reset(struct flow_nic_dev *ndev)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, FILTER, "%s: profile_inline module uninitialized", __func__);
+@@ -586,7 +586,7 @@ static struct flow_eth_dev *flow_get_eth_dev(uint8_t adapter_no, uint8_t port_no
+ 	int *rss_target_id, enum flow_eth_dev_profile flow_profile,
+ 	uint32_t exception_path)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL)
+ 		NT_LOG(ERR, FILTER, "%s: profile_inline module uninitialized", __func__);
+@@ -1015,7 +1015,7 @@ static int flow_dev_dump(struct flow_eth_dev *dev,
+ 	FILE *file,
+ 	struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, FILTER, "%s: profile_inline module uninitialized", __func__);
+@@ -1032,7 +1032,7 @@ static int flow_get_aged_flows(struct flow_eth_dev *dev,
+ 	uint32_t nb_contexts,
+ 	struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline_ops uninitialized");
+@@ -1053,7 +1053,7 @@ static int flow_info_get(struct flow_eth_dev *dev, uint8_t caller_id,
+ 	struct rte_flow_port_info *port_info, struct rte_flow_queue_info *queue_info,
+ 	struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline module uninitialized");
+@@ -1068,7 +1068,7 @@ static int flow_configure(struct flow_eth_dev *dev, uint8_t caller_id,
+ 	const struct rte_flow_port_attr *port_attr, uint16_t nb_queue,
+ 	const struct rte_flow_queue_attr *queue_attr[], struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline module uninitialized");
+@@ -1088,7 +1088,7 @@ flow_pattern_template_create(struct flow_eth_dev *dev,
+ 	const struct rte_flow_pattern_template_attr *template_attr, uint16_t caller_id,
+ 	const struct rte_flow_item pattern[], struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline module uninitialized");
+@@ -1103,7 +1103,7 @@ static int flow_pattern_template_destroy(struct flow_eth_dev *dev,
+ 	struct flow_pattern_template *pattern_template,
+ 	struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline module uninitialized");
+@@ -1121,7 +1121,7 @@ flow_actions_template_create(struct flow_eth_dev *dev,
+ 	const struct rte_flow_action actions[], const struct rte_flow_action masks[],
+ 	struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline module uninitialized");
+@@ -1136,7 +1136,7 @@ static int flow_actions_template_destroy(struct flow_eth_dev *dev,
+ 	struct flow_actions_template *actions_template,
+ 	struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline module uninitialized");
+@@ -1154,7 +1154,7 @@ static struct flow_template_table *flow_template_table_create(struct flow_eth_de
+ 	uint8_t nb_pattern_templates, struct flow_actions_template *actions_templates[],
+ 	uint8_t nb_actions_templates, struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline module uninitialized");
+@@ -1170,7 +1170,7 @@ static int flow_template_table_destroy(struct flow_eth_dev *dev,
+ 	struct flow_template_table *template_table,
+ 	struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline module uninitialized");
+@@ -1188,7 +1188,7 @@ flow_async_create(struct flow_eth_dev *dev, uint32_t queue_id,
+ 	const struct rte_flow_action actions[], uint8_t actions_template_index, void *user_data,
+ 	struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline module uninitialized");
+@@ -1204,7 +1204,7 @@ static int flow_async_destroy(struct flow_eth_dev *dev, uint32_t queue_id,
+ 	const struct rte_flow_op_attr *op_attr, struct flow_handle *flow,
+ 	void *user_data, struct rte_flow_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "profile_inline module uninitialized");
+@@ -1216,7 +1216,7 @@ static int flow_async_destroy(struct flow_eth_dev *dev, uint32_t queue_id,
+ }
+ int nthw_flow_get_flm_stats(struct flow_nic_dev *ndev, uint64_t *data, uint64_t size)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL)
+ 		return -1;
+@@ -1229,7 +1229,7 @@ int nthw_flow_get_flm_stats(struct flow_nic_dev *ndev, uint64_t *data, uint64_t
+ 
+ int nthw_flow_get_ifr_stats(struct flow_nic_dev *ndev, uint64_t *data, uint8_t port_count)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL)
+ 		return -1;
+diff --git a/drivers/net/ntnic/nthw/flow_api/flow_filter.c b/drivers/net/ntnic/nthw/flow_api/flow_filter.c
+index a4a95746e8..9de3ed3b7a 100644
+--- a/drivers/net/ntnic/nthw/flow_api/flow_filter.c
++++ b/drivers/net/ntnic/nthw/flow_api/flow_filter.c
+@@ -12,7 +12,7 @@ int nthw_flow_filter_init(nthw_fpga_t *p_fpga, struct flow_nic_dev **p_flow_devi
+ 	void *be_dev = NULL;
+ 	struct flow_nic_dev *flow_nic;
+ 
+-	const struct flow_backend_ops *flow_backend_ops = get_flow_backend_ops();
++	const struct flow_backend_ops *flow_backend_ops = nthw_get_flow_backend_ops();
+ 
+ 	if (flow_backend_ops == NULL) {
+ 		NT_LOG(ERR, FILTER, "%s: flow_backend module uninitialized", __func__);
+@@ -41,7 +41,7 @@ int nthw_flow_filter_done(struct flow_nic_dev *dev)
+ 	int res = nthw_flow_api_done(dev);
+ 
+ 	if (be_dev) {
+-		const struct flow_backend_ops *flow_backend_ops = get_flow_backend_ops();
++		const struct flow_backend_ops *flow_backend_ops = nthw_get_flow_backend_ops();
+ 
+ 		if (flow_backend_ops == NULL) {
+ 			NT_LOG(WRN, FILTER, "%s: flow_backend module uninitialized", __func__);
+diff --git a/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c b/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
+index a2c37774fe..95a875fc1a 100644
+--- a/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
++++ b/drivers/net/ntnic/nthw/ntnic_meter/ntnic_meter.c
+@@ -35,7 +35,7 @@ static int eth_mtr_capabilities_get_inline(struct rte_eth_dev *eth_dev,
+ 	struct rte_mtr_capabilities *cap,
+ 	struct rte_mtr_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, NTHW, "profile_inline module uninitialized");
+@@ -106,7 +106,7 @@ static int eth_mtr_meter_profile_add_inline(struct rte_eth_dev *eth_dev,
+ 	struct rte_mtr_meter_profile *profile,
+ 	struct rte_mtr_error *error __rte_unused)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, NTHW, "profile_inline module uninitialized");
+@@ -157,7 +157,7 @@ static int eth_mtr_meter_profile_delete_inline(struct rte_eth_dev *eth_dev,
+ 	uint32_t meter_profile_id,
+ 	struct rte_mtr_error *error __rte_unused)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, NTHW, "profile_inline module uninitialized");
+@@ -180,7 +180,7 @@ static int eth_mtr_meter_policy_add_inline(struct rte_eth_dev *eth_dev,
+ 	struct rte_mtr_meter_policy_params *policy,
+ 	struct rte_mtr_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, NTHW, "profile_inline module uninitialized");
+@@ -226,7 +226,7 @@ static int eth_mtr_meter_policy_delete_inline(struct rte_eth_dev *eth_dev __rte_
+ 	uint32_t policy_id,
+ 	struct rte_mtr_error *error __rte_unused)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, NTHW, "profile_inline module uninitialized");
+@@ -246,7 +246,7 @@ static int eth_mtr_create_inline(struct rte_eth_dev *eth_dev,
+ 	int shared,
+ 	struct rte_mtr_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, NTHW, "profile_inline module uninitialized");
+@@ -312,7 +312,7 @@ static int eth_mtr_destroy_inline(struct rte_eth_dev *eth_dev,
+ 	uint32_t mtr_id,
+ 	struct rte_mtr_error *error __rte_unused)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, NTHW, "profile_inline module uninitialized");
+@@ -342,7 +342,7 @@ static int eth_mtr_stats_adjust_inline(struct rte_eth_dev *eth_dev,
+ 	uint64_t adjust_value,
+ 	struct rte_mtr_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, NTHW, "profile_inline module uninitialized");
+@@ -405,7 +405,7 @@ static int eth_mtr_stats_read_inline(struct rte_eth_dev *eth_dev,
+ 	int clear,
+ 	struct rte_mtr_error *error)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG(ERR, NTHW, "profile_inline module uninitialized");
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index 906e55de7c..42aa2d4095 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -162,7 +162,7 @@ get_pdrv_from_pci(struct rte_pci_addr addr)
+ 
+ static int dpdk_stats_collect(struct pmd_internals *internals, struct rte_eth_stats *stats)
+ {
+-	const struct ntnic_filter_ops *ntnic_filter_ops = get_ntnic_filter_ops();
++	const struct ntnic_filter_ops *ntnic_filter_ops = nthw_get_filter_ops();
+ 
+ 	if (ntnic_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, NTNIC, "ntnic_filter_ops uninitialized");
+@@ -261,7 +261,7 @@ static int dpdk_stats_reset(struct pmd_internals *internals, struct ntdrv_4ga_s
+ static int
+ eth_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete __rte_unused)
+ {
+-	const struct port_ops *port_ops = get_port_ops();
++	const struct port_ops *port_ops = nthw_get_port_ops();
+ 
+ 	if (port_ops == NULL) {
+ 		NT_LOG(ERR, NTNIC, "Link management module uninitialized");
+@@ -317,7 +317,7 @@ static int eth_stats_reset(struct rte_eth_dev *eth_dev)
+ static int
+ eth_dev_infos_get(struct rte_eth_dev *eth_dev, struct rte_eth_dev_info *dev_info)
+ {
+-	const struct port_ops *port_ops = get_port_ops();
++	const struct port_ops *port_ops = nthw_get_port_ops();
+ 
+ 	if (port_ops == NULL) {
+ 		NT_LOG(ERR, NTNIC, "Link management module uninitialized");
+@@ -1081,7 +1081,7 @@ static int eth_tx_scg_queue_setup(struct rte_eth_dev *eth_dev,
+ 	unsigned int socket_id __rte_unused,
+ 	const struct rte_eth_txconf *tx_conf)
+ {
+-	const struct port_ops *port_ops = get_port_ops();
++	const struct port_ops *port_ops = nthw_get_port_ops();
+ 
+ 	if (port_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, NTNIC, "Link management module uninitialized");
+@@ -1181,7 +1181,7 @@ static int eth_tx_scg_queue_setup(struct rte_eth_dev *eth_dev,
+ 
+ static int dev_set_mtu_inline(struct rte_eth_dev *eth_dev, uint16_t mtu)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, NTNIC, "profile_inline module uninitialized");
+@@ -1367,14 +1367,14 @@ eth_dev_configure(struct rte_eth_dev *eth_dev)
+ static int
+ eth_dev_start(struct rte_eth_dev *eth_dev)
+ {
+-	const struct port_ops *port_ops = get_port_ops();
++	const struct port_ops *port_ops = nthw_get_port_ops();
+ 
+ 	if (port_ops == NULL) {
+ 		NT_LOG(ERR, NTNIC, "Link management module uninitialized");
+ 		return -1;
+ 	}
+ 
+-	eth_dev->flow_fp_ops = get_dev_fp_flow_ops();
++	eth_dev->flow_fp_ops = nthw_get_dev_fp_flow_ops();
+ 	struct pmd_internals *internals = eth_dev->data->dev_private;
+ 
+ 	const int n_intf_no = internals->n_intf_no;
+@@ -1459,7 +1459,7 @@ eth_dev_stop(struct rte_eth_dev *eth_dev)
+ static int
+ eth_dev_set_link_up(struct rte_eth_dev *eth_dev)
+ {
+-	const struct port_ops *port_ops = get_port_ops();
++	const struct port_ops *port_ops = nthw_get_port_ops();
+ 
+ 	if (port_ops == NULL) {
+ 		NT_LOG(ERR, NTNIC, "Link management module uninitialized");
+@@ -1484,7 +1484,7 @@ eth_dev_set_link_up(struct rte_eth_dev *eth_dev)
+ static int
+ eth_dev_set_link_down(struct rte_eth_dev *eth_dev)
+ {
+-	const struct port_ops *port_ops = get_port_ops();
++	const struct port_ops *port_ops = nthw_get_port_ops();
+ 
+ 	if (port_ops == NULL) {
+ 		NT_LOG(ERR, NTNIC, "Link management module uninitialized");
+@@ -1509,14 +1509,14 @@ eth_dev_set_link_down(struct rte_eth_dev *eth_dev)
+ static void
+ drv_deinit(struct drv_s *p_drv)
+ {
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, NTNIC, "profile_inline module uninitialized");
+ 		return;
+ 	}
+ 
+-	const struct adapter_ops *adapter_ops = get_adapter_ops();
++	const struct adapter_ops *adapter_ops = nthw_get_adapter_ops();
+ 
+ 	if (adapter_ops == NULL) {
+ 		NT_LOG(ERR, NTNIC, "Adapter module uninitialized");
+@@ -1623,7 +1623,7 @@ eth_fw_version_get(struct rte_eth_dev *eth_dev, char *fw_version, size_t fw_size
+ 
+ static int dev_flow_ops_get(struct rte_eth_dev *dev __rte_unused, const struct rte_flow_ops **ops)
+ {
+-	*ops = get_dev_flow_ops();
++	*ops = nthw_get_dev_flow_ops();
+ 	return 0;
+ }
+ 
+@@ -1636,7 +1636,7 @@ static int eth_xstats_get(struct rte_eth_dev *eth_dev, struct rte_eth_xstat *sta
+ 	int n_intf_no = internals->n_intf_no;
+ 	int nb_xstats;
+ 
+-	const struct ntnic_xstats_ops *ntnic_xstats_ops = get_ntnic_xstats_ops();
++	const struct ntnic_xstats_ops *ntnic_xstats_ops = nthw_get_xstats_ops();
+ 
+ 	if (ntnic_xstats_ops == NULL) {
+ 		NT_LOG(INF, NTNIC, "ntnic_xstats module not included");
+@@ -1661,7 +1661,7 @@ static int eth_xstats_get_by_id(struct rte_eth_dev *eth_dev,
+ 	int n_intf_no = internals->n_intf_no;
+ 	int nb_xstats;
+ 
+-	const struct ntnic_xstats_ops *ntnic_xstats_ops = get_ntnic_xstats_ops();
++	const struct ntnic_xstats_ops *ntnic_xstats_ops = nthw_get_xstats_ops();
+ 
+ 	if (ntnic_xstats_ops == NULL) {
+ 		NT_LOG(INF, NTNIC, "ntnic_xstats module not included");
+@@ -1683,7 +1683,7 @@ static int eth_xstats_reset(struct rte_eth_dev *eth_dev)
+ 	nt4ga_stat_t *p_nt4ga_stat = &p_nt_drv->adapter_info.nt4ga_stat;
+ 	int n_intf_no = internals->n_intf_no;
+ 
+-	struct ntnic_xstats_ops *ntnic_xstats_ops = get_ntnic_xstats_ops();
++	struct ntnic_xstats_ops *ntnic_xstats_ops = nthw_get_xstats_ops();
+ 
+ 	if (ntnic_xstats_ops == NULL) {
+ 		NT_LOG(INF, NTNIC, "ntnic_xstats module not included");
+@@ -1704,7 +1704,7 @@ static int eth_xstats_get_names(struct rte_eth_dev *eth_dev,
+ 	ntdrv_4ga_t *p_nt_drv = &p_drv->ntdrv;
+ 	nt4ga_stat_t *p_nt4ga_stat = &p_nt_drv->adapter_info.nt4ga_stat;
+ 
+-	const struct ntnic_xstats_ops *ntnic_xstats_ops = get_ntnic_xstats_ops();
++	const struct ntnic_xstats_ops *ntnic_xstats_ops = nthw_get_xstats_ops();
+ 
+ 	if (ntnic_xstats_ops == NULL) {
+ 		NT_LOG(INF, NTNIC, "ntnic_xstats module not included");
+@@ -1723,7 +1723,7 @@ static int eth_xstats_get_names_by_id(struct rte_eth_dev *eth_dev,
+ 	struct drv_s *p_drv = internals->p_drv;
+ 	ntdrv_4ga_t *p_nt_drv = &p_drv->ntdrv;
+ 	nt4ga_stat_t *p_nt4ga_stat = &p_nt_drv->adapter_info.nt4ga_stat;
+-	const struct ntnic_xstats_ops *ntnic_xstats_ops = get_ntnic_xstats_ops();
++	const struct ntnic_xstats_ops *ntnic_xstats_ops = nthw_get_xstats_ops();
+ 
+ 	if (ntnic_xstats_ops == NULL) {
+ 		NT_LOG(INF, NTNIC, "ntnic_xstats module not included");
+@@ -1743,7 +1743,7 @@ promiscuous_enable(struct rte_eth_dev __rte_unused(*dev))
+ 
+ static int eth_dev_rss_hash_update(struct rte_eth_dev *eth_dev, struct rte_eth_rss_conf *rss_conf)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, NTNIC, "flow_filter module uninitialized");
+@@ -2035,7 +2035,7 @@ static int adapter_flm_update_service(void *context)
+ 
+ 		dev = p_flow_nic_dev->eth_base;
+ 
+-		profile_inline_ops = get_profile_inline_ops();
++		profile_inline_ops = nthw_get_profile_inline_ops();
+ 		RTE_ASSERT(profile_inline_ops != NULL);
+ 
+ 		NT_LOG(INF, NTNIC, "flm update service started on lcore %i",  rte_lcore_id());
+@@ -2067,7 +2067,7 @@ static int adapter_stat_service(void *context)
+ 		struct drv_s *p_drv = context;
+ 		RTE_ASSERT(p_drv != NULL);
+ 
+-		nt4ga_stat_ops = get_nt4ga_stat_ops();
++		nt4ga_stat_ops = nthw_get_nt4ga_stat_ops();
+ 		RTE_ASSERT(nt4ga_stat_ops != NULL);
+ 
+ 		p_nt_drv = &p_drv->ntdrv;
+@@ -2136,14 +2136,14 @@ static int adapter_stat_service(void *context)
+ static int
+ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, NTNIC, "flow_filter module uninitialized");
+ 		/* Return statement is not necessary here to allow traffic processing by SW  */
+ 	}
+ 
+-	const struct profile_inline_ops *profile_inline_ops = get_profile_inline_ops();
++	const struct profile_inline_ops *profile_inline_ops = nthw_get_profile_inline_ops();
+ 
+ 	if (profile_inline_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, NTNIC, "profile_inline module uninitialized");
+@@ -2151,14 +2151,14 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 	}
+ 
+ 	nthw_vfio_init();
+-	const struct port_ops *port_ops = get_port_ops();
++	const struct port_ops *port_ops = nthw_get_port_ops();
+ 
+ 	if (port_ops == NULL) {
+ 		NT_LOG(ERR, NTNIC, "Link management module uninitialized");
+ 		return -1;
+ 	}
+ 
+-	const struct adapter_ops *adapter_ops = get_adapter_ops();
++	const struct adapter_ops *adapter_ops = nthw_get_adapter_ops();
+ 
+ 	if (adapter_ops == NULL) {
+ 		NT_LOG(ERR, NTNIC, "Adapter module uninitialized");
+@@ -2328,7 +2328,7 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 		return -1;
+ 	}
+ 
+-	const struct meter_ops_s *meter_ops = get_meter_ops();
++	const struct meter_ops_s *meter_ops = nthw_get_meter_ops();
+ 
+ 	if (meter_ops != NULL)
+ 		nthw_eth_dev_ops.mtr_ops_get = meter_ops->eth_mtr_ops_get;
+@@ -2337,7 +2337,7 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 		NT_LOG(DBG, NTNIC, "Meter module is not initialized");
+ 
+ 	/* Initialize the queue system */
+-	sg_ops = get_sg_ops();
++	sg_ops = nthw_get_sg_ops();
+ 
+ 	if (sg_ops != NULL) {
+ 		err = sg_ops->nthw_virt_queue_init(fpga_info);
+@@ -2556,7 +2556,7 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
+ 		/* increase initialized ethernet devices - PF */
+ 		p_drv->n_eth_dev_init_count++;
+ 
+-		if (get_flow_filter_ops() != NULL) {
++		if (nthw_get_flow_filter_ops() != NULL) {
+ 			if (fpga_info->profile == FPGA_INFO_PROFILE_INLINE &&
+ 				internals->flw_dev->ndev->be.tpe.ver >= 2) {
+ 				RTE_ASSERT(nthw_eth_dev_ops.mtu_set == dev_set_mtu_inline ||
+diff --git a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
+index 2d0d0ea54f..5a0ef125be 100644
+--- a/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
++++ b/drivers/net/ntnic/ntnic_filter/ntnic_filter.c
+@@ -540,7 +540,7 @@ static int convert_flow(struct rte_eth_dev *eth_dev,
+ static int
+ eth_flow_destroy(struct rte_eth_dev *eth_dev, struct rte_flow *flow, struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "flow_filter module uninitialized");
+@@ -584,7 +584,7 @@ static struct rte_flow *eth_flow_create(struct rte_eth_dev *eth_dev,
+ 	const struct rte_flow_action actions[],
+ 	struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "flow_filter module uninitialized");
+@@ -667,7 +667,7 @@ static struct rte_flow *eth_flow_create(struct rte_eth_dev *eth_dev,
+ 
+ static int eth_flow_flush(struct rte_eth_dev *eth_dev, struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "flow_filter module uninitialized");
+@@ -708,7 +708,7 @@ static int eth_flow_actions_update(struct rte_eth_dev *eth_dev,
+ 	const struct rte_flow_action actions[],
+ 	struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG(ERR, FILTER, "flow_filter module uninitialized");
+@@ -770,7 +770,7 @@ static int eth_flow_dev_dump(struct rte_eth_dev *eth_dev,
+ 	FILE *file,
+ 	struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG(ERR, NTNIC, "%s: flow_filter module uninitialized", __func__);
+@@ -797,7 +797,7 @@ static int eth_flow_get_aged_flows(struct rte_eth_dev *eth_dev,
+ 	uint32_t nb_contexts,
+ 	struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, NTNIC, "flow_filter module uninitialized");
+@@ -824,7 +824,7 @@ static int eth_flow_get_aged_flows(struct rte_eth_dev *eth_dev,
+ static int eth_flow_info_get(struct rte_eth_dev *dev, struct rte_flow_port_info *port_info,
+ 	struct rte_flow_queue_info *queue_info, struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "flow_filter module uninitialized");
+@@ -849,7 +849,7 @@ static int eth_flow_configure(struct rte_eth_dev *dev, const struct rte_flow_por
+ 	uint16_t nb_queue, const struct rte_flow_queue_attr *queue_attr[],
+ 	struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "flow_filter module uninitialized");
+@@ -875,7 +875,7 @@ static struct rte_flow_pattern_template *eth_flow_pattern_template_create(struct
+ 	const struct rte_flow_pattern_template_attr *template_attr,
+ 	const struct rte_flow_item pattern[], struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "flow_filter module uninitialized");
+@@ -914,7 +914,7 @@ static int eth_flow_pattern_template_destroy(struct rte_eth_dev *dev,
+ 	struct rte_flow_pattern_template *pattern_template,
+ 	struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "flow_filter module uninitialized");
+@@ -939,7 +939,7 @@ static struct rte_flow_actions_template *eth_flow_actions_template_create(struct
+ 	const struct rte_flow_action actions[], const struct rte_flow_action masks[],
+ 	struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "flow_filter module uninitialized");
+@@ -1000,7 +1000,7 @@ static int eth_flow_actions_template_destroy(struct rte_eth_dev *dev,
+ 	struct rte_flow_actions_template *actions_template,
+ 	struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, NTNIC, "flow_filter module uninitialized");
+@@ -1026,7 +1026,7 @@ static struct rte_flow_template_table *eth_flow_template_table_create(struct rte
+ 	struct rte_flow_actions_template *actions_templates[], uint8_t nb_actions_templates,
+ 	struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "flow_filter module uninitialized");
+@@ -1065,7 +1065,7 @@ static int eth_flow_template_table_destroy(struct rte_eth_dev *dev,
+ 	struct rte_flow_template_table *template_table,
+ 	struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "flow_filter module uninitialized");
+@@ -1091,7 +1091,7 @@ static struct rte_flow *eth_flow_async_create(struct rte_eth_dev *dev, uint32_t
+ 	uint8_t pattern_template_index, const struct rte_flow_action actions[],
+ 	uint8_t actions_template_index, void *user_data, struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "flow_filter module uninitialized");
+@@ -1151,7 +1151,7 @@ static int eth_flow_async_destroy(struct rte_eth_dev *dev, uint32_t queue_id,
+ 	const struct rte_flow_op_attr *op_attr, struct rte_flow *flow,
+ 	void *user_data, struct rte_flow_error *error)
+ {
+-	const struct flow_filter_ops *flow_filter_ops = get_flow_filter_ops();
++	const struct flow_filter_ops *flow_filter_ops = nthw_get_flow_filter_ops();
+ 
+ 	if (flow_filter_ops == NULL) {
+ 		NT_LOG_DBGX(ERR, FILTER, "flow_filter module uninitialized");
+diff --git a/drivers/net/ntnic/ntnic_mod_reg.c b/drivers/net/ntnic/ntnic_mod_reg.c
+index be872aa090..67ba694e25 100644
+--- a/drivers/net/ntnic/ntnic_mod_reg.c
++++ b/drivers/net/ntnic/ntnic_mod_reg.c
+@@ -12,7 +12,7 @@ void nthw_reg_sg_ops(struct sg_ops_s *ops)
+ 	sg_ops = ops;
+ }
+ 
+-const struct sg_ops_s *get_sg_ops(void)
++const struct sg_ops_s *nthw_get_sg_ops(void)
+ {
+ 	if (sg_ops == NULL)
+ 		nthw_sg_init();
+@@ -29,7 +29,7 @@ void nthw_reg_meter_ops(struct meter_ops_s *ops)
+ 	meter_ops = ops;
+ }
+ 
+-const struct meter_ops_s *get_meter_ops(void)
++const struct meter_ops_s *nthw_get_meter_ops(void)
+ {
+ 	if (meter_ops == NULL)
+ 		nthw_meter_init();
+@@ -47,7 +47,7 @@ void nthw_reg_filter_ops(const struct ntnic_filter_ops *ops)
+ 	ntnic_filter_ops = ops;
+ }
+ 
+-const struct ntnic_filter_ops *get_ntnic_filter_ops(void)
++const struct ntnic_filter_ops *nthw_get_filter_ops(void)
+ {
+ 	if (ntnic_filter_ops == NULL)
+ 		ntnic_filter_init();
+@@ -62,7 +62,7 @@ void nthw_reg_100g_link_ops(struct link_ops_s *ops)
+ 	link_100g_ops = ops;
+ }
+ 
+-const struct link_ops_s *get_100g_link_ops(void)
++const struct link_ops_s *nthw_get_100g_link_ops(void)
+ {
+ 	if (link_100g_ops == NULL)
+ 		nthw_link_100g_init();
+@@ -79,7 +79,7 @@ void nthw_reg_agx_100g_link_ops(struct link_ops_s *ops)
+ 	link_agx_100g_ops = ops;
+ }
+ 
+-const struct link_ops_s *get_agx_100g_link_ops(void)
++const struct link_ops_s *nthw_get_agx_100g_link_ops(void)
+ {
+ 	if (link_agx_100g_ops == NULL)
+ 		link_agx_100g_init();
+@@ -93,7 +93,7 @@ void nthw_reg_port_ops(const struct port_ops *ops)
+ 	port_ops = ops;
+ }
+ 
+-const struct port_ops *get_port_ops(void)
++const struct port_ops *nthw_get_port_ops(void)
+ {
+ 	if (port_ops == NULL)
+ 		nthw_port_init();
+@@ -107,7 +107,7 @@ void nthw_reg_nt4ga_stat_ops(const struct nt4ga_stat_ops *ops)
+ 	nt4ga_stat_ops = ops;
+ }
+ 
+-const struct nt4ga_stat_ops *get_nt4ga_stat_ops(void)
++const struct nt4ga_stat_ops *nthw_get_nt4ga_stat_ops(void)
+ {
+ 	if (nt4ga_stat_ops == NULL)
+ 		nt4ga_stat_ops_init();
+@@ -122,7 +122,7 @@ void nthw_reg_adapter_ops(const struct adapter_ops *ops)
+ 	adapter_ops = ops;
+ }
+ 
+-const struct adapter_ops *get_adapter_ops(void)
++const struct adapter_ops *nthw_get_adapter_ops(void)
+ {
+ 	if (adapter_ops == NULL)
+ 		nthw_adapter_init();
+@@ -136,7 +136,7 @@ void nthw_reg_clk9563_ops(struct clk9563_ops *ops)
+ 	clk9563_ops = ops;
+ }
+ 
+-struct clk9563_ops *get_clk9563_ops(void)
++struct clk9563_ops *nthw_get_clk9563_ops(void)
+ {
+ 	if (clk9563_ops == NULL)
+ 		clk9563_ops_init();
+@@ -150,7 +150,7 @@ void nthw_reg_rst_nt200a0x_ops(struct rst_nt200a0x_ops *ops)
+ 	rst_nt200a0x_ops = ops;
+ }
+ 
+-struct rst_nt200a0x_ops *get_rst_nt200a0x_ops(void)
++struct rst_nt200a0x_ops *nthw_get_rst_nt200a0x_ops(void)
+ {
+ 	if (rst_nt200a0x_ops == NULL)
+ 		rst_nt200a0x_ops_init();
+@@ -164,7 +164,7 @@ void nthw_reg_rst9563_ops(struct rst9563_ops *ops)
+ 	rst9563_ops = ops;
+ }
+ 
+-struct rst9563_ops *get_rst9563_ops(void)
++struct rst9563_ops *nthw_get_rst9563_ops(void)
+ {
+ 	if (rst9563_ops == NULL)
+ 		rst9563_ops_init();
+@@ -185,7 +185,7 @@ void nthw_reg_rst9574_ops(struct rst9574_ops *ops)
+ 	rst9574_ops = ops;
+ }
+ 
+-struct rst9574_ops *get_rst9574_ops(void)
++struct rst9574_ops *nthw_get_rst9574_ops(void)
+ {
+ 	if (rst9574_ops == NULL)
+ 		rst9574_ops_init();
+@@ -200,7 +200,7 @@ void nthw_reg_rst_nt400dxx_ops(struct rst_nt400dxx_ops *ops)
+ 	rst_nt400dxx_ops = ops;
+ }
+ 
+-struct rst_nt400dxx_ops *get_rst_nt400dxx_ops(void)
++struct rst_nt400dxx_ops *nthw_get_rst_nt400dxx_ops(void)
+ {
+ 	if (rst_nt400dxx_ops == NULL)
+ 		rst_nt400dxx_ops_init();
+@@ -208,7 +208,7 @@ struct rst_nt400dxx_ops *get_rst_nt400dxx_ops(void)
+ 	return rst_nt400dxx_ops;
+ }
+ 
+-const struct flow_backend_ops *get_flow_backend_ops(void)
++const struct flow_backend_ops *nthw_get_flow_backend_ops(void)
+ {
+ 	if (flow_backend_ops == NULL)
+ 		nthw_flow_backend_init();
+@@ -223,7 +223,7 @@ void nthw_reg_profile_inline_ops(const struct profile_inline_ops *ops)
+ 	profile_inline_ops = ops;
+ }
+ 
+-const struct profile_inline_ops *get_profile_inline_ops(void)
++const struct profile_inline_ops *nthw_get_profile_inline_ops(void)
+ {
+ 	if (profile_inline_ops == NULL)
+ 		nthw_profile_inline_init();
+@@ -238,7 +238,7 @@ void nthw_reg_flow_filter_ops(const struct flow_filter_ops *ops)
+ 	flow_filter_ops = ops;
+ }
+ 
+-const struct flow_filter_ops *get_flow_filter_ops(void)
++const struct flow_filter_ops *nthw_get_flow_filter_ops(void)
+ {
+ 	if (flow_filter_ops == NULL)
+ 		nthw_init_flow_filter();
+@@ -253,7 +253,7 @@ void nthw_reg_dev_fp_flow_ops(const struct rte_flow_fp_ops *ops)
+ 	dev_fp_flow_ops = ops;
+ }
+ 
+-const struct rte_flow_fp_ops *get_dev_fp_flow_ops(void)
++const struct rte_flow_fp_ops *nthw_get_dev_fp_flow_ops(void)
+ {
+ 	if (dev_fp_flow_ops == NULL)
+ 		nthw_dev_fp_flow_init();
+@@ -268,7 +268,7 @@ void nthw_reg_dev_flow_ops(const struct rte_flow_ops *ops)
+ 	dev_flow_ops = ops;
+ }
+ 
+-const struct rte_flow_ops *get_dev_flow_ops(void)
++const struct rte_flow_ops *nthw_get_dev_flow_ops(void)
+ {
+ 	if (dev_flow_ops == NULL)
+ 		nthw_dev_flow_init();
+@@ -283,7 +283,7 @@ void nthw_reg_xstats_ops(struct ntnic_xstats_ops *ops)
+ 	ntnic_xstats_ops = ops;
+ }
+ 
+-struct ntnic_xstats_ops *get_ntnic_xstats_ops(void)
++struct ntnic_xstats_ops *nthw_get_xstats_ops(void)
+ {
+ 	if (ntnic_xstats_ops == NULL)
+ 		ntnic_xstats_ops_init();
+diff --git a/drivers/net/ntnic/ntnic_mod_reg.h b/drivers/net/ntnic/ntnic_mod_reg.h
+index 26c8723afa..2ed2286911 100644
+--- a/drivers/net/ntnic/ntnic_mod_reg.h
++++ b/drivers/net/ntnic/ntnic_mod_reg.h
+@@ -120,7 +120,7 @@ struct sg_ops_s {
+ };
+ 
+ void nthw_reg_sg_ops(struct sg_ops_s *ops);
+-const struct sg_ops_s *get_sg_ops(void);
++const struct sg_ops_s *nthw_get_sg_ops(void);
+ void nthw_sg_init(void);
+ 
+ /* Meter ops section */
+@@ -129,7 +129,7 @@ struct meter_ops_s {
+ };
+ 
+ void nthw_reg_meter_ops(struct meter_ops_s *ops);
+-const struct meter_ops_s *get_meter_ops(void);
++const struct meter_ops_s *nthw_get_meter_ops(void);
+ void nthw_meter_init(void);
+ 
+ /*
+@@ -140,7 +140,7 @@ struct ntnic_filter_ops {
+ };
+ 
+ void nthw_reg_filter_ops(const struct ntnic_filter_ops *ops);
+-const struct ntnic_filter_ops *get_ntnic_filter_ops(void);
++const struct ntnic_filter_ops *nthw_get_filter_ops(void);
+ void ntnic_filter_init(void);
+ 
+ struct link_ops_s {
+@@ -148,11 +148,11 @@ struct link_ops_s {
+ };
+ 
+ void nthw_reg_100g_link_ops(struct link_ops_s *ops);
+-const struct link_ops_s *get_100g_link_ops(void);
++const struct link_ops_s *nthw_get_100g_link_ops(void);
+ void nthw_link_100g_init(void);
+ 
+ void nthw_reg_agx_100g_link_ops(struct link_ops_s *ops);
+-const struct link_ops_s *get_agx_100g_link_ops(void);
++const struct link_ops_s *nthw_get_agx_100g_link_ops(void);
+ void link_agx_100g_init(void);
+ 
+ struct port_ops {
+@@ -208,7 +208,7 @@ struct port_ops {
+ };
+ 
+ void nthw_reg_port_ops(const struct port_ops *ops);
+-const struct port_ops *get_port_ops(void);
++const struct port_ops *nthw_get_port_ops(void);
+ void nthw_port_init(void);
+ 
+ struct nt4ga_stat_ops {
+@@ -219,7 +219,7 @@ struct nt4ga_stat_ops {
+ };
+ 
+ void nthw_reg_nt4ga_stat_ops(const struct nt4ga_stat_ops *ops);
+-const struct nt4ga_stat_ops *get_nt4ga_stat_ops(void);
++const struct nt4ga_stat_ops *nthw_get_nt4ga_stat_ops(void);
+ void nt4ga_stat_ops_init(void);
+ 
+ struct adapter_ops {
+@@ -230,7 +230,7 @@ struct adapter_ops {
+ };
+ 
+ void nthw_reg_adapter_ops(const struct adapter_ops *ops);
+-const struct adapter_ops *get_adapter_ops(void);
++const struct adapter_ops *nthw_get_adapter_ops(void);
+ void nthw_adapter_init(void);
+ 
+ struct clk9563_ops {
+@@ -239,7 +239,7 @@ struct clk9563_ops {
+ };
+ 
+ void nthw_reg_clk9563_ops(struct clk9563_ops *ops);
+-struct clk9563_ops *get_clk9563_ops(void);
++struct clk9563_ops *nthw_get_clk9563_ops(void);
+ void clk9563_ops_init(void);
+ 
+ struct rst_nt200a0x_ops {
+@@ -250,7 +250,7 @@ struct rst_nt200a0x_ops {
+ };
+ 
+ void nthw_reg_rst_nt200a0x_ops(struct rst_nt200a0x_ops *ops);
+-struct rst_nt200a0x_ops *get_rst_nt200a0x_ops(void);
++struct rst_nt200a0x_ops *nthw_get_rst_nt200a0x_ops(void);
+ void rst_nt200a0x_ops_init(void);
+ 
+ struct rst9563_ops {
+@@ -259,7 +259,7 @@ struct rst9563_ops {
+ };
+ 
+ void nthw_reg_rst9563_ops(struct rst9563_ops *ops);
+-struct rst9563_ops *get_rst9563_ops(void);
++struct rst9563_ops *nthw_get_rst9563_ops(void);
+ void rst9563_ops_init(void);
+ 
+ struct rst9574_ops {
+@@ -270,7 +270,7 @@ struct rst9574_ops {
+ };
+ 
+ void nthw_reg_rst9574_ops(struct rst9574_ops *ops);
+-struct rst9574_ops *get_rst9574_ops(void);
++struct rst9574_ops *nthw_get_rst9574_ops(void);
+ void rst9574_ops_init(void);
+ 
+ struct rst_nt400dxx_ops {
+@@ -279,7 +279,7 @@ struct rst_nt400dxx_ops {
+ };
+ 
+ void nthw_reg_rst_nt400dxx_ops(struct rst_nt400dxx_ops *ops);
+-struct rst_nt400dxx_ops *get_rst_nt400dxx_ops(void);
++struct rst_nt400dxx_ops *nthw_get_rst_nt400dxx_ops(void);
+ void rst_nt400dxx_ops_init(void);
+ 
+ struct flow_backend_ops {
+@@ -289,7 +289,7 @@ struct flow_backend_ops {
+ };
+ 
+ void nthw_reg_flow_backend_ops(const struct flow_backend_ops *ops);
+-const struct flow_backend_ops *get_flow_backend_ops(void);
++const struct flow_backend_ops *nthw_get_flow_backend_ops(void);
+ void nthw_flow_backend_init(void);
+ 
+ struct profile_inline_ops {
+@@ -447,7 +447,7 @@ struct profile_inline_ops {
+ };
+ 
+ void nthw_reg_profile_inline_ops(const struct profile_inline_ops *ops);
+-const struct profile_inline_ops *get_profile_inline_ops(void);
++const struct profile_inline_ops *nthw_get_profile_inline_ops(void);
+ void nthw_profile_inline_init(void);
+ 
+ struct flow_filter_ops {
+@@ -560,15 +560,15 @@ struct flow_filter_ops {
+ };
+ 
+ void nthw_reg_dev_fp_flow_ops(const struct rte_flow_fp_ops *ops);
+-const struct rte_flow_fp_ops *get_dev_fp_flow_ops(void);
++const struct rte_flow_fp_ops *nthw_get_dev_fp_flow_ops(void);
+ void nthw_dev_fp_flow_init(void);
+ 
+ void nthw_reg_dev_flow_ops(const struct rte_flow_ops *ops);
+-const struct rte_flow_ops *get_dev_flow_ops(void);
++const struct rte_flow_ops *nthw_get_dev_flow_ops(void);
+ void nthw_dev_flow_init(void);
+ 
+ void nthw_reg_flow_filter_ops(const struct flow_filter_ops *ops);
+-const struct flow_filter_ops *get_flow_filter_ops(void);
++const struct flow_filter_ops *nthw_get_flow_filter_ops(void);
+ void nthw_init_flow_filter(void);
+ 
+ struct ntnic_xstats_ops {
+@@ -592,7 +592,7 @@ struct ntnic_xstats_ops {
+ };
+ 
+ void nthw_reg_xstats_ops(struct ntnic_xstats_ops *ops);
+-struct ntnic_xstats_ops *get_ntnic_xstats_ops(void);
++struct ntnic_xstats_ops *nthw_get_xstats_ops(void);
+ void ntnic_xstats_ops_init(void);
+ 
+ #endif	/* __NTNIC_MOD_REG_H__ */
 -- 
 2.45.0
 
