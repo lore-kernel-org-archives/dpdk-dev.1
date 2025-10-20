@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC80CCD19F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D5CCCD19F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 20 Oct 2025 16:45:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 066B842E53;
-	Mon, 20 Oct 2025 18:44:15 +0200 (CEST)
-Received: from egress-ip11a.ess.de.barracuda.com
- (egress-ip11a.ess.de.barracuda.com [18.184.203.234])
- by mails.dpdk.org (Postfix) with ESMTP id 03BB440ECF
- for <dev@dpdk.org>; Mon, 20 Oct 2025 18:43:54 +0200 (CEST)
-Received: from DUZPR83CU001.outbound.protection.outlook.com
- (mail-northeuropeazon11022119.outbound.protection.outlook.com
- [52.101.66.119]) by mx-outbound11-211.eu-central-1a.ess.aws.cudaops.com
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	by mails.dpdk.org (Postfix) with ESMTP id 42B3340ECF;
+	Mon, 20 Oct 2025 18:44:16 +0200 (CEST)
+Received: from egress-ip42a.ess.de.barracuda.com
+ (egress-ip42a.ess.de.barracuda.com [18.185.115.201])
+ by mails.dpdk.org (Postfix) with ESMTP id 8A3B740E4B
+ for <dev@dpdk.org>; Mon, 20 Oct 2025 18:43:55 +0200 (CEST)
+Received: from AS8PR04CU009.outbound.protection.outlook.com
+ (mail-westeuropeazon11021083.outbound.protection.outlook.com [52.101.70.83])
+ by mx-outbound44-20.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
+ cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
  Mon, 20 Oct 2025 16:43:54 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VftzCJoFrIw+m3TG6jbjSi9zORl/9JaB++rjzZ41Sw9qMe7cE79yiCDF4L4h7ySxIiNIxPYjSKzP19PKijgc+uHtjJSFwLnfibk67S6B/ulCg636QWZOXTTCWQd4HHHVVpiPg1Ic0ibRDhZiOEgVD9A9SPfEZZZ4ryzWNVKdqE66fGWVz1s7TumWfbOkAMQCn8X0Ym8A67XdbLYObrv72/3BlkZyzcE6jRXT1zUT9kIPYbIjkfhgmGPwtIE3RIoN2rwyZSYGNPJMP0l+m+BqR6oZT7eYXFGEZTy/3qNbfx2RSjrKjvabgIeJj8m6GXqiS4OJr/FVp8Qh7ExIiL4i5w==
+ b=iNQ94DQgt8a4LIdaRtBYSeLwvBNXQIfPlV/3XPWBD0Vi2ssEvKms/uTLjTwUDiknwfYXMlOY2dr/YjbVSi9pvoBPkl1uPh9LiRV3lVCpChgNj3T7cAEPvSdbexITrmTRHA0KMiNl4P+TCme0Xl7Sst0OoDoGxLh3PDqTwJh3LJ/RviNyb+3rj4kvVKqJbvBTpetr1eJy//GfDPWDPLTpzpRthOJkqeTGRkKLAB0dr24Wu3MfHBSATlkbXyULoEFr5FXqK1ESQ+r+GKXT1j/y5bGkj5NLf97RTmnM7OI4hRHeq9qXKK8LszTw4JoQUA9jFtdYylWHTaS3vEjT0Y/Siw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z9Q23eD046qRmgVWxEOckjtuDJpVewlrSREG7uHEQR0=;
- b=lkIwl7QwblAutrvOR/1NF70kL+XbG+8uJ7oMD9AHfaZi0kcrcqzXFYtAXLbi+9GmrWfATQAHmbd5NJawZ6v3LF73PWq+Fysvs9BU8YJjlEZvYCcjlym0hsPDf0jctaJejhtjKXbQJTPdARNx4z0coigBTldZ+QEz30udh/XILZplRnIJVgD0zmpyCH+C5GRb1eL6/e+zTFyVKkfMNYsFSGG9I7PHe5uJnMEvomtAg8itah5l7v/FHjmRyaKgCfRch4xL/jRSM2t8V32HVUC/VHDcCF6bjGj/NX68UQQ3FUqUL3TBkyGq06VnBG387mUxKGAtlpxQyLC8RN03J1X5sw==
+ bh=YFkCMHpxRiIrZy+wZTdzqf9X6EjT9gk8nBpJYxhWH6w=;
+ b=hzM+rbinSat3hvcjEjuwHKz5mya3VV/Z3HLji3ZNUvVApvzoMxqXuxN2/tVS3V7x4HAGS53OCOhbUb0kxzhzFViDW6BHP9yayWyPoWOpfvCwX6IReqwTge+hGb8ewuPsbyyz93Op/oOdgRW/JPZsqG5JQTC/Gh8GTNm0O2czOJTbeWQ/+Ut95oemmREV3YY2u00sMinPlC2QoFetSOGpVlXa0CZ6M+SR74TVpj0Nfoy42O0g4FaRVcXXEMsF9v17UBshD2CQkKZZYGEdT+3M54x9bqT9CBnIHMcNGvsLR26USKOlNtCZ6XheW7QXwrVzVwnfh7cz0R3vJJPsN/mX1A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,16 +30,16 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z9Q23eD046qRmgVWxEOckjtuDJpVewlrSREG7uHEQR0=;
- b=l9LbkhQqf7hoDATRB6N47f1M4yZ1IlGj1RblWJ/KqsPmDqZZ+WEz1pHg90P6BwQ3tWlpZhH9+83EI3hNwnpdCazmrTBj/l00Dr8ntAA8Hle0v7dv4XdTagAbKkmPIqCHF0uuiASAlBtgF7q1sZM8IbLIUDAgQiXgiYOqnZxaJzE=
-Received: from DUZPR01CA0018.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:46b::6) by GVXP190MB1848.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:150:6e::6) with Microsoft SMTP Server (version=TLS1_2,
+ bh=YFkCMHpxRiIrZy+wZTdzqf9X6EjT9gk8nBpJYxhWH6w=;
+ b=WiI7QtWPg8XjO5JcziV5KpWvgNk8l44pxwT/h5aRhUTR2ah20BZPnINqgAPXazUbd4SzbBYPbNyV4WD8Vqp4p51AkWtySx5T93e55NQsGm0D79YKvy94bNHyAFGrey8VtWYrwNBj/6gAnSD9/KlIqKP2v1B3Luq9FD6ff6YqmCc=
+Received: from DUZPR01CA0024.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46b::11) by DU0P190MB2386.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:10:5a1::17) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.11; Mon, 20 Oct
- 2025 16:43:50 +0000
+ 2025 16:43:52 +0000
 Received: from DU6PEPF0000B61F.eurprd02.prod.outlook.com
- (2603:10a6:10:46b:cafe::6a) by DUZPR01CA0018.outlook.office365.com
- (2603:10a6:10:46b::6) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:10:46b:cafe::11) by DUZPR01CA0024.outlook.office365.com
+ (2603:10a6:10:46b::11) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.17 via Frontend Transport; Mon,
  20 Oct 2025 16:44:15 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
@@ -50,91 +50,82 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  DU6PEPF0000B61F.mail.protection.outlook.com (10.167.8.134) with Microsoft
- SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:43:50
+ SMTP Server id 15.20.9253.7 via Frontend Transport; Mon, 20 Oct 2025 16:43:52
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v2 14/21] net/ntnic: add handling exception path option
-Date: Mon, 20 Oct 2025 18:43:23 +0200
-Message-ID: <20251020164336.283664-15-sil-plv@napatech.com>
+Subject: [PATCH v2 17/21] net/ntnic: extend flow dump with MBR configuration
+Date: Mon, 20 Oct 2025 18:43:26 +0200
+Message-ID: <20251020164336.283664-18-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20251020164336.283664-1-sil-plv@napatech.com>
 References: <20251001151018.250671-21-sil-plv@napatech.com>
  <20251020164336.283664-1-sil-plv@napatech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU6PEPF0000B61F:EE_|GVXP190MB1848:EE_
-X-MS-Office365-Filtering-Correlation-Id: 26b98653-c617-432f-a4c6-08de0ff7d8c6
+X-MS-TrafficTypeDiagnostic: DU6PEPF0000B61F:EE_|DU0P190MB2386:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 6d1e51d4-5b56-4aff-bcda-08de0ff7da4a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|82310400026|36860700013|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?SUd0UmRTbnRGNHA0WE9hQXdzMGtBUVlydEhCUHI0Y2pjUTJvUkZ0UEVtVEdK?=
- =?utf-8?B?L0NmakpVdXBMTnNzNTE5UzdlQjNHR1RHQ295NWdDZGdSMDRxNjhrN0xONFZu?=
- =?utf-8?B?K1oybTdZU2QyNXBkemNnRHJVN3pLVWZYYllpZDM2bFVIdkpndFRwS2U4RVMv?=
- =?utf-8?B?Rm5Ud3R3TE5YT3pMMld0R0RlVFB3b3FYZmNwSUxjeE95ZGVYejJDQ0VraUZo?=
- =?utf-8?B?TlUzczczbWEwd29kak1nZFZQcjVwWEpQK29xWFJ5YzNPZUE2ZTFUL0NDVFRy?=
- =?utf-8?B?SnJLVi9KcWZySkdkcjdpeUNwOE9IOTY3bzUzT3JYOWEwNWF1NitDY3BhYng2?=
- =?utf-8?B?dUs3VzVRVXZDNUdZSGg3RnJTK3M2VFZ0VEtsZUJJZnpyTW1nY213QzlJNnpo?=
- =?utf-8?B?VGRiRnhhd0I2emdGcjdrTlJHTytzRkJYZFkwYWVmdUMvRDV2NW1RYThIUXlt?=
- =?utf-8?B?b2tIb3M1OWllaStFL09rczJSd1N6b1k4alFRNXJkRGxOdWFSMUR6SE5FTnVU?=
- =?utf-8?B?di9aRU42KzlPNEt5ZDB3a3A0ZVhWdlE2QWEvcFUzY0FiMmVrZFhFSmh3OTEw?=
- =?utf-8?B?U0tuSnp4RTJIUmtXUHVYR1MzUm5tT3d2NDB5Wks2YWx2clBQejRYeCs0Rjl6?=
- =?utf-8?B?UlVtNmY5U1laSXdaM0d1enpiMUdqZHBoNEg2RjZ2ZmlQeHlMZ1lnaUJoMWt4?=
- =?utf-8?B?S0dMb0VBaGpUSkljNUs0S3Z4cGRxQmNPWk9vbXNaVWVCWnptMlBzR1JXOUtt?=
- =?utf-8?B?L21LSnhBSmEvZTVqb3lqRytQUCttRWY3TU80SzFTSlFsWkNxWGJjN0diU0p0?=
- =?utf-8?B?UXZ5U3MxSUp4a2N1cGNldjRReHk1S0hXNCtEeTcrZnJuZzhGV1pGK054NU1P?=
- =?utf-8?B?SjJOdE90aVVZTzJ5WW01Zk1zSm01bmNyVzRrVXRwTWR6czk2UVdGN1BqSGty?=
- =?utf-8?B?c0lQQTNqeU0yY2JhUGNMWWNFMjl3bDdUeWN5NFJJZW1FbWRZQ0dYQlhNQ1d5?=
- =?utf-8?B?TnQwYVhBQi9SbGFUV0hLOE1HUU54TE1XeHdaNzI4T081ellqYWdRU0lTYldI?=
- =?utf-8?B?VUVGbEtMbmNDVmxWUy9ESlN0R3dWSHhHeGlJV1FzMWRlL25HeEZUNXVVaFpP?=
- =?utf-8?B?N0syMUVTdmdvQXZkZGZvZDRkMWU5eUpCc0JCOHlKekVYWXFQdUduajJzMGxa?=
- =?utf-8?B?L253Z0w0NkxSSnpSaGtzVkUvZjVZdXFETUkvK0JrcUt0NTYwRm5JWkp6ekhD?=
- =?utf-8?B?TjYwcndxOEhVQ203U0k0NU44N25tTWhHTXM0V3gvRTFyeXp5OVJ1U3JMbHEv?=
- =?utf-8?B?QmlXdGJWZ3ZoendlUXN6bHdQYUtSZ3BQUjNtQ2daaWhaYlVTL29RT2ZDZ29K?=
- =?utf-8?B?VjZVSkhBbjRXN1Ryb3h3TEd4Mk9sS0twTUxIVE52Y0t6aGl4WTc3eVVRYzI1?=
- =?utf-8?B?clIya3JjQ1lNMS8vbW9PT2ZveUdDV2ZreDBaY1pCRjVha1ZjY2ZHVHVvU2pj?=
- =?utf-8?B?MWVxMUNqeUpGK0I3VVBpLzRnVDE2K3J0TFJXKzhMNlNEOFJvRzJmMDYzcS90?=
- =?utf-8?B?Wkxwd2Jtdi9HSUVzTlRvekExMXZXczhGd1lKTGdZZFZob21jRUZHaGNoMHdQ?=
- =?utf-8?B?MlNFRXFuQ0hleUdYVDJXWVlRVXphU0FVMlpWRWNoemZ6eitnSTNOaXh2bmt6?=
- =?utf-8?B?VURHRHVvUnRVelJRRk95TUxvaE5ZaDliTi9NaG5RMCtIN09OL2VkRUNWalJY?=
- =?utf-8?B?Z2pYMDBlakQxQWFEeFRseUVodGY1RGhiRDdHak1Tcmd0Z0dsa2hDVXArV05R?=
- =?utf-8?B?ZTc1V0FPY2dUMnBKU1BFQnc2cjBOeU53NFE3UkhFUmduUVp0QS8xVnB4RWJJ?=
- =?utf-8?B?UXlpNEF2dEZqVGhncnJYSmgyRGlETUxOVTZaZmVTSUxRMml2a3BINEQ3RElw?=
- =?utf-8?B?U3lLc1BKMzZmc01YaVoySDJEMTBPaHJnQk5jUzNwdVlRNkdiSjNzSVRXZUhl?=
- =?utf-8?B?SDQ2VngxYVlCYVlHUC9uKzdpT3ZDMWdsenJkWFFPQUh4M3d4amJvRmRJN1pY?=
- =?utf-8?B?N0EwZGVCdXZMRTNlSWhUbkl1RlFnbUxJQjgrSDFIQ3YzQ0NjVXptM0o4bUdG?=
- =?utf-8?Q?w028=3D?=
+ ARA:13230040|82310400026|376014|1800799024|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?i1hUZPwU7IWsfWG/iUF+OJoso2TMf04rQkvt3fgrBczgsfClpoB3iZrPc+YC?=
+ =?us-ascii?Q?RnkPYpsyuonURrML6KMbhZnRbh6qCN3knB6e/21OypXTkBvgA/y0g0W5UmRq?=
+ =?us-ascii?Q?Bw8XgGEYzdM/7NpYRY1ov3Ezr1n/hg8Ep2AMvfKqALM26qsHJHUp2lvZ/wxg?=
+ =?us-ascii?Q?gkwRTyltiWKC1lOhXzFWLqkU3N/G8wItlRpl8dEFLpFxIOeOwst2YpILZV11?=
+ =?us-ascii?Q?IDlIpBJjaWBofDQ9R8+UBsjSBPhne9/fI9Ws43GKcip2eAsd5Iik3AVa3hPa?=
+ =?us-ascii?Q?1BwNcISC8jzyIsQnTpEWjaqWlh8HKcC5aYHWdSC2ig9Ri7PVy50MW3D6TuAP?=
+ =?us-ascii?Q?ygv2yXMPGu6dLTydjfnv8WGNcFv5YtyminZu9qhtVDEfyDmKoB5L1CvvF0Dj?=
+ =?us-ascii?Q?dxhDKOVHmQhPxDY6wqXyBghxfzFEVBEp20isqnq5xPKY1OEJMSugVvHw4def?=
+ =?us-ascii?Q?w8EjsU7xYfeabC8i+MBD1l/bTph2flWgGb6/idDopZli9Xd6RFpl9qtSRpzK?=
+ =?us-ascii?Q?t3ziEImvHhswxwgLGoBWxRcRMDyFGonz/yiDyRLfbZ8+V8C3+EN0/5Ak6WP6?=
+ =?us-ascii?Q?OxyXM7ctMhC1IBoNlIoosYeYh2VLnboE1u/OS4yl+94bH87d6UG+w94V1x2A?=
+ =?us-ascii?Q?h/yJVlwJID+HJJAGzdq07EOW4RhC8+fSG2v2iBhutc/fKMsWsjak7rzEgBLN?=
+ =?us-ascii?Q?Lcdgu4O0rxGO9J2Og1J3c2WXLBq92MYhKhJq5/zdtTmNP0Rhqqt6vLUp+/bG?=
+ =?us-ascii?Q?xmSQbzXmiIpanLRQCC2sBblgA2YZgAPl7OeML9zXU9Ze9SjXeMsZBgZabsT+?=
+ =?us-ascii?Q?OYcM9Sgq9QQFGCdyklMEqzjD33YNmsbGEjl3UJxhfLOpQjgSl7B8QiErYIkj?=
+ =?us-ascii?Q?mYKjA9mOou5dYjn7T1k8pQNw0YZibYCdt6lSpV0SRHXFzdExiyl1nI903gkf?=
+ =?us-ascii?Q?gNlwMMrpsvvQXxN8QHE0lL/3bitDZeF4j0iQHLsw+XC2nznJVWSgqzgDBlHc?=
+ =?us-ascii?Q?ieUOz/PNjPvliwtrGlDSzJN6N8CF0kfRo9O18jmUdMExtW27NmyJh+6WpRhu?=
+ =?us-ascii?Q?WTL+wFvsuYwuc6rJ6tgpjI8w6UBeSQIrTz2z1JJuQFHYWgQHiTkZlkPk5Mcm?=
+ =?us-ascii?Q?5MABoCEc0pndGxzqjib9ivpRJEuCk6fmx27tnYCkn0It+dz1s98KcYPOWzrN?=
+ =?us-ascii?Q?hb1x2F5TTFeVZ141PzJzHH9F7b6tMpe8pN6ltE13qMWWGnypgJlnMjbsdhNX?=
+ =?us-ascii?Q?vtQN7I9L0Gjfpy/vZoemOkbIlaoJ4L+o8DvvSVZI5245sOvrLlOnwbyBCMxz?=
+ =?us-ascii?Q?OLdL9op6zm4+Pcgke3vDMdxuUpWgNUNmJ2M3jzyjtae76VO6tDiZQJTh9c9/?=
+ =?us-ascii?Q?omhcfaPmlHuvQjk9f875+2TyRVfH7D97tT7uzY2fSzcs935yrUcCvnWjgLqj?=
+ =?us-ascii?Q?1ujGKv9vbGDEETkK7D4LMy01kGQiSTvqhqaC6+txd2U/5HkL8yp/qm5nO0CO?=
+ =?us-ascii?Q?2GhdHrK6rQpheZMKQL7voPL63CPMjf4lpBLwl2N7cQosMBcD7SRgWdNytp83?=
+ =?us-ascii?Q?bbGLZ7IkJXvrgU6pq1U=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);
+ CAT:NONE; SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: myVduMVc5LoMODnC12kgPgG53RhAQlkOKF2axgX3x05s2MxqKHgjPug70tFw5cPFPtoI6OE3KIrV/Xrkj5fC4zthQIxq4DG6MVPYWgWZftvoOnbcBEAHl0K83bfTCO4UjaUlMeT897EHHzqIhksxWegnAq1NcLis2LOHBCKZVTp69onvXCu9ByoXf4f78/wmSHcfNP8jWw5INU6+sT2aHzbWdloB1fm5rUrjwhLzM4S4FTi0S56zDITBYbWDIPlALYi7ux6Taj2OTN/5SqpPXI9jNfSUX937gz8AQdPFoBMHT43p1GPSideZIXm6TAlHBdpt44ERRcLlnltRXYDgP0qmvHNUdYkl2lmxtBuScjHLzIO7N34XJe3vS4x1RGYp9Fx2HQOo7kBCPD3ZB119YLEiv/FMuwo5jx+zr7FNw+L/MzMPrFeKbGQB4O8EpTTyGS04oTjG3FjjL4l3jzfepPKgxRjI4plAcW17o16B7DlVEdx6ZAcr+7RnOMbo/GOC3xfTffCR8oZjcAdhdmFV38PttnjUQgNkxyhK2pWrutbYbiAZFpH/UyIuASIZr9RUApJBA1p6LPdpcYpzlLf9INnqoRxVF6HHWUIu9zeztpRykgRhz3aBzFpp/FS0quYwy/qa2929MPirrxx77ZcxiaWnGe5sXKN6ajtqj8gHwB4=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 6tRdQ+/uYa9sDkT/nZa9Io7f/BpRJQB90l1Qw0KA3RBPgkeDciAm8CojMqySbOsrkm7kht61liGZMpAXr1Gm6z1w5hSawm2rtw/N2gwvzwPR+o7Fcch38+SKEMbb76nFFsSNpS6uO2tAGu9Yx0cEU3zcgvnWYk3cdvuTQXmfUzlQ+mBeUH5WWy9v61S0bzEbsZsj1m2ccj5tVH4UA7rNzbR4gz4dr7VGqO7jqbENorXcDMdghY2Qv1o49+GRjGsnR3hgF3oW93FQPhWak4ZydTmVyNoEuD+77b1h21i4Y3lmO5wAy25j4dNAnHR0uMyHcH2G8ACPx/8sCgOjs5oJsfrKeb5HJ5/7isdwJWNodgFF+gDIqfsY1/aRgXp582/6z5iouAoG3lzOD2+oCXVenrWCChqjXk8GfyTDTG9DsYoYw9MqsdoCkpk3ZQ96d5CeLSJT/VerJVZ+xvFn/ZcKvIQY4lIZTlbTO57aLAFsMGCRKPzK7hYDlSIue/jftDCEJLNGPKRf7TCvh132ze7JTJ03k6Wqc8wdWXvetqAnsoBjYQaogehTC+p1vsc0rmhP0Kxx7o9NloKMWG1FA7xgtsZEEw0PuRPR4D6ZoigFVIK5bBfiMhLJJM9TbA1ebnORgraPB7OL0wgU7nOlVgUVj2uW+gjScflxf2nAJGbqZ+I=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:43:50.0003 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 26b98653-c617-432f-a4c6-08de0ff7d8c6
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2025 16:43:52.5385 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d1e51d4-5b56-4aff-bcda-08de0ff7da4a
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU6PEPF0000B61F.eurprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXP190MB1848
-X-BESS-ID: 1760978634-303027-28481-63652-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0P190MB2386
+X-BESS-ID: 1760978634-311284-32701-8334-1
 X-BESS-VER: 2019.1_20251001.1803
-X-BESS-Apparent-Source-IP: 52.101.66.119
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkaG5oZAVgZQ0Mwg2dLU0tIg2c
- zA3DDNNCXVLNXIwDLF0sg8ycjQ2NxCqTYWAHYa/19BAAAA
+X-BESS-Apparent-Source-IP: 52.101.70.83
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKViYW5hZAVgZQ0DQ1NcXcMtnE1D
+ DF3NjM0NQiycIiLdkkxTLZzNI8xchIqTYWAAXbMqlBAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.268348 [from 
- cloudscan19-215.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan16-189.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -155,78 +146,129 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enable exception path for unmatched packets to go through queue 0.
+add dump of MBR init configuration and extend dump of MBR rules
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- doc/guides/nics/ntnic.rst        |  9 +++++++++
- drivers/net/ntnic/ntnic_ethdev.c | 21 +++++++++++++++++++++
- 2 files changed, 30 insertions(+)
+ .../profile_inline/flow_api_hw_db_inline.c    | 36 ++++++++++++--
+ .../flow_api_profile_inline_config.h          | 48 +++++++++++++++++++
+ 2 files changed, 81 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/nics/ntnic.rst b/doc/guides/nics/ntnic.rst
-index 5375d89a2d..01b6dca652 100644
---- a/doc/guides/nics/ntnic.rst
-+++ b/doc/guides/nics/ntnic.rst
-@@ -136,6 +136,15 @@ Multiple arguments for the same device are separated by ‘,’ comma.
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c
+index 17a0332a06..db40bfd368 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_hw_db_inline.c
+@@ -23,6 +23,13 @@
  
-    By default, the value is set to 1.
+ #define HW_DB_FT_TYPE_FLM 0
+ #define HW_DB_FT_TYPE_KM 1
++
++/******************************************************************************/
++/* MBR Configuration support                                                  */
++/******************************************************************************/
++static int8_t hw_db_pkt_layer_dyn[] = NTNIC_FLOW_MBR_PKT_LAYER_PER_GROUP;
++static int8_t hw_db_pkt_layer_ofs[] = NTNIC_FLOW_MBR_PKT_LAYER_OFFSET_PER_GROUP;
++
+ /******************************************************************************/
+ /* Handle                                                                     */
+ /******************************************************************************/
+@@ -533,11 +540,34 @@ void nthw_db_inline_dump(struct flow_nic_dev *ndev, void *db_handle, const struc
+ 					&db->flm[idxs[i].id2].ft[idxs[i].id1].data;
+ 			fprintf(file, "  FLM_FT %" PRIu32 "\n", idxs[i].id1);
  
-+``exception_path`` parameter [int]
-+
-+   Enable exception path for unmatched packets to go through queue 0.
-+
-+   To enable exception_path::
-+
-+      -a <domain>:<bus>:00.0,exception_path=1
-+
-+   By default, the value is set to 0.
+-			if (data->is_group_zero)
++			if (data->is_group_zero) {
+ 				fprintf(file, "    Jump to %d\n", data->jump);
++			} else {
++				uint32_t group_orig = 0;
  
- Logging and Debugging
- ---------------------
-diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
-index 01b3fe00ef..29508888a3 100644
---- a/drivers/net/ntnic/ntnic_ethdev.c
-+++ b/drivers/net/ntnic/ntnic_ethdev.c
-@@ -73,11 +73,13 @@ uint64_t rte_tsc_freq;
- #define ETH_DEV_NTNIC_HELP_ARG "help"
- #define ETH_DEV_NTHW_RXQUEUES_ARG "rxqs"
- #define ETH_DEV_NTHW_TXQUEUES_ARG "txqs"
-+#define ETH_DEV_NTHW_EXCEPTION_PATH_ARG "exception_path"
- 
- static const char *const valid_arguments[] = {
- 	ETH_DEV_NTNIC_HELP_ARG,
- 	ETH_DEV_NTHW_RXQUEUES_ARG,
- 	ETH_DEV_NTHW_TXQUEUES_ARG,
-+	ETH_DEV_NTHW_EXCEPTION_PATH_ARG,
- 	NULL,
- };
- 
-@@ -2260,6 +2262,25 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
- 			NT_LOG_DBGX(DBG, NTNIC, "devargs: %s=%u",
- 				ETH_DEV_NTHW_TXQUEUES_ARG, nb_tx_queues);
- 		}
+-			else
+-				fprintf(file, "    Group %d\n", data->group);
++				if (nthw_flow_group_translate_get_orig_group(ndev->group_handle,
++					data->group,
++					&group_orig) < 0) {
++					fprintf(file, "    Encoded group: %d\n", data->group);
 +
-+		kvargs_count = rte_kvargs_count(kvlist, ETH_DEV_NTHW_EXCEPTION_PATH_ARG);
++				} else {
++					fprintf(file, "    Group %d, encoded group: %d\n",
++						group_orig, data->group);
++				}
 +
-+		if (kvargs_count != 0) {
-+			assert(kvargs_count == 1);
-+			res = rte_kvargs_process(kvlist, ETH_DEV_NTHW_EXCEPTION_PATH_ARG,
-+					&nthw_string_to_u32, &exception_path);
++				const int dyn_group_orig =
++					group_orig >= sizeof(hw_db_pkt_layer_dyn) ?
++						hw_db_pkt_layer_dyn[0] :
++						hw_db_pkt_layer_dyn[group_orig];
 +
-+			if (res < 0) {
-+				NT_LOG_DBGX(ERR, NTNIC,
-+					"problem with command line arguments: res=%d", res);
-+				return -1;
++				const int ofs_group_orig =
++					group_orig >= sizeof(hw_db_pkt_layer_ofs) ?
++						hw_db_pkt_layer_ofs[0] :
++						hw_db_pkt_layer_ofs[group_orig];
++
++				fprintf(file, "    BYT dyn %d, ofs %d\n",
++					dyn_group_orig, ofs_group_orig);
 +			}
-+
-+			NT_LOG_DBGX(DBG, NTNIC, "devargs: %s=%u",
-+				ETH_DEV_NTHW_EXCEPTION_PATH_ARG, exception_path);
-+		}
-+
-+		rte_kvargs_free(kvlist);
- 	}
  
+ 			fprintf(file, "    ACTION_SET id %d\n", data->action_set.ids);
+ 			break;
+diff --git a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline_config.h b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline_config.h
+index c665cab16a..4be5740f1a 100644
+--- a/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline_config.h
++++ b/drivers/net/ntnic/nthw/flow_api/profile_inline/flow_api_profile_inline_config.h
+@@ -93,6 +93,54 @@
+  */
+ #define NTNIC_FLOW_PERIODIC_STATS_BYTE_TIMEOUT 23
  
++/*
++ * Protocol offset for packet bytes that should be used for calculations.
++ * The number of bytes (N) used for counting bytes in the FLM is determined
++ * as follows:
++ *
++ * N = FrameLength - NTNIC_FLOW_MBR_PKT_LAYER - NTNIC_FLOW_MBR_PKT_LAYER_OFFSET
++ *
++ * The frame length includes the FCS.
++ *
++ * 0: Start of frame; always zero.
++ * 1: Layer 2 header.
++ * 2: First VLAN.
++ * 3: First MPLS.
++ * 4: Layer 3 header.
++ * 5: The Identification field of IPv4 or IPv6.
++ * 6: The final IP destination address.
++ * 7: Layer 4 header.
++ * 8: Layer 4 payload.
++ * 9: Tunnel payload.
++ * 10: Tunneled layer 2 header.
++ * 11: First tunneled VLAN.
++ * 12: First tunneled MPLS.
++ * 13: Tunneled Layer 3 header.
++ * 14: The Identification field of tunneled IPv4 or IPv6.
++ * 15: The final tunneled IP destination address.
++ * 16: Tunneled layer 4 header.
++ * 17: Tunneled layer 4 payload.
++ *
++ * Default value : {0} - to count whole packet for all groups
++ * NOTE: In case that value for given `group` is not defined, then value for group 0 is used.
++ *
++ * Example: {4, 13, 13}
++ *  - count size of packet starting at:
++ *    - OUTER layer 3 for groups 0, 3 and above
++ *    - INNER layer 3 for groups 1 and 2
++ */
++#define NTNIC_FLOW_MBR_PKT_LAYER_PER_GROUP {0}
++
++/*
++ * Offset relative to the NTNIC_FLOW_MBR_PKT_LAYER. This is an 8 bit signed value.
++ *
++ * Default value: {-20} - to account for minimum spacing of 20B between frames for all groups
++ * NOTE: In case that value for given `group` is not defined, then value for group 0 is used.
++ *
++ * Example: {0} - do not apply any offset for any group
++ */
++#define NTNIC_FLOW_MBR_PKT_LAYER_OFFSET_PER_GROUP {-20}
++
+ /*
+  * This define sets the percentage of the full processing capacity
+  * being reserved for scan operations. The scanner is responsible
 -- 
 2.45.0
 
