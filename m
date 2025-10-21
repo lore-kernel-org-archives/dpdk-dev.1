@@ -2,84 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1497CCD184
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 17:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB87CCCD1A7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 17:54:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A1A3410FC;
-	Tue, 21 Oct 2025 19:53:14 +0200 (CEST)
-Received: from mail-qv1-f97.google.com (mail-qv1-f97.google.com
- [209.85.219.97]) by mails.dpdk.org (Postfix) with ESMTP id EE58441140
- for <dev@dpdk.org>; Tue, 21 Oct 2025 19:53:08 +0200 (CEST)
-Received: by mail-qv1-f97.google.com with SMTP id
- 6a1803df08f44-81fdd5d7b59so83499546d6.3
- for <dev@dpdk.org>; Tue, 21 Oct 2025 10:53:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C1B5341140;
+	Tue, 21 Oct 2025 19:53:15 +0200 (CEST)
+Received: from mail-pf1-f227.google.com (mail-pf1-f227.google.com
+ [209.85.210.227])
+ by mails.dpdk.org (Postfix) with ESMTP id 336AD40F35
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 19:53:12 +0200 (CEST)
+Received: by mail-pf1-f227.google.com with SMTP id
+ d2e1a72fcca58-781206cce18so181699b3a.0
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 10:53:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761069188; x=1761673988;
+ d=1e100.net; s=20230601; t=1761069191; x=1761673991;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=B52fhcvvKdNkFuCPwtsJjCH9RYlndSIvJEyAeQzGlnk=;
- b=VkZgTLcbOQXxlx0X+yiTDtLuTwjT4QLG6k3wlb2OAfsbs9aE76Q9ytQsmZhxA+VXcT
- PZEMghW74JT3xfc52LnCD29LEfV/WzbjN0WmcqAVLD7BLwR1XE+A7Mg9KKLNqBevVWxk
- NLJkGoxPVU287urGunUtx7nW5475KQdapjai70O70jDApNVoB0UQSNJzlK3zOuSNeO1n
- pYoNUl7F9z3RE9ZQLRgaSXEB2ucUyjPx0hr1fliP/ab7qoGJmw1BhRt35B9C6485CbRk
- CnioY/SQaSJhmrj9UMtZLut2HbMfCY8r9BvYKp9HYKDsk7BPAjCXcQdqqjb8nnknOtEH
- wexQ==
-X-Gm-Message-State: AOJu0Yz6aDY8e/efJ5VgEoN1jwkEf/DzHVTY+XNf7dtSAo09O9cwfypf
- /BVLwH3Fozy87+3sFeD0I0Q2sZY2bAlyJC9Opk6115q5PsihA382UVfzRdfMCrof1GAQQFUaF99
- bkz1xh738b7gq684cmYM1ua4zM0/d0ppxeqFjOh16f9uburE1j+TFiMUzMOuSRv/7JOMT9zRrOV
- 7dv14Ow75R/4LLff9Vy1lR9Y9ZjvHY30p4QwL34uTdHNWK/wDBtyfGBTNDAElIoeBAngwdAQ==
-X-Gm-Gg: ASbGncua1ait3Mg/yuf+5ZzV4RqMGirS1H3GGWV20QQfVnUYG5bopvMcyigNMiXR+Mn
- 9EtoapBjDU63a4tC0C5F48EVrKt1EtEbpm53/L7CJSqBB0OlGsJ8wjeq+AOq04z7wfVdJZ28Rdq
- ELtcNOqR/lp6RajGpTj8+B3/thOpp77UYP0HFvNBcpPrzKq3pefANDeRV1HTRD5QSmq+A8wp0oZ
- xDNDE/r3uUU1qcXluMUtXqTvzAl7XsipKBZ1C2Iq13y3MTqcpoS3kNdUxNqp+PvPEPBZckFW5QL
- vMOfKNa0h/C/681k/AHbja2QihedZuSIYQhHjKCnuf7hm03kmG49Phz9PERF6RcmpNIgy3h+qWi
- oV870pPmKXEsRSfMYg6bxOSwkqveaumrTJvroeGxzaZGGoRdwYTQj0YCiOoXReZTveQci4gdopu
- y60Ov7gZBj4BwreuFsX/t6+m7NewXlYcxHyjTI
-X-Google-Smtp-Source: AGHT+IFwKX18EtqC61hc+TOL5nfLoL87yhvwUj7tIOBoc8J+gHMpnqiNTZ9dLaV5SSV7jtySf13Dzhq7fVby
-X-Received: by 2002:a05:6214:f63:b0:81d:8926:a9d8 with SMTP id
- 6a1803df08f44-87c205ed12cmr231315636d6.36.1761069188264; 
- Tue, 21 Oct 2025 10:53:08 -0700 (PDT)
+ bh=8IUhUsuMOakohN0O0TO5V/CAw7Bfo+566vnlAp9JAHs=;
+ b=EOr3Qc0OlUOd5R0rbKOlG5XAysH//tGSaUd0h7vIfp/t9TvvZlj90C0/TIvSMGf8Q8
+ TJOeZG6fNtjv/Xpa4qJ7cDkth43WlYE+XFsxZB1n+Mm5RB7rMKrzeYIA6X/0lG9VmFab
+ DP7tbxD5HgmWk8mmFsMssEhR0gScO2VgUJRsJtjR2z+X8uFMvw8AL+qLRWDdXcM1VhTp
+ oNM2Zdnn0HvuvtgwqFdOgLbOxa0MNOZ3wvVEt8eWmgDpUK5wBbyyUFe3xDyX9+h8xuoh
+ TgzHJqx9dIcR7z3tz5hKXSY21j0YxvrmcbhuQdsP2t3AqpAMfvDlIUcR4IHdYSPFAT2V
+ 7oDA==
+X-Gm-Message-State: AOJu0YwDihtmuGoKzOsLNy7ZKiGtVAS6hreajjWDmpRsSNroxahkqrEP
+ tyVXsfvm+yzE2YcvefyMXPHSSHA4RuoTomGlQO0+iefCgRY47usS48EHKtLUZ9NTwnLBp4vNz5U
+ ByOzvE159lCALs4ZHV2e+8lBpcZWWZboJc/1OaB0gFdYT8n/Ev5UNWPk4AFNNn7o7rSK4+pdQB8
+ VA8bYeO2OCgnfcwc3GPtQrlf6GiVS3o8zKuqFLy+NXi9+wTGGzcHJ/0NYs1D+oLdaVp8ESUA==
+X-Gm-Gg: ASbGncvMBQ9xUuD/O08sUum7LJSAgT6G1h0491uoc3O6y1RPJeuGDelr14iH89FTgWa
+ p6xa68WqWkuVv6AFZJme/8O+lHEwnWe4yyZ61GpODYbEA6hdr9r5pyLqKjstgwyfuaIsXk0Uf1a
+ 6JMo8e+adQ4GZVEXiRLOr/jUhKBwC0CHEMSzhHBVZ02psCelX/qifi6pKSijjtTOGRKL1lEfeXO
+ UfX/rbemO8V+UtNZDkZgu+gwP9avIl5Phh1CIuct7Dsvm0gXdR8zXRN6hlMmnBu60GhNrwEZfY4
+ 3dln3ggAYm9k5fViDHVEQxoR1Km8W2ptr7fiZsP/7dFu5XJhXUV/fl7x8hUnVdWM0Z9+Fj1ZIAE
+ Gt042GXqZZljc7rBX2SIR7uZAorZ3OajmUCEHreCJl+tetVVl1QT52m4IizykQAQPJWE6+LrgmY
+ /RC8T6K9YwzJxLyGj1Xw5is8oeE18GhC3iug==
+X-Google-Smtp-Source: AGHT+IF85pJ5dQM2/d0ztpbwJGEGwXj8196IHSyDJJbcX6x0aOdV7HqnKRlhotOEXmEaccOXkPLhc8gd/P21
+X-Received: by 2002:a05:6a00:6a59:10b0:77f:5cbb:16a3 with SMTP id
+ d2e1a72fcca58-7a26469609emr572519b3a.5.1761069191098; 
+ Tue, 21 Oct 2025 10:53:11 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
+ (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
  by smtp-relay.gmail.com with ESMTPS id
- 6a1803df08f44-87cf547d956sm13199256d6.17.2025.10.21.10.53.07
+ d2e1a72fcca58-7a22ff23eddsm1442098b3a.6.2025.10.21.10.53.10
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 21 Oct 2025 10:53:08 -0700 (PDT)
+ Tue, 21 Oct 2025 10:53:11 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pl1-f198.google.com with SMTP id
- d9443c01a7336-290c9724deeso50092475ad.2
- for <dev@dpdk.org>; Tue, 21 Oct 2025 10:53:07 -0700 (PDT)
+Received: by mail-pl1-f199.google.com with SMTP id
+ d9443c01a7336-2909daa65f2so1538105ad.0
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 10:53:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761069187; x=1761673987; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761069189; x=1761673989; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=B52fhcvvKdNkFuCPwtsJjCH9RYlndSIvJEyAeQzGlnk=;
- b=MRLiCXpipnNwjNuwBPreEDLWTglhi83wTTrwYE5khmEKZYVDaHqLhTb5xezEDO+YoL
- HCxijWniekol6fBR/46ow34Kzgr8vWLBjX9Q8/y8eHUW/DPsHOJnFcOtZQiOweBy7JqC
- FqPsqpyMIR6rmH9rHivkF1xijrqw1It6MeYmk=
-X-Received: by 2002:a17:902:d510:b0:25c:46cd:1dc1 with SMTP id
- d9443c01a7336-290ca216346mr216880885ad.33.1761069186605; 
- Tue, 21 Oct 2025 10:53:06 -0700 (PDT)
-X-Received: by 2002:a17:902:d510:b0:25c:46cd:1dc1 with SMTP id
- d9443c01a7336-290ca216346mr216880465ad.33.1761069185936; 
- Tue, 21 Oct 2025 10:53:05 -0700 (PDT)
+ bh=8IUhUsuMOakohN0O0TO5V/CAw7Bfo+566vnlAp9JAHs=;
+ b=hdThZChElX0qfrcp68WU1ghOsAcks8e0kqdkFkX3GECTn0tsNIKbHx6kwXv9BoYeYD
+ 1KwejyEKK5I1FkgKyD/i4gwY8bvk34CU38D7P/LT9kVDyGMyvNwix4+tIBkk5rrLAPaY
+ UbYhKR1IHj0fIefjRLG0TGRdpN0LNOYiCcF10=
+X-Received: by 2002:a17:903:38c8:b0:262:f975:fcba with SMTP id
+ d9443c01a7336-292ffbd0b53mr6720055ad.9.1761069188704; 
+ Tue, 21 Oct 2025 10:53:08 -0700 (PDT)
+X-Received: by 2002:a17:903:38c8:b0:262:f975:fcba with SMTP id
+ d9443c01a7336-292ffbd0b53mr6719655ad.9.1761069188023; 
+ Tue, 21 Oct 2025 10:53:08 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-292472193c2sm115441495ad.104.2025.10.21.10.53.04
+ d9443c01a7336-292472193c2sm115441495ad.104.2025.10.21.10.53.06
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Tue, 21 Oct 2025 10:53:05 -0700 (PDT)
+ Tue, 21 Oct 2025 10:53:07 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com, Farah Smith <farah.smith@broadcom.com>,
+Cc: ajit.khaparde@broadcom.com, Shuanglin Wang <shuanglin.wang@broadcom.com>,
  Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Subject: [PATCH v4 30/57] net/bnxt/tf_core: thor2 hot upgrade ungraceful quit
- crash
-Date: Tue, 21 Oct 2025 13:50:22 -0400
-Message-Id: <20251021175049.46092-31-manish.kurup@broadcom.com>
+Subject: [PATCH v4 31/57] net/bnxt/tf_ulp: support MPLS packets
+Date: Tue, 21 Oct 2025 13:50:23 -0400
+Message-Id: <20251021175049.46092-32-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251021175049.46092-1-manish.kurup@broadcom.com>
 References: <20251015090024.32250-1-manish.kurup@broadcom.com>
@@ -100,133 +100,543 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Farah Smith <farah.smith@broadcom.com>
+From: Shuanglin Wang <shuanglin.wang@broadcom.com>
 
-Change table scope shutdown sequence in DPDK to remove the function
-from the scope prior to requesting the memory being freed. The
-firmware will delete the scope when the last fid is removed so
-there is no need to issue the table scope deconfig HWRM.
+Thor supports offloading MPLS packets and performing drop, forward,
+or queue actions for matchied packets.
 
-Signed-off-by: Farah Smith <farah.smith@broadcom.com>
+Signed-off-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
 Reviewed-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 ---
- drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c | 24 ++++++++-------------
- drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c      | 20 +++++++++++------
- 2 files changed, 22 insertions(+), 22 deletions(-)
+ drivers/net/bnxt/tf_ulp/ulp_rte_handler_tbl.c |   4 +-
+ drivers/net/bnxt/tf_ulp/ulp_rte_parser.c      |  52 ++++
+ drivers/net/bnxt/tf_ulp/ulp_rte_parser.h      |   5 +
+ .../net/bnxt/tf_ulp/ulp_template_db_enum.h    | 239 +++++++++++++++++-
+ drivers/net/bnxt/tf_ulp/ulp_template_struct.h |   3 +
+ 5 files changed, 289 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-index 60b8289805..ac805916cc 100644
---- a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-+++ b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-@@ -1284,7 +1284,7 @@ int tfc_tbl_scope_mem_alloc(struct tfc *tfcp, uint16_t fid, uint8_t tsid,
- 						tsid,
- 						dir,
- 						CFA_REGION_TYPE_LKUP,
--						true,
-+						parms->local,
- 						&lkup_mem_cfg[dir]);
- 			if (rc)
- 				goto cleanup;
-@@ -1293,7 +1293,7 @@ int tfc_tbl_scope_mem_alloc(struct tfc *tfcp, uint16_t fid, uint8_t tsid,
- 						tsid,
- 						dir,
- 						CFA_REGION_TYPE_ACT,
--						true,
-+						parms->local,
- 						&act_mem_cfg[dir]);
- 			if (rc)
- 				goto cleanup;
-@@ -1388,9 +1388,13 @@ int tfc_tbl_scope_mem_free(struct tfc *tfcp, uint16_t fid, uint8_t tsid)
- 			PMD_DRV_LOG_LINE(ERR, "tfc_vf2pf_mem_free failed");
- 			/* continue cleanup regardless */
- 		}
--		PMD_DRV_LOG_LINE(DEBUG, "tsid: %d, status %d", resp.tsid, resp.status);
--		if (shared)
-+		PMD_DRV_LOG_LINE(DEBUG, "%s: tsid: %d, status %d",
-+				 __func__, resp.tsid, resp.status);
-+		if (shared) {
-+			/* reset scope */
-+			tfo_ts_set(tfcp->tfo, tsid, false, CFA_APP_TYPE_INVALID, false, 0);
- 			return rc;
-+		}
- 	}
- 
- 	if (shared && is_pf) {
-@@ -1495,11 +1499,9 @@ int tfc_tbl_scope_fid_add(struct tfc *tfcp, uint16_t fid, uint8_t tsid,
- int tfc_tbl_scope_fid_rem(struct tfc *tfcp, uint16_t fid, uint8_t tsid,
- 			  uint16_t *fid_cnt)
- {
--	struct tfc_ts_mem_cfg mem_cfg;
- 	struct tfc_cpm *cpm_lkup;
- 	struct tfc_cpm *cpm_act;
- 	int rc = 0;
--	bool local;
- 
- 	if (tfcp == NULL) {
- 		PMD_DRV_LOG_LINE(ERR, "Invalid tfcp pointer");
-@@ -1536,15 +1538,7 @@ int tfc_tbl_scope_fid_rem(struct tfc *tfcp, uint16_t fid, uint8_t tsid,
- 	if (rc == 0 && (cpm_lkup != NULL || cpm_act != NULL))
- 		(void)tfc_tbl_scope_cpm_free(tfcp, tsid);
- 
--	/*
--	 * Check if any table has memory configured and, if so, free it.
--	 */
--	(void)tfo_ts_get_mem_cfg(tfcp->tfo, tsid, CFA_DIR_RX,
--				 CFA_REGION_TYPE_LKUP, &local, &mem_cfg);
--
--	rc = tfo_ts_set(tfcp->tfo, tsid, false, CFA_APP_TYPE_INVALID,
--			false, 0);
--
-+	/* tbl_scope_mem_free() will reset the remaining tsid state */
- 	return rc;
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_handler_tbl.c b/drivers/net/bnxt/tf_ulp/ulp_rte_handler_tbl.c
+index 5b9caabe1d..6e1115b985 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_rte_handler_tbl.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_rte_handler_tbl.c
+@@ -297,8 +297,8 @@ struct bnxt_ulp_rte_hdr_info ulp_hdr_info[] = {
+ 	.proto_hdr_func          = NULL
+ 	},
+ 	[RTE_FLOW_ITEM_TYPE_MPLS] = {
+-	.hdr_type                = BNXT_ULP_HDR_TYPE_NOT_SUPPORTED,
+-	.proto_hdr_func          = NULL
++	.hdr_type                = BNXT_ULP_HDR_TYPE_SUPPORTED,
++	.proto_hdr_func          = ulp_rte_mpls_hdr_handler
+ 	},
+ 	[RTE_FLOW_ITEM_TYPE_GRE] = {
+ 	.hdr_type                = BNXT_ULP_HDR_TYPE_SUPPORTED,
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
+index bf3a3deb18..af7f8b7ab4 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
+@@ -2159,6 +2159,58 @@ ulp_rte_ecpri_hdr_handler(const struct rte_flow_item *item,
+ 	return BNXT_TF_RC_SUCCESS;
  }
  
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-index 167f2dcc1e..281c32dff8 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-@@ -320,20 +320,21 @@ ulp_tfc_tbl_scope_deinit(struct bnxt *bp)
- 	else
- 		BNXT_DRV_DBG(DEBUG, "Freed CPM TSID:%d FID: %d\n", tsid, fid);
- 
--	rc = tfc_tbl_scope_mem_free(tfcp, fid, tsid);
++/* Function to handle the parsing of RTE Flow item MPLS Header. */
++int32_t
++ulp_rte_mpls_hdr_handler(const struct rte_flow_item *item,
++			 struct ulp_rte_parser_params *params)
++{
++	const struct rte_flow_item_mpls *mpls_spec = item->spec;
++	const struct rte_flow_item_mpls *mpls_mask = item->mask;
++	struct ulp_rte_hdr_bitmap *hdr_bitmap = &params->hdr_bitmap;
++	uint32_t idx = 0;
++	uint32_t size;
 +
-+	rc = tfc_tbl_scope_fid_rem(tfcp, fid, tsid, &fid_cnt);
- 	if (rc)
--		BNXT_DRV_DBG(ERR, "Failed freeing tscope mem TSID:%d FID:%d\n",
-+		BNXT_DRV_DBG(ERR, "Failed removing FID from TSID:%d FID:%d",
- 			     tsid, fid);
- 	else
--		BNXT_DRV_DBG(DEBUG, "Freed tscope mem TSID:%d FID:%d\n",
-+		BNXT_DRV_DBG(DEBUG, "Removed FID from TSID:%d FID:%d",
- 			     tsid, fid);
- 
--	rc = tfc_tbl_scope_fid_rem(tfcp, fid, tsid, &fid_cnt);
-+	rc = tfc_tbl_scope_mem_free(tfcp, fid, tsid);
- 	if (rc)
--		BNXT_DRV_DBG(ERR, "Failed removing FID from TSID:%d FID:%d\n",
-+		BNXT_DRV_DBG(ERR, "Failed freeing tscope mem TSID:%d FID:%d",
- 			     tsid, fid);
- 	else
--		BNXT_DRV_DBG(DEBUG, "Removed FID from TSID:%d FID:%d\n",
-+		BNXT_DRV_DBG(DEBUG, "Freed tscope mem TSID:%d FID:%d",
- 			     tsid, fid);
- }
- 
-@@ -456,7 +457,12 @@ ulp_tfc_tbl_scope_init(struct bnxt *bp)
- 		qparms.act_pool_sz_exp[CFA_DIR_RX];
- 	mem_parms.act_pool_sz_exp[CFA_DIR_TX] =
- 		qparms.act_pool_sz_exp[CFA_DIR_TX];
--	mem_parms.local = true;
++	if (unlikely(ulp_rte_prsr_fld_size_validate(params, &idx,
++						    BNXT_ULP_PROTO_HDR_MPLS_NUM))) {
++		BNXT_DRV_DBG(ERR, "Error parsing protocol header");
++		return BNXT_TF_RC_ERROR;
++	}
 +
-+	if (shared)
-+		mem_parms.local = false;
-+	else
-+		mem_parms.local = true;
++	if (mpls_spec && !mpls_mask)
++		mpls_mask = &rte_flow_item_mpls_mask;
 +
- 	rc = tfc_tbl_scope_mem_alloc(tfcp, fid, tsid, &mem_parms);
- 	if (rc) {
- 		BNXT_DRV_DBG(ERR,
++	if (mpls_spec) {
++		uint8_t spec_label_tc_s[3] = {0};
++		uint8_t mask_label_tc_s[3] = {0};
++		/* right-shift 4 bits */
++		spec_label_tc_s[0] = mpls_spec->label_tc_s[0] >> 4;
++		spec_label_tc_s[1] = mpls_spec->label_tc_s[0] << 4 | mpls_spec->label_tc_s[1] >> 4;
++		spec_label_tc_s[2] = mpls_spec->label_tc_s[1] << 4 | mpls_spec->label_tc_s[2] >> 4;
++		mask_label_tc_s[0] = mpls_mask->label_tc_s[0] >> 4;
++		mask_label_tc_s[1] = mpls_mask->label_tc_s[0] << 4 | mpls_mask->label_tc_s[1] >> 4;
++		mask_label_tc_s[2] = mpls_mask->label_tc_s[1] << 4 | mpls_mask->label_tc_s[2] >> 4;
++
++		/* Process mpls label field */
++		size = sizeof(((struct rte_flow_item_mpls *)NULL)->label_tc_s);
++		ulp_rte_prsr_fld_mask(params, &idx, size,
++				      spec_label_tc_s,
++				      mask_label_tc_s,
++				      ULP_PRSR_ACT_DEFAULT);
++
++		/* Process mpls ttl field */
++		size = sizeof(((struct rte_flow_item_mpls *)NULL)->ttl);
++		ulp_rte_prsr_fld_mask(params, &idx, size,
++				      ulp_deference_struct(mpls_spec, ttl),
++				      ulp_deference_struct(mpls_mask, ttl),
++				      ULP_PRSR_ACT_DEFAULT);
++	}
++
++	/* Update the hdr_bitmap with MPLS and cf bitmap*/
++	ULP_BITMAP_SET(hdr_bitmap->bits, BNXT_ULP_HDR_BIT_T_MPLS);
++	ULP_BITMAP_SET(params->cf_bitmap, BNXT_ULP_CF_BIT_IS_TUNNEL);
++	return BNXT_TF_RC_SUCCESS;
++}
++
+ /* Function to handle the parsing of RTE Flow item void Header */
+ int32_t
+ ulp_rte_void_hdr_handler(const struct rte_flow_item *item __rte_unused,
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.h b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.h
+index b20cb1ccde..5f451ba404 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.h
++++ b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.h
+@@ -164,6 +164,11 @@ int32_t
+ ulp_rte_ecpri_hdr_handler(const struct rte_flow_item *item,
+ 			  struct ulp_rte_parser_params *params);
+ 
++/* Function to handle the parsing of RTE Flow item MPLS Header. */
++int32_t
++ulp_rte_mpls_hdr_handler(const struct rte_flow_item *item,
++			 struct ulp_rte_parser_params *params);
++
+ /* Function to handle the parsing of RTE Flow item void Header. */
+ int32_t
+ ulp_rte_void_hdr_handler(const struct rte_flow_item *item,
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h b/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
+index 4e7cb570b0..02534d8fe8 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
++++ b/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2014-2024 Broadcom
++ * Copyright(c) 2014-2025 Broadcom
+  * All rights reserved.
+  */
+ 
+@@ -71,7 +71,8 @@ enum bnxt_ulp_cf_bit {
+ 	BNXT_ULP_CF_BIT_STATIC_VXLAN_IP_PORT = 0x0000000000000800,
+ 	BNXT_ULP_CF_BIT_DYNAMIC_VXLAN_PORT   = 0x0000000000001000,
+ 	BNXT_ULP_CF_BIT_DYNAMIC_GENEVE_PORT  = 0x0000000000002000,
+-	BNXT_ULP_CF_BIT_LAST                 = 0x0000000000004000
++	BNXT_ULP_CF_BIT_HOT_UP_SECONDARY     = 0x0000000000004000,
++	BNXT_ULP_CF_BIT_LAST                 = 0x0000000000008000
+ };
+ 
+ enum bnxt_ulp_dev_ft {
+@@ -117,7 +118,8 @@ enum bnxt_ulp_hdr_bit {
+ 	BNXT_ULP_HDR_BIT_I_L4_FLOW           = 0x0000000200000000,
+ 	BNXT_ULP_HDR_BIT_NON_GENERIC         = 0x0000000400000000,
+ 	BNXT_ULP_HDR_BIT_GENERIC             = 0x0000000800000000,
+-	BNXT_ULP_HDR_BIT_LAST                = 0x0000001000000000
++	BNXT_ULP_HDR_BIT_T_MPLS              = 0x0000001000000000,
++	BNXT_ULP_HDR_BIT_LAST                = 0x0000002000000000
+ };
+ 
+ enum bnxt_ulp_accept_opc {
+@@ -386,7 +388,8 @@ enum bnxt_ulp_enc_field {
+ 	BNXT_ULP_ENC_FIELD_GENEVE_OPT_W3 = 51,
+ 	BNXT_ULP_ENC_FIELD_GENEVE_OPT_W4 = 52,
+ 	BNXT_ULP_ENC_FIELD_GENEVE_OPT_W5 = 53,
+-	BNXT_ULP_ENC_FIELD_LAST = 54
++	BNXT_ULP_ENC_FIELD_MPLS_LABEL = 54,
++	BNXT_ULP_ENC_FIELD_LAST = 55
+ };
+ 
+ enum bnxt_ulp_fdb_opc {
+@@ -479,7 +482,10 @@ enum bnxt_ulp_func_opc {
+ 	BNXT_ULP_FUNC_OPC_COND_LIST = 26,
+ 	BNXT_ULP_FUNC_OPC_PORT_TABLE = 27,
+ 	BNXT_ULP_FUNC_OPC_MTR_ID_TO_STATS_HANDLE = 28,
+-	BNXT_ULP_FUNC_OPC_LAST = 29
++	BNXT_ULP_FUNC_OPC_APP_PRIORITY = 29,
++	BNXT_ULP_FUNC_OPC_TCAM_SET_PRIORITY = 30,
++	BNXT_ULP_FUNC_OPC_GET_HA_PRIORITY = 31,
++	BNXT_ULP_FUNC_OPC_LAST = 32
+ };
+ 
+ enum bnxt_ulp_func_src {
+@@ -511,7 +517,8 @@ enum bnxt_ulp_generic_tbl_opc {
+ 	BNXT_ULP_GENERIC_TBL_OPC_NOT_USED = 0,
+ 	BNXT_ULP_GENERIC_TBL_OPC_READ = 1,
+ 	BNXT_ULP_GENERIC_TBL_OPC_WRITE = 2,
+-	BNXT_ULP_GENERIC_TBL_OPC_LAST = 3
++	BNXT_ULP_GENERIC_TBL_OPC_ITERATE = 3,
++	BNXT_ULP_GENERIC_TBL_OPC_LAST = 4
+ };
+ 
+ enum bnxt_ulp_glb_rf_idx {
+@@ -616,6 +623,18 @@ enum bnxt_ulp_glb_rf_idx {
+ 	BNXT_ULP_GLB_RF_IDX_LAST = 98
+ };
+ 
++enum bnxt_ulp_global_identifier_tbl_opc {
++	BNXT_ULP_GLOBAL_IDENTIFIER_TBL_OPC_NOP = 0,
++	BNXT_ULP_GLOBAL_IDENTIFIER_TBL_OPC_ALLOC = 1,
++	BNXT_ULP_GLOBAL_IDENTIFIER_TBL_OPC_LAST = 2
++};
++
++enum bnxt_ulp_global_idx_tbl_opc {
++	BNXT_ULP_GLOBAL_IDX_TBL_OPC_NOP = 0,
++	BNXT_ULP_GLOBAL_IDX_TBL_OPC_ALLOC = 1,
++	BNXT_ULP_GLOBAL_IDX_TBL_OPC_LAST = 2
++};
++
+ enum bnxt_ulp_global_register_tbl_opc {
+ 	BNXT_ULP_GLOBAL_REGISTER_TBL_OPC_NOT_USED = 0,
+ 	BNXT_ULP_GLOBAL_REGISTER_TBL_OPC_WR_REGFILE = 1,
+@@ -830,7 +849,13 @@ enum bnxt_ulp_rf_idx {
+ 	BNXT_ULP_RF_IDX_FLOW_CNTR_PTR_MTR = 104,
+ 	BNXT_ULP_RF_IDX_SW_METER_PTR_0 = 105,
+ 	BNXT_ULP_RF_IDX_METER_STATS_HNDL_0 = 106,
+-	BNXT_ULP_RF_IDX_LAST = 107
++	BNXT_ULP_RF_IDX_DYN_TUN_TYPE = 107,
++	BNXT_ULP_RF_IDX_DYN_UPAR_TUN = 108,
++	BNXT_ULP_RF_IDX_DYN_UPAR_ID = 109,
++	BNXT_ULP_RF_IDX_GENERIC_TBL_INDEX = 110,
++	BNXT_ULP_RF_IDX_APP_PRIO = 111,
++	BNXT_ULP_RF_IDX_HA_PRIO = 112,
++	BNXT_ULP_RF_IDX_LAST = 113
+ };
+ 
+ enum bnxt_ulp_stats_cache_tbl_opc {
+@@ -883,7 +908,10 @@ enum bnxt_ulp_feature_bit {
+ 	BNXT_ULP_FEATURE_BIT_PARENT_DMAC = 0x00000001,
+ 	BNXT_ULP_FEATURE_BIT_PORT_DMAC = 0x00000002,
+ 	BNXT_ULP_FEATURE_BIT_MULTI_TUNNEL_FLOW = 0x00000004,
+-	BNXT_ULP_FEATURE_BIT_SOCKET_DIRECT = 0x00000008
++	BNXT_ULP_FEATURE_BIT_SOCKET_DIRECT = 0x00000008,
++	BNXT_ULP_FEATURE_BIT_MULTI_INSTANCE = 0x00000010,
++	BNXT_ULP_FEATURE_BIT_SPECIAL_VXLAN = 0x00000020,
++	BNXT_ULP_FEATURE_BIT_HOT_UPGRADE = 0x00000040
+ };
+ 
+ enum bnxt_ulp_flow_dir_bitmask {
+@@ -909,7 +937,9 @@ enum bnxt_ulp_resource_func {
+ 	BNXT_ULP_RESOURCE_FUNC_GLOBAL_REGISTER_TABLE = 0x8a,
+ 	BNXT_ULP_RESOURCE_FUNC_KEY_RECIPE_TABLE = 0x8b,
+ 	BNXT_ULP_RESOURCE_FUNC_ALLOCATOR_TABLE = 0x8c,
+-	BNXT_ULP_RESOURCE_FUNC_STATS_CACHE = 0x8d
++	BNXT_ULP_RESOURCE_FUNC_STATS_CACHE = 0x8d,
++	BNXT_ULP_RESOURCE_FUNC_GLOBAL_IDENTIFIER = 0x8e,
++	BNXT_ULP_RESOURCE_FUNC_GLOBAL_IDX_TBL = 0x8f
+ };
+ 
+ enum bnxt_ulp_resource_sub_type {
+@@ -951,6 +981,8 @@ enum bnxt_ulp_resource_sub_type {
+ 	BNXT_ULP_RESOURCE_SUB_TYPE_GENERIC_TABLE_PROF_FUNC_CACHE = 28,
+ 	BNXT_ULP_RESOURCE_SUB_TYPE_GENERIC_TABLE_GROUP_MISS_ACTION_CACHE = 29,
+ 	BNXT_ULP_RESOURCE_SUB_TYPE_GENERIC_TABLE_SHARED_METER_STATS_CACHE = 30,
++	BNXT_ULP_RESOURCE_SUB_TYPE_GENERIC_TABLE_HOT_UPGRADE_TCAM_CACHE = 31,
++	BNXT_ULP_RESOURCE_SUB_TYPE_GENERIC_TABLE_GLOBAL_REGFILES_CACHE = 32,
+ 	BNXT_ULP_RESOURCE_SUB_TYPE_ALLOCATOR_TABLE_JUMP_INDEX = 0,
+ 	BNXT_ULP_RESOURCE_SUB_TYPE_VNIC_TABLE_RSS = 0,
+ 	BNXT_ULP_RESOURCE_SUB_TYPE_VNIC_TABLE_QUEUE = 1,
+@@ -1374,10 +1406,44 @@ enum ulp_wp_sym {
+ 	ULP_WP_SYM_DECAP_FUNC_THRU_L2 = 11,
+ 	ULP_WP_SYM_DECAP_FUNC_THRU_L3 = 12,
+ 	ULP_WP_SYM_DECAP_FUNC_THRU_L4 = 13,
++	ULP_WP_SYM_DECAP_FUNC_THRU_OL2 = 0,
++	ULP_WP_SYM_DECAP_FUNC_THRU_OL3 = 0,
++	ULP_WP_SYM_DECAP_FUNC_THRU_OL4 = 0,
++	ULP_WP_SYM_DECAP_FUNC_THRU_OTUN = 0,
+ 	ULP_WP_SYM_ECV_VALID_NO = 0,
+ 	ULP_WP_SYM_ECV_VALID_YES = 1,
+ 	ULP_WP_SYM_ECV_CUSTOM_EN_NO = 0,
+ 	ULP_WP_SYM_ECV_CUSTOM_EN_YES = 1,
++	ULP_WP_SYM_ECV_CUSTOM_IPV4_CTRL_ENCREC = 0,
++	ULP_WP_SYM_ECV_CUSTOM_IPV4_CTRL_RSVD = 0,
++	ULP_WP_SYM_ECV_CUSTOM_IPV4_CTRL_INHERIT = 0,
++	ULP_WP_SYM_ECV_CUSTOM_IPV4_CTRL_INCREMENT = 0,
++	ULP_WP_SYM_ECV_SMAC_OVR_USE_SPSMAC = 0,
++	ULP_WP_SYM_ECV_SMAC_OVR_REUSE_IN_L2 = 0,
++	ULP_WP_SYM_ECV_SMAC_OVR_REUSE_TUN_L2 = 0,
++	ULP_WP_SYM_ECV_SMAC_OVR_USE_OUT_L2 = 0,
++	ULP_WP_SYM_ECV_SMAC_OVR_RFU = 0,
++	ULP_WP_SYM_ECV_SMAC_OVR_REUSE_IN_L2_DMAC = 0,
++	ULP_WP_SYM_ECV_SMAC_OVR_REUSE_TUN_L2_DMAC = 0,
++	ULP_WP_SYM_ECV_SMAC_OVR_REUSE_OUT_L2_DMAC = 0,
++	ULP_WP_SYM_ECV_VLAN_OVR_USE_ENCREC_VLANS = 0,
++	ULP_WP_SYM_ECV_VLAN_OVR_USE_IN_L2_VLANS = 0,
++	ULP_WP_SYM_ECV_VLAN_OVR_USE_TUN_L2_VLANS = 0,
++	ULP_WP_SYM_ECV_VLAN_OVR_USE_OUT_L2_VLANS = 0,
++	ULP_WP_SYM_ECV_VLAN_OVR_USE_IN_VLAN_IN_L2 = 0,
++	ULP_WP_SYM_ECV_VLAN_OVR_USE_OUT_VLAN_IN_L2 = 0,
++	ULP_WP_SYM_ECV_VLAN_OVR_USE_IN_VLAN_OUT_L2 = 0,
++	ULP_WP_SYM_ECV_VLAN_OVR_USE_OUT_VLAN_OUT_L2 = 0,
++	ULP_WP_SYM_ECV_VLAN_OVR_USE_ENCREC_DMAC = 0,
++	ULP_WP_SYM_ECV_VLAN_OVR_USE_IN_L2_DMAC = 0,
++	ULP_WP_SYM_ECV_VLAN_OVR_USE_IN_TUN_DMAC = 0,
++	ULP_WP_SYM_ECV_VLAN_OVR_USE_OUT_L2_DMAC = 0,
++	ULP_WP_SYM_ECV_GRE_SET_K_INCLUDE_OPTIONAL = 0,
++	ULP_WP_SYM_ECV_GRE_SET_K_NONE = 0,
++	ULP_WP_SYM_ECV_IP_TOS_IN_HDR = 0,
++	ULP_WP_SYM_ECV_IP_TOS_ENCREC = 0,
++	ULP_WP_SYM_ECV_IP_TTL_IN_HDR = 0,
++	ULP_WP_SYM_ECV_IP_TTL_ENCREC = 0,
+ 	ULP_WP_SYM_ECV_L2_EN_NO = 0,
+ 	ULP_WP_SYM_ECV_L2_EN_YES = 1,
+ 	ULP_WP_SYM_ECV_VTAG_TYPE_NOP = 0,
+@@ -1412,6 +1478,8 @@ enum ulp_wp_sym {
+ 	ULP_WP_SYM_ECV_TUN_TYPE_NGE = 3,
+ 	ULP_WP_SYM_ECV_TUN_TYPE_NVGRE = 4,
+ 	ULP_WP_SYM_ECV_TUN_TYPE_GRE = 5,
++	ULP_WP_SYM_ECV_TUN_TYPE_GA_L4 = 0,
++	ULP_WP_SYM_ECV_TUN_TYPE_GA_TUN = 0,
+ 	ULP_WP_SYM_EEM_ACT_REC_INT = 1,
+ 	ULP_WP_SYM_EEM_EXT_FLOW_CNTR = 0,
+ 	ULP_WP_SYM_UC_ACT_REC = 0,
+@@ -1452,6 +1520,7 @@ enum ulp_wp_sym {
+ 	ULP_WP_SYM_DPORT_TUN_TYPE_ECPRI = 4,
+ 	ULP_WP_SYM_DPORT_TUN_TYPE_SRV6 = 5,
+ 	ULP_WP_SYM_DPORT_TUN_TYPE_VXLAN_IPV4 = 6,
++	ULP_WP_SYM_TUN_TYPE_DYN_UPAR = 6,
+ 	ULP_WP_SYM_L3_ECPRI_HDR_SIZE = 0,
+ 	ULP_WP_SYM_L3_ECPRI_HDR_OFFS = 0,
+ 	ULP_WP_SYM_L3_ECPRI_PAT = 0,
+@@ -1470,7 +1539,31 @@ enum ulp_wp_sym {
+ 	ULP_WP_SYM_T_ECPRI_ID_MASK = 0,
+ 	ULP_WP_SYM_T_ECPRI_CONTEXT_SIZE = 0,
+ 	ULP_WP_SYM_T_ECPRI_CONTEXT_OFFS = 0,
+-	ULP_WP_SYM_T_ECPRI_CONTEXT_MASK = 0
++	ULP_WP_SYM_T_ECPRI_CONTEXT_MASK = 0,
++	ULP_WP_SYM_SRV6_IP_PROTO_IPV6_ROUTE = 0,
++	ULP_WP_SYM_SRV6_IPV6_ENCAP = 0,
++	ULP_WP_SYM_SRV6_HDR_SIZE = 0,
++	ULP_WP_SYM_SRV6_HDR_OFFSET = 0,
++	ULP_WP_SYM_SRV6_V6_ENCAP = 0,
++	ULP_WP_SYM_SRV6_NXT_HDR_EXT_LEN = 0,
++	ULP_WP_SYM_SRV6_8BYTE_UNIT = 0,
++	ULP_WP_SYM_SRV6_8BIT_FLD = 0,
++	ULP_WP_SYM_SRV6_HDR_LEN_OFFSET = 0,
++	ULP_WP_SYM_SRV6_ID_EXTRACTION_LENGTH = 0,
++	ULP_WP_SYM_SRV6_ID_EXTRACTION_OFFSET = 0,
++	ULP_WP_SYM_SRV6_PATTERN = 0,
++	ULP_WP_SYM_SRV6_ID_MASK = 0,
++	ULP_WP_SYM_SRV6_CTXT_EXTRACTION_LENGTH = 0,
++	ULP_WP_SYM_SRV6_CTXT_EXTRACTION_OFFSET = 0,
++	ULP_WP_SYM_SRV6_CTXT_MASK = 0,
++	ULP_WP_SYM_GLB_ID_L2_CNTXT_ID = 0,
++	ULP_WP_SYM_GLB_ID_PROF_FUNC_ID = 1,
++	ULP_WP_SYM_GLB_ID_WC_PROFILE_ID = 2,
++	ULP_WP_SYM_GLB_ID_EM_PROFILE_ID = 3,
++	ULP_WP_SYM_GLB_APP_IDX_TBL_ID = 0,
++	ULP_WP_SYM_GLB_IDX_META_REC_ACT = 4,
++	ULP_WP_SYM_GLB_IDX_META_REC_PROF = 5,
++	ULP_WP_SYM_GLB_IDX_META_REC_LKUP = 6
+ };
+ 
+ enum ulp_thor_sym {
+@@ -1696,10 +1789,44 @@ enum ulp_thor_sym {
+ 	ULP_THOR_SYM_DECAP_FUNC_THRU_L2 = 11,
+ 	ULP_THOR_SYM_DECAP_FUNC_THRU_L3 = 12,
+ 	ULP_THOR_SYM_DECAP_FUNC_THRU_L4 = 13,
++	ULP_THOR_SYM_DECAP_FUNC_THRU_OL2 = 0,
++	ULP_THOR_SYM_DECAP_FUNC_THRU_OL3 = 0,
++	ULP_THOR_SYM_DECAP_FUNC_THRU_OL4 = 0,
++	ULP_THOR_SYM_DECAP_FUNC_THRU_OTUN = 0,
+ 	ULP_THOR_SYM_ECV_VALID_NO = 0,
+ 	ULP_THOR_SYM_ECV_VALID_YES = 1,
+ 	ULP_THOR_SYM_ECV_CUSTOM_EN_NO = 0,
+ 	ULP_THOR_SYM_ECV_CUSTOM_EN_YES = 1,
++	ULP_THOR_SYM_ECV_CUSTOM_IPV4_CTRL_ENCREC = 0,
++	ULP_THOR_SYM_ECV_CUSTOM_IPV4_CTRL_RSVD = 0,
++	ULP_THOR_SYM_ECV_CUSTOM_IPV4_CTRL_INHERIT = 0,
++	ULP_THOR_SYM_ECV_CUSTOM_IPV4_CTRL_INCREMENT = 0,
++	ULP_THOR_SYM_ECV_SMAC_OVR_USE_SPSMAC = 0,
++	ULP_THOR_SYM_ECV_SMAC_OVR_REUSE_IN_L2 = 0,
++	ULP_THOR_SYM_ECV_SMAC_OVR_REUSE_TUN_L2 = 0,
++	ULP_THOR_SYM_ECV_SMAC_OVR_USE_OUT_L2 = 0,
++	ULP_THOR_SYM_ECV_SMAC_OVR_RFU = 0,
++	ULP_THOR_SYM_ECV_SMAC_OVR_REUSE_IN_L2_DMAC = 0,
++	ULP_THOR_SYM_ECV_SMAC_OVR_REUSE_TUN_L2_DMAC = 0,
++	ULP_THOR_SYM_ECV_SMAC_OVR_REUSE_OUT_L2_DMAC = 0,
++	ULP_THOR_SYM_ECV_VLAN_OVR_USE_ENCREC_VLANS = 0,
++	ULP_THOR_SYM_ECV_VLAN_OVR_USE_IN_L2_VLANS = 0,
++	ULP_THOR_SYM_ECV_VLAN_OVR_USE_TUN_L2_VLANS = 0,
++	ULP_THOR_SYM_ECV_VLAN_OVR_USE_OUT_L2_VLANS = 0,
++	ULP_THOR_SYM_ECV_VLAN_OVR_USE_IN_VLAN_IN_L2 = 0,
++	ULP_THOR_SYM_ECV_VLAN_OVR_USE_OUT_VLAN_IN_L2 = 0,
++	ULP_THOR_SYM_ECV_VLAN_OVR_USE_IN_VLAN_OUT_L2 = 0,
++	ULP_THOR_SYM_ECV_VLAN_OVR_USE_OUT_VLAN_OUT_L2 = 0,
++	ULP_THOR_SYM_ECV_VLAN_OVR_USE_ENCREC_DMAC = 0,
++	ULP_THOR_SYM_ECV_VLAN_OVR_USE_IN_L2_DMAC = 0,
++	ULP_THOR_SYM_ECV_VLAN_OVR_USE_IN_TUN_DMAC = 0,
++	ULP_THOR_SYM_ECV_VLAN_OVR_USE_OUT_L2_DMAC = 0,
++	ULP_THOR_SYM_ECV_GRE_SET_K_INCLUDE_OPTIONAL = 0,
++	ULP_THOR_SYM_ECV_GRE_SET_K_NONE = 0,
++	ULP_THOR_SYM_ECV_IP_TOS_IN_HDR = 0,
++	ULP_THOR_SYM_ECV_IP_TOS_ENCREC = 0,
++	ULP_THOR_SYM_ECV_IP_TTL_IN_HDR = 0,
++	ULP_THOR_SYM_ECV_IP_TTL_ENCREC = 0,
+ 	ULP_THOR_SYM_ECV_L2_EN_NO = 0,
+ 	ULP_THOR_SYM_ECV_L2_EN_YES = 1,
+ 	ULP_THOR_SYM_ECV_VTAG_TYPE_NOP = 0,
+@@ -1734,6 +1861,8 @@ enum ulp_thor_sym {
+ 	ULP_THOR_SYM_ECV_TUN_TYPE_NGE = 3,
+ 	ULP_THOR_SYM_ECV_TUN_TYPE_NVGRE = 4,
+ 	ULP_THOR_SYM_ECV_TUN_TYPE_GRE = 5,
++	ULP_THOR_SYM_ECV_TUN_TYPE_GA_L4 = 0,
++	ULP_THOR_SYM_ECV_TUN_TYPE_GA_TUN = 0,
+ 	ULP_THOR_SYM_EEM_ACT_REC_INT = 0,
+ 	ULP_THOR_SYM_EEM_EXT_FLOW_CNTR = 0,
+ 	ULP_THOR_SYM_UC_ACT_REC = 0,
+@@ -1774,6 +1903,7 @@ enum ulp_thor_sym {
+ 	ULP_THOR_SYM_DPORT_TUN_TYPE_ECPRI = 4,
+ 	ULP_THOR_SYM_DPORT_TUN_TYPE_SRV6 = 5,
+ 	ULP_THOR_SYM_DPORT_TUN_TYPE_VXLAN_IPV4 = 6,
++	ULP_THOR_SYM_TUN_TYPE_DYN_UPAR = 0x12,
+ 	ULP_THOR_SYM_L3_ECPRI_HDR_SIZE = 4,
+ 	ULP_THOR_SYM_L3_ECPRI_HDR_OFFS = 0,
+ 	ULP_THOR_SYM_L3_ECPRI_PAT = 0,
+@@ -1792,7 +1922,31 @@ enum ulp_thor_sym {
+ 	ULP_THOR_SYM_T_ECPRI_ID_MASK = 0xffffffff,
+ 	ULP_THOR_SYM_T_ECPRI_CONTEXT_SIZE = 32,
+ 	ULP_THOR_SYM_T_ECPRI_CONTEXT_OFFS = 3,
+-	ULP_THOR_SYM_T_ECPRI_CONTEXT_MASK = 0xffffffff
++	ULP_THOR_SYM_T_ECPRI_CONTEXT_MASK = 0xffffffff,
++	ULP_THOR_SYM_SRV6_IP_PROTO_IPV6_ROUTE = 0x2b,
++	ULP_THOR_SYM_SRV6_IPV6_ENCAP = 0x2900,
++	ULP_THOR_SYM_SRV6_HDR_SIZE = 4,
++	ULP_THOR_SYM_SRV6_HDR_OFFSET = 0,
++	ULP_THOR_SYM_SRV6_V6_ENCAP = 3,
++	ULP_THOR_SYM_SRV6_NXT_HDR_EXT_LEN = 0x2900,
++	ULP_THOR_SYM_SRV6_8BYTE_UNIT = 3,
++	ULP_THOR_SYM_SRV6_8BIT_FLD = 8,
++	ULP_THOR_SYM_SRV6_HDR_LEN_OFFSET = 1,
++	ULP_THOR_SYM_SRV6_ID_EXTRACTION_LENGTH = 32,
++	ULP_THOR_SYM_SRV6_ID_EXTRACTION_OFFSET = 3,
++	ULP_THOR_SYM_SRV6_PATTERN = 2,
++	ULP_THOR_SYM_SRV6_ID_MASK = 0xff00ffff,
++	ULP_THOR_SYM_SRV6_CTXT_EXTRACTION_LENGTH = 32,
++	ULP_THOR_SYM_SRV6_CTXT_EXTRACTION_OFFSET = 7,
++	ULP_THOR_SYM_SRV6_CTXT_MASK = 0xffffffff,
++	ULP_THOR_SYM_GLB_ID_L2_CNTXT_ID = 0,
++	ULP_THOR_SYM_GLB_ID_PROF_FUNC_ID = 1,
++	ULP_THOR_SYM_GLB_ID_WC_PROFILE_ID = 2,
++	ULP_THOR_SYM_GLB_ID_EM_PROFILE_ID = 3,
++	ULP_THOR_SYM_GLB_APP_IDX_TBL_ID = 0,
++	ULP_THOR_SYM_GLB_IDX_META_REC_ACT = 4,
++	ULP_THOR_SYM_GLB_IDX_META_REC_PROF = 5,
++	ULP_THOR_SYM_GLB_IDX_META_REC_LKUP = 6
+ };
+ 
+ enum ulp_thor2_sym {
+@@ -2018,10 +2172,44 @@ enum ulp_thor2_sym {
+ 	ULP_THOR2_SYM_DECAP_FUNC_THRU_L2 = 11,
+ 	ULP_THOR2_SYM_DECAP_FUNC_THRU_L3 = 12,
+ 	ULP_THOR2_SYM_DECAP_FUNC_THRU_L4 = 13,
++	ULP_THOR2_SYM_DECAP_FUNC_THRU_OL2 = 0x14,
++	ULP_THOR2_SYM_DECAP_FUNC_THRU_OL3 = 0x15,
++	ULP_THOR2_SYM_DECAP_FUNC_THRU_OL4 = 0x16,
++	ULP_THOR2_SYM_DECAP_FUNC_THRU_OTUN = 0x17,
+ 	ULP_THOR2_SYM_ECV_VALID_NO = 0,
+ 	ULP_THOR2_SYM_ECV_VALID_YES = 1,
+ 	ULP_THOR2_SYM_ECV_CUSTOM_EN_NO = 0,
+ 	ULP_THOR2_SYM_ECV_CUSTOM_EN_YES = 1,
++	ULP_THOR2_SYM_ECV_CUSTOM_IPV4_CTRL_ENCREC = 0,
++	ULP_THOR2_SYM_ECV_CUSTOM_IPV4_CTRL_RSVD = 1,
++	ULP_THOR2_SYM_ECV_CUSTOM_IPV4_CTRL_INHERIT = 2,
++	ULP_THOR2_SYM_ECV_CUSTOM_IPV4_CTRL_INCREMENT = 3,
++	ULP_THOR2_SYM_ECV_SMAC_OVR_USE_SPSMAC = 0,
++	ULP_THOR2_SYM_ECV_SMAC_OVR_REUSE_IN_L2 = 1,
++	ULP_THOR2_SYM_ECV_SMAC_OVR_REUSE_TUN_L2 = 2,
++	ULP_THOR2_SYM_ECV_SMAC_OVR_USE_OUT_L2 = 3,
++	ULP_THOR2_SYM_ECV_SMAC_OVR_RFU = 4,
++	ULP_THOR2_SYM_ECV_SMAC_OVR_REUSE_IN_L2_DMAC = 5,
++	ULP_THOR2_SYM_ECV_SMAC_OVR_REUSE_TUN_L2_DMAC = 6,
++	ULP_THOR2_SYM_ECV_SMAC_OVR_REUSE_OUT_L2_DMAC = 7,
++	ULP_THOR2_SYM_ECV_VLAN_OVR_USE_ENCREC_VLANS = 0,
++	ULP_THOR2_SYM_ECV_VLAN_OVR_USE_IN_L2_VLANS = 1,
++	ULP_THOR2_SYM_ECV_VLAN_OVR_USE_TUN_L2_VLANS = 0,
++	ULP_THOR2_SYM_ECV_VLAN_OVR_USE_OUT_L2_VLANS = 0,
++	ULP_THOR2_SYM_ECV_VLAN_OVR_USE_IN_VLAN_IN_L2 = 0,
++	ULP_THOR2_SYM_ECV_VLAN_OVR_USE_OUT_VLAN_IN_L2 = 0,
++	ULP_THOR2_SYM_ECV_VLAN_OVR_USE_IN_VLAN_OUT_L2 = 0,
++	ULP_THOR2_SYM_ECV_VLAN_OVR_USE_OUT_VLAN_OUT_L2 = 0,
++	ULP_THOR2_SYM_ECV_VLAN_OVR_USE_ENCREC_DMAC = 0,
++	ULP_THOR2_SYM_ECV_VLAN_OVR_USE_IN_L2_DMAC = 1,
++	ULP_THOR2_SYM_ECV_VLAN_OVR_USE_IN_TUN_DMAC = 2,
++	ULP_THOR2_SYM_ECV_VLAN_OVR_USE_OUT_L2_DMAC = 3,
++	ULP_THOR2_SYM_ECV_GRE_SET_K_INCLUDE_OPTIONAL = 1,
++	ULP_THOR2_SYM_ECV_GRE_SET_K_NONE = 1,
++	ULP_THOR2_SYM_ECV_IP_TOS_IN_HDR = 1,
++	ULP_THOR2_SYM_ECV_IP_TOS_ENCREC = 0,
++	ULP_THOR2_SYM_ECV_IP_TTL_IN_HDR = 1,
++	ULP_THOR2_SYM_ECV_IP_TTL_ENCREC = 0,
+ 	ULP_THOR2_SYM_ECV_L2_EN_NO = 0,
+ 	ULP_THOR2_SYM_ECV_L2_EN_YES = 1,
+ 	ULP_THOR2_SYM_ECV_VTAG_TYPE_NOP = 0,
+@@ -2056,6 +2244,8 @@ enum ulp_thor2_sym {
+ 	ULP_THOR2_SYM_ECV_TUN_TYPE_NGE = 3,
+ 	ULP_THOR2_SYM_ECV_TUN_TYPE_NVGRE = 4,
+ 	ULP_THOR2_SYM_ECV_TUN_TYPE_GRE = 5,
++	ULP_THOR2_SYM_ECV_TUN_TYPE_GA_L4 = 6,
++	ULP_THOR2_SYM_ECV_TUN_TYPE_GA_TUN = 7,
+ 	ULP_THOR2_SYM_EEM_ACT_REC_INT = 0,
+ 	ULP_THOR2_SYM_EEM_EXT_FLOW_CNTR = 0,
+ 	ULP_THOR2_SYM_UC_ACT_REC = 0,
+@@ -2096,6 +2286,7 @@ enum ulp_thor2_sym {
+ 	ULP_THOR2_SYM_DPORT_TUN_TYPE_ECPRI = 4,
+ 	ULP_THOR2_SYM_DPORT_TUN_TYPE_SRV6 = 5,
+ 	ULP_THOR2_SYM_DPORT_TUN_TYPE_VXLAN_IPV4 = 6,
++	ULP_THOR2_SYM_TUN_TYPE_DYN_UPAR = 0x12,
+ 	ULP_THOR2_SYM_L3_ECPRI_HDR_SIZE = 0,
+ 	ULP_THOR2_SYM_L3_ECPRI_HDR_OFFS = 0,
+ 	ULP_THOR2_SYM_L3_ECPRI_PAT = 0,
+@@ -2114,7 +2305,31 @@ enum ulp_thor2_sym {
+ 	ULP_THOR2_SYM_T_ECPRI_ID_MASK = 0,
+ 	ULP_THOR2_SYM_T_ECPRI_CONTEXT_SIZE = 0,
+ 	ULP_THOR2_SYM_T_ECPRI_CONTEXT_OFFS = 0,
+-	ULP_THOR2_SYM_T_ECPRI_CONTEXT_MASK = 0
++	ULP_THOR2_SYM_T_ECPRI_CONTEXT_MASK = 0,
++	ULP_THOR2_SYM_SRV6_IP_PROTO_IPV6_ROUTE = 0x2b,
++	ULP_THOR2_SYM_SRV6_IPV6_ENCAP = 0x2900,
++	ULP_THOR2_SYM_SRV6_HDR_SIZE = 4,
++	ULP_THOR2_SYM_SRV6_HDR_OFFSET = 0,
++	ULP_THOR2_SYM_SRV6_V6_ENCAP = 3,
++	ULP_THOR2_SYM_SRV6_NXT_HDR_EXT_LEN = 0x2900,
++	ULP_THOR2_SYM_SRV6_8BYTE_UNIT = 3,
++	ULP_THOR2_SYM_SRV6_8BIT_FLD = 8,
++	ULP_THOR2_SYM_SRV6_HDR_LEN_OFFSET = 1,
++	ULP_THOR2_SYM_SRV6_ID_EXTRACTION_LENGTH = 32,
++	ULP_THOR2_SYM_SRV6_ID_EXTRACTION_OFFSET = 3,
++	ULP_THOR2_SYM_SRV6_PATTERN = 2,
++	ULP_THOR2_SYM_SRV6_ID_MASK = 0xff00ffff,
++	ULP_THOR2_SYM_SRV6_CTXT_EXTRACTION_LENGTH = 32,
++	ULP_THOR2_SYM_SRV6_CTXT_EXTRACTION_OFFSET = 7,
++	ULP_THOR2_SYM_SRV6_CTXT_MASK = 0xffffffff,
++	ULP_THOR2_SYM_GLB_ID_L2_CNTXT_ID = 0,
++	ULP_THOR2_SYM_GLB_ID_PROF_FUNC_ID = 1,
++	ULP_THOR2_SYM_GLB_ID_WC_PROFILE_ID = 2,
++	ULP_THOR2_SYM_GLB_ID_EM_PROFILE_ID = 3,
++	ULP_THOR2_SYM_GLB_APP_IDX_TBL_ID = 0,
++	ULP_THOR2_SYM_GLB_IDX_META_REC_ACT = 4,
++	ULP_THOR2_SYM_GLB_IDX_META_REC_PROF = 5,
++	ULP_THOR2_SYM_GLB_IDX_META_REC_LKUP = 6
+ };
+ 
+ #endif
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_template_struct.h b/drivers/net/bnxt/tf_ulp/ulp_template_struct.h
+index fbce97269b..5b3e82f336 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_template_struct.h
++++ b/drivers/net/bnxt/tf_ulp/ulp_template_struct.h
+@@ -34,6 +34,9 @@
+ #define BNXT_ULP_PROTO_HDR_GRE_NUM	2
+ #define BNXT_ULP_PROTO_HDR_ICMP_NUM	5
+ #define BNXT_ULP_PROTO_HDR_ECPRI_NUM	2
++#define	BNXT_ULP_PROTO_HDR_IPV6_EXT_NUM	1
++#define BNXT_ULP_PROTO_HDR_SRV6_NUM	7
++#define BNXT_ULP_PROTO_HDR_MPLS_NUM	2
+ #define BNXT_ULP_PROTO_HDR_MAX		128
+ #define BNXT_ULP_PROTO_HDR_ENCAP_MAX	64
+ #define BNXT_ULP_PROTO_HDR_FIELD_SVIF_IDX	1
 -- 
 2.39.5 (Apple Git-154)
 
