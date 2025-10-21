@@ -2,83 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C009CCD1A5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 18:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67056CCD1B9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 18:58:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 046CA410D2;
-	Tue, 21 Oct 2025 20:58:11 +0200 (CEST)
-Received: from mail-ot1-f97.google.com (mail-ot1-f97.google.com
- [209.85.210.97]) by mails.dpdk.org (Postfix) with ESMTP id 0EA1140ED1
- for <dev@dpdk.org>; Tue, 21 Oct 2025 20:58:10 +0200 (CEST)
-Received: by mail-ot1-f97.google.com with SMTP id
- 46e09a7af769-7c27a099d61so2344585a34.1
- for <dev@dpdk.org>; Tue, 21 Oct 2025 11:58:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 69D72410EA;
+	Tue, 21 Oct 2025 20:58:15 +0200 (CEST)
+Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com
+ [209.85.214.225])
+ by mails.dpdk.org (Postfix) with ESMTP id 37EB8410EA
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 20:58:14 +0200 (CEST)
+Received: by mail-pl1-f225.google.com with SMTP id
+ d9443c01a7336-290aaff555eso58112745ad.2
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 11:58:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761073089; x=1761677889;
+ d=1e100.net; s=20230601; t=1761073093; x=1761677893;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=7oavr6P14Ga+9mOP8Zv1wxARmZGE0+nWEp/GV2lao90=;
- b=UDaeMnwFv8bHrf2BtxvUyPxzGGw0fr/yIx9N5Omj4rer1BR5a248OUBmOZ/ARkyupH
- izLG9qEwXrexso065rSVSWw4VssqhGeHobJU0hoHDodYNKPlV+MekQymx+bJA8BzDvH9
- Ah5Q4dOeppRmBxhdo1/+GmfVxLu3LJaRI6yr38zuJRqGGXMWG9OoyYES7OcCg73z7heh
- DH/VTVvJwthiWfiO/ZdW2LE+OHWrxqAUh0IiYrdYOLU8FdwUo59d4zlRcYkMXI1mNF+J
- lO6yR90BGO+uju0/q7HpcsgMNpSdXh+SUbKcj5pRBBjIkhe//Yp380S6lhaIFNxx+rZ+
- 3nSQ==
-X-Gm-Message-State: AOJu0YwGvhDfOklL9Or4Fdq20wDSG9eYwpWTgLTRbjII95PJnWlC4Z5k
- lU0RI911aOY9xaHYcFZCMkZ3JVWV+6SzVTjavDXEiqt6tqIW1Etl7XEjMvghWG8kTLuNbXo/oB3
- cCtiHM8lce8lmP2ArOy3vh+2h2ZswGfbllFou2u5yb0GBYzG7VClm5pJGnvft2f/3CUXyygdyth
- XSj7WG4sEePg5P7UW2ERyXMH7B6rpoQPlVGw9kvZTP6Btwdcq87L2qIszNlXK7wDBDnaEwZQ==
-X-Gm-Gg: ASbGnctjRDj2BD1gjYxF/ExUQnDdRfwWTFSDpFZK8WsE8MFSlTznmt0PMUVxjbZAwXz
- a3R9cPMXDG7+MveXyYpHWsnsv3JrXJ2WF5IVgGr/TUKpcKZVuQYMxjO1C2qiHqUHZOC86zs5BqO
- RjjYvU9pJ3vVhi9z79AHNJ2rkBCfA7QLUUEUM0H+TJnYyztzWFhPiiCO0N6awcyurvxu0YDrueL
- iKZvKHgQXEOiddb8YfKCd+yZqXVVb1ThOOIm49bADUrdQc+w9rSXm0eWM1U31tHPdkX1SdH6kJp
- doQ+o2xWXKq9jFHS1D8bX8sbMDnzoWCUe1vOyTrIgqq3+lBdUIGqNeEuGOyuM8DC9V3D6www0KE
- rG9AzKy8KS0Dgn9Zeitqp+lbg4CPIgtDCMLPbsiegBKIPFk7bTHag2V2E/eFTyDhIX6MaCHTeXz
- rGIRTALPivCQkpvywt0pHlPusiEuoOUeOKCRKI
-X-Google-Smtp-Source: AGHT+IEZG05rqh+uYs8zgKi1UpaXyOL7QEKZ9YNLcbKzxnZWsSqobIomtA7xsJG1jaHMOs/DjLKy7XrwgNQF
-X-Received: by 2002:a05:6830:6585:b0:7b4:1768:ff31 with SMTP id
- 46e09a7af769-7c27cca6758mr9357319a34.25.1761073089216; 
- Tue, 21 Oct 2025 11:58:09 -0700 (PDT)
+ bh=Saz+LUnU2NUljE7rSnTwk7kDpDsiFFBwF+PqT9tABKw=;
+ b=j4nLaxjJz7dRusfkkwlp6WlOlxfU2wJuuFBMtgoHR5bORTWhlJMNZC49MqmqfrspxB
+ wrewciGlDxGqO/VquHod/N9WNLSvk8pCLM+rpN7p3e1RaMp5JiGhRhleaazx4bsf1rl1
+ en5nOY4FYVLjdgu9Z0wsgTX5rKgp7hEf944yip5349kjvPv8aGSuHX8kP2VxgMJn+kxh
+ knJ8RXweEznLmqwXicd36/3km4PNGyKPcXfwGL7Eng+aM3rLVa80ZTXhqm0AqfeMSNxs
+ MRDcShU2fXydgLj9QGkJ1SVLftbSN41MS0aTGeidHGWs40eT33u0M1a4xxyzgTZc9YKZ
+ HsHg==
+X-Gm-Message-State: AOJu0YyApbAnFE1x5kZ8P/z6WNIhb/g3kzl7oUdZUrTepiO33SYHbozh
+ qotDElQIIFfQXd0bva7HqeTl4FQFJw8+6t6VEQOGnPKsHtmei55Qzr7KmI5hqjDjrY6VkDQmtT0
+ xmIxKIjJN6YSDeVlFynqjTxnrvxWwI+bJpGDljznSnQ6x2a3J1qsLAIKJlXl8Zw6M+2+AG4OkD4
+ Pm1ZUhC2bRSFuWL83AmZaMMsaaQYrUMGs7Gly49xzRosBHY/XreEL+DawuKOD29MQrY6qx0g==
+X-Gm-Gg: ASbGncvyPZLHhDLhgHwZuKlHeVHVj6DMC8tvlb2llechOjKs212xl0xfyD045y0um3O
+ G44Ey7diYVcUVUAzonUVSs4BVAylAoEDMU5XjifVXswi7pFulsHQnjPv+MSlJ+HwNxy9VtVXEZa
+ VqVJ3KqfXQesB6LU+CYqwBLUAlUEqTWYRt0d8JwqnxeZr8TDS29ye7UHexf2bpUmsySBe9bB40M
+ GufquDNPffFKxnUtb0xGu5cMfocbbkBl0DiyDWUcB9lvh73Kb5qAygujWLQIbEpPzuzDrl0d7SO
+ 9rEpzr2wozu60WmXnaGGsUHYsth9Q3t61dbEwwXHXVat7g9+OyetO4J6APROieJv8rOs3FgA8wK
+ XWNIhXRsZ8JNyJ5eQRwOHtIdhzhD3YAjf2fJOQH12laKh3kLpM9Jaex8MX7dbLzAgcTgJCsTyLR
+ 6+I+c4X29PdxNJSqtBpgCqRty44/gvMHWPmezR
+X-Google-Smtp-Source: AGHT+IGze1vDwDOKl4VK0S5JmBtXVy1zeuUgyTLbGoeCmSbuCKbbSWZSNmkmSQ9c6Uhg8nj75jroIqxsHNYs
+X-Received: by 2002:a17:902:da89:b0:248:7018:c739 with SMTP id
+ d9443c01a7336-290cba4ef0amr230557455ad.28.1761073093330; 
+ Tue, 21 Oct 2025 11:58:13 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
  by smtp-relay.gmail.com with ESMTPS id
- 46e09a7af769-7c2888b1d14sm1621208a34.8.2025.10.21.11.58.08
+ d9443c01a7336-292471c5c7dsm13053055ad.38.2025.10.21.11.58.12
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 21 Oct 2025 11:58:09 -0700 (PDT)
+ Tue, 21 Oct 2025 11:58:13 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pl1-f200.google.com with SMTP id
- d9443c01a7336-27ee41e062cso75714505ad.1
- for <dev@dpdk.org>; Tue, 21 Oct 2025 11:58:08 -0700 (PDT)
+Received: by mail-pg1-f198.google.com with SMTP id
+ 41be03b00d2f7-b631ba3d31eso3728418a12.1
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 11:58:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761073087; x=1761677887; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761073091; x=1761677891; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7oavr6P14Ga+9mOP8Zv1wxARmZGE0+nWEp/GV2lao90=;
- b=FI8tqD3Urhgb410AJmMA6GPAc6RxI0cu4wBw5v3S9ql9APuPVwvbYfxhUFXjtsl6+U
- HiQf6JZXtEZqM59riuUtKVh54/Bo8yJ2FFmf9Tr5iD9R1k4Un827nkOHVUDJ7ibNa20f
- xi1ooHjrb8hV0AAxjZVtNAdRrMN9ytYl4UBok=
-X-Received: by 2002:a17:903:8c6:b0:28d:18fb:bb93 with SMTP id
- d9443c01a7336-290c9c8968cmr247460155ad.7.1761073087295; 
- Tue, 21 Oct 2025 11:58:07 -0700 (PDT)
-X-Received: by 2002:a17:903:8c6:b0:28d:18fb:bb93 with SMTP id
- d9443c01a7336-290c9c8968cmr247459765ad.7.1761073086764; 
- Tue, 21 Oct 2025 11:58:06 -0700 (PDT)
+ bh=Saz+LUnU2NUljE7rSnTwk7kDpDsiFFBwF+PqT9tABKw=;
+ b=bgP9bL7cRV5ODJ7kWbcreKdVNd2J3JKTwvEnS4f/k+sBUq7upCOPOJg0rX4agKD2f9
+ lFRYA6YGmxMWUPxVi+tYKmBbCHQQzvw8/OWnaWJYqOW/oy3joMX5PzSDMB44OVMF5Dil
+ LARVqPgipP+0+Ze1zqVHKFT5GqUas+GlYMIDc=
+X-Received: by 2002:a17:903:2381:b0:240:3b9e:dd65 with SMTP id
+ d9443c01a7336-290cba4ec0fmr219398325ad.38.1761073091281; 
+ Tue, 21 Oct 2025 11:58:11 -0700 (PDT)
+X-Received: by 2002:a17:903:2381:b0:240:3b9e:dd65 with SMTP id
+ d9443c01a7336-290cba4ec0fmr219398015ad.38.1761073090775; 
+ Tue, 21 Oct 2025 11:58:10 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-29246fdc9cfsm116598155ad.45.2025.10.21.11.58.05
+ d9443c01a7336-29246fdc9cfsm116598155ad.45.2025.10.21.11.58.09
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Tue, 21 Oct 2025 11:58:06 -0700 (PDT)
+ Tue, 21 Oct 2025 11:58:10 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Subject: [PATCH v4 44/57] net/bnxt: fix rss configuration when set to none
-Date: Tue, 21 Oct 2025 14:56:48 -0400
-Message-Id: <20251021185701.71881-13-manish.kurup@broadcom.com>
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Somnath Kotur <somnath.kotur@broadcom.com>,
+ Peter Spreadborough <peter.spreadborough@broadcom.com>,
+ Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+Subject: [PATCH v4 45/57] net/bnxt: packet drop after port stop and start
+Date: Tue, 21 Oct 2025 14:56:49 -0400
+Message-Id: <20251021185701.71881-14-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251021185701.71881-1-manish.kurup@broadcom.com>
 References: <20251021185701.71881-1-manish.kurup@broadcom.com>
@@ -100,37 +104,51 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-If the rss hash type is set to none and the ports are stopped and
-started again, the check for rss hash type was not allowing the
-bnxt driver to populate the correct rx rings in the vnic rss list.
-This causes the subsequent calls to rss configuration fail since
-the rss list is not configured and have stale data causing the
-firmware to reject the rss configuration.
+The packets are getting dropped if some of the queues are configured
+to stop and if the bnxt driver is reset due to port stop all and
+port start all then when the bnxt driver comes up, the driver is
+overwriting the queue configuration to operationally started
+instead of stopping the queues that was previously stopped. The
+stopped queues were getting added to the rss context resulting in
+the packet drops.
 
-The rss hash type of none should not be ignored during configuration,
-it is a valid configuration and should be applied. When rss hash
-type is none, the rss context is disabled and there should be no
-rss algorithm applied to the incoming traffic.
+Added a fix to address this issue, the rxq structure is not cleared
+during the stop and start process and retains the context, that flag
+is used to set the queue state. Thus stopped queues shall not be added
+to the rss context on recovery from a stop and start. The queues that
+were configured to be stopped have to explicitly started to see
+traffic on those queues.
 
 Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Reviewed-by: Somnath Kotur <somnath.kotur@broadcom.com>
+Reviewed-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_hwrm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/bnxt/bnxt_ethdev.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-index 00b02821c9..939f35e3da 100644
---- a/drivers/net/bnxt/bnxt_hwrm.c
-+++ b/drivers/net/bnxt/bnxt_hwrm.c
-@@ -6331,7 +6331,7 @@ int bnxt_vnic_rss_configure(struct bnxt *bp, struct bnxt_vnic_info *vnic)
- 	if (vnic->fw_vnic_id == INVALID_HW_RING_ID)
- 		return 0;
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index 4ed2bf2a1a..50bc0f1f9e 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -925,11 +925,13 @@ static int bnxt_start_nic(struct bnxt *bp)
+ 	for (j = 0; j < bp->rx_nr_rings; j++) {
+ 		struct bnxt_rx_queue *rxq = bp->rx_queues[j];
  
--	if (!(vnic->rss_table && vnic->hash_type))
-+	if (vnic->rss_table == NULL)
- 		return 0;
++		__rte_assume(j < RTE_MAX_QUEUES_PER_PORT);
++		/* If not deferred start then change only the state of the */
++		/* queue based on the queue rx_started flag */
+ 		if (!rxq->rx_deferred_start) {
+-			__rte_assume(j < RTE_MAX_QUEUES_PER_PORT);
+-			bp->eth_dev->data->rx_queue_state[j] =
++			if (rxq->rx_started)
++				bp->eth_dev->data->rx_queue_state[j] =
+ 				RTE_ETH_QUEUE_STATE_STARTED;
+-			rxq->rx_started = true;
+ 		}
+ 	}
  
- 	if (BNXT_CHIP_P5_P7(bp))
 -- 
 2.39.5 (Apple Git-154)
 
