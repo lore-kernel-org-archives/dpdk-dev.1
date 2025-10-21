@@ -2,87 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D94CCD1A7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 17:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE672CCD1A7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 17:54:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B0A7B40E5E;
-	Tue, 21 Oct 2025 19:52:59 +0200 (CEST)
-Received: from mail-qk1-f225.google.com (mail-qk1-f225.google.com
- [209.85.222.225])
- by mails.dpdk.org (Postfix) with ESMTP id 7980E40ED9
- for <dev@dpdk.org>; Tue, 21 Oct 2025 19:52:56 +0200 (CEST)
-Received: by mail-qk1-f225.google.com with SMTP id
- af79cd13be357-8909f01bd00so673159985a.0
- for <dev@dpdk.org>; Tue, 21 Oct 2025 10:52:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 07BC640F1A;
+	Tue, 21 Oct 2025 19:53:05 +0200 (CEST)
+Received: from mail-pj1-f100.google.com (mail-pj1-f100.google.com
+ [209.85.216.100])
+ by mails.dpdk.org (Postfix) with ESMTP id 49D1F40EF0
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 19:52:59 +0200 (CEST)
+Received: by mail-pj1-f100.google.com with SMTP id
+ 98e67ed59e1d1-33d463e79ddso5044250a91.0
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 10:52:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761069176; x=1761673976;
+ d=1e100.net; s=20230601; t=1761069178; x=1761673978;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=7AC4lRdOLtLVMIYfNCDOJAsZu0pn1+BKzrGcc4bgyX4=;
- b=u3v3jh/0GjIM9ipb3KzrPwkap6ER4xAv34bvCu4peBanvYJoaQlbcnwDG8FIvcLBfG
- sWOXwh78HOPsmLhgAGA3H6RfskwALcOihQ0AC1+B1ZubRVxhgn99cte9epaOfOdT0Sd0
- MhcfvHwONBLrcgH3nOInvUMjKXPZ1n57ULDRib9pQieHqpHGOMDnlCmCqquhm/HTIfXR
- lJ5ERwHetrdv3evnBagkAyfaKZ6+cW/VJmaB4O1eeoAHZkE0Ybni05wcWIw4nfWnZNG7
- TJ2eu3lG04pF93FP3uk2NHmt/p+95fMLJGFAYrv1Rp/hLUF486+O5Z9QqKZsKltTPKCP
- I+xg==
-X-Gm-Message-State: AOJu0Yyqq9kQZ7qfdf+BNX0FP7A06rAmDJ4Y83fgcsXpFECh37BM9xmI
- 0fbAptA5sTrKyAf6BPSjuJKR/Wz52PGEWYVEp1CblN5S+nu/rLYJE7fN/bxrdmnJjUFbSzpF8Km
- vWxrhSNn2/p4NBzXeIy8mSU4rG3VxllVtFDemDPVpXE1atu2B+DyDUqGcjAP4CVeWurljEv2L3R
- To5T9AMLp55aUZQTAWbFpU5NtNvrJpXVpcdt3nZ3B6F/qYHqRYHOSOx9OxtdumRq3ZqOmqfw==
-X-Gm-Gg: ASbGncs6G5uGPu258bNau0kDST/8wo8G0AjW6aAw/BjHKwUfpu6RtIv36e0Uns682eV
- Azs0DLRr8TfIUMRlMGsQjVPemka7xydRnnI/Apads9nIh/P0qh4jgq2PKOjwD96kfMXU9Nup6mw
- jc4+QI1tj+D0VFVai0AZx6SyG3J7IU19idyKY29Nhs6hOP1K5v6x+XRNe/AYY7JRpYiqQwReADP
- QYqqURRzeqaapk9SA5D0zlmvOkaQXl3wVznlkzj51bbagblyPutni87kHSTTldx9EzpwoDUNxxQ
- Zq+57CJ53VIl4MeydJufpFC4GJrKGG7Hkq9AksGR18K0NEvUVBfvYgefTmtKGt4RzgifT74wMq8
- KzaNAPp80c3JLnU+vJj9olPfAJLlIrNZfYFyiTCZic9qziozsakyn/Qp/6H89GRVAUAIaoJwled
- GJIR6cZTd8rCP4UXg0saaX8y3tF2+i6/MBrw==
-X-Google-Smtp-Source: AGHT+IF9O6yvVQ013djQtO+75E4Mevf9KhAHWB9R6rgXZhHfxC1Wv8Hk54FckPrYElTOVUUUbzbLWQySPxxJ
-X-Received: by 2002:a05:620a:4806:b0:88e:75f8:1e4a with SMTP id
- af79cd13be357-8906e2ca673mr2049441285a.11.1761069175684; 
- Tue, 21 Oct 2025 10:52:55 -0700 (PDT)
+ bh=BnjICvWo03rToGq636QEQBwAsqS2j3fxgQnCoDETIVA=;
+ b=sXqIgUV14Cb0RznsfXffeyh53QdTj4vHHp+BuF0AsFhqGOS84BQDBozT5zAt9ZjYmd
+ Kgl5i53Htj2k11eqTvTISi536D86tmydVXJd+XVtVJQsSKDegdGbgQPQ3Zhg4gh5L8WU
+ Yw4Xzr0bAO0p2V4Tkm3TcyjArFG+i+kTb/I8Z36j4oEGIUCIQnKzaISvnqM0xMKoEZ6V
+ b89+rOkp2T2f2f/hoahsl7YWwadTmGkTO+c8xzxxPuaQA07PqaxOvyX8FK9Mct60ii1T
+ HhEUm8ZNqYnnIgDYOHw/sYZky05uLWz5s+X1phqVAgJkLaBc1KOx2N0ZSiwS9Liuy+lJ
+ xP1g==
+X-Gm-Message-State: AOJu0YwYf3ovd7J+X7UwnaRPLgQbJygE8CGwIeRgulSVdoVkeA/pLhDD
+ pECXxpwzZ1gdM7H+m5igvzrgQE9/Sn9x2Ar06c/7zBBjw0eKr/ylIZmMg1OYx6uBmOBBS24JDZv
+ QOCrNW7JHOdEFAxnmGWAUqPHdW+Rbi7NK5NaZZHNLynhj7qFdK5RLfNTWyoZd4Fj1QkEdzLrbpG
+ BaWbNGIVv7O1qN4ez1qNKLg5Rujvb8yTmnrhxH8KAXgXwTYKLqblX/emSd4YLrM8+J2B2/1Q==
+X-Gm-Gg: ASbGncsjqxl04hGnyTnhp3cQbfj9Fn2vZKlCo/4tQec6AveQSkGgWtwYM0xG++tgpFf
+ tIkZGzdroW/5M2S94pzFx41Oq/T0jnB9POowzHgbjphqJY6B71THgIzZnN30fmxjcROoJY+6IMy
+ LigwFJt4zj7EpsFJSIYvrdDbegyiY3mYFzW7n+2RW15o9j8M0NwlYIIj2Fx4mjKjwKSgF2TfW2o
+ ax3LB0v+XK8P/fRbIEFxEf3AymKhyDRI2hVjL6B2jExlP+UXzixMCfHpLyqbzIV7pNmvo2vdeMb
+ Z1KFuKmQjKnfiEtWq8P5OqG/P1abwcqdY3QGr/TnMcWqM0l6ItIBqpl0z7OONTBjeK18bYT7r42
+ wm2jVUj86ZBQHcouoCfJJmqEbzuOvlCTNJGR+MbqBnsZedzX1cxy8sL+RhhBMEcmJ50abBJIfLF
+ S9ITGaSAhSfvngoK3r11O2/m20jL2ezGfgpA==
+X-Google-Smtp-Source: AGHT+IGrLzrohsXAhZUbnvxvbirTiUbNTQqmApMDI7GBDG1Okxkf7XXVIULiHcLSdBQjvqd8E3bcRvE7xnHv
+X-Received: by 2002:a17:90b:2789:b0:32b:cb05:849a with SMTP id
+ 98e67ed59e1d1-33bcf8fe212mr20811270a91.29.1761069178279; 
+ Tue, 21 Oct 2025 10:52:58 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-72.dlp.protect.broadcom.com. [144.49.247.72])
  by smtp-relay.gmail.com with ESMTPS id
- af79cd13be357-891cf3918d1sm128648685a.3.2025.10.21.10.52.55
+ 98e67ed59e1d1-33e223d250asm17821a91.1.2025.10.21.10.52.57
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 21 Oct 2025 10:52:55 -0700 (PDT)
+ Tue, 21 Oct 2025 10:52:58 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pl1-f199.google.com with SMTP id
- d9443c01a7336-290b13e3ac0so56933105ad.0
- for <dev@dpdk.org>; Tue, 21 Oct 2025 10:52:55 -0700 (PDT)
+Received: by mail-pl1-f200.google.com with SMTP id
+ d9443c01a7336-2904e9e0ef9so115012935ad.3
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 10:52:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761069174; x=1761673974; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761069176; x=1761673976; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7AC4lRdOLtLVMIYfNCDOJAsZu0pn1+BKzrGcc4bgyX4=;
- b=P0AknuRnUuiyz4vQ5D805k8lS36axEQmx6FZPlRoyOHWZRTpEPEq/dGDiIJWgFLQMP
- f0AAOl+rY1AotNv1xLg/tZhDwe9ZRUeaISQBnS+UGe7UxpjqNVo3FGoHNk5Z5E0ucUnS
- QEWw6wJSWyXIi5uvKEjn22QBUXMLs8vWRgPJ4=
-X-Received: by 2002:a17:903:4b0d:b0:250:643e:c947 with SMTP id
- d9443c01a7336-290ca30e401mr223806755ad.28.1761069174213; 
- Tue, 21 Oct 2025 10:52:54 -0700 (PDT)
-X-Received: by 2002:a17:903:4b0d:b0:250:643e:c947 with SMTP id
- d9443c01a7336-290ca30e401mr223806265ad.28.1761069173447; 
- Tue, 21 Oct 2025 10:52:53 -0700 (PDT)
+ bh=BnjICvWo03rToGq636QEQBwAsqS2j3fxgQnCoDETIVA=;
+ b=M/0il2C1SGi7HZ44s4N/qujl7wd/iTMsiDOFmXSJjl68Jd0eTcy+zgpURaFL6OmXJo
+ V1QKBXd5b9xLDTohnrMiiBs4uox+d0J5GfUxLebpNGRDRTxikGwUza0hFolWtnCAAaEW
+ QO0MetXfZtXpufkV/zVIz3PCLvoLlZJr0poCM=
+X-Received: by 2002:a17:902:ce12:b0:279:daa1:6780 with SMTP id
+ d9443c01a7336-290cba41dd2mr194251065ad.52.1761069176208; 
+ Tue, 21 Oct 2025 10:52:56 -0700 (PDT)
+X-Received: by 2002:a17:902:ce12:b0:279:daa1:6780 with SMTP id
+ d9443c01a7336-290cba41dd2mr194250685ad.52.1761069175441; 
+ Tue, 21 Oct 2025 10:52:55 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-292472193c2sm115441495ad.104.2025.10.21.10.52.52
+ d9443c01a7336-292472193c2sm115441495ad.104.2025.10.21.10.52.54
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Tue, 21 Oct 2025 10:52:53 -0700 (PDT)
+ Tue, 21 Oct 2025 10:52:55 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com,
- Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>,
- Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
  Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
-Subject: [PATCH v4 24/57] net/bnxt/tf_ulp: fix seg fault when devargs argument
- missing
-Date: Tue, 21 Oct 2025 13:50:16 -0400
-Message-Id: <20251021175049.46092-25-manish.kurup@broadcom.com>
+Subject: [PATCH v4 25/57] net/bnxt: fix default rss config
+Date: Tue, 21 Oct 2025 13:50:17 -0400
+Message-Id: <20251021175049.46092-26-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251021175049.46092-1-manish.kurup@broadcom.com>
 References: <20251015090024.32250-1-manish.kurup@broadcom.com>
@@ -103,47 +100,83 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
+From: Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
 
-For Thor2 if any of the ports are attached on testpmd without
-"mpc=1" argument, code flow will not initialize core mpc
-structure which can lead to seg fault in bnxt_mpc_send while
-accessing tx queues. Fix it by adding NULL conditional check for
-mpc member of bp structure.
+On Thor2, the set of supported RSS hash types reported in
+dev_info->flow_type_rss_offloads includes both IPV6 and
+IPV6_FLOW_LABEL. However, hardware support is mutually exclusive.
+That is, either hash type IPV6 or IPV6_FLOW_LABEL can be
+specified, but not both.
 
-Signed-off-by: Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
-Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-Reviewed-by: Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
+But, an application (such as testpmd) that sets the default
+hash types based on dev_info could end up specifying both bits
+in rss_conf->rss_hf field. This results in an error when both
+are set in HWRM_VNIC_RSS_CFG command.
+
+testpmd> port config all rss default
+bnxt_hwrm_vnic_rss_cfg_p5(): error 2:0:00000000:0000
+Configuration of RSS hash at ethernet port 0 failed with
+		error (22): Invalid argument.
+bnxt_hwrm_vnic_rss_cfg_p5(): error 2:0:00000000:0000
+Configuration of RSS hash at ethernet port 1 failed with
+		error (22): Invalid argument.
+
+Fix this issue by specifying only hash type IPV6_FLOW_LABEL in
+the hwrm, when both are specified in the rte command. This works
+since the hw includes IPV6 src and dst fields also in its hash
+function when the type is IPV6_FLOW_LABEL.
+
+Signed-off-by: Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
+Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_mpc.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/net/bnxt/bnxt_ethdev.c | 11 +++++++++++
+ drivers/net/bnxt/bnxt_vnic.c   | 10 +++++++++-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/bnxt/bnxt_mpc.c b/drivers/net/bnxt/bnxt_mpc.c
-index 2582b50782..ff2f0d7043 100644
---- a/drivers/net/bnxt/bnxt_mpc.c
-+++ b/drivers/net/bnxt/bnxt_mpc.c
-@@ -719,10 +719,20 @@ int bnxt_mpc_send(struct bnxt *bp,
- 		  bool batch)
- {
- 	int rc;
--	struct bnxt_mpc_txq *mpc_queue = bp->mpc->mpc_txq[in_msg->chnl_id];
-+	struct bnxt_mpc_txq *mpc_queue;
- 	int retry = BNXT_MPC_RX_RETRY;
- 	uint32_t pi = 0;
- 
-+	/*
-+	 * TODO: This condition check is added to avoid
-+	 * segmentation fault in case mpc argument is
-+	 * missing in dev-args. Fix this by removing
-+	 * mpc argument from dev args.
-+	 */
-+	if (!bp->mpc)
-+		return -1;
-+	mpc_queue = bp->mpc->mpc_txq[in_msg->chnl_id];
-+
- 	if (out_msg->cmp_type != CMPL_BASE_TYPE_MID_PATH_SHORT &&
- 	    out_msg->cmp_type != CMPL_BASE_TYPE_MID_PATH_LONG)
- 		return -1;
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index b2b8e20516..4bca2239c3 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -2485,6 +2485,17 @@ static int bnxt_rss_hash_conf_get_op(struct rte_eth_dev *eth_dev,
+ 			memcpy(rss_conf->rss_key, vnic->rss_hash_key, len);
+ 		}
+ 		bnxt_hwrm_rss_to_rte_hash_conf(vnic, &rss_conf->rss_hf);
++		/* HASH_TYPE_IPV6_FLOW_LABEL and HASH_TYPE_IPV6 are mutually
++		 * exclusive in hardware. See related comments in
++		 * bnxt_rte_to_hwrm_hash_types(). If the cached user config
++		 * has both bits enabled, make sure both are reported in
++		 * conf_get_op().
++		 */
++		if (bp->rss_conf.rss_hf &&
++		    (bp->rss_conf.rss_hf &
++		    (RTE_ETH_RSS_IPV6 | RTE_ETH_RSS_IPV6_FLOW_LABEL)) &&
++		    (rss_conf->rss_hf & RTE_ETH_RSS_IPV6_FLOW_LABEL))
++			rss_conf->rss_hf |= RTE_ETH_RSS_IPV6;
+ 		rss_conf->rss_hf |=
+ 			bnxt_hwrm_to_rte_rss_level(bp, vnic->hash_mode);
+ 	} else {
+diff --git a/drivers/net/bnxt/bnxt_vnic.c b/drivers/net/bnxt/bnxt_vnic.c
+index 637e9b9aa4..f0ec87198f 100644
+--- a/drivers/net/bnxt/bnxt_vnic.c
++++ b/drivers/net/bnxt/bnxt_vnic.c
+@@ -285,8 +285,16 @@ uint32_t bnxt_rte_to_hwrm_hash_types(uint64_t rte_type)
+ 		hwrm_type |= HWRM_VNIC_RSS_CFG_INPUT_HASH_TYPE_TCP_IPV6;
+ 	if (rte_type & RTE_ETH_RSS_NONFRAG_IPV6_UDP)
+ 		hwrm_type |= HWRM_VNIC_RSS_CFG_INPUT_HASH_TYPE_UDP_IPV6;
+-	if (rte_type & RTE_ETH_RSS_IPV6_FLOW_LABEL)
++	if (rte_type & RTE_ETH_RSS_IPV6_FLOW_LABEL) {
++		/* HASH_TYPE_IPV6_FLOW_LABEL and HASH_TYPE_IPV6 are mutually
++		 * exclusive. If both bits are specified in rte_type, set only
++		 * HASH_TYPE_IPV6_FLOW_LABEL in hardware since it subsumes
++		 * HASH_TYPE_IPV6 (see comments for HASH_TYPE_IPV6_FLOW_LABEL
++		 * in hsi.h).
++		 */
+ 		hwrm_type |= HWRM_VNIC_RSS_CFG_INPUT_HASH_TYPE_IPV6_FLOW_LABEL;
++		hwrm_type &= ~HWRM_VNIC_RSS_CFG_INPUT_HASH_TYPE_IPV6;
++	}
+ 	if (rte_type & RTE_ETH_RSS_ESP)
+ 		hwrm_type |= HWRM_VNIC_RSS_CFG_INPUT_HASH_TYPE_ESP_SPI_IPV4 |
+ 			     HWRM_VNIC_RSS_CFG_INPUT_HASH_TYPE_ESP_SPI_IPV6;
 -- 
 2.39.5 (Apple Git-154)
 
