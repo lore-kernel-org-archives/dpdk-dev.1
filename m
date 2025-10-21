@@ -2,50 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 300B8CCD1A5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 10:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C2CCCD1A5
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 11:30:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0921D402C3;
-	Tue, 21 Oct 2025 12:10:03 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id 1DAB6400D5;
- Tue, 21 Oct 2025 12:10:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1761041401; x=1792577401;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=h097hbVmLhahN4NEcMQ8+qxw3bixEJoA3oasrxefE4o=;
- b=eEel/WQqwT8o7ib04CnHftaKYK0e3pqGQASh5mHYL5CTzFuOLeqGDGpS
- p3piS+a+MoUKn2MJrfK3vtGwOrgxvKk23xzOO1vkY0G1ASF2yp2AiXK/w
- xLQ/oubOlDNBvUMZjPz+WfBc86pY1bqqEeT+oq6IoL+TdZkb5Hp2dTGjk
- LzMhsGKMCxp8I2+ammCs62R5r9JVnBcV/Xl94QvW+KYOcUthkBecT/5mm
- CNEQpz5qw578RpwXtQXgtbyew8c259kNLoF61A8ROPeyoLAiaiClNVPGX
- jZWAsH3VLxHS4t7LF6EbM3oudeFh+44gu/A3q0X4yIhCDw4GVKVBQMIVu w==;
-X-CSE-ConnectionGUID: q2GLkWY7SiS6mRv5MiOyaA==
-X-CSE-MsgGUID: 1zbu4bzSQ4+1m8hGtF05uw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="73454529"
-X-IronPort-AV: E=Sophos;i="6.19,244,1754982000"; d="scan'208";a="73454529"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 21 Oct 2025 03:10:00 -0700
-X-CSE-ConnectionGUID: XzxIjq4sQ7+MGuKs2JuKJA==
-X-CSE-MsgGUID: ZkKrbEBhTrWJdW4uQFnLPA==
-X-ExtLoop1: 1
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 21 Oct 2025 03:09:58 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Xiao Wang <xiao.w.wang@intel.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>, Junjie Chen <junjie.j.chen@intel.com>
-Cc: stable@dpdk.org
-Subject: [PATCH v1 1/1] vfio: fix custom containers in multiprocess
-Date: Tue, 21 Oct 2025 11:09:56 +0100
-Message-ID: <eb2c322e42a39e684514186503515e96633cd991.1761041388.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.3
+	by mails.dpdk.org (Postfix) with ESMTP id D84B94026A;
+	Tue, 21 Oct 2025 13:30:26 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 52309400D5
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 13:30:25 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4crVRz00bCz6K6dX;
+ Tue, 21 Oct 2025 19:29:02 +0800 (CST)
+Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
+ by mail.maildlp.com (Postfix) with ESMTPS id 03126140372;
+ Tue, 21 Oct 2025 19:30:24 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 21 Oct 2025 12:30:23 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Tue, 21 Oct 2025 12:30:23 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, Konstantin Ananyev
+ <konstantin.v.ananyev@yandex.ru>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: BPF elf examples
+Thread-Topic: BPF elf examples
+Thread-Index: AQHcQf6Ko95BSpBDZESEHvP+Z95A4bTMd5dA
+Date: Tue, 21 Oct 2025 11:30:23 +0000
+Message-ID: <bcc95778767444e28a21d2575a41bd9f@huawei.com>
+References: <20251020131631.2a6a0de3@phoenix.lan>
+In-Reply-To: <20251020131631.2a6a0de3@phoenix.lan>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.220]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,325 +55,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, the API regarding handling custom (non-default) containers has
-a problem with how it behaves in secondary process. The expected flow for
-using custom containers is to:
 
-1) create a new container using rte_vfio_container_create()
-2) look up IOMMU group with rte_vfio_get_group_num()
-3) bind group to that container using rte_vfio_group_bind()
-4) setup device with rte_vfio_setup_device()
+> While looking in more detail at BPF use of VLA, went down a rabbit hole
+> because there are no tests and no examples of loading a BPF program using
+> the elf_load API's in BPF.
+>=20
+> Tried using AI to generate tests, and as usual it sort of worked but the
+> example code generated won't load or work. Is there anywhere to find work=
+ing
+> DPDK examples of using BPF load?=20
 
-When called from secondary process, rte_vfio_container_create() will check
-if there's space in local VFIO config, and if there is, it will call
-rte_vfio_get_container_fd() which, in secondary process, will call into a
-multiprocess code to request primary process to open container fd, and then
-pass it back to the requester. Primary process does not store this fd
-anywhere, in fact it closes it immediately after responding to the request.
-
-Following that, when we call rte_vfio_group_bind(), we check if the group
-is open locally, and if not, we will call into multiprocess code again, to
-request primary process to open the group fd for us, but since primary did
-not store any information about the new container in step 1, it will store
-the group in local config for default container, and return it to the
-secondary, who will add it to its own config for a different container.
-
-To address these issues, the following changes are made:
-
-1) Clarify meaning of rte_vfio_get_container_fd() to only return the
-   default container, and always pick it up from process-local config
-
-2) Avoid calling into multiprocess on rte_vfio_container_create()
-
-3) Avoid calling into multiprocess in group-related code, except when
-   dealing with groups associated with default container
-
-As a consequence, SOCKET_REQ_DEFAULT_CONTAINER can be removed and
-consolidated with SOCKET_REQ_CONTAINER, which now only handles the
-default container.
-
-Fixes: ea2dc1066870 ("vfio: add multi container support")
-Cc: stable@dpdk.org
-
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- lib/eal/include/rte_vfio.h       |   6 +-
- lib/eal/linux/eal_vfio.c         | 117 ++++++++++++++-----------------
- lib/eal/linux/eal_vfio.h         |   5 +-
- lib/eal/linux/eal_vfio_mp_sync.c |  13 +---
- 4 files changed, 59 insertions(+), 82 deletions(-)
-
-diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
-index 80951517fa..d1e8bce56b 100644
---- a/lib/eal/include/rte_vfio.h
-+++ b/lib/eal/include/rte_vfio.h
-@@ -192,14 +192,14 @@ rte_vfio_get_device_info(const char *sysfs_base, const char *dev_addr,
- 		int *vfio_dev_fd, struct vfio_device_info *device_info);
- 
- /**
-- * Open a new VFIO container fd
-+ * Get the default VFIO container fd
-  *
-  * This function is only relevant to linux and will return
-  * an error on BSD.
-  *
-  * @return
-- *  > 0 container fd
-- *  < 0 for errors
-+ *  > 0 default container fd
-+ *  < 0 if VFIO is not enabled or not supported
-  */
- int
- rte_vfio_get_container_fd(void);
-diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-index 45c1354390..5f651bb625 100644
---- a/lib/eal/linux/eal_vfio.c
-+++ b/lib/eal/linux/eal_vfio.c
-@@ -351,7 +351,7 @@ compact_user_maps(struct user_mem_maps *user_mem_maps)
- }
- 
- static int
--vfio_open_group_fd(int iommu_group_num)
-+vfio_open_group_fd(int iommu_group_num, bool mp_request)
- {
- 	int vfio_group_fd;
- 	char filename[PATH_MAX];
-@@ -359,11 +359,9 @@ vfio_open_group_fd(int iommu_group_num)
- 	struct rte_mp_reply mp_reply = {0};
- 	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
- 	struct vfio_mp_param *p = (struct vfio_mp_param *)mp_req.param;
--	const struct internal_config *internal_conf =
--		eal_get_internal_configuration();
- 
--	/* if primary, try to open the group */
--	if (internal_conf->process_type == RTE_PROC_PRIMARY) {
-+	/* if not requesting via mp, open the group locally */
-+	if (!mp_request) {
- 		/* try regular group format */
- 		snprintf(filename, sizeof(filename), RTE_VFIO_GROUP_FMT, iommu_group_num);
- 		vfio_group_fd = open(filename, O_RDWR);
-@@ -471,7 +469,24 @@ vfio_get_group_fd(struct vfio_config *vfio_cfg,
- 		return -1;
- 	}
- 
--	vfio_group_fd = vfio_open_group_fd(iommu_group_num);
-+	/*
-+	 * When opening a group fd, we need to decide whether to open it locally
-+	 * or request it from the primary process via mp_sync.
-+	 *
-+	 * For the default container, secondary processes use mp_sync so that
-+	 * the primary process tracks the group fd and maintains VFIO state
-+	 * across all processes.
-+	 *
-+	 * For custom containers, we open the group fd locally in each process
-+	 * since custom containers are process-local and the primary has no
-+	 * knowledge of them. Requesting a group fd from the primary for a
-+	 * container it doesn't know about would be incorrect.
-+	 */
-+	const struct internal_config *internal_conf = eal_get_internal_configuration();
-+	bool mp_request = (internal_conf->process_type == RTE_PROC_SECONDARY) &&
-+			(vfio_cfg == default_vfio_cfg);
-+
-+	vfio_group_fd = vfio_open_group_fd(iommu_group_num, mp_request);
- 	if (vfio_group_fd < 0) {
- 		EAL_LOG(ERR, "Failed to open VFIO group %d",
- 			iommu_group_num);
-@@ -1140,13 +1155,13 @@ rte_vfio_enable(const char *modname)
- 		if (vfio_mp_sync_setup() == -1) {
- 			default_vfio_cfg->vfio_container_fd = -1;
- 		} else {
--			/* open a new container */
--			default_vfio_cfg->vfio_container_fd = rte_vfio_get_container_fd();
-+			/* open a default container */
-+			default_vfio_cfg->vfio_container_fd = vfio_open_container_fd(false);
- 		}
- 	} else {
- 		/* get the default container from the primary process */
- 		default_vfio_cfg->vfio_container_fd =
--				vfio_get_default_container_fd();
-+			vfio_open_container_fd(true);
- 	}
- 
- 	/* check if we have VFIO driver enabled */
-@@ -1168,49 +1183,6 @@ rte_vfio_is_enabled(const char *modname)
- 	return default_vfio_cfg->vfio_enabled && mod_available;
- }
- 
--int
--vfio_get_default_container_fd(void)
--{
--	struct rte_mp_msg mp_req, *mp_rep;
--	struct rte_mp_reply mp_reply = {0};
--	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
--	struct vfio_mp_param *p = (struct vfio_mp_param *)mp_req.param;
--	int container_fd;
--	const struct internal_config *internal_conf =
--		eal_get_internal_configuration();
--
--	if (default_vfio_cfg->vfio_enabled)
--		return default_vfio_cfg->vfio_container_fd;
--
--	if (internal_conf->process_type == RTE_PROC_PRIMARY) {
--		/* if we were secondary process we would try requesting
--		 * container fd from the primary, but we're the primary
--		 * process so just exit here
--		 */
--		return -1;
--	}
--
--	p->req = SOCKET_REQ_DEFAULT_CONTAINER;
--	strcpy(mp_req.name, EAL_VFIO_MP);
--	mp_req.len_param = sizeof(*p);
--	mp_req.num_fds = 0;
--
--	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) == 0 &&
--	    mp_reply.nb_received == 1) {
--		mp_rep = &mp_reply.msgs[0];
--		p = (struct vfio_mp_param *)mp_rep->param;
--		if (p->result == SOCKET_OK && mp_rep->num_fds == 1) {
--			container_fd = mp_rep->fds[0];
--			free(mp_reply.msgs);
--			return container_fd;
--		}
--	}
--
--	free(mp_reply.msgs);
--	EAL_LOG(ERR, "Cannot request default VFIO container fd");
--	return -1;
--}
--
- int
- vfio_get_iommu_type(void)
- {
-@@ -1303,20 +1275,25 @@ vfio_has_supported_extensions(int vfio_container_fd)
- 	return 0;
- }
- 
--RTE_EXPORT_SYMBOL(rte_vfio_get_container_fd)
-+/*
-+ * Open a new VFIO container fd.
-+ *
-+ * If mp_request is true, requests a new container fd from the primary process
-+ * via mp channel (for secondary processes that need to open the default container).
-+ *
-+ * Otherwise, opens a new container fd locally by opening /dev/vfio/vfio.
-+ */
- int
--rte_vfio_get_container_fd(void)
-+vfio_open_container_fd(bool mp_request)
- {
- 	int ret, vfio_container_fd;
- 	struct rte_mp_msg mp_req, *mp_rep;
- 	struct rte_mp_reply mp_reply = {0};
- 	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
- 	struct vfio_mp_param *p = (struct vfio_mp_param *)mp_req.param;
--	const struct internal_config *internal_conf =
--		eal_get_internal_configuration();
- 
--	/* if we're in a primary process, try to open the container */
--	if (internal_conf->process_type == RTE_PROC_PRIMARY) {
-+	/* if not requesting via mp, open a new container locally */
-+	if (!mp_request) {
- 		vfio_container_fd = open(RTE_VFIO_CONTAINER_PATH, O_RDWR);
- 		if (vfio_container_fd < 0) {
- 			EAL_LOG(ERR, "Cannot open VFIO container %s, error %i (%s)",
-@@ -1346,16 +1323,13 @@ rte_vfio_get_container_fd(void)
- 
- 		return vfio_container_fd;
- 	}
--	/*
--	 * if we're in a secondary process, request container fd from the
--	 * primary process via mp channel
--	 */
-+
-+	/* request container fd from primary via mp_sync */
- 	p->req = SOCKET_REQ_CONTAINER;
- 	strcpy(mp_req.name, EAL_VFIO_MP);
- 	mp_req.len_param = sizeof(*p);
- 	mp_req.num_fds = 0;
- 
--	vfio_container_fd = -1;
- 	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) == 0 &&
- 	    mp_reply.nb_received == 1) {
- 		mp_rep = &mp_reply.msgs[0];
-@@ -1372,6 +1346,20 @@ rte_vfio_get_container_fd(void)
- 	return -1;
- }
- 
-+RTE_EXPORT_SYMBOL(rte_vfio_get_container_fd)
-+int
-+rte_vfio_get_container_fd(void)
-+{
-+	/* Return the default container fd if VFIO is enabled.
-+	 * The default container is set up during rte_vfio_enable().
-+	 * This function does not create a new container.
-+	 */
-+	if (!default_vfio_cfg->vfio_enabled)
-+		return -1;
-+
-+	return default_vfio_cfg->vfio_container_fd;
-+}
-+
- RTE_EXPORT_SYMBOL(rte_vfio_get_group_num)
- int
- rte_vfio_get_group_num(const char *sysfs_base,
-@@ -2093,7 +2081,8 @@ rte_vfio_container_create(void)
- 		return -1;
- 	}
- 
--	vfio_cfgs[i].vfio_container_fd = rte_vfio_get_container_fd();
-+	/* Create a new container fd */
-+	vfio_cfgs[i].vfio_container_fd = vfio_open_container_fd(false);
- 	if (vfio_cfgs[i].vfio_container_fd < 0) {
- 		EAL_LOG(NOTICE, "Fail to create a new VFIO container");
- 		return -1;
-diff --git a/lib/eal/linux/eal_vfio.h b/lib/eal/linux/eal_vfio.h
-index 5c5742b429..89c4b5ba45 100644
---- a/lib/eal/linux/eal_vfio.h
-+++ b/lib/eal/linux/eal_vfio.h
-@@ -42,7 +42,7 @@ struct vfio_iommu_type {
- };
- 
- /* get the vfio container that devices are bound to by default */
--int vfio_get_default_container_fd(void);
-+int vfio_open_container_fd(bool mp_request);
- 
- /* pick IOMMU type. returns a pointer to vfio_iommu_type or NULL for error */
- const struct vfio_iommu_type *
-@@ -62,8 +62,7 @@ void vfio_mp_sync_cleanup(void);
- 
- #define SOCKET_REQ_CONTAINER 0x100
- #define SOCKET_REQ_GROUP 0x200
--#define SOCKET_REQ_DEFAULT_CONTAINER 0x400
--#define SOCKET_REQ_IOMMU_TYPE 0x800
-+#define SOCKET_REQ_IOMMU_TYPE 0x400
- #define SOCKET_OK 0x0
- #define SOCKET_NO_FD 0x1
- #define SOCKET_ERR 0xFF
-diff --git a/lib/eal/linux/eal_vfio_mp_sync.c b/lib/eal/linux/eal_vfio_mp_sync.c
-index 8230f3d24d..d211f9b227 100644
---- a/lib/eal/linux/eal_vfio_mp_sync.c
-+++ b/lib/eal/linux/eal_vfio_mp_sync.c
-@@ -50,18 +50,7 @@ vfio_mp_primary(const struct rte_mp_msg *msg, const void *peer)
- 		break;
- 	case SOCKET_REQ_CONTAINER:
- 		r->req = SOCKET_REQ_CONTAINER;
--		fd = rte_vfio_get_container_fd();
--		if (fd < 0)
--			r->result = SOCKET_ERR;
--		else {
--			r->result = SOCKET_OK;
--			reply.num_fds = 1;
--			reply.fds[0] = fd;
--		}
--		break;
--	case SOCKET_REQ_DEFAULT_CONTAINER:
--		r->req = SOCKET_REQ_DEFAULT_CONTAINER;
--		fd = vfio_get_default_container_fd();
-+		fd = vfio_open_container_fd(false);
- 		if (fd < 0)
- 			r->result = SOCKET_ERR;
- 		else {
--- 
-2.47.3
-
+app/test-pmd/bpf_cmd.c calls rte_bpf_eth_rx_elf_load/ rte_bpf_eth_tx_elf_lo=
+ad,
+which in turn calls rte_bpf_elf_load().
+Though it is a good point, will think can we add a UT for it too.
