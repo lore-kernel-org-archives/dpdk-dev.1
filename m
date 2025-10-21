@@ -2,86 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CDF7CCD1A7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 17:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D39DFCCD1A7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 17:53:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 361A540ED6;
-	Tue, 21 Oct 2025 19:52:55 +0200 (CEST)
-Received: from mail-il1-f226.google.com (mail-il1-f226.google.com
- [209.85.166.226])
- by mails.dpdk.org (Postfix) with ESMTP id 4CA0A40E13
- for <dev@dpdk.org>; Tue, 21 Oct 2025 19:52:50 +0200 (CEST)
-Received: by mail-il1-f226.google.com with SMTP id
- e9e14a558f8ab-430d0cad0deso16207225ab.2
- for <dev@dpdk.org>; Tue, 21 Oct 2025 10:52:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 46E9840EE3;
+	Tue, 21 Oct 2025 19:52:56 +0200 (CEST)
+Received: from mail-yx1-f98.google.com (mail-yx1-f98.google.com
+ [74.125.224.98]) by mails.dpdk.org (Postfix) with ESMTP id 213A240E38
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 19:52:52 +0200 (CEST)
+Received: by mail-yx1-f98.google.com with SMTP id
+ 956f58d0204a3-6360397e8c7so6031372d50.0
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 10:52:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761069169; x=1761673969;
+ d=1e100.net; s=20230601; t=1761069171; x=1761673971;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=b5s4amC7p9WJpKP5ilrkQY3tN37ouYRIk1tdUYSu/FQ=;
- b=IP8JqZfMU/8GUtlc9qYjNzRrwzWN2YNN3ckDZ/IXIh4pC6Aft2YdTCoNhZy0yHa6bM
- YieEoq/kOkPTeaC3YD+kx7ZCLDFjjzHpPocxn5LQiQb7DlXIGm6NPJ7GU+nH7fjxq/PY
- kgFlQh9WUgZr++d5Ou4bDRJgcxtw9HPEGF9u2s8qagdhxU/tTwrWVv6JDcm9rY3YR1b5
- 6RcccgJo7OHO9ZG97HNRvhBP13GymbY9AD8DyrOMvINaESIN0KFoZ7npSlOrKMmU/Eox
- craHL82pr32uMVeyWZHXy4Da92+g9/ta0zDyZ27x5qL/vRDTBM9nZktrTYl6Cm1cv1E6
- VKvA==
-X-Gm-Message-State: AOJu0Yzt/yO2fQEypEhj0hlePaSzc3+FVIUc+Xkt21/U8pVEKLirYdYV
- gzz6TuDjBCjvXcl+QFpRRQos3SBYQ1plAWI5QVSZCVavzq/ZBUda7NBqdZeHwmYaCodqZ+i/WqU
- /Hoo2qmuT79R3oF7KsiA5xEEtL2dBrUt0ZW0tC49JzmwrJrIgZer+1luGA5+xDUGijLcwzS3ScK
- KRHJWFbIPos7il7sgfFpBOHLmT92fhK69thrydHHLhQHFCNsn47FTmUR36q8EadlS7L/eptA==
-X-Gm-Gg: ASbGnct6lj5KJYdLz7dToE5yXX6ozxCGUwFBcIk7QUasPzmk255ja35N9LdbGt8sC+i
- nY4gyCq7P0dzmcg81mvv1acUwAMro872gT1lR+EG8obI1LycQYU17ofwlA2AW64/2ISig3B8T6r
- IwF3I8H/3ZY+Cgu4USS16NJ0iPYBwyazwM6KxGGJGf5ElvBqWZSsaslRnaLBYQBSIVQnzQU6zCs
- e+bPRgPqlLOQR1DrY90eAITXjadTu9D4yP+ABf9oE93J8aeKGFpRhboygYKGZZGdZ4UY4E4Aa4L
- NZc9sCMLXHbTigFhFe0GVZUmH/oPRdgxph8kH9gypwChq0TTCi7jhgN4OsQ53bIDClkxQ9mrKH1
- 1h/xbJHHADD+ZeiGY5Q0jKT4Ui4Y1iRtS1BX8smJFHkBy3khL8GJRGm3Rq7oaTyGEqX/RA83PBq
- Zmrt7J0YYK5cuwnzCdwEv9xbak/Jta7hX1qQ==
-X-Google-Smtp-Source: AGHT+IHU5t3Ln/COW3/WuzZKG/zhWl8dbkqyduDOMor8JFClAz+vnPUC5t6uCbzMK9KNnFjPZ3lkK40a2qLa
-X-Received: by 2002:a05:6e02:1947:b0:42f:9ba7:e47e with SMTP id
- e9e14a558f8ab-430c522f01fmr259964325ab.14.1761069169484; 
- Tue, 21 Oct 2025 10:52:49 -0700 (PDT)
+ bh=rSha/rHfhVpqMCkemzhzJt9MKBZNA3cJ/ALQp5n7hHk=;
+ b=ScKrb1YjSKD4ekVyP2e8D6IBMfYhCOEEuHXdbc95Z+ljtw/PPcFMM/YtvLhg4/3Ehk
+ clyMnlpOEbv6fmuFOkSvRbUuxddP/PDQCFeQ598KwOvoflLo0OROTWulKpdCnMBJmRuM
+ mB/Zz42mzqu92sKmvPB/EGpBj5pXPDm+R21Jaoix/biQxD5IUK8TW3gCKZcs1U1mJwC8
+ 5u/0A7Fca5nc+pjjsNYKK38yCEw54QKNhZ8DbgZPlyyfp7xH8odRcqpcZXwwd9btXW3c
+ LIs3iEImWRpdg8IoHdyih4P6gGaLnFelniFj5xVpkwhzmxEis7IlbqoDz4BECOZ7zEZQ
+ thTg==
+X-Gm-Message-State: AOJu0Yxg11rWTXlsfc72m3svFRV6Xa76pQwkSKIwFhNo+jkKg4JB4t5X
+ hknL9jlM9fp8VHy5dFyxIwaQlaAFDVqGx+IdCcbu88KOFfebzV57phPRhIY12PWl2hUcLC6paec
+ 6HLKwRLBP2fSp+7HOFVmaukG3N3a9DIdBGOuZ0kD/ZtjcYCJ8ewcDsCLci5xEyU9oXY939mz8M+
+ 6LJ1f4RWXlrjIOmMZbsBHbdGHDexPgizGaZYgvd/FNaGSeUWPPyYFpyHhWE8mKiTUNDkQwQQ==
+X-Gm-Gg: ASbGncsN0Tur/tZp3p6O03xsQeghjOMVAXsrl19XVylYyPUfikk2Hwbpkxc86yS4m9u
+ 0NukWdROOGzwmzawwutJPZLJShEJcNJeUYe5p/e4ijX6ltbH6NdXga0gI+FYjrqMUBnnJRygIhi
+ F0kqPE1YI5SENxaMpNBUYPe6riBAqg22O+SaVN0SLx7q8qCQmkggZUx18qDjm0eJCNq6zbrfdnw
+ m8eRRK8/LsPLs3u31w+qxrpuMCUsCeV0w+68vQAAYG98KZQNUYotu/Kec1uOdzp0HUzkbIVYEuS
+ Nr/XflHBQNwo6MRRgI00LaUniySfoj0cHUU0VreisnAZz25uaO7kxygO8Qjipq/GBkxQDFQYo5W
+ G0o8uanoOwM90JaxD/jVTNLYKhv2a9vrHOG9nZ8kRxIdbjO373RJu/AtdEkDUO/BpOZgCIUdHJG
+ in/G/XpJYqEzHbWnvVu3K7uh9mXkQxZyu68Q==
+X-Google-Smtp-Source: AGHT+IGeogtm/8r9oo14C+Bze8M2j3ghupKFltdc4oBdB56Okl5B3pgr2rXag4SOzqipbNmaD8xgztpg24tY
+X-Received: by 2002:a05:690e:130d:b0:63e:217e:6758 with SMTP id
+ 956f58d0204a3-63e217e693cmr10702772d50.52.1761069171399; 
+ Tue, 21 Oct 2025 10:52:51 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-72.dlp.protect.broadcom.com. [144.49.247.72])
  by smtp-relay.gmail.com with ESMTPS id
- e9e14a558f8ab-430d072ab18sm11683785ab.16.2025.10.21.10.52.49
+ 956f58d0204a3-63e26683cd2sm853064d50.4.2025.10.21.10.52.50
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 21 Oct 2025 10:52:49 -0700 (PDT)
+ Tue, 21 Oct 2025 10:52:51 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
 Received: by mail-pl1-f197.google.com with SMTP id
- d9443c01a7336-290c9724deeso50090595ad.2
- for <dev@dpdk.org>; Tue, 21 Oct 2025 10:52:48 -0700 (PDT)
+ d9443c01a7336-290cd61855eso46310075ad.1
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 10:52:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761069167; x=1761673967; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761069169; x=1761673969; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=b5s4amC7p9WJpKP5ilrkQY3tN37ouYRIk1tdUYSu/FQ=;
- b=C52KJL3qLcK0rfcYSooQLAXTvOBxGnD0y16+OObNzyYcpaSM7qHy2DJ1QJcUp9O/ju
- YdRCXZdoZfIs1kcqXJFJ+dr25oZ8Tb4iSh2pIz//ApUMFkU9inot0cazF6G2PnCXpszY
- zRHkPScvaGJKYXFgGPCWSOKq3P/XVBqMGuvP8=
-X-Received: by 2002:a17:902:ef4c:b0:290:7803:9e8 with SMTP id
- d9443c01a7336-290cb659d58mr224115415ad.48.1761069167644; 
- Tue, 21 Oct 2025 10:52:47 -0700 (PDT)
-X-Received: by 2002:a17:902:ef4c:b0:290:7803:9e8 with SMTP id
- d9443c01a7336-290cb659d58mr224115085ad.48.1761069167024; 
- Tue, 21 Oct 2025 10:52:47 -0700 (PDT)
+ bh=rSha/rHfhVpqMCkemzhzJt9MKBZNA3cJ/ALQp5n7hHk=;
+ b=hCjRNRjLHwqZhLkNWGAS8Zp0toeIs/Xt5Quz/m+tshI0O+gta+SUOHfRicOlIyRKkR
+ cyNbWhqKcpMB3cJQaRvMJ1fZMrY2/1YHS5N8945z2GAmogX3UpK8tNfJiibJcMBdCRzi
+ deV+hTO92d13cqQhtJ9pX+mRwAAM9wUvXLjV4=
+X-Received: by 2002:a17:903:2290:b0:269:8d85:2249 with SMTP id
+ d9443c01a7336-290d14e83a7mr205114035ad.22.1761069169685; 
+ Tue, 21 Oct 2025 10:52:49 -0700 (PDT)
+X-Received: by 2002:a17:903:2290:b0:269:8d85:2249 with SMTP id
+ d9443c01a7336-290d14e83a7mr205113615ad.22.1761069169032; 
+ Tue, 21 Oct 2025 10:52:49 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-292472193c2sm115441495ad.104.2025.10.21.10.52.45
+ d9443c01a7336-292472193c2sm115441495ad.104.2025.10.21.10.52.47
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Tue, 21 Oct 2025 10:52:46 -0700 (PDT)
+ Tue, 21 Oct 2025 10:52:48 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Shuanglin Wang <shuanglin.wang@broadcom.com>
-Subject: [PATCH v4 21/57] net/bnxt/tf_ulp: fix stats counter memory
- initialization
-Date: Tue, 21 Oct 2025 13:50:13 -0400
-Message-Id: <20251021175049.46092-22-manish.kurup@broadcom.com>
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Subject: [PATCH v4 22/57] net/bnxt: fix max VFs count for thor2
+Date: Tue, 21 Oct 2025 13:50:14 -0400
+Message-Id: <20251021175049.46092-23-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251021175049.46092-1-manish.kurup@broadcom.com>
 References: <20251015090024.32250-1-manish.kurup@broadcom.com>
@@ -104,117 +101,61 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-The stats counter cache memory initialization did not print the
-error message on failure, updated the initialization to print
-error message on failure.
+The number of max vfs per pf is 128 for thor2.
+Fixed the vnic hash table creation if the number of max vnics is less
+than 8.
 
 Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
+Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c | 35 ++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 12 deletions(-)
+ drivers/net/bnxt/bnxt.h      |  2 ++
+ drivers/net/bnxt/bnxt_vnic.c | 11 +++++++++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-index fc4207b36c..b246b90fe2 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-@@ -63,29 +63,30 @@ int32_t ulp_sc_mgr_init(struct bnxt_ulp_context *ctxt)
- 	int i;
+diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
+index 00bdb53215..90352d537c 100644
+--- a/drivers/net/bnxt/bnxt.h
++++ b/drivers/net/bnxt/bnxt.h
+@@ -260,8 +260,10 @@ struct bnxt_pf_info {
+ #define BNXT_MAX_VFS(bp)	((bp)->pf->max_vfs)
+ #define BNXT_MAX_VF_REPS_P4     64
+ #define BNXT_MAX_VF_REPS_P5     256
++#define BNXT_MAX_VF_REPS_P7     128
+ #define BNXT_MAX_VF_REPS(bp) \
+ 				(BNXT_CHIP_P5(bp) ? BNXT_MAX_VF_REPS_P5 : \
++				BNXT_CHIP_P7(bp) ? BNXT_MAX_VF_REPS_P7 : \
+ 				BNXT_MAX_VF_REPS_P4)
+ #define BNXT_TOTAL_VFS(bp)	((bp)->pf->total_vfs)
+ #define BNXT_FIRST_VF_FID	128
+diff --git a/drivers/net/bnxt/bnxt_vnic.c b/drivers/net/bnxt/bnxt_vnic.c
+index 7b028f2ee5..637e9b9aa4 100644
+--- a/drivers/net/bnxt/bnxt_vnic.c
++++ b/drivers/net/bnxt/bnxt_vnic.c
+@@ -16,6 +16,11 @@
+ #include "hsi_struct_def_dpdk.h"
+ #include "bnxt_hwrm.h"
  
- 	if (!ctxt) {
--		BNXT_DRV_DBG(DEBUG, "Invalid ULP CTXT\n");
-+		BNXT_DRV_DBG(ERR, "Invalid ULP CTXT\n");
- 		return -EINVAL;
- 	}
- 
- 	if (bnxt_ulp_cntxt_dev_id_get(ctxt, &dev_id)) {
--		BNXT_DRV_DBG(DEBUG, "Failed to get device id\n");
-+		BNXT_DRV_DBG(ERR, "Failed to get device id\n");
- 		return -EINVAL;
- 	}
- 
- 	dparms = bnxt_ulp_device_params_get(dev_id);
- 	if (!dparms) {
--		BNXT_DRV_DBG(DEBUG, "Failed to device parms\n");
-+		BNXT_DRV_DBG(ERR, "Failed to device parms\n");
- 		return -EINVAL;
- 	}
- 
- 	sc_ops = bnxt_ulp_sc_ops_get(ctxt);
- 	if (sc_ops == NULL) {
--		BNXT_DRV_DBG(DEBUG, "Failed to get the counter ops\n");
-+		BNXT_DRV_DBG(ERR, "Failed to get the counter ops\n");
- 		return -EINVAL;
- 	}
- 
- 	ulp_sc_info = rte_zmalloc("ulp_sc_info", sizeof(*ulp_sc_info), 0);
- 	if (!ulp_sc_info) {
-+		BNXT_DRV_DBG(ERR, "Failed to allocate stats cache container\n");
- 		rc = -ENOMEM;
- 		goto error;
- 	}
-@@ -99,8 +100,9 @@ int32_t ulp_sc_mgr_init(struct bnxt_ulp_context *ctxt)
- 	ulp_sc_info->num_counters = dparms->ext_flow_db_num_entries;
- 	if (!ulp_sc_info->num_counters) {
- 		/* No need for software counters, call fw directly */
--		BNXT_DRV_DBG(DEBUG, "Sw flow counter support not enabled\n");
--		return 0;
-+		BNXT_DRV_DBG(ERR, "Num of flow entries is not configured\n");
-+		rc = -EINVAL;
-+		goto error;
- 	}
- 
- 	/*
-@@ -115,6 +117,7 @@ int32_t ulp_sc_mgr_init(struct bnxt_ulp_context *ctxt)
- 	ulp_sc_info->stats_cache_tbl = rte_zmalloc("ulp_stats_cache_tbl",
- 						   stats_cache_tbl_sz, 0);
- 	if (!ulp_sc_info->stats_cache_tbl) {
-+		BNXT_DRV_DBG(ERR, "Failed to allocate stats cache table\n");
- 		rc = -ENOMEM;
- 		goto error;
- 	}
-@@ -123,7 +126,7 @@ int32_t ulp_sc_mgr_init(struct bnxt_ulp_context *ctxt)
- 					     ULP_SC_BATCH_SIZE * ULP_SC_PAGE_SIZE,
- 					     ULP_SC_PAGE_SIZE);
- 	if (!ulp_sc_info->read_data) {
--		rte_free(ulp_sc_info->stats_cache_tbl);
-+		BNXT_DRV_DBG(ERR, "Failed to allocate stats cache data\n");
- 		rc = -ENOMEM;
- 		goto error;
- 	}
-@@ -135,10 +138,15 @@ int32_t ulp_sc_mgr_init(struct bnxt_ulp_context *ctxt)
- 	}
- 
- 	rc = ulp_sc_mgr_thread_start(ctxt);
--	if (rc)
--		BNXT_DRV_DBG(DEBUG, "Stats counter thread start failed\n");
-+	if (rc) {
-+		BNXT_DRV_DBG(ERR, "Stats cache thread start failed\n");
-+		rc = -EIO;
-+		goto error;
-+	}
- 
-- error:
-+	return 0;
-+error:
-+	ulp_sc_mgr_deinit(ctxt);
- 	return rc;
- }
- 
-@@ -399,8 +407,11 @@ void ulp_sc_mgr_thread_cancel(struct bnxt_ulp_context *ctxt)
- 	if (!ulp_sc_info)
- 		return;
- 
--	ulp_sc_info->flags &= ~ULP_FLAG_SC_THREAD;
--	pthread_cancel(ulp_sc_info->tid);
-+	/* if thread started then stop it */
-+	if (ulp_sc_info->flags & ULP_FLAG_SC_THREAD) {
-+		pthread_cancel((pthread_t)ulp_sc_info->tid.opaque_id);
-+		ulp_sc_info->flags &= ~ULP_FLAG_SC_THREAD;
-+	}
- }
- 
- /*
++#ifndef RTE_HASH_BUCKET_ENTRIES
++/* it is defined in lib/hash/rte_cuckoo_hash.h */
++#define RTE_HASH_BUCKET_ENTRIES     8
++#endif /* RTE_HASH_BUCKET_ENTRIES */
++
+ /* Macros to manipulate vnic bitmaps*/
+ #define BNXT_VNIC_BITMAP_SIZE	64
+ #define BNXT_VNIC_BITMAP_SET(b, i)	((b[(i) / BNXT_VNIC_BITMAP_SIZE]) |= \
+@@ -978,6 +983,12 @@ int32_t bnxt_vnic_queue_db_init(struct bnxt *bp)
+ 	hash_tbl_params.name = hash_tbl_name;
+ 	hash_tbl_params.entries = (bp->max_vnics > BNXT_VNIC_MAX_SUPPORTED_ID) ?
+ 		BNXT_VNIC_MAX_SUPPORTED_ID : bp->max_vnics;
++
++	/* if the number of max vnis is less than bucket size */
++	/* then let the max entries size be the least value */
++	if (hash_tbl_params.entries <= RTE_HASH_BUCKET_ENTRIES)
++		hash_tbl_params.entries = RTE_HASH_BUCKET_ENTRIES;
++
+ 	hash_tbl_params.key_len = BNXT_VNIC_MAX_QUEUE_SZ_IN_8BITS;
+ 	hash_tbl_params.socket_id = rte_socket_id();
+ 	bp->vnic_queue_db.rss_q_db = rte_hash_create(&hash_tbl_params);
 -- 
 2.39.5 (Apple Git-154)
 
