@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8845ACCD1A7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 13:38:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08851CCD184
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 13:45:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6A58440616;
-	Tue, 21 Oct 2025 15:38:36 +0200 (CEST)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
- [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id A1278400D5
- for <dev@dpdk.org>; Tue, 21 Oct 2025 15:38:34 +0200 (CEST)
-Received: by mail-qv1-f52.google.com with SMTP id
- 6a1803df08f44-87c103928ffso83910376d6.1
- for <dev@dpdk.org>; Tue, 21 Oct 2025 06:38:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761053914;
- x=1761658714; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=GKMeCbjiEokWkSmfHTcZfVKHNkIxiZdoYCGf5Tz2QCM=;
- b=ImaeVpM5iFzNpWXMT7Qk6K/M9JQM7Mi6U8lqYIEVjEvwy7Tu+c9Igj0hqfjEfi3r3D
- IW9oK6Q6qqy6ofqpNpnzWcDwqH3oxlA/i1lz6rMgLbpHFg/hOhHCLquFupBTfmSP24s5
- MjQfVQ4XHDdbJtaH1QsgseqzY1XkOQ2CpVV35ZIpIeTdonvdUzVLveD22iX974dfX7Ft
- YH0OPdFIZtaQh2m9a/uqOGNzv+iU+e3wSbR4kKdyviQYg3KK3rjkXhuPDVcFlQl8dXc3
- 0NZ+eV/cYGLwCBUOuf7FXa8iNUiOiVgRqTd/MUaTpHEp/1V1f/Rlg3nEeuziVyz1fYJM
- ipWA==
+	by mails.dpdk.org (Postfix) with ESMTP id 31E1B402C9;
+	Tue, 21 Oct 2025 15:45:56 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 673CB400D5
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 15:45:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1761054353;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=mHL88CLPrWkIba0oC1qr9pLBOnbvEULFbs1rA+ZdoUQ=;
+ b=SKCftPvVg1zeDGBhLHtXTxe0C3W303cK7wCRzWK3KFlsq0hHYf7A91hFSBU7oxeLH85B7N
+ lBBpcqUp9ka2FgeA8+BW5OEK325OJ0wJ0iZ6fJ6jhUZq7PDX+s+VLBT2KN0Xrlhd3yBqb3
+ gTvqk5Pz/j72qgXe9d6PGRSS/dz7TNs=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-363-1Op71vG-OuadgpVGvS7TQQ-1; Tue, 21 Oct 2025 09:45:52 -0400
+X-MC-Unique: 1Op71vG-OuadgpVGvS7TQQ-1
+X-Mimecast-MFC-AGG-ID: 1Op71vG-OuadgpVGvS7TQQ_1761054351
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-368348cf7d5so35878791fa.0
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 06:45:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761053914; x=1761658714;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=GKMeCbjiEokWkSmfHTcZfVKHNkIxiZdoYCGf5Tz2QCM=;
- b=rTa0Mt7REPdV0QMhr9JskUD9oek21vRDAXHf6Ms5qEHAwMukmqjeLReqJC772J1+WL
- BlLBOVX7mLqhPUFCQJe4jaWtnvJaBuryGF8gghIn2bGDpMa3rjYJ8REtDpPVweilNINe
- UgDibSp4I6STgQSTETK0pJOK+py9dfi7XnjATD5b/nn35SW67Y+PTDXXAn4Vnxv+FeAo
- l1j1B/rHjG1Bn62m/oDS0NeZmohDLsLlm19jKQ3mIU6wyowzcZCOfgqPoiX4VHrUcrTT
- REXqkE/2yS38rvkL7/0VYQ0j+EoqPw17OF4ee9fBtFitKDwvVVwwMnupdUZRXeR2cdBG
- hhHA==
-X-Gm-Message-State: AOJu0YzgFzRa9XhGPaeTOyV1k4gYLkxz6oI5fGnlvAF87jVbtBcMEzc5
- tZLt+V2rIbv7HPu7QdLevhRShcrsbjEQ/Jf2FO6uLlfH86n7cO7wO47+fYukgiZdplQ=
-X-Gm-Gg: ASbGnctAxJhVrSE5agBuYqdUhbJec68shpkkU5y2NBRfDnpTJ7uQc3yUgUnLcOFkvFK
- izlGztC4pL8J4Qi200KryB/9Y65AWMiqLB5ka9NIB4+dvwqdYJ3wNd/v356aCGOfyOQPO6IpyQ9
- D/hIAJVDELItiiytfvow6+D1m1W4ZSE1wnL6cF6PmHja4vR9T3bBHPQj7Voo/vqMy+aviSguGOv
- PjF51Tf0PcCotmSJRce791RWVb5KQabIcY9Pgq6lhJ/ubjG7UiM+9iEMEEkujAeVG+sa3YBI1Cv
- bZPIM2MbO7sRm/EV3qQz25RxhbFsdsjy+qx4gZihbtr7s2+BmjjO76+/UxpZ93UFOXp6UXUJTfD
- fIeJCHVCiBW3RUZmpNqIrOg5S9nELJKVd2uMay+ySU+ZufMBLNL316MOk/z036s+rfPBeYOIMZP
- YiLcqCxhSS3LftxLcvmObXsJX8xYVqUWDxi+RuhxA=
-X-Google-Smtp-Source: AGHT+IF4J2A5tFVVuPkwNiTy6eNVmJYo+nLx6GKDvZT3UZSBxFbSNAxd7KRPw2I2eVmksr6rwNmKmA==
-X-Received: by 2002:a05:6214:1c81:b0:87c:f97:7acf with SMTP id
- 6a1803df08f44-87c20653c2emr211434286d6.62.1761053913602; 
- Tue, 21 Oct 2025 06:38:33 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-87d028b2ebfsm69023436d6.52.2025.10.21.06.38.32
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 21 Oct 2025 06:38:33 -0700 (PDT)
-Date: Tue, 21 Oct 2025 06:38:30 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Konstantin Ananyev
- <konstantin.v.ananyev@yandex.ru>
-Subject: Re: BPF elf examples
-Message-ID: <20251021063830.1202be65@phoenix.lan>
-In-Reply-To: <1c2a834602b440d6841ea8120ae37db2@huawei.com>
-References: <20251020131631.2a6a0de3@phoenix.lan>
- <1c2a834602b440d6841ea8120ae37db2@huawei.com>
+ d=1e100.net; s=20230601; t=1761054351; x=1761659151;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=mHL88CLPrWkIba0oC1qr9pLBOnbvEULFbs1rA+ZdoUQ=;
+ b=GtHSxmXVPazWiCMx8xlv8FR3a9q5JjYYkEhSN/3jux0omP9aXoI1vSqLBl/Ok/99/A
+ cQTs6w5nwum/kOrty6bM0ka5qQGK2UT1IpfBDIj24MYGm37w6N2mGih0xOpcqMEiyD2B
+ MjurxTIIZ88w34nhROsn9sttdmvS99ikBEw+vdSVJ74b8Us2rL/VIe8bkKZcfXK0nnYc
+ EBZhAqYsEUevj39fBOTtJ4/MaN/ajA3t5m88RXrC7sFHeL51pa0S8fJD0Tb2TROaU/gt
+ wX3GT9KjMbCEgCVTGccSSyW4l1c4I2HN1ZVyX4y+4h4jWxNfKrI5UJxKlFHyoXeawPdF
+ RNuw==
+X-Gm-Message-State: AOJu0YxufHL9ReXDvjkC10/M0rEWPUyqhuTU8Y/PhUJrHg1JRIxgK542
+ gKsuhJKu8YnHVoB8THooseWC9VJ91KgTkLEEkkUXMKwDwjkeQQa6y/ZRrbXM8XWKhKoudl/psZc
+ 1Cns1XtCnNIsIT2OvCqnzdUIaCfbgqNpgn2JgCnKYi4W1qYNjWz7PS+imZUH+J1+rId4arOBwAK
+ QvZ2jIZSNwNze6ObxOhL4=
+X-Gm-Gg: ASbGncsr5FhE1e5lhNmHYqLg5LAyuTfu3yYYFUoNm74FLCohyJ5ZfD9bOUDsxhEiQoG
+ 91uAB92xJI5vBLp3gM5k4fI1BRL2a7a5QM5hNz7R1Brt9nfHpoF5ZeamcVbDcPGwnyleMnk2s6j
+ V5IQfxeBhZO5M3uJi6pc4U3B8M4rbAqLfE5zpGqJjQI9AyGWmFBII6hSIVhA==
+X-Received: by 2002:a05:6512:1546:10b0:591:ebc3:a686 with SMTP id
+ 2adb3069b0e04-591ebc3ab84mr629827e87.44.1761054351013; 
+ Tue, 21 Oct 2025 06:45:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUsW0hG4j0ToaPr9fcPE6GbDbpeQ5LNkCsHyBWEF0bn2CqtT4Ac004E1+uKmXV1U/YmYAM04OiWpQ9hIgg9AM=
+X-Received: by 2002:a05:6512:1546:10b0:591:ebc3:a686 with SMTP id
+ 2adb3069b0e04-591ebc3ab84mr629819e87.44.1761054350586; Tue, 21 Oct 2025
+ 06:45:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250825083229.919586-1-ashwini@wisig.com>
+In-Reply-To: <20250825083229.919586-1-ashwini@wisig.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 21 Oct 2025 15:45:38 +0200
+X-Gm-Features: AS18NWB_Zrbq8Qv38LqcTnJrSfQccl1mv6JR0FDQhuGHkOzGUy61ZpR2k-57dw0
+Message-ID: <CAJFAV8yWB+_+0XF4nk+Vx=DmY2mZVG=T2k-XUoaBB1KG_u8y5w@mail.gmail.com>
+Subject: Re: [PATCH] vduse: fix typo in struct vduse_iova_info comment
+To: Ashwini Sahu <ashwini@wisig.com>
+Cc: dev@dpdk.org, Maxime Coquelin <maxime.coquelin@redhat.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: efovcDcl8aQ8DY3HRqxK-tgjluKVwm-btRZN8hQkSsM_1761054351
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,23 +82,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 21 Oct 2025 11:42:25 +0000
-Marat Khalili <marat.khalili@huawei.com> wrote:
+On Mon, 25 Aug 2025 at 10:32, Ashwini Sahu <ashwini@wisig.com> wrote:
+>
+> Fixes a typo in the kernel header comment for struct vduse_iova_info
+> where "IOVA region" was incorrectly repeated.
+>
+> Signed-off-by: Ashwini Sahu <ashwini@wisig.com>
 
-> > -----Original Message-----
-> > Tried using AI to generate tests, and as usual it sort of worked but the
-> > example code generated won't load or work. Is there anywhere to find working
-> > DPDK examples of using BPF load?  
-> 
-> Hello! I'm sitting on some patches adding a framework for generating BPF ELF 
-> files using libelf and some basic unit tests based on it. Hopefully I'll be 
-> able to upstream it within the next couple of months.
-> 
-> Generating ELF files is probably beyond the reach of current AI, but once the 
-> framework is there perhaps it could be used to add test cases, would be 
-> interesting to try...
+As I said in the other thread [1], I prefer we don't "fix" uapi headers in DPDK.
+This needs to be fixed in the kernel itself.
 
-I have sample programs now (thanks AI). But building them in meson is messy.
-And integrating standalone files in UT is brittle.
-Perhaps using bpftool like tap driver does to generate a header file (.h) and
-then have UT write a /tmp file to load.
+1: https://inbox.dpdk.org/dev/CAJFAV8wqC1PpVvRoxdRpb-8v5FY90KOfKuTGLL_CvbUnpdjsRg@mail.gmail.com/
+
+
+-- 
+David Marchand
+
