@@ -2,85 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD70CCD184
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 17:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E68CCD184
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 17:54:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 01B3C410EE;
-	Tue, 21 Oct 2025 19:53:07 +0200 (CEST)
-Received: from mail-pg1-f227.google.com (mail-pg1-f227.google.com
- [209.85.215.227])
- by mails.dpdk.org (Postfix) with ESMTP id 2E0E540E38
- for <dev@dpdk.org>; Tue, 21 Oct 2025 19:53:04 +0200 (CEST)
-Received: by mail-pg1-f227.google.com with SMTP id
- 41be03b00d2f7-b6a225b7e9eso4201816a12.0
- for <dev@dpdk.org>; Tue, 21 Oct 2025 10:53:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7FFB54111B;
+	Tue, 21 Oct 2025 19:53:08 +0200 (CEST)
+Received: from mail-il1-f228.google.com (mail-il1-f228.google.com
+ [209.85.166.228])
+ by mails.dpdk.org (Postfix) with ESMTP id 1CC5E410D2
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 19:53:05 +0200 (CEST)
+Received: by mail-il1-f228.google.com with SMTP id
+ e9e14a558f8ab-431d2ca8323so1835715ab.3
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 10:53:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761069183; x=1761673983;
+ d=1e100.net; s=20230601; t=1761069184; x=1761673984;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=j3sxnLaXiWkXvG469e06v5H7cEbF5In/yjOTAzyItFM=;
- b=Kq9VQQ7WVZq1iWhF0tji3CHFILN3Z7HNudO++PuMH4Tls5UAJcojOj063jNQ+XNdRd
- 1fNGI/lLCAK/uVXDvWy9K0xxE59zAbZ4//b+vuEgYacTGcw/tmn4ezgt2Wm6oUz6yjps
- hFCzWHUYfvjLmqTG+L+uSzbpfjb5m6hLapcESxE9pUaIGwCSQwT4SxEOsjMnISSGm5BS
- c4N07DXGNbaf5HKwLKR+PghAjjNuijLxcosPmhVUfX7pDwIYlt9PS0QZDpEZZ1zMo8IX
- G/5Usu2OWLqdt8gY9PzshAIJrHUsahXwnoGxbrqyNQoa97hyOlU3rnYGNuv82i6xE7xJ
- ta4g==
-X-Gm-Message-State: AOJu0YxkK0v0xbc+QLVRVg0hL2ujRuz+luIN9JkZz0ej4acOGrP9dNyR
- m84sdosellEtG3C12vmHAs3SNnOawcfKTJVol+N/bRKP7ed7sp89pMNUsIkDpTxL18/nPrpyC1L
- z4TrCOzAP+hN5xKep94NYXOkqe5ZZYlPGs0GyX9aCkg6wBP9ivY//orwb8J2X1XxVV1Xny46vvm
- t7T+h8X73lM2XMvniZrpnk6fOkvOhcb6ijb1eo3IjhIU37nQIBCXMOPSfJY/QxTdE2GJdJmA==
-X-Gm-Gg: ASbGncvajiSAG9k1rgwIoDr45iYWKZ8ygYpOQOM4eB1qAkRpB4pSR0YcW6bxbYY5zW5
- 4dVBCL1E1troj9e2Vb08QYdsh9gJpO3rZG7WztgSzgS3Uyu/GJXZT5nLfiRRiKnJ6at90MMlcRJ
- koOPQ237eGfFwlOHhkWeVFiegB2f7PfkO6JhwzUZzRpqcUo85HlgNILsHPJpxZAio8LAnVwSbzM
- z1rfwoPei1FG83CCPCq2/BUmBbRFFAkkWLkXjCR1r14KjD76keggg8hq/cLmyJy66GDI7xCWenR
- TKyad0IZq5ETmn7EkNkMTl6xO52pJUZUMTDEJU0W+OZ72ZhNfLTxpCdHN8SvRXjKxmXmbfT3OqZ
- Tat2h1dmgkvMPuz8pspu9rKRp3ZURQGwdb+AFZ+zVhjhVFDXowupBhaavJvkb2gL+HZ2BkBiOOo
- ZS28aNFro4dfN8unT1xUmQ+rVe3bPJvShstPXr
-X-Google-Smtp-Source: AGHT+IHDex7o7Q4EpdBNuIyZtySClFTWbcf1ZcHqqvL8744x0+jKwn3RMEwDmC8W+KNMcYdHHn+U+8kTyuvH
-X-Received: by 2002:a17:903:b8b:b0:26d:e984:8157 with SMTP id
- d9443c01a7336-290c9c89ca7mr185540495ad.8.1761069182694; 
- Tue, 21 Oct 2025 10:53:02 -0700 (PDT)
+ bh=ij0hSuFP4lyPjAbN4hXlpNhbJAvcj6+7MhEvujeLGeg=;
+ b=EAvX42GZw0nipz51NaODRZGCAn6cSOHvCBdIkrq/TnopaqUTemob4L68IP8Mz5MNcj
+ z1dM065SVZyb/9R0K+RluDU3VA7CYfFup/atnQQOEsP+BWsyjzSZACmswy6myj5ZYDJN
+ vFv/U5fRaILFBzfauBZ8TTEpdJac/Sg45TU6/sqGPbHbEW/tGzygYwd1WdpRCBZK+t4m
+ uiberIEmtmPF4yVhvo0NN4d+jM2+2pWHyIFinPBg4e85cRhkRVZHspwpYVDSrMrGz7g0
+ br4wnU2uvaHRtumvUcUp/9LzRUd6ix82ohklcuQeliF+cyFn7g8uSUOK5wowpUC3fxIW
+ duOA==
+X-Gm-Message-State: AOJu0Yw4druFxyVOZTCUWdGNDEr+zxrbYGMjtbBrNtuSz3fe+4TWzMtm
+ qIa+63J/MOCVhpzA7eskfuv6Pz0J9FPklQ9CC3iAzS5ZdS4p3xFLLXTbYUiCQfM7jbRd/T9Fq/+
+ Nz8FalGmlZHE0ydtwTIqVvLziQtVQguY9GqgnsgZQkSKCNH6stqsCHp9AYGZTmcRsooninFUjej
+ fVSAW+WZGq4hZYFAsaPp5Bf8cCmLAhl6ql3U0a3CQk2vIIJxBsyIXPsCpco0YBEjMMFmPMZQ==
+X-Gm-Gg: ASbGncunmzo/o60+f2vyPLmHZ0BIrTfcM/VfVMZU3hNIhlrbgnOHMQyPi8Vn4kU3IUj
+ SOlcZjyBaW8xkmkXltIvGTUVfKmOHa76IFx7nMz3TnMq9r1XCRz0KUIWt93ZAwKRSEPoq5nxF/t
+ mUMhZUWCeE6X9PlD3En+z8tGix3MDMheDkoUbTNWvIOHMscLCShxUucIwOg8xDhbiQPkUx/ilM+
+ 6qjPo8dA9eyPQDdW7O/UbcfH0wYHXBBvvQNyBJYMTnj9UvMpaXDl4Fn/T4USs6DWEgp1xPaUJTy
+ 9ieQcnli3p9rMFTqTsmKLYLfw2PR48RoJqAdXCfFJuLoBwa185Ohlc5WJrXb2xaALa0OPSjbb+/
+ toZgcFY5AJxXh8474+Hv0dbeSaloYgU/ItUP1rh9It40B/7EcBByopAR2KTLaXO7tqFiY40gP6I
+ uFqTFSnrzjTm2FL0DM+2VUPTauimmJFsc=
+X-Google-Smtp-Source: AGHT+IFjO0VckcnlE61GraVKsBNJMh5S2dV+WQP5ylnk6dyoXc1ZG4qSi0VLgLUiE/rxY19wqoVOzMsz2gCE
+X-Received: by 2002:a05:6e02:2702:b0:42f:9574:7c1e with SMTP id
+ e9e14a558f8ab-430c52a253amr256593855ab.27.1761069184271; 
+ Tue, 21 Oct 2025 10:53:04 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
+ (address-144-49-247-0.dlp.protect.broadcom.com. [144.49.247.0])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-292471c5c7dsm12931085ad.38.2025.10.21.10.53.02
+ 8926c6da1cb9f-5a8a95feddbsm1327688173.7.2025.10.21.10.53.03
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 21 Oct 2025 10:53:02 -0700 (PDT)
+ Tue, 21 Oct 2025 10:53:04 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pl1-f200.google.com with SMTP id
- d9443c01a7336-290e4fade70so44112115ad.2
- for <dev@dpdk.org>; Tue, 21 Oct 2025 10:53:01 -0700 (PDT)
+Received: by mail-pg1-f197.google.com with SMTP id
+ 41be03b00d2f7-b60992e3b27so3939831a12.3
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 10:53:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761069180; x=1761673980; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761069182; x=1761673982; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=j3sxnLaXiWkXvG469e06v5H7cEbF5In/yjOTAzyItFM=;
- b=KlqQhEgPuVigsmDNrC30wC6ALpGzP1om70qAIOAlIQWr+IfJ5UlOdLuLmQQahsun98
- dd7no6dHZP/OzNYcOCaTCMPUBBR7UftJqoQnxfvvfOYMRPx5/ArFnbfFW2eEpwtgRiT0
- bQyiBmrvBAIiQFodYbBqylVmazRrKvF524fgY=
-X-Received: by 2002:a17:902:d2ca:b0:290:ab25:2986 with SMTP id
- d9443c01a7336-290cb27d770mr239680105ad.48.1761069180625; 
- Tue, 21 Oct 2025 10:53:00 -0700 (PDT)
-X-Received: by 2002:a17:902:d2ca:b0:290:ab25:2986 with SMTP id
- d9443c01a7336-290cb27d770mr239679665ad.48.1761069179954; 
- Tue, 21 Oct 2025 10:52:59 -0700 (PDT)
+ bh=ij0hSuFP4lyPjAbN4hXlpNhbJAvcj6+7MhEvujeLGeg=;
+ b=KQYjR99h+6BFEHM1PhSOQBWR8Q0WJzcObtdq6/X5Tk9NBcU/pwzicAlzw5EYrl0MzG
+ YKpkutxHc/5nhIT/5eXbGMqDvV1RuPvsLhkRQzrw6Zt7Xxc4ZCeOjrL1CmcdCeWoQiZz
+ 1OkrrKsTQUj0/m+P6mNLxSgiEZm801505GCp8=
+X-Received: by 2002:a17:902:da88:b0:24c:9a51:9a33 with SMTP id
+ d9443c01a7336-290c9cbc119mr222496425ad.22.1761069182412; 
+ Tue, 21 Oct 2025 10:53:02 -0700 (PDT)
+X-Received: by 2002:a17:902:da88:b0:24c:9a51:9a33 with SMTP id
+ d9443c01a7336-290c9cbc119mr222496075ad.22.1761069181798; 
+ Tue, 21 Oct 2025 10:53:01 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-292472193c2sm115441495ad.104.2025.10.21.10.52.58
+ d9443c01a7336-292472193c2sm115441495ad.104.2025.10.21.10.53.00
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Tue, 21 Oct 2025 10:52:59 -0700 (PDT)
+ Tue, 21 Oct 2025 10:53:01 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com, Shuanglin Wang <shuanglin.wang@broadcom.com>,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Subject: [PATCH v4 27/57] net/bnxt/tf_core: fix build failure with flow scale
- option
-Date: Tue, 21 Oct 2025 13:50:19 -0400
-Message-Id: <20251021175049.46092-28-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com,
+ Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
+Subject: [PATCH v4 28/57] net/bnxt: truflow remove redundant code for mpc init
+Date: Tue, 21 Oct 2025 13:50:20 -0400
+Message-Id: <20251021175049.46092-29-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251021175049.46092-1-manish.kurup@broadcom.com>
 References: <20251015090024.32250-1-manish.kurup@broadcom.com>
@@ -101,66 +100,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Shuanglin Wang <shuanglin.wang@broadcom.com>
+From: Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
 
-Resolved the build failure when building dpdk with the extra c flag:
--DTF_FLOW_SCALE_QUERY. The issue is caused by the new debug code
-in DPDK 24.11.
+This patch removes redundant code from two files which is used
+during mpc init. The NULL condition check for mpc member in
+bnxt_mpc.c file is not required as mpc will always be initialized
+for P7 platform. The extra condition added in bnxt_ethdev.c to
+enable mpc for tf apps is not required as it will be always be
+enabled for P7 platform.
 
-Signed-off-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
-Reviewed-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Signed-off-by: Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
+Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 ---
- drivers/net/bnxt/tf_core/tf_resources.c     |  2 +-
- drivers/net/bnxt/tf_core/v3/tfc_resources.c | 12 +++++++-----
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ drivers/net/bnxt/bnxt_mpc.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_core/tf_resources.c b/drivers/net/bnxt/tf_core/tf_resources.c
-index b3174ba1af..3219d61cab 100644
---- a/drivers/net/bnxt/tf_core/tf_resources.c
-+++ b/drivers/net/bnxt/tf_core/tf_resources.c
-@@ -535,7 +535,7 @@ void tf_resc_usage_update_all(struct bnxt *bp)
+diff --git a/drivers/net/bnxt/bnxt_mpc.c b/drivers/net/bnxt/bnxt_mpc.c
+index ff2f0d7043..2582b50782 100644
+--- a/drivers/net/bnxt/bnxt_mpc.c
++++ b/drivers/net/bnxt/bnxt_mpc.c
+@@ -719,20 +719,10 @@ int bnxt_mpc_send(struct bnxt *bp,
+ 		  bool batch)
+ {
+ 	int rc;
+-	struct bnxt_mpc_txq *mpc_queue;
++	struct bnxt_mpc_txq *mpc_queue = bp->mpc->mpc_txq[in_msg->chnl_id];
+ 	int retry = BNXT_MPC_RX_RETRY;
+ 	uint32_t pi = 0;
  
- 	tfp = bnxt_ulp_bp_tfp_get(bp, BNXT_ULP_SESSION_TYPE_DEFAULT);
- 	if (!tfp || !tfp->session) {
--		BNXT_DRV_DBG(ERR, "Failed to get truflow or session pointer\n");
-+		BNXT_DRV_DBG(ERR, "Failed to get truflow or session pointer");
- 		return;
- 	}
- 
-diff --git a/drivers/net/bnxt/tf_core/v3/tfc_resources.c b/drivers/net/bnxt/tf_core/v3/tfc_resources.c
-index 5fa6d113ca..44b7a0afcb 100644
---- a/drivers/net/bnxt/tf_core/v3/tfc_resources.c
-+++ b/drivers/net/bnxt/tf_core/v3/tfc_resources.c
-@@ -59,14 +59,16 @@ tfc_query_resc_usage(struct tfc *tfcp, enum cfa_dir dir)
- 
- 	rc = tfo_sid_get(tfcp->tfo, &sid);
- 	if (rc) {
--		PMD_DRV_LOG_LINE(ERR, "Failed to retrieve SID, rc:%s\n",
--				 strerror(-rc));
-+		PMD_DRV_LOG_LINE(ERR, "%s: Failed to retrieve SID, rc:%s",
-+				 __func__, strerror(-rc));
- 		return rc;
- 	}
- 	tfc_msg_resc_usage_query(tfcp, sid, dir, &data_size, &stats_info);
- 	PMD_DRV_LOG_LINE(ERR,
--			 "dir:%s, %d - %d %d(1-slice) - %d %d(2-slices) - %d(4-slices) - %d(unused row) - %d(used_slices)\n",
--			 dir ? "TX" : "RX", stats_info.max_slices,
-+			 "%s: dir:%s, %d - %d %d(1-slice) - %d %d(2-slices) - %d(4-slices) - %d(unused row) - %d(used_slices)",
-+			 __func__,
-+			 dir ? "TX" : "RX",
-+			 stats_info.max_slices,
- 			 stats_info.row_1_slice_p_used,
- 			 stats_info.row_1_slice_f_used,
- 			 stats_info.row_2_slice_p_used,
-@@ -86,7 +88,7 @@ void tfc_resc_usage_query_all(struct bnxt *bp)
- 
- 	tfcp = bnxt_ulp_cntxt_tfcp_get(bp->ulp_ctx);
- 	if (!tfcp) {
--		BNXT_DRV_DBG(ERR, "Failed to get truflow pointer\n");
-+		BNXT_DRV_DBG(ERR, "Failed to get truflow pointer");
- 		return;
- 	}
- 
+-	/*
+-	 * TODO: This condition check is added to avoid
+-	 * segmentation fault in case mpc argument is
+-	 * missing in dev-args. Fix this by removing
+-	 * mpc argument from dev args.
+-	 */
+-	if (!bp->mpc)
+-		return -1;
+-	mpc_queue = bp->mpc->mpc_txq[in_msg->chnl_id];
+-
+ 	if (out_msg->cmp_type != CMPL_BASE_TYPE_MID_PATH_SHORT &&
+ 	    out_msg->cmp_type != CMPL_BASE_TYPE_MID_PATH_LONG)
+ 		return -1;
 -- 
 2.39.5 (Apple Git-154)
 
