@@ -2,140 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F7CCCD19F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 04:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 217A2CCD19F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 05:25:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 590AE4025D;
-	Tue, 21 Oct 2025 06:01:43 +0200 (CEST)
-Received: from BYAPR05CU005.outbound.protection.outlook.com
- (mail-westusazon11010026.outbound.protection.outlook.com [52.101.85.26])
- by mails.dpdk.org (Postfix) with ESMTP id 9D03F400D5
- for <dev@dpdk.org>; Tue, 21 Oct 2025 06:01:42 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VUt/9o2CsOEXsKTD1WkLvv2/7XrU/CyWh32VE2jBGd1ZP8+C6SiufmwLgiaAHhrXRYkhDgjwKBrwq5vaDlKIz5yqH1QuFA0/jyQXl4/l20noWEtvWpmxFRg0UbfI4+IyXYcS1WpGTSFOUoq8dFt4rko6Yv4OlNMF46XPmQaImey+NdaV+OULGlR02MxJyB/jkwhRT/RHM/HoWq0KDeQNs/5FdwSKyZPNmluJEYIZs17fbtJ0OtXvURLsx82ywtiUugSj7rKp5bAYZlx6hQE3xXdCLjCbeUCIphhEEEH7ty7WHU6YgKJyUIT3WBbnZACGZ8YdBpg5QLkY19OSNamjFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+AeNtAH/0bVjvOZ/C6Ezfq4fsKW2ca6wo8FAqoOsAXs=;
- b=m+D2aTylUpI5C5gFpxFMbVd1eW7r9BgqUmg7wsQ6UiL6QCdlf3FSXRGnSUYBRC4bxkJ4FNsuqQfJLvRrOeHsM978VXr+Gll2j8bSNrSGicWvKJ5ke4pz08MzVKttdnzcFd4K1/fBerxKIC7REdtuhf0nsoKI1Rk7qvClfUDAJfAOOHbbjlOmNz0fB6UZGxMK9gKCCfnHOUQEHhG9uggH9pArWNP8Wf7s15E8sQqDY0+DI4j46Im3Mkb9HTzkpwBM6YLmlk3m67GHczWcQ8FPME9uzviRFImBwC0tWP78jgOFp01xy3k9Oxn37EpPK9TLvB5jIKdYiogO76+gpureMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+AeNtAH/0bVjvOZ/C6Ezfq4fsKW2ca6wo8FAqoOsAXs=;
- b=GQrin7bc7sjGhVy6THBs3tyvwzgspMSBqO9OyOAcu8XT5YtU9Vt+TE1ZdMBCfWEZPsl7+sE4AliCuJNECtWfm4W0E56Dc3L2Q9z8nYY7XGJbUg3h5KVWl0yPbPpEmLX/Z2iqON63ZVJJl7LClkyagxOIoJ63ErOW3omfQdumWfU=
-Received: from SJ0PR12MB8615.namprd12.prod.outlook.com (2603:10b6:a03:484::12)
- by DM4PR12MB6110.namprd12.prod.outlook.com (2603:10b6:8:ad::7) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9228.16; Tue, 21 Oct 2025 04:01:40 +0000
-Received: from SJ0PR12MB8615.namprd12.prod.outlook.com
- ([fe80::220:c7d1:9e75:8fa6]) by SJ0PR12MB8615.namprd12.prod.outlook.com
- ([fe80::220:c7d1:9e75:8fa6%4]) with mapi id 15.20.9228.015; Tue, 21 Oct 2025
- 04:01:40 +0000
-From: "Varghese, Vipin" <Vipin.Varghese@amd.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH 2/2] mailmap: sort mailmap
-Thread-Topic: [PATCH 2/2] mailmap: sort mailmap
-Thread-Index: AQHcCHCftF1pOQDiNECaekgjC6rkjbTDO6+ggAABlQCACTCP0A==
-Date: Tue, 21 Oct 2025 04:01:39 +0000
-Message-ID: <SJ0PR12MB8615FD66226E62FFA3BAE53482F2A@SJ0PR12MB8615.namprd12.prod.outlook.com>
-References: <20250808142721.408998-1-bruce.richardson@intel.com>
- <20250808142721.408998-3-bruce.richardson@intel.com>
- <PH7PR12MB8596E4E3C090C148BA8A528582E8A@PH7PR12MB8596.namprd12.prod.outlook.com>
- <aO9QFopivyfSCal_@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aO9QFopivyfSCal_@bricha3-mobl1.ger.corp.intel.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-10-21T04:01:17.0000000Z;
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only; MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR12MB8615:EE_|DM4PR12MB6110:EE_
-x-ms-office365-filtering-correlation-id: e9b6b0a9-5bea-4974-778c-08de105689e7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|376014|366016|38070700021;
-x-microsoft-antispam-message-info: =?us-ascii?Q?Tgo5oduL8jhyIe+9JWf8rMpugpKotBz4X6ew1Op8AXitAwVUChDiZI6hre10?=
- =?us-ascii?Q?Xpf91FMA1G7mlw3JJtEpUD3zOM+BeEuYZL52niwhIvDSWXajEyWYLUVFbzi9?=
- =?us-ascii?Q?hUayxdJoPrhtaeJnQrgLyWJRbZ+uk9bTG1Rp9o0GWbe0qJ+hZN6KS6FjXJBT?=
- =?us-ascii?Q?tyOxKUAwiUjZXM3i13TbsRkbuyVb3jtcsBmq7XsCO8C1D/1iwbJeu/BnZZ4R?=
- =?us-ascii?Q?u4APe63+/ZYcViqtMh0e5Jd2fLlh+mo1q+w//Ko+S4870AXyX0QsA+3qlHjc?=
- =?us-ascii?Q?uvbSRjcB2Fpkj6TT4wqezo2xYW13jelbRUytUjApzASg9iNYLZf4N+6dFve4?=
- =?us-ascii?Q?2f+/lRgEEjxO79vDeDrnMte+fQfXlbzud3lpNIFSUQ5MOYX3CzUpYRipu4nd?=
- =?us-ascii?Q?mriBBs1mJZTq2ATIpPr1la+cl82UvGLEpVlHdhsLjpLM/bPfldjncLKf657p?=
- =?us-ascii?Q?hH6mE3qOLs97eFaxFkAnPXeAi4LoRSMgSUBtxz30rpF6rQ9QlILUVdEH/0sj?=
- =?us-ascii?Q?OlN/E9FzFRS7xzw6FaHmH3DCs26zK6en2awUJLmGNvJr6RXlFBpqCmKU82W6?=
- =?us-ascii?Q?GKXcpqx+42dpHvMyd/LuveQsbNk6u7iFaS5a+3V0Yxka3dXwgsTUr9IApC8Q?=
- =?us-ascii?Q?VcEBQwh2perEYyay+0GGlSreEgXt0tJcoocCYios43f5NjH63/JiO4xsB3Ag?=
- =?us-ascii?Q?TdLJGqOvqfaphWerGPwAu5s3Am1/pnVTWXVRd4lWKcCYsZHxnGUN44AKr1aZ?=
- =?us-ascii?Q?fQoIXg2zev57B5g+5IXaL4047gEIKXwpL2sQ5zAHsTODfn4GBQHaZtHrX4nJ?=
- =?us-ascii?Q?pbcSkTY/WsiD1TY84naB7Jm1QV4UiEQWYszCQM4DhC+1LCbo4IB7nSvL8Fnj?=
- =?us-ascii?Q?h0d0ThRdU0c70kzvM8d6Q48D63SHfFPvQbPv3CXOz4PSZOeSjD3mRuRhl5Dg?=
- =?us-ascii?Q?Ge3hfZj7CjVGCpNbGV8OdYo0EoX1GtdUSxR7JCK836D/QubibxrYm8r+ky53?=
- =?us-ascii?Q?ZXjukYUx9eJQRe2TajsqIC8GnFwHn1onSWCGWBNW72AKw+M/huh95+wpNhLD?=
- =?us-ascii?Q?pSp3kf4RsfHEjWVXD+87I9jLB1A5P8Pn1bQSs+gDIUwsyDC8bfbmseZyZ8wx?=
- =?us-ascii?Q?Lv67pTLBP57wr7dE1q5IUsm+ODeZS2y8x/VRcDvSHlBuxQNEUtw9B9FJSmjj?=
- =?us-ascii?Q?2oQC3viT0F4UkU/SypCd1ojSusRGM5n8aJnOcGljDPbmn/TFzlr3agdViszr?=
- =?us-ascii?Q?Pr6kUIaYCoocRFs4jMSRmIJUC02sP93Znkwq35ofPBqTQeelugDHV9cEPxku?=
- =?us-ascii?Q?oIR1A5JeSW5DgnQp/9kLyQvqZny/8ORjYCkFMzADJi5uzhBp1wCVzQp00yk7?=
- =?us-ascii?Q?D3YGFBZC78KvVBJINYrUxqBM3eIIgGfoB4H8x0dYt+tTaetDTT7QyHst9Wl0?=
- =?us-ascii?Q?rEXJdU+WpZQI/NymyMf0oc9dPkxZ9hppYM2VFQvA6h0k5aH2zBRiNlyeBgPO?=
- =?us-ascii?Q?zGEJ34q/qzb4nEgal/AJTNisZZrWTLMiopTl?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SJ0PR12MB8615.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016)(38070700021); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?fKZGNOXvxgZSbst0ewSL5quXsvf8Em7+ca4Sev5AIwYnuMBWKhA9FUVPyU/b?=
- =?us-ascii?Q?niP3tOtzP75GQjEZMXhfOcATFjQ806zw+3rn65e6t3AE4fZUV+zzLE2oUsRZ?=
- =?us-ascii?Q?t7SWnskSPKocXCO1o0uWwpucYF9eGvPSuzx1WG+mDT0UjoSd4qeIxiUUWqlh?=
- =?us-ascii?Q?7BojPgwkT5prGdvEYeibPqNqVOKUmos37shr+HNqGtjCIJKTHhciu85euhYW?=
- =?us-ascii?Q?Ik4AKeVYJS54W0dI8/lI6BQY0dJ2U97xwHOMhxGiMv+LlgDpV0LWhrFeLmHv?=
- =?us-ascii?Q?hJWB3qkIkJnUyNhWblFBsOu90fW3QSY0KL4xY6qVCfEB27f5ctJhRaKEhK2E?=
- =?us-ascii?Q?hVaACChsJunczZOoeVcQ8VuTntdss1pUDSME7v5z/FQFlbm9DqbX9xdlNEnv?=
- =?us-ascii?Q?RJvmuclyJrnc+AJyqKHndF7rWt9oaRPS0RXgyOTRElkVwTANGPMPOuIvGluw?=
- =?us-ascii?Q?FFTk+GnJdXt8XwLmbKTCyW3ObnmBxcBjChuFs24g2U0A5s8uuJsIJWRnc1FQ?=
- =?us-ascii?Q?Vannx8/ahTUGXeDEfct/2sm5Oc2LRmuC4GZ7svLt56RYIHXASDwHjcj1Kyag?=
- =?us-ascii?Q?4rhLJcHc67yRaZKo2mqdNUk4vjgO0b/VJBh5WH0wSLuAA+4E2Ke+LxazXTAj?=
- =?us-ascii?Q?p4oVDIin4UG23vdjNN5ex4bvJYvUkXKkRy0gga4Su4dKnFV9F77AvaMPq89x?=
- =?us-ascii?Q?TAA2nC4Bz1y4U5tGvqszI1UWLrm5+mser9CubGR4klnXRNtgUXgN30XQGEOg?=
- =?us-ascii?Q?iy0UCchCHLDdG0u4LHq7a+9UohxuU/w4/kZprlVYSAgU/uEPp2mwl/iZC8oN?=
- =?us-ascii?Q?LE9NMKxFRkwGpa18mN4yfRS3DCLQP0P/8+STdcrDmyJ6KTzn8G/UC1DGo6jU?=
- =?us-ascii?Q?/cBWCeLbFjsp7GS0e0F3K9UCqduOMtal6qpxaZHAw7ilcZx5uwG5lzOc9oFs?=
- =?us-ascii?Q?jDYysiCtKp+2iUGoP5Hkkany5jjhTnidD+JqpGNXYqics4kmfcDPhHc5HVu7?=
- =?us-ascii?Q?+bPDwE+FuigBUBEQ8j2RrEt7cI6XSQ1ehdqbwvgMRHyUIV3u6Ra9KBNhVSZr?=
- =?us-ascii?Q?eRLQrZ9qe+Vk23YPWX3aJlu55X0b+dyPqXNuh31wMMXzEVogvfBUYL6p73T2?=
- =?us-ascii?Q?VOxUgvnFP4hHmooxFzMpGvmiofVCPF4YOFSkj38CFZvsHYlZ+kbsH2ufyDaK?=
- =?us-ascii?Q?tJvP2Ikr1pBgne+oG8h39BVJwMMf4D6TtAHQr3hDGgjjMwZukRSS44u72dUg?=
- =?us-ascii?Q?c6X+KC+nhyBo9g2LuM20oR2ouoacivu5MKI+jYnLZyaZdjrX8hyAUyWQAGxF?=
- =?us-ascii?Q?mCgPtRz2FnghySjRxDKtBESxbD4l+W6eRO3STaXsGsV+834OL+JAg8pHPL6/?=
- =?us-ascii?Q?X4K8NTSp4kelQ91r/0kzXgdGAoDqelT2VnBJ9umn1bRu0Y4Ei9XmYr51cvWW?=
- =?us-ascii?Q?RMTPFR0/a/N++qGxdfgbbFHIA3V51+aVo8kitnvgz9xLpbmcGpJ9DTlz5MWa?=
- =?us-ascii?Q?5Ce/8ADKNkWy1ICGolpge1PQMJw3utEDHTmNrpoCAtlNm/aqI1lCmQXWawsi?=
- =?us-ascii?Q?D+nR9koxK5k+j1QLU/U=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id C9B7A402BC;
+	Tue, 21 Oct 2025 07:25:50 +0200 (CEST)
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
+ [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 2B434400D5
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 07:25:49 +0200 (CEST)
+Received: by mail-pj1-f46.google.com with SMTP id
+ 98e67ed59e1d1-33082c95fd0so5156766a91.1
+ for <dev@dpdk.org>; Mon, 20 Oct 2025 22:25:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761024348;
+ x=1761629148; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=vX1sQ5rqm71hSOna1jsFmhBZ1BpOT4ZoJasre7Rfpn4=;
+ b=V1lZwplizw1lT3YnxB46f5P0h3DmMmy/pB2ZNw/aYRaV/Et2As/GunZg6W0Z6hV5Jm
+ yk0/upS/5tBAhIhwXuO2tq+05l9qLGqDMOUFtE4Fuh7QgR/aXfqIDiEmHwlsjaVizAvd
+ rB31ukHOuxXfuQZZJJXNCO38ReKiXaP6Q4Z1lIsytK8UXMnqusLaGKABcgTv8NhEls9N
+ FlrOpjP4mhQrgdZHI8tib9ZAdy8cx/g66I+CoUQH6mpwALdQ4O0/m++UThioYqmsCkCq
+ 42cqjk/U6DvcgLVciv/ZljZXvTGHSAfVGG5e5+UG4F7OeydR8bO7AlWZ2JMII0zE0Qa6
+ lMag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1761024348; x=1761629148;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=vX1sQ5rqm71hSOna1jsFmhBZ1BpOT4ZoJasre7Rfpn4=;
+ b=IXNFHZJrzatBqud+ZFJZLd3QTNKDzSP/HjQXqO9sjuqxrJOcQFRJs8xZv+tnhFdYdz
+ 8udx1slJklEfmNNMjf11nk0YFLZb5MMRqESlZ7ovGgUv1fgFr80QowUzHBOHft0B/N6f
+ XbCz9vRsBcA6z9cMtrO4zyLLmj+4PrG+DeKGomOirIl4x4mhfvBgOTDZHrm6TG+ySOup
+ 39H/kOZS1Wf3UZ1qBO+kJOEctOWA/BsewspJeE0KuVlK5XLM/UvzoCF4yAVU7VqT/nXS
+ LSePRkNegRR+ogyh6A/NRr37Q9ezxiebSdQ9hG74Bh50++qNNPubc8spNcst1UADc3ZJ
+ cn1g==
+X-Gm-Message-State: AOJu0YxUHkDjJsMKZGAuoDDqW20ChcMC03JQBJqJldJ/ugug6ew2/x37
+ OzZuyvL/JdA3H2j+Kyb0wLPnTTQprZBHkyZCPyAB576yGb8ouFDI7rvNcFBPHkVg8bY=
+X-Gm-Gg: ASbGncsonZVpkQ0rVtj+b8w5BxpRJul5eYFNEY9HDdntPQZpOMppxzLNUjI4VAv0gJf
+ +nKUYuex9OxTs3vv4CMW2c4E9Utud58Za48pRjGPxo54XbMftfSWzX+/6LgloBusWLXYgRZM4in
+ 37LE5Sb1ARusOs7+hrh5Jak8uAVOe6pHUxg9zVDzzWulkvtpRPdFDzuB2WXUctvQgOSlftLT7O5
+ wgMl9ObybfXsTVGPvabExH08PXERpdIeNTRoZvnoxuYMZriEqN79c+39sB6vXWRJ14ZPepNXnub
+ 8ctK1tIZGIUrKUMcc3SdFDO9VCWqGrE9CWlC0C3RS3AyGj8mv4SDizzT2s7p9y82WI5lGNwkcar
+ F3mflrTPTaVE6ntwR3mFZVq52XFnun6t/aLa1+ILH411XB5QfUzzhqn9mkAQ2eA+2lB455XJ29t
+ GBcI3aHI37YBhj+S/UiQ8JMrBByVTvdg0KC8agB8RngQE4PaBYrA==
+X-Google-Smtp-Source: AGHT+IHqxtzM9lPgr0uVfW0nAXMftfnKZNF2vPz6hut7e1tNz0tK/IE6XqIgE/J+AvpnqD316k8oyA==
+X-Received: by 2002:a17:90b:2883:b0:32e:3830:65d5 with SMTP id
+ 98e67ed59e1d1-33bcf9222aemr17055184a91.36.1761024347969; 
+ Mon, 20 Oct 2025 22:25:47 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-33d5de8091fsm9913961a91.19.2025.10.20.22.25.47
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 20 Oct 2025 22:25:47 -0700 (PDT)
+Date: Mon, 20 Oct 2025 22:25:46 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Shai Brandes <shaibran@amazon.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [PATCH v2 00/20] net/ena: Release 2.14.0
+Message-ID: <20251020222546.04adb7ad@phoenix.lan>
+In-Reply-To: <20251015120415.2204-1-shaibran@amazon.com>
+References: <20251015120415.2204-1-shaibran@amazon.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB8615.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9b6b0a9-5bea-4974-778c-08de105689e7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2025 04:01:39.9847 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0ak8JG1c2SBtMhrqTcpNUfrSzyQk5cVdA2cpjiQXr8f7fmSoyaNh0xAeWZMJvwCMq6amxas/EcPDzTrsA2GwWg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6110
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -149,39 +80,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+On Wed, 15 Oct 2025 15:03:55 +0300
+Shai Brandes <shaibran@amazon.com> wrote:
 
-> -----Original Message-----
-> From: Bruce Richardson <bruce.richardson@intel.com>
-> Sent: Wednesday, October 15, 2025 1:11 PM
-> To: Varghese, Vipin <Vipin.Varghese@amd.com>
-> Cc: dev@dpdk.org
-> Subject: Re: [PATCH 2/2] mailmap: sort mailmap
->
-> Caution: This message originated from an External Source. Use proper caut=
-ion
-> when opening attachments, clicking links, or responding.
->
->
-> On Wed, Oct 15, 2025 at 07:38:32AM +0000, Varghese, Vipin wrote:
-> > [Public]
-> >
-> > +1 for the change
-> >
-> > > +Vipin Padmam Ramesh <vipinp@vmware.com>
-> > >  Vipin Varghese <vipin.varghese@amd.com> <vipin.varghese@intel.com>
-> >
-> > Should we update, ` Vipin Varghese <vipin.varghese@amd.com>
-> > <vipin.varghese@intel.com>` to ` Vipin Varghese
-> > <vipin.varghese@amd.com>`
-> >
-> I don't think so. That would result in all your commits made under the ol=
-d email
-> address being counted as written by a different person. The map entry is =
-to map the
-> old email address to the new one.
->
+> This patchset includes an upgrade of the ENA HAL,
+> introduces a new feature, and addresses few bug fixes.
+> Based on repository: dpdk-next-net; branch: origin/main; hash: 1d627ea13a
+> 
+> Thank you in advance to the net maintainers and community members
+> for your time and effort reviewing the code.
+> 
+> Best regards,
+> Shai Brandes
+> AWS Elastic Network Adapter team
+> 
+> ---
+> v2:
+> removed 0002-net-ena-base-rework-admin-timeout-handling.patch which caused compilation failure in ubuntu-22.04-clang-stdatomic test
+> 
+> 
+> Shai Brandes (20):
+>   net/ena/base: optimize Tx desc fields setting
+>   net/ena/base: add extended Tx cdesc support
+>   net/ena/base: add IO ring helper functions
+>   net/ena/base: add lost interrupt indication
+>   net/ena/base: add Rx cdesc dump on bad request ID
+>   net/ena: add Rx HW timestamping support
+>   net/ena: rework sanity checks
+>   net/ena: add verification of DMA address width
+>   net/ena: fix PCI BAR mapping on 64K page size
+>   net/ena: style and comment changes
+>   net/ena/base: rework log format
+>   net/ena/base: add phc error statistics
+>   net/ena/base: remove redundant zeroing of Tx desc
+>   net/ena/base: style changes in hal
+>   net/ena/base: improve admin logging
+>   net/ena/base: remove redundant if sentence
+>   net/ena/base: fix unsafe memcpy on invalid memory
+>   net/ena/base: optimize branch prediction
+>   net/ena/base: change return type and improve logging
+>   net/ena: upgrade driver version to 2.14.0
+> 
+>  doc/guides/nics/ena.rst                       |   4 +
+>  doc/guides/rel_notes/release_25_11.rst        |   5 +
+>  drivers/net/ena/base/ena_com.c                | 273 +++++++++++++-----
+>  drivers/net/ena/base/ena_com.h                |  62 +++-
+>  .../net/ena/base/ena_defs/ena_admin_defs.h    |  44 +++
+>  .../net/ena/base/ena_defs/ena_eth_io_defs.h   |  12 +-
+>  drivers/net/ena/base/ena_eth_com.c            | 218 ++++++++------
+>  drivers/net/ena/base/ena_eth_com.h            |  59 ++--
+>  drivers/net/ena/base/ena_plat_dpdk.h          |   2 +-
+>  drivers/net/ena/ena_ethdev.c                  | 140 ++++++++-
+>  drivers/net/ena/ena_ethdev.h                  |  19 +-
+>  drivers/net/ena/ena_rss.c                     |   2 +
+>  12 files changed, 626 insertions(+), 214 deletions(-)
+> 
 
-Thank you Bruce, I learnt something new today.
 
-> /Bruce
+Queued to next-net
