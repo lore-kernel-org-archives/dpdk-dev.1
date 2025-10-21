@@ -2,34 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89569CCD184
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 13:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8845ACCD1A7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 13:38:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8AB7E402EE;
-	Tue, 21 Oct 2025 15:29:00 +0200 (CEST)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 9DCA9400D5
- for <dev@dpdk.org>; Tue, 21 Oct 2025 15:28:58 +0200 (CEST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 302DB1063;
- Tue, 21 Oct 2025 06:28:50 -0700 (PDT)
-Received: from arm.com (unknown [10.57.67.110])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B7843F63F;
- Tue, 21 Oct 2025 06:28:56 -0700 (PDT)
-Date: Tue, 21 Oct 2025 14:28:51 +0100
-From: Luca Vizzarro <luca.vizzarro@arm.com>
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu
-Subject: Re: [PATCH v7 1/3] dts: allow mbuf_fast_free to be set with testpmd
- shell
-Message-ID: <176105316351.86099.5081796528192485598.luca.vizzarro@arm.com>
-References: <20250902114327.48185-1-abailey@iol.unh.edu>
- <20251016132421.12176-1-abailey@iol.unh.edu>
- <20251016132421.12176-2-abailey@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id 6A58440616;
+	Tue, 21 Oct 2025 15:38:36 +0200 (CEST)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
+ [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id A1278400D5
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 15:38:34 +0200 (CEST)
+Received: by mail-qv1-f52.google.com with SMTP id
+ 6a1803df08f44-87c103928ffso83910376d6.1
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 06:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761053914;
+ x=1761658714; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=GKMeCbjiEokWkSmfHTcZfVKHNkIxiZdoYCGf5Tz2QCM=;
+ b=ImaeVpM5iFzNpWXMT7Qk6K/M9JQM7Mi6U8lqYIEVjEvwy7Tu+c9Igj0hqfjEfi3r3D
+ IW9oK6Q6qqy6ofqpNpnzWcDwqH3oxlA/i1lz6rMgLbpHFg/hOhHCLquFupBTfmSP24s5
+ MjQfVQ4XHDdbJtaH1QsgseqzY1XkOQ2CpVV35ZIpIeTdonvdUzVLveD22iX974dfX7Ft
+ YH0OPdFIZtaQh2m9a/uqOGNzv+iU+e3wSbR4kKdyviQYg3KK3rjkXhuPDVcFlQl8dXc3
+ 0NZ+eV/cYGLwCBUOuf7FXa8iNUiOiVgRqTd/MUaTpHEp/1V1f/Rlg3nEeuziVyz1fYJM
+ ipWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1761053914; x=1761658714;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=GKMeCbjiEokWkSmfHTcZfVKHNkIxiZdoYCGf5Tz2QCM=;
+ b=rTa0Mt7REPdV0QMhr9JskUD9oek21vRDAXHf6Ms5qEHAwMukmqjeLReqJC772J1+WL
+ BlLBOVX7mLqhPUFCQJe4jaWtnvJaBuryGF8gghIn2bGDpMa3rjYJ8REtDpPVweilNINe
+ UgDibSp4I6STgQSTETK0pJOK+py9dfi7XnjATD5b/nn35SW67Y+PTDXXAn4Vnxv+FeAo
+ l1j1B/rHjG1Bn62m/oDS0NeZmohDLsLlm19jKQ3mIU6wyowzcZCOfgqPoiX4VHrUcrTT
+ REXqkE/2yS38rvkL7/0VYQ0j+EoqPw17OF4ee9fBtFitKDwvVVwwMnupdUZRXeR2cdBG
+ hhHA==
+X-Gm-Message-State: AOJu0YzgFzRa9XhGPaeTOyV1k4gYLkxz6oI5fGnlvAF87jVbtBcMEzc5
+ tZLt+V2rIbv7HPu7QdLevhRShcrsbjEQ/Jf2FO6uLlfH86n7cO7wO47+fYukgiZdplQ=
+X-Gm-Gg: ASbGnctAxJhVrSE5agBuYqdUhbJec68shpkkU5y2NBRfDnpTJ7uQc3yUgUnLcOFkvFK
+ izlGztC4pL8J4Qi200KryB/9Y65AWMiqLB5ka9NIB4+dvwqdYJ3wNd/v356aCGOfyOQPO6IpyQ9
+ D/hIAJVDELItiiytfvow6+D1m1W4ZSE1wnL6cF6PmHja4vR9T3bBHPQj7Voo/vqMy+aviSguGOv
+ PjF51Tf0PcCotmSJRce791RWVb5KQabIcY9Pgq6lhJ/ubjG7UiM+9iEMEEkujAeVG+sa3YBI1Cv
+ bZPIM2MbO7sRm/EV3qQz25RxhbFsdsjy+qx4gZihbtr7s2+BmjjO76+/UxpZ93UFOXp6UXUJTfD
+ fIeJCHVCiBW3RUZmpNqIrOg5S9nELJKVd2uMay+ySU+ZufMBLNL316MOk/z036s+rfPBeYOIMZP
+ YiLcqCxhSS3LftxLcvmObXsJX8xYVqUWDxi+RuhxA=
+X-Google-Smtp-Source: AGHT+IF4J2A5tFVVuPkwNiTy6eNVmJYo+nLx6GKDvZT3UZSBxFbSNAxd7KRPw2I2eVmksr6rwNmKmA==
+X-Received: by 2002:a05:6214:1c81:b0:87c:f97:7acf with SMTP id
+ 6a1803df08f44-87c20653c2emr211434286d6.62.1761053913602; 
+ Tue, 21 Oct 2025 06:38:33 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-87d028b2ebfsm69023436d6.52.2025.10.21.06.38.32
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 21 Oct 2025 06:38:33 -0700 (PDT)
+Date: Tue, 21 Oct 2025 06:38:30 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Konstantin Ananyev
+ <konstantin.v.ananyev@yandex.ru>
+Subject: Re: BPF elf examples
+Message-ID: <20251021063830.1202be65@phoenix.lan>
+In-Reply-To: <1c2a834602b440d6841ea8120ae37db2@huawei.com>
+References: <20251020131631.2a6a0de3@phoenix.lan>
+ <1c2a834602b440d6841ea8120ae37db2@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251016132421.12176-2-abailey@iol.unh.edu>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,65 +82,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Andrew,
+On Tue, 21 Oct 2025 11:42:25 +0000
+Marat Khalili <marat.khalili@huawei.com> wrote:
 
-Apologies for not spotting this before. Everything else is fine just as
-before but:
+> > -----Original Message-----
+> > Tried using AI to generate tests, and as usual it sort of worked but the
+> > example code generated won't load or work. Is there anywhere to find working
+> > DPDK examples of using BPF load?  
+> 
+> Hello! I'm sitting on some patches adding a framework for generating BPF ELF 
+> files using libelf and some basic unit tests based on it. Hopefully I'll be 
+> able to upstream it within the next couple of months.
+> 
+> Generating ELF files is probably beyond the reach of current AI, but once the 
+> framework is there perhaps it could be used to add test cases, would be 
+> interesting to try...
 
-On Thu, Oct 16, 2025 at 09:24:19AM +0000, Andrew Bailey wrote:
-> diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
-> index a060ab5639..39696ddde2 100644
-> --- a/dts/api/testpmd/__init__.py
-> +++ b/dts/api/testpmd/__init__.py
-> @@ -1292,3 +1292,63 @@ def get_capabilities_physical_function(
->              supported_capabilities.add(NicCapability.PHYSICAL_FUNCTION)
->          else:
->              unsupported_capabilities.add(NicCapability.PHYSICAL_FUNCTION)
-> +
-> +    @_requires_stopped_ports
-> +    def set_port_mbuf_fast_free(
-> +        self,
-> +        on: bool,
-> +        port_id: int,
-
-Out of consistency with the actual testpmd call and with all the other
-methods, the port_id should come first. The arguments generally reflect
-the other in which they are called in testpmd to make it "easier" for
-someone who is familiar with it to pick up.
-
-> +        /,
-> +        verify: bool = True,
-> +    ) -> None:
-> +        """Sets the mbuf_fast_free configuration for the Tx offload of a given port.
-> +
-> +        Args:
-> +            on: If :data:`True` mbuf_fast_free will be enabled, disable it otherwise.
-> +            port_id: The ID of the port to configure mbuf_fast_free on.
-
-Don't forget to swap it here as well.
-
-> +            verify: If :data:`True` the output of the command will be scanned in an attempt to
-> +                verify that the mbuf_fast_free was set successfully.
-> +
-> +        Raises:
-> +            InteractiveCommandExecutionError: If mbuf_fast_free could not be set successfully.
-> +        """
-<snip>
-> +
-> +    @_requires_stopped_ports
-> +    def set_queue_mbuf_fast_free(
-> +        self,
-> +        on: bool,
-> +        port_id: int,
-
-same here.
-
-> +        /,
-> +        queue_id: int = 0,
-> +        verify: bool = True,
-> +    ) -> None:
-
-and the docstring here too.
-
-Best,
-Luca
+I have sample programs now (thanks AI). But building them in meson is messy.
+And integrating standalone files in UT is brittle.
+Perhaps using bpftool like tap driver does to generate a header file (.h) and
+then have UT write a /tmp file to load.
