@@ -2,82 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB56CCD184
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 15:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9DECCD184
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 15:13:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52F324066F;
-	Tue, 21 Oct 2025 17:12:34 +0200 (CEST)
-Received: from fout-b8-smtp.messagingengine.com
- (fout-b8-smtp.messagingengine.com [202.12.124.151])
- by mails.dpdk.org (Postfix) with ESMTP id 1887A4066D
- for <dev@dpdk.org>; Tue, 21 Oct 2025 17:12:32 +0200 (CEST)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfout.stl.internal (Postfix) with ESMTP id 390111D000BF;
- Tue, 21 Oct 2025 11:12:31 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Tue, 21 Oct 2025 11:12:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1761059551;
- x=1761145951; bh=Wa0JrKrOMm7sGm4qxAjJ/1cRi4vPuDkMgwTIlPFqYbQ=; b=
- C2H9wWk18WiVvYEyEnhEtcPA8scnrasTgrt8QPmxRW2DnL1ZMxjhKmDaIlFJlG0v
- eqVzaBi2+/86VHlFyJ+RH0eNmbTr0KCGWHqN9rNTvkrQrxz6WKk74fN/wg+SFTpR
- u0VhgxEnTJSmF+w6m/wZPReGNVYOuMMDea2GvU/5hrg8p+jaWHJiq+nru9CmHYYQ
- hbxVxOEydMp0ONrg9wAs2XwmMScgk/yca5HXJkD+HdYvmuh+8p2BqeNpm+VtHrZi
- secvf1DWPfX44c/8+mY3i44k3Ovnx3uiYwHarzxJ/i98EODNvZU7khjvtf0AoUOK
- nrY5eSofyJd9WBl/6X7TSQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761059551; x=
- 1761145951; bh=Wa0JrKrOMm7sGm4qxAjJ/1cRi4vPuDkMgwTIlPFqYbQ=; b=K
- t9Tj3MguTc0s0Gwn7h2l5P3BC0lPSDLAoq6jRDIqqozsn7GDM4hzKAb93YnW+zfL
- HCaMH1Tg4CvGAEbPYnQnjnFYiskm0ruGBsfl+3sfRW6ucmC1oKLFCeIggfjFoZw0
- ApflEGFgkERTGN4f+t+OiTaik87OGeS9L2EIFPeO1EGYE3wQPVWfwG1bpPBkPEX8
- RQHFpvNHAupIQ6YljtLFyJtHAthoMKdEkJIVQZ19pWuC3UVJchyd4NTd0W3fsn8o
- ROWjY9QMtarXJlCpggdVnsgY6LdEnzmiu3MlBjgEa/RP+iDw6MWc7rc27GxGYbhe
- uqXSO/+JAxzj8LKYVgYYw==
-X-ME-Sender: <xms:3qL3aP9sO57wZKb5OhNbc6BWGof8cIWD4qQZ6BuTlNkq8QNUzP7xsw>
- <xme:3qL3aErcSmTMSyNt4xTDVSdCaR-zxkN27SMH3Sm2FlT4qt60kDwWj-DjTx3hqlNmT
- 1QQO-2FnWrXZvNlARW01XeVhUuJxmvFFpjuATSgjh8bgR6Kz88zFQ>
-X-ME-Received: <xmr:3qL3aImPO4x8RT2KJ5kytGCpKbbG_LcUeKIxpF_Kdta_ai3CwiCcxtd6Ppdoy4VCw7tGv3rut_sIpFo1dONhBVxPQQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugedutddvucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertd
- dttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
- ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevff
- fgtdegkeeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgep
- tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
- gvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
- shhilhdqphhlvhesnhgrphgrthgvtghhrdgtohhmpdhrtghpthhtohepuggvvhesughpug
- hkrdhorhhgpdhrtghpthhtohepmhhkohdqphhlvhesnhgrphgrthgvtghhrdgtohhmpdhr
- tghpthhtoheptghkmhesnhgrphgrthgvtghhrdgtohhmpdhrtghpthhtohepshhtvghphh
- gvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhg
-X-ME-Proxy: <xmx:3qL3aLh0DlD3CeoQhU68udyLA3oD8m5E8tORKhCiPSi4rdIOvWsHyg>
- <xmx:3qL3aAddaIVyTCZs-hrD5wiVT7lIwWBbGGCPLf-fTriiGUpm2rUc9A>
- <xmx:3qL3aLhVZUm6zlKeeUnsoWg9quJI_PnFlfKomC55yq9u7roTS_63Rw>
- <xmx:3qL3aIyePkcOrwEXec12j5SWoa_7LS_M7nojGuaeql9DYtJgx1995A>
- <xmx:36L3aLJp_7LQ7Cizc80J7xLSdle2Mz-XjQDEv5XcV3Ux6FoheohM6s2E>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 21 Oct 2025 11:12:29 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Serhii Iliushyk <sil-plv@napatech.com>
-Cc: dev@dpdk.org, mko-plv@napatech.com, sil-plv@napatech.com,
- ckm@napatech.com, stephen@networkplumber.org
-Subject: Re: [PATCH v1 01/24] net/ntnic: introduce service API for NTNIC PMD
-Date: Tue, 21 Oct 2025 17:12:27 +0200
-Message-ID: <9256303.5OynTdThKG@thomas>
-In-Reply-To: <20251020163620.282312-2-sil-plv@napatech.com>
-References: <20250908141740.1312268-2-sil-plv@napatech.com>
- <20251020163620.282312-1-sil-plv@napatech.com>
- <20251020163620.282312-2-sil-plv@napatech.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5FC854067B;
+	Tue, 21 Oct 2025 17:13:34 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id AC92A40677
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 17:13:32 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 048FE1063;
+ Tue, 21 Oct 2025 08:13:24 -0700 (PDT)
+Received: from arm.com (unknown [10.57.67.110])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8C04D3F63F;
+ Tue, 21 Oct 2025 08:13:30 -0700 (PDT)
+Date: Tue, 21 Oct 2025 16:13:26 +0100
+From: Luca Vizzarro <luca.vizzarro@arm.com>
+To: Dean Marx <dmarx@iol.unh.edu>
+Cc: probb@iol.unh.edu, yoan.picchi@foss.arm.com, 
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
+Subject: Re: [PATCH v2 2/2] dts: add virtio forwarding test suite
+Message-ID: <176105647358.88782.2909811739370348721.luca.vizzarro@arm.com>
+References: <20250916200458.259376-1-dmarx@iol.unh.edu>
+ <20251003192717.444490-1-dmarx@iol.unh.edu>
+ <20251003192717.444490-2-dmarx@iol.unh.edu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251003192717.444490-2-dmarx@iol.unh.edu>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,129 +43,260 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-20/10/2025 18:35, Serhii Iliushyk:
-> --- a/doc/guides/nics/ntnic.rst
-> +++ b/doc/guides/nics/ntnic.rst
-> @@ -185,3 +185,115 @@ There are list of characteristics that age timeout action has:
->  - after flow is aged-out it's not automatically deleted;
->  - aged-out flow can be updated with ``flow update`` command,
->    and its aged-out status will be reverted;
+On Fri, Oct 03, 2025 at 03:27:16PM +0000, Dean Marx wrote:
+> Add test suite covering virtio-user and vhost
+> server/client forwarding scenarios with
+> testpmd packet validation.
+> 
+> Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+> ---
+>  doc/api/tests.TestSuite_virtio_fwd.rst |   8 ++
+>  dts/tests/TestSuite_virtio_fwd.py      | 180 +++++++++++++++++++++++++
+>  2 files changed, 188 insertions(+)
+>  create mode 100644 doc/api/tests.TestSuite_virtio_fwd.rst
+>  create mode 100644 dts/tests/TestSuite_virtio_fwd.py
+> 
+> diff --git a/doc/api/tests.TestSuite_virtio_fwd.rst b/doc/api/tests.TestSuite_virtio_fwd.rst
+> new file mode 100644
+> index 0000000000..782eddad2d
+> --- /dev/null
+> +++ b/doc/api/tests.TestSuite_virtio_fwd.rst
+> @@ -0,0 +1,8 @@
+> +.. SPDX-License-Identifier: BSD-3-Clause
 > +
-> +Service API
-> +-----------
+> +virtio_fwd Test Suite
+> +===========================
+this is fine, but ideally should be aligned with the heading.
 > +
-> +**nthw_service_add**
-> +**nthw_service_del**
-> +**nthw_service_get_info**
+> +.. automodule:: tests.TestSuite_virtio_fwd
+> +   :members:
+> +   :show-inheritance:
+> \ No newline at end of file
+> diff --git a/dts/tests/TestSuite_virtio_fwd.py b/dts/tests/TestSuite_virtio_fwd.py
+> new file mode 100644
+> index 0000000000..194bd24257
+> --- /dev/null
+> +++ b/dts/tests/TestSuite_virtio_fwd.py
+> @@ -0,0 +1,180 @@
+> +# SPDX-License-Identifier: BSD-3-Clause
+> +# Copyright(c) 2025 University of New Hampshire
 > +
-> +The NTNIC PMD provides a service API that allows applications to configure services
+> +"""Virtio forwarding test suite.
 > +
-> +The services are responsible for handling the vital functionality of the NTNIC PMD:
+> +Verify vhost/virtio pvp and loopback topology functionalities.
+> +"""
 > +
-> +- **FLM Update**: is responsible for creating and destroying flows;
-> +- **Statistics**: is responsible for collecting statistics;
-> +- **Port event**: is responsible for handling port events: aging, port load, and flow load;
-> +- **Adapter monitor** is responsible for link control;
+> +from scapy.layers.inet import IP
+> +from scapy.layers.l2 import Ether
 > +
-> +**NOTE**: Use next EAL options to configure set service cores
-> +   * -s SERVICE COREMASK Hexadecimal bitmask of cores to be used as service cores;
-> +   * -S SERVICE CORELIST List of cores to run services on;
-> +
-> +**NOTE**: **At least 5 lcores must be reserved** for the ntnic services by EAL options. above.
-> +
-> +For example
-> +
-> +.. code-block:: console
-> +
-> +   dpdk-testpmd -S 8,9,10,11,12
-> +
-> +The PMD registers each service during initialization by function:
-> +
-> +.. code-block:: c
-> +
-> +   int nthw_service_add(struct rte_service_spec *srv_spec, const enum rte_ntnic_service_tag tag)
-> +
-> +and unregistered by the PMD during deinitialization by the function:
-> +
-> +.. code-block:: c
-> +
-> +   int nthw_service_del(const enum rte_ntnic_service_tag tag)
-> +
-> +The service info may be retrieved by function:
-> +
-> +.. code-block:: c
-> +
-> +   struct nt_service *nthw_service_get_info(const enum rte_ntnic_service_tag tag)
-> +
-> +The service info includes the service ID, assigned lcore, and initialization state.
-> +
-> +Service API for user applications
-> +---------------------------------
-> +**rte_pmd_ntnic_service_set_lcore**
-> +**rte_pmd_ntnic_service_get_id**
-> +
-> +The exported service API is available for applications to configure the services.
-> +
-> +By API function:
-> +
-> +.. code-block:: c
-> +
-> +   int rte_pmd_ntnic_service_set_lcore(enum rte_ntnic_service_tag tag, uint32_t lcore_id)
-> +
-> +For example to assign lcores 8,9,10,11,12 to the services, the application can use:
-> +
-> +.. code-block:: c
-> +
-> +   rte_pmd_ntnic_service_set_lcore(RTE_NTNIC_SERVICE_STAT, 8);
-> +   rte_pmd_ntnic_service_set_lcore(RTE_NTNIC_SERVICE_ADAPTER_MON, 9);
-> +   rte_pmd_ntnic_service_set_lcore(RTE_NTNIC_SERVICE_PORT_0_EVENT, 10);
-> +   rte_pmd_ntnic_service_set_lcore(RTE_NTNIC_SERVICE_PORT_1_EVENT,11);
-> +   rte_pmd_ntnic_service_set_lcore(RTE_NTNIC_SERVICE_FLM_UPDATE, 12);
-> +
-> +The API will automatically lcore to service core list and map the service to the lcore.
-> +
-> +.. note:: Use `rte_service_lcore_start` to start the lcore after mapping it to the service.
-> +
-> +Each service has its own tag to identify it.
-> +
-> +.. code-block:: c
-> +
-> +   enum rte_ntnic_service_tag {
-> +      RTE_NTNIC_SERVICE_FLM_UPDATE = 0,
-> +      RTE_NTNIC_SERVICE_STAT = 1,
-> +      RTE_NTNIC_SERVICE_PORT_0_EVENT = 2,
-> +      RTE_NTNIC_SERVICE_PORT_1_EVENT = 3,
-> +      RTE_NTNIC_SERVICE_ADAPTER_MON = 4,
-> +      RTE_NTNIC_SERVICE_MAX
-> +   };
-> +
-> +The application may use next API function to retrieve the service id:
-> +
-> +.. code-block:: c
-> +
-> +  int rte_pmd_ntnic_service_get_id(enum rte_ntnic_service_tag tag);
+> +from api.capabilities import LinkTopology
+> +from api.testpmd import TestPmd
+> +from api.testpmd.config import SimpleForwardingModes
+> +from framework.parser import TextParser
+> +from framework.test_suite import TestSuite, func_test
+> +from framework.testbed_model.capability import requires
+> +from framework.testbed_model.linux_session import LinuxSession
+> +from framework.testbed_model.virtual_device import VirtualDevice
 > +
 > +
-> +For example, to enable statistics for flm_update service, the application can use:
+> +@requires(topology_type=LinkTopology.TWO_LINKS)
+> +class TestVirtioFwd(TestSuite):
+> +    """Virtio forwarding test suite."""
 > +
-> +.. code-block:: c
+> +    class ForwardingParsers:
+> +        """Class for gathering Rx/Tx packets from testpmd stats."""
 > +
-> +   int flm_update_id = rte_pmd_ntnic_service_get_id(RTE_NTNIC_SERVICE_FLM_UPDATE);
-> +   rte_service_set_stats_enable(flm_update_id, 1);
+> +        rx_packets = TextParser.find_int(r"RX-packets:\s*(\d+)")
+> +        tx_packets = TextParser.find_int(r"TX-packets:\s*(\d+)")
 > +
-> +All other manipulations with the service can be done with the service ID and rte_service* API.
+> +    class vdevs:
+> +        """Class containing virtio-user and vhost-user virtual devices."""
+is it actually vhost-user? or just vhost?
 > +
-> +To use the service API, an application must have included the header file:
-> +
-> +.. code-block:: c
-> +
-> +   #include <rte_pmd_ntnic.h>
-> +
-> +And linked with the library: `librte_net_ntnic.so` or `librte_net_ntnic.a` for static linking.
+> +        virtio_user = VirtualDevice(
+> +            "net_virtio_user0,mac=00:01:02:03:04:05,path=/tmp/vhost-net,server=1"
+> +        )
+> +        vhost_user = VirtualDevice("eth_vhost0,iface=/tmp/vhost-net,client=1")
 
+How come you put these properties under some internal classes? Not sure
+how this helps. The vdevs class should technically be capitalised as
+well. Either way if these are just class variables, they should be made
+as such. Doing the following:
 
-This doc is a real mess considering formatting.
-I suppose you didn't read it twice and never tried to generate HTML output.
-I'll do a quick cleanup while pulling in the main branch.
+  parse_rx_packets: ClassVar[ParserFn] = TextParser...
+  parse_tx_packets: ...
+  virtio_user_vdev: ClassVar[VirtualDevice] = ...
+  vhost_user_vdev: ...
 
+is perfectly fine and acceptable.
 
+I've changed the naming of the parser functions, because you are
+effectively treating these as functions, then they should be named as
+such.
+
+> +
+> +    @func_test
+> +    def virtio_server(self) -> None:
+> +        """Test virtio server packet transmission.
+> +
+> +        Steps:
+> +            * Launch a testpmd session with a vhost-user virtual device (client side).
+> +            * Launch a testpmd session with a virtio-user virtual device (server side).
+> +            * Set the forwarding mode to mac in both sessions.
+> +            * Start packet forwarding on vhost session.
+> +            * Send a burst of packets from the virtio session.
+> +            * Stop packet forwarding on vhost session and collect Rx packet stats.
+> +
+> +        Verify:
+> +            * Vhost session receives packets from virtio session.
+> +        """
+> +        with (
+> +            TestPmd(
+> +                prefix="vhost",
+> +                no_pci=True,
+> +                memory_channels=4,
+> +                vdevs=[self.vdevs.vhost_user],
+> +            ) as vhost,
+> +            TestPmd(
+> +                prefix="virtio",
+> +                no_pci=True,
+> +                memory_channels=4,
+> +                vdevs=[self.vdevs.virtio_user],
+> +            ) as virtio,
+> +        ):
+> +            vhost.set_forward_mode(SimpleForwardingModes.mac)
+> +            virtio.set_forward_mode(SimpleForwardingModes.mac)
+> +
+> +            vhost.start()
+> +            virtio.start_tx_first(burst_num=32)
+> +
+> +            forwarding_stats = vhost.stop()
+> +
+> +            rx_packets = self.ForwardingParsers.rx_packets["TextParser_fn"](forwarding_stats) or 0
+> +            tx_packets = self.ForwardingParsers.tx_packets["TextParser_fn"](forwarding_stats) or 0
+
+So I understand you are basically reusing the functionality of the
+TextParser functions here. I guess it's not a bad shout but I would not
+expose the internals which are only meant to be used within the
+TextParser class for handling with generic dataclass metadata.
+
+Ideally we want this:
+
+  rx_packets = self.parse_rx_packets(forwarding_stats) or 0
+
+You can implement __call__ in ParserFn to make this happen. In the best
+scenario we'd want the return type to be correct as well instead of just
+Any. If you want to, you can play around and implement a Generic[T] in
+ParserFn to replace Any with T. This will probably require you to make
+changes elsewhere though. It may get tricky easily, so it's not really
+mandatory.
+
+> +
+> +            self.verify(
+> +                rx_packets != 0 and tx_packets != 0,
+> +                "Vhost session failed to receive packets from virtio session.",
+> +            )
+> +
+> +    @func_test
+> +    def virtio_server_reconnect(self) -> None:
+> +        """Test virtio server reconnection.
+> +
+> +        Steps:
+> +            * Launch a testpmd session with a vhost-user virtual device (client side).
+> +            * Launch a testpmd session with a virtio-user virtual device (server side).
+> +            * Close the virtio session and relaunch it.
+> +            * Start packet forwarding on vhost session.
+> +            * Send a burst of packets from the virtio session.
+> +            * Stop packet forwarding on vhost session and collect Rx packet stats.
+> +
+> +        Verify:
+> +            * Vhost session receives packets from relaunched virtio session.
+> +        """
+> +        with TestPmd(
+> +            prefix="vhost",
+> +            no_pci=True,
+> +            memory_channels=4,
+> +            vdevs=[self.vdevs.vhost_user],
+> +        ) as vhost:
+> +            with TestPmd(
+> +                prefix="virtio",
+> +                no_pci=True,
+> +                memory_channels=4,
+> +                vdevs=[self.vdevs.virtio_user],
+> +            ) as virtio:
+> +                pass
+> +            # end session and reconnect
+> +            with TestPmd(
+> +                prefix="virtio",
+> +                no_pci=True,
+> +                memory_channels=4,
+> +                vdevs=[self.vdevs.virtio_user],
+> +            ) as virtio:
+> +                virtio.set_forward_mode(SimpleForwardingModes.mac)
+> +                vhost.set_forward_mode(SimpleForwardingModes.mac)
+> +
+> +                vhost.start()
+> +                virtio.start_tx_first(burst_num=32)
+> +
+> +                forwarding_stats = vhost.stop()
+> +
+> +                rx_packets = (
+> +                    self.ForwardingParsers.rx_packets["TextParser_fn"](forwarding_stats) or 0
+> +                )
+> +                tx_packets = (
+> +                    self.ForwardingParsers.tx_packets["TextParser_fn"](forwarding_stats) or 0
+> +                )
+> +
+> +                self.verify(
+> +                    rx_packets != 0 and tx_packets != 0,
+> +                    "Vhost session failed to receive packets from virtio session.",
+> +                )
+> +
+> +    @func_test
+> +    def pvp_loop(self) -> None:
+> +        """Test vhost/virtio physical-virtual-physical loop topology.
+> +
+> +        Steps:
+> +            * Launch testpmd session with a physical NIC and virtio-user vdev
+> +                connected to a vhost-net socket.
+> +            * Configure the tap interface that is created with IP address and
+> +                set link state to UP.
+> +            * Launch second testpmd session with af_packet vdev connected to
+> +                the tap interface.
+> +            * Start packet forwarding on both testpmd sessions.
+> +            * Send 100 packets to the physical interface from external tester.
+> +            * Capture packets on the same physical interface.
+> +
+> +        Verify:
+> +            * Physical interface receives all 100 sent packets.
+> +        """
+> +        self.sut_node = self._ctx.sut_node
+> +        if not isinstance(self.sut_node.main_session, LinuxSession):
+> +            self.verify(False, "Must be running on a Linux environment.")
+> +        with TestPmd(
+> +            prefix="virtio",
+> +            vdevs=[VirtualDevice("virtio_user0,path=/dev/vhost-net,queues=1,queue_size=1024")],
+> +        ) as virtio:
+> +            self.sut_node.main_session.send_command("ip link set dev tap0 up", privileged=True)
+
+This should have been implemented as part of main_session. If it's not,
+it should. Shouldn't call send_command directly like this.
+
+> +            with TestPmd(
+> +                prefix="vhost", no_pci=True, vdevs=[VirtualDevice("net_af_packet0,iface=tap0")]
+> +            ) as vhost:
+> +                virtio.set_forward_mode(SimpleForwardingModes.mac)
+> +                vhost.set_forward_mode(SimpleForwardingModes.mac)
+> +                vhost.start()
+> +                virtio.start()
+> +
+> +                packet = Ether() / IP()
+> +                packets = [packet] * 100
+> +                captured_packets = self.send_packets_and_capture(packets)
+> +
+> +                self.verify(
+> +                    len(captured_packets) >= 100, "Sent packets not received on physical interface."
+> +                )
+> -- 
+> 2.51.0
+> 
