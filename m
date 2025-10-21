@@ -2,69 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED5BCCD1A7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 17:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA19CCD184
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 17:51:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 432DE40667;
-	Tue, 21 Oct 2025 19:35:46 +0200 (CEST)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com
- [209.85.128.171])
- by mails.dpdk.org (Postfix) with ESMTP id BEA14402A1
- for <dev@dpdk.org>; Tue, 21 Oct 2025 19:35:44 +0200 (CEST)
-Received: by mail-yw1-f171.google.com with SMTP id
- 00721157ae682-784807fa38dso48024077b3.2
- for <dev@dpdk.org>; Tue, 21 Oct 2025 10:35:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1761068144; x=1761672944; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=kKiwndp2+1Bqt3Gki7f1/2RtJOXCqB1eYANzr48OX/8=;
- b=d4I+J5W/MQLfG6d/yPm6inuNrJhZ483ADeMdCoQAqGTjKuC92ZwJ5qg2v+ZbtjxnaY
- s6hNRNM84zk6Xj38Ios3Nw4VOzQp/HoDiPIchh0C+93ayAdrnY02q9GyfZN33QsP3NPc
- /qW8g8SOwOt8SYJ5QUfX/xqi4gFrDXd9A510A=
+	by mails.dpdk.org (Postfix) with ESMTP id 7CEC840676;
+	Tue, 21 Oct 2025 19:51:05 +0200 (CEST)
+Received: from mail-io1-f97.google.com (mail-io1-f97.google.com
+ [209.85.166.97]) by mails.dpdk.org (Postfix) with ESMTP id 1962C402A1
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 19:51:04 +0200 (CEST)
+Received: by mail-io1-f97.google.com with SMTP id
+ ca18e2360f4ac-92b92e4b078so247213139f.0
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 10:51:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761068144; x=1761672944;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=kKiwndp2+1Bqt3Gki7f1/2RtJOXCqB1eYANzr48OX/8=;
- b=WG/IITPBpwJbwqslqiFSeo8fDZREUZN1iTjUsdbYTwDNa/5B9ay5lGPGatC8NZuJx4
- J5OKZI2WBCZVtdWXzsKUn43QftBjPHEvOSmbK4Rb9e9nh9qa81SvAIZ6Fb4vkvkXDMuO
- mHB51bZZWJvQu9gRnv76JFmsAywcUGt2nMTAXPOQvTt9d0Ch3W3TIypVjVwqpsMlaxPf
- u8/my/iVv69UQAn107pgZueYJIwkbm/azslvPejGs45Z56v50Cz5DIWAXdcaxVk+ORGv
- QIEM6ci8Gr6Ty/9g4uiS3HYT6Ci1TDDFBp8BgtdM+yAgp21X3FWKrwKpP66RGABe3MLH
- nuZQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUsyaL1kTXv055AG3vRkme0a9Efuk4/u3WSuLKzkjjE1DxTPVfwPzoQ5qA8VTpViAkY2m8=@dpdk.org
-X-Gm-Message-State: AOJu0Yz1gjLV5agfY/wqM+LrQt2LhpE01wZNmuRje59xGhB5HjEU3y4C
- twx7WO708ghTlNmug7Ezl2oUPowjHiLrreSGZGqCFnlgiAJVgn/oTBkbtZzs4OYgvc4Kb+0+Gz3
- 0cHVTmL9MChvuBEV4XOlghWZXBm4oUXzRocWSOAjTo45OhiDXJ2kp
-X-Gm-Gg: ASbGnctJwFir8+9vRBdNflfWNOzR5P0rrLflWneAS5Huzn3IUziSmjAo9/rImgN5ir5
- +e1B3rxyDto98ZkLmHEML7ftjHSiwtT1JtXVKhHmSBaGhiFFdiGagAOEr7r+uTFeRTCqn0vs6Cg
- ZDkMaj1flJh2+VvBZw5IbwgMHxVdO1iFCW/ENQUzYbynBHE2H8+/vTnV4oxiJsojpN5J6YpJNkQ
- b6lofxlkUMQ7+ZuSikOFZ7h13Pgg2cqPnrOqhk2OdNQzewQUAY5DPI6k5ixPFoJgANS+st1dmlb
- y2riRVWOiKJj1Ublyos=
-X-Google-Smtp-Source: AGHT+IE2zr6g+mdV+UF7KvIQZdP0t9xHslUeB42QKjclJEXB17ZayADLWk1RQSC4oPdJ+o4bJ/Nr+30avdpxy93Hujs=
-X-Received: by 2002:a53:be4f:0:b0:63c:f5a6:f2f7 with SMTP id
- 956f58d0204a3-63e161da571mr10251513d50.57.1761068143806; Tue, 21 Oct 2025
- 10:35:43 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1761069063; x=1761673863;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:dkim-signature
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=M7Dcqmvoh6ui408hCr/IYl1JKNC7iu4F4lIG5WETe4I=;
+ b=lgH1jc5/jNhU9S9p2fxZ8csgxhe5Ykvtw1fdmzVLtN1fnFpEP83tqMzIHX2eOwXQAI
+ raC/sOWvBxzJ8+i0gc51MrfgedwynVedmLIV9Ctbgfeb4iqsMxCBjay7sru6kv5c1+0G
+ KXkjw40IjJS1NOEo/5ysevz+hg6HvZvPIfEpKG6/b0m4zDhTlOuZO8FxW8e1SIzhaLcv
+ JRFT7FYQZaD/ingnXkN/J8ICnIB4M4wCWZ5RtGElGtnlAGiDdw+ILduipCtv3VC2XODC
+ RI5u5pOTfSx8fkSK5HJ3SwPP6orLSbDT+hug1CodVbcloT7YPKq6vu68CwNKF3nO7qNk
+ 2VUQ==
+X-Gm-Message-State: AOJu0Yy98nQvSDpsIOXPdWndRLDVyX7kTJ3yskh5IAFjY3sWx1LjzMti
+ Q3NkESXPiNV5m/dWi33COwktQbefymG/kD9K6s/n6KPiEhszQXO3kJkFd7Brwv0bwEsJ5W3kZCo
+ oIV3oCrAN3zhTuV3JO/6y7yc4RPQeK2J2IVVTGMPi4mqIz6/r8r2l1hApOdnorUweo6jqIKQE+v
+ 7Lpb9/lj9ltxsIkd4SvIcc4G0MVJejC5hJHULmxWQJ/Q77EuFrGwVBDPT5UVzQ9zBJHIwypQ==
+X-Gm-Gg: ASbGncu1cZ+wDXwqKLRBeZDyWCbIczxMPh0W0iiW7RnEDlfyucMZGdHw52e99pBnuIt
+ 1l41M9qPRXEQ7yv0cFQZKNNBTW6R796rVOHbBVJqyBknMOzQkKNkGXCQo0fygrGpZAX64VhjXNX
+ kYv8YBnrWVIp65aA54aJ/P+ywZxULT8fGvCku1vanc+ZMsqNUnBgUhGXxcTnsLvc08x5u96bmE4
+ BzPn8CDX1mbz+xT+P659rQ2RBjwq1HHNFK5noKcmBEF0vIigzeORVSlUPemPqkbC1w9E3w8Q1Dj
+ 8kYj30sD9GmeBDWAO7LTpY8g0YFbc3dBalLpjK5fVSv+0yWfpMacL2VxakPTrAeThaV/Ug7Fvxo
+ ZHNDRja1Rrh3FQOULh6HKc69JwuWrH3FE2/kduMOAtN1A4hWNEhyGJc89zE4T9kQOoY2BW6+3E3
+ VUKOYxmjkeiAVgS42Abs0nriptVTcrsRoEGjHl
+X-Google-Smtp-Source: AGHT+IFRlG/TtRjQZNpXTHxLh6gXjofFnU3WFZYDJDfB0IxO/Z2iSn+JF9h8Ug3ubNJ9zL91ArhvQZhVUgk3
+X-Received: by 2002:a05:6602:6b88:b0:940:cce3:2c2f with SMTP id
+ ca18e2360f4ac-940cce32f9emr1901659839f.4.1761069063186; 
+ Tue, 21 Oct 2025 10:51:03 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
+ (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
+ by smtp-relay.gmail.com with ESMTPS id
+ ca18e2360f4ac-93e8662f689sm85316539f.4.2025.10.21.10.51.02
+ for <dev@dpdk.org>
+ (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+ Tue, 21 Oct 2025 10:51:03 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pl1-f199.google.com with SMTP id
+ d9443c01a7336-290d860acbcso103139685ad.1
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 10:51:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=broadcom.com; s=google; t=1761069060; x=1761673860; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=M7Dcqmvoh6ui408hCr/IYl1JKNC7iu4F4lIG5WETe4I=;
+ b=d0JATT7wc62eVA4nfnGvXE3wmXQQijWj0ugNXv66a0wqn2GTSB7velO6t9qjSTnF+N
+ zQCvH3DjwGQ64KXNKRq+OOwkS9ukgaU4RJUsbj70sauNbQf8KSDfrn4l6B7DIaWzod2x
+ ZzEDiHwRZEXnNIzkzR5RTrFkcwNQVPty0xSDk=
+X-Received: by 2002:a17:902:ebc6:b0:290:9a74:a8ad with SMTP id
+ d9443c01a7336-290cba41dc7mr238623345ad.53.1761069060254; 
+ Tue, 21 Oct 2025 10:51:00 -0700 (PDT)
+X-Received: by 2002:a17:902:ebc6:b0:290:9a74:a8ad with SMTP id
+ d9443c01a7336-290cba41dc7mr238622865ad.53.1761069059515; 
+ Tue, 21 Oct 2025 10:50:59 -0700 (PDT)
+Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-292472193c2sm115441495ad.104.2025.10.21.10.50.58
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Tue, 21 Oct 2025 10:50:59 -0700 (PDT)
+From: Manish Kurup <manish.kurup@broadcom.com>
+To: dev@dpdk.org
+Cc: ajit.khaparde@broadcom.com
+Subject: [PATCH v4 00/57] bnxt patchset
+Date: Tue, 21 Oct 2025 13:49:52 -0400
+Message-Id: <20251021175049.46092-1-manish.kurup@broadcom.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20251015090024.32250-1-manish.kurup@broadcom.com>
+References: <20251015090024.32250-1-manish.kurup@broadcom.com>
 MIME-Version: 1.0
-References: <20250916200458.259376-1-dmarx@iol.unh.edu>
- <20251003192717.444490-1-dmarx@iol.unh.edu>
- <20251003192717.444490-2-dmarx@iol.unh.edu>
- <176105647358.88782.2909811739370348721.luca.vizzarro@arm.com>
-In-Reply-To: <176105647358.88782.2909811739370348721.luca.vizzarro@arm.com>
-From: Dean Marx <dmarx@iol.unh.edu>
-Date: Tue, 21 Oct 2025 13:35:32 -0400
-X-Gm-Features: AS18NWBzsOGgLpRkFznTdcAT-j-VhaJHsU8o4uIV323bxwYP8idUD8ixljQlyOw
-Message-ID: <CABD7UXPoNjmb4tYm2tKG86UX4hyKfQo1M21JH6v78MYUqjjnMA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dts: add virtio forwarding test suite
-To: Luca Vizzarro <luca.vizzarro@arm.com>
-Cc: probb@iol.unh.edu, yoan.picchi@foss.arm.com, Honnappa.Nagarahalli@arm.com, 
- paul.szczepanek@arm.com, dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,120 +97,218 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Oct 21, 2025 at 11:13=E2=80=AFAM Luca Vizzarro <luca.vizzarro@arm.c=
-om> wrote:
->
-> On Fri, Oct 03, 2025 at 03:27:16PM +0000, Dean Marx wrote:
-> > Add test suite covering virtio-user and vhost
-> > server/client forwarding scenarios with
-> > testpmd packet validation.
-> >
-> > Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
-<snip>
-> > +
-> > +virtio_fwd Test Suite
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> this is fine, but ideally should be aligned with the heading.
+Apart from bug fixes, this patchset adds the following
+functionality:
 
-I'll change this, I just noticed I put it in the wrong directory too
-so thanks to you and Patrick for pointing that out
+1. Add the data, defines and enums for applications targeting
+   Wh+, P5, P7 product families.
+2. Update HSI files (HWRM API defintions, enums, version number)
+3. Dynamic UPAR support for THOR2.
+4. Add support to allow multiple instances of applications to
+   exist at the same time.
+5. Add hot upgrade support for applications.
+6. Add MPLS packet offload support.
+7. Improve backing store debug capabilities.
+8. Add truflow global table scope support.
+9. ULP parser support to handle GRE key.
 
-<snip>
-> > +    class vdevs:
-> > +        """Class containing virtio-user and vhost-user virtual devices=
-."""
-> is it actually vhost-user? or just vhost?
+v1->v2:
+1. Fixed typos in commit messages
+2. Removed incorrect tabs in meson.build
+3. Fixed ENODATA return value for BSD
+4. Removed unused function bnxt_mpc_bds_in_hw()
+5. Fixed questionable pointer cast warning
+6. Ignoring function argument mispelling warnings
 
-It's vhost-user since it's using a unix socket path (/tmp/vhost-net),
-whereas a vhost version would use a kernel network interface like tap0
-or something similar.
+v2->v3:
+1. Fixed all sprintf format string warnings.
+2. Fixed additional pointer size warnings.
 
-> > +
-> > +        virtio_user =3D VirtualDevice(
-> > +            "net_virtio_user0,mac=3D00:01:02:03:04:05,path=3D/tmp/vhos=
-t-net,server=3D1"
-> > +        )
-> > +        vhost_user =3D VirtualDevice("eth_vhost0,iface=3D/tmp/vhost-ne=
-t,client=3D1")
->
-> How come you put these properties under some internal classes? Not sure
-> how this helps. The vdevs class should technically be capitalised as
-> well. Either way if these are just class variables, they should be made
-> as such. Doing the following:
->
->   parse_rx_packets: ClassVar[ParserFn] =3D TextParser...
->   parse_tx_packets: ...
->   virtio_user_vdev: ClassVar[VirtualDevice] =3D ...
->   vhost_user_vdev: ...
->
-> is perfectly fine and acceptable.
->
-> I've changed the naming of the parser functions, because you are
-> effectively treating these as functions, then they should be named as
-> such.
+v3->v4:
+1. Fixed additional pointer size warnings.
+2. Split bnxt platform specific app data into multiple commits.
 
-Got it, I'll change this
+Please apply.
 
-<snip>
-> > +
-> > +            rx_packets =3D self.ForwardingParsers.rx_packets["TextPars=
-er_fn"](forwarding_stats) or 0
-> > +            tx_packets =3D self.ForwardingParsers.tx_packets["TextPars=
-er_fn"](forwarding_stats) or 0
->
-> So I understand you are basically reusing the functionality of the
-> TextParser functions here. I guess it's not a bad shout but I would not
-> expose the internals which are only meant to be used within the
-> TextParser class for handling with generic dataclass metadata.
->
-> Ideally we want this:
->
->   rx_packets =3D self.parse_rx_packets(forwarding_stats) or 0
->
-> You can implement __call__ in ParserFn to make this happen. In the best
-> scenario we'd want the return type to be correct as well instead of just
-> Any. If you want to, you can play around and implement a Generic[T] in
-> ParserFn to replace Any with T. This will probably require you to make
-> changes elsewhere though. It may get tricky easily, so it's not really
-> mandatory.
+Farah Smith (8):
+  net/bnxt/tf_core: thor2 TF table scope sizing adjustments
+  net/bnxt/tf_core: tcam manager logical id free
+  net/bnxt/tf_core: thor2 hot upgrade ungraceful quit crash
+  net/bnxt/tf_core: truflow global table scope
+  net/bnxt/tf_ulp: socket direct enable
+  net/bnxt: fix adding udp_tunnel_port
+  net/bnxt: thor2 truflow memory manager bug
+  net/bnxt/tf_core: fix truflow PF init failure on sriov disabled
 
-Hmm okay, I'll try to write a workaround for this without
-overcomplicating things
+Jay Ding (4):
+  net/bnxt: fix a NULL pointer dereference in bnxt_rep funcs
+  net/bnxt/tf_ulp: add meter stats support for Thor2
+  net/bnxt/tf_core: fix the miscalculation of the lkup table pool
+  next/bnxt/tf_ulp: truflow fixes for meter and mac_addr cache
 
-<snip>
-> > +        with TestPmd(
-> > +            prefix=3D"virtio",
-> > +            vdevs=3D[VirtualDevice("virtio_user0,path=3D/dev/vhost-net=
-,queues=3D1,queue_size=3D1024")],
-> > +        ) as virtio:
-> > +            self.sut_node.main_session.send_command("ip link set dev t=
-ap0 up", privileged=3DTrue)
->
-> This should have been implemented as part of main_session. If it's not,
-> it should. Shouldn't call send_command directly like this.
+Kishore Padmanabha (18):
+  net/bnxt: enable vector mode processing
+  net/bnxt/tf_ulp: add support for global identifiers
+  net/bnxt/tf_core: add support for multi instance
+  net/bnxt/tf_core: fix table scope free
+  net/bnxt/tf_core: fix vfr clean up and stats lockup
+  net/bnxt/tf_ulp: increase shared pool size to 32
+  net/bnxt/tf_ulp: add support for tcam priority update
+  net/bnxt/tf_ulp: hot upgrade support
+  net/bnxt/tf_ulp: fix stats counter memory initialization
+  net/bnxt: fix max VFs count for thor2
+  net/bnxt/tf_ulp: enable support for global index table
+  net/bnxt/tf_ulp: optimize template enums
+  net/bnxt/tf_ulp: add non vfr mode capability
+  net/bnxt: fix stats collection when rx queue is not set
+  net/bnxt: fix rss configuration when set to none
+  net/bnxt: packet drop after port stop and start
+  net/bnxt/tf_ulp: add support for unicast only feature
+  net/bnxt: add support for truflow promiscuous mode
 
-I'll add this to the next version
+Manish Kurup (9):
+  net/bnxt/tf_ulp: add bnxt platform data for 25.11
+  net/bnxt/tf_ulp: add bnxt app data for 25.11 for Wh+
+  net/bnxt/tf_ulp: add bnxt app data for 25.11 - Thor
+  net/bnxt/tf_ulp: add bnxt app data for 25.11 - Thor2
+  net/bnxt/tf_core: dynamic UPAR support for THOR2
+  net/bnxt: add meson build options for TruFlow
+  net/bnxt: truflow HSI struct fixes
+  net/bnxt/tf_ulp: fixes to enable TF functionality
+  net/bnxt/tf_ulp: remove Truflow DEBUG code
 
->
-> > +            with TestPmd(
-> > +                prefix=3D"vhost", no_pci=3DTrue, vdevs=3D[VirtualDevic=
-e("net_af_packet0,iface=3Dtap0")]
-> > +            ) as vhost:
-> > +                virtio.set_forward_mode(SimpleForwardingModes.mac)
-> > +                vhost.set_forward_mode(SimpleForwardingModes.mac)
-> > +                vhost.start()
-> > +                virtio.start()
-> > +
-> > +                packet =3D Ether() / IP()
-> > +                packets =3D [packet] * 100
-> > +                captured_packets =3D self.send_packets_and_capture(pac=
-kets)
-> > +
-> > +                self.verify(
-> > +                    len(captured_packets) >=3D 100, "Sent packets not =
-received on physical interface."
-> > +                )
-> > --
-> > 2.51.0
-> >
+Peter Spreadborough (6):
+  net/bnxt/tf_ulp: ovs-dpdk packet drop observed with thor2
+  net/bnxt/tf_core: add backing store debug to dpdk
+  net/bnxt/tf_core: handle out of order MPC completions
+  net/bnxt: avoid potential segfault in VFR handling
+  net/bnxt/tf_core: fix truflow crash on memory allocation failure
+  net/bnxt/tf_core: remove excessive debug logging
+
+Sangtani Parag Satishbhai (3):
+  net/bnxt/tf_ulp: fix seg fault when devargs argument missing
+  net/bnxt: truflow remove redundant code for mpc init
+  net/bnxt: truflow remove RTE devarg processing for mpc=1
+
+Shahaji Bhosle (4):
+  net/bnxt/tf_ulp: ulp parser support to handle gre key
+  net/bnxt/tf_ulp: change rte_mem_virt2iova to rte_mem_virt2phys
+  net/bnxt/tf_ulp: truflow add pf action handler
+  net/bnxt/tf_ulp: add feature bit rx miss handling
+
+Shuanglin Wang (2):
+  net/bnxt/tf_core: fix build failure with flow scale option
+  net/bnxt/tf_ulp: support MPLS packets
+
+Smitha Pisupati (1):
+  net/bnxt/tf_ulp: add support for special vxlan
+
+Sriharsha Basavapatna (2):
+  net/bnxt: fix default rss config
+  net/bnxt: avoid iova range check when external memory is used
+
+ drivers/net/bnxt/bnxt.h                       |     7 +
+ drivers/net/bnxt/bnxt_ethdev.c                |   256 +-
+ drivers/net/bnxt/bnxt_hwrm.c                  |    25 +-
+ drivers/net/bnxt/bnxt_mpc.c                   |    26 +-
+ drivers/net/bnxt/bnxt_mpc.h                   |     7 +-
+ drivers/net/bnxt/bnxt_reps.c                  |    37 +-
+ drivers/net/bnxt/bnxt_stats.c                 |     5 +
+ drivers/net/bnxt/bnxt_txr.c                   |     5 +-
+ drivers/net/bnxt/bnxt_vnic.c                  |    21 +-
+ .../bnxt/hcapi/cfa_v3/include/cfa_resources.h |    33 +-
+ .../net/bnxt/hcapi/cfa_v3/include/cfa_types.h |    10 +
+ drivers/net/bnxt/hcapi/cfa_v3/mm/cfa_mm.c     |    83 +-
+ .../net/bnxt/hcapi/cfa_v3/mm/cfa_mm_priv.h    |     2 +-
+ drivers/net/bnxt/hsi_struct_def_dpdk.h        |  1123 +-
+ drivers/net/bnxt/tf_core/cfa_tcam_mgr.c       |    35 +-
+ .../net/bnxt/tf_core/cfa_tcam_mgr_device.h    |     6 +-
+ drivers/net/bnxt/tf_core/cfa_tcam_mgr_p4.c    |     2 +-
+ drivers/net/bnxt/tf_core/cfa_tcam_mgr_p58.c   |     2 +-
+ drivers/net/bnxt/tf_core/tf_resources.c       |     2 +-
+ drivers/net/bnxt/tf_core/tf_util.c            |     2 +
+ drivers/net/bnxt/tf_core/v3/meson.build       |     4 +-
+ drivers/net/bnxt/tf_core/v3/tfc.h             |   238 +-
+ drivers/net/bnxt/tf_core/v3/tfc_act.c         |    47 +-
+ drivers/net/bnxt/tf_core/v3/tfc_cpm.c         |    13 +
+ drivers/net/bnxt/tf_core/v3/tfc_debug.h       |    12 +-
+ drivers/net/bnxt/tf_core/v3/tfc_em.c          |   143 +-
+ drivers/net/bnxt/tf_core/v3/tfc_em.h          |   105 +-
+ drivers/net/bnxt/tf_core/v3/tfc_global_id.c   |    45 +-
+ drivers/net/bnxt/tf_core/v3/tfc_hot_upgrade.c |   142 +
+ drivers/net/bnxt/tf_core/v3/tfc_idx_tbl.c     |    51 +-
+ drivers/net/bnxt/tf_core/v3/tfc_mpc_debug.c   |  1411 +
+ drivers/net/bnxt/tf_core/v3/tfc_mpc_table.c   |   565 -
+ drivers/net/bnxt/tf_core/v3/tfc_msg.c         |   363 +-
+ drivers/net/bnxt/tf_core/v3/tfc_msg.h         |    41 +-
+ drivers/net/bnxt/tf_core/v3/tfc_resources.c   |    12 +-
+ drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c   |   246 +-
+ drivers/net/bnxt/tf_core/v3/tfc_tcam.c        |    55 +
+ drivers/net/bnxt/tf_core/v3/tfc_tcam_debug.c  |  1875 +
+ drivers/net/bnxt/tf_core/v3/tfc_util.c        |    23 +
+ drivers/net/bnxt/tf_core/v3/tfc_util.h        |    14 +
+ drivers/net/bnxt/tf_core/v3/tfc_vf2pf_msg.c   |     3 +-
+ drivers/net/bnxt/tf_core/v3/tfc_vf2pf_msg.h   |     4 +-
+ drivers/net/bnxt/tf_core/v3/tfo.c             |   211 +-
+ drivers/net/bnxt/tf_core/v3/tfo.h             |    53 +-
+ drivers/net/bnxt/tf_ulp/bnxt_tf_common.h      |     5 -
+ drivers/net/bnxt/tf_ulp/bnxt_tf_pmd_shim.c    |     6 -
+ drivers/net/bnxt/tf_ulp/bnxt_ulp.h            |     6 +
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_flow.c       |    10 +
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c      |    55 +-
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c         |    27 +-
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c        |   147 +-
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.h        |     5 +
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h      |    82 +-
+ .../generic_templates/ulp_template_db_act.c   |     6 +-
+ .../generic_templates/ulp_template_db_class.c |  8808 ++--
+ .../generic_templates/ulp_template_db_defs.h  |    88 +
+ .../generic_templates/ulp_template_db_field.h |     5 +-
+ .../generic_templates/ulp_template_db_tbl.c   |   267 +-
+ .../ulp_template_db_thor2_act.c               |  4637 +-
+ .../ulp_template_db_thor2_class.c             | 42439 +++++++++-------
+ .../ulp_template_db_thor_act.c                |    14 +-
+ .../ulp_template_db_thor_class.c              | 13247 ++---
+ .../ulp_template_db_wh_plus_act.c             |     2 +-
+ .../ulp_template_db_wh_plus_class.c           |    26 +-
+ drivers/net/bnxt/tf_ulp/meson.build           |    56 +-
+ drivers/net/bnxt/tf_ulp/ulp_alloc_tbl.c       |     4 -
+ drivers/net/bnxt/tf_ulp/ulp_def_rules.c       |    38 +-
+ drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c          |    50 +-
+ drivers/net/bnxt/tf_ulp/ulp_fc_mgr.h          |    11 +
+ drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tf.c       |     3 +-
+ drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tfc.c      |    64 +-
+ drivers/net/bnxt/tf_ulp/ulp_flow_db.c         |    10 +-
+ drivers/net/bnxt/tf_ulp/ulp_flow_db.h         |     6 +
+ drivers/net/bnxt/tf_ulp/ulp_gen_hash.c        |     2 +-
+ drivers/net/bnxt/tf_ulp/ulp_gen_tbl.c         |    24 +
+ drivers/net/bnxt/tf_ulp/ulp_gen_tbl.h         |    12 +
+ drivers/net/bnxt/tf_ulp/ulp_mapper.c          |   326 +-
+ drivers/net/bnxt/tf_ulp/ulp_mapper.h          |    56 +-
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c       |    81 +-
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c      |   347 +-
+ drivers/net/bnxt/tf_ulp/ulp_matcher.c         |     9 -
+ drivers/net/bnxt/tf_ulp/ulp_rte_handler_tbl.c |     8 +-
+ drivers/net/bnxt/tf_ulp/ulp_rte_parser.c      |   141 +-
+ drivers/net/bnxt/tf_ulp/ulp_rte_parser.h      |    10 +
+ drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c          |   137 +-
+ drivers/net/bnxt/tf_ulp/ulp_sc_mgr.h          |     4 +-
+ drivers/net/bnxt/tf_ulp/ulp_sc_mgr_tfc.c      |     1 -
+ .../ulp_template_db_enum.h                    |   333 +-
+ drivers/net/bnxt/tf_ulp/ulp_template_struct.h |     5 +
+ drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c      |   264 +
+ drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.h      |    40 +
+ meson_options.txt                             |     4 +
+ 92 files changed, 48710 insertions(+), 30583 deletions(-)
+ create mode 100644 drivers/net/bnxt/tf_core/v3/tfc_hot_upgrade.c
+ create mode 100644 drivers/net/bnxt/tf_core/v3/tfc_mpc_debug.c
+ delete mode 100644 drivers/net/bnxt/tf_core/v3/tfc_mpc_table.c
+ create mode 100644 drivers/net/bnxt/tf_core/v3/tfc_tcam_debug.c
+ create mode 100644 drivers/net/bnxt/tf_ulp/generic_templates/ulp_template_db_defs.h
+ rename drivers/net/bnxt/tf_ulp/{generic_templates => }/ulp_template_db_enum.h (88%)
+ create mode 100644 drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.c
+ create mode 100644 drivers/net/bnxt/tf_ulp/ulp_tfc_ha_mgr.h
+
+-- 
+2.39.5 (Apple Git-154)
+
