@@ -2,85 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BE5CCD1A7
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 17:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 873E4CCD1A7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Oct 2025 17:51:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6FB4340A71;
-	Tue, 21 Oct 2025 19:51:50 +0200 (CEST)
-Received: from mail-pf1-f227.google.com (mail-pf1-f227.google.com
- [209.85.210.227])
- by mails.dpdk.org (Postfix) with ESMTP id 6258E40A4B
- for <dev@dpdk.org>; Tue, 21 Oct 2025 19:51:49 +0200 (CEST)
-Received: by mail-pf1-f227.google.com with SMTP id
- d2e1a72fcca58-79ef9d1805fso5439462b3a.1
- for <dev@dpdk.org>; Tue, 21 Oct 2025 10:51:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 725C040BA4;
+	Tue, 21 Oct 2025 19:51:55 +0200 (CEST)
+Received: from mail-qt1-f228.google.com (mail-qt1-f228.google.com
+ [209.85.160.228])
+ by mails.dpdk.org (Postfix) with ESMTP id 262BA40B9D
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 19:51:53 +0200 (CEST)
+Received: by mail-qt1-f228.google.com with SMTP id
+ d75a77b69052e-4e89f35f943so2080991cf.2
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 10:51:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761069108; x=1761673908;
+ d=1e100.net; s=20230601; t=1761069112; x=1761673912;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=3Dkoerd0y2cIl1/KCscMEHHJw2rYSz/WOozRRZp//U0=;
- b=OtiyoL09F3ZSBUIVlDfVC+p9BTkjn82Fi4t7s7NIfObie/3NmjiINqWOjuw1BO77Tl
- 237OeZ5U5WkHQRzOSym1AUFtMQlYSuLZAWpXxAviIxsTJJx0kndXc8GrA0RlzQdZ+9r9
- 76FpzOhgFKbM4VnzmrSTfsk46CBAVGnBeZgIjZwCK7EMX7p8PdiylZSzvb8RRrEIGSGl
- 73b+0aQzdlVXJoHvj0gcFA2YRaHB9ZYB1wOdSz9AZvrFAZa2y8K4xa7cLylNF9WK6WSh
- BJkEf1JP8VRhsf2JxKC1K7ANBypYOtcKCUtfO+tHj4dDSRPnYMRBIC/3w7N/yZT+phPp
- 4unA==
-X-Gm-Message-State: AOJu0Yyz13A1g0asjjLB4614Prukcf2QB9gOsV5c0SkS6THNKG/bLKqK
- CXa2UY4b7dwicXt/eb7b9JwIel697h+nFI1Q3R4QmutqrtMLHt3s4lQLCVtnocj1J0zW+12oP/z
- QbM+QDahcdxhz+8QfGIxsghGvbDAkEdotbtCr37C4aYseGvrB1vWy4ZrPOlzOFZ41dsq/tq9wZM
- nsNOzZegPHdgSWS2LRXMurpPqY9rnFDB0eBFu+f83FeslVpqOht0WozvS6ddbj0g0Vbebrjg==
-X-Gm-Gg: ASbGncsre3PTQr226XqmpiKR0rgEqaW/C3TtmF+qGaGtspEvr959JPKRz/N4NbDxXPX
- m1uR/07E+SSaJBBfOcdBHDLNT8XKSRBuRkXVajE114FkNo7kkWUTb7IwEEhz01VzWpSWyaxCfFx
- McI3l496wKhw9NPIHY4Glwlgn6P9+rbhQo6QkRRBF+ggqIycCcLpqr1KxEUUSr/I5zlA6tgOZNq
- wIcG2i1VqnZQRiwdZ3k/AHrXqu3JGOJDRYQ5LFPv7s3spsXU6bqO4/8gERMVihLrj6QkswqNgOr
- YTMXamkmLdtsEq83tsUxPZx7//lNOvoe6bs5qkx87ivZ2BVUcKqVufs9RjbaMRRn9kwlDNrQM+Y
- X26HWwRPWcKIG5GaHl3k+KkqifaPDGhJQkPK4jqpeuGL3/rvr2+4fnwH/hAqsknprcRIdvmIl6C
- oOaVxOlt+RdxzggsdqanhFSlGgevHIOtGShQ==
-X-Google-Smtp-Source: AGHT+IGlDGsF4qAJdFCY4V2VmpzZz8eiDm7MlHFwLOFKzwnjdBmXc1+01B7f5R8YlUBcnceE25yYp+TLoRx6
-X-Received: by 2002:a05:6300:8052:b0:334:a916:8b4 with SMTP id
- adf61e73a8af0-334a9160985mr21351120637.8.1761069108545; 
- Tue, 21 Oct 2025 10:51:48 -0700 (PDT)
+ bh=xy8fyI5PwrU/pq00OAq0TWPhL0atJCWcLPoRZgDf7Os=;
+ b=TBqNTvXhYcDNSKR8dVa9EygePguz83laSsRyd1DATCe2EE6oCQuYKAkLaVBVRPp7XS
+ jdMiFN0jiK0h2xnbKPA5AlR1MrDS+w5Ic2s0kL6sbqnEse3JGNe0JZZ32ybbd4oVrNmE
+ 0pPBqgVc0906s1TmildcKzufI4+rPHe9RdzUzYVWK9ejwdqpNK8HUUlwVg9o0PWcCoIs
+ APYsfYiL0Y2Jxz9JBdLj23RpddjRZXENNXVypoRa9DQyTJChOO3QO6AAjwodnW0gpPLe
+ bZXK6LYXI/+hmS+g61CnvTf40J+cJovN9XKeQ1dssv3RB+12/Q3nGyOZGr/p3rS0pfPj
+ WdmA==
+X-Gm-Message-State: AOJu0YyUJRDBljdBNM6ygk7MpfuuhZbw287lK4wmRfs+uSjXYF9bCYKx
+ FUu1cw6VqgU5eAQ99gZzIN09wCq+WVz2dTnWMa6dCQCsdgdwveYqVSNGraog5CdZ86R7RpDYASM
+ K17M6BVTBrnyFPRqGNRoT5kTCP1h2iHffU8ta6OLkq0CTM9EgmZ22D+bJog0Q8jdBn0NkGLaPpx
+ h83qU5MVvlEyYnMBznj9tt4Mdenx8XziTgWh5WNPwjtzLHu29MJn636JHH+5e4GBc8QEchhw==
+X-Gm-Gg: ASbGnct+TtGUBsnzD6Zok8cM+fnVkvJd0HRsx44zoeED8csh/8DbwmHZV9+I4fnhv5f
+ Vr3+JJxyZHfN5twuv0qzTUfAoRso6sHA53SKSMzobEG1HSD/nzB+ih+acUPWyXnvpsoex9pzsjo
+ 2ewAF+f1AUhEHzFrDrOUI8AsflHvkqfDrgjS/o8ogkdqEcdyNf2CO5e3iUrQAEEprgzDuQ8B3kr
+ 9hHFYVR6jkwJYYudoqiSgecMlpZ1JQymMAzKn4VVdhL5YXA0wxv6YZCN/Fd0hrGilLxgKnTp7BS
+ B/jRhHa7GmUm+HIVLR6/XRnDQY6UzBRaO2hlKNFg+v2esNRi/eXi8rFoklWA7vQPZg+FApeug2w
+ LcND5UnSeS/HlyjSJaq6R7x7jpzASJgZIp0n8WlHDoSdLTwXkrxMJ+2qhCO2oWrkLq6zb3NVfLZ
+ 1ip69NCC0UCxXtPYAz8WoiGGU3GuWn74v134pb
+X-Google-Smtp-Source: AGHT+IH1Qyrq3exsYm7pBHXrSvyNFcYnyepnENS37TVlZwMyGcslzjtyx6zGMwVr+KxQEz8O8jeKVZ7IQsZL
+X-Received: by 2002:ac8:7d94:0:b0:4e8:b979:c7c8 with SMTP id
+ d75a77b69052e-4e8b979cc1bmr121225601cf.28.1761069112359; 
+ Tue, 21 Oct 2025 10:51:52 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
+ (address-144-49-247-120.dlp.protect.broadcom.com. [144.49.247.120])
  by smtp-relay.gmail.com with ESMTPS id
- d2e1a72fcca58-7a22fef0a39sm1460317b3a.2.2025.10.21.10.51.48
+ af79cd13be357-891cc6ea49dsm136960185a.1.2025.10.21.10.51.50
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 21 Oct 2025 10:51:48 -0700 (PDT)
+ Tue, 21 Oct 2025 10:51:52 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pg1-f199.google.com with SMTP id
- 41be03b00d2f7-b57c2371182so4966494a12.1
- for <dev@dpdk.org>; Tue, 21 Oct 2025 10:51:47 -0700 (PDT)
+Received: by mail-pl1-f197.google.com with SMTP id
+ d9443c01a7336-290d860acbcso103148735ad.1
+ for <dev@dpdk.org>; Tue, 21 Oct 2025 10:51:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761069106; x=1761673906; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761069109; x=1761673909; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=3Dkoerd0y2cIl1/KCscMEHHJw2rYSz/WOozRRZp//U0=;
- b=K5rBokdxlsa2y8BQP8/7bhPXb18zrP35jj63U56Cob2k13IBKaZNRA7fezFlA70y6/
- 3chcGtOs8OpNxAEXcWIiVHKSOhh9IgnIXN+yb8pOebKIBIhi3Bd+12uwzDiuvaPF1qLC
- DWVbrLkmIASdCimRqQYLo8YXj6UXnM5BHKacU=
-X-Received: by 2002:a17:903:19cf:b0:275:7ee4:83bc with SMTP id
- d9443c01a7336-290c9c8ad4fmr212787755ad.2.1761069106264; 
- Tue, 21 Oct 2025 10:51:46 -0700 (PDT)
-X-Received: by 2002:a17:903:19cf:b0:275:7ee4:83bc with SMTP id
- d9443c01a7336-290c9c8ad4fmr212787505ad.2.1761069105679; 
- Tue, 21 Oct 2025 10:51:45 -0700 (PDT)
+ bh=xy8fyI5PwrU/pq00OAq0TWPhL0atJCWcLPoRZgDf7Os=;
+ b=TAvbx8FkLuwbeTo0g81BtS92aFvkdvsSRLyHFwpNTGL2rUk7gzdm/MsuQIaZTWqwzp
+ DHzNyHP7t0ifufyqKReZzfy568gv5W/dIzHicO27WQF5bHw+bqUWHNNI2TosZAyT/j4r
+ v52bFtDQIjwnnr/FLeXRar3czKPi4m+ITrrMk=
+X-Received: by 2002:a17:902:ec87:b0:258:f033:3ff9 with SMTP id
+ d9443c01a7336-290cb65c9f1mr239953435ad.48.1761069108708; 
+ Tue, 21 Oct 2025 10:51:48 -0700 (PDT)
+X-Received: by 2002:a17:902:ec87:b0:258:f033:3ff9 with SMTP id
+ d9443c01a7336-290cb65c9f1mr239953055ad.48.1761069108061; 
+ Tue, 21 Oct 2025 10:51:48 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-292472193c2sm115441495ad.104.2025.10.21.10.51.44
+ d9443c01a7336-292472193c2sm115441495ad.104.2025.10.21.10.51.46
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Tue, 21 Oct 2025 10:51:45 -0700 (PDT)
+ Tue, 21 Oct 2025 10:51:47 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Shuanglin Wang <shuanglin.wang@broadcom.com>
-Subject: [PATCH v4 06/57] net/bnxt: enable vector mode processing
-Date: Tue, 21 Oct 2025 13:49:58 -0400
-Message-Id: <20251021175049.46092-7-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com, Jay Ding <jay.ding@broadcom.com>,
+ Michael Baucom <michael.baucom@broadcom.com>
+Subject: [PATCH v4 07/57] net/bnxt/tf_ulp: add meter stats support for Thor2
+Date: Tue, 21 Oct 2025 13:49:59 -0400
+Message-Id: <20251021175049.46092-8-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251021175049.46092-1-manish.kurup@broadcom.com>
 References: <20251015090024.32250-1-manish.kurup@broadcom.com>
@@ -101,171 +100,472 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+From: Jay Ding <jay.ding@broadcom.com>
 
-When representors are not enabled, then truflow could be run in
-vector mode processing to achieve higher throughput. Added logic
-to check representors to enable or disable vector mode.
+A CFA stats counter is created with each meter by default but is
+only activated when the meter is attached to a non-tunnel flow
+because the tunnel flow may use the stats pointer for other purpose.
 
-Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
+Only the green and red/drop packet/byte stats are supported.
+
+Signed-off-by: Jay Ding <jay.ding@broadcom.com>
+Reviewed-by: Michael Baucom <michael.baucom@broadcom.com>
 ---
- drivers/net/bnxt/bnxt.h        |  7 +++
- drivers/net/bnxt/bnxt_ethdev.c | 88 +++++++++++++++++++++++++++++++++-
- 2 files changed, 93 insertions(+), 2 deletions(-)
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c | 45 ++++++++++++-----
+ drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c     | 46 +++++++++++++++++
+ drivers/net/bnxt/tf_ulp/ulp_fc_mgr.h     | 11 +++++
+ drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tf.c  |  3 +-
+ drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tfc.c | 63 ++++++++++++++++++++----
+ drivers/net/bnxt/tf_ulp/ulp_flow_db.h    |  6 +++
+ drivers/net/bnxt/tf_ulp/ulp_mapper.c     |  9 ----
+ drivers/net/bnxt/tf_ulp/ulp_mapper.h     | 24 +++++++++
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c  |  5 +-
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c | 54 +++++++++++++++++++-
+ 10 files changed, 234 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
-index c9fdd36d3e..72ac66b0db 100644
---- a/drivers/net/bnxt/bnxt.h
-+++ b/drivers/net/bnxt/bnxt.h
-@@ -852,6 +852,13 @@ struct bnxt {
- 	((bp)->flags2 & BNXT_FLAGS2_MULTIROOT_EN)
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
+index 591bde96e8..bc48e35c00 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
+@@ -42,7 +42,6 @@
+  * Meter init status
+  */
+ int bnxt_mtr_initialized;
+-
+ int32_t
+ bnxt_flow_mtr_init(struct bnxt *bp __rte_unused)
+ {
+@@ -542,6 +541,7 @@ bnxt_flow_mtr_destroy(struct rte_eth_dev *dev,
+ 	uint16_t func_id;
+ 	int ret;
+ 	uint32_t tmp_mtr_id;
++	const struct ulp_mapper_core_ops *oper;
  
- #define	BNXT_FLAGS2_COMPRESSED_RX_CQE		BIT(5)
-+#define	BNXT_FLAGS2_USE_MPC			BIT(6)
-+#define BNXT_USE_MPC(bp)			\
-+	((bp)->flags2 & BNXT_FLAGS2_USE_MPC)
-+#define	BNXT_FLAGS2_REP_MODE			BIT(7)
-+#define BNXT_REP_MODE_EN(bp)			\
-+	((bp)->flags2 & BNXT_FLAGS2_REP_MODE)
+ 	if (!bnxt_mtr_initialized)
+ 		return -rte_mtr_error_set(error, ENOTSUP,
+@@ -750,17 +750,40 @@ bnxt_flow_mtr_stats_update(struct rte_eth_dev *dev __rte_unused,
+  * Read meter statistics.
+  */
+ static int
+-bnxt_flow_mtr_stats_read(struct rte_eth_dev *dev __rte_unused,
+-			   uint32_t mtr_id __rte_unused,
+-			   struct rte_mtr_stats *stats __rte_unused,
+-			   uint64_t *stats_mask __rte_unused,
+-			   int clear __rte_unused,
+-			   struct rte_mtr_error *error)
++bnxt_flow_mtr_stats_read(struct rte_eth_dev *dev,
++			 uint32_t mtr_id,
++			 struct rte_mtr_stats *stats,
++			 uint64_t *stats_mask,
++			 int clear,
++			 struct rte_mtr_error *error)
+ {
+-	return -rte_mtr_error_set(error, ENOTSUP,
+-				  RTE_MTR_ERROR_TYPE_UNSPECIFIED,
+-				  NULL,
+-				  "Meter_stats_read not supported yet");
++	int rc = 0;
++	struct bnxt_ulp_context *ulp_ctx;
 +
- 	uint32_t		fw_cap;
- #define BNXT_FW_CAP_HOT_RESET		BIT(0)
- #define BNXT_FW_CAP_IF_CHANGE		BIT(1)
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index 0ec9ed8175..bf78f9dff5 100644
---- a/drivers/net/bnxt/bnxt_ethdev.c
-+++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -107,6 +107,8 @@ static const struct rte_pci_id bnxt_pci_id_map[] = {
- #define BNXT_DEVARG_IEEE_1588	"ieee-1588"
- #define BNXT_DEVARG_CQE_MODE	"cqe-mode"
- #define BNXT_DEVARG_MPC		"mpc"
-+#define BNXT_DEVARG_SCALAR_MODE	"scalar-mode"
-+#define BNXT_DEVARD_APP_INST_ID "app-instance-id"
++	ulp_ctx = bnxt_ulp_eth_dev_ptr2_cntxt_get(dev);
++	if (unlikely(!ulp_ctx)) {
++		BNXT_DRV_DBG(ERR, "ULP context is not initialized\n");
++		goto error;
++	}
++
++	memset(stats, 0, sizeof(*stats));
++	rc = ulp_mtr_query_count_get(ulp_ctx, mtr_id, clear, stats);
++	if (unlikely(rc))
++		goto error;
++
++	*stats_mask = 0;
++	*stats_mask |= RTE_MTR_STATS_N_PKTS_GREEN;
++	*stats_mask |= RTE_MTR_STATS_N_PKTS_RED;
++	*stats_mask |= RTE_MTR_STATS_N_PKTS_DROPPED;
++	*stats_mask |= RTE_MTR_STATS_N_BYTES_GREEN;
++	*stats_mask |= RTE_MTR_STATS_N_BYTES_RED;
++	*stats_mask |= RTE_MTR_STATS_N_BYTES_DROPPED;
++
++	return rc;
++error:
++	return -rte_mtr_error_set(error, EINVAL,
++				  RTE_MTR_ERROR_TYPE_STATS, NULL,
++				  "Failed to query meter.");
+ }
  
- static const char *const bnxt_dev_args[] = {
- 	BNXT_DEVARG_REPRESENTOR,
-@@ -122,6 +124,8 @@ static const char *const bnxt_dev_args[] = {
- 	BNXT_DEVARG_IEEE_1588,
- 	BNXT_DEVARG_CQE_MODE,
- 	BNXT_DEVARG_MPC,
-+	BNXT_DEVARG_SCALAR_MODE,
-+	BNXT_DEVARD_APP_INST_ID,
- 	NULL
+ static const struct rte_mtr_ops bnxt_flow_mtr_ops = {
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c
+index f9d069f4e1..4be2703740 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.c
+@@ -627,6 +627,52 @@ int ulp_fc_mgr_query_count_get(struct bnxt_ulp_context *ctxt,
+ 	return rc;
+ }
+ 
++/*
++ * Fill the rte_mtr_stats 'mtr_count' argument passed
++ * in the rte_mtr_stats_read() with the values obtained
++ * through CFA table get.
++ *
++ * ctxt [in] The ulp context for the flow counter manager
++ *
++ * mtr_id [in] The SW meter ID
++ *
++ * count [out] The rte_mtr_stats 'mtr_count' that is set
++ *
++ */
++int ulp_mtr_query_count_get(struct bnxt_ulp_context *ctxt,
++			    uint32_t mtr_id,
++			    int clear,
++			    struct rte_mtr_stats *mtr_count)
++{
++	int rc = 0;
++	struct bnxt_ulp_fc_info *ulp_fc_info;
++	const struct bnxt_ulp_fc_core_ops *fc_ops;
++	struct ulp_flow_db_res_params params;
++	uint32_t session_type = 0;
++	uint8_t dir = 0;
++	const struct ulp_mapper_core_ops *oper;
++
++	ulp_fc_info = bnxt_ulp_cntxt_ptr2_fc_info_get(ctxt);
++	if (!ulp_fc_info)
++		return -ENODEV;
++
++	oper = ulp_mapper_data_oper_get(ctxt);
++	if (!oper)
++		return -ENODEV;
++	rc = oper->ulp_mapper_mtr_stats_hndl_get(mtr_id, &params.resource_hndl);
++	if (rc)
++		return rc;
++
++	fc_ops = ulp_fc_info->fc_ops;
++	if (!fc_ops || !fc_ops->ulp_mtr_stat_get)
++		return -ENODEV;
++
++	rc = fc_ops->ulp_mtr_stat_get(ctxt, dir, session_type,
++				      params.resource_hndl, clear, mtr_count);
++
++	return rc;
++}
++
+ /*
+  * Set the parent flow if it is SW accumulation counter entry.
+  *
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.h b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.h
+index 0b81be7af9..d80d2e4e9d 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.h
++++ b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr.h
+@@ -36,6 +36,13 @@ struct bnxt_ulp_fc_core_ops {
+ 	(*ulp_flow_stats_accum_update)(struct bnxt_ulp_context *ctxt,
+ 				       struct bnxt_ulp_fc_info *ulp_fc_info,
+ 				       struct bnxt_ulp_device_params *dparms);
++	int32_t
++	(*ulp_mtr_stat_get)(struct bnxt_ulp_context *ctxt,
++			    uint8_t direction,
++			    uint32_t session_type,
++			    uint64_t handle,
++			    int32_t clear,
++			    struct rte_mtr_stats *mtr_count);
  };
  
-@@ -1447,7 +1451,7 @@ bnxt_receive_function(struct rte_eth_dev *eth_dev)
- 	 * asynchronous completions and receive completions can be placed in
- 	 * the same completion ring.
- 	 */
--	if ((BNXT_TRUFLOW_EN(bp) && !BNXT_CHIP_P7(bp)) ||
-+	if ((BNXT_TRUFLOW_EN(bp) && BNXT_REP_MODE_EN(bp)) ||
- 	    !BNXT_NUM_ASYNC_CPR(bp))
- 		goto use_scalar_rx;
+ struct sw_acc_counter {
+@@ -186,6 +193,10 @@ bool ulp_fc_mgr_thread_isstarted(struct bnxt_ulp_context *ctxt);
+ int ulp_fc_mgr_query_count_get(struct bnxt_ulp_context *ulp_ctx,
+ 			       uint32_t flow_id,
+ 			       struct rte_flow_query_count *count);
++int ulp_mtr_query_count_get(struct bnxt_ulp_context *ulp_ctx,
++			    uint32_t mtr_id,
++			    int clear,
++			    struct rte_mtr_stats *count);
  
-@@ -1523,7 +1527,7 @@ bnxt_transmit_function(__rte_unused struct rte_eth_dev *eth_dev)
- 	 */
- 	if (eth_dev->data->scattered_rx ||
- 	    (offloads & ~RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) ||
--	    (BNXT_TRUFLOW_EN(bp) && !BNXT_CHIP_P7(bp)) ||
-+	    (BNXT_TRUFLOW_EN(bp) && BNXT_REP_MODE_EN(bp)) ||
- 	    bp->ieee_1588)
- 		goto use_scalar_tx;
+ /*
+  * Set the parent flow if in the SW accumulator table entry
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tf.c b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tf.c
+index 60a7073514..65737f0cde 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tf.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tf.c
+@@ -255,5 +255,6 @@ ulp_fc_tf_flow_stat_get(struct bnxt_ulp_context *ctxt,
  
-@@ -6380,6 +6384,64 @@ bnxt_parse_devarg_rep_fc_f2r(__rte_unused const char *key,
- 	return 0;
- }
+ const struct bnxt_ulp_fc_core_ops ulp_fc_tf_core_ops = {
+ 	.ulp_flow_stat_get = ulp_fc_tf_flow_stat_get,
+-	.ulp_flow_stats_accum_update = ulp_fc_tf_update_accum_stats
++	.ulp_flow_stats_accum_update = ulp_fc_tf_update_accum_stats,
++	.ulp_mtr_stat_get = NULL,
+ };
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tfc.c
+index 4a1d0bf3df..d1b374e603 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_fc_mgr_tfc.c
+@@ -26,6 +26,8 @@
+  */
+ #define ULP_FC_TFC_PKT_CNT_OFFS 0
+ #define ULP_FC_TFC_BYTE_CNT_OFFS 1
++#define ULP_FC_TFC_PKT_MTR_DROP_CNT_OFFS 2
++#define ULP_FC_TFC_BYTE_MTR_DROP_CNT_OFFS 3
+ #define ULP_TFC_CNTR_READ_BYTES 32
+ #define ULP_TFC_CNTR_ALIGN 32
+ #define ULP_TFC_ACT_WORD_SZ 32
+@@ -56,11 +58,12 @@ static uint8_t *data;
+ static uint64_t virt2iova_data;
  
-+static int
-+bnxt_parse_devarg_representor_mode(__rte_unused const char *key,
-+				   const char *value, void *opaque_arg)
-+{
-+	struct bnxt *bp = opaque_arg;
-+	unsigned long rep;
-+	char *end = NULL;
-+
-+	if (!value || !opaque_arg) {
-+		PMD_DRV_LOG_LINE(ERR,
-+				 "Invalid param passed to rep mode in devargs");
-+		return -EINVAL;
-+	}
-+
-+	rep = strtoul(value, &end, 10);
-+	if (end == NULL || *end != '\0' ||
-+	    (rep == ULONG_MAX && errno == ERANGE)) {
-+		PMD_DRV_LOG_LINE(ERR,
-+				 "Invalid param passed to rep mode in devargs");
-+		return -EINVAL;
-+	}
-+
-+	if (rep > 0)
-+		bp->flags2 |= BNXT_FLAGS2_REP_MODE;
-+	PMD_DRV_LOG_LINE(INFO, "representor feature enabled");
-+
-+	return 0;
-+}
-+
-+static int
-+bnxt_parse_devarg_scalar_mode(__rte_unused const char *key,
-+			      const char *value, void *opaque_arg)
-+{
-+	struct bnxt *bp = opaque_arg;
-+	unsigned long rep;
-+	char *end = NULL;
-+
-+	if (!value || !opaque_arg) {
-+		PMD_DRV_LOG_LINE(ERR,
-+				 "Invalid param passed to scalar mode in devargs");
-+		return -EINVAL;
-+	}
-+
-+	rep = strtoul(value, &end, 10);
-+	if (end == NULL || *end != '\0' ||
-+	    (rep == ULONG_MAX && errno == ERANGE)) {
-+		PMD_DRV_LOG_LINE(ERR,
-+				 "Invalid param passed to scalar mode in devargs");
-+		return -EINVAL;
-+	}
-+
-+	if (rep > 0)
-+		bp->flags2 |= BNXT_FLAGS2_REP_MODE;
-+	PMD_DRV_LOG_LINE(INFO, "Scalar mode enabled");
-+
-+	return 0;
-+}
-+
- static int
- bnxt_parse_dev_args(struct bnxt *bp, struct rte_devargs *devargs)
+ static int32_t
+-ulp_fc_tfc_flow_stat_get(struct bnxt_ulp_context *ctxt,
+-			 uint8_t direction,
+-			 uint32_t session_type __rte_unused,
+-			 uint64_t handle,
+-			 struct rte_flow_query_count *count)
++ulp_fc_tfc_stat_get(struct bnxt_ulp_context *ctxt,
++		    uint8_t direction,
++		    uint32_t session_type __rte_unused,
++		    uint64_t handle,
++		    struct rte_flow_query_count *count,
++		    struct rte_mtr_stats *mtr_drop_count)
  {
-@@ -6440,6 +6502,28 @@ bnxt_parse_dev_args(struct bnxt *bp, struct rte_devargs *devargs)
- 	rte_kvargs_process(kvlist, BNXT_DEVARG_CQE_MODE,
- 			   bnxt_parse_devarg_cqe_mode, bp);
+ 	uint16_t data_size = ULP_TFC_CNTR_READ_BYTES;
+ 	struct tfc_cmm_clr cmm_clr = { 0 };
+@@ -102,11 +105,15 @@ ulp_fc_tfc_flow_stat_get(struct bnxt_ulp_context *ctxt,
+ 	cmm_info.act_handle = handle;
+ 	cmm_info.dir = (enum cfa_dir)direction;
+ 	/* Read and Clear the hw stat if requested */
+-	if (count->reset) {
++	if (count && count->reset) {
+ 		cmm_clr.clr = true;
+ 		cmm_clr.offset_in_byte = 0;
+ 		cmm_clr.sz_in_byte = sizeof(data64[ULP_FC_TFC_PKT_CNT_OFFS]) +
+ 			sizeof(data64[ULP_FC_TFC_BYTE_CNT_OFFS]);
++		if (mtr_drop_count) {
++			cmm_clr.sz_in_byte += sizeof(data64[ULP_FC_TFC_PKT_MTR_DROP_CNT_OFFS]);
++			cmm_clr.sz_in_byte += sizeof(data64[ULP_FC_TFC_BYTE_MTR_DROP_CNT_OFFS]);
++		}
+ 	}
+ 	rc = tfc_act_get(tfcp, NULL, &cmm_info, &cmm_clr, &virt2iova_data, &word_size);
+ 	if (rc) {
+@@ -115,19 +122,57 @@ ulp_fc_tfc_flow_stat_get(struct bnxt_ulp_context *ctxt,
+ 			     handle);
+ 		return rc;
+ 	}
+-	if (data64[ULP_FC_TFC_PKT_CNT_OFFS]) {
++	if (count && data64[ULP_FC_TFC_PKT_CNT_OFFS]) {
+ 		count->hits_set = 1;
+ 		count->hits = data64[ULP_FC_TFC_PKT_CNT_OFFS];
+ 	}
+-	if (data64[ULP_FC_TFC_BYTE_CNT_OFFS]) {
++	if (count && data64[ULP_FC_TFC_BYTE_CNT_OFFS]) {
+ 		count->bytes_set = 1;
+ 		count->bytes = data64[ULP_FC_TFC_BYTE_CNT_OFFS];
+ 	}
  
-+	/*
-+	 * Handler for "representor" devarg.
-+	 * Invoked as for ex: "-a 000:00:0d.0,representor=1"
-+	 */
-+	rte_kvargs_process(kvlist, BNXT_DEVARG_REPRESENTOR,
-+			   bnxt_parse_devarg_representor_mode, bp);
++	if (mtr_drop_count) {
++		mtr_drop_count->n_pkts[RTE_COLOR_GREEN] = data64[ULP_FC_TFC_PKT_CNT_OFFS];
++		mtr_drop_count->n_bytes[RTE_COLOR_GREEN] = data64[ULP_FC_TFC_BYTE_CNT_OFFS];
++		mtr_drop_count->n_pkts_dropped = data64[ULP_FC_TFC_PKT_MTR_DROP_CNT_OFFS];
++		mtr_drop_count->n_pkts[RTE_COLOR_RED] = data64[ULP_FC_TFC_PKT_MTR_DROP_CNT_OFFS];
++		mtr_drop_count->n_bytes_dropped = data64[ULP_FC_TFC_BYTE_MTR_DROP_CNT_OFFS];
++		mtr_drop_count->n_bytes[RTE_COLOR_RED] = data64[ULP_FC_TFC_BYTE_MTR_DROP_CNT_OFFS];
++	}
 +
-+	/*
-+	 * Handler for "scalar-mode" devarg.
-+	 * Invoked as for ex: "-a 000:00:0d.0,scalar-mode=1"
-+	 */
-+	rte_kvargs_process(kvlist, BNXT_DEVARG_SCALAR_MODE,
-+			   bnxt_parse_devarg_scalar_mode, bp);
-+
-+	/*
-+	 * Handler for "app-instance-id" devarg.
-+	 * Invoked as for ex: "-a 000:00:0d.0,app-instance-id=1"
-+	 * This argument is required for enabling truflow hot upgrade feature.
-+	 */
-+	rte_kvargs_process(kvlist, BNXT_DEVARD_APP_INST_ID,
-+			   bnxt_parse_devarg_app_instance_id, bp);
-+
- 	rte_kvargs_free(kvlist);
- 	return ret;
+ 	return rc;
  }
+ 
++static int32_t
++ulp_fc_tfc_flow_stat_get(struct bnxt_ulp_context *ctxt,
++			 uint8_t direction,
++			 uint32_t session_type,
++			 uint64_t handle,
++			 struct rte_flow_query_count *count)
++{
++	return ulp_fc_tfc_stat_get(ctxt, direction, session_type, handle, count, NULL);
++}
++
++static int32_t
++ulp_fc_tfc_mtr_stat_get(struct bnxt_ulp_context *ctxt,
++			uint8_t direction,
++			uint32_t session_type,
++			uint64_t handle,
++			int32_t clear,
++			struct rte_mtr_stats *mtr_count)
++{
++	struct rte_flow_query_count count;
++
++	if (clear)
++		count.reset = 1;
++	else
++		count.reset = 0;
++
++	return ulp_fc_tfc_stat_get(ctxt, direction, session_type, handle, &count, mtr_count);
++}
++
+ const struct bnxt_ulp_fc_core_ops ulp_fc_tfc_core_ops = {
+ 	.ulp_flow_stat_get = ulp_fc_tfc_flow_stat_get,
+-	.ulp_flow_stats_accum_update = ulp_fc_tfc_update_accum_stats
++	.ulp_flow_stats_accum_update = ulp_fc_tfc_update_accum_stats,
++	.ulp_mtr_stat_get = ulp_fc_tfc_mtr_stat_get
+ };
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_flow_db.h b/drivers/net/bnxt/tf_ulp/ulp_flow_db.h
+index 4301094cfe..f0a677b64b 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_flow_db.h
++++ b/drivers/net/bnxt/tf_ulp/ulp_flow_db.h
+@@ -91,6 +91,12 @@ struct ulp_flow_db_res_params {
+ 	uint64_t			resource_hndl;
+ };
+ 
++struct bnxt_mtr_stats_id_map {
++	bool valid;
++	uint32_t mtr_id;
++	uint64_t stats_hndl;
++};
++
+ /*
+  * Initialize the flow database. Memory is allocated in this
+  * call and assigned to the flow database.
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.c b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
+index c06d849883..4829ae41d1 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.c
+@@ -71,15 +71,6 @@ bnxt_ulp_mapper_ops_get(struct bnxt *bp)
+ 	return func_ops;
+ }
+ 
+-static const struct ulp_mapper_core_ops *
+-ulp_mapper_data_oper_get(struct bnxt_ulp_context *ulp_ctx)
+-{
+-	struct bnxt_ulp_mapper_data *m_data;
+-
+-	m_data = (struct bnxt_ulp_mapper_data *)ulp_ctx->cfg_data->mapper_data;
+-	return m_data->mapper_oper;
+-}
+-
+ static const char *
+ ulp_mapper_tmpl_name_str(enum bnxt_ulp_template_type tmpl_type)
+ {
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper.h b/drivers/net/bnxt/tf_ulp/ulp_mapper.h
+index d1dec6c2bd..f9a407cd84 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper.h
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper.h
+@@ -170,8 +170,26 @@ struct ulp_mapper_core_ops {
+ 	int
+ 	(*ulp_mapper_mpc_batch_end)(struct tfc *tfcp,
+ 				    struct tfc_mpc_batch_info_t *batch_info);
++
++	int32_t
++	(*ulp_mapper_mtr_stats_hndl_set)(struct bnxt_ulp_mapper_parms *parms,
++					 uint32_t mtr_id,
++					 uint64_t stats_hndl);
++	int32_t
++	(*ulp_mapper_mtr_stats_hndl_get)(uint32_t mtr_id, uint64_t *stats_hndl);
++
++	int
++	(*ulp_mapper_mtr_stats_hndl_del)(uint32_t mtr_id);
+ };
+ 
++static inline const struct ulp_mapper_core_ops *
++ulp_mapper_data_oper_get(struct bnxt_ulp_context *ulp_ctx) {
++	struct bnxt_ulp_mapper_data *m_data;
++
++	m_data = (struct bnxt_ulp_mapper_data *)ulp_ctx->cfg_data->mapper_data;
++	return m_data->mapper_oper;
++}
++
+ extern const struct ulp_mapper_core_ops ulp_mapper_tf_core_ops;
+ extern const struct ulp_mapper_core_ops ulp_mapper_tfc_core_ops;
+ 
+@@ -302,6 +320,12 @@ ulp_mapper_init(struct bnxt_ulp_context	*ulp_ctx);
+ void
+ ulp_mapper_deinit(struct bnxt_ulp_context *ulp_ctx);
+ 
++int
++ulp_mapper_get_mtr_stats_hndl(uint32_t mtr_id, uint64_t *stats_ptr);
++
++int
++ulp_mapper_del_mtr_stats_hndl(uint32_t mtr_id);
++
+ #ifdef TF_FLOW_SCALE_QUERY
+ int32_t
+ ulp_resc_usage_sync(struct bnxt_ulp_context *ulp_ctx);
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
+index 53497c164a..e755591716 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
+@@ -1385,5 +1385,8 @@ const struct ulp_mapper_core_ops ulp_mapper_tf_core_ops = {
+ 	.ulp_mapper_core_handle_to_offset = ulp_mapper_tf_handle_to_offset,
+ 	.ulp_mapper_mpc_batch_started = ulp_mapper_tf_mpc_batch_started,
+ 	.ulp_mapper_mpc_batch_start = ulp_mapper_tf_mpc_batch_start,
+-	.ulp_mapper_mpc_batch_end = ulp_mapper_tf_mpc_batch_end
++	.ulp_mapper_mpc_batch_end = ulp_mapper_tf_mpc_batch_end,
++	.ulp_mapper_mtr_stats_hndl_set = NULL,
++	.ulp_mapper_mtr_stats_hndl_get = NULL,
++	.ulp_mapper_mtr_stats_hndl_del = NULL
+ };
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
+index cbe9aa01c9..388ebea7ee 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tfc.c
+@@ -1759,6 +1759,55 @@ ulp_mapper_tfc_mpc_batch_start(struct tfc_mpc_batch_info_t *batch_info)
+ 	return tfc_mpc_batch_start(batch_info);
+ }
+ 
++static int32_t
++ulp_mapper_tfc_mtr_stats_hndl_set(struct bnxt_ulp_mapper_parms *parms __rte_unused,
++				  uint32_t mtr_id, uint64_t stats_hndl)
++{
++	int32_t i, rc = -ENOMEM;
++
++	for (i = 0; i < BNXT_METER_MAX_NUM; i++)
++		if (!mtr_stats[i].valid) {
++			mtr_stats[i].mtr_id = mtr_id;
++			mtr_stats[i].stats_hndl = stats_hndl;
++			mtr_stats[i].valid = true;
++			rc = 0;
++			break;
++		}
++
++	return rc;
++}
++
++static int32_t
++ulp_mapper_tfc_mtr_stats_hndl_get(uint32_t mtr_id, uint64_t *stats_hndl)
++{
++	int32_t i, rc = -EINVAL;
++
++	for (i = 0; i < BNXT_METER_MAX_NUM; i++) {
++		if (mtr_stats[i].valid && mtr_stats[i].mtr_id == mtr_id) {
++			*stats_hndl = mtr_stats[i].stats_hndl;
++			rc = 0;
++			break;
++		}
++	}
++
++	return rc;
++}
++
++static int32_t
++ulp_mapper_tfc_mtr_stats_hndl_del(uint32_t mtr_id)
++{
++	int32_t i, rc = -EINVAL;
++
++	for (i = 0; i < BNXT_METER_MAX_NUM; i++)
++		if (mtr_stats[i].valid && mtr_stats[i].mtr_id == mtr_id) {
++			mtr_stats[i].valid = false;
++			rc = 0;
++			break;
++		}
++
++	return rc;
++}
++
+ const struct ulp_mapper_core_ops ulp_mapper_tfc_core_ops = {
+ 	.ulp_mapper_core_tcam_tbl_process = ulp_mapper_tfc_tcam_tbl_process,
+ 	.ulp_mapper_core_tcam_entry_free = ulp_mapper_tfc_tcam_entry_free,
+@@ -1779,5 +1828,8 @@ const struct ulp_mapper_core_ops ulp_mapper_tfc_core_ops = {
+ 	.ulp_mapper_core_handle_to_offset = ulp_mapper_tfc_handle_to_offset,
+ 	.ulp_mapper_mpc_batch_start = ulp_mapper_tfc_mpc_batch_start,
+ 	.ulp_mapper_mpc_batch_started = ulp_mapper_tfc_mpc_batch_started,
+-	.ulp_mapper_mpc_batch_end = ulp_mapper_tfc_mpc_batch_end
++	.ulp_mapper_mpc_batch_end = ulp_mapper_tfc_mpc_batch_end,
++	.ulp_mapper_mtr_stats_hndl_set = ulp_mapper_tfc_mtr_stats_hndl_set,
++	.ulp_mapper_mtr_stats_hndl_get = ulp_mapper_tfc_mtr_stats_hndl_get,
++	.ulp_mapper_mtr_stats_hndl_del = ulp_mapper_tfc_mtr_stats_hndl_del
+ };
 -- 
 2.39.5 (Apple Git-154)
 
