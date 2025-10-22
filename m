@@ -2,74 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 341CFCCD1BB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 13:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07045CCD1BB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 13:53:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B6534029A;
-	Wed, 22 Oct 2025 15:35:52 +0200 (CEST)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com
- [209.85.210.182])
- by mails.dpdk.org (Postfix) with ESMTP id 6637B4025E
- for <dev@dpdk.org>; Wed, 22 Oct 2025 15:35:50 +0200 (CEST)
-Received: by mail-pf1-f182.google.com with SMTP id
- d2e1a72fcca58-78af3fe5b17so5604806b3a.2
- for <dev@dpdk.org>; Wed, 22 Oct 2025 06:35:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1761140149; x=1761744949; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=1wEyte0nOF4Xh9c7ES3RPQa2L1UQt/wIOWrjQvo7AuI=;
- b=BW/3sQh4JFFp+vvW44M5XCdF6L+fkISXVkLcKAm7ehA4A13Qd1CPNvScQtspqwxldu
- 8ROwFXPAgjzU9jCVO7qewio1D00gs0YepLVoE1S1N3YlYqFdQ0tbuUXjEdD6ryvGokdT
- bal83ai9SjgDze0EpwiQbXKODDilTdsnsR/WCXoOr7bRD4cx2d8Ip+tWCkLuy64fjZ95
- p9kdhhyAyZya9xlFyMc7+kXZ6tl1nto58Rp5a3Z8YRZUySGVCplv7AWmivZ2Xa6SvBeA
- WjL4y2kylETpYkyiIxmTabc5tv+mHtBhjuF1GCp0MGTwZQlFdm1dlq3LPT0OCl7Fdkdv
- u24g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761140149; x=1761744949;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=1wEyte0nOF4Xh9c7ES3RPQa2L1UQt/wIOWrjQvo7AuI=;
- b=og9lnwd/K5ZVXMa6xhcDWaL9DuPdSDARKOeT2jhTuCvGUMgdVX2h3jtn9FOF1hj4/C
- gLHZ/OzLLHWVENeqAXqj4AsErCQM2WWcOXqon9aqluP/NwlGV0A3xOPAofNHiTG/UKe+
- lBrsKlC75FrMfIpS6LEDIor9Hd3i1Jj9MON2apqRtWmRi355KCJWv299vZkT0zRP9o0H
- 3qfNCtpETjSK6M+AyWmCSdU1B51WfjgbqXn2rIP1sDg6awxx2psGPipV/lS2XLHd6z3z
- 2to7AYEY7yyu84YoB3ec1MKOraJK23cebrS7twMQSUnFEVDoLkt0vSoT3IsXqgKq2bkU
- fPXg==
-X-Gm-Message-State: AOJu0Yy1L7B9bSCio5tF6unVxBgurpaQejjHolLBsV1fVL0fV90EGOFg
- 7/aKZUkty+qYFGaePjF1YSJDdtr1FN+hsp4Pe47VpVJ/ou7rFQZeZwg8cnIDZg==
-X-Gm-Gg: ASbGncsOLd4Ye9yUhOlQBLy919NLGPdUVb59OuQa3hUYpmO3O9yk2OB1yEMbTGBVude
- ModttluABId5OZkqP68H7bO95uLwTj4GwcXFxwwWIkbcqFtUdt/UylU+NQ74d8BqK0lNMc0xSqq
- FUVmyuwqMH20fqeMBV+mGW6VddazozSk2NapGzjfqBGoNnSWlVEdwHcdXyKxxevMY2O89h51Y2O
- SVOChGt/RMH37Ey0RGJ+CboWEpUMePuBOgzl/W6MQcSHCtuUeKeZxvC3xvRNZ+0GA5jcuL+jq4S
- 9SaHrNwAHAi0cTX6fsEnjc9og1UuP8SA3MZKiuT4NEj7jGqghzzsKXdJTQPiWyqRlSc7StnWGPr
- C/IK+j7foe4N16fDnU8lpr6nLfueUUw+5JLcFR8VYdExfIhjrD+BiiQ4fxzTIz2xHXKTBjUO2gO
- rDXpJWko3La+hJjatLfw9kXE2PZpPWpVeqFPd+QIvkzf+jhhI8S4zi6p6UDqsOneXjx2mv
-X-Google-Smtp-Source: AGHT+IG0JpxWyXhuIfXTISx6RAFw9CG38Tg8mDBfHut0HCTGzJD+slExtQtiGT9isGXHOsAA3ljp8A==
-X-Received: by 2002:a05:6a20:3d8a:b0:334:8dd2:8377 with SMTP id
- adf61e73a8af0-334a8585bc3mr31010247637.26.1761140148962; 
- Wed, 22 Oct 2025 06:35:48 -0700 (PDT)
-Received: from amiya73TMT9m.aristanetworks.com
- ([2402:e280:2162:53:50bb:5301:cacd:1307])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7a2301231a9sm14645751b3a.74.2025.10.22.06.35.45
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 22 Oct 2025 06:35:48 -0700 (PDT)
-From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
-To: dev@dpdk.org
-Cc: amiyaranjan.mohakud@gmail.com,
-	stable@dpdk.org
-Subject: [PATCH] net/vmxnet3: disable RSS for single queue configuration for
- ESX8.0+ versions
-Date: Wed, 22 Oct 2025 19:05:23 +0530
-Message-Id: <20251022133523.6977-1-amiyaranjan.mohakud@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20251022125844.6187-1-amiyaranjan.mohakud@gmail.com>
-References: <20251022125844.6187-1-amiyaranjan.mohakud@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1927B40276;
+	Wed, 22 Oct 2025 15:53:26 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 1F57A4025E
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 15:53:25 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E05D92041E;
+ Wed, 22 Oct 2025 15:53:24 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v2] mbuf: optimize segment prefree
+Date: Wed, 22 Oct 2025 15:53:21 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F654EE@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <aPifDTMMaD2FRMun@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v2] mbuf: optimize segment prefree
+Thread-Index: AdxDM3kjO7gBiTKGSjiT+GTjKxT8WwAJNM+g
+References: <20250827213535.21602-1-mb@smartsharesystems.com>
+ <20251020120202.80114-1-mb@smartsharesystems.com>
+ <aPifDTMMaD2FRMun@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Chengwen Feng" <fengchengwen@huawei.com>
+Cc: <dev@dpdk.org>, "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Wathsala Vithanage" <wathsala.vithanage@arm.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,37 +51,121 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-It fixes the issue of v4 RSS configuration failure in
-vmxnet3_v4_rss_configure() whilw writing to BAR register. It's very
-specific to single queue configuration.
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Wednesday, 22 October 2025 11.08
+>=20
+> On Mon, Oct 20, 2025 at 12:02:01PM +0000, Morten Br=F8rup wrote:
+> > Refactored rte_pktmbuf_prefree_seg() for both performance and
+> readability.
+> >
+> > With the optimized RTE_MBUF_DIRECT() macro, the common likely code
+> path
+> > now fits within one instruction cache line on x86-64 when built with
+> GCC.
+> >
+> > Signed-off-by: Morten Br=F8rup <mb@smartsharesystems.com>
+>=20
+> Reviewed-by: Bruce Richardson <bruce.richardson@intel.com>
+>=20
 
-https://mails.dpdk.org/archives/users/2025-April/008236.html
+[...]
 
-Bugzilla ID:1789
-Cc: stable@dpdk.org
+> >  #define RTE_MBUF_DIRECT(mb) \
+> >  	(!((mb)->ol_flags & (RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL)))
+> >
+> > +#if defined(RTE_TOOLCHAIN_GCC) && defined(RTE_ARCH_X86)
+> > +/* Optimization for code size.
+> > + * GCC only optimizes single-bit MSB tests this way, so we do it by
+> hand with multi-bit.
+> > + *
+> > + * The flags RTE_MBUF_F_INDIRECT and RTE_MBUF_F_EXTERNAL are both =
+in
+> the MSB of the
+> > + * 64-bit ol_flags field, so we only compare this one byte instead
+> of all 64 bits.
+> > + * On little endian architecture, the MSB of a 64-bit integer is at
+> byte offest 7.
+> > + *
+> > + * Note: Tested using GCC version 16.0.0 20251019 (experimental).
+> > + *
+> > + * Without this optimization, GCC generates 17 bytes of
+> instructions:
+> > + *      movabs rax,0x6000000000000000       // 10 bytes
+> > + *      and    rax,QWORD PTR [rdi+0x18]     // 4 bytes
+> > + *      sete   al                           // 3 bytes
+> > + * With this optimization, GCC generates only 7 bytes of
+> instructions:
+> > + *      test   BYTE PTR [rdi+0x1f],0x60     // 4 bytes
+> > + *      sete   al                           // 3 bytes
+> > + */
+> > +#undef RTE_MBUF_DIRECT
+> > +#define RTE_MBUF_DIRECT(mb) \
+> > +	(!(((const uint8_t *)(mb))[offsetof(struct rte_mbuf, ol_flags) +
+> 7] & \
+> > +	(uint8_t)((RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL) >> (7 *
+> 8))))
+> > +static_assert(((RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL) >> (7 *
+> 8)) << (7 * 8) =3D=3D
+> > +	(RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL),
+> > +	"RTE_MBUF_F_INDIRECT and/or RTE_MBUF_F_EXTERNAL are not in
+> MSB.");
+> > +#endif
+> > +
+> Couple of comments/thoughts/questions here.
+>=20
+> * This looks like a compiler limitation that should be fixed in GCC. =
+IF
+> we
+>   put this optimization in, how will we know when/if we can remove it
+> again
+>   in future? I'm not sure we want this hanging around forever.
 
-Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
----
- drivers/net/vmxnet3/vmxnet3_ethdev.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Agree.
+There are plenty of hand crafted optimizations in DPDK, which are =
+already obsolete;
+it seems no one has found a good way of identifying them. Including =
+myself.
 
-diff --git a/drivers/net/vmxnet3/vmxnet3_ethdev.c b/drivers/net/vmxnet3/vmxnet3_ethdev.c
-index f4cdb1bb31..3c0ddba80c 100644
---- a/drivers/net/vmxnet3/vmxnet3_ethdev.c
-+++ b/drivers/net/vmxnet3/vmxnet3_ethdev.c
-@@ -534,6 +534,12 @@ vmxnet3_dev_configure(struct rte_eth_dev *dev)
- 
- 	PMD_INIT_FUNC_TRACE();
- 
-+	/* Disabling RSS for single queue pair */
-+	if (dev->data->nb_rx_queues == 1) {
-+		dev->data->dev_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
-+		PMD_INIT_LOG(ERR, "WARN: Disabling RSS for single Rx queue");
-+	}
-+
- 	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG)
- 		dev->data->dev_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
- 
--- 
-2.39.5 (Apple Git-154)
+> * Can the static_assert - which just checks flags are in the MSB - be
+> * simplified to e.g.
+>   "((RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL) << CHAR_BIT) =3D=3D 0"
+>   or "__builtin_ctzll(...) > (7 * CHAR_BIT)"
+> * As in prev bullet, I tend to prefer use of CHAR_BIT over hard-coded
+> 8.
+
+In v3, I have simplified both the static_assert and the optimized macro =
+as you suggested on Slack,
+with some minor improvements.
+
+> * Is it necessary to limit this to just GCC and x86? If it leads to =
+the
+>   best code on x86, why not include for all compilers? What about non-
+> x86
+>   LE platforms?
+
+I had already tested ARM64, where it didn't make a difference; now I =
+have added a note about it.
+I also tested ARM32, which doesn't benefit either, but I didn't add a =
+note about it.
+I also tested Loongarch (on Godbolt), which does benefit from it, so I =
+added it.
+
+Now, as I'm writing this email, Godbolt shows that RISC-V and POWER =
+could also benefit.
+Maybe we should just replace the standard macro with the optimized =
+macro. WDYT?
+
+> * Does the actual macro need to be that long and complex? If we
+> simplify a
+>   bit, does the compiler go back to generating bad code? For example:
+>   using "(mb->ol_flags >> 56) & ((RTE_MBUF_F_INDIRECT | ..) >> 56)"
+
+Simplified in v3.
+
+> * If the above is true, do we need to actually put this in in =
+assembler
+> to
+>   guarantee compiler generates good code in all situations?
+
+No need for assembler.
 
