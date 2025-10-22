@@ -2,46 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDFACCD1AB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 02:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 919E5CCD1AB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 03:52:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B853040151;
-	Wed, 22 Oct 2025 04:57:48 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 554AF400D6
- for <dev@dpdk.org>; Wed, 22 Oct 2025 04:57:47 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 4347E4899E; Wed, 22 Oct 2025 04:57:47 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1805] Outdated CQE consumer index in
- rxq_burst_mprq_v()
-Date: Wed, 22 Oct 2025 02:57:47 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 22.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: canary.overflow@gmail.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1805-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 6D08A40151;
+	Wed, 22 Oct 2025 05:52:21 +0200 (CEST)
+Received: from out28-193.mail.aliyun.com (out28-193.mail.aliyun.com
+ [115.124.28.193])
+ by mails.dpdk.org (Postfix) with ESMTP id 6A6F4400D6
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 05:52:18 +0200 (CEST)
+Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
+ fp:SMTPD_---.f4RFeCA_1761105132 cluster:ay29) by smtp.aliyun-inc.com;
+ Wed, 22 Oct 2025 11:52:16 +0800
+From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+To: dimon.zhao@nebula-matrix.com,
+	dev@dpdk.org
+Subject: [PATCH v14 00/17] NBL PMD for Nebulamatrix NICs
+Date: Tue, 21 Oct 2025 20:51:53 -0700
+Message-Id: <20251022035210.3243056-1-dimon.zhao@nebula-matrix.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
+References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,63 +39,125 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1805
+Features:
+---------
+- MTU update
+- promisc mode set
+- xstats
+- Basic stats 
 
-            Bug ID: 1805
-           Summary: Outdated CQE consumer index in rxq_burst_mprq_v()
-           Product: DPDK
-           Version: 22.11
-          Hardware: x86
-                OS: Linux
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: canary.overflow@gmail.com
-  Target Milestone: ---
+Support NICs:
+-------------
+- S1205CQ-A00CHT
+- S1105AS-A00CHT
+- S1055AS-A00CHT
+- S1052AS-A00CHT
+- S1051AS-A00CHT
+- S1045XS-A00CHT
+- S1205CQ-A00CSP
+- S1055AS-A00CSP
+- S1052AS-A00CSP
 
-In function rxq_burst_mprq_v() [drivers/net/mlx5/mlx5_rxtx_vec.c line 470]:
+Dimon Zhao (17):
+  net/nbl: add doc and minimum nbl build framework
+  net/nbl: add simple probe/remove and log module
+  net/nbl: add HW layer definitions and implementation
+  net/nbl: add Channel layer definitions and implementation
+  net/nbl: add Resource layer definitions and implementation
+  net/nbl: add Dispatch layer definitions and implementation
+  net/nbl: add Dev layer definitions and implementation
+  net/nbl: add complete device init and uninit functionality
+  net/nbl: add UIO and VFIO mode for nbl
+  net/nbl: add nbl coexistence mode for nbl
+  net/nbl: add nbl ethdev configuration
+  net/nbl: add nbl device rxtx queue setup and release ops
+  net/nbl: add nbl device start and stop ops
+  net/nbl: add nbl device Tx and Rx burst
+  net/nbl: add nbl ethdev infos get
+  net/nbl: add nbl device xstats and stats
+  net/nbl: add nbl device set MTU and promisc
 
-unsigned int cq_idx =3D rxq->cq_ci & q_mask;
-...
-cq =3D &(*rxq->cqes)[cq_idx];
-rte_prefetch0(cq);
-rte_prefetch0(cq + 1);
-rte_prefetch0(cq + 2);
-rte_prefetch0(cq + 3);
-...
-if (rcvd_pkt > 0) {
-    rcvd_pkt =3D RTE_MIN(rcvd_pkt, pkts_n);
-    cp_pkt =3D rxq_copy_mprq_mbuf_v(rxq, pkts, rcvd_pkt); // rxq->cq_ci
-incremented here
-    rxq->decompressed -=3D rcvd_pkt;
-    pkts +=3D cp_pkt;
-}
-...
-/* Not to overflow pkts array. */
-pkts_n =3D RTE_ALIGN_FLOOR(pkts_n - cp_pkt, MLX5_VPMD_DESCS_PER_LOOP);
-/* Not to cross queue end. */
-pkts_n =3D RTE_MIN(pkts_n, elts_n - elts_idx);
-pkts_n =3D RTE_MIN(pkts_n, q_n - cq_idx); // (1)=20
-...
-/* At this point, there shouldn't be any remaining packets. */
-MLX5_ASSERT(rxq->decompressed =3D=3D 0);
-/* Process all the CQEs */
-nocmp_n =3D rxq_cq_process_v(rxq, cq, elts, pkts, pkts_n, err, &comp_idx); =
-(2)
+ .mailmap                                      |    4 +
+ MAINTAINERS                                   |    9 +
+ doc/guides/nics/features/nbl.ini              |   18 +
+ doc/guides/nics/index.rst                     |    1 +
+ doc/guides/nics/nbl.rst                       |   87 ++
+ doc/guides/rel_notes/release_25_11.rst        |    4 +
+ drivers/net/meson.build                       |    1 +
+ drivers/net/nbl/meson.build                   |   26 +
+ drivers/net/nbl/nbl_common/nbl_common.c       |   47 +
+ drivers/net/nbl/nbl_common/nbl_common.h       |   10 +
+ drivers/net/nbl/nbl_common/nbl_userdev.c      |  762 ++++++++++
+ drivers/net/nbl/nbl_common/nbl_userdev.h      |   21 +
+ drivers/net/nbl/nbl_core.c                    |  105 ++
+ drivers/net/nbl/nbl_core.h                    |   98 ++
+ drivers/net/nbl/nbl_dev/nbl_dev.c             | 1074 ++++++++++++++
+ drivers/net/nbl/nbl_dev/nbl_dev.h             |   89 ++
+ drivers/net/nbl/nbl_dispatch.c                | 1318 +++++++++++++++++
+ drivers/net/nbl/nbl_dispatch.h                |   31 +
+ drivers/net/nbl/nbl_ethdev.c                  |  138 ++
+ drivers/net/nbl/nbl_ethdev.h                  |   31 +
+ drivers/net/nbl/nbl_hw/nbl_channel.c          |  977 ++++++++++++
+ drivers/net/nbl/nbl_hw/nbl_channel.h          |  132 ++
+ drivers/net/nbl/nbl_hw/nbl_hw.h               |   28 +
+ .../nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c |  228 +++
+ .../nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.h |   53 +
+ .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c |  253 ++++
+ .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h |   10 +
+ drivers/net/nbl/nbl_hw/nbl_resource.c         |    5 +
+ drivers/net/nbl/nbl_hw/nbl_resource.h         |  249 ++++
+ drivers/net/nbl/nbl_hw/nbl_txrx.c             |  908 ++++++++++++
+ drivers/net/nbl/nbl_hw/nbl_txrx.h             |   40 +
+ drivers/net/nbl/nbl_hw/nbl_txrx_ops.h         |   91 ++
+ drivers/net/nbl/nbl_include/nbl_def_channel.h |  459 ++++++
+ drivers/net/nbl/nbl_include/nbl_def_common.h  |  120 ++
+ drivers/net/nbl/nbl_include/nbl_def_dev.h     |   26 +
+ .../net/nbl/nbl_include/nbl_def_dispatch.h    |  100 ++
+ drivers/net/nbl/nbl_include/nbl_def_hw.h      |   35 +
+ .../net/nbl/nbl_include/nbl_def_resource.h    |   92 ++
+ drivers/net/nbl/nbl_include/nbl_include.h     |  201 +++
+ drivers/net/nbl/nbl_include/nbl_logs.h        |   25 +
+ .../net/nbl/nbl_include/nbl_product_base.h    |   31 +
+ 41 files changed, 7937 insertions(+)
+ create mode 100644 doc/guides/nics/features/nbl.ini
+ create mode 100644 doc/guides/nics/nbl.rst
+ create mode 100644 drivers/net/nbl/meson.build
+ create mode 100644 drivers/net/nbl/nbl_common/nbl_common.c
+ create mode 100644 drivers/net/nbl/nbl_common/nbl_common.h
+ create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.c
+ create mode 100644 drivers/net/nbl/nbl_common/nbl_userdev.h
+ create mode 100644 drivers/net/nbl/nbl_core.c
+ create mode 100644 drivers/net/nbl/nbl_core.h
+ create mode 100644 drivers/net/nbl/nbl_dev/nbl_dev.c
+ create mode 100644 drivers/net/nbl/nbl_dev/nbl_dev.h
+ create mode 100644 drivers/net/nbl/nbl_dispatch.c
+ create mode 100644 drivers/net/nbl/nbl_dispatch.h
+ create mode 100644 drivers/net/nbl/nbl_ethdev.c
+ create mode 100644 drivers/net/nbl/nbl_ethdev.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_channel.c
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_channel.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/
+		    nbl_hw_leonis_snic.c
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/
+		    nbl_hw_leonis_snic.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.c
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_resource.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.c
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx.h
+ create mode 100644 drivers/net/nbl/nbl_hw/nbl_txrx_ops.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_channel.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_common.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dev.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_dispatch.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_hw.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_def_resource.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_include.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_logs.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
 
-The cq pointer may be using an outdated rxq->cq_ci value if rcvd_pkt > 0 and
-rxq->cq_ci gets incremented in rxq_copy_mprq_mbuf_v(). This may have the
-following issues:
-- pkts_n computed in (1) may be more than what it should be
-- the cq pointer retrieved using the outdated cq_idx is being passed into
-rxq_cq_process_v() again (2).
+-- 
+2.34.1
 
-
-For the fix, I think the value of cq_idx needs to be updated again after the
-processing the decompressed packets and cq pointer be retrieved after.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
