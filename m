@@ -2,62 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA10FCCD1AB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 17:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A393CCD1BB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 18:28:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2D7ED40262;
-	Wed, 22 Oct 2025 19:54:05 +0200 (CEST)
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
- [209.85.215.180])
- by mails.dpdk.org (Postfix) with ESMTP id 4BD6E4025E
- for <dev@dpdk.org>; Wed, 22 Oct 2025 19:54:04 +0200 (CEST)
-Received: by mail-pg1-f180.google.com with SMTP id
- 41be03b00d2f7-b6cee846998so416533a12.1
- for <dev@dpdk.org>; Wed, 22 Oct 2025 10:54:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1761155643; x=1761760443; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=P4PZlXRR8ty+Af0/XurpJP+Dn21AXT2rxAGeqeEfaZI=;
- b=fhVCIfTf+8MJuLpXkYneuI4m8ZnFJXC15LI8LnfXcYoftUCG0ClK1g2yJ1jUB6CaXQ
- cpK8po8z2QZUWgcarSDRdmKC1FrF+KEKbW+HkFWEHP+D0Zaaz5W5uLwhzpGz9GLBlm14
- ggs7nx7zscvz3JdhY2RQyRrOB8uLXXAMmD/aY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761155643; x=1761760443;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=P4PZlXRR8ty+Af0/XurpJP+Dn21AXT2rxAGeqeEfaZI=;
- b=jlU0eEfZezsBBeP9+j1m9oOvLx648735lQhIPurJl+2nLnxtKOQpzdhDbiKnhxv3sS
- At9DhsESMdCi0CubFG2Ad51tsnNOeRY+GHTFWZs7GRAPO6wTTMC7Lopha0EHTEdAWKGX
- w6AJi0Am2CxFcnhhFus6Vu5mkv6pACMKDpqebPwmdGWAD7NZ1Df7oXIY74xfjwuBtRlv
- YBlvXcxtdMij0Fx9rdyi3gwy8uSxU4O8vEnFSkEUVUukZMFA9TzEhiGHz9/v1GzrQ/1+
- uFOfmyfSMIzdk0n6F7Gvt2bx/1xoSRHNqk2fP1o0LTPualLfw82gfBp9jH/5RVLjrTIX
- d+yQ==
-X-Gm-Message-State: AOJu0YzvsqqQuoNoFBPKRzOWKJEtJtwDx7Fl4J9n7sN1RUrtZHLPKgsE
- eg92MhRj39Y1wN7NrMzj9t/iytJcM6LqlzVV0llXL6AUG0UDLRqTs2rLEx/YlLxyUXnLGu80BD2
- b+EXIv9NULRokseCMqbvDcmF8Lxgt+8F3Y3on19Zi3g==
-X-Gm-Gg: ASbGncuU+jt7108PaDirb+0E5h9KMEpLzAfAS6bJWNoI/dN3iFnDFw6Fw2uIeyJgYdK
- XIMFHKhndVeZOgh+bJejKXJ5FjC7kKOWAt4tRKti10Bq73g6qFZsrb4i+kRCd8Tk/gax9ODu2LH
- Fy7uOTVsRyAiUqINyOHDlxUv269TiZ/N8UcBUgwLkAB5J7O9oZD7FnM5zylQfAFgocQiynDX9CY
- szt5XCmN8lEE+8OUGJDwiCTCL2sqlHiQKZK++z30p5rv+t0guwjbv+QCcShwJFPb1DBcw+cP9Bw
- ct8Cwdfi621pHUe+KC0t4T0C8x2d
-X-Google-Smtp-Source: AGHT+IGiLHXxWfcTQlSZuXu4wcQHYXy1yxQwfbd3rUB3igTkMgE1LW87CmDMMvKFc32INIo+J5vkDDo0cxKJUXfR0fc=
-X-Received: by 2002:a17:903:94e:b0:27e:dc53:d222 with SMTP id
- d9443c01a7336-290cb278e97mr272817935ad.44.1761155643461; Wed, 22 Oct 2025
- 10:54:03 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AEADD40262;
+	Wed, 22 Oct 2025 20:28:09 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 50CF84025E
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 20:28:08 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 097EA2041E;
+ Wed, 22 Oct 2025 20:28:08 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-References: <20251017121946.421658-2-rjarry@redhat.com>
-In-Reply-To: <20251017121946.421658-2-rjarry@redhat.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 22 Oct 2025 13:53:12 -0400
-X-Gm-Features: AS18NWCltpezTHP4qX0PSJRWU15LZY4m2_Z78SluwFtK3vaZ9RBVmoXT4yy8jXc
-Message-ID: <CAJvnSUB4ed8=z+dcGsowudhodhzevp33KoTLtEfAMvZfm3AQMg@mail.gmail.com>
-Subject: Re: [PATCH dpdk] net/tap: fix interrupt callback crash after failed
- start
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="00000000000085e4210641c300e9"
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v4] mbuf: optimize segment prefree
+Date: Wed, 22 Oct 2025 20:28:05 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F654F2@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <aPjyFK392slWz5R5@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v4] mbuf: optimize segment prefree
+Thread-Index: AdxDZPWsgk+NnNOVTYOveeGbob2DmQAEuWFQ
+References: <20250827213535.21602-1-mb@smartsharesystems.com>
+ <20251022144708.150069-1-mb@smartsharesystems.com>
+ <aPjyFK392slWz5R5@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>, "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Chengwen Feng" <fengchengwen@huawei.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -71,17 +51,258 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000085e4210641c300e9
-Content-Type: text/plain; charset="UTF-8"
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Wednesday, 22 October 2025 17.03
+>=20
+> On Wed, Oct 22, 2025 at 02:47:08PM +0000, Morten Br=F8rup wrote:
+> > Refactored rte_pktmbuf_prefree_seg() for both performance and
+> readability.
+> >
+> > With the optimized RTE_MBUF_DIRECT() macro, the common likely code
+> path
+> > now fits within one instruction cache line on x86-64 when built with
+> GCC.
+> >
+> > Signed-off-by: Morten Br=F8rup <mb@smartsharesystems.com>
+> > Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+> > Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+> > Reviewed-by: Bruce Richardson <bruce.richardson@intel.com>
+> > ---
+> > v4:
+> > * Enabled the optimized RTE_MBUF_DIRECT() macro for GCC on all
+> >   architectures.
+> > v3:
+> > * Rewrote the optimized RTE_MBUF_DIRECT() macro for readability; use
+> >   numerical value instead of long names. (Bruce Richardson)
+> > * Enabled the optimized RTE_MBUF_DIRECT() macro for Loongarch too.
+> > v2:
+> > * Fixed typo in commit description.
+> > * Fixed indentation.
+> > * Added detailed description to the optimized RTE_MBUF_DIRECT()
+> macro.
+> >   (Stephen Hemminger)
+> > * Added static_assert() to verify that the optimized
+> RTE_MBUF_DIRECT()
+> >   macro is valid, specifically that the tested bits are in the MSB =
+of
+> the
+> >   64-bit field.
+> > ---
+> >  lib/mbuf/rte_mbuf.h      | 51 =
++++++++++++++++-----------------------
+> --
+> >  lib/mbuf/rte_mbuf_core.h | 47 ++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 66 insertions(+), 32 deletions(-)
+> >
+> > diff --git a/lib/mbuf/rte_mbuf.h b/lib/mbuf/rte_mbuf.h
+> > index 3df22125de..2004391f57 100644
+> > --- a/lib/mbuf/rte_mbuf.h
+> > +++ b/lib/mbuf/rte_mbuf.h
+> > @@ -31,6 +31,7 @@
+> >   * http://www.kohala.com/start/tcpipiv2.html
+> >   */
+> >
+> > +#include <stdbool.h>
+> >  #include <stdint.h>
+> >
+> >  #include <rte_common.h>
+> > @@ -1458,44 +1459,30 @@ static inline int
+> __rte_pktmbuf_pinned_extbuf_decref(struct rte_mbuf *m)
+> >  static __rte_always_inline struct rte_mbuf *
+> >  rte_pktmbuf_prefree_seg(struct rte_mbuf *m)
+> >  {
+> > -	__rte_mbuf_sanity_check(m, 0);
+> > -
+> > -	if (likely(rte_mbuf_refcnt_read(m) =3D=3D 1)) {
+> > -
+> > -		if (!RTE_MBUF_DIRECT(m)) {
+> > -			rte_pktmbuf_detach(m);
+> > -			if (RTE_MBUF_HAS_EXTBUF(m) &&
+> > -			    RTE_MBUF_HAS_PINNED_EXTBUF(m) &&
+> > -			    __rte_pktmbuf_pinned_extbuf_decref(m))
+> > -				return NULL;
+> > -		}
+> > -
+> > -		if (m->next !=3D NULL)
+> > -			m->next =3D NULL;
+> > -		if (m->nb_segs !=3D 1)
+> > -			m->nb_segs =3D 1;
+> > +	bool refcnt_not_one;
+> >
+> > -		return m;
+> > +	__rte_mbuf_sanity_check(m, 0);
+> >
+> > -	} else if (__rte_mbuf_refcnt_update(m, -1) =3D=3D 0) {
+> > +	refcnt_not_one =3D unlikely(rte_mbuf_refcnt_read(m) !=3D 1);
+> > +	if (refcnt_not_one && __rte_mbuf_refcnt_update(m, -1) !=3D 0)
+> > +		return NULL;
+> >
+> > -		if (!RTE_MBUF_DIRECT(m)) {
+> > -			rte_pktmbuf_detach(m);
+> > -			if (RTE_MBUF_HAS_EXTBUF(m) &&
+> > -			    RTE_MBUF_HAS_PINNED_EXTBUF(m) &&
+> > -			    __rte_pktmbuf_pinned_extbuf_decref(m))
+> > -				return NULL;
+> > -		}
+> > +	if (unlikely(!RTE_MBUF_DIRECT(m))) {
+> > +		rte_pktmbuf_detach(m);
+> > +		if (RTE_MBUF_HAS_EXTBUF(m) &&
+> > +				RTE_MBUF_HAS_PINNED_EXTBUF(m) &&
+> > +				__rte_pktmbuf_pinned_extbuf_decref(m))
+> > +			return NULL;
+> > +	}
+> >
+> > -		if (m->next !=3D NULL)
+> > -			m->next =3D NULL;
+> > -		if (m->nb_segs !=3D 1)
+> > -			m->nb_segs =3D 1;
+> > +	if (refcnt_not_one)
+> >  		rte_mbuf_refcnt_set(m, 1);
+> > +	if (m->nb_segs !=3D 1)
+> > +		m->nb_segs =3D 1;
+> > +	if (m->next !=3D NULL)
+> > +		m->next =3D NULL;
+> >
+> > -		return m;
+> > -	}
+> > -	return NULL;
+> > +	return m;
+> >  }
+> >
+> >  /**
+> > diff --git a/lib/mbuf/rte_mbuf_core.h b/lib/mbuf/rte_mbuf_core.h
+> > index a0df265b5d..37f2975158 100644
+> > --- a/lib/mbuf/rte_mbuf_core.h
+> > +++ b/lib/mbuf/rte_mbuf_core.h
+> > @@ -706,6 +706,7 @@ struct rte_mbuf_ext_shared_info {
+> >   */
+> >  #define RTE_MBUF_HAS_EXTBUF(mb) ((mb)->ol_flags &
+> RTE_MBUF_F_EXTERNAL)
+> >
+> > +#if !defined(RTE_TOOLCHAIN_GCC) || defined __DOXYGEN__
+> >  /**
+> >   * Returns TRUE if given mbuf is direct, or FALSE otherwise.
+> >   *
+> > @@ -714,6 +715,52 @@ struct rte_mbuf_ext_shared_info {
+> >   */
+> >  #define RTE_MBUF_DIRECT(mb) \
+> >  	(!((mb)->ol_flags & (RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL)))
+> > +#else /* RTE_TOOLCHAIN_GCC */
+>=20
+> Do we need the non-gcc block?
+>=20
+> > +#if RTE_BYTE_ORDER =3D=3D RTE_LITTLE_ENDIAN
+> > +/* Macro optimized for code size.
+> > + * GCC only optimizes single-bit MSB tests this way, so we do it by
+> hand with multi-bit.
+> > + *
+> > + * The flags RTE_MBUF_F_INDIRECT and RTE_MBUF_F_EXTERNAL are both =
+in
+> the MSB of the
+> > + * 64-bit ol_flags field, so we only compare this one byte instead
+> of all 64 bits.
+> > + * On little endian architecture, the MSB of a 64-bit integer is at
+> byte offset 7.
+> > + *
+> > + * Note: Tested on x86-64 using GCC version 16.0.0 20251019
+> (experimental).
+> > + *
+> > + * Without this optimization, GCC generates 17 bytes of
+> instructions:
+> > + *      movabs rax,0x6000000000000000       // 10 bytes
+> > + *      and    rax,QWORD PTR [rdi+0x18]     // 4 bytes
+> > + *      sete   al                           // 3 bytes
+> > + * With this optimization, GCC generates only 7 bytes of
+> instructions:
+> > + *      test   BYTE PTR [rdi+0x1f],0x60     // 4 bytes
+> > + *      sete   al                           // 3 bytes
+> > + *
+> > + * Note: Tested on loongarch using GCC version 15.2.0.
+> > + *
+> > + * Without this optimization, GCC generates 5 instructions:
+> > + *      ld.d        $a0, $a0, 24
+> > + *      move        $t0, $zero
+> > + *      lu52i.d     $t0, $t0, 1536
+> > + *      and         $a0, $a0, $t0
+> > + *      sltui       $a0, $a0, 1
+> > + * With this optimization, GCC generates only 3 instructions:
+> > + *      ld.bu       $a0, $a0, 31
+> > + *      andi        $a0, $a0, 0x60
+> > + *      sltui       $a0, $a0, 1
+> > + *
+> > + * Note: GCC also generates smaller code size with the optimized
+> macro on many other architectures.
+> > + *
+> > + * Note: GCC generates the same code size as with the plain macro =
+on
+> ARM (64 and 32 bit).
+> > + */
+> > +static_assert((RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL) =3D=3D
+> UINT64_C(0x60) << (7 * CHAR_BIT),
+> > +	"(RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL) is not 0x60 at byte
+> offset 7");
+> > +#define RTE_MBUF_DIRECT(mb)     !(((const char *)(&(mb)-
+> >ol_flags))[7] & 0x60)
+> > +#elif RTE_BYTE_ORDER =3D=3D RTE_BIG_ENDIAN
+> > +/* As described above; but on big endian architecture, the MSB is =
+at
+> byte offset 0. */
+> > +static_assert((RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL) =3D=3D
+> UINT64_C(0x60) << (7 * CHAR_BIT),
+> > +	"(RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL) is not 0x60 at byte
+> offset 0");
+> > +#define RTE_MBUF_DIRECT(mb)     !(((const char *)(&(mb)-
+> >ol_flags))[0] & 0x60)
+> > +#endif /* RTE_BYTE_ORDER */
+>=20
+> Minor nit, the static assert is common, so can be put out of the
+> endianness
+> check rather than duplicated.
 
-This email is triggering a rerun of testing at the DPDK Community Lab for
-this patchseries.
+I considered a generic common static_assert, but prefer individual ones =
+with specific error texts (byte offset 7 or 0).
 
-Recheck-request: iol-intel-Functional
+> I'd also suggest putting the the comment
+> outside it too, so that the endianness check only covers one line =
+each.
 
---00000000000085e4210641c300e9
-Content-Type: text/html; charset="UTF-8"
+Good idea.
+While doing this, I'll see how it looks with a common static_assert and =
+individual ones.
 
-<div dir="ltr">This email is triggering a rerun of testing at the DPDK Community Lab for this patchseries.<br><br>Recheck-request: iol-intel-Functional</div>
+> Also, in the comment, showing an example on one arch is probably
+> enough,
+> showing two sort of implies that you should show all, while if you =
+show
+> just one, you can clearly state its just one example.
 
---00000000000085e4210641c300e9--
+Agree. Less is more.
+
+>=20
+> BTW: if you want to remove the endian ifdefs, you can compute the
+> offset
+> as e.g.
+>=20
+> #define OLF_MSB (7 * (RTE_BYTE_ORDER =3D=3D RTE_LITTLE_ENDIAN)) // 7 =
+for
+> LE, 0 for BE
+> #define RTE_MBUF_DIRECT(mb)     !(((const char *)(&(mb)-
+> >ol_flags))[OLF_MSB] & 0x60)
+
+I don't think it improves source code readability, so not going to do =
+it.
+Also, it's a header file, so the OLF_MSB would need to have some obscure =
+name. Alternatively reside in rte_common.h with a generic name for =
+similar purposes.
+
+>=20
+>=20
+> > +#endif /* RTE_TOOLCHAIN_GCC */
+> >
+> >  /** Uninitialized or unspecified port. */
+> >  #define RTE_MBUF_PORT_INVALID UINT16_MAX
+> > --
+> > 2.43.0
+> >
+
+Will post a v5.
