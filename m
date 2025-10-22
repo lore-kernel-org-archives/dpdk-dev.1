@@ -2,42 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC1CCCD1AB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 01:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDFACCD1AB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 02:57:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 75CBE402F1;
-	Wed, 22 Oct 2025 03:37:14 +0200 (CEST)
-Received: from out28-121.mail.aliyun.com (out28-121.mail.aliyun.com
- [115.124.28.121])
- by mails.dpdk.org (Postfix) with ESMTP id 30A03402AF
- for <dev@dpdk.org>; Wed, 22 Oct 2025 03:37:11 +0200 (CEST)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.07386875|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_regular_dialog|0.0204403-0.000360759-0.979199;
- FP=17353447571053878662|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam033037071049; MF=dimon.zhao@nebula-matrix.com; NM=1;
- PH=DW; RN=5; RT=5; SR=0; TI=W4_0.2.3_212512B3_1761097010981_o7001c204q; 
-Received: from WS-web
- (dimon.zhao@nebula-matrix.com[W4_0.2.3_212512B3_1761097010981_o7001c204q]
- cluster:ay29) at Wed, 22 Oct 2025 09:37:08 +0800
-Date: Wed, 22 Oct 2025 09:37:08 +0800
-From: "Dimon" <dimon.zhao@nebula-matrix.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: "dev" <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
- "Kyo Liu" <kyo.liu@nebula-matrix.com>, "Leon" <leon.yu@nebula-matrix.com>,
- "Sam" <sam.chen@nebula-matrix.com>
-Message-ID: <1a671259-db95-4d13-9986-c28ff8c360bb.dimon.zhao@nebula-matrix.com>
-Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIHYxMyAwMS8xN10gbmV0L25ibDogYWRkIGRvYyBhbmQgbWluaW11?=
- =?UTF-8?B?bSBuYmwgYnVpbGQgZnJhbWV3b3Jr?=
-X-Mailer: [Alimail-Mailagent revision 560][W4_0.2.3][null][Chrome]
+	by mails.dpdk.org (Postfix) with ESMTP id B853040151;
+	Wed, 22 Oct 2025 04:57:48 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 554AF400D6
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 04:57:47 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 4347E4899E; Wed, 22 Oct 2025 04:57:47 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/ethdev Bug 1805] Outdated CQE consumer index in
+ rxq_burst_mprq_v()
+Date: Wed, 22 Oct 2025 02:57:47 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: 22.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: canary.overflow@gmail.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1805-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>	<20251016080128.3133579-1-dimon.zhao@nebula-matrix.com>	<20251016080128.3133579-2-dimon.zhao@nebula-matrix.com>,
- <20251021072102.2308eb46@phoenix.lan>
-x-aliyun-mail-creator: W4_0.2.3_null_d2lTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEwOC4wLjUzNTkuMTI1IFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4wLjEwLVJlbGVhc2UuMjUwOTE3MDAyKSBNb2pvLzEuMC4wIE5hdGl2ZSBBcHBUeXBlKHJlbGVhc2UpIENoYW5uZWwvMjAxMjAwIEFyY2hpdGVjdHVyZS94ODZfNjQ=Gs
-In-Reply-To: <20251021072102.2308eb46@phoenix.lan>
-Content-Type: multipart/alternative;
- boundary="----=ALIBOUNDARY_1939_7ff816895700_68f83544_19e5d5"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,173 +53,65 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-------=ALIBOUNDARY_1939_7ff816895700_68f83544_19e5d5
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+http://bugs.dpdk.org/show_bug.cgi?id=3D1805
 
-SGkgU3RlcGhlbiwKVGhhbmsgeW91IGZvciB0aGUgcmV2aWV3LgpJIHdpbGwgZml4IHRoZSBkb2N1
-bWVudGF0aW9uIHRvIG1hdGNoIHRoZSBmZWF0dXJlcyBpbXBsZW1lbnRlZCBpbiB0aGUgY29kZS4K
-VG8gY2xhcmlmeSwgdGhlIG5ibCBkcml2ZXIgZG9lcyBzdXBwb3J0IGFsbCB0aGUgZmVhdHVyZXMg
-bGlzdGVkIGluIHRoZSBkb2N1bWVudGF0aW9uLgpUaGVyZSB3YXMgYSBtaXN1bmRlcnN0YW5kaW5n
-IG9uIG15IHBhcnQgYWJvdXQgdGhlIHN1Ym1pc3Npb24gcHJvY2VzcyAtIEkgdGhvdWdodCB3ZSB3
-ZXJlIHN1cHBvc2VkIHRvIHN1Ym1pdCBiYXNpYyBmdW5jdGlvbmFsaXR5IGZpcnN0LAphbmQgdGhl
-biBhZGQgZmVhdHVyZXMgbGlrZSBUU08sIGNoZWNrc3VtIG9mZmxvYWQsIGFuZCBGRUMgaW4gc3Vi
-c2VxdWVudCBwYXRjaGVzIGFmdGVyIHRoZSBpbml0aWFsIGRyaXZlciBtZXJnZS4KVGhhbmsgeW91
-LgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0K5Y+R5Lu25Lq677yaU3RlcGhlbiBIZW1taW5nZXIgPHN0ZXBoZW5AbmV0d29y
-a3BsdW1iZXIub3JnPgrlj5HpgIHml7bpl7TvvJoyMDI15bm0MTDmnIgyMeaXpSjlkajkuowpIDIy
-OjIxCuaUtuS7tuS6uu+8mkRpbW9uPGRpbW9uLnpoYW9AbmVidWxhLW1hdHJpeC5jb20+CuaKhOOA
-gOmAge+8mmRldjxkZXZAZHBkay5vcmc+OyBUaG9tYXMgTW9uamFsb248dGhvbWFzQG1vbmphbG9u
-Lm5ldD47IEt5byBMaXU8a3lvLmxpdUBuZWJ1bGEtbWF0cml4LmNvbT47IExlb248bGVvbi55dUBu
-ZWJ1bGEtbWF0cml4LmNvbT47IFNhbTxzYW0uY2hlbkBuZWJ1bGEtbWF0cml4LmNvbT4K5Li744CA
-6aKY77yaUmU6IFtQQVRDSCB2MTMgMDEvMTddIG5ldC9uYmw6IGFkZCBkb2MgYW5kIG1pbmltdW0g
-bmJsIGJ1aWxkIGZyYW1ld29yawpBcyBwYXJ0IG9mIGRyaXZlciByZXZpZXcgSSBhdWRpdCB0aGUg
-ZG9jdW1lbnRhdGlvbiBpbiBmZWF0dXJlcwphZ2FpbnN0IHdoYXQgaXMgYWN0dWFsbHkgaW1wbGVt
-ZW50ZWQuIE1hbnkgbmV3IGRyaXZlcnMgc2VlbSB0byBjdXQgYW5kIHBhc3RlCmZyb20gZXhpc3Rp
-bmcgZHJpdmVycyBhbmQgbm90IGltcGxlbWVudCBmZWF0dXJlcy4KPiBkaWZmIC0tZ2l0IGEvZG9j
-L2d1aWRlcy9uaWNzL2ZlYXR1cmVzL25ibC5pbmkgYi9kb2MvZ3VpZGVzL25pY3MvZmVhdHVyZXMv
-bmJsLmluaQo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAwMDAwMC4uOTBlYzU5
-Mzc1OQo+IC0tLSAvZGV2L251bGwKPiArKysgYi9kb2MvZ3VpZGVzL25pY3MvZmVhdHVyZXMvbmJs
-LmluaQo+IEBAIC0wLDAgKzEsMzEgQEAKPiArOwo+ICs7IFN1cHBvcnRlZCBmZWF0dXJlcyBvZiB0
-aGUgJ25ibCcgbmV0d29yayBwb2xsIG1vZGUgZHJpdmVyLgo+ICs7Cj4gKzsgUmVmZXIgdG8gZGVm
-YXVsdC5pbmkgZm9yIHRoZSBmdWxsIGxpc3Qgb2YgYXZhaWxhYmxlIFBNRCBmZWF0dXJlcy4KPiAr
-Owo+ICtbRmVhdHVyZXNdCj4gK1NwZWVkIGNhcGFiaWxpdGllcyA9IFkKPiArTGluayBzcGVlZCBj
-b25maWd1cmF0aW9uID0gWQo+ICtMaW5rIHN0YXR1cyA9IFkKPiArRkVDID0gWQpUaGVyZSBpcyBu
-byBldGhkZXYgb3BzIGZvciBmZWNfZ2V0IGluIHRoaXMgZHJpdmVyLgpJdCBkb2Vzbid0IHN1cHBv
-cnQgRkVDCj4gK1F1ZXVlIHN0YXJ0L3N0b3AgPSBZClRoZXJlIGlzIG5vIG9wZXJhdGlvbiBmb3Ig
-dHhfcXVldWVfc3RhcnQgb3IgcnhfcXVldWVfc3RhcnQKPiArQnVyc3QgbW9kZSBpbmZvID0gWQpE
-cml2ZXIgaGFzIHByb3RvdHlwZSBmb3IgdHhyeF9idXJzdF9tb2RlX2dldCBidXQgbm8gaW1wbGVt
-ZW50YXRpb24Kb3IgZXRoZGV2X29wcy4KPiArTVRVIHVwZGF0ZSA9IFkKPiArU2NhdHRlcmVkIFJ4
-ID0gWQo+ICtUU08gPSBZCj4gK1Byb21pc2N1b3VzIG1vZGUgPSBZCj4gK0FsbG11bHRpY2FzdCBt
-b2RlID0gWQo+ICtVbmljYXN0IE1BQyBmaWx0ZXIgPSBZCj4gK1JTUyByZXRhIHVwZGF0ZSA9IFkK
-PiArVkxBTiBmaWx0ZXIgPSBZCk5vIGV0aGRldl9vcHMgZm9yIHZsYW5fZmlsdGVyX3NldAo+ICtW
-TEFOIG9mZmxvYWQgPSBQCkRyaXZlciBkb2VzIG5vdCByZXBvcnQgUlRFX0VUSF9WTEFOX1NUUklQ
-X09GRkxPQVMKPiArTDMgY2hlY2tzdW0gb2ZmbG9hZCA9IFAKPiArTDQgY2hlY2tzdW0gb2ZmbG9h
-ZCA9IFAKRHJpdmVyIGRvZXMgbm90IHJlcG9ydCBSVEVfRVRIX1JYX09GRkxPQURfVENQX0NLU1VN
-IGV0Yy4KPiArQmFzaWMgc3RhdHMgPSBZCj4gK0V4dGVuZGVkIHN0YXRzID0gWQo+ICtTdGF0cyBw
-ZXIgcXVldWUgPSBZCj4gK0ZXIHZlcnNpb24gPSBZCk5vdCBpbXBsZW1lbnRlZC4KPiArTW9kdWxl
-IEVFUFJPTSBkdW1wID0gWQpOb3QgaW1wbGVtZW50ZWQuCj4gK0xpbnV4ID0gWQo+ICtBUk12OCA9
-IFkKPiAreDg2LTY0ID0gWQpQbGVhc2UgZml4IHRoZSBkb2N1bWVudGF0aW9uIGFuZC9vciBjb2Rl
-IHRvIG1hdGNoIGZlYXR1cmVzCmFuZCByZXN1Ym1pdAo=
-------=ALIBOUNDARY_1939_7ff816895700_68f83544_19e5d5
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+            Bug ID: 1805
+           Summary: Outdated CQE consumer index in rxq_burst_mprq_v()
+           Product: DPDK
+           Version: 22.11
+          Hardware: x86
+                OS: Linux
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: ethdev
+          Assignee: dev@dpdk.org
+          Reporter: canary.overflow@gmail.com
+  Target Milestone: ---
 
-PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
-bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
-Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
-VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuID5IaSBTdGVwaGVuLDxiciA+PC9zcGFuPjwv
-c3Bhbj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij48YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJj
-bGVhcjogYm90aDsiPlRoYW5rIHlvdSBmb3IgdGhlIHJldmlldy48YnIgPjwvZGl2PjxkaXYgIHN0
-eWxlPSJjbGVhcjogYm90aDsiPjxiciA+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+
-SSB3aWxsIGZpeCB0aGUgZG9jdW1lbnRhdGlvbiB0byBtYXRjaCB0aGUgZmVhdHVyZXMgaW1wbGVt
-ZW50ZWQgaW4gdGhlIGNvZGUuPGJyID48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij48
-YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPlRvIGNsYXJpZnksIHRoZSBuYmwg
-ZHJpdmVyIGRvZXMgc3VwcG9ydCBhbGwgdGhlIGZlYXR1cmVzIGxpc3RlZCBpbiB0aGUgZG9jdW1l
-bnRhdGlvbi48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij5UaGVyZSB3YXMgYSBtaXN1
-bmRlcnN0YW5kaW5nIG9uIG15IHBhcnQgYWJvdXQgdGhlIHN1Ym1pc3Npb24gcHJvY2VzcyAtIEkg
-dGhvdWdodCB3ZSB3ZXJlIHN1cHBvc2VkIHRvIHN1Ym1pdCBiYXNpYyBmdW5jdGlvbmFsaXR5IGZp
-cnN0LDwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPmFuZCB0aGVuIGFkZCBmZWF0dXJl
-cyBsaWtlIFRTTywgY2hlY2tzdW0gb2ZmbG9hZCwgYW5kIEZFQyBpbiBzdWJzZXF1ZW50IHBhdGNo
-ZXMgYWZ0ZXIgdGhlIGluaXRpYWwgZHJpdmVyIG1lcmdlLjxiciA+PC9kaXY+PGRpdiAgc3R5bGU9
-ImNsZWFyOiBib3RoOyI+PGJyID48L2Rpdj48ZGl2ID48c3BhbiA+VGhhbmsgeW91Ljwvc3Bhbj48
-L2Rpdj48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0Mt
-TGlnaHQsIFNpbVN1bjsiPjxiciA+PC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90
-aDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+
-PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0
-LCBTaW1TdW47Ij48YnIgPjwvc3Bhbj48L2Rpdj48YmxvY2txdW90ZSAgX3F1b3RlPSIxIiBzdHls
-ZT0ibWFyZ2luLXJpZ2h0OiAwcHg7IG1hcmdpbi10b3A6IDBweDsgbWFyZ2luLWJvdHRvbTogMHB4
-OyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6
-IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij48ZGl2ICBjbGFzcz0iYWxpbWFpbC1xdW90ZSI+
-PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPC9kaXY+PGRpdiAgc3R5bGU9ImNs
-ZWFyOiBib3RoOyI+5Y+R5Lu25Lq677yaU3RlcGhlbiBIZW1taW5nZXIgJmx0O3N0ZXBoZW5AbmV0
-d29ya3BsdW1iZXIub3JnJmd0OzwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuWPkemA
-geaXtumXtO+8mjIwMjXlubQxMOaciDIx5pelKOWRqOS6jCkgMjI6MjE8L2Rpdj48ZGl2ICBzdHls
-ZT0iY2xlYXI6IGJvdGg7Ij7mlLbku7bkurrvvJpEaW1vbiZsdDtkaW1vbi56aGFvQG5lYnVsYS1t
-YXRyaXguY29tJmd0OzwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuaKhOOAgOmAge+8
-mmRldiZsdDtkZXZAZHBkay5vcmcmZ3Q7OyBUaG9tYXMgTW9uamFsb24mbHQ7dGhvbWFzQG1vbmph
-bG9uLm5ldCZndDs7IEt5byBMaXUmbHQ7a3lvLmxpdUBuZWJ1bGEtbWF0cml4LmNvbSZndDs7IExl
-b24mbHQ7bGVvbi55dUBuZWJ1bGEtbWF0cml4LmNvbSZndDs7IFNhbSZsdDtzYW0uY2hlbkBuZWJ1
-bGEtbWF0cml4LmNvbSZndDs8L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7kuLvjgIDp
-opjvvJpSZTogW1BBVENIIHYxMyAwMS8xN10gbmV0L25ibDogYWRkIGRvYyBhbmQgbWluaW11bSBu
-YmwgYnVpbGQgZnJhbWV3b3JrPC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+PGJyID48
-L2Rpdj5BcyBwYXJ0IG9mIGRyaXZlciByZXZpZXcgSSBhdWRpdCB0aGUgZG9jdW1lbnRhdGlvbiBp
-biBmZWF0dXJlczxiciA+YWdhaW5zdCB3aGF0IGlzIGFjdHVhbGx5IGltcGxlbWVudGVkLiBNYW55
-IG5ldyBkcml2ZXJzIHNlZW0gdG8gY3V0IGFuZCBwYXN0ZTxiciA+ZnJvbSBleGlzdGluZyBkcml2
-ZXJzIGFuZCBub3QgaW1wbGVtZW50IGZlYXR1cmVzLjxiciA+PGJyID4mZ3Q7IGRpZmYgLS1naXQg
-YS9kb2MvZ3VpZGVzL25pY3MvZmVhdHVyZXMvbmJsLmluaSBiL2RvYy9ndWlkZXMvbmljcy9mZWF0
-dXJlcy9uYmwuaW5pPGJyID4mZ3Q7IG5ldyBmaWxlIG1vZGUgMTAwNjQ0PGJyID4mZ3Q7IGluZGV4
-IDAwMDAwMDAwMDAuLjkwZWM1OTM3NTk8YnIgPiZndDsgLS0tIC9kZXYvbnVsbDxiciA+Jmd0OyAr
-KysgYi9kb2MvZ3VpZGVzL25pY3MvZmVhdHVyZXMvbmJsLmluaTxiciA+Jmd0OyBAQCAtMCwwICsx
-LDMxIEBAPGJyID4mZ3Q7ICs7PGJyID4mZ3Q7ICs7IFN1cHBvcnRlZCBmZWF0dXJlcyBvZiB0aGUg
-J25ibCcgbmV0d29yayBwb2xsIG1vZGUgZHJpdmVyLjxiciA+Jmd0OyArOzxiciA+Jmd0OyArOyBS
-ZWZlciB0byBkZWZhdWx0LmluaSBmb3IgdGhlIGZ1bGwgbGlzdCBvZiBhdmFpbGFibGUgUE1EIGZl
-YXR1cmVzLjxiciA+Jmd0OyArOzxiciA+Jmd0OyArW0ZlYXR1cmVzXTxiciA+Jmd0OyArU3BlZWQg
-Y2FwYWJpbGl0aWVzICZuYnNwOyA9IFk8YnIgPiZndDsgK0xpbmsgc3BlZWQgY29uZmlndXJhdGlv
-biA9IFk8YnIgPiZndDsgK0xpbmsgc3RhdHVzJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZu
-YnNwOyA9IFk8YnIgPiZndDsgK0ZFQyZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsg
-Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ID0gWTxiciA+PGJyID5UaGVyZSBpcyBubyBldGhk
-ZXYgb3BzIGZvciBmZWNfZ2V0IGluIHRoaXMgZHJpdmVyLjxiciA+SXQgZG9lc24ndCBzdXBwb3J0
-IEZFQzxiciA+PGJyID4mZ3Q7ICtRdWV1ZSBzdGFydC9zdG9wICZuYnNwOyAmbmJzcDsgPSBZPGJy
-ID48YnIgPlRoZXJlIGlzIG5vIG9wZXJhdGlvbiBmb3IgdHhfcXVldWVfc3RhcnQgb3IgcnhfcXVl
-dWVfc3RhcnQ8YnIgPjxiciA+Jmd0OyArQnVyc3QgbW9kZSBpbmZvJm5ic3A7ICZuYnNwOyAmbmJz
-cDsgPSBZPGJyID48YnIgPkRyaXZlciBoYXMgcHJvdG90eXBlIGZvciB0eHJ4X2J1cnN0X21vZGVf
-Z2V0IGJ1dCBubyBpbXBsZW1lbnRhdGlvbjxiciA+b3IgZXRoZGV2X29wcy48YnIgPjxiciA+Jmd0
-OyArTVRVIHVwZGF0ZSAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ID0gWTxiciA+
-Jmd0OyArU2NhdHRlcmVkIFJ4ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyA9IFk8YnIgPiZn
-dDsgK1RTTyZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAm
-bmJzcDsgJm5ic3A7ID0gWTxiciA+Jmd0OyArUHJvbWlzY3VvdXMgbW9kZSAmbmJzcDsgJm5ic3A7
-ID0gWTxiciA+Jmd0OyArQWxsbXVsdGljYXN0IG1vZGUmbmJzcDsgJm5ic3A7ID0gWTxiciA+Jmd0
-OyArVW5pY2FzdCBNQUMgZmlsdGVyICZuYnNwOyA9IFk8YnIgPiZndDsgK1JTUyByZXRhIHVwZGF0
-ZSZuYnNwOyAmbmJzcDsgJm5ic3A7ID0gWTxiciA+Jmd0OyArVkxBTiBmaWx0ZXImbmJzcDsgJm5i
-c3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ID0gWTxiciA+PGJyID5ObyBldGhkZXZfb3BzIGZvciB2
-bGFuX2ZpbHRlcl9zZXQ8YnIgPjxiciA+Jmd0OyArVkxBTiBvZmZsb2FkICZuYnNwOyAmbmJzcDsg
-Jm5ic3A7ICZuYnNwOyA9IFA8YnIgPjxiciA+RHJpdmVyIGRvZXMgbm90IHJlcG9ydCBSVEVfRVRI
-X1ZMQU5fU1RSSVBfT0ZGTE9BUzxiciA+PGJyID4mZ3Q7ICtMMyBjaGVja3N1bSBvZmZsb2FkJm5i
-c3A7ID0gUDxiciA+Jmd0OyArTDQgY2hlY2tzdW0gb2ZmbG9hZCZuYnNwOyA9IFA8YnIgPjxiciA+
-RHJpdmVyIGRvZXMgbm90IHJlcG9ydCBSVEVfRVRIX1JYX09GRkxPQURfVENQX0NLU1VNIGV0Yy48
-YnIgPjxiciA+Jmd0OyArQmFzaWMgc3RhdHMmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5i
-c3A7ID0gWTxiciA+Jmd0OyArRXh0ZW5kZWQgc3RhdHMgJm5ic3A7ICZuYnNwOyAmbmJzcDsgPSBZ
-PGJyID4mZ3Q7ICtTdGF0cyBwZXIgcXVldWUmbmJzcDsgJm5ic3A7ICZuYnNwOyA9IFk8YnIgPiZn
-dDsgK0ZXIHZlcnNpb24gJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyA9IFk8YnIg
-PjxiciA+Tm90IGltcGxlbWVudGVkLjxiciA+PGJyID4mZ3Q7ICtNb2R1bGUgRUVQUk9NIGR1bXAg
-Jm5ic3A7ID0gWTxiciA+PGJyID5Ob3QgaW1wbGVtZW50ZWQuPGJyID48YnIgPiZndDsgK0xpbnV4
-Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyA9
-IFk8YnIgPiZndDsgK0FSTXY4Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJz
-cDsgJm5ic3A7ICZuYnNwOyA9IFk8YnIgPiZndDsgK3g4Ni02NCAmbmJzcDsgJm5ic3A7ICZuYnNw
-OyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgPSBZPGJyID48YnIgPlBsZWFzZSBmaXggdGhl
-IGRvY3VtZW50YXRpb24gYW5kL29yIGNvZGUgdG8gbWF0Y2ggZmVhdHVyZXM8YnIgPmFuZCByZXN1
-Ym1pdDwvZGl2PjwvYmxvY2txdW90ZT48ZGl2ICBzdHlsZT0ibGluZS1oZWlnaHQ6IDIwcHg7IGNs
-ZWFyOiBib3RoOyI+PGJyID48L2Rpdj48L2Rpdj48L2Rpdj4NCjxkaXYgc3R5bGU9ImNsZWFyOiBi
-b3RoOyI+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTBweDsgY29sb3I6IHJnYigyMTYsIDIxNiwg
-MjE2KTsiPuacrOmCruS7tuaJgOWQq+S/oeaBr+WPiuWFtuS7u+S9lemZhOS7tuS4uuS/neWvhuS/
-oeaBr+S4lOWPr+iDveWxnuS6juS4k+acieS/oeaBr+OAguS7u+S9lemdnuaMh+WumuaOpeaUtuS6
-uuWdh+aXoOadg+iuv+mXruacrOmCruS7tuOAguWmguaenOaCqOS4jeaYr+ivpemCruS7tueahOaM
-h+WumuaOpeaUtuS6uu+8jOmCo+S5iOS7u+S9leWvueacrOmCruS7tuWGheWuuei/m+ihjOaKq+mc
-su+8jOWkjeWItuaIluS9v+eUqOeahOihjOS4uuWdh+aYr+emgeatoueahOOAguWmguaenOaCqOS4
-jeaYr+ivpemCruS7tueahOaMh+WumuaOpeaUtuS6uu+8jOivt+aCqOeri+WNs+mAmui/h+mCruS7
-tumAmuefpSZuYnNwO2NvbXBsaWFuY2VAbmVidWxhLW1hdHJpeC5jb23lubbnq4vljbPliKDpmaTm
-gqjplJnor6/mjqXlj5fnmoTpgq7ku7bjgII8L3NwYW4+PC9kaXY+PGRpdiBzdHlsZT0iY2xlYXI6
-IGJvdGg7Ij48c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMHB4OyBjb2xvcjogcmdiKDIxNiwgMjE2
-LCAyMTYpOyI+VGhlJm5ic3A7aW5mb3JtYXRpb24mbmJzcDtpbiZuYnNwO3RoaXMmbmJzcDttZXNz
-YWdlJm5ic3A7YW5kJm5ic3A7YW55Jm5ic3A7YXR0YWNobWVudHMmbmJzcDtpcyZuYnNwO2NvbmZp
-ZGVudGlhbCZuYnNwO2FuZCZuYnNwO21heSZuYnNwO2JlJm5ic3A7cHJpdmlsZWdlZC4mbmJzcDsm
-bmJzcDtBY2Nlc3MmbmJzcDt0byZuYnNwO3RoaXMmbmJzcDtlbWFpbCZuYnNwO2J5Jm5ic3A7YW55
-b25lJm5ic3A7b3RoZXImbmJzcDt0aGFuJm5ic3A7dGhlJm5ic3A7aW50ZW5kZWQmbmJzcDtyZWNp
-cGllbnQmbmJzcDtpcyZuYnNwO25vdCZuYnNwO2F1dGhvcml6ZWQuJm5ic3A7Jm5ic3A7SWYmbmJz
-cDt5b3UmbmJzcDthcmUmbmJzcDtub3QmbmJzcDt0aGUmbmJzcDtpbnRlbmRlZCZuYnNwO3JlY2lw
-aWVudCwmbmJzcDtkaXNjbG9zdXJlLCZuYnNwO2NvcHlpbmcmbmJzcDtvciZuYnNwO3VzZSZuYnNw
-O29mJm5ic3A7dGhlJm5ic3A7Y29udGVudHMmbmJzcDtvZiZuYnNwO3RoaXMmbmJzcDtlbWFpbCZu
-YnNwO2lzJm5ic3A7cHJvaGliaXRlZC4mbmJzcDsmbmJzcDtJZiZuYnNwO3lvdSZuYnNwO2FyZSZu
-YnNwO25vdCZuYnNwO3RoZSZuYnNwO2ludGVuZGVkJm5ic3A7cmVjaXBpZW50LCZuYnNwO3BsZWFz
-ZSZuYnNwO25vdGlmeSZuYnNwOyZuYnNwO2NvbXBsaWFuY2VAbmVidWxhLW1hdHJpeC5jb20mbmJz
-cDtpbW1lZGlhdGVseSZuYnNwO2J5Jm5ic3A7ZW1haWwsJm5ic3A7YW5kJm5ic3A7cGxlYXNlJm5i
-c3A7ZGVzdHJveSZuYnNwO3RoZSZuYnNwO2VtYWlsJm5ic3A7eW91Jm5ic3A7cmVjZWl2ZWQmbmJz
-cDtpbiZuYnNwO2Vycm9yLjwvc3Bhbj48L2Rpdj4=
-------=ALIBOUNDARY_1939_7ff816895700_68f83544_19e5d5--
+In function rxq_burst_mprq_v() [drivers/net/mlx5/mlx5_rxtx_vec.c line 470]:
 
+unsigned int cq_idx =3D rxq->cq_ci & q_mask;
+...
+cq =3D &(*rxq->cqes)[cq_idx];
+rte_prefetch0(cq);
+rte_prefetch0(cq + 1);
+rte_prefetch0(cq + 2);
+rte_prefetch0(cq + 3);
+...
+if (rcvd_pkt > 0) {
+    rcvd_pkt =3D RTE_MIN(rcvd_pkt, pkts_n);
+    cp_pkt =3D rxq_copy_mprq_mbuf_v(rxq, pkts, rcvd_pkt); // rxq->cq_ci
+incremented here
+    rxq->decompressed -=3D rcvd_pkt;
+    pkts +=3D cp_pkt;
+}
+...
+/* Not to overflow pkts array. */
+pkts_n =3D RTE_ALIGN_FLOOR(pkts_n - cp_pkt, MLX5_VPMD_DESCS_PER_LOOP);
+/* Not to cross queue end. */
+pkts_n =3D RTE_MIN(pkts_n, elts_n - elts_idx);
+pkts_n =3D RTE_MIN(pkts_n, q_n - cq_idx); // (1)=20
+...
+/* At this point, there shouldn't be any remaining packets. */
+MLX5_ASSERT(rxq->decompressed =3D=3D 0);
+/* Process all the CQEs */
+nocmp_n =3D rxq_cq_process_v(rxq, cq, elts, pkts, pkts_n, err, &comp_idx); =
+(2)
+
+The cq pointer may be using an outdated rxq->cq_ci value if rcvd_pkt > 0 and
+rxq->cq_ci gets incremented in rxq_copy_mprq_mbuf_v(). This may have the
+following issues:
+- pkts_n computed in (1) may be more than what it should be
+- the cq pointer retrieved using the outdated cq_idx is being passed into
+rxq_cq_process_v() again (2).
+
+
+For the fix, I think the value of cq_idx needs to be updated again after the
+processing the decompressed packets and cq pointer be retrieved after.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
