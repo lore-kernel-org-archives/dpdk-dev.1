@@ -2,74 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB602CCD1AB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 15:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F95CCD1AB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 16:00:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 64015402A7;
-	Wed, 22 Oct 2025 17:57:16 +0200 (CEST)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
- [209.85.210.180])
- by mails.dpdk.org (Postfix) with ESMTP id 98A8540262
- for <dev@dpdk.org>; Wed, 22 Oct 2025 17:57:15 +0200 (CEST)
-Received: by mail-pf1-f180.google.com with SMTP id
- d2e1a72fcca58-781ea2cee3fso6316548b3a.0
- for <dev@dpdk.org>; Wed, 22 Oct 2025 08:57:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BC8E94027D;
+	Wed, 22 Oct 2025 18:00:08 +0200 (CEST)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id B01F24025E
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 18:00:07 +0200 (CEST)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-2897522a1dfso71682515ad.1
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 09:00:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1761148634; x=1761753434; darn=dpdk.org;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761148807;
+ x=1761753607; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=otG5MsAyve2hMoVxdwCDxgimm2PfZqEIFk5Sv8dnkXM=;
- b=QOAfwPh94PivTsbXw0zp93ENNvaE33Z8HGESDPKHpMfOSkcBnZ+XDlesd517bAKQNq
- am27Buqkgay9b3St9+NsZ99X+MthJTJjfwzm6M+PwJ0Q/e8zWn1dNwZ/HV0fe4FnIbGM
- tZI49cRXrTmhUWHOLt93jWkXzDsoeLsCJ6iTz8wP74QGxdY7dXHapnFzbK1+IX5CMsxZ
- MShj3l5IEjC45kyiByYQkVrh3socwMWRA7ByWkQAbk2ufBlqXLKlAzdB+w9kjg6rKfc1
- OhVJ75X7sBiS8qOTbN/ZiAbeNapiN/iqTpHoGQFFoiEA4BRRs5BIw3Orivihi4iWltQ6
- g61w==
+ bh=odpCw2madKLP2d0991ynCT2TZkwH6EISQ1BKCzsMhc8=;
+ b=YQDBM4QnlqVkwtvPPeZ/0S1tMFDwOGXh8w1lbxP270MHFUYSnmBfedhvyTbMSPLVeU
+ WdDzzS/3sqTqnypsGxPBTiFNAGWtEJgH9SlJNIpToklu2XWZzL36ywDr+wGTJzYdlPSU
+ vE2Z8aBDRYSUuhAk1Mm133Hlu6K9IFUG4F89Om3Dbz0+xLaJP0c7zv5AzUdqfTcdPGRN
+ LE8aLTs8zDWPxeL2/EKWDSK5GW/njlyXY0qq4eC4/5y3/PQUjurndl7d++F857Iz9N4r
+ RMZTGC62Vav4CrUpExd96oPXD4Ltn2UMBf3bWGiB0BSaWPcpwx1D80iTbKB9peyLZHlJ
+ R2GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761148634; x=1761753434;
+ d=1e100.net; s=20230601; t=1761148807; x=1761753607;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=otG5MsAyve2hMoVxdwCDxgimm2PfZqEIFk5Sv8dnkXM=;
- b=DlOtpPN90DzLjcnaOkIGSeU4eTe12W5Hzq96bXJCz328GWfB+1EsM5FADhhIJeTvD3
- R/hY+vN+3WynmYMaxAVnNXFTNsS3/cMKnt/bDLJCiw/Yqeb++2CP96HidSK7pxO0OdF9
- NEkgbh0x5XzcGcigRPozEkmvpzF2d7vTkzfi0GdZk1Rjs4NeHUvBfP73eV6V4Va9fpBY
- AVvW5A7N3jI9IRTs/L8FTnDv9ZrK38ueM/gsdwGCtXP5vjmSrJxy5hcoD/Q1y365KThC
- n/G/vJCN5vPonJNclSfUuqFRGz6A7O6hDVZoHouC48Pb0vHv1O+K+BuPqLa4Iz9Mri5Y
- OFDQ==
-X-Gm-Message-State: AOJu0YxdghH34fgox6MORCO4KF+DGshAxX02Is3YiqG9LDEShXLWV+iu
- O6QCDDfPFbCnywEnmsOlGWMqsyxNcl3LtN3yBhpHCcmKAzkVzWml91ohQyYOMA==
-X-Gm-Gg: ASbGnctDY7S6e5B9GRhrMLWGNIXpQf4Ns1JjGmLxMmPFVYmeJ1Ole5IECKj9nv20qwH
- OEc4HntjZ6K9MjO7srGTsp74vL3/NKLOn7vpDUv2B5+3kn2xsTjcOzY6RWx0Z1+bUGCBS/qjaVF
- ZxiZQUdYjJyornB7R5lId2xx1tWnjm8foKGSD1QOOS0MgQpkcsc6O7DgG34xSMnoHduhcVIYktG
- XBgVD8Ae8wW1MB1XC+mjziOUJzsj1YDK2dqnViuN8MkEji029zKep3DmhD2Z/GYMMX/HOQXz5RE
- XnxmzYQX4oB5Izr8TsEFOZ8kI98zBr/C1mPkqv/uOSyJzTGlQU9Dt1WeK1Z7uevpbQgFi1lDpJX
- 6Xt8wbPWUbLewilhy5Y2tCXRvg9XufFTYRZFC3irrsVAzsOlnEjL0dPAPZehWx9Sf41dUdUaBMA
- aoTvec7mXFqdGgy94MAh5hRVHFiU+KwwUnn4sQ84dH5J9/XnSO/uP+FzPbBg==
-X-Google-Smtp-Source: AGHT+IHZqCoTaWJjMsh7S20L7qTgnXC120QgPbm1N4vucdggHNMIPiMDjZ3DesVqdheVm5Fsp/VyXg==
-X-Received: by 2002:a05:6a21:999e:b0:32b:70aa:a1d9 with SMTP id
- adf61e73a8af0-334a85fcd29mr29779929637.33.1761148634238; 
- Wed, 22 Oct 2025 08:57:14 -0700 (PDT)
-Received: from amiya73TMT9m.aristanetworks.com
- ([2402:e280:2162:53:50bb:5301:cacd:1307])
+ bh=odpCw2madKLP2d0991ynCT2TZkwH6EISQ1BKCzsMhc8=;
+ b=SIm6pVa+f4QWaDTPHfzto8xJYJO7FgFCKEzaH7QnmSUNecQu8RD+/eEoplnq7Ch+U2
+ g/+cIGQsytU1dTNHttVnS4IggLC6o4oB8h/RnjIboGmenlFfZ+AOEUOnKMXJM6RMApEh
+ nUG/XKe43WptrhZjHOqUrX9q70KqLGUzZFP5OeFv6qi7gFSZWXaQx4oOBxB9BbYKLRHY
+ LGsgchmB93Sk1DYVp7NccJvlz2GgTjAG7ovOL+5UaXqmHZKCm+rp+VP4G1Bvn/Ew9Bl5
+ wSzHQ7Of2KMYmuctWVM8P29oovHUaaZ5dJ0pY7zSFzv+gvB4w1vGyMkA+m3jEzXi2Zgx
+ 0D4Q==
+X-Gm-Message-State: AOJu0YzxjqizmbG5D9EPo1xDReC0w8ulleu9aOQRKThEMMRwGkSW/Eh/
+ hpbTx9Lp8rPXoUb0WTuAO+vC/LHeLp5/ljKMxXjAj83qHUrsI6bb6G43iH8QSazJ1/Q20T50G4K
+ KGkR5f+4=
+X-Gm-Gg: ASbGncvtlqarmXOI85ylcdQcvNnPbLgZYtr8s/OwhEV1V+5+6pQy6pbq42j1roV/yo0
+ pV2f4Ezu1mXkvtrgVrsqcTA1/EUue+3tgTK1rTqeFJKLudpR/xR/Y+zYokyQMkJPsRl45cMFhxn
+ b0I95AqfX95B5abBHSC4dpsvi5SZWj7cikAEY/H+kMkUIu5/s5y+rVel72DmxfRE6CnCpWgiqix
+ HqE2E/KoDLZhWtPU6fP8PkED1GJC1qzpiwZkZMgyqENmXEHAloI2l49Hly6Dsp2nPke7DW/j4Gy
+ YYtWZAlaOkv+3+K1ZLznU7HInUVm8ei4dL4HN8QjlZBbm38eNtcukcLxpwu+GJ9eMn6mOntWlZG
+ JSRYiyE8m+0hAeKI+nEyWLZiR02W55EeseSTVQ5JmBGXZJH46b5EQwmpGi20EgU8B5sKLq6SkyG
+ 13SpS+E9gtYTxjaSOub9VSZzgXNjvTnya/TGm6uGHkjWTcHaBO3A==
+X-Google-Smtp-Source: AGHT+IFz3uGe8V54qdGm2ZoFzI1ChtYLCSSyVFTiJj0OFG3q5Mgj82hvxi2XTo4Z/Z6ElaacDR83eA==
+X-Received: by 2002:a17:903:181:b0:271:479d:3dcb with SMTP id
+ d9443c01a7336-290c9c8a75amr255839965ad.6.1761148806763; 
+ Wed, 22 Oct 2025 09:00:06 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-b6a76b77bf6sm13437223a12.41.2025.10.22.08.57.08
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 22 Oct 2025 08:57:13 -0700 (PDT)
-From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+ d9443c01a7336-29246fcc78asm143321155ad.32.2025.10.22.09.00.06
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 22 Oct 2025 09:00:06 -0700 (PDT)
+Date: Wed, 22 Oct 2025 09:00:04 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: amiyaranjan.mohakud@gmail.com,
-	stable@dpdk.org
-Subject: [PATCH v2] net/vmxnet3: disable RSS for single queue configuration
- for ESX8.0+ versions
-Date: Wed, 22 Oct 2025 21:26:51 +0530
-Message-Id: <20251022155651.9818-1-amiyaranjan.mohakud@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20251022133523.6977-1-amiyaranjan.mohakud@gmail.com>
-References: <20251022133523.6977-1-amiyaranjan.mohakud@gmail.com>
+Cc: david.marchand@redhat.com
+Subject: Re: [PATCH] devtools: fix awk regular expression
+Message-ID: <20251022090004.049fd27f@phoenix.lan>
+In-Reply-To: <20251019160511.18173-1-stephen@networkplumber.org>
+References: <20251019160511.18173-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,40 +82,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-It fixes the issue of v4 RSS configuration failure in
-vmxnet3_v4_rss_configure() while writing to BAR register. It's very
-specific to single queue configuration.
+On Sun, 19 Oct 2025 09:05:11 -0700
+Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-https://mails.dpdk.org/archives/users/2025-April/008236.html
+> The latest version of awk (in Debian testing) will give a warning
+> about invalid regular expression error.
+> 
+> 	awk: line 6: regular expression compile failed (syntax error ^* or ^+)
+> 	^+++ b/
+> 
+> Fix by using additional backslash escape.
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-Bugzilla ID:1789
-Cc: stable@dpdk.org
-
-v2:
- - Fixed typo in commit message
-
-Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
----
- drivers/net/vmxnet3/vmxnet3_ethdev.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/net/vmxnet3/vmxnet3_ethdev.c b/drivers/net/vmxnet3/vmxnet3_ethdev.c
-index f4cdb1bb31..3c0ddba80c 100644
---- a/drivers/net/vmxnet3/vmxnet3_ethdev.c
-+++ b/drivers/net/vmxnet3/vmxnet3_ethdev.c
-@@ -534,6 +534,12 @@ vmxnet3_dev_configure(struct rte_eth_dev *dev)
-
- 	PMD_INIT_FUNC_TRACE();
-
-+	/* Disabling RSS for single queue pair */
-+	if (dev->data->nb_rx_queues == 1) {
-+		dev->data->dev_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
-+		PMD_INIT_LOG(ERR, "WARN: Disabling RSS for single Rx queue");
-+	}
-+
- 	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG)
- 		dev->data->dev_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
-
---
-2.39.5 (Apple Git-154)
-
+This bug is impacting running checkpatch on next-net staging
