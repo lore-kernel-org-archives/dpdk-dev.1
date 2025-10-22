@@ -2,31 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AD9CCD1AB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 03:52:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D94CCD1AB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 03:52:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6754B40280;
-	Wed, 22 Oct 2025 05:52:23 +0200 (CEST)
-Received: from out28-195.mail.aliyun.com (out28-195.mail.aliyun.com
- [115.124.28.195])
- by mails.dpdk.org (Postfix) with ESMTP id 94395400D6
+	by mails.dpdk.org (Postfix) with ESMTP id 5C5FF4025E;
+	Wed, 22 Oct 2025 05:52:24 +0200 (CEST)
+Received: from out28-147.mail.aliyun.com (out28-147.mail.aliyun.com
+ [115.124.28.147])
+ by mails.dpdk.org (Postfix) with ESMTP id 5F0E7400D6
  for <dev@dpdk.org>; Wed, 22 Oct 2025 05:52:20 +0200 (CEST)
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.f4RFeIM_1761105137 cluster:ay29) by smtp.aliyun-inc.com;
- Wed, 22 Oct 2025 11:52:17 +0800
+ fp:SMTPD_---.f4RFeJV_1761105138 cluster:ay29) by smtp.aliyun-inc.com;
+ Wed, 22 Oct 2025 11:52:18 +0800
 From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 To: dimon.zhao@nebula-matrix.com,
 	dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>, Kyo Liu <kyo.liu@nebula-matrix.com>,
- Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v14 01/17] net/nbl: add doc and minimum nbl build framework
-Date: Tue, 21 Oct 2025 20:51:54 -0700
-Message-Id: <20251022035210.3243056-2-dimon.zhao@nebula-matrix.com>
+Cc: Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>,
+ Sam Chen <sam.chen@nebula-matrix.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v14 02/17] net/nbl: add simple probe/remove and log module
+Date: Tue, 21 Oct 2025 20:51:55 -0700
+Message-Id: <20251022035210.3243056-3-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251022035210.3243056-1-dimon.zhao@nebula-matrix.com>
 References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
  <20251022035210.3243056-1-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -41,300 +43,401 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-add minimum PMD code, doc and build infrastructure for nbl driver.
+Our driver architecture is relatively complex because the code
+is highly reusable and designed to support multiple features.
+For example, our driver can support open-source UIO/VFIO drivers
+while also coexisting with kernel drivers.
+Additionally, the codebase supports multiple chip variants,
+each with distinct hardware-software interactions.
+To ensure compatibility, our architecture is divided
+into the following layers:
+
+1. Dev Layer (Device Layer)
+The top-level business logic layer where all DPDK operations
+are device-centric. Every operation is performed relative
+to the device context.
+
+2. Dispatch Layer
+The dispatching layer determines whether tasks from the
+Dev Layer should be routed to the Resource Layer or
+Channel Layer based on two criteria:
+2.1 The driver type in use (UIO/VFIO vs. vendor-specific driver)
+2.2 Whether the task requires hardware access
+
+3. Resource Layer
+Handles tasks dispatched from the Dev Layer (via Dispatch Layer)
+in userspace. These tasks fall into two categories:
+3.1 Hardware control in userspace (common with UIO/VFIO drivers):
+The Resource Layer further invokes the HW Layer
+when hardware access is needed, as only the HW Layer
+has OS-level privileges.
+3.2 Software resource management: Operations like packet
+statistics collection that don't require hardware access.
+
+4. HW Layer (Hardware Layer)
+Serves the Resource Layer by interacting with different
+hardware chipsets.Writes to hardware registers to drive
+the hardware based on Resource Layer directives.
+
+5. Channel Layer
+Dedicated to coexistence mode with kernel drivers.
+When a BDF device is shared between two drivers
+(with the kernel driver as primary), all hardware operations from
+DPDK are forwarded through this layer to the kernel driver.
+Exceptions include performance-sensitive operations
+(e.g., doorbell ringing) handled directly in userspace.
+
+Architecture Flow Summary
+Our top-down architecture varies by driver mode:
+1. UIO/VFIO Mode (e.g., configuring a hardware queue)
+Dev Layer → Dispatch Layer → Resource Layer → HW Layer
+The Dispatch Layer routes tasks to the Resource Layer,
+which interacts with the HW Layer for hardware writes.
+
+2. Coexistence Mode
+Dev Layer → Dispatch Layer → Channel Layer
+The Dispatch Layer redirects hooks to the Channel Layer,
+which communicates with the kernel driver to configure hardware.
+
+This layered approach ensures flexibility across driver types
+and hardware variants. My subsequent patches will
+iteratively define and implement each layer’s functionality.
+Let me know if further clarification would be helpful
+for the review process.
 
 Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 ---
- .mailmap                                      |  4 +
- MAINTAINERS                                   |  9 ++
- doc/guides/nics/features/nbl.ini              | 18 ++++
- doc/guides/nics/index.rst                     |  1 +
- doc/guides/nics/nbl.rst                       | 87 +++++++++++++++++++
- doc/guides/rel_notes/release_25_11.rst        |  4 +
- drivers/net/meson.build                       |  1 +
- drivers/net/nbl/meson.build                   | 11 +++
- drivers/net/nbl/nbl_ethdev.c                  |  3 +
- .../net/nbl/nbl_include/nbl_product_base.h    | 31 +++++++
- 10 files changed, 169 insertions(+)
- create mode 100644 doc/guides/nics/features/nbl.ini
- create mode 100644 doc/guides/nics/nbl.rst
- create mode 100644 drivers/net/nbl/meson.build
- create mode 100644 drivers/net/nbl/nbl_ethdev.c
- create mode 100644 drivers/net/nbl/nbl_include/nbl_product_base.h
+ drivers/net/nbl/meson.build               |   3 +
+ drivers/net/nbl/nbl_core.c                |  30 ++++++
+ drivers/net/nbl/nbl_core.h                |  40 ++++++++
+ drivers/net/nbl/nbl_ethdev.c              | 116 ++++++++++++++++++++++
+ drivers/net/nbl/nbl_ethdev.h              |  13 +++
+ drivers/net/nbl/nbl_include/nbl_include.h |  43 ++++++++
+ drivers/net/nbl/nbl_include/nbl_logs.h    |  25 +++++
+ 7 files changed, 270 insertions(+)
+ create mode 100644 drivers/net/nbl/nbl_core.c
+ create mode 100644 drivers/net/nbl/nbl_core.h
+ create mode 100644 drivers/net/nbl/nbl_ethdev.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_include.h
+ create mode 100644 drivers/net/nbl/nbl_include/nbl_logs.h
 
-diff --git a/.mailmap b/.mailmap
-index 984621f26b..ce494f22ee 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -378,6 +378,7 @@ Diana Wang <na.wang@corigine.com>
- Didier Pallard <didier.pallard@6wind.com>
- Dilshod Urazov <dilshod.urazov@oktetlabs.ru>
- Dima Ruinskiy <dima.ruinskiy@intel.com>
-+Dimon Zhao <dimon.zhao@nebula-matrix.com>
- Ding Zhi <zhi.ding@6wind.com>
- Diogo Behrens <diogo.behrens@huawei.com>
- Dirk-Holger Lenz <dirk.lenz@ng4t.com>
-@@ -864,6 +865,7 @@ Kumar Amber <kumar.amber@intel.com>
- Kumara Parameshwaran <kumaraparamesh92@gmail.com> <kparameshwar@vmware.com>
- Kumar Sanghvi <kumaras@chelsio.com>
- Kyle Larose <klarose@sandvine.com>
-+Kyo Liu <kyo.liu@nebula-matrix.com>
- Lance Richardson <lance.richardson@broadcom.com>
- Laszlo Ersek <lersek@redhat.com>
- Laura Stroe <laura.stroe@intel.com>
-@@ -878,6 +880,7 @@ Lei Gong <arei.gonglei@huawei.com>
- Lei Ji <jilei8@huawei.com>
- Lei Yao <lei.a.yao@intel.com>
- Leonid Myravjev <myravjev@amicon.ru>
-+Leon Yu <leon.yu@nebula-matrix.com>
- Leo Xu <yongquanx@nvidia.com>
- Leszek Zygo <leszek.zygo@intel.com>
- Levend Sayar <levendsayar@gmail.com>
-@@ -1397,6 +1400,7 @@ Saikrishna Edupuganti <saikrishna.edupuganti@intel.com>
- Saleh Alsouqi <salehals@nvidia.com> <salehals@mellanox.com>
- Salem Sol <salems@nvidia.com>
- Sam Andrew <samandrew@microsoft.com>
-+Sam Chen <sam.chen@nebula-matrix.com>
- Sameh Gobriel <sameh.gobriel@intel.com>
- Sam Grove <sam.grove@sifive.com>
- Samik Gupta <samik.gupta@broadcom.com>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ad02128ca1..1f08899870 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1018,6 +1018,15 @@ F: drivers/net/rnp/
- F: doc/guides/nics/rnp.rst
- F: doc/guides/nics/features/rnp.ini
- 
-+Nebulamatrix nbl
-+M: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-+M: Kyo Liu<kyo.liu@nebula-matrix.com>
-+M: Leon Yu <leon.yu@nebula-matrix.com>
-+M: Sam Chen <sam.chen@nebula-matrix.com>
-+F: drivers/net/nbl
-+F: doc/guides/nics/nbl.rst
-+F: doc/guides/nics/features/nbl.ini
-+
- Realtek r8169
- M: Howard Wang <howard_wang@realsil.com.cn>
- M: Chunhao Lin <hau@realtek.com>
-diff --git a/doc/guides/nics/features/nbl.ini b/doc/guides/nics/features/nbl.ini
-new file mode 100644
-index 0000000000..b579743dc7
---- /dev/null
-+++ b/doc/guides/nics/features/nbl.ini
-@@ -0,0 +1,18 @@
-+;
-+; Supported features of the 'nbl' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Speed capabilities   = Y
-+MTU update           = Y
-+Scattered Rx         = Y
-+Promiscuous mode     = Y
-+Unicast MAC filter   = Y
-+VLAN filter          = Y
-+Basic stats          = Y
-+Extended stats       = Y
-+Stats per queue      = Y
-+Linux                = Y
-+ARMv8                = Y
-+x86-64               = Y
-diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
-index 1a1e3a6825..14276a366c 100644
---- a/doc/guides/nics/index.rst
-+++ b/doc/guides/nics/index.rst
-@@ -51,6 +51,7 @@ Network Interface Controller Drivers
-     mvneta
-     mvpp2
-     netvsc
-+    nbl
-     nfb
-     nfp
-     ngbe
-diff --git a/doc/guides/nics/nbl.rst b/doc/guides/nics/nbl.rst
-new file mode 100644
-index 0000000000..fa5dfaecdc
---- /dev/null
-+++ b/doc/guides/nics/nbl.rst
-@@ -0,0 +1,87 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+   Copyright 2025 Nebulamatrix Technology Co., Ltd
-+
-+NBL Poll Mode Driver
-+====================
-+
-+The NBL PMD (**librte_net_nbl**) provides poll mode driver support for
-+10/25/50/100/200 Gbps Nebulamatrix Series Network Adapters.
-+
-+
-+Features
-+--------
-+
-+Features of the NBL PMD are:
-+
-+- Multiple queues for TX and RX
-+- Receiver Side Scaling (RSS). Currently does not support user-configured RSS and only supports packet spraying via RSS.
-+- Jumbo frames
-+
-+
-+Supported NICs
-+--------------
-+
-+The following Nebulamatrix device models are supported by the same nbl driver:
-+
-+  - S1205CQ-A00CHT
-+  - S1105AS-A00CHT
-+  - S1055AS-A00CHT
-+  - S1052AS-A00CHT
-+  - S1051AS-A00CHT
-+  - S1045XS-A00CHT
-+  - S1205CQ-A00CSP
-+  - S1055AS-A00CSP
-+  - S1052AS-A00CSP
-+
-+
-+Linux Prerequisites
-+~~~~~~~~~~~~~~~~~~~
-+
-+This driver relies on kernel drivers for resources allocations and initialization.
-+The following dependencies are not part of DPDK and must be installed separately:
-+
-+- **Kernel modules**
-+
-+  They provide low level device drivers that manage actual hardware initialization
-+  and resources sharing with user-space processes.
-+
-+  Unlike most other PMDs, these modules must remain loaded and bound to
-+  their devices:
-+
-+  - ``nbl_core``: hardware driver managing Ethernet kernel network devices.
-+
-+Because the nbl_core kernel driver code has not been upstreamed to the Linux kernel community, it cannot be provided by standard Linux distributions.
-+However, the nbl_core kernel driver has been upstreamed to the openEuler and Anolis communities. You can obtain the nbl_core code from the following links:
-+
-+openEuler community:
-+https://gitee.com/openeuler/kernel/pulls/11667
-+
-+Anolis community:
-+https://gitee.com/anolis/cloud-kernel/pulls/5185
-+https://gitee.com/anolis/cloud-kernel/pulls/5059
-+
-+Alternatively, you can contact us to obtain the nbl_core code and installation package.
-+
-+
-+Prerequisites
-+-------------
-+
-+- Follow the DPDK :ref:`Getting Started Guide for Linux <linux_gsg>`
-+  to setup the basic DPDK environment.
-+
-+- Learn about `Nebulamatrix Series NICs
-+  <https://www.nebula-matrix.com/main>`_.
-+
-+
-+Multiple Processes
-+~~~~~~~~~~~~~~~~~~
-+
-+The NBL PMD does not support Multiple Processes.
-+
-+
-+Limitations or Known Issues
-+---------------------------
-+
-+32-bit architectures are not supported.
-+
-+Windows and BSD are not supported yet.
-diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
-index 8709784f8c..62219a5dbb 100644
---- a/doc/guides/rel_notes/release_25_11.rst
-+++ b/doc/guides/rel_notes/release_25_11.rst
-@@ -145,6 +145,10 @@ New Features
-   * Added support for retrieving HW timestamps for Rx packets with nanosecond resolution.
-   * Fixed PCI BAR mapping on 64K page size.
- 
-+* **Added Nebulamatrix nbl net driver.**
-+
-+  * Added the PMD for Nebulamatrix NICs.
-+
- 
- Removed Items
- -------------
-diff --git a/drivers/net/meson.build b/drivers/net/meson.build
-index 2d32068ed2..c7dae4ad27 100644
---- a/drivers/net/meson.build
-+++ b/drivers/net/meson.build
-@@ -41,6 +41,7 @@ drivers = [
-         'mlx5',
-         'mvneta',
-         'mvpp2',
-+        'nbl',
-         'netvsc',
-         'nfb',
-         'nfp',
 diff --git a/drivers/net/nbl/meson.build b/drivers/net/nbl/meson.build
-new file mode 100644
-index 0000000000..68c045a48c
---- /dev/null
+index 68c045a48c..778c495c68 100644
+--- a/drivers/net/nbl/meson.build
 +++ b/drivers/net/nbl/meson.build
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright 2025 NebulaMatrix Technology Co., Ltd.
+@@ -6,6 +6,9 @@ if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
+     reason = 'only supported on 64bit Linux'
+ endif
+ 
++includes += include_directories('nbl_include')
 +
-+if not is_linux or not dpdk_conf.get('RTE_ARCH_64')
-+    build = false
-+    reason = 'only supported on 64bit Linux'
-+endif
-+
-+sources = files(
-+        'nbl_ethdev.c',
-+)
-diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
+ sources = files(
+         'nbl_ethdev.c',
++        'nbl_core.c',
+ )
+diff --git a/drivers/net/nbl/nbl_core.c b/drivers/net/nbl/nbl_core.c
 new file mode 100644
-index 0000000000..3ad8e4033a
+index 0000000000..267293715a
 --- /dev/null
-+++ b/drivers/net/nbl/nbl_ethdev.c
-@@ -0,0 +1,3 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
-+ */
-diff --git a/drivers/net/nbl/nbl_include/nbl_product_base.h b/drivers/net/nbl/nbl_include/nbl_product_base.h
-new file mode 100644
-index 0000000000..648278b094
---- /dev/null
-+++ b/drivers/net/nbl/nbl_include/nbl_product_base.h
-@@ -0,0 +1,31 @@
++++ b/drivers/net/nbl/nbl_core.c
+@@ -0,0 +1,30 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright 2025 Nebulamatrix Technology Co., Ltd.
 + */
 +
-+#ifndef _NBL_DEF_PRODUCT_BASE_H_
-+#define _NBL_DEF_PRODUCT_BASE_H_
++#include "nbl_core.h"
++
++int nbl_core_init(struct nbl_adapter *adapter, const struct rte_eth_dev *eth_dev)
++{
++	RTE_SET_USED(adapter);
++	RTE_SET_USED(eth_dev);
++
++	return 0;
++}
++
++void nbl_core_remove(struct nbl_adapter *adapter)
++{
++	RTE_SET_USED(adapter);
++}
++
++int nbl_core_start(struct nbl_adapter *adapter)
++{
++	RTE_SET_USED(adapter);
++
++	return 0;
++}
++
++void nbl_core_stop(struct nbl_adapter *adapter)
++{
++	RTE_SET_USED(adapter);
++}
+diff --git a/drivers/net/nbl/nbl_core.h b/drivers/net/nbl/nbl_core.h
+new file mode 100644
+index 0000000000..0b0769a780
+--- /dev/null
++++ b/drivers/net/nbl/nbl_core.h
+@@ -0,0 +1,40 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#ifndef _NBL_CORE_H_
++#define _NBL_CORE_H_
 +
 +#include "nbl_include.h"
 +
-+struct nbl_product_core_ops {
-+	int (*hw_init)(void *p);
-+	void (*hw_remove)(void *p);
-+	int (*res_init)(void *p, struct rte_eth_dev *eth_dev);
-+	void (*res_remove)(void *p);
-+	int (*chan_init)(void *p);
-+	void (*chan_remove)(void *p);
++#define NBL_VENDOR_ID				(0x1F0F)
++#define NBL_DEVICE_ID_M18110			(0x3403)
++#define NBL_DEVICE_ID_M18110_LX			(0x3404)
++#define NBL_DEVICE_ID_M18110_BASE_T		(0x3405)
++#define NBL_DEVICE_ID_M18110_LX_BASE_T		(0x3406)
++#define NBL_DEVICE_ID_M18110_OCP		(0x3407)
++#define NBL_DEVICE_ID_M18110_LX_OCP		(0x3408)
++#define NBL_DEVICE_ID_M18110_BASE_T_OCP		(0x3409)
++#define NBL_DEVICE_ID_M18110_LX_BASE_T_OCP	(0x340a)
++#define NBL_DEVICE_ID_M18120			(0x340b)
++#define NBL_DEVICE_ID_M18120_LX			(0x340c)
++#define NBL_DEVICE_ID_M18120_BASE_T		(0x340d)
++#define NBL_DEVICE_ID_M18120_LX_BASE_T		(0x340e)
++#define NBL_DEVICE_ID_M18120_OCP		(0x340f)
++#define NBL_DEVICE_ID_M18120_LX_OCP		(0x3410)
++#define NBL_DEVICE_ID_M18120_BASE_T_OCP		(0x3411)
++#define NBL_DEVICE_ID_M18120_LX_BASE_T_OCP	(0x3412)
++#define NBL_DEVICE_ID_M18100_VF			(0x3413)
++
++#define NBL_MAX_INSTANCE_CNT 516
++struct nbl_adapter {
++	TAILQ_ENTRY(nbl_adapter) next;
++	struct rte_pci_device *pci_dev;
 +};
 +
-+struct nbl_product_dev_ops {
-+	int (*dev_init)(void *adapter);
-+	void (*dev_uninit)(void *adapter);
-+	int (*dev_start)(void *adapter);
-+	void (*dev_stop)(void *adapter);
++int nbl_core_init(struct nbl_adapter *adapter, const struct rte_eth_dev *eth_dev);
++void nbl_core_remove(struct nbl_adapter *adapter);
++int nbl_core_start(struct nbl_adapter *adapter);
++void nbl_core_stop(struct nbl_adapter *adapter);
++
++#endif
+diff --git a/drivers/net/nbl/nbl_ethdev.c b/drivers/net/nbl/nbl_ethdev.c
+index 3ad8e4033a..1d8168c767 100644
+--- a/drivers/net/nbl/nbl_ethdev.c
++++ b/drivers/net/nbl/nbl_ethdev.c
+@@ -1,3 +1,119 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  * Copyright 2025 Nebulamatrix Technology Co., Ltd.
+  */
++
++#include "nbl_ethdev.h"
++
++RTE_LOG_REGISTER_SUFFIX(nbl_logtype_init, init, INFO);
++RTE_LOG_REGISTER_SUFFIX(nbl_logtype_driver, driver, INFO);
++
++static int nbl_dev_release_pf(struct rte_eth_dev *eth_dev)
++{
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++
++	if (!adapter)
++		return -EINVAL;
++	NBL_LOG(DEBUG, "start to close device %s", eth_dev->device->name);
++	nbl_core_stop(adapter);
++	nbl_core_remove(adapter);
++	return 0;
++}
++
++static int nbl_dev_close(struct rte_eth_dev *eth_dev)
++{
++	return nbl_dev_release_pf(eth_dev);
++}
++
++const struct eth_dev_ops nbl_eth_dev_ops = {
++	.dev_close = nbl_dev_close,
 +};
 +
-+struct nbl_product_dispatch_ops {
-+	int (*dispatch_init)(void *mgt);
-+	int (*dispatch_uninit)(void *mgt);
++static int nbl_eth_dev_init(struct rte_eth_dev *eth_dev)
++{
++	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
++	int ret;
++
++	PMD_INIT_FUNC_TRACE();
++	ret = nbl_core_init(adapter, eth_dev);
++	if (ret) {
++		NBL_LOG(ERR, "core init failed ret %d", ret);
++		goto eth_init_failed;
++	}
++
++	ret = nbl_core_start(adapter);
++	if (ret) {
++		NBL_LOG(ERR, "core start failed ret %d", ret);
++		nbl_core_remove(adapter);
++		goto eth_init_failed;
++	}
++
++	eth_dev->dev_ops = &nbl_eth_dev_ops;
++	return 0;
++
++eth_init_failed:
++	return ret;
++}
++
++/**
++ * @brief: nbl device pci probe
++ * @param[in]: {rte_pci_driver} *pci_drv
++ * @param[in]: {rte_pci_device} *pci_dev
++ * @return: {0-success,negative-fail}
++ */
++static int nbl_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
++			 struct rte_pci_device *pci_dev)
++{
++	NBL_LOG(DEBUG, "nbl probe device %s", pci_dev->name);
++	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
++		NBL_LOG(ERR, "Secondary process is not supported.");
++		return -ENOTSUP;
++	}
++	return rte_eth_dev_pci_generic_probe(pci_dev, sizeof(struct nbl_adapter),
++					     nbl_eth_dev_init);
++}
++
++static int nbl_eth_dev_uninit(struct rte_eth_dev *eth_dev)
++{
++	PMD_INIT_FUNC_TRACE();
++	return nbl_dev_close(eth_dev);
++}
++
++static int nbl_pci_remove(struct rte_pci_device *pci_dev)
++{
++	PMD_INIT_FUNC_TRACE();
++	return rte_eth_dev_pci_generic_remove(pci_dev, nbl_eth_dev_uninit);
++}
++
++static const struct rte_pci_id pci_id_nbl_map[] = {
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18110) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18110_LX) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18110_BASE_T) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18110_LX_BASE_T) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18110_OCP) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18110_LX_OCP) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18110_BASE_T_OCP) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18110_LX_BASE_T_OCP) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18120) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18120_LX) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18120_BASE_T) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18120_LX_BASE_T) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18120_OCP) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18120_LX_OCP) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18120_BASE_T_OCP) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18120_LX_BASE_T_OCP) },
++	{ RTE_PCI_DEVICE(NBL_VENDOR_ID, NBL_DEVICE_ID_M18100_VF) },
++	{ .vendor_id = 0, /* sentinel */ },
 +};
++
++static struct rte_pci_driver nbl_pmd = {
++	.id_table = pci_id_nbl_map,
++	.drv_flags =
++		RTE_PCI_DRV_INTR_LSC |
++		RTE_PCI_DRV_PROBE_AGAIN,
++	.probe = nbl_pci_probe,
++	.remove = nbl_pci_remove,
++};
++
++RTE_PMD_REGISTER_PCI(net_nbl, nbl_pmd);
++RTE_PMD_REGISTER_PCI_TABLE(net_nbl, pci_id_nbl_map);
++RTE_PMD_REGISTER_KMOD_DEP(net_nbl, "* nbl_core");
+diff --git a/drivers/net/nbl/nbl_ethdev.h b/drivers/net/nbl/nbl_ethdev.h
+new file mode 100644
+index 0000000000..e20a7b940e
+--- /dev/null
++++ b/drivers/net/nbl/nbl_ethdev.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#ifndef _NBL_ETHDEV_H_
++#define _NBL_ETHDEV_H_
++
++#include "nbl_core.h"
++
++#define ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev) \
++	((struct nbl_adapter *)((eth_dev)->data->dev_private))
++
++#endif
+diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
+new file mode 100644
+index 0000000000..3c7573f3bf
+--- /dev/null
++++ b/drivers/net/nbl/nbl_include/nbl_include.h
+@@ -0,0 +1,43 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#ifndef _NBL_INCLUDE_H_
++#define _NBL_INCLUDE_H_
++
++#include <ctype.h>
++#include <dirent.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <inttypes.h>
++#include <limits.h>
++#include <linux/netlink.h>
++#include <linux/rtnetlink.h>
++#include <linux/genetlink.h>
++#include <stdarg.h>
++#include <stdbool.h>
++#include <stdint.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/eventfd.h>
++#include <sys/ioctl.h>
++#include <sys/types.h>
++#include <unistd.h>
++
++#include <rte_ethdev.h>
++#include <ethdev_driver.h>
++#include <ethdev_pci.h>
++#include <bus_pci_driver.h>
++
++#include "nbl_logs.h"
++
++typedef uint64_t u64;
++typedef uint32_t u32;
++typedef uint16_t u16;
++typedef uint8_t u8;
++typedef int64_t s64;
++typedef int32_t s32;
++typedef int16_t s16;
++typedef int8_t s8;
++
++#endif
+diff --git a/drivers/net/nbl/nbl_include/nbl_logs.h b/drivers/net/nbl/nbl_include/nbl_logs.h
+new file mode 100644
+index 0000000000..161e07b29d
+--- /dev/null
++++ b/drivers/net/nbl/nbl_include/nbl_logs.h
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2025 Nebulamatrix Technology Co., Ltd.
++ */
++
++#ifndef _NBL_LOGS_H_
++#define _NBL_LOGS_H_
++
++#include <rte_log.h>
++
++extern int nbl_logtype_init;
++#define RTE_LOGTYPE_NBL_INIT nbl_logtype_init
++#define PMD_INIT_LOG(level, ...) \
++	RTE_LOG_LINE_PREFIX(level, NBL_INIT, "%s(): ", __func__, __VA_ARGS__)
++
++extern int nbl_logtype_driver;
++#define RTE_LOGTYPE_NBL_DRIVER nbl_logtype_driver
++
++#define NBL_LOG(level, ...) \
++	RTE_LOG_LINE_PREFIX(level, NBL_DRIVER, "%s: ", __func__, __VA_ARGS__)
++
++#define NBL_ASSERT(exp)		RTE_VERIFY(exp)
++
++#define PMD_INIT_FUNC_TRACE() PMD_INIT_LOG(DEBUG, ">>")
 +
 +#endif
 -- 
