@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C17EACCD1BB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 16:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104D0CCD1BB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 16:36:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 17E18402BC;
-	Wed, 22 Oct 2025 18:34:45 +0200 (CEST)
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com
- [209.85.215.179])
- by mails.dpdk.org (Postfix) with ESMTP id D16B540262
- for <dev@dpdk.org>; Wed, 22 Oct 2025 18:34:43 +0200 (CEST)
-Received: by mail-pg1-f179.google.com with SMTP id
- 41be03b00d2f7-b62e7221351so5965808a12.1
- for <dev@dpdk.org>; Wed, 22 Oct 2025 09:34:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 575DA40262;
+	Wed, 22 Oct 2025 18:36:08 +0200 (CEST)
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
+ [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id E75304025E
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 18:36:06 +0200 (CEST)
+Received: by mail-pj1-f53.google.com with SMTP id
+ 98e67ed59e1d1-33badfbbc48so8581090a91.2
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 09:36:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761150883;
- x=1761755683; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761150966;
+ x=1761755766; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=1xHBdwtNbeZ/Q+phW0xB+c5Yjyb7FQrb1QsJEhx1fwg=;
- b=nZ4MZAQateXQXOHQx50UvHKowpDRIcReBGf96IgwaMsPID++X+ltE7R+Rm3GmUacUe
- TWrVsEEwT8UphvRGyDkTJNZ0/p3zHoMpNQxpFVxqqJcjxR7RbWXZnC76hE1ULcl+KHjS
- bTomeih+sldZ+g+ciMFcLQ+WrmrsfGa49zuTeWnDgF+yNQkqWm2vdB9zwFX7C7JKTYQG
- XNhn/8RRmKy9U0sUBZ3yWAh0GZYNQKjTpJjs9jQLufamIhxiStM9V/9fPpJmSiC3yV6r
- AifFxZNWdNlup6W7rBXKx1xTr/7Otsuv07+JI2B0s3clE3Lr8z5oB2pg6XWhN6NZOJgZ
- Qdbw==
+ bh=bsRn4v/iC/NPy1OA53kGboWqwCr2C+a1W6HFBMKpCLo=;
+ b=F91Wus3R7LMBI8lpZxUK+LMuwyHur5eXDlZIo/ZrBNg4BMq2bh5ntztVx9ztt9Qw9P
+ kFqenQDYdIdhLhoMK5C5NsU/qeDlf4UaZnrr5fg7YrCAzN4l62p5ugJb8s6iwocZmuDj
+ Cn55ZsJE+Pn/6o7ylx7aU/F/clzxe3cJUnTQFJMxWri/8RsRXGZ0LYdcXzpRY0Ysh1MX
+ Y8Zrth8aSmJhTSHsr8ytSaDpeK9CluZwgiZLwOnib9CWKBGwDVap6yZRghca/87SClnS
+ bPlETdKojLp+nCazmSGktgQDv8vYOvPF5graBgnz//2iOkNnTC21hYyrzDofixF95ZtD
+ h14g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761150883; x=1761755683;
+ d=1e100.net; s=20230601; t=1761150966; x=1761755766;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=1xHBdwtNbeZ/Q+phW0xB+c5Yjyb7FQrb1QsJEhx1fwg=;
- b=sqURLOkN+xEHtjDWu5E57uwjVYICGtt4KUTrUikFUqJClQ8ToJtUVl+jshXWKCOKwn
- CtdyNyw3HJHBGHbPOGKw/X3Gx4H6w3i7M4X834QaOMSD8/m8ZKxp+KHPkE7lSZw7t+PV
- nvrPPY0SsZliFe7xLRRVmT5K849bnNkNj5BHS60NtD/Tp8qoo1z+u01FILnuy4ouMU54
- H7foDaMpXiD9f70VWIzEO58azXR9/gGoW8iAz17Zhpz+H9LWE7DHbgsDvsglsAd5Qj1J
- tUVyliOpUoJRzDYvLzxAohiwfNPQ+/o6Lsk+y3n4XQ2gvpCNj+gUtIIN+aF6tDr8sn+W
- 1tZA==
-X-Gm-Message-State: AOJu0Yymy8yD3+40kpvpzdo7IMWcf39mVlk6TH8kkUeC1EwyEsoVwz8j
- af+gQkAWZL6TWlVAIUT27e54bwPbGBefmhIm5iXgXP9PS6/+PQzQfHtlkG+2CcEIEHI=
-X-Gm-Gg: ASbGncsTMZPt7KuB2yV/3qJl3GrAm/80G039Lg2PZmTm2JnNPIDyUzMEHgPkFEOeIev
- CJjF5JDI1QYBPykbKcf1UYLlnl16i0i1SAEKSvlJC+8CaqsgMmPxcdwGsieg/yuJP+KlbpkWdZb
- RbnbVBN2XuzQ4j6vHgg9X7EA+p/PgzKGFstocIEEoM0NM42MXcwhXUpgmYV+1a2ep9rnadhWxcz
- nyVSs0RgmnFgAk5KtcVUPrhsvwu0JLII1eriQoMcp41BxXHBphbRasm/73oYTJTPdnpnIXQTPBm
- sH/wrW8jZWLk5+awwY8v5L2eQO6q8pPUiyV8nqtGQ6a6D+bh5HdPXxYsYO5wqy22+Rr0W4snHVU
- A4um7VTOQ2MYSP0JEN+FLM6p3FLMkG6XMbW3WX4dm2hgTqj7a1ohPkejAPT5nBNHDuzGrw/cIh6
- 8Q34hYRTc6V6/jI2044FF5Zi/lJQYOjb/ySu2mG5k0ZB8ywxGUGw==
-X-Google-Smtp-Source: AGHT+IFf1GnZ5cWmoxyzwtBfUL0sR03n4gzeXEagljmCtaGOFe9snA2Ro89veKRKjaIb1MbWyXe6+g==
-X-Received: by 2002:a17:902:c943:b0:26d:d860:3dae with SMTP id
- d9443c01a7336-290c9c93ac6mr260873925ad.3.1761150882763; 
- Wed, 22 Oct 2025 09:34:42 -0700 (PDT)
+ bh=bsRn4v/iC/NPy1OA53kGboWqwCr2C+a1W6HFBMKpCLo=;
+ b=h/KCWFT5AfMH1KoGy5vBETq3v2aYFPVeYJ/SQ5Rp2taK57zdMbOA5972ekVVTzNpDd
+ qnjbnVclrbfjME0eKPjW3Z9wNoHl3B9x+gle1iT45CeFWex6sfy8lC8TALvUNu3fjzHj
+ odcMxuL+izENn9tfUAJc6EXq+OjW+++QSeLzBJpZQIy7+QgMscDem2qcEWijQ1LkDjej
+ dHFjhDRX6nEU82E6MuE/J/mIFMK5qJzLqwzgVVJaXkvoNyY5ItGs/2r8zFUVxGZPqbql
+ D87gVM46+gs2esIpvlkQHWg0uayv/hTkiyYWlWBJqE8v00sS5UhqKvSBsHWu/nzq35DP
+ T6tw==
+X-Gm-Message-State: AOJu0Yx7EVT11oNl4HmLxWa226c6/ewtmUNAQAIJwHF3u8Vh7WkRsMjT
+ uUnEykMdg7hxP0KPeLj8i9g0n9F1wqCH6i3QKuQ4PV0O/7Ja3M4n9xOa9mciWLJ0Xuw=
+X-Gm-Gg: ASbGncvAk1XdP4/YC8ttGaQj6RY1TMo6mgxVuyNTPqeMb3yhADXJh7leHIdilIdM9Wn
+ 1eae2GRcbKuMFTYrTmoX3hvADUjtT2bgY0VlP/stCEQylnbuZTwEMQUdMiFLiyyhOUvVqdb2Gxy
+ 4q3GqJIp3FIs/1dN6d/YijoUTFJ+V19saFi8iMwgaT5XzweDNMsZ/R1rO2ddWqGqU2QrXh5Gzju
+ VGELEOKaplG4uHDvBe9vQz4tMO4r41UV9thVC7nYTs4AzppVSUi3Q9QrSekHyXIUUs0uF7p3ySG
+ aBDYo0A6uTrbiLvs5qsSt3p/2VU9x+BncmpL7AtbyGX6M9qUtCKTOKSms4cbOKNtbdDSeIIGju3
+ h0bhLW2/bCxuSdayV2wmIKNMiyHR5N8kr57h3EMFTZbqEkdwDmeeO1xPj6qrlTXN6NYBZ0IyfYE
+ BrCHm4Y/je/G00XCiAtmYakkjyiruO1ltVf/s/aREIkxEyYoQiyA==
+X-Google-Smtp-Source: AGHT+IHZ/SE2WIof8HcdvWQQhmps9f8H3nVkXrEE56lizL20Fo1ZVmmVwp38r/DlmpSojxZKZyhwrA==
+X-Received: by 2002:a17:90b:4a49:b0:330:82b1:ef76 with SMTP id
+ 98e67ed59e1d1-33bcf914d79mr28558975a91.28.1761150965893; 
+ Wed, 22 Oct 2025 09:36:05 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-33dfb55fda8sm2412386a91.1.2025.10.22.09.34.42
+ 98e67ed59e1d1-33e223e223esm3046385a91.7.2025.10.22.09.36.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 22 Oct 2025 09:34:42 -0700 (PDT)
-Date: Wed, 22 Oct 2025 09:34:40 -0700
+ Wed, 22 Oct 2025 09:36:05 -0700 (PDT)
+Date: Wed, 22 Oct 2025 09:36:04 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: vanshika.shukla@nxp.com
+To: Prashant Gupta <prashant.gupta_3@nxp.com>
 Cc: dev@dpdk.org
-Subject: Re: [v2 00/12] ENETC4 PMD support
-Message-ID: <20251022093440.431c4746@phoenix.lan>
-In-Reply-To: <20251017091929.2723044-1-vanshika.shukla@nxp.com>
-References: <20251009111633.3585957-1-vanshika.shukla@nxp.com>
- <20251017091929.2723044-1-vanshika.shukla@nxp.com>
+Subject: Re: [PATCH v2 00/15] dpaa2: Fixes and enhancements for DPMAC,
+ stats, and parser
+Message-ID: <20251022093604.43eae5b0@phoenix.lan>
+In-Reply-To: <20251016102805.2453687-1-prashant.gupta_3@nxp.com>
+References: <20251014064035.1312896-1-prashant.gupta_3@nxp.com>
+ <20251016102805.2453687-1-prashant.gupta_3@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,60 +82,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 17 Oct 2025 14:49:17 +0530
-vanshika.shukla@nxp.com wrote:
+On Thu, 16 Oct 2025 15:57:50 +0530
+Prashant Gupta <prashant.gupta_3@nxp.com> wrote:
 
-> From: Vanshika Shukla <vanshika.shukla@nxp.com>
+> v2: fix checkpatch errors and comment from Hemant
 > 
-> V2 changes:
-> - Deferred queue start/stop functionality for ENETC4 driver.
-> - Add rxq_info_get and txq_info_get to report queue information
-> - Addressed code review comments
+> This patch series introduces a set of improvements and bug fixes for the DPAA2 Ethernet driver. Key highlights include:
 > 
-> Apeksha Gupta (6):
->   net/enetc: Add initial ENETC4 PMD driver support
->   net/enetc: Add RX and TX queue APIs for ENETC4 PMD
->   net/enetc: Optimize ENETC4 data path
->   net/enetc: Add TX checksum offload and RX checksum validation
->   net/enetc: Add basic statistics
->   net/enetc: Add packet type parsing support
+> - Fixes for checksum parsing and error queue buffer handling
+> - Enhancements to flow rule resizing and parser result prefetching
+> - Addition of DPMAC MC header support and Policer statistics per traffic class
+> - Support for eCPRI header/message dump and DPMAC counters
+> - Upgrade of fslmc base firmware to version 10.39.0
+> - Introduction of devargs to drop parse-failed packets in hardware
 > 
-> Vanshika Shukla (6):
->   net/enetc: Add VF to PF messaging support and primary MAC setup
->   net/enetc: Add multicast and promiscuous mode support
->   net/enetc: Add link speed and status support
->   net/enetc: Add link status notification support
->   net/enetc: Add MAC and VLAN filter support
->   net/enetc: Add support for deferred queue and queue info callbacks
+> These changes improve robustness, observability, and performance of the DPAA2 driver stack.
 > 
->  MAINTAINERS                            |    3 +
->  config/arm/arm64_imx_linux_gcc         |   17 +
->  config/arm/meson.build                 |   14 +
->  doc/guides/nics/enetc4.rst             |   90 ++
->  doc/guides/nics/features/enetc4.ini    |   22 +
->  doc/guides/nics/index.rst              |    1 +
->  doc/guides/rel_notes/release_25_11.rst |    3 +
->  drivers/net/enetc/base/enetc4_hw.h     |  188 ++++
->  drivers/net/enetc/base/enetc_hw.h      |   49 +-
->  drivers/net/enetc/enetc.h              |  245 ++++-
->  drivers/net/enetc/enetc4_ethdev.c      | 1058 ++++++++++++++++++
->  drivers/net/enetc/enetc4_vf.c          | 1364 ++++++++++++++++++++++++
->  drivers/net/enetc/enetc_cbdr.c         |  311 ++++++
->  drivers/net/enetc/enetc_ethdev.c       |    9 +-
->  drivers/net/enetc/enetc_rxtx.c         |  165 ++-
->  drivers/net/enetc/meson.build          |    5 +-
->  drivers/net/enetc/ntmp.h               |  110 ++
->  17 files changed, 3613 insertions(+), 41 deletions(-)
->  create mode 100644 config/arm/arm64_imx_linux_gcc
->  create mode 100644 doc/guides/nics/enetc4.rst
->  create mode 100644 doc/guides/nics/features/enetc4.ini
->  create mode 100644 drivers/net/enetc/base/enetc4_hw.h
->  create mode 100644 drivers/net/enetc/enetc4_ethdev.c
->  create mode 100644 drivers/net/enetc/enetc4_vf.c
->  create mode 100644 drivers/net/enetc/enetc_cbdr.c
->  create mode 100644 drivers/net/enetc/ntmp.h
+> 
+> Brick Yang (2):
+>   net/dpaa2: fix L3/L4 csum results in packet parse
+>   net/dpaa2: fix to recv packets with additional parse errors
+> 
+> Hemant Agrawal (3):
+>   drivers: dpaa2 upgrade fslmc base FW to 10.39.0
+>   net/dpaa2: replace global variable to driver flag
+>   net/dpaa2: add devargs to drop parse packets in HW
+> 
+> Ioana Ciornei (1):
+>   net/dpaa2: setup the speed cap based on the actual MAC
+> 
+> Jun Yang (4):
+>   net/dpaa2: fix error frame dump issue
+>   net/dpaa2: fix flow rule's resizing issue
+>   net/dpaa2: optimize to prefetch next parser result
+>   net/dpaa2: add eCPRI header and message dump
+> 
+> Prashant Gupta (4):
+>   net/dpaa2: fix uninitialized variable issue
+>   net/dpaa2: fix to free buffers from error queue
+>   net/dpaa2: add dpmac MC header file
+>   net/dpaa2: add Policer stats for each TC
+> 
+> Vanshika Shukla (1):
+>   net/dpaa2: support dpmac counters in stats
+> 
+>  .mailmap                                     |   1 +
+>  doc/guides/nics/dpaa2.rst                    |   4 +
+>  doc/guides/rel_notes/release_25_11.rst       |   3 +
+>  drivers/bus/fslmc/bus_fslmc_driver.h         |   1 +
+>  drivers/bus/fslmc/mc/dpbp.c                  |  78 ++-
+>  drivers/bus/fslmc/mc/dprc.c                  |   2 +
+>  drivers/bus/fslmc/mc/fsl_dpbp.h              |  41 +-
+>  drivers/bus/fslmc/mc/fsl_dpmng.h             |   4 +-
+>  drivers/bus/fslmc/mc/fsl_dprc.h              |   1 +
+>  drivers/net/dpaa2/base/dpaa2_hw_dpni.c       |   3 +-
+>  drivers/net/dpaa2/base/dpaa2_hw_dpni_annot.h |  10 +-
+>  drivers/net/dpaa2/dpaa2_ethdev.c             | 350 +++++++++++-
+>  drivers/net/dpaa2/dpaa2_ethdev.h             |  65 ++-
+>  drivers/net/dpaa2/dpaa2_flow.c               | 123 ++++-
+>  drivers/net/dpaa2/dpaa2_mux.c                |   8 +-
+>  drivers/net/dpaa2/dpaa2_parse_dump.h         | 124 +++++
+>  drivers/net/dpaa2/dpaa2_rxtx.c               | 123 +++--
+>  drivers/net/dpaa2/mc/dpkg.c                  |   7 +-
+>  drivers/net/dpaa2/mc/dpni.c                  |  50 +-
+>  drivers/net/dpaa2/mc/dprtc.c                 |  38 +-
+>  drivers/net/dpaa2/mc/fsl_dpdmux.h            |  13 +-
+>  drivers/net/dpaa2/mc/fsl_dpkg.h              |   7 +-
+>  drivers/net/dpaa2/mc/fsl_dpmac.h             | 526 +++++++++++++++++++
+>  drivers/net/dpaa2/mc/fsl_dpni.h              |  37 +-
+>  drivers/net/dpaa2/mc/fsl_dpni_cmd.h          |  15 +-
+>  drivers/net/dpaa2/mc/fsl_dprtc.h             |  39 +-
+>  drivers/net/dpaa2/mc/fsl_dprtc_cmd.h         |   7 +-
+>  27 files changed, 1520 insertions(+), 160 deletions(-)
+>  create mode 100644 drivers/net/dpaa2/mc/fsl_dpmac.h
 > 
 
-
-Added to next-net.
-Reworded some of the commit messages to conform to guidelines checked by devtools/check-git-log.sh
+Added ton next-net.
