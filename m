@@ -2,44 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A920ACCD1AB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 10:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C30CCD1AB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 12:59:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7F40E400D6;
-	Wed, 22 Oct 2025 12:10:02 +0200 (CEST)
-Received: from out28-149.mail.aliyun.com (out28-149.mail.aliyun.com
- [115.124.28.149])
- by mails.dpdk.org (Postfix) with ESMTP id D6532400D5
- for <dev@dpdk.org>; Wed, 22 Oct 2025 12:09:59 +0200 (CEST)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.07386959|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_enroll_verification|0.0423047-0.0115086-0.946187;
- FP=17393847992083552132|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam033040019066; MF=dimon.zhao@nebula-matrix.com; NM=1;
- PH=DW; RN=5; RT=5; SR=0; TI=W4_0.2.3_21251EBE_1761127689642_o7001c83m; 
-Received: from WS-web
- (dimon.zhao@nebula-matrix.com[W4_0.2.3_21251EBE_1761127689642_o7001c83m]
- cluster:ay29) at Wed, 22 Oct 2025 18:09:57 +0800
-Date: Wed, 22 Oct 2025 18:09:57 +0800
-From: "Dimon" <dimon.zhao@nebula-matrix.com>
-To: "Thomas Monjalon" <thomas@monjalon.net>
-Cc: "Stephen Hemminger" <stephen@networkplumber.org>, "dev" <dev@dpdk.org>,
- "Kyo Liu" <kyo.liu@nebula-matrix.com>, "Leon" <leon.yu@nebula-matrix.com>,
- "Sam" <sam.chen@nebula-matrix.com>
-Message-ID: <4d13f96a-6f9e-416b-9c40-bbc34eb2f13f.dimon.zhao@nebula-matrix.com>
-Subject: =?UTF-8?B?5Zue5aSN77ya5Zue5aSN77yaW1BBVENIIHYxMyAwMS8xN10gbmV0L25ibDogYWRkIGRvYyBh?=
- =?UTF-8?B?bmQgbWluaW11bSBuYmwgYnVpbGQgZnJhbWV3b3Jr?=
-X-Mailer: [Alimail-Mailagent revision 560][W4_0.2.3][null][Chrome]
+	by mails.dpdk.org (Postfix) with ESMTP id B8A214027D;
+	Wed, 22 Oct 2025 14:59:45 +0200 (CEST)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 3C0024025E
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 14:59:45 +0200 (CEST)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-269af38418aso85398525ad.1
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 05:59:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1761137984; x=1761742784; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=jioTDfrub3SFn1ivIdnf+Kz9NrKUj3pUSaxJEjtXWS8=;
+ b=JtsQzgd5jTlzDIddK6nBIzHAEJYsuL9ZB84DK6JwOdZFqGkiDtrHYjzQPmIrgpV2E1
+ sZMtK6YDeMBJDrTZd7dCIajCmesSNfZZ5LiejyV/ljJ+MV0x6mcyZVl8fq61wvYLRCpM
+ d8uKM+fThf3riK1QbQnrQRak+6FetmU407RbTk3G/xfluDz+sC1E2EgK7r2gHVWFsmim
+ 364OQW6ec9bPxc5X79QURoYRUjt9AONGnMVwE5hg/FARuKaNgweZz93BSFI7qzHeQrmv
+ 5qS6giPdbPz6twySxEcFOPe+SzIbjkXQly8vURV/H5ar+rpEZISgHrsaTqHQbbsbcMjI
+ Lp7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1761137984; x=1761742784;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=jioTDfrub3SFn1ivIdnf+Kz9NrKUj3pUSaxJEjtXWS8=;
+ b=TGl6usDhrkNj9arHPkOOx88rf+s53bZiJ6kTqn0t4KlyE1L+VjDMj8C60FR1FVG2a3
+ P1vsQHktHnmQYlqEFrgk+TkaOwEGlChrVy89mLhcgRS03vHPbiPFD10cdbWdx1lL9wVa
+ NfJQ+i/yV+xUhnuJqKexlFVMJnNqSj6UQU7uYCpxvQ8aKzvgo2rAUmZxPCdWMb9k3OGM
+ q//KikF+HudtXmiHf/XpHXCIJTh4V9bAY5gCTBfjNI1rzy6+Scrjz0xzl7EN5Gp/cD8f
+ IWoIJYvqVo6N9mggmyozBDqKtKD6BPy+GJ1hcaCNq0XGfS2CJIOasYSlTpN4AAe5WcPo
+ 2/pw==
+X-Gm-Message-State: AOJu0YzIHmmDPzf2A/4P3Ac0SDYO7igQrI0/tuvUWo09ULuIAMgBvJ05
+ +jb34sjtFQximMBzftgLJwBdhP1jzI736hDUL607uIEOCzKPlKoi58n1sFlZkQ==
+X-Gm-Gg: ASbGncs14MdXOla6lil3a1Ve8Gw8fC9FbCvbg0EjsHf72fbWBX2Px0Hgt90FdhZNvuA
+ mFxVXVGnckY42V+feLfQ2rIpbDspJXPw6cd/dcgWjxD8zzGpjnbNxKE+/o4RNXFlQ94xbDpahhS
+ M7Ss1t0kmeZWUe9BIALodFfH5hCiKgQKsMg85QUA8n4gCZBQYNvimIkHUDdHvj5G3MRYxjb+8e4
+ vsDkwqWuheA3qejWh6I+gsgPk9YpnPzcLKVZ+ceavGM7s7aAj9KZKudeCYDeu/GgNs9y8FZPvwp
+ Ajib5FKL71f6+k2AEsDIS6i8gtJzNHHXQhBkQ39tnmjmEzqNjhhddigN09XJe/i4kzNcnqFGUOr
+ VijaTg18XWsycySTla4ZmyGQ2L1OXexZ2/xVinyNf7abcIU7DShgOEvVqjrGYNgmaV0B40P6Ayj
+ 8ndjaLJuG5swvI/5Tcj1eVYo9bfolW2Vbq6QQT51TOQnU8bPwwN5TWUyvIZvZVewd0uyte
+X-Google-Smtp-Source: AGHT+IFVuomptp8mXDjxxyc3LL3i4mQB8VRBsJ8V54CCka8lPb4G5qJrgH9M5oBiwEEleM1OgS2Z0w==
+X-Received: by 2002:a17:902:f610:b0:272:2bf1:6a21 with SMTP id
+ d9443c01a7336-290c9ca72aamr290213035ad.14.1761137983726; 
+ Wed, 22 Oct 2025 05:59:43 -0700 (PDT)
+Received: from amiya73TMT9m.aristanetworks.com
+ ([2402:e280:2162:53:50bb:5301:cacd:1307])
+ by smtp.gmail.com with ESMTPSA id
+ 41be03b00d2f7-b6a76b5a007sm12774741a12.31.2025.10.22.05.59.40
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Wed, 22 Oct 2025 05:59:42 -0700 (PDT)
+From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+To: dev@dpdk.org
+Cc: amiyaranjan.mohakud@gmail.com,
+	stable@dpdk.org
+Subject: [PATCH] net/vmxnet3: disable RSS for single queue configuration for
+ ESX8.0+ versions
+Date: Wed, 22 Oct 2025 18:28:44 +0530
+Message-Id: <20251022125844.6187-1-amiyaranjan.mohakud@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
- <20251021072102.2308eb46@phoenix.lan>
- <1a671259-db95-4d13-9986-c28ff8c360bb.dimon.zhao@nebula-matrix.com>,
- <4139672.som1txNFv6@thomas>
-x-aliyun-mail-creator: W4_0.2.3_null_d2lTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEwOC4wLjUzNTkuMTI1IFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4wLjEwLVJlbGVhc2UuMjUwOTE3MDAyKSBNb2pvLzEuMC4wIE5hdGl2ZSBBcHBUeXBlKHJlbGVhc2UpIENoYW5uZWwvMjAxMjAwIEFyY2hpdGVjdHVyZS94ODZfNjQ=Gs
-In-Reply-To: <4139672.som1txNFv6@thomas>
-Content-Type: multipart/alternative;
- boundary="----=ALIBOUNDARY_1939_7fd24e8c4700_68f8ad75_1de25c"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,136 +78,38 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-------=ALIBOUNDARY_1939_7fd24e8c4700_68f8ad75_1de25c
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+This fixes the issue of v4 RSS configuration failure in vmxnet3_v4_rss_configure
+while writing to BAR register. It's very specific to single queue conifuguration.
 
-SGksIFRob21hcwpUaGFuayB5b3UgZm9yIHlvdXIgc3VnZ2VzdGlvbnMuCldlIHdpbGwgbmVlZCBz
-b21lIHRpbWUgdG8gcHJlcGFyZSB0aGUgcmVtYWluaW5nIGZlYXR1cmVzIHN1Y2ggYXMgVFNPLCBj
-aGVja3N1bSBvZmZsb2FkLCBhbmQgRkVDIGZvciBmdXR1cmUgc3VibWlzc2lvbnMuCkluIHRoZSBt
-ZWFudGltZSwgd2UgaG9wZSB0aGUgY3VycmVudCBwYXRjaCBzZXJpZXMgY2FuIGJlIG1lcmdlZCBp
-bnRvIERQREsgYXMgc29vbiBhcyBwb3NzaWJsZSB0byBlbmFibGUgZWFybHkgY3VzdG9tZXIgYWRv
-cHRpb24uCkkgaGF2ZSB1cGRhdGVkIHRoZSBkb2N1bWVudGF0aW9uIHRvIG1hdGNoIHRoZSBjdXJy
-ZW50bHkgaW1wbGVtZW50ZWQgZmVhdHVyZXMgYW5kIHN1Ym1pdHRlZCB2MTQgcGF0Y2hlcy4KVGhh
-bmsgeW91LgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0K5Y+R5Lu25Lq677yaVGhvbWFzIE1vbmphbG9uIDx0aG9tYXNAbW9u
-amFsb24ubmV0Pgrlj5HpgIHml7bpl7TvvJoyMDI15bm0MTDmnIgyMuaXpSjlkajkuIkpIDE3OjQ1
-CuaUtuS7tuS6uu+8mkRpbW9uPGRpbW9uLnpoYW9AbmVidWxhLW1hdHJpeC5jb20+CuaKhOOAgOmA
-ge+8mlN0ZXBoZW4gSGVtbWluZ2VyPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPjsgZGV2PGRl
-dkBkcGRrLm9yZz47IEt5byBMaXU8a3lvLmxpdUBuZWJ1bGEtbWF0cml4LmNvbT47IExlb248bGVv
-bi55dUBuZWJ1bGEtbWF0cml4LmNvbT47IFNhbTxzYW0uY2hlbkBuZWJ1bGEtbWF0cml4LmNvbT4K
-5Li744CA6aKY77yaUmU6IOWbnuWkje+8mltQQVRDSCB2MTMgMDEvMTddIG5ldC9uYmw6IGFkZCBk
-b2MgYW5kIG1pbmltdW0gbmJsIGJ1aWxkIGZyYW1ld29yawoyMi8xMC8yMDI1IDAzOjM3LCBEaW1v
-bjoKPiBUbyBjbGFyaWZ5LCB0aGUgbmJsIGRyaXZlciBkb2VzIHN1cHBvcnQgYWxsIHRoZSBmZWF0
-dXJlcyBsaXN0ZWQgaW4gdGhlIGRvY3VtZW50YXRpb24uCj4gVGhlcmUgd2FzIGEgbWlzdW5kZXJz
-dGFuZGluZyBvbiBteSBwYXJ0IGFib3V0IHRoZSBzdWJtaXNzaW9uIHByb2Nlc3MgLSBJIHRob3Vn
-aHQgd2Ugd2VyZSBzdXBwb3NlZCB0byBzdWJtaXQgYmFzaWMgZnVuY3Rpb25hbGl0eSBmaXJzdCwK
-PiBhbmQgdGhlbiBhZGQgZmVhdHVyZXMgbGlrZSBUU08sIGNoZWNrc3VtIG9mZmxvYWQsIGFuZCBG
-RUMgaW4gc3Vic2VxdWVudCBwYXRjaGVzIGFmdGVyIHRoZSBpbml0aWFsIGRyaXZlciBtZXJnZS4K
-WWVzIGl0IGlzIGEgZ29vZCBhcHByb2FjaC4KSWYgeW91IGFyZSBjb25maWRlbnQgZW5vdWdoLCB5
-b3UgY2FuIGFsc28gc3VibWl0IHRoZXNlIGZlYXR1cmVzCmFzIHNlcGFyYXRlIHBhdGNoZXMgaW4g
-dGhlIHNhbWUgc2VyaWVzLgpQbGVhc2UgdHJ5IHRvIHVwZGF0ZSB0aGUgZG9jdW1lbnRhdGlvbiBh
-bG9uZyB0aGUgc2VyaWVzCmluIHRoZSBjb21taXRzIHdoZW4gZmVhdHVyZXMgYXBwZWFyLgo=
-------=ALIBOUNDARY_1939_7fd24e8c4700_68f8ad75_1de25c
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Ref: https://mails.dpdk.org/archives/users/2025-April/008236.html
 
-PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
-bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
-Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
-VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPkhpLCZuYnNwOzxzcGFuICBzdHlsZT0iY29sb3I6IHJn
-YigwLCAwLCAwKTsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsg
-Zm9udC1zaXplOiAxNHB4OyBmb250LXN0eWxlOiBub3JtYWw7IGZvbnQtdmFyaWFudC1saWdhdHVy
-ZXM6IG5vcm1hbDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9udC13ZWlnaHQ6IDQwMDsg
-bGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAw
-cHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3aGl0ZS1zcGFjZTogbm9ybWFsOyB3b3JkLXNwYWNp
-bmc6IDBweDsgYmFja2dyb3VuZC1jb2xvcjogcmdiKDI1NSwgMjU1LCAyNTUpOyB0ZXh0LWRlY29y
-YXRpb24tdGhpY2tuZXNzOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tc3R5bGU6IGluaXRpYWw7
-IHRleHQtZGVjb3JhdGlvbi1jb2xvcjogaW5pdGlhbDsgZmxvYXQ6IG5vbmU7IGRpc3BsYXk6IGlu
-bGluZSAhaW1wb3J0YW50OyI+VGhvbWFzPC9zcGFuPjwvc3Bhbj48L2Rpdj48ZGl2ICBzdHlsZT0i
-Y2xlYXI6IGJvdGg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQs
-IFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVp
-dGlTQy1MaWdodCwgU2ltU3VuOyI+PGJyID48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFy
-OiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1T
-dW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0Mt
-TGlnaHQsIFNpbVN1bjsiPjxzcGFuID5UaGFuayB5b3UgZm9yIHlvdXIgc3VnZ2VzdGlvbnMuPGJy
-ID48L3NwYW4+PC9zcGFuPjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxiciA+PC9kaXY+PGRp
-diAgc3R5bGU9ImNsZWFyOiBib3RoOyI+V2Ugd2lsbCBuZWVkIHNvbWUgdGltZSB0byBwcmVwYXJl
-IHRoZSByZW1haW5pbmcgZmVhdHVyZXMgc3VjaCBhcyBUU08sIGNoZWNrc3VtIG9mZmxvYWQsIGFu
-ZCBGRUMgZm9yIGZ1dHVyZSBzdWJtaXNzaW9ucy48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJv
-dGg7Ij5JbiB0aGUgbWVhbnRpbWUsIHdlIGhvcGUgdGhlIGN1cnJlbnQgcGF0Y2ggc2VyaWVzIGNh
-biBiZSBtZXJnZWQgaW50byBEUERLIGFzIHNvb24gYXMgcG9zc2libGUgdG8gZW5hYmxlIGVhcmx5
-IGN1c3RvbWVyIGFkb3B0aW9uLjwvZGl2PjxkaXYgPjxzcGFuID5JIGhhdmUgdXBkYXRlZCB0aGUg
-ZG9jdW1lbnRhdGlvbiB0byBtYXRjaCB0aGUgY3VycmVudGx5IGltcGxlbWVudGVkIGZlYXR1cmVz
-IGFuZCBzdWJtaXR0ZWQgdjE0IHBhdGNoZXMuPC9zcGFuPjwvZGl2PjxzcGFuICBzdHlsZT0iZm9u
-dC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PGJyID48
-L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21h
-LCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFt
-aWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPlRoYW5rIHlvdS48
-L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21h
-LCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFt
-aWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxiciA+PC9zcGFu
-PjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJp
-YWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTog
-VGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48YnIgPjwvc3Bhbj48L2Rp
-dj48YmxvY2txdW90ZSAgX3F1b3RlPSIxIiBzdHlsZT0ibWFyZ2luLXJpZ2h0OiAwcHg7IG1hcmdp
-bi10b3A6IDBweDsgbWFyZ2luLWJvdHRvbTogMHB4OyBmb250LWZhbWlseTogVGFob21hLCBBcmlh
-bCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7
-Ij48ZGl2ICBjbGFzcz0iYWxpbWFpbC1xdW90ZSI+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tPC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+5Y+R5Lu25Lq677yaVGhv
-bWFzIE1vbmphbG9uICZsdDt0aG9tYXNAbW9uamFsb24ubmV0Jmd0OzwvZGl2PjxkaXYgIHN0eWxl
-PSJjbGVhcjogYm90aDsiPuWPkemAgeaXtumXtO+8mjIwMjXlubQxMOaciDIy5pelKOWRqOS4iSkg
-MTc6NDU8L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7mlLbku7bkurrvvJpEaW1vbiZs
-dDtkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29tJmd0OzwvZGl2PjxkaXYgIHN0eWxlPSJjbGVh
-cjogYm90aDsiPuaKhOOAgOmAge+8mlN0ZXBoZW4gSGVtbWluZ2VyJmx0O3N0ZXBoZW5AbmV0d29y
-a3BsdW1iZXIub3JnJmd0OzsgZGV2Jmx0O2RldkBkcGRrLm9yZyZndDs7IEt5byBMaXUmbHQ7a3lv
-LmxpdUBuZWJ1bGEtbWF0cml4LmNvbSZndDs7IExlb24mbHQ7bGVvbi55dUBuZWJ1bGEtbWF0cml4
-LmNvbSZndDs7IFNhbSZsdDtzYW0uY2hlbkBuZWJ1bGEtbWF0cml4LmNvbSZndDs8L2Rpdj48ZGl2
-ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7kuLvjgIDpopjvvJpSZTog5Zue5aSN77yaW1BBVENIIHYx
-MyAwMS8xN10gbmV0L25ibDogYWRkIGRvYyBhbmQgbWluaW11bSBuYmwgYnVpbGQgZnJhbWV3b3Jr
-PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+PGJyID48L2Rpdj4yMi8xMC8yMDI1IDAz
-OjM3LCBEaW1vbjo8YnIgPiZndDsgVG8gY2xhcmlmeSwgdGhlIG5ibCBkcml2ZXIgZG9lcyBzdXBw
-b3J0IGFsbCB0aGUgZmVhdHVyZXMgbGlzdGVkIGluIHRoZSBkb2N1bWVudGF0aW9uLjxiciA+Jmd0
-OyBUaGVyZSB3YXMgYSBtaXN1bmRlcnN0YW5kaW5nIG9uIG15IHBhcnQgYWJvdXQgdGhlIHN1Ym1p
-c3Npb24gcHJvY2VzcyAtIEkgdGhvdWdodCB3ZSB3ZXJlIHN1cHBvc2VkIHRvIHN1Ym1pdCBiYXNp
-YyBmdW5jdGlvbmFsaXR5IGZpcnN0LDxiciA+Jmd0OyBhbmQgdGhlbiBhZGQgZmVhdHVyZXMgbGlr
-ZSBUU08sIGNoZWNrc3VtIG9mZmxvYWQsIGFuZCBGRUMgaW4gc3Vic2VxdWVudCBwYXRjaGVzIGFm
-dGVyIHRoZSBpbml0aWFsIGRyaXZlciBtZXJnZS48YnIgPjxiciA+WWVzIGl0IGlzIGEgZ29vZCBh
-cHByb2FjaC48YnIgPklmIHlvdSBhcmUgY29uZmlkZW50IGVub3VnaCwgeW91IGNhbiBhbHNvIHN1
-Ym1pdCB0aGVzZSBmZWF0dXJlczxiciA+YXMgc2VwYXJhdGUgcGF0Y2hlcyBpbiB0aGUgc2FtZSBz
-ZXJpZXMuPGJyID48YnIgPlBsZWFzZSB0cnkgdG8gdXBkYXRlIHRoZSBkb2N1bWVudGF0aW9uIGFs
-b25nIHRoZSBzZXJpZXM8YnIgPmluIHRoZSBjb21taXRzIHdoZW4gZmVhdHVyZXMgYXBwZWFyLjxi
-ciA+PC9kaXY+PC9ibG9ja3F1b3RlPjxkaXYgIHN0eWxlPSJsaW5lLWhlaWdodDogMjBweDsgY2xl
-YXI6IGJvdGg7Ij48YnIgPjwvZGl2PjwvZGl2PjwvZGl2Pg0KPGRpdiBzdHlsZT0iY2xlYXI6IGJv
-dGg7Ij48c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMHB4OyBjb2xvcjogcmdiKDIxNiwgMjE2LCAy
-MTYpOyI+5pys6YKu5Lu25omA5ZCr5L+h5oGv5Y+K5YW25Lu75L2V6ZmE5Lu25Li65L+d5a+G5L+h
-5oGv5LiU5Y+v6IO95bGe5LqO5LiT5pyJ5L+h5oGv44CC5Lu75L2V6Z2e5oyH5a6a5o6l5pS25Lq6
-5Z2H5peg5p2D6K6/6Zeu5pys6YKu5Lu244CC5aaC5p6c5oKo5LiN5piv6K+l6YKu5Lu255qE5oyH
-5a6a5o6l5pS25Lq677yM6YKj5LmI5Lu75L2V5a+55pys6YKu5Lu25YaF5a656L+b6KGM5oqr6Zyy
-77yM5aSN5Yi25oiW5L2/55So55qE6KGM5Li65Z2H5piv56aB5q2i55qE44CC5aaC5p6c5oKo5LiN
-5piv6K+l6YKu5Lu255qE5oyH5a6a5o6l5pS25Lq677yM6K+35oKo56uL5Y2z6YCa6L+H6YKu5Lu2
-6YCa55+lJm5ic3A7Y29tcGxpYW5jZUBuZWJ1bGEtbWF0cml4LmNvbeW5tueri+WNs+WIoOmZpOaC
-qOmUmeivr+aOpeWPl+eahOmCruS7tuOAgjwvc3Bhbj48L2Rpdj48ZGl2IHN0eWxlPSJjbGVhcjog
-Ym90aDsiPjxzcGFuIHN0eWxlPSJmb250LXNpemU6IDEwcHg7IGNvbG9yOiByZ2IoMjE2LCAyMTYs
-IDIxNik7Ij5UaGUmbmJzcDtpbmZvcm1hdGlvbiZuYnNwO2luJm5ic3A7dGhpcyZuYnNwO21lc3Nh
-Z2UmbmJzcDthbmQmbmJzcDthbnkmbmJzcDthdHRhY2htZW50cyZuYnNwO2lzJm5ic3A7Y29uZmlk
-ZW50aWFsJm5ic3A7YW5kJm5ic3A7bWF5Jm5ic3A7YmUmbmJzcDtwcml2aWxlZ2VkLiZuYnNwOyZu
-YnNwO0FjY2VzcyZuYnNwO3RvJm5ic3A7dGhpcyZuYnNwO2VtYWlsJm5ic3A7YnkmbmJzcDthbnlv
-bmUmbmJzcDtvdGhlciZuYnNwO3RoYW4mbmJzcDt0aGUmbmJzcDtpbnRlbmRlZCZuYnNwO3JlY2lw
-aWVudCZuYnNwO2lzJm5ic3A7bm90Jm5ic3A7YXV0aG9yaXplZC4mbmJzcDsmbmJzcDtJZiZuYnNw
-O3lvdSZuYnNwO2FyZSZuYnNwO25vdCZuYnNwO3RoZSZuYnNwO2ludGVuZGVkJm5ic3A7cmVjaXBp
-ZW50LCZuYnNwO2Rpc2Nsb3N1cmUsJm5ic3A7Y29weWluZyZuYnNwO29yJm5ic3A7dXNlJm5ic3A7
-b2YmbmJzcDt0aGUmbmJzcDtjb250ZW50cyZuYnNwO29mJm5ic3A7dGhpcyZuYnNwO2VtYWlsJm5i
-c3A7aXMmbmJzcDtwcm9oaWJpdGVkLiZuYnNwOyZuYnNwO0lmJm5ic3A7eW91Jm5ic3A7YXJlJm5i
-c3A7bm90Jm5ic3A7dGhlJm5ic3A7aW50ZW5kZWQmbmJzcDtyZWNpcGllbnQsJm5ic3A7cGxlYXNl
-Jm5ic3A7bm90aWZ5Jm5ic3A7Jm5ic3A7Y29tcGxpYW5jZUBuZWJ1bGEtbWF0cml4LmNvbSZuYnNw
-O2ltbWVkaWF0ZWx5Jm5ic3A7YnkmbmJzcDtlbWFpbCwmbmJzcDthbmQmbmJzcDtwbGVhc2UmbmJz
-cDtkZXN0cm95Jm5ic3A7dGhlJm5ic3A7ZW1haWwmbmJzcDt5b3UmbmJzcDtyZWNlaXZlZCZuYnNw
-O2luJm5ic3A7ZXJyb3IuPC9zcGFuPjwvZGl2Pg==
-------=ALIBOUNDARY_1939_7fd24e8c4700_68f8ad75_1de25c--
+Bugzilla ID:1789
+Cc: stable@dpdk.org
+
+Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+---
+ drivers/net/vmxnet3/vmxnet3_ethdev.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/net/vmxnet3/vmxnet3_ethdev.c b/drivers/net/vmxnet3/vmxnet3_ethdev.c
+index f4cdb1bb31..fee4c23091 100644
+--- a/drivers/net/vmxnet3/vmxnet3_ethdev.c
++++ b/drivers/net/vmxnet3/vmxnet3_ethdev.c
+@@ -534,6 +534,12 @@ vmxnet3_dev_configure(struct rte_eth_dev *dev)
+ 
+ 	PMD_INIT_FUNC_TRACE();
+ 
++    /* Disabling RSS for single queue pair */
++    if (dev->data->nb_rx_queues == 1) {
++        dev->data->dev_conf.rxmode.mq_mode = ETH_MQ_RX_NONE;
++        PMD_INIT_LOG(ERR, "WARN: Disabling RSS for single Rx queue");
++    }
++
+ 	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG)
+ 		dev->data->dev_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
+ 
+-- 
+2.39.5 (Apple Git-154)
 
