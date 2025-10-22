@@ -2,61 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32FCCCCD1AB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 17:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C45D5CCD1AB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Oct 2025 17:30:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0108240262;
-	Wed, 22 Oct 2025 19:29:44 +0200 (CEST)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
- [209.85.214.174])
- by mails.dpdk.org (Postfix) with ESMTP id 8D4814025E
- for <dev@dpdk.org>; Wed, 22 Oct 2025 19:29:42 +0200 (CEST)
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-2698d47e776so53236455ad.1
- for <dev@dpdk.org>; Wed, 22 Oct 2025 10:29:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2021D40262;
+	Wed, 22 Oct 2025 19:30:34 +0200 (CEST)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id A7A794025E
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 19:30:32 +0200 (CEST)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-27ee41e074dso84098465ad.1
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 10:30:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1761154181; x=1761758981; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1761154232; x=1761759032; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=MeFKsyQy0IhnSf7UuCoqityp+LbSA4LQXJ3ulSc04cI=;
- b=bwXEBjlFa2w5cxE4W3dtUZcGtJUeDc/c+dmC7vqppNt+XDRuORgT37T2TqQbq1aVXg
- yBTUqVvclTtBpcBKL8kK0+cuRHKS80P7AtHVt+T9bxK3k8KdQh7A6Z7qWmz+Bg2NWYvZ
- NzT/LmccKP6pcu+pvPxzniBtGWT7aMSoEad5E=
+ bh=7r8hAEP9XJk/e0dLulSc6FSZfItwP1AxWzSStGq1tW8=;
+ b=jpgJGvZNQR5ZD5+MHWCFfqICO1zOssanlkiSYf3i4GXLoaA/HH7I8F2vH676AnV4jL
+ F0J0ujcgPjN22XCJXVdU5ZGvDGypzbxbCRPUocEXStKXy9zSCsbVJdagAMUiWaCNth32
+ Pq6KZN5S4znf6/NX79ehVvzJCHPdgKPa4yEM8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761154181; x=1761758981;
+ d=1e100.net; s=20230601; t=1761154232; x=1761759032;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=MeFKsyQy0IhnSf7UuCoqityp+LbSA4LQXJ3ulSc04cI=;
- b=TplsvyJ2WC7eTQGchAsySYVtoC729w/RTPKOpRXyag1fojlE0F48u2RJllbkbdp49r
- 53GZ2vlHLdDd6LllsMf8RFP3NxuIKYmF+t963zMPc8PijaPSke1mEaggC1nnJnlKFOM2
- jO0aSN9yrXxZ83+h74OTOx9tlm/hFozwjODo9YCMOsBzoJ3juHxXrNbhciywPkLQswwL
- ainbnt0DwhxN5p8ej05wp/40Fr9wIsRQ1/9tglpKoFc3gJsQASTy+3aQp+0/eO/9BO1l
- CJOAMj1hLWoDMIhZhoYwiMfiZyYl2b3HRy/w/DZ6urdSdrafcTmjBZIjucgu6mRiKMxg
- g1kw==
-X-Gm-Message-State: AOJu0YzmXu3MwHP4NM897u65nd5cBkTdwr7ycU1F0J1DWQ3lozota4PU
- rZVPMzmrde0LlCQaRr6RlgKPpzLS0c7seCjjd+UcVot70al5gi09wgTUWoAcHysJjFZEF9rHPn4
- 0jB0shx/6IzPi4geHnN1LW3KBpbCmSlHq5sJjlBHBxQ==
-X-Gm-Gg: ASbGncsdQ1X5Pyo2lcDzN+0stvXzJElE+OHI8fq1SChi5rLeboXsaxJF+Gf8VEkBzRw
- 6/MP9yH+RvQiAvt0NLWGRcHR3aVcCY17iT62HNKiMNEfTXnv2Agtsgkyl5X2nL8T0F/X91s44Lk
- eCX31DgZGS40BLM8dCcvxQGlOFcIqhA2Uj1bWF6tebpNzw1mDXO6CjCW9t+wKU8RuWS+k2dDS4L
- I1O4wgeyJxb4OwRJJxaiE8fmalDr50XmcV3HI2R+3f1uZhfzoBRlr4tYAXhU2+hiQp3TQ19dII3
- FHovBSgJZD0PxJ+SE9T3wcfs4Za2x7SCuDKLM/c=
-X-Google-Smtp-Source: AGHT+IFzWjBOkHEU+sBsHWvJ2eU0Ykf1mFy5wMgH8HBpUgOVnLVLdtJmrCJWg5miVu4Qt3SSJ5//egO5R5/HGyjRbtE=
-X-Received: by 2002:a17:903:1209:b0:26c:4085:e3f5 with SMTP id
- d9443c01a7336-290cb65cd46mr265693055ad.50.1761154181514; Wed, 22 Oct 2025
- 10:29:41 -0700 (PDT)
+ bh=7r8hAEP9XJk/e0dLulSc6FSZfItwP1AxWzSStGq1tW8=;
+ b=CovaBkI//PTOOlnLzNUd3XybDCrMQIRltO3xwYEsMb6GNuOSwA98fljclrdSCIP05R
+ 31NS/4+IgUcpfsubTU0JLOTfPR88qWKk0UyBq8icm8XUa4J/DZS0/Dq7fGGUv2SAgWB8
+ CeStWINjsJl6NIcsFy6axAdsjyLKBDGOhqUuI8A+fwIsgivw82IGXCb8lfYOhqOeinyT
+ QPkiOHJwlTKmU+RBtt2K28KnoWfUr7cXVAFy6mdovIcHNH7ifxPiQjvykUbAYar5CrM2
+ E4pBxpistnDT158ac9awcDoLwyeWDD/TO2zHDGwev/SwwwZZ0Mgce0qC0evQMHWUTkT7
+ PAgA==
+X-Gm-Message-State: AOJu0YzRc8W71xzWpCW5tX7C/KQ55qcl9KrqWvZGqclNu0DB8MuV1D1z
+ dwZqNWJIpFReOmEtbVasfatvSmj0LD6uYmiGLYMwUCfnqcsXDYf6OMk+QAnhOh5Fk2ehubQ2KsH
+ wVnLo/lf3Hjh32NWTFQQC5tUJ62+GwBJqlOdaaK7fwg==
+X-Gm-Gg: ASbGncvq7emdyV6LysKJwQ1AJQahYhZMhQBONS66f5s6q2p+pwlW/+LKAAcnYyfSyL0
+ YQjHupBqUiJ+m2kCGb0TrjSzkFdLn0qy6jSQU8RcC5SoJS+cyGU7LzragNsf5ECjdwUueQIax1v
+ A2OcE1bqUbbO3+LElkTtyo/zmsph2NNSnjy3hUHHc1X03InQfcJcj3JaXo/iZ1fMCBi71Mi9vSi
+ 0cZigg12TnaDhPkSF9O/sDjEmU5bcTOqdpKfCEGomw/MOA4e+L0CV1hmN86H5Asxu70dVSrWWq4
+ v/0VaJ58VU8mC4b/84TgkQlPcLj0
+X-Google-Smtp-Source: AGHT+IGZNGfIe1bAZZ1gYuw8hB6BbRrOCaK4vi4nwwjjqYhBYvrXsW5mDutwu9fWoRHEwsmdsmfuJNbH4zvbeOjnlTc=
+X-Received: by 2002:a17:902:e5c8:b0:27d:6777:2833 with SMTP id
+ d9443c01a7336-290cb18415emr297585905ad.47.1761154231427; Wed, 22 Oct 2025
+ 10:30:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20251020155536.1965938-1-bruce.richardson@intel.com>
-In-Reply-To: <20251020155536.1965938-1-bruce.richardson@intel.com>
+References: <250811213632.16023-1-stephen@networkplumber.org>
+ <20251019165728.164929-1-stephen@networkplumber.org>
+In-Reply-To: <20251019165728.164929-1-stephen@networkplumber.org>
 From: Patrick Robb <probb@iol.unh.edu>
-Date: Wed, 22 Oct 2025 13:28:50 -0400
-X-Gm-Features: AS18NWCf9wUUkJOEz3LZS2RXgxoP1GpV61MQdN4GtWVjSeU8UFdDG9ql634vxPs
-Message-ID: <CAJvnSUBvK-az5zZFh=19TD4Khvi_KtzYo7Dw7vRriHhKEGEwbQ@mail.gmail.com>
-Subject: Re: [PATCH] devtools/test-meson-builds: reduce output size
-To: Bruce Richardson <bruce.richardson@intel.com>
+Date: Wed, 22 Oct 2025 13:29:39 -0400
+X-Gm-Features: AS18NWBRbBxCisyesUBElUvDNqbFhKC7oH4Uybw03iMzBBOXwpCTKh3ggtv9aoE
+Message-ID: <CAJvnSUCqKffbMP_aB2MevhBVRL1NwO4n6XTUYopFcLizHmVdOA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/8] packet capture bugfix and improvements
+To: Stephen Hemminger <stephen@networkplumber.org>
 Cc: dev@dpdk.org
-Content-Type: multipart/alternative; boundary="0000000000006254bb0641c2a93f"
+Content-Type: multipart/alternative; boundary="0000000000005bf86e0641c2ac6e"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,7 +71,7 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000006254bb0641c2a93f
+--0000000000005bf86e0641c2ac6e
 Content-Type: text/plain; charset="UTF-8"
 
 This email is triggering a rerun of testing at the DPDK Community Lab for
@@ -78,9 +79,9 @@ this patchseries.
 
 Recheck-request: iol-intel-Functional
 
---0000000000006254bb0641c2a93f
+--0000000000005bf86e0641c2ac6e
 Content-Type: text/html; charset="UTF-8"
 
-<div dir="ltr">This email is triggering a rerun of testing at the DPDK Community Lab for this patchseries.<br><br>Recheck-request: iol-intel-Functional<br></div>
+<div dir="ltr">This email is triggering a rerun of testing at the DPDK Community Lab for this patchseries.<br><br>Recheck-request: iol-intel-Functional</div>
 
---0000000000006254bb0641c2a93f--
+--0000000000005bf86e0641c2ac6e--
