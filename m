@@ -2,51 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2065CCD193
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 17:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2C4CCD193
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 17:29:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2FA2E4066C;
-	Thu, 23 Oct 2025 19:28:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3ABC340A7A;
+	Thu, 23 Oct 2025 19:28:24 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 2ACED40A75
- for <dev@dpdk.org>; Thu, 23 Oct 2025 19:28:18 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 430C640A76;
+ Thu, 23 Oct 2025 19:28:22 +0200 (CEST)
 Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N3d5Xw022686
- for <dev@dpdk.org>; Thu, 23 Oct 2025 10:28:17 -0700
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N3ck2f021882;
+ Thu, 23 Oct 2025 10:28:21 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=1
- lHdbbUSqn2mUdoEWZ08p/248TCQtJ1k+pOWhzaFRH0=; b=UJ1iyb5JNsVsyflaG
- 6fxP0gN84aam71/1fDJEGLOuVvmlz055KJ1ZmDpR/aSWRcMr8phRi1JSGEWzPWB/
- scCbPte2Pjq46/UKyQYSNRARwVGdIX0xmv/5pbV1kL+CYLzjvElokYpL2uA082Ep
- Fxn+0nvW8KBcositseCNCcyhbmMMXhjnLqjjjercyFfXI74IMKVguogNBpQ7Ryu8
- Jy4fzHB3g0+tBSNP576WGALenIO3j6avt/okEzmek9zSLqxG+azQ+PfIsGLCxa/o
- RLZx3KG7hYXgLAtbwgv2+eKQztuluIch26iAdn6kWtN+vNbHTwVWVOtP+FC93gL1
- JfqJQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49ycmr1w8h-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 23 Oct 2025 10:28:17 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=C
+ nxMGWRp5RUNg0cJXcwtAnVQ8Z8g19VKQD/5zx7mx3s=; b=GVI68H8HORsCWzr/P
+ +95kyrTlimtcfy8R0Qp6Cdff1hZIeJVfo7YivkIVZIB+ylQR2Tnf1hTIrgwX7lKO
+ FV0YnHUxW0vOmcoFusdoHQGAfww+V0m3Ex4BZ2qPRzvwaSSnT2CnXpaX2z5q19QV
+ 6H0JRp8eti6aghZzkX+lSp7b0UyN6lYbCsPLctapqtVrThdg0bdB0U5/YXvZxyg4
+ yN6jwRHfX6YidHQb44rjZ+xIHWMx3eUnE7X2i0Pk9Ye9bUE1bQtnoIXYpMrYI6yk
+ STpfxJSBqgjrBxyW84d37tkLmsgf8Si+zxFLks4yxR4ifDWUUHInMkK6nJ61LUA/
+ ZdF7Q==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49ycmr1w8r-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 23 Oct 2025 10:28:21 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 23 Oct 2025 10:28:26 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 23 Oct 2025 10:28:25 -0700
+ 15.2.1544.25; Thu, 23 Oct 2025 10:28:19 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Thu, 23 Oct 2025 10:28:19 -0700
 Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id 243255C68F1;
- Thu, 23 Oct 2025 10:28:13 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 4BE1B3F7068;
+ Thu, 23 Oct 2025 10:28:17 -0700 (PDT)
 From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <jerinj@marvell.com>, <dev@dpdk.org>, Rakesh Kudurumalla
- <rkudurumalla@marvell.com>
-Subject: [PATCH v3 15/19] common/cnxk: resolve klocwork issues
-Date: Thu, 23 Oct 2025 22:57:23 +0530
-Message-ID: <20251023172728.770661-15-ndabilpuram@marvell.com>
+CC: <jerinj@marvell.com>, <dev@dpdk.org>, <stable@dpdk.org>
+Subject: [PATCH v3 16/19] common/cnxk: fix null SQ access
+Date: Thu, 23 Oct 2025 22:57:24 +0530
+Message-ID: <20251023172728.770661-16-ndabilpuram@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251023172728.770661-1-ndabilpuram@marvell.com>
 References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
@@ -54,19 +53,19 @@ References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: nDGF3NWzDVRaSbldSbBeeddvRYoIAas-
-X-Proofpoint-GUID: nDGF3NWzDVRaSbldSbBeeddvRYoIAas-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDAzMCBTYWx0ZWRfX3qtA8CSnNa58
- dNQpbh5d8a0r65z51jezbv4oTcmBg2XgmmYgCmoHgzJIlbD49+UjnFl3Jy6/Kzlyn/4IVB5z6CA
- +FNFSczetRpUPJksIcoAeaFAWRPgOdE2pxTMqh3CIhmKtFLtiF3kIX/iLNA60FlV9EJD4SFRCNZ
- 1/y61qH1q4PHF65dLuLzA7cp1CnpGdcqnWkzqCPrUz7n5KmeJ1/sXQNnIoi5w5xcT5qQIroM1tc
- +5jwfhXypQTQ9OoSchLHksNCQF1kiYN2opC2PiB4ObrNL2DiFqjCXU4ZQYoQZFNXg/MMK0+krW4
- SYjdL2HykCN/BsNsqLiHXo1+JV4w3DUrBqYpAjNFtlEersAQjIaVC79hgE6Z+BJZbnMYCYdPDgm
- CCBj4SuKHkiV+V7k6tMuzdpA+DCL5Q==
-X-Authority-Analysis: v=2.4 cv=CtSys34D c=1 sm=1 tr=0 ts=68fa65b1 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
- a=G8DdwVB4TRNb03k8HkUA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: l0Haev7VYNti3qrL-GUZZ30myp7qAWZG
+X-Proofpoint-GUID: l0Haev7VYNti3qrL-GUZZ30myp7qAWZG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDAzMCBTYWx0ZWRfX2hMUbrckkRTS
+ UBBdikRA7nl915vtxfSVfHAZYzxhm9KqhaTIVp+etdc/CarHuHTNvo+sXO5PyeUk0aIeR70+rLQ
+ nWNjRdibOxTuPn9ptuY2sJp24VE6Giq8lXjuwtWYwT+SM3GGuK/VR57QWUZzdd3lprviQ9lS3hi
+ nkJ9U/J/DJJma2t35hOIxfA4RE0gPrdDpQk5ve57DnzpnwSKSYD2O6p1bpM3FD8SQ73OuXD1uBc
+ I1s4GZynjVHUQlU4PsyYrSptMkn5sqAkdaU9ElSqAkaaiOebdDwM3P85DMioKYkYUjQBEKlEVqz
+ /QybuKRz4+qScFP7RqeIxLIGcfAi3oJApNRMbpG1aQ8aL5LNdGlEXDbXdgjODPCHuhn0BZSO7w0
+ q9iDSkDCN2TWJqYokU00THNl+VjENg==
+X-Authority-Analysis: v=2.4 cv=CtSys34D c=1 sm=1 tr=0 ts=68fa65b5 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
+ a=aJDCPxk_WUJAfcRIQEIA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-23_01,2025-10-22_01,2025-03-28_01
@@ -83,71 +82,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+From: Satha Rao <skoteshwar@marvell.com>
 
-Fix klockwork for NULL pointer dereference
+Condition to check SQ is non NULL before access. Also pktio locks
+are simplified while doing threshold_profile config.
 
-Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+Fixes: 90a903ffa6eb ("common/cnxk: split NIX TM hierarchy enable API")
+Cc: stable@dpdk.org
+
+Signed-off-by: Satha Rao <skoteshwar@marvell.com>
 ---
- drivers/common/cnxk/roc_nix_queue.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/common/cnxk/roc_nix_tm_ops.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/common/cnxk/roc_nix_queue.c b/drivers/common/cnxk/roc_nix_queue.c
-index 2c7fce1067..c7e37abf32 100644
---- a/drivers/common/cnxk/roc_nix_queue.c
-+++ b/drivers/common/cnxk/roc_nix_queue.c
-@@ -112,6 +112,11 @@ roc_nix_sq_ena_dis(struct roc_nix_sq *sq, bool enable)
- {
- 	int rc = 0;
+diff --git a/drivers/common/cnxk/roc_nix_tm_ops.c b/drivers/common/cnxk/roc_nix_tm_ops.c
+index 09d014a276..230e9b72f6 100644
+--- a/drivers/common/cnxk/roc_nix_tm_ops.c
++++ b/drivers/common/cnxk/roc_nix_tm_ops.c
+@@ -624,6 +624,13 @@ roc_nix_tm_hierarchy_xmit_enable(struct roc_nix *roc_nix, enum roc_nix_tm_tree t
+ 		sq_id = node->id;
+ 		sq = nix->sqs[sq_id];
  
-+	if (!sq) {
-+		rc = NIX_ERR_PARAM;
-+		goto done;
-+	}
-+
- 	rc = roc_nix_tm_sq_aura_fc(sq, enable);
- 	if (rc)
- 		goto done;
-@@ -2163,9 +2168,9 @@ nix_sqb_mem_dyn_free(uint64_t aura_handle, uint16_t count)
- int
- roc_nix_sq_fini(struct roc_nix_sq *sq)
- {
--	struct roc_nix *roc_nix = sq->roc_nix;
--	bool sq_resize_ena = roc_nix->sq_resize_ena;
- 	struct ndc_sync_op *ndc_req;
-+	struct roc_nix *roc_nix;
-+	bool sq_resize_ena;
- 	struct mbox *mbox;
- 	struct nix *nix;
- 	uint16_t qid;
-@@ -2174,6 +2179,9 @@ roc_nix_sq_fini(struct roc_nix_sq *sq)
- 	if (sq == NULL)
- 		return NIX_ERR_PARAM;
- 
-+	roc_nix = sq->roc_nix;
-+	sq_resize_ena = roc_nix->sq_resize_ena;
-+
- 	nix = roc_nix_to_nix_priv(roc_nix);
- 	mbox = (&nix->dev)->mbox;
- 
-@@ -2228,7 +2236,7 @@ sqb_aura_dyn_expand(struct roc_nix_sq *sq, uint16_t count)
- 	int i;
- 
- 	blk_sz = nix->sqb_size;
--	sqbs = calloc(1, count * sizeof(uint64_t *));
-+	sqbs = calloc(1, count * sizeof(uint64_t));
- 	if (!sqbs)
- 		return -ENOMEM;
- 
-@@ -2300,7 +2308,7 @@ sqb_aura_dyn_contract(struct roc_nix_sq *sq, uint16_t count)
- 	cycles = (timeout * 10 * plt_tsc_hz()) / (uint64_t)1E6;
- 	cycles += plt_tsc_cycles();
- 
--	sqbs = calloc(1, count * sizeof(uint64_t *));
-+	sqbs = calloc(1, count * sizeof(uint64_t));
- 	if (!sqbs)
- 		return -ENOMEM;
- 
++		if (!sq) {
++			plt_err("nb_rxq %d nb_txq %d sq_id %d lvl %d", nix->nb_rx_queues,
++				nix->nb_tx_queues, sq_id, node->lvl);
++			roc_nix_tm_dump(roc_nix, NULL);
++			roc_nix_dump(roc_nix, NULL);
++			return NIX_ERR_TM_INVALID_NODE;
++		}
+ 		rc = roc_nix_sq_ena_dis(sq, true);
+ 		if (rc) {
+ 			plt_err("TM sw xon failed on SQ %u, rc=%d", node->id,
 -- 
 2.34.1
 
