@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BAF6CCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 07:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC777CCD1BC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 07:55:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 59591402D9;
-	Thu, 23 Oct 2025 09:55:01 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+	by mails.dpdk.org (Postfix) with ESMTP id 4BB9B402E3;
+	Thu, 23 Oct 2025 09:55:04 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id E3967402C3
- for <dev@dpdk.org>; Thu, 23 Oct 2025 09:54:59 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N3hdoN029708
- for <dev@dpdk.org>; Thu, 23 Oct 2025 00:54:59 -0700
+ by mails.dpdk.org (Postfix) with ESMTP id 79BA2402E0
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 09:55:02 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N3d51Z022686
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 00:55:01 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=X
- Wr98Z7VSaq0wHMzZpqbKsrJJ/E+4Vo4hGbeJuwBbUc=; b=IVcb/UOHaZAixjX0B
- Q9A++Y81YXq4uYpmHOD9PV6nratOB8gf5q5OjmNkyT+vD+VxeufGPLkYTK2G11fJ
- zUAw1gPeAlwTTZuo4Ww5IUfB1BJguN1SliamBoTJ8c4MkwC0nsc6gKWNRpX1Hjqv
- WXMAbJ787agCPR5gFWPpeDi7tUS04Cs5IrGvb2B7kcDIBXTKWsNgl07zlIC3fjlW
- vGD3YmFIr8dz+WtVs8XEA/Eq2l+r21mTDGpLT37bkVNsILAeYhEXF4znTdguSV+3
- eJfdMO3/yxvWrZfas3vrZH0Yjf5SyPe7v/ZW/6dce1F0s/aeqyYvulQUz6f3dNYj
- dgQng==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=u
+ QSL4CKJ0WOd/6vjKsNF3v1kFdexCOjLZ9RBgaJkDXg=; b=PGaFcfq7jj8kA0yoT
+ yd7NHksx2VKxbjJv02wwNDz+YhZP+QPRmesec3CYB22Q68+jlSSq2i2NG7lYX5Bz
+ 7g1XadV1ExJE8slJSuSeolPMbenJgzodomA39qybh1J/rs8RSrczbh6w2820Ml1k
+ Zi9wZ4lVPsX8tI7000f5tLYGTPWBOlh3xhnstNODLh6jW7Luu/Wwjsepy70AdtV5
+ Eo2Ch0+gwNjLzxydC41h9u8Bg5+oyyMXoQQ0ph8SSkDycjBU41ikiMcJhxBtatwI
+ ubsuuSDV7SbccLAezzuwc06Ap2IC/BhXwEYLmTejsZ0k1tRNtY1m2PErgHd9IQ3G
+ E6few==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49ycq48ds3-1
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49ycmr0euv-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 23 Oct 2025 00:54:58 -0700 (PDT)
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 00:55:01 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 23 Oct 2025 00:55:07 -0700
+ 15.2.1544.25; Thu, 23 Oct 2025 00:55:10 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 23 Oct 2025 00:55:07 -0700
+ Transport; Thu, 23 Oct 2025 00:55:10 -0700
 Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
- by maili.marvell.com (Postfix) with ESMTP id 49E973F7090;
- Thu, 23 Oct 2025 00:54:56 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id C69603F7090;
+ Thu, 23 Oct 2025 00:54:58 -0700 (PDT)
 From: <skori@marvell.com>
 To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH v5 2/6] common/cnxk: provide port type from fwdata
-Date: Thu, 23 Oct 2025 13:23:26 +0530
-Message-ID: <20251023075450.4145667-2-skori@marvell.com>
+Subject: [PATCH v5 3/6] net/cnxk: get speed capability from firmware
+Date: Thu, 23 Oct 2025 13:23:27 +0530
+Message-ID: <20251023075450.4145667-3-skori@marvell.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251023075450.4145667-1-skori@marvell.com>
 References: <20251023053728.4091023-6-skori@marvell.com>
@@ -53,19 +53,19 @@ References: <20251023053728.4091023-6-skori@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDAzMSBTYWx0ZWRfX1yTOZSnaeSeu
- cjLh5rYD6NbuZVTJLDPhj0TKRyE6Uc7/CQdfbTNpYM+qXSMUWP0YQ2E12UoKL4p+vysjk1hGJ3y
- osCAVWF45sHxLQCVmFYdBn8jqGnNrwPiOwxCDzkTd7f65dMCyLeHSqCIr1Dcu4d7a+RK3FRFD3j
- kbJBWWnnoeD9dxmaJ+nihwMod6qlwhpNtQwlTzgv3XcdaoET7jb+jjdZiNQpoD0Qq1BQZI7DM0a
- sNXD0tL08X2SA0xwgIK1Pd6sjbUFFIXMiaIGD7GGRXWBfSh73SHQKb2RhePYV6dajsy+846GBck
- DdtH/YucFxOV+wSmdyChfk1OiMo26GZfVj1k3K+z1ukxsRnUz00i6sLNxfDFW8AfADyY6yCQAMa
- SxyqujloA5vkcAdgYiCaAaAkUg74+w==
-X-Authority-Analysis: v=2.4 cv=fI80HJae c=1 sm=1 tr=0 ts=68f9df52 cx=c_pps
+X-Proofpoint-ORIG-GUID: qpa1rwLfZKnMMR0wquBqzMZuOTefUtvq
+X-Proofpoint-GUID: qpa1rwLfZKnMMR0wquBqzMZuOTefUtvq
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDAzMCBTYWx0ZWRfX02koIskzpN6z
+ uN4KSfd+nh4G8M2kADuiwEdf2H3AK+2nmKe30FCV0e/Cp/ZMLG3m9x+noiedjJTxA/u68ssvTcW
+ k20DGa2Pp9Z6qjkFwzSQqCg8vVatr6vVdLJ6esFRqrsETIIm7jc61PsFadEhji/Egl0seKfGid2
+ M3Fm1TMp+DaBui08eofGCXIdRfLSxx0kuT3VRZ78OshAcud8zKLvwhcnMBIAOVzo8/5ZxPsKp0s
+ fon1mhJ1gLbx+fdvmdFWm6xD96ZAw2exNYCezFZEqFjMyj8rmsvLL0SoWR8BtITTbVistM2WlDr
+ RNhSxEJIuzolQMMlq6PpWsnuRkC3o+watSKm+c+MwTt0hN5MPD9u8W4sicxE757eIrNQK6bNL31
+ RUAUjVi/TIy20EIajjF5BDtqNH88Ag==
+X-Authority-Analysis: v=2.4 cv=CtSys34D c=1 sm=1 tr=0 ts=68f9df55 cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
- a=x9mx7A_yV6r5R7-WvSUA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: AodMDeBd3unYpaLc4IyWfbS800SHS7QB
-X-Proofpoint-ORIG-GUID: AodMDeBd3unYpaLc4IyWfbS800SHS7QB
+ a=3CMRPe03__idA2T9rPcA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
@@ -84,86 +84,117 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Sunil Kumar Kori <skori@marvell.com>
 
-Retrieves type of port from firmware data.
+Currently speed capability is hardcoded to support defined
+modes and speeds but MAC can support others modes and speed
+too. This information is populated by firmware.
+
+Hence fetching firmware data to provide actual supported
+modes and speeds by the port.
 
 Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
 Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
 ---
- drivers/common/cnxk/hw/nix.h      | 12 ++++++++++++
- drivers/common/cnxk/roc_mbox.h    | 13 +++++++++++--
- drivers/common/cnxk/roc_nix.h     |  1 +
- drivers/common/cnxk/roc_nix_mac.c |  1 +
- 4 files changed, 25 insertions(+), 2 deletions(-)
+ drivers/net/cnxk/cnxk_ethdev.c | 75 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 72 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/common/cnxk/hw/nix.h b/drivers/common/cnxk/hw/nix.h
-index f344d4de99..c438f18145 100644
---- a/drivers/common/cnxk/hw/nix.h
-+++ b/drivers/common/cnxk/hw/nix.h
-@@ -2751,4 +2751,16 @@ enum cgx_mode {
- 	CGX_MODE_MAX /* = 51 */
- };
+diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
+index 6c723c9cec..14e9707fcb 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.c
++++ b/drivers/net/cnxk/cnxk_ethdev.c
+@@ -7,6 +7,60 @@
+ #include <rte_eventdev.h>
+ #include <rte_pmd_cnxk.h>
  
-+/* CGX Port types from kernel */
-+enum cgx_port_type {
-+	CGX_PORT_TP = 0x0,
-+	CGX_PORT_AUI,
-+	CGX_PORT_MII,
-+	CGX_PORT_FIBRE,
-+	CGX_PORT_BNC,
-+	CGX_PORT_DA,
-+	CGX_PORT_NONE = 0xef,
-+	CGX_PORT_OTHER = 0xff,
++static const uint32_t cnxk_mac_modes[CGX_MODE_MAX + 1] = {
++	[CGX_MODE_SGMII] = RTE_ETH_LINK_SPEED_1G,
++	[CGX_MODE_1000_BASEX] = RTE_ETH_LINK_SPEED_1G,
++	[CGX_MODE_QSGMII] = RTE_ETH_LINK_SPEED_1G,
++	[CGX_MODE_10G_C2C] = RTE_ETH_LINK_SPEED_10G,
++	[CGX_MODE_10G_C2M] = RTE_ETH_LINK_SPEED_10G,
++	[CGX_MODE_10G_KR] = RTE_ETH_LINK_SPEED_10G,
++	[CGX_MODE_20G_C2C] = RTE_ETH_LINK_SPEED_20G,
++	[CGX_MODE_25G_C2C] = RTE_ETH_LINK_SPEED_25G,
++	[CGX_MODE_25G_C2M] = RTE_ETH_LINK_SPEED_25G,
++	[CGX_MODE_25G_2_C2C] = RTE_ETH_LINK_SPEED_25G,
++	[CGX_MODE_25G_CR] = RTE_ETH_LINK_SPEED_25G,
++	[CGX_MODE_25G_KR] = RTE_ETH_LINK_SPEED_25G,
++	[CGX_MODE_40G_C2C] = RTE_ETH_LINK_SPEED_40G,
++	[CGX_MODE_40G_C2M] = RTE_ETH_LINK_SPEED_40G,
++	[CGX_MODE_40G_CR4] = RTE_ETH_LINK_SPEED_40G,
++	[CGX_MODE_40G_KR4] = RTE_ETH_LINK_SPEED_40G,
++	[CGX_MODE_40GAUI_C2C] = RTE_ETH_LINK_SPEED_40G,
++	[CGX_MODE_50G_C2C] = RTE_ETH_LINK_SPEED_50G,
++	[CGX_MODE_50G_C2M] = RTE_ETH_LINK_SPEED_50G,
++	[CGX_MODE_50G_4_C2C] = RTE_ETH_LINK_SPEED_50G,
++	[CGX_MODE_50G_CR] = RTE_ETH_LINK_SPEED_50G,
++	[CGX_MODE_50G_KR] = RTE_ETH_LINK_SPEED_50G,
++	[CGX_MODE_80GAUI_C2C] = 0, /* No define for 80G */
++	[CGX_MODE_100G_C2C] = RTE_ETH_LINK_SPEED_100G,
++	[CGX_MODE_100G_C2M] = RTE_ETH_LINK_SPEED_100G,
++	[CGX_MODE_100G_CR4] = RTE_ETH_LINK_SPEED_100G,
++	[CGX_MODE_100G_KR4] = RTE_ETH_LINK_SPEED_100G,
++	[CGX_MODE_LAUI_2_C2C_BIT] = RTE_ETH_LINK_SPEED_50G,
++	[CGX_MODE_LAUI_2_C2M_BIT] = RTE_ETH_LINK_SPEED_50G,
++	[CGX_MODE_50GBASE_CR2_C_BIT] = RTE_ETH_LINK_SPEED_50G,
++	[CGX_MODE_50GBASE_KR2_C_BIT] = RTE_ETH_LINK_SPEED_50G,
++	[CGX_MODE_100GAUI_2_C2C_BIT] = RTE_ETH_LINK_SPEED_100G,
++	[CGX_MODE_100GAUI_2_C2M_BIT] = RTE_ETH_LINK_SPEED_100G,
++	[CGX_MODE_100GBASE_CR2_BIT] = RTE_ETH_LINK_SPEED_100G,
++	[CGX_MODE_100GBASE_KR2_BIT] = RTE_ETH_LINK_SPEED_100G,
++	[CGX_MODE_SFI_1G_BIT] = RTE_ETH_LINK_SPEED_1G,
++	[CGX_MODE_25GBASE_CR_C_BIT] = RTE_ETH_LINK_SPEED_25G,
++	[CGX_MODE_25GBASE_KR_C_BIT] = RTE_ETH_LINK_SPEED_25G,
++	[ETH_MODE_SGMII_10M_BIT] = RTE_ETH_LINK_SPEED_10M | RTE_ETH_LINK_SPEED_10M_HD,
++	[ETH_MODE_SGMII_100M_BIT] = RTE_ETH_LINK_SPEED_100M | RTE_ETH_LINK_SPEED_100M_HD,
++	[40] = 0,
++	[41] = 0,
++	[ETH_MODE_2500_BASEX_BIT] = RTE_ETH_LINK_SPEED_2_5G,
++	[ETH_MODE_5000_BASEX_BIT] = RTE_ETH_LINK_SPEED_5G,
++	[ETH_MODE_O_USGMII_BIT] = RTE_ETH_LINK_SPEED_100M,
++	[ETH_MODE_Q_USGMII_BIT] = RTE_ETH_LINK_SPEED_1G,
++	[ETH_MODE_2_5G_USXGMII_BIT] = RTE_ETH_LINK_SPEED_2_5G,
++	[ETH_MODE_5G_USXGMII_BIT] = RTE_ETH_LINK_SPEED_5G,
++	[ETH_MODE_10G_SXGMII_BIT] = RTE_ETH_LINK_SPEED_10G,
++	[ETH_MODE_10G_DXGMII_BIT] = RTE_ETH_LINK_SPEED_10G,
++	[ETH_MODE_10G_QXGMII_BIT] = RTE_ETH_LINK_SPEED_10G,
 +};
 +
- #endif /* __NIX_HW_H__ */
-diff --git a/drivers/common/cnxk/roc_mbox.h b/drivers/common/cnxk/roc_mbox.h
-index 7fec23772f..66a3dd2125 100644
---- a/drivers/common/cnxk/roc_mbox.h
-+++ b/drivers/common/cnxk/roc_mbox.h
-@@ -755,8 +755,17 @@ enum fec_type {
- };
+ cnxk_ethdev_rx_offload_cb_t cnxk_ethdev_rx_offload_cb;
  
- struct phy_s {
--	uint64_t __io can_change_mod_type : 1;
--	uint64_t __io mod_type : 1;
-+	struct {
-+		uint64_t __io can_change_mod_type : 1;
-+		uint64_t __io mod_type : 1;
-+		uint64_t __io has_fec_stats : 1;
-+	} misc;
-+	struct fec_stats_s {
-+		uint32_t __io rsfec_corr_cws;
-+		uint32_t __io rsfec_uncorr_cws;
-+		uint32_t __io brfec_corr_blks;
-+		uint32_t __io brfec_uncorr_blks;
-+	} fec_stats;
- };
+ #define CNXK_NIX_CQ_INL_CLAMP_MAX (64UL * 1024UL)
+@@ -42,14 +96,29 @@ nix_get_tx_offload_capa(struct cnxk_eth_dev *dev)
+ static inline uint32_t
+ nix_get_speed_capa(struct cnxk_eth_dev *dev)
+ {
++	struct roc_nix_mac_fwdata fwdata;
+ 	uint32_t speed_capa;
++	uint8_t mode;
++	int rc;
  
- struct cgx_lmac_fwdata_s {
-diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
-index 41334327bb..a62ddf4732 100644
---- a/drivers/common/cnxk/roc_nix.h
-+++ b/drivers/common/cnxk/roc_nix.h
-@@ -507,6 +507,7 @@ struct roc_nix_link_info {
- struct roc_nix_mac_fwdata {
- 	uint64_t advertised_link_modes;
- 	uint64_t supported_link_modes;
-+	uint64_t port_type;
- 	uint64_t supported_an;
- };
+ 	/* Auto negotiation disabled */
+ 	speed_capa = RTE_ETH_LINK_SPEED_FIXED;
+ 	if (!roc_nix_is_vf_or_sdp(&dev->nix) && !roc_nix_is_lbk(&dev->nix)) {
+-		speed_capa |= RTE_ETH_LINK_SPEED_1G | RTE_ETH_LINK_SPEED_10G |
+-			      RTE_ETH_LINK_SPEED_25G | RTE_ETH_LINK_SPEED_40G |
+-			      RTE_ETH_LINK_SPEED_50G | RTE_ETH_LINK_SPEED_100G;
++		memset(&fwdata, 0, sizeof(fwdata));
++		rc = roc_nix_mac_fwdata_get(&dev->nix, &fwdata);
++		if (rc) {
++			plt_err("Failed to get MAC firmware data");
++			return 0;
++		}
++
++		if (fwdata.supported_an)
++			speed_capa = 0;
++
++		/* Translate advertised modes to speed_capa */
++		for (mode = 0; mode < CGX_MODE_MAX; mode++) {
++			if (fwdata.supported_link_modes & BIT_ULL(mode))
++				speed_capa |= cnxk_mac_modes[mode];
++		}
+ 	}
  
-diff --git a/drivers/common/cnxk/roc_nix_mac.c b/drivers/common/cnxk/roc_nix_mac.c
-index 08b4f30810..376ff48522 100644
---- a/drivers/common/cnxk/roc_nix_mac.c
-+++ b/drivers/common/cnxk/roc_nix_mac.c
-@@ -436,6 +436,7 @@ roc_nix_mac_fwdata_get(struct roc_nix *roc_nix, struct roc_nix_mac_fwdata *data)
- 	data->supported_link_modes = nix->supported_link_modes;
- 	data->advertised_link_modes = nix->advertised_link_modes;
- 	data->supported_an = fw_data->fwdata.supported_an;
-+	data->port_type = fw_data->fwdata.port;
- exit:
- 	mbox_put(mbox);
- 	return rc;
+ 	return speed_capa;
 -- 
 2.43.0
 
