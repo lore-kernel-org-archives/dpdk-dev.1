@@ -2,30 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5D5CCD1BC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 12:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC190CCD1BE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 12:14:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EA2B0402E1;
-	Thu, 23 Oct 2025 14:14:45 +0200 (CEST)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
- by mails.dpdk.org (Postfix) with ESMTP id E9DE54060C
- for <dev@dpdk.org>; Thu, 23 Oct 2025 14:14:42 +0200 (CEST)
-X-QQ-mid: esmtpgz12t1761221677tbfe729ce
-X-QQ-Originating-IP: iMRc9yBPDhd0dkyQrqyAn7iFJdB8wm6pXvIEn5J9xP4=
+	by mails.dpdk.org (Postfix) with ESMTP id 0CAF240616;
+	Thu, 23 Oct 2025 14:14:52 +0200 (CEST)
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+ by mails.dpdk.org (Postfix) with ESMTP id 1C92440616
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 14:14:48 +0200 (CEST)
+X-QQ-mid: esmtpgz12t1761221683tbc11075a
+X-QQ-Originating-IP: a59St8rnDeH/tVKRoDA0tSfXOjLuBdbLl2qbmrUQH30=
 Received: from DSK-zaiyuwang.trustnetic.com ( [60.186.187.129])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Thu, 23 Oct 2025 20:14:31 +0800 (CST)
+ id ; Thu, 23 Oct 2025 20:14:38 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12398237125250991598
+X-BIZMAIL-ID: 5619954051794385796
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, Jiawen Wu <jiawenwu@trustnetic.com>,
  Jian Wang <jianwang@trustnetic.com>
-Subject: [PATCH 2/6] net/txgbe: add flush operation for Amber-Lite NICs
-Date: Thu, 23 Oct 2025 20:13:51 +0800
-Message-Id: <20251023121356.21944-3-zaiyuwang@trustnetic.com>
+Subject: [PATCH 3/6] net/txgbe: add RSS register selection for Amber-Lite 25G
+ VF
+Date: Thu, 23 Oct 2025 20:13:52 +0800
+Message-Id: <20251023121356.21944-4-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20251023121356.21944-1-zaiyuwang@trustnetic.com>
 References: <20251023121356.21944-1-zaiyuwang@trustnetic.com>
@@ -33,24 +34,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: MwqrwaLzgdebE8+yMTWcXeoOHSYCk6XCbzUthXyAzV3IK/pGy4h6bwMD
- gQHV1VYiUjmkIjT/jROItgszKlX09WHThbVHzzS2ThNrKbDLjsS9LOl/uNGPsySaMXmrdF7
- 4CYUMHyc8JR2AO7dLj2xGEahjGZGtRafT+4/MwoEmmxkbJ7lBw4HMxMxjeefZBwOxNMA9+A
- pPJRUy1zy5MclL5nUSmEGxZxrxWzBvHo7DVbq5YXLgxIUag+BJ53TDubpUwya9l2P2moJs/
- F+VFXfBmC/Ncv3kX+QEZKOGYUMjlpZR/khvafPdZMV4IO8O6Wbasa7v1ZdTSVvHXO+vmUEN
- UewS/vr/mykzwI5E4AODfC9fOzlL/1u+J7iCQMVbRdXMSo76ZHMiwM/IZUHL0CJZlD7wUuv
- jsRIDVRQtF/doGtp3pycMuG37LpFh3lJ/awiHnhLVAAPi+CV5iF357RSQZiJTHj/lMF04vk
- IyA4fJaI/XtOk6BZ9u8kdbxiLvfGNxD/5WByQAvK0HXUrYgxII7nUWr+YvPZWfSpISUeVmy
- /1AVFbsdHSquq4JahaCgMALun9e98C4pSWnQwMeE6upWrdQtm67i9oFCKOtXqjfVjUDSQRX
- TGzKnN0aynSpoHSq1ydY7ndmy8LpXTYWq0Q5hBb2D/vywC8mRZ62QAV1/CChiq9L2svxfPv
- BAr8cZ168oGOobULaVqe+nSISlqQ2qyqsBvEIe9dj4B0ENgZ6biu8cuVBNAnmD9oTsJAbqQ
- seNBg8lxQIrBra9zmGAest+sw4YJCh8M8hOSa4zosUSJJqv0T4iZiFZqe++tfX92b7dOZFl
- KNoEbQ91/1rVbuvOUmOgKRQWrUYm23kSMepiAEOCNQ4Zu3NnH0rKT6BM59VAiugqaMouRwg
- RnafsjspRQXxWbY6hs9eLNXCduNHCiLAo94NMJIEcsWLYd41DNBL1kid8+3t6yA6eBz/3uy
- SPfN0D6XihrdKF3KCGSKk9GjteZcrvDJ35PWJJ914Z7gWrJAdZGs+tHW4a3Y7Rv5I42Nf00
- UQ1Bq6fx4mDvCClHZtYJpSA3cGBXl7OXEyMgqqOjAytY+GXROjoyfP/n31XUCkCj7jrcXwD
- kW5P3S0qHO8
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-XMAILINFO: NcOdkfOXZm3fDSoRzEvIYDgzQqgyYrodo0qUCoNDWdv5Fw2/d57GL0lJ
+ 5cwa9Lykinfh1lakD++03lA6sz0N8mZARLyqe9c1KXFKHEjCaeoOaXlz9MvoYTkxLehXpaj
+ LbKZ8WzF/C6Ya4YGPpny08aTi0Jl1DMarhRVH6RJxxOZVxSmRqVftbjdDsB7sDHfiUqJg3k
+ 70L+809W8aEh1plTUnt45PT3tFV2d+FVLa4Sb7E7iMrzGqjehijcS/KHg9IHSOCBbBs82qg
+ MMH7EDa5LwJbgoDtteoTeNRaAi+FfBQh0DgrMIb6HkuCfN6sG24p93rgigxt++XT7oyTmZ2
+ iedrofFP92m1S2dHtHth20CAbclJCCxlPJX/0bV1/tt2yUFO9U9q/DRSqpycr46jBXjff3V
+ lnVafy+0/ZxN+Gi0vXMvtkWWmfub9TiiERE8WYYPD/avgh2PxMcsv8btgu8LpDtF+jYp7L9
+ 7XAOQvU0GY6cJT70B9yEjv2Hnreco6st/m6zFuDD+oatGDUDukHx12VUN8ey8gjQrGB/0HC
+ hCVuMVY2rYHyZ8g1+XKRwA4217MP2sQufqVWYtLHdu0BR65BrLvgQL9IDoslNEctOY5XT90
+ dJMVT17TUoTcTVh5UE4oTeua/4roz+lzdwGdKnn5mOOz8i6RXlWqMCGTQXJigBUHk1fl5mp
+ G3QYIY/1FIdIxdL/mrrIHvjFlJ6TvSmCEuyXEsic1kUw6Hwrc0BOhbiG/du3msLGGI+12k1
+ +c8bqCA1b/i/rP8vSQadFu70WiiX9nrC4PqgzrSgyuS98x/o/80Xc6TWsEd/xvvjbvwQ8SJ
+ s4CA+iOW8wUM9E/YYsvSRrO2e3W/DN7iQIa79xVjSG3NzhocLJtJH8imyKOqvD0qoWteO21
+ 5q7tbOfArEslKtKoinkjJ/ksrPZXyXNLX8LHDcXDEF6nIyQuKegt7Z7DC6UsTz2g0FlYXRC
+ dmUgeWkbFkaEKmkwUocW0/TqF4NE+6YkVffAttO30ajqIfSLxvjf3mPiftGaWB4kXB+Z+ta
+ F1n4lWBFiqdvRlBsZSvskSdZWSieXFVStJchIfFCpeNAyt0aP5F2rr/26bawY=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -65,31 +65,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add flush operation for AML NICs to ensure configuration takes effect.
-The flush forces hardware to apply new settings right after driver
-updates. Missing flush may cause potential negative impacts as
-configurations could remain pending.
+A mapping function is used to distinguish between PF and VF during RSS
+setup, ensuring access to the correct registers. This feature is added
+specifically for Amber-Lite 25G VF, while 40G VF remains unchanged.
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_regs.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/txgbe/base/txgbe_regs.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
-index f2e4994863..505e42a666 100644
+index 505e42a666..cfe9b94e78 100644
 --- a/drivers/net/txgbe/base/txgbe_regs.h
 +++ b/drivers/net/txgbe/base/txgbe_regs.h
-@@ -1997,9 +1997,12 @@ static inline void txgbe_flush(struct txgbe_hw *hw)
+@@ -1816,11 +1816,13 @@ txgbe_map_reg(struct txgbe_hw *hw, u32 reg)
  {
- 	switch (hw->mac.type) {
- 	case txgbe_mac_sp:
-+	case txgbe_mac_aml:
-+	case txgbe_mac_aml40:
- 		rd32(hw, TXGBE_PWR);
+ 	switch (reg) {
+ 	case TXGBE_REG_RSSTBL:
+-		if (hw->mac.type == txgbe_mac_sp_vf)
++		if (hw->mac.type == txgbe_mac_sp_vf ||
++		    hw->mac.type == txgbe_mac_aml_vf)
+ 			reg = TXGBE_VFRSSTBL(0);
  		break;
- 	case txgbe_mac_sp_vf:
-+	case txgbe_mac_aml_vf:
- 		rd32(hw, TXGBE_VFSTATUS);
+ 	case TXGBE_REG_RSSKEY:
+-		if (hw->mac.type == txgbe_mac_sp_vf)
++		if (hw->mac.type == txgbe_mac_sp_vf ||
++		    hw->mac.type == txgbe_mac_aml_vf)
+ 			reg = TXGBE_VFRSSKEY(0);
  		break;
  	default:
 -- 
