@@ -2,88 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E2FACCD1BC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 17:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFFACCD1BC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 17:27:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6FBAF4026A;
-	Thu, 23 Oct 2025 19:26:03 +0200 (CEST)
-Received: from fout-a5-smtp.messagingengine.com
- (fout-a5-smtp.messagingengine.com [103.168.172.148])
- by mails.dpdk.org (Postfix) with ESMTP id 9908D40144;
- Thu, 23 Oct 2025 19:26:02 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id E766EEC029C;
- Thu, 23 Oct 2025 13:26:01 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Thu, 23 Oct 2025 13:26:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1761240361;
- x=1761326761; bh=EN7mTSlM+HZulYY5KQJYglP9Lu//aTVQRYGCnQcjSaA=; b=
- JnSTHHCoj4HoTMgfSasw9gl1LBnhDeFF/z059tlqI6JTF3byYOzBp9MzRtHmnAkg
- J2LGOlBpmBM7Jo1W9RTNofRFdNbLIf55P3DyxzCLbY87PhW+6jKwVDoSxgMJPQ5Z
- ujoZIdCj3XTCkBUYTxeJZ8D771eUS5beqKEggkuYEeiMe48FT64eOEfsnxWWwTjd
- XEsOUkzCKjhl7OqwYX/6JnELMGo7lmniXlD9uEhAK8Ir5VXy3DZ7mY2Qlc3WJw7E
- ZBZR8TlbYJVWJ35omOePD+GhFjVWiE0wBfjJJ5C1G5YYzEmXwwnR6CuQF0CD89cN
- ZRGukXtfYui1FlRFGSu/6A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761240361; x=
- 1761326761; bh=EN7mTSlM+HZulYY5KQJYglP9Lu//aTVQRYGCnQcjSaA=; b=i
- kqNDaUNTC1c6jttj+2OJEJQQC1WVlBXi/AXSjs2IH8YxvcUy1SgHpiPRLJJqKTXS
- WovvkaMVqrVEt2obLndPIvhnxOuOXpG2iBS8hzVTnaWsGA1PFrsLVVThlAarTwxM
- G6tTc1TSiCW7jdPG/5//AyGhiYt4npbmi0KAi+NypK1PARbifhuHoki5ewsD/jkW
- PBiZEQSHKWIk4dEo4B2ZcfSPxYxuoMp0BfLu3PdQ2HhdyRw8KrP51oO7LbSuHkuT
- +r1yniNTjvrott6BJv9Gs4mImbvp990GYVrO8UjGkC1XSESw6oQos5Jf5/P0JORB
- BuSGOVwmt5xov8VSUbTzw==
-X-ME-Sender: <xms:KGX6aHdJlRxHh0g-fru9TJVUtyxtEHTP8eWVMihK3ESuqyTzvNGdoQ>
- <xme:KGX6aN6f9MVvhcD10XnRQK2RUGLjn4Ai4QLcsuVmBmjFsBUxAYMi4Fq0a3KFuT4C_
- coC37Q8S4lvvq-ArOi3ObtjuazNj8Mjds1cU1tGdQcyU0IuZ4Pu>
-X-ME-Received: <xmr:KGX6aOtZJj1kqD9hSDxPxQ2MAD6ggUOOg0sfIyVSXJNfsb1ojdmxKg3obeD055cma_gmPgnqTQsuvL-mbnlFkdFImA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeejtdeiucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
- leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehmrghtthhirghsrdhrohhnnhgslhhomh
- esvghrihgtshhsohhnrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughs
- ohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtg
- hpthhtohepjhgrtghkrdgsohhnugdqphhrvghsthhonhesfhhoshhsrdgrrhhmrdgtohhm
- pdhrtghpthhtohephhhofhhorhhssehlhihsrghtohhrrdhlihhurdhsvgdprhgtphhtth
- hopehsthgrsghlvgesughpughkrdhorhhgpdhrtghpthhtohepmhgssehsmhgrrhhtshhh
- rghrvghshihsthgvmhhsrdgtohhm
-X-ME-Proxy: <xmx:KGX6aNjKDn_t4PLw7DWiXJOYQ9Zxs6fbTvVKhJg2t6IPtUHoCoDYQA>
- <xmx:KGX6aJrJhCb3ulVb_WQPRc62rlCDlb6fnR2LUO1lAJXoafLRHYdlPA>
- <xmx:KGX6aKstC6j7yyoAXnLjvI6djDCdkzFNx4gTBlPD3zNpZg_veiHq6w>
- <xmx:KGX6aMbR-o4cX_jhSJvsADt6EFV3XHALorahzV6KzJe0DS6uMKfWJQ>
- <xmx:KWX6aN7ZJU3flcUSpN4yUUFCa2KD7bVNCAf0-tWPmRXg7hHtBYSXX2Wl>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Oct 2025 13:25:59 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Mattias =?UTF-8?B?UsO2bm5ibG9t?= <mattias.ronnblom@ericsson.com>
-Cc: Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org,
- Jack Bond-Preston <jack.bond-preston@foss.arm.com>,
- Mattias =?UTF-8?B?UsO2bm5ibG9t?= <hofors@lysator.liu.se>, stable@dpdk.org,
- Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Subject: Re: [PATCH] bitops: improve power of 2 alignment function
- documentation
-Date: Thu, 23 Oct 2025 19:25:58 +0200
-Message-ID: <2357650.d7IHhHJzqS@thomas>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FDBF@smartserver.smartshare.dk>
-References: <20250722075321.121254-1-mattias.ronnblom@ericsson.com>
- <aH9Ob8sReOBJw-yv@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FDBF@smartserver.smartshare.dk>
+	by mails.dpdk.org (Postfix) with ESMTP id B9B4A4026A;
+	Thu, 23 Oct 2025 19:27:37 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id D9FFF40144
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 19:27:36 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N8OlHs031543
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 10:27:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=9
+ hS2u9v5SxwZgOr0HjVFr12cnY8iodY+GwyJiYldXss=; b=a6UUT+MvzV4iFbDEC
+ KqasAIwyKsi7BDhvvt/O+HlhE+PAh+qx6o7WnjAc0yszGDiYE+6+XbEP/LrZIvZg
+ i3st7NXGDQ8WSuAfs9cb6c/ty5Xbt3/swmQt8d026WTujNnuogxkKswjhSZKpw6W
+ yPPKIjfelrQfVFnqmk0atsAArlbIM5XQCTu/TzfNFGulEVZ9n5eGRPk7HnSR8qzA
+ YiwSGtsv7CoqRjBFYDVa2mz7WPDBqrxqUXNxP78pjfzgcc0aLhQ7HPF8vaoKO8FC
+ ZZP8ZsPuom6vvQFuB6lU7jGwxW5FAoNfjSFn3d2jTn4dxCRijy9THwLjHYdrQq+5
+ 9DE9g==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49ycq49v5h-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 10:27:35 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 23 Oct 2025 10:27:34 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Thu, 23 Oct 2025 10:27:33 -0700
+Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
+ by maili.marvell.com (Postfix) with ESMTP id 041573F7068;
+ Thu, 23 Oct 2025 10:27:31 -0700 (PDT)
+From: Nithin Dabilpuram <ndabilpuram@marvell.com>
+To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <jerinj@marvell.com>, <dev@dpdk.org>
+Subject: [PATCH v3 01/19] common/cnxk: add new TM tree for SDP interface
+Date: Thu, 23 Oct 2025 22:57:09 +0530
+Message-ID: <20251023172728.770661-1-ndabilpuram@marvell.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250901073036.1381560-1-ndabilpuram@marvell.com>
+References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDAzMSBTYWx0ZWRfX3LP74Hw48rUf
+ FfBwX4HpTx3gePvcyn0dBebeYJ4I4BQgiu1BMMR86MUt/VznGyfhc5cz8MS6rTzUtJGERxXHiRF
+ 9piUBoCMVBg4zw0U6+hOx4wQeUR3UbSuIDQZUrFNTI+lXp3AUgD0HmZGv5yp/egTWgWrwsDqy4t
+ HpMfWEIBDzYM060MnwBmJEh4cOFxQ1O0e3X0z8Jmt9QPWDJEecxJqENzKAaUqEz0WlidtK9z2HZ
+ +gkvDnSWU5NNxIwxMngtK3Xg0J6CbF67K1H2mnLuwOgUT/bDCnIDSZMpXv2u9Z4zrT9pZHdoe5I
+ HC3UIfFZk/US1l8bfAG7Bf7rvgAqc8+7KBk3zBFxiEfMlGZi6MRkfU+1J2Ww3ldQakWKkGTKhIm
+ woxOJu82wkNO6hVFTO4WdjQpT+7mlQ==
+X-Authority-Analysis: v=2.4 cv=fI80HJae c=1 sm=1 tr=0 ts=68fa6587 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
+ a=N1rwnyxQk5nB-LrYttQA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: 4PuFaihU5ps4-0Nip3B0VFLRn1WhLlJK
+X-Proofpoint-ORIG-GUID: 4PuFaihU5ps4-0Nip3B0VFLRn1WhLlJK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-23_01,2025-10-22_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,28 +81,273 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> > > In the documentation, make clear
-> > > rte_align(32|64)prevpow2(<n>) -> <n>, provided <n> is a power of 2.
-> > >
-> > > The original documentation stated the "previous" power of 2 would be
-> > > returned, potentially leaving the user to erroneously conclude that,
-> > > for example, rte_align32prevpow2(32) -> 16.
-> > >
-> > > The rte_align(32|64)pow2(<n>) documentation, suffering from a similar
-> > > issue, is reworded in the same manner.
-> > >
-> > > Fixes: 08f683174e94 ("eal: add functions for previous power of 2
-> > alignment")
-> > > Cc: stable@dpdk.org
-> > >
-> > > Signed-off-by: Mattias R=C3=B6nnblom <mattias.ronnblom@ericsson.com>
-> > > ---
-> > Much clearer, thanks.
-> >=20
-> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
->=20
-> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+From: Satha Rao <skoteshwar@marvell.com>
 
-Applied, thanks.
+Create a new default tree for the SDP interface if more than one TX
+queue is requested. This helps to backpressure each queue independently
+when they are created with separate channels.
 
+Signed-off-by: Satha Rao <skoteshwar@marvell.com>
+---
+
+v3:
+- Fixed usage of rte_atomic in common/cnxk folder.
+
+v2:
+- Handled comments related to commit messages
+- Fixed typo
+
+ drivers/common/cnxk/roc_nix.h                 |   2 +
+ drivers/common/cnxk/roc_nix_priv.h            |   2 +
+ drivers/common/cnxk/roc_nix_tm.c              | 158 ++++++++++++++++++
+ drivers/common/cnxk/roc_nix_tm_ops.c          |   5 +-
+ drivers/common/cnxk/roc_nix_tm_utils.c        |   2 +-
+ .../common/cnxk/roc_platform_base_symbols.c   |   1 +
+ 6 files changed, 168 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
+index a9cdc42617..a156d83200 100644
+--- a/drivers/common/cnxk/roc_nix.h
++++ b/drivers/common/cnxk/roc_nix.h
+@@ -596,6 +596,7 @@ enum roc_nix_tm_tree {
+ 	ROC_NIX_TM_DEFAULT = 0,
+ 	ROC_NIX_TM_RLIMIT,
+ 	ROC_NIX_TM_PFC,
++	ROC_NIX_TM_SDP,
+ 	ROC_NIX_TM_USER,
+ 	ROC_NIX_TM_TREE_MAX,
+ };
+@@ -768,6 +769,7 @@ int __roc_api roc_nix_tm_lvl_cnt_get(struct roc_nix *roc_nix);
+ int __roc_api roc_nix_tm_lvl_have_link_access(struct roc_nix *roc_nix, int lvl);
+ int __roc_api roc_nix_tm_prepare_rate_limited_tree(struct roc_nix *roc_nix);
+ int __roc_api roc_nix_tm_pfc_prepare_tree(struct roc_nix *roc_nix);
++int __roc_api roc_nix_tm_sdp_prepare_tree(struct roc_nix *roc_nix);
+ bool __roc_api roc_nix_tm_is_user_hierarchy_enabled(struct roc_nix *nix);
+ int __roc_api roc_nix_tm_tree_type_get(struct roc_nix *nix);
+ int __roc_api roc_nix_tm_mark_config(struct roc_nix *roc_nix,
+diff --git a/drivers/common/cnxk/roc_nix_priv.h b/drivers/common/cnxk/roc_nix_priv.h
+index dc3450a3d4..d7ea3c6be2 100644
+--- a/drivers/common/cnxk/roc_nix_priv.h
++++ b/drivers/common/cnxk/roc_nix_priv.h
+@@ -387,6 +387,8 @@ nix_tm_tree2str(enum roc_nix_tm_tree tree)
+ 		return "Rate Limit Tree";
+ 	else if (tree == ROC_NIX_TM_PFC)
+ 		return "PFC Tree";
++	else if (tree == ROC_NIX_TM_SDP)
++		return "SDP Tree";
+ 	else if (tree == ROC_NIX_TM_USER)
+ 		return "User Tree";
+ 	return "???";
+diff --git a/drivers/common/cnxk/roc_nix_tm.c b/drivers/common/cnxk/roc_nix_tm.c
+index abfe80978b..2771fd8fc4 100644
+--- a/drivers/common/cnxk/roc_nix_tm.c
++++ b/drivers/common/cnxk/roc_nix_tm.c
+@@ -1890,6 +1890,164 @@ roc_nix_tm_pfc_prepare_tree(struct roc_nix *roc_nix)
+ 	return rc;
+ }
+ 
++int
++roc_nix_tm_sdp_prepare_tree(struct roc_nix *roc_nix)
++{
++	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
++	uint32_t nonleaf_id = nix->nb_tx_queues;
++	uint32_t tl2_node_id, tl3_node_id;
++	uint8_t leaf_lvl, lvl, lvl_start;
++	struct nix_tm_node *node = NULL;
++	uint32_t parent, i;
++	int rc = -ENOMEM;
++
++	parent = ROC_NIX_TM_NODE_ID_INVALID;
++	leaf_lvl = (nix_tm_have_tl1_access(nix) ? ROC_TM_LVL_QUEUE : ROC_TM_LVL_SCH4);
++
++	/* TL1 node */
++	node = nix_tm_node_alloc();
++	if (!node)
++		goto error;
++
++	node->id = nonleaf_id;
++	node->parent_id = parent;
++	node->priority = 0;
++	node->weight = NIX_TM_DFLT_RR_WT;
++	node->shaper_profile_id = ROC_NIX_TM_SHAPER_PROFILE_NONE;
++	node->lvl = ROC_TM_LVL_ROOT;
++	node->tree = ROC_NIX_TM_SDP;
++	node->rel_chan = NIX_TM_CHAN_INVALID;
++
++	rc = nix_tm_node_add(roc_nix, node);
++	if (rc)
++		goto error;
++
++	parent = nonleaf_id;
++	nonleaf_id++;
++
++	lvl_start = ROC_TM_LVL_SCH1;
++	if (roc_nix_is_pf(roc_nix)) {
++		/* TL2 node */
++		rc = -ENOMEM;
++		node = nix_tm_node_alloc();
++		if (!node)
++			goto error;
++
++		node->id = nonleaf_id;
++		node->parent_id = parent;
++		node->priority = 0;
++		node->weight = NIX_TM_DFLT_RR_WT;
++		node->shaper_profile_id = ROC_NIX_TM_SHAPER_PROFILE_NONE;
++		node->lvl = ROC_TM_LVL_SCH1;
++		node->tree = ROC_NIX_TM_SDP;
++		node->rel_chan = NIX_TM_CHAN_INVALID;
++
++		rc = nix_tm_node_add(roc_nix, node);
++		if (rc)
++			goto error;
++
++		lvl_start = ROC_TM_LVL_SCH2;
++		tl2_node_id = nonleaf_id;
++		nonleaf_id++;
++	} else {
++		tl2_node_id = parent;
++	}
++
++	/* Allocate TL3 node */
++	rc = -ENOMEM;
++	node = nix_tm_node_alloc();
++	if (!node)
++		goto error;
++
++	node->id = nonleaf_id;
++	node->parent_id = tl2_node_id;
++	node->priority = 0;
++	node->weight = NIX_TM_DFLT_RR_WT;
++	node->shaper_profile_id = ROC_NIX_TM_SHAPER_PROFILE_NONE;
++	node->lvl = lvl_start;
++	node->tree = ROC_NIX_TM_SDP;
++	node->rel_chan = NIX_TM_CHAN_INVALID;
++
++	rc = nix_tm_node_add(roc_nix, node);
++	if (rc)
++		goto error;
++
++	tl3_node_id = nonleaf_id;
++	nonleaf_id++;
++	lvl_start++;
++
++	for (i = 0; i < nix->nb_tx_queues; i++) {
++		parent = tl3_node_id;
++		rc = -ENOMEM;
++		node = nix_tm_node_alloc();
++		if (!node)
++			goto error;
++
++		node->id = nonleaf_id;
++		node->parent_id = parent;
++		node->priority = 0;
++		node->weight = NIX_TM_DFLT_RR_WT;
++		node->shaper_profile_id = ROC_NIX_TM_SHAPER_PROFILE_NONE;
++		node->lvl = lvl_start;
++		node->tree = ROC_NIX_TM_SDP;
++		/* For SDP, if BP enabled use channel to PAUSE the corresponding queue */
++		node->rel_chan = (i % nix->tx_chan_cnt);
++
++		rc = nix_tm_node_add(roc_nix, node);
++		if (rc)
++			goto error;
++
++		parent = nonleaf_id;
++		nonleaf_id++;
++
++		lvl = (nix_tm_have_tl1_access(nix) ? ROC_TM_LVL_SCH4 : ROC_TM_LVL_SCH3);
++
++		rc = -ENOMEM;
++		node = nix_tm_node_alloc();
++		if (!node)
++			goto error;
++
++		node->id = nonleaf_id;
++		node->parent_id = parent;
++		node->priority = 0;
++		node->weight = NIX_TM_DFLT_RR_WT;
++		node->shaper_profile_id = ROC_NIX_TM_SHAPER_PROFILE_NONE;
++		node->lvl = lvl;
++		node->tree = ROC_NIX_TM_SDP;
++		node->rel_chan = NIX_TM_CHAN_INVALID;
++
++		rc = nix_tm_node_add(roc_nix, node);
++		if (rc)
++			goto error;
++
++		parent = nonleaf_id;
++		nonleaf_id++;
++
++		rc = -ENOMEM;
++		node = nix_tm_node_alloc();
++		if (!node)
++			goto error;
++
++		node->id = i;
++		node->parent_id = parent;
++		node->priority = 0;
++		node->weight = NIX_TM_DFLT_RR_WT;
++		node->shaper_profile_id = ROC_NIX_TM_SHAPER_PROFILE_NONE;
++		node->lvl = leaf_lvl;
++		node->tree = ROC_NIX_TM_SDP;
++		node->rel_chan = NIX_TM_CHAN_INVALID;
++
++		rc = nix_tm_node_add(roc_nix, node);
++		if (rc)
++			goto error;
++	}
++
++	return 0;
++error:
++	nix_tm_node_free(node);
++	return rc;
++}
++
+ int
+ nix_tm_free_resources(struct roc_nix *roc_nix, uint32_t tree_mask, bool hw_only)
+ {
+diff --git a/drivers/common/cnxk/roc_nix_tm_ops.c b/drivers/common/cnxk/roc_nix_tm_ops.c
+index b89f08ac66..951c310a56 100644
+--- a/drivers/common/cnxk/roc_nix_tm_ops.c
++++ b/drivers/common/cnxk/roc_nix_tm_ops.c
+@@ -1035,7 +1035,10 @@ roc_nix_tm_init(struct roc_nix *roc_nix)
+ 	}
+ 
+ 	/* Prepare default tree */
+-	rc = nix_tm_prepare_default_tree(roc_nix);
++	if (roc_nix_is_sdp(roc_nix) && (nix->nb_tx_queues > 1))
++		rc = roc_nix_tm_sdp_prepare_tree(roc_nix);
++	else
++		rc = nix_tm_prepare_default_tree(roc_nix);
+ 	if (rc) {
+ 		plt_err("failed to prepare default tm tree, rc=%d", rc);
+ 		return rc;
+diff --git a/drivers/common/cnxk/roc_nix_tm_utils.c b/drivers/common/cnxk/roc_nix_tm_utils.c
+index 4a09cc2aae..eaf6f9e4c7 100644
+--- a/drivers/common/cnxk/roc_nix_tm_utils.c
++++ b/drivers/common/cnxk/roc_nix_tm_utils.c
+@@ -582,7 +582,7 @@ nix_tm_topology_reg_prep(struct nix *nix, struct nix_tm_node *node,
+ 
+ 		/* Configure TL4 to send to SDP channel instead of CGX/LBK */
+ 		if (nix->sdp_link) {
+-			relchan = nix->tx_chan_base & 0xff;
++			relchan = (nix->tx_chan_base & 0xff) + node->rel_chan;
+ 			plt_tm_dbg("relchan=%u schq=%u tx_chan_cnt=%u", relchan, schq,
+ 				   nix->tx_chan_cnt);
+ 			reg[k] = NIX_AF_TL4X_SDP_LINK_CFG(schq);
+diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/common/cnxk/roc_platform_base_symbols.c
+index 7f0fe601ad..cc35c46456 100644
+--- a/drivers/common/cnxk/roc_platform_base_symbols.c
++++ b/drivers/common/cnxk/roc_platform_base_symbols.c
+@@ -221,6 +221,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_rq_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_cq_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_sq_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_tm_dump)
++RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_tm_sdp_prepare_tree)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_dev_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_outb_cpt_lfs_dump)
+-- 
+2.34.1
 
