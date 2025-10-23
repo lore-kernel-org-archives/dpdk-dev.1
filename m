@@ -2,89 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AC9CCD193
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 18:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E0BCCD1BC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 18:47:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4797F40151;
-	Thu, 23 Oct 2025 20:47:32 +0200 (CEST)
-Received: from fhigh-a2-smtp.messagingengine.com
- (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
- by mails.dpdk.org (Postfix) with ESMTP id BB98440144;
- Thu, 23 Oct 2025 20:47:30 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 0F0C41400159;
- Thu, 23 Oct 2025 14:47:30 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Thu, 23 Oct 2025 14:47:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1761245250;
- x=1761331650; bh=TtHf1BMs32wkVqABBBgVX4UXpnMoq+uKWG1XYMNdGf4=; b=
- Gmuaw+etXXljlsr//nvtTcCxgWaHIaYprqCUyzTR4D/yfZK7mHWiyaTrw4i8WOYJ
- v+I/9Aqfso6ZKSf14/APg5oJlTp3c5D43i6aFkuXotbc/PoiAGaJGLkxKrsiKnSQ
- 5n1+g33TsR+I6tQTHWtGCPjh0M6JaCaITJmq0AIa7ff/vfYIRVNslSTWfQJYMZ9Q
- uWWc5n27kkPURigFRSkuh3pm2K/wVz8XOv3vrfMnhxLxdTA+DikwV608qvVhIobF
- B3XnK1ZO1och7Coem67z89VpLft4jfpEVU0Ni33ow60CMvZNKL1lgSKO2Al4dc1Q
- htK8vQn2B8bI8P0ZigG0Fw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761245250; x=
- 1761331650; bh=TtHf1BMs32wkVqABBBgVX4UXpnMoq+uKWG1XYMNdGf4=; b=T
- kI19fsTAb9Y9V9kf0zavteEZHTLHLoY0xNt5osQn1qYzfMa+t5wLWfWmiafvhT7J
- ZQ/+ukS8RrsvPzQq8Cu1E6krHl1Z0r70wJEMYjsMFqQ5C5IYtjElVlgfE4g9HHih
- zm7irBneQfYQU4Wb/kX4FaWpkrHwgbkrMVWUZN/EzAu5s5RMZ5B1wUJPAlVWM/DQ
- RQgPHaoyRdal1zLvpylKf6PEjiXkkPDZZurOZ1BlslhoD6NdfSN2Nrh1rIGw8f4O
- slWYH9GYv3Qj+VfyTNxt8ktm6UbfLcxu9SPfY1DWhY4/ULDMDxH8VSFz0Qy/oQVq
- oyTF7LLBiU4DMiOWaxy8Q==
-X-ME-Sender: <xms:QXj6aMZgoiIhIU-N8zzEM2T7_OmfG9AT6mj1gp9Klk0-C7bAZaXhxw>
- <xme:QXj6aH3OPp5fBMpcrla3vxN7OaifcfHH_Eiy7W-0XqvopWBLoyMZwKXi1CTfsLTtc
- La8Z4Rxey10Av-YZAzzkBSGHaoRMODhcrKLIgIiE9y8m6ZaGzpm>
-X-ME-Received: <xmr:QXj6aHo1hVimMKkztau2IVN_kFgSZtXbTa-ONZ2CGihG2mTMbjyC3Ig5P32uufpPXovtiGLLU-C7sB07so-sr7vP_g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeejvdduucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedutddp
- mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhgurggsihhlphhurhgrmhesmhgrrh
- hvvghllhdrtghomhdprhgtphhtthhopegrjhhpsehmrghrvhgvlhhlrdgtohhmpdhrtghp
- thhtohepkhhirhgrnhhkuhhmrghrkhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhope
- hskhhorhhisehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepshhkohhtvghshhifrghr
- sehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohephhhkrghlrhgrsehmrghrvhgvlhhlrd
- gtohhmpdhrtghpthhtohepjhgvrhhinhhjsehmrghrvhgvlhhlrdgtohhmpdhrtghpthht
- ohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepshhtrggslhgvseguphgukhdroh
- hrgh
-X-ME-Proxy: <xmx:QXj6aONHB-8eM8IZJTCC8U4f3Nbnw5vSme4J0eWu7bNk9HHpp2EYAg>
- <xmx:QXj6aIrGmePY65SLt2Ok6gFTEepgw_R748x2oTfiZOzSdZnyVIbJOg>
- <xmx:QXj6aBuGhvRDDY7E5bCKokiBy6BE46vTXxyPvebddHbjJvN4EWxvWQ>
- <xmx:QXj6aH0zxWDZdrhMajaR1vthMUkObNscWLPFIQq0qaYN4y3mh0GMfQ>
- <xmx:Qnj6aOP5_tnQkyDV16UHavaMApzokfmfqzCD2eTKPiNDgxQm31C-NOEM>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Oct 2025 14:47:28 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Aarnav JP <ajp@marvell.com>
-Cc: Kiran Kumar K <kirankumark@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>, jerinj@marvell.com,
- dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH v3 19/19] drivers: fix Klocwork issues
-Date: Thu, 23 Oct 2025 20:47:26 +0200
-Message-ID: <2492954.jbyF5MZJ3u@thomas>
-In-Reply-To: <20251023172728.770661-19-ndabilpuram@marvell.com>
-References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
- <20251023172728.770661-1-ndabilpuram@marvell.com>
- <20251023172728.770661-19-ndabilpuram@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 592F1402BE;
+	Thu, 23 Oct 2025 20:47:35 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 1FB3C402E1
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 20:47:33 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AE2D1516;
+ Thu, 23 Oct 2025 11:47:25 -0700 (PDT)
+Received: from ampere-altra-2-1.usa.arm.com (ampere-altra-2-1.usa.arm.com
+ [10.118.91.158])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1B6853F59E;
+ Thu, 23 Oct 2025 11:47:33 -0700 (PDT)
+From: Wathsala Vithanage <wathsala.vithanage@arm.com>
+To: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+Cc: dev@dpdk.org, Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Ola Liljedahl <ola.liljedahl@arm.com>
+Subject: [PATCH 1/1] eal: correct memory ordering in MCS lock
+Date: Thu, 23 Oct 2025 18:47:24 +0000
+Message-ID: <20251023184724.1759497-1-wathsala.vithanage@arm.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,20 +42,187 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-23/10/2025 19:27, Nithin Dabilpuram:
-> From: Aarnav JP <ajp@marvell.com>
-> 
-> fixed klocwork suggested issues in
-> cnxk component of drivers module
-> 
-> Fixes: db5744d3cd23 ("common/cnxk: support NIX debug for CN20K")
-> Fixes: 3c31a7485172 ("common/cnxk: config CPT result address for CN20K")
-> Fixes: 4b8eb5bd6627 ("common/cnxk: reserve CPT LF for Rx inject")
-> Fixes: f410059baac6 ("common/cnxk: support inline inbound queue")
-> Fixes: 47cca253d605 ("net/cnxk: support Rx inject")
-> Fixes: ac35d4bf4cd6 ("net/cnxk: support ingress meter pre-color")
-> Cc: stable@dpdk.org
+Fix incorrect memory ordering in the MCS lock implementation by
+adding proper synchronizing edges to establish clear happens-before
+relationships between threads invoking lock() and unlock(). These
+synchronizing edges prevent potential deadlocks caused by improper
+ordering and are documented in detail through in-code comments.
 
-Would be better to split and provide details of the bugs.
+The previously relaxed load of the successor’s lock object pointer
+in unlock() has been upgraded to a load-acquire operation. This
+change ensures that the successor’s initialization does not
+overwrite the current lock holder’s update to the locked field,
+which could otherwise lead to deadlocks.
 
+Remove two unnecessary fences:
+
+The acquire fence in unlock() had no matching release fence, making
+it ineffective for enforcing memory order. The associated comment
+suggested it prevented speculative reordering, but such fences (data
+memory barriers) only establish memory ordering and do not control
+instruction speculation.
+
+The release-acquire fence pair in lock() was previously justified as
+preventing reordering between the load-acquire loop of me->locked
+and the store-release of prev->next. This is no longer needed, as the
+new synchronizing edges ensure a chain of happens-before
+relationships between memory operations of threads calling lock() and
+unlock().
+
+Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+Reviewed-by: Ola Liljedahl <ola.liljedahl@arm.com>
+---
+ lib/eal/include/rte_mcslock.h | 100 ++++++++++++++++++++++------------
+ 1 file changed, 64 insertions(+), 36 deletions(-)
+
+diff --git a/lib/eal/include/rte_mcslock.h b/lib/eal/include/rte_mcslock.h
+index bb218d2e50..0af7a94a06 100644
+--- a/lib/eal/include/rte_mcslock.h
++++ b/lib/eal/include/rte_mcslock.h
+@@ -57,11 +57,21 @@ rte_mcslock_lock(RTE_ATOMIC(rte_mcslock_t *) *msl, rte_mcslock_t *me)
+ 	rte_atomic_store_explicit(&me->locked, 1, rte_memory_order_relaxed);
+ 	rte_atomic_store_explicit(&me->next, NULL, rte_memory_order_relaxed);
+ 
+-	/* If the queue is empty, the exchange operation is enough to acquire
+-	 * the lock. Hence, the exchange operation requires acquire semantics.
+-	 * The store to me->next above should complete before the node is
+-	 * visible to other CPUs/threads. Hence, the exchange operation requires
+-	 * release semantics as well.
++	/*
++	 * A0/R0: Queue might be empty, perform the exchange (RMW) with both acquire and
++	 * release semantics:
++	 * A0: Acquire — synchronizes with both R0 and R2.
++	 *     Must synchronize with R0 to ensure that this thread observes predecessor's
++	 *     initialization of its lock object or risk them overwriting this thread's
++	 *     update to the next of the same object via store to prev->next.
++	 *
++	 *     Must synchronize with R2 the releasing CAS in unlock(), this will ensure
++	 *     that all prior critical-section writes become visible to this thread.
++	 *
++	 * R0: Release — ensures the successor observes our initialization of me->next;
++	 *     without it, me->next could be overwritten to NULL after the successor
++	 *     sets its own address, causing deadlock. This release synchronizes with
++	 *     A0 above.
+ 	 */
+ 	prev = rte_atomic_exchange_explicit(msl, me, rte_memory_order_acq_rel);
+ 	if (likely(prev == NULL)) {
+@@ -70,24 +80,26 @@ rte_mcslock_lock(RTE_ATOMIC(rte_mcslock_t *) *msl, rte_mcslock_t *me)
+ 		 */
+ 		return;
+ 	}
+-	/* The store to me->next above should also complete before the node is
+-	 * visible to predecessor thread releasing the lock. Hence, the store
+-	 * prev->next also requires release semantics. Note that, for example,
+-	 * on ARM, the release semantics in the exchange operation is not
+-	 * strong as a release fence and is not sufficient to enforce the
+-	 * desired order here.
++
++	/*
++	 * R1: With the relaxed memory model of C/C++, it's essential that after
++	 * we link ourselves by storing prev->next = me, the owner of prev must
++	 * observe our prior initialization of me->locked. Otherwise it could
++	 * clear me->locked before we set it to 1, which may deadlock.
++	 * Perform a releasing store so the predecessor's acquire loads A2 and A3
++	 * observes our initialization, establishing a happens-before from those
++	 * writes.
+ 	 */
+ 	rte_atomic_store_explicit(&prev->next, me, rte_memory_order_release);
+ 
+-	/* The while-load of me->locked should not move above the previous
+-	 * store to prev->next. Otherwise it will cause a deadlock. Need a
+-	 * store-load barrier.
+-	 */
+-	rte_atomic_thread_fence(rte_memory_order_acq_rel);
+-	/* If the lock has already been acquired, it first atomically
++	/*
++	 * A1: If the lock has already been acquired, it first atomically
+ 	 * places the node at the end of the queue and then proceeds
+ 	 * to spin on me->locked until the previous lock holder resets
+-	 * the me->locked using mcslock_unlock().
++	 * the me->locked in rte_mcslock_unlock().
++	 * This load must synchronize with store-release R3 to ensure that
++	 * all updates to critical section by previous lock holder is visible
++	 * to this thread after acquiring the lock.
+ 	 */
+ 	rte_wait_until_equal_32((uint32_t *)(uintptr_t)&me->locked, 0, rte_memory_order_acquire);
+ }
+@@ -103,30 +115,46 @@ rte_mcslock_lock(RTE_ATOMIC(rte_mcslock_t *) *msl, rte_mcslock_t *me)
+ static inline void
+ rte_mcslock_unlock(RTE_ATOMIC(rte_mcslock_t *) *msl, RTE_ATOMIC(rte_mcslock_t *) me)
+ {
+-	/* Check if there are more nodes in the queue. */
+-	if (likely(rte_atomic_load_explicit(&me->next, rte_memory_order_relaxed) == NULL)) {
++	/*
++	 * A2: Check whether a successor is already queued.
++	 * Load me->next with acquire semantics so it can synchronize with the
++	 * successor’s release store R1. This guarantees that the successor’s
++	 * initialization of its lock object (me) is completed before we observe
++	 * it here, preventing a race between this thread’s store-release to
++	 * me->next->locked and the successor’s store to me->locked.
++	 */
++	if (likely(rte_atomic_load_explicit(&me->next, rte_memory_order_acquire) == NULL)) {
+ 		/* No, last member in the queue. */
+-		rte_mcslock_t *save_me = rte_atomic_load_explicit(&me, rte_memory_order_relaxed);
++		rte_mcslock_t *save_me = me;
+ 
+-		/* Release the lock by setting it to NULL */
++		/*
++		 * R2: Try to release the lock by swinging *msl from save_me to NULL.
++		 * Use release semantics so all critical section writes become
++		 * visible to the next lock acquirer.
++		 */
+ 		if (likely(rte_atomic_compare_exchange_strong_explicit(msl, &save_me, NULL,
+ 				rte_memory_order_release, rte_memory_order_relaxed)))
+ 			return;
+ 
+-		/* Speculative execution would be allowed to read in the
+-		 * while-loop first. This has the potential to cause a
+-		 * deadlock. Need a load barrier.
+-		 */
+-		rte_atomic_thread_fence(rte_memory_order_acquire);
+-		/* More nodes added to the queue by other CPUs.
+-		 * Wait until the next pointer is set.
++		/*
++		 * A3: Another thread was enqueued concurrently, so the CAS and the lock
++		 * release failed. Wait until the successor sets our 'next' pointer.
++		 * This load must synchronize with the successor’s release store (R1) to
++		 * ensure that the successor’s initialization completes before we observe
++		 * it here. This ordering prevents a race between this thread’s later
++		 * store-release to me->next->locked and the successor’s store to me->locked.
+ 		 */
+ 		RTE_ATOMIC(uintptr_t) *next;
+ 		next = (__rte_atomic uintptr_t *)&me->next;
+-		RTE_WAIT_UNTIL_MASKED(next, UINTPTR_MAX, !=, 0, rte_memory_order_relaxed);
++		RTE_WAIT_UNTIL_MASKED(next, UINTPTR_MAX, !=, 0, rte_memory_order_acquire);
+ 	}
+ 
+-	/* Pass lock to next waiter. */
++	/*
++	 * R3: Pass the lock to the successor.
++	 * Use a release store to synchronize with A1 when clearing me->next->locked
++	 * so the successor observes our critical section writes after it sees locked
++	 * become 0.
++	 */
+ 	rte_atomic_store_explicit(&me->next->locked, 0, rte_memory_order_release);
+ }
+ 
+@@ -149,11 +177,11 @@ rte_mcslock_trylock(RTE_ATOMIC(rte_mcslock_t *) *msl, rte_mcslock_t *me)
+ 	/* Try to lock */
+ 	rte_mcslock_t *expected = NULL;
+ 
+-	/* The lock can be taken only when the queue is empty. Hence,
+-	 * the compare-exchange operation requires acquire semantics.
+-	 * The store to me->next above should complete before the node
+-	 * is visible to other CPUs/threads. Hence, the compare-exchange
+-	 * operation requires release semantics as well.
++	/*
++	 * A4/R4: The lock can be acquired only when the queue is empty.
++	 * The compare-and-exchange operation must use acquire and release
++	 * semantics for the same reasons described in the rte_mcslock_lock()
++	 * function’s empty-queue case (see A0/R0 for details).
+ 	 */
+ 	return rte_atomic_compare_exchange_strong_explicit(msl, &expected, me,
+ 			rte_memory_order_acq_rel, rte_memory_order_relaxed);
+-- 
+2.43.0
 
