@@ -2,87 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9735ECCD1BF
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 20:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D294CCD193
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 23:42:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B022D40151;
-	Thu, 23 Oct 2025 22:24:45 +0200 (CEST)
-Received: from fhigh-a3-smtp.messagingengine.com
- (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id C167540144;
- Thu, 23 Oct 2025 22:24:44 +0200 (CEST)
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 0E5E4140007F;
- Thu, 23 Oct 2025 16:24:44 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-08.internal (MEProxy); Thu, 23 Oct 2025 16:24:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1761251084;
- x=1761337484; bh=znAHgT/hx8Z6Lutmk6DcUPuhoCAzxFYDEaFLDrtR84g=; b=
- GxhsPWz+G+c26Aie4naVQSsTEfLdgEwR0+S8uy6RcWhdy2fOSWHWnCCSb71vkya6
- SmiYjmWIyd5gpsn5efxVvlMaieFPUXW8i6TqXiFPCAAymyyVP2jJy97LahmKd+sW
- H1xy7As9DzW5OoII4b4Tox3RpUtgT2ZAHfIY54ciDXGL5Z2DuuvQ5YSefieMpF0q
- iKMy+bXAQjf1+YdWQ0nHoziHpMRDNyOyFWfm4TjKr8oesQSpqZ+OtqGva4j9gpRX
- VeGYTI4//6lr0up4KdWRog286h4Xr0mFJaI19QwYkbsGj1mJe/v86NWJC+r3vsV4
- rQFOddBbhK3saYLPol2JmQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761251084; x=
- 1761337484; bh=znAHgT/hx8Z6Lutmk6DcUPuhoCAzxFYDEaFLDrtR84g=; b=D
- hRIqu8hBozPEO51+52ty4WsFl4p+Ndr6jMKbg4XR/GUldVoSnIduL0bew20En9s5
- NY1Pv0gkBNQadcRBXfZZ4qHfn5ANgxKrlZovnZvS8DWPNjb4u1BdGoBzloCniGiJ
- a88wmpfA8nj3iy8gK4SccRI9p8uB2W7l1h66VmKFFLDLQ86frPUtRBwTWIGHA6DF
- pfxEN/tKM1xvyv1nF5Ls65JHWPgAU3N/8SVu43uTctfhIDEtTf/TLIhP3mbM/TsS
- G616mTeWudQHarX5a33JzKbmVeikp2sXC/iNpmB6igRGcvgsBh7jmXsFGkBiULnL
- xGGmttHubHcOf1cy8jRFg==
-X-ME-Sender: <xms:C4_6aL7aNSuCnXemC68gCcQz1hMFeupb1CxZ07unoGIXpeGw069nQg>
- <xme:C4_6aK826oW5GNq3SjMsF-tsz5sjBfNxcfQc1Vo5AQ-VT_SzW9f9BeLagt_8zXZKI
- nCsOcFdyP657W52VfHOAjYSgOPW1MAgkv1KVNUqOsfsrI3J46aw>
-X-ME-Received: <xmr:C4_6aCXeCBFw7K6_cKhPAY1LEpSL6hdaPFQAXk0mZGXehKIsvNYQrF1RvKSiyHrmfAJmxGCLWX3RUqLi9TSmsqfs0A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeejgedtucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeekpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehthhhivghrrhihrdhhvghrsggvlhhoth
- esieifihhnugdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
- thhopehsthgrsghlvgesughpughkrdhorhhgpdhrtghpthhtohepsghruhgtvgdrrhhitg
- hhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepfigrthhhshgrlhgrrdhv
- ihhthhgrnhgrghgvsegrrhhmrdgtohhmpdhrtghpthhtohepohhlihhvihgvrhdrmhgrth
- iiseeifihinhgurdgtohhmpdhrtghpthhtohepughouhhgrdhfohhsthgvrhesrghrmhdr
- tghomh
-X-ME-Proxy: <xmx:C4_6aNrO4KZCZ72etxyb4bSml_DHu2G-mJQsI030xuSj67Tru1006A>
- <xmx:C4_6aMmsFFhuSkrxNFKsd8PTkRk2rMObZT48rESBLEohzQ4ophoiEg>
- <xmx:C4_6aF1FPyD3qI-7KLxjMrsSHt_Jgvhto9fv27DZatG8_H7voXEvsg>
- <xmx:C4_6aBSlPFMcsGwAU8i5yEjoYf5alPE8OezjGiWs11k1yy-yMOhRbA>
- <xmx:DI_6aMiHaOiK8127ZWdyGLiLS3gOOpgY7Iuna69k_V82LCaJ1METRODe>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Oct 2025 16:24:42 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Thierry Herbelot <thierry.herbelot@6wind.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, stable@dpdk.org,
- Bruce Richardson <bruce.richardson@intel.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- "stable@dpdk.org" <stable@dpdk.org>, Olivier Matz <olivier.matz@6wind.com>,
- Doug Foster <Doug.Foster@arm.com>
-Subject: Re: [PATCH] config/arm: fix inconsistency for Neoverse N2
-Date: Thu, 23 Oct 2025 22:24:41 +0200
-Message-ID: <17805354.0ZKypZ73Fx@thomas>
-In-Reply-To: <AS8PR08MB7339DA678541942C52F92D3AE5F0A@AS8PR08MB7339.eurprd08.prod.outlook.com>
-References: <20251016080533.535266-1-thierry.herbelot@6wind.com>
- <AS8PR08MB7339DA678541942C52F92D3AE5F0A@AS8PR08MB7339.eurprd08.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id EF9F840151;
+	Fri, 24 Oct 2025 01:42:39 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 9F49E40144
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 01:42:38 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 73DD4489BE; Fri, 24 Oct 2025 01:42:38 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/ethdev Bug 1807] net/bnxt: misuse of comma operator
+Date: Thu, 23 Oct 2025 23:42:38 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: 20.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: stephen@networkplumber.org
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1807-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,14 +54,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> >Configuration for hex code '0xd49' enables two NUMA nodes.
-> >Then, the corresponding 'soc_n2' should allow 'numa'.
-> >
-> >Fixes: ea85ed1f6882 ("config/arm: increase nodes and cores for Neoverse N2")
-> >Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
-> Acked-by: Doug Foster <doug.foster@arm.com>
+http://bugs.dpdk.org/show_bug.cgi?id=3D1807
 
-Applied, thanks.
+            Bug ID: 1807
+           Summary: net/bnxt: misuse of comma operator
+           Product: DPDK
+           Version: 20.11
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: ethdev
+          Assignee: dev@dpdk.org
+          Reporter: stephen@networkplumber.org
+  Target Milestone: ---
 
+If DPDK is built with clang and -Wcomma in drivers, then bnxt has some open
+issues:
 
+[846/3622] Compiling C object drivers/...xt.a.p/net_bnxt_tf_ulp_bnxt_ulp_tf=
+.c.o
+../drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c:1302:17: warning: possible misuse =
+of
+comma operator here [-Wcomma]
+ 1302 |         parms.dir =3D dir,
+      |                        ^
+../drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c:1302:2: note: cast expression to v=
+oid
+to silence warning
+ 1302 |         parms.dir =3D dir,
+      |         ^~~~~~~~~~~~~~~
+      |         (void)(        )
+../drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c:1303:19: warning: possible misuse =
+of
+comma operator here [-Wcomma]
+ 1303 |         parms.type =3D type,
+      |                          ^
+../drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c:1303:2: note: cast expression to v=
+oid
+to silence warning
+ 1303 |         parms.type =3D type,
+      |         ^~~~~~~~~~~~~~~~~
+      |         (void)(          )
+../drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c:1304:23: warning: possible misuse =
+of
+comma operator here [-Wcomma]
+ 1304 |         parms.offset =3D offset,
+      |                              ^
+../drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c:1304:2: note: cast expression to v=
+oid
+to silence warning
+ 1304 |         parms.offset =3D offset,
+      |         ^~~~~~~~~~~~~~~~~~~~~
+      |         (void)(              )
+../drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c:1305:39: warning: possible misuse =
+of
+comma operator here [-Wcomma]
+ 1305 |         parms.config =3D (uint8_t *)&global_cfg,
+      |                                              ^
+../drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c:1305:2: note: cast expression to v=
+oid
+to silence warning
+ 1305 |         parms.config =3D (uint8_t *)&global_cfg,
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |         (void)(                              )
 
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
