@@ -2,186 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56608CCD1BE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 00:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE268CCD1BE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 01:32:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A01A3402CC;
-	Thu, 23 Oct 2025 02:28:42 +0200 (CEST)
-Received: from AM0PR83CU005.outbound.protection.outlook.com
- (mail-westeuropeazon11010044.outbound.protection.outlook.com [52.101.69.44])
- by mails.dpdk.org (Postfix) with ESMTP id 0CCBF4025E;
- Thu, 23 Oct 2025 02:28:40 +0200 (CEST)
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=pnXHtFvhAfcqHLhTiQ6As8Ro6kBWTUh+biLEFqTKfc4dnICP8w+Szn64x/AWp0PjBY37EDhUmR9WQT2Asl0zQ/MxSma5LAEchPWNzxow9+g/2IYh4PCThwLPgpk1W/GPKj4F/q9HyhMpD0qx1VINBAdjqTAYeO1cjV0blM/OKNZA/MdR3nlDiuF2D3V3/gYu4/BaPFeDTV7fOV3/Mv6vAahonKAN123DDboR3mFbLfIex5ij5nNBNROlVPjOx3nMrxk4Esofbp76SSujasRC8E08o6MwilgPy/TKpuOzCqaHShQ6Q94f9fCydlrTTD3e1R8B/09so2vHj00VZAXM7A==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p6H5x1M0f9/g2N4OhFEegYsqd+gHqv9ukUarMGTkhj8=;
- b=fCIEqwM5xI9FqEJzQAiAMwPK4SytH0Iiy0JHGXQOzxbVZx04QL0QWgczyMxnlCb87tgCZ9EG0kUEj/noBFDbx60YSC11Qzf+cY6XQAz2EUZ8tbdwONtMIMks1xQH1cPiPfJqaEiwOht04CG1r2WJuhE8CPiZNdV2iuKvS2kaZroNqjNQMt6OHBmoHIX1pFQIbo48RBsLh+D+pbUVlk6D/LW1j8mkFv8LelXnYu4ONydi5W0TTqLi/3ikTIPLjZWVl8Py4w5BEQAUSKzNpGrdX8TiOOHBZ2xsSVgLRjmY0bMBd2kR4tcADyvhJkcyS7jGrxWuzvI/eL59sCi6RP3Nwg==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=6wind.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p6H5x1M0f9/g2N4OhFEegYsqd+gHqv9ukUarMGTkhj8=;
- b=M98OQ4VoGU8fk840uZpcEaw/zty4HrQ9FFazy1FSxNb2SZRUNoCFA7hMZ3uf0BnikYy2wIxqFhmKfikeOQnCfWRVJjdjp8fDAW9aHuRNeFxMGBAmIwXRHXHjS2PGHXNipLGZO5wucztOC4otHbv03/vZmcHsHf50LZFiLtGbm/8=
-Received: from DU2PR04CA0044.eurprd04.prod.outlook.com (2603:10a6:10:234::19)
- by AM9PR08MB6707.eurprd08.prod.outlook.com (2603:10a6:20b:305::6)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
- 2025 00:28:37 +0000
-Received: from DB5PEPF00014B8C.eurprd02.prod.outlook.com
- (2603:10a6:10:234:cafe::28) by DU2PR04CA0044.outlook.office365.com
- (2603:10a6:10:234::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.13 via Frontend Transport; Thu,
- 23 Oct 2025 00:28:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DB5PEPF00014B8C.mail.protection.outlook.com (10.167.8.200) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.7
- via Frontend Transport; Thu, 23 Oct 2025 00:28:37 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SCr+sTmfcN4zckq5ucV3YOCa+3efd3KQHck3hla8UcS39N5Jy6qO/YWPOfihti72O12e5ai9c1+byfzFLg5dca2u2XXTIPCcSjWgzdIrm3lMh359vFdfWE4wxXDDxJndlzO69P1ht57jo+oMvFI505RSgnjLteYTnaKc6rxEgl+2YBwKaOk911nCR+9FGmZcHahc8ma2hDU09eg0ty0pvIjNW1LXpPG1jLLVvCnpnIwTrIb6mgRqc/iTlIv7M0mo1U1JTiT7FTegpV9YQJ54N013LSWDxQCwpRxD1GqTE+hzMG+s5hBE7l6PiYPQ6pgAJJ/udX5CBUw+tIVjmIL6CQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p6H5x1M0f9/g2N4OhFEegYsqd+gHqv9ukUarMGTkhj8=;
- b=EL1BEk/KZYF0pXdqHastWFfkHu9W37av/vc0min6AMwnbHCz1wSTfy03OSeOc8jr6uIhfZml2PYnNhIkAWj3zQX8heofHQbfcDeE3EOGkOoWSH21EEglvqLvh4xV2kCkWqEImGhYdnNV29b3jtXiyL98j0w0sPLio6KTIeDx3hZLBFh5NuIFwoOOy9U/jFni8YBDqasWlhsUIivjWDcUZQ6hQDUdxHlHjAFlium6Vz28xP3SJnD9VgcBCUmFLVipGSEevyd+qaBT9pXjPPndMuhiZJx/ZcCuztNCKKUGpLv+Gvit5FKGCCPnaShI6talQCz3fGT/yzS1EnlRxXS6wQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p6H5x1M0f9/g2N4OhFEegYsqd+gHqv9ukUarMGTkhj8=;
- b=M98OQ4VoGU8fk840uZpcEaw/zty4HrQ9FFazy1FSxNb2SZRUNoCFA7hMZ3uf0BnikYy2wIxqFhmKfikeOQnCfWRVJjdjp8fDAW9aHuRNeFxMGBAmIwXRHXHjS2PGHXNipLGZO5wucztOC4otHbv03/vZmcHsHf50LZFiLtGbm/8=
-Received: from AS8PR08MB7339.eurprd08.prod.outlook.com (2603:10a6:20b:446::11)
- by DBBPR08MB6028.eurprd08.prod.outlook.com (2603:10a6:10:208::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
- 2025 00:28:04 +0000
-Received: from AS8PR08MB7339.eurprd08.prod.outlook.com
- ([fe80::98e5:ae7d:ccb9:beb8]) by AS8PR08MB7339.eurprd08.prod.outlook.com
- ([fe80::98e5:ae7d:ccb9:beb8%3]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 00:28:03 +0000
-From: Doug Foster <Doug.Foster@arm.com>
-To: Thierry Herbelot <thierry.herbelot@6wind.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: "thomas@monjalon.net" <thomas@monjalon.net>, Bruce Richardson
- <bruce.richardson@intel.com>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>, "stable@dpdk.org" <stable@dpdk.org>, Olivier
- Matz <olivier.matz@6wind.com>
-Subject: RE: [PATCH] config/arm: fix inconsistency for Neoverse N2
-Thread-Topic: [PATCH] config/arm: fix inconsistency for Neoverse N2
-Thread-Index: AQHcPnOrEkCvvgq3e0mQ2CzmYouVobTO6n/A
-Date: Thu, 23 Oct 2025 00:28:03 +0000
-Message-ID: <AS8PR08MB7339DA678541942C52F92D3AE5F0A@AS8PR08MB7339.eurprd08.prod.outlook.com>
-References: <20251016080533.535266-1-thierry.herbelot@6wind.com>
-In-Reply-To: <20251016080533.535266-1-thierry.herbelot@6wind.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-x-ms-traffictypediagnostic: AS8PR08MB7339:EE_|DBBPR08MB6028:EE_|DB5PEPF00014B8C:EE_|AM9PR08MB6707:EE_
-X-MS-Office365-Filtering-Correlation-Id: cbce90a2-a7e3-4ace-3461-08de11cb1b94
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
-x-checkrecipientrouted: true
-nodisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
- ARA:13230040|376014|1800799024|366016|38070700021; 
-X-Microsoft-Antispam-Message-Info-Original: =?us-ascii?Q?4Rm8Cllk236OJuW+LGjVqVgSS4tnH0lRsCF/MUkigdWI/+xBHLQrT6gBUAP2?=
- =?us-ascii?Q?dmXwlnb7EIuPnwD+FZuacEKGPDJyDEgSimMsVv02ZTTsfYC5AEKfC50Ahkwz?=
- =?us-ascii?Q?TyyqTc2ZmGJJKVSrmqCtNk0lHe+5eTz7kie9dejz71m4ntvrMcpIY0zU8Lr7?=
- =?us-ascii?Q?WbaS+4tN6tLQ2sWABd7B6w6x9fpGAl1r4dl1BcDmdNKHeHV+sGmarXhgTMlP?=
- =?us-ascii?Q?VuIR3vr2XsEF4h11mmuBKIRRmGV3OP4nAhOcO1TvOswWPG6PvQKVH8pEqWn6?=
- =?us-ascii?Q?pCakVimi3zoOKNZxGsWRGAs0wb+4LWEyecXWIvDUsqXbZ8gJ7Nv5bbOIVXHz?=
- =?us-ascii?Q?VoxjSqiWua4jVC65He5Cqp1mqnQzVeZCAT4FGT5sr9lkhCkF1hfmNHf6YZbz?=
- =?us-ascii?Q?Vr44riTc1PNGSg7mBAhjuPqYo9lMUCAM4suH4bsM3k0dW2/Qx5Z/Cy30gc3W?=
- =?us-ascii?Q?xCxfJ8pBDfWrcnwbkP4O7jqqE8G06jqoTHCkDxw+n/2YtGlz+uJvE5ax2HuF?=
- =?us-ascii?Q?uccxH1M5yaNA3CsE/fqfXICcSyS/OXQCeUaJN/M3l1WWPjMlAr9H9vk+TB1g?=
- =?us-ascii?Q?AaRKaABV85pWzuQE4DF+qD5mxTMyGDLlEnBWu5lj8/WFapvdni5aqbIwFTPP?=
- =?us-ascii?Q?+3dBAhe9vUSWMIkZvU+feajsqbmgshEnEY0eUApjpZffJGZH1sSlWxMtIOFM?=
- =?us-ascii?Q?SVX/Lj3QbhP57zDqx9m2Aw/g17UKE5Q4zS3xDaM3aJ25W0WP6HUGVS81g1bj?=
- =?us-ascii?Q?AV8xsREYU6ObIS9i6NcfnQyaug2g7XwqbvoUXUB4InH5XPFsTlSnW8Luw98A?=
- =?us-ascii?Q?8KG+SFmM5+D0SNWpcgNHS70/At2eqwd4QdOoTYY808DsIdfsSojwFRKDh8KG?=
- =?us-ascii?Q?lKaXDXoDV/799mTt3vyaMotybAN30Dg+ylYDoX/gx3DWnq0WsmCSZSuZiZdH?=
- =?us-ascii?Q?Hx5ke5no4NEBihJ0qhV/YHDJvgL0ramhBOZKztTlPZJ57OSLcXzkxGkENYtm?=
- =?us-ascii?Q?2moHvzrFgJKelNXcGzCd66kg8dYLFsbcc/Tboo12DvlI5vOZhqfDiiaBvcEX?=
- =?us-ascii?Q?mSPAWdnjHILF5MX6w1FCjr6AhboojuP07wP4SXo+Utkc/1dHyh9y0NV3Ul2a?=
- =?us-ascii?Q?LxhJXm63DywLbezG667S/PlByJ8pLrLpP6s64zjcNRH6KuSKGFvsugIe4uQy?=
- =?us-ascii?Q?ni32VxNfDuUaVRxgg/c2KAAZR6dzmRD9n46nbj5BGujm1dIlloypR+vTQqIR?=
- =?us-ascii?Q?fmQrefNXsFLphflg0HY5Tq9FqJwQOu877P0idjEZ0cDJlRXdffUppOtHi64q?=
- =?us-ascii?Q?jQR3nfguO4rV86xB9Svu6PEpRz5NR5mz/Lteufs3sLTU+T6We5coXL5q4rxW?=
- =?us-ascii?Q?7PztKQJ+VFTgAIG8NxYGoqrbDpCHVGLsLu3GC0FjRjFM9CaMUxBYzpG7uc4c?=
- =?us-ascii?Q?GnCCxl8xANgV4HkQAHeiJ03iVRsWUTBPj1bFN8lKPyWDjzNygKHz1HIHnKLI?=
- =?us-ascii?Q?Dd2fI6x4eATu5/GKGfmnftjEpeF625JOfZkL?=
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
- SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:AS8PR08MB7339.eurprd08.prod.outlook.com;
- PTR:; CAT:NONE; SFS:(13230040)(376014)(1800799024)(366016)(38070700021);
- DIR:OUT; SFP:1101; 
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id CAC1D40151;
+	Thu, 23 Oct 2025 03:32:00 +0200 (CEST)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
+ [209.85.222.177])
+ by mails.dpdk.org (Postfix) with ESMTP id B4553400D6
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 03:31:58 +0200 (CEST)
+Received: by mail-qk1-f177.google.com with SMTP id
+ af79cd13be357-8907af237ceso25264385a.3
+ for <dev@dpdk.org>; Wed, 22 Oct 2025 18:31:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1761183118; x=1761787918; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=GKnWgzbMpbkptwj2MOVxTwYyzniGea0l9MCucGh9V50=;
+ b=A7J9WtjMkvg5xqlL7zJpSZvB1tvvTroTPFtELbor42O6OjDUALLSWFLrvSdcr9Mmrp
+ T+H14geTVAcLuEJwsA3N9Mu8X1QuLmBGkcrOSLRfffOJ3p/zGGWXe1zMSVkWIy//7um0
+ t1gy4+mJvgYv8WCGc77K1AptPzKD7BIvlJvLc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1761183118; x=1761787918;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=GKnWgzbMpbkptwj2MOVxTwYyzniGea0l9MCucGh9V50=;
+ b=WFuORcrdqKrJkjlZ0Y10NPXiAYRIbr6PFvaaoVtudSoBSpxxPTh2oVXdKlExBfBRMT
+ IOS/uW3DVB5VsWf6ZcqhySBBwVfV3udH/+Y6xEZK8RWeT7ehvLW/JwtvJtH8XVuHhVHk
+ shxxAYZiBIPuRgJlmqbEB1sfzP8D114+x2X4JcnOzqj0RXgYgdjr5J6gZo3xi0jtYRbY
+ b6mpYjoVQKWzwADWOUNrMJj10AYUKXhO0TDUy1TgKb+A5f99mQkbQWQFcCiESYw0Rjnq
+ lwKTi04/A7STbr472AngjBsDFTcGfgxeGISBYnj5YEX5sbve2CI3Pcyh/7PVLMzmSuvW
+ ItFg==
+X-Gm-Message-State: AOJu0Yw8TQSBXVEFlff3ug6ZlXJeFmZJTJtZlbOnYJhr8fFHveBSIcU/
+ eIbs7d5tig40/ok4q1SsGbpcKIBFXQ8Q3qdh05AQyEkI3iqG5t9yq8BAzxDjeYjBWjlAW4Jsy4h
+ iiq1JvTo=
+X-Gm-Gg: ASbGncvTMsbIDfhHBpYDIG80IOBDD8eXucLiQFqsSs4uxMRnli0Vxvqw4+R4vFFB+zL
+ A1LqYKwWC/Sd0Pqzzio/sR+xBGLPizrXyRZ2ndGsTGgnno/SdNPlZDsBR/Z5e8rUUnuNC6ucZi8
+ Vc+lzY1Os/JbTRzOPD9AMbZOZjPdzCF+nwd3IbB0ugGmQosYPocSeXvGLOM6pdke/wKBxKFjQWW
+ 3XcxydN5eVeTKJvvHBfGHZNAtude4A9A2gdIFZGoDa6yAk96Xr9dPgWCYDXOV6S+fUnE/mrIk3s
+ JeBd5cTGRiz3cte3j0N1VQjQ0sUnnExMBuv0f3KU8LQgCJ/dk7sxsn+24oFkL8AlshngFCuq/8T
+ Y4Q3HxtG1x36uX9lxnG8Cvkkmsh8xj4axuLHvohlkVuqgv/6Q/NTg0yi24ShvYH/DiVHBSBI7Ra
+ 2wQkAklX17xX1rU8JaLUY=
+X-Google-Smtp-Source: AGHT+IHug05J+YLSs6hx57x9pVEThi09ZbnU10gLqfHVQzEpvpinpKT/ONJjOoAIMJbf9EfaxHnGVQ==
+X-Received: by 2002:a05:620a:1aaa:b0:892:43af:ba37 with SMTP id
+ af79cd13be357-89c0f7014a9mr119159685a.5.1761183117844; 
+ Wed, 22 Oct 2025 18:31:57 -0700 (PDT)
+Received: from patrick-laptop.iol.unh.edu
+ ([2606:4100:3880:1271:8c70:5b9e:ecd3:14e])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-89c12546031sm56080085a.56.2025.10.22.18.31.56
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 22 Oct 2025 18:31:56 -0700 (PDT)
+From: Patrick Robb <probb@iol.unh.edu>
+To: Luca.Vizzarro@arm.com
+Cc: dev@dpdk.org, dmarx@iol.unh.ed, abailey@iol.unh.edu,
+ Paul.Szczepanek@arm.com, Patrick Robb <probb@iol.unh.edu>
+Subject: [PATCH v5 0/3] Add TREX Traffic Generator to DTS Framework
+Date: Wed, 22 Oct 2025 21:30:46 -0400
+Message-ID: <20251023013049.1368129-1-probb@iol.unh.edu>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20251001231659.2297751-1-probb@iol.unh.edu>
+References: <20251001231659.2297751-1-probb@iol.unh.edu>
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB6028
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5PEPF00014B8C.eurprd02.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: c0134e75-1ec6-4063-8284-08de11cb079e
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|14060799003|376014|35042699022|82310400026|1800799024|36860700013|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?0Npdfxb9N3fakKl+wnDU9Exh9mplqwtk3sNjtE8pGGHXkmqfic4M51O4BAMO?=
- =?us-ascii?Q?EZT6+fE/Y2temESqbvOMlfsKaK8mgozNMyOfpeE9eUkP+Km6U2C3UlDJ/Q4t?=
- =?us-ascii?Q?sJUPh9RHoChJtU09rGLXbqqjFaaSdlsMbBEQvH7P5GU75K4la62sa8J1dhzO?=
- =?us-ascii?Q?xTRHPRuMZESiEySanACTbDW0OujJ6P/j2HCKMA6/6pbDk7udqvkTFq+HFGxs?=
- =?us-ascii?Q?9ZWf6x50nkA/PMHoMerrV5NBmi0I/kFp8zAn15HkHzkpUUfc4Ez/Bg5zd6Pn?=
- =?us-ascii?Q?SdeBbeaL4l8nQCqpQk53I0pxreL/zswj7ZwqNVLf9cF31mbKncVDUxcqKH44?=
- =?us-ascii?Q?SQiDjr8m27wY+AZvgtAwla8NlzvzbzA59T6PFvqonQV4+e3k2kiMprYcEBFO?=
- =?us-ascii?Q?FlKgYZf5T8TE6kqZphl7vH9lbWhdkFbFjlzsGfKgloKVSoy8m2jJmqa/8w5Q?=
- =?us-ascii?Q?fodlzJX9F7NyrRVlqbtfI4pQTOj/Qqtp0rNeYbmxZra9fQ9xlgLYMeMMo8If?=
- =?us-ascii?Q?LY337oa3pke1lljyNm8JxhwYz3aK/bP5gS++Yzh6zojLqpb4uvM0xCCi5WvO?=
- =?us-ascii?Q?HqmCeLGgAx3GLw3nXBY33ldsviSYcK0Bb7Pair2tzFgjMcIUpiyF6iukk8oR?=
- =?us-ascii?Q?gDQGES7BieR2hCe1C5nIV+TadiAuzzpbW1ruu0bgovo8it9Vmz+hxRE0ZiIB?=
- =?us-ascii?Q?YzB+byvzxiHg/8wtNCyjXckc3jPXyxy0bKlYN1U6AaCS0xPmS6ZTMkFt5eH8?=
- =?us-ascii?Q?O8g8yN9lXpIUtFp+/e+zuZczb2h9YhKrJ4XzCH9ri88m2HyPDPYsT0/U/zzM?=
- =?us-ascii?Q?UU5nSjULyuIA/xUvgkXQYma8D88bJvZqaZhs9nehW65rSl78lMQdx8reO9ux?=
- =?us-ascii?Q?XLt/eowo8U3OwVUq/LmsiHGaAR1+J1R+HgDp+VoFPdPC1rRLQskpxgDCOgFL?=
- =?us-ascii?Q?GGVmwWXUcdTBUZtCtevXlm/ThrXfeDJOKnIT3xwDO+ln7fn8I8bCAVwnaUCm?=
- =?us-ascii?Q?D/rqSI8vHqkMCLwE11kIQrOgABtyWnEBI71iSozRMM1mCjgsxvXiIcTBg1mj?=
- =?us-ascii?Q?RSGLc/tp8dM8xPzoT9iEFSrK31/vUKaNRVmvTr4LZtAyNatYov3+h228bOo5?=
- =?us-ascii?Q?GwB923oXfRpuruIOQ1lNCai5KGdB3wjEAbRcJReXYVbOBoWki2CgwKivLMKT?=
- =?us-ascii?Q?9WimeedYiGzh5Z4HyYA73/ugGcQ1fExoDDqoOOj3HVKR0Ys9jFIdbWw/Bomk?=
- =?us-ascii?Q?OJNtg/gwDR1LFMdz0cO3ur1EW658sMyp8mfsGpMBRUMOt7kYrSntALbW0JtV?=
- =?us-ascii?Q?ImuUF9vg9B58kaHEI7410Mt6/49U/eQWReNL5QX8dnBuxdLNI2ko84VF7eZL?=
- =?us-ascii?Q?8Ha6NiW8k7CI09Ir67tkfZcgwzOc2U/8XBOyQzxUWTJTdD4r7lTu5hlH+wJU?=
- =?us-ascii?Q?KdOuFdlLjufFXvcCl6wCGe1pwr/t9z52jTqXU9kxSOtUvhBy310IqOW+hMYL?=
- =?us-ascii?Q?76DBtbtQg8r4jQTR7JD+vUtYVzxukv4J0B2IipR8lKwNvEhxowQPKmpE0340?=
- =?us-ascii?Q?YPorrVXpuqzb20KOf7w=3D?=
-X-Forefront-Antispam-Report: CIP:4.158.2.129; CTRY:GB; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:outbound-uk1.az.dlp.m.darktrace.com;
- PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(14060799003)(376014)(35042699022)(82310400026)(1800799024)(36860700013)(7053199007);
- DIR:OUT; SFP:1101; 
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 00:28:37.0890 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cbce90a2-a7e3-4ace-3461-08de11cb1b94
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d; Ip=[4.158.2.129];
- Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource: DB5PEPF00014B8C.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR08MB6707
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -195,46 +80,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Doug Foster <doug.foster@arm.com>
+This series adds support for performance traffic generators, and
+includes an implementation for using the TREX traffic generator for
+performance testing. It also includes a new testsuite which measures the
+single core forwarding performance of a SUT in millions of packets per
+second.
 
->-----Original Message-----
->From: Thierry Herbelot <thierry.herbelot@6wind.com>
->Sent: Thursday, October 16, 2025 3:06 AM
->To: dev@dpdk.org
->Cc: Thierry Herbelot <thierry.herbelot@6wind.com>; thomas@monjalon.net;
->Bruce Richardson <bruce.richardson@intel.com>; Wathsala Vithanage
-><wathsala.vithanage@arm.com>; stable@dpdk.org; Olivier Matz
-><olivier.matz@6wind.com>
->Subject: [PATCH] config/arm: fix inconsistency for Neoverse N2
->
->Configuration for hex code '0xd49' enables two NUMA nodes.
->Then, the corresponding 'soc_n2' should allow 'numa'.
->
->Fixes: ea85ed1f6882 ("config/arm: increase nodes and cores for Neoverse N2=
-")
->Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
->---
-> config/arm/meson.build | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/config/arm/meson.build b/config/arm/meson.build index
->665f3fa38fcf..316f23941996 100644
->--- a/config/arm/meson.build
->+++ b/config/arm/meson.build
->@@ -590,7 +590,7 @@ soc_n2 =3D {
->     'description': 'Arm Neoverse N2',
->     'implementer': '0x41',
->     'part_number': '0xd49',
->-    'numa': false
->+    'numa': true
-> }
->
-> soc_n3 =3D {
->--
->2.39.2
+v5 changes:
 
-IMPORTANT NOTICE: The contents of this email and any attachments are confid=
-ential and may also be privileged. If you are not the intended recipient, p=
-lease notify the sender immediately and do not disclose the contents to any=
- other person, use it for any purpose, or store or copy the information in =
-any medium. Thank you.
+1. Adding a new api test function for taking a performance metrics dict
+and writing it to a new performance metrics json file within the output
+dir of each respective testsuite that calls this function
+
+2. Adding the option to start a shell without adding it to the shell
+pool, for when a shell is intended to outlive the current shell pool
+cleanup.
+
+Nicholas Pratte (3):
+  dts: rework traffic generator inheritance structure
+  dts: add trex traffic generator to dts framework
+  dts: add performance test functions to test suite API
+
+ ...sts.TestSuite_single_core_forward_perf.rst |   8 +
+ doc/guides/tools/dts.rst                      |  49 +++-
+ dts/api/packet.py                             |  39 ++-
+ dts/api/test.py                               |  32 +++
+ dts/{ => configurations}/nodes.example.yaml   |   0
+ .../test_run.example.yaml                     |   6 +-
+ dts/configurations/tests_config.example.yaml  |  17 ++
+ dts/framework/config/test_run.py              |  22 +-
+ dts/framework/context.py                      |   5 +-
+ dts/framework/remote_session/blocking_app.py  |  12 +-
+ .../remote_session/interactive_shell.py       |   8 +-
+ dts/framework/settings.py                     |  12 +-
+ dts/framework/test_run.py                     |  52 +++-
+ .../traffic_generator/__init__.py             |  13 +-
+ .../capturing_traffic_generator.py            |  34 +++
+ .../performance_traffic_generator.py          |  64 +++++
+ .../testbed_model/traffic_generator/scapy.py  |  14 +-
+ .../traffic_generator/traffic_generator.py    |  44 +--
+ .../testbed_model/traffic_generator/trex.py   | 259 ++++++++++++++++++
+ .../TestSuite_single_core_forward_perf.py     | 151 ++++++++++
+ dts/tests_config.example.yaml                 |   5 -
+ 21 files changed, 768 insertions(+), 78 deletions(-)
+ create mode 100644 doc/api/dts/tests.TestSuite_single_core_forward_perf.rst
+ rename dts/{ => configurations}/nodes.example.yaml (100%)
+ rename dts/{ => configurations}/test_run.example.yaml (88%)
+ create mode 100644 dts/configurations/tests_config.example.yaml
+ create mode 100644 dts/framework/testbed_model/traffic_generator/performance_traffic_generator.py
+ create mode 100644 dts/framework/testbed_model/traffic_generator/trex.py
+ create mode 100644 dts/tests/TestSuite_single_core_forward_perf.py
+ delete mode 100644 dts/tests_config.example.yaml
+
+-- 
+2.49.0
+
