@@ -2,49 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A019ECCD193
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 08:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64727CCD1BC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 11:05:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E87BC402C3;
-	Thu, 23 Oct 2025 10:51:27 +0200 (CEST)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
- by mails.dpdk.org (Postfix) with ESMTP id D6479400D6
- for <dev@dpdk.org>; Thu, 23 Oct 2025 10:51:25 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.88.163])
- by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4csfnF1vgwz1R9Vr;
- Thu, 23 Oct 2025 16:48:01 +0800 (CST)
-Received: from kwepemk500008.china.huawei.com (unknown [7.202.194.93])
- by mail.maildlp.com (Postfix) with ESMTPS id 52BD01800CE;
- Thu, 23 Oct 2025 16:51:23 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- kwepemk500008.china.huawei.com (7.202.194.93) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 451C340151;
+	Thu, 23 Oct 2025 13:05:15 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id E577C40150
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 13:05:13 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N3hWjF029627
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 04:05:13 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=5
+ PuiBYTOwKbUIMpuFE9s7TPnUd19G/Lw65YThnJ+4hs=; b=KIQPs3JN7N1kRJkHA
+ qp8pbpV8k2m+ephiHS9JQxBc042CVWUyp0XXq/7iF2jdESGGEsizH24nhHYip/ZE
+ 38ejMKZozYdeVJ+PGmLj9Ta882nrQCN/NCZ0OdQpaHXU2FwlySnz6O8eEpRY1bR8
+ 3ILUxAKVSU/G9sSOGeZp00mANrDclAmp/UmknJ7gLuyI96fMOrYeuDdZxUpAAbCg
+ m8uTp20GjKKIrQFDK/Jt7/VB3cAAKuKOfnhSpnpj5ngIIwRoN+b+ccCoxJV2HEYd
+ oPiVQot9Fi7RhWBI6RxnrvGigxghekdxTKpZMFAiIzvZT3kFy8Ee5l8SltFlqXEx
+ oVxIQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49ycq48v20-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 04:05:12 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 23 Oct 2025 16:51:22 +0800
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Thu, 23 Oct 2025 09:51:19 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>,
- "dev@dpdk.org" <dev@dpdk.org>, Stephen Hemminger
- <stephen@networkplumber.org>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>, Fengchengwen <fengchengwen@huawei.com>, "Bruce
- Richardson" <bruce.richardson@intel.com>
-Subject: RE: [PATCH v5] mbuf: optimize segment prefree
-Thread-Topic: [PATCH v5] mbuf: optimize segment prefree
-Thread-Index: AQHcQ/NUxCpzFpnLEUCegFLyVmlwCLTPa7AA
-Date: Thu, 23 Oct 2025 08:51:19 +0000
-Message-ID: <c556ea7b92a24bc09ac5240da39bc36c@huawei.com>
-References: <20250827213535.21602-1-mb@smartsharesystems.com>
- <20251023080136.165513-1-mb@smartsharesystems.com>
-In-Reply-To: <20251023080136.165513-1-mb@smartsharesystems.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.126.175.92]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ 15.2.1544.25; Thu, 23 Oct 2025 04:05:21 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Thu, 23 Oct 2025 04:05:21 -0700
+Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
+ by maili.marvell.com (Postfix) with ESMTP id 22EB13F70A9;
+ Thu, 23 Oct 2025 04:05:09 -0700 (PDT)
+From: <skori@marvell.com>
+To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH v6 1/6] common/cnxk: support link mode configuration
+Date: Thu, 23 Oct 2025 16:32:01 +0530
+Message-ID: <20251023110332.6231-1-skori@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251023075450.4145667-6-skori@marvell.com>
+References: <20251023075450.4145667-6-skori@marvell.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDAzMSBTYWx0ZWRfX9r8EYM2/6LrX
+ BnoqLpptBFTfEBj9169Vc49N88OaL0sF3lkEXf3sH73drZE6scngvcW4REDXZWEh5LUkYwRnYuF
+ MgswjstNnR+7c+ZcD6KccFaJM2Yn+aCAH9naVHZ6PMTEkcADjN/8AQdhDAm/51YjG9Mf6GYb3Lh
+ 8PENIEk3lDUGrcYZkynKjkFOrdplF+ZnE/uUl48Cids2VZfqog/2NpDvtRHW65RyGS3LTmK+Xdx
+ V95CHXtlXrQdersvU1Xgcytypx7fBCpibqUfHZcylup0DizK1Qv2xf4eyMMdRSz+PYazGVtmfu3
+ w+zljaqxHc4+Vn/AMe7E+yNVT1yJPa4hvV4rFOVhHDzXqblQzZQWGHOb/ze/oyBsEG/Hz7gU29I
+ f/c34UFvTt7oCzfdzhP2nWEtB1SY+w==
+X-Authority-Analysis: v=2.4 cv=fI80HJae c=1 sm=1 tr=0 ts=68fa0be8 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
+ a=I4B3QrvN1LbncYpy22gA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: -0ya17abGRVKOEKzaPaGi5uRMDZrZgQx
+X-Proofpoint-ORIG-GUID: -0ya17abGRVKOEKzaPaGi5uRMDZrZgQx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,114 +81,373 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gDQo+IFJlZmFjdG9yZWQgcnRlX3BrdG1idWZfcHJlZnJlZV9zZWcoKSBmb3IgYm90aCBw
-ZXJmb3JtYW5jZSBhbmQgcmVhZGFiaWxpdHkuDQo+IA0KPiBXaXRoIHRoZSBvcHRpbWl6ZWQgUlRF
-X01CVUZfRElSRUNUKCkgbWFjcm8sIHRoZSBjb21tb24gbGlrZWx5IGNvZGUgcGF0aA0KPiBub3cg
-Zml0cyB3aXRoaW4gb25lIGluc3RydWN0aW9uIGNhY2hlIGxpbmUgb24geDg2LTY0IHdoZW4gYnVp
-bHQgd2l0aCBHQ0MuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21h
-cnRzaGFyZXN5c3RlbXMuY29tPg0KPiBBY2tlZC1ieTogS29uc3RhbnRpbiBBbmFueWV2IDxrb25z
-dGFudGluLmFuYW55ZXZAaHVhd2VpLmNvbT4NCj4gQWNrZWQtYnk6IENoZW5nd2VuIEZlbmcgPGZl
-bmdjaGVuZ3dlbkBodWF3ZWkuY29tPg0KPiBSZXZpZXdlZC1ieTogQnJ1Y2UgUmljaGFyZHNvbiA8
-YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5jb20+DQo+IC0tLQ0KPiB2NToNCj4gKiBSZW1vdmVkIHRo
-ZSBwbGFpbiBSVEVfTUJVRl9ESVJFQ1QoKSBtYWNybywgYW5kIG9ubHkgdXNlIHRoZSBvcHRpbWl6
-ZWQNCj4gICB2YXJpYW50LiAoQnJ1Y2UgUmljaGFyZHNvbikNCj4gICBGdXJ0aGVyIHRlc3Rpbmcg
-b24gR29kYm9sdCBjb25maXJtZWQgdGhhdCBvdGhlciBjb21waWxlcnMgYmVuZWZpdCBmcm9tDQo+
-ICAgdGhlIG9wdGltaXplZCBtYWNybyB0b28uDQo+ICogU2hvcnRlbmVkIHRoZSBkZXNjcmlwdGlv
-biBvZiB0aGUgUlRFX01CVUZfRElSRUNUKCkgbWFjcm8sIGFuZCBvbmx5DQo+ICAgcHJvdmlkZSBv
-bmUgZXhhbXBsZSBvZiBjb2RlIGVtaXR0ZWQgYnkgYSBjb21waWxlci4gKEJydWNlIFJpY2hhcmRz
-b24pDQo+ICogQ29uc29saWRhdGVkIHRoZSBzdGF0aWNfYXNzZXJ0KCkgaW50byBvbmUsIGNvdmVy
-aW5nIGJvdGggbGl0dGxlIGFuZCBiaWcNCj4gICBlbmRpYW4uDQo+ICAgVGhpcyBhbHNvIHJlZHVj
-ZXMgdGhlIGFtb3VudCBvZiBlbmRpYW4tY29uZGl0aW9uYWwgc291cmNlIGNvZGUgYW5kDQo+ICAg
-aW1wcm92ZXMgcmVhZGFiaWxpdHkuDQo+ICAgKEJydWNlIFJpY2hhcmRzb24pDQo+ICogQWRkZWQg
-Y29tbWVudCBhYm91dCBNU0IgbWVhbmluZyAibW9zdCBzaWduaWZpY2FudCBieXRlIi4NCj4gdjQ6
-DQo+ICogRW5hYmxlZCB0aGUgb3B0aW1pemVkIFJURV9NQlVGX0RJUkVDVCgpIG1hY3JvIGZvciBH
-Q0Mgb24gYWxsDQo+ICAgYXJjaGl0ZWN0dXJlcy4NCj4gdjM6DQo+ICogUmV3cm90ZSB0aGUgb3B0
-aW1pemVkIFJURV9NQlVGX0RJUkVDVCgpIG1hY3JvIGZvciByZWFkYWJpbGl0eTsgdXNlDQo+ICAg
-bnVtZXJpY2FsIHZhbHVlIGluc3RlYWQgb2YgbG9uZyBuYW1lcy4gKEJydWNlIFJpY2hhcmRzb24p
-DQo+ICogRW5hYmxlZCB0aGUgb3B0aW1pemVkIFJURV9NQlVGX0RJUkVDVCgpIG1hY3JvIGZvciBM
-b29uZ2FyY2ggdG9vLg0KPiB2MjoNCj4gKiBGaXhlZCB0eXBvIGluIGNvbW1pdCBkZXNjcmlwdGlv
-bi4NCj4gKiBGaXhlZCBpbmRlbnRhdGlvbi4NCj4gKiBBZGRlZCBkZXRhaWxlZCBkZXNjcmlwdGlv
-biB0byB0aGUgb3B0aW1pemVkIFJURV9NQlVGX0RJUkVDVCgpIG1hY3JvLg0KPiAgIChTdGVwaGVu
-IEhlbW1pbmdlcikNCj4gKiBBZGRlZCBzdGF0aWNfYXNzZXJ0KCkgdG8gdmVyaWZ5IHRoYXQgdGhl
-IG9wdGltaXplZCBSVEVfTUJVRl9ESVJFQ1QoKQ0KPiAgIG1hY3JvIGlzIHZhbGlkLCBzcGVjaWZp
-Y2FsbHkgdGhhdCB0aGUgdGVzdGVkIGJpdHMgYXJlIGluIHRoZSBNU0Igb2YgdGhlDQo+ICAgNjQt
-Yml0IGZpZWxkLg0KPiAtLS0NCj4gIGxpYi9tYnVmL3J0ZV9tYnVmLmggICAgICB8IDUxICsrKysr
-KysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gIGxpYi9tYnVmL3J0ZV9tYnVm
-X2NvcmUuaCB8IDMzICsrKysrKysrKysrKysrKysrKysrKysrLS0tDQo+ICAyIGZpbGVzIGNoYW5n
-ZWQsIDQ5IGluc2VydGlvbnMoKyksIDM1IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBh
-L2xpYi9tYnVmL3J0ZV9tYnVmLmggYi9saWIvbWJ1Zi9ydGVfbWJ1Zi5oDQo+IGluZGV4IDNkZjIy
-MTI1ZGUuLjIwMDQzOTFmNTcgMTAwNjQ0DQo+IC0tLSBhL2xpYi9tYnVmL3J0ZV9tYnVmLmgNCj4g
-KysrIGIvbGliL21idWYvcnRlX21idWYuaA0KPiBAQCAtMzEsNiArMzEsNyBAQA0KPiAgICogaHR0
-cDovL3d3dy5rb2hhbGEuY29tL3N0YXJ0L3RjcGlwaXYyLmh0bWwNCj4gICAqLw0KPiANCj4gKyNp
-bmNsdWRlIDxzdGRib29sLmg+DQo+ICAjaW5jbHVkZSA8c3RkaW50Lmg+DQo+IA0KPiAgI2luY2x1
-ZGUgPHJ0ZV9jb21tb24uaD4NCj4gQEAgLTE0NTgsNDQgKzE0NTksMzAgQEAgc3RhdGljIGlubGlu
-ZSBpbnQNCj4gX19ydGVfcGt0bWJ1Zl9waW5uZWRfZXh0YnVmX2RlY3JlZihzdHJ1Y3QgcnRlX21i
-dWYgKm0pDQo+ICBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSBzdHJ1Y3QgcnRlX21idWYgKg0K
-PiAgcnRlX3BrdG1idWZfcHJlZnJlZV9zZWcoc3RydWN0IHJ0ZV9tYnVmICptKQ0KPiAgew0KPiAt
-CV9fcnRlX21idWZfc2FuaXR5X2NoZWNrKG0sIDApOw0KPiAtDQo+IC0JaWYgKGxpa2VseShydGVf
-bWJ1Zl9yZWZjbnRfcmVhZChtKSA9PSAxKSkgew0KPiAtDQo+IC0JCWlmICghUlRFX01CVUZfRElS
-RUNUKG0pKSB7DQo+IC0JCQlydGVfcGt0bWJ1Zl9kZXRhY2gobSk7DQo+IC0JCQlpZiAoUlRFX01C
-VUZfSEFTX0VYVEJVRihtKSAmJg0KPiAtCQkJICAgIFJURV9NQlVGX0hBU19QSU5ORURfRVhUQlVG
-KG0pICYmDQo+IC0JCQkgICAgX19ydGVfcGt0bWJ1Zl9waW5uZWRfZXh0YnVmX2RlY3JlZihtKSkN
-Cj4gLQkJCQlyZXR1cm4gTlVMTDsNCj4gLQkJfQ0KPiAtDQo+IC0JCWlmIChtLT5uZXh0ICE9IE5V
-TEwpDQo+IC0JCQltLT5uZXh0ID0gTlVMTDsNCj4gLQkJaWYgKG0tPm5iX3NlZ3MgIT0gMSkNCj4g
-LQkJCW0tPm5iX3NlZ3MgPSAxOw0KPiArCWJvb2wgcmVmY250X25vdF9vbmU7DQo+IA0KPiAtCQly
-ZXR1cm4gbTsNCj4gKwlfX3J0ZV9tYnVmX3Nhbml0eV9jaGVjayhtLCAwKTsNCj4gDQo+IC0JfSBl
-bHNlIGlmIChfX3J0ZV9tYnVmX3JlZmNudF91cGRhdGUobSwgLTEpID09IDApIHsNCj4gKwlyZWZj
-bnRfbm90X29uZSA9IHVubGlrZWx5KHJ0ZV9tYnVmX3JlZmNudF9yZWFkKG0pICE9IDEpOw0KPiAr
-CWlmIChyZWZjbnRfbm90X29uZSAmJiBfX3J0ZV9tYnVmX3JlZmNudF91cGRhdGUobSwgLTEpICE9
-IDApDQo+ICsJCXJldHVybiBOVUxMOw0KPiANCj4gLQkJaWYgKCFSVEVfTUJVRl9ESVJFQ1QobSkp
-IHsNCj4gLQkJCXJ0ZV9wa3RtYnVmX2RldGFjaChtKTsNCj4gLQkJCWlmIChSVEVfTUJVRl9IQVNf
-RVhUQlVGKG0pICYmDQo+IC0JCQkgICAgUlRFX01CVUZfSEFTX1BJTk5FRF9FWFRCVUYobSkgJiYN
-Cj4gLQkJCSAgICBfX3J0ZV9wa3RtYnVmX3Bpbm5lZF9leHRidWZfZGVjcmVmKG0pKQ0KPiAtCQkJ
-CXJldHVybiBOVUxMOw0KPiAtCQl9DQo+ICsJaWYgKHVubGlrZWx5KCFSVEVfTUJVRl9ESVJFQ1Qo
-bSkpKSB7DQo+ICsJCXJ0ZV9wa3RtYnVmX2RldGFjaChtKTsNCj4gKwkJaWYgKFJURV9NQlVGX0hB
-U19FWFRCVUYobSkgJiYNCj4gKwkJCQlSVEVfTUJVRl9IQVNfUElOTkVEX0VYVEJVRihtKSAmJg0K
-PiArCQkJCV9fcnRlX3BrdG1idWZfcGlubmVkX2V4dGJ1Zl9kZWNyZWYobSkpDQo+ICsJCQlyZXR1
-cm4gTlVMTDsNCj4gKwl9DQo+IA0KPiAtCQlpZiAobS0+bmV4dCAhPSBOVUxMKQ0KPiAtCQkJbS0+
-bmV4dCA9IE5VTEw7DQo+IC0JCWlmIChtLT5uYl9zZWdzICE9IDEpDQo+IC0JCQltLT5uYl9zZWdz
-ID0gMTsNCj4gKwlpZiAocmVmY250X25vdF9vbmUpDQo+ICAJCXJ0ZV9tYnVmX3JlZmNudF9zZXQo
-bSwgMSk7DQo+ICsJaWYgKG0tPm5iX3NlZ3MgIT0gMSkNCj4gKwkJbS0+bmJfc2VncyA9IDE7DQo+
-ICsJaWYgKG0tPm5leHQgIT0gTlVMTCkNCj4gKwkJbS0+bmV4dCA9IE5VTEw7DQo+IA0KPiAtCQly
-ZXR1cm4gbTsNCj4gLQl9DQo+IC0JcmV0dXJuIE5VTEw7DQo+ICsJcmV0dXJuIG07DQo+ICB9DQo+
-IA0KPiAgLyoqDQo+IGRpZmYgLS1naXQgYS9saWIvbWJ1Zi9ydGVfbWJ1Zl9jb3JlLmggYi9saWIv
-bWJ1Zi9ydGVfbWJ1Zl9jb3JlLmgNCj4gaW5kZXggYTBkZjI2NWI1ZC4uMWRmZWFiMDUxMSAxMDA2
-NDQNCj4gLS0tIGEvbGliL21idWYvcnRlX21idWZfY29yZS5oDQo+ICsrKyBiL2xpYi9tYnVmL3J0
-ZV9tYnVmX2NvcmUuaA0KPiBAQCAtNzExLDkgKzcxMSwzNiBAQCBzdHJ1Y3QgcnRlX21idWZfZXh0
-X3NoYXJlZF9pbmZvIHsNCj4gICAqDQo+ICAgKiBJZiBhIG1idWYgZW1iZWRzIGl0cyBvd24gZGF0
-YSBhZnRlciB0aGUgcnRlX21idWYgc3RydWN0dXJlLCB0aGlzIG1idWYNCj4gICAqIGNhbiBiZSBk
-ZWZpbmVkIGFzIGEgZGlyZWN0IG1idWYuDQo+IC0gKi8NCj4gLSNkZWZpbmUgUlRFX01CVUZfRElS
-RUNUKG1iKSBcDQo+IC0JKCEoKG1iKS0+b2xfZmxhZ3MgJiAoUlRFX01CVUZfRl9JTkRJUkVDVCB8
-IFJURV9NQlVGX0ZfRVhURVJOQUwpKSkNCj4gKyAqDQo+ICsgKiBOb3RlOiBNYWNybyBvcHRpbWl6
-ZWQgZm9yIGNvZGUgc2l6ZS4NCj4gKyAqDQo+ICsgKiBUaGUgcGxhaW4gbWFjcm8gd291bGQgYmU6
-DQo+ICsgKiAgICAgICNkZWZpbmUgUlRFX01CVUZfRElSRUNUKG1iKSBcDQo+ICsgKiAgICAgICAg
-ICAoISgobWIpLT5vbF9mbGFncyAmIChSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRFX01CVUZfRl9F
-WFRFUk5BTCkpKQ0KPiArICoNCj4gKyAqIFRoZSBmbGFncyBSVEVfTUJVRl9GX0lORElSRUNUIGFu
-ZCBSVEVfTUJVRl9GX0VYVEVSTkFMIGFyZSBib3RoIGluIHRoZQ0KPiBNU0IgKG1vc3Qgc2lnbmlm
-aWNhbnQNCj4gKyAqIGJ5dGUpIG9mIHRoZSA2NC1iaXQgb2xfZmxhZ3MgZmllbGQsIHNvIHdlIG9u
-bHkgY29tcGFyZSB0aGlzIG9uZSBieXRlIGluc3RlYWQgb2YgYWxsDQo+IDY0IGJpdHMuDQo+ICsg
-Kg0KPiArICogRS5nLiwgR0NDIHZlcnNpb24gMTYuMC4wIDIwMjUxMDE5IChleHBlcmltZW50YWwp
-IGdlbmVyYXRlcyB0aGUgZm9sbG93aW5nIGNvZGUNCj4gZm9yIHg4Ni02NC4NCj4gKyAqDQo+ICsg
-KiBXaXRoIHRoZSBwbGFpbiBtYWNybywgMTcgYnl0ZXMgb2YgaW5zdHJ1Y3Rpb25zOg0KPiArICog
-ICAgICBtb3ZhYnMgcmF4LDB4NjAwMDAwMDAwMDAwMDAwMCAgICAgICAvLyAxMCBieXRlcw0KPiAr
-ICogICAgICBhbmQgICAgcmF4LFFXT1JEIFBUUiBbcmRpKzB4MThdICAgICAvLyA0IGJ5dGVzDQo+
-ICsgKiAgICAgIHNldGUgICBhbCAgICAgICAgICAgICAgICAgICAgICAgICAgIC8vIDMgYnl0ZXMN
-Cj4gKyAqIFdpdGggdGhpcyBvcHRpbWl6ZWQgbWFjcm8sIG9ubHkgNyBieXRlcyBvZiBpbnN0cnVj
-dGlvbnM6DQo+ICsgKiAgICAgIHRlc3QgICBCWVRFIFBUUiBbcmRpKzB4MWZdLDB4NjAgICAgIC8v
-IDQgYnl0ZXMNCj4gKyAqICAgICAgc2V0ZSAgIGFsICAgICAgICAgICAgICAgICAgICAgICAgICAg
-Ly8gMyBieXRlcw0KPiArICovDQo+ICsjaWYgUlRFX0JZVEVfT1JERVIgPT0gUlRFX0xJVFRMRV9F
-TkRJQU4NCj4gKy8qIE9uIGxpdHRsZSBlbmRpYW4gYXJjaGl0ZWN0dXJlLCB0aGUgTVNCIG9mIGEg
-NjQtYml0IGludGVnZXIgaXMgYXQgYnl0ZSBvZmZzZXQgNy4gKi8NCj4gKyNkZWZpbmUgUlRFX01C
-VUZfRElSRUNUKG1iKSAgICAgISgoKGNvbnN0IGNoYXIgKikoJihtYiktPm9sX2ZsYWdzKSlbN10g
-JiAweDYwKQ0KPiArI2VsaWYgUlRFX0JZVEVfT1JERVIgPT0gUlRFX0JJR19FTkRJQU4NCj4gKy8q
-IE9uIGJpZyBlbmRpYW4gYXJjaGl0ZWN0dXJlLCB0aGUgTVNCIG9mIGEgNjQtYml0IGludGVnZXIg
-aXMgYXQgYnl0ZSBvZmZzZXQgMC4gKi8NCj4gKyNkZWZpbmUgUlRFX01CVUZfRElSRUNUKG1iKSAg
-ICAgISgoKGNvbnN0IGNoYXIgKikoJihtYiktPm9sX2ZsYWdzKSlbMF0gJiAweDYwKQ0KDQpBIHN0
-dXBpZCBxOiB3aHkgdGhlbiBub3Qgc2ltcGx5IGRvOg0KKG1iLT5vbF9mbGFncyA+PiA1NikgJiAw
-eDYwDQp0aGVuPw0KU2hvdWxkIGhlbHAgdG8gYWxsIHRoZXNlIExFL0JFIGNhc3RzLCBldGMuDQoN
-Cj4gKyNlbmRpZg0KPiArLyogVmVyaWZ5IHRoZSBvcHRpbWl6YXRpb24gYWJvdmUuICovDQo+ICtz
-dGF0aWNfYXNzZXJ0KChSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRFUk5BTCkg
-PT0NCj4gVUlOVDY0X0MoMHg2MCkgPDwgKDcgKiBDSEFSX0JJVCksDQo+ICsJIihSVEVfTUJVRl9G
-X0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRFUk5BTCkgaXMgbm90IDB4NjAgYXQgTVNCIik7DQo+
-IA0KPiAgLyoqIFVuaW5pdGlhbGl6ZWQgb3IgdW5zcGVjaWZpZWQgcG9ydC4gKi8NCj4gICNkZWZp
-bmUgUlRFX01CVUZfUE9SVF9JTlZBTElEIFVJTlQxNl9NQVgNCj4gLS0NCj4gMi40My4wDQoNCg==
+From: Sunil Kumar Kori <skori@marvell.com>
+
+CGX MAC can be configured into different modes and speeds
+as mentioned below:
+
+ - fixed/autoneg
+ - half/full duplex
+ - 10M/100M/1G/10G etc speeds.
+
+Sync mailbox and implement that to configure above mentioned
+settings.
+
+Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
+Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
+---
+v5..v6:
+ - Rebased on ToT
+
+ drivers/common/cnxk/hw/nix.h                  | 70 ++++++++++++++
+ drivers/common/cnxk/roc_mbox.h                | 15 ++-
+ drivers/common/cnxk/roc_nix.h                 | 95 ++++++++++++++++++-
+ drivers/common/cnxk/roc_nix_mac.c             | 38 +++++++-
+ drivers/common/cnxk/roc_nix_priv.h            |  2 +
+ .../common/cnxk/roc_platform_base_symbols.c   |  1 +
+ 6 files changed, 211 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/common/cnxk/hw/nix.h b/drivers/common/cnxk/hw/nix.h
+index d16fa3b3ec..f344d4de99 100644
+--- a/drivers/common/cnxk/hw/nix.h
++++ b/drivers/common/cnxk/hw/nix.h
+@@ -2681,4 +2681,74 @@ struct nix_lso_format {
+  */
+ #define NIX_CHAN_CPT_X2P_MASK (0x7ffull)
+ 
++/* CGX lmac types defined by firmware */
++enum cgx_lmac_type {
++	CGX_LMAC_TYPE_SGMII = 0,
++	CGX_LMAC_TYPE_XAUI = 1,
++	CGX_LMAC_TYPE_RXAUI = 2,
++	CGX_LMAC_TYPE_10G_R = 3,
++	CGX_LMAC_TYPE_40G_R = 4,
++	CGX_LMAC_TYPE_QSGMII = 6,
++	CGX_LMAC_TYPE_25G_R = 7,
++	CGX_LMAC_TYPE_50G_R = 8,
++	CGX_LMAC_TYPE_100G_R = 9,
++	CGX_LMAC_TYPE_USXGMII = 10,
++	CGX_LMAC_TYPE_USGMII = 11,
++	CGX_LMAC_TYPE_MAX,
++};
++
++/* CGX modes defined by firmware */
++enum cgx_mode {
++	CGX_MODE_SGMII,
++	CGX_MODE_1000_BASEX,
++	CGX_MODE_QSGMII,
++	CGX_MODE_10G_C2C,
++	CGX_MODE_10G_C2M,
++	CGX_MODE_10G_KR,
++	CGX_MODE_20G_C2C,
++	CGX_MODE_25G_C2C,
++	CGX_MODE_25G_C2M,
++	CGX_MODE_25G_2_C2C,
++	CGX_MODE_25G_CR,
++	CGX_MODE_25G_KR,
++	CGX_MODE_40G_C2C,
++	CGX_MODE_40G_C2M,
++	CGX_MODE_40G_CR4,
++	CGX_MODE_40G_KR4,
++	CGX_MODE_40GAUI_C2C,
++	CGX_MODE_50G_C2C,
++	CGX_MODE_50G_C2M,
++	CGX_MODE_50G_4_C2C,
++	CGX_MODE_50G_CR,
++	CGX_MODE_50G_KR,
++	CGX_MODE_80GAUI_C2C,
++	CGX_MODE_100G_C2C,
++	CGX_MODE_100G_C2M,
++	CGX_MODE_100G_CR4,
++	CGX_MODE_100G_KR4,
++	CGX_MODE_LAUI_2_C2C_BIT,
++	CGX_MODE_LAUI_2_C2M_BIT,
++	CGX_MODE_50GBASE_CR2_C_BIT,
++	CGX_MODE_50GBASE_KR2_C_BIT, /* = 30 */
++	CGX_MODE_100GAUI_2_C2C_BIT,
++	CGX_MODE_100GAUI_2_C2M_BIT,
++	CGX_MODE_100GBASE_CR2_BIT,
++	CGX_MODE_100GBASE_KR2_BIT,
++	CGX_MODE_SFI_1G_BIT,
++	CGX_MODE_25GBASE_CR_C_BIT,
++	CGX_MODE_25GBASE_KR_C_BIT,
++	ETH_MODE_SGMII_10M_BIT,
++	ETH_MODE_SGMII_100M_BIT,      /* = 39 */
++	ETH_MODE_2500_BASEX_BIT = 42, /* Mode group 1 */
++	ETH_MODE_5000_BASEX_BIT,
++	ETH_MODE_O_USGMII_BIT,
++	ETH_MODE_Q_USGMII_BIT,
++	ETH_MODE_2_5G_USXGMII_BIT,
++	ETH_MODE_5G_USXGMII_BIT,
++	ETH_MODE_10G_SXGMII_BIT,
++	ETH_MODE_10G_DXGMII_BIT,
++	ETH_MODE_10G_QXGMII_BIT,
++	CGX_MODE_MAX /* = 51 */
++};
++
+ #endif /* __NIX_HW_H__ */
+diff --git a/drivers/common/cnxk/roc_mbox.h b/drivers/common/cnxk/roc_mbox.h
+index cbafa9555d..7fec23772f 100644
+--- a/drivers/common/cnxk/roc_mbox.h
++++ b/drivers/common/cnxk/roc_mbox.h
+@@ -764,13 +764,18 @@ struct cgx_lmac_fwdata_s {
+ 	uint64_t __io supported_fec;
+ 	uint64_t __io supported_an;
+ 	uint64_t __io supported_link_modes;
+-	/* Only applicable if AN is supported */
++	/* only applicable if AN is supported */
+ 	uint64_t __io advertised_fec;
+-	uint64_t __io advertised_link_modes;
++	uint64_t __io advertised_link_modes_own : 1; /* CGX_CMD_OWN */
++	uint64_t __io advertised_link_modes : 63;
+ 	/* Only applicable if SFP/QSFP slot is present */
+ 	struct sfp_eeprom_s sfp_eeprom;
+ 	struct phy_s phy;
+-#define LMAC_FWDATA_RESERVED_MEM 1023
++	uint32_t __io lmac_type;
++	uint32_t __io portm_idx;
++	uint64_t __io mgmt_port : 1;
++	uint64_t __io port;
++#define LMAC_FWDATA_RESERVED_MEM 1018
+ 	uint64_t __io reserved[LMAC_FWDATA_RESERVED_MEM];
+ };
+ 
+@@ -798,8 +803,10 @@ struct cgx_set_link_mode_args {
+ 	uint32_t __io speed;
+ 	uint8_t __io duplex;
+ 	uint8_t __io an;
+-	uint8_t __io ports;
++	uint8_t __io mode_baseidx;
++	uint8_t __io multimode;
+ 	uint64_t __io mode;
++	uint64_t __io advertising;
+ };
+ 
+ struct cgx_set_link_mode_req {
+diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
+index a9cdc42617..41334327bb 100644
+--- a/drivers/common/cnxk/roc_nix.h
++++ b/drivers/common/cnxk/roc_nix.h
+@@ -16,6 +16,7 @@
+ #define ROC_NIX_SQB_THRESH	      30U
+ #define ROC_NIX_SQB_SLACK	      12U
+ #define ROC_NIX_AURA_THRESH	      95U
++#define ROC_NIX_LINK_SPEED_ALL	      0xFFFFF
+ 
+ /* Reserved interface types for BPID allocation */
+ #define ROC_NIX_INTF_TYPE_CGX  0
+@@ -109,6 +110,89 @@ enum roc_nix_bpf_stats {
+ 	ROC_NIX_BPF_RED_OCTS_F_DROP = BIT_ULL(11),
+ };
+ 
++enum roc_nix_link_duplex {
++	ROC_NIX_LINK_DUPLEX_FULL = 0,
++	ROC_NIX_LINK_DUPLEX_HALF = 1
++};
++
++enum roc_nix_link_speed_bits {
++	ROC_NIX_LINK_SPEED_NONE_BIT = BIT_ULL(0),
++	ROC_NIX_LINK_SPEED_10M_HD_BIT = BIT_ULL(1),
++	ROC_NIX_LINK_SPEED_10M_BIT = BIT_ULL(2),
++	ROC_NIX_LINK_SPEED_100M_HD_BIT = BIT_ULL(3),
++	ROC_NIX_LINK_SPEED_100M_BIT = BIT_ULL(4),
++	ROC_NIX_LINK_SPEED_1G_BIT = BIT_ULL(5),
++	ROC_NIX_LINK_SPEED_2_5G_BIT = BIT_ULL(6),
++	ROC_NIX_LINK_SPEED_5G_BIT = BIT_ULL(7),
++	ROC_NIX_LINK_SPEED_10G_BIT = BIT_ULL(8),
++	ROC_NIX_LINK_SPEED_20G_BIT = BIT_ULL(9),
++	ROC_NIX_LINK_SPEED_25G_BIT = BIT_ULL(10),
++	ROC_NIX_LINK_SPEED_40G_BIT = BIT_ULL(11),
++	ROC_NIX_LINK_SPEED_50G_BIT = BIT_ULL(12),
++	ROC_NIX_LINK_SPEED_56G_BIT = BIT_ULL(13),
++	ROC_NIX_LINK_SPEED_100G_BIT = BIT_ULL(14),
++	ROC_NIX_LINK_SPEED_200G_BIT = BIT_ULL(15),
++	ROC_NIX_LINK_SPEED_400G_BIT = BIT_ULL(16),
++	ROC_NIX_LINK_SPEED_MAX = 17
++};
++
++enum roc_nix_link_mode {
++	ROC_NIX_LINK_MODE_10BASET_HD = BIT_ULL(0),
++	ROC_NIX_LINK_MODE_10BASET_FD = BIT_ULL(1),
++	ROC_NIX_LINK_MODE_100BASET_HD = BIT_ULL(2),
++	ROC_NIX_LINK_MODE_100BASET_FD = BIT_ULL(3),
++	ROC_NIX_LINK_MODE_1000BASET_HD = BIT_ULL(4),
++	ROC_NIX_LINK_MODE_1000BASET_FD = BIT_ULL(5),
++	ROC_NIX_LINK_MODE_AUTONEG = BIT_ULL(6),
++	ROC_NIX_LINK_MODE_10000BASET_FD = BIT_ULL(12),
++	ROC_NIX_LINK_MODE_2500BASEX_FD = BIT_ULL(15),
++	ROC_NIX_LINK_MODE_1000BASEKX_FD = BIT_ULL(17),
++	ROC_NIX_LINK_MODE_10000BASEKX4_FD = BIT_ULL(18),
++	ROC_NIX_LINK_MODE_10000BASEKR_FD = BIT_ULL(19),
++	ROC_NIX_LINK_MODE_10000BASER_FEC = BIT_ULL(20),
++	ROC_NIX_LINK_MODE_20000BASEMLD2_FD = BIT_ULL(21),
++	ROC_NIX_LINK_MODE_20000BASEKR2_FD = BIT_ULL(22),
++	ROC_NIX_LINK_MODE_40000BASEKR4_FD = BIT_ULL(23),
++	ROC_NIX_LINK_MODE_40000BASECR4_FD = BIT_ULL(24),
++	ROC_NIX_LINK_MODE_40000BASESR4_FD = BIT_ULL(25),
++	ROC_NIX_LINK_MODE_40000BASELR4_FD = BIT_ULL(26),
++	ROC_NIX_LINK_MODE_56000BASEKR4_FD = BIT_ULL(27),
++	ROC_NIX_LINK_MODE_56000BASECR4_FD = BIT_ULL(28),
++	ROC_NIX_LINK_MODE_56000BASESR4_FD = BIT_ULL(29),
++	ROC_NIX_LINK_MODE_56000BASELR4_FD = BIT_ULL(30),
++	ROC_NIX_LINK_MODE_25000BASECR_FD = BIT_ULL(31),
++	ROC_NIX_LINK_MODE_25000BASEKR_FD = BIT_ULL(32),
++	ROC_NIX_LINK_MODE_25000BASESR_FD = BIT_ULL(33),
++	ROC_NIX_LINK_MODE_50000BASECR2_FD = BIT_ULL(34),
++	ROC_NIX_LINK_MODE_50000BASEKR2_FD = BIT_ULL(35),
++	ROC_NIX_LINK_MODE_100000BASEKR4_FD = BIT_ULL(36),
++	ROC_NIX_LINK_MODE_100000BASESR4_FD = BIT_ULL(37),
++	ROC_NIX_LINK_MODE_100000BASECR4_FD = BIT_ULL(38),
++	ROC_NIX_LINK_MODE_100000BASELR4_ER4_FD = BIT_ULL(39),
++	ROC_NIX_LINK_MODE_50000BASESR2_FD = BIT_ULL(40),
++	ROC_NIX_LINK_MODE_1000BASEX_FD = BIT_ULL(41),
++	ROC_NIX_LINK_MODE_10000BASECR_FD = BIT_ULL(42),
++	ROC_NIX_LINK_MODE_10000BASESR_FD = BIT_ULL(43),
++	ROC_NIX_LINK_MODE_10000BASELR_FD = BIT_ULL(44),
++	ROC_NIX_LINK_MODE_10000BASELRM_FD = BIT_ULL(45),
++	ROC_NIX_LINK_MODE_10000BASEER_FD = BIT_ULL(46),
++	ROC_NIX_LINK_MODE_2500BASET_FD = BIT_ULL(47),
++	ROC_NIX_LINK_MODE_5000BASET_FD = BIT_ULL(48),
++	ROC_NIX_LINK_MODE_FEC_NONE = BIT_ULL(49),
++	ROC_NIX_LINK_MODE_FEC_RS = BIT_ULL(50),
++	ROC_NIX_LINK_MODE_FEC_BASER = BIT_ULL(51),
++	ROC_NIX_LINK_MODE_50000BASEKR_FD = BIT_ULL(52),
++	ROC_NIX_LINK_MODE_50000BASESR_FD = BIT_ULL(53),
++	ROC_NIX_LINK_MODE_50000BASECR_FD = BIT_ULL(54),
++	ROC_NIX_LINK_MODE_50000BASELR_ER_FR_FD = BIT_ULL(55),
++	ROC_NIX_LINK_MODE_50000BASEDR_FD = BIT_ULL(56),
++	ROC_NIX_LINK_MODE_100000BASEKR2_FD = BIT_ULL(57),
++	ROC_NIX_LINK_MODE_100000BASESR2_FD = BIT_ULL(58),
++	ROC_NIX_LINK_MODE_100000BASECR2_FD = BIT_ULL(59),
++	ROC_NIX_LINK_MODE_100000BASELR2_ER2_FR2_FD = BIT_ULL(60),
++	ROC_NIX_LINK_MODE_100000BASEDR2_FD = BIT_ULL(61),
++};
++
+ struct roc_nix_bpf_cfg {
+ 	enum roc_nix_bpf_algo alg;
+ 	enum roc_nix_bpf_lmode lmode;
+@@ -413,9 +497,17 @@ struct roc_nix_link_info {
+ 	uint64_t full_duplex : 1;
+ 	uint64_t lmac_type_id : 4;
+ 	uint64_t speed : 20;
++	uint64_t speed_bitmask : 16;
+ 	uint64_t autoneg : 1;
+ 	uint64_t fec : 2;
+ 	uint64_t port : 8;
++	uint64_t advertising;
++};
++
++struct roc_nix_mac_fwdata {
++	uint64_t advertised_link_modes;
++	uint64_t supported_link_modes;
++	uint64_t supported_an;
+ };
+ 
+ /** Maximum name length for extended statistics counters */
+@@ -502,7 +594,7 @@ struct roc_nix {
+ 	bool reass_ena;
+ 	TAILQ_ENTRY(roc_nix) next;
+ 
+-#define ROC_NIX_MEM_SZ (6 * 1112)
++#define ROC_NIX_MEM_SZ (6 * 1131)
+ 	uint8_t reserved[ROC_NIX_MEM_SZ] __plt_cache_aligned;
+ } __plt_cache_aligned;
+ 
+@@ -865,6 +957,7 @@ void __roc_api roc_nix_mac_link_info_get_cb_unregister(struct roc_nix *roc_nix);
+ int __roc_api roc_nix_q_err_cb_register(struct roc_nix *roc_nix, q_err_get_t sq_err_handle);
+ void __roc_api roc_nix_q_err_cb_unregister(struct roc_nix *roc_nix);
+ int __roc_api roc_nix_mac_stats_reset(struct roc_nix *roc_nix);
++int __roc_api roc_nix_mac_fwdata_get(struct roc_nix *roc_nix, struct roc_nix_mac_fwdata *fwdata);
+ 
+ /* Ops */
+ int __roc_api roc_nix_switch_hdr_set(struct roc_nix *roc_nix,
+diff --git a/drivers/common/cnxk/roc_nix_mac.c b/drivers/common/cnxk/roc_nix_mac.c
+index 54db1adf17..08b4f30810 100644
+--- a/drivers/common/cnxk/roc_nix_mac.c
++++ b/drivers/common/cnxk/roc_nix_mac.c
+@@ -267,20 +267,19 @@ roc_nix_mac_link_info_set(struct roc_nix *roc_nix,
+ 	struct cgx_set_link_mode_req *req;
+ 	int rc;
+ 
+-	rc = roc_nix_mac_link_state_set(roc_nix, link_info->status);
+-	if (rc)
+-		goto exit;
+-
+ 	req = mbox_alloc_msg_cgx_set_link_mode(mbox);
+ 	if (req == NULL) {
+ 		rc =  -ENOSPC;
+ 		goto exit;
+ 	}
++
++	req->args.advertising = link_info->advertising;
+ 	req->args.speed = link_info->speed;
+ 	req->args.duplex = link_info->full_duplex;
+ 	req->args.an = link_info->autoneg;
+ 
+-	rc = mbox_process(mbox);
++	/* Link mode changes takes more time. */
++	rc = mbox_process_tmo(mbox, mbox->rsp_tmo * 4);
+ exit:
+ 	mbox_put(mbox);
+ 	return rc;
+@@ -412,3 +411,32 @@ roc_nix_mac_link_info_get_cb_unregister(struct roc_nix *roc_nix)
+ 
+ 	dev->ops->link_status_get = NULL;
+ }
++
++int
++roc_nix_mac_fwdata_get(struct roc_nix *roc_nix, struct roc_nix_mac_fwdata *data)
++{
++	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
++	struct cgx_fw_data *fw_data;
++	struct dev *dev = &nix->dev;
++	struct mbox *mbox;
++	int rc;
++
++	if (roc_nix_is_sdp(roc_nix))
++		return 0;
++
++	mbox = mbox_get(dev->mbox);
++
++	mbox_alloc_msg_cgx_get_aux_link_info(mbox);
++	rc = mbox_process_msg(mbox, (void *)&fw_data);
++	if (rc)
++		goto exit;
++
++	nix->supported_link_modes = fw_data->fwdata.supported_link_modes;
++	nix->advertised_link_modes = fw_data->fwdata.advertised_link_modes;
++	data->supported_link_modes = nix->supported_link_modes;
++	data->advertised_link_modes = nix->advertised_link_modes;
++	data->supported_an = fw_data->fwdata.supported_an;
++exit:
++	mbox_put(mbox);
++	return rc;
++}
+diff --git a/drivers/common/cnxk/roc_nix_priv.h b/drivers/common/cnxk/roc_nix_priv.h
+index dc3450a3d4..c949621196 100644
+--- a/drivers/common/cnxk/roc_nix_priv.h
++++ b/drivers/common/cnxk/roc_nix_priv.h
+@@ -138,6 +138,8 @@ struct nix {
+ 	uint16_t bpid[NIX_MAX_CHAN];
+ 	struct nix_qint *qints_mem;
+ 	struct nix_qint *cints_mem;
++	uint64_t supported_link_modes;
++	uint64_t advertised_link_modes;
+ 	uint8_t configured_qints;
+ 	uint8_t configured_cints;
+ 	uint8_t exact_match_ena;
+diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/common/cnxk/roc_platform_base_symbols.c
+index 7f0fe601ad..152798e360 100644
+--- a/drivers/common/cnxk/roc_platform_base_symbols.c
++++ b/drivers/common/cnxk/roc_platform_base_symbols.c
+@@ -307,6 +307,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_link_info_set)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_mtu_set)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_max_rx_len_set)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_stats_reset)
++RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_fwdata_get)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_link_cb_register)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_link_cb_unregister)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_mac_link_info_get_cb_register)
+-- 
+2.43.0
+
