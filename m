@@ -2,73 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B45CCD1BE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 11:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F285CCD1BC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 11:17:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8995D4042F;
-	Thu, 23 Oct 2025 13:05:30 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 4A0DD4042F
- for <dev@dpdk.org>; Thu, 23 Oct 2025 13:05:28 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N3ckdT021882
- for <dev@dpdk.org>; Thu, 23 Oct 2025 04:05:27 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=Z
- Ei6GcFQFGgzJkjcL2qBASONSItXQUALo/5UCUIoGAU=; b=c2JqXseR8Kjc+gV24
- OGw+rPk/aJz3EbhDi+hJHk1Sz07m1G1p2UzKbcSNDjkROxa9xpwJmozDsyub2K04
- Gm2/JhIDmQaCw+6EHVwdHprEtIG1N5NzhwKPejwkshAdSRMqcGn2lRm68lXv6oJw
- FY86vt2bKQJurHzpB7CfiJqMAN8y206sbH0bO21bDrdbLntm9GyQmXG9GPybdKRT
- wvk/arLkhXSkR0Ytfcdl6hxakoN+5JnTUuqNwQzvXpHQ1E1CXVwv/sp3hIz7fIaU
- O9sR38vrWFSYKNLAP/XmR1/dNFh0V09EMswake8Pogu6TRZs2/P49YSvm7LJisUZ
- 1B2GA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49ycmr0w31-4
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 23 Oct 2025 04:05:27 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 23 Oct 2025 04:05:34 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 23 Oct 2025 04:05:34 -0700
-Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
- by maili.marvell.com (Postfix) with ESMTP id 2939F3F70A9;
- Thu, 23 Oct 2025 04:05:22 -0700 (PDT)
-From: <skori@marvell.com>
-To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
- <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <dev@dpdk.org>
-Subject: [PATCH v6 6/6] net/cnxk: report link mode
-Date: Thu, 23 Oct 2025 16:32:06 +0530
-Message-ID: <20251023110332.6231-6-skori@marvell.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251023110332.6231-1-skori@marvell.com>
-References: <20251023075450.4145667-6-skori@marvell.com>
- <20251023110332.6231-1-skori@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D7803402C3;
+	Thu, 23 Oct 2025 13:17:23 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id A25F640151
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 13:17:22 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 4D9AA2041E;
+ Thu, 23 Oct 2025 13:17:22 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: KB9DdYFmn0nS2psrVPctvvDUpNQ_ADHR
-X-Proofpoint-GUID: KB9DdYFmn0nS2psrVPctvvDUpNQ_ADHR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDAzMCBTYWx0ZWRfX9iUnaH3d5h/a
- Df5Z3YSNOs33Fh+3yB6WtYfDgGmZZ5jH+Om38Yz/OVfOzqnxhyg8mvBD7EEWruXzPHm8KiPO4fW
- yQzgId1kvzdxkBuXAHzuSj8BY5ixo175FFaJa6Wi6AXV4CowVfOzFNmDHDXZPL9RS9/uEwqvRnH
- hAfx0Mfh4dC7TV2I8XqWqBHpqY40zdG7JiaNyO81iD+2OaM19ZHJQPqYkPp6OXk4rmxVc4uui8S
- AhstJU/IzeVfWLHKgAyAal0VKrA2n9MzEjzSMmJF244dblnMijjfQ0fAMEA0AeSx8nwmdIlDrEe
- XWGJNqlxhZ0S4VUf6Td36bX3bgZc5kkyJTsTbjV5MEQkNZWRIncILF4Al/vaWXMS/0sTa9DROFC
- AXZvbvvI1gljlmYGMlN4yakqKN0qVw==
-X-Authority-Analysis: v=2.4 cv=CtSys34D c=1 sm=1 tr=0 ts=68fa0bf7 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
- a=koTAqf3Ast2ZiasxKz8A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-22_08,2025-10-22_01,2025-03-28_01
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v5] mbuf: optimize segment prefree
+Date: Thu, 23 Oct 2025 13:17:20 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F654F7@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <c556ea7b92a24bc09ac5240da39bc36c@huawei.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v5] mbuf: optimize segment prefree
+Thread-Index: AQHcQ/NUxCpzFpnLEUCegFLyVmlwCLTPa7AAgAAngXA=
+References: <20250827213535.21602-1-mb@smartsharesystems.com>
+ <20251023080136.165513-1-mb@smartsharesystems.com>
+ <c556ea7b92a24bc09ac5240da39bc36c@huawei.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, <dev@dpdk.org>,
+ "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
+ "Fengchengwen" <fengchengwen@huawei.com>,
+ "Bruce Richardson" <bruce.richardson@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,41 +51,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Sunil Kumar Kori <skori@marvell.com>
-
-Reports link mode whether fixed or autonegotiation
-
-Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
-Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
----
-v5..v6:
- - Rebased on ToT
-
- drivers/net/cnxk/cnxk_link.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/cnxk/cnxk_link.c b/drivers/net/cnxk/cnxk_link.c
-index b29a4285a3..2eda47b809 100644
---- a/drivers/net/cnxk/cnxk_link.c
-+++ b/drivers/net/cnxk/cnxk_link.c
-@@ -171,7 +171,7 @@ cnxk_eth_dev_link_status_cb(struct roc_nix *nix, struct roc_nix_link_info *link)
- 
- 	eth_link.link_status = link->status;
- 	eth_link.link_speed = link->speed;
--	eth_link.link_autoneg = RTE_ETH_LINK_AUTONEG;
-+	eth_link.link_autoneg = link->autoneg ? RTE_ETH_LINK_AUTONEG : RTE_ETH_LINK_FIXED;
- 	eth_link.link_duplex = link->full_duplex;
- 	eth_link.link_connector = dev->link_type;
- 
-@@ -210,7 +210,7 @@ cnxk_nix_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete)
- 			return rc;
- 		link.link_status = info.status;
- 		link.link_speed = info.speed;
--		link.link_autoneg = RTE_ETH_LINK_AUTONEG;
-+		link.link_autoneg = info.autoneg ? RTE_ETH_LINK_AUTONEG : RTE_ETH_LINK_FIXED;
- 		if (info.full_duplex)
- 			link.link_duplex = info.full_duplex;
- 		link.link_connector = dev->link_type;
--- 
-2.43.0
-
+PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
+d2VpLmNvbV0NCj4gU2VudDogVGh1cnNkYXksIDIzIE9jdG9iZXIgMjAyNSAxMC41MQ0KPiANCj4g
+PiAtI2RlZmluZSBSVEVfTUJVRl9ESVJFQ1QobWIpIFwNCj4gPiAtCSghKChtYiktPm9sX2ZsYWdz
+ICYgKFJURV9NQlVGX0ZfSU5ESVJFQ1QgfCBSVEVfTUJVRl9GX0VYVEVSTkFMKSkpDQo+ID4gKyAq
+DQo+ID4gKyAqIE5vdGU6IE1hY3JvIG9wdGltaXplZCBmb3IgY29kZSBzaXplLg0KPiA+ICsgKg0K
+PiA+ICsgKiBUaGUgcGxhaW4gbWFjcm8gd291bGQgYmU6DQo+ID4gKyAqICAgICAgI2RlZmluZSBS
+VEVfTUJVRl9ESVJFQ1QobWIpIFwNCj4gPiArICogICAgICAgICAgKCEoKG1iKS0+b2xfZmxhZ3Mg
+JiAoUlRFX01CVUZfRl9JTkRJUkVDVCB8DQo+IFJURV9NQlVGX0ZfRVhURVJOQUwpKSkNCj4gPiAr
+ICoNCj4gPiArICogVGhlIGZsYWdzIFJURV9NQlVGX0ZfSU5ESVJFQ1QgYW5kIFJURV9NQlVGX0Zf
+RVhURVJOQUwgYXJlIGJvdGggaW4NCj4gdGhlDQo+ID4gTVNCIChtb3N0IHNpZ25pZmljYW50DQo+
+ID4gKyAqIGJ5dGUpIG9mIHRoZSA2NC1iaXQgb2xfZmxhZ3MgZmllbGQsIHNvIHdlIG9ubHkgY29t
+cGFyZSB0aGlzIG9uZQ0KPiBieXRlIGluc3RlYWQgb2YgYWxsDQo+ID4gNjQgYml0cy4NCj4gPiAr
+ICoNCj4gPiArICogRS5nLiwgR0NDIHZlcnNpb24gMTYuMC4wIDIwMjUxMDE5IChleHBlcmltZW50
+YWwpIGdlbmVyYXRlcyB0aGUNCj4gZm9sbG93aW5nIGNvZGUNCj4gPiBmb3IgeDg2LTY0Lg0KPiA+
+ICsgKg0KPiA+ICsgKiBXaXRoIHRoZSBwbGFpbiBtYWNybywgMTcgYnl0ZXMgb2YgaW5zdHJ1Y3Rp
+b25zOg0KPiA+ICsgKiAgICAgIG1vdmFicyByYXgsMHg2MDAwMDAwMDAwMDAwMDAwICAgICAgIC8v
+IDEwIGJ5dGVzDQo+ID4gKyAqICAgICAgYW5kICAgIHJheCxRV09SRCBQVFIgW3JkaSsweDE4XSAg
+ICAgLy8gNCBieXRlcw0KPiA+ICsgKiAgICAgIHNldGUgICBhbCAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIC8vIDMgYnl0ZXMNCj4gPiArICogV2l0aCB0aGlzIG9wdGltaXplZCBtYWNybywgb25s
+eSA3IGJ5dGVzIG9mIGluc3RydWN0aW9uczoNCj4gPiArICogICAgICB0ZXN0ICAgQllURSBQVFIg
+W3JkaSsweDFmXSwweDYwICAgICAvLyA0IGJ5dGVzDQo+ID4gKyAqICAgICAgc2V0ZSAgIGFsICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgLy8gMyBieXRlcw0KPiA+ICsgKi8NCj4gPiArI2lmIFJU
+RV9CWVRFX09SREVSID09IFJURV9MSVRUTEVfRU5ESUFODQo+ID4gKy8qIE9uIGxpdHRsZSBlbmRp
+YW4gYXJjaGl0ZWN0dXJlLCB0aGUgTVNCIG9mIGEgNjQtYml0IGludGVnZXIgaXMgYXQNCj4gYnl0
+ZSBvZmZzZXQgNy4gKi8NCj4gPiArI2RlZmluZSBSVEVfTUJVRl9ESVJFQ1QobWIpICAgICAhKCgo
+Y29uc3QgY2hhciAqKSgmKG1iKS0NCj4gPm9sX2ZsYWdzKSlbN10gJiAweDYwKQ0KPiA+ICsjZWxp
+ZiBSVEVfQllURV9PUkRFUiA9PSBSVEVfQklHX0VORElBTg0KPiA+ICsvKiBPbiBiaWcgZW5kaWFu
+IGFyY2hpdGVjdHVyZSwgdGhlIE1TQiBvZiBhIDY0LWJpdCBpbnRlZ2VyIGlzIGF0DQo+IGJ5dGUg
+b2Zmc2V0IDAuICovDQo+ID4gKyNkZWZpbmUgUlRFX01CVUZfRElSRUNUKG1iKSAgICAgISgoKGNv
+bnN0IGNoYXIgKikoJihtYiktDQo+ID5vbF9mbGFncykpWzBdICYgMHg2MCkNCj4gDQo+IEEgc3R1
+cGlkIHE6IHdoeSB0aGVuIG5vdCBzaW1wbHkgZG86DQo+IChtYi0+b2xfZmxhZ3MgPj4gNTYpICYg
+MHg2MA0KPiB0aGVuPw0KPiBTaG91bGQgaGVscCB0byBhbGwgdGhlc2UgTEUvQkUgY2FzdHMsIGV0
+Yy4NCg0KR0NDIGlzIHRvbyBzdHVwaWQgZm9yIHRoYXQgdG9vLg0KDQpQbGF5aW5nIGFyb3VuZCB3
+aXRoIEdvZGJvbHQgc2hvd3MgdGhhdA0KCXJldHVybiAhKChjaGFyKShwWzNdID4+IDU2KSAmIDB4
+NjApOw0KYmVjb21lcw0KCW1vdnp4ICBlYXgsQllURSBQVFIgW3JkaSsweDFmXQkvLyA0IGJ5dGVz
+DQoJdGVzdCAgIGFsLDB4NjAJCQkJLy8gMiBieXRlcw0KSW5zdGVhZCBvZiBzaW1wbHkNCgl0ZXN0
+ICAgQllURSBQVFIgW3JkaSsweDFmXSwweDYwCS8vIDQgYnl0ZXMNCg0KR29vZCBzdWdnZXN0aW9u
+LCB0aG91Z2guDQoNCj4gDQo+ID4gKyNlbmRpZg0KPiA+ICsvKiBWZXJpZnkgdGhlIG9wdGltaXph
+dGlvbiBhYm92ZS4gKi8NCj4gPiArc3RhdGljX2Fzc2VydCgoUlRFX01CVUZfRl9JTkRJUkVDVCB8
+IFJURV9NQlVGX0ZfRVhURVJOQUwpID09DQo+ID4gVUlOVDY0X0MoMHg2MCkgPDwgKDcgKiBDSEFS
+X0JJVCksDQo+ID4gKwkiKFJURV9NQlVGX0ZfSU5ESVJFQ1QgfCBSVEVfTUJVRl9GX0VYVEVSTkFM
+KSBpcyBub3QgMHg2MCBhdA0KPiBNU0IiKTsNCj4gPg0KPiA+ICAvKiogVW5pbml0aWFsaXplZCBv
+ciB1bnNwZWNpZmllZCBwb3J0LiAqLw0KPiA+ICAjZGVmaW5lIFJURV9NQlVGX1BPUlRfSU5WQUxJ
+RCBVSU5UMTZfTUFYDQo+ID4gLS0NCj4gPiAyLjQzLjANCg0K
