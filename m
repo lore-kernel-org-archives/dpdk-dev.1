@@ -2,57 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEFCCCD1BC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 12:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCD4CCD1BC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 12:32:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1873D4060C;
-	Thu, 23 Oct 2025 14:15:09 +0200 (CEST)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
- by mails.dpdk.org (Postfix) with ESMTP id 7227D40431
- for <dev@dpdk.org>; Thu, 23 Oct 2025 14:15:06 +0200 (CEST)
-X-QQ-mid: esmtpgz12t1761221701tddac927c
-X-QQ-Originating-IP: vWmipbhz72DfEhwbsUvHK7Nw6BNtsbWPsP3/hi8OoXY=
-Received: from DSK-zaiyuwang.trustnetic.com ( [60.186.187.129])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Thu, 23 Oct 2025 20:14:57 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6385506867610937838
-EX-QQ-RecipientCnt: 4
-From: Zaiyu Wang <zaiyuwang@trustnetic.com>
-To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, Jiawen Wu <jiawenwu@trustnetic.com>,
- Jian Wang <jianwang@trustnetic.com>
-Subject: [PATCH 6/6] net/txgbe: add PF-triggered VF link status change handling
-Date: Thu, 23 Oct 2025 20:13:55 +0800
-Message-Id: <20251023121356.21944-7-zaiyuwang@trustnetic.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20251023121356.21944-1-zaiyuwang@trustnetic.com>
-References: <20251023121356.21944-1-zaiyuwang@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id B6F3E402C1;
+	Thu, 23 Oct 2025 14:32:36 +0200 (CEST)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
+ [209.85.222.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 6902940151
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 14:32:35 +0200 (CEST)
+Received: by mail-qk1-f182.google.com with SMTP id
+ af79cd13be357-88f2aebce7fso81322685a.3
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 05:32:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1761222755; x=1761827555; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=8ykU/R6SLW95UD8/yVItiYa9bVbfjhovYfC0AJPlXX0=;
+ b=cmvjOckFDQYChatGJuRn7NUrgX7RFRM0mwOQ6fHgpQD+xen0qTHPnk2+6chNBnKcSU
+ 2b2zD3ki6p8mQt+kHfPbOmF1BuH9WJWVMrIK0FCULZmcQ3qT0AGkYoOztoRIaaUcm6uE
+ drJQgvOrcOhcu+u4/Mt4qTvhB4p9ECyMTKsS0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1761222755; x=1761827555;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=8ykU/R6SLW95UD8/yVItiYa9bVbfjhovYfC0AJPlXX0=;
+ b=oF+Jr08tbH8RDypPcPe5byv4h8ndA2CFQ/G3AV3SJasZwy6Lt7cBWAhKX/n3oBxXy7
+ /TVK4Hy9e8KvF8DnA2AvBulLvPCn1lDi0kQOSPQ2oaLo1G2tFyYIVBzaf9l6G6isfgTS
+ oUUX7tnON3vKR6plMRmwDjhC1aibhM4Rb/HeGkfYExqVQW4DrSrnY3frnd2QFXGJayr/
+ SlbNtZdbE3xlgnC1e49T6Oq6VVSPoNmYEtpJ4CeUi9lVVN0IsAb+7jeUadPXLZVU4GEC
+ yHuDDDiK3TZuvT8jb4rfDVNyLFVVcoPYJmX8l8HS4qn2vUNK8tXJ/7NiOdIh/W/HljN5
+ HgyA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXiGgzz2R3GQUbb4FJ8b0SHQbfq/19oR61uWsqaW6d1+nz/tffEPKYhBKYvXzJwAq8ig2U=@dpdk.org
+X-Gm-Message-State: AOJu0YyeM+88eTD/h7+pujPc/inULdlvzVzh2Vbm68Fm2NLUi51Ox1rD
+ 4cJGrAuvNkP+6HPhZDGWXe7gHspWTvo3UKG0t9koCZeOV4n7svO2WoJtK0GG4xMIgBU=
+X-Gm-Gg: ASbGncuRqXV2tg5z49nJ88Cty5LDS8fRFVtxVZTP829AVmBjkyBOIuAIJRifdm3lyyW
+ vfQmt6uqAnNsQGaM4ALUKTKdH97zr5SRY+Yd6n0n3Dhd7/mUuo4S2kflLVRDpjHdafZcQkYQvUm
+ QNObIoJdwMECuZftltNIM24JdxA0UlUuX+wG3ZoCfvqBi+YYF5uy+jPWeVbX+WFWtkqbx8s1bkB
+ Sv5kj55T2yhrwt9nZYK3SWNVG3Q0gtn1rzYRzNeSXH4t/aPgpI0PdGRLb6+jOUlVErWtP1CYWKw
+ f7X9KTJL0n+kyj7WcMABe2vgPsSjczCVvORM6Cyunw5G6dNcscZXZOhG8Nto0vJSVBOTo1Pk8nP
+ Zz+KMnUOFh25wPbn8sK/TRFHxC94FrrQBlQzv23j3FZ4G5ru7EkLscLdewmXFEJvPTajKDaRMfc
+ XcEK0+dE977GVC
+X-Google-Smtp-Source: AGHT+IEFA7yxQ/UiKtYqtwjL7M8ulaCUg6yItNzyk8hlmdSdhTeML9q4FI11ByyC948w1vUVmFK8cQ==
+X-Received: by 2002:a05:620a:4621:b0:88f:228c:c6a0 with SMTP id
+ af79cd13be357-8906e8af048mr2625649385a.24.1761222751642; 
+ Thu, 23 Oct 2025 05:32:31 -0700 (PDT)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-4eb805cdd6csm13137021cf.6.2025.10.23.05.32.30
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 23 Oct 2025 05:32:30 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: luca.vizzarro@arm.com
+Cc: abailey@iol.unh.edu, dev@dpdk.org, dmarx@iol.unh.edu, probb@iol.unh.edu
+Subject: [PATCH v9 1/3] dts: allow mbuf fast free to be set with testpmd shell
+Date: Thu, 23 Oct 2025 08:32:21 -0400
+Message-ID: <20251023123223.56924-2-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251023123223.56924-1-abailey@iol.unh.edu>
+References: <20250902114327.48185-1-abailey@iol.unh.edu>
+ <20251023123223.56924-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: MPEorwW6cFo90J31SqSA/Ug9CjCOsLav0f4Dn/L8JZyqy8wmm0XoWy3g
- +HqM6Sd5fvVJpdie2IeDsaafQW0UWXK9OgXfsbAOdvzTTj1zp1JrBqwj4pspPznhvOPWf0H
- +04HHcatzm4hrnJv5Kmf0a1QraJcZwf1CfycAg06dI2AfNH0Ate80rC3dKNElSINMKFnt1O
- KTUm7+ZHYDGdJwMTP3MJbBQNXBujzGBQeSee/R8xF1r0AYrGFsRT6IuMDWqik3+u1NNCrwW
- 0iWhMqE+oV2dSB2jqVk89yAiJnVBLXIMV6XdhMsRmedR65P9Ro9g8s4Ep4d0Y6iV/CQqaIC
- IvgJYyXNo3ToVRQ/qWCb/+WFj/zzN4X2/Jdf9ea5164qxi9mYgijLZTOlwIfd/ucq4eBCWd
- Xz8fKMQRGFBj9fXgy8K50sK/mX9urX8h+E8GSKHj1Zqbn4CeYpeD+939IuVl6p+t7TNP18A
- jV/ZU1gZNy9R2c/pf4B1ouKqMhRF74folG7HVii9fo1nwfJYF3+kaEAuYm6f40BdCTWEEz6
- RGLwF29WUEpTOCiCP+PgKXRexsSEOVvt/DhIQVFD3/RLJzTeac6zXQLz+RbHX9enIyK0pa4
- aGwiJsB9wjwhqSwwXiDCOmp4ghDRM67EmW/Knu5jI7MeXADl6QWDhq0agVhM7lVthYp1zH8
- 1lvO5MmNG0mwVPzYahIDrRI+xGzDDF233XkKwnsQC4BpiYQrsrYqy1K+k45e1D9OBY7jtlQ
- B6kzjM2k7EK4JI+7oDy79edU0YIWLQjQRvzJVLBTTVqYtct8M1EpNKQ8u1E4/w+TLWqvhHm
- K4bKmQ6Wa8rmNP+goUgFJvcDj/GClnF1Dow+B07CHCF2axszBVNHr1aSyF5+l6xq6248mwb
- ZtjDQOn6qRmZ1iuun15A59mdpUMvTYsTnmSWrYcbgbN0aw0wXrOLj1PSAyXsnyHPI2W2Hur
- kK66W+e1ePbWSoxjT+vjED5BkZHMXbomyheeYfaFDxROko1IiIxWBfsu34Hwn8ISql4hXum
- OoCWQmgHV8Ecg6bhZWG40NmQUwiautkcmtbOHEyUJFDPvXzq4Un9WcBkvYEPkaKzCrg4yl/
- 7ipE6HwHHnDYt9sh1fBjIY=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,136 +80,222 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Our Linux kernel driver add TXGBE_NOFITY_VF_LINK_STATUS field in
-mailbox message when pf notifying vf of LSC event since txgbe-2.0.0.
-So we can process VF link down/up via PF's mailbox notifications,
-and directly update VF link status based on PF status
+Currently, there is no way in the testpmd shell class to set the mbuf
+fast free offload configuration for queues or ports. This prohibits any
+test suites to be written utilizing this offload configuration.
+Introduce methods that support calls to testpmd in order to allow
+the configuration of mbuf fast free.
 
-For legacy kernel driver compatibility, trigger link_update to check
-vf link status changes when receive a mailbox message without
-TXGBE_NOFITY_VF_LINK_STATUS filed from pf.
-
-Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- drivers/net/txgbe/base/txgbe_mbx.h  |  2 +
- drivers/net/txgbe/txgbe_ethdev_vf.c | 84 ++++++++++++++++++++++++++---
- 2 files changed, 80 insertions(+), 6 deletions(-)
+ dts/api/testpmd/__init__.py          |  60 +++++++++++++
+ dts/tests/TestSuite_rx_tx_offload.py | 129 +++++++++++++++++++++++++++
+ 2 files changed, 189 insertions(+)
+ create mode 100644 dts/tests/TestSuite_rx_tx_offload.py
 
-diff --git a/drivers/net/txgbe/base/txgbe_mbx.h b/drivers/net/txgbe/base/txgbe_mbx.h
-index 31e2d51658..987bbeb3c3 100644
---- a/drivers/net/txgbe/base/txgbe_mbx.h
-+++ b/drivers/net/txgbe/base/txgbe_mbx.h
-@@ -49,6 +49,8 @@ enum txgbe_pfvf_api_rev {
- #define TXGBE_VF_SET_MULTICAST	0x03 /* VF requests PF to set MC addr */
- #define TXGBE_VF_SET_VLAN	0x04 /* VF requests PF to set VLAN */
- 
-+#define TXGBE_NOFITY_VF_LINK_STATUS 0x01 /* PF notify VF link status */
+diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
+index a060ab5639..9e9cbaf495 100644
+--- a/dts/api/testpmd/__init__.py
++++ b/dts/api/testpmd/__init__.py
+@@ -1292,3 +1292,63 @@ def get_capabilities_physical_function(
+             supported_capabilities.add(NicCapability.PHYSICAL_FUNCTION)
+         else:
+             unsupported_capabilities.add(NicCapability.PHYSICAL_FUNCTION)
 +
- /* mailbox API, version 1.0 VF requests */
- #define TXGBE_VF_SET_LPE	0x05 /* VF requests PF to set VMOLR.LPE */
- #define TXGBE_VF_SET_MACVLAN	0x06 /* VF requests PF for unicast filter */
-diff --git a/drivers/net/txgbe/txgbe_ethdev_vf.c b/drivers/net/txgbe/txgbe_ethdev_vf.c
-index 9d0a858d4f..d181d2fe7c 100644
---- a/drivers/net/txgbe/txgbe_ethdev_vf.c
-+++ b/drivers/net/txgbe/txgbe_ethdev_vf.c
-@@ -1366,6 +1366,75 @@ txgbevf_dev_allmulticast_disable(struct rte_eth_dev *dev)
- 	return ret;
- }
- 
-+/**
-+ *  txgbevf_get_pf_link_status - Get pf link/speed status
-+ *  @hw: pointer to hardware structure
-+ *
-+ *  - PF notifies status via mailbox on change
-+ *  - VF sets its link state synchronously upon mailbox interrupt,
-+ *    skipping hardware link detection.
-+ **/
-+static s32 txgbevf_get_pf_link_status(struct rte_eth_dev *dev)
-+{
-+	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
-+	struct txgbe_mbx_info *mbx = &hw->mbx;
-+	struct rte_eth_link link;
-+	u32 link_speed = TXGBE_LINK_SPEED_UNKNOWN;
-+	bool link_up = false;
-+	u32 msgbuf[2];
-+	s32 retval;
++    @_requires_stopped_ports
++    def set_port_mbuf_fast_free(
++        self,
++        port_id: int,
++        on: bool,
++        /,
++        verify: bool = True,
++    ) -> None:
++        """Sets the mbuf_fast_free configuration for the Tx offload of a given port.
 +
-+	retval = mbx->read(hw, msgbuf, 2, 0);
++        Args:
++            port_id: The ID of the port to configure mbuf_fast_free on.
++            on: If :data:`True` mbuf_fast_free will be enabled, disable it otherwise.
++            verify: If :data:`True` the output of the command will be scanned in an attempt to
++                verify that the mbuf_fast_free was set successfully.
 +
-+	/*
-+	 *if the read failed it could just be a mailbox collision, best wait
-+	 * until we are called again and don't report an error
-+	 */
-+	if (retval)
-+		return 0;
++        Raises:
++            InteractiveCommandExecutionError: If mbuf_fast_free could not be set successfully.
++        """
++        mbuf_output = self.send_command(
++            f"port config {port_id} tx_offload mbuf_fast_free {"on" if on else "off"}"
++        )
 +
-+	rte_eth_linkstatus_get(dev, &link);
++        if verify and "Error" in mbuf_output:
++            raise InteractiveCommandExecutionError(
++                f"Unable to set mbuf_fast_free config on port {port_id}:\n{mbuf_output}"
++            )
 +
-+	link_up = msgbuf[1] & TXGBE_VFSTATUS_UP;
-+	link_speed = (msgbuf[1] & 0xFFF0) >> 1;
++    @_requires_stopped_ports
++    def set_queue_mbuf_fast_free(
++        self,
++        port_id: int,
++        on: bool,
++        /,
++        queue_id: int = 0,
++        verify: bool = True,
++    ) -> None:
++        """Sets the Tx mbuf_fast_free configuration of the specified queue on a given port.
 +
-+	if (link_up == link.link_status && link_speed == link.link_speed)
-+		return 0;
++        Args:
++            port_id: The ID of the port containing the queues.
++            on: If :data:`True` the mbuf_fast_free configuration will be enabled, otherwise
++                disabled.
++            queue_id: The ID of the queue to configure mbuf_fast_free on.
++            verify: If :data:`True` the output of the command will be scanned in an attempt to
++                verify that mbuf_fast_free was set successfully on all ports.
 +
-+	link.link_speed = link_speed;
-+	link.link_status = link_up;
++        Raises:
++            InteractiveCommandExecutionError: If all queues could not be set successfully.
++        """
++        toggle = "on" if on else "off"
++        output = self.send_command(
++            f"port {port_id} txq {queue_id} tx_offload mbuf_fast_free {toggle}"
++        )
++        if verify and "Error" in output:
++            self._logger.debug(f"Set queue offload config error\n{output}")
++            raise InteractiveCommandExecutionError(
++                f"Failed to get offload config on port {port_id}, queue {queue_id}:\n{output}"
++            )
+diff --git a/dts/tests/TestSuite_rx_tx_offload.py b/dts/tests/TestSuite_rx_tx_offload.py
+new file mode 100644
+index 0000000000..16e1b8cf93
+--- /dev/null
++++ b/dts/tests/TestSuite_rx_tx_offload.py
+@@ -0,0 +1,129 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2025 University of New Hampshire
 +
-+	if (link_up)
-+		link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
-+	else
-+		link.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
-+	/*
-+	 * Invoke the LSC interrupt callback to notify the upper app of a link
-+	 * status change, even though the change is detected via a mailbox interrupt
-+	 * instead of an LSC interrupt. This is because VF link status changes do
-+	 * not trigger LSC interrupts — they rely on PF notifications.
-+	 */
-+	rte_eth_dev_callback_process(dev, RTE_ETH_EVENT_INTR_LSC,
-+				     NULL);
-+	return rte_eth_linkstatus_set(dev, &link);
-+}
++"""RX TX offload test suite.
 +
-+static void txgbevf_check_link_for_intr(struct rte_eth_dev *dev)
-+{
-+	struct rte_eth_link orig_link, new_link;
++Test the testpmd feature of configuring RX and TX offloads.
++"""
 +
-+	rte_eth_linkstatus_get(dev, &orig_link);
-+	txgbevf_dev_link_update(dev, 0);
-+	rte_eth_linkstatus_get(dev, &new_link);
++from api.capabilities import NicCapability, requires_nic_capability
++from api.test import verify
++from api.testpmd import TestPmd
++from api.testpmd.types import (
++    OffloadConfiguration,
++    RxTxLiteralSwitch,
++)
++from framework.test_suite import TestSuite, func_test
 +
-+	PMD_DRV_LOG(INFO, "orig_link: %d, new_link: %d",
-+		    orig_link.link_status, new_link.link_status);
 +
-+	if (new_link.link_status != orig_link.link_status)
-+		rte_eth_dev_callback_process(dev, RTE_ETH_EVENT_INTR_LSC,
-+					     NULL);
-+}
++class TestRxTxOffload(TestSuite):
++    """RX/TX offload test suite."""
 +
- static void txgbevf_mbx_process(struct rte_eth_dev *dev)
- {
- 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
-@@ -1375,12 +1444,15 @@ static void txgbevf_mbx_process(struct rte_eth_dev *dev)
- 	in_msg = rd32(hw, TXGBE_VFMBX);
- 
- 	/* PF reset VF event */
--	if (in_msg == TXGBE_PF_CONTROL_MSG) {
--		/* dummy mbx read to ack pf */
--		if (txgbe_read_mbx(hw, &in_msg, 1, 0))
--			return;
--		rte_eth_dev_callback_process(dev, RTE_ETH_EVENT_INTR_RESET,
--					      NULL);
-+	if (in_msg & TXGBE_PF_CONTROL_MSG) {
-+		if (in_msg & TXGBE_NOFITY_VF_LINK_STATUS) {
-+			txgbevf_get_pf_link_status(dev);
-+		} else {
-+			/* dummy mbx read to ack pf */
-+			txgbe_read_mbx(hw, &in_msg, 1, 0);
-+			/* check link status if pf ping vf */
-+			txgbevf_check_link_for_intr(dev);
-+		}
- 	}
- }
- 
++    def _check_config(
++        self,
++        testpmd: TestPmd,
++        port_id: int,
++        port_offload: str | None,
++        rxtx: RxTxLiteralSwitch,
++        /,
++        queue_offload: list[str | None] | None = None,
++        verify: bool = True,
++    ) -> bool:
++        config: OffloadConfiguration = testpmd.get_offload_config(port_id, rxtx, verify)
++        if config.port.name != port_offload:
++            return False
++
++        if queue_offload:
++            for i, q in enumerate(config.queues):
++                if q.name != queue_offload[i]:
++                    return False
++        return True
++
++    def _set_all_queues_mbuf_fast_free(
++        self, testpmd: TestPmd, port_id: int, on: bool, num_queues: int, /, verify: bool = True
++    ) -> None:
++        for i in range(num_queues):
++            testpmd.set_queue_mbuf_fast_free(on, port_id, i, verify)
++
++    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_MBUF_FAST_FREE)
++    @func_test
++    def test_mbuf_fast_free_configuration_per_port(self) -> None:
++        """Ensure mbuf_fast_free can be configured with testpmd per port.
++
++        Steps:
++            * Start up testpmd shell.
++            * Toggle mbuf_fast_free off per port.
++            * Toggle mbuf_fast_free on per port.
++
++        Verify:
++            * Mbuf_fast_free starts enabled.
++            * Mbuf_fast_free can be configured off per port.
++            * Mbuf_fast_free can be configured on per port.
++        """
++        with TestPmd() as testpmd:
++            to_verify = True
++            port_id = 0
++            testpmd.start_all_ports()
++
++            # Ensure MBUF_FAST_FREE is enabled by default and verify
++            verify(
++                self._check_config(testpmd, port_id, "MBUF_FAST_FREE", "tx", verify=to_verify),
++                "MBUF_FAST_FREE disabled on port start.",
++            )
++            # disable MBUF_FAST_FREE per port and verify
++            testpmd.set_port_mbuf_fast_free(port_id, False, to_verify)
++            verify(
++                self._check_config(testpmd, port_id, None, "tx", verify=to_verify),
++                "Failed to enable MBUF_FAST_FREE on port.",
++            )
++            # Enable MBUF_FAST_FREE per port and verify
++            testpmd.set_port_mbuf_fast_free(port_id, True, to_verify)
++            verify(
++                self._check_config(testpmd, port_id, "MBUF_FAST_FREE", "tx", verify=to_verify),
++                "Failed to disable MBUF_FAST_FREE on port.",
++            )
++
++    @requires_nic_capability(NicCapability.QUEUE_TX_OFFLOAD_MBUF_FAST_FREE)
++    @func_test
++    def test_mbuf_fast_free_configuration_per_queue(self) -> None:
++        """Ensure mbuf_fast_free can be configured with testpmd.
++
++        Steps:
++            * Start up testpmd shell.
++            * Toggle mbuf_fast_free off per queue.
++            * Toggle mbuf_fast_free on per queue.
++
++        Verify:
++            * Mbuf_fast_free starts disabled.
++            * Mbuf_fast_free can be configured off per queue.
++            * Mbuf_fast_free can be configured on per queue.
++        """
++        with TestPmd() as testpmd:
++            to_verify = True
++            port_id = 0
++            num_queues = 4
++            queue_off: list[str | None] | None = [None] * num_queues
++            queue_on: list[str | None] | None = ["MBUF_FAST_FREE"] * num_queues
++
++            testpmd.set_ports_queues(num_queues)
++            testpmd.start_all_ports()
++
++            # Ensure mbuf_fast_free is enabled by default on port and queues
++            verify(
++                self._check_config(
++                    testpmd, port_id, "MBUF_FAST_FREE", "tx", queue_on, verify=to_verify
++                ),
++                "MBUF_FAST_FREE disabled on queue start.",
++            )
++            # Disable mbuf_fast_free per queue and verify
++            self._set_all_queues_mbuf_fast_free(testpmd, port_id, False, num_queues, to_verify)
++            verify(
++                self._check_config(testpmd, port_id, "MBUF_FAST_FREE", "tx", queue_off, to_verify),
++                "Failed to disable MBUF_FAST_FREE on all queues.",
++            )
++            # Disable mbuf_fast_free per queue and verify
++            self._set_all_queues_mbuf_fast_free(testpmd, port_id, True, num_queues, to_verify)
++            verify(
++                self._check_config(testpmd, port_id, "MBUF_FAST_FREE", "tx", queue_on, to_verify),
++                "Failed to enable MBUF_FAST_FREE on all queues.",
++            )
 -- 
-2.21.0.windows.1
+2.50.1
 
