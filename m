@@ -2,79 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A20DCCCD193
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 17:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AC9CCD193
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 18:47:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C70AA40276;
-	Thu, 23 Oct 2025 19:40:08 +0200 (CEST)
-Received: from fout-a5-smtp.messagingengine.com
- (fout-a5-smtp.messagingengine.com [103.168.172.148])
- by mails.dpdk.org (Postfix) with ESMTP id 422AB40144;
- Thu, 23 Oct 2025 19:40:07 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4797F40151;
+	Thu, 23 Oct 2025 20:47:32 +0200 (CEST)
+Received: from fhigh-a2-smtp.messagingengine.com
+ (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+ by mails.dpdk.org (Postfix) with ESMTP id BB98440144;
+ Thu, 23 Oct 2025 20:47:30 +0200 (CEST)
 Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id D6344EC0103;
- Thu, 23 Oct 2025 13:40:06 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Thu, 23 Oct 2025 13:40:06 -0400
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 0F0C41400159;
+ Thu, 23 Oct 2025 14:47:30 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Thu, 23 Oct 2025 14:47:30 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1761241206;
- x=1761327606; bh=jKMso60e/kmd7P0Ytj+1dCSUT7lyKOu8c22RKw1nFiU=; b=
- Jq02gl+vv6ewnfHIN2DZlZk4kwx1FSmCkxefcLYZMTFHpt0bGfw71vGMz9u15m/L
- 2oo+W6Ff1VXhNcJeEE4dOTnxLDV4c8lmQPGRZ6I+dp77aqxHj0G8kd25F5S65Xwz
- +ABHkwOaaRUB/ONEXCjsxsQJBN8QjhNLV/Al/YXV0+LzqvboI8lJpUZ2KaY2r+LT
- X6k5Y5AftAe82c5wulLSq9dRqBdtVBL9ro822IOEW4n8Nev74tBDPGBBenViTfCT
- NDEr5mAVb+FHR2aRC2yBCArwHrFFDBbaIfcE5s/bU8Or0qlpUIYGFr+sWdhh1jVU
- U+DlIaNHbXXyU53B1DD6cQ==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1761245250;
+ x=1761331650; bh=TtHf1BMs32wkVqABBBgVX4UXpnMoq+uKWG1XYMNdGf4=; b=
+ Gmuaw+etXXljlsr//nvtTcCxgWaHIaYprqCUyzTR4D/yfZK7mHWiyaTrw4i8WOYJ
+ v+I/9Aqfso6ZKSf14/APg5oJlTp3c5D43i6aFkuXotbc/PoiAGaJGLkxKrsiKnSQ
+ 5n1+g33TsR+I6tQTHWtGCPjh0M6JaCaITJmq0AIa7ff/vfYIRVNslSTWfQJYMZ9Q
+ uWWc5n27kkPURigFRSkuh3pm2K/wVz8XOv3vrfMnhxLxdTA+DikwV608qvVhIobF
+ B3XnK1ZO1och7Coem67z89VpLft4jfpEVU0Ni33ow60CMvZNKL1lgSKO2Al4dc1Q
+ htK8vQn2B8bI8P0ZigG0Fw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761241206; x=
- 1761327606; bh=jKMso60e/kmd7P0Ytj+1dCSUT7lyKOu8c22RKw1nFiU=; b=m
- 4qgYfZVJrPyCUvRqS6RPRJVoaERornVoXRq8ZRVKq3aeQkCTjqF0Jj8B90Wh/bBY
- 8NjgDQmfW01jgzZ/q1g7Z7SRpvU89s/nNAVdgn54GUvba/ITce/sJVhPcCS8zEDP
- MracxZ06Zij/NVbG9n1CnqlgmZSO+xu8HlzGu9Q4k9QAiOiUnbEeuloS8FgvlsSl
- OOxzJqN70CAyiIKKG4Q/Y2/DHb4kX75K5nIFsWW/2SYFjYfoQlN2oLUIurnOuxYu
- 7fe187bQ7LIEtue/L+TlwpzEPCyv1Q0opl+z4U2+QL7hofoUKagoWCHrDei/VC68
- dRiHzwlAAb+rteqVsuM2w==
-X-ME-Sender: <xms:dmj6aD_qsDILq0f7i3PHf7N6wK9OLv7Cp3Aq3AE5qIFBHWLuLdR02A>
- <xme:dmj6aLKkcmqHuZy6QpFJ8JWZZdliucd32noNzH-L3DhthQeVZUkY-sFSVEnRbCtvz
- Lk3_AHwcOU1oEPhY5ZbMTJWT_jJ_ECbUToDBSpdh5hZ8oNcQsuY>
-X-ME-Received: <xmr:dmj6aEgfywqEgIcQTtmdLDrS0nv6Qtg3q3RJhvdvD2oI48BqKzPXQfH-i2jv1EwpkALUkW7ms291Fj6adSQzV0rwVA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeejtdekucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761245250; x=
+ 1761331650; bh=TtHf1BMs32wkVqABBBgVX4UXpnMoq+uKWG1XYMNdGf4=; b=T
+ kI19fsTAb9Y9V9kf0zavteEZHTLHLoY0xNt5osQn1qYzfMa+t5wLWfWmiafvhT7J
+ ZQ/+ukS8RrsvPzQq8Cu1E6krHl1Z0r70wJEMYjsMFqQ5C5IYtjElVlgfE4g9HHih
+ zm7irBneQfYQU4Wb/kX4FaWpkrHwgbkrMVWUZN/EzAu5s5RMZ5B1wUJPAlVWM/DQ
+ RQgPHaoyRdal1zLvpylKf6PEjiXkkPDZZurOZ1BlslhoD6NdfSN2Nrh1rIGw8f4O
+ slWYH9GYv3Qj+VfyTNxt8ktm6UbfLcxu9SPfY1DWhY4/ULDMDxH8VSFz0Qy/oQVq
+ oyTF7LLBiU4DMiOWaxy8Q==
+X-ME-Sender: <xms:QXj6aMZgoiIhIU-N8zzEM2T7_OmfG9AT6mj1gp9Klk0-C7bAZaXhxw>
+ <xme:QXj6aH3OPp5fBMpcrla3vxN7OaifcfHH_Eiy7W-0XqvopWBLoyMZwKXi1CTfsLTtc
+ La8Z4Rxey10Av-YZAzzkBSGHaoRMODhcrKLIgIiE9y8m6ZaGzpm>
+X-ME-Received: <xmr:QXj6aHo1hVimMKkztau2IVN_kFgSZtXbTa-ONZ2CGihG2mTMbjyC3Ig5P32uufpPXovtiGLLU-C7sB07so-sr7vP_g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeejvdduucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehmvghghhgrrdgrjhhmvghrrgesihhnth
- gvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehj
- rghsvhhinhguvghrrdhsihhnghhhsehinhhtvghlrdgtohhmpdhrtghpthhtohepshhtvg
- hphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepshhtrggs
- lhgvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:dmj6aD7oI3hEAdnJ_MM1BW_rQKHBnQL2FuT6xCT84mXhgjWWCxFtng>
- <xmx:dmj6aEYpLOrcG6wNKcWl4dcvR8PEW9JdHgkULIMt1RLj1K_xsxcp7A>
- <xmx:dmj6aA6hC6gxrhdbO6wM08cMsfcu5PxcsG2icXXL1c4LyrKSA9Qetw>
- <xmx:dmj6aPDjo9Hfa2SOmKr18xu42bZ35Buwyg6WUH3A1gfEZ7aCPGOQMA>
- <xmx:dmj6aA3vY37kjyTSGmSY0Fp9NiO1Gke8GNKf0objv8893Ipms4KOEbkI>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedutddp
+ mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhgurggsihhlphhurhgrmhesmhgrrh
+ hvvghllhdrtghomhdprhgtphhtthhopegrjhhpsehmrghrvhgvlhhlrdgtohhmpdhrtghp
+ thhtohepkhhirhgrnhhkuhhmrghrkhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhope
+ hskhhorhhisehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepshhkohhtvghshhifrghr
+ sehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohephhhkrghlrhgrsehmrghrvhgvlhhlrd
+ gtohhmpdhrtghpthhtohepjhgvrhhinhhjsehmrghrvhgvlhhlrdgtohhmpdhrtghpthht
+ ohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepshhtrggslhgvseguphgukhdroh
+ hrgh
+X-ME-Proxy: <xmx:QXj6aONHB-8eM8IZJTCC8U4f3Nbnw5vSme4J0eWu7bNk9HHpp2EYAg>
+ <xmx:QXj6aIrGmePY65SLt2Ok6gFTEepgw_R748x2oTfiZOzSdZnyVIbJOg>
+ <xmx:QXj6aBuGhvRDDY7E5bCKokiBy6BE46vTXxyPvebddHbjJvN4EWxvWQ>
+ <xmx:QXj6aH0zxWDZdrhMajaR1vthMUkObNscWLPFIQq0qaYN4y3mh0GMfQ>
+ <xmx:Qnj6aOP5_tnQkyDV16UHavaMApzokfmfqzCD2eTKPiNDgxQm31C-NOEM>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Oct 2025 13:40:05 -0400 (EDT)
+ 23 Oct 2025 14:47:28 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Megha Ajmera <megha.ajmera@intel.com>
-Cc: dev@dpdk.org, jasvinder.singh@intel.com,
- Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org
-Subject: Re: [PATCH] sched: fix wrr parameter data type
-Date: Thu, 23 Oct 2025 19:40:04 +0200
-Message-ID: <6674915.uKWtJMOXK1@thomas>
-In-Reply-To: <20250918085145.584fca13@hermes.local>
-References: <20250918024609.2027038-1-megha.ajmera@intel.com>
- <20250918085145.584fca13@hermes.local>
+To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Aarnav JP <ajp@marvell.com>
+Cc: Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, jerinj@marvell.com,
+ dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH v3 19/19] drivers: fix Klocwork issues
+Date: Thu, 23 Oct 2025 20:47:26 +0200
+Message-ID: <2492954.jbyF5MZJ3u@thomas>
+In-Reply-To: <20251023172728.770661-19-ndabilpuram@marvell.com>
+References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
+ <20251023172728.770661-1-ndabilpuram@marvell.com>
+ <20251023172728.770661-19-ndabilpuram@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -91,36 +98,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-18/09/2025 17:51, Stephen Hemminger:
-> On Thu, 18 Sep 2025 08:16:09 +0530
-> Megha Ajmera <megha.ajmera@intel.com> wrote:
+23/10/2025 19:27, Nithin Dabilpuram:
+> From: Aarnav JP <ajp@marvell.com>
 > 
-> > wrr tokens getting truncated to uint8_t in wrr_store function() due to
-> > type mismatch. This patch changes the data type to uint16_t.
-> > 
-> > Fixes: e16b06da0908 ("sched: remove WRR from strict priority TC queues")
-> > 
-> > Signed-off-by: Megha Ajmera <megha.ajmera@intel.com>
-> > Acked-by: Jasvinder Singh <Jasvinder.singh@intel.com>
+> fixed klocwork suggested issues in
+> cnxk component of drivers module
 > 
-> The pipe tokens are updated in grinder_wrr_store by:
-> 
-> 	pipe->wrr_tokens[0] =
-> 			(grinder->wrr_tokens[0] & grinder->wrr_mask[0]) >>
-> 				RTE_SCHED_WRR_SHIFT;
-> 
-> The token in rte_sched_grinder is uint16_t.
-> The mask value in wrr_mask is either 0 or 0xffff.
-> The shift is 3.
-> Therefore the range of pipe tokens is 0xffff >> 3 = 1FFF
-> 
-> The sched code is severely under commented and overly complex.
-> The patch looks right.
-> 
-> Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+> Fixes: db5744d3cd23 ("common/cnxk: support NIX debug for CN20K")
+> Fixes: 3c31a7485172 ("common/cnxk: config CPT result address for CN20K")
+> Fixes: 4b8eb5bd6627 ("common/cnxk: reserve CPT LF for Rx inject")
+> Fixes: f410059baac6 ("common/cnxk: support inline inbound queue")
+> Fixes: 47cca253d605 ("net/cnxk: support Rx inject")
+> Fixes: ac35d4bf4cd6 ("net/cnxk: support ingress meter pre-color")
+> Cc: stable@dpdk.org
 
-Cc stable
-
-Applied, thanks.
+Would be better to split and provide details of the bugs.
 
 
