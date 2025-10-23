@@ -2,44 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A36CCD1BC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 14:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8842CCD1BC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 14:49:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EB23E4025E;
-	Thu, 23 Oct 2025 16:48:17 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 10F4B40151
- for <dev@dpdk.org>; Thu, 23 Oct 2025 16:48:17 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id EEBC22041E;
- Thu, 23 Oct 2025 16:48:15 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 0CC204025E;
+	Thu, 23 Oct 2025 16:49:55 +0200 (CEST)
+Received: from fout-a3-smtp.messagingengine.com
+ (fout-a3-smtp.messagingengine.com [103.168.172.146])
+ by mails.dpdk.org (Postfix) with ESMTP id 9E82840151
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 16:49:53 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.phl.internal (Postfix) with ESMTP id 09B1BEC01B7;
+ Thu, 23 Oct 2025 10:49:53 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Thu, 23 Oct 2025 10:49:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1761230993;
+ x=1761317393; bh=e0ubFd739MbTDaIrqiS9k/qK/lfWTcc95tPpl+Db1Q4=; b=
+ MLyU++lpLsRLVyWfN4ZbS8ybAsCF/LvwEgsoQCLl3s+6WeAjXxT9pup+qZuzxBAQ
+ YV/mHvosaUvRxBM9IgdCKFyg58W/TLxpYzC4ibnksL1ZpTQuh3if7UXWcbn273OD
+ TnCCNZ8KaoR0RSM/VN4lr2qdpWl8WcNL2BC59C7jXXsyjRXrbHemTCfLF5C74rob
+ n8S1fWIlCC4VjPA0GcIw61Nk4YIZfXb0hAXKQ5Y0qlqwuFrW64HPQalDhQWsT3W5
+ PUSBy0RQpbAvfQYjOPzaXaebizet6Kq/tuVV1L3zfDdcifIBHe+kNfPmxAvFmPY7
+ jNWmrmkMZ/X9KalmnImBBQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761230993; x=
+ 1761317393; bh=e0ubFd739MbTDaIrqiS9k/qK/lfWTcc95tPpl+Db1Q4=; b=v
+ O50Mv0VAa/nN+b9rhdtLVjUSBM4sVSuUvxGEdeWws4Tw+RdeBadBK8wMHUQBQT90
+ 3bJ3Clh2WA2ZUhn1cqT/XQ94WyIenDgzI8N9J3es+Jur0ar1c8m8RBndDJwFJqrR
+ aXnRrml6FGl7M/YHGhwPBNVAiSJn5U6a2raS2U4a9N5IzBkzGugo+BNFj+LTwQgY
+ 2HVVEYnuG1zTG2zY7wY3WzIj9RMoqJkfYTE3QKPLu4d5ta/KppZWbQb77PFu8pvG
+ /yJsi6Wem5ysrpjs4V8+e95zXfurfdgdSu+UIqBp16G5KrBQada+cG3utg8oGeEy
+ ZYFnni3RLLHb27w7kKcmg==
+X-ME-Sender: <xms:kED6aG-QxteRp6YeghrpzWdiyKbr98gQRZpRe09-ohmYXOJzKX6Vyw>
+ <xme:kED6aPqSn7ErGtS_EzjODSGQSJ-pPHY31XYWDPzs6pthm3pjQTfmU5lh7U6msah9V
+ JBV-WgVlVTDE1hS-TCKQuQqY6YuN0dlYrh9-6VSGKKVPmTcgqs>
+X-ME-Received: <xmr:kED6aHl4r5-ucqgP4i0FyC5-62HUjn4t7xYZGs5suYWw0iQUZHOPewU0topHRiCUSxV79SwMOWwQgP833rxr-NqapQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeijeegucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertd
+ dttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
+ ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevff
+ fgtdegkeeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgep
+ tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
+ gvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+ shhilhdqphhlvhesnhgrphgrthgvtghhrdgtohhmpdhrtghpthhtohepuggvvhesughpug
+ hkrdhorhhgpdhrtghpthhtohepmhhkohdqphhlvhesnhgrphgrthgvtghhrdgtohhmpdhr
+ tghpthhtoheptghkmhesnhgrphgrthgvtghhrdgtohhmpdhrtghpthhtohepshhtvghphh
+ gvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhg
+X-ME-Proxy: <xmx:kED6aOhC8JhKQl4wAuLJXxjMzzE7iluE-32BHeySq8DPCw4eBQCyww>
+ <xmx:kED6aHdHDCEcZrUX1TkM9OvGTQWerarcxyoA14fzTpJbQE5sXNG2Jg>
+ <xmx:kED6aGjHEBJDJxaZsV5uQZ7HV8y33BML3n_EbwhBPS6V-8UGxMo9WA>
+ <xmx:kED6aHwmoi6jVQOpViNhJ8mF5X6ASulOMaGkOynZ2RPkbwX-KRxLzQ>
+ <xmx:kUD6aKI9MgmaNeI4Bsg15h6Xd9CPaVnYzREaJWbMiZ8Ro2dp2iBgySCE>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 Oct 2025 10:49:51 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Serhii Iliushyk <sil-plv@napatech.com>
+Cc: dev@dpdk.org, mko-plv@napatech.com, sil-plv@napatech.com,
+ ckm@napatech.com, stephen@networkplumber.org
+Subject: Re: [PATCH v2] doc: refactoring the guide for NTNIC PMD
+Date: Thu, 23 Oct 2025 16:49:49 +0200
+Message-ID: <6896421.YiXZdWvhHV@thomas>
+In-Reply-To: <20251023143506.587329-1-sil-plv@napatech.com>
+References: <3590447.BaHzMo0RvP@thomas>
+ <20251023143506.587329-1-sil-plv@napatech.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v5] mbuf: optimize segment prefree
-Date: Thu, 23 Oct 2025 16:48:12 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F654FB@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <6a26d57153714d04865753fd557978dd@huawei.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v5] mbuf: optimize segment prefree
-Thread-Index: AQHcQ/NUxCpzFpnLEUCegFLyVmlwCLTPa7AAgAAngXCAAC+rQIAABewA
-References: <20250827213535.21602-1-mb@smartsharesystems.com>
- <20251023080136.165513-1-mb@smartsharesystems.com>
- <c556ea7b92a24bc09ac5240da39bc36c@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F654F7@smartserver.smartshare.dk>
- <6a26d57153714d04865753fd557978dd@huawei.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, <dev@dpdk.org>,
- "Stephen Hemminger" <stephen@networkplumber.org>,
- "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
- "Fengchengwen" <fengchengwen@huawei.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,88 +90,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
-d2VpLmNvbV0NCj4gU2VudDogVGh1cnNkYXksIDIzIE9jdG9iZXIgMjAyNSAxNi4wNQ0KPiANCj4g
-PiA+IEZyb206IEtvbnN0YW50aW4gQW5hbnlldiBbbWFpbHRvOmtvbnN0YW50aW4uYW5hbnlldkBo
-dWF3ZWkuY29tXQ0KPiA+ID4gU2VudDogVGh1cnNkYXksIDIzIE9jdG9iZXIgMjAyNSAxMC41MQ0K
-PiA+ID4NCj4gPiA+ID4gLSNkZWZpbmUgUlRFX01CVUZfRElSRUNUKG1iKSBcDQo+ID4gPiA+IC0J
-KCEoKG1iKS0+b2xfZmxhZ3MgJiAoUlRFX01CVUZfRl9JTkRJUkVDVCB8DQo+IFJURV9NQlVGX0Zf
-RVhURVJOQUwpKSkNCj4gPiA+ID4gKyAqDQo+ID4gPiA+ICsgKiBOb3RlOiBNYWNybyBvcHRpbWl6
-ZWQgZm9yIGNvZGUgc2l6ZS4NCj4gPiA+ID4gKyAqDQo+ID4gPiA+ICsgKiBUaGUgcGxhaW4gbWFj
-cm8gd291bGQgYmU6DQo+ID4gPiA+ICsgKiAgICAgICNkZWZpbmUgUlRFX01CVUZfRElSRUNUKG1i
-KSBcDQo+ID4gPiA+ICsgKiAgICAgICAgICAoISgobWIpLT5vbF9mbGFncyAmIChSVEVfTUJVRl9G
-X0lORElSRUNUIHwNCj4gPiA+IFJURV9NQlVGX0ZfRVhURVJOQUwpKSkNCj4gPiA+ID4gKyAqDQo+
-ID4gPiA+ICsgKiBUaGUgZmxhZ3MgUlRFX01CVUZfRl9JTkRJUkVDVCBhbmQgUlRFX01CVUZfRl9F
-WFRFUk5BTCBhcmUNCj4gYm90aCBpbg0KPiA+ID4gdGhlDQo+ID4gPiA+IE1TQiAobW9zdCBzaWdu
-aWZpY2FudA0KPiA+ID4gPiArICogYnl0ZSkgb2YgdGhlIDY0LWJpdCBvbF9mbGFncyBmaWVsZCwg
-c28gd2Ugb25seSBjb21wYXJlIHRoaXMNCj4gb25lDQo+ID4gPiBieXRlIGluc3RlYWQgb2YgYWxs
-DQo+ID4gPiA+IDY0IGJpdHMuDQo+ID4gPiA+ICsgKg0KPiA+ID4gPiArICogRS5nLiwgR0NDIHZl
-cnNpb24gMTYuMC4wIDIwMjUxMDE5IChleHBlcmltZW50YWwpIGdlbmVyYXRlcw0KPiB0aGUNCj4g
-PiA+IGZvbGxvd2luZyBjb2RlDQo+ID4gPiA+IGZvciB4ODYtNjQuDQo+ID4gPiA+ICsgKg0KPiA+
-ID4gPiArICogV2l0aCB0aGUgcGxhaW4gbWFjcm8sIDE3IGJ5dGVzIG9mIGluc3RydWN0aW9uczoN
-Cj4gPiA+ID4gKyAqICAgICAgbW92YWJzIHJheCwweDYwMDAwMDAwMDAwMDAwMDAgICAgICAgLy8g
-MTAgYnl0ZXMNCj4gPiA+ID4gKyAqICAgICAgYW5kICAgIHJheCxRV09SRCBQVFIgW3JkaSsweDE4
-XSAgICAgLy8gNCBieXRlcw0KPiA+ID4gPiArICogICAgICBzZXRlICAgYWwgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAvLyAzIGJ5dGVzDQo+ID4gPiA+ICsgKiBXaXRoIHRoaXMgb3B0aW1pemVk
-IG1hY3JvLCBvbmx5IDcgYnl0ZXMgb2YgaW5zdHJ1Y3Rpb25zOg0KPiA+ID4gPiArICogICAgICB0
-ZXN0ICAgQllURSBQVFIgW3JkaSsweDFmXSwweDYwICAgICAvLyA0IGJ5dGVzDQo+ID4gPiA+ICsg
-KiAgICAgIHNldGUgICBhbCAgICAgICAgICAgICAgICAgICAgICAgICAgIC8vIDMgYnl0ZXMNCj4g
-PiA+ID4gKyAqLw0KPiA+ID4gPiArI2lmIFJURV9CWVRFX09SREVSID09IFJURV9MSVRUTEVfRU5E
-SUFODQo+ID4gPiA+ICsvKiBPbiBsaXR0bGUgZW5kaWFuIGFyY2hpdGVjdHVyZSwgdGhlIE1TQiBv
-ZiBhIDY0LWJpdCBpbnRlZ2VyIGlzDQo+IGF0DQo+ID4gPiBieXRlIG9mZnNldCA3LiAqLw0KPiA+
-ID4gPiArI2RlZmluZSBSVEVfTUJVRl9ESVJFQ1QobWIpICAgICAhKCgoY29uc3QgY2hhciAqKSgm
-KG1iKS0NCj4gPiA+ID5vbF9mbGFncykpWzddICYgMHg2MCkNCj4gPiA+ID4gKyNlbGlmIFJURV9C
-WVRFX09SREVSID09IFJURV9CSUdfRU5ESUFODQo+ID4gPiA+ICsvKiBPbiBiaWcgZW5kaWFuIGFy
-Y2hpdGVjdHVyZSwgdGhlIE1TQiBvZiBhIDY0LWJpdCBpbnRlZ2VyIGlzIGF0DQo+ID4gPiBieXRl
-IG9mZnNldCAwLiAqLw0KPiA+ID4gPiArI2RlZmluZSBSVEVfTUJVRl9ESVJFQ1QobWIpICAgICAh
-KCgoY29uc3QgY2hhciAqKSgmKG1iKS0NCj4gPiA+ID5vbF9mbGFncykpWzBdICYgMHg2MCkNCj4g
-PiA+DQo+ID4gPiBBIHN0dXBpZCBxOiB3aHkgdGhlbiBub3Qgc2ltcGx5IGRvOg0KPiA+ID4gKG1i
-LT5vbF9mbGFncyA+PiA1NikgJiAweDYwDQo+ID4gPiB0aGVuPw0KPiA+ID4gU2hvdWxkIGhlbHAg
-dG8gYWxsIHRoZXNlIExFL0JFIGNhc3RzLCBldGMuDQo+ID4NCj4gPiBHQ0MgaXMgdG9vIHN0dXBp
-ZCBmb3IgdGhhdCB0b28uDQo+ID4NCj4gPiBQbGF5aW5nIGFyb3VuZCB3aXRoIEdvZGJvbHQgc2hv
-d3MgdGhhdA0KPiA+IAlyZXR1cm4gISgoY2hhcikocFszXSA+PiA1NikgJiAweDYwKTsNCj4gPiBi
-ZWNvbWVzDQo+ID4gCW1vdnp4ICBlYXgsQllURSBQVFIgW3JkaSsweDFmXQkvLyA0IGJ5dGVzDQo+
-ID4gCXRlc3QgICBhbCwweDYwCQkJCS8vIDIgYnl0ZXMNCj4gPiBJbnN0ZWFkIG9mIHNpbXBseQ0K
-PiA+IAl0ZXN0ICAgQllURSBQVFIgW3JkaSsweDFmXSwweDYwCS8vIDQgYnl0ZXMNCj4gDQo+IEFu
-ZCB0aGVzZSAyIGV4dHJhIGJ5dGVzIGluIGluc3RydWN0aW9ucywgYXJlIHRoYXQgcmVhbGx5IHRo
-YXQgY3JpdGljYWw/DQo+IE15IGd1ZXNzLCB3ZSB3b3VsZG4ndCBub3RpY2UgYW55IHJlYWwgZGlm
-ZiBoZXJlLg0KDQpUaGUgb3B0aW1pemVkIG1hY3JvIG1hZGUgdGhlIGNvbW1vbiBjb2RlIHBhdGgg
-b2YgdGhlIHJlZmFjdG9yZWQgcnRlX3BrdG1idWZfcHJlZnJlZV9zZWcoKSBmaXQgaW50byBvbmUg
-Y2FjaGUgbGluZS4NCklJUkMsIGFsbCAxMCBieXRlcyBzYXZpbmcgd2VyZSByZXF1aXJlZCBmb3Ig
-dGhpcy4NCg0KPiBCdXQgaWYgaXQgcmVhbGx5IGlzLCBjYW4gSSBhc2sgeW91IHRvIGNyZWF0ZSBh
-IG5ldyBkZWZpbmUgZm9yIDB4NjAsDQo+IHRvIGF2b2lkIGhhcmRjb2RlZCBjb25zdGFudHMgaW4g
-dGhlIGNvZGU/DQo+IE1pZ2h0IGJlIHNvbWV0aGluZyAgbGlrZQ0KPiAjZGVmaW5lIFJURV9NQlVG
-X0ZfSU5ESVJFQ1RfRVhURVJOQUxfMUIgLi4uDQo+IG9yIHNvLg0KDQpJIHN0YXJ0ZWQgb3V0IHVz
-aW5nIHRoZSBmaWVsZCBuYW1lcywgYnV0IEJydWNlIHN1Z2dlc3RlZCB1c2luZyAweDYwIGZvciBy
-ZWFkYWJpbGl0eSwgbWFraW5nIHRoZSBtYWNyb3Mgc2hvcnRlciwgd2hpY2ggSU1PIGxvb2tzIGdv
-b2QuDQoNCkkgZG9uJ3QgbGlrZSBhZGRpbmcgc3BlY2lhbCBuYW1lcyBqdXN0IGZvciB0aGlzLCBz
-byBlaXRoZXIgd2Ugc3RpY2sgd2l0aCAweDYwIG9yIGdvIGZvciAiKGNoYXIpKChSVEVfTUJVRl9G
-X0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRFUk5BTCkgPj4gKDcgKiBDSEFSX0JJVCkpIiwgc29t
-ZXRoaW5nIGxpa2UgdGhpczoNCg0KI2lmZGVmIF9fRE9YWUdFTl9fDQojZGVmaW5lIFJURV9NQlVG
-X0RJUkVDVChtYikgXA0KCSEoKChjb25zdCBjaGFyICopKCYobWIpLT5vbF9mbGFncykpW01TQl9P
-RkZTRVQgLyogNyBvciAwLCBkZXBlbmRpbmcgb24gZW5kaWFubmVzcyAqL10gJiBcDQoJKGNoYXIp
-KChSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRFUk5BTCkgPj4gKDcgKiBDSEFS
-X0JJVCkpKQ0KI2Vsc2UgLyogIV9fRE9YWUdFTl9fICovDQojaWYgUlRFX0JZVEVfT1JERVIgPT0g
-UlRFX0xJVFRMRV9FTkRJQU4NCi8qIE9uIGxpdHRsZSBlbmRpYW4gYXJjaGl0ZWN0dXJlLCB0aGUg
-TVNCIG9mIGEgNjQtYml0IGludGVnZXIgaXMgYXQgYnl0ZSBvZmZzZXQgNy4gKi8NCiNkZWZpbmUg
-UlRFX01CVUZfRElSRUNUKG1iKSBcDQoJISgoKGNvbnN0IGNoYXIgKikoJihtYiktPm9sX2ZsYWdz
-KSlbN10gJiBcDQoJKGNoYXIpKChSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRF
-Uk5BTCkgPj4gKDcgKiBDSEFSX0JJVCkpKQ0KI2VsaWYgUlRFX0JZVEVfT1JERVIgPT0gUlRFX0JJ
-R19FTkRJQU4NCi8qIE9uIGJpZyBlbmRpYW4gYXJjaGl0ZWN0dXJlLCB0aGUgTVNCIG9mIGEgNjQt
-Yml0IGludGVnZXIgaXMgYXQgYnl0ZSBvZmZzZXQgMC4gKi8NCiNkZWZpbmUgUlRFX01CVUZfRElS
-RUNUKG1iKSBcDQoJISgoKGNvbnN0IGNoYXIgKikoJihtYiktPm9sX2ZsYWdzKSlbMF0gJiBcDQoJ
-KGNoYXIpKChSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRFUk5BTCkgPj4gKDcg
-KiBDSEFSX0JJVCkpKQ0KI2VuZGlmIC8qIFJURV9CWVRFX09SREVSICovDQojZW5kaWYgLyogIV9f
-RE9YWUdFTl9fICovDQovKiBWZXJpZnkgdGhlIG9wdGltaXphdGlvbiBhYm92ZS4gKi8NCnN0YXRp
-Y19hc3NlcnQoKChSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRFUk5BTCkgJiAo
-VUlOVDY0X0MoMHhGRikgPDwgKDcgKiBDSEFSX0JJVCkpKSA9PQ0KCShSVEVfTUJVRl9GX0lORElS
-RUNUIHwgUlRFX01CVUZfRl9FWFRFUk5BTCksDQoJIihSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRF
-X01CVUZfRl9FWFRFUk5BTCkgaXMgbm90IGF0IE1TQiIpOw0KDQo+IEtvbnN0YW50aW4NCj4gDQo+
-ID4gR29vZCBzdWdnZXN0aW9uLCB0aG91Z2guDQo+ID4NCj4gPiA+DQo+ID4gPiA+ICsjZW5kaWYN
-Cj4gPiA+ID4gKy8qIFZlcmlmeSB0aGUgb3B0aW1pemF0aW9uIGFib3ZlLiAqLw0KPiA+ID4gPiAr
-c3RhdGljX2Fzc2VydCgoUlRFX01CVUZfRl9JTkRJUkVDVCB8IFJURV9NQlVGX0ZfRVhURVJOQUwp
-ID09DQo+ID4gPiA+IFVJTlQ2NF9DKDB4NjApIDw8ICg3ICogQ0hBUl9CSVQpLA0KPiA+ID4gPiAr
-CSIoUlRFX01CVUZfRl9JTkRJUkVDVCB8IFJURV9NQlVGX0ZfRVhURVJOQUwpIGlzIG5vdCAweDYw
-IGF0DQo+ID4gPiBNU0IiKTsNCj4gPiA+ID4NCj4gPiA+ID4gIC8qKiBVbmluaXRpYWxpemVkIG9y
-IHVuc3BlY2lmaWVkIHBvcnQuICovDQo+ID4gPiA+ICAjZGVmaW5lIFJURV9NQlVGX1BPUlRfSU5W
-QUxJRCBVSU5UMTZfTUFYDQo+ID4gPiA+IC0tDQo+ID4gPiA+IDIuNDMuMA0KDQo=
+23/10/2025 16:35, Serhii Iliushyk:
+> +=========================================================================================== =======
+> +Supported Features                                                                           Linux
+> +=========================================================================================== =======
+> +FW version                                                                                     X
+> +Speed capabilities                                                                             X
+> +Link status (Link update only)                                                                 X
+> +Unicast MAC filter                                                                             X
+> +Multicast MAC filter                                                                           X
+> +Promiscuous mode (Enable only. The device always run promiscuous mode)                         X
+> +Flow API support.                                                                              X
+> +Support for multiple rte_flow groups.                                                          X
+> +Multiple TX and RX queues.                                                                     X
+> +Scattered and gather for TX and RX.                                                            X
+> +Jumbo frame support.                                                                           X
+> +Traffic mirroring.                                                                             X
+> +VLAN filtering.                                                                                X
+> +Packet modification: NAT, TTL decrement, DSCP tagging                                          X
+> +Tunnel types: GTP.                                                                             X
+> +Encapsulation and decapsulation of GTP data.                                                   X
+> +RX VLAN stripping via raw decap.                                                               X
+> +TX VLAN insertion via raw encap.                                                               X
+> +CAM and TCAM based matching.                                                                   X
+> +Exact match of 140 million flows and policies.                                                 X
+> +Tunnel HW offload: Packet type, inner/outer RSS, IP and UDP checksum verification.             X
+> +RSS hash                                                                                       X
+> +RSS key update                                                                                 X
+> +RSS based on VLAN or 5*tuple.                                                                  X
+> +RSS using combinations of fields: L3 only, L4 only or both, and src only, dst only or both.    X
+
+When you make a table, you should not write sentences.
+Columns must not be wide.
+
+
+[...]
+> +<object>.<attribute>=[<object-ids>:]<value>
+
+Should it have a fixed witdth font?
+
+
+[...]
+> -``exception_path`` parameter [int]
+> +- ``exception_path`` parameter [int]
+
+Why do you replace the definition list with a simple list?
+Did you check the HTML output?
+
+
+[...]
+>  Logging and Debugging
+> ----------------------
+> +~~~~~~~~~~~~~~~~~~~~~
+
+Why? So there is only 1 main title like "Features"?
+
+
+[...]
+> -.. note::
+> +   .. note::
+
+No reason to do that.
+
+
