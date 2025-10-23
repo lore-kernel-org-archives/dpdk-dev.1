@@ -2,78 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A7BCCD1BE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 15:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B96FCCD1BC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 15:27:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2394A4021E;
-	Thu, 23 Oct 2025 17:25:11 +0200 (CEST)
-Received: from fhigh-a8-smtp.messagingengine.com
- (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
- by mails.dpdk.org (Postfix) with ESMTP id 0A48340151
- for <dev@dpdk.org>; Thu, 23 Oct 2025 17:25:10 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 6738714001AF;
- Thu, 23 Oct 2025 11:25:09 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Thu, 23 Oct 2025 11:25:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1761233109;
- x=1761319509; bh=zjX4lwntY1VnswPwkbk298DUteHy8P9jCrw0fmZKVPc=; b=
- Io1g+MLxqdIh5bzP7brMhs9PhDPT8o4wesfH6W4SEIu2AyW0mNzK8dBm7JCJOYKp
- 2hQUB16Bvbs66n7GtG9at8EvpW1xjNUTqPi1OY0CMPKqtBUYO0zIxQCChtkpWpAo
- Wm5c8eRVW9m3wRLmZ9DVCJEMKHM0afXantjLVukI/3oV5qIokB/EwCA4H3w7OlHq
- sKgcdvrMhvF83BCd1XZBQbyTuYtdM9VNPTPKaxLo8cDgcD2YSZQs506/trcn8RLD
- HWlPYKnNismt8XpQYtaF9hN2XUaPWxjeyKokibu9jPDZEkUJlm+Nybv9+8eomk/p
- 1kmIm+iF3t296FLmaxXVPQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761233109; x=
- 1761319509; bh=zjX4lwntY1VnswPwkbk298DUteHy8P9jCrw0fmZKVPc=; b=i
- 9IOcSW8nKZ+yY6NAaKLzavqQ4KB7AUpCRyF6Wx0T5cQi7IEk8bvyAsS1VkRSfU1p
- 6MXobW19ddwV/pZtC840Yn1I7ze14dl6XZnQp2HpKtUmbed5KjClAygTy2uEOlAJ
- 76TU/hpNDLokoBaFwRPC8nO0PxsfVRzZZFgaE3FZcb9dRdvttbt5P3VudTQB6yXa
- MwOnOl7WMrfIFEhqGHMDOiy9MuzXyWZ9xhKr1AGnKyZUV6TIgdSVUyT0BftwxtRJ
- sIKgqRoK+kddWJPvHq2RdtThtteZN3TfGV/6n3vO3S5f2jZjd0yf/xaXARGJtlqz
- Y0YB3qrtCIDI3dV/tn5uA==
-X-ME-Sender: <xms:1Ej6aOHshTmiZbdOSdm8rbS5HJoOIiUDtCvpr49NRrkrpbeNgaXjig>
- <xme:1Ej6aLru7g_OtJdvJvwds97a8U2ctC_tHy6peFgU7UabpvgrozI4Ynz1iXJjU_Tk3
- H14BJUWh8RJLjLo1UAYSNmtqO8OnCnST5Cw91y0MCvyyWoTTf3qVw>
-X-ME-Received: <xmr:1Ej6aK7KreFnvqEkm8KxBVwcIgtWaxOPhfMytHoHLKzk3PVtf-RHRaBoI78KSpTbqkroq9-pVEdWf2_cedOVLEYrOQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeikeduucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
- esihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:1Ej6aJ4_E9DE191MGPRsSO_RLApTIZx-tS8W_HnFxC82BjJ0S-AEFw>
- <xmx:1Ej6aHEAS8G1ipTHYC24CfEOaGsIpo9DlpNRmgqiF0_y2dPBgUV46Q>
- <xmx:1Ej6aCT_Wj2MzJZwCPGbFtw1Jbd3NtaxERJkEJWYJvD3ODRj92rXAQ>
- <xmx:1Ej6aAt47zchTjXyiCh4wqc55g8XjbE0h-CBch3B2sqCJ2HEmFFGHQ>
- <xmx:1Uj6aLMLNps7__YRm4FkZDHx46qvftdvSV24bTX5DYqeUZQlWuXOxPjM>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Oct 2025 11:25:08 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v4 0/2] improve mailmap file
-Date: Thu, 23 Oct 2025 17:25:06 +0200
-Message-ID: <3958057.AxlXzFCzgd@thomas>
-In-Reply-To: <20251020140805.1361249-1-bruce.richardson@intel.com>
-References: <20250808142721.408998-1-bruce.richardson@intel.com>
- <20251020140805.1361249-1-bruce.richardson@intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+	by mails.dpdk.org (Postfix) with ESMTP id 4CF4640276;
+	Thu, 23 Oct 2025 17:27:32 +0200 (CEST)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+ by mails.dpdk.org (Postfix) with ESMTP id DEA194021E
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 17:27:30 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+ by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4csqZG6rj6z1R9XW;
+ Thu, 23 Oct 2025 23:24:06 +0800 (CST)
+Received: from kwepemk200009.china.huawei.com (unknown [7.202.194.75])
+ by mail.maildlp.com (Postfix) with ESMTPS id 253921A016C;
+ Thu, 23 Oct 2025 23:27:29 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ kwepemk200009.china.huawei.com (7.202.194.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 23 Oct 2025 23:27:27 +0800
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Thu, 23 Oct 2025 16:27:25 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>,
+ "dev@dpdk.org" <dev@dpdk.org>, Stephen Hemminger
+ <stephen@networkplumber.org>, Wathsala Vithanage
+ <wathsala.vithanage@arm.com>, Fengchengwen <fengchengwen@huawei.com>, "Bruce
+ Richardson" <bruce.richardson@intel.com>
+Subject: RE: [PATCH v5] mbuf: optimize segment prefree
+Thread-Topic: [PATCH v5] mbuf: optimize segment prefree
+Thread-Index: AQHcQ/NUxCpzFpnLEUCegFLyVmlwCLTPa7AAgAAngXCAAC+rQIAABewAgAAQ4yA=
+Date: Thu, 23 Oct 2025 15:27:25 +0000
+Message-ID: <e12aa6583cb34a3595fd518c187bf144@huawei.com>
+References: <20250827213535.21602-1-mb@smartsharesystems.com>
+ <20251023080136.165513-1-mb@smartsharesystems.com>
+ <c556ea7b92a24bc09ac5240da39bc36c@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F654F7@smartserver.smartshare.dk>
+ <6a26d57153714d04865753fd557978dd@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F654FB@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F654FB@smartserver.smartshare.dk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.220]
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,40 +62,97 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-20/10/2025 16:08, Bruce Richardson:
-> The mailmap file in DPDK is not always correctly sorted, and standard
-> cmdline sorting tools don't always do the job correctly. To improve
-> things, add a new script to devtools for working with the mailmap file,
-> to make it easier to add new entries in the correct place, to check the
-> file for correctness, and lastly to sort the file in place (hopefully a
-> one-off operation).
-> 
-> Once that is done, commit the changes to the mailmap file to ensure it
-> is correctly sorted in the repository.
-> 
-> V4: minor changes based on more feedback:
->  - sort imports alphabetically
->  - remove unused "operations" map
-> 
-> V3:
-> * feedback from Robin's review:
->   - used builtin type annotations
->     - used argparse subparsers and callbacks for individual commands
->     * re-sorted latest mailmap in patch 2
-> 
-> V2:
-> * address multiple feedback items on V1.
-> * fix bug whereby adding an extra actually sorted the whole file
-> 
-> Bruce Richardson (2):
->   devtools/mailmap_ctl: script to work with mailmap
->   mailmap: sort mailmap
-> 
->  .mailmap                | 356 ++++++++++++++++++++--------------------
->  devtools/mailmap_ctl.py | 209 +++++++++++++++++++++++
-
-For consistency, it should be named devtools/mailmap-ctl.py
-
-Applied with this minor change, thanks.
-
-
+DQoNCj4gPiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55
+ZXZAaHVhd2VpLmNvbV0NCj4gPiBTZW50OiBUaHVyc2RheSwgMjMgT2N0b2JlciAyMDI1IDE2LjA1
+DQo+ID4NCj4gPiA+ID4gRnJvbTogS29uc3RhbnRpbiBBbmFueWV2IFttYWlsdG86a29uc3RhbnRp
+bi5hbmFueWV2QGh1YXdlaS5jb21dDQo+ID4gPiA+IFNlbnQ6IFRodXJzZGF5LCAyMyBPY3RvYmVy
+IDIwMjUgMTAuNTENCj4gPiA+ID4NCj4gPiA+ID4gPiAtI2RlZmluZSBSVEVfTUJVRl9ESVJFQ1Qo
+bWIpIFwNCj4gPiA+ID4gPiAtCSghKChtYiktPm9sX2ZsYWdzICYgKFJURV9NQlVGX0ZfSU5ESVJF
+Q1QgfA0KPiA+IFJURV9NQlVGX0ZfRVhURVJOQUwpKSkNCj4gPiA+ID4gPiArICoNCj4gPiA+ID4g
+PiArICogTm90ZTogTWFjcm8gb3B0aW1pemVkIGZvciBjb2RlIHNpemUuDQo+ID4gPiA+ID4gKyAq
+DQo+ID4gPiA+ID4gKyAqIFRoZSBwbGFpbiBtYWNybyB3b3VsZCBiZToNCj4gPiA+ID4gPiArICog
+ICAgICAjZGVmaW5lIFJURV9NQlVGX0RJUkVDVChtYikgXA0KPiA+ID4gPiA+ICsgKiAgICAgICAg
+ICAoISgobWIpLT5vbF9mbGFncyAmIChSVEVfTUJVRl9GX0lORElSRUNUIHwNCj4gPiA+ID4gUlRF
+X01CVUZfRl9FWFRFUk5BTCkpKQ0KPiA+ID4gPiA+ICsgKg0KPiA+ID4gPiA+ICsgKiBUaGUgZmxh
+Z3MgUlRFX01CVUZfRl9JTkRJUkVDVCBhbmQgUlRFX01CVUZfRl9FWFRFUk5BTCBhcmUNCj4gPiBi
+b3RoIGluDQo+ID4gPiA+IHRoZQ0KPiA+ID4gPiA+IE1TQiAobW9zdCBzaWduaWZpY2FudA0KPiA+
+ID4gPiA+ICsgKiBieXRlKSBvZiB0aGUgNjQtYml0IG9sX2ZsYWdzIGZpZWxkLCBzbyB3ZSBvbmx5
+IGNvbXBhcmUgdGhpcw0KPiA+IG9uZQ0KPiA+ID4gPiBieXRlIGluc3RlYWQgb2YgYWxsDQo+ID4g
+PiA+ID4gNjQgYml0cy4NCj4gPiA+ID4gPiArICoNCj4gPiA+ID4gPiArICogRS5nLiwgR0NDIHZl
+cnNpb24gMTYuMC4wIDIwMjUxMDE5IChleHBlcmltZW50YWwpIGdlbmVyYXRlcw0KPiA+IHRoZQ0K
+PiA+ID4gPiBmb2xsb3dpbmcgY29kZQ0KPiA+ID4gPiA+IGZvciB4ODYtNjQuDQo+ID4gPiA+ID4g
+KyAqDQo+ID4gPiA+ID4gKyAqIFdpdGggdGhlIHBsYWluIG1hY3JvLCAxNyBieXRlcyBvZiBpbnN0
+cnVjdGlvbnM6DQo+ID4gPiA+ID4gKyAqICAgICAgbW92YWJzIHJheCwweDYwMDAwMDAwMDAwMDAw
+MDAgICAgICAgLy8gMTAgYnl0ZXMNCj4gPiA+ID4gPiArICogICAgICBhbmQgICAgcmF4LFFXT1JE
+IFBUUiBbcmRpKzB4MThdICAgICAvLyA0IGJ5dGVzDQo+ID4gPiA+ID4gKyAqICAgICAgc2V0ZSAg
+IGFsICAgICAgICAgICAgICAgICAgICAgICAgICAgLy8gMyBieXRlcw0KPiA+ID4gPiA+ICsgKiBX
+aXRoIHRoaXMgb3B0aW1pemVkIG1hY3JvLCBvbmx5IDcgYnl0ZXMgb2YgaW5zdHJ1Y3Rpb25zOg0K
+PiA+ID4gPiA+ICsgKiAgICAgIHRlc3QgICBCWVRFIFBUUiBbcmRpKzB4MWZdLDB4NjAgICAgIC8v
+IDQgYnl0ZXMNCj4gPiA+ID4gPiArICogICAgICBzZXRlICAgYWwgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAvLyAzIGJ5dGVzDQo+ID4gPiA+ID4gKyAqLw0KPiA+ID4gPiA+ICsjaWYgUlRFX0JZ
+VEVfT1JERVIgPT0gUlRFX0xJVFRMRV9FTkRJQU4NCj4gPiA+ID4gPiArLyogT24gbGl0dGxlIGVu
+ZGlhbiBhcmNoaXRlY3R1cmUsIHRoZSBNU0Igb2YgYSA2NC1iaXQgaW50ZWdlciBpcw0KPiA+IGF0
+DQo+ID4gPiA+IGJ5dGUgb2Zmc2V0IDcuICovDQo+ID4gPiA+ID4gKyNkZWZpbmUgUlRFX01CVUZf
+RElSRUNUKG1iKSAgICAgISgoKGNvbnN0IGNoYXIgKikoJihtYiktDQo+ID4gPiA+ID5vbF9mbGFn
+cykpWzddICYgMHg2MCkNCj4gPiA+ID4gPiArI2VsaWYgUlRFX0JZVEVfT1JERVIgPT0gUlRFX0JJ
+R19FTkRJQU4NCj4gPiA+ID4gPiArLyogT24gYmlnIGVuZGlhbiBhcmNoaXRlY3R1cmUsIHRoZSBN
+U0Igb2YgYSA2NC1iaXQgaW50ZWdlciBpcyBhdA0KPiA+ID4gPiBieXRlIG9mZnNldCAwLiAqLw0K
+PiA+ID4gPiA+ICsjZGVmaW5lIFJURV9NQlVGX0RJUkVDVChtYikgICAgICEoKChjb25zdCBjaGFy
+ICopKCYobWIpLQ0KPiA+ID4gPiA+b2xfZmxhZ3MpKVswXSAmIDB4NjApDQo+ID4gPiA+DQo+ID4g
+PiA+IEEgc3R1cGlkIHE6IHdoeSB0aGVuIG5vdCBzaW1wbHkgZG86DQo+ID4gPiA+IChtYi0+b2xf
+ZmxhZ3MgPj4gNTYpICYgMHg2MA0KPiA+ID4gPiB0aGVuPw0KPiA+ID4gPiBTaG91bGQgaGVscCB0
+byBhbGwgdGhlc2UgTEUvQkUgY2FzdHMsIGV0Yy4NCj4gPiA+DQo+ID4gPiBHQ0MgaXMgdG9vIHN0
+dXBpZCBmb3IgdGhhdCB0b28uDQo+ID4gPg0KPiA+ID4gUGxheWluZyBhcm91bmQgd2l0aCBHb2Ri
+b2x0IHNob3dzIHRoYXQNCj4gPiA+IAlyZXR1cm4gISgoY2hhcikocFszXSA+PiA1NikgJiAweDYw
+KTsNCj4gPiA+IGJlY29tZXMNCj4gPiA+IAltb3Z6eCAgZWF4LEJZVEUgUFRSIFtyZGkrMHgxZl0J
+Ly8gNCBieXRlcw0KPiA+ID4gCXRlc3QgICBhbCwweDYwCQkJCS8vIDIgYnl0ZXMNCj4gPiA+IElu
+c3RlYWQgb2Ygc2ltcGx5DQo+ID4gPiAJdGVzdCAgIEJZVEUgUFRSIFtyZGkrMHgxZl0sMHg2MAkv
+LyA0IGJ5dGVzDQo+ID4NCj4gPiBBbmQgdGhlc2UgMiBleHRyYSBieXRlcyBpbiBpbnN0cnVjdGlv
+bnMsIGFyZSB0aGF0IHJlYWxseSB0aGF0IGNyaXRpY2FsPw0KPiA+IE15IGd1ZXNzLCB3ZSB3b3Vs
+ZG4ndCBub3RpY2UgYW55IHJlYWwgZGlmZiBoZXJlLg0KPiANCj4gVGhlIG9wdGltaXplZCBtYWNy
+byBtYWRlIHRoZSBjb21tb24gY29kZSBwYXRoIG9mIHRoZSByZWZhY3RvcmVkDQo+IHJ0ZV9wa3Rt
+YnVmX3ByZWZyZWVfc2VnKCkgZml0IGludG8gb25lIGNhY2hlIGxpbmUuDQo+IElJUkMsIGFsbCAx
+MCBieXRlcyBzYXZpbmcgd2VyZSByZXF1aXJlZCBmb3IgdGhpcy4NCg0KSSB1bmRlcnN0YW5kIHRo
+YXQuIGJ1dCBpcyB0aGF0IGNoYW5nZSB3aWxsIHByb3ZpZGUgYSBtZWFzdXJhYmxlIGltcGFjdCwN
+CmluIHRlcm1zIG9mIGN5Y2xlcy9vcCBvciBwcHMgb3Igc28/IA0KDQo+ID4gQnV0IGlmIGl0IHJl
+YWxseSBpcywgY2FuIEkgYXNrIHlvdSB0byBjcmVhdGUgYSBuZXcgZGVmaW5lIGZvciAweDYwLA0K
+PiA+IHRvIGF2b2lkIGhhcmRjb2RlZCBjb25zdGFudHMgaW4gdGhlIGNvZGU/DQo+ID4gTWlnaHQg
+YmUgc29tZXRoaW5nICBsaWtlDQo+ID4gI2RlZmluZSBSVEVfTUJVRl9GX0lORElSRUNUX0VYVEVS
+TkFMXzFCIC4uLg0KPiA+IG9yIHNvLg0KPiANCj4gSSBzdGFydGVkIG91dCB1c2luZyB0aGUgZmll
+bGQgbmFtZXMsIGJ1dCBCcnVjZSBzdWdnZXN0ZWQgdXNpbmcgMHg2MCBmb3INCj4gcmVhZGFiaWxp
+dHksIG1ha2luZyB0aGUgbWFjcm9zIHNob3J0ZXIsIHdoaWNoIElNTyBsb29rcyBnb29kLg0KPiAN
+Cj4gSSBkb24ndCBsaWtlIGFkZGluZyBzcGVjaWFsIG5hbWVzIGp1c3QgZm9yIHRoaXMsIHNvIGVp
+dGhlciB3ZSBzdGljayB3aXRoIDB4NjAgb3IgZ28gZm9yDQo+ICIoY2hhcikoKFJURV9NQlVGX0Zf
+SU5ESVJFQ1QgfCBSVEVfTUJVRl9GX0VYVEVSTkFMKSA+PiAoNyAqDQo+IENIQVJfQklUKSkiLCBz
+b21ldGhpbmcgbGlrZSB0aGlzOg0KDQpNeSB2b3RlIHdvdWxkIGJlIHRvIHVzZSB0aGUgY29uc3Ry
+dWN0aW9uIGFib3ZlLg0KTWlnaHQgYmUgcHV0IGl0IGluIGEgbmV3IG1hY3JvIGZvciByZWFkYWJp
+bGl0eS4NCktvbnN0YW50aW4NCg0KPiAjaWZkZWYgX19ET1hZR0VOX18NCj4gI2RlZmluZSBSVEVf
+TUJVRl9ESVJFQ1QobWIpIFwNCj4gCSEoKChjb25zdCBjaGFyICopKCYobWIpLT5vbF9mbGFncykp
+W01TQl9PRkZTRVQgLyogNyBvciAwLCBkZXBlbmRpbmcgb24NCj4gZW5kaWFubmVzcyAqL10gJiBc
+DQo+IAkoY2hhcikoKFJURV9NQlVGX0ZfSU5ESVJFQ1QgfCBSVEVfTUJVRl9GX0VYVEVSTkFMKSA+
+PiAoNyAqDQo+IENIQVJfQklUKSkpDQo+ICNlbHNlIC8qICFfX0RPWFlHRU5fXyAqLw0KPiAjaWYg
+UlRFX0JZVEVfT1JERVIgPT0gUlRFX0xJVFRMRV9FTkRJQU4NCj4gLyogT24gbGl0dGxlIGVuZGlh
+biBhcmNoaXRlY3R1cmUsIHRoZSBNU0Igb2YgYSA2NC1iaXQgaW50ZWdlciBpcyBhdCBieXRlIG9m
+ZnNldCA3LiAqLw0KPiAjZGVmaW5lIFJURV9NQlVGX0RJUkVDVChtYikgXA0KPiAJISgoKGNvbnN0
+IGNoYXIgKikoJihtYiktPm9sX2ZsYWdzKSlbN10gJiBcDQo+IAkoY2hhcikoKFJURV9NQlVGX0Zf
+SU5ESVJFQ1QgfCBSVEVfTUJVRl9GX0VYVEVSTkFMKSA+PiAoNyAqDQo+IENIQVJfQklUKSkpDQo+
+ICNlbGlmIFJURV9CWVRFX09SREVSID09IFJURV9CSUdfRU5ESUFODQo+IC8qIE9uIGJpZyBlbmRp
+YW4gYXJjaGl0ZWN0dXJlLCB0aGUgTVNCIG9mIGEgNjQtYml0IGludGVnZXIgaXMgYXQgYnl0ZSBv
+ZmZzZXQgMC4gKi8NCj4gI2RlZmluZSBSVEVfTUJVRl9ESVJFQ1QobWIpIFwNCj4gCSEoKChjb25z
+dCBjaGFyICopKCYobWIpLT5vbF9mbGFncykpWzBdICYgXA0KPiAJKGNoYXIpKChSVEVfTUJVRl9G
+X0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRFUk5BTCkgPj4gKDcgKg0KPiBDSEFSX0JJVCkpKQ0K
+PiAjZW5kaWYgLyogUlRFX0JZVEVfT1JERVIgKi8NCj4gI2VuZGlmIC8qICFfX0RPWFlHRU5fXyAq
+Lw0KPiAvKiBWZXJpZnkgdGhlIG9wdGltaXphdGlvbiBhYm92ZS4gKi8NCj4gc3RhdGljX2Fzc2Vy
+dCgoKFJURV9NQlVGX0ZfSU5ESVJFQ1QgfCBSVEVfTUJVRl9GX0VYVEVSTkFMKSAmDQo+IChVSU5U
+NjRfQygweEZGKSA8PCAoNyAqIENIQVJfQklUKSkpID09DQo+IAkoUlRFX01CVUZfRl9JTkRJUkVD
+VCB8IFJURV9NQlVGX0ZfRVhURVJOQUwpLA0KPiAJIihSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRF
+X01CVUZfRl9FWFRFUk5BTCkgaXMgbm90IGF0IE1TQiIpOw0KPiANCj4gPiBLb25zdGFudGluDQo+
+ID4NCj4gPiA+IEdvb2Qgc3VnZ2VzdGlvbiwgdGhvdWdoLg0KPiA+ID4NCj4gPiA+ID4NCj4gPiA+
+ID4gPiArI2VuZGlmDQo+ID4gPiA+ID4gKy8qIFZlcmlmeSB0aGUgb3B0aW1pemF0aW9uIGFib3Zl
+LiAqLw0KPiA+ID4gPiA+ICtzdGF0aWNfYXNzZXJ0KChSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRF
+X01CVUZfRl9FWFRFUk5BTCkgPT0NCj4gPiA+ID4gPiBVSU5UNjRfQygweDYwKSA8PCAoNyAqIENI
+QVJfQklUKSwNCj4gPiA+ID4gPiArCSIoUlRFX01CVUZfRl9JTkRJUkVDVCB8IFJURV9NQlVGX0Zf
+RVhURVJOQUwpIGlzIG5vdCAweDYwDQo+IGF0DQo+ID4gPiA+IE1TQiIpOw0KPiA+ID4gPiA+DQo+
+ID4gPiA+ID4gIC8qKiBVbmluaXRpYWxpemVkIG9yIHVuc3BlY2lmaWVkIHBvcnQuICovDQo+ID4g
+PiA+ID4gICNkZWZpbmUgUlRFX01CVUZfUE9SVF9JTlZBTElEIFVJTlQxNl9NQVgNCj4gPiA+ID4g
+PiAtLQ0KPiA+ID4gPiA+IDIuNDMuMA0KDQo=
