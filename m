@@ -2,72 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B23CCD1BE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 01:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1966BCCD1BF
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 01:50:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EDFB2402E6;
-	Thu, 23 Oct 2025 03:32:15 +0200 (CEST)
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
- [209.85.222.182])
- by mails.dpdk.org (Postfix) with ESMTP id 7FF65402E3
- for <dev@dpdk.org>; Thu, 23 Oct 2025 03:32:11 +0200 (CEST)
-Received: by mail-qk1-f182.google.com with SMTP id
- af79cd13be357-893c373500cso28147285a.0
- for <dev@dpdk.org>; Wed, 22 Oct 2025 18:32:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1761183131; x=1761787931; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=HF4yU45YqzxcjXG6APARqXiwD3DOqi1shdTiKLRC7rA=;
- b=Z74BQ/y7kGr49Lfa4tS7R50RINuDN1tsEUy+uG/jxZyUU0wjhHGIsrZ79txoy5exlr
- xt7qJ+lrIPyZNyIZugNue/EpR9QIxkH8C6PYWyoCn4WLM0IvmVkbPo3TvZ4N5zz7RGsg
- gfC82xUauPOe06pbO1/WDV+ntP2/9zKtH8gG4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761183131; x=1761787931;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=HF4yU45YqzxcjXG6APARqXiwD3DOqi1shdTiKLRC7rA=;
- b=MDn4+Y1N6hFdWF2aVxIYEnuIVd3aDc6GGfFUE8adguPq6rQIRyxzcXOmJNablDcJL9
- oXnKRKq1iTJN1CNuFa7Idrgw0ODAgNyDdhQgFYSDNqxBE3OdHExiLt1HVknZTqYzDga1
- GkTs31ZlmCrBlu57QUrW2KJqQ5a+Ee4A84iQ+lHNa+F0GQVTG6UMKEkhjGmXjYskD0IJ
- Prusp6yGfcrfADlEI4GtosNXrflBL4qBzZbuzcvt7Ly4eGx5EjlmVFkYjQkXJiW9t5Cn
- JSVAvh74DD4MSwrmWg3ckCJfRRknw56QIu/NmjSm+DNH8tDilzqfDP735jYuoI0vWhcR
- ZxZw==
-X-Gm-Message-State: AOJu0YyhR5EzRZFl/a6IGi8v98VUYH1F+48dInal2dxwFLP6EGfuPbku
- rmnrW+XtlJ7d6x8U9Cyza21mJwrW9KudICrTklTTtQsXkIdaABx3iNG2lzMiaOlXcfQ=
-X-Gm-Gg: ASbGncvJfNtyOXHamTr2er8v4Si09hem58vtp3q5KJhCbUZqO/tEzWw4r5ZfWDz2VYF
- awxxwO7ofrw5WwOe4cUsLZXmDwKSJwzClrSjt9A6crA9WQHkd3/tOD5/0/86Npg5SbDA/yGJxqC
- wXPDkDHseI5Vbr0RWE/oK2ii8FjWvJURSpm1QapLTD4pGONOcW25TWGB7zv+SLII+yZfSwdA1bl
- C3svtnMtlA9Xo/XuYhVMehs14g6/HnN3n99fTdEfs8P9S5BIAZAn288ysLSqw1HHkD+9OCq5TVf
- KGwyaKDa3nOgaWPrr07HjuhaVAZqd6VZIfDQkaUU3bctUcE5sMJDYAcd7O3/AcSbPH5BVDe2U3X
- IBw8bn1JDhNpjYlS33dhfZv2ea4+zbrmx2jme+4dfpKwDHq0+UPQQXfSj2AHTgxsZuHxHmPAI82
- 1zm+VkhBVMV9F/ArQsql5xsizq6ORZky8Z9p1pGjml
-X-Google-Smtp-Source: AGHT+IFz6YKVNZ9crq4ayc4JmEZI6frVRzObSTeuOycjinpKVJc+K5fmCwAmJDAnOZ8ejAQFjR73FA==
-X-Received: by 2002:a05:620a:29cb:b0:890:e60c:de2c with SMTP id
- af79cd13be357-89adfa0210fmr474991485a.14.1761183130667; 
- Wed, 22 Oct 2025 18:32:10 -0700 (PDT)
-Received: from patrick-laptop.iol.unh.edu
- ([2606:4100:3880:1271:8c70:5b9e:ecd3:14e])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-89c12546031sm56080085a.56.2025.10.22.18.32.09
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 22 Oct 2025 18:32:10 -0700 (PDT)
-From: Patrick Robb <probb@iol.unh.edu>
-To: Luca.Vizzarro@arm.com
-Cc: dev@dpdk.org, dmarx@iol.unh.ed, abailey@iol.unh.edu,
- Paul.Szczepanek@arm.com, Nicholas Pratte <npratte@iol.unh.edu>,
- Patrick Robb <probb@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v5 3/3] dts: add performance test functions to test suite API
-Date: Wed, 22 Oct 2025 21:30:49 -0400
-Message-ID: <20251023013049.1368129-4-probb@iol.unh.edu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20251023013049.1368129-1-probb@iol.unh.edu>
-References: <20251001231659.2297751-1-probb@iol.unh.edu>
- <20251023013049.1368129-1-probb@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id 3D53340151;
+	Thu, 23 Oct 2025 03:50:17 +0200 (CEST)
+Received: from out28-145.mail.aliyun.com (out28-145.mail.aliyun.com
+ [115.124.28.145])
+ by mails.dpdk.org (Postfix) with ESMTP id 2DB25400D6
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 03:50:13 +0200 (CEST)
+X-Alimail-AntiSpam: AC=CONTINUE; BC=0.07403116|-1; CH=green;
+ DM=|CONTINUE|false|;
+ DS=CONTINUE|ham_regular_dialog|0.0229619-0.00654784-0.97049;
+ FP=15732338398614527894|0|0|0|0|-1|-1|-1;
+ HT=maildocker-contentspam033037000073; MF=dimon.zhao@nebula-matrix.com; NM=1;
+ PH=DW; RN=2; RT=2; SR=0; TI=W4_0.2.3_21251998_1761184211480_o7001c140; 
+Received: from WS-web
+ (dimon.zhao@nebula-matrix.com[W4_0.2.3_21251998_1761184211480_o7001c140]
+ cluster:ay29) at Thu, 23 Oct 2025 09:50:11 +0800
+Date: Thu, 23 Oct 2025 09:50:11 +0800
+From: "Dimon" <dimon.zhao@nebula-matrix.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: "dev" <dev@dpdk.org>
+Message-ID: <1b24415c-39b3-4960-9731-783499c549cd.dimon.zhao@nebula-matrix.com>
+Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIHYxNCAwMC8xN10gTkJMIFBNRCBmb3IgTmVidWxhbWF0cml4IE5J?=
+ =?UTF-8?B?Q3M=?=
+X-Mailer: [Alimail-Mailagent revision 560][W4_0.2.3][null][Chrome]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+x-aliyun-im-through: {"version":"v1.0"}
+References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>	<20251022035210.3243056-1-dimon.zhao@nebula-matrix.com>,
+ <20251022093302.38f7659a@phoenix.lan>
+x-aliyun-mail-creator: W4_0.2.3_null_d2lTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEwOC4wLjUzNTkuMTI1IFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4wLjEwLVJlbGVhc2UuMjUwOTE3MDAyKSBNb2pvLzEuMC4wIE5hdGl2ZSBBcHBUeXBlKHJlbGVhc2UpIENoYW5uZWwvMjAxMjAwIEFyY2hpdGVjdHVyZS94ODZfNjQ=Gs
+In-Reply-To: <20251022093302.38f7659a@phoenix.lan>
+Content-Type: multipart/alternative;
+ boundary="----=ALIBOUNDARY_1939_7ffa67797700_68f989d3_21ee72"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,329 +47,353 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
+Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-From: Nicholas Pratte <npratte@iol.unh.edu>
+------=ALIBOUNDARY_1939_7ffa67797700_68f989d3_21ee72
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-Provide packet transmission function to support performance tests using a
-user-supplied performance traffic generator. The single core performance
-test is included. It allows the user to define a matrix of frame size,
-descriptor count, and expected mpps, and fails if any combination does
-not forward a mpps count within 5% of the given baseline.
+SGkgU3RlcGhlbiwKVGhhbmsgeW91IGZvciB0aGUgcmV2aWV3IGFuZCBmb3IgZml4aW5nIHRoZSBz
+dGF0cyBBUEkgaXNzdWUhIAotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0K5Y+R5Lu25Lq677yaU3RlcGhlbiBIZW1taW5nZXIg
+PHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPgrlj5HpgIHml7bpl7TvvJoyMDI15bm0MTDmnIgy
+M+aXpSjlkajlm5spIDAwOjMzCuaUtuS7tuS6uu+8mkRpbW9uPGRpbW9uLnpoYW9AbmVidWxhLW1h
+dHJpeC5jb20+CuaKhOOAgOmAge+8mmRldjxkZXZAZHBkay5vcmc+CuS4u+OAgOmimO+8mlJlOiBb
+UEFUQ0ggdjE0IDAwLzE3XSBOQkwgUE1EIGZvciBOZWJ1bGFtYXRyaXggTklDcwpPbiBUdWUsIDIx
+IE9jdCAyMDI1IDIwOjUxOjUzIC0wNzAwCkRpbW9uIFpoYW8gPGRpbW9uLnpoYW9AbmVidWxhLW1h
+dHJpeC5jb20+IHdyb3RlOgo+IEZlYXR1cmVzOgo+IC0tLS0tLS0tLQo+IC0gTVRVIHVwZGF0ZQo+
+IC0gcHJvbWlzYyBtb2RlIHNldAo+IC0geHN0YXRzCj4gLSBCYXNpYyBzdGF0cyAKPiAKPiBTdXBw
+b3J0IE5JQ3M6Cj4gLS0tLS0tLS0tLS0tLQo+IC0gUzEyMDVDUS1BMDBDSFQKPiAtIFMxMTA1QVMt
+QTAwQ0hUCj4gLSBTMTA1NUFTLUEwMENIVAo+IC0gUzEwNTJBUy1BMDBDSFQKPiAtIFMxMDUxQVMt
+QTAwQ0hUCj4gLSBTMTA0NVhTLUEwMENIVAo+IC0gUzEyMDVDUS1BMDBDU1AKPiAtIFMxMDU1QVMt
+QTAwQ1NQCj4gLSBTMTA1MkFTLUEwMENTUAo+IAo+IERpbW9uIFpoYW8gKDE3KToKPiBuZXQvbmJs
+OiBhZGQgZG9jIGFuZCBtaW5pbXVtIG5ibCBidWlsZCBmcmFtZXdvcmsKPiBuZXQvbmJsOiBhZGQg
+c2ltcGxlIHByb2JlL3JlbW92ZSBhbmQgbG9nIG1vZHVsZQo+IG5ldC9uYmw6IGFkZCBIVyBsYXll
+ciBkZWZpbml0aW9ucyBhbmQgaW1wbGVtZW50YXRpb24KPiBuZXQvbmJsOiBhZGQgQ2hhbm5lbCBs
+YXllciBkZWZpbml0aW9ucyBhbmQgaW1wbGVtZW50YXRpb24KPiBuZXQvbmJsOiBhZGQgUmVzb3Vy
+Y2UgbGF5ZXIgZGVmaW5pdGlvbnMgYW5kIGltcGxlbWVudGF0aW9uCj4gbmV0L25ibDogYWRkIERp
+c3BhdGNoIGxheWVyIGRlZmluaXRpb25zIGFuZCBpbXBsZW1lbnRhdGlvbgo+IG5ldC9uYmw6IGFk
+ZCBEZXYgbGF5ZXIgZGVmaW5pdGlvbnMgYW5kIGltcGxlbWVudGF0aW9uCj4gbmV0L25ibDogYWRk
+IGNvbXBsZXRlIGRldmljZSBpbml0IGFuZCB1bmluaXQgZnVuY3Rpb25hbGl0eQo+IG5ldC9uYmw6
+IGFkZCBVSU8gYW5kIFZGSU8gbW9kZSBmb3IgbmJsCj4gbmV0L25ibDogYWRkIG5ibCBjb2V4aXN0
+ZW5jZSBtb2RlIGZvciBuYmwKPiBuZXQvbmJsOiBhZGQgbmJsIGV0aGRldiBjb25maWd1cmF0aW9u
+Cj4gbmV0L25ibDogYWRkIG5ibCBkZXZpY2Ugcnh0eCBxdWV1ZSBzZXR1cCBhbmQgcmVsZWFzZSBv
+cHMKPiBuZXQvbmJsOiBhZGQgbmJsIGRldmljZSBzdGFydCBhbmQgc3RvcCBvcHMKPiBuZXQvbmJs
+OiBhZGQgbmJsIGRldmljZSBUeCBhbmQgUnggYnVyc3QKPiBuZXQvbmJsOiBhZGQgbmJsIGV0aGRl
+diBpbmZvcyBnZXQKPiBuZXQvbmJsOiBhZGQgbmJsIGRldmljZSB4c3RhdHMgYW5kIHN0YXRzCj4g
+bmV0L25ibDogYWRkIG5ibCBkZXZpY2Ugc2V0IE1UVSBhbmQgcHJvbWlzYwo+IAo+IC5tYWlsbWFw
+IHwgNCArCj4gTUFJTlRBSU5FUlMgfCA5ICsKPiBkb2MvZ3VpZGVzL25pY3MvZmVhdHVyZXMvbmJs
+LmluaSB8IDE4ICsKPiBkb2MvZ3VpZGVzL25pY3MvaW5kZXgucnN0IHwgMSArCj4gZG9jL2d1aWRl
+cy9uaWNzL25ibC5yc3QgfCA4NyArKwo+IGRvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjVf
+MTEucnN0IHwgNCArCj4gZHJpdmVycy9uZXQvbWVzb24uYnVpbGQgfCAxICsKPiBkcml2ZXJzL25l
+dC9uYmwvbWVzb24uYnVpbGQgfCAyNiArCj4gZHJpdmVycy9uZXQvbmJsL25ibF9jb21tb24vbmJs
+X2NvbW1vbi5jIHwgNDcgKwo+IGRyaXZlcnMvbmV0L25ibC9uYmxfY29tbW9uL25ibF9jb21tb24u
+aCB8IDEwICsKPiBkcml2ZXJzL25ldC9uYmwvbmJsX2NvbW1vbi9uYmxfdXNlcmRldi5jIHwgNzYy
+ICsrKysrKysrKysKPiBkcml2ZXJzL25ldC9uYmwvbmJsX2NvbW1vbi9uYmxfdXNlcmRldi5oIHwg
+MjEgKwo+IGRyaXZlcnMvbmV0L25ibC9uYmxfY29yZS5jIHwgMTA1ICsrCj4gZHJpdmVycy9uZXQv
+bmJsL25ibF9jb3JlLmggfCA5OCArKwo+IGRyaXZlcnMvbmV0L25ibC9uYmxfZGV2L25ibF9kZXYu
+YyB8IDEwNzQgKysrKysrKysrKysrKysKPiBkcml2ZXJzL25ldC9uYmwvbmJsX2Rldi9uYmxfZGV2
+LmggfCA4OSArKwo+IGRyaXZlcnMvbmV0L25ibC9uYmxfZGlzcGF0Y2guYyB8IDEzMTggKysrKysr
+KysrKysrKysrKysKPiBkcml2ZXJzL25ldC9uYmwvbmJsX2Rpc3BhdGNoLmggfCAzMSArCj4gZHJp
+dmVycy9uZXQvbmJsL25ibF9ldGhkZXYuYyB8IDEzOCArKwo+IGRyaXZlcnMvbmV0L25ibC9uYmxf
+ZXRoZGV2LmggfCAzMSArCj4gZHJpdmVycy9uZXQvbmJsL25ibF9ody9uYmxfY2hhbm5lbC5jIHwg
+OTc3ICsrKysrKysrKysrKwo+IGRyaXZlcnMvbmV0L25ibC9uYmxfaHcvbmJsX2NoYW5uZWwuaCB8
+IDEzMiArKwo+IGRyaXZlcnMvbmV0L25ibC9uYmxfaHcvbmJsX2h3LmggfCAyOCArCj4gLi4uL25i
+bF9ody9uYmxfaHdfbGVvbmlzL25ibF9od19sZW9uaXNfc25pYy5jIHwgMjI4ICsrKwo+IC4uLi9u
+YmxfaHcvbmJsX2h3X2xlb25pcy9uYmxfaHdfbGVvbmlzX3NuaWMuaCB8IDUzICsKPiAuLi4vbmJs
+L25ibF9ody9uYmxfaHdfbGVvbmlzL25ibF9yZXNfbGVvbmlzLmMgfCAyNTMgKysrKwo+IC4uLi9u
+YmwvbmJsX2h3L25ibF9od19sZW9uaXMvbmJsX3Jlc19sZW9uaXMuaCB8IDEwICsKPiBkcml2ZXJz
+L25ldC9uYmwvbmJsX2h3L25ibF9yZXNvdXJjZS5jIHwgNSArCj4gZHJpdmVycy9uZXQvbmJsL25i
+bF9ody9uYmxfcmVzb3VyY2UuaCB8IDI0OSArKysrCj4gZHJpdmVycy9uZXQvbmJsL25ibF9ody9u
+YmxfdHhyeC5jIHwgOTA4ICsrKysrKysrKysrKwo+IGRyaXZlcnMvbmV0L25ibC9uYmxfaHcvbmJs
+X3R4cnguaCB8IDQwICsKPiBkcml2ZXJzL25ldC9uYmwvbmJsX2h3L25ibF90eHJ4X29wcy5oIHwg
+OTEgKysKPiBkcml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2RlZl9jaGFubmVsLmggfCA0
+NTkgKysrKysrCj4gZHJpdmVycy9uZXQvbmJsL25ibF9pbmNsdWRlL25ibF9kZWZfY29tbW9uLmgg
+fCAxMjAgKysKPiBkcml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2RlZl9kZXYuaCB8IDI2
+ICsKPiAuLi4vbmV0L25ibC9uYmxfaW5jbHVkZS9uYmxfZGVmX2Rpc3BhdGNoLmggfCAxMDAgKysK
+PiBkcml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2RlZl9ody5oIHwgMzUgKwo+IC4uLi9u
+ZXQvbmJsL25ibF9pbmNsdWRlL25ibF9kZWZfcmVzb3VyY2UuaCB8IDkyICsrCj4gZHJpdmVycy9u
+ZXQvbmJsL25ibF9pbmNsdWRlL25ibF9pbmNsdWRlLmggfCAyMDEgKysrCj4gZHJpdmVycy9uZXQv
+bmJsL25ibF9pbmNsdWRlL25ibF9sb2dzLmggfCAyNSArCj4gLi4uL25ldC9uYmwvbmJsX2luY2x1
+ZGUvbmJsX3Byb2R1Y3RfYmFzZS5oIHwgMzEgKwo+IDQxIGZpbGVzIGNoYW5nZWQsIDc5MzcgaW5z
+ZXJ0aW9ucygrKQo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkb2MvZ3VpZGVzL25pY3MvZmVhdHVyZXMv
+bmJsLmluaQo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkb2MvZ3VpZGVzL25pY3MvbmJsLnJzdAo+IGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbWVzb24uYnVpbGQKPiBjcmVhdGUgbW9k
+ZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9jb21tb24vbmJsX2NvbW1vbi5jCj4gY3JlYXRl
+IG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9uYmxfY29tbW9uL25ibF9jb21tb24uaAo+IGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2NvbW1vbi9uYmxfdXNlcmRldi5j
+Cj4gY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9uYmxfY29tbW9uL25ibF91c2Vy
+ZGV2LmgKPiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9jb3JlLmMKPiBj
+cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9jb3JlLmgKPiBjcmVhdGUgbW9k
+ZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9kZXYvbmJsX2Rldi5jCj4gY3JlYXRlIG1vZGUg
+MTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9uYmxfZGV2L25ibF9kZXYuaAo+IGNyZWF0ZSBtb2RlIDEw
+MDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2Rpc3BhdGNoLmMKPiBjcmVhdGUgbW9kZSAxMDA2NDQg
+ZHJpdmVycy9uZXQvbmJsL25ibF9kaXNwYXRjaC5oCj4gY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
+cnMvbmV0L25ibC9uYmxfZXRoZGV2LmMKPiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQv
+bmJsL25ibF9ldGhkZXYuaAo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJs
+X2h3L25ibF9jaGFubmVsLmMKPiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25i
+bF9ody9uYmxfY2hhbm5lbC5oCj4gY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9u
+YmxfaHcvbmJsX2h3LmgKPiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9o
+dy9uYmxfaHdfbGVvbmlzLwo+IG5ibF9od19sZW9uaXNfc25pYy5jCj4gY3JlYXRlIG1vZGUgMTAw
+NjQ0IGRyaXZlcnMvbmV0L25ibC9uYmxfaHcvbmJsX2h3X2xlb25pcy8KPiBuYmxfaHdfbGVvbmlz
+X3NuaWMuaAo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2h3L25ibF9o
+d19sZW9uaXMvbmJsX3Jlc19sZW9uaXMuYwo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25l
+dC9uYmwvbmJsX2h3L25ibF9od19sZW9uaXMvbmJsX3Jlc19sZW9uaXMuaAo+IGNyZWF0ZSBtb2Rl
+IDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2h3L25ibF9yZXNvdXJjZS5jCj4gY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9uYmxfaHcvbmJsX3Jlc291cmNlLmgKPiBjcmVhdGUg
+bW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9ody9uYmxfdHhyeC5jCj4gY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9uYmxfaHcvbmJsX3R4cnguaAo+IGNyZWF0ZSBtb2Rl
+IDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2h3L25ibF90eHJ4X29wcy5oCj4gY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9uYmxfaW5jbHVkZS9uYmxfZGVmX2NoYW5uZWwuaAo+
+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2RlZl9j
+b21tb24uaAo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUv
+bmJsX2RlZl9kZXYuaAo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2lu
+Y2x1ZGUvbmJsX2RlZl9kaXNwYXRjaC5oCj4gY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0
+L25ibC9uYmxfaW5jbHVkZS9uYmxfZGVmX2h3LmgKPiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
+cy9uZXQvbmJsL25ibF9pbmNsdWRlL25ibF9kZWZfcmVzb3VyY2UuaAo+IGNyZWF0ZSBtb2RlIDEw
+MDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2luY2x1ZGUuaAo+IGNyZWF0ZSBt
+b2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2xvZ3MuaAo+IGNyZWF0
+ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX3Byb2R1Y3RfYmFz
+ZS5oCj4gCkFkZGVkIHRvIG5leHQtbmV0LiBGaXhlZCB0aGUgc3RhdHMgaGFuZGxpbmcgdG8gYWNj
+b3VudCBmb3IgY2hhbmdlcwp0byBxdWV1ZSBzdGF0cyBpbnRlcm5hbCBBUEkuCg==
+------=ALIBOUNDARY_1939_7ffa67797700_68f989d3_21ee72
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-Bugzilla ID: 1697
-Signed-off-by: Nicholas Pratte <npratte@iol.unh.edu>
-Signed-off-by: Patrick Robb <probb@iol.unh.edu>
-Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
----
- ...sts.TestSuite_single_core_forward_perf.rst |   8 +
- dts/api/packet.py                             |  35 +++-
- dts/api/test.py                               |  32 ++++
- dts/configurations/tests_config.example.yaml  |  12 ++
- .../TestSuite_single_core_forward_perf.py     | 151 ++++++++++++++++++
- 5 files changed, 237 insertions(+), 1 deletion(-)
- create mode 100644 doc/api/dts/tests.TestSuite_single_core_forward_perf.rst
- create mode 100644 dts/tests/TestSuite_single_core_forward_perf.py
-
-diff --git a/doc/api/dts/tests.TestSuite_single_core_forward_perf.rst b/doc/api/dts/tests.TestSuite_single_core_forward_perf.rst
-new file mode 100644
-index 0000000000..3651b0b041
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_single_core_forward_perf.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+single_core_forward_perf Test Suite
-+===================================
-+
-+.. automodule:: tests.TestSuite_single_core_forward_perf
-+   :members:
-+   :show-inheritance:
-diff --git a/dts/api/packet.py b/dts/api/packet.py
-index ac7f64dd17..094a1b7a9d 100644
---- a/dts/api/packet.py
-+++ b/dts/api/packet.py
-@@ -33,6 +33,9 @@
- from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
-     PacketFilteringConfig,
- )
-+from framework.testbed_model.traffic_generator.performance_traffic_generator import (
-+    PerformanceTrafficStats,
-+)
- from framework.utils import get_packet_summaries
- 
- 
-@@ -108,7 +111,9 @@ def send_packets(
-         packets: Packets to send.
-     """
-     packets = adjust_addresses(packets)
--    get_ctx().func_tg.send_packets(packets, get_ctx().topology.tg_port_egress)
-+    tg = get_ctx().func_tg
-+    if tg:
-+        tg.send_packets(packets, get_ctx().topology.tg_port_egress)
- 
- 
- def get_expected_packets(
-@@ -317,3 +322,31 @@ def _verify_l3_packet(received_packet: IP, expected_packet: IP) -> bool:
-     if received_packet.src != expected_packet.src or received_packet.dst != expected_packet.dst:
-         return False
-     return True
-+
-+
-+def assess_performance_by_packet(
-+    packet: Packet, duration: float, send_mpps: int | None = None
-+) -> PerformanceTrafficStats:
-+    """Send a given packet for a given duration and assess basic performance statistics.
-+
-+    Send `packet` and assess NIC performance for a given duration, corresponding to the test
-+    suite's given topology.
-+
-+    Args:
-+        packet: The packet to send.
-+        duration: Performance test duration (in seconds).
-+        send_mpps: The millions packets per second send rate.
-+
-+    Returns:
-+        Performance statistics of the generated test.
-+    """
-+    from framework.testbed_model.traffic_generator.performance_traffic_generator import (
-+        PerformanceTrafficGenerator,
-+    )
-+
-+    assert isinstance(
-+        get_ctx().perf_tg, PerformanceTrafficGenerator
-+    ), "Cannot send performance traffic with non-performance traffic generator"
-+    tg: PerformanceTrafficGenerator = cast(PerformanceTrafficGenerator, get_ctx().perf_tg)
-+    # TODO: implement @requires for types of traffic generator
-+    return tg.calculate_traffic_and_stats(packet, duration, send_mpps)
-diff --git a/dts/api/test.py b/dts/api/test.py
-index f58c82715d..11265ee2c1 100644
---- a/dts/api/test.py
-+++ b/dts/api/test.py
-@@ -6,9 +6,13 @@
- This module provides utility functions for test cases, including logging, verification.
- """
- 
-+import json
-+from datetime import datetime
-+
- from framework.context import get_ctx
- from framework.exception import InternalError, SkippedTestException, TestCaseVerifyError
- from framework.logger import DTSLogger
-+from framework.testbed_model.artifact import Artifact
- 
- 
- def get_current_test_case_name() -> str:
-@@ -124,3 +128,31 @@ def get_logger() -> DTSLogger:
-     if current_test_suite is None:
-         raise InternalError("No current test suite")
-     return current_test_suite._logger
-+
-+
-+def write_performance_json(
-+    performance_data: dict, filename: str = "performance_metrics.json"
-+) -> None:
-+    """Write performance test results to a JSON file in the test suite's output directory.
-+
-+    This method creates a JSON file containing performance metrics in the test suite's
-+    output directory. The data can be a dictionary of any structure. No specific format
-+    is required.
-+
-+    Args:
-+        performance_data: Dictionary containing performance metrics and results.
-+        filename: Name of the JSON file to create.
-+
-+    Raises:
-+        InternalError: If performance data is not provided.
-+    """
-+    if not performance_data:
-+        raise InternalError("No performance data to write")
-+
-+    perf_data = {"timestamp": datetime.now().isoformat(), **performance_data}
-+    perf_json_artifact = Artifact("local", filename)
-+
-+    with perf_json_artifact.open("w") as json_file:
-+        json.dump(perf_data, json_file, indent=2)
-+
-+    get_logger().info(f"Performance results written to: {perf_json_artifact.local_path}")
-diff --git a/dts/configurations/tests_config.example.yaml b/dts/configurations/tests_config.example.yaml
-index c011ac0588..167bc91a35 100644
---- a/dts/configurations/tests_config.example.yaml
-+++ b/dts/configurations/tests_config.example.yaml
-@@ -3,3 +3,15 @@
- # Define the custom test suite configurations
- hello_world:
-   msg: A custom hello world to you!
-+single_core_forward_perf:
-+  test_parameters: # Add frame size / descriptor count combinations as needed
-+    - frame_size: 64
-+      num_descriptors: 512
-+      expected_mpps: 1.0 # Set millions of packets per second according to your devices expected throughput for this given frame size / descriptor count
-+    - frame_size: 64
-+      num_descriptors: 1024
-+      expected_mpps: 1.0
-+    - frame_size: 512
-+      num_descriptors: 1024
-+      expected_mpps: 1.0
-+  delta_tolerance: 0.05
-\ No newline at end of file
-diff --git a/dts/tests/TestSuite_single_core_forward_perf.py b/dts/tests/TestSuite_single_core_forward_perf.py
-new file mode 100644
-index 0000000000..ceea6f25e5
---- /dev/null
-+++ b/dts/tests/TestSuite_single_core_forward_perf.py
-@@ -0,0 +1,151 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 University of New Hampshire
-+
-+"""Single core forwarding performance test suite.
-+
-+This suite measures the amount of packets which can be forwarded by DPDK using a single core.
-+The testsuites takes in as parameters a set of parameters, each consisting of a frame size,
-+Tx/Rx descriptor count, and the expected MPPS to be forwarded by the DPDK application. The
-+test leverages a performance traffic generator to send traffic at two paired TestPMD interfaces
-+on the SUT system, which forward to one another and then back to the traffic generator's ports.
-+The aggregate packets forwarded by the two TestPMD ports are compared against the expected MPPS
-+baseline which is given in the test config, in order to determine the test result.
-+"""
-+
-+from scapy.layers.inet import IP
-+from scapy.layers.l2 import Ether
-+from scapy.packet import Raw
-+
-+from api.capabilities import (
-+    LinkTopology,
-+    requires_link_topology,
-+)
-+from api.packet import assess_performance_by_packet
-+from api.test import verify, write_performance_json
-+from api.testpmd import TestPmd
-+from api.testpmd.config import RXRingParams, TXRingParams
-+from framework.params.types import TestPmdParamsDict
-+from framework.test_suite import BaseConfig, TestSuite, perf_test
-+
-+
-+class Config(BaseConfig):
-+    """Performance test metrics."""
-+
-+    test_parameters: list[dict[str, int | float]] = [
-+        {"frame_size": 64, "num_descriptors": 1024, "expected_mpps": 1.00},
-+        {"frame_size": 128, "num_descriptors": 1024, "expected_mpps": 1.00},
-+        {"frame_size": 256, "num_descriptors": 1024, "expected_mpps": 1.00},
-+        {"frame_size": 512, "num_descriptors": 1024, "expected_mpps": 1.00},
-+        {"frame_size": 1024, "num_descriptors": 1024, "expected_mpps": 1.00},
-+        {"frame_size": 1518, "num_descriptors": 1024, "expected_mpps": 1.00},
-+    ]
-+    delta_tolerance: float = 0.05
-+
-+
-+@requires_link_topology(LinkTopology.TWO_LINKS)
-+class TestSingleCoreForwardPerf(TestSuite):
-+    """Single core forwarding performance test suite."""
-+
-+    config: Config
-+
-+    def set_up_suite(self):
-+        """Set up the test suite."""
-+        self.test_parameters = self.config.test_parameters
-+        self.delta_tolerance = self.config.delta_tolerance
-+
-+    def _transmit(self, testpmd: TestPmd, frame_size: int) -> float:
-+        """Create a testpmd session with every rule in the given list, verify jump behavior.
-+
-+        Args:
-+            testpmd: The testpmd shell to use for forwarding packets
-+            frame_size: The size of the frame to transmit
-+
-+        Returns:
-+            The MPPS (millions of packets per second) forwarded by the SUT.
-+        """
-+        # Build packet with dummy values, and account for the 14B and 20B Ether and IP headers
-+        packet = (
-+            Ether(src="52:00:00:00:00:00")
-+            / IP(src="1.2.3.4", dst="192.18.1.0")
-+            / Raw(load="x" * (frame_size - 14 - 20))
-+        )
-+
-+        testpmd.start()
-+
-+        # Transmit for 30 seconds.
-+        stats = assess_performance_by_packet(packet=packet, duration=30)
-+
-+        rx_mpps = stats.rx_pps / 1000000
-+
-+        return rx_mpps
-+
-+    def _produce_stats_table(self, test_parameters: list[dict[str, int | float]]) -> None:
-+        """Display performance results in table format and write to structured JSON file.
-+
-+        Args:
-+            test_parameters: The expected and real stats per set of test parameters.
-+        """
-+        header = f"{'Frame Size':>12} | {'TXD/RXD':>12} | {'Real MPPS':>12} | {'Expected MPPS':>14}"
-+        print("-" * len(header))
-+        print(header)
-+        print("-" * len(header))
-+        for params in test_parameters:
-+            print(f"{params['frame_size']:>12} | {params['num_descriptors']:>12} | ", end="")
-+            print(f"{params['measured_mpps']:>12.2f} | {params['expected_mpps']:>14.2f}")
-+            print("-" * len(header))
-+
-+        write_performance_json({"results": test_parameters})
-+
-+    @perf_test
-+    def single_core_forward_perf(self) -> None:
-+        """Validate expected single core forwarding performance.
-+
-+        Steps:
-+            * Create a packet according to the frame size specified in the test config.
-+            * Transmit from the traffic generator's ports 0 and 1 at above the expect
-+            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
-+
-+        Verify:
-+            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance)
-+        """
-+        # Find SUT DPDK driver to determine driver specific performance optimization flags
-+        sut_dpdk_driver = self._ctx.sut_node.config.ports[0].os_driver_for_dpdk
-+
-+        for params in self.test_parameters:
-+            frame_size = params["frame_size"]
-+            num_descriptors = params["num_descriptors"]
-+
-+            driver_specific_testpmd_args: TestPmdParamsDict = {
-+                "tx_ring": TXRingParams(descriptors=num_descriptors),
-+                "rx_ring": RXRingParams(descriptors=num_descriptors),
-+                "nb_cores": 1,
-+            }
-+
-+            if sut_dpdk_driver == "mlx5_core":
-+                driver_specific_testpmd_args["burst"] = 64
-+                driver_specific_testpmd_args["mbcache"] = 512
-+            elif sut_dpdk_driver == "i40e":
-+                driver_specific_testpmd_args["rx_queues"] = 2
-+                driver_specific_testpmd_args["tx_queues"] = 2
-+
-+            with TestPmd(
-+                **driver_specific_testpmd_args,
-+            ) as testpmd:
-+                params["measured_mpps"] = self._transmit(testpmd, frame_size)
-+                params["performance_delta"] = (
-+                    float(params["measured_mpps"]) - float(params["expected_mpps"])
-+                ) / float(params["measured_mpps"])
-+                params["pass"] = float(params["measured_mpps"]) >= float(
-+                    params["expected_mpps"]
-+                ) * (1 - self.delta_tolerance)
-+
-+        self._produce_stats_table(self.test_parameters)
-+
-+        for params in self.test_parameters:
-+            verify(
-+                params["pass"] is True,
-+                f"""Packets forwarded is less than {(1 -self.delta_tolerance)*100}%
-+                of the expected baseline.
-+                Measured MPPS = {params["measured_mpps"]}
-+                Expected MPPS = {params["expected_mpps"]}""",
-+            )
--- 
-2.49.0
+PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
+ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
+bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
+Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
+VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPkhpJm5ic3A7PHNwYW4gIHN0eWxlPSJjb2xvcjogcmdi
+KDAsIDAsIDApOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBm
+b250LXNpemU6IDE0cHg7IGZvbnQtc3R5bGU6IG5vcm1hbDsgZm9udC12YXJpYW50LWxpZ2F0dXJl
+czogbm9ybWFsOyBmb250LXZhcmlhbnQtY2Fwczogbm9ybWFsOyBmb250LXdlaWdodDogNDAwOyBs
+ZXR0ZXItc3BhY2luZzogbm9ybWFsOyB0ZXh0LWFsaWduOiBzdGFydDsgdGV4dC1pbmRlbnQ6IDBw
+eDsgdGV4dC10cmFuc2Zvcm06IG5vbmU7IHdoaXRlLXNwYWNlOiBub3JtYWw7IHdvcmQtc3BhY2lu
+ZzogMHB4OyBiYWNrZ3JvdW5kLWNvbG9yOiByZ2IoMjU1LCAyNTUsIDI1NSk7IHRleHQtZGVjb3Jh
+dGlvbi10aGlja25lc3M6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1zdHlsZTogaW5pdGlhbDsg
+dGV4dC1kZWNvcmF0aW9uLWNvbG9yOiBpbml0aWFsOyBmbG9hdDogbm9uZTsgZGlzcGxheTogaW5s
+aW5lICFpbXBvcnRhbnQ7Ij5TdGVwaGVuLDwvc3Bhbj48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9
+ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0
+LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhl
+aXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iY29sb3I6IHJnYigwLCAwLCAwKTsg
+Zm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAx
+NHB4OyBmb250LXN0eWxlOiBub3JtYWw7IGZvbnQtdmFyaWFudC1saWdhdHVyZXM6IG5vcm1hbDsg
+Zm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9udC13ZWlnaHQ6IDQwMDsgbGV0dGVyLXNwYWNp
+bmc6IG5vcm1hbDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJh
+bnNmb3JtOiBub25lOyB3aGl0ZS1zcGFjZTogbm9ybWFsOyB3b3JkLXNwYWNpbmc6IDBweDsgYmFj
+a2dyb3VuZC1jb2xvcjogcmdiKDI1NSwgMjU1LCAyNTUpOyB0ZXh0LWRlY29yYXRpb24tdGhpY2tu
+ZXNzOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tc3R5bGU6IGluaXRpYWw7IHRleHQtZGVjb3Jh
+dGlvbi1jb2xvcjogaW5pdGlhbDsgZmxvYXQ6IG5vbmU7IGRpc3BsYXk6IGlubGluZSAhaW1wb3J0
+YW50OyI+PGJyID48L3NwYW4+PC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsg
+Zm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PHNw
+YW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBT
+aW1TdW47Ij48c3BhbiA+VGhhbmsgeW91IGZvciB0aGUgcmV2aWV3IGFuZCBmb3IgZml4aW5nIHRo
+ZSBzdGF0cyBBUEkgaXNzdWUhIDwvc3Bhbj48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFy
+OiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1T
+dW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0Mt
+TGlnaHQsIFNpbVN1bjsiPjxzcGFuID48YnIgPjwvc3Bhbj48L3NwYW4+PC9kaXY+PGRpdiAgc3R5
+bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
+Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
+VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuID48YnIgPjwvc3Bhbj48L3NwYW4+PC9kaXY+
+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RI
+ZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEs
+IEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxiciA+PC9zcGFuPjwvZGl2PjxibG9j
+a3F1b3RlICBfcXVvdGU9IjEiIHN0eWxlPSJtYXJnaW4tcmlnaHQ6IDBweDsgbWFyZ2luLXRvcDog
+MHB4OyBtYXJnaW4tYm90dG9tOiAwcHg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhl
+aXRpLCBTaW1TdW47IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPjxkaXYg
+IGNsYXNzPSJhbGltYWlsLXF1b3RlIj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij4tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS08L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7lj5Hku7bkurrvvJpTdGVwaGVuIEhl
+bW1pbmdlciAmbHQ7c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmcmZ3Q7PC9kaXY+PGRpdiAgc3R5
+bGU9ImNsZWFyOiBib3RoOyI+5Y+R6YCB5pe26Ze077yaMjAyNeW5tDEw5pyIMjPml6Uo5ZGo5Zub
+KSAwMDozMzwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuaUtuS7tuS6uu+8mkRpbW9u
+Jmx0O2RpbW9uLnpoYW9AbmVidWxhLW1hdHJpeC5jb20mZ3Q7PC9kaXY+PGRpdiAgc3R5bGU9ImNs
+ZWFyOiBib3RoOyI+5oqE44CA6YCB77yaZGV2Jmx0O2RldkBkcGRrLm9yZyZndDs8L2Rpdj48ZGl2
+ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7kuLvjgIDpopjvvJpSZTogW1BBVENIIHYxNCAwMC8xN10g
+TkJMIFBNRCBmb3IgTmVidWxhbWF0cml4IE5JQ3M8L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJv
+dGg7Ij48YnIgPjwvZGl2Pk9uIFR1ZSwgMjEgT2N0IDIwMjUgMjA6NTE6NTMgLTA3MDA8YnIgPkRp
+bW9uIFpoYW8gJmx0O2RpbW9uLnpoYW9AbmVidWxhLW1hdHJpeC5jb20mZ3Q7IHdyb3RlOjxiciA+
+PGJyID4mZ3Q7IEZlYXR1cmVzOjxiciA+Jmd0OyAtLS0tLS0tLS08YnIgPiZndDsgLSBNVFUgdXBk
+YXRlPGJyID4mZ3Q7IC0gcHJvbWlzYyBtb2RlIHNldDxiciA+Jmd0OyAtIHhzdGF0czxiciA+Jmd0
+OyAtIEJhc2ljIHN0YXRzIDxiciA+Jmd0OyA8YnIgPiZndDsgU3VwcG9ydCBOSUNzOjxiciA+Jmd0
+OyAtLS0tLS0tLS0tLS0tPGJyID4mZ3Q7IC0gUzEyMDVDUS1BMDBDSFQ8YnIgPiZndDsgLSBTMTEw
+NUFTLUEwMENIVDxiciA+Jmd0OyAtIFMxMDU1QVMtQTAwQ0hUPGJyID4mZ3Q7IC0gUzEwNTJBUy1B
+MDBDSFQ8YnIgPiZndDsgLSBTMTA1MUFTLUEwMENIVDxiciA+Jmd0OyAtIFMxMDQ1WFMtQTAwQ0hU
+PGJyID4mZ3Q7IC0gUzEyMDVDUS1BMDBDU1A8YnIgPiZndDsgLSBTMTA1NUFTLUEwMENTUDxiciA+
+Jmd0OyAtIFMxMDUyQVMtQTAwQ1NQPGJyID4mZ3Q7IDxiciA+Jmd0OyBEaW1vbiBaaGFvICgxNyk6
+PGJyID4mZ3Q7ICZuYnNwOyBuZXQvbmJsOiBhZGQgZG9jIGFuZCBtaW5pbXVtIG5ibCBidWlsZCBm
+cmFtZXdvcms8YnIgPiZndDsgJm5ic3A7IG5ldC9uYmw6IGFkZCBzaW1wbGUgcHJvYmUvcmVtb3Zl
+IGFuZCBsb2cgbW9kdWxlPGJyID4mZ3Q7ICZuYnNwOyBuZXQvbmJsOiBhZGQgSFcgbGF5ZXIgZGVm
+aW5pdGlvbnMgYW5kIGltcGxlbWVudGF0aW9uPGJyID4mZ3Q7ICZuYnNwOyBuZXQvbmJsOiBhZGQg
+Q2hhbm5lbCBsYXllciBkZWZpbml0aW9ucyBhbmQgaW1wbGVtZW50YXRpb248YnIgPiZndDsgJm5i
+c3A7IG5ldC9uYmw6IGFkZCBSZXNvdXJjZSBsYXllciBkZWZpbml0aW9ucyBhbmQgaW1wbGVtZW50
+YXRpb248YnIgPiZndDsgJm5ic3A7IG5ldC9uYmw6IGFkZCBEaXNwYXRjaCBsYXllciBkZWZpbml0
+aW9ucyBhbmQgaW1wbGVtZW50YXRpb248YnIgPiZndDsgJm5ic3A7IG5ldC9uYmw6IGFkZCBEZXYg
+bGF5ZXIgZGVmaW5pdGlvbnMgYW5kIGltcGxlbWVudGF0aW9uPGJyID4mZ3Q7ICZuYnNwOyBuZXQv
+bmJsOiBhZGQgY29tcGxldGUgZGV2aWNlIGluaXQgYW5kIHVuaW5pdCBmdW5jdGlvbmFsaXR5PGJy
+ID4mZ3Q7ICZuYnNwOyBuZXQvbmJsOiBhZGQgVUlPIGFuZCBWRklPIG1vZGUgZm9yIG5ibDxiciA+
+Jmd0OyAmbmJzcDsgbmV0L25ibDogYWRkIG5ibCBjb2V4aXN0ZW5jZSBtb2RlIGZvciBuYmw8YnIg
+PiZndDsgJm5ic3A7IG5ldC9uYmw6IGFkZCBuYmwgZXRoZGV2IGNvbmZpZ3VyYXRpb248YnIgPiZn
+dDsgJm5ic3A7IG5ldC9uYmw6IGFkZCBuYmwgZGV2aWNlIHJ4dHggcXVldWUgc2V0dXAgYW5kIHJl
+bGVhc2Ugb3BzPGJyID4mZ3Q7ICZuYnNwOyBuZXQvbmJsOiBhZGQgbmJsIGRldmljZSBzdGFydCBh
+bmQgc3RvcCBvcHM8YnIgPiZndDsgJm5ic3A7IG5ldC9uYmw6IGFkZCBuYmwgZGV2aWNlIFR4IGFu
+ZCBSeCBidXJzdDxiciA+Jmd0OyAmbmJzcDsgbmV0L25ibDogYWRkIG5ibCBldGhkZXYgaW5mb3Mg
+Z2V0PGJyID4mZ3Q7ICZuYnNwOyBuZXQvbmJsOiBhZGQgbmJsIGRldmljZSB4c3RhdHMgYW5kIHN0
+YXRzPGJyID4mZ3Q7ICZuYnNwOyBuZXQvbmJsOiBhZGQgbmJsIGRldmljZSBzZXQgTVRVIGFuZCBw
+cm9taXNjPGJyID4mZ3Q7IDxiciA+Jmd0OyZuYnNwOyAubWFpbG1hcCZuYnNwOyAmbmJzcDsgJm5i
+c3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJz
+cDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNw
+OyB8Jm5ic3A7ICZuYnNwOyA0ICs8YnIgPiZndDsmbmJzcDsgTUFJTlRBSU5FUlMgJm5ic3A7ICZu
+YnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5i
+c3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyB8Jm5i
+c3A7ICZuYnNwOyA5ICs8YnIgPiZndDsmbmJzcDsgZG9jL2d1aWRlcy9uaWNzL2ZlYXR1cmVzL25i
+bC5pbmkmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgfCAm
+bmJzcDsgMTggKzxiciA+Jmd0OyZuYnNwOyBkb2MvZ3VpZGVzL25pY3MvaW5kZXgucnN0ICZuYnNw
+OyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7
+ICZuYnNwOyB8Jm5ic3A7ICZuYnNwOyAxICs8YnIgPiZndDsmbmJzcDsgZG9jL2d1aWRlcy9uaWNz
+L25ibC5yc3QgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7
+ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyB8ICZuYnNwOyA4NyArKzxiciA+Jmd0OyZuYnNw
+OyBkb2MvZ3VpZGVzL3JlbF9ub3Rlcy9yZWxlYXNlXzI1XzExLnJzdCZuYnNwOyAmbmJzcDsgJm5i
+c3A7ICZuYnNwOyB8Jm5ic3A7ICZuYnNwOyA0ICs8YnIgPiZndDsmbmJzcDsgZHJpdmVycy9uZXQv
+bWVzb24uYnVpbGQgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5i
+c3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyB8Jm5ic3A7ICZuYnNwOyAxICs8YnIgPiZn
+dDsmbmJzcDsgZHJpdmVycy9uZXQvbmJsL21lc29uLmJ1aWxkICZuYnNwOyAmbmJzcDsgJm5ic3A7
+ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHwgJm5ic3A7IDI2ICs8
+YnIgPiZndDsmbmJzcDsgZHJpdmVycy9uZXQvbmJsL25ibF9jb21tb24vbmJsX2NvbW1vbi5jICZu
+YnNwOyAmbmJzcDsgJm5ic3A7IHwgJm5ic3A7IDQ3ICs8YnIgPiZndDsmbmJzcDsgZHJpdmVycy9u
+ZXQvbmJsL25ibF9jb21tb24vbmJsX2NvbW1vbi5oICZuYnNwOyAmbmJzcDsgJm5ic3A7IHwgJm5i
+c3A7IDEwICs8YnIgPiZndDsmbmJzcDsgZHJpdmVycy9uZXQvbmJsL25ibF9jb21tb24vbmJsX3Vz
+ZXJkZXYuYyZuYnNwOyAmbmJzcDsgJm5ic3A7IHwmbmJzcDsgNzYyICsrKysrKysrKys8YnIgPiZn
+dDsmbmJzcDsgZHJpdmVycy9uZXQvbmJsL25ibF9jb21tb24vbmJsX3VzZXJkZXYuaCZuYnNwOyAm
+bmJzcDsgJm5ic3A7IHwgJm5ic3A7IDIxICs8YnIgPiZndDsmbmJzcDsgZHJpdmVycy9uZXQvbmJs
+L25ibF9jb3JlLmMmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJz
+cDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgfCZuYnNwOyAxMDUgKys8YnIgPiZndDsmbmJzcDsgZHJp
+dmVycy9uZXQvbmJsL25ibF9jb3JlLmgmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7
+ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgfCAmbmJzcDsgOTggKys8YnIgPiZn
+dDsmbmJzcDsgZHJpdmVycy9uZXQvbmJsL25ibF9kZXYvbmJsX2Rldi5jICZuYnNwOyAmbmJzcDsg
+Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHwgMTA3NCArKysrKysrKysrKysrKzxiciA+Jmd0
+OyZuYnNwOyBkcml2ZXJzL25ldC9uYmwvbmJsX2Rldi9uYmxfZGV2LmggJm5ic3A7ICZuYnNwOyAm
+bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgfCAmbmJzcDsgODkgKys8YnIgPiZndDsmbmJzcDsg
+ZHJpdmVycy9uZXQvbmJsL25ibF9kaXNwYXRjaC5jJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7
+ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyB8IDEzMTggKysrKysrKysrKysrKysrKys8YnIg
+PiZndDsmbmJzcDsgZHJpdmVycy9uZXQvbmJsL25ibF9kaXNwYXRjaC5oJm5ic3A7ICZuYnNwOyAm
+bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyB8ICZuYnNwOyAzMSArPGJy
+ID4mZ3Q7Jm5ic3A7IGRyaXZlcnMvbmV0L25ibC9uYmxfZXRoZGV2LmMmbmJzcDsgJm5ic3A7ICZu
+YnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyB8Jm5ic3A7IDEz
+OCArKzxiciA+Jmd0OyZuYnNwOyBkcml2ZXJzL25ldC9uYmwvbmJsX2V0aGRldi5oJm5ic3A7ICZu
+YnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgfCAm
+bmJzcDsgMzEgKzxiciA+Jmd0OyZuYnNwOyBkcml2ZXJzL25ldC9uYmwvbmJsX2h3L25ibF9jaGFu
+bmVsLmMmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHwmbmJzcDsgOTc3ICsrKysr
+KysrKysrKzxiciA+Jmd0OyZuYnNwOyBkcml2ZXJzL25ldC9uYmwvbmJsX2h3L25ibF9jaGFubmVs
+LmgmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHwmbmJzcDsgMTMyICsrPGJyID4m
+Z3Q7Jm5ic3A7IGRyaXZlcnMvbmV0L25ibC9uYmxfaHcvbmJsX2h3LmggJm5ic3A7ICZuYnNwOyAm
+bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHwgJm5ic3A7IDI4ICs8YnIgPiZndDsm
+bmJzcDsgLi4uL25ibF9ody9uYmxfaHdfbGVvbmlzL25ibF9od19sZW9uaXNfc25pYy5jIHwmbmJz
+cDsgMjI4ICsrKzxiciA+Jmd0OyZuYnNwOyAuLi4vbmJsX2h3L25ibF9od19sZW9uaXMvbmJsX2h3
+X2xlb25pc19zbmljLmggfCAmbmJzcDsgNTMgKzxiciA+Jmd0OyZuYnNwOyAuLi4vbmJsL25ibF9o
+dy9uYmxfaHdfbGVvbmlzL25ibF9yZXNfbGVvbmlzLmMgfCZuYnNwOyAyNTMgKysrKzxiciA+Jmd0
+OyZuYnNwOyAuLi4vbmJsL25ibF9ody9uYmxfaHdfbGVvbmlzL25ibF9yZXNfbGVvbmlzLmggfCAm
+bmJzcDsgMTAgKzxiciA+Jmd0OyZuYnNwOyBkcml2ZXJzL25ldC9uYmwvbmJsX2h3L25ibF9yZXNv
+dXJjZS5jICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyB8Jm5ic3A7ICZuYnNwOyA1ICs8YnIg
+PiZndDsmbmJzcDsgZHJpdmVycy9uZXQvbmJsL25ibF9ody9uYmxfcmVzb3VyY2UuaCAmbmJzcDsg
+Jm5ic3A7ICZuYnNwOyAmbmJzcDsgfCZuYnNwOyAyNDkgKysrKzxiciA+Jmd0OyZuYnNwOyBkcml2
+ZXJzL25ldC9uYmwvbmJsX2h3L25ibF90eHJ4LmMgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7
+ICZuYnNwOyAmbmJzcDsgfCZuYnNwOyA5MDggKysrKysrKysrKysrPGJyID4mZ3Q7Jm5ic3A7IGRy
+aXZlcnMvbmV0L25ibC9uYmxfaHcvbmJsX3R4cnguaCAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJz
+cDsgJm5ic3A7ICZuYnNwOyB8ICZuYnNwOyA0MCArPGJyID4mZ3Q7Jm5ic3A7IGRyaXZlcnMvbmV0
+L25ibC9uYmxfaHcvbmJsX3R4cnhfb3BzLmggJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHwg
+Jm5ic3A7IDkxICsrPGJyID4mZ3Q7Jm5ic3A7IGRyaXZlcnMvbmV0L25ibC9uYmxfaW5jbHVkZS9u
+YmxfZGVmX2NoYW5uZWwuaCB8Jm5ic3A7IDQ1OSArKysrKys8YnIgPiZndDsmbmJzcDsgZHJpdmVy
+cy9uZXQvbmJsL25ibF9pbmNsdWRlL25ibF9kZWZfY29tbW9uLmgmbmJzcDsgfCZuYnNwOyAxMjAg
+Kys8YnIgPiZndDsmbmJzcDsgZHJpdmVycy9uZXQvbmJsL25ibF9pbmNsdWRlL25ibF9kZWZfZGV2
+LmggJm5ic3A7ICZuYnNwOyB8ICZuYnNwOyAyNiArPGJyID4mZ3Q7Jm5ic3A7IC4uLi9uZXQvbmJs
+L25ibF9pbmNsdWRlL25ibF9kZWZfZGlzcGF0Y2guaCZuYnNwOyAmbmJzcDsgfCZuYnNwOyAxMDAg
+Kys8YnIgPiZndDsmbmJzcDsgZHJpdmVycy9uZXQvbmJsL25ibF9pbmNsdWRlL25ibF9kZWZfaHcu
+aCZuYnNwOyAmbmJzcDsgJm5ic3A7IHwgJm5ic3A7IDM1ICs8YnIgPiZndDsmbmJzcDsgLi4uL25l
+dC9uYmwvbmJsX2luY2x1ZGUvbmJsX2RlZl9yZXNvdXJjZS5oJm5ic3A7ICZuYnNwOyB8ICZuYnNw
+OyA5MiArKzxiciA+Jmd0OyZuYnNwOyBkcml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2lu
+Y2x1ZGUuaCAmbmJzcDsgJm5ic3A7IHwmbmJzcDsgMjAxICsrKzxiciA+Jmd0OyZuYnNwOyBkcml2
+ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2xvZ3MuaCZuYnNwOyAmbmJzcDsgJm5ic3A7ICZu
+YnNwOyB8ICZuYnNwOyAyNSArPGJyID4mZ3Q7Jm5ic3A7IC4uLi9uZXQvbmJsL25ibF9pbmNsdWRl
+L25ibF9wcm9kdWN0X2Jhc2UuaCZuYnNwOyAmbmJzcDsgfCAmbmJzcDsgMzEgKzxiciA+Jmd0OyZu
+YnNwOyA0MSBmaWxlcyBjaGFuZ2VkLCA3OTM3IGluc2VydGlvbnMoKyk8YnIgPiZndDsmbmJzcDsg
+Y3JlYXRlIG1vZGUgMTAwNjQ0IGRvYy9ndWlkZXMvbmljcy9mZWF0dXJlcy9uYmwuaW5pPGJyID4m
+Z3Q7Jm5ic3A7IGNyZWF0ZSBtb2RlIDEwMDY0NCBkb2MvZ3VpZGVzL25pY3MvbmJsLnJzdDxiciA+
+Jmd0OyZuYnNwOyBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL21lc29uLmJ1aWxk
+PGJyID4mZ3Q7Jm5ic3A7IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2Nv
+bW1vbi9uYmxfY29tbW9uLmM8YnIgPiZndDsmbmJzcDsgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
+cnMvbmV0L25ibC9uYmxfY29tbW9uL25ibF9jb21tb24uaDxiciA+Jmd0OyZuYnNwOyBjcmVhdGUg
+bW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9jb21tb24vbmJsX3VzZXJkZXYuYzxiciA+
+Jmd0OyZuYnNwOyBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9jb21tb24v
+bmJsX3VzZXJkZXYuaDxiciA+Jmd0OyZuYnNwOyBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9u
+ZXQvbmJsL25ibF9jb3JlLmM8YnIgPiZndDsmbmJzcDsgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
+cnMvbmV0L25ibC9uYmxfY29yZS5oPGJyID4mZ3Q7Jm5ic3A7IGNyZWF0ZSBtb2RlIDEwMDY0NCBk
+cml2ZXJzL25ldC9uYmwvbmJsX2Rldi9uYmxfZGV2LmM8YnIgPiZndDsmbmJzcDsgY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9uYmxfZGV2L25ibF9kZXYuaDxiciA+Jmd0OyZuYnNw
+OyBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9kaXNwYXRjaC5jPGJyID4m
+Z3Q7Jm5ic3A7IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2Rpc3BhdGNo
+Lmg8YnIgPiZndDsmbmJzcDsgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9uYmxf
+ZXRoZGV2LmM8YnIgPiZndDsmbmJzcDsgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25i
+bC9uYmxfZXRoZGV2Lmg8YnIgPiZndDsmbmJzcDsgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMv
+bmV0L25ibC9uYmxfaHcvbmJsX2NoYW5uZWwuYzxiciA+Jmd0OyZuYnNwOyBjcmVhdGUgbW9kZSAx
+MDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9ody9uYmxfY2hhbm5lbC5oPGJyID4mZ3Q7Jm5ic3A7
+IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2h3L25ibF9ody5oPGJyID4m
+Z3Q7Jm5ic3A7IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2h3L25ibF9o
+d19sZW9uaXMvPGJyID4mZ3Q7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IG5ibF9od19sZW9uaXNfc25p
+Yy5jPGJyID4mZ3Q7Jm5ic3A7IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9uYmwvbmJs
+X2h3L25ibF9od19sZW9uaXMvPGJyID4mZ3Q7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IG5ibF9od19s
+ZW9uaXNfc25pYy5oPGJyID4mZ3Q7Jm5ic3A7IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25l
+dC9uYmwvbmJsX2h3L25ibF9od19sZW9uaXMvbmJsX3Jlc19sZW9uaXMuYzxiciA+Jmd0OyZuYnNw
+OyBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9ody9uYmxfaHdfbGVvbmlz
+L25ibF9yZXNfbGVvbmlzLmg8YnIgPiZndDsmbmJzcDsgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
+cnMvbmV0L25ibC9uYmxfaHcvbmJsX3Jlc291cmNlLmM8YnIgPiZndDsmbmJzcDsgY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9uYmxfaHcvbmJsX3Jlc291cmNlLmg8YnIgPiZndDsm
+bmJzcDsgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9uYmxfaHcvbmJsX3R4cngu
+YzxiciA+Jmd0OyZuYnNwOyBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9o
+dy9uYmxfdHhyeC5oPGJyID4mZ3Q7Jm5ic3A7IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25l
+dC9uYmwvbmJsX2h3L25ibF90eHJ4X29wcy5oPGJyID4mZ3Q7Jm5ic3A7IGNyZWF0ZSBtb2RlIDEw
+MDY0NCBkcml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2RlZl9jaGFubmVsLmg8YnIgPiZn
+dDsmbmJzcDsgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9uYmxfaW5jbHVkZS9u
+YmxfZGVmX2NvbW1vbi5oPGJyID4mZ3Q7Jm5ic3A7IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJz
+L25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2RlZl9kZXYuaDxiciA+Jmd0OyZuYnNwOyBjcmVhdGUg
+bW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9pbmNsdWRlL25ibF9kZWZfZGlzcGF0Y2gu
+aDxiciA+Jmd0OyZuYnNwOyBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9p
+bmNsdWRlL25ibF9kZWZfaHcuaDxiciA+Jmd0OyZuYnNwOyBjcmVhdGUgbW9kZSAxMDA2NDQgZHJp
+dmVycy9uZXQvbmJsL25ibF9pbmNsdWRlL25ibF9kZWZfcmVzb3VyY2UuaDxiciA+Jmd0OyZuYnNw
+OyBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvbmJsL25ibF9pbmNsdWRlL25ibF9pbmNs
+dWRlLmg8YnIgPiZndDsmbmJzcDsgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L25ibC9u
+YmxfaW5jbHVkZS9uYmxfbG9ncy5oPGJyID4mZ3Q7Jm5ic3A7IGNyZWF0ZSBtb2RlIDEwMDY0NCBk
+cml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX3Byb2R1Y3RfYmFzZS5oPGJyID4mZ3Q7IDxi
+ciA+PGJyID48YnIgPkFkZGVkIHRvIG5leHQtbmV0LiBGaXhlZCB0aGUgc3RhdHMgaGFuZGxpbmcg
+dG8gYWNjb3VudCBmb3IgY2hhbmdlczxiciA+dG8gcXVldWUgc3RhdHMgaW50ZXJuYWwgQVBJLjwv
+ZGl2PjwvYmxvY2txdW90ZT48ZGl2ICBzdHlsZT0ibGluZS1oZWlnaHQ6IDIwcHg7IGNsZWFyOiBi
+b3RoOyI+PGJyID48L2Rpdj48L2Rpdj48L2Rpdj4NCjxkaXYgc3R5bGU9ImNsZWFyOiBib3RoOyI+
+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZTogMTBweDsgY29sb3I6IHJnYigyMTYsIDIxNiwgMjE2KTsi
+PuacrOmCruS7tuaJgOWQq+S/oeaBr+WPiuWFtuS7u+S9lemZhOS7tuS4uuS/neWvhuS/oeaBr+S4
+lOWPr+iDveWxnuS6juS4k+acieS/oeaBr+OAguS7u+S9lemdnuaMh+WumuaOpeaUtuS6uuWdh+aX
+oOadg+iuv+mXruacrOmCruS7tuOAguWmguaenOaCqOS4jeaYr+ivpemCruS7tueahOaMh+WumuaO
+peaUtuS6uu+8jOmCo+S5iOS7u+S9leWvueacrOmCruS7tuWGheWuuei/m+ihjOaKq+mcsu+8jOWk
+jeWItuaIluS9v+eUqOeahOihjOS4uuWdh+aYr+emgeatoueahOOAguWmguaenOaCqOS4jeaYr+iv
+pemCruS7tueahOaMh+WumuaOpeaUtuS6uu+8jOivt+aCqOeri+WNs+mAmui/h+mCruS7tumAmuef
+pSZuYnNwO2NvbXBsaWFuY2VAbmVidWxhLW1hdHJpeC5jb23lubbnq4vljbPliKDpmaTmgqjplJno
+r6/mjqXlj5fnmoTpgq7ku7bjgII8L3NwYW4+PC9kaXY+PGRpdiBzdHlsZT0iY2xlYXI6IGJvdGg7
+Ij48c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMHB4OyBjb2xvcjogcmdiKDIxNiwgMjE2LCAyMTYp
+OyI+VGhlJm5ic3A7aW5mb3JtYXRpb24mbmJzcDtpbiZuYnNwO3RoaXMmbmJzcDttZXNzYWdlJm5i
+c3A7YW5kJm5ic3A7YW55Jm5ic3A7YXR0YWNobWVudHMmbmJzcDtpcyZuYnNwO2NvbmZpZGVudGlh
+bCZuYnNwO2FuZCZuYnNwO21heSZuYnNwO2JlJm5ic3A7cHJpdmlsZWdlZC4mbmJzcDsmbmJzcDtB
+Y2Nlc3MmbmJzcDt0byZuYnNwO3RoaXMmbmJzcDtlbWFpbCZuYnNwO2J5Jm5ic3A7YW55b25lJm5i
+c3A7b3RoZXImbmJzcDt0aGFuJm5ic3A7dGhlJm5ic3A7aW50ZW5kZWQmbmJzcDtyZWNpcGllbnQm
+bmJzcDtpcyZuYnNwO25vdCZuYnNwO2F1dGhvcml6ZWQuJm5ic3A7Jm5ic3A7SWYmbmJzcDt5b3Um
+bmJzcDthcmUmbmJzcDtub3QmbmJzcDt0aGUmbmJzcDtpbnRlbmRlZCZuYnNwO3JlY2lwaWVudCwm
+bmJzcDtkaXNjbG9zdXJlLCZuYnNwO2NvcHlpbmcmbmJzcDtvciZuYnNwO3VzZSZuYnNwO29mJm5i
+c3A7dGhlJm5ic3A7Y29udGVudHMmbmJzcDtvZiZuYnNwO3RoaXMmbmJzcDtlbWFpbCZuYnNwO2lz
+Jm5ic3A7cHJvaGliaXRlZC4mbmJzcDsmbmJzcDtJZiZuYnNwO3lvdSZuYnNwO2FyZSZuYnNwO25v
+dCZuYnNwO3RoZSZuYnNwO2ludGVuZGVkJm5ic3A7cmVjaXBpZW50LCZuYnNwO3BsZWFzZSZuYnNw
+O25vdGlmeSZuYnNwOyZuYnNwO2NvbXBsaWFuY2VAbmVidWxhLW1hdHJpeC5jb20mbmJzcDtpbW1l
+ZGlhdGVseSZuYnNwO2J5Jm5ic3A7ZW1haWwsJm5ic3A7YW5kJm5ic3A7cGxlYXNlJm5ic3A7ZGVz
+dHJveSZuYnNwO3RoZSZuYnNwO2VtYWlsJm5ic3A7eW91Jm5ic3A7cmVjZWl2ZWQmbmJzcDtpbiZu
+YnNwO2Vycm9yLjwvc3Bhbj48L2Rpdj4=
+------=ALIBOUNDARY_1939_7ffa67797700_68f989d3_21ee72--
 
