@@ -2,51 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F1D2CCD1BC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 14:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6656ACCD1BE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 14:33:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3EC724025E;
-	Thu, 23 Oct 2025 16:04:50 +0200 (CEST)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
- by mails.dpdk.org (Postfix) with ESMTP id DA7DD40151
- for <dev@dpdk.org>; Thu, 23 Oct 2025 16:04:48 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.19.88.163])
- by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4csnrB38ZZz11ST2;
- Thu, 23 Oct 2025 22:06:02 +0800 (CST)
-Received: from kwepemk100007.china.huawei.com (unknown [7.202.194.55])
- by mail.maildlp.com (Postfix) with ESMTPS id 2A62D18001B;
- Thu, 23 Oct 2025 22:04:46 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- kwepemk100007.china.huawei.com (7.202.194.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 23 Oct 2025 22:04:44 +0800
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Thu, 23 Oct 2025 15:04:42 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>,
- "dev@dpdk.org" <dev@dpdk.org>, Stephen Hemminger
- <stephen@networkplumber.org>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>, Fengchengwen <fengchengwen@huawei.com>, "Bruce
- Richardson" <bruce.richardson@intel.com>
-Subject: RE: [PATCH v5] mbuf: optimize segment prefree
-Thread-Topic: [PATCH v5] mbuf: optimize segment prefree
-Thread-Index: AQHcQ/NUxCpzFpnLEUCegFLyVmlwCLTPa7AAgAAngXCAAC+rQA==
-Date: Thu, 23 Oct 2025 14:04:42 +0000
-Message-ID: <6a26d57153714d04865753fd557978dd@huawei.com>
-References: <20250827213535.21602-1-mb@smartsharesystems.com>
- <20251023080136.165513-1-mb@smartsharesystems.com>
- <c556ea7b92a24bc09ac5240da39bc36c@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F654F7@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F654F7@smartserver.smartshare.dk>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.220]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id C9A374025E;
+	Thu, 23 Oct 2025 16:33:48 +0200 (CEST)
+Received: from fhigh-a7-smtp.messagingengine.com
+ (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+ by mails.dpdk.org (Postfix) with ESMTP id DDAAC40151
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 16:33:46 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 411281400229;
+ Thu, 23 Oct 2025 10:33:46 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Thu, 23 Oct 2025 10:33:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1761230026;
+ x=1761316426; bh=eE6kMQam+nEEeT1/FYP6+zbmRL8gsQwBSKRivHCTM1c=; b=
+ e5v4ctD7/qAS/bSxMWSsTcG8YJrMn/YHWnMckTesVypFTDGADJ3N+mS0jtuJ3ZEk
+ pW48sjZqaAL89iO1CAlySYx58sK3jE3Jb/hau3rafS6deVBNo1iFdt3V1Q7cU/mj
+ ScfxNHbphGj0ZuSpNZ4+NEWeaEawpJy5eRt5XXnDF4KudWkXs3Lhnq+Wlpwt0u1M
+ yjZUwDqabGTrnTwTjdXT2n6y+CiMpnDZb4WSNoouM3dPLJdqzdjstRen2qIcFl3D
+ dyB074QoaOuh9h5clZ+KGQPjcfRF/g+hKIDukktFH+c0+BcTioTiu2XSgSrxee/E
+ O6jno9wPZqttHCJmE+kG/A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761230026; x=
+ 1761316426; bh=eE6kMQam+nEEeT1/FYP6+zbmRL8gsQwBSKRivHCTM1c=; b=U
+ OrJuFs0ZLp8OKfFkF2nWO81bfdwn6ySMoSP6TEsQO5RLXASMSlDFpAJ4Bpen0PbL
+ 61MLyDjskO2wTX+ohPDPAOjPpfuWYpM125luzjXLUhLDc2n3X89RaYHtAUx9+d9s
+ /evmFskNzQQDFUwum7lJogvlSoKWQ/pllNHgkkg7qo2lQtj7sDTbAVu4QL19mybV
+ kZnRn7XmMUr+abH39Mg+Lj+onZ54OlcQblMVRFBdj1EKrLz9NsH90ZTUwIAjoVI3
+ uVsMU221KuTCArtCX/T2IGy05NH8wV1IjmNvflvo83VxrSYXuyEBmBLqNAvheHrV
+ vykoMGMtMN73upJ7jXAdw==
+X-ME-Sender: <xms:yTz6aJECmuWr6BNFOvT3hLnzYfQheJpZ4IV-aaHRmbNKfFQC4CsweQ>
+ <xme:yTz6aKpKOP46WwIeqPPxllnB08VWa3hipiSqEb1MWxPvGB7-MYnedSz86dLnSqqev
+ -uiXp-LC6sWdYgz5E16e4lLkj_NdNRmTRivo_R-vzisS1eELJM>
+X-ME-Received: <xmr:yTz6aN6PwyDpiSwTbD0MDP_Buted_u7tW0kOE3qEJRUc5LHG48Axf7y4N-_MFlJJVtRDC9Vf2I_qRwSuW5T7tCR25w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeijeduucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegrlhhirghlnhhusehnvhhiughirgdrtg
+ homhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:yTz6aA5VwaMJN2K1t4_yiPntWQZtY2sshI-f47FzZq0kLuyRc9IFCA>
+ <xmx:yTz6aCHB7CxPso1xedGTNYnJEQNnmxvfmciiKgNuhJtuC0MUq8Zdmg>
+ <xmx:yTz6aBQqmKao5a6opyFnajY-B0iAg7oeMXVGNQzS3eDjSn98j26vww>
+ <xmx:yTz6aDtgzrCaNc_HkBaTHChqYgENQAhWtgfB8O2sOcfwzJVn2YZlug>
+ <xmx:yjz6aPEgjX58e0PnTPXxXxOwFhGV7VqO8ChGW3YioHGuFeyXeTkXwJXB>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 Oct 2025 10:33:45 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Ali Alnubani <alialnu@nvidia.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] devtools: honor -n flag regardless of stdin state
+Date: Thu, 23 Oct 2025 16:33:43 +0200
+Message-ID: <6805909.NeCsiYhmir@thomas>
+In-Reply-To: <20251014074340.2364328-1-alialnu@nvidia.com>
+References: <20251014074340.2364328-1-alialnu@nvidia.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,55 +86,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gPiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55
-ZXZAaHVhd2VpLmNvbV0NCj4gPiBTZW50OiBUaHVyc2RheSwgMjMgT2N0b2JlciAyMDI1IDEwLjUx
-DQo+ID4NCj4gPiA+IC0jZGVmaW5lIFJURV9NQlVGX0RJUkVDVChtYikgXA0KPiA+ID4gLQkoISgo
-bWIpLT5vbF9mbGFncyAmIChSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRFUk5B
-TCkpKQ0KPiA+ID4gKyAqDQo+ID4gPiArICogTm90ZTogTWFjcm8gb3B0aW1pemVkIGZvciBjb2Rl
-IHNpemUuDQo+ID4gPiArICoNCj4gPiA+ICsgKiBUaGUgcGxhaW4gbWFjcm8gd291bGQgYmU6DQo+
-ID4gPiArICogICAgICAjZGVmaW5lIFJURV9NQlVGX0RJUkVDVChtYikgXA0KPiA+ID4gKyAqICAg
-ICAgICAgICghKChtYiktPm9sX2ZsYWdzICYgKFJURV9NQlVGX0ZfSU5ESVJFQ1QgfA0KPiA+IFJU
-RV9NQlVGX0ZfRVhURVJOQUwpKSkNCj4gPiA+ICsgKg0KPiA+ID4gKyAqIFRoZSBmbGFncyBSVEVf
-TUJVRl9GX0lORElSRUNUIGFuZCBSVEVfTUJVRl9GX0VYVEVSTkFMIGFyZSBib3RoIGluDQo+ID4g
-dGhlDQo+ID4gPiBNU0IgKG1vc3Qgc2lnbmlmaWNhbnQNCj4gPiA+ICsgKiBieXRlKSBvZiB0aGUg
-NjQtYml0IG9sX2ZsYWdzIGZpZWxkLCBzbyB3ZSBvbmx5IGNvbXBhcmUgdGhpcyBvbmUNCj4gPiBi
-eXRlIGluc3RlYWQgb2YgYWxsDQo+ID4gPiA2NCBiaXRzLg0KPiA+ID4gKyAqDQo+ID4gPiArICog
-RS5nLiwgR0NDIHZlcnNpb24gMTYuMC4wIDIwMjUxMDE5IChleHBlcmltZW50YWwpIGdlbmVyYXRl
-cyB0aGUNCj4gPiBmb2xsb3dpbmcgY29kZQ0KPiA+ID4gZm9yIHg4Ni02NC4NCj4gPiA+ICsgKg0K
-PiA+ID4gKyAqIFdpdGggdGhlIHBsYWluIG1hY3JvLCAxNyBieXRlcyBvZiBpbnN0cnVjdGlvbnM6
-DQo+ID4gPiArICogICAgICBtb3ZhYnMgcmF4LDB4NjAwMDAwMDAwMDAwMDAwMCAgICAgICAvLyAx
-MCBieXRlcw0KPiA+ID4gKyAqICAgICAgYW5kICAgIHJheCxRV09SRCBQVFIgW3JkaSsweDE4XSAg
-ICAgLy8gNCBieXRlcw0KPiA+ID4gKyAqICAgICAgc2V0ZSAgIGFsICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgLy8gMyBieXRlcw0KPiA+ID4gKyAqIFdpdGggdGhpcyBvcHRpbWl6ZWQgbWFjcm8s
-IG9ubHkgNyBieXRlcyBvZiBpbnN0cnVjdGlvbnM6DQo+ID4gPiArICogICAgICB0ZXN0ICAgQllU
-RSBQVFIgW3JkaSsweDFmXSwweDYwICAgICAvLyA0IGJ5dGVzDQo+ID4gPiArICogICAgICBzZXRl
-ICAgYWwgICAgICAgICAgICAgICAgICAgICAgICAgICAvLyAzIGJ5dGVzDQo+ID4gPiArICovDQo+
-ID4gPiArI2lmIFJURV9CWVRFX09SREVSID09IFJURV9MSVRUTEVfRU5ESUFODQo+ID4gPiArLyog
-T24gbGl0dGxlIGVuZGlhbiBhcmNoaXRlY3R1cmUsIHRoZSBNU0Igb2YgYSA2NC1iaXQgaW50ZWdl
-ciBpcyBhdA0KPiA+IGJ5dGUgb2Zmc2V0IDcuICovDQo+ID4gPiArI2RlZmluZSBSVEVfTUJVRl9E
-SVJFQ1QobWIpICAgICAhKCgoY29uc3QgY2hhciAqKSgmKG1iKS0NCj4gPiA+b2xfZmxhZ3MpKVs3
-XSAmIDB4NjApDQo+ID4gPiArI2VsaWYgUlRFX0JZVEVfT1JERVIgPT0gUlRFX0JJR19FTkRJQU4N
-Cj4gPiA+ICsvKiBPbiBiaWcgZW5kaWFuIGFyY2hpdGVjdHVyZSwgdGhlIE1TQiBvZiBhIDY0LWJp
-dCBpbnRlZ2VyIGlzIGF0DQo+ID4gYnl0ZSBvZmZzZXQgMC4gKi8NCj4gPiA+ICsjZGVmaW5lIFJU
-RV9NQlVGX0RJUkVDVChtYikgICAgICEoKChjb25zdCBjaGFyICopKCYobWIpLQ0KPiA+ID5vbF9m
-bGFncykpWzBdICYgMHg2MCkNCj4gPg0KPiA+IEEgc3R1cGlkIHE6IHdoeSB0aGVuIG5vdCBzaW1w
-bHkgZG86DQo+ID4gKG1iLT5vbF9mbGFncyA+PiA1NikgJiAweDYwDQo+ID4gdGhlbj8NCj4gPiBT
-aG91bGQgaGVscCB0byBhbGwgdGhlc2UgTEUvQkUgY2FzdHMsIGV0Yy4NCj4gDQo+IEdDQyBpcyB0
-b28gc3R1cGlkIGZvciB0aGF0IHRvby4NCj4gDQo+IFBsYXlpbmcgYXJvdW5kIHdpdGggR29kYm9s
-dCBzaG93cyB0aGF0DQo+IAlyZXR1cm4gISgoY2hhcikocFszXSA+PiA1NikgJiAweDYwKTsNCj4g
-YmVjb21lcw0KPiAJbW92enggIGVheCxCWVRFIFBUUiBbcmRpKzB4MWZdCS8vIDQgYnl0ZXMNCj4g
-CXRlc3QgICBhbCwweDYwCQkJCS8vIDIgYnl0ZXMNCj4gSW5zdGVhZCBvZiBzaW1wbHkNCj4gCXRl
-c3QgICBCWVRFIFBUUiBbcmRpKzB4MWZdLDB4NjAJLy8gNCBieXRlcw0KDQpBbmQgdGhlc2UgMiBl
-eHRyYSBieXRlcyBpbiBpbnN0cnVjdGlvbnMsIGFyZSB0aGF0IHJlYWxseSB0aGF0IGNyaXRpY2Fs
-Pw0KTXkgZ3Vlc3MsIHdlIHdvdWxkbid0IG5vdGljZSBhbnkgcmVhbCBkaWZmIGhlcmUuDQpCdXQg
-aWYgaXQgcmVhbGx5IGlzLCBjYW4gSSBhc2sgeW91IHRvIGNyZWF0ZSBhIG5ldyBkZWZpbmUgZm9y
-IDB4NjAsDQp0byBhdm9pZCBoYXJkY29kZWQgY29uc3RhbnRzIGluIHRoZSBjb2RlPw0KTWlnaHQg
-YmUgc29tZXRoaW5nICBsaWtlDQojZGVmaW5lIFJURV9NQlVGX0ZfSU5ESVJFQ1RfRVhURVJOQUxf
-MUIgLi4uDQpvciBzby4gDQpLb25zdGFudGluDQoNCj4gR29vZCBzdWdnZXN0aW9uLCB0aG91Z2gu
-DQo+IA0KPiA+DQo+ID4gPiArI2VuZGlmDQo+ID4gPiArLyogVmVyaWZ5IHRoZSBvcHRpbWl6YXRp
-b24gYWJvdmUuICovDQo+ID4gPiArc3RhdGljX2Fzc2VydCgoUlRFX01CVUZfRl9JTkRJUkVDVCB8
-IFJURV9NQlVGX0ZfRVhURVJOQUwpID09DQo+ID4gPiBVSU5UNjRfQygweDYwKSA8PCAoNyAqIENI
-QVJfQklUKSwNCj4gPiA+ICsJIihSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRF
-Uk5BTCkgaXMgbm90IDB4NjAgYXQNCj4gPiBNU0IiKTsNCj4gPiA+DQo+ID4gPiAgLyoqIFVuaW5p
-dGlhbGl6ZWQgb3IgdW5zcGVjaWZpZWQgcG9ydC4gKi8NCj4gPiA+ICAjZGVmaW5lIFJURV9NQlVG
-X1BPUlRfSU5WQUxJRCBVSU5UMTZfTUFYDQo+ID4gPiAtLQ0KPiA+ID4gMi40My4wDQoNCg==
+14/10/2025 09:43, Ali Alnubani:
+> The checkpatches.sh script was checking if stdin is a terminal before
+> honoring the -n flag, causing it to incorrectly attempt to read patches
+> from stdin when run without a TTY (e.g., in Jenkins/CI pipelines).
+> 
+> Reorder the conditionals to check for the -n flag before checking stdin
+> state. This ensures the -n flag takes precedence and the script checks
+> git commits as intended.
+> 
+> Signed-off-by: Ali Alnubani <alialnu@nvidia.com>
+
+Applied, thanks.
+
+
