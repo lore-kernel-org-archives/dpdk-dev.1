@@ -2,74 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 427A3CCD193
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 16:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FD6CCD193
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 17:13:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6EE15402F1;
-	Thu, 23 Oct 2025 18:54:14 +0200 (CEST)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
- [209.85.214.181])
- by mails.dpdk.org (Postfix) with ESMTP id 8AA04402A1
- for <dev@dpdk.org>; Thu, 23 Oct 2025 18:54:12 +0200 (CEST)
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-292fd52d527so11775245ad.2
- for <dev@dpdk.org>; Thu, 23 Oct 2025 09:54:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761238452;
- x=1761843252; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=fxwbxH0MC7Ia8rp2w1OHAKC7oBLPl6v/lfz1zjUSOaI=;
- b=qHS/nHAB2ak76SKJGJLdvf3AlBBT1r4xNpU4n6dSIwrQGO5hFd9sSwAUzkovo8gfr6
- z4YbUevsSKCYjJcLk59L9FG/711hp016/JDzyew4qWtziI/oSD292qXxUx/t93BJJkhL
- ZoHzfAtBWFHY9yexbSUHa+mPvaXC0Mjfp+OBziGJHtw6AJFBdrXxfwyKQi/e6WstVvdO
- 17PcEaZmFNGclPnvoO+Qw/CIMASc6DvZZ+05qK6wAW4w0X/Bl6Z3nIQY0dBcBCvaXjYA
- eSrYdGbuZ46rZJN4/AX+ekxs8nUS0i9Sqao5Zjo869XyTtG3Xz5PcnzImMm2ToKqiQyi
- VPOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761238452; x=1761843252;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=fxwbxH0MC7Ia8rp2w1OHAKC7oBLPl6v/lfz1zjUSOaI=;
- b=XqwQIwUuywFu06fc9PATEuvfPSuNHNC7H0pQmlg7CcrNzDcDXajCxHvHYgYvwwADho
- 8zwIz1A6wiixWTiuAxl1goop2HKWTC7fB2n5ps7iQff8VS9pqHgm6vmx8TXQ1gXpNdLs
- CdOeMd+lWybWvFyLQo7FvmocB0jjZUicYXPPb7K9fKwCHXWJiCWUwyYhQ0Mo4anH35Np
- KHltlr67B2k+SZxaX/gsGUyrp7AaJNcJcBkvSz2lCFhNlZROtoorwQG3LOCrm9KzAIu7
- beFkRTKyP52sZqjMAf2uTUEGGDsxyGBBMWQd5cc5tw+lHCxPgmabYxZpdm0VXiQr6pUj
- X2HQ==
-X-Gm-Message-State: AOJu0YwU1yXlrSVzpxF3ft3aksmHvTwe2SmqcpD0YASsz32JsnbYpZp5
- NC1sJ3H3a+YneG+e5I+RKjzxD3ECI5RXQgK6fnbprJvbQCe501W7zBZpXZoLsya54rI=
-X-Gm-Gg: ASbGnctF83hOpBHDhTQNpG5AjetSJa79N2P2dxfOZDUrBxRxjVcne3nYhi0gmFJiO8m
- t2TakCkspDIkgDVYHkkvz7z5PUZSMY/oUfpmo9vIfkiBPlBL157fTn0VDNjivBIBCc5//M9MHeC
- lR3IdBmglZdYCv4fbBwVgIqyUpiCPvT8p0uYth+hfM6cQlY7HKrmwgtlodoOpEZRJz/+ddbspNu
- L508Bvq5BwAj1eg4ihtnk2Sh1aZ4GDnjFIMdbwFsMjKeCcG4R4jNEPL8hlStHCuYL/ddWL/aGSd
- H5dLLd7qLvmicIuP5Visnn9TeduvqIYP/2QLj9xSUT952JavCw07Ja6PBZac9KaM2egNWrcxFdn
- t/c4H9IUdYVBVJHNmTp1eD1cLmCIAvxchGwXmn7rCn6EP2lE8HWvk0R5G66VsrtC8xvvY+xSFOq
- AZzs0pKFcfWo8OaduTBB8kOPoMQUJnr5FAhmMq1lwHxvQ=
-X-Google-Smtp-Source: AGHT+IHIv6N98tHHuQssET2KtC5spTdHzxKGiyQpwI7sBWxWvsB9NfuZV8O0igb/PQWv6EUZdsn7pg==
-X-Received: by 2002:a17:903:3d0c:b0:25d:d848:1cca with SMTP id
- d9443c01a7336-290ca30ddb5mr305958265ad.35.1761238451585; 
- Thu, 23 Oct 2025 09:54:11 -0700 (PDT)
-Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2946dda577csm28594795ad.13.2025.10.23.09.54.11
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 23 Oct 2025 09:54:11 -0700 (PDT)
-Date: Thu, 23 Oct 2025 09:54:09 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
-Cc: dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH v3] net/vmxnet3: disable RSS for single queue
- configuration for ESX8.0+ versions
-Message-ID: <20251023095409.55bc74c4@phoenix>
-In-Reply-To: <20251023083019.18792-1-amiyaranjan.mohakud@gmail.com>
-References: <20251022155651.9818-1-amiyaranjan.mohakud@gmail.com>
- <20251023083019.18792-1-amiyaranjan.mohakud@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5A1E84027F;
+	Thu, 23 Oct 2025 19:13:40 +0200 (CEST)
+Received: from fhigh-a1-smtp.messagingengine.com
+ (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+ by mails.dpdk.org (Postfix) with ESMTP id C4D8040144
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 19:13:39 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 2CA1014000FA;
+ Thu, 23 Oct 2025 13:13:39 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Thu, 23 Oct 2025 13:13:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1761239619;
+ x=1761326019; bh=pV9DJPK7+lfIDR7WhSjhX3UUGOTHubBnWNHi/bbNUvE=; b=
+ g4S011BfNzrY1qJ8qGGzElEX/JGXTkuGUnCYw3WMSeBS5hoa0wqUyXUQ+wRAhNQH
+ 2bFoipY/BJOsS1eTt5+dZOtD4xJlAnlZ6qENTtKpld+kPMbaKfBx9NZKj8//EL5q
+ Cytz6BrIexQuO41PyimpfWPnKIWJKf+LhzZI4WgukmOM3qhxDDUuHBlt5tLIAb8m
+ 22uXITCjq0SRlo/FuJ3qZuUa0hahAItAuqdmGfjWgFwzB8b2ux0G5wkoNwub4nYX
+ HrpCv4VWZRHtORjdne9c4YZ/WlwZvUbjxN5NJ86HYqcDtdjnfJ7mbW8M2Iz7GMTm
+ W+nTXer4TbvQ2aRhg0odMg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761239619; x=
+ 1761326019; bh=pV9DJPK7+lfIDR7WhSjhX3UUGOTHubBnWNHi/bbNUvE=; b=k
+ iF8CKq/lbzO7h/liToc6DIER09IbbVeuQ61xJ0ZNmulVlIBrhb8LTvGPZ3ASeEBa
+ XXUORDdjsb0MQftLpT74lZSeAAQN5pmApmVOSOjjLAq9bjKZkm0NlKMA8Xnm0jKh
+ gWo8OtApYoDNWXhvUpZr1aUGiaEF5x2Ne7oZN4cd57GYXQQiJOOH+vAC3n0R+/W6
+ Y57jrKrb0kCaIf+sw916W3nGIovLYgd/UuX+oM4pT3ikvglWYaw939bPRMKdzB7G
+ aXnVgfNXZK7JBK0WAjEkY2owRp2usozIdZ26Bd8rCPOGjBdTW6WZoQq/oeq6+bYd
+ pZKnj01FmvjnkafGBbZRg==
+X-ME-Sender: <xms:QmL6aDXRreSIRp3MOliw7Drxm2E3i_WRwIVAO5ky5zkExaLN1etFKQ>
+ <xme:QmL6aGjQA-qi6fi7FJ-NuyAP-fvUImCSaFZBvdhS0sfJ0wq9BW4M02I3utKkyEmkE
+ ntLr8FzI_0FR4pCCn90z38YKl4NOAcRtTNvJnYcsBNcpugRmM_C>
+X-ME-Received: <xmr:QmL6aOaixW62J3WQUVhcArdF9NYCskczTKK3lnzP6m9EmV81plBUzeEG11j6LdCVLidoOoD5zZKjlniQUtvKr1nK-A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeejtdefucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
+ leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihsh
+ htvghmshdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthho
+ pehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhope
+ ifrghthhhsrghlrgdrvhhithhhrghnrghgvgesrghrmhdrtghomhdprhgtphhtthhopehk
+ ohhnshhtrghnthhinhdrrghnrghnhigvvheshhhurgifvghirdgtohhmpdhrtghpthhtoh
+ epfhgvnhhgtghhvghnghifvghnsehhuhgrfigvihdrtghomhdprhgtphhtthhopegsrhhu
+ tggvrdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:QmL6aDoEV1n1D5Zd7d4IFD0GsD0RYO66ReEnfceNf9tx571O1NgDMg>
+ <xmx:QmL6aLPElFQ_3EUnY_8eYxT_6oVbHZLM75cT8FbvSZZ8o6j22fOm1Q>
+ <xmx:QmL6aGoAxMn9BQJUB6shWMQaYSoEo0Ec609LUOPJByhVdnGsDQw7wA>
+ <xmx:QmL6aIc9QJao1P7aZjSbN3xUpUJdR5TpVbM8v3o0fQYC0Ms3NEGFhA>
+ <xmx:Q2L6aCLWpsXXpU5rpx-uwEMtmxuBoqZn__uwk9LJtPz6vNc-5z9mOBEr>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 Oct 2025 13:13:37 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Chengwen Feng <fengchengwen@huawei.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH v6] mbuf: optimize segment prefree
+Date: Thu, 23 Oct 2025 19:13:35 +0200
+Message-ID: <2899098.8uLHfb51uz@thomas>
+In-Reply-To: <20251023124858.318148-1-mb@smartsharesystems.com>
+References: <20250827213535.21602-1-mb@smartsharesystems.com>
+ <20251023124858.318148-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,23 +96,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 23 Oct 2025 14:00:19 +0530
-Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com> wrote:
+23/10/2025 14:48, Morten Br=C3=B8rup:
+> Refactored rte_pktmbuf_prefree_seg() for both performance and readability.
+>=20
+> With the optimized RTE_MBUF_DIRECT() macro, the common likely code path
+> now fits within one instruction cache line on x86-64 when built with GCC.
+>=20
+> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+> Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+> Reviewed-by: Bruce Richardson <bruce.richardson@intel.com>
 
-> vmxnet3_v4_rss_configure() while writing to BAR register. It's very
-> specific to single queue configuration.
-> 
-> https://mails.dpdk.org/archives/users/2025-April/008236.html
-> 
-> Bugzilla ID:1789
-> Fixes: 52ec00fd1474e8 ("net/vmxnet3: fix RSS setting on v4")
-> Cc: stable@dpdk.org
-> 
-> v2:
->  - Fixed typo in commit message
-> v3:
->  - Checking if RSS is already enabled
-> 
-> Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+Applied, thanks.
 
-Queued to next-net
+Note: v7 is not chosen because long names make this difficult macro
+even more complicated to read.
+
+
