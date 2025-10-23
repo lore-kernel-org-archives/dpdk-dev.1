@@ -2,161 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77912CCD1BE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 16:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3190CCD1BC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 16:24:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C079B4021E;
-	Thu, 23 Oct 2025 18:22:41 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id CA70D40144
- for <dev@dpdk.org>; Thu, 23 Oct 2025 18:22:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1761236561; x=1792772561;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=5A36Mr452MVGh5gwyP7LTmad1v04P+8aeHbBxpnM1YA=;
- b=UDHhjEW/deWOM2KdhkQPvkNQ6O0FOFXLLlD18zLBVmSFR7L5kbj7+bFg
- laoXf4b078Oa85GcetkWW16G2U0wcipBr6SIdU1oaQR8Ja9VCttqbKXxJ
- u3pVSxKxw5gD4bRC2rKRuwSdVbb5vA6QR/UVwWrg21FUksyAsirFNvCgE
- YYjK1bDaDpS9ProG/z2bE8xTdF5zeVIWFjKaWGQXhx6SgastQPwRcjRdj
- bA7tMnJd1XNmceRUb9K5gm2ifEQ3eVWOxUuTYWLcg4Xh/r7opRB4j45wm
- 2vanZnhT6JkOAOKPa3Et2HXEfx8yaZxDu7xc0CVoJOw+kmvjjch3A7r++ g==;
-X-CSE-ConnectionGUID: sNTe3eTPQnefhR8HeSog5A==
-X-CSE-MsgGUID: v6n2awUmScust9jkoJcQdA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74756604"
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; d="scan'208";a="74756604"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Oct 2025 09:22:40 -0700
-X-CSE-ConnectionGUID: DjbhfS/3T6WBqr08+fGIog==
-X-CSE-MsgGUID: NtaDHCzsTMSRFCvqQxAefw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,250,1754982000"; d="scan'208";a="184095002"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Oct 2025 09:22:40 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 23 Oct 2025 09:22:39 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 23 Oct 2025 09:22:39 -0700
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.5) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 23 Oct 2025 09:22:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rvaonyp0ZfISrlVg33Zu8tTEM0jxrkNiKz/+MNscLulYYS98ObHrpvwPa4VOY4Ww5q7P58qNtY9E4sM2oiHEXLlMiUkJxm2wtjbdPVZv4O51cvLlUF69L3ennbuo7eOIJdKgx4fWI8KfrTxtVM7tDIDRnPvI65VoyMclb6RiTyCmYqPMBypFXaIfFHOnWuIrijdvmuI85mIOoJr0h9TfkpurJOG4RALqjGdwLoSj2LUbx1kfH/RLZd8eX44iY3/ZxHvW3ISYcOoNwGD5yw1Qg8rO9mF5Mm4UXyC/BLhVnfTtZlVgSxh5PSXPm2NsMR0/3YFrqE488RhUwOZcCDoLgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BKtYZfg4NzqCW0eUR0EZ7qK42rw5DFBCZC0odWfaDPE=;
- b=MT5Jj54/gaN37uliUl0Oowwg7VULyKBSOUMuK1h3O83VOGXLauSC7avEIvU2vJQ/76vUfh5p7N6dOt+K+bHGqJb0nXpt99WnPbncIFQFjJXtDXA0CQH0vFEuQ0fymmmCGxothEJrqEO4Ib8uhp+8ScL6Ly86QZW+GzzstHnWYNjbzBp+ZJqbaFEa6NEVC2tYifaDPN37YwAOuToYU5fBBdDBRBM0JarKFIg9DyNbaTNgNTYLZ5Nyv3S7/JxEyKoZQujWLa+OrZ+RoijhVqSRA3BZYmYH3upms52NZ8ySKC0w9BRnCKSFkP8gsDGv7n4RG0V0Ey3TRPk6fRQkJwYbbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by IA0PR11MB8397.namprd11.prod.outlook.com (2603:10b6:208:48b::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Thu, 23 Oct
- 2025 16:22:37 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
- 16:22:37 +0000
-Date: Thu, 23 Oct 2025 17:22:32 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH v4 0/8] packet capture bugfix and secondary support
-Message-ID: <aPpWSLdxE0IOAdsZ@bricha3-mobl1.ger.corp.intel.com>
-References: <250811213632.16023-1-stephen@networkplumber.org>
- <20251023154748.38535-1-stephen@networkplumber.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251023154748.38535-1-stephen@networkplumber.org>
-X-ClientProxiedBy: DU2PR04CA0298.eurprd04.prod.outlook.com
- (2603:10a6:10:28c::33) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id EB43A4021E;
+	Thu, 23 Oct 2025 18:24:12 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 7D7B540151
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 18:24:11 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 5362B2041E;
+ Thu, 23 Oct 2025 18:24:11 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA0PR11MB8397:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75baf673-077d-4664-b91a-08de12506151
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?vD0GJNBn3Vp0VMe2l+vUaTALKjOVSMXFemxk7aC2FvNKCTLP6Egiss9poxig?=
- =?us-ascii?Q?OqjfEP6jecPV7JMo/6EBvKuPdHbmkwjFIKVqMjDscP6ClazTPvBtOOLNPa6K?=
- =?us-ascii?Q?JVempl4KdTCN/wsSv2FsfNdt/DG8yfaq0KlrusQh5MgOasiQei8fG78qCkNF?=
- =?us-ascii?Q?ChHviohGmpbNu6MkpyDuo1q7+Kzprb3Ore20yIFgsUWTg5MMY19JUz+CO71k?=
- =?us-ascii?Q?6l6C/JBCHPoHIfDml1cFhVSC03X7KS8YOGEGmucNamdvWS0rJ0O/CXDG5siy?=
- =?us-ascii?Q?8jWwybwbqhDOUtrDm+cV0TdhewzdlngAznl8NG0xp4LXYWXsrIwHtjTWi+v0?=
- =?us-ascii?Q?EwYmO0rbNN6qTXJC3Ss28qXd4v+VsNDy/hE1begtqq3K96v75XwGpDnthI5q?=
- =?us-ascii?Q?xCsywbAhJhND/59HBwdlKK0onTTkgaT+urOX6uSMoo4GNRVX/tEUqLa1T0if?=
- =?us-ascii?Q?LUpP64G0nnFVN3qCysbbuuqCqU4gSiL2ehz4WdlrOk04paiKofvJHVLLqB04?=
- =?us-ascii?Q?3EapHQKU3HsxOqB962eSWKGUtuB9oHobVyVjY9KMHj/tfYHo7foYvVUb6a7k?=
- =?us-ascii?Q?LLhzlVqLpCIE+laOBL7RaF/eatChMnCDW73PvC1Wxz7rxbibIU2NUNPvNici?=
- =?us-ascii?Q?PIRafYWWxj/neF1l1LE9wJwyNnWbx6oVN++BKK7DhqcjpihrUVq/8qFi3Nvb?=
- =?us-ascii?Q?qxT5mV4r7JwzrWdbE556zaFFs76R+gcavOyJfGy2QWjB2cvZ88nLCwe6DW6f?=
- =?us-ascii?Q?0tcWj4IAhbD35417vr6eKAMMGMjYuqCgBZ1djOyij72OljpBBJ+T3267w1ur?=
- =?us-ascii?Q?BKF/EkjAboCIcsMNY2/WFYJaVhQwEgtfnlVaeHUn1XExx0KShYwFdAPQGgIr?=
- =?us-ascii?Q?i5MmSf/5JGQ0nXmEBpciBzBgFNrdgciMXBVDzKocsIO2AJw/xDk98QXMYxIZ?=
- =?us-ascii?Q?9vhS1+ZJCt7kymDl6jNgaQMjywdEyltMz/kQgiUmdCk2qv4tYCrZTzf0Dc/5?=
- =?us-ascii?Q?2FzdBbxXetDyBWfVvbtzJlUtARghzaLf7frZImJkA02Mj8PMvFep3ozW58zR?=
- =?us-ascii?Q?uTJ0wmWkmGs8drGwHbRo39SOSE/vAi03ha6Ihk7BNwTZLT55FnNNug07Mmtj?=
- =?us-ascii?Q?gEbGgalnFvadWuzX6q3PV/sCTz/1fXwhEnKh208qRgUeLcERGB5PNHBd1wfH?=
- =?us-ascii?Q?68P1kT9ESFemY+vkXLSPv1pHLPX13mHwmGRL/L+nzImNzY/OcGSBJAdjBsxE?=
- =?us-ascii?Q?r66wWItvUoMHNZPpoQWURSMQs9rd06jodOpGA4rfN1Uhq7S1aCTOIdxlgMX6?=
- =?us-ascii?Q?4jB4m4HmC+PKQFJ7Mgua7TU41LegT6a5i9+0PEvHnOrv4bVqO6CtMXEFg+el?=
- =?us-ascii?Q?OWJ495H7jiU4XAEtIJuk5aMo0lBfYB2cEIj8ezLrN1O5zhkEu7IoSLPUSILP?=
- =?us-ascii?Q?T46AeG3M2aazuTDsoOslSv6AweLsXd4j?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MhbOxOj+gBWEdXa4t9cIOswra5yeihdnQG5Dlf08dsalrO7a7KrHri0biH3V?=
- =?us-ascii?Q?Qsf7wJO5e9zfsEoJ8NeG19RL5a5US0X4NUV8nM5jiwmaT8lBKZvrkHhTRKCv?=
- =?us-ascii?Q?y89jO/H791P4PuCjpRnx5DDsV2JPt+0EJCghfC47u31fzs2W2hS7l3VftTg7?=
- =?us-ascii?Q?oV8SwvgtFNIZGKl5nA/aMkSySiFumGrDlesofcU629tLeeDB+B+FbXbvUviP?=
- =?us-ascii?Q?xwkre1u9qeZVs2Kw+z/n8OUIrZ1ifFbBi3ePM0ym+mViFQ9AQ6aFRjI+az+8?=
- =?us-ascii?Q?0n3i4mYLTq5owh1FT8NV51NIRPswi69mwOvx2vsYk4H8u8MlWb+7kAE7ipqy?=
- =?us-ascii?Q?mVhr8sRnItUbjO3syMwlau1yJsZZQ1ZqH4CbFgCM29L66+x0e5mYeIeIkQBR?=
- =?us-ascii?Q?fjo4CKGybgfLPOmsQkdEobtf9+eAu7oW5P+LgMwJ9hBT3SfSJWaS7CHz1Qr8?=
- =?us-ascii?Q?8Y6cnqnMvQXQS4/3W2Y9Zpfvb3bR0c5x1kLHZOQ69rE7sIeLHcnk8i5Y5uU4?=
- =?us-ascii?Q?KHYe2ChSiFp4GL5o7OsOCAi3SHi66T1r43fkVHxViQs9D1Dfq2ZDh7KECs7m?=
- =?us-ascii?Q?4J2woELmTWkLIui/6WvfJK6Mued25iDlVFIcq6i895Kki/+2DTTFeD+T3vo4?=
- =?us-ascii?Q?KKwTaFnt2MwtJDTGvpM/M/hcKy2mI8AbVZf1WO4UYRszL+KM250DnEwCUsTn?=
- =?us-ascii?Q?e9nlRJc6wJeEx1w05Z/xargz3Y33t6M7IzG4VthvcLix01tmgOjilixvryPs?=
- =?us-ascii?Q?0Jx0KKFD0+5c0Nk3bjZPkxIkwcrbh3zYEVOhiYCSngkNklYtLgK8UcXA1PzK?=
- =?us-ascii?Q?Mev5qV1SC0rjG+W+qzKNTvOCFOXHiIGyDNNSeQKken6wraB6m8f2pq7oG/Ze?=
- =?us-ascii?Q?IppKC/3R4DNbwxmacEovivxVKFan1wL0xddH6lfdddOE8pAeatklu4rWbi5Y?=
- =?us-ascii?Q?nEvP4riOyyEG/VlrpC9GdJK+fZKnXbeOm+PZc3jfWVKkXJ/2bXxVqJJt/Wz0?=
- =?us-ascii?Q?xfi3F+RUOLNmLbaQBGnxM6eCDccs6SQ+NxR9/nGSw3VEEb+SSXMOjs7lNxhL?=
- =?us-ascii?Q?214MG5PFO+J5gBz5Dg/GTVEBJqZyabckj9JBJrYdCsgSGOrl1/unglzxgC23?=
- =?us-ascii?Q?1Q5QjdX1FGcKnrmC1ldNaW9dSumn806XXPcfV0QKMbvwSJNY4G29ViCjmQay?=
- =?us-ascii?Q?iCXL62aar8cpu4Up/FWKBeOpJiAjCXJhpjVZFewXRs/xHVlmvhihAt5dCDa4?=
- =?us-ascii?Q?5S6cqutsvgHA5BqjtX9ptBjJ0AWxpNIvAXa6iuj6vN1ONp1pz2wclHuC4C1Q?=
- =?us-ascii?Q?kAKlnfAGVSTPcxhvQA+3dckmjgxjagsHsN5ta+jyQRg2XoEVjaHJRFrudtMa?=
- =?us-ascii?Q?qDECXWhePP93d3t0663WosFZultDSiiWTjLImF/2fK/lsHpXpdsOMmam9Gf4?=
- =?us-ascii?Q?FBhQtWOA2xD4O5OC4lFy3UFt8MQXY3ST100gpptYy/IpiJjiOz41w9TJJ+ir?=
- =?us-ascii?Q?u/9SDHxnR2pTJJGzMl3Cyxb0lcfIoC3881yf1ZkM6VJmaaoBFTlXz9PgJj7O?=
- =?us-ascii?Q?szRUSlCy4Djls42Qz0FHPA2qMQn8saOMwTd8W4FCiwkeJV7cgv4dZtobj/W8?=
- =?us-ascii?Q?aw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75baf673-077d-4664-b91a-08de12506151
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 16:22:37.3933 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qAekgF3AVWR2b0nA3BhN8wgRxtce+8yIUiu6JoAy3iglE6VQctSeFoFZJaLkoBhCj/DMmDFf0SJoS8TeFR7Gd+DAzfv1infjgnL0fgchCo0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8397
-X-OriginatorOrg: intel.com
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v5] mbuf: optimize segment prefree
+Date: Thu, 23 Oct 2025 18:24:07 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F654FF@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <aPpR4jZtBvDM42pL@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v5] mbuf: optimize segment prefree
+Thread-Index: AdxENrDrjX2d9lTTSJS/qZbWKPTppAAAhFfw
+References: <20250827213535.21602-1-mb@smartsharesystems.com>
+ <20251023080136.165513-1-mb@smartsharesystems.com>
+ <c556ea7b92a24bc09ac5240da39bc36c@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F654F7@smartserver.smartshare.dk>
+ <6a26d57153714d04865753fd557978dd@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F654FB@smartserver.smartshare.dk>
+ <e12aa6583cb34a3595fd518c187bf144@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F654FE@smartserver.smartshare.dk>
+ <aPpR4jZtBvDM42pL@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, <thomas@monjalon.net>
+Cc: <dev@dpdk.org>, "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
+ "Fengchengwen" <fengchengwen@huawei.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -170,28 +57,262 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Oct 23, 2025 at 08:46:21AM -0700, Stephen Hemminger wrote:
-> This patch series addresses the problem of packet capture when
-> the secondary process is sending/receiving by using the same
-> mechanism as hot plug.  It also fixes some bugs on shutdown
-> of dumpcap (and pdump).
-> 
-> The documentation has been updated and improved as well.
-> 
-> v4 - instead of using alloca() instead process in chunks
->      which avoids possible stack overflow
-> 
-> Stephen Hemminger (8):
->   dumpcap: handle primary process exit
->   pdump: handle primary process exit
->   pdump: fix races in callbacks
->   dumpcap: handle pdump requests from primary
->   pdump: handle pdump requests from primary
->   pdump: forward callback enable to secondary
->   pdump: remove use of VLA
->   doc: update documentation on pdump library
-> 
-While I haven't been able to do a full review of all patches, the idea
-generally looks good.
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Thursday, 23 October 2025 18.04
+>=20
+> On Thu, Oct 23, 2025 at 05:46:49PM +0200, Morten Br=F8rup wrote:
+> > > From: Konstantin Ananyev [mailto:konstantin.ananyev@huawei.com]
+> > > Sent: Thursday, 23 October 2025 17.27
+> > >
+> > > > > From: Konstantin Ananyev =
+[mailto:konstantin.ananyev@huawei.com]
+> > > > > Sent: Thursday, 23 October 2025 16.05
+> > > > >
+> > > > > > > From: Konstantin Ananyev
+> [mailto:konstantin.ananyev@huawei.com]
+> > > > > > > Sent: Thursday, 23 October 2025 10.51
+> > > > > > >
+> > > > > > > > -#define RTE_MBUF_DIRECT(mb) \
+> > > > > > > > -	(!((mb)->ol_flags & (RTE_MBUF_F_INDIRECT |
+> > > > > RTE_MBUF_F_EXTERNAL)))
+> > > > > > > > + *
+> > > > > > > > + * Note: Macro optimized for code size.
+> > > > > > > > + *
+> > > > > > > > + * The plain macro would be:
+> > > > > > > > + *      #define RTE_MBUF_DIRECT(mb) \
+> > > > > > > > + *          (!((mb)->ol_flags & (RTE_MBUF_F_INDIRECT |
+> > > > > > > RTE_MBUF_F_EXTERNAL)))
+> > > > > > > > + *
+> > > > > > > > + * The flags RTE_MBUF_F_INDIRECT and =
+RTE_MBUF_F_EXTERNAL
+> are
+> > > > > both in
+> > > > > > > the
+> > > > > > > > MSB (most significant
+> > > > > > > > + * byte) of the 64-bit ol_flags field, so we only
+> compare
+> > > this
+> > > > > one
+> > > > > > > byte instead of all
+> > > > > > > > 64 bits.
+> > > > > > > > + *
+> > > > > > > > + * E.g., GCC version 16.0.0 20251019 (experimental)
+> > > generates
+> > > > > the
+> > > > > > > following code
+> > > > > > > > for x86-64.
+> > > > > > > > + *
+> > > > > > > > + * With the plain macro, 17 bytes of instructions:
+> > > > > > > > + *      movabs rax,0x6000000000000000       // 10 bytes
+> > > > > > > > + *      and    rax,QWORD PTR [rdi+0x18]     // 4 bytes
+> > > > > > > > + *      sete   al                           // 3 bytes
+> > > > > > > > + * With this optimized macro, only 7 bytes of
+> instructions:
+> > > > > > > > + *      test   BYTE PTR [rdi+0x1f],0x60     // 4 bytes
+> > > > > > > > + *      sete   al                           // 3 bytes
+> > > > > > > > + */
+> > > > > > > > +#if RTE_BYTE_ORDER =3D=3D RTE_LITTLE_ENDIAN
+> > > > > > > > +/* On little endian architecture, the MSB of a 64-bit
+> > > integer is
+> > > > > at
+> > > > > > > byte offset 7. */
+> > > > > > > > +#define RTE_MBUF_DIRECT(mb)     !(((const char =
+*)(&(mb)-
+> > > > > > > >ol_flags))[7] & 0x60)
+> > > > > > > > +#elif RTE_BYTE_ORDER =3D=3D RTE_BIG_ENDIAN
+> > > > > > > > +/* On big endian architecture, the MSB of a 64-bit
+> integer
+> > > is at
+> > > > > > > byte offset 0. */
+> > > > > > > > +#define RTE_MBUF_DIRECT(mb)     !(((const char =
+*)(&(mb)-
+> > > > > > > >ol_flags))[0] & 0x60)
+> > > > > > >
+> > > > > > > A stupid q: why then not simply do:
+> > > > > > > (mb->ol_flags >> 56) & 0x60
+> > > > > > > then?
+> > > > > > > Should help to all these LE/BE casts, etc.
+> > > > > >
+> > > > > > GCC is too stupid for that too.
+> > > > > >
+> > > > > > Playing around with Godbolt shows that
+> > > > > > 	return !((char)(p[3] >> 56) & 0x60);
+> > > > > > becomes
+> > > > > > 	movzx  eax,BYTE PTR [rdi+0x1f]	// 4 bytes
+> > > > > > 	test   al,0x60				// 2 bytes
+> > > > > > Instead of simply
+> > > > > > 	test   BYTE PTR [rdi+0x1f],0x60	// 4 bytes
+> > > > >
+> > > > > And these 2 extra bytes in instructions, are that really that
+> > > critical?
+> > > > > My guess, we wouldn't notice any real diff here.
+> > > >
+> > > > The optimized macro made the common code path of the refactored
+> > > > rte_pktmbuf_prefree_seg() fit into one cache line.
+> > > > IIRC, all 10 bytes saving were required for this.
+> > >
+> > > I understand that. but is that change will provide a measurable
+> impact,
+> > > in terms of cycles/op or pps or so?
+> >
+> > L1 instruction cache is important; reducing code size of a =
+per-packet
+> function might have an effect in some cases.
+> > I don't have other metrics than code size for this optimization.
+> >
+> > I just tested to see if I recalled correctly, and here's the
+> generated code with the two different macros:
+> >
+> > #define RTE_MBUF_DIRECT(mb)     !(((const char *)(&(mb)-
+> >ol_flags))[7] & 0x60)
+> >
+> > 0000000000000670 <review_rte_pktmbuf_prefree_seg>:
+> >      670:       f3 0f 1e fa             endbr64
+> >      674:       41 57                   push   %r15
+> >      676:       41 56                   push   %r14
+> >      678:       41 55                   push   %r13
+> >      67a:       41 54                   push   %r12
+> >      67c:       55                      push   %rbp
+> >      67d:       53                      push   %rbx
+> >      67e:       48 89 fb                mov    %rdi,%rbx
+> >      681:       48 83 ec 18             sub    $0x18,%rsp
+> >      685:       64 48 8b 04 25 28 00    mov    %fs:0x28,%rax
+> >      68c:       00 00
+> >      68e:       48 89 44 24 08          mov    %rax,0x8(%rsp)
+> >      693:       31 c0                   xor    %eax,%eax
+> >      695:       0f b7 6f 12             movzwl 0x12(%rdi),%ebp
+> >      699:       66 83 fd 01             cmp    $0x1,%bp
+> >      69d:       75 51                   jne    6f0
+> <review_rte_pktmbuf_prefree_seg+0x80>
+> > ** Look here {
+> >      69f:       f6 47 1f 60             testb  $0x60,0x1f(%rdi)
+> >      6a3:       75 6b                   jne    710
+> <review_rte_pktmbuf_prefree_seg+0xa0>
+> > ** }
+> >      6a5:       66 83 7b 14 01          cmpw   $0x1,0x14(%rbx)
+> >      6aa:       74 09                   je     6b5
+> <review_rte_pktmbuf_prefree_seg+0x45>
+> >      6ac:       b8 01 00 00 00          mov    $0x1,%eax
+> >      6b1:       66 89 43 14             mov    %ax,0x14(%rbx)
+> >      6b5:       48 83 7b 40 00          cmpq   $0x0,0x40(%rbx)
+> >      6ba:       74 08                   je     6c4
+> <review_rte_pktmbuf_prefree_seg+0x54>
+> >      6bc:       48 c7 43 40 00 00 00    movq   $0x0,0x40(%rbx)
+> >      6c3:       00
+> >      6c4:       48 89 d8                mov    %rbx,%rax
+> >      6c7:       48 8b 54 24 08          mov    0x8(%rsp),%rdx
+> >      6cc:       64 48 2b 14 25 28 00    sub    %fs:0x28,%rdx
+> >      6d3:       00 00
+> >      6d5:       0f 85 3a 02 00 00       jne    915
+> <review_rte_pktmbuf_prefree_seg+0x2a5>
+> >      6db:       48 83 c4 18             add    $0x18,%rsp
+> >      6df:       5b                      pop    %rbx
+> >      6e0:       5d                      pop    %rbp
+> >      6e1:       41 5c                   pop    %r12
+> >      6e3:       41 5d                   pop    %r13
+> >      6e5:       41 5e                   pop    %r14
+> >      6e7:       41 5f                   pop    %r15
+> >      6e9:       c3                      ret
+> >
+> > #define RTE_MBUF_DIRECT(mb) \
+> > 	!((char)((mb)->ol_flags >> (7 * CHAR_BIT)) & \
+> > 	(char)((RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL) >> (7 *
+> CHAR_BIT)))
+> >
+> > 0000000000000690 <review_rte_pktmbuf_prefree_seg>:
+> >      690:       f3 0f 1e fa             endbr64
+> >      694:       41 57                   push   %r15
+> >      696:       41 56                   push   %r14
+> >      698:       41 55                   push   %r13
+> >      69a:       41 54                   push   %r12
+> >      69c:       55                      push   %rbp
+> >      69d:       53                      push   %rbx
+> >      69e:       48 89 fb                mov    %rdi,%rbx
+> >      6a1:       48 83 ec 18             sub    $0x18,%rsp
+> >      6a5:       64 48 8b 04 25 28 00    mov    %fs:0x28,%rax
+> >      6ac:       00 00
+> >      6ae:       48 89 44 24 08          mov    %rax,0x8(%rsp)
+> >      6b3:       31 c0                   xor    %eax,%eax
+> >      6b5:       0f b7 6f 12             movzwl 0x12(%rdi),%ebp
+> >      6b9:       66 83 fd 01             cmp    $0x1,%bp
+> >      6bd:       75 59                   jne    718
+> <review_rte_pktmbuf_prefree_seg+0x88>
+> > ** Look here {
+> >      6bf:       48 8b 47 18             mov    0x18(%rdi),%rax
+> >      6c3:       48 89 c2                mov    %rax,%rdx
+> >      6c6:       48 c1 ea 38             shr    $0x38,%rdx
+> >      6ca:       83 e2 60                and    $0x60,%edx
+> >      6cd:       75 71                   jne    740
+> <review_rte_pktmbuf_prefree_seg+0xb0>
+> > * }
+> >      6cf:       66 83 7b 14 01          cmpw   $0x1,0x14(%rbx)
+> >      6d4:       74 09                   je     6df
+> <review_rte_pktmbuf_prefree_seg+0x4f>
+> >      6d6:       b8 01 00 00 00          mov    $0x1,%eax
+> >      6db:       66 89 43 14             mov    %ax,0x14(%rbx)
+> >      6df:       48 83 7b 40 00          cmpq   $0x0,0x40(%rbx)
+> >      6e4:       74 08                   je     6ee
+> <review_rte_pktmbuf_prefree_seg+0x5e>
+> >      6e6:       48 c7 43 40 00 00 00    movq   $0x0,0x40(%rbx)
+> >      6ed:       00
+> >      6ee:       48 89 d8                mov    %rbx,%rax
+> >      6f1:       48 8b 54 24 08          mov    0x8(%rsp),%rdx
+> >      6f6:       64 48 2b 14 25 28 00    sub    %fs:0x28,%rdx
+> >      6fd:       00 00
+> >      6ff:       0f 85 50 02 00 00       jne    955
+> <review_rte_pktmbuf_prefree_seg+0x2c5>
+> >      705:       48 83 c4 18             add    $0x18,%rsp
+> >      709:       5b                      pop    %rbx
+> >      70a:       5d                      pop    %rbp
+> >      70b:       41 5c                   pop    %r12
+> >      70d:       41 5d                   pop    %r13
+> >      70f:       41 5e                   pop    %r14
+> >      711:       41 5f                   pop    %r15
+> >      713:       c3                      ret
+> >
+> > >
+> > > > > But if it really is, can I ask you to create a new define for
+> 0x60,
+> > > > > to avoid hardcoded constants in the code?
+> > > > > Might be something  like
+> > > > > #define RTE_MBUF_F_INDIRECT_EXTERNAL_1B ...
+> > > > > or so.
+> > > >
+> > > > I started out using the field names, but Bruce suggested using
+> 0x60
+> > > for
+> > > > readability, making the macros shorter, which IMO looks good.
+> > > >
+> > > > I don't like adding special names just for this, so either we
+> stick
+> > > with 0x60 or go for
+> > > > "(char)((RTE_MBUF_F_INDIRECT | RTE_MBUF_F_EXTERNAL) >> (7 *
+> > > > CHAR_BIT))", something like this:
+> > >
+> > > My vote would be to use the construction above.
+> > > Might be put it in a new macro for readability.
+> > > Konstantin
+> >
+> > The optimization requires casting ol_flags as a byte array and then
+> reading the MSB; otherwise GCC and some other compilers are too stupid
+> to perform the optimization.
+> > So, should I post a v7 with the code proposed below (to get rid of
+> the 0x60 numerical value)?
+> >
+> While I'm not going to massively complain about removing it, I think
+> using
+> the numeric value is absolutely fine because we check its validity
+> using a
+> static_assert, which also serves to document where the constant comes
+> from.
+>=20
+> /Bruce
 
-Series-acked-by: Bruce Richardson <bruce.richardson@intel.com>
+I have posted a v7 patch, so you can all see how it looks with long =
+names vs. numerical value.
+
+I just want the optimization, and have no strong preference of one or =
+the other.
+
+If none of you have any strong opinions, let's let @Thomas choose. :-)
+
