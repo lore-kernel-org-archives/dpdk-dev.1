@@ -2,77 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D07CCD193
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 17:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A20DCCCD193
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 17:40:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B669140669;
-	Thu, 23 Oct 2025 19:28:33 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id ADD2E4042F;
- Thu, 23 Oct 2025 19:28:31 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59N8OlIH031543;
- Thu, 23 Oct 2025 10:28:30 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=X
- 5XM4Ed1BK7/krJFghNPD3qNWbhJfDGZkdbNPbAZVRQ=; b=C85akIkmcWcA+Ph1R
- Nw2gILMyecfymhYhks7vKCDJ1biYG+2hlOhWIars9Lbkj9T1f6zBSQrvilRK9pRo
- lBLcX8VF0J4GiVAj5YXIUXYNTbTjY8xpVm8PSqLszi7KmVSzs2SgxiO1AjsZwvj2
- t7mIgwDgyD0LBwrgYtyjrrciIpPvc2aztQcvbprBDEhdEY1GNCfISvn4GRJx+pVt
- z8hCIRvGWek1/YUz2oGBzZKCpkde4PuhXUKf5SQpMvjQDw6fPohH4BIVBBgFu/Ri
- aioTR4vPJhZ1N0n+kcYhKrxFmCopYmuWoioNkRxzEJAFNQ96orokqaSvm8whFy9E
- AFlzA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 49ycq49vba-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 23 Oct 2025 10:28:30 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 23 Oct 2025 10:28:39 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 23 Oct 2025 10:28:39 -0700
-Received: from hyd1588t430.caveonetworks.com (unknown [10.29.52.204])
- by maili.marvell.com (Postfix) with ESMTP id E90AD3F705D;
- Thu, 23 Oct 2025 10:28:26 -0700 (PDT)
-From: Nithin Dabilpuram <ndabilpuram@marvell.com>
-To: Thomas Monjalon <thomas@monjalon.net>, Nithin Dabilpuram
- <ndabilpuram@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, "Sunil
- Kumar Kori" <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- "Harman Kalra" <hkalra@marvell.com>
-CC: <jerinj@marvell.com>, <dev@dpdk.org>, Aarnav JP <ajp@marvell.com>,
- <stable@dpdk.org>
-Subject: [PATCH v3 19/19] drivers: fix Klocwork issues
-Date: Thu, 23 Oct 2025 22:57:27 +0530
-Message-ID: <20251023172728.770661-19-ndabilpuram@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251023172728.770661-1-ndabilpuram@marvell.com>
-References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
- <20251023172728.770661-1-ndabilpuram@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C70AA40276;
+	Thu, 23 Oct 2025 19:40:08 +0200 (CEST)
+Received: from fout-a5-smtp.messagingengine.com
+ (fout-a5-smtp.messagingengine.com [103.168.172.148])
+ by mails.dpdk.org (Postfix) with ESMTP id 422AB40144;
+ Thu, 23 Oct 2025 19:40:07 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.phl.internal (Postfix) with ESMTP id D6344EC0103;
+ Thu, 23 Oct 2025 13:40:06 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Thu, 23 Oct 2025 13:40:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1761241206;
+ x=1761327606; bh=jKMso60e/kmd7P0Ytj+1dCSUT7lyKOu8c22RKw1nFiU=; b=
+ Jq02gl+vv6ewnfHIN2DZlZk4kwx1FSmCkxefcLYZMTFHpt0bGfw71vGMz9u15m/L
+ 2oo+W6Ff1VXhNcJeEE4dOTnxLDV4c8lmQPGRZ6I+dp77aqxHj0G8kd25F5S65Xwz
+ +ABHkwOaaRUB/ONEXCjsxsQJBN8QjhNLV/Al/YXV0+LzqvboI8lJpUZ2KaY2r+LT
+ X6k5Y5AftAe82c5wulLSq9dRqBdtVBL9ro822IOEW4n8Nev74tBDPGBBenViTfCT
+ NDEr5mAVb+FHR2aRC2yBCArwHrFFDBbaIfcE5s/bU8Or0qlpUIYGFr+sWdhh1jVU
+ U+DlIaNHbXXyU53B1DD6cQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761241206; x=
+ 1761327606; bh=jKMso60e/kmd7P0Ytj+1dCSUT7lyKOu8c22RKw1nFiU=; b=m
+ 4qgYfZVJrPyCUvRqS6RPRJVoaERornVoXRq8ZRVKq3aeQkCTjqF0Jj8B90Wh/bBY
+ 8NjgDQmfW01jgzZ/q1g7Z7SRpvU89s/nNAVdgn54GUvba/ITce/sJVhPcCS8zEDP
+ MracxZ06Zij/NVbG9n1CnqlgmZSO+xu8HlzGu9Q4k9QAiOiUnbEeuloS8FgvlsSl
+ OOxzJqN70CAyiIKKG4Q/Y2/DHb4kX75K5nIFsWW/2SYFjYfoQlN2oLUIurnOuxYu
+ 7fe187bQ7LIEtue/L+TlwpzEPCyv1Q0opl+z4U2+QL7hofoUKagoWCHrDei/VC68
+ dRiHzwlAAb+rteqVsuM2w==
+X-ME-Sender: <xms:dmj6aD_qsDILq0f7i3PHf7N6wK9OLv7Cp3Aq3AE5qIFBHWLuLdR02A>
+ <xme:dmj6aLKkcmqHuZy6QpFJ8JWZZdliucd32noNzH-L3DhthQeVZUkY-sFSVEnRbCtvz
+ Lk3_AHwcOU1oEPhY5ZbMTJWT_jJ_ECbUToDBSpdh5hZ8oNcQsuY>
+X-ME-Received: <xmr:dmj6aEgfywqEgIcQTtmdLDrS0nv6Qtg3q3RJhvdvD2oI48BqKzPXQfH-i2jv1EwpkALUkW7ms291Fj6adSQzV0rwVA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeejtdekucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehmvghghhgrrdgrjhhmvghrrgesihhnth
+ gvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehj
+ rghsvhhinhguvghrrdhsihhnghhhsehinhhtvghlrdgtohhmpdhrtghpthhtohepshhtvg
+ hphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepshhtrggs
+ lhgvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:dmj6aD7oI3hEAdnJ_MM1BW_rQKHBnQL2FuT6xCT84mXhgjWWCxFtng>
+ <xmx:dmj6aEYpLOrcG6wNKcWl4dcvR8PEW9JdHgkULIMt1RLj1K_xsxcp7A>
+ <xmx:dmj6aA6hC6gxrhdbO6wM08cMsfcu5PxcsG2icXXL1c4LyrKSA9Qetw>
+ <xmx:dmj6aPDjo9Hfa2SOmKr18xu42bZ35Buwyg6WUH3A1gfEZ7aCPGOQMA>
+ <xmx:dmj6aA3vY37kjyTSGmSY0Fp9NiO1Gke8GNKf0objv8893Ipms4KOEbkI>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 23 Oct 2025 13:40:05 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Megha Ajmera <megha.ajmera@intel.com>
+Cc: dev@dpdk.org, jasvinder.singh@intel.com,
+ Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org
+Subject: Re: [PATCH] sched: fix wrr parameter data type
+Date: Thu, 23 Oct 2025 19:40:04 +0200
+Message-ID: <6674915.uKWtJMOXK1@thomas>
+In-Reply-To: <20250918085145.584fca13@hermes.local>
+References: <20250918024609.2027038-1-megha.ajmera@intel.com>
+ <20250918085145.584fca13@hermes.local>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDAzMSBTYWx0ZWRfXyQKKYdACkotY
- /L0GdjxgY2f+U6ZGrq69I3IhGBLWlKAOzpCd/BGp/RVVolitT0T7iGorm3cH2yRVRmex7KtNiCP
- nHOpdVLKZJTr1VJZtEbrJLDb6VRPTDb9vyYPkDvjJEuxVkKkHpsgyfygv1nji60b1oB5tSEGQ1F
- XT1uLnKpWHnvJG3Ca9drQxCzDCf7SMG5T+XkJfkBnPp6bvPs7ZEXU593fB3k3EVZQEhS/t7cR5Z
- tht1cqbcXECMg/sc04ABr5E16AyDpti5rEEsdIgZmV7cneB2heIycHWdxMCE3Qmnecb5j/ElD3I
- 3rTYPo03Cbq4mNI3yfG9Nm3k5g5apJVpF4dzgU6RHpU0mOt8w/FOwZpmUk6PcZxN8JKilyu9M6K
- SqidI6Qxe9GUpRaxyGV6Bo9aP+NOLg==
-X-Authority-Analysis: v=2.4 cv=fI80HJae c=1 sm=1 tr=0 ts=68fa65be cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=02K0Y2VpAAAA:8 a=yBKhqCqsAAAA:8 a=20KFwNOVAAAA:8 a=lOrjXhgRObHz-F5jIjYA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22 a=SVpKTQGeYiyENV88YW8K:22
- a=u5H4eTi2zCHWd_3L5ZMT:22
-X-Proofpoint-GUID: -B-2kn5LZP3fbri_FQ_Dq5WGKONTQspG
-X-Proofpoint-ORIG-GUID: -B-2kn5LZP3fbri_FQ_Dq5WGKONTQspG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-23_01,2025-10-22_01,2025-03-28_01
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,129 +91,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Aarnav JP <ajp@marvell.com>
+18/09/2025 17:51, Stephen Hemminger:
+> On Thu, 18 Sep 2025 08:16:09 +0530
+> Megha Ajmera <megha.ajmera@intel.com> wrote:
+> 
+> > wrr tokens getting truncated to uint8_t in wrr_store function() due to
+> > type mismatch. This patch changes the data type to uint16_t.
+> > 
+> > Fixes: e16b06da0908 ("sched: remove WRR from strict priority TC queues")
+> > 
+> > Signed-off-by: Megha Ajmera <megha.ajmera@intel.com>
+> > Acked-by: Jasvinder Singh <Jasvinder.singh@intel.com>
+> 
+> The pipe tokens are updated in grinder_wrr_store by:
+> 
+> 	pipe->wrr_tokens[0] =
+> 			(grinder->wrr_tokens[0] & grinder->wrr_mask[0]) >>
+> 				RTE_SCHED_WRR_SHIFT;
+> 
+> The token in rte_sched_grinder is uint16_t.
+> The mask value in wrr_mask is either 0 or 0xffff.
+> The shift is 3.
+> Therefore the range of pipe tokens is 0xffff >> 3 = 1FFF
+> 
+> The sched code is severely under commented and overly complex.
+> The patch looks right.
+> 
+> Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 
-fixed klocwork suggested issues in
-cnxk component of drivers module
+Cc stable
 
-Fixes: db5744d3cd23 ("common/cnxk: support NIX debug for CN20K")
-Fixes: 3c31a7485172 ("common/cnxk: config CPT result address for CN20K")
-Fixes: 4b8eb5bd6627 ("common/cnxk: reserve CPT LF for Rx inject")
-Fixes: f410059baac6 ("common/cnxk: support inline inbound queue")
-Fixes: 47cca253d605 ("net/cnxk: support Rx inject")
-Fixes: ac35d4bf4cd6 ("net/cnxk: support ingress meter pre-color")
-Cc: stable@dpdk.org
+Applied, thanks.
 
-Signed-off-by: Aarnav JP <ajp@marvell.com>
----
- .mailmap                            |  1 +
- drivers/common/cnxk/roc_nix_debug.c |  4 ++--
- drivers/common/cnxk/roc_nix_inl.c   | 13 ++++++-------
- drivers/net/cnxk/cn10k_ethdev_sec.c |  2 ++
- drivers/net/cnxk/cnxk_ethdev_mtr.c  |  8 +++++++-
- 5 files changed, 18 insertions(+), 10 deletions(-)
-
-diff --git a/.mailmap b/.mailmap
-index 504c539da4..5616a9bec5 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1,4 +1,5 @@
- Aakash Sasidharan <asasidharan@marvell.com>
-+Aarnav JP <ajp@marvell.com>
- Aaro Koskinen <aaro.koskinen@nsn.com>
- Aaron Campbell <aaron@arbor.net>
- Aaron Conole <aconole@redhat.com>
-diff --git a/drivers/common/cnxk/roc_nix_debug.c b/drivers/common/cnxk/roc_nix_debug.c
-index f9294e693b..11994bf131 100644
---- a/drivers/common/cnxk/roc_nix_debug.c
-+++ b/drivers/common/cnxk/roc_nix_debug.c
-@@ -769,8 +769,8 @@ nix_lf_rq_dump(__io struct nix_cn20k_rq_ctx_s *ctx, FILE *file)
- 
- 	nix_dump(file, "W2: xqe_hdr_split \t\t%d\nW2: xqe_imm_copy \t\t%d",
- 		 ctx->xqe_hdr_split, ctx->xqe_imm_copy);
--	nix_dump(file, "W2: band_prof_id\t\t%d\n",
--		 ((ctx->band_prof_id_h << 10) | ctx->band_prof_id_l));
-+	nix_dump(file, "W2: band_prof_id\t\t0x%" PRIx64 "\n",
-+		 (uint64_t)((ctx->band_prof_id_h << 10) | ctx->band_prof_id_l));
- 	nix_dump(file, "W2: xqe_imm_size \t\t%d\nW2: later_skip \t\t\t%d",
- 		 ctx->xqe_imm_size, ctx->later_skip);
- 	nix_dump(file, "W2: sso_bp_ena\t\t%d\n", ctx->sso_bp_ena);
-diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index a5fc33b5c9..9135c1c172 100644
---- a/drivers/common/cnxk/roc_nix_inl.c
-+++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -581,7 +581,7 @@ nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
- 	struct nix_inl_dev *inl_dev = NULL;
- 	uint64_t max_sa = 1, sa_pow2_sz;
- 	uint64_t sa_idx_w, lenm1_max;
--	uint64_t res_addr_offset;
-+	uint64_t res_addr_offset = 0;
- 	uint64_t def_cptq = 0;
- 	size_t inb_sa_sz = 1;
- 	uint8_t profile_id;
-@@ -626,12 +626,11 @@ nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
- 		inl_dev = idev->nix_inl_dev;
- 		if (inl_dev->nb_inb_cptlfs)
- 			def_cptq = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id];
-+		res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
-+		if (res_addr_offset)
-+			res_addr_offset |= (1UL << 56);
- 	}
- 
--	res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
--	if (res_addr_offset)
--		res_addr_offset |= (1UL << 56);
--
- 	lf_cfg->enable = 1;
- 	lf_cfg->profile_id = profile_id;
- 	lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id];
-@@ -850,12 +849,12 @@ roc_nix_inl_inb_rx_inject_enable(struct roc_nix *roc_nix, bool inb_inl_dev)
- 
- 	if (inb_inl_dev) {
- 		inl_dev = idev->nix_inl_dev;
--		if (inl_dev && inl_dev->attach_cptlf && inl_dev->rx_inj_ena &&
-+		if (inl_dev && inl_dev->attach_cptlf && inl_dev->rx_inj_ena && roc_nix &&
- 		    roc_nix->rx_inj_ena)
- 			return true;
- 	}
- 
--	return roc_nix->rx_inj_ena;
-+	return roc_nix ? roc_nix->rx_inj_ena : 0;
- }
- 
- uint32_t
-diff --git a/drivers/net/cnxk/cn10k_ethdev_sec.c b/drivers/net/cnxk/cn10k_ethdev_sec.c
-index 110630596e..5ecdc2b463 100644
---- a/drivers/net/cnxk/cn10k_ethdev_sec.c
-+++ b/drivers/net/cnxk/cn10k_ethdev_sec.c
-@@ -1336,6 +1336,8 @@ cn10k_eth_sec_rx_inject_config(void *device, uint16_t port_id, bool enable)
- 	roc_idev_nix_rx_inject_set(port_id, enable);
- 
- 	inl_lf = roc_nix_inl_inb_inj_lf_get(nix);
-+	if (!inl_lf)
-+		return -ENOTSUP;
- 	sa_base = roc_nix_inl_inb_sa_base_get(nix, dev->inb.inl_dev);
- 
- 	inj_cfg = &dev->inj_cfg;
-diff --git a/drivers/net/cnxk/cnxk_ethdev_mtr.c b/drivers/net/cnxk/cnxk_ethdev_mtr.c
-index edeca6dcc3..992e2d446e 100644
---- a/drivers/net/cnxk/cnxk_ethdev_mtr.c
-+++ b/drivers/net/cnxk/cnxk_ethdev_mtr.c
-@@ -1261,7 +1261,13 @@ nix_mtr_config_map(struct cnxk_meter_node *mtr, struct roc_nix_bpf_cfg *cfg)
- 
- 	cfg->alg = alg_map[profile->profile.alg];
- 	cfg->lmode = profile->profile.packet_mode;
--	cfg->icolor = color_map[mtr->params.default_input_color];
-+	int idx = mtr->params.default_input_color;
-+
-+	/* Index validation */
-+	if (idx >= RTE_COLORS)
-+		cfg->icolor = ROC_NIX_BPF_COLOR_GREEN;
-+	else
-+		cfg->icolor = color_map[idx];
- 
- 	switch (RTE_MTR_COLOR_IN_PROTO_OUTER_IP) {
- 	case RTE_MTR_COLOR_IN_PROTO_OUTER_IP:
--- 
-2.34.1
 
