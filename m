@@ -2,78 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8842CCD1BC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 14:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EF1CCD1BE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Oct 2025 14:52:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CC204025E;
-	Thu, 23 Oct 2025 16:49:55 +0200 (CEST)
-Received: from fout-a3-smtp.messagingengine.com
- (fout-a3-smtp.messagingengine.com [103.168.172.146])
- by mails.dpdk.org (Postfix) with ESMTP id 9E82840151
- for <dev@dpdk.org>; Thu, 23 Oct 2025 16:49:53 +0200 (CEST)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id 09B1BEC01B7;
- Thu, 23 Oct 2025 10:49:53 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Thu, 23 Oct 2025 10:49:53 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 4DDDC4025E;
+	Thu, 23 Oct 2025 16:51:59 +0200 (CEST)
+Received: from fhigh-a7-smtp.messagingengine.com
+ (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+ by mails.dpdk.org (Postfix) with ESMTP id DD77E40151
+ for <dev@dpdk.org>; Thu, 23 Oct 2025 16:51:57 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 849EF14000BB;
+ Thu, 23 Oct 2025 10:51:57 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-04.internal (MEProxy); Thu, 23 Oct 2025 10:51:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1761230993;
- x=1761317393; bh=e0ubFd739MbTDaIrqiS9k/qK/lfWTcc95tPpl+Db1Q4=; b=
- MLyU++lpLsRLVyWfN4ZbS8ybAsCF/LvwEgsoQCLl3s+6WeAjXxT9pup+qZuzxBAQ
- YV/mHvosaUvRxBM9IgdCKFyg58W/TLxpYzC4ibnksL1ZpTQuh3if7UXWcbn273OD
- TnCCNZ8KaoR0RSM/VN4lr2qdpWl8WcNL2BC59C7jXXsyjRXrbHemTCfLF5C74rob
- n8S1fWIlCC4VjPA0GcIw61Nk4YIZfXb0hAXKQ5Y0qlqwuFrW64HPQalDhQWsT3W5
- PUSBy0RQpbAvfQYjOPzaXaebizet6Kq/tuVV1L3zfDdcifIBHe+kNfPmxAvFmPY7
- jNWmrmkMZ/X9KalmnImBBQ==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1761231117;
+ x=1761317517; bh=sIBJ9l6me2LcxROF8TALDDU2bCczsNiVNHtNw094M+A=; b=
+ FJKZSNYZXK9DbXsfRUSyxLNltksnMUH1H4fNwt3akvDvxymtNRHKPSOPJsseT83K
+ cNxXBEj7FPwP3qoPrtwtdKzelE9f97NdpodBJfW2TiDgq/V0UtSmPpSi6TGNYSg7
+ mc2YryJsD5uXOUHj1rLjqgmiv1kwxCXLO8wm+fpcKCVjttqZRd1q2Ib0birp/PpV
+ DJuT4ieCLTZs5fVDf+beUirAkvqt853uEPgZNHGBYJ8ZlywOye9Y4p5SPEdTfO4G
+ tnD5ktGSakWvS+v08aR5ijWQDGFZqnbd7Hjo2Qjw2vNZLo1ptDRQCvabrTVa6H06
+ 0Fpa4kCYXG07ZI2xEcm8lA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761230993; x=
- 1761317393; bh=e0ubFd739MbTDaIrqiS9k/qK/lfWTcc95tPpl+Db1Q4=; b=v
- O50Mv0VAa/nN+b9rhdtLVjUSBM4sVSuUvxGEdeWws4Tw+RdeBadBK8wMHUQBQT90
- 3bJ3Clh2WA2ZUhn1cqT/XQ94WyIenDgzI8N9J3es+Jur0ar1c8m8RBndDJwFJqrR
- aXnRrml6FGl7M/YHGhwPBNVAiSJn5U6a2raS2U4a9N5IzBkzGugo+BNFj+LTwQgY
- 2HVVEYnuG1zTG2zY7wY3WzIj9RMoqJkfYTE3QKPLu4d5ta/KppZWbQb77PFu8pvG
- /yJsi6Wem5ysrpjs4V8+e95zXfurfdgdSu+UIqBp16G5KrBQada+cG3utg8oGeEy
- ZYFnni3RLLHb27w7kKcmg==
-X-ME-Sender: <xms:kED6aG-QxteRp6YeghrpzWdiyKbr98gQRZpRe09-ohmYXOJzKX6Vyw>
- <xme:kED6aPqSn7ErGtS_EzjODSGQSJ-pPHY31XYWDPzs6pthm3pjQTfmU5lh7U6msah9V
- JBV-WgVlVTDE1hS-TCKQuQqY6YuN0dlYrh9-6VSGKKVPmTcgqs>
-X-ME-Received: <xmr:kED6aHl4r5-ucqgP4i0FyC5-62HUjn4t7xYZGs5suYWw0iQUZHOPewU0topHRiCUSxV79SwMOWwQgP833rxr-NqapQ>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761231117; x=
+ 1761317517; bh=sIBJ9l6me2LcxROF8TALDDU2bCczsNiVNHtNw094M+A=; b=x
+ tYsTvYpYnjIl0aETATP+7epJpbE8GLTW1XLcwIadCs8lP4A0bK8H7yzvQhglb5Cx
+ fZbe0ut6BSK/DNsN4iQ3xuR8fL79q9QWRd1ouYCe8tcwiMEqGnv839fxyOdvKSCj
+ VfNrMFGdcl8ghyqBdcS89+4ZtwRyoNqOYoGzUK1Yz05Q3wMERMcbBnUx5vs9vv1N
+ ZIlOBDnOY7ETljV9CbCL1VDbydwELr/5MsD1Z4O2aUfy0oPGgFOJe0EUOKYS2q/J
+ lam54FOzI2ca9ozjGtHMcKWKEu3zrC6Eosd8BEUbfoyDHGhion8Dce2V682P0fIr
+ EH/1qGKMDTwt6HOx/zzOg==
+X-ME-Sender: <xms:DUH6aNBjZXNhGpQPp41s2NQV3w59-eginMZSLVqdRRNp8CSgVs8AWA>
+ <xme:DUH6aH1MQ181DL9WeqovIIPhwRTMdccfU0efiEB_vV0j5iMhS7d1GoxFX24e-HD9P
+ BlkzqIXZWRDYGBoppFT8Kzogs_Rp0T3ra03ZL4T_OGfSQvQ8rIC2fs>
+X-ME-Received: <xmr:DUH6aLXomv7RzN-cg-mDuIg6QFS9HMO558vxodQSPOFCGPN60kxQEKucpYaPO6o0KAhLkf3wdBumYVNxTKkLnu-VCA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeeijeegucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertd
- dttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
- ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevff
- fgtdegkeeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgep
- tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
- gvthdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
- shhilhdqphhlvhesnhgrphgrthgvtghhrdgtohhmpdhrtghpthhtohepuggvvhesughpug
- hkrdhorhhgpdhrtghpthhtohepmhhkohdqphhlvhesnhgrphgrthgvtghhrdgtohhmpdhr
- tghpthhtoheptghkmhesnhgrphgrthgvtghhrdgtohhmpdhrtghpthhtohepshhtvghphh
- gvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhg
-X-ME-Proxy: <xmx:kED6aOhC8JhKQl4wAuLJXxjMzzE7iluE-32BHeySq8DPCw4eBQCyww>
- <xmx:kED6aHdHDCEcZrUX1TkM9OvGTQWerarcxyoA14fzTpJbQE5sXNG2Jg>
- <xmx:kED6aGjHEBJDJxaZsV5uQZ7HV8y33BML3n_EbwhBPS6V-8UGxMo9WA>
- <xmx:kED6aHwmoi6jVQOpViNhJ8mF5X6ASulOMaGkOynZ2RPkbwX-KRxLzQ>
- <xmx:kUD6aKI9MgmaNeI4Bsg15h6Xd9CPaVnYzREaJWbMiZ8Ro2dp2iBgySCE>
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegrlhhirghlnhhusehnvhhiughirgdrtg
+ homhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:DUH6aJlSd-ofGa4Vd6ewcG9HHLmgZt9KBQ35U1fNKrVH15-39XJl9w>
+ <xmx:DUH6aFCXWBC-9ToubmwPLsx0-GwpuVRB7DfW-HmVQqhjsgKFOVa7bQ>
+ <xmx:DUH6aBeWRJOAeI426TBkkTHnQyGszXqDf0Fwpaw1g9rH20XdxAc5kA>
+ <xmx:DUH6aIIPB4wQj7cSeb2p3csV-CdzHBaDGiTpBRoe7FrPnLD0v_Tneg>
+ <xmx:DUH6aMBP3xmjjno4a3vqgtKNAwPkXE8TaK8Dhd-To565f8aaOr2FhV5_>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 23 Oct 2025 10:49:51 -0400 (EDT)
+ 23 Oct 2025 10:51:56 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Serhii Iliushyk <sil-plv@napatech.com>
-Cc: dev@dpdk.org, mko-plv@napatech.com, sil-plv@napatech.com,
- ckm@napatech.com, stephen@networkplumber.org
-Subject: Re: [PATCH v2] doc: refactoring the guide for NTNIC PMD
-Date: Thu, 23 Oct 2025 16:49:49 +0200
-Message-ID: <6896421.YiXZdWvhHV@thomas>
-In-Reply-To: <20251023143506.587329-1-sil-plv@napatech.com>
-References: <3590447.BaHzMo0RvP@thomas>
- <20251023143506.587329-1-sil-plv@napatech.com>
+To: Ali Alnubani <alialnu@nvidia.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] devtools: honor -n flag regardless of stdin state
+Date: Thu, 23 Oct 2025 16:51:54 +0200
+Message-ID: <26063275.kmuVQn2iE0@thomas>
+In-Reply-To: <6805909.NeCsiYhmir@thomas>
+References: <20251014074340.2364328-1-alialnu@nvidia.com>
+ <6805909.NeCsiYhmir@thomas>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -90,66 +87,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-23/10/2025 16:35, Serhii Iliushyk:
-> +=========================================================================================== =======
-> +Supported Features                                                                           Linux
-> +=========================================================================================== =======
-> +FW version                                                                                     X
-> +Speed capabilities                                                                             X
-> +Link status (Link update only)                                                                 X
-> +Unicast MAC filter                                                                             X
-> +Multicast MAC filter                                                                           X
-> +Promiscuous mode (Enable only. The device always run promiscuous mode)                         X
-> +Flow API support.                                                                              X
-> +Support for multiple rte_flow groups.                                                          X
-> +Multiple TX and RX queues.                                                                     X
-> +Scattered and gather for TX and RX.                                                            X
-> +Jumbo frame support.                                                                           X
-> +Traffic mirroring.                                                                             X
-> +VLAN filtering.                                                                                X
-> +Packet modification: NAT, TTL decrement, DSCP tagging                                          X
-> +Tunnel types: GTP.                                                                             X
-> +Encapsulation and decapsulation of GTP data.                                                   X
-> +RX VLAN stripping via raw decap.                                                               X
-> +TX VLAN insertion via raw encap.                                                               X
-> +CAM and TCAM based matching.                                                                   X
-> +Exact match of 140 million flows and policies.                                                 X
-> +Tunnel HW offload: Packet type, inner/outer RSS, IP and UDP checksum verification.             X
-> +RSS hash                                                                                       X
-> +RSS key update                                                                                 X
-> +RSS based on VLAN or 5*tuple.                                                                  X
-> +RSS using combinations of fields: L3 only, L4 only or both, and src only, dst only or both.    X
+23/10/2025 16:33, Thomas Monjalon:
+> 14/10/2025 09:43, Ali Alnubani:
+> > The checkpatches.sh script was checking if stdin is a terminal before
+> > honoring the -n flag, causing it to incorrectly attempt to read patches
+> > from stdin when run without a TTY (e.g., in Jenkins/CI pipelines).
+> > 
+> > Reorder the conditionals to check for the -n flag before checking stdin
+> > state. This ensures the -n flag takes precedence and the script checks
+> > git commits as intended.
+> > 
+> > Signed-off-by: Ali Alnubani <alialnu@nvidia.com>
+> 
+> Applied, thanks.
 
-When you make a table, you should not write sentences.
-Columns must not be wide.
-
-
-[...]
-> +<object>.<attribute>=[<object-ids>:]<value>
-
-Should it have a fixed witdth font?
-
-
-[...]
-> -``exception_path`` parameter [int]
-> +- ``exception_path`` parameter [int]
-
-Why do you replace the definition list with a simple list?
-Did you check the HTML output?
-
-
-[...]
->  Logging and Debugging
-> ----------------------
-> +~~~~~~~~~~~~~~~~~~~~~
-
-Why? So there is only 1 main title like "Features"?
-
-
-[...]
-> -.. note::
-> +   .. note::
-
-No reason to do that.
+After a second thought, I did not push it
+as I think we should improve the check to make
+the option -r a priority as well.
+Then the title would become "check patch from stdin only if nothing else".
 
 
