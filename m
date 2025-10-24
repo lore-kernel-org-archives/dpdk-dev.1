@@ -2,70 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF47CCD1BF
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 21:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85634CCF9E0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 21:55:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8123740151;
-	Fri, 24 Oct 2025 23:55:01 +0200 (CEST)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 9690D4014F
- for <dev@dpdk.org>; Fri, 24 Oct 2025 23:55:00 +0200 (CEST)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-339d53f4960so2791420a91.3
- for <dev@dpdk.org>; Fri, 24 Oct 2025 14:55:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A90A3402E0;
+	Fri, 24 Oct 2025 23:55:03 +0200 (CEST)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
+ [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id 29B894014F
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 23:55:01 +0200 (CEST)
+Received: by mail-pj1-f43.google.com with SMTP id
+ 98e67ed59e1d1-33e27a3b153so2639759a91.3
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 14:55:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761342899;
- x=1761947699; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761342900;
+ x=1761947700; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=GnQyYhwEgGNJcNtpmlXjtc/oKU8tJwfhE0Nh9HvE4lE=;
- b=knE0r5JiMfH0SLZL9BzTaepnhPKpxKeSbZp/d9/yDOGSL/wAy952ISA+BglK02wZEU
- CF2+QTeOm4PNhXZ7A+hPPy09n3YzfZRsZnmK4CacSkWT0N1NlGndZfgosVzGB1drhlRL
- y4tD0BDCiuFcS6i0mXZCycupQDgsfaY9bdi41QhW4D9Bg6PjXG71M7pEPMttR9IFyQS6
- OZYSgwgSOZTYN8lE+ibPj1hAaL4VAVNqop8rd0ubqPVFZYGEwCTZpeUKPoGBsH54VmdS
- GgMiLJY74XXXbB9OlnD6SVAUmY5hFuzELIGfrOsE2hCpc5Ar7uURd/yqJd7yTJkP6pG3
- hDug==
+ bh=VSFS6Xja25kswmX5YHSMeQ3EFy5NE/0X5r6+3S33NNE=;
+ b=g/cGtlYN1wqa5uK9nuNxyZrW3jOfHom0VD9KdXj2MgMLtzXoP0cpT+x/Mr4eq6nkAJ
+ 7Qeqy6Te6xxHpQ1RlXmq6YB52xNq1K8bOtBjfKVpScxvxnvJOECoHoKcjrLfUWpN/jpw
+ tB84+j4+nzdcU+q01wLv7SidpZyh4K2U+CtCKf43QryFoA6ngj/nrkHHeZSDuRsHcZP/
+ PT+OVvHtn0hILcYUc/ImqWNYN4aRjPcQi5uIhFvDNgUNlNP6aOwBK8g997YADKvMYuJF
+ R3wccHaHEwjnWncnvelKl7hR526x7zTMS45WAAJZ50D/Mx0iFgJEZLwCfAsVbncnKnHx
+ Ms0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761342899; x=1761947699;
+ d=1e100.net; s=20230601; t=1761342900; x=1761947700;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=GnQyYhwEgGNJcNtpmlXjtc/oKU8tJwfhE0Nh9HvE4lE=;
- b=ZK8EawoO54nEcjBKBhw2c2xprDlgHc5z7eQx8wPQHyK6t7FGmK14GAov19KqMx28HK
- g0c1Y88wCdc/kwldyrz55PdaTxcX4dQKtt2juU2z4bPAbCT/8asdDrSy8KuX01JyAt6Q
- CnAmrs6F7wdnYgPq/logtPnUJNSAGh5GC64zwcY9DnnFUMHEa5DheJqPbo9qmAv8uZU4
- 1FMi4icl+591yDmtU2PR8yX3LCxWaqBGioRqzPBD+SQ8VKQCfyQyfBBkJCmIJ++T9L72
- Ithq8XlsLzprWQGdPCpqFHgr+XTCwt2kkMunTi4ecfTsRQ5efk8DWU1+3eTgl4geo+h2
- yxaw==
-X-Gm-Message-State: AOJu0YzdUXBOH4VlftSMBGfRDC5hywP/HxA3jMZC5jKzY23oGO7Euteq
- B/JMIPypq4LuZXP9v3e0tces+hS82D+13MrJwcUc+3mJDzJIfMLg17exgijCS+PWoP7fS8kiKbl
- XMFY1
-X-Gm-Gg: ASbGncsQLvoueEJeIm09Ytok/dYqQzNRZc3uUOCytHs3zrzV9Oow3yGc+zIPhRXFDqu
- AICVfyXoMS0iOL8J7fF2zYS34b0J01gGe2HnKD3m3ej2Hk9T562CntpQybV14rHJk6ZRX/sbEz4
- hpk+hEWkvw+7mvO1Tst10kGxX1J64zjWdCe135XrY8/Un9lH6a8PDH4xjML6ql8Mr2p15wWBrij
- yxT0PruyY3ge2vRUfTvA7xKPxgDgs0TG0MSPnfB7GhvTh6ZTO4fZhZvAXYhDjv8I/crm1HzgEWK
- mxX9eaPaQoqAXITk0ejvmoELl5e5KoFZc/YOu8NjUuTJHq0Z8CWClV9PTJBGi82Y3sByYNLB3T4
- 1y1lSZ+cXv+fqN5D/X59BfoQ3aZq8reLjzKWb1H++DXv7R6Z4pSU56eIvpoFdCoRoaw/R2wOcHh
- hZVEHvKvvuQTwdQMz6mNxXOynRWqgCigFTDE68TMUEzNKI2oXRDw==
-X-Google-Smtp-Source: AGHT+IFbGpBpWASJmKGyoF//IkhLXCWrXygRGBqn5yL3tbe/Z6dH8dHQwYv2+Q4/Lor+fR6yPaWZ7w==
-X-Received: by 2002:a17:90b:3f8d:b0:32e:6fae:ba52 with SMTP id
- 98e67ed59e1d1-33bcf861b1amr37444430a91.6.1761342899322; 
- Fri, 24 Oct 2025 14:54:59 -0700 (PDT)
+ bh=VSFS6Xja25kswmX5YHSMeQ3EFy5NE/0X5r6+3S33NNE=;
+ b=CqV7PHkd0Wm2sBoOFoiEZdFiaYYx5mazhN+YLEsJD0p9aXBTgqYrDOIWnShWqqNCTN
+ J+b3yoMYjYZo03LKYupX9PL/WUCpYBTuNH7jqSvz5/GZXTNzikLJzZDE1S5iOs1hL+9R
+ sfO88QjjezanfyeXq6euAoKaAJx/ysOVwLoQ9ynJtru7w73ZOeGr42rpqFpW/b5p3Ga7
+ EBzPUkNM9wsZeXRjJNLEsobV3CdH576QTGFvUFRBnIsIb8BI0zQpfEj47Zx+reATO1ic
+ yHrqk9WuoL1oWadPtTyHYWlWAyKKqRA1LPqKpT5Td/M9ih7uahQPFC6ot8iThO5ODXlV
+ hNaw==
+X-Gm-Message-State: AOJu0YyBOOHoG14hOo62YzPI3qdhBrrKqD5qYgU8nQMILPReQhp2j0zc
+ iHTVtR6srWSkgbHpkCuuQPVDbgNfz9Sw9CwsrRJ1Pg19WL5CQk1Sb6ffqcg7y7Nq1mrfrdwphkn
+ 2gucU
+X-Gm-Gg: ASbGncuF/3BetFWyuCMSSCbF9seauENq63cob6QjfjaZFezTqftlEz3uYRmS5u8E10t
+ rsjK0+QJVxWOX8ya+6zmop1YtKVNaW1XUm+yaYeMai3CMbbIYTCQBOhPB/HWV3jvJe1xtuCZo9+
+ p6rjifJe9QQslh+W6KVt09tYa8VsGVbQAD9oBd4WGaQMZ8oJAaVFQrw9ymVUO0jMOajGR8NmZbz
+ RHq2Cfyi3EaG2LYJfJgZEx4IGYfJAM9Q1CX/2x0pJW73S6fGR2mneYExo1cigl9sQsY4G1q+hFF
+ 8nLP9+15KaeNoLxbOMoKYfvZh9Ee86YxkggyCL+faVI8W6RWuljd9nZ59e2/3mBAdAX3B8Zq9Hm
+ kyee24XzeFO3RLFNnNmbRNn1ICre5Ktz3n3xByQmNJkxLiNtIdiUYaHFi8o4CrZMPPbxnp6Yczt
+ xLwiP9UIeLfMQwg1rBKqDmm2x4EWIxxqsPqcoT5fYK+5Xp7d0YCA==
+X-Google-Smtp-Source: AGHT+IERNLQXYn5nJqijP59iuK4x11DuQ8YSNFcWMKHkqO9gdzv571dJSGBnilu+ppZZYiI25UyBxQ==
+X-Received: by 2002:a17:90b:1f89:b0:32e:3c57:8a9e with SMTP id
+ 98e67ed59e1d1-33fafc8a0c9mr8966985a91.35.1761342900241; 
+ Fri, 24 Oct 2025 14:55:00 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7a414012de3sm252530b3a.2.2025.10.24.14.54.58
+ d2e1a72fcca58-7a414012de3sm252530b3a.2.2025.10.24.14.54.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 24 Oct 2025 14:54:58 -0700 (PDT)
+ Fri, 24 Oct 2025 14:54:59 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 0/8] packet capture bugfixes and secondary process
-Date: Fri, 24 Oct 2025 14:53:55 -0700
-Message-ID: <20251024215456.282171-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>,
+ Reshma Pattan <reshma.pattan@intel.com>
+Subject: [PATCH v5 1/8] dumpcap: handle primary process exit
+Date: Fri, 24 Oct 2025 14:53:56 -0700
+Message-ID: <20251024215456.282171-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <250811213632.16023-1-stephen@networkplumber.org>
+In-Reply-To: <20251024215456.282171-1-stephen@networkplumber.org>
 References: <250811213632.16023-1-stephen@networkplumber.org>
+ <20251024215456.282171-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,35 +85,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch series addresses the problem of packet capture when
-the secondary process is sending/receiving by using the same
-mechanism as hot plug.  It also fixes some bugs on shutdown
-of dumpcap (and pdump).
+If primary process exits, then it is not possible (or needed)
+to cleanup resources. Instead just exit after closing the
+capture file.
 
-The documentation has been updated and improved as well.
+Bugzilla ID: 1760
+Fixes: cbb44143be74 ("app/dumpcap: add new packet capture application")
+Cc: stable@dpdk.org
 
-v5 - fix signed/unsigned mismatch in RTE_MIN
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
+---
+ app/dumpcap/main.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Stephen Hemminger (8):
-  dumpcap: handle primary process exit
-  pdump: handle primary process exit
-  pdump: fix races in callbacks
-  dumpcap: handle pdump requests from primary
-  pdump: handle pdump requests from primary
-  pdump: forward callback enable to secondary
-  pdump: remove use of VLA
-  doc: update documentation on pdump library
-
- app/dumpcap/main.c                           |  14 +
- app/pdump/main.c                             |  16 +-
- doc/guides/prog_guide/img/pdump_overview.svg | 135 ++++++++
- doc/guides/prog_guide/pdump_lib.rst          | 183 +++++++----
- doc/guides/rel_notes/release_25_11.rst       |   5 +
- lib/pdump/meson.build                        |   2 -
- lib/pdump/rte_pdump.c                        | 320 ++++++++++++++++---
- 7 files changed, 550 insertions(+), 125 deletions(-)
- create mode 100644 doc/guides/prog_guide/img/pdump_overview.svg
-
+diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
+index e5ba36350b..3621c0ebe3 100644
+--- a/app/dumpcap/main.c
++++ b/app/dumpcap/main.c
+@@ -1059,6 +1059,10 @@ int main(int argc, char **argv)
+ 	else
+ 		pcap_dump_close(out.dumper);
+ 
++	/* If primary has exited, do not try and communicate with it */
++	if (!rte_eal_primary_proc_alive(NULL))
++		return 0;
++
+ 	cleanup_pdump_resources();
+ 
+ 	rte_ring_free(r);
 -- 
 2.51.0
 
