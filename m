@@ -2,70 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0EEBCCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 16:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DC9CCF9E0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 16:27:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D164C4021E;
-	Fri, 24 Oct 2025 18:25:19 +0200 (CEST)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
- [209.85.210.180])
- by mails.dpdk.org (Postfix) with ESMTP id 6E96E40151
- for <dev@dpdk.org>; Fri, 24 Oct 2025 18:25:18 +0200 (CEST)
-Received: by mail-pf1-f180.google.com with SMTP id
- d2e1a72fcca58-781206cce18so2409980b3a.0
- for <dev@dpdk.org>; Fri, 24 Oct 2025 09:25:18 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F14DD4021E;
+	Fri, 24 Oct 2025 18:27:28 +0200 (CEST)
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
+ [209.85.210.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 23D4F40151
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 18:27:28 +0200 (CEST)
+Received: by mail-pf1-f177.google.com with SMTP id
+ d2e1a72fcca58-7a2754a7f6aso2830447b3a.1
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 09:27:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761323117;
- x=1761927917; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761323247;
+ x=1761928047; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=YXFg7+HPs8UMBPbLO/Ypu56hizKq2S/ghiv1gM1D8rE=;
- b=Lm7foLy5fTSi6/J1lKgFRdeAP8VTY6wWiaiysFqIvsFEX8jvxiOoxAurd5q5W1wV7P
- 8Oq8PeBWzBkRAC9oI/HMjitLQTgawEbabsbMwA72LXETXwxNmwjkLQdDYfJGW+7o4V6F
- O4VmZGX/gBFeCQt1F6IdMCOWLsLhLhTGYi5q1A3nLNpibIINAyYVGzvkLQsluVNPGeAU
- tuy0pOo8wZHAFqJJ4S+mlvHHKsBclWbX9MML56+zflX5Jm0SdbcpLpUqr74aYkeah17y
- ujI0cmS/EJXPOMnQGjDSp7WKbvZqLlDD+PI5LZYNG6ETDylOjMD5AA6dOFcK1A9rKBav
- /wOQ==
+ bh=WQnsd9GYL1DsD+6jY9SRN8bLVjZhOpkRsKXCf5w+miY=;
+ b=lh8my3/71M1y/jBgRJTVWRYZpzHKZF0JjJYhCCLo7wr2n8hj5FHdCKwK9y1swxOd0e
+ 6MEcGMPUbrFqtw+ad/2jbUt7yCJxnBOd5m6JB5iKSnxKNOLFqHJUYh27ofeeydKH7/xP
+ vHufMlUxl90G7L3E2dypYhPbwpyO8IS2gqrih+/UJnOQW+EU2ktq8SCjqDu39oQ28Bd2
+ CPhHMtjpQ0g9SUeTHDp+6rBRuWABEgc6490YvvgxbKoMvp6HpH6Rh5dk0tMY0Xz2hvKr
+ yo/qkn6PKa+mw2Zt/UZNudHIGnMrnMXXa1bU8wJ4kbMQkXmoYqBQcroJETSeXxO5PkVs
+ tGeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761323117; x=1761927917;
+ d=1e100.net; s=20230601; t=1761323247; x=1761928047;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=YXFg7+HPs8UMBPbLO/Ypu56hizKq2S/ghiv1gM1D8rE=;
- b=HnvYunAI0uYq/rld/JcN5NAoz63+34TCT+VsR5eYB0/2AdRzH/BpFJ29W0a3F4SO5L
- 5PtaDsKtG6rgoXh66Q9Y0zyPpj0lL4XCfzGD91FVNeqm28hmHzj8FYklpsGc84NVU/y8
- sNdV1IB6pKwqmuzVUJ01ZqTDQLYOVPr5SKLZcP0KQDZNm98jAyKD8S6MKHRw7MVQBjSH
- d6nNNufJeEbtGYFZtGG7NlKlFuRjiigxUyDtsJds7jym5Mkq0WUWrpVNn7t1hlJEejrA
- u1V29ofWKQyQq8vOcKQah9XaGCfMuFulEUM4GWqKq1f3wN68nnTZaJtRRXmQv4PLy6JQ
- 4c3Q==
-X-Gm-Message-State: AOJu0YwimWTNgC91iP9oDzankoXCpjXunixTJfUKTxBrzWOiH6yDsFKn
- 8O4XGgv0p+Epx7PmOp3Z2mnxm2ab06U1uYpihqL6Qw2Q9125sYGjWqLAlzLW/R1s9NM=
-X-Gm-Gg: ASbGncsHg336+XMFSXEp+hlm8tRweRHAs2d3k6JN9SLg42vUL+aEmOejZbS5N+41ub3
- cas6zgOiByvRNN5kymRkcOd+gVuDeZMzarH+jNA3kqM1rdAKXEwDM7X/EX2FKtrBWCCicG3Jom+
- 9wQzzX7g1OqxEH+xw8iXOsEsMNActCBDII1/hROUkmT32MMKQR2FonOscF9DcZX0hil/S6YPjJW
- eU38+RZYtYhOlNnRbJvx/Fd84gaiN1SqxTsoiwyplPROHamUZXaLlyT+xQtqlFh3iPn7UnEuY5p
- CdDAuU57QgSbJ7K6hLnDw8kfIpo2sjL8Sgh+KKNWAf1DjlJOy71HpSwArkdiBAeVnDNEwX08FV+
- +IijKJNszHrAWtwQItZ5PwBfievo8sBy3N9PjJavxY0dvlsEqK6wrh+aOpDp1puiAMFkL3cWgXE
- a7H+xNeR0QqPM5MN1tC0Z1JneTAEm6bnc7h4oq1QLpnTtZ
-X-Google-Smtp-Source: AGHT+IErthOj0ozGW4t8JlMVYEh2LdJ/g/fRnBvMkzEmCV7gGEhDTjTauRSpoiQYVu1JvjY3gXBjRQ==
-X-Received: by 2002:a05:6a00:b8a:b0:781:1110:f175 with SMTP id
- d2e1a72fcca58-7a284e102famr3535508b3a.14.1761323117458; 
- Fri, 24 Oct 2025 09:25:17 -0700 (PDT)
+ bh=WQnsd9GYL1DsD+6jY9SRN8bLVjZhOpkRsKXCf5w+miY=;
+ b=o3SGbf0TM4wbKIs3S4y1GbE1gjpnN7HqomHKZ54etfIYDxQZCzbuM9Jw6K5SRKo8qo
+ GYkmjDOzpJdOLi646eUwXvF/88aSDAJ4EPm7OdQ/YmQ1oWUYcrOm1YLqC/vSTE+vXf/Z
+ VF6ZdoWnWoewSxhD35u1csxB/4FRp+h8X/EV7VjsjOqucSxd0SYX1CGlfkMqt0xNhYWd
+ IqhEnEdnbGsBkothA5CT/u31QdBw1wD2KxpF1u6taF15ak8cxp8cyDrj3kaJcrWZzgST
+ VPFfdQwK16/n/w0S+0/5tVDiMqP1Ykn8LTuIsY6N4kpB1Su/VH0xn6f5k/USCgfU13PL
+ b6MQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUqPF8oaKhPumuPns8ykzpi4+mIKFDwud1JRCFg6LU92Nf9qu1D+U+MjbBwlaS1XJM/IE4=@dpdk.org
+X-Gm-Message-State: AOJu0YyZcAQFS+Ntdd5bd0K45H3meDo5xiFcuhD7joJ1roKbjD7YllNW
+ HSRAc7BLMZP4dKHWQUSu/t9S6T9IR1qdloyoltK9cqiu5xkIaIbCejDUmiTjZEsJ7UM=
+X-Gm-Gg: ASbGnctJX6PJGxlsotHRcTQDBHo+5Sbx5JXdhEp544CI/2qHHS1A41k5qncR5P46mZ4
+ ivcBfG/VFCCzPejVO0ny9Prkos56n2FcVSr02cYAgi0OwVuBTGKVK4aTqVzQovJZOZHqNthJIEW
+ TN/b3tDFUwqaWeceq9Wrl0DYutdxyD2MSwEVoRLXxSnN4FMDIxxLF09Xc80rzLYwBoUW5DqcSgE
+ oL29zsYXHaAUJ7MKSjhD02oKuD29emBCNzsvV0QgTz8s05g/YX+fxUQAULmBL+Tto2+GopoEhy8
+ ajjiiwzgGb1wQDHZlFJu44pVe5t2bwTOyn2Mp1QGWBRampHBoeAVwh224jkBg+iJez95zBCpo98
+ Ex2AaAwwG0VOV9hf3B6QR3SbtJKF8IzDdkog5dbdwZYriDy3fn48Ji27poyBsKNveJBWlFJvJsv
+ 4eZtE+vN5tq04cLFL6hAL9A0wiu+Jd9ZBGpA==
+X-Google-Smtp-Source: AGHT+IHo1r/74bK3KsJQcrL5D4dpO+F8Qx0L1tGEIWAg1CyF5OQu02V7QjYPlVimySaaGjN4IZh4XA==
+X-Received: by 2002:aa7:8043:0:b0:782:7052:5167 with SMTP id
+ d2e1a72fcca58-7a220a574f9mr25204183b3a.6.1761323244803; 
+ Fri, 24 Oct 2025 09:27:24 -0700 (PDT)
 Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7a274bb22f6sm6361342b3a.56.2025.10.24.09.25.16
+ d2e1a72fcca58-7a274bb3d5dsm6328126b3a.54.2025.10.24.09.27.24
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 24 Oct 2025 09:25:17 -0700 (PDT)
-Date: Fri, 24 Oct 2025 09:25:14 -0700
+ Fri, 24 Oct 2025 09:27:24 -0700 (PDT)
+Date: Fri, 24 Oct 2025 09:27:22 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Wencheng Li <liwencheng@phytium.com.cn>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v10 1/3] net/macb: add new poll mode driver
-Message-ID: <20251024092514.3a62ff89@phoenix>
-In-Reply-To: <1755664389-9412-1-git-send-email-liwencheng@phytium.com.cn>
-References: <1749200770-53411-1-git-send-email-liwencheng@phytium.com.cn>
- <1755664389-9412-1-git-send-email-liwencheng@phytium.com.cn>
+To: Qiguo Chen <chen.qiguo@zte.com.cn>
+Cc: sunyuechi@iscas.ac.cn, stanislaw.kardach@gmail.com, dev@dpdk.org,
+ bruce.richardson@intel.com
+Subject: Re: [PATCH v5 1/1] eal/riscv: optimize rte_memcpy with vector and
+ zicbop extensions
+Message-ID: <20251024092722.6c623afd@phoenix>
+In-Reply-To: <20251024054128.1569133-2-chen.qiguo@zte.com.cn>
+References: <20251021065607.1418203-2-chen.qiguo@zte.com.cn>
+ <20251024054128.1569133-1-chen.qiguo@zte.com.cn>
+ <20251024054128.1569133-2-chen.qiguo@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,17 +87,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 20 Aug 2025 04:33:09 +0000
-Wencheng Li <liwencheng@phytium.com.cn> wrote:
+On Fri, 24 Oct 2025 13:41:28 +0800
+Qiguo Chen <chen.qiguo@zte.com.cn> wrote:
 
-> +int __rte_cold macb_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
-> +							uint16_t nb_desc, unsigned int socket_id,
-> +							const struct rte_eth_rxconf *rx_conf,
-> +							struct rte_mempool *mp)
-> +{
+> This patch uses RISC-V vector instructions and zicbop prefetching to
+> optimize memory copies for 129~1600 byte ranges.
+> 
+> Signed-off-by: Qiguo Chen <chen.qiguo@zte.com.cn>
+> ---
 
-Please take off __rte_cold except where necessary; in later followups.
-
-It is meant for special cases (like rte_log) where code that calls that
-function should be less favored and does not need speed optimization.
-In a driver like this it just is clutter.
+Is there any possibility of build environment being newer than
+the run time? The Intel builds already have to deal with that problem.
