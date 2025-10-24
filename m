@@ -2,52 +2,130 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88390CCD1A5
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 05:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3115FCCD1A5
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 06:19:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 10A3E402D1;
-	Fri, 24 Oct 2025 07:57:25 +0200 (CEST)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
- by mails.dpdk.org (Postfix) with ESMTP id 78F974025F
- for <dev@dpdk.org>; Fri, 24 Oct 2025 07:57:23 +0200 (CEST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ctBxt2Cj6z8Xs71;
- Fri, 24 Oct 2025 13:57:22 +0800 (CST)
-Received: from szxl2zmapp07.zte.com.cn ([10.1.32.52])
- by mse-fl2.zte.com.cn with SMTP id 59O5v8PS010915;
- Fri, 24 Oct 2025 13:57:08 +0800 (+08)
- (envelope-from chen.qiguo@zte.com.cn)
-Received: from localhost.localdomain (unknown [192.168.6.15])
- by smtp (Zmail) with SMTP; Fri, 24 Oct 2025 13:57:10 +0800
-X-Zmail-TransId: 3e8168fb1531009-c69e5
-X-Zmail-LocalSMTP: 1
-X-Zmail-RealSender: chen.qiguo@zte.com.cn
-From: Qiguo Chen <chen.qiguo@zte.com.cn>
-To: sunyuechi@iscas.ac.cn, stanislaw.kardach@gmail.com,
- stephen@networkplumber.org
-Cc: dev@dpdk.org, bruce.richardson@intel.com,
- Qiguo Chen <chen.qiguo@zte.com.cn>
-Subject: [PATCH v5 0/1] Optimization Summary for RISC-V rte_memcpy
-Date: Fri, 24 Oct 2025 13:41:27 +0800
-Message-ID: <20251024054128.1569133-1-chen.qiguo@zte.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251021065607.1418203-2-chen.qiguo@zte.com.cn>
-References: <20251021065607.1418203-2-chen.qiguo@zte.com.cn>
-MIME-Version: 1.0
+	by mails.dpdk.org (Postfix) with ESMTP id 5D60340262;
+	Fri, 24 Oct 2025 08:19:24 +0200 (CEST)
+Received: from AS8PR04CU009.outbound.protection.outlook.com
+ (mail-westeuropeazon11011011.outbound.protection.outlook.com [52.101.70.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 610ED4025F
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 08:19:23 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OL0DiEna6Rh4eAaOrWAF1/Y9N62a8zFaYbIxAj5iP5XsT85WTHN+A8kaA5FLIUKfkXW9KbJVa/wCOnskgiMndgzC7fBV4bCFv0eBILEmkRNQEgyETbVq1M3+jRX7Z6Vbe8T/zG8RWfm+tthPwo54nXihvV5DEWLhXfin4Urtjn/PyUD0RO8apExeY/uIiqhmhdzaEqPM4SlOLNwB8PDcU76hZTbIrGYcNtRZA7xIWm2/G2Xc1SdR8+tHxvS8nFxNeICRg2d2vb+GN4o/YA+SdrzwMlR8Gcgt9mA/JIdlaZ5YyDgeGAhiBBwSvKWnxwu+xExYheZ/pXoGk/1JF4Co1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GSeT/RiDOnyc4Kf0EH8hWMNINckbH6m2paNFyAimytk=;
+ b=OS+42Td+rijUapIpbowDzu8iTfBzHjDZ69FU/GTfKhBJEujjVyVhzFYlE3X6s3blld5ZCn79Sj/J+9B3o5jSqo2SOXwfRcAuvExCyqJxqiSKdFx5QDA50jTiPOQR8CogiNzlKu3xjJVCzy70xGXWFLX7MWbuGm3tO9xS/gfuvIxbMqiXGWw+XIJgWSLfVWCT7VvjwRff0xGT9YUDGwi0S9iEkwizw2HUTrel4Da5nZUNemaM0Vo9ggpLn4QMVvdMWqhzLzeWswhRT8ZGtDUOW03t7s6j/raraQxv2nDZ/cb4jO3HGjgMcYlCdr1TAL5WCRqNFGEatfIErCXM7kv9Qw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GSeT/RiDOnyc4Kf0EH8hWMNINckbH6m2paNFyAimytk=;
+ b=K7WxpWtPEvDudofOlfvFFwgy1mLv9JzqEMNFcVNp6O/99wjY99ZJwTzfYr7b27HUCVEm32jtTpFoV1pg2ttOs0He91r3pYkOXtD+QqQKgcBHsi806lqO7jAyXZp15p0L24lhDEKtrE3fgeseCMWD83apoGcX0nEpkmhznCUsyKSjTtJ1B1lBOZi54aUeqQF544KS1lGzTJAyh4+rnK+ds3cOAOdCV25admCj8rwqFPiHhH3EH16KoOeEYNlyXa1W6iBsqFO7t2VwP+S5nh0oWvpfunoZ0aRU/mjhtTn9OzfdmnYhfODGZutCdmzjQWEevBTeqzbFIs/lCVq4CYXVxQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8198.eurprd04.prod.outlook.com (2603:10a6:20b:3b0::14)
+ by DBAPR04MB7478.eurprd04.prod.outlook.com (2603:10a6:10:1b3::24)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Fri, 24 Oct
+ 2025 06:19:21 +0000
+Received: from AS8PR04MB8198.eurprd04.prod.outlook.com
+ ([fe80::c52d:9751:36a3:78f9]) by AS8PR04MB8198.eurprd04.prod.outlook.com
+ ([fe80::c52d:9751:36a3:78f9%6]) with mapi id 15.20.9253.011; Fri, 24 Oct 2025
+ 06:19:21 +0000
+From: Gagandeep Singh <g.singh@nxp.com>
+To: dev@dpdk.org
+Cc: hemant.agrawal@nxp.com
+Subject: [PATCH v6 0/6] DPAA specific changes
+Date: Fri, 24 Oct 2025 11:49:00 +0530
+Message-Id: <20251024061906.3535470-1-g.singh@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251017044848.3269627-1-g.singh@nxp.com>
+References: <20251017044848.3269627-1-g.singh@nxp.com>
 Content-Transfer-Encoding: 8bit
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL: mse-fl2.zte.com.cn 59O5v8PS010915
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: chen.qiguo@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Fri, 24 Oct 2025 13:57:22 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68FB1542.000/4ctBxt2Cj6z8Xs71
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0052.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::20) To AS8PR04MB8198.eurprd04.prod.outlook.com
+ (2603:10a6:20b:3b0::14)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8198:EE_|DBAPR04MB7478:EE_
+X-MS-Office365-Filtering-Correlation-Id: e06357b8-b3da-4844-de80-08de12c54560
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|52116014|366016|376014|19092799006|1800799024|38350700014; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?qqiOi7afNq0kEQwic1CsutlmK66868DzGx3msROdai8SHIXyxhASV+jptZVs?=
+ =?us-ascii?Q?zMFaHe7shDX9QjntwOGsEDXNCr2YFFNgxNmLqbfAA7u7h7mMGCn5Z+60cFnv?=
+ =?us-ascii?Q?nNJIMFm0Act3Ie9+HRJgJ4dQHKElP4RZa4AJQryWa74Zjwh2tCXKEo5fi2kL?=
+ =?us-ascii?Q?k3um3Af2kNMGj8DYREQql4JIG8NfSzfdJ3ti4guvWso4pGdoFm7QITpAQ0Bv?=
+ =?us-ascii?Q?ckMsMOArujIleXbSexZ0jMXLLYypeTnove82tXroy6MaNqtEWLrXQQW4IBVa?=
+ =?us-ascii?Q?Aq4/R5I1dqTE6LbakfdL6SzdCshpUyNvA8VWBHWJO4eGS5Zj4Ii2zAGteLfx?=
+ =?us-ascii?Q?XHb8c8o27f2WXTbTac7fmOBjX47pLdU8EYMPx85sxH9EBACRCvIdiQEeKQ0X?=
+ =?us-ascii?Q?w7vizwrlhisTj8LxS3eqZDcltDyf2VwZlwq+tOkdxwy0ydTkwYamy+E22akV?=
+ =?us-ascii?Q?TviDwbqw+OpgSM8VYGu16A7Avd5zgKxEjNoFfisgFhrdrjAaMBJbORdESwSE?=
+ =?us-ascii?Q?HRktf3DCFlXeF/tetjrT0DiIHVNVrmwuGX2QHD92hmrYHVuwLuFkXxv0FoCs?=
+ =?us-ascii?Q?klwwn0MNFh5aVKTU+VVQ6Y69+zZjHW6extUq/w7lPoQVXmK7jCd7PIyM7uSI?=
+ =?us-ascii?Q?A3//iQmODYyDkn1MM8rlBI0Yhff041yB0eGXQFeQcIOTIAaVVMtwSQWgHGwl?=
+ =?us-ascii?Q?uOAolw7gH1vQeclvo3cbtPLODSFTMGIxMDT6W9O5BeqxKNh5P0Oy1zeJdcNf?=
+ =?us-ascii?Q?JFSDBsVu1ZF3N6R5Igpz92Wi8GLrVnbbu9w16saolaE0a9Q6vrgA8MsCApw5?=
+ =?us-ascii?Q?y5w68GV1aEfSbrbVtZLqGDU6x0QA47v6M8sNCFeNxFooeCSlFmbquAptEvrJ?=
+ =?us-ascii?Q?oSbJ+VqztXHQSJ7mHGVgDkTq3W9ETOFm7slycv0wOypimpsFbKHTe+b3bIpt?=
+ =?us-ascii?Q?mpVNU7fHb3yA19e0Ah+++yg/uNPNiJjOkwpLmv4pQLhkK45z02NAu5ZQvKnH?=
+ =?us-ascii?Q?Sn6i160K5R5mBpfAyGs9NBPa/5stg75PbuxPYppEUBbBiDH46Wk/BYMIo+Jt?=
+ =?us-ascii?Q?FlRmjhqnQMtGifYf6bKyb79m9UZRcuzQy89uOr+O6eXSwSkodXiLxknOIX4X?=
+ =?us-ascii?Q?3919JUHC+LSSS409b2+ifTWaI2YiHMEFQN6qaB+sO1zmxC9w93yG2qmxglrT?=
+ =?us-ascii?Q?yF/g5currcvFOouPf19nzrfWOETO06Gy+1CfqkXvNYutu5UPFH21+9Gg9szB?=
+ =?us-ascii?Q?Qm0B/eFviuQMJ0E4w39tb/D8FGZazMFJwYAq3M+zQoivOQoLCeIZOe2bMq9/?=
+ =?us-ascii?Q?I0frOmv8qNH/x7xjT2vDnOA0mp4W+hTtCF590IokmiFef4CWDS7NvnfkZCzk?=
+ =?us-ascii?Q?jnovOkCf7ijucjleLqBCtGoECMkejK6ipC5LR7PbAvB9Zeh6lyPkKMcstq+n?=
+ =?us-ascii?Q?WS/wsOaH7xTIxqQU/dttIszozZ17xIps/B9QxmScLLi9ORujlGG0s8M8l4A0?=
+ =?us-ascii?Q?WQmob6edZ5u6OprSXhti7v/DCru+IYu41M8Q?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:AS8PR04MB8198.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(52116014)(366016)(376014)(19092799006)(1800799024)(38350700014);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?l1BDES4SV8cm55AEPur1WBPDqWys8x+/nuwd5Jc9kfJNfum9P9oYEdlQAJuG?=
+ =?us-ascii?Q?tuzfHU+2JkAjSpHv5T4oZBpHIpHbwqG2qcaxyHqD0qaw1GrV9Lfv3qiRwIzw?=
+ =?us-ascii?Q?KC1ef5+lBx0kCT7UH6QR272aojvn5qumWWCYYjeWRUreSL5jnAWnlP6WOWhw?=
+ =?us-ascii?Q?P8vsZPZJKRyD8QCtVM+Uv9HBS528FXzYWcbuqyakLTtAaartWPaoqfhp/1L1?=
+ =?us-ascii?Q?Qq5B+KCSAMsHELD0WHUBnZiKc4MP5OBHKso0D3j3QoqnlauZ8MSLOtZHm/dm?=
+ =?us-ascii?Q?pzB2XQ5ZGf4p+srqX4z6lM/iAXrcvIt7OH0X5ALS+ekePTCB7LX3P3r1HGIa?=
+ =?us-ascii?Q?7V/UsJQ0DiQO2Fy5P4YF6AM2KBqkKuW11UruwXIiwfOFDrwydr0tFoJpP98n?=
+ =?us-ascii?Q?m1CwIjWEdHLSBKO5okuntXOp6ozur2VXKGecRp85CiT5Nhr+gZ1n4KJtidzX?=
+ =?us-ascii?Q?zVDj34VlzTVoafkiOlK94u2hXV7M1CuB9xczTLaxhWG2gqjqoYxgKpBRYCEl?=
+ =?us-ascii?Q?ibDDVUq/e1QTUghysdPfkDN4iuZkxkIbqT7hEnc8vW96Dop6qNfLpW/Yrpde?=
+ =?us-ascii?Q?HRS1Hoa6D5xFbhyTWhW9d3KLx/fDxAhgItJb+mKw7Ik4TtauQOrUxNrN1kJ5?=
+ =?us-ascii?Q?m2JC8SSeE62lyoH5/OiT0/vHYTWrbSfL1qftYXOph6O+1loTL2vYPgCDFp3q?=
+ =?us-ascii?Q?lwkfg59MBb9gVnAije4JCrsCtE0zlIPCXuLNHENOHmfuMd570OefFwfbkxiA?=
+ =?us-ascii?Q?ay8vpCSAnj4LcgCVRlnszblApj4BSFSfwm4YjQ+3ceEYoslFE/MYXsYbsZgV?=
+ =?us-ascii?Q?zbggUIV7PL8nWOfKTKpWoZGt9EDj1g1PWIFz9WKRr5IzjZVrXU2kVhF8dM9+?=
+ =?us-ascii?Q?iGBhlpAye8GfB1xMaivthv5DxcF8JmiybLo9Uzo8csnpHTWLkvlmwLVmS0BZ?=
+ =?us-ascii?Q?qvSCHqtCJ7P0Z/+VVoPeKiejqzz0f71+Z57IvksVmEbunPQtwiZXE8krVNtg?=
+ =?us-ascii?Q?fR6YDGL4LgT4NMyDH691F8ksQ/Y3Y6tsgWhhoE3p7dmLqafxP9yocUB9x+aE?=
+ =?us-ascii?Q?LsuoyVqiNbBu3i8Fx2qmKA8EmMBzjR1pEfvI/NF2Zd9+tLs42VW3GjfNpAxU?=
+ =?us-ascii?Q?fk+rOM/TeIxMD+xMnD3U1YMbdu8RttGhrLwCCnok2i5Bw0ilSXGVudEeo5Kx?=
+ =?us-ascii?Q?44/t2LVqvwH9Fysu5aaF0lkUi9dF7c5UkFFz1mgESOMJqpGF6bhh2/Ru98FQ?=
+ =?us-ascii?Q?o5cnFHvxHWf53YVUh1EfIt+y6zan6ydVrRJG1+wFwndJ6KHk9x1MlSbctzIP?=
+ =?us-ascii?Q?wY4CIVpRH8aybCPlaymmPH6kkl2ePABLCgtDHgPL8wHryEjcjF67P4zrtDOI?=
+ =?us-ascii?Q?KyEAu1yo9W50kp4p1yxamxqdCdZYys1RlKzl2gdNHUBfeewHHiSnvFhMao8U?=
+ =?us-ascii?Q?PKxnTf8cpwPyTNALqwdeJ1Qfugf1BqCEvZxaJTkJXnHDnRhyjl4G8DjqyDKz?=
+ =?us-ascii?Q?bSj89i9J63oqSI5ih6crUhT0s+MqUFG7sOwnp6ww3YJYby6mnINZy/YCGfYB?=
+ =?us-ascii?Q?fSqlVATxVyJBlaI9Xxc=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e06357b8-b3da-4844-de80-08de12c54560
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8198.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2025 06:19:21.7221 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bup1jCl5Eh0IRet8bMOBrYjCVYWtxZnDX0nc/9aiGF57hVRnjpFjV6U6uJirOiho
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7478
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,103 +139,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+This series support timesync APIs, improves
+queue reset logic and include minor fixes.
 
+v2 change log:
+ - fix 32 bit compilation
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
+v3 change log:
+ - update commit message of coverity fix patch
 
+v4 change log:
+ - separated queue shutdown and logging patch into two.
 
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
+v5 change log:
+ - update commit message for FQ shutdown patch
 
+v6 change log:
+ - Removed capitalization for support, disable and set.
+ - fix typo mistake in a commit message.
+ - add standard tag for coverity issue in commit.
+ - update commit message for FQ shutdown fix patch.
 
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+Gagandeep Singh (2):
+  bus/dpaa: fix FQ shutdown to do proper cleanup of frame queues
+  bus/dpaa: improve DPAA bus qman logging
 
-Q2hhbmdlcyBpbiB2NToNCiAgICAgMSl0byB0cmlnIGNpIG9ubHkuDQoNCkNoYW5nZXMgaW4gdjQ6
-DQogICAgIDEpcmViYXNlIGNvZGUgb25seS4NCg0KQ2hhbmdlcyBpbiB2MzoNCiAgICAgMSlDaGFu
-Z2UgdGl0bGUgZm9yIHBhdGNoMi4NCiAgICAgMilBcHBseSBjb3JyZWN0IHBhdGNoIHZlcnNpb24g
-Zm9yIHBhdGNoMi4NCiAgICAgICBUaGFua3MgdG8gU3VueXVlY2hpIGZvciB0aGUgcmVtaW5kZXIu
-DQoNCkNoYW5nZXMgaW4gdjI6DQogICAgIDEpTW9kaWZ5IHNvbWUgY29kZXMgYW5kIGRlc2NyaXB0
-aW9ucyBhY2NvcmRpbmcgdG8gU3VueXVlY2hpJ3MNCiAgICAgc3VnZ2VzdGlvbnMuDQogICAgIDIp
-UmVtb3ZlZCBiZW5jaG1hcmtfcmVwb3J0LnR4dCB0byBhdm9pZCB3YXJuaW5ncy4NCg0KW1BBVENI
-IHYxXQ0KSSd2ZSBpbXBsZW1lbnRlZCBvcHRpbWl6YXRpb25zIHRvIHJ0ZV9tZW1jcHkgdGFyZ2V0
-aW5nIFJJU0MtVg0KYXJjaGl0ZWN0dXJlcywgYWNoaWV2aW5nIGFuIGF2ZXJhZ2UgMTAlfjE1JSBy
-ZWR1Y3Rpb24gaW4gZXhlY3V0aW9uIHRpbWUNCmZvciBkYXRhIHNpemVzIGJldHdlZW4gMTI5IHRv
-IDEwMjQgYnl0ZXMoIDEwMjV+MTYwMCBnYWlucyBsaXR0bGUpLg0KVGhlc2UgZW5oYW5jZW1lbnRz
-IGRyYXcgaW5zcGlyYXRpb24gZnJvbSB4ODYgaW1wbGVtZW50YXRpb25zLA0Kc3BlY2lmaWNhbGx5
-IGZvY3VzaW5nIG9uOg0KMSlBbGlnbm1lbnQgSGFuZGxpbmcgZm9yIFVuYWxpZ25lZCBTY2VuYXJp
-b3MNCjIpVmVjdG9yIENvbmZpZ3VyYXRpb24gVHVuaW5nDQozKVN0cmF0ZWdpYyBQcmVmZXRjaGlu
-ZyB3aXRoIHppY2JvcA0KDQotIFBhdGNoIDE6IENvdmVyIGxldHRlcg0KLSBQYXRjaCAyOiBCYXNl
-IGltcGxlbWVudGF0aW9uDQotIFBhdGNoIDM6IEJlbmNobWFyayByZXBvcnQNCg0KDQpUZXN0ZWQg
-b24gVGVzdGVkIG9uIFNHMjA0NCAoVkxFTj0xMjgpIA0KDQoNClFpZ3VvIENoZW4gKDEpOg0KICBl
-YWwvcmlzY3Y6IG9wdGltaXplIHJ0ZV9tZW1jcHkgd2l0aCB2ZWN0b3IgYW5kIHppY2JvcCBleHRl
-bnNpb25zDQoNCiAubWFpbG1hcCAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAxICsNCiBj
-b25maWcvcmlzY3YvbWVzb24uYnVpbGQgICAgICAgICAgIHwgIDE0ICsrDQogbGliL2VhbC9yaXNj
-di9pbmNsdWRlL3J0ZV9tZW1jcHkuaCB8IDMwMyArKysrKysrKysrKysrKysrKysrKysrKysrKysr
-LQ0KIDMgZmlsZXMgY2hhbmdlZCwgMzE2IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQoN
-Ci0tIA0KMi4yMS4wLndpbmRvd3MuMQ==
+Jun Yang (3):
+  net/dpaa: support IEEE1588 by timesync API
+  bus/dpaa: disable qman Invalid Enqueue State interrupt
+  bus/dpaa: set max push RXQ number
 
+Vanshika Shukla (1):
+  net/dpaa: fix resource leak coverity issue
 
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+ doc/guides/nics/dpaa.rst                  |   3 -
+ drivers/bus/dpaa/base/qbman/qman.c        | 459 +++++++++++++---------
+ drivers/bus/dpaa/base/qbman/qman_driver.c |  27 +-
+ drivers/bus/dpaa/bus_dpaa_driver.h        |   6 +
+ drivers/bus/dpaa/dpaa_bus.c               |  51 +++
+ drivers/bus/dpaa/include/fsl_qman.h       |   6 +-
+ drivers/common/dpaax/dpaax_ptp.h          |  95 +++++
+ drivers/net/dpaa/dpaa_ethdev.c            |  69 +---
+ drivers/net/dpaa/dpaa_ethdev.h            |  13 +-
+ drivers/net/dpaa/dpaa_flow.c              |   6 +-
+ drivers/net/dpaa/dpaa_ptp.c               |  50 ++-
+ drivers/net/dpaa/dpaa_rxtx.c              |  93 ++---
+ drivers/net/dpaa/dpaa_rxtx.h              |   2 +-
+ 13 files changed, 580 insertions(+), 300 deletions(-)
+ create mode 100644 drivers/common/dpaax/dpaax_ptp.h
 
-Q2hhbmdlcyZuYnNwO2luJm5ic3A7djU6PGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7MSl0byZuYnNwO3RyaWcmbmJzcDtjaSZuYnNwO29ubHkuPGJyIC8+DTxiciAvPkNoYW5nZXMm
-bmJzcDtpbiZuYnNwO3Y0OjxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOzEpcmVi
-YXNlJm5ic3A7Y29kZSZuYnNwO29ubHkuPGJyIC8+DTxiciAvPkNoYW5nZXMmbmJzcDtpbiZuYnNw
-O3YzOjxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOzEpQ2hhbmdlJm5ic3A7dGl0
-bGUmbmJzcDtmb3ImbmJzcDtwYXRjaDIuPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7MilBcHBseSZuYnNwO2NvcnJlY3QmbmJzcDtwYXRjaCZuYnNwO3ZlcnNpb24mbmJzcDtmb3Im
-bmJzcDtwYXRjaDIuPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7VGhhbmtzJm5ic3A7dG8mbmJzcDtTdW55dWVjaGkmbmJzcDtmb3ImbmJzcDt0aGUmbmJzcDty
-ZW1pbmRlci48YnIgLz4NPGJyIC8+Q2hhbmdlcyZuYnNwO2luJm5ic3A7djI6PGJyIC8+Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7MSlNb2RpZnkmbmJzcDtzb21lJm5ic3A7Y29kZXMmbmJz
-cDthbmQmbmJzcDtkZXNjcmlwdGlvbnMmbmJzcDthY2NvcmRpbmcmbmJzcDt0byZuYnNwO1N1bnl1
-ZWNoaSZhcG9zO3M8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDtzdWdnZXN0aW9u
-cy48YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsyKVJlbW92ZWQmbmJzcDtiZW5j
-aG1hcmtfcmVwb3J0LnR4dCZuYnNwO3RvJm5ic3A7YXZvaWQmbmJzcDt3YXJuaW5ncy48YnIgLz4N
-PGJyIC8+W1BBVENIJm5ic3A7djFdPGJyIC8+SSZhcG9zO3ZlJm5ic3A7aW1wbGVtZW50ZWQmbmJz
-cDtvcHRpbWl6YXRpb25zJm5ic3A7dG8mbmJzcDtydGVfbWVtY3B5Jm5ic3A7dGFyZ2V0aW5nJm5i
-c3A7UklTQy1WPGJyIC8+YXJjaGl0ZWN0dXJlcywmbmJzcDthY2hpZXZpbmcmbmJzcDthbiZuYnNw
-O2F2ZXJhZ2UmbmJzcDsxMCV+MTUlJm5ic3A7cmVkdWN0aW9uJm5ic3A7aW4mbmJzcDtleGVjdXRp
-b24mbmJzcDt0aW1lPGJyIC8+Zm9yJm5ic3A7ZGF0YSZuYnNwO3NpemVzJm5ic3A7YmV0d2VlbiZu
-YnNwOzEyOSZuYnNwO3RvJm5ic3A7MTAyNCZuYnNwO2J5dGVzKCZuYnNwOzEwMjV+MTYwMCZuYnNw
-O2dhaW5zJm5ic3A7bGl0dGxlKS48YnIgLz5UaGVzZSZuYnNwO2VuaGFuY2VtZW50cyZuYnNwO2Ry
-YXcmbmJzcDtpbnNwaXJhdGlvbiZuYnNwO2Zyb20mbmJzcDt4ODYmbmJzcDtpbXBsZW1lbnRhdGlv
-bnMsPGJyIC8+c3BlY2lmaWNhbGx5Jm5ic3A7Zm9jdXNpbmcmbmJzcDtvbjo8YnIgLz4xKUFsaWdu
-bWVudCZuYnNwO0hhbmRsaW5nJm5ic3A7Zm9yJm5ic3A7VW5hbGlnbmVkJm5ic3A7U2NlbmFyaW9z
-PGJyIC8+MilWZWN0b3ImbmJzcDtDb25maWd1cmF0aW9uJm5ic3A7VHVuaW5nPGJyIC8+MylTdHJh
-dGVnaWMmbmJzcDtQcmVmZXRjaGluZyZuYnNwO3dpdGgmbmJzcDt6aWNib3A8YnIgLz4NPGJyIC8+
-LSZuYnNwO1BhdGNoJm5ic3A7MTombmJzcDtDb3ZlciZuYnNwO2xldHRlcjxiciAvPi0mbmJzcDtQ
-YXRjaCZuYnNwOzI6Jm5ic3A7QmFzZSZuYnNwO2ltcGxlbWVudGF0aW9uPGJyIC8+LSZuYnNwO1Bh
-dGNoJm5ic3A7MzombmJzcDtCZW5jaG1hcmsmbmJzcDtyZXBvcnQ8YnIgLz4NPGJyIC8+DTxiciAv
-PlRlc3RlZCZuYnNwO29uJm5ic3A7VGVzdGVkJm5ic3A7b24mbmJzcDtTRzIwNDQmbmJzcDsoVkxF
-Tj0xMjgpJm5ic3A7DTxiciAvPg08YnIgLz4NPGJyIC8+UWlndW8mbmJzcDtDaGVuJm5ic3A7KDEp
-OjxiciAvPiZuYnNwOyZuYnNwO2VhbC9yaXNjdjombmJzcDtvcHRpbWl6ZSZuYnNwO3J0ZV9tZW1j
-cHkmbmJzcDt3aXRoJm5ic3A7dmVjdG9yJm5ic3A7YW5kJm5ic3A7emljYm9wJm5ic3A7ZXh0ZW5z
-aW9uczxiciAvPg08YnIgLz4mbmJzcDsubWFpbG1hcCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsmbmJzcDsxJm5ic3A7KzxiciAvPiZu
-YnNwO2NvbmZpZy9yaXNjdi9tZXNvbi5idWlsZCZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsxNCZuYnNw
-OysrPGJyIC8+Jm5ic3A7bGliL2VhbC9yaXNjdi9pbmNsdWRlL3J0ZV9tZW1jcHkuaCZuYnNwO3wm
-bmJzcDszMDMmbmJzcDsrKysrKysrKysrKysrKysrKysrKysrKysrKysrLTxiciAvPiZuYnNwOzMm
-bmJzcDtmaWxlcyZuYnNwO2NoYW5nZWQsJm5ic3A7MzE2Jm5ic3A7aW5zZXJ0aW9ucygrKSwmbmJz
-cDsyJm5ic3A7ZGVsZXRpb25zKC0pPGJyIC8+DTxiciAvPi0tJm5ic3A7DTxiciAvPjIuMjEuMC53
-aW5kb3dzLjE8YnIgLz4=
-
-
---=====_003_next=====--
-
---=====_002_next=====--
-
---=====_001_next=====--
+-- 
+2.25.1
 
