@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DA5CCD1BF
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 16:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE9ADCCD1BF
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 16:09:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BE8CF4021E;
-	Fri, 24 Oct 2025 18:00:51 +0200 (CEST)
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com
- [209.85.215.176])
- by mails.dpdk.org (Postfix) with ESMTP id 89BE840151
- for <dev@dpdk.org>; Fri, 24 Oct 2025 18:00:50 +0200 (CEST)
-Received: by mail-pg1-f176.google.com with SMTP id
- 41be03b00d2f7-b608df6d2a0so1964369a12.1
- for <dev@dpdk.org>; Fri, 24 Oct 2025 09:00:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7B96E4021E;
+	Fri, 24 Oct 2025 18:09:11 +0200 (CEST)
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com
+ [209.85.210.169])
+ by mails.dpdk.org (Postfix) with ESMTP id AC60840151
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 18:09:09 +0200 (CEST)
+Received: by mail-pf1-f169.google.com with SMTP id
+ d2e1a72fcca58-780fc3b181aso1488957b3a.2
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 09:09:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761321649;
- x=1761926449; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761322149;
+ x=1761926949; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=0Sh+lLq2NVuoIobPDsqZE7lzrYdQBS6AyvzyZlCKQIU=;
- b=A+g34sfSPSPQ3UsKMMtYDkAOAX3Kl7a2IdEhBGqhmRg4K60bS8k9+HxsWQeyGMGlzt
- KqnGFQbXMcgiKxh7tDTxov0G6EYWbMT2jHBuJT2bBnfGfKoaz/rJOT4sBgKcyHbRdJsd
- ZtvtyDADvqjmm42Z5njHwFQhFHfhQe2NC22V2KWFTfOsVR3zi+Zvfi0uvYASk38pRaat
- MAkYEmzfqlyD1MS+N/HJavPNuzYpd1se7P5wvI6cZwbMfI4eViQ3lPE8TAaaCFLeEUwr
- SBKI9A9VnUsmeHo+945VqBw9Dqpcj3EGPxnTkcrRID87gHkGOhmWivnWTVlS9fXXWU/1
- gA/Q==
+ bh=1MPreUnnwvTDc/NiwC7kvlMwTCeUZbL8ui1iIAdEt3E=;
+ b=gkV0nsm2P6uNeIMwoKAFHtCCN889lpM8R3rOBf9pk9cIpT5YYq5SqfM03KI4zbzDor
+ VmaXOtE7TWQ+ySzgOifIO2NP5ZWswrltODbgyRSYEHD3lLunAqqx9pmKAAQ87h7TnJqY
+ a9fwrKkNDOtn+U9AfOQDuYQR0UTqeg/dqqdkZiJWY8w9HNbjQUYs+VIFiWGNRzQleRI0
+ 41yLDQT6+dEvLvsDalBw3QlYJ4l88vhQ8QvLnnHWmUPj2NRSCOEwx2nsm19Xtgv4SYBm
+ yx7gTszJpvterUutikjkkB84rxCLqtmIOra4+jNtaQEu8azEvOJckEr3j9G3Vy+8W7V5
+ n28g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761321649; x=1761926449;
+ d=1e100.net; s=20230601; t=1761322149; x=1761926949;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=0Sh+lLq2NVuoIobPDsqZE7lzrYdQBS6AyvzyZlCKQIU=;
- b=oKb9iB83He1Qj/qOMSxuBShm+QfpJGCNBt/eUfaz/ODpfYMeblOt1SMs36bNZsZtib
- ky6L77/UNVgNOYJxxyrBItKWROxZaMlDqyx/pk10abkjGST1t16jOPTfaW4GeF0T/8QD
- iGVXDF8PlT+x6sodmZr8OFUkIW05fB5PG0IZ7sg+fYwQVANWMkKHtxNxIX7HP60w885L
- j2HMqhoGQRvcnES35LcaLM32r//qJjEjgjXkzfvc94eq8smi7YRNTP0U3744VGJpbQS5
- mUMdhITHUSRJInk35h/w9c5Vts1wCIr2ReziM95FYiDrAAE1G9vYbRYnOCkEnxCGMmUZ
- XIQA==
-X-Gm-Message-State: AOJu0YxXgI8xZhKTX3Qp+zBEf8mQ5dI39T7FeBtu+5fIelcIGdJT5n2E
- JfW6g/23x0AeUcMOhpDGkXBlAkrt8JqIyKFTPbC/P0qpQrc7ho8544FoLa9RmgfxGqAi+dEqpPi
- S788J
-X-Gm-Gg: ASbGnculetbMUyupIJqYBhErkB6pYxa8bRworNeA7AO4o/MfZLni6wE8X0EdLp//VRq
- d0yjLI8H1p4dxmCltC7nrdsxdZOahK8Gl3vAXEjBuoRF6N+RC8ry2ie65YYRVAxqR8o+HPvMzLb
- huYAeCa1XkwFM5jAQVZ9/qFlYGdnnmm6Rn6oFYJYlBs0n3d4At1THui6Rml8ozLYZfJ5dHA1zih
- g+yN5AascDb04yjDgC+p5rHshA8awhddgzAErw4Uevr9sjep3BRxDh3Tn3ARBubPGIeK5EKP/HS
- aAWlyR/6up1rCIo8Rlxlcn+iGaAtcx9aD6pjk8MXSFCPO1Ppk7Y6Rx89ax3sb+/G9tyxowQIUQJ
- zsuCsc3EdVvFNZBrw4e6gJkV/mnP98LsR2ZAUzDMZzoGKfVAa+FNpdOBqSfmT0iO+4Yhx/FiKDe
- zhCw9a7l4Llnk4/wUkabji5nOOE53LCTAAYw==
-X-Google-Smtp-Source: AGHT+IEHSixcg4sYkaBvdWsObmfqrf6kjnIaMlftkb1n781KWHKwejQiTDcTWqZ5O5BR39VcfRKOgg==
-X-Received: by 2002:a17:903:1251:b0:28e:cb51:1232 with SMTP id
- d9443c01a7336-2948b95c6c2mr35953915ad.3.1761321647673; 
- Fri, 24 Oct 2025 09:00:47 -0700 (PDT)
+ bh=1MPreUnnwvTDc/NiwC7kvlMwTCeUZbL8ui1iIAdEt3E=;
+ b=p7OFaO6r7y9tNvq7Hf3sld+W3Mp66wdAfGle9kUZLVSYFSSngaYwIsHyE+hew9yje2
+ UVOHbv1CX1qTIcqZdIUwFrIfLHKJ4zANb27oaRyXohBlQoJvvKWnDkkErvNWh7HIS505
+ LkH9KGqDZjzjpSJxAPB3mUf59yaCqCXZkJqxyU8j8ZyvaTkHnyY1egItIYSHUQKN2Kvj
+ IUeRl2DHPfu/NtbZ6BjqO2N1KkC1lnwrKTT5mOSMA2o5wBn8YIGnOBw1ST+sjTbbGoUJ
+ m4VuKwryoxLpkOtwcAnUAlINu6/f/fJnAP/yggg5TUIm4l1EkUoQwhbfPiPt4ovb9w5O
+ SmRw==
+X-Gm-Message-State: AOJu0YzGNn1Gowe9w/FmiMlodcvXQEKiLsqk3vuD8ETMVef+apkqmJif
+ irWKlC8OWhQ9g6F9EUm4LFYRt1tNdDz+BlPYqsAkD1+TDXwZj6xd87p7H8DccA5owXU=
+X-Gm-Gg: ASbGncvIsiea7i+LBzmgOsW3Wh3jqO81gdDXUBpINGpzoSYvDqpnluSmlGY70F6KaY9
+ wGZrkbbd2eLTfn0KpuBEUrauvVoje8KIlpOkEe0x24ch5mEVgHG/PIqgU6x8cRi1PaaX/gDvQO0
+ p8RLe51JyY4odFAb766NlbccHKNF8KIL8HKnP/1oFW1NizdcrwbB8PCGjPlIOpD+87rjzWs5sJY
+ LpaupN328abjde3UVf9UjUnXRzhADUfaAYwplnDVNyd3bO/2r8YzOfEDPgQlyEXNuVBScNgIz1D
+ u/9uQuvCdk4vQeSTcTsnayiSx08U1Fi/eacW9+E3iXsO2N7qGFdPHVYRn0naNYt3wdCRXUL5ALH
+ iWSNX4AI6+NHOCEdxtnVf30i09X6ZF1x/+TCJhr11PZ/cCBtZiHg4jCLLXHMdMy0erePQ39xOS8
+ jkztys2v6cJk6TWxUAb4peSXORl3Jkd38kDGWnXCfwvzrCRd3Z4HkXLFw=
+X-Google-Smtp-Source: AGHT+IHW83tv0FEIzLSLpXDui2wIzzi1iotRuzYoaOwpE9Rlz0Ddq2PaUnoKuSfGrIPfccM9JIU4+w==
+X-Received: by 2002:a05:6a21:48a:b0:334:89c6:cdeb with SMTP id
+ adf61e73a8af0-33c626aec66mr8998003637.56.1761322148698; 
+ Fri, 24 Oct 2025 09:09:08 -0700 (PDT)
 Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2946dded613sm59589355ad.37.2025.10.24.09.00.47
+ d2e1a72fcca58-7a274bb2174sm6291638b3a.55.2025.10.24.09.09.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 24 Oct 2025 09:00:47 -0700 (PDT)
-Date: Fri, 24 Oct 2025 09:00:45 -0700
+ Fri, 24 Oct 2025 09:09:08 -0700 (PDT)
+Date: Fri, 24 Oct 2025 09:09:05 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Wencheng Li <liwencheng@phytium.com.cn>
 Cc: dev@dpdk.org
 Subject: Re: [PATCH v10 0/3] net/macb: updated net macb driver
-Message-ID: <20251024090045.78e0598d@phoenix>
+Message-ID: <20251024090905.5ffaad89@phoenix>
 In-Reply-To: <1755664327-9362-1-git-send-email-liwencheng@phytium.com.cn>
 References: <1749200714-53359-1-git-send-email-liwencheng@phytium.com.cn>
  <1755664327-9362-1-git-send-email-liwencheng@phytium.com.cn>
@@ -204,11 +203,5 @@ Wencheng Li <liwencheng@phytium.com.cn> wrote:
 >  create mode 100644 drivers/net/macb/meson.build
 > 
 
-The driver can be merged as is. But it would prefer that drivers
-do not have gratuitous inclusion of linux headers. The base code has
-stuff referring to ioctl's, sockets, and ethtool which is irrelevant
-in DPDK. It limits the portability of the driver.
-
-Disabling unused warnings in base code is allowed, but consider it
-sloppy practice and there could be bugs.
+Queued to next-net
 
