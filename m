@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E205CCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 21:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 581EECCF9E0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 21:55:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C66C40395;
-	Fri, 24 Oct 2025 23:55:08 +0200 (CEST)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com
- [209.85.210.173])
- by mails.dpdk.org (Postfix) with ESMTP id B08BA402E4
- for <dev@dpdk.org>; Fri, 24 Oct 2025 23:55:03 +0200 (CEST)
-Received: by mail-pf1-f173.google.com with SMTP id
- d2e1a72fcca58-7a26ea3bf76so3477849b3a.2
- for <dev@dpdk.org>; Fri, 24 Oct 2025 14:55:03 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 12D5640661;
+	Fri, 24 Oct 2025 23:55:09 +0200 (CEST)
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
+ [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id 87234402E4
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 23:55:04 +0200 (CEST)
+Received: by mail-pj1-f53.google.com with SMTP id
+ 98e67ed59e1d1-33067909400so1910869a91.2
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 14:55:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761342903;
- x=1761947703; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761342904;
+ x=1761947704; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=PPQTx0z2LrGhFBoUFfqMhsEtngbOKeBe2Sa3KcccjjA=;
- b=gtb2iWJaM5jbAbmtLata9MtRTWxSMmgd4IC76sscAduiTXJMdC4fRSVOv3yu69pl4O
- F7PK9wZ9BibML2/3kcRuD3iUdI9Tb+C/hNvb0bzBwwNQT6ZZTaQ3mMp6VkcwWBoQLD+/
- RxjWYXTnn6F3bHHhMrLwWk7wTehmTUxLcoD3WhEWgZRxHijDSTPmh4enfwB6neE+VlRX
- ew65LshEMfr69QjKuvGVnB0dQMoHQ06ZlvkY9MdgfZoc0MzzX+kvXVhPEk90YrnT/3Xy
- ByyaxY5jrmsbugecsPsnliZJxmkW2wZtfl1tnbXu1L2MjCKzWXKvT8YsemPqLQC76WhC
- dGHg==
+ bh=k0J06KJzDzXhPV3N4fCx7IN8y3PaQHpxuTDCF2EhH3Q=;
+ b=HMC4qHhkbxHN/jKLsng3053fzaoaUrpQkF59OJ0ZBRxH7Ymw+kYc8YbFHyKHXn29P+
+ Ake5YKc/rASHWQyNIdjO3PiifCEHlqOSWhLe9hFNB0A5deDdP83/UW+In5w/goz1HzqS
+ 6S1Sun28IBrIjWs9Wca1CC6mMg1yWReTjZUEdqDLVLB730exxSupwu1KR1SSh4WPHN/R
+ rvHsX1uTu1cKuFMIQids1S9sSxLB/HzemBHEiWoJtTuyGuG6OxB+mKlmLIK3vM+DZ+18
+ sb66ywJLflOwV+UFP1+bfaWjGxZDvwP+aPr+5ws58APxkFUyJkUu04vbELNfA8UDFOgR
+ 9FMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761342903; x=1761947703;
+ d=1e100.net; s=20230601; t=1761342904; x=1761947704;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=PPQTx0z2LrGhFBoUFfqMhsEtngbOKeBe2Sa3KcccjjA=;
- b=poUjJgt6zuBVkXgjTjOPxUlwAGuu1wu2KDchKCwIFBrELH+aFnZsSVfjsfQYeUvmRt
- uDGjOXEKI/rUByuOH3x6agmddpL+0VFTr4EzTnN2BBfAbxMaYX3UVgi74Ouu/FMkgNts
- 3aoHBpbI30iU4ov/QUWyhgrbpDqeR9UmbBsgSglHyOnN5dQbQ32nJfvD1v/Mhfcl7HRZ
- Iz4WdDuyflPkdqWHaNgiiWVKD7FywTfwfpgGSXQNWI6FaQ5HFlZrK4D78Cajm7l69Ydi
- o6c1Dt3u2Flg7J1nl2SXiYlg0son0JWfyLsOPlNxc8tP3RiUqxQpgk5t3fYt/UwqxLty
- K90w==
-X-Gm-Message-State: AOJu0YxR4alR6EDfJo6yDnjSki87Qoi2m9O9H7bn2/p6cAOcQY9E+Ywt
- +jZhrqtdovVazh40HvTW3lYmDdw+n8EsuyEfVxO6xOaVdrYEwGTHzJeuBh53/xwcQhrHKyKgnuX
- cis/b
-X-Gm-Gg: ASbGncv2iQKOPuJehQckEjYM6xOPzcH7hjMYbkcfv43rIdyiAuzx7U/ZYXJ1xmNL3j8
- CiYXG42d4x2sdvOZPnu3oeFYfywkR9r/UQsr/zTDSP1OpYYdooJmboWQb3eB5UEhOR5CWZyrv7d
- qcKryNzcL3HwllOI+EhJBLCeAm9jABhaReJlnf/SHmVmRARlb6TNsCcBeb5JQ/yUbDM9qUP8jZv
- nRXwB8WfdJZvDhaycgMZ7oNrysgol4LfbD4BRNytMOr4MjsRfQDnqyeiGLrQApXO5eL7fdttEQK
- Y+m4HKQMmbuph7Ut/HaN7QCXM9Rxg6q7lO5UlUIhNKmpkixYglbW17J+5H3S1ymCAPZsyC2XBa4
- sFR9ESubqcCIdsJiFg7UGrYgFienUUugDAzZRY85D/eHFfOB0g85xlSBwGtRpCS07OrnLipqX+r
- oif91aH2i7V4G+vf5jj/B+OoYFrioeRHtBGg3t4iLXPuELD5e+rg==
-X-Google-Smtp-Source: AGHT+IGmA0SCHCeIsPk1y2tIXyDXtM7epxzbrD67uIBGUE768i9JTMr9+9LRcK3juoBHtZvITnWGUQ==
-X-Received: by 2002:a05:6a00:cd4:b0:7a2:7d0d:80d5 with SMTP id
- d2e1a72fcca58-7a28680406amr3894648b3a.16.1761342902881; 
- Fri, 24 Oct 2025 14:55:02 -0700 (PDT)
+ bh=k0J06KJzDzXhPV3N4fCx7IN8y3PaQHpxuTDCF2EhH3Q=;
+ b=HeOkdRjjbJFeQZiLPT5x2+WMM8YyE9KDeUxnPVDp1t2xJDX+BiMoUb/jeXeMWsjXUs
+ tndcWKs/XIABCN3kMMZza2Ipgbmh3RbpVSbAMHDF5EFMijur4+QIz2Emd55IeHF1JeM0
+ jy6BFQDxhY+1PJTjjjPOC2e7eMnGCBQzx5FA/r6zjT56ZQyl21jkU8CfSaUvI5AoO1Az
+ qnBaQoyrxfQSScRWfOlL0CoE0tiqkQE+t4+zUIBTggPAc6UCaDPoF4uEadvk1u+Yf0Em
+ 5amFGuw0sbNg8HosTsjfbL7TqKQ7a9rH6MTc8ZvBfe+CcWblpxc9LNX8JD1YNWgncLAS
+ dDBQ==
+X-Gm-Message-State: AOJu0YzkWK0ABXE7Jlo2NMZZicMVJYwfCahdzM+b1kawFEzLZfYFKZ5i
+ NUwdrmLzHJ1E1V/rFIPJLE5BRS05AbMax2uSAKLrgZYLUc5i2FWACjQ7u2G+zaDTBNB6JkcKAfy
+ ubTmi
+X-Gm-Gg: ASbGnctRh5UbwUFSARQ/N7PgB/7JPSXS/weu2P46RRYUcf+CfUrd+pHA342eFJ5gyzN
+ psO9z9UKcmvBaxMY9d30Qvy+5Bz0OgjyiOIKtQ5SW5t04RXV+9M+fuowr/B4Zw0yn77sSjYmZru
+ ACcxgloVk+vsnQOZgyIseh1AziRhelMa40/9xFm0RMwdqpzAubYLszyErvF8tz9DrRXvvB+kd+n
+ SjdzN+KtJE+86JGWCU8XS5MrWFgufQGGZqVPgKwItM6PU7uIeNy06mPIvA2xqrSU3kN977PAQBl
+ atryVnOSE82I5OJnMTQQo52y7SoFLfIYzTzLs8TCSIcYIiP/u5cxiEAs+XX99wEi1zmfTAnwTVe
+ 2xXUXjeRaeNfrgq3FdZwbT0Hv0fy5f/YbjLz7ZNuIaLL21bymWjyIIeVKLoKfuFPkfzp3ErsY67
+ MtuuOK2jc8CjhB4GKv2ki10baClddd4hJkZFiNU4VQGtLVFlu5Ew==
+X-Google-Smtp-Source: AGHT+IEWV/QMP4jJQGNBgIMzhYPuqc/kQd9EAo9JT6MKFjWD0j1edK0kXuicbJejATvdXDa7sdoBsg==
+X-Received: by 2002:a17:90b:38cc:b0:313:1c7b:fc62 with SMTP id
+ 98e67ed59e1d1-33fafc1eb1bmr9212906a91.22.1761342903719; 
+ Fri, 24 Oct 2025 14:55:03 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7a414012de3sm252530b3a.2.2025.10.24.14.55.02
+ d2e1a72fcca58-7a414012de3sm252530b3a.2.2025.10.24.14.55.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 24 Oct 2025 14:55:02 -0700 (PDT)
+ Fri, 24 Oct 2025 14:55:03 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Bruce Richardson <bruce.richardson@intel.com>,
  Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>,
  Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH v5 4/8] dumpcap: handle pdump requests from primary
-Date: Fri, 24 Oct 2025 14:53:59 -0700
-Message-ID: <20251024215456.282171-5-stephen@networkplumber.org>
+Subject: [PATCH v5 5/8] pdump: handle pdump requests from primary
+Date: Fri, 24 Oct 2025 14:54:00 -0700
+Message-ID: <20251024215456.282171-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251024215456.282171-1-stephen@networkplumber.org>
 References: <250811213632.16023-1-stephen@networkplumber.org>
@@ -87,44 +86,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 The primary process will start to notify all secondary processes
-about pdump changes. The dumpcap secondary process can just call
+about pdump changes. The pdump secondary process can just call
 rte_pdump_init() and it take care of that.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 Acked-by: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
 ---
- app/dumpcap/main.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ app/pdump/main.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
-index 3621c0ebe3..46a6cb251e 100644
---- a/app/dumpcap/main.c
-+++ b/app/dumpcap/main.c
-@@ -528,6 +528,8 @@ cleanup_pdump_resources(void)
- 		if (intf->opts.promisc_mode)
- 			rte_eth_promiscuous_disable(intf->port);
+diff --git a/app/pdump/main.c b/app/pdump/main.c
+index 1741d7e709..626ba0ce93 100644
+--- a/app/pdump/main.c
++++ b/app/pdump/main.c
+@@ -552,6 +552,7 @@ cleanup_pdump_resources(void)
+ 		}
+ 
  	}
-+
 +	rte_pdump_uninit();
+ 	cleanup_rings();
  }
  
- /* Alarm signal handler, used to check that primary process */
-@@ -659,6 +661,14 @@ static void dpdk_init(void)
- 	if (rte_eal_init(eal_argc, eal_argv) < 0)
- 		rte_exit(EXIT_FAILURE, "EAL init failed: is primary process running?\n");
+@@ -822,6 +823,9 @@ enable_pdump(void)
+ 	struct pdump_tuples *pt;
+ 	int ret = 0, ret1 = 0;
  
-+	/*
-+	 * Register pdump callback handler.
-+	 * Primary will notify all secondary processes of change.
-+	 * No impact for this application, but need to reply.
-+	 */
 +	if (rte_pdump_init() < 0)
-+		rte_exit(EXIT_FAILURE, "EAL pdump init failed\n");
++		rte_exit(EXIT_FAILURE, "pdump init failed\n");
 +
- 	/*
- 	 * If no lcore argument was specified, then run this program as a normal process
- 	 * which can be scheduled on any non-isolated CPU.
+ 	for (i = 0; i < num_tuples; i++) {
+ 		pt = &pdump_t[i];
+ 		if (pt->dir == RTE_PDUMP_FLAG_RXTX) {
 -- 
 2.51.0
 
