@@ -2,75 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 016BFCCF9E3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 13:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CBCCCF9E0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 13:54:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2C9EC40151;
-	Fri, 24 Oct 2025 15:52:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4622040151;
+	Fri, 24 Oct 2025 15:54:31 +0200 (CEST)
 Received: from fhigh-b3-smtp.messagingengine.com
  (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
- by mails.dpdk.org (Postfix) with ESMTP id 90A7840150
- for <dev@dpdk.org>; Fri, 24 Oct 2025 15:52:13 +0200 (CEST)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfhigh.stl.internal (Postfix) with ESMTP id CB6347A0102;
- Fri, 24 Oct 2025 09:52:12 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-10.internal (MEProxy); Fri, 24 Oct 2025 09:52:12 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 3E1B940150;
+ Fri, 24 Oct 2025 15:54:30 +0200 (CEST)
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 818DA7A0178;
+ Fri, 24 Oct 2025 09:54:29 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-09.internal (MEProxy); Fri, 24 Oct 2025 09:54:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1761313932;
- x=1761400332; bh=N2W+8BzYeodH0Pue130iMdenMq+or9uQydiKMRNsZQc=; b=
- SS/EZxGNNotKdjRD9CFTXPCZ/aH/lRY7h35JUDR4jmKEKlxmiSsucGUDM5xWLZ6F
- ycG4nvav87EbVK3RT0Wt5SV50bXh4P4x732wZMeMASm7dvy6UctSkX4p38ZlauDh
- kFD3aNnKbf92ZgfCSA20XVQqrmRBGuybqHCXb5ZihSdOi9A+Qbxr0EV+QekDtNge
- hyShQU9VFYNF5mjPaFoPqY/vMsSBCS/3Wsv5TaTg7mmqV42QCzoSn9H1Rk0om5xc
- g5l4Zz1sJlJuurY7G0Mn0cM4ylaqxWxw9LyozRg9kLXjAbF/SD99rRMp1MQrSdAr
- YSDqi6WgmFIBThOa9LUjqA==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1761314069;
+ x=1761400469; bh=ptZQoKCWu3IPHPDRgyIQpNq5k5V5iYz5v0FuvdS35nQ=; b=
+ NBJKVwAd7nOsZwreJLYGGV8fRpTqZ9necQbVyKtJLKwNVXkPJNvu0Aysi5NBcXV6
+ dc0wynp8hW58LG6oNAvlV9seIWbGgsmu6+KeM5UD6DawsC9Vi3BCIYn1vGexj88Y
+ ZJJNOkIrQqw0G3lBAiK/fcXd79lRXHwLJePIUFb586Wj70G1o3zuS0EVnG+HM5B/
+ Tez7qcEhl2enXyJiStMTrlcE4oeTMto3UtGrfFXUfth9cemU6yC3O8TRhTGX3G39
+ mdplyBvAuTYVQoyN/U70TrmaiLmVprm4gqRAajnfgw5Ht3sMJ4zr15aw99zHKedM
+ v/jDV01PGU8/M2OXvlwQfA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761313932; x=
- 1761400332; bh=N2W+8BzYeodH0Pue130iMdenMq+or9uQydiKMRNsZQc=; b=w
- Ov+84Be5lge3w5LbcmHM/mAT5WEq4sgw2aAlVm65ya+dBb4WvpYZPJCkjgVs9UXM
- YEbemS+uqsNeZuA39eIqw1Rel9BnhNNKc4ziaHUWju065xCHUjtiZdLcAhSw84K9
- /puHzJjV8Bpnap57zyjR0ex1x2FCiGf48Ewhw7SaCrH0kqTVkPFpbb0i8K48aqQQ
- fIE5QjPRjXgFbxqhyk6395xzbsH7VOVK7HQy9cfG356FPuGqsIFaWNF9gBV4Fu1K
- JSUm1N5Nogn+Y7gUzc2RFbc7PxOuuSZ9ril8r6kIM4E5u78QJK0/Wt9ihKuBV7i4
- 2cxZ5wbcDpm89FnWLUTbg==
-X-ME-Sender: <xms:jIT7aEqgNVJs1e4UfcwDwQyzdQWxCrnMVHm_LulF2IOC9lMIZcY4Vw>
- <xme:jIT7aO-mp7wunzMbKgT0O77gb3_1gLohTpz2yhF_tFsiH8pWCN3WMMNf38NPryujS
- kx4N-hP5xM49B1ar04-Ux4-8j0lTuwHUIkF6frx8h6sQGN1Zyc72g>
-X-ME-Received: <xmr:jIT7aIWARfVhjAnCRcq5EM8c_e0dFeVE1n6LkJtvpQFccP1wjOBsMJLlGFGlLo8VlY-TsqEsxMYbzdUtH6bloji4bg>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1761314069; x=
+ 1761400469; bh=ptZQoKCWu3IPHPDRgyIQpNq5k5V5iYz5v0FuvdS35nQ=; b=K
+ 4rcSSwbODBvIRgudhEKu4SGjWo6Kw8Rtp5mkDJsufSXj2V3lQ28VtrjKId1TManM
+ W4NzL5209Ukc5qsgSIVpV5CADLcK0va1vHzA28ij1p8HQUXM8uN+70DkssgHuLSB
+ UayX4y6YWX74GAF01VtoneVkW33H+JunZM1SzF64IH2USzytxVxJM3j5346BcF+b
+ dY/TInDH0tTKiHPEwV1pGTh20hF9pviZuodvfmJQ96h3WkIcGHnAYCAJGBhSi5ss
+ HVM9jEIaRF56Rcnb7Y51WcD3GtwNNWmpRw2/0cvBp26fnVo5Cp7mkcjHPOYunsjY
+ 7q2lYJz9fBYkb2nyOeSaQ==
+X-ME-Sender: <xms:FIX7aPR7Sz0B-Jq9PCc381_GfasdaBM8W_rOFw-6nUmEk3KH8mX_jA>
+ <xme:FIX7aHrlneIG-QwcXW-D_2BOaHE0ElEhXfZKwaz5hoTxVMguyjguQDoh4wP_4hOds
+ tDCQHa-2sVMNmgnqoAL_b9w4trnXLtraJIsIDZsKBMW7D-oem5ONA>
+X-ME-Received: <xmr:FIX7aNLj8FSiafaUCoN2yAsEaL17lwdTm0wCpCHSHPaIa1Kw6Ir2UFGrQQnEksUfN1M7JDSxDuDZBIAr45GTlSRhNQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddugeelheduucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehvlhgrughimhhirhdrmhgvughvvggukh
- hinhesihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgt
- phhtthhopehrjhgrrhhrhiesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:jIT7aEAufWIhcVKBnlECfycy-eUmp1eayt-z_yuD0LiOONPsr5AXxA>
- <xmx:jIT7aJw5WL7O3xaQuayz2h0972klblSE_q7cwccDVJ8UZNVtz-QjRw>
- <xmx:jIT7aBAz7Zv3E7yQSCTrA6_X5YmC3JO_ocaVzcQzUlyfOG4JEBnF5g>
- <xmx:jIT7aGaZAN1bRDtg_5MEWLsZh2f8M_9n2QDP-8O1ogCPYL3Cxmh03g>
- <xmx:jIT7aNZCYEpL3lxpCAszZiRpxpdnNrJBRAdwZH-BmmDkiBjYgz9B0q4D>
+ rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertd
+ dttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
+ ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevff
+ fgtdegkeeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgep
+ tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
+ gvthdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+ mhgrohgsihgsoheslhhoohhnghhsohhnrdgtnhdprhgtphhtthhopeiihhhouhhmihhnse
+ hlohhonhhgshhonhdrtghnpdhrtghpthhtohepphhrohgssgesihholhdruhhnhhdrvggu
+ uhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopegtihesughpug
+ hkrdhorhhg
+X-ME-Proxy: <xmx:FIX7aKrWeD6k0mUQoKn7p5h5H3hCT6_m5ZZorbp46E-gtbljhYp37A>
+ <xmx:FIX7aFzfHbCYYhS4tNvq7mjcZloeq2QGTw9upYvwV3ppLg73zmAumQ>
+ <xmx:FIX7aOMbMYjFP_bjbftrr2Sh6IEr9o0zcMdfa49Id1HijOZW2WJptA>
+ <xmx:FIX7aK4ZdAG-sKb-yXd3WgAeejGWWusNjlbCFYRxuwXTsLotWHcKDw>
+ <xmx:FYX7aNAFcJRL4fiiF12yvacThMub5EG-dgnSEJDdGeKTUAadqZl3L2RM>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 24 Oct 2025 09:52:11 -0400 (EDT)
+ 24 Oct 2025 09:54:27 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Cc: dev@dpdk.org, Robin Jarry <rjarry@redhat.com>
-Subject: Re: [PATCH dpdk v2] fib6: implement RCU rule reclamation
-Date: Fri, 24 Oct 2025 15:52:10 +0200
-Message-ID: <2728875.otsE0voPBg@thomas>
-In-Reply-To: <20251015095347.333685-2-rjarry@redhat.com>
-References: <20251015095347.333685-2-rjarry@redhat.com>
+To: maobibo@loongson.cn, zhoumin@loongson.cn
+Cc: probb@iol.unh.edu, dev@dpdk.org, ci@dpdk.org
+Subject: Re: [PATCH v1] maintainers: update for LoongArch
+Date: Fri, 24 Oct 2025 15:54:26 +0200
+Message-ID: <2521648.VZ3vTMCxA0@thomas>
+In-Reply-To: <20251016090948.836029-1-zhoumin@loongson.cn>
+References: <20251016090948.836029-1-zhoumin@loongson.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,19 +88,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Pending for review please.
+16/10/2025 11:09, Min Zhou:
+>  LoongArch
+> -M: Min Zhou <zhoumin@loongson.cn>
+> +M: Bibo Mao <maobibo@loongson.cn>
+>  F: config/loongarch/
+>  F: doc/guides/linux_gsg/cross_build_dpdk_for_loongarch.rst
+>  F: lib/eal/loongarch/
 
-15/10/2025 11:53, Robin Jarry:
-> Currently, for the TRIE algorithm, the tbl8 group is freed even though
-> the readers might be using the tbl8 group entries. The freed tbl8 group
-> can be reallocated quickly. As a result, lookup may be performed
-> incorrectly.
-> 
-> To address that, RCU QSBR is integrated for safe tbl8 group reclamation.
-> 
-> Cc: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
-
-
+Applied, thank you for the work done and to come.
 
 
