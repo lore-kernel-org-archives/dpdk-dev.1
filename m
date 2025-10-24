@@ -2,56 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6DECCD1BF
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 18:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E9EECCF9E0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 18:47:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 883BE40151;
-	Fri, 24 Oct 2025 20:47:32 +0200 (CEST)
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com
- [205.220.180.131])
- by mails.dpdk.org (Postfix) with ESMTP id C0B6E4014F
- for <dev@dpdk.org>; Fri, 24 Oct 2025 20:47:30 +0200 (CEST)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
- by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OI9KMo020691;
- Fri, 24 Oct 2025 18:47:30 GMT
+	by mails.dpdk.org (Postfix) with ESMTP id 6A7B2402D6;
+	Fri, 24 Oct 2025 20:47:50 +0200 (CEST)
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com
+ [205.220.168.131])
+ by mails.dpdk.org (Postfix) with ESMTP id 66794402D6
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 20:47:49 +0200 (CEST)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+ by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59OI9UoI009796
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 18:47:48 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
  cc:content-transfer-encoding:date:from:message-id:mime-version
- :subject:to; s=qcppdkim1; bh=6cjD+CpxAatZ1slnpIzDSnkdmRuU8lVEDEF
- b2QGMO3U=; b=WPTIAk421wkUyKLBeI9RQ5Ftn/ePl09tl7bZZzmNJq+/DjfbfYo
- aZrDqvqZiVULsIZNEPy/eE1if4D4zKESCJsjwzA/ZwwPbkoLMdi8LAmu13LzHzTA
- /7Bv51PV/VWukzv3Z7aWRdN8w1UWXTbXSM+ieJ6Akf9GzFTuJIe59ysZTLl2ULtM
- bctK/OnOe46lYXxXFImfpnsBtnE05e7a7vqm3kLBTGrM/NHSma0YTj+P4ogBMPZ0
- pjVZqubF+YcB7wn6nMd+4nMiaeZ9ecaaWHLEIYaHxdB1VuLfhID0h6Y7ubcSe92p
- 0cxhM/h8hT3CD12bRYXlBGDslCNZCeuq4Lg==
+ :subject:to; s=qcppdkim1; bh=iQt0v1gZVRHcIUpSRR99Bu8GvsjOjAx0E+6
+ cpJLc5Bs=; b=ENz5mZzrat8aAd44UY9Co0T+zEXNxVQvrxiot+Nw3zy1hXSh/ok
+ lK0rvVgbsAOrdj+XxEG4+oLHBGiRfH7inT/ysjk/vRbW7wIP02pA26NxtPLBSetJ
+ RKA7A+4LEd3Qq0PpfiN8vZwdK5a2tdmxgt6dkkd3sy+o6JXBXG21K64PTtTH+tRE
+ VzOwCo2yn6Q5CwoTxuS6eYNN02OZP7hj3xC5PPJI+DFUAveu3QWYCIQZKSgq4tx6
+ D3sRNlBksdQdt5nwQGH5xGrOjxw/R14BG3CbZpPlXvg7T/osccmMB77+G1D/vpFO
+ a9HLsN3rtogiADFLerLqcJ7JIdkQBH/OD0g==
 Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com
  [199.106.103.254])
- by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49v08pw6tm-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 24 Oct 2025 18:47:29 +0000 (GMT)
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49ym9j4knb-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 18:47:48 +0000 (GMT)
 Received: from pps.filterd (nasanppmta01.qualcomm.com [127.0.0.1])
- by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59OIlSBO019741; 
- Fri, 24 Oct 2025 18:47:28 GMT
+ by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59OIllJA019941
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 18:47:47 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
- by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a0adxcfsb-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 24 Oct 2025 18:47:28 +0000
+ by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a0adxcfv4-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 18:47:47 +0000
 Received: from nasanppmta01.qualcomm.com (nasanppmta01.qualcomm.com
  [127.0.0.1])
- by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59OIj5S0015578;
- Fri, 24 Oct 2025 18:47:28 GMT
+ by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59OIllwI019936
+ for <dev@dpdk.org>; Fri, 24 Oct 2025 18:47:47 GMT
 Received: from tbs-5gnr-mt-30 (tbs-5gnr-mt-30.qualcomm.com [10.239.80.165])
- by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 59OIlSw6019730
+ by NASANPPMTA01.qualcomm.com (PPS) with ESMTPS id 59OIllQe019925
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 24 Oct 2025 18:47:28 +0000
+ Fri, 24 Oct 2025 18:47:47 +0000
 Received: by tbs-5gnr-mt-30 (Postfix, from userid 2316195)
- id E2AB24006F; Fri, 24 Oct 2025 12:47:27 -0600 (MDT)
+ id 11A164006F; Fri, 24 Oct 2025 12:47:47 -0600 (MDT)
 From: Sameer Vaze <svaze@qti.qualcomm.com>
-To: Sunila Sahu <ssahu@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
- Ashish Gupta <ashishg@marvell.com>
+To: 
 Cc: dev@dpdk.org, Sameer Vaze <svaze@qti.qualcomm.com>
-Subject: [PATCH] compressdev: fix coverity issue
-Date: Fri, 24 Oct 2025 12:47:24 -0600
-Message-Id: <20251024184724.1698235-1-svaze@qti.qualcomm.com>
+Subject: [PATCH] app/compress-perf: fix coverity issue
+Date: Fri, 24 Oct 2025 12:47:45 -0600
+Message-Id: <20251024184745.1698409-1-svaze@qti.qualcomm.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -61,27 +60,27 @@ X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
  signatures=585085
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800
  signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE4MDAwMCBTYWx0ZWRfX6bvoyrfCsDB8
- ZNkraMeFRf87/9+HXsPXzbIXS/GkOboG7HsK5aMQa8z4evlGvFEySE4T2TE3DvLytSCFQooNcc9
- f1ep179AB82ag9VfPkL5jm56no0upFlBVg8Qzc39M7iNtibDy+0qLDq7nspYFHQjGKj5x1lqCJ3
- CNn60wv/kWt5TmVRjMsoIa9YF3qBSOtw878mLZtpgUYNwrxRE/qsIlqQPN8bL+YoIAkpyqG9B7g
- /1vIa2+WQzKttiwDza8WGz8iy86wZqOXbSz7M1WsPFP5tCEZLZp7VfMYjx3F4xnEGr0RWdK0rlL
- MxNIGqJJRpW19eMCZ9Eo1JM9PrnBd7eiyBH28IpZBnHD1V70bZoNBxh1uP9yWlGmn6mYAnII263
- 5GILXPyhdb/I5uPxf7IOySpCoUlOWw==
-X-Proofpoint-GUID: utdHxlpFW3MHYueDsC8Vd8Zi7_7ob0Lx
-X-Authority-Analysis: v=2.4 cv=Up1u9uwB c=1 sm=1 tr=0 ts=68fbc9c1 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=CLknnBrD c=1 sm=1 tr=0 ts=68fbc9d4 cx=c_pps
  a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
  a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8
- a=NBG51ibPg0Pvp_jVd8UA:9
-X-Proofpoint-ORIG-GUID: utdHxlpFW3MHYueDsC8Vd8Zi7_7ob0Lx
+ a=gff3aSZNGPX9DwQQ_QIA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDIzMDExMiBTYWx0ZWRfXwohYFgtR0OUj
+ ++PcN2mFD2OBqLVDPds8bYD6VOTyvvpa1b13VIYia3NbfQV3KpkUqxeP6tchAPzwzyAipVWmHhM
+ Z9rrtmMgFnhAWA5syM0kr+D/gikmE/HKpeEDzKkK2sxuz/EDVpLpCvN81+7A0j/lXwkYS6zeThT
+ MP98uxQd3LgEZNd6opNKg4iIo/hoKK/KV5InFSJD74AAauEv5DR3ZOnffFs6ecdzW1OIxoOLwN0
+ 6vRdPD6vQCVtzygpr7Rl8CTEKTdEXIIWleJmY0Ep5QSX3LEGJ5yct+bvEDfwc/PgO7bF4fyEDTP
+ iIc+qJjt6bOMUdwxCn+WYSVq1kCDDuHFDcfkfUx7/hDGAAYjLIC2eVK5pKC5zKc5HxzAJRX5uHZ
+ IVXXa3JWqZbj8nCd/bd4pkNaVuZwvA==
+X-Proofpoint-GUID: wez5vEjFeqrqrweovdWthWaroEyeBbFl
+X-Proofpoint-ORIG-GUID: wez5vEjFeqrqrweovdWthWaroEyeBbFl
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-24_03,2025-10-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0 clxscore=1015
- impostorscore=0 bulkscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510180000
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510230112
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,25 +94,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Adds missing free before end of function
+Removes possible assignment of a signed value
+to an unsigned parameter. Also makes dictionary
+an optional argument
 
 Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
 ---
- drivers/compress/zlib/zlib_pmd.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../comp_perf_options_parse.c                 |  2 +-
+ app/test-compress-perf/main.c                 | 19 +++++++++++++------
+ 2 files changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/compress/zlib/zlib_pmd.c b/drivers/compress/zlib/zlib_pmd.c
-index 3a2485b54e..1d7651dd7d 100644
---- a/drivers/compress/zlib/zlib_pmd.c
-+++ b/drivers/compress/zlib/zlib_pmd.c
-@@ -126,6 +126,7 @@ process_zlib_inflate_chksum(struct rte_comp_op *op,
- 		free(dictionary);
- 		return;
+diff --git a/app/test-compress-perf/comp_perf_options_parse.c b/app/test-compress-perf/comp_perf_options_parse.c
+index 49197dc290..16d31c7e90 100644
+--- a/app/test-compress-perf/comp_perf_options_parse.c
++++ b/app/test-compress-perf/comp_perf_options_parse.c
+@@ -660,7 +660,7 @@ static struct option lgopts[] = {
+ 	{ CPERF_LEVEL, required_argument, 0, 0 },
+ 	{ CPERF_WINDOW_SIZE, required_argument, 0, 0 },
+ 	{ CPERF_EXTERNAL_MBUFS, 0, 0, 0 },
+-	{ CPERF_DICTIONARY, required_argument, 0, 0 },
++	{ CPERF_DICTIONARY, optional_argument, 0, 0 },
+ 	{ CPERF_CYCLECOUNT_DELAY_US, required_argument, 0, 0 },
+ 	{ NULL, 0, 0, 0 }
+ };
+diff --git a/app/test-compress-perf/main.c b/app/test-compress-perf/main.c
+index 11b016069c..59af073f12 100644
+--- a/app/test-compress-perf/main.c
++++ b/app/test-compress-perf/main.c
+@@ -355,16 +355,22 @@ comp_perf_dump_dictionary_data(struct comp_test_data *test_data)
+ 		RTE_LOG(ERR, USER1, "Size of input could not be calculated\n");
+ 		goto end;
  	}
-+	free(dictionary);
+-	size_t actual_file_sz = ftell(f);
++	long file_sz = ftell(f);
+ 	/* If extended input data size has not been set,
+ 	 * input data size = file size
+ 	 */
+ 
++	if (file_sz < 0) {
++		RTE_LOG(ERR, USER1, "Actual file size could not be determined\n");
++		goto end;
++	}
++
++	size_t actual_file_sz = (size_t)file_sz;
++
+ 	if (test_data->dictionary_data_sz == 0)
+ 		test_data->dictionary_data_sz = actual_file_sz;
+ 
+-	if (test_data->dictionary_data_sz <= 0 || actual_file_sz <= 0 ||
+-			fseek(f, 0, SEEK_SET) != 0) {
++	if (fseek(f, 0, SEEK_SET) != 0) {
+ 		RTE_LOG(ERR, USER1, "Size of input could not be calculated\n");
+ 		goto end;
+ 	}
+@@ -386,11 +392,15 @@ comp_perf_dump_dictionary_data(struct comp_test_data *test_data)
+ 
+ 		if (fread(data, data_to_read, 1, f) != 1) {
+ 			RTE_LOG(ERR, USER1, "Input file could not be read\n");
++			if (test_data->dictionary_data)
++				rte_free(test_data->dictionary_data);
+ 			goto end;
+ 		}
+ 		if (fseek(f, 0, SEEK_SET) != 0) {
+ 			RTE_LOG(ERR, USER1,
+ 				"Size of input could not be calculated\n");
++			if (test_data->dictionary_data)
++				rte_free(test_data->dictionary_data);
+ 			goto end;
+ 		}
+ 		remaining_data -= data_to_read;
+@@ -414,9 +424,6 @@ comp_perf_dump_dictionary_data(struct comp_test_data *test_data)
+ 	if (f)
+ 		fclose(f);
+ 
+-	if (test_data->dictionary_data)
+-		rte_free(test_data->dictionary_data);
+-
+ 	return ret;
  }
  
- static void
 -- 
 2.31.1
 
