@@ -2,43 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AEFBCCD1AB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 08:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF239CCD1A5
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Oct 2025 09:18:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E77564025E;
-	Fri, 24 Oct 2025 10:58:51 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id DDBD140156
- for <dev@dpdk.org>; Fri, 24 Oct 2025 10:58:50 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 5A9A420602;
- Fri, 24 Oct 2025 10:58:50 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id BDAFD4025E;
+	Fri, 24 Oct 2025 11:18:29 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 095F440156;
+ Fri, 24 Oct 2025 11:18:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1761297508; x=1792833508;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=oQZFkbaVpkMTMXip1ZWaXc4aHT6WGWA0Mr52Ngm/qQQ=;
+ b=LU7KWpzqqw80/MnZFHw3+Rs8LtAffHCL/zBMrjh1PbpJ5vkKsxEWZmMc
+ j7Nz+rrFmMqVbtqVRNWhIG2WLgXVlLzi/+bhNFsf6Y0QXJZBHWu0QLcwM
+ XgUGDdJ9OXJFUO5nDn80fh9mNciYsGKg7ANYtEqouejyLz8ksaaADv+Bf
+ EnDEXeIdRI+Wq29UKYXniOiwJj3GTY551ASwvE9Mg4BafgrZCvaINBxNo
+ /DrN7iK4Q5TH+14dZYktA25Z5lQX+eJSgJoDkFvnwpAv9Br/PoCy4Lokn
+ ngVz9gTlibL56Xn5u7dpzEX5VFYUUt1WRvKjB9ZetYz9BQNfBxjfSF+YS g==;
+X-CSE-ConnectionGUID: 9Q3vD7gjSoqSsrdrA3GKvQ==
+X-CSE-MsgGUID: m2V/1MBCSfCdZuiKG/d92w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63368861"
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; d="scan'208";a="63368861"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Oct 2025 02:18:27 -0700
+X-CSE-ConnectionGUID: XwM/PJmJToaNjGT8xIDgbA==
+X-CSE-MsgGUID: dY9O4F3ZQ86K/EJanAwSOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,252,1754982000"; d="scan'208";a="184868712"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by fmviesa009.fm.intel.com with ESMTP; 24 Oct 2025 02:18:25 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org, Chenbo Xia <chenbox@nvidia.com>,
+ Nipun Gupta <nipun.gupta@amd.com>, Yahui Cao <yahui.cao@intel.com>,
+ Sunil Kumar Kori <skori@marvell.com>
+Cc: stable@dpdk.org
+Subject: [PATCH v1 1/1] bus/pci: fix resource leak in secondary process
+Date: Fri, 24 Oct 2025 10:18:24 +0100
+Message-ID: <54e4e95f31382c1bb3babee07c107f1e39dc9093.1761297496.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v7] mbuf: optimize segment prefree
-Date: Fri, 24 Oct 2025 10:58:47 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65503@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <9abef7c705da4f9194fd95e1fdeb004c@huawei.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v7] mbuf: optimize segment prefree
-Thread-Index: AQHcRDjKDZgiVqK2tUaY10zSlJWeBrTQ9TOwgAAJHQA=
-References: <20250827213535.21602-1-mb@smartsharesystems.com>
- <20251023161851.328258-1-mb@smartsharesystems.com>
- <9abef7c705da4f9194fd95e1fdeb004c@huawei.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>,
- "Thomas Monjalon" <thomas@monjalon.net>
-Cc: <dev@dpdk.org>, "Stephen Hemminger" <stephen@networkplumber.org>,
- "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
- "Fengchengwen" <fengchengwen@huawei.com>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,68 +59,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
-d2VpLmNvbV0NCj4gU2VudDogRnJpZGF5LCAyNCBPY3RvYmVyIDIwMjUgMTAuMjANCj4gDQo+ID4N
-Cj4gPiBSZWZhY3RvcmVkIHJ0ZV9wa3RtYnVmX3ByZWZyZWVfc2VnKCkgZm9yIGJvdGggcGVyZm9y
-bWFuY2UgYW5kDQo+IHJlYWRhYmlsaXR5Lg0KPiA+DQo+ID4gV2l0aCB0aGUgb3B0aW1pemVkIFJU
-RV9NQlVGX0RJUkVDVCgpIG1hY3JvLCB0aGUgY29tbW9uIGxpa2VseSBjb2RlDQo+IHBhdGgNCj4g
-PiBub3cgZml0cyB3aXRoaW4gb25lIGluc3RydWN0aW9uIGNhY2hlIGxpbmUgb24geDg2LTY0IHdo
-ZW4gYnVpbHQgd2l0aA0KPiBHQ0MuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBNb3J0ZW4gQnLD
-uHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KPiA+IEFja2VkLWJ5OiBLb25zdGFudGlu
-IEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPg0KPiA+IEFja2VkLWJ5OiBD
-aGVuZ3dlbiBGZW5nIDxmZW5nY2hlbmd3ZW5AaHVhd2VpLmNvbT4NCj4gPiBSZXZpZXdlZC1ieTog
-QnJ1Y2UgUmljaGFyZHNvbiA8YnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5jb20+DQo+ID4gLS0tDQo+
-ID4gdjc6DQo+ID4gKiBHbyBiYWNrIHRvIGxvbmcgbmFtZXMgaW5zdGVhZCBvZiBudW1lcmljYWwg
-dmFsdWUgaW4NCj4gUlRFX01CVUZfRElSRUNUKCkNCj4gPiAgIG1hY3JvLg0KPiA+ICAgKEtvbnN0
-YW50aW4gQW5hbnlldikNCj4gPiAqIFVwZGF0ZWQgc3RhdGljX2Fzc2VydCgpIGFjY29yZGluZ2x5
-Lg0KDQpbLi4uXQ0KDQo+ID4gICAqDQo+ID4gICAqIElmIGEgbWJ1ZiBlbWJlZHMgaXRzIG93biBk
-YXRhIGFmdGVyIHRoZSBydGVfbWJ1ZiBzdHJ1Y3R1cmUsIHRoaXMNCj4gbWJ1Zg0KPiA+ICAgKiBj
-YW4gYmUgZGVmaW5lZCBhcyBhIGRpcmVjdCBtYnVmLg0KPiA+IC0gKi8NCj4gPiArICoNCj4gPiAr
-ICogTm90ZTogTWFjcm8gb3B0aW1pemVkIGZvciBjb2RlIHNpemUuDQo+ID4gKyAqDQo+ID4gKyAq
-IFRoZSBwbGFpbiBtYWNybyB3b3VsZCBiZToNCj4gPiArICogXGNvZGV7LmN9DQo+ID4gKyAqICAg
-ICAgI2RlZmluZSBSVEVfTUJVRl9ESVJFQ1QobWIpIFwNCj4gPiArICogICAgICAgICAgKCEoKG1i
-KS0+b2xfZmxhZ3MgJiAoUlRFX01CVUZfRl9JTkRJUkVDVCB8DQo+ID4gUlRFX01CVUZfRl9FWFRF
-Uk5BTCkpKQ0KPiA+ICsgKiBcZW5kY29kZQ0KPiA+ICsgKg0KPiA+ICsgKiBUaGUgZmxhZ3MgUlRF
-X01CVUZfRl9JTkRJUkVDVCBhbmQgUlRFX01CVUZfRl9FWFRFUk5BTCBhcmUgYm90aCBpbg0KPiA+
-IHRoZSBNU0IgKG1vc3Qgc2lnbmlmaWNhbnQNCj4gPiArICogYnl0ZSkgb2YgdGhlIDY0LWJpdCBv
-bF9mbGFncyBmaWVsZCwgc28gd2Ugb25seSBjb21wYXJlIHRoaXMgb25lDQo+IGJ5dGUgaW5zdGVh
-ZCBvZg0KPiA+IGFsbCA2NCBiaXRzLg0KPiA+ICsgKg0KPiA+ICsgKiBFLmcuLCBHQ0MgdmVyc2lv
-biAxNi4wLjAgMjAyNTEwMTkgKGV4cGVyaW1lbnRhbCkgZ2VuZXJhdGVzIHRoZQ0KPiBmb2xsb3dp
-bmcNCj4gPiBjb2RlIGZvciB4ODYtNjQuDQo+ID4gKyAqDQo+ID4gKyAqIFdpdGggdGhlIHBsYWlu
-IG1hY3JvLCAxNyBieXRlcyBvZiBpbnN0cnVjdGlvbnM6DQo+ID4gKyAqIFxjb2RlDQo+ID4gKyAq
-ICAgICAgbW92YWJzIHJheCwweDYwMDAwMDAwMDAwMDAwMDAgICAgICAgLy8gMTAgYnl0ZXMNCj4g
-PiArICogICAgICBhbmQgICAgcmF4LFFXT1JEIFBUUiBbcmRpKzB4MThdICAgICAvLyA0IGJ5dGVz
-DQo+ID4gKyAqICAgICAgc2V0ZSAgIGFsICAgICAgICAgICAgICAgICAgICAgICAgICAgLy8gMyBi
-eXRlcw0KPiA+ICsgKiBcZW5kY29kZQ0KPiA+ICsgKiBXaXRoIHRoaXMgb3B0aW1pemVkIG1hY3Jv
-LCBvbmx5IDcgYnl0ZXMgb2YgaW5zdHJ1Y3Rpb25zOg0KPiA+ICsgKiBcY29kZQ0KPiA+ICsgKiAg
-ICAgIHRlc3QgICBCWVRFIFBUUiBbcmRpKzB4MWZdLDB4NjAgICAgIC8vIDQgYnl0ZXMNCj4gPiAr
-ICogICAgICBzZXRlICAgYWwgICAgICAgICAgICAgICAgICAgICAgICAgICAvLyAzIGJ5dGVzDQo+
-ID4gKyAqIFxlbmRjb2RlDQo+ID4gKyAqLw0KPiA+ICsjaWZkZWYgX19ET1hZR0VOX18NCj4gPiAr
-I2RlZmluZSBSVEVfTUJVRl9ESVJFQ1QobWIpIFwNCj4gPiArCSEoKChjb25zdCBjaGFyICopKCYo
-bWIpLT5vbF9mbGFncykpW01TQl9PRkZTRVQgLyogNyBvciAwLA0KPiBkZXBlbmRpbmcgb24NCj4g
-PiBlbmRpYW5uZXNzICovXSAmIFwNCj4gPiArCShjaGFyKSgoUlRFX01CVUZfRl9JTkRJUkVDVCB8
-IFJURV9NQlVGX0ZfRVhURVJOQUwpID4+ICg3ICoNCj4gPiBDSEFSX0JJVCkpKQ0KPiA+ICsjZWxz
-ZSAvKiAhX19ET1hZR0VOX18gKi8NCj4gPiArI2lmIFJURV9CWVRFX09SREVSID09IFJURV9MSVRU
-TEVfRU5ESUFODQo+ID4gKy8qIE9uIGxpdHRsZSBlbmRpYW4gYXJjaGl0ZWN0dXJlLCB0aGUgTVNC
-IG9mIGEgNjQtYml0IGludGVnZXIgaXMgYXQNCj4gYnl0ZSBvZmZzZXQgNy4gKi8NCj4gPiArI2Rl
-ZmluZSBSVEVfTUJVRl9ESVJFQ1QobWIpIFwNCj4gPiArCSEoKChjb25zdCBjaGFyICopKCYobWIp
-LT5vbF9mbGFncykpWzddICYgXA0KPiA+ICsJKGNoYXIpKChSVEVfTUJVRl9GX0lORElSRUNUIHwg
-UlRFX01CVUZfRl9FWFRFUk5BTCkgPj4gKDcgKg0KPiA+IENIQVJfQklUKSkpDQo+ID4gKyNlbGlm
-IFJURV9CWVRFX09SREVSID09IFJURV9CSUdfRU5ESUFODQo+ID4gKy8qIE9uIGJpZyBlbmRpYW4g
-YXJjaGl0ZWN0dXJlLCB0aGUgTVNCIG9mIGEgNjQtYml0IGludGVnZXIgaXMgYXQNCj4gYnl0ZSBv
-ZmZzZXQgMC4gKi8NCj4gPiAgI2RlZmluZSBSVEVfTUJVRl9ESVJFQ1QobWIpIFwNCj4gPiAtCSgh
-KChtYiktPm9sX2ZsYWdzICYgKFJURV9NQlVGX0ZfSU5ESVJFQ1QgfA0KPiA+IFJURV9NQlVGX0Zf
-RVhURVJOQUwpKSkNCj4gPiArCSEoKChjb25zdCBjaGFyICopKCYobWIpLT5vbF9mbGFncykpWzBd
-ICYgXA0KPiA+ICsJKGNoYXIpKChSVEVfTUJVRl9GX0lORElSRUNUIHwgUlRFX01CVUZfRl9FWFRF
-Uk5BTCkgPj4gKDcgKg0KPiA+IENIQVJfQklUKSkpDQo+ID4gKyNlbmRpZiAvKiBSVEVfQllURV9P
-UkRFUiAqLw0KPiA+ICsjZW5kaWYgLyogIV9fRE9YWUdFTl9fICovDQo+ID4gKy8qIFZlcmlmeSB0
-aGUgb3B0aW1pemF0aW9uIGFib3ZlLiAqLw0KPiA+ICtzdGF0aWNfYXNzZXJ0KCgoUlRFX01CVUZf
-Rl9JTkRJUkVDVCB8IFJURV9NQlVGX0ZfRVhURVJOQUwpICYNCj4gPiAoVUlOVDY0X0MoMHhGRikg
-PDwgKDcgKiBDSEFSX0JJVCkpKSA9PQ0KPiA+ICsJKFJURV9NQlVGX0ZfSU5ESVJFQ1QgfCBSVEVf
-TUJVRl9GX0VYVEVSTkFMKSwNCj4gPiArCSIoUlRFX01CVUZfRl9JTkRJUkVDVCB8IFJURV9NQlVG
-X0ZfRVhURVJOQUwpIGlzIG5vdCBhdCBNU0IiKTsNCj4gPg0KPiA+ICAvKiogVW5pbml0aWFsaXpl
-ZCBvciB1bnNwZWNpZmllZCBwb3J0LiAqLw0KPiA+ICAjZGVmaW5lIFJURV9NQlVGX1BPUlRfSU5W
-QUxJRCBVSU5UMTZfTUFYDQo+ID4gLS0NCj4gDQo+IExHVE0sIHRoYW5rcyBmb3IgcmVmYWN0b3Jp
-bmcuDQoNClRoYW5rIHlvdSBmb3IgcmV2aWV3aW5nLCBLb25zdGFudGluLg0KDQpJIGhhZCBubyBw
-cmVmZXJlbmNlIGZvciB2NyBvciB2NiwgYnV0IEJydWNlIGFuZCBUaG9tYXMgcHJlZmVycmVkIHY2
-LCBzbyB2NiB3YXMgYXBwbGllZC4NCg0K
+Right after setting up VFIO device, we attempt to fill region information.
+This operation can fail, and if it does, we do not release the device fd.
+Fix the control flow to free the device fd if getting region info failed.
+
+Fixes: 4b741542ecde ("bus/pci: avoid depending on private kernel value")
+Cc: stable@dpdk.org
+
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ drivers/bus/pci/linux/pci_vfio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
+index c63721dd61..8562fdcc6b 100644
+--- a/drivers/bus/pci/linux/pci_vfio.c
++++ b/drivers/bus/pci/linux/pci_vfio.c
+@@ -932,7 +932,7 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+ 	char pci_addr[PATH_MAX] = {0};
+ 	int vfio_dev_fd;
+ 	struct rte_pci_addr *loc = &dev->addr;
+-	int i, j, ret;
++	int j, ret, i = 0;
+ 	struct mapped_pci_resource *vfio_res = NULL;
+ 	struct mapped_pci_res_list *vfio_res_list =
+ 		RTE_TAILQ_CAST(rte_vfio_tailq.head, mapped_pci_res_list);
+@@ -968,7 +968,7 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+ 
+ 	ret = pci_vfio_fill_regions(dev, vfio_dev_fd, &device_info);
+ 	if (ret)
+-		return ret;
++		goto err_vfio_dev_fd;
+ 
+ 	/* map BARs */
+ 	maps = vfio_res->maps;
+-- 
+2.47.3
+
