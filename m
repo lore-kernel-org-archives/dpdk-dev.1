@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA4DACCD1BF
-	for <dpdk-dev@archiver.kernel.org>; Sat, 25 Oct 2025 18:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BBFCCF9E9
+	for <dpdk-dev@archiver.kernel.org>; Sat, 25 Oct 2025 18:35:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B59E340151;
-	Sat, 25 Oct 2025 20:33:59 +0200 (CEST)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com
- [209.85.218.48]) by mails.dpdk.org (Postfix) with ESMTP id A617A4003C
- for <dev@dpdk.org>; Sat, 25 Oct 2025 20:33:58 +0200 (CEST)
-Received: by mail-ej1-f48.google.com with SMTP id
- a640c23a62f3a-b626a4cd9d6so676959366b.3
- for <dev@dpdk.org>; Sat, 25 Oct 2025 11:33:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CA81D40151;
+	Sat, 25 Oct 2025 20:35:11 +0200 (CEST)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
+ [209.85.214.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 45D9D4003C
+ for <dev@dpdk.org>; Sat, 25 Oct 2025 20:35:11 +0200 (CEST)
+Received: by mail-pl1-f173.google.com with SMTP id
+ d9443c01a7336-28e7cd6dbc0so40557385ad.0
+ for <dev@dpdk.org>; Sat, 25 Oct 2025 11:35:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761417238;
- x=1762022038; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761417310;
+ x=1762022110; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=9GrLi6xRHgD7Dis18g4IxnuUuqhjL9YYcHzgGxrI4Iw=;
- b=t2jCkRjxEGDc/fnIOB6UUcvoCGVbwTmMUc2XTFNUaggfq/VtAPnxsG/DKzPVYSqhPe
- hpB4RIhT1yiMF+33qMkwsze0azneq3G+MFuLyjVMdslgf8+6f7DUVBSnoyJFYWu9Silw
- qe25gZQot2/ZqiBhZRtQriphJYwRQmiNTch9GZIJAu1i6eFbVq6hsw6sFUyG5NYyojI9
- TOsYtXG0Cok3FkOiNTGHxjGc/HhAbcB2A7a08wSM/C5LJ5NDcfxvXPScQJ4ZpUAKUa2C
- Fh/9nJPHS/X6ARtYa994EL9DXJc5xt4fvDX0MF07ewieYOHajru2XqG6LmGdAtLG9pG+
- 1Lig==
+ bh=EHqhF7KEGC4CguoOeKiKG+AQlr9lD2/+HKMAFLoGsag=;
+ b=nRAXP+QaY/8UzD64zKbzmSx2h50iY+Y+o2G0dtseQbCq13kM1YSgLGw60OYVxCZy8x
+ /eL4s0Rvs/UYXNgjFo49Ry3YeQOpTj/XfZKSx9qSNQ99FaAR1I7HgE37G8gy+UYbxPlD
+ kNI9IpjYkRX3QfrYaQKaB2b19WcrpyHhZuEKyxcT8hDXb8EgSQ6SqWvhEe1u7SLUzG1W
+ TA2vIOsCLkkkP842YOOf9NbCIRn2n9l8Joy76c5FuPv//V+LaOJBUnqIXVqLkfJXq7x+
+ 11KYdBg6p48f5Ayr/HeFEykx1IQqeGCtQ8+g/NnZQMdorgKz7TEEpvtHYAkebXsPQ1xm
+ YZgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761417238; x=1762022038;
+ d=1e100.net; s=20230601; t=1761417310; x=1762022110;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=9GrLi6xRHgD7Dis18g4IxnuUuqhjL9YYcHzgGxrI4Iw=;
- b=mv3hlg5d0JnS6rMF+/JUyxxozknzfhg0CEmkbF12mfFUWUzZ1EX3SbcCSNiSX/uHyg
- sXfyLI1sk+9p+lm3SUuRh7bJ4aHWtNi0Jra+8U024774XascZlolQQNt72N4XibI53kq
- AgikFWbgOvLivCZzkuXoe2OQy/P62nAcs9FtGIhga/UE4JFXBjERvZ9odgbY4r8YOlPp
- 5XMvxWAaQBkmqbI2Zad/yiQfQV/zmaQRf7ONVt554rKn2//9+xImPPV/sawlOgIEYa28
- XConxG72MTsBwrwJu/atgZtsRWtwqMw7shBGYcQuHqbiRjKjKySPnCiyUtoNVqQNHXln
- mOww==
-X-Gm-Message-State: AOJu0Yz6Cl8lFWYgxxWX+OYPa+URXSm1ZSz0DK0iCczhzeO0zBUjeop5
- 3XlB7twK6FYKGuT4Ob/FyiD0P90GAgD5iq7M9yPAxTFyTFzLShGueqXbJjwiSePbcEvfEEUL9VU
- F+580
-X-Gm-Gg: ASbGncv6IMikrjwnsPAp4c/7ij2gMQzvGh8iEnvfyCwhZDiYt4Ba7anv9CZjQ4pEzRx
- MNCGmXHxQQS9R4F3bMX6IWypweRVxhVMYPA6zf8oNdEKtXxZuSXZDCeXZDcI/32Qd8vtqics76P
- 9SolOYNRt9xwz2dAflVWamrfFRGEQ5ZcVrA2TeqfCX0yVGVN201zD2Kd5zCahes0vzRllPjJEvf
- BwsiJ3YF8mmIpwcCzHBiuVlPnKLJRUHLGLJX/PTTw4ZetQqmnAL5bpFj4kpK24FbRtktLJrW71s
- y0eFY7Ao7gceuz6YtfdYzYhx50umnKVaRQAyiZ1Dh9qRy+6SXSDrfLqpEHzPYFtc+cDiHQkmNC8
- QGHPaDvutzQIJuAVkfcqlhkHTKBGVAn7V2SZ3380r9CtBwaweR4KmX6rbEs3VrTAI5j4fshkJPL
- pPAFAZN/K9mW0fRPbbCyROY1+M1ZMdN1m7YgEy5hc4m75d
-X-Google-Smtp-Source: AGHT+IFna46m+06WCZkodxrZ9W/hvttVm2dgIwxhw8V+HGywO2/COqX1SPQQVzCPowi2CuNqFprZlQ==
-X-Received: by 2002:a17:907:9701:b0:b46:31be:e8fe with SMTP id
- a640c23a62f3a-b6d6fd8133cmr800803866b.11.1761417238048; 
- Sat, 25 Oct 2025 11:33:58 -0700 (PDT)
+ bh=EHqhF7KEGC4CguoOeKiKG+AQlr9lD2/+HKMAFLoGsag=;
+ b=XeQkW5sKK3zjStG1PAQFHJzYXC2Y8AgOJsRAYqHVIfRi34gKq2mMhxqh1uPr4qJ8uk
+ qNNcOoCwOtPgMu/69Esmz8M/a3NgdEgjcOlJuNow6VAQB7bLWAhXX8nXoYsH4aglhhtS
+ Ik7TpCh8pobUkPYniRH+wVmj9nQNE+alROX8T3NYyTvenWIZYcrmFdA9PXGzkqe73/Wv
+ 8AJKgk66PRl15hT6ruz7FZpQ3YocXPemmFLINLsEerlhR59Oqj5i+FV1Cb33hYA8mCdb
+ Dv7qeGNqV85FOF3BTR3IHS9fmXIPSDoLQn+BdekiPkkQ5UP5d51ESIG+z+UMxtr4q2NY
+ uKxQ==
+X-Gm-Message-State: AOJu0YxByfzHrt8+WWiKBSrsV7DSNTi/vezvUGfcc0Ye2CmDb13vh3JR
+ muM58RwO6yMl7pUbBltUgk7SHG13IwFH/WRfilQCQQmwQdzVYfEPKQ9ZqvHoXgZr433uCbaVlWl
+ 38JdT
+X-Gm-Gg: ASbGnctnLLyVgaVqDpmgZiXFTBvpUDrJ19coGL/AzPyLY17lPCY6T+rcPfCAxBFcPtx
+ mzULWi/bFNmQXKf+qBYaSfVZLZjPjWWMN83xwDDhOBadkDr0hmKpVaLxFxczIIIbkza58cF2hPp
+ 5b+Ffov5W22NJjzxOt+9qim7jgmnc2XIPRAiNME2nZaR1r8XQk7iAhkdCFN5CBApE0hqsjPogG0
+ SirvYtzLc5Nfm3YKZmDN+6Cru3hyWnEasd118fuvsCFoO+jkzRbCDZP66Ble6NnHPNEZnI+VDVX
+ uJhxbcHCoLpWVS1rK/uchKFXshptTRXiQImtz/lfTj2sjCgzpiVgwdqNx6/WYeha3jDbfnnD9vi
+ uZuFXbIQV08cYU9f/LBElpiMaGS9RSSnZd+acqUQRZFrvwNRDJSApeOjoe3yOwHVXxAQJTFo0PS
+ /olEJ6vG8Xa9IYa02Z4B17zTNCtaZieAfE9Q==
+X-Google-Smtp-Source: AGHT+IG9ehPIS/IaJATP4Q1WnMjvgqjq2EwMNDXOU86ZkZiBFE0/QWng0qoivyU4Eejzfi7lia3RMA==
+X-Received: by 2002:a17:902:d503:b0:275:b1cf:6ddc with SMTP id
+ d9443c01a7336-2948b95c714mr79839085ad.5.1761417310377; 
+ Sat, 25 Oct 2025 11:35:10 -0700 (PDT)
 Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b6d853e5138sm263477866b.44.2025.10.25.11.33.56
+ 41be03b00d2f7-b7127bf6accsm2721862a12.14.2025.10.25.11.35.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 25 Oct 2025 11:33:57 -0700 (PDT)
-Date: Sat, 25 Oct 2025 11:33:52 -0700
+ Sat, 25 Oct 2025 11:35:10 -0700 (PDT)
+Date: Sat, 25 Oct 2025 11:35:08 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: liujie5@linkdatatechnology.com
 Cc: dev@dpdk.org
 Subject: Re: [PATCH v12 01/13] net/sxe: add base driver directory and doc
-Message-ID: <20251025113352.3115f742@phoenix>
+Message-ID: <20251025113508.2826bdb3@phoenix>
 In-Reply-To: <20250728090517.1811244-1-liujie5@linkdatatechnology.com>
 References: <20250725104855.73326-13-liujie5@linkdatatechnology.com>
  <20250728090517.1811244-1-liujie5@linkdatatechnology.com>
@@ -82,150 +83,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The following patch may help you fix the driver and have it build on current 25.11-rc1 or later.
+On Mon, 28 Jul 2025 17:05:05 +0800
+liujie5@linkdatatechnology.com wrote:
 
-diff --git a/drivers/net/sxe/pf/sxe_queue.c b/drivers/net/sxe/pf/sxe_queue.c
-index 75287defda..59447cc8af 100644
---- a/drivers/net/sxe/pf/sxe_queue.c
-+++ b/drivers/net/sxe/pf/sxe_queue.c
-@@ -676,7 +676,7 @@ s32 __rte_cold sxe_rx_queue_stop(struct rte_eth_dev *dev, u16 queue_id)
- 	return 0;
- }
- 
--u32 sxe_rx_queue_count(void *rx_queue)
-+s32 sxe_rx_queue_count(void *rx_queue)
- {
- 	volatile sxe_rx_data_desc_u *desc;
- 	struct sxe_rx_queue *rxq;
-diff --git a/drivers/net/sxe/pf/sxe_queue.h b/drivers/net/sxe/pf/sxe_queue.h
-index 43d8d4d633..c60bc6b9c2 100644
---- a/drivers/net/sxe/pf/sxe_queue.h
-+++ b/drivers/net/sxe/pf/sxe_queue.h
-@@ -76,7 +76,7 @@ void sxe_rx_queue_init(bool rx_batch_alloc_allowed,
- 
- void sxe_rx_queue_free(sxe_rx_queue_s *rxq);
- 
--u32 sxe_rx_queue_count(void *rx_queue);
-+s32 sxe_rx_queue_count(void *rx_queue);
- 
- s32 sxe_mq_mode_check(struct rte_eth_dev *dev);
- 
-diff --git a/drivers/net/sxe/pf/sxe_stats.c b/drivers/net/sxe/pf/sxe_stats.c
-index 34470eae64..dd3196b75d 100644
---- a/drivers/net/sxe/pf/sxe_stats.c
-+++ b/drivers/net/sxe/pf/sxe_stats.c
-@@ -93,8 +93,8 @@ u32 sxe_xstats_cnt_get(void)
- }
- #endif
- 
--s32 sxe_eth_stats_get(struct rte_eth_dev *eth_dev,
--				struct rte_eth_stats *stats)
-+s32 sxe_eth_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
-+		      struct eth_queue_stats *qstats)
- {
- 	struct sxe_adapter *adapter = eth_dev->data->dev_private;
- 	struct sxe_stats_info *stats_info = &adapter->stats_info;
-@@ -112,16 +112,17 @@ s32 sxe_eth_stats_get(struct rte_eth_dev *eth_dev,
- 		goto l_out;
- 	}
- 
--	for (i = 0; i < RTE_MIN_T(SXE_QUEUE_STAT_COUNT,
--		RTE_ETHDEV_QUEUE_STAT_CNTRS, typeof(i)); i++) {
-+	for (i = 0; i < SXE_QUEUE_STAT_COUNT; i++) {
- 		rx_packets += stats_info->hw_stats.qprc[i];
- 		rx_bytes += stats_info->hw_stats.qbrc[i];
- 
--		stats->q_ipackets[i] = stats_info->hw_stats.qprc[i];
--		stats->q_opackets[i] = stats_info->hw_stats.qptc[i];
--		stats->q_ibytes[i] = stats_info->hw_stats.qbrc[i];
--		stats->q_obytes[i] = stats_info->hw_stats.qbtc[i];
--		stats->q_errors[i] = stats_info->hw_stats.qprdc[i];
-+		if (qstats && i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
-+			qstats->q_ipackets[i] = stats_info->hw_stats.qprc[i];
-+			qstats->q_opackets[i] = stats_info->hw_stats.qptc[i];
-+			qstats->q_ibytes[i] = stats_info->hw_stats.qbrc[i];
-+			qstats->q_obytes[i] = stats_info->hw_stats.qbtc[i];
-+			qstats->q_errors[i] = stats_info->hw_stats.qprdc[i];
-+		}
- 	}
- 
- 	stats->ipackets = rx_packets;
-@@ -278,7 +279,7 @@ s32 sxe_stats_reset(struct rte_eth_dev *eth_dev)
- 	sxe_rx_queue_s *rxq;
- 	u32 i;
- 
--	sxe_eth_stats_get(eth_dev, NULL);
-+	sxe_eth_stats_get(eth_dev, NULL, NULL);
- 	sxe_hw_stats_seq_clean(hw, &stats_info->hw_stats);
- 
- 	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
-diff --git a/drivers/net/sxe/pf/sxe_stats.h b/drivers/net/sxe/pf/sxe_stats.h
-index 7c70761cd6..d84d93421c 100644
---- a/drivers/net/sxe/pf/sxe_stats.h
-+++ b/drivers/net/sxe/pf/sxe_stats.h
-@@ -7,6 +7,7 @@
- 
- #include <rte_ethdev.h>
- #include <rte_ethdev_core.h>
-+#include <ethdev_driver.h>
- #include "sxe_hw.h"
- 
- #define SXE_STATS_FIELD_NAME_SIZE  50
-@@ -31,8 +32,8 @@ struct sxe_stats_field {
- 	u32 offset;
- };
- 
--s32 sxe_eth_stats_get(struct rte_eth_dev *eth_dev,
--				struct rte_eth_stats *stats);
-+s32 sxe_eth_stats_get(struct rte_eth_dev *eth_dev,struct rte_eth_stats *stats,
-+		      struct eth_queue_stats *qstats);
- 
- s32 sxe_stats_reset(struct rte_eth_dev *eth_dev);
- 
-diff --git a/drivers/net/sxe/vf/sxevf_stats.c b/drivers/net/sxe/vf/sxevf_stats.c
-index 30ce9753dd..3b75126eb7 100644
---- a/drivers/net/sxe/vf/sxevf_stats.c
-+++ b/drivers/net/sxe/vf/sxevf_stats.c
-@@ -5,6 +5,7 @@
- #if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
- 
- #include <rte_ethdev.h>
-+#include <ethdev_driver.h>
- 
- #include "sxevf_stats.h"
- #include "sxe_logs.h"
-@@ -25,8 +26,8 @@ static u32 sxevf_xstats_cnt_get(void)
- }
- #endif
- 
--s32 sxevf_eth_stats_get(struct rte_eth_dev *eth_dev,
--				struct rte_eth_stats *stats)
-+s32 sxevf_eth_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
-+			struct eth_queue_stats *qstats __rte_unused)
- {
- 	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
- 	struct sxevf_stats_info *stats_info = &adapter->stats_info;
-@@ -55,7 +56,7 @@ s32 sxevf_dev_stats_reset(struct rte_eth_dev *eth_dev)
- 	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
- 	struct sxevf_stats_info *stats_info = &adapter->stats_info;
- 
--	sxevf_eth_stats_get(eth_dev, NULL);
-+	sxevf_eth_stats_get(eth_dev, NULL, NULL);
- 
- 	stats_info->hw_stats.vfgprc = 0;
- 	stats_info->hw_stats.vfgorc = 0;
-diff --git a/drivers/net/sxe/vf/sxevf_stats.h b/drivers/net/sxe/vf/sxevf_stats.h
-index ddf56c39df..7a6649577b 100644
---- a/drivers/net/sxe/vf/sxevf_stats.h
-+++ b/drivers/net/sxe/vf/sxevf_stats.h
-@@ -16,8 +16,8 @@ struct sxevf_stats_info {
- 	struct sxevf_hw_stats hw_stats;
- };
- 
--s32 sxevf_eth_stats_get(struct rte_eth_dev *eth_dev,
--				struct rte_eth_stats *stats);
-+s32 sxevf_eth_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
-+			struct eth_queue_stats *qstats);
- 
- s32 sxevf_dev_stats_reset(struct rte_eth_dev *eth_dev);
- 
+> From: Jie Liu <liujie5@linkdatatechnology.com>
+> 
+> Adding a minimum maintainable directory structure for the
+> network driver and request maintenance of the sxe driver.
+> 
+> Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+> ---
+
+Drivers need to have all global symbols prefixed consistently to avoid
+conflicts when DPDK is statically linked.
+
+This driver has some work left:
+
+.../sxe/build/drivers $ nm librte_net_sxe.a | grep ' [TDB] ' | grep -v ' sxe' | grep -v '__sxe' | grep -v 'rte_pmd_sxe_'
+0000000000000000 B g_log_filename
+0000000000000108 B is_log_created
+00000000000002a0 T is_sxe_supported
+0000000000000000 D def_txq_ops
+0000000000000000 D mac_regs
+0000000000000000 B dump_regs
