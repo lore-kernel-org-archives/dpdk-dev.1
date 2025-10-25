@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA3BCCD1BF
-	for <dpdk-dev@archiver.kernel.org>; Sat, 25 Oct 2025 18:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91867CCD1BF
+	for <dpdk-dev@archiver.kernel.org>; Sat, 25 Oct 2025 18:05:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B22504021E;
-	Sat, 25 Oct 2025 20:04:08 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B9F1A40151;
+	Sat, 25 Oct 2025 20:05:25 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 909C640156
- for <dev@dpdk.org>; Sat, 25 Oct 2025 20:04:07 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8961C4003C
+ for <dev@dpdk.org>; Sat, 25 Oct 2025 20:05:24 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 71FF7489D7; Sat, 25 Oct 2025 20:04:07 +0200 (CEST)
+ id 82026489D7; Sat, 25 Oct 2025 20:05:24 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1811] common/cnxk: identical branch warnings
-Date: Sat, 25 Oct 2025 18:04:07 +0000
+Subject: [DPDK/ethdev Bug 1812] net/nfp: duplicate code in branches
+Date: Sat, 25 Oct 2025 18:05:24 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -34,7 +34,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1811-3@http.bugs.dpdk.org/>
+Message-ID: <bug-1812-3@http.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: http://bugs.dpdk.org/
@@ -54,10 +54,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1811
+http://bugs.dpdk.org/show_bug.cgi?id=3D1812
 
-            Bug ID: 1811
-           Summary: common/cnxk: identical branch warnings
+            Bug ID: 1812
+           Summary: net/nfp: duplicate code in branches
            Product: DPDK
            Version: 25.07
           Hardware: All
@@ -70,55 +70,18 @@ http://bugs.dpdk.org/show_bug.cgi?id=3D1811
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-If DPDK is compiled with duplicate condition warnings, then the following
-warnings show up:
+If DPDK is compiled with duplicate branch warnings then nfp driver has these
+warnings:
 
-[251/3707] Compiling C object drivers/...ommon_cnxk.a.p/common_cnxk_roc_cpt=
+[485/3707] Compiling C object drivers/...mmon_nfp.a.p/common_nfp_nfp_common=
 .c.o
-../drivers/common/cnxk/roc_cpt.c: In function =E2=80=98cpt_get_blkaddr=E2=
-=80=99:
-../drivers/common/cnxk/roc_cpt.c:680:12: warning: this condition has identi=
-cal
-branches [-Wduplicated-branches]
-  680 |         if (dev_is_vf(dev))
+In file included from ../drivers/common/nfp/nfp_common.c:6:
+../drivers/common/nfp/nfp_common.h: In function =E2=80=98nfp_qcp_read=E2=80=
+=99:
+../drivers/common/nfp/nfp_common.h:212:12: warning: this condition has
+identical branches [-Wduplicated-branches]
+  212 |         if (ptr =3D=3D NFP_QCP_READ_PTR)
       |            ^
-[265/3707] Compiling C object drivers/...xk.a.p/common_cnxk_roc_nix_inl_dev=
-.c.o
-../drivers/common/cnxk/roc_nix_inl_dev.c: In function =E2=80=98nix_inl_nix_=
-setup=E2=80=99:
-../drivers/common/cnxk/roc_nix_inl_dev.c:833:17: warning: this condition has
-identical branches [-Wduplicated-branches]
-  833 |         else if (roc_model_is_cn10k())
-      |                 ^
-[270/3707] Compiling C object drivers/...n_cnxk.a.p/common_cnxk_roc_nix_inl=
-.c.o
-../drivers/common/cnxk/roc_nix_inl.c: In function
-=E2=80=98nix_inl_inb_ipsec_sa_tbl_setup=E2=80=99:
-../drivers/common/cnxk/roc_nix_inl.c:426:17: warning: this condition has
-identical branches [-Wduplicated-branches]
-  426 |         else if (roc_model_is_cn10k())
-      |                 ^
-../drivers/common/cnxk/roc_nix_inl.c: In function =E2=80=98nix_inl_eng_caps=
-_get=E2=80=99:
-../drivers/common/cnxk/roc_nix_inl.c:1215:12: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1215 |         if (roc_model_is_cn9k() || roc_model_is_cn10k())
-      |            ^
-../drivers/common/cnxk/roc_nix_inl.c: In function =E2=80=98roc_nix_inl_outb=
-_init=E2=80=99:
-../drivers/common/cnxk/roc_nix_inl.c:1616:17: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1616 |         else if (roc_model_is_cn10k())
-      |                 ^
-[274/3707] Compiling C object drivers/...cnxk.a.p/common_cnxk_roc_nix_queue=
-.c.o
-../drivers/common/cnxk/roc_nix_queue.c: In function =E2=80=98roc_nix_cq_ini=
-t=E2=80=99:
-../drivers/common/cnxk/roc_nix_queue.c:1290:90: warning: this condition has
-identical branches [-Wduplicated-branches]
- 1290 |                         cq_ctx->lbp_frac =3D force_tail_drop ?
-NIX_CQ_LBP_THRESH_FRAC_REF1 :
-      |
 
 --=20
 You are receiving this mail because:
