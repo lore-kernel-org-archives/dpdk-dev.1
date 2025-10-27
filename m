@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C445CCF9EA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 10:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AA6CCF9E0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 10:17:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 758D040395;
-	Mon, 27 Oct 2025 11:17:09 +0100 (CET)
-Received: from out28-73.mail.aliyun.com (out28-73.mail.aliyun.com
- [115.124.28.73]) by mails.dpdk.org (Postfix) with ESMTP id 0DB114026F
- for <dev@dpdk.org>; Mon, 27 Oct 2025 11:17:04 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 753F840609;
+	Mon, 27 Oct 2025 11:17:10 +0100 (CET)
+Received: from out28-124.mail.aliyun.com (out28-124.mail.aliyun.com
+ [115.124.28.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 6FD7F402E3
+ for <dev@dpdk.org>; Mon, 27 Oct 2025 11:17:06 +0100 (CET)
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.f8MxqNC_1761560221 cluster:ay29) by smtp.aliyun-inc.com;
- Mon, 27 Oct 2025 18:17:01 +0800
+ fp:SMTPD_---.f8MxqRF_1761560224 cluster:ay29) by smtp.aliyun-inc.com;
+ Mon, 27 Oct 2025 18:17:04 +0800
 From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 To: dimon.zhao@nebula-matrix.com,
 	dev@dpdk.org
 Cc: Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>,
  Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v1 2/9] net/nbl: address nbl channel integer handling issues
- 490943
-Date: Mon, 27 Oct 2025 03:16:41 -0700
-Message-Id: <20251027101649.3337618-3-dimon.zhao@nebula-matrix.com>
+Subject: [PATCH v1 5/9] net/nbl: address nbl dev null pointer issues 490950
+Date: Mon, 27 Oct 2025 03:16:44 -0700
+Message-Id: <20251027101649.3337618-6-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251027101649.3337618-1-dimon.zhao@nebula-matrix.com>
 References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
@@ -41,26 +41,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Coverity issue: 490943
+Coverity issue: 490950
 
 Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 ---
- drivers/net/nbl/nbl_hw/nbl_channel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/nbl/nbl_dev/nbl_dev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/nbl/nbl_hw/nbl_channel.c b/drivers/net/nbl/nbl_hw/nbl_channel.c
-index 17d9231dfe..876032781c 100644
---- a/drivers/net/nbl/nbl_hw/nbl_channel.c
-+++ b/drivers/net/nbl/nbl_hw/nbl_channel.c
-@@ -163,7 +163,7 @@ static int nbl_chan_prepare_rx_bufs(struct nbl_channel_mgt *chan_mgt,
- 	desc = rxq->desc;
- 	for (i = 0; i < chan_info->mailbox.num_rxq_entries - 1; i++) {
- 		desc[i].flags = NBL_CHAN_RX_DESC_AVAIL;
--		desc[i].buf_addr = rxq->buf_mem.pa + i * chan_info->mailbox.rxq_buf_size;
-+		desc[i].buf_addr = rxq->buf_mem.pa + (u64)i * (u64)chan_info->mailbox.rxq_buf_size;
- 		desc[i].buf_len = chan_info->mailbox.rxq_buf_size;
- 	}
+diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
+index 8a4a776b22..b4cc241def 100644
+--- a/drivers/net/nbl/nbl_dev/nbl_dev.c
++++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
+@@ -18,11 +18,11 @@ int nbl_dev_configure(struct rte_eth_dev *eth_dev)
+ 	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
+ 	int ret;
  
+-	NBL_LOG(DEBUG, "Begin to configure the device, state: %d", adapter->state);
+-
+ 	if (dev_data == NULL || adapter == NULL)
+ 		return -EINVAL;
+ 
++	NBL_LOG(DEBUG, "Begin to configure the device, state: %d", adapter->state);
++
+ 	if (rx_mq_mode != RTE_ETH_MQ_RX_NONE && rx_mq_mode != RTE_ETH_MQ_RX_RSS) {
+ 		NBL_LOG(ERR, "Rx mq mode %d is not supported", rx_mq_mode);
+ 		return -ENOTSUP;
 -- 
 2.34.1
 
