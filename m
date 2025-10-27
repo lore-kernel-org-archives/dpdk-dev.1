@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C203CCF9E9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 03:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB77CCF9E9
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 03:17:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AFC0B40A75;
-	Mon, 27 Oct 2025 04:16:29 +0100 (CET)
-Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
- by mails.dpdk.org (Postfix) with ESMTP id 90B31402E8;
- Mon, 27 Oct 2025 04:16:25 +0100 (CET)
-X-QQ-mid: esmtpsz16t1761534982tcd7bcabe
-X-QQ-Originating-IP: cw6zFup0+jZSsIpvKDtIUDECiovrLE92KKPig6yc/AQ=
+	by mails.dpdk.org (Postfix) with ESMTP id 22F1E40A89;
+	Mon, 27 Oct 2025 04:16:33 +0100 (CET)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+ by mails.dpdk.org (Postfix) with ESMTP id C357340A77;
+ Mon, 27 Oct 2025 04:16:29 +0100 (CET)
+X-QQ-mid: esmtpsz16t1761534986t690a4c07
+X-QQ-Originating-IP: R0qbHyIFnHItY+DqT5jutDn9gl8W3x4uVXTsxpcZe6k=
 Received: from lap-jiawenwu.trustnetic.com ( [36.20.107.118])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 27 Oct 2025 11:16:21 +0800 (CST)
+ id ; Mon, 27 Oct 2025 11:16:25 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13145983964850292375
+X-BIZMAIL-ID: 17574007083870610212
 EX-QQ-RecipientCnt: 4
 From: Jiawen Wu <jiawenwu@trustnetic.com>
 To: dev@dpdk.org
 Cc: zaiyuwang@trustnetic.com, Jiawen Wu <jiawenwu@trustnetic.com>,
  stable@dpdk.org
-Subject: [PATCH 17/19] net/txgbe: fix VF-PF message for ntuple flow filter
-Date: Mon, 27 Oct 2025 11:15:40 +0800
-Message-Id: <20251027031542.10512-18-jiawenwu@trustnetic.com>
+Subject: [PATCH 19/19] net/txgbe: remove unsupported flow action mark
+Date: Mon, 27 Oct 2025 11:15:42 +0800
+Message-Id: <20251027031542.10512-20-jiawenwu@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20251027031542.10512-1-jiawenwu@trustnetic.com>
 References: <20251027031542.10512-1-jiawenwu@trustnetic.com>
@@ -33,23 +33,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: Me3hdGK5nWP4ObtnRzuUprO7yyRdoIZCFRfYWQBpMsCbGliLboa3RvHI
- kX1eUNbisxAb3zx6Y6uSPFAAXZq0bvTtjQOAC7HGI3/JpPsWJ5ClXUzc1ZqAOTT+AmGDbJQ
- eSBJSpkbjpIFlV2R2JqnnohlJ++29qeUimCPCIM/kf3e2355mIKIAnhSm5Wz3bQgBek4dOo
- 1lPueASmCk2u3USa3WTXGhYBwHdr+VsPb2KmUrWqPcB2EM416cxCjIGx25fWPs4J5wcKBVb
- O6JhMF+eO5cxFn8+UdgqjE/QPHDXoBbEI3Nd0LjCisImwFLsK3V3BJvTQAULm9diGXSB6r1
- //Sz1SrjYwswggZ61MY3wT6GfHzH7z/oYBeuKTpebMG61O5DBAK86Jlsj4v/2kMnuzk0yn5
- LSP3JApLp43m2wQQ2bSN3zO31+OC1TXn8uk69CEyUNUA8mKfVbNBpkwBrFgd4A7TfrtIGh3
- 7zbZzQTfsNJO+Wjz+OMWfA8ADryLYpaurvMh+be10hiptisTERG+on8BX1S4PSIRpyDWeSh
- OrlQkVDTcMZLRasd+l6GOEehw0RshPGfTSur0hynuyKyBfoolFPrgRJ+5ZzaDqpHwR978u1
- wfenynJmBkz8cfuehnm8msRwfJe9EoTQHW/yZZRo203SqorZz5fDEdOG2Eyl9ThiA159uUA
- fBB38xxGUJ0qNHn42HFis1VBlPhH2JHz6NmW+kNAfZbStIPzlF3KT3jpxZqSlvtv58Sk/xV
- 2mFygmadZRfcTf0yEnc+zhpCKT/rDn6E8/NKxDbugAXizuag8PveODn2QiphDx3MRO4jR5f
- H2rrfqu6Z+wMZa567ZhBG9X0aTttbR1BzlHLXFtt1cjBdS/sPouzmEbt2QrRRq77MqeAn0W
- +TVY/qbYU4X2rs4/7NcOSGgRcnl+P0ZNePycdBLHfIagC4sqcutF0fgUPng6wQnGzD+8yEH
- qnVdQMwqw+9Ux4Mh/oeKtEcTHs4gWZFUMq9nv6hQyGVheh7BMIdtML3UAzXGCn3A8OZRDVa
- ozXP3x6R0sLmb4cxm+gce2OrDEppLBU0Ej+mskTpFdmzuyzkOQ3purIoxxju8=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-XMAILINFO: N7h1OCCDntujmU+gap7mnFj+glCv+pdDV+4PkNgHrrBZcZYcYvqw2iAr
+ JpM5hQ+DxIcoYDt0pRkPCGeNP2aF+BGxCxUqsbI8EtXdiZqHUSqhL0w6Ys6G6cx9pv5mtCH
+ Wy3hggq87skK8VLpiu3730l0F/ezjffZNgG3IWv1xZ/SFrCKBUtZKXxzmbMFbdiMCK+OkBC
+ eAX96rqS6/9K7wm5lGQDSssEsG0rQkx/AMvfDCT/TlvdmcZEGRVCGOVWQYNfM64M4TL51bj
+ gh4noUtuvBWJSSNXshCMjkef42K0UJ4PHnIZcpg9nhzHES9B2NZA3eryLotyQ42Wa4o2bSQ
+ u60t07CSiNNqnUyLQ0hV57utBTy6KurqaWgFuxT6e+7bksnw2XI/upedJTKIX0UMUcrgO6L
+ wZ8KmjcSEue8toncQrWM6tfJjlsMtg9h1KnP/glK7bXkdTfXMpC8XbLk1nSBewduIZ+szlH
+ vZ/67lzvlPrw9LcApfdm2MaBregfR9jL4OyfGF6LqCnAynvJUGKd5RvulQ7n7e/ystaCYVI
+ VfQ0LPO+b+RPoYHeJKRDnuGyEo89fjY7I6S/7U6Uw0+A1c3U4ZByqqUUSqQWH812k2mRyUb
+ aGiYPyKZkx1h7GXrTZRVXNJEeneCQ8iQxT419JEo5Bk1nRV7vrgAybTturiGD3nuKA2dZNY
+ 57b7XXwhVc+pAIp0agw9P6Hd3iu2SwYAY3e12b2xl1TSu6pW/8kofnCsaBzPtzGntLU4Dk/
+ WktLTBfUjnRCkoP+ESbI2zUD1y0AgSdtbTMgxqXqSgEyu5/BZkXzZ0O/LwN+7M51bgxqFqR
+ b6aK/GZFckDknDgnUx+Cdq1XJtF1MfgdNO61z5Z2Uocc+nFR2WpIqHqWXktXOKL5YReJVbn
+ L/ZDMWRrRndq0hXVlkMd5DJfLnfQ5GaUVau4/nWYHcbbeiUYC2BIW0812zQVkyMfrUZIYd4
+ AWX+KxIACPc7yGRZ8P2CVI0htLK1GZHVcJIvu2R9xUjL7vDUi5xos5uGGy+0gLF7wEpT1BN
+ DLZpSuhmTXVUUm9F8v/r0UnlV0AcdhBBn+MhJZWg==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -64,30 +64,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-VF-PF message box is only cleared for the first 4 bytes when add a
-ntuple filter. This does not present any actual errors in usage, but
-there is issue in the code.
+Flow action "mark" is not supported, just remove it.
 
-Fixes: 065d64788cdc ("net/txgbe: support flow filter for VF")
+Fixes: b973ee26747a ("net/txgbe: parse flow director filter")
 Cc: stable@dpdk.org
 Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
 ---
- drivers/net/txgbe/txgbe_ethdev_vf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/txgbe/txgbe_flow.c | 23 ++---------------------
+ 1 file changed, 2 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/net/txgbe/txgbe_ethdev_vf.c b/drivers/net/txgbe/txgbe_ethdev_vf.c
-index 4be7c5d659..ae04054d02 100644
---- a/drivers/net/txgbe/txgbe_ethdev_vf.c
-+++ b/drivers/net/txgbe/txgbe_ethdev_vf.c
-@@ -168,7 +168,7 @@ txgbevf_inject_5tuple_filter(struct rte_eth_dev *dev,
- 	uint32_t msg[TXGBEVF_5T_MAX];
- 	int err;
+diff --git a/drivers/net/txgbe/txgbe_flow.c b/drivers/net/txgbe/txgbe_flow.c
+index 5647165d52..a97588e57a 100644
+--- a/drivers/net/txgbe/txgbe_flow.c
++++ b/drivers/net/txgbe/txgbe_flow.c
+@@ -1358,7 +1358,6 @@ txgbe_parse_fdir_act_attr(const struct rte_flow_attr *attr,
+ {
+ 	const struct rte_flow_action *act;
+ 	const struct rte_flow_action_queue *act_q;
+-	const struct rte_flow_action_mark *mark;
  
--	memset(msg, 0, sizeof(*msg));
-+	memset(msg, 0, sizeof(msg));
+ 	/* parse attr */
+ 	/* must be input direction */
+@@ -1423,10 +1422,9 @@ txgbe_parse_fdir_act_attr(const struct rte_flow_attr *attr,
+ 		rule->fdirflags = TXGBE_FDIRPICMD_DROP;
+ 	}
  
- 	/* 0 means compare */
- 	mask &= ~TXGBE_5TFCTL0_MPOOL;
+-	/* check if the next not void item is MARK */
++	/* nothing else supported */
+ 	act = next_no_void_action(actions, act);
+-	if (act->type != RTE_FLOW_ACTION_TYPE_MARK &&
+-		act->type != RTE_FLOW_ACTION_TYPE_END) {
++	if (act->type != RTE_FLOW_ACTION_TYPE_END) {
+ 		memset(rule, 0, sizeof(struct txgbe_fdir_rule));
+ 		rte_flow_error_set(error, EINVAL,
+ 			RTE_FLOW_ERROR_TYPE_ACTION,
+@@ -1436,21 +1434,6 @@ txgbe_parse_fdir_act_attr(const struct rte_flow_attr *attr,
+ 
+ 	rule->soft_id = 0;
+ 
+-	if (act->type == RTE_FLOW_ACTION_TYPE_MARK) {
+-		mark = (const struct rte_flow_action_mark *)act->conf;
+-		rule->soft_id = mark->id;
+-		act = next_no_void_action(actions, act);
+-	}
+-
+-	/* check if the next not void item is END */
+-	if (act->type != RTE_FLOW_ACTION_TYPE_END) {
+-		memset(rule, 0, sizeof(struct txgbe_fdir_rule));
+-		rte_flow_error_set(error, EINVAL,
+-			RTE_FLOW_ERROR_TYPE_ACTION,
+-			act, "Not supported action.");
+-		return -rte_errno;
+-	}
+-
+ 	return 0;
+ }
+ 
+@@ -1562,8 +1545,6 @@ txgbe_fdir_parse_flow_type(struct txgbe_atr_input *input, u8 ptid, bool tun)
+  * The next not void item must be END.
+  * ACTION:
+  * The first not void action should be QUEUE or DROP.
+- * The second not void optional action should be MARK,
+- * mark_id is a uint32_t number.
+  * The next not void action should be END.
+  * UDP/TCP/SCTP pattern example:
+  * ITEM		Spec			Mask
 -- 
 2.48.1
 
