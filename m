@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1EBCCF9E9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 03:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A78CCF9E9
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 03:16:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A6B724060A;
-	Mon, 27 Oct 2025 04:16:09 +0100 (CET)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
- by mails.dpdk.org (Postfix) with ESMTP id 27349402E9;
- Mon, 27 Oct 2025 04:16:05 +0100 (CET)
-X-QQ-mid: esmtpsz16t1761534961t723b4619
-X-QQ-Originating-IP: n71Qw9/uquy+yAGPYRZy7p1X4xmLTxFkv//Wtgu+p/U=
+	by mails.dpdk.org (Postfix) with ESMTP id 42AB040663;
+	Mon, 27 Oct 2025 04:16:13 +0100 (CET)
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+ by mails.dpdk.org (Postfix) with ESMTP id 37FB840651;
+ Mon, 27 Oct 2025 04:16:09 +0100 (CET)
+X-QQ-mid: esmtpsz16t1761534967t571012b9
+X-QQ-Originating-IP: IKWxYhk4ayCgoKNVU9jJijSLdh8ATYKYj5yhKu1CVzI=
 Received: from lap-jiawenwu.trustnetic.com ( [36.20.107.118])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 27 Oct 2025 11:16:00 +0800 (CST)
+ id ; Mon, 27 Oct 2025 11:16:06 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16665371084642865939
+X-BIZMAIL-ID: 2097224516378831201
 EX-QQ-RecipientCnt: 4
 From: Jiawen Wu <jiawenwu@trustnetic.com>
 To: dev@dpdk.org
 Cc: zaiyuwang@trustnetic.com, Jiawen Wu <jiawenwu@trustnetic.com>,
  stable@dpdk.org
-Subject: [PATCH 06/19] net/ngbe: fix VF Rx buffer size in config register
-Date: Mon, 27 Oct 2025 11:15:29 +0800
-Message-Id: <20251027031542.10512-7-jiawenwu@trustnetic.com>
+Subject: [PATCH 09/19] net/txgbe: fix the maxinum number of FDIR filter
+Date: Mon, 27 Oct 2025 11:15:32 +0800
+Message-Id: <20251027031542.10512-10-jiawenwu@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20251027031542.10512-1-jiawenwu@trustnetic.com>
 References: <20251027031542.10512-1-jiawenwu@trustnetic.com>
@@ -33,23 +33,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: NLyBhYFVFstxkqNHg7PqmrgtSr2+IXZ39aZpCPdyTYevkhILRoDupV2R
- l6P7KE59zeVc7z9LWkCAYl73MZUV3wWpkkMMw3/0+NgYwOasVLlbsZTLTL7lomr3YuCMBP0
- rJf97CNoZVSQVfdwt9Bup9Z2omz2puEUsjir3ZoOX9XQL48rO/BrlpxY1wZOlkr0SqPojn4
- O/RWZwDBgmpmUDxZlQwg8BvNDbtALZrhgsOjmIM5N+TYz6X1/TbaCBoC+uml6KoDFcu96Z5
- JxNJB6qk8lQP1j1Hqg0DrwOWbUDxFys0UEiC8GEiIfXCfk9lERAwifv6lbjouOPZzl5bepP
- 144O+vDwEPxrtdIHoVDAqiO/PMD83uEQ85SsU/0dqGQeqianpivxF+QRq+4Z7Yy6xhSAJCs
- shPeHQnCvUyK+JjwB5rT7COT5wNXPG80EoFLnz+VRBUiLXE4Dn9JL/XjZgflrhvH3ZFhHb0
- XzmaZ4tJCgoDxnN3zNu3UwpKsGZBjvmSFj/6N/yzWOC5RMq4k+VFdvsJ+NnvwKTlatpFI+F
- ld5T2sFZ3UGJmOVOd5vqepg6+r/z8ZZvMzQ7gyv4llTUr/J/K+g8ibrTuXK11vvmxUldTGe
- RPOycslFCWrM2H0x8ZNfpplArNSmzVQjPouiP7YAxGC/D6FEdn1uubLdlVoSPvizVLtHp1V
- vyb00ldN7OIl4DAn6iRK00ahUWEbBO5wnpNWzdC+mZFqbaOs0yjYXx4dTn7l0LyzrMf4Q5s
- IdILH1jfSoOTvEDlFvU0Ns4xHgo/BWf+0JHz0FCLAdfYDKJ+S++wxxru2kBBDu5R52rhGKu
- OlHpwDVIjiZw6Mru3NZMuAG6gya01gxFKl7THmxeP1XSucCth981baTnS2+4aAoVFqIynvU
- ku+URzEKCqvL4HKKgN05Hoc4bKByqlsjM6YRf9J9+kaKW/3Jfc9wwMnb3z7XLLyC3QqPQwg
- VRF4zQWB/U7OaAP4v7Tu/tUS5ciIJuXoRRzNydGlMxVlNRnIaNBYl7CFbLZSeMSQSTR0r/P
- fL89XF/nXDRDSmuP23yk4Ljw4AYHivXtJccpH3/b+HqVXm+Wd0to7zM2S1SzM=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-XMAILINFO: MmpliBmRb3iCFg9xO5fV1ywm8igQMlqs3CkvzOkHTVtqP2vOW9abYHcY
+ CCcryfXHGFCHLRb04IiIxkupCoRzbVmu8vaoXzfZsXndfy8qmPnle7q91799aZVEI6WuZv/
+ cUWVRVAXA0W+8OV5AmpL5gWpWMoSnE1O2nxLglXZNkQDAcGVRwWLjg+b7+E6PkpMzNLHmDo
+ fWIPMfhqYEBxqdlhfRJpF/OAdui/RKmI+hdlPg3mgvCQXwT/KjjiayXiqFNMweyKh4pPv4Q
+ pHLoEh00aQVEvmymA6tozK4T+zR0e1sQOWjV3YcFA43XfY9iithe1N7VAFNHcJT1P9VFFVx
+ xcEKC4RQ9/W7SPnC1GRhypWGWSqBaCWCnhpztVFk5IaPc7vESIhZhdoRJJS1PccOOfCgH9+
+ ppyDH+fCJa16zRlUnKZ8fq7V6AwbZHTaLB6Kn2l9CqjfuYKtHqvYLLNvg4AM+OSx2mChTdY
+ Q2/adB1g1u4apr9bM/yr/ntXtqhMt/BNlasWeI4q4YHk9zLJlOWRV5T8/X9Vpgj3pO6Ua0M
+ SAW8/L6MyAHmv3Vgl5QR5aEV7r5pjJLqgGigBfT/YCUKGeB6I3w1aFDXsJtFlVg//+ROqPT
+ f75Ri7S1pwtW/JIXWPzC4PxfNdjFTC7wjOUeCX7DAhwxVRQAFyFZG98ocsy1WVEGZ4N++U1
+ u0kJLPygJffkt0HwLlabzt6ze0jNe4pD9R7V3Q0o8cOwih6llMOi+BGKrZrdzJs05bsmmnd
+ T5D8zwf/RLNbxiiRRxZq4UgzaaFeR5FrlH0mrU4DqvT6ohMhqKZDVZfshYK2MEEiWE4hh9l
+ WNSgKtVPmrbxRySyg4d7Es4md5Muw+XSrWjfDWODlml5ep55C7McPLtoITXCRK0znXvenbU
+ qbRtYU0XYxxoQgChH0uzgBRYvIOOPR4SXqN+fXUBYIvJCoHiB1Wv3/OfR4kqrUjdyv2Hkvk
+ G5AZqs82BcFKpj/CWdQT8lPvU/Lpgl33ySOSsDJAPS4FpcJvNlzX6ZIIcPxAwQoivn8ACYZ
+ K6sKBnNa6rH5Vx5vrE4qL8lO27yDqzYySryGSBuxjRAN5xvClk
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -64,33 +64,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Refer to commit 8a3ef4b89e6d ("net/txgbe: fix Rx buffer size in
-config register").
+FDIR is determined the maximum value on the hardware based on the
+memory space allocated (i.e. fdir_conf.pballoc). But the hash map of
+FDIR is created based on TXGBE_MAX_FDIR_FILTER_NUM. These two do not
+match. It resulted in the absence of error when creating more FDIR rules
+than the maximum allowed by the hardware.
 
-When round up buffer size to 1K, to configure the register, hardware
-will receive packets exceeding the buffer size in scatter mode. It will
-cause a segment fault in the receive function.
-
-Fixes: 711a06e896ba ("net/ngbe: add datapath init for VF device")
+Fixes: 635c21354f9a ("net/txgbe: add flow director filter init and uninit")
 Cc: stable@dpdk.org
 Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
 ---
- drivers/net/ngbe/ngbe_rxtx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/txgbe/txgbe_ethdev.c | 6 ++++--
+ drivers/net/txgbe/txgbe_fdir.c   | 4 +++-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ngbe/ngbe_rxtx.c b/drivers/net/ngbe/ngbe_rxtx.c
-index 03ada844bf..66d72c88df 100644
---- a/drivers/net/ngbe/ngbe_rxtx.c
-+++ b/drivers/net/ngbe/ngbe_rxtx.c
-@@ -3559,7 +3559,7 @@ ngbevf_dev_rx_init(struct rte_eth_dev *dev)
- 		 */
- 		buf_size = (uint16_t)(rte_pktmbuf_data_room_size(rxq->mb_pool) -
- 			RTE_PKTMBUF_HEADROOM);
--		buf_size = ROUND_UP(buf_size, 1 << 10);
-+		buf_size = ROUND_DOWN(buf_size, 1 << 10);
- 		srrctl |= NGBE_RXCFG_PKTLEN(buf_size);
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index e9bbf8ea72..f650c5b7a4 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -935,11 +935,13 @@ static int txgbe_l2_tn_filter_uninit(struct rte_eth_dev *eth_dev)
  
- 		/*
+ static int txgbe_fdir_filter_init(struct rte_eth_dev *eth_dev)
+ {
++	struct rte_eth_fdir_conf *fdir_conf = TXGBE_DEV_FDIR_CONF(eth_dev);
+ 	struct txgbe_hw_fdir_info *fdir_info = TXGBE_DEV_FDIR(eth_dev);
+ 	char fdir_hash_name[RTE_HASH_NAMESIZE];
++	u16 max_fdir_num = (1024 << (fdir_conf->pballoc + 1)) - 2;
+ 	struct rte_hash_parameters fdir_hash_params = {
+ 		.name = fdir_hash_name,
+-		.entries = TXGBE_MAX_FDIR_FILTER_NUM,
++		.entries = max_fdir_num,
+ 		.key_len = sizeof(struct txgbe_atr_input),
+ 		.hash_func = rte_hash_crc,
+ 		.hash_func_init_val = 0,
+@@ -956,7 +958,7 @@ static int txgbe_fdir_filter_init(struct rte_eth_dev *eth_dev)
+ 	}
+ 	fdir_info->hash_map = rte_zmalloc("txgbe",
+ 					  sizeof(struct txgbe_fdir_filter *) *
+-					  TXGBE_MAX_FDIR_FILTER_NUM,
++					  max_fdir_num,
+ 					  0);
+ 	if (!fdir_info->hash_map) {
+ 		PMD_INIT_LOG(ERR,
+diff --git a/drivers/net/txgbe/txgbe_fdir.c b/drivers/net/txgbe/txgbe_fdir.c
+index 0efd43b59a..631dec69e8 100644
+--- a/drivers/net/txgbe/txgbe_fdir.c
++++ b/drivers/net/txgbe/txgbe_fdir.c
+@@ -959,6 +959,7 @@ txgbe_fdir_filter_restore(struct rte_eth_dev *dev)
+ int
+ txgbe_clear_all_fdir_filter(struct rte_eth_dev *dev)
+ {
++	struct rte_eth_fdir_conf *fdir_conf = TXGBE_DEV_FDIR_CONF(dev);
+ 	struct txgbe_hw_fdir_info *fdir_info = TXGBE_DEV_FDIR(dev);
+ 	struct txgbe_fdir_filter *fdir_filter;
+ 	struct txgbe_fdir_filter *filter_flag;
+@@ -967,7 +968,8 @@ txgbe_clear_all_fdir_filter(struct rte_eth_dev *dev)
+ 	/* flush flow director */
+ 	rte_hash_reset(fdir_info->hash_handle);
+ 	memset(fdir_info->hash_map, 0,
+-	       sizeof(struct txgbe_fdir_filter *) * TXGBE_MAX_FDIR_FILTER_NUM);
++	       sizeof(struct txgbe_fdir_filter *) *
++	       ((1024 << (fdir_conf->pballoc + 1)) - 2));
+ 	filter_flag = TAILQ_FIRST(&fdir_info->fdir_list);
+ 	while ((fdir_filter = TAILQ_FIRST(&fdir_info->fdir_list))) {
+ 		TAILQ_REMOVE(&fdir_info->fdir_list,
 -- 
 2.48.1
 
