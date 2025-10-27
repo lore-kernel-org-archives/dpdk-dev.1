@@ -2,47 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C9ACCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 07:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59875CCF9E0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 08:08:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F6944021E;
-	Mon, 27 Oct 2025 08:49:42 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 5FAA84003C
- for <dev@dpdk.org>; Mon, 27 Oct 2025 08:49:40 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 3932C48A01; Mon, 27 Oct 2025 08:49:40 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/testpmd Bug 1813] [dpdk25.11]
- vxlan/vxlan_ipv6_checksum_offload: get incorrect checksum value for the inner
- L4
-Date: Mon, 27 Oct 2025 07:49:39 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: testpmd
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: zhiminx.huang@intel.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1813-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 6923C4021E;
+	Mon, 27 Oct 2025 09:08:03 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+ by mails.dpdk.org (Postfix) with ESMTP id 374384003C
+ for <dev@dpdk.org>; Mon, 27 Oct 2025 09:08:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1761552483; x=1793088483;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=FZuKnCQnGGxgFdgrw1I0EHw88DSgtObm0ANs1aYc8as=;
+ b=h6tFIKYIi6HkIJQg4vzh6KZest1t6xtNBdoX272A1+QJhm4Mn+/m57tn
+ sEz/dwXwZCwQdh0/0Ep6TwUcsuXqti/b5Br6UCFJO8PuxXfkWLvdV/mhD
+ 3P2tlba2ZKURsGSmizKiStrwE8zEVln8xiEate3dCR/wDfh8q0B4c+SCv
+ TU+l8c0qqgohPCKemXSh3x+CjKLBrL4G5qSpgXXm5ECpZduzasD8rpKcE
+ L4nPdUsExzix5y6uID+F1RCLs106H33V4PU8+4cwdHlepZ1RszoVYiJmS
+ x3QmO9ippJtXoa0AJ9IkVJ92Dnvk5efs1NCOV0JvOVeRYEaU/EFvbh3Aa A==;
+X-CSE-ConnectionGUID: a6LssUnaSoeBjQbSUsNKqg==
+X-CSE-MsgGUID: /jBNMm/kRbqpKjsU98p83g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="81258180"
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; d="scan'208";a="81258180"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Oct 2025 01:08:01 -0700
+X-CSE-ConnectionGUID: 9/sFvs79RG+peDO9hS+cbg==
+X-CSE-MsgGUID: m9zgAah/TjKrNKbWVHx4wA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,258,1754982000"; d="scan'208";a="215878840"
+Received: from unknown (HELO srv24..) ([10.138.182.231])
+ by fmviesa001.fm.intel.com with ESMTP; 27 Oct 2025 01:08:00 -0700
+From: Shaiq Wani <shaiq.wani@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com
+Cc: aman.deep.singh@intel.com
+Subject: [PATCH v7 0/3] net/idpf: enable AVX2 for split queue Rx/Tx 
+Date: Mon, 27 Oct 2025 13:37:55 +0530
+Message-Id: <20251027080758.48410-1-shaiq.wani@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250917052658.582872-1-shaiq.wani@intel.com>
+References: <20250917052658.582872-1-shaiq.wani@intel.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,109 +60,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1813
+In case some CPUs don't support AVX512. Enable AVX2 for them to
+get better per-core performance.
 
-            Bug ID: 1813
-           Summary: [dpdk25.11] vxlan/vxlan_ipv6_checksum_offload: get
-                    incorrect checksum value for the inner L4
-           Product: DPDK
-           Version: unspecified
-          Hardware: x86
-                OS: Linux
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: testpmd
-          Assignee: dev@dpdk.org
-          Reporter: zhiminx.huang@intel.com
-  Target Milestone: ---
+In the single queue model, the same descriptor queue is used by SW
+to post descriptors to the device and used by device to report completed
+descriptors to SW. While as the split queue model separates them into
+different queues for parallel processing and improved performance.
 
-Environment=EF=BC=9A
- DPDK version: dpdk-25.11-rc1:39b54f2dcf44ad1f91eabc7080cd5dea763607fd
- OS: Ubuntu 24.04.3 LTS/6.8.0-60-generic
- Compiler: gcc version 13.3.0
- Hardware platform: Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz
- NIC hardware: Intel Corporation Ethernet Controller X710 for 10GbE SFP+=20
- [8086:1572]
- NIC firmware:=20
-   i40e: 6.8.0-60-generic
-   firmware: 9.55 0x8000fdf4 1.3862.0
+v8:
+*Reworked the receive func to avoid race conditions in Rx path.
+*Removed unnecessary compiler barriers.
 
-Steps to reproduce=EF=BC=9A
+v7:
+*Removed (char) casts, ifdef block as suggested.
+*Fixed indentation, line wrapping.
+*Did blind write of data to avoid branching.
+*changed desc building and writing  order for Tx.
 
- 1.bind pf to vfio-pci
- usertools/dpdk-devbind.py --force --bind=3Dvfio-pci 0000:31:00.0
+v6:
+*used single load/store in splitq_recv_pkts function.
+*removed x86-specific intrinsics from common code.
 
- 2.start testpmd
- ./x86_64-native-linuxapp-clang/app/dpdk-testpmd  -l 1-5 -n 4 -a 0000:31:00=
-.0
---=20
- force-max-simd-bitwidth=3D64   -- -i --enable-rx-cksum
+v5:
+*Fixed CI errors.
+*Used defined constants instead of numbers.
 
- vlan set filter off 0
- set fwd csum
- port stop all
- csum set outer-ip hw 0
- csum set udp hw 0
- csum set outer-udp hw 0
- csum set tcp hw 0
- csum set sctp hw 0
- csum parse-tunnel on 0
- port start all
- rx_vxlan_port add 4789 0
- start
+v4:
+*moved splitq_rearm_common to a common location.
+*reduced duplication of code.
+*fixed splitq_recv_pkts function.
 
- 3.launch the tcpdump
- tcpdump -i ens3f0  'ether[12:2] !=3D 0x88cc'  -Q in -w /tmp/test.pcap
+v3:
+*Fixed some indentation issues.
+*Collapsed wrapper and core function into one.
+*Fixed some pointer casting and naming inconsistency issues.
 
- 4.send packet
- sendp([Ether(src=3D'00:00:10:00:00:00',=20
- dst=3D'3c:fd:fe:b2:44:c8')/IPv6(src=3D'fe80::',dst=3D'fe80::1')/UDP(sport=
-=3D63,=20
- dport=3D4789)/VXLAN(vni=3D1)/Ether(src=3D'00:00:20:00:00:00',=20
- dst=3D'00:00:20:00:00:01')/IP(src=3D'192.168.2.1',=20
-dst=3D'192.168.2.2')/UDP(chksum=3D1)/Raw(load=3Db'XXXXXXXXXXXXXXXXXX')],ifa=
-ce=3D"ens3f0",count=3D1,inter=3D0,verbose=3DFalse)
+v2:
+*Fixed CI build related issues.
+*Rebased on top of idpf/cpfl rx path selection simplication patch.
 
- 5.use scapy to check the checksum value for capture packet
- p =3D rdpcap("/tmp/test.pcap")
- p[0].show2()
 
-Show the output from the previous commands=EF=BC=9A
- the inner udp checksum incorrect
- ###[ UDP ]###
-                     sport     =3D domain
-                     dport     =3D domain
-                     len       =3D 26
-                     chksum    =3D 0x1
+Shaiq Wani (3):
+  net/idpf: enable AVX2 for split queue Rx
+  net/idpf: enable AVX2 for split queue Tx
+  doc: note on unsupported completion queue sharing
 
- Expected Result=EF=BC=9A
- ###[ UDP ]###
-                     sport     =3D domain
-                     dport     =3D domain
-                     len       =3D 26
-                     chksum    =3D 0x5ee1=20
-Regression=EF=BC=9A
- Is this issue a regression: (Y/N) Y
+ doc/guides/nics/idpf.rst                      |   5 +
+ drivers/net/intel/idpf/idpf_common_device.h   |   1 +
+ drivers/net/intel/idpf/idpf_common_rxtx.c     |  59 ++++
+ drivers/net/intel/idpf/idpf_common_rxtx.h     |   8 +
+ .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 303 +++++++++++++++++-
+ .../net/intel/idpf/idpf_common_rxtx_avx512.c  |  56 ----
+ drivers/net/intel/idpf/idpf_rxtx.c            |   9 +
+ 7 files changed, 383 insertions(+), 58 deletions(-)
 
- commit 496159613ffc7b6ba592432a1ba4d1a38f6935de
- Author: Dengdui Huang <huangdengdui@huawei.com>
- Date:   Sat Aug 30 09:29:13 2025 +0800
+-- 
+2.34.1
 
-     app/testpmd: fix L4 protocol retrieval from L3 header
-
-     Currently, when retrieving the L4 protocol from the L3 header,
-     the case of IPv6 with extension headers is not handled correctly.
-     This patch fixes it.
-
-     Fixes: 76730c7b9b5a ("app/testpmd: use packet type parsing API")
-     Cc: stable@dpdk.org
-
-     Signed-off-by: Dengdui Huang <huangdengdui@huawei.com>
-
-  app/test-pmd/csumonly.c | 39 ++++++++++++++++-----------------------
-  1 file changed, 16 insertions, 23 deletions
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
