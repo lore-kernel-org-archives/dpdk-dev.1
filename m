@@ -2,46 +2,29 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E80E3CCF9EA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 09:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C78B5CCF9EA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 10:17:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B39F14028B;
-	Mon, 27 Oct 2025 10:17:37 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id C1DCE4026F
- for <dev@dpdk.org>; Mon, 27 Oct 2025 10:17:36 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id B312648A01; Mon, 27 Oct 2025 10:17:36 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/testpmd Bug 1479] mlx5: Not able to create rte_flows to match
- head fragments and sub fragments
-Date: Mon, 27 Oct 2025 09:17:36 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: testpmd
-X-Bugzilla-Version: 21.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: major
-X-Bugzilla-Who: mkashani@nvidia.com
-X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: FIXED
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: cc bug_status resolution
-Message-ID: <bug-1479-3-Nwhz585GCD@http.bugs.dpdk.org/>
-In-Reply-To: <bug-1479-3@http.bugs.dpdk.org/>
-References: <bug-1479-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 93A50402D2;
+	Mon, 27 Oct 2025 11:17:05 +0100 (CET)
+Received: from out28-171.mail.aliyun.com (out28-171.mail.aliyun.com
+ [115.124.28.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 8BCDE4026F
+ for <dev@dpdk.org>; Mon, 27 Oct 2025 11:17:03 +0100 (CET)
+Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
+ fp:SMTPD_---.f8MxqGZ_1761560216 cluster:ay29) by smtp.aliyun-inc.com;
+ Mon, 27 Oct 2025 18:17:00 +0800
+From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+To: dimon.zhao@nebula-matrix.com,
+	dev@dpdk.org
+Subject: [PATCH v1 0/9] Address NBL Coverity issues
+Date: Mon, 27 Oct 2025 03:16:39 -0700
+Message-Id: <20251027101649.3337618-1-dimon.zhao@nebula-matrix.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
+References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,38 +38,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1479
+Address all Coverity issues in the NBL driver from the recent scan.
 
-mkashani@nvidia.com (mkashani@nvidia.com) changed:
+Dimon Zhao (9):
+  net/nbl: address nbl channel integer handling issues 490942
+  net/nbl: address nbl channel integer handling issues 490943
+  net/nbl: address nbl userdev error handling issues 490947
+  net/nbl: address nbl channel Integer handling issues 490949
+  net/nbl: address nbl dev null pointer issues 490950
+  net/nbl: address nbl userdev Error handling issues 490951
+  net/nbl: address nbl channel integer handling issues 490952
+  net/nbl: address nbl channel integer handling issues 490954
+  net/nbl: address channel Incorrect expression issues 490958
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-                 CC|                            |mkashani@nvidia.com
-             Status|CONFIRMED                   |RESOLVED
-         Resolution|---                         |FIXED
+ drivers/net/nbl/nbl_common/nbl_userdev.c | 11 +++++++++--
+ drivers/net/nbl/nbl_dev/nbl_dev.c        |  4 ++--
+ drivers/net/nbl/nbl_hw/nbl_channel.c     | 18 +++++++++++-------
+ 3 files changed, 22 insertions(+), 11 deletions(-)
 
---- Comment #1 from mkashani@nvidia.com (mkashani@nvidia.com) ---
-Hi, Siva,
-Sorry for the late response,
+-- 
+2.34.1
 
-You're correct that the mlx5 driver explicitly blocks the fragment matching
-patterns you're trying to use.
-
-For your use case (computing different RSS based on 5-tuple vs 3-tuple):
-Create two flow rules:
-One for ANY fragmented packets =E2=86=92 RSS with 3-tuple (ipv4-frag)
-One for non-fragmented packets =E2=86=92 RSS with 5-tuple (ipv4-tcp, ipv4-u=
-dp)
-The NIC will automatically:
-Use 3-tuple for fragments (only IP src/dst/protocol available)
-Use 5-tuple for non-fragments (full 5-tuple available)
-You cannot differentiate between first, middle, and last fragments in flow
-rules on ConnectX-6 DX.
-The hardware RSS engine already handles this correctly by design - fragment=
-ed
-packets can only use 3-tuple because port information is only in the first
-fragment, and may not be available to all fragments.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
