@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA56CCF9E9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 03:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06EB3CCF9E9
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 03:17:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 258AE40649;
-	Mon, 27 Oct 2025 04:16:27 +0100 (CET)
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
- by mails.dpdk.org (Postfix) with ESMTP id 02E2D4069F;
- Mon, 27 Oct 2025 04:16:22 +0100 (CET)
-X-QQ-mid: esmtpsz16t1761534980t9c6cfc46
-X-QQ-Originating-IP: UpOxVTSXHSyPZEY+YFFp2v0LgC1lMnO+Wwl/oT8yoXI=
+	by mails.dpdk.org (Postfix) with ESMTP id 6CFAA40A6C;
+	Mon, 27 Oct 2025 04:16:28 +0100 (CET)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+ by mails.dpdk.org (Postfix) with ESMTP id 7BBC0406BC;
+ Mon, 27 Oct 2025 04:16:21 +0100 (CET)
+X-QQ-mid: esmtpsz16t1761534978t95ba9590
+X-QQ-Originating-IP: IQs6zFJ2UrmjJ57+n8bLlXPXdYG/74mpdSOQLQm8aJ8=
 Received: from lap-jiawenwu.trustnetic.com ( [36.20.107.118])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 27 Oct 2025 11:16:19 +0800 (CST)
+ id ; Mon, 27 Oct 2025 11:16:17 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 130919324389389893
+X-BIZMAIL-ID: 14130782444694741358
 EX-QQ-RecipientCnt: 4
 From: Jiawen Wu <jiawenwu@trustnetic.com>
 To: dev@dpdk.org
 Cc: zaiyuwang@trustnetic.com, Jiawen Wu <jiawenwu@trustnetic.com>,
  stable@dpdk.org
-Subject: [PATCH 16/19] net/txgbe: switch to use FDIR when ntuple filter is full
-Date: Mon, 27 Oct 2025 11:15:39 +0800
-Message-Id: <20251027031542.10512-17-jiawenwu@trustnetic.com>
+Subject: [PATCH 15/19] net/txgbe: fix FDIR input mask
+Date: Mon, 27 Oct 2025 11:15:38 +0800
+Message-Id: <20251027031542.10512-16-jiawenwu@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20251027031542.10512-1-jiawenwu@trustnetic.com>
 References: <20251027031542.10512-1-jiawenwu@trustnetic.com>
@@ -33,23 +33,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: MFdGPHhuqhNo/WMYuIRYGEr/wUAE5QWkko7LwQKf6g+0XVadL7foswSf
- 9ew5HmpZFbMunrxYHAUZcMz6lmsCyiMlt1ebh0kGurRiWAL1w22NEu7QkTGvvcFJbhuZMvD
- xf0N5G1m5pPtRpGxVm4BpbasdGSAKW6u1nWjdWDFhUDgH7RdsnRsTz0GShrc+XIWUg3rgJb
- g8OAG/NWvAPCYKZxipPgkB+Dt2BzKBEarh2vVk+VVTekLk6V6R1l7/mwfyoLaEjethmDKcS
- mA34OFckzcegimIknw32l+tms6y1NVj0aiK6oHTpyQ7I6IcTwmR68HlKMpC4CIY27IJants
- 2VZAWVQjUmLHRbICzLTw+RBK98BCHiInD64xN3lkqdj/THT6/3oNoB6Q0jKqMhBEkbmSawP
- Gazx2JiWYJ9RN+QIUYlce1/k6u7SsR2fUQ12NTs1+/Nae1TpOHj4TbdHfcmVNh95TsSnL+9
- j5Rz8ZfYOH45ApkqrHxvlUNH1Q+KaBdol84I6R9toz4DB0R/ArjtwZ02S1zdjmBSAB2Ttuq
- hYPi20s0S+dzfsrGOfE6pmTJGr4VPTlALFbXCbOtZKh8l6Ge47G4zLzguLKjoqSPV8xJQ+d
- I+1/rnmlgDesBvWBc+rwBNPTAScgM0Ikx0TmSRK4XylTvNKvFgcMeFlMCGEeAXcIO+j/KcG
- o506nlZ0qok+l7Uc7Bk4B36qxLWnguy40T823iPYBr2DIvtTbre8omwGiZWGhrDsOdIruAQ
- SBwYWdEMm0m4ctuNE7EJVTg2k409Omw+DZogqvbHSG2lm//G68CBGrHKL4Yo++5b0v3jO8V
- pdFCFjJUPhzWM0B3ioVFWZ15eZDD8558BJL/yMAJRASUltFJxS4Sa9+3zFi7jkZvqpxIrr2
- 1bzVcCQxzjW8BVBYGu88FuN2yAT+ZZOWhZ5gwsf3CbQO+UTVfvODZ5bYg5mA4yvik10f+K6
- smxaKDxgVg9ctY1SpqGCETDLYbxMVUSz6i+MLnwNAe9fu/3MqwWSc+rR+RCASkhFdQw/sTL
- mpK7p/2navS8tpS2jRCRSa9EJ5JX2b+XxF25MqcoKVPPVlEQCa
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-XMAILINFO: MYcyYH/A/+tCCy0wYplyp+hm+EpRrI5yfATfO6fVbKQzSVO/KwBjEMSP
+ /D/FkAdNKgUWkbY7fcwCKzD0HGrwzWQb4pAdMJqXt+cVpDgzikky8G/ujIB2Xnd+DdjzJbj
+ SvtyVDOoyNvp/fB/ZnXuCjimFB2fpa6RTjmPbthcmRY8mP/htNuCFlkwejaBtoauinf4n99
+ p2WntVXIlmjc+z6fuUMk+zzXqwZqJsY9fQoaSd2k12ffw0EwIN40RrqdhsnFmTmmaaTL7PL
+ ogEejyPMTIbwgFxixqEZ1QJIIRLgrHYW3gSXIq+Jc9nTRwFiPdj+0smSYwSI3gXehq6Fr8P
+ jMfCZzOiV5vbKfvN7ld9G0l/w9EkuCOJGjfBvBX0lSE8c4TulWQ0MiiGnQggk5J3xlm/KTk
+ CBQcs5C4nJ7j89yBk3lZaaxPBPMMexttVqUgXDLruqDVLq49ETyFdGyq2vEW7xIVB0+bNbq
+ aFbiMlUik+sr8ybCUXy2RDsdYSGjuupSIRGnPrnneR3AprZy9qiXx26gp1um87PDvGU7Xbp
+ LaDxeFhr59LU6ONNKCkGiPx9RsuSKSWvUTpiM4MVVQGi97dzG8DF88f1YMQYcecVu+e4MQc
+ StrEzXdH3o1/Xn6yUwZms51vAyANNzFKZ+nFY0Rk8nJWITHjyPlaj7xquldW6C0+bSNCaPQ
+ TReW3ool2vNsKk8vzq9OdtVuvIEuEDSqG9RrtanFxknksnz96CVLQebA4ldSSlEw2ftK2R2
+ YVi5jtL1Q5zq0kZIfHjbg1GC9VOZE74plK+Hszqs64e0ytXnp3JN54uQ+X7RlHm+TMWWGuZ
+ pmX1L7prk0XDvQebxM1MAh73z6tPUMmPi/5NGf8uRQ+rxzrUYVqkWPNIL/C/gGRoLggseQm
+ FIjXfyk3GN+3efUGzS8M2fQP6iVswUhag/uu5Oyr6Vj9evh/9EQ8+ws5NfidkxZKdytHEHr
+ eCJlvHvXPjILlwdgdAVNFRTQ2EOa53CnWwJTgnsiTIEcm/CmoopEK0AiMdvJ4wsZLd1kECr
+ +DcZNZJHbb2uHnkCS80Yc5KxCCm91u2LYfdB5XgzwwWxUfR3FO
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -64,106 +64,143 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Using ntuple filter has less performance loss on the hardware compared
-to FDIR filter. So when the flow rule both match ntuple filter and FDIR
-filter, ntuple filter will be created first. But there are only maximum
-128 flow rules can be created on ntuple filter, it is far less than the
-requirements of many users. So switch to use FDIR when ntuple filters
-are full.
+Fix FDIR mask settings to comply with the hardware configuration. And
+mask out the spec field instead of manually setting it to 0.
 
-Fixes: 77a72b4d9dc0 ("net/txgbe: support ntuple filter add and delete")
+There are some requirements of mask in hardware:
+1) IPv4 mask should be little-endian.
+2) Ipv6 source address mask has only 16 bits, one bit of mask
+   corresponds to one byte of spec.
+3) IPv6 dest address is only supported to perfect match the low 8 bits,
+   so it is not taken into account for support in the driver.
+
+Fixes: ea230dda16ad ("net/txgbe: configure flow director filter")
 Cc: stable@dpdk.org
 Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
 ---
- drivers/net/txgbe/txgbe_ethdev.c | 5 ++++-
- drivers/net/txgbe/txgbe_ethdev.h | 1 +
- drivers/net/txgbe/txgbe_flow.c   | 8 ++++++++
- 3 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/net/txgbe/txgbe_fdir.c | 49 +++++++++++++++++++++++++++++-----
+ drivers/net/txgbe/txgbe_flow.c |  8 ++----
+ 2 files changed, 45 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index f650c5b7a4..21f0711762 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -893,6 +893,7 @@ int txgbe_ntuple_filter_uninit(struct rte_eth_dev *eth_dev)
- 	}
- 	memset(filter_info->fivetuple_mask, 0,
- 	       sizeof(uint32_t) * TXGBE_5TUPLE_ARRAY_SIZE);
-+	filter_info->ntuple_is_full = false;
- 
+diff --git a/drivers/net/txgbe/txgbe_fdir.c b/drivers/net/txgbe/txgbe_fdir.c
+index 8d181db33f..6b83a7379d 100644
+--- a/drivers/net/txgbe/txgbe_fdir.c
++++ b/drivers/net/txgbe/txgbe_fdir.c
+@@ -165,6 +165,15 @@ configure_fdir_flags(const struct rte_eth_fdir_conf *conf,
  	return 0;
  }
-@@ -4495,7 +4496,8 @@ txgbe_add_5tuple_filter(struct rte_eth_dev *dev,
- 		}
- 	}
- 	if (i >= TXGBE_MAX_FTQF_FILTERS) {
--		PMD_DRV_LOG(ERR, "5tuple filters are full.");
-+		PMD_DRV_LOG(INFO, "5tuple filters are full, switch to FDIR");
-+		filter_info->ntuple_is_full = true;
- 		return -ENOSYS;
- 	}
  
-@@ -4526,6 +4528,7 @@ txgbe_remove_5tuple_filter(struct rte_eth_dev *dev,
- 				~(1 << (index % (sizeof(uint32_t) * NBBY)));
- 	TAILQ_REMOVE(&filter_info->fivetuple_list, filter, entries);
- 	rte_free(filter);
-+	filter_info->ntuple_is_full = false;
++static inline uint16_t
++txgbe_reverse_fdir_bitmasks(uint16_t mask)
++{
++	mask = ((mask & 0x5555) << 1) | ((mask & 0xAAAA) >> 1);
++	mask = ((mask & 0x3333) << 2) | ((mask & 0xCCCC) >> 2);
++	mask = ((mask & 0x0F0F) << 4) | ((mask & 0xF0F0) >> 4);
++	return ((mask & 0x00FF) << 8) | ((mask & 0xFF00) >> 8);
++}
++
+ int
+ txgbe_fdir_set_input_mask(struct rte_eth_dev *dev)
+ {
+@@ -206,15 +215,15 @@ txgbe_fdir_set_input_mask(struct rte_eth_dev *dev)
+ 	wr32(hw, TXGBE_FDIRUDPMSK, ~fdirtcpm);
+ 	wr32(hw, TXGBE_FDIRSCTPMSK, ~fdirtcpm);
  
- 	if (!txgbe_is_pf(TXGBE_DEV_HW(dev))) {
- 		txgbevf_remove_5tuple_filter(dev, index);
-diff --git a/drivers/net/txgbe/txgbe_ethdev.h b/drivers/net/txgbe/txgbe_ethdev.h
-index 053aa1645f..1e7cc5ea80 100644
---- a/drivers/net/txgbe/txgbe_ethdev.h
-+++ b/drivers/net/txgbe/txgbe_ethdev.h
-@@ -245,6 +245,7 @@ struct txgbe_filter_info {
- 	/* Bit mask for every used 5tuple filter */
- 	uint32_t fivetuple_mask[TXGBE_5TUPLE_ARRAY_SIZE];
- 	struct txgbe_5tuple_filter_list fivetuple_list;
-+	bool ntuple_is_full;
- 	/* store the SYN filter info */
- 	uint32_t syn_info;
- 	/* store the rss filter info */
+-	/* Store source and destination IPv4 masks (big-endian) */
+-	wr32(hw, TXGBE_FDIRSIP4MSK, ~info->mask.src_ipv4_mask);
+-	wr32(hw, TXGBE_FDIRDIP4MSK, ~info->mask.dst_ipv4_mask);
++	/* Store source and destination IPv4 masks (little-endian) */
++	wr32(hw, TXGBE_FDIRSIP4MSK, rte_be_to_cpu_32(~info->mask.src_ipv4_mask));
++	wr32(hw, TXGBE_FDIRDIP4MSK, rte_be_to_cpu_32(~info->mask.dst_ipv4_mask));
+ 
+ 	/*
+ 	 * Store source and destination IPv6 masks (bit reversed)
+ 	 */
+-	fdiripv6m = TXGBE_FDIRIP6MSK_DST(info->mask.dst_ipv6_mask) |
+-		    TXGBE_FDIRIP6MSK_SRC(info->mask.src_ipv6_mask);
++	fdiripv6m = txgbe_reverse_fdir_bitmasks(info->mask.dst_ipv6_mask) << 16;
++	fdiripv6m |= txgbe_reverse_fdir_bitmasks(info->mask.src_ipv6_mask);
+ 	wr32(hw, TXGBE_FDIRIP6MSK, ~fdiripv6m);
+ 
+ 	return 0;
+@@ -636,8 +645,14 @@ fdir_write_perfect_filter(struct txgbe_hw *hw,
+ 	fdircmd |= TXGBE_FDIRPICMD_QP(queue);
+ 	fdircmd |= TXGBE_FDIRPICMD_POOL(input->vm_pool);
+ 
+-	if (input->flow_type & TXGBE_ATR_L3TYPE_IPV6)
++	if (input->flow_type & TXGBE_ATR_L3TYPE_IPV6) {
++		/* use SIP4 to store LS Dword of the Source iPv6 address */
++		wr32(hw, TXGBE_FDIRPISIP4, be_to_le32(input->src_ip[3]));
++		wr32(hw, TXGBE_FDIRPISIP6(0), be_to_le32(input->src_ip[2]));
++		wr32(hw, TXGBE_FDIRPISIP6(1), be_to_le32(input->src_ip[1]));
++		wr32(hw, TXGBE_FDIRPISIP6(2), be_to_le32(input->src_ip[0]));
+ 		fdircmd |= TXGBE_FDIRPICMD_IP6;
++	}
+ 	wr32(hw, TXGBE_FDIRPICMD, fdircmd);
+ 
+ 	PMD_DRV_LOG(DEBUG, "Rx Queue=%x hash=%x", queue, fdirhash);
+@@ -783,6 +798,26 @@ txgbe_remove_fdir_filter(struct txgbe_hw_fdir_info *fdir_info,
+ 	return 0;
+ }
+ 
++static void
++txgbe_fdir_mask_input(struct txgbe_hw_fdir_mask *mask,
++		      struct txgbe_atr_input *input)
++{
++	int i;
++
++	if (input->flow_type & TXGBE_ATR_L3TYPE_IPV6) {
++		for (i = 0; i < 16; i++) {
++			if (!(mask->src_ipv6_mask & (1 << i)))
++				input->src_ip[i / 4] &= ~(0xFF << ((i % 4) * 8));
++		}
++	} else {
++		input->src_ip[0] &= mask->src_ipv4_mask;
++		input->dst_ip[0] &= mask->dst_ipv4_mask;
++	}
++
++	input->src_port &= mask->src_port_mask;
++	input->dst_port &= mask->dst_port_mask;
++}
++
+ int
+ txgbe_fdir_filter_program(struct rte_eth_dev *dev,
+ 			  struct txgbe_fdir_rule *rule,
+@@ -805,6 +840,8 @@ txgbe_fdir_filter_program(struct rte_eth_dev *dev,
+ 	if (fdir_mode >= RTE_FDIR_MODE_PERFECT)
+ 		is_perfect = TRUE;
+ 
++	txgbe_fdir_mask_input(&info->mask, &rule->input);
++
+ 	if (is_perfect) {
+ 		fdirhash = atr_compute_perfect_hash(&rule->input,
+ 				TXGBE_DEV_FDIR_CONF(dev)->pballoc);
 diff --git a/drivers/net/txgbe/txgbe_flow.c b/drivers/net/txgbe/txgbe_flow.c
-index d3113b6fc8..cd05ceffed 100644
+index 095c84823f..d3113b6fc8 100644
 --- a/drivers/net/txgbe/txgbe_flow.c
 +++ b/drivers/net/txgbe/txgbe_flow.c
-@@ -580,8 +580,12 @@ txgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
- 			  struct rte_eth_ntuple_filter *filter,
- 			  struct rte_flow_error *error)
- {
-+	struct txgbe_filter_info *filter_info = TXGBE_DEV_FILTER(dev);
- 	int ret;
+@@ -1849,9 +1849,7 @@ txgbe_parse_fdir_filter_normal(struct rte_eth_dev *dev __rte_unused,
  
-+	if (filter_info->ntuple_is_full)
-+		return -ENOSYS;
-+
- 	ret = cons_parse_ntuple_filter(attr, pattern, actions, filter, error);
+ 			/* check dst addr mask */
+ 			for (j = 0; j < 16; j++) {
+-				if (ipv6_mask->hdr.dst_addr.a[j] == UINT8_MAX) {
+-					rule->mask.dst_ipv6_mask |= 1 << j;
+-				} else if (ipv6_mask->hdr.dst_addr.a[j] != 0) {
++				if (ipv6_mask->hdr.dst_addr.a[j] != 0) {
+ 					memset(rule, 0, sizeof(struct txgbe_fdir_rule));
+ 					rte_flow_error_set(error, EINVAL,
+ 						RTE_FLOW_ERROR_TYPE_ITEM,
+@@ -2612,9 +2610,7 @@ txgbe_parse_fdir_filter_tunnel(const struct rte_flow_attr *attr,
  
- 	if (ret)
-@@ -3200,6 +3204,7 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 	struct txgbe_fdir_rule_ele *fdir_rule_ptr;
- 	struct txgbe_rss_conf_ele *rss_filter_ptr;
- 	struct txgbe_flow_mem *txgbe_flow_mem_ptr;
-+	struct txgbe_filter_info *filter_info = TXGBE_DEV_FILTER(dev);
- 	uint8_t first_mask = FALSE;
- 
- 	flow = rte_zmalloc("txgbe_rte_flow", sizeof(struct rte_flow), 0);
-@@ -3245,6 +3250,8 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 			flow->rule = ntuple_filter_ptr;
- 			flow->filter_type = RTE_ETH_FILTER_NTUPLE;
- 			return flow;
-+		} else if (filter_info->ntuple_is_full) {
-+			goto next;
- 		}
- 		goto out;
- 	}
-@@ -3254,6 +3261,7 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 		goto out;
- 	}
- 
-+next:
- 	memset(&ethertype_filter, 0, sizeof(struct rte_eth_ethertype_filter));
- 	ret = txgbe_parse_ethertype_filter(dev, attr, pattern,
- 				actions, &ethertype_filter, error);
+ 			/* check dst addr mask */
+ 			for (j = 0; j < 16; j++) {
+-				if (ipv6_mask->hdr.dst_addr.a[j] == UINT8_MAX) {
+-					rule->mask.dst_ipv6_mask |= 1 << j;
+-				} else if (ipv6_mask->hdr.dst_addr.a[j] != 0) {
++				if (ipv6_mask->hdr.dst_addr.a[j] != 0) {
+ 					memset(rule, 0, sizeof(struct txgbe_fdir_rule));
+ 					rte_flow_error_set(error, EINVAL,
+ 							   RTE_FLOW_ERROR_TYPE_ITEM,
 -- 
 2.48.1
 
