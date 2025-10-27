@@ -2,51 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E6DCCF9EB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 15:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A99CCF9EB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 15:38:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A0504028B;
-	Mon, 27 Oct 2025 16:38:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6F8D0402ED;
+	Mon, 27 Oct 2025 16:38:14 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6EEDA4026F
- for <dev@dpdk.org>; Mon, 27 Oct 2025 16:38:09 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 996254026F
+ for <dev@dpdk.org>; Mon, 27 Oct 2025 16:38:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1761579488;
+ s=mimecast20190719; t=1761579493;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=WXYsAJ/wYwNL559NVGfQGL/S2vObXPe+IbWgFdTAuWs=;
- b=M2XLg/Ok+KzBE5MLqi2tMBjx4SONlhMwJw9wVPfZMiGDzCNJ9vEzlEn23fFMWqH7G2iXyw
- mRRWWxa/dhd2wmbT+HPe6BCoG4aF4xuXjSiDRENVy59MQVgJsVO22hIwAzZnWWJTqwUVb9
- ruezlAO3Ijl89T3pV5KXYpImYfpWOYQ=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=Vzg6pTm5qNZuw/DXGDetClINf34YQe9GkRYZioL1Igw=;
+ b=UjlD+o0ibKASObRTFnfL2o2yNR/31mXgl6SPDcdwwTe/PaRUUDN0jkRa0Z1rQ4hgCvK7PK
+ 6s61BjiXHyq0x/4ovBoIcnjnb+jdIdh/x5FickHwlVVjyLA5cZGfNZPSU5Lgz5EqFPhYqm
+ qSDYPVoJ3Xj3Xkisr4RvlIPH5Smhr5c=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-131-jyUdmyPMNniwFzw7tL7zew-1; Mon,
- 27 Oct 2025 11:38:07 -0400
-X-MC-Unique: jyUdmyPMNniwFzw7tL7zew-1
-X-Mimecast-MFC-AGG-ID: jyUdmyPMNniwFzw7tL7zew_1761579486
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-235-cvm18ZTsNR6awqydh8ZMcQ-1; Mon,
+ 27 Oct 2025 11:38:09 -0400
+X-MC-Unique: cvm18ZTsNR6awqydh8ZMcQ-1
+X-Mimecast-MFC-AGG-ID: cvm18ZTsNR6awqydh8ZMcQ_1761579488
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 51FC519540E2
- for <dev@dpdk.org>; Mon, 27 Oct 2025 15:38:06 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 88754180121B; Mon, 27 Oct 2025 15:38:08 +0000 (UTC)
 Received: from ringo.home (unknown [10.44.33.145])
  by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 01485180057E; Mon, 27 Oct 2025 15:38:04 +0000 (UTC)
+ id 23CD1180057C; Mon, 27 Oct 2025 15:38:06 +0000 (UTC)
 From: Robin Jarry <rjarry@redhat.com>
-To: dev@dpdk.org
-Subject: [PATCH dpdk 0/4] net/tap: add network namespace support
-Date: Mon, 27 Oct 2025 16:37:51 +0100
-Message-ID: <20251027153750.445275-6-rjarry@redhat.com>
+To: dev@dpdk.org,
+	Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH dpdk 1/4] net/tap: add netlink helpers
+Date: Mon, 27 Oct 2025 16:37:52 +0100
+Message-ID: <20251027153750.445275-7-rjarry@redhat.com>
+In-Reply-To: <20251027153750.445275-6-rjarry@redhat.com>
+References: <20251027153750.445275-6-rjarry@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: vzMqZhqF7GUcTETaEYL91KIKFzNHBnzzn4wngRBZ_wc_1761579486
+X-Mimecast-MFC-PROC-ID: 8UAWbwaf7FYf_IHTLC5Wa7ck00xIc839iP2bAx1Najs_1761579488
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -63,35 +66,354 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The TAP driver currently uses ioctl operations which are name-based and
-namespace-unaware. When an interface is moved to another namespace, the
-driver loses control and cannot track the device.
+Add functions to get/set link flags, MAC address, and MTU using netlink
+RTM_GETLINK/RTM_SETLINK messages instead of ioctl.
 
-This series migrates to netlink-based interface control using ifindex
-instead of names, making operations namespace-safe. When an interface
-moves to another namespace, the driver detects RTM_DELLINK, queries the
-new namespace using TUNGETDEVNETNS, and recreates netlink sockets in
-that namespace to maintain control.
+These will be used in the next commits for a more robust solution that
+does not rely on interface names.
 
-The implementation falls back to ioctl when netlink is unavailable,
-preserving compatibility with older kernels.
-
-Tested by moving TAP interfaces between namespaces while running
-testpmd. All link operations continue to work transparently after
-namespace changes.
-
-Robin Jarry (4):
-  net/tap: add netlink helpers
-  net/tap: rename internal ioctl wrapper
-  net/tap: use netlink if possible
-  net/tap: detect namespace change
-
- drivers/net/tap/rte_eth_tap.c | 316 ++++++++++++++++++++++++++++------
- drivers/net/tap/rte_eth_tap.h |   2 +-
- drivers/net/tap/tap_netlink.c | 291 +++++++++++++++++++++++++++++++
+Signed-off-by: Robin Jarry <rjarry@redhat.com>
+---
+ drivers/net/tap/tap_netlink.c | 291 ++++++++++++++++++++++++++++++++++
  drivers/net/tap/tap_netlink.h |  10 +-
- 4 files changed, 565 insertions(+), 54 deletions(-)
+ 2 files changed, 299 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/tap/tap_netlink.c b/drivers/net/tap/tap_netlink.c
+index 5ff60f41d426..20bdbe5f7df8 100644
+--- a/drivers/net/tap/tap_netlink.c
++++ b/drivers/net/tap/tap_netlink.c
+@@ -6,6 +6,7 @@
+ #include <errno.h>
+ #include <inttypes.h>
+ #include <linux/netlink.h>
++#include <net/if.h>
+ #include <string.h>
+ #include <sys/socket.h>
+ #include <unistd.h>
+@@ -411,3 +412,293 @@ tap_nlattr_nested_finish(struct tap_nlmsg *msg)
+ 
+ 	rte_free(tail);
+ }
++
++/**
++ * Helper structure to pass data between netlink request and callback
++ */
++struct link_info_ctx {
++	struct ifinfomsg *info;
++	struct rte_ether_addr *mac;
++	unsigned int *flags;
++	unsigned int ifindex;
++	int found;
++};
++
++/**
++ * Callback to extract link information from RTM_GETLINK response
++ */
++static int
++tap_nl_link_cb(struct nlmsghdr *nh, void *arg)
++{
++	struct link_info_ctx *ctx = arg;
++	struct ifinfomsg *ifi = NLMSG_DATA(nh);
++	struct rtattr *rta;
++	int rta_len;
++
++	if (nh->nlmsg_type != RTM_NEWLINK)
++		return 0;
++
++	/* Check if this is the interface we're looking for */
++	if (ifi->ifi_index != (int)ctx->ifindex)
++		return 0;
++
++	ctx->found = 1;
++
++	/* Copy basic info if requested */
++	if (ctx->info)
++		*ctx->info = *ifi;
++
++	/* Extract flags if requested */
++	if (ctx->flags)
++		*ctx->flags = ifi->ifi_flags;
++
++	/* Parse attributes for MAC address if requested */
++	if (ctx->mac) {
++		rta = IFLA_RTA(ifi);
++		rta_len = IFLA_PAYLOAD(nh);
++
++		for (; RTA_OK(rta, rta_len); rta = RTA_NEXT(rta, rta_len)) {
++			if (rta->rta_type == IFLA_ADDRESS) {
++				if (RTA_PAYLOAD(rta) >= RTE_ETHER_ADDR_LEN)
++					memcpy(ctx->mac, RTA_DATA(rta),
++					       RTE_ETHER_ADDR_LEN);
++				break;
++			}
++		}
++	}
++
++	return 0;
++}
++
++/**
++ * Get interface flags by ifindex
++ *
++ * @param nlsk_fd
++ *   Netlink socket file descriptor
++ * @param ifindex
++ *   Interface index
++ * @param flags
++ *   Pointer to store interface flags
++ *
++ * @return
++ *   0 on success, -1 on error
++ */
++int
++tap_nl_get_link_flags(int nlsk_fd, unsigned int ifindex, unsigned int *flags)
++{
++	struct {
++		struct nlmsghdr nh;
++		struct ifinfomsg ifi;
++	} req = {
++		.nh = {
++			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
++			.nlmsg_type = RTM_GETLINK,
++			.nlmsg_flags = NLM_F_REQUEST,
++		},
++		.ifi = {
++			.ifi_family = AF_UNSPEC,
++			.ifi_index = ifindex,
++		},
++	};
++	struct link_info_ctx ctx = {
++		.flags = flags,
++		.ifindex = ifindex,
++		.found = 0,
++	};
++
++	if (tap_nl_send(nlsk_fd, &req.nh) < 0)
++		return -1;
++
++	if (tap_nl_recv(nlsk_fd, tap_nl_link_cb, &ctx) < 0)
++		return -1;
++
++	if (!ctx.found) {
++		errno = ENODEV;
++		return -1;
++	}
++
++	return 0;
++}
++
++/**
++ * Set interface flags by ifindex
++ *
++ * @param nlsk_fd
++ *   Netlink socket file descriptor
++ * @param ifindex
++ *   Interface index
++ * @param flags
++ *   Flags to set/unset
++ * @param set
++ *   1 to set flags, 0 to unset them
++ *
++ * @return
++ *   0 on success, -1 on error
++ */
++int
++tap_nl_set_link_flags(int nlsk_fd, unsigned int ifindex, unsigned int flags, int set)
++{
++	struct {
++		struct nlmsghdr nh;
++		struct ifinfomsg ifi;
++	} req = {
++		.nh = {
++			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
++			.nlmsg_type = RTM_SETLINK,
++			.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK,
++		},
++		.ifi = {
++			.ifi_family = AF_UNSPEC,
++			.ifi_index = ifindex,
++			.ifi_flags = set ? flags : 0,
++			.ifi_change = flags,  /* mask of flags to change */
++		},
++	};
++
++	if (tap_nl_send(nlsk_fd, &req.nh) < 0)
++		return -1;
++
++	return tap_nl_recv_ack(nlsk_fd);
++}
++
++/**
++ * Set interface MTU by ifindex
++ *
++ * @param nlsk_fd
++ *   Netlink socket file descriptor
++ * @param ifindex
++ *   Interface index
++ * @param mtu
++ *   New MTU value
++ *
++ * @return
++ *   0 on success, -1 on error
++ */
++int
++tap_nl_set_link_mtu(int nlsk_fd, unsigned int ifindex, unsigned int mtu)
++{
++	struct {
++		struct nlmsghdr nh;
++		struct ifinfomsg ifi;
++		char buf[64];
++	} req = {
++		.nh = {
++			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
++			.nlmsg_type = RTM_SETLINK,
++			.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK,
++		},
++		.ifi = {
++			.ifi_family = AF_UNSPEC,
++			.ifi_index = ifindex,
++		},
++	};
++	struct rtattr *rta;
++
++	/* Add MTU attribute */
++	rta = (struct rtattr *)((char *)&req + NLMSG_ALIGN(req.nh.nlmsg_len));
++	rta->rta_type = IFLA_MTU;
++	rta->rta_len = RTA_LENGTH(sizeof(mtu));
++	memcpy(RTA_DATA(rta), &mtu, sizeof(mtu));
++	req.nh.nlmsg_len = NLMSG_ALIGN(req.nh.nlmsg_len) + RTA_ALIGN(rta->rta_len);
++
++	if (tap_nl_send(nlsk_fd, &req.nh) < 0)
++		return -1;
++
++	return tap_nl_recv_ack(nlsk_fd);
++}
++
++/**
++ * Get interface MAC address by ifindex
++ *
++ * @param nlsk_fd
++ *   Netlink socket file descriptor
++ * @param ifindex
++ *   Interface index
++ * @param mac
++ *   Pointer to store MAC address
++ *
++ * @return
++ *   0 on success, -1 on error
++ */
++int
++tap_nl_get_link_mac(int nlsk_fd, unsigned int ifindex, struct rte_ether_addr *mac)
++{
++	struct {
++		struct nlmsghdr nh;
++		struct ifinfomsg ifi;
++	} req = {
++		.nh = {
++			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
++			.nlmsg_type = RTM_GETLINK,
++			.nlmsg_flags = NLM_F_REQUEST,
++		},
++		.ifi = {
++			.ifi_family = AF_UNSPEC,
++			.ifi_index = ifindex,
++		},
++	};
++	struct link_info_ctx ctx = {
++		.mac = mac,
++		.ifindex = ifindex,
++		.found = 0,
++	};
++
++	if (tap_nl_send(nlsk_fd, &req.nh) < 0)
++		return -1;
++
++	if (tap_nl_recv(nlsk_fd, tap_nl_link_cb, &ctx) < 0)
++		return -1;
++
++	if (!ctx.found) {
++		errno = ENODEV;
++		return -1;
++	}
++
++	return 0;
++}
++
++/**
++ * Set interface MAC address by ifindex
++ *
++ * @param nlsk_fd
++ *   Netlink socket file descriptor
++ * @param ifindex
++ *   Interface index
++ * @param mac
++ *   New MAC address
++ *
++ * @return
++ *   0 on success, -1 on error
++ */
++int
++tap_nl_set_link_mac(int nlsk_fd, unsigned int ifindex, const struct rte_ether_addr *mac)
++{
++	struct {
++		struct nlmsghdr nh;
++		struct ifinfomsg ifi;
++		char buf[64];
++	} req = {
++		.nh = {
++			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg)),
++			.nlmsg_type = RTM_SETLINK,
++			.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK,
++		},
++		.ifi = {
++			.ifi_family = AF_UNSPEC,
++			.ifi_index = ifindex,
++		},
++	};
++	struct rtattr *rta;
++
++	/* Add MAC address attribute */
++	rta = (struct rtattr *)((char *)&req + NLMSG_ALIGN(req.nh.nlmsg_len));
++	rta->rta_type = IFLA_ADDRESS;
++	rta->rta_len = RTA_LENGTH(RTE_ETHER_ADDR_LEN);
++	memcpy(RTA_DATA(rta), mac, RTE_ETHER_ADDR_LEN);
++	req.nh.nlmsg_len = NLMSG_ALIGN(req.nh.nlmsg_len) + RTA_ALIGN(rta->rta_len);
++
++	if (tap_nl_send(nlsk_fd, &req.nh) < 0)
++		return -1;
++
++	return tap_nl_recv_ack(nlsk_fd);
++}
+diff --git a/drivers/net/tap/tap_netlink.h b/drivers/net/tap/tap_netlink.h
+index 5eff6edbb1cd..e9c9e5dce553 100644
+--- a/drivers/net/tap/tap_netlink.h
++++ b/drivers/net/tap/tap_netlink.h
+@@ -6,12 +6,11 @@
+ #ifndef _TAP_NETLINK_H_
+ #define _TAP_NETLINK_H_
+ 
+-#include <ctype.h>
+ #include <inttypes.h>
+ #include <linux/rtnetlink.h>
+ #include <linux/netlink.h>
+-#include <stdio.h>
+ 
++#include <rte_ether.h>
+ #include <rte_log.h>
+ 
+ #define NLMSG_BUF 512
+@@ -39,4 +38,11 @@ void tap_nlattr_add32(struct tap_nlmsg *msg, unsigned short type, uint32_t data)
+ int tap_nlattr_nested_start(struct tap_nlmsg *msg, uint16_t type);
+ void tap_nlattr_nested_finish(struct tap_nlmsg *msg);
+ 
++/* Link management functions using netlink */
++int tap_nl_get_link_flags(int nlsk_fd, unsigned int ifindex, unsigned int *flags);
++int tap_nl_set_link_flags(int nlsk_fd, unsigned int ifindex, unsigned int flags, int set);
++int tap_nl_set_link_mtu(int nlsk_fd, unsigned int ifindex, unsigned int mtu);
++int tap_nl_set_link_mac(int nlsk_fd, unsigned int ifindex, const struct rte_ether_addr *mac);
++int tap_nl_get_link_mac(int nlsk_fd, unsigned int ifindex, struct rte_ether_addr *mac);
++
+ #endif /* _TAP_NETLINK_H_ */
 -- 
 2.51.0
 
