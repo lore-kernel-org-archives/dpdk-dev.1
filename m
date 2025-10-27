@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C15A9CCF9E5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 13:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B28CCF9EA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 13:00:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 854124028B;
-	Mon, 27 Oct 2025 14:00:13 +0100 (CET)
-Received: from egress-ip11b.ess.de.barracuda.com
- (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
- by mails.dpdk.org (Postfix) with ESMTP id B8FE64026F
- for <dev@dpdk.org>; Mon, 27 Oct 2025 14:00:12 +0100 (CET)
-Received: from MRWPR03CU001.outbound.protection.outlook.com
- (mail-francesouthazon11021079.outbound.protection.outlook.com
- [40.107.130.79]) by mx-outbound21-216.eu-central-1b.ess.aws.cudaops.com
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Mon, 27 Oct 2025 13:00:09 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id 81E42402E3;
+	Mon, 27 Oct 2025 14:00:15 +0100 (CET)
+Received: from egress-ip11a.ess.de.barracuda.com
+ (egress-ip11a.ess.de.barracuda.com [18.184.203.234])
+ by mails.dpdk.org (Postfix) with ESMTP id A3482402E1
+ for <dev@dpdk.org>; Mon, 27 Oct 2025 14:00:14 +0100 (CET)
+Received: from AS8PR04CU009.outbound.protection.outlook.com
+ (mail-westeuropeazon11021096.outbound.protection.outlook.com [52.101.70.96])
+ by mx-outbound42-44.eu-central-1c.ess.aws.cudaops.com (version=TLSv1.2
+ cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+ Mon, 27 Oct 2025 13:00:11 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H7uzkZ9CM8raLHHvHz6B3kpnjXme2/NBWYXhMQ27byzcJzTdcZMgyFDCwVVzl0WBIpDwcdkfd7qC2AYvvZf2aHju21BDPSGlhi+vsYNpf9uhTLfCRPm1J6Y+ni1k0X9pdlSSN6MIyAEUd35bakCcRHgOJcvH7t2wEg+Vv34v1du6C04LY9UyZR0dXljbWZwdEaJHcCZ4jtjcT8wJVIQ+Lu6cNEeeuL5QC5U/5LkvWiUqNrUyEtyFSFUmKP3Z3JDGZo4njZQGH9R/nBpwiTxABSP2pnx2ezOhSDjhXT2o3vXlls8nSfaIiXQkqSlzecIEkv5sZUOB4JCDVXpThZoxsA==
+ b=nAtpVwIBb6tjvmfehbQc24BJE4q4UwjRrdfdSfVTcM1DGkIr90FMcYCZ97BwHZ+vmDrR5mLmE3/AROc6eXTY6U1BFXDuLQZ6UEkslunTYWiiw+lo8HGnEbeMgBYAiaww1nkiYdISQ0ncH4vru3OZMs6mX/UwQBxepm0J693jls5i/Xo0pUgNvr6IwEPXxU+pNFr8v02U68lGGug9pjWzAGxol0fDDuaGsCp16dzN2tW54bAHtWb6IPdAwhRYfAGtqjtu8l6PWT2m06FTtlUb+a32+TaROrU8jzEp3BNeibEls+lSHMnOhxLQuPctRX0oM4KUr3U7/m/8mR0crxN/eg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Tzy4XbJ1H2r3qowgfXa/uYcYVE/5g8sw5oZ5utqVx64=;
- b=kerbPxoSiCUap+vMXb/AIStNRud6mnh9N49Lp0oFo33SrJMgrXEGHR6yWtqy0MVDeYNN4Tze8IWIMpvoG4Nf480t4+mriXIPuIcx0keVEIpvShfiQwIyPVvCWBfpldXPoCnR1tuL6EO8+L1r0AzG1I4uVUMHXs88/5V9hyMekHCG0rh8iu2ow2eon7seGr+b9VXo4O39lRHr8kH+lckOxoD2gO83y+pFw5C3JN6KyX3Qbip89firIFO60HtCdi/dT7HePUIWdTZ99YUNqT+zqcIqlD1HC2nRc/mf31Zv0ZCwkt8nE1RMmWdDzXMaPb5pQOcOnFpaHpisTxvzTzP1gQ==
+ bh=SGsJMG4mq86uSTCNZjIFzANWJRujoX1gQIVHcc/Db5c=;
+ b=ZEeL7AO5+cJPTttCDqgfcAon8/Bc7g8y9eSXFKMXyy9088cDEDQ92xkny7R8ELs785+iNqzLD5B/n5/xl8XhZTJ9N5MY2jRokrStKSFkdyobp7nVMvSanp7xfT5gCkVuUWBEjeyRVlzeKnV6lsrGUKQwIj/wJyn/updxaAEl2BdS09oMy5wcm78l3rEuKHesnlPwgezwASYavRsl8RwuVSIljJ4Vb1h5bCasYIZ3AVo0q+D3tudiKPpZxg136nLVK6fmb4vfT0OkoEL/Wwau3BxFpczWgODkOCSQCtNxK6KUDPLTESJbhV39R8tyHq8NIUtU18waO30A5vU8+/bKsw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=dpdk.org smtp.mailfrom=napatech.com;
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tzy4XbJ1H2r3qowgfXa/uYcYVE/5g8sw5oZ5utqVx64=;
- b=H66rxoasOHUdphswm1Ad8j7YsWuWbIB/gPryCSPMKYYXBQbayR2lOk4FvmgCsL6eUrZQsLuC7kMPaQMRWpC+KGcO0bfCaPmLdYILIsRQ26cX89RYJmiG9a0GoZzHK2RME7q4u3+MAQVv5s8WrXBKyTwtN0nfkwVwHDdxtwBKz7I=
-Received: from AS4P250CA0023.EURP250.PROD.OUTLOOK.COM (2603:10a6:20b:5e3::11)
- by AM7P190MB0726.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:11f::13)
+ bh=SGsJMG4mq86uSTCNZjIFzANWJRujoX1gQIVHcc/Db5c=;
+ b=a97EW/4jxB1enJZ7EylovOP3ZT0yCgow3bWENFA7cCHVmdBZs24x2Hl6WCnk583u6ihkNa5bvW+T/9R4KeoKluLyZo8Li6YlVGSjfuocruIdBBSvxC9nOstU0RgrdF0P/X9aNhjKJpVytW+LMUnC1cM4wncZtZm6zvN0WVQd6hk=
+Received: from AS4P250CA0018.EURP250.PROD.OUTLOOK.COM (2603:10a6:20b:5e3::13)
+ by AS4P190MB1807.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:4b6::21)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Mon, 27 Oct
- 2025 13:00:07 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.9; Mon, 27 Oct
+ 2025 13:00:08 +0000
 Received: from AM1PEPF000252DE.eurprd07.prod.outlook.com
- (2603:10a6:20b:5e3:cafe::ab) by AS4P250CA0023.outlook.office365.com
- (2603:10a6:20b:5e3::11) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:20b:5e3:cafe::de) by AS4P250CA0018.outlook.office365.com
+ (2603:10a6:20b:5e3::13) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.19 via Frontend Transport; Mon,
- 27 Oct 2025 13:00:13 +0000
+ 27 Oct 2025 13:00:11 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -51,87 +51,99 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
 Received: from localhost.localdomain (178.72.21.4) by
  AM1PEPF000252DE.mail.protection.outlook.com (10.167.16.56) with Microsoft
  SMTP Server id 15.20.9275.10 via Frontend Transport; Mon, 27 Oct 2025
- 13:00:06 +0000
+ 13:00:07 +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: dev@dpdk.org,
 	thomas@monjalon.net
 Cc: mko-plv@napatech.com, sil-plv@napatech.com, ckm@napatech.com,
  stephen@networkplumber.org
-Subject: [PATCH v3 0/1] Clean up the guide for NTNIC PMD
-Date: Mon, 27 Oct 2025 14:00:00 +0100
-Message-ID: <20251027130002.597552-1-sil-plv@napatech.com>
+Subject: [PATCH v3 1/1] doc: refactoring the guide for NTNIC PMD
+Date: Mon, 27 Oct 2025 14:00:01 +0100
+Message-ID: <20251027130002.597552-2-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
-In-Reply-To: <2974305.OYXXYNVTWy@thomas>
+In-Reply-To: <20251027130002.597552-1-sil-plv@napatech.com>
 References: <2974305.OYXXYNVTWy@thomas>
+ <20251027130002.597552-1-sil-plv@napatech.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM1PEPF000252DE:EE_|AM7P190MB0726:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: fe67d3de-4bb6-4745-b70d-08de1558c0ab
+X-MS-TrafficTypeDiagnostic: AM1PEPF000252DE:EE_|AS4P190MB1807:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b8696ac-a565-4217-5f9a-08de1558c17d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|82310400026|36860700013; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?KkEr161DqEQK8FoTzS8uIoP9F308pzSnWnEBeJaF8wJToEyE8x5u2Wxsg46q?=
- =?us-ascii?Q?DRzEuSipyN6sHtiTjVzuWX8OGkNWo05ERI8OYHtYAYN9/edEp1ERlke5dh0p?=
- =?us-ascii?Q?bGnJUWk0LR26cD7iAZDowY1lFk5xHthCI8+RoX/knRXk1nd5lj6fTZDULcdK?=
- =?us-ascii?Q?EHH363bDIwSyoNpg2N5/MpMt1ZmoJhbjT+c7lyKe6fyj1cZF8tCuYLVHCCcK?=
- =?us-ascii?Q?jX1VcMH6xPSyIxINewK+taX7eZA+tSC0gQ40bby53PZRw+BhoQtwXgAIla3a?=
- =?us-ascii?Q?A8A2gfmfVNb7Fcs17jEeG9jHlQ77d3UImf+egyTx+itA6iPA2tTnEHViON7P?=
- =?us-ascii?Q?5rJRgtqjSG99ZCE6c3TkdSWeax+wdxltc6bgPlvBtGf4GyScYOKWwkusOFoU?=
- =?us-ascii?Q?AW0axyEolYhZ474ON0b0cMGtZeshMhywQNinkiENS3EzVa7mgkkWbraOVek6?=
- =?us-ascii?Q?uG8G9YKLezy0TRETTbGTk3KG4kDywPPye6adxSi9NQK/yePt2aezlZ8iPmby?=
- =?us-ascii?Q?wGY5sTSA7p+Bmb8SXu4YIbmq5fHqzvWHfgO5FASVvktPJOiWP9epGcp+1ww9?=
- =?us-ascii?Q?ZmCQmkqiU/6Gf5R0rbzT8kFd7xeuN41GyCJRNSqHN57WxaoNqsgjjsHKvnzY?=
- =?us-ascii?Q?3qBJ5VjKrWmiOCmYgSxLbuCmxw84R9kf01uhJR8hA3RF2SBGcdYHaJuhYCmn?=
- =?us-ascii?Q?Wa+DFM9hQIfKS9r/JYRc+9ks4Qvtovl9x8CTHT1rxvNEbHFYuY5rptQq3d1X?=
- =?us-ascii?Q?96UqPduRBbgHp0b2XUIkK6xJRMKQGeR1T56dM1nkNN2kHPzgwsjg9h6XLYcq?=
- =?us-ascii?Q?yb1AYFhDMJLFC8HCIA8lT8cn8ize9HzOkv29htbcKZZBL3cz8ruEwYOv0Ezz?=
- =?us-ascii?Q?hwk5I6N4N6rXdGUkTawJtovX6uJbbhwlxyYFDVK7fYJsXvmuQXzivuyAjWYj?=
- =?us-ascii?Q?5mFx64wlES7koQmdtBx906H0TaO/yAMilk3SfrnuK+sCll7E2cW9Da5SFcmp?=
- =?us-ascii?Q?iS9u6cvypM8o5SxXu6g84SbjYhY90cVT+cHoi9ShLfYS5kYCHVrOke6NaQX4?=
- =?us-ascii?Q?kih6slBZzuNGEpdtitAdkq1SycdhGJXz3GPF0UZVCEjXEBfNtwU4WM+tj0Wd?=
- =?us-ascii?Q?HXyldwJEG3iViS/RjZWc15j6ZmU0iik234nFbLDTyCKBuh0J4hw6apuLAgwo?=
- =?us-ascii?Q?E38q9YDXWYNQvtkatwr+ESpU/nSPas/UNSPVWBSUDYmUcC9GsmBndaUJ6tm4?=
- =?us-ascii?Q?MY+PFBnQh7kMzXa02LFQOAb8+ZU0INmlcH658jI+nVYonhP79byetfdFoqkW?=
- =?us-ascii?Q?gDgLrdpZal8fXewBoDchVY3br90E/ZkMM1x4DLphNSsbY0sthrN+/5j1CbxV?=
- =?us-ascii?Q?E++AOEoquoGNNrLQ7Lhg/u/cFP55MjZCYVklDLIGZZw8ofBXfBsbvq+78F6l?=
- =?us-ascii?Q?I8CSXTx0XN3fs8mnspLttSY0f06f642Ouop/oTmFwdp3mIn/emW4jZwxCqdE?=
- =?us-ascii?Q?UzCnhhb9ztqH4RKUmZ7RwFYdvqasZ301OsdkThupRHT1ZXQbHYGEIzP/YSkp?=
- =?us-ascii?Q?EIxGVpD0/0h3dN4Eyl0=3D?=
+ ARA:13230040|82310400026|376014|1800799024|36860700013|13003099007; 
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?c0ZKeHRMR2pUeHRCL0M3OFYybHdsdUw4L09vSVNKVS9ITGdnVmwrZlI5VkZz?=
+ =?utf-8?B?ek4wbk5CV0F4MDFsMHlCNTJ0VEd2eEZMOGcxaElhNHNId0RsdmFkZytSUjZR?=
+ =?utf-8?B?Yk44SXZnNHNzdmRsQmc0aHNqUTNQbzVlWGswWHVaclFCTHdNazVXL296OGMw?=
+ =?utf-8?B?YXVMb2JqOEtza3ptQW1oWUo3U0FQNU9EMzJjRkFnS1NmbEVXMzRLTzZnUGhq?=
+ =?utf-8?B?eENabnZXL2R5NTBsMWc5UlpQM0pXTVQxVFk5cXl5dGVTN1RuY25OSXo4UmJp?=
+ =?utf-8?B?TG5nTGR0NE8vN2dvRzFQZzJobS9Gb3lKT1F3TUFLcWd0VFNCNlJmamJmUWRV?=
+ =?utf-8?B?SVBnRjUvMFdUYmJVRWc5eW04d0MxcTV3YzJBUjIvcnBFRHRTNDBMTFhWL21u?=
+ =?utf-8?B?dzEyaDNteG8yczhiNzVtaTVSMW92UUEzaW5ZTEI0eEdzQXQ4Q21Wa0ZsQ2Fz?=
+ =?utf-8?B?cHdON1UvSml1Mzh1dU5VZE55YzhIKzJ1OHR1RjVoa0VSZzRuWjZaK09La3Rh?=
+ =?utf-8?B?UyswWXp2QTFSTVoyV0duSldqbnUwbWQ3T2lxc1VJZ0pBQ0xnNGcvMkRUdFdI?=
+ =?utf-8?B?NnJXYXo4UDFzb2luQmNibnBlUWQ4dmNPS3lkVk1xWWNQQkVpdTlLRU9TUFZq?=
+ =?utf-8?B?UGRNQjNITmczb0d0Y2lwMHRzbElFYzN0V3VROEdEK29JSkd5U25ONUNOUlFm?=
+ =?utf-8?B?bGdEUXF1M0NieGRSVGoyQUgvaHloZ0NwTnFpTFoxSE9ZemQ2Y2x4TSsvQlBr?=
+ =?utf-8?B?UGZ5akRmTVdXam5QdmtpVEYrdGtzdXFZNW1zOUdFMFBzUVh5VnNyUzJVUTNV?=
+ =?utf-8?B?b0JXckRDSzFjREFGSHlTS1Vjd3laZG5Dc0ZOV3BSa1cxY1EyWHk4aFc2TGpM?=
+ =?utf-8?B?UiszWjU5WmZIOUZVUUNJWmg5RHBPTXlXbXJkbTNqQlhzbUlPRVVUbC9KblRl?=
+ =?utf-8?B?ajhoNG45T1JJUjY2dHEyTWh4SVYyUmxiU21uMEJnc0tibG1vcTBRNlJMZzE5?=
+ =?utf-8?B?czNPWkVNYlFUcXJJRnI4RDMrK1ZsdWZRbWFBM2RlaUNaZ3d3d01IUlNqbmxU?=
+ =?utf-8?B?M01BWmE1N2JzVnBhU0ZiNEllMW51TWRiaXdoTGI4c0dicllXZHViV3djWDRr?=
+ =?utf-8?B?SDRoNS9MWVNoRGhIWnhXWkxYZTVsM3JpUzM5RDY1Ungvdk1vS3NMa0poVDVl?=
+ =?utf-8?B?Z2IwMHFYYzlPZmczcmwzUFVVc3VSck5SaFlYMUlwZGJOSkNtTXRHK1dEdWxq?=
+ =?utf-8?B?ZXBWWCtXQitSaC9FRmNleDZrSUlrcXEwY25JclJpNEdPNVp6alpGbjJUeVAw?=
+ =?utf-8?B?aGhOR2t6cDYyRWhLb2ZtV2VMM3BLSlAraUZ3VFBkRUdxVHhTOUE0RFFvVlRu?=
+ =?utf-8?B?SmpvNi91azhkOThtOStjQ2R4cDFKOFRzbTJqVklQUkd2OE9keGNJUHlwZnIz?=
+ =?utf-8?B?N1BheVMxY3hPRGhLYlpjb1U2eUN4d1pxbk1nOWViVHBENDJvRFMvek5JSGlJ?=
+ =?utf-8?B?MlVpTm82U3FJeVFBS3U0VlRlV0dscFRTZFN5SjB1RzM2RlEyeE5TTFM4TVlz?=
+ =?utf-8?B?bHBXeVpJck1UVm1OcjIxcnYrMndzVlhyTTVjamFvNVhHdE85SnY1cXJpS2RZ?=
+ =?utf-8?B?K2ZRbmJxcVZSNVlvMjhESHM0cWNXbXozZHV3QzJQN2wwZmlQK3VzWTJJTHl2?=
+ =?utf-8?B?SWRYS2lybFQ0M1JrZ2xWMXc2WVpWbkJzNzluKzg5QjNJYm1BOCtZRmZkbzdx?=
+ =?utf-8?B?S0hXQXlTajdna2UyR0k0blJ5NmRETzRGVGdPRTFRcnhnRXc4NDhrcmNBdmw0?=
+ =?utf-8?B?dkRRS3pHYzhXM0FSV096bU9xWTBhMkx0WDhxV1JXTm5ybnNibiszdWMvcGhR?=
+ =?utf-8?B?aW1iUmF5Y21sVmpEWDNqdXE0L3Uvdkl0bndJSFN1QWNHaGxLS0lUZnVsT2c5?=
+ =?utf-8?B?VVQ3N1REdkdjczIzNWlXVytnUWxBYVpjZVpGK3dWNHByN1Z1RUlheENjVEtK?=
+ =?utf-8?B?ZXhsS1pXZFAzS043eFR0OWJRQzQvT2dNZVpqUDJBQm1TeWxCcFJWUnNUdkIz?=
+ =?utf-8?B?TXRkeGpoK3VUK1ZCd3pGRk45aVhPZm50WGFRd09vY25QbmF1Z2QzdExrVmcz?=
+ =?utf-8?Q?aZkE=3D?=
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
- CAT:NONE; SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);
+ CAT:NONE;
+ SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013)(13003099007);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: HOGXK6bGoEQ/XWolWabTxHWOAxtHsIOIuoHtlK2RZa9SyfJBStKvFkvkLQB/ywWw932wSxkp//zRnFTVvXCztM/d2ki4s8fDilgq1xIOBy28d6CCzwBhDN0qBcMPzdRhA5gJjy6Z1/nOo/yUtbktXwNGcgS8RkHV9/uo0HcZvqzks80D2v3EFc0lsw3ReGRrf9nrrJvvsR9MH0Z82txXuVk2c0OIqLFMyi502DozhFEBx/S5z9wveKDcFvRpr40PtrnQTQ+UmgFd5TNXBOZ8fjKtYOwKHlY52eka5nIvOA5uv++KXE9TybAxxGHaMrOdTJB2N+tBbg9EV9Vij1NSkqJtSyxo/vdUp5iJ+Sgii6B30iB/cGXPTv7B0tNlVVex2JsyW+RcOVcJVSGRkvB3k2vkwT7FBVpElt/5VDTqYk0WZh63DvOZPuMVfqrkK+N6k3GnVfrIWw/UpUQouc16ic9bxa30PsXAmM5oF5c8r4QdHoTJU3DGqKL2dMZs0ZHze2gYelvGIcg4/6cwb2ZtQVF4TjeImwysyviQn5jZin0E1AucxcXysre5ICPNokVPgJpgPMLh2GUloixxhu0edxAIFkZui51AwNd09AtIpX7XTIMwy4KddEGR+ZcqV5d3El5ZwBzHzKMQ98boXN47SrmD4BaCswBiBhqLZr+cv4A=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: eQ3l6Kg5chKvGiC0/6XRms93xLvJJRVecrsOubv4a1E5Z4JebKtea5xoenE/V34e4H/rUJPW6VcQAdcPgYCLurhgw5e8Ofb+8+5JWFe2SMEG8GbA+pwrkTxXu/q87iqF2BrGhcxX8S4FWg94YXnaHX7b0VXBVJ2Riu4Qn7Cuy60ZLx9RveSDc9nKKWjgzAN7szXqm0AqSHK8K7uBN9oxnEFrTOLh75nG7OTDuRl9YmSvu4QYW5lJPj2CWa2gSQ+9RQfYg17F9K5SXPhC70pDUbOp8NOPcKnAxsvQglAZDsjjYAE1GL2/ca0jaEUyJYXE6RWr3yBnxSOzx2s7tzjjYFIuiWsBV6N2w3B0GwPcOteRRXG3v7SzUWI6ixUdbXuZ/nV0ZUA/uKbB899u8IPKMKJo88rzEY9l1D4gWAZB2sv9tXSjlgT2DJjoJ7uhvje994zYmBITusFMsdNJ/cYQktEODv4WMDk8YGgC6wTV3It9GdXIqpiwH8aT+PqeXFQwdaPCDDXmyzDCw4S5r+uUC62CJjAHCLAXdHDPYdmk0Y029T/uL0ixKls5jhx7QG2JjH2/GuISc1q681h7QxrxZHK24oS1dKy/kC8XyGXSjTETmg2ShBnoR03hR+nsVyKK3Rf986NSbIBlVeq1rxL0UDg9KItqP4EWbp5GidM7UTE=
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 13:00:06.5518 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe67d3de-4bb6-4745-b70d-08de1558c0ab
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Oct 2025 13:00:07.9466 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b8696ac-a565-4217-5f9a-08de1558c17d
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: AM1PEPF000252DE.eurprd07.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7P190MB0726
-X-BESS-ID: 1761570009-305592-7662-115926-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4P190MB1807
+X-BESS-ID: 1761570011-310796-7662-113862-1
 X-BESS-VER: 2019.1_20251001.1803
-X-BESS-Apparent-Source-IP: 40.107.130.79
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVsYGJkBGBlDMMNHS0jjRPC3N2M
- w02STZItUk2SDZ3MAyycwsxdDEME2pNhYAfapBLUAAAAA=
-X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Apparent-Source-IP: 52.101.70.96
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoaGxgYGQGYGUDTZwtg02SzNzD
+ TN0jzRKC051dDI2NLM3CQpNTXVKNUkWak2FgCL9N/MQgAAAA==
+X-BESS-Outbound-Spam-Score: 0.01
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.268512 [from 
- cloudscan22-174.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan8-246.eu-central-1a.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
  0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS113687 scores of
- KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+ 0.01 BSF_SC7_SG0146_1       META: Custom rule SG0146_1 
+X-BESS-Outbound-Spam-Status: SCORE=0.01 using account:ESS113687 scores of
+ KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND, BSF_SC7_SG0146_1
 X-BESS-BRTS-Status: 1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -146,17 +158,326 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+Improve the doc formatting.
 
-I have made the requested changes.
-The simple list of features was converted into a list-table.
-
-Serhii Iliushyk (1):
-  doc: refactoring the guide for NTNIC PMD
-
+Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
+---
  doc/guides/nics/ntnic.rst | 204 ++++++++++++++++++++------------------
  1 file changed, 106 insertions(+), 98 deletions(-)
 
+diff --git a/doc/guides/nics/ntnic.rst b/doc/guides/nics/ntnic.rst
+index fc40c97095..9f5349494e 100644
+--- a/doc/guides/nics/ntnic.rst
++++ b/doc/guides/nics/ntnic.rst
+@@ -23,66 +23,64 @@ The physical ports are located behind PF0 as DPDK port 0 and 1.
+ Supported NICs
+ --------------
+ 
+-- NT200A02 2x100G SmartNIC
++================== ================ ================================
++SmartNIC           total bandwidth  FPGA id
++================== ================ ================================
++**NT200A02**       2x100 Gb/s        9563 (Inline Flow Management)
++**NT400D11**       2x100 Gb/s        9569 (Inline Flow Management)
++**NT400D13**       2x100 Gb/s        9574 (Inline Flow Management)
++================== ================ ================================
+ 
+-    - FPGA ID 9563 (Inline Flow Management)
++All information about Napatech SmartNICs can be found by links below:
+ 
+-- NT400D11 2x100G SmartNIC
+-
+-    - FPGA ID 9569 (Inline Flow Management)
+-
+-- NT400D13 2x100G SmartNIC
+-
+-    - FPGA ID 9574 (Inline Flow Management)
+-
+-All information about NT200A02 and NT400D13 can be found by links below:
+-
+-- https://www.napatech.com/products/nt200a02-smartnic-inline/
+-- https://www.napatech.com/products/nt400d11-smartnic-programmable/
+-- https://www.napatech.com/products/nt400d13-smartnic-programmable/
+-- https://www.napatech.com/support/resources/data-sheets/link-inline-software-for-napatech/
++- `NT200A02 <https://www.napatech.com/products/nt200a02-smartnic-inline/>`_
++- `NT400D11 <https://www.napatech.com/products/nt400d11-smartnic-programmable/>`_
++- `NT400D13 <https://www.napatech.com/products/nt400d13-smartnic-programmable/>`_
++- `Napatech FPGA-based SmartNICs <https://www.napatech.com/support/resources/data-sheets/link-inline-software-for-napatech/>`_
+ 
+ 
+ Features
+ --------
+ 
+-- FW version
+-- Speed capabilities
+-- Link status (Link update only)
+-- Unicast MAC filter
+-- Multicast MAC filter
+-- Promiscuous mode (Enable only. The device always run promiscuous mode)
+-- Flow API support.
+-- Support for multiple rte_flow groups.
+-- Multiple TX and RX queues.
+-- Scattered and gather for TX and RX.
+-- Jumbo frame support.
+-- Traffic mirroring.
+-- VLAN filtering.
+-- Packet modification: NAT, TTL decrement, DSCP tagging
+-- Tunnel types: GTP.
+-- Encapsulation and decapsulation of GTP data.
+-- RX VLAN stripping via raw decap.
+-- TX VLAN insertion via raw encap.
+-- CAM and TCAM based matching.
+-- Exact match of 140 million flows and policies.
+-- Tunnel HW offload: Packet type, inner/outer RSS, IP and UDP checksum verification.
+-- RSS hash
+-- RSS key update
+-- RSS based on VLAN or 5-tuple.
+-- RSS using different combinations of fields: L3 only, L4 only or both,
+-  and source only, destination only or both.
+-- Several RSS hash keys, one for each flow type.
+-- Default RSS operation with no hash key specification.
+-- Port and queue statistics.
+-- RMON statistics in extended stats.
+-- Link state information.
+-- Flow statistics
+-- Flow aging support
+-- Flow metering, including meter policy API.
+-- Flow update. Update of the action list for specific flow
+-- Asynchronous flow support
+-- MTU update
++.. list-table:: Supported Features
++   :widths: 100
++
++   * - FW version
++   * - Speed capabilities
++   * - Link status (link updates only)
++   * - Unicast MAC filtering
++   * - Multicast MAC filtering
++   * - Promiscuous mode (device always runs in promiscuous mode)
++   * - Flow API support
++   * - Support for multiple rte_flow groups
++   * - Multiple TX and RX queues
++   * - Scatter/gather for TX and RX
++   * - Jumbo frame support
++   * - Traffic mirroring
++   * - VLAN filtering
++   * - Packet modification: NAT, TTL decrement, DSCP tagging
++   * - Tunnel types: GTP
++   * - Encapsulation and decapsulation of GTP data
++   * - RX VLAN stripping via raw decap
++   * - TX VLAN insertion via raw encap
++   * - CAM- and TCAM-based matching
++   * - Exact match for up to 140 million flows and policies
++   * - Tunnel HW offload: packet type, inner/outer RSS, IP and UDP checksum verification
++   * - RSS hash
++   * - RSS key update
++   * - RSS based on VLAN or 5-tuple
++   * - RSS using combinations of fields (L3, L4, source/destination)
++   * - Several RSS hash keys (one per flow type)
++   * - Default RSS operation with no hash key specification
++   * - Port and queue statistics
++   * - RMON statistics in extended stats
++   * - Link state information
++   * - Flow statistics
++   * - Flow aging support
++   * - Flow metering, including meter policy API
++   * - Flow update (update action list for a specific flow)
++   * - Asynchronous flow support
++   * - MTU update
+ 
+ Limitations
+ ~~~~~~~~~~~
+@@ -101,79 +99,89 @@ Configuration
+ Command line arguments
+ ~~~~~~~~~~~~~~~~~~~~~~
+ 
+-Following standard DPDK command line arguments are used by the PMD:
++Following standard DPDK command line arguments are used by the PMD.
+ 
+-``-a``
+-   Used to specifically define the NT adapter by PCI ID.
++NTNIC-specific arguments can be passed in the PCI device parameter list:
+ 
+-``--iova-mode``
+-   Must be set to ``pa`` for Physical Address mode.
+-
+-NTNIC specific arguments can be passed to the PMD in the PCI device parameter list::
++.. code-block:: console
+ 
+    <application> ... -a 0000:03:00.0[{,<NTNIC specific argument>}]
+ 
+-The NTNIC specific argument format is::
++The NTNIC-specific argument format is
+ 
+-   <object>.<attribute>=[<object-ids>:]<value>
++``<object>.<attribute>=[<object-ids>:]<value>``
+ 
+-Multiple arguments for the same device are separated by ‘,’ comma.
+-<object-ids> can be a single value or a range.
++Multiple arguments for the same device are separated by commas. The
++``<object-ids>`` field can be a single value or a range.
+ 
+ ``rxqs`` parameter [int]
+ 
+-   Specify number of Rx queues to use::
++   Number of Rx queues to use. Example:
+ 
+-      -a <domain>:<bus>:00.0,rxqs=4,txqs=4
++   .. code-block:: console
+ 
+-   By default, the value is set to 1.
++         -a <domain>:<bus>:00.0,rxqs=4,txqs=4
++
++      By default, the value is set to 1.
+ 
+ ``txqs`` parameter [int]
+ 
+-   Specify number of Tx queues to use::
++   Number of Tx queues to use. Example:
++
++   .. code-block:: console
+ 
+-      -a <domain>:<bus>:00.0,rxqs=4,txqs=4
++         -a <domain>:<bus>:00.0,rxqs=4,txqs=4
+ 
+-   By default, the value is set to 1.
++      By default, the value is set to 1.
+ 
+ ``exception_path`` parameter [int]
+ 
+    Enable exception path for unmatched packets to go through queue 0.
+ 
+-   To enable exception_path::
++   To enable exception_path:
+ 
+-      -a <domain>:<bus>:00.0,exception_path=1
++   .. code-block:: console
+ 
+-   By default, the value is set to 0.
++         -a <domain>:<bus>:00.0,exception_path=1
++
++      By default, the value is set to 0.
+ 
+ 
+ Logging and Debugging
+----------------------
++~~~~~~~~~~~~~~~~~~~~~
+ 
+ NTNIC supports several groups of logging
+ that can be enabled with ``--log-level`` parameter:
+ 
+ NTNIC
+-   Logging info from the main PMD code. i.e. code that is related to DPDK::
++   Logging info from the main PMD code. i.e. code that is related to DPDK:
++
++   .. code-block:: console
+ 
+       --log-level=pmd.net.ntnic.ntnic,8
+ 
+ NTHW
+-   Logging info from NTHW. i.e. code that is related to the FPGA and the adapter::
++   Logging info from NTHW. i.e. code that is related to the FPGA and the adapter:
++
++   .. code-block:: console
+ 
+       --log-level=pmd.net.ntnic.nthw,8
+ 
+ FILTER
+-   Logging info from filter. i.e. code that is related to the binary filter::
++   Logging info from filter. i.e. code that is related to the binary filter:
++
++   .. code-block:: console
+ 
+-        --log-level=pmd.net.ntnic.filter,8
++      --log-level=pmd.net.ntnic.filter,8
+ 
+-To enable logging on all levels use wildcard in the following way::
++To enable logging on all levels use wildcard in the following way:
++
++.. code-block:: console
+ 
+    --log-level=pmd.net.ntnic.*,8
+ 
+ Flow Scanner
+-------------
++~~~~~~~~~~~~
+ 
+ Flow Scanner is DPDK mechanism that constantly and periodically scans
+ the flow tables to check for aged-out flows.
+@@ -204,7 +212,7 @@ There are list of characteristics that age timeout action has:
+ 
+ 
+ Service API
+------------
++~~~~~~~~~~~
+ 
+ The NTNIC PMD provides a service API that allows applications to configure services:
+ 
+@@ -214,29 +222,29 @@ The NTNIC PMD provides a service API that allows applications to configure servi
+ 
+ The services are responsible for handling the vital functionality of the NTNIC PMD:
+ 
+-FLM Update
+-   is responsible for creating and destroying flows;
+-Statistics
+-   is responsible for collecting statistics;
+-Port event
+-   is responsible for handling port events: aging, port load, and flow load;
+-Adapter monitor
+-   is responsible for link control;
++======================== =================================================
++Service name             Service purpose
++======================== =================================================
++**FLM Update**           create and destroy flows
++**Statistics**           collect statistics
++**Port event**           handle port events (aging, port load, flow load)
++**Adapter monitor**      monitor link state
++======================== =================================================
+ 
+ .. note::
+ 
+    Use next EAL options to configure set service cores:
+ 
+-   * -s SERVICE COREMASK Hexadecimal bitmask of cores to be used as service cores;
+-   * -S SERVICE CORELIST List of cores to run services on;
++   * **-S SERVICE CORELIST** List of cores to run services on;
++   * **-s SERVICE COREMASK** Hexadecimal bitmask of cores to be used as service cores;
+ 
+-   At least 5 lcores must be reserved for the ntnic services by EAL options.
++   At least **5 (five)** lcores must be reserved for the ntnic services by EAL options.
+ 
+-For example,
++   For example,
+ 
+-.. code-block:: console
++   .. code-block:: console
+ 
+-   dpdk-testpmd -S 8,9,10,11,12
++      dpdk-testpmd -S 8,9,10,11,12
+ 
+ The PMD registers each service during initialization by function ``nthw_service_add``
+ and unregistered by the PMD during deinitialization by the function ``nthw_service_del``.
+@@ -262,7 +270,7 @@ For example to assign lcores 8,9,10,11,12 to the services, the application can u
+    rte_pmd_ntnic_service_set_lcore(RTE_NTNIC_SERVICE_PORT_1_EVENT,11);
+    rte_pmd_ntnic_service_set_lcore(RTE_NTNIC_SERVICE_FLM_UPDATE, 12);
+ 
+-The API will automatically lcore to service core list and map the service to the lcore.
++The API will automatically map a service to an lcore.
+ 
+ .. note::
+ 
+@@ -284,9 +292,9 @@ For example, to enable statistics for flm_update service, the application can us
+    int flm_update_id = rte_pmd_ntnic_service_get_id(RTE_NTNIC_SERVICE_FLM_UPDATE);
+    rte_service_set_stats_enable(flm_update_id, 1);
+ 
+-All other manipulations with the service can be done with the service ID and rte_service API.
++All other manipulations with the service can be done with the service ID and *rte_service* API.
+ 
+-To use the service API, an application must have included the header file:
++To use the NTNIC service API, an application must have included the header file:
+ 
+ .. code-block:: c
+ 
 -- 
 2.45.0
 
