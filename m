@@ -2,30 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E468CCF9E5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 03:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06BA9CCF9E5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 03:17:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E4E3040677;
-	Mon, 27 Oct 2025 04:16:15 +0100 (CET)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
- by mails.dpdk.org (Postfix) with ESMTP id 0CD834065F;
- Mon, 27 Oct 2025 04:16:12 +0100 (CET)
-X-QQ-mid: esmtpsz16t1761534969tdbd2f8da
-X-QQ-Originating-IP: 9AZvf/ep8xyykUMOMuQ1Iu3vWDlafYRAgOdpUOLWEYQ=
+	by mails.dpdk.org (Postfix) with ESMTP id 0F44440676;
+	Mon, 27 Oct 2025 04:16:18 +0100 (CET)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+ by mails.dpdk.org (Postfix) with ESMTP id D40A540673;
+ Mon, 27 Oct 2025 04:16:15 +0100 (CET)
+X-QQ-mid: esmtpsz16t1761534972tdb14db44
+X-QQ-Originating-IP: OdqSlJTPXzNAHN7ZxrUT4JMg1FPs8b1r1Q6eigI7EIs=
 Received: from lap-jiawenwu.trustnetic.com ( [36.20.107.118])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 27 Oct 2025 11:16:08 +0800 (CST)
+ id ; Mon, 27 Oct 2025 11:16:12 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6868014541887765934
+X-BIZMAIL-ID: 14136163287597553646
 EX-QQ-RecipientCnt: 4
 From: Jiawen Wu <jiawenwu@trustnetic.com>
 To: dev@dpdk.org
 Cc: zaiyuwang@trustnetic.com, Jiawen Wu <jiawenwu@trustnetic.com>,
  stable@dpdk.org
-Subject: [PATCH 10/19] net/txgbe: fix FDIR mode is not be cleared
-Date: Mon, 27 Oct 2025 11:15:33 +0800
-Message-Id: <20251027031542.10512-11-jiawenwu@trustnetic.com>
+Subject: [PATCH 12/19] net/txgbe: fix to create FDIR filter for tunnel SCTP
+ packet
+Date: Mon, 27 Oct 2025 11:15:35 +0800
+Message-Id: <20251027031542.10512-13-jiawenwu@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20251027031542.10512-1-jiawenwu@trustnetic.com>
 References: <20251027031542.10512-1-jiawenwu@trustnetic.com>
@@ -33,23 +34,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: OZZSS56D9fAjgWTlrlnqyHA+6EO1luAjTnpRgMkDRFQJOtygYERY/OhQ
- a+aBtQ5mqnasv/DAOPEvh3giyP/Sh10EvgvyUNf76dUtXBlqDgkxmHTF+NoIeuoBL3U9x/E
- gMjKjKujHMefuWQ89+4IOjeE/54SW/so0xLx9yZRgZZASCviNSVoyTjGYyKMmbEhyrxAATK
- 5WAnPX5ZCjmVhFyTeMMBWQsoT3lOIqI6Kiw5hrm5mik5iL3TSpDUP20QRTuoKSfydEY1K4D
- lGyBSkC32jYkOxq6mPr1I4U3WXXdeBiTpNHYHVFoHD7ZqWdZyIRlgX0OgukrXZ5CCb4Gpav
- L8AbOBbf7CAVG92nAYjaoT9l/8yVZnHlUaj1QgCklN3Gmwe48+xfRM0sDmeEViptXwLWyC4
- xLJ8uMX291S6FKrpT7KsJR4rkVrHEmoF+ZehsrGhBdRQbjOF2JzyfMT6yS02l2zcnNAZbMT
- uZf0SVBJxsHjibPfSeB5dV6T99fbyVAWO8Lm+kC+YUQg2PnJZx7IUOqprC3GcI7FWFvmbFI
- RQNpKHcCXhhIquTti9lf5F8Gh/psR6MYZqZgxtXsK5lpPI6YzA4TbX6ZUV77/DrcbK8N5A6
- tYTqE/UVGU2vxK9aFDuxiujntUfwWbnSow+9v/W5H/45vKwchAyZXlYIaCvrMdQDj+Fm+mq
- OBGS3A182nQH+2Cd7pn5JOFLIK2TKAG+Z1d42hzbkJUKrVO5KxhNvJe9EgvgH/hrUIbXogu
- x+a2f3ItYedApQB5ehr729izyXq79YYHoEBysVr+lr/KU0orZzUH6/Sh/VouVgVppyjCwIf
- 4tRE4XTPbRBlPnhVB7guKUlziKs7z7PB7Z89SFr0zqmuzRmkCXLPcvVwn+5zSDXuNd5jJex
- ZPPiMauEx8R0iku0rPOdgtyLkKG+cGqdh2KjIggzYm7ytj/GX+KTdPk4VES/ZSVsbR8zlgb
- gOVR9EahEyPrF3UUhbRlRtqpIQ0pHlGGOeAcDkK6dU8RVfjpL+UXld/ITR4Qw7lAB+kZ8tp
- CTSUKip+WZeAk7G7XVLePYplv0a+Y=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-XMAILINFO: NpE4FRFHkRiPv/a9kIi9QnZaLlwG90jACbqKjAamtDS77MTP7GvEFc8E
+ f7N+Fjvc6Z6ebibN7WhaWgImU4HWqqQBAcTTeHtl76f/rgJtmo/eAH4+wmeeAidT2I69j4k
+ 0+R64l66xGxt/IOwZAiIxaVYmXfaMpAwR/lfAhKyn2hYrk/q8+oQaUCNxFvSVd4ok/hIw+j
+ 7cfcRFX8VsKgVyA9llZbDAJ79kmPmjVS9Nwp5mmMKxhBrSdZxH7QehtCXBiPI62W46z+DMs
+ s62fsoaSMKzAXdXSi8WzJH2yvnC1aGMEtTHGI9gEW13AEGhs7TzbDULRVJ6Gx5fyzWZlfho
+ vP7OWxdbmfEr2oMynRZonUCSEtRQxXtuirnTQ+G5S3vl7oPfR/jJ4qZmLSzzd3hzYlrPqS6
+ AqRt1CAKlAof6C53bNJyeyNxXwiJG7W7t5RYjqFth+aJZ506niD7tBISISKGu5UTm4fmApl
+ gWc+VvXFOEuwOc0Kw6u0IaYkrDfil4FiCskStFvEptze3SiGqF2zCHs7fZfhE/rkO0oJz8m
+ mPTsKUXsfzhGgDVGb+2r0vfJZeKptEvLtJPE8bp+zJgNeNrw8Yqlp9Bi75pR2LkImi8lfww
+ UdqXXeWqZsP4pgssd8Uizhc1VDcFobO5yaZhsfhvVbGtZFQlqWm6ne0I+/hvHZ3eUX/evK4
+ IhTGx8MWJcQAujYB3rha94qlGjet3bwzp9WU3ieal2Ymgp4r4cFTA5pKpQoM7O0t5hFeN3R
+ zfg7GbQiw65LBeirGZ2Dw4bN1uvaH9Jtec392KZ2u0I4YfdzVqyyAl4w3hwLnxtqDLFcAvJ
+ ZWn/3/DnwvNL+7FB6qHJ3mPKAZylUzhu7f7U6SNOV2mp0xU3WdP6CqJoy+RzntKy2lXOlNa
+ EaThACPPP493pxsy1a9RyTILo8xyttRU321pLYDgFM0GKrDtUl5w5DBloI1v6bUBhvE0vNl
+ mu+n8qKalg1T8ek62hAMV8A2bXeuJ4prWe+33DBnvToQZAJvWB1xcMAxRii0Bv4eXhPjPpN
+ m7JdwUWvH1XXBctCqEqvhvmC4MGwx7csrxiTbhgQ==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -64,50 +65,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When FDIR flow rules are all cleared, FDIR mode is not cleared. This will
-cause that creating new FDIR flow rules failed, for their mode are
-different from the previously deleted ones.
+This commit is the same as commit 0db38d54b57a ("net/txgbe: fix to
+create FDIR filter for SCTP packet").
 
-Fixes: 6bde42fe7fa5 ("net/txgbe: flush all filters")
+The check for the mask of SCTP item is repeated and wrong, fix it to
+make it work.
+
+Fixes: a1851465f825 ("net/txgbe: fix to create FDIR filter for tunnel packet")
 Cc: stable@dpdk.org
 Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
 ---
- drivers/net/txgbe/txgbe_fdir.c | 1 +
- drivers/net/txgbe/txgbe_flow.c | 2 ++
- 2 files changed, 3 insertions(+)
+ drivers/net/txgbe/txgbe_flow.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/drivers/net/txgbe/txgbe_fdir.c b/drivers/net/txgbe/txgbe_fdir.c
-index 631dec69e8..77d0cc4c30 100644
---- a/drivers/net/txgbe/txgbe_fdir.c
-+++ b/drivers/net/txgbe/txgbe_fdir.c
-@@ -970,6 +970,7 @@ txgbe_clear_all_fdir_filter(struct rte_eth_dev *dev)
- 	memset(fdir_info->hash_map, 0,
- 	       sizeof(struct txgbe_fdir_filter *) *
- 	       ((1024 << (fdir_conf->pballoc + 1)) - 2));
-+	fdir_conf->mode = RTE_FDIR_MODE_NONE;
- 	filter_flag = TAILQ_FIRST(&fdir_info->fdir_list);
- 	while ((fdir_filter = TAILQ_FIRST(&fdir_info->fdir_list))) {
- 		TAILQ_REMOVE(&fdir_info->fdir_list,
 diff --git a/drivers/net/txgbe/txgbe_flow.c b/drivers/net/txgbe/txgbe_flow.c
-index 31af3593ed..25cf0db316 100644
+index 7cf079a1cf..5b03a35949 100644
 --- a/drivers/net/txgbe/txgbe_flow.c
 +++ b/drivers/net/txgbe/txgbe_flow.c
-@@ -3429,6 +3429,7 @@ txgbe_flow_destroy(struct rte_eth_dev *dev,
- 	struct txgbe_fdir_rule_ele *fdir_rule_ptr;
- 	struct txgbe_flow_mem *txgbe_flow_mem_ptr;
- 	struct txgbe_hw_fdir_info *fdir_info = TXGBE_DEV_FDIR(dev);
-+	struct rte_eth_fdir_conf *fdir_conf = TXGBE_DEV_FDIR_CONF(dev);
- 	struct txgbe_rss_conf_ele *rss_filter_ptr;
- 
- 	switch (filter_type) {
-@@ -3488,6 +3489,7 @@ txgbe_flow_destroy(struct rte_eth_dev *dev,
- 				fdir_info->mask_added = false;
- 				fdir_info->flex_relative = false;
- 				fdir_info->flex_bytes_offset = 0;
-+				fdir_conf->mode = RTE_FDIR_MODE_NONE;
- 			}
+@@ -2798,19 +2798,6 @@ txgbe_parse_fdir_filter_tunnel(const struct rte_flow_attr *attr,
+ 			rule->input.dst_port =
+ 				sctp_spec->hdr.dst_port;
  		}
- 		break;
+-		/* others even sctp port is not supported */
+-		sctp_mask = item->mask;
+-		if (sctp_mask &&
+-		    (sctp_mask->hdr.src_port ||
+-		     sctp_mask->hdr.dst_port ||
+-		     sctp_mask->hdr.tag ||
+-		     sctp_mask->hdr.cksum)) {
+-			memset(rule, 0, sizeof(struct txgbe_fdir_rule));
+-			rte_flow_error_set(error, EINVAL,
+-					   RTE_FLOW_ERROR_TYPE_ITEM,
+-					   item, "Not supported by fdir filter");
+-			return -rte_errno;
+-		}
+ 	}
+ 
+ 	if (item->type != RTE_FLOW_ITEM_TYPE_END) {
 -- 
 2.48.1
 
