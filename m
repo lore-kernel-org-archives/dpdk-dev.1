@@ -2,63 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 814B5CCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 16:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B57CCF9EB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 16:30:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D0E214028E;
-	Mon, 27 Oct 2025 17:18:51 +0100 (CET)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id 52BFF4028B
- for <dev@dpdk.org>; Mon, 27 Oct 2025 17:18:51 +0100 (CET)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-29488933a91so44225135ad.2
- for <dev@dpdk.org>; Mon, 27 Oct 2025 09:18:51 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 95BE7402C9;
+	Mon, 27 Oct 2025 17:29:59 +0100 (CET)
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com
+ [209.85.222.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 3C1C74028B
+ for <dev@dpdk.org>; Mon, 27 Oct 2025 17:29:58 +0100 (CET)
+Received: by mail-qk1-f178.google.com with SMTP id
+ af79cd13be357-88f239686f2so478218485a.0
+ for <dev@dpdk.org>; Mon, 27 Oct 2025 09:29:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1761581930; x=1762186730; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=En6ev/FzwJd/7cXiv97C8pdkz8hWlAPduZNt+xSrf1U=;
- b=RDeV2ONaHBHDfn+IzUEkHVcMy491rHU3ouBko4EPUC3pJxAaIXvYvKQwAhGWn0Pq2u
- JfvpifwhkXwkOcJEmI4EFte5pLbOj5TteTMdvgxnq9QlVORF1YNiKQm67m6+MLtMTCs5
- HF+3eLS4DCIF0TcCg2zaNu4g/2/KitfioSmOo=
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761582597;
+ x=1762187397; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=OsnQVF9l6890hPZ5DWWPQeBPEARBlsj1Mvyb1pL5DzE=;
+ b=jmQ8tc5SvJdeYRmwNnL/wzm35EiMj/Jki018dwV0LNe18MXtGmUIsBf+63PhKVisrk
+ GWyWnw0n8nrGPhsEaVxZZzBo2AGFNQcCvuEjR4ugGXoZuejhbKkpU6r6EjhHMBi551F1
+ 8aI4015JcN17jOqKaESd6D5LGKfVUQD2zoZRo8uPag4V3Jci7UWH86j2Yv2Jo+JIXa3o
+ kpSwPEGQIF/NGzBEFe1z/ISXTGCtZP+7dZlYEbnrg2LffgNULwRE1Dcsvv6+SwPohHI9
+ fjd8lEyH666QdfFCuwxqqFCeiWAkwSZzamEQLZ9zsqsX9r18emqlKbf78NOw3o/+gRnh
+ Yl1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761581930; x=1762186730;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=En6ev/FzwJd/7cXiv97C8pdkz8hWlAPduZNt+xSrf1U=;
- b=A29nu7SZmDEfoPAALN25QmPvciNEKoFdKrG/lJIvaVhvVh4vsBCyVRzGCfnTAO3kA1
- giGgrA11P1cVlLRrJgl/EgqyF0gJD/eRIFEm+WnEZaAiByZHjob7AxgnPb+NpNzy+ybg
- LQq+eoc9VMgiQkDS0X0ZFzeKYo4rRHcXrkTrOAuyU0y41TDVe7OTmiypuuHS/u2TbP69
- KidW0WRrSBDH0p6ggIC48FWoxctZsmxmzM1WMzxIn8/eMtPg+RirEny2L2yLdW257d/+
- 23QuH8oCY3ILTf2EKwgunmEfArW12HzbucJ54DUD/FfN2LCCHPH1b2c2qzsIKTpTln8L
- qsTg==
-X-Gm-Message-State: AOJu0YwZiLAYaPPfW9XgPB+WlKOJvwHzSa3kbHUrEIiPIPI5o2bxpU/1
- lXzTUj8i73db7VnHzsxDq9rGYT6coPSrOu2bw1x6Jo2KcmsVdamIFICpyvj4TjL3CdBRXEmb6e0
- HpLibDuxgqmDxK0IDjsuYYeYDIhgjZ3bQe6zgAJ57MA==
-X-Gm-Gg: ASbGncvxfyus8aIOJddg12EB8kjSZOI8Kjpz7un9VmdXp3rKMHSshXGWJiUe9BT+SRe
- VAegnO6YCqsaIZhx5yPfNrQqsT+jz2yWy00UAeGqsoCe1d80VupYtmlz4VnuwU/wAq7Qncn8jps
- C0+iyVL2fPyrgiayT0AkwuQHCc1qJLAkz94qoXQTHjynzQBdf7JcY90H0UnfsUZ1K8o3yiT4cXo
- IFwhTmCnCVLKk82GpFuozoEUGjO2MkGWInXwKRowdzDS3WpxNw82IHSTvjAj4+2w5ZZQ2geRBFC
- xMsxUQIrsutvHcJuqL+bKTYwEUfY
-X-Google-Smtp-Source: AGHT+IFmcsin/eyZYz1JrlvTjB+F2HxHxGm0ej6PoO06Hdb16FGLBMNnfDZ4E2tfhmfm/jEJEFteNmOX0dHueoxddQs=
-X-Received: by 2002:a17:903:1d2:b0:267:da75:e0f with SMTP id
- d9443c01a7336-294cb37a9f3mr5514845ad.11.1761581930338; Mon, 27 Oct 2025
- 09:18:50 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1761582597; x=1762187397;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=OsnQVF9l6890hPZ5DWWPQeBPEARBlsj1Mvyb1pL5DzE=;
+ b=ZU5j0+dydAXz+trb/tM0sUawiXmzbz4rZahxGeuYUKcPJNM38y2yAqiH5le6rigXv9
+ /Llz6mEbnoVdVdwsH7KZ25NL2ilMeCyFDToCRrVCkCRVd1UnbPw8Mtk69SXqdDwJQ/10
+ GAugNPKgnwEjS7rLqxgMSKUF/l1lREKYU27wBvxibwm0ctr0K4RhMYEeIZAEUeEb+Ss6
+ XOUMJBcnGXQq/lGE82q2cl8aEcR+By0pi4wHfnUz6H6fEf49JtVyAtFDFsKeJ89l20hb
+ mZPzM1s6fJdwt49icj5f9egHqLZQI5r2fB1dto+tm9ovwFxK9uDK9HwyR7Z6cgnOLE96
+ CaLw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWBoSEMbyOOv5cVxfWceLixvgZ4a6SLznMDdbNl9pM6U3RJL9o4ZrT6OlF9hKK2tFlLST4=@dpdk.org
+X-Gm-Message-State: AOJu0YyMKb9Xy9LuMfKAHUMc4ThJdS/SpAzVynqH8xE54oHXGu41Oo/j
+ qAonC8k6uv3QO+s/w8+bgYwWoFPcrCYoYLNuR78xfYe4pjHQX7UlxFkaNB/rCZBeNpo=
+X-Gm-Gg: ASbGnctAm7EIOTLm31MU6J1r6RxO8Z5CmJ7jwUZAHB2otO4zCPKESGLOlIzd+rXd56d
+ TQ5KMzm8KGEV+MWgjmH+caWMpfLjxAAvs7x6vRDiHg4JopH28ISJ7rdxDNnX83NEud84wNW39yU
+ OuPDU+iwZseRoqW1MhvlOw6W7zCrpDx6uomc3IztdoPKooumL3RL4YWaFUsLng4oozoEheYCeRz
+ yNhkn0xUYAelnJzBq7WuMoNQQd5s6gKIFqX9oDghRctypak13slKLMZzNPRCnpeo7OqiPcDCwgK
+ A6+mna+DhPDvYQ+B1XtVlzpLfrj3chwSjQaxY49if1rfrVuUo62oN+zFZNlRxNu164gSNSII3/z
+ iZS9K87p3PbLO3sag0rfqoPs+rLAVrb1Gy+rbyYB5z0mYQnNJc0YTTk5k1FNMInwQduaWQGBLKZ
+ nC7snstYJx8PjFZa49gX6/A+VOw7trCBjTWA==
+X-Google-Smtp-Source: AGHT+IH3vXakT35gvcFNnSIbXup6Fqi21zUUCij4Oumlc6ME+x4jQlLdRt74w4Ltyydir6ktBNcSNA==
+X-Received: by 2002:a05:620a:1996:b0:82f:10ac:450b with SMTP id
+ af79cd13be357-8a7009d57b2mr50300885a.65.1761582592978; 
+ Mon, 27 Oct 2025 09:29:52 -0700 (PDT)
+Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-89f261747efsm617569485a.55.2025.10.27.09.29.52
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 27 Oct 2025 09:29:52 -0700 (PDT)
+Date: Mon, 27 Oct 2025 09:29:49 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Chengwen Feng <fengchengwen@huawei.com>
+Cc: <thomas@monjalon.net>, <dev@dpdk.org>
+Subject: Re: [PATCH 2/2] ethdev: support hide zero when telemetry regs
+Message-ID: <20251027092949.4af149e1@phoenix>
+In-Reply-To: <20251025094239.4915-3-fengchengwen@huawei.com>
+References: <20251025094239.4915-1-fengchengwen@huawei.com>
+ <20251025094239.4915-3-fengchengwen@huawei.com>
 MIME-Version: 1.0
-References: <20250902114327.48185-1-abailey@iol.unh.edu>
- <20251027130215.95444-1-abailey@iol.unh.edu>
- <20251027130215.95444-4-abailey@iol.unh.edu>
-In-Reply-To: <20251027130215.95444-4-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Mon, 27 Oct 2025 12:17:53 -0400
-X-Gm-Features: AWmQ_bnYmXvkQdihp3PDs9dfRaJ_5TZXKKZc4v8ghMxXLQ4vUcKMOUFWuXaTkow
-Message-ID: <CAJvnSUDyok0SmTDYUtXd5x12CMsC7PnufOgft4uZhyUNJOQH3Q@mail.gmail.com>
-Subject: Re: [PATCH v10 3/3] dts: add Rx Tx offload test suite
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: dev@dpdk.org, dmarx@iol.unh.edu, luca.vizzarro@arm.com
-Content-Type: multipart/alternative; boundary="000000000000336bf40642264156"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,24 +84,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000336bf40642264156
-Content-Type: text/plain; charset="UTF-8"
+On Sat, 25 Oct 2025 17:42:39 +0800
+Chengwen Feng <fengchengwen@huawei.com> wrote:
 
-It looks like the testsuite only requires 1 link, not 2 (the default). Can
-you decorate it saying so?
+> Support hide zero when telemetry regs, and also modify filter usage.
+> 
+> Now the usage:
+>   /ethdev/regs,0,hide_zero=true   --hide zero values when dump regs
+>   /ethdev/regs,0,hide_zero=false  --don't hide zero values
+> 
+>   /ethdev/regs,0,filter=ssu       --filter ssu module when dump regs
+> 
+>   /ethdev/regs,0,filter=ssu,hide_zero=true
+>           --filter ssu module and hide zero values when dump regs
+> 
+> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 
-Otherwise this looks good and I've done a testrun.
 
-Reviewed-by: Patrick Robb <probb@iol.unh.edu>
-
---000000000000336bf40642264156
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">It looks like the testsuite only requires 1 link,=C2=A0not=
- 2 (the default). Can you decorate it saying so?<div><br></div><div>Otherwi=
-se this looks good and I&#39;ve done a testrun.<br><div><br></div><div>Revi=
-ewed-by: Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu">probb@iol.un=
-h.edu</a>&gt;</div></div></div>
-
---000000000000336bf40642264156--
+Recheck-request: iol-unit-amd64-testing, iol-sample-apps-testing
