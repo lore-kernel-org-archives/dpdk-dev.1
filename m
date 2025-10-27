@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D18CCF9EB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 16:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B876CCF9EE
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 16:58:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A7964028C;
-	Mon, 27 Oct 2025 17:51:13 +0100 (CET)
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com
- [209.85.210.176])
- by mails.dpdk.org (Postfix) with ESMTP id 63C804021E
- for <dev@dpdk.org>; Mon, 27 Oct 2025 17:51:12 +0100 (CET)
-Received: by mail-pf1-f176.google.com with SMTP id
- d2e1a72fcca58-7a28c7e3577so2421354b3a.1
- for <dev@dpdk.org>; Mon, 27 Oct 2025 09:51:12 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4C7644028C;
+	Mon, 27 Oct 2025 17:58:52 +0100 (CET)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
+ [209.85.214.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 5BE634028C
+ for <dev@dpdk.org>; Mon, 27 Oct 2025 17:58:50 +0100 (CET)
+Received: by mail-pl1-f175.google.com with SMTP id
+ d9443c01a7336-26a0a694ea8so35100215ad.3
+ for <dev@dpdk.org>; Mon, 27 Oct 2025 09:58:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761583871;
- x=1762188671; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761584329;
+ x=1762189129; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=3a+TcLlA9KLPx/KXuD2v7/r92Nu37iqkajyp4En15+E=;
- b=HFiheDjDYCF9YcPke/NdtweZSlH2KDUZkwN/j9/XvA/GYmbxl8+ofrgg7iuh5rQ9fE
- xiN2BCYiwi8oAr2ocZtrrVXRQt4ddxB5fHVL2UIS7VsbC3tbAXjfy1rjEUffkUqgX++u
- p9E+AobTKri62kp762JD5+xGIqmJVSjZ/rqff7/OryOJPuLiVrEsOiKB9uBMM6OPpElD
- 1rzPXVuHRwMfXMyc2uvy0el3jeoll+DuIo1RccIDCeXT76xARVoGlLhOcQzMlGS0WGTI
- hlMoIJIdx/rU5Iz26mHN8RVQrUrO/khe4Wz36MYS/RsePd+aXnpJKNUAG1TZzHg5uRIi
- 01eQ==
+ bh=3m8UeM8WArxna7YTxUHoHINCBMaN++zqrX8DMKwWVWk=;
+ b=g0UIoFbLWpPvQYLIql6s9tXxS0KJeLgdxLtipzV0fuW/bfaT1V+r/7CZDeCBuSpn3i
+ RIStEmc2JUE9rSnMKP8z1uxRRK+aSrJDND/2uHWpSUpF9/55DZZDyDG8+45CjQzMh/HD
+ HRbmq+vqNBXYhK60G/I4YHGKNdLNIiqrh8+IHA1ZfTfA8vceCy/xDh1wGb9kTy2JuCkz
+ gzJbGaaw/qtQE7knFODLQQ+it1IuAyWh+ymN8W5dm2k2KUvBEvsJ8zp//WtAs3FetfTw
+ nRgfPB1Gbk9RzrUSgOCaT74t+zzJwvqxl76fkMa0L+ov5gJ3/Yo9cL/L1PsG9IUqf0Sa
+ 956Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761583871; x=1762188671;
+ d=1e100.net; s=20230601; t=1761584329; x=1762189129;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=3a+TcLlA9KLPx/KXuD2v7/r92Nu37iqkajyp4En15+E=;
- b=YJToi6QAX2V1UPjm7QAXzcPPpsRso1pMUr8zxdfc3brEv0SBKQod2B9owPX7wr2fWR
- HlLXe0mZvkVwsLwfg7iLWeUCG4+ndusLxiv0Mjlv8DL+v+fZ1lomIYhhFb1TRu56zXQO
- dYtV51IRH+OiSlsWm17zb8IVzkirIWsVsF8dDiiprd00BAEA6cREcKN02Mb/PAxZz7si
- 0rYeD7YpPNpadkc3TRG48lZ84TyfFptgi/XS44ViEYKe7R7+UxYDNRK7X6cAOwmUbo0R
- 1zdPwL0uKk3DDv6B8t+nuQjTJQHg7o9CKubm1mWj3tHX/G9cBryr5sy8VZGnU6j6Gm7c
- 2GCg==
-X-Gm-Message-State: AOJu0YxoMQp6IBNwdb1CatuqCU39/CIrazYnuBbyUdarrtcjE1qMpnp4
- nT8juPPF8c7uc5zl6LS0XIdan1qwEabIO8HZVTEF8n2ILgVa9BZQFag/G96hIWxXeOCHyGpc5Jk
- SpJ+c2OA=
-X-Gm-Gg: ASbGncuBY8qqoueAhyoNTMDmIrhTDiS/31DxhgA800socWQ5Nur/WAKhH/ZeWcIR5fN
- vxxKhdAVnc06RusQkaBWzIxDM90slcKiGx3XURZcSiOdBGTp/91CKD73vKoTIh3zVY/SkhushGr
- VLMzkzuSEyUqG168J7lLznyn19emL+DO2umrnMxhOumM4T3OeCaxsKjvZPVGzJ7uIWdxzZ0hY/X
- Wnq4iOBKmcvsOLDKdC+fpUbT2INgn2QzEUnrAGHJtXD8Mp+TbRsUWMFwRMOkzzhT1mLgdIsz7pK
- 6lUFXXq9iQkKkTg5jgL0x/EKrAcdm+588KRnGIjSmylLwFQ0tWuCH6DISdZaP8rLkC8hl/9iqFa
- Ow1W43QAbZ3CWiMdvbzFBgDAnkHBA3c371v2tpq7EFVzvmI8gKswjY13ToU6oxiq0juPoJz6VCF
- 7XRvG0rDhcwvOHeXZw9OHkXQ1V2NJfabvncF+zrazSIqj8
-X-Google-Smtp-Source: AGHT+IE0h4jLFmzWSWZlhI20a0ABYWJE2i7bb3OGm9I5VCD1X5lqapR85cSXpIC6nXTKOxyBtFK2rg==
-X-Received: by 2002:a05:6a20:6a08:b0:306:2a14:d0d4 with SMTP id
- adf61e73a8af0-344d441f94dmr353742637.43.1761583871244; 
- Mon, 27 Oct 2025 09:51:11 -0700 (PDT)
+ bh=3m8UeM8WArxna7YTxUHoHINCBMaN++zqrX8DMKwWVWk=;
+ b=mz3b/GFYOeTjdaNbjiOkpbWPZimgn1xxMAyZ6vfcIFaeKRbmce/nARe+PP1P9SccKT
+ 1dBfai7oEBtUgzP9ZajGEIVXKwuF9G53Ughoiap8pFzlxTkjJ3SxOmZmeFK5SLD2O20Z
+ irHGnS4cj7DrEtrZhk87Tno4hXO3X9IVmhfBcnMeYptYzUlHXZYSx0/ZMSgi2dJh3PRm
+ qmuTFnx2GIICdEqOwy9X0CksB4A7GHRBU9dTh39VgtxrV5llo3CJ2e/GMftyZqLEukJr
+ vkAL5tveDBiZ6Nswmfr5zBEQQ0ZdUunwte133zouh7PsxmJNknLys8BVTQPsi+299TDL
+ Zz2Q==
+X-Gm-Message-State: AOJu0YzZQwE+6YTdl4lGLyKcIK41iAloTCr2iNxG5+7epOfFxGslRiuU
+ oEYy+NQ64fi2iMsmOgDfcoxPlbQrhNPJIiEbOwRVqjJKhcoPB/+zZYWj91foBxfW1wg=
+X-Gm-Gg: ASbGnctOiXYclmmOtlPUXxE9DWr4RIPg64rbesvgNID3J/YOOd71oqGC/WJDRTsUD2V
+ Yz5XBxhSiYA6ocXgBPba0zDKMM1n0Wj+Jkuvc9oheqZaXA0Vey967YymCCBJif8o8C/1LaIfHxs
+ NmBzaE+LWptpVfKc+Zl0BmwQMaVw/Fi6JNFv93iVq8XB0kYmdHWZcYOtw/7ETRIJa2KzYcrDPGi
+ rS7oSbrg7IgA2sRDGiLGmx9gv/jIgl9b14ykcrd3PgI/XozkX4Wm/2nNinrzt48pWg7z3tZ8rh8
+ 3G1+fw0vvJNeTmP5AswkHHQlmKvCLY/bCfpb+n48DDaMz5yyS0iFAR0WdBWtMhKZmIUcf4yZnQb
+ UiivPSo5JIy+WVbCyYCLfoVN4qGvhI9tPBO8gT/+UOxUA+g+EYQ7E3UpAcmIhE0dn9uxnKuiAFi
+ L2QdaOAws8vRT+4z0q+kvgGbPylkrAJNGq5w==
+X-Google-Smtp-Source: AGHT+IGeH7XLwIAeSCnHoTSfBz4hA2mGZ6Mf5wsfhovdRq5i9u2XsHpc7kwwhuRQcbwJwftscWZZoQ==
+X-Received: by 2002:a17:903:2f91:b0:27d:69cc:9a6 with SMTP id
+ d9443c01a7336-294cb515f4dmr5873075ad.53.1761584329291; 
+ Mon, 27 Oct 2025 09:58:49 -0700 (PDT)
 Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-33fed7d27b2sm9137871a91.4.2025.10.27.09.51.10
+ d9443c01a7336-29498e3d2aasm89575585ad.88.2025.10.27.09.58.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 27 Oct 2025 09:51:11 -0700 (PDT)
-Date: Mon, 27 Oct 2025 09:51:09 -0700
+ Mon, 27 Oct 2025 09:58:49 -0700 (PDT)
+Date: Mon, 27 Oct 2025 09:58:47 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Jiawen Wu <jiawenwu@trustnetic.com>
-Cc: dev@dpdk.org, zaiyuwang@trustnetic.com
-Subject: Re: [PATCH 00/19] Wangxun Fixes
-Message-ID: <20251027095109.3740e7f5@phoenix>
-In-Reply-To: <20251027031542.10512-1-jiawenwu@trustnetic.com>
-References: <20251027031542.10512-1-jiawenwu@trustnetic.com>
+To: "Robin Jarry" <rjarry@redhat.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [PATCH dpdk 3/4] net/tap: use netlink if possible
+Message-ID: <20251027095847.2a1afb37@phoenix>
+In-Reply-To: <DDT8HYDZ6BS5.4UGBB34IPO3I@redhat.com>
+References: <20251027153750.445275-6-rjarry@redhat.com>
+ <20251027153750.445275-9-rjarry@redhat.com>
+ <20251027090642.13524bf2@phoenix>
+ <DDT8HYDZ6BS5.4UGBB34IPO3I@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,30 +84,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 27 Oct 2025 11:15:23 +0800
-Jiawen Wu <jiawenwu@trustnetic.com> wrote:
+On Mon, 27 Oct 2025 17:10:24 +0100
+"Robin Jarry" <rjarry@redhat.com> wrote:
 
-> Fix some usage issues.
+> Stephen Hemminger, Oct 27, 2025 at 17:06:
+> > Netlink has been available since linux 2.4!
+> > Rather than having two code paths, only one of which gets tested,
+> > better to commit to netlink and use it.
+> >
+> > Since dealing with netlink is a nuisance, I wonder if using
+> > libmnl would be better. Yes, it creates new dependency but netlink
+> > handling has been place with lots of Coverity overruns etc.  
 > 
-> Jiawen Wu (19):
->   net/txgbe: fix hardware statistic rx_l3_l4_xsum_error
->   net/ngbe: fix hardware statistic rx_l3_l4_xsum_error
->   net/txgbe: reduce memory size of ring descriptors
->   net/ngbe: reduce memory size of ring descriptors
->   net/txgbe: fix VF Rx buffer size in config register
->   net/ngbe: fix VF Rx buffer size in config register
->   net/txgbe: remove duplicate txq assignment
->   net/txgbe: add device arguments for FDIR
->   net/txgbe: fix the maxinum number of FDIR filter
->   net/txgbe: fix FDIR mode is not be cleared
->   net/txgbe: fix FDIR drop action for L4 match packets
->   net/txgbe: fix to create FDIR filter for tunnel SCTP packet
->   net/txgbe: filter FDIR match flex bytes for tunnel packets
->   net/txgbe: fix FDIR rule raw relative for L3 packets
->   net/txgbe: fix FDIR input mask
->   net/txgbe: switch to use FDIR when ntuple filter is full
->   net/txgbe: fix VF-PF message for ntuple flow filter
->   net/txgbe: switch to use FDIR on VF
->   net/txgbe: remove unsupported flow action mark
+> I don't mind replacing ioctl with netlink calls but adding a libmnl
+> dependency just for one driver seems overkill.
+> 
 
-Queued to next-net
+There is netlink handling in a couple drivers but probably not worth
+bothering for now.
