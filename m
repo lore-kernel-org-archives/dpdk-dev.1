@@ -2,41 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED8FCCF9E9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 01:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6178CCF9E5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Oct 2025 03:15:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A0F974026F;
-	Mon, 27 Oct 2025 02:53:22 +0100 (CET)
-Received: from cstnet.cn (smtp85.cstnet.cn [159.226.251.85])
- by mails.dpdk.org (Postfix) with ESMTP id B04594003C
- for <dev@dpdk.org>; Mon, 27 Oct 2025 02:53:20 +0100 (CET)
-Received: from sunyuechi$iscas.ac.cn ( [113.231.127.37] ) by
- ajax-webmail-APP-13 (Coremail) ; Mon, 27 Oct 2025 09:53:16 +0800
- (GMT+08:00)
-X-Originating-IP: [113.231.127.37]
-Date: Mon, 27 Oct 2025 09:53:16 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: sunyuechi@iscas.ac.cn
+	by mails.dpdk.org (Postfix) with ESMTP id ECBCF402D2;
+	Mon, 27 Oct 2025 04:15:56 +0100 (CET)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+ by mails.dpdk.org (Postfix) with ESMTP id 8A3444003C;
+ Mon, 27 Oct 2025 04:15:54 +0100 (CET)
+X-QQ-mid: esmtpsz16t1761534951t815f250f
+X-QQ-Originating-IP: s3Wlbpb5r4WLqml6iNhDiKEBUJwlYNy0wS2Q4oLepX4=
+Received: from lap-jiawenwu.trustnetic.com ( [36.20.107.118])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Mon, 27 Oct 2025 11:15:50 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 14258764966893980710
+EX-QQ-RecipientCnt: 4
+From: Jiawen Wu <jiawenwu@trustnetic.com>
 To: dev@dpdk.org
-Cc: =?UTF-8?Q?Stanis=C5=82aw_Kardach?= <stanislaw.kardach@gmail.com>, 
- "Bruce Richardson" <bruce.richardson@intel.com>
-Subject: Re: Re: [PATCH] config/riscv: add rv64gcv cross compilation target
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.1-cmXT5 build
- 20240627(e6c6db66) Copyright (c) 2002-2025 www.mailtech.cn cnic.cn
-In-Reply-To: <224af7e6.115d8.199b98c0ff2.Coremail.sunyuechi@iscas.ac.cn>
-References: <20250923150734.2208125-1-sunyuechi@iscas.ac.cn>
- <224af7e6.115d8.199b98c0ff2.Coremail.sunyuechi@iscas.ac.cn>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+Cc: zaiyuwang@trustnetic.com, Jiawen Wu <jiawenwu@trustnetic.com>,
+ stable@dpdk.org
+Subject: [PATCH 01/19] net/txgbe: fix hardware statistic rx_l3_l4_xsum_error
+Date: Mon, 27 Oct 2025 11:15:24 +0800
+Message-Id: <20251027031542.10512-2-jiawenwu@trustnetic.com>
+X-Mailer: git-send-email 2.21.0.windows.1
+In-Reply-To: <20251027031542.10512-1-jiawenwu@trustnetic.com>
+References: <20251027031542.10512-1-jiawenwu@trustnetic.com>
 MIME-Version: 1.0
-Message-ID: <65e3478c.507d1.19a235ea501.Coremail.sunyuechi@iscas.ac.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: twCowAAX5PuM0P5o_cIAAA--.9185W
-X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAYIAmj+y+YE8gABsM
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
- CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
- daVFxhVjvjDU=
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
+X-QQ-XMAILINFO: OWGNuuDQspzCUvyd8qNCf3YNaX93j6WqqUuWv8p2qVLVo1iKXSYyy9Mh
+ g4fZ9vPvUgtIa4n/Cl1m75rmwgSuyCzkc+ER+wnE7zsvTKP8Pxn6AbZg8muEPJn07AmupRn
+ jHmAXK5W8R7qKRJG+jUuuUQMMbyzf6f484OMUgjDnuEjb9Or0MtfeAMSaI7k8qaIORcmG6k
+ fE78aZMFRrN7ZUZ+4fmwLUkbMuqfRk4Gh5nwcLVXKHQBmNv2YvXgluGtTklhs4UUCvkBrke
+ 9fyezYKDukQOr1cbQO5pWJbZogKcFrEd3jEfuKjFYhcwsNrqEr0JOK3KTm9rWp7bzhHyXNM
+ u2Qu7mLjU7OwJjPkEuLpx9Ia2U+3/or8T7nC+ZrV1if55pm4JVfkjNjQhW8wZiw1Ryv56Ml
+ xR9C83rLUukpymSGWmRz6rkOPSgB6NRbtWHzUiT1ZQZmpV7gtgU+roXggWVSy81thd6n2rg
+ ObzEOJ+Tjo33nwXMrT0xdX/XD8LCUuTXvyQR5phM2ukw5SZPxgFmnq+kacmXCvJEa0DquZO
+ D6muUfG5WYEwScn5ltKEvGLKbj2NOub9ZP+WdbOc0mQ4gehrQCzEaQlNVXDgPK9q8oC3Cph
+ bctQYfPiImhLtHEGGeuxYNZtzlniXCbsgHIl5l0bYWLiP31g5doeMfRUHV7JfNe3ZXtYi44
+ uh5HK1epxrV1VCNZCroOf1jAx4kaXY3itenknqZD8AwNYXTrdsO9oP8S333Dm3m9c+Pf7Ow
+ P5ghP8xTCzEVkRDDAgf3I9YFvLsIwpYMfRmzL0PwAVJyzULFY4nSpqaQB6Bc7DtWxvq0WII
+ oY6bcDDrtNk2MUAgt4wV2pLb2xPKSNMzFbbWWnLxFos5VUGRFgx2ODi8cvgeVIFc6lhE7J4
+ zkm3noLaMnJezbSZxNjlBB9Fzee04PaE5emin4ptVbR+C1WgyR8HYxLezvD/kUmANhqHQ5M
+ L5OOhGyAmmxRXKWzCk7Ej5mmqtQjPFqQ42mQZtyScIBFayWUOGSMnIaLuRLUh9YlyjtAzsx
+ Q/iPufcQ==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,86 +64,204 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-UGluZwoKCiZndDsgLS0tLS3ljp/lp4vpgq7ku7YtLS0tLQomZ3Q7IOWPkeS7tuS6ujogc3VueXVl
-Y2hpQGlzY2FzLmFjLmNuCiZndDsg5Y+R6YCB5pe26Ze0OiAyMDI1LTEwLTA2IDIwOjQzOjA4ICjm
-mJ/mnJ/kuIApCiZndDsg5pS25Lu25Lq6OiBkZXZAZHBkay5vcmcKJmd0OyDmioTpgIE6ICJTdGFu
-aXPFgmF3IEthcmRhY2giIDxzdGFuaXNsYXcua2FyZGFjaEBnbWFpbC5jb20+LCAiQnJ1Y2UgUmlj
-aGFyZHNvbiIgPGJydWNlLnJpY2hhcmRzb25AaW50ZWwuY29tPgomZ3Q7IOS4u+mimDogUmU6IFtQ
-QVRDSF0gY29uZmlnL3Jpc2N2OiBhZGQgcnY2NGdjdiBjcm9zcyBjb21waWxhdGlvbiB0YXJnZXQK
-Jmd0OyAKJmd0OyBIaSwgaG93IGlzIHRoaXMgcGF0Y2g/CiZndDsgCiZndDsgCiZndDsgJmd0OyAt
-LS0tLeWOn+Wni+mCruS7ti0tLS0tCiZndDsgJmd0OyDlj5Hku7bkuro6IHN1bnl1ZWNoaUBpc2Nh
-cy5hYy5jbgomZ3Q7ICZndDsg5Y+R6YCB5pe26Ze0OiAyMDI1LTA5LTIzIDIzOjA3OjM0ICjmmJ/m
-nJ/kuowpCiZndDsgJmd0OyDmlLbku7bkuro6IGRldkBkcGRrLm9yZwomZ3Q7ICZndDsg5oqE6YCB
-OiAiU3VuIFl1ZWNoaSIgPHN1bnl1ZWNoaUBpc2Nhcy5hYy5jbj4sICJTdGFuaXPFgmF3IEthcmRh
-Y2giIDxzdGFuaXNsYXcua2FyZGFjaEBnbWFpbC5jb20+LCAiQnJ1Y2UgUmljaGFyZHNvbiIgPGJy
-dWNlLnJpY2hhcmRzb25AaW50ZWwuY29tPgomZ3Q7ICZndDsg5Li76aKYOiBbUEFUQ0hdIGNvbmZp
-Zy9yaXNjdjogYWRkIHJ2NjRnY3YgY3Jvc3MgY29tcGlsYXRpb24gdGFyZ2V0CiZndDsgJmd0OyAK
-Jmd0OyAmZ3Q7IEZyb206IFN1biBZdWVjaGkgPHN1bnl1ZWNoaUBpc2Nhcy5hYy5jbj4KJmd0OyAm
-Z3Q7IAomZ3Q7ICZndDsgQWRkIGEgY3Jvc3MgZmlsZSBmb3IgcnY2NGdjdiwgZW5hYmxlIGl0IGlu
-IGRldnRvb2xzL3Rlc3QtbWVzb24tYnVpbGRzLnNoLAomZ3Q7ICZndDsgYW5kIHVwZGF0ZSB0aGUg
-UklTQy1WIGNyb3NzLWJ1aWxkIGd1aWRlIHRvIHN1cHBvcnQgdGhlIHZlY3RvciBleHRlbnNpb24u
-CiZndDsgJmd0OyAKJmd0OyAmZ3Q7IFNpZ25lZC1vZmYtYnk6IFN1biBZdWVjaGkgPHN1bnl1ZWNo
-aUBpc2Nhcy5hYy5jbj4KJmd0OyAmZ3Q7IC0tLQomZ3Q7ICZndDsgIGNvbmZpZy9yaXNjdi9tZXNv
-bi5idWlsZCAgICAgICAgICAgICAgICAgICAgICAgIHwgIDMgKystCiZndDsgJmd0OyAgY29uZmln
-L3Jpc2N2L3Jpc2N2NjRfcnY2NGdjdl9saW51eF9nY2MgICAgICAgICAgfCAxNyArKysrKysrKysr
-KysrKysrKwomZ3Q7ICZndDsgIGRldnRvb2xzL3Rlc3QtbWVzb24tYnVpbGRzLnNoICAgICAgICAg
-ICAgICAgICAgIHwgIDQgKysrKwomZ3Q7ICZndDsgIC4uLi9saW51eF9nc2cvY3Jvc3NfYnVpbGRf
-ZHBka19mb3JfcmlzY3YucnN0ICAgIHwgIDIgKysKJmd0OyAmZ3Q7ICA0IGZpbGVzIGNoYW5nZWQs
-IDI1IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKJmd0OyAmZ3Q7ICBjcmVhdGUgbW9kZSAx
-MDA2NDQgY29uZmlnL3Jpc2N2L3Jpc2N2NjRfcnY2NGdjdl9saW51eF9nY2MKJmd0OyAmZ3Q7IAom
-Z3Q7ICZndDsgZGlmZiAtLWdpdCBhL2NvbmZpZy9yaXNjdi9tZXNvbi5idWlsZCBiL2NvbmZpZy9y
-aXNjdi9tZXNvbi5idWlsZAomZ3Q7ICZndDsgaW5kZXggZjNkYWVhMGMwZS4uYTA2NDI5YTFlMiAx
-MDA2NDQKJmd0OyAmZ3Q7IC0tLSBhL2NvbmZpZy9yaXNjdi9tZXNvbi5idWlsZAomZ3Q7ICZndDsg
-KysrIGIvY29uZmlnL3Jpc2N2L21lc29uLmJ1aWxkCiZndDsgJmd0OyBAQCAtNDMsNyArNDMsOCBA
-QCB2ZW5kb3JfZ2VuZXJpYyA9IHsKJmd0OyAmZ3Q7ICAgICAgICAgIFsnUlRFX01BWF9OVU1BX05P
-REVTJywgMl0KJmd0OyAmZ3Q7ICAgICAgXSwKJmd0OyAmZ3Q7ICAgICAgJ2FyY2hfY29uZmlnJzog
-ewomZ3Q7ICZndDsgLSAgICAgICAgJ2dlbmVyaWMnOiB7J21hY2hpbmVfYXJncyc6IFsnLW1hcmNo
-PXJ2NjRnYyddfQomZ3Q7ICZndDsgKyAgICAgICAgJ2dlbmVyaWMnOiB7J21hY2hpbmVfYXJncyc6
-IFsnLW1hcmNoPXJ2NjRnYyddfSwKJmd0OyAmZ3Q7ICsgICAgICAgICdydjY0Z2N2JzogeydtYWNo
-aW5lX2FyZ3MnOiBbJy1tYXJjaD1ydjY0Z2N2J119LAomZ3Q7ICZndDsgICAgICB9CiZndDsgJmd0
-OyAgfQomZ3Q7ICZndDsgIAomZ3Q7ICZndDsgZGlmZiAtLWdpdCBhL2NvbmZpZy9yaXNjdi9yaXNj
-djY0X3J2NjRnY3ZfbGludXhfZ2NjIGIvY29uZmlnL3Jpc2N2L3Jpc2N2NjRfcnY2NGdjdl9saW51
-eF9nY2MKJmd0OyAmZ3Q7IG5ldyBmaWxlIG1vZGUgMTAwNjQ0CiZndDsgJmd0OyBpbmRleCAwMDAw
-MDAwMDAwLi5jY2M1MTE1ZGVjCiZndDsgJmd0OyAtLS0gL2Rldi9udWxsCiZndDsgJmd0OyArKysg
-Yi9jb25maWcvcmlzY3YvcmlzY3Y2NF9ydjY0Z2N2X2xpbnV4X2djYwomZ3Q7ICZndDsgQEAgLTAs
-MCArMSwxNyBAQAomZ3Q7ICZndDsgK1tiaW5hcmllc10KJmd0OyAmZ3Q7ICtjID0gWydjY2FjaGUn
-LCAncmlzY3Y2NC1saW51eC1nbnUtZ2NjJ10KJmd0OyAmZ3Q7ICtjcHAgPSBbJ2NjYWNoZScsICdy
-aXNjdjY0LWxpbnV4LWdudS1nKysnXQomZ3Q7ICZndDsgK2FyID0gJ3Jpc2N2NjQtbGludXgtZ251
-LWFyJwomZ3Q7ICZndDsgK3N0cmlwID0gJ3Jpc2N2NjQtbGludXgtZ251LXN0cmlwJwomZ3Q7ICZn
-dDsgK3BjYXAtY29uZmlnID0gJycKJmd0OyAmZ3Q7ICsKJmd0OyAmZ3Q7ICtbaG9zdF9tYWNoaW5l
-XQomZ3Q7ICZndDsgK3N5c3RlbSA9ICdsaW51eCcKJmd0OyAmZ3Q7ICtjcHVfZmFtaWx5ID0gJ3Jp
-c2N2NjQnCiZndDsgJmd0OyArY3B1ID0gJ3J2NjRnY3YnCiZndDsgJmd0OyArZW5kaWFuID0gJ2xp
-dHRsZScKJmd0OyAmZ3Q7ICsKJmd0OyAmZ3Q7ICtbcHJvcGVydGllc10KJmd0OyAmZ3Q7ICt2ZW5k
-b3JfaWQgPSAnZ2VuZXJpYycKJmd0OyAmZ3Q7ICthcmNoX2lkID0gJ3J2NjRnY3YnCiZndDsgJmd0
-OyArcGtnX2NvbmZpZ19saWJkaXIgPSAnL3Vzci9saWIvcmlzY3Y2NC1saW51eC1nbnUvcGtnY29u
-ZmlnJwomZ3Q7ICZndDsgZGlmZiAtLWdpdCBhL2RldnRvb2xzL3Rlc3QtbWVzb24tYnVpbGRzLnNo
-IGIvZGV2dG9vbHMvdGVzdC1tZXNvbi1idWlsZHMuc2gKJmd0OyAmZ3Q7IGluZGV4IDRmZmYxZjcx
-NzcuLjRmMDdmODRlYjAgMTAwNzU1CiZndDsgJmd0OyAtLS0gYS9kZXZ0b29scy90ZXN0LW1lc29u
-LWJ1aWxkcy5zaAomZ3Q7ICZndDsgKysrIGIvZGV2dG9vbHMvdGVzdC1tZXNvbi1idWlsZHMuc2gK
-Jmd0OyAmZ3Q7IEBAIC0yOTAsNiArMjkwLDEwIEBAIGJ1aWxkIGJ1aWxkLXBwYzY0LXBvd2VyOC1n
-Y2MgJGYgQUJJICR1c2Vfc2hhcmVkCiZndDsgJmd0OyAgZj0kc3JjZGlyL2NvbmZpZy9yaXNjdi9y
-aXNjdjY0X2xpbnV4X2djYwomZ3Q7ICZndDsgIGJ1aWxkIGJ1aWxkLXJpc2N2NjQtZ2VuZXJpYy1n
-Y2MgJGYgQUJJICR1c2Vfc2hhcmVkCiZndDsgJmd0OyAgCiZndDsgJmd0OyArIyBSSVNDLVYgdmVj
-dG9yIChydjY0Z2N2KQomZ3Q7ICZndDsgK2Y9JHNyY2Rpci9jb25maWcvcmlzY3YvcmlzY3Y2NF9y
-djY0Z2N2X2xpbnV4X2djYwomZ3Q7ICZndDsgK2J1aWxkIGJ1aWxkLXJpc2N2NjRfcnY2NGdjdl9n
-Y2MgJGYgQUJJICR1c2Vfc2hhcmVkCiZndDsgJmd0OyArCiZndDsgJmd0OyAgIyBUZXN0IGluc3Rh
-bGxhdGlvbiBvZiB0aGUgeDg2LWdlbmVyaWMgdGFyZ2V0LCB0byBiZSB1c2VkIGZvciBjaGVja2lu
-ZwomZ3Q7ICZndDsgICMgdGhlIHNhbXBsZSBhcHBzIGJ1aWxkIHVzaW5nIHRoZSBwa2ctY29uZmln
-IGZpbGUgZm9yIGNmbGFncyBhbmQgbGlicwomZ3Q7ICZndDsgIGxvYWRfZW52IGNjCiZndDsgJmd0
-OyBkaWZmIC0tZ2l0IGEvZG9jL2d1aWRlcy9saW51eF9nc2cvY3Jvc3NfYnVpbGRfZHBka19mb3Jf
-cmlzY3YucnN0IGIvZG9jL2d1aWRlcy9saW51eF9nc2cvY3Jvc3NfYnVpbGRfZHBka19mb3Jfcmlz
-Y3YucnN0CiZndDsgJmd0OyBpbmRleCA3ZDdmN2FjNzJiLi5iY2JhMTJhNjA0IDEwMDY0NAomZ3Q7
-ICZndDsgLS0tIGEvZG9jL2d1aWRlcy9saW51eF9nc2cvY3Jvc3NfYnVpbGRfZHBka19mb3Jfcmlz
-Y3YucnN0CiZndDsgJmd0OyArKysgYi9kb2MvZ3VpZGVzL2xpbnV4X2dzZy9jcm9zc19idWlsZF9k
-cGRrX2Zvcl9yaXNjdi5yc3QKJmd0OyAmZ3Q7IEBAIC0xMDgsNiArMTA4LDggQEAgQ3VycmVudGx5
-IHRoZSBmb2xsb3dpbmcgdGFyZ2V0cyBhcmUgc3VwcG9ydGVkOgomZ3Q7ICZndDsgIAomZ3Q7ICZn
-dDsgICogR2VuZXJpYyBydjY0Z2MgSVNBOiBgYGNvbmZpZy9yaXNjdi9yaXNjdjY0X2xpbnV4X2dj
-Y2BgCiZndDsgJmd0OyAgCiZndDsgJmd0OyArKiBSVjY0R0NWIElTQTogYGBjb25maWcvcmlzY3Yv
-cmlzY3Y2NF9ydjY0Z2N2X2xpbnV4X2djY2BgCiZndDsgJmd0OyArCiZndDsgJmd0OyAgKiBTaUZp
-dmUgVTc0MCBTb0M6IGBgY29uZmlnL3Jpc2N2L3Jpc2N2NjRfc2lmaXZlX3U3NDBfbGludXhfZ2Nj
-YGAKJmd0OyAmZ3Q7ICAKJmd0OyAmZ3Q7ICBUbyBhZGQgYSBuZXcgdGFyZ2V0IHN1cHBvcnQsIGBg
-Y29uZmlnL3Jpc2N2L21lc29uLmJ1aWxkYGAgaGFzIHRvIGJlIG1vZGlmaWVkIGJ5CiZndDsgJmd0
-OyAtLSAKJmd0OyAmZ3Q7IDIuNTEuMAomZ3Q7IDwvc3VueXVlY2hpQGlzY2FzLmFjLmNuPjwvc3Vu
-eXVlY2hpQGlzY2FzLmFjLmNuPjwvYnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5jb20+PC9zdGFuaXNs
-YXcua2FyZGFjaEBnbWFpbC5jb20+PC9zdW55dWVjaGlAaXNjYXMuYWMuY24+CjwvYnJ1Y2Uucmlj
-aGFyZHNvbkBpbnRlbC5jb20+PC9zdGFuaXNsYXcua2FyZGFjaEBnbWFpbC5jb20+
+Count the rx_l3_l4_xsum_error statistic in Rx path. Since this hardware
+register counter is missing, resulted in the count always showing as 0
+in error.
+
+Fixes: 91fe49c87d76 ("net/txgbe: support device xstats")
+Cc: stable@dpdk.org
+Signed-off-by: Jiawen Wu <jiawenwu@trustnetic.com>
+---
+ drivers/net/txgbe/txgbe_ethdev.c        | 17 +++++++++++++++++
+ drivers/net/txgbe/txgbe_rxtx.c          | 12 ++++++++----
+ drivers/net/txgbe/txgbe_rxtx.h          |  1 +
+ drivers/net/txgbe/txgbe_rxtx_vec_neon.c |  9 ++++++++-
+ drivers/net/txgbe/txgbe_rxtx_vec_sse.c  |  9 ++++++++-
+ 5 files changed, 42 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index 7b040b08c5..cbb2ea815f 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -2666,6 +2666,8 @@ txgbe_dev_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
+ {
+ 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
+ 	struct txgbe_hw_stats *hw_stats = TXGBE_DEV_STATS(dev);
++	struct txgbe_rx_queue *rxq;
++	uint64_t rx_csum_err = 0;
+ 	unsigned int i, count;
+ 
+ 	txgbe_read_stats_registers(hw, hw_stats);
+@@ -2679,6 +2681,13 @@ txgbe_dev_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
+ 
+ 	limit = min(limit, txgbe_xstats_calc_num(dev));
+ 
++	/* Rx Checksum Errors */
++	for (i = 0; i < dev->data->nb_rx_queues; i++) {
++		rxq = dev->data->rx_queues[i];
++		rx_csum_err += rxq->csum_err;
++	}
++	hw_stats->rx_l3_l4_xsum_error = rx_csum_err;
++
+ 	/* Extended stats from txgbe_hw_stats */
+ 	for (i = 0; i < limit; i++) {
+ 		uint32_t offset = 0;
+@@ -2755,6 +2764,8 @@ txgbe_dev_xstats_reset(struct rte_eth_dev *dev)
+ {
+ 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
+ 	struct txgbe_hw_stats *hw_stats = TXGBE_DEV_STATS(dev);
++	struct txgbe_rx_queue *rxq;
++	int i = 0;
+ 
+ 	/* HW registers are cleared on read */
+ 	hw->offset_loaded = 0;
+@@ -2764,6 +2775,12 @@ txgbe_dev_xstats_reset(struct rte_eth_dev *dev)
+ 	/* Reset software totals */
+ 	memset(hw_stats, 0, sizeof(*hw_stats));
+ 
++	/* Reset rxq checksum errors */
++	for (i = 0; i < dev->data->nb_rx_queues; i++) {
++		rxq = dev->data->rx_queues[i];
++		rxq->csum_err = 0;
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
+index 167bda8019..c606180741 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.c
++++ b/drivers/net/txgbe/txgbe_rxtx.c
+@@ -1290,7 +1290,7 @@ rx_desc_status_to_pkt_flags(uint32_t rx_status, uint64_t vlan_flags)
+ }
+ 
+ static inline uint64_t
+-rx_desc_error_to_pkt_flags(uint32_t rx_status)
++rx_desc_error_to_pkt_flags(uint32_t rx_status, struct txgbe_rx_queue *rxq)
+ {
+ 	uint64_t pkt_flags = 0;
+ 
+@@ -1298,16 +1298,19 @@ rx_desc_error_to_pkt_flags(uint32_t rx_status)
+ 	if (rx_status & TXGBE_RXD_STAT_IPCS) {
+ 		pkt_flags |= (rx_status & TXGBE_RXD_ERR_IPCS
+ 				? RTE_MBUF_F_RX_IP_CKSUM_BAD : RTE_MBUF_F_RX_IP_CKSUM_GOOD);
++		rxq->csum_err += !!(rx_status & TXGBE_RXD_ERR_IPCS);
+ 	}
+ 
+ 	if (rx_status & TXGBE_RXD_STAT_L4CS) {
+ 		pkt_flags |= (rx_status & TXGBE_RXD_ERR_L4CS
+ 				? RTE_MBUF_F_RX_L4_CKSUM_BAD : RTE_MBUF_F_RX_L4_CKSUM_GOOD);
++		rxq->csum_err += !!(rx_status & TXGBE_RXD_ERR_L4CS);
+ 	}
+ 
+ 	if (rx_status & TXGBE_RXD_STAT_EIPCS &&
+ 	    rx_status & TXGBE_RXD_ERR_EIPCS) {
+ 		pkt_flags |= RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD;
++		rxq->csum_err += !!(rx_status & TXGBE_RXD_ERR_EIPCS);
+ 	}
+ 
+ #ifdef RTE_LIB_SECURITY
+@@ -1389,7 +1392,7 @@ txgbe_rx_scan_hw_ring(struct txgbe_rx_queue *rxq)
+ 			/* convert descriptor fields to rte mbuf flags */
+ 			pkt_flags = rx_desc_status_to_pkt_flags(s[j],
+ 					rxq->vlan_flags);
+-			pkt_flags |= rx_desc_error_to_pkt_flags(s[j]);
++			pkt_flags |= rx_desc_error_to_pkt_flags(s[j], rxq);
+ 			pkt_flags |=
+ 				txgbe_rxd_pkt_info_to_pkt_flags(pkt_info[j]);
+ 			mb->ol_flags = pkt_flags;
+@@ -1728,7 +1731,7 @@ txgbe_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 
+ 		pkt_flags = rx_desc_status_to_pkt_flags(staterr,
+ 					rxq->vlan_flags);
+-		pkt_flags |= rx_desc_error_to_pkt_flags(staterr);
++		pkt_flags |= rx_desc_error_to_pkt_flags(staterr, rxq);
+ 		pkt_flags |= txgbe_rxd_pkt_info_to_pkt_flags(pkt_info);
+ 		rxm->ol_flags = pkt_flags;
+ 		rxm->packet_type = txgbe_rxd_pkt_info_to_pkt_type(pkt_info,
+@@ -1804,7 +1807,7 @@ txgbe_fill_cluster_head_buf(struct rte_mbuf *head, struct txgbe_rx_desc *desc,
+ 	head->vlan_tci = rte_le_to_cpu_16(desc->qw1.hi.tag);
+ 	pkt_info = rte_le_to_cpu_32(desc->qw0.dw0);
+ 	pkt_flags = rx_desc_status_to_pkt_flags(staterr, rxq->vlan_flags);
+-	pkt_flags |= rx_desc_error_to_pkt_flags(staterr);
++	pkt_flags |= rx_desc_error_to_pkt_flags(staterr, rxq);
+ 	pkt_flags |= txgbe_rxd_pkt_info_to_pkt_flags(pkt_info);
+ 	if (TXGBE_RXD_RSCCNT(desc->qw0.dw0))
+ 		pkt_flags |= RTE_MBUF_F_RX_LRO;
+@@ -2753,6 +2756,7 @@ txgbe_reset_rx_queue(struct txgbe_adapter *adapter, struct txgbe_rx_queue *rxq)
+ 	rxq->rx_free_trigger = (uint16_t)(rxq->rx_free_thresh - 1);
+ 	rxq->rx_tail = 0;
+ 	rxq->nb_rx_hold = 0;
++	rxq->csum_err = 0;
+ 	rte_pktmbuf_free(rxq->pkt_first_seg);
+ 	rxq->pkt_first_seg = NULL;
+ 	rxq->pkt_last_seg = NULL;
+diff --git a/drivers/net/txgbe/txgbe_rxtx.h b/drivers/net/txgbe/txgbe_rxtx.h
+index b1ac03576f..02e2617cce 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.h
++++ b/drivers/net/txgbe/txgbe_rxtx.h
+@@ -323,6 +323,7 @@ struct txgbe_rx_queue {
+ 	/** hold packets to return to application */
+ 	struct rte_mbuf *rx_stage[RTE_PMD_TXGBE_RX_MAX_BURST * 2];
+ 	const struct rte_memzone *mz;
++	uint64_t            csum_err;
+ };
+ 
+ /**
+diff --git a/drivers/net/txgbe/txgbe_rxtx_vec_neon.c b/drivers/net/txgbe/txgbe_rxtx_vec_neon.c
+index a56e2f4164..c408a65036 100644
+--- a/drivers/net/txgbe/txgbe_rxtx_vec_neon.c
++++ b/drivers/net/txgbe/txgbe_rxtx_vec_neon.c
+@@ -222,7 +222,7 @@ _recv_raw_pkts_vec(struct txgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 	volatile struct txgbe_rx_desc *rxdp;
+ 	struct txgbe_rx_entry *sw_ring;
+ 	uint16_t nb_pkts_recd;
+-	int pos;
++	int pos, i;
+ 	uint8x16_t shuf_msk = {
+ 		0xFF, 0xFF,
+ 		0xFF, 0xFF,  /* skip 32 bits pkt_type */
+@@ -331,6 +331,13 @@ _recv_raw_pkts_vec(struct txgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 		desc_to_olflags_v(sterr_tmp1, sterr_tmp2, staterr, vlan_flags,
+ 				  &rx_pkts[pos]);
+ 
++		for (i = 0; i < RTE_TXGBE_DESCS_PER_LOOP; i++) {
++			if (rx_pkts[pos + i]->ol_flags &
++			    (RTE_MBUF_F_RX_IP_CKSUM_BAD |
++			     RTE_MBUF_F_RX_L4_CKSUM_BAD))
++				rxq->csum_err++;
++		}
++
+ 		/* D.2 pkt 3,4 set in_port/nb_seg and remove crc */
+ 		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb4), crc_adjust);
+ 		pkt_mb4 = vreinterpretq_u8_u16(tmp);
+diff --git a/drivers/net/txgbe/txgbe_rxtx_vec_sse.c b/drivers/net/txgbe/txgbe_rxtx_vec_sse.c
+index 8ecce33471..03c2af43d5 100644
+--- a/drivers/net/txgbe/txgbe_rxtx_vec_sse.c
++++ b/drivers/net/txgbe/txgbe_rxtx_vec_sse.c
+@@ -283,7 +283,7 @@ _recv_raw_pkts_vec(struct txgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ #ifdef RTE_LIB_SECURITY
+ 	uint8_t use_ipsec = rxq->using_ipsec;
+ #endif
+-	int pos;
++	int pos, i;
+ 	uint64_t var;
+ 	__m128i shuf_msk;
+ 	__m128i crc_adjust = _mm_set_epi16(0, 0, 0, /* ignore non-length fields */
+@@ -451,6 +451,13 @@ _recv_raw_pkts_vec(struct txgbe_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 		/* set ol_flags with vlan packet type */
+ 		desc_to_olflags_v(descs, mbuf_init, vlan_flags, &rx_pkts[pos]);
+ 
++		for (i = 0; i < RTE_TXGBE_DESCS_PER_LOOP; i++) {
++			if (rx_pkts[pos + i]->ol_flags &
++			    (RTE_MBUF_F_RX_IP_CKSUM_BAD |
++			     RTE_MBUF_F_RX_L4_CKSUM_BAD))
++				rxq->csum_err++;
++		}
++
+ #ifdef RTE_LIB_SECURITY
+ 		if (unlikely(use_ipsec))
+ 			desc_to_olflags_v_ipsec(descs, &rx_pkts[pos]);
+-- 
+2.48.1
+
