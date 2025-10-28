@@ -2,38 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 725A0CCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 08:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5210CCD1BF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 08:43:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A863740262;
-	Tue, 28 Oct 2025 09:33:36 +0100 (CET)
-Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net
- (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
- by mails.dpdk.org (Postfix) with ESMTP id 564A64021E
- for <dev@dpdk.org>; Tue, 28 Oct 2025 09:33:35 +0100 (CET)
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
- by hzbj-icmmx-6 (Coremail) with SMTP id AQAAfwB3ZVzZfwBp5d54AA--.42770S2;
- Tue, 28 Oct 2025 16:33:29 +0800 (CST)
-Received: from localhost.localdomain (unknown [218.76.62.144])
- by mail (Coremail) with SMTP id AQAAfwDHLOrXfwBpavZzAA--.54120S3;
- Tue, 28 Oct 2025 16:33:27 +0800 (CST)
-From: Wencheng Li <liwencheng@phytium.com.cn>
-To: dev@dpdk.org
-Subject: [PATCH v11 3/3] net/macb: add necessary docs and update related files
-Date: Tue, 28 Oct 2025 08:33:21 +0000
-Message-Id: <1761640401-80633-1-git-send-email-liwencheng@phytium.com.cn>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1755664500-9517-1-git-send-email-liwencheng@phytium.com.cn>
-References: <1755664500-9517-1-git-send-email-liwencheng@phytium.com.cn>
-X-CM-TRANSID: AQAAfwDHLOrXfwBpavZzAA--.54120S3
-X-CM-SenderInfo: polzv0xfkh0wo6sk53xlxphulrpou0/
-Authentication-Results: hzbj-icmmx-6; spf=neutral smtp.mail=liwencheng
- @phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoWxKrW5Ar4kGw4xWF4xZw48Crg_yoWfWw17pw
- sxAFyfWrZ7XrWfZr93ta18Zr4rua1vy3yUuF1xt34kXFn8Cr4FqF4xtrWrC397WFW3Aa1F
- q3W5Xry3ZFn5G3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
- DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
- UUUUU
+	by mails.dpdk.org (Postfix) with ESMTP id 31AB240262;
+	Tue, 28 Oct 2025 09:43:11 +0100 (CET)
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com
+ [113.46.200.224])
+ by mails.dpdk.org (Postfix) with ESMTP id C22794021E
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 09:43:09 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=yYi/lwIDOEPOFAyiEZuBxUYJE47Uj2pqGwJkJb4IGaA=;
+ b=hJW3X7fNGNIDUlFzlqNFOfh0c37euRINHj1Ch5w2D1dTzXigZ44l4MIlgzQ7OnJE8hkopqwpK
+ fI/NXa6sRmscynzC6QFZxrJ6xGIvo5Rf0nOav5FwMsF0ML9d3iQlVqnxA6b9jeopXgKtmjE+LBS
+ 3K1zjVBPxEHj1rvo2DdMFKo=
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+ by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4cwkQl5Bfkz1cyVm;
+ Tue, 28 Oct 2025 16:42:39 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id E47801402A5;
+ Tue, 28 Oct 2025 16:43:07 +0800 (CST)
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 28 Oct 2025 16:43:07 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>
+CC: <dev@dpdk.org>
+Subject: [PATCH] config/arm: add HiSilicon HIP12
+Date: Tue, 28 Oct 2025 16:42:59 +0800
+Message-ID: <20251028084259.4925-1-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.50.163.32]
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,277 +52,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added missing documentation in doc/guides/nics,
-mailmap entry, and updated MAINTAINERS file.
+Adding support for HiSilicon HIP12 platform.
 
-Signed-off-by: Wencheng Li <liwencheng@phytium.com.cn>
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 ---
- MAINTAINERS                            |   6 ++
- doc/guides/nics/features/macb.ini      |  19 ++++
- doc/guides/nics/index.rst              |   1 +
- doc/guides/nics/macb.rst               | 181 +++++++++++++++++++++++++++++++++
- doc/guides/rel_notes/release_25_11.rst |   5 +
- 5 files changed, 212 insertions(+)
- create mode 100644 doc/guides/nics/features/macb.ini
- create mode 100644 doc/guides/nics/macb.rst
+ config/arm/arm64_hip12_linux_gcc | 17 +++++++++++++++++
+ config/arm/meson.build           | 22 ++++++++++++++++++++++
+ 2 files changed, 39 insertions(+)
+ create mode 100644 config/arm/arm64_hip12_linux_gcc
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5f198bf..df4c2d2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -930,6 +930,12 @@ F: doc/guides/platform/bluefield.rst
- F: doc/guides/nics/mlx5.rst
- F: doc/guides/nics/features/mlx5.ini
- 
-+Phytium macb
-+M: Wencheng Li <liwencheng@phytium.com.cn>
-+F: drivers/net/macb
-+F: doc/guides/nics/macb.rst
-+F: doc/guides/nics/features/macb.ini
-+
- Microsoft mana
- M: Long Li <longli@microsoft.com>
- M: Wei Hu <weh@microsoft.com>
-diff --git a/doc/guides/nics/features/macb.ini b/doc/guides/nics/features/macb.ini
+diff --git a/config/arm/arm64_hip12_linux_gcc b/config/arm/arm64_hip12_linux_gcc
 new file mode 100644
-index 0000000..5e291e3
+index 0000000000..949093d67b
 --- /dev/null
-+++ b/doc/guides/nics/features/macb.ini
-@@ -0,0 +1,19 @@
-+;
-+; Supported features of the 'macb' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
++++ b/config/arm/arm64_hip12_linux_gcc
+@@ -0,0 +1,17 @@
++[binaries]
++c = ['ccache', 'aarch64-linux-gnu-gcc']
++cpp = ['ccache', 'aarch64-linux-gnu-g++']
++ar = 'aarch64-linux-gnu-gcc-ar'
++strip = 'aarch64-linux-gnu-strip'
++pkgconfig = 'aarch64-linux-gnu-pkg-config'
++pkg-config = 'aarch64-linux-gnu-pkg-config'
++pcap-config = ''
 +
-+[Features]
-+Speed capabilities   = Y
-+Link status          = Y
-+Link status event    = Y
-+MTU update           = Y
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+CRC offload          = Y
-+L3 checksum offload  = Y
-+L4 checksum offload  = Y
-+Scattered Rx         = Y
-+Basic stats          = Y
-+Linux                = Y
-diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
-index b00ed99..d6ce39b 100644
---- a/doc/guides/nics/index.rst
-+++ b/doc/guides/nics/index.rst
-@@ -45,6 +45,7 @@ Network Interface Controller Drivers
-     ionic
-     ipn3ke
-     ixgbe
-+    macb
-     mana
-     memif
-     mlx4
-diff --git a/doc/guides/nics/macb.rst b/doc/guides/nics/macb.rst
-new file mode 100644
-index 0000000..6eca2af
---- /dev/null
-+++ b/doc/guides/nics/macb.rst
-@@ -0,0 +1,181 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright(c) 2022~2023 Phytium Technology Co., Ltd.
++[host_machine]
++system = 'linux'
++cpu_family = 'aarch64'
++cpu = 'armv8.5-a'
++endian = 'little'
 +
-+MACB Poll Mode Driver
-+=====================
++[properties]
++platform = 'hip12'
+diff --git a/config/arm/meson.build b/config/arm/meson.build
+index ec9e08cb5e..c0aa21b57d 100644
+--- a/config/arm/meson.build
++++ b/config/arm/meson.build
+@@ -257,0 +258,9 @@ implementer_hisilicon = {
++        },
++        '0xd06': {
++            'mcpu': 'mcpu_hip12',
++            'flags': [
++                ['RTE_MACHINE', '"hip12"'],
++                ['RTE_ARM_FEATURE_ATOMICS', true],
++                ['RTE_MAX_LCORE', 1280],
++                ['RTE_MAX_NUMA_NODES', 16]
++            ]
+@@ -564,0 +574,7 @@ soc_hip10 = {
++soc_hip12 = {
++    'description': 'HiSilicon HIP12',
++    'implementer': '0x48',
++    'part_number': '0xd06',
++    'numa': true
++}
 +
-+The MACB PMD provides poll mode driver support
-+for the Ethernet interface MAC 1/2.5/10 Gbps adapter.
-+
-+
-+Supported Chipsets and NICs
-+---------------------------
-+
-+Phytium Ethernet interface cdns,phytium-gem-1.0
-+Phytium Ethernet interface cdns,phytium-gem-2.0
-+
-+
-+Features
-+--------
-+
-+Features of the MACB PMD are:
-+
-+- Speed capabilities
-+- Link status
-+- Set link down or up
-+- MTU update
-+- Multiple queues for TX and RX
-+- CRC offload
-+- Scatter and gather for Tx and Rx
-+- Jumbo frames supported
-+- Promiscuous mode
-+- Allmulticast mode
-+- Basic stats
-+
-+
-+Runtime Configuration
-+---------------------
-+
-+The following ``devargs`` options can be enabled at runtime. They can
-+be passed as part of EAL arguments. For example,
-+
-+Run the command in non-vector mode:
-+
-+.. code-block:: console
-+
-+   ./dpdk-testpmd -l 0,3 --vdev=net_macb0,device=3200c000.ethernet,usephydrv=0 \
-+    --vdev=net_macb1,device=3200e000.ethernet,usephydrv=0 --iova-mode=pa -- -i \
-+    -a --rxq=1 --txq=1 --rxd=128 --txd=128
-+
-+- ``device`` (mandatory, with no default value)
-+
-+  The name of port (owned by Phytium) that should be enabled in DPDK.
-+  This options can be repeated resulting in a list of ports to be
-+  enabled.  For instance below will enable ``eth0`` and ``eth1`` ports.
-+  Use the network interface 3200c000.ethernet as eth0,
-+  and the network interface 3200e000.ethernet as eth1.
-+
-+- ``--vdev=net_macb0, device=3200c000.ethernet, usephydrv=0`` (no default value)
-+
-+  --vdev specifies the MACB driver, and device specifies the virtual device to be used. The options
-+  --vdev=net_macb0,device=3200c000.ethernet and --vdev=net_macb1,device=3200e000.ethernet
-+  can also be written as: --vdev=net_macb,device=3200c000.ethernet,device=3200e000.ethernet.
-+
-+- ``usephydrv`` (Default value: true)
-+  The specified macb device does not have an external phy chip.
-+  If there is indeed a device with phy, this parameter is not added.
-+
-+Run the command in vector mode:
-+
-+.. code-block:: console
-+
-+   ./dpdk-testpmd -l 0,3 --vdev=net_macb0,device=3200c000.ethernet,usephydrv=0 \
-+    --vdev=net_macb1,device=3200e000.ethernet,usephydrv=0 --iova-mode=pa -- -i \
-+    -a --rxq=1 --txq=1 --rxd=128 --txd=128 --rxfreet=32 --txrst=32
-+
-+- ``--rxfreet`` (Default value: 16)
-+  Enable the optimization of sending vector instructions.
-+
-+- ``--txrst`` (Default value: 16)
-+  Enable the optimization of receiving vector instructions.
-+
-+
-+Usage Example
-+-------------
-+
-+MACB PMD requires extra out of tree kernel modules to function properly. The macb_uio
-+module can be found in the repository `<https://github.com/dpdk-kmods/macb_uio>`.
-+It can be loaded as shown below:
-+
-+.. code-block:: console
-+
-+   git clone https://github.com/dpdk-kmods/macb_uio.git
-+   cd macb_uio && make
-+   modprobe uio
-+   insmod macb_uio.ko
-+
-+Bind the network interface to the macb_uio driver:
-+
-+.. code-block:: console
-+
-+   ./dpdk-pdevbind.sh --bind macb_uio 3200c000.ethernet
-+   ./dpdk-pdevbind.sh --bind macb_uio 3200e000.ethernet
-+
-+In order to run testpmd example application following command can be used:
-+
-+.. code-block:: console
-+
-+   ./app/dpdk-testpmd -l 0,3 --vdev=net_macb0,device=3200c000.ethernet \
-+    --vdev=net_macb1,device=3200e000.ethernet --iova-mode=pa -- -i -a
-+
-+Example output:
-+
-+.. code-block:: console
-+
-+   [...]
-+   EAL: Detected CPU lcores: 4
-+   EAL: Detected NUMA nodes: 1
-+   EAL: Detected static linkage of DPDK
-+   EAL: Multi-process socket /var/run/dpdk/rte/mp_socket
-+   EAL: Selected IOVA mode 'PA'
-+   MACB: Phytium mac driver v5.8
-+   MACB: macb_get_fixed_link_speed_info(): speed info is unknown.
-+   MACB: Phytium mac driver v5.8
-+   MACB: macb_get_fixed_link_speed_info(): speed info is unknown.
-+   Interactive-mode selected
-+   Auto-start selected
-+   testpmd: create a new mbuf pool <mb_pool_0>: n=155456, size=2176, socket=0
-+   testpmd: preferred mempool ops selected: ring_mp_mc
-+   Configuring Port 0 (socket 0)
-+   MACB: Rx Burst Bulk Alloc Preconditions: rxq->rx_free_thresh=16, MACB_MAX_RX_BURST=32
-+   MACB: queue[0] doesn't meet Rx Bulk Alloc preconditions - canceling the feature for port[0]
-+   MACB: Port[0] doesn't meet Vector Rx preconditions
-+   Port 0: 24:DC:0F:54:E5:D0
-+   Configuring Port 1 (socket 0)
-+   MACB: Rx Burst Bulk Alloc Preconditions: rxq->rx_free_thresh=16, MACB_MAX_RX_BURST=32
-+   MACB: queue[0] doesn't meet Rx Bulk Alloc preconditions - canceling the feature for port[1]
-+   MACB: Port[1] doesn't meet Vector Rx preconditions
-+   Port 1: 24:DC:0F:54:E5:D1
-+   Checking link statuses...
-+   MACB: Port 0: Link up at 10 Gbps FDX Autoneg
-+
-+   Port 0: link state change event
-+   MACB: Port 1: Link up at 10 Gbps FDX Autoneg
-+
-+   Port 1: link state change event
-+   Done
-+   Start automatic packet forwarding
-+   io packet forwarding - ports=2 - cores=1 - streams=2 - NUMA support enabled, MP allocation mode: native
-+   Logical Core 3 (socket 0) forwards packets on 2 streams:
-+     RX P=0/Q=0 (socket 0) -> TX P=1/Q=0 (socket 0) peer=02:00:00:00:00:01
-+     RX P=1/Q=0 (socket 0) -> TX P=0/Q=0 (socket 0) peer=02:00:00:00:00:00
-+
-+     io packet forwarding packets/burst=32
-+     nb forwarding cores=1 - nb forwarding ports=2
-+     port 0: RX queue number: 1 Tx queue number: 1
-+       Rx offloads=0xe Tx offloads=0x0
-+       RX queue: 0
-+         RX desc=512 - RX free threshold=16
-+         RX threshold registers: pthresh=0 hthresh=0  wthresh=0
-+         RX Offloads=0xe
-+       TX queue: 0
-+         TX desc=512 - TX free threshold=32
-+         TX threshold registers: pthresh=0 hthresh=0  wthresh=0
-+         TX offloads=0x0 - TX RS bit threshold=0
-+     port 1: RX queue number: 1 Tx queue number: 1
-+       Rx offloads=0xe Tx offloads=0x0
-+       RX queue: 0
-+         RX desc=512 - RX free threshold=16
-+         RX threshold registers: pthresh=0 hthresh=0  wthresh=0
-+         RX Offloads=0xe
-+       TX queue: 0
-+         TX desc=512 - TX free threshold=32
-+         TX threshold registers: pthresh=0 hthresh=0  wthresh=0
-+         TX offloads=0x0 - TX RS bit threshold=0
-+   testpmd>
-+
-+
-+Limitations
-+-----------
-+
-+The driver is only available on the ARM64 architecture.
-diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
-index c5ba335..5278932 100644
---- a/doc/guides/rel_notes/release_25_11.rst
-+++ b/doc/guides/rel_notes/release_25_11.rst
-@@ -55,6 +55,11 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Added Phytium macb net driver.**
-+
-+  Added a new network PMD which supports Phytium 1 and 10 Gigabit
-+  Ethernet NICs.
-+
- * **Added automatic lcore-id remapping option.**
- 
-   Added the EAL option ``--remap-lcore-ids`` or ``-R``
+@@ -705,0 +722,4 @@ mcpu_defs = {
++    'mcpu_hip12': {
++        'march': 'armv8.5-a',
++        'march_extensions': ['crypto', 'sve']
++    },
+@@ -760,0 +781 @@ hip10:           HiSilicon HIP10
++hip12:           HiSilicon HIP12
+@@ -803,0 +825 @@ socs = {
++    'hip12': soc_hip12,
 -- 
-2.7.4
+2.17.1
 
