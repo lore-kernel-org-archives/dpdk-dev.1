@@ -2,43 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F00A2CCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 08:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20438CCF9EF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 08:28:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A7D640262;
-	Tue, 28 Oct 2025 09:17:43 +0100 (CET)
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com
- [113.46.200.216])
- by mails.dpdk.org (Postfix) with ESMTP id EFE1F4021E
- for <dev@dpdk.org>; Tue, 28 Oct 2025 09:17:40 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=n+T00/zKXlcGJNLUnAkcDlHMuxlaQ55ZoA/EwhtKdRs=;
- b=MCK/cp2l/ettIkUj75VCHrGCHYVNuwq7cy4aaNd6L2eXQPyu6YdBNC6O9jE3l0LJpJSA5Gjpc
- TH4oiQAX6NlHUgrjo/iZIdF9DmPBsTVd/EnEB8r7RRsXTv9fa99cHARtuAob6h4bxxtQ05FdOno
- 0mMR04EHiDfgSAFpnEIhx8E=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
- by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cwjrh2F1Qz1T4Fg;
- Tue, 28 Oct 2025 16:16:36 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id B395B140277;
- Tue, 28 Oct 2025 16:17:38 +0800 (CST)
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 28 Oct 2025 16:17:38 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>, <stephen@networkplumber.org>
-CC: <dev@dpdk.org>, <reshma.pattan@intel.com>
-Subject: [PATCH] app/procinfo: fix warning of deprecated coremask
-Date: Tue, 28 Oct 2025 16:17:33 +0800
-Message-ID: <20251028081733.38583-1-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
+	by mails.dpdk.org (Postfix) with ESMTP id 35AD340262;
+	Tue, 28 Oct 2025 09:28:12 +0100 (CET)
+Received: from fout-a2-smtp.messagingengine.com
+ (fout-a2-smtp.messagingengine.com [103.168.172.145])
+ by mails.dpdk.org (Postfix) with ESMTP id B090D4021E;
+ Tue, 28 Oct 2025 09:28:10 +0100 (CET)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfout.phl.internal (Postfix) with ESMTP id 2FECCEC049C;
+ Tue, 28 Oct 2025 04:28:10 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-04.internal (MEProxy); Tue, 28 Oct 2025 04:28:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1761640090;
+ x=1761726490; bh=kflyvQR7OfWLF1X0eVIXwObt8Wk+DAhwLeA59ZCJd1g=; b=
+ Bleg/8vfmGYCx+C6SLOywdSAfvMEmQR8WJfTOef17GeEmw2XWpqjPs3JZBKO0/n8
+ sBixLmUbBuSxnVYoNx7LrVE5kvtyGFBR4JeBhlLYSwD5lDHu6GnwiAGEJJz3/U/N
+ QAefl2q9PbCGBvckdYaJRNlcPYdrdf+2L12yFjYSMvsjf5KfskOyue0tQLvgVLsS
+ iER06tHj8caj0FZb07h1po9KPLOw5fcIn0NhOBN39lcNhnRyiFXIO59PELIx5c5w
+ WKl+9kmZxlZ7iXvy7sPhz31B3vyAPRxSkRXybps9qqLJubLmwplwM6FCSKkiAkfv
+ G4Sh2aX4VjoNKb9Xrt4Wsw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761640090; x=
+ 1761726490; bh=kflyvQR7OfWLF1X0eVIXwObt8Wk+DAhwLeA59ZCJd1g=; b=b
+ XJ8BPXS9Rjq9FxNS+6E0TVjS44IaqhcxT66pmDgQ9lVgdQUsr404Nrtce4Xl9RQ3
+ Tg+IMD0Udhsalnk04MvMbohdWoGNPLukb7Lwo6VI8J+nBPIo0ArKYfRXvHjq/Kqm
+ xPT8J7QVKjHmy4rWWAUDo9q1t1X9YqQ4DuyMzzf/TWd6rH8nvfkNc8xIBlqZswQ/
+ QZlfhTzIG3V+83jqK9hCD42xYnb/4ncWorgsyMa/V3of6wg7T5QlTVBb0Cti4ns+
+ rOuBxmcna70j4DEXRmI6Dp0zGh0aje2msdzp/z8gZp9Z1g36YVaXLFbmizS/hRqn
+ p0QWNEXm0k/CxcSVwsE9g==
+X-ME-Sender: <xms:mX4AaelRx4M388HqG__dBMaeTkwyJ5SdMmPaoMwyMIN7Fss3NYDSWg>
+ <xme:mX4AaaIh2V0grxJTXckBCwiDIE6alW4iOfODLZmw3zMe3LBG7fUoXCFILLyw8D6M3
+ c3Qk5OrREadR9ydFyIaHXCX8GenVup2o1dbxxoTml_53TqYqy4c>
+X-ME-Received: <xmr:mX4AabyQl2I-szl56dKrsGQTaAZQWo-H5eHbKGdCSxMlYRO5JRZKP_eS9-j5236Q7fM_sbacBWnAYm_6sAx_gSwXJQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduiedtfeejucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegouf
+ hushhpvggtthffohhmrghinhculdegledmnecujfgurhephffvvefufffkjghfggfgtges
+ thhqredttddtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomh
+ grshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeeuleeiffejledt
+ ueekleegudehheeggedvgedvheelfeejiedttdfgkeekvedthfenucffohhmrghinhepoh
+ hffhhitggvrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+ lhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtoh
+ epfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprgguvghlqddvrdgsvghlkhhh
+ ihhrihesphholhihmhhtlhdrtggrpdhrtghpthhtohepuhhsvghrshesughpughkrdhorh
+ hgpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:mX4Aaat_s00Le_4oIaQE1ubInaeO5i7Giw1qfZdVJn5q1qARWMj6UQ>
+ <xmx:mn4AaSsGQ4rCWyqJJAhWc0ouVDEypluwYxn-yhJAtQKUCNVq_nuQIQ>
+ <xmx:mn4AafPFgvhgv_vtAXpGipTgB1VDI68Jp2wbBCgziBDAbMs_AJOKIA>
+ <xmx:mn4AaQ0W7O29H74bA-q6Sv-EdvHwhZ8ZPjDa6OJ6OpOPZRB7Bj6qjg>
+ <xmx:mn4AaTUEJaPbgoDwO1T8YbjrjRXPa7t1edNBeebegXAzT27-tGp43wel>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 28 Oct 2025 04:28:09 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Adel Belkhiri <adel-2.belkhiri@polymtl.ca>
+Cc: "users@dpdk.org" <users@dpdk.org>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: DPDK observability survey =?UTF-8?B?KOKJiDc=?= min)
+Date: Tue, 28 Oct 2025 09:28:07 +0100
+Message-ID: <4909502.ghgXmdF2J7@thomas>
+In-Reply-To: <YT1PR01MB88261798F3919CB8AF4D68DB8EFCA@YT1PR01MB8826.CANPRD01.PROD.OUTLOOK.COM>
+References: <YT1PR01MB88265C8B9023D8653C29BCB58EF2A@YT1PR01MB8826.CANPRD01.PROD.OUTLOOK.COM>
+ <2720733.htQpZWrp2x@thomas>
+ <YT1PR01MB88261798F3919CB8AF4D68DB8EFCA@YT1PR01MB8826.CANPRD01.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,30 +90,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When launch proc-info:
-  EAL: '-c <coremask>' option is deprecated, and will be removed in a future release
-  EAL: 	Use '-l <corelist>' or '--lcores=<corelist>' option instead
+OK, I suppose that presenting in a DPDK Summit would fit very well.
 
-This commit fix it by use -l0 other than -c1.
+Thank you
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- app/proc-info/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/app/proc-info/main.c b/app/proc-info/main.c
-index 1b9979b7c8..b09c03ab35 100644
---- a/app/proc-info/main.c
-+++ b/app/proc-info/main.c
-@@ -2121,7 +2121,7 @@ main(int argc, char **argv)
- {
- 	int ret;
- 	int i;
--	char c_flag[] = "-c1";
-+	char c_flag[] = "-l0";
- 	char n_flag[] = "-n4";
- 	char mp_flag[] = "--proc-type=secondary";
- 	char log_flag[] = "--log-level=6";
--- 
-2.17.1
+27/10/2025 16:31, Adel Belkhiri:
+> Hello Thomas,
+> Thank you very much for your comment. What I meant by bare metal was actu=
+ally on top of the OS, so you are absolutely right that the phrasing was co=
+nfusing. I=E2=80=99ve reworded the question according to your suggestion.
+> Regarding the results, I=E2=80=99m currently preparing an academic paper =
+to submit either to the International Conference on Performance Engineering=
+ (ICPE) or the Network Operations and Management Symposium (NOMS). I also p=
+lan to share the results at the next DPDK Summit.
+> If you think it would be interesting to share the findings here in the gr=
+oup, I=E2=80=99d be happy to do so=E2=80=95or I can send you a copy of the =
+paper once it=E2=80=99s completed.
+> Cheers,
+> Adel
+>=20
+> ________________________________
+> From: Thomas Monjalon <thomas@monjalon.net>
+> Sent: Friday, October 24, 2025 10:06 AM
+> To: Adel Belkhiri <adel-2.belkhiri@polymtl.ca>
+> Cc: users@dpdk.org <users@dpdk.org>; dev@dpdk.org <dev@dpdk.org>
+> Subject: Re: DPDK observability survey (=E2=89=887 min)
+>=20
+> Hello Adel,
+>=20
+> 21/10/2025 16:18, Adel Belkhiri:
+> > Quick reminder about our =E2=89=887-minute survey
+> > on how you debug and observe DPDK-based applications in real environmen=
+ts.
+> >
+> > Survey: https://forms.office.com/r/6zRAqxWYKj
+>=20
+> In the question "Runtime environment",
+> I suppose "Bare Metal" means just on top of the OS?
+> DPDK used to be a real bare metal environment,
+> so I suggest rewording this question.
+>=20
+>=20
+> > This will help guide open-source observability work (Trace Compass anal=
+yses)
+> > by Polytechnique Montr=C3=A9al, Ericsson Canada, and Ciena.
+>=20
+> Will you share the results here?
+>=20
+> Thank you
+
+
+
+
 
