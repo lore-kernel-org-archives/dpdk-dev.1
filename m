@@ -2,76 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E90CCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 12:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D2CCCF9E0
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 13:37:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3B1044060A;
-	Tue, 28 Oct 2025 13:56:37 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 922054021E
- for <dev@dpdk.org>; Tue, 28 Oct 2025 13:56:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1761656195;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=dkkMQG/+jw1tt//AIG1hok+V1jxJNM3Vdk149zsBCGk=;
- b=Vfl6JtQwozRzA9N5NlQkDHdj/BIrfD9wodgIOrU0UbRe0+C6ZugPIk8E/5dTOZHFKGTo3M
- ZlfOc5OD7i+Y6o5sTt6MFB+y5/yCsmG7jPeHf5sQElQNBGih0dT3mMl1cD5J1ZLE1iz/gC
- ot6mVeAqYPMEVOcEHW1WGF113gr6pak=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-673-yFFNBUoXP9eZ12L5TrxXGw-1; Tue, 28 Oct 2025 08:56:34 -0400
-X-MC-Unique: yFFNBUoXP9eZ12L5TrxXGw-1
-X-Mimecast-MFC-AGG-ID: yFFNBUoXP9eZ12L5TrxXGw_1761656191
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-378d710cb33so26917001fa.3
- for <dev@dpdk.org>; Tue, 28 Oct 2025 05:56:32 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 33F554028D;
+	Tue, 28 Oct 2025 14:37:14 +0100 (CET)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 7005D4021E
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 14:37:12 +0100 (CET)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-290b48e09a7so72539175ad.0
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 06:37:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761658631;
+ x=1762263431; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=lw49NLOIz6qNq0JKMv+n1+V1EWV4EhESMwkCZN8tD3E=;
+ b=pTIRCcUICx94JgPLjw9wO4DK+tBJBgvz7rZPUf8Ri2UFRZ8BVKf4qmTKG0/qZy+5/5
+ b4hObKhiFIeC1OTBZbLA19nj4zptHipZB5ENeHp4PGQ5RdSojGMw2angApHUFxgth1+c
+ V5rtD4mNM0hIaSLLyHMRF2GEEG9ZRvXarwyRu/HiOwECCS3JNr5XHNyEhhDgKZTqGi9C
+ 5DoYBpA52PjmJCOow/FUFzodbw4VbEVqKT8wYxochfPYJ2ZqQ9mXGyDGKLp8J8YQ0b0f
+ fVek8PkN82JT813ZP9baCbnzyCTVncxEKAC/+WKPczxMSip0u5XsbhYrlo6OfIgjzpXS
+ sc6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761656191; x=1762260991;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1761658631; x=1762263431;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=dkkMQG/+jw1tt//AIG1hok+V1jxJNM3Vdk149zsBCGk=;
- b=NrlsBogIgK1i2KJBIZTqCH0C+A7yV5bn+Gn6JdB6dF9UVBgznHQSUFNF/knoYAxOWP
- MfoqHHPPsnmylh539pZwA86626Komo8JUDG+EYZbINmw94CRCTg+Ndp3qeVqVAntGYzc
- rg8rvd9E5ceyE7c9CQpkmAXakg++mOolmyjIoeF2+Zv7NWKIECSR69detCG+VXB6pRFM
- /9azvIGDPFX0vLiT4NtGzyzxW7N44b4fRClP8aY9AohZU6je0MPv2/plPhgES3ZFXm1j
- 0tCmloqDn4qJU9zmnAOxKZmqEdL8dVSc//woXoFz63iAiOBPN1c1aF4hOoG4s6Oe0njS
- ZX8w==
-X-Gm-Message-State: AOJu0YxJsHP2jmJa7Dxi2GxOL2swJx85ZsFx/+gePrYrivTBmd1lIxo7
- UY6Vkf5cXDKdde9aBG4BHyNMZmEJCuzvat6BrPL70ce9t3dGiVrvApKaaiZb0aNEql9yhwheAYc
- yqfg73kUr3g1+O614o3VhUlceXjrDL1kE6Pun7hQwOHhc2yjhbaufy+WdLpkwImxyeCs0oZ7OeN
- Ql32PUKLwhgoowsgbAJQo=
-X-Gm-Gg: ASbGncu1yML6LdK+KSsxWSRW8dubmag/QHEOCCPmAxxzo6DCdxlD/AqKHaGC8Wukb1Z
- /7P4b6Vqm1gCu9vD30F9/lAWrov6yIIqmCgCY1tbCWyhC6EzglI9lP3utEWdkRow2rmatw47xrr
- xtG6nbbr2sNEfSYSTb3SqiyhAtP+9P2J8VSPlmYpRGy0cio3fq5AIh3A==
-X-Received: by 2002:a05:651c:3543:10b0:36b:b0eb:9d64 with SMTP id
- 38308e7fff4ca-3790773c7a6mr9004201fa.30.1761656191313; 
- Tue, 28 Oct 2025 05:56:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG27qzf2ZoLthZ/5HFH+pPK5nFyMCVKZiLRPSeMkEYKEkQ9J1ydKnS3OT/ZvxDjcjymWr6xkRO9QsUagHVURPg=
-X-Received: by 2002:a05:651c:3543:10b0:36b:b0eb:9d64 with SMTP id
- 38308e7fff4ca-3790773c7a6mr9004051fa.30.1761656190870; Tue, 28 Oct 2025
- 05:56:30 -0700 (PDT)
+ bh=lw49NLOIz6qNq0JKMv+n1+V1EWV4EhESMwkCZN8tD3E=;
+ b=h0o0+Q2KPe5jpJX6ldiClP7QXza7/QSf83lBNpZzOSw1663OqzrfALqju9zgvPO9ph
+ 7/xFsLembHvRP4EDPcpQJWrt21KNjb5d5RkRMLCcFZMcnIIDyBHyohogEbAHNvGHHauF
+ Jqs3DBsc3yFIJfUJjoGk55bavhYvRW2fxftqn7IYkM5Bs2yO2zzkCSbv2EP4qus2pOaD
+ r+p0dgPGDt3Ly6o/u5cVm5Jzn9W7lydA+pC5dKnojj6Pger9JumXH6ApUeWP2VuFIzjA
+ yeqBcdyqp51ONMOGKNHWzrQwUOEDgQqN0KagHgaFuMra2PHsGK4Uy3TB322vhE8cgBQs
+ s3iA==
+X-Gm-Message-State: AOJu0YzLn/EiwjZGF4YlQ4ha9FaiY3sZrJ+GtCWB4DZ3LVwh8ExyYk/g
+ c91sL/thXo3TRRvUu6i+D+GJnRB3TTQWAWuov9DtYRcDE2AkYbOVZzQsXW+J/AOMkJM=
+X-Gm-Gg: ASbGncuvQkW5En32cS7nldrgQS9gyknl+gqzYu7A+bwE+dRZtYWCAvvJQf/CgU4GT+4
+ eXPHneDMCdHwTKdCJqn2z2m3+6tnofihH4Fkck5AoBooqWj/8d6nSk2zzJC+GptFwHL7Bx7+h0w
+ lYTxKR+8mslyRBO2zyc3NEAMk8qRz7abRRjEJFuJCzhq0S5Utrelmx6H9Fk9yny0nt9N7Wo/Nwz
+ EwO4YTdXWtPB6pdMLuDpAi4QLwNtZH4WueadCRQJeCo3WMGmPhKlUmLXXmkNmfWXDsuQ0kgAJB3
+ cXzIw90S6UkCj519snM5O1OQsiygWiCnQDPU/k8pFw0LBnUf/8p6NPE3jAROMe1hFtMA/g1slkm
+ d0csmrSGKxxd3t1BuY1zNmuV3SOXIhF5C2aq3tS3o6SJ39I9bjdeRdiUNymvt01H7gGtIHCVgC+
+ wKfGJ+HTRx8O2Jvk0gSNS5/31cTbdOXKOFlDYPOTyS89p6
+X-Google-Smtp-Source: AGHT+IGobk7XHhI1QU5+wKhm7R2PT734b4x6uJeoYYS++8nKxqHSqglLDJWYejqg4HRhOXKXxcI9MQ==
+X-Received: by 2002:a17:902:d50c:b0:294:9699:74f6 with SMTP id
+ d9443c01a7336-294cb51ae0amr53254455ad.43.1761658631244; 
+ Tue, 28 Oct 2025 06:37:11 -0700 (PDT)
+Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-29498d4287bsm120452155ad.80.2025.10.28.06.37.10
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 28 Oct 2025 06:37:11 -0700 (PDT)
+Date: Tue, 28 Oct 2025 06:37:09 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Howard Wang <howard_wang@realsil.com.cn>
+Cc: <dev@dpdk.org>, <pro_nic_dpdk@realtek.com>
+Subject: Re: [PATCH v1 3/3] net/r8169: fix issues reported by Coverity
+Message-ID: <20251028063709.2bc69e84@phoenix>
+In-Reply-To: <20251028084716.369128-4-howard_wang@realsil.com.cn>
+References: <20251028084716.369128-1-howard_wang@realsil.com.cn>
+ <20251028084716.369128-4-howard_wang@realsil.com.cn>
 MIME-Version: 1.0
-References: <20251028123453.4127525-1-david.marchand@redhat.com>
-In-Reply-To: <20251028123453.4127525-1-david.marchand@redhat.com>
-From: Maxime Coquelin <mcoqueli@redhat.com>
-Date: Tue, 28 Oct 2025 13:56:20 +0100
-X-Gm-Features: AWmQ_bkXgPnYIj0DtlY3RVEIndDwmyWvNUMuhQDzlQF_syN8KMQ_y5uiVBku8Mo
-Message-ID: <CAO55csz6nhyG3kuBYMpWC5VnF8x0SrG5xmKsDtkowOGtocG+rQ@mail.gmail.com>
-Subject: Re: [PATCH] vhost: fix external buffer in VDUSE
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, jmeng@redhat.com, stable@dpdk.org, 
- Maxime Coquelin <maxime.coquelin@redhat.com>, Chenbo Xia <chenbox@nvidia.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: WSd0tPcCuKKVNZyWdeadzLnAgtZbTk-KP0FTHJ2pSXw_1761656191
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,32 +82,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Oct 28, 2025 at 1:35=E2=80=AFPM David Marchand
-<david.marchand@redhat.com> wrote:
->
-> extbuf and linearbuf features are required for (enhanced) TSO support
-> in OVS.
->
-> VDUSE ports were generating multi-segments mbufs in case of "TSO"
-> buffers which resulted in OVS generating wrong packets after tunnel
-> encapsulation.
->
-> Enable the missing datapath features.
->
-> Fixes: 0adb8eccc6a6 ("vhost: add VDUSE device creation and destruction")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+On Tue, 28 Oct 2025 16:47:16 +0800
+Howard Wang <howard_wang@realsil.com.cn> wrote:
+
+> Signed-off-by: Howard Wang <howard_wang@realsil.com.cn>
 > ---
->  lib/vhost/socket.c | 3 ++-
->  lib/vhost/vduse.c  | 8 +++++++-
->  lib/vhost/vduse.h  | 2 +-
->  3 files changed, 10 insertions(+), 3 deletions(-)
->
 
-Thanks for working on this!
-
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-
-Maxime
-
+Please add references to the Coverity ID's so that the bugs will
+get closed there.
