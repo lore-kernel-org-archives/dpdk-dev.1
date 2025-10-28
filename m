@@ -2,71 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6546DCCF9EE
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 14:12:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D5DCCF9E0
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 14:14:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9ED8440677;
-	Tue, 28 Oct 2025 15:12:20 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 5D2844021E;
- Tue, 28 Oct 2025 15:12:17 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 59SDrq451221111; Tue, 28 Oct 2025 07:12:16 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=FMjYlVKn9MHOY6H1JYJLa1c
- zk1H5EoqmOmTdo/bFWRc=; b=OKf4k9PA8fjzDEFVDo2dD0a1oldzKtaFjE+QRSx
- EZbPZIdGAi0WkAiZlWt/pkULiJTIgepwaq+q/uVnkO/EpDwIvDS1H8mj3AxAgzDQ
- Sn9XXeguQ6d4durSplEODABKOq05SO4SGN6xsAuDJ8tIO6tMOhlgTUdmXoY0HNxA
- 8b9qFJ44enQ95DU3DSGGvqx+Ku620boyhPhnqElMB1BYzRYUVvs9JCiWq6D0MmuW
- SSHaD4EOAli1MEWki8h6c8M8Hv0l2LfwSU3EHn5/sb2kjEZNxWn8JPPeQVm0yeuN
- JyRJ5AUqt0oqYyK6Yb5DrgfSbrThTb+Z21eSJuIHX8jLBtA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4a2ttbh6ca-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 28 Oct 2025 07:12:16 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 28 Oct 2025 07:12:14 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 28 Oct 2025 07:12:14 -0700
-Received: from jerin-lab.marvell.com (jerin-lab.marvell.com [10.28.34.14])
- by maili.marvell.com (Postfix) with ESMTP id 93BAD3F7109;
- Tue, 28 Oct 2025 07:12:12 -0700 (PDT)
-From: <jerinj@marvell.com>
-To: Erik Gabriel Carrillo <erik.g.carrillo@intel.com>, Jerin Jacob
- <jerinj@marvell.com>, Sachin Saxena <sachin.saxena@nxp.com>, Hemant Agrawal
- <hemant.agrawal@nxp.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>, <david.marchand@redhat.com>,
- <stable@dpdk.org>
-Subject: [dpdk-dev] [PATCH] doc: fix doxygen errors with v1.15.0
-Date: Tue, 28 Oct 2025 19:41:59 +0530
-Message-ID: <20251028141159.177727-1-jerinj@marvell.com>
-X-Mailer: git-send-email 2.51.2
+	by mails.dpdk.org (Postfix) with ESMTP id 0A2424028D;
+	Tue, 28 Oct 2025 15:14:40 +0100 (CET)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com
+ [209.85.215.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 80F0A4028D
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 15:14:38 +0100 (CET)
+Received: by mail-pg1-f179.google.com with SMTP id
+ 41be03b00d2f7-b6ceb3b68eeso4577915a12.2
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 07:14:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761660877;
+ x=1762265677; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=+3icYAk2JJPBK/ctKLeN63UaTzeUrfG7fNZBTHjTW7k=;
+ b=NiiPt3LTB73r/pYOjh9LjcuG580L6tMhX475hIGpVwGcU7BnTlh/VYMJGe9uKMi5AE
+ Uz+F5TXwI8gZ+PRgiF5Qp1FRRZkAA89Z42l99RcRKVnVDSztaa/WUuwb13xECgrrmKlW
+ +uPFd7pIJif4XvVrOK4dTb6Z70mz0ZEuSTpOBpg+vyHVkEpGTJF0rfIlHlOLlgxWwtw7
+ h16XF0adFl1uEIV/glef9RCgHKicEbIgRlC0E6lXmCJWwNN5ZKvnT9+QjC7CDDukflnQ
+ Ri9JCnZ+tTJ7RqtTfRs2qI5ZzyLOkcI5n7y5IiL1eh2SzLeCmAIzHZZ3rOqAECEwtpyI
+ NRgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1761660877; x=1762265677;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=+3icYAk2JJPBK/ctKLeN63UaTzeUrfG7fNZBTHjTW7k=;
+ b=P7CbLI07K0R/7TR5wTEJ5UvcUxhqNhn93oPpVHj1gUPcuXjShKRHJ8lTBk5u5PFzNW
+ i5ZLmE9SyO+tEHim++XosruZpPI1r0w53U43JuRtNICEUhOaW52oWTzRgoKtruP6pWIf
+ Hv8umW3UtH9nNaOyvWEdnXUR99/PJHukz09RWcK4nuxcHPDzVFIGNJcC+t8g469jnSE9
+ I7YKQK3lIpJBItETaXIObhNIgxDZnNNw077GhRIM2kYYyVN+ZwF0qbsC+INGGGMtVn0r
+ LiRrQiNOfctltVuMyorQLz5SeDNpMb48kP7VPgD7lsTjmT6+0vqBYPlH1IvN+rY5+GgR
+ VzdA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVYgnhKr7eScm5G1nJff7y3naL9k6mRQl45aF3SUYs5PIHKoe0JW2FgHrqY86WyJ9Adau0=@dpdk.org
+X-Gm-Message-State: AOJu0YybXIcT/8vtsSl43SokfRrjGP5xoHQ9rD03lw7CljU/hp/ta4id
+ p1E6ehvny9mw8JzpqixoBHVJAhq2jBM4ERx8urtggoCI6k1QNGhdyPxMV5KPqG1VIKM=
+X-Gm-Gg: ASbGncv+Mz7WaK0746dMD6zfVZ2CD/4L52NPfxKuQAF/PfaxRA/BPQlPpxtTHVljaeP
+ xwFoNTkvpV7J1QD/8+xW6LKT2QrDuXapdL+gAjKPz6shSc4TbkRekgXugBSH1l7nBJrVg/8ads8
+ AvDMpxsueXirjJ1PGHD/HzQkaf7DfdwT3M0hcb8uBQh7ne/Jb24tmMEx1MnhLM7qzSkaT6XxTYW
+ lb53z2sRhfAf7dnAalrFY089Tv9u3eUTHhyeb8Ao9UhXIf9oE9h/1ec4LFn2pOF/Zf0q9Fi1302
+ 3UCSoqMqLOd8AobTLoi3QmH2+R04bYFra+YjjywcnRoFizK1dgUnDA+9ldwPyuSS9Rtz4YerKNL
+ 7M4oqPxOugwd2f6MXfldOmzJ8vNDYdgMVS2OkO16XQuhqqqHI0BUrAg9xEQw0QLZbEq51WBY37S
+ f3NTcgEH9zWdVE6MhF1AXHkKDKrBUPEyc7Bg==
+X-Google-Smtp-Source: AGHT+IGjyvsr966iQuIkRniVvGTZPFEbIkD9wUjDnzgdqqRVeLG2qRjwu06yHYfbleVpd65mMZZ0PA==
+X-Received: by 2002:a17:903:1ca:b0:290:ad79:c616 with SMTP id
+ d9443c01a7336-294cb6a3926mr44244075ad.57.1761660877609; 
+ Tue, 28 Oct 2025 07:14:37 -0700 (PDT)
+Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-29498d41c4esm120593985ad.81.2025.10.28.07.14.37
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 28 Oct 2025 07:14:37 -0700 (PDT)
+Date: Tue, 28 Oct 2025 07:14:35 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: <jerinj@marvell.com>
+Cc: Erik Gabriel Carrillo <erik.g.carrillo@intel.com>, Sachin Saxena
+ <sachin.saxena@nxp.com>, Hemant Agrawal <hemant.agrawal@nxp.com>, Pavan
+ Nikhilesh <pbhagavatula@marvell.com>, <dev@dpdk.org>,
+ <thomas@monjalon.net>, <david.marchand@redhat.com>, <stable@dpdk.org>
+Subject: Re: [dpdk-dev] [PATCH] doc: fix doxygen errors with v1.15.0
+Message-ID: <20251028071435.6c06c737@phoenix>
+In-Reply-To: <20251028141159.177727-1-jerinj@marvell.com>
+References: <20251028141159.177727-1-jerinj@marvell.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: c3W54xMxPW3tzTv_8gw2T2zammCSFD77
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDExOSBTYWx0ZWRfX4G9upUDgqOZo
- 7rV7k9bArBiSA2DEzV8EewlBUmgFAezCN1K9cO9mYV+bn0/4etU1iGSkYXrcIsS5sFvcO0toUub
- uXEEoBv92n162UJ6tWtgw0cO9DzNae44jNrCetDegJpxpNtjiom5aIIBFRwtVGsR9lWMdvMFgIC
- RWUo6mQdsBKOiVogyBcBPjqRNwfmXqfwFGVxJJUBq5H+vVMmrJOwHhCsPTN0j7dPajlFPuB1+e2
- tkV+/u+Bj+PLepmlHCqUY9jeBjxltB18vyH0zglYsMwLWtaz1suKB+dua3wPc9jU531o5DitE7Y
- ZlVUsqFFCRHzWu08pK/3cmEOqVKM0lILf4hP4FvAyfZpmAwr3h3kvjW1z4wx4Pk0weEY90znQsV
- JpEkgPcRPN9Jmmw8TMtuoml18aV+iw==
-X-Authority-Analysis: v=2.4 cv=Ffk6BZ+6 c=1 sm=1 tr=0 ts=6900cf40 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=bCyuHyKUdbIu3Wqq8GgA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: c3W54xMxPW3tzTv_8gw2T2zammCSFD77
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_05,2025-10-22_01,2025-03-28_01
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,50 +86,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jerin Jacob <jerinj@marvell.com>
+On Tue, 28 Oct 2025 19:41:59 +0530
+<jerinj@marvell.com> wrote:
 
-Doxygen detects valid errors. Fixing the same.
+> Doxygen detects valid errors. Fixing the same.
+> 
+> Example:
+> lib/eventdev/rte_event_timer_adapter.h:720: error: Reached end of file
+> while still searching closing '`' of a verbatim block starting at line
+> 569 (warning treated as error, aborting now)
+> 
+> Fixes: a6562f6d6f8e ("eventdev: introduce event timer adapter")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Jerin Jacob <jerinj@marvell.com>
+> ---
 
-Example:
-lib/eventdev/rte_event_timer_adapter.h:720: error: Reached end of file
-while still searching closing '`' of a verbatim block starting at line
-569 (warning treated as error, aborting now)
-
-Fixes: a6562f6d6f8e ("eventdev: introduce event timer adapter")
-Cc: stable@dpdk.org
-
-Signed-off-by: Jerin Jacob <jerinj@marvell.com>
----
- lib/eventdev/rte_event_timer_adapter.h | 2 +-
- lib/rawdev/rte_rawdev_pmd.h            | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/lib/eventdev/rte_event_timer_adapter.h b/lib/eventdev/rte_event_timer_adapter.h
-index 256807b3bf..67e65ab849 100644
---- a/lib/eventdev/rte_event_timer_adapter.h
-+++ b/lib/eventdev/rte_event_timer_adapter.h
-@@ -566,7 +566,7 @@ struct __rte_cache_aligned rte_event_timer_adapter {
-  * Before calling this function, the application allocates
-  * ``struct rte_event_timer`` objects from mempool or huge page backed
-  * application buffers of desired size. On successful allocation,
-- * application updates the `struct rte_event_timer`` attributes such as
-+ * application updates the ``struct rte_event_timer`` attributes such as
-  * expiry event attributes, timeout ticks from now.
-  * This function submits the event timer arm requests to the event timer adapter
-  * and on expiry, the events will be injected to designated event queue.
-diff --git a/lib/rawdev/rte_rawdev_pmd.h b/lib/rawdev/rte_rawdev_pmd.h
-index b810006a46..02351a2a29 100644
---- a/lib/rawdev/rte_rawdev_pmd.h
-+++ b/lib/rawdev/rte_rawdev_pmd.h
-@@ -506,7 +506,7 @@ typedef int (*rawdev_firmware_version_get_t)(struct rte_rawdev *dev,
-  *   >0, ~0: for successful load
-  *   <0: for failure
-  *
-- * @see Application may use 'firmware_version_get` for ascertaining successful
-+ * @see Application may use `firmware_version_get` for ascertaining successful
-  * load
-  */
- typedef int (*rawdev_firmware_load_t)(struct rte_rawdev *dev,
--- 
-2.51.2
-
+Acked-by: Stephen Hemminger <stephen@networkplumber.org>
