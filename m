@@ -2,71 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 273CDCCD1BF
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 13:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA8ECCD1BF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 13:48:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 509844028D;
-	Tue, 28 Oct 2025 14:46:58 +0100 (CET)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
- [209.85.210.175])
- by mails.dpdk.org (Postfix) with ESMTP id B6DEF4021E
- for <dev@dpdk.org>; Tue, 28 Oct 2025 14:46:56 +0100 (CET)
-Received: by mail-pf1-f175.google.com with SMTP id
- d2e1a72fcca58-7a26b04bfc8so6643093b3a.2
- for <dev@dpdk.org>; Tue, 28 Oct 2025 06:46:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F28A240659;
+	Tue, 28 Oct 2025 14:48:06 +0100 (CET)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTP id BF7A84021E
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 14:48:05 +0100 (CET)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-290cd62acc3so67757255ad.2
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 06:48:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761659216;
- x=1762264016; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761659285;
+ x=1762264085; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=91yg/NfmJyB8Fj73nfPqRaSm+gXmPiPvpQfiGF+KZ0A=;
- b=yGtwwAFSIYEqbRx38K90JBT7K69F3pFkZ0pf85oNS82zWuiR3GELxaM8XFpuHHByap
- dV7ALYwnOEx7BZM0ZgYI7O/4vSOQFudeESSTQgX63BZ/PbfJf6/sZI0iiLVIRX+yY9tI
- l9MXTMbJ/aPGW2ASH6DNXSOrjnjBhcz3axIFQ9ViwF3TJnyMeqwnci/CJE2k3au6aJeZ
- hN4ajPGR1cY3BZiqKaUth/9eC3X2sP3GMP3O/kqHUnwhs/6VsRo8CIp9lj0Pkx4quovZ
- bmfSn9ogyktpUsOtuDMyga6oqZve5eOpm0Kfq+7zfO6BG3V4Lp0QVSC7JIcnkGEtnvo0
- ic7Q==
+ bh=pWQxTw0GxR+6SBoKJ7V0CO2f9AhUj+Jx/A+ULRgCJuQ=;
+ b=HrbJ3ToAZCvp/f1rHIC70ZbtF60GxKQe3g97ujauKfCq4SSKy+tAnSZz36RdX2rOZF
+ 0BdLwEydFndroGQdv3CVnBY0FdQ523OGblKoKF/+cp2Ro0uD7eygnnYlkSDUqo4TvZZm
+ XGFDa0LY2aHIrj1/Y2Q/aQejmNMFJMx+M3gHeJFSw2WLinpsQXxcw3QDoodzmOuGZt+W
+ edwH/AVpB6kESvCBmGeZ3kymCLxclCC1b1/TWe7qoGGVERyPpGPNWMpJYX7BGupfQdko
+ DJTRxwvdNWKqesarFbjkwH92x1e4tYWMhRR0O8YYJm2thFuPnACHqHCEP8OGLdWaZj4e
+ fpsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761659216; x=1762264016;
+ d=1e100.net; s=20230601; t=1761659285; x=1762264085;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=91yg/NfmJyB8Fj73nfPqRaSm+gXmPiPvpQfiGF+KZ0A=;
- b=YHqQ0kbobZfLH7eszo+LlJRF20QIgv2QlEwUZeoeMDZqyL+KpvmJhLUpGbe9JAkEIJ
- ckv0O6DqHABisIIox0uoKRHSJ/xnTTwTUj2gwIUmZqUP8bgzpe3KB5l4rcA6UO2U+qG5
- tDMKl0X68CO1SY2IaomSrn2u5RU+pMRVDRDKQesqNRZze/+bqQrFmXUkH8RRM5zeogRa
- 3QU7mh14+TJ9OigCQ4DE9/K+/7TSBiTqGnAAz9rj/CsPSL65SQJXR1MZHnhQqToFTYGo
- l2BG+oLUeEVQvThIU9Ka/XDHzriOu/ni7n1rIHMgozetiCOkYemwZwD/7QpqBHoYZXnf
- Q1vQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWvtMRZEDOn4g/6hMU5bWj2tuUkA0zN7l5mGFR4Sdp41P6tDd5A98pnuwZ9qT47uGF3qoA=@dpdk.org
-X-Gm-Message-State: AOJu0YyVawiKQBU2tjQP2XvzGsgYYV8lESpEYae9hyDgjF8gCptKXPdo
- NcpwinGAIdOrNiqYGNsAXQkK5t5Wm/vqyHkWBdsHF76CNhEkoqexnnKfpi43aJEFIg0=
-X-Gm-Gg: ASbGncvejytBGS4C5NuaUNf4AE0f98UnYFeTApI5pDrLqA7Etfe/er3zh/o1ZiEJNGi
- RbhPFyrVqGDGRWAcBNtcDfYDXqksbTSjxMkEeMG4kPG1wWs4m4J79lNtD8qCDhkv4YEg6ZIVpMc
- FG60R2Rv3yJTKujH8mYzgBG5/0Q5vkwpDbx4e2FIr3WgfbvXSbg03XSdl40aQ58yucarKtLwyoN
- 97ygy21AAHtg3czp9dFT2GN/2mvodc3YmFev5Cf1MlivPVg5VmS3REIwl8Ib/+NDQHHhkQjx5fS
- yJMgF5+D4I6XUtQw32Wek2dIoTRvblOlzXlp4Ca7oSIF9dTrBvJ0GPe4EjQ8pWAubzhSlwBSUfg
- N/mZxzJJY6EQ3KBPZoa3CMdpEsXLksy8z9l9cpTc2h0lzvfDvTpj8+mY958UAr1dfSJFsVx7rqR
- rcPFN1DlYvnXdKi3q2zIShOrkBY3ilpNrRemvZHXFgqmh3
-X-Google-Smtp-Source: AGHT+IGRnv/dE81mssUOj4GXYE4oCYINWIsNp0NwptCBpWzL0Sj/CzPfNYyeyrp5MFT0CHOL5Phnpg==
-X-Received: by 2002:a05:6a00:a08:b0:7a2:7610:364d with SMTP id
- d2e1a72fcca58-7a441c3268fmr4743567b3a.15.1761659215599; 
- Tue, 28 Oct 2025 06:46:55 -0700 (PDT)
+ bh=pWQxTw0GxR+6SBoKJ7V0CO2f9AhUj+Jx/A+ULRgCJuQ=;
+ b=QzBw5W7HFOGt49UEtyFlt1viDVq1oNzyqSDLUDF0VLGm3dNyvcSiDrQTyFYB24OIW+
+ Y1yMTpHhIR41leirMEA1PRfiYxjOffWAhtvK21Yu+26rD3lEhzl5Vi6lG67GKYNEP53J
+ Mqx8Veukw0b5LzJAwNcv7LuX1DgaNQoHkl0mPZUO5sLO8oP1KfxaY719qMN9pB0oiA+b
+ UZ3nTnli01YVUd/eiNd5JU0PkKoHHvEnIpdl4Uj2ThdThNI8O/PNtE56iWJ1FXkJWurx
+ fGRr/wixM1V7AtAygYlyDMMJe9513ldfs67TZfB/7nYNL5lRtzBBQ4VJ1mvo9mnOTzXK
+ jBtA==
+X-Gm-Message-State: AOJu0Yz639Q4LSwRl2KVKxPraLl2awlj46M8vkKlzdoffCO/Nqg8Xak/
+ 3devNiyumAJuZ3H97lftAjafdhpEgcnlX/UAWhkbRz7zv9WvJhDAugxi4RROX9M5YCs=
+X-Gm-Gg: ASbGncuU8+Yos+gTeynHP4HfaJ3OM4gAqHEdtTeJeIPuJr4cVwp/K2ewbJ+bNtoXOrN
+ ceeCiFKGziIxCLaiO4maYCLZFBFRzMFkSpS+FliP2+cKwumYJXfBDOb2Nn2MvyenSOj8NKcDlmI
+ 2uL4X3PcQQA7Lp5B8bZ2Pmh7xmOzNNcQboqekaTE0KhjIEIo1vooH18XLRreUotD6eftfGScWUg
+ aSQ7ju6xVOO3TEBcE/dby5ekSLePLbwBtpSHo3u8ctX/WOjjmTCDQG1HX6q5rhU/g01tU0WY4Ok
+ yMvEiIJysEmILtpxN5hdRLN9PpFQUVjuNVLlG67ArMp5VNUXdRAES0DDFLUyM2uy5LXsQ8Q8Jjl
+ ioKIsr1fpBnKbG/QEooT3G/iWj0ZjlZiVyfyMFBz/ltIPaEibb70do+0FSSI3lxqWnP9XWb1yu4
+ nSlKpSGK/RNPqGzugNyAHS/uu8h+JGgkWMrllbd1B9ImrY
+X-Google-Smtp-Source: AGHT+IHyoswa4cU3YTvrT7c1pNXAxzxL5DNox/YJY6W8lnIW/k9FxZsaM+zxjaehscgJdnoUh1MD+g==
+X-Received: by 2002:a17:902:e5c4:b0:28e:7fce:6685 with SMTP id
+ d9443c01a7336-294cb525581mr45691225ad.32.1761659284900; 
+ Tue, 28 Oct 2025 06:48:04 -0700 (PDT)
 Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7a41407a0fasm11631247b3a.54.2025.10.28.06.46.55
+ 98e67ed59e1d1-3402a5ba7fesm1201848a91.9.2025.10.28.06.48.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 28 Oct 2025 06:46:55 -0700 (PDT)
-Date: Tue, 28 Oct 2025 06:46:53 -0700
+ Tue, 28 Oct 2025 06:48:04 -0700 (PDT)
+Date: Tue, 28 Oct 2025 06:48:02 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Chengwen Feng <fengchengwen@huawei.com>
-Cc: <thomas@monjalon.net>, <dev@dpdk.org>
-Subject: Re: [PATCH 0/2] enhance ethdev telemetry
-Message-ID: <20251028064653.54941255@phoenix>
-In-Reply-To: <20251025094239.4915-1-fengchengwen@huawei.com>
-References: <20251025094239.4915-1-fengchengwen@huawei.com>
+To: Serhii Iliushyk <sil-plv@napatech.com>
+Cc: dev@dpdk.org, thomas@monjalon.net, mko-plv@napatech.com, ckm@napatech.com
+Subject: Re: [PATCH v3 1/1] doc: refactoring the guide for NTNIC PMD
+Message-ID: <20251028064802.6e573b13@phoenix>
+In-Reply-To: <20251027130002.597552-2-sil-plv@napatech.com>
+References: <2974305.OYXXYNVTWy@thomas>
+ <20251027130002.597552-1-sil-plv@napatech.com>
+ <20251027130002.597552-2-sil-plv@napatech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,19 +83,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 25 Oct 2025 17:42:37 +0800
-Chengwen Feng <fengchengwen@huawei.com> wrote:
+On Mon, 27 Oct 2025 14:00:01 +0100
+Serhii Iliushyk <sil-plv@napatech.com> wrote:
 
-> This patchset contains two commits which enhancing ethdev telemetry.
+> Improve the doc formatting.
 > 
-> Chengwen Feng (2):
->   ethdev: support telemetry RSS algorithm
->   ethdev: support hide zero when telemetry regs
-> 
->  lib/ethdev/rte_ethdev_telemetry.c | 56 ++++++++++++++++++++++---------
->  1 file changed, 40 insertions(+), 16 deletions(-)
-> 
+> Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 
 Queued to next-net
-
-Does the documentation need updating? or a release note?
