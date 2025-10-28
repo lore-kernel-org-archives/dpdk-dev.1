@@ -2,76 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7537CCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 20:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F1ACCD1BF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 22:16:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AEC704042E;
-	Tue, 28 Oct 2025 21:50:43 +0100 (CET)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com
- [209.85.210.178])
- by mails.dpdk.org (Postfix) with ESMTP id BAA214021E
- for <dev@dpdk.org>; Tue, 28 Oct 2025 21:50:41 +0100 (CET)
-Received: by mail-pf1-f178.google.com with SMTP id
- d2e1a72fcca58-7a2852819a8so4537750b3a.3
- for <dev@dpdk.org>; Tue, 28 Oct 2025 13:50:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761684641;
- x=1762289441; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=0qYwV+VpbgwiqabPHaUyFrSP1BFP2Nu3yWS6JzwbstU=;
- b=P3065mN0/KTJ0qoZWJfmaHVIkxe2knyOn/HF4+cOEMqd9hHT6eQQ56O5EKz8bIp2KM
- ORoXl5Fi0xVVirvBGe9aUHG0By8E4FlalcMP7OM1T5/LY3iXBfHNmoLX5qstiRPWkChA
- gjv6f2Lj/ODIjiR9027JpxpbVvuu8ADYhxQ3uGWJ4tagFzlno7djj+dpWbMqYxMg93V8
- epCdot4Pc/uPMmcNCycMMvKDpfLiAAcKO8v5wTej7X3BaCjEkAFmBg51KelSyGbt5wxj
- BqD4cDmApMG0GSkSjBuuTxvfz0YjBw9arTKkjGliiECaCOMKGcTa3i20y+W8fPpHSoK7
- 9x6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761684641; x=1762289441;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=0qYwV+VpbgwiqabPHaUyFrSP1BFP2Nu3yWS6JzwbstU=;
- b=Ampe0BK5Zg8khT4XBxbDbE5T27LMOdIqIjjnJ2rDH9rJsEnQpkErMrDlEBtewfI0ci
- 6TqW9+NVHBk95E5/0kGxIAsM2XOVBcIodBY7VvGhCG9mjMcHXDzCxyzF6WILNgRIZ01e
- BUXFPL2zXCgKoV1aOL/+OUKEU3ThFjBwImsM2Dn4AOiks28WiJmtsLC7SQJ9zyFuULkb
- 7GGR7Dfp9xLn7ComXivKZJi5/J7dhGo5Rw+SC+U9d2dxNbACLHHxZMp0YMPxDcK/yc1v
- BALVOfEPUpnOdcm6lzVPwCPsUiNxikPBP04wrwXautCmulqOYMHktYhHRQ+rTmnqyfP7
- eJZw==
-X-Gm-Message-State: AOJu0Yw79QfvXS+eYyO6jL3sdPbpPogczP6Wwe/egNLFz9B9NVdFGjeo
- 54Ia0gmP5pzbophsQACKoXYMx2fV7XoMvod6D5yaaS+thIPOI5c3jh6Sn3GFlf8ARnU=
-X-Gm-Gg: ASbGnctRoM1uW0lc02tkPQgvD/aeWhqipYxwCSNxR3SG2zu0MYv5BllT1FidTR2OpDf
- xBRdWFtW138rLbvfWLyGckBLWU8YMtCP7hmnAX6y7ky1uOF+8t6krEc+auGIRvjeGFJ9ECPvHVF
- /D7ZR0oYNRszvABV7zl9hzJdClFCkOFQKCC/85RJ3G3L8cVHLO+OV/52qEDXcG1BHWJTWMpWs2J
- hs7k4UHA9yEb13YppNT7ynUXlLApKV00YcV0oED/ShiIWVafMxKUPVUIiIFPbA5HJLraIT26b3k
- 0KznmUqG7X+r0gLoxv6BDIXt+WwSoBsxt9+/JlaZgZLB+95XuposGkeWgHAb/kUfntpE9XVFeqa
- NlEMAE6alZHK/wbDEGg9dKGNqTcOctzt41PRfP0I8ruZKHPwcyuAdTshnZw7ZwJafxa/kad0/5W
- 2D2X+XRUHdzg5L1+TFp3N2MKd56F72/eu/Lw==
-X-Google-Smtp-Source: AGHT+IHn6DFM75s/Rvdo/eIlj783ghm1lA33uu63kSqbDBrnm1kvWLL9RSV+pihXObYkdipm0H6y6g==
-X-Received: by 2002:a05:6a21:33a0:b0:334:99f9:ff57 with SMTP id
- adf61e73a8af0-3465381373dmr370166637.47.1761684640915; 
- Tue, 28 Oct 2025 13:50:40 -0700 (PDT)
-Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7a414032c71sm12849828b3a.25.2025.10.28.13.50.40
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 28 Oct 2025 13:50:40 -0700 (PDT)
-Date: Tue, 28 Oct 2025 13:49:49 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
- <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH v1 1/9] net/nbl: address nbl channel integer handling
- issues 490942
-Message-ID: <20251028134949.497a5108@phoenix>
-In-Reply-To: <20251027101649.3337618-2-dimon.zhao@nebula-matrix.com>
-References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
- <20251027101649.3337618-1-dimon.zhao@nebula-matrix.com>
- <20251027101649.3337618-2-dimon.zhao@nebula-matrix.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+	by mails.dpdk.org (Postfix) with ESMTP id 00F644028D;
+	Tue, 28 Oct 2025 23:16:05 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 6526440262
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 23:16:03 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 71B5E201C94E; Tue, 28 Oct 2025 15:16:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 71B5E201C94E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1761689762;
+ bh=/kDQ05Pyp06vy3F2/LoyEQDEkY54Jx01XXud5YA1vZs=;
+ h=From:To:Cc:Subject:Date:From;
+ b=flTvk64C+fVA5Ox+W2GK85b6wDbgmsgk3e92DA4piHPIthbxYr9LakeNEaaht5eCE
+ WWXutJv9jymgG8xz4fOgbcqVhUx2s7wCPxqKPZLr4hrr+rxU52KpaNgcKODLZHYFEc
+ JiC2P8xw/kIWEMRY5Qi6mTjxsJ+0UUY+iEpcU3F4=
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: thomas.monjalon@6wind.com
+Cc: dev@dpdk.org,
+	Andre Muezerie <andremue@linux.microsoft.com>
+Subject: [PATCH] dpdk-web: update Windows roadmap
+Date: Tue, 28 Oct 2025 15:15:53 -0700
+Message-Id: <1761689753-23181-1-git-send-email-andremue@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,36 +41,142 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 27 Oct 2025 03:16:40 -0700
-Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
+Summary of changes:
 
-> Coverity issue: 490942
-> 
-> Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-> ---
->  drivers/net/nbl/nbl_hw/nbl_channel.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/nbl/nbl_hw/nbl_channel.c b/drivers/net/nbl/nbl_hw/nbl_channel.c
-> index 7cc214df01..17d9231dfe 100644
-> --- a/drivers/net/nbl/nbl_hw/nbl_channel.c
-> +++ b/drivers/net/nbl/nbl_hw/nbl_channel.c
-> @@ -376,8 +376,8 @@ static uint16_t nbl_chan_update_txqueue(union nbl_chan_info *chan_info,
->  
->  	txq = &chan_info->mailbox.txq;
->  	next_to_use = txq->next_to_use;
-> -	va = (u8 *)txq->buf + next_to_use * chan_info->mailbox.txq_buf_size;
-> -	pa = txq->buf_mem.pa + next_to_use * chan_info->mailbox.txq_buf_size;
-> +	va = (u8 *)txq->buf + (u64)next_to_use * (u64)chan_info->mailbox.txq_buf_size;
-> +	pa = txq->buf_mem.pa + (u64)next_to_use * (u64)chan_info->mailbox.txq_buf_size;
->  	tx_desc = NBL_CHAN_TX_DESC(txq, next_to_use);
->  
->  	tx_desc->dstid = dstid;
+- Removed completed tasks from roadmap
+- Updated status section to reflect parity between Clang and
+MSVC. Also included in that section a list with all the
+libraries that now get compiled on Windows.
 
-Please use standard subject, like:
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+---
+ content/roadmap/windows.md | 106 ++++---------------------------------
+ 1 file changed, 10 insertions(+), 96 deletions(-)
 
-net/nbl: fix nbl channel integer handling
+diff --git a/content/roadmap/windows.md b/content/roadmap/windows.md
+index 2c2d15a..7abaf45 100644
+--- a/content/roadmap/windows.md
++++ b/content/roadmap/windows.md
+@@ -13,10 +13,16 @@ or with PCAP virtual devices.
+ It requires yet unsigned kernel-mode drivers to run (except mlx5).
+ Only network PMDs are currently enabled.
+ 
+-The focus is getting more of the DPDK code to compile with MSVC.
+-The goal is to get parity between clang and MSVC,
+-so that all code that currently compiles with clang on Windows
+-can also be compiled with MSVC.
++Many of the DPDK libraries are available on Windows. These include
++log, kvargs, argparse, telemetry, eal, ptr_compress, ring, rcu,
++mempool, mbuf, net, meter, ethdev, pci, cmdline, metrics,
++hash, timer, bbdev, bitratestats, cfgfile, cryptodev, dmadev, gpudev,
++gro, gso, ip_frag, latencystats, lpm, pcapng, regexdev, mldev,
++rib, reorder, security, stack and fib.
++
++With DPDK 25.11 parity was reached between Clang and MSVC. All source
++code which previously could only be compiled on Windows using Clang
++can now also be compiled with MSVC.
+ 
+ All development happens in the upstream:
+ 
+@@ -39,98 +45,6 @@ This list is obviously neither complete nor guaranteed.
+ {{% /notice %}}
+ 
+ 
+-#### Bringing support for Microsoft Visual Studio on Windows
+-
+-Starting with release 23.11, integration began to formally support
+-the Microsoft Visual Studio toolset.
+-Patches were introduced to incrementally phase in full support
+-of the core DPDK libraries, the DPDK unit tests and drivers.
+-
+-Continuing that effort, the following is a work plan targeting the 25.03 release.
+-The plan is subject to change depending on delays and discussions
+-from the review process.
+-Contributions toward this plan from the community are welcome.
+-
+-##### Eliminate VLAs
+-
+-MSVC does not support Variable Length Arrays (VLAs). Therefore there is a need
+-to replace VLAs with standard C arrays or alloca(). alloca() is available for
+-all toolchain/platform combinations officially supported by DPDK.
+-
+-The series [Remove use of VLAs for Windows](https://patches.dpdk.org/project/dpdk/list/?series=34007)
+-removes the use of VLAs from code built for Windows for all three toolchains.
+-Since this is a large series touching many files, it's a pre-requisite for
+-many subsequent changes.
+-
+-##### Structure Packing
+-
+-MSVC struct packing is not compatible with GCC. A discussion about possible
+-solutions was held and as a result the series
+-[Fix packing of structs when building with MSVC](https://patches.dpdk.org/project/dpdk/list/?series=34043)
+-was submitted for review.
+-
+-This series provides a macro (__rte_packed_begin) that can be used to push
+-existing pack value and sets packing to 1-byte. The existing __rte_packed
+-macro is replaced with __rte_packed_end and restores the pack value prior
+-to the push.
+-
+-Like the VLA-related change, this series is also large and is a pre-requisite
+-for many subsequent changes.
+-
+-##### MSVC CI Pipeline
+-
+-The DPDK CI pipeline is fundamental to making progress with porting work for
+-the MSVC toolset as it avoids regressions from being introduced. The CI
+-pipeline is in place and is being relied on as work progresses. It
+-automatically starts compiling additional code as it gets enabled by the
+-patches that get completed.
+-
+-As additional libraries and tests are ported, the pipeline will also allow
+-execution of the DPDK unit tests.
+-
+-##### MSVC Library Porting
+-
+-Several libraries are already compiling with MSVC: log, kvargs, telemetry,
+-eal, ptr_compress, ring, meter, pci, timer and cfgfile.
+-
+-These are some of the libraries that will be ported for 25.03: rcu, mbuf,
+-lpm, dmadev, mldev, stack and fib.
+-
+-Porting new libraries might be broken down into multiple-patch series to
+-address & decouple different issues separately.
+-
+-It's important to note that some libraries (EAL is a great example) are
+-pre-requisite for porting other libraries, drivers and unit tests. As
+-mentioned above, the VLA and structure packing changes are pre-requisites
+-as well.
+-
+-##### Unit Test Library Porting
+-
+-In addition to EAL there are several libraries required for the basic
+-DPDK unit test harness.
+-Multiple series will be submitted to port the appropriate libraries
+-to allow the harness to be invoked.
+-
+-##### Unit Test Enablement
+-
+-Fundamental unit tests will be ported to MSVC.
+-For tests that depend only on EAL this is not expected to require code change
+-but is just re-enabling compilation of the tests allowing them to be built and run.
+-
+-##### MSVC CI Pipeline Test Enablement
+-
+-With initial DPDK unit tests building & passing the CI pipeline will be
+-updated to run the unit tests.
+-
+-##### Driver Porting
+-
+-Candidate drivers will be selected from the set currently built with clang.
+-Multiple series will be submitted (probably per-driver) with changes to port to MSVC.
+-
+-Nearing the 25.03 release timeframe the plan will be reviewed to
+-understand and schedule porting work beyond the 25.03 release.
+-
+-
+ #### Kernel Mode Drivers
+ 
+ Concurrent work is in progress by Microsoft to provide functionality
+-- 
+2.34.1
 
-and add Fixes: line to track the original commit.
-
-Also it is ok, to fix multiple Coverity issues in one commit.
