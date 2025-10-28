@@ -2,95 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FEDCCCD1BF
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 17:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1034CCD1BF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 17:57:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F1092402E6;
-	Tue, 28 Oct 2025 18:44:21 +0100 (CET)
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com
- [209.85.160.172])
- by mails.dpdk.org (Postfix) with ESMTP id CA0D240262
- for <dev@dpdk.org>; Tue, 28 Oct 2025 18:44:19 +0100 (CET)
-Received: by mail-qt1-f172.google.com with SMTP id
- d75a77b69052e-4ecee8ce926so27418631cf.1
- for <dev@dpdk.org>; Tue, 28 Oct 2025 10:44:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1761673459; x=1762278259; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=hOFSRoExJDjROeo2lBnc6CoNyQ0iuFLCvmO0NaiKhhM=;
- b=I8HoFPR734XM/zlU6QPDNs0FPIqdplTD3YChaYx4xX2LKnd6SbvHFJNooL6Rqdt7Go
- gwoVYO47WSbrCJzS3WPJMYsNHyNM0qgX+Ignaxtr0IH2Llheh5CS4c9h2OlMVe9lRU2Q
- Ft+8vXVlN4dE3XgdOcABbL+Tz0tQXOWviEQvr5m+Gj+9JjayEvJUyBt4kvAeg6MsHaXh
- YFnFBlTkBJC/KizVr4qeIVsCVipSnyFRWQ1a6IiuCKU8AEHr/jP8rvu4opN5Igt9BqEm
- UncD7NXsg1M0+Nk/WQipoOKpczN58uwQmxzQYb4G9Rv3QafeccYgrBRG24u78bsi6vbC
- y3fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761673459; x=1762278259;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=hOFSRoExJDjROeo2lBnc6CoNyQ0iuFLCvmO0NaiKhhM=;
- b=A9eKk0q4pTWhuphLM6HWM2BdxywyT0n6BYCrK48VkC4kNAfDH2EfiRgUrFVGhW4uyu
- gsotCn2bcWMb1N5lqd1+rVUmUTXVWeWNS+kmudedVFO/XdAo4fNErqpmMHRXSZ6CbHjy
- MB1rkhRU4NOAR5+dIvd3MVKoy8v3GO6Z8PrRZjp4Kt2XW1WT2OFPJKoIdHKXKdL6qQvD
- nek8e3qr2g16vSekJ8EHXQ+0CgzHsWJBFfuDA0VhaZURZg1ImqeZiOV2RJXskHoBbyjM
- uRI9IHAEH22J5Mp7ookrR/Y4qiAZzWJ98VMxB+BqkmLI+YzPMWtUcASrKtmaPxnSHr56
- pbjg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWKXaG1NF3qY3s+feh5P6HB6gkFX2YcQg+N//CDhl9lfpCRawNl0PPsxPOtRioqDZolSWk=@dpdk.org
-X-Gm-Message-State: AOJu0YwJZuaKzGjGiYr8J6Ew36tF4pvzsygYh3oKX6CsdTXCuPa5+FUH
- cBKycImnvbVrS4brNLaQwxpOHMvRjWKbgwLs+K/SKZsyjShy1JNQeb3n80Tva2oEsQuYvphTbkx
- F+VfV+n9Sj6r6N2j1qrO06Wijb9M4WBM=
-X-Gm-Gg: ASbGncsxm1iwwShfETpkfoJdfmcKb0EyatCGMRIQKGf+6Hb90kkA4ky6deXetFUBLvd
- 40n/hDgt/hw5RisrMJNcuniaUfI/kJOjTTUFSbBS2rZZ+OPBwClqPCCdW5QFZHjnBKY1HGPsBeS
- +ikMBNgDm+skrlLPlgKvhzzwqhFELpBI/PjM/Ut50Jok4bomWwcL0u6fLh1uD3/P796o+PimLwv
- KANVpHIjGCULHn747kJQJXwl3keDYVew+YBe9NKMLiy0jD7Lg1wAsAGiAYh2SJQZlnhY8Ge
-X-Google-Smtp-Source: AGHT+IHMp8+0jNdFIfNtGdbCm5XSvqv/V3YzDBTf02vd+2dAtsfZ26PDIulfwL7GnzxwsneOJnLP6F3BWfeTQhsuH4Y=
-X-Received: by 2002:a05:622a:5c19:b0:4ec:f6b2:e4ec with SMTP id
- d75a77b69052e-4ed15c1bf1dmr373301cf.44.1761673459004; Tue, 28 Oct 2025
- 10:44:19 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B6CC640262;
+	Tue, 28 Oct 2025 18:57:25 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 0DE464021E;
+ Tue, 28 Oct 2025 18:57:23 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 59SDrTjP1293438; Tue, 28 Oct 2025 10:23:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=Y
+ za3ymVnbGSNBIdu1mcSKZfjGussBttZWQrYx2F4JXI=; b=k86hQM4bJpsxFtl4E
+ jXBF+Jyp5bogLyQTEXobJdtpbHnNKI9n357toVe5bDI/RiVZBwtkskfvxV/3K6Y/
+ MhdwD0bWbUQjozzM8VBrFAkzdRgvvSiNqAOpGcTBIPBqy6/gjsGwgli0u5Z7U2Qw
+ 7j1sqh3keyJXSLCcPyVx8ZTaKo7CI1RtCzVI+QZ0P3ewhw8/hXcRMTolVkyJctdS
+ QCvUGva6W7AyYT7rQ/6DviQQaEYpwWNSQ8Q4MVE4UirYlhkWWsSTZrVTXYkX5vME
+ ywXtyyg6tNLCZUPgblL+6TFBlOaEJLm3BecNGLNkD8fSHXBCTn3N5+XbNL0pt/t9
+ IU3cw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4a2s5ktee8-2
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 28 Oct 2025 10:23:47 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 28 Oct 2025 10:23:44 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 28 Oct 2025 10:23:44 -0700
+Received: from jerin-lab.marvell.com (jerin-lab.marvell.com [10.28.34.14])
+ by maili.marvell.com (Postfix) with ESMTP id 2897B5B6930;
+ Tue, 28 Oct 2025 10:23:41 -0700 (PDT)
+From: <jerinj@marvell.com>
+To: Amit Prakash Shukla <amitprakashs@marvell.com>, Jerin Jacob
+ <jerinj@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Ankur Dwivedi
+ <adwivedi@marvell.com>, =?UTF-8?q?Morten=20Br=C3=B8rup?=
+ <mb@smartsharesystems.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <bruce.richardson@intel.com>,
+ <david.marchand@redhat.com>, <stable@dpdk.org>
+Subject: [dpdk-dev] [PATCH v1 3/3] app/test: fix issues with clang 21.1.4
+Date: Tue, 28 Oct 2025 22:53:23 +0530
+Message-ID: <20251028172324.3149379-3-jerinj@marvell.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <20251028172324.3149379-1-jerinj@marvell.com>
+References: <20251028172324.3149379-1-jerinj@marvell.com>
 MIME-Version: 1.0
-References: <98CBD80474FA8B44BF855DF32C47DC35F65442@smartserver.smartshare.dk>
- <20250918081327.06fcdadf@hermes.local>
-In-Reply-To: <20250918081327.06fcdadf@hermes.local>
-From: Nithin Dabilpuram <nithind1988@gmail.com>
-Date: Tue, 28 Oct 2025 23:14:07 +0530
-X-Gm-Features: AWmQ_bn0q4PyetrqkUWMHWVqE_3XqgmMLEA4ZGAMG1iKar5MGqk_fnetHZYgq8c
-Message-ID: <CAMuDWKTLgDjSTD-Dzb-SBEUdC0LPwDNx3W0W3mn2doWFyQQp0w@mail.gmail.com>
-Subject: Re: Fixing MBUF_FAST_FREE TX offload requirements?
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Somnath Kotur <somnath.kotur@broadcom.com>, 
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>, 
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, 
- Harman Kalra <hkalra@marvell.com>, Hemant Agrawal <hemant.agrawal@nxp.com>, 
- Sachin Saxena <sachin.saxena@oss.nxp.com>, Shai Brandes <shaibran@amazon.com>, 
- Evgeny Schemeilin <evgenys@amazon.com>, Ron Beider <rbeider@amazon.com>, 
- Amit Bernstein <amitbern@amazon.com>, Wajeeh Atrash <atrwajee@amazon.com>,
- Gaetan Rivet <grive@u256.net>, 
- Xingui Yang <yangxingui@huawei.com>, Chengwen Feng <fengchengwen@huawei.com>, 
- Bruce Richardson <bruce.richardson@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>, 
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>, 
- Jingjing Wu <jingjing.wu@intel.com>, Rosen Xu <rosen.xu@altera.com>, 
- Andrew Boyer <andrew.boyer@amd.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
- Ori Kam <orika@nvidia.com>, 
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
- Wenbo Cao <caowenbo@mucse.com>, 
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Jerin Jacob <jerinj@marvell.com>, 
- Maciej Czekaj <mczekaj@marvell.com>, dev@dpdk.org, techboard@dpdk.org, 
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Ivan Malov <ivan.malov@arknetworks.am>, 
- Thomas Monjalon <thomas@monjalon.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE0NyBTYWx0ZWRfXz9hO9dSZBQ+K
+ YjY4uH8HNz+XB3YFj+Ow9LvTvtoOvggVABjw5AqPNKrnttOf43E4+xFS5UX92X5BCi95OS+cHOh
+ hjHDRs+jTbifYO8dYzbT8OecUK41I8HWkOvDqcgFcyP91YvncLv/cJmUFe1PJd/riZeRoepaEbX
+ fPcNVmZkmnmeOv366S+nL3Cbe6gBRDjiqY7GnsBOityDVd1jsjNMGbcxlKeqzQTBYB7CHaGDaMJ
+ ejfdbGvdojsO7nC5HOaVybZQ/AineIsPBIMZ0J5VrDZIm5XzbewVqLsrk0HUDObSg15p5dvDVj8
+ dLvamQTVMdBGXNnmHU+47XiN9QBOvO/LFss/15/y4vp+zVjQWKsRGWYhdrrwoFFYQKmGOR2siaO
+ tBqWZxdZRfKf2x0iuHdPycEKdaXgwQ==
+X-Proofpoint-ORIG-GUID: OoLaLMXXtK2VNkcfRjJF2h2myPJP2hiK
+X-Authority-Analysis: v=2.4 cv=BuKQAIX5 c=1 sm=1 tr=0 ts=6900fc23 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
+ a=Nnu6frwsqterZxj1QOQA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: OoLaLMXXtK2VNkcfRjJF2h2myPJP2hiK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_06,2025-10-22_01,2025-03-28_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -104,66 +84,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-I agree with Stephen.
-Generally what we see with customers is they enable multi-seg offload
-on Rx and Tx just to handle very few jumbo frames while most of the
-pkts are smaller / IMIX.
-So if we say FAST_FREE is mutually exclusive with MULTI_SEGS offload,
-then in effect, FAST_FREE is never used.
+From: Jerin Jacob <jerinj@marvell.com>
 
-We should restore to original two requirements and report bugs in
-driver as bugs rather than adjusting the spec for that.
-In Marvell drivers, we have adhered to original spec. Keeping #3 is
-fine IMO. Problem is only with #4.
+Fix the following errors seen with clang 21.1.4
 
---
-Nithin
+app/test/test_event_dma_adapter.c:532:32: error: variable 'event' is
+uninitialized when passed as a const pointer argument here
+[-Werror,-Wuninitialized-const-pointer]
 
-PS: Sorry for late reply
+app/test/test_trace.c:201:29: error: variable 'tmp' is uninitialized
+when passed as a const pointer argument here
+[-Werror,-Wuninitialized-const-pointer]
 
-On Thu, Sep 18, 2025 at 8:49=E2=80=AFPM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Thu, 18 Sep 2025 10:50:11 +0200
-> Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
->
-> > Dear NIC driver maintainers (CC: DPDK Tech Board),
-> >
-> > The DPDK Tech Board has discussed that patch [1] (included in DPDK 25.0=
-7) extended the documented requirements to the RTE_ETH_TX_OFFLOAD_MBUF_FAST=
-_FREE offload.
-> > These changes put additional limitations on applications' use of the MB=
-UF_FAST_FREE TX offload, and made MBUF_FAST_FREE mutually exclusive with MU=
-LTI_SEGS (which is typically used for jumbo frame support).
-> > The Tech Board discussed that these changes do not reflect the intentio=
-n of the MBUF_FAST_FREE TX offload, and wants to fix it.
-> > Mainly, MBUF_FAST_FREE and MULTI_SEGS should not be mutually exclusive.
-> >
-> > The original RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE requirements were:
-> > When set, application must guarantee that
-> > 1) per-queue all mbufs come from the same mempool, and
-> > 2) mbufs have refcnt =3D 1.
-> >
-> > The patch added the following requirements to the MBUF_FAST_FREE offloa=
-d, reflecting rte_pktmbuf_prefree_seg() postconditions:
-> > 3) mbufs are direct,
-> > 4) mbufs have next =3D NULL and nb_segs =3D 1.
-> >
-> > Now, the key question is:
-> > Can we roll back to the original two requirements?
-> > Or do the drivers also depend on the third and/or fourth requirements?
->
-> IMHO fast free should be as much like normal as possible.
-> Only things that would have a measurable impact on performance would help=
-.
->
-> The reason for the single mempool is mostly related to not requiring code
-> that would walk a multi-segment mbuf to disperse the segments to potentia=
-lly
-> different pools.
->
-> The reason for the refcnt =3D=3D 1 is that updating refcnt requires atomi=
-c
-> operations which need to read-modify-write on memory (not just cache).
-> And RMW operation can take several memory clock cycles.
->
+Fixes: 4925e15a1614 ("trace: add trace point emit for blob")
+Fixes: a276e7c8fbb3 ("test/event: add DMA adapter auto-test")
+Cc: stable@dpdk.org
+
+Signed-off-by: Jerin Jacob <jerinj@marvell.com>
+---
+ app/test/test_event_dma_adapter.c | 2 ++
+ app/test/test_trace.c             | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/app/test/test_event_dma_adapter.c b/app/test/test_event_dma_adapter.c
+index 7f72a4e81d..4df5991285 100644
+--- a/app/test/test_event_dma_adapter.c
++++ b/app/test/test_event_dma_adapter.c
+@@ -144,6 +144,7 @@ test_dma_adapter_params(void)
+ 	TEST_ASSERT_SUCCESS(err, "Failed to get adapter capabilities\n");
+ 
+ 	if (cap & RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_VCHAN_EV_BIND) {
++		event.queue_id = 0;
+ 		err = rte_event_dma_adapter_vchan_add(TEST_ADAPTER_ID, TEST_DMA_DEV_ID,
+ 							    TEST_DMA_VCHAN_ID, &event);
+ 	} else
+@@ -528,6 +529,7 @@ test_dma_adapter_vchan_add_del(void)
+ 	TEST_ASSERT_SUCCESS(ret, "Failed to get adapter capabilities\n");
+ 
+ 	if (cap & RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_VCHAN_EV_BIND) {
++		event.queue_id = 0;
+ 		ret = rte_event_dma_adapter_vchan_add(TEST_ADAPTER_ID, TEST_DMA_DEV_ID,
+ 							    TEST_DMA_VCHAN_ID, &event);
+ 	} else
+diff --git a/app/test/test_trace.c b/app/test/test_trace.c
+index 8ea1443044..52b5ba5cbb 100644
+--- a/app/test/test_trace.c
++++ b/app/test/test_trace.c
+@@ -179,7 +179,7 @@ static int
+ test_generic_trace_points(void)
+ {
+ 	uint8_t arr[RTE_TRACE_BLOB_LEN_MAX];
+-	int tmp;
++	int tmp = 0;
+ 	int i;
+ 
+ 	for (i = 0; i < RTE_TRACE_BLOB_LEN_MAX; i++)
+-- 
+2.51.2
+
