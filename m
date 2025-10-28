@@ -2,48 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73238CCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 00:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D3E8CCF9E0
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 05:29:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44B4140281;
-	Tue, 28 Oct 2025 01:45:43 +0100 (CET)
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com
- [113.46.200.221])
- by mails.dpdk.org (Postfix) with ESMTP id A08F54021E;
- Tue, 28 Oct 2025 01:45:41 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=rN/SwWmZSGG54YMT9Aw4T6UsOSFexgmAfrinEbCzM8Q=;
- b=RrazYI8WxDtc2GzwNavRx/gVKkv9A17Two5k9/tQ2rz4kK8+Jg2Pjv5vmdLA7EIBE33bNAuzA
- jBuxGS7Vz3p+2CpHCQ+CrP+G6j35kEQdPQP13YdZIjvLwhn6wL7lKYg0TTVMAT+vfDoRgjhuOie
- QJiHkp6TS4AIPEWcAHy4O5A=
-Received: from mail.maildlp.com (unknown [172.19.163.48])
- by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4cwWqp5GLPzRhRJ;
- Tue, 28 Oct 2025 08:45:10 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 0795C180080;
- Tue, 28 Oct 2025 08:45:39 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 28 Oct 2025 08:45:38 +0800
-Message-ID: <35d7b613-6f37-4d7a-b0b7-022cb65a36c1@huawei.com>
-Date: Tue, 28 Oct 2025 08:45:37 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id D2B8540262;
+	Tue, 28 Oct 2025 06:29:50 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 849104021E
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 06:29:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1761629388; x=1793165388;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=v8klXjSTpE3bswJeAwl3YaxNv1BlW+7THI4bvvl6phY=;
+ b=Fbb126l2tSk8yaGgKGUFBF6rA/jLShX/ZnN9yKYYCKFIxk20ZXvHrmlL
+ pv9X7Si2tu68VQh0xbfiamiC9FN+550B5pLfewJYGc+hb+eAg/h6rN7Ys
+ 8G+gmRzQ9ySfaEAz2S/04HLLQish6Oo4YrItF7E2DzmRSkdzTLMxOy/Xu
+ ++aUtrqgMwRagLYyzDVRnbXeWkpD6Q8BNyNg1/4/h/lLZPUv985w8Mb01
+ nf0tGc/rOgS8VJBAZPry4PUZKh18bERmzQAxqQMrUPy86a4uELvfVmgxA
+ KwG3JteB4KDlpZvH/Yi7vCJoXxOCx0qlqaWEDD+TSJj5kQwmiHDKB61QB w==;
+X-CSE-ConnectionGUID: Vaw78eJcT5Or77Z48lgxTQ==
+X-CSE-MsgGUID: WnSJ+d+yRlupVgWvy7dDEA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="86346428"
+X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; d="scan'208";a="86346428"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Oct 2025 22:29:47 -0700
+X-CSE-ConnectionGUID: tLUnTZDkSgCla1yJhGfrXg==
+X-CSE-MsgGUID: pen9dAD8Qa6FKrSzgNM5iQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; d="scan'208";a="215904137"
+Received: from unknown (HELO srv24..) ([10.138.182.231])
+ by orviesa002.jf.intel.com with ESMTP; 27 Oct 2025 22:29:46 -0700
+From: Shaiq Wani <shaiq.wani@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com
+Cc: aman.deep.singh@intel.com
+Subject: [PATCH v9 0/3] net/idpf: enable AVX2 for split queue Rx/Tx
+Date: Tue, 28 Oct 2025 10:59:40 +0530
+Message-Id: <20251028052943.121453-1-shaiq.wani@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250917052658.582872-1-shaiq.wani@intel.com>
+References: <20250917052658.582872-1-shaiq.wani@intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dmadev: fix build if RTE_DMADEV_DEBUG enabled
-To: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>
-CC: <stable@dpdk.org>, <david.marchand@redhat.com>, Kevin Laatz
- <kevin.laatz@intel.com>, Bruce Richardson <bruce.richardson@intel.com>
-References: <20251027164621.175861-1-stephen@networkplumber.org>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20251027164621.175861-1-stephen@networkplumber.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,21 +60,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+In case some CPUs don't support AVX512. Enable AVX2 for them to
+get better per-core performance.
 
-On 10/28/2025 12:46 AM, Stephen Hemminger wrote:
-> Missing definition of errnos causes build failure:
-> 
-> In file included from ../lib/dmadev/rte_dmadev_trace.h:16,
->                  from ../lib/dmadev/rte_dmadev_trace_points.c:8:
-> ../lib/dmadev/rte_dmadev.h: In function ‘rte_dma_copy’:
-> ../lib/dmadev/rte_dmadev.h:1183:25: error: ‘EINVAL’ undeclared (first use in this function)
->  1183 |                 return -EINVAL;
->       |                         ^~~~~~
-> 
-> Bugzilla ID: 1814
-> Fixes: 8f1d23ece06a ("eal: deprecate RTE_FUNC_PTR_* macros")
-> Cc: david.marchand@redhat.com
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+In the single queue model, the same descriptor queue is used by SW
+to post descriptors to the device and used by device to report completed
+descriptors to SW. While as the split queue model separates them into
+different queues for parallel processing and improved performance.
+
+v9:
+*Some minor fixes.
+
+v8:
+*Reworked the receive func to avoid race conditions in Rx path.
+*Removed unnecessary compiler barriers.
+
+v7:
+*Removed (char) casts, ifdef block as suggested.
+*Fixed indentation, line wrapping.
+*Did blind write of data to avoid branching.
+*changed desc building and writing  order for Tx.
+
+v6:
+*used single load/store in splitq_recv_pkts function.
+*removed x86-specific intrinsics from common code.
+
+v5:
+*Fixed CI errors.
+*Used defined constants instead of numbers.
+
+v4:
+*moved splitq_rearm_common to a common location.
+*reduced duplication of code.
+*fixed splitq_recv_pkts function.
+
+v3:
+*Fixed some indentation issues.
+*Collapsed wrapper and core function into one.
+*Fixed some pointer casting and naming inconsistency issues.
+
+v2:
+*Fixed CI build related issues.
+*Rebased on top of idpf/cpfl rx path selection simplication patch.
+
+Shaiq Wani (3):
+  net/idpf: enable AVX2 for split queue Rx
+  net/idpf: enable AVX2 for split queue Tx
+  doc: note on unsupported completion queue sharing
+
+ doc/guides/nics/idpf.rst                      |   5 +
+ drivers/net/intel/idpf/idpf_common_device.h   |   1 +
+ drivers/net/intel/idpf/idpf_common_rxtx.c     |  59 ++++
+ drivers/net/intel/idpf/idpf_common_rxtx.h     |   8 +
+ .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 299 +++++++++++++++++-
+ .../net/intel/idpf/idpf_common_rxtx_avx512.c  |  56 ----
+ drivers/net/intel/idpf/idpf_rxtx.c            |   9 +
+ 7 files changed, 379 insertions(+), 58 deletions(-)
+
+-- 
+2.34.1
 
