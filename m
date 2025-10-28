@@ -2,74 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1D8CCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 20:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7537CCF9E0
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 20:50:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B212B40262;
-	Tue, 28 Oct 2025 21:50:37 +0100 (CET)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
- [209.85.214.173])
- by mails.dpdk.org (Postfix) with ESMTP id 214384021E
- for <dev@dpdk.org>; Tue, 28 Oct 2025 21:50:35 +0100 (CET)
-Received: by mail-pl1-f173.google.com with SMTP id
- d9443c01a7336-26e68904f0eso69453845ad.0
- for <dev@dpdk.org>; Tue, 28 Oct 2025 13:50:35 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AEC704042E;
+	Tue, 28 Oct 2025 21:50:43 +0100 (CET)
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com
+ [209.85.210.178])
+ by mails.dpdk.org (Postfix) with ESMTP id BAA214021E
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 21:50:41 +0100 (CET)
+Received: by mail-pf1-f178.google.com with SMTP id
+ d2e1a72fcca58-7a2852819a8so4537750b3a.3
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 13:50:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761684635;
- x=1762289435; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761684641;
+ x=1762289441; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=JfXNI0XT4RJ+PjyT6hteeLG6DqgkkcJMlRFmaQBWPRE=;
- b=SwxKem6q88ByGTZMHicZbwRguxvUfNtoy3SI9cPnu75mhmbjQ0knaDMA4jxgu4SI1N
- 1pPWctbKyf0sBOXDM67zUdu0BakuYiERJermtHb+kNNuNBdGsvBsPzWK8kxLZ67/+ofR
- nnaCxWC3cBtpZAsHP7vOaLD+xe8I/AKqA+O8sBRlioCLjxamWqbZu5MFaVSYCW/irdKl
- wJHhUKkj4jRClRP/2eU37E2lhwlPmnhmLX6pYGHLAkZravg97HaPRogSkIQ8tcHbZbhG
- lxXCHCETLC4bJOjv9Vkr5DU6HdqeF9SdClRvGj67gRHhpq3vzzBtVJrTIETliESOBhcC
- ffFA==
+ bh=0qYwV+VpbgwiqabPHaUyFrSP1BFP2Nu3yWS6JzwbstU=;
+ b=P3065mN0/KTJ0qoZWJfmaHVIkxe2knyOn/HF4+cOEMqd9hHT6eQQ56O5EKz8bIp2KM
+ ORoXl5Fi0xVVirvBGe9aUHG0By8E4FlalcMP7OM1T5/LY3iXBfHNmoLX5qstiRPWkChA
+ gjv6f2Lj/ODIjiR9027JpxpbVvuu8ADYhxQ3uGWJ4tagFzlno7djj+dpWbMqYxMg93V8
+ epCdot4Pc/uPMmcNCycMMvKDpfLiAAcKO8v5wTej7X3BaCjEkAFmBg51KelSyGbt5wxj
+ BqD4cDmApMG0GSkSjBuuTxvfz0YjBw9arTKkjGliiECaCOMKGcTa3i20y+W8fPpHSoK7
+ 9x6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761684635; x=1762289435;
+ d=1e100.net; s=20230601; t=1761684641; x=1762289441;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=JfXNI0XT4RJ+PjyT6hteeLG6DqgkkcJMlRFmaQBWPRE=;
- b=F8VF90ev6x3FvR8IVu2D1HiARlUgijOD+A0HsC8YacyODuMxxizEkbQk8RoVqfsSmC
- 9Gf9jHoSX4F4ZX3eI3gz7wwfKugsqrS1KbRUbznQqBoscRJIFF7N3wPbhqrLo7dZBTsa
- 7xO2xldDDyWFP9XyNeZmC/15fsS79WKNhjZBNkLPQlJryNzMgr3vSgWRzl2dT8vOUDN9
- CvtWiXLNXeExQ8fR/nqRGl4XUEM+uZnAo10g5kvXp8alLYvwFLeb7KD2R6vd+J1tlHWf
- I1hmKYEscRHrt3q8Eo323pYeoNneayIszHGy4TcTwlUa4Oo0f0UFk3XNNt70C0ifYLLb
- AZEA==
-X-Gm-Message-State: AOJu0Yw3tJF2Ur7dEYwrXKsCUWBHyeneYNEp+Nqd3sKsMpRrop0pt/SC
- +52IGMRkYfwJHAgKPgkA6/PF9k0tL0peocCUzyTqenmpxFYnnfzyaYpRE32yfGWUvuSjkA3l7y9
- 35n96vjI=
-X-Gm-Gg: ASbGncs3piG/XIEdcvhMHwdb1Yv24rdfqTTeZNac++a3aaLoHEKByH83bp1XyobU6O0
- dn9VuZXI39TdCfqjo+cPKkysR69cS6NwLfTfWLCpL5XchRgoUpV61/YXR1cxwYGNgOyHw8+2mWa
- XuqnLHwxtzE+849doGHEpt4Qiw6TCjapRidhfS/Q2lSn52182MJX9NOCCXKun2mRF7eQ7sTytWp
- eEaQ1gIj4Rp02Ti229+8vg+7JLmClw9Xn2I0a0vyQCvLbaFQBew0VjZsbWlIqL9P/LGBFcjx7/a
- 7pyo2ARJ4+ARGaZ8KdUWHed2XCPONGxlA//F4PRwWX7pgd1d4GZIfg1RVd6liMAJUt1Usaxul5E
- L2MOPPDPJE2y+t0QJQNAZDnmzvs0xD3OmxExok3pqdkdX8ieGYgbpXKcqF1XZugkp0v02CeeXWL
- BITYq8pdvFFQ8bQFQ6E+TYqLqmikL5ZXj6bA==
-X-Google-Smtp-Source: AGHT+IEA5G092Rp5MsM5ZpHwx1UrCIvAZr1mUDJI9XSlbaYzWIVKBnYAE+46Rdi7/ybFN+/w9UQRpA==
-X-Received: by 2002:a17:903:41c6:b0:28a:8ae7:4034 with SMTP id
- d9443c01a7336-294dee2281dmr5103305ad.25.1761684634753; 
- Tue, 28 Oct 2025 13:50:34 -0700 (PDT)
+ bh=0qYwV+VpbgwiqabPHaUyFrSP1BFP2Nu3yWS6JzwbstU=;
+ b=Ampe0BK5Zg8khT4XBxbDbE5T27LMOdIqIjjnJ2rDH9rJsEnQpkErMrDlEBtewfI0ci
+ 6TqW9+NVHBk95E5/0kGxIAsM2XOVBcIodBY7VvGhCG9mjMcHXDzCxyzF6WILNgRIZ01e
+ BUXFPL2zXCgKoV1aOL/+OUKEU3ThFjBwImsM2Dn4AOiks28WiJmtsLC7SQJ9zyFuULkb
+ 7GGR7Dfp9xLn7ComXivKZJi5/J7dhGo5Rw+SC+U9d2dxNbACLHHxZMp0YMPxDcK/yc1v
+ BALVOfEPUpnOdcm6lzVPwCPsUiNxikPBP04wrwXautCmulqOYMHktYhHRQ+rTmnqyfP7
+ eJZw==
+X-Gm-Message-State: AOJu0Yw79QfvXS+eYyO6jL3sdPbpPogczP6Wwe/egNLFz9B9NVdFGjeo
+ 54Ia0gmP5pzbophsQACKoXYMx2fV7XoMvod6D5yaaS+thIPOI5c3jh6Sn3GFlf8ARnU=
+X-Gm-Gg: ASbGnctRoM1uW0lc02tkPQgvD/aeWhqipYxwCSNxR3SG2zu0MYv5BllT1FidTR2OpDf
+ xBRdWFtW138rLbvfWLyGckBLWU8YMtCP7hmnAX6y7ky1uOF+8t6krEc+auGIRvjeGFJ9ECPvHVF
+ /D7ZR0oYNRszvABV7zl9hzJdClFCkOFQKCC/85RJ3G3L8cVHLO+OV/52qEDXcG1BHWJTWMpWs2J
+ hs7k4UHA9yEb13YppNT7ynUXlLApKV00YcV0oED/ShiIWVafMxKUPVUIiIFPbA5HJLraIT26b3k
+ 0KznmUqG7X+r0gLoxv6BDIXt+WwSoBsxt9+/JlaZgZLB+95XuposGkeWgHAb/kUfntpE9XVFeqa
+ NlEMAE6alZHK/wbDEGg9dKGNqTcOctzt41PRfP0I8ruZKHPwcyuAdTshnZw7ZwJafxa/kad0/5W
+ 2D2X+XRUHdzg5L1+TFp3N2MKd56F72/eu/Lw==
+X-Google-Smtp-Source: AGHT+IHn6DFM75s/Rvdo/eIlj783ghm1lA33uu63kSqbDBrnm1kvWLL9RSV+pihXObYkdipm0H6y6g==
+X-Received: by 2002:a05:6a21:33a0:b0:334:99f9:ff57 with SMTP id
+ adf61e73a8af0-3465381373dmr370166637.47.1761684640915; 
+ Tue, 28 Oct 2025 13:50:40 -0700 (PDT)
 Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-29498cf35a5sm125624705ad.18.2025.10.28.13.50.34
+ d2e1a72fcca58-7a414032c71sm12849828b3a.25.2025.10.28.13.50.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 28 Oct 2025 13:50:34 -0700 (PDT)
-Date: Tue, 28 Oct 2025 13:50:32 -0700
+ Tue, 28 Oct 2025 13:50:40 -0700 (PDT)
+Date: Tue, 28 Oct 2025 13:49:49 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
  <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH v1 9/9] net/nbl: address channel Incorrect expression
- issues 490958
-Message-ID: <20251028135032.70f467cc@phoenix>
-In-Reply-To: <20251027101649.3337618-10-dimon.zhao@nebula-matrix.com>
+Subject: Re: [PATCH v1 1/9] net/nbl: address nbl channel integer handling
+ issues 490942
+Message-ID: <20251028134949.497a5108@phoenix>
+In-Reply-To: <20251027101649.3337618-2-dimon.zhao@nebula-matrix.com>
 References: <20250627014022.4019625-1-dimon.zhao@nebula-matrix.com>
  <20251027101649.3337618-1-dimon.zhao@nebula-matrix.com>
- <20251027101649.3337618-10-dimon.zhao@nebula-matrix.com>
+ <20251027101649.3337618-2-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -86,34 +85,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 27 Oct 2025 03:16:48 -0700
+On Mon, 27 Oct 2025 03:16:40 -0700
 Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
 
-> Coverity issue: 490958
+> Coverity issue: 490942
 > 
 > Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 > ---
->  drivers/net/nbl/nbl_hw/nbl_channel.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  drivers/net/nbl/nbl_hw/nbl_channel.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/net/nbl/nbl_hw/nbl_channel.c b/drivers/net/nbl/nbl_hw/nbl_channel.c
-> index 654e56f200..acbceecc46 100644
+> index 7cc214df01..17d9231dfe 100644
 > --- a/drivers/net/nbl/nbl_hw/nbl_channel.c
 > +++ b/drivers/net/nbl/nbl_hw/nbl_channel.c
-> @@ -856,9 +856,12 @@ static void nbl_chan_remove_state_bitmap(void *priv)
->  {
->  	struct nbl_channel_mgt *chan_mgt = (struct nbl_channel_mgt *)priv;
->  	union nbl_chan_info *chan_info = NBL_CHAN_MGT_TO_CHAN_INFO(chan_mgt);
-> +	int ret = 0;
+> @@ -376,8 +376,8 @@ static uint16_t nbl_chan_update_txqueue(union nbl_chan_info *chan_info,
 >  
->  	if (chan_info->mailbox.state_bmp) {
-> -		rte_bitmap_free(chan_info->mailbox.state_bmp);
-> +		ret = rte_bitmap_free(chan_info->mailbox.state_bmp);
-> +		if (ret)
-> +			NBL_LOG(ERR, "mailbox state bitmap free failed, ret:%d", ret);
->  		chan_info->mailbox.state_bmp = NULL;
->  	}
->  	if (chan_info->mailbox.state_bmp_mem) {
+>  	txq = &chan_info->mailbox.txq;
+>  	next_to_use = txq->next_to_use;
+> -	va = (u8 *)txq->buf + next_to_use * chan_info->mailbox.txq_buf_size;
+> -	pa = txq->buf_mem.pa + next_to_use * chan_info->mailbox.txq_buf_size;
+> +	va = (u8 *)txq->buf + (u64)next_to_use * (u64)chan_info->mailbox.txq_buf_size;
+> +	pa = txq->buf_mem.pa + (u64)next_to_use * (u64)chan_info->mailbox.txq_buf_size;
+>  	tx_desc = NBL_CHAN_TX_DESC(txq, next_to_use);
+>  
+>  	tx_desc->dstid = dstid;
 
-Skip this patch, better to fix rte_bitmap_free() stub to be a void
-function; addressed in another patch.
+Please use standard subject, like:
+
+net/nbl: fix nbl channel integer handling
+
+and add Fixes: line to track the original commit.
+
+Also it is ok, to fix multiple Coverity issues in one commit.
