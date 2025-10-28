@@ -2,74 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD63CCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 17:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F2ECCF9EB
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 17:37:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7440340262;
-	Tue, 28 Oct 2025 18:23:49 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id D526B4021E;
- Tue, 28 Oct 2025 18:23:47 +0100 (CET)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 59SDrTjO1293438; Tue, 28 Oct 2025 10:23:47 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=u
- mFlUyshvfOCN8xZEnFN79/VuqaAVfGk2JUvth9Kn+c=; b=ObQGfIrz8riX3olNd
- D3liTTvCWp/j551zJ1f6rDs9gwrmf0yO5LCKb6g/YCd9Dd8sfK0qJA5wTqhEJeET
- C6fPOl9TqQM+PddM0sk7tJ/4+voOVBgByKVltzoHcOC2mwyHMScz5ZgUFB+mysXP
- BR3YN5A0m9JZMHFsQsmcKd3+cS4Lq9WyQZRut4CEF0lifX8mvMwFwAULp5t/w8Q4
- NieQKkY7UdX1SGp/sNyRFOyx7OD4dJB72cypdjDR+4V/RgU8War2XmN9LBd2wqrv
- vP7wD+0tqci4vB02ISHMBgosFFMhLJ1J21v2IkhS2pMK0femDhj7egv1wKETADql
- MxAzA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4a2s5ktee8-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Tue, 28 Oct 2025 10:23:41 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 28 Oct 2025 10:23:40 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 28 Oct 2025 10:23:40 -0700
-Received: from jerin-lab.marvell.com (jerin-lab.marvell.com [10.28.34.14])
- by maili.marvell.com (Postfix) with ESMTP id 28B8F5B6930;
- Tue, 28 Oct 2025 10:23:37 -0700 (PDT)
-From: <jerinj@marvell.com>
-To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>, Yiding Zhou
- <yidingx.zhou@intel.com>, Qi Zhang <qi.z.zhang@intel.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>, <bruce.richardson@intel.com>,
- <david.marchand@redhat.com>, Jerin Jacob <jerinj@marvell.com>,
- <stable@dpdk.org>
-Subject: [dpdk-dev] [PATCH v1 2/3] net/iavf: fix issues with clang 21.1.4
-Date: Tue, 28 Oct 2025 22:53:22 +0530
-Message-ID: <20251028172324.3149379-2-jerinj@marvell.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251028172324.3149379-1-jerinj@marvell.com>
-References: <20251028172324.3149379-1-jerinj@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0D5B440262;
+	Tue, 28 Oct 2025 18:37:27 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 806454021E
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 18:37:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1761673044;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=JlZ6MckrrOPrYml6e5NbGKhloOoGxVZFWSSEWuy7Co0=;
+ b=Jtp51kmEq967uc5+Z6reM+0jc/IRJ5TKpPfaZYhC3TIBsJEYnJqXqMeyAyD5SYMfGaOJ5t
+ PsuDrvuoWJTDRM92jSO7OTzxcZWOk8nAY8cw0a8kTW1XIawmvKTp0Uj86YlcKxK0UTO3bk
+ 8pJ5JOPe6yzJn4YlmSeYvsWv5jgc5Vs=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-668-Dpx6z3VAPNyK0mAdpt_2UA-1; Tue,
+ 28 Oct 2025 13:37:22 -0400
+X-MC-Unique: Dpx6z3VAPNyK0mAdpt_2UA-1
+X-Mimecast-MFC-AGG-ID: Dpx6z3VAPNyK0mAdpt_2UA_1761673041
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 88AB81800654; Tue, 28 Oct 2025 17:37:21 +0000 (UTC)
+Received: from ringo.home (unknown [10.44.33.225])
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 0C05330001A2; Tue, 28 Oct 2025 17:37:19 +0000 (UTC)
+From: Robin Jarry <rjarry@redhat.com>
+To: dev@dpdk.org,
+	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH dpdk v3] fib6: implement RCU rule reclamation
+Date: Tue, 28 Oct 2025 18:37:05 +0100
+Message-ID: <20251028173703.548656-3-rjarry@redhat.com>
+In-Reply-To: <20250610145341.38271-2-rjarry@redhat.com>
+References: <20250610145341.38271-2-rjarry@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: M7qUFGbjyOfXuO4rFBacKozC14NXljpbF_qBlvoKTRA_1761673041
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE0NyBTYWx0ZWRfXzbbfBY/hSq5m
- vddJVdloOVf77YRoENLSgHAIkOqTRZKv/fSuyo2Y5R1fn3AyobT+7yb3S4I0Ww0e3WG0fCWYSOY
- DmVSIkLy3NewjmvZk+jI6x3J1TUKHfgxC/7uW/2W9OnAH1t5ZxjJlL8fAi0MrAC9IHNapZS+zQm
- LW40iN3ZGDeZIZ7uSwcGBkiwJ6UHGVCRWUeVY5MZf6gxwPcY8s1U/rVUMqjFRdyrY15Vo/YOv1r
- LgbaIeINdDHofMnH022Iepp0KI8AH6Kib0dHm2CyS7pAklHqZKO/siwCV6Zfg6/MTHWJoGpvK1y
- ePWyCKWraZSEwiK++eM0VlqLKix2SRBri4rTmT+2A6T9gPyp4wbXe3mvXHBvcGmet6LseWoWaAr
- LfJqlVabdvZVvIqKgIzD9qLg7p2Acw==
-X-Proofpoint-ORIG-GUID: XbrqApMZ94G8rfifjf8ETIomnxOLVyoe
-X-Authority-Analysis: v=2.4 cv=BuKQAIX5 c=1 sm=1 tr=0 ts=6900fc1d cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=R18w0tCIQCz98NZomTsA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: XbrqApMZ94G8rfifjf8ETIomnxOLVyoe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_06,2025-10-22_01,2025-03-28_01
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,35 +66,575 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jerin Jacob <jerinj@marvell.com>
+Currently, for the TRIE algorithm, the tbl8 group is freed even though
+the readers might be using the tbl8 group entries. The freed tbl8 group
+can be reallocated quickly. As a result, lookup may be performed
+incorrectly.
 
-Fix the following error seen with clang 21.1.4
+Integrate RCU QSBR support in rte_fib6 objects to support safe tbl8
+group reclamation.
 
-drivers/net/intel/iavf/iavf_vchnl.c:123:38: error: variable
-'notify_byte' is uninitialized when passed as a const pointer
-argument here [-Werror,-Wuninitialized-const-pointer]
-
-Fixes: cb5c1b91f76f ("net/iavf: add thread for event callbacks")
-Cc: stable@dpdk.org
-
-Signed-off-by: Jerin Jacob <jerinj@marvell.com>
+Signed-off-by: Robin Jarry <rjarry@redhat.com>
 ---
- drivers/net/intel/iavf/iavf_vchnl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 460035d772..9ad39300c6 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -102,7 +102,7 @@ iavf_dev_event_post(struct rte_eth_dev *dev,
- 		void *param, size_t param_alloc_size)
+Notes:
+    v3:
+    
+    - Added release notes.
+    - Added missing break.
+    - Updated RTE_EXPORT_EXPERIMENTAL_SYMBOL version tag to 25.11.
+    
+    v2:
+    
+    - Fixed typos in docstrings.
+    - Tests depend on: http://patches.dpdk.org/project/dpdk/list/?series=36356
+
+ app/test/test_fib6.c                   | 214 +++++++++++++++++++++++++
+ doc/guides/rel_notes/release_25_11.rst |   4 +
+ lib/fib/rte_fib6.c                     |  15 ++
+ lib/fib/rte_fib6.h                     |  52 ++++++
+ lib/fib/trie.c                         |  90 ++++++++++-
+ lib/fib/trie.h                         |   8 +
+ 6 files changed, 376 insertions(+), 7 deletions(-)
+
+diff --git a/app/test/test_fib6.c b/app/test/test_fib6.c
+index 79220a88b112..843a4086c1cf 100644
+--- a/app/test/test_fib6.c
++++ b/app/test/test_fib6.c
+@@ -11,6 +11,7 @@
+ #include <rte_log.h>
+ #include <rte_rib6.h>
+ #include <rte_fib6.h>
++#include <rte_malloc.h>
+ 
+ #include "test.h"
+ 
+@@ -22,6 +23,8 @@ static int32_t test_free_null(void);
+ static int32_t test_add_del_invalid(void);
+ static int32_t test_get_invalid(void);
+ static int32_t test_lookup(void);
++static int32_t test_invalid_rcu(void);
++static int32_t test_fib_rcu_sync_rw(void);
+ 
+ #define MAX_ROUTES	(1 << 16)
+ /** Maximum number of tbl8 for 2-byte entries */
+@@ -387,6 +390,215 @@ test_lookup(void)
+ 	return TEST_SUCCESS;
+ }
+ 
++/*
++ * rte_fib6_rcu_qsbr_add positive and negative tests.
++ *  - Add RCU QSBR variable to FIB
++ *  - Add another RCU QSBR variable to FIB
++ *  - Check returns
++ */
++int32_t
++test_invalid_rcu(void)
++{
++	struct rte_fib6 *fib = NULL;
++	struct rte_fib6_conf config = { 0 };
++	size_t sz;
++	struct rte_rcu_qsbr *qsv;
++	struct rte_rcu_qsbr *qsv2;
++	int32_t status;
++	struct rte_fib6_rcu_config rcu_cfg = {0};
++	uint64_t def_nh = 100;
++
++	config.max_routes = MAX_ROUTES;
++	config.rib_ext_sz = 0;
++	config.default_nh = def_nh;
++
++	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
++
++	/* Create RCU QSBR variable */
++	sz = rte_rcu_qsbr_get_memsize(RTE_MAX_LCORE);
++	qsv = (struct rte_rcu_qsbr *)rte_zmalloc_socket(NULL, sz, RTE_CACHE_LINE_SIZE,
++		SOCKET_ID_ANY);
++	RTE_TEST_ASSERT(qsv != NULL, "Can not allocate memory for RCU\n");
++
++	status = rte_rcu_qsbr_init(qsv, RTE_MAX_LCORE);
++	RTE_TEST_ASSERT(status == 0, "Can not initialize RCU\n");
++
++	rcu_cfg.v = qsv;
++
++	/* adding rcu to RTE_FIB6_DUMMY FIB type */
++	config.type = RTE_FIB6_DUMMY;
++	rcu_cfg.mode = RTE_FIB6_QSBR_MODE_SYNC;
++	status = rte_fib6_rcu_qsbr_add(fib, &rcu_cfg);
++	RTE_TEST_ASSERT(status == -ENOTSUP,
++		"rte_fib6_rcu_qsbr_add returned wrong error status when called with DUMMY type FIB\n");
++	rte_fib6_free(fib);
++
++	config.type = RTE_FIB6_TRIE;
++	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
++	config.trie.num_tbl8 = MAX_TBL8;
++	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
++
++	/* Call rte_fib6_rcu_qsbr_add without fib or config */
++	status = rte_fib6_rcu_qsbr_add(NULL, &rcu_cfg);
++	RTE_TEST_ASSERT(status == -EINVAL, "RCU added without fib\n");
++	status = rte_fib6_rcu_qsbr_add(fib, NULL);
++	RTE_TEST_ASSERT(status == -EINVAL, "RCU added without config\n");
++
++	/* Invalid QSBR mode */
++	rcu_cfg.mode = 2;
++	status = rte_fib6_rcu_qsbr_add(fib, &rcu_cfg);
++	RTE_TEST_ASSERT(status == -EINVAL, "RCU added with incorrect mode\n");
++
++	rcu_cfg.mode = RTE_FIB6_QSBR_MODE_DQ;
++
++	/* Attach RCU QSBR to FIB to check for double attach */
++	status = rte_fib6_rcu_qsbr_add(fib, &rcu_cfg);
++	RTE_TEST_ASSERT(status == 0, "Can not attach RCU to FIB\n");
++
++	/* Create and attach another RCU QSBR to FIB table */
++	qsv2 = (struct rte_rcu_qsbr *)rte_zmalloc_socket(NULL, sz, RTE_CACHE_LINE_SIZE,
++		SOCKET_ID_ANY);
++	RTE_TEST_ASSERT(qsv2 != NULL, "Can not allocate memory for RCU\n");
++
++	rcu_cfg.v = qsv2;
++	rcu_cfg.mode = RTE_FIB6_QSBR_MODE_SYNC;
++	status = rte_fib6_rcu_qsbr_add(fib, &rcu_cfg);
++	RTE_TEST_ASSERT(status == -EEXIST, "Secondary RCU was mistakenly attached\n");
++
++	rte_fib6_free(fib);
++	rte_free(qsv);
++	rte_free(qsv2);
++
++	return TEST_SUCCESS;
++}
++
++static struct rte_fib6 *g_fib;
++static struct rte_rcu_qsbr *g_v;
++static struct rte_ipv6_addr g_ip = RTE_IPV6(0x2001, 0xabcd, 0, 0, 0, 0, 0, 1);
++static volatile uint8_t writer_done;
++/* Report quiescent state interval every 1024 lookups. Larger critical
++ * sections in reader will result in writer polling multiple times.
++ */
++#define QSBR_REPORTING_INTERVAL 1024
++#define WRITER_ITERATIONS	512
++
++/*
++ * Reader thread using rte_fib6 data structure with RCU.
++ */
++static int
++test_fib_rcu_qsbr_reader(void *arg)
++{
++	int i;
++	uint64_t next_hop_return = 0;
++
++	RTE_SET_USED(arg);
++	/* Register this thread to report quiescent state */
++	rte_rcu_qsbr_thread_register(g_v, 0);
++	rte_rcu_qsbr_thread_online(g_v, 0);
++
++	do {
++		for (i = 0; i < QSBR_REPORTING_INTERVAL; i++)
++			rte_fib6_lookup_bulk(g_fib, &g_ip, &next_hop_return, 1);
++
++		/* Update quiescent state */
++		rte_rcu_qsbr_quiescent(g_v, 0);
++	} while (!writer_done);
++
++	rte_rcu_qsbr_thread_offline(g_v, 0);
++	rte_rcu_qsbr_thread_unregister(g_v, 0);
++
++	return 0;
++}
++
++/*
++ * rte_fib6_rcu_qsbr_add sync mode functional test.
++ * 1 Reader and 1 writer. They cannot be in the same thread in this test.
++ *  - Create FIB which supports 1 tbl8 group at max
++ *  - Add RCU QSBR variable with sync mode to FIB
++ *  - Register a reader thread. Reader keeps looking up a specific rule.
++ *  - Writer keeps adding and deleting a specific rule with depth=28 (> 24)
++ */
++int32_t
++test_fib_rcu_sync_rw(void)
++{
++	struct rte_fib6_conf config = { 0 };
++	size_t sz;
++	int32_t status;
++	uint32_t i, next_hop;
++	uint8_t depth;
++	struct rte_fib6_rcu_config rcu_cfg = {0};
++	uint64_t def_nh = 100;
++
++	if (rte_lcore_count() < 2) {
++		printf("Not enough cores for %s, expecting at least 2\n", __func__);
++		return TEST_SKIPPED;
++	}
++
++	config.max_routes = MAX_ROUTES;
++	config.rib_ext_sz = 0;
++	config.default_nh = def_nh;
++	config.type = RTE_FIB6_TRIE;
++	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
++	config.trie.num_tbl8 = 1;
++
++	g_fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	RTE_TEST_ASSERT(g_fib != NULL, "Failed to create FIB\n");
++
++	/* Create RCU QSBR variable */
++	sz = rte_rcu_qsbr_get_memsize(1);
++	g_v = (struct rte_rcu_qsbr *)rte_zmalloc_socket(NULL, sz, RTE_CACHE_LINE_SIZE,
++		SOCKET_ID_ANY);
++	RTE_TEST_ASSERT(g_v != NULL, "Can not allocate memory for RCU\n");
++
++	status = rte_rcu_qsbr_init(g_v, 1);
++	RTE_TEST_ASSERT(status == 0, "Can not initialize RCU\n");
++
++	rcu_cfg.v = g_v;
++	rcu_cfg.mode = RTE_FIB6_QSBR_MODE_SYNC;
++	/* Attach RCU QSBR to FIB table */
++	status = rte_fib6_rcu_qsbr_add(g_fib, &rcu_cfg);
++	RTE_TEST_ASSERT(status == 0, "Can not attach RCU to FIB\n");
++
++	writer_done = 0;
++	/* Launch reader thread */
++	rte_eal_remote_launch(test_fib_rcu_qsbr_reader, NULL, rte_get_next_lcore(-1, 1, 0));
++
++	depth = 28;
++	next_hop = 1;
++	status = rte_fib6_add(g_fib, &g_ip, depth, next_hop);
++	if (status != 0) {
++		printf("%s: Failed to add rule\n", __func__);
++		goto error;
++	}
++
++	/* Writer update */
++	for (i = 0; i < WRITER_ITERATIONS; i++) {
++		status = rte_fib6_delete(g_fib, &g_ip, depth);
++		if (status != 0) {
++			printf("%s: Failed to delete rule at iteration %d\n", __func__, i);
++			goto error;
++		}
++
++		status = rte_fib6_add(g_fib, &g_ip, depth, next_hop);
++		if (status != 0) {
++			printf("%s: Failed to add rule at iteration %d\n", __func__, i);
++			goto error;
++		}
++	}
++
++error:
++	writer_done = 1;
++	/* Wait until reader exited. */
++	rte_eal_mp_wait_lcore();
++
++	rte_fib6_free(g_fib);
++	rte_free(g_v);
++
++	return status == 0 ? TEST_SUCCESS : TEST_FAILED;
++}
++
+ static struct unit_test_suite fib6_fast_tests = {
+ 	.suite_name = "fib6 autotest",
+ 	.setup = NULL,
+@@ -397,6 +609,8 @@ static struct unit_test_suite fib6_fast_tests = {
+ 	TEST_CASE(test_add_del_invalid),
+ 	TEST_CASE(test_get_invalid),
+ 	TEST_CASE(test_lookup),
++	TEST_CASE(test_invalid_rcu),
++	TEST_CASE(test_fib_rcu_sync_rw),
+ 	TEST_CASES_END()
+ 	}
+ };
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index c5ba335cfca3..e70b1ee4e5b0 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -167,6 +167,10 @@ New Features
+   The built-in help text function is available as a public function which can be reused by custom functions,
+   if so desired.
+ 
++* **Added RCU support in the FIB6 library.**
++
++  It is now possible to register an RCU QSBR object to handle graceful deletion of table groups.
++
+ 
+ Removed Items
+ -------------
+diff --git a/lib/fib/rte_fib6.c b/lib/fib/rte_fib6.c
+index 93a1c7197b26..770becdb611e 100644
+--- a/lib/fib/rte_fib6.c
++++ b/lib/fib/rte_fib6.c
+@@ -346,3 +346,18 @@ rte_fib6_select_lookup(struct rte_fib6 *fib,
+ 		return -EINVAL;
+ 	}
+ }
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_fib6_rcu_qsbr_add, 25.11)
++int
++rte_fib6_rcu_qsbr_add(struct rte_fib6 *fib, struct rte_fib6_rcu_config *cfg)
++{
++	if (fib == NULL || cfg == NULL)
++		return -EINVAL;
++
++	switch (fib->type) {
++	case RTE_FIB6_TRIE:
++		return trie_rcu_qsbr_add(fib->dp, cfg, fib->name);
++	default:
++		return -ENOTSUP;
++	}
++}
+diff --git a/lib/fib/rte_fib6.h b/lib/fib/rte_fib6.h
+index 625df1fa6b7b..4527328bf00d 100644
+--- a/lib/fib/rte_fib6.h
++++ b/lib/fib/rte_fib6.h
+@@ -19,6 +19,7 @@
+ 
+ #include <rte_common.h>
+ #include <rte_ip6.h>
++#include <rte_rcu_qsbr.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -34,6 +35,19 @@ extern "C" {
+ struct rte_fib6;
+ struct rte_rib6;
+ 
++/** @internal Default RCU defer queue entries to reclaim in one go. */
++#define RTE_FIB6_RCU_DQ_RECLAIM_MAX     16
++/** @internal Default RCU defer queue size. */
++#define RTE_FIB6_RCU_DQ_RECLAIM_SZ      128
++
++/** RCU reclamation modes */
++enum rte_fib6_qsbr_mode {
++	/** Create defer queue for reclaim. */
++	RTE_FIB6_QSBR_MODE_DQ = 0,
++	/** Use blocking mode reclaim. No defer queue created. */
++	RTE_FIB6_QSBR_MODE_SYNC
++};
++
+ /** Type of FIB struct */
+ enum rte_fib6_type {
+ 	RTE_FIB6_DUMMY,		/**< RIB6 tree based FIB */
+@@ -85,6 +99,26 @@ struct rte_fib6_conf {
+ 	};
+ };
+ 
++/** FIB RCU QSBR configuration structure. */
++struct rte_fib6_rcu_config {
++	/** RCU QSBR variable. */
++	struct rte_rcu_qsbr *v;
++	/** Mode of RCU QSBR. See RTE_FIB6_QSBR_MODE_*.
++	 * Default: RTE_FIB6_QSBR_MODE_DQ, create defer queue for reclaim.
++	 */
++	enum rte_fib6_qsbr_mode mode;
++	/** RCU defer queue size.
++	 * Default: RTE_FIB6_RCU_DQ_RECLAIM_SZ.
++	 */
++	uint32_t dq_size;
++	/** Threshold to trigger auto reclaim. */
++	uint32_t reclaim_thd;
++	/** Max entries to reclaim in one go.
++	 * Default: RTE_FIB6_RCU_DQ_RECLAIM_MAX.
++	 */
++	uint32_t reclaim_max;
++};
++
+ /**
+  * Free an FIB object.
+  *
+@@ -220,6 +254,24 @@ rte_fib6_get_rib(struct rte_fib6 *fib);
+ int
+ rte_fib6_select_lookup(struct rte_fib6 *fib, enum rte_fib6_lookup_type type);
+ 
++/**
++ * Associate RCU QSBR variable with a FIB object.
++ *
++ * @param fib
++ *   FIB object handle
++ * @param cfg
++ *   RCU QSBR configuration
++ * @return
++ *   0 on success
++ *   -EINVAL - invalid pointer
++ *   -EEXIST - already added QSBR
++ *   -ENOMEM - memory allocation failure
++ *   -ENOTSUP - not supported by configured dataplane algorithm
++ */
++__rte_experimental
++int
++rte_fib6_rcu_qsbr_add(struct rte_fib6 *fib, struct rte_fib6_rcu_config *cfg);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/lib/fib/trie.c b/lib/fib/trie.c
+index 6427920c5833..9b56dd9588f6 100644
+--- a/lib/fib/trie.c
++++ b/lib/fib/trie.c
+@@ -13,6 +13,7 @@
+ 
+ #include <rte_rib6.h>
+ #include <rte_fib6.h>
++#include "fib_log.h"
+ #include "trie.h"
+ 
+ #ifdef CC_AVX512_SUPPORT
+@@ -160,6 +161,12 @@ tbl8_alloc(struct rte_trie_tbl *dp, uint64_t nh)
+ 	uint8_t		*tbl8_ptr;
+ 
+ 	tbl8_idx = tbl8_get(dp);
++
++	/* If there are no tbl8 groups try to reclaim one. */
++	if (unlikely(tbl8_idx == -ENOSPC && dp->dq &&
++			!rte_rcu_qsbr_dq_reclaim(dp->dq, 1, NULL, NULL, NULL)))
++		tbl8_idx = tbl8_get(dp);
++
+ 	if (tbl8_idx < 0)
+ 		return tbl8_idx;
+ 	tbl8_ptr = get_tbl_p_by_idx(dp->tbl8,
+@@ -170,6 +177,23 @@ tbl8_alloc(struct rte_trie_tbl *dp, uint64_t nh)
+ 	return tbl8_idx;
+ }
+ 
++static void
++tbl8_cleanup_and_free(struct rte_trie_tbl *dp, uint64_t tbl8_idx)
++{
++	uint8_t *ptr = (uint8_t *)dp->tbl8 + (tbl8_idx * TRIE_TBL8_GRP_NUM_ENT << dp->nh_sz);
++
++	memset(ptr, 0, TRIE_TBL8_GRP_NUM_ENT << dp->nh_sz);
++	tbl8_put(dp, tbl8_idx);
++}
++
++static void
++__rcu_qsbr_free_resource(void *p, void *data, unsigned int n __rte_unused)
++{
++	struct rte_trie_tbl *dp = p;
++	uint64_t tbl8_idx = *(uint64_t *)data;
++	tbl8_cleanup_and_free(dp, tbl8_idx);
++}
++
+ static void
+ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
  {
- 	struct iavf_event_handler *handler = &event_handler;
--	char notify_byte;
-+	char notify_byte = 0;
- 	struct iavf_event_element *elem = rte_malloc(NULL, sizeof(*elem) + param_alloc_size, 0);
- 	if (!elem)
- 		return;
+@@ -191,8 +215,6 @@ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
+ 				return;
+ 		}
+ 		write_to_dp(par, nh, dp->nh_sz, 1);
+-		for (i = 0; i < TRIE_TBL8_GRP_NUM_ENT; i++)
+-			ptr16[i] = 0;
+ 		break;
+ 	case RTE_FIB6_TRIE_4B:
+ 		ptr32 = &((uint32_t *)dp->tbl8)[tbl8_idx *
+@@ -205,8 +227,6 @@ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
+ 				return;
+ 		}
+ 		write_to_dp(par, nh, dp->nh_sz, 1);
+-		for (i = 0; i < TRIE_TBL8_GRP_NUM_ENT; i++)
+-			ptr32[i] = 0;
+ 		break;
+ 	case RTE_FIB6_TRIE_8B:
+ 		ptr64 = &((uint64_t *)dp->tbl8)[tbl8_idx *
+@@ -219,11 +239,18 @@ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
+ 				return;
+ 		}
+ 		write_to_dp(par, nh, dp->nh_sz, 1);
+-		for (i = 0; i < TRIE_TBL8_GRP_NUM_ENT; i++)
+-			ptr64[i] = 0;
+ 		break;
+ 	}
+-	tbl8_put(dp, tbl8_idx);
++
++	if (dp->v == NULL) {
++		tbl8_cleanup_and_free(dp, tbl8_idx);
++	} else if (dp->rcu_mode == RTE_FIB6_QSBR_MODE_SYNC) {
++		rte_rcu_qsbr_synchronize(dp->v, RTE_QSBR_THRID_INVALID);
++		tbl8_cleanup_and_free(dp, tbl8_idx);
++	} else { /* RTE_FIB6_QSBR_MODE_DQ */
++		if (rte_rcu_qsbr_dq_enqueue(dp->dq, &tbl8_idx))
++			FIB_LOG(ERR, "Failed to push QSBR FIFO");
++	}
+ }
+ 
+ #define BYTE_SIZE	8
+@@ -695,7 +722,56 @@ trie_free(void *p)
+ {
+ 	struct rte_trie_tbl *dp = (struct rte_trie_tbl *)p;
+ 
++	rte_rcu_qsbr_dq_delete(dp->dq);
+ 	rte_free(dp->tbl8_pool);
+ 	rte_free(dp->tbl8);
+ 	rte_free(dp);
+ }
++
++int
++trie_rcu_qsbr_add(struct rte_trie_tbl *dp, struct rte_fib6_rcu_config *cfg,
++	const char *name)
++{
++	struct rte_rcu_qsbr_dq_parameters params = {0};
++	char rcu_dq_name[RTE_RCU_QSBR_DQ_NAMESIZE];
++
++	if (dp == NULL || cfg == NULL)
++		return -EINVAL;
++
++	if (dp->v != NULL)
++		return -EEXIST;
++
++	switch (cfg->mode) {
++	case RTE_FIB6_QSBR_MODE_DQ:
++		/* Init QSBR defer queue. */
++		snprintf(rcu_dq_name, sizeof(rcu_dq_name),
++			"FIB_RCU_%s", name);
++		params.name = rcu_dq_name;
++		params.size = cfg->dq_size;
++		if (params.size == 0)
++			params.size = RTE_FIB6_RCU_DQ_RECLAIM_SZ;
++		params.trigger_reclaim_limit = cfg->reclaim_thd;
++		params.max_reclaim_size = cfg->reclaim_max;
++		if (params.max_reclaim_size == 0)
++			params.max_reclaim_size = RTE_FIB6_RCU_DQ_RECLAIM_MAX;
++		params.esize = sizeof(uint64_t);
++		params.free_fn = __rcu_qsbr_free_resource;
++		params.p = dp;
++		params.v = cfg->v;
++		dp->dq = rte_rcu_qsbr_dq_create(&params);
++		if (dp->dq == NULL) {
++			FIB_LOG(ERR, "FIB6 defer queue creation failed");
++			return -ENOMEM;
++		}
++		break;
++	case RTE_FIB6_QSBR_MODE_SYNC:
++		/* No other things to do. */
++		break;
++	default:
++		return -EINVAL;
++	}
++	dp->rcu_mode = cfg->mode;
++	dp->v = cfg->v;
++
++	return 0;
++}
+diff --git a/lib/fib/trie.h b/lib/fib/trie.h
+index bcb161702b49..c34cc2c05731 100644
+--- a/lib/fib/trie.h
++++ b/lib/fib/trie.h
+@@ -38,6 +38,10 @@ struct rte_trie_tbl {
+ 	uint64_t	*tbl8;		/**< tbl8 table. */
+ 	uint32_t	*tbl8_pool;	/**< bitmap containing free tbl8 idxes*/
+ 	uint32_t	tbl8_pool_pos;
++	/* RCU config. */
++	enum rte_fib6_qsbr_mode rcu_mode; /**< Blocking, defer queue. */
++	struct rte_rcu_qsbr *v; /**< RCU QSBR variable. */
++	struct rte_rcu_qsbr_dq *dq; /**< RCU QSBR defer queue. */
+ 	/* tbl24 table. */
+ 	alignas(RTE_CACHE_LINE_SIZE) uint64_t	tbl24[];
+ };
+@@ -143,4 +147,8 @@ int
+ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
+ 	uint8_t depth, uint64_t next_hop, int op);
+ 
++int
++trie_rcu_qsbr_add(struct rte_trie_tbl *dp, struct rte_fib6_rcu_config *cfg,
++	const char *name);
++
+ #endif /* _TRIE_H_ */
 -- 
-2.51.2
+2.51.0
 
