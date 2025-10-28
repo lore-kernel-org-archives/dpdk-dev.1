@@ -2,39 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DBFCCF9E0
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 17:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 435B8CCD1BF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Oct 2025 17:20:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 677A340262;
-	Tue, 28 Oct 2025 18:19:18 +0100 (CET)
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com
- [205.220.168.131])
- by mails.dpdk.org (Postfix) with ESMTP id A234D4021E
- for <dev@dpdk.org>; Tue, 28 Oct 2025 18:19:16 +0100 (CET)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mails.dpdk.org (Postfix) with ESMTP id 8F91A40262;
+	Tue, 28 Oct 2025 18:20:11 +0100 (CET)
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com
+ [205.220.180.131])
+ by mails.dpdk.org (Postfix) with ESMTP id D83D54021E
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 18:20:09 +0100 (CET)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
  by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 59SEntoO1937136; Tue, 28 Oct 2025 17:19:15 GMT
+ 59SFcwJP2027333 for <dev@dpdk.org>; Tue, 28 Oct 2025 17:20:09 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
  cc:content-type:date:from:in-reply-to:message-id:mime-version
- :references:subject:to; s=qcppdkim1; bh=yzisUSr64W6AWNFm9Pa2Kr3s
- 9+RYmMuHvOXA7OK2dUY=; b=bpaorBKrVN2j0kb2SXwWaUoY7eoLAYFFAsOCj5y+
- FgRJfr3KlR2N5EbOfATfBTCjxPKodWZo9hMpeKXtpq6fWLYuJZEuYbL0WYeZqVsi
- 5SRX+pDTEs5Puts3pvyiCc6k2L3ORi1VbZalFTDkeGlLv/7TkKIMwYy5bHK/TUv+
- n5W7RkLE/cK8F1odf2XZCwOAI9kDDx+QlCfsKv2bJ1QLTcD8NKnudJ09FNUtXqQl
- 3xUqTyvHmzUfA6u8cXlW2mYIouSmYCIBvaIYKTA1fsyumB/6e9wtEvMqnB0BlFYM
- HRR9hBoP7YI/F0H8hrRWTTPlK41FQwNbU0fw+7YVq9h1yw==
-Received: from ds2pr08cu001.outbound.protection.outlook.com
- (mail-ds2pr08cu00102.outbound.protection.outlook.com [40.93.13.50])
- by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2pjfaabw-1
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
- Tue, 28 Oct 2025 17:19:15 +0000 (GMT)
+ :references:subject; s=qcppdkim1; bh=pE286JS5CPsOXr7eTMqvEF7CQOG
+ p2KtG5Y2OcyZYJeQ=; b=OmlkN5uPCcX/XWldHqEYKo51r4hay4yvWXFa5W8J+iT
+ Sm0RujEySBnF/xj+2LO9jOsuEq6r3qdpanabNtckzGrVhLMLJMPgsbnQfe1co2wJ
+ Rzn36OGKrke78J0AO9B4+1KIMH+73S7S6M4quB1GVwfyA2QOOP5CofBNck2uLCwl
+ JXprCd/HIBHVxxdFWkMLI2d3612YxMOnAWixq5Shrl6uJgv+lpeVIamUD2vKY4v2
+ 8P0y+72V6m6wdyaeFrTDtmBlWZgdS+lTliTQLUT1l3L4neyZG7DuL8QXygXmsCK6
+ g5Zq1bPEvGfrBK59QYSJ0sPwUgUyoVlxl+rkMn0lNpA==
+Received: from sj0pr08cu001.outbound.protection.outlook.com
+ (mail-sj0pr08cu00102.outbound.protection.outlook.com [40.93.1.74])
+ by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2yxtrhhv-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Tue, 28 Oct 2025 17:20:09 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Negt9mlM+9DDldGuAZT6Up1TUaVfTDqxILL7+9pn0LIy9Lc4cgx9tVFRZpKKcz13eUr0KlIdRRP3attm2Zuns9hylmCaVijklnQhg0AG6du7MzP3/bpir9pSXujQucFG5mIEXf2w3hT1JhBtx+9pYVQmp2nOP9OgCi7r0B+0PEhEMj2FLaiY3EZn6BnVBTuDa2nhzaKb3Zpml7dC4c6LYPlp0gcLlxPqgZS1bnkoS/3iKVPMmR4GEO5kzbsXMp0VXxj+fcUyc2kfan+dK4Hr9rOvt29Vf3+YoUUf8O6XVEAS3OoWlMxZbXoBJtLT7m9irfPoEe21ZzG0/pFG2YhpHw==
+ b=r235qwjtCJxXRoH8Gj9CuuDS9WHTTod8ab0NYsayVBMBHtIT+goSIeNrnls2DKdfPm0vpJZE7P6GnPFVKTSdkxItNaVeIfAIc3ponNCgEAxi3HDZFjmTbsZtHnCAC1J0YyjUQ+9TDGddDehFCXZF1iigA1wzt+un8KvSR13iHLQwyyMefYE4x1XQc1myfkW838eLBFivG02YQGrOEbLQ+34oafl5ku9cUQLuZUkddnASER5gudr4yGnZB8E99LAaH5bNWxiS5/rku2ORMH1DGOBl9Vw0ylnZZMFZb0lRxfCU6qmzwChsehOaig4AriLhOoc/owEnvoOhnRQcIrhZCg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yzisUSr64W6AWNFm9Pa2Kr3s9+RYmMuHvOXA7OK2dUY=;
- b=lp3EUyqcUgMqoFoVTc2L8nt92rz7KsXendqSZPEWQxeWm625I253jToFHLtL26qIv12Ll7wXE5eWLAXuMW6R1LoVlbvBlBdhR30MfB3ZlCQv/WSJvDkHkQ7GVIJtObAypCi0mL61etWOQtWmQ51IYcrXU/ZIRvTywIXFEYQJ9kSd0b75dEH/L5fwzRqqUx5HaIEUyCimk+vGgJNetTDiQ5EuluTuGiKMHt0R4BKWLwzeu+zwUE4zCO32BAd20mpI1Jgy10HyNjQ0ya5bPJr9dyTgOWV7QG57a7j+HH6zMAYDgrHK5sJ6LjnD5UgO5xxn7jRKyyIAx5viMBiOzROvUw==
+ bh=pE286JS5CPsOXr7eTMqvEF7CQOGp2KtG5Y2OcyZYJeQ=;
+ b=llgBkY7EPp4IMB+dAnTjmPsHEDpDp2FRik0z8YFJOXuVi6R5bW0LoxnUNXP5QC0fn02iH+5//P4g/dP8hTtVsJBYzXO+7jKWbM1fu/P4uXvZz9hJHfSSxeKz3aJTgUFNMWTpM0Fb8WLF6eNmnTxGiaZ/GEfD984Yl+y9TRNoLhNwxS9BBQxtEAbQRYXv+lfR8o4gxYjAuB+lh3YYPc4NWarzhDlGOpAY6U7fDArqqH4YNGY8H1oQoK8i/wjnn6qeeenZrYL3dgaB3ToPaa4ELxjAb1doomFfyfV4u04maqmtKSOOEugnKAN5RXKgLEf3AKbxHo+elEXQK5Rv/0tMsA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=qti.qualcomm.com; dmarc=pass action=none
  header.from=qti.qualcomm.com; dkim=pass header.d=qti.qualcomm.com; arc=none
@@ -42,22 +42,20 @@ Received: from SJ2PR02MB9795.namprd02.prod.outlook.com (2603:10b6:a03:549::7)
  by LV3PR02MB9982.namprd02.prod.outlook.com (2603:10b6:408:1a7::11)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
- 2025 17:19:12 +0000
+ 2025 17:20:02 +0000
 Received: from SJ2PR02MB9795.namprd02.prod.outlook.com
  ([fe80::697:a925:e536:acbb]) by SJ2PR02MB9795.namprd02.prod.outlook.com
  ([fe80::697:a925:e536:acbb%6]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
- 17:19:10 +0000
+ 17:20:02 +0000
 From: Sameer Vaze <svaze@qti.qualcomm.com>
-To: Sunila Sahu <ssahu@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
- Ashish Gupta <ashishg@marvell.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [PATCH] compressdev: fix coverity issue
-Thread-Topic: [PATCH] compressdev: fix coverity issue
-Thread-Index: AQHcRRanOHKK+dCWxEif70E4SmjXVrTX00av
-Date: Tue, 28 Oct 2025 17:19:10 +0000
-Message-ID: <SJ2PR02MB97955A036156C166302AC92489FDA@SJ2PR02MB9795.namprd02.prod.outlook.com>
-References: <20251024184724.1698235-1-svaze@qti.qualcomm.com>
-In-Reply-To: <20251024184724.1698235-1-svaze@qti.qualcomm.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Sameer Vaze <svaze@qti.qualcomm.com>
+Subject: Re: [PATCH] app/compress-perf: fix coverity issue
+Thread-Topic: [PATCH] app/compress-perf: fix coverity issue
+Thread-Index: AQHcRRazNkNdp20yqkaVN+UxsLw4zbTX08gv
+Date: Tue, 28 Oct 2025 17:20:02 +0000
+Message-ID: <SJ2PR02MB9795341842DF1C4B70F7B32D89FDA@SJ2PR02MB9795.namprd02.prod.outlook.com>
+References: <20251024184745.1698409-1-svaze@qti.qualcomm.com>
+In-Reply-To: <20251024184745.1698409-1-svaze@qti.qualcomm.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -65,108 +63,109 @@ X-MS-TNEF-Correlator:
 msip_labels: 
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: SJ2PR02MB9795:EE_|LV3PR02MB9982:EE_
-x-ms-office365-filtering-correlation-id: 7d6cbae8-acfa-4fca-f981-08de16461bb6
+x-ms-office365-filtering-correlation-id: 3a996d43-5497-402a-74a0-08de16463ade
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
  ARA:13230040|376014|1800799024|366016|38070700021|8096899003|7053199007; 
-x-microsoft-antispam-message-info: =?us-ascii?Q?7w9+4c4gbbI4BoogcrndjLa+aQBlLQXeqOsht24PNk/aAm+QsUNjdCr9NPdl?=
- =?us-ascii?Q?9KPkJ/B8hXTR7OWZpxaYmHJB0rc4WUJ2uNohogcZ2qF428zCShBAFrbk+ble?=
- =?us-ascii?Q?bigs1XyVLP2UdzPXMPNSBzd2O/cb9njkyImXQ0z+y093v6u793lkiaugdiV0?=
- =?us-ascii?Q?MRy4iFyCG6n9DeO7Lg+EfzPlW2w8sOgUplPczMGj1A/ZGnFTBQpcDSc9Hui+?=
- =?us-ascii?Q?EjTF/NXTTzZhNkiLWLqubqer7r8xU66g8RPAdWJACJdlMzaXuTI+JjgWESLx?=
- =?us-ascii?Q?P3BwY624+x8qB6DdIZiPaK/Ocm5pkJIMPv1IiIdLNDNRlMsjoJJiBsCclqxl?=
- =?us-ascii?Q?FHoq80vfnYnvS+nX8YYFXhgkq98OBsoSXQDweBONDdpTDfYfx94qe7Dtsmw0?=
- =?us-ascii?Q?/PJyDGu+Nhxf1CMmzBB9S90CdxpaDi0vflHkl4x+9C+L4mPoIk5EUhMxVyAF?=
- =?us-ascii?Q?pJbqcul5BqHG6hSRQqeBgcMfZ2DAKviUPFzzx07uVdE103bLqo/TQQ7Lrc39?=
- =?us-ascii?Q?PmR2PjZaxTjCtjf+/NRl1A8BPNW23Un5JG8XZm74S2EObPSug+0Fg5XC9YYm?=
- =?us-ascii?Q?ytVU/pHBzXb03JHUAt6iKXRH3ZOPXwtaWhi5IaMFiW2GKQ/bcRasJBZpDhrp?=
- =?us-ascii?Q?CuFxlCkIUh2ZhZEm+ooLpncnaZF9bugBq4ErYJKZ/P1YZci6ww9/fYxMsvcI?=
- =?us-ascii?Q?R/qnaEccFFTe/u2DaLcLl/2FTaKwpnAHi8qQdLiH6LW5xdhTfTfWwJ+fwUk5?=
- =?us-ascii?Q?qqp4E0IFZxvh5xga7SAyov3ldoaT7ZV08zTe7lKjsWIdeoh1Yk5eObccsSVf?=
- =?us-ascii?Q?O6pZW36ADwX1W/8pYDJNaArHBFQ2jl2pyGyOg4nIDP1E9vWQGOm2jR8QVH9d?=
- =?us-ascii?Q?0gZ8QIpPVzJ3LGFMAyNs20eZzzOlnlgeayE1BTjfNTeY5vVWlXuuok4OXUwo?=
- =?us-ascii?Q?8duoP3UPBkkNK9paBmpS46KzVK7+E6zX6gDQq7NZKa9jkhsg0oW+r2gi+uXN?=
- =?us-ascii?Q?LcuDYOVhs8N4DrzVuCnQrYGqac95MSlujM5f1j1Ei1M6cgsc3xFWrn5b7dYU?=
- =?us-ascii?Q?5zzzAS5fm0821jyRxOwWvp9cDmEiMC5NUqJDyJI4w70mb2G+nVpnFpQm4H8E?=
- =?us-ascii?Q?k0x9vl4sObf+1rpYkrsU069sBXsve9/1uM1yVpmx09uStodKxmOZssn0NmW0?=
- =?us-ascii?Q?yLtR7dG55/6zlyebfYRAnFMt0jXhSWvUUzHEm7ErIOkx3r2Fk0IdfQ9KbAxD?=
- =?us-ascii?Q?XHMGgeRzaTzM0cUEUmrY8BeoRKfTOvH63Wffg4ZdvarBcR5DBmbXD5w313r7?=
- =?us-ascii?Q?m8AoMPpM5Cyv/drhuq/pN8axZqnuWEppQZB8n/alp51f0HXqXaMWKXs6kxjZ?=
- =?us-ascii?Q?HiKEuhUSSyg7szCKei8ztuWjpOFF03sBXgN+QRlcw2bS7jXXRL1qsdhipbvS?=
- =?us-ascii?Q?lZMfdygxPAyXVT1aZGle0hf42piHhK4kAFzMvKyzG0qzkNMsFLTpYkpuudTX?=
- =?us-ascii?Q?RQoFr8li8lJpfUZq9XrqqrBmeVsZ+AWsa4RK?=
+x-microsoft-antispam-message-info: =?us-ascii?Q?lyQzl8p1JZ1hZ+Lt4mKkhTzrNFFJLIgAeaMexJ3vfWo1JoTN+kbXYgg0rkgN?=
+ =?us-ascii?Q?YYMzBwU9WuvmsfnRlJgi9Eg19hXZYXVlsRKSIFooQd+D5tXqT+s5g/parIGA?=
+ =?us-ascii?Q?wGwkWitZrBAzBBMV7QH7n8Y1ENAuL3Vf8fXzvUcvUVq7Bhk92CWc80KBYzEY?=
+ =?us-ascii?Q?hCuHj0ZriDImgK/DbbIWmU2qxj/klfMj7i9xeyLodhwpnnmrUWvLC5jYIW9G?=
+ =?us-ascii?Q?PEzIqrPj9qhb7ViPca6/ed6aD6i0cDhV9g3wfegh17EoN4uYG/GHPTTIYQOq?=
+ =?us-ascii?Q?9+xt1oZ9gtJxPR8r2SavjUTpg9FA7/PGtCThRytSIqS2bLBkJl85zXJCTW+9?=
+ =?us-ascii?Q?a5nikP831KF3m29ztIX9vb+tmTfrg74EhYl95P3gqoKX3NdsPodcuVajM9gE?=
+ =?us-ascii?Q?CZd9UtshmH7hYaKlOMaWBGHbY6Z6MZrjuaaqEwgdfR57JaP+D825KGbXOlwz?=
+ =?us-ascii?Q?RFI06UrKgGoB7qdr9oaEE36C1I6PQULCyEo5MFOEhgWWse0olJp+MNt2XO6Q?=
+ =?us-ascii?Q?lBBVEB7fb+qroGZbKoekmJQimBWQYBkhOSJnhgRRt4Ofb+VIZvOF9QOspanu?=
+ =?us-ascii?Q?+OvK33TswSw7QAHzYvxwrQpCsfXloC/Il03Fei7XumUetlBjXGDgLpqmrj6i?=
+ =?us-ascii?Q?yhOtPQDsm1frIEWENBR9WtLSgUJj3l8B/+vgw9cDujqJy9nUGh0EvqocIHWt?=
+ =?us-ascii?Q?DAa14UNe43jErMh7I+uCmgYw9AhF2vo3rc3tQFEv1+KYHgc9LEFwaZ61NykA?=
+ =?us-ascii?Q?72cCdYzJ59w3DwtsmNaxSYVbcBS37U4woSa0HgGIuXwxgxmmFszYBNUhBdIA?=
+ =?us-ascii?Q?I5B2VTXwpzEVI3QPr08U7tzkIhQw9tuumRKtAOQvqJAsQbSCe81IiU/jOii1?=
+ =?us-ascii?Q?+ac9FdueFV6Ox31WNtC6sCwgYgB7XTzlH7fVYqV+w0RfEgcA28Jt3sNmTQuG?=
+ =?us-ascii?Q?F0Jev5YO0uHsx35CsKaOW1u8lu73XtpgqrjnIzUV/DJyrk6NPUn4qVlNYYck?=
+ =?us-ascii?Q?I2skYaqfkTuf1OaK6hmxzcK9DW0Yr6d7jfBDfTv7kkHqGAKOHV2gFdQAKzHK?=
+ =?us-ascii?Q?g+/P9hptfgzWcP9ZQTVf/Y0CR2J4/W5xM82hz3yuzUtF0yO/UZUjSilQLli7?=
+ =?us-ascii?Q?2eiunKwyXkkyMu7l2YZY3RlV7pX8Lsh2r7q0ElnzWOWWjr4g1bQ6tQEh5Tgk?=
+ =?us-ascii?Q?2VK3cRRbt7w99m2bBY5WoZpqnaLoez/kJVZtxuFBC3Sfm/+VoBFfJUwCE9x/?=
+ =?us-ascii?Q?Js2tghrpDSyieuUxcfNLrdrQPo1WT9MpigpMnKHTDBo328mzjuyX6bKDF/b6?=
+ =?us-ascii?Q?r4xkwQGv2XQ3UaiNugBAVJYbvUTktVcDNV/6IhOm+WwU/1+0fpMfwcQX3ccz?=
+ =?us-ascii?Q?gEItWOFAQUybMMzZ8B1cl6Nq9i3DJGnfVKA8xTbaAnpDf0UVwSP5OwluQLnX?=
+ =?us-ascii?Q?R2wtnMguvrCS5++HO/Etq1i0ykYj2Pb6g2egSu669kq0W7+6SfW+2cbYxUjR?=
+ =?us-ascii?Q?c2de4wqHhacI0P7KAwKx+aW9QwhO1YemI5Hr?=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SJ2PR02MB9795.namprd02.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(376014)(1800799024)(366016)(38070700021)(8096899003)(7053199007);
  DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?y/87nDLxKrKUH2jo47zYIG7Uw71WU8LmkIcFRyhNkV9jMv3TXwiqaxN9vtQj?=
- =?us-ascii?Q?R+kjvZX/lND0ka8JEBwqBr2/+PPHsdSFBNGcqSn3Es5XvCDI6H7thMXJdee5?=
- =?us-ascii?Q?yyj6lsvzY0w/0MvTVWys0qpJIh0TAJLq3VK28IGkv4DczJI7NsZnf+iw8ik5?=
- =?us-ascii?Q?jt1Yy3e4U8U/zES9mA4mh5EqGC1XUWMY+wIYOSwONmv5xXd62FBg4s2iZ8eJ?=
- =?us-ascii?Q?96Uj+2Jx8ycOR0HCcerD0+GtvI0RtV+49yxYX1sswoh/JNwTbZYrEQlNDdHV?=
- =?us-ascii?Q?5Gb+48KlMEmBiNqDO2njdVgUCkzNV4dnzfxek1Rf8GKWCiKWi/rEb4o0i+vO?=
- =?us-ascii?Q?9esrS0lD9Th9NtulJTYx2pAoZfV0fmkW8OyW18PNU65RqdkQmU/xs2uOcPrd?=
- =?us-ascii?Q?IM94x3CRAPCB7kiZEQCaqyt1tiYYvx5VBpuiv08y6kYoVQln7IjkijEFNyOf?=
- =?us-ascii?Q?NiVPMynANtUazfIsoRT3UcSb+vt9R0+lFYuFR281K1Dcw6s8vyBL166xM/45?=
- =?us-ascii?Q?tqBng8z9yCuaHoVPgrjov3UeY/k4/BWLmo1sKH0wssNY/CLI5Nnl3Tv9iNXs?=
- =?us-ascii?Q?hgqy/UByvW2w1L48rb0VHAPzuHFKORm71voYijjcp173WCW1Sjt0qGKoPeFG?=
- =?us-ascii?Q?op1SmWdY5q3Y8jbYPv5TdMO0IISu54eqsI7T6i0iSolOVYE/skp7JjyyDfVG?=
- =?us-ascii?Q?i24U7NuQlOCIZMbX213HouiSnq59sof8ayhCg7X9sTBLh4c0Zbo2Rndn/rKj?=
- =?us-ascii?Q?lkAJK6ttVwi+J9XRN8WDXnWEmMPylwhzBtaJq6IZfWAIFvb+Bb3gS5/3LmKn?=
- =?us-ascii?Q?9vW7Gs8lvFTiOtqrqUFdr1pi38QC3hdvbO9XNokLzAlVQ+YXfe0DYQ1Dl4Ug?=
- =?us-ascii?Q?PpfwrXHQzzQdP2uIKAUMHj9A2zzrK1iVK/XD0hNqezN03LTEgaRxRZIVBcT4?=
- =?us-ascii?Q?I5efN8vjxjyzf1Y/J+dakMEed9lFryvIhkU9Lh6pT6lWuuZedMZhhOwHA109?=
- =?us-ascii?Q?RtrJTd+gru+o0R4PtfTGwjFE2oW37tMmj9roNzgWpKV0T2TQlU9EAsMK6tQX?=
- =?us-ascii?Q?kSQjMSo7ghFBRvvNb5nwXaqbq9qSWSV0SRARjIuAb8cJ16UkH8UGsdVu375y?=
- =?us-ascii?Q?Mv/u0SQhVWrY4gZLu4amdHzEed0fbwULxPyYSPMpqTK2WheLvuASsV3mSHe1?=
- =?us-ascii?Q?O7iwxWtJDXvmbFPpr313ndvZmn5p1ZaPUbtyCShoSyXSRtZ7SnqrZtHVcxuo?=
- =?us-ascii?Q?tm2ynn5Qb75bYzES5e12G7S0M57FtAnwe//hWZIef81II7iQORE6/poFGwyz?=
- =?us-ascii?Q?VFH4HAJ6BnwQgEDALZpmzKQZsRhSvV2Cu4tMrAuhC3K+B1F5gfOjOhuf+QKc?=
- =?us-ascii?Q?7jBekMPpja2Irp8oYGy96lwcjvkWASAA39D0WDUiH2EVbpa2Df3sgtTvMYve?=
- =?us-ascii?Q?9x6HuP1l8qyNufsH7fNQdWKcxDWR1jAJqBnSyDXkXxZuBLkk/vzMJ9b7stDB?=
- =?us-ascii?Q?nq+waWHzj/v03VX8eupKU+oBlhdxxHBR3m4n2o6Md1bURdbNfFLTDGtLRasg?=
- =?us-ascii?Q?8UQL0RF10XwiM8oYoPOl4o1Z7S73WhDT/yQg2VRf?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ed+OubAVD+FP9cXCWHd9Enw1Kcn6IuIRJn+J83Zk7TOGIyGb0qwhjQWzpPIr?=
+ =?us-ascii?Q?jajos45MoAtntEDxh0tOeSN+dS+PNuv7P27Q7BrgL2ZEVq5M7Z0LEUzPhaZQ?=
+ =?us-ascii?Q?DYHcgMYvKLoOoGTUeI8QXajA9RRdgKcz+fAyeykHTb8TrmWqdHCjrH3GXzCK?=
+ =?us-ascii?Q?2IS7TAvZAW0lx3Ot0tm+HfRX0pZVAPkW7+9yOnuXtuGtEvZyD6Nh80zH4Y+e?=
+ =?us-ascii?Q?SnS2nULVhz/dvMI4alKMKu9dBeQzqn92+tPyBcC9vqMl8pyWyC/lQIKSctuN?=
+ =?us-ascii?Q?cUIMRpd71Mxdts8F401B2EHMoEkTI6TPg8tVCJge5l0kdAADOyuhLC2uhM4B?=
+ =?us-ascii?Q?dLoSMDQSf/83cd7Cahd4IgUVhz7vxHYZgNDuRGb4l6GIRZepLRduoSlJYU0z?=
+ =?us-ascii?Q?PzYqWEES/rgSlmtq4TH+l8LI7n2Nvpau1D4HNq+h5n4ePHKK4kQv8RyJg5yN?=
+ =?us-ascii?Q?CT/xfxCX3fuRHFERMH3ruBVvwsDKXz6WqXMzJbetFZAY0KuUuRKUs3of6Drr?=
+ =?us-ascii?Q?6hAePnASEZrkaHwMAadnmLw6NjyQTQhIeRQMcykIcclSq2JcfRCEEmiGxgVq?=
+ =?us-ascii?Q?805K37hnoyRwnBnppBQJpW6MDmxPb7+IMXJ1Fd6yqxsbFtvlscg7haAFJDfT?=
+ =?us-ascii?Q?N5W7J+PffeZXM6fd0c+YOTp2MIiy9T9QGqj0gbudCXvDKZlzLuycgB88eTr6?=
+ =?us-ascii?Q?8aeRExFp6HYp3LE8astNpBJbxWgSbRmS7fNMg/qTtqeT0pxIxNVr+9kwyuYn?=
+ =?us-ascii?Q?kPfhkXTP8YFj6UwL2VqC1JxP9FIjBKcwjEZwLcdkHYbLPOCNXDbV+h4mXllU?=
+ =?us-ascii?Q?QLLkjf5XEFMWVrb+0+ELBOwN/mKrJeSvOxUo6ydaCzyF4BY1VR/DnS5dZdIN?=
+ =?us-ascii?Q?ImRIckVwI9YDCfTk464Ep7ZMfB/TMM2cHXaa4ZzamL9yynaK2TccsUAUYvW5?=
+ =?us-ascii?Q?6UXVqtz63rcajTglqeZQl6sgaTHnkyltO3r10UoFY1w4hous3vECuGceVXwK?=
+ =?us-ascii?Q?NvAtLafj7RqdCVyrILIpCRqT9SsNkqKLOeR7EfVBnQdSfyitD94FiRd8czZX?=
+ =?us-ascii?Q?Z1CIEFJj7xpGug3qXQsNYP0w3t/UgLr37op1TAbdLlfj03zCoOvskp5r7CUT?=
+ =?us-ascii?Q?HXEInNEQQUZLpm4mgcbz9fdC/oGsiVKtHSwKfgbQAvwI0BFevophCKE4aCU8?=
+ =?us-ascii?Q?ZVkkebMbkPY1Phaa/P4TkR6KY7JRCv1gex1JrjVibJXD7dPP2+r4KF6SXULj?=
+ =?us-ascii?Q?ZvQJzCmfYlo8efGu4G5VKfuJrve7WgsNx5xXxMw2U0srEzUkr9xE/qJN/ZrZ?=
+ =?us-ascii?Q?4jQ/hKk7P3Th0Cb6beFPO4Z8nfCqEQEqjIv+OQWOpZj3oUcEC6SdQmaEuX+5?=
+ =?us-ascii?Q?naypdgqDS2DckRWmXQ929hJgkmyz7R5XW9BEZxAgYYBBZGZnI1coAdfpRE8t?=
+ =?us-ascii?Q?L6MlaT0k7TUr9+wGkH97C1ZS0JHJFbXMuw0u9AFtjMOMc3uKqCeogaS9Bz7g?=
+ =?us-ascii?Q?dWxh1ghzAS65yAETzJ7TATymkdsBr3deAOH/XVjV3JRtbzbiqnr/RXqY9R3d?=
+ =?us-ascii?Q?SbXjNM7sXlilETsAuhcMtOcuOVIWgBgNBYt/+dha?=
 Content-Type: multipart/alternative;
- boundary="_000_SJ2PR02MB97955A036156C166302AC92489FDASJ2PR02MB9795namp_"
+ boundary="_000_SJ2PR02MB9795341842DF1C4B70F7B32D89FDASJ2PR02MB9795namp_"
 MIME-Version: 1.0
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: erHiiGp/Dupj6W2oOX9aazXqVMu1LjaMbmKbYlNIwNO9r6kbCWoAgQL2ZQoJJnsXAneXEKaYFJevWOtG/J3qfV3eho6ziQBNEgr0XudNqXeFg2jK6DvgyPQA3D2M9WMAmZfAD2PjjKqb8KBpcs9WBNUD1GZtRlmfMxAhO5pUkJgXKTh0LVI9+ofwiv9D1AOhjy1oyhieGhL45sAcXGPv0uNc5ww2VwJOGh69m3+ou+dQ0O4ECsSFi1lqrEgE29B8ZKR1qxfMtXh2WOFdhism/hV1SobcRbrhh3BdT9uMllB0DWKbkjz5xOuZgEwKey1PYLqUR4XYQLsVVeHKKLgD4dRiCtd3zfB7a0YOhhh6voWjq5VxoVqjahxQgOrnUW/HdsK18zk03MRVUzn3rEv85LxOXgdIBwl5+l58XAQtu56wGjN8rBhPD5OWdr8jqsHN8mRjDgZbFEmFbc6tMnNHOKl430JvVLReB33VfffCOll2EsOg0mmbG+53VEBdRyrkGyp835O7hHaRO+LqHK+l9+GGqSsc7NeaqnpScmD6+OCDvUnJOqM/Qyr16eb7R2wjeaMTd82vqlTrRbgg/opb7EvPNJD7yzQuqhhLotBVZ3JbxtMDrsfID6oSKhPoWaec
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: HyjL0nKHVg7csh0KgoPttvy1Jov9KknbVGB/jcFDnTYo8x/KH3MqB+bRcGc2EaSfyE2IGsGnQj14N8L4spcwPY7T+N1rSbCVIjZdFyK6aRNTiEkfoin4PKkwpo9N+XaiHsuZxFKG+ceBMoIfNPlo+hi0CdSSShfbUT7Ml8+jusIwIVhDwAZEKwfKRkqckaatSvVQRjL5rY/8ORobK3URi4jfCVNBfqp77R9Sc0ZabUFaaQ4EQqIGgDySp/w+gMij5/+nuJmmovaXgdNRDRhEs7WdtNJWTbNLjpAO9/tBDdz5tSxCumuSivOsnJtN2JWCx7YynxpQiVX/URvm+sUXJiWP0+e/tuHHb//kII1SI/zIgsEUQi5yrn+9uPLndSnJdAUCpnsAa+rCzTF1q9X70CoVKQwg5y8ZeRsvX8+/PRdtAlGlvrGCB1u8BFhvMKZDgk7iczUxyLYTAcQxn/AurXYOoBVW0BKoDyVCi8/sIKlIXCltOBEkYUxrRkSCNhhbuA9J/EH+SkBI/F0Mhwdp/rD/NVGMhMTMaAng0WuXeg9iPRYXZWibmM1m6O+0Za6R7zvAgXzS80WU2SiTUlxS2N3QClJ5hfPzsVmRx3n9NSuFr4friTTG3q+o56J+tJ1c
 X-OriginatorOrg: qti.qualcomm.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR02MB9795.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d6cbae8-acfa-4fca-f981-08de16461bb6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Oct 2025 17:19:10.1148 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a996d43-5497-402a-74a0-08de16463ade
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Oct 2025 17:20:02.4150 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MfNwVsBbPQHM0YOgE21LsJ/RCeaYNQlHnRwwjChic1ucoSFFxgNWn4TwV9ZCkFCdME2fZpWZNMzxcO/mdcMwIw==
+X-MS-Exchange-CrossTenant-userprincipalname: JISHLsUnaPVvV8t+Uv4GbxtVespDKuqAomH7I9kxW3cPE86uGT2+SnD73YB1pYlOgvZmDPgQ6cfpzJ9GJgt/6A==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR02MB9982
-X-Authority-Analysis: v=2.4 cv=Ut9u9uwB c=1 sm=1 tr=0 ts=6900fb13 cx=c_pps
- a=ITiX5wGoaVWtfJBAqtKqhw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=M5GUcnROAAAA:8 a=pGLkceISAAAA:8
- a=8rWy6zfcAAAA:8 a=OtfHWxG8SO0elayeX9QA:9 a=CjuIK1q_8ugA:10
- a=tICrskoflLkfJMyR0EcA:9 a=0ZKyI5_0SvVtDSmN:21 a=frz4AuCg-hUA:10
- a=_W_S_7VecoQA:10 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE0NyBTYWx0ZWRfXzwrcikneBQ5/
- gyw9M4w7gNIWKArQ2xvIjqYP2KIIZDFJJWzutPDKpmFugq61YCtH6qqxuxrZ8pjj8XKoJWLqYoO
- DZGUg6/j0125NFwcM2ibgIMp+SE/jBtxW9c6i8wT9o0XoO3hjEZUmtH/pImXKzJK7V++URKStKs
- /+5RthjxYuL2adECApYr6NRjnjNVqskPMOKuvfGoJLW6wbwTy7xKYoVPLTRImnJSL+xVMqq922g
- EFX/6sZpPJnnFJAXeeDCavDLtc8r3kowqYvM5yWHNNO//SEN6wpT7c5q1jnnD5wyMaGgM2Q6kq+
- HYt3UPTocfiTgIatpaLTsgBs8WnOKuKckV9sXnDMIBFW/MRhTiyTyL25+3/xP6bqFTiKcNiObpW
- 76MCFmy+uKAowhHUHbBVNxweTLpmgg==
-X-Proofpoint-GUID: ds2_lqUr1Zij5D29u3hB5gM70MKov_xF
-X-Proofpoint-ORIG-GUID: ds2_lqUr1Zij5D29u3hB5gM70MKov_xF
+X-Authority-Analysis: v=2.4 cv=ZN7aWH7b c=1 sm=1 tr=0 ts=6900fb49 cx=c_pps
+ a=i5O+0KHWwz6AHTILDS7dZA==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=9cW_t1CCXrUA:10 a=xqWC_Br6kY4A:10
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=8rWy6zfcAAAA:8
+ a=SxM26bOyJmv0ALaE1eQA:9 a=CjuIK1q_8ugA:10 a=xfbmT3IrJVpm7hlXS28A:9
+ a=lv6hTjqe4B0QkdbI:21 a=frz4AuCg-hUA:10 a=_W_S_7VecoQA:10
+ a=YjdVzJdQTyZRADMV7wFX:22 a=DYNvvWTX9Sh4oU8lHtL3:22
+X-Proofpoint-ORIG-GUID: wbMCqwPYcu81mhcou22SPtRJazsj1eD-
+X-Proofpoint-GUID: wbMCqwPYcu81mhcou22SPtRJazsj1eD-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE0NyBTYWx0ZWRfX+mMVdwfbnfH+
+ mLOXg8vsehKoX1N4XEljT9g+LRoNBZwRA/BLv4GhSADq6znGratPwX58w6tgxwUr+bhSUxSKEQ8
+ jMbqCZJfnZDfyHfSh+G9fEDPC1aaPeLjlhQM2f0Zi8VTAsdyU8Xg1u2R7SJQiHQplvLb0Ap/Epy
+ hAbBZCICDVmiwj9fnn36VPjuWGp1lr4hiGvT2ogzFi++293fl+g4m1b5qfwFuK15lbjeQtc043p
+ AJnJ3jAxlPeYa+nEZOv28utzgBUNRr3RubzZWz4aLx9VtTXKTwzpR9rfX7sRJEGeApQj8UEj6aU
+ nm4iwm1j3F3ZdV62XtPPJVG2knaGWQ63dW3kexT/3QQorCrtobDnRIWa8vLikE1kTPbomkMrhjz
+ cVfMT+L8V5KDttkMtrBmr0w6I8/IyQ==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-28_06,2025-10-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 spamscore=0 adultscore=0 bulkscore=0
- clxscore=1015 impostorscore=0 suspectscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280147
+ clxscore=1015 suspectscore=0 impostorscore=0 lowpriorityscore=0
+ malwarescore=0 adultscore=0 phishscore=0 priorityscore=1501 bulkscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2510020000
+ definitions=main-2510280147
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -180,45 +179,112 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_SJ2PR02MB97955A036156C166302AC92489FDASJ2PR02MB9795namp_
+--_000_SJ2PR02MB9795341842DF1C4B70F7B32D89FDASJ2PR02MB9795namp_
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
-Recheck-request: rebase=3Dmain, iol-sample-apps-testing, iol-compile-amd64-=
-testing
+Recheck-request: rebase=3Dmain, github-robot, iol-sample-apps-testing, iol-=
+compile-amd64-testing
 ________________________________
 From: Sameer Vaze <svaze@qti.qualcomm.com>
 Sent: Friday, October 24, 2025 12:47 PM
-To: Sunila Sahu <ssahu@marvell.com>; Fan Zhang <fanzhang.oss@gmail.com>; As=
-hish Gupta <ashishg@marvell.com>
 Cc: dev@dpdk.org <dev@dpdk.org>; Sameer Vaze <svaze@qti.qualcomm.com>
-Subject: [PATCH] compressdev: fix coverity issue
+Subject: [PATCH] app/compress-perf: fix coverity issue
 
-Adds missing free before end of function
+Removes possible assignment of a signed value
+to an unsigned parameter. Also makes dictionary
+an optional argument
 
 Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
 ---
- drivers/compress/zlib/zlib_pmd.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../comp_perf_options_parse.c                 |  2 +-
+ app/test-compress-perf/main.c                 | 19 +++++++++++++------
+ 2 files changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/compress/zlib/zlib_pmd.c b/drivers/compress/zlib/zlib_=
-pmd.c
-index 3a2485b54e..1d7651dd7d 100644
---- a/drivers/compress/zlib/zlib_pmd.c
-+++ b/drivers/compress/zlib/zlib_pmd.c
-@@ -126,6 +126,7 @@ process_zlib_inflate_chksum(struct rte_comp_op *op,
-                 free(dictionary);
-                 return;
+diff --git a/app/test-compress-perf/comp_perf_options_parse.c b/app/test-co=
+mpress-perf/comp_perf_options_parse.c
+index 49197dc290..16d31c7e90 100644
+--- a/app/test-compress-perf/comp_perf_options_parse.c
++++ b/app/test-compress-perf/comp_perf_options_parse.c
+@@ -660,7 +660,7 @@ static struct option lgopts[] =3D {
+         { CPERF_LEVEL, required_argument, 0, 0 },
+         { CPERF_WINDOW_SIZE, required_argument, 0, 0 },
+         { CPERF_EXTERNAL_MBUFS, 0, 0, 0 },
+-       { CPERF_DICTIONARY, required_argument, 0, 0 },
++       { CPERF_DICTIONARY, optional_argument, 0, 0 },
+         { CPERF_CYCLECOUNT_DELAY_US, required_argument, 0, 0 },
+         { NULL, 0, 0, 0 }
+ };
+diff --git a/app/test-compress-perf/main.c b/app/test-compress-perf/main.c
+index 11b016069c..59af073f12 100644
+--- a/app/test-compress-perf/main.c
++++ b/app/test-compress-perf/main.c
+@@ -355,16 +355,22 @@ comp_perf_dump_dictionary_data(struct comp_test_data =
+*test_data)
+                 RTE_LOG(ERR, USER1, "Size of input could not be calculated=
+\n");
+                 goto end;
          }
-+       free(dictionary);
+-       size_t actual_file_sz =3D ftell(f);
++       long file_sz =3D ftell(f);
+         /* If extended input data size has not been set,
+          * input data size =3D file size
+          */
+
++       if (file_sz < 0) {
++               RTE_LOG(ERR, USER1, "Actual file size could not be determin=
+ed\n");
++               goto end;
++       }
++
++       size_t actual_file_sz =3D (size_t)file_sz;
++
+         if (test_data->dictionary_data_sz =3D=3D 0)
+                 test_data->dictionary_data_sz =3D actual_file_sz;
+
+-       if (test_data->dictionary_data_sz <=3D 0 || actual_file_sz <=3D 0 |=
+|
+-                       fseek(f, 0, SEEK_SET) !=3D 0) {
++       if (fseek(f, 0, SEEK_SET) !=3D 0) {
+                 RTE_LOG(ERR, USER1, "Size of input could not be calculated=
+\n");
+                 goto end;
+         }
+@@ -386,11 +392,15 @@ comp_perf_dump_dictionary_data(struct comp_test_data =
+*test_data)
+
+                 if (fread(data, data_to_read, 1, f) !=3D 1) {
+                         RTE_LOG(ERR, USER1, "Input file could not be read\=
+n");
++                       if (test_data->dictionary_data)
++                               rte_free(test_data->dictionary_data);
+                         goto end;
+                 }
+                 if (fseek(f, 0, SEEK_SET) !=3D 0) {
+                         RTE_LOG(ERR, USER1,
+                                 "Size of input could not be calculated\n")=
+;
++                       if (test_data->dictionary_data)
++                               rte_free(test_data->dictionary_data);
+                         goto end;
+                 }
+                 remaining_data -=3D data_to_read;
+@@ -414,9 +424,6 @@ comp_perf_dump_dictionary_data(struct comp_test_data *t=
+est_data)
+         if (f)
+                 fclose(f);
+
+-       if (test_data->dictionary_data)
+-               rte_free(test_data->dictionary_data);
+-
+         return ret;
  }
 
- static void
 --
 2.31.1
 
 
---_000_SJ2PR02MB97955A036156C166302AC92489FDASJ2PR02MB9795namp_
+--_000_SJ2PR02MB9795341842DF1C4B70F7B32D89FDASJ2PR02MB9795namp_
 Content-Type: text/html; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 
@@ -233,45 +299,163 @@ ttom:0;} </style>
 <div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
 Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);" clas=
 s=3D"elementToProof">
-Recheck-request: rebase=3Dmain, iol-sample-apps-testing, iol-compile-amd64-=
-testing</div>
+Recheck-request: rebase=3Dmain,&nbsp;github-robot, iol-sample-apps-testing,=
+ iol-compile-amd64-testing</div>
 <div id=3D"appendonsend"></div>
 <hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
 <div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
 yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Sameer Vaze &lt;svaze=
 @qti.qualcomm.com&gt;<br>
 <b>Sent:</b> Friday, October 24, 2025 12:47 PM<br>
-<b>To:</b> Sunila Sahu &lt;ssahu@marvell.com&gt;; Fan Zhang &lt;fanzhang.os=
-s@gmail.com&gt;; Ashish Gupta &lt;ashishg@marvell.com&gt;<br>
 <b>Cc:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;; Sameer Vaze &lt;svaze@qti.qua=
 lcomm.com&gt;<br>
-<b>Subject:</b> [PATCH] compressdev: fix coverity issue</font>
+<b>Subject:</b> [PATCH] app/compress-perf: fix coverity issue</font>
 <div>&nbsp;</div>
 </div>
 <div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
 ">
-<div class=3D"PlainText">Adds missing free before end of function<br>
+<div class=3D"PlainText">Removes possible assignment of a signed value<br>
+to an unsigned parameter. Also makes dictionary<br>
+an optional argument<br>
 <br>
 Signed-off-by: Sameer Vaze &lt;svaze@qti.qualcomm.com&gt;<br>
 ---<br>
-&nbsp;drivers/compress/zlib/zlib_pmd.c | 1 +<br>
-&nbsp;1 file changed, 1 insertion(+)<br>
+&nbsp;.../comp_perf_options_parse.c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |&nbsp; 2 +-<br>
+&nbsp;app/test-compress-perf/main.c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 19 +++++++++++++=
+------<br>
+&nbsp;2 files changed, 14 insertions(+), 7 deletions(-)<br>
 <br>
-diff --git a/drivers/compress/zlib/zlib_pmd.c b/drivers/compress/zlib/zlib_=
-pmd.c<br>
-index 3a2485b54e..1d7651dd7d 100644<br>
---- a/drivers/compress/zlib/zlib_pmd.c<br>
-+++ b/drivers/compress/zlib/zlib_pmd.c<br>
-@@ -126,6 +126,7 @@ process_zlib_inflate_chksum(struct rte_comp_op *op,<br>
+diff --git a/app/test-compress-perf/comp_perf_options_parse.c b/app/test-co=
+mpress-perf/comp_perf_options_parse.c<br>
+index 49197dc290..16d31c7e90 100644<br>
+--- a/app/test-compress-perf/comp_perf_options_parse.c<br>
++++ b/app/test-compress-perf/comp_perf_options_parse.c<br>
+@@ -660,7 +660,7 @@ static struct option lgopts[] =3D {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { CPERF_LEVEL, required_ar=
+gument, 0, 0 },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { CPERF_WINDOW_SIZE, requi=
+red_argument, 0, 0 },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { CPERF_EXTERNAL_MBUFS, 0,=
+ 0, 0 },<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { CPERF_DICTIONARY, required_argument=
+, 0, 0 },<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { CPERF_DICTIONARY, optional_argument=
+, 0, 0 },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { CPERF_CYCLECOUNT_DELAY_U=
+S, required_argument, 0, 0 },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { NULL, 0, 0, 0 }<br>
+&nbsp;};<br>
+diff --git a/app/test-compress-perf/main.c b/app/test-compress-perf/main.c<=
+br>
+index 11b016069c..59af073f12 100644<br>
+--- a/app/test-compress-perf/main.c<br>
++++ b/app/test-compress-perf/main.c<br>
+@@ -355,16 +355,22 @@ comp_perf_dump_dictionary_data(struct comp_test_data =
+*test_data)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; free(dictionary);<br>
+sp;&nbsp;&nbsp;&nbsp; RTE_LOG(ERR, USER1, &quot;Size of input could not be =
+calculated\n&quot;);<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
-sp;&nbsp;&nbsp;&nbsp; return;<br>
+sp;&nbsp;&nbsp;&nbsp; goto end;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
-+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; free(dictionary);<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; size_t actual_file_sz =3D ftell(f);<b=
+r>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; long file_sz =3D ftell(f);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* If extended input data =
+size has not been set,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; * input data size =
+=3D file size<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */<br>
+&nbsp;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (file_sz &lt; 0) {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; RTE_LOG(ERR, USER1, &quot;Actual file size could not be determin=
+ed\n&quot;);<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; goto end;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
++<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; size_t actual_file_sz =3D (size_t)fil=
+e_sz;<br>
++<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (test_data-&gt;dictiona=
+ry_data_sz =3D=3D 0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; test_data-&gt;dictionary_data_sz =3D actual_file_sz;<=
+br>
+&nbsp;<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (test_data-&gt;dictionary_data_sz =
+&lt;=3D 0 || actual_file_sz &lt;=3D 0 ||<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fseek(f, 0, SEEK=
+_SET) !=3D 0) {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (fseek(f, 0, SEEK_SET) !=3D 0) {<b=
+r>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; RTE_LOG(ERR, USER1, &quot;Size of input could not be =
+calculated\n&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; goto end;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+@@ -386,11 +392,15 @@ comp_perf_dump_dictionary_data(struct comp_test_data =
+*test_data)<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; if (fread(data, data_to_read, 1, f) !=3D 1) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_L=
+OG(ERR, USER1, &quot;Input file could not be read\n&quot;);<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (test_data-&g=
+t;dictionary_data)<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_free(test_data-&gt;dictionary_data);<br=
+>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; goto =
+end;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; if (fseek(f, 0, SEEK_SET) !=3D 0) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RTE_L=
+OG(ERR, USER1,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &quot;Size of input could not be=
+ calculated\n&quot;);<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (test_data-&g=
+t;dictionary_data)<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rte_free(test_data-&gt;dictionary_data);<br=
+>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; goto =
+end;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; }<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; remaining_data -=3D data_to_read;<br>
+@@ -414,9 +424,6 @@ comp_perf_dump_dictionary_data(struct comp_test_data *t=
+est_data)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (f)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp; fclose(f);<br>
+&nbsp;<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (test_data-&gt;dictionary_data)<br=
+>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; rte_free(test_data-&gt;dictionary_data);<br>
+-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return ret;<br>
 &nbsp;}<br>
 &nbsp;<br>
-&nbsp;static void<br>
 -- <br>
 2.31.1<br>
 <br>
@@ -280,4 +464,4 @@ sp;&nbsp;&nbsp;&nbsp; return;<br>
 </body>
 </html>
 
---_000_SJ2PR02MB97955A036156C166302AC92489FDASJ2PR02MB9795namp_--
+--_000_SJ2PR02MB9795341842DF1C4B70F7B32D89FDASJ2PR02MB9795namp_--
