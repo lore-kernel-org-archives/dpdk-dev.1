@@ -2,178 +2,187 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D09CCF9EB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 15:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF8BBCCF9F0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 15:46:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A1614042F;
-	Wed, 29 Oct 2025 16:18:02 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id 3A46B402D2
- for <dev@dpdk.org>; Wed, 29 Oct 2025 16:18:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EA0614042F;
+	Wed, 29 Oct 2025 16:46:05 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 476B240150;
+ Wed, 29 Oct 2025 16:46:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1761751080; x=1793287080;
- h=message-id:date:subject:to:references:from:in-reply-to:
- content-transfer-encoding:mime-version;
- bh=4ArnKndM1l9kgbowTDuqneB14AZMsmWgeFz4STjIHp0=;
- b=NH7+4ES1MSErxfdjCNFCn4eSVbdZOC0EZ/Z178nGeGn7EWiXg5L6/N0l
- ND99+6rx3J8PiDHW3PAMV9v5/JOg6fKCmmhWzgdvezyNC5qzRDT0KXUp2
- MRgn6vzu4AT22HCStNdFYH58XYF0ZHQkD+Ggtj02YgrFBjTd13WbByn61
- MJUcOCzhgZFkC9/5bBXCHH8xeqezTy/6v3f0560JIcp5gwEN0FBID6+4v
- xrYFQpKbjUSCn2tcszLdtIIlThAN/4CtZByJteIj07p0WKficIVnA+hSG
- X/BxKGxeIdJwFYSAxY6pk3nOm1VuZ5VkjhW2fDhCDzT5BC9lzqlmgrC8i Q==;
-X-CSE-ConnectionGUID: 0Z+Sv7DkRHyqpy61vEqkgA==
-X-CSE-MsgGUID: sf0QQhV0T4mTcW6fckSYwA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="74552388"
-X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; d="scan'208";a="74552388"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Oct 2025 08:17:59 -0700
-X-CSE-ConnectionGUID: s1mWMuPGRs+xXzsEaCaqTA==
-X-CSE-MsgGUID: KSEwoBcpSaSVJzkfPkXMaQ==
+ t=1761752763; x=1793288763;
+ h=date:from:to:cc:subject:message-id:references:
+ content-transfer-encoding:in-reply-to:mime-version;
+ bh=yzNyga5dGnjDbcSuaLWyjEkiY39e5zpIFoYVtSDwWQw=;
+ b=cLR4HbqntdKELOwVzKeAOlh40Nly8qO2RrC6fG80Ux3eV1wMe+RPyaDG
+ Noz1e6haZ3rKBXnkO+NGDT8yPu0l2IR/G8slbCz2vrqQfVnroOIG+jIUJ
+ R+Vt/YKx2axwb95qLSgY4YQefJDQD7O1hD4odnnunHq2RRh+qEpJjmSDO
+ 7bTNZdoNtx45PJSH6AMHycKDlxdIRyV6E+9MrRYVhiuGoT8JGpE+9BQYm
+ k4uQ8zBQnrMsDlhYUewupFTIPfQ8v9CDIXz4FLtY6qC4YKwW5FOPxHAyq
+ sszNa7nMinQxPWalMm6ed1tkDgFYanKod/XqX6COQXhgCqxNIV5RyxjDc A==;
+X-CSE-ConnectionGUID: oUqVSRf1Ql+1uERDVgadnw==
+X-CSE-MsgGUID: UlETxVusTPG3YEBcGfkV+Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="63787346"
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; d="scan'208";a="63787346"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Oct 2025 08:46:02 -0700
+X-CSE-ConnectionGUID: rQLwmV9tSG6XUM8lpig6Yg==
+X-CSE-MsgGUID: +WdlFPcfRHKUMJEfk4yfoQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; d="scan'208";a="216556761"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Oct 2025 08:17:59 -0700
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; d="scan'208";a="190057074"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Oct 2025 08:46:01 -0700
 Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 29 Oct 2025 08:17:58 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
  ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 29 Oct 2025 08:17:58 -0700
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.24)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ 15.2.2562.27; Wed, 29 Oct 2025 08:46:01 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 29 Oct 2025 08:17:58 -0700
+ 15.2.2562.27 via Frontend Transport; Wed, 29 Oct 2025 08:46:01 -0700
+Received: from CH4PR04CU002.outbound.protection.outlook.com (40.107.201.4) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 29 Oct 2025 08:46:00 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZX2nPCuReKzAswVUFD2cl/iXUMGJCO4GVnJbuLKeC5ohGpTwT9nJV8zetJ3xLfvJuGmcsQLm4BnPsfW3C8ezYFII2xgvnALwy9w/pCLz6mGGlBNGbHYMJ7n4AhLRlECVpyA+4uF45D+xfd0HldZNKs1LkhChU+QeSAtOnBLYWh1WNU5+4EOicZxO4vKiToQn6eF35YzVKe6/Vghw+C8JCNhx9or2+E9wIeYIJbpQn0DD8pvF9mWkICZjxdIyyXJ0OsbS23L0rtR48FL7zOJykprjlMhB9aJKoncHPF4k3xe68b8nYFzj3+/+9/jrdLiKhuSBgZ8YKhu297K4VNaUEw==
+ b=FjPaN2mJqIJUQyFVvhlDV7tU8ig2yfNMp5ESbVNnLA3lKPwPk6l51zEjyoMpN7WzcBp0vovLPXWDb8u5iVkE8LVQVClAU16n/t5T9aO5E2nemB9vP/bPax/5E9kp4DZ9EdbXdFPl5TG1zN0EvS95wRajn6dCpJn4ZtTBAd1jvQ9YJ3ipvmF0qvugQ4yH5uprlLQWFq0nJ4ACCZVlhH/3cA8NzU5lkRuasF4CXC7ChVpoe57t/p8RM5HB4/KzdMMuSCys/eS+VN6rLe5FdmNKM4Bh7XxWjq8uRyykwhDj3d2NZSzV5fYnv9+WrXcqtuUbRq81VkzLPYk0q5+CCaGqqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jDqvg7Of5I0jtkPa8jwSck+7vQBm8IYjGdy2McIXY9o=;
- b=nvMQh2Pz+cd1DZJq+yPwmAfrAJm5z0VuB1ubi5nTOMp/eNQb/KQteV5Le6kTzTol2/lVTbcZWBKAZFuVUq7Sb3KsjB6fLjih7r0pFz446zSayTD9cbcSce5XB2x+5uSu3Ay7tPFhfxikBz2zI8ztWyDLBU7xONIriHaRr0+94HQwwGZ2A9MSWDaHWHjUifmin+uu1ImuvsArKqQftzupYUYmcdz/DDvJt1N7OnjwY+ahVZNjpBDU2yACPUJVZE2QfmxrhD0pQgRG8hvo9Da/4oXrB6SK19LxQSCSikSF7eVgQbaHDUxVDSUnhmWI5AollCT8IklZpJfQUlN6Xw/5TQ==
+ bh=q2wmZIeYgsedIynIfVL2rLZPBXVRhGGGDy3HDYADjFo=;
+ b=NEh7r9Gjs3PU7MJjLGkQwKuXgsOJYRJ9ElRAHf01BM56pZPlI9mMntq//JJ3uv8nvDOqYNFA+W0mDAEh8PUw2MHiw1Hs2fmEBSxixon+7DyCKWPxo5z91K70E+uXVbcFzhkgkv3ug7wv3f3vPgkKxGUAlAHAxDuTsX/5AD0modyriLuVIMs8WzqsDXFzyBtly/MNNxpLtpuJFlYFefRhERYSkoGoXSCyX9GzxJPrbjSQ8iBdw2drP1IXsEq3sCk8UqGSTIUBxRPVLAg2hTDbdeUYLLp09ExRJ/8MhreRc+bmgUnqOHftIF71qsxZoceVofcIytyVP6sl5uUsV0q9cQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA4PR11MB9204.namprd11.prod.outlook.com (2603:10b6:208:56d::16)
- by SA3PR11MB7463.namprd11.prod.outlook.com (2603:10b6:806:304::20)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Wed, 29 Oct
- 2025 15:17:54 +0000
-Received: from IA4PR11MB9204.namprd11.prod.outlook.com
- ([fe80::509:acc9:5dba:5963]) by IA4PR11MB9204.namprd11.prod.outlook.com
- ([fe80::509:acc9:5dba:5963%3]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
- 15:17:48 +0000
-Message-ID: <b80746cb-9093-4986-a490-391415a4a636@intel.com>
-Date: Wed, 29 Oct 2025 15:17:45 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] doc/ice: document protocol agnostic filtering
-To: Anatoly Burakov <anatoly.burakov@intel.com>, <dev@dpdk.org>, "Bruce
- Richardson" <bruce.richardson@intel.com>
-References: <f2bf17ce5b8f64dade7a5505ed0aaf30343e3888.1761751024.git.anatoly.burakov@intel.com>
-Content-Language: en-US
-From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
-In-Reply-To: <f2bf17ce5b8f64dade7a5505ed0aaf30343e3888.1761751024.git.anatoly.burakov@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DB9PR06CA0019.eurprd06.prod.outlook.com
- (2603:10a6:10:1db::24) To IA4PR11MB9204.namprd11.prod.outlook.com
- (2603:10b6:208:56d::16)
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by IA1PR11MB8151.namprd11.prod.outlook.com (2603:10b6:208:44d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
+ 2025 15:45:53 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
+ 15:45:53 +0000
+Date: Wed, 29 Oct 2025 15:45:43 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Thomas Monjalon <thomas@monjalon.net>
+CC: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>, "Andrew
+ Rybchenko" <andrew.rybchenko@oktetlabs.ru>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>, Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Somnath Kotur <somnath.kotur@broadcom.com>, Nithin Dabilpuram
+ <ndabilpuram@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, "Sunil
+ Kumar Kori" <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, "Harman
+ Kalra" <hkalra@marvell.com>, Hemant Agrawal <hemant.agrawal@nxp.com>, "Sachin
+ Saxena" <sachin.saxena@oss.nxp.com>, Shai Brandes <shaibran@amazon.com>,
+ Evgeny Schemeilin <evgenys@amazon.com>, Ron Beider <rbeider@amazon.com>,
+ "Amit Bernstein" <amitbern@amazon.com>, Wajeeh Atrash <atrwajee@amazon.com>,
+ "Gaetan Rivet" <grive@u256.net>, yangxingui <yangxingui@h-partners.com>,
+ Fengchengwen <fengchengwen@huawei.com>, Praveen Shetty
+ <praveen.shetty@intel.com>, Vladimir Medvedkin
+ <vladimir.medvedkin@intel.com>, Anatoly Burakov <anatoly.burakov@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>, Rosen Xu <rosen.xu@altera.com>, Andrew
+ Boyer <andrew.boyer@amd.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, "Bing Zhao"
+ <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Wenbo Cao
+ <caowenbo@mucse.com>, Jerin Jacob <jerinj@marvell.com>, Maciej Czekaj
+ <mczekaj@marvell.com>, <dev@dpdk.org>, <techboard@dpdk.org>, Ivan Malov
+ <ivan.malov@arknetworks.am>
+Subject: Re: Fixing MBUF_FAST_FREE TX offload requirements?
+Message-ID: <aQI2p-ODpm8oxTMy@bricha3-mobl1.ger.corp.intel.com>
+References: <98CBD80474FA8B44BF855DF32C47DC35F65442@smartserver.smartshare.dk>
+ <aQHdDf7DnAIyIzR4@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65513@smartserver.smartshare.dk>
+ <5090512.QZNE9M9tJY@thomas>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5090512.QZNE9M9tJY@thomas>
+X-ClientProxiedBy: DB3PR06CA0009.eurprd06.prod.outlook.com (2603:10a6:8:1::22)
+ To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA4PR11MB9204:EE_|SA3PR11MB7463:EE_
-X-MS-Office365-Filtering-Correlation-Id: c2ffdbe2-4148-41c4-7838-08de16fe51a1
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA1PR11MB8151:EE_
+X-MS-Office365-Filtering-Correlation-Id: 95c15054-c5f4-49b8-3de0-08de17023df5
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?U0FZbzlYaFgrTHRuMmhDc2NBQURwV01RYU9GQWlpeEdrVllOaWl2QnRTeVJC?=
- =?utf-8?B?WFZnUjdFd1BhSkZVQW4wQi9rVnlteGMyTEY1VzkwZzVQY2Q5eUtrb3FlNmI1?=
- =?utf-8?B?L3kyc3NOelFWSTJXWTBYczRVVElYT0J2ejdvVVZpaEMwb1J3QXdvRHBrMFdo?=
- =?utf-8?B?M1lpNVdINjV3NmlLNWRNckMrZE5lZGhxNXVKaHNIMHVRM3JHK3NiakZwdHM3?=
- =?utf-8?B?emNxMWFNcVZwRFRBTmIzcXNGRXpnbjN4cHVTcmc2MHdDTzNnajY3M0VBSU9q?=
- =?utf-8?B?YXkwenVBc1lQb0FJNlNRL2dYc1YzQmIvUVlBWVBhdEUvODVCWFRIUnU3ZjR6?=
- =?utf-8?B?TGRQSHJ6SkVLSVMyaGFrci9jK3dJWW8yYXI3b1ZaVGpoa0dSZzRyeThidmsr?=
- =?utf-8?B?SC9IWEErc0tCVUc5TUlxSnNQUzNPWmUvZGVhRWZFRERKMkhBY3BzNEpEb2x1?=
- =?utf-8?B?enRrQ1Uxa1FqeHRXQ2FKZktkR3RrUUtjUy82dFlxY1U5VXFnWDkrR1JWSGls?=
- =?utf-8?B?YXI4MnVWTWFqdGZldDNjRFVKMnBnbGJqbFN2QXdHVDhmQkx1TndVaU5yL1cx?=
- =?utf-8?B?Tk50endxZnBLOVdsR09UZzFyU1QzUFhFM3R3WGFTZkE5enA5UlBXQWpMT2sw?=
- =?utf-8?B?aEJBeTRZTGpRV21ScmRlUlREMWx0YnFCcVFPOVdtR29JUSt6S3hxcnhzc29z?=
- =?utf-8?B?dy81RkdSNUpZbjhGcDFVTFkreTk3U0d0WkRmNVJ4TURaSm9TODdQdXJ6bUlz?=
- =?utf-8?B?bUpPUElmZFpiNjRQMDhnOVM1MFVKN1pzcEtFbEVLVGV1SmxQeDc2a2g2Nkda?=
- =?utf-8?B?aUhBLy9nVXZJTUNvbnZab2RSaDIwZ1FzWmZIOE82VG5xZHZKK3owMFk3ekxz?=
- =?utf-8?B?TWtrRXpwaEhPTGNaZVFoRFVwQkZLL1M3M0JLb2pRY0ZodWJmQnk1R0Q5NGxE?=
- =?utf-8?B?cE84bDdIcVNaVlJBeHJwazdTSmZmNUVQNW1yVjZmd3ZzejgyNkVmOGNMcFhu?=
- =?utf-8?B?SG44MjF3cUdRSktpOG9BZi94djJtTWZOVHJ1ZnFpR0dLclNpNEw4czlHck9H?=
- =?utf-8?B?SFFYaDlreUVsYUpjdFlTN25KMENvbEFEaGRkUEp1OXo5QTdKQVMwTHEwaEov?=
- =?utf-8?B?bno5TU1KbVNyTzNuVWw5RWo4eVVaZm80NG9vU3Zoc2ZOS1NUQUZKYWVhWlZY?=
- =?utf-8?B?VlNOb0NpYW1CbjhCaWhJYWJzSVhDM0szTFZnQkRaK0kzSzZ1WmxMQlA0KzBC?=
- =?utf-8?B?a05GMWE1U3EzVHkxNjF5NU5mZFk3S2EzYm9TcWRBUzhTdzVRaG5FOHdmNlds?=
- =?utf-8?B?WXRuM2NQMEFmRTlwVFNMcmtGd0dOMVRqNHlPa1pONmNxTjA4OXVYQkJjYzZQ?=
- =?utf-8?B?WncrSHZ5VGFhK0NHQXRrU0svcnFMdzUxQzB3dkdJMWhzcnUvSkZFL1lNVTJH?=
- =?utf-8?B?WjdXOXRCWm5MN2M4Tm5sQWsydDNTSm5KT2MxZUdSdndpSzVJTFBpR0ltZ25j?=
- =?utf-8?B?M1pHK0w4bUNaSVlMMWVXaE9uMWIwaUZFUy9kaTFlQVhrTTZqSTFuVWk0Y3JN?=
- =?utf-8?B?bUpCRUVjWUNJR3llcHRMRG95QkhCZ0k0ZkxhNWJpaTIvbHVtTXFPbnpsQXQ2?=
- =?utf-8?B?WDh4Nk9wRXZ0K2RoL1hENnJpODh0VmwxT2dUck1DLzZlbzlmSGNpNXVTVWZa?=
- =?utf-8?B?eUhGSGxTYXVHUWZIZmFGWWtnSjZ5NXJPQUhpQ1dERVRWSkh4SmRNaWdic29u?=
- =?utf-8?B?UzlJYk95bWFhZ3VXbStIQ2NZejJOdTVFYUkrWUtuMnNveGJFNGZMeVA4bTNK?=
- =?utf-8?B?ZTlnNC9pTmNOWDU5Q3lJKzJ0c2hhUlBBVXhQRktMK0d1WWxiWVJHczhUaWVX?=
- =?utf-8?B?WjJlTmp4cWJmNmRHbGZDQTJGQ0RYYlk0M3B6U1BqNzlvL2haZkxlYXVCQ3Ba?=
- =?utf-8?Q?0MkH2X2TnRjX+PyzBO9P8DsX1F/8pmGs?=
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?c/jV/z45XmMOSJmb2JpXX3U8giZGYmHf+8vKAGXbePWiESIccvCXopnFPG?=
+ =?iso-8859-1?Q?VA2Gft1eQ47akopXLXcxWnuoEf6+Ag/veRKjZWpneVwkJO6nMHohEG9vdO?=
+ =?iso-8859-1?Q?31B6aDm3D3BanhFRf1PfBK7z9xSkg/+CuhTe5Ho0EdvXt5XknRD7TN79e9?=
+ =?iso-8859-1?Q?Ce51WelhwPnfF5dYhWHgeYNMZA9yKSbJwLhQEAzUohnFgNAMgd3zex957E?=
+ =?iso-8859-1?Q?ENBnivyUOrF/DvYuMP8yi2+ptGc4xX++4nkLdfTrBYGPMSJTfZtod4WtYL?=
+ =?iso-8859-1?Q?2ZyyPHw72XwtfTpQS1ZWLnd9BnnWSh2deoXjwGwK/yZ+SNBc1JjgZOngvh?=
+ =?iso-8859-1?Q?Lk2CNOiVmZMmfUueCl3aTIM0F067kVI/8nBf5TPOTgr7A+JWUsdGzBUw2I?=
+ =?iso-8859-1?Q?L/BPZUpN6zMHI4u5u4L1oFIjrbaYFa4vdlHraVUtL4jnS9gEQe+DYHUlxC?=
+ =?iso-8859-1?Q?1V3QLX56Ffvr6RITu4qVjF3SDvwyhil5uh13tUDu3hb00UJjtExv/PZvBf?=
+ =?iso-8859-1?Q?iwwXVxGJBqevbZZscMpv5lWZRT+ehYUQRkxZFNK8K79VEfpG4pl9n6j7La?=
+ =?iso-8859-1?Q?nZ2nM3w9RapZNabVhMrWJjSUdlh0lZdW5Bn1e1xdSS4D0ouNGOpYBaKJ0r?=
+ =?iso-8859-1?Q?HsU1QXN2ANzxBEh+c5fjkla2RAkhSN0whgQZ9vZa1BUqusGo233DqGgRlv?=
+ =?iso-8859-1?Q?xxTuuhWYu66cCDyUVT5UssPp3LG1rq7ZSsJqy+qvIWrwDtlqdRwBxrBoSD?=
+ =?iso-8859-1?Q?Qe3wsTLFOXKj2iHsSHf4Hz/w0gq2yYpKMuixFsU9Dd/pNKA/XsZvuCrVI2?=
+ =?iso-8859-1?Q?trgdyhk6mrRgonuHr71qU+So3FT25iKj7ODU3pdEWMH37YvDtPibxYN1jh?=
+ =?iso-8859-1?Q?Ns39wDBJSWtShsWttTSwTaZ32uD59mN6mqHJG+ytWt+5BASSCA7TBLx4dr?=
+ =?iso-8859-1?Q?tBjcWp8lzxZ4tnTfLZNMdCDLKxeXI4Z+wgVpcIeAbbe7FxsoPF8WtGU5fU?=
+ =?iso-8859-1?Q?OEf7TG0ImUDXU3b0hrwt9eLEbA4x8OzqY6h1yE3nlf3afTrJNRGyPoC9D5?=
+ =?iso-8859-1?Q?FA3N7P01u6nob/S+B/wj6KQKdpcCeHEgpzqlJmqkXuWOd68SmjElb/E7eh?=
+ =?iso-8859-1?Q?fIhR23GiDaDaN2KMzRLt6EaSrOCSSfyqF8I1lD4p+7hKL+OrXDTbwaN1YI?=
+ =?iso-8859-1?Q?L90LPafsGrrGWl1CdCAOFlBMRqLEj8IqQoZ35FBBVrQ2n2+sNMJ8beyaRG?=
+ =?iso-8859-1?Q?0mRWNu3XoPnrXTouHm6G2mRSYVLuORjMYvynCLUwwpcqN3G1+YnnrKadnj?=
+ =?iso-8859-1?Q?1dw1848uJDOgJamVSkpCKX76b/k3Imhdef+2lXHjR3Le+LZms25wLQzupK?=
+ =?iso-8859-1?Q?4uoYC61JOAOzxbhvqjN4jnJiXxpigsgcVTTyK3cWkykayiab+syEpx+K+g?=
+ =?iso-8859-1?Q?MGQvbanLJOwhDgGjjinKqATkK4yf2YTXirN0vs2aEkH+wCGqJJmyy7DIwb?=
+ =?iso-8859-1?Q?XnytUT+ygXYyPBLrqM7O4/2pwK0oOc3csLkOMYS6YdMg=3D=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:IA4PR11MB9204.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(7416014)(1800799024)(366016); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YkY0U01KMTZTRFNhdWlyYUhaN29CRDFKZ1ZKSTI3bEp2R3hDUTZ6T1pYUDJi?=
- =?utf-8?B?UWtOb0M4ZDh0RUtIOGg4cEFIdUVoS3I2NzZqSGdYTmU2ZTF2M25EWTI1RStu?=
- =?utf-8?B?TSthaFZETk5YdW9PUm5rK3plTG03K0RILzM3a04vWCtHWFc3SURuU09LbktJ?=
- =?utf-8?B?OXIyM0lrRkk5eUpxdjEzTEJyMlhqTlhBS0xGdzhtckFVZVV3OFlxWjBPM3JO?=
- =?utf-8?B?VHZnUUlpR2xhYXVFR09MY3RHNllJQXh0QlBLcTM2YzZnanhQcGpLNURyOWNI?=
- =?utf-8?B?K2l6QVV3Rmw1UjA5VFFzN0xEVzZIMXNTc3VKdzdXVHJORHhxNzE2eVV6dlcw?=
- =?utf-8?B?WGZNdFQzWEZHMnZTQ0l1L1oyUjNVY0l4YXRoTjIrS0dGTVdsTGFaSkJxT2I4?=
- =?utf-8?B?TEtHRyt1eXhRVEdTdXdvdUU3ck96SDkrS2JkV0xHOFNheW51T3ptQlRzNTJv?=
- =?utf-8?B?ek5JY2ZVWFZmbDBubzBnd1lzbEV1Tjl1NzMwblQ3a0dJWGt2SW5USDkxYUU1?=
- =?utf-8?B?YStmWklwNjMxUjVMcGxZTnR2dEVNNlJQd0o5ekx5ZEtWRXg1aGlIZFFXdUxU?=
- =?utf-8?B?eWZ4RUZna3RrTFlSQ3VoSFFNUWdveHlDSnNUSmxOUzk3TlJSRkY4c3BGek5Y?=
- =?utf-8?B?TzZmbnU4SnhZSUthcDA4TGN0QUlUenBhekRzd3FIVXZHQWE2aUFaaFg5L1V2?=
- =?utf-8?B?S1d3NkMyQVBjNngrU2hqam1yMHpZbGdudXY2ZWRQRmVPUnlNS1ViZjlNYXc4?=
- =?utf-8?B?VjVQWTRGRUtWTHVRaU5EOUNhR1U2SXQyUDk3R0M5NkVabmR4TVZSNjNKL2Ro?=
- =?utf-8?B?MzJ3ZDBDekJoeENGem1hSDhoOFQ4TGtkR0E1cmhNTENkVmVEV1d6ZEVna1l3?=
- =?utf-8?B?ZUlhM3hSQXh5a2NxMmJnWXJBTm5MbjNKamFQNlBGYmQvVXN2UVpZL2p6MTRp?=
- =?utf-8?B?eGhKQjRka3VlTkVjRjE1bk5ScXRoS3FteFF0aVJCY0paZ3dmdUNjN2xVc1oz?=
- =?utf-8?B?Z201ancxV2lwZkFsL1Zqa3BpUjFqYUY3eU1YYUdIVm4wUTM3VDB1WXZjV0k5?=
- =?utf-8?B?VWl4Sk9UOFB5UGhuU3RlMTNTaUd2bDcxc3BWU3JPOEpsczdGOUV1MGxHWC9w?=
- =?utf-8?B?K0hTWHN0ZUVKREdMQldYYWt0L0ZUL29aOFU1MHhLMGNMa2p5K3F0bUMyMjVB?=
- =?utf-8?B?a3lTclZEZzZiblpZVmxUbW9UQzlhR2djK3c1dlBvUnNYNW4wZ3l3aGhkL0R4?=
- =?utf-8?B?WUFnY0praVVHb0h0ZzkwZUxIK0dqOWJTSVdLQk5tWHlkS2ZRVFJtS2J6ZGcy?=
- =?utf-8?B?UUVFK0RhNVRucjVXZnZQQ1hub1RGSnFFL2NkaUVNTXd0TDFrUENzV1ZWVGNE?=
- =?utf-8?B?SEI5NXFEck5JOE1udTJkQlVhd3U4VEhRV3lPY0JBbVlpMW82cEZnKzJmK2Ro?=
- =?utf-8?B?VWE3V2gvelBSdzQzMGNXYjk3TnZ2bElTdkVHRlhnNm5SRzdSNUk5M3BRcGFk?=
- =?utf-8?B?dHg1am9QaHBmRGN6dU9KVm93ek4vMUN3ZmtWSVhCVVQvMkZkS096Qk1tc2JT?=
- =?utf-8?B?MklUdlNFZ0M4eGNKWm1oQ1R4R2ZxNkpjbXdXSFdsQmlabkMyRTduYnBTbHZj?=
- =?utf-8?B?L25NZ25RQUZxbmRSa1E0QzNwaDNzTnF2NU5LMmNsM24xc0tNWmdJSjQrQklQ?=
- =?utf-8?B?L2xsNEZaSE52SksxQzNiY3Fzd2t6WEsyTTNYQi9RZUtOd1dxL1dkRkc2QlpL?=
- =?utf-8?B?VDhJK2pLeC9lRXcxaUJZVjhPZFphcEFxNGNrQ1ZGRnhheERyN3htK0RBaFE0?=
- =?utf-8?B?VjFkYlY3L1p0MHZtTzhQQ3ZDYTIwSnIyY3k0MW01aDZvOXJoTEw4UnlodDM3?=
- =?utf-8?B?aHV3NWNPWnpGSDdNeXNPUi9kTVBrb3ovWkJPeTc1Vk5NVVlwWkdVTThlRENa?=
- =?utf-8?B?TEY3R09zRkVoQ0ZSNVJnaEdNNUQvQktzckxGV21sSWFUZWViOTNMUncrQmJF?=
- =?utf-8?B?NFI1MU5Wd2hxaVNlNDNJb2FkRU9POWp4L1R3b1JiT0sxbHU2U0EvZk5ZZHRZ?=
- =?utf-8?B?Q2syaTlRdTc5N1pqWFNDeDB5Q09xdENhc2QvQnByWHV4a1k5OWRFYTE4bVFU?=
- =?utf-8?B?akcydzN0WEt6bFp6NFdpMTlvVXBTRDBRSFpBU1FpM1NEdjIyWEFYeStaNlZT?=
- =?utf-8?B?MHc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2ffdbe2-4148-41c4-7838-08de16fe51a1
-X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9204.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?wLsC6uhCl2Wah/lEYr9s82/qt5PVlmA/g6bfSEBFW8c82peSR6yG8eiX/4?=
+ =?iso-8859-1?Q?H3gKDu8ntLdJfsCOzo3xR2Etwrd0RaPW7fDI2DPN13vuAKGpUw3ZNmqeF8?=
+ =?iso-8859-1?Q?buX/S0CRuyCgY8B58I6LHBajbmLnA6vZbb6ePlQoasHzLN4bj+OmDc6DWT?=
+ =?iso-8859-1?Q?tW+aLsojsOitVzQEs9c4R//QN3SWN0JRUSnqLI5GWMfTBwYMGs2RSMBGTs?=
+ =?iso-8859-1?Q?wO64Pf6FvDAP2/1FLuYNZYgS8yUYVqMn5OQ2UoWsA4M3Aw+Jj4F1GYaebx?=
+ =?iso-8859-1?Q?AJpC1Y/J1SSa65lSuBQE4NeWg7O0fIoqjb2LIW3BUlVbR6RzciDku7jb28?=
+ =?iso-8859-1?Q?0sORaRMbZCNd54Hs9zdw9qSwYHw+hnoWkfKlSW3laneDiy7hdT/VqV6Y1E?=
+ =?iso-8859-1?Q?Tz2j+GqlECmuSldwouZuefjqicuaHEMmEX1JmXS/8mSYejY8Nnj4BOBB8M?=
+ =?iso-8859-1?Q?qBDZokb6RxSD7LBZtrx41AG9OvFHR1YnQa8rbhHd7f+1YSpc02soDo5Roe?=
+ =?iso-8859-1?Q?vIW1csJxQWJMgFsTZZuGJ3hOviykKjWJ29u8xClCegVj7Do9cHoiKJBepy?=
+ =?iso-8859-1?Q?yXg+2viwWnRmDfKGSr63gqwHr8n9oT2BiwqgSgKV9SnmZ8v81PBwm65Eo/?=
+ =?iso-8859-1?Q?CP1k52/szCM4f+s4bOm5uS0Bw+OY+u6QF3U1alg9JHaEM876EKaqy9XZcp?=
+ =?iso-8859-1?Q?IqD2EYp8JLS+VkyA8zpcvm5rlsLvzYleuV8FTrGmDdrcaAqFPot1yzmuzq?=
+ =?iso-8859-1?Q?qXG5/YNsBtV3ebsL7ZRbxgXy1N19PPDK8vhZzI7i1dC48+unUnpD2AbFTe?=
+ =?iso-8859-1?Q?UJyxoZ/fj6ZvOixipnnKMqplIUf44yKeKt6Z43ybmDJkQBvKCSmyZzCqC7?=
+ =?iso-8859-1?Q?Zn8DanKYVSD9Wrl+PvYU/IgOWtyk/tEgo8MFWqAEiZYup5EEHImV4Hl1/s?=
+ =?iso-8859-1?Q?3xbizLZKxJNksvvnYWHjlLLmcbuq3AUZA0AP/T8674J+GLqD/IQR6ay+P6?=
+ =?iso-8859-1?Q?Fg2g0LpLIC0wcvBj2IXEJmg/edNQDTZrCMI4UlGjw+sZyMbJkSmX/dfXv4?=
+ =?iso-8859-1?Q?1LgAgFQPO2jqb5azgh7NqtFe7ixZ2mAldi7VQd3M0K+pA+6yTG/PTW6W2e?=
+ =?iso-8859-1?Q?StlYD6Ql8tmesXhAl8sMI6Zc/gquxMhacBHoIA9HTiDn9WdT8BDMzmdUYr?=
+ =?iso-8859-1?Q?zNVs0Lp0ePpYtURzQvn0yAB/Nlnii/NMz6KmfJB17cCAxPZO2o17rTL+7d?=
+ =?iso-8859-1?Q?8zTW4uBu7gqtdxjzMwdrTnCdYYuW6Cp5pyRV4IsQbup09h3IY7qE20Scx6?=
+ =?iso-8859-1?Q?GM204XZgarjKPSgCXbOtIn08VZZIARRHd9E26hsUJESYG273ozMRImoXT4?=
+ =?iso-8859-1?Q?z90qWLflL5BorlSB4B3Y5XruvUAwoyc8j7JNMU3WA2bTgYr7UErjNwUyJD?=
+ =?iso-8859-1?Q?kYCOKINJ3dw96COz1PQ4sfLqxKa6bPlmCLcgiruzV3hTIM3GG7Pn2AobI4?=
+ =?iso-8859-1?Q?PdDQmIfoFW6fxVu8hMY84LWNOVzgjv2Crj9mUMK2PR/HhuXfBKIn7frui2?=
+ =?iso-8859-1?Q?izB16r8lSp+t24NZ3vzEU/tlNV+VXEjHss5BxNSufzJD8kaBpSo7AbrSA0?=
+ =?iso-8859-1?Q?a+gqihD5zb9a5r2jbU/e7BtByWzwYeZbz4iyli/R2HRMbPCAtobMZ9XA?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95c15054-c5f4-49b8-3de0-08de17023df5
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 15:17:48.2905 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 15:45:53.3245 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mAN8ZAWklEbMWgIA7I3Cy0Yj0by2jyFs92zc7kPM6hlqnsfKusmfnOQnJKT+lHtXUTpMPT8PX8/uSz86TGCCWtB2xFtM3QXT5Z5PkYRKDdE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7463
+X-MS-Exchange-CrossTenant-UserPrincipalName: uTVjVhGNC1fj4KrdNmEdbAchfUtNPcstjk16EiiOfSSsgdeXv/CRCn2aKwlI5sBlkGeS78huZypksveMOSg3LJX8URCnDNWJtDQOwy85coA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8151
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -188,178 +197,229 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+On Wed, Oct 29, 2025 at 03:57:40PM +0100, Thomas Monjalon wrote:
+> 29/10/2025 13:23, Morten Brørup:
+> > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> > > On Wed, Oct 29, 2025 at 12:16:37PM +0300, Andrew Rybchenko wrote:
+> > > > On 9/18/25 5:12 PM, Konstantin Ananyev wrote:
+> > > > > > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> > > > > > > On Thu, Sep 18, 2025 at 10:50:11AM +0200, Morten Brørup wrote:
+> > > > > > > > Dear NIC driver maintainers (CC: DPDK Tech Board),
+> > > > > > > >
+> > > > > > > > The DPDK Tech Board has discussed that patch [1] (included in
+> > > DPDK
+> > > > > > > 25.07) extended the documented requirements to the
+> > > > > > > RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE offload.
+> > > > > > > > These changes put additional limitations on applications' use
+> > > of the
+> > > > > > > MBUF_FAST_FREE TX offload, and made MBUF_FAST_FREE mutually
+> > > exclusive
+> > > > > > > with MULTI_SEGS (which is typically used for jumbo frame
+> > > support).
+> > > > > > > > The Tech Board discussed that these changes do not reflect
+> > > the
+> > > > > > > intention of the MBUF_FAST_FREE TX offload, and wants to fix
+> > > it.
+> > > > > > > > Mainly, MBUF_FAST_FREE and MULTI_SEGS should not be mutually
+> > > > > > > exclusive.
+> > > > > > > >
+> > > > > > > > The original RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE requirements
+> > > were:
+> > > > > > > > When set, application must guarantee that
+> > > > > > > > 1) per-queue all mbufs come from the same mempool, and
+> > > > > > > > 2) mbufs have refcnt = 1.
+> > > > > > > >
+> > > > > > > > The patch added the following requirements to the
+> > > MBUF_FAST_FREE
+> > > > > > > offload, reflecting rte_pktmbuf_prefree_seg() postconditions:
+> > > > > > > > 3) mbufs are direct,
+> > > > > > > > 4) mbufs have next = NULL and nb_segs = 1.
+> > > > > > > >
+> > > > > > > > Now, the key question is:
+> > > > > > > > Can we roll back to the original two requirements?
+> > > > > > > > Or do the drivers also depend on the third and/or fourth
+> > > > > > > requirements?
+> > > > > > > >
+> > > > > > > > <advertisement>
+> > > > > > > > Drivers freeing mbufs directly to a mempool should use the
+> > > new
+> > > > > > > rte_mbuf_raw_free_bulk() instead of rte_mempool_put_bulk(), so
+> > > the
+> > > > > > > preconditions for freeing mbufs directly into a mempool are
+> > > validated
+> > > > > > > in mbuf debug mode (with RTE_LIBRTE_MBUF_DEBUG enabled).
+> > > > > > > > Similarly, rte_mbuf_raw_alloc_bulk() should be used instead
+> > > of
+> > > > > > > rte_mempool_get_bulk().
+> > > > > > > > </advertisement>
+> > > > > > > >
+> > > > > > > > PS: The feature documentation [2] still reflects the original
+> > > > > > > requirements.
+> > > > > > > >
+> > > > > > > > [1]:
+> > > > > > >
+> > > > > >
+> > > https://github.com/DPDK/dpdk/commit/55624173bacb2becaa67793b7139188487
+> > > > > > 6
+> > > > > > > 673c1
+> > > > > > > > [2]:
+> > > > > > >
+> > > https://elixir.bootlin.com/dpdk/v25.07/source/doc/guides/nics/features.
+> > > > > > > rst#L125
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > Venlig hilsen / Kind regards,
+> > > > > > > > -Morten Brørup
+> > > > > > > >
+> > > > > > > I'm a little torn on this question, because I can see benefits
+> > > for both
+> > > > > > > approaches. Firstly, it would be nice if we made FAST_FREE as
+> > > > > > > accessible
+> > > > > > > for driver use as it was originally, with minimal requirements.
+> > > > > > > However, on
+> > > > > > > looking at the code, I believe that many drivers actually took
+> > > it to
+> > > > > > > mean
+> > > > > > > that scattered packets couldn't occur in that case either, so
+> > > the use
+> > > > > > > was
+> > > > > > > incorrect.
+> > > > > >
+> > > > > > I primarily look at Intel drivers, and that's how I read the
+> > > driver code too.
+> > > > > >
+> > > > > > > Similarly, and secondly, if we do have the extra
+> > > > > > > requirements
+> > > > > > > for FAST_FREE, it does mean that any use of it can be very,
+> > > very
+> > > > > > > minimal
+> > > > > > > and efficient, since we don't need to check anything before
+> > > freeing the
+> > > > > > > buffers.
+> > > > > > >
+> > > > > > > Given where we are now, I think keeping the more restrictive
+> > > definition
+> > > > > > > of
+> > > > > > > FAST_FREE is the way to go - keeping it exclusive with
+> > > MULTI_SEGS -
+> > > > > > > because
+> > > > > > > it means that we are less likely to have bugs. If we look to
+> > > change it
+> > > > > > > back, I think we'd have to check all drivers to ensure they are
+> > > using
+> > > > > > > the
+> > > > > > > flag safely.
+> > > > > >
+> > > > > > However, those driver bugs are not new.
+> > > > > > If we haven't received bug reports from users affected by them,
+> > > maybe we can
+> > > > > > disregard them (in this discussion about pros and cons).
+> > > > > > I prefer we register them as driver bugs, instead of changing the
+> > > API to
+> > > > > > accommodate bugs in the drivers.
+> > > > > >
+> > > > > >  From an application perspective, here's an idea for
+> > > consideration:
+> > > > > > Assuming that indirect mbufs are uncommon, we keep requirement
+> > > #3.
+> > > > > > To allow MULTI_SEGS (jumbo frames) with FAST_FREE, we get rid of
+> > > requirement
+> > > > > > #4.
+> > > > >
+> > > > > Do we really need to enable FAST_FREE for jumbo-frames?
+> > > > > Jumbo-frames usually means much smaller PPS number and actual RX/TX
+> > > overhead
+> > > > > becomes really tiny.
+> > > >
+> > > > +1
+> > > > > > Since the driver knows that refcnt == 1, the driver can set next
+> > > = NULL and
+> > > > > > nb_segs = 1 at any time, either when writing the TX descriptor
+> > > (when it reads the
+> > > > > > mbuf anyway), or when freeing the mbuf.
+> > > > > > Regarding performance, this means that the driver's TX code path
+> > > has to write to
+> > > > > > the mbufs (i.e. adding the performance cost of memory store
+> > > operations) when
+> > > > > > segmented - but that is a universal requirement when freeing
+> > > segmented mbufs
+> > > > > > to the mempool.
+> > > > >
+> > > > > It might work, but I think it will become way too complicated.
+> > > > > Again I don't know who is going to inspect/fix all the drivers.
+> > > > > Just not allowing FAST_FREE for mulsti-seg seems like a much more
+> > > simpler and safer approach.
+> > > > > > For even more optimized driver performance, as Bruce mentions...
+> > > > > > If a port is configured for FAST_FREE and not MULTI_SEGS, the
+> > > driver can use a
+> > > > > > super lean transmit function.
+> > > > > > Since the driver's transmit function pointer is per port (not per
+> > > queue), this would
+> > > > > > require the driver to provide the MULTI_SEGS capability only per
+> > > port, and not
+> > > > > > per queue. (Or we would have to add a NOT_MULTI_SEGS offload
+> > > flag, to ensure
+> > > > > > that no queue is configured for MULTI_SEGS.)
+> > > >
+> > > >
+> > > > FAST_FREE is not a real Tx offload, since there is no promise from
+> > > > driver to do something (like other Tx offloads, e.g. checksumming or
+> > > > TSO). Is it a promise to ignore refcount or take a look at memory
+> > > pool
+> > > > of some packets only? I guess no. If so, basically any driver may
+> > > > advertise it and simply ignore if the offload is requested, but
+> > > > driver can do nothing with these limitations on input data.
+> > > >
+> > > > It is a performance hint in fact and promise from application to
+> > > > follow specified limitations on Tx mbufs.
+> > > >
+> > > > So, if application specifies both FAST_FREE and MULTI_SEG, but driver
+> > > > code can't FAST_FREE with MULTI_SEG, it should just ignore FAST_FREE.
+> > > > That's it. The performance hint is simply useless in this case.
+> > > > There is no point to make FAST_FREE and MULTI_SEG mutual exclusive.
+> > > > If some drivers can really support both - great. If no, just ignore
+> > > > FAST_FREE and support MULTI_SEG.
+> > > >
+> > > > "mbufs are direct" must be FAST_FREE requirement. Since otherwise
+> > > > freeing is not simple. I guess is was simply lost in the original
+> > > > definition of FAST_FREE.
+> > 
+> > Agree about the "mbufs are direct" statement being lost in the original definition.
+> > It can be extended to include mbufs using "pinned external buffer with refcnt==1", because freeing those is just as simple as freeing "direct" mbufs.
+> > 
+> > > >
+> > > That's a good point and expanation of things. Perhaps we are better to
+> > > deprecate FAST_FREE and replace it with a couple of explicit hints that
+> > > better explain what they are?
+> > > 
+> > > - RTE_ETH_TX_HINT_DIRECT_MBUFS
+> > 
+> > In the FAST_FREE case, this hint would be TX_HINT_MBUF_DIRECT_OR_SINGLE_OWNER_PINNED_EXTBUF.
+> > 
+> > > - RTE_ETH_TX_HINT_SINGLE_MEMPOOL
+> > 
+> > Prefer TX_HINT_SINGLE_MEMPOOL -> TX_HINT_SAME_MEMPOOL, so we can add a globally scoped TX_HINT_SINGLE_MEMPOOL later.
+> > 
+> > Also, RTE_ETH_TX_HINT_NON_SEGMENTED can be added later.
+> > 
+> > I strongly agree with the finer granularity for the hints; the optimization of freeing to one mempool instead of a variety of mempools is orthogonal to the optimization of not having to consider indirect mbufs.
+> > And the drivers are free to only optimize if multiple hints are present; so there is no downside to using a finer granularity for hints.
+> 
+> Yes we can have finer granularity.
+> 
+> 
+> > Although we are reusing "offload" fields for hints, there's no need for drivers to announce capability for such hints, including FAST_FREE; since the drivers can freely ignore any hints, hint capability doesn't contain any information about the driver's ability to do anything useful with the hints.
+> 
+> Capability does not need to be announced,
+> but it would be useful to have debug logs when an optimization is enabled.
+> I'm not sure how we can enforce such logs in drivers.
+> 
+> 
+> > Regarding naming, we should use "promise" instead of "hint",
+> > to emphasize that the "hint" is not allowed to be violated.
+> 
+> I'm not sure why but I'm not confortable with the word "promise".
+> To me, a "hint" is already something strong.
+> 
 
-On 10/29/2025 3:17 PM, Anatoly Burakov wrote:
-> Current documentation for protocol agnostic filtering for ICE driver is a
-> bit terse and relies on a lot of assumed knowledge. Document the feature
-> better and make all of the assumptions explicit.
->
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
->   doc/guides/nics/ice.rst | 143 +++++++++++++++++++++++++++++++++++++---
->   1 file changed, 133 insertions(+), 10 deletions(-)
->
-> diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
-> index 7e9ba23102..cb06abcdbc 100644
-> --- a/doc/guides/nics/ice.rst
-> +++ b/doc/guides/nics/ice.rst
-> @@ -506,20 +506,143 @@ For each engine, a list of supported patterns is maintained in a global array
->   named ``ice_<engine>_supported_pattern``. The Ice PMD will reject any rule with
->   a pattern that is not included in the supported list.
->   
-> +Protocol Agnostic Filtering
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
->   One notable feature is the ice PMD's ability to leverage the Raw pattern,
-> -enabling protocol-agnostic flow offloading. Here is an example of creating
-> -a rule that matches an IPv4 destination address of 1.2.3.4 and redirects it to
-> -queue 3 using a raw pattern::
-> -
-> -  flow create 0 ingress group 2 pattern raw \
-> -  pattern spec \
-> -  00000000000000000000000008004500001400004000401000000000000001020304 \
-> -  pattern mask \
-> -  000000000000000000000000000000000000000000000000000000000000ffffffff \
-> -  end actions queue index 3 / mark id 3 / end
-> +enabling protocol-agnostic flow offloading. This feature allows users to create
-> +flow rules for any protocol recognized by the hardware parser, by manually
-> +specifying the raw packet structure. Therefore, flow offloading can be used even
-> +in cases where desired protocol isn't explicitly supported by RTE_FLOW interface.
-> +
-> +Raw Pattern Components
-> +++++++++++++++++++++++
-> +
-> +Raw patterns consist of two key components:
-> +
-> +**Pattern Spec**
-> +  An ASCII hexadecimal string representing the complete packet structure that defines
-> +  the packet type and protocol layout. The hardware parser analyzes this structure
-> +  to determine the packet type (PTYPE) and identify protocol headers and their offsets.
-> +  This specification must represent a valid packet structure that the hardware
-> +  can parse and classify. If the hardware parser does not support a particular protocol
-> +  stack, it may not correctly identify the packet type.
-> +
-> +**Pattern Mask**
-> +  An ASCII hexadecimal string of the same length as the spec that determines which specific
-> +  fields within the packet will be extracted and used for matching. The mask controls
-> +  field extraction without affecting the packet type identification.
-> +
-> +It is important to note that raw pattern must be the only flow item in the flow item list.
-> +
-> +Generating Raw Pattern Values
-> ++++++++++++++++++++++++++++++
-> +
-> +To create raw patterns, follow these steps:
-> +
-> +1. **Verify parser support**: Confirm that the hardware parser supports the protocol
-> +   combination needed for the intended flow rule. This can be checked against
-> +   the documentation for the DDP package currently in use.
-> +
-> +2. **Build the packet template**: Create a complete, valid packet header with all
-> +   necessary sections (Ethernet, IP, UDP/TCP, etc.) using the exact field values
-> +   that need to be matched.
-> +
-> +3. **Convert to hexadecimal**: Transform the entire header into a continuous
-> +   ASCII hexadecimal string, with each byte represented as two hex characters.
-> +
-> +4. **Create the extraction mask**: Generate a mask of the same length as the spec, where set bits
-> +   would indicate the fields used for extraction/matching.
-> +
-> +VPP project's `flow_parse.py` script can be used to generate packet templates and masks for raw patterns.
-> +This tool takes a human-readable flow description and outputs the corresponding ASCII hexadecimal spec and mask.
-> +
-> +Example usage:
-> +
-> +.. code-block:: console
-> +
-> +   python3 flow_parse.py --show -p "mac()/ipv4(src=1.1.1.1,dst=2.2.2.2)/udp()"
-> +
-> +Output:
-> +
-> +   {'flow': {'generic': {'pattern': {'spec': b'00000000000100000000000208004500001c000000000011000001010101020202020000000000080000',
-> +   'mask': b'0000000000000000000000000000000000000000000000000000ffffffffffffffff0000000000000000'}}}}
-> +
-> +.. note::
-> +   Ensure the spec represents complete protocol headers, as the hardware parser processes
-> +   fields at 16-bit boundaries. Incomplete or truncated headers may result in unpredictable
-> +   field extraction behavior.
-> +
-> +Action Support and Usage
-> +^^^^^^^^^^^^^^^^^^^^^^^^
-> +
-> +After constructing the raw pattern spec and mask, they can be used in the flow API with pattern type "raw".
-> +
-> +The following is an example of a minimal Ethernet + IPv4 header template. Source and destination IPv4 addresses are
-> +part of the match key; all other fields are ignored.
-> +
-> +Spec (packet template):
-> +  000000000001              Destination MAC (6 bytes)
-> +  000000000002              Source MAC (6 bytes)
-> +  0800                      EtherType = IPv4
-> +  4500001c0000000000110000  IPv4 header, protocol = UDP
-> +  01010101                  Source IP = 1.1.1.1
-> +  02020202                  Destination IP = 2.2.2.2
-> +  0000000000080000          UDP header
-> +
-> +Mask:
-> +  000000000000              Destination MAC (ignored)
-> +  000000000000              Source MAC (ignored)
-> +  0000                      EtherType (ignored)
-> +  000000000000000000000000  IPv4/UDP header (ignored)
-> +  ffffffff                  Source IP (match all 32 bits)
-> +  ffffffff                  Destination IP (match all 32 bits)
-> +  0000000000000000          UDP header (ignored)
-> +
-> +This spec will match any non-fragmented IPv4/UDP packet whose source IP is 1.1.1.1 and destination IP is 2.2.2.2.
-> +
-> +Currently, the following actions are supported:
-> +
-> +- **mark**: Attaches a user-defined integer value to matching packets. Can be specified together with another action.
-> +
-> +- **queue**: Directs matching packets to a specific receive queue.
-> +
-> +- **drop**: Discards matching packets at the hardware level.
-> +
-> +- **rss**: Enables Receive Side Scaling (RSS) for matching packets.
-> +
-> +Constraints:
-> +  * For RSS, only the global configuration is used; per-rule queue lists or RSS keys are not supported.
-> +
-> +To direct matching packets to a specific queue, and set mbuf FDIR metadata:
-> +
-> +.. code-block:: console
-> +
-> +   flow create 0 ingress pattern raw \
-> +     pattern spec 00000000000100000000000208004500001c000000000011000001010101020202020000000000080000 \
-> +     pattern mask 0000000000000000000000000000000000000000000000000000ffffffffffffffff0000000000000000 / end \
-> +     actions queue index 3 mark id 3 / end
-> +
-> +To use masked bits (IPv4 source/destination addresses) to distribute such packets via RSS:
-> +
-> +.. code-block:: console
-> +
-> +   flow create 0 ingress pattern raw \
-> +     pattern spec 00000000000100000000000208004500001c000000000011000001010101020202020000000000080000 \
-> +     pattern mask 0000000000000000000000000000000000000000000000000000ffffffffffffffff0000000000000000 / end \
-> +     actions rss / end
-> +
-> +**Limitations**
->   
->   Currently, raw pattern support is limited to the FDIR and Hash engines.
->   
-> +.. note::
-> +
-> +   **DDP Package Dependency**: Raw pattern functionality relies on the loaded
-> +   DDP package to define available packet types and protocol parsing rules.
-> +   Different DDP packages (OS Default, COMMS, Wireless) may support different
-> +   protocol combinations and PTYPE mappings.
-> +
->   Traffic Management Support
->   ~~~~~~~~~~~~~~~~~~~~~~~~~~
->   
-
--- 
-Regards,
-Vladimir
-
+Agree. Also, promise is too long a word. Hint is shorter.
