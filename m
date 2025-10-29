@@ -2,86 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671CFCCF9EB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC37CCF9EB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:09:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 586C9406BB;
-	Wed, 29 Oct 2025 17:08:49 +0100 (CET)
-Received: from mail-oa1-f97.google.com (mail-oa1-f97.google.com
- [209.85.160.97]) by mails.dpdk.org (Postfix) with ESMTP id 6889440656
- for <dev@dpdk.org>; Wed, 29 Oct 2025 17:08:46 +0100 (CET)
-Received: by mail-oa1-f97.google.com with SMTP id
- 586e51a60fabf-3d199f29161so88828fac.0
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:08:46 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E98E6406B6;
+	Wed, 29 Oct 2025 17:08:53 +0100 (CET)
+Received: from mail-pf1-f225.google.com (mail-pf1-f225.google.com
+ [209.85.210.225])
+ by mails.dpdk.org (Postfix) with ESMTP id DB2CA40669
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 17:08:49 +0100 (CET)
+Received: by mail-pf1-f225.google.com with SMTP id
+ d2e1a72fcca58-7a435a3fc57so94001b3a.1
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:08:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761754126; x=1762358926;
+ d=1e100.net; s=20230601; t=1761754129; x=1762358929;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=F/565j2krOhGZZormeLatUiDFBl210XoJi1Jlb772tA=;
- b=XRYF6+MAEwWR0G/T9JyHo7q7EuU2J4H0ZX3LBcxghCoNKkEsZfvf+Lge9V+AKrWF8f
- 6x7eraa+HYftGjVEdtg4yOa10GFx0o30vb168ZLPrxLk7M/TyL+w/hWI5Ox+JJyU0TwO
- iou7EwyPTJ7n6+HufFMZqo6xpD6W+XS0Rim21SZTjgzbV1+9i9e1mGNqtc89XNkb3yn7
- OD2yoCR2NqZYB5H2+F4g5c5ApOz5MWzqK6sJ2Pzg07IJI4CUvbTmSw1EVinY2YBuSqFZ
- R7sBxYs03EgHs7uNBPd8KehVl1WYb/Eks2sI1lGzYTMistPofEJoS+3BNITOmEsq1bDw
- Uk3Q==
-X-Gm-Message-State: AOJu0YxVDiY3u8TyIOpmoSrTjGXP2AvwWXTdWTiRXo34GbN6nIKlz3Fk
- 0Gy2w7JdlYHUZGrwBksLCFgf4sXXhL9wu0ipQ4qDc02pu7idQ/jvPUL5u1xKMj0F9Tyr0Vz0i4Z
- HIAGYZOpXEUv/mwRKqmhUyGBNSQOfDxNgKtK+JgZ3ikKhA70YxMLpg7LNVlQRnUSVwd1o3DvecS
- BJD3JpYQNSInta4LvTFez/QAlzE1RTvFn4vJ2aiWAd1K9r9Nneq94H5bVFbQ4cErAhmD9ryQ==
-X-Gm-Gg: ASbGncuIdBw96mihwTvMgtA23rrgrPM5wUw4piYZMGYJuRr0gJJGsCmn5vyW8lODD4w
- p7PXuyxTbrUhN6eHI+T0ltGmrviZJ1kev/NfJboRyin+9YsTPDavUx3dIPFTaPECi7L35hcXuMz
- qh50BdYMHYRTVl40r+ecXzDRLfYZmD1jYTaGboJqIpb+RRqTKoJgZFvyiLRyrP1LqMk7WIcTEKY
- jtNPL95Qjp1EQ85+S0+QgDuX7j/xVXsaXJv0b2b7BQUbiGNx2LUHXWGP/nAh/ArbNR34nWbFTqJ
- TJVSvGFDiRF5odVyRTveaSSb4oqJ8N16nUEz2Xmgi+u0J6C3J2Ys8dLQl4ZFQLoqRlfJhIeLND+
- G7qFgFJWy/L04ZVIspIYTkPZ3rFjaaEGktKIJYzeJfiZfpcPFlRPjatW4rtAMY7hcnstA2XGgor
- Bxaxz1RLIt7hZPKppqGETQiJosxz2N6dpsHw==
-X-Google-Smtp-Source: AGHT+IH7ez5qEGamyEU4KC0WuuGTOzy8o2cP7ePeOBD+XNI+pwdLeZ7oFmPhi5OTnxU2R0FqpQr6rewMVsv2
-X-Received: by 2002:a05:6870:84ca:b0:367:6cdd:8c52 with SMTP id
- 586e51a60fabf-3d745b82e13mr1717027fac.14.1761754125601; 
- Wed, 29 Oct 2025 09:08:45 -0700 (PDT)
+ bh=GzekxNyUcsEw9z0bweNDDxSTCPYFlqWpXwNtzxb1rtQ=;
+ b=TC7/mN+aY5z+KUIOfoAhu4i0hWpxZZQak8ongBrmrLCNp9t51FOPv60X6hSllHQUq+
+ 9BvodqzZYC0LyRr7G72c97TsXX33OKkQVEMKWvU1UlPQNY62Zn6boy6nCxeiBeZeoU7K
+ j8LQZChUAOvL6ZIVh5hUziaQTscQVjAszYMq7iVHP6rmFwldiUdRL+3Zl97r7fLmXDVG
+ FcMYoWdz+8RppNMKju30SsVUAjHO04LoVor0zAYtmVfQSy6MssbBEm16wzf0fptDPQoY
+ 7VHN0MevWi7u9flRlBJcCfaQ3x6yNifpP2na0gv+nmh9RZKBkWc8NCkTci5oLpXAI1X9
+ xVbQ==
+X-Gm-Message-State: AOJu0YzAiigawT4j0tvC40l90FIVrzMKUJJuKzKQpC1eTZST9UkRqnSh
+ UMz13ftEUHjyUhLJzWEyM3bBZ3k+nW21Yh4FGousBP4xEkEKjSwoYHT0JPEo0tne+vLQ0GypbRq
+ 9/oquC1CO1KXYzd0JGQG5mmyFsPLDMflRb3ypzlcXjfn7Kn7TWi89glUN8tm5VQY/SFm23LqNcz
+ 4wb0tlmmyJNM8uEqdaC/QfoMOPCjna4LtMPoZCCj1z7x8pcpV+C7w6MhUs2CaR6rifSF4Hzw==
+X-Gm-Gg: ASbGncvRkqpQBRGdqdiP21GRy7h36DgP7m4JUK3gAvs0ueX9Ex/vmb8Iw97YRlAve2n
+ V6z97iYrD1LeqJNBkMRjOoh5Sz/1QkBk0aMuBwS7S7ImeOSS8oIAorQmTl+eLEYlYrWzv9YONkq
+ +CD/diz904hNnWNqJ6SYJsgITp6ydvaEtHEuhORsvGgEBWa8EZZd6cZBRfkqRXvhtTchFN9+SD4
+ ykQ4KtnJjaWUTAykuQGIlUugLrJS6MF93vX2dz3tCLpCn/G++2KA4ZHPP/hdtdmaTAAQn2WpJ0Z
+ u7o6wjF91QOdUh4ar8+j7FieuteV2d5O0rg4tFVRz3JqYqS21Es2KmFaOzY/4vcf2mZtcGsKoM+
+ 3exwnz3OPfZmhoTuQw112e8VmUndvnrdcRYDzDiNq6Zy93vuZ1jhzq05gox6fdmUm3znKTX8Qhu
+ ArnLr3wezJyoKqTA+RrP5+1piGaJgWIevwI7PB
+X-Google-Smtp-Source: AGHT+IHLDoeJoaqHEI1QVQBdBLKqpgBScpllpXznoKblwifB8iI/wNSnTDJh/fTno/BlqL+GU8CNtuEndKl7
+X-Received: by 2002:a05:6a20:7291:b0:2b7:e136:1f30 with SMTP id
+ adf61e73a8af0-34653e275f5mr4133644637.55.1761754128750; 
+ Wed, 29 Oct 2025 09:08:48 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
+ (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
  by smtp-relay.gmail.com with ESMTPS id
- 586e51a60fabf-3d1e2e2f20bsm1343508fac.8.2025.10.29.09.08.45
+ 41be03b00d2f7-b712791546bsm1108750a12.2.2025.10.29.09.08.48
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 29 Oct 2025 09:08:45 -0700 (PDT)
+ Wed, 29 Oct 2025 09:08:48 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qt1-f200.google.com with SMTP id
- d75a77b69052e-4e892acc0b3so233979701cf.2
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:08:44 -0700 (PDT)
+Received: by mail-qk1-f198.google.com with SMTP id
+ af79cd13be357-8a873657698so458687285a.0
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:08:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761754124; x=1762358924; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761754127; x=1762358927; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=F/565j2krOhGZZormeLatUiDFBl210XoJi1Jlb772tA=;
- b=FwhCit7NAJaTV8mA78YrBh51Op8afXbMIHRtKitzf8CIajved8vNdDVDk/3efryuc+
- /Nly0wJd1rq8MaiGR6XOmNk54Lxve4ydCGN4LsCFy1Mjr0eBjNlqevZNKOydEWGMydZu
- Z7ypoJXLgYb+8IMZ/dALiTPVGwzgFQv7L/k/k=
-X-Received: by 2002:a05:622a:56:b0:4ec:76d8:e73f with SMTP id
- d75a77b69052e-4ed15bba94amr37913521cf.10.1761754124226; 
- Wed, 29 Oct 2025 09:08:44 -0700 (PDT)
-X-Received: by 2002:a05:622a:56:b0:4ec:76d8:e73f with SMTP id
- d75a77b69052e-4ed15bba94amr37912971cf.10.1761754123524; 
- Wed, 29 Oct 2025 09:08:43 -0700 (PDT)
+ bh=GzekxNyUcsEw9z0bweNDDxSTCPYFlqWpXwNtzxb1rtQ=;
+ b=Yw3KqbmMaWajCvz2NQ6rNs5yh1AhJV4v3sXLDr++/8+azKGxTFYmGJfch38z32WEd4
+ PbM288dayRIGf6xqneQJvf6i5zquk1ElexxHDMoT6LXrUnxQ+slqPSr/hAAQqA6H/YFY
+ x2jZKf8ZLEMFl79IVDIPBJezLBcejOLbtlFCw=
+X-Received: by 2002:a05:620a:4724:b0:7fd:50bd:193b with SMTP id
+ af79cd13be357-8a8e34d4588mr463825285a.14.1761754127138; 
+ Wed, 29 Oct 2025 09:08:47 -0700 (PDT)
+X-Received: by 2002:a05:620a:4724:b0:7fd:50bd:193b with SMTP id
+ af79cd13be357-8a8e34d4588mr463818285a.14.1761754126484; 
+ Wed, 29 Oct 2025 09:08:46 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.08.42
+ af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.08.45
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 29 Oct 2025 09:08:43 -0700 (PDT)
+ Wed, 29 Oct 2025 09:08:45 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Peter Spreadborough <peter.spreadborough@broadcom.com>,
- Shuanglin Wang <shuanglin.wang@broadcom.com>
-Subject: [PATCH v5 14/57] net/bnxt/tf_core: VFR cleanup and stats lockup
- handling
-Date: Wed, 29 Oct 2025 12:06:29 -0400
-Message-Id: <20251029160712.58519-15-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com, Smitha Pisupati <smitha.pisupati@broadcom.com>,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Subject: [PATCH v5 15/57] net/bnxt/tf_ulp: add support for special vxlan
+Date: Wed, 29 Oct 2025 12:06:30 -0400
+Message-Id: <20251029160712.58519-16-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251029160712.58519-1-manish.kurup@broadcom.com>
 References: <20251021175049.46092-1-manish.kurup@broadcom.com>
@@ -102,203 +100,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+From: Smitha Pisupati <smitha.pisupati@broadcom.com>
 
-The representor flows were not being deleted as part of the
-vfr clean up. Added code to delete flows related to vfr interface.
-Also handled the stats counter thread lockup correctly.
+Some special vxlan packets have extra padding bytes between
+the vxlan header and inner eth header. Thor2 is required to
+forward those packets as is, and not drop them.
 
-Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Reviewed-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
-Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
+To make this possible, following changes were made:
+1. Don't check on the l2 header type in the default template
+2. Based on a feature bit called special_vxlan, enable the support
+to pass the special packets. With feature bits disabled, normal vxlan
+should still pass.
+
+Signed-off-by: Smitha Pisupati <smitha.pisupati@broadcom.com>
+Reviewed-by: Manish Kurup <manish.kurup@broadcom.com>
+Reviewed-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_reps.c         | 31 ++++++++++++++++++++++++----
- drivers/net/bnxt/tf_core/v3/tfc_em.c |  5 +++--
- drivers/net/bnxt/tf_core/v3/tfo.c    |  1 +
- drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c | 29 ++++++++++++++++----------
- drivers/net/bnxt/tf_ulp/ulp_sc_mgr.h |  2 +-
- 5 files changed, 50 insertions(+), 18 deletions(-)
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/bnxt/bnxt_reps.c b/drivers/net/bnxt/bnxt_reps.c
-index a216aab14e..e26a086f41 100644
---- a/drivers/net/bnxt/bnxt_reps.c
-+++ b/drivers/net/bnxt/bnxt_reps.c
-@@ -502,12 +502,33 @@ int bnxt_rep_dev_start_op(struct rte_eth_dev *eth_dev)
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
+index 28938070ac..40e7aaa170 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
+@@ -1038,7 +1038,6 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
+ #else
+ 	uint64_t bit = 0;
+ #endif
+-
+ 	*out_bits = 0;
+ 	if ((feat_bits | bit) != feat_bits) {
+ 		BNXT_DRV_DBG(ERR, "Invalid TF feature bit is set %" PRIu64 "\n",
+@@ -1059,6 +1058,9 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
+ 		BNXT_DRV_DBG(ERR, "Multi Tunnel Flow Feature is enabled\n");
+ 	if (bit & BNXT_ULP_FEATURE_BIT_MULTI_INSTANCE)
+ 		BNXT_DRV_DBG(ERR, "Multi Instance Feature is enabled\n");
++	if (bit & BNXT_ULP_FEATURE_BIT_SPECIAL_VXLAN)
++		BNXT_DRV_DBG(ERR, "Special VXLAN Feature is enabled\n");
++
+ 
+ 	*out_bits =  bit;
  	return 0;
- }
- 
-+static int bnxt_tf_vfr_flush_flows(struct bnxt_representor *vfr_bp)
-+{
-+	struct bnxt *parent_bp = vfr_bp->parent_dev->data->dev_private;
-+	uint16_t func_id;
-+
-+	/* it is assumed that port is either TVF or PF */
-+	if (unlikely(ulp_port_db_port_func_id_get(parent_bp->ulp_ctx,
-+						  vfr_bp->dpdk_port_id,
-+						  &func_id))) {
-+		BNXT_DRV_DBG(ERR, "Invalid argument\n");
-+		return -EINVAL;
-+	}
-+	return ulp_flow_db_function_flow_flush(parent_bp->ulp_ctx, func_id);
-+}
-+
- static int bnxt_tf_vfr_free(struct bnxt_representor *vfr)
- {
- 	struct bnxt *parent_bp;
- 	int32_t rc;
- 
- 	PMD_DRV_LOG_LINE(DEBUG, "BNXT Port:%d VFR ulp free", vfr->dpdk_port_id);
-+	rc = bnxt_tf_vfr_flush_flows(vfr);
-+	if (rc)
-+		PMD_DRV_LOG_LINE(ERR,
-+			    "Failed to delete rules from Port:%d VFR",
-+			    vfr->dpdk_port_id);
-+
- 	rc = bnxt_ulp_delete_vfr_default_rules(vfr);
- 	if (rc)
- 		PMD_DRV_LOG_LINE(ERR,
-@@ -603,15 +624,17 @@ int bnxt_rep_dev_info_get_op(struct rte_eth_dev *eth_dev,
- 	struct bnxt *parent_bp;
- 	unsigned int max_rx_rings;
- 
-+	/* Need be an error scenario, if parent is removed first */
-+	if (eth_dev->device->driver == NULL)
-+		return -ENODEV;
-+
- 	/* MAC Specifics */
- 	if (!bnxt_rep_check_parent(rep_bp)) {
--		PMD_DRV_LOG_LINE(INFO, "Rep parent port does not exist");
--		/* Need be an error scenario, if parent is removed first */
--		if (eth_dev->device->driver == NULL)
--			return -ENODEV;
-+		PMD_DRV_LOG_LINE(INFO, "Rep parent port does not exist.");
- 		/* Need not be an error scenario, if parent is closed first */
- 		return 0;
- 	}
-+
- 	parent_bp = rep_bp->parent_dev->data->dev_private;
- 	PMD_DRV_LOG_LINE(DEBUG, "Representor dev_info_get_op");
- 	dev_info->max_mac_addrs = parent_bp->max_l2_ctx;
-diff --git a/drivers/net/bnxt/tf_core/v3/tfc_em.c b/drivers/net/bnxt/tf_core/v3/tfc_em.c
-index feb6e899f6..8264f9a05d 100644
---- a/drivers/net/bnxt/tf_core/v3/tfc_em.c
-+++ b/drivers/net/bnxt/tf_core/v3/tfc_em.c
-@@ -936,8 +936,9 @@ int tfc_mpc_batch_end(struct tfc *tfcp,
- 
- 	tfo_mpcinfo_get(tfcp->tfo, &mpc_info);
- 
--	if (unlikely(mpc_info->mpcops == NULL)) {
--		PMD_DRV_LOG_LINE(ERR, "MPC not initialized");
-+	if (unlikely(mpc_info == NULL || mpc_info->mpcops == NULL)) {
-+		PMD_DRV_LOG_LINE(ERR, "%s: MPC not initialized",
-+			    __func__);
- 		return -EINVAL;
- 	}
- 
-diff --git a/drivers/net/bnxt/tf_core/v3/tfo.c b/drivers/net/bnxt/tf_core/v3/tfo.c
-index c888dd1e4e..5ec2f7afa2 100644
---- a/drivers/net/bnxt/tf_core/v3/tfo.c
-+++ b/drivers/net/bnxt/tf_core/v3/tfo.c
-@@ -155,6 +155,7 @@ int tfo_mpcinfo_get(void *tfo, struct cfa_bld_mpcinfo **mpc_info)
- {
- 	struct tfc_object *tfco = (struct tfc_object *)tfo;
- 
-+	*mpc_info = NULL;
- 	if (tfo == NULL) {
- 		PMD_DRV_LOG_LINE(ERR, "Invalid tfo pointer");
- 		return -EINVAL;
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-index 753c19b055..6b6733133a 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-@@ -158,9 +158,11 @@ ulp_sc_mgr_deinit(struct bnxt_ulp_context *ctxt)
- 	if (!ulp_sc_info)
- 		return -EINVAL;
- 
--	rte_free(ulp_sc_info->stats_cache_tbl);
-+	if (ulp_sc_info->stats_cache_tbl)
-+		rte_free(ulp_sc_info->stats_cache_tbl);
- 
--	rte_free(ulp_sc_info->read_data);
-+	if (ulp_sc_info->read_data)
-+		rte_free(ulp_sc_info->read_data);
- 
- 	rte_free(ulp_sc_info);
- 
-@@ -186,9 +188,14 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
- 	uint32_t batch_size;
- 	struct tfc *tfcp = NULL;
- 	uint32_t batch, stat_cnt;
-+	int oldstate;
-+	int oldtype;
- 	uint8_t *data;
- 	int rc;
- 
-+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldstate);
-+	pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &oldtype);
-+
- 	while (true) {
- 		ctxt = NULL;
- 		while (!ctxt) {
-@@ -222,7 +229,6 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
- 			if (bnxt_ulp_cntxt_acquire_fdb_lock(ctxt))
- 				break;
- 
--			batch_info.enabled = false;
- 			rc = tfc_mpc_batch_start(&batch_info);
- 			if (unlikely(rc)) {
- 				PMD_DRV_LOG_LINE(ERR,
-@@ -250,12 +256,12 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
- 					(uint64_t)sce;
- 
- 				rc = sc_ops->ulp_stats_cache_update(tfcp,
--							    sce->dir,
--							    &ulp_sc_info->read_data_iova[batch],
--							    sce->handle,
--							    &words,
--							    &batch_info,
--							    sce->reset);
-+								    sce->dir,
-+								    data,
-+								    sce->handle,
-+								    &words,
-+								    &batch_info,
-+								    sce->reset);
- 				if (unlikely(rc)) {
- 					/* Abort this batch */
- 					PMD_DRV_LOG_LINE(ERR,
-@@ -278,7 +284,8 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
- 			bnxt_ulp_cntxt_release_fdb_lock(ctxt);
- 
- 			if (unlikely(rc)) {
--				PMD_DRV_LOG_LINE(ERR, "MPC batch end failed rc:%d", rc);
-+				PMD_DRV_LOG_LINE(ERR,
-+						 "MPC batch end failed rc:%d", rc);
- 				batch_info.enabled = false;
- 				break;
- 			}
-@@ -306,7 +313,7 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
- 	}
- 
-  terminate:
--	PMD_DRV_LOG_LINE(DEBUG, "Terminating the stats cachce thread");
-+	PMD_DRV_LOG_LINE(ERR, "Terminating the stats cachce thread");
- 	return 0;
- }
- 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.h b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.h
-index 5501dc18fd..29d0b0a1a4 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.h
-@@ -36,7 +36,7 @@ struct ulp_sc_tfc_stats_cache_entry {
- struct bnxt_ulp_sc_info {
- 	struct ulp_sc_tfc_stats_cache_entry *stats_cache_tbl;
- 	uint8_t		*read_data;
--	uint64_t	read_data_iova[ULP_SC_BATCH_SIZE];
-+	uint64_t        read_data_iova[ULP_SC_BATCH_SIZE];
- 	uint32_t	flags;
- 	uint32_t	num_entries;
- 	uint32_t	num_counters;
 -- 
 2.39.5 (Apple Git-154)
 
