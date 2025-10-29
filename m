@@ -2,84 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC78CCF9F0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96361CCF9EB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:23:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB83040669;
-	Wed, 29 Oct 2025 17:22:49 +0100 (CET)
-Received: from mail-yw1-f227.google.com (mail-yw1-f227.google.com
- [209.85.128.227])
- by mails.dpdk.org (Postfix) with ESMTP id 8C741402A6
- for <dev@dpdk.org>; Wed, 29 Oct 2025 17:22:48 +0100 (CET)
-Received: by mail-yw1-f227.google.com with SMTP id
- 00721157ae682-71d71bcac45so1178167b3.0
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:22:48 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id ECF1D40A70;
+	Wed, 29 Oct 2025 17:23:09 +0100 (CET)
+Received: from mail-oa1-f98.google.com (mail-oa1-f98.google.com
+ [209.85.160.98]) by mails.dpdk.org (Postfix) with ESMTP id 9D229402A6
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 17:23:08 +0100 (CET)
+Received: by mail-oa1-f98.google.com with SMTP id
+ 586e51a60fabf-3d2ea93836bso69361fac.3
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:23:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761754968; x=1762359768;
+ d=1e100.net; s=20230601; t=1761754988; x=1762359788;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=RUMCy9vUsf2u1cQUB1qdeOGfxUAAfafRJuPx7RcgqUk=;
- b=BaDTuQRxYhcBk2xJsGctlnmtBDPc+zwPQE6apy/zBMbAEL4CO+65nb7Pwq/19PvF88
- Sv7Jbc8YZBXA5BUaz8K2fgmIJmw2Cv05vwXbjRFqHxR6oJhfUlMvoP9yFjgOKS0zTVtV
- agPe8/ULuw1PfsAlh/NVQ6SNT/onCPi1FVLxr7l3Dhu2NoKXzlfSNvov/V6bs1Aibsuw
- KaB1X4/Sq8K54AEltG4j1RJAB9LSSO1faAWZYciZKd5oPW/HOjMgHQR8aOaD99OA3swb
- rxTlbBrTPbnBhxbJqWo2/6qoBn/6x91xBNZdxAqODU63ruKQwXmcrQAROrS0gg+5pdS9
- qp1g==
-X-Gm-Message-State: AOJu0YxSxtJdL4ZYFxkvZXf0xbk8exOls60MH6pRZGI5L5L52WszwF6D
- y1NUnOys4vfDuGRlxj9HQZlcHZskVY0nIiMX2M+vYVgLJuo8fZkAxX1lPP/8qtziO4KTJKlvXak
- uyqp0vpP5v8qh3G4BfFiUOvl8QzWmNTX38xZRK8mCp1jov+4HTKbQHBRZDMsP7y0Utl6LGH0CRr
- fW8+7Xw2WZlPMHC6ezzwmeSZDtXllKAXpvNwPuMWwIQcbPlE6FDVaUfYi05gepX6qS8BaHPw==
-X-Gm-Gg: ASbGnct51ipDrUcgGuIQGRZAmp8gR+CGwoDH9OP57fJIB8ZayJQnghTKE+7NRWiQ/1L
- MyEBLRUhirV0Wox9Bj6wDhrdY6hGaFcdApV0GWj2T4F/nkydyQ7W8VIoDfTElfYioaEXaA5LSw5
- U9hxYXzooJx8aQdqJR8akNri3LJgk4bd0MoahnrpDdbHVv7ZzD/bOPl56VX6sl++qNFGya9Q/UW
- AfMWkfV0jO7bsOnaY77lSBM/+5w4fHGms/ltY0KN3PQcZqjtbcEN/qVt6TL1YoBE7+1YdXwYhi8
- tw/sYAQJLAiPEy4r/QR9OJKjJFWwtVbGHkkfRgT2K8EqKj6hOT/pVfob2yTS2EgbL5hhgXrUQrH
- bwqjBYctkctFVZPyiWh4sU7kD4MKBkY2r4mvTJdf6d3jlOcEpZM81I4PJ7jWMEdd6Dc51d3V5g+
- CnOf5A26PkWNYPQSQx8l3UrfKENza3jzk=
-X-Google-Smtp-Source: AGHT+IE03Xz/wL946VAGu91MkOxWchCMhePfIBA7fOUxFAkDN4JUu964L+zHVUgOiRNEnnQ1zK3fjWHurrx0
-X-Received: by 2002:a05:690c:2c8f:b0:786:38b6:f4f7 with SMTP id
- 00721157ae682-78638b6f694mr2341127b3.40.1761754967639; 
- Wed, 29 Oct 2025 09:22:47 -0700 (PDT)
+ bh=YvMAO88MadcyF1PwEMgonv0jZSIGfh/Nw2MW8Hb9JCU=;
+ b=q5ffA0qtw94AHLk+fIxviFX35z/+26cKxlXquSfF4bb+u40DOhCP6gfjkEbMZp6Q9P
+ Hk2fw1R9ijAPlKPy072fNg+rUWLMmYhF3PhSOmXfPUJ6w3WScAodV4eMxwduG6dpK3Ey
+ 6bk7WZcz8z0qp9Jwn2+s/9Ge5l7OnZXC3KinGfFJYwSRWC0SjTgf6xhoW5qPLU1J9m1D
+ rDRCvr9t64tyRCb/BqxGFQXIlTJ5DsRqpEV9voX/zPs5P7eE2xDHObJ1l4iechArH95d
+ f+1cuCMbRBdrIoiGmpepToaga82md3Nbmv/QeQJJFfjC6kJoxgSSS9yfyQsAeyU27hxj
+ lDIA==
+X-Gm-Message-State: AOJu0Yx9sGR+B54v6VuZcGhkl/HvasUIY0UE9xmH5BpYEugsoK1UmkIG
+ T2ahHVSgdm5pATFVtj2Ygj0aC6IboGhYTCuNfRCbijWr1ZBUda8yagUz47yG4OwiqjLzwQbThro
+ 5uw1e4+jJhYCeo703p7XuLDXkElTNwyXwAdWGbfLDwFhKYkkmHn1Z8q+dWJtRm+uAgL+fOy8sCG
+ +ArxpNco8miC9iVpoM00YkfRaiP2zLwvs6rStg6kKm/E/S4cbpHdGMMTBEvmffA3acsja7oQ==
+X-Gm-Gg: ASbGncsByiOHmeSLF6RL6gtw9n/IwGsUBSqG45JK+8UThv92wo35T6ueMzuCe8M5r3v
+ gOdwwrUGS9YJpRkW4TdBiiY7PgWHuGvSLFjZNcnguT6iTqOoK8oL8euSX9Cu5er35F11ta8nboX
+ yKuZprnosQXjoJUruYdst0to+zodR7KLPD/u3zS9Y+Y8eC14uD6yDIOIAsQaXeh0alvGCkkzwe8
+ 1e+pZdyubBTXDXA+ec7gPykIcW5VHB0WELdVTDUU5J+RQAchuIXIEyxh7WN8CC+LXenDW5fu157
+ Z2aFg8d5aW7bjCJheOJVxSYo+somYPG6SEhgOsob5GMA3I3UtoP0GNAfuHk/qPLi/MD2rylROZJ
+ jeFpznPOtTHWLQqmnEE770YBGM0FCuUyUvJegDoBS9HeHCT6nd6wHCJvbnK4A59uN3dXJrZDuLh
+ wneKWs4wWT5AC2bVKwhhZ4RorMFHEaDUlScu3T
+X-Google-Smtp-Source: AGHT+IHFJH45kIqZR5rN424ri9zRhQdIpEusBhM3j7R7oReyTTiC7E8Cz3JH5Mph8PT9TiiPweQIx3BzpLVx
+X-Received: by 2002:a05:6870:8a0f:b0:319:be1e:9dce with SMTP id
+ 586e51a60fabf-3d7496f7b85mr1487007fac.5.1761754987747; 
+ Wed, 29 Oct 2025 09:23:07 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-0.dlp.protect.broadcom.com. [144.49.247.0])
+ (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
  by smtp-relay.gmail.com with ESMTPS id
- 00721157ae682-785ed1d05e9sm9747627b3.25.2025.10.29.09.22.47
+ 586e51a60fabf-3d1e344793dsm1312634fac.13.2025.10.29.09.23.07
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 29 Oct 2025 09:22:47 -0700 (PDT)
+ Wed, 29 Oct 2025 09:23:07 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
 Received: by mail-qk1-f199.google.com with SMTP id
- af79cd13be357-891504015e5so2160993885a.3
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:22:47 -0700 (PDT)
+ af79cd13be357-88f7eff9d5fso2627985a.0
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:23:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761754967; x=1762359767; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761754986; x=1762359786; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=RUMCy9vUsf2u1cQUB1qdeOGfxUAAfafRJuPx7RcgqUk=;
- b=CLw2B7r0m0kQwPdR/ETrZcUANqyj5HiCq7n3EZF7T/xtVAZpZk2g6AqbFZlYHzGIvH
- AXY/nuVh93Q9arDUP+AxU2VYjOkXYKJdEaK1hE3avfSD4VMuEMgbIUV1JLLvgAlOTC8N
- n9EqdKTNtTIiNEWuwZ3adByOhwuRxmRgNAlUk=
-X-Received: by 2002:a05:620a:7104:b0:892:4858:11a5 with SMTP id
- af79cd13be357-8a8e426cd9emr436293685a.38.1761754966716; 
- Wed, 29 Oct 2025 09:22:46 -0700 (PDT)
-X-Received: by 2002:a05:620a:7104:b0:892:4858:11a5 with SMTP id
- af79cd13be357-8a8e426cd9emr436289085a.38.1761754966116; 
- Wed, 29 Oct 2025 09:22:46 -0700 (PDT)
+ bh=YvMAO88MadcyF1PwEMgonv0jZSIGfh/Nw2MW8Hb9JCU=;
+ b=Qcd3pm1v3HTey+AuwVIsVDSaa6hOK3cjV1ROkw74Uf9Lxb3uQw5yei55YFMnpcd94a
+ +S/112lgp/DNCJgLTZYxyzFSP2J4Gtv6P5StMk9P7Y1prki30Hp2ZK98gnKgJForvtgA
+ vfCEy6eXJC/v/0zaIV/tY93e7/yQQUaBPGKvQ=
+X-Received: by 2002:a05:620a:4726:b0:88f:c0e1:ec2 with SMTP id
+ af79cd13be357-8aa2e346f40mr21296385a.60.1761754986400; 
+ Wed, 29 Oct 2025 09:23:06 -0700 (PDT)
+X-Received: by 2002:a05:620a:4726:b0:88f:c0e1:ec2 with SMTP id
+ af79cd13be357-8aa2e346f40mr21291485a.60.1761754985811; 
+ Wed, 29 Oct 2025 09:23:05 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.22.45
+ af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.23.04
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 29 Oct 2025 09:22:45 -0700 (PDT)
+ Wed, 29 Oct 2025 09:23:05 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com,
- Peter Spreadborough <peter.spreadborough@broadcom.com>
-Subject: [PATCH v5 46/57] net/bnxt/tf_core: backing store cleanup
-Date: Wed, 29 Oct 2025 12:07:01 -0400
-Message-Id: <20251029160712.58519-47-manish.kurup@broadcom.com>
+ Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
+Subject: [PATCH v5 47/57] net/bnxt: truflow remove RTE devarg processing for
+ mpc=1
+Date: Wed, 29 Oct 2025 12:07:02 -0400
+Message-Id: <20251029160712.58519-48-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251029160712.58519-1-manish.kurup@broadcom.com>
 References: <20251021175049.46092-1-manish.kurup@broadcom.com>
@@ -100,31 +100,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Peter Spreadborough <peter.spreadborough@broadcom.com>
+From: Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
 
-A backing store table allocation failed due to lack of memory and
-resulted in a crash because the result of the allocation was not
-checked for validity.
+Now as the mpc is initialized for P7 platform regardless
+of mpc=1 devarg, RTE and bnxt argument processing APIs
+for mpc devarg are redundant. This patch removes such RTE
+and bnxt APIs. The "mpc=1" devarg is now invalid and should
+not be used while launching an application.
 
-Signed-off-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
-Reviewed-by: Manish Kurup <manish.kurup@broadcom.com>
+Before:
+     ./dpdk-testpmd -c 0xff -a 0000:0a:00.0,mpc=1,app-id=0
+After:
+     ./dpdk-testpmd -c 0xff -a 0000:0a:00.0,app-id=0
+
+Signed-off-by: Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
+Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 ---
- drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/bnxt/bnxt.h        |  3 ---
+ drivers/net/bnxt/bnxt_ethdev.c | 19 ++++---------------
+ 2 files changed, 4 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-index b229f07596..878f62c115 100644
---- a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-+++ b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-@@ -505,6 +505,8 @@ static int alloc_link_pbl(struct tfc_ts_mem_cfg *mem_cfg, uint32_t page_size,
- 								RTE_MEMZONE_SIZE_HINT_ONLY |
- 								RTE_MEMZONE_IOVA_CONTIG,
- 								page_size);
-+		if (!mem_cfg->ts_mz.mz)
-+			return -ENOMEM;
+diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
+index 90352d537c..83ae151066 100644
+--- a/drivers/net/bnxt/bnxt.h
++++ b/drivers/net/bnxt/bnxt.h
+@@ -854,9 +854,6 @@ struct bnxt {
+ 	((bp)->flags2 & BNXT_FLAGS2_MULTIROOT_EN)
+ 
+ #define	BNXT_FLAGS2_COMPRESSED_RX_CQE		BIT(5)
+-#define	BNXT_FLAGS2_USE_MPC			BIT(6)
+-#define BNXT_USE_MPC(bp)			\
+-	((bp)->flags2 & BNXT_FLAGS2_USE_MPC)
+ #define	BNXT_FLAGS2_REP_MODE			BIT(7)
+ #define BNXT_REP_MODE_EN(bp)			\
+ 	((bp)->flags2 & BNXT_FLAGS2_REP_MODE)
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index 50bc0f1f9e..7a2dd08951 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -152,11 +152,6 @@ static const struct rte_eth_speed_lanes_capa speed_lanes_capa_tbl[] = {
+  */
+ #define BNXT_DEVARG_CQE_MODE_INVALID(val)		((val) > 1)
+ 
+-/*
+- * mpc = an non-negative 8-bit number
+- */
+-#define BNXT_DEVARG_MPC_INVALID(val)			((val) > 1)
+-
+ /*
+  * app-id = an non-negative 8-bit number
+  */
+@@ -207,7 +202,6 @@ static const struct rte_eth_speed_lanes_capa speed_lanes_capa_tbl[] = {
+ #define BNXT_DEVARG_REP_FC_F2R_INVALID(rep_fc_f2r)	((rep_fc_f2r) > 1)
+ 
+ int bnxt_cfa_code_dynfield_offset = -1;
+-unsigned long mpc;
+ 
+ /*
+  * max_num_kflows must be >= 32
+@@ -1759,8 +1753,7 @@ static int bnxt_dev_stop(struct rte_eth_dev *eth_dev)
+ 	/* Process any remaining notifications in default completion queue */
+ 	bnxt_int_handler(eth_dev);
+ 
+-	if (mpc != 0)
+-		bnxt_mpc_close(bp);
++	bnxt_mpc_close(bp);
+ 
+ 	bnxt_shutdown_nic(bp);
+ 	bnxt_hwrm_if_change(bp, false);
+@@ -1856,11 +1849,9 @@ int bnxt_dev_start_op(struct rte_eth_dev *eth_dev)
+ 	if (rc)
+ 		goto error;
+ 
+-	if (mpc != 0) {
+-		rc = bnxt_mpc_open(bp);
+-		if (rc != 0)
+-			PMD_DRV_LOG_LINE(DEBUG, "MPC open failed");
+-	}
++	rc = bnxt_mpc_open(bp);
++	if (rc != 0)
++		PMD_DRV_LOG_LINE(DEBUG, "MPC open failed");
+ 
+ 	rc = bnxt_alloc_prev_ring_stats(bp);
+ 	if (rc)
+@@ -7208,8 +7199,6 @@ static bool bnxt_enable_ulp(struct bnxt *bp)
+ 	/* not enabling ulp for cli and no truflow apps */
+ 	if (BNXT_TRUFLOW_EN(bp) && bp->app_id != 254 &&
+ 	    bp->app_id != 255) {
+-		if (BNXT_CHIP_P7(bp) && !mpc)
+-			return false;
+ 		return true;
  	}
- 	memset(mem_cfg->ts_mz.mz->addr, 0, mem_cfg->ts_mz.mz->len);
- 	mem_cfg->ts_mz.page_count = total_pages;
+ 	return false;
 -- 
 2.39.5 (Apple Git-154)
 
