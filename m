@@ -2,83 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E05EECCF9F0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8903CCF9F0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:24:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3C96F4066C;
-	Wed, 29 Oct 2025 17:24:32 +0100 (CET)
-Received: from mail-pj1-f98.google.com (mail-pj1-f98.google.com
- [209.85.216.98]) by mails.dpdk.org (Postfix) with ESMTP id 5273140667
- for <dev@dpdk.org>; Wed, 29 Oct 2025 17:24:15 +0100 (CET)
-Received: by mail-pj1-f98.google.com with SMTP id
- 98e67ed59e1d1-3402942e79cso129212a91.2
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:24:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4545A40BA4;
+	Wed, 29 Oct 2025 17:24:39 +0100 (CET)
+Received: from mail-il1-f227.google.com (mail-il1-f227.google.com
+ [209.85.166.227])
+ by mails.dpdk.org (Postfix) with ESMTP id B0B9C40657
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 17:24:20 +0100 (CET)
+Received: by mail-il1-f227.google.com with SMTP id
+ e9e14a558f8ab-430c17e29d9so31552875ab.1
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:24:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761755054; x=1762359854;
+ d=1e100.net; s=20230601; t=1761755060; x=1762359860;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=P+oRHAx33OF7DjSmxcix83uRAR8aRjps067V3JfT/i0=;
- b=SeJj3qJHFnAhECcbWP3iFE41xowfVRgoV653NLYlWOe/wPKcY3t2MAwrH4mqzpkKOF
- hsjD7i/gS5bfQdcVw0X+SbljxYRuRaXfJjpa8buMbfEUIocXEFr2dyHeQeEPoTKl9TG+
- tvpsKkqitWUUN8k/fkEQC7xC8d8x1jy10osATlfFpM/ftdPHU6csYQ6LuJAJpF9CvmIf
- FBBVDstc1w3iLSZcQ+sfeVFAY1cRNfeCqBXBFzhebMzVD9qmLZByOx41gYnQWqROgehh
- chJobWIN6q+lh+6lbAhjYR+g6xgQRsM/eAB9mzxLhXJoStJlzl4qkxc2R7ySXxEuOFOU
- oYEQ==
-X-Gm-Message-State: AOJu0YzcaZ5yHbKNgVewu+XDQiSLsMsZrWI7BYN3MAJLQs1JT1M8oWcM
- PAiNzXb1LsQehnv/FN9volwFHNECYa//uc+niSIm9BldiBfCqH5ZUCy8+1XSsjYcB/mXK5B1olI
- 3re/bx8amb17/LHOIlk6cViRdLKH0llnPClSuFrhitYwR5OgsWmZbTI/udOQZ1m6vwj28rFDMt3
- ROUrrY5kduv9bn4/lKcXZaXk1LirxNLdTD0vh6vBgt1O38iKrFdB5kReQKtl2N7OO8A0ySJg==
-X-Gm-Gg: ASbGncsc8fVDccyFA4FvJ0sWXWonfkT6D41Y0dupJTrWoQaihoq3eEN4scF3qpycrOv
- A4ExqEPoiCENs0ncvYuH2n+jAPyFVcEda3kxjz3ba/x3x+fIUeQ44Aym744uT3+jKjh1P2vHJQ2
- uUczK3ZqJdF72cB+SKIglVbclkLvVdC9dOY/W37OLp7h+am224bqEmpD1d/9EAKb3+/Z32+ZzAd
- a5shn0tFCzqPxvigub1pR+8gTtzgI1RNTTDjZN1pCirjcNUdmgZuMHJ3FzCIkVOQprux9yyXjKI
- UAgyNhoJF1isoSXNL3WwKaQBEJOfIgWRp2fBHZj0FXYKdtzZGUh/rCrxu3MCA0fcqlrbWpwZcca
- YTlr6Mb8yutWyDHTucHGmW9v/8XRQ4mRaKfGTGndc3yzs2k6elQ8Q+H3It7VSPONrWKgljQ/pRe
- zJJAgisOicGg+vcaCi9dyZGfq5yOMORQkT6A==
-X-Google-Smtp-Source: AGHT+IFIQJSOFNUVUuzVOSyybtq/WqP8hMsa83TNe/+38FZYv+UTsNk48zxvhfjDn6o+pU5sxWjEULR1bX2O
-X-Received: by 2002:a17:90b:4c8c:b0:330:84c8:92d0 with SMTP id
- 98e67ed59e1d1-3403a283a76mr4037551a91.24.1761755054458; 
- Wed, 29 Oct 2025 09:24:14 -0700 (PDT)
+ bh=PnpDj5lR4RNJPdID+gl4yS/+GnWYICXNl2DN1eZj5F8=;
+ b=bsQz9cH4wUaQGuQc3XGZ9/dRocurb5741mE4XSLc8McckutFmyqkBi4ejwcWcEZduI
+ OSvDHeXfwWfAx1hpZO+B3DvYEhn5egox/qYa8y4VmLtrhEwGWvp0E+Q2eyn3QNO4V9UM
+ bwY/FXT9pDYj3h96YeWT5I7KkGnuJa/cuskUAKIEZUxl8ZaviKenyB6BbdknozJPtTf0
+ CIZu5R8d/cssKYslgX+FL6JhwLIDAGxIubsXhBo8pCNEOjCI+LtYtV98mrtewGG2O9KD
+ 7yJQ4dBMOckiz9MoUXfIJTV9wCsEwN7U320+PE+DW2tHr3pHJKpcebSnF5fKbtvJWQGy
+ Fu4w==
+X-Gm-Message-State: AOJu0YxQJdwok60pDfWcB7WEusE1uTNz5KeIBiq5Wh6fl1vNbi6QlGY0
+ LbFj+0kliVv04blULI1+HC2PDjepTK12nMr8yGo2+07CTMxLm+YijwcmEWcr0M5+EKuKGHmWNpu
+ Hnmp8GtSAl0PkNKrBRosBwaXdiHe0qSzw+gN0zWOyL2kLyIiQ8hhkao+Vwfx0h9JJPFmzGvpg7g
+ +9onmF45geIKa9zqii1ZxzfMRdRl4RjOYGf5Rn2JYoqXmYzVdQ/+xqkcE/lNbopwy4+DmcEQ==
+X-Gm-Gg: ASbGnct4khsndgac24wPsYrwlLhVR4EWqsLzMuMw89vMZvXPDt9oArkePgYIgeZQfLE
+ 9gSUtaW1mKS9Nfo8w8UolWARXQLLMhcF1zEMPSJHQiLvJss0mQDS+0SJMkcSP4EmfF99jKH77a7
+ eI5MACdfkk8c1WqX+46xlBpWzCoY55v6+gGC1d/IAz7axNVnqYbMzjZWNZAPo6FQRTdRwuK3Y2j
+ KQ2FhaOVsTM/xVu0ZQrdV+8Eyat/p1C7bePCcvHWkTmOZyzpZIkw+8or6m8SpO4Jz8PFNomOgcQ
+ 2rA1pXkpH3VaAdIxjiKgHPYwcW+7OLBMnrroYbQhTSqsX5/QXdt7SH1hS+pD9swJKZoR7xi7z4R
+ Q8Zz02dtXnKC0o2djQRYF7V1lvfbJtZNIl0bG6dJqvNEhy0RfOwAL14/Md43otpiwUj/NLB/WMi
+ ZK0tyQwrQ9iEDSmHMM9tsIcC/mOPT6mBTIXlOT
+X-Google-Smtp-Source: AGHT+IGAsvoFcTyZcpB3AMInA8+Hh2OBvbywsgluYG3lTpyX7ZYPLv6f0umKQ8CxuJml7D9uLsFIKckyuGrS
+X-Received: by 2002:a05:6e02:2285:b0:430:9fde:33d3 with SMTP id
+ e9e14a558f8ab-432f9044a1bmr41207095ab.27.1761755059932; 
+ Wed, 29 Oct 2025 09:24:19 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
+ (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-33fed7cdc27sm1440443a91.5.2025.10.29.09.24.14
+ e9e14a558f8ab-431f688d961sm13996395ab.17.2025.10.29.09.24.19
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 29 Oct 2025 09:24:14 -0700 (PDT)
+ Wed, 29 Oct 2025 09:24:19 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qk1-f200.google.com with SMTP id
- af79cd13be357-8a24116e89eso2403485a.0
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:24:13 -0700 (PDT)
+Received: by mail-qk1-f199.google.com with SMTP id
+ af79cd13be357-8a9d56c36caso174632385a.3
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:24:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761755053; x=1762359853; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761755058; x=1762359858; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=P+oRHAx33OF7DjSmxcix83uRAR8aRjps067V3JfT/i0=;
- b=V2tjXUP6i6ZuGu9Sc4l8o4HptvEPRX4z8HfjkwED0EayHX9zX/PytRcIkNQgYQdC/o
- 0YffBIk69BqlkqbVeXzw7QgeRvZ08c6BVShxxDeRBf7YY/xXkLtbIclGvBK4cSHSaT8l
- JXjcwYuKsOuo1U5WyI0fUuNcfgFolz0idfOlI=
-X-Received: by 2002:a05:620a:40cb:b0:89f:12af:e55f with SMTP id
- af79cd13be357-8aa2ea09a01mr24348885a.44.1761755052668; 
- Wed, 29 Oct 2025 09:24:12 -0700 (PDT)
-X-Received: by 2002:a05:620a:40cb:b0:89f:12af:e55f with SMTP id
- af79cd13be357-8aa2ea09a01mr24342185a.44.1761755051962; 
- Wed, 29 Oct 2025 09:24:11 -0700 (PDT)
+ bh=PnpDj5lR4RNJPdID+gl4yS/+GnWYICXNl2DN1eZj5F8=;
+ b=bYrnfEHtk4IiFbd1cjMCT1a9KOqvwt9R0tei757TJq5PRDmKqXfxDWHXkZ09fX1CDs
+ syqQDeYHPjp321cw8CZqTAxCFPc1uOP2U/Jg7rFplEQWflLl+SiB9G0Hlse8Enj85MWZ
+ XlY5rJaQmoIUwhSLesW9GeQy1DOin9tDjWgeA=
+X-Received: by 2002:a05:620a:46a4:b0:8a2:234a:17d9 with SMTP id
+ af79cd13be357-8a8e36c2977mr441971385a.33.1761755058624; 
+ Wed, 29 Oct 2025 09:24:18 -0700 (PDT)
+X-Received: by 2002:a05:620a:46a4:b0:8a2:234a:17d9 with SMTP id
+ af79cd13be357-8a8e36c2977mr441960685a.33.1761755058002; 
+ Wed, 29 Oct 2025 09:24:18 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.24.11
+ af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.24.17
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 29 Oct 2025 09:24:11 -0700 (PDT)
+ Wed, 29 Oct 2025 09:24:17 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com, Farah Smith <farah.smith@broadcom.com>,
- Peter Spreadborough <peter.spreadborough@broadcom.com>
-Subject: [PATCH v5 53/57] net/bnxt/tf_core: truflow SR-IOV PF init cleanup
-Date: Wed, 29 Oct 2025 12:07:08 -0400
-Message-Id: <20251029160712.58519-54-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com
+Subject: [PATCH v5 54/57] net/bnxt/tf_ulp: TF functionality additions
+Date: Wed, 29 Oct 2025 12:07:09 -0400
+Message-Id: <20251029160712.58519-55-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251029160712.58519-1-manish.kurup@broadcom.com>
 References: <20251021175049.46092-1-manish.kurup@broadcom.com>
@@ -99,48 +99,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Farah Smith <farah.smith@broadcom.com>
+1. Correct RTE_ACTION last item
 
-When running DPDK on PFs with SR-IOV disabled, correct the
-"invalid max VF check" during table scope creation.
-
-Signed-off-by: Farah Smith <farah.smith@broadcom.com>
-Reviewed-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
+Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
+Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 ---
- drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+ drivers/net/bnxt/tf_ulp/ulp_rte_parser.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-index 878f62c115..c06099af12 100644
---- a/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-+++ b/drivers/net/bnxt/tf_core/v3/tfc_tbl_scope.c
-@@ -1210,7 +1210,8 @@ int tfc_tbl_scope_mem_alloc(struct tfc *tfcp, uint16_t fid, uint8_t tsid,
- 				return rc;
- 
- 			if (fid > max_vf) {
--				PMD_DRV_LOG_LINE(ERR, "fid out of range %d", fid);
-+				PMD_DRV_LOG_LINE(ERR, "%s fid out of range %d",
-+						 __func__, fid);
- 				return -EINVAL;
- 			}
- 
-@@ -1419,16 +1420,7 @@ int tfc_tbl_scope_mem_free(struct tfc *tfcp, uint16_t fid, uint8_t tsid,
- 	}
- 	if (scope_type != CFA_SCOPE_TYPE_NON_SHARED && is_pf) {
- 		uint16_t pool_cnt;
--		uint16_t max_vf;
- 
--		rc = tfc_bp_vf_max(tfcp, &max_vf);
--		if (rc)
--			return rc;
--
--		if (fid > max_vf) {
--			PMD_DRV_LOG_LINE(ERR, "invalid fid 0x%x", fid);
--			return -EINVAL;
--		}
- 		rc = tbl_scope_tpm_fid_rem(tfcp, fid, tsid, &pool_cnt);
- 		if (rc) {
- 			PMD_DRV_LOG_LINE(ERR, "error getting tsid(%d) pools status %s",
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
+index 82baf722cd..26823858b5 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
+@@ -211,7 +211,7 @@ bnxt_ulp_rte_parser_act_parse(const struct rte_flow_action actions[],
+ 			hdr_info = &ulp_vendor_act_info[action_item->type -
+ 				BNXT_RTE_FLOW_ACTION_TYPE_END];
+ 		} else {
+-			if (action_item->type > RTE_FLOW_ACTION_TYPE_INDIRECT)
++			if (action_item->type > RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT)
+ 				goto act_parser_error;
+ 			/* get the header information from the act info table */
+ 			hdr_info = &ulp_act_info[action_item->type];
 -- 
 2.39.5 (Apple Git-154)
 
