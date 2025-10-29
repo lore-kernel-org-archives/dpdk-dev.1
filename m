@@ -2,79 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B514ACCF9F0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 14:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA51CCF9EB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 14:51:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C7D9E40609;
-	Wed, 29 Oct 2025 15:40:32 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id DA4044042F
- for <dev@dpdk.org>; Wed, 29 Oct 2025 15:40:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1761748830;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=xNmKX/hEzm1E1/q5CdhMfwU91FdZLxmDD+1iCfM5COA=;
- b=c9ar++V3EhygnrWYD/TFuSO9ZllU8hgK1d0e63yiHUXVGc+4p5SHcEXK4P4NGfqX93KTgI
- 3nBgVQeUlWhkLn1yhFd4MVYZv7YNNdr2Z+Li8Pv1uT6nyAwmSxHIxg/hZ6rP0625I4DdWh
- MQJ+Y4j/VWH4ilxMzomtIBvyzvj/TBg=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-150-TkOyFL1yNmSnuXwuhBBadg-1; Wed, 29 Oct 2025 10:40:28 -0400
-X-MC-Unique: TkOyFL1yNmSnuXwuhBBadg-1
-X-Mimecast-MFC-AGG-ID: TkOyFL1yNmSnuXwuhBBadg_1761748827
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-57893a7d7b6so7076434e87.1
- for <dev@dpdk.org>; Wed, 29 Oct 2025 07:40:28 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1920F4042F;
+	Wed, 29 Oct 2025 15:51:01 +0100 (CET)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
+ [209.85.215.178])
+ by mails.dpdk.org (Postfix) with ESMTP id B0C8B402E5
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 15:50:59 +0100 (CET)
+Received: by mail-pg1-f178.google.com with SMTP id
+ 41be03b00d2f7-b6ce806af3eso6784568a12.0
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 07:50:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761749459;
+ x=1762354259; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=cgsBVNQf4qmF2Q4qjEkKI46C56Z+u0JhwNoK3PSTUek=;
+ b=2rcl1BDsb04z8/AJJ9vQnmZQ74wkJ/uhWWeCIGNUgULhfHtyqPQM9LgqSaJFVns+nQ
+ tLPc0HISlY3bkZhf2DoYvaiUWO2Nc9LopjYDh+J54Qt6TWALQ1IRdGSKYb2rWrOXhECp
+ 8FwK05aUjpF2UUHLokNpZw4V8pX5EeOCidGSoVP/4ABYbNjnhBgaLjmEOUVgkn+pBE79
+ EyrN+xsYYfWsXwpZSZ1q3sIS+bhpF3hl1+FCRkVlVzpk1Vd4NuQgheYFXZXA/tsrKbSB
+ JJY3yZQbOZgl4jSVMpm7NSRZh31yqZhkPrnU4kTOtSm4lR14Sx/8e6XAJx8wR7MqbMBF
+ T8oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761748827; x=1762353627;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ d=1e100.net; s=20230601; t=1761749459; x=1762354259;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=xNmKX/hEzm1E1/q5CdhMfwU91FdZLxmDD+1iCfM5COA=;
- b=g9ySyN6peffO8cZM7QSMWSYusxNft0Eptou8f/hVmtLdBVxF1ELkoFFIhMJwbEbSv3
- LW8jF2KjXrw5GymAIG5ACo/PCoilZ9foywOi+xmHL8O/yJ7VVY4zNpPD9TiUphOAeJL2
- +1D3ZqJIHDmhqVv2VBXbhBCdieVi62RaR8aMjPUJ+oDqDfUbbcoYpTYC40mW+8N6G60J
- 3oJ5ECYVk2/J1JYht8Bes+qvgsf+0CtWJc4c8qzOGsPgV2lUjvbE0+v+9hbck7UJJPXu
- yZ8B884f4tXlQztLRyKvdcSb7mby7uynhPpadisIwlGeE1UHMy3+GrlKCsdDkJcEOL2z
- 0DTw==
-X-Gm-Message-State: AOJu0YyL/sjrhSMtQ/5myjejA5aH0htxzrX9shJjSlgSEujx2mzNVx9L
- L0cXf76LVvfnBX+23hyUMD2HLOvobfwjKpXXxm7nP4ok0Hs2p+fMrZmHr52FfslYmLfdovMvUwW
- 8zyD4NdYhIvVgR/XRUg57/ojQ4cZH1Mq894g5rvHJqE1mbd4zQ2df03nmIg8jIWaLLcxqywTOKm
- 02yMYdyLr7bF6BEv4vofU=
-X-Gm-Gg: ASbGncvHNa9HJZgWMjfp5G8hbkEa1q8Edpa8x4F3jnTzOwvVBjWLr6jzhBQZeapWQ91
- rNkA7nr8NbkG5K7NunLCxUOp40r3AjSEnSI7invsOCw5/eHKtW8bku3wuA2RGzIL6equwM6WeXm
- hjAoqPCWlRiQaS9NKGrxIiqL2cFZ1wRAwkmi/P1blRvwRDhP6Zen/r4+tLkw==
-X-Received: by 2002:a05:6512:3d22:b0:592:f573:65d3 with SMTP id
- 2adb3069b0e04-594128738bfmr1223102e87.1.1761748827143; 
- Wed, 29 Oct 2025 07:40:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2QJBlAEjE+Ews7lHSrKqafx+/crvonIaA2xPY5IuqcQ+p0T0U6eDz1jJEo/P/9l0qc2x6XRMz1kutTgRdrDQ=
-X-Received: by 2002:a05:6512:3d22:b0:592:f573:65d3 with SMTP id
- 2adb3069b0e04-594128738bfmr1223081e87.1.1761748826658; Wed, 29 Oct 2025
- 07:40:26 -0700 (PDT)
+ bh=cgsBVNQf4qmF2Q4qjEkKI46C56Z+u0JhwNoK3PSTUek=;
+ b=RpVFF5HLIC/c1nzngR/557lk7AGe+mIVQ0pNoCX7uxKRzueHbdzwcaPS6poaCaynCJ
+ s4x+Xc07x1XOWM5sQEt1BNtRWYXqvM5V86jpnTgChtHOvb1V90428GOoMPWbXe01a88E
+ CUNnj64jGCgT8wGj+elzPnJfT9JwtDq01DXPo4+H2//hOxnXMJ4KVji9ydiWzY6X8CzC
+ 6cDHzmkz9sHKRTh0YOUsZ5OpPdzMeQ4o5/Lff56qhDYZL0yzF6dXZDoEShul3+3VILch
+ 5IQytgc2NQVxO8RC9D8ZTSxAY73eOZeV6Y8GyCfXIJlvv2LOUyM3k4PVynK/dreo5ZW/
+ oQPA==
+X-Gm-Message-State: AOJu0YwRUt53GuRmQCPlVMkHlHijZ54xMKd+1OiQNyOdL8LFmD2cGORs
+ h9mW6XDujzbUY/RZHikqUpvUT4qN1rGrDoD+AoZpEMytley5HXF2he/janrxf9aK0/mFry06QaI
+ uJ55k7+4=
+X-Gm-Gg: ASbGncuLBE6NVA54juQOJv2dxj70La+AUTAOe673RpG8YwvKOKp1W9A5EucWlUpFlBZ
+ pWEVFGOWV4/yi5tXQeUQGvswRhfqjWiZeA2urmUuSAEi8N13NO3ZbUj2s/+mZ/dWIzsoFtzN2JJ
+ KaDP2EaJFLWtqTRqEwtg49pDWyeRgXCkLxzNt0z0pzqbSG5mxx0JAlbRPxsIRGRLSmXKbkAb47n
+ V/mvZX0wg0KCKZrCDNiHEgypUH1kFeIM+VRC1T46G0SqFLcQknxG1G5IUxRS9mDrYTOgAYZRXuK
+ 5F9mXe76ghEx7a0F+ttOin6IgyXfsGxlMFFGyqnWt9RC1ZeibFVqSt8sq+7XUIzkrcYRFKCGBLY
+ nqnX0qDviaXPRRYPR/J+EbvtRdG9hB7ggbDVsjIyVb8Ey31fN+N/mHAoduPOAJbKvpEsMUjfMAu
+ vjzNSR2+P0hezEZ/4CK/uS6Een37ua6jjrnquYqrI=
+X-Google-Smtp-Source: AGHT+IFXQzLJQT7ZdzE7LbtAvNvP5uhBsIZ9C5GwNTOpA6YIUB1aXFVURDaNdTghBRT1mpiFYZLxmA==
+X-Received: by 2002:a17:903:f76:b0:272:f9c3:31f7 with SMTP id
+ d9443c01a7336-294def30ed5mr26994015ad.50.1761749458761; 
+ Wed, 29 Oct 2025 07:50:58 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 41be03b00d2f7-b71268bdb2dsm14343887a12.5.2025.10.29.07.50.58
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 29 Oct 2025 07:50:58 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [PATCH v2] bitmap: change return value of rte_bitmap_free
+Date: Wed, 29 Oct 2025 07:50:55 -0700
+Message-ID: <20251029145055.990899-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251028204432.880074-1-stephen@networkplumber.org>
+References: <20251028204432.880074-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-References: <20251027164621.175861-1-stephen@networkplumber.org>
- <CAJFAV8zi5=hBo6wEWwqr=QZyzodkf1K-39m82Fj9CA+-2SX1PQ@mail.gmail.com>
- <20251029073215.494d130e@phoenix>
-In-Reply-To: <20251029073215.494d130e@phoenix>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 29 Oct 2025 15:40:15 +0100
-X-Gm-Features: AWmQ_bn0IzWrxeEsS85CzGCJsEH3WXRTvFTtPJGq8bVWVUqN_dY8DsQwuA4Cvwo
-Message-ID: <CAJFAV8z=Vz9XjPhwfapgy5UZoKRVOwM4nt5JCFZ17e4EnqwKjQ@mail.gmail.com>
-Subject: Re: [PATCH] dmadev: fix build if RTE_DMADEV_DEBUG enabled
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, stable@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>, 
- Kevin Laatz <kevin.laatz@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: E-pH1LAXyX0rQ-kPozLmzPRHgYQL0speIyK53LCvYGI_1761748827
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,128 +86,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 29 Oct 2025 at 15:32, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Wed, 29 Oct 2025 14:48:13 +0100
-> David Marchand <david.marchand@redhat.com> wrote:
->
-> > On Mon, 27 Oct 2025 at 17:46, Stephen Hemminger
-> > <stephen@networkplumber.org> wrote:
-> > >
-> > > Missing definition of errnos causes build failure:
-> > >
-> > > In file included from ../lib/dmadev/rte_dmadev_trace.h:16,
-> > >                  from ../lib/dmadev/rte_dmadev_trace_points.c:8:
-> > > ../lib/dmadev/rte_dmadev.h: In function =E2=80=98rte_dma_copy=E2=80=
-=99:
-> > > ../lib/dmadev/rte_dmadev.h:1183:25: error: =E2=80=98EINVAL=E2=80=99 u=
-ndeclared (first use in this function)
-> > >  1183 |                 return -EINVAL;
-> > >       |                         ^~~~~~
-> > >
-> > > Bugzilla ID: 1814
-> > > Fixes: 8f1d23ece06a ("eal: deprecate RTE_FUNC_PTR_* macros")
-> >
-> > I am not following the rationale... 8f1d23ece06a removed a macro but
-> > use of errno was already there, so I am skeptical this is the right
-> > Fixes: tag.
-> >
-> > The issue was present from the start, so:
-> > Fixes: 91e581e5c924 ("dmadev: add data plane API")
-> >
-> > > Cc: david.marchand@redhat.com
-> > >
-> > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> >
-> >
->
-> Yes, the fixes tag is incorrect. The issue probably goes back further
-> in time. Might be related to tracepoints not including errno.h
+No existing code is checking the return value of rte_bitmap_free
+and other functions like rte_free do not return an int.
+Change it to just a stub void function.
 
-Tracepoints were added later.
+This was motivated by Coverity warnings about unchecked return
+value.
 
-$ git blame 91e581e5c924 -- lib/dmadev/rte_dmadev.h | grep -A3 -E
-'#include|RTE_DMADEV_DEBUG'
-b36970f2e13 (Chengwen Feng 2021-10-13 20:24:55 +0800  147) #include <stdint=
-.h>
-b36970f2e13 (Chengwen Feng 2021-10-13 20:24:55 +0800  148)
-b36970f2e13 (Chengwen Feng 2021-10-13 20:24:55 +0800  149) #include
-<rte_bitops.h>
-b36970f2e13 (Chengwen Feng 2021-10-13 20:24:55 +0800  150) #include
-<rte_common.h>
-b36970f2e13 (Chengwen Feng 2021-10-13 20:24:55 +0800  151) #include
-<rte_compat.h>
-b36970f2e13 (Chengwen Feng 2021-10-13 20:24:55 +0800  152) #include <rte_de=
-v.h>
-b36970f2e13 (Chengwen Feng 2021-10-13 20:24:55 +0800  153)
-b36970f2e13 (Chengwen Feng 2021-10-13 20:24:55 +0800  154) #ifdef __cpluspl=
-us
-b36970f2e13 (Chengwen Feng 2021-10-13 20:24:55 +0800  155) extern "C" {
---
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  739) #include
-"rte_dmadev_core.h"
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  740)
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  741) /**@{@name
-DMA operation flag
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  742)  * @see
-rte_dma_copy()
---
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  801) #ifdef
-RTE_DMADEV_DEBUG
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  802)     if
-(!rte_dma_is_valid(dev_id) || length =3D=3D 0)
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  803)
-return -EINVAL;
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  804)
-RTE_FUNC_PTR_OR_ERR_RET(*obj->copy, -ENOTSUP);
---
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  851) #ifdef
-RTE_DMADEV_DEBUG
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  852)     if
-(!rte_dma_is_valid(dev_id) || src =3D=3D NULL || dst =3D=3D NULL ||
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  853)
-nb_src =3D=3D 0 || nb_dst =3D=3D 0)
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  854)
-return -EINVAL;
---
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  898) #ifdef
-RTE_DMADEV_DEBUG
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  899)     if
-(!rte_dma_is_valid(dev_id) || length =3D=3D 0)
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  900)
-return -EINVAL;
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  901)
-RTE_FUNC_PTR_OR_ERR_RET(*obj->fill, -ENOTSUP);
---
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  931) #ifdef
-RTE_DMADEV_DEBUG
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  932)     if
-(!rte_dma_is_valid(dev_id))
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  933)
-return -EINVAL;
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  934)
-RTE_FUNC_PTR_OR_ERR_RET(*obj->submit, -ENOTSUP);
---
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  972) #ifdef
-RTE_DMADEV_DEBUG
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  973)     if
-(!rte_dma_is_valid(dev_id) || nb_cpls =3D=3D 0)
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  974)         return 0=
-;
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800  975)
-RTE_FUNC_PTR_OR_ERR_RET(*obj->completed, 0);
---
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800 1032) #ifdef
-RTE_DMADEV_DEBUG
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800 1033)     if
-(!rte_dma_is_valid(dev_id) || nb_cpls =3D=3D 0 || status =3D=3D NULL)
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800 1034)         return 0=
-;
-91e581e5c92 (Chengwen Feng 2021-10-13 20:24:57 +0800 1035)
-RTE_FUNC_PTR_OR_ERR_RET(*obj->completed_status, 0);
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Reviewed-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ doc/guides/rel_notes/release_25_11.rst |  3 +++
+ lib/eal/include/rte_bitmap.h           | 13 ++++---------
+ 2 files changed, 7 insertions(+), 9 deletions(-)
 
-
---=20
-David Marchand
+diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
+index c5ba335cfc..4b8e084204 100644
+--- a/doc/guides/rel_notes/release_25_11.rst
++++ b/doc/guides/rel_notes/release_25_11.rst
+@@ -220,6 +220,9 @@ API Changes
+   The link type was previously hardcoded to the Ethernet link type in the API.
+   This argument is added to ``rte_pcapng_add_interface``.
+ 
++* bitmap: Changed the return type of ``rte_bitmap_free()`` to void
++  for consistency with other free functions.
++
+ 
+ ABI Changes
+ -----------
+diff --git a/lib/eal/include/rte_bitmap.h b/lib/eal/include/rte_bitmap.h
+index abb102f1d3..ebe6c44998 100644
+--- a/lib/eal/include/rte_bitmap.h
++++ b/lib/eal/include/rte_bitmap.h
+@@ -282,20 +282,15 @@ rte_bitmap_init_with_all_set(uint32_t n_bits, uint8_t *mem, uint32_t mem_size)
+ /**
+  * Bitmap free
+  *
++ * This function does nothing in current implementation.
++ *
+  * @param bmp
+  *   Handle to bitmap instance
+- * @return
+- *   0 upon success, error code otherwise
+  */
+-static inline int
++static inline void
+ rte_bitmap_free(struct rte_bitmap *bmp)
+ {
+-	/* Check input arguments */
+-	if (bmp == NULL) {
+-		return -1;
+-	}
+-
+-	return 0;
++	RTE_SET_USED(bmp);
+ }
+ 
+ /**
+-- 
+2.51.0
 
