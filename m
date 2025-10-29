@@ -2,83 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D10CCF9EB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A77CCF9EB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:19:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3B49240669;
-	Wed, 29 Oct 2025 17:19:29 +0100 (CET)
-Received: from mail-oa1-f98.google.com (mail-oa1-f98.google.com
- [209.85.160.98]) by mails.dpdk.org (Postfix) with ESMTP id AEC9940A79
- for <dev@dpdk.org>; Wed, 29 Oct 2025 17:19:27 +0100 (CET)
-Received: by mail-oa1-f98.google.com with SMTP id
- 586e51a60fabf-3d2ea93836bso66279fac.3
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:19:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 827934066E;
+	Wed, 29 Oct 2025 17:19:44 +0100 (CET)
+Received: from mail-pj1-f99.google.com (mail-pj1-f99.google.com
+ [209.85.216.99]) by mails.dpdk.org (Postfix) with ESMTP id 2E5D04066A
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 17:19:43 +0100 (CET)
+Received: by mail-pj1-f99.google.com with SMTP id
+ 98e67ed59e1d1-3401314d845so136169a91.1
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:19:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761754767; x=1762359567;
+ d=1e100.net; s=20230601; t=1761754782; x=1762359582;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=NWoSr4KeytGd4GizxVUX2X+fYsf91kn30CgFt6sPJQ0=;
- b=fKGXww7V+tmj6QMYwFGPotIfhOVvstNxyOjQtEezYQeQ31ybiod8f9jXa04trAlzqp
- xdHGtPD4g9H48Ub0SwZyx0WE6etEsxDo6RIhYdhRXKIOjYQB1JAM3+/gnKQhaUnKTOAj
- DRu6R6wavEdghsVUHfANN3e9CSyQZyBnD4VYiv9O16jNAYgmCKeLmF53xMzVKL3ZsCXw
- mpgPxGgfVdJnMVVeLhUqiy0mrOaBu/gQnRLRz8FHNRoFR+7vFfPeFgRObNQY2C4a3QUs
- t2d/YFuT+ArBcfJANCGwA4i/PbU+u6o9YVZIYG9YQ9dLE2TATMbjsKXU2h9Q6A8p4sNE
- E/0w==
-X-Gm-Message-State: AOJu0YyeHeIt9yd2CoE99XDKcH123DpXVf9BXFwaloor6s4jOr0dCqCL
- 3++Zc9q99bUm8tqlPWVxmQJ+dJUnCl2CQYnp6R0FwEOMgl7QI8p0x+R1rEIKsF3Jg7YdxzBQcG+
- eEnFxh8McRpZG+brnN/C1tUeBgRzBixK2sMEeWWCtHmS8S+GwMJYtJNcWx6QJk/0lrypBJgfzZu
- 8L4STY8SR9jE6491EQ/jg1ZaGMjWnCoXPGdWLkTptKYLV1TwYvHetmWPO8E2Dships+ybwIw==
-X-Gm-Gg: ASbGncufyMCV8gvc6wtliZHJ2ji9Pa6zkESF89jKpt1eU3GIzUupNHomXkWUiN+te+R
- p9zmGSkBoixCl0B5ukEVP2JPEcayJqSNcI6wHz/CdJDAIquzC4hVezqz+Ae1kG/G3RKfyFvhSO9
- qdetAklkvyTrnTi9e6ry2qwzXXZiRWYI6dscUVxOtZwJSK6T6RRr3TXC5StW62WWSbgPJ5aaJ9E
- DA+bdJbXDHF+HIFxwt40ElXI5wZNaW/7/oytlZiNEGJKjEjb/sMynpXLLvUlvB2sAA4Ev/R91pe
- c9UkbDc6nesjp5icDxy1uSfPYqmfdEeIjRfTyg1mV6HIR25PSuyMMQWCLGQrVZvPLYiW/pAyR17
- TRMoKmX+aRfZ64Pm8xkr5Q9W1UMpeJ6+n6GmXvdviiNmOtQliFrNIa2q5/fnppOPfYmRcpJb0lQ
- rHZUCdbJtrEReCigavLWc3XRm4jHi7FCM=
-X-Google-Smtp-Source: AGHT+IFELjn1bTYO9nOlSOFVWDV2bdkBceB2q8h2ho+xIozFMasleVJmuT1P90RsQRu26r9a+nZdzB83hU/+
-X-Received: by 2002:a05:6871:8302:b0:3d1:b6a4:1914 with SMTP id
- 586e51a60fabf-3d74b26cc19mr1704020fac.27.1761754766657; 
- Wed, 29 Oct 2025 09:19:26 -0700 (PDT)
+ bh=yLNcYNDlnGphmhCBMz0plfQEOX8KFQsicyeioDDEx2E=;
+ b=eioZ/qXyuqBQQZVKh2viz2W1gMHyUHwWXK926u8GvjnGIIF0GhVmrpMRiKf0onLJCS
+ uAPsqdo9xch+vIJDlHXfl1ZzTxUcHZslfULuPtnR7SBcTyvIoV90O4wSd+BewQCzWDEm
+ jkqfMobn5xkhcKMrpuI+NkkGFk1bKGuwKlBnVX/so91YuuQaxr21hZKhc1RC9gmi1bze
+ Iw205xhUMpi0l6WFcV5WITtq6CuQXtp92GNlBVoqxkcJzN3r+pI5menjfbcdujGT7fw0
+ 5zm0f4JuqQUpIVjocdhyN2a8Trnju8zAvimAjRJSxdTTZmpuoPFEFbyIsM+aI7WgbnrE
+ MtrQ==
+X-Gm-Message-State: AOJu0YyCUCZNPKq2coxBCyMsQYXVBnbiOpx0QK6QpViolxMrHGOp75ht
+ 6s+rDSnsXlqkl72QHCNIFRCV62YrwtWh7Wp/7N2T7hqFFNiG8MMpXhCTMDkRrRY9oe0sFZyJAnm
+ 3gN1TDr8/Lldapcz5DrFSOjpLxDepom9mwZ1qQsXCYAPt1S1JhlAEnzxb5qxbh8+eWyJsA+N8Wv
+ LarlD4almDPYempmmnAh44pxaYMPELaUjU/CUf4Ta5wras4dQ9Vxu8bk5MpmClEXMGP5yHnQ==
+X-Gm-Gg: ASbGncsxDGsi1GSeUmSoiYX2g71Wk0kR45rayH0vCpJqrXMT7VsHybP7ui91Vad5gCA
+ KvUEHDMFRI1tCtBXzgGRj4KNO3PkrTBgVjL5IlNakreijrh4WdtTF7fsEBuUa6aULaUvzAIRnHP
+ PxT9QfBP6VU+AubHMBThAvVfesdoK1YCKolRWtpFSjRJ/+GEz1MFAaXSvlFqRLqblszqnicj1tv
+ p+UNLMeP+G8biKJW99S+rgWQftF4stpqUr2sv0Zw2/yQYc2AY6eNHRwQ7cTJcFQo98IrdfQE/mu
+ 4Rehmm0L2Bzf9oQQqJYgoHhKLxHcBrgGVqPR4ZuxeTKzcPeEdo5jxme2jS/G/YpmI17U/s3gD6c
+ WsG9HgWsdd+ADaLjtDJHeDgrJ+n5nCQu7MQeKjdSDTaxWf2EayzL+tWR1KU4lOFNEsYzq+q58jG
+ n8c1pckp/7KsXL/+N5vIB/AiLhemNZFxi+4StD
+X-Google-Smtp-Source: AGHT+IE6p64WeoNG3eXyKcnqw0f+CRh5teRqFz3vlAuB9QCNkKNQhnauBeUSSCtyJwQfdmU8oNGipVf7c1nx
+X-Received: by 2002:a17:902:f64b:b0:294:df5f:ffc1 with SMTP id
+ d9443c01a7336-294df5fffffmr36093745ad.23.1761754782071; 
+ Wed, 29 Oct 2025 09:19:42 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-0.dlp.protect.broadcom.com. [144.49.247.0])
+ (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
  by smtp-relay.gmail.com with ESMTPS id
- 586e51a60fabf-3d1e3d5edf4sm1273927fac.19.2025.10.29.09.19.26
+ d9443c01a7336-29498d099c1sm13804035ad.16.2025.10.29.09.19.41
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 29 Oct 2025 09:19:26 -0700 (PDT)
+ Wed, 29 Oct 2025 09:19:42 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qt1-f198.google.com with SMTP id
- d75a77b69052e-4eba930d6ecso156508741cf.3
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:19:26 -0700 (PDT)
+Received: by mail-qk1-f199.google.com with SMTP id
+ af79cd13be357-8a194ded475so536419185a.2
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:19:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761754765; x=1762359565; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761754780; x=1762359580; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=NWoSr4KeytGd4GizxVUX2X+fYsf91kn30CgFt6sPJQ0=;
- b=QlNlwYr/biOpl5MwwQbtRkpORHVpn5+XPDHeWkZvriIH/GpJB5iLTNpWmGdCDToLUT
- XcWCNyo+d80As5OLPdUmF4+h39qBj4uY087NCehKknhy2/V5uNr7R2pvY+QVekZtfGiW
- hrhfkpqOlcmgMDyj9TJBONPqSdEdOWZAbX408=
-X-Received: by 2002:a05:622a:58a:b0:4ec:f5cd:8721 with SMTP id
- d75a77b69052e-4ed15a3c05amr40893321cf.0.1761754765509; 
- Wed, 29 Oct 2025 09:19:25 -0700 (PDT)
-X-Received: by 2002:a05:622a:58a:b0:4ec:f5cd:8721 with SMTP id
- d75a77b69052e-4ed15a3c05amr40892821cf.0.1761754764889; 
- Wed, 29 Oct 2025 09:19:24 -0700 (PDT)
+ bh=yLNcYNDlnGphmhCBMz0plfQEOX8KFQsicyeioDDEx2E=;
+ b=NYQyIq5GKNqPd0zYu1AojTDAY8PUnd78QSAmOeRH3fMK6HHLDGdMdJ2jUYVxVjDA5r
+ 8OZ9CdQyNIL/L7vZq5yR2fCZZAhu3H1jkYt2NoF7wUwu5Oj7t603AU7VScXArOss9hsT
+ w0VHqnX6zcpeNDhGT/Q2VKgjnkWUh6gEKrtak=
+X-Received: by 2002:a05:620a:bc2:b0:8a2:2233:c151 with SMTP id
+ af79cd13be357-8aa2efdbda8mr19336785a.75.1761754779914; 
+ Wed, 29 Oct 2025 09:19:39 -0700 (PDT)
+X-Received: by 2002:a05:620a:bc2:b0:8a2:2233:c151 with SMTP id
+ af79cd13be357-8aa2efdbda8mr19329785a.75.1761754779204; 
+ Wed, 29 Oct 2025 09:19:39 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.19.24
+ af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.19.37
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 29 Oct 2025 09:19:24 -0700 (PDT)
+ Wed, 29 Oct 2025 09:19:38 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com, Shahaji Bhosle <shahaji.bhosle@broadcom.com>,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Subject: [PATCH v5 34/57] net/bnxt/tf_ulp: ulp parser support to handle gre key
-Date: Wed, 29 Oct 2025 12:06:49 -0400
-Message-Id: <20251029160712.58519-35-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com,
+ Peter Spreadborough <peter.spreadborough@broadcom.com>,
+ Jay Ding <jay.ding@broadcom.com>, Farah Smith <farah.smith@broadcom.com>
+Subject: [PATCH v5 35/57] net/bnxt/tf_core: handle out of order MPC completions
+Date: Wed, 29 Oct 2025 12:06:50 -0400
+Message-Id: <20251029160712.58519-36-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251029160712.58519-1-manish.kurup@broadcom.com>
 References: <20251021175049.46092-1-manish.kurup@broadcom.com>
@@ -99,163 +100,459 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
+From: Peter Spreadborough <peter.spreadborough@broadcom.com>
 
-1. Added a new handler to GRE key input from the parser
-2. Add a new pattern to match on GRE with KEY id.
+It is possible for MPC completions to be returned in an order
+different to the corresponding MPC requests. This change adds
+using the MPC opaque field to uniquely associate a completion
+with a request and handling of out of order completions to
+the batch-end processing.
 
-Signed-off-by: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
-Reviewed-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Signed-off-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
+Reviewed-by: Jay Ding <jay.ding@broadcom.com>
+Reviewed-by: Farah Smith <farah.smith@broadcom.com>
+Reviewed-by: Manish Kurup <manish.kurup@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/ulp_rte_handler_tbl.c |  4 +-
- drivers/net/bnxt/tf_ulp/ulp_rte_parser.c      | 45 ++++++++++++++++++-
- drivers/net/bnxt/tf_ulp/ulp_rte_parser.h      |  5 +++
- .../net/bnxt/tf_ulp/ulp_template_db_enum.h    |  3 +-
- drivers/net/bnxt/tf_ulp/ulp_template_struct.h |  2 +
- 5 files changed, 55 insertions(+), 4 deletions(-)
+ drivers/net/bnxt/bnxt_mpc.c           |  26 +++++-
+ drivers/net/bnxt/bnxt_mpc.h           |   7 +-
+ drivers/net/bnxt/tf_core/v3/tfc_act.c |  12 +--
+ drivers/net/bnxt/tf_core/v3/tfc_em.c  | 126 +++++++++++++++++++++-----
+ drivers/net/bnxt/tf_core/v3/tfc_em.h  |   4 +-
+ 5 files changed, 138 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_handler_tbl.c b/drivers/net/bnxt/tf_ulp/ulp_rte_handler_tbl.c
-index 6e1115b985..4a7c7e437c 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_rte_handler_tbl.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_rte_handler_tbl.c
-@@ -373,8 +373,8 @@ struct bnxt_ulp_rte_hdr_info ulp_hdr_info[] = {
- 	.proto_hdr_func          = NULL
- 	},
- 	[RTE_FLOW_ITEM_TYPE_GRE_KEY] = {
--	.hdr_type                = BNXT_ULP_HDR_TYPE_NOT_SUPPORTED,
--	.proto_hdr_func          = NULL
-+	.hdr_type                = BNXT_ULP_HDR_TYPE_SUPPORTED,
-+	.proto_hdr_func          = ulp_rte_gre_key_hdr_handler
- 	},
- 	[RTE_FLOW_ITEM_TYPE_GTP_PSC] = {
- 	.hdr_type                = BNXT_ULP_HDR_TYPE_NOT_SUPPORTED,
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-index af7f8b7ab4..ceda1ff5ef 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-@@ -31,6 +31,9 @@
- #define ULP_UDP_PORT_GENEVE		6081
- #define ULP_UDP_PORT_GENEVE_MASK	0xFFFF
- 
-+/* GRE cks_rsvd0_ver bits */
-+#define ULP_GRE_CKS_RSVD0_VER_HDR_KEY_BIT 0x2000
-+
- /**
-  * Geneve header first 16Bit
-  * Version (2b), length of the options fields (6b), OAM packet (1b),
-@@ -1887,14 +1890,51 @@ ulp_rte_geneve_hdr_handler(const struct rte_flow_item *item,
- 	return BNXT_TF_RC_SUCCESS;
+diff --git a/drivers/net/bnxt/bnxt_mpc.c b/drivers/net/bnxt/bnxt_mpc.c
+index 2582b50782..259066fa61 100644
+--- a/drivers/net/bnxt/bnxt_mpc.c
++++ b/drivers/net/bnxt/bnxt_mpc.c
+@@ -575,7 +575,9 @@ int bnxt_mpc_open(struct bnxt *bp)
+ 	return rc;
  }
  
-+/* Function to handle the parsing of RTE Flow item GRE Key Header. */
-+int32_t
-+ulp_rte_gre_key_hdr_handler(const struct rte_flow_item *item,
-+			    struct ulp_rte_parser_params *params)
-+{
-+	const rte_be32_t *gre_key_spec = item->spec;
-+	const rte_be32_t *gre_key_mask = item->mask;
-+	rte_be32_t gre_key_full_mask = RTE_BE32(UINT32_MAX);
-+	struct ulp_rte_hdr_bitmap *hdr_bitmap = &params->hdr_bitmap;
-+	uint32_t idx = 0;
-+	uint32_t size;
-+
-+	if (unlikely(ulp_rte_prsr_fld_size_validate(params, &idx,
-+						    BNXT_ULP_PROTO_HDR_GRE_KEY_NUM))) {
-+		BNXT_DRV_DBG(ERR, "Error parsing protocol header");
-+		return BNXT_TF_RC_ERROR;
-+	}
-+
-+	if (unlikely(!(params->gre_cks_rsvd0_ver & RTE_BE16(ULP_GRE_CKS_RSVD0_VER_HDR_KEY_BIT)))) {
-+		BNXT_DRV_DBG(ERR, "Error GRE K bit is not set");
-+		return BNXT_TF_RC_ERROR;
-+	}
-+
-+	if (gre_key_spec && !gre_key_mask)
-+		gre_key_mask = &gre_key_full_mask;
-+
-+	size = sizeof(uint32_t);
-+	ulp_rte_prsr_fld_mask(params, &idx, size,
-+			      gre_key_spec,
-+			      gre_key_mask,
-+			      ULP_PRSR_ACT_DEFAULT);
-+
-+	/* Update the hdr_bitmap with GRE */
-+	ULP_BITMAP_SET(hdr_bitmap->bits, BNXT_ULP_HDR_BIT_T_GRE_OPT);
-+	return BNXT_TF_RC_SUCCESS;
-+}
-+
- /* Function to handle the parsing of RTE Flow item GRE Header. */
- int32_t
- ulp_rte_gre_hdr_handler(const struct rte_flow_item *item,
- 			struct ulp_rte_parser_params *params)
+-int bnxt_mpc_cmd_cmpl(struct bnxt_mpc_txq *mpc_queue, struct bnxt_mpc_mbuf *out_msg)
++int bnxt_mpc_cmd_cmpl(struct bnxt_mpc_txq *mpc_queue,
++		      struct bnxt_mpc_mbuf *out_msg,
++		      uint16_t *opaque)
  {
-+	struct ulp_rte_hdr_bitmap *hdr_bitmap = &params->hdr_bitmap;
- 	const struct rte_flow_item_gre *gre_spec = item->spec;
- 	const struct rte_flow_item_gre *gre_mask = item->mask;
--	struct ulp_rte_hdr_bitmap *hdr_bitmap = &params->hdr_bitmap;
- 	uint32_t idx = 0;
- 	uint32_t size;
+ 	struct bnxt_cp_ring_info *cpr = mpc_queue->cp_ring;
+ 	uint32_t raw_cons = cpr->cp_raw_cons;
+@@ -665,12 +667,13 @@ int bnxt_mpc_cmd_cmpl(struct bnxt_mpc_txq *mpc_queue, struct bnxt_mpc_mbuf *out_
+ 		bnxt_db_mpc_cq(cpr);
+ 	}
  
-@@ -1907,6 +1947,9 @@ ulp_rte_gre_hdr_handler(const struct rte_flow_item *item,
- 	if (gre_spec && !gre_mask)
- 		gre_mask = &rte_flow_item_gre_mask;
++	*opaque = (uint16_t)mpc_cmpl->info2;
+ 	return nb_mpc_cmds;
+ }
  
-+	params->gre_cks_rsvd0_ver = (gre_spec && gre_mask) ?
-+		(gre_spec->c_rsvd0_ver & gre_mask->c_rsvd0_ver) : 0;
+ static uint16_t bnxt_mpc_xmit(struct bnxt_mpc_mbuf *mpc_cmd,
+ 			      struct bnxt_mpc_txq *mpc_queue,
+-			      uint32_t *opaque)
++			      uint16_t *opaque)
+ {
+ 	struct bnxt_mpc_ring_info *mpr = mpc_queue->mpc_ring;
+ 	struct bnxt_ring *ring = mpr->mpc_ring_struct;
+@@ -715,13 +718,14 @@ static uint16_t bnxt_mpc_xmit(struct bnxt_mpc_mbuf *mpc_cmd,
+ int bnxt_mpc_send(struct bnxt *bp,
+ 		  struct bnxt_mpc_mbuf *in_msg,
+ 		  struct bnxt_mpc_mbuf *out_msg,
+-		  uint32_t *opaque,
++		  uint16_t *opaque,
+ 		  bool batch)
+ {
+ 	int rc;
+ 	struct bnxt_mpc_txq *mpc_queue = bp->mpc->mpc_txq[in_msg->chnl_id];
+ 	int retry = BNXT_MPC_RX_RETRY;
+ 	uint32_t pi = 0;
++	uint16_t rx_opaque;
+ 
+ 	if (out_msg->cmp_type != CMPL_BASE_TYPE_MID_PATH_SHORT &&
+ 	    out_msg->cmp_type != CMPL_BASE_TYPE_MID_PATH_LONG)
+@@ -737,6 +741,8 @@ int bnxt_mpc_send(struct bnxt *bp,
+ 	 * it can be detected.
+ 	 */
+ 	pi = mpc_queue->mpc_ring->raw_prod;
++	*opaque = mpc_queue->seq_num;
++	mpc_queue->seq_num++;
+ 	rc = bnxt_mpc_xmit(in_msg, mpc_queue, opaque);
+ 
+ 	if (unlikely(rc))
+@@ -761,10 +767,20 @@ int bnxt_mpc_send(struct bnxt *bp,
+ 	do {
+ 		rte_delay_us_block(BNXT_MPC_RX_US_DELAY);
+ 
+-		rc =  bnxt_mpc_cmd_cmpl(mpc_queue, out_msg);
++		rc =  bnxt_mpc_cmd_cmpl(mpc_queue, out_msg, &rx_opaque);
+ 
+-		if (rc == 1)
++		if (rc == 1) {
++			if (rx_opaque != *opaque)
++				PMD_DRV_LOG_LINE(ERR,
++					    "%s: Out of order completion. Opaque Expected:%d Got:%d",
++					    __func__,
++					    *opaque,
++					    rx_opaque);
+ 			return 0;
++		}
++#ifdef MPC_DEBUG
++		PMD_DRV_LOG_LINE("Received zero or more than one completion:%d", rc);
++#endif
+ 		retry--;
+ 	} while (retry);
+ 
+diff --git a/drivers/net/bnxt/bnxt_mpc.h b/drivers/net/bnxt/bnxt_mpc.h
+index b089ddd4bb..da3672e493 100644
+--- a/drivers/net/bnxt/bnxt_mpc.h
++++ b/drivers/net/bnxt/bnxt_mpc.h
+@@ -93,6 +93,7 @@ struct bnxt_mpc_txq {
+ 	struct bnxt_cp_ring_info	*cp_ring;
+ 	const struct rte_memzone *mz;
+ 	struct bnxt_mpc_mbuf **free;
++	uint16_t	seq_num;
+ 
+ 	void (*cmpl_handler_cb)(struct bnxt_mpc_txq *mpc_queue,
+ 				uint32_t nb_mpc_cmds);
+@@ -109,9 +110,11 @@ int bnxt_mpc_close(struct bnxt *bp);
+ int bnxt_mpc_send(struct bnxt *bp,
+ 		  struct bnxt_mpc_mbuf *in_msg,
+ 		  struct bnxt_mpc_mbuf *out_msg,
+-		  uint32_t *opaque,
++		  uint16_t *opaque,
+ 		  bool batch);
+-int bnxt_mpc_cmd_cmpl(struct bnxt_mpc_txq *mpc_queue, struct bnxt_mpc_mbuf *out_msg);
++int bnxt_mpc_cmd_cmpl(struct bnxt_mpc_txq *mpc_queue,
++		      struct bnxt_mpc_mbuf *out_msg,
++		      uint16_t *opaque);
+ int bnxt_mpc_poll_cmd_cmpls(struct bnxt_mpc_txq *mpc_queue);
+ 
+ #endif
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_act.c b/drivers/net/bnxt/tf_core/v3/tfc_act.c
+index 3c1c76359b..d93064dbc6 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_act.c
++++ b/drivers/net/bnxt/tf_core/v3/tfc_act.c
+@@ -225,7 +225,7 @@ int tfc_act_set(struct tfc *tfcp,
+ 	int rc = 0;
+ 	uint8_t tx_msg[TFC_MPC_MAX_TX_BYTES];
+ 	uint8_t rx_msg[TFC_MPC_MAX_RX_BYTES];
+-	uint32_t msg_count = BNXT_MPC_COMP_MSG_COUNT;
++	uint16_t opaque;
+ 	uint32_t i;
+ 	uint32_t buff_len;
+ 	struct cfa_mpc_data_obj fields_cmd[CFA_BLD_MPC_WRITE_CMD_MAX_FLD];
+@@ -311,7 +311,7 @@ int tfc_act_set(struct tfc *tfcp,
+ 	rc = tfc_mpc_send(tfcp->bp,
+ 			  &mpc_msg_in,
+ 			  &mpc_msg_out,
+-			  &msg_count,
++			  &opaque,
+ 			  TFC_MPC_TABLE_WRITE,
+ 			  batch_info);
+ 
+@@ -377,7 +377,7 @@ static int tfc_act_get_only(struct tfc *tfcp,
+ 	int rc = 0;
+ 	uint8_t tx_msg[TFC_MPC_MAX_TX_BYTES] = { 0 };
+ 	uint8_t rx_msg[TFC_MPC_MAX_RX_BYTES] = { 0 };
+-	uint32_t msg_count = BNXT_MPC_COMP_MSG_COUNT;
++	uint16_t opaque;
+ 	int i;
+ 	uint32_t buff_len;
+ 	struct cfa_mpc_data_obj fields_cmd[CFA_BLD_MPC_READ_CMD_MAX_FLD] = { {0} };
+@@ -477,7 +477,7 @@ static int tfc_act_get_only(struct tfc *tfcp,
+ 	rc = tfc_mpc_send(tfcp->bp,
+ 			  &mpc_msg_in,
+ 			  &mpc_msg_out,
+-			  &msg_count,
++			  &opaque,
+ 			  TFC_MPC_TABLE_READ,
+ 			  batch_info);
+ 
+@@ -556,7 +556,7 @@ static int tfc_act_get_clear(struct tfc *tfcp,
+ 	int rc = 0;
+ 	uint8_t tx_msg[TFC_MPC_MAX_TX_BYTES] = { 0 };
+ 	uint8_t rx_msg[TFC_MPC_MAX_RX_BYTES] = { 0 };
+-	uint32_t msg_count = BNXT_MPC_COMP_MSG_COUNT;
++	uint16_t opaque;
+ 	int i;
+ 	uint32_t buff_len;
+ 	struct cfa_mpc_data_obj fields_cmd[CFA_BLD_MPC_READ_CLR_CMD_MAX_FLD] = { {0} };
+@@ -665,7 +665,7 @@ static int tfc_act_get_clear(struct tfc *tfcp,
+ 	rc = tfc_mpc_send(tfcp->bp,
+ 			  &mpc_msg_in,
+ 			  &mpc_msg_out,
+-			  &msg_count,
++			  &opaque,
+ 			  TFC_MPC_TABLE_READ_CLEAR,
+ 			  batch_info);
+ 
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_em.c b/drivers/net/bnxt/tf_core/v3/tfc_em.c
+index 828b7838f5..47870747e1 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_em.c
++++ b/drivers/net/bnxt/tf_core/v3/tfc_em.c
+@@ -129,7 +129,7 @@ int tfc_em_insert(struct tfc *tfcp, uint8_t tsid,
+ 	uint32_t buff_len;
+ 	uint8_t tx_msg[TFC_MPC_MAX_TX_BYTES];
+ 	uint8_t rx_msg[TFC_MPC_MAX_RX_BYTES];
+-	uint32_t msg_count = BNXT_MPC_COMP_MSG_COUNT;
++	uint16_t opaque;
+ 	uint32_t i;
+ 	uint32_t hash = 0;
+ 	struct cfa_mpc_data_obj fields_cmd[CFA_BLD_MPC_EM_INSERT_CMD_MAX_FLD];
+@@ -354,7 +354,7 @@ int tfc_em_insert(struct tfc *tfcp, uint8_t tsid,
+ 	rc = tfc_mpc_send(tfcp->bp,
+ 			  &mpc_msg_in,
+ 			  &mpc_msg_out,
+-			  &msg_count,
++			  &opaque,
+ 			  TFC_MPC_EM_INSERT,
+ 			  parms->batch_info);
+ 
+@@ -500,7 +500,7 @@ int tfc_em_delete_raw(struct tfc *tfcp,
+ 	struct bnxt_mpc_mbuf mpc_msg_out;
+ 	uint8_t tx_msg[TFC_MPC_MAX_TX_BYTES];
+ 	uint8_t rx_msg[TFC_MPC_MAX_RX_BYTES];
+-	uint32_t msg_count = BNXT_MPC_COMP_MSG_COUNT;
++	uint16_t opaque = 0;
+ 	int i;
+ 	struct cfa_mpc_data_obj fields_cmd[CFA_BLD_MPC_EM_DELETE_CMD_MAX_FLD];
+ 	struct cfa_bld_mpcinfo *mpc_info;
+@@ -565,7 +565,7 @@ int tfc_em_delete_raw(struct tfc *tfcp,
+ 	rc = tfc_mpc_send(tfcp->bp,
+ 			  &mpc_msg_in,
+ 			  &mpc_msg_out,
+-			  &msg_count,
++			  &opaque,
+ 			  TFC_MPC_EM_DELETE,
+ 			  batch_info);
+ 	if (rc) {
+@@ -834,7 +834,7 @@ int tfc_em_delete_entries_by_pool_id(struct tfc *tfcp,
+ int tfc_mpc_send(struct bnxt *bp,
+ 		 struct bnxt_mpc_mbuf *in_msg,
+ 		 struct bnxt_mpc_mbuf *out_msg,
+-		 uint32_t *opaque,
++		 uint16_t *opaque,
+ 		 int type,
+ 		 struct tfc_mpc_batch_info_t *batch_info)
+ {
+@@ -856,6 +856,8 @@ int tfc_mpc_send(struct bnxt *bp,
+ 		batch_info->comp_info[batch_info->count].mpc_queue =
+ 			bp->mpc->mpc_txq[in_msg->chnl_id];
+ 		batch_info->comp_info[batch_info->count].type = type;
++		batch_info->comp_info[batch_info->count].opaque = *opaque;
++		batch_info->comp_info[batch_info->count].valid = true;
+ 		batch_info->count++;
+ 	}
+ 
+@@ -863,7 +865,8 @@ int tfc_mpc_send(struct bnxt *bp,
+ }
+ 
+ static int tfc_mpc_process_completions(uint8_t *rx_msg,
+-				       struct tfc_mpc_comp_info_t *comp_info)
++				       struct tfc_mpc_comp_info_t *comp_info,
++				       uint16_t *opaque)
+ {
+ 	int rc;
+ 	int retry = BNXT_MPC_RX_RETRY;
+@@ -872,7 +875,8 @@ static int tfc_mpc_process_completions(uint8_t *rx_msg,
+ 
+ 	do {
+ 		rc =  bnxt_mpc_cmd_cmpl(comp_info->mpc_queue,
+-					&comp_info->out_msg);
++					&comp_info->out_msg,
++					opaque);
+ 
+ 		if (likely(rc == 1)) {
+ #ifdef MPC_DEBUG
+@@ -913,14 +917,41 @@ bool tfc_mpc_batch_started(struct tfc_mpc_batch_info_t *batch_info)
+ 	return (batch_info->enabled && batch_info->count > 0);
+ }
+ 
++/* Test out of order handling */
++/*#define MPC_OOO_DEBUG */
 +
- 	size = sizeof(((struct rte_flow_item_gre *)NULL)->c_rsvd0_ver);
- 	ulp_rte_prsr_fld_mask(params, &idx, size,
- 			      ulp_deference_struct(gre_spec, c_rsvd0_ver),
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.h b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.h
-index 5f451ba404..92c34394ae 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.h
-@@ -140,6 +140,11 @@ int32_t
- ulp_rte_geneve_hdr_handler(const struct rte_flow_item *item,
- 			      struct ulp_rte_parser_params *params);
- 
-+/* Function to handle the parsing of RTE Flow item GRE KEY Header. */
-+int32_t
-+ulp_rte_gre_key_hdr_handler(const struct rte_flow_item *item,
-+			    struct ulp_rte_parser_params *params);
++#ifdef MPC_OOO_DEBUG
++static void swap_entries(struct tfc_mpc_batch_info_t *batch_info, int count)
++{
++	struct tfc_mpc_comp_info_t tmp;
++	int i1;
++	int i2;
 +
- /* Function to handle the parsing of RTE Flow item GRE Header. */
- int32_t
- ulp_rte_gre_hdr_handler(const struct rte_flow_item *item,
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h b/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
-index c30a43568b..3ce43f4c92 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
-@@ -119,7 +119,8 @@ enum bnxt_ulp_hdr_bit {
- 	BNXT_ULP_HDR_BIT_NON_GENERIC         = 0x0000000400000000,
- 	BNXT_ULP_HDR_BIT_GENERIC             = 0x0000000800000000,
- 	BNXT_ULP_HDR_BIT_T_MPLS              = 0x0000001000000000,
--	BNXT_ULP_HDR_BIT_LAST                = 0x0000002000000000
-+	BNXT_ULP_HDR_BIT_T_GRE_OPT           = 0x0000002000000000,
-+	BNXT_ULP_HDR_BIT_LAST                = 0x0000004000000000
++	i1 = rand() % (count - 1);
++	i2 = rand() % (count - 1);
++
++	PMD_DRV_LOG(ERR, "%s: Swapping index %d and %d",
++		    __func__,
++		    i1,
++		    i2);
++
++	memcpy(&tmp, &batch_info->comp_info[i1], sizeof(tmp));
++	memcpy(&batch_info->comp_info[i1], &batch_info->comp_info[i2], sizeof(tmp));
++	memcpy(&batch_info->comp_info[i2], &tmp, sizeof(tmp));
++}
++#endif
++
+ int tfc_mpc_batch_end(struct tfc *tfcp,
+ 		      struct tfc_mpc_batch_info_t *batch_info)
+ {
+-	uint32_t i;
++	uint32_t j;
++	uint32_t start_index = 0;
+ 	int rc;
+ 	uint8_t rx_msg[TFC_MPC_MAX_RX_BYTES];
+ 	struct cfa_bld_mpcinfo *mpc_info;
+ 	uint32_t hash = 0;
++	uint16_t opaque = 0;
++	uint32_t count;
+ #if TFC_EM_DYNAMIC_BUCKET_EN
+ 	bool *db_unused;
+ 	uint32_t *db_offset;
+@@ -945,17 +976,65 @@ int tfc_mpc_batch_end(struct tfc *tfcp,
+ 	if (batch_info->count < (BNXT_MPC_COMP_MAX_COUNT / 4))
+ 		rte_delay_us_block(BNXT_MPC_RX_US_DELAY * 4);
+ 
+-	for (i = 0; i < batch_info->count; i++) {
++#ifdef MPC_OOO_DEBUG
++	/* force out of order in large batches */
++	if (batch_info->count > 10)
++		swap_entries(batch_info, batch_info->count);
++#endif
++
++	count = batch_info->count;
++
++	while (count) {
+ 		rc = tfc_mpc_process_completions(&rx_msg[TFC_MPC_HEADER_SIZE_BYTES],
+-						 &batch_info->comp_info[i]);
++						 &batch_info->comp_info[start_index],
++						 &opaque);
+ 		if (unlikely(rc))
+ 			return -1;
+ 
++#ifdef MPC_DEBUG
++		PMD_DRV_LOG(ERR, "%s: count:%d start_index:%d bo:%d op:%d ci:%p type:%d",
++			    __func__,
++			    count,
++			    start_index,
++			    batch_info->comp_info[start_index].opaque,
++			    opaque,
++			    batch_info->comp_info[start_index].mpc_queue,
++			    batch_info->comp_info[start_index].type);
++#endif
++
++		/* Find batch entry that has a matching opaque value */
++		for (j = start_index; j < batch_info->count; j++) {
++			if (!batch_info->comp_info[j].valid ||
++			    opaque != batch_info->comp_info[j].opaque ||
++			    batch_info->comp_info[start_index].mpc_queue !=
++			    batch_info->comp_info[j].mpc_queue)
++				continue;
++
++			count--;
++
++			if (j != start_index) {
++				PMD_DRV_LOG_LINE(INFO,
++						 "%s: OOO comp. Opq Exp:%d Got:%d j:%d",
++						 __func__,
++						 batch_info->comp_info[j].opaque,
++						 opaque, j);
++			} else {
++				start_index++;
++
++				while (count &&
++				       start_index < batch_info->count &&
++				       !batch_info->comp_info[start_index].valid)
++					start_index++;
++			}
++
++			batch_info->comp_info[j].out_msg.msg_data = rx_msg;
++			break;
++		}
+ 
+-		switch (batch_info->comp_info[i].type) {
++		switch (batch_info->comp_info[j].type) {
+ 		case TFC_MPC_EM_INSERT:
+ 			rc = tfc_em_insert_response(mpc_info,
+-						    &batch_info->comp_info[i].out_msg,
++						    &batch_info->comp_info[j].out_msg,
+ 						    rx_msg,
+ 						    &hash);
+ 			/*
+@@ -963,14 +1042,14 @@ int tfc_mpc_batch_end(struct tfc *tfcp,
+ 			 * flow DB entry that requires the flow_handle
+ 			 * contained within to be updated.
+ 			 */
+-			batch_info->em_hdl[i] =
+-				tfc_create_flow_handle2(batch_info->em_hdl[i],
++			batch_info->em_hdl[j] =
++				tfc_create_flow_handle2(batch_info->em_hdl[j],
+ 							hash);
+ 			batch_info->em_error = rc;
+ 			break;
+ 		case TFC_MPC_EM_DELETE:
+ 			rc = tfc_em_delete_response(mpc_info,
+-						    &batch_info->comp_info[i].out_msg,
++						    &batch_info->comp_info[j].out_msg,
+ 						    rx_msg
+ #if TFC_EM_DYNAMIC_BUCKET_EN
+ 						    , bool *db_unused,
+@@ -980,30 +1059,31 @@ int tfc_mpc_batch_end(struct tfc *tfcp,
+ 			break;
+ 		case TFC_MPC_TABLE_WRITE:
+ 			rc = tfc_act_set_response(mpc_info,
+-						  &batch_info->comp_info[i].out_msg,
++						  &batch_info->comp_info[j].out_msg,
+ 						  rx_msg);
+ 			break;
+ 		case TFC_MPC_TABLE_READ:
+ 			rc = tfc_act_get_only_response(mpc_info,
+-						       &batch_info->comp_info[i].out_msg,
++						       &batch_info->comp_info[j].out_msg,
+ 						       rx_msg,
+-						       &batch_info->comp_info[i].read_words);
++						       &batch_info->comp_info[j].read_words);
+ 			break;
+ 
+ 		case TFC_MPC_TABLE_READ_CLEAR:
+ 			rc = tfc_act_get_clear_response(mpc_info,
+-							&batch_info->comp_info[i].out_msg,
++							&batch_info->comp_info[j].out_msg,
+ 							rx_msg,
+-							&batch_info->comp_info[i].read_words);
++							&batch_info->comp_info[j].read_words);
+ 			break;
+ 
+ 		default:
+-			PMD_DRV_LOG_LINE(ERR, "MPC Batch not supported for type: %d",
+-					 batch_info->comp_info[i].type);
++			PMD_DRV_LOG_LINE(ERR, "%s: MPC Batch not supported for type: %d",
++				    __func__, batch_info->comp_info[j].type);
+ 			return -1;
+ 		}
+ 
+-		batch_info->result[i] = rc;
++		batch_info->comp_info[j].valid = false;
++		batch_info->result[j] = rc;
+ 		if (rc)
+ 			batch_info->error = true;
+ 	}
+diff --git a/drivers/net/bnxt/tf_core/v3/tfc_em.h b/drivers/net/bnxt/tf_core/v3/tfc_em.h
+index 52589ea9c3..659cebe907 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfc_em.h
++++ b/drivers/net/bnxt/tf_core/v3/tfc_em.h
+@@ -21,6 +21,8 @@ struct tfc_mpc_comp_info_t {
+ 	struct bnxt_mpc_mbuf out_msg;
+ 	int type;
+ 	uint16_t read_words;
++	uint16_t opaque;
++	bool valid;
  };
  
- enum bnxt_ulp_accept_opc {
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_template_struct.h b/drivers/net/bnxt/tf_ulp/ulp_template_struct.h
-index 5b3e82f336..f38ebcea9a 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_template_struct.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_template_struct.h
-@@ -32,6 +32,7 @@
- #define BNXT_ULP_PROTO_HDR_VXLAN_GPE_NUM 5
- #define BNXT_ULP_PROTO_HDR_GENEVE_NUM 4
- #define BNXT_ULP_PROTO_HDR_GRE_NUM	2
-+#define BNXT_ULP_PROTO_HDR_GRE_KEY_NUM	1
- #define BNXT_ULP_PROTO_HDR_ICMP_NUM	5
- #define BNXT_ULP_PROTO_HDR_ECPRI_NUM	2
- #define	BNXT_ULP_PROTO_HDR_IPV6_EXT_NUM	1
-@@ -100,6 +101,7 @@ struct ulp_rte_parser_params {
- 	uint32_t			act_pattern_id;
- 	uint8_t				app_id;
- 	uint8_t				tun_idx;
-+	uint16_t			gre_cks_rsvd0_ver; /* GRE C, K, S bits and version */
- 	uint16_t			class_info_idx;
- 	uint64_t			wc_field_bitmap;
- 	uint64_t			cf_bitmap;
+ struct tfc_mpc_batch_info_t {
+@@ -249,7 +251,7 @@ int tfc_act_get_clear_response(struct cfa_bld_mpcinfo *mpc_info,
+ int tfc_mpc_send(struct bnxt *bp,
+ 		 struct bnxt_mpc_mbuf *in_msg,
+ 		 struct bnxt_mpc_mbuf *out_msg,
+-		 uint32_t *opaque,
++		 uint16_t *opaque,
+ 		 int type,
+ 		 struct tfc_mpc_batch_info_t *batch_info);
+ 
 -- 
 2.39.5 (Apple Git-154)
 
