@@ -2,87 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D81CCF9F0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80395CCF9F0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:17:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 588CC40B9B;
-	Wed, 29 Oct 2025 17:09:15 +0100 (CET)
-Received: from mail-ot1-f100.google.com (mail-ot1-f100.google.com
- [209.85.210.100])
- by mails.dpdk.org (Postfix) with ESMTP id 7DE0B40A89
- for <dev@dpdk.org>; Wed, 29 Oct 2025 17:09:14 +0100 (CET)
-Received: by mail-ot1-f100.google.com with SMTP id
- 46e09a7af769-7c2846c961fso4790604a34.2
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:09:14 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CDBE940297;
+	Wed, 29 Oct 2025 17:17:58 +0100 (CET)
+Received: from mail-oa1-f97.google.com (mail-oa1-f97.google.com
+ [209.85.160.97]) by mails.dpdk.org (Postfix) with ESMTP id 0B9A940150
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 17:17:58 +0100 (CET)
+Received: by mail-oa1-f97.google.com with SMTP id
+ 586e51a60fabf-3c9a42d6349so154555fac.1
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:17:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761754154; x=1762358954;
+ d=1e100.net; s=20230601; t=1761754677; x=1762359477;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=i6L+uNH1tAaLEsZf9XmKpv9AV1uuaMdcOUvtN9FzQkI=;
- b=CLkU8LtEt8eVL9c3WhQlB9qz4+2P6dUKGQSogQRyzanfnv9K67lJnwR/ZPWUeoNGrC
- 3tf3aNzRQA/jwUjBA/QNqBJKXLfKLoNXsYo56ysHsnfard8upH2FSUo8CFRSESLUIAzF
- czA55U6jq2JsHbVez3HPWvtoCD4ewiwjmrZbmojaoToHexTitrroL5tTHESw2fcjnq3p
- 2jjODtHQJRQI/ThXjZ9OYHP9aOdmJTVD0TNY5ZjjhQ0ntjNoYoxx8O5Nbnk7pZvqtopk
- +kkURXB+rvPc9+PtpCeNkRwamJ0lULOjdI6yewm9LqX5CcHXF0HhZK2dCX3MIiVabGVG
- Lutw==
-X-Gm-Message-State: AOJu0YzENAH69UKdFBHySRUy0t0napo1IS+5FqAWdW/qykQD5tM/1Kdo
- WFtUcrOG0ZshOEhYRqf+T8Mcj3G32eR/pX0A084U7eFYwR4N1kJFAlBp6H+5gt00WoX48HM5UgF
- wtj/uAlBeBHg42/rPZ5EJ49d2E76zJxu3f7163598TD0noPbcyvNhsy/67Rd1dn2ujljYEaGEpK
- WcWVYQSurdSmOJtwzTEaNDLSSXHRhojIYKpVXZX5zxUPj+UktF2+KJUy//oIcJ+y3XOuzX0w==
-X-Gm-Gg: ASbGncu2AXvHAdZp9HMsoJ/bpd95CZl0PrIYrnJwbWDzLR0HSDRneiD9kNCrcWA5kaQ
- vG8+u9QceG3QpTPSaGOGsMWhX7iSpx8q7tjd1c7IALpNDe2Wxn9ucLX2hDLzMxPIwUxIeqEGAgT
- X66jmOnsvSF/k/mNUTB27jcR2c8f7iTT2NHfYe+vhQV2gw5bhdjKEAVkj49rbtjoqTfX7jDhokt
- d78sZUamafPUBcaSjTYJGyo+hIxe1MEcuAfLhWNn7bs8Tv6ya6siWIgL1I7kLMBvpbCfCP49t6F
- shknQBk3FD9TxGF0aj3p1E09NJkVx6r+ayFAOcyhY5YrshOI9fMSIBVkLpTAPK+4HpGOPEJ/GWJ
- r4tQj7LcYIVLY+mzzwlvHsKpv2tN3pItxjeTmojx1yJ6QIdynyrQ3sf4+buhNocUf16ILnovphX
- Qz8ab2fOx4sSk1uDM12LuX39g3qbk8ylep777Q
-X-Google-Smtp-Source: AGHT+IHMzDUoa1s1pNx7bVi7Tp0o2SC/6GyXRhWiQyIt9NH3c/KgBJJ0U7DhwXTrZ+7tcI3ohI14eXI2ga8+
-X-Received: by 2002:a05:6830:44aa:b0:7af:353b:95ea with SMTP id
- 46e09a7af769-7c68305f500mr2202722a34.14.1761754153672; 
- Wed, 29 Oct 2025 09:09:13 -0700 (PDT)
+ bh=bZxPBHD4ONfGrqgOQPscQZB61SGsc7QmNvaWb+9fsf8=;
+ b=UExWPCVAF9sUipbbQbyceuKu3NmCrc8OXnAtk3BSzLj64f8MTLyp35/nI6jmT4Fqq8
+ GjuWFhbJZr+x+NTlI1c3Ae0ZIKPXg5tro1k5T/ELe+lFP44M+G7iKmu/w4LyMr5O4hu6
+ +UFRj5vvVENH2q15/veA33BycEuB9bGJSpM0zcCAJAxaUpbiBe2qs/+bHXd56Vt7BnYz
+ G6ckYEfyYMilQ2l2ng/igXlWPvcOOOgryqsAtCbv9Q111T7PkX69LQsRUOrEBoFZlIAJ
+ BUqkLep4C5TZStb2QQIAzlOX5wyPl/MxqE8QLYoGRaR1aMl8F9ksdszWolW0HZ6rVOqW
+ 4UTA==
+X-Gm-Message-State: AOJu0YwUoEyBqs3+nNS5DNlYgOH9g6RWA7Piv8i+KA0Fh21jaFNeIfR1
+ NKvgl9MNg0ZPKjwvAlb/bknbnerGU9yGcU8N1RIqR/73VWBztRR2O84SCZvhwWLkl/dQO263u8O
+ q1HEUxkixcADVQbMIh1k03DOcxhcYTtXYMeXTO6f9uaZoqWgbpuVoyA8vV01K+2BL70N/w6wAz2
+ jHH5ATYm+nrX8xy5K0++0MPK1TGTVRmM9zqOfNiO2z14Lywwtoe52qEOYbHoSBeVckJ5sX7A==
+X-Gm-Gg: ASbGnctIFDKiA6dXF4dSJvNepe6YIMDRJWfu7N1UENCN646DMgEqgJF17r2c1YZmmVe
+ l5ojtdtCBMooAzB6e4F64cxeFPHCz0FP1Z8zOwK4DHhyBbUBRI0mdRtZomKN3mHvOddGPiXpb+2
+ MrxK19hL+fql8ZjW/NhKCTVsqfVDmEK7gnrE8cImqCxJMAiQ9A/8mXyCfDqr16zI2oxv9aCfQE2
+ d2RJQU/WNVWeWng1qdRAwXnut/6jvulVPkmOmhd68UDv+R1UM70JrdHTuV0+9inhHnjxrJ1qy5V
+ S17bVgW5kBAYF4PXEcaeojHaYVtZJZpcKvRCK+tg/FPL4V/3H5s3Cvmjin0gytLvuRVd+beFNJx
+ H2wHEWbgUW9PqoZDT8STz6G+94R/so4yuVB68LgO3nl5QlNsKcVfWYBOxkWlwHlsFUuKnZ+YK4D
+ HMAo4Fv9oAVtU4UUsSjYP7YikvKirXcFGJkvwm
+X-Google-Smtp-Source: AGHT+IG71l+gfVUOMxLzyLP+u4Wg7XkHD5kd9NFc7HBPQEhSg0moL6ux50uohnwQQNMymqDo7zuUR7a3tSIC
+X-Received: by 2002:a05:687c:20d3:b0:3d1:b17b:2549 with SMTP id
+ 586e51a60fabf-3d745d992d2mr1702826fac.15.1761754676065; 
+ Wed, 29 Oct 2025 09:17:56 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
+ (address-144-49-247-103.dlp.protect.broadcom.com. [144.49.247.103])
  by smtp-relay.gmail.com with ESMTPS id
- 46e09a7af769-7c5301c8e89sm1307631a34.5.2025.10.29.09.09.13
+ 586e51a60fabf-3d1e290e020sm1204733fac.7.2025.10.29.09.17.55
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 29 Oct 2025 09:09:13 -0700 (PDT)
+ Wed, 29 Oct 2025 09:17:56 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qk1-f198.google.com with SMTP id
- af79cd13be357-8a65ae81245so886080485a.3
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:09:13 -0700 (PDT)
+Received: by mail-qk1-f200.google.com with SMTP id
+ af79cd13be357-86df46fa013so1983703385a.2
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:17:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761754152; x=1762358952; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761754675; x=1762359475; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=i6L+uNH1tAaLEsZf9XmKpv9AV1uuaMdcOUvtN9FzQkI=;
- b=SrPdGL+ltYmx4mrck8dOfM8No9/fCh/nS79syr9rQAwoRamXBwHRegJ9ZXKGtlVFII
- k+XDegBdtqVhW4sv251Ci1q65NyLLD8IcbX02PpWV/bL8w+4xPzCUrgpo5StRyaaj2ut
- zwEng/Cram4IXXVNx/mCiVtCDqht7KAhjqbz0=
-X-Received: by 2002:a05:620a:2909:b0:8a1:d55f:8c9c with SMTP id
- af79cd13be357-8a8e59b10dfmr470031985a.71.1761754152296; 
- Wed, 29 Oct 2025 09:09:12 -0700 (PDT)
-X-Received: by 2002:a05:620a:2909:b0:8a1:d55f:8c9c with SMTP id
- af79cd13be357-8a8e59b10dfmr470024985a.71.1761754151671; 
- Wed, 29 Oct 2025 09:09:11 -0700 (PDT)
+ bh=bZxPBHD4ONfGrqgOQPscQZB61SGsc7QmNvaWb+9fsf8=;
+ b=CYCBIpjsFC4Xnwc7T9Q4sSxJMedEOp5GI2XGvmqkKV6P/qnRTntS2hbs3+5JMLcYoA
+ y+PsOGrWpeSzmPj9G2YNjIlOHAs8Rg/qWv+tqrVL8Feq3tAXVXzu0a7jDfKJ7gwRGL39
+ mtv8u2LOyCa3nyIdg3g5XHi6VoYsTJFh6jQqg=
+X-Received: by 2002:a05:620a:46a4:b0:891:d993:1bdb with SMTP id
+ af79cd13be357-8a8e6087428mr426780685a.86.1761754674692; 
+ Wed, 29 Oct 2025 09:17:54 -0700 (PDT)
+X-Received: by 2002:a05:620a:46a4:b0:891:d993:1bdb with SMTP id
+ af79cd13be357-8a8e6087428mr426774685a.86.1761754674070; 
+ Wed, 29 Oct 2025 09:17:54 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.09.10
+ af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.17.53
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 29 Oct 2025 09:09:11 -0700 (PDT)
+ Wed, 29 Oct 2025 09:17:53 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com,
- Peter Spreadborough <peter.spreadborough@broadcom.com>,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Farah Smith <farah.smith@broadcom.com>
-Subject: [PATCH v5 23/57] net/bnxt/tf_ulp: ovs-dpdk packet drop observed with
- thor2
-Date: Wed, 29 Oct 2025 12:06:38 -0400
-Message-Id: <20251029160712.58519-24-manish.kurup@broadcom.com>
+ Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>,
+ Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
+ Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
+Subject: [PATCH v5 24/57] net/bnxt/tf_ulp: Cleanup devargs argument parsing
+ code
+Date: Wed, 29 Oct 2025 12:06:39 -0400
+Message-Id: <20251029160712.58519-25-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251029160712.58519-1-manish.kurup@broadcom.com>
 References: <20251021175049.46092-1-manish.kurup@broadcom.com>
@@ -103,190 +102,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Peter Spreadborough <peter.spreadborough@broadcom.com>
+From: Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
 
-Incorrect packet counts were being returned for ovs flows. This was
-happening when stats counter was doing read-clear for flow stats at a
-rate faster than OVS was reading the stats from us. In this
-scenario SC would read a count and as a result the HW counter would be
-reset, SC would then do a second read which would replace the current
-count and it would be lost. The fix is to never do read-clear and always
-update with the latest full count. If the application requests a reset
-then the current count is returned minus the last value read and the last
-value read updated with the current count, hence just the delta is
-returned.
+For Thor2 if any of the ports are attached on testpmd without
+"mpc=1" argument, code flow will not initialize core mpc
+structure which can lead to seg fault in bnxt_mpc_send while
+accessing tx queues. Adding a NULL conditional check for the
+MPC member of the bp structure.
 
-Signed-off-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
-Reviewed-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Reviewed-by: Farah Smith <farah.smith@broadcom.com>
+Signed-off-by: Sangtani Parag Satishbhai <parag-satishbhai.sangtani@broadcom.com>
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+Reviewed-by: Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c | 79 +++++++++++++++++++---------
- drivers/net/bnxt/tf_ulp/ulp_sc_mgr.h |  2 +
- 2 files changed, 57 insertions(+), 24 deletions(-)
+ drivers/net/bnxt/bnxt_mpc.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-index b246b90fe2..24012e30b1 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-@@ -26,6 +26,8 @@
- #define ULP_TFC_CNTR_ALIGN 32
- #define ULP_TFC_ACT_WORD_SZ 32
- 
-+#define ULP_SC_MAX_COUNT 0xFFFFFFFFFFFFFFFFULL
-+
- static const struct bnxt_ulp_sc_core_ops *
- bnxt_ulp_sc_ops_get(struct bnxt_ulp_context *ctxt)
+diff --git a/drivers/net/bnxt/bnxt_mpc.c b/drivers/net/bnxt/bnxt_mpc.c
+index 2582b50782..ff2f0d7043 100644
+--- a/drivers/net/bnxt/bnxt_mpc.c
++++ b/drivers/net/bnxt/bnxt_mpc.c
+@@ -719,10 +719,20 @@ int bnxt_mpc_send(struct bnxt *bp,
+ 		  bool batch)
  {
-@@ -182,7 +184,7 @@ ulp_sc_mgr_deinit(struct bnxt_ulp_context *ctxt)
- 	return 0;
- }
+ 	int rc;
+-	struct bnxt_mpc_txq *mpc_queue = bp->mpc->mpc_txq[in_msg->chnl_id];
++	struct bnxt_mpc_txq *mpc_queue;
+ 	int retry = BNXT_MPC_RX_RETRY;
+ 	uint32_t pi = 0;
  
--#define ULP_SC_PERIOD_US 256
-+#define ULP_SC_PERIOD_US 100000
- #define ULP_SC_CTX_DELAY 10000
- 
- static uint32_t ulp_stats_cache_main_loop(void *arg)
-@@ -265,12 +267,12 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
- 					(uint64_t)sce;
- 
- 				rc = sc_ops->ulp_stats_cache_update(tfcp,
--								    sce->dir,
--								    data,
--								    sce->handle,
--								    &words,
--								    &batch_info,
--								    sce->reset);
-+					    sce->dir,
-+					    &ulp_sc_info->read_data_iova[batch],
-+					    sce->handle,
-+					    &words,
-+					    &batch_info,
-+					    false);
- 				if (unlikely(rc)) {
- 					/* Abort this batch */
- 					PMD_DRV_LOG_LINE(ERR,
-@@ -278,9 +280,6 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
- 					break;
- 				}
- 
--				if (sce->reset)
--					sce->reset = false;
--
- 				/* Next */
- 				batch++;
- 				sce++;
-@@ -308,9 +307,15 @@ static uint32_t ulp_stats_cache_main_loop(void *arg)
- 					PMD_DRV_LOG_LINE(ERR, "batch:%d result:%d",
- 							 batch, batch_info.result[batch]);
- 				} else {
--					count = (struct ulp_sc_tfc_stats_cache_entry *)
--						((uintptr_t)batch_info.em_hdl[batch]);
--					memcpy(&count->packet_count, data, ULP_TFC_ACT_WORD_SZ);
-+					uint64_t *cptr = (uint64_t *)data;
-+				   uintptr_t em_hdl = batch_info.em_hdl[batch];
-+
-+					count = (struct ulp_sc_tfc_stats_cache_entry *)em_hdl;
-+					if (*cptr != count->packet_count) {
-+						count->packet_count = *cptr;
-+						cptr++;
-+						count->byte_count = *cptr;
-+					}
- 				}
- 
- 				data += ULP_SC_PAGE_SIZE;
-@@ -440,6 +445,8 @@ int ulp_sc_mgr_query_count_get(struct bnxt_ulp_context *ctxt,
- 	uint32_t f2_cnt;
- 	uint64_t *t;
- 	uint64_t bs;
-+	uint64_t packet_count;
-+	uint64_t byte_count;
- 	int rc = 0;
- 
- 	/* Get stats cache info */
-@@ -450,8 +457,22 @@ int ulp_sc_mgr_query_count_get(struct bnxt_ulp_context *ctxt,
- 	sce = ulp_sc_info->stats_cache_tbl;
- 	sce += flow_id;
- 
-+	/* Save the counts to local variables since they could be modified
-+	 * in the stats cache loop.
++	/*
++	 * TODO: This condition check is added to avoid
++	 * segmentation fault in case mpc argument is
++	 * missing in dev-args. Fix this by removing
++	 * mpc argument from dev args.
 +	 */
-+	packet_count = sce->packet_count;
-+	byte_count = sce->byte_count;
++	if (!bp->mpc)
++		return -1;
++	mpc_queue = bp->mpc->mpc_txq[in_msg->chnl_id];
 +
- 	/* To handle the parent flow */
- 	if (sce->flags & ULP_SC_ENTRY_FLAG_PARENT) {
-+		struct ulp_sc_tfc_stats_cache_entry *f1_sce = sce;
-+
-+		if (!(f1_sce->flags & ULP_SC_ENTRY_FLAG_VALID))
-+			return -EBUSY;
-+
-+		packet_count = 0;
-+		byte_count = 0;
-+
- 		flow_db = bnxt_ulp_cntxt_ptr2_flow_db_get(ctxt);
- 		if (!flow_db) {
- 			BNXT_DRV_DBG(ERR, "parent child db validation failed\n");
-@@ -490,26 +511,36 @@ int ulp_sc_mgr_query_count_get(struct bnxt_ulp_context *ctxt,
- 				/* no counter action, then ignore flows */
- 				if (!(sce->flags & ULP_SC_ENTRY_FLAG_VALID))
- 					continue;
--				count->hits += sce->packet_count;
--				count->hits_set = 1;
--				count->bytes += sce->byte_count;
--				count->bytes_set = 1;
-+
-+				packet_count += sce->packet_count;
-+				byte_count += sce->byte_count;
- 			} while (bs && f2_cnt);
- 		}
-+
-+		sce = f1_sce;
- 	} else {
- 		/* To handle regular or child flows */
- 		/* If entry is not valid return an error */
- 		if (!(sce->flags & ULP_SC_ENTRY_FLAG_VALID))
- 			return -EBUSY;
-+	}
- 
--		count->hits = sce->packet_count;
--		count->hits_set = 1;
--		count->bytes = sce->byte_count;
--		count->bytes_set = 1;
--
--		if (count->reset)
--			sce->reset = true;
-+	if (count->reset) {
-+		/* Calculate packet count delta */
-+		count->hits = (packet_count - sce->last_packet_count) & ULP_SC_MAX_COUNT;
-+		count->bytes = (byte_count - sce->last_byte_count) & ULP_SC_MAX_COUNT;
-+	} else {
-+		count->hits = packet_count;
-+		count->bytes = byte_count;
- 	}
-+
-+	/* Save the raw packet count */
-+	sce->last_packet_count = packet_count;
-+	sce->last_byte_count = byte_count;
-+
-+	count->bytes_set = 1;
-+	count->hits_set = 1;
-+
- 	return rc;
- }
- 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.h b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.h
-index 29d0b0a1a4..631e2f77b2 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.h
-@@ -30,6 +30,8 @@ struct ulp_sc_tfc_stats_cache_entry {
- 	uint64_t byte_count;
- 	uint64_t count_fields1;
- 	uint64_t count_fields2;
-+	uint64_t last_packet_count;
-+	uint64_t last_byte_count;
- 	bool reset;
- };
- 
+ 	if (out_msg->cmp_type != CMPL_BASE_TYPE_MID_PATH_SHORT &&
+ 	    out_msg->cmp_type != CMPL_BASE_TYPE_MID_PATH_LONG)
+ 		return -1;
 -- 
 2.39.5 (Apple Git-154)
 
