@@ -2,70 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 901B5CCF9E9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 12:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FED3CCF9EB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 13:00:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 925814028E;
-	Wed, 29 Oct 2025 13:23:33 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 64DCA40288;
- Wed, 29 Oct 2025 13:23:31 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2D245206CD;
- Wed, 29 Oct 2025 13:23:31 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id E305C4028E;
+	Wed, 29 Oct 2025 14:00:31 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 610C140288
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 14:00:30 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 59TCfX7F3884952 for <dev@dpdk.org>; Wed, 29 Oct 2025 06:00:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=s
+ /OUKVMmXzuqeoITCMga7eESL66RT/iXIQp6Bl0PFGU=; b=Khsa++yzv8iIiJ3uM
+ KjuS6aj1kZKvFLpNWmToPF6BAwhu5BgoWJWhGnch2OAhMX2K8k0JkKotHEn1AJzs
+ 0VdUQ+PjqtHhCDfpJovlLLA+v4A67aKtXNYM0hhHeTAs7MkZ0L1OVubMuMqY4IpN
+ H+txa7h080u87IZFxgYr2wGotkHZeNWQNMFhA3K0xpMNB4loyR1RTOOa1M3+xLAH
+ ciexGkMWCoqSSPUDbdEOHrgpajCkb+B12npfWCMXnElfalXZh1B8PmTKrxpxs3HX
+ naCFtBwCVEvWdZ0/cIAI9rUq/cIowMwYkjE2VjBJgo44IO+D0UkPz3qi5+lvdZvA
+ D+tzA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4a348ma7yk-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 06:00:29 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 29 Oct 2025 06:00:38 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Wed, 29 Oct 2025 06:00:38 -0700
+Received: from localhost.localdomain (unknown [10.28.36.154])
+ by maili.marvell.com (Postfix) with ESMTP id 26EA95B6941;
+ Wed, 29 Oct 2025 06:00:25 -0700 (PDT)
+From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <dev@dpdk.org>, <jerinj@marvell.com>, Rakesh Kudurumalla
+ <rkudurumalla@marvell.com>
+Subject: [PATCH v2 1/5] common/cnxk: add CPT CQ configuration
+Date: Wed, 29 Oct 2025 18:30:19 +0530
+Message-ID: <20251029130023.1637177-1-rkudurumalla@marvell.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251006051402.1387576-1-rkudurumalla@marvell.com>
+References: <20251006051402.1387576-1-rkudurumalla@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: Fixing MBUF_FAST_FREE TX offload requirements?
-Date: Wed, 29 Oct 2025 13:23:28 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65513@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <aQHdDf7DnAIyIzR4@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: Fixing MBUF_FAST_FREE TX offload requirements?
-Thread-Index: AdxItbf0vaAZYbBtT5KshyiE1pVM9QAEFMUw
-References: <98CBD80474FA8B44BF855DF32C47DC35F65442@smartserver.smartshare.dk>
- <aMvMNUxSslnM68OR@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65446@smartserver.smartshare.dk>
- <f3d8956d80814d82a450abc263349ea7@huawei.com>
- <157addba-7dc8-4f0c-8b86-4ca8d057cdfc@oktetlabs.ru>
- <aQHdDf7DnAIyIzR4@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>,
- "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
-Cc: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "Ajit Khaparde" <ajit.khaparde@broadcom.com>,
- "Somnath Kotur" <somnath.kotur@broadcom.com>,
- "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
- "Kiran Kumar K" <kirankumark@marvell.com>,
- "Sunil Kumar Kori" <skori@marvell.com>,
- "Satha Rao" <skoteshwar@marvell.com>, "Harman Kalra" <hkalra@marvell.com>,
- "Hemant Agrawal" <hemant.agrawal@nxp.com>,
- "Sachin Saxena" <sachin.saxena@oss.nxp.com>,
- "Shai Brandes" <shaibran@amazon.com>,
- "Evgeny Schemeilin" <evgenys@amazon.com>,
- "Ron Beider" <rbeider@amazon.com>, "Amit Bernstein" <amitbern@amazon.com>,
- "Wajeeh Atrash" <atrwajee@amazon.com>, "Gaetan Rivet" <grive@u256.net>,
- "yangxingui" <yangxingui@h-partners.com>,
- "Fengchengwen" <fengchengwen@huawei.com>,
- "Praveen Shetty" <praveen.shetty@intel.com>,
- "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>,
- "Anatoly Burakov" <anatoly.burakov@intel.com>,
- "Jingjing Wu" <jingjing.wu@intel.com>, "Rosen Xu" <rosen.xu@altera.com>,
- "Andrew Boyer" <andrew.boyer@amd.com>,
- "Dariusz Sosnowski" <dsosnowski@nvidia.com>,
- "Viacheslav Ovsiienko" <viacheslavo@nvidia.com>,
- "Bing Zhao" <bingz@nvidia.com>, "Ori Kam" <orika@nvidia.com>,
- "Suanming Mou" <suanmingm@nvidia.com>, "Matan Azrad" <matan@nvidia.com>,
- "Wenbo Cao" <caowenbo@mucse.com>, "Jerin Jacob" <jerinj@marvell.com>,
- "Maciej Czekaj" <mczekaj@marvell.com>, <dev@dpdk.org>,
- <techboard@dpdk.org>, "Ivan Malov" <ivan.malov@arknetworks.am>,
- "Thomas Monjalon" <thomas@monjalon.net>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDA5OSBTYWx0ZWRfX7CsO1HoXSiQS
+ FhNUySSAPAqJtT7Uqt3z0msmZiQ/aevsex8B0hrEs83M0nR4F9IogwMjWK06GcG0TbsMEMKLCTv
+ KU2g8SYGBfNUAwXZTOjDf+VSqFsGlFGDa+WfmdB/E0nWGlkpEtZMMJX1ywF9eaPNrb0E51s07lD
+ KYd7jSm6mjCk0yN8lYZdgKLSLIIdYSoZ6dDq33jKIdRexj4+UH3BULV87OFySMW+kQIEC4eDIX0
+ 6zIgMQ0s5HUEA1NLxpLr8KmFHVVDJXmDHX/Nuv9oVHWCLKir5fMyb8ZrlWjL4dDpfay9U8TgAwW
+ mDPPKfr/nwGLNjo8qsemKbXpJUY6bltlsKLhECsIkn9vfl/Exqq8UiLVffLQNrw3gaMyiTOD6Yn
+ LndyhhvkwXBpdLrPahTd4aSIyMOemw==
+X-Authority-Analysis: v=2.4 cv=T/mBjvKQ c=1 sm=1 tr=0 ts=69020fed cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
+ a=P-QZ-QV2CIGMkEk3wzoA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: XuZbSsiy5xqvqjUBnBy3Lsx-9CdExkW6
+X-Proofpoint-ORIG-GUID: XuZbSsiy5xqvqjUBnBy3Lsx-9CdExkW6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-29_05,2025-10-29_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,249 +82,131 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Wednesday, 29 October 2025 10.23
->=20
-> On Wed, Oct 29, 2025 at 12:16:37PM +0300, Andrew Rybchenko wrote:
-> > On 9/18/25 5:12 PM, Konstantin Ananyev wrote:
-> > >
-> > >
-> > > > Subject: RE: Fixing MBUF_FAST_FREE TX offload requirements?
-> > > >
-> > > > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > > > > Sent: Thursday, 18 September 2025 11.09
-> > > > >
-> > > > > On Thu, Sep 18, 2025 at 10:50:11AM +0200, Morten Br=F8rup =
-wrote:
-> > > > > > Dear NIC driver maintainers (CC: DPDK Tech Board),
-> > > > > >
-> > > > > > The DPDK Tech Board has discussed that patch [1] (included =
-in
-> DPDK
-> > > > > 25.07) extended the documented requirements to the
-> > > > > RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE offload.
-> > > > > > These changes put additional limitations on applications' =
-use
-> of the
-> > > > > MBUF_FAST_FREE TX offload, and made MBUF_FAST_FREE mutually
-> exclusive
-> > > > > with MULTI_SEGS (which is typically used for jumbo frame
-> support).
-> > > > > > The Tech Board discussed that these changes do not reflect
-> the
-> > > > > intention of the MBUF_FAST_FREE TX offload, and wants to fix
-> it.
-> > > > > > Mainly, MBUF_FAST_FREE and MULTI_SEGS should not be mutually
-> > > > > exclusive.
-> > > > > >
-> > > > > > The original RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE requirements
-> were:
-> > > > > > When set, application must guarantee that
-> > > > > > 1) per-queue all mbufs come from the same mempool, and
-> > > > > > 2) mbufs have refcnt =3D 1.
-> > > > > >
-> > > > > > The patch added the following requirements to the
-> MBUF_FAST_FREE
-> > > > > offload, reflecting rte_pktmbuf_prefree_seg() postconditions:
-> > > > > > 3) mbufs are direct,
-> > > > > > 4) mbufs have next =3D NULL and nb_segs =3D 1.
-> > > > > >
-> > > > > > Now, the key question is:
-> > > > > > Can we roll back to the original two requirements?
-> > > > > > Or do the drivers also depend on the third and/or fourth
-> > > > > requirements?
-> > > > > >
-> > > > > > <advertisement>
-> > > > > > Drivers freeing mbufs directly to a mempool should use the
-> new
-> > > > > rte_mbuf_raw_free_bulk() instead of rte_mempool_put_bulk(), so
-> the
-> > > > > preconditions for freeing mbufs directly into a mempool are
-> validated
-> > > > > in mbuf debug mode (with RTE_LIBRTE_MBUF_DEBUG enabled).
-> > > > > > Similarly, rte_mbuf_raw_alloc_bulk() should be used instead
-> of
-> > > > > rte_mempool_get_bulk().
-> > > > > > </advertisement>
-> > > > > >
-> > > > > > PS: The feature documentation [2] still reflects the =
-original
-> > > > > requirements.
-> > > > > >
-> > > > > > [1]:
-> > > > >
-> > > >
-> https://github.com/DPDK/dpdk/commit/55624173bacb2becaa67793b7139188487
-> > > > 6
-> > > > > 673c1
-> > > > > > [2]:
-> > > > >
-> =
-https://elixir.bootlin.com/dpdk/v25.07/source/doc/guides/nics/features.
-> > > > > rst#L125
-> > > > > >
-> > > > > >
-> > > > > > Venlig hilsen / Kind regards,
-> > > > > > -Morten Br=F8rup
-> > > > > >
-> > > > > I'm a little torn on this question, because I can see benefits
-> for both
-> > > > > approaches. Firstly, it would be nice if we made FAST_FREE as
-> > > > > accessible
-> > > > > for driver use as it was originally, with minimal =
-requirements.
-> > > > > However, on
-> > > > > looking at the code, I believe that many drivers actually took
-> it to
-> > > > > mean
-> > > > > that scattered packets couldn't occur in that case either, so
-> the use
-> > > > > was
-> > > > > incorrect.
-> > > >
-> > > > I primarily look at Intel drivers, and that's how I read the
-> driver code too.
-> > > >
-> > > > > Similarly, and secondly, if we do have the extra
-> > > > > requirements
-> > > > > for FAST_FREE, it does mean that any use of it can be very,
-> very
-> > > > > minimal
-> > > > > and efficient, since we don't need to check anything before
-> freeing the
-> > > > > buffers.
-> > > > >
-> > > > > Given where we are now, I think keeping the more restrictive
-> definition
-> > > > > of
-> > > > > FAST_FREE is the way to go - keeping it exclusive with
-> MULTI_SEGS -
-> > > > > because
-> > > > > it means that we are less likely to have bugs. If we look to
-> change it
-> > > > > back, I think we'd have to check all drivers to ensure they =
-are
-> using
-> > > > > the
-> > > > > flag safely.
-> > > >
-> > > > However, those driver bugs are not new.
-> > > > If we haven't received bug reports from users affected by them,
-> maybe we can
-> > > > disregard them (in this discussion about pros and cons).
-> > > > I prefer we register them as driver bugs, instead of changing =
-the
-> API to
-> > > > accommodate bugs in the drivers.
-> > > >
-> > > >  From an application perspective, here's an idea for
-> consideration:
-> > > > Assuming that indirect mbufs are uncommon, we keep requirement
-> #3.
-> > > > To allow MULTI_SEGS (jumbo frames) with FAST_FREE, we get rid of
-> requirement
-> > > > #4.
-> > >
-> > > Do we really need to enable FAST_FREE for jumbo-frames?
-> > > Jumbo-frames usually means much smaller PPS number and actual =
-RX/TX
-> overhead
-> > > becomes really tiny.
-> >
-> > +1
-> > > > Since the driver knows that refcnt =3D=3D 1, the driver can set =
-next
-> =3D NULL and
-> > > > nb_segs =3D 1 at any time, either when writing the TX descriptor
-> (when it reads the
-> > > > mbuf anyway), or when freeing the mbuf.
-> > > > Regarding performance, this means that the driver's TX code path
-> has to write to
-> > > > the mbufs (i.e. adding the performance cost of memory store
-> operations) when
-> > > > segmented - but that is a universal requirement when freeing
-> segmented mbufs
-> > > > to the mempool.
-> > >
-> > > It might work, but I think it will become way too complicated.
-> > > Again I don't know who is going to inspect/fix all the drivers.
-> > > Just not allowing FAST_FREE for mulsti-seg seems like a much more
-> simpler and safer approach.
-> > > > For even more optimized driver performance, as Bruce mentions...
-> > > > If a port is configured for FAST_FREE and not MULTI_SEGS, the
-> driver can use a
-> > > > super lean transmit function.
-> > > > Since the driver's transmit function pointer is per port (not =
-per
-> queue), this would
-> > > > require the driver to provide the MULTI_SEGS capability only per
-> port, and not
-> > > > per queue. (Or we would have to add a NOT_MULTI_SEGS offload
-> flag, to ensure
-> > > > that no queue is configured for MULTI_SEGS.)
-> >
-> >
-> > FAST_FREE is not a real Tx offload, since there is no promise from
-> > driver to do something (like other Tx offloads, e.g. checksumming or
-> > TSO). Is it a promise to ignore refcount or take a look at memory
-> pool
-> > of some packets only? I guess no. If so, basically any driver may
-> > advertise it and simply ignore if the offload is requested, but
-> > driver can do nothing with these limitations on input data.
-> >
-> > It is a performance hint in fact and promise from application to
-> > follow specified limitations on Tx mbufs.
-> >
-> > So, if application specifies both FAST_FREE and MULTI_SEG, but =
-driver
-> > code can't FAST_FREE with MULTI_SEG, it should just ignore =
-FAST_FREE.
-> > That's it. The performance hint is simply useless in this case.
-> > There is no point to make FAST_FREE and MULTI_SEG mutual exclusive.
-> > If some drivers can really support both - great. If no, just ignore
-> > FAST_FREE and support MULTI_SEG.
-> >
-> > "mbufs are direct" must be FAST_FREE requirement. Since otherwise
-> > freeing is not simple. I guess is was simply lost in the original
-> > definition of FAST_FREE.
+Add new structures to used initialize and enable & disable
+CPT CQ
 
-Agree about the "mbufs are direct" statement being lost in the original =
-definition.
-It can be extended to include mbufs using "pinned external buffer with =
-refcnt=3D=3D1", because freeing those is just as simple as freeing =
-"direct" mbufs.
+Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+---
+v2: updated doc/guides/nics/cnxk.rst
+ drivers/common/cnxk/hw/cpt.h | 77 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-> >
-> That's a good point and expanation of things. Perhaps we are better to
-> deprecate FAST_FREE and replace it with a couple of explicit hints =
-that
-> better explain what they are?
->=20
-> - RTE_ETH_TX_HINT_DIRECT_MBUFS
-
-In the FAST_FREE case, this hint would be =
-TX_HINT_MBUF_DIRECT_OR_SINGLE_OWNER_PINNED_EXTBUF.
-
-> - RTE_ETH_TX_HINT_SINGLE_MEMPOOL
-
-Prefer TX_HINT_SINGLE_MEMPOOL -> TX_HINT_SAME_MEMPOOL, so we can add a =
-globally scoped TX_HINT_SINGLE_MEMPOOL later.
-
-Also, RTE_ETH_TX_HINT_NON_SEGMENTED can be added later.
-
-I strongly agree with the finer granularity for the hints; the =
-optimization of freeing to one mempool instead of a variety of mempools =
-is orthogonal to the optimization of not having to consider indirect =
-mbufs.
-And the drivers are free to only optimize if multiple hints are present; =
-so there is no downside to using a finer granularity for hints.
-
-Although we are reusing "offload" fields for hints, there's no need for =
-drivers to announce capability for such hints, including FAST_FREE; =
-since the drivers can freely ignore any hints, hint capability doesn't =
-contain any information about the driver's ability to do anything useful =
-with the hints.
-
-Regarding naming, we should use "promise" instead of "hint", to =
-emphasize that the "hint" is not allowed to be violated.
+diff --git a/drivers/common/cnxk/hw/cpt.h b/drivers/common/cnxk/hw/cpt.h
+index e542f3a3d4..19a1b87ae6 100644
+--- a/drivers/common/cnxk/hw/cpt.h
++++ b/drivers/common/cnxk/hw/cpt.h
+@@ -36,6 +36,10 @@
+ #define CPT_LF_Q_SIZE		(0x100ull)
+ #define CPT_LF_Q_INST_PTR	(0x110ull)
+ #define CPT_LF_Q_GRP_PTR	(0x120ull)
++#define CPT_LF_CQ_BASE		(0x200ull)
++#define CPT_LF_CQ_SIZE		(0x210ull)
++#define CPT_LF_CQ_PTR		(0x220ull)
++#define CPT_LF_CQ_CTL		(0x230ull)
+ #define CPT_LF_NQX(a)		(0x400ull | (uint64_t)(a) << 3)
+ #define CPT_LF_CTX_CTL		(0x500ull)
+ #define CPT_LF_CTX_FLUSH	(0x510ull)
+@@ -87,6 +91,24 @@ union cpt_eng_caps {
+ 	};
+ };
+ 
++union cpt_lf_cq_ctl {
++	uint64_t u;
++	struct cpt_lf_cq_ctl_s {
++		uint64_t ena : 1;
++		uint64_t fc_ena : 1;
++		uint64_t fc_up_crossing : 1;
++		uint64_t reserved_3_3 : 1;
++		uint64_t fc_hyst_bits : 4;
++		uint64_t reserved_8_15 : 8;
++		uint64_t entry_size : 2;
++		uint64_t reserved_18_23 : 6;
++		uint64_t dq_ack_ena : 1;
++		uint64_t cq_all : 1;
++		uint64_t reserved_26_43 : 18;
++		uint64_t busy_count : 20;
++	} s;
++};
++
+ union cpt_lf_ctl {
+ 	uint64_t u;
+ 	struct cpt_lf_ctl_s {
+@@ -161,6 +183,16 @@ union cpt_lf_q_inst_ptr {
+ 	} s;
+ };
+ 
++union cpt_lf_cq_ptr {
++	uint64_t u;
++	struct cpt_lf_cq_ptr_s {
++		uint64_t count : 20;
++		uint64_t reserved_20_31 : 12;
++		uint64_t nq_ptr : 20;
++		uint64_t reserved_52_63 : 12;
++	} s;
++};
++
+ union cpt_lf_q_base {
+ 	uint64_t u;
+ 	struct cpt_lf_q_base_s {
+@@ -180,6 +212,23 @@ union cpt_lf_q_size {
+ 	} s;
+ };
+ 
++union cpt_lf_cq_base {
++	uint64_t u;
++	struct cpt_lf_cq_base_s {
++		uint64_t reserved_0_6 : 7;
++		uint64_t addr : 46;
++		uint64_t reserved_53_63 : 11;
++	} s;
++};
++
++union cpt_lf_cq_size {
++	uint64_t u;
++	struct cpt_lf_cq_size_s {
++		uint64_t size : 20;
++		uint64_t reserved_20_63 : 44;
++	} s;
++};
++
+ union cpt_lf_misc_int {
+ 	uint64_t u;
+ 	struct cpt_lf_misc_int_s {
+@@ -297,6 +346,34 @@ struct cpt_inst_s {
+ 	union cpt_inst_w7 w7;
+ };
+ 
++struct cpt_cq_s {
++	union cpt_cq_w0 {
++		struct {
++			uint64_t compcode : 7;
++			uint64_t doneint : 1;
++			uint64_t uc_compcode : 8;
++			uint64_t uc_info : 48;
++		} s;
++		uint64_t u64;
++	} w0;
++
++	struct {
++		uint64_t esn : 64;
++	} w1;
++
++	union cpt_cq_w2 {
++		struct {
++			uint64_t fmt : 2;
++			uint64_t rsv : 14;
++			uint64_t uc_info2 : 48;
++		} s;
++	} w2;
++
++	struct {
++		uint64_t comp_ptr : 64;
++	} w3;
++};
++
+ union cpt_res_s {
+ 	struct cpt_cn20k_res_s {
+ 		uint64_t compcode : 7;
+-- 
+2.25.1
 
