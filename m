@@ -2,48 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 809D2CCD1BF
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 01:18:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F97CCD1BF
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 02:02:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC450402D2;
-	Wed, 29 Oct 2025 02:18:25 +0100 (CET)
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com
- [113.46.200.226])
- by mails.dpdk.org (Postfix) with ESMTP id 6FF864028D
- for <dev@dpdk.org>; Wed, 29 Oct 2025 02:18:23 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	by mails.dpdk.org (Postfix) with ESMTP id 2D69B4028D;
+	Wed, 29 Oct 2025 03:02:10 +0100 (CET)
+Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com
+ [113.46.200.225])
+ by mails.dpdk.org (Postfix) with ESMTP id 0A83A40262
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 03:02:07 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=J5l/lnZjw8cMC4dlsyjs8uxNzhoe/wLeC6Am4YOMq4E=;
- b=n4JvkGVciW6XcRFMRfGiIvjolVwwGu13hlNfemTmdWx679fz5lvHU654vPdO7lUl28FgZ8aOL
- LGamgSepumwQzn1OSiT6aOSUPYVY6iG2RB4vkMuCFUua/Yv5W6aRbNtd0DuUGfXIynQsWup9uNw
- tOhRDjFyWxebpCDBQ5N47P4=
+ bh=RptjHc3jS+lbx2PKg1DVCJ9Cv8QdlM1geCnSX5TDMRo=;
+ b=ntk8rD3SA9PPRnJ5yINHdIALG7wqRaphPfhsTFNypy6JibuM4NNbQXMmvZB2fbncMZY08WUHc
+ F2pXz/iG91M3X3lOSB/Z8kqG3Cjx484usbKkbh6fS+qzb2V7Wsygl2utqvCWr4d1+I1+lgRJ+DP
+ jWNHJMESufYToEA3NW0a4qY=
 Received: from mail.maildlp.com (unknown [172.19.88.214])
- by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cx8W51Y29zKm4k;
- Wed, 29 Oct 2025 09:17:53 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id B9D0F1A016C;
- Wed, 29 Oct 2025 09:18:21 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4cx9TZ0Qn1z1K97v;
+ Wed, 29 Oct 2025 10:01:38 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+ by mail.maildlp.com (Postfix) with ESMTPS id 0E7FF1A016C;
+ Wed, 29 Oct 2025 10:02:06 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 29 Oct 2025 09:18:21 +0800
-Message-ID: <c3009bd2-19fb-4ff9-960c-14870d10c561@huawei.com>
-Date: Wed, 29 Oct 2025 09:18:20 +0800
+ 15.2.1544.11; Wed, 29 Oct 2025 10:02:05 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 29 Oct
+ 2025 10:02:05 +0800
+Message-ID: <53e527b7-4c47-4419-82e5-e02f00273f3e@huawei.com>
+Date: Wed, 29 Oct 2025 10:02:04 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/14] bugfix and refactor of dma-perf
-From: fengchengwen <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>, <honest.jiang@foxmail.com>
-CC: <dev@dpdk.org>, <liuyonglong@huawei.com>, <vattunuru@marvell.com>
-References: <20250811105430.55791-1-fengchengwen@huawei.com>
- <20251020041105.1590-1-fengchengwen@huawei.com>
-Content-Language: en-US
-In-Reply-To: <20251020041105.1590-1-fengchengwen@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Subject: Re: [PATCH v2] config/arm: add HiSilicon HIP12
+To: Chengwen Feng <fengchengwen@huawei.com>, <thomas@monjalon.net>
+CC: <dev@dpdk.org>, <lihuisong@huawei.com>
+References: <20251028084259.4925-1-fengchengwen@huawei.com>
+ <20251029011626.9298-1-fengchengwen@huawei.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20251029011626.9298-1-fengchengwen@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.121.59]
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,43 +60,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-ping for review / upstream
 
-On 10/20/2025 12:10 PM, Chengwen Feng wrote:
-> This patchset contain one bugfix and refactor commits for
-> test-dma-perf application.
-> 
-> Chengwen Feng (14):
->   app/dma-perf: fix use-after-free
->   app/dma-perf: add global section for config file
->   app/dma-perf: use argparse lib to parse argument
->   app/dma-perf: refactor output csv
->   app/dma-perf: support list DMA devices
->   app/dma-perf: add more global config
->   app/dma-perf: remove invalid or redundant field
->   app/dma-perf: refactor load config function
->   app/dma-perf: refactor benchmark function
->   app/dma-perf: support specific error info
->   app/dma-perf: fix segment fault with large size
->   app/dma-perf: fix on-flight DMA when verify data
->   app/dma-perf: fix wrong stage to stop dmadev
->   app/dma-perf: refactor benchmark function
-> 
+在 2025/10/29 9:16, Chengwen Feng 写道:
+> Adding support for HiSilicon HIP12 platform.
+>
+> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 > ---
-> v4: rebase to latest upstream.
->     add one more refactor commit.
-> v3: add min/max desc when list DMA devices
->     add three bugfix commit (11~13) that recently found
-> v2: fix global argv[0] not prog name.
->     friendly remide if there are no dmadev when list-dma.
->     add ack from Vamsi Attunuru.
-> 
->  app/test-dma-perf/benchmark.c | 479 ++++++++++++++++-----------
->  app/test-dma-perf/config.ini  |  36 +--
->  app/test-dma-perf/main.c      | 594 ++++++++++++++++++----------------
->  app/test-dma-perf/main.h      |  28 +-
->  app/test-dma-perf/meson.build |   2 +-
->  doc/guides/tools/dmaperf.rst  |  57 ++--
->  6 files changed, 671 insertions(+), 525 deletions(-)
-> 
-
+>
+Thanks,
+Acked-by: lihuisong@huawei.com
