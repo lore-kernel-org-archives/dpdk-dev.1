@@ -2,51 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F97CCD1BF
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 02:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBCDCCF9EA
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 02:08:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2D69B4028D;
-	Wed, 29 Oct 2025 03:02:10 +0100 (CET)
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com
- [113.46.200.225])
- by mails.dpdk.org (Postfix) with ESMTP id 0A83A40262
- for <dev@dpdk.org>; Wed, 29 Oct 2025 03:02:07 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=RptjHc3jS+lbx2PKg1DVCJ9Cv8QdlM1geCnSX5TDMRo=;
- b=ntk8rD3SA9PPRnJ5yINHdIALG7wqRaphPfhsTFNypy6JibuM4NNbQXMmvZB2fbncMZY08WUHc
- F2pXz/iG91M3X3lOSB/Z8kqG3Cjx484usbKkbh6fS+qzb2V7Wsygl2utqvCWr4d1+I1+lgRJ+DP
- jWNHJMESufYToEA3NW0a4qY=
-Received: from mail.maildlp.com (unknown [172.19.88.214])
- by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4cx9TZ0Qn1z1K97v;
- Wed, 29 Oct 2025 10:01:38 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
- by mail.maildlp.com (Postfix) with ESMTPS id 0E7FF1A016C;
- Wed, 29 Oct 2025 10:02:06 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 039A1402EE;
+	Wed, 29 Oct 2025 03:08:52 +0100 (CET)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+ by mails.dpdk.org (Postfix) with ESMTP id 387A540262
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 03:08:49 +0100 (CET)
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 59T28ko963479729,
+ This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
+ s=dkim; t=1761703727;
+ bh=Bur+lL+0n4YpSp7kLzxlQSKkKE5NsV8BEc+0+xwskJM=;
+ h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+ Content-Transfer-Encoding:Content-Type;
+ b=Ys08xDgTQ6cw9BU3O24k6zIlfS7QXOXaUhVSqtUj+1Kv2f8DuMyKPvnqXfeE+2AQG
+ DA2RCzyR1A7PTt3lsBIiueibkyG3VVJXdqCIeIyjZyZDVOeZwbfSPLd4vj5hMjVQeW
+ TsgiJ7BTGxFVvHuqEljt3Ut92GEnmUJRqvYh21wZOZr3JvrSIlmi2LXNMhq1cAOEGI
+ 1i3UdmCAdB57YWAElYTDrTBT88KPXrPNznmVEbtxf/vduGM2gu9xjZfwF7e3SDxmDk
+ /ZO5CtoMgoK4Xj8oUB6PSbVovBJX80kHmBZXLhcefCKmvLl07gi1WEhMQhSCUBwunN
+ mSW+QiV2iw2IA==
+Received: from RS-EX-MBS1.realsil.com.cn ([172.29.17.101])
+ by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 59T28ko963479729
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 10:08:46 +0800
+Received: from RS-EX-MBS2.realsil.com.cn (172.29.17.102) by
+ RS-EX-MBS1.realsil.com.cn (172.29.17.101) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 29 Oct 2025 10:02:05 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 29 Oct
- 2025 10:02:05 +0800
-Message-ID: <53e527b7-4c47-4419-82e5-e02f00273f3e@huawei.com>
-Date: Wed, 29 Oct 2025 10:02:04 +0800
+ 15.2.1544.33; Wed, 29 Oct 2025 10:08:46 +0800
+Received: from 172.29.32.27 (172.29.32.27) by RS-EX-MBS2.realsil.com.cn
+ (172.29.17.102) with Microsoft SMTP Server id 15.2.1544.33 via Frontend
+ Transport; Wed, 29 Oct 2025 10:08:46 +0800
+From: Howard Wang <howard_wang@realsil.com.cn>
+To: <dev@dpdk.org>
+CC: <pro_nic_dpdk@realtek.com>, Howard Wang <howard_wang@realsil.com.cn>
+Subject: [PATCH v2 0/3] net/r8169: support multiq and code refactor
+Date: Wed, 29 Oct 2025 10:08:35 +0800
+Message-ID: <20251029020838.401035-1-howard_wang@realsil.com.cn>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] config/arm: add HiSilicon HIP12
-To: Chengwen Feng <fengchengwen@huawei.com>, <thomas@monjalon.net>
-CC: <dev@dpdk.org>, <lihuisong@huawei.com>
-References: <20251028084259.4925-1-fengchengwen@huawei.com>
- <20251029011626.9298-1-fengchengwen@huawei.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <20251029011626.9298-1-fengchengwen@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.59]
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: text/plain
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,12 +57,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+Howard Wang (3):
+  net/r8169: support multiq for 8126 and 8127
+  net/r8169: simplify config method check with if
+  net/r8169: fix issues reported by Coverity
 
-在 2025/10/29 9:16, Chengwen Feng 写道:
-> Adding support for HiSilicon HIP12 platform.
->
-> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-> ---
->
-Thanks,
-Acked-by: lihuisong@huawei.com
+ .mailmap                           |   1 +
+ MAINTAINERS                        |   1 +
+ doc/guides/nics/features/r8169.ini |   3 +
+ doc/guides/nics/r8169.rst          |   2 +
+ drivers/net/r8169/r8169_compat.h   |  10 +
+ drivers/net/r8169/r8169_ethdev.c   | 212 ++++++-
+ drivers/net/r8169/r8169_ethdev.h   | 149 ++++-
+ drivers/net/r8169/r8169_hw.c       | 607 +++++++------------
+ drivers/net/r8169/r8169_hw.h       |   3 +
+ drivers/net/r8169/r8169_phy.c      | 239 +-------
+ drivers/net/r8169/r8169_rxtx.c     | 930 ++++++++++++++++++++---------
+ 11 files changed, 1230 insertions(+), 927 deletions(-)
+
+-- 
+2.34.1
+
