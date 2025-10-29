@@ -2,84 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0995CCF9F0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDB1CCF9EB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:20:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B2AE4066E;
-	Wed, 29 Oct 2025 17:20:01 +0100 (CET)
-Received: from mail-pl1-f226.google.com (mail-pl1-f226.google.com
- [209.85.214.226])
- by mails.dpdk.org (Postfix) with ESMTP id C2F7440669
- for <dev@dpdk.org>; Wed, 29 Oct 2025 17:19:59 +0100 (CET)
-Received: by mail-pl1-f226.google.com with SMTP id
- d9443c01a7336-29476dc9860so160915ad.0
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:19:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1527140A6C;
+	Wed, 29 Oct 2025 17:20:11 +0100 (CET)
+Received: from mail-il1-f225.google.com (mail-il1-f225.google.com
+ [209.85.166.225])
+ by mails.dpdk.org (Postfix) with ESMTP id 0A896406BB
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 17:20:10 +0100 (CET)
+Received: by mail-il1-f225.google.com with SMTP id
+ e9e14a558f8ab-430b6a0eaeaso67675645ab.1
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:20:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761754799; x=1762359599;
+ d=1e100.net; s=20230601; t=1761754809; x=1762359609;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=c8rwxgb+bgJR+Jx26Vxp9kSc3+3AGj1fWf8ZauHq7Fw=;
- b=AL54m3RIT51XWFGdqM5m7XDsBcfweQ24i4HWmYmasxRyPAmC57pDRgQm8RAbyPujTT
- 9J2waCahbdZenVKdNYvA6hBpTehEeWKT1xX7rJHZE22DPIjaordEd5rQjCaX3fHnX4Ic
- f2ZJwUVVozOhtHk6qGWWOsJcvKU22upF/7FZQLn7AfNJs/CW+fdAKMy6egwiMK1Le1Ol
- UiIhL2RMofekOZC0jHtJ7cBS/RTM4mr7DjjnNk5mSK9XRJHNbgNBiXJ/bylhV6DeetG4
- QnAapQubV/tOp6NS8TCscIpuBDuA7BmIwM/mMP/8lDYUt7fx2hJTDvIrBEcUb3gN1joq
- khzA==
-X-Gm-Message-State: AOJu0YwX2lwWWwTZyGjZEyACeCflbCljAYmAiFF1nCk7B5ISi0BDu/L8
- G5QCeLnzMcT8W/Cjf+XWPFgsFb/bdx5GTAiRe+WR2NTzZEfkwHsMckR1EJsj2K7CuOn5xvYVCtz
- EosMNcfoxEhg30KuYXkU3biQQVWLmlEx6qmEE6bBALttFSvf4gmUtJECwY/8sYUqhXIht9aEUw7
- B8KllSO+XQOxUqTd3GFyKSQFyWBM9qqRbcVTMEev/hSpyayVojetQ4vOK+QT+zoVahAIsgWA==
-X-Gm-Gg: ASbGnctEtRf6uOtgTn0rdqAJ8LVmIWtf4Eg7ZVeEMatO5Re+iOqVa6dU3HiblT78g5M
- P4xz6fhX6hwH2bWfAT6S8mG3D8z6C/+PSK554s/qU8FE4zBPEXIgWNkBT2+zwsy/gG50easrRP+
- 06m/ZwkJB523sr3UzDoparryOzhrkZTWapL7C4XLZ55oXd7LcoYFUvJUlMXpLkNqoWHNBgt/58X
- AMr5HaxQxAcT0rtRcir3j5fz3GO+1N3pVHA6ZZYa36wIU3yK2jlI/Jw9NKwal9jY4W7+7EOOp/e
- erVw4tVbjjvMFijU9X5k/N5tI9Wh3CcfK2GJJnxwJF8is+BntFkMKQw/4KX8yG8HDTfCvnXTGp9
- NavzZ6sdlFgr89yKmHeax/dsyToZPs1VJlBpL1Tlq/AObjq0E2C4PsGHlmiKjqMzaq0TrtkQhN7
- wXjs02NK5KofF45NeuT+uJ0TYl2vIsSMs=
-X-Google-Smtp-Source: AGHT+IHmrcfbASF0WkHyUL04cApZkEj9U11ukClQzACNpybe8yoGFxzUaXZ/65KD6VD3hQADyw01L27t81Az
-X-Received: by 2002:a17:903:ad0:b0:269:96db:939 with SMTP id
- d9443c01a7336-294def33bffmr42836635ad.58.1761754798839; 
- Wed, 29 Oct 2025 09:19:58 -0700 (PDT)
+ bh=kYg0lcdDHObiw94fyQiudKYNmB7ER5WU1X3PHrvDHGY=;
+ b=qj0d02TDCfV69aM0bxRYgT4ybPRvl5FAXzj8U+E07dBTvCLE6u+Ug0NwPsqviMQoWQ
+ 5/E4PteTLxYqJajXAdCJu7SixaxZlcIhIa2yZPsmWRkgektIk1m5G9oc54J2ZG14BY/7
+ 3OujHTr1hG70oDDppd3vVozK+pRw/l/yqkvSV9xBMXqUUnJbeyLOc06RWVsO17KqH0Ft
+ WtvNjs6P+P0qssXjxzAIju4XdML3f/mMTviyP+WxDrwVCOfe3S4weJdxk+20s4NjBHNj
+ u36m5hShed3WHehxozHWDRao1gzCoi5+NJqPGj28YKH4UHTEBhBSvhJbuylt/YO3vbkH
+ H7+Q==
+X-Gm-Message-State: AOJu0Yy60yPJgtXNuoRzi4W2pzg5WHC1hpL0TL05Ucz287pMAdSTHOMR
+ TMNG//0SH4G3xVK8s/Eu00Tdwnq6qfgglUJlf38sm2CMrmLSvCUW2FW79A5gXDkXiECVF6+MjeJ
+ W5M4qTRWgKf6DgP6WdrshkFe9xcTcXO4ujQ7tUI0VJr2hX7oDmjMEkpFRHtD3RQG9iZ9hnxKqUJ
+ Q2obhb6GwMkRA3K+g3PA5ljSaCXiC7YNj805HQ9UeMF3YFiPH1+QM1WIlgk9W+fIY25gvfXg==
+X-Gm-Gg: ASbGncuBFqOllSwPmuGxU9inGKWsOeH7k/i8tLUCHMsEkYNjJYUgiT5wjqouDfkNx1S
+ xCbbCcVE1vmdRKE3pokFSGIGziLLZrCtH0Z8NCJOnwxbMFmBlClPJHfg77XKQ10TvcLSCzq9AtM
+ DV1G7TlYcIBz/kzvibRqcPMpymRGTj264r3LOXjZ77wtPdIecjFAaxc2Thr5QHco/9NVMAob+Xw
+ w2klyVvTG7/QL6FQps2KgtQu8on968lNcdg0ILtFzNd9EjMudOMuLAbKEWVexZY05YWrd3CGDg3
+ FspCtdO6bpocOZY1gKihth5GCJ4JvOWPeb28ps0ZmKZiONthedWoqOLlffSWXdVoBcokDQH9ofP
+ JLTG3OdWLqJwTrGQbpL9yUDDepDb/3HTx0u644QXxoPvjcuzddvW8wAebEMP5OMOxim1NjwrxW2
+ YW8z8Gx7YQacZLjfj+EV9EdixGuvuM09k=
+X-Google-Smtp-Source: AGHT+IETg5UjM09J0/eShKrSfHh7N1vgDFmR3T4+ChHiSsoMK1ZxNTb9lGabD7XZsDsNyEWyyJRBNnbHOiq0
+X-Received: by 2002:a05:6e02:16cd:b0:430:ae12:c5bc with SMTP id
+ e9e14a558f8ab-432f904afcemr40338365ab.28.1761754809347; 
+ Wed, 29 Oct 2025 09:20:09 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-0.dlp.protect.broadcom.com. [144.49.247.0])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-29498d23328sm13847315ad.29.2025.10.29.09.19.58
+ e9e14a558f8ab-431f682f4a9sm13865365ab.15.2025.10.29.09.20.09
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 29 Oct 2025 09:19:58 -0700 (PDT)
+ Wed, 29 Oct 2025 09:20:09 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qt1-f200.google.com with SMTP id
- d75a77b69052e-4e8a89c9750so213437811cf.0
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:19:58 -0700 (PDT)
+Received: by mail-qk1-f200.google.com with SMTP id
+ af79cd13be357-89f7a8b9775so1522030785a.1
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:20:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761754797; x=1762359597; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761754808; x=1762359608; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=c8rwxgb+bgJR+Jx26Vxp9kSc3+3AGj1fWf8ZauHq7Fw=;
- b=E1O8Sirtc/AEG7jiKmF4WS2kSq7Uj7FYExnAkXHDR2GBlhkWAxhddSdkFMaHHvfADO
- w6+bP1yNez9SHRNHJiLWBflYglXVCKkyqiMNTmGXj1/8y0y/Lhds1m6VyfoWp8XCOFuq
- GNVW5DeSG1vdXMyrhf+ajk0FTv8WYqBbu4Q6k=
-X-Received: by 2002:ac8:5882:0:b0:4de:5b49:dc94 with SMTP id
- d75a77b69052e-4ed15b53f2fmr43781281cf.3.1761754797275; 
- Wed, 29 Oct 2025 09:19:57 -0700 (PDT)
-X-Received: by 2002:ac8:5882:0:b0:4de:5b49:dc94 with SMTP id
- d75a77b69052e-4ed15b53f2fmr43780761cf.3.1761754796519; 
- Wed, 29 Oct 2025 09:19:56 -0700 (PDT)
+ bh=kYg0lcdDHObiw94fyQiudKYNmB7ER5WU1X3PHrvDHGY=;
+ b=agToS12b6UKobvymqDDYDyC5aaD7T2H+hXE1I7UwMXqSocZoS0BKU4rimIQ3I++kTv
+ WWNmOXyo8aY6Zc/fM/kAeadTCeBr5quELVV6LivuqWpuY0g+or6cPa1ShITCnPArRiym
+ V4vF+BeP67demmtvUW2vrHz86IQCGThmi9+xI=
+X-Received: by 2002:a05:620a:40c7:b0:890:492:cbcb with SMTP id
+ af79cd13be357-8a8e473a5bcmr549512585a.28.1761754808053; 
+ Wed, 29 Oct 2025 09:20:08 -0700 (PDT)
+X-Received: by 2002:a05:620a:40c7:b0:890:492:cbcb with SMTP id
+ af79cd13be357-8a8e473a5bcmr549506685a.28.1761754807502; 
+ Wed, 29 Oct 2025 09:20:07 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.19.55
+ af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.20.06
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 29 Oct 2025 09:19:56 -0700 (PDT)
+ Wed, 29 Oct 2025 09:20:07 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com, Farah Smith <farah.smith@broadcom.com>,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Subject: [PATCH v5 36/57] net/bnxt/tf_ulp: socket direct enable
-Date: Wed, 29 Oct 2025 12:06:51 -0400
-Message-Id: <20251029160712.58519-37-manish.kurup@broadcom.com>
+ Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
+ Peter Spreadborough <peter.spreadborough@broadcom.com>
+Subject: [PATCH v5 37/57] net/bnxt: Correctly account for udp_tunnel_ports
+Date: Wed, 29 Oct 2025 12:06:52 -0400
+Message-Id: <20251029160712.58519-38-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251029160712.58519-1-manish.kurup@broadcom.com>
 References: <20251021175049.46092-1-manish.kurup@broadcom.com>
@@ -102,89 +103,45 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Farah Smith <farah.smith@broadcom.com>
 
-1. Remove code which requires multi-root to be configured in order for
-the socket direct feature be enabled.  This is not required and was
-a customer specific implementation.
-
-2. Always enable the global table scope for Thor2 when the socket
-direct feature is enabled.
-
-3. Remove global table scope feature bit.
+Do not increment the port count if adding the same value multiple
+times.
 
 Signed-off-by: Farah Smith <farah.smith@broadcom.com>
-Reviewed-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+Reviewed-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
+Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c    | 12 +++---------
- drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c   | 16 ++++------------
- drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h |  5 +++--
- 3 files changed, 10 insertions(+), 23 deletions(-)
+ drivers/net/bnxt/bnxt_ethdev.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-index e3eb9107ab..de87ce0349 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-@@ -420,15 +420,9 @@ ulp_tf_cntxt_app_caps_init(struct bnxt *bp,
- 		if (info[i].flags & BNXT_ULP_APP_CAP_BC_MC_SUPPORT)
- 			ulp_ctx->cfg_data->ulp_flags |=
- 				BNXT_ULP_APP_BC_MC_SUPPORT;
--		if (info[i].flags & BNXT_ULP_APP_CAP_SOCKET_DIRECT) {
--			/* Enable socket direction only if MR is enabled in fw*/
--			if (BNXT_MULTIROOT_EN(bp)) {
--				ulp_ctx->cfg_data->ulp_flags |=
--					BNXT_ULP_APP_SOCKET_DIRECT;
--				BNXT_DRV_DBG(INFO,
--					     "Socket Direct feature is enabled\n");
--			}
--		}
-+		if (info[i].flags & BNXT_ULP_APP_CAP_SOCKET_DIRECT)
-+			ulp_ctx->cfg_data->ulp_flags |=
-+				BNXT_ULP_APP_SOCKET_DIRECT;
- 		if (info[i].flags & BNXT_ULP_APP_CAP_HA_DYNAMIC) {
- 			/* Read the environment variable to determine hot up */
- 			if (!bnxt_pmd_get_hot_up_config()) {
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-index 65df4ecd79..772dd69035 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-@@ -553,18 +553,10 @@ ulp_tfc_cntxt_app_caps_init(struct bnxt *bp, uint8_t app_id, uint32_t dev_id)
- 		if (info[i].flags & BNXT_ULP_APP_CAP_BC_MC_SUPPORT)
- 			ulp_ctx->cfg_data->ulp_flags |=
- 				BNXT_ULP_APP_BC_MC_SUPPORT;
--		if (info[i].flags & BNXT_ULP_APP_CAP_SOCKET_DIRECT) {
--			/* Enable socket direction only if MR is enabled in fw*/
--			if (BNXT_MULTIROOT_EN(bp)) {
--				ulp_ctx->cfg_data->ulp_flags |=
--					BNXT_ULP_APP_SOCKET_DIRECT;
--				BNXT_DRV_DBG(DEBUG,
--					    "Socket Direct feature is enabled");
--			} else {
--				BNXT_DRV_DBG(DEBUG,
--					     "No Socket Direct feature - must enable multiroot");
--			}
--		}
-+		if (info[i].flags & BNXT_ULP_APP_CAP_SOCKET_DIRECT)
-+			ulp_ctx->cfg_data->ulp_flags |=
-+				BNXT_ULP_APP_SOCKET_DIRECT;
-+
- 		/* Update the capability feature bits*/
- 		if (bnxt_ulp_cap_feat_process(info[i].feature_bits,
- 					      &ulp_ctx->cfg_data->feature_bits))
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-index c3f3bcd59d..c46340b1a4 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-@@ -1061,8 +1061,9 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
- 	if (bit & BNXT_ULP_FEATURE_BIT_SPECIAL_VXLAN)
- 		BNXT_DRV_DBG(ERR, "Special VXLAN Feature is enabled\n");
- 	if (bit & BNXT_ULP_FEATURE_BIT_HOT_UPGRADE)
--		BNXT_DRV_DBG(ERR, "Hot Upgrade Feature is enabled\n");
--
-+		BNXT_DRV_DBG(ERR, "Hot Upgrade Feature is enabled");
-+	if (bit & BNXT_ULP_FEATURE_BIT_SOCKET_DIRECT)
-+		BNXT_DRV_DBG(ERR, "Socket Direct Feature is enabled");
- 	*out_bits =  bit;
- 	return 0;
- }
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index 94bec74c1e..54613076b0 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -2622,7 +2622,6 @@ bnxt_udp_tunnel_port_add_op(struct rte_eth_dev *eth_dev,
+ 				PMD_DRV_LOG_LINE(ERR, "Only one port allowed");
+ 				return -ENOSPC;
+ 			}
+-			bp->vxlan_port_cnt++;
+ 			return 0;
+ 		}
+ 		tunnel_type =
+@@ -2636,7 +2635,6 @@ bnxt_udp_tunnel_port_add_op(struct rte_eth_dev *eth_dev,
+ 				PMD_DRV_LOG_LINE(ERR, "Only one port allowed");
+ 				return -ENOSPC;
+ 			}
+-			bp->geneve_port_cnt++;
+ 			return 0;
+ 		}
+ 		tunnel_type =
+@@ -2650,7 +2648,6 @@ bnxt_udp_tunnel_port_add_op(struct rte_eth_dev *eth_dev,
+ 				PMD_DRV_LOG_LINE(ERR, "Only one port allowed");
+ 				return -ENOSPC;
+ 			}
+-			bp->ecpri_port_cnt++;
+ 			return 0;
+ 		}
+ 		tunnel_type =
 -- 
 2.39.5 (Apple Git-154)
 
