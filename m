@@ -2,85 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B184CCF9F0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F94CCF9F0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:09:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 026ED406BA;
-	Wed, 29 Oct 2025 17:08:55 +0100 (CET)
-Received: from mail-pf1-f226.google.com (mail-pf1-f226.google.com
- [209.85.210.226])
- by mails.dpdk.org (Postfix) with ESMTP id 355F440695
- for <dev@dpdk.org>; Wed, 29 Oct 2025 17:08:52 +0100 (CET)
-Received: by mail-pf1-f226.google.com with SMTP id
- d2e1a72fcca58-78af743c232so83317b3a.1
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:08:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0D07140A6D;
+	Wed, 29 Oct 2025 17:08:59 +0100 (CET)
+Received: from mail-vk1-f226.google.com (mail-vk1-f226.google.com
+ [209.85.221.226])
+ by mails.dpdk.org (Postfix) with ESMTP id 5714440669
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 17:08:54 +0100 (CET)
+Received: by mail-vk1-f226.google.com with SMTP id
+ 71dfb90a1353d-54aa4b86b09so11921e0c.0
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:08:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761754131; x=1762358931;
+ d=1e100.net; s=20230601; t=1761754134; x=1762358934;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=CxB7wWO80ywp52HefvVp8FWJFunxq6ZTbeR8TZkk02E=;
- b=Bbdpy32WCLFLZM6PYbb/Jgzly+J/VNHDk2Xd+BgA79Khv7CgGHKbdcIPubvezn5vor
- 5W/6/GBC7ejI/DMm/Pm5K7LYZALn7BWOnauZxEfU4NgnlxwAx9Zc8Y+0FQ9DBpjtcXSp
- TGAkseysiUK6qgaZwuPBkP+2ZmxNUEC+8k5PDUBN24bKtETgzKPB7dvWaB9XDy+cxRSL
- qyvrEIaTPueFD1RmP0rpXl05yn2LP+lZw1eU24ABbPOZaAyCCvXA6yRz8kKOX1AptwM+
- sAh3Y7R4CFfkUtZoRGNKAfkpSc0O5SDvezIuL9bSJRSlwSSKflfQg8km657cNVpYo1g3
- ZqnQ==
-X-Gm-Message-State: AOJu0YxZh+ivFbYJQTJw6xtYgU7rsfgEyEc63Dp8tMfIxSXTsDKtm0Qj
- C/yKmtyJabocQRDppKGBmirJH9MK9hZAIGsx1jSg7MZEnHN6JSCP0CotugDCFzG+8pyaD+Lh3Cf
- EUmhZhAx+xFmq0axUU3zHI14qH4BPdearUeFffN926tn7adc+43XffBFs+AlhLL3/JdBe5nhe5F
- IUmGeBwHmCxYfFfMa5Sy3aOfM06kLuHnjFh7XlaVuomAN1g15P6FdShAzpVV3bNgMVM5VwNw==
-X-Gm-Gg: ASbGncvW799tK9f3MYvIXSjlpYjiFRCBAnreEitC+orcQEI2UsvTt0Lk+yLCjKjGJLo
- a++sNISZZ/aBuhjhTvTwCQyVKdWmKrJ5YEzYkX61asKcTqiwJ1jNSdAxgt55GJoydMA5bLEkl57
- jxEYoMGZeyCCYuOqSEKZWhLcWLwFEwnxrGhxkUcwT32EvFhiRzs8I87/FDTQS4ZQUzHaKoqIzhp
- sh0boJ3kVMNot80JaghZsJxX6qMjjPRPeXh74a5PHpLwJDbMOU/l50md38IfJH8y/lnDoezJBNo
- tK6LVM0OodVcIxl3CBCmQj8YskHJyeC1VbkCOETzasqmOjnQQvliA0EOBSf94elBLPTVjcv4/wD
- O9Fwci1K7j1Z+fP/lS08hTWfs75kx4sMX1/oyshyl6uH0o2pFvSivQQio1b0UKE2IcWars5gykC
- RaJvyhQLwAAvVrQZe3N8UMX7VcTjCD2dg8efWf
-X-Google-Smtp-Source: AGHT+IE75KwtouUzGrgb+/nNDPSq2Gc/xNCNDiixyb1xsgpVYf+pWwhNrRwnezHSgEV7FNR+flH3foYe7ns0
-X-Received: by 2002:a05:6a20:9149:b0:342:fa4f:5843 with SMTP id
- adf61e73a8af0-346553f7217mr4481613637.43.1761754131270; 
- Wed, 29 Oct 2025 09:08:51 -0700 (PDT)
+ bh=3QDFoWFB+cEq9OUyywXDabkxOCbl/adbGvZIBIcM9Kc=;
+ b=queqrOxkqR3USINS0BRntuyHTIvxblzICaAIVO6Et6FksYlgiNGdqYsx8Qm42AcoQ9
+ vhEUbmk51dHwgU/aBJGXk47WbIqUAv0DNMvhwzrfSYJA3FTnZvL2LZ/T6GYwU0f3WJxx
+ 4N/L2CY7qT3ghC/ArvkBvS9EOOHbiefxgoXzxLzhUJm3GPBxnvzet628IdyZUJlH0q5e
+ csRtPtI6wO2CZOo0CN9bCShN1zJ3zhMNPi0qcj2pCI1ypUGIllOgkr7XyMS1FjlPTllv
+ /lYKHB1W93mQM8XPoJncRjrTvkLTsNsV8DdTj7bVJQiVSeaKxJ0SUcxv/4fkaCcNOg1V
+ KOzA==
+X-Gm-Message-State: AOJu0YzFd4jSudEM7W0upv51lvCqA9qieLSIWs7GSnjQ7G3VoqTIF/ex
+ XGhAucJJ8fNqMeo7hl6olg8QAZCuQc22EREVrvpvSgWuwTEiUp8yqj4vc2kOOYhHHZele8YiLxi
+ y1540Efw7B0459YWYapJ7b1/l9TVWHJloFTxbV+7A/JmpFqSYgKbBeOEKI002Vq7UNcPkDFb/zJ
+ VSEKeWIaGKTAt3VLR+lSY2NKHMbBfbrJVecfvyt6LaPeU/H5zk9Dgx9feMtSx2YuGTYIilDg==
+X-Gm-Gg: ASbGncsrvIouiPfe7gzVpGGghfnijgKOwMgO2Es9Er212uHYE5iHIIpfv8U6IKqh070
+ xtzPcTPw5t8dFS/feYOjB247PC62ChIPWYX0/fiFE9LqZLrUoZn37sCqpuULE43F1BnK49jwhFf
+ by/Lf1lTFTzR4UFLnscCJnz6apJ50UqVVGGY++Y4QfKFF9OklxshapkVCA0KSEZo/Z80WQDR0yP
+ n9UA7jjdwBL70uEw9XGxn2dDkv+tOyJVNGnA+qFYXSmCDZElBA3iA0tikKdGuV6EuqI5Q0Mu9kX
+ lbu5LkcfLzkeSU0zR7aYTcRUw6sAmU5LXLKmuyBQKXxtB5ttinxqa2O5FpjARp5Hg02tQpknuxE
+ TBzvo2XLfrcpNd7JUWZKC9AWv8iQt308lOMvrcpawlMNKAL0KGAuzLFknRjBnBdJLSIytrLFp8D
+ u8ZoQo5RN8fTFSHiaZqWXhKOmDbqAH8XXm7nPg
+X-Google-Smtp-Source: AGHT+IEN5syU+8Spx1tplnw/6gV3ZJA/XJxk/fv0OjjyCMt06XIrFkmy6vVr+IfyO9DOyhWk/MjHtYwPq/8N
+X-Received: by 2002:a05:6122:341c:b0:544:8830:8e15 with SMTP id
+ 71dfb90a1353d-55814220495mr1119370e0c.12.1761754133456; 
+ Wed, 29 Oct 2025 09:08:53 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-103.dlp.protect.broadcom.com. [144.49.247.103])
+ (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
  by smtp-relay.gmail.com with ESMTPS id
- d2e1a72fcca58-7a4140c47a0sm992125b3a.11.2025.10.29.09.08.50
+ 71dfb90a1353d-557ddab68bcsm1664027e0c.1.2025.10.29.09.08.53
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 29 Oct 2025 09:08:51 -0700 (PDT)
+ Wed, 29 Oct 2025 09:08:53 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qk1-f198.google.com with SMTP id
- af79cd13be357-8a3f828c9bdso952524785a.0
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:08:50 -0700 (PDT)
+Received: by mail-vk1-f198.google.com with SMTP id
+ 71dfb90a1353d-5569a2b4244so2840e0c.2
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:08:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761754129; x=1762358929; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761754132; x=1762358932; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=CxB7wWO80ywp52HefvVp8FWJFunxq6ZTbeR8TZkk02E=;
- b=RN4QWQ/RZNygZfUeJ0L4stfBN6OYgV3QvkiihcqqonGXpEPehrWlWlGTs8KJPCB8eL
- FQ9HctnPwGYQTmtuCZmJrACEffVSC7EdYLmlk5pyL3oNCMjBZnA5eqQEsVc+MV9ozZcX
- UZ2KUQZj3IGDqQwse1FR33aogpsfbDcMSh/AE=
-X-Received: by 2002:a05:620a:29ca:b0:8a3:d644:6937 with SMTP id
- af79cd13be357-8a8ed1648c4mr415174085a.6.1761754129268; 
- Wed, 29 Oct 2025 09:08:49 -0700 (PDT)
-X-Received: by 2002:a05:620a:29ca:b0:8a3:d644:6937 with SMTP id
- af79cd13be357-8a8ed1648c4mr415167285a.6.1761754128629; 
- Wed, 29 Oct 2025 09:08:48 -0700 (PDT)
+ bh=3QDFoWFB+cEq9OUyywXDabkxOCbl/adbGvZIBIcM9Kc=;
+ b=Q2mLNHxDPEAHI70VE6IREVvYT6q+UCsUvIbr8TcOYjXm7NE0LpZKDpuKRv4StHSJ6d
+ PjopmxrFa8IatDlV5JOhhwn3hC04P2ALXrtAZtqj5xz83D9WiGw+AuqeTrFbSuFy1ZVv
+ 63Rm0YjVIzsEPQR02UFP0SUJ5LUIkzH4OwaD8=
+X-Received: by 2002:a05:6122:17a7:b0:54a:9e02:f9c2 with SMTP id
+ 71dfb90a1353d-55814145932mr1108571e0c.6.1761754132227; 
+ Wed, 29 Oct 2025 09:08:52 -0700 (PDT)
+X-Received: by 2002:a05:6122:17a7:b0:54a:9e02:f9c2 with SMTP id
+ 71dfb90a1353d-55814145932mr1108446e0c.6.1761754131030; 
+ Wed, 29 Oct 2025 09:08:51 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.08.47
+ af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.08.50
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 29 Oct 2025 09:08:48 -0700 (PDT)
+ Wed, 29 Oct 2025 09:08:50 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
-Cc: ajit.khaparde@broadcom.com,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Shahaji Bhosle <shahaji.bhosle@broadcom.com>
-Subject: [PATCH v5 16/57] net/bnxt/tf_ulp: increase shared pool size to 32
-Date: Wed, 29 Oct 2025 12:06:31 -0400
-Message-Id: <20251029160712.58519-17-manish.kurup@broadcom.com>
+Cc: ajit.khaparde@broadcom.com, Jay Ding <jay.ding@broadcom.com>,
+ Shuanglin Wang <shuanglin.wang@broadcom.com>,
+ Peter Spreadborough <peter.spreadborough@broadcom.com>
+Subject: [PATCH v5 17/57] next/bnxt/tf_ulp: meter and mac_addr cache cleanup
+Date: Wed, 29 Oct 2025 12:06:32 -0400
+Message-Id: <20251029160712.58519-18-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251029160712.58519-1-manish.kurup@broadcom.com>
 References: <20251021175049.46092-1-manish.kurup@broadcom.com>
@@ -101,29 +101,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+From: Jay Ding <jay.ding@broadcom.com>
 
-Increased the shared pool size for table scopes from 8 to 32.
-So that 32 instances of application can be created.
+1. Thor doesn't support meter stats. Add null pointer check on
+   ulp_mapper_mtr_stats_hndl_del.
+2. Increased the number of mac_addr_cache from 512 to 2048.
+   Changed the data type in an error message.
 
-Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Reviewed-by: Shahaji Bhosle <shahaji.bhosle@broadcom.com>
+Signed-off-by: Jay Ding <jay.ding@broadcom.com>
+Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
+Reviewed-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c | 10 ++++++++++
+ drivers/net/bnxt/tf_ulp/ulp_gen_hash.c   |  2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-index e7778f8b1f..e4c9bfcff6 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-@@ -373,7 +373,7 @@ ulp_tfc_tbl_scope_init(struct bnxt *bp)
- 	if ((feat_bits & BNXT_ULP_FEATURE_BIT_MULTI_INSTANCE)) {
- 		if (!BNXT_PF(bp)) {
- 			shared = true;
--			max_pools = 8;
-+			max_pools = 32;
- 		}
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
+index bc48e35c00..7f6a84e699 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
+@@ -598,6 +598,16 @@ bnxt_flow_mtr_destroy(struct rte_eth_dev *dev,
+ 	if (ret)
+ 		goto parse_error;
+ 
++	oper = ulp_mapper_data_oper_get(ulp_ctx);
++	if (!oper)
++		goto parse_error;
++
++	if (oper->ulp_mapper_mtr_stats_hndl_del) {
++		ret = oper->ulp_mapper_mtr_stats_hndl_del(mtr_id);
++		if (ret)
++			goto parse_error;
++	}
++
+ 	BNXT_DRV_DBG(DEBUG, "Bnxt flow meter %d is deleted\n", mtr_id);
+ 
+ 	return 0;
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_gen_hash.c b/drivers/net/bnxt/tf_ulp/ulp_gen_hash.c
+index e8cb1a3784..74cdd5c1da 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_gen_hash.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_gen_hash.c
+@@ -33,7 +33,7 @@ int32_t ulp_bit_alloc_list_alloc(struct bit_alloc_list *blist,
+ 		return 0;
  	}
+ 	jdx = (uint32_t)(bsize_64 * ULP_INDEX_BITMAP_SIZE);
+-	BNXT_DRV_DBG(ERR, "bit allocator is full reached max:%x\n", jdx);
++	BNXT_DRV_DBG(ERR, "bit allocator is full reached max:%d\n", jdx);
+ 	return -1;
+ }
  
 -- 
 2.39.5 (Apple Git-154)
