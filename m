@@ -2,74 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF0CCCF9EB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 20:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B77E5CCF9EB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 21:06:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 77924402AE;
-	Wed, 29 Oct 2025 21:32:11 +0100 (CET)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
- [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id 89E894025E
- for <dev@dpdk.org>; Wed, 29 Oct 2025 21:32:09 +0100 (CET)
-Received: by mail-pj1-f43.google.com with SMTP id
- 98e67ed59e1d1-33ff5149ae8so292669a91.3
- for <dev@dpdk.org>; Wed, 29 Oct 2025 13:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761769928;
- x=1762374728; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=v2NidpLVknbTF4NN+wOlz/MYNHahkxnuA1q/oi1QnZI=;
- b=oBhI1k70mKQ3RLM+eEBeV/ILyabchEovzu+YUhi1bGeIotFv9f6DUC62U6byZNUNZe
- iFdEJeVIZm7mDWMY/OBfhNVcmoSqgOz26B2BIqXob0QbmXybj81xSvefWGqkjldAa7cD
- /czSRERrOdgCjd1XzSHfT+N3M9j92+0EvOjBxe7v7bX3F9NZ3j20QT6g8Vgd3hbXH200
- kl3MB0C/27NI3HNmI4KnLq7HpVZ5ZTXWC/AXnO06yWXtD/JLZdkDFPEm8vRTqQ3Sos5b
- sxeaK9opegBEko5AxW44/lFlgdi07cZ22e2OfYoOpUWL4I3/zlr/7fLPfFPZDTtlDKgh
- sOyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761769928; x=1762374728;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=v2NidpLVknbTF4NN+wOlz/MYNHahkxnuA1q/oi1QnZI=;
- b=WsyRQae6OIj19L8H1ypce5GQLb6TzOvMhRzxWGAtSzdRxr7Mz4/MIU+rthkrDdrQEH
- s3DNFakUpoCNt61AG4VxtwOkrXWBsExIXdetGMBYXSITJ1Abq5X+3agbf97hqwvLaUg6
- 5OumnwkFAyKgA9hGGLGWdeX9n/viokdXP4ZRDvW5VpRpVNht453EQTfd/G6Xgfnw/1u5
- s1dlwuUeJZVMt7pMa55zlAxWyzidgLUerDzJ6FYsojaTBbTdIcbDw9RFcEz+gmKg+bpI
- Ucm1u2MbLpaSsItPaT0IEj6bEsi+dHagIMd7h1W60yfEFxUni9FewKL/VY8nivslO9if
- FAWQ==
-X-Gm-Message-State: AOJu0YzOY21us33Gg2Y+QoNq0oGeKEMAK3M+pmZf5yvVHbKo4qEMGFBi
- I0Ow4NNefEL2xxo1TfwESUdx6xT3RmbO1QF0Pwswim8V1jxYJXm7lKxl6OYows+AibA=
-X-Gm-Gg: ASbGncvHS3FQXA7T5BYGnQzmDQa1CvizQOLZFg4DxnFaqbKT7fjlWdRsGQCPom3qi5C
- mg70felGMDDTvt9DiDozGoQXop6mIe8/RGWB/L8ZW+XwiGEO7pUb791hWyMW7bJbusL3ZXe2mx6
- /FMrfKufnxTmFspbL4FyH3tNBp7MntpAJYFbiUOVeHurDDwxAR+4CKBRGiJC7h/4Ho04tdx3H3I
- 9sRwPR1HR4CbfZmXRAtnKvUX2YGimt8nHZ1RNIEl+t4YBLhbSFeTj4QS5Kpl1I7CSOBfrRrXblo
- yLkncDRgJXpnvnWmCbM3NpAm96lCEG21BkS8BAZymzaMlLtMW+NZPPjqfW4mccQo4ay1DIvzap8
- Fm0E0Cur49NIGICTU0XOcRyMehdYvPpi4zd+5T2+WWQLHjGZtDvZpDgFZxMSV7gQlrf8nWnFv1S
- NvWXBsWInDLc0qgjD4/EeWdl6BJdmg3ACtJA==
-X-Google-Smtp-Source: AGHT+IFgKf0S3BFcYgCud1Qmbq2K9wbeXdWF1oq7SiFJ10IqVbFzyx8CKM4sV3kSqUoZ6Sx0aEwDbQ==
-X-Received: by 2002:a17:90b:164f:b0:32e:d599:1f66 with SMTP id
- 98e67ed59e1d1-3404c46747bmr722621a91.30.1761769928195; 
- Wed, 29 Oct 2025 13:32:08 -0700 (PDT)
-Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3404df3ec94sm132459a91.1.2025.10.29.13.32.07
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Oct 2025 13:32:07 -0700 (PDT)
-Date: Wed, 29 Oct 2025 13:32:06 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: <dev@dpdk.org>, <techboard@dpdk.org>, "Thomas Monjalon"
- <thomas@monjalon.net>, "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
- "Patrick Robb" <probb@iol.unh.edu>
-Subject: Re: Use of TX offload flags MBUF_FAST_FREE and MULTI_SEGS
-Message-ID: <20251029133206.254d61ef@phoenix>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F654A3@smartserver.smartshare.dk>
-References: <aN-Use5rigF3tQc9@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F654A3@smartserver.smartshare.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	by mails.dpdk.org (Postfix) with ESMTP id 95648402AE;
+	Wed, 29 Oct 2025 22:06:19 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id B185D402A6
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 22:06:18 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 909CE48A05; Wed, 29 Oct 2025 22:06:18 +0100 (CET)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/other Bug 1816] bpf ethdev tx filtering semantic issues
+Date: Wed, 29 Oct 2025 21:06:18 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: other
+X-Bugzilla-Version: 25.07
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: major
+X-Bugzilla-Who: stephen@networkplumber.org
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1816-3@http.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,61 +54,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 6 Oct 2025 16:51:38 +0200
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+http://bugs.dpdk.org/show_bug.cgi?id=3D1816
 
-> > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > Sent: Friday, 3 October 2025 11.18
-> > Subject: Minutes of techboard meeting, 2025-10-01 =20
->=20
-> > * Use of FAST_FREE and multi-buffer/scattered mbuf flags
-> >   - The flags for enabling fast-free and supporting multi-mbuf packets
-> > are
-> >     now documented incompatible
-> >   - Previously they were not defined as incompatible, but that seems to
-> >     have been assumed for some usages.
-> >   - Techboard discussed how best to resolve this incompatibility with
-> >     regards to:
-> >     - ensuring correctness
-> >     - avoiding major churn to DPDK code
-> >     - avoiding churn to end-user code
-> >   - Options discussed:
-> >     1 change definition back to not have the settings incompatible:
-> > this
-> >       necessitates checking drivers for correctness
-> >     2 keep as explicitly incompatible and report error if both
-> > specified:
-> >       this could break end-user apps, and requires changes to example
-> > apps
-> >     3 drop the fast-free flag if multi-segment mbufs are also
-> > specified:
-> >       "hides" the issue, but probably minimises changes. Would need to
-> >       decide whether the dropping of flag done in drivers vs ethdev
-> > level.
-> >       Pros and cons to both options. Needs clear documenting.
-> >   - No firm decision reached, will discuss more over email. =20
->=20
-> IMO, the patch [1] making MBUF_FAST_FREE and MULTI_SEGS explicitly incomp=
-atible should be reverted, at least for RC1.
-> That will take the project back to the state it was in before we started =
-this discussion.
-> And all the examples broken by the patch (because they use both TX offloa=
-ds) will not need fixing.
->=20
-> [1]: https://patchwork.dpdk.org/project/dpdk/patch/20250803194218.683318-=
-3-mb@smartsharesystems.com/
->=20
+            Bug ID: 1816
+           Summary: bpf ethdev tx filtering semantic issues
+           Product: DPDK
+           Version: 25.07
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: major
+          Priority: Normal
+         Component: other
+          Assignee: dev@dpdk.org
+          Reporter: stephen@networkplumber.org
+  Target Milestone: ---
 
-There is still code NULL PMD which checks for FAST_FREE with MULTI_SEGS.
-I think this commit needs to be reverted as well.
+If the function rte_bpf_eth_tx_elf_load() is used to load a filter on a que=
+ue
+can cause duplicate mbuf usage issues.
 
-commit 675ddc233d68d90b3858cdb6267dd407c4e85984
-Author: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-Date:   Wed Jul 30 14:04:51 2025 +0000
+For normal PMD transmit if rte_eth_tx_burst() returns a value smaller than =
+the
+request number of packets; then the application will assume that this is
+because the transmit descriptor queue in the PMD is full. The unsent buffers
+will not be freed by the PMD, and is up to the application to either free (=
+or
+resend) those mbufs.
 
-    net/null: add fast mbuf release Tx offload
-   =20
-    Added fast mbuf release, reusing the existing mbuf pool pointer
-    in the queue structure.
-   =20
-    Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+The issue is that the transmit call back filter can return a smaller value =
+than
+requested if some packets were filtered. The BPF filter code drops the filt=
+ered
+out packets.
+
+In the simplest case, a common practice will cause duplicate free:
+    sent =3D rte_eth_tx_burst(port, queue, pkts, nb_pkts);
+    if (sent < nb_pkts)
+        rte_pktmbuf_free_bulk(pkts + sent, nb_pkts - sent);
+
+Alternatives are:
+   - redefining the meaning of tx_burst such that rte_eth_tx_burst frees
+     major application impact
+   - treat filtered packets as if sent
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
