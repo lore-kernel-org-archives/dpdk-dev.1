@@ -2,85 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA118CCF9EB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB36CCF9EB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 16:20:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 365F24066A;
-	Wed, 29 Oct 2025 17:20:35 +0100 (CET)
-Received: from mail-pl1-f227.google.com (mail-pl1-f227.google.com
- [209.85.214.227])
- by mails.dpdk.org (Postfix) with ESMTP id BD2A54065F
- for <dev@dpdk.org>; Wed, 29 Oct 2025 17:20:33 +0100 (CET)
-Received: by mail-pl1-f227.google.com with SMTP id
- d9443c01a7336-26d0fbe238bso54506155ad.3
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:20:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3311840A70;
+	Wed, 29 Oct 2025 17:20:42 +0100 (CET)
+Received: from mail-oa1-f100.google.com (mail-oa1-f100.google.com
+ [209.85.160.100])
+ by mails.dpdk.org (Postfix) with ESMTP id AB1C540A70
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 17:20:40 +0100 (CET)
+Received: by mail-oa1-f100.google.com with SMTP id
+ 586e51a60fabf-3c9975a3d6eso42574fac.2
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:20:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761754833; x=1762359633;
+ d=1e100.net; s=20230601; t=1761754840; x=1762359640;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=UnGPfW/53Jz81zuzs9GGKJZBAtKwgg5oTUyMy1CtPUE=;
- b=eYG9AhpkOQKa7lfcjIdo4tmX0SoxEhIcAjFx24alxDxLwE2QOej6z8/e9epyXwzw7g
- AbVhV/GLfOvrlWCSdJDqJg6YPKy4aJx+/kHXogEie+MY/q93tPB9/n5L5cdTjMzwQgwD
- ECCQFxr1zqAqt7++527rSH282JhU2iRT7LFe8nbt72dUrwvSJihFpCNXJV8jq746jGOD
- 0UIO1xz1B4b1c0FiJWCflQzYb3ItDY2gAKZlCzcaZqDY0yACw7v7s4FC86QmqR9dZQIO
- p3CWRICbVMf9lNrIktIqcvG5IKtWBYdkU9sTgumYrTZ8oqmVD673APa9FYXD/bthVK0D
- xYOw==
-X-Gm-Message-State: AOJu0YySashLOPu8IiUzClJQAyxEBni0smRmdP/nvMQnN4+EfwgVU15t
- 3jmOBSg1VHQ+D8lWRxKvtiM/qjRBdnILNnk++llfq+VQme4tIhTZ8q+IcHZwsSz3pur6K4whFG+
- /g8pjh7QYjKpDtSS8Kp3PV2abfqW0Qbl6kkK8CzGC95Vs2tS1eXbTcOtTz/LJ143UgogqhqQb2U
- OYa3uZHzJ5ZBlvTKzAjWezEAgNcIZja/Ii2EOi9w030krGDnpbl/WVbwdQe4TEhius6c8D6A==
-X-Gm-Gg: ASbGncssphaIhOsIVLEncU57oYkRVm+poZyPADah5W6W7EYhIaBAESXSdWn73sxLDwN
- 5qcWI4LpF58yGzSuOdXSIlD3XTcM1M+M4fdTLKiPWfCkc+gzZW48r5P6ZVpB+n4pQ/iv1MTEiwl
- vKDOVAIA/mwWTUAWmhtp/Os8YqZeQYA62nTgKxdJ8qQNYZGr/qaGpYuQLbsU7VXJSTyEKSQ/1se
- SOPJ3lLyWvgJmOaF7dvfzOwvuWszybbaZkN/2S6xilnlBNGZFzvGmSb/RtFgfrhvb9OJZuGaw2T
- oL5ZYVEjBtNlX2u8+NYUobIVKItb7BbeqxzA3ncTTWi2ZRpAzfvuVN03qIeUKLVQUzyIYzDAL6i
- W3NwjkeMrA/e6z18ozu4XEi1D1Im2hl7ealASDktZBcjPtMaDFUeGMpemr5/JD7oDCjRsC/zkyu
- YN9ugZOKmKfmuepy+8E6LJdNpjsx6KwpFV/z7O
-X-Google-Smtp-Source: AGHT+IHhtgTiac+0nR5/zD0bRvWW1zcyrN/ujmr2HnhtCE0HkJ9Y/dJSdxx1NnM+WSkXBXNqBVatPlGlwzsS
-X-Received: by 2002:a17:903:22c5:b0:290:c317:a34e with SMTP id
- d9443c01a7336-294dee33a17mr40271675ad.25.1761754832770; 
- Wed, 29 Oct 2025 09:20:32 -0700 (PDT)
+ bh=TxPsVNdWDee7AzhiTv+7fNvKPbLFqYH7whN7uPHEBz4=;
+ b=Wi5j5RXSh0M3hMgZzNvY7+BT7gGpO5C6VS81AQvs17TcKIeW5lJm9LBQsRGwt8aFwj
+ qcySUW4WwoYdCmU4gOfagAOzFxTzpiMHzlUdxJcy4+TZ6lDod0jDu3TlvTi9x9QRhJXZ
+ CgGUcftCiqBxh5y1pYCjOUq3nmKXQ3xCztZxtz/wUA+FRzKcvnp7S5beW1rYQo0xHM2Q
+ fsdCEh27DTTdqsWKKRayrZ6ter+ZeJWyBuqJeC3m5Op2craMfgFS+sU2nqyzIBehx6hy
+ SL1+NKfQpWIVn2fE4i6IODZJmAuaXfMhgEHjKaiQ6Khd3DzIci5G0ZV/JDEUuHR8JQb4
+ XzDQ==
+X-Gm-Message-State: AOJu0YxzwtsL6cJoJduTDVqBdZRsZ1eHu8x3v1R/KfXFIMeiNCc/gNm9
+ 1VphFPBZLvX3ZrmUac6OiSZ0HOMeVPtWYaT6wRM+do8OyrkwrKFrawHuQe7S4WyznhCZTJ9rMNo
+ lNyjnOV0RP9XYhZvM4WiiMHVsnL2GLeUFccC7Kn9q5Ew1jONf/MJZAwLZJteNIuas9LfFeXl+09
+ sUJRa56A/inh/RWBO0nlFr7z1hSVP6rbELEsGhnQRI7V40qXSKjkDz0XVneALbLnd/iqA6lQ==
+X-Gm-Gg: ASbGncvaB5y+YEiJUMTlcrLfEwOTz0qSJrMyiM/fz01oNO6eaKOYk4cuTyb5+kG1jqG
+ xG3L5YtIoCP02X/uo1E/UMWcLJyON92O4P5jtuY/s2xQe2qfJlJImm2yyu6xwkoSp1svic47I8Y
+ ocRH4wf7yOvyVP6YvFX8Gsm6rhGngrRJtLxjEJcZweNDbEuxBeEHEFJbE4ifZfJw8uN73Kv4CQN
+ YDdB7MeoWomPg5vuGczqNxegHGA+pc0XS73zJvpQv1AK/lDv0drOp323HGrYayqMunV4G/VOA1S
+ 1UkgfxOX1+L+qKDj2xErsER23YNrtnnBnjP9aKfMTT+1AwM8qpLMhWKDssRK1gcxcIc0tnBy3zP
+ 7rfUCBNrSHfOxQww9sJHjqXyuhyT7wgljF4gkQsW9nQaZCz+sLRQRdzqrYxhnfV4DmySiMzF9jR
+ 6gbs9Az0JHVNYKPmIMFEdbnmxdbRNHkCYXqufB
+X-Google-Smtp-Source: AGHT+IEi2yVTBSljxzXfAyi1SgyKGtRrSylcGcECjARzPNxago/bVSNa7W/8cKTrR9ORy7ljpk/N3vs+hwlc
+X-Received: by 2002:a05:6870:9724:b0:377:8166:9376 with SMTP id
+ 586e51a60fabf-3d746efdcfcmr1752589fac.28.1761754839880; 
+ Wed, 29 Oct 2025 09:20:39 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-103.dlp.protect.broadcom.com. [144.49.247.103])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-29498d0aa83sm13581525ad.21.2025.10.29.09.20.32
+ 586e51a60fabf-3d1e21f2633sm1303224fac.2.2025.10.29.09.20.39
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Wed, 29 Oct 2025 09:20:32 -0700 (PDT)
+ Wed, 29 Oct 2025 09:20:39 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
 Received: by mail-qk1-f197.google.com with SMTP id
- af79cd13be357-8a3f828c9bdso1919085a.0
- for <dev@dpdk.org>; Wed, 29 Oct 2025 09:20:32 -0700 (PDT)
+ af79cd13be357-8a3c5e46a06so984610685a.1
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 09:20:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1761754831; x=1762359631; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1761754838; x=1762359638; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=UnGPfW/53Jz81zuzs9GGKJZBAtKwgg5oTUyMy1CtPUE=;
- b=dbfQU0Ovqljm+fgC4yKYMdbouRN7Zc2myYMQz+WXicd1uAZkt/7uqz3JmkTkj0p1pH
- /ecNBLv4DnURuNLdUrGqWbQryAOccl03bp4kA/bOeijHUUqC5Qb7BGRH5QYyQY4sP6cy
- lsF3RuM5X9gXffx+KWBDJzseeSVz/JASy7tc8=
-X-Received: by 2002:a05:620a:40c6:b0:892:ce2b:f84d with SMTP id
- af79cd13be357-8a8ed72d388mr460804885a.33.1761754831217; 
- Wed, 29 Oct 2025 09:20:31 -0700 (PDT)
-X-Received: by 2002:a05:620a:40c6:b0:892:ce2b:f84d with SMTP id
- af79cd13be357-8a8ed72d388mr460797785a.33.1761754830491; 
- Wed, 29 Oct 2025 09:20:30 -0700 (PDT)
+ bh=TxPsVNdWDee7AzhiTv+7fNvKPbLFqYH7whN7uPHEBz4=;
+ b=foz65JYcBOKVmi/bW8WFYutNHrqXl0ngBPhiDudGsEERehoduBcC5IRy+AkH2pjd3z
+ e3dLG06DziXlAMPF5qDVG0bWDQMtJfTXD2Vozwn9wCCXlTlLMWqz/92ZKtUHzqexBSLS
+ XxEDNIyUtHXxcQ13rGJqmKbG0P5kq+ZaP7P8c=
+X-Received: by 2002:a05:620a:4506:b0:8a7:2373:1c75 with SMTP id
+ af79cd13be357-8a8eef6267fmr510941985a.49.1761754838602; 
+ Wed, 29 Oct 2025 09:20:38 -0700 (PDT)
+X-Received: by 2002:a05:620a:4506:b0:8a7:2373:1c75 with SMTP id
+ af79cd13be357-8a8eef6267fmr510934885a.49.1761754838000; 
+ Wed, 29 Oct 2025 09:20:38 -0700 (PDT)
 Received: from KX3WTC9T54.dhcp.broadcom.net ([192.19.144.250])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.20.29
+ af79cd13be357-89f2421fba6sm1089026785a.4.2025.10.29.09.20.37
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 29 Oct 2025 09:20:30 -0700 (PDT)
+ Wed, 29 Oct 2025 09:20:37 -0700 (PDT)
 From: Manish Kurup <manish.kurup@broadcom.com>
 To: dev@dpdk.org
 Cc: ajit.khaparde@broadcom.com,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Shuanglin Wang <shuanglin.wang@broadcom.com>
-Subject: [PATCH v5 38/57] net/bnxt/tf_ulp: add non vfr mode capability
-Date: Wed, 29 Oct 2025 12:06:53 -0400
-Message-Id: <20251029160712.58519-39-manish.kurup@broadcom.com>
+ Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+ Andy Gospodarek <andrew.gospodarek@broadcom.com>,
+ Ning Wang <ning-nw.wang@broadcom.com>,
+ Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
+ Somnath Kotur <somnath.kotur@broadcom.com>
+Subject: [PATCH v5 39/57] net/bnxt: avoid iova range check when external
+ memory is used
+Date: Wed, 29 Oct 2025 12:06:54 -0400
+Message-Id: <20251029160712.58519-40-manish.kurup@broadcom.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20251029160712.58519-1-manish.kurup@broadcom.com>
 References: <20251021175049.46092-1-manish.kurup@broadcom.com>
@@ -101,73 +105,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+From: Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
 
-For Wh+ platform, the generic template support representor
-and non representor mode, this flag shall be controlled by the
-newly added capability flag that is added during the compile time.
-The flag enables the testpmd forward mode, so testpmd application
-can forward packets from one port to another port.
+The function checks if the iova is in the valid range. But this check
+is not relevant to external memory; avoid it when external memory is
+in use.
 
-Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
+Signed-off-by: Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
+Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
+Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
+Reviewed-by: Ning Wang <ning-nw.wang@broadcom.com>
+Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+Reviewed-by: Somnath Kotur <somnath.kotur@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c          | 5 ++++-
- drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h       | 3 +++
- drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h | 3 ++-
- 3 files changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/bnxt/bnxt_txr.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-index de87ce0349..54a5e6968c 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-@@ -1049,6 +1049,7 @@ ulp_tf_ctx_init(struct bnxt *bp,
- 	int32_t			rc = 0;
- 	enum bnxt_ulp_device_id devid;
- 	enum bnxt_ulp_session_type stype;
-+	uint64_t feat_bits;
- 	struct tf *tfp;
+diff --git a/drivers/net/bnxt/bnxt_txr.c b/drivers/net/bnxt/bnxt_txr.c
+index f88e214790..27758898b0 100644
+--- a/drivers/net/bnxt/bnxt_txr.c
++++ b/drivers/net/bnxt/bnxt_txr.c
+@@ -221,8 +221,9 @@ static int bnxt_invalid_mbuf(struct rte_mbuf *mbuf)
+ 	if (unlikely(rte_mbuf_check(mbuf, 1, &reason)))
+ 		return -EINVAL;
  
- 	/* Initialize the context entries list */
-@@ -1101,7 +1102,9 @@ ulp_tf_ctx_init(struct bnxt *bp,
- 		goto error_deinit;
- 	}
+-	if (unlikely(mbuf->buf_iova < mbuf_size ||
+-		     (mbuf->buf_iova != rte_mempool_virt2iova(mbuf) + mbuf_size)))
++	if (unlikely(!(mbuf->ol_flags & RTE_MBUF_F_EXTERNAL) &&
++		     (mbuf->buf_iova < mbuf_size ||
++		      (mbuf->buf_iova != rte_mempool_virt2iova(mbuf) + mbuf_size))))
+ 		return -EINVAL;
  
--	if (BNXT_TESTPMD_EN(bp)) {
-+	feat_bits = bnxt_ulp_feature_bits_get(bp->ulp_ctx);
-+	if ((feat_bits & BNXT_ULP_FEATURE_BIT_NON_VFR_MODE) &&
-+	    !BNXT_REP_MODE_EN(bp)) {
- 		ulp_data->ulp_flags &= ~BNXT_ULP_VF_REP_ENABLED;
- 		BNXT_DRV_DBG(ERR, "Enabled Testpmd forward mode\n");
- 	}
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-index c46340b1a4..14ee1e05fb 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_utils.h
-@@ -1064,6 +1064,9 @@ bnxt_ulp_cap_feat_process(uint64_t feat_bits, uint64_t *out_bits)
- 		BNXT_DRV_DBG(ERR, "Hot Upgrade Feature is enabled");
- 	if (bit & BNXT_ULP_FEATURE_BIT_SOCKET_DIRECT)
- 		BNXT_DRV_DBG(ERR, "Socket Direct Feature is enabled");
-+	if (bit & BNXT_ULP_FEATURE_BIT_NON_VFR_MODE)
-+		BNXT_DRV_DBG(ERR, "Non VFR Feature is enabled");
-+
- 	*out_bits =  bit;
  	return 0;
- }
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h b/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
-index 3ce43f4c92..d63862ffba 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
-+++ b/drivers/net/bnxt/tf_ulp/ulp_template_db_enum.h
-@@ -913,7 +913,8 @@ enum bnxt_ulp_feature_bit {
- 	BNXT_ULP_FEATURE_BIT_MULTI_INSTANCE = 0x00000010,
- 	BNXT_ULP_FEATURE_BIT_SPECIAL_VXLAN = 0x00000020,
- 	BNXT_ULP_FEATURE_BIT_HOT_UPGRADE = 0x00000040,
--	BNXT_ULP_FEATURE_BIT_GLOBAL_TBL_SCOPE = 0x00000080
-+	BNXT_ULP_FEATURE_BIT_GLOBAL_TBL_SCOPE = 0x00000080,
-+	BNXT_ULP_FEATURE_BIT_NON_VFR_MODE = 0x00000100
- };
- 
- enum bnxt_ulp_flow_dir_bitmask {
 -- 
 2.39.5 (Apple Git-154)
 
