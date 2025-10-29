@@ -2,68 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 248E5CCF9E9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 13:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3450FCCF9E9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Oct 2025 13:12:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 65524402A6;
-	Wed, 29 Oct 2025 14:05:30 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 58E024028E
- for <dev@dpdk.org>; Wed, 29 Oct 2025 14:05:29 +0100 (CET)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 59TCfWFP3884945; Wed, 29 Oct 2025 06:05:28 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=aCoSNK36G2WGExEPgQD84YP
- +/0WjOrfJPgHXCTyyT00=; b=kEGMQ8RHSyEWjLdvvKGhO8CQ/6mwub1D+ghIHc4
- Wd5kXSVjqqa06p0hXuIlMGy2f9ZwVqjQC+78xmVqDr1LHDcv1rgfJW2cIioLWW+E
- S3dg3NxNgqf7MH1Cd9Zfz7eNtAkSnR/WTfmHEKOGAIekKKvhbts0nRgyrkgWedgQ
- UDRjtfkWzjSOlqwg+Ur9xewUL56RoXIComHvw2Qskg6sssm2O6s9Q4B0AdD0EoKw
- Z7WAT6wdw2N9kJDLe3KMmtW3z5vHHwrhn3ilskbwZSMhOn+S2QUA8perKe0B6+Nt
- mqNNczjCxtQh1j6lDN/kh1AZwEWewxlWsqvzkF0LWzGmXHQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4a348ma8rw-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 29 Oct 2025 06:05:28 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 29 Oct 2025 06:05:27 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 29 Oct 2025 06:05:27 -0700
-Received: from localhost.localdomain (unknown [10.28.36.154])
- by maili.marvell.com (Postfix) with ESMTP id F28593F70CB;
- Wed, 29 Oct 2025 06:05:25 -0700 (PDT)
-From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
-To: Jie Hai <haijie1@huawei.com>
-CC: <dev@dpdk.org>, <jerinj@marvell.com>, <ndabilpuram@marvell.com>, "Rakesh
- Kudurumalla" <rkudurumalla@marvell.com>
-Subject: [PATCH v1 1/1] net: fix inner L2 length for GRE and NVGRE
-Date: Wed, 29 Oct 2025 18:35:23 +0530
-Message-ID: <20251029130523.1642847-1-rkudurumalla@marvell.com>
-X-Mailer: git-send-email 2.25.1
+	by mails.dpdk.org (Postfix) with ESMTP id 169E940431;
+	Wed, 29 Oct 2025 14:12:15 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id C0AC540288
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 14:12:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1761743533;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=zUuCyc7AiNHGebEom88YzQV2lzSaA5RAZf4p2BquDNA=;
+ b=GNym9BtmCb3HLKlfVdjDJhxAC3f9oaSInxuheDmRZ5jMGc4+aq6eJI53josfTvqVy0VbRA
+ FpP8UE/p6NHR62qQbbEJwBivhqirj8/+/yWQMx3jdpPNL0DA0Atzfk9I7Ez8b+lpkid8+d
+ De+LMblQa8CTr+KcPrjqFhgRkihecqE=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-583-qwHZ-jbdNLyCKxpoGpc76g-1; Wed, 29 Oct 2025 09:12:10 -0400
+X-MC-Unique: qwHZ-jbdNLyCKxpoGpc76g-1
+X-Mimecast-MFC-AGG-ID: qwHZ-jbdNLyCKxpoGpc76g_1761743529
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-377c5a52433so53876561fa.3
+ for <dev@dpdk.org>; Wed, 29 Oct 2025 06:12:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1761743529; x=1762348329;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=zUuCyc7AiNHGebEom88YzQV2lzSaA5RAZf4p2BquDNA=;
+ b=V2qIUj2tsc3h/Cd5bTWQ61GwRs/ogI38PR+8ZVHcwHauDL6osioUjIzfnGGVrJSUVF
+ bNZ60o7MU26gNG46AWULOvevSK/5Bj5c4It0oL9xof1ZA4RJFq25ng5s0T9Xw8IYhJ3T
+ GVXIOXx54wyJw/TxYd/u/YfrvcYmg2rBzFbXrVclPW4gi2szeHUiVkchQjqb3oJFSD4m
+ xTzcW5WKKfTk5bVj1ieJ+0aGr+wDpNEYgTHMPg8F0FoC9q+Hw0xJGPB+5gDp91X/Cu37
+ tuXBakzD/+SMPJGCift5keX3f3LPiZ4dcHD+4Ae0JN1cntnnRvWdvESEFLIT8wftOeTH
+ b2NQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVQR2KaEzOWFuWipxX0hfd61CU4cC1kS/YktIC0ls3lYGjAPSwTtYDCO0+to4aXglG0ELQ=@dpdk.org
+X-Gm-Message-State: AOJu0Ywr/6DOH7ms4cj2woEDWcSv69C14WQjHZocGkHWocePoqraVc6H
+ zntKZKC0mCx86spIvrrjJz7irRCM72906ZwRaaoZ6jJIg35ZeZ6I3C7mz7RqZibwBcTGav+Pdu4
+ Iz9h1WtT1Fua9KBwMHS/dycOg3sKStTJnV1dOmgmqeU77QDwgmcndjVmhagHoNtQ8LwBnsGJcCf
+ 5s0yehU/VVK26tDHS+baw=
+X-Gm-Gg: ASbGncuoBcxuqCXOD8XQdhIVfcFhFY3p3i/oaehiBM+Qe0g50p9G1Ann8QENETmFV6H
+ WE/MswMFAs7bobjysgg7KecC/GmbjjBRfbKBBioxqc3P3sp4rJQ7gmYJaZW26tJaL0my4VOhn0t
+ LZ+4URKRHpj3UjAvhB5FuaeVyz7ZoOCBjm+KOr7JsDazy4Iv9Bq05iv7Q1/g==
+X-Received: by 2002:a05:651c:25d5:20b0:36e:21a0:f212 with SMTP id
+ 38308e7fff4ca-37a023fad09mr8092031fa.29.1761743528762; 
+ Wed, 29 Oct 2025 06:12:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYMbF4W0tQHM+biPvrroOZoCo7O9Jnw4Vf48xG+WPtTemNzGei91h8jlbtEPYVswDJo1Z/ctSbwSGZzTNlJMk=
+X-Received: by 2002:a05:651c:25d5:20b0:36e:21a0:f212 with SMTP id
+ 38308e7fff4ca-37a023fad09mr8091931fa.29.1761743528161; Wed, 29 Oct 2025
+ 06:12:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDEwMCBTYWx0ZWRfX7Op4GcbEgKQU
- WGVh3O8SEGcVdLJ7J2r/znytYArbtNG6jqBw9R4Vf9PCkFMJ75hgrzbo37ErwoO8/Az2cQWf3Ak
- IGl5l/OnFPhpM5SUQNBCzOqp/lXcVdp+LnnwYPU73JUfR4/k2ieBAutQElqhZlhTIfFBeoQ3C6A
- /MM6xk9pSdd3cDPuFJdj62HDv756rVtpViaDwqSFSOan8DslJYPqIlSboZCF+ijeuBfQAIomrdu
- 8243vZ8MqKjboXft5ZbsVcsjekQ2b/gCLbrNN/WT+vEulU5kuctbcPk1KuVeaXA7NdVmQczgOTV
- 4A3XAIg5SprcDG+XXHNTV07wP+cvxbw51KNzY3MTt9fVLLiLGAu5fSvVmpTjbuURZRQBHgH5+pF
- FFK3CRASsRtHyKqRO0U1ny7+Qdoq4Q==
-X-Authority-Analysis: v=2.4 cv=T/mBjvKQ c=1 sm=1 tr=0 ts=69021118 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
- a=pIk_GNdga5_yIZ7ewsAA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: EexYRnDiYp4juwMTt3GdF5E3P7EDU74i
-X-Proofpoint-ORIG-GUID: EexYRnDiYp4juwMTt3GdF5E3P7EDU74i
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-29_05,2025-10-29_01,2025-10-01_01
+References: <20251028172324.3149379-1-jerinj@marvell.com>
+In-Reply-To: <20251028172324.3149379-1-jerinj@marvell.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 29 Oct 2025 14:11:56 +0100
+X-Gm-Features: AWmQ_bkADt6H1-OnXbX3WZ0quAZPo0wxfEqNfL-N1_alfIQCrvrKgpJNIQ-BGkU
+Message-ID: <CAJFAV8xgt1EjHNZKGsTk1-H=3rNrrNFqJmUA=5aOK1guvESF5Q@mail.gmail.com>
+Subject: Re: [dpdk-dev] [PATCH v1 1/3] app/test-eventdev: fix issues with
+ clang 21.1.4
+To: jerinj@marvell.com
+Cc: Amit Prakash Shukla <amitprakashs@marvell.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>, dev@dpdk.org, 
+ thomas@monjalon.net, bruce.richardson@intel.com, stable@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 14mUayPXDSdhIiLqoogiUO_ely4NN3Ju9IO10-rSDwI_1761743529
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,32 +87,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Inner l2 length needs to be updated to include GRE and NVGRE
-headers. Not updating this would cause failures for applications
-which would be expecting l2_len field to be valid for
-inner checksum offload cases.
+On Tue, 28 Oct 2025 at 18:24, <jerinj@marvell.com> wrote:
+>
+> From: Jerin Jacob <jerinj@marvell.com>
+>
+> Fix the following error seen with clang 21.1.4
+>
+> app/test-eventdev/test_perf_common.c:1340:30: error: variable
+> 'event' is uninitialized when passed as a const pointer argument
+> here [-Werror,-Wuninitialized-const-pointer]
+>
+> Fixes: b25a66c49e8d ("app/eventdev: add DMA adapter performance test")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Jerin Jacob <jerinj@marvell.com>
+> ---
+>  app/test-eventdev/test_perf_common.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/app/test-eventdev/test_perf_common.c b/app/test-eventdev/test_perf_common.c
+> index 2ad451e457..2bbc17ae96 100644
+> --- a/app/test-eventdev/test_perf_common.c
+> +++ b/app/test-eventdev/test_perf_common.c
+> @@ -1335,13 +1335,14 @@ perf_event_dma_adapter_setup(struct test_perf *t, struct prod_data *p)
+>                 return -ENOTSUP;
+>         }
+>
+> -       if (cap & RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_VCHAN_EV_BIND)
+> +       if (cap & RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_VCHAN_EV_BIND) {
 
-Fixes: 76730c7b9b5a ("app/testpmd: use packet type parsing API")
+struct rte_event event declaration can be moved in this block.
 
-Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
----
- lib/net/rte_net.c | 3 +++
- 1 file changed, 3 insertions(+)
+> +               event.queue_id = p->queue_id;
+>                 ret = rte_event_dma_adapter_vchan_add(TEST_PERF_DA_ID, p->da.dma_dev_id,
+>                                                       p->da.vchan_id, &event);
+> -       else
+> +       } else {
+>                 ret = rte_event_dma_adapter_vchan_add(TEST_PERF_DA_ID, p->da.dma_dev_id,
+>                                                       p->da.vchan_id, NULL);
+> -
+> +       }
+>         return ret;
+>  }
 
-diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
-index 44fb6c0f51..5476d2a573 100644
---- a/lib/net/rte_net.c
-+++ b/lib/net/rte_net.c
-@@ -480,6 +480,9 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
- 			return pkt_type;
- 
- 		pkt_type |= ptype_tunnel_without_udp(&proto, m, &off);
-+		if ((pkt_type & RTE_PTYPE_TUNNEL_MASK) == RTE_PTYPE_TUNNEL_GRE ||
-+		    (pkt_type & RTE_PTYPE_TUNNEL_MASK) == RTE_PTYPE_TUNNEL_NVGRE)
-+			hdr_lens->inner_l2_len += sizeof(struct rte_gre_hdr);
- 		hdr_lens->tunnel_len = off - prev_off;
- 	}
- 
+Otherwise, this lgtm.
+I tested with Fedora 43.
+
+
 -- 
-2.25.1
+David Marchand
 
