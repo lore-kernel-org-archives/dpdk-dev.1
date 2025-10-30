@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C52DCCF9FC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Oct 2025 13:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF07CCF9F0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Oct 2025 13:13:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A3ABC4026F;
-	Thu, 30 Oct 2025 14:04:01 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 310474026F
- for <dev@dpdk.org>; Thu, 30 Oct 2025 14:04:00 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E553B206CD;
- Thu, 30 Oct 2025 14:03:59 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 505D8402DC;
+	Thu, 30 Oct 2025 14:13:21 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id E416E40150
+ for <dev@dpdk.org>; Thu, 30 Oct 2025 14:13:19 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id EAB03200FE6A; Thu, 30 Oct 2025 06:13:18 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EAB03200FE6A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1761829998;
+ bh=krqQIhvGTVhRQqtFTUyTVSu6TrkjzOfuE3AIxojSLN4=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=fIEq7VgeVOeNYXeUcAnWFfg0OYCCuF7c3FJc80ILP43TKgN9Ac7vp9SdCX0AJB+lA
+ jEau5C+WqOtD0boUyG+HEELwzOjJYsd5j4VOPRstoQCnvjDYLa48hV7J88948x14wi
+ ckQqWYInpl5+Wjh4ixOwqvl5bqxJEcsYw2L9RS3E=
+Date: Thu, 30 Oct 2025 06:13:18 -0700
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: Ayshathul Thuhara <ayshathul.thuhara@iwave-global.com>
+Cc: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>,
+ Chaturbhuja Nath Prabhu <c.prabhu@iwave-global.com>, dev <dev@dpdk.org>,
+ Thenveer Poolakkanni <thenveer.poolakkanni@iwave-global.com>
+Subject: Re: Virtio-PMD in Windows
+Message-ID: <20251030131318.GA15405@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <PN0P287MB25316B273566FD2CDDF0D83AC5F2A@PN0P287MB2531.INDP287.PROD.OUTLOOK.COM>
+ <PN0P287MB2531616EDF3F92036B4E01DFC5F2A@PN0P287MB2531.INDP287.PROD.OUTLOOK.COM>
+ <PN0P287MB2531AEA71C2E1A6B25D15680C5FCA@PN0P287MB2531.INDP287.PROD.OUTLOOK.COM>
+ <PN0P287MB25314E093834DFBAA35898A5C5FAA@PN0P287MB2531.INDP287.PROD.OUTLOOK.COM>
+ <1c5cad85-1408-4458-9e32-08f45f36c130@gmail.com>
+ <PN0P287MB2531E4AB73A84D84E5F3A2DFC5FAA@PN0P287MB2531.INDP287.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v11 7/9] test/pmu: enable test
-Date: Thu, 30 Oct 2025 14:03:56 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65516@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20251024054830.933910-8-tduszynski@marvell.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v11 7/9] test/pmu: enable test
-Thread-Index: AdxEqfO07iRv5NoHQAGk1C3y8qiaFgE7+T+A
-References: <20250801102109.3544901-1-tduszynski@marvell.com>
- <20251024054830.933910-1-tduszynski@marvell.com>
- <20251024054830.933910-8-tduszynski@marvell.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Tomasz Duszynski" <tduszynski@marvell.com>
-Cc: <dev@dpdk.org>, <Ruifeng.Wang@arm.com>, <bruce.richardson@intel.com>,
- <david.marchand@redhat.com>, <jerinj@marvell.com>,
- <konstantin.v.ananyev@yandex.ru>, <mattias.ronnblom@ericsson.com>,
- <roretzla@linux.microsoft.com>, <stephen@networkplumber.org>,
- <thomas@monjalon.net>, <zhoumin@loongson.cn>, <wathsala.vithanage@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PN0P287MB2531E4AB73A84D84E5F3A2DFC5FAA@PN0P287MB2531.INDP287.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,78 +52,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBUb21hc3ogRHVzenluc2tpIFttYWlsdG86dGR1c3p5bnNraUBtYXJ2ZWxsLmNvbV0N
-Cj4gU2VudDogRnJpZGF5LCAyNCBPY3RvYmVyIDIwMjUgMDcuNDgNCj4gDQo+IEVuYWJsZSB0ZXN0
-IHRvIGFsbG93IHVzZXJzIHRvIHZlcmlmeSBiYXNpYyBmdW5jdGlvbmFsaXR5LiBEdWUgdG8NCj4g
-dmFyeWluZw0KPiBjb25maWd1cmF0aW9uIG9wdGlvbnMgYWNyb3NzIGRpc3RyaWJ1dGlvbnMgYW5k
-IGtlcm5lbHMgdXNlciBzaG91bGQNCj4gZW5zdXJlIHRoYXQgYWxsIHJlcXVpcmVtZW50cyBhcmUg
-c2F0aXNmaWVkIGJlZm9yZSBzdGFydGluZyB0ZXN0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogVG9t
-YXN6IER1c3p5bnNraSA8dGR1c3p5bnNraUBtYXJ2ZWxsLmNvbT4NCj4gLS0tDQoNCldpdGggdGhl
-c2UgY2hhbmdlcywgdGhlIHRlc3QgY2FuIG5ldmVyIHJldHVybiBURVNUX0ZBSUxFRCwgaXQgcmV0
-dXJucyBURVNUX1NLSVBQRUQgd2hlbiBzb21ldGhpbmcgZG9lc24ndCB3b3JrLg0KDQpJTU8sIHRo
-ZSBwZXJmX2FsbG93ZWRfcXVpcmsoKSBjaGVjayBiZWxvbmdzIGluIHJ0ZV9wbXVfaW5pdCgpIGlu
-c3RlYWQuDQoNClRoZW4sIHJ0ZV9wbXVfaW5pdCgpIGNvdWxkIHJldHVybiBhIHZhcmlldHkgb2Yg
-ZXJyb3IgdmFsdWVzIGRlcGVuZGluZyBvbiB0aGUgcmVhc29uIGZvciB0aGUgaW5hYmlsaXR5IHRv
-IGluaXQvc3RhcnQgdGhlIFBNVSBsaWJyYXJ5Lg0KQW1vbmdzdCB0aGUgaGlnaCBsZXZlbCBlcnJv
-ciB2YWx1ZXMgc2hvdWxkIGJlOg0KLUVBQ0NFUyAoaW5zdWZmaWNpZW50IHByaXZpbGVnZXMpDQot
-RU5PREVWIChoYXJkd2FyZSBoYXMgbm8gUE1VLCBvciBrZXJuZWwgaXMgY3VzdG9tIGJ1aWx0IHdp
-dGhvdXQgUE1VKQ0KDQpUaGUgdGVzdCBzaG91bGQgb25seSByZXR1cm4gU0tJUFBFRCBpZiBydGVf
-cG11X2luaXQoKSByZXR1cm5zIC1FTk9ERVYgKG5vIFBNVSBwcmVzZW50IHRvIHRlc3QpOyBhbnkg
-b3RoZXIgbm9uLXN1Y2Nlc3Mgc2hvdWxkIGNhdXNlIHRoZSB0ZXN0IHRvIHJldHVybiBGQUlMRUQu
-DQoNCkFsc28sIHRoZSBwb3NzaWJsZSByZXR1cm4gdmFsdWVzIGZyb20gcnRlX3BtdV9pbml0KCkg
-c2hvdWxkIGJlIGRvY3VtZW50ZWQgaW4gaXRzIGZ1bmN0aW9uIGRlc2NyaXB0aW9uLg0KDQoNCj4g
-IGFwcC90ZXN0L3Rlc3RfcG11LmMgfCA2MCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCA1NCBpbnNlcnRpb25zKCspLCA2IGRl
-bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2FwcC90ZXN0L3Rlc3RfcG11LmMgYi9hcHAv
-dGVzdC90ZXN0X3BtdS5jDQo+IGluZGV4IDEwNTEzYmY5YzkuLjdmNDUwYjM1NjYgMTAwNjQ0DQo+
-IC0tLSBhL2FwcC90ZXN0L3Rlc3RfcG11LmMNCj4gKysrIGIvYXBwL3Rlc3QvdGVzdF9wbXUuYw0K
-PiBAQCAtMiwxMCArMiw0OCBAQA0KPiAgICogQ29weXJpZ2h0KEMpIDIwMjUgTWFydmVsbCBJbnRl
-cm5hdGlvbmFsIEx0ZC4NCj4gICAqLw0KPiANCj4gKyNpbmNsdWRlIDxzdGRib29sLmg+DQo+ICsj
-aW5jbHVkZSA8c3RkaW8uaD4NCj4gKyNpbmNsdWRlIDxzeXMvdHlwZXMuaD4NCj4gKyNpbmNsdWRl
-IDx1bmlzdGQuaD4NCj4gKw0KPiAgI2luY2x1ZGUgPHJ0ZV9wbXUuaD4NCj4gDQo+ICAjaW5jbHVk
-ZSAidGVzdC5oIg0KPiANCj4gKyNkZWZpbmUgUEVSRl9FVkVOVF9QQVJBTk9JRF9QQVRIDQo+ICIv
-cHJvYy9zeXMva2VybmVsL3BlcmZfZXZlbnRfcGFyYW5vaWQiDQo+ICsNCj4gK3N0YXRpYyBib29s
-IHBlcmZfYWxsb3dlZF9xdWlyayh2b2lkKQ0KPiArew0KPiArCWludCBsZXZlbCwgcmV0Ow0KPiAr
-CUZJTEUgKmZwOw0KPiArDQo+ICsJZnAgPSBmb3BlbihQRVJGX0VWRU5UX1BBUkFOT0lEX1BBVEgs
-ICJyIik7DQo+ICsJaWYgKCFmcCkNCj4gKwkJcmV0dXJuIGZhbHNlOw0KPiArDQo+ICsJcmV0ID0g
-ZnNjYW5mKGZwLCAiJWQiLCAmbGV2ZWwpOw0KPiArCWZjbG9zZShmcCk7DQo+ICsJaWYgKHJldCAh
-PSAxKQ0KPiArCQlyZXR1cm4gZmFsc2U7DQo+ICsNCj4gKwkvKiBPbiB2YW5pbGxhIExpbnV4IHRo
-ZSBkZWZhdWx0IHBlcmZfZXZlbnRfcGFyYW5vaWQgbGV2ZWwgaXMgMiwNCj4gd2hpY2ggYWxsb3dz
-IG5vbi1wcml2aWxlZ2VkDQo+ICsJICogcHJvY2Vzc2VzIHRvIGFjY2VzcyBwZXJmb3JtYW5jZSBj
-b3VudGVycy4NCj4gKwkgKg0KPiArCSAqIERlYmlhbiAvIFVidW50dSBhbmQgdGhlaXIgZGVyaXZh
-dGl2ZXMgYXBwbHkgcGF0Y2hlcyB0aGF0DQo+IGludHJvZHVjZQ0KPiArCSAqIGFkZGl0aW9uYWwg
-cGFyYW5vaWEgbGV2ZWxzOg0KPiArCSAqDQo+ICsJICogLSBEZWJpYW4gYWRkcyBsZXZlbCAzLCB3
-aGljaCByZXN0cmljdHMgYWNjZXNzIHRvDQo+IHBlcmZfZXZlbnRfb3BlbigpIGZvcg0KPiArCSAq
-ICAgbW9uaXRvcmluZyBvdGhlciBwcm9jZXNzZXMsIGJ1dCBzdGlsbCBhbGxvd3MgdW5wcml2aWxl
-Z2VkDQo+IHNlbGYtbW9uaXRvcmluZy4NCj4gKwkgKiAgIFNlZTogaHR0cHM6Ly9sb3JlLmtlcm5l
-bC5vcmcvYWxsLzE0Njk2MzA3NDYtMzIyNzktMS1naXQtDQo+IHNlbmQtZW1haWwtamVmZnZAZ29v
-Z2xlLmNvbS8NCj4gKwkgKiAtIFVidW50dSBhZGRzIGxldmVsIDQgKHdoaWNoIGlzIGFsc28gdGhl
-IGRlZmF1bHQpLCBjb21wbGV0ZWx5DQo+IGRpc2FibGluZyBwZXJmX2V2ZW50X29wZW4oKQ0KPiAr
-CSAqICAgZm9yIHVucHJpdmlsZWdlZCB1c2Vyc+KAlGVmZmVjdGl2ZWx5IGRpc2FibGluZyBzZWxm
-LQ0KPiBtb25pdG9yaW5nLg0KPiArCSAqDQo+ICsJICogVGhhdCBzYWlkLCBjaGVjayBiZWxvdyBz
-aG91bGQgYmUgc3VmZmljaWVudCB0byBlbmFibGUgdGhpcw0KPiB0ZXN0IG9uIG1vc3Qga2VybmVs
-cy4NCj4gKwkgKi8NCj4gKwlyZXR1cm4gbGV2ZWwgPCA0Ow0KPiArfQ0KPiArDQo+ICBzdGF0aWMg
-aW50DQo+ICB0ZXN0X3BtdV9yZWFkKHZvaWQpDQo+ICB7DQo+IEBAIC0yNCw4ICs2MiwxNSBAQCB0
-ZXN0X3BtdV9yZWFkKHZvaWQpDQo+ICAJCXJldHVybiBURVNUX1NLSVBQRUQ7DQo+ICAJfQ0KPiAN
-Cj4gLQlpZiAocnRlX3BtdV9pbml0KCkgPCAwKQ0KPiAtCQlyZXR1cm4gVEVTVF9GQUlMRUQ7DQo+
-ICsJaWYgKChnZXR1aWQoKSAhPSAwKSAmJiAhcGVyZl9hbGxvd2VkX3F1aXJrKCkpIHsNCj4gKwkJ
-cHJpbnRmKCJzZWxmLW1vbml0b3JpbmcgZGlzYWJsZWRcbiIpOw0KPiArCQlyZXR1cm4gVEVTVF9T
-S0lQUEVEOw0KPiArCX0NCj4gKw0KPiArCWlmIChydGVfcG11X2luaXQoKSA8IDApIHsNCj4gKwkJ
-cHJpbnRmKCJQTVUgbm90IGluaXRpYWxpemVkXG4iKTsNCj4gKwkJcmV0dXJuIFRFU1RfU0tJUFBF
-RDsNCj4gKwl9DQo+IA0KPiAgCWV2ZW50ID0gcnRlX3BtdV9hZGRfZXZlbnQobmFtZSk7DQo+ICAJ
-d2hpbGUgKHRyaWVzLS0pDQo+IEBAIC0zMyw3ICs3OCwxMiBAQCB0ZXN0X3BtdV9yZWFkKHZvaWQp
-DQo+IA0KPiAgCXJ0ZV9wbXVfZmluaSgpOw0KPiANCj4gLQlyZXR1cm4gdmFsID8gVEVTVF9TVUND
-RVNTIDogVEVTVF9GQUlMRUQ7DQo+ICsJLyogcnRlX3BtdV9yZWFkKCkgcmV0dXJucyB6ZXJvIGlm
-IGl0IGNhbid0IHJlYWQgcGVyZiBjb3VudGVyLg0KPiBUaHVzIHNlcmllcyBvZiB6ZXJvcyBkb2Vz
-bid0DQo+ICsJICogbmVjZXNzYXJpbHkgbWVhbiB0aGUgY291bnRlciBpcyBhY3R1YWxseSB6ZXJv
-LiBJdCBtaWdodCBqdXN0DQo+IHNpZ25hbCBhIHByb2JsZW0gd2l0aCBzZXR1cA0KPiArCSAqIGl0
-c2VsZi4gU28gc2tpcCB0ZXN0IHRvIGF2b2lkIHRlc3RpbmcgZmFpbHVyZSBhbmQgbGVhdmUgaXQg
-dG8NCj4gdXNlciB0byBpbnRlcnByZXQgdGhpcw0KPiArCSAqIG91dGNvbWUuDQo+ICsJICovDQo+
-ICsJcmV0dXJuIHZhbCA/IFRFU1RfU1VDQ0VTUyA6IFRFU1RfU0tJUFBFRDsNCj4gIH0NCj4gDQo+
-ICBzdGF0aWMgc3RydWN0IHVuaXRfdGVzdF9zdWl0ZSBwbXVfdGVzdHMgPSB7DQo+IEBAIC01Miw2
-ICsxMDIsNCBAQCB0ZXN0X3BtdSh2b2lkKQ0KPiAgCXJldHVybiB1bml0X3Rlc3Rfc3VpdGVfcnVu
-bmVyKCZwbXVfdGVzdHMpOw0KPiAgfQ0KPiANCj4gLS8qIGRpc2FibGVkIGJlY2F1c2Ugb2YgcmVw
-b3J0ZWQgZmFpbHVyZXMsIHdhaXRpbmcgZm9yIGEgZml4DQo+IC0gKiBSRUdJU1RFUl9GQVNUX1RF
-U1QocG11X2F1dG90ZXN0LCB0cnVlLCB0cnVlLCB0ZXN0X3BtdSk7DQo+IC0gKi8NCj4gK1JFR0lT
-VEVSX0ZBU1RfVEVTVChwbXVfYXV0b3Rlc3QsIHRydWUsIHRydWUsIHRlc3RfcG11KTsNCj4gLS0N
-Cj4gMi4zNC4xDQoNCg==
+On Wed, Oct 29, 2025 at 12:09:28PM +0000, Ayshathul Thuhara wrote:
+> Hi Team,
+> 
+>        Thankyou for providing this input.
+> 
+> In addition we have a few queries while running DPDK in Windows.
+> (A) On what scenario or an example,  can Virt2PHY driver be used?
+> (B) After we bind the interface using netuio.inf file, the example application testpmd.exe shows "No probed ethernet device". But in Device manager the interface shows available and bind with QDMA. Here we are using QDMA-PMD(https://github.com/Xilinx/dma_ip_drivers/tree/master/QDMA/DPDK) driver. This driver works with Linux environment.(Please let me know if we need to create new mail for this).
+> 
+> Thanks and regards,
+> Ayshathul Thuhara
+> ________________________________
+> From: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+> Sent: 29 October 2025 11:56
+> To: Ayshathul Thuhara <ayshathul.thuhara@iwave-global.com>
+> Cc: Chaturbhuja Nath Prabhu <c.prabhu@iwave-global.com>; dev <dev@dpdk.org>; Andre Muezerie <andremue@linux.microsoft.com>
+> Subject: Re: Virtio-PMD in Windows
+> 
+> Hi Ayshathul,
+> 
+> Adding Andre as currently the most involved Windows DPDK maintainer.
+> 
+> Virtio PMD could work in QEMU-KVM on Linux host with Windows guest as PoC.
+> However, the patches were never completed and merged
+> because of a few toolchain-related issues that no one had time to resolve.
+> In DPDK, the latest patch is this
+> (check also the link in that message and the discussion):
+> 
+> https://inbox.dpdk.org/dev/20210815145614.3826-1-u9012063@gmail.com/
+> 
+> In DPDK kmods repository, you'd need to add PCI IDs to the INF file.
+> 
+
+Hi Ayshathul,
+
+I don't have further context on this, but let me know if I can help with this.
+
+Regards,
+
+Andre
