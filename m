@@ -2,75 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EC1CCF9E3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Oct 2025 15:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9551CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Oct 2025 15:53:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 979464026F;
-	Thu, 30 Oct 2025 16:43:20 +0100 (CET)
-Received: from fout-b3-smtp.messagingengine.com
- (fout-b3-smtp.messagingengine.com [202.12.124.146])
- by mails.dpdk.org (Postfix) with ESMTP id 3EAC940150
- for <dev@dpdk.org>; Thu, 30 Oct 2025 16:43:19 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.stl.internal (Postfix) with ESMTP id 5EE4D1D00100;
- Thu, 30 Oct 2025 11:43:18 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Thu, 30 Oct 2025 11:43:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm3; t=1761838998; x=1761925398; bh=evdu9eQJ+HtOtAyoYfL87
- 2kmMlIwnd9YgGMBkqd1nck=; b=HV6EI/kI/FvjoaOLi2WYIosNiDKGWzMSyWt2H
- JNe+MwxsYY+LmXZNJJbAv1ecOCnqQyEVWxCAlS0ilnhwDnYWvS52Gg8XcaaMS+R4
- YnniQI39bU8ZfGKONBv6/4yeXVWaAosXnbVnt1UVUI77g73LUVtFf8LAX1abDTyp
- Vn0Qe61R7b3k87oZi9uddft4znTlRk/NaReopKZdwTYMeeOpJZrhyLhfvYxVYjhT
- xC/1y0gSViiXDrPxoa3z9VyqTyzxBQSurN04kpAM3UN4PEUJZkknzGJNQmDLeIx4
- qqSMTMtRDWg06fJjmHQlWfNNeP5AHlD1gpx99ZrzuZhqCmT/g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
- 1761838998; x=1761925398; bh=evdu9eQJ+HtOtAyoYfL872kmMlIwnd9YgGM
- Bkqd1nck=; b=2HwTEd5O8iZHaMr8SXEhtjPiwZoYtEGLIQbqmlEazaoEkFC8sc+
- zKasrpy67z4ZN2sBY1JdUxUA+qyrwVb0CSZMVz7WuZ1wakf2rQxsCZy+SWrKsrS0
- Errp+ZVefjgljGDr0QPknENqWhoAM6OUMmIMnT88NA7iYiv2pOAphW23rDS+4o0m
- ol17U7C/tcypDKr6hc5WOxkRYBm9qxMhdZZvrYlxjBtaAuk4G4QZWxC1DssCzGoe
- SVSA1QfEMpiC2S71cn5SPAiAVMY0Cg4AwWVPnZrPu+lXQsQu3QjdHqS9vgEfMYHL
- g+pzoXRmn77EyCMRz6CgI/nS+n/xQhto2OQ==
-X-ME-Sender: <xms:lYcDaeBNeTEkqUmSeq2eWd6D8oelQRZeeefXApN6rzBDY1KE1RPpCA>
- <xme:lYcDac1TtbRaEN65e61mUhUWhwryH4LmcgFL-QEdTJu4dzDt6SY3xQeIdrQMZVm2Q
- 7bg1eCNFYuFgZw0GBln0MtTck9DuNUJCZcYFrvX1oTOXfrakUFeguI>
-X-ME-Received: <xmr:lYcDaQuPD70o0U7RgEnLMfr0A0rL2djFC2w-QzSCDtGq_TDo22t_ZZDhbQi_172JRnw7iU1JL7MVkamZcuqPAh3eQJC2sQY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejtddtucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghsucfo
- ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
- htthgvrhhnpeehueekvdejudefveekjeelgeejffeuiefgleffleefudfgkefhheetuddt
- leegfeenucffohhmrghinhepnhhvihguihgrrdgtohhmnecuvehluhhsthgvrhfuihiivg
- eptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdr
- nhgvthdpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
- epuggvvhesughpughkrdhorhhgpdhrtghpthhtohepmhgrthgrnhesnhhvihguihgrrdgt
- ohhmpdhrtghpthhtohepohhrihhkrgesnhhvihguihgrrdgtohhm
-X-ME-Proxy: <xmx:lYcDaU7BGZQ2HLDW4iRA4Hgq8hIT6clRYob7s4qHJYfQYE5c3mvs9Q>
- <xmx:lYcDaZJqCT8akkFER8z-BODi_uZPKuhIv6W7HS1JCAR_fBAFVus4ow>
- <xmx:lYcDac4PJBB-kLE44wmhZqBC13tgaSph5DtS_CawNgiuxpbY099KRA>
- <xmx:lYcDaUxK1-VJUXji6JNKU1fSEssexWb58HE_ispUNgcDtW9S1wtu0A>
- <xmx:locDaWjncyMEOsmz-ohvaCuipCNsi0uJdeAfAQq8V7xFhOgkNTpfdc5l>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Oct 2025 11:43:17 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: Matan Azrad <matan@nvidia.com>,
-	Ori Kam <orika@nvidia.com>
-Subject: [PATCH] doc: add NVIDIA SuperNIC devices
-Date: Thu, 30 Oct 2025 16:42:49 +0100
-Message-ID: <20251030154250.3918985-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.51.0
+	by mails.dpdk.org (Postfix) with ESMTP id A8DFC4026F;
+	Thu, 30 Oct 2025 16:53:09 +0100 (CET)
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com
+ [209.85.167.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 7494840150
+ for <dev@dpdk.org>; Thu, 30 Oct 2025 16:53:08 +0100 (CET)
+Received: by mail-oi1-f181.google.com with SMTP id
+ 5614622812f47-44daa894741so366258b6e.1
+ for <dev@dpdk.org>; Thu, 30 Oct 2025 08:53:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761839587;
+ x=1762444387; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=SztFEtiNhilZHJ71W7cSOCKrmtfBKCsuYSvJ6FoZB54=;
+ b=mSMIRf96Vg2Fa1EvrVPpN++vANKTNhxzEHKXaG12/MLiWMe3oFEt9myKi8ar1Uqhee
+ t7RcI88MSoE7sDfsVE/VsRUHziK0RTJfEdB0jEBCjtMp82D1XUb55Fkphr5s3slM8DeH
+ YAigJMci4p83z75FpB81W3svQE5/xlxJJ8KHcbI29iKe1oYQsOwzwAcmtRaYkj7N/FLc
+ oGsQ0a4PYFH1w/55jDeeZwRmFpjF6zQ5VUzOqrgyEGZEdQKDXqc0nG/2OvhCMh7Zskxq
+ 3B3/yeB15t0ixksGWUz30mUs0lnQ2fTykzgjg/6ZNSYyaXWdrcMfsPL0STM/Cei4wUUc
+ pkNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1761839587; x=1762444387;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=SztFEtiNhilZHJ71W7cSOCKrmtfBKCsuYSvJ6FoZB54=;
+ b=Bbjn4Do7Fm/dCpUtp0RTX8IFEd0yZwSb3dHk6G+4R0p00wA84iSyBHHlbfCVH23a9b
+ TlGcS1JVzi3C3Y68Dwj/MENZ55Vgn++eYbRFl1n9JawsiPn44Dm+h6JP4NRtWSzN9Wi+
+ vixBc6IEl4M8DYf2KuKVMuVVG5qo8/tOOiHR0YxU39v3y+MkKtbqUBVS0BGSvET05tC5
+ 41HH6WMQJkUHOZI4BoZ8f/dm90Spi/LKvm06w5V2rch+ncEebshA05p02VKTtofSp0D/
+ 63FIdy3nZsUDOqfhc2T2A1GurrhXI8XDbL2nAiEa6Xgih0Q+8paJXofAWVjMPNM/MjxP
+ QshQ==
+X-Gm-Message-State: AOJu0YyPtT9+Vf/Olq0J6YFv+H3mVwxg1ceJlAbZbBf3hooiBAk5Aa17
+ sVR1uQ5m8ST/fQIDf5yZyPgkuAozB+0sGkqeJFmhrfCKGvfWMbhlJDJvqNGMszLO6Y0=
+X-Gm-Gg: ASbGncsbSsyGcwnjTqhTyXaIi0AqsziraF2NILo4KRKOrrCkHDIDq8kP22lUauZ6Agf
+ GHNObalL5PmUdHoj3SVGCpigrsR3Y2NzrVurcgmyvyXfFsC84IPHje2Zkpju4fjVzZbpxNFpZTo
+ 8cHGnVHs/yRlcHwk+kxce40J84DRF8E7OfDlApaQ1yoOmzly7CJOHls3QVifgCtvqOsewGnqGp6
+ N+TcbQSS2e83XnDGOpS7NCIjo3cI/MTDoHK3sbZ0pY2EhyNVP8EmVKexnNS/V+B1DwgpoktoEmB
+ lnuBPanUOP0O0JSW3LntWYk3/WNBkDjS0+VR8Uzo5/NAOna3p6wiAwkj3QO6nEExXfnKQGutq1n
+ e36hfV4/KIUdD15KNvyXI0Kicr/bLnnrCvjEOgqhVuUfUHeM5hyvIk7uCCOpdgctB0qi7cmvNOg
+ bsjV0GuoYKl+9LS8eWdtLy8kCVfpjUOzZK/g==
+X-Google-Smtp-Source: AGHT+IGMC94GwsKcN4jclSPzlHMJmIqb9Vuuf0L+nnjYwHD2ILlEHL6p2v8rOyqKR1tCu9MrOVIGAw==
+X-Received: by 2002:a05:6808:1a1c:b0:44d:aab9:3f99 with SMTP id
+ 5614622812f47-44f95e4d3bemr45824b6e.17.1761839587458; 
+ Thu, 30 Oct 2025 08:53:07 -0700 (PDT)
+Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5614622812f47-44da3e93e0esm4268477b6e.17.2025.10.30.08.53.06
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 30 Oct 2025 08:53:07 -0700 (PDT)
+Date: Thu, 30 Oct 2025 08:53:04 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Gregory Etelson <getelson@nvidia.com>
+Cc: <dev@dpdk.org>, <mkashani@nvidia.com>, <rasland@nvidia.com>, Dariusz
+ Sosnowski <dsosnowski@nvidia.com>, Aman Singh <aman.deep.singh@intel.com>,
+ Shani Peretz <shperetz@nvidia.com>
+Subject: Re: [PATCH] app/testpmd: fix devargs format in port attach
+Message-ID: <20251030085304.41795417@phoenix>
+In-Reply-To: <20251030092016.226974-1-getelson@nvidia.com>
+References: <20251030092016.226974-1-getelson@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,119 +83,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-SuperNIC devices are designed for AI workloads:
-https://www.nvidia.com/en-us/networking/products/ethernet/supernic/
+On Thu, 30 Oct 2025 11:20:15 +0200
+Gregory Etelson <getelson@nvidia.com> wrote:
 
-The lists of well supported NVIDIA devices are updated accordingly.
+>  static char *
+> -convert_pci_address_format(const char *identifier, char *pci_buffer, size_t buf_size)
+> +convert_pci_address_format(const char *identifier, char *pci_buffer)
+>  {
+>  	struct rte_devargs da;
+>  	struct rte_pci_addr pci_addr;
+> @@ -3430,7 +3430,8 @@ convert_pci_address_format(const char *identifier, char *pci_buffer, size_t buf_
+>  	if (rte_pci_addr_parse(da.name, &pci_addr) != 0)
+>  		return NULL;
+>  
+> -	rte_pci_device_name(&pci_addr, pci_buffer, buf_size);
+> +	rte_pci_device_name(&pci_addr, pci_buffer, PCI_PRI_STR_SIZE);
+> +	sprintf(pci_buffer + strlen(pci_buffer), ",%s", da.args);
+>  	return pci_buffer;
+>  }
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- doc/guides/compressdevs/mlx5.rst | 13 ++++++-------
- doc/guides/cryptodevs/mlx5.rst   | 15 ++++++---------
- doc/guides/regexdevs/mlx5.rst    | 13 ++++++-------
- 3 files changed, 18 insertions(+), 23 deletions(-)
-
-diff --git a/doc/guides/compressdevs/mlx5.rst b/doc/guides/compressdevs/mlx5.rst
-index b64818444a..8eda954d4e 100644
---- a/doc/guides/compressdevs/mlx5.rst
-+++ b/doc/guides/compressdevs/mlx5.rst
-@@ -6,9 +6,8 @@
- NVIDIA MLX5 Compress Driver
- ===========================
- 
--The mlx5 compress driver library
--(**librte_compress_mlx5**) provides support for **NVIDIA BlueField-2**,
--and **NVIDIA BlueField-3** families of 25/50/100/200/400 Gb/s adapters.
-+The mlx5 compress driver (``librte_compress_mlx5``)
-+provides support for NVIDIA DPU device family.
- 
- Design
- ------
-@@ -108,11 +107,11 @@ for an additional list of options shared with other mlx5 drivers.
-   The default value is 15.
- 
- 
--Supported NICs
----------------
-+Supported Devices
-+-----------------
- 
--* NVIDIA\ |reg| BlueField-2 SmartNIC
--* NVIDIA\ |reg| BlueField-3 SmartNIC
-+* NVIDIA\ |reg| BlueField-2 DPU
-+* NVIDIA\ |reg| BlueField-3 DPU/SuperNIC
- 
- Prerequisites
- -------------
-diff --git a/doc/guides/cryptodevs/mlx5.rst b/doc/guides/cryptodevs/mlx5.rst
-index 8a2ec20e74..e1eb02e548 100644
---- a/doc/guides/cryptodevs/mlx5.rst
-+++ b/doc/guides/cryptodevs/mlx5.rst
-@@ -6,10 +6,8 @@
- NVIDIA MLX5 Crypto Driver
- =========================
- 
--The MLX5 crypto driver library
--(**librte_crypto_mlx5**) provides support for **NVIDIA ConnectX-6**,
--**NVIDIA ConnectX-6 Dx**, **NVIDIA ConnectX-7**, **NVIDIA ConnectX-8**,
--**NVIDIA BlueField-2**, and **NVIDIA BlueField-3** family adapters.
-+The mlx5 crypto driver (``librte_crypto_mlx5``)
-+provides support for NVIDIA NIC and DPU device families.
- 
- Overview
- --------
-@@ -201,15 +199,14 @@ for an additional list of options shared with other mlx5 drivers.
-   Set to ``full_capable`` by default.
- 
- 
--Supported NICs
----------------
-+Supported Devices
-+-----------------
- 
- * NVIDIA\ |reg| ConnectX\ |reg|-6 200G MCX654106A-HCAT (2x200G)
- * NVIDIA\ |reg| ConnectX\ |reg|-6 Dx
- * NVIDIA\ |reg| ConnectX\ |reg|-7
--* NVIDIA\ |reg| ConnectX\ |reg|-8
--* NVIDIA\ |reg| BlueField\ |reg|-2 SmartNIC
--* NVIDIA\ |reg| BlueField\ |reg|-3 SmartNIC
-+* NVIDIA\ |reg| BlueField\ |reg|-2 DPU
-+* NVIDIA\ |reg| BlueField\ |reg|-3 DPU/SuperNIC
- 
- 
- Limitations
-diff --git a/doc/guides/regexdevs/mlx5.rst b/doc/guides/regexdevs/mlx5.rst
-index 814228c5e3..be45b54147 100644
---- a/doc/guides/regexdevs/mlx5.rst
-+++ b/doc/guides/regexdevs/mlx5.rst
-@@ -6,9 +6,8 @@
- NVIDIA MLX5 RegEx Driver
- ========================
- 
--The mlx5 RegEx (Regular Expression) driver library
--(**librte_regex_mlx5**) provides support for **NVIDIA BlueField-2**,
--and **NVIDIA BlueField-3** families of 25/50/100/200 Gb/s adapters.
-+The mlx5 RegEx (Regular Expression) driver (``librte_regex_mlx5``)
-+provides support for NVIDIA DPU device family.
- 
- Design
- ------
-@@ -32,11 +31,11 @@ See :ref:`mlx5 common compilation <mlx5_common_compilation>`,
- and :ref:`mlx5 common driver options <mlx5_common_driver_options>`.
- 
- 
--Supported NICs
----------------
-+Supported Devices
-+-----------------
- 
--* NVIDIA\ |reg| BlueField-2 SmartNIC
--* NVIDIA\ |reg| BlueField-3 SmartNIC
-+* NVIDIA\ |reg| BlueField-2 DPU
-+* NVIDIA\ |reg| BlueField-3 DPU/SuperNIC
- 
- Prerequisites
- -------------
--- 
-2.51.0
-
+It would be safer to keep the buf_size argument. It avoids any overflow issues.
+Many tools flag any direct sprintf usage as an error.
