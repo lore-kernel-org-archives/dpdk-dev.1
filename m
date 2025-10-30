@@ -2,30 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81FA0CCF9F0
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Oct 2025 12:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C52DCCF9FC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Oct 2025 13:04:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6061B402A6;
-	Thu, 30 Oct 2025 13:52:43 +0100 (CET)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 92C234026F
- for <dev@dpdk.org>; Thu, 30 Oct 2025 13:52:41 +0100 (CET)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E49201AC1;
- Thu, 30 Oct 2025 05:52:32 -0700 (PDT)
-Received: from paul-pc.localdomain (unknown [10.57.2.143])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E04673F673;
- Thu, 30 Oct 2025 05:52:39 -0700 (PDT)
-From: Paul Szczepanek <paul.szczepanek@arm.com>
-To: dev@dpdk.org
-Cc: probb@iol.unh.edu, Paul Szczepanek <paul.szczepanek@arm.com>,
- Luca Vizzarro <luca.vizzarro@arm.com>
-Subject: [PATCH v1] dts: move artifact class to API
-Date: Thu, 30 Oct 2025 12:52:31 +0000
-Message-Id: <20251030125231.114295-1-paul.szczepanek@arm.com>
-X-Mailer: git-send-email 2.39.5
+	by mails.dpdk.org (Postfix) with ESMTP id A3ABC4026F;
+	Thu, 30 Oct 2025 14:04:01 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 310474026F
+ for <dev@dpdk.org>; Thu, 30 Oct 2025 14:04:00 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E553B206CD;
+ Thu, 30 Oct 2025 14:03:59 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v11 7/9] test/pmu: enable test
+Date: Thu, 30 Oct 2025 14:03:56 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65516@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20251024054830.933910-8-tduszynski@marvell.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v11 7/9] test/pmu: enable test
+Thread-Index: AdxEqfO07iRv5NoHQAGk1C3y8qiaFgE7+T+A
+References: <20250801102109.3544901-1-tduszynski@marvell.com>
+ <20251024054830.933910-1-tduszynski@marvell.com>
+ <20251024054830.933910-8-tduszynski@marvell.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Tomasz Duszynski" <tduszynski@marvell.com>
+Cc: <dev@dpdk.org>, <Ruifeng.Wang@arm.com>, <bruce.richardson@intel.com>,
+ <david.marchand@redhat.com>, <jerinj@marvell.com>,
+ <konstantin.v.ananyev@yandex.ru>, <mattias.ronnblom@ericsson.com>,
+ <roretzla@linux.microsoft.com>, <stephen@networkplumber.org>,
+ <thomas@monjalon.net>, <zhoumin@loongson.cn>, <wathsala.vithanage@arm.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -39,154 +52,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Moved the artifact module to API and
-updated docs and tests to match the move.
-
-Signed-off-by: Paul Szczepanek <paul.szczepanek@arm.com>
-Reviewed-by: Luca Vizzarro <luca.vizzarro@arm.com>
----
- ...{framework.testbed_model.artifact.rst => api.artifact.rst} | 2 +-
- doc/api/dts/api.rst                                           | 1 +
- doc/api/dts/framework.testbed_model.rst                       | 1 -
- dts/{framework/testbed_model => api}/artifact.py              | 2 +-
- dts/framework/logger.py                                       | 4 ++--
- .../traffic_generator/capturing_traffic_generator.py          | 2 +-
- dts/tests/TestSuite_packet_capture.py                         | 2 +-
- dts/tests/TestSuite_softnic.py                                | 2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
- rename doc/api/dts/{framework.testbed_model.artifact.rst => api.artifact.rst} (72%)
- rename dts/{framework/testbed_model => api}/artifact.py (99%)
-
-diff --git a/doc/api/dts/framework.testbed_model.artifact.rst b/doc/api/dts/api.artifact.rst
-similarity index 72%
-rename from doc/api/dts/framework.testbed_model.artifact.rst
-rename to doc/api/dts/api.artifact.rst
-index 1b941b9a95..3a55473d28 100644
---- a/doc/api/dts/framework.testbed_model.artifact.rst
-+++ b/doc/api/dts/api.artifact.rst
-@@ -3,6 +3,6 @@
- artifact - File Management
- ==========================
-
--.. automodule:: framework.testbed_model.artifact
-+.. automodule:: api.artifact
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/api.rst b/doc/api/dts/api.rst
-index 2734b633be..ec9d2beda7 100644
---- a/doc/api/dts/api.rst
-+++ b/doc/api/dts/api.rst
-@@ -17,6 +17,7 @@ api - DTS API
-    :hidden:
-    :maxdepth: 1
-
-+   api.artifact
-    api.capabilities
-    api.packet
-    api.test
-diff --git a/doc/api/dts/framework.testbed_model.rst b/doc/api/dts/framework.testbed_model.rst
-index 59429e5cd9..f283178f6a 100644
---- a/doc/api/dts/framework.testbed_model.rst
-+++ b/doc/api/dts/framework.testbed_model.rst
-@@ -17,7 +17,6 @@ testbed\_model - Testbed Modelling Package
-    :hidden:
-    :maxdepth: 1
-
--   framework.testbed_model.artifact
-    framework.testbed_model.os_session
-    framework.testbed_model.linux_session
-    framework.testbed_model.posix_session
-diff --git a/dts/framework/testbed_model/artifact.py b/dts/api/artifact.py
-similarity index 99%
-rename from dts/framework/testbed_model/artifact.py
-rename to dts/api/artifact.py
-index 9b4caacae2..24a2b05063 100644
---- a/dts/framework/testbed_model/artifact.py
-+++ b/dts/api/artifact.py
-@@ -10,7 +10,7 @@
-
-     .. code:: python
-
--        from framework.testbed_model.artifact import Artifact
-+        from api.artifact import Artifact
-
-         # Create an artifact on a remote node
-         artifact = Artifact(node="sut", file_name="example.txt")
-diff --git a/dts/framework/logger.py b/dts/framework/logger.py
-index 58f26f93ef..67b180bca2 100644
---- a/dts/framework/logger.py
-+++ b/dts/framework/logger.py
-@@ -18,7 +18,7 @@
- from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple
-
- if TYPE_CHECKING:
--    from framework.testbed_model.artifact import Artifact
-+    from api.artifact import Artifact
-
- date_fmt = "%Y/%m/%d %H:%M:%S"
- stream_fmt = "%(asctime)s - %(stage)s - %(name)s - %(levelname)s - %(message)s"
-@@ -140,7 +140,7 @@ def _add_artifact_handlers(self, log_file_name: str) -> list[ArtifactHandler]:
-         Returns:
-             The newly created artifact handlers.
-         """
--        from framework.testbed_model.artifact import Artifact
-+        from api.artifact import Artifact
-
-         log_artifact = Artifact("local", f"{log_file_name}.log")
-         handler = StreamHandler(log_artifact.open("w"))
-diff --git a/dts/framework/testbed_model/traffic_generator/capturing_traffic_generator.py b/dts/framework/testbed_model/traffic_generator/capturing_traffic_generator.py
-index ec0993e6b7..6f7ae022dd 100644
---- a/dts/framework/testbed_model/traffic_generator/capturing_traffic_generator.py
-+++ b/dts/framework/testbed_model/traffic_generator/capturing_traffic_generator.py
-@@ -16,7 +16,7 @@
- import scapy.utils
- from scapy.packet import Packet
-
--from framework.testbed_model.artifact import Artifact
-+from api.artifact import Artifact
- from framework.testbed_model.port import Port
- from framework.utils import get_packet_summaries
-
-diff --git a/dts/tests/TestSuite_packet_capture.py b/dts/tests/TestSuite_packet_capture.py
-index 3873cf622f..4bd15e2401 100644
---- a/dts/tests/TestSuite_packet_capture.py
-+++ b/dts/tests/TestSuite_packet_capture.py
-@@ -25,6 +25,7 @@
- from scapy.packet import Packet, Raw, raw
- from scapy.utils import rdpcap
-
-+from api.artifact import Artifact
- from api.capabilities import (
-     LinkTopology,
-     requires_link_topology,
-@@ -40,7 +41,6 @@
- from framework.remote_session.blocking_app import BlockingApp
- from framework.remote_session.dpdk_shell import compute_eal_params
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.artifact import Artifact
- from framework.testbed_model.cpu import LogicalCoreList
- from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
-     PacketFilteringConfig,
-diff --git a/dts/tests/TestSuite_softnic.py b/dts/tests/TestSuite_softnic.py
-index c786e23d33..fa91f7ee2f 100644
---- a/dts/tests/TestSuite_softnic.py
-+++ b/dts/tests/TestSuite_softnic.py
-@@ -6,6 +6,7 @@
- Create a softnic virtual device and verify it successfully forwards packets.
- """
-
-+from api.artifact import Artifact
- from api.capabilities import (
-     LinkTopology,
-     NicCapability,
-@@ -20,7 +21,6 @@
- from api.testpmd import TestPmd
- from api.testpmd.config import EthPeer
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.artifact import Artifact
- from framework.testbed_model.virtual_device import VirtualDevice
- from framework.utils import generate_random_packets
-
---
-2.39.5
-
+PiBGcm9tOiBUb21hc3ogRHVzenluc2tpIFttYWlsdG86dGR1c3p5bnNraUBtYXJ2ZWxsLmNvbV0N
+Cj4gU2VudDogRnJpZGF5LCAyNCBPY3RvYmVyIDIwMjUgMDcuNDgNCj4gDQo+IEVuYWJsZSB0ZXN0
+IHRvIGFsbG93IHVzZXJzIHRvIHZlcmlmeSBiYXNpYyBmdW5jdGlvbmFsaXR5LiBEdWUgdG8NCj4g
+dmFyeWluZw0KPiBjb25maWd1cmF0aW9uIG9wdGlvbnMgYWNyb3NzIGRpc3RyaWJ1dGlvbnMgYW5k
+IGtlcm5lbHMgdXNlciBzaG91bGQNCj4gZW5zdXJlIHRoYXQgYWxsIHJlcXVpcmVtZW50cyBhcmUg
+c2F0aXNmaWVkIGJlZm9yZSBzdGFydGluZyB0ZXN0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogVG9t
+YXN6IER1c3p5bnNraSA8dGR1c3p5bnNraUBtYXJ2ZWxsLmNvbT4NCj4gLS0tDQoNCldpdGggdGhl
+c2UgY2hhbmdlcywgdGhlIHRlc3QgY2FuIG5ldmVyIHJldHVybiBURVNUX0ZBSUxFRCwgaXQgcmV0
+dXJucyBURVNUX1NLSVBQRUQgd2hlbiBzb21ldGhpbmcgZG9lc24ndCB3b3JrLg0KDQpJTU8sIHRo
+ZSBwZXJmX2FsbG93ZWRfcXVpcmsoKSBjaGVjayBiZWxvbmdzIGluIHJ0ZV9wbXVfaW5pdCgpIGlu
+c3RlYWQuDQoNClRoZW4sIHJ0ZV9wbXVfaW5pdCgpIGNvdWxkIHJldHVybiBhIHZhcmlldHkgb2Yg
+ZXJyb3IgdmFsdWVzIGRlcGVuZGluZyBvbiB0aGUgcmVhc29uIGZvciB0aGUgaW5hYmlsaXR5IHRv
+IGluaXQvc3RhcnQgdGhlIFBNVSBsaWJyYXJ5Lg0KQW1vbmdzdCB0aGUgaGlnaCBsZXZlbCBlcnJv
+ciB2YWx1ZXMgc2hvdWxkIGJlOg0KLUVBQ0NFUyAoaW5zdWZmaWNpZW50IHByaXZpbGVnZXMpDQot
+RU5PREVWIChoYXJkd2FyZSBoYXMgbm8gUE1VLCBvciBrZXJuZWwgaXMgY3VzdG9tIGJ1aWx0IHdp
+dGhvdXQgUE1VKQ0KDQpUaGUgdGVzdCBzaG91bGQgb25seSByZXR1cm4gU0tJUFBFRCBpZiBydGVf
+cG11X2luaXQoKSByZXR1cm5zIC1FTk9ERVYgKG5vIFBNVSBwcmVzZW50IHRvIHRlc3QpOyBhbnkg
+b3RoZXIgbm9uLXN1Y2Nlc3Mgc2hvdWxkIGNhdXNlIHRoZSB0ZXN0IHRvIHJldHVybiBGQUlMRUQu
+DQoNCkFsc28sIHRoZSBwb3NzaWJsZSByZXR1cm4gdmFsdWVzIGZyb20gcnRlX3BtdV9pbml0KCkg
+c2hvdWxkIGJlIGRvY3VtZW50ZWQgaW4gaXRzIGZ1bmN0aW9uIGRlc2NyaXB0aW9uLg0KDQoNCj4g
+IGFwcC90ZXN0L3Rlc3RfcG11LmMgfCA2MCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCA1NCBpbnNlcnRpb25zKCspLCA2IGRl
+bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2FwcC90ZXN0L3Rlc3RfcG11LmMgYi9hcHAv
+dGVzdC90ZXN0X3BtdS5jDQo+IGluZGV4IDEwNTEzYmY5YzkuLjdmNDUwYjM1NjYgMTAwNjQ0DQo+
+IC0tLSBhL2FwcC90ZXN0L3Rlc3RfcG11LmMNCj4gKysrIGIvYXBwL3Rlc3QvdGVzdF9wbXUuYw0K
+PiBAQCAtMiwxMCArMiw0OCBAQA0KPiAgICogQ29weXJpZ2h0KEMpIDIwMjUgTWFydmVsbCBJbnRl
+cm5hdGlvbmFsIEx0ZC4NCj4gICAqLw0KPiANCj4gKyNpbmNsdWRlIDxzdGRib29sLmg+DQo+ICsj
+aW5jbHVkZSA8c3RkaW8uaD4NCj4gKyNpbmNsdWRlIDxzeXMvdHlwZXMuaD4NCj4gKyNpbmNsdWRl
+IDx1bmlzdGQuaD4NCj4gKw0KPiAgI2luY2x1ZGUgPHJ0ZV9wbXUuaD4NCj4gDQo+ICAjaW5jbHVk
+ZSAidGVzdC5oIg0KPiANCj4gKyNkZWZpbmUgUEVSRl9FVkVOVF9QQVJBTk9JRF9QQVRIDQo+ICIv
+cHJvYy9zeXMva2VybmVsL3BlcmZfZXZlbnRfcGFyYW5vaWQiDQo+ICsNCj4gK3N0YXRpYyBib29s
+IHBlcmZfYWxsb3dlZF9xdWlyayh2b2lkKQ0KPiArew0KPiArCWludCBsZXZlbCwgcmV0Ow0KPiAr
+CUZJTEUgKmZwOw0KPiArDQo+ICsJZnAgPSBmb3BlbihQRVJGX0VWRU5UX1BBUkFOT0lEX1BBVEgs
+ICJyIik7DQo+ICsJaWYgKCFmcCkNCj4gKwkJcmV0dXJuIGZhbHNlOw0KPiArDQo+ICsJcmV0ID0g
+ZnNjYW5mKGZwLCAiJWQiLCAmbGV2ZWwpOw0KPiArCWZjbG9zZShmcCk7DQo+ICsJaWYgKHJldCAh
+PSAxKQ0KPiArCQlyZXR1cm4gZmFsc2U7DQo+ICsNCj4gKwkvKiBPbiB2YW5pbGxhIExpbnV4IHRo
+ZSBkZWZhdWx0IHBlcmZfZXZlbnRfcGFyYW5vaWQgbGV2ZWwgaXMgMiwNCj4gd2hpY2ggYWxsb3dz
+IG5vbi1wcml2aWxlZ2VkDQo+ICsJICogcHJvY2Vzc2VzIHRvIGFjY2VzcyBwZXJmb3JtYW5jZSBj
+b3VudGVycy4NCj4gKwkgKg0KPiArCSAqIERlYmlhbiAvIFVidW50dSBhbmQgdGhlaXIgZGVyaXZh
+dGl2ZXMgYXBwbHkgcGF0Y2hlcyB0aGF0DQo+IGludHJvZHVjZQ0KPiArCSAqIGFkZGl0aW9uYWwg
+cGFyYW5vaWEgbGV2ZWxzOg0KPiArCSAqDQo+ICsJICogLSBEZWJpYW4gYWRkcyBsZXZlbCAzLCB3
+aGljaCByZXN0cmljdHMgYWNjZXNzIHRvDQo+IHBlcmZfZXZlbnRfb3BlbigpIGZvcg0KPiArCSAq
+ICAgbW9uaXRvcmluZyBvdGhlciBwcm9jZXNzZXMsIGJ1dCBzdGlsbCBhbGxvd3MgdW5wcml2aWxl
+Z2VkDQo+IHNlbGYtbW9uaXRvcmluZy4NCj4gKwkgKiAgIFNlZTogaHR0cHM6Ly9sb3JlLmtlcm5l
+bC5vcmcvYWxsLzE0Njk2MzA3NDYtMzIyNzktMS1naXQtDQo+IHNlbmQtZW1haWwtamVmZnZAZ29v
+Z2xlLmNvbS8NCj4gKwkgKiAtIFVidW50dSBhZGRzIGxldmVsIDQgKHdoaWNoIGlzIGFsc28gdGhl
+IGRlZmF1bHQpLCBjb21wbGV0ZWx5DQo+IGRpc2FibGluZyBwZXJmX2V2ZW50X29wZW4oKQ0KPiAr
+CSAqICAgZm9yIHVucHJpdmlsZWdlZCB1c2Vyc+KAlGVmZmVjdGl2ZWx5IGRpc2FibGluZyBzZWxm
+LQ0KPiBtb25pdG9yaW5nLg0KPiArCSAqDQo+ICsJICogVGhhdCBzYWlkLCBjaGVjayBiZWxvdyBz
+aG91bGQgYmUgc3VmZmljaWVudCB0byBlbmFibGUgdGhpcw0KPiB0ZXN0IG9uIG1vc3Qga2VybmVs
+cy4NCj4gKwkgKi8NCj4gKwlyZXR1cm4gbGV2ZWwgPCA0Ow0KPiArfQ0KPiArDQo+ICBzdGF0aWMg
+aW50DQo+ICB0ZXN0X3BtdV9yZWFkKHZvaWQpDQo+ICB7DQo+IEBAIC0yNCw4ICs2MiwxNSBAQCB0
+ZXN0X3BtdV9yZWFkKHZvaWQpDQo+ICAJCXJldHVybiBURVNUX1NLSVBQRUQ7DQo+ICAJfQ0KPiAN
+Cj4gLQlpZiAocnRlX3BtdV9pbml0KCkgPCAwKQ0KPiAtCQlyZXR1cm4gVEVTVF9GQUlMRUQ7DQo+
+ICsJaWYgKChnZXR1aWQoKSAhPSAwKSAmJiAhcGVyZl9hbGxvd2VkX3F1aXJrKCkpIHsNCj4gKwkJ
+cHJpbnRmKCJzZWxmLW1vbml0b3JpbmcgZGlzYWJsZWRcbiIpOw0KPiArCQlyZXR1cm4gVEVTVF9T
+S0lQUEVEOw0KPiArCX0NCj4gKw0KPiArCWlmIChydGVfcG11X2luaXQoKSA8IDApIHsNCj4gKwkJ
+cHJpbnRmKCJQTVUgbm90IGluaXRpYWxpemVkXG4iKTsNCj4gKwkJcmV0dXJuIFRFU1RfU0tJUFBF
+RDsNCj4gKwl9DQo+IA0KPiAgCWV2ZW50ID0gcnRlX3BtdV9hZGRfZXZlbnQobmFtZSk7DQo+ICAJ
+d2hpbGUgKHRyaWVzLS0pDQo+IEBAIC0zMyw3ICs3OCwxMiBAQCB0ZXN0X3BtdV9yZWFkKHZvaWQp
+DQo+IA0KPiAgCXJ0ZV9wbXVfZmluaSgpOw0KPiANCj4gLQlyZXR1cm4gdmFsID8gVEVTVF9TVUND
+RVNTIDogVEVTVF9GQUlMRUQ7DQo+ICsJLyogcnRlX3BtdV9yZWFkKCkgcmV0dXJucyB6ZXJvIGlm
+IGl0IGNhbid0IHJlYWQgcGVyZiBjb3VudGVyLg0KPiBUaHVzIHNlcmllcyBvZiB6ZXJvcyBkb2Vz
+bid0DQo+ICsJICogbmVjZXNzYXJpbHkgbWVhbiB0aGUgY291bnRlciBpcyBhY3R1YWxseSB6ZXJv
+LiBJdCBtaWdodCBqdXN0DQo+IHNpZ25hbCBhIHByb2JsZW0gd2l0aCBzZXR1cA0KPiArCSAqIGl0
+c2VsZi4gU28gc2tpcCB0ZXN0IHRvIGF2b2lkIHRlc3RpbmcgZmFpbHVyZSBhbmQgbGVhdmUgaXQg
+dG8NCj4gdXNlciB0byBpbnRlcnByZXQgdGhpcw0KPiArCSAqIG91dGNvbWUuDQo+ICsJICovDQo+
+ICsJcmV0dXJuIHZhbCA/IFRFU1RfU1VDQ0VTUyA6IFRFU1RfU0tJUFBFRDsNCj4gIH0NCj4gDQo+
+ICBzdGF0aWMgc3RydWN0IHVuaXRfdGVzdF9zdWl0ZSBwbXVfdGVzdHMgPSB7DQo+IEBAIC01Miw2
+ICsxMDIsNCBAQCB0ZXN0X3BtdSh2b2lkKQ0KPiAgCXJldHVybiB1bml0X3Rlc3Rfc3VpdGVfcnVu
+bmVyKCZwbXVfdGVzdHMpOw0KPiAgfQ0KPiANCj4gLS8qIGRpc2FibGVkIGJlY2F1c2Ugb2YgcmVw
+b3J0ZWQgZmFpbHVyZXMsIHdhaXRpbmcgZm9yIGEgZml4DQo+IC0gKiBSRUdJU1RFUl9GQVNUX1RF
+U1QocG11X2F1dG90ZXN0LCB0cnVlLCB0cnVlLCB0ZXN0X3BtdSk7DQo+IC0gKi8NCj4gK1JFR0lT
+VEVSX0ZBU1RfVEVTVChwbXVfYXV0b3Rlc3QsIHRydWUsIHRydWUsIHRlc3RfcG11KTsNCj4gLS0N
+Cj4gMi4zNC4xDQoNCg==
