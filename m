@@ -2,49 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B20CCF9FA
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Oct 2025 07:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1757CCF9F0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Oct 2025 08:54:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D14CD402E2;
-	Thu, 30 Oct 2025 08:57:52 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 8B0524027A
- for <dev@dpdk.org>; Thu, 30 Oct 2025 08:57:51 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.186.216])
- by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cxxJ03KLFz6L4rx;
- Thu, 30 Oct 2025 15:56:00 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (unknown [7.214.147.241])
- by mail.maildlp.com (Postfix) with ESMTPS id 370801402F9;
- Thu, 30 Oct 2025 15:57:49 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500001.china.huawei.com (7.214.147.241) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 30 Oct 2025 07:57:48 +0000
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Thu, 30 Oct 2025 07:57:48 +0000
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, "Cristian
- Dumitrescu" <cristian.dumitrescu@intel.com>, Tyler Retzlaff
- <roretzla@linux.microsoft.com>
-Subject: RE: [PATCH v2] bitmap: change return value of rte_bitmap_free
-Thread-Topic: [PATCH v2] bitmap: change return value of rte_bitmap_free
-Thread-Index: AQHcSOOKaR/jDSvDMUehduMQf6tENLTaUj8A
-Date: Thu, 30 Oct 2025 07:57:48 +0000
-Message-ID: <cc6a7dece31f4769b6ad0c1038d35434@huawei.com>
-References: <20251028204432.880074-1-stephen@networkplumber.org>
- <20251029145055.990899-1-stephen@networkplumber.org>
-In-Reply-To: <20251029145055.990899-1-stephen@networkplumber.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.48.147.110]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id E794440297;
+	Thu, 30 Oct 2025 09:54:16 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id A230F4027A
+ for <dev@dpdk.org>; Thu, 30 Oct 2025 09:54:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1761814455;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=jBI4x5BReo8nvO8FR20VWTZFHranNbvcsFky7HuKjBo=;
+ b=R/9qXPDCf1mFedoZopfVB8zLLapI6D0CpBdHq+q/JdtAEaxwwe55ISrw6PEhc5GiYpo8XP
+ MBtRUxejPuIwcj8J3t3YRYhN2IZnl1/qjEAiGcHWASemmvyEvD8a3DVm0Bivt8p0rxm2Pj
+ 57WzHH6dZTZNEF5lIH8LAUe5Y9cjGHI=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-54-cN8W7gkJMKyrucXYA9GrdA-1; Thu, 30 Oct 2025 04:54:13 -0400
+X-MC-Unique: cN8W7gkJMKyrucXYA9GrdA-1
+X-Mimecast-MFC-AGG-ID: cN8W7gkJMKyrucXYA9GrdA_1761814452
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-378ccb2cd05so2920251fa.0
+ for <dev@dpdk.org>; Thu, 30 Oct 2025 01:54:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1761814452; x=1762419252;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=jBI4x5BReo8nvO8FR20VWTZFHranNbvcsFky7HuKjBo=;
+ b=QAhIf9xdWCDxJTyplMJBhM9fAW02Jssz44mewYFgjqjzCnOA8fMC1MGHrp+FnM4lDw
+ 9v3jUNUsIwhV8J2gwl0pfdOIL+cuzysQ86JB6XqpldgmpVatMtXGXqpLqIbfmM/EDH+5
+ TeCz/nX88Q+K6iNhbWb7dWi3X4YLw8UfnJBnbiRzF92Kb7uxq/vWNezG5uMqccG/QGpD
+ rtiUtZ7kuU4skL7bKcX8TfC4GCmeRQMMA67AwZ0KO3J1Z8jReEylKv/XcReQ46KDshkR
+ +CQdESovORpzgrwtbkK7CT+ZbwmzgIvLEbyeQojmAIMwQvcvq2UIIYzmyQ+T0MYFr2a6
+ vN5Q==
+X-Gm-Message-State: AOJu0YxUzz8vDOcIa6JSyZHnPpkc0O5KncE6cZYKnhYqbrgczWHKOtmo
+ woBbsZcxgyZrQm/dCD9W5LocaBJwwBy7kzVvo6A8eT1+LwIQyLWU1rRpxSKHz6USQwP9l/+fbgq
+ 0lHDHwIaf/wHkeJUkbmB0WI4bUWFKVHTzioAc83Qk3Qd2lj8l9dTyRPJv8+rCxUH51hdcHpMruy
+ Szzflv8yAkvxrWSP1SKKQ=
+X-Gm-Gg: ASbGncuTh1mEaph5jp2c8xGgmhglhrF8498khkFNrsBxfQvyEN/FyHmqrL2zKbwNtxp
+ P55Pf9iEZsXEhVg41rjkqTr3Kjq5VkfUX/vF+Y4cLB326HMmXS/MlB6QVyWVLG+k03FQLYtoBCo
+ V1OASKixfN1rBYLqcbS4FFCGstFAoAEXtpVRSyshA+/K9iIJ6ifGANYBtpRw==
+X-Received: by 2002:a2e:b894:0:b0:36b:ce19:d853 with SMTP id
+ 38308e7fff4ca-37a05378dcamr19051881fa.45.1761814452107; 
+ Thu, 30 Oct 2025 01:54:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGs3guIQQw3/PtVMFdLy6CtIQAxPsvk+eZ+/9Pgaxb2Il21mn7PNBYhX/oQ3zYNSRJBt/mQn1umDtBNx1yy7nk=
+X-Received: by 2002:a2e:b894:0:b0:36b:ce19:d853 with SMTP id
+ 38308e7fff4ca-37a05378dcamr19051811fa.45.1761814451666; Thu, 30 Oct 2025
+ 01:54:11 -0700 (PDT)
 MIME-Version: 1.0
+References: <7e4985db2bbf29515f8cd6a4ab510d71f8a636a3.1761299581.git.anatoly.burakov@intel.com>
+ <05ecc81aefbbe2073416c0e78aed926ec9ad54b5.1761299581.git.anatoly.burakov@intel.com>
+In-Reply-To: <05ecc81aefbbe2073416c0e78aed926ec9ad54b5.1761299581.git.anatoly.burakov@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 30 Oct 2025 09:54:00 +0100
+X-Gm-Features: AWmQ_bl4HBsjBR5ubryEsRIyYLzvaeW56Tjv6c82XY3Jgq6ozauGk8_EpkMijHM
+Message-ID: <CAJFAV8wM7HE_WRPO0d4D1Ve5BLwfLQ=GW5iNpNQQpnaDSrghNw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] bus/cdx: fix incorrect device release on error
+To: Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>
+Cc: dev@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>, 
+ Ferruh Yigit <ferruh.yigit@amd.com>, stable@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: qZbsCdbuUDHTF7YiAH7T-ArELGxdIctI8fNmKOhm5vw_1761814452
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,46 +84,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3RlcGhlbiBIZW1taW5n
-ZXIgPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPg0KPiBTZW50OiBXZWRuZXNkYXksIE9jdG9i
-ZXIgMjksIDIwMjUgMjo1MSBQTQ0KPiBUbzogZGV2QGRwZGsub3JnDQo+IENjOiBTdGVwaGVuIEhl
-bW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+OyBNb3J0ZW4gQnLDuHJ1cA0KPiA8
-bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPjsgQ3Jpc3RpYW4gRHVtaXRyZXNjdQ0KPiA8Y3Jpc3Rp
-YW4uZHVtaXRyZXNjdUBpbnRlbC5jb20+OyBUeWxlciBSZXR6bGFmZiA8cm9yZXR6bGFAbGludXgu
-bWljcm9zb2Z0LmNvbT4NCj4gU3ViamVjdDogW1BBVENIIHYyXSBiaXRtYXA6IGNoYW5nZSByZXR1
-cm4gdmFsdWUgb2YgcnRlX2JpdG1hcF9mcmVlDQo+IA0KPiBObyBleGlzdGluZyBjb2RlIGlzIGNo
-ZWNraW5nIHRoZSByZXR1cm4gdmFsdWUgb2YgcnRlX2JpdG1hcF9mcmVlDQo+IGFuZCBvdGhlciBm
-dW5jdGlvbnMgbGlrZSBydGVfZnJlZSBkbyBub3QgcmV0dXJuIGFuIGludC4NCj4gQ2hhbmdlIGl0
-IHRvIGp1c3QgYSBzdHViIHZvaWQgZnVuY3Rpb24uDQo+IA0KPiBUaGlzIHdhcyBtb3RpdmF0ZWQg
-YnkgQ292ZXJpdHkgd2FybmluZ3MgYWJvdXQgdW5jaGVja2VkIHJldHVybg0KPiB2YWx1ZS4NCj4g
-DQo+IFNpZ25lZC1vZmYtYnk6IFN0ZXBoZW4gSGVtbWluZ2VyIDxzdGVwaGVuQG5ldHdvcmtwbHVt
-YmVyLm9yZz4NCj4gUmV2aWV3ZWQtYnk6IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lz
-dGVtcy5jb20+DQo+IC0tLQ0KPiAgZG9jL2d1aWRlcy9yZWxfbm90ZXMvcmVsZWFzZV8yNV8xMS5y
-c3QgfCAgMyArKysNCj4gIGxpYi9lYWwvaW5jbHVkZS9ydGVfYml0bWFwLmggICAgICAgICAgIHwg
-MTMgKysrKy0tLS0tLS0tLQ0KPiAgMiBmaWxlcyBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKyksIDkg
-ZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZG9jL2d1aWRlcy9yZWxfbm90ZXMvcmVs
-ZWFzZV8yNV8xMS5yc3QNCj4gYi9kb2MvZ3VpZGVzL3JlbF9ub3Rlcy9yZWxlYXNlXzI1XzExLnJz
-dA0KPiBpbmRleCBjNWJhMzM1Y2ZjLi40YjhlMDg0MjA0IDEwMDY0NA0KPiAtLS0gYS9kb2MvZ3Vp
-ZGVzL3JlbF9ub3Rlcy9yZWxlYXNlXzI1XzExLnJzdA0KPiArKysgYi9kb2MvZ3VpZGVzL3JlbF9u
-b3Rlcy9yZWxlYXNlXzI1XzExLnJzdA0KPiBAQCAtMjIwLDYgKzIyMCw5IEBAIEFQSSBDaGFuZ2Vz
-DQo+ICAgIFRoZSBsaW5rIHR5cGUgd2FzIHByZXZpb3VzbHkgaGFyZGNvZGVkIHRvIHRoZSBFdGhl
-cm5ldCBsaW5rIHR5cGUgaW4gdGhlIEFQSS4NCj4gICAgVGhpcyBhcmd1bWVudCBpcyBhZGRlZCB0
-byBgYHJ0ZV9wY2FwbmdfYWRkX2ludGVyZmFjZWBgLg0KPiANCj4gKyogYml0bWFwOiBDaGFuZ2Vk
-IHRoZSByZXR1cm4gdHlwZSBvZiBgYHJ0ZV9iaXRtYXBfZnJlZSgpYGAgdG8gdm9pZA0KPiArICBm
-b3IgY29uc2lzdGVuY3kgd2l0aCBvdGhlciBmcmVlIGZ1bmN0aW9ucy4NCj4gKw0KPiANCj4gIEFC
-SSBDaGFuZ2VzDQo+ICAtLS0tLS0tLS0tLQ0KPiBkaWZmIC0tZ2l0IGEvbGliL2VhbC9pbmNsdWRl
-L3J0ZV9iaXRtYXAuaCBiL2xpYi9lYWwvaW5jbHVkZS9ydGVfYml0bWFwLmgNCj4gaW5kZXggYWJi
-MTAyZjFkMy4uZWJlNmM0NDk5OCAxMDA2NDQNCj4gLS0tIGEvbGliL2VhbC9pbmNsdWRlL3J0ZV9i
-aXRtYXAuaA0KPiArKysgYi9saWIvZWFsL2luY2x1ZGUvcnRlX2JpdG1hcC5oDQo+IEBAIC0yODIs
-MjAgKzI4MiwxNSBAQCBydGVfYml0bWFwX2luaXRfd2l0aF9hbGxfc2V0KHVpbnQzMl90IG5fYml0
-cywgdWludDhfdA0KPiAqbWVtLCB1aW50MzJfdCBtZW1fc2l6ZSkNCj4gIC8qKg0KPiAgICogQml0
-bWFwIGZyZWUNCj4gICAqDQo+ICsgKiBUaGlzIGZ1bmN0aW9uIGRvZXMgbm90aGluZyBpbiBjdXJy
-ZW50IGltcGxlbWVudGF0aW9uLg0KPiArICoNCj4gICAqIEBwYXJhbSBibXANCj4gICAqICAgSGFu
-ZGxlIHRvIGJpdG1hcCBpbnN0YW5jZQ0KPiAtICogQHJldHVybg0KPiAtICogICAwIHVwb24gc3Vj
-Y2VzcywgZXJyb3IgY29kZSBvdGhlcndpc2UNCj4gICAqLw0KPiAtc3RhdGljIGlubGluZSBpbnQN
-Cj4gK3N0YXRpYyBpbmxpbmUgdm9pZA0KPiAgcnRlX2JpdG1hcF9mcmVlKHN0cnVjdCBydGVfYml0
-bWFwICpibXApDQo+ICB7DQo+IC0JLyogQ2hlY2sgaW5wdXQgYXJndW1lbnRzICovDQo+IC0JaWYg
-KGJtcCA9PSBOVUxMKSB7DQo+IC0JCXJldHVybiAtMTsNCj4gLQl9DQo+IC0NCj4gLQlyZXR1cm4g
-MDsNCj4gKwlSVEVfU0VUX1VTRUQoYm1wKTsNCj4gIH0NCj4gDQo+ICAvKioNCj4gLS0NCkFja2Vk
-LWJ5OiBLb25zdGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPg0K
-PiAyLjUxLjANCg0K
+On Fri, 24 Oct 2025 at 11:53, Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+>
+> The variable cdx_addr is a stack-allocated zero-initialized char array, but
+> it is never used anywhere except in an error handler to stand it as a
+> device bus address for a VFIO device release call. This is incorrect, as it
+> should have been actual device address, so fix the code to reflect that.
+>
+> Fixes: 45ef232af515 ("bus/cdx: introduce AMD CDX bus")
+> Cc: nipun.gupta@amd.com
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+
+Reviews on this series please.
+
+
+-- 
+David Marchand
+
