@@ -2,67 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A38ACCF9F0
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Oct 2025 14:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB2ECCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Oct 2025 15:35:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4500D4026F;
-	Thu, 30 Oct 2025 15:53:47 +0100 (CET)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com
- [209.85.208.48]) by mails.dpdk.org (Postfix) with ESMTP id EC97240150
- for <dev@dpdk.org>; Thu, 30 Oct 2025 15:53:45 +0100 (CET)
-Received: by mail-ed1-f48.google.com with SMTP id
- 4fb4d7f45d1cf-63c21467e5bso2358293a12.0
- for <dev@dpdk.org>; Thu, 30 Oct 2025 07:53:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D4A254026F;
+	Thu, 30 Oct 2025 16:35:32 +0100 (CET)
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com
+ [209.85.160.44]) by mails.dpdk.org (Postfix) with ESMTP id B177240150
+ for <dev@dpdk.org>; Thu, 30 Oct 2025 16:35:31 +0100 (CET)
+Received: by mail-oa1-f44.google.com with SMTP id
+ 586e51a60fabf-3d199f29161so965340fac.0
+ for <dev@dpdk.org>; Thu, 30 Oct 2025 08:35:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1761836025; x=1762440825; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=PJcZLzSaSqp6Jrc6EM/101YBLkEjV85ydp7ap/FuooU=;
- b=P1EKyDuasCw9T7tatmTrAjD1k365S5A9tq3o+0QjFxposIbM8i6l8j5QNILx+bOZyl
- 7jZ6MsZ36FWxUOWcNPGZ0NkdBNGZlxEgVlt5uuIJnSK1uu4xEvjxzxH84JR+3Tox8YmI
- KtIMxSxjORQpWovfbyfM0RWXsIzdIBAk7BFRQ=
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761838531;
+ x=1762443331; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+ :reply-to; bh=duFLzUJcnaSVqe/ng0+l31kduX+gXG+OP1P66LE9ZPk=;
+ b=yUa+CGcKhWHOw4xokH7/GsHCeIUOleSLE5pCQ7TCs2XgfLBQ+kkzuHpQiWVeWe84Bk
+ P8KphZ7XhO8/w8VCTgCiUOlhapTvLs0DWoRtvT7EnhMRVYVlRdQTfHCKRrAGeicqbn8I
+ dEKK33w9qkgEJpCGGUId2uMRmhigr8FO2cevQ//AQYmoIxVu+opum8ayh0qiKqNrsqHY
+ QAR0Twp0yyyXfUQyb6DmI3NOnvlgIuFY6vKm7kLa7v/4LE+ATPo/VvG66G2AhjVn+30Y
+ Yfs11kFjH1Psmpdh5KDgkjCkU7quh7G84dSK5TEpgGMYE2wYXr/Ub8XoF/jIA6+olWgQ
+ w/6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761836025; x=1762440825;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=PJcZLzSaSqp6Jrc6EM/101YBLkEjV85ydp7ap/FuooU=;
- b=e6jqT1hxKV4Qagn6NBCuiWuSLcoqE4FR2qoe5EdxlT9tnsfS5VeLV7GUYlaAJKpeAX
- ND2V6M/DzbZnUwrKNwLu36pSn3uJ20Vz3giqXF6+PQ27wwYRVAt5AtWNIlYk1SYoLmlp
- fGDm1C012XdzEKz5mnV55dvRK8SJ40Oj+IBJ+JFLIRlJgWXZJ0XgpV33MhTXbrnZp1Kw
- /hDHSoOKPa9NyoX79IWozOPbKKml7sU7+WPSW4x42vuxRL6/ubfYO30842sywrPq0YPH
- laGX3ISY2MOsV710+79TnXaA1qwyBeuM5W7fEEwU8prggxhYFxDtOTv0TIyFNZWYsuKA
- 5AIQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCW6QCC/a7WpTkv/zQzR1jG/PSfFJoJ5lziYbxAUo81GA2leRfH0qou2ilCEqq+/YQAKXpQ=@dpdk.org
-X-Gm-Message-State: AOJu0Ywc3DLdO4TFi8cxDucVby5hDSLz9k+4IdqQs6bseTFI91YwCqJv
- SgtzgcYDCehciwRx2P6EtkwuIljJ7QCSc3Vx8KqmqHQBObe/Z7KKi37OLpIf5WjcY1Mvwv7xWql
- gjiBeEqZ0sYJRWdQYx3g3PgaFF7tOr0ZqVtpuNt2DLA==
-X-Gm-Gg: ASbGncuyKo2XZbZG/eRRpNUJ9TsNbOpMc4qtLj53An08Zmjy1ArXVLpJg2IrKt5TgDw
- VOzucrBlB7jpfUOhtM5RXbkdpikb3xTPiJYRhWyjnWqxhZ5h6Qcr9YwDviwXqeFNmF19RUl2I/h
- tP8pm2PyknpGB4wcBBKGAItm5wdwCStZ+BbclJDTvZUlUn5kl+Pn1053t6WkyQXleKj4vNCxmQe
- ZzYSbDIPJdNFbmGxqeF9V977bgyTPAC01/6T87LSU+OThwnke8G2KbVB4YufHVwJrX7FQQyWWfc
- qmH6uvb9cqD1M8Ccf5ETxfGj/QfN
-X-Google-Smtp-Source: AGHT+IF0SBEb+U4IImfOs3HxHHz8eujdwsjTQcRkvl1zpfbIT2ItZTsu33DJNChDnxl4gVsgCS1NwwcwA43ujXQa5uY=
-X-Received: by 2002:a05:6402:440f:b0:63b:e822:ac3a with SMTP id
- 4fb4d7f45d1cf-6406167d3e4mr2895959a12.0.1761836025546; Thu, 30 Oct 2025
- 07:53:45 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1761838531; x=1762443331;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=duFLzUJcnaSVqe/ng0+l31kduX+gXG+OP1P66LE9ZPk=;
+ b=GJaiWIgyXplUdxHKD2fCpzliJEEGivf81ib8FmdOMZNC2jiAyCiYNk+lgE9pWVyHhD
+ jaZ1OYZjS4zwpWLciXwvP54JBQdLgNcfDZIhNcY+QrbUYJdi0JaLAUTRmx4vL4i7Tutw
+ NsnuofnSUVciMGY1NdOYj9kzRfPGkv3atDe2Qlj2Sltudh80Mn0zLexuHI/E/SFzLiNA
+ rxniEA+HRrwvmNP+9eNUYacqngsTbeVbA8ieY/Aq94peWA7XwCAGznX9qrPFzNdcNMhG
+ FVOS7TwOzBuGQhuZi4b5Iq8TVHVYRS5ZnIfM60WyYhtjqQLOVlv+IvfHXgyrgFRP5ROL
+ 7QbQ==
+X-Gm-Message-State: AOJu0Yy5AJlrMm8H+/tViAexfiCa62dESiz5Vrx9sjPPMooeGPY6MaY3
+ uo4rSbWIzHwDYDDVzbUinbfhl7eH+XX+kkPdeMLdpoEDZNUuMgrJwmWGD7j7W45bIHm9PMXGeWY
+ a9G3y
+X-Gm-Gg: ASbGncve/2Tryyxcy1cPKe79bZHXKveoRCpdjXHG9gq/yGbPBRSLJ/PEaKa4jx2Hx5d
+ 000YC+FARNN8XNeEJbwkVnTu3nBbAcEsvqBAA1Pj95HRSyOf5Ky0zs8iO8apWY4fspNTiFnvh+R
+ Ovwbg/RoPcLGsa9GKAaGmV5xdP3Btl7nEcKVNNya3oX8RoTgfjGl4ViNSIDQM0YUYBEK1nKnI+w
+ nLG3fkDHY3L9FFlUywyvuoRi2i6iJ5d6kf9ewjlNhE72/m1ySJMN9Wk/cqDiEJnAZAJ7Xqq/A9s
+ WfW7nV13nCuIHfmHvW/ot1nnFSzXRaJ93pjWguLdY+YehGO8CVU1qI2+470WbXO84EtCqoAgl6h
+ xRKEmxtH1BeJlSqy2w37YUXwUdbv9q5QQ2EduzbJgEs92KiA/7ziuAkr77RCmyQoDmhuGTbFGSB
+ lTdL8lR8xTpIJdEBtaqidjiengp+P3uffHWsL5zc0EkCtl
+X-Google-Smtp-Source: AGHT+IHqq+xd3wr9FsHvs1ysJKcgIaCYMMcw2dAoB1U9I81KWwr+c4sHZ4BkUR+vkYd4cCe1Wv26+A==
+X-Received: by 2002:a05:6870:a352:b0:342:6d27:2e2 with SMTP id
+ 586e51a60fabf-3d8c902d667mr1641451fac.29.1761838530632; 
+ Thu, 30 Oct 2025 08:35:30 -0700 (PDT)
+Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 586e51a60fabf-3d1e35443dcsm5915057fac.19.2025.10.30.08.35.30
+ for <dev@dpdk.org>
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 30 Oct 2025 08:35:30 -0700 (PDT)
+Date: Thu, 30 Oct 2025 08:35:27 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Subject: Re: retest
+Message-ID: <20251030083527.49d149d6@phoenix>
+In-Reply-To: <20251024025647.1563088-1-chen.qiguo@zte.com.cn>
+References: <20251021065607.1418203-2-chen.qiguo@zte.com.cn>
+ <20251024025647.1563088-1-chen.qiguo@zte.com.cn>
 MIME-Version: 1.0
-References: <20251001231659.2297751-1-probb@iol.unh.edu>
- <20251023013049.1368129-1-probb@iol.unh.edu>
- <20251023013049.1368129-4-probb@iol.unh.edu>
-In-Reply-To: <20251023013049.1368129-4-probb@iol.unh.edu>
-From: Andrew Bailey <abailey@iol.unh.edu>
-Date: Thu, 30 Oct 2025 10:53:34 -0400
-X-Gm-Features: AWmQ_bmJ2q3eNvRSJ6_3XMTa8_7xGrV1GF9_n3QUmMm-L6FCyLOtYVtw2JCEoOI
-Message-ID: <CABJ3N2XALBsU7pw1LQUJNixgHzW2CSYo76PZGUMXMMJFyq1pBg@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] dts: add performance test functions to test suite
- API
-To: Patrick Robb <probb@iol.unh.edu>
-Cc: Luca.Vizzarro@arm.com, dev@dpdk.org, dmarx@iol.unh.ed, 
- Paul.Szczepanek@arm.com, Nicholas Pratte <npratte@iol.unh.edu>, 
- Dean Marx <dmarx@iol.unh.edu>
-Content-Type: multipart/alternative; boundary="0000000000007499690642616a7d"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,65 +81,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000007499690642616a7d
-Content-Type: text/plain; charset="UTF-8"
+On Fri, 24 Oct 2025 10:56:47 +0800
+Qiguo Chen <chen.qiguo@zte.com.cn> wrote:
 
-   rx_mpps = stats.rx_pps / 1000000
-   Nit: not so important, but you can use _ as a comma separator to make
-bigger numbers more readable. ie. 1_000_000.
 
-   Args:
-> +            testpmd: The testpmd shell to use for forwarding packets
-> +            frame_size: The size of the frame to transmit
+> Currently, various testing labs perform CI testing on new patch series se=
+nt
+> to dev at dpdk.org and report their results to
+> https://patchwork.dpdk.org/project/dpdk/list/. On each series on the patch
+> list, the results appear in the test category contexts for IOL (community
+> lab), GitHub, and LoongSon.
+>=20
+> If a reported failure on a series seems suspicious to the patch submitter
+> or maintainer, then there may be an interest in requesting a retest on the
+> series for the failing label(s) in order to verify the failure is not
+> spurious or a false positive. This retest demonstrates to the submitter or
+> maintainer that the failure can be reliably reproduced. Unfortunately, at
+> present, the best way to accomplish this is to reach out to lab maintaine=
+rs
+> via email or Slack. This is not ideal for developers in need of quick test
+> results.
+>=20
+> Going forward, CI testing labs will be implementing the option to request
+> retest for their respective test labels on patchwork via emails sent to t=
+he
+> dev mailing list. This feature is ready today for labels reported by the
+> UNH-IOL Community Lab, and will soon also be an option for the Github Rob=
+ot
+> at least.
+>=20
+> In order to request a retest on your patch series, send an email reply to
+> one of your series=E2=80=99s patch or cover letter emails with email cont=
+ent of the
+> format used below:
+>=20
+> Recheck-request: <test names>
 
-Missing full stops.
-
-Steps:
-+            * Create a packet according to the frame size specified in the
-test config.
-+            * Transmit from the traffic generator's ports 0 and 1 at above
-the expect
-+            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
-+
-+        Verify:
-+            * The resulting MPPS forwarded is greater than
-expected_mpps*(1-delta_tolerance)
-Missing full stop on step 2 and verify.
-
-Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
-
---0000000000007499690642616a7d
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div class=3D"gmail_quote gmail_quote_container"><div>=C2=
-=A0<span style=3D"color:rgb(80,0,80)">=C2=A0 rx_mpps =3D stats.rx_pps / 100=
-0000<br></span>=C2=A0 =C2=A0Nit: not so important, but you can use _ as a c=
-omma separator to make bigger numbers more readable. ie. 1_000_000.</div><d=
-iv><br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px =
-0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex"><span style=
-=3D"color:rgb(80,0,80)">=C2=A0=C2=A0 Args:</span><br style=3D"color:rgb(80,=
-0,80)"><span style=3D"color:rgb(80,0,80)">+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 testpmd: The testpmd shell to use for forwarding packets</span><=
-br style=3D"color:rgb(80,0,80)"><span style=3D"color:rgb(80,0,80)">+=C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 frame_size: The size of the frame to tra=
-nsmit</span></blockquote><div>Missing full stops.=C2=A0</div><div><br><span=
- style=3D"color:rgb(80,0,80)">Steps:</span><br style=3D"color:rgb(80,0,80)"=
-><span style=3D"color:rgb(80,0,80)">+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 * Create a packet according to the frame size specified in the test con=
-fig.</span><br style=3D"color:rgb(80,0,80)"><span style=3D"color:rgb(80,0,8=
-0)">+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Transmit from the traffic =
-generator&#39;s ports 0 and 1 at above the expect</span><br style=3D"color:=
-rgb(80,0,80)"><span style=3D"color:rgb(80,0,80)">+=C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 * Forward on TestPMD&#39;s interfaces 0 and 1 with 1 core=
-.</span><br style=3D"color:rgb(80,0,80)"><span style=3D"color:rgb(80,0,80)"=
->+</span><br style=3D"color:rgb(80,0,80)"><span style=3D"color:rgb(80,0,80)=
-">+=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:</span><br style=3D"color:rgb(80,0,80=
-)"><span style=3D"color:rgb(80,0,80)">+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 * The resulting MPPS forwarded is greater than expected_mpps*(1-delt=
-a_toleran</span><span style=3D"color:rgb(80,0,80)">ce)<br></span>Missing fu=
-ll stop on step 2 and verify.</div><div><br></div><div>Reviewed-by: Andrew =
-Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu">abailey@iol.unh.edu</a>&g=
-t;<br><br></div></div></div>
-
---0000000000007499690642616a7d--
