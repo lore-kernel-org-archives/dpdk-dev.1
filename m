@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 878FDCCF9F0
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Oct 2025 17:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F2FCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Oct 2025 17:53:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC5FC40615;
-	Thu, 30 Oct 2025 18:53:44 +0100 (CET)
-Received: from fhigh-b4-smtp.messagingengine.com
- (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
- by mails.dpdk.org (Postfix) with ESMTP id 817B440651;
- Thu, 30 Oct 2025 18:53:43 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.stl.internal (Postfix) with ESMTP id D9FFC7A00AB;
- Thu, 30 Oct 2025 13:53:42 -0400 (EDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1D5FF40661;
+	Thu, 30 Oct 2025 18:53:49 +0100 (CET)
+Received: from fout-b5-smtp.messagingengine.com
+ (fout-b5-smtp.messagingengine.com [202.12.124.148])
+ by mails.dpdk.org (Postfix) with ESMTP id D147240150
+ for <dev@dpdk.org>; Thu, 30 Oct 2025 18:53:47 +0100 (CET)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+ by mailfout.stl.internal (Postfix) with ESMTP id D7B4C1D001AB;
+ Thu, 30 Oct 2025 13:53:46 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Thu, 30 Oct 2025 13:53:43 -0400
+ by phl-compute-11.internal (MEProxy); Thu, 30 Oct 2025 13:53:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm3; t=1761846822; x=
- 1761933222; bh=Oo4GhbpSSGVuW7vrvyNW5rqeiIQThRKhBdmiRCoEXcU=; b=N
- MQ5qMmVH6sk5P9AbRDBh9WScF3oHXZ7Faa6j0G/e4rjMMywe+iwFCX3iHqEvjc3j
- itM2JlA3RRuw8xp0LAXNM2Z6eLhpIKQI1KcaflSI59dM+8X3/hRbJXL0tJueRgDQ
- EG4qRJuUVWGpitkWeJDSrs224UWuzmIih4cu86W6ODiUcSMxqeRukE0cbnlTciMJ
- MHs0nzuISpSORn29oLfnktwr+zlXl1T3OCzg+DDNdNRGQj6F14g7nxoEzbsdvagK
- Xh+3Zd7a4FDtxKE9RDFveS+50ywip4rtglljWBU30jUUOEylTsEtv0D20toH2aSN
- 1FA9oAwRGz2Q9Zjg6xLQA==
+ :reply-to:subject:subject:to:to; s=fm3; t=1761846826; x=
+ 1761933226; bh=GKz87PkcK7GbxN4dtK0AOuVumjoHCWxJVg4C9hlHji8=; b=p
+ BkLTYrAE7BM+V6lUI6keQHXttxApUcgf0JQN7urbr+pNL/rgskt+PT/48LsNEBUm
+ JhJYLNHrT2x5MXKlX6zgTFTFN67crz6JT9TW6bYxaRKFqVK+k0gDl/KeGKSn1VLW
+ I9r/nBwjUIo8V+/wBeMb+lP9GAN6j1897V3RxwZ6yLHp6JuNdJqYDVBJGgAfCFjN
+ KQgMD0mBRvCrtlI1u/vYXZfSjH4/8tu67yq0aSr0WqTmBZ8syIhxwZWllotVgdw0
+ XOQ/5A/BYp7Lha9im7Tw+PK5zzENUpxE/36cK75vMv9DJDuyKOr3Wmk2bs0cG+dx
+ IU4zMCxQnDpi/ieWFLiJw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm3; t=1761846822; x=1761933222; bh=O
- o4GhbpSSGVuW7vrvyNW5rqeiIQThRKhBdmiRCoEXcU=; b=JgCc9jbBHXmi2+K3J
- mIkjWoisTcKIX4u/oaHk5bsIUdxQ/8VqkuKHsjQmcDle20y/5BUrL2eze6P0RYmI
- UhL9svi02I/S7HL6AhaGEHBZ9X6PuMWYPs7dTYC3GLfksJh/TqMqUu2qouK6Yxqq
- 7Ar2z9f6zt3gi8lVh/iacCFGT/4rIR2jQovucz8X2FyhgIeYp1BirzOlcqUiXJl6
- rEfTWXQajcalMoGiAqEFKkton4jSxLBs/o0Gau0NM2UkWCGUQCcXTifoD3Sd2a2i
- CWKsCqe+8XG6996oDJ8cXbCMYIphL9+0HNMxR9681yRiVtO0w4TvDkw3npOCVKlu
- lymCw==
-X-ME-Sender: <xms:JqYDaQN_sY4vGpIkg1nGTevTkqwFn_bBwULx4Rjj-40BrYpyhVnf6Q>
- <xme:JqYDaR7lo3kOQR7kvqGZF-FP7sEpGzJPEV9-EQzIi2CseDji6AQUbPyM6LAM7LnM4
- 9OM1KdlUKq3mYzDwI8J1-yjFm0ajfY7-rk3Fx_gjORrzOiSQ886xA>
-X-ME-Received: <xmr:JqYDaWT4UVRB6TVNDRL-qOfwCqkL2xA0Dy3bd9kQxBoBkYnAIjFzndt9-mIf2h0rlOu_L4E32lPDfY9cvDWZILnlnw1G99Y>
+ :x-me-sender:x-sasl-enc; s=fm3; t=1761846826; x=1761933226; bh=G
+ Kz87PkcK7GbxN4dtK0AOuVumjoHCWxJVg4C9hlHji8=; b=UCNQz3yJTLjhHMaVt
+ Kb9+imgEY81wBheJSHspLiO3pKdFxztERqZl/iD0erzrxTiw3TV5Sb1SvRjwCKJn
+ 0KF5LHH3yP8tMI4kFdHK2iWAVGhFnZ9ncWK+QP8/0jMNPj4dIxbAfmfw1wZDNemH
+ 9uo2lI9ocFxj5AoJw64FYIfxcQrEyQWF4YQlgS6pz68Q7toQrt5A4A52N4MvpQ9J
+ EqQdL8HJG4hDV94xYffUC8vuvvE9u29VKKFAnUTKT8blGCRDPXHteAS5+Pwk55wX
+ pRtkxA08psQTRvkwBzsKZxzxAnPPRFCVFyAG8TppOYqElpYqoydpzUGV91tp9J8T
+ 43F8g==
+X-ME-Sender: <xms:KqYDaW87ve4MmyQaVcVQebsEo7f-LcCIikLvWDL7wVV9BKRhtUlXLg>
+ <xme:KqYDafphSLp1PymxNTdAsYRnegWaYgVysApZvULE2FKN9fjnCisLdTVkapJAgyFkH
+ K1FjUwBb6Vj7SSCBk1VcRl9Rn4T_JvAec1u68byS_QZRkKtq2T9sKY>
+X-ME-Received: <xmr:KqYDaXmbic1Oh1AWv7qVXav1uN0eShK31DzGfrhDJ5n0m2Czy2TWtMNCJsZdpaxXqE8lbrivXe5ugAkXnERvch5Jv15GcYQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejvdeiucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -51,32 +51,30 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieejvdeiucetufdote
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
  hfeilefhtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhm
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
  ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
  htthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthht
- ohepshhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopeihihhpvghnghdurdifrg
- hnghesihhnthgvlhdrtghomhdprhgtphhtthhopehsrghmvghhrdhgohgsrhhivghlsehi
- nhhtvghlrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughsohhnsehinh
- htvghlrdgtohhmpdhrtghpthhtohepvhhlrgguihhmihhrrdhmvgguvhgvughkihhnsehi
- nhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:JqYDaeCeDj_0GrgxOCXYSjKTy3h88EEk-QoLDtrdUAyq16O3loV8mg>
- <xmx:JqYDaWHBup0wnBLvpaliYaVjFFAy1LkFiFWgIegmH8l8dwdT8Wm1ag>
- <xmx:JqYDaYDqXORe0XxWOg7uxM1BPSUXVOeMJqT-xGkBihT6sqv3mOFtAg>
- <xmx:JqYDaeWs8yvClkmBqyEc_FqS7tofVaDxeTpTuTMfhQ251_ozf1jJOw>
- <xmx:JqYDaRuQPWCf6RkJ0ljtgYBavNjep_ZpJPbdHdUzTnv4ofoB8YUa0T5K>
+ ohephihiphgvnhhguddrfigrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepshgrmh
+ gvhhdrghhosghrihgvlhesihhnthgvlhdrtghomhdprhgtphhtthhopegsrhhutggvrdhr
+ ihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtthhopehvlhgrughimhhirh
+ drmhgvughvvggukhhinhesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:KqYDaegpQ17aSHJtRJ9g3XuZouPZvBnTMcp778Gf5AaAyiH6sCvj5w>
+ <xmx:KqYDaXei4pSbmBUEWHi2PPMRjAxzMXuMYEPP0xzb41be8iiLTOxWkw>
+ <xmx:KqYDaWiGF96EpFfyD6ZHnQJyJgPgWMaTsgmyUYcGykHjNaN6jHnmZA>
+ <xmx:KqYDaXx5GzEX4wKfCZBoau2PGXZ1mTm6AKmfnc_py0fDX7fLEBSajw>
+ <xmx:KqYDaboxV-snQG1rymOkSFQB_VvRN06GIO15Y6UL4T87SBWmUqgAu3tu>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 30 Oct 2025 13:53:41 -0400 (EDT)
+ 30 Oct 2025 13:53:45 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Cc: david.marchand@redhat.com, stable@dpdk.org,
- Yipeng Wang <yipeng1.wang@intel.com>,
+Cc: david.marchand@redhat.com, Yipeng Wang <yipeng1.wang@intel.com>,
  Sameh Gobriel <sameh.gobriel@intel.com>,
  Bruce Richardson <bruce.richardson@intel.com>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH 1/2] test/hash: check memory allocation
-Date: Thu, 30 Oct 2025 18:50:11 +0100
-Message-ID: <20251030175329.4041960-2-thomas@monjalon.net>
+Subject: [PATCH 2/2] test/hash: reduce time of functional R/W test
+Date: Thu, 30 Oct 2025 18:50:12 +0100
+Message-ID: <20251030175329.4041960-3-thomas@monjalon.net>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251030175329.4041960-1-thomas@monjalon.net>
 References: <20251030175329.4041960-1-thomas@monjalon.net>
@@ -95,51 +93,123 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When reserving a specific memory amount, it was possible to pass
-the first allocations and fail on a later allocation
-where there was no check, resulting in a crash.
-It is fixed by stopping the test if allocation failed.
+When running on limited platforms like GitHub Actions,
+the functional unit test "hash_readwrite_func_autotest"
+will hit a timeout, especially when running with UBSan:
 
-Fixes: fd368e1982bc ("test/hash: test more corner cases")
-Cc: stable@dpdk.org
+46/102 DPDK:fast-tests / hash_readwrite_func_autotest  TIMEOUT  30.01s
+killed by signal 15 SIGTERM
+
+Similarly to what was done in the
+commit fd368e1982bc ("test/hash: test more corner cases"),
+some constants are decreased.
+In order to keep the performance test as it was,
+a multiplier is kept for performance test case only.
 
 Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 ---
- app/test/test_hash_readwrite.c         | 5 +++++
- app/test/test_hash_readwrite_lf_perf.c | 4 ++++
- 2 files changed, 9 insertions(+)
+ app/test/test_hash_readwrite.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
 diff --git a/app/test/test_hash_readwrite.c b/app/test/test_hash_readwrite.c
-index 82fe03cc5a..22ccd6df6a 100644
+index 22ccd6df6a..4d140439e4 100644
 --- a/app/test/test_hash_readwrite.c
 +++ b/app/test/test_hash_readwrite.c
-@@ -70,6 +70,11 @@ test_hash_readwrite_worker(__rte_unused void *arg)
+@@ -18,9 +18,11 @@
  
- 	ret = rte_malloc(NULL, sizeof(int) *
- 				tbl_rw_test_param.num_insert, 0);
-+	if (ret == NULL) {
-+		printf("allocation failed\n");
-+		return -1;
-+	}
-+
- 	for (i = 0; i < rte_lcore_count(); i++) {
- 		if (worker_core_ids[i] == lcore_id)
- 			break;
-diff --git a/app/test/test_hash_readwrite_lf_perf.c b/app/test/test_hash_readwrite_lf_perf.c
-index 864c3059d9..bef987d29d 100644
---- a/app/test/test_hash_readwrite_lf_perf.c
-+++ b/app/test/test_hash_readwrite_lf_perf.c
-@@ -1310,6 +1310,10 @@ test_hash_rcu_qsbr_writer_perf(struct rwc_perf *rwc_perf_results, int rwc_lf,
+ #define RTE_RWTEST_FAIL 0
  
- 	sz = rte_rcu_qsbr_get_memsize(RTE_MAX_LCORE);
- 	rv = (struct rte_rcu_qsbr *)rte_zmalloc(NULL, sz, RTE_CACHE_LINE_SIZE);
-+	if (rv == NULL) {
-+		printf("allocation failed\n");
-+		goto err;
-+	}
- 	rcu_config.v = rv;
+-#define TOTAL_ENTRY (5*1024*1024)
+-#define TOTAL_INSERT (4.5*1024*1024)
+-#define TOTAL_INSERT_EXT (5*1024*1024)
++#define TOTAL_ENTRY           (5*1024) /* must be multiplied for perf test */
++#define TOTAL_INSERT_FUNC   (4.5*1024)
++#define TOTAL_INSERT_FUNC_EXT (5*1024)
++#define PERF_MULTIPLIER  1024
++#define TOTAL_INSERT (TOTAL_INSERT_FUNC * PERF_MULTIPLIER) /* only for perf */
  
- 	if (rte_hash_rcu_qsbr_add(tbl_rwc_test_param.h, &rcu_config) < 0) {
+ #define NUM_TEST 3
+ unsigned int core_cnt[NUM_TEST] = {2, 4, 8};
+@@ -136,16 +138,15 @@ test_hash_readwrite_worker(__rte_unused void *arg)
+ }
+ 
+ static int
+-init_params(int use_ext, int use_htm, int rw_lf, int use_jhash)
++init_params(int use_ext, int use_htm, int rw_lf, int use_jhash, bool perf)
+ {
+ 	unsigned int i;
+-
+ 	uint32_t *keys = NULL;
+ 	uint8_t *found = NULL;
+ 	struct rte_hash *handle;
+ 
+ 	struct rte_hash_parameters hash_params = {
+-		.entries = TOTAL_ENTRY,
++		.entries = TOTAL_ENTRY * (perf ? PERF_MULTIPLIER : 1),
+ 		.key_len = sizeof(uint32_t),
+ 		.hash_func_init_val = 0,
+ 		.socket_id = rte_socket_id(),
+@@ -182,14 +183,13 @@ init_params(int use_ext, int use_htm, int rw_lf, int use_jhash)
+ 	}
+ 
+ 	tbl_rw_test_param.h = handle;
+-	keys = rte_malloc(NULL, sizeof(uint32_t) * TOTAL_ENTRY, 0);
+-
++	keys = rte_malloc(NULL, sizeof(uint32_t) * hash_params.entries, 0);
+ 	if (keys == NULL) {
+ 		printf("RTE_MALLOC failed\n");
+ 		goto err;
+ 	}
+ 
+-	found = rte_zmalloc(NULL, sizeof(uint8_t) * TOTAL_ENTRY, 0);
++	found = rte_zmalloc(NULL, sizeof(uint8_t) * hash_params.entries, 0);
+ 	if (found == NULL) {
+ 		printf("RTE_ZMALLOC failed\n");
+ 		goto err;
+@@ -198,7 +198,7 @@ init_params(int use_ext, int use_htm, int rw_lf, int use_jhash)
+ 	tbl_rw_test_param.keys = keys;
+ 	tbl_rw_test_param.found = found;
+ 
+-	for (i = 0; i < TOTAL_ENTRY; i++)
++	for (i = 0; i < hash_params.entries; i++)
+ 		keys[i] = i;
+ 
+ 	return 0;
+@@ -227,13 +227,13 @@ test_hash_readwrite_functional(int use_htm, int use_rw_lf, int use_ext)
+ 	rte_atomic_store_explicit(&gcycles, 0, rte_memory_order_relaxed);
+ 	rte_atomic_store_explicit(&ginsertions, 0, rte_memory_order_relaxed);
+ 
+-	if (init_params(use_ext, use_htm, use_rw_lf, use_jhash) != 0)
++	if (init_params(use_ext, use_htm, use_rw_lf, use_jhash, false) != 0)
+ 		goto err;
+ 
+ 	if (use_ext)
+-		tot_insert = TOTAL_INSERT_EXT;
++		tot_insert = TOTAL_INSERT_FUNC_EXT;
+ 	else
+-		tot_insert = TOTAL_INSERT;
++		tot_insert = TOTAL_INSERT_FUNC;
+ 
+ 	tbl_rw_test_param.num_insert =
+ 		tot_insert / worker_cnt;
+@@ -390,7 +390,7 @@ test_hash_readwrite_perf(struct perf *perf_results, int use_htm,
+ 	rte_atomic_store_explicit(&gread_cycles, 0, rte_memory_order_relaxed);
+ 	rte_atomic_store_explicit(&gwrite_cycles, 0, rte_memory_order_relaxed);
+ 
+-	if (init_params(0, use_htm, 0, use_jhash) != 0)
++	if (init_params(0, use_htm, 0, use_jhash, true) != 0)
+ 		goto err;
+ 
+ 	/*
+@@ -548,7 +548,7 @@ test_hash_readwrite_perf(struct perf *perf_results, int use_htm,
+ 		rte_eal_mp_wait_lcore();
+ 
+ 		iter = 0;
+-		memset(tbl_rw_test_param.found, 0, TOTAL_ENTRY);
++		memset(tbl_rw_test_param.found, 0, TOTAL_ENTRY * PERF_MULTIPLIER);
+ 		while (rte_hash_iterate(tbl_rw_test_param.h,
+ 				&next_key, &next_data, &iter) >= 0) {
+ 			/* Search for the key in the list of keys added .*/
 -- 
 2.51.0
 
