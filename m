@@ -2,39 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 767E9CCF9FE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 14:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF42CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 14:55:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7AFBF40650;
-	Fri, 31 Oct 2025 15:29:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6BB14402D5;
+	Fri, 31 Oct 2025 15:55:31 +0100 (CET)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 95C5A40150
- for <dev@dpdk.org>; Fri, 31 Oct 2025 15:29:10 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 6A30540150
+ for <dev@dpdk.org>; Fri, 31 Oct 2025 15:55:30 +0100 (CET)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 76E7D206E7;
- Fri, 31 Oct 2025 15:29:10 +0100 (CET)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 3F610206E7;
+ Fri, 31 Oct 2025 15:55:30 +0100 (CET)
 Content-class: urn:content-classes:message
 MIME-Version: 1.0
 Content-Type: text/plain;
 	charset="UTF-8"
 Content-Transfer-Encoding: base64
-Subject: RE: [PATCH] mbuf: dump Tx offload metadata
-Date: Fri, 31 Oct 2025 15:29:06 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65524@smartserver.smartshare.dk>
+Subject: RE: [PATCH 1/1] move SPDX tag on the first line
+Date: Fri, 31 Oct 2025 15:55:27 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65525@smartserver.smartshare.dk>
 X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <CAJFAV8xfDUuAt_aC0rzi6pJ+7YXWfEBejx3MJB6Szi28+bZU5g@mail.gmail.com>
+In-Reply-To: <20251031142018.49319-1-thomas@monjalon.net>
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] mbuf: dump Tx offload metadata
-Thread-Index: AdxKb9JnRAyCUMQVQG68kO85ptC+swAAEYTQ
-References: <20251031131159.1199221-1-david.marchand@redhat.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65523@smartserver.smartshare.dk>
- <CAJFAV8xfDUuAt_aC0rzi6pJ+7YXWfEBejx3MJB6Szi28+bZU5g@mail.gmail.com>
+Thread-Topic: [PATCH 1/1] move SPDX tag on the first line
+Thread-Index: AdxKcZEB+YG9SR3dQgiwKMs11ET//AABLzaA
+References: <20251031142018.49319-1-thomas@monjalon.net>
 From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "David Marchand" <david.marchand@redhat.com>
-Cc: <dev@dpdk.org>
+To: "Thomas Monjalon" <thomas@monjalon.net>,
+	<dev@dpdk.org>
+Cc: "Jerin Jacob" <jerinj@marvell.com>,
+ "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
+ "Kiran Kumar K" <kirankumark@marvell.com>,
+ "Sunil Kumar Kori" <skori@marvell.com>,
+ "Satha Rao" <skoteshwar@marvell.com>, "Harman Kalra" <hkalra@marvell.com>,
+ "Christian Koue Muf" <ckm@napatech.com>,
+ "Serhii Iliushyk" <sil-plv@napatech.com>, "Rosen Xu" <rosen.xu@altera.com>,
+ "David Christensen" <drc@linux.ibm.com>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Bibo Mao" <maobibo@loongson.cn>,
+ =?UTF-8?B?U3RhbmlzxYJhdyBLYXJkYWNo?= <stanislaw.kardach@gmail.com>,
+ "Sun Yuechi" <sunyuechi@iscas.ac.cn>, "Jiayu Hu" <hujiayu.hu@foxmail.com>,
+ "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>,
+ "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Cristian Dumitrescu" <cristian.dumitrescu@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,32 +61,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBEYXZpZCBNYXJjaGFuZCBbbWFpbHRvOmRhdmlkLm1hcmNoYW5kQHJlZGhhdC5jb21d
-DQo+IFNlbnQ6IEZyaWRheSwgMzEgT2N0b2JlciAyMDI1IDE1LjA4DQo+IA0KPiBPbiBGcmksIDMx
-IE9jdCAyMDI1IGF0IDE0OjI4LCBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMu
-Y29tPg0KPiB3cm90ZToNCj4gPiBQcmludGluZyBvZiBvdXRlcl9sMl9sZW4gYW5kIG91dGVyX2wz
-X2xlbiBjb3VsZCBiZSBvbWl0dGVkIGlmIG5vdA0KPiBwcmVzZW50LCBsaWtlIHRoZSBWTEFOIElE
-cywgZS5nLjoNCj4gPg0KPiA+IGZwcmludGYoZiwgIiAgIik7DQo+ID4gaWYgKG0tPm91dGVyX2wy
-X2xlbiAhPSAwKQ0KPiA+ICAgICAgICAgZnByaW50ZihmLCAib3V0ZXJfbDJfbGVuPSV1LCAiLCBt
-LT5vdXRlcl9sMl9sZW4pOw0KPiA+IGlmIChtLT5vdXRlcl9sM19sZW4gIT0gMCkNCj4gPiAgICAg
-ICAgIGZwcmludGYoZiwgIm91dGVyX2wzX2xlbj0ldSwgIiwgbS0+b3V0ZXJfbDNfbGVuKTsNCj4g
-PiBmcHJpbnRmKGYsICJsMl9sZW49JXUsIGwzX2xlbj0ldSwgbDRfbGVuPSV1LCB0c29fc2Vnc3o9
-JXVcbiIsDQo+ID4gICAgICAgICBtLT5sMl9sZW4sIG0tPmwzX2xlbiwgbS0+bDRfbGVuLCBtLT50
-c29fc2Vnc3opOw0KPiANCj4gTW0sIHdoeSBzcGVjaWZpY2FsbHkgdGhvc2UgdHdvIG9ubHk/DQo+
-IElmIHRoZSBpbnRlbnRpb24gaXMgdG8gbWFrZSB0aGlzIGRlYnVnIG91dHB1dCBzaG9ydGVyLCBJ
-IHdvdWxkIGFwcGx5DQo+IHRoZSBzYW1lIHRvIGFsbCB0aG9zZSBmaWVsZHMsIGFuZCBvbWl0IHRo
-ZSB3aG9sZSAobmV3KSBsaW5lIGlmIG5vDQo+IGZpZWxkIGlzIHNldC4NCg0KVGhlIGludGVudGlv
-biBpcyBub3QgZG8gbWFrZSB0aGUgb3V0cHV0IHNob3J0ZXIsIGJ1dCB0byByZWR1Y2UgdGhlIGFt
-b3VudCBvZiAibm9pc2UiICh1c2VsZXNzIGRhdGEpIGluIHRoZSBvdXRwdXQuDQpNeSBzdWdnZXN0
-aW9uIG9taXRzIG5vaXNlIGZvciBub24tdHVubmVsZWQgcGFja2V0cy4NCg0KTWF5YmUgdHNvX3Nl
-Z3N6IGNvdWxkIGJlIGNvbmRpdGlvbmFsIG9uIG5vbi16ZXJvIHRvby4NCg0KSXQgZGVwZW5kcyBv
-biB3aGF0IHRoZSB1c2VyL2RldmVsb3BlciBpcyBkZWJ1Z2dpbmcsIHdoZXRoZXIgbDIvbDMvbDRf
-bGVuIGFyZSBjb25zaWRlcmVkIG5vaXNlLiBJIGRvbid0IG9iamVjdCB0byBtYWtpbmcgdGhlbSBj
-b25kaXRpb25hbCB0b28sIGlmIHlvdSBwcmVmZXIuDQoNCkFueXdheSwgSSBqdXN0IHJlYWxpemVk
-IHRoYXQgdGhlIHR4X29mZmxvYWQgZmllbGQgaXMgbm90IGNsZWFyZWQgb24gUlgsIHNvIHRoZSBk
-aXNjdXNzZWQgemVyby1jaGVjayBpcyB1c2VsZXNzIChjaGVja2luZyB1bmluaXRpYWxpemVkIGRh
-dGEpIHdoZW4gZHVtcGluZyBhbiBtYnVmIGF0IGFuIGVhcmx5IHN0YWdlIGluIHRoZSBhcHBsaWNh
-dGlvbidzIHBhY2tldCBwcm9jZXNzaW5nIHBpcGVsaW5lLg0KSSBoYXZlIGFuIGlkZWEgdG8gZ2V0
-IGFyb3VuZCB0aGlzLi4uIFRoZSBUWCBmbGFncyBpbiBvbF9mbGFncyBhcmUgY2xlYXJlZCBhdCBS
-WCwgc28gd2UgY2FuIGNvbnNpZGVyIHR4X29mZmxvYWQgdW5pbml0aWFsaXplZCB1bnRpbCBvbmUg
-b2YgdGhlIFRYIGZsYWdzIGluIG9sX2ZsYWdzIGhhcyBiZWVuIHNldC4NCg0K
+PiBGcm9tOiBUaG9tYXMgTW9uamFsb24gW21haWx0bzp0aG9tYXNAbW9uamFsb24ubmV0XQ0KPiBT
+ZW50OiBGcmlkYXksIDMxIE9jdG9iZXIgMjAyNSAxNS4yMA0KPiANCj4gRnJvbSAiQ29udHJpYnV0
+b3IncyBHdWlkZWxpbmVzIjoNCj4gIg0KPiBEUERLIHVzZXMgZmlyc3QgbGluZSBvZiB0aGUgZmls
+ZSB0byBiZSBTUERYIHRhZy4NCj4gSW4gY2FzZSBvZiAjISBzY3JpcHRzLCBTUERYIHRhZyBjYW4g
+YmUgcGxhY2VkIGluIDJuZCBsaW5lIG9mIHRoZSBmaWxlLg0KPiAiDQo+IA0KPiBTb21lIC5jIG9y
+IC5oIGZpbGVzIGhhZCB0aGUgU1BEWCBpZGVudGlmaWVyIG9uIHRoZSBzZWNvbmQgbGluZQ0KPiBm
+b3Igbm8gZ29vZCByZWFzb24sIHNvIGl0IGlzIG1vdmVkIHRvIHRoZSBmaXJzdCBsaW5lDQo+IHRv
+IGNvbXBseSB3aXRoIHRoZSBndWlkZWxpbmVzLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogVGhvbWFz
+IE1vbmphbG9uIDx0aG9tYXNAbW9uamFsb24ubmV0Pg0KPiAtLS0NCg0KQ2xlYW5pbmcgdXAgaXMg
+YWx3YXlzIGdvb2QuDQpBY2tlZC1ieTogTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0
+ZW1zLmNvbT4NCg0K
