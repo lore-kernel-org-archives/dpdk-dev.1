@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4394CCFA00
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 16:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525FBCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 16:44:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3D7F40668;
-	Fri, 31 Oct 2025 17:44:27 +0100 (CET)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
- [209.85.214.174])
- by mails.dpdk.org (Postfix) with ESMTP id 5D25440661
- for <dev@dpdk.org>; Fri, 31 Oct 2025 17:44:25 +0100 (CET)
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-28e7cd6dbc0so31235145ad.0
- for <dev@dpdk.org>; Fri, 31 Oct 2025 09:44:25 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F04854066F;
+	Fri, 31 Oct 2025 17:44:28 +0100 (CET)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
+ [209.85.214.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 8AB0B402D8
+ for <dev@dpdk.org>; Fri, 31 Oct 2025 17:44:26 +0100 (CET)
+Received: by mail-pl1-f175.google.com with SMTP id
+ d9443c01a7336-2951a817541so17135685ad.2
+ for <dev@dpdk.org>; Fri, 31 Oct 2025 09:44:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761929064;
- x=1762533864; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761929066;
+ x=1762533866; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=jcVZLwygaXhiI+anj2MjuHkbYgEhWXW+OFSDWMCMaTw=;
- b=hRbLBXDIgb/cT4FZUJ5yxvsm4QOPlXmGWYsswzr0nPapyjRjQREi3UmHLmm0g0IVbq
- B7FYPxd6OZ0DnrmRXobVRxoh79vuEN+2/RNB82Wprvx3e1qUwSm/rxje6c/jWovQsarp
- aAbUqMh2ZPwEHQfsnHjNXkNqUil+j2U6IKMushnwCqZS9TeIkpZG+EAXHn4JaMI4Tphf
- +nvETMZJuzQpp7597iuwviHAkwDxyocIoZyV/miCD8ds1teFdcT6kw9WdtYPHvn187jr
- s142oZZD0PquxyUSMKrOmmUVmppH9LeOeyxnTI2/DFZJRKS9izDXpySUP2ldsiQWGClL
- Ygvw==
+ bh=D0ZYcyBPJsdK5B5huSPK3LzKVD7fDGoli3Pmnq2uxs8=;
+ b=dOHjhYVsyMGl2SiHF77J2zNEcXkhRLsArKrKfXpUDXiOKG9gh+zOY2wocRCsg7fZED
+ fM4+CXtbsWyN3mioYLjcXq9fbh6gyy80YnXP9RQhPk9L2VcKcvgK10qLAK0CujLZTzKq
+ DftodO2IfawQdeoGeGPV7CYik/HHK9w9Ewyvl82aqq8yEnCzQuaU+ss6rRfc8OPOQlaM
+ ymYSMZpNI+ltiSJXXZpWnWpMFBrWJabbYZH4LSa2bpzrhO2M0Os+uOvMzaOpjAjU7v7N
+ MVCsmkIIjTFBhwICwrmrC9iCdyyeKMgITuRueRX3ZKan1WAXTFxlHxDXwZR94V7v8L7H
+ umMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761929064; x=1762533864;
+ d=1e100.net; s=20230601; t=1761929066; x=1762533866;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=jcVZLwygaXhiI+anj2MjuHkbYgEhWXW+OFSDWMCMaTw=;
- b=C7vLU5mBW6Gtk9nzhg3BSlzGB3Hiu7VCuhUEmPUuGojdqHZT+KaT3VWTV0fJD8Xphc
- MHjGuJTUcjai0TBqufEioP0Klwf2lV72+3jUVv//CLqlcno0l3r6Jye3YLeS6lToXILz
- L0RaaRa2hs/LroYN276y63ZgnKPlgYsmLQm6JM3Mqij7iIT1dOIOfdr6/+CFum2Dn4M2
- mk2gqHBMoHDmpyteCR25BQDKN9P1Q6lTCytoLRXr54zio2FLe83d0/9kKt+avbi0xRXo
- LAkgkncCT+uMMpYG83JEQKHUxcP927wamBqS0qBCH9e7kBVK+kVBIulB/aa50x4b46IO
- oV2g==
-X-Gm-Message-State: AOJu0YwbeafrPbQ9u3NHWtMan+hMR5tQna/jnRxv1KUFf0ifpgvHUolN
- nG8zAKQfHweiLsUrBLlo/Yfj/RUJ80zLXn9lHPqdWm5/YmDsSXLKHmdEtweNjDNorOmpRNVz7cQ
- m38jq
-X-Gm-Gg: ASbGncvuSDzXFHidYMNoeUThigpj7EBXV66JG3FHGVJHof+3xzXtkVgec9+EvSuQHY0
- 50IUWWKGeic5tEmWOh1xUzF7qZycZ57/7ellfGwpf4MlZV90RPRI4j/VTgNPK25d5Fe9k0Hrspd
- tnGPpuEt0Q3Tc1tuRl7ZjU1oFgbgtEHrx55DzfVIK+3APRtqCwJrb2T0KbDI3sB7AAUsnlgK+bz
- U7BDzZiJA0OQQ2Uo/nypzxojqqFh/6Tg5xpslo5Lh9uhx0mBxMSwuHOoSm1FrvEt2b7nKlun+Y+
- 7Pg2Gy/JjPu/V+Qqa3/Yw+o4QwrXWTBPD5D/fJXV4TpKZ+79Xlp41nKZFTSh5/3FxFUYajyrjZC
- h/d2NeGJPhfncYzbjpDGRjojuw6XJwoF1S2MAjwolrsqvx7bH/cBv1667jxzvSqFcSSmxPRU5yH
- LfriItNxSFRMlOixyFLJ9+7mjABxhXyMrKuVLpWQM=
-X-Google-Smtp-Source: AGHT+IF5hKbPzpPbmkV2tR63ztXaXnv6D39UulPif8biYWCBJcLK6UpnLYHxFap8O0TitgsLD25GQQ==
-X-Received: by 2002:a17:903:24f:b0:295:24c3:8b49 with SMTP id
- d9443c01a7336-29524c38fcdmr39355535ad.46.1761929064399; 
- Fri, 31 Oct 2025 09:44:24 -0700 (PDT)
+ bh=D0ZYcyBPJsdK5B5huSPK3LzKVD7fDGoli3Pmnq2uxs8=;
+ b=k+qR8VDoSMeXOjSh2FHmRQVSpeoZU3fdQozWlGZQIeIM0967Yeo6NFH47EOZqVcD4y
+ G2Tn8XUolx5oMu4zfHR/k2QOTT19srVMu2TOC7+AWoRqkvR/0XvbxNZLzptFdk79wWtg
+ R6/Q1ImPWUPMlyU3VIElSkBfaDzxUmyW7G3U/MsS0a99R+gTRkEA+VUygoCQd39NidRa
+ px60OlomjglodeMtAIiNlMZ/Ni2EC+L36cHfx6C2IUWmWdaOYVRmKaz+V440gvIAh0ko
+ beF3ac5sMMZQRPd91Ch7QrDLv2ukeKuvxvSiLFhx6gIBWD+mqpidXDBtCY/XMUJCZwU+
+ 1pDA==
+X-Gm-Message-State: AOJu0YwXH/iwxBk2cooU4n215AHMd7WNJ6u64ieFqDlTrlvt22KWyxAa
+ JQRxw+2UrGTNnRmff9G1BHZ2eYxrCmG/Hl34v695UCu27Mg2SdPKAFo4+zi+EZveNvtH9YkUL4A
+ MGF6U
+X-Gm-Gg: ASbGncsd6C0LUrJSfWvaVYDNVtTv2MjmYgJ0oewU/XRCQF4Z6PsIrYzgru1xG3kXreD
+ OvDf4pHyv01N6nvFy7k5yHBLnCfKB/UmeO6Hr0r9R+yiME1ahsd4tMVlOK1Ae9735YVHaqYMRo5
+ gLdA2Wwz7ww0IQdoqfNJlC1RLbGwOgahsG0swGbI7f5fJsxYd1kdjm1/mWSOHOT3vvLDdu/WDI8
+ 48aTZNPfUk220wxqXzmFTUhS7jN9/N0yNipUdImMpog7n9ou/lLvKlYoM2GJyGh892VPG2iM552
+ 5Ys5ZuR/iCCnmcTQSDi6IULeTtD0VfDPvQ5NA+Nsn/rn1aRMp0VqxeW3tJeMeHyVo9vcv21enNS
+ 1CBTG0Y8kT4X9KpXY0+GgtPuYsWA36rKrw75CxjZwFiCZQ96OV6etOvq6Xq6lsL7laMKZYn5GFm
+ T0LxDx3iwYYL3lu+FlMul0MJK26ys8HxwqItFAQqP8GCV7sgvSGw==
+X-Google-Smtp-Source: AGHT+IEcbg9da6AT/jvFq15TSAqtAziGL+fgK5zySMCPtdH13Ae8LPnOaj32UGMgv443x5tAI/lAmw==
+X-Received: by 2002:a17:902:cecc:b0:252:5220:46b4 with SMTP id
+ d9443c01a7336-2951a4dfbaemr54509445ad.37.1761929065512; 
+ Fri, 31 Oct 2025 09:44:25 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-295269a8ddcsm28391845ad.91.2025.10.31.09.44.23
+ d9443c01a7336-295269a8ddcsm28391845ad.91.2025.10.31.09.44.24
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 31 Oct 2025 09:44:24 -0700 (PDT)
+ Fri, 31 Oct 2025 09:44:25 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v2 4/5] bpf: add test for Rx and Tx filtering
-Date: Fri, 31 Oct 2025 09:41:48 -0700
-Message-ID: <20251031164417.14166-5-stephen@networkplumber.org>
+Subject: [PATCH v2 5/5] bpf: remove use of VLA
+Date: Fri, 31 Oct 2025 09:41:49 -0700
+Message-ID: <20251031164417.14166-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251031164417.14166-1-stephen@networkplumber.org>
 References: <20251030173732.246435-1-stephen@networkplumber.org>
@@ -84,426 +84,159 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-New test using null device to test filtering with BPF.
+Replace variable length array with two part loop which
+applies filter in bursts up to 32 packets.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
-Note: the BPF source will generate some false positives from checkpatch
-because it is not regular DPDK source, and must not use DPDK macros.
+ lib/bpf/bpf_pkt.c   | 81 ++++++++++++++++++++++++++-------------------
+ lib/bpf/meson.build |  2 --
+ 2 files changed, 47 insertions(+), 36 deletions(-)
 
- app/test/bpf/meson.build       |   3 +-
- app/test/bpf/test_bpf_filter.c |  53 ++++++
- app/test/test_bpf.c            | 306 +++++++++++++++++++++++++++++++++
- 3 files changed, 361 insertions(+), 1 deletion(-)
- create mode 100644 app/test/bpf/test_bpf_filter.c
-
-diff --git a/app/test/bpf/meson.build b/app/test/bpf/meson.build
-index 2b944f5ea9..be7c643b41 100644
---- a/app/test/bpf/meson.build
-+++ b/app/test/bpf/meson.build
-@@ -31,7 +31,8 @@ cflags += '-DTEST_BPF_ELF_LOAD'
+diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
+index 087ac0f244..15d36739a0 100644
+--- a/lib/bpf/bpf_pkt.c
++++ b/lib/bpf/bpf_pkt.c
+@@ -157,13 +157,16 @@ bpf_eth_cbh_add(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue)
+ /*
+  * BPF packet processing routines.
+  */
++#define BPF_FILTER_BURST	32u
  
- # BPF sources to compile
- test_bpf_progs = [
--    'test_bpf_load'
-+    'test_bpf_load',
-+    'test_bpf_filter',
- ]
+ static inline uint32_t
+ apply_filter(struct rte_mbuf *mb[], const uint64_t rc[], uint32_t num,
+ 	uint32_t drop)
+ {
+ 	uint32_t i, j, k;
+-	struct rte_mbuf *dr[num];
++	struct rte_mbuf *dr[BPF_FILTER_BURST];
++
++	RTE_ASSERT(num <= BPF_FILTER_BURST);
  
- foreach test_name : test_bpf_progs
-diff --git a/app/test/bpf/test_bpf_filter.c b/app/test/bpf/test_bpf_filter.c
-new file mode 100644
-index 0000000000..d47233a47a
---- /dev/null
-+++ b/app/test/bpf/test_bpf_filter.c
-@@ -0,0 +1,53 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * BPF TX filter program for testing rte_bpf_eth_tx_elf_load
-+ */
-+
-+typedef unsigned char uint8_t;
-+typedef unsigned short uint16_t;
-+typedef unsigned int uint32_t;
-+typedef unsigned long uint64_t;
-+
-+/*
-+ * Simple TX filter that accepts TCP packets
-+ *
-+ * BPF TX programs receive pointer to data and should return:
-+ *   0 = drop packet
-+ *   non-zero = rx/tx packet
-+ *
-+ * This filter checks:
-+ * 1. Packet is IPv4
-+ * 2. Protocol is TCP (IPPROTO_TCP = 6)
-+ */
-+__attribute__((section("filter"), used))
-+uint64_t
-+test_filter(void *pkt)
-+{
-+	uint8_t *data = pkt;
-+
-+	/* Read version and IHL (first byte of IP header) */
-+	uint8_t version_ihl = data[14];
-+
-+	/* Check IPv4 version (upper 4 bits should be 4) */
-+	if ((version_ihl >> 4) != 4)
-+		return 0;
-+
-+	/* Protocol field (byte 9 of IP header) must be TCP (6) */
-+	uint8_t proto = data[14 + 9];
-+	return (proto == 6);
-+}
-+
-+__attribute__((section("drop"), used))
-+uint64_t
-+test_drop(void *pkt)
-+{
-+	(void)pkt;
-+	return 0;
-+}
-+
-+__attribute__((section("allow"), used))
-+uint64_t
-+test_allow(void *pkt)
-+{
-+	(void)pkt;
-+	return 1;
-+}
-diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-index 855fdc8ad1..2b34f4986d 100644
---- a/app/test/test_bpf.c
-+++ b/app/test/test_bpf.c
-@@ -16,6 +16,12 @@
- #include <rte_byteorder.h>
- #include <rte_errno.h>
- #include <rte_bpf.h>
-+#include <rte_ethdev.h>
-+#include <rte_bpf_ethdev.h>
-+#include <rte_bus_vdev.h>
-+#include <rte_ether.h>
-+#include <rte_ip.h>
-+#include <rte_tcp.h>
+ 	for (i = 0, j = 0, k = 0; i != num; i++) {
  
- #include "test.h"
+@@ -191,65 +194,75 @@ static inline uint32_t
+ pkt_filter_vm(const struct rte_bpf *bpf, struct rte_mbuf *mb[], uint32_t num,
+ 	uint32_t drop)
+ {
+-	uint32_t i;
+-	void *dp[num];
+-	uint64_t rc[num];
++	uint32_t matched = 0;
++
++	for (uint32_t i = 0; i < num; i += BPF_FILTER_BURST) {
++		uint32_t burst_sz = RTE_MIN(num, BPF_FILTER_BURST);
++		void *dp[BPF_FILTER_BURST];
++		uint64_t rc[BPF_FILTER_BURST];
  
-@@ -3411,6 +3417,290 @@ test_bpf_elf_load(void)
- 	printf("%s: ELF load test passed\n", __func__);
- 	return TEST_SUCCESS;
+-	for (i = 0; i != num; i++)
+-		dp[i] = rte_pktmbuf_mtod(mb[i], void *);
++		for (uint32_t j = 0; j < burst_sz; j++)
++			dp[j] = rte_pktmbuf_mtod(mb[i + j], void *);
+ 
+-	rte_bpf_exec_burst(bpf, dp, rc, num);
+-	return apply_filter(mb, rc, num, drop);
++		rte_bpf_exec_burst(bpf, dp, rc, burst_sz);
++		matched += apply_filter(mb + i, rc, burst_sz, drop);
++	}
++	return matched;
  }
+ 
+ static inline uint32_t
+ pkt_filter_jit(const struct rte_bpf_jit *jit, struct rte_mbuf *mb[],
+ 	uint32_t num, uint32_t drop)
+ {
+-	uint32_t i, n;
+-	void *dp;
+-	uint64_t rc[num];
+-
+-	n = 0;
+-	for (i = 0; i != num; i++) {
+-		dp = rte_pktmbuf_mtod(mb[i], void *);
+-		rc[i] = jit->func(dp);
+-		n += (rc[i] == 0);
+-	}
++	uint32_t matched = 0;
 +
-+#include "test_bpf_filter.h"
++	for (uint32_t i = 0; i < num; i += BPF_FILTER_BURST) {
++		uint32_t burst_sz = RTE_MIN(num, BPF_FILTER_BURST);
++		uint64_t rc[BPF_FILTER_BURST];
 +
-+#define BPF_TEST_BURST		128
-+#define BPF_TEST_POOLSIZE	256 /* at least 2x burst */
-+#define BPF_TEST_PKT_LEN	64 /* Ether + IP + TCP */
-+
-+static int null_vdev_setup(const char *name, uint16_t *port, struct rte_mempool *pool)
-+{
-+	int ret;
-+
-+	/* Make a null device */
-+	ret = rte_vdev_init(name, NULL);
-+	TEST_ASSERT(ret == 0, "rte_vdev_init(%s) failed: %d", name, ret);
-+
-+	ret = rte_eth_dev_get_port_by_name(name, port);
-+	TEST_ASSERT(ret == 0, "failed to get port id for %s: %d", name, ret);
-+
-+	struct rte_eth_conf conf = { };
-+	ret = rte_eth_dev_configure(*port, 1, 1, &conf);
-+	TEST_ASSERT(ret == 0, "failed to configure port %u: %d", *port, ret);
-+
-+	struct rte_eth_txconf txconf = { };
-+	ret = rte_eth_tx_queue_setup(*port, 0, BPF_TEST_BURST, SOCKET_ID_ANY, &txconf);
-+	TEST_ASSERT(ret == 0, "failed to setup tx queue port %u: %d", *port, ret);
-+
-+	struct rte_eth_rxconf rxconf = { };
-+	ret = rte_eth_rx_queue_setup(*port, 0, BPF_TEST_BURST, SOCKET_ID_ANY,
-+				     &rxconf, pool);
-+	TEST_ASSERT(ret == 0, "failed to setup rx queue port %u: %d", *port, ret);
-+
-+	ret = rte_eth_dev_start(*port);
-+	TEST_ASSERT(ret == 0, "failed to start port %u: %d", *port, ret);
-+
-+	return 0;
-+}
-+
-+static unsigned int
-+setup_mbufs(struct rte_mbuf *burst[], unsigned int n)
-+{
-+	struct rte_ether_hdr eh = {
-+		.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4),
-+	};
-+	const struct rte_ipv4_hdr iph = {
-+		.version_ihl = RTE_IPV4_VHL_DEF,
-+		.total_length = rte_cpu_to_be_16(BPF_TEST_PKT_LEN - sizeof(eh)),
-+		.time_to_live = IPDEFTTL,
-+		.src_addr = rte_cpu_to_be_32(ip_src_addr),
-+		.dst_addr = rte_cpu_to_be_32(ip_dst_addr),
-+	};
-+	unsigned int tcp_count = 0;
-+
-+	rte_eth_random_addr(eh.dst_addr.addr_bytes);
-+
-+	for (unsigned int i = 0; i < n; i++) {
-+		struct rte_mbuf *mb = burst[i];
-+
-+		/* Setup Ethernet header */
-+		*rte_pktmbuf_mtod(mb, struct rte_ether_hdr *) = eh;
-+
-+		/* Setup IP header */
-+		struct rte_ipv4_hdr *ip
-+			= rte_pktmbuf_mtod_offset(mb, struct rte_ipv4_hdr *, sizeof(eh));
-+		*ip = iph;
-+
-+		if (rte_rand() & 1) {
-+			struct rte_udp_hdr *udp
-+				= rte_pktmbuf_mtod_offset(mb, struct rte_udp_hdr *,
-+							  sizeof(eh) + sizeof(iph));
-+
-+			ip->next_proto_id = IPPROTO_UDP;
-+			*udp = (struct rte_udp_hdr) {
-+				.src_port = rte_cpu_to_be_16(9),	/* discard */
-+				.dst_port = rte_cpu_to_be_16(9),	/* discard */
-+				.dgram_len = BPF_TEST_PKT_LEN - sizeof(eh) - sizeof(iph),
-+			};
-+
-+		} else {
-+			struct rte_tcp_hdr *tcp
-+				= rte_pktmbuf_mtod_offset(mb, struct rte_tcp_hdr *,
-+							  sizeof(eh) + sizeof(iph));
-+
-+			ip->next_proto_id = IPPROTO_TCP;
-+			*tcp = (struct rte_tcp_hdr) {
-+				.src_port = rte_cpu_to_be_16(9),	/* discard */
-+				.dst_port = rte_cpu_to_be_16(9),	/* discard */
-+				.tcp_flags = RTE_TCP_RST_FLAG,
-+			};
-+			++tcp_count;
++		for (uint32_t j = 0; j < burst_sz; j++) {
++			void *dp = rte_pktmbuf_mtod(mb[i + j], void *);
+ 
+-	if (n != 0)
+-		num = apply_filter(mb, rc, num, drop);
++			rc[j] = jit->func(dp);
 +		}
-+	}
-+
-+	return tcp_count;
-+}
-+
-+static int bpf_tx_test(uint16_t port, const char *tmpfile, struct rte_mempool *pool,
-+		       const char *fname, uint32_t flags)
-+{
-+	const struct rte_bpf_prm prm = {
-+		.prog_arg = {
-+			.type = RTE_BPF_ARG_PTR,
-+			.size = sizeof(struct rte_mbuf),
-+		},
-+	};
-+	int ret;
-+
-+	struct rte_mbuf *pkts[BPF_TEST_BURST] = { };
-+	ret = rte_pktmbuf_alloc_bulk(pool, pkts, BPF_TEST_BURST);
-+	TEST_ASSERT(ret == 0, "failed to allocate mbufs");
-+
-+	uint16_t expect = setup_mbufs(pkts, BPF_TEST_BURST);
-+
-+	/* Try to load BPF TX program from temp file */
-+	ret = rte_bpf_eth_tx_elf_load(port, 0, &prm, tmpfile, fname, flags);
-+	TEST_ASSERT(ret == 0, "failed to load BPF filter from temp file %s: %d",
-+		    tmpfile, ret);
-+
-+	uint16_t sent = rte_eth_tx_burst(port, 0, pkts, BPF_TEST_BURST);
-+	TEST_ASSERT_EQUAL(sent, expect, "rte_eth_tx_burst returned: %u expected %u",
-+			  sent, expect);
-+
-+	/* The unsent packets should be dropped */
-+	rte_pktmbuf_free_bulk(pkts + sent, BPF_TEST_BURST - sent);
-+
-+	/* Pool should have same number of packets avail */
-+	unsigned int avail = rte_mempool_avail_count(pool);
-+	TEST_ASSERT_EQUAL(avail, BPF_TEST_POOLSIZE,
-+			  "Mempool available %u != %u leaks?", avail, BPF_TEST_POOLSIZE);
-+
-+	rte_bpf_eth_tx_unload(port, 0);
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_bpf_elf_tx_load(void)
-+{
-+	static const char null_dev[] = "net_null_bpf0";
-+	char *tmpfile = NULL;
-+	struct rte_mempool *mb_pool = NULL;
-+	uint16_t port = UINT16_MAX;
-+	int ret;
-+
-+	printf("%s start\n", __func__);
-+
-+	/* Make a pool for packets */
-+	mb_pool = rte_pktmbuf_pool_create("bpf_tx_test_pool", BPF_TEST_POOLSIZE,
-+					  0, 0, RTE_MBUF_DEFAULT_BUF_SIZE,
-+					  SOCKET_ID_ANY);
-+
-+	ret = null_vdev_setup(null_dev, &port, mb_pool);
-+	if (ret != 0)
-+		goto fail;
-+
-+	/* Create temp file from embedded BPF object */
-+	tmpfile = create_temp_bpf_file(test_bpf_filter_data,
-+				       test_bpf_filter_data_len, "tx");
-+	if (tmpfile == NULL)
-+		goto fail;
-+
-+	/* Do test with VM */
-+	ret = bpf_tx_test(port, tmpfile, mb_pool, "filter", 0);
-+	if (ret != 0)
-+		goto fail;
-+
-+	/* Repeat with JIT */
-+	ret = bpf_tx_test(port, tmpfile, mb_pool, "filter", RTE_BPF_ETH_F_JIT);
-+	if (ret == 0)
-+		printf("%s: TX ELF load test passed\n", __func__);
-+
-+fail:
-+	if (tmpfile) {
-+		unlink(tmpfile);
-+		free(tmpfile);
-+	}
-+
-+	if (port != UINT16_MAX)
-+		rte_vdev_uninit(null_dev);
-+
-+	rte_mempool_free(mb_pool);
-+
-+	return ret == 0 ? TEST_SUCCESS : TEST_FAILED;
-+}
-+
-+static int bpf_rx_test(uint16_t port, const char *tmpfile, struct rte_mempool *pool,
-+		       const char *fname, uint32_t flags, uint16_t expected)
-+{
-+	struct rte_mbuf *pkts[BPF_TEST_BURST];
-+	const struct rte_bpf_prm prm = {
-+		.prog_arg = {
-+			.type = RTE_BPF_ARG_PTR,
-+			.size = sizeof(struct rte_mbuf),
-+		},
-+	};
-+	int ret;
-+
-+	/* Load BPF program to drop all packets */
-+	ret = rte_bpf_eth_rx_elf_load(port, 0, &prm, tmpfile, fname, flags);
-+	TEST_ASSERT(ret == 0, "failed to load BPF filter from temp file %s: %d",
-+		    tmpfile, ret);
-+
-+	uint16_t rcvd = rte_eth_rx_burst(port, 0, pkts, BPF_TEST_BURST);
-+	TEST_ASSERT_EQUAL(rcvd, expected,
-+			  "rte_eth_rx_burst returned: %u expect: %u", rcvd, expected);
-+
-+	/* Drop the received packets */
-+	rte_pktmbuf_free_bulk(pkts, rcvd);
-+
-+	rte_bpf_eth_rx_unload(port, 0);
-+
-+	/* Pool should now be full */
-+	unsigned int avail = rte_mempool_avail_count(pool);
-+	TEST_ASSERT_EQUAL(avail, BPF_TEST_POOLSIZE,
-+			  "Mempool available %u != %u leaks?", avail, BPF_TEST_POOLSIZE);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_bpf_elf_rx_load(void)
-+{
-+	static const char null_dev[] = "net_null_bpf0";
-+	struct rte_mempool *pool = NULL;
-+	char *tmpfile = NULL;
-+	uint16_t port;
-+	int ret;
-+
-+	printf("%s start\n", __func__);
-+
-+	/* Make a pool for packets */
-+	pool = rte_pktmbuf_pool_create("bpf_rx_test_pool", 2 * BPF_TEST_BURST,
-+					  0, 0, RTE_MBUF_DEFAULT_BUF_SIZE,
-+					  SOCKET_ID_ANY);
-+	TEST_ASSERT(pool != NULL, "failed to create mempool");
-+
-+	ret = null_vdev_setup(null_dev, &port, pool);
-+	if (ret != 0)
-+		goto fail;
-+
-+	/* Create temp file from embedded BPF object */
-+	tmpfile = create_temp_bpf_file(test_bpf_filter_data,
-+				       test_bpf_filter_data_len, "tx");
-+	if (tmpfile == NULL)
-+		goto fail;
-+
-+	/* Do test with VM */
-+	ret = bpf_rx_test(port, tmpfile, pool, "drop", 0, 0);
-+	if (ret != 0)
-+		goto fail;
-+
-+	/* Repeat with JIT */
-+	ret = bpf_rx_test(port, tmpfile, pool, "drop", RTE_BPF_ETH_F_JIT, 0);
-+	if (ret != 0)
-+		goto fail;
-+
-+	/* Repeat with allow all */
-+	ret = bpf_rx_test(port, tmpfile, pool, "allow", 0, BPF_TEST_BURST);
-+	if (ret != 0)
-+		goto fail;
-+
-+	/* Repeat with JIT */
-+	ret = bpf_rx_test(port, tmpfile, pool, "allow", RTE_BPF_ETH_F_JIT, BPF_TEST_BURST);
-+	if (ret != 0)
-+		goto fail;
-+
-+	printf("%s: RX ELF load test passed\n", __func__);
-+
-+	/* The filter should free the mbufs */
-+	unsigned int avail = rte_mempool_avail_count(pool);
-+	TEST_ASSERT_EQUAL(avail, BPF_TEST_POOLSIZE,
-+			  "Mempool available %u != %u leaks?", avail, BPF_TEST_POOLSIZE);
-+
-+fail:
-+	if (tmpfile) {
-+		unlink(tmpfile);
-+		free(tmpfile);
-+	}
-+
-+	if (port != UINT16_MAX)
-+		rte_vdev_uninit(null_dev);
-+
-+	rte_mempool_free(pool);
-+
-+	return ret == 0 ? TEST_SUCCESS : TEST_FAILED;
-+}
- #else
  
- static int
-@@ -3420,9 +3710,25 @@ test_bpf_elf_load(void)
- 	return TEST_SKIPPED;
+-	return num;
++		matched += apply_filter(mb + i, rc, burst_sz, drop);
++	}
++	return matched;
  }
  
-+static int
-+test_bpf_elf_tx_load(void)
-+{
-+	printf("BPF compile not supported, skipping Tx test\n");
-+	return TEST_SKIPPED;
-+}
+ static inline uint32_t
+ pkt_filter_mb_vm(const struct rte_bpf *bpf, struct rte_mbuf *mb[], uint32_t num,
+ 	uint32_t drop)
+ {
+-	uint64_t rc[num];
++	uint32_t matched = 0;
 +
-+static int
-+test_bpf_elf_rx_load(void)
-+{
-+	printf("BPF compile not supported, skipping Tx test\n");
-+	return TEST_SKIPPED;
-+}
-+
- #endif /* !TEST_BPF_ELF_LOAD */
++	for (uint32_t i = 0; i < num; i += BPF_FILTER_BURST) {
++		uint32_t burst_sz = RTE_MIN(num, BPF_FILTER_BURST);
++		uint64_t rc[BPF_FILTER_BURST];
  
- REGISTER_FAST_TEST(bpf_elf_load_autotest, true, true, test_bpf_elf_load);
-+REGISTER_FAST_TEST(bpf_eth_tx_elf_load_autotest, true, true, test_bpf_elf_tx_load);
-+REGISTER_FAST_TEST(bpf_eth_rx_elf_load_autotest, true, true, test_bpf_elf_rx_load);
+-	rte_bpf_exec_burst(bpf, (void **)mb, rc, num);
+-	return apply_filter(mb, rc, num, drop);
++		rte_bpf_exec_burst(bpf, (void **)mb, rc, burst_sz);
++		matched += apply_filter(mb + i, rc, burst_sz, drop);
++	}
++	return matched;
+ }
  
- #ifndef RTE_HAS_LIBPCAP
+ static inline uint32_t
+ pkt_filter_mb_jit(const struct rte_bpf_jit *jit, struct rte_mbuf *mb[],
+ 	uint32_t num, uint32_t drop)
+ {
+-	uint32_t i, n;
+-	uint64_t rc[num];
++	uint32_t matched = 0;
  
+-	n = 0;
+-	for (i = 0; i != num; i++) {
+-		rc[i] = jit->func(mb[i]);
+-		n += (rc[i] == 0);
+-	}
++	for (uint32_t i = 0; i < num; i += BPF_FILTER_BURST) {
++		uint32_t burst_sz = RTE_MIN(num, BPF_FILTER_BURST);
++		uint64_t rc[BPF_FILTER_BURST];
+ 
+-	if (n != 0)
+-		num = apply_filter(mb, rc, num, drop);
++		for (uint32_t j = 0; j < burst_sz; j++)
++			rc[j] = jit->func(mb[i + j]);
+ 
+-	return num;
++		matched += apply_filter(mb + i, rc, burst_sz, drop);
++	}
++	return matched;
+ }
+ 
+ /*
+diff --git a/lib/bpf/meson.build b/lib/bpf/meson.build
+index 28df7f469a..aa258a9061 100644
+--- a/lib/bpf/meson.build
++++ b/lib/bpf/meson.build
+@@ -7,8 +7,6 @@ if is_windows
+     subdir_done()
+ endif
+ 
+-cflags += no_wvla_cflag
+-
+ if arch_subdir == 'x86' and dpdk_conf.get('RTE_ARCH_32')
+     build = false
+     reason = 'not supported on 32-bit x86'
 -- 
 2.51.0
 
