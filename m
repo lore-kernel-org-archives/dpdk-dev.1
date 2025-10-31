@@ -2,74 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A95CCFA00
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 16:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B855ECCFA00
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 16:44:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B7674028D;
-	Fri, 31 Oct 2025 17:37:16 +0100 (CET)
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com
- [209.85.210.179])
- by mails.dpdk.org (Postfix) with ESMTP id 9E53F40150
- for <dev@dpdk.org>; Fri, 31 Oct 2025 17:37:14 +0100 (CET)
-Received: by mail-pf1-f179.google.com with SMTP id
- d2e1a72fcca58-7a2754a7f6aso3268142b3a.1
- for <dev@dpdk.org>; Fri, 31 Oct 2025 09:37:14 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AB49540395;
+	Fri, 31 Oct 2025 17:44:22 +0100 (CET)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id D048840150
+ for <dev@dpdk.org>; Fri, 31 Oct 2025 17:44:20 +0100 (CET)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-294fb21b068so26619515ad.1
+ for <dev@dpdk.org>; Fri, 31 Oct 2025 09:44:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761928633;
- x=1762533433; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1761929060;
+ x=1762533860; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=En4BIQ7FJYM6JqiJcJMxih33DkYp9y4t5a1GSCQnqkE=;
- b=EOQsq+NSUzbJ2ZtW39NDGtOUYSM0kzmaZ75yxV0GYnf5T6wJqxvp5XAoY3K8vur443
- quhWQsDIQHHonDEHKQkkz4rtomrOJD3OiVeMF4pzOSRhWuEP50H2cW3+swdURLYp8e6I
- FJZyEfwDT6LXe56ltiZ+WugWJIBnV5dlTLAO2Q6G3M/DXNjGv0Soiza8Z8lsETKzaqbS
- 1K5MzZENfCe0CdES+myY5cfM/lcOJGxj5jphFi/cdc4Veye6jaQJDnGS1kGPvPPtwSCh
- GrmLmPKOWsy0IvYbMpBWIV1iIIEjwWXiV2NrAKi5AJXRu0KwyPFhrdGncTRmmbpZnkF4
- IUdg==
+ bh=Ln5UxjhTXyihDKrskjElugo5dDcXTBv4zBXZrGocRsE=;
+ b=KMIE0gHvEGLyqJ17t+bippUXYdEIwhpTvIq6npjdLDv/RST4jyYSvOVjcBy4cU4Idc
+ C6sHyLRjZFYnf60nX4/4yIRhuCMtNjjYpqBNQYLyBoMi/DB9uTpdABfUEK+SLqdzW+gN
+ WLwa8ISIMfj+xvRrT2MAcDyp4XRqNg/inxbxT1hvVBxXZ3aX8ysGlnkaf53dr7ixudSl
+ BjyYx3AHeLIhI8X3YgJeQa+oJgYRd20xaCzegiJaiwD1lPJ9LsR9rXqwPjijSHj2qYmR
+ 4P4WYUStFcrKBfOsVnw5EO9tORVD8hoz+qDt9nvEyMZHSMLn25gkhDwO/xT8V8OnTrSj
+ foXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761928633; x=1762533433;
+ d=1e100.net; s=20230601; t=1761929060; x=1762533860;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=En4BIQ7FJYM6JqiJcJMxih33DkYp9y4t5a1GSCQnqkE=;
- b=QTECrzDFfN68jjRjnoF6/CoqdhGiVQGEGb4/VgzVIgQmG7dy26S5By4GxjrfKIt9O7
- vFi6LPwiFm67Hq1hAQt/KrsUwNj7+I4LkDqmcEpPBm+fbvFMs56pXLNCXvK/dpZ3qRZJ
- 1rB4kbk+NW5gtjL3OmPmNdEqCERzWbb9aenvS83to90KB/Et1Ek3+1V972Gk5WktjiiS
- f3CG9XqE6UBJUAYRXdGSoDB5OPoqRkEP4kDia8h3Cs7fAF9jpkQCFk0KNfN6PQfljjvK
- Jbid1fByVVbLn2LWW6iQGmEPvpwfJWJYvp2IjZT2w1Ws71pW+LxDApMuDUalVLQeVN7R
- G5Fw==
-X-Gm-Message-State: AOJu0YyKTgAPwBEu7xGEd5SOBA879+1I4nJBuk2OllhWgZgDQQUkMEjM
- X6c5KIIlnqc4rCjFFgTkZsACpiaPDs8SU1s1MvjeV60huBYK/H8vQqCzzLOdiKOSHmyPqaoKGx6
- bNSo5
-X-Gm-Gg: ASbGncs6OlKqUsXFB0aFSje1Ei7Zkf0jTbJpVSOeo+5Bu4HqiaWWt0jPystX/Z1NxmP
- HvNwQgImNbF0/41a7AZNYetBcXeOT+R0EMwnhG+nzGXMTb3+lFidCSmFPC7KX9gjEXq8I2kuhlO
- 20BqKS6qHhF7sJ41L8TMoB5mWIqilSU8GqUYfl4EPoTxv59QRYcRzbd4cgsM/Fa0D/dQtl8Rf25
- TVSBUaPZ/ZZ63gxs3vWxKx3nxWopiDySD6Bfkrvql7yKjtXP6ql3au8ufnKXCRI8qx62NRDlJUN
- VzWGREWEefQ2/zulpNul4LLw5WgaZI0BlZmUxnWN9NEP4R4B1zpyszhtP/yEkuTpVpcQ7qoNffa
- EPao64k/jB+WO78sGhNZyTFR9Ox5mTYNkcD4FH5hB2iBEFlzfOAod3TZP301xtGbFJ9L+IpPQII
- USnRicKqGLYWEcS4loqqA1EY184VvQbT4PzR2LiANJf7He2ahGol4sosA=
-X-Google-Smtp-Source: AGHT+IFu5cflznSX7iyYLpA0QZkyew6IHMm16PfYiF5ASOum7Zywl1hLslDsYGJ4+2nh2CLfb4dEhg==
-X-Received: by 2002:a17:902:d2cc:b0:294:fd3c:6de2 with SMTP id
- d9443c01a7336-2951a39059cmr52561385ad.12.1761928633405; 
- Fri, 31 Oct 2025 09:37:13 -0700 (PDT)
-Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=Ln5UxjhTXyihDKrskjElugo5dDcXTBv4zBXZrGocRsE=;
+ b=JklzAJ3doxjOw7ceqgEv4ZJRHv8e9Pzvji9wiYUMb2JxxBHc+ODFEq1chn/UInv1aK
+ Gj/HIPhsDomUYw5WvYEBFkLwkDSxcd5CN3jedHT7sxpVVGXLBwh/p8RgSWwed6InbK6k
+ lYnlBHmJup4WL6XIpzTIZBPy9I7am+/FIOHciJ/rsatj36MQKcyzDzuku9jNdx8CuIjC
+ Kp3GpMjRPZYqDjFIU201/SoRGunImoAcJ9LhlTTaEVPdMvSbmQtIlJqBUBPIvl0F/J6i
+ SxeUurl0hzC+bI3uqSTS/kofKH6QwQYewTvzkpOF8pFEB9XRJqHZwBlO8Jd0uTwDEICr
+ 7Xsw==
+X-Gm-Message-State: AOJu0Yyv8bou0CXNtRrFbgVU+rdA5PCpHy5OuwGbYEN8Y1STmFR0X7ri
+ 6O8pQO/tujhyJmtf+9DJTlyO+Xx07764XOBNQ4acQ7lAxPZL8jZPPbEBbXHKnl7M+p9fN+yN3sM
+ MqOOz
+X-Gm-Gg: ASbGncuhIhAmhy/Va5zto4ok7GOyo7fyphms1LTmLohEN+LDVycdnjV0egs5gy68RBx
+ pclZ8S+gsOF45NbBI9r59E1Wjih8E7/OaiOMYDcqLa1x4/p0jBWNA3sn61MJFpb7Uzp0Pllv0ha
+ gbzcMslIOwpQIZhpdc/HlpcliGiAjVu4cmO1xhKIsycvU54AqWuOBTQGHUqY3vp+Ey/S5yP4arD
+ /OEkQD3oHFw1V6AMU/Bq8B4DvUM0shxQdDhG3Zh7Uo8pxN1wOsT5rtlrQCzNK7EMXc1V+Th3Bji
+ kw6z+0k6yXJkT7mbhDp/rg9pDF5InrJaqQYUlBt/PYfLL9tZU8fYE6ailo9leUDKrm0p4+0bi1m
+ fO18wB91pbVoXvftd6m5t2L8TvLKZKJdUu7iiIvBE/F+sydq1o42MY85/QdQ2DGVaop7nM9SnQ6
+ sZrrnInw6Q6YAPirKiUoJ4WECBECa7YshJhZ1NZ+OZkKRhwo5O1w==
+X-Google-Smtp-Source: AGHT+IHtZlXgHw5pOE5808YJOp8W6xiRLULOVI9spOr2xXoP61sVzLFOalb1RdS6kE6lTlLYMKeZRg==
+X-Received: by 2002:a17:902:f545:b0:295:ed0:f7bf with SMTP id
+ d9443c01a7336-2951a524d5dmr58852225ad.58.1761929059841; 
+ Fri, 31 Oct 2025 09:44:19 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-295268b5522sm28761485ad.37.2025.10.31.09.37.12
+ d9443c01a7336-295269a8ddcsm28391845ad.91.2025.10.31.09.44.19
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 31 Oct 2025 09:37:13 -0700 (PDT)
-Date: Fri, 31 Oct 2025 09:37:08 -0700
+ Fri, 31 Oct 2025 09:44:19 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [PATCH 0/5] bpf enhancements
-Message-ID: <20251031093708.238779c0@phoenix>
-In-Reply-To: <c3c399ee3970498a87526af848920df0@huawei.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 0/5] BPF enhancements
+Date: Fri, 31 Oct 2025 09:41:44 -0700
+Message-ID: <20251031164417.14166-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251030173732.246435-1-stephen@networkplumber.org>
 References: <20251030173732.246435-1-stephen@networkplumber.org>
- <c3c399ee3970498a87526af848920df0@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,25 +82,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 31 Oct 2025 11:39:54 +0000
-Marat Khalili <marat.khalili@huawei.com> wrote:
+This is a series of fixes and tests for BPF functionality.
+The new tests for Tx and Rx filtering require the infrastructure
+to build a bpf program (clang) and the tool to convert object
+file to header (xxd). If missing the test will get skipped.
 
-> > -----Original Message-----
-> > From: Stephen Hemminger <stephen@networkplumber.org>
-> > Sent: Thursday 30 October 2025 17:34
-> > To: dev@dpdk.org
-> > Cc: Stephen Hemminger <stephen@networkplumber.org>
-> > Subject: [PATCH 0/5] bpf enhancements
-> > 
-> > This is a series of fixes and tests for BPF functionality.
-> > The new tests for Tx and Rx filtering require the infrastructure
-> > to build a bpf program (clang) and the tool to convert object
-> > file to header (xxd). If missing the test will get skipped.  
-> 
-> Thank you for doing this, I will try to have a look next week.
-> 
-> About the overall approach to getting the BPF object file, I understand the clang part, but do we really need to convert object files to headers and then write them back? Could we just pass these object files around as test resources instead? Not that xxd was not present in most systems, but looks like extra work and complexity.
+v2 - add more checks in rx test
+     fix headers 
 
-The problem is that it is hard to determine file location paths when functional test is run.
-The test needs to not reference the build directory structure. And installing objects somewhere in build
-requires more steps in meson. This was the easiest way which is what the cfgfiles test was already doing.
+Stephen Hemminger (5):
+  bpf: add allocation annotations to functions
+  bpf: use bulk free on filtered packets
+  bpf: add a test for BPF ELF load
+  bpf: add test for Rx and Tx filtering
+  bpf: remove use of VLA
+
+ app/test/bpf/meson.build       |  53 ++++
+ app/test/bpf/test_bpf_filter.c |  53 ++++
+ app/test/bpf/test_bpf_load.c   |  62 +++++
+ app/test/meson.build           |   2 +
+ app/test/test_bpf.c            | 452 +++++++++++++++++++++++++++++++++
+ lib/bpf/bpf_pkt.c              |  84 +++---
+ lib/bpf/meson.build            |   2 -
+ lib/bpf/rte_bpf.h              |  11 +-
+ 8 files changed, 678 insertions(+), 41 deletions(-)
+ create mode 100644 app/test/bpf/meson.build
+ create mode 100644 app/test/bpf/test_bpf_filter.c
+ create mode 100644 app/test/bpf/test_bpf_load.c
+
+-- 
+2.51.0
+
