@@ -2,80 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAACDCCF9FF
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 09:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B1CCCF9FA
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 09:18:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EAFF2402AE;
-	Fri, 31 Oct 2025 10:18:12 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id BB7D440270
- for <dev@dpdk.org>; Fri, 31 Oct 2025 10:18:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1761902290;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=vuDINOMLd3SQH6869xuhD/l/uoRup+frK/bePHjolu8=;
- b=G3AL/DdrnXpwRiMu/LSgdNAhjyV8JHwWdwFq1esepHgwcoHKFEkVKEG2JcnMFOguy0/Bu2
- F7wKkPA4PBhoaD24TjQFjqpiKmBRD2V6kBosi67lakeltWzPuRwxpHJdlmUDbP+npMpxEv
- v51lPSZwo+CZO9u7NOSl74vHB8gELOA=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-689-P1xr3C5LNkWs4dLruwRCug-1; Fri, 31 Oct 2025 05:18:08 -0400
-X-MC-Unique: P1xr3C5LNkWs4dLruwRCug-1
-X-Mimecast-MFC-AGG-ID: P1xr3C5LNkWs4dLruwRCug_1761902287
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-368ab6919e9so10780891fa.1
- for <dev@dpdk.org>; Fri, 31 Oct 2025 02:18:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761902287; x=1762507087;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=vuDINOMLd3SQH6869xuhD/l/uoRup+frK/bePHjolu8=;
- b=MsFsVN3FH0gnI/nY/qw31yIGWCS/qkNWb083Xvs7iXFfgjKxIOp2V/HmpY63h40OnB
- FjaVsFeNIwEMTMrUurySeX7aURAFd9W7Wd0pJkaaM/gzKlOA43CXxO6l+kICoNAig3Eg
- /xd4LRUF6QwyLfsSc1k3XGx8Aot+e44mzB7dkl8TwQFHgsg+RtwOxBzWypKzBbk02CWX
- HLnL/u9P9+QodkB4OKK1Kk87NadjS5p7y6zfOGPOAmhLdHnXHJPUK7dVDQb3x/CtDBGF
- r9eNrNcWyVsjdlCBTx0uLjEy4b6yHvWf8MzT5ou77FrJu0GKPIyLkwlfbWYK7pFJwEnM
- 3tLA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXMrvrxPusD94G+R1eJlEIb3+SxlKeScKineibA8l7mzuLgYT81zk/ID7MW+B1gZpQ+DiM=@dpdk.org
-X-Gm-Message-State: AOJu0Yx4glVR3if8AiErE2MkJ14G6+3EJ1hl4YHjiMqrbKjkHUWHycLE
- wlca4GczfqrYiJftYBPPgA6CqBe9070i+TXDBFSyB3wZMVum+Xc9ekTVjES0OIPItCryb01dFcu
- YFDpJDeaPIp1RbU7RwQ9iZQXTUZ5ksvdWpxLrNhnmNOTdAZ9tk4wAnUwHJs6O3U4QuTEUSj5ra6
- i2jDOIl9VaEZqTRqQLlrs=
-X-Gm-Gg: ASbGncsl4Ft8lYsdflhRmP3MUIYsD1SShXs/AOGdZ40FXvKZFvE4ZjGfrbpt4ZZRIBs
- izBHJam6wXsjlQSAOYwKiwUUK+csa6eAFgfiXE0xwz87ZISyQD0GwKxKFWDYClIciNNDsZkc1nL
- SvQmqm3Db7Bp2QpL/EFDnQ5znxL8rKPrc96plZ6r9q1GIEZZtYzA0SbJ4org==
-X-Received: by 2002:a2e:a593:0:b0:376:4320:e34c with SMTP id
- 38308e7fff4ca-37a18df596dmr8493761fa.46.1761902287303; 
- Fri, 31 Oct 2025 02:18:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IErUlXnsg6aFwEvS6PO4YUDn4CY4uRZ9OVRT+YLiKfzKkA9bjOOkGGDPa7SgSGvcJBD9bka3xJ2mHdlgzOj2aE=
-X-Received: by 2002:a2e:a593:0:b0:376:4320:e34c with SMTP id
- 38308e7fff4ca-37a18df596dmr8493641fa.46.1761902286885; Fri, 31 Oct 2025
- 02:18:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F407A402F1;
+	Fri, 31 Oct 2025 10:18:29 +0100 (CET)
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com
+ [113.46.200.226])
+ by mails.dpdk.org (Postfix) with ESMTP id D680040395;
+ Fri, 31 Oct 2025 10:18:27 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=A58u35Qjpgh5gULV1mUAzHoJhJm0n1zJ6ae3aOsojik=;
+ b=LQIGDqRGlb8SkocFbhlmvxu+D8BBeO65GRwmq0rISHGZGwdwwSLRr2wGtClObWDJgfJXHbn6i
+ /P723+ciUwEJwuaYd89y7QppZjz1kaB5dhLS69gcnx2RPKMosSx/2iiuEtnRVS4DKn0Wj8MGoYt
+ hT0QMpPcim7eXG84j4meOfE=
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+ by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cyb436HvxzKm4k;
+ Fri, 31 Oct 2025 17:17:55 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id D341F1401E9;
+ Fri, 31 Oct 2025 17:18:25 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 31 Oct 2025 17:18:25 +0800
+Message-ID: <81d70c4e-aa4b-482e-a708-be477ed22f5b@huawei.com>
+Date: Fri, 31 Oct 2025 17:18:24 +0800
 MIME-Version: 1.0
-References: <CAJFAV8yS3-_RMn-Ln7umJFt+wWVH7Fj7yFnmmjgUnpD1=VX9yA@mail.gmail.com>
- <98CBD80474FA8B44BF855DF32C47DC35F6551F@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6551F@smartserver.smartshare.dk>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 31 Oct 2025 10:17:55 +0100
-X-Gm-Features: AWmQ_bkMH-oXKrDLNlyQOtl3iopKvlOZkbTZSLfmdZggeqtFqfy3QOBDy2qrVcY
-Message-ID: <CAJFAV8yn0n2B32W1WUaZSKs1N3DbBPCGZxrT-ats4x0mo0Py-A@mail.gmail.com>
-Subject: Re: Disable SPDK testing again?
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: Patrick Robb <probb@iol.unh.edu>, Aaron Conole <aconole@redhat.com>, 
- dpdk-techboard <techboard@dpdk.org>, bruce.richardson@intel.com, ci@dpdk.org, 
- dev <dev@dpdk.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: aIE9OEIbYDejSk9lGr3mLhShTwC2z5FfsEkN2x3L5vc_1761902287
-X-Mimecast-Originator: redhat.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] [PATCH v2] examples/l3fwd: adjust Tx burst size based
+ on Rx burst
+To: "Tummala, Sivaprasad" <Sivaprasad.Tummala@amd.com>, Pavan Nikhilesh
+ Bhagavatula <pbhagavatula@marvell.com>, "david.hunt@intel.com"
+ <david.hunt@intel.com>, "anatoly.burakov@intel.com"
+ <anatoly.burakov@intel.com>, Jerin Jacob <jerinj@marvell.com>,
+ "radu.nicolau@intel.com" <radu.nicolau@intel.com>, Akhil Goyal
+ <gakhil@marvell.com>, "cristian.dumitrescu@intel.com"
+ <cristian.dumitrescu@intel.com>, "Yigit, Ferruh" <Ferruh.Yigit@amd.com>,
+ "konstantin.ananyev@huawei.com" <konstantin.ananyev@huawei.com>,
+ "mb@smartsharesystems.com" <mb@smartsharesystems.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "haijie1@huawei.com" <haijie1@huawei.com>, 
+ "stable@dpdk.org" <stable@dpdk.org>, "Ande, Venkat Kumar"
+ <VenkatKumar.Ande@amd.com>, Dengdui Huang <huangdengdui@huawei.com>
+References: <20250212045416.2393001-1-sivaprasad.tummala@amd.com>
+ <20250609095827.4174387-1-sivaprasad.tummala@amd.com>
+ <PH0PR18MB40861D909AD3BC9A0695309ADE6AA@PH0PR18MB4086.namprd18.prod.outlook.com>
+ <CH3PR12MB8233DABD201A97C7A71D8D2C86EEA@CH3PR12MB8233.namprd12.prod.outlook.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <CH3PR12MB8233DABD201A97C7A71D8D2C86EEA@CH3PR12MB8233.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,23 +70,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 31 Oct 2025 at 10:11, Morten Br=C3=B8rup <mb@smartsharesystems.com>=
- wrote:
- > While it is just a warning in the CI dashboard, I don't think we
-> > should waste resources on this testing.
-> > Opinions?
->
-> We should ask ourselves why they are doing that.
-> Is something wrong (or incomplete) with our handling of -Denable_libs?
-> Are we including unnecessary optional libs?
->
-> It seems like they are using -Ddisable_libs, not -Denable_libs. Don't the=
-y know about -Denable_libs?
+Hi Sivaprasad,
 
-I reached out to some SPDK dev when I was working on enable_libs.
-I also Cc: one of them on the patches but never got a reply.
+Are you going to send v3 (add log) version?
 
+There is another patch about adjust burst size [1], if this patch
+don't continue, maybe we should restart that one.
 
---=20
-David Marchand
+[1] https://patchwork.dpdk.org/project/dpdk/patch/20241204020622.977156-1-haijie1@huawei.com/
+
+Thanks
+
+On 10/9/2025 10:32 AM, Tummala, Sivaprasad wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
+> 
+> Hi Pavan,
+> 
+> Please find my response inline.
+> 
+> ________________________________
+> From: Pavan Nikhilesh Bhagavatula <pbhagavatula@marvell.com>
+> Sent: Tuesday, June 10, 2025 7:59 PM
+> To: Tummala, Sivaprasad <Sivaprasad.Tummala@amd.com>; david.hunt@intel.com <david.hunt@intel.com>; anatoly.burakov@intel.com <anatoly.burakov@intel.com>; Jerin Jacob <jerinj@marvell.com>; radu.nicolau@intel.com <radu.nicolau@intel.com>; Akhil Goyal <gakhil@marvell.com>; cristian.dumitrescu@intel.com <cristian.dumitrescu@intel.com>; Yigit, Ferruh <Ferruh.Yigit@amd.com>; konstantin.ananyev@huawei.com <konstantin.ananyev@huawei.com>; mb@smartsharesystems.com <mb@smartsharesystems.com>
+> Cc: dev@dpdk.org <dev@dpdk.org>; haijie1@huawei.com <haijie1@huawei.com>; stable@dpdk.org <stable@dpdk.org>; Ande, Venkat Kumar <VenkatKumar.Ande@amd.com>; Dengdui Huang <huangdengdui@huawei.com>
+> Subject: Re: [EXTERNAL] [PATCH v2] examples/l3fwd: adjust Tx burst size based on Rx burst
+> 
+> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
+> 
+> 
+>>> Previously, the TX burst size was fixed at 256, leading to performance
+>>> degradation in certain scenarios.
+>>>
+>>> This patch introduces logic to set the TX burst size to match the
+>>> configured RX burst size (--burst option, default 32, max 512)
+>>> for better efficiency.
+>>>
+>>> Fixes: d5c4897ecfb2 ("examples/l3fwd: add option to set Rx burst size")
+>>> Cc: haijie1@huawei.com
+>>> Cc: stable@dpdk.org
+>>>
+>>> Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+>>> Tested-by: Venkat Kumar Ande <VenkatKumar.Ande@amd.com>
+>>> Tested-by: Dengdui Huang <huangdengdui@huawei.com>
+> 
+>> It would be good if the selected burst sizes of Rx and Tx are logged.
+> ACK
+> 
+>> On CN10K platform we see upto 5% improvement, and upto 30% improvement on CN9K.
+> 
+>> Tested-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
+> 
+>> ---
+>> examples/l3fwd/l3fwd.h        |  8 ++------
+>> examples/l3fwd/l3fwd_common.h | 11 +++++++----
+>> examples/l3fwd/main.c         |  2 ++
+>> 3 files changed, 11 insertions(+), 10 deletions(-)
+> 
+> 
 
