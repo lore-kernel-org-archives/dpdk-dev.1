@@ -2,54 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B53EDCCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 13:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F49CCF9FE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 13:28:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7672D402DB;
-	Fri, 31 Oct 2025 14:12:12 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0CAFF40150
- for <dev@dpdk.org>; Fri, 31 Oct 2025 14:12:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1761916330;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=G9VMPOzXvVJHG3o39mQwH+3IXnU5+5m6VYO+e6qSd3w=;
- b=IDsbuioWUmO+Fh7gKfwdgxlR/6mQ/DgG6U03isMWvaAZzZGWBlVGAtXadxWbWNckdGlvBV
- 0K0ah9/K+1a04VmEsY9uALhMuoQcliCp8rEwk/Eo16bNU7/WJp3VgZKiLdq9TZWLiFzrqU
- LAF1eh/K575SB6ztf607Ikxek1D/fsE=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-218-vuo8k7kbNZ2sjgv32yQkNQ-1; Fri,
- 31 Oct 2025 09:12:06 -0400
-X-MC-Unique: vuo8k7kbNZ2sjgv32yQkNQ-1
-X-Mimecast-MFC-AGG-ID: vuo8k7kbNZ2sjgv32yQkNQ_1761916325
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 4B91718001E9; Fri, 31 Oct 2025 13:12:05 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.45.224.16])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id EFE77180057E; Fri, 31 Oct 2025 13:12:03 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH] mbuf: dump Tx offload metadata
-Date: Fri, 31 Oct 2025 14:11:59 +0100
-Message-ID: <20251031131159.1199221-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 433B1402ED;
+	Fri, 31 Oct 2025 14:28:28 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 7910C40150
+ for <dev@dpdk.org>; Fri, 31 Oct 2025 14:28:26 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 42871206E7;
+ Fri, 31 Oct 2025 14:28:26 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: EQ9bC8q945L2jziaf-vgDze5qutf73Gp7NspPhRJCc4_1761916325
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH] mbuf: dump Tx offload metadata
+Date: Fri, 31 Oct 2025 14:28:24 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65523@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20251031131159.1199221-1-david.marchand@redhat.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] mbuf: dump Tx offload metadata
+Thread-Index: AdxKZ/eERgRB+7K/SZq409pshJXnIwAAHsug
+References: <20251031131159.1199221-1-david.marchand@redhat.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "David Marchand" <david.marchand@redhat.com>
+Cc: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,54 +46,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When debugging TSO and other checksum offloads, dumping the various
-l*_len fields and TSO segmentation size can be helpful.
-
-Example in OVS that dumps a mbuf on rte_eth_tx_prepare failure:
-
-Before:
-netdev_dpdk(pmd-c30/id:11)|DBG|dpdk0: First invalid packet:
-dump mbuf at 0x2201a916c0, iova=0x2200800580, buf_len=6864
-  pkt_len=6804, ol_flags=0x3114800000000102, nb_segs=1, port=65535, ptype=0
-  segment at 0x2201a916c0, data=0x22008005b2, len=6804, off=50, refcnt=1
-  Dump data at [0x22008005b2], len=6804
-...
-
-After:
-netdev_dpdk(pmd-c30/id:11)|DBG|dpdk0: First invalid packet:
-dump mbuf at 0x2201a916c0, iova=0x2200800580, buf_len=6864, pkt_len=6804
-  outer_l2_len=14, outer_l3_len=40, l2_len=38, l3_len=40, l4_len=32, tso_segsz=0
-  ol_flags=0x3114800000000102, nb_segs=1, port=65535, ptype=0
-  segment at 0x2201a916c0, data=0x22008005b2, len=6804, off=50, refcnt=1
-  Dump data at [0x22008005b2], len=6804
-...
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- lib/mbuf/rte_mbuf.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/lib/mbuf/rte_mbuf.c b/lib/mbuf/rte_mbuf.c
-index 0d931c7a15..74dcb6c934 100644
---- a/lib/mbuf/rte_mbuf.c
-+++ b/lib/mbuf/rte_mbuf.c
-@@ -750,10 +750,12 @@ rte_pktmbuf_dump(FILE *f, const struct rte_mbuf *m, unsigned dump_len)
- 
- 	__rte_mbuf_sanity_check(m, 1);
- 
--	fprintf(f, "dump mbuf at %p, iova=%#" PRIx64 ", buf_len=%u\n", m, rte_mbuf_iova_get(m),
--		m->buf_len);
--	fprintf(f, "  pkt_len=%u, ol_flags=%#"PRIx64", nb_segs=%u, port=%u",
--		m->pkt_len, m->ol_flags, m->nb_segs, m->port);
-+	fprintf(f, "dump mbuf at %p, iova=%#" PRIx64 ", buf_len=%u, pkt_len=%u\n",
-+		m, rte_mbuf_iova_get(m), m->buf_len, m->pkt_len);
-+	fprintf(f, "  outer_l2_len=%u, outer_l3_len=%u, l2_len=%u, l3_len=%u, l4_len=%u, tso_segsz=%u\n",
-+		m->outer_l2_len, m->outer_l3_len, m->l2_len, m->l3_len, m->l4_len, m->tso_segsz);
-+	fprintf(f, "  ol_flags=%#"PRIx64", nb_segs=%u, port=%u",
-+		m->ol_flags, m->nb_segs, m->port);
- 
- 	if (m->ol_flags & (RTE_MBUF_F_RX_QINQ | RTE_MBUF_F_TX_QINQ))
- 		fprintf(f, ", vlan_tci_outer=%u", m->vlan_tci_outer);
--- 
-2.51.0
-
+PiBGcm9tOiBEYXZpZCBNYXJjaGFuZCBbbWFpbHRvOmRhdmlkLm1hcmNoYW5kQHJlZGhhdC5jb21d
+DQo+IFNlbnQ6IEZyaWRheSwgMzEgT2N0b2JlciAyMDI1IDE0LjEyDQo+IA0KPiBXaGVuIGRlYnVn
+Z2luZyBUU08gYW5kIG90aGVyIGNoZWNrc3VtIG9mZmxvYWRzLCBkdW1waW5nIHRoZSB2YXJpb3Vz
+DQo+IGwqX2xlbiBmaWVsZHMgYW5kIFRTTyBzZWdtZW50YXRpb24gc2l6ZSBjYW4gYmUgaGVscGZ1
+bC4NCj4gDQo+IEV4YW1wbGUgaW4gT1ZTIHRoYXQgZHVtcHMgYSBtYnVmIG9uIHJ0ZV9ldGhfdHhf
+cHJlcGFyZSBmYWlsdXJlOg0KPiANCj4gQmVmb3JlOg0KPiBuZXRkZXZfZHBkayhwbWQtYzMwL2lk
+OjExKXxEQkd8ZHBkazA6IEZpcnN0IGludmFsaWQgcGFja2V0Og0KPiBkdW1wIG1idWYgYXQgMHgy
+MjAxYTkxNmMwLCBpb3ZhPTB4MjIwMDgwMDU4MCwgYnVmX2xlbj02ODY0DQo+ICAgcGt0X2xlbj02
+ODA0LCBvbF9mbGFncz0weDMxMTQ4MDAwMDAwMDAxMDIsIG5iX3NlZ3M9MSwgcG9ydD02NTUzNSwN
+Cj4gcHR5cGU9MA0KPiAgIHNlZ21lbnQgYXQgMHgyMjAxYTkxNmMwLCBkYXRhPTB4MjIwMDgwMDVi
+MiwgbGVuPTY4MDQsIG9mZj01MCwNCj4gcmVmY250PTENCj4gICBEdW1wIGRhdGEgYXQgWzB4MjIw
+MDgwMDViMl0sIGxlbj02ODA0DQo+IC4uLg0KPiANCj4gQWZ0ZXI6DQo+IG5ldGRldl9kcGRrKHBt
+ZC1jMzAvaWQ6MTEpfERCR3xkcGRrMDogRmlyc3QgaW52YWxpZCBwYWNrZXQ6DQo+IGR1bXAgbWJ1
+ZiBhdCAweDIyMDFhOTE2YzAsIGlvdmE9MHgyMjAwODAwNTgwLCBidWZfbGVuPTY4NjQsDQo+IHBr
+dF9sZW49NjgwNA0KPiAgIG91dGVyX2wyX2xlbj0xNCwgb3V0ZXJfbDNfbGVuPTQwLCBsMl9sZW49
+MzgsIGwzX2xlbj00MCwgbDRfbGVuPTMyLA0KPiB0c29fc2Vnc3o9MA0KPiAgIG9sX2ZsYWdzPTB4
+MzExNDgwMDAwMDAwMDEwMiwgbmJfc2Vncz0xLCBwb3J0PTY1NTM1LCBwdHlwZT0wDQo+ICAgc2Vn
+bWVudCBhdCAweDIyMDFhOTE2YzAsIGRhdGE9MHgyMjAwODAwNWIyLCBsZW49NjgwNCwgb2ZmPTUw
+LA0KPiByZWZjbnQ9MQ0KPiAgIER1bXAgZGF0YSBhdCBbMHgyMjAwODAwNWIyXSwgbGVuPTY4MDQN
+Cj4gLi4uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBEYXZpZCBNYXJjaGFuZCA8ZGF2aWQubWFyY2hh
+bmRAcmVkaGF0LmNvbT4NCg0KR29vZCBpZGVhLg0KDQpXaXRoIG9yIHdpdGhvdXQgc3VnZ2VzdGVk
+IGltcHJvdmVtZW50IGlubGluZSBiZWxvdywNCkFja2VkLWJ5OiBNb3J0ZW4gQnLDuHJ1cCA8bWJA
+c21hcnRzaGFyZXN5c3RlbXMuY29tPg0KDQo+IC0tLQ0KPiAgbGliL21idWYvcnRlX21idWYuYyB8
+IDEwICsrKysrKy0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDQgZGVs
+ZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvbGliL21idWYvcnRlX21idWYuYyBiL2xpYi9t
+YnVmL3J0ZV9tYnVmLmMNCj4gaW5kZXggMGQ5MzFjN2ExNS4uNzRkY2I2YzkzNCAxMDA2NDQNCj4g
+LS0tIGEvbGliL21idWYvcnRlX21idWYuYw0KPiArKysgYi9saWIvbWJ1Zi9ydGVfbWJ1Zi5jDQo+
+IEBAIC03NTAsMTAgKzc1MCwxMiBAQCBydGVfcGt0bWJ1Zl9kdW1wKEZJTEUgKmYsIGNvbnN0IHN0
+cnVjdCBydGVfbWJ1Zg0KPiAqbSwgdW5zaWduZWQgZHVtcF9sZW4pDQo+IA0KPiAgCV9fcnRlX21i
+dWZfc2FuaXR5X2NoZWNrKG0sIDEpOw0KPiANCj4gLQlmcHJpbnRmKGYsICJkdW1wIG1idWYgYXQg
+JXAsIGlvdmE9JSMiIFBSSXg2NCAiLCBidWZfbGVuPSV1XG4iLCBtLA0KPiBydGVfbWJ1Zl9pb3Zh
+X2dldChtKSwNCj4gLQkJbS0+YnVmX2xlbik7DQo+IC0JZnByaW50ZihmLCAiICBwa3RfbGVuPSV1
+LCBvbF9mbGFncz0lIyJQUkl4NjQiLCBuYl9zZWdzPSV1LA0KPiBwb3J0PSV1IiwNCj4gLQkJbS0+
+cGt0X2xlbiwgbS0+b2xfZmxhZ3MsIG0tPm5iX3NlZ3MsIG0tPnBvcnQpOw0KPiArCWZwcmludGYo
+ZiwgImR1bXAgbWJ1ZiBhdCAlcCwgaW92YT0lIyIgUFJJeDY0ICIsIGJ1Zl9sZW49JXUsDQo+IHBr
+dF9sZW49JXVcbiIsDQo+ICsJCW0sIHJ0ZV9tYnVmX2lvdmFfZ2V0KG0pLCBtLT5idWZfbGVuLCBt
+LT5wa3RfbGVuKTsNCj4gKwlmcHJpbnRmKGYsICIgIG91dGVyX2wyX2xlbj0ldSwgb3V0ZXJfbDNf
+bGVuPSV1LCBsMl9sZW49JXUsDQo+IGwzX2xlbj0ldSwgbDRfbGVuPSV1LCB0c29fc2Vnc3o9JXVc
+biIsDQo+ICsJCW0tPm91dGVyX2wyX2xlbiwgbS0+b3V0ZXJfbDNfbGVuLCBtLT5sMl9sZW4sIG0t
+PmwzX2xlbiwgbS0NCj4gPmw0X2xlbiwgbS0+dHNvX3NlZ3N6KTsNCg0KUHJpbnRpbmcgb2Ygb3V0
+ZXJfbDJfbGVuIGFuZCBvdXRlcl9sM19sZW4gY291bGQgYmUgb21pdHRlZCBpZiBub3QgcHJlc2Vu
+dCwgbGlrZSB0aGUgVkxBTiBJRHMsIGUuZy46DQoNCmZwcmludGYoZiwgIiAgIik7DQppZiAobS0+
+b3V0ZXJfbDJfbGVuICE9IDApDQoJZnByaW50ZihmLCAib3V0ZXJfbDJfbGVuPSV1LCAiLCBtLT5v
+dXRlcl9sMl9sZW4pOw0KaWYgKG0tPm91dGVyX2wzX2xlbiAhPSAwKQ0KCWZwcmludGYoZiwgIm91
+dGVyX2wzX2xlbj0ldSwgIiwgbS0+b3V0ZXJfbDNfbGVuKTsNCmZwcmludGYoZiwgImwyX2xlbj0l
+dSwgbDNfbGVuPSV1LCBsNF9sZW49JXUsIHRzb19zZWdzej0ldVxuIiwNCgltLT5sMl9sZW4sIG0t
+PmwzX2xlbiwgbS0+bDRfbGVuLCBtLT50c29fc2Vnc3opOw0KDQo+ICsJZnByaW50ZihmLCAiICBv
+bF9mbGFncz0lIyJQUkl4NjQiLCBuYl9zZWdzPSV1LCBwb3J0PSV1IiwNCj4gKwkJbS0+b2xfZmxh
+Z3MsIG0tPm5iX3NlZ3MsIG0tPnBvcnQpOw0KPiANCj4gIAlpZiAobS0+b2xfZmxhZ3MgJiAoUlRF
+X01CVUZfRl9SWF9RSU5RIHwgUlRFX01CVUZfRl9UWF9RSU5RKSkNCj4gIAkJZnByaW50ZihmLCAi
+LCB2bGFuX3RjaV9vdXRlcj0ldSIsIG0tPnZsYW5fdGNpX291dGVyKTsNCj4gLS0NCj4gMi41MS4w
+DQoNCg==
