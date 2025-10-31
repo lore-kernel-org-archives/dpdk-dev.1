@@ -2,45 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8236CCF9FA
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 11:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04CEACCF9FA
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 11:43:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B34ED40270;
-	Fri, 31 Oct 2025 12:39:58 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 586D440150
- for <dev@dpdk.org>; Fri, 31 Oct 2025 12:39:56 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.186.231])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4cyfBn6w2dzHnH6S;
- Fri, 31 Oct 2025 11:38:57 +0000 (UTC)
-Received: from frapema100004.china.huawei.com (unknown [7.182.19.128])
- by mail.maildlp.com (Postfix) with ESMTPS id 5A7D61402E9;
- Fri, 31 Oct 2025 19:39:54 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema100004.china.huawei.com (7.182.19.128) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 31 Oct 2025 12:39:54 +0100
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Fri, 31 Oct 2025 12:39:54 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH 0/5] bpf enhancements
-Thread-Topic: [PATCH 0/5] bpf enhancements
-Thread-Index: AQHcScP7sKepPiqwfk6B7do9qDNUgbTcIBLg
-Date: Fri, 31 Oct 2025 11:39:54 +0000
-Message-ID: <c3c399ee3970498a87526af848920df0@huawei.com>
-References: <20251030173732.246435-1-stephen@networkplumber.org>
-In-Reply-To: <20251030173732.246435-1-stephen@networkplumber.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.70]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id F13954029A;
+	Fri, 31 Oct 2025 12:43:23 +0100 (CET)
+Received: from fhigh-b7-smtp.messagingengine.com
+ (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+ by mails.dpdk.org (Postfix) with ESMTP id 540CD40150
+ for <dev@dpdk.org>; Fri, 31 Oct 2025 12:43:22 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 95D097A013D;
+ Fri, 31 Oct 2025 07:43:21 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-03.internal (MEProxy); Fri, 31 Oct 2025 07:43:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to; s=fm3; t=1761911001; x=1761997401; bh=FBslBIqP0KXQql/p3bX6V
+ eC6Jb9mGpVhEurVCvPaFC4=; b=Y/GOsJI7G7SYX2VaZQg/Pac7KxYFQ7Dbm6ZH7
+ swFZX8baZGu2dcirHzWgDFXyz/Rs4kbkv+ox2lLHwXnuhGVROF5wrspxVazirnm7
+ 7eg4Vgf6Q3MpAfdJ6/nFbHf10LNvXyaOtdzauKk/v2iYnyhWzkEl1aSQJQF5NW8W
+ 5sV5rMix7j7s375VRGk7vnTCQwjrC0bI2KndjPp49sCqyvSUnQv5/b6rht/TZHWO
+ dlUFANl17uHLXWRgOpS4Ecape20S8Tc5kCQHCprNEN0+sliuT3bbpD6dXURE95D1
+ 7Kh31yFGtLmikNmLTPF3NSj9jbaxi41VIVkau9ZrzTUKb2TEA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+ 1761911001; x=1761997401; bh=FBslBIqP0KXQql/p3bX6VeC6Jb9mGpVhEur
+ VCvPaFC4=; b=xdClhVX1jAjMsV6JGlTVhnuTGaEfMaoEUKMYUuiASZKuo5znB7q
+ pR+DSzdgNtxCJ1dpWFpr3w+cVQQz02u1VjpYBSeltEFt11D57RGa1mJQIogOGHJY
+ Lddur5vIfMJ0jfHK7hP56FLsG/h9NZbOFiJ3CkY9n4UI3U8uxrR/xMtnLGe/OmsM
+ REpE4W1O0q7UXeqb+MkGFVl5U4FQrUqeOpeTp7sBSNJUnN/n01t8bjMH32txEy/r
+ Mwt0UfnlNNaH8FGbxVEmhJnrQl1KpsHtjvSL5cMBrQ793Q21aQec/51AuooFi09s
+ i/yrspWP7PFrC3hXFLTfwx1a9/C37gdUsIA==
+X-ME-Sender: <xms:2aAEaXsmyVyLO3Ux5jA3kXeXs_bKyPlbqTuZnTlvDaiTtj0WH8XKzw>
+ <xme:2aAEaf7bbQ90wH4CBpVaCfP0zuql5K3gwSRQlbZ2DadgGs6eJGKmci9ghVQj4EfiW
+ VVZICqOuU9okIlDckRx9KpeKCJRuPYMIuTkK-7MDHm51yjOQBBEkQ>
+X-ME-Received: <xmr:2aAEaYLnEox8aRN-5Kd_A86tLFTer5nVvuYvspWu1TOCVvwkbT0sKNGTYxhsuzJfGtuGuJC-qUt5OGxz36L2BGTsBg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieelgedtucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
+ dtnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhn
+ jhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepveevfeevieeihfetudekgeekle
+ eigeffueekveduteeuffeiudevteeiudekfeelnecuvehluhhsthgvrhfuihiivgeptden
+ ucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvth
+ dpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggv
+ vhesughpughkrdhorhhgpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnhgusehrvg
+ guhhgrthdrtghomhdprhgtphhtthhopehrohhrvghtiihlrgeslhhinhhugidrmhhitghr
+ ohhsohhfthdrtghomh
+X-ME-Proxy: <xmx:2aAEaf7hrbAMpj8dkCPT3ud-8mStmxr3m1Pn-JufPICwtMV5jQygwQ>
+ <xmx:2aAEabzonHeCt54-YgwlSCWJfl0TbFqPzN2xR0Mq93uXg_NiMHyp5A>
+ <xmx:2aAEaTaByYasxdzxLSIdT8I-I4sgxp5bVWZrx6FIm-V6JLbiatu1qQ>
+ <xmx:2aAEadSRfc2hA6mzlNLf2L834pzCfO4LGsv8HNxWRvPjorzU2mwpmw>
+ <xmx:2aAEaXR1MYZshljlOdrjdN9aKE1o_YniT6Df6rGY0zX4pdKsyzzBbIlY>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 31 Oct 2025 07:43:20 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: david.marchand@redhat.com,
+	Tyler Retzlaff <roretzla@linux.microsoft.com>
+Subject: [PATCH 1/1] test/memcpy: reduce duration
+Date: Fri, 31 Oct 2025 12:43:09 +0100
+Message-ID: <20251031114310.4062899-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,22 +84,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Thursday 30 October 2025 17:34
-> To: dev@dpdk.org
-> Cc: Stephen Hemminger <stephen@networkplumber.org>
-> Subject: [PATCH 0/5] bpf enhancements
->=20
-> This is a series of fixes and tests for BPF functionality.
-> The new tests for Tx and Rx filtering require the infrastructure
-> to build a bpf program (clang) and the tool to convert object
-> file to header (xxd). If missing the test will get skipped.
+When running on limited platforms like GitHub Actions,
+the functional unit test "memcpy_autotest"
+may hit a timeout, especially when running with UBSan.
 
-Thank you for doing this, I will try to have a look next week.
+This change skips testing some alignment offsets (from 0 to 31).
+It will test only every 3-byte offsets for the source buffer,
+and every 2-byte offsets for the destination buffer.
+So it is supposed to be 6x faster with a reasonably smaller coverage.
 
-About the overall approach to getting the BPF object file, I understand the=
- clang part, but do we really need to convert object files to headers and t=
-hen write them back? Could we just pass these object files around as test r=
-esources instead? Not that xxd was not present in most systems, but looks l=
-ike extra work and complexity.
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+---
+ app/test/test_memcpy.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/app/test/test_memcpy.c b/app/test/test_memcpy.c
+index 802dc4631b..ea9e76e9ad 100644
+--- a/app/test/test_memcpy.c
++++ b/app/test/test_memcpy.c
+@@ -105,8 +105,8 @@ func_test(void)
+ 	unsigned int off_src, off_dst, i;
+ 	int ret;
+ 
+-	for (off_src = 0; off_src < ALIGNMENT_UNIT; off_src++) {
+-		for (off_dst = 0; off_dst < ALIGNMENT_UNIT; off_dst++) {
++	for (off_src = 0; off_src < ALIGNMENT_UNIT; off_src += 3) {
++		for (off_dst = 0; off_dst < ALIGNMENT_UNIT; off_dst += 2) {
+ 			for (i = 0; i < RTE_DIM(buf_sizes); i++) {
+ 				ret = test_single_memcpy(off_src, off_dst,
+ 				                         buf_sizes[i]);
+-- 
+2.51.0
+
