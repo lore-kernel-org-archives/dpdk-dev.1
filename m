@@ -2,79 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CA9CCF9FE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 13:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F018CCF9FE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 14:08:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D4D240612;
-	Fri, 31 Oct 2025 14:28:36 +0100 (CET)
-Received: from fout-a1-smtp.messagingengine.com
- (fout-a1-smtp.messagingengine.com [103.168.172.144])
- by mails.dpdk.org (Postfix) with ESMTP id BBDB940609
- for <dev@dpdk.org>; Fri, 31 Oct 2025 14:28:35 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id 5BBE7EC0083;
- Fri, 31 Oct 2025 09:28:35 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Fri, 31 Oct 2025 09:28:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1761917315;
- x=1762003715; bh=BJ0TsvOLvoW63htN2K3MXwaTnpXJdztdeVYlgA8mdrw=; b=
- hoTmRA+L31wny8p4DlxAtzcf3kIXMEhMm7/dDDwW0vTqkZnb8rYsJtunMsSBlKM0
- XBtLu6cl/dBIZ27dKgnUJMGsd9xatPZJMJJUu9J6D/stGNhbVp2x5DKFnsFequpJ
- 5X9miUNSd9XsXK3Yg1Aqr3JqWdNN1m/dRd0OYMOuxFcZN2RvzZ8XV5RBmBJht1Vh
- +3bIsvAT7PLw95KG3gDeepx+2qf6qBYY6QkFF86bmncf8Vw/aE/pCCKJaC6/X+eC
- intf9dUqSqLBnuqOMJWgp5RFvcmnyPtiCPrf8Raef6wfmiN5mt75LRXCDtJkf2s0
- ZAdegKRtPBXy7HAP5vXSFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761917315; x=
- 1762003715; bh=BJ0TsvOLvoW63htN2K3MXwaTnpXJdztdeVYlgA8mdrw=; b=a
- lzzYGLmJlaUDdiuqopGXwtnTk/wSLa37d14t+4rWc+nJiEIRtpy5NwI2QSugcnK1
- XY26aaBQWO71PP7vGT4S9lU2+qk+3PBHm66gg1426dXlwQIQmx/z/gAOxTp+WWSJ
- PhD0qmfgc1rc4Ld+2mlPB8xrgors93ENxWDqNegKEvlw0slMD4CjhiXuTP9lDMEN
- Bx4BHcDu6ksTYvVNkZMFSPS8VCMQ+fYKlFUrnjrq/XWe1zkAU5NwDd5OKTEigYh+
- GMqNojgWJO/AebxywdyRnX/2IPMetdAoekW9PeTI80lPl3zXq40yqVljmzpi09Vs
- Uoc2zBbwVrYoDkh/+4iOg==
-X-ME-Sender: <xms:g7kEaeppg3g8q0kdYJ6TuVGVHPhYXevWsMX7qqxT1M-RnnpdM9Id4g>
- <xme:g7kEaQ9AbI4LMsDg2LBjuOIDPCbur4lLVeIsgFzfeByLyNjWDEXbXWC62qzqe6nvE
- bVymlTrb08LW20ApK2tBli9_tfZsQ8e0Gur-1No1zK8OMeZ5MJZSA>
-X-ME-Received: <xmr:g7kEaSVzDdF5MLO17JORAijN68IvtoDGW60ExfwwFg67bAnw7gpAULqfVnhrkognEXHpdn3A8J00WWoouyNb>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieelieduucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehprhgrvhhinhdrsggrthhhihhjrgesug
- gvlhhlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
- phhrrghvihhnrdhmrdgsrghthhhijhgrrdguvghvsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:g7kEaWA8GwY_if5XIUwaKUMEFQN8YRkGb0RpmDMZJVx3m0W_5Y7Sfg>
- <xmx:g7kEaTz91C7JMcyNv09ozQ0AzGcPktNhPu0rwtALGnJp8F1C_bJXEw>
- <xmx:g7kEaTA-TrBBe0NaVv0dX0_rmGwAfpTgSH9v8zCE-ehxcxGgepgAVg>
- <xmx:g7kEaQYW0bsCgmVhSG89jrcBZswbQAyczSDqRhBleQk2b48Ork_MQA>
- <xmx:g7kEaaAerJslkyC9zrzvb-YZnGT5rsTHL2qgAHEHU-vIrHiy4_jat52h>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 31 Oct 2025 09:28:34 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Pravin M Bathija <pravin.bathija@dell.com>
-Cc: dev@dpdk.org, pravin.m.bathija.dev@gmail.com
-Subject: Re: [PATCH v2 1/6] vhost: add define for configure mem slot
-Date: Fri, 31 Oct 2025 14:28:32 +0100
-Message-ID: <4112055.uBEoKPz9u1@thomas>
-In-Reply-To: <20251008090444.2689652-2-pravin.bathija@dell.com>
-References: <20251008090444.2689652-1-pravin.bathija@dell.com>
- <20251008090444.2689652-2-pravin.bathija@dell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 28F4940609;
+	Fri, 31 Oct 2025 15:08:20 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 0B09440150
+ for <dev@dpdk.org>; Fri, 31 Oct 2025 15:08:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1761919698;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=mjJLRJz6P1nYyMroH9CWgLUtZh8g9wM/Tfv/vsE+5Nw=;
+ b=bAG4ccEJJqDYWCB+aSAJwbCEZ3tq9zAe4anZpaL5dyPxmL3zwvZzP0CvavVo6z9Qe1OQFL
+ irR7W4kPHcZsLHq4MRt3EaXFHwyRerdS+9VnHUF3BfBjvWGUrUAgQ/APsHIpuTgmIvgxrZ
+ K02Vqm66Ec9/kgtL0MQRjHY5LW0Dj1Q=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-615-I7-yQzg_OKuJ8dKOKXYAow-1; Fri, 31 Oct 2025 10:08:15 -0400
+X-MC-Unique: I7-yQzg_OKuJ8dKOKXYAow-1
+X-Mimecast-MFC-AGG-ID: I7-yQzg_OKuJ8dKOKXYAow_1761919694
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-592f0214ee8so2966266e87.1
+ for <dev@dpdk.org>; Fri, 31 Oct 2025 07:08:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1761919694; x=1762524494;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=mjJLRJz6P1nYyMroH9CWgLUtZh8g9wM/Tfv/vsE+5Nw=;
+ b=GiNAJtMXRelGTCyXhQYQiwdhkuUB2vqOw0Mdna3myWsKOHI4d4u/EehHD1JWgfkNz9
+ ggtP+CQG4gP1J1YYo47ZozDC9T9fVoRNo2UuhChkfVTArIiRC5zR0xfPaGWrqe8Zjiin
+ KUzv6iadQV4o0xJXRbJG9D9KulaPAeCBJmD7j8EGTfKcfudC5BXFDY2/g1sJqn830sMu
+ kicJm2JYGtcdlnw21sXyA0Xus+MAzcIuQzYJ9HFzjrg3qfPPMIYBjw7tZNr8lAfx4hhb
+ 4zCWE3QPUdRIMHuRKzsE/49fiXhxFO/fQ4AfkqtB7soXglyQ3gB1kxeMfoHkDWuc5BwS
+ G8bA==
+X-Gm-Message-State: AOJu0Ywjcr1UOAZatjd8XBTRaodcFpun0Akc0I+pasGb7Tqu5YkxpY9P
+ wecZhkTicchkTBtKf7kzRJk0VPM9l0267tR5k7TM8kErDx1la2g+fXIGURKzbI9SXlcf2sDzxrz
+ ZDepw4Wl8hMIknTtRSnH4g7yxYBj8KLHkstXyN1/wN+MXpDygjS/76QPGpyUv+lu/LAtIIFtHk+
+ 8ZxPtkWkylrmL6x1EE5gychjDflNk=
+X-Gm-Gg: ASbGncvkUeQZHKgj6hDvcIskRqHkGVhEMZPkaS0UQAe13wPtIji9bJBS4s0R1cT3CfH
+ IGhp8u0sHhvGfi9qfHP447hZeKREfxcYyQ7MGTQH1XoLIZk0432QVEu5fl661sVTYoBghWlEx/e
+ pb8dWmmyeJGM+Y/O0F8EUX0mhknFjJ7hPcB6OG3h58S58Muv2hFkE5usGvtg==
+X-Received: by 2002:a05:6512:3b11:b0:592:f6ea:24fe with SMTP id
+ 2adb3069b0e04-5941d563d06mr1334968e87.40.1761919693916; 
+ Fri, 31 Oct 2025 07:08:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHBMgZJ/+mED+/tqvzmJc0Ap0HLFajT8ioKT+Emrms27rNKBXcrOEXdxb/akISe58Tuw+7fLClqFpDrjvZCqS0=
+X-Received: by 2002:a05:6512:3b11:b0:592:f6ea:24fe with SMTP id
+ 2adb3069b0e04-5941d563d06mr1334951e87.40.1761919693311; Fri, 31 Oct 2025
+ 07:08:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20251031131159.1199221-1-david.marchand@redhat.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65523@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65523@smartserver.smartshare.dk>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 31 Oct 2025 15:07:59 +0100
+X-Gm-Features: AWmQ_bkT8ykpnnVpdXZrmNJxKDEM8z8x41clel7Q708HdDHBHE_kau1QvsoTZzQ
+Message-ID: <CAJFAV8xfDUuAt_aC0rzi6pJ+7YXWfEBejx3MJB6Szi28+bZU5g@mail.gmail.com>
+Subject: Re: [PATCH] mbuf: dump Tx offload metadata
+To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: oscIzSlN05c-uphSYk0KA4MA3H4EW4ABdFEw8ZcNo_o_1761919694
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,15 +85,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-08/10/2025 11:04, Pravin M Bathija:
-> * add user to mailmap file
-> * add define for configure memory slots
-> 
-> Signed-off-By: Pravin M Bathija <pravin.bathija@dell.com>
-> ---
-> +Pravin M Bathija <pravin.bathija@dell.com> <pravin.m.bathija@gmail.com>
+On Fri, 31 Oct 2025 at 14:28, Morten Br=C3=B8rup <mb@smartsharesystems.com>=
+ wrote:
+> Printing of outer_l2_len and outer_l3_len could be omitted if not present=
+, like the VLAN IDs, e.g.:
+>
+> fprintf(f, "  ");
+> if (m->outer_l2_len !=3D 0)
+>         fprintf(f, "outer_l2_len=3D%u, ", m->outer_l2_len);
+> if (m->outer_l3_len !=3D 0)
+>         fprintf(f, "outer_l3_len=3D%u, ", m->outer_l3_len);
+> fprintf(f, "l2_len=3D%u, l3_len=3D%u, l4_len=3D%u, tso_segsz=3D%u\n",
+>         m->l2_len, m->l3_len, m->l4_len, m->tso_segsz);
 
-The mailmap file is for tracking adresses of the patch authors.
-Why adding your gmail address here if you don't use it for DPDK dev?
+Mm, why specifically those two only?
+If the intention is to make this debug output shorter, I would apply
+the same to all those fields, and omit the whole (new) line if no
+field is set.
 
+
+--=20
+David Marchand
 
