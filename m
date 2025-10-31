@@ -2,66 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0EDECCFA02
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 19:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9ACCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 22:13:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C3349402E4;
-	Fri, 31 Oct 2025 20:19:08 +0100 (CET)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id 96CD240150
- for <dev@dpdk.org>; Fri, 31 Oct 2025 20:19:07 +0100 (CET)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-294fac2d438so21433935ad.1
- for <dev@dpdk.org>; Fri, 31 Oct 2025 12:19:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1761938346; x=1762543146; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=RHpTGTyBKBiKprnnDl+5MySS33YsNoKOyoDvaMJmmvM=;
- b=Xl4ZJb0Vb/nsShl/9oJBbnhsfq9WGw9mzfUeXeedaP5uToUMS0wDWZ0BnhVQJn0tbV
- RSG5bDHyh1Gh1uQ1szejBgNKzc4SkRnCD2Edqdcoj8EDqWqwzz6HGZxSq2yt7/DXj+re
- LApXN/SeLXy8QBcWjIosUlqU32kiQ31MfLCvQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1761938346; x=1762543146;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=RHpTGTyBKBiKprnnDl+5MySS33YsNoKOyoDvaMJmmvM=;
- b=koJgdIf8Aqidpp9ZQ84t97rzhqaM1qf4LVhmxZ675rafnJbPnm+5x0tYaHLg+wkC5a
- dlvTQtTMYEldRIeBGEJ0PVLpreb7K2uUUNE/rYX79i9FHv6CKMD1G/dOs602B6s6xKqg
- by606jO6Hh+w8KPOTjl1tMqiXbrWYLaDTuAQ0vBjSAV748P8Uh6umMXV0m5njfNmtA0P
- Oru1amKYqkLEmkM4t/Zf9SY5TzYfu/Am+hp1F+8RwJUkBrqgqG/F48qQ0NaxgYVLtjPp
- 8BF4pe6yNIIUSLWeQtSsgN3y6xEWdsgUAF1lu3YQ1mvlS10FcoUKjZcql9PJFb4AsGkz
- xRFQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCV9+NiX4qFp+E0adKRVlbCz7p1/Jy0bfz0QEOyg8yInREXQCHp1wC+MObH9F7NFnO+rWR0=@dpdk.org
-X-Gm-Message-State: AOJu0YxonCA62d6ZeQMzZUb4Hx2IrfcxkLGXD/+uT1uAIrTx7gLl3olT
- 2Uh4h+DmfKiduP1PUpND63sCL+KYMKbRcN/tfnKdcxMRWkwbDbqAwYiThSFbAyuBoCMDFNed8Mm
- mdlUdZOgsXyE6HV5/xzLay3gxt4MOSXBqxKSwU1Qoyg==
-X-Gm-Gg: ASbGnctgkGLAM2X4/CCv5k0ERzkqNYye+f97AEQimE/KmaIVRTN5zJA3r2s7j0sgfyk
- cjYXlaFqIpDF/h3mXi+HWYj2esyNC+CEo4NDJHT4sTOUA42kYjxzoVhSNM35ldD8tCE41wyaGwN
- IkA744cswbEl607EZAauTjEf+hd8giQqIzm/eio036Gu5s4JiWj6pM0uQJPhsOe6AUD9IYbFW7F
- EtvXGJXtaaCEsUq4lZ4uC6BhXMe1320r3yys/qIXrUSz18wN8HUcpIedvjtr6IU4sdd+lafmRfK
- 9SeP+NzBdw==
-X-Google-Smtp-Source: AGHT+IE2SLfM62jIwR44UAMQpdVWSgG2PzryJQI8VHDT8qLiKYwlmfaDCpd9pPqt0vR0gWyt80BupnWXW2DVmpYcb8s=
-X-Received: by 2002:a17:902:b48e:b0:27e:ef27:1e52 with SMTP id
- d9443c01a7336-2951a45459emr43557955ad.35.1761938346527; Fri, 31 Oct 2025
- 12:19:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1C74D4027A;
+	Fri, 31 Oct 2025 23:13:35 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 8B77340150
+ for <dev@dpdk.org>; Fri, 31 Oct 2025 23:13:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1761948813;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=fvEFwP6zmVw+rV8Fg08ILqNgaQmYp8+ItexBsH3GPV0=;
+ b=JYnynpGfYTIr994xY+z1AQKzGZBWvjcSTYesUiYX61b4C35u6539cDJljCLOB53wB0d/cO
+ 5R/jKyX0oYBgXm6bOfNdt1aMckDLstNwKLXiU1834YBVFz0ZJAjD7rGHpMWCX6mCBG6jvs
+ /MkSdAF8rLIAmqBdB6WR3k8w7KKLuLs=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-57-aCBJvVsbM1CbBlYQeyAnxg-1; Fri,
+ 31 Oct 2025 18:13:31 -0400
+X-MC-Unique: aCBJvVsbM1CbBlYQeyAnxg-1
+X-Mimecast-MFC-AGG-ID: aCBJvVsbM1CbBlYQeyAnxg_1761948810
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 1B291195608D; Fri, 31 Oct 2025 22:13:30 +0000 (UTC)
+Received: from ringo.home (unknown [10.44.32.13])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id E64821955BE3; Fri, 31 Oct 2025 22:13:26 +0000 (UTC)
+From: Robin Jarry <rjarry@redhat.com>
+To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>
+Cc: stable@dpdk.org
+Subject: [PATCH dpdk] graph: fix use-after-free when updating edges with
+ active graphs
+Date: Fri, 31 Oct 2025 23:13:04 +0100
+Message-ID: <20251031221304.394997-2-rjarry@redhat.com>
 MIME-Version: 1.0
-References: <20251024184724.1698235-1-svaze@qti.qualcomm.com>
- <SJ2PR02MB97955A036156C166302AC92489FDA@SJ2PR02MB9795.namprd02.prod.outlook.com>
- <SJ2PR02MB97950C22EE0516E4903D5CF389F8A@SJ2PR02MB9795.namprd02.prod.outlook.com>
-In-Reply-To: <SJ2PR02MB97950C22EE0516E4903D5CF389F8A@SJ2PR02MB9795.namprd02.prod.outlook.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Fri, 31 Oct 2025 15:18:04 -0400
-X-Gm-Features: AWmQ_bnogKF6nUOXIqB9I6cJ1TNHh_dCq0_38Gd4o9A-CHNzwi7ZuN-cPa7mHzc
-Message-ID: <CAJvnSUCRqwCG=DyOXYeibHk=Yt4BRmqtfFaJkWbcD7=jOq3XLw@mail.gmail.com>
-Subject: Re: [PATCH] compressdev: fix coverity issue
-To: Sameer Vaze <svaze@qti.qualcomm.com>
-Cc: Sunila Sahu <ssahu@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>, 
- Ashish Gupta <ashishg@marvell.com>, "dev@dpdk.org" <dev@dpdk.org>
-Content-Type: multipart/alternative; boundary="00000000000042dfd30642793d9a"
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: -d5VLcntIM_Cmzh6wzO5OU-0OS55lQUIRrbWpWoq0BY_1761948810
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,216 +68,114 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000042dfd30642793d9a
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+After creating at least one graph and calling rte_node_edge_update to
+add a new edge on a node which is in use in the graph, the node memory
+is reallocated but the active graph still has a pointer to the freed
+memory.
 
-Hi Sameer,
+When destroying the graph, it causes a use-after-free error detected by
+libasan:
 
-Thanks for the heads up. It looks like the Github Robot has a failure but I
-think it is a spurious false fail, so I just sent a recheck request for
-that. I expect that failure will be overwritten with a PASS soon.
+ERROR: AddressSanitizer: heap-use-after-free
+READ of size 8 at 0x7c4baa5e4da8 thread T0
+    #0 0x0000005ad224 in graph_node_fini lib/graph/graph.c:256
+    #1 0x0000005ae657 in rte_graph_destroy lib/graph/graph.c:504
+    ...
 
-There are also 2 warnings on your patch, which I can address, but they will
-not preclude your patch from being merged (as they are only a WARN, not a
-FAIL).
+freed by thread T0 here:
+    #0 0x7f1bac4e5e4b in realloc.part.0 (/lib64/libasan.so.8+0xe5e4b)
+    #1 0x0000005ab6d7 in edge_update lib/graph/node.c:271
+    #2 0x0000005abb1b in rte_node_edge_update lib/graph/node.c:339
+    ...
 
-Thanks.
+previously allocated by thread T0 here:
+    #0 0x7f1bac4e5e4b in realloc.part.0 (/lib64/libasan.so.8+0xe5e4b)
+    #1 0x0000005ab6d7 in edge_update lib/graph/node.c:271
+    #2 0x0000005abb1b in rte_node_edge_update lib/graph/node.c:339
+    ...
 
-On Fri, Oct 31, 2025 at 1:10=E2=80=AFPM Sameer Vaze <svaze@qti.qualcomm.com=
-> wrote:
+Use malloc+memcpy and add an internal function to replace all references
+to the old node memory before freeing it.
 
->
-> Hey Patrick
->
-> I followed https://core.dpdk.org/testing/#requesting-a-patch-retest to
-> request a rebase and recheck since the failures don't seem related to my
-> changes. It doesn't look like the retests were picked up. Did I miss
-> something?
->
-> Thanks
-> Sameer Vaze
-> ------------------------------
-> *From:* Sameer Vaze <svaze@qti.qualcomm.com>
-> *Sent:* Tuesday, October 28, 2025 11:19 AM
-> *To:* Sunila Sahu <ssahu@marvell.com>; Fan Zhang <fanzhang.oss@gmail.com>=
-;
-> Ashish Gupta <ashishg@marvell.com>
-> *Cc:* dev@dpdk.org <dev@dpdk.org>
-> *Subject:* Re: [PATCH] compressdev: fix coverity issue
->
->
-> *WARNING:* This email originated from outside of Qualcomm. Please be wary
-> of any links or attachments, and do not enable macros.
-> Recheck-request: rebase=3Dmain, iol-sample-apps-testing,
-> iol-compile-amd64-testing
-> ------------------------------
-> *From:* Sameer Vaze <svaze@qti.qualcomm.com>
-> *Sent:* Friday, October 24, 2025 12:47 PM
-> *To:* Sunila Sahu <ssahu@marvell.com>; Fan Zhang <fanzhang.oss@gmail.com>=
-;
-> Ashish Gupta <ashishg@marvell.com>
-> *Cc:* dev@dpdk.org <dev@dpdk.org>; Sameer Vaze <svaze@qti.qualcomm.com>
-> *Subject:* [PATCH] compressdev: fix coverity issue
->
-> Adds missing free before end of function
->
-> Signed-off-by: Sameer Vaze <svaze@qti.qualcomm.com>
-> ---
->  drivers/compress/zlib/zlib_pmd.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/compress/zlib/zlib_pmd.c
-> b/drivers/compress/zlib/zlib_pmd.c
-> index 3a2485b54e..1d7651dd7d 100644
-> --- a/drivers/compress/zlib/zlib_pmd.c
-> +++ b/drivers/compress/zlib/zlib_pmd.c
-> @@ -126,6 +126,7 @@ process_zlib_inflate_chksum(struct rte_comp_op *op,
->                  free(dictionary);
->                  return;
->          }
-> +       free(dictionary);
->  }
->
->  static void
-> --
-> 2.31.1
->
->
+Cc: stable@dpdk.org
+Fixes: c59dac2ca14a ("graph: implement node operations")
 
---00000000000042dfd30642793d9a
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Robin Jarry <rjarry@redhat.com>
+---
+ lib/graph/graph.c         | 14 ++++++++++++++
+ lib/graph/graph_private.h | 12 ++++++++++++
+ lib/graph/node.c          |  6 +++++-
+ 3 files changed, 31 insertions(+), 1 deletion(-)
 
-<div dir=3D"ltr">Hi Sameer,<div><br></div><div>Thanks for the heads up. It =
-looks like the Github Robot has a failure but I think it is a spurious fals=
-e fail, so I just sent a recheck request for that. I expect that failure wi=
-ll be overwritten with a PASS soon.</div><div><br></div><div>There are also=
- 2 warnings on your patch, which I can address, but they will not preclude =
-your patch from being merged (as they are only a WARN, not a FAIL).</div><d=
-iv><br></div><div>Thanks.</div></div><br><div class=3D"gmail_quote gmail_qu=
-ote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Fri, Oct 31, 2025 a=
-t 1:10=E2=80=AFPM Sameer Vaze &lt;<a href=3D"mailto:svaze@qti.qualcomm.com"=
->svaze@qti.qualcomm.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_=
-quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,=
-204);padding-left:1ex"><div class=3D"msg528728163559859775">
+diff --git a/lib/graph/graph.c b/lib/graph/graph.c
+index 61159edc7261..6911ea8abeed 100644
+--- a/lib/graph/graph.c
++++ b/lib/graph/graph.c
+@@ -277,6 +277,20 @@ graph_node_fini(struct graph *graph)
+ 						       graph_node->node->name));
+ }
+ 
++void
++graph_node_replace_all(struct node *old, struct node *new)
++{
++	struct graph_node *graph_node;
++	struct graph *graph;
++
++	STAILQ_FOREACH(graph, &graph_list, next) {
++		STAILQ_FOREACH(graph_node, &graph->node_list, next) {
++			if (graph_node->node == old)
++				graph_node->node = new;
++		}
++	}
++}
++
+ static struct rte_graph *
+ graph_mem_fixup_node_ctx(struct rte_graph *graph)
+ {
+diff --git a/lib/graph/graph_private.h b/lib/graph/graph_private.h
+index 21912c0ae63f..26cdc6637192 100644
+--- a/lib/graph/graph_private.h
++++ b/lib/graph/graph_private.h
+@@ -299,6 +299,18 @@ int graph_node_has_edge_to_src_node(struct graph *graph);
+  */
+ int graph_node_has_loop_edge(struct graph *graph);
+ 
++/**
++ * @internal
++ *
++ * Replace all pointers of a given node with another one in all active graphs.
++ *
++ * @param old
++ *   Node pointer to replace in all graphs.
++ * @param new
++ *   Updated pointer.
++ */
++void graph_node_replace_all(struct node *old, struct node *new);
++
+ /**
+  * @internal
+  *
+diff --git a/lib/graph/node.c b/lib/graph/node.c
+index cae1c809edc4..e3359fe490a5 100644
+--- a/lib/graph/node.c
++++ b/lib/graph/node.c
+@@ -325,11 +325,15 @@ edge_update(struct node *node, struct node *prev, rte_edge_t from,
+ 	need_realloc = max_edges > node->nb_edges;
+ 	if (need_realloc) {
+ 		sz = sizeof(struct node) + (max_edges * RTE_NODE_NAMESIZE);
+-		new_node = realloc(node, sz);
++		new_node = malloc(sz);
+ 		if (new_node == NULL) {
+ 			rte_errno = ENOMEM;
+ 			goto restore;
+ 		} else {
++			sz = sizeof(*node) + (node->nb_edges * RTE_NODE_NAMESIZE);
++			memcpy(new_node, node, sz);
++			graph_node_replace_all(node, new_node);
++			free(node);
+ 			node = new_node;
+ 		}
+ 	}
+-- 
+2.51.1
 
-
-
-
-<div dir=3D"ltr">
-<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
-bri,Helvetica,sans-serif;font-size:11pt;color:rgb(0,0,0)">
-<br>
-</div>
-<div id=3D"m_528728163559859775Signature">
-<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
-bri,Helvetica,sans-serif;font-size:11pt;color:rgb(0,0,0)">
-Hey Patrick</div>
-<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
-bri,Helvetica,sans-serif;font-size:11pt;color:rgb(0,0,0)">
-<br>
-</div>
-<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
-bri,Helvetica,sans-serif;font-size:11pt;color:rgb(0,0,0)">
-I followed <a id=3D"m_528728163559859775OWA1ca9f512-d97b-9bdf-6aac-161c55ee=
-1852" href=3D"https://core.dpdk.org/testing/#requesting-a-patch-retest" tar=
-get=3D"_blank">
-https://core.dpdk.org/testing/#requesting-a-patch-retest</a>=C2=A0to reques=
-t a rebase and recheck since the failures don&#39;t seem related to my chan=
-ges. It doesn&#39;t look like the retests were picked up. Did I miss someth=
-ing?</div>
-<div style=3D"font-family:Calibri,Arial,Helvetica,sans-serif;font-size:11pt=
-;color:rgb(0,0,0)">
-<br>
-</div>
-<div style=3D"font-family:Calibri,Arial,Helvetica,sans-serif;font-size:11pt=
-;color:rgb(0,0,0)">
-Thanks<br>
-Sameer Vaze</div>
-</div>
-<div id=3D"m_528728163559859775appendonsend"></div>
-<hr style=3D"display:inline-block;width:98%">
-<div id=3D"m_528728163559859775divRplyFwdMsg" dir=3D"ltr"><font face=3D"Cal=
-ibri, sans-serif" style=3D"font-size:11pt" color=3D"#000000"><b>From:</b> S=
-ameer Vaze &lt;<a href=3D"mailto:svaze@qti.qualcomm.com" target=3D"_blank">=
-svaze@qti.qualcomm.com</a>&gt;<br>
-<b>Sent:</b> Tuesday, October 28, 2025 11:19 AM<br>
-<b>To:</b> Sunila Sahu &lt;<a href=3D"mailto:ssahu@marvell.com" target=3D"_=
-blank">ssahu@marvell.com</a>&gt;; Fan Zhang &lt;<a href=3D"mailto:fanzhang.=
-oss@gmail.com" target=3D"_blank">fanzhang.oss@gmail.com</a>&gt;; Ashish Gup=
-ta &lt;<a href=3D"mailto:ashishg@marvell.com" target=3D"_blank">ashishg@mar=
-vell.com</a>&gt;<br>
-<b>Cc:</b> <a href=3D"mailto:dev@dpdk.org" target=3D"_blank">dev@dpdk.org</=
-a> &lt;<a href=3D"mailto:dev@dpdk.org" target=3D"_blank">dev@dpdk.org</a>&g=
-t;<br>
-<b>Subject:</b> Re: [PATCH] compressdev: fix coverity issue</font>
-<div>=C2=A0</div>
-</div>
-
-<div dir=3D"ltr">
-<p style=3D"text-align:center"><span style=3D"background-color:rgb(255,255,=
-0);font-size:14px;font-family:sans-serif;color:rgb(0,0,0)"><strong>WARNING:=
-</strong> This email originated from outside of Qualcomm. Please be wary of=
- any links or attachments, and do not enable
- macros.</span></p>
-<div>
-<div style=3D"font-family:Aptos,Aptos_EmbeddedFont,Aptos_MSFontService,Cali=
-bri,Helvetica,sans-serif;font-size:11pt;color:rgb(0,0,0)">
-Recheck-request: rebase=3Dmain, iol-sample-apps-testing, iol-compile-amd64-=
-testing</div>
-<div id=3D"m_528728163559859775x_appendonsend"></div>
-<hr style=3D"display:inline-block;width:98%">
-<div id=3D"m_528728163559859775x_divRplyFwdMsg" dir=3D"ltr"><font face=3D"C=
-alibri, sans-serif" color=3D"#000000" style=3D"font-size:11pt"><b>From:</b>=
- Sameer Vaze &lt;<a href=3D"mailto:svaze@qti.qualcomm.com" target=3D"_blank=
-">svaze@qti.qualcomm.com</a>&gt;<br>
-<b>Sent:</b> Friday, October 24, 2025 12:47 PM<br>
-<b>To:</b> Sunila Sahu &lt;<a href=3D"mailto:ssahu@marvell.com" target=3D"_=
-blank">ssahu@marvell.com</a>&gt;; Fan Zhang &lt;<a href=3D"mailto:fanzhang.=
-oss@gmail.com" target=3D"_blank">fanzhang.oss@gmail.com</a>&gt;; Ashish Gup=
-ta &lt;<a href=3D"mailto:ashishg@marvell.com" target=3D"_blank">ashishg@mar=
-vell.com</a>&gt;<br>
-<b>Cc:</b> <a href=3D"mailto:dev@dpdk.org" target=3D"_blank">dev@dpdk.org</=
-a> &lt;<a href=3D"mailto:dev@dpdk.org" target=3D"_blank">dev@dpdk.org</a>&g=
-t;; Sameer Vaze &lt;<a href=3D"mailto:svaze@qti.qualcomm.com" target=3D"_bl=
-ank">svaze@qti.qualcomm.com</a>&gt;<br>
-<b>Subject:</b> [PATCH] compressdev: fix coverity issue</font>
-<div>=C2=A0</div>
-</div>
-<div><font size=3D"2"><span style=3D"font-size:11pt">
-<div>Adds missing free before end of function<br>
-<br>
-Signed-off-by: Sameer Vaze &lt;<a href=3D"mailto:svaze@qti.qualcomm.com" ta=
-rget=3D"_blank">svaze@qti.qualcomm.com</a>&gt;<br>
----<br>
-=C2=A0drivers/compress/zlib/zlib_pmd.c | 1 +<br>
-=C2=A01 file changed, 1 insertion(+)<br>
-<br>
-diff --git a/drivers/compress/zlib/zlib_pmd.c b/drivers/compress/zlib/zlib_=
-pmd.c<br>
-index 3a2485b54e..1d7651dd7d 100644<br>
---- a/drivers/compress/zlib/zlib_pmd.c<br>
-+++ b/drivers/compress/zlib/zlib_pmd.c<br>
-@@ -126,6 +126,7 @@ process_zlib_inflate_chksum(struct rte_comp_op *op,<br>
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 free(dictionary);<br>
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 return;<br>
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }<br>
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 free(dictionary);<br>
-=C2=A0}<br>
-=C2=A0<br>
-=C2=A0static void<br>
--- <br>
-2.31.1<br>
-<br>
-</div>
-</span></font></div>
-</div>
-</div>
-</div>
-
-</div></blockquote></div>
-
---00000000000042dfd30642793d9a--
