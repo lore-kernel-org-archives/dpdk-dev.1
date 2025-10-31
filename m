@@ -2,37 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F49CCF9FE
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 13:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CA9CCF9FE
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 13:28:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 433B1402ED;
-	Fri, 31 Oct 2025 14:28:28 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 7910C40150
- for <dev@dpdk.org>; Fri, 31 Oct 2025 14:28:26 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 42871206E7;
- Fri, 31 Oct 2025 14:28:26 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 5D4D240612;
+	Fri, 31 Oct 2025 14:28:36 +0100 (CET)
+Received: from fout-a1-smtp.messagingengine.com
+ (fout-a1-smtp.messagingengine.com [103.168.172.144])
+ by mails.dpdk.org (Postfix) with ESMTP id BBDB940609
+ for <dev@dpdk.org>; Fri, 31 Oct 2025 14:28:35 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.phl.internal (Postfix) with ESMTP id 5BBE7EC0083;
+ Fri, 31 Oct 2025 09:28:35 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Fri, 31 Oct 2025 09:28:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1761917315;
+ x=1762003715; bh=BJ0TsvOLvoW63htN2K3MXwaTnpXJdztdeVYlgA8mdrw=; b=
+ hoTmRA+L31wny8p4DlxAtzcf3kIXMEhMm7/dDDwW0vTqkZnb8rYsJtunMsSBlKM0
+ XBtLu6cl/dBIZ27dKgnUJMGsd9xatPZJMJJUu9J6D/stGNhbVp2x5DKFnsFequpJ
+ 5X9miUNSd9XsXK3Yg1Aqr3JqWdNN1m/dRd0OYMOuxFcZN2RvzZ8XV5RBmBJht1Vh
+ +3bIsvAT7PLw95KG3gDeepx+2qf6qBYY6QkFF86bmncf8Vw/aE/pCCKJaC6/X+eC
+ intf9dUqSqLBnuqOMJWgp5RFvcmnyPtiCPrf8Raef6wfmiN5mt75LRXCDtJkf2s0
+ ZAdegKRtPBXy7HAP5vXSFg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761917315; x=
+ 1762003715; bh=BJ0TsvOLvoW63htN2K3MXwaTnpXJdztdeVYlgA8mdrw=; b=a
+ lzzYGLmJlaUDdiuqopGXwtnTk/wSLa37d14t+4rWc+nJiEIRtpy5NwI2QSugcnK1
+ XY26aaBQWO71PP7vGT4S9lU2+qk+3PBHm66gg1426dXlwQIQmx/z/gAOxTp+WWSJ
+ PhD0qmfgc1rc4Ld+2mlPB8xrgors93ENxWDqNegKEvlw0slMD4CjhiXuTP9lDMEN
+ Bx4BHcDu6ksTYvVNkZMFSPS8VCMQ+fYKlFUrnjrq/XWe1zkAU5NwDd5OKTEigYh+
+ GMqNojgWJO/AebxywdyRnX/2IPMetdAoekW9PeTI80lPl3zXq40yqVljmzpi09Vs
+ Uoc2zBbwVrYoDkh/+4iOg==
+X-ME-Sender: <xms:g7kEaeppg3g8q0kdYJ6TuVGVHPhYXevWsMX7qqxT1M-RnnpdM9Id4g>
+ <xme:g7kEaQ9AbI4LMsDg2LBjuOIDPCbur4lLVeIsgFzfeByLyNjWDEXbXWC62qzqe6nvE
+ bVymlTrb08LW20ApK2tBli9_tfZsQ8e0Gur-1No1zK8OMeZ5MJZSA>
+X-ME-Received: <xmr:g7kEaSVzDdF5MLO17JORAijN68IvtoDGW60ExfwwFg67bAnw7gpAULqfVnhrkognEXHpdn3A8J00WWoouyNb>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieelieduucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehprhgrvhhinhdrsggrthhhihhjrgesug
+ gvlhhlrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
+ phhrrghvihhnrdhmrdgsrghthhhijhgrrdguvghvsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:g7kEaWA8GwY_if5XIUwaKUMEFQN8YRkGb0RpmDMZJVx3m0W_5Y7Sfg>
+ <xmx:g7kEaTz91C7JMcyNv09ozQ0AzGcPktNhPu0rwtALGnJp8F1C_bJXEw>
+ <xmx:g7kEaTA-TrBBe0NaVv0dX0_rmGwAfpTgSH9v8zCE-ehxcxGgepgAVg>
+ <xmx:g7kEaQYW0bsCgmVhSG89jrcBZswbQAyczSDqRhBleQk2b48Ork_MQA>
+ <xmx:g7kEaaAerJslkyC9zrzvb-YZnGT5rsTHL2qgAHEHU-vIrHiy4_jat52h>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 31 Oct 2025 09:28:34 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Pravin M Bathija <pravin.bathija@dell.com>
+Cc: dev@dpdk.org, pravin.m.bathija.dev@gmail.com
+Subject: Re: [PATCH v2 1/6] vhost: add define for configure mem slot
+Date: Fri, 31 Oct 2025 14:28:32 +0100
+Message-ID: <4112055.uBEoKPz9u1@thomas>
+In-Reply-To: <20251008090444.2689652-2-pravin.bathija@dell.com>
+References: <20251008090444.2689652-1-pravin.bathija@dell.com>
+ <20251008090444.2689652-2-pravin.bathija@dell.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH] mbuf: dump Tx offload metadata
-Date: Fri, 31 Oct 2025 14:28:24 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65523@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <20251031131159.1199221-1-david.marchand@redhat.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] mbuf: dump Tx offload metadata
-Thread-Index: AdxKZ/eERgRB+7K/SZq409pshJXnIwAAHsug
-References: <20251031131159.1199221-1-david.marchand@redhat.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "David Marchand" <david.marchand@redhat.com>
-Cc: <dev@dpdk.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,55 +88,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBEYXZpZCBNYXJjaGFuZCBbbWFpbHRvOmRhdmlkLm1hcmNoYW5kQHJlZGhhdC5jb21d
-DQo+IFNlbnQ6IEZyaWRheSwgMzEgT2N0b2JlciAyMDI1IDE0LjEyDQo+IA0KPiBXaGVuIGRlYnVn
-Z2luZyBUU08gYW5kIG90aGVyIGNoZWNrc3VtIG9mZmxvYWRzLCBkdW1waW5nIHRoZSB2YXJpb3Vz
-DQo+IGwqX2xlbiBmaWVsZHMgYW5kIFRTTyBzZWdtZW50YXRpb24gc2l6ZSBjYW4gYmUgaGVscGZ1
-bC4NCj4gDQo+IEV4YW1wbGUgaW4gT1ZTIHRoYXQgZHVtcHMgYSBtYnVmIG9uIHJ0ZV9ldGhfdHhf
-cHJlcGFyZSBmYWlsdXJlOg0KPiANCj4gQmVmb3JlOg0KPiBuZXRkZXZfZHBkayhwbWQtYzMwL2lk
-OjExKXxEQkd8ZHBkazA6IEZpcnN0IGludmFsaWQgcGFja2V0Og0KPiBkdW1wIG1idWYgYXQgMHgy
-MjAxYTkxNmMwLCBpb3ZhPTB4MjIwMDgwMDU4MCwgYnVmX2xlbj02ODY0DQo+ICAgcGt0X2xlbj02
-ODA0LCBvbF9mbGFncz0weDMxMTQ4MDAwMDAwMDAxMDIsIG5iX3NlZ3M9MSwgcG9ydD02NTUzNSwN
-Cj4gcHR5cGU9MA0KPiAgIHNlZ21lbnQgYXQgMHgyMjAxYTkxNmMwLCBkYXRhPTB4MjIwMDgwMDVi
-MiwgbGVuPTY4MDQsIG9mZj01MCwNCj4gcmVmY250PTENCj4gICBEdW1wIGRhdGEgYXQgWzB4MjIw
-MDgwMDViMl0sIGxlbj02ODA0DQo+IC4uLg0KPiANCj4gQWZ0ZXI6DQo+IG5ldGRldl9kcGRrKHBt
-ZC1jMzAvaWQ6MTEpfERCR3xkcGRrMDogRmlyc3QgaW52YWxpZCBwYWNrZXQ6DQo+IGR1bXAgbWJ1
-ZiBhdCAweDIyMDFhOTE2YzAsIGlvdmE9MHgyMjAwODAwNTgwLCBidWZfbGVuPTY4NjQsDQo+IHBr
-dF9sZW49NjgwNA0KPiAgIG91dGVyX2wyX2xlbj0xNCwgb3V0ZXJfbDNfbGVuPTQwLCBsMl9sZW49
-MzgsIGwzX2xlbj00MCwgbDRfbGVuPTMyLA0KPiB0c29fc2Vnc3o9MA0KPiAgIG9sX2ZsYWdzPTB4
-MzExNDgwMDAwMDAwMDEwMiwgbmJfc2Vncz0xLCBwb3J0PTY1NTM1LCBwdHlwZT0wDQo+ICAgc2Vn
-bWVudCBhdCAweDIyMDFhOTE2YzAsIGRhdGE9MHgyMjAwODAwNWIyLCBsZW49NjgwNCwgb2ZmPTUw
-LA0KPiByZWZjbnQ9MQ0KPiAgIER1bXAgZGF0YSBhdCBbMHgyMjAwODAwNWIyXSwgbGVuPTY4MDQN
-Cj4gLi4uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBEYXZpZCBNYXJjaGFuZCA8ZGF2aWQubWFyY2hh
-bmRAcmVkaGF0LmNvbT4NCg0KR29vZCBpZGVhLg0KDQpXaXRoIG9yIHdpdGhvdXQgc3VnZ2VzdGVk
-IGltcHJvdmVtZW50IGlubGluZSBiZWxvdywNCkFja2VkLWJ5OiBNb3J0ZW4gQnLDuHJ1cCA8bWJA
-c21hcnRzaGFyZXN5c3RlbXMuY29tPg0KDQo+IC0tLQ0KPiAgbGliL21idWYvcnRlX21idWYuYyB8
-IDEwICsrKysrKy0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDQgZGVs
-ZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvbGliL21idWYvcnRlX21idWYuYyBiL2xpYi9t
-YnVmL3J0ZV9tYnVmLmMNCj4gaW5kZXggMGQ5MzFjN2ExNS4uNzRkY2I2YzkzNCAxMDA2NDQNCj4g
-LS0tIGEvbGliL21idWYvcnRlX21idWYuYw0KPiArKysgYi9saWIvbWJ1Zi9ydGVfbWJ1Zi5jDQo+
-IEBAIC03NTAsMTAgKzc1MCwxMiBAQCBydGVfcGt0bWJ1Zl9kdW1wKEZJTEUgKmYsIGNvbnN0IHN0
-cnVjdCBydGVfbWJ1Zg0KPiAqbSwgdW5zaWduZWQgZHVtcF9sZW4pDQo+IA0KPiAgCV9fcnRlX21i
-dWZfc2FuaXR5X2NoZWNrKG0sIDEpOw0KPiANCj4gLQlmcHJpbnRmKGYsICJkdW1wIG1idWYgYXQg
-JXAsIGlvdmE9JSMiIFBSSXg2NCAiLCBidWZfbGVuPSV1XG4iLCBtLA0KPiBydGVfbWJ1Zl9pb3Zh
-X2dldChtKSwNCj4gLQkJbS0+YnVmX2xlbik7DQo+IC0JZnByaW50ZihmLCAiICBwa3RfbGVuPSV1
-LCBvbF9mbGFncz0lIyJQUkl4NjQiLCBuYl9zZWdzPSV1LA0KPiBwb3J0PSV1IiwNCj4gLQkJbS0+
-cGt0X2xlbiwgbS0+b2xfZmxhZ3MsIG0tPm5iX3NlZ3MsIG0tPnBvcnQpOw0KPiArCWZwcmludGYo
-ZiwgImR1bXAgbWJ1ZiBhdCAlcCwgaW92YT0lIyIgUFJJeDY0ICIsIGJ1Zl9sZW49JXUsDQo+IHBr
-dF9sZW49JXVcbiIsDQo+ICsJCW0sIHJ0ZV9tYnVmX2lvdmFfZ2V0KG0pLCBtLT5idWZfbGVuLCBt
-LT5wa3RfbGVuKTsNCj4gKwlmcHJpbnRmKGYsICIgIG91dGVyX2wyX2xlbj0ldSwgb3V0ZXJfbDNf
-bGVuPSV1LCBsMl9sZW49JXUsDQo+IGwzX2xlbj0ldSwgbDRfbGVuPSV1LCB0c29fc2Vnc3o9JXVc
-biIsDQo+ICsJCW0tPm91dGVyX2wyX2xlbiwgbS0+b3V0ZXJfbDNfbGVuLCBtLT5sMl9sZW4sIG0t
-PmwzX2xlbiwgbS0NCj4gPmw0X2xlbiwgbS0+dHNvX3NlZ3N6KTsNCg0KUHJpbnRpbmcgb2Ygb3V0
-ZXJfbDJfbGVuIGFuZCBvdXRlcl9sM19sZW4gY291bGQgYmUgb21pdHRlZCBpZiBub3QgcHJlc2Vu
-dCwgbGlrZSB0aGUgVkxBTiBJRHMsIGUuZy46DQoNCmZwcmludGYoZiwgIiAgIik7DQppZiAobS0+
-b3V0ZXJfbDJfbGVuICE9IDApDQoJZnByaW50ZihmLCAib3V0ZXJfbDJfbGVuPSV1LCAiLCBtLT5v
-dXRlcl9sMl9sZW4pOw0KaWYgKG0tPm91dGVyX2wzX2xlbiAhPSAwKQ0KCWZwcmludGYoZiwgIm91
-dGVyX2wzX2xlbj0ldSwgIiwgbS0+b3V0ZXJfbDNfbGVuKTsNCmZwcmludGYoZiwgImwyX2xlbj0l
-dSwgbDNfbGVuPSV1LCBsNF9sZW49JXUsIHRzb19zZWdzej0ldVxuIiwNCgltLT5sMl9sZW4sIG0t
-PmwzX2xlbiwgbS0+bDRfbGVuLCBtLT50c29fc2Vnc3opOw0KDQo+ICsJZnByaW50ZihmLCAiICBv
-bF9mbGFncz0lIyJQUkl4NjQiLCBuYl9zZWdzPSV1LCBwb3J0PSV1IiwNCj4gKwkJbS0+b2xfZmxh
-Z3MsIG0tPm5iX3NlZ3MsIG0tPnBvcnQpOw0KPiANCj4gIAlpZiAobS0+b2xfZmxhZ3MgJiAoUlRF
-X01CVUZfRl9SWF9RSU5RIHwgUlRFX01CVUZfRl9UWF9RSU5RKSkNCj4gIAkJZnByaW50ZihmLCAi
-LCB2bGFuX3RjaV9vdXRlcj0ldSIsIG0tPnZsYW5fdGNpX291dGVyKTsNCj4gLS0NCj4gMi41MS4w
-DQoNCg==
+08/10/2025 11:04, Pravin M Bathija:
+> * add user to mailmap file
+> * add define for configure memory slots
+> 
+> Signed-off-By: Pravin M Bathija <pravin.bathija@dell.com>
+> ---
+> +Pravin M Bathija <pravin.bathija@dell.com> <pravin.m.bathija@gmail.com>
+
+The mailmap file is for tracking adresses of the patch authors.
+Why adding your gmail address here if you don't use it for DPDK dev?
+
+
