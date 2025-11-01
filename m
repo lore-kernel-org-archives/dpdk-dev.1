@@ -2,78 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CE5CCFA02
-	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Nov 2025 17:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B021ECCFA00
+	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Nov 2025 18:07:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8873B40270;
-	Sat,  1 Nov 2025 18:21:27 +0100 (CET)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
- [209.85.214.179])
- by mails.dpdk.org (Postfix) with ESMTP id 471BD40261
- for <dev@dpdk.org>; Sat,  1 Nov 2025 18:21:26 +0100 (CET)
-Received: by mail-pl1-f179.google.com with SMTP id
- d9443c01a7336-27d3540a43fso32729585ad.3
- for <dev@dpdk.org>; Sat, 01 Nov 2025 10:21:26 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 78A1D40270;
+	Sat,  1 Nov 2025 19:07:04 +0100 (CET)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
+ [209.85.210.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 37A9140261
+ for <dev@dpdk.org>; Sat,  1 Nov 2025 19:07:03 +0100 (CET)
+Received: by mail-pf1-f175.google.com with SMTP id
+ d2e1a72fcca58-781206cce18so3645876b3a.0
+ for <dev@dpdk.org>; Sat, 01 Nov 2025 11:07:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762017685;
- x=1762622485; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762020422;
+ x=1762625222; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fvgmH4t8h2Whu18EHPSTWRscqDeIjE0SntuxSBsJ9Vc=;
- b=lx7jr1ZHpd7PxMZltNSZjpiwVo5MmpAu0dLjho6hnKODmhhwUUEboCIEvMJqMpWRRh
- cHNH8O3MRfEVpPCiJzBV1Etf7V00Pq71ic7iBV/j8A3dAIw0R81Qni+ViqbNffqQQOCf
- LyDNdJ0dbCm22we2EWFmJuDySKWC7FzGeM/kNXVFu1xHhIUOLti6t04Ytnl+vugdq4D6
- rajee/i7pTUObhKdFp593E/jS6Zn/z4WDQkfWNiLcbSXZkO+n5z2NkDrWIJdu2DqMcLt
- 22BCd2vONtMCAdwImvMHenA0SAeW28Zyh6r411v7RuIzunMy4x6O2bKPBmNTGcrITDOt
- w8YA==
+ bh=H/JI4DdXL3oDQjXhW22iwXceFR4RBz/JayrwY6GZApQ=;
+ b=ikC6misdCn7aGsn2lSiTI5KTYAa8FrG9BEfH82Fjf3fdPq9hcO9JIqXzoeceZhjggB
+ g6nSg7fqCDvHCRJwbOrywPl1b5C+q5ZoMw+v//2qyP5ASBkY77jsQlGIy5ZJBj1T1N2f
+ 1dRnfam/ec91yYK+svGQZAwPJAyivGQVw5hvo3aQQfs0hJPahDNjy8aQwoX9L9u/hexz
+ wu9+I7OAo2q35DCiA9vAHeTuzbzgOMsJ9Y+u9F87ky7CWxFdOOHsfvirqZotF83To//7
+ zfVCWlBqL1gz84/qeIaPTVNW25m0VaRY8BOZL0ketypSFgWWSHVebz/ggyFo6tNb00DO
+ ikjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762017685; x=1762622485;
+ d=1e100.net; s=20230601; t=1762020422; x=1762625222;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=fvgmH4t8h2Whu18EHPSTWRscqDeIjE0SntuxSBsJ9Vc=;
- b=E3+6ivPdDGBZYD4Hi2inbmOOYauFA9bwbsmmAy/wUyhukgpXD4hlLEYagxaYgvHOkd
- LsNq4ZOXphaxLKscq1deeDIXJbJubXuIlQxh6D8ySzcPJM864CeRUEOgvtj3GhQAAxAq
- 0QCB7WUs6dV4UXV+okd0L7ppVAiOVTJLAUiUnzx4Fd0HtHZQhEUAorLlBX477AarG+ty
- Vm0boS2JKRcOkCUj88QX2F7e1AyDHy8LvFc7x9n8vwDV/KuJe4G5nbxu0wIWgxma/8Nz
- jCxpalh708j1kWntOALQKa5LjSsGJpadSj1FjsVsoHnImwNWoBdS0dzzg05Bm051mNDD
- sTcA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCU4FRgb2RDgS3/4yvQcWssl0TZ6TJ2tnl4e5kbnBMYATFl9P3txricXCTICTaovs5BFmCs=@dpdk.org
-X-Gm-Message-State: AOJu0Yx3Uq5PP6rr1W0o+T2jkC76h83LdM69vGlZocJqclznfrNMru/T
- /6DPA0+tgf2tVj43swFVzgRWgpeMknWNOTtYRI3WARnSL32i+D3RkdEf3oYMYS7kpfQ=
-X-Gm-Gg: ASbGncs95zEyhmUD5pIHShjj+o9B8GTeiIRTyLKaqY+QSgX7uz87dzblRRItCiUnBu7
- +2NwySNVjqF40yiJQ7mRaWtcuSF/kVFvMSoGQzvxja00ovZD7IeTVpAH+utlRnAcbnMn3Yi01+c
- KgS6MCP7tAweWp6Z3Z9PAQS+v1eM4dvlC8pfZUWbg4Z8wUAg8WlG0uDJHCRHkmRI1iGz8hNppQB
- tR465bl06MzznK/uXdQixjGuugzlBj7FZV99oyaG4teuk1eWUeMZOgQYsxxJOuPL1v6mFM9UvGz
- 1+4jXTL6uDzyaDYARsqgGeVxSGphC6WF7KmhXtiRBRYAGwBPWmjaFJrInapccZF5SBMqI3FCCgv
- dc++8CQJzjO/UfGvi239jjCgnb+V9JHqPx5H7+mHHuaRAZLs/N182j2ctYSYp5d3uVYBAj+nwM2
- lsc3pJhAXjOcfsHxDWqCaaaOnT7olhOuIQlQ==
-X-Google-Smtp-Source: AGHT+IFQ8SQzJTK0PSlv6tZ4XO+aKM685QayTuNayGW/8/aNE1qK9X4vMBADxpYnsz9VvvLanCRg1g==
-X-Received: by 2002:a17:903:41c4:b0:295:557e:746a with SMTP id
- d9443c01a7336-295557e7b2fmr45577285ad.13.1762017685089; 
- Sat, 01 Nov 2025 10:21:25 -0700 (PDT)
-Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=H/JI4DdXL3oDQjXhW22iwXceFR4RBz/JayrwY6GZApQ=;
+ b=C0Z7dmCvzSjMJ6SbafyCdnHX2mlImxVyLxg29C+0xpUv0hRkW69Hzhznvj9OYt6mID
+ ygL9rHMGBH3sDmp9zML/UUCzfTOudlhP+En0gJguf706oDtde5jWkV8MAsR+B6GsMUxM
+ jJ+9fJV9SQGhQXCfjn97yjTD6N+drtDdtpU5Wx5ryjsXVwSy2rraH+MC9DIwNNo0JcC4
+ 1Ar2WCtMv1iqlMzPmcJ76V+Ae3W2cIDrB0lqNEq7/DRC9DTox625B5lOA7G+CbRJaRx2
+ sDN4F6Mw3+8IOEpXBiDymaG0twjl+Bf/YmHi7L5rU8xVpdqhFfnHsGuCbLH8wmCHyOnU
+ Qg1w==
+X-Gm-Message-State: AOJu0YzNuUpu1Xwe4/0Bve6A46eD8gcx2ZK0E2eLVig9rpdeGK/i+Fbj
+ +JMxGu84DAXVFsF/Z4EjYLsf+XMi+Tc/UMluWiwBSHT1bPyy9tv2YrbHC0BsB13hSACS6Zfv0qp
+ Ed2Qy
+X-Gm-Gg: ASbGncv7QQWwHRzkE6bljzA3URWGAZhq4Kh7LG2w3qq75DHlXfMfMFETxYWafanBsQo
+ l4SBfJhSR5CgSHctFO0yO/ouqfjGBdKl7xLOGweoJN5FnUhWf9wm3e4NrD/hClCqdu0aMxSvlOm
+ 7VjeRmdkXj6MY/Eax00eqrojqFkmAseWE8aO+une98oQGopK9py4WKm4v9TSNlNHtDl6/Q8yGOd
+ aEk2nj7TNe8RUqqUJWuhEoByOE1fh8ao0+phtxFpYdraJ6KfHePu2yFvLxjSiXEymNvE+HXIyUW
+ xGLorsBYjKhyPXsjCIIx2NRQhTq0Dz1/IqABQMc+6VbWtbW9NWUkVziTt8Ew8wJar+XKCPjttd0
+ j4lCAnmGWrzl4jeXK2o2qEv3D0rtYhBswF0+MuaBlrTtuvFyZRioIHkr2Sfj33HVlgSjAUqVB3T
+ w35vDqBu6r62t6ywXVnC6Tk1cvSeKGceTtCfPzakM=
+X-Google-Smtp-Source: AGHT+IH0Ntkk1wlsfIafJk1DG60pgVKEkja4IzJ/hJHkieGlZ/S/BRt8x/NuIPjaDUUcfnU0Y0lHDQ==
+X-Received: by 2002:a05:6a00:9507:b0:7a4:24af:e16f with SMTP id
+ d2e1a72fcca58-7a612eb8487mr14018440b3a.3.1762020422078; 
+ Sat, 01 Nov 2025 11:07:02 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-29570cb027bsm12529515ad.92.2025.11.01.10.21.23
+ d2e1a72fcca58-7a7db0a019csm5861606b3a.42.2025.11.01.11.07.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 01 Nov 2025 10:21:24 -0700 (PDT)
-Date: Sat, 1 Nov 2025 10:21:21 -0700
+ Sat, 01 Nov 2025 11:07:01 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
-Cc: Jochen Behrens <jochen.behrens@broadcom.com>, dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH v3] net/vmxnet3: disable RSS for single queue
- configuration for ESX8.0+ versions
-Message-ID: <20251101102121.127af268@phoenix>
-In-Reply-To: <CAL+mCpMB4aZuqkX_zzDea9uyUf1qQp-5JdoeEPxWnfk=u8XqRQ@mail.gmail.com>
-References: <20251022155651.9818-1-amiyaranjan.mohakud@gmail.com>
- <20251023083019.18792-1-amiyaranjan.mohakud@gmail.com>
- <8e750656-787c-4dce-8cbe-241e7929d2a0@broadcom.com>
- <CAL+mCpMB4aZuqkX_zzDea9uyUf1qQp-5JdoeEPxWnfk=u8XqRQ@mail.gmail.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 0/5] BPF enhancements
+Date: Sat,  1 Nov 2025 11:04:42 -0700
+Message-ID: <20251101180659.43883-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251030173732.246435-1-stephen@networkplumber.org>
+References: <20251030173732.246435-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,16 +82,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 1 Nov 2025 08:31:21 +0530
-Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com> wrote:
+This is a series of fixes and tests for BPF functionality.
+The new tests for Tx and Rx filtering require the infrastructure
+to build a bpf program (clang) and the tool to convert object
+file to header (xxd). If missing the test will get skipped.
 
-> Thanks Jochen.
-> I see that the state is "Awaiting Upstream".  Will it be changed to
-> "Accepted" post upstream or Is it already accepted ?
-> 
-> Thanks
-> Amiya
+It is disappointing that there were no examples or tests when
+the code was submitted.
 
+v3 - do not depend on xxd -n flag which is not present on versions
+     before Oct 2024
 
-I periodically have to manually go through the awaiting upstream list
-on patchwork. Usually happens at each rc.
+Stephen Hemminger (5):
+  bpf: add allocation annotations to functions
+  bpf: use bulk free on filtered packets
+  bpf: add a test for BPF ELF load
+  bpf: add test for Rx and Tx filtering
+  bpf: remove use of VLA
+
+ app/test/bpf/filter.c    |  53 +++++
+ app/test/bpf/load.c      |  62 ++++++
+ app/test/bpf/meson.build |  53 +++++
+ app/test/meson.build     |   2 +
+ app/test/test_bpf.c      | 451 +++++++++++++++++++++++++++++++++++++++
+ lib/bpf/bpf_pkt.c        |  84 ++++----
+ lib/bpf/meson.build      |   2 -
+ lib/bpf/rte_bpf.h        |  11 +-
+ 8 files changed, 677 insertions(+), 41 deletions(-)
+ create mode 100644 app/test/bpf/filter.c
+ create mode 100644 app/test/bpf/load.c
+ create mode 100644 app/test/bpf/meson.build
+
+-- 
+2.51.0
+
