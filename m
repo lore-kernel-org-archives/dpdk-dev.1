@@ -2,59 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9ACCCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Oct 2025 22:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBC0CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Nov 2025 03:01:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1C74D4027A;
-	Fri, 31 Oct 2025 23:13:35 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8B77340150
- for <dev@dpdk.org>; Fri, 31 Oct 2025 23:13:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1761948813;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=fvEFwP6zmVw+rV8Fg08ILqNgaQmYp8+ItexBsH3GPV0=;
- b=JYnynpGfYTIr994xY+z1AQKzGZBWvjcSTYesUiYX61b4C35u6539cDJljCLOB53wB0d/cO
- 5R/jKyX0oYBgXm6bOfNdt1aMckDLstNwKLXiU1834YBVFz0ZJAjD7rGHpMWCX6mCBG6jvs
- /MkSdAF8rLIAmqBdB6WR3k8w7KKLuLs=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-57-aCBJvVsbM1CbBlYQeyAnxg-1; Fri,
- 31 Oct 2025 18:13:31 -0400
-X-MC-Unique: aCBJvVsbM1CbBlYQeyAnxg-1
-X-Mimecast-MFC-AGG-ID: aCBJvVsbM1CbBlYQeyAnxg_1761948810
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 1B291195608D; Fri, 31 Oct 2025 22:13:30 +0000 (UTC)
-Received: from ringo.home (unknown [10.44.32.13])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id E64821955BE3; Fri, 31 Oct 2025 22:13:26 +0000 (UTC)
-From: Robin Jarry <rjarry@redhat.com>
-To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>
-Cc: stable@dpdk.org
-Subject: [PATCH dpdk] graph: fix use-after-free when updating edges with
- active graphs
-Date: Fri, 31 Oct 2025 23:13:04 +0100
-Message-ID: <20251031221304.394997-2-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0A58D402D3;
+	Sat,  1 Nov 2025 04:01:35 +0100 (CET)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com
+ [209.85.218.50]) by mails.dpdk.org (Postfix) with ESMTP id BCBEE4021F
+ for <dev@dpdk.org>; Sat,  1 Nov 2025 04:01:33 +0100 (CET)
+Received: by mail-ej1-f50.google.com with SMTP id
+ a640c23a62f3a-afcb7ae6ed0so596923666b.3
+ for <dev@dpdk.org>; Fri, 31 Oct 2025 20:01:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1761966093; x=1762570893; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=fIe/3gUCb8luk+Np9fkmVXbdjnN3UYDtFNb9ZXNjgKQ=;
+ b=Jj+c5rKylAgbmqZNhbwKLm8taog22CcR1FxPK2FhZ4bCs+O/nwP/GfxvnnrfAVW8Nq
+ bXudvKzcRg/hFXlPEB7dKMRkDKm25tJF4rOA/Q/LpJnz+pzzSLqcDSR1YEpKgX2EiySo
+ iRzgVRRqm4MfXFhfpS2UWBvBvqYM2vRDe0wh9cIBd5HJ0GbWYixP1J4YZmanWVpw3lUZ
+ OH/5ZOnqChO8fNeaW2RyGdXfFS4AuQKqoD3EnQL1RTPC2dLnxWSMS//OjUVcHuLizVIW
+ sJzcIn6CU5bf0vTk3VUK3jPnM0GMtGml2FdySiBY+n+8pt2nS0QWjlxiAJoDN6TJrzyW
+ VLIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1761966093; x=1762570893;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=fIe/3gUCb8luk+Np9fkmVXbdjnN3UYDtFNb9ZXNjgKQ=;
+ b=MwXadQaspLbgGTPw3dpDCe+b+IgIKVLbflljznx2Zbns8nqEne6jKeoTHTx/86IVlf
+ AT6a1FmDGmecK2p1TLsBhTf5YLyyLP07lA0coKiWnfbh3GCIwp73rP3NSQFL9iSkgq4a
+ WQU8WCVjxuHREllh2MZkidyQghrVy6EW1Pypzu6F8kHRPRoPthWQHIq4jsbRKvK2B2q+
+ HELd5hnP34aJDvvW9c5zLo8tu+BmFQZsBMJHIO/E8R54RIuC68rk0Vv8HT3ZsVt5VwMH
+ DNy/P61VLHy2oDgbzHoPii72AH6zhNoL0xYO3fGoToHlkxthvRS5eHFkR+pQBuBQX1kB
+ QEeg==
+X-Gm-Message-State: AOJu0Yz9lDBTUKWPw5w10Dsu2oRybgi7OdzU+ZHZy6aJbXvcHogY3wOb
+ iFfUFUSjkCEohi/BBJh591tqtHlZ+ukDBPnXMRxRoU62vhfJo1QS3fFAT5bk/fXxkrH0e1i2Dhx
+ 3ofV43irHKM6np/5RUFNxpznRHKLTAdnTlQ==
+X-Gm-Gg: ASbGncu6rXUCYjDvJEdcc+5mWHP9IzOmWlWrD1LsnsaFBin6aw9c7W0TKNZGRBMOftm
+ emgYLJbCgk2JAzmryR3zyZ7rvwyNQBcjhWlzDiUPS/bT0ntsjtk2mQeRCpOAfQYFZvxHECcxjjX
+ g52dgs1+ph0FeimF7m3MY+Fuj5XnYFNvv3HsC9d88Pa7/sChgVGS0o6ydozl+HmNyeSLoUrT4kD
+ +LLdbRIIyvRYMnV9OQXJ75sWznpMDPY950Kbp+Rmi4KSkf4MK8NjRDmpLh2W/ZCWotfS/8KOaK9
+ dYrWE0PcBuxJIUus
+X-Google-Smtp-Source: AGHT+IGohKCkUpCXKuCqdkzHToKGsqAoBAmyxMZxWTGvK/YmKdj6v+SVFs09nDbAwQKpPuWSwxwWvxBH/ljqtpRfvII=
+X-Received: by 2002:a17:906:c10c:b0:b4a:e11a:195b with SMTP id
+ a640c23a62f3a-b707062f00bmr557298066b.44.1761966093021; Fri, 31 Oct 2025
+ 20:01:33 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -d5VLcntIM_Cmzh6wzO5OU-0OS55lQUIRrbWpWoq0BY_1761948810
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+References: <20251022155651.9818-1-amiyaranjan.mohakud@gmail.com>
+ <20251023083019.18792-1-amiyaranjan.mohakud@gmail.com>
+ <8e750656-787c-4dce-8cbe-241e7929d2a0@broadcom.com>
+In-Reply-To: <8e750656-787c-4dce-8cbe-241e7929d2a0@broadcom.com>
+From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+Date: Sat, 1 Nov 2025 08:31:21 +0530
+X-Gm-Features: AWmQ_bnGH9dqaG5nsOKTduSOSfMIgayii6PcAV9yq-WmMSbY8p58_0ZvrA46xtQ
+Message-ID: <CAL+mCpMB4aZuqkX_zzDea9uyUf1qQp-5JdoeEPxWnfk=u8XqRQ@mail.gmail.com>
+Subject: Re: [PATCH v3] net/vmxnet3: disable RSS for single queue
+ configuration for ESX8.0+ versions
+To: Jochen Behrens <jochen.behrens@broadcom.com>
+Cc: dev@dpdk.org, stable@dpdk.org
+Content-Type: multipart/alternative; boundary="00000000000014b5d906427fb3ac"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,114 +75,143 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-After creating at least one graph and calling rte_node_edge_update to
-add a new edge on a node which is in use in the graph, the node memory
-is reallocated but the active graph still has a pointer to the freed
-memory.
+--00000000000014b5d906427fb3ac
+Content-Type: text/plain; charset="UTF-8"
 
-When destroying the graph, it causes a use-after-free error detected by
-libasan:
+Thanks Jochen.
+I see that the state is "Awaiting Upstream".  Will it be changed to
+"Accepted" post upstream or Is it already accepted ?
 
-ERROR: AddressSanitizer: heap-use-after-free
-READ of size 8 at 0x7c4baa5e4da8 thread T0
-    #0 0x0000005ad224 in graph_node_fini lib/graph/graph.c:256
-    #1 0x0000005ae657 in rte_graph_destroy lib/graph/graph.c:504
-    ...
+Thanks
+Amiya
 
-freed by thread T0 here:
-    #0 0x7f1bac4e5e4b in realloc.part.0 (/lib64/libasan.so.8+0xe5e4b)
-    #1 0x0000005ab6d7 in edge_update lib/graph/node.c:271
-    #2 0x0000005abb1b in rte_node_edge_update lib/graph/node.c:339
-    ...
 
-previously allocated by thread T0 here:
-    #0 0x7f1bac4e5e4b in realloc.part.0 (/lib64/libasan.so.8+0xe5e4b)
-    #1 0x0000005ab6d7 in edge_update lib/graph/node.c:271
-    #2 0x0000005abb1b in rte_node_edge_update lib/graph/node.c:339
-    ...
+On Fri, 24 Oct 2025 at 06:06, Jochen Behrens <jochen.behrens@broadcom.com>
+wrote:
 
-Use malloc+memcpy and add an internal function to replace all references
-to the old node memory before freeing it.
+> Acked-by: Jochen Behrens <jochen.behrens@broadcom.com>
+>
+> On 10/23/25 01:30, Amiya Ranjan Mohakud wrote:
+> > It fixes the issue of v4 RSS configuration failure in
+> > vmxnet3_v4_rss_configure() while writing to BAR register. It's very
+> > specific to single queue configuration.
+> >
+> > https://mails.dpdk.org/archives/users/2025-April/008236.html
+> >
+> > Bugzilla ID:1789
+> > Fixes: 52ec00fd1474e8 ("net/vmxnet3: fix RSS setting on v4")
+> > Cc: stable@dpdk.org
+> >
+> > v2:
+> >   - Fixed typo in commit message
+> > v3:
+> >   - Checking if RSS is already enabled
+> >
+> > Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+> > ---
+> >   drivers/net/vmxnet3/vmxnet3_ethdev.c | 7 +++++++
+> >   1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/net/vmxnet3/vmxnet3_ethdev.c
+> b/drivers/net/vmxnet3/vmxnet3_ethdev.c
+> > index f4cdb1bb31..a0306af86c 100644
+> > --- a/drivers/net/vmxnet3/vmxnet3_ethdev.c
+> > +++ b/drivers/net/vmxnet3/vmxnet3_ethdev.c
+> > @@ -534,6 +534,13 @@ vmxnet3_dev_configure(struct rte_eth_dev *dev)
+> >
+> >       PMD_INIT_FUNC_TRACE();
+> >
+> > +     /* Disabling RSS for single queue pair */
+> > +     if (dev->data->nb_rx_queues == 1 &&
+> > +         dev->data->dev_conf.rxmode.mq_mode == RTE_ETH_MQ_RX_RSS) {
+> > +             dev->data->dev_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_NONE;
+> > +             PMD_INIT_LOG(ERR, "WARN: Disabling RSS for single Rx
+> queue");
+> > +     }
+> > +
+> >       if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG)
+> >               dev->data->dev_conf.rxmode.offloads |=
+> RTE_ETH_RX_OFFLOAD_RSS_HASH;
+> >
+>
+>
 
-Cc: stable@dpdk.org
-Fixes: c59dac2ca14a ("graph: implement node operations")
+--00000000000014b5d906427fb3ac
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Robin Jarry <rjarry@redhat.com>
----
- lib/graph/graph.c         | 14 ++++++++++++++
- lib/graph/graph_private.h | 12 ++++++++++++
- lib/graph/node.c          |  6 +++++-
- 3 files changed, 31 insertions(+), 1 deletion(-)
+<div dir=3D"ltr"><div><div style=3D"font-family:trebuchet ms,sans-serif;col=
+or:rgb(103,78,167)" class=3D"gmail_default">Thanks Jochen.</div><div style=
+=3D"font-family:trebuchet ms,sans-serif;color:rgb(103,78,167)" class=3D"gma=
+il_default">I see that the state is &quot;Awaiting Upstream&quot;.=C2=A0 Wi=
+ll it be changed=C2=A0to=C2=A0 &quot;Accepted&quot; post upstream or Is=C2=
+=A0it already accepted ?</div><br clear=3D"all"></div><div><div dir=3D"ltr"=
+ class=3D"gmail_signature" data-smartmail=3D"gmail_signature"><div dir=3D"l=
+tr"><div><span style=3D"font-family:verdana,sans-serif">Thanks</span></div>=
+<div><span style=3D"font-family:verdana,sans-serif">Amiya</span><br></div><=
+/div></div></div><br></div><br><div class=3D"gmail_quote gmail_quote_contai=
+ner"><div dir=3D"ltr" class=3D"gmail_attr">On Fri, 24 Oct 2025 at 06:06, Jo=
+chen Behrens &lt;<a href=3D"mailto:jochen.behrens@broadcom.com">jochen.behr=
+ens@broadcom.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" =
+style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);pa=
+dding-left:1ex">Acked-by: Jochen Behrens &lt;<a href=3D"mailto:jochen.behre=
+ns@broadcom.com" target=3D"_blank">jochen.behrens@broadcom.com</a>&gt;<br>
+<br>
+On 10/23/25 01:30, Amiya Ranjan Mohakud wrote:<br>
+&gt; It fixes the issue of v4 RSS configuration failure in<br>
+&gt; vmxnet3_v4_rss_configure() while writing to BAR register. It&#39;s ver=
+y<br>
+&gt; specific to single queue configuration.<br>
+&gt; <br>
+&gt; <a href=3D"https://mails.dpdk.org/archives/users/2025-April/008236.htm=
+l" rel=3D"noreferrer" target=3D"_blank">https://mails.dpdk.org/archives/use=
+rs/2025-April/008236.html</a><br>
+&gt; <br>
+&gt; Bugzilla ID:1789<br>
+&gt; Fixes: 52ec00fd1474e8 (&quot;net/vmxnet3: fix RSS setting on v4&quot;)=
+<br>
+&gt; Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.o=
+rg</a><br>
+&gt; <br>
+&gt; v2:<br>
+&gt;=C2=A0 =C2=A0- Fixed typo in commit message<br>
+&gt; v3:<br>
+&gt;=C2=A0 =C2=A0- Checking if RSS is already enabled<br>
+&gt; <br>
+&gt; Signed-off-by: Amiya Ranjan Mohakud &lt;<a href=3D"mailto:amiyaranjan.=
+mohakud@gmail.com" target=3D"_blank">amiyaranjan.mohakud@gmail.com</a>&gt;<=
+br>
+&gt; ---<br>
+&gt;=C2=A0 =C2=A0drivers/net/vmxnet3/vmxnet3_ethdev.c | 7 +++++++<br>
+&gt;=C2=A0 =C2=A01 file changed, 7 insertions(+)<br>
+&gt; <br>
+&gt; diff --git a/drivers/net/vmxnet3/vmxnet3_ethdev.c b/drivers/net/vmxnet=
+3/vmxnet3_ethdev.c<br>
+&gt; index f4cdb1bb31..a0306af86c 100644<br>
+&gt; --- a/drivers/net/vmxnet3/vmxnet3_ethdev.c<br>
+&gt; +++ b/drivers/net/vmxnet3/vmxnet3_ethdev.c<br>
+&gt; @@ -534,6 +534,13 @@ vmxnet3_dev_configure(struct rte_eth_dev *dev)<br=
+>
+&gt;=C2=A0 =C2=A0<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0PMD_INIT_FUNC_TRACE();<br>
+&gt;=C2=A0 =C2=A0<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0/* Disabling RSS for single queue pair */<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0if (dev-&gt;data-&gt;nb_rx_queues =3D=3D 1 &amp;&=
+amp;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev-&gt;data-&gt;dev_conf.rxmode.mq=
+_mode =3D=3D RTE_ETH_MQ_RX_RSS) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev-&gt;data-&gt;dev_=
+conf.rxmode.mq_mode =3D RTE_ETH_MQ_RX_NONE;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0PMD_INIT_LOG(ERR, &qu=
+ot;WARN: Disabling RSS for single Rx queue&quot;);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0if (dev-&gt;data-&gt;dev_conf.rxmode.mq_mode=
+ &amp; RTE_ETH_MQ_RX_RSS_FLAG)<br>
+&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev-&gt;data-&gt=
+;dev_conf.rxmode.offloads |=3D RTE_ETH_RX_OFFLOAD_RSS_HASH;<br>
+&gt;=C2=A0 =C2=A0<br>
+<br>
+</blockquote></div>
 
-diff --git a/lib/graph/graph.c b/lib/graph/graph.c
-index 61159edc7261..6911ea8abeed 100644
---- a/lib/graph/graph.c
-+++ b/lib/graph/graph.c
-@@ -277,6 +277,20 @@ graph_node_fini(struct graph *graph)
- 						       graph_node->node->name));
- }
- 
-+void
-+graph_node_replace_all(struct node *old, struct node *new)
-+{
-+	struct graph_node *graph_node;
-+	struct graph *graph;
-+
-+	STAILQ_FOREACH(graph, &graph_list, next) {
-+		STAILQ_FOREACH(graph_node, &graph->node_list, next) {
-+			if (graph_node->node == old)
-+				graph_node->node = new;
-+		}
-+	}
-+}
-+
- static struct rte_graph *
- graph_mem_fixup_node_ctx(struct rte_graph *graph)
- {
-diff --git a/lib/graph/graph_private.h b/lib/graph/graph_private.h
-index 21912c0ae63f..26cdc6637192 100644
---- a/lib/graph/graph_private.h
-+++ b/lib/graph/graph_private.h
-@@ -299,6 +299,18 @@ int graph_node_has_edge_to_src_node(struct graph *graph);
-  */
- int graph_node_has_loop_edge(struct graph *graph);
- 
-+/**
-+ * @internal
-+ *
-+ * Replace all pointers of a given node with another one in all active graphs.
-+ *
-+ * @param old
-+ *   Node pointer to replace in all graphs.
-+ * @param new
-+ *   Updated pointer.
-+ */
-+void graph_node_replace_all(struct node *old, struct node *new);
-+
- /**
-  * @internal
-  *
-diff --git a/lib/graph/node.c b/lib/graph/node.c
-index cae1c809edc4..e3359fe490a5 100644
---- a/lib/graph/node.c
-+++ b/lib/graph/node.c
-@@ -325,11 +325,15 @@ edge_update(struct node *node, struct node *prev, rte_edge_t from,
- 	need_realloc = max_edges > node->nb_edges;
- 	if (need_realloc) {
- 		sz = sizeof(struct node) + (max_edges * RTE_NODE_NAMESIZE);
--		new_node = realloc(node, sz);
-+		new_node = malloc(sz);
- 		if (new_node == NULL) {
- 			rte_errno = ENOMEM;
- 			goto restore;
- 		} else {
-+			sz = sizeof(*node) + (node->nb_edges * RTE_NODE_NAMESIZE);
-+			memcpy(new_node, node, sz);
-+			graph_node_replace_all(node, new_node);
-+			free(node);
- 			node = new_node;
- 		}
- 	}
--- 
-2.51.1
-
+--00000000000014b5d906427fb3ac--
