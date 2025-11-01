@@ -2,73 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F78CCFA00
-	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Nov 2025 18:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6582CCFA02
+	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Nov 2025 18:29:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 916EC40656;
-	Sat,  1 Nov 2025 19:07:10 +0100 (CET)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
- [209.85.210.177])
- by mails.dpdk.org (Postfix) with ESMTP id CC0DD40395
- for <dev@dpdk.org>; Sat,  1 Nov 2025 19:07:08 +0100 (CET)
-Received: by mail-pf1-f177.google.com with SMTP id
- d2e1a72fcca58-782e93932ffso3209833b3a.3
- for <dev@dpdk.org>; Sat, 01 Nov 2025 11:07:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762020428;
- x=1762625228; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=D0ZYcyBPJsdK5B5huSPK3LzKVD7fDGoli3Pmnq2uxs8=;
- b=AemuCPZlIDNj7E4/3QfLnCd46S6CaYUrSFrDU00ePaboGi3nGrjGZ3PiYvJyKP68t0
- +u6AZIPckpjmXsHZYoPnbqhpfptnUpcs9quxBWfHOolpujI9pnPwRB0fN1YuFYHjPEwt
- KGg4hp4q54wmFy9jUtw2Z3Mu0TFdn1S7ENqfNqL+430N4yaqW2oDW8HWgWyxN6sIktn4
- E1o8MLl9xzwybTPGbywYwKOH2N+8PDcITP5y1PPdX7TjM/W8wcVdP9vRDzmGVLOprTCL
- PyS0nP+yyASIUTKbyJrHv2jN7qWBu5qZcOHE/MHlgGm+OwO6+ecKoXkfMi5I+6n3tl2n
- BdYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762020428; x=1762625228;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=D0ZYcyBPJsdK5B5huSPK3LzKVD7fDGoli3Pmnq2uxs8=;
- b=emI1CEdmySceOJi6bwGTrt69DWDJHiN4W6NoHN69BhEzlSxDhchQbazZgKQPveeFgW
- IKQV86RCVJNCSPK8BWoIaCTSBn8K6Pkzf0E7SE7c7Nm8ELaUjQATBdNMLKHz1cZ/mu3x
- giJVBkQWQ35QsEcod7F+s6dFCyDUiyttRYyYzGVB+7VShPKILrmaY/4J9nXdd/H1kFiw
- UuJndXa4iRVRmm1Hl9B16wo/8416i/+MKn6EF9fIVuGxx6bteeY+rXP4tWVY8RSxWWpH
- e4TqUe6KqJj7I6numR54iNUeUkj0II+qcGCLMfI1OqiC/EgME8zL0h7Hieb2NEMha/Dy
- OloA==
-X-Gm-Message-State: AOJu0Ywl5rH/TodbLgBrFLExxIO9K5KAOcgeK0lS366uOonmQsOyoxLA
- WEYfmquPdzgAM7Q3I9gs9JpUjGb4lgPfliQNwQI//pAQPKiJw77XrbWxSAnTAOnPVEyOMFq5IvR
- LjDVC
-X-Gm-Gg: ASbGncsR/8B2wdbsFoMOdFaanjb5DvTEu6ueBSSuM95eLeOC8YPhYH51cR8dLLzST/I
- WPv7qbOfJrlaKtL1WT/LSSOw4fLFgaRO/lo1aG6+5VHp+lrAt0Dmzc28sR8ZK+l/b9vtqHs/BlL
- MZQlc/8L9e6hEI6El/gOfKrfNmuIqTwlBtJJrnihVv6zxEF1yGGyD1d0qPUY+dCYOgttlFkuuZZ
- rBX2m4jhI+x4uQJPYxqGzVBqANwlGtMIqW7l4SPH8irG6bbd8bzV2nW419QLBoafRVPPB7saw8F
- XVxdpECTEORlXRzA/gluq+rZE92oidAI7yk8LYTYuZKLnH6Rw9vrlwpRTbRc0w1E8cQTW1Fxs8V
- fTgjm4dN6pczzwXEi00EQyt4gcDworxBGBSS8dKJ4YwxY+eC0fD9g0DQabT1iAHnY/tgtrmEnlo
- 6W/TB17E4KIfV8NNuKxH6rEaaCch/oHtyJYAVvjqE=
-X-Google-Smtp-Source: AGHT+IEi4SqqikgymWpTCBgla2y1Z+ri9p8dolxVCGOTbvXSQZpea8Eyg2Ki8vhuVDoIHZZqa7/Drg==
-X-Received: by 2002:a05:6a00:cc8:b0:7a2:7893:b17a with SMTP id
- d2e1a72fcca58-7a77737e3fcmr9891919b3a.6.1762020427912; 
- Sat, 01 Nov 2025 11:07:07 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7a7db0a019csm5861606b3a.42.2025.11.01.11.07.07
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 01 Nov 2025 11:07:07 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id AEC8740297;
+	Sat,  1 Nov 2025 19:29:51 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id C5B4740270;
+ Sat,  1 Nov 2025 19:29:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1762021790; x=1793557790;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=FDKJZT/Q6cQoX/e3BjPSo/QSpBJtDcskjgaI1k9H8Nk=;
+ b=MzxKKpel43tAP900t2OwrNAuFdBI59sWzbsAQBXOI2Oz/G9jT58ptAAU
+ nEzLnXTc+H8BZ1P0lfVANdXH/kLW7ETFs6JM1/g0SkPEaaDTQFtwZhSjf
+ jEHtnve3ZuK5ae/gy0PjXQR0RoZJ74mYxuiPMoZ4SePfzgzR9G5N7IPum
+ P77EB3/39FaqHj23frbK9BNBZ/3mMypWYBQbmCOYDuGid4Mbnxrliid1z
+ POVnI8NB8d8PbrwPCN3hrtWsq0bwi2W6A0o1UOKofDwjniAS1adDy8kHP
+ 0qfSkhSB6Ae3L4XjWqbOHEgKxCqjbrYcnxHs9yDwBQUysPfYTBrt06Yel w==;
+X-CSE-ConnectionGUID: lIkRBb1VQ1qVpWyOr6Q3kw==
+X-CSE-MsgGUID: MoMUowVqTt2EvugYVzynpw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11600"; a="63177869"
+X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; d="scan'208";a="63177869"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Nov 2025 11:29:49 -0700
+X-CSE-ConnectionGUID: 55plOUnyT6uE/CTfKyhlsw==
+X-CSE-MsgGUID: v/XU/mN2QwKW0kzlM4lReQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; d="scan'208";a="186955541"
+Received: from pae-14.iind.intel.com ([10.190.203.159])
+ by fmviesa009.fm.intel.com with ESMTP; 01 Nov 2025 11:29:46 -0700
+From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v3 5/5] bpf: remove use of VLA
-Date: Sat,  1 Nov 2025 11:04:47 -0700
-Message-ID: <20251101180659.43883-6-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251101180659.43883-1-stephen@networkplumber.org>
-References: <20251030173732.246435-1-stephen@networkplumber.org>
- <20251101180659.43883-1-stephen@networkplumber.org>
+Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
+ Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
+Subject: [PATCH v2] net/ice: add source prune configuration API
+Date: Sat,  1 Nov 2025 18:29:34 +0000
+Message-Id: <20251101182934.67105-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251101104627.64906-1-anurag.mandal@intel.com>
+References: <20251101104627.64906-1-anurag.mandal@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -84,159 +60,268 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace variable length array with two part loop which
-applies filter in bursts up to 32 packets.
+Source prune is disabled by default to support
+VRRP advertisement packets in a vsi of ice PF.
+There is no way to enable source prune itself.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+This patch adds a PMD specific API to enable/disable
+source prune for all PF ports or for an individual PF port.
+
+Tested the following with VRRP advertisement packets in a
+vsi of ice PF:
+1. Source prune default mode.
+2. Enable source prune for an individual PF port.
+3. Disable source prune for an individual PF port.
+4. Enable source prune for all PF ports.
+5. Disable source prune for all PF ports.
+
+Fixes: 6f866eb93e79 ("net/ice: fix dropped packets when using VRRP")
+Cc: stable@dpdk.org
+
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 ---
- lib/bpf/bpf_pkt.c   | 81 ++++++++++++++++++++++++++-------------------
- lib/bpf/meson.build |  2 --
- 2 files changed, 47 insertions(+), 36 deletions(-)
+ drivers/net/intel/ice/ice_ethdev.c  | 72 +++++++++++++++++++++++
+ drivers/net/intel/ice/ice_ethdev.h  | 16 ++++++
+ drivers/net/intel/ice/ice_testpmd.c | 88 +++++++++++++++++++++++++++++
+ 3 files changed, 176 insertions(+)
 
-diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
-index 087ac0f244..15d36739a0 100644
---- a/lib/bpf/bpf_pkt.c
-+++ b/lib/bpf/bpf_pkt.c
-@@ -157,13 +157,16 @@ bpf_eth_cbh_add(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue)
- /*
-  * BPF packet processing routines.
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index 4669eba7c7..27904589d5 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -2,6 +2,7 @@
+  * Copyright(c) 2018 Intel Corporation
   */
-+#define BPF_FILTER_BURST	32u
  
- static inline uint32_t
- apply_filter(struct rte_mbuf *mb[], const uint64_t rc[], uint32_t num,
- 	uint32_t drop)
- {
- 	uint32_t i, j, k;
--	struct rte_mbuf *dr[num];
-+	struct rte_mbuf *dr[BPF_FILTER_BURST];
-+
-+	RTE_ASSERT(num <= BPF_FILTER_BURST);
++#include <eal_export.h>
+ #include <rte_string_fns.h>
+ #include <ethdev_pci.h>
  
- 	for (i = 0, j = 0, k = 0; i != num; i++) {
+@@ -201,6 +202,7 @@ static const uint32_t *ice_buffer_split_supported_hdr_ptypes_get(struct rte_eth_
+ 						size_t *no_of_elements);
+ static int ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info);
+ static int ice_priority_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_pfc_conf *pfc_conf);
++static int ice_pf_set_source_prune(struct ice_pf *pf, uint8_t on);
  
-@@ -191,65 +194,75 @@ static inline uint32_t
- pkt_filter_vm(const struct rte_bpf *bpf, struct rte_mbuf *mb[], uint32_t num,
- 	uint32_t drop)
- {
--	uint32_t i;
--	void *dp[num];
--	uint64_t rc[num];
-+	uint32_t matched = 0;
-+
-+	for (uint32_t i = 0; i < num; i += BPF_FILTER_BURST) {
-+		uint32_t burst_sz = RTE_MIN(num, BPF_FILTER_BURST);
-+		void *dp[BPF_FILTER_BURST];
-+		uint64_t rc[BPF_FILTER_BURST];
- 
--	for (i = 0; i != num; i++)
--		dp[i] = rte_pktmbuf_mtod(mb[i], void *);
-+		for (uint32_t j = 0; j < burst_sz; j++)
-+			dp[j] = rte_pktmbuf_mtod(mb[i + j], void *);
- 
--	rte_bpf_exec_burst(bpf, dp, rc, num);
--	return apply_filter(mb, rc, num, drop);
-+		rte_bpf_exec_burst(bpf, dp, rc, burst_sz);
-+		matched += apply_filter(mb + i, rc, burst_sz, drop);
-+	}
-+	return matched;
+ static const struct rte_pci_id pci_id_ice_map[] = {
+ 	{ RTE_PCI_DEVICE(ICE_INTEL_VENDOR_ID, ICE_DEV_ID_E823L_BACKPLANE) },
+@@ -1703,6 +1705,75 @@ ice_pf_sw_init(struct rte_eth_dev *dev)
+ 	return 0;
  }
  
- static inline uint32_t
- pkt_filter_jit(const struct rte_bpf_jit *jit, struct rte_mbuf *mb[],
- 	uint32_t num, uint32_t drop)
- {
--	uint32_t i, n;
--	void *dp;
--	uint64_t rc[num];
--
--	n = 0;
--	for (i = 0; i != num; i++) {
--		dp = rte_pktmbuf_mtod(mb[i], void *);
--		rc[i] = jit->func(dp);
--		n += (rc[i] == 0);
--	}
-+	uint32_t matched = 0;
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_ice_set_pf_src_prune, 25.11)
++int
++rte_pmd_ice_set_pf_src_prune(uint16_t port, uint8_t on)
++{
++	struct rte_eth_dev *dev;
++	struct ice_pf *pf;
++	int ret;
 +
-+	for (uint32_t i = 0; i < num; i += BPF_FILTER_BURST) {
-+		uint32_t burst_sz = RTE_MIN(num, BPF_FILTER_BURST);
-+		uint64_t rc[BPF_FILTER_BURST];
++	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
 +
-+		for (uint32_t j = 0; j < burst_sz; j++) {
-+			void *dp = rte_pktmbuf_mtod(mb[i + j], void *);
- 
--	if (n != 0)
--		num = apply_filter(mb, rc, num, drop);
-+			rc[j] = jit->func(dp);
-+		}
- 
--	return num;
-+		matched += apply_filter(mb + i, rc, burst_sz, drop);
-+	}
-+	return matched;
- }
- 
- static inline uint32_t
- pkt_filter_mb_vm(const struct rte_bpf *bpf, struct rte_mbuf *mb[], uint32_t num,
- 	uint32_t drop)
- {
--	uint64_t rc[num];
-+	uint32_t matched = 0;
++	dev = &rte_eth_devices[port];
++	if (!is_ice_supported(dev))
++		return -ENOTSUP;
 +
-+	for (uint32_t i = 0; i < num; i += BPF_FILTER_BURST) {
-+		uint32_t burst_sz = RTE_MIN(num, BPF_FILTER_BURST);
-+		uint64_t rc[BPF_FILTER_BURST];
- 
--	rte_bpf_exec_burst(bpf, (void **)mb, rc, num);
--	return apply_filter(mb, rc, num, drop);
-+		rte_bpf_exec_burst(bpf, (void **)mb, rc, burst_sz);
-+		matched += apply_filter(mb + i, rc, burst_sz, drop);
++	pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
++
++	ret = ice_pf_set_source_prune(pf, on);
++	return ret;
++}
++
++/* ice_pf_set_source_prune
++ * @pf: pointer to the pf structure
++ * @on: enable/disable source prune
++ *
++ * set source prune on pf
++ */
++static int
++ice_pf_set_source_prune(struct ice_pf *pf, uint8_t on)
++{
++	struct ice_hw *hw = ICE_PF_TO_HW(pf);
++	struct ice_vsi *vsi = pf->main_vsi;
++	struct ice_vsi_ctx ctxt;
++	int ret;
++
++	memset(&ctxt, 0, sizeof(ctxt));
++	ctxt.flags = ICE_AQ_VSI_TYPE_PF;
++	ctxt.info.valid_sections |=
++		rte_cpu_to_le_16(ICE_AQ_VSI_PROP_SW_VALID);
++	ctxt.info.sw_id = hw->port_info->sw_id;
++	ctxt.vsi_num = vsi->vsi_id;
++
++	if (on) {
++		/* Enable source prune */
++		ctxt.info.sw_flags &=
++			~(ICE_AQ_VSI_SW_FLAG_LOCAL_LB);
++		ctxt.info.sw_flags &=
++			~(ICE_AQ_VSI_SW_FLAG_SRC_PRUNE);
++	} else {
++		/* Disable source prune to support VRRP */
++		ctxt.info.sw_flags =
++			ICE_AQ_VSI_SW_FLAG_LOCAL_LB;
++		ctxt.info.sw_flags |=
++			ICE_AQ_VSI_SW_FLAG_SRC_PRUNE;
 +	}
-+	return matched;
- }
- 
- static inline uint32_t
- pkt_filter_mb_jit(const struct rte_bpf_jit *jit, struct rte_mbuf *mb[],
- 	uint32_t num, uint32_t drop)
++
++	ret = ice_update_vsi(hw, vsi->idx, &ctxt, NULL);
++	if (ret) {
++		PMD_DRV_LOG(ERR, "Update VSI failed to %s source prune",
++			on ? "enable" : "disable");
++		return -EINVAL;
++	} else {
++		vsi->info.valid_sections |=
++			rte_cpu_to_le_16(ICE_AQ_VSI_PROP_SW_VALID);
++		vsi->info.sw_flags = ctxt.info.sw_flags;
++	}
++
++	return 0;
++}
++
+ struct ice_vsi *
+ ice_setup_vsi(struct ice_pf *pf, enum ice_vsi_type type)
  {
--	uint32_t i, n;
--	uint64_t rc[num];
-+	uint32_t matched = 0;
+@@ -1753,6 +1824,7 @@ ice_setup_vsi(struct ice_pf *pf, enum ice_vsi_type type)
+ 		 * by ice_init_hw
+ 		 */
+ 		vsi_ctx.info.sw_id = hw->port_info->sw_id;
++		/* disable source prune to support VRRP in default */
+ 		vsi_ctx.info.sw_flags = ICE_AQ_VSI_SW_FLAG_LOCAL_LB;
+ 		vsi_ctx.info.sw_flags |= ICE_AQ_VSI_SW_FLAG_SRC_PRUNE;
+ 		cfg = ICE_AQ_VSI_PROP_SW_VALID;
+diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
+index 6478d6dfbd..c2dad32045 100644
+--- a/drivers/net/intel/ice/ice_ethdev.h
++++ b/drivers/net/intel/ice/ice_ethdev.h
+@@ -805,6 +805,22 @@ int rte_pmd_ice_dump_switch(uint16_t port, uint8_t **buff, uint32_t *size);
+ __rte_experimental
+ int rte_pmd_ice_dump_txsched(uint16_t port, bool detail, FILE *stream);
  
--	n = 0;
--	for (i = 0; i != num; i++) {
--		rc[i] = jit->func(mb[i]);
--		n += (rc[i] == 0);
--	}
-+	for (uint32_t i = 0; i < num; i += BPF_FILTER_BURST) {
-+		uint32_t burst_sz = RTE_MIN(num, BPF_FILTER_BURST);
-+		uint64_t rc[BPF_FILTER_BURST];
++/**
++ * Enable/Disable source prune on all the PF.
++ *
++ * @param port
++ *    The port identifier of the Ethernet device.
++ * @param on
++ *    1 - Enable source prune.
++ *    0 - Disable source prune.
++ * @return
++ *   - (0) if successful.
++ *   - (-ENODEV) if *port* invalid.
++ *   - (-EINVAL) if bad parameter.
++ */
++__rte_experimental
++int rte_pmd_ice_set_pf_src_prune(uint16_t port, uint8_t on);
++
+ int
+ ice_tm_setup_txq_node(struct ice_pf *pf, struct ice_hw *hw, uint16_t qid, uint32_t node_teid);
  
--	if (n != 0)
--		num = apply_filter(mb, rc, num, drop);
-+		for (uint32_t j = 0; j < burst_sz; j++)
-+			rc[j] = jit->func(mb[i + j]);
+diff --git a/drivers/net/intel/ice/ice_testpmd.c b/drivers/net/intel/ice/ice_testpmd.c
+index 98c02d68c6..29a15f548f 100644
+--- a/drivers/net/intel/ice/ice_testpmd.c
++++ b/drivers/net/intel/ice/ice_testpmd.c
+@@ -206,6 +206,84 @@ cmdline_parse_inst_t cmd_txsched_dump = {
+ 	},
+ };
  
--	return num;
-+		matched += apply_filter(mb + i, rc, burst_sz, drop);
++/* *** configure source prune for ice port *** */
++struct cmd_config_src_prune_result {
++	cmdline_fixed_string_t port;
++	cmdline_fixed_string_t keyword;
++	cmdline_fixed_string_t port_all; /* valid if "allports" argument == 1 */
++	uint16_t port_id;                /* valid if "allports" argument == 0 */
++	cmdline_fixed_string_t item;
++	cmdline_fixed_string_t enable;
++};
++
++static void cmd_config_pf_src_prune_parsed(void *parsed_result,
++					__rte_unused struct cmdline *cl,
++					void *allports)
++{
++	struct cmd_config_src_prune_result *res = parsed_result;
++	uint8_t enable;
++	uint16_t i;
++
++	if (!strcmp(res->enable, "on"))
++		enable = 1;
++	else
++		enable = 0;
++
++	/* all ports */
++	if (allports) {
++		RTE_ETH_FOREACH_DEV(i)
++			rte_pmd_ice_set_pf_src_prune(i, enable);
++	} else {
++		rte_pmd_ice_set_pf_src_prune(res->port_id, enable);
 +	}
-+	return matched;
- }
++}
++
++static cmdline_parse_token_string_t cmd_config_src_prune_port =
++	TOKEN_STRING_INITIALIZER(struct cmd_config_src_prune_result, port, "port");
++static cmdline_parse_token_string_t cmd_config_src_prune_keyword =
++	TOKEN_STRING_INITIALIZER(struct cmd_config_src_prune_result, keyword,
++				 "config");
++static cmdline_parse_token_string_t cmd_config_src_prune_portall =
++	TOKEN_STRING_INITIALIZER(struct cmd_config_src_prune_result, port_all,
++				 "all");
++static cmdline_parse_token_num_t cmd_config_src_prune_port_id =
++	TOKEN_NUM_INITIALIZER(struct cmd_config_src_prune_result, port_id,
++			      RTE_UINT16);
++static cmdline_parse_token_string_t cmd_config_src_prune_item =
++	TOKEN_STRING_INITIALIZER(struct cmd_config_src_prune_result,
++			item, "ice_source_prune");
++static cmdline_parse_token_string_t cmd_config_src_prune_enable =
++	TOKEN_STRING_INITIALIZER(struct cmd_config_src_prune_result, enable,
++				 "on#off");
++
++static cmdline_parse_inst_t cmd_config_src_prune_all = {
++	.f = cmd_config_pf_src_prune_parsed,
++	.data = (void *)1,
++	.help_str = "port config all ice_source_prune on|off: Set source prune on/off all pf ports.",
++	.tokens = {
++		(void *)&cmd_config_src_prune_port,
++		(void *)&cmd_config_src_prune_keyword,
++		(void *)&cmd_config_src_prune_portall,
++		(void *)&cmd_config_src_prune_item,
++		(void *)&cmd_config_src_prune_enable,
++		NULL,
++	},
++};
++
++static cmdline_parse_inst_t cmd_config_src_prune_specific = {
++	.f = cmd_config_pf_src_prune_parsed,
++	.data = (void *)0,
++	.help_str = "port config <port_id> ice_source_prune on|off: Set source prune on/off specific pf port.",
++	.tokens = {
++		(void *)&cmd_config_src_prune_port,
++		(void *)&cmd_config_src_prune_keyword,
++		(void *)&cmd_config_src_prune_port_id,
++		(void *)&cmd_config_src_prune_item,
++		(void *)&cmd_config_src_prune_enable,
++		NULL,
++	},
++};
++
+ static struct testpmd_driver_commands ice_cmds = {
+ 	.commands = {
+ 	{
+@@ -225,6 +303,16 @@ static struct testpmd_driver_commands ice_cmds = {
+ 		"txsched dump (port_id) <brief|detail> (config_path)\n"
+ 		"    Dump tx scheduling runtime configure on a port\n\n",
  
- /*
-diff --git a/lib/bpf/meson.build b/lib/bpf/meson.build
-index 28df7f469a..aa258a9061 100644
---- a/lib/bpf/meson.build
-+++ b/lib/bpf/meson.build
-@@ -7,8 +7,6 @@ if is_windows
-     subdir_done()
- endif
- 
--cflags += no_wvla_cflag
--
- if arch_subdir == 'x86' and dpdk_conf.get('RTE_ARCH_32')
-     build = false
-     reason = 'not supported on 32-bit x86'
++	},
++		{
++		&cmd_config_src_prune_all,
++		"port config all ice_source_prune (on|off)\n"
++		"    Set source prune on/off pf port all.\n"
++	},
++	{
++		&cmd_config_src_prune_specific,
++		"port config (port_id) ice_source_prune (on|off)\n"
++		"    Set source prune on/off pf port_id.\n"
+ 	},
+ 	{ NULL, NULL },
+ 	},
 -- 
-2.51.0
+2.34.1
 
