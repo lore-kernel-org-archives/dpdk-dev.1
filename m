@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6582CCFA02
-	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Nov 2025 18:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F3ACCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Sun,  2 Nov 2025 01:19:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AEC8740297;
-	Sat,  1 Nov 2025 19:29:51 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id C5B4740270;
- Sat,  1 Nov 2025 19:29:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0C109402B3;
+	Sun,  2 Nov 2025 02:19:36 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+ by mails.dpdk.org (Postfix) with ESMTP id B9A0340261;
+ Sun,  2 Nov 2025 02:19:34 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762021790; x=1793557790;
+ t=1762046375; x=1793582375;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=FDKJZT/Q6cQoX/e3BjPSo/QSpBJtDcskjgaI1k9H8Nk=;
- b=MzxKKpel43tAP900t2OwrNAuFdBI59sWzbsAQBXOI2Oz/G9jT58ptAAU
- nEzLnXTc+H8BZ1P0lfVANdXH/kLW7ETFs6JM1/g0SkPEaaDTQFtwZhSjf
- jEHtnve3ZuK5ae/gy0PjXQR0RoZJ74mYxuiPMoZ4SePfzgzR9G5N7IPum
- P77EB3/39FaqHj23frbK9BNBZ/3mMypWYBQbmCOYDuGid4Mbnxrliid1z
- POVnI8NB8d8PbrwPCN3hrtWsq0bwi2W6A0o1UOKofDwjniAS1adDy8kHP
- 0qfSkhSB6Ae3L4XjWqbOHEgKxCqjbrYcnxHs9yDwBQUysPfYTBrt06Yel w==;
-X-CSE-ConnectionGUID: lIkRBb1VQ1qVpWyOr6Q3kw==
-X-CSE-MsgGUID: MoMUowVqTt2EvugYVzynpw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11600"; a="63177869"
-X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; d="scan'208";a="63177869"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Nov 2025 11:29:49 -0700
-X-CSE-ConnectionGUID: 55plOUnyT6uE/CTfKyhlsw==
-X-CSE-MsgGUID: v/XU/mN2QwKW0kzlM4lReQ==
+ bh=uItocSHNILMdO07+8EXAWA2cu/tiOK+sf1pFfWD9vG8=;
+ b=YCQgLpGa5RhVrwbA89jJ4bGhSjwDOs9y0fkOjzPn89kMnsRkwdjIsLYc
+ Gqz9VvDhAUsDXUF1a3+45ED3xl2E5kUbyJTWrFTUcokOIqnQ+aGJWCySJ
+ TI5FYrni8RjIqr9b995LddBxHRjw/qdr5bTXC/DKNdSKbW8pYL3Nj/0ZT
+ zG+RVjrnKXxa6cwbhJkzD71jQ1hVlnK36Pi8VtTCy9qClokhQrIIcz3YM
+ 3ThU2TTX0ynca+iQHvz/JA5r7YawMX4fJ5Ax9rhuqaFnptBy0QgANtcOL
+ 0uiVyiFmvSOgKT4UJJ/R2m6C4g8aYrh1yDRGHOXP/S4eWKPOfwu4YX1gt A==;
+X-CSE-ConnectionGUID: dDPMNZaVRMCccwR4vSVkxg==
+X-CSE-MsgGUID: hpivSi0oTvmbP+LU/hycFQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11600"; a="81795587"
+X-IronPort-AV: E=Sophos;i="6.19,273,1754982000"; d="scan'208";a="81795587"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Nov 2025 18:19:33 -0700
+X-CSE-ConnectionGUID: FC0VzQoqRXuVtTopB1ht6A==
+X-CSE-MsgGUID: ymgCOjGgRZiWDuo2SOlYYA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; d="scan'208";a="186955541"
+X-IronPort-AV: E=Sophos;i="6.19,273,1754982000"; d="scan'208";a="186503964"
 Received: from pae-14.iind.intel.com ([10.190.203.159])
- by fmviesa009.fm.intel.com with ESMTP; 01 Nov 2025 11:29:46 -0700
+ by orviesa007.jf.intel.com with ESMTP; 01 Nov 2025 18:19:32 -0700
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
  Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
-Subject: [PATCH v2] net/ice: add source prune configuration API
-Date: Sat,  1 Nov 2025 18:29:34 +0000
-Message-Id: <20251101182934.67105-1-anurag.mandal@intel.com>
+Subject: [PATCH v3] net/ice: add source prune configuration API
+Date: Sun,  2 Nov 2025 01:19:19 +0000
+Message-Id: <20251102011919.68783-1-anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251101104627.64906-1-anurag.mandal@intel.com>
-References: <20251101104627.64906-1-anurag.mandal@intel.com>
+In-Reply-To: <20251101182934.67105-1-anurag.mandal@intel.com>
+References: <20251101182934.67105-1-anurag.mandal@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -86,7 +86,7 @@ Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
  3 files changed, 176 insertions(+)
 
 diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index 4669eba7c7..27904589d5 100644
+index 4669eba7c7..d1565f0a7a 100644
 --- a/drivers/net/intel/ice/ice_ethdev.c
 +++ b/drivers/net/intel/ice/ice_ethdev.c
 @@ -2,6 +2,7 @@
@@ -169,11 +169,11 @@ index 4669eba7c7..27904589d5 100644
 +		PMD_DRV_LOG(ERR, "Update VSI failed to %s source prune",
 +			on ? "enable" : "disable");
 +		return -EINVAL;
-+	} else {
-+		vsi->info.valid_sections |=
-+			rte_cpu_to_le_16(ICE_AQ_VSI_PROP_SW_VALID);
-+		vsi->info.sw_flags = ctxt.info.sw_flags;
 +	}
++
++	vsi->info.valid_sections |=
++		rte_cpu_to_le_16(ICE_AQ_VSI_PROP_SW_VALID);
++	vsi->info.sw_flags = ctxt.info.sw_flags;
 +
 +	return 0;
 +}
