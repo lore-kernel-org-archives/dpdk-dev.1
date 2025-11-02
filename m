@@ -2,51 +2,148 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F3ACCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Sun,  2 Nov 2025 01:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3B1CCFA02
+	for <dpdk-dev@archiver.kernel.org>; Sun,  2 Nov 2025 07:31:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C109402B3;
-	Sun,  2 Nov 2025 02:19:36 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id B9A0340261;
- Sun,  2 Nov 2025 02:19:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762046375; x=1793582375;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=uItocSHNILMdO07+8EXAWA2cu/tiOK+sf1pFfWD9vG8=;
- b=YCQgLpGa5RhVrwbA89jJ4bGhSjwDOs9y0fkOjzPn89kMnsRkwdjIsLYc
- Gqz9VvDhAUsDXUF1a3+45ED3xl2E5kUbyJTWrFTUcokOIqnQ+aGJWCySJ
- TI5FYrni8RjIqr9b995LddBxHRjw/qdr5bTXC/DKNdSKbW8pYL3Nj/0ZT
- zG+RVjrnKXxa6cwbhJkzD71jQ1hVlnK36Pi8VtTCy9qClokhQrIIcz3YM
- 3ThU2TTX0ynca+iQHvz/JA5r7YawMX4fJ5Ax9rhuqaFnptBy0QgANtcOL
- 0uiVyiFmvSOgKT4UJJ/R2m6C4g8aYrh1yDRGHOXP/S4eWKPOfwu4YX1gt A==;
-X-CSE-ConnectionGUID: dDPMNZaVRMCccwR4vSVkxg==
-X-CSE-MsgGUID: hpivSi0oTvmbP+LU/hycFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11600"; a="81795587"
-X-IronPort-AV: E=Sophos;i="6.19,273,1754982000"; d="scan'208";a="81795587"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Nov 2025 18:19:33 -0700
-X-CSE-ConnectionGUID: FC0VzQoqRXuVtTopB1ht6A==
-X-CSE-MsgGUID: ymgCOjGgRZiWDuo2SOlYYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,273,1754982000"; d="scan'208";a="186503964"
-Received: from pae-14.iind.intel.com ([10.190.203.159])
- by orviesa007.jf.intel.com with ESMTP; 01 Nov 2025 18:19:32 -0700
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
- Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
-Subject: [PATCH v3] net/ice: add source prune configuration API
-Date: Sun,  2 Nov 2025 01:19:19 +0000
-Message-Id: <20251102011919.68783-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251101182934.67105-1-anurag.mandal@intel.com>
-References: <20251101182934.67105-1-anurag.mandal@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 52A4A40261;
+	Sun,  2 Nov 2025 08:31:22 +0100 (CET)
+Received: from BYAPR05CU005.outbound.protection.outlook.com
+ (mail-westusazon11010048.outbound.protection.outlook.com [52.101.85.48])
+ by mails.dpdk.org (Postfix) with ESMTP id 0EE804021F;
+ Sun,  2 Nov 2025 08:31:20 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wevH/xOtLuv+UWivFH2a7tq8cB6N2kkiCF+nz6v0Bngl0VPmIoX+z8dev6PHfDWoieVDa3yX0L09P2dIxcBP5LZUdCAfPijWHl04Qz9Ccn6voc4zGpULcCJ5JMkOJ+57lK2KbYlqhLWXWkP242ocHhzItI0BZ4/CV8uDtx/lYGbu6my5r+aJ17YG1LhkeRhCwCrwND17CWL7grmltRUgh793VPMqaAYSZjYPXme/KHsj9NaU5Vs9fXJ/9SS9vsWifrhwUkUSghssPU5ZRZlCQz/W4Z4APfU2hUNr7UchF8XqMy6zsNiPwVmCimPNE4uSlaonqZMbytP0ltysM+yMpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nnLVpKQod27f25anY9YjpZFr+3HIEF63WkrPBcdYwtU=;
+ b=apSxrUB9EUOJnZkqT+2hlGG+q6rSSzW/U6bj67zdGsAsGrbWSEx1YMgIoAMl3lO6yFk9K7LFb/LEcXK3uTdognccOL1iB7026pZRpSgfon4ewXA80XSBc+EDOWTgpAsy3EpZIDmUYQWHtHamJ56EYQSyyrt/kQNZhWJ7El/g5t94+E4JMfezWdgja1GpeohbzvjcvyZOYQcSE0Zrs5jKTYgjivqo6Fg2qsfZppp7wcRl+BpCyXIq4jVa5xzHn/oQ6HJs/zLwy7kZDoXRC1wTHsC7uDjqNI0V2ZkWjtZnmp+PALQ8pB1FADWiNdkW6bElrhnsHvLg+q3fnIdxRsBtUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nnLVpKQod27f25anY9YjpZFr+3HIEF63WkrPBcdYwtU=;
+ b=rnIH06vqlCUQI3qSwNsYF8IxdG/ttL4K4WxQSkzJNTFG62EHA2MycUN/r3KSJUjYD3ij+3ZdusEPhg4W4XkLohSh0JUA38mgmCivjriii4Kgw6g0CfXN35lfNi9YoChZXFzEtGVHZgqzTtYC3X71EJJA8KoNdQeBGVp/xotspPEkRXau7zuy1ON4/jVY+upSu1SQIGZ4Rrx2ewvr61Xvv+6CzkiyksKn30BOlvIg3XOnfKRVqdZmV3WxT6MFiBsnSh5qTe+0alCHlW8x03gl0NC6te1LXvMS5UP12Ozc2ZpQyJ54FeGJqsYsxhvHZo+ZvKVH/+Zf7P1bobSt5kt5Ag==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com (2603:10b6:610:156::15)
+ by DM6PR12MB4090.namprd12.prod.outlook.com (2603:10b6:5:217::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Sun, 2 Nov
+ 2025 07:31:18 +0000
+Received: from CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5]) by CH3PR12MB8460.namprd12.prod.outlook.com
+ ([fe80::2e9d:7265:3b84:59b5%5]) with mapi id 15.20.9275.013; Sun, 2 Nov 2025
+ 07:31:18 +0000
+Message-ID: <7f5d3795-79fd-4438-b982-e8264433ed09@nvidia.com>
+Date: Sun, 2 Nov 2025 09:31:11 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] net/mlx4: fix unnecessary comma compilation warnings
+To: Gregory Etelson <getelson@nvidia.com>, dev@dpdk.org
+Cc: mkashani@nvidia.com, stable@dpdk.org, Matan Azrad <matan@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Moti Haimovsky <motih@mellanox.com>
+References: <20251029095505.100582-1-getelson@nvidia.com>
+Content-Language: en-US
+From: Raslan Darawsheh <rasland@nvidia.com>
+In-Reply-To: <20251029095505.100582-1-getelson@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TL2P290CA0020.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:3::9)
+ To CH3PR12MB8460.namprd12.prod.outlook.com
+ (2603:10b6:610:156::15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8460:EE_|DM6PR12MB4090:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2b0d52b9-ab7f-4c57-5b34-08de19e1cfd5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?dVVVUlRWWmdyenNIV290RGJRY3lKTlBhQ0hEL3VjWTlTaXRhWHdJSk8rQnJG?=
+ =?utf-8?B?YW5yTWlnQTBQbTkyUWhya1lpd1Q5N3JJTXhyWldhdTRFeTB2ekRYN2dOeXk3?=
+ =?utf-8?B?K09yRUVyaUtBdFJGVHlpYWIrTk85MFdJeW5qUlBiS2x4eXZUKy9qMWR0RW5p?=
+ =?utf-8?B?NElYU2FSdmpwZVFDcTNPTkFCbW44RjViSzE2N1ZDQTF4UTdEaXhGa29wT0Vs?=
+ =?utf-8?B?OGVKT0pTV0dRZDBuQlpQV05oSGIrL3ZobkR5aHRaMVBxUkNEKzVoM0xidGty?=
+ =?utf-8?B?RmQybjNYV2h1SG5hZElTSFpvM3ZIdmU4NUQrbnZrczJxazYyOUNjWldXVndy?=
+ =?utf-8?B?TWkyS2N3RFJoZlhab1FjK3F6U1c4ZDRnWFBXVS9xRDlZS2lzeFpOTnpOREE1?=
+ =?utf-8?B?cmdDeEF5ZDBmRUVaMlRNRUJQaEd0MEFoN0w5UGR2MWMzUUFuTEF1TGZ4QXMz?=
+ =?utf-8?B?a1VrYjVKZ0N3NWxmNFJBa2pOdG5HQ0VZSzhGczliSldudXFlWXZhVHpISytG?=
+ =?utf-8?B?YTBRaTNjNkIrdnB6ZjdsellpbGxWZ3Z5dFMxeGxVekczall0ZGhXblR6aHc3?=
+ =?utf-8?B?MVJVNU03eUJRbDFBZkw0YTVCeGtPTjArdDNaK1l6RnN0b0diY0wvZmx5dm9T?=
+ =?utf-8?B?UzVuZFV5SVFzYkJWKzk1VEtHb3VmK0ttcGJJaXlQU3AvM05HR0RrQnFzb3Ax?=
+ =?utf-8?B?WnVmendQcEs5NUliQmdiSkI4NlZxcnovaW5reFo1RVYwZlhOdUIzNnVuRjRR?=
+ =?utf-8?B?a2dmOWhIN2NBVkxmazhlbjBDZ09rdGJBcER2N0NQSmlCQzJiYk45bkJjN3U0?=
+ =?utf-8?B?NGFBWC8xUWdBT0hjeDVZMno5c2tmOTQ1YjdWT2VFazg4NkwrcmxQMTJLdlRR?=
+ =?utf-8?B?SE9YN0ZzUlFRNDViek50YU5LUklycEJVY1phMmJqMVIySklmeTRPb1VpYnFP?=
+ =?utf-8?B?bEljeWRLRlRYMlU1N0ZqbWlLeW16YkNzV0ozWGk3RHRldFlybTl6dE55M2lx?=
+ =?utf-8?B?U1Y3QVJMd1R1b3dlRHBQM0N5aXNnQVR4VnBiM2s2dGVWWDQ1MktKOFk3eVpu?=
+ =?utf-8?B?TWYrZU05azZyZVljdnFGeGdKNzBEQzVJVDdIYU13K3ladkJjNks0dzJWd3pY?=
+ =?utf-8?B?T2FzZnNOQzBKMFQ3Q2xxZ1J3L2N2c1pQY3NIMDdlUStkRElHaWdVdk8yYUs1?=
+ =?utf-8?B?ZE1lN2h1dDBpR1lOQ2tIZXc3SC91S2tpcU0rUmhjdEMzNFRXMUNleEhCWWlo?=
+ =?utf-8?B?MDl3WEJLcVp0ZkcxNW01UW1QNVhiTUxIU2p3OGx2blM2UDFObmdsZ1p2bmFB?=
+ =?utf-8?B?VXpwUFh5NnBWczdKTTVzTjUzRGFVOCt5TUlweFpJVWR0NVR1YjBDL3RuSXFC?=
+ =?utf-8?B?NkxyUDhxT1BROWlacU5mNFdCTHJJVUlOdGhwWExiWkxwMUh2MFNBZGl6UkZh?=
+ =?utf-8?B?TmxtRmxOMWdTVExURTYxRHgzano2czRtOVRFNFEvWFBFZmpUbmVqNGhrbDhM?=
+ =?utf-8?B?UnMyeEdVRHBwTTdTRnJRdVVYUXBuVDFIVG4wRTA2M0QzL0FaYjJtakFhOXFt?=
+ =?utf-8?B?Uk1uaThraTFIOVFxQloxOWJURi85M0Y1NzY3L3RtMS9yelB6dU14N0lVd2g3?=
+ =?utf-8?B?UXE3UUZ3SEFCdmEwWXJWditjaWVCekFNdk9JNDZobHVnaHNwRXd5enNiVWw2?=
+ =?utf-8?B?eU9zRUx6ZUsrLzdDeGJUWjg4N1Rxd0NGYms3blJ0TGgvUnVLa0dVMHNFN3I0?=
+ =?utf-8?B?T3FqQUtJNDRMdE9pMWxqc0IyM1lDR3VXdTVoMTNkZ2pKR1JCRHFjcHZlMWMz?=
+ =?utf-8?B?bDZTdmxNdFhpRGI2SWc3UEdQcW5iczB0VG5GSWVzM1JPY0xiemtvT3BXQ01y?=
+ =?utf-8?B?T0lQRk5xSTFEU1pPOUJrSStzQW0raDdCRDJOajQ5azRVQ3JPaklBYUd2WXB5?=
+ =?utf-8?Q?/I/5vGv+aAsC4r5Wo3lb2Z2aeubpkp4s?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CH3PR12MB8460.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cnBoaDN5OW5uOUk2RDBjQTMzQ1ovTnRpVUtmOXhxc3JKQ3EwWUNJR2U4Z1RR?=
+ =?utf-8?B?ZS9nMm9KN1RkbzVXdEpFcWJFcTBVZnBIMS9TNGtFZWt5czA5Y3JqZjIwS2NS?=
+ =?utf-8?B?UFE3OUtXVnVxWnRRbS94aG04YWs3cXdKK0NidzdiZnlnQlBlNVpuMVl4aXNm?=
+ =?utf-8?B?eW5IVGlJdlhnNlllVUk1UitGRkxRUGtlL3M1cXU3azFyNzl5ZVcwczNhajdH?=
+ =?utf-8?B?NDhHNXRFQ2xxRE5GRjBYOEJGNTNNd2JkTjA3SWI1YzBROUkyM1VBTDlBdkJ0?=
+ =?utf-8?B?N3dHYzAxeFZTKzBpN3VvOXNneVFEY3haYk9rWkFibTBkYzBDVEFWcGllVGcr?=
+ =?utf-8?B?T01YSDNCNW9QVVhidnptRm82YkwyM1NPVWtBZVJzQUhtZDVDNkJUOEFOVGJw?=
+ =?utf-8?B?UGdCdFBoSTRhNGhrVHhFaGg1QjdKbWhEOVlJSG1VdktMdGx3eXpGdXFTSm9I?=
+ =?utf-8?B?LzdKZEF3QTF6aWZ4ZjhscS9GL09UUCswTlAreEJVODRXaXVTcHNjdHplVGxN?=
+ =?utf-8?B?eEFVSDNTanhCTTZLRmtwbkpCODBRcEQwVWZHQ2lOZTAxa0pXNDF0MExRTVVk?=
+ =?utf-8?B?b0drVWdqc0VpVStoMlkwR2VUdkdhc25tQmUvRnpQYThlMnNIUVVXU3haSGFl?=
+ =?utf-8?B?L0NiQ3ZoY0RrYjhkUnNJNXI0dnNSODRVSHBUOWhtT3Q5b0tPbGM0V04zZXF0?=
+ =?utf-8?B?UTRzT3ZaWktiR3BaQU1oY09hTUlONCtHTFFnWk9ZbnlFeG1oRUk2Y1poNXNY?=
+ =?utf-8?B?T3RadE9mY29IT0k0YnJVdjlyOTVOc2pqakVVWEtJUnFuRjVRN21hRFkrZmpu?=
+ =?utf-8?B?Z2RNK1FZY1N5aU15dVllRmtDa2ZhMmp6MG9xakY1SS9uMWV5N21IRkQrZC9N?=
+ =?utf-8?B?MG1udFh0YTYxSzlIdGZIK3hscWlaK3BDRlBYd2RwLzA4WllCZmJVMFdBUXgw?=
+ =?utf-8?B?QVlGZFYrWGZ0Q1dzY21hR0ZnYk9qR0ZSQUw0S0VSTmEvcTVYa2o1a1BHTUZy?=
+ =?utf-8?B?MVlQb2xMT3ZtMU5WV05WT25JV0dkN0ltcUJWcnllVUsvZGEyMXVRRDNWM3Vu?=
+ =?utf-8?B?RW1sSDRXT1VjRjlZZUQ5aGdRSHZleWVDNVBUbkE0anRsNHZrRDRyZWdXWk0z?=
+ =?utf-8?B?TTR3OGd6N3lZSXp1LzVtYlBwUXFBb1M0Tjh0emxmcTRraEEvakNRcXE1U0VS?=
+ =?utf-8?B?T3dkTU1URXEvakowTnEyZ0xCeUdxWWZVckZpNm5HTDVqWktLbUd6NzJnMXNZ?=
+ =?utf-8?B?Ti8vTVp3eVppbVBLb2Ziazlvc0hVYWtzWTMvVHU1ckdMTWFlU0JpS3VsZjNi?=
+ =?utf-8?B?S1pGTHR1ZE1qNHVrdkdyNUI1K3VzeDFwWEFPWmRRejdHMjdTT0RPeERjRXEr?=
+ =?utf-8?B?SVROUXRmRC9FdVIzQSszS1crS0tNUHVoTExFb1FPTWFSbFd3eW5sVnlHelNJ?=
+ =?utf-8?B?Tjg3cU5ORTFwVVRXK0lJUnYraWFYN0w4elNxNm9Jdk9vdDhXWWJyRlIybUs1?=
+ =?utf-8?B?WWxXd05rWkNsUVVTU3p4MlN0cDJqWEJtOE9ROStNZHFObkJITGZvNzZYWkdH?=
+ =?utf-8?B?K2pyOG5YeXdwNTR2NHpJVDRUNzQ1b0JXdXV3WEpOVVRObmlYTWNFSVFXdWN0?=
+ =?utf-8?B?eUEwcVZOT0RFZUE5b2NIeUVXQ2UzdTdvNm5EMDB6RTJZUWF6RmxGK1V5ZUdp?=
+ =?utf-8?B?MzBnUVBBK1F2L0pDQlBBbHp0bmpldjRHSXpnOFRISlBHR3A4VEpqQUxMcnlU?=
+ =?utf-8?B?dmNRRkFSNlFhaHFXemNOaFVUTStaSHB5NWozdWdwRkU2YTNnMm9pU092WHRv?=
+ =?utf-8?B?VU9xS3p3aU5YNS92OE9Rcm9qcEV1YnY1WTR3ei94TjcrL0pMZVUzSGtpK0Jz?=
+ =?utf-8?B?UE1jREdCVDh3cFIxY3lpTnQwVHhXUm9TaGR3RjRjZXBWa0pDek8vRzU3WSth?=
+ =?utf-8?B?NlRRakQ1WVFYVkhweEpqdTBUNEx1Y2s5VWVwdm5sSXo2c0d0aEtRWDNINzlI?=
+ =?utf-8?B?VjBxNEgrb3FyYTBKRzR1NjBjMVN0Z2xDbEhLSU1wREdQUWtCZzdrRFdrbkh5?=
+ =?utf-8?B?WGxnY0MzN1l3Mm00S1dEck9Ock56cU91bUJBcnZ5elBnT0RqaHdVN3lBZTRK?=
+ =?utf-8?Q?cGS0nLrj304PoMkMIp3NbfVl3?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b0d52b9-ab7f-4c57-5b34-08de19e1cfd5
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8460.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2025 07:31:18.1411 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6wHG1M5tHpOPFS33rjDzl8dgZoYoNgWJ/Lww+MQwvej0cfzVhuxYYCFebhaNcyX8FgD1JvTs9wuXks8U/ONX6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4090
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,268 +157,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Source prune is disabled by default to support
-VRRP advertisement packets in a vsi of ice PF.
-There is no way to enable source prune itself.
+Hi
 
-This patch adds a PMD specific API to enable/disable
-source prune for all PF ports or for an individual PF port.
+On 29/10/2025 11:55 AM, Gregory Etelson wrote:
+> The patch fixes compilation warnings produced by clang -Wcomma option.
+> 
+> Bugzilla ID: 1810
+> Fixes: ba576975a89b ("net/mlx4: support hardware TSO")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Gregory Etelson <getelson@nvidia.com>
 
-Tested the following with VRRP advertisement packets in a
-vsi of ice PF:
-1. Source prune default mode.
-2. Enable source prune for an individual PF port.
-3. Disable source prune for an individual PF port.
-4. Enable source prune for all PF ports.
-5. Disable source prune for all PF ports.
+Series applied to next-net-mlx,
 
-Fixes: 6f866eb93e79 ("net/ice: fix dropped packets when using VRRP")
-Cc: stable@dpdk.org
-
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
- drivers/net/intel/ice/ice_ethdev.c  | 72 +++++++++++++++++++++++
- drivers/net/intel/ice/ice_ethdev.h  | 16 ++++++
- drivers/net/intel/ice/ice_testpmd.c | 88 +++++++++++++++++++++++++++++
- 3 files changed, 176 insertions(+)
-
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index 4669eba7c7..d1565f0a7a 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -2,6 +2,7 @@
-  * Copyright(c) 2018 Intel Corporation
-  */
- 
-+#include <eal_export.h>
- #include <rte_string_fns.h>
- #include <ethdev_pci.h>
- 
-@@ -201,6 +202,7 @@ static const uint32_t *ice_buffer_split_supported_hdr_ptypes_get(struct rte_eth_
- 						size_t *no_of_elements);
- static int ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info);
- static int ice_priority_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_pfc_conf *pfc_conf);
-+static int ice_pf_set_source_prune(struct ice_pf *pf, uint8_t on);
- 
- static const struct rte_pci_id pci_id_ice_map[] = {
- 	{ RTE_PCI_DEVICE(ICE_INTEL_VENDOR_ID, ICE_DEV_ID_E823L_BACKPLANE) },
-@@ -1703,6 +1705,75 @@ ice_pf_sw_init(struct rte_eth_dev *dev)
- 	return 0;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_ice_set_pf_src_prune, 25.11)
-+int
-+rte_pmd_ice_set_pf_src_prune(uint16_t port, uint8_t on)
-+{
-+	struct rte_eth_dev *dev;
-+	struct ice_pf *pf;
-+	int ret;
-+
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
-+
-+	dev = &rte_eth_devices[port];
-+	if (!is_ice_supported(dev))
-+		return -ENOTSUP;
-+
-+	pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
-+
-+	ret = ice_pf_set_source_prune(pf, on);
-+	return ret;
-+}
-+
-+/* ice_pf_set_source_prune
-+ * @pf: pointer to the pf structure
-+ * @on: enable/disable source prune
-+ *
-+ * set source prune on pf
-+ */
-+static int
-+ice_pf_set_source_prune(struct ice_pf *pf, uint8_t on)
-+{
-+	struct ice_hw *hw = ICE_PF_TO_HW(pf);
-+	struct ice_vsi *vsi = pf->main_vsi;
-+	struct ice_vsi_ctx ctxt;
-+	int ret;
-+
-+	memset(&ctxt, 0, sizeof(ctxt));
-+	ctxt.flags = ICE_AQ_VSI_TYPE_PF;
-+	ctxt.info.valid_sections |=
-+		rte_cpu_to_le_16(ICE_AQ_VSI_PROP_SW_VALID);
-+	ctxt.info.sw_id = hw->port_info->sw_id;
-+	ctxt.vsi_num = vsi->vsi_id;
-+
-+	if (on) {
-+		/* Enable source prune */
-+		ctxt.info.sw_flags &=
-+			~(ICE_AQ_VSI_SW_FLAG_LOCAL_LB);
-+		ctxt.info.sw_flags &=
-+			~(ICE_AQ_VSI_SW_FLAG_SRC_PRUNE);
-+	} else {
-+		/* Disable source prune to support VRRP */
-+		ctxt.info.sw_flags =
-+			ICE_AQ_VSI_SW_FLAG_LOCAL_LB;
-+		ctxt.info.sw_flags |=
-+			ICE_AQ_VSI_SW_FLAG_SRC_PRUNE;
-+	}
-+
-+	ret = ice_update_vsi(hw, vsi->idx, &ctxt, NULL);
-+	if (ret) {
-+		PMD_DRV_LOG(ERR, "Update VSI failed to %s source prune",
-+			on ? "enable" : "disable");
-+		return -EINVAL;
-+	}
-+
-+	vsi->info.valid_sections |=
-+		rte_cpu_to_le_16(ICE_AQ_VSI_PROP_SW_VALID);
-+	vsi->info.sw_flags = ctxt.info.sw_flags;
-+
-+	return 0;
-+}
-+
- struct ice_vsi *
- ice_setup_vsi(struct ice_pf *pf, enum ice_vsi_type type)
- {
-@@ -1753,6 +1824,7 @@ ice_setup_vsi(struct ice_pf *pf, enum ice_vsi_type type)
- 		 * by ice_init_hw
- 		 */
- 		vsi_ctx.info.sw_id = hw->port_info->sw_id;
-+		/* disable source prune to support VRRP in default */
- 		vsi_ctx.info.sw_flags = ICE_AQ_VSI_SW_FLAG_LOCAL_LB;
- 		vsi_ctx.info.sw_flags |= ICE_AQ_VSI_SW_FLAG_SRC_PRUNE;
- 		cfg = ICE_AQ_VSI_PROP_SW_VALID;
-diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index 6478d6dfbd..c2dad32045 100644
---- a/drivers/net/intel/ice/ice_ethdev.h
-+++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -805,6 +805,22 @@ int rte_pmd_ice_dump_switch(uint16_t port, uint8_t **buff, uint32_t *size);
- __rte_experimental
- int rte_pmd_ice_dump_txsched(uint16_t port, bool detail, FILE *stream);
- 
-+/**
-+ * Enable/Disable source prune on all the PF.
-+ *
-+ * @param port
-+ *    The port identifier of the Ethernet device.
-+ * @param on
-+ *    1 - Enable source prune.
-+ *    0 - Disable source prune.
-+ * @return
-+ *   - (0) if successful.
-+ *   - (-ENODEV) if *port* invalid.
-+ *   - (-EINVAL) if bad parameter.
-+ */
-+__rte_experimental
-+int rte_pmd_ice_set_pf_src_prune(uint16_t port, uint8_t on);
-+
- int
- ice_tm_setup_txq_node(struct ice_pf *pf, struct ice_hw *hw, uint16_t qid, uint32_t node_teid);
- 
-diff --git a/drivers/net/intel/ice/ice_testpmd.c b/drivers/net/intel/ice/ice_testpmd.c
-index 98c02d68c6..29a15f548f 100644
---- a/drivers/net/intel/ice/ice_testpmd.c
-+++ b/drivers/net/intel/ice/ice_testpmd.c
-@@ -206,6 +206,84 @@ cmdline_parse_inst_t cmd_txsched_dump = {
- 	},
- };
- 
-+/* *** configure source prune for ice port *** */
-+struct cmd_config_src_prune_result {
-+	cmdline_fixed_string_t port;
-+	cmdline_fixed_string_t keyword;
-+	cmdline_fixed_string_t port_all; /* valid if "allports" argument == 1 */
-+	uint16_t port_id;                /* valid if "allports" argument == 0 */
-+	cmdline_fixed_string_t item;
-+	cmdline_fixed_string_t enable;
-+};
-+
-+static void cmd_config_pf_src_prune_parsed(void *parsed_result,
-+					__rte_unused struct cmdline *cl,
-+					void *allports)
-+{
-+	struct cmd_config_src_prune_result *res = parsed_result;
-+	uint8_t enable;
-+	uint16_t i;
-+
-+	if (!strcmp(res->enable, "on"))
-+		enable = 1;
-+	else
-+		enable = 0;
-+
-+	/* all ports */
-+	if (allports) {
-+		RTE_ETH_FOREACH_DEV(i)
-+			rte_pmd_ice_set_pf_src_prune(i, enable);
-+	} else {
-+		rte_pmd_ice_set_pf_src_prune(res->port_id, enable);
-+	}
-+}
-+
-+static cmdline_parse_token_string_t cmd_config_src_prune_port =
-+	TOKEN_STRING_INITIALIZER(struct cmd_config_src_prune_result, port, "port");
-+static cmdline_parse_token_string_t cmd_config_src_prune_keyword =
-+	TOKEN_STRING_INITIALIZER(struct cmd_config_src_prune_result, keyword,
-+				 "config");
-+static cmdline_parse_token_string_t cmd_config_src_prune_portall =
-+	TOKEN_STRING_INITIALIZER(struct cmd_config_src_prune_result, port_all,
-+				 "all");
-+static cmdline_parse_token_num_t cmd_config_src_prune_port_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_config_src_prune_result, port_id,
-+			      RTE_UINT16);
-+static cmdline_parse_token_string_t cmd_config_src_prune_item =
-+	TOKEN_STRING_INITIALIZER(struct cmd_config_src_prune_result,
-+			item, "ice_source_prune");
-+static cmdline_parse_token_string_t cmd_config_src_prune_enable =
-+	TOKEN_STRING_INITIALIZER(struct cmd_config_src_prune_result, enable,
-+				 "on#off");
-+
-+static cmdline_parse_inst_t cmd_config_src_prune_all = {
-+	.f = cmd_config_pf_src_prune_parsed,
-+	.data = (void *)1,
-+	.help_str = "port config all ice_source_prune on|off: Set source prune on/off all pf ports.",
-+	.tokens = {
-+		(void *)&cmd_config_src_prune_port,
-+		(void *)&cmd_config_src_prune_keyword,
-+		(void *)&cmd_config_src_prune_portall,
-+		(void *)&cmd_config_src_prune_item,
-+		(void *)&cmd_config_src_prune_enable,
-+		NULL,
-+	},
-+};
-+
-+static cmdline_parse_inst_t cmd_config_src_prune_specific = {
-+	.f = cmd_config_pf_src_prune_parsed,
-+	.data = (void *)0,
-+	.help_str = "port config <port_id> ice_source_prune on|off: Set source prune on/off specific pf port.",
-+	.tokens = {
-+		(void *)&cmd_config_src_prune_port,
-+		(void *)&cmd_config_src_prune_keyword,
-+		(void *)&cmd_config_src_prune_port_id,
-+		(void *)&cmd_config_src_prune_item,
-+		(void *)&cmd_config_src_prune_enable,
-+		NULL,
-+	},
-+};
-+
- static struct testpmd_driver_commands ice_cmds = {
- 	.commands = {
- 	{
-@@ -225,6 +303,16 @@ static struct testpmd_driver_commands ice_cmds = {
- 		"txsched dump (port_id) <brief|detail> (config_path)\n"
- 		"    Dump tx scheduling runtime configure on a port\n\n",
- 
-+	},
-+		{
-+		&cmd_config_src_prune_all,
-+		"port config all ice_source_prune (on|off)\n"
-+		"    Set source prune on/off pf port all.\n"
-+	},
-+	{
-+		&cmd_config_src_prune_specific,
-+		"port config (port_id) ice_source_prune (on|off)\n"
-+		"    Set source prune on/off pf port_id.\n"
- 	},
- 	{ NULL, NULL },
- 	},
--- 
-2.34.1
+Kindest regards
+Raslan Darawsheh
 
