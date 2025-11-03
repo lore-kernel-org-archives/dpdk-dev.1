@@ -2,127 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2305CCCFA03
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD15FCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:49:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 76AA940613;
-	Mon,  3 Nov 2025 17:40:42 +0100 (CET)
-Received: from BN1PR04CU002.outbound.protection.outlook.com
- (mail-eastus2azon11010056.outbound.protection.outlook.com [52.101.56.56])
- by mails.dpdk.org (Postfix) with ESMTP id 13970402BB;
- Mon,  3 Nov 2025 17:40:41 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cL6y2/Zevu2Ayoc8Mk3JVf/SiCboG11kKd/BS/hrcgqTRFnmq5ebysH/Y0lLzeYFN1FbbethQJ+x7uMdI73yAIbHi7tRBFdEHAeGYINCcqN1O5ah3nft7hhh8Xi26LEFijrn0RqZWHsHjc6xS1oNVgq5rHi/BY97xlryBwxewlZR+Je9IhXVgywJFqvFq1QaG18teCmJ2/gZe+WQedmX96mEXswBCRXos9B2X040L9XhJGDLBvzCBqjM5M323ybD9yMkR6BmyZqSnMAAGXgFqkypyL/3LI3ZyEU2hB9pYMh82zwr7qriy84KFfJhYmc+Yc4Ev75aDZ3yeOeoYXr6Gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=417tzZXbk54tCYRNrf2vy3tnBCZDoELdzjy+BVKo8Bg=;
- b=xcTZmmWpu1DdRtZt7Np3pozKT09tw0TXNbJVdoAL0xCtcGpCv6+a3jv9IeCMoZ1Itxg5TbljIPjGtgIUS1BCzQKGTaAcBskfbySZWru6EA0Wl5sSiVdJIBbxaxEfS/GiMJyYvNMlOpRI8XdgOTJgcS5JGVvHgSEb/PVBxvzBI3q1yYsSAp6ZAoBq2stzP7KMQKGgWCzT0dyZvX57n7+NsZyboolg+/Vl0DYpjgnbBEoo/+iBb0hpO5cuF9apB06695h1tUaWrb2ixnjLB7w2HBQeOnB09qy8D19VXC+tfmpxGQfZa+XxYJ6OO656sr6Ye5u/qWF5pscHFKt2uyk6sA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=417tzZXbk54tCYRNrf2vy3tnBCZDoELdzjy+BVKo8Bg=;
- b=XFq+UyCiRvLTILXkBfxEq7aKoV1XmNPgMSnDrYwzB4zVCt+2AegJ8JYY2mUz2sjIh2XdudXMQ0R+lpaY3LmP4RGV/S9baKzUG3rY6mUd7eLPLSfGzHJcdOoIk/uWBrNwOQzXeK0Ui4kV49jouqHOvM/7AN3CivkJmO8qMmvPQjczZaI0Ajw+1CHe+oUXxNL+xjmJ6s7RdhxvvsCwlVYdbaidSqkZEJcxK/GZHiJ7ystANLTjun0Pzbl61yku5onHfwgQqapTq43g7DCzRRRYuPbBoCtHuhCz9PGRTwB9RokgliQo5F1i+CupyjaEb0AU/vZsNb4X5HoJl2sKaywMRw==
-Received: from MN2PR22CA0021.namprd22.prod.outlook.com (2603:10b6:208:238::26)
- by SN7PR12MB8434.namprd12.prod.outlook.com (2603:10b6:806:2e6::6)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Mon, 3 Nov
- 2025 16:40:34 +0000
-Received: from BN3PEPF0000B374.namprd21.prod.outlook.com
- (2603:10b6:208:238:cafe::2b) by MN2PR22CA0021.outlook.office365.com
- (2603:10b6:208:238::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Mon,
- 3 Nov 2025 16:40:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN3PEPF0000B374.mail.protection.outlook.com (10.167.243.171) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.0 via Frontend Transport; Mon, 3 Nov 2025 16:40:31 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 3 Nov
- 2025 08:40:08 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
- 2025 08:40:08 -0800
-Received: from nvidia.com (10.127.8.12) by mail.nvidia.com (10.129.68.8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 3 Nov 2025 08:40:05 -0800
-From: Shani Peretz <shperetz@nvidia.com>
-To: <dev@dpdk.org>
-CC: <david.marchand@redhat.com>, <stephen@networkplumber.org>,
- <bruce.richardson@intel.com>, Shani Peretz <shperetz@nvidia.com>,
- <stable@dpdk.org>, Aman Singh <aman.deep.singh@intel.com>, Dengdui Huang
- <huangdengdui@huawei.com>
-Subject: [PATCH] app/testpmd: fix inner header parsing for tunnel TSO
-Date: Mon, 3 Nov 2025 18:40:01 +0200
-Message-ID: <20251103164001.437863-1-shperetz@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id BFD0140431;
+	Mon,  3 Nov 2025 17:49:20 +0100 (CET)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
+ [209.85.214.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 4653F4029C
+ for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:19 +0100 (CET)
+Received: by mail-pl1-f173.google.com with SMTP id
+ d9443c01a7336-294fc62d7f4so42346205ad.2
+ for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188558;
+ x=1762793358; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=FBMkDvEumUoC88+3tfEyfBMltjY4eV7JA6ZJ13V2AMo=;
+ b=AsnYxsdzuIGuvG2nB8TGVvWB3iYOUb+YpCg9eqbXrpwGeJ1VEcNEpPsiYrxolhtGN7
+ h/5AdoPiCWEEFp1ZVIyBSBu4ax4AFWUDqlpNYRfsVHzOpsK50+EUBb9QMv5kbZnRD3CE
+ O4NWIrTg9mLPQfiiA6orTFvRlYhHbpRW0xRKCskm6P8Lk6kcFoGdFqB30gOBUZUXQwfL
+ qc5mdUYoHMKbbrbyXaVpERvFe5aWSeGYK98m1ARhr1byIUiyeKTVphBRRamSw2uh0eh9
+ bYG71R5tIc4SAUoCHFCaSFqMpVzkfe89tAsx5nDw0DTXp8zkCAxhiNL5+90rQryVRhPq
+ FfOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762188558; x=1762793358;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=FBMkDvEumUoC88+3tfEyfBMltjY4eV7JA6ZJ13V2AMo=;
+ b=SOpSZU1jE9poJ9h6bwRkcStD/m3KYDNBIle+7RTnBPnX0YPNLXpGSo7lXQR5sXy3nw
+ 0/tXDXXbS8D+pFVCifyX1Re5q6mMAJOxQOF8cdJo5Jl51gKnPBj1qga+Z5/2m8dVknfk
+ 8yja/BTVXjCquTM0YXz1jFbz3nbE5PPaNna6HdHz1w3kLL6Jld8Gm7FHdOI9QrKuixdM
+ o9249XZJ5TgPhFjWoaZPzvZHkAbKmM4CW7FvleZJrSwEmK0WoYz2FqRSiUlW4PZ1gPOZ
+ dgw9UksmIJ8WUh6+FWZEdutvfOGG7iCyv2U1chHAR4JLjgCUzooobDazyR/3wdAHRkHB
+ F5Uw==
+X-Gm-Message-State: AOJu0Yz8Ia6biB0ecgcaUUnJ131G9Ga7cRkPyBY4Dj5knEswWQjR1HuM
+ lnc383V92v6g6ExF497ABEtdUT72ZT++BB88VPEbF+yc0vj4AI+TVwCp4p9kPqls1BnuJmc0zqP
+ NXTe7
+X-Gm-Gg: ASbGncv1Pqj9Hb6PKXIxlKYSmXzKh4QfvhyLWJ25ljNhi/ZYhi/yEiooZcHtka7Y1Vl
+ zQFNPhUw8tKshz13dZ2NYe0Eob5m2CAEIVZvTsArup+EE28SoC0AB3txiAVzfhs2D7UGTB3K7oV
+ FuoKfAhmw9dQlxWq+IqJybg3MeLP57HDbWBMwER/cA/v6rDx4LhsbltBGIageAzzITNZrzIN7ZU
+ 8jY3hfwPFWMr3DlVp075i0SC+p3X+MTwclMPers2IEqddc+lY79MzDjKDHbu2o0kyBEyeFd6aGZ
+ NvGSiWrJMrPVXlPa90n+0kVSZHwxtTm1WoYG7CJvkJYyOl4FOn7x/eRS7W9XfcjqgDy7WHU3jnS
+ OMimmABugk3ETsbYSF2cyGwoeR3bQwdcFSEDdpS6an8Lnz2UStKr7ai3jb9AJ+S109ibDw15dYA
+ dj8elPg/UC5zhlfWlBVKNpYUKFZ6k4tHgdAVzL2+c=
+X-Google-Smtp-Source: AGHT+IFBJEU6KDyo0VbaDSpyZp4yHDuquUPIjovTlrjpR3QTY1VCGfSL7s1Ex9NfRr4BqcxhRYBJEg==
+X-Received: by 2002:a17:902:f60c:b0:295:9cb5:ae57 with SMTP id
+ d9443c01a7336-2959cb5b3d6mr51110745ad.60.1762188558131; 
+ Mon, 03 Nov 2025 08:49:18 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.17
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 03 Nov 2025 08:49:17 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 00/44] introduce _SAFE variants of queue macros
+Date: Mon,  3 Nov 2025 08:47:05 -0800
+Message-ID: <20251103164915.101713-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250818233102.180207-1-stephen@networkplumber.org>
+References: <20250818233102.180207-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B374:EE_|SN7PR12MB8434:EE_
-X-MS-Office365-Filtering-Correlation-Id: be8c423a-6286-427a-7a51-08de1af7b488
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|82310400026|36860700013|1800799024; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?+t3ivewjwPo06aaYLVm8h/SIvM7NUzt3WhlXoy5m3Ehu+QkWAZ2g+Tj+lMxy?=
- =?us-ascii?Q?VtR3bDOBZG0NrD89fmdgn0ADKTEeGl4d/fVZqNOUHYwvJZB/SQe89lgExh0T?=
- =?us-ascii?Q?mEd+3JcTv6RI6pP/1U45MQMAkbz9nuiatIbVYjvCpKTMdlHRiV2C2qjK1bCB?=
- =?us-ascii?Q?GA+p/Z/uA+b+Qgg4ijyCoMNBMH7rdGeLoyG+2pZzhnq8eZK0TokzHXlo0PBB?=
- =?us-ascii?Q?CJOC7GhCf0tz+rgR+qZ+BBcsmVXCDDA6QomRmxgnVlbDOfwSumZ+pRYe4js5?=
- =?us-ascii?Q?qiYtgOflF+1G6JhGwnuzG2O40CLSDmUyK++4kjleIvASdY1hW2CD15LOQWwu?=
- =?us-ascii?Q?Vj+JBqTCuQqBfxhVucmjfyzDh0L6kikv5jmt5TUBLHGfg2cArQ4TCBZ5OWkA?=
- =?us-ascii?Q?4WAtmhWl9OB+H6ZJXKkx86cobGsfNVrMQPFEDYLoqMPFDGo0w3gVAgrYWMvP?=
- =?us-ascii?Q?IGlEZv9psx/y8CtPjI1hLlhD/dcfBaTxOE07pqeoAc15XXfqR3675EU2RF1s?=
- =?us-ascii?Q?dA8L/+SDX0MWONy6tOPrUpNJHeMqENOKFFyKAuDyyDlzbyuyhGBYg4B8b9Jp?=
- =?us-ascii?Q?lsrRAoOj3gynZGan/7T7jczGf7pksu9avxIqSVf7UzlGDH9ncUJX9LKHpYFT?=
- =?us-ascii?Q?ELgbGuTswl+Mys6qh8D85GkYdr2cctLcPwh9WIW5twTFekBpSL5VBarOb0mo?=
- =?us-ascii?Q?b88X8IkicKnePBFZz/kBt95L9UITGo3OqDxs6fTeNz5+Al6Q7FYOR58Aqxmx?=
- =?us-ascii?Q?jXHSL4IAlBGYynU+uZaqdwtXQxV66xvA0NY2QAwC6Gw+KY1SMqUKkDIzXNL8?=
- =?us-ascii?Q?Seb2rLsaWcgnN5iYAF7Ou3aEZiVHwdGfh67U87i4wocr+vNoCes5TgK/uxvQ?=
- =?us-ascii?Q?RRlrE1Gufm/0El/7RI5Ax31Fp50QEYqjzkiIHlEakvU0HyTx6VCju8KbIH2x?=
- =?us-ascii?Q?7Kodb+Dg3cCt0sW5HbkvbGZchMcFQvW6SwOe9t5rs/os/2RRVPiUhEGDuJTz?=
- =?us-ascii?Q?zUAMxqi6PuvKpfEFLuKq4YENTWQ43xkS8Q/KyikxCPHViHfp/eJU6Qr3DZMi?=
- =?us-ascii?Q?eSg9cMeEVuptLWFGb4z53PnZXMh44G27sqrNejkoFt92+B1DhcNZn+ZIfk/Q?=
- =?us-ascii?Q?UPqV3y0kFkBucgSkkr0495SOwPwUU0MEbOzYAb9/RvXyBuQAhZq/vUGcO9RM?=
- =?us-ascii?Q?7oDZ7D5HITkeVLb9iVFc4w2IkDuqgn/5x3WMADOhEpRLYrBlQGEqPUWwHXVA?=
- =?us-ascii?Q?DJ12CT9FzX60AXe50TK4OlhfbRJPanl3O/JVQmbELJwL7YbtB7noqpG1iVh1?=
- =?us-ascii?Q?5Zcar0twdpEHLxW8RbDQNpHUTcAMs/N1jajPg7Yo2w+MbLcSNzztk2Kof/uw?=
- =?us-ascii?Q?/eesH4+WcWUFCBzvS5G8cZl7lrZGuwW5uxC8Ob1gZlHykGyHee2koOKnL8tl?=
- =?us-ascii?Q?IOusrVImvPfWdRusm7PUIeL50ky4D4sPKwzY0AYoI6geYy/Mo7P2RX1qC1fC?=
- =?us-ascii?Q?LDjw1QhYEbrpUJN1vPhxlqBeLMFFwQ058a0E40cOlvzpc0fH9atbUaXBYEFn?=
- =?us-ascii?Q?4fMFnWuBkYtUpoIwNio=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 16:40:31.9493 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: be8c423a-6286-427a-7a51-08de1af7b488
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN3PEPF0000B374.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8434
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -136,129 +82,371 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The csumonly forwarding mode had two issues preventing TSO from working
-correctly:
+This patchset cleans up the queue.h macro problems in DPDK.
+The root cause is that sys/queue.h in Linux is an old version
+from early BSD; my best guess is that it is a BSD GPL license
+issue that it never got updated. The Linux version is missing
+several useful macros which leads to redefiniton, bugs, etc.
 
-First, inner L2 length calculation was incorrect. The inner_l2_len field
-from rte_net_get_ptype() includes the outer L4 header and tunnel header
-lengths for UDP-based tunnels (VXLAN, GENEVE), but the code was using
-it directly as the inner Ethernet header length.
-Fixed by subtracting these from inner_l2_len to get the inner Ethernet
-header length.
+The patch starts out by introducing a version of the current
+FreeBSD queue.h named as bsd_queue.h, then uses it across all
+of DPDK. The file sys/queue.h is no longer used.
+Ends up doing one line change on lots of files.
 
-Second, inner L4 protocol detection failed when outer and inner L3 types
-differed. The parse_l4_proto() function used RTE_ETH_IS_IPV4_HDR()
-which checks the outer L3 type, even when parsing inner headers.
-For packets with IPv6 outer and IPv4 inner headers (or vice versa),
-this caused the inner L4 protocol to be undetected, preventing TSO.
+The patch fixes a couple of use after free cases in existing
+drivers. May require some manual effort to backport but
+not that hard.
 
-Fixed by checking the appropriate L3 type mask (outer vs inner) based
-on the parse_inner parameter.
+v3 - rebase
+   - fix netvsc
 
-Fixes: a738c43ffaee ("app/testpmd: fix tunnel inner info")
-Cc: stable@dpdk.org
+Stephen Hemminger (44):
+  net/nfp: fix use after free
+  eal: add BSD version of queue.h
+  test: remove unnecessary inclusion of sys/queue.h
+  test-pipeline: remove unnecessary use of sys/queue.h
+  test-eventdev: use rte_bsd_queue.h
+  test-bbdev, test-cmdline, test-mldev: don't use sys/queue.h
+  app/testpmd: use rte_bsd_queue.h
+  apps: use rte_bsd_queue.h
+  examples: replace use of sys/queue.h
+  ethdev: replace use of sys/queue.h
+  lib: remove use of sys/queue.h
+  drivers/bus: replace use of sys/queue.h
+  net/nfp: use rte_bsd_queue.h
+  net/qede: use rte_bsd_queue.h
+  net/bnxt: remove use of sys/queue.h
+  net/intel: remove use of sys/queue.h
+  net/mlx5: remove unnecessary include of sys/queue.h
+  net/mlx4: replace use of sys/queue.h
+  net/tap: remove unnecessary include of sys/queue.h
+  net/axgbe: replace use of sys/queue.h
+  net/bnx2x: replace use of sys/queue.h
+  net/bonding: replace use of sys/queue.h
+  net/cxgbe: replace use of sys/queue.h
+  net/enic: replace use of sys/queue.h
+  net/failsafe: replace use of sys/queue.h
+  net/memif: replace use of sys/queue.h
+  net/ngbe: replace use of sys/queue.h
+  net/ntnic: replace use of sys/queue.h
+  net/sfc: replace use of sys/queue.h
+  net/softnic: replace use of sys/queue.h
+  net/thunderx: replace use of sys/queue.h
+  net/txgbe: replace use of sys/queue.h
+  net/vdev_netvsc: replace use of sys/queue.h
+  net/vmxnet3: replace use of sys/queue.h
+  net/zxdh: replace use of sys/queue.h
+  net/dpaa2: replace use of sys/queue.h
+  net/mvpp2: replace local definition of FOREACH_SAFE
+  raw/ifpga: replace with TAILQ_FOREACH_SAFE
+  drivers/vdpa: replace use of sys/queue.h
+  drivers/common: remove use of sys/queue.h
+  drivers/crypto: remove use of sys_queue.h
+  drivers/event: remove include of sys/queue.h
+  eal: remove no longer used windows version of sys/queue.h
+  net/netvsc: use LIST_FOREACH_SAFE
 
-Signed-off-by: Shani Peretz <shperetz@nvidia.com>
----
- app/test-pmd/csumonly.c | 51 ++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 45 insertions(+), 6 deletions(-)
+ app/dumpcap/main.c                            |   2 +-
+ app/proc-info/main.c                          |   1 -
+ app/test-bbdev/main.h                         |   1 -
+ app/test-cmdline/cmdline_test.c               |   1 -
+ app/test-eventdev/evt_test.c                  |   2 +-
+ app/test-eventdev/evt_test.h                  |   1 -
+ app/test-mldev/ml_test.h                      |   1 -
+ app/test-pipeline/config.c                    |   1 -
+ app/test-pipeline/init.c                      |   1 -
+ app/test-pipeline/main.c                      |   1 -
+ app/test-pipeline/runtime.c                   |   1 -
+ app/test-pmd/5tswap.c                         |   2 -
+ app/test-pmd/cmdline.c                        |   2 +-
+ app/test-pmd/config.c                         |   2 +-
+ app/test-pmd/csumonly.c                       |   1 -
+ app/test-pmd/flowgen.c                        |   1 -
+ app/test-pmd/hairpin.c                        |   1 -
+ app/test-pmd/icmpecho.c                       |   1 -
+ app/test-pmd/iofwd.c                          |   1 -
+ app/test-pmd/macfwd.c                         |   1 -
+ app/test-pmd/macswap.c                        |   1 -
+ app/test-pmd/noisy_vnf.c                      |   1 -
+ app/test-pmd/parameters.c                     |   1 -
+ app/test-pmd/rxonly.c                         |   1 -
+ app/test-pmd/testpmd.c                        |   1 -
+ app/test-pmd/testpmd.h                        |   2 +-
+ app/test-pmd/txonly.c                         |   1 -
+ app/test/commands.c                           |   2 +-
+ app/test/test.c                               |   1 -
+ app/test/test.h                               |   2 +-
+ app/test/test_atomic.c                        |   1 -
+ app/test/test_cmdline_lib.c                   |   1 -
+ app/test/test_func_reentrancy.c               |   1 -
+ app/test/test_hash.c                          |   1 -
+ app/test/test_hash_functions.c                |   1 -
+ app/test/test_link_bonding.c                  |   1 -
+ app/test/test_link_bonding_mode4.c            |   1 -
+ app/test/test_link_bonding_rssconf.c          |   1 -
+ app/test/test_logs.c                          |   1 -
+ app/test/test_malloc.c                        |   1 -
+ app/test/test_mbuf.c                          |   1 -
+ app/test/test_mcslock.c                       |   1 -
+ app/test/test_mempool.c                       |   1 -
+ app/test/test_mempool_perf.c                  |   1 -
+ app/test/test_memzone.c                       |   1 -
+ app/test/test_mp_secondary.c                  |   1 -
+ app/test/test_per_lcore.c                     |   1 -
+ app/test/test_pflock.c                        |   1 -
+ app/test/test_ring.c                          |   1 -
+ app/test/test_rwlock.c                        |   1 -
+ app/test/test_soring.c                        |   1 -
+ app/test/test_spinlock.c                      |   1 -
+ app/test/test_tailq.c                         |   1 -
+ app/test/test_ticketlock.c                    |   1 -
+ app/test/test_timer.c                         |   1 -
+ doc/guides/contributing/coding_style.rst      |   4 +-
+ doc/guides/rel_notes/release_25_11.rst        |   3 +
+ drivers/bus/auxiliary/auxiliary_common.c      |   2 +-
+ drivers/bus/auxiliary/private.h               |   2 +-
+ drivers/bus/fslmc/bus_fslmc_driver.h          |   1 -
+ drivers/bus/fslmc/fslmc_vfio.c                |   1 +
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |  11 +-
+ drivers/bus/ifpga/ifpga_bus.c                 |   2 +-
+ drivers/bus/pci/bsd/pci.c                     |   2 +-
+ drivers/bus/pci/pci_common.c                  |   1 -
+ drivers/bus/pci/pci_params.c                  |   2 -
+ drivers/bus/pci/windows/pci.c                 |   3 +-
+ drivers/bus/pci/windows/pci_netuio.c          |   2 -
+ drivers/bus/platform/platform.c               |   2 +-
+ drivers/bus/vdev/vdev.c                       |   1 -
+ drivers/bus/vmbus/vmbus_common.c              |   1 -
+ drivers/common/cnxk/roc_bphy_irq.c            |   3 +-
+ drivers/common/cnxk/roc_npc.h                 |   2 -
+ drivers/common/mlx5/mlx5_common_mr.h          |   3 +-
+ drivers/crypto/bcmfs/bcmfs_device.c           |   2 +-
+ drivers/crypto/bcmfs/bcmfs_device.h           |   2 -
+ drivers/crypto/ccp/ccp_crypto.c               |   1 -
+ drivers/crypto/ccp/ccp_dev.c                  |   2 +-
+ drivers/event/dlb2/dlb2_selftest.c            |   1 -
+ drivers/event/opdl/opdl_test.c                |   1 -
+ drivers/event/sw/sw_evdev_selftest.c          |   1 -
+ drivers/net/axgbe/axgbe_common.h              |   1 -
+ drivers/net/bnx2x/bnx2x_ethdev.h              |   1 -
+ drivers/net/bnxt/bnxt.h                       |   1 -
+ drivers/net/bnxt/bnxt_filter.c                |   7 +-
+ drivers/net/bnxt/bnxt_flow.c                  |   1 -
+ drivers/net/bnxt/bnxt_vnic.h                  |   1 -
+ drivers/net/bnxt/tf_ulp/bnxt_ulp.h            |   1 -
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c      |   1 -
+ drivers/net/bonding/eth_bond_private.h        |   1 -
+ drivers/net/bonding/rte_eth_bond_flow.c       |   1 -
+ drivers/net/cxgbe/cxgbe_ethdev.c              |   2 +-
+ drivers/net/cxgbe/cxgbe_main.c                |   1 -
+ drivers/net/cxgbe/sge.c                       |   1 -
+ drivers/net/dpaa2/dpaa2_flow.c                |   1 -
+ drivers/net/dpaa2/dpaa2_mux.c                 |   1 -
+ drivers/net/dpaa2/dpaa2_ptp.c                 |   1 -
+ drivers/net/enic/enic.h                       |   1 -
+ drivers/net/failsafe/failsafe_flow.c          |   1 -
+ drivers/net/failsafe/failsafe_private.h       |   2 +-
+ drivers/net/intel/cpfl/cpfl_flow_engine_fxp.c |   1 -
+ drivers/net/intel/e1000/e1000_ethdev.h        |   1 -
+ drivers/net/intel/e1000/em_ethdev.c           |   1 -
+ drivers/net/intel/e1000/em_rxtx.c             |   1 -
+ drivers/net/intel/e1000/igb_ethdev.c          |   2 +-
+ drivers/net/intel/e1000/igb_flow.c            |   2 +-
+ drivers/net/intel/e1000/igb_rxtx.c            |   1 -
+ drivers/net/intel/i40e/i40e_ethdev.c          |   9 +-
+ drivers/net/intel/i40e/i40e_ethdev.h          |   1 -
+ drivers/net/intel/i40e/i40e_fdir.c            |   2 +-
+ drivers/net/intel/i40e/i40e_flow.c            |   1 -
+ drivers/net/intel/i40e/i40e_hash.c            |   1 -
+ drivers/net/intel/i40e/i40e_pf.c              |   1 -
+ drivers/net/intel/i40e/i40e_rxtx.c            |   1 -
+ drivers/net/intel/iavf/iavf.h                 |   1 -
+ drivers/net/intel/iavf/iavf_ethdev.c          |   1 -
+ drivers/net/intel/iavf/iavf_fdir.c            |   1 -
+ drivers/net/intel/iavf/iavf_fsub.c            |   1 -
+ drivers/net/intel/iavf/iavf_generic_flow.c    |   1 -
+ drivers/net/intel/iavf/iavf_hash.c            |   1 -
+ drivers/net/intel/iavf/iavf_rxtx.c            |   1 -
+ drivers/net/intel/iavf/iavf_vchnl.c           |   7 -
+ drivers/net/intel/ice/base/ice_osdep.h        |   2 +-
+ drivers/net/intel/ice/ice_acl_filter.c        |   1 -
+ drivers/net/intel/ice/ice_dcf.c               |   2 +-
+ drivers/net/intel/ice/ice_dcf_ethdev.c        |   1 -
+ drivers/net/intel/ice/ice_ethdev.c            |   8 +-
+ drivers/net/intel/ice/ice_generic_flow.c      |   1 -
+ drivers/net/intel/ice/ice_hash.c              |   1 -
+ drivers/net/intel/ice/ice_switch_filter.c     |   1 -
+ drivers/net/intel/idpf/base/idpf_osdep.h      |   9 +-
+ drivers/net/intel/ipn3ke/ipn3ke_ethdev.h      |   1 -
+ drivers/net/intel/ipn3ke/ipn3ke_flow.c        |   1 -
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c        |   2 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   1 -
+ drivers/net/intel/ixgbe/ixgbe_fdir.c          |   2 +-
+ drivers/net/intel/ixgbe/ixgbe_flow.c          |   2 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c          |   1 -
+ drivers/net/memif/memif_socket.h              |   1 -
+ drivers/net/memif/rte_eth_memif.h             |   1 -
+ drivers/net/mlx4/mlx4.h                       |   1 -
+ drivers/net/mlx4/mlx4_flow.c                  |   2 +-
+ drivers/net/mlx4/mlx4_flow.h                  |   1 -
+ drivers/net/mlx4/mlx4_mr.h                    |   1 -
+ drivers/net/mlx4/mlx4_rxtx.h                  |   1 -
+ drivers/net/mlx5/hws/mlx5dr_internal.h        |   1 -
+ drivers/net/mlx5/linux/mlx5_verbs.c           |   1 -
+ drivers/net/mlx5/mlx5.h                       |   2 +-
+ drivers/net/mlx5/mlx5_devx.c                  |   1 -
+ drivers/net/mlx5/mlx5_flow.c                  |   2 +-
+ drivers/net/mlx5/mlx5_flow.h                  |   2 +-
+ drivers/net/mlx5/mlx5_flow_dv.c               |   1 -
+ drivers/net/mlx5/mlx5_flow_verbs.c            |   2 +-
+ drivers/net/mlx5/mlx5_rx.h                    |   1 -
+ drivers/net/mlx5/mlx5_rxq.c                   |   2 +-
+ drivers/net/mlx5/mlx5_rxtx.h                  |   1 -
+ drivers/net/mlx5/mlx5_tx.h                    |   1 -
+ drivers/net/mvpp2/mrvl_mtr.c                  |   8 +-
+ drivers/net/netvsc/hn_ethdev.c                |   4 +-
+ drivers/net/nfp/nfp_mtr.c                     |  12 +-
+ drivers/net/nfp/nfp_mtr.h                     |   1 +
+ drivers/net/ngbe/ngbe_ethdev_vf.c             |   1 -
+ drivers/net/ngbe/ngbe_rxtx.c                  |   1 -
+ drivers/net/ntnic/ntnic_ethdev.c              |   2 -
+ drivers/net/qede/qede_ethdev.h                |   3 +-
+ drivers/net/qede/qede_filter.c                |   6 -
+ drivers/net/sfc/sfc_dp.c                      |   2 +-
+ drivers/net/sfc/sfc_dp.h                      |   1 -
+ .../net/softnic/rte_eth_softnic_internals.h   |   1 -
+ drivers/net/tap/rte_eth_tap.h                 |   1 -
+ drivers/net/tap/tap_flow.c                    |   1 -
+ drivers/net/thunderx/base/nicvf_bsvf.h        |   2 +-
+ drivers/net/thunderx/base/nicvf_plat.h        |   1 +
+ drivers/net/thunderx/nicvf_ethdev.c           |   1 -
+ drivers/net/txgbe/txgbe_ethdev_vf.c           |   1 -
+ drivers/net/txgbe/txgbe_fdir.c                |   2 +-
+ drivers/net/txgbe/txgbe_flow.c                |   2 +-
+ drivers/net/txgbe/txgbe_rxtx.c                |   1 -
+ drivers/net/vdev_netvsc/vdev_netvsc.c         |   2 +-
+ drivers/net/vmxnet3/vmxnet3_ethdev.c          |   1 -
+ drivers/net/vmxnet3/vmxnet3_rxtx.c            |   1 -
+ drivers/net/zxdh/zxdh_mtr.h                   |   1 -
+ drivers/raw/ifpga/base/ifpga_enumerate.c      |   6 +-
+ drivers/raw/ifpga/base/opae_hw_api.h          |   1 -
+ drivers/raw/ifpga/base/opae_intel_max10.c     |   8 +-
+ .../raw/ifpga/base/osdep_rte/osdep_generic.h  |   1 +
+ drivers/vdpa/mlx5/mlx5_vdpa.h                 |   3 +-
+ drivers/vdpa/sfc/sfc_vdpa.c                   |   2 +-
+ drivers/vdpa/sfc/sfc_vdpa.h                   |   2 +-
+ examples/bbdev_app/main.c                     |   2 +-
+ examples/bond/main.c                          |   2 +-
+ examples/cmdline/main.c                       |   1 -
+ examples/cmdline/parse_obj_list.h             |   2 +-
+ examples/flow_filtering/main.c                |   1 -
+ examples/helloworld/main.c                    |   2 +-
+ examples/ip_fragmentation/main.c              |   2 +-
+ examples/ip_pipeline/action.h                 |   2 +-
+ examples/ip_pipeline/cryptodev.h              |   2 +-
+ examples/ip_pipeline/link.h                   |   2 +-
+ examples/ip_pipeline/mempool.h                |   2 +-
+ examples/ip_pipeline/pipeline.h               |   2 +-
+ examples/ip_pipeline/swq.h                    |   2 +-
+ examples/ip_pipeline/tap.h                    |   2 +-
+ examples/ip_pipeline/tmgr.h                   |   2 +-
+ examples/ip_reassembly/main.c                 |   2 +-
+ examples/ipsec-secgw/ipsec-secgw.c            |   2 +-
+ examples/ipv4_multicast/main.c                |   2 +-
+ examples/l2fwd-crypto/main.c                  |   2 +-
+ examples/l2fwd-event/l2fwd_common.h           |   1 -
+ examples/l2fwd-keepalive/ka-agent/main.c      |   1 -
+ examples/l2fwd-keepalive/main.c               |   2 +-
+ examples/l2fwd-macsec/main.c                  |   2 +-
+ examples/l2fwd/main.c                         |   2 +-
+ examples/l3fwd-graph/main.c                   |   2 +-
+ examples/l3fwd-power/main.c                   |   2 +-
+ examples/l3fwd/l3fwd_em.c                     |   1 -
+ examples/l3fwd/l3fwd_lpm.c                    |   1 -
+ examples/l3fwd/main.c                         |   2 +-
+ examples/link_status_interrupt/main.c         |   2 +-
+ .../client_server_mp/mp_client/client.c       |   1 -
+ .../client_server_mp/mp_server/init.c         |   1 -
+ .../client_server_mp/mp_server/main.c         |   2 +-
+ examples/multi_process/hotplug_mp/main.c      |   1 -
+ examples/multi_process/simple_mp/main.c       |   2 +-
+ examples/multi_process/symmetric_mp/main.c    |   2 +-
+ examples/server_node_efd/efd_node/node.c      |   1 -
+ examples/server_node_efd/efd_server/init.c    |   1 -
+ examples/server_node_efd/efd_server/main.c    |   1 -
+ examples/service_cores/main.c                 |   1 -
+ examples/timer/main.c                         |   2 +-
+ examples/vhost/main.h                         |   2 +-
+ examples/vm_power_manager/channel_manager.c   |   2 +-
+ examples/vm_power_manager/channel_monitor.c   |   2 +-
+ examples/vm_power_manager/main.c              |   2 +-
+ examples/vmdq/main.c                          |   2 +-
+ examples/vmdq_dcb/main.c                      |   2 +-
+ lib/acl/rte_acl_osdep.h                       |   1 -
+ lib/bbdev/rte_bbdev.c                         |   2 +-
+ lib/bpf/bpf_load_elf.c                        |   1 -
+ lib/bpf/bpf_pkt.c                             |   3 +-
+ lib/cryptodev/cryptodev_pmd.c                 |   1 -
+ lib/cryptodev/rte_cryptodev.c                 |   1 -
+ lib/distributor/rte_distributor.c             |   2 +-
+ lib/distributor/rte_distributor_single.c      |   2 +-
+ lib/eal/common/eal_common_bus.c               |   2 +-
+ lib/eal/common/eal_common_class.c             |   2 +-
+ lib/eal/common/eal_common_dev.c               |   2 +-
+ lib/eal/common/eal_common_tailqs.c            |   2 +-
+ lib/eal/common/eal_common_trace.c             |   2 +-
+ lib/eal/common/eal_private.h                  |   2 +-
+ lib/eal/common/malloc_elem.c                  |   2 +-
+ lib/eal/common/malloc_elem.h                  |   1 +
+ lib/eal/common/malloc_heap.c                  |   2 +-
+ lib/eal/common/malloc_heap.h                  |   2 +-
+ lib/eal/common/rte_malloc.c                   |   2 +-
+ lib/eal/freebsd/eal.c                         |   2 +-
+ lib/eal/freebsd/eal_interrupts.c              |   2 +-
+ lib/eal/freebsd/eal_thread.c                  |   2 +-
+ lib/eal/freebsd/include/rte_os.h              |  10 -
+ lib/eal/include/dev_driver.h                  |   1 +
+ lib/eal/include/meson.build                   |   1 +
+ .../sys/queue.h => include/rte_bsd_queue.h}   | 670 ++++++++++++------
+ lib/eal/include/rte_class.h                   |   1 +
+ lib/eal/include/rte_devargs.h                 |   1 +
+ lib/eal/include/rte_tailq.h                   |  10 +
+ lib/eal/linux/eal_alarm.c                     |   2 +-
+ lib/eal/linux/eal_interrupts.c                |   2 +-
+ lib/eal/linux/include/rte_os.h                |   3 +-
+ lib/eal/windows/eal_alarm.c                   |   2 +-
+ lib/eal/windows/include/rte_os.h              |  27 -
+ lib/efd/rte_efd.c                             |   1 -
+ lib/ethdev/ethdev_private.h                   |   3 +-
+ lib/ethdev/rte_ethdev.c                       |   2 +-
+ lib/fib/rte_fib.c                             |   1 -
+ lib/fib/rte_fib6.c                            |   1 -
+ lib/graph/graph_private.h                     |   1 -
+ lib/hash/rte_cuckoo_hash.c                    |   1 -
+ lib/hash/rte_fbk_hash.c                       |   1 -
+ lib/hash/rte_thash.c                          |   1 -
+ lib/ip_frag/ip_frag_common.h                  |   3 +-
+ lib/log/log.c                                 |   2 +-
+ lib/lpm/rte_lpm.c                             |   1 -
+ lib/lpm/rte_lpm6.c                            |   1 -
+ lib/mbuf/rte_mbuf_dyn.c                       |   1 -
+ lib/mempool/rte_mempool.c                     |   1 -
+ lib/mempool/rte_mempool.h                     |   1 +
+ lib/pipeline/rte_swx_ctl.c                    |   1 -
+ lib/pipeline/rte_swx_pipeline_internal.h      |   3 +-
+ lib/pmu/pmu.c                                 |   1 -
+ lib/reorder/rte_reorder.c                     |   1 -
+ lib/rib/rte_rib.c                             |   1 -
+ lib/rib/rte_rib6.c                            |   1 -
+ lib/ring/rte_ring.c                           |   1 -
+ lib/stack/rte_stack.c                         |   1 -
+ lib/vhost/fd_man.h                            |   1 -
+ lib/vhost/socket.c                            |   2 +-
+ lib/vhost/vdpa.c                              |   2 -
+ lib/vhost/vhost.h                             |   2 +-
+ 298 files changed, 604 insertions(+), 616 deletions(-)
+ rename lib/eal/{windows/include/sys/queue.h => include/rte_bsd_queue.h} (52%)
 
-diff --git a/app/test-pmd/csumonly.c b/app/test-pmd/csumonly.c
-index a6e872e5a4..17e2af9a65 100644
---- a/app/test-pmd/csumonly.c
-+++ b/app/test-pmd/csumonly.c
-@@ -529,8 +529,24 @@ static uint8_t
- parse_l4_proto(const struct rte_mbuf *m, uint32_t off, uint32_t ptype, bool parse_inner)
- {
- 	int frag = 0, ret;
-+	bool is_ipv4, is_ipv6;
-+
-+	if (parse_inner) {
-+		/* Check inner L3 type for tunneled packets */
-+		uint32_t inner_l3 = ptype & RTE_PTYPE_INNER_L3_MASK;
-+		is_ipv4 = (inner_l3 == RTE_PTYPE_INNER_L3_IPV4) ||
-+			  (inner_l3 == RTE_PTYPE_INNER_L3_IPV4_EXT) ||
-+			  (inner_l3 == RTE_PTYPE_INNER_L3_IPV4_EXT_UNKNOWN);
-+		is_ipv6 = (inner_l3 == RTE_PTYPE_INNER_L3_IPV6) ||
-+			  (inner_l3 == RTE_PTYPE_INNER_L3_IPV6_EXT) ||
-+			  (inner_l3 == RTE_PTYPE_INNER_L3_IPV6_EXT_UNKNOWN);
-+	} else {
-+		/* Check outer L3 type */
-+		is_ipv4 = RTE_ETH_IS_IPV4_HDR(ptype);
-+		is_ipv6 = RTE_ETH_IS_IPV6_HDR(ptype);
-+	}
- 
--	if (RTE_ETH_IS_IPV4_HDR(ptype)) {
-+	if (is_ipv4) {
- 		const struct rte_ipv4_hdr *ip4h;
- 		struct rte_ipv4_hdr ip4h_copy;
- 		ip4h = rte_pktmbuf_read(m, off, sizeof(*ip4h), &ip4h_copy);
-@@ -538,7 +554,7 @@ parse_l4_proto(const struct rte_mbuf *m, uint32_t off, uint32_t ptype, bool pars
- 			return 0;
- 
- 		return ip4h->next_proto_id;
--	} else if (RTE_ETH_IS_IPV6_HDR(ptype)) {
-+	} else if (is_ipv6) {
- 		const struct rte_ipv6_hdr *ip6h;
- 		struct rte_ipv6_hdr ip6h_copy;
- 		ip6h = rte_pktmbuf_read(m, off, sizeof(*ip6h), &ip6h_copy);
-@@ -552,9 +568,15 @@ parse_l4_proto(const struct rte_mbuf *m, uint32_t off, uint32_t ptype, bool pars
- 			return ip6h->proto;
- 
- 		off += sizeof(struct rte_ipv6_hdr);
-+		/* Check offset before parsing extension headers. */
-+		if (off >= m->pkt_len)
-+			return 0;
- 		ret = rte_net_skip_ip6_ext(ip6h->proto, m, &off, &frag);
- 		if (ret < 0)
- 			return 0;
-+		/* Ensure offset is valid after skipping IPv6 extension headers. */
-+		if (off > m->pkt_len)
-+			return 0;
- 		return ret;
- 	}
- 
-@@ -703,7 +725,21 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
- 		if (txp->parse_tunnel && RTE_ETH_IS_TUNNEL_PKT(ptype) != 0) {
- 			info.is_tunnel = 1;
- 			update_tunnel_outer(&info);
--			info.l2_len = hdr_lens.inner_l2_len;
-+			/* For tunnels with inner L2 (e.g., VXLAN, GENEVE with Ethernet),
-+			 * inner_l2_len includes outer L4 + tunnel headers.
-+			 * Subtract them to get only inner L2 length.
-+			 * For tunnels without inner L2, inner_l2_len already contains
-+			 * only headers before inner L3, no adjustment needed.
-+			 */
-+			if (ptype & RTE_PTYPE_INNER_L2_MASK) {
-+				if (unlikely(hdr_lens.inner_l2_len <
-+					     hdr_lens.l4_len + hdr_lens.tunnel_len))
-+					info.l2_len = 0;
-+				else
-+					info.l2_len = hdr_lens.inner_l2_len -
-+						hdr_lens.l4_len - hdr_lens.tunnel_len;
-+			} else
-+				info.l2_len = hdr_lens.inner_l2_len;
- 			info.l3_len = hdr_lens.inner_l3_len;
- 			info.l4_len = hdr_lens.inner_l4_len;
- 			eth_hdr = (struct rte_ether_hdr *)((char *)l3_hdr +
-@@ -714,11 +750,14 @@ pkt_burst_checksum_forward(struct fwd_stream *fs)
- 		}
- 		/* update l3_hdr and outer_l3_hdr if a tunnel was parsed */
- 		if (info.is_tunnel) {
--			uint16_t l3_off = info.outer_l2_len +  info.outer_l3_len + info.l2_len;
-+			uint16_t l3_off = info.outer_l2_len +  info.outer_l3_len +
-+				hdr_lens.l4_len + hdr_lens.tunnel_len + info.l2_len;
- 
- 			outer_l3_hdr = l3_hdr;
--			l3_hdr = (char *)l3_hdr + info.outer_l3_len + info.l2_len;
--			info.l4_proto = parse_l4_proto(m, l3_off, ptype, true);
-+			l3_hdr = (char *)eth_hdr + info.l2_len;
-+			/* Validate offset is within packet bounds before parsing */
-+			if (l3_off < info.pkt_len)
-+				info.l4_proto = parse_l4_proto(m, l3_off, ptype, true);
- 		}
- 		/* step 2: depending on user command line configuration,
- 		 * recompute checksum either in software or flag the
 -- 
-2.34.1
+2.51.0
 
