@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B8FCCFA03
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FEFCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:52:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 72AC840E39;
-	Mon,  3 Nov 2025 17:50:05 +0100 (CET)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com
- [209.85.210.172])
- by mails.dpdk.org (Postfix) with ESMTP id 6703940E15
- for <dev@dpdk.org>; Mon,  3 Nov 2025 17:50:00 +0100 (CET)
-Received: by mail-pf1-f172.google.com with SMTP id
- d2e1a72fcca58-7aab7623f42so1671897b3a.2
- for <dev@dpdk.org>; Mon, 03 Nov 2025 08:50:00 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 44F7B40E0B;
+	Mon,  3 Nov 2025 17:50:06 +0100 (CET)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
+ [209.85.215.177])
+ by mails.dpdk.org (Postfix) with ESMTP id E6DC740E1B
+ for <dev@dpdk.org>; Mon,  3 Nov 2025 17:50:01 +0100 (CET)
+Received: by mail-pg1-f177.google.com with SMTP id
+ 41be03b00d2f7-b550eff972eso3219869a12.3
+ for <dev@dpdk.org>; Mon, 03 Nov 2025 08:50:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188599;
- x=1762793399; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188601;
+ x=1762793401; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=hKROHCMShd0ZvpI/xvgk7qQfwcFjOGYYUigrzpGergQ=;
- b=AnSJLsNAv/uC2WfY1Da/4F3OIPj5O/xhUUaZ8phnkburh1FWLOSMPYyxwNHeMT+UT3
- LBaNycuMYp+/+2YbcCUd+oRhag+0OlGKlY5FIZ1QFe2EcL5VA13BQlLp8F2n6nBW/HIg
- EJCBtpHBPRH6wlKrWV5eaxa2YcD0VF4Q784oegkf22+PEjw6XyGrcZIg+XBSQAUylP0j
- ELL7Xyezij2/afl7Ha5FvOaWnhIhxiu/h1w1ca8chixjHsjW4AAQaYbfJ7Np+sXHaewl
- H4d8lRaaa51+zghP5Y4WYC9trRpezX+62MG8coaaGeutF/MpLlRDce3IGTfFDpfFCq01
- agtg==
+ bh=pTapQFEAoeO/8oxjeez6TESRp6yHCQHzsLcSQ/gXyds=;
+ b=oM68UPjrO0FhygWyIBcr/MpUHS9sKtfxK2W9QJ13rMU/WsD806ZIQQdsms0v0ZZY3p
+ Lm4cAcBFIEQJJtby+0OcMRz/XW3Bxsv51eTOfu/quogbwpgVTRPez0FaVM2R0fJV3D2z
+ XI88YOR0D6jA9TVSSrlMZyN+uyR0Z+UG7BkISPk7BA3FlLYXbi/tKlhHjYwNVE7hkI4e
+ 58z2mqHX9vL1M4mrQev51zhg5bnR/iHdKyyGprW8wthvuVgZRUJZI+RLyO/EBo3wyPJP
+ +NUKvyNgxR7khgQlVnO8GRRvVo74aE3hI6flEskTSmAziL+nJgqamsX3iAguAPtZD+wu
+ 4oYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762188599; x=1762793399;
+ d=1e100.net; s=20230601; t=1762188601; x=1762793401;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=hKROHCMShd0ZvpI/xvgk7qQfwcFjOGYYUigrzpGergQ=;
- b=QP+OR/Zean44y7xsIfgyxq7B8qynxiaYFF8jIO+x9pEcjGGRtTTY53brIDYYbQLm64
- Tr82mxU1UxOi5Po1pZaszTqiMEDyYC8o0LGlildtNPmSLNQpOfwFBVH99XqS+kTTLipQ
- X7XDLJ9txwAO2+5tRdGoBpC7CgfuQwzPpyYskBfAp40R8AjpRr334RwhFfpvy3vUqHRe
- PGZ6Ac5nEv6tkV4nipZIIRTghSPNoVKsVdwrmAlqhlSq40/HtiL25CR/bAVFLjyC0DcK
- hG6qxcckdcKQlZ/FZ9l8epl8o+W1jW8YlCwn+SvvNYb5jGD2bi3nyhNg7ro7dITmcsbQ
- Ivcg==
-X-Gm-Message-State: AOJu0Ywwsgc+AtXkFw12l+aM4a6ZclhRJ6HgdPiyKpOyrVcwkzVWFNNc
- zWWXx63rP/cFOgO4f63tUi4bhhLUp58JT/13dD14XAyb5pHSPGrMAdwky9On9NB9gbxWBbLsXqj
- qlolD
-X-Gm-Gg: ASbGncuPW+JLlxE3SeDt+Rf6cyQkmlIfCs3UdknzA3ORhVy3+dv4DidqAmCkRnAajA4
- i21ZEUYpSE8/xJY1ftwGOKbT/R2KBxMrquuMijmvJyP8d5QHyX0cEbAkkVBqT0CdpsDpbrplM8L
- GMrR1HM60azP7aS//mhJ7i1zUcL3X/6ui6K35fXndmZAXQv7QCLhduJu0bmEu5gaL8rScEhvjkF
- fkzmhLqpOqd+IZfKUcMg4Tplt5g5duCF3YyLl/a7FjUoItF4P6jsRB7aVrzb+hHeUSUteWw/ZuT
- DQXFB8xBkT4O3T8YarNfSU1LazcWjSxrphTO7A3p6n2vsicIMjxRIPM5lAFsNJBPJifVxScFH36
- 3H4cU8ns3+PIjcBdXACA7CuTGYscw/npmJupVcTU52R/q0S9nBB7QnmzfyV3XJoN+dtBg5Bf8+Z
- lIiUwALMDYJM+IRaAI03zLh9pmNSUbAmemZUZtCIuE18NuVlXcFw==
-X-Google-Smtp-Source: AGHT+IGnHCMgzUpLxOMrQ8GQfs4em8bH5HY6fzj/q78VZ2221Wlk1qbV0gbJtcsYNeG/nHftwgk6XA==
-X-Received: by 2002:a17:90b:2b50:b0:32b:9506:1780 with SMTP id
- 98e67ed59e1d1-34082fd996bmr14374975a91.9.1762188599604; 
- Mon, 03 Nov 2025 08:49:59 -0800 (PST)
+ bh=pTapQFEAoeO/8oxjeez6TESRp6yHCQHzsLcSQ/gXyds=;
+ b=LWJOmEZosPMuXsdfudD/VbiHWEQXD7VluJVL1VBVDocz4JSUf8VwjKkxX5vjRywhXu
+ T6WNPWXmBuozSzv0OVOoa6Nl5Lryuh0ZGYEBWsju3BPU4hYZ5Md3vdRLYUbB1y0/zxnH
+ upNj+eV0rFHKOfk7+17XUmmZ910qg318YkPmmbnhjZ2bwwxM6vXpMDpuGkzxxygHF1Qw
+ IS7NfD66K4HkMzyzePBgBi0zPnB/0+bbuF0AatSC85SWJ1r7alV9ndKbJnikbkZgAplK
+ u8SCbeE+LfzuVsGM5EKPMCFo1VaTn6Ge/2W22uviZ4V519rGEUDvnR/2qB+zABCc5pF9
+ ypxg==
+X-Gm-Message-State: AOJu0YwVLIv+3aYkPbolNWCoYfL1vJeJDNA7LFjfgCLQRbaxs6TGQxx1
+ 8hJu7Caop2xOWsIqm0HgrC41pIwqgqpKM9GYf2nKkpZDfEXRCjpKeayW04KaEINxZidW0uutA+v
+ hyTmE
+X-Gm-Gg: ASbGncucvmnxFaPGFdAkbn/RMy8aXKwtvr3WmPS3hEpUBw+Cp92HVkaZIYJNgAmQwn3
+ elqAta+eDxRtYIpHHCMX51X0DDlkw3JKYGtsnloeeYgRES066ayEGyL5G/EQ8lIjZjCs1HFhFcs
+ srqtt0uqo+rOsTQGHNI1nyqKpfpTLcnxgwEGMeIXHfwo8Unotsem4IymDS5iPnqh3/qozdSr4N/
+ qGRWrRdbI2cCX6+YimP58CHMcSlpQiMjTies9jiAXHFZQrbGUO+I3TvDEYvjsGUw0b+/k2gQZxu
+ tG/YUkF2xHmcx/Hr5qchJg5aB1NmOlfde6RrjaFC8dEKKjBmLCgn3sr+CkU5mYQCCGFWcrHFCvv
+ 63eTaWtxIwYpl/pFNhtb5KMTg2aNmzxYHk/Aj3N0+TMFw+bduDJTD5XvktQyu60K70WKvxB1fh5
+ k/nKITZePxHWej1fYXrydty1MrUxXXdb+m4/7dxoWfR4BV9F3k/w==
+X-Google-Smtp-Source: AGHT+IFfNnOlkzCVBbsZGleS1EsUnQ1QKey2wQfVq3815fWO8JWD5eDCFkhyAMQSBprxRtppaSJ/4g==
+X-Received: by 2002:a17:903:41cc:b0:295:7806:1d64 with SMTP id
+ d9443c01a7336-29578062796mr94009545ad.25.1762188600808; 
+ Mon, 03 Nov 2025 08:50:00 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.58
+ 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Nov 2025 08:49:59 -0800 (PST)
+ Mon, 03 Nov 2025 08:50:00 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jerin Jacob <jerinj@marvell.com>, Maciej Czekaj <mczekaj@marvell.com>
-Subject: [PATCH v3 31/44] net/thunderx: replace use of sys/queue.h
-Date: Mon,  3 Nov 2025 08:47:36 -0800
-Message-ID: <20251103164915.101713-32-stephen@networkplumber.org>
+ Jiawen Wu <jiawenwu@trustnetic.com>, Jian Wang <jianwang@trustnetic.com>,
+ Zaiyu Wang <zaiyuwang@trustnetic.com>
+Subject: [PATCH v3 32/44] net/txgbe: replace use of sys/queue.h
+Date: Mon,  3 Nov 2025 08:47:37 -0800
+Message-ID: <20251103164915.101713-33-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251103164915.101713-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -88,48 +89,62 @@ Replace use of system sys/queue.h with DPDK rte_bsd_queue.h
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/thunderx/base/nicvf_bsvf.h | 2 +-
- drivers/net/thunderx/base/nicvf_plat.h | 1 +
- drivers/net/thunderx/nicvf_ethdev.c    | 1 -
- 3 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/txgbe/txgbe_ethdev_vf.c | 1 -
+ drivers/net/txgbe/txgbe_fdir.c      | 2 +-
+ drivers/net/txgbe/txgbe_flow.c      | 2 +-
+ drivers/net/txgbe/txgbe_rxtx.c      | 1 -
+ 4 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/thunderx/base/nicvf_bsvf.h b/drivers/net/thunderx/base/nicvf_bsvf.h
-index 4c7615ca99..74019818e3 100644
---- a/drivers/net/thunderx/base/nicvf_bsvf.h
-+++ b/drivers/net/thunderx/base/nicvf_bsvf.h
-@@ -5,7 +5,7 @@
- #ifndef __THUNDERX_NICVF_BSVF_H__
- #define __THUNDERX_NICVF_BSVF_H__
+diff --git a/drivers/net/txgbe/txgbe_ethdev_vf.c b/drivers/net/txgbe/txgbe_ethdev_vf.c
+index 4be7c5d659..b7d0bf81f7 100644
+--- a/drivers/net/txgbe/txgbe_ethdev_vf.c
++++ b/drivers/net/txgbe/txgbe_ethdev_vf.c
+@@ -3,7 +3,6 @@
+  * Copyright(c) 2010-2017 Intel Corporation
+  */
  
 -#include <sys/queue.h>
-+#include <rte_bsd_queue.h>
- 
- struct nicvf;
- 
-diff --git a/drivers/net/thunderx/base/nicvf_plat.h b/drivers/net/thunderx/base/nicvf_plat.h
-index 8421f57040..ccc6aef0fc 100644
---- a/drivers/net/thunderx/base/nicvf_plat.h
-+++ b/drivers/net/thunderx/base/nicvf_plat.h
-@@ -6,6 +6,7 @@
- #define _THUNDERX_NICVF_H
- 
- /* Platform/OS/arch specific abstractions */
-+#include <rte_bsd_queue.h>
- 
- /* log */
- #include <rte_log.h>
-diff --git a/drivers/net/thunderx/nicvf_ethdev.c b/drivers/net/thunderx/nicvf_ethdev.c
-index 76ed76a045..d3457aa1bc 100644
---- a/drivers/net/thunderx/nicvf_ethdev.c
-+++ b/drivers/net/thunderx/nicvf_ethdev.c
-@@ -12,7 +12,6 @@
+ #include <stdio.h>
+ #include <errno.h>
+ #include <stdint.h>
+diff --git a/drivers/net/txgbe/txgbe_fdir.c b/drivers/net/txgbe/txgbe_fdir.c
+index 0efd43b59a..c1c6e3625f 100644
+--- a/drivers/net/txgbe/txgbe_fdir.c
++++ b/drivers/net/txgbe/txgbe_fdir.c
+@@ -7,7 +7,7 @@
+ #include <stdint.h>
  #include <stdarg.h>
- #include <inttypes.h>
- #include <netinet/in.h>
+ #include <errno.h>
+-#include <sys/queue.h>
++#include <rte_bsd_queue.h>
+ #include <rte_malloc.h>
+ 
+ #include "txgbe_logs.h"
+diff --git a/drivers/net/txgbe/txgbe_flow.c b/drivers/net/txgbe/txgbe_flow.c
+index 31af3593ed..660f479adf 100644
+--- a/drivers/net/txgbe/txgbe_flow.c
++++ b/drivers/net/txgbe/txgbe_flow.c
+@@ -3,7 +3,7 @@
+  * Copyright(c) 2010-2017 Intel Corporation
+  */
+ 
+-#include <sys/queue.h>
++#include <rte_bsd_queue.h>
+ #include <bus_pci_driver.h>
+ #include <rte_malloc.h>
+ #include <rte_flow.h>
+diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
+index 167bda8019..0bbbf19791 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.c
++++ b/drivers/net/txgbe/txgbe_rxtx.c
+@@ -3,7 +3,6 @@
+  * Copyright(c) 2010-2017 Intel Corporation
+  */
+ 
 -#include <sys/queue.h>
  
- #include <rte_alarm.h>
- #include <rte_branch_prediction.h>
+ #include <stdio.h>
+ #include <stdlib.h>
 -- 
 2.51.0
 
