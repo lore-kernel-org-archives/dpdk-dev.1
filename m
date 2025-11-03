@@ -2,69 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1039FCCFA03
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 132EDCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:51:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7129840DC9;
-	Mon,  3 Nov 2025 17:49:50 +0100 (CET)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 872A440B8C
- for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:46 +0100 (CET)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-340bb1cb9ddso2199343a91.2
- for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:46 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id DD5EE40BA4;
+	Mon,  3 Nov 2025 17:49:51 +0100 (CET)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
+ [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id 5618140B90
+ for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:47 +0100 (CET)
+Received: by mail-pj1-f54.google.com with SMTP id
+ 98e67ed59e1d1-340bb1cb9ddso2199353a91.2
+ for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188586;
  x=1762793386; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=BObaC8WUuvG2KwThOdqHfo02l/XzaVEj8lrRY2Byk8E=;
- b=D/6yTHcTZR3hr59xCF8zg1LvCUUexT0clLE4IyaNXzIoON6qdBEnJdSKSD1sk1wmp3
- ZhW/bixCRXzrWNw4IQFHxgo5ubothnatqxmz36e5W/mrbhzj4mpuuS8C0wmQ9sHkx9BQ
- 36WPHBz/n4nTbaT/hblKg+dN2/6S7PfQVTi7Dyw1vuvaeJlEFNlnRKSVENtZ6jTpa3aZ
- JF4OjXVmyl63sx2wQ0b6M0x04wZEv0zPg3z7+FRRwNOPEVraf00zEbUsyHIgvOIUxozv
- Piciq3H39IvpOOdCRnJpFMBz51UaoA8L5xeFTr4W+2CFsquUzW0Gv4wxC2U1+ZIFXBmi
- uSzQ==
+ bh=YglZsCzvEiGOjd106ngvPm0GHR6iymv9yQJ2WKUg5wY=;
+ b=3Zc9pyaTgCPb0fBaxoqSS0fkafihL5hNOLp27+Zthytfw0hws329s6mrr5zcOgo+Se
+ +pXb4XgigHnHU2Ak7+7KpUCoIIDDnXdjailJJ2esc3jIB+HahhR3vlzmaOCceBiyox6t
+ FDt20xfDJ4Km17ArlokVUHOpaaC4wJdwexUozV1DgW9TA6QOVKdk/4DzhM0jEkrs0Rj+
+ S7ethcz2lHtEhp9QAL9YzxGIzXUTkcIrF8srvKaO6mfRiK5omzbQDimI3uq/grT8nU5z
+ ipKWqiLM9m/ufgqsrC5YgkZpHAHErxcYvt2G5TltJMiuKELkRNQ6814UW6npi/Qnm9wc
+ GP1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20230601; t=1762188586; x=1762793386;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=BObaC8WUuvG2KwThOdqHfo02l/XzaVEj8lrRY2Byk8E=;
- b=rLxabNPLtX4ENBaET7/Mh/lpAhvYggfzB2hJXGvPoVfNb/WglOkFaGgH9M6Oi2BUnf
- K7e4zpCsMJeX9+EfdK5473+pcRBY4T+A917eGMBEUUGaYvO4Mgd+KqSvZsxNMJMLU+67
- l3FHgOTJlcUjOzMN6AXlVRV5EjQByx+LJwdNLx9EuakbgjdkMedAx5gXvJtLEx1rcDd3
- 8oq1M8OickgSycCcFKLYwLtRSim+ZiWEQLhDj3lo3P47fGWgyKNJHoyEVmkEsXp8eTRm
- NGGK68L7e0hhqRFXp35ncF0Y88PPc/ieQz0b8EdqwUx0pDE5mIa6cEwEOG081EQZFCYl
- h+6g==
-X-Gm-Message-State: AOJu0YybrJrCTx6C85NhbpTc/MkbsxRaKX/sTvoJHEt7b7rqjR8TW49j
- k9D5Bz7dsBTdEVtrDokLI3IIOZmKjoE9lZHQZfF2eYL6cbhk83JGw6u7fIaVB3b6Swl2pylvZMP
- P4Fem
-X-Gm-Gg: ASbGncspcG7c3IUp9Sl5QETKO+EfO4gapvCWoX7uPFPMU8/wclf873BZBfYSDUvNO45
- dM6UYPQLZTpxiKNNym2YjJOLLaS1qVsu0EWJ2bJcfHQE8ssNx7KhyloXE439LgZ23l1jRFL80h4
- Cw0p0m0pCiEept33HRs7BHv9bYqy/JGem9/7B6bW/haVCBJNsj5xUGM9RgOISQUsFyuria2QZgL
- 2xFmu/0+PMjMs/kN6ymxRz5e3haOIprTPl4Sd8u3cI4riNaxWom8ksdEaBsY8vR+wzEKVrivYDz
- tlbh3m/uF5J0xV0MUPv8qLU8E0PaFHM0l6pKWukXSIjlgTKP4WQhFuvsknjGFo5qjVE0yAt6hIe
- rqI6vUFPwNv7UFKDwbL6ezm/fUGT+JtRF9lYqYRvLFY+JPFBQTFEihZnki6i98BSR8LziGEm4+D
- Ifz+ZlJuLWwXZ9ofJ/UcugXiEaCK/cEyGH+EYk8PM=
-X-Google-Smtp-Source: AGHT+IHC9XpuJLu3K/XQii2qGvg5dawydheWYrDOkB6B5C4Z2eJ3/c8gCrM9avlWtNSSKpLj3pTq0Q==
-X-Received: by 2002:a17:90b:5150:b0:340:48f2:5e2d with SMTP id
- 98e67ed59e1d1-34082fc655dmr16231894a91.9.1762188585538; 
- Mon, 03 Nov 2025 08:49:45 -0800 (PST)
+ bh=YglZsCzvEiGOjd106ngvPm0GHR6iymv9yQJ2WKUg5wY=;
+ b=Z0/dgYnUYqdvOs/DL+TAlBcTjXf+j37jf1iXaEJfN7BqENyQYdMStX4vYphNFNQ9W3
+ 195CP7sGysuT1E3rG5cqpwz8wqZv0XRuo4+OzBH1YXvWrbjvd+XTH/X8/PwrR59oHDok
+ VB64YnSoFvAbydgBay3Rll20zPZBkwO5Zq6Jzf/DUAanZmNDc1kAQRcvseJVjLIMPivb
+ BoVhnO6ah6Xkm+uLtLjrDXh1vkdikHrXv6HRHYf9W4Voi6+84s0Qg2Ca9rd5mnPlI/QS
+ yWWSDhNdv4VZLlQPWgD6uoatTLrBSbPjcVsIaPnzS7w0TFksaaIbJ7NOo8lMXD7VHdL1
+ W2CA==
+X-Gm-Message-State: AOJu0YwLXy/lyfBvEAnrTJ+zTOfenCNdbx1mCXlNb8zVdRoNtaiNzmRF
+ OsXvwVHk+2PrmCn1Mb0naqE1RN16HaIh7S6+rushq8F6ofwkT8qx/JctVpvEmGBdBvCQXEJDdpl
+ 8fkfT
+X-Gm-Gg: ASbGncsn8GBkz521tP2+aAk4+9YJwiU1CooI9BdmMr7R4P5WBbcz0mFc+dtor+PGSrS
+ iIV/1KiPZXnDfAxUGK9VuiCPwIA+Ak52SvxpJcU7DxIuyYGpc+NIr4Ec/eQbflCN8u+SbsQ6Vpk
+ /ekgGBpiQx+xAplOTSrlzInxEXbUGWnIXX9SgbibUdDm6ykaG3p3luPn1MzXSZHiAAl5yImVfk/
+ vCCKMJ7Lm66GAA4/BzhNhMufJ3hx32xQ/FXb4nGmB+/HFTlxfi79VlgwFIR2eaXoIMQVbHnWhXK
+ t4MGCSH25/QdpPlEeCyLAq/xVZJdiwJrxvJAyBODHmPOy4zKgEmw0O1eKBWz0SgfrZQj6qryRpG
+ VlIJA0cISbz2C98AiNjokk55f/kcuipVRDf/qIY3/J6D3bF/Hlg6xVYQISnJOr/kjCUWMFAxECx
+ Fb2Dxl50ssq+Me3OZ9ZrHPjBxypOxc0PeQY8GAhTY=
+X-Google-Smtp-Source: AGHT+IEUWooR8uQDDuy7nKIr0MGj39pLNmFGERGfQr5LKiMc4eBaVauF28ujnwHCvXV8tCjgn4vxdw==
+X-Received: by 2002:a17:90b:2882:b0:340:bc90:d9ad with SMTP id
+ 98e67ed59e1d1-340bc90db2cmr11319355a91.10.1762188586524; 
+ Mon, 03 Nov 2025 08:49:46 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.44
+ 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Nov 2025 08:49:45 -0800 (PST)
+ Mon, 03 Nov 2025 08:49:46 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Matan Azrad <matan@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>
-Subject: [PATCH v3 18/44] net/mlx4: replace use of sys/queue.h
-Date: Mon,  3 Nov 2025 08:47:23 -0800
-Message-ID: <20251103164915.101713-19-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 19/44] net/tap: remove unnecessary include of sys/queue.h
+Date: Mon,  3 Nov 2025 08:47:24 -0800
+Message-ID: <20251103164915.101713-20-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251103164915.101713-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -84,78 +82,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace use of system sys/queue.h with DPDK rte_bsd_queue.h
+The macros in sys/queue.h are not used here.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/mlx4/mlx4.h      | 1 -
- drivers/net/mlx4/mlx4_flow.c | 2 +-
- drivers/net/mlx4/mlx4_flow.h | 1 -
- drivers/net/mlx4/mlx4_mr.h   | 1 -
- drivers/net/mlx4/mlx4_rxtx.h | 1 -
- 5 files changed, 1 insertion(+), 5 deletions(-)
+ drivers/net/tap/rte_eth_tap.h | 1 -
+ drivers/net/tap/tap_flow.c    | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/drivers/net/mlx4/mlx4.h b/drivers/net/mlx4/mlx4.h
-index f68eeb991a..38ed78df9f 100644
---- a/drivers/net/mlx4/mlx4.h
-+++ b/drivers/net/mlx4/mlx4.h
-@@ -8,7 +8,6 @@
+diff --git a/drivers/net/tap/rte_eth_tap.h b/drivers/net/tap/rte_eth_tap.h
+index ce4322ad04..055a9e9b23 100644
+--- a/drivers/net/tap/rte_eth_tap.h
++++ b/drivers/net/tap/rte_eth_tap.h
+@@ -6,7 +6,6 @@
+ #ifndef _RTE_ETH_TAP_H_
+ #define _RTE_ETH_TAP_H_
  
+-#include <sys/queue.h>
+ #include <sys/uio.h>
+ #include <inttypes.h>
  #include <net/if.h>
- #include <stdint.h>
--#include <sys/queue.h>
- 
- /* Verbs headers do not support -pedantic. */
- #ifdef PEDANTIC
-diff --git a/drivers/net/mlx4/mlx4_flow.c b/drivers/net/mlx4/mlx4_flow.c
-index b520664d95..44181c0aa3 100644
---- a/drivers/net/mlx4/mlx4_flow.c
-+++ b/drivers/net/mlx4/mlx4_flow.c
-@@ -14,7 +14,7 @@
- #include <stddef.h>
- #include <stdint.h>
+diff --git a/drivers/net/tap/tap_flow.c b/drivers/net/tap/tap_flow.c
+index 9d4ef27a8a..90fab604c2 100644
+--- a/drivers/net/tap/tap_flow.c
++++ b/drivers/net/tap/tap_flow.c
+@@ -6,7 +6,6 @@
+ #include <errno.h>
  #include <string.h>
+ #include <unistd.h>
 -#include <sys/queue.h>
-+#include <rte_bsd_queue.h>
+ #include <sys/resource.h>
  
- /* Verbs headers do not support -pedantic. */
- #ifdef PEDANTIC
-diff --git a/drivers/net/mlx4/mlx4_flow.h b/drivers/net/mlx4/mlx4_flow.h
-index 5e82df6bd6..a27317432d 100644
---- a/drivers/net/mlx4/mlx4_flow.h
-+++ b/drivers/net/mlx4/mlx4_flow.h
-@@ -7,7 +7,6 @@
- #define RTE_PMD_MLX4_FLOW_H_
- 
- #include <stdint.h>
--#include <sys/queue.h>
- 
- /* Verbs headers do not support -pedantic. */
- #ifdef PEDANTIC
-diff --git a/drivers/net/mlx4/mlx4_mr.h b/drivers/net/mlx4/mlx4_mr.h
-index 56dd73ff19..7fef07d6f9 100644
---- a/drivers/net/mlx4/mlx4_mr.h
-+++ b/drivers/net/mlx4/mlx4_mr.h
-@@ -8,7 +8,6 @@
- 
- #include <stddef.h>
- #include <stdint.h>
--#include <sys/queue.h>
- 
- /* Verbs headers do not support -pedantic. */
- #ifdef PEDANTIC
-diff --git a/drivers/net/mlx4/mlx4_rxtx.h b/drivers/net/mlx4/mlx4_rxtx.h
-index 70f3cd8680..c68375b088 100644
---- a/drivers/net/mlx4/mlx4_rxtx.h
-+++ b/drivers/net/mlx4/mlx4_rxtx.h
-@@ -7,7 +7,6 @@
- #define MLX4_RXTX_H_
- 
- #include <stdint.h>
--#include <sys/queue.h>
- 
- /* Verbs headers do not support -pedantic. */
- #ifdef PEDANTIC
+ #include <rte_byteorder.h>
 -- 
 2.51.0
 
