@@ -2,125 +2,180 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 874B8CCFA03
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 15:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8699DCCFA03
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 15:51:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C81B4042F;
-	Mon,  3 Nov 2025 16:43:16 +0100 (CET)
-Received: from PH7PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11010021.outbound.protection.outlook.com [52.101.201.21])
- by mails.dpdk.org (Postfix) with ESMTP id A8D6C40281;
- Mon,  3 Nov 2025 16:43:14 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 93A82402F0;
+	Mon,  3 Nov 2025 16:51:07 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTP id AB53040281
+ for <dev@dpdk.org>; Mon,  3 Nov 2025 16:51:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1762185066; x=1793721066;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=L18VUVpiO0F2ejXC9X6Ul6MviWG8TGjUqYTTuifeWa8=;
+ b=BGXzNOcG1Irv0095OLok8sGfJ5IkFCTxz10VbmF9xHacBGPxukh/rKBC
+ YvcB9QoDfILnI55rwdSWOe91cfUpbutn2iIvuFC2EYnhYAqAhXYUy3A0T
+ i0SzVockV1iTgJGiiLsg+wW7GMBNQXk0iQrTYVaVjewzGEu4R+xhbdIcM
+ t+41vRrUV74G7zcXn8IWBw8BObYecGA8WMJ5d5C4jOpsYhrSoOjC6xAv8
+ dOJb/YWNi1iLdcsTIP2kduvIODa0bt/SPq3nc6G542N9OGfXKba9RkBKS
+ lqv1dsRIHol5oTTLL++8ZgDPu7bPKzqssd1cMH+ps3lo5uP0TyQS+TYgd Q==;
+X-CSE-ConnectionGUID: wwXql4z6SbC/Go9n2Ieomg==
+X-CSE-MsgGUID: tYoTJB8eQgOw0u340lPVsg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="74940620"
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; d="scan'208";a="74940620"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Nov 2025 07:51:05 -0800
+X-CSE-ConnectionGUID: xpi8Eb4VTuG4nx4vllGbcw==
+X-CSE-MsgGUID: ozfDhRmCTFGhvC8/Y9npXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; d="scan'208";a="186574221"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Nov 2025 07:51:04 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 3 Nov 2025 07:51:04 -0800
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 3 Nov 2025 07:51:04 -0800
+Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.69) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 3 Nov 2025 07:51:03 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hHH8CejzfEucthVt5SA4UJk3kGfQbG9TuuyjVrbBZI+pWsLB5XYaNua96pcUZY9F3EHPYgfWyTzEe+VNRamhYfgIi26JEYUec+6AM6+ofqE8lBtCUYVMB6daOAX8sIirx2iqjsvdOey73xH07eIqk9wTqiPVgIdTgoPz1XTFs4T++eglxeo6EuBp0uKKYngiT63P4bd04UahgG2OB9gR19aZ415Aq7jnu4YI+ooAo8SPF5vuIMtDDxhYTrWGQrngjNcPcS63D6Xj13iAb+sujet8bbtVzTzOsyWOzt90kHqmZ1+quG7cS9pWolL1VbFeqQcT8ZopTx71L8+2QhCj5w==
+ b=PKnYqFoq+NnbOFifSO+tkRSSF/Bh57Xl4Xty4IXJxUYLr53w5HBSGmOrDoslD0HLazQlKu3It1dhW2h78+7av2gcV58tuaQKm9xa9xJ4y3ZXikxWv0w5Y114MKODNou0JU8kPSZKUk1rZi8ekvo5MW5HwonCaPZmhmw/5RBSvfF46YLKMH3jxpDQp6yalwQuKwRlGfkEZdTJ2HFBbpbySmoF1K/e9Jg6yI0r+XZ/cbqUvjjPFUCiwazbdhJXccmfjdBUseBkzfMuNJjo91EUoOO3P+8CzQzCSVCBBDY1WPuawWQLaNB1uRoc0gORWf+O26VfvVLALrhkOkftq9YsTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RlL3QzOg+GvyF7vTFtXdr7wzbCaKvAvykhLimLsp5Dg=;
- b=wN7b5KHG5hWISUVklAucV/LKPW8qsCVSB7Xp52IpSOffmrUWjHDXCM/V+XASYGONuK/quL+swcE+2LnZenhD90oO2slhbtIjeKgoRSX/QCHjqvIdLLIt7JnczKHAezbwOdpunrUlQlcQWi4gF4wH3J2q4jcuZd5b5qTSMXm/yR74T0MDJnb0jGfYJ+ed+vmkq8LYyLKhrJo9AYG5op9CjrTT9gIM782KuaqpznVJtUzXFFZ8ONhdrKi7M0tZvaXctMkiN1dez5OrYRaGtR4rIbVTJCIcWTmr2x2rgBlgMarT9Vai/2PlpHGxO6dxhQ8YXScz/5NyArED/wAEBqYlWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RlL3QzOg+GvyF7vTFtXdr7wzbCaKvAvykhLimLsp5Dg=;
- b=Hycb9JVXF2glwBHXOcnhSf/ALgfNdMKpBW/3JJPIOi5dwVcskEgUtMk9eYJnY3/UntE0hd2otCDaXIbd0Edv+hHMOA3sEZ4HfwVPT/8ItelD7R/rCns1lgCLj6XH3f/W8VByhhA62AlSM12buITNTOb4wVE+KHRQw052QTvtud4YrFGPBpT8fFtxL9TCtGKpB2N5L6Cub35A4EAzQxE9SUngnyQNxWF7G884DIZdmiBrv5s/BtpyrScqSjMesyNig/YeDwWQeK+RwzqpWyxaKjjGcVwhJN8hMlc4jNRNBnu8Jlfjta6oDWtd1Mo13cZUA02qaAUskj8RaI/6ruOw5g==
-Received: from BN9P220CA0009.NAMP220.PROD.OUTLOOK.COM (2603:10b6:408:13e::14)
- by SJ0PR12MB6709.namprd12.prod.outlook.com (2603:10b6:a03:44a::20)
+ bh=EuZf3AZM+jje58Ly1ij9Xg6Qj2Rn0USLMoU/0h3mFT0=;
+ b=EIiy795DljxHJ3uLfZx8gF2mIiCEq72hoMgxO8qkvIxI0D00JrNa16J+P7PZtlPX49be2wHidX7cTQbYSmsRdPyG/Z97pk7Q/tgcD7OxUUM4Y8TL2VqPxCSOntdgbfcQ+4jV/9NHhT30nvM3XFixw3hMEtGRf/2W9VnM1pzCB5VorHCFE+Zo/w3IfbOj1EYd/qdHO/2Kj9r5NKpdM2ytr2R5/m80kiyz9BfGSbEh3BH3ifrfbLV53uQTn5JljJjs+d6ps2n250bmuvSGmLIAO3GLj1Povr0HSHx1mpIRYvSL2SkG7gdJVJNMv5YihM0KjG0wj9ef1QXnaYQSbhTE0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA4PR11MB9204.namprd11.prod.outlook.com (2603:10b6:208:56d::16)
+ by BL3PR11MB6434.namprd11.prod.outlook.com (2603:10b6:208:3ba::22)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
- 2025 15:43:09 +0000
-Received: from BN2PEPF000055DD.namprd21.prod.outlook.com
- (2603:10b6:408:13e:cafe::fc) by BN9P220CA0009.outlook.office365.com
- (2603:10b6:408:13e::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Mon,
- 3 Nov 2025 15:43:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN2PEPF000055DD.mail.protection.outlook.com (10.167.245.7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.0 via Frontend Transport; Mon, 3 Nov 2025 15:43:06 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
- 2025 07:42:48 -0800
-Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
- 2025 07:42:45 -0800
-From: Gregory Etelson <getelson@nvidia.com>
-To: <dev@dpdk.org>
-CC: <getelson@nvidia.com>, <mkashani@nvidia.com>, <rasland@nvidia.com>,
- <thomas@monjalon.net>, <stable@dpdk.org>, Olivier Matz
- <olivier.matz@6wind.com>, Didier Pallard <didier.pallard@6wind.com>
-Subject: [PATCH] net: fix parsing of frames with arbitrary VLAN stacks
-Date: Mon, 3 Nov 2025 17:41:27 +0200
-Message-ID: <20251103154128.297748-1-getelson@nvidia.com>
-X-Mailer: git-send-email 2.51.0
+ 2025 15:51:01 +0000
+Received: from IA4PR11MB9204.namprd11.prod.outlook.com
+ ([fe80::509:acc9:5dba:5963]) by IA4PR11MB9204.namprd11.prod.outlook.com
+ ([fe80::509:acc9:5dba:5963%3]) with mapi id 15.20.9275.013; Mon, 3 Nov 2025
+ 15:51:01 +0000
+Message-ID: <a208388a-4db1-44d3-8184-f2c3ea355a65@intel.com>
+Date: Mon, 3 Nov 2025 15:50:59 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] doc: update documentation for ICE DCB and PFC features
+To: Bruce Richardson <bruce.richardson@intel.com>
+CC: <dev@dpdk.org>, <anatoly.burakov@intel.com>
+References: <20251103150237.958606-1-vladimir.medvedkin@intel.com>
+ <aQjF_6Gne1Wpk1OM@bricha3-mobl1.ger.corp.intel.com>
+Content-Language: en-US
+From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
+In-Reply-To: <aQjF_6Gne1Wpk1OM@bricha3-mobl1.ger.corp.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU6P191CA0017.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:540::28) To IA4PR11MB9204.namprd11.prod.outlook.com
+ (2603:10b6:208:56d::16)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000055DD:EE_|SJ0PR12MB6709:EE_
-X-MS-Office365-Filtering-Correlation-Id: c3c1f765-3127-4964-2160-08de1aefaf24
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-TrafficTypeDiagnostic: IA4PR11MB9204:EE_|BL3PR11MB6434:EE_
+X-MS-Office365-Filtering-Correlation-Id: fff761ca-038e-44b9-bdac-08de1af0c9f2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700013|1800799024|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?e6+qJHVm0MzNzTOFvsxcVDvOtXLwuyg4NU0dHKSuMIK+lO6AH/BElanNTbjR?=
- =?us-ascii?Q?JTPltaPXx2m6GCj0PeVzrYxWaHgDtLWsmVPj3dqSogrCoiR+wcMQbIqVvp7I?=
- =?us-ascii?Q?ySFAyjkUZfem1OtzVQe5zxnRmQhSq8mCWoP9UM2QUgCp93NkK7ooOUFZ2iEt?=
- =?us-ascii?Q?UZxrb7gwnJ9ADrtxhsgPN9pINX47uVxrp7DHA2PuqL0lQNgvNoFWBiz+O+qF?=
- =?us-ascii?Q?ESsoJ1w19EpUdmuOnWQsuI/YBv3Pk0TgRGufnPOSCJcaqUWd6KiYE/BXKIrf?=
- =?us-ascii?Q?3jK6CVHzW+OJQd4InsqfJlhv6hE1DrTQNVCT6v4Jc0J8AsD4ODHOvo4G5+LO?=
- =?us-ascii?Q?5BRESGNTiCtzSXMqakDXFVTMB6AZwUYXSZlQ17Vvn62cyfsFLXDzrVc9tSLx?=
- =?us-ascii?Q?8k9UlgK1ASVaHdCgFxqJ4qY7xrMKV+5trDW89xDKjaBzy1YhVRUC3HjOeqFV?=
- =?us-ascii?Q?cyRfeqPr/L5ynCAJdo0enxltA99odKYIxEefEaLyGNgNvWNKLm3uWHivOD8P?=
- =?us-ascii?Q?IE6cnr5Equp4cS5tLBODgDp33Qcz4vmAp5latOyf303QQ3vvZMOhpAk5UOeO?=
- =?us-ascii?Q?7HNm2lnGq4grNLFrVUZ+AdrH8ZBizrk/7bzLLyWq0f7h08/IW5yjPsmhGH5k?=
- =?us-ascii?Q?P6ksTmLgrmxfVWh6TBWsQFmyj6J56I5DfDLkbTEwoV+jZJqYg2Vs3PE24o30?=
- =?us-ascii?Q?RTlivCFSrmGyfrdSmqs8PMQVGyVSVEoYDp/DD/fLOemQqLige84FJin1dTPq?=
- =?us-ascii?Q?QhKvesCEJ7LwAUKc19aXftTqNZStDiZm5ocfdaE0X409HaOD23v7ryt8kgHz?=
- =?us-ascii?Q?XiTZiC6Dy8wmrBv0bEOum7HpNKg4ie38hyl51hIU4XEZblyoC3PPtxOdTFhh?=
- =?us-ascii?Q?pRkfyb9QlQEg0Ggsh2tcgW15o7aaPUHzOBNUCTY0FQ1GrT4iB/3hN2aEDDQG?=
- =?us-ascii?Q?BpsXYkSScqKtSg00d7l193rMFGVgnyAZkEjky3g/i+7B2qCeDT+frLwBiMMS?=
- =?us-ascii?Q?4nkom6c1iVlQ6wEiA0guEvO9P0Q3QIMmC5g13BMLalCEciNJIrhNkEKTNDxG?=
- =?us-ascii?Q?a52MKAeDFPh9+uO/SWGSKqtfQOrk+AUdaPvVlhMt4aStElwJ2ga/IS5Ni7Lg?=
- =?us-ascii?Q?MYdhTASXV3Q5QbReNHT2GHCvyTWtc3mCgDybdXVEyiONCb+KT/bZHdrB8aLq?=
- =?us-ascii?Q?OoL3BFkGTQeGOWamm2HjyOvLB8PJZVnK6aVnhREZxfy+Cmm3cPHksxYCoO5j?=
- =?us-ascii?Q?DbtgNQ6NzNBVwAd+ULkbNKYrGdkCppDSb4i76aCxLaQ5Owvj6Ga5dlHlWqBj?=
- =?us-ascii?Q?3/CzY/grDfrvU1VjqICpuF3Z6UUnVCloyDXbO+yGMGdg/VilSuEdg9jn8Rzk?=
- =?us-ascii?Q?Z/2vYSkpZSx1CkJRgf/fR2RjWBagUr06ikzxySR5I5z1pUq7gsfuAosnzF4q?=
- =?us-ascii?Q?OtOS+VdmmotlUdqpRB5DI2xFp4oI21bMpIN27AyQy8EG/Ubgy9+paPwxMTvr?=
- =?us-ascii?Q?HESj4KK9ac2vXYcFzjdFjAZ7rmXVf4xoXquIjq7mnK2ziC19JlMzptKdEUO0?=
- =?us-ascii?Q?kZ3SOT9ON1/+ImbDWw0=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014); DIR:OUT;
- SFP:1101; 
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 15:43:06.9235 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3c1f765-3127-4964-2160-08de1aefaf24
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN2PEPF000055DD.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6709
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?TmtBWlh3dGRZcmlBSExvcUxKRG5lZFVpcTR1R3VpMHZ5U3V0NFdsOXNJdnpG?=
+ =?utf-8?B?UHlFbjdLVE1nU0VDMWRvai9kZDVhOVZNMmRJUWpzT1NGWVpaQmhxT0UxTkNX?=
+ =?utf-8?B?N3lleThzUUhqYjJ5WjU3ejRxTy9UUkkyWC9ZdDMxVDVOdytVcVB5RDI2Yy9k?=
+ =?utf-8?B?a2hzWk4wVEtWT3JENENkVEJNRmhDbkxKSTRtNmphWVM0emxNY0taN0U2d29y?=
+ =?utf-8?B?cVBQRzZMTWEyY09nMndHMVZqWmxhVHBDVjBtZmgzb1dNQ0JsQlcyWHBHWXVw?=
+ =?utf-8?B?c2YvK2JuVFZEVVFCQ3BqQ05XQVRmZ0wvb25QSWtEaFVMU3VzNElwU2s1cCty?=
+ =?utf-8?B?cW9IQzFwdEYyTEFGa284OGFNM3h5WFFYREExdHRQRjZqemJXdDB2SERTSFdW?=
+ =?utf-8?B?Y1g1ejU3bnU4WE5GY3hvQWVGbFFyL0lwY1ZZNzNBbEIwc01UamFiWUlJQTRC?=
+ =?utf-8?B?WVdGaTcveC9Ydjgxb0xLZkJFUGRpaXFQclRIK2l2alErMWhLWGd2TXpQYUlY?=
+ =?utf-8?B?aERxQnpaSmJZMW41RjlGNVFXWkJDckVYeXdhY2hrNnh3UVhjZFlmaGRZYW1z?=
+ =?utf-8?B?eHNwcG1PNGIvVWpGTEtXL0Z0NkN1b0R1RmNaZ09EaDhtOWI4OXpEdGx6aE4y?=
+ =?utf-8?B?K1hJNkp6by9aYmxvNzVVOHlGelZhL1Y1cE9ndHdxR0NwWVVDRlRoMDc2d1V1?=
+ =?utf-8?B?cWpmOEQxQlozKzBjSjNFN0t1V0I1THdKOVdHZXBGTTZJZCsxeTlkRS9adjUy?=
+ =?utf-8?B?WndBdFZOMi92WkhaYTRGODlUMFNsNStFYzBMclltRnFlQk9jWW1CMnAyM3VF?=
+ =?utf-8?B?ZWJ1bkJYcmcyZ0FNYVRvY2o5NE5MK3A1ZmNTODlrWFpzTkRaVWRCemxEbzJu?=
+ =?utf-8?B?dDd6WHFBSjNSdXpnQmNBbXFlUjg4MXhWVlpMazJKYzBDQVR2S3U4elA1MGZl?=
+ =?utf-8?B?SHNYVHdFV2FpZEVjMnRTakZxbGlhNktlOHNzMmcwM0lMcGVBc2dxM3NKdFM3?=
+ =?utf-8?B?RGQ3UUdudWpxaytZeERBU1o2ZjRaMmg1NjBjanFKRW5wRXphSTVYSDh1QUZ2?=
+ =?utf-8?B?a1d3ZjFkNEFRc3JSY1RuaFg5UE9uclJlWExuY2VNdVJlaTRCY2dIaTJBeklD?=
+ =?utf-8?B?SU5NWVRrcmdFK3N5VHB3Y2Y0a1NHQVp6MGpkTzdzcm4rVmlqNUZjTlpuUURa?=
+ =?utf-8?B?QW00SjQ5MGVsTkVwYWJPYmhCN0tnWkJCcUJ0MFExUlJZb0haZDlkcDFjSzFu?=
+ =?utf-8?B?NDlETkppMXlKaXFOdXZzcTJYcWJ6ejdzYURhYVVUR2owWmN5WjBIUlZFTFRH?=
+ =?utf-8?B?RDdJeU1SVWIzN0pQUSsrM0tPdTF0YUZES1NnZFFNajdFbHhUeGh0YmVBeWRJ?=
+ =?utf-8?B?d2d0YzkzdWhCaVFpNlAyYmFqRStUeWt0UDZGZ2IxaFFXUWoyUDdIVy92ZTRC?=
+ =?utf-8?B?K0JiUndlV2ptWTUzVlhPZ1ZGZlVQemRlVkxuZjZsZmU1T1NuT21vdDg2VGFJ?=
+ =?utf-8?B?bmt4WnUyb3ViK2xGNi9lUTJOUkQxNmdDWTRCWThBTXBWVXVQWmx1ZVFwVkVk?=
+ =?utf-8?B?d1NiR3U2cUdONlBXWkQrZHM1bkxuN0FlWlVVaDBQVjRYYk9hRlJtVGNyZUFR?=
+ =?utf-8?B?L09aMzg3T2x6bDRhdjVScWxqWnBnM3prRzdkVURlV28zbFllK3NRUVZqeVQ4?=
+ =?utf-8?B?ZFhGckdiZmdPcGVxb3lOOGZSSE5EcjRXOCttTFBMOVE4M0h6K3hsL1B5cjF0?=
+ =?utf-8?B?NFBhS1dFelMwZ1I2RlpHb000TS9rU3NOVmFta1hGSzkzK1FMa1dRdUtEcy94?=
+ =?utf-8?B?VTFRb29XVjBoWGxzbFFVbTRWR0FaQzBMNm9uZ29zMit0dnNDRVFWbngvSzBJ?=
+ =?utf-8?B?OUNnWTV5S2t1bXRSb3pzNUQ5U0JYZEkyT1I1Q0NlNmZWMytGYm03SFlKWkhh?=
+ =?utf-8?Q?ON/O1RHYVe1hSQpApFpuo5pCY0vcflyJ?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA4PR11MB9204.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cWc4c01KYlQzMDU3TDFlL3pMMmhtL0o3d3FtakhacnhYRXpNdlFwaGVMeEFD?=
+ =?utf-8?B?b1dnN3FSbkRKaDJkYUdxZmY1MGJJbStHcUdZU1J5bHV0MXBNYm90dzJ2S0Rn?=
+ =?utf-8?B?TzNiSlFNSnNReGdtOXpVZ0FVZmF4WEc0cldsZ0lsYVQvdHdxd2xkYXVhdlQw?=
+ =?utf-8?B?cW4rUzlNcVFWcGtmdnpubEF5UzgyaFlXdG8wODgzQ1MzOXZuSW40SXVEa2Ri?=
+ =?utf-8?B?WVhqQ1NTTjJmMyt5Y1dYbWR6ODdXSnVKcjVIQTNxS3g1bTZsUXV1V093cUtZ?=
+ =?utf-8?B?ak5WRUEvdWVOaTlWeDdicGh5NEp6ckFYcjkyWmRlcytwM28rdTlTcUxLd25H?=
+ =?utf-8?B?dTB4ZGEwSGVnM0h5SEdBM0xmeUVxdFBUUFVnallwaGs1V3A4cnpmeW1YVWRV?=
+ =?utf-8?B?UEFrSEI0c1RMWkNvRy93K0Zpek1WV1ZDTi9HbFgrY2czRGVmazgxbVZycjFt?=
+ =?utf-8?B?a21RdEZEMDhNN3pSWGFDVHMxb3VBUEhkazNkRVFRaHhTYU05UHBJYXNOcFdU?=
+ =?utf-8?B?MitjdXRyMUlvcVRPVlEzQlZlY1YzVTBDSXlEYjZ3YjhCY2J3dllBbk8vbmpS?=
+ =?utf-8?B?S3lvSDZvOEl3TWNkdFhHMUNBaS9jbG1nMU5iUkh5NkdBMFdBVGdaUTRsTVVq?=
+ =?utf-8?B?dU9FS3JCbDVQTDhaQzZxQWJ0R2pFcUU1UVV4M1dhdTFhT0taWnN1TTQ3b0Jo?=
+ =?utf-8?B?bVpvQWNYSXZ1a2FibFpNVXJHa2E3Q1U2bHhNdE9qUXZBdC8rZm9oNDRZQzZk?=
+ =?utf-8?B?TGwwTUk0Y3pXNHZvU1M4VHoxQmZmRmVmV2tOTHJFRC9TNGtpYWVHSDM2cHY0?=
+ =?utf-8?B?TlhCMUdOalNHUTIraWZFWEpUQXRIWGhCNyttRm5sa2RsTjllbm5oWDVDYzRZ?=
+ =?utf-8?B?bTlwOHQ2TGVnWW9XZzZMZkYrRVFicnZzWE1nVXBhS0FqRXcyb1hhT3hJbE1W?=
+ =?utf-8?B?aXNhNklyY2taOVQwSDV2YXcvcllVRTBKUHEzYW00bG1OQXk5RVI0cG9aQjZh?=
+ =?utf-8?B?RVd2OVo5L3BGRDRxMERzdGRpYkdNVUhxeURrYzM5a3crOWQrUGltSHJ5WkJJ?=
+ =?utf-8?B?RVFsc3JsdlJRMk9pWVFaeVhJdWhWa2dYbnJVNGlMczF4dE92c2phR2Z5ckwr?=
+ =?utf-8?B?WUNOc1M3ZHIySThRaThOdHJ3aGpONndiNkdMMWt0L3M4UllVUXBja3ZwRnYr?=
+ =?utf-8?B?blpyMnN0VDdEbXE2NVhMZVBySjJ2dm10WjJIcEhRK2dDbXg2VHBWR0NaTVJG?=
+ =?utf-8?B?WUFPMlI4OFNqZWpDS1BXL1Z0UUdHbTkzVW1BNDVja1JWditTQ2VUY3RYY1k4?=
+ =?utf-8?B?VnhHcnI4OGJCd2dQRlArMWYzMkkzaXlsaGk4bnZseXh3bFZqMFY3TmJaTlVt?=
+ =?utf-8?B?QXE2YTI1ak91bFp2a05NRm9PY25FVFVibENHWWduWUZmSkw0T3NPd1hjbFpK?=
+ =?utf-8?B?N1FPbDhlTENLS1BReEdiMVJSeGl6aFcyWHFHNmkrelFtd2NURm14NFF2c3pR?=
+ =?utf-8?B?UitQcVlsb0c1VUlDZDJEUFlzTUt5RE1HNERHckRiZThKQ3VyaTg5bTAwcEdH?=
+ =?utf-8?B?VW41dGh4R2l0b1hHUnRwaVJxVXQyekZkOEowSjdnYWpraTdoR0lrRDZpYzZV?=
+ =?utf-8?B?NTNJNjNUdy9Lb0pBcW1vVHc0OEpOd0R6VDNwN0Q4UWxURnZGUXh3NWhqRkd0?=
+ =?utf-8?B?bk1HUTJBdDV6L0tHdW8wQS85THROeWFQaXlsQ1ppZnoxZXVuajlsa2ZlN2V4?=
+ =?utf-8?B?dlFzbGFBTkJLaHpoVmJvQk5UUExoQnlMZUNVeVhFWGZDT2Jqb0pZZVRJL04w?=
+ =?utf-8?B?SkQycXJDZlUxSFdYVjltNi9na1pOb3ZqWmhPSHBENUMwak9DZjVQcGw1WmdD?=
+ =?utf-8?B?THRPZ1B2YnNrRlhrZ0xocXgvNWlweHUrRnZicGhrK1B0RVFrNktkMll5ekgz?=
+ =?utf-8?B?eFh0QllyR2E3b3k0YitVL1ByamRZRnVCRFRhRTRLS29XZlRRUEVhS1N4VFFM?=
+ =?utf-8?B?MHNYdWVaaEY5SUFST3RCSEhMbXo4bmlFTE5VdU9XNW9IYWZvUXRBVFhXUDhl?=
+ =?utf-8?B?ZHV5NFgyR0lqc0tra1EvNHh4ZytBaFd3UjJvcFRZeHpLV0QrV0YvRDN0eWNS?=
+ =?utf-8?B?OFFHaDVSTnN6Vk1HKy9JMkdPRFUvNlFmUFdyV09jVWxFWTR6UVNFNmdFeGUx?=
+ =?utf-8?B?YWc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: fff761ca-038e-44b9-bdac-08de1af0c9f2
+X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9204.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 15:51:01.7890 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pg+ysThYS3g3cAs/+0IyB3g6YmEEk6PiKYV7fSheawIfpRQ/oCEnPOL2xN/C4FXmSbwviQZYGLZK+EqWkbpaqb0pI3bDJQB+bMUvBhIN4vY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6434
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -134,100 +189,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rte_net_get_ptype() supported only 2 types of VLAN headers frames
-that are defined in the IEEE standards 802.1Q and 802.1ad:
+Hi Bruce, thanks for reviewing, will send v2 addressing your comments
 
-frames with a single 0x8100 VLAN header:
-  eth type VLAN / vlan / [IPv4 | IPv6 ]
+On 11/3/2025 3:10 PM, Bruce Richardson wrote:
+> On Mon, Nov 03, 2025 at 03:02:37PM +0000, Vladimir Medvedkin wrote:
+>> Add DCB and PFC documentation. Update feature matrix
+>> and release notes.
+>>
+>> Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+>> ---
+>>   doc/guides/nics/features/ice.ini       |  1 +
+>>   doc/guides/nics/ice.rst                | 74 ++++++++++++++++++++++++++
+>>   doc/guides/rel_notes/release_25_11.rst |  4 ++
+>>   3 files changed, 79 insertions(+)
+>>
+> I should have noticed that this was all missing from the original patchset
+> and flagged it before merge! Sorry.
+>
+> Anyway, thanks for doing this now - better late than never, as the saying
+> goes! Review comments inline below.
+>
+> Thanks,
+> /Bruce
+>
+<snip>
+>> +
+>> +PFC operates in VLAN-based mode and requires DCB to be configured first.
+>> +
+> So this means you need to call APIs in a specific order?
 
-frames with 0x88A8 QinQ header followed by 0x8100 VLAN:
- eth type QinQ / vlan type VLAN / vlan / [IPv4 | IPv6 ]
+Yes, first we need to enable DCB with rte_eth_dev_configure(), then PFC 
+can be configured on each individual TC. Generally speaking, PFC is a 
+part of DCB standard so it should be obvious to configure DCB first.
 
-The function did not parse frames where VLAN headers were stacked in
-different configurations.
-Such frames should also be allowed to provide HW vendor flexibility.
-As a result, ptype bitmask and header length returned from
-rte_net_get_ptype() for a custom VLAN frame were wrong.
-
-For example, the parser result for the frame
-  eth type QinQ / vlan type QinQ / vlan type VLAN / vlan / ipv4
-was:
-pkt_type:=0x120007
-   RTE_PTYPE_L2_ETHER_QINQ         0x00000007 OK
-   RTE_PTYPE_INNER_L2_ETHER_VLAN   0x00020000 wrong
-   RTE_PTYPE_INNER_L3_IPV4         0x00100000 wrong
-
-hdr_lens:={
-  l2_len       = 22 wrong
-  inner_l2_len =  4 wrong
-  l3_len       =  0 wrong
-  inner_l3_len = 20 wrong
-}
-
-The patch changes:
-1. Allow frames with an arbitrary number of VLAN headers.
-
-2. Set each parsed VLAN type in the returned ptype bitmask.
-   Multiple VLAN headers are referenced by a single
-   RTE_PTYPE_L2_ETHER_VLAN bit.
-   Multiple QinQ headers are references by a single
-   RTE_PTYPE_L2_ETHER_QINQ bit.
-
-3. Preserve RTE_PTYPE_L2_ETHER bit if VLAN or QinQ type was detected.
-
-Fixes: eb173c8def0a ("net: support VLAN in software packet type parser")
-Fixes: 218a163efd67 ("net: support QinQ in software packet type parser")
-
-Cc: stable@dpdk.org
-
-Signed-off-by: Gregory Etelson <getelson@nvidia.com>
----
- lib/net/rte_net.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
-
-diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
-index 44fb6c0f51..96fb054f55 100644
---- a/lib/net/rte_net.c
-+++ b/lib/net/rte_net.c
-@@ -349,30 +349,24 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
- 	if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4))
- 		goto l3; /* fast path if packet is IPv4 */
- 
--	if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN)) {
-+	while (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ||
-+	       proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
- 		const struct rte_vlan_hdr *vh;
- 		struct rte_vlan_hdr vh_copy;
- 
--		pkt_type = RTE_PTYPE_L2_ETHER_VLAN;
-+		pkt_type |=
-+			proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ?
-+				 RTE_PTYPE_L2_ETHER_VLAN :
-+				 RTE_PTYPE_L2_ETHER_QINQ;
- 		vh = rte_pktmbuf_read(m, off, sizeof(*vh), &vh_copy);
- 		if (unlikely(vh == NULL))
- 			return pkt_type;
- 		off += sizeof(*vh);
- 		hdr_lens->l2_len += sizeof(*vh);
- 		proto = vh->eth_proto;
--	} else if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
--		const struct rte_vlan_hdr *vh;
--		struct rte_vlan_hdr vh_copy;
-+	}
- 
--		pkt_type = RTE_PTYPE_L2_ETHER_QINQ;
--		vh = rte_pktmbuf_read(m, off + sizeof(*vh), sizeof(*vh),
--			&vh_copy);
--		if (unlikely(vh == NULL))
--			return pkt_type;
--		off += 2 * sizeof(*vh);
--		hdr_lens->l2_len += 2 * sizeof(*vh);
--		proto = vh->eth_proto;
--	} else if ((proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLS)) ||
-+	if ((proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLS)) ||
- 		(proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLSM))) {
- 		unsigned int i;
- 		const struct rte_mpls_hdr *mh;
+>
+<snip>
+>> -- 
+>> 2.43.0
+>>
 -- 
-2.51.0
+Regards,
+Vladimir
 
