@@ -2,91 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B78CCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E19C8CCFA03
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:50:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DBAB540A6B;
-	Mon,  3 Nov 2025 17:49:39 +0100 (CET)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id 14EA1406A2
- for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:37 +0100 (CET)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-33b9dc8d517so4258804a91.0
- for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:37 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1626540A6D;
+	Mon,  3 Nov 2025 17:49:42 +0100 (CET)
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
+ [209.85.215.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 289F6406A2
+ for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:39 +0100 (CET)
+Received: by mail-pg1-f180.google.com with SMTP id
+ 41be03b00d2f7-b553412a19bso3086806a12.1
+ for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188576;
- x=1762793376; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188578;
+ x=1762793378; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=LptBwRkoScq0hdaBn8HlcXhUpJhg3scNUfgZTv37C8E=;
- b=BhYa6Zml7nKxxRzfaR1fwo7O3G5L8V/w/NTGraxCoht5t4TjgvLbb8YxAcYJTtD1Zo
- pRZ1MYXDBJXTsccaNrr94gX+bh67inBdlqR+sIUwVcqTLOqeCoC8sztUW9P4omBvEY6g
- Gi/by3GwDVs9UMGtWIjdxHmSedBDjxuAaXU4a5YE3RbUZu5H8ycF1wH8qQnwlMidl2Vt
- J7sH5rV10tUgpBV1+MQPMZkXrpAiM5Mr6406QRvFucTVfnwgLQLf8oGa+c/LtRRXIwtz
- LeI8GE3u2+UzT6OE6YqyQrLrCr05j9KL2TWXAi1oxycNCywN3OKvcXaL5tjgTXs75pNg
- wAvA==
+ bh=h3azN2PAom3QpA0exsYKhMQGZ9Y+smhVBXVknLdyfkM=;
+ b=FEIlS5e5GzidtyCEU81kHvfPSx1T24axck4nMET78QissZ9C3G7llx5xzciFWQUNcR
+ 6kiBE//Kuq6MevilhBo1v9qMIMqQKtOxAXam4MlNlTOTX8llgPEgylSaOwqwvWIraOq3
+ SJvYcPFMJfmrZ0Y/LOFV2XKfZZC+zjQ4ABXZczWz3SaNUu/NJwNM36mRZP8uWhk0KW3a
+ Y6vGFyEu83puI/Zpbj3KPNG6ygZYknV7PBKGZnANPLFrozkMVhKni7FNUMVenvEVf3Ns
+ BfmjrafA8mof9fWr+K93Jhi5CltCQX3ttYgdVbX/4fyrXfTi50msf86bwk4zD4eRmGWy
+ P/6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762188576; x=1762793376;
+ d=1e100.net; s=20230601; t=1762188578; x=1762793378;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=LptBwRkoScq0hdaBn8HlcXhUpJhg3scNUfgZTv37C8E=;
- b=dKxjiKdfU1vspgrWD6KgBgmpOiiuD6OkrY+LpYnUYtpfBA0s8saNTt98wqJUdOQw+a
- x1bXzCFXNXWYobkui2VW+NYM2DbsPA4LlN74mYGtBc4OIQnlbvvOKR32nmlcTxbGIGzj
- 2V7zyV2hHOVBHfFDpO6JgxuN0LDiDRYE3LvuAjiU0m+xsiyL1c6fxYlWG/NaLLABsplY
- F5Dk/eGSHYL0/ZYxCRJBX6+N+zn4hTeYZCXAiElmbq0d+DyEvkgJh9B6ABOUPQgT5Zps
- xuerBwaUIVc3gSirdfIrYnxoUUtj/3PK0SZdCTYNaWa9xbiGqpfGWls6opiFkrLy3Qll
- 4b6Q==
-X-Gm-Message-State: AOJu0YzPzC44h+2i6kIWEUpcYcha6v8Hw/Wm8sHMbLamPlNuiGEpmiLa
- kmY8j+Ry1Cgfs1AKT6DwOZj9Q1jyIVIIaUkSHFdRc88SXjg13S2CWK4bj19v4HieyW6E3Wtg4D/
- oPNmI
-X-Gm-Gg: ASbGnctgxrYm4K5c2ELUEEu/jDRS1vzmM/XaxPwKNevkK5HzGlJI6BQFyxfT8XB5ErE
- 5yKICPAn60ymDOGkJL/5qAswBdte11TUJRsZ7YgpAbTguBvrVdVfmYsEkLyoOPn4KyqvV5bWxd4
- Cd7MQlRIAWJ3yG5RHKtfhQrHyRrk0+LHVnCwmMylaRFqV5NrK9xQX7SHaQBcE82QggcpIxbG9Kp
- rVrHTumuad21f1pnBBuw2SRobDyZpJ662+yUIwZ1i9s2gnKAufUpKdugCb93jEefAWywbyO3Z0J
- wcfF2sQkDIhXDBRBEDMTTqqfeuiOqM80pwpW/HXaEKdtlQEHOicbYwXDDLvJ9EkWz1wMKUKERMm
- 4l8lTW4EmzO+7aXZqnHshCEMk4t9fCwoeuvS7k9oKSqzBCUk1qHAVQXdeW9vfNf2zt50Rk0DPl+
- dk+Lv8K1C2/pOyduwQL9ksNurayNXhgxlyaszmr5un6Wg/L1CQ8w==
-X-Google-Smtp-Source: AGHT+IHMdOBuOa3Y9VXG36Bp1g82VmuALwe7evk3fx8Y3ELw8qZo6/B9fuDEnqao392rv2QGiwCfaA==
-X-Received: by 2002:a17:90b:2d8e:b0:340:be44:dd11 with SMTP id
- 98e67ed59e1d1-340be44de44mr10253811a91.27.1762188575996; 
- Mon, 03 Nov 2025 08:49:35 -0800 (PST)
+ bh=h3azN2PAom3QpA0exsYKhMQGZ9Y+smhVBXVknLdyfkM=;
+ b=Wr7bP26avAgjyM6pRI0P/eKtyZjhy5f8QurQIGI7kt/+rj4B+lgdqPuY0K2RRWAcJP
+ T0nVYhbP+JOpfc5FQENMAZsat+1DnmdVUKXU6e2sWV0W6389C4BzQbzcLjq/N8XXeBFn
+ ZKtnk2KhgQ2G1RvQLoGSlBcJ5yB8v31WIV0LJgKVg7snWE0lOqGpFPA5HLbg30m+n5q5
+ ia8RIWVz4/q9xwXyoUKRk4KzQ9waVqd5VnzgRCY+MZCpJ/HWNoGvSnVJjMD2SaElW3M+
+ +jqWNVzvcfwon+sqyyiZM49aFd94DYTS7/h5UlMNUBo9vIRVcFrKXyFpP46KA1VFcuz5
+ 8TLg==
+X-Gm-Message-State: AOJu0YyH/9Rz12nbNhUwfkyD+TqSFd4Fa6SDwC4Yhh8KVHtWYq4N565i
+ DLtYCZOdWnNNbUBlTOjWeZOL0s1s6p4p9GnKznQuYKahj7onpTvV+LKjk8QqALZI8HLWndkbbrp
+ d8vdA
+X-Gm-Gg: ASbGncvRQZiZVtQTx46o+oHVdQ2DOHcgCE5icetjA16Ztdcq7vu8X8fpwuzDv0v3zYL
+ 2Poimf/S/bZCtN+vV9vq12EoAY2xDjVAmrt0rNzi8LCAVORS3hh0tj2AFZY+GnR/puIM4zxRkQM
+ dbXGp9MJUks5EcldQIUIqZshwUQXI/QF0jCOtlwCMJ41zSrlhdWII99DIBa1ENO+iOkV+ruZwIx
+ WyNXTyc2CfzLTVQnYvXIdUgQDyivMuQ5727HDp5H5N4icQBKTm2ClvYVn1Hx5qahPeH/yV4MlS7
+ Sacqs1P2w+6Eu30QucFecHbGbuPcEYe8clHBzRlhjlLQetfVSsEhzldPQ5FtymWpSaWIP6EPCF6
+ 5l4i68QGFXea1lfT1vgAQkR2WHghczrjUalbb2tq1Utxnfk07mm71v/hn4o6jdIznOIhPqUS9i1
+ 9jrK96jyHoBogjdCzOg/ERTJDzk1PpGXBzyXhXKUo=
+X-Google-Smtp-Source: AGHT+IEXQMXPJkW0Adt2+358F+L096CkTwpiLr7ez4/fUlf8cZP9gAwp9HW22v55FnX1pKfvLPl2hg==
+X-Received: by 2002:a17:902:c406:b0:24b:25f:5f81 with SMTP id
+ d9443c01a7336-2951a3eacaamr202654885ad.17.1762188577827; 
+ Mon, 03 Nov 2025 08:49:37 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.33
+ 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Nov 2025 08:49:35 -0800 (PST)
+ Mon, 03 Nov 2025 08:49:37 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Nicolas Chautru <nicolas.chautru@intel.com>,
- Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
- David Hunt <david.hunt@intel.com>, Byron Marohn <byron.marohn@intel.com>,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
- Tomasz Duszynski <tduszynski@marvell.com>,
- Volodymyr Fialko <vfialko@marvell.com>,
- Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [PATCH v3 11/44] lib: remove use of sys/queue.h
-Date: Mon,  3 Nov 2025 08:47:16 -0800
-Message-ID: <20251103164915.101713-12-stephen@networkplumber.org>
+ Parav Pandit <parav@nvidia.com>, Xueming Li <xuemingl@nvidia.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@altera.com>,
+ Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
+ Tomasz Duszynski <tduszynski@marvell.com>, Long Li <longli@microsoft.com>,
+ Wei Hu <weh@microsoft.com>
+Subject: [PATCH v3 12/44] drivers/bus: replace use of sys/queue.h
+Date: Mon,  3 Nov 2025 08:47:17 -0800
+Message-ID: <20251103164915.101713-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251103164915.101713-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
  <20251103164915.101713-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -101,492 +90,265 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use the new rte_bsd_queue.h where needed but most files already
-get the needed macros from rte_tailq.h
+Prefer just using rte_tailq.h when TAILQ macro's are used.
+Other places eliminate sys/queue.h if possible.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/acl/rte_acl_osdep.h                  | 1 -
- lib/bbdev/rte_bbdev.c                    | 2 +-
- lib/bpf/bpf_load_elf.c                   | 1 -
- lib/bpf/bpf_pkt.c                        | 3 +--
- lib/cryptodev/cryptodev_pmd.c            | 1 -
- lib/cryptodev/rte_cryptodev.c            | 1 -
- lib/distributor/rte_distributor.c        | 2 +-
- lib/distributor/rte_distributor_single.c | 2 +-
- lib/efd/rte_efd.c                        | 1 -
- lib/fib/rte_fib.c                        | 1 -
- lib/fib/rte_fib6.c                       | 1 -
- lib/graph/graph_private.h                | 1 -
- lib/hash/rte_cuckoo_hash.c               | 1 -
- lib/hash/rte_fbk_hash.c                  | 1 -
- lib/hash/rte_thash.c                     | 1 -
- lib/ip_frag/ip_frag_common.h             | 3 +--
- lib/log/log.c                            | 2 +-
- lib/lpm/rte_lpm.c                        | 1 -
- lib/lpm/rte_lpm6.c                       | 1 -
- lib/mbuf/rte_mbuf_dyn.c                  | 1 -
- lib/mempool/rte_mempool.c                | 1 -
- lib/mempool/rte_mempool.h                | 1 +
- lib/pipeline/rte_swx_ctl.c               | 1 -
- lib/pipeline/rte_swx_pipeline_internal.h | 3 ++-
- lib/pmu/pmu.c                            | 1 -
- lib/reorder/rte_reorder.c                | 1 -
- lib/rib/rte_rib.c                        | 1 -
- lib/rib/rte_rib6.c                       | 1 -
- lib/ring/rte_ring.c                      | 1 -
- lib/stack/rte_stack.c                    | 1 -
- lib/vhost/fd_man.h                       | 1 -
- lib/vhost/socket.c                       | 2 +-
- lib/vhost/vdpa.c                         | 2 --
- lib/vhost/vhost.h                        | 2 +-
- 34 files changed, 11 insertions(+), 36 deletions(-)
+ drivers/bus/auxiliary/auxiliary_common.c |  2 +-
+ drivers/bus/auxiliary/private.h          |  2 +-
+ drivers/bus/fslmc/bus_fslmc_driver.h     |  1 -
+ drivers/bus/fslmc/fslmc_vfio.c           |  1 +
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c | 11 ++---------
+ drivers/bus/ifpga/ifpga_bus.c            |  2 +-
+ drivers/bus/pci/bsd/pci.c                |  2 +-
+ drivers/bus/pci/pci_common.c             |  1 -
+ drivers/bus/pci/pci_params.c             |  2 --
+ drivers/bus/pci/windows/pci.c            |  3 +--
+ drivers/bus/pci/windows/pci_netuio.c     |  2 --
+ drivers/bus/platform/platform.c          |  2 +-
+ drivers/bus/vdev/vdev.c                  |  1 -
+ drivers/bus/vmbus/vmbus_common.c         |  1 -
+ 14 files changed, 9 insertions(+), 24 deletions(-)
 
-diff --git a/lib/acl/rte_acl_osdep.h b/lib/acl/rte_acl_osdep.h
-index b2c262dee7..96e4f2908c 100644
---- a/lib/acl/rte_acl_osdep.h
-+++ b/lib/acl/rte_acl_osdep.h
-@@ -21,7 +21,6 @@
- #include <stdio.h>
- #include <stdarg.h>
- #include <stdlib.h>
--#include <sys/queue.h>
- 
- /*
-  * Common defines.
-diff --git a/lib/bbdev/rte_bbdev.c b/lib/bbdev/rte_bbdev.c
-index 6c98296bdb..fd4c38a497 100644
---- a/lib/bbdev/rte_bbdev.c
-+++ b/lib/bbdev/rte_bbdev.c
-@@ -5,8 +5,8 @@
- #include <stdint.h>
- #include <string.h>
+diff --git a/drivers/bus/auxiliary/auxiliary_common.c b/drivers/bus/auxiliary/auxiliary_common.c
+index ac766e283e..4edc621268 100644
+--- a/drivers/bus/auxiliary/auxiliary_common.c
++++ b/drivers/bus/auxiliary/auxiliary_common.c
+@@ -8,7 +8,7 @@
  #include <stdbool.h>
--#include <sys/queue.h>
- 
-+#include <rte_bsd_queue.h>
- #include <eal_export.h>
- #include <rte_common.h>
- #include <rte_errno.h>
-diff --git a/lib/bpf/bpf_load_elf.c b/lib/bpf/bpf_load_elf.c
-index 1d30ba17e2..4e911c5083 100644
---- a/lib/bpf/bpf_load_elf.c
-+++ b/lib/bpf/bpf_load_elf.c
-@@ -12,7 +12,6 @@
- 
- #include <sys/types.h>
- #include <sys/stat.h>
--#include <sys/queue.h>
- #include <fcntl.h>
- 
- #include <libelf.h>
-diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
-index 01f813c56b..e3cd56f961 100644
---- a/lib/bpf/bpf_pkt.c
-+++ b/lib/bpf/bpf_pkt.c
-@@ -7,8 +7,7 @@
- #include <errno.h>
- #include <stdint.h>
- 
--#include <sys/queue.h>
--
-+#include <rte_bsd_queue.h>
- #include <eal_export.h>
- #include <rte_common.h>
- #include <rte_malloc.h>
-diff --git a/lib/cryptodev/cryptodev_pmd.c b/lib/cryptodev/cryptodev_pmd.c
-index d79d561bf6..1c6292ed1c 100644
---- a/lib/cryptodev/cryptodev_pmd.c
-+++ b/lib/cryptodev/cryptodev_pmd.c
-@@ -3,7 +3,6 @@
-  */
- 
  #include <stdlib.h>
--#include <sys/queue.h>
- 
- #include <dev_driver.h>
- #include <eal_export.h>
-diff --git a/lib/cryptodev/rte_cryptodev.c b/lib/cryptodev/rte_cryptodev.c
-index f4c6f692f0..34e9b2172c 100644
---- a/lib/cryptodev/rte_cryptodev.c
-+++ b/lib/cryptodev/rte_cryptodev.c
-@@ -2,7 +2,6 @@
-  * Copyright(c) 2015-2020 Intel Corporation
-  */
- 
--#include <sys/queue.h>
- #include <ctype.h>
- #include <stdio.h>
- #include <stdlib.h>
-diff --git a/lib/distributor/rte_distributor.c b/lib/distributor/rte_distributor.c
-index dde7ce2677..49ce882cdb 100644
---- a/lib/distributor/rte_distributor.c
-+++ b/lib/distributor/rte_distributor.c
-@@ -5,8 +5,8 @@
- #include <stdalign.h>
- #include <stdio.h>
- #include <stdlib.h>
--#include <sys/queue.h>
- #include <string.h>
-+
- #include <eal_export.h>
- #include <rte_mbuf.h>
- #include <rte_cycles.h>
-diff --git a/lib/distributor/rte_distributor_single.c b/lib/distributor/rte_distributor_single.c
-index d4b3e12648..804d6b8a71 100644
---- a/lib/distributor/rte_distributor_single.c
-+++ b/lib/distributor/rte_distributor_single.c
-@@ -3,7 +3,7 @@
-  */
- 
  #include <stdio.h>
 -#include <sys/queue.h>
 +
- #include <rte_mbuf.h>
- #include <rte_memzone.h>
+ #include <eal_export.h>
  #include <rte_errno.h>
-diff --git a/lib/efd/rte_efd.c b/lib/efd/rte_efd.c
-index ebf1e0655f..38002deb8d 100644
---- a/lib/efd/rte_efd.c
-+++ b/lib/efd/rte_efd.c
-@@ -7,7 +7,6 @@
+ #include <rte_interrupts.h>
+diff --git a/drivers/bus/auxiliary/private.h b/drivers/bus/auxiliary/private.h
+index 4604f6f4a7..bd519c1091 100644
+--- a/drivers/bus/auxiliary/private.h
++++ b/drivers/bus/auxiliary/private.h
+@@ -7,9 +7,9 @@
+ 
+ #include <stdbool.h>
+ #include <stdio.h>
+-#include <sys/queue.h>
+ 
+ #include <bus_driver.h>
++#include <rte_bsd_queue.h>
+ 
+ #include "bus_auxiliary_driver.h"
+ 
+diff --git a/drivers/bus/fslmc/bus_fslmc_driver.h b/drivers/bus/fslmc/bus_fslmc_driver.h
+index b6a6238a01..88c9ce88a9 100644
+--- a/drivers/bus/fslmc/bus_fslmc_driver.h
++++ b/drivers/bus/fslmc/bus_fslmc_driver.h
+@@ -17,7 +17,6 @@
  #include <stdlib.h>
- #include <inttypes.h>
- #include <errno.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_cpuflags.h>
-diff --git a/lib/fib/rte_fib.c b/lib/fib/rte_fib.c
-index 184210f380..e3da524236 100644
---- a/lib/fib/rte_fib.c
-+++ b/lib/fib/rte_fib.c
-@@ -5,7 +5,6 @@
- 
- #include <stdint.h>
- #include <string.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_eal_memconfig.h>
-diff --git a/lib/fib/rte_fib6.c b/lib/fib/rte_fib6.c
-index 93a1c7197b..b351d8cd69 100644
---- a/lib/fib/rte_fib6.c
-+++ b/lib/fib/rte_fib6.c
-@@ -5,7 +5,6 @@
- 
- #include <stdint.h>
- #include <string.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_eal_memconfig.h>
-diff --git a/lib/graph/graph_private.h b/lib/graph/graph_private.h
-index 21912c0ae6..db74ff41d2 100644
---- a/lib/graph/graph_private.h
-+++ b/lib/graph/graph_private.h
-@@ -6,7 +6,6 @@
- #define _RTE_GRAPH_PRIVATE_H_
- 
- #include <inttypes.h>
--#include <sys/queue.h>
- 
- #include <rte_common.h>
- #include <rte_eal.h>
-diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
-index 2c92c51624..dbc0ddcf75 100644
---- a/lib/hash/rte_cuckoo_hash.c
-+++ b/lib/hash/rte_cuckoo_hash.c
-@@ -7,7 +7,6 @@
- #include <stdint.h>
- #include <errno.h>
- #include <stdio.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_common.h>
-diff --git a/lib/hash/rte_fbk_hash.c b/lib/hash/rte_fbk_hash.c
-index 38b15a14d1..c4027bee26 100644
---- a/lib/hash/rte_fbk_hash.c
-+++ b/lib/hash/rte_fbk_hash.c
-@@ -6,7 +6,6 @@
- #include <stdio.h>
- #include <string.h>
- #include <errno.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_cpuflags.h>
-diff --git a/lib/hash/rte_thash.c b/lib/hash/rte_thash.c
-index fcd41248b9..49d62e538e 100644
---- a/lib/hash/rte_thash.c
-+++ b/lib/hash/rte_thash.c
-@@ -3,7 +3,6 @@
-  */
- 
- #include <stdalign.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_thash.h>
-diff --git a/lib/ip_frag/ip_frag_common.h b/lib/ip_frag/ip_frag_common.h
-index 51fc9d47fb..ecf29fc02b 100644
---- a/lib/ip_frag/ip_frag_common.h
-+++ b/lib/ip_frag/ip_frag_common.h
-@@ -5,8 +5,7 @@
- #ifndef _IP_FRAG_COMMON_H_
- #define _IP_FRAG_COMMON_H_
- 
--#include <sys/queue.h>
--
-+#include <rte_bsd_queue.h>
- #include <rte_common.h>
- 
- #if defined(RTE_ARCH_ARM64)
-diff --git a/lib/log/log.c b/lib/log/log.c
-index 8ad5250a13..b785156bac 100644
---- a/lib/log/log.c
-+++ b/lib/log/log.c
-@@ -11,9 +11,9 @@
- #include <errno.h>
- #include <regex.h>
- #include <fnmatch.h>
--#include <sys/queue.h>
- #include <unistd.h>
- 
-+#include <rte_bsd_queue.h>
- #include <eal_export.h>
- #include <rte_common.h>
- #include <rte_log.h>
-diff --git a/lib/lpm/rte_lpm.c b/lib/lpm/rte_lpm.c
-index 6dab86a05e..09d1e08263 100644
---- a/lib/lpm/rte_lpm.c
-+++ b/lib/lpm/rte_lpm.c
-@@ -7,7 +7,6 @@
- #include <stdint.h>
- #include <errno.h>
- #include <stdio.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_log.h>
-diff --git a/lib/lpm/rte_lpm6.c b/lib/lpm/rte_lpm6.c
-index e23c886766..781ec8de0b 100644
---- a/lib/lpm/rte_lpm6.c
-+++ b/lib/lpm/rte_lpm6.c
-@@ -6,7 +6,6 @@
- #include <stdint.h>
- #include <errno.h>
- #include <stdio.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_log.h>
-diff --git a/lib/mbuf/rte_mbuf_dyn.c b/lib/mbuf/rte_mbuf_dyn.c
-index 5987c9dee8..9a20033021 100644
---- a/lib/mbuf/rte_mbuf_dyn.c
-+++ b/lib/mbuf/rte_mbuf_dyn.c
-@@ -3,7 +3,6 @@
-  */
- 
- #include <stdalign.h>
--#include <sys/queue.h>
- #include <stdint.h>
  #include <limits.h>
- 
-diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-index 1021ede0c2..bf8e870151 100644
---- a/lib/mempool/rte_mempool.c
-+++ b/lib/mempool/rte_mempool.c
-@@ -12,7 +12,6 @@
- #include <unistd.h>
- #include <inttypes.h>
  #include <errno.h>
 -#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_common.h>
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index aedc100964..e5492a9ce0 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -49,6 +49,7 @@
- #include <rte_ring.h>
- #include <rte_memcpy.h>
- #include <rte_common.h>
-+#include <rte_tailq.h>
- 
- #include "rte_mempool_trace_fp.h"
- 
-diff --git a/lib/pipeline/rte_swx_ctl.c b/lib/pipeline/rte_swx_ctl.c
-index 4e9bb842a1..ca44adb126 100644
---- a/lib/pipeline/rte_swx_ctl.c
-+++ b/lib/pipeline/rte_swx_ctl.c
-@@ -5,7 +5,6 @@
- #include <stdlib.h>
- #include <string.h>
- #include <stdio.h>
--#include <sys/queue.h>
- #include <unistd.h>
- 
- #include <eal_export.h>
-diff --git a/lib/pipeline/rte_swx_pipeline_internal.h b/lib/pipeline/rte_swx_pipeline_internal.h
-index df864ea066..fa8dfa7d75 100644
---- a/lib/pipeline/rte_swx_pipeline_internal.h
-+++ b/lib/pipeline/rte_swx_pipeline_internal.h
-@@ -6,7 +6,7 @@
- 
+ #include <stdint.h>
  #include <inttypes.h>
- #include <string.h>
--#include <sys/queue.h>
-+
  
- #include <rte_bitops.h>
- #include <rte_byteorder.h>
-@@ -14,6 +14,7 @@
- #include <rte_cycles.h>
- #include <rte_prefetch.h>
- #include <rte_meter.h>
-+#include <rte_tailq.h>
+diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
+index 550d4e0e8d..cf6b4c6ab4 100644
+--- a/drivers/bus/fslmc/fslmc_vfio.c
++++ b/drivers/bus/fslmc/fslmc_vfio.c
+@@ -23,6 +23,7 @@
+ #include <sys/eventfd.h>
+ #include <ctype.h>
  
- #include <rte_swx_table_selector.h>
- #include <rte_swx_table_learner.h>
-diff --git a/lib/pmu/pmu.c b/lib/pmu/pmu.c
-index 4c7271522a..6a18563c80 100644
---- a/lib/pmu/pmu.c
-+++ b/lib/pmu/pmu.c
-@@ -8,7 +8,6 @@
- #include <stdlib.h>
- #include <unistd.h>
- #include <sys/mman.h>
++#include <rte_bsd_queue.h>
+ #include <eal_export.h>
+ #include <eal_filesystem.h>
+ #include <rte_mbuf.h>
+diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
+index 2a9e519668..ac7cbd3a1f 100644
+--- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
++++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
+@@ -17,7 +17,6 @@
+ #include <signal.h>
+ #include <pthread.h>
+ #include <sys/types.h>
 -#include <sys/queue.h>
  #include <sys/ioctl.h>
- #include <sys/syscall.h>
- 
-diff --git a/lib/reorder/rte_reorder.c b/lib/reorder/rte_reorder.c
-index be06530860..1c4751bee0 100644
---- a/lib/reorder/rte_reorder.c
-+++ b/lib/reorder/rte_reorder.c
-@@ -4,7 +4,6 @@
- 
- #include <stdalign.h>
- #include <string.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_string_fns.h>
-diff --git a/lib/rib/rte_rib.c b/lib/rib/rte_rib.c
-index 046db131ca..bfb4c0e577 100644
---- a/lib/rib/rte_rib.c
-+++ b/lib/rib/rte_rib.c
-@@ -5,7 +5,6 @@
- 
- #include <stdbool.h>
- #include <stdint.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_eal_memconfig.h>
-diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
-index ec8ff68e87..5333fdd543 100644
---- a/lib/rib/rte_rib6.c
-+++ b/lib/rib/rte_rib6.c
-@@ -5,7 +5,6 @@
- 
- #include <stdbool.h>
- #include <stdint.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_eal_memconfig.h>
-diff --git a/lib/ring/rte_ring.c b/lib/ring/rte_ring.c
-index edd63aa535..b63820dcd2 100644
---- a/lib/ring/rte_ring.c
-+++ b/lib/ring/rte_ring.c
-@@ -13,7 +13,6 @@
- #include <stdint.h>
- #include <inttypes.h>
- #include <errno.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_common.h>
-diff --git a/lib/stack/rte_stack.c b/lib/stack/rte_stack.c
-index 4c78fe4b4b..0b9223cd3f 100644
---- a/lib/stack/rte_stack.c
-+++ b/lib/stack/rte_stack.c
-@@ -4,7 +4,6 @@
- 
- #include <stdalign.h>
- #include <string.h>
--#include <sys/queue.h>
- 
- #include <eal_export.h>
- #include <rte_string_fns.h>
-diff --git a/lib/vhost/fd_man.h b/lib/vhost/fd_man.h
-index eadcc6fb42..0f3f8fb430 100644
---- a/lib/vhost/fd_man.h
-+++ b/lib/vhost/fd_man.h
-@@ -6,7 +6,6 @@
- #define _FD_MAN_H_
- #include <pthread.h>
- #include <poll.h>
--#include <sys/queue.h>
- 
- struct fdset;
- 
-diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
-index 9b4f332f94..107933bfd7 100644
---- a/lib/vhost/socket.c
-+++ b/lib/vhost/socket.c
-@@ -10,13 +10,13 @@
- #include <string.h>
- #include <sys/socket.h>
- #include <sys/un.h>
--#include <sys/queue.h>
- #include <errno.h>
- #include <fcntl.h>
- 
- #include <eal_export.h>
- #include <rte_thread.h>
- #include <rte_log.h>
+ #include <sys/stat.h>
+ #include <sys/mman.h>
+@@ -34,6 +33,7 @@
+ #include <rte_cycles.h>
+ #include <rte_kvargs.h>
+ #include <dev_driver.h>
 +#include <rte_tailq.h>
  
- #include "fd_man.h"
- #include "vduse.h"
-diff --git a/lib/vhost/vdpa.c b/lib/vhost/vdpa.c
-index bc2dd8d2e1..4e5fcf02be 100644
---- a/lib/vhost/vdpa.c
-+++ b/lib/vhost/vdpa.c
-@@ -8,8 +8,6 @@
-  * Device specific vhost lib
+ #include <fslmc_logs.h>
+ #include <bus_fslmc_driver.h>
+@@ -41,13 +41,6 @@
+ #include "dpaa2_hw_dpio.h"
+ #include <mc/fsl_dpmng.h>
+ 
+-#ifndef TAILQ_FOREACH_SAFE
+-#define	TAILQ_FOREACH_SAFE(var, head, field, tvar)			\
+-	for ((var) = TAILQ_FIRST((head));				\
+-	    (var) && ((tvar) = TAILQ_NEXT((var), field), 1);		\
+-	    (var) = (tvar))
+-#endif
+-
+ #define NUM_HOST_CPUS RTE_MAX_LCORE
+ 
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_io_portal)
+@@ -107,7 +100,7 @@ static struct dpaa2_dpio_dev *get_dpio_dev_from_id(int32_t dpio_id)
+ 	struct dpaa2_dpio_dev *dpio_dev = NULL;
+ 
+ 	/* Get DPIO dev handle from list using index */
+-	TAILQ_FOREACH(dpio_dev, &dpio_dev_list, next) {
++	RTE_TAILQ_FOREACH(dpio_dev, &dpio_dev_list, next) {
+ 		if (dpio_dev->hw_id == dpio_id)
+ 			break;
+ 	}
+diff --git a/drivers/bus/ifpga/ifpga_bus.c b/drivers/bus/ifpga/ifpga_bus.c
+index ca9e49f548..3af95921a7 100644
+--- a/drivers/bus/ifpga/ifpga_bus.c
++++ b/drivers/bus/ifpga/ifpga_bus.c
+@@ -7,7 +7,6 @@
+ #include <stdint.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+-#include <sys/queue.h>
+ #include <sys/mman.h>
+ #include <sys/types.h>
+ #include <unistd.h>
+@@ -26,6 +25,7 @@
+ #include <rte_alarm.h>
+ #include <rte_string_fns.h>
+ #include <rte_debug.h>
++#include <rte_tailq.h>
+ 
+ #include "rte_rawdev.h"
+ #include "rte_rawdev_pmd.h"
+diff --git a/drivers/bus/pci/bsd/pci.c b/drivers/bus/pci/bsd/pci.c
+index 3f13e1d6ac..97214ea049 100644
+--- a/drivers/bus/pci/bsd/pci.c
++++ b/drivers/bus/pci/bsd/pci.c
+@@ -15,7 +15,6 @@
+ #include <errno.h>
+ #include <dirent.h>
+ #include <limits.h>
+-#include <sys/queue.h>
+ #include <sys/mman.h>
+ #include <sys/ioctl.h>
+ #include <sys/pciio.h>
+@@ -38,6 +37,7 @@
+ #include <rte_string_fns.h>
+ #include <rte_debug.h>
+ #include <rte_devargs.h>
++#include <rte_tailq.h>
+ 
+ #include <eal_export.h>
+ #include "eal_filesystem.h"
+diff --git a/drivers/bus/pci/pci_common.c b/drivers/bus/pci/pci_common.c
+index bf5df3d94e..fd535967dd 100644
+--- a/drivers/bus/pci/pci_common.c
++++ b/drivers/bus/pci/pci_common.c
+@@ -9,7 +9,6 @@
+ #include <stdbool.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+-#include <sys/queue.h>
+ #include <eal_export.h>
+ #include <rte_errno.h>
+ #include <rte_interrupts.h>
+diff --git a/drivers/bus/pci/pci_params.c b/drivers/bus/pci/pci_params.c
+index 087ec38bb9..0b6d944118 100644
+--- a/drivers/bus/pci/pci_params.c
++++ b/drivers/bus/pci/pci_params.c
+@@ -2,8 +2,6 @@
+  * Copyright 2018 Gaëtan Rivet
   */
  
 -#include <sys/queue.h>
 -
+ #include <bus_driver.h>
+ #include <rte_bus_pci.h>
  #include <dev_driver.h>
- #include <eal_export.h>
- #include <rte_class.h>
-diff --git a/lib/vhost/vhost.h b/lib/vhost/vhost.h
-index e9e71c1707..16c37fc5b9 100644
---- a/lib/vhost/vhost.h
-+++ b/lib/vhost/vhost.h
-@@ -8,7 +8,6 @@
- #include <stdio.h>
- #include <stdbool.h>
- #include <stdlib.h>
+diff --git a/drivers/bus/pci/windows/pci.c b/drivers/bus/pci/windows/pci.c
+index 6f6f368cb7..1f74d81af5 100644
+--- a/drivers/bus/pci/windows/pci.c
++++ b/drivers/bus/pci/windows/pci.c
+@@ -2,8 +2,6 @@
+  * Copyright 2020 Mellanox Technologies, Ltd
+  */
+ 
 -#include <sys/queue.h>
- #include <unistd.h>
- #include <linux/virtio_net.h>
- #include <sys/socket.h>
-@@ -19,6 +18,7 @@
- #include <rte_ether.h>
- #include <rte_malloc.h>
- #include <rte_dmadev.h>
+-
+ #include <eal_export.h>
+ #include <rte_windows.h>
+ #include <rte_errno.h>
+@@ -11,6 +9,7 @@
+ #include <rte_eal.h>
+ #include <rte_memory.h>
+ #include <rte_bus_pci.h>
 +#include <rte_tailq.h>
  
- #include "rte_vhost.h"
- #include "vdpa_driver.h"
+ /* DEVPKEY_Device_Numa_Node should be defined in devpkey.h */
+ #include <devpkey.h>
+diff --git a/drivers/bus/pci/windows/pci_netuio.c b/drivers/bus/pci/windows/pci_netuio.c
+index 346b2f4c0a..d3d7e1f504 100644
+--- a/drivers/bus/pci/windows/pci_netuio.c
++++ b/drivers/bus/pci/windows/pci_netuio.c
+@@ -2,8 +2,6 @@
+  * Copyright(c) 2020 Intel Corporation.
+  */
+ 
+-#include <sys/queue.h>
+-
+ #include <rte_windows.h>
+ #include <rte_errno.h>
+ #include <rte_log.h>
+diff --git a/drivers/bus/platform/platform.c b/drivers/bus/platform/platform.c
+index f6673cf181..edad25e759 100644
+--- a/drivers/bus/platform/platform.c
++++ b/drivers/bus/platform/platform.c
+@@ -10,7 +10,6 @@
+ #include <string.h>
+ #include <sys/ioctl.h>
+ #include <sys/mman.h>
+-#include <sys/queue.h>
+ #include <unistd.h>
+ 
+ #include <bus_driver.h>
+@@ -23,6 +22,7 @@
+ #include <rte_log.h>
+ #include <rte_memory.h>
+ #include <rte_string_fns.h>
++#include <rte_tailq.h>
+ #include <rte_vfio.h>
+ 
+ #include "private.h"
+diff --git a/drivers/bus/vdev/vdev.c b/drivers/bus/vdev/vdev.c
+index be375f63dc..85df5f02c6 100644
+--- a/drivers/bus/vdev/vdev.c
++++ b/drivers/bus/vdev/vdev.c
+@@ -8,7 +8,6 @@
+ #include <stdlib.h>
+ #include <stdint.h>
+ #include <stdbool.h>
+-#include <sys/queue.h>
+ 
+ #include <eal_export.h>
+ #include <rte_eal.h>
+diff --git a/drivers/bus/vmbus/vmbus_common.c b/drivers/bus/vmbus/vmbus_common.c
+index a787d8b18d..8a987a7d0e 100644
+--- a/drivers/bus/vmbus/vmbus_common.c
++++ b/drivers/bus/vmbus/vmbus_common.c
+@@ -7,7 +7,6 @@
+ #include <unistd.h>
+ #include <dirent.h>
+ #include <fcntl.h>
+-#include <sys/queue.h>
+ #include <sys/mman.h>
+ 
+ #include <eal_export.h>
 -- 
 2.51.0
 
