@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FEFCCFA03
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78503CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:52:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 35BE440E12;
-	Mon,  3 Nov 2025 17:50:00 +0100 (CET)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
- [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id BDB3940666
- for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:54 +0100 (CET)
-Received: by mail-pj1-f48.google.com with SMTP id
- 98e67ed59e1d1-340c39ee02dso1896413a91.1
- for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6153140E19;
+	Mon,  3 Nov 2025 17:50:01 +0100 (CET)
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
+ [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id DAD7740DD6
+ for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:55 +0100 (CET)
+Received: by mail-pj1-f53.google.com with SMTP id
+ 98e67ed59e1d1-33db8fde85cso4566690a91.0
+ for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188594;
- x=1762793394; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188595;
+ x=1762793395; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=6WmAMpChFGZ+NQ3XgGiUMRN9oARNH1Z+u0iQZKlQ8kY=;
- b=whkx+t4lTOH+uIxQQ8eFkT91HDHSdE2xJP+wxzWhwTN3NyxlY31nxUeZqIxnvAUbNA
- H7T8gvZEJZjthySg98DpjjtC4CEV0u83dv4uBtxoUotwUKM2OQoAscOV/mAb5QxzHK8z
- 4NM4RGfDQzAXCPoochl4FHpHzpyob7vy8nT3/EuQnLVb9DUHll3U6cYAvZ9EdqtGH2ZO
- As+otgTt8Qz8M5tqZnBRSYgdlxobciMf9KoAwOLiz0ofdXPs4SvfKGpFUwRIiJNpZY86
- naGrLmQ8DgGOGRJ62BVu4HC0JFiwCm7A9o2MbBirc4ccNetA9/kDDwjELvI2pAKw0Wl1
- bk1w==
+ bh=kzGZtuJRPAHs9+CSXP5QfKfyxgUlNRovkHAaCLLRCJs=;
+ b=vwzKzBW9zcM+2cuDzqYky/Lrk7Ps32mpOKUYuG1V9Bh6ZcI55Z49qcciZjQirumMaV
+ 8VGchp1ZkCEMANc/AXnQGKuFfsOCTrhItaygnYrXqBVf3i4vuftQ2a37o6gIcJI8NLA2
+ CI2LnYag3Kv2/4yu2GslQbaL/yerES5e4aCjOw9/fZ5WGThZ9H7AKrY4L47Bu9cu+tyy
+ vb7qLU6P8EtbTml8ReYCLKRzOzssZ+2cXohM8jZMI2nNVT9VyZZOVikgo5a12xDxXFbL
+ HXtodrIm9Wy6NWZwc1SHiVxCAhjTGyV06MHoTu7sp9AEM2XRXdmDF2YLZlk6L5ahlFPv
+ K+zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762188594; x=1762793394;
+ d=1e100.net; s=20230601; t=1762188595; x=1762793395;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=6WmAMpChFGZ+NQ3XgGiUMRN9oARNH1Z+u0iQZKlQ8kY=;
- b=kUybIxublaRHVbcQBPNKr1ORu7afDIK4iPtAO/5uwudmySrLDpulJZFEi9wiQjms9R
- W+MdSLlCXPe3TkRREjhyR8QHA/xXKxFeZy34h2/a7zRD+2/LXdxz+wbf9zMDMnVNTG0L
- ZtxI0H3aj3K6ahz1QrGIPkq4q2MfngW8e2GoxA+IK2dwpwDmJHAuYjXxH/dN55HU+FXQ
- j30kuuae0Dm0YOM1vrpS3NFtVQxjvtbKP93XagCU1PYz1Vj0sbEn4C+ZcMZDkjbgDfoD
- JD+YdRNd6UJZEvWqeIItFYwjt/N+cx8k0Ab7uP7eW0N9XLnJSdMO7z5t486pI80pJ/05
- yiQw==
-X-Gm-Message-State: AOJu0YymHYjcmkjFbKLif3JYZPTX5jg1lx0aExSCPfc30YDSVT0BUFcr
- clWQIROx/yoyHPXYT/qqFlZFkii5vme4aHzOvaf9Z7IiURxt54v4if+ifZdu76jRRHQZI3sep6J
- xakgw
-X-Gm-Gg: ASbGnctchy8BGb35pHY9CKnvAavOyzldaEIuEI9Nm/D+4rjam2TuvjlOgH5bNLQxRfR
- G77Xs0gZC0AouY7J84jnUd9pfbex684JL4qOacvlzBZ2Wkc1nhpCErOm6EWpbsXQ6lITTcHBx8F
- DN32s/z2pWozJ3unI/ho3OsIjMp3SQ1aPJNwo9IDec1BD0YOywzjlHVM8wfoI/yg6hPeMHkA81Z
- 5ybcntwUIN5ZowLU1mJuyV7zemXTOMtucpuImOvLIcpd2ISLHH5RfA0NlnwsHRthg4rk/9d4nWn
- z8sZKYyETbbMFCRxl7SfH6dnDemkbCVxBZvmbv0nyhd/8vDRWXT+kbF+0U/KgYU6nVBz5bkhtLk
- 7PHSdaFz1IKNzOJULw3MkcD+qCWvYvxL7Rx6FQHAT9Kw9O1T+5fCCTzRN5cc5rRO3eMzL7GZAzI
- Q3cyCUNE3mTM460CEyUuDNhNOeudnBQMbIiFnE9CY=
-X-Google-Smtp-Source: AGHT+IGgX1b76KWixz8Hx/ekKApbcseQi2evK8R+kUQswuBpdUbsGSYzJy3Lvi48+gXFXEC+DIbZiQ==
-X-Received: by 2002:a17:90b:55cc:b0:330:82b1:ef76 with SMTP id
- 98e67ed59e1d1-3408308b48fmr14006190a91.28.1762188593946; 
- Mon, 03 Nov 2025 08:49:53 -0800 (PST)
+ bh=kzGZtuJRPAHs9+CSXP5QfKfyxgUlNRovkHAaCLLRCJs=;
+ b=W0/XeXBtR0ZHE+Mk9HIQtJESOjBlPqg5BHNvjxIEc2+ZDBhPn+kHeMyH4vguCLAKaj
+ u0rv2heBKn/JyYEm2dl3i+J8VhH/CWy4m73m6WOM4/TUb4naIdV0kuNX1MgiI+KpREJk
+ ssHCblImJYawnnjsBWfuWBOr33k6ZeDe0UDqsurS19TkkU+dbN8tB/BRMGW6s2EOrFb3
+ 9ZaYwg2Idv40KA1tGHKYtPskfGVHxgZQLq6erxStQ/sp8vLT+WjJPy4baDOIfM+gjKsR
+ A6kzKwlGv5NivL2+8rcUIJHa6V9kj9Ygu5TkNIeSgHO2C+33isMexhvWUT7k5n2+PYQ7
+ nqxg==
+X-Gm-Message-State: AOJu0YyypH0jRDw8oh+YkSGCv2X0aiUL3yQa/VEZoe0Nh9R/x4TiKCcm
+ MdPdlNEke84ErmM8zj/xbhr+A3G5YTEgHAKE+hEfaGe2xj6893suSdzKzoENK+WoR19ooRdXamA
+ RsfPB
+X-Gm-Gg: ASbGncuSy4yGvZgEQeVerY6zzKWqVtHqLOjmVwPqIqyc8E21SpA9oeRmjda5qqVpoyy
+ 442dRr7i42sV7lznNHHdZvF7kj4FcwaPL93+5wLkqMhBIpIAzD3UvUiXST0oqLjcRm8c+AaSnmA
+ /rwrg9hCTqWItPgFUvyxmeDnuwTBfVmw51fu9btuLQPga1NNyZWQpNqOj5ZenGDzjvhLg7oIh98
+ xLSpBnTKxzVZmuUpoLm7H8g7DZ/0KhImIEMMRnukInhyFvg0CxWQRl/3FBD9l/M88nA7T5oPOMx
+ nXyAHQ23nFgUqghfc9khb5KuNA/f3XsPb/DcQKurSnzF0AvxKF7GJMqWSnHvXA59vmCwzpeQWRo
+ UtMuMaBJwvmh9M0mVu+JURR46NGobdsP94B7szpoZ1UDHfmqa1mLImY0i165U6KrNkZbAXRR9dh
+ Nb+b1Jq+Vq4hG7J81RtXcNbsjwi37GpMWCWpuqxQzg05SWwyTSEeB7UIFKoHPz
+X-Google-Smtp-Source: AGHT+IGw+U2HsS2rxRGwvSBc8ovZh46P3nLPUke7UkaO/5RZljmJx3jAKWgAVZDvISHnEdHnvfvaow==
+X-Received: by 2002:a17:90a:e70b:b0:340:2a3a:71b7 with SMTP id
+ 98e67ed59e1d1-34082fc3919mr16455895a91.12.1762188595025; 
+ Mon, 03 Nov 2025 08:49:55 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.53
+ 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Nov 2025 08:49:53 -0800 (PST)
+ Mon, 03 Nov 2025 08:49:54 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jakub Grajciar <jgrajcia@cisco.com>
-Subject: [PATCH v3 26/44] net/memif: replace use of sys/queue.h
-Date: Mon,  3 Nov 2025 08:47:31 -0800
-Message-ID: <20251103164915.101713-27-stephen@networkplumber.org>
+ Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang <zaiyuwang@trustnetic.com>
+Subject: [PATCH v3 27/44] net/ngbe: replace use of sys/queue.h
+Date: Mon,  3 Nov 2025 08:47:32 -0800
+Message-ID: <20251103164915.101713-28-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251103164915.101713-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -87,34 +87,34 @@ Replace use of system sys/queue.h with DPDK rte_bsd_queue.h
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/memif/memif_socket.h  | 1 -
- drivers/net/memif/rte_eth_memif.h | 1 -
+ drivers/net/ngbe/ngbe_ethdev_vf.c | 1 -
+ drivers/net/ngbe/ngbe_rxtx.c      | 1 -
  2 files changed, 2 deletions(-)
 
-diff --git a/drivers/net/memif/memif_socket.h b/drivers/net/memif/memif_socket.h
-index b0decbb0a2..f95b64fd61 100644
---- a/drivers/net/memif/memif_socket.h
-+++ b/drivers/net/memif/memif_socket.h
-@@ -5,7 +5,6 @@
- #ifndef _MEMIF_SOCKET_H_
- #define _MEMIF_SOCKET_H_
+diff --git a/drivers/net/ngbe/ngbe_ethdev_vf.c b/drivers/net/ngbe/ngbe_ethdev_vf.c
+index e575c47049..62ec1dc2e2 100644
+--- a/drivers/net/ngbe/ngbe_ethdev_vf.c
++++ b/drivers/net/ngbe/ngbe_ethdev_vf.c
+@@ -3,7 +3,6 @@
+  * Copyright(c) 2010-2017 Intel Corporation
+  */
  
 -#include <sys/queue.h>
- #include <sys/un.h>
- 
- /**
-diff --git a/drivers/net/memif/rte_eth_memif.h b/drivers/net/memif/rte_eth_memif.h
-index d4e625ab51..0154930cb7 100644
---- a/drivers/net/memif/rte_eth_memif.h
-+++ b/drivers/net/memif/rte_eth_memif.h
-@@ -5,7 +5,6 @@
- #ifndef _RTE_ETH_MEMIF_H_
- #define _RTE_ETH_MEMIF_H_
+ #include <stdio.h>
+ #include <errno.h>
+ #include <stdint.h>
+diff --git a/drivers/net/ngbe/ngbe_rxtx.c b/drivers/net/ngbe/ngbe_rxtx.c
+index 95e2172ee4..0f9ec153cc 100644
+--- a/drivers/net/ngbe/ngbe_rxtx.c
++++ b/drivers/net/ngbe/ngbe_rxtx.c
+@@ -3,7 +3,6 @@
+  * Copyright(c) 2010-2017 Intel Corporation
+  */
  
 -#include <sys/queue.h>
  
- #include <ethdev_driver.h>
- #include <rte_ether.h>
+ #include <stdint.h>
+ #include <rte_ethdev.h>
 -- 
 2.51.0
 
