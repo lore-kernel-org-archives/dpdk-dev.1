@@ -2,71 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C708CCFA03
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1039FCCFA03
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:51:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2DCE340B9D;
-	Mon,  3 Nov 2025 17:49:49 +0100 (CET)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
- [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id 593C740A75
- for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:45 +0100 (CET)
-Received: by mail-pj1-f43.google.com with SMTP id
- 98e67ed59e1d1-34077439166so3916033a91.2
- for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:45 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7129840DC9;
+	Mon,  3 Nov 2025 17:49:50 +0100 (CET)
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
+ [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 872A440B8C
+ for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:46 +0100 (CET)
+Received: by mail-pj1-f46.google.com with SMTP id
+ 98e67ed59e1d1-340bb1cb9ddso2199343a91.2
+ for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188584;
- x=1762793384; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188586;
+ x=1762793386; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=v3q748VyzKuq5ySIu0v5c3y53aNMOeuXMrF+Ag1KAMo=;
- b=11sWe5oX5b4smzlJIVo6qNU9BExrk7xnsh/ZBEO2P4ThkQ15w8Ssx66fRSo9l1mPWp
- axApvZC29AK1xmOdvNE+F2qNMR67xXe93mpikVAnYLPUgNuXvLHSvHR86ZdlWYEayVaf
- rFM3d17UzNdCF1D7s1FDYwuoVv8gfKXO3zi7XAPfCH8kxCK7THTEswhOtmRG07FSA3/1
- whejv+O/YluZqXqDnzTcFhlm9I6XXCVQk+aBBSPoUvmibsJ1/3HVTqVQze+sP0SwvSop
- J9pG2O9FYYbXC2UjAdxp2hpftvKL/KlJgdoh9yf2Jy8q8/bOUUjB1Mjlp2kHMD2m3E21
- vuhg==
+ bh=BObaC8WUuvG2KwThOdqHfo02l/XzaVEj8lrRY2Byk8E=;
+ b=D/6yTHcTZR3hr59xCF8zg1LvCUUexT0clLE4IyaNXzIoON6qdBEnJdSKSD1sk1wmp3
+ ZhW/bixCRXzrWNw4IQFHxgo5ubothnatqxmz36e5W/mrbhzj4mpuuS8C0wmQ9sHkx9BQ
+ 36WPHBz/n4nTbaT/hblKg+dN2/6S7PfQVTi7Dyw1vuvaeJlEFNlnRKSVENtZ6jTpa3aZ
+ JF4OjXVmyl63sx2wQ0b6M0x04wZEv0zPg3z7+FRRwNOPEVraf00zEbUsyHIgvOIUxozv
+ Piciq3H39IvpOOdCRnJpFMBz51UaoA8L5xeFTr4W+2CFsquUzW0Gv4wxC2U1+ZIFXBmi
+ uSzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762188584; x=1762793384;
+ d=1e100.net; s=20230601; t=1762188586; x=1762793386;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=v3q748VyzKuq5ySIu0v5c3y53aNMOeuXMrF+Ag1KAMo=;
- b=RP7UkxCSS7O+u3mRKNgp3Uhaz60SXJ899CfmO8AOHEEekYR+N8tiQSXkYAp/wwgbtM
- FRuVDHQgMGJ56iVdKDmkyqECF6AmrtEGyc+NLja6VHf3x6Ow/LiX6VWcA2SVyWkkT0y3
- fdBJq2QhyAoCaJkNR+wai/J45NhooNQtSzbNDLlVtnKSuRgUtHgQwrMAmsaKDT/rQ3Im
- m9Np/REK8z65EnL/VVZwkaUiROjiJ6J8RjGrj383JGHvfg+Nnj2uptXQ/z+6rT3MIs9o
- NnrWxdH1Kbbyfpa9FyStX8wq3FI5jVhGFYX6YuuvtkmfpJjNc2jagtb6AtyuXK40obrr
- 1Fqg==
-X-Gm-Message-State: AOJu0YxIhpKQgwuO2VTcQwTM28bFxmPU+IjzrfIiC7WWM0x7VLGnzzR1
- KG7woo0mkX/qigNZwn6+hSFJUYjz7+0O4aJ2VvVxCLODl5cSEkJ0xzwUneFj/J4C8V8h6oqofKJ
- 0jSui
-X-Gm-Gg: ASbGncuKpfQioudOAVvNzXiz2+PlPHCvJpXO59be6TOa/PcxluT43h3QBN7F6J1Fntw
- V/XthMhk+YM/4S8HV/K1uGM6hVHUbaTZ8dj14L+ePcpkdr9B6fVxyfSM6QwJ1+6OJma28sjFi+b
- Yb8jNDNVNxBooCfCZBKYjM9UiqkpX8IULLTgFrauMG40rlR/aa178iOyLMyePjV+Lz+MKvLSX2/
- /MfLlGeM/MdLDdk3u/TV0sbUGBFoXNcYKyhkct0F8W6/tExC51pBKBSiZeJFyvWF8PMvVwQLzwi
- tAlfhGUFmURPTTk/AlpRDBMEo+EllPrusOWCg1a3QAyn3sePo9weUsnl7EwtDb9pBQiUMgA6kdW
- HVpLuzIBngaGiDaE17ASEvzPotUVYqaPU8VIMFc5/XWR4ysVyU3LxF/4FHrkAFeqjgROQkPopUU
- BmzCDcayyeI7EAOgQJoZRAejZ/bHxPjGeMzycWJ5igCEy7I81eYg==
-X-Google-Smtp-Source: AGHT+IEJ2RbQFBGFVLdWbkjPPuud3eaEbx8c6QhYZhPK5LkUhN5xFiiADlfAFvE5rWEZJgJIyHKS2Q==
-X-Received: by 2002:a17:90a:e18e:b0:339:a243:e96d with SMTP id
- 98e67ed59e1d1-3408309eec0mr15390774a91.36.1762188584409; 
- Mon, 03 Nov 2025 08:49:44 -0800 (PST)
+ bh=BObaC8WUuvG2KwThOdqHfo02l/XzaVEj8lrRY2Byk8E=;
+ b=rLxabNPLtX4ENBaET7/Mh/lpAhvYggfzB2hJXGvPoVfNb/WglOkFaGgH9M6Oi2BUnf
+ K7e4zpCsMJeX9+EfdK5473+pcRBY4T+A917eGMBEUUGaYvO4Mgd+KqSvZsxNMJMLU+67
+ l3FHgOTJlcUjOzMN6AXlVRV5EjQByx+LJwdNLx9EuakbgjdkMedAx5gXvJtLEx1rcDd3
+ 8oq1M8OickgSycCcFKLYwLtRSim+ZiWEQLhDj3lo3P47fGWgyKNJHoyEVmkEsXp8eTRm
+ NGGK68L7e0hhqRFXp35ncF0Y88PPc/ieQz0b8EdqwUx0pDE5mIa6cEwEOG081EQZFCYl
+ h+6g==
+X-Gm-Message-State: AOJu0YybrJrCTx6C85NhbpTc/MkbsxRaKX/sTvoJHEt7b7rqjR8TW49j
+ k9D5Bz7dsBTdEVtrDokLI3IIOZmKjoE9lZHQZfF2eYL6cbhk83JGw6u7fIaVB3b6Swl2pylvZMP
+ P4Fem
+X-Gm-Gg: ASbGncspcG7c3IUp9Sl5QETKO+EfO4gapvCWoX7uPFPMU8/wclf873BZBfYSDUvNO45
+ dM6UYPQLZTpxiKNNym2YjJOLLaS1qVsu0EWJ2bJcfHQE8ssNx7KhyloXE439LgZ23l1jRFL80h4
+ Cw0p0m0pCiEept33HRs7BHv9bYqy/JGem9/7B6bW/haVCBJNsj5xUGM9RgOISQUsFyuria2QZgL
+ 2xFmu/0+PMjMs/kN6ymxRz5e3haOIprTPl4Sd8u3cI4riNaxWom8ksdEaBsY8vR+wzEKVrivYDz
+ tlbh3m/uF5J0xV0MUPv8qLU8E0PaFHM0l6pKWukXSIjlgTKP4WQhFuvsknjGFo5qjVE0yAt6hIe
+ rqI6vUFPwNv7UFKDwbL6ezm/fUGT+JtRF9lYqYRvLFY+JPFBQTFEihZnki6i98BSR8LziGEm4+D
+ Ifz+ZlJuLWwXZ9ofJ/UcugXiEaCK/cEyGH+EYk8PM=
+X-Google-Smtp-Source: AGHT+IHC9XpuJLu3K/XQii2qGvg5dawydheWYrDOkB6B5C4Z2eJ3/c8gCrM9avlWtNSSKpLj3pTq0Q==
+X-Received: by 2002:a17:90b:5150:b0:340:48f2:5e2d with SMTP id
+ 98e67ed59e1d1-34082fc655dmr16231894a91.9.1762188585538; 
+ Mon, 03 Nov 2025 08:49:45 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.43
+ 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Nov 2025 08:49:44 -0800 (PST)
+ Mon, 03 Nov 2025 08:49:45 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH v3 17/44] net/mlx5: remove unnecessary include of sys/queue.h
-Date: Mon,  3 Nov 2025 08:47:22 -0800
-Message-ID: <20251103164915.101713-18-stephen@networkplumber.org>
+ Matan Azrad <matan@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+Subject: [PATCH v3 18/44] net/mlx4: replace use of sys/queue.h
+Date: Mon,  3 Nov 2025 08:47:23 -0800
+Message-ID: <20251103164915.101713-19-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251103164915.101713-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -86,173 +84,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Already handled by rte_tailq.h in most places.
+Replace use of system sys/queue.h with DPDK rte_bsd_queue.h
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/mlx5/hws/mlx5dr_internal.h | 1 -
- drivers/net/mlx5/linux/mlx5_verbs.c    | 1 -
- drivers/net/mlx5/mlx5.h                | 2 +-
- drivers/net/mlx5/mlx5_devx.c           | 1 -
- drivers/net/mlx5/mlx5_flow.c           | 2 +-
- drivers/net/mlx5/mlx5_flow.h           | 2 +-
- drivers/net/mlx5/mlx5_flow_dv.c        | 1 -
- drivers/net/mlx5/mlx5_flow_verbs.c     | 2 +-
- drivers/net/mlx5/mlx5_rx.h             | 1 -
- drivers/net/mlx5/mlx5_rxq.c            | 2 +-
- drivers/net/mlx5/mlx5_rxtx.h           | 1 -
- drivers/net/mlx5/mlx5_tx.h             | 1 -
- 12 files changed, 5 insertions(+), 12 deletions(-)
+ drivers/net/mlx4/mlx4.h      | 1 -
+ drivers/net/mlx4/mlx4_flow.c | 2 +-
+ drivers/net/mlx4/mlx4_flow.h | 1 -
+ drivers/net/mlx4/mlx4_mr.h   | 1 -
+ drivers/net/mlx4/mlx4_rxtx.h | 1 -
+ 5 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/net/mlx5/hws/mlx5dr_internal.h b/drivers/net/mlx5/hws/mlx5dr_internal.h
-index 2abc516b5e..4687e16dbe 100644
---- a/drivers/net/mlx5/hws/mlx5dr_internal.h
-+++ b/drivers/net/mlx5/hws/mlx5dr_internal.h
-@@ -6,7 +6,6 @@
- #define MLX5DR_INTERNAL_H_
+diff --git a/drivers/net/mlx4/mlx4.h b/drivers/net/mlx4/mlx4.h
+index f68eeb991a..38ed78df9f 100644
+--- a/drivers/net/mlx4/mlx4.h
++++ b/drivers/net/mlx4/mlx4.h
+@@ -8,7 +8,6 @@
  
+ #include <net/if.h>
  #include <stdint.h>
 -#include <sys/queue.h>
+ 
  /* Verbs headers do not support -pedantic. */
  #ifdef PEDANTIC
- #pragma GCC diagnostic ignored "-Wpedantic"
-diff --git a/drivers/net/mlx5/linux/mlx5_verbs.c b/drivers/net/mlx5/linux/mlx5_verbs.c
-index 9011319a3e..6d5864ae3d 100644
---- a/drivers/net/mlx5/linux/mlx5_verbs.c
-+++ b/drivers/net/mlx5/linux/mlx5_verbs.c
-@@ -8,7 +8,6 @@
+diff --git a/drivers/net/mlx4/mlx4_flow.c b/drivers/net/mlx4/mlx4_flow.c
+index b520664d95..44181c0aa3 100644
+--- a/drivers/net/mlx4/mlx4_flow.c
++++ b/drivers/net/mlx4/mlx4_flow.c
+@@ -14,7 +14,7 @@
+ #include <stddef.h>
  #include <stdint.h>
- #include <unistd.h>
- #include <inttypes.h>
--#include <sys/queue.h>
- 
- #include "mlx5_autoconf.h"
- 
-diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
-index 07418b0922..463ce730ab 100644
---- a/drivers/net/mlx5/mlx5.h
-+++ b/drivers/net/mlx5/mlx5.h
-@@ -10,7 +10,7 @@
- #include <stdbool.h>
- #include <stdint.h>
- #include <limits.h>
+ #include <string.h>
 -#include <sys/queue.h>
 +#include <rte_bsd_queue.h>
  
- #include <rte_pci.h>
- #include <rte_ether.h>
-diff --git a/drivers/net/mlx5/mlx5_devx.c b/drivers/net/mlx5/mlx5_devx.c
-index 673c9f3902..4fa9e444c4 100644
---- a/drivers/net/mlx5/mlx5_devx.c
-+++ b/drivers/net/mlx5/mlx5_devx.c
+ /* Verbs headers do not support -pedantic. */
+ #ifdef PEDANTIC
+diff --git a/drivers/net/mlx4/mlx4_flow.h b/drivers/net/mlx4/mlx4_flow.h
+index 5e82df6bd6..a27317432d 100644
+--- a/drivers/net/mlx4/mlx4_flow.h
++++ b/drivers/net/mlx4/mlx4_flow.h
 @@ -7,7 +7,6 @@
- #include <stdbool.h>
- #include <string.h>
- #include <stdint.h>
--#include <sys/queue.h>
- 
- #include <rte_malloc.h>
- #include <rte_common.h>
-diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
-index 1de398982a..c359923c29 100644
---- a/drivers/net/mlx5/mlx5_flow.c
-+++ b/drivers/net/mlx5/mlx5_flow.c
-@@ -7,7 +7,7 @@
- #include <stdint.h>
- #include <string.h>
- #include <stdbool.h>
--#include <sys/queue.h>
-+#include <rte_bsd_queue.h>
- 
- #include <eal_export.h>
- #include <rte_common.h>
-diff --git a/drivers/net/mlx5/mlx5_flow.h b/drivers/net/mlx5/mlx5_flow.h
-index ff61706054..84aec40458 100644
---- a/drivers/net/mlx5/mlx5_flow.h
-+++ b/drivers/net/mlx5/mlx5_flow.h
-@@ -8,7 +8,7 @@
- #include <stdalign.h>
- #include <stdint.h>
- #include <string.h>
--#include <sys/queue.h>
-+#include <rte_bsd_queue.h>
- 
- #include <rte_alarm.h>
- #include <rte_mtr.h>
-diff --git a/drivers/net/mlx5/mlx5_flow_dv.c b/drivers/net/mlx5/mlx5_flow_dv.c
-index bcce1597e2..ba23280abc 100644
---- a/drivers/net/mlx5/mlx5_flow_dv.c
-+++ b/drivers/net/mlx5/mlx5_flow_dv.c
-@@ -2,7 +2,6 @@
-  * Copyright 2018 Mellanox Technologies, Ltd
-  */
- 
--#include <sys/queue.h>
- #include <stdalign.h>
- #include <stdint.h>
- #include <string.h>
-diff --git a/drivers/net/mlx5/mlx5_flow_verbs.c b/drivers/net/mlx5/mlx5_flow_verbs.c
-index 67d199ce15..aa94a9fee1 100644
---- a/drivers/net/mlx5/mlx5_flow_verbs.c
-+++ b/drivers/net/mlx5/mlx5_flow_verbs.c
-@@ -3,7 +3,7 @@
-  */
- 
- #include <netinet/in.h>
--#include <sys/queue.h>
-+#include <rte_bsd_queue.h>
- #include <stdalign.h>
- #include <stdint.h>
- #include <string.h>
-diff --git a/drivers/net/mlx5/mlx5_rx.h b/drivers/net/mlx5/mlx5_rx.h
-index 7be31066a5..e88c60aa22 100644
---- a/drivers/net/mlx5/mlx5_rx.h
-+++ b/drivers/net/mlx5/mlx5_rx.h
-@@ -7,7 +7,6 @@
- #define RTE_PMD_MLX5_RX_H_
+ #define RTE_PMD_MLX4_FLOW_H_
  
  #include <stdint.h>
 -#include <sys/queue.h>
  
- #include <rte_mbuf.h>
- #include <rte_mempool.h>
-diff --git a/drivers/net/mlx5/mlx5_rxq.c b/drivers/net/mlx5/mlx5_rxq.c
-index 1425886a22..cddc0da9fa 100644
---- a/drivers/net/mlx5/mlx5_rxq.c
-+++ b/drivers/net/mlx5/mlx5_rxq.c
-@@ -8,7 +8,7 @@
- #include <string.h>
- #include <stdint.h>
- #include <fcntl.h>
--#include <sys/queue.h>
-+#include <rte_bsd_queue.h>
- 
- #include <eal_export.h>
- #include <rte_mbuf.h>
-diff --git a/drivers/net/mlx5/mlx5_rxtx.h b/drivers/net/mlx5/mlx5_rxtx.h
-index 3fa9245769..c999ca9052 100644
---- a/drivers/net/mlx5/mlx5_rxtx.h
-+++ b/drivers/net/mlx5/mlx5_rxtx.h
+ /* Verbs headers do not support -pedantic. */
+ #ifdef PEDANTIC
+diff --git a/drivers/net/mlx4/mlx4_mr.h b/drivers/net/mlx4/mlx4_mr.h
+index 56dd73ff19..7fef07d6f9 100644
+--- a/drivers/net/mlx4/mlx4_mr.h
++++ b/drivers/net/mlx4/mlx4_mr.h
 @@ -8,7 +8,6 @@
  
  #include <stddef.h>
  #include <stdint.h>
 -#include <sys/queue.h>
  
- #include <rte_mbuf.h>
- #include <rte_mempool.h>
-diff --git a/drivers/net/mlx5/mlx5_tx.h b/drivers/net/mlx5/mlx5_tx.h
-index 16307206e2..f320b18481 100644
---- a/drivers/net/mlx5/mlx5_tx.h
-+++ b/drivers/net/mlx5/mlx5_tx.h
+ /* Verbs headers do not support -pedantic. */
+ #ifdef PEDANTIC
+diff --git a/drivers/net/mlx4/mlx4_rxtx.h b/drivers/net/mlx4/mlx4_rxtx.h
+index 70f3cd8680..c68375b088 100644
+--- a/drivers/net/mlx4/mlx4_rxtx.h
++++ b/drivers/net/mlx4/mlx4_rxtx.h
 @@ -7,7 +7,6 @@
- #define RTE_PMD_MLX5_TX_H_
+ #define MLX4_RXTX_H_
  
  #include <stdint.h>
 -#include <sys/queue.h>
  
- #include <rte_mbuf.h>
- #include <rte_mempool.h>
+ /* Verbs headers do not support -pedantic. */
+ #ifdef PEDANTIC
 -- 
 2.51.0
 
