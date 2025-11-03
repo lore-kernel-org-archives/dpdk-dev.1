@@ -2,75 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093C4CCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFB7CCFA03
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 17:07:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CDF9540EE3;
-	Mon,  3 Nov 2025 17:50:19 +0100 (CET)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com
- [209.85.215.172])
- by mails.dpdk.org (Postfix) with ESMTP id 2909240ED3
- for <dev@dpdk.org>; Mon,  3 Nov 2025 17:50:16 +0100 (CET)
-Received: by mail-pg1-f172.google.com with SMTP id
- 41be03b00d2f7-b991ddb06a9so1144785a12.3
- for <dev@dpdk.org>; Mon, 03 Nov 2025 08:50:16 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 599A2402B7;
+	Mon,  3 Nov 2025 18:07:22 +0100 (CET)
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
+ [209.85.210.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 12B20402B7
+ for <dev@dpdk.org>; Mon,  3 Nov 2025 18:07:20 +0100 (CET)
+Received: by mail-pf1-f171.google.com with SMTP id
+ d2e1a72fcca58-7833765433cso6122651b3a.0
+ for <dev@dpdk.org>; Mon, 03 Nov 2025 09:07:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188615;
- x=1762793415; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762189640;
+ x=1762794440; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=OjHCW9ekGwX2R7gLAhHtN43KCGcROSUiJXgL0KXemCI=;
- b=ILx6lRhX7hPbHjJ4yLHgE7HtbaKDzzEdq61+667yrJp+wPdL7Wvm/l/MtSLAi4EZtj
- Z5HgenuafgOTLabIGArMY5YZtNfJ6Rkn1fiXNeHNxzDnSC7hxGX4NXg8kfFu1ahT6w+A
- UGXQ+mKgAWoA9bCG+Uq9KjddCeTIlV3+pMMHmjkAEz2wXhAVE/gzQFyNcwlmnrLhFqcv
- IC23kqjGHLaNa7tfG7uW4BLPLEXaTzZVSnX8eX4wcLCsXGJDB3h5FUY2WBm4bWyGrgyV
- Ur2g6C4tPr0g+wmh8RYhVhIlFkmbFr3SF63vY8YSDAo+1N8kgE9Wvfbq05iOfTfI79SZ
- C+bA==
+ bh=IIcTTGWaOndMtplpEnppajgwximK8+wChWnLzaIDu+E=;
+ b=NMpvNr/HB6RDR0O5YIf4Mj1ko8dbctazXRDIEGYFsiUpoqpLb8YmcYSqGKlXQEucdC
+ SoA76tDioO5WDoEi3lJ9ZWAm3Aq5kbGRkvQwNgchKwdGCeT4vmkaHcfbEpPAqviPVe4q
+ XCSt0CcyUJqcbCF+A5Uy0jsIEMZ5trUde4gnFZqVeCxRYJpasgg1ozWpqvrnlApU813k
+ CEtoM4GuY3BKnxLutQC+K/os2QZqkMO0eoO/gQ0uMVvKPfjOFk8tKTAmc0+JAmg94Qln
+ Ro8n+LoPH5YQJ+J0wO7hPk1VCxtgnxzwz7lH/H7TcRS6xOTgf6HeQA+pNpi3QNI58SYC
+ 8/hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762188615; x=1762793415;
+ d=1e100.net; s=20230601; t=1762189640; x=1762794440;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=OjHCW9ekGwX2R7gLAhHtN43KCGcROSUiJXgL0KXemCI=;
- b=JNjZcvbK1VRnaglfHP1wu98Qy+WCiGvuykZHKQZ23on7eZvFP7woCjkVOpB5T7xVN0
- srL0ny24+C3wPBXmjT/44iEmDe/RX3KLK5Mqk2NkmkIWEttTB/VJrZ2rPkE1CNp+FIM4
- H8DDU/TXdYT8n3BubkYboM8wNSFXdmwaUnu1F1G1yoWd9WmXzdXn3Q4pR+J/WgZyCpBF
- /k69+KCPG6fWks/2KZSkeuocBuyGx/5hY17krWgtqTi3A8LjylyhwGjKIixfznKsxwzQ
- gzpiyh69tSAu+jmDte+6o0i0f0d0T9ERUsT0SS4tIzpFjARIxhQsgS5iL29pc/+mWma2
- oVHQ==
-X-Gm-Message-State: AOJu0YykPV1VVg4gqghIX9PJhjpy1MbeFZIQsntUVUQ0Kk2Au7nPQUp1
- JsRw6wXhf8U0eDVqrPSi1CHIogUNJqPn8xzrWsO1U7mH/bmsURtZUNaifQmfnzu/ABjaLBOry8d
- 6ezpW
-X-Gm-Gg: ASbGnctsyVyOqnvF/uQxdK5L4e1+XOrVxyQumI+r+M2IzRbyFBdHrWd8dlPHzx17RNZ
- 0afb8N77tOiEllpSRLR0p8KB5qQqjj1fgmTrEoUju/jNJ1q4dLMJ6dJHQZKe0KVdov67s1ptVz9
- 89ePRpiMAL8iez67ELKjMUkQZIEAjKH195LRlirahsLHSAhvM8nqbnC12u2cG/Mie/UsBqDisrK
- m0sdATydKUZNXYhZhMVGDpmtglQDyZh65sdeqRUBiOPFKEOTatrWydisEBWwUydDpIfH3qopTQx
- UwewQtT3CvMLYCYcdkslLE2u2fw14V+dvUHwKUGbzw3TAp9sABwln2e+qxZmhQTjjAffg37Jrsx
- DRUAcUKdGQvSEOcOVXzvxjd2oiDxvtfb/9ChGXKWao2dt2l7OKTVq7ZjaluXae0jgQi87zJPjyS
- cyuOLX5yuSiznlGoDApX6bgWc4AIXdDa79nVNHVkQ9nAGeMS5RVQ==
-X-Google-Smtp-Source: AGHT+IFqFVfUL3KdG/2R0sAzivQckHP5us0qph/BgkcFsy6Z7+vL/A3Ha/dAAqp8L4BnG/cA2apfGA==
-X-Received: by 2002:a17:903:2f8d:b0:294:ecba:c7f with SMTP id
- d9443c01a7336-2951a49dd5emr182406485ad.48.1762188615248; 
- Mon, 03 Nov 2025 08:50:15 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=IIcTTGWaOndMtplpEnppajgwximK8+wChWnLzaIDu+E=;
+ b=js9BFRRlE/PyKuEBH22t/FGUeNuvhaYNrnhXmrakVRERA8N0HWF/aZBRoN16mZ55Q6
+ 6pLu3IRU/WHNwwVB/9HXKaA19G5DD1tkxjvYTcbwTxdNIAq4i+QKJwxOtDMjYPra0S8V
+ dVIKhA/FcnD+M+sRaGojrTOIckMNdn2VyFfAh4sFh23hJHO8gcWSna4Z7Cl4Tjy9NZP5
+ U+43wdHBoQhqHt55B4OapJNvZfPaot43NIUchDhVuapzP5m0yDV7J+F1pEi1udK7TvP3
+ 5NtLzyyvs4crEhBVvb6vROTPFvG4pGON6tDQWHhT9h2zKH64kCxklO0jSsxLY2oi5lTd
+ ilxQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWOpj4ws409n9OWkdVlaRj9jQ/N5Gv6XRRAo3KpuKckBx2Gk9f24MY74TmKv9/zJrzY0wo=@dpdk.org
+X-Gm-Message-State: AOJu0YyrrVpaRUwaQRCY99P/d8TELB1uCF9oHy8GrYHEVl+SDurfIxkS
+ njL4e8CqkEw4ieSyRlDRWisrUTDXutqZdyZDpel7wJgwX0eTaUouHyhxNWjxeaEv9Nk=
+X-Gm-Gg: ASbGncsnjXEyvgTcvuaGNmXwwqCgmi//EjxnnNEGwfFWyuD5XsnJGZ1cvzh26IwmTWt
+ qeYXUldULMDCOGEU5FNbB9mTLS1yspmHZh4ksgxSkTxMjgphwW/NBMHJxqWzrvAE2VoGBU/XylP
+ G3RWu/Jzc5C3e8sDqpiGcdai/tlIedK0dbEbYjIqBbEvdlnlySehi9DxE9w95VRy1GF4n3BHeVB
+ 8RmezfglXctV7UqK62STUfFkqed2vwbon+8ZkTE0vXMGBXdR5A0N5eH8mI/P2Xm/hUmAiB4gYAh
+ et4G4V7itiFlfGPhloVOFGvY/oLe6Lbv4CJ2dneHeLr2s0ssz3I9j3jlkV1N5+HgCiEXuFhi196
+ c6eAwOeJpBVluBv+6X8dN2WSHIXf+GTPJnHtpnYeQHWkJtkLxrtpp92Pb9pL6/gyDANjHZ0Qkfg
+ 9xO+bzfog9U1g1Bt/UP1qsygwILWnPv+3u9A==
+X-Google-Smtp-Source: AGHT+IEngt9VovJAILNPCGlO7TZb+oYk30rMXRAYZbbct7v5XW6xUPe6S5PRvBWROkLu3wECe+d8uQ==
+X-Received: by 2002:a05:6a00:b8e:b0:7a2:8d06:fa0e with SMTP id
+ d2e1a72fcca58-7a77aac1eccmr16256576b3a.26.1762189639914; 
+ Mon, 03 Nov 2025 09:07:19 -0800 (PST)
+Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.50.14
+ d2e1a72fcca58-7ab940156fcsm3373868b3a.22.2025.11.03.09.07.19
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Nov 2025 08:50:14 -0800 (PST)
+ Mon, 03 Nov 2025 09:07:19 -0800 (PST)
+Date: Mon, 3 Nov 2025 09:07:17 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
-Subject: [PATCH v3 44/44] net/netvsc: use LIST_FOREACH_SAFE
-Date: Mon,  3 Nov 2025 08:47:49 -0800
-Message-ID: <20251103164915.101713-45-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251103164915.101713-1-stephen@networkplumber.org>
-References: <20250818233102.180207-1-stephen@networkplumber.org>
- <20251103164915.101713-1-stephen@networkplumber.org>
+To: Wathsala Vithanage <wathsala.vithanage@arm.com>
+Cc: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>, Tyler Retzlaff
+ <roretzla@linux.microsoft.com>, dev@dpdk.org, Ola Liljedahl
+ <ola.liljedahl@arm.com>, vattunuru@marvell.com
+Subject: Re: [PATCH 1/1] eal: correct memory ordering in MCS lock
+Message-ID: <20251103090717.2d181d95@phoenix>
+In-Reply-To: <f08a5a55-2a46-4f8c-9658-f7c320de57f2@arm.com>
+References: <20251023184724.1759497-1-wathsala.vithanage@arm.com>
+ <f08a5a55-2a46-4f8c-9658-f7c320de57f2@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,34 +86,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix use after free in in remove_cache_list by using LIST_FOREACH_SAFE
+On Mon, 3 Nov 2025 09:12:39 -0600
+Wathsala Vithanage <wathsala.vithanage@arm.com> wrote:
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/netvsc/hn_ethdev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> MCS lock is broken, it's just a matter of time it will run into a deadlock.
+> 
+> drivers/dma/cnxk is a user of MCS lock.
 
-diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
-index dc765e88f7..bc243bf229 100644
---- a/drivers/net/netvsc/hn_ethdev.c
-+++ b/drivers/net/netvsc/hn_ethdev.c
-@@ -1479,14 +1479,14 @@ static int populate_cache_list(void)
- 
- static void remove_cache_list(void)
- {
--	struct da_cache *cache;
-+	struct da_cache *cache, *tmp;
- 
- 	rte_spinlock_lock(&netvsc_lock);
- 	da_cache_usage--;
- 	if (da_cache_usage)
- 		goto out;
- 
--	LIST_FOREACH(cache, &da_cache_list, list) {
-+	LIST_FOREACH_SAFE(cache, &da_cache_list, list, tmp) {
- 		LIST_REMOVE(cache, list);
- 		free(cache);
- 	}
--- 
-2.51.0
-
+I am surprised that a driver would use mcslock.
+MCSlock is targeted at case of large number of CPU's with lots of contention.
+It will likely be slower than spinlock or ticketlock for the use case of driver.
