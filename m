@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78503CCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0DFCCFA03
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:52:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6153140E19;
-	Mon,  3 Nov 2025 17:50:01 +0100 (CET)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
- [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id DAD7740DD6
- for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:55 +0100 (CET)
-Received: by mail-pj1-f53.google.com with SMTP id
- 98e67ed59e1d1-33db8fde85cso4566690a91.0
- for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:55 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 792FF40E22;
+	Mon,  3 Nov 2025 17:50:02 +0100 (CET)
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
+ [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 0474B409FA
+ for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:57 +0100 (CET)
+Received: by mail-pj1-f46.google.com with SMTP id
+ 98e67ed59e1d1-340a5c58bf1so2125726a91.2
+ for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188595;
- x=1762793395; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188596;
+ x=1762793396; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=kzGZtuJRPAHs9+CSXP5QfKfyxgUlNRovkHAaCLLRCJs=;
- b=vwzKzBW9zcM+2cuDzqYky/Lrk7Ps32mpOKUYuG1V9Bh6ZcI55Z49qcciZjQirumMaV
- 8VGchp1ZkCEMANc/AXnQGKuFfsOCTrhItaygnYrXqBVf3i4vuftQ2a37o6gIcJI8NLA2
- CI2LnYag3Kv2/4yu2GslQbaL/yerES5e4aCjOw9/fZ5WGThZ9H7AKrY4L47Bu9cu+tyy
- vb7qLU6P8EtbTml8ReYCLKRzOzssZ+2cXohM8jZMI2nNVT9VyZZOVikgo5a12xDxXFbL
- HXtodrIm9Wy6NWZwc1SHiVxCAhjTGyV06MHoTu7sp9AEM2XRXdmDF2YLZlk6L5ahlFPv
- K+zQ==
+ bh=CluWMr9N/4VCAtmP64Liofe3YBuTG6qc4Exey6rG7dg=;
+ b=q8o74syA7jNpY2up4t/VcPBoaLDJ5s7l6Z4N05hMVJ7K9XnFgYtbNAzJyFjx0prAhy
+ zrHpdFIF0ZF41OqS58oh2YTBjPr1Rql+quRtBUUHGr8n/QUo5+jaxxJurKDPpDDyZVnf
+ 26zNQhuRUbuAMQ3/8nZp5EWkYOxRZj/fbMd7N7cjr4Pji2K4Qvekue753hQ6spSnFOG6
+ tOdwjxxOdnZHYpr/1UoNX2S7kZs3kaYBOOYWbtKkkABV6gywcs/IiGe9Ob5zPqIAqksJ
+ bTLWth1/Y0u/8Ayb/V4aUhwMxpPW98Gkj3p5x4Rh4aJ2sxKqISGJxzvyrC8sND8o7Fkm
+ Vrag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762188595; x=1762793395;
+ d=1e100.net; s=20230601; t=1762188596; x=1762793396;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=kzGZtuJRPAHs9+CSXP5QfKfyxgUlNRovkHAaCLLRCJs=;
- b=W0/XeXBtR0ZHE+Mk9HIQtJESOjBlPqg5BHNvjxIEc2+ZDBhPn+kHeMyH4vguCLAKaj
- u0rv2heBKn/JyYEm2dl3i+J8VhH/CWy4m73m6WOM4/TUb4naIdV0kuNX1MgiI+KpREJk
- ssHCblImJYawnnjsBWfuWBOr33k6ZeDe0UDqsurS19TkkU+dbN8tB/BRMGW6s2EOrFb3
- 9ZaYwg2Idv40KA1tGHKYtPskfGVHxgZQLq6erxStQ/sp8vLT+WjJPy4baDOIfM+gjKsR
- A6kzKwlGv5NivL2+8rcUIJHa6V9kj9Ygu5TkNIeSgHO2C+33isMexhvWUT7k5n2+PYQ7
- nqxg==
-X-Gm-Message-State: AOJu0YyypH0jRDw8oh+YkSGCv2X0aiUL3yQa/VEZoe0Nh9R/x4TiKCcm
- MdPdlNEke84ErmM8zj/xbhr+A3G5YTEgHAKE+hEfaGe2xj6893suSdzKzoENK+WoR19ooRdXamA
- RsfPB
-X-Gm-Gg: ASbGncuSy4yGvZgEQeVerY6zzKWqVtHqLOjmVwPqIqyc8E21SpA9oeRmjda5qqVpoyy
- 442dRr7i42sV7lznNHHdZvF7kj4FcwaPL93+5wLkqMhBIpIAzD3UvUiXST0oqLjcRm8c+AaSnmA
- /rwrg9hCTqWItPgFUvyxmeDnuwTBfVmw51fu9btuLQPga1NNyZWQpNqOj5ZenGDzjvhLg7oIh98
- xLSpBnTKxzVZmuUpoLm7H8g7DZ/0KhImIEMMRnukInhyFvg0CxWQRl/3FBD9l/M88nA7T5oPOMx
- nXyAHQ23nFgUqghfc9khb5KuNA/f3XsPb/DcQKurSnzF0AvxKF7GJMqWSnHvXA59vmCwzpeQWRo
- UtMuMaBJwvmh9M0mVu+JURR46NGobdsP94B7szpoZ1UDHfmqa1mLImY0i165U6KrNkZbAXRR9dh
- Nb+b1Jq+Vq4hG7J81RtXcNbsjwi37GpMWCWpuqxQzg05SWwyTSEeB7UIFKoHPz
-X-Google-Smtp-Source: AGHT+IGw+U2HsS2rxRGwvSBc8ovZh46P3nLPUke7UkaO/5RZljmJx3jAKWgAVZDvISHnEdHnvfvaow==
-X-Received: by 2002:a17:90a:e70b:b0:340:2a3a:71b7 with SMTP id
- 98e67ed59e1d1-34082fc3919mr16455895a91.12.1762188595025; 
- Mon, 03 Nov 2025 08:49:55 -0800 (PST)
+ bh=CluWMr9N/4VCAtmP64Liofe3YBuTG6qc4Exey6rG7dg=;
+ b=me1VwxY274YMOxK0CEF/iuVu+OSk6d+3mgzJ/Vo9X7p0Sfn0Bj/O5iw/fXf3hbMAiC
+ tUsd+scFgGjHXhnRMd0qO3Cc2n/oqmpoV2gEhuFStz4kgsXtmRp/95zZfmCx+A+exYiA
+ kFfd2REa2yne59ZKfxE7tlAAZb98RUpr3vg1faRBYQ2uGXHWbLUvo2VqWjQTsDEtL3zL
+ S27DYz+AcuTNGfFRrdwKTii9n6jrm1FWlcevZaLE/ZleALEwf213QGnbZpe15G0Oi8US
+ VJIDwWPV4JRqAfuYXww4ZGEtzsl3QL6BIB6EOPf6XKhzYkqRVus7x8F7pEls00U85Gkw
+ XzKA==
+X-Gm-Message-State: AOJu0YwgQtwJQti2r0srXVXCbbyQhKxn34o2EW+iUtBFDTLvlEMRmO6G
+ nrpe6Hd75vYkyU8oS1jq3QcpEvfw1dnvDDFWDp/LXlNoaX085M1tqAtea6HW3xsEODcRSVlIH4P
+ 11iuu
+X-Gm-Gg: ASbGncuvbepTy0NIUs7m3IwJVqPAnYOx04VFh1ZO8QwD0TXvq5x+GQA6Bnay//nmsnx
+ 5/aed8BA8Nly7Sb/cDs5n0OUCXa1gnTYhKmQ0Hjr8MDFyslGE1hURVU/7/zlu53r4NsL7A8I8qr
+ n3rBolxEcxugmEFRKEsvqSW/IycUlbuvbYvNx9wN3/RtZAFJ9S7kVmVBjQ6d6siPQTHHBRLlLO0
+ RTvyuu0uA9ise3ebEHzsI141SXJ2xgIQjenMttCC9pr2EB062I4Tsv89+fsKqblMbKzaGLITm+5
+ P1romB0PFWG/ZCbAX/L+/6Vn0/f5IfPxnR5H2x7DkLN+kXFh/UmH8c2WRLthkuEYGi0alQU02HY
+ bmTjMfT7cjYEQxRVhiBl5LUkwd39FSHzHPb2s8yR9MgvolJsOdiq4iUxtbthNPGRdYY/SOg3L0y
+ woNnfAle4ZiwfMnbGNQTdom0EjSN7nR04uK62bL/ZIFsTKsP5ZMg==
+X-Google-Smtp-Source: AGHT+IEPU9HZJl6BWi0/DQMH7IhXcK3U/pU4luO+IXo0PNDMJx4GdS+Hln/jLfYe2CcxmNf3ukaWiw==
+X-Received: by 2002:a17:90b:2b44:b0:340:f05a:3ed3 with SMTP id
+ 98e67ed59e1d1-340f05a4111mr9018480a91.17.1762188596145; 
+ Mon, 03 Nov 2025 08:49:56 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.54
+ 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Nov 2025 08:49:54 -0800 (PST)
+ Mon, 03 Nov 2025 08:49:55 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang <zaiyuwang@trustnetic.com>
-Subject: [PATCH v3 27/44] net/ngbe: replace use of sys/queue.h
-Date: Mon,  3 Nov 2025 08:47:32 -0800
-Message-ID: <20251103164915.101713-28-stephen@networkplumber.org>
+ Christian Koue Muf <ckm@napatech.com>,
+ Serhii Iliushyk <sil-plv@napatech.com>
+Subject: [PATCH v3 28/44] net/ntnic: replace use of sys/queue.h
+Date: Mon,  3 Nov 2025 08:47:33 -0800
+Message-ID: <20251103164915.101713-29-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251103164915.101713-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
@@ -87,34 +88,22 @@ Replace use of system sys/queue.h with DPDK rte_bsd_queue.h
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/ngbe/ngbe_ethdev_vf.c | 1 -
- drivers/net/ngbe/ngbe_rxtx.c      | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/net/ntnic/ntnic_ethdev.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/net/ngbe/ngbe_ethdev_vf.c b/drivers/net/ngbe/ngbe_ethdev_vf.c
-index e575c47049..62ec1dc2e2 100644
---- a/drivers/net/ngbe/ngbe_ethdev_vf.c
-+++ b/drivers/net/ngbe/ngbe_ethdev_vf.c
-@@ -3,7 +3,6 @@
-  * Copyright(c) 2010-2017 Intel Corporation
-  */
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index f8a01dc9fc..6e1bc16036 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -14,8 +14,6 @@
+ #include <ethdev_pci.h>
+ #include <rte_kvargs.h>
  
 -#include <sys/queue.h>
- #include <stdio.h>
- #include <errno.h>
- #include <stdint.h>
-diff --git a/drivers/net/ngbe/ngbe_rxtx.c b/drivers/net/ngbe/ngbe_rxtx.c
-index 95e2172ee4..0f9ec153cc 100644
---- a/drivers/net/ngbe/ngbe_rxtx.c
-+++ b/drivers/net/ngbe/ngbe_rxtx.c
-@@ -3,7 +3,6 @@
-  * Copyright(c) 2010-2017 Intel Corporation
-  */
- 
--#include <sys/queue.h>
- 
- #include <stdint.h>
- #include <rte_ethdev.h>
+-
+ #include "rte_spinlock.h"
+ #include "ntlog.h"
+ #include "ntdrv_4ga.h"
 -- 
 2.51.0
 
