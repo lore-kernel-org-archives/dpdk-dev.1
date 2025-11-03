@@ -2,71 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD15FCCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF75ECCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Nov 2025 16:49:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BFD0140431;
-	Mon,  3 Nov 2025 17:49:20 +0100 (CET)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
- [209.85.214.173])
- by mails.dpdk.org (Postfix) with ESMTP id 4653F4029C
- for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:19 +0100 (CET)
-Received: by mail-pl1-f173.google.com with SMTP id
- d9443c01a7336-294fc62d7f4so42346205ad.2
- for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:19 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1523040652;
+	Mon,  3 Nov 2025 17:49:22 +0100 (CET)
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
+ [209.85.215.180])
+ by mails.dpdk.org (Postfix) with ESMTP id B178D402EB
+ for <dev@dpdk.org>; Mon,  3 Nov 2025 17:49:20 +0100 (CET)
+Received: by mail-pg1-f180.google.com with SMTP id
+ 41be03b00d2f7-b9a6ff216faso1278929a12.3
+ for <dev@dpdk.org>; Mon, 03 Nov 2025 08:49:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188558;
- x=1762793358; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762188560;
+ x=1762793360; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=FBMkDvEumUoC88+3tfEyfBMltjY4eV7JA6ZJ13V2AMo=;
- b=AsnYxsdzuIGuvG2nB8TGVvWB3iYOUb+YpCg9eqbXrpwGeJ1VEcNEpPsiYrxolhtGN7
- h/5AdoPiCWEEFp1ZVIyBSBu4ax4AFWUDqlpNYRfsVHzOpsK50+EUBb9QMv5kbZnRD3CE
- O4NWIrTg9mLPQfiiA6orTFvRlYhHbpRW0xRKCskm6P8Lk6kcFoGdFqB30gOBUZUXQwfL
- qc5mdUYoHMKbbrbyXaVpERvFe5aWSeGYK98m1ARhr1byIUiyeKTVphBRRamSw2uh0eh9
- bYG71R5tIc4SAUoCHFCaSFqMpVzkfe89tAsx5nDw0DTXp8zkCAxhiNL5+90rQryVRhPq
- FfOQ==
+ bh=+0xGKvb4s3y76CRxUEFcf/y9Rl/0w7aHHiEz7NmqzZY=;
+ b=EMGqTgzEd/JeB3JCJwFL0GeuYTrmtC3k5ckJQrZPFfzAvLiPcGIqtbVW2s+9qq35Qa
+ MRY7vOiQiOnCxdPO0hRP78ikv1Y3dM4gzwDBqWh+zTubxXaY0upDQgOcQEauas/k1Tjo
+ Wa99OzoELToV0mSFwJqu/8hg7oGnXkpIXEzZmgpac12BHltGW+tukXAvG94gbhRnWGOf
+ /BrcGug0OAQV3dOQg614B6AtmD7AFS/iOEu6+Bv6W4ncGIosvqRlXBj+M+CGvAPte4qe
+ UkB5jIkRiZvKG4vtIkdA8IdGGsihplC6NfWu7XyHLuDfoiIgVG8hrsdyi3K+LAxtf3/W
+ v30A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762188558; x=1762793358;
+ d=1e100.net; s=20230601; t=1762188560; x=1762793360;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=FBMkDvEumUoC88+3tfEyfBMltjY4eV7JA6ZJ13V2AMo=;
- b=SOpSZU1jE9poJ9h6bwRkcStD/m3KYDNBIle+7RTnBPnX0YPNLXpGSo7lXQR5sXy3nw
- 0/tXDXXbS8D+pFVCifyX1Re5q6mMAJOxQOF8cdJo5Jl51gKnPBj1qga+Z5/2m8dVknfk
- 8yja/BTVXjCquTM0YXz1jFbz3nbE5PPaNna6HdHz1w3kLL6Jld8Gm7FHdOI9QrKuixdM
- o9249XZJ5TgPhFjWoaZPzvZHkAbKmM4CW7FvleZJrSwEmK0WoYz2FqRSiUlW4PZ1gPOZ
- dgw9UksmIJ8WUh6+FWZEdutvfOGG7iCyv2U1chHAR4JLjgCUzooobDazyR/3wdAHRkHB
- F5Uw==
-X-Gm-Message-State: AOJu0Yz8Ia6biB0ecgcaUUnJ131G9Ga7cRkPyBY4Dj5knEswWQjR1HuM
- lnc383V92v6g6ExF497ABEtdUT72ZT++BB88VPEbF+yc0vj4AI+TVwCp4p9kPqls1BnuJmc0zqP
- NXTe7
-X-Gm-Gg: ASbGncv1Pqj9Hb6PKXIxlKYSmXzKh4QfvhyLWJ25ljNhi/ZYhi/yEiooZcHtka7Y1Vl
- zQFNPhUw8tKshz13dZ2NYe0Eob5m2CAEIVZvTsArup+EE28SoC0AB3txiAVzfhs2D7UGTB3K7oV
- FuoKfAhmw9dQlxWq+IqJybg3MeLP57HDbWBMwER/cA/v6rDx4LhsbltBGIageAzzITNZrzIN7ZU
- 8jY3hfwPFWMr3DlVp075i0SC+p3X+MTwclMPers2IEqddc+lY79MzDjKDHbu2o0kyBEyeFd6aGZ
- NvGSiWrJMrPVXlPa90n+0kVSZHwxtTm1WoYG7CJvkJYyOl4FOn7x/eRS7W9XfcjqgDy7WHU3jnS
- OMimmABugk3ETsbYSF2cyGwoeR3bQwdcFSEDdpS6an8Lnz2UStKr7ai3jb9AJ+S109ibDw15dYA
- dj8elPg/UC5zhlfWlBVKNpYUKFZ6k4tHgdAVzL2+c=
-X-Google-Smtp-Source: AGHT+IFBJEU6KDyo0VbaDSpyZp4yHDuquUPIjovTlrjpR3QTY1VCGfSL7s1Ex9NfRr4BqcxhRYBJEg==
-X-Received: by 2002:a17:902:f60c:b0:295:9cb5:ae57 with SMTP id
- d9443c01a7336-2959cb5b3d6mr51110745ad.60.1762188558131; 
- Mon, 03 Nov 2025 08:49:18 -0800 (PST)
+ bh=+0xGKvb4s3y76CRxUEFcf/y9Rl/0w7aHHiEz7NmqzZY=;
+ b=CHY8TuZY5SvbLOO97SdF4cNawCWhsO5kDSJs/wm2lXRIM1xZckfTmMy0nqVg926ZRP
+ MyshGCtsEDB3q4/C8Ot53vyP6xvJbCdc/O2NyMBFwYzUDuGn4fE42jGZ5HeIDmoKpwk1
+ akCd0+QIA1mJHPYQb0GUkx6kCfmHcXyYEMoRIoqGqSlTwhmPNpbGZNmCFaJDUbBI7Bv3
+ +xRL74fPjli+WHnI3hSHYebEoA1D09Hw3Ld9yeJxt0fhAAXVUVDdaM5tGtpNwMzkYAbG
+ Fk3dTEtKj9re0vQaUEFUwu+HICPMmr7lDh76cvIFmxAkSEb5F6aibuZJPNsnLLsSrFXl
+ 6G7w==
+X-Gm-Message-State: AOJu0YwTPohvJGGXD+sx0p2Mvfsal2WAYreNy9mu/IErt1Y0drbKrRHX
+ k0MWf2QSjakwambIzftJURLaZHGszytbIdHT6pOJlSIg823Whx8gXTgdtD6n+Peq5nSXyC/zH45
+ oXDNB
+X-Gm-Gg: ASbGncsrUEmH8QfegEQWpfhXwdMWENLxrAy4ikcK1sZmLaAJTbF5FokZ1exU/ImMkj8
+ kCQHpKj9jA0u9Q5nSIktXyUXgTALVVP79o8rq1V0KdoE0JRDDi67rOg6aIaemyZnIN5+Q+rLhJH
+ ws6qiwlVKQB/bxJhc8VKz/YNqskgGFnLR9HUor+rV8PrQmymhApddk8xVm747IcB9FPR3Jrvliz
+ HxOnQ8bOPBUIJZaGTrEeur7MwkjXFExP06tilcB4CMQytL9VWeqr8aErmSftyxBC2jPF5XoOuu8
+ DxKKrUQCGNRlbP5b9FoZVtsJqN5+0PldLeZk8+xozxekDu+gffVQM4FzFYnu5bEgZ4BnKeKflHe
+ YZbrCWOCF60lOt43MoDccJCfpMylWB1B+PUkAcOj9QEs/ZRw8B1u5fRm+uA9JuYIyseATcDkpoY
+ WU/7TAiLV9PeFv/fErHNKEAuEmqS2ngsY9lEL67sR5E62fEzKuKQ==
+X-Google-Smtp-Source: AGHT+IFl2HWe8xTdOwm3H70AXonxYzFEJbeUASvnLj8m42UiftD/v1DPZbw8kikTWkq2GPqomuHp6Q==
+X-Received: by 2002:a17:902:ea0d:b0:295:7bbd:52fa with SMTP id
+ d9443c01a7336-2957bbd5b0dmr84510955ad.56.1762188559470; 
+ Mon, 03 Nov 2025 08:49:19 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.17
+ 98e67ed59e1d1-3407f26e0a6sm6779040a91.5.2025.11.03.08.49.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Nov 2025 08:49:17 -0800 (PST)
+ Mon, 03 Nov 2025 08:49:19 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 00/44] introduce _SAFE variants of queue macros
-Date: Mon,  3 Nov 2025 08:47:05 -0800
-Message-ID: <20251103164915.101713-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, jin.liu@corigine.com,
+ stable@dpdk.org, Chaoyong He <chaoyong.he@corigine.com>,
+ =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@corigine.com>,
+ Peng Zhang <peng.zhang@corigine.com>
+Subject: [PATCH v3 01/44] net/nfp: fix use after free
+Date: Mon,  3 Nov 2025 08:47:06 -0800
+Message-ID: <20251103164915.101713-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250818233102.180207-1-stephen@networkplumber.org>
+In-Reply-To: <20251103164915.101713-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
+ <20251103164915.101713-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,371 +86,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset cleans up the queue.h macro problems in DPDK.
-The root cause is that sys/queue.h in Linux is an old version
-from early BSD; my best guess is that it is a BSD GPL license
-issue that it never got updated. The Linux version is missing
-several useful macros which leads to redefiniton, bugs, etc.
+The code to cleanup metering was using the objects after calling
+rte_free(). Fix by using LISTFOREACH_SAFE
 
-The patch starts out by introducing a version of the current
-FreeBSD queue.h named as bsd_queue.h, then uses it across all
-of DPDK. The file sys/queue.h is no longer used.
-Ends up doing one line change on lots of files.
+Fixes: 2caf84a71cfd ("net/nfp: add meter options")
+Cc: jin.liu@corigine.com
+Cc: stable@dpdk.org
 
-The patch fixes a couple of use after free cases in existing
-drivers. May require some manual effort to backport but
-not that hard.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/net/nfp/nfp_mtr.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-v3 - rebase
-   - fix netvsc
-
-Stephen Hemminger (44):
-  net/nfp: fix use after free
-  eal: add BSD version of queue.h
-  test: remove unnecessary inclusion of sys/queue.h
-  test-pipeline: remove unnecessary use of sys/queue.h
-  test-eventdev: use rte_bsd_queue.h
-  test-bbdev, test-cmdline, test-mldev: don't use sys/queue.h
-  app/testpmd: use rte_bsd_queue.h
-  apps: use rte_bsd_queue.h
-  examples: replace use of sys/queue.h
-  ethdev: replace use of sys/queue.h
-  lib: remove use of sys/queue.h
-  drivers/bus: replace use of sys/queue.h
-  net/nfp: use rte_bsd_queue.h
-  net/qede: use rte_bsd_queue.h
-  net/bnxt: remove use of sys/queue.h
-  net/intel: remove use of sys/queue.h
-  net/mlx5: remove unnecessary include of sys/queue.h
-  net/mlx4: replace use of sys/queue.h
-  net/tap: remove unnecessary include of sys/queue.h
-  net/axgbe: replace use of sys/queue.h
-  net/bnx2x: replace use of sys/queue.h
-  net/bonding: replace use of sys/queue.h
-  net/cxgbe: replace use of sys/queue.h
-  net/enic: replace use of sys/queue.h
-  net/failsafe: replace use of sys/queue.h
-  net/memif: replace use of sys/queue.h
-  net/ngbe: replace use of sys/queue.h
-  net/ntnic: replace use of sys/queue.h
-  net/sfc: replace use of sys/queue.h
-  net/softnic: replace use of sys/queue.h
-  net/thunderx: replace use of sys/queue.h
-  net/txgbe: replace use of sys/queue.h
-  net/vdev_netvsc: replace use of sys/queue.h
-  net/vmxnet3: replace use of sys/queue.h
-  net/zxdh: replace use of sys/queue.h
-  net/dpaa2: replace use of sys/queue.h
-  net/mvpp2: replace local definition of FOREACH_SAFE
-  raw/ifpga: replace with TAILQ_FOREACH_SAFE
-  drivers/vdpa: replace use of sys/queue.h
-  drivers/common: remove use of sys/queue.h
-  drivers/crypto: remove use of sys_queue.h
-  drivers/event: remove include of sys/queue.h
-  eal: remove no longer used windows version of sys/queue.h
-  net/netvsc: use LIST_FOREACH_SAFE
-
- app/dumpcap/main.c                            |   2 +-
- app/proc-info/main.c                          |   1 -
- app/test-bbdev/main.h                         |   1 -
- app/test-cmdline/cmdline_test.c               |   1 -
- app/test-eventdev/evt_test.c                  |   2 +-
- app/test-eventdev/evt_test.h                  |   1 -
- app/test-mldev/ml_test.h                      |   1 -
- app/test-pipeline/config.c                    |   1 -
- app/test-pipeline/init.c                      |   1 -
- app/test-pipeline/main.c                      |   1 -
- app/test-pipeline/runtime.c                   |   1 -
- app/test-pmd/5tswap.c                         |   2 -
- app/test-pmd/cmdline.c                        |   2 +-
- app/test-pmd/config.c                         |   2 +-
- app/test-pmd/csumonly.c                       |   1 -
- app/test-pmd/flowgen.c                        |   1 -
- app/test-pmd/hairpin.c                        |   1 -
- app/test-pmd/icmpecho.c                       |   1 -
- app/test-pmd/iofwd.c                          |   1 -
- app/test-pmd/macfwd.c                         |   1 -
- app/test-pmd/macswap.c                        |   1 -
- app/test-pmd/noisy_vnf.c                      |   1 -
- app/test-pmd/parameters.c                     |   1 -
- app/test-pmd/rxonly.c                         |   1 -
- app/test-pmd/testpmd.c                        |   1 -
- app/test-pmd/testpmd.h                        |   2 +-
- app/test-pmd/txonly.c                         |   1 -
- app/test/commands.c                           |   2 +-
- app/test/test.c                               |   1 -
- app/test/test.h                               |   2 +-
- app/test/test_atomic.c                        |   1 -
- app/test/test_cmdline_lib.c                   |   1 -
- app/test/test_func_reentrancy.c               |   1 -
- app/test/test_hash.c                          |   1 -
- app/test/test_hash_functions.c                |   1 -
- app/test/test_link_bonding.c                  |   1 -
- app/test/test_link_bonding_mode4.c            |   1 -
- app/test/test_link_bonding_rssconf.c          |   1 -
- app/test/test_logs.c                          |   1 -
- app/test/test_malloc.c                        |   1 -
- app/test/test_mbuf.c                          |   1 -
- app/test/test_mcslock.c                       |   1 -
- app/test/test_mempool.c                       |   1 -
- app/test/test_mempool_perf.c                  |   1 -
- app/test/test_memzone.c                       |   1 -
- app/test/test_mp_secondary.c                  |   1 -
- app/test/test_per_lcore.c                     |   1 -
- app/test/test_pflock.c                        |   1 -
- app/test/test_ring.c                          |   1 -
- app/test/test_rwlock.c                        |   1 -
- app/test/test_soring.c                        |   1 -
- app/test/test_spinlock.c                      |   1 -
- app/test/test_tailq.c                         |   1 -
- app/test/test_ticketlock.c                    |   1 -
- app/test/test_timer.c                         |   1 -
- doc/guides/contributing/coding_style.rst      |   4 +-
- doc/guides/rel_notes/release_25_11.rst        |   3 +
- drivers/bus/auxiliary/auxiliary_common.c      |   2 +-
- drivers/bus/auxiliary/private.h               |   2 +-
- drivers/bus/fslmc/bus_fslmc_driver.h          |   1 -
- drivers/bus/fslmc/fslmc_vfio.c                |   1 +
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |  11 +-
- drivers/bus/ifpga/ifpga_bus.c                 |   2 +-
- drivers/bus/pci/bsd/pci.c                     |   2 +-
- drivers/bus/pci/pci_common.c                  |   1 -
- drivers/bus/pci/pci_params.c                  |   2 -
- drivers/bus/pci/windows/pci.c                 |   3 +-
- drivers/bus/pci/windows/pci_netuio.c          |   2 -
- drivers/bus/platform/platform.c               |   2 +-
- drivers/bus/vdev/vdev.c                       |   1 -
- drivers/bus/vmbus/vmbus_common.c              |   1 -
- drivers/common/cnxk/roc_bphy_irq.c            |   3 +-
- drivers/common/cnxk/roc_npc.h                 |   2 -
- drivers/common/mlx5/mlx5_common_mr.h          |   3 +-
- drivers/crypto/bcmfs/bcmfs_device.c           |   2 +-
- drivers/crypto/bcmfs/bcmfs_device.h           |   2 -
- drivers/crypto/ccp/ccp_crypto.c               |   1 -
- drivers/crypto/ccp/ccp_dev.c                  |   2 +-
- drivers/event/dlb2/dlb2_selftest.c            |   1 -
- drivers/event/opdl/opdl_test.c                |   1 -
- drivers/event/sw/sw_evdev_selftest.c          |   1 -
- drivers/net/axgbe/axgbe_common.h              |   1 -
- drivers/net/bnx2x/bnx2x_ethdev.h              |   1 -
- drivers/net/bnxt/bnxt.h                       |   1 -
- drivers/net/bnxt/bnxt_filter.c                |   7 +-
- drivers/net/bnxt/bnxt_flow.c                  |   1 -
- drivers/net/bnxt/bnxt_vnic.h                  |   1 -
- drivers/net/bnxt/tf_ulp/bnxt_ulp.h            |   1 -
- drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c      |   1 -
- drivers/net/bonding/eth_bond_private.h        |   1 -
- drivers/net/bonding/rte_eth_bond_flow.c       |   1 -
- drivers/net/cxgbe/cxgbe_ethdev.c              |   2 +-
- drivers/net/cxgbe/cxgbe_main.c                |   1 -
- drivers/net/cxgbe/sge.c                       |   1 -
- drivers/net/dpaa2/dpaa2_flow.c                |   1 -
- drivers/net/dpaa2/dpaa2_mux.c                 |   1 -
- drivers/net/dpaa2/dpaa2_ptp.c                 |   1 -
- drivers/net/enic/enic.h                       |   1 -
- drivers/net/failsafe/failsafe_flow.c          |   1 -
- drivers/net/failsafe/failsafe_private.h       |   2 +-
- drivers/net/intel/cpfl/cpfl_flow_engine_fxp.c |   1 -
- drivers/net/intel/e1000/e1000_ethdev.h        |   1 -
- drivers/net/intel/e1000/em_ethdev.c           |   1 -
- drivers/net/intel/e1000/em_rxtx.c             |   1 -
- drivers/net/intel/e1000/igb_ethdev.c          |   2 +-
- drivers/net/intel/e1000/igb_flow.c            |   2 +-
- drivers/net/intel/e1000/igb_rxtx.c            |   1 -
- drivers/net/intel/i40e/i40e_ethdev.c          |   9 +-
- drivers/net/intel/i40e/i40e_ethdev.h          |   1 -
- drivers/net/intel/i40e/i40e_fdir.c            |   2 +-
- drivers/net/intel/i40e/i40e_flow.c            |   1 -
- drivers/net/intel/i40e/i40e_hash.c            |   1 -
- drivers/net/intel/i40e/i40e_pf.c              |   1 -
- drivers/net/intel/i40e/i40e_rxtx.c            |   1 -
- drivers/net/intel/iavf/iavf.h                 |   1 -
- drivers/net/intel/iavf/iavf_ethdev.c          |   1 -
- drivers/net/intel/iavf/iavf_fdir.c            |   1 -
- drivers/net/intel/iavf/iavf_fsub.c            |   1 -
- drivers/net/intel/iavf/iavf_generic_flow.c    |   1 -
- drivers/net/intel/iavf/iavf_hash.c            |   1 -
- drivers/net/intel/iavf/iavf_rxtx.c            |   1 -
- drivers/net/intel/iavf/iavf_vchnl.c           |   7 -
- drivers/net/intel/ice/base/ice_osdep.h        |   2 +-
- drivers/net/intel/ice/ice_acl_filter.c        |   1 -
- drivers/net/intel/ice/ice_dcf.c               |   2 +-
- drivers/net/intel/ice/ice_dcf_ethdev.c        |   1 -
- drivers/net/intel/ice/ice_ethdev.c            |   8 +-
- drivers/net/intel/ice/ice_generic_flow.c      |   1 -
- drivers/net/intel/ice/ice_hash.c              |   1 -
- drivers/net/intel/ice/ice_switch_filter.c     |   1 -
- drivers/net/intel/idpf/base/idpf_osdep.h      |   9 +-
- drivers/net/intel/ipn3ke/ipn3ke_ethdev.h      |   1 -
- drivers/net/intel/ipn3ke/ipn3ke_flow.c        |   1 -
- drivers/net/intel/ixgbe/ixgbe_ethdev.c        |   2 +-
- drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   1 -
- drivers/net/intel/ixgbe/ixgbe_fdir.c          |   2 +-
- drivers/net/intel/ixgbe/ixgbe_flow.c          |   2 +-
- drivers/net/intel/ixgbe/ixgbe_rxtx.c          |   1 -
- drivers/net/memif/memif_socket.h              |   1 -
- drivers/net/memif/rte_eth_memif.h             |   1 -
- drivers/net/mlx4/mlx4.h                       |   1 -
- drivers/net/mlx4/mlx4_flow.c                  |   2 +-
- drivers/net/mlx4/mlx4_flow.h                  |   1 -
- drivers/net/mlx4/mlx4_mr.h                    |   1 -
- drivers/net/mlx4/mlx4_rxtx.h                  |   1 -
- drivers/net/mlx5/hws/mlx5dr_internal.h        |   1 -
- drivers/net/mlx5/linux/mlx5_verbs.c           |   1 -
- drivers/net/mlx5/mlx5.h                       |   2 +-
- drivers/net/mlx5/mlx5_devx.c                  |   1 -
- drivers/net/mlx5/mlx5_flow.c                  |   2 +-
- drivers/net/mlx5/mlx5_flow.h                  |   2 +-
- drivers/net/mlx5/mlx5_flow_dv.c               |   1 -
- drivers/net/mlx5/mlx5_flow_verbs.c            |   2 +-
- drivers/net/mlx5/mlx5_rx.h                    |   1 -
- drivers/net/mlx5/mlx5_rxq.c                   |   2 +-
- drivers/net/mlx5/mlx5_rxtx.h                  |   1 -
- drivers/net/mlx5/mlx5_tx.h                    |   1 -
- drivers/net/mvpp2/mrvl_mtr.c                  |   8 +-
- drivers/net/netvsc/hn_ethdev.c                |   4 +-
- drivers/net/nfp/nfp_mtr.c                     |  12 +-
- drivers/net/nfp/nfp_mtr.h                     |   1 +
- drivers/net/ngbe/ngbe_ethdev_vf.c             |   1 -
- drivers/net/ngbe/ngbe_rxtx.c                  |   1 -
- drivers/net/ntnic/ntnic_ethdev.c              |   2 -
- drivers/net/qede/qede_ethdev.h                |   3 +-
- drivers/net/qede/qede_filter.c                |   6 -
- drivers/net/sfc/sfc_dp.c                      |   2 +-
- drivers/net/sfc/sfc_dp.h                      |   1 -
- .../net/softnic/rte_eth_softnic_internals.h   |   1 -
- drivers/net/tap/rte_eth_tap.h                 |   1 -
- drivers/net/tap/tap_flow.c                    |   1 -
- drivers/net/thunderx/base/nicvf_bsvf.h        |   2 +-
- drivers/net/thunderx/base/nicvf_plat.h        |   1 +
- drivers/net/thunderx/nicvf_ethdev.c           |   1 -
- drivers/net/txgbe/txgbe_ethdev_vf.c           |   1 -
- drivers/net/txgbe/txgbe_fdir.c                |   2 +-
- drivers/net/txgbe/txgbe_flow.c                |   2 +-
- drivers/net/txgbe/txgbe_rxtx.c                |   1 -
- drivers/net/vdev_netvsc/vdev_netvsc.c         |   2 +-
- drivers/net/vmxnet3/vmxnet3_ethdev.c          |   1 -
- drivers/net/vmxnet3/vmxnet3_rxtx.c            |   1 -
- drivers/net/zxdh/zxdh_mtr.h                   |   1 -
- drivers/raw/ifpga/base/ifpga_enumerate.c      |   6 +-
- drivers/raw/ifpga/base/opae_hw_api.h          |   1 -
- drivers/raw/ifpga/base/opae_intel_max10.c     |   8 +-
- .../raw/ifpga/base/osdep_rte/osdep_generic.h  |   1 +
- drivers/vdpa/mlx5/mlx5_vdpa.h                 |   3 +-
- drivers/vdpa/sfc/sfc_vdpa.c                   |   2 +-
- drivers/vdpa/sfc/sfc_vdpa.h                   |   2 +-
- examples/bbdev_app/main.c                     |   2 +-
- examples/bond/main.c                          |   2 +-
- examples/cmdline/main.c                       |   1 -
- examples/cmdline/parse_obj_list.h             |   2 +-
- examples/flow_filtering/main.c                |   1 -
- examples/helloworld/main.c                    |   2 +-
- examples/ip_fragmentation/main.c              |   2 +-
- examples/ip_pipeline/action.h                 |   2 +-
- examples/ip_pipeline/cryptodev.h              |   2 +-
- examples/ip_pipeline/link.h                   |   2 +-
- examples/ip_pipeline/mempool.h                |   2 +-
- examples/ip_pipeline/pipeline.h               |   2 +-
- examples/ip_pipeline/swq.h                    |   2 +-
- examples/ip_pipeline/tap.h                    |   2 +-
- examples/ip_pipeline/tmgr.h                   |   2 +-
- examples/ip_reassembly/main.c                 |   2 +-
- examples/ipsec-secgw/ipsec-secgw.c            |   2 +-
- examples/ipv4_multicast/main.c                |   2 +-
- examples/l2fwd-crypto/main.c                  |   2 +-
- examples/l2fwd-event/l2fwd_common.h           |   1 -
- examples/l2fwd-keepalive/ka-agent/main.c      |   1 -
- examples/l2fwd-keepalive/main.c               |   2 +-
- examples/l2fwd-macsec/main.c                  |   2 +-
- examples/l2fwd/main.c                         |   2 +-
- examples/l3fwd-graph/main.c                   |   2 +-
- examples/l3fwd-power/main.c                   |   2 +-
- examples/l3fwd/l3fwd_em.c                     |   1 -
- examples/l3fwd/l3fwd_lpm.c                    |   1 -
- examples/l3fwd/main.c                         |   2 +-
- examples/link_status_interrupt/main.c         |   2 +-
- .../client_server_mp/mp_client/client.c       |   1 -
- .../client_server_mp/mp_server/init.c         |   1 -
- .../client_server_mp/mp_server/main.c         |   2 +-
- examples/multi_process/hotplug_mp/main.c      |   1 -
- examples/multi_process/simple_mp/main.c       |   2 +-
- examples/multi_process/symmetric_mp/main.c    |   2 +-
- examples/server_node_efd/efd_node/node.c      |   1 -
- examples/server_node_efd/efd_server/init.c    |   1 -
- examples/server_node_efd/efd_server/main.c    |   1 -
- examples/service_cores/main.c                 |   1 -
- examples/timer/main.c                         |   2 +-
- examples/vhost/main.h                         |   2 +-
- examples/vm_power_manager/channel_manager.c   |   2 +-
- examples/vm_power_manager/channel_monitor.c   |   2 +-
- examples/vm_power_manager/main.c              |   2 +-
- examples/vmdq/main.c                          |   2 +-
- examples/vmdq_dcb/main.c                      |   2 +-
- lib/acl/rte_acl_osdep.h                       |   1 -
- lib/bbdev/rte_bbdev.c                         |   2 +-
- lib/bpf/bpf_load_elf.c                        |   1 -
- lib/bpf/bpf_pkt.c                             |   3 +-
- lib/cryptodev/cryptodev_pmd.c                 |   1 -
- lib/cryptodev/rte_cryptodev.c                 |   1 -
- lib/distributor/rte_distributor.c             |   2 +-
- lib/distributor/rte_distributor_single.c      |   2 +-
- lib/eal/common/eal_common_bus.c               |   2 +-
- lib/eal/common/eal_common_class.c             |   2 +-
- lib/eal/common/eal_common_dev.c               |   2 +-
- lib/eal/common/eal_common_tailqs.c            |   2 +-
- lib/eal/common/eal_common_trace.c             |   2 +-
- lib/eal/common/eal_private.h                  |   2 +-
- lib/eal/common/malloc_elem.c                  |   2 +-
- lib/eal/common/malloc_elem.h                  |   1 +
- lib/eal/common/malloc_heap.c                  |   2 +-
- lib/eal/common/malloc_heap.h                  |   2 +-
- lib/eal/common/rte_malloc.c                   |   2 +-
- lib/eal/freebsd/eal.c                         |   2 +-
- lib/eal/freebsd/eal_interrupts.c              |   2 +-
- lib/eal/freebsd/eal_thread.c                  |   2 +-
- lib/eal/freebsd/include/rte_os.h              |  10 -
- lib/eal/include/dev_driver.h                  |   1 +
- lib/eal/include/meson.build                   |   1 +
- .../sys/queue.h => include/rte_bsd_queue.h}   | 670 ++++++++++++------
- lib/eal/include/rte_class.h                   |   1 +
- lib/eal/include/rte_devargs.h                 |   1 +
- lib/eal/include/rte_tailq.h                   |  10 +
- lib/eal/linux/eal_alarm.c                     |   2 +-
- lib/eal/linux/eal_interrupts.c                |   2 +-
- lib/eal/linux/include/rte_os.h                |   3 +-
- lib/eal/windows/eal_alarm.c                   |   2 +-
- lib/eal/windows/include/rte_os.h              |  27 -
- lib/efd/rte_efd.c                             |   1 -
- lib/ethdev/ethdev_private.h                   |   3 +-
- lib/ethdev/rte_ethdev.c                       |   2 +-
- lib/fib/rte_fib.c                             |   1 -
- lib/fib/rte_fib6.c                            |   1 -
- lib/graph/graph_private.h                     |   1 -
- lib/hash/rte_cuckoo_hash.c                    |   1 -
- lib/hash/rte_fbk_hash.c                       |   1 -
- lib/hash/rte_thash.c                          |   1 -
- lib/ip_frag/ip_frag_common.h                  |   3 +-
- lib/log/log.c                                 |   2 +-
- lib/lpm/rte_lpm.c                             |   1 -
- lib/lpm/rte_lpm6.c                            |   1 -
- lib/mbuf/rte_mbuf_dyn.c                       |   1 -
- lib/mempool/rte_mempool.c                     |   1 -
- lib/mempool/rte_mempool.h                     |   1 +
- lib/pipeline/rte_swx_ctl.c                    |   1 -
- lib/pipeline/rte_swx_pipeline_internal.h      |   3 +-
- lib/pmu/pmu.c                                 |   1 -
- lib/reorder/rte_reorder.c                     |   1 -
- lib/rib/rte_rib.c                             |   1 -
- lib/rib/rte_rib6.c                            |   1 -
- lib/ring/rte_ring.c                           |   1 -
- lib/stack/rte_stack.c                         |   1 -
- lib/vhost/fd_man.h                            |   1 -
- lib/vhost/socket.c                            |   2 +-
- lib/vhost/vdpa.c                              |   2 -
- lib/vhost/vhost.h                             |   2 +-
- 298 files changed, 604 insertions(+), 616 deletions(-)
- rename lib/eal/{windows/include/sys/queue.h => include/rte_bsd_queue.h} (52%)
-
+diff --git a/drivers/net/nfp/nfp_mtr.c b/drivers/net/nfp/nfp_mtr.c
+index d4f2c4f2f0..4833ebd881 100644
+--- a/drivers/net/nfp/nfp_mtr.c
++++ b/drivers/net/nfp/nfp_mtr.c
+@@ -12,6 +12,13 @@
+ #include "flower/nfp_flower_representor.h"
+ #include "nfp_logs.h"
+ 
++#ifndef LIST_FOREACH_SAFE
++#define	LIST_FOREACH_SAFE(var, head, field, tvar)			\
++	for ((var) = LIST_FIRST((head));				\
++	    (var) && ((tvar) = LIST_NEXT((var), field), 1);		\
++	    (var) = (tvar))
++#endif
++
+ #define NFP_MAX_POLICY_CNT             NFP_MAX_MTR_CNT
+ #define NFP_MAX_PROFILE_CNT            NFP_MAX_MTR_CNT
+ 
+@@ -1124,10 +1131,10 @@ nfp_mtr_priv_init(struct nfp_pf_dev *pf_dev)
+ void
+ nfp_mtr_priv_uninit(struct nfp_pf_dev *pf_dev)
+ {
+-	struct nfp_mtr *mtr;
++	struct nfp_mtr *mtr, *tmp_mtr;
+ 	struct nfp_mtr_priv *priv;
+-	struct nfp_mtr_policy *mtr_policy;
+-	struct nfp_mtr_profile *mtr_profile;
++	struct nfp_mtr_policy *mtr_policy, *tmp_policy;
++	struct nfp_mtr_profile *mtr_profile, *tmp_profile;
+ 	struct nfp_app_fw_flower *app_fw_flower;
+ 
+ 	app_fw_flower = NFP_PRIV_TO_APP_FW_FLOWER(pf_dev->app_fw_priv);
+@@ -1135,17 +1142,17 @@ nfp_mtr_priv_uninit(struct nfp_pf_dev *pf_dev)
+ 
+ 	rte_eal_alarm_cancel(nfp_mtr_stats_request, (void *)app_fw_flower);
+ 
+-	LIST_FOREACH(mtr, &priv->mtrs, next) {
++	LIST_FOREACH_SAFE(mtr, &priv->mtrs, next, tmp_mtr) {
+ 		LIST_REMOVE(mtr, next);
+ 		rte_free(mtr);
+ 	}
+ 
+-	LIST_FOREACH(mtr_profile, &priv->profiles, next) {
++	LIST_FOREACH_SAFE(mtr_profile, &priv->profiles, next, tmp_profile) {
+ 		LIST_REMOVE(mtr_profile, next);
+ 		rte_free(mtr_profile);
+ 	}
+ 
+-	LIST_FOREACH(mtr_policy, &priv->policies, next) {
++	LIST_FOREACH_SAFE(mtr_policy, &priv->policies, next, tmp_policy) {
+ 		LIST_REMOVE(mtr_policy, next);
+ 		rte_free(mtr_policy);
+ 	}
 -- 
 2.51.0
 
