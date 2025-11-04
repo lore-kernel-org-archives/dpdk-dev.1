@@ -2,76 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FB7CCF9E3
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 10:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7DECCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 10:14:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 62770402E8;
-	Tue,  4 Nov 2025 11:07:33 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0F833402EE;
+	Tue,  4 Nov 2025 11:14:16 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id CB76140285
- for <dev@dpdk.org>; Tue,  4 Nov 2025 11:07:31 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 2B67C4028C
+ for <dev@dpdk.org>; Tue,  4 Nov 2025 11:14:14 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1762250851;
+ s=mimecast20190719; t=1762251253;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=iaJtapz/w9WsLvMXQBBnxaliBANO4UULlrF/0KdFnmA=;
- b=EP1Ndl5xKyU7Xhs7KVJo8NiJfO8XYqf2V/nBAvH0aI0oTi6D1Lc8ZDtlmsV6Q5nGrlTSm9
- 4bf/kM53Tzy1ZTuV9C8dDpt8tWjDc3UA77w1s2AgPWsgPMLeV86ENKKw0CSw6DHp7eiVuH
- cIWfBrkIEQvpVHKJWu8uK1/TNIr+BPI=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=x7DEO1MxcsZMh9/AiUQoX6MMzUgjhITNYKlsktVJgg4=;
+ b=dsujcjtpEYwezZ8HxxfsL1dHFmpo5pO9Rxh18IwlsZa3qyf6z9wJRcr5h2HWL2o+XRoJbo
+ 3kMJpbk7YGCi8DN5eWhpDxZUj+ZADjaSs5Sm99iWrWC2ybHuaUor/6I0Xoejf3pxs8edSr
+ PWBKfoBF/RCNH15Y+F97h5SZVwoNMcc=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-480-0gbfs5HPPfK4qCgioSY5PQ-1; Tue, 04 Nov 2025 05:07:30 -0500
-X-MC-Unique: 0gbfs5HPPfK4qCgioSY5PQ-1
-X-Mimecast-MFC-AGG-ID: 0gbfs5HPPfK4qCgioSY5PQ_1762250849
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-5942c1f786aso1130907e87.0
- for <dev@dpdk.org>; Tue, 04 Nov 2025 02:07:30 -0800 (PST)
+ us-mta-160-rLKjKiXFOvukNAj5uiAEvg-1; Tue, 04 Nov 2025 05:14:12 -0500
+X-MC-Unique: rLKjKiXFOvukNAj5uiAEvg-1
+X-Mimecast-MFC-AGG-ID: rLKjKiXFOvukNAj5uiAEvg_1762251251
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-36d99707249so26768621fa.3
+ for <dev@dpdk.org>; Tue, 04 Nov 2025 02:14:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762250849; x=1762855649;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=iaJtapz/w9WsLvMXQBBnxaliBANO4UULlrF/0KdFnmA=;
- b=sTjYHM3WRwcNuyAcrKQuNGupXSzjcH7BXqvG7O7TWWdKeCkfS8Ix7n7K1GQ/5cnAKb
- V4Xwcu/jtTpKTSpUIq/3cCZIMh8rvy+D0ZlWPInqm4UObZHlgPvQKFUUwVM/11aMb0DQ
- McFmOzSuX0hKXS3olpVE6w8+uYVnw32qfPPzeZgOm0KqnJyexv367HjYfQ/LNYhtiOTs
- sEyhgyQYfW2ywhD6pUJ9UFXbShFevsGSM4RYN3brzonFArJzFlBtaTIYQCLPNkl3HP7g
- u0ol8m3+ubEAXwobL9voTJDZmL29mDNAW1C8D+5AFXGiWaYRWwWXN+04RSTkA5SSsEYH
- JhMA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXeBTb4qipVfI+uy8US0UG939MTj+5Nrr0FOufozU3E4nEi1CzVzzDOk14hYc7ERRGoOSk=@dpdk.org
-X-Gm-Message-State: AOJu0Yx6Pz/XE8foCQcgAkkLvXUnA0Je5OcRpA7UBunlAzIsJxucWb8Y
- cYO8J4NIZstavX9EXGlcB0guy5XwlHsABr0kzfIZVAfy71FOKqG0deFmN68RttPSawz+jTh9TbZ
- uVT3KYm6ny6lPagrY/vZUaKNp04OkHlOIJgrn9D+Zoqii6nAGPGN2beiCZC5YoM0fS6sUiMMt23
- 55XWY2JmDhO39ssoa2DRc=
-X-Gm-Gg: ASbGnctHxmdFa119OTXX7/azYZaxRoCAx0uI1NgZsCdnanFV3tQyolc0fcmVBUvzspk
- LyG/Mlm11kfqBZYn+dAnvMahPafEwgzlpkcVbCSBqG51LfSBmKv4QLbMwtGFkOVZpXbm+m02b/l
- rmH8vbsf7gUjAn2VFT2/fXnO5hdsfURpDGbMzsLLHVj13vcSgzhCXEdIhCrw==
-X-Received: by 2002:a05:6512:3d07:b0:592:fc68:5b9d with SMTP id
- 2adb3069b0e04-5941d50d137mr4861134e87.10.1762250848146; 
- Tue, 04 Nov 2025 02:07:28 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGPwhdgemUbe4zPIkZdB3b1qiHIXGl9BMzyJYD8jPYXqQlWQJm8Dw9CECxcZ4ZICs/lDqtmlI2LINQxwPwVm7k=
-X-Received: by 2002:a05:6512:3d07:b0:592:fc68:5b9d with SMTP id
- 2adb3069b0e04-5941d50d137mr4861116e87.10.1762250847556; Tue, 04 Nov 2025
- 02:07:27 -0800 (PST)
+ d=1e100.net; s=20230601; t=1762251251; x=1762856051;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=x7DEO1MxcsZMh9/AiUQoX6MMzUgjhITNYKlsktVJgg4=;
+ b=TVRCa7eJKv3i6asXliNnUPcYvuGiB5bek0P4HyykvYAZJZgmaNVkKYj+NP3OGeYSre
+ qSQPQ+VodcAhf8cFCNl8IjrfLMA4PAS8GbkcZhqG+bMX5mU0z8TVv4M3dC+XHoz9g2Qp
+ UVO8MmOswHMRF7wkMTZeEHX8o51IYCYey9HTbzkQvgZ6Wz3YVP3np2ALhUIq6qlViyLN
+ T5Fo/9VrzzvxbCDmFBtVtnMRJ8KXF/pi80l/HwW0CTMGzNwu0ilPs8qPk0hv5ZIIaSbC
+ gvDRyci6Dq40ohzfteqYgh/7OnhpPuBkNLP9li+Rs7XGiO93EoqINN2NzHQgk2YKCCAD
+ c4kQ==
+X-Gm-Message-State: AOJu0Yz7KWxcXgCMCistipQE6n+YK5yllHIUrLZCDdMVEn7k8A9nCfRV
+ n1T2xmpP98aejUCdEsWUEUOQHwmcI+iSIa3heZ+GMHjYeIQSh2F9KwilIvwnl/YJdWSVuQ+U2yv
+ LgZZW7u9diL1HJFliZLmlVMkww0KT0syjx6xX6sNFBzOnhSyIX5oNkT5y82yyN9pFgpzYG67LuM
+ 1nipJDhZOvKSFlZvycKSo=
+X-Gm-Gg: ASbGnctbbTyzHy7Ffm93N0eLpr8Zot4MTwIHZdb6xYg2VghycsL2qjsJvUcl9Sc4imh
+ nifB7/spCPsytqEkmZTMMtlxd7YYh9KvEsV/d5LOdeFAaiJBghHzOrFw0OhH7fMv4WDByqAuo71
+ zqEwWj8Fo9/ZL2tSkYF8hkJYRNGHrNMFNxFwxJ4CHblQ4520S5f9MS2HdvFA==
+X-Received: by 2002:a05:6512:2249:b0:594:35c4:fed2 with SMTP id
+ 2adb3069b0e04-59435c501bemr551877e87.3.1762251250753; 
+ Tue, 04 Nov 2025 02:14:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IER3UCRGVuHgTcemBMujhWgfSydqkRNnNTvczKH6HppNVIJE/lMcYqIK8W7gvbN8Zn/p60rtESqG74oBXmLjMs=
+X-Received: by 2002:a05:6512:2249:b0:594:35c4:fed2 with SMTP id
+ 2adb3069b0e04-59435c501bemr551858e87.3.1762251250292; Tue, 04 Nov 2025
+ 02:14:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20251028081733.38583-1-fengchengwen@huawei.com>
-In-Reply-To: <20251028081733.38583-1-fengchengwen@huawei.com>
+References: <20251027164621.175861-1-stephen@networkplumber.org>
+In-Reply-To: <20251027164621.175861-1-stephen@networkplumber.org>
 From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 4 Nov 2025 11:07:15 +0100
-X-Gm-Features: AWmQ_blDkKHX-R76jJAhM73G1CRMiHyaYNFioZmhywGhe1nBb61odLtc-yh8TBE
-Message-ID: <CAJFAV8xR6emv4N6W6Ng1ZxE1FkzCTGGj9PRbBQHxF5BWn4yH4w@mail.gmail.com>
-Subject: Re: [PATCH] app/procinfo: fix warning of deprecated coremask
-To: Chengwen Feng <fengchengwen@huawei.com>
-Cc: thomas@monjalon.net, stephen@networkplumber.org, dev@dpdk.org, 
- reshma.pattan@intel.com
+Date: Tue, 4 Nov 2025 11:13:58 +0100
+X-Gm-Features: AWmQ_bm1Jv46UlT5bRejSLvarI9SoAgtk8V6rvXcj59Gi-m2Lpjlut8-ZsFO9Io
+Message-ID: <CAJFAV8yVqckdhv4ST0JRsCCO8mV-eqN-wtE_S1wU9raNLLkf2A@mail.gmail.com>
+Subject: Re: [PATCH] dmadev: fix build if RTE_DMADEV_DEBUG enabled
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, stable@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>, 
+ Kevin Laatz <kevin.laatz@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: TXoTIO3tOQS8rDuY6P43nePIJzfuzB9Smit3YFRbI4s_1762250849
+X-Mimecast-MFC-PROC-ID: h4wiHwPYBzQZdd_etj3oJneGDPQP5sMb4roF3QLbVxk_1762251251
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,19 +86,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 28 Oct 2025 at 09:17, Chengwen Feng <fengchengwen@huawei.com> wrote:
+On Mon, 27 Oct 2025 at 17:46, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
 >
-> When launch proc-info:
->   EAL: '-c <coremask>' option is deprecated, and will be removed in a future release
->   EAL:  Use '-l <corelist>' or '--lcores=<corelist>' option instead
+> Missing definition of errnos causes build failure:
 >
-> This commit fix it by use -l0 other than -c1.
+> In file included from ../lib/dmadev/rte_dmadev_trace.h:16,
+>                  from ../lib/dmadev/rte_dmadev_trace_points.c:8:
+> ../lib/dmadev/rte_dmadev.h: In function =E2=80=98rte_dma_copy=E2=80=99:
+> ../lib/dmadev/rte_dmadev.h:1183:25: error: =E2=80=98EINVAL=E2=80=99 undec=
+lared (first use in this function)
+>  1183 |                 return -EINVAL;
+>       |                         ^~~~~~
 >
-> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+> Bugzilla ID: 1814
+Fixes: 91e581e5c924 ("dmadev: add data plane API")
+Cc: stable@dpdk.org
+>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
 Applied, thanks.
 
 
--- 
+--=20
 David Marchand
 
