@@ -2,45 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B37E8CCFA00
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 06:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF01CCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 07:15:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7DE284028C;
-	Tue,  4 Nov 2025 07:52:54 +0100 (CET)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 6EB4740285
- for <dev@dpdk.org>; Tue,  4 Nov 2025 07:52:52 +0100 (CET)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 4F78948A9B; Tue,  4 Nov 2025 07:52:52 +0100 (CET)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1810] net/mlx: possible misuse of comma operator
-Date: Tue, 04 Nov 2025 06:52:52 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 20.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: getelson@nvidia.com
-X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: FIXED
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: resolution cc bug_status
-Message-ID: <bug-1810-3-39VvroDmRz@http.bugs.dpdk.org/>
-In-Reply-To: <bug-1810-3@http.bugs.dpdk.org/>
-References: <bug-1810-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id C77634028C;
+	Tue,  4 Nov 2025 08:15:10 +0100 (CET)
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com
+ [113.46.200.217])
+ by mails.dpdk.org (Postfix) with ESMTP id E9E3F40285
+ for <dev@dpdk.org>; Tue,  4 Nov 2025 08:15:08 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=/GtfSTIORJHgp+7PVElaEb9iXsZaillMdeP9CNZjRnw=;
+ b=kKB/yzRO+uJTUrEb69pRkean81J3MQk8cBfyK1dI/fbxQa293Mkr2x+Tp0IxB8po9boEhfNfI
+ R86J3ocAP+TjZ/vY5DSagqUuI/+/Z15SYZWVJYwRZ++aVxt+8ohaqHgdiI681bKzn8QXRygT6k7
+ KK0iEnhnqRW4SAhkDflYMhA=
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+ by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4d106h1FPjzcZy3;
+ Tue,  4 Nov 2025 15:13:32 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id CF0DE1400C8;
+ Tue,  4 Nov 2025 15:15:06 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 4 Nov 2025 15:15:06 +0800
+Message-ID: <ae3c917c-42f0-4764-836a-292cd89b7a53@huawei.com>
+Date: Tue, 4 Nov 2025 15:15:06 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] vhost: add user to mailmap and define to vhost hdr
+To: Pravin M Bathija <pravin.bathija@dell.com>, <dev@dpdk.org>
+CC: <pravin.m.bathija.dev@gmail.com>
+References: <20251104042142.2787631-1-pravin.bathija@dell.com>
+ <20251104042142.2787631-2-pravin.bathija@dell.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20251104042142.2787631-2-pravin.bathija@dell.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,27 +57,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1810
+Please fix a typo below
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
-Gregory Etelson (getelson@nvidia.com) changed:
+On 11/4/2025 12:21 PM, Pravin M Bathija wrote:
+> - add user to mailmap fle
+> - define a bit-field called VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS
+> that depicts if the fature/capability to add/remove memory regions is
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-         Resolution|---                         |FIXED
-                 CC|                            |getelson@nvidia.com
-             Status|UNCONFIRMED                 |RESOLVED
+fature -> feature
 
---- Comment #1 from Gregory Etelson (getelson@nvidia.com) ---
-Hello,
+> supported. This is a part of the overall support for add/remove
+> memory region feature in this patchset.
+> 
+> Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
 
-A fix will be merged into 25.11.
-
-https://patches.dpdk.org/project/dpdk/patch/20251029095505.100582-1-getelso=
-n@nvidia.com/
-
-Regards,
-Gregory
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
