@@ -2,33 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F955CCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 02:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C505CCFA03
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 03:35:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E2F524042E;
-	Tue,  4 Nov 2025 03:49:40 +0100 (CET)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 2C90B402E7
- for <dev@dpdk.org>; Tue,  4 Nov 2025 03:49:39 +0100 (CET)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B92FC1C2B;
- Mon,  3 Nov 2025 18:49:30 -0800 (PST)
-Received: from ampere-altra-2-2.usa.arm.com (unknown [10.118.91.160])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 804023F694;
- Mon,  3 Nov 2025 18:49:38 -0800 (PST)
-From: Doug Foster <doug.foster@arm.com>
-To: dev@dpdk.org,
-	Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Cc: nd@arm.com, Doug Foster <doug.foster@arm.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>
-Subject: [PATCH 2/2] app/test-pipeline: add ring size options
-Date: Tue,  4 Nov 2025 02:49:19 +0000
-Message-Id: <20251104024919.3329372-3-doug.foster@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251104024919.3329372-1-doug.foster@arm.com>
-References: <20251104024919.3329372-1-doug.foster@arm.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A9BBB402D4;
+	Tue,  4 Nov 2025 04:35:23 +0100 (CET)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
+ [209.85.214.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 313E7402B1
+ for <dev@dpdk.org>; Tue,  4 Nov 2025 04:35:22 +0100 (CET)
+Received: by mail-pl1-f177.google.com with SMTP id
+ d9443c01a7336-295df6ad56cso11239055ad.3
+ for <dev@dpdk.org>; Mon, 03 Nov 2025 19:35:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1762227321; x=1762832121; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=JRTysSXygq6LAjfZlqnMmQEd7ec/KyCN2yKwkwmO4YE=;
+ b=hk4oFOuzLWzCaQWgyQ0jvqm7ZIJnU+ivM1wfIjmfvvwUoEqRdYM+SazE+vNkiGmbFk
+ JL9cFD9jZrOppXik32tERBO26cTF8K8GjMRIdmgFzmXZmtqmXNDYBHeXKz0Y/PjnLjTF
+ pYrvQl+DlDIxXWA3GUss+iqzAZCRnYos113mA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762227321; x=1762832121;
+ h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+ :from:to:cc:subject:date:message-id:reply-to;
+ bh=JRTysSXygq6LAjfZlqnMmQEd7ec/KyCN2yKwkwmO4YE=;
+ b=DCArq6ZHqaWIxvF5hSOazFRr4XwYxI9P5dGJacrOzhdwKfbh9t9jnn4gnBijRTOIv/
+ ztOF/wMnPVKiX/6+V4w85cWN6VYmJjWyVWeiaBAHI/BYaw7fODseFCF84T20HrLO9l1P
+ 7q5r7K7gsitb5jKIBC6GwCuYB1yBVAKUFYYhndmdKWAYgQ1Z5YQqvKxttoxNzlXbyzdd
+ jecmyytdMOq05nLG9Pjtx8+E9S2kYeyGhD+Fhd58FnRRlHZM0wxdGmOS/MjWtZSEBsH2
+ uQ0sBwsXJBFvYsltSpsoNh3Ri8wJlDNWWbpDfzPvjM/HilUDCLYLyrTVVHw1TfRYEgol
+ 2aew==
+X-Gm-Message-State: AOJu0YxUztCaOrBbhNTa8oQq0ILOdguK+kg8BeNi8sO8+O1yDusJv7dX
+ 28Q/DEkWTl08UP8JD89qylN8vqIVvTduYCQv/+SLI0QHioXqe93wCra85Rox6UUi/KZXozU9JEP
+ BtYgUTEEB6OkO0A8sQ4z2t3HtVWdqGp7NNZMq0L8y7ufaWsm2qKmsPRU=
+X-Gm-Gg: ASbGncvvPfXPFNUjM3DYz0suN0/diNijGGtCaRGZE+cgyGVQD7HGKBBkB9oza3x+EAt
+ aXc39w01uDiQymQHnWwxLG+dfB03nmZvebZLs3sxpO/l7NBal427M+1QRHLkwAI1heqi8bZ1Xoq
+ B5hYIfMLs43jN5K24Ns+Sy27pFFSolXrohgrpeGDPFODOVcGMVV6svVs63075/pcofvFTM4nZ+6
+ dFFVJkLmgr/ZYo3XH8YGM8uSS8N0V7jX6A5QzyS1n4ofRfj8k5jtxPvzsRfzbC5vjFpjQAT6+xt
+ AeycKVV4bDI=
+X-Google-Smtp-Source: AGHT+IHHrpFs0jh2FvJvCZA7bKuC6z1M8zDvT3qD3vRIcTsj8VRE5XI9lmYnuOTjLeDQd8XvqhV8pEwZb2Arovox8S4=
+X-Received: by 2002:a17:902:e882:b0:295:9b73:b161 with SMTP id
+ d9443c01a7336-2959b73b297mr91582735ad.44.1762227320725; Mon, 03 Nov 2025
+ 19:35:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Mon, 3 Nov 2025 22:34:14 -0500
+X-Gm-Features: AWmQ_bkCYCJlSpQtYHJA9ta13CNBEVL-OFARzVkvVCJz431ZqxSlggRhCRudQhU
+Message-ID: <CAJvnSUCgBnw=wXi-1ugP_RYZYMBC2xY2VGBBxv0_WEuekiLYAQ@mail.gmail.com>
+Subject: DTS WG Meeting Minutes - October 9, 2025
+To: dev <dev@dpdk.org>
+Cc: ci@dpdk.org
+Content-Type: multipart/alternative; boundary="00000000000077339d0642bc850f"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -42,209 +67,109 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add command-line options to configure the size of the RX and TX rings.
-The ring sizes should provide enough capacity to accommodate the number
-of new entries that accumulate during the time it takes for existing
-entries to be dequeued from the rings. This depends on CPU processing
-rate, which varies across platforms, so configurable options are
-provided. Use of these options is optional, and the default size
-remains 128 for both the TX and RX rings. When setting the size, the
-value must be a power of two, as required by the ring library.
+--00000000000077339d0642bc850f
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Doug Foster <doug.foster@arm.com>
-Reviewed-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
----
- app/test-pipeline/config.c                 | 48 ++++++++++++++++++++--
- app/test-pipeline/init.c                   |  4 --
- app/test-pipeline/main.h                   |  8 +++-
- doc/guides/sample_app_ug/test_pipeline.rst | 12 +++++-
- 4 files changed, 62 insertions(+), 10 deletions(-)
+####################################################################
+October 9, 2025
+Attendees
+* Patrick Robb
+* Luca Vizzarro
+* Andrew Bailey
 
-diff --git a/app/test-pipeline/config.c b/app/test-pipeline/config.c
-index 0d280cf898..ef0438c06c 100644
---- a/app/test-pipeline/config.c
-+++ b/app/test-pipeline/config.c
-@@ -43,7 +43,7 @@
- 
- static const char usage[] =
- "Usage:\n"
--"  dpdk-test-pipeline [EAL options] -- -p PORTMASK --TABLE_TYPE\n"
-+"  dpdk-test-pipeline [EAL options] -- -p PORTMASK --PIPELINE_ARGS\n"
- "\n"
- "EAL requirements:\n"
- "  -l/--lcores must specify exactly 3 lcores (RX core, pipeline core , TX core)\n"
-@@ -61,7 +61,10 @@ static const char usage[] =
- "  --hash-cuckoo-8  | --hash-cuckoo-16  | --hash-cuckoo-32  |\n"
- "  --hash-cuckoo-48 | --hash-cuckoo-64  | --hash-cuckoo-80  |\n"
- "  --hash-cuckoo-96 | --hash-cuckoo-112 | --hash-cuckoo-128\n"
--"  -h/--help    print help statement and exit\n";
-+"  -h/--help    print help statement and exit\n"
-+"  --rx-ring-size=N    Optional, size of RX ring (power-of-two)\n"
-+"  --tx-ring-size=N    Optional, size of TX ring (power-of-two)\n";
-+
- 
- void
- app_print_usage(void)
-@@ -104,6 +107,25 @@ app_parse_port_mask(const char *arg)
- 	return 0;
- }
- 
-+static int
-+app_parse_ring_size(const char *ring_size_arg, uint32_t *size)
-+{
-+	char *end = NULL;
-+	unsigned long value;
-+
-+	value = strtoul(ring_size_arg, &end, 10);
-+
-+	/* Check for conversion of invalid string */
-+	if (!(*ring_size_arg != '\0' && *end == '\0'))
-+		return -1;
-+
-+	if (!rte_is_power_of_2(value) || value > UINT32_MAX)
-+		return -1;
-+
-+	*size = value;
-+	return 0;
-+}
-+
- struct {
- 	const char *name;
- 	uint32_t value;
-@@ -142,6 +164,7 @@ app_parse_args(int argc, char **argv)
- 	int opt, ret;
- 	char **argvopt;
- 	int option_index;
-+	uint32_t rx_ring_size, tx_ring_size;
- 	char *prgname = argv[0];
- 	static struct option lgopts[] = {
- 		{"none", 0, 0, e_APP_PIPELINES},
-@@ -171,6 +194,8 @@ app_parse_args(int argc, char **argv)
- 		{"hash-cuckoo-112", 0, 0, e_APP_PIPELINES},
- 		{"hash-cuckoo-128", 0, 0, e_APP_PIPELINES},
- 		{"help", 0, 0, e_APP_HELP},
-+		{"rx-ring-size", 1, 0, e_APP_RX_RING_SIZE},
-+		{"tx-ring-size", 1, 0, e_APP_TX_RING_SIZE},
- 		{NULL, 0, 0, 0}
- 	};
- 	uint32_t lcores[3], n_lcores, lcore_id, pipeline_type_provided;
-@@ -205,6 +230,9 @@ app_parse_args(int argc, char **argv)
- 	app.pipeline_type = e_APP_PIPELINE_HASH_KEY16_LRU;
- 	pipeline_type_provided = 0;
- 
-+	app.ring_rx_size = APP_RING_SIZE_DEFAULT;
-+	app.ring_tx_size = APP_RING_SIZE_DEFAULT;
-+
- 	while ((opt = getopt_long(argc, argvopt, "p:h",
- 			lgopts, &option_index)) != EOF) {
- 		switch (opt) {
-@@ -214,7 +242,7 @@ app_parse_args(int argc, char **argv)
- 
- 			break;
- 
--		case e_APP_PIPELINES: /* long options */
-+		case e_APP_PIPELINES:
- 			if (!pipeline_type_provided) {
- 				uint32_t i;
- 
-@@ -233,6 +261,20 @@ app_parse_args(int argc, char **argv)
- 
- 			return -1;
- 
-+		case e_APP_RX_RING_SIZE:
-+			if (app_parse_ring_size(optarg, &rx_ring_size) < 0)
-+				return -1;
-+
-+			app.ring_rx_size = rx_ring_size;
-+			break;
-+
-+		case e_APP_TX_RING_SIZE:
-+			if (app_parse_ring_size(optarg, &tx_ring_size) < 0)
-+				return -1;
-+
-+			app.ring_tx_size = tx_ring_size;
-+			break;
-+
- 		case e_APP_HELP:
- 		case 'h':
- 		default:
-diff --git a/app/test-pipeline/init.c b/app/test-pipeline/init.c
-index 558f0e428d..f596337751 100644
---- a/app/test-pipeline/init.c
-+++ b/app/test-pipeline/init.c
-@@ -48,10 +48,6 @@ struct app_params app = {
- 	.port_rx_ring_size = 128,
- 	.port_tx_ring_size = 512,
- 
--	/* Rings */
--	.ring_rx_size = 128,
--	.ring_tx_size = 128,
--
- 	/* Buffer pool */
- 	.pool_buffer_size = 2048 + RTE_PKTMBUF_HEADROOM,
- 	.pool_size = 32 * 1024,
-diff --git a/app/test-pipeline/main.h b/app/test-pipeline/main.h
-index 1f93dc3964..6f9ef6e2e2 100644
---- a/app/test-pipeline/main.h
-+++ b/app/test-pipeline/main.h
-@@ -18,6 +18,8 @@ struct app_mbuf_array {
- #define APP_MAX_PORTS 4
- #endif
- 
-+#define APP_RING_SIZE_DEFAULT 128
-+
- struct __rte_cache_aligned app_params {
- 	/* CPU cores */
- 	uint32_t core_rx;
-@@ -67,7 +69,7 @@ void app_print_usage(void);
- void app_init(void);
- int app_lcore_main_loop(void *arg);
- 
--/* Pipeline and help*/
-+/* Pipelines, help, ring size */
- enum {
- 	e_APP_PIPELINE_NONE = 0,
- 	e_APP_PIPELINE_STUB,
-@@ -100,7 +102,9 @@ enum {
- 	e_APP_PIPELINE_HASH_CUCKOO_KEY112,
- 	e_APP_PIPELINE_HASH_CUCKOO_KEY128,
- 	e_APP_PIPELINES,
--	e_APP_HELP
-+	e_APP_HELP,
-+	e_APP_RX_RING_SIZE,
-+	e_APP_TX_RING_SIZE
- };
- 
- void app_main_loop_rx(void);
-diff --git a/doc/guides/sample_app_ug/test_pipeline.rst b/doc/guides/sample_app_ug/test_pipeline.rst
-index 818be93cd6..46a5ecc780 100644
---- a/doc/guides/sample_app_ug/test_pipeline.rst
-+++ b/doc/guides/sample_app_ug/test_pipeline.rst
-@@ -45,13 +45,23 @@ The application execution command line is:
- 
- .. code-block:: console
- 
--    ./dpdk-test-pipeline [EAL options] -- -p PORTMASK --TABLE_TYPE
-+    ./dpdk-test-pipeline [EAL options] -- -p PORTMASK --PIPELINE_ARGS
- 
- The ``-l/--lcores`` EAL CPU corelist option has to contain exactly 3 CPU cores.
- The first CPU core in the core mask is assigned for core A, the second for core B and the third for core C.
- 
- The PORTMASK parameter must contain 2 or 4 ports.
- 
-+PIPELINE_ARGS represents TABLE_TYPE and pipeline options, such as ``--rx-ring-size`` and ``--tx-ring-size``, described below.
-+The ``--rx-ring-size`` and ``--tx-ring-size`` options control the sizes of the rings used between cores.
-+Both values **must be powers of two**. If not used, the default size is 128.
-+
-+* ``--rx-ring-size=N``
-+  Optional, sets size of the RX ring between **Core A (RX)** and **Core B (Pipeline)**.
-+
-+* ``--tx-ring-size=N``
-+  Optional, sets size of the TX ring between **Core B (Pipeline)** and **Core C (TX)**.
-+
- Table Types and Behavior
- ~~~~~~~~~~~~~~~~~~~~~~~~
- 
--- 
-2.34.1
+####################################################################
+Minutes
 
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+General Discussion
+* None
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Patch discussions
+* RSS Testsuite:
+   * Patrick to review
+* Mbuf fast release testcase / tx_offload:
+   * Looks good overall
+   * Most likely the testcase will need to be updated to reflect the latest
+tech board decision on mbuf fast free (it is now enabled by default instead
+of disabled by default)
+* Virtio:
+   * V2 looks good to Patrick. When it is final - send to Maxime (virtio
+maintainer) for his review
+* Single_core_fwd_perf:
+   * Patrick is going to send a V5 which adds a performance_metrics.json
+   * Traffic Generators are setup and torn down as needed. As a part of
+this, Patrick flattened the shell pool system so that there are no longer
+testsuite and testcase level shell pools, but this removes some safety (it
+stops protecting us from rogue shells which didn=E2=80=99t get closed
+      * Can we add a flag (like persist) that allows a shell to be added
+without being added to the shell pool? Need to ensure this is cleaned up in
+testrunteardown
+* Move testsuite methods to API modules
+   * Patrick to do a review
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Bugzilla discussions
+* None
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Any other business
+* Roadmap status review:
+   *
+https://docs.google.com/document/d/1doTZOOpkv4D5P2w6K7fEJpa_CjzrlMl3mCeDBWt=
+xnko/edit?tab=3Dt.0
+* Next meeting is Oct 23, 2025
+
+--00000000000077339d0642bc850f
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr">#########################################=
+###########################<br>October 9, 2025<br>Attendees<br>* Patrick Ro=
+bb<br>* Luca Vizzarro<br>* Andrew Bailey<br><br>###########################=
+#########################################<br>Minutes<br><br>=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>General Discussion<br>* None<=
+br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Patch=
+ discussions<br>* RSS Testsuite:<br>=C2=A0 =C2=A0* Patrick to review<br>* M=
+buf fast release testcase / tx_offload: =C2=A0 =C2=A0 =C2=A0 =C2=A0<br>=C2=
+=A0 =C2=A0* Looks good overall<br>=C2=A0 =C2=A0* Most likely the testcase w=
+ill need to be updated to reflect the latest tech board decision on mbuf fa=
+st free (it is now enabled by default instead of disabled by default)<br>* =
+Virtio:<br>=C2=A0 =C2=A0* V2 looks good to Patrick. When it is final - send=
+ to Maxime (virtio maintainer) for his review<br>* Single_core_fwd_perf:<br=
+>=C2=A0 =C2=A0* Patrick is going to send a V5 which adds a performance_metr=
+ics.json<br>=C2=A0 =C2=A0* Traffic Generators are setup and torn down as ne=
+eded. As a part of this, Patrick flattened the shell pool system so that th=
+ere are no longer testsuite and testcase level shell pools, but this remove=
+s some safety (it stops protecting us from rogue shells which didn=E2=80=99=
+t get closed <br>=C2=A0 =C2=A0 =C2=A0 * Can we add a flag (like persist) th=
+at allows a shell to be added without being added to the shell pool? Need t=
+o ensure this is cleaned up in testrunteardown<br>* Move testsuite methods =
+to API modules<br>=C2=A0 =C2=A0* Patrick to do a review<br>=C2=A0 =C2=A0<br=
+>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Bugzilla di=
+scussions<br>* None<br><br>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D<br>Any other business<br>* Roadmap status review:<br>=C2=A0 =C2=
+=A0* <a href=3D"https://docs.google.com/document/d/1doTZOOpkv4D5P2w6K7fEJpa=
+_CjzrlMl3mCeDBWtxnko/edit?tab=3Dt.0" target=3D"_blank">https://docs.google.=
+com/document/d/1doTZOOpkv4D5P2w6K7fEJpa_CjzrlMl3mCeDBWtxnko/edit?tab=3Dt.0<=
+/a><br>* Next meeting is Oct 23, 2025</div>
+</div>
+
+--00000000000077339d0642bc850f--
