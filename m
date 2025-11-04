@@ -2,52 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF10CCF9E3
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 15:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86141CCFA04
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 15:29:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 35FC0402A8;
-	Tue,  4 Nov 2025 16:05:15 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id A19C240269
- for <dev@dpdk.org>; Tue,  4 Nov 2025 16:05:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762268714; x=1793804714;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=/5CXog+P433sNUa1NKE+eWmjCQdL4v8vp18mi2E/phY=;
- b=Iv5wu4EIMT4bjAHcWocTOo8EQf/IOknjuBxNmUOqdSJ9GoaQfnDaUJwX
- vT3XGA+kwm5FZ7c4PTsTUDo+eqE1NRt9ru8+/uzbZwYKtCO7NdmFFJEIV
- xpMo8vNez6yE+NeFAFR9vc0TQNE5WT0BhNFqwgibKqPY6kFPipwF1BeLW
- LY5LjCQLe9WYNRsS+Hy0I81MTqhk5Mjx1hD/VdnQOmj3YSVV94GnwKlwF
- JhBwtJ1JkSmMxBKgFYz9P1dxhwBaHkYNbXFjlSvqk0TfLhxRW1ugJ0USV
- TQHUOTrlGRalx1LOlE7yWU6kbUAa+TpcpBuAWnL2HWuj1kPdxnLQCj+Xl w==;
-X-CSE-ConnectionGUID: rAbRhNFaRBCsYXoVu3B4wg==
-X-CSE-MsgGUID: R1Nu96qGTnaZHU/3WTsJqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64292175"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="64292175"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Nov 2025 07:05:12 -0800
-X-CSE-ConnectionGUID: cdHR5Z5UTRiP0kMVyvvdXA==
-X-CSE-MsgGUID: hTShbPItRyCbMTisT4GEZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,279,1754982000"; d="scan'208";a="187484315"
-Received: from unknown (HELO srv24..) ([10.138.182.231])
- by fmviesa008.fm.intel.com with ESMTP; 04 Nov 2025 07:05:11 -0800
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	anatoly.burakov@intel.com
-Cc: aman.deep.singh@intel.com
-Subject: [PATCH v2] net/ixgbe: add E610 NIC speed support
-Date: Tue,  4 Nov 2025 20:31:13 +0530
-Message-Id: <20251104150113.729184-1-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251103133804.585506-1-shaiq.wani@intel.com>
-References: <20251103133804.585506-1-shaiq.wani@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 93C834028C;
+	Tue,  4 Nov 2025 16:29:06 +0100 (CET)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com
+ [209.85.160.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 49A0440269
+ for <dev@dpdk.org>; Tue,  4 Nov 2025 16:29:05 +0100 (CET)
+Received: by mail-qt1-f174.google.com with SMTP id
+ d75a77b69052e-4ed0d2a949dso38628871cf.1
+ for <dev@dpdk.org>; Tue, 04 Nov 2025 07:29:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1762270144; x=1762874944; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=h3rKDB2nkx61x0mXz9g1wj7+r1lS2zu1gxF09qkXczU=;
+ b=NG/++MMbl9621y9AZCgqMnjhpwIL5rBRJaxy+5bBexCCWqbw0UFAWwVXgL4aUbU6wX
+ 6qzL1O8vmaa099eJ6KmXmme/lU6lSz+MIN5exvIMjlbZli4bhz5WvgoxqhS7FEASgJOV
+ J9/ICo35sXwtffvlqVXuSG0JY0QwVBt1croDocplm409wFrkayJsVysFSzZ8Ws0tRlG2
+ Dj9X8Nv2nPTDQYEq6GHUjTtrl62mOs9PrwrN742+7wVlFYG5OodWRlSuxTtuXtpWMsUV
+ MzVul2DLo+XaroQ1nGW67bRY9kKF6r9OgExnmiNRbpxjqnHYR1tuY6EEjk/okSwYD+lh
+ AJcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762270144; x=1762874944;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=h3rKDB2nkx61x0mXz9g1wj7+r1lS2zu1gxF09qkXczU=;
+ b=v/LEJB48XU4tsuVQrQDpXIBUkV8YbsOdZVMpxojGIzz+oxU4iEdafxmIHQ5jw6q4DG
+ dulPmZTD8TRG5zQDh9S9SP1l7tDYi2SHlr42ykDctvDLjO2b2l7xdnRhU/S1PIkAlkW/
+ +2XCXpOUKlvsu3oHKtGnYeFDKMzmmr9dbw3zfEloyfPsg3vtqdZic9j+VL8ccInF5Ni8
+ +xd+rtrKWuXxdPjgB7JufnXlT1UZsGtOiqTF02brOyoWrZP5+rjG1aGQn3NW1PRuYCP1
+ BZg+bNQ56IZqRV9mfgvh9pqX/qBOv4OaIR8JubfZUGKQM3FP6VQ08IE5BErqisWozRUP
+ 2N6A==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWkyuXjxVb+QPBsD82hummxX1PuIU4qCTc+WqiZbpC+A39lW65T7IkwPraeuQCdV/T4TSk=@dpdk.org
+X-Gm-Message-State: AOJu0Yw2ghD+Zq86tJFrFbnZyc6STeXY4lFZDshu2p+Lqrzk69DWyHC1
+ Pq4vfRD8t1RYIziOYmLeoRbCIUpZoOWieranykM/r+MVASDe1n/LZrC8cLsvAXPgWAJuWsGJKTd
+ A93g3OODQRQEHauUeH927GW+fpHGZ9qA=
+X-Gm-Gg: ASbGnctz6FcV/CKN+ZSTTVkPoIVmkg0SsDA9i5OzmOi1iBsow/JhIeaU9bSO71xPg6f
+ idVOxO/LnAf1pu7me+sdaUtZ1lAobUZA7hCQyQ81oo/d4iH+rsKJacA3XR68aOiplSnVvPHy5t5
+ ZPGuYeUWnFcgNpYmdOI3BFF5mPWKzeiR1kFNUHKkgnVf9pscw/xkhfJTovjHSkH8YnEs6EyzBcU
+ toquqXk0e+rwaANYJpPCxx8C0Fmf86XMHDAfZjaMSJYpQ/tWjMrrvNN7cc=
+X-Google-Smtp-Source: AGHT+IHwwkwTcMajiqaNyxlKT0FSpbv4rWAI9kbsEHZ5Ym9W6Vtf+qD+gK9cRrqLMZj7ng+bDMsg7ruihW4zU/OTJSU=
+X-Received: by 2002:a05:622a:4c11:b0:4c4:6b67:ccd7 with SMTP id
+ d75a77b69052e-4ed31073e28mr220381221cf.55.1762270144570; Tue, 04 Nov 2025
+ 07:29:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250901073036.1381560-1-ndabilpuram@marvell.com>
+ <20251023172728.770661-1-ndabilpuram@marvell.com>
+ <20251023172728.770661-19-ndabilpuram@marvell.com>
+ <2492954.jbyF5MZJ3u@thomas>
+In-Reply-To: <2492954.jbyF5MZJ3u@thomas>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Tue, 4 Nov 2025 20:58:37 +0530
+X-Gm-Features: AWmQ_bn0yiM8NAPlR78KdDvdH5OOmbZB8dXy0fokLkFw59_NAXCbepsgKTL_t_0
+Message-ID: <CALBAE1MQBeyAXxmunOVEV2gFux5_TBLBPXgbVN03C4C8Jy46Ew@mail.gmail.com>
+Subject: Re: [PATCH v3 19/19] drivers: fix Klocwork issues
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: Nithin Dabilpuram <ndabilpuram@marvell.com>, Aarnav JP <ajp@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, 
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
+ jerinj@marvell.com, dev@dpdk.org, stable@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,35 +83,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added a switch case for the E610 NIC adapter to set all supported link
-speeds (100M, 1G, 2.5G, 5G, 10G) in the ixgbe driver.
-Previously, E610 was not explicitly handled.
+On Fri, Oct 24, 2025 at 12:25=E2=80=AFAM Thomas Monjalon <thomas@monjalon.n=
+et> wrote:
+>
+> 23/10/2025 19:27, Nithin Dabilpuram:
+> > From: Aarnav JP <ajp@marvell.com>
+> >
+> > fixed klocwork suggested issues in
+> > cnxk component of drivers module
+> >
+> > Fixes: db5744d3cd23 ("common/cnxk: support NIX debug for CN20K")
+> > Fixes: 3c31a7485172 ("common/cnxk: config CPT result address for CN20K"=
+)
+> > Fixes: 4b8eb5bd6627 ("common/cnxk: reserve CPT LF for Rx inject")
+> > Fixes: f410059baac6 ("common/cnxk: support inline inbound queue")
+> > Fixes: 47cca253d605 ("net/cnxk: support Rx inject")
+> > Fixes: ac35d4bf4cd6 ("net/cnxk: support ingress meter pre-color")
+> > Cc: stable@dpdk.org
+>
+> Would be better to split and provide details of the bugs.
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-v2:
-*removed 10M speed since E610 does not support it.
----
- drivers/net/intel/ixgbe/ixgbe_ethdev.c | 5 +++++
- 1 file changed, 5 insertions(+)
+@Nithin Dabilpuram  @Aarnav JP  Could you send the next version with
+this. Good to merge the next version.
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index bfc091c367..89a799762f 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -2797,6 +2797,11 @@ ixgbe_dev_start(struct rte_eth_dev *dev)
- 			allowed_speeds = RTE_ETH_LINK_SPEED_10M |
- 				RTE_ETH_LINK_SPEED_100M | RTE_ETH_LINK_SPEED_1G;
- 		break;
-+	case ixgbe_mac_E610:
-+		allowed_speeds = RTE_ETH_LINK_SPEED_100M | RTE_ETH_LINK_SPEED_1G |
-+			RTE_ETH_LINK_SPEED_2_5G | RTE_ETH_LINK_SPEED_5G |
-+			RTE_ETH_LINK_SPEED_10G;
-+		break;
- 	default:
- 		allowed_speeds = RTE_ETH_LINK_SPEED_100M | RTE_ETH_LINK_SPEED_1G |
- 			RTE_ETH_LINK_SPEED_10G;
--- 
-2.34.1
 
+
+>
+>
