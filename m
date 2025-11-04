@@ -2,69 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEBECCFA04
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 14:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6112ECCFA04
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 14:46:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4BD4B4065B;
-	Tue,  4 Nov 2025 15:45:19 +0100 (CET)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com
- [209.85.216.51]) by mails.dpdk.org (Postfix) with ESMTP id 646A240613
- for <dev@dpdk.org>; Tue,  4 Nov 2025 15:45:18 +0100 (CET)
-Received: by mail-pj1-f51.google.com with SMTP id
- 98e67ed59e1d1-34077439166so4943564a91.2
- for <dev@dpdk.org>; Tue, 04 Nov 2025 06:45:18 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 68FDA40651;
+	Tue,  4 Nov 2025 15:46:09 +0100 (CET)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 22E4F40613
+ for <dev@dpdk.org>; Tue,  4 Nov 2025 15:46:08 +0100 (CET)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-295548467c7so31539955ad.2
+ for <dev@dpdk.org>; Tue, 04 Nov 2025 06:46:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762267517;
- x=1762872317; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762267567;
+ x=1762872367; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=bkUMizyYLaom4AUeBd7ByOlCLKZSNAIFSHfT9rtyz7E=;
- b=kMlKGfyVssrK0Ll6eJOW1wgxFYl5YBI/4XqLGvno7h+ufnZMPygCzeBmp5trncnFcN
- BPYBJeInm3+oqXbuJskf9Hv+ImPI5t0iUzJm6wtTYg/WeVB+3RZ7KxzGl8vUE3dTPXcE
- 7he8sf+gNnhOFT5H3KjL5SM8rJF0+i4/V9/YFVIRhGBtYvqsasUCIwZUyIsBb/WyYddY
- Vgb3bU6+zfqmLi6FYyL6yFwGuII0W6X/txdH17jqAh3RRRKHnUGt2pzD5VgwtdUoPVN/
- 8vjJILFrYU+w9daD2j7uy7LSF+6dQiEaHNwNMs7WlK0rRJbFxi4WIOzxxIiWr8S6EoJk
- Kn/Q==
+ bh=U9zTA3cyV9e0YncTtK6gxO9AhBUsHJ/8+s674lHq6CE=;
+ b=IR0AXZHqIiG1CgsaOYbpNpZB3/2MmD7PYYYIjFmfLc+XuI7u0A0ZGuKLiwAHUhksZ4
+ mhnYkO8NYlq0Pm2k6vAOQBpPh14MROe7m5MnV3UiOxkFfevFe7sqhg7boLa5R2lAIHx2
+ xIdMcAbJeVJl34VY96QIQ2cIjqofq3Hg5oz38VCXaYtimjbU/UFNvZALrDvMHKaCa9ye
+ DSEsZPxSF4d+FNj7mu5+PMSup+VQX2lNSYVDozTOBz3p3zmwyrOvDc6jQHPhb7LOsxgt
+ 05Yeeg6JbUU7GdTSjPfndx2myWe6mdDwErVSWsY6yiQZGoI85bbUYuTYg5hy6OYzPDx/
+ cLOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762267517; x=1762872317;
+ d=1e100.net; s=20230601; t=1762267567; x=1762872367;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=bkUMizyYLaom4AUeBd7ByOlCLKZSNAIFSHfT9rtyz7E=;
- b=YTc6dXN5ZPqxWPGcG5ZFmmODuXCVDgzQZe6z8wgMnCjb34oyqj0LACLt3trM+J/1br
- lEC1g6WCaT/cvIRs8zpdv3KCz9u+QGA1pxe4KQfdPRKFUAh63T+dyUvreF1T6r6dXrUf
- ClSW9Lu2DjoMecvLG5/rTKvsVceFjcwh3nYg1KB5ggr5V6U0qKqF/MVV4Bgh0wHUfcQz
- f+UVo8CXJBku5NU3QmTU1VAi6NwVG5jscQfhwLJFeoOqp52at5y9STz1B6fD3ZfhgiK0
- MtCBr8doQd1WK2Qi62YyGnRzJUd3kroUmXpqiXdmfsJTdNcXnK9mkOGsmhT7LYPaZEN5
- KhOw==
-X-Gm-Message-State: AOJu0YxPF+Dp2UWWSfxy6lWaU001yTSsIzuFPf60m3B4bueMSlZ3Evbw
- n1gk/2STI9nhP2pWYK0gP3tNYD9JMWSEroaAD+pOynaaHo7qn9UY/M0LHqAyjMYq8UDPvslyHpH
- iB9dr
-X-Gm-Gg: ASbGncvCkyJhnOQoAdpseFR3bY73eqiYZItk2uzNvWg0QNHYuSx7Bbn37fNMu/lxFI8
- RdRqhzcySEioZGmN37FL6Lsac/Jp/Xi8Jahsy+yxFIv/Lrxzpw2x1J78Mzynb0VIein7RcKBoBb
- 2sO4OYE1NwzmsQhooTCQsSnhlFBki3QTrJFXf+/j5lBC89uNLeOEBHW+FG/aJIa+FXgT4SZ4auh
- i6GiK0qK7vGcM2BJiENnW/zZpFNjizPADrGpQNzCKQ+UmOF3x37OiCCzLSZJEak91QcqJmeGUUN
- s48JSVZ9fUW5wmltKJLIMs7nqP6V8Mfzwvyxi1unyzvwv585ruIYZrq/EEH/FODBkGlPXRZAptJ
- 7OJnNpcVGIgF6YvbY/NG+CLPjpaUB40bHMLb3HlCf0ofYRSGBKev8GmAMCNqxXX2j8nfDcRTyG2
- sP8cVVkL8YJwQue12n2t2iKqzxqZ2dTcklNIbB2kmUEqw6
-X-Google-Smtp-Source: AGHT+IGsW7nJBGrbAd5BlHGcGkbpz/2CEbs3Nd/rNTElBI4YRzRkRPIN6ncv5t4IV9beZUt3MbmoYA==
-X-Received: by 2002:a17:90b:3504:b0:340:776d:f4ca with SMTP id
- 98e67ed59e1d1-3408308a99dmr22588787a91.26.1762267517513; 
- Tue, 04 Nov 2025 06:45:17 -0800 (PST)
+ bh=U9zTA3cyV9e0YncTtK6gxO9AhBUsHJ/8+s674lHq6CE=;
+ b=Bup1nhMksFt5XJ57WubHPUo/DLNsFJz+WjCeWcvsTa5oS0j451LUwxcCK35gfKUHYS
+ +m3q6zBC4rqwgimSdKzZXdj1ZNe4nLswPIkl2asO9ZxfKPxGuyMpKr7ZkjVsBEXALa09
+ HcY7PebC/r5WPpFmtj8PLBkkLh2xjQFppOM+YSMr33j1nLC8cGCVpTgOSlLD/4nFvNDW
+ Lb28UyNAqAbG/3yNKxGb+dmZ8BPuCKeic85IKysV9+T3Ti92ZpU/7F02TUZelW2nPZvd
+ 2o1YQEyPQKgFKOXfv1x5FTZ95tF0Ki1UfMiiqEf9Uu5AhDx2h8UyURhyYHmKqQGgKaJq
+ CPkg==
+X-Gm-Message-State: AOJu0YyziMK2mOCMkgT3RrUkSd5qbQ9KVcZfIGGKcKOUNaMBObZeZhZ+
+ HvFqXylP4pra9auNwnvOPoLRE94FwHJfM0xsL2kCJzNezHcLSR9hSIwYYKrtG4JvxyAFPMbbxgm
+ LLiht
+X-Gm-Gg: ASbGncvwEkOu3gX1D9+LKDiLK9ZTMPXEY7R0X51Mpbe86a/LJn2mflgFVSdwYEDhPeQ
+ sBhBkpll2f04Qad4Dzlpkrf/IATZS0zg6F7aRUMOVI0Wm/2GRkuiAvWgFI4Fdz70Aq6HEWlEIxM
+ QVjfAxy54hC0DPTav+RngKzz2GxN2obaszttiHmvLH//h2BYzqsSD2FdfNekmZRhvKDYk5lr/Mz
+ f4vJm2SADdrQdB9kte6x7a68WOAgWc1YOWbfyAhrLO11f/EhqM4T2f8biXh6HmYnbQq/9DgTINX
+ gxkrwLH+jMtdhTfGzp5G9u8WhX4mT5xXFrEs7rmJaGlJFO5q6EcsELjL5V09CIfSNpF4AxPFXIh
+ wVQozmCXJEh7jU4xcSPLny8bnixtjqqifmuR0EiO+uc7N/2196w2B9kh1GO4XhJJT97JwAHnSqZ
+ ze6J0fe1OyLUYhdXQouqoAJuyj1kSd98+ywA==
+X-Google-Smtp-Source: AGHT+IF+84rl6/cfBSfgwpXi0JKGtqiWcC17f7l7iQdCq6iXcOF4yn/tah/X7CuZ/Ki+ovGjjFEqeg==
+X-Received: by 2002:a17:902:ea0e:b0:269:a23e:9fd7 with SMTP id
+ d9443c01a7336-2951a3c0348mr216335585ad.26.1762267567191; 
+ Tue, 04 Nov 2025 06:46:07 -0800 (PST)
 Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7acd392040csm3181902b3a.19.2025.11.04.06.45.16
+ d2e1a72fcca58-7ade3c864c0sm260074b3a.35.2025.11.04.06.46.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 04 Nov 2025 06:45:17 -0800 (PST)
-Date: Tue, 4 Nov 2025 06:45:15 -0800
+ Tue, 04 Nov 2025 06:46:07 -0800 (PST)
+Date: Tue, 4 Nov 2025 06:46:04 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: longli@microsoft.com, stable@dpdk.org, Wei Hu <weh@microsoft.com>
-Subject: Re: [PATCH] net/netvsc: fix use after free in cache list cleanup
-Message-ID: <20251104064515.41972bf0@phoenix>
-In-Reply-To: <20251103163703.100238-1-stephen@networkplumber.org>
-References: <20251103163703.100238-1-stephen@networkplumber.org>
+Cc: jin.liu@corigine.com, stable@dpdk.org, Chaoyong He
+ <chaoyong.he@corigine.com>, Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?=
+ <niklas.soderlund@corigine.com>, Peng Zhang <peng.zhang@corigine.com>
+Subject: Re: [PATCH v3 01/44] net/nfp: fix use after free
+Message-ID: <20251104064604.0f334312@phoenix>
+In-Reply-To: <20251103164915.101713-2-stephen@networkplumber.org>
+References: <20250818233102.180207-1-stephen@networkplumber.org>
+ <20251103164915.101713-1-stephen@networkplumber.org>
+ <20251103164915.101713-2-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,18 +86,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  3 Nov 2025 08:37:03 -0800
+On Mon,  3 Nov 2025 08:47:06 -0800
 Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-> The variable cache is referred to by LIST_FOREACH macro
-> after was freed. Replace by the standard LIST_FOREACH_SAFE
-> from BSD (and other drivers).
+> The code to cleanup metering was using the objects after calling
+> rte_free(). Fix by using LISTFOREACH_SAFE
 > 
-> Fixes: 9a9d038c782e ("net/netvsc: cache device parameters for hotplug events")
-> Cc: longli@microsoft.com
+> Fixes: 2caf84a71cfd ("net/nfp: add meter options")
+> Cc: jin.liu@corigine.com
 > Cc: stable@dpdk.org
 > 
 > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-Queued to next-net.
-Added Long Li's Ack based on earlier version
+Queued to next-net
