@@ -2,39 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE21CCF9E3
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 18:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C7ACCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 23:30:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3309040299;
-	Tue,  4 Nov 2025 19:45:19 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id F287040269
- for <dev@dpdk.org>; Tue,  4 Nov 2025 19:45:17 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C0D0A2085B;
- Tue,  4 Nov 2025 19:45:17 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 794F340280;
+	Wed,  5 Nov 2025 00:30:29 +0100 (CET)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 27B7A40269
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 00:30:27 +0100 (CET)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5844F175D;
+ Tue,  4 Nov 2025 15:30:18 -0800 (PST)
+Received: from [10.118.106.37] (u104515.arm.com [10.118.106.37])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E90233F66E;
+ Tue,  4 Nov 2025 15:30:25 -0800 (PST)
+Message-ID: <88e99e93-6633-40ca-99ea-ab1b9343092b@arm.com>
+Date: Tue, 4 Nov 2025 17:30:25 -0600
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v2] mbuf: dump Tx offload metadata
-Date: Tue, 4 Nov 2025 19:45:16 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6552E@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <CAJFAV8zEM4Ohdk+wg1Ryz4n1VC2KC3nCkRBX7iRMakY3scfqEg@mail.gmail.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v2] mbuf: dump Tx offload metadata
-Thread-Index: AdxNkyowiPIOHh8FQ6uXBBu+mNCwzAAJymhg
-References: <20251031131159.1199221-1-david.marchand@redhat.com>
- <20251104100214.1818660-1-david.marchand@redhat.com>
- <CAJFAV8zEM4Ohdk+wg1Ryz4n1VC2KC3nCkRBX7iRMakY3scfqEg@mail.gmail.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "David Marchand" <david.marchand@redhat.com>,
-	<dev@dpdk.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] eal: correct memory ordering in MCS lock
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>, dev@dpdk.org,
+ Ola Liljedahl <ola.liljedahl@arm.com>
+References: <20251023184724.1759497-1-wathsala.vithanage@arm.com>
+ <20251103154846.07be1aa0@phoenix>
+Content-Language: en-US
+From: Wathsala Vithanage <wathsala.vithanage@arm.com>
+In-Reply-To: <20251103154846.07be1aa0@phoenix>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,85 +45,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBEYXZpZCBNYXJjaGFuZCBbbWFpbHRvOmRhdmlkLm1hcmNoYW5kQHJlZGhhdC5jb21d
-DQo+IFNlbnQ6IFR1ZXNkYXksIDQgTm92ZW1iZXIgMjAyNSAxNC41OQ0KPiANCj4gT24gVHVlLCA0
-IE5vdiAyMDI1IGF0IDExOjAyLCBEYXZpZCBNYXJjaGFuZCA8ZGF2aWQubWFyY2hhbmRAcmVkaGF0
-LmNvbT4NCj4gd3JvdGU6DQo+ID4NCj4gPiBXaGVuIGRlYnVnZ2luZyBUU08gYW5kIG90aGVyIGNo
-ZWNrc3VtIG9mZmxvYWRzLCBkdW1waW5nIHRoZSB2YXJpb3VzDQo+ID4gbCpfbGVuIGZpZWxkcyBh
-bmQgVFNPIHNlZ21lbnRhdGlvbiBzaXplIGNhbiBiZSBoZWxwZnVsLg0KPiA+DQo+ID4gRXhhbXBs
-ZSBpbiBPVlMgdGhhdCBkdW1wcyBhIG1idWYgb24gcnRlX2V0aF90eF9wcmVwYXJlIGZhaWx1cmU6
-DQo+ID4NCj4gPiBCZWZvcmU6DQo+ID4gbmV0ZGV2X2RwZGsocG1kLWMzMC9pZDoxMSl8REJHfGRw
-ZGswOiBGaXJzdCBpbnZhbGlkIHBhY2tldDoNCj4gPiBkdW1wIG1idWYgYXQgMHgyMjAxYTkxNmMw
-LCBpb3ZhPTB4MjIwMDgwMDU4MCwgYnVmX2xlbj02ODY0DQo+ID4gICBwa3RfbGVuPTY4MDQsIG9s
-X2ZsYWdzPTB4MzExNDgwMDAwMDAwMDEwMiwgbmJfc2Vncz0xLCBwb3J0PTY1NTM1LA0KPiBwdHlw
-ZT0wDQo+ID4gICBzZWdtZW50IGF0IDB4MjIwMWE5MTZjMCwgZGF0YT0weDIyMDA4MDA1YjIsIGxl
-bj02ODA0LCBvZmY9NTAsDQo+IHJlZmNudD0xDQo+ID4gICBEdW1wIGRhdGEgYXQgWzB4MjIwMDgw
-MDViMl0sIGxlbj02ODA0DQo+ID4gLi4uDQo+ID4NCj4gPiBBZnRlcjoNCj4gPiBuZXRkZXZfZHBk
-ayhwbWQtYzMwL2lkOjExKXxEQkd8ZHBkazA6IEZpcnN0IGludmFsaWQgcGFja2V0Og0KPiA+IGR1
-bXAgbWJ1ZiBhdCAweDIyMDFhOTE2YzAsIGlvdmE9MHgyMjAwODAwNTgwLCBidWZfbGVuPTY4NjQs
-DQo+IHBrdF9sZW49NjgwNA0KPiA+ICAgb3V0ZXJfbDJfbGVuPTE0LCBvdXRlcl9sM19sZW49NDAs
-IGwyX2xlbj0zOCwgbDNfbGVuPTQwLCBsNF9sZW49MzINCj4gPiAgIG9sX2ZsYWdzPTB4MzExNDgw
-MDAwMDAwMDEwMiwgbmJfc2Vncz0xLCBwb3J0PTY1NTM1LCBwdHlwZT0wDQo+ID4gICBzZWdtZW50
-IGF0IDB4MjIwMWE5MTZjMCwgZGF0YT0weDIyMDA4MDA1YjIsIGxlbj02ODA0LCBvZmY9NTAsDQo+
-IHJlZmNudD0xDQo+ID4gICBEdW1wIGRhdGEgYXQgWzB4MjIwMDgwMDViMl0sIGxlbj02ODA0DQo+
-ID4gLi4uDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBEYXZpZCBNYXJjaGFuZCA8ZGF2aWQubWFy
-Y2hhbmRAcmVkaGF0LmNvbT4NCj4gPiAtLS0NCj4gPiAgbGliL21idWYvcnRlX21idWYuYyB8IDQx
-ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tDQo+ID4gIDEgZmlsZSBj
-aGFuZ2VkLCAzNyBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAt
-LWdpdCBhL2xpYi9tYnVmL3J0ZV9tYnVmLmMgYi9saWIvbWJ1Zi9ydGVfbWJ1Zi5jDQo+ID4gaW5k
-ZXggMGQ5MzFjN2ExNS4uMTI3MTBhNTlkZiAxMDA2NDQNCj4gPiAtLS0gYS9saWIvbWJ1Zi9ydGVf
-bWJ1Zi5jDQo+ID4gKysrIGIvbGliL21idWYvcnRlX21idWYuYw0KPiA+IEBAIC03NTAsMTAgKzc1
-MCw0MyBAQCBydGVfcGt0bWJ1Zl9kdW1wKEZJTEUgKmYsIGNvbnN0IHN0cnVjdCBydGVfbWJ1Zg0K
-PiAqbSwgdW5zaWduZWQgZHVtcF9sZW4pDQo+ID4NCj4gPiAgICAgICAgIF9fcnRlX21idWZfc2Fu
-aXR5X2NoZWNrKG0sIDEpOw0KPiA+DQo+ID4gLSAgICAgICBmcHJpbnRmKGYsICJkdW1wIG1idWYg
-YXQgJXAsIGlvdmE9JSMiIFBSSXg2NCAiLA0KPiBidWZfbGVuPSV1XG4iLCBtLCBydGVfbWJ1Zl9p
-b3ZhX2dldChtKSwNCj4gPiAtICAgICAgICAgICAgICAgbS0+YnVmX2xlbik7DQo+ID4gLSAgICAg
-ICBmcHJpbnRmKGYsICIgIHBrdF9sZW49JXUsIG9sX2ZsYWdzPSUjIlBSSXg2NCIsIG5iX3NlZ3M9
-JXUsDQo+IHBvcnQ9JXUiLA0KPiA+IC0gICAgICAgICAgICAgICBtLT5wa3RfbGVuLCBtLT5vbF9m
-bGFncywgbS0+bmJfc2VncywgbS0+cG9ydCk7DQo+ID4gKyAgICAgICBmcHJpbnRmKGYsICJkdW1w
-IG1idWYgYXQgJXAsIGlvdmE9JSMiIFBSSXg2NCAiLCBidWZfbGVuPSV1LA0KPiBwa3RfbGVuPSV1
-XG4iLA0KPiA+ICsgICAgICAgICAgICAgICBtLCBydGVfbWJ1Zl9pb3ZhX2dldChtKSwgbS0+YnVm
-X2xlbiwgbS0+cGt0X2xlbik7DQo+ID4gKyAgICAgICBpZiAobS0+b2xfZmxhZ3MgJiBSVEVfTUJV
-Rl9GX1RYX09GRkxPQURfTUFTSykgew0KPiA+ICsgICAgICAgICAgICAgICBjb25zdCBjaGFyICpz
-ZXAgPSAiIjsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIGZwcmludGYoZiwgIiAgIik7DQo+
-ID4gKyAgICAgICAgICAgICAgIGlmIChtLT5vdXRlcl9sMl9sZW4gIT0gMCkgew0KPiA+ICsgICAg
-ICAgICAgICAgICAgICAgICAgIGZwcmludGYoZiwgIiVzb3V0ZXJfbDJfbGVuPSV1Iiwgc2VwLCBt
-LQ0KPiA+b3V0ZXJfbDJfbGVuKTsNCj4gDQo+IE9uZSBtb3JlIHJvdW5kIHdpbGwgYmUgbmVlZGVk
-IGZvciBNU1ZDIChDSSBkaWQgbm90IHJlcG9ydCBpdCBvbiB2MSwNCj4gc29tZSB0ZXN0cyBkaWQg
-bm90IHJ1bi4uKS4NCj4gLi4vbGliL21idWYvcnRlX21idWYuYyg3NjApOiBlcnJvciBDMjIyMDog
-dGhlIGZvbGxvd2luZyB3YXJuaW5nIGlzDQo+IHRyZWF0ZWQgYXMgYW4gZXJyb3INCj4gLi4vbGli
-L21idWYvcnRlX21idWYuYyg3NjApOiB3YXJuaW5nIEM0NDc3OiAnZnByaW50ZicgOiBmb3JtYXQg
-c3RyaW5nDQo+ICcldScgcmVxdWlyZXMgYW4gYXJndW1lbnQgb2YgdHlwZSAndW5zaWduZWQgaW50
-JywgYnV0IHZhcmlhZGljDQo+IGFyZ3VtZW50IDIgaGFzIHR5cGUgJ2NvbnN0IHVpbnQ2NF90Jw0K
-PiAuLi9saWIvbWJ1Zi9ydGVfbWJ1Zi5jKDc2MCk6IG5vdGU6IGNvbnNpZGVyIHVzaW5nICclbGx1
-JyBpbiB0aGUgZm9ybWF0DQo+IHN0cmluZw0KPiAuLi9saWIvbWJ1Zi9ydGVfbWJ1Zi5jKDc2MCk6
-IG5vdGU6IGNvbnNpZGVyIHVzaW5nICclSXUnIGluIHRoZSBmb3JtYXQNCj4gc3RyaW5nDQo+IC4u
-L2xpYi9tYnVmL3J0ZV9tYnVmLmMoNzYwKTogbm90ZTogY29uc2lkZXIgdXNpbmcgJyVJNjR1JyBp
-biB0aGUgZm9ybWF0DQo+IHN0cmluZw0KPiANCj4gVGhpcyBpcyBwcm9iYWJseSBiZWNhdXNlIG9m
-IHRoZSBiaXRmaWVsZHMgd2UgaGF2ZSBmb3IgdGhlIHR4X29mZmxvYWQNCj4gZmllbGQuDQo+IGxp
-Yi9tYnVmL3J0ZV9tYnVmX2NvcmUuaDogICAgICAgUlRFX01CVUZfTDJfTEVOX0JJVFMgPSA3LA0K
-PiBsaWIvbWJ1Zi9ydGVfbWJ1Zl9jb3JlLmg6ICAgICAgIFJURV9NQlVGX0wzX0xFTl9CSVRTID0g
-OSwNCj4gbGliL21idWYvcnRlX21idWZfY29yZS5oOiAgICAgICBSVEVfTUJVRl9MNF9MRU5fQklU
-UyA9IDgsDQo+IGxpYi9tYnVmL3J0ZV9tYnVmX2NvcmUuaDogICAgICAgUlRFX01CVUZfT1VUTDNf
-TEVOX0JJVFMgPSA5LA0KPiBsaWIvbWJ1Zi9ydGVfbWJ1Zl9jb3JlLmg6ICAgICAgIFJURV9NQlVG
-X09VVEwyX0xFTl9CSVRTID0gNywNCj4gbGliL21idWYvcnRlX21idWZfY29yZS5oOiAgICAgICAg
-ICAgICAgICAgICAgICAgdWludDY0X3QNCj4gbDJfbGVuOlJURV9NQlVGX0wyX0xFTl9CSVRTOw0K
-PiBsaWIvbWJ1Zi9ydGVfbWJ1Zl9jb3JlLmg6ICAgICAgICAgICAgICAgICAgICAgICB1aW50NjRf
-dA0KPiBsM19sZW46UlRFX01CVUZfTDNfTEVOX0JJVFM7DQo+IGxpYi9tYnVmL3J0ZV9tYnVmX2Nv
-cmUuaDogICAgICAgICAgICAgICAgICAgICAgIHVpbnQ2NF90DQo+IGw0X2xlbjpSVEVfTUJVRl9M
-NF9MRU5fQklUUzsNCj4gbGliL21idWYvcnRlX21idWZfY29yZS5oOiAgICAgICAgICAgICAgICAg
-ICAgICAgdWludDY0X3QNCj4gb3V0ZXJfbDNfbGVuOlJURV9NQlVGX09VVEwzX0xFTl9CSVRTOw0K
-PiBsaWIvbWJ1Zi9ydGVfbWJ1Zl9jb3JlLmg6ICAgICAgICAgICAgICAgICAgICAgICB1aW50NjRf
-dA0KPiBvdXRlcl9sMl9sZW46UlRFX01CVUZfT1VUTDJfTEVOX0JJVFM7DQo+IA0KPiANCj4gUGFz
-c2luZyAlUFJJdTY0IGluc3RlYWQgb2YgJXUgYnJlYWtzIGJ1aWxkIHdpdGggZ2NjIGFuZCBjbGFu
-Zy4NCj4gLi4vbGliL21idWYvcnRlX21idWYuYzogSW4gZnVuY3Rpb24g4oCYcnRlX3BrdG1idWZf
-ZHVtcOKAmToNCj4gLi4vbGliL21idWYvcnRlX21idWYuYzo3NjA6MzY6IGVycm9yOiBmb3JtYXQg
-4oCYJWx14oCZIGV4cGVjdHMgYXJndW1lbnQgb2YNCj4gdHlwZSDigJhsb25nIHVuc2lnbmVkIGlu
-dOKAmSwgYnV0IGFyZ3VtZW50IDQgaGFzIHR5cGUg4oCYaW504oCZDQo+IFstV2Vycm9yPWZvcm1h
-dD1dDQo+IDc2MCB8IGZwcmludGYoZiwgIiVzb3V0ZXJfbDJfbGVuPSUiUFJJdTY0LCBzZXAsIG0t
-Pm91dGVyX2wyX2xlbik7DQo+IHwgXn5+fn5+fn5+fn5+fn5+fn5+IH5+fn5+fn5+fn5+fn5+fg0K
-PiB8IHwNCj4gfCBpbnQNCj4gDQoNCkludGVyZXN0aW5nIGRpZmZlcmVuY2UgaW4gaW50ZXJwcmV0
-YXRpb24gYmV0d2VlbiB0aGUgY29tcGlsZXJzLg0KDQo+IA0KPiBJJ2xsIGdvIHdpdGggc2ltcGxl
-IGNhc3RpbmcsIGxpa2U6DQo+ICsgICAgICAgICAgICBmcHJpbnRmKGYsICIlc291dGVyX2wyX2xl
-bj0ldSIsIHNlcCwgKHVuc2lnbmVkDQo+IGludCltLT5vdXRlcl9sMl9sZW4pOw0KDQpBZ3JlZS4N
-Cg0KPiANCj4gDQo+IC0tDQo+IERhdmlkIE1hcmNoYW5kDQoNCg==
+
+On 11/3/25 17:48, Stephen Hemminger wrote:
+> On Thu, 23 Oct 2025 18:47:24 +0000
+> Wathsala Vithanage <wathsala.vithanage@arm.com> wrote:
+>
+>> Fix incorrect memory ordering in the MCS lock implementation by
+>> adding proper synchronizing edges to establish clear happens-before
+>> relationships between threads invoking lock() and unlock(). These
+>> synchronizing edges prevent potential deadlocks caused by improper
+>> ordering and are documented in detail through in-code comments.
+>>
+>> The previously relaxed load of the successor’s lock object pointer
+>> in unlock() has been upgraded to a load-acquire operation. This
+>> change ensures that the successor’s initialization does not
+>> overwrite the current lock holder’s update to the locked field,
+>> which could otherwise lead to deadlocks.
+>>
+>> Remove two unnecessary fences:
+>>
+>> The acquire fence in unlock() had no matching release fence, making
+>> it ineffective for enforcing memory order. The associated comment
+>> suggested it prevented speculative reordering, but such fences (data
+>> memory barriers) only establish memory ordering and do not control
+>> instruction speculation.
+>>
+>> The release-acquire fence pair in lock() was previously justified as
+>> preventing reordering between the load-acquire loop of me->locked
+>> and the store-release of prev->next. This is no longer needed, as the
+>> new synchronizing edges ensure a chain of happens-before
+>> relationships between memory operations of threads calling lock() and
+>> unlock().
+>>
+>> Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
+>> Reviewed-by: Ola Liljedahl <ola.liljedahl@arm.com>
+> Thanks for the good explanatory comments.
+>
+> Could you please add a Fixes: tag and Cc: stable@dpdk.org
+> so it can go to the right stable releases as well.
+>
+> I noticed that Progress64 has same effective code.
+>
+Yes, the P64 MCS implementation is aligned with the DPDK version
+after these changes.
+Ola’s verification tool confirms that the P64 implementation is correct,
+so this should be correct as well.
