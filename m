@@ -2,48 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F612CCF9E3
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 08:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 181A9CCFA00
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 08:09:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 78A014028C;
-	Tue,  4 Nov 2025 09:05:43 +0100 (CET)
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com
- [113.46.200.226])
- by mails.dpdk.org (Postfix) with ESMTP id D10BA40285
- for <dev@dpdk.org>; Tue,  4 Nov 2025 09:05:40 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=Yovw2P7jfgfhb/BvjwomLDhMYTUclgs453smYdc9a5E=;
- b=dDmuKzmXREyfv87zKFVmmVDrtItadWgsriQyiyfhGb7AyS6F0dSCl5WTllXsRFikEiAKpPxc8
- /bqF0HjP/Px/bxSWnjryqm9hlPXNw8lpad5r4hctzyndivmOqZGJpYOGRaHrf0NR5Yj++5TuJyd
- PJKe+fsQPU8E/vn4twPgeEM=
-Received: from mail.maildlp.com (unknown [172.19.163.17])
- by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d11Dz0KTKzKmTX;
- Tue,  4 Nov 2025 16:04:03 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 39EBB1A0188;
- Tue,  4 Nov 2025 16:05:38 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 188A64028C;
+	Tue,  4 Nov 2025 09:09:14 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 1543E40285
+ for <dev@dpdk.org>; Tue,  4 Nov 2025 09:09:12 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 5A45kEjV705236 for <dev@dpdk.org>; Tue, 4 Nov 2025 00:09:12 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=X
+ Wr98Z7VSaq0wHMzZpqbKsrJJ/E+4Vo4hGbeJuwBbUc=; b=fZsd7zRKC4rtLvIZX
+ oOdUi8No9XsU0hjFxAWQDHaRgapxgZCtXiybE24UXc2fwgH8wcsoLqjKrIAxEeGg
+ tqyyuMVELzs8HDcwkZvpCDKQxOiQU758vvYNQKYe1Iv18OAUZzt9ZeUDod37Pt0T
+ wSL8MnpXvU1NMCHVW3KTch1HPfRGLjY28TdzmrFOXrczbygUzgvDKlvIi16OlWQj
+ CAoOeqm6JwjtufSbIM1NMW7Wrx3fkT8FBErgAuJ3W19UFr5QCIx/unzttCgzHPUy
+ w+YRjuffMPXa7LXwNM+YDTB1ZmjNPJdzb3mnwCU7PR9L0Aih0OCJ0dgeOyS0UpKZ
+ 2MVCg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4a70ec2k27-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Tue, 04 Nov 2025 00:09:11 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 4 Nov 2025 16:05:37 +0800
-Message-ID: <051163f2-7b6e-49db-83cf-7f6f366c448a@huawei.com>
-Date: Tue, 4 Nov 2025 16:05:37 +0800
+ 15.2.1544.25; Tue, 4 Nov 2025 00:09:21 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 4 Nov 2025 00:09:21 -0800
+Received: from cavium-3070-BM23.. (unknown [10.28.34.25])
+ by maili.marvell.com (Postfix) with ESMTP id 3698C5B695F;
+ Tue,  4 Nov 2025 00:09:06 -0800 (PST)
+From: <skori@marvell.com>
+To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH v7 2/6] common/cnxk: provide port type from fwdata
+Date: Tue, 4 Nov 2025 13:38:50 +0530
+Message-ID: <20251104080901.1610706-2-skori@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251104080901.1610706-1-skori@marvell.com>
+References: <20251023110332.6231-6-skori@marvell.com>
+ <20251104080901.1610706-1-skori@marvell.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] vhost_user: support function defines for back-end
-To: Pravin M Bathija <pravin.bathija@dell.com>, <dev@dpdk.org>
-CC: <pravin.m.bathija.dev@gmail.com>
-References: <20251104042142.2787631-1-pravin.bathija@dell.com>
- <20251104042142.2787631-5-pravin.bathija@dell.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20251104042142.2787631-5-pravin.bathija@dell.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA0MDA2NiBTYWx0ZWRfX0R4vkDsbeAha
+ KVL0paUP0OV1HxRUXO2aCU6TUDxPpzR5cJMgrNMrRCoiO94/wzPVMQ7bIIZzooKStnJsj6FieRJ
+ drZi1ts/JbB8+ntzi7lHD/ukUcinCEKmdtjbZfgSIVGy9nhwgxv63xALRKpJUvTkBIS5lWfKtEg
+ Zw2WlkZZpIFxBQnEuN3ZWJvYuVhNP1QD0i9nvF9NmfUjly96H+pmjq47d9fYv5pgS2ZdkTCnrik
+ g6h8TbS8/VONcOlaKlh/ZPsp35l2Wm+vezsZS24z6CbjRt56vTQ2kc9yroqdUZCAtOeu5qvK7rX
+ AjNwtg3eV2Lwcrrjai9QpA9HDBMX7h00Qht2tPsjGv16EtAGpPDjOgMC/QTRJlgdmjdO0eokUus
+ QJ1IJdkFA3Q/yjQuSx7INYs0idmUog==
+X-Proofpoint-GUID: VDEJI2_-XpfyHrRJYd9XkSltbXljivUg
+X-Authority-Analysis: v=2.4 cv=SomdKfO0 c=1 sm=1 tr=0 ts=6909b4a8 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=M5GUcnROAAAA:8
+ a=x9mx7A_yV6r5R7-WvSUA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: VDEJI2_-XpfyHrRJYd9XkSltbXljivUg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_06,2025-11-03_03,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,175 +82,88 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 11/4/2025 12:21 PM, Pravin M Bathija wrote:
-> Here we define support functions which are called from the various
-> vhost-user back-end message functions like set memory table, get
-> memory slots, add memory region, remove memory region.  These are
-> essetially common functions to initialize memory, unmap a set of
-> memory regions, perform register copy and align memory addresses.
-> 
-> Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
-> ---
->  lib/vhost/vhost_user.c | 80 +++++++++++++++++++++++++++++++++++-------
->  1 file changed, 68 insertions(+), 12 deletions(-)
-> 
-> diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
-> index 168432e7d1..9a85f2fc92 100644
-> --- a/lib/vhost/vhost_user.c
-> +++ b/lib/vhost/vhost_user.c
-> @@ -228,7 +228,17 @@ async_dma_map(struct virtio_net *dev, bool do_map)
->  }
->  
->  static void
-> -free_mem_region(struct virtio_net *dev)
-> +free_mem_region(struct rte_vhost_mem_region *reg)
-> +{
-> +	if (reg != NULL && reg->host_user_addr) {
-> +		munmap(reg->mmap_addr, reg->mmap_size);
-> +		close(reg->fd);
-> +		memset(reg, 0, sizeof(struct rte_vhost_mem_region));
-> +	}
-> +}
-> +
-> +static void
-> +free_all_mem_regions(struct virtio_net *dev)
->  {
->  	uint32_t i;
->  	struct rte_vhost_mem_region *reg;
-> @@ -239,12 +249,10 @@ free_mem_region(struct virtio_net *dev)
->  	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
->  		async_dma_map(dev, false);
->  
-> -	for (i = 0; i < dev->mem->nregions; i++) {
-> +	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
->  		reg = &dev->mem->regions[i];
-> -		if (reg->host_user_addr) {
-> -			munmap(reg->mmap_addr, reg->mmap_size);
-> -			close(reg->fd);
-> -		}
-> +		if (reg->mmap_addr)
-> +			free_mem_region(reg);
->  	}
->  }
->  
-> @@ -258,7 +266,7 @@ vhost_backend_cleanup(struct virtio_net *dev)
->  		vdpa_dev->ops->dev_cleanup(dev->vid);
->  
->  	if (dev->mem) {
-> -		free_mem_region(dev);
-> +		free_all_mem_regions(dev);
->  		rte_free(dev->mem);
->  		dev->mem = NULL;
->  	}
-> @@ -707,7 +715,7 @@ numa_realloc(struct virtio_net **pdev, struct vhost_virtqueue **pvq)
->  	vhost_devices[dev->vid] = dev;
->  
->  	mem_size = sizeof(struct rte_vhost_memory) +
-> -		sizeof(struct rte_vhost_mem_region) * dev->mem->nregions;
-> +		sizeof(struct rte_vhost_mem_region) * VHOST_MEMORY_MAX_NREGIONS;
->  	mem = rte_realloc_socket(dev->mem, mem_size, 0, node);
->  	if (!mem) {
->  		VHOST_CONFIG_LOG(dev->ifname, ERR,
-> @@ -811,8 +819,10 @@ hua_to_alignment(struct rte_vhost_memory *mem, void *ptr)
->  	uint32_t i;
->  	uintptr_t hua = (uintptr_t)ptr;
->  
-> -	for (i = 0; i < mem->nregions; i++) {
-> +	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
->  		r = &mem->regions[i];
-> +		if (r->host_user_addr == 0)
-> +			continue;
->  		if (hua >= r->host_user_addr &&
->  			hua < r->host_user_addr + r->size) {
->  			return get_blk_size(r->fd);
-> @@ -1250,9 +1260,13 @@ vhost_user_postcopy_register(struct virtio_net *dev, int main_fd,
->  	 * retrieve the region offset when handling userfaults.
->  	 */
->  	memory = &ctx->msg.payload.memory;
-> -	for (i = 0; i < memory->nregions; i++) {
-> +	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
+From: Sunil Kumar Kori <skori@marvell.com>
 
-I think the using MAX_NREGIONS are most for convienent, but it will impact the performance,
-because the rte_vhost_va_from_guest_pa() should iter the entire array.
+Retrieves type of port from firmware data.
 
-I think we should keep the original impl: make sure the nregions entry of memory-region is
-always valid.
+Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
+Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
+---
+ drivers/common/cnxk/hw/nix.h      | 12 ++++++++++++
+ drivers/common/cnxk/roc_mbox.h    | 13 +++++++++++--
+ drivers/common/cnxk/roc_nix.h     |  1 +
+ drivers/common/cnxk/roc_nix_mac.c |  1 +
+ 4 files changed, 25 insertions(+), 2 deletions(-)
 
-Beside, where is the modification for rte_vhost_va_from_guest_pa()???
-
-> +		int reg_msg_index = 0;
->  		reg = &dev->mem->regions[i];
-> -		memory->regions[i].userspace_addr = reg->host_user_addr;
-> +		if (reg->host_user_addr == 0)
-> +			continue;
-> +		memory->regions[reg_msg_index].userspace_addr = reg->host_user_addr;
-> +		reg_msg_index++;
->  	}
->  
->  	/* Send the addresses back to qemu */
-> @@ -1279,8 +1293,10 @@ vhost_user_postcopy_register(struct virtio_net *dev, int main_fd,
->  	}
->  
->  	/* Now userfault register and we can use the memory */
-> -	for (i = 0; i < memory->nregions; i++) {
-> +	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
->  		reg = &dev->mem->regions[i];
-> +		if (reg->host_user_addr == 0)
-> +			continue;
->  		if (vhost_user_postcopy_region_register(dev, reg) < 0)
->  			return -1;
->  	}
-> @@ -1385,6 +1401,46 @@ vhost_user_mmap_region(struct virtio_net *dev,
->  	return 0;
->  }
->  
-> +static int
-> +vhost_user_initialize_memory(struct virtio_net **pdev)
-
-This function should be part of 3/5, else the 3/5 will compile fail
-
-> +{
-> +	struct virtio_net *dev = *pdev;
-> +	int numa_node = SOCKET_ID_ANY;
-> +
-> +	/*
-> +	 * If VQ 0 has already been allocated, try to allocate on the same
-> +	 * NUMA node. It can be reallocated later in numa_realloc().
-> +	 */
-> +	if (dev->nr_vring > 0)
-> +		numa_node = dev->virtqueue[0]->numa_node;
-> +
-> +	dev->nr_guest_pages = 0;
-> +	if (dev->guest_pages == NULL) {
-> +		dev->max_guest_pages = 8;
-
-It should be VHOST_MEMORY_MAX_NREGIONS
-
-> +		dev->guest_pages = rte_zmalloc_socket(NULL,
-> +					dev->max_guest_pages *
-> +					sizeof(struct guest_page),
-> +					RTE_CACHE_LINE_SIZE,
-> +					numa_node);
-> +		if (dev->guest_pages == NULL) {
-> +			VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +				"failed to allocate memory for dev->guest_pages");
-> +			return -1;
-> +		}
-> +	}
-> +
-> +	dev->mem = rte_zmalloc_socket("vhost-mem-table", sizeof(struct rte_vhost_memory) +
-> +		sizeof(struct rte_vhost_mem_region) * VHOST_MEMORY_MAX_NREGIONS, 0, numa_node);
-> +	if (dev->mem == NULL) {
-> +		VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to allocate memory for dev->mem");
-> +		rte_free(dev->guest_pages);
-> +		dev->guest_pages = NULL;
-> +		return -1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int
->  vhost_user_set_mem_table(struct virtio_net **pdev,
->  			struct vhu_msg_context *ctx,
+diff --git a/drivers/common/cnxk/hw/nix.h b/drivers/common/cnxk/hw/nix.h
+index f344d4de99..c438f18145 100644
+--- a/drivers/common/cnxk/hw/nix.h
++++ b/drivers/common/cnxk/hw/nix.h
+@@ -2751,4 +2751,16 @@ enum cgx_mode {
+ 	CGX_MODE_MAX /* = 51 */
+ };
+ 
++/* CGX Port types from kernel */
++enum cgx_port_type {
++	CGX_PORT_TP = 0x0,
++	CGX_PORT_AUI,
++	CGX_PORT_MII,
++	CGX_PORT_FIBRE,
++	CGX_PORT_BNC,
++	CGX_PORT_DA,
++	CGX_PORT_NONE = 0xef,
++	CGX_PORT_OTHER = 0xff,
++};
++
+ #endif /* __NIX_HW_H__ */
+diff --git a/drivers/common/cnxk/roc_mbox.h b/drivers/common/cnxk/roc_mbox.h
+index 7fec23772f..66a3dd2125 100644
+--- a/drivers/common/cnxk/roc_mbox.h
++++ b/drivers/common/cnxk/roc_mbox.h
+@@ -755,8 +755,17 @@ enum fec_type {
+ };
+ 
+ struct phy_s {
+-	uint64_t __io can_change_mod_type : 1;
+-	uint64_t __io mod_type : 1;
++	struct {
++		uint64_t __io can_change_mod_type : 1;
++		uint64_t __io mod_type : 1;
++		uint64_t __io has_fec_stats : 1;
++	} misc;
++	struct fec_stats_s {
++		uint32_t __io rsfec_corr_cws;
++		uint32_t __io rsfec_uncorr_cws;
++		uint32_t __io brfec_corr_blks;
++		uint32_t __io brfec_uncorr_blks;
++	} fec_stats;
+ };
+ 
+ struct cgx_lmac_fwdata_s {
+diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
+index 41334327bb..a62ddf4732 100644
+--- a/drivers/common/cnxk/roc_nix.h
++++ b/drivers/common/cnxk/roc_nix.h
+@@ -507,6 +507,7 @@ struct roc_nix_link_info {
+ struct roc_nix_mac_fwdata {
+ 	uint64_t advertised_link_modes;
+ 	uint64_t supported_link_modes;
++	uint64_t port_type;
+ 	uint64_t supported_an;
+ };
+ 
+diff --git a/drivers/common/cnxk/roc_nix_mac.c b/drivers/common/cnxk/roc_nix_mac.c
+index 08b4f30810..376ff48522 100644
+--- a/drivers/common/cnxk/roc_nix_mac.c
++++ b/drivers/common/cnxk/roc_nix_mac.c
+@@ -436,6 +436,7 @@ roc_nix_mac_fwdata_get(struct roc_nix *roc_nix, struct roc_nix_mac_fwdata *data)
+ 	data->supported_link_modes = nix->supported_link_modes;
+ 	data->advertised_link_modes = nix->advertised_link_modes;
+ 	data->supported_an = fw_data->fwdata.supported_an;
++	data->port_type = fw_data->fwdata.port;
+ exit:
+ 	mbox_put(mbox);
+ 	return rc;
+-- 
+2.43.0
 
