@@ -2,73 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05023CCF9E3
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 13:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E55CCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 13:16:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A55F40609;
-	Tue,  4 Nov 2025 14:15:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5F802402D7;
+	Tue,  4 Nov 2025 14:16:44 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id ABD3F40609
- for <dev@dpdk.org>; Tue,  4 Nov 2025 14:15:38 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C8C5540269
+ for <dev@dpdk.org>; Tue,  4 Nov 2025 14:16:42 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1762262138;
+ s=mimecast20190719; t=1762262202;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=r6eaTchBfs/eD0jEq5ecbgvOK4alnGi7Vaole0yWHxo=;
- b=i8YAW9tVz2KPMzvVzoUUo8m2s4ic7VARvZ317n7Z2YLFgBE5Mslvuuf0SsJhOJiGJSjexr
- xK+d86o9YUx5V5pJk8gwgP17WauWQoNP4BGwu5nCQuiE8kFG8mV29pQEqQV3UkVQHLPFDy
- uStT+WpHfN/V/LRcwoz46k1aHDeD1cM=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=cgGdJsuj00t9Flqfjcqi3xFnS7KrIlweYub0EWB0+jc=;
+ b=jDSpMbPNpupxnuDo+L94beuk+4dLlC0TqDkoornmN3DtcsG2QgIuSmk6Gk6jIh51CgRXy5
+ iSlvZqTzQY1X70/66EI0/vY77bG+dEK+np3i8odmVSvRXjYTBYAcuGVuHxhQIHkcZq7OIL
+ Jl5n2bIyR5bZCxIKWrz3S1KZ8gt3j2Q=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-303-fiHkMbodPuSNLKzaC7AGGg-1; Tue, 04 Nov 2025 08:15:37 -0500
-X-MC-Unique: fiHkMbodPuSNLKzaC7AGGg-1
-X-Mimecast-MFC-AGG-ID: fiHkMbodPuSNLKzaC7AGGg_1762262135
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-594259bf71aso1831400e87.3
- for <dev@dpdk.org>; Tue, 04 Nov 2025 05:15:36 -0800 (PST)
+ us-mta-549-9txT1-MnPi-Ii02xf6mUog-1; Tue, 04 Nov 2025 08:16:41 -0500
+X-MC-Unique: 9txT1-MnPi-Ii02xf6mUog-1
+X-Mimecast-MFC-AGG-ID: 9txT1-MnPi-Ii02xf6mUog_1762262200
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-37a17435230so24855951fa.0
+ for <dev@dpdk.org>; Tue, 04 Nov 2025 05:16:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762262135; x=1762866935;
+ d=1e100.net; s=20230601; t=1762262200; x=1762867000;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=r6eaTchBfs/eD0jEq5ecbgvOK4alnGi7Vaole0yWHxo=;
- b=xEAtMq5QO9NYAkYaEu6wnFgC7ZfIYlxSpP9eKKitivCW9nOSDPdN1wCmunJ5t6ma//
- qxnT6xfRAX5rXkBIErP4z/v0ucqBf2lUXfsHPZl9D12/bSqRai1fU9MdOpXU7RWPmvN+
- LpLAtgobEDH8NwNtk5Hqfj7hiQjOhtUlk2TeKbp3KoTvoTa57Xdy+vS47/s7Z4bycvQ5
- NwttbzdzgDT8Q50vyNZaF/MmUqKDw6Iy31IwcCYIJyW8Sy7oP6Q45GQySd+q9EnmB6mq
- 9VHzKBx4UUrGTncL7XTEOE9SfvHNRN3kHWNRlr7KTu1a94dZQDTfdkVBt0rSzDHOlFCs
- TGEA==
-X-Gm-Message-State: AOJu0YxlqCLbUqAzvriUsXEQa83mWECS9Xl/JLswLWSjj0KFidkASozt
- oa8C6cvusJHTtyXlwjmDJ+dZbvuwK+s3YNyy/gyDzL4OPXhfMtnqEZ5eimHr5fM3V+TCPb//svr
- yKH7+A3gX24w1V2acM4njkVf4WsKdq+oImUfUzVY6MHtuIbcu8n5XxvMTvrdTjllqrwc9am44zp
- MFP7MijRP6oLOPjLSL8HY=
-X-Gm-Gg: ASbGncvFGsFK+C7glv8x9+Pd1zRsE4/PTNLrkoLmJIlH9jeUHx4ZBBklCso724DOohg
- U+XUBrXFNrhK4fNz+PZ+e2F263hvXqjqtFERfEybVR0Jn+sXtK7UnUjY/9kMoUhwPW7q4vKd2+W
- uwJ9GLEo8pTlZOEHyl8Gv0JABYDVr6kypiXfk53oE5IkmoUy1hD+aqB3mQsQ==
-X-Received: by 2002:a05:6512:3993:b0:592:fce6:9054 with SMTP id
- 2adb3069b0e04-5941d556275mr5379139e87.52.1762262135249; 
- Tue, 04 Nov 2025 05:15:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEKkS/I8ILVlvRZprQ3918J+qYJSxC24rCx8atxzdJXPa0WFMFDJp0R/a9l2YwUSWIqOnvhnC5HF+64rW2cE9I=
-X-Received: by 2002:a05:6512:3993:b0:592:fce6:9054 with SMTP id
- 2adb3069b0e04-5941d556275mr5379132e87.52.1762262134800; Tue, 04 Nov 2025
- 05:15:34 -0800 (PST)
+ bh=cgGdJsuj00t9Flqfjcqi3xFnS7KrIlweYub0EWB0+jc=;
+ b=Qk6Tu7WnU5NWDZDrzL2HmWp7HlZw/91LAo4FMx6iiG9fVYqfnd3ZzslnEQ5d4glQ73
+ 9JKwL1kTvKGIdObVAwr74D24Gi3/k922m15IhbJ5azWrNd3J467jSg7BYf+8UqYKd0Lp
+ vHYkfvqCWTapUTe8QYJqx7xmkbblekMJ0YzVwPo5z11gAF4z8DDxynkwCJaleSCWOfjF
+ 0q4aFGvhEPiNkxrcey9bfBacf4bzq0hdtntsPiQU1cvMV2F56Dyk3Y+bGpip6mZGnO1K
+ Kd9aCHtm9IMu66vq/5q6uKOI08L8bFxzD8I/5z6jBuXuA8H+z0C1exvOUiMtY+eD1yH4
+ bdZQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVqYbGaNAtgeq24Cx7HhOeNBnIeQMt3gBSRWNQmYwGwGemYKK7g95dkzsZ8AOUmi25pGac=@dpdk.org
+X-Gm-Message-State: AOJu0YwYvIzTCayMRAbfo4Ut0xKrFf5Wuos5zV0hkB86A2irukEOyc7E
+ JEXSDluLXmeK7HWVfb9AIqyuw6wo9u0yEZG37ZsW7ZuQbqnzlQWsyQcDKkKA19JBlNviUQgH5/8
+ vFP64dKUMQL7y7jEvnuW8v41dfEo0PJbhbEdrvDtgGIviYnRmjw0Rvb60cgcba3yf71i7KkuX5c
+ qs9g5Oudt08FmEBB05uN4=
+X-Gm-Gg: ASbGncuFREU67cblnFMJWdhtCz6qcPNFj2aap1Y4yQTfre7C1WsUeobgzU1klyGx6UR
+ y/z1EjI5pF7p1TqZbGv192mio+89rFE55OKH29JS7kXEJ72nIIIXGmy9DSFv+Tv9WXoEdsKtA8L
+ dSIGJoUDt68Xq3zEIcu2snlXeQfe1+tmMrGa/DCLewRJblVAtLxq/VudgYtg==
+X-Received: by 2002:a05:6512:3d08:b0:594:2bc4:8284 with SMTP id
+ 2adb3069b0e04-5942bc484edmr2692797e87.49.1762262199654; 
+ Tue, 04 Nov 2025 05:16:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF9lY86GDVgub+AJ5x67gyLPj6k9gaqWQD/fTZA9SkLzrk39sSvPtB0KKz2c4j++O23QvucQkoTjfaLMY9/gkw=
+X-Received: by 2002:a05:6512:3d08:b0:594:2bc4:8284 with SMTP id
+ 2adb3069b0e04-5942bc484edmr2692784e87.49.1762262198966; Tue, 04 Nov 2025
+ 05:16:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20251028143952.4160487-1-david.marchand@redhat.com>
-In-Reply-To: <20251028143952.4160487-1-david.marchand@redhat.com>
+References: <20251028172324.3149379-1-jerinj@marvell.com>
+ <20251028172324.3149379-3-jerinj@marvell.com>
+ <CAJFAV8y7X13JpLtidVD8TcEJfz1p+4OACDgzw5C4V51Qo2Z+8w@mail.gmail.com>
+In-Reply-To: <CAJFAV8y7X13JpLtidVD8TcEJfz1p+4OACDgzw5C4V51Qo2Z+8w@mail.gmail.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 4 Nov 2025 14:15:23 +0100
-X-Gm-Features: AWmQ_blLi5chROMqTuVp6AcbO1V3Q2tlolwHWaUJJk2Eep0pJhHFJj86HlFwJ5M
-Message-ID: <CAJFAV8x3awicFYCt_KFFDsVY0EFafvrMky4oRa8KJfhZwEeUTg@mail.gmail.com>
-Subject: Re: [PATCH] trace: fix build with clang 21
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, jerinj@marvell.com, stable@dpdk.org, 
- Sunil Kumar Kori <skori@marvell.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>
+Date: Tue, 4 Nov 2025 14:16:27 +0100
+X-Gm-Features: AWmQ_bmq0fNJrOJCGqveXzKVAOUZgeGc9VGJI6V8hXx521LaMY4Gkm0kmEvqenk
+Message-ID: <CAJFAV8xPB6oSm1w3uOfoqbcC1aN2eyPoO=v-CZgCsRaDkk0H2w@mail.gmail.com>
+Subject: Re: [dpdk-dev] [PATCH v1 3/3] app/test: fix issues with clang 21.1.4
+To: jerinj@marvell.com
+Cc: Amit Prakash Shukla <amitprakashs@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, 
+ Ankur Dwivedi <adwivedi@marvell.com>,
+ =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, 
+ Ferruh Yigit <ferruh.yigit@amd.com>, dev@dpdk.org, thomas@monjalon.net, 
+ bruce.richardson@intel.com, stable@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: eln_4IOPPBnddbphU133rDOerfS-pPrTs6Wl85Id0fI_1762262135
+X-Mimecast-MFC-PROC-ID: Rgw1kY498IToppiPpQoR5CzT6752BvOruo8zsJIE46g_1762262200
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -84,63 +91,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 28 Oct 2025 at 15:40, David Marchand <david.marchand@redhat.com> wrote:
+On Wed, 29 Oct 2025 at 14:19, David Marchand <david.marchand@redhat.com> wrote:
 >
-> This was caught with recent clang.
-> The RTE_TRACE_POINT_ARGS() macro expects at least one parameter.
-> As a (void) function does not require any special tweaking with
-> __rte_unused, we can simply replace with a direct (void) token.
+> On Tue, 28 Oct 2025 at 18:25, <jerinj@marvell.com> wrote:
+> >
+> > From: Jerin Jacob <jerinj@marvell.com>
+> >
+> > Fix the following errors seen with clang 21.1.4
+> >
+> > app/test/test_event_dma_adapter.c:532:32: error: variable 'event' is
+> > uninitialized when passed as a const pointer argument here
+> > [-Werror,-Wuninitialized-const-pointer]
+> >
+> > app/test/test_trace.c:201:29: error: variable 'tmp' is uninitialized
+> > when passed as a const pointer argument here
+> > [-Werror,-Wuninitialized-const-pointer]
+> >
+> > Fixes: 4925e15a1614 ("trace: add trace point emit for blob")
 >
-> Build dir: /export/dpdk-next-net-mrvl/build-clang-static
-> Project version: 25.11.0-rc1
-> C compiler for the host machine: ccache clang (clang 21.1.4
->         "clang version 21.1.4")
+> I don't think this Fixes: tag is the right one.
+> Instead, I would point at 9247e71dfb55 ("test/trace: add functional
+> test cases").
 >
-> In file included from ../lib/eal/common/eal_common_trace_points.c:7:
-> ../lib/eal/include/rte_eal_trace.h:23:2: error: attribute 'unused'
->         cannot be applied to a 'void' parameter
->         [-Werror,-Wignored-attributes]
->    23 |         RTE_TRACE_POINT_ARGS(void),
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> ../lib/eal/include/rte_trace_point_register.h:46:3: note: expanded
->         from macro 'RTE_TRACE_POINT_ARGS'
->    46 |         (RTE_TRACE_POINT_ARGS_(RTE_TRACE_POINT_ARGS_COUNT(0,
->         __VA_ARGS__), __VA_ARGS__))
->       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ../lib/eal/include/rte_trace_point_register.h:44:30: note: expanded
->         from macro 'RTE_TRACE_POINT_ARGS_'
->    44 |         RTE_TRACE_POINT_ARGS_EXPAND(RTE_TRACE_POINT_ARGS_FUNC
->         (N))(__VA_ARGS__)
->       |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
->         ~~~~~~~~~~~~~~~~~
-> ../lib/eal/include/rte_trace_point_register.h:41:38: note: expanded
->         from macro 'RTE_TRACE_POINT_ARGS_FUNC'
->    41 | #define RTE_TRACE_POINT_ARGS_FUNC(a) RTE_TRACE_POINT_ARGS_ ## a
->       |                                      ^
-> note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0
->         to see all)
-> ../lib/eal/include/rte_trace_point_register.h:42:42: note: expanded
->         from macro 'RTE_TRACE_POINT_ARGS_EXPAND'
->    42 | #define RTE_TRACE_POINT_ARGS_EXPAND(...) __VA_ARGS__
->       |                                          ^
-> ../lib/eal/include/rte_trace_point_register.h:26:35: note: expanded
->         from macro 'RTE_TRACE_POINT_ARGS_1'
->    26 | #define RTE_TRACE_POINT_ARGS_1(a) __rte_unused a
->       |                                   ^~~~~~~~~~~~
-> ../lib/eal/include/rte_common.h:248:37: note: expanded
->         from macro '__rte_unused'
->   248 | #define __rte_unused __attribute__((__unused__))
->       |                                     ^~~~~~~~~~
-> 1 error generated.
 >
-Fixes: 856aef55de95 ("trace: fix undefined behavior in register")
-> Cc: stable@dpdk.org
+> > Fixes: a276e7c8fbb3 ("test/event: add DMA adapter auto-test")
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: Jerin Jacob <jerinj@marvell.com>
+> > ---
+> >  app/test/test_event_dma_adapter.c | 2 ++
+> >  app/test/test_trace.c             | 2 +-
+> >  2 files changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/app/test/test_event_dma_adapter.c b/app/test/test_event_dma_adapter.c
+> > index 7f72a4e81d..4df5991285 100644
+> > --- a/app/test/test_event_dma_adapter.c
+> > +++ b/app/test/test_event_dma_adapter.c
+> > @@ -144,6 +144,7 @@ test_dma_adapter_params(void)
+> >         TEST_ASSERT_SUCCESS(err, "Failed to get adapter capabilities\n");
+> >
+> >         if (cap & RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_VCHAN_EV_BIND) {
+> > +               event.queue_id = 0;
+> >                 err = rte_event_dma_adapter_vchan_add(TEST_ADAPTER_ID, TEST_DMA_DEV_ID,
+> >                                                             TEST_DMA_VCHAN_ID, &event);
+> >         } else
+> > @@ -528,6 +529,7 @@ test_dma_adapter_vchan_add_del(void)
+> >         TEST_ASSERT_SUCCESS(ret, "Failed to get adapter capabilities\n");
+> >
+> >         if (cap & RTE_EVENT_DMA_ADAPTER_CAP_INTERNAL_PORT_VCHAN_EV_BIND) {
+> > +               event.queue_id = 0;
+> >                 ret = rte_event_dma_adapter_vchan_add(TEST_ADAPTER_ID, TEST_DMA_DEV_ID,
+> >                                                             TEST_DMA_VCHAN_ID, &event);
+> >         } else
 >
-> Reported-by: Jerin Jacob <jerinj@marvell.com>
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Same comment than for the eventdev test app, I would move those event
+> variable declaration in the block where only needed.
 
-Applied, thanks.
+I did those suggested changes and applied the series.
+Thanks.
 
 
 -- 
