@@ -2,53 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7684ACCFA00
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 08:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01121CCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 09:24:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B89184028C;
-	Tue,  4 Nov 2025 09:18:53 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id D1D3B40285
- for <dev@dpdk.org>; Tue,  4 Nov 2025 09:18:52 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.186.216])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d11Yg6dgFzJ46BK;
- Tue,  4 Nov 2025 16:18:31 +0800 (CST)
-Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
- by mail.maildlp.com (Postfix) with ESMTPS id 23221140275;
- Tue,  4 Nov 2025 16:18:51 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 4 Nov 2025 08:18:50 +0000
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Tue, 4 Nov 2025 08:18:50 +0000
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: Wathsala Vithanage <wathsala.vithanage@arm.com>, Honnappa Nagarahalli
- <honnappa.nagarahalli@arm.com>, Tyler Retzlaff
- <roretzla@linux.microsoft.com>, "dev@dpdk.org" <dev@dpdk.org>, Ola Liljedahl
- <ola.liljedahl@arm.com>, "vattunuru@marvell.com" <vattunuru@marvell.com>
-Subject: RE: [PATCH 1/1] eal: correct memory ordering in MCS lock
-Thread-Topic: [PATCH 1/1] eal: correct memory ordering in MCS lock
-Thread-Index: AQHcRE2WHhnnI3qNXUmQEzir4eowobThH/qAgAAgCICAAAZ5gIAACaJwgAAMDICAAOD+MA==
-Date: Tue, 4 Nov 2025 08:18:50 +0000
-Message-ID: <9a7a720e91f546879368a0ed83dd7224@huawei.com>
-References: <20251023184724.1759497-1-wathsala.vithanage@arm.com>
- <f08a5a55-2a46-4f8c-9658-f7c320de57f2@arm.com>
- <20251103090717.2d181d95@phoenix>
- <b435dd1d-c56f-4d56-9f73-30ee1ec99eac@arm.com>
- <d63bc45cb32848299574333fed5e5406@huawei.com>
- <20251103104803.30464227@phoenix>
-In-Reply-To: <20251103104803.30464227@phoenix>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.48.156.162]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 09DF04028C;
+	Tue,  4 Nov 2025 10:24:33 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id C530940285
+ for <dev@dpdk.org>; Tue,  4 Nov 2025 10:24:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1762248270;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=Kef63HYIzlcnVRC/YkP5zIUEIAfCsG8B/NrxgVI5oT4=;
+ b=SCo/kqiZ5RqGH2G9YXdEKvdoY7EpKujDWWawPd9pZ1BZTssw34XVGv1IsFTYIhsOZ6RiKY
+ DV0OWSFlKXCv/HqnqKGAo2zrzg9Ou4yxAm2nhjXr6ikGOTZ8Ij7PjESD//yhtHUN8jVKnV
+ 4j8XZoMOFmMc6n3NuGuz/sNihHRWrV0=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-367-AxkXfXfqMHGJHViElaleng-1; Tue, 04 Nov 2025 04:24:28 -0500
+X-MC-Unique: AxkXfXfqMHGJHViElaleng-1
+X-Mimecast-MFC-AGG-ID: AxkXfXfqMHGJHViElaleng_1762248267
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-5942ee3c805so1643922e87.2
+ for <dev@dpdk.org>; Tue, 04 Nov 2025 01:24:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762248267; x=1762853067;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=Kef63HYIzlcnVRC/YkP5zIUEIAfCsG8B/NrxgVI5oT4=;
+ b=dmLiAfEMbKFgroQL4ZL2ZFFo/Azy8vSBgpmv08/1aTNJyvuzQQrWUvQMm0hg7y3muH
+ b+V/kLqz/cDYUxTQFohmEgrCXw+hUY3cA91B71TSO4aB0NXkOlha/MRPpVAGGBtRnGsM
+ CLow881ozpj/aM9LtDhJTbfOEUrlHialAg+jcwHGjtqyiOXrXObDdc3E6agF4NopJn90
+ zdlT21VKGrQWrOx7GLLI4o8SaJGZAtvwgAXiOYQHrPQbxj3kJB9xv7jHDB0OF8LF95rI
+ IiT/QK7cu2HDxk1u8PCMjK9zFgOT4AzDpg3gGMd1+FK0X9LTDe8OqgEayWhV1oYG7ftL
+ dgBQ==
+X-Gm-Message-State: AOJu0YyO22rcTWrdLWQ/SB94EtqxEUpv3FH1l44KpyjaYh4iUtM8RKZ3
+ eOiJfN+6fa/ngZMZKf1AuBZMezGmE6GxfR3djltEJmGYxFZWnNh0YDjdAdccOrwFE595JN5nFSc
+ C0I3sjXGnsPCOJW1GueYZKHh0/aQmJ0RvlhWcDVHfwARjD9H1BvGmnZEUEniVgQvRUeW46xZUrx
+ ontdpS2Uhq9xlZOD2ZmXk=
+X-Gm-Gg: ASbGncs/xDFr69TK9BJw5suhbVbkG2bNPvHrZc57o3tlDuFw02o0WD4MAF4K9RsxYbs
+ 0+Bub29poQKrE2csGBTiBXCkTe0h3IL59phf7hBXJ6lqv1sG5tuhdB9yzoHpCHmEDX506RxZ4NR
+ V4pMdBNB685pASbCP2W+3iuHs4JaOWypXD604QD1Ls5wXz51Vs0cz+OA==
+X-Received: by 2002:a05:6512:31d0:b0:55f:6fb4:e084 with SMTP id
+ 2adb3069b0e04-5941d551601mr4765314e87.50.1762248266855; 
+ Tue, 04 Nov 2025 01:24:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG20Cq98aw7znt6+JeNkQqloPq59DQVsbb2tgw5uuUPYVBemgNW4pBIzMsbVkuu5AZ8HDHE+yEScD23NZf57Xk=
+X-Received: by 2002:a05:6512:31d0:b0:55f:6fb4:e084 with SMTP id
+ 2adb3069b0e04-5941d551601mr4765307e87.50.1762248266415; Tue, 04 Nov 2025
+ 01:24:26 -0800 (PST)
 MIME-Version: 1.0
+References: <20250818233102.180207-1-stephen@networkplumber.org>
+ <20251103164915.101713-1-stephen@networkplumber.org>
+ <20251103164915.101713-40-stephen@networkplumber.org>
+In-Reply-To: <20251103164915.101713-40-stephen@networkplumber.org>
+From: Maxime Coquelin <mcoqueli@redhat.com>
+Date: Tue, 4 Nov 2025 10:24:14 +0100
+X-Gm-Features: AWmQ_bk1GduFhrOAwELn1eN2eS__5CmACeLlaWiYJTPqFQNebzzbFlR1zvhJzT4
+Message-ID: <CAO55csyPHbCqDqF7t=ZT_JRtHaViyoLeUT_MxZyg40m4Ag1-cA@mail.gmail.com>
+Subject: Re: [PATCH v3 39/44] drivers/vdpa: replace use of sys/queue.h
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Matan Azrad <matan@nvidia.com>, 
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Vijay Kumar Srivastava <vsrivast@xilinx.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: oKGeQwFdowkqOuzaFr1AKS-Er-tG0vEYzAtNxRUXyy8_1762248267
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,39 +88,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Mon, Nov 3, 2025 at 5:53=E2=80=AFPM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> Use rte_bsd_queue.h instead.
+>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  drivers/vdpa/mlx5/mlx5_vdpa.h | 3 ++-
+>  drivers/vdpa/sfc/sfc_vdpa.c   | 2 +-
+>  drivers/vdpa/sfc/sfc_vdpa.h   | 2 +-
+>  3 files changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/vdpa/mlx5/mlx5_vdpa.h b/drivers/vdpa/mlx5/mlx5_vdpa.=
+h
+> index a398aa22ce..8071e1a5e0 100644
+> --- a/drivers/vdpa/mlx5/mlx5_vdpa.h
+> +++ b/drivers/vdpa/mlx5/mlx5_vdpa.h
+> @@ -6,7 +6,8 @@
+>  #define RTE_PMD_MLX5_VDPA_H_
+>
+>  #include <linux/virtio_net.h>
+> -#include <sys/queue.h>
+> +
+> +#include <rte_bsd_queue.h>
+>
+>  #ifdef PEDANTIC
+>  #pragma GCC diagnostic ignored "-Wpedantic"
+> diff --git a/drivers/vdpa/sfc/sfc_vdpa.c b/drivers/vdpa/sfc/sfc_vdpa.c
+> index eda111954f..73c75acca2 100644
+> --- a/drivers/vdpa/sfc/sfc_vdpa.c
+> +++ b/drivers/vdpa/sfc/sfc_vdpa.c
+> @@ -5,8 +5,8 @@
+>  #include <stdbool.h>
+>  #include <stdint.h>
+>  #include <pthread.h>
+> -#include <sys/queue.h>
+>
+> +#include <rte_bsd_queue.h>
+>  #include <rte_common.h>
+>  #include <rte_devargs.h>
+>  #include <rte_errno.h>
+> diff --git a/drivers/vdpa/sfc/sfc_vdpa.h b/drivers/vdpa/sfc/sfc_vdpa.h
+> index 2b843e563d..a240a8be25 100644
+> --- a/drivers/vdpa/sfc/sfc_vdpa.h
+> +++ b/drivers/vdpa/sfc/sfc_vdpa.h
+> @@ -6,8 +6,8 @@
+>  #define _SFC_VDPA_H
+>
+>  #include <stdint.h>
+> -#include <sys/queue.h>
+>
+> +#include <rte_bsd_queue.h>
+>  #include <bus_pci_driver.h>
+>
+>  #include "sfc_efx.h"
+> --
+> 2.51.0
+>
 
+Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
-> On Mon, 3 Nov 2025 18:06:05 +0000
-> Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
->=20
-> > >
-> > > On 11/3/25 11:07, Stephen Hemminger wrote:
-> > > > On Mon, 3 Nov 2025 09:12:39 -0600
-> > > > Wathsala Vithanage <wathsala.vithanage@arm.com> wrote:
-> > > >
-> > > >> MCS lock is broken, it's just a matter of time it will run into a =
-deadlock.
-> > > >>
-> > > >> drivers/dma/cnxk is a user of MCS lock.
-> > > > I am surprised that a driver would use mcslock.
-> > > > MCSlock is targeted at case of large number of CPU's with lots of
-> contention.
-> > > > It will likely be slower than spinlock or ticketlock for the use ca=
-se of driver.
-> > > It appears in |drivers/dma/cnxk/cnxk_dmadev_fp.c|, perhaps the
-> > > maintainer can clarify.
-> > >
-> >
-> > If MCS lock is really broken, it needs to be fixed anyway.
-> > It might be used by other third-party libs/apps that do use on DPDK.
->=20
-> 100% agree it must be fixed.
-> It would be good to have test or static analysis tool that could validate=
- all the lock
-> types.
-
-+1
-Another option would be to have sort of stress test for all locking types w=
-e have in our UT.
-At least for ring I found it very useful.
+Thanks,
+Maxime
 
