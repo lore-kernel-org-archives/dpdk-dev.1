@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B15AACCFA00
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 05:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CADE8CCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 05:19:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0725F402B6;
-	Tue,  4 Nov 2025 06:18:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 07D604042E;
+	Tue,  4 Nov 2025 06:19:07 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 1226F402B1
- for <dev@dpdk.org>; Tue,  4 Nov 2025 06:18:25 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id F28AA402B1
+ for <dev@dpdk.org>; Tue,  4 Nov 2025 06:19:05 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 0DAF648A9B; Tue,  4 Nov 2025 06:18:25 +0100 (CET)
+ id EE91E48A9B; Tue,  4 Nov 2025 06:19:05 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1822] net/intel/fm10k: warning with gcc-16
-Date: Tue, 04 Nov 2025 05:18:25 +0000
+Subject: [DPDK/ethdev Bug 1823] mlx5: warnings when built with gcc-16
+Date: Tue, 04 Nov 2025 05:19:06 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -34,7 +34,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1822-3@http.bugs.dpdk.org/>
+Message-ID: <bug-1823-3@http.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: http://bugs.dpdk.org/
@@ -54,10 +54,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1822
+http://bugs.dpdk.org/show_bug.cgi?id=3D1823
 
-            Bug ID: 1822
-           Summary: net/intel/fm10k: warning with gcc-16
+            Bug ID: 1823
+           Summary: mlx5: warnings when built with gcc-16
            Product: DPDK
            Version: 25.07
           Hardware: All
@@ -70,15 +70,24 @@ http://bugs.dpdk.org/show_bug.cgi?id=3D1822
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-../drivers/net/intel/fm10k/base/fm10k_common.c: In function
-=E2=80=98fm10k_unbind_hw_stats_q=E2=80=99:
-../drivers/net/intel/fm10k/base/fm10k_common.c:480:62: warning: parameter =
-=E2=80=98idx=E2=80=99
-set but not used [-Wunused-but-set-parameter=3D]
-  480 | void fm10k_unbind_hw_stats_q(struct fm10k_hw_stats_q *q, u32 idx, u=
-32
-count)
-      |
+../drivers/net/mlx5/linux/mlx5_ethdev_os.c: In function =E2=80=98mlx5_link_=
+update=E2=80=99:
+../drivers/net/mlx5/linux/mlx5_ethdev_os.c:539:15: warning: =E2=80=98*(long=
+ unsigned
+int *)((char *)&dev_link + offsetof(struct rte_eth_link, <U38c0>))=E2=80=99=
+ may be used
+uninitialized [-Wmaybe-uninitialized]
+  539 |         ret =3D !!memcmp(&dev->data->dev_link, &dev_link,
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  540 |                        sizeof(struct rte_eth_link));
+      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/net/mlx5/linux/mlx5_ethdev_os.c:515:29: note: =E2=80=98*(long un=
+signed int
+*)((char *)&dev_link + offsetof(struct rte_eth_link, <U38c0>))=E2=80=99 was=
+ declared
+here
+  515 |         struct rte_eth_link dev_link;
+      |                             ^~~~~~~~
 
 --=20
 You are receiving this mail because:
