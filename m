@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F9ECCFA04
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 13:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05023CCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 13:15:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC86E4028C;
-	Tue,  4 Nov 2025 14:14:35 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0A55F40609;
+	Tue,  4 Nov 2025 14:15:40 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0620640269
- for <dev@dpdk.org>; Tue,  4 Nov 2025 14:14:33 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id ABD3F40609
+ for <dev@dpdk.org>; Tue,  4 Nov 2025 14:15:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1762262073;
+ s=mimecast20190719; t=1762262138;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=IanWiU8KGBtuuLlws5wsnoyMseuWw9QbgbTRxHzin5U=;
- b=HDLKT7MhPQiNULUM+AXL2d1/KxBovs30HF0xMjqt87l/9+/k28IyIIxyYhyv4cKxgBo/PA
- H7aFePHIHrrtZQpP9g4bHQ2FYegoUHe3PxAsj0zmYI4aHbP4LRvZ3UiEBmGff9zStSC6iv
- TE7LGRdOGsuvDw/zVGQDJRsi8PEjfoM=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=r6eaTchBfs/eD0jEq5ecbgvOK4alnGi7Vaole0yWHxo=;
+ b=i8YAW9tVz2KPMzvVzoUUo8m2s4ic7VARvZ317n7Z2YLFgBE5Mslvuuf0SsJhOJiGJSjexr
+ xK+d86o9YUx5V5pJk8gwgP17WauWQoNP4BGwu5nCQuiE8kFG8mV29pQEqQV3UkVQHLPFDy
+ uStT+WpHfN/V/LRcwoz46k1aHDeD1cM=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-125-liH3mKyINv--qamZzkSlng-1; Tue, 04 Nov 2025 08:14:31 -0500
-X-MC-Unique: liH3mKyINv--qamZzkSlng-1
-X-Mimecast-MFC-AGG-ID: liH3mKyINv--qamZzkSlng_1762262070
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-378d24de0b4so29475371fa.1
- for <dev@dpdk.org>; Tue, 04 Nov 2025 05:14:30 -0800 (PST)
+ us-mta-303-fiHkMbodPuSNLKzaC7AGGg-1; Tue, 04 Nov 2025 08:15:37 -0500
+X-MC-Unique: fiHkMbodPuSNLKzaC7AGGg-1
+X-Mimecast-MFC-AGG-ID: fiHkMbodPuSNLKzaC7AGGg_1762262135
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-594259bf71aso1831400e87.3
+ for <dev@dpdk.org>; Tue, 04 Nov 2025 05:15:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762262070; x=1762866870;
+ d=1e100.net; s=20230601; t=1762262135; x=1762866935;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
  :reply-to;
- bh=IanWiU8KGBtuuLlws5wsnoyMseuWw9QbgbTRxHzin5U=;
- b=cxDpSr5dPaPhfxB1y76syyWniPsyR3UrXrHLmrF4AAMZjk+/Jl6YQ1imW5my6/6Goi
- wZl+vHZcH2yTtNSQQdAavnVzx1UX7iQosA5etF4oOXDx/WKWM0UmF8Ck2/RxMceiq8i4
- dZl2jw6qPzjzw68g8InECLxe2+OLWYVgxRRCOrDKl1eqD6Grtny001OBjhrRM9esSKXK
- al06x5nH0pZviuD+2oDSkyy2UGKWhhxZ3sHz8+z9WbElaqPenlsbUt09CYgi1VHbM5tI
- wm3BncQkIOXlJAZMU0jv6ps4VpJskGqpX4nzH7r6JnMtEDI7bpba6cybVnezj8hFrSRu
- T79g==
-X-Gm-Message-State: AOJu0YwbBNyyWcxQIog3LFnapJa5U0nXiWtpoZxZgiXBytzWbLDQ5qLl
- bwMXv9n5tDNLi7hzjoX3w93cDuwhEKfl2aE3SlXVKxzqnHz8Bm97N98veF98+jXbZi2cK/HSd8U
- 0252ExJv0lcqf4evllMS7KWz4qqqEyqi6vmmhsJKJu0QZxMjtBrivrPIO3CgjajvAJVjNTfA1Ug
- 2ktKCdp7GDwPgvx0FZZ/8=
-X-Gm-Gg: ASbGnctxmh3TcLONnEXeTy33x79Ju1W1oYiJdXp+SxrYwFv9XTHexcsr00mBfeLdtEj
- ERWHiilzs99dYqfux9Evg5EWxkRXpHObhRaKGwcavmVvgNw9Dt/NN5Am/LzrRNb4uF5XHDeNRsd
- ANXqTzXioiIkeaAGs209E4yVvMsZPEozWFIBcbeLADvRISkMbD2kxC63CvEA==
-X-Received: by 2002:a05:6512:3d08:b0:594:2bc4:8284 with SMTP id
- 2adb3069b0e04-5942bc484edmr2690762e87.49.1762262069703; 
- Tue, 04 Nov 2025 05:14:29 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHISjuP107lAW6wLHv1Zmpk8aPbhfAkdMualVMzzPOicFvYhreE09OwcW5a98IF61NxxjVq7f8gCWBFaxqQX5I=
-X-Received: by 2002:a05:6512:3d08:b0:594:2bc4:8284 with SMTP id
- 2adb3069b0e04-5942bc484edmr2690755e87.49.1762262069293; Tue, 04 Nov 2025
- 05:14:29 -0800 (PST)
+ bh=r6eaTchBfs/eD0jEq5ecbgvOK4alnGi7Vaole0yWHxo=;
+ b=xEAtMq5QO9NYAkYaEu6wnFgC7ZfIYlxSpP9eKKitivCW9nOSDPdN1wCmunJ5t6ma//
+ qxnT6xfRAX5rXkBIErP4z/v0ucqBf2lUXfsHPZl9D12/bSqRai1fU9MdOpXU7RWPmvN+
+ LpLAtgobEDH8NwNtk5Hqfj7hiQjOhtUlk2TeKbp3KoTvoTa57Xdy+vS47/s7Z4bycvQ5
+ NwttbzdzgDT8Q50vyNZaF/MmUqKDw6Iy31IwcCYIJyW8Sy7oP6Q45GQySd+q9EnmB6mq
+ 9VHzKBx4UUrGTncL7XTEOE9SfvHNRN3kHWNRlr7KTu1a94dZQDTfdkVBt0rSzDHOlFCs
+ TGEA==
+X-Gm-Message-State: AOJu0YxlqCLbUqAzvriUsXEQa83mWECS9Xl/JLswLWSjj0KFidkASozt
+ oa8C6cvusJHTtyXlwjmDJ+dZbvuwK+s3YNyy/gyDzL4OPXhfMtnqEZ5eimHr5fM3V+TCPb//svr
+ yKH7+A3gX24w1V2acM4njkVf4WsKdq+oImUfUzVY6MHtuIbcu8n5XxvMTvrdTjllqrwc9am44zp
+ MFP7MijRP6oLOPjLSL8HY=
+X-Gm-Gg: ASbGncvFGsFK+C7glv8x9+Pd1zRsE4/PTNLrkoLmJIlH9jeUHx4ZBBklCso724DOohg
+ U+XUBrXFNrhK4fNz+PZ+e2F263hvXqjqtFERfEybVR0Jn+sXtK7UnUjY/9kMoUhwPW7q4vKd2+W
+ uwJ9GLEo8pTlZOEHyl8Gv0JABYDVr6kypiXfk53oE5IkmoUy1hD+aqB3mQsQ==
+X-Received: by 2002:a05:6512:3993:b0:592:fce6:9054 with SMTP id
+ 2adb3069b0e04-5941d556275mr5379139e87.52.1762262135249; 
+ Tue, 04 Nov 2025 05:15:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEKkS/I8ILVlvRZprQ3918J+qYJSxC24rCx8atxzdJXPa0WFMFDJp0R/a9l2YwUSWIqOnvhnC5HF+64rW2cE9I=
+X-Received: by 2002:a05:6512:3993:b0:592:fce6:9054 with SMTP id
+ 2adb3069b0e04-5941d556275mr5379132e87.52.1762262134800; Tue, 04 Nov 2025
+ 05:15:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20251029164616.76233-2-rjarry@redhat.com>
-In-Reply-To: <20251029164616.76233-2-rjarry@redhat.com>
+References: <20251028143952.4160487-1-david.marchand@redhat.com>
+In-Reply-To: <20251028143952.4160487-1-david.marchand@redhat.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 4 Nov 2025 14:14:17 +0100
-X-Gm-Features: AWmQ_bk9w--neg6yq_4xd7DT7XX-160xvwnTewTKl_C2bMZncorDtq4aj58ra6g
-Message-ID: <CAJFAV8zQDhtFM+kQjQxkOw1T+iXfBK=jQQAP279AUbt-EyHFpw@mail.gmail.com>
-Subject: Re: [PATCH dpdk] pmdinfogen: fix warning with python 3.14
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org, Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>, 
- Stephen Hemminger <stephen@networkplumber.org>
+Date: Tue, 4 Nov 2025 14:15:23 +0100
+X-Gm-Features: AWmQ_blLi5chROMqTuVp6AcbO1V3Q2tlolwHWaUJJk2Eep0pJhHFJj86HlFwJ5M
+Message-ID: <CAJFAV8x3awicFYCt_KFFDsVY0EFafvrMky4oRa8KJfhZwEeUTg@mail.gmail.com>
+Subject: Re: [PATCH] trace: fix build with clang 21
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, jerinj@marvell.com, stable@dpdk.org, 
+ Sunil Kumar Kori <skori@marvell.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: fGCknv9nZWzwhYy-dhVifSSci7x675whjX6YvxKOTvs_1762262070
+X-Mimecast-MFC-PROC-ID: eln_4IOPPBnddbphU133rDOerfS-pPrTs6Wl85Id0fI_1762262135
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -83,27 +84,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 29 Oct 2025 at 17:46, Robin Jarry <rjarry@redhat.com> wrote:
+On Tue, 28 Oct 2025 at 15:40, David Marchand <david.marchand@redhat.com> wrote:
 >
-> Fix the following warning seen on Fedora 43 with Python 3.14:
+> This was caught with recent clang.
+> The RTE_TRACE_POINT_ARGS() macro expects at least one parameter.
+> As a (void) function does not require any special tweaking with
+> __rte_unused, we can simply replace with a direct (void) token.
 >
->  buildtools/pmdinfogen.py:118: DeprecationWarning: Due to '_pack_', the
->  'rte_pci_id' Structure will use memory layout compatible with MSVC
->  (Windows). If this is intended, set _layout_ to 'ms'. The implicit
->  default is dep recated and slated to become an error in Python 3.19.
+> Build dir: /export/dpdk-next-net-mrvl/build-clang-static
+> Project version: 25.11.0-rc1
+> C compiler for the host machine: ccache clang (clang 21.1.4
+>         "clang version 21.1.4")
 >
-> Use the struct module which is simpler and assumes everything is packed
-> by default.
+> In file included from ../lib/eal/common/eal_common_trace_points.c:7:
+> ../lib/eal/include/rte_eal_trace.h:23:2: error: attribute 'unused'
+>         cannot be applied to a 'void' parameter
+>         [-Werror,-Wignored-attributes]
+>    23 |         RTE_TRACE_POINT_ARGS(void),
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> ../lib/eal/include/rte_trace_point_register.h:46:3: note: expanded
+>         from macro 'RTE_TRACE_POINT_ARGS'
+>    46 |         (RTE_TRACE_POINT_ARGS_(RTE_TRACE_POINT_ARGS_COUNT(0,
+>         __VA_ARGS__), __VA_ARGS__))
+>       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ../lib/eal/include/rte_trace_point_register.h:44:30: note: expanded
+>         from macro 'RTE_TRACE_POINT_ARGS_'
+>    44 |         RTE_TRACE_POINT_ARGS_EXPAND(RTE_TRACE_POINT_ARGS_FUNC
+>         (N))(__VA_ARGS__)
+>       |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+>         ~~~~~~~~~~~~~~~~~
+> ../lib/eal/include/rte_trace_point_register.h:41:38: note: expanded
+>         from macro 'RTE_TRACE_POINT_ARGS_FUNC'
+>    41 | #define RTE_TRACE_POINT_ARGS_FUNC(a) RTE_TRACE_POINT_ARGS_ ## a
+>       |                                      ^
+> note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0
+>         to see all)
+> ../lib/eal/include/rte_trace_point_register.h:42:42: note: expanded
+>         from macro 'RTE_TRACE_POINT_ARGS_EXPAND'
+>    42 | #define RTE_TRACE_POINT_ARGS_EXPAND(...) __VA_ARGS__
+>       |                                          ^
+> ../lib/eal/include/rte_trace_point_register.h:26:35: note: expanded
+>         from macro 'RTE_TRACE_POINT_ARGS_1'
+>    26 | #define RTE_TRACE_POINT_ARGS_1(a) __rte_unused a
+>       |                                   ^~~~~~~~~~~~
+> ../lib/eal/include/rte_common.h:248:37: note: expanded
+>         from macro '__rte_unused'
+>   248 | #define __rte_unused __attribute__((__unused__))
+>       |                                     ^~~~~~~~~~
+> 1 error generated.
 >
-> There is no change in the output of dpdk-pmdinfo.py before and after
-> this patch.
-
-Bugzilla ID: 1818
-Cc: stable@dpdk.org
-
+Fixes: 856aef55de95 ("trace: fix undefined behavior in register")
+> Cc: stable@dpdk.org
 >
-> Link: https://docs.python.org/3/library/struct.html
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
+> Reported-by: Jerin Jacob <jerinj@marvell.com>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 
 Applied, thanks.
 
