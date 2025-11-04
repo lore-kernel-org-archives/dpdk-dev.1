@@ -2,46 +2,108 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15811CCF9E3
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 04:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4060ECCFA00
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Nov 2025 04:22:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0751740658;
-	Tue,  4 Nov 2025 05:09:30 +0100 (CET)
-Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com
- [113.46.200.227])
- by mails.dpdk.org (Postfix) with ESMTP id ADB8540299
- for <dev@dpdk.org>; Tue,  4 Nov 2025 05:09:25 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=9fkS6wbW+lHryc7Ji9C2/Vnm+EIsyYWAGPCDAHeOtX8=;
- b=hq6nyuOH7awLIV6hS/MUnMrO7DQB5gJZlFHu8coBN1n9rHLNk6jQoS/RH+xV0MyLxCyAWesnk
- dv13v1m6DaQFVnbqbvx0757A2WBySrwE/IAYrK46gFC1hHLoSxi1ICXop2K9sW15h1BMa97hpQp
- YmUcxb9wAhh4YuDHNYwNi9U=
-Received: from mail.maildlp.com (unknown [172.19.162.112])
- by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d0w0N0GlCznTbl;
- Tue,  4 Nov 2025 12:07:48 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 273971401E9;
- Tue,  4 Nov 2025 12:09:24 +0800 (CST)
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 6B0FF402B6;
+	Tue,  4 Nov 2025 05:22:17 +0100 (CET)
+Received: from mx0a-00154904.pphosted.com (mx0a-00154904.pphosted.com
+ [148.163.133.20])
+ by mails.dpdk.org (Postfix) with ESMTP id E2A18402B1
+ for <dev@dpdk.org>; Tue,  4 Nov 2025 05:22:15 +0100 (CET)
+Received: from pps.filterd (m0170390.ppops.net [127.0.0.1])
+ by mx0a-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A3LduEO018653
+ for <dev@dpdk.org>; Mon, 3 Nov 2025 23:22:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=cc
+ :content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=smtpout1; bh=23KgZNFBEtsZbBCOh+sj6l3
+ nzDZdvljbksUyajrOwHA=; b=lHSD3ovnfYNbxCox76PcKyxSFkwwGDAe6EwKVZl
+ D5rLUXpjokv4nlnoC8pbkFXhFAXtxQmDg1dA/ltQM+VV5PXRYB3vlHOiF+5c5zts
+ jW2W+B60AE1Tb25ayVzT0InsKx5ZESSUjpqHMdqIsmxOIsxarsDAFvLhSCco5E50
+ 9lQu6uHmfNYhrsIgVORBWFcwq4MKTtiLOyk+C6ZpaVi4Bvl2ojBZPFahwifsQ63j
+ SBdWyxsX9keMCGb7Oi7e8zGvpv27Z1XxX+vx8zvMAer2039/IxikskJ2UxLKlCoF
+ /wZL9BacBG/T/TBRnSiLV5NG6lVp1N7BkdmmsgNGQqXugmg==
+Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com
+ [67.231.157.37])
+ by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 4a5d93axn2-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Mon, 03 Nov 2025 23:22:14 -0500 (EST)
+Received: from pps.filterd (m0089483.ppops.net [127.0.0.1])
+ by mx0b-00154901.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A42pQHk002832
+ for <dev@dpdk.org>; Mon, 3 Nov 2025 23:22:13 -0500
+Received: from esapsmtpat09.us.dell.com (esapsmtpat09.us.dell.com
+ [143.166.211.151])
+ by mx0b-00154901.pphosted.com (PPS) with ESMTPS id 4a78dh96xr-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+ for <dev@dpdk.org>; Mon, 03 Nov 2025 23:22:13 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dell.com; i=@dell.com; q=dns/txt; s=smtpdev1;
+ t=1762230133; x=1793766133;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=23KgZNFBEtsZbBCOh+sj6l3nzDZdvljbksUyajrOwHA=;
+ b=Y89LWPDaufhG7cnzkjtAgej4e8l2Kx3fU4BYeor5djPauLNqv2XTpK8r
+ y6w8z97HlwaBQsfEN7krv+cZ2eIb4AZou/qzPw+MqNShNUsFre/Dc1pJs
+ HJWjPb6iBWT9M8GS6RkHUrti4r4v9hn6uB2yukTyh8FDCi+p96MTS66fF
+ 5l8ww/qBwZ/4ZDuSrOMIYE8RaGFv1Tb7ZEOvi5JWvoXnMAX2UbwiCCD20
+ 1fZpU3XRJaVwXmkqeoxBH85uUuXbHEuO348zEKo/ulG5PI39x/Dwl3XF+
+ 1gpM378QSGQ/GRFPLaAAE+nb2r3G+RE+GHJGNYICXG/TszlIELsGoHoPA g==;
+X-CSE-ConnectionGUID: xZMs/GqQQ8ODBx/BftY1Vg==
+X-CSE-MsgGUID: kpk5f5jgTa6SepD1VWid9A==
+X-LoopCount0: from 10.215.64.31
+X-MS-Exchange-CrossPremises-AuthAs: Internal
+Received: from mx2-adc.dell.com (HELO ieorr5-pvwed002.delllabs.net)
+ ([10.215.64.31])
+ by esapsmtpat09.us.dell.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Nov 2025 04:22:13 +0000
+Received: from ieorr5-ppwem001.delllabs.net (100.64.0.132) by
+ ieorr5-pvwed002.delllabs.net (10.215.64.31) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 4 Nov 2025 12:09:23 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>, <stephen@networkplumber.org>
-CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>, <liuyonglong@huawei.com>,
- <yangxingui@huawei.com>, <lihuisong@huawei.com>
-Subject: [PATCH 3/3] app/testpmd: support stop specify lcore
-Date: Tue, 4 Nov 2025 12:09:16 +0800
-Message-ID: <20251104040916.25864-4-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20251104040916.25864-1-fengchengwen@huawei.com>
-References: <20251104040916.25864-1-fengchengwen@huawei.com>
+ 15.2.1544.36; Mon, 3 Nov 2025 22:23:02 -0600
+Received: from ieorr5-pvwer001.delllabs.net (100.64.0.134) by
+ ieorr5-ppwem001.delllabs.net (100.64.0.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Mon, 3 Nov 2025 22:22:12 -0600
+Received: from localhost (10.240.17.25) by smtprelay.delllabs.net
+ (100.64.0.134) with Microsoft SMTP Server id 15.2.1544.36 via Frontend
+ Transport; Mon, 3 Nov 2025 22:22:11 -0600
+From: Pravin M Bathija <pravin.bathija@dell.com>
+To: <dev@dpdk.org>
+CC: <pravin.bathija@dell.com>, <pravin.m.bathija.dev@gmail.com>
+Subject: [PATCH v3 0/5] Support add/remove memory region & get-max-slots
+Date: Tue, 4 Nov 2025 04:21:36 +0000
+Message-ID: <20251104042142.2787631-1-pravin.bathija@dell.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_06,2025-11-03_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 suspectscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 priorityscore=1501 phishscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511040016
+X-Proofpoint-ORIG-GUID: -Y8liCzNyVU8r3T8t-bjVCR03F_7L85c
+X-Proofpoint-GUID: -Y8liCzNyVU8r3T8t-bjVCR03F_7L85c
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDA1NiBTYWx0ZWRfX8DEiA/XSp1HN
+ X5d/dkez/6uuIwWdF5f+N9Q/E7Pa+JMcbFt09Jxkei4g915RFjcZ6rhEJl3HYHMBViQPzXHGQ/x
+ Njqt0D+kGEvmscrys+RkcvafKzXxvS985DA/4XKSUrdeIvQI9L2eE0Cmeiofei9c2w2SDV6kbpt
+ p9nRg/cHc2dSy8R/1GJBfheTXgGNzwr7QXO9BICu/HJzAfQPS+vuWcZA8Mru+B+Zs2ISnxVmmZP
+ 0wloKalMWEM5xMe4yVU3EISzC4Adz+EoObW+aExdU0gaVtNxrtaOsfmMaosjx4IZtnlWg1F7eD0
+ QIaDHvDA8rS7P8Aw1653360fafPko0E/ELeeYhHgVJiqHn91j9wXWTMCUEomgFL87G9ntJWE1Ox
+ NOttJyoIaX/Im21z7/QfUb25a+RMlg==
+X-Authority-Analysis: v=2.4 cv=J/WnLQnS c=1 sm=1 tr=0 ts=69097f76 cx=c_pps
+ a=Z2e5DKjA+8LiMDv5v6mwwA==:117 a=Vd41IKOgs+CGE2+bDnhSdQ==:17
+ a=6UeiqGixMTsA:10 a=ke5jqHz-1hQA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=4lcfC4FaXlkJtg1E69wA:9 a=hlJyneSgMmFPbskH-t2w:22
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0
+ adultscore=0 clxscore=1015 malwarescore=0
+ lowpriorityscore=0
+ priorityscore=1501 suspectscore=0 bulkscore=0 spamscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010056
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,129 +117,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This commit supports stop specify lcore, the command:
+This patchset incorporates support for adding and removal of memory
+regions, getting max memory slots and other changes to vhost-user messages.
+These messages are sent from vhost-user front-end (qemu or libblkio) to a
+vhost-user back-end (dpdk, spdk). Supporting functions corresponding to
+these message functions have been implemented in the interest of writing
+optimized code. Older functions pasrt of vhost-user back-end have also been
+optimized using these newly defined support functions. This implementation
+has been extensively tested by doing Read/Write I/O from multiple instances
+of fio + libblkio (front-end) talking to spdk/dpdk (back-end) based drives. 
+Also tested with qemu front-end talking to dpdk + testpmd (back-end) performing
+add/removal of memory regions. The last patch also includes increasing
+the number of memory regions from 8 to 128. This has been also
+extensively tested using the above test approaches.
 
-  stop fwd_core (lcore_id)
+Pravin M Bathija (5):
+  vhost: add user to mailmap and define to vhost hdr
+  vhost_user: header defines for add/rem mem region
+  vhost_user: Function defs for add/rem mem regions
+  vhost_user: support function defines for back-end
+  vhost_user: Increase number of memory regions
 
-The background of this command:
-1. Only some TCs are expected to generate traffic when the DCB function
-   is tested based on txonly forwarding.
-2. Because each lcore will process all the traffic of one TC, therefore,
-   we could stop the lcores which process unexpected TCs by this
-   command.
+ .mailmap               |   1 +
+ lib/vhost/rte_vhost.h  |   4 +
+ lib/vhost/vhost_user.c | 333 +++++++++++++++++++++++++++++++++++------
+ lib/vhost/vhost_user.h |  12 +-
+ 4 files changed, 305 insertions(+), 45 deletions(-)
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- app/test-pmd/cmdline.c                      | 63 +++++++++++++++++++++
- doc/guides/testpmd_app_ug/testpmd_funcs.rst |  7 +++
- 2 files changed, 70 insertions(+)
-
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 22afbdbad3..e03f6e6181 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -150,6 +150,9 @@ static void cmd_help_long_parsed(void *parsed_result,
- 			"    Stop packet forwarding, and display accumulated"
- 			" statistics.\n\n"
- 
-+			"stop fwd_core (lcore_id)\n"
-+			"    Stop specify lcore's forwarding.\n\n"
-+
- 			"quit\n"
- 			"    Quit to prompt.\n\n"
- 		);
-@@ -3975,6 +3978,65 @@ static cmdline_parse_inst_t cmd_stop = {
- 	},
- };
- 
-+/* *** stop specify forward core *** */
-+struct cmd_stop_fwd_core_result {
-+	cmdline_fixed_string_t stop;
-+	cmdline_fixed_string_t fwd_core;
-+	uint32_t lcore_id;
-+};
-+
-+static void
-+cmd_stop_fwd_core_parsed(void *parsed_result,
-+			 __rte_unused struct cmdline *cl,
-+			 __rte_unused void *data)
-+{
-+	struct cmd_stop_fwd_core_result *res = parsed_result;
-+	struct fwd_lcore *fc = lcore_to_fwd_lcore(res->lcore_id);
-+
-+	if (test_done) {
-+		fprintf(stderr, "Packet forwarding not started\n");
-+		return;
-+	}
-+
-+	if (fc == NULL) {
-+		fprintf(stderr, "core: %u not in the forward corelist.\n", res->lcore_id);
-+		return;
-+	}
-+
-+	if (fc->stopped) {
-+		fprintf(stderr, "core: %u already stopped!\n", res->lcore_id);
-+		return;
-+	}
-+
-+	printf("Telling core: %u to stop...", res->lcore_id);
-+	fc->stopped = 1;
-+	printf("\nWaiting for core: %u to finish...\n", res->lcore_id);
-+	rte_eal_wait_lcore(res->lcore_id);
-+	printf("Done.\n");
-+}
-+
-+static cmdline_parse_token_string_t cmd_stop_fwd_core_stop =
-+	TOKEN_STRING_INITIALIZER(struct cmd_stop_fwd_core_result,
-+			stop, "stop");
-+static cmdline_parse_token_string_t cmd_stop_fwd_core_fwd_core =
-+	TOKEN_STRING_INITIALIZER(struct cmd_stop_fwd_core_result,
-+			fwd_core, "fwd_core");
-+static cmdline_parse_token_num_t cmd_stop_fwd_core_lcore_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_stop_fwd_core_result,
-+			lcore_id, RTE_UINT32);
-+
-+static cmdline_parse_inst_t cmd_stop_fwd_core = {
-+	.f = cmd_stop_fwd_core_parsed,
-+	.data = NULL,
-+	.help_str = "stop fwd_core <lcore_id>: stop specify lcore's forwarding.",
-+	.tokens = {
-+		(void *)&cmd_stop_fwd_core_stop,
-+		(void *)&cmd_stop_fwd_core_fwd_core,
-+		(void *)&cmd_stop_fwd_core_lcore_id,
-+		NULL,
-+	},
-+};
-+
- static unsigned int
- get_ptype(char *value)
- {
-@@ -14051,6 +14113,7 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
- 	&cmd_config_dcb,
- 	&cmd_read_rxd_txd,
- 	&cmd_stop,
-+	&cmd_stop_fwd_core,
- 	&cmd_mac_addr,
- 	&cmd_set_fwd_eth_peer,
- 	&cmd_set_xstats_hide_zero,
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index e423abd40e..0a362d06b8 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -143,6 +143,13 @@ Stop packet forwarding, and display accumulated statistics::
- 
-    testpmd> stop
- 
-+stop fwd_core
-+~~~~~~~~~~~~~
-+
-+Stop specify lcore's forwarding::
-+
-+   testpmd> stop fwd_core (lcore_id)
-+
- quit
- ~~~~
- 
 -- 
-2.17.1
+2.43.0
 
