@@ -2,75 +2,95 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFC1CCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 21:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DEF4CCFA0D
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 21:31:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B0C15402F1;
-	Wed,  5 Nov 2025 22:28:59 +0100 (CET)
-Received: from fhigh-a2-smtp.messagingengine.com
- (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
- by mails.dpdk.org (Postfix) with ESMTP id 95161402E6
- for <dev@dpdk.org>; Wed,  5 Nov 2025 22:28:58 +0100 (CET)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 052CC140010D;
- Wed,  5 Nov 2025 16:28:58 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Wed, 05 Nov 2025 16:28:58 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id 0868340B95;
+	Wed,  5 Nov 2025 22:31:43 +0100 (CET)
+Received: from fout-a7-smtp.messagingengine.com
+ (fout-a7-smtp.messagingengine.com [103.168.172.150])
+ by mails.dpdk.org (Postfix) with ESMTP id 1D617402E6
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 22:31:42 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.phl.internal (Postfix) with ESMTP id B6FE2EC012A;
+ Wed,  5 Nov 2025 16:31:41 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Wed, 05 Nov 2025 16:31:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762378138;
- x=1762464538; bh=J+PKwPILcPwR9e9G6qFbh2/qLCx/96wQ4VbWoM11RLk=; b=
- jXfi/FgSwZmaqJLqKEM9Nu4IvVTGR51wG5OQxYBWBIaeB3PqWe4OgOI/550tXCt4
- pZP8cV4L0updGpdTO8eeBPu/7gPTFu0WDS8L7JdymLf+V+LigZB1MvIu/apF3ae8
- q3c+AsfJDx+XQf0zLSP8U/gXIROu1PvDYmnRWdnyMl6gbcYUN5eQiMc7LjmKS86i
- t3TFMkkyDGEvIyCt6UusH90MOkIvWRkGOqltHj2tTBhNKP1l3996HQ2uP6hOJPoQ
- 4egyjz+bkDRArjRnkSmmvBLnsb7a3IeOXXEDpxJKuIw1LFQdIdWWstkJJeEwE5+2
- bnmKXhfr7JmTmlV7t+Qbtw==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762378301;
+ x=1762464701; bh=JkKBlopPlKq3AKxz8YQz5jlu4RgOps7eprDHDSf/4UA=; b=
+ S1xIkL26EWr0uqJ+J/Ac5EWjV9MTItCzugnn8p3spcTKN+DeOaGYgZs+H2gQivoa
+ rG46KEQxI2B87+LrS2+lTFAgxtQKcKa/QOjM0KO0CjsoGoMijjy2k4TBozqA9K3g
+ pZSwl85oKaNfqSZVe/pVYYNBX0c0e7M/0bb52bOaaIMHpfe9XiI/IRcaBYd5tgE2
+ +IqkWyiDQ8ov2kVpagNbzxjZoZNXBuvSNOr3O8sIjAmClxWr6+jEL4jkLyWjzRJq
+ d5hAoR+FDhQymyACbo91REZJKN18SbkpsbRlkNIR/EeQaGbnlAhJ+ED8fw5WlG6d
+ XinqZc+vVxcdK/sii1WG7g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762378138; x=
- 1762464538; bh=J+PKwPILcPwR9e9G6qFbh2/qLCx/96wQ4VbWoM11RLk=; b=j
- tgtRoh438kXA2IfWc1EhIi8V9DNmiuRptswC/qked6SddrCHWA9mRE0VtCVY74nW
- NVuyQi7DUVDdjaO3lAfktNRQ6LSepqQJADEi8J1mNrWxhsuWsV7sjwYAuTUnG16M
- 8SD6307OWB9hB1l2R/9DntaUcxbBoMRPB+k5rwAq0N/X5xpMQzfYIz3rYzlWxeLa
- qtVomzsou+dOmBUXkWBpJFE0GzlpatA51ekAvMVcezZyYep8BQLglPV1bD0XzP5o
- I4nvZbXaIsys3OVrZzpFmtb9Q69FWFKuBe5BwLazP0jG/A8naYEfR1MwLEqQznVE
- s7gQ2XGgVTtGNmusGuEVg==
-X-ME-Sender: <xms:mcELaQeRBLgWTt9FFeMGOeXp9RVhpDMazDk8wDqj0MSIL-Gt2IoEGA>
- <xme:mcELaej2XPpbA_We2c8mtGBz75v3Tt3Ln1yfOoFb91Xj6jSawJoKlXacc938IiBeq
- -5ElqGvx9njIN-vZtdrr8QBkKpo-n-HhnPMsibKg1q5bpcPQDKgYQ>
-X-ME-Received: <xmr:mcELaUSaSPzEbg8zL3jCqm0AEPw_3gIxd9e86ljoyhXnMbAkT_SammL9XY4Cj9ZUp9Jnw7dgt3kp3zO4sGuqAqDvOg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeegleekucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762378301; x=
+ 1762464701; bh=JkKBlopPlKq3AKxz8YQz5jlu4RgOps7eprDHDSf/4UA=; b=q
+ PSOaiOSB12MNDZQ1d3BPBBeztaKaLVt2YC9WIYMdz+OwrJjRHglHXBNfJL+auNE2
+ DhAW38sTaxy+4s8aZ90cvvaO5L8jTTIlpLpjHwLF7k7EUHZgWoG3LjFUI4Ml/uwm
+ 5VoQn9FxZ6zGFY63FkSJtZhVWHzktp5tsYcaq5y+Nx1gXarFWx46lF3vSw3nXcn4
+ s8Z7Pzm4dsODTV48EhkSzzGDfCQLtnr22E1A993TG2m542BTuA2DtUXTudxMxvXM
+ 5AG/EPLp1me6NoSEQLMrXzHVDv7C8LNqJOkrO1YZA4i4KHdEIzOlWYfp39UXFl0o
+ o1XwF9UX83c5CW1IHrUsA==
+X-ME-Sender: <xms:OsILac08F0h8nBmWf3p1T26MKI98ozAkUi50uVb4vRMSb87YHRs3NA>
+ <xme:OsILaWVJN4qpLbwvaH5Slcz-De_vSnSdGCTZAcWL9z2LwJUzh3l2LruEQJAjI6Xtt
+ CGYXG6Qb5g4ZS1csr6a6hwdX0s5Q7WBzspS_yUABr8pDao6gVaCUf0>
+X-ME-Received: <xmr:OsILaXvy9d7bxgvrCBgr5CCkZ59AN7rlPiToBDGXP2MfcNs7LUycICBJRle33fdFkowID-RsQIELRO3e9X2J73CCCA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeegleelucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
  leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihsh
- htvghmshdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:mcELaXxmxqzBlDb32Pa425WOUT_kfAONWDwJcWK2uz748sWviEgfug>
- <xmx:mcELafcAJgcCmbNzxal3A7niJEbc53ar_0UtKkMq45krnVV8WnKx3g>
- <xmx:mcELaTKcmm337IQLdDSPpplqW9_rdHtajTia-uUNUl6A8Xih3r5Ljg>
- <xmx:mcELaQHrB9chMFFkG7fYc28QO7mhFVUp3Ha739h_RFy9UNV3GVomtQ>
- <xmx:mcELaf8GcKa3q7GCgr7V-TWpWRXk-eQZrl-TS9cESIt8WWdPR0NiNKmN>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvtddp
+ mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtg
+ hpthhtohepjhgvrhhinhhjsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepnhgurggs
+ ihhlphhurhgrmhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopehkihhrrghnkhhumh
+ grrhhksehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepshhkohhrihesmhgrrhhvvghl
+ lhdrtghomhdprhgtphhtthhopehskhhothgvshhhfigrrhesmhgrrhhvvghllhdrtghomh
+ dprhgtphhtthhopehhkhgrlhhrrgesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopegt
+ khhmsehnrghprghtvggthhdrtghomhdprhgtphhtthhopehsihhlqdhplhhvsehnrghprg
+ htvggthhdrtghomh
+X-ME-Proxy: <xmx:OsILadWXyJYOze0-ocGqBVLzJqYGN2mJX-elZB6o76HBbQ9NJJYdIA>
+ <xmx:OsILaTVMek2TpaIuJEyIKcEnaQgTjOv6hmZe7dWGRltNpqxqrew6ag>
+ <xmx:OsILaXdfafCqxRjyTLRNln8gvzdCqcXwZG7YY2UdycXDPiPHzs20_g>
+ <xmx:OsILaa52akVcZYbzX6LwbzXC2ziag0J_72V3ulqRayGEWLHm1vi6Aw>
+ <xmx:PcILaXHwpDMYGDTHENAvv_0mszKRpimvV830a0zJkOX9rXBDZ2LmunK6>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Nov 2025 16:28:56 -0500 (EST)
+ 5 Nov 2025 16:31:35 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] mbuf: improve mbuf comments
-Date: Wed, 05 Nov 2025 22:28:55 +0100
-Message-ID: <11692478.3WhfQktd6Z@thomas>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65530@smartserver.smartshare.dk>
-References: <20251105112810.20838-1-mb@smartsharesystems.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65530@smartserver.smartshare.dk>
+To: dev@dpdk.org
+Cc: Jerin Jacob <jerinj@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>, Christian Koue Muf <ckm@napatech.com>,
+ Serhii Iliushyk <sil-plv@napatech.com>, Rosen Xu <rosen.xu@altera.com>,
+ David Christensen <drc@linux.ibm.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Bibo Mao <maobibo@loongson.cn>,
+ =?UTF-8?B?U3RhbmlzxYJhdw==?= Kardach <stanislaw.kardach@gmail.com>,
+ Sun Yuechi <sunyuechi@iscas.ac.cn>, Jiayu Hu <hujiayu.hu@foxmail.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
+ Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Subject: Re: [PATCH 1/1] move SPDX tag on the first line
+Date: Wed, 05 Nov 2025 22:31:34 +0100
+Message-ID: <18707035.lhrHg4fidi@thomas>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65525@smartserver.smartshare.dk>
+References: <20251031142018.49319-1-thomas@monjalon.net>
+ <98CBD80474FA8B44BF855DF32C47DC35F65525@smartserver.smartshare.dk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
@@ -87,23 +107,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-05/11/2025 12:33, Morten Br=C3=B8rup:
-> > From: Morten Br=C3=B8rup [mailto:mb@smartsharesystems.com]
-> > Sent: Wednesday, 5 November 2025 12.28
+31/10/2025 15:55, Morten Br=C3=B8rup:
+> > From: Thomas Monjalon [mailto:thomas@monjalon.net]
+> > Sent: Friday, 31 October 2025 15.20
 > >=20
-> > Updated the comment preceding the 'rearm_data' fields to reflect that
-> > some
-> > ethdev drivers don't really set the rearm_data fields on RX descriptor
-> > rearm, but rather when pulling the packet from the descriptor.
-> > By doing this, they avoid a store operation into the mbuf when they
-> > rearm
-> > the TX descriptor, and instead postpone it to later, where it will be
+> > From "Contributor's Guidelines":
+> > "
+> > DPDK uses first line of the file to be SPDX tag.
+> > In case of #! scripts, SPDX tag can be placed in 2nd line of the file.
+> > "
+> >=20
+> > Some .c or .h files had the SPDX identifier on the second line
+> > for no good reason, so it is moved to the first line
+> > to comply with the guidelines.
+> >=20
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> > ---
 >=20
-> Typo: TX descriptor -> RX descriptor.
+> Cleaning up is always good.
+> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
 
-Another Typo: RX -> Rx ;)
-
-We agreed to prefer Tx/Rx capitalization in devtools/words-case.txt.
-I personnaly think it is more correct, as it is not an acronym.
+Applied
 
 
