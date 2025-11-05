@@ -2,75 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A9DCCFA0D
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 10:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16CFBCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 10:20:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4133B4065E;
-	Wed,  5 Nov 2025 11:13:54 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3B9D140673;
+	Wed,  5 Nov 2025 11:20:08 +0100 (CET)
 Received: from fhigh-a3-smtp.messagingengine.com
  (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id 3DBD4400D7
- for <dev@dpdk.org>; Wed,  5 Nov 2025 11:13:52 +0100 (CET)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.phl.internal (Postfix) with ESMTP id DACA61400200;
- Wed,  5 Nov 2025 05:13:51 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Wed, 05 Nov 2025 05:13:51 -0500
+ by mails.dpdk.org (Postfix) with ESMTP id 70DB9400D7
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 11:20:07 +0100 (CET)
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 02020140025D;
+ Wed,  5 Nov 2025 05:20:07 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-12.internal (MEProxy); Wed, 05 Nov 2025 05:20:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762337631;
- x=1762424031; bh=tDutuyjcFOz57u2t0VzChS5uBJ7JelP/LiD1787Ytpw=; b=
- tyyA0hvsgetfo3IhgAmoGXvApRPVKPANOZu+1agCfmvfx2GtjjIwyU+I6VBV1eWv
- cfjzBxlQNaSaB/5zeHErdEnGCkb0P+ktEtoNzNkD7INCs71Y9uqLpAMSxD0XxUo2
- Q+6SoW5IBBuAOH0ldeUVdjWR2G+lXy+FodzSBtihe08A5mT/N81REeiCkM+g6ZIY
- meDxWg5cA2mTqx4gWsAbAmsSxHs1KQhv14NA2OZNUsiYqAGNeDho6UqsI/pxkcfS
- q9oMVkXaQzU+OMgB94oiCbVgfKzES0kUQW4b8J1R7T/hoO+gsv4pWguhirFmSYT+
- bTz9/Ba2B2l6y3rgN7OGfA==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762338006;
+ x=1762424406; bh=qV9lvEQBee4VtiNrFV6DuLIHPmkuU3VZALyTQKjLC1Q=; b=
+ SvEDIFdGo7099vn9I72Xa+wpOAnOlX27YmYQhxa4SSutAno3BZncDqi854p9STKL
+ FvH1KabVpUCLYykpWRJOGdAHyhIRFuZoFDkT09o8TVWlRSkJIR5T3wpVVlE4e481
+ GsD8pNkrAHTY/8FH2COp0PjTn1oJx3Ip5VE1C5/hC9QjRpjM3oCnmDjw+cWv3hDp
+ g8JEQCVUT+2duL106ZZFStJZ9dJEx0Knl4yhp7beR3SCeQpa3tPwxrsMltlFk7cR
+ kGKnrsYWGTL05BmIvjSFUBBZRK+sdumehMsXfBB76ALWrHhuDwbkDC/KI8SHb9a5
+ PpFNhabEUuUZ0O/uBXKTMQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762337631; x=
- 1762424031; bh=tDutuyjcFOz57u2t0VzChS5uBJ7JelP/LiD1787Ytpw=; b=T
- b4aZB0/zdydVcPLmnXskm/KjCPMN68fJQ6rm02buU8OEC3z31xnAWe910ZkQDyUX
- T6TR4cxjAFwAibXKc+0DwnHWlhBkUbJRXLZADhQdNhJ2VD6a8HDqGe/ZNuRyj2bx
- r0z9/OkbXmYl0gIc7H8cMg7eu80h/bgYxz2mYp6NbQayrkzCdWz6YIDCauyCONz1
- ezru9nnsdPiXkjK3pBp8ygadeDLGmqAK2g+9ly/vEslbL3as6FQP2yFTNl5Vu7AU
- o68Pf5gMKOxGDhj6oOVtHeLFMvNZ2zfDVGq99htfKXjTgQAAinWjeao6lAiw6v1p
- eMcnjSicLml6OBbzkteHA==
-X-ME-Sender: <xms:XyMLaVkd30tOVfYAtuiXAh2uoEYlxmvy8LnGCtJoBuJ474IlBsg6yw>
- <xme:XyMLaVJgAZyLwFcAyTiAo0VNnAKX9s2nsmAK18V3p9X-83C7cyncfkgKefUTBjm7l
- U22_Q5rPQEMw6KiUGPANIWJ7LzinAnnMRBFtFbZh70xWuuHQNGyBA>
-X-ME-Received: <xmr:XyMLaaxhTGy_9bl_P2ox_ZjNkQCNC7-ZC8L6VmbgM6tePdWuX6divJtrXTx9-H2vOk-ufc73ToYZq2HywB_APo09bg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeefieefucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762338006; x=
+ 1762424406; bh=qV9lvEQBee4VtiNrFV6DuLIHPmkuU3VZALyTQKjLC1Q=; b=U
+ U8gpC6f8J0G3+piX2zX/HrsYppHyjvLxmq6E92RWMp7NXtFB6QTJ8Au1y/4ekK2l
+ VjYHWizLKglUea8juzL5HDErt8qxy101NupCf14GAcC3B2jNBGoe2iiZyH26WXT/
+ deloqefTwl27UYdgnvRkSM5uIkzgbdNotlrBo9q6n4ovytmprL2wD7+1909FfFEf
+ me+ma5pcUdKWT+DpBxer8dhIK0bxRDWm2q13Oy6o/Owy0prXwd+qgs4/t8cbUPWo
+ VRtkcBVCZxDpCdPPFYBXwz0qNXSy4GkK1twZuksMDs9TPnRMLZjZuVXB5IDLTkpL
+ Z8KuBuRl9ppr2J8uuIbdg==
+X-ME-Sender: <xms:1iQLaWD5LcMt0W7A-7SU5aCJ8D9yUbN9ze_MQ2UcPiveP8Pg1778Vg>
+ <xme:1iQLac1ayk7zz1iu7kpIhwEYA23AoIqw8Amh-_WFNJv5Rmtt88CDSufDSQCq40LTE
+ gLhuNU4xUts7DUhhMbKYpM-tbpzx6BJ-4oGEPQbCvJFk3pZRVCAtg>
+X-ME-Received: <xmr:1iQLacXgt-NQ5GVEVn21GPoV_mK0mAhhJhzrf_YlOdAXMNr9abL3yfh9NeUwZMuOMPhS1kU4q5w4uu0kbAj7Ni6hHg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeefieegucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopegshhgrghihrggurgdrmhhouggrlhhise
- grmhgurdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
- rhgrghhhrghvvghnughrrgdrnhhinhhgohhjihesrghmugdrtghomh
-X-ME-Proxy: <xmx:XyMLadsVqKBPmwwZdlXKuvv9tBVSTvawaH-GnOcYVp1_cCyKovWbbA>
- <xmx:XyMLaZsYlq_zdDLEhAUhWav-nPXDOTg82Bf9QYgeozcXsJDahiGKCA>
- <xmx:XyMLaaM_sp4wCMvD_peKVT2IwTf3y0eh0t09OI_AIgY02aTZvx7vcA>
- <xmx:XyMLaf0FtyXBa4HIN5YSFjgSMmYW9PBW-F0DYGbQFQl9QrWqDzJcsw>
- <xmx:XyMLaR2k0vqKWH3ZT_dSII7WvooXRwALffmW4YNlgR1QfUYU2CDv0lkm>
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehfvghnghgthhgvnhhgfigvnheshhhurg
+ ifvghirdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:1iQLaWlRaw37gLz9WRjZoaWCGiUklGrvT_W47AO6WsMPXAMrCXJMQA>
+ <xmx:1iQLaeD16nDV6w_FjHA16RdZtAp7TsmHnSncTm-er0YVXvdydHx6LQ>
+ <xmx:1iQLaWc5TD9Q8YXvQmhkNqg5aLBmMHxzVpAZe7K4n81HgX4IywLTDw>
+ <xmx:1iQLaZJ4wZVEuMiKbDRQjGA6MQKtEDOEDgz1u4ru-N64b6WGK_jIdQ>
+ <xmx:1iQLaVxroMuw-g_33slHp7l7NBwki_l82ANXb0NPsHr9tULrzsKRrjO9>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Nov 2025 05:13:50 -0500 (EST)
+ 5 Nov 2025 05:20:05 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Bhagyada Modali <bhagyada.modali@amd.com>
-Cc: dev@dpdk.org, raghavendra.ningoji@amd.com
-Subject: Re: [PATCH] ntb/ae4dma: added Amd userspace DMA and NTB drivers
-Date: Wed, 05 Nov 2025 11:13:49 +0100
-Message-ID: <3713570.9VTjjQsp5K@thomas>
-In-Reply-To: <20250705141001.34223-1-bhagyada.modali@amd.com>
-References: <20250705141001.34223-1-bhagyada.modali@amd.com>
+To: Chengwen Feng <fengchengwen@huawei.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v2] test: support SVA copy for dmadev test
+Date: Wed, 05 Nov 2025 11:20:04 +0100
+Message-ID: <3103453.7eYt6pKtYU@thomas>
+In-Reply-To: <20250918082025.17173-1-fengchengwen@huawei.com>
+References: <20250918041534.38227-1-fengchengwen@huawei.com>
+ <20250918082025.17173-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -87,26 +87,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-05/07/2025 16:10, Bhagyada Modali:
-> Added a user-space driver with support for the
-> 	AMD EPYC 4th Generation DMA (AE4DMA) offload engine.
-> 	AMD Non Transparent Bridge driver.
+18/09/2025 10:20, Chengwen Feng:
+> This commit supports SVA copy for dmadev test.
 > 
->       - Implementation of new user-space driver supporting
->         NTB and DMA memory copy offload on AMD EYPC 9004 & 8004
-> 	systems (Genoa and Siena processors).
->       - Updated the NTB_FWD application to support AMD NTB driver.
-> 
-> Signed-off-by: Bhagyada Modali <bhagyada.modali@amd.com>
+> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 
-It looks to be a draft.
-There are so many problems in this patch that I was expecting a follow-up,
-but looks like no.
+Applied, thanks.
 
-Please check the contributors guide for the tools you should run
-before submitting.
-Then make sure your patch pass the CI in patchwork.
-
-Thank you
 
 
