@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0C5CCFA04
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 05:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F318CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 06:52:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7BDA8402E1;
-	Wed,  5 Nov 2025 06:11:35 +0100 (CET)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
- [209.85.160.181])
- by mails.dpdk.org (Postfix) with ESMTP id 056EF40269
- for <dev@dpdk.org>; Wed,  5 Nov 2025 06:11:35 +0100 (CET)
-Received: by mail-qt1-f181.google.com with SMTP id
- d75a77b69052e-4e896e91368so75076581cf.0
- for <dev@dpdk.org>; Tue, 04 Nov 2025 21:11:34 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2ECF7402B6;
+	Wed,  5 Nov 2025 07:52:42 +0100 (CET)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com
+ [209.85.160.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 8678F40269
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 07:52:40 +0100 (CET)
+Received: by mail-qt1-f174.google.com with SMTP id
+ d75a77b69052e-4e88cacc5d9so60351151cf.0
+ for <dev@dpdk.org>; Tue, 04 Nov 2025 22:52:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1762319494; x=1762924294; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1762325560; x=1762930360; darn=dpdk.org;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=R0KsU6aGaCEWh6EkhSTtsPLinpZVQAFiRcUCMPusEfg=;
- b=hgtyYr/jwJstli3FtTIMLLfNwnWYWNd9xZGVvuvRTGnFeNge+AiR2QK/JPDo8KWOWS
- QuPcZpQoDQLQVzseXum6+Z9yXRh57yBihnyTqlIoLLBdf5FU8qp2XWstBOHgaecu3HY3
- 8X2AQ1Qh7ptUSDRDsavuGz0knI0YXmWFjamrYBEs6+oln7cs1ljRa4YaY1sQhIsz8lno
- a6H1OFOe4Ht719xF0cG1Mrn1kFHgT5C9scK3iZYzm+f8SJa8jAB70BjGWhuE9CtlOguI
- gTmJasxlY6wa3iNYo6rMD+LVurUkqKf8OZ+IoomLFXGzW76EdrkXvOZOYzetzzE1h65b
- CgAg==
+ bh=PUh+Lcs44Vw+2a/UUN3IPvRqiTP/TbQp3Bkf/yQJb9E=;
+ b=lTHRWBS02jNAXWzrEosO/4x9x2ZdcKkN+9OOK7kJFjrDxR6dcFC/bkYgNXLskp/g55
+ 9mR79ODpg0lVQpfnXCh8Z3WK+bpqQT4IX2AESi3FFo8usKcLx+X7HwsKb6aWjDtJKu9L
+ QWn6kx/DDxOcssIo6nPwKogsNGPz/drlX8Enpcl43sDXBMEyVKrASPmgVrKtCYc9CY7B
+ AyXgv5VYhC1qkQlvLQRSz7ZREDTtu28suDYF1xLO95QOwA4MNXGBZ6O+StaBYkwl1i3Q
+ 3wvLPZOy8CUVj2t0IucSOlFOECvHxHcjjJJqVjqhgcyqLx8lSN741sCHji4wFIWxKTAp
+ NanQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762319494; x=1762924294;
+ d=1e100.net; s=20230601; t=1762325560; x=1762930360;
  h=content-transfer-encoding:cc:to:subject:message-id:date:from
  :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=R0KsU6aGaCEWh6EkhSTtsPLinpZVQAFiRcUCMPusEfg=;
- b=tbCUrKoheOdXIx5ZX021xLOeDTIPrFwi1JvnpK3Emza9syNHbZE9/1iIbym6symN0j
- r2LhGslGPn7b4h/gR1OKOe6PRqDwT5M0nADxTrbpwnRENhxSheN4yh+vqODQFK4dBmdw
- swflbyPwzoX3mKqj0MNX3ZSjywqsYHIQ7xr56cP8m1mEzfDFiMlg87SHtomvhu8ZuQiG
- w35RqpFPul/ThgXrCXUVYFT2KRxCc1n/9P5SyApvZ/v55EcW/cucFhAmyyW5CtJoHXXX
- piI3ARVZgbe5lBdZmUe7bqd2EOFQ7UnHTttak+j2MmYjkeAQJMJTsRte2GLIthsgWEi2
- jfxw==
+ bh=PUh+Lcs44Vw+2a/UUN3IPvRqiTP/TbQp3Bkf/yQJb9E=;
+ b=H5HwAHSidKnwTTzb79/0OeTFhxlRzIkbSqLwZsTJAbW5ITJd4YEI6NYg5lR3popOrV
+ pfnI8jjbr6Ya/mETMkqDo9dQHgUBasKSUHpcQ1Z3RPZP9jHYWcoE1lrhaKr20+NCpM9Q
+ wvdYS11uJG7NyNLYNLmpVU18zJ5GDfSXHwo8uhPXNFdvbDnvYsw+/TMeBuxEVPpV5uFq
+ WagmOS2BqaJlQvkn6zX24ANVOf2TYQ4HW6m2rN9PCn3YvRAWglLEYh00P+fe8+73EI5x
+ /ZQJxwjT6SNXgGzFTxE4dxEnA5/DGuKVYJwzcb0Ho8zQ1mFoRxE9bjptVqnuoai90lD5
+ zp2A==
 X-Forwarded-Encrypted: i=1;
- AJvYcCW/lJ1OzE2aF7xr66zddoXipZhpsnKCRuxuo7VcTS/TDoMf42vn2EXOxReCrs+uYJRWcws=@dpdk.org
-X-Gm-Message-State: AOJu0YxvWsAaROc7HgtyWlnsdDG2UAGh6bCxZ7T/ci11FKqRicb0ttaV
- XcQXOql/5CyHV/qnesvhF5e454lwHlSpfeGC07P1iA3GboTFfpyvaoEBJaKKg7zxu8z2jQ3mgZH
- j8Qx+aesEoqGzyxmfTwhT3yaSYy1DzSc=
-X-Gm-Gg: ASbGncv0Gy00TVWNeaD9r81O++KcJzSOdTcV2b2g849Url0TEhMIQLcEKNw+r4fvt8r
- zBmKXWrzraosRs+xPf+/D/IRq7W+pBlWlEosrVtAI+2ImaNMfNimEQ5IhJcJ1ncJNZ+C1P3eUTY
- 9hg0J4auYS2H1HnFYQ+plT9eGKMBRDgPdsL6+KomqmeiQHkJ5iHH5QFYZt+B6S23dDPGWDRexqd
- S+UkA8wHllga1ea0eODV7w/BtBCW4G9l+qVgQbhBooXDGyJ/tXKQID0bHI=
-X-Google-Smtp-Source: AGHT+IE7FuRKDoxmTqjMgdMjEtiKDxFHRgWdCYvqXD6YIxwhoIV7n3/w9qoQOaaguzVony70D+EQjKtb1PPgYs7piXA=
-X-Received: by 2002:a05:622a:110e:b0:4ed:7074:423e with SMTP id
- d75a77b69052e-4ed723759dfmr24380151cf.28.1762319494167; Tue, 04 Nov 2025
- 21:11:34 -0800 (PST)
+ AJvYcCU/5UE8T7QXMNVS6Rji/0j10bpPBa+TsqKcpZK/2usTta/Y76C2cx3dUY9sMjhq0J3q8tY=@dpdk.org
+X-Gm-Message-State: AOJu0YxFCLXYPtZJ4NChZBFbpGQ8dC35FFoPH6SpbpBZDKiu3wJiRTGV
+ wGbbGgJw2oZ96ycJEo7QM0tYr5qYhj8OySpd1YqCp3Hd2d0FPIiq21dpQeqh0QpzyPYyjKRblpB
+ 7i3SNfb6KT2halVN8hbd1BzlbTpTYAqc=
+X-Gm-Gg: ASbGncs/jfPBFf+SuXOJgiHwzyHf3hVGvkmLM8E/QkcKhS51xBisif9YeRU5l5UkFTA
+ +5K5uwVIh9XLrsCYqCr0CoCn22fN4V1ZHlkaQdiOkBVp2oxpOVbYS+LKv0emp1kk55vkaXqFYuR
+ KIDVHlWSiYPODyVH6NfjJR9neF8uNFLhe6FMIiJ46peQZvmoKcGkjpHJDEzklm9THioZMKCvTLd
+ xmD6hkwv3GLDC6MdZQLMSe/9Mhit3RWsO1BRUgSXrrPiHk2YaADW7LPk8E=
+X-Google-Smtp-Source: AGHT+IFD0uzks4umerPQK98CFVPN4r4DtKhqy1Kvt2dPUQQj5dT3zLj2L9eDxw/XwhNSkzbEK10qBQXEvVMF1GCB+k0=
+X-Received: by 2002:a05:622a:1f0f:b0:4df:504:ef88 with SMTP id
+ d75a77b69052e-4ed7236b1famr33120261cf.23.1762325559693; Tue, 04 Nov 2025
+ 22:52:39 -0800 (PST)
 MIME-Version: 1.0
-References: <20251006051402.1387576-1-rkudurumalla@marvell.com>
- <20251029130023.1637177-1-rkudurumalla@marvell.com>
- <20251029130023.1637177-5-rkudurumalla@marvell.com>
-In-Reply-To: <20251029130023.1637177-5-rkudurumalla@marvell.com>
+References: <20251023110332.6231-6-skori@marvell.com>
+ <20251104080901.1610706-1-skori@marvell.com>
+ <20251104080901.1610706-6-skori@marvell.com>
+In-Reply-To: <20251104080901.1610706-6-skori@marvell.com>
 From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Wed, 5 Nov 2025 10:41:19 +0530
-X-Gm-Features: AWmQ_blbiXWUs_9p-5UL9wJGpkYSMOEjzdh6xV4rOiBb5M6v7y_XkrxrEQAaaHw
-Message-ID: <CALBAE1Nboip1UhNtQkUTkdPareKEekzJCniK7E3WD1s4sWLr2w@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] net/cnxk: enable CPT CQ for outbound traffic
-To: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+Date: Wed, 5 Nov 2025 12:22:25 +0530
+X-Gm-Features: AWmQ_blG3oE_If_Wd40t4Dpj_qtrERqXBQgvHjanobQ-ZojxWuAQNBf5fa7fcko
+Message-ID: <CALBAE1PvLXi4AHQZE93hApC5mdOSXT7_F3HSPEsLtABF1+cSuQ@mail.gmail.com>
+Subject: Re: [PATCH v7 6/6] net/cnxk: report link mode
+To: skori@marvell.com
 Cc: Nithin Dabilpuram <ndabilpuram@marvell.com>,
  Kiran Kumar K <kirankumark@marvell.com>, 
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, 
- Harman Kalra <hkalra@marvell.com>, dev@dpdk.org, jerinj@marvell.com
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
+ dev@dpdk.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
@@ -81,27 +81,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Oct 29, 2025 at 6:31=E2=80=AFPM Rakesh Kudurumalla
-<rkudurumalla@marvell.com> wrote:
+On Tue, Nov 4, 2025 at 10:36=E2=80=AFPM <skori@marvell.com> wrote:
 >
-> enable CPT CQ in cpt instruction to read outbound
-> error packets from CQ
+> From: Sunil Kumar Kori <skori@marvell.com>
 >
-> Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
-
-Please fix below issues. Good to merge next version
-
-Wrong headline prefix:
-        net/cnxk: handle soft expiry support (expected prefix "drivers:")
-        net/cnxk: enable CPT CQ for outbound traffic (expected prefix
-"drivers:")
-
-Invalid patch(es) found - checked 5 patches
-check-git-log failed
+> Reports link mode whether fixed or autonegotiation
+>
+> Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
+> Signed-off-by: Sunil Kumar Kori <skori@marvell.com>
 
 
-### [PATCH] net/cnxk: enable CPT CQ for outbound traffic
+Update release note for cnxk PMD for this feature and fix the issue
+below. Good to merge the next version.
 
-__rte_packed_begin and __rte_packed_end should always be used in pairs.
 
-3/5 valid patches
+### [PATCH] net/cnxk: support link mode configuration
+
+Warning in drivers/net/cnxk/cnxk_link.c:
+Using %l format, prefer %PRI*64 if type is [u]int64_t
