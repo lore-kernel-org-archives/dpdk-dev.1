@@ -2,34 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D06CCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 11:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0496CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 11:34:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F1F940656;
-	Wed,  5 Nov 2025 12:28:20 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CE6BF4068E;
+	Wed,  5 Nov 2025 12:33:59 +0100 (CET)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 5B59E400D7
- for <dev@dpdk.org>; Wed,  5 Nov 2025 12:28:18 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id DC9BC400D7
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 12:33:57 +0100 (CET)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 279EA2079A
- for <dev@dpdk.org>; Wed,  5 Nov 2025 12:28:18 +0100 (CET)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Wed, 5 Nov 2025 12:28:17 +0100
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH] mbuf: improve mbuf comments
-Date: Wed,  5 Nov 2025 11:28:10 +0000
-Message-ID: <20251105112810.20838-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B942E2079A
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 12:33:57 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 05 Nov 2025 11:28:17.0486 (UTC)
- FILETIME=[482D86E0:01DC4E47]
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH] mbuf: improve mbuf comments
+Date: Wed, 5 Nov 2025 12:33:55 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65530@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20251105112810.20838-1-mb@smartsharesystems.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] mbuf: improve mbuf comments
+Thread-Index: AdxOR0ikyR5TMx/ESeWIWy7OisGRoQAAKEGQ
+References: <20251105112810.20838-1-mb@smartsharesystems.com>
+From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,96 +45,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Updated the comment preceding the 'rearm_data' fields to reflect that some
-ethdev drivers don't really set the rearm_data fields on RX descriptor
-rearm, but rather when pulling the packet from the descriptor.
-By doing this, they avoid a store operation into the mbuf when they rearm
-the TX descriptor, and instead postpone it to later, where it will be
-combined with other store operations into the mbuf.
-
-Updated the comment describing what the second cache line is used for, to
-reflect that there are exceptions, where some fields are set on RX too.
-
-Updated comments describing what needs to be updated when adding new RX
-and TX offload flags.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
- lib/mbuf/rte_mbuf_core.h | 29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
-
-diff --git a/lib/mbuf/rte_mbuf_core.h b/lib/mbuf/rte_mbuf_core.h
-index a9caaf4e14..6d66eab11d 100644
---- a/lib/mbuf/rte_mbuf_core.h
-+++ b/lib/mbuf/rte_mbuf_core.h
-@@ -37,8 +37,8 @@ extern "C" {
-  *   added to the right of the previously defined flags i.e. they should count
-  *   downwards, not upwards.
-  *
-- * Keep these flags synchronized with rte_get_rx_ol_flag_name() and
-- * rte_get_tx_ol_flag_name().
-+ * Keep these flags synchronized with rte_get_rx_ol_flag_name(), rte_get_rx_ol_flag_list(),
-+ * rte_get_tx_ol_flag_name(), and rte_get_tx_ol_flag_list().
-  */
- 
- /**
-@@ -180,12 +180,20 @@ extern "C" {
- #define RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD	(1ULL << 22)
- #define RTE_MBUF_F_RX_OUTER_L4_CKSUM_INVALID	((1ULL << 21) | (1ULL << 22))
- 
--/* add new RX flags here, don't forget to update RTE_MBUF_F_FIRST_FREE */
-+/*
-+ * Add new RX flags here.
-+ * Don't forget to update RTE_MBUF_F_FIRST_FREE,
-+ * rte_get_rx_ol_flag_name(), and rte_get_rx_ol_flag_list().
-+ */
- 
- #define RTE_MBUF_F_FIRST_FREE (1ULL << 23)
- #define RTE_MBUF_F_LAST_FREE (1ULL << 40)
- 
--/* add new TX flags here, don't forget to update RTE_MBUF_F_LAST_FREE  */
-+/*
-+ * Add new TX flags here.
-+ * Don't forget to update RTE_MBUF_F_LAST_FREE, RTE_MBUF_F_TX_OFFLOAD_MASK,
-+ * rte_get_tx_ol_flag_name(), and rte_get_tx_ol_flag_list().
-+ */
- 
- /**
-  * Outer UDP checksum offload flag. This flag is used for enabling
-@@ -485,7 +493,10 @@ struct __rte_cache_aligned rte_mbuf {
- 	struct rte_mbuf *next;
- #endif
- 
--	/* next 8 bytes are initialised on RX descriptor rearm */
-+	/*
-+	 * Next 8 bytes are initialised on RX descriptor rearm,
-+	 * or on RX when pulling packet from descriptor.
-+	 */
- 	union {
- 		uint64_t rearm_data[1];
- 		__extension__
-@@ -517,7 +528,7 @@ struct __rte_cache_aligned rte_mbuf {
- 
- 	uint64_t ol_flags;        /**< Offload features. */
- 
--	/* remaining 24 bytes are set on RX when pulling packet from descriptor */
-+	/* Remaining 24 bytes are set on RX when pulling packet from descriptor. */
- 	union {
- 		/* void * type of the array elements is retained for driver compatibility. */
- 		void *rx_descriptor_fields1[24 / sizeof(void *)];
-@@ -603,7 +614,11 @@ struct __rte_cache_aligned rte_mbuf {
- 
- 	struct rte_mempool *pool; /**< Pool from which mbuf was allocated. */
- 
--	/* second cache line - fields only used in slow path or on TX */
-+	/*
-+	 * Second cache line - fields only used in slow path or on TX.
-+	 * In special cases, some of these fields are also set on RX,
-+	 * most notably the 'next' field is set on RX scattered packets.
-+	 */
- #if RTE_IOVA_IN_MBUF
- 	/**
- 	 * Next segment of scattered packet. Must be NULL in the last
--- 
-2.43.0
-
+PiBGcm9tOiBNb3J0ZW4gQnLDuHJ1cCBbbWFpbHRvOm1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbV0N
+Cj4gU2VudDogV2VkbmVzZGF5LCA1IE5vdmVtYmVyIDIwMjUgMTIuMjgNCj4gDQo+IFVwZGF0ZWQg
+dGhlIGNvbW1lbnQgcHJlY2VkaW5nIHRoZSAncmVhcm1fZGF0YScgZmllbGRzIHRvIHJlZmxlY3Qg
+dGhhdA0KPiBzb21lDQo+IGV0aGRldiBkcml2ZXJzIGRvbid0IHJlYWxseSBzZXQgdGhlIHJlYXJt
+X2RhdGEgZmllbGRzIG9uIFJYIGRlc2NyaXB0b3INCj4gcmVhcm0sIGJ1dCByYXRoZXIgd2hlbiBw
+dWxsaW5nIHRoZSBwYWNrZXQgZnJvbSB0aGUgZGVzY3JpcHRvci4NCj4gQnkgZG9pbmcgdGhpcywg
+dGhleSBhdm9pZCBhIHN0b3JlIG9wZXJhdGlvbiBpbnRvIHRoZSBtYnVmIHdoZW4gdGhleQ0KPiBy
+ZWFybQ0KPiB0aGUgVFggZGVzY3JpcHRvciwgYW5kIGluc3RlYWQgcG9zdHBvbmUgaXQgdG8gbGF0
+ZXIsIHdoZXJlIGl0IHdpbGwgYmUNCg0KVHlwbzogVFggZGVzY3JpcHRvciAtPiBSWCBkZXNjcmlw
+dG9yLg0KDQo+IGNvbWJpbmVkIHdpdGggb3RoZXIgc3RvcmUgb3BlcmF0aW9ucyBpbnRvIHRoZSBt
+YnVmLg0KPiANCj4gVXBkYXRlZCB0aGUgY29tbWVudCBkZXNjcmliaW5nIHdoYXQgdGhlIHNlY29u
+ZCBjYWNoZSBsaW5lIGlzIHVzZWQgZm9yLA0KPiB0bw0KPiByZWZsZWN0IHRoYXQgdGhlcmUgYXJl
+IGV4Y2VwdGlvbnMsIHdoZXJlIHNvbWUgZmllbGRzIGFyZSBzZXQgb24gUlggdG9vLg0KPiANCj4g
+VXBkYXRlZCBjb21tZW50cyBkZXNjcmliaW5nIHdoYXQgbmVlZHMgdG8gYmUgdXBkYXRlZCB3aGVu
+IGFkZGluZyBuZXcgUlgNCj4gYW5kIFRYIG9mZmxvYWQgZmxhZ3MuDQo+IA0KPiBTaWduZWQtb2Zm
+LWJ5OiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KPiAtLS0NCj4g
+IGxpYi9tYnVmL3J0ZV9tYnVmX2NvcmUuaCB8IDI5ICsrKysrKysrKysrKysrKysrKysrKystLS0t
+LS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMjIgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkN
+Cj4gDQo+IGRpZmYgLS1naXQgYS9saWIvbWJ1Zi9ydGVfbWJ1Zl9jb3JlLmggYi9saWIvbWJ1Zi9y
+dGVfbWJ1Zl9jb3JlLmgNCj4gaW5kZXggYTljYWFmNGUxNC4uNmQ2NmVhYjExZCAxMDA2NDQNCj4g
+LS0tIGEvbGliL21idWYvcnRlX21idWZfY29yZS5oDQo+ICsrKyBiL2xpYi9tYnVmL3J0ZV9tYnVm
+X2NvcmUuaA0KPiBAQCAtMzcsOCArMzcsOCBAQCBleHRlcm4gIkMiIHsNCj4gICAqICAgYWRkZWQg
+dG8gdGhlIHJpZ2h0IG9mIHRoZSBwcmV2aW91c2x5IGRlZmluZWQgZmxhZ3MgaS5lLiB0aGV5DQo+
+IHNob3VsZCBjb3VudA0KPiAgICogICBkb3dud2FyZHMsIG5vdCB1cHdhcmRzLg0KPiAgICoNCj4g
+LSAqIEtlZXAgdGhlc2UgZmxhZ3Mgc3luY2hyb25pemVkIHdpdGggcnRlX2dldF9yeF9vbF9mbGFn
+X25hbWUoKSBhbmQNCj4gLSAqIHJ0ZV9nZXRfdHhfb2xfZmxhZ19uYW1lKCkuDQo+ICsgKiBLZWVw
+IHRoZXNlIGZsYWdzIHN5bmNocm9uaXplZCB3aXRoIHJ0ZV9nZXRfcnhfb2xfZmxhZ19uYW1lKCks
+DQo+IHJ0ZV9nZXRfcnhfb2xfZmxhZ19saXN0KCksDQo+ICsgKiBydGVfZ2V0X3R4X29sX2ZsYWdf
+bmFtZSgpLCBhbmQgcnRlX2dldF90eF9vbF9mbGFnX2xpc3QoKS4NCj4gICAqLw0KPiANCj4gIC8q
+Kg0KPiBAQCAtMTgwLDEyICsxODAsMjAgQEAgZXh0ZXJuICJDIiB7DQo+ICAjZGVmaW5lIFJURV9N
+QlVGX0ZfUlhfT1VURVJfTDRfQ0tTVU1fR09PRAkoMVVMTCA8PCAyMikNCj4gICNkZWZpbmUgUlRF
+X01CVUZfRl9SWF9PVVRFUl9MNF9DS1NVTV9JTlZBTElECSgoMVVMTCA8PCAyMSkgfCAoMVVMTA0K
+PiA8PCAyMikpDQo+IA0KPiAtLyogYWRkIG5ldyBSWCBmbGFncyBoZXJlLCBkb24ndCBmb3JnZXQg
+dG8gdXBkYXRlIFJURV9NQlVGX0ZfRklSU1RfRlJFRQ0KPiAqLw0KPiArLyoNCj4gKyAqIEFkZCBu
+ZXcgUlggZmxhZ3MgaGVyZS4NCj4gKyAqIERvbid0IGZvcmdldCB0byB1cGRhdGUgUlRFX01CVUZf
+Rl9GSVJTVF9GUkVFLA0KPiArICogcnRlX2dldF9yeF9vbF9mbGFnX25hbWUoKSwgYW5kIHJ0ZV9n
+ZXRfcnhfb2xfZmxhZ19saXN0KCkuDQo+ICsgKi8NCj4gDQo+ICAjZGVmaW5lIFJURV9NQlVGX0Zf
+RklSU1RfRlJFRSAoMVVMTCA8PCAyMykNCj4gICNkZWZpbmUgUlRFX01CVUZfRl9MQVNUX0ZSRUUg
+KDFVTEwgPDwgNDApDQo+IA0KPiAtLyogYWRkIG5ldyBUWCBmbGFncyBoZXJlLCBkb24ndCBmb3Jn
+ZXQgdG8gdXBkYXRlIFJURV9NQlVGX0ZfTEFTVF9GUkVFDQo+ICovDQo+ICsvKg0KPiArICogQWRk
+IG5ldyBUWCBmbGFncyBoZXJlLg0KPiArICogRG9uJ3QgZm9yZ2V0IHRvIHVwZGF0ZSBSVEVfTUJV
+Rl9GX0xBU1RfRlJFRSwNCj4gUlRFX01CVUZfRl9UWF9PRkZMT0FEX01BU0ssDQo+ICsgKiBydGVf
+Z2V0X3R4X29sX2ZsYWdfbmFtZSgpLCBhbmQgcnRlX2dldF90eF9vbF9mbGFnX2xpc3QoKS4NCj4g
+KyAqLw0KPiANCj4gIC8qKg0KPiAgICogT3V0ZXIgVURQIGNoZWNrc3VtIG9mZmxvYWQgZmxhZy4g
+VGhpcyBmbGFnIGlzIHVzZWQgZm9yIGVuYWJsaW5nDQo+IEBAIC00ODUsNyArNDkzLDEwIEBAIHN0
+cnVjdCBfX3J0ZV9jYWNoZV9hbGlnbmVkIHJ0ZV9tYnVmIHsNCj4gIAlzdHJ1Y3QgcnRlX21idWYg
+Km5leHQ7DQo+ICAjZW5kaWYNCj4gDQo+IC0JLyogbmV4dCA4IGJ5dGVzIGFyZSBpbml0aWFsaXNl
+ZCBvbiBSWCBkZXNjcmlwdG9yIHJlYXJtICovDQo+ICsJLyoNCj4gKwkgKiBOZXh0IDggYnl0ZXMg
+YXJlIGluaXRpYWxpc2VkIG9uIFJYIGRlc2NyaXB0b3IgcmVhcm0sDQo+ICsJICogb3Igb24gUlgg
+d2hlbiBwdWxsaW5nIHBhY2tldCBmcm9tIGRlc2NyaXB0b3IuDQo+ICsJICovDQo+ICAJdW5pb24g
+ew0KPiAgCQl1aW50NjRfdCByZWFybV9kYXRhWzFdOw0KPiAgCQlfX2V4dGVuc2lvbl9fDQo+IEBA
+IC01MTcsNyArNTI4LDcgQEAgc3RydWN0IF9fcnRlX2NhY2hlX2FsaWduZWQgcnRlX21idWYgew0K
+PiANCj4gIAl1aW50NjRfdCBvbF9mbGFnczsgICAgICAgIC8qKjwgT2ZmbG9hZCBmZWF0dXJlcy4g
+Ki8NCj4gDQo+IC0JLyogcmVtYWluaW5nIDI0IGJ5dGVzIGFyZSBzZXQgb24gUlggd2hlbiBwdWxs
+aW5nIHBhY2tldCBmcm9tDQo+IGRlc2NyaXB0b3IgKi8NCj4gKwkvKiBSZW1haW5pbmcgMjQgYnl0
+ZXMgYXJlIHNldCBvbiBSWCB3aGVuIHB1bGxpbmcgcGFja2V0IGZyb20NCj4gZGVzY3JpcHRvci4g
+Ki8NCj4gIAl1bmlvbiB7DQo+ICAJCS8qIHZvaWQgKiB0eXBlIG9mIHRoZSBhcnJheSBlbGVtZW50
+cyBpcyByZXRhaW5lZCBmb3IgZHJpdmVyDQo+IGNvbXBhdGliaWxpdHkuICovDQo+ICAJCXZvaWQg
+KnJ4X2Rlc2NyaXB0b3JfZmllbGRzMVsyNCAvIHNpemVvZih2b2lkICopXTsNCj4gQEAgLTYwMyw3
+ICs2MTQsMTEgQEAgc3RydWN0IF9fcnRlX2NhY2hlX2FsaWduZWQgcnRlX21idWYgew0KPiANCj4g
+IAlzdHJ1Y3QgcnRlX21lbXBvb2wgKnBvb2w7IC8qKjwgUG9vbCBmcm9tIHdoaWNoIG1idWYgd2Fz
+DQo+IGFsbG9jYXRlZC4gKi8NCj4gDQo+IC0JLyogc2Vjb25kIGNhY2hlIGxpbmUgLSBmaWVsZHMg
+b25seSB1c2VkIGluIHNsb3cgcGF0aCBvciBvbiBUWCAqLw0KPiArCS8qDQo+ICsJICogU2Vjb25k
+IGNhY2hlIGxpbmUgLSBmaWVsZHMgb25seSB1c2VkIGluIHNsb3cgcGF0aCBvciBvbiBUWC4NCj4g
+KwkgKiBJbiBzcGVjaWFsIGNhc2VzLCBzb21lIG9mIHRoZXNlIGZpZWxkcyBhcmUgYWxzbyBzZXQg
+b24gUlgsDQo+ICsJICogbW9zdCBub3RhYmx5IHRoZSAnbmV4dCcgZmllbGQgaXMgc2V0IG9uIFJY
+IHNjYXR0ZXJlZCBwYWNrZXRzLg0KPiArCSAqLw0KPiAgI2lmIFJURV9JT1ZBX0lOX01CVUYNCj4g
+IAkvKioNCj4gIAkgKiBOZXh0IHNlZ21lbnQgb2Ygc2NhdHRlcmVkIHBhY2tldC4gTXVzdCBiZSBO
+VUxMIGluIHRoZSBsYXN0DQo+IC0tDQo+IDIuNDMuMA0KDQo=
