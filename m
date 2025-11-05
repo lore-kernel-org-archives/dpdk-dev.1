@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADC5CCFA0D
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 18:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 466D1CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 19:03:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2DBC5402C5;
-	Wed,  5 Nov 2025 19:59:53 +0100 (CET)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
- [209.85.210.171])
- by mails.dpdk.org (Postfix) with ESMTP id ECDB34021F
- for <dev@dpdk.org>; Wed,  5 Nov 2025 19:59:51 +0100 (CET)
-Received: by mail-pf1-f171.google.com with SMTP id
- d2e1a72fcca58-7af6a6f20easo240137b3a.0
- for <dev@dpdk.org>; Wed, 05 Nov 2025 10:59:51 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A871D40A8A;
+	Wed,  5 Nov 2025 20:03:37 +0100 (CET)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 65BBD4060A
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 20:03:36 +0100 (CET)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-2956d816c10so2458575ad.1
+ for <dev@dpdk.org>; Wed, 05 Nov 2025 11:03:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762369191;
- x=1762973991; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762369415;
+ x=1762974215; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=tMdyIuGISo7IjFWKmCGZeuwWtmtzSaq3TWiixecNvr0=;
- b=t72frQ2291rayRFCrMuoviKlC6OAnNdtNsKL6MiJzaThe8Beukhmw+Yj4J2cIsfBDK
- q4w1sJI2Hly+pnbMHJTxN7vHxcDNkXgVmE0xAU25qoGytj6M8riTMyTN5OgoQkjZSkYK
- WyWurYAZPgsAUKe/PEdoAEZe3yHDt/7joXzs3N/byQqTqwpX+oryNPJFuv5bb7f1BbkY
- r6zPEr8wNYKJWHw6OcZNE7ldFxCZ4TytrZa6dNh0ZbdOurE3dkua28KRscSTuRGU1lik
- tDzyrQAAGElJuX7NygdISTs3rG0lfMWKE2LeqmE/TClcT1qe5IWMl5m7JxV9lUnwy54N
- rrcA==
+ bh=lgbXzf70odsFhnQd8E77vHqghlYeC+zHitAGo8zOb80=;
+ b=3UFRRyP4sG3Y0QLh7+NE3Q0ieJroY6ipSMbI/sp5mVm55CLLWTWd2ulN0j9FHu4waD
+ chatvOa0GDN0CNvUap54xjZ9N9ylXDj3c0D7rDAW6gJdQ0aMGQJvOuoxVcADIqhUrwBb
+ JaqKdiiTq0XUOrOdSBOlEz6EdTe3tnqj5AHrUxDcPUPhXxFIfnJgUpvcNMTLkqj60/EJ
+ j1Fprpj/LpFIZY06/1ltMV7X/CDJ7kMBtWPLZ9KEqr3rl1w2E+JJGWHyeUKE3XXpsK18
+ ddmp11qBAfd1vD+XbfjmBMvQaqr+lEI0x+8xgHiXCnOfmRWrOl8/zjOxYiQvRNtTehG9
+ iLnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762369191; x=1762973991;
+ d=1e100.net; s=20230601; t=1762369415; x=1762974215;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to;
- bh=tMdyIuGISo7IjFWKmCGZeuwWtmtzSaq3TWiixecNvr0=;
- b=SJB6gSEwIG2JL36FmsBfJSNCck5fTmncFh01ytlMpLwHmSkfmRNzMwiT4c6vFc4y59
- oHW9Bjhd3fczcphtaLpMs6Zalnq1dM7+QK+o8UAtvASyOCo80ChMMbePMS/XXNGewrSw
- CBXUO0wcrexmAmiQHUGVaj1SB4p0R79/DMDNedYW958g7EHDIlXWEh5QHBqCUaCR5czA
- 0MHTfCgG4niJiB6oI1m9xW6XVoCN02OONVJmf69r1oyp7VBKF6ObFw+2gQ47VuzDSLG5
- ldc+FmDgjeZJkzRnAPW1jaZfmm80xmwlLZoAPyidOkvXUS9PP/YjtSgK40hKxjgxWDim
- PKLg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUbNQvmW6A7YDoRgPcXKdZY0NonV6hOI0CfUy90D/oldtcU10RDiJZZzWhdxilIvjSqg9I=@dpdk.org
-X-Gm-Message-State: AOJu0YzGZcZmGd1V5sHm6lCLZd0qY7uQzwLrAw0W54DCqJwCy5tjba72
- ARRDfquCkYYMHKs+yxpmp80+b37+8LnxJsxW0f8eitctUTrsDh0uZXsqn+1u7FgVZbo=
-X-Gm-Gg: ASbGncukQQAtOjoV5S5ug6pl9sbcpIl5qSKRQCl9YDDXXGFdE8hLmijnGb212/GhxtF
- fxmMSwqjtF5CjNuR+pfZIYU6fhqGBGRvXJRsU/+IT58mvWUDvNwYi7+xnlX+5uiqtJktp435sF+
- y4zX4iTVvvntGcV5JQtMTidoDsEQAKm4+3Wucs7wsufLaB2RvVnOYisqUMK74dUojIOM8Bhif9Q
- xwSJ0U4L5o4K8bmoxTcoJuF247yxUUfr6Vmugp0Jp10FMT0HJyYEy3NMgc7IP663EZtKdRInQcZ
- ANCqDGpg8Jf38xHRfSNlTPhz71L1jiK/oTR/hFoN5I2Yu2u5wUABbK0vTBNnobB+XifBf4EdpLq
- GX3eZUK/NnEFWEjpqA31bkWyx5Lxs76qp+o1pUJD4CQ2G5E7x2jJVCC/elYWNCSlG0PtNRIsTkZ
- 39G6XQ+iWpqpZsUqwv9sa6EhCW5Po19YuoVQ==
-X-Google-Smtp-Source: AGHT+IH54VxeZ8/k33Ki+8Cb9GJAQjdsG0duVAIAQjwHSPt9pEbZgSwyulrUJyqKO3fsIrwo5hEIog==
-X-Received: by 2002:a05:6a20:2729:b0:340:cc06:9514 with SMTP id
- adf61e73a8af0-34f86e0bb65mr4042962637.57.1762369190775; 
- Wed, 05 Nov 2025 10:59:50 -0800 (PST)
+ bh=lgbXzf70odsFhnQd8E77vHqghlYeC+zHitAGo8zOb80=;
+ b=KadYwTv/p+4g71sCKH1a+2WxqIRYcC+cRXIwn64XZJ2inOIO7WViCYCHsuN8reTsoO
+ yX2wt5++UiduDHJqy2eCLNuifI4dKoCbB0CMDJphtWRN+xlfl+in6vTFVpSxUdMRbJ/t
+ WkW2y4znQwx32ynoPLhIccnXs5IkX9geFM1kSabwAB+cwy6bf167m9Wlrp22P+pUxLMs
+ nWS6Teemd+jtoVLQmKrrkSI4h6hrnKw191OgKOdM8YRBgWncgBSQPP2cBr4YQAWnvjm7
+ GhUMYbhx8SWeiEa+la7vxvlqjMnKknK2UByUEdLDxX9oxAoTDxL+lTp+pSoc18e2EyTE
+ +qqQ==
+X-Gm-Message-State: AOJu0Yzr/2EvtSygyto1eXTgOkuRX2xwKAvMwj+HtkdP+5o2bQBIDrFr
+ BnyJElrG2T/jDXmmHmM6X4L3q3Bayjsr4qAS/D5lxaO9h3UbS6ZUyQTCJOhru+u5AbA=
+X-Gm-Gg: ASbGncsjpGqP6j0OI4JzZRHaleTj0ORpSY5MnpWTpMT/SxCbAgvRvpxQhsKTgJX5giY
+ Y7zaV5fuSU6rgRW+ByC/0igbT5ysY7HQGEl+ksONZ0fJ0QJ4hYtEhyG8eoqASMFt60PdeN7Jv9Z
+ SBPmnD0bvd9pc88O6JZ9LofEecJZ7pFlQy68cMEosQQoD4mmtLPU5Ej9I038eFVDyhHUmQL5dGA
+ MqVT4fkXVO+GG8SB9rKfTIyNAZlfibInMvc9aghsPaqtYiad2PHHtdsQ2xu1WoMSXJZFlfmE0OY
+ ro3g6Otq8Z8TcuIFHGuvkzd+OZodwdEp17Wyl0f8ztVxvjn0iYltoU1EYX+eJfxQKLwWg6qVpOK
+ U2CeDg0f13bnIp3qOZ/LiGZxYGIE1baevYjt7TQ4eCYt31MOPSH1PiK2GEnzH6LTHlIxsFHGIgj
+ QI1vrbOWTkF7okKiJSJMsGA/IIWBbKFGgsnw==
+X-Google-Smtp-Source: AGHT+IEShM5ZIP3WK0hZuVRoi7j+Help8lkQoKTiejqNjbLil8z/j8fxm4uS39kOYwQNBiQNJuJ5hQ==
+X-Received: by 2002:a17:902:ce84:b0:295:19e:487b with SMTP id
+ d9443c01a7336-2962ad07945mr68097485ad.5.1762369415371; 
+ Wed, 05 Nov 2025 11:03:35 -0800 (PST)
 Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-341a68d5c17sm3718541a91.13.2025.11.05.10.59.49
+ 41be03b00d2f7-ba8ffe36ad7sm64014a12.22.2025.11.05.11.03.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Nov 2025 10:59:50 -0800 (PST)
-Date: Wed, 5 Nov 2025 10:59:46 -0800
+ Wed, 05 Nov 2025 11:03:35 -0800 (PST)
+Date: Wed, 5 Nov 2025 11:03:31 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Chengwen Feng <fengchengwen@huawei.com>
-Cc: <thomas@monjalon.net>, <dev@dpdk.org>, <aman.deep.singh@intel.com>,
- <liuyonglong@huawei.com>, <yangxingui@huawei.com>, <lihuisong@huawei.com>
-Subject: Re: [PATCH v2 0/3] testpmd support pause/resume specify lcore's fwd
-Message-ID: <20251105105946.73a06834@phoenix>
-In-Reply-To: <20251105094748.3269-1-fengchengwen@huawei.com>
-References: <20251104040916.25864-1-fengchengwen@huawei.com>
- <20251105094748.3269-1-fengchengwen@huawei.com>
+To: Shani Peretz <shperetz@nvidia.com>
+Cc: <dev@dpdk.org>, <stable@dpdk.org>, Chas Williams <3chas3@gmail.com>,
+ "Min Hu (Connor)" <humin29@huawei.com>, Pawel Wodkowski
+ <pawelwod@gmail.com>, Declan Doherty <declan.doherty@intel.com>
+Subject: Re: [PATCH] net/bonding: fix MAC address propagation in 802.3ad mode
+Message-ID: <20251105110331.1975b42a@phoenix>
+In-Reply-To: <20251105180135.1181619-1-shperetz@nvidia.com>
+References: <20251105180135.1181619-1-shperetz@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,33 +83,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 5 Nov 2025 17:47:45 +0800
-Chengwen Feng <fengchengwen@huawei.com> wrote:
+On Wed, 5 Nov 2025 20:01:35 +0200
+Shani Peretz <shperetz@nvidia.com> wrote:
 
-> This patch support pause/resume specify lcore's forwarding for testpmd,
-> and also include two bugfix which found when test DCB function.
+> When changing the MAC address of a bonding device in 802.3ad mode,
+> the new MAC was not propagated to the physical member NIC.
+> This caused the physical NIC to drop all data packets sent to the
+> new MAC address, resulting in connectivity loss.
 > 
-> Chengwen Feng (3):
->   app/testpmd: fix invalid txp when setup DCB forward
->   app/testpmd: fix wrong Rx queues when setup DCB forward
->   app/testpmd: support pause/resume specify lcore
+> It happens because the MAC update function only updated the
+> LACP layer (actor.system) but not the physical NIC hardware MAC
+> addresses.
 > 
->  app/test-pmd/cmdline.c                      | 126 ++++++++++++++++++++
->  app/test-pmd/config.c                       |   9 +-
->  app/test-pmd/testpmd.c                      |   5 +
->  app/test-pmd/testpmd.h                      |   2 +-
->  doc/guides/testpmd_app_ug/testpmd_funcs.rst |  14 +++
->  5 files changed, 149 insertions(+), 7 deletions(-)
+> This fix adds a call to rte_eth_dev_default_mac_addr_set() to update
+> the hardware MAC on each member port.
 > 
+> Bugzilla ID: 1158
+> Fixes: 46fb43683679 ("bond: add mode 4")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
+> ---
 
-Please split bug fix from enhancements.
-
-The whole scheme looks like an optimization for power usage in testpmd.
-Since testpmd is solely focused on performance, I don't think you have
-provided enough justification to add the new feature.
-
-With DCB if there are TC's that could receive packets, it is better
-not to never poll those queues. 
-
-That said, longer term it would make sense to bring of the power
-saving logic that is in examples into testpmd.
+Queued to next-net.
+Modified patch to put check on oneline since max line length in DPDK is 100.
