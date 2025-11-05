@@ -2,73 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A86CCFA13
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 21:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD9DCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 21:18:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2055940B9D;
-	Wed,  5 Nov 2025 22:07:05 +0100 (CET)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com
- [209.85.215.182])
- by mails.dpdk.org (Postfix) with ESMTP id 879B44066C
- for <dev@dpdk.org>; Wed,  5 Nov 2025 22:07:03 +0100 (CET)
-Received: by mail-pg1-f182.google.com with SMTP id
- 41be03b00d2f7-b98a619f020so206371a12.2
- for <dev@dpdk.org>; Wed, 05 Nov 2025 13:07:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762376823;
- x=1762981623; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=c4nJvcgVop/3xj6QnUnqHh2Qg7Qd1mTJeW18Ky2sstA=;
- b=xkM9QCkohtuGUdq4vSJFDQBCdwYeNfuRDJQO5CuzRLlpMok5Ei0LTzmgixlqQ3AR+T
- wGqzl4u8DWFhnWYwp0iEcNrgCrDWNUCnyrvIrIpW5xW4UlNrvVSCa/OT0OirS6w7b+Yv
- MzT3dUe/6x1BVLm8pUKxisweSMOz5qnv+EcXYG8ze1BkIlMrIrgfugqYGCf2X+rAgMny
- BhDlLdrfu3DZgZD04sNKwiGiHJt8B4sDNX/LHNGaugs+deVXT/FQdvyo5tDbEfCdQWhU
- 9uKZyTEEOaNFivWvv0r9Rcrct5up4vBcZjmEFrx+/bhZlBFrloEqvbBv+zqbHQMUdZcg
- eWsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762376823; x=1762981623;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=c4nJvcgVop/3xj6QnUnqHh2Qg7Qd1mTJeW18Ky2sstA=;
- b=V7jtvNydT9IGROfH58uA4LOzWDMGx70cIsgSrg9nOXXYbeH+KfYbQRqqBigDb1TAeH
- HprDWDbaSCWZx4W6dsU1KyRSx38otDI/cQokkFTvnc5ljWk/ubX50Z1FahoUqrba2PRV
- d/vbYtdgNjMEvXg8pm8cuAixG12VB3hce64luzrtT8jRTFtI57DTl+mX3VetQ+Kyv20D
- ReBkRNiHq5+EsMQV1mdV8BZMlrG618C0Wf5PVOJuKxvMVGaAOd6v4S81pDI8OPWqb6IK
- O/5HxC2O1z46phF8rNfdVDFVfMR6sRND3rSwu9LbwQVxDzzObv2+o+GMY+UxczGiKhYx
- iwcg==
-X-Gm-Message-State: AOJu0Yz5g3X010Al/XUXUmfLZY4L6uJ8g13XS/egb3KgypB68BmKWstR
- wKJO/uDfm5ejGV3KUc1jy7HPbTixNtQxl6OolzPSyuZrrCy91nMr5zQItqR9bnhKD2luDVmDAcw
- wCQfx
-X-Gm-Gg: ASbGncuXxLFBUSYtJyJ8+zvDffvzOi5CKEPrFdR55wmbjBSzOWspuyub2TV5SOQ4+6z
- baignoj4DG1q08OrmL6sAeHPP+HqiP5IvcxYvoj8ESPiUbH/o4qVuKbvSaSYM9LJCj2Che9dvB9
- Cmj9b+Yn6q8VM2nWYE31c8D2REIJTsPXSlAaYA17bp3F6VhbpcOvvBMwqu8X+i3g2+mnRLS7bWs
- Sjh4iaKxoHP14FWnAqxPnE2D4P1suzq6ezEJO+yJ5bSj+ZN5i/1TvYZLjCxy9rutyqcEcqjJW4Y
- /ZeKN6URiFTcZwxr99ksNKR86Jf34f/PdnFhBO+XTrHfcGm8kVWwA7WrDhkdjWKd4zA2C8aRzd5
- 3T+yQv55HZ/zTJNoxrCHhXK0qIWt1iLj3DC3H+d8Z1fIh0SFhMUlj2GyWkJcGkrCgmmjA4jC9wQ
- 8elbVTXhMjsIUZ6XtldGipE5loFqg0wfXnvKZR4bo=
-X-Google-Smtp-Source: AGHT+IGpfH3cE4rxzOxYBoDf1vCQLYkkgC6JWuQurm2eTLCXgbWOdSLe8r/iazY5KNEyfhJ5NohhJg==
-X-Received: by 2002:a17:903:244b:b0:295:20b8:e0ef with SMTP id
- d9443c01a7336-2962add94fdmr57733475ad.57.1762376822572; 
- Wed, 05 Nov 2025 13:07:02 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-29650c5ee4dsm4725895ad.45.2025.11.05.13.07.01
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Nov 2025 13:07:02 -0800 (PST)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 2/2] test: add more tests for comments
-Date: Wed,  5 Nov 2025 13:03:59 -0800
-Message-ID: <20251105210657.871310-3-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251105210657.871310-1-stephen@networkplumber.org>
-References: <20251105210657.871310-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id BDCBD4066C;
+	Wed,  5 Nov 2025 22:18:01 +0100 (CET)
+Received: from fout-a7-smtp.messagingengine.com
+ (fout-a7-smtp.messagingengine.com [103.168.172.150])
+ by mails.dpdk.org (Postfix) with ESMTP id BE576402E6
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 22:17:59 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.phl.internal (Postfix) with ESMTP id 4211DEC0180;
+ Wed,  5 Nov 2025 16:17:59 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+ by phl-compute-02.internal (MEProxy); Wed, 05 Nov 2025 16:17:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762377479;
+ x=1762463879; bh=JSnKW4bCY4pdFKKs8Iz3H7QbVnEUC1oXWFvniUza9t4=; b=
+ ox6UlTT02b3ZyVQDzrbPEPPgj31xFvufIwzJcfHWDzZfAwMnI6PvkSvdNEFH95vz
+ L0HLo3nfHZ+FNsd0Ytf0JHxmlFwKKVjqv3kDPNvYjYgPmmELK+pTmlXrC9bmyxAG
+ NCUN5cnXZjn7/m3MK7FpvdaJnDKIVK+P3fh0+7smkAzoObW5ds3ap4HrTAMlh7Uo
+ ye0OU+lzKOl5BJGsDRahplVcOTH+lZRCUFi8Xc1yztmoFHkGgSA3PdpkRiAZ+dR7
+ ++IJojGIuOvvsA6vnCXVOiVlIrbohmlE6ltDVGgS7jLtAdZnA1FBF97DN6mtJrVi
+ MIiIv8JwqF0Z6+KfxJce8Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762377479; x=
+ 1762463879; bh=JSnKW4bCY4pdFKKs8Iz3H7QbVnEUC1oXWFvniUza9t4=; b=q
+ AYS5wTsj4HFrBpw8KftCmplZR99pq2tZrvHevrCRkubF/ZB+UQ3ITwt8CagRXpDr
+ SvMUi47XFGouT6iT21i+8pe2ALhZLREPWYvwSDu1gBWG4b7XzXCd26wzj7KmRs7P
+ JaowsOw5cDpnXJtwfa7s9i7ITldqkOQFumGKwdR8Q2Sk9TvsXz5RhxRCftPQkBRf
+ M97YVMh2KFjluCr9jwHbQe95AeAwpWqlPnW/1oG7zC+yrXEW9NXF0LenazLTtVJc
+ 1yCRuyiZiUHk82fXLwR+F/gty2cd3oRbbQIXRopmtuuQvFgLJ14sxPs4kZfnelrj
+ LB84eTjKMzgUOSDrenz4A==
+X-ME-Sender: <xms:Br8LaToOhv3rfWdOnDKLpHoAACArE7bAFWUQsvEGzkR_evBmRbMHfg>
+ <xme:Br8LaWmEUND6odH8e1TNodRdbWF11JFfahv-RjAfj2sc6zOo6Kdh_RRnkihAS8wAS
+ hvEEBjxGLbxfzGqJy0QZAvbLf_E4iszdwwBT5L3avmvPQiGCzR8Hg>
+X-ME-Received: <xmr:Br8Labz-Q37pUIsUurQP9oxhSFrVdOcecpvabQXc7SDPvcBLKnRs54exHOL2Kf6zv4LQGcTKZ1etQYaXKnEkBfYqIw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeegleeiucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehgvghtvghlshhonhesnhhvihguihgrrd
+ gtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdho
+ rhhgpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepmhhkrghshh
+ grnhhisehnvhhiughirgdrtghomhdprhgtphhtthhopehrrghslhgrnhgusehnvhhiughi
+ rgdrtghomhdprhgtphhtthhopegrnhgurhgvfidrrhihsggthhgvnhhkohesohhkthgvth
+ hlrggsshdrrhhu
+X-ME-Proxy: <xmx:Br8LaW-fka5mfSz9wHedUYC6-j-vPyX6OxafAXdk_PC-IGIMFpiXGw>
+ <xmx:Br8LafL2Va7zmRYZXudDP2x1g60YkNJ8nNwFBrbtY-bMLaIV_yNTPg>
+ <xmx:Br8LaccAfd2RxcmBzikz1-a4QXzVsIgugQLoSqTzvWPVsnWwW8uPLw>
+ <xmx:Br8Lae_t1UzMZmrXEvJgYAW_uRng8V9-t33OaBLshiwG8ZmVggq0ug>
+ <xmx:B78Lae93JW0yXL5z2sXlQSntyTjxQFae3RxM6YtN7XaGlRzCEhrRBMPJ>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Nov 2025 16:17:57 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Gregory Etelson <getelson@nvidia.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org,
+ mkashani@nvidia.com, rasland@nvidia.com,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [PATCH v3 1/2] ethdev: make representor parameter more explicit
+Date: Wed, 05 Nov 2025 22:17:55 +0100
+Message-ID: <8735291.3yuU7cT3dn@thomas>
+In-Reply-To: <20251105112039.1db64906@phoenix>
+References: <20251028095831.53669-1-getelson@nvidia.com>
+ <20251105174839.323085-1-getelson@nvidia.com>
+ <20251105112039.1db64906@phoenix>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,62 +94,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add some more cases where comment is set in pcapng file.
+05/11/2025 20:20, Stephen Hemminger:
+> Looks good as is, a couple of minor observations.
+> 
+> > +	/* pfX... or (pfX)... */
+> > +	if ((str[0] == 'p' && str[1] == 'f') ||
+> > +	    (str[0] == '(' && str[1] == 'p' && str[2] == 'f')) {
+> 
+> This is correct but seem like it is getting verbose.
+> If there are more cases than this looking for prefix, might be
+> useful to have helper function.
+> 
+> Looks like devargs could use some better pattern matching,
+> lots of string handling already in this code.
+> String processing in C is often an error trap.
+> 
+> > +		if (str != NULL && str[0] == ')') {
+> > +			str++; /* advance past ")" */
+> > +			eth_da->flags =
+> > +				RTE_ETH_DEVARG_IGNORE_PF_REPRESENTOR;
+> 
+> Can't that go on one line, max line length in DPDK is 100.
+> Is there a case where there could be multiple devargs flags?
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/test_pcapng.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+It is the first flag.
+I would prefer this flag to be named RTE_ETH_DEVARG_REPRESENTOR_IGNORE_PF.
 
-diff --git a/app/test/test_pcapng.c b/app/test/test_pcapng.c
-index bcf99724fa..7e50457794 100644
---- a/app/test/test_pcapng.c
-+++ b/app/test/test_pcapng.c
-@@ -162,13 +162,20 @@ fill_pcapng_file(rte_pcapng_t *pcapng, unsigned int num_packets)
- 		burst_size = rte_rand_max(MAX_BURST) + 1;
- 		for (i = 0; i < burst_size; i++) {
- 			struct rte_mbuf *mc;
-+			char *comment = NULL;
-+
-+			/* Put comment on one out of hundred packets */
-+			if ((count + i % 100) == 0)
-+				asprintf(&comment, "Function: %s\nPacket %u\n",
-+					 __func__, count + i);
- 
- 			mc = rte_pcapng_copy(port_id, 0, orig, mp, rte_pktmbuf_pkt_len(orig),
--					     RTE_PCAPNG_DIRECTION_IN, NULL);
-+					     RTE_PCAPNG_DIRECTION_IN, comment);
- 			if (mc == NULL) {
- 				fprintf(stderr, "Cannot copy packet\n");
- 				return -1;
- 			}
-+			free(comment);
- 			clones[i] = mc;
- 		}
- 
-@@ -386,7 +393,7 @@ static int
- test_write_packets(void)
- {
- 	char file_name[] = "/tmp/pcapng_test_XXXXXX.pcapng";
--	static rte_pcapng_t *pcapng;
-+	rte_pcapng_t *pcapng = NULL;
- 	int ret, tmp_fd, count;
- 	uint64_t now = current_timestamp();
- 
-@@ -413,6 +420,13 @@ test_write_packets(void)
- 		goto fail;
- 	}
- 
-+	/* write a statistics block */
-+	ret = rte_pcapng_write_stats(pcapng, port_id, 0, 0, NULL);
-+	if (ret <= 0) {
-+		fprintf(stderr, "Write of statistics failed\n");
-+		goto fail;
-+	}
-+
- 	count = fill_pcapng_file(pcapng, TOTAL_PACKETS);
- 	if (count < 0)
- 		goto fail;
--- 
-2.51.0
 
