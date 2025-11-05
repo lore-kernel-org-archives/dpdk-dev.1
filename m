@@ -2,84 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD9DCCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 21:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFC1CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 21:29:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BDCBD4066C;
-	Wed,  5 Nov 2025 22:18:01 +0100 (CET)
-Received: from fout-a7-smtp.messagingengine.com
- (fout-a7-smtp.messagingengine.com [103.168.172.150])
- by mails.dpdk.org (Postfix) with ESMTP id BE576402E6
- for <dev@dpdk.org>; Wed,  5 Nov 2025 22:17:59 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.phl.internal (Postfix) with ESMTP id 4211DEC0180;
- Wed,  5 Nov 2025 16:17:59 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Wed, 05 Nov 2025 16:17:59 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id B0C15402F1;
+	Wed,  5 Nov 2025 22:28:59 +0100 (CET)
+Received: from fhigh-a2-smtp.messagingengine.com
+ (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+ by mails.dpdk.org (Postfix) with ESMTP id 95161402E6
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 22:28:58 +0100 (CET)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 052CC140010D;
+ Wed,  5 Nov 2025 16:28:58 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-04.internal (MEProxy); Wed, 05 Nov 2025 16:28:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762377479;
- x=1762463879; bh=JSnKW4bCY4pdFKKs8Iz3H7QbVnEUC1oXWFvniUza9t4=; b=
- ox6UlTT02b3ZyVQDzrbPEPPgj31xFvufIwzJcfHWDzZfAwMnI6PvkSvdNEFH95vz
- L0HLo3nfHZ+FNsd0Ytf0JHxmlFwKKVjqv3kDPNvYjYgPmmELK+pTmlXrC9bmyxAG
- NCUN5cnXZjn7/m3MK7FpvdaJnDKIVK+P3fh0+7smkAzoObW5ds3ap4HrTAMlh7Uo
- ye0OU+lzKOl5BJGsDRahplVcOTH+lZRCUFi8Xc1yztmoFHkGgSA3PdpkRiAZ+dR7
- ++IJojGIuOvvsA6vnCXVOiVlIrbohmlE6ltDVGgS7jLtAdZnA1FBF97DN6mtJrVi
- MIiIv8JwqF0Z6+KfxJce8Q==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762378138;
+ x=1762464538; bh=J+PKwPILcPwR9e9G6qFbh2/qLCx/96wQ4VbWoM11RLk=; b=
+ jXfi/FgSwZmaqJLqKEM9Nu4IvVTGR51wG5OQxYBWBIaeB3PqWe4OgOI/550tXCt4
+ pZP8cV4L0updGpdTO8eeBPu/7gPTFu0WDS8L7JdymLf+V+LigZB1MvIu/apF3ae8
+ q3c+AsfJDx+XQf0zLSP8U/gXIROu1PvDYmnRWdnyMl6gbcYUN5eQiMc7LjmKS86i
+ t3TFMkkyDGEvIyCt6UusH90MOkIvWRkGOqltHj2tTBhNKP1l3996HQ2uP6hOJPoQ
+ 4egyjz+bkDRArjRnkSmmvBLnsb7a3IeOXXEDpxJKuIw1LFQdIdWWstkJJeEwE5+2
+ bnmKXhfr7JmTmlV7t+Qbtw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762377479; x=
- 1762463879; bh=JSnKW4bCY4pdFKKs8Iz3H7QbVnEUC1oXWFvniUza9t4=; b=q
- AYS5wTsj4HFrBpw8KftCmplZR99pq2tZrvHevrCRkubF/ZB+UQ3ITwt8CagRXpDr
- SvMUi47XFGouT6iT21i+8pe2ALhZLREPWYvwSDu1gBWG4b7XzXCd26wzj7KmRs7P
- JaowsOw5cDpnXJtwfa7s9i7ITldqkOQFumGKwdR8Q2Sk9TvsXz5RhxRCftPQkBRf
- M97YVMh2KFjluCr9jwHbQe95AeAwpWqlPnW/1oG7zC+yrXEW9NXF0LenazLTtVJc
- 1yCRuyiZiUHk82fXLwR+F/gty2cd3oRbbQIXRopmtuuQvFgLJ14sxPs4kZfnelrj
- LB84eTjKMzgUOSDrenz4A==
-X-ME-Sender: <xms:Br8LaToOhv3rfWdOnDKLpHoAACArE7bAFWUQsvEGzkR_evBmRbMHfg>
- <xme:Br8LaWmEUND6odH8e1TNodRdbWF11JFfahv-RjAfj2sc6zOo6Kdh_RRnkihAS8wAS
- hvEEBjxGLbxfzGqJy0QZAvbLf_E4iszdwwBT5L3avmvPQiGCzR8Hg>
-X-ME-Received: <xmr:Br8Labz-Q37pUIsUurQP9oxhSFrVdOcecpvabQXc7SDPvcBLKnRs54exHOL2Kf6zv4LQGcTKZ1etQYaXKnEkBfYqIw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeegleeiucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762378138; x=
+ 1762464538; bh=J+PKwPILcPwR9e9G6qFbh2/qLCx/96wQ4VbWoM11RLk=; b=j
+ tgtRoh438kXA2IfWc1EhIi8V9DNmiuRptswC/qked6SddrCHWA9mRE0VtCVY74nW
+ NVuyQi7DUVDdjaO3lAfktNRQ6LSepqQJADEi8J1mNrWxhsuWsV7sjwYAuTUnG16M
+ 8SD6307OWB9hB1l2R/9DntaUcxbBoMRPB+k5rwAq0N/X5xpMQzfYIz3rYzlWxeLa
+ qtVomzsou+dOmBUXkWBpJFE0GzlpatA51ekAvMVcezZyYep8BQLglPV1bD0XzP5o
+ I4nvZbXaIsys3OVrZzpFmtb9Q69FWFKuBe5BwLazP0jG/A8naYEfR1MwLEqQznVE
+ s7gQ2XGgVTtGNmusGuEVg==
+X-ME-Sender: <xms:mcELaQeRBLgWTt9FFeMGOeXp9RVhpDMazDk8wDqj0MSIL-Gt2IoEGA>
+ <xme:mcELaej2XPpbA_We2c8mtGBz75v3Tt3Ln1yfOoFb91Xj6jSawJoKlXacc938IiBeq
+ -5ElqGvx9njIN-vZtdrr8QBkKpo-n-HhnPMsibKg1q5bpcPQDKgYQ>
+X-ME-Received: <xmr:mcELaUSaSPzEbg8zL3jCqm0AEPw_3gIxd9e86ljoyhXnMbAkT_SammL9XY4Cj9ZUp9Jnw7dgt3kp3zO4sGuqAqDvOg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeegleekucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehgvghtvghlshhonhesnhhvihguihgrrd
- gtohhmpdhrtghpthhtohepshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdho
- rhhgpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepmhhkrghshh
- grnhhisehnvhhiughirgdrtghomhdprhgtphhtthhopehrrghslhgrnhgusehnvhhiughi
- rgdrtghomhdprhgtphhtthhopegrnhgurhgvfidrrhihsggthhgvnhhkohesohhkthgvth
- hlrggsshdrrhhu
-X-ME-Proxy: <xmx:Br8LaW-fka5mfSz9wHedUYC6-j-vPyX6OxafAXdk_PC-IGIMFpiXGw>
- <xmx:Br8LafL2Va7zmRYZXudDP2x1g60YkNJ8nNwFBrbtY-bMLaIV_yNTPg>
- <xmx:Br8LaccAfd2RxcmBzikz1-a4QXzVsIgugQLoSqTzvWPVsnWwW8uPLw>
- <xmx:Br8Lae_t1UzMZmrXEvJgYAW_uRng8V9-t33OaBLshiwG8ZmVggq0ug>
- <xmx:B78Lae93JW0yXL5z2sXlQSntyTjxQFae3RxM6YtN7XaGlRzCEhrRBMPJ>
+ frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
+ leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihsh
+ htvghmshdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:mcELaXxmxqzBlDb32Pa425WOUT_kfAONWDwJcWK2uz748sWviEgfug>
+ <xmx:mcELafcAJgcCmbNzxal3A7niJEbc53ar_0UtKkMq45krnVV8WnKx3g>
+ <xmx:mcELaTKcmm337IQLdDSPpplqW9_rdHtajTia-uUNUl6A8Xih3r5Ljg>
+ <xmx:mcELaQHrB9chMFFkG7fYc28QO7mhFVUp3Ha739h_RFy9UNV3GVomtQ>
+ <xmx:mcELaf8GcKa3q7GCgr7V-TWpWRXk-eQZrl-TS9cESIt8WWdPR0NiNKmN>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Nov 2025 16:17:57 -0500 (EST)
+ 5 Nov 2025 16:28:56 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Gregory Etelson <getelson@nvidia.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org,
- mkashani@nvidia.com, rasland@nvidia.com,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: Re: [PATCH v3 1/2] ethdev: make representor parameter more explicit
-Date: Wed, 05 Nov 2025 22:17:55 +0100
-Message-ID: <8735291.3yuU7cT3dn@thomas>
-In-Reply-To: <20251105112039.1db64906@phoenix>
-References: <20251028095831.53669-1-getelson@nvidia.com>
- <20251105174839.323085-1-getelson@nvidia.com>
- <20251105112039.1db64906@phoenix>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] mbuf: improve mbuf comments
+Date: Wed, 05 Nov 2025 22:28:55 +0100
+Message-ID: <11692478.3WhfQktd6Z@thomas>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65530@smartserver.smartshare.dk>
+References: <20251105112810.20838-1-mb@smartsharesystems.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65530@smartserver.smartshare.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -94,30 +87,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-05/11/2025 20:20, Stephen Hemminger:
-> Looks good as is, a couple of minor observations.
-> 
-> > +	/* pfX... or (pfX)... */
-> > +	if ((str[0] == 'p' && str[1] == 'f') ||
-> > +	    (str[0] == '(' && str[1] == 'p' && str[2] == 'f')) {
-> 
-> This is correct but seem like it is getting verbose.
-> If there are more cases than this looking for prefix, might be
-> useful to have helper function.
-> 
-> Looks like devargs could use some better pattern matching,
-> lots of string handling already in this code.
-> String processing in C is often an error trap.
-> 
-> > +		if (str != NULL && str[0] == ')') {
-> > +			str++; /* advance past ")" */
-> > +			eth_da->flags =
-> > +				RTE_ETH_DEVARG_IGNORE_PF_REPRESENTOR;
-> 
-> Can't that go on one line, max line length in DPDK is 100.
-> Is there a case where there could be multiple devargs flags?
+05/11/2025 12:33, Morten Br=C3=B8rup:
+> > From: Morten Br=C3=B8rup [mailto:mb@smartsharesystems.com]
+> > Sent: Wednesday, 5 November 2025 12.28
+> >=20
+> > Updated the comment preceding the 'rearm_data' fields to reflect that
+> > some
+> > ethdev drivers don't really set the rearm_data fields on RX descriptor
+> > rearm, but rather when pulling the packet from the descriptor.
+> > By doing this, they avoid a store operation into the mbuf when they
+> > rearm
+> > the TX descriptor, and instead postpone it to later, where it will be
+>=20
+> Typo: TX descriptor -> RX descriptor.
 
-It is the first flag.
-I would prefer this flag to be named RTE_ETH_DEVARG_REPRESENTOR_IGNORE_PF.
+Another Typo: RX -> Rx ;)
+
+We agreed to prefer Tx/Rx capitalization in devtools/words-case.txt.
+I personnaly think it is more correct, as it is not an acronym.
 
 
