@@ -2,50 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9013ECCFA0D
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 18:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADC5CCFA0D
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 18:59:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 992C540698;
-	Wed,  5 Nov 2025 19:30:51 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id 028A04021F;
- Wed,  5 Nov 2025 19:30:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762367451; x=1793903451;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=6OnCASym3Dp0Jkus7buNy854dfbQlTt3/M6CdMVD10g=;
- b=nXcFt1QTixkEq6YjA+P2vUNoLJsbi2zNqkAy2weT4HeaOaeJtIp0RZGc
- BHIqjAFLNJEaz1PxEDeLlKUEYVCkkDgEjo/T2zuL/MU4WB1aQNyawsqig
- 7PrpBmdmk4TCYOvGq8eFdmcId/GeS11jkerFRXs/dv6OwuWaWFXrbKcfZ
- hBfKNYB/Vszz1h4QKXKq8zbwt0NPv+VoMywo5ffGWD7uBqkfMsuv8hWFY
- bmu1I65crWrCWPUdZlxD6nHQAMcJarREYRfpmCF759lLcp+ACIYQ9k37C
- e1g3EfA33E/gmwVpN0STA3vuMD4VHCRXGgoepazL5DlTzuGXZghM5uWDG Q==;
-X-CSE-ConnectionGUID: f43hI5elSVuJHOW2o8NT3A==
-X-CSE-MsgGUID: cTjaLdqNSiuNz+qFH95UvA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="87120653"
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; d="scan'208";a="87120653"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Nov 2025 10:30:50 -0800
-X-CSE-ConnectionGUID: 4osl6rNZSFOppoa2KOg39Q==
-X-CSE-MsgGUID: Ftt9jADXTPG1R8PgmG4XvA==
-X-ExtLoop1: 1
-Received: from pae-14.iind.intel.com ([10.190.203.159])
- by fmviesa003.fm.intel.com with ESMTP; 05 Nov 2025 10:30:47 -0800
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
- Anurag Mandal <anurag.mandal@intel.com>, stable@dpdk.org
-Subject: [PATCH v4] net/ice: add option to enable source prune
-Date: Wed,  5 Nov 2025 18:30:31 +0000
-Message-Id: <20251105183031.91709-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251101104627.64906-1-anurag.mandal@intel.com>
-References: <20251101104627.64906-1-anurag.mandal@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2DBC5402C5;
+	Wed,  5 Nov 2025 19:59:53 +0100 (CET)
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
+ [209.85.210.171])
+ by mails.dpdk.org (Postfix) with ESMTP id ECDB34021F
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 19:59:51 +0100 (CET)
+Received: by mail-pf1-f171.google.com with SMTP id
+ d2e1a72fcca58-7af6a6f20easo240137b3a.0
+ for <dev@dpdk.org>; Wed, 05 Nov 2025 10:59:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762369191;
+ x=1762973991; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=tMdyIuGISo7IjFWKmCGZeuwWtmtzSaq3TWiixecNvr0=;
+ b=t72frQ2291rayRFCrMuoviKlC6OAnNdtNsKL6MiJzaThe8Beukhmw+Yj4J2cIsfBDK
+ q4w1sJI2Hly+pnbMHJTxN7vHxcDNkXgVmE0xAU25qoGytj6M8riTMyTN5OgoQkjZSkYK
+ WyWurYAZPgsAUKe/PEdoAEZe3yHDt/7joXzs3N/byQqTqwpX+oryNPJFuv5bb7f1BbkY
+ r6zPEr8wNYKJWHw6OcZNE7ldFxCZ4TytrZa6dNh0ZbdOurE3dkua28KRscSTuRGU1lik
+ tDzyrQAAGElJuX7NygdISTs3rG0lfMWKE2LeqmE/TClcT1qe5IWMl5m7JxV9lUnwy54N
+ rrcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762369191; x=1762973991;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=tMdyIuGISo7IjFWKmCGZeuwWtmtzSaq3TWiixecNvr0=;
+ b=SJB6gSEwIG2JL36FmsBfJSNCck5fTmncFh01ytlMpLwHmSkfmRNzMwiT4c6vFc4y59
+ oHW9Bjhd3fczcphtaLpMs6Zalnq1dM7+QK+o8UAtvASyOCo80ChMMbePMS/XXNGewrSw
+ CBXUO0wcrexmAmiQHUGVaj1SB4p0R79/DMDNedYW958g7EHDIlXWEh5QHBqCUaCR5czA
+ 0MHTfCgG4niJiB6oI1m9xW6XVoCN02OONVJmf69r1oyp7VBKF6ObFw+2gQ47VuzDSLG5
+ ldc+FmDgjeZJkzRnAPW1jaZfmm80xmwlLZoAPyidOkvXUS9PP/YjtSgK40hKxjgxWDim
+ PKLg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUbNQvmW6A7YDoRgPcXKdZY0NonV6hOI0CfUy90D/oldtcU10RDiJZZzWhdxilIvjSqg9I=@dpdk.org
+X-Gm-Message-State: AOJu0YzGZcZmGd1V5sHm6lCLZd0qY7uQzwLrAw0W54DCqJwCy5tjba72
+ ARRDfquCkYYMHKs+yxpmp80+b37+8LnxJsxW0f8eitctUTrsDh0uZXsqn+1u7FgVZbo=
+X-Gm-Gg: ASbGncukQQAtOjoV5S5ug6pl9sbcpIl5qSKRQCl9YDDXXGFdE8hLmijnGb212/GhxtF
+ fxmMSwqjtF5CjNuR+pfZIYU6fhqGBGRvXJRsU/+IT58mvWUDvNwYi7+xnlX+5uiqtJktp435sF+
+ y4zX4iTVvvntGcV5JQtMTidoDsEQAKm4+3Wucs7wsufLaB2RvVnOYisqUMK74dUojIOM8Bhif9Q
+ xwSJ0U4L5o4K8bmoxTcoJuF247yxUUfr6Vmugp0Jp10FMT0HJyYEy3NMgc7IP663EZtKdRInQcZ
+ ANCqDGpg8Jf38xHRfSNlTPhz71L1jiK/oTR/hFoN5I2Yu2u5wUABbK0vTBNnobB+XifBf4EdpLq
+ GX3eZUK/NnEFWEjpqA31bkWyx5Lxs76qp+o1pUJD4CQ2G5E7x2jJVCC/elYWNCSlG0PtNRIsTkZ
+ 39G6XQ+iWpqpZsUqwv9sa6EhCW5Po19YuoVQ==
+X-Google-Smtp-Source: AGHT+IH54VxeZ8/k33Ki+8Cb9GJAQjdsG0duVAIAQjwHSPt9pEbZgSwyulrUJyqKO3fsIrwo5hEIog==
+X-Received: by 2002:a05:6a20:2729:b0:340:cc06:9514 with SMTP id
+ adf61e73a8af0-34f86e0bb65mr4042962637.57.1762369190775; 
+ Wed, 05 Nov 2025 10:59:50 -0800 (PST)
+Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-341a68d5c17sm3718541a91.13.2025.11.05.10.59.49
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 05 Nov 2025 10:59:50 -0800 (PST)
+Date: Wed, 5 Nov 2025 10:59:46 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Chengwen Feng <fengchengwen@huawei.com>
+Cc: <thomas@monjalon.net>, <dev@dpdk.org>, <aman.deep.singh@intel.com>,
+ <liuyonglong@huawei.com>, <yangxingui@huawei.com>, <lihuisong@huawei.com>
+Subject: Re: [PATCH v2 0/3] testpmd support pause/resume specify lcore's fwd
+Message-ID: <20251105105946.73a06834@phoenix>
+In-Reply-To: <20251105094748.3269-1-fengchengwen@huawei.com>
+References: <20251104040916.25864-1-fengchengwen@huawei.com>
+ <20251105094748.3269-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,141 +85,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Source prune is disabled by default to support
-VRRP advertisement packets in a vsi of ice PF.
-There is no way to enable source prune itself.
+On Wed, 5 Nov 2025 17:47:45 +0800
+Chengwen Feng <fengchengwen@huawei.com> wrote:
 
-This patch introduces devarg "source-prune-enable" to allow
-user to enable source prune.
+> This patch support pause/resume specify lcore's forwarding for testpmd,
+> and also include two bugfix which found when test DCB function.
+> 
+> Chengwen Feng (3):
+>   app/testpmd: fix invalid txp when setup DCB forward
+>   app/testpmd: fix wrong Rx queues when setup DCB forward
+>   app/testpmd: support pause/resume specify lcore
+> 
+>  app/test-pmd/cmdline.c                      | 126 ++++++++++++++++++++
+>  app/test-pmd/config.c                       |   9 +-
+>  app/test-pmd/testpmd.c                      |   5 +
+>  app/test-pmd/testpmd.h                      |   2 +-
+>  doc/guides/testpmd_app_ug/testpmd_funcs.rst |  14 +++
+>  5 files changed, 149 insertions(+), 7 deletions(-)
+> 
 
-Enable Source Prune to automatically drop incoming packets when
-their source MAC address matches one of the MAC addresses assigned
-to that same NIC port.
+Please split bug fix from enhancements.
 
-Tested the following with VRRP advertisement packets in a
-vsi of ice PF:
-1. Source prune default mode with no devarg option.
-2. Enable source prune with devarg"source-prune-enable=1".
-3. Disable source prune with devarg"source-prune-enable=0".
+The whole scheme looks like an optimization for power usage in testpmd.
+Since testpmd is solely focused on performance, I don't think you have
+provided enough justification to add the new feature.
 
-Fixes: 6f866eb93e79 ("net/ice: fix dropped packets when using VRRP")
-Cc: stable@dpdk.org
+With DCB if there are TC's that could receive packets, it is better
+not to never poll those queues. 
 
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
-V4: Adressed Bruce Richardson's comment
- - changed from private API to devarg option.
-
- doc/guides/nics/ice.rst            | 11 +++++++++++
- drivers/net/intel/ice/ice_ethdev.c | 25 +++++++++++++++++++++++--
- drivers/net/intel/ice/ice_ethdev.h |  1 +
- 3 files changed, 35 insertions(+), 2 deletions(-)
-
-diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
-index 7e9ba23102..09561b08c5 100644
---- a/doc/guides/nics/ice.rst
-+++ b/doc/guides/nics/ice.rst
-@@ -183,6 +183,17 @@ Runtime Configuration
-   If the value provided is greater than the number of levels provided by the HW,
-   SW will use the hardware maximum value.
- 
-+- ``Source Prune Enable`` (default ``0``)
-+
-+  Enable Source Prune to automatically drop incoming packets when
-+  their source MAC address matches one of the MAC addresses assigned
-+  to that same NIC port.
-+
-+  Source Prune can be enabled by setting the devargs parameter ``source-prune-enable``,
-+  for example::
-+
-+    -a 80:00.0,source-prune-enable=1
-+
- - ``Protocol extraction for per queue``
- 
-   Configure the RX queues to do protocol extraction into mbuf for protocol
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index 4669eba7c7..540d0bd977 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -41,6 +41,7 @@
- #define ICE_DDP_FILENAME_ARG      "ddp_pkg_file"
- #define ICE_DDP_LOAD_SCHED_ARG    "ddp_load_sched_topo"
- #define ICE_TM_LEVELS_ARG         "tm_sched_levels"
-+#define ICE_SRC_PRUNE_ENABLE_ARG  "source-prune-enable"
- #define ICE_LINK_STATE_ON_CLOSE   "link_state_on_close"
- 
- #define ICE_CYCLECOUNTER_MASK  0xffffffffffffffffULL
-@@ -58,6 +59,7 @@ static const char * const ice_valid_args[] = {
- 	ICE_DDP_FILENAME_ARG,
- 	ICE_DDP_LOAD_SCHED_ARG,
- 	ICE_TM_LEVELS_ARG,
-+	ICE_SRC_PRUNE_ENABLE_ARG,
- 	ICE_LINK_STATE_ON_CLOSE,
- 	NULL
- };
-@@ -1716,6 +1718,7 @@ ice_setup_vsi(struct ice_pf *pf, enum ice_vsi_type type)
- 	uint16_t max_txqs[ICE_MAX_TRAFFIC_CLASS] = { 0 };
- 	uint8_t tc_bitmap = 0x1;
- 	uint16_t cfg;
-+	struct ice_adapter *ad = (struct ice_adapter *)hw->back;
- 
- 	/* hw->num_lports = 1 in NIC mode */
- 	vsi = rte_zmalloc(NULL, sizeof(struct ice_vsi), 0);
-@@ -1753,8 +1756,20 @@ ice_setup_vsi(struct ice_pf *pf, enum ice_vsi_type type)
- 		 * by ice_init_hw
- 		 */
- 		vsi_ctx.info.sw_id = hw->port_info->sw_id;
--		vsi_ctx.info.sw_flags = ICE_AQ_VSI_SW_FLAG_LOCAL_LB;
--		vsi_ctx.info.sw_flags |= ICE_AQ_VSI_SW_FLAG_SRC_PRUNE;
-+		/* Source Prune */
-+		if (ad->devargs.source_prune_enable == 1) {
-+			/* Enable source prune */
-+			vsi_ctx.info.sw_flags &=
-+				~(ICE_AQ_VSI_SW_FLAG_LOCAL_LB);
-+			vsi_ctx.info.sw_flags &=
-+				~(ICE_AQ_VSI_SW_FLAG_SRC_PRUNE);
-+		} else {
-+			/* Disable source prune to support VRRP */
-+			vsi_ctx.info.sw_flags =
-+				ICE_AQ_VSI_SW_FLAG_LOCAL_LB;
-+			vsi_ctx.info.sw_flags |=
-+				ICE_AQ_VSI_SW_FLAG_SRC_PRUNE;
-+		}
- 		cfg = ICE_AQ_VSI_PROP_SW_VALID;
- 		vsi_ctx.info.valid_sections |= rte_cpu_to_le_16(cfg);
- 		vsi_ctx.info.sw_flags2 = ICE_AQ_VSI_SW_FLAG_LAN_ENA;
-@@ -2449,6 +2464,11 @@ static int ice_parse_devargs(struct rte_eth_dev *dev)
- 	if (ret)
- 		goto bail;
- 
-+	ret = rte_kvargs_process(kvlist, ICE_SRC_PRUNE_ENABLE_ARG,
-+				 &parse_bool, &ad->devargs.source_prune_enable);
-+	if (ret)
-+		goto bail;
-+
- 	ret = rte_kvargs_process(kvlist, ICE_LINK_STATE_ON_CLOSE,
- 				 &parse_link_state_on_close, &ad->devargs.link_state_on_close);
- 
-@@ -7659,6 +7679,7 @@ RTE_PMD_REGISTER_PARAM_STRING(net_ice,
- 			      ICE_DDP_FILENAME_ARG "=</path/to/file>"
- 			      ICE_DDP_LOAD_SCHED_ARG "=<0|1>"
- 			      ICE_TM_LEVELS_ARG "=<N>"
-+			      ICE_SRC_PRUNE_ENABLE_ARG "=<0|1>"
- 			      ICE_RX_LOW_LATENCY_ARG "=<0|1>"
- 			      ICE_LINK_STATE_ON_CLOSE "=<down|up|initial>");
- 
-diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index 6478d6dfbd..408cbe4a38 100644
---- a/drivers/net/intel/ice/ice_ethdev.h
-+++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -614,6 +614,7 @@ struct ice_devargs {
- 	uint8_t pps_out_ena;
- 	uint8_t ddp_load_sched;
- 	uint8_t tm_exposed_levels;
-+	uint8_t source_prune_enable;
- 	int link_state_on_close;
- 	int xtr_field_offs;
- 	uint8_t xtr_flag_offs[PROTO_XTR_MAX];
--- 
-2.34.1
-
+That said, longer term it would make sense to bring of the power
+saving logic that is in examples into testpmd.
