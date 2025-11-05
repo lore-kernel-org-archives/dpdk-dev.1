@@ -2,131 +2,126 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9087CCFA0D
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 17:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2CFCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 18:02:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E852440A77;
-	Wed,  5 Nov 2025 18:50:19 +0100 (CET)
-Received: from PH7PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11010010.outbound.protection.outlook.com [52.101.201.10])
- by mails.dpdk.org (Postfix) with ESMTP id 8021A4021F
- for <dev@dpdk.org>; Wed,  5 Nov 2025 18:50:18 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B7D1640608;
+	Wed,  5 Nov 2025 19:02:21 +0100 (CET)
+Received: from BN1PR04CU002.outbound.protection.outlook.com
+ (mail-eastus2azon11010017.outbound.protection.outlook.com [52.101.56.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 5F9704021F;
+ Wed,  5 Nov 2025 19:02:18 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eXDYFGLbV+nkhU8wMI8wU5W7IEQZs+uvsmAgb8Muy+Tc//zWt91SQQ5Lnhe8uWrvPc4QOySiIPThHLh4+1H/aWlzSy8LoSwiJfsHjuSpLxi40CP/YIuSfjiE+ki9PTNhh1Od6qKOMcklqPBDGC8atpkEMvsx/HlqxTmW9GQNVCEmbGI2itjTe86vZF/wtY3MSou/5510pO2vUktq1HIv6dGE0B8HHgpSL1TYPoZRg8WTe9dXRGEe3wWp/K8n/Q0YRppEoBqqDrAJ5bTrQLgRXAn1oXyPiqNfS+oFFcvsfkxEbISPS/wuI7tuIepRQEWQjSOJ+OcNHh9f0X5+EcYfPQ==
+ b=uLqH3MZ9yNHpT1oZNaCXiJGWViVZ9afGcJ4j2KA990IWE6zx0kspRsODo2MjNvm3I2a5ZXvFrQZTyAi5JGGbWUAmlGtamxz7ablTZCp+5kmSXsw5OgpVCdADrAFevsLGV1c1ykppED9pIYBnLdRC9yBkiR3eABdhSyDZ8yaBF9Yye9SwtB9BLnNdvP4F7sb7ezFeQU2nWBTZyllCZaxdlH76yC1Tm/L4goz8XTKSrMvFXN/iLDyCGfRprs92ysRfpX+zRukjWtyaqC+jJOIq+Kcp2Ezng400KDs1YoLIiq2UvbGgQ883uvPDQbw1GoB+CXAaECBr+J0isvKzDVrOmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qntxBU1t9iTKCTq48gNKiO9bSKhQiq8gK+C4aNBsFUY=;
- b=yuicGxxTQz+zvggKCbMv1hExkUvf3SE3T9J/3k5EgrvhzgcQypP6TbF96QA30WZ0IgJMnMrTVTqDAr8EKMWHVX8dLcnItZfyKGBUXSkwPMn/q0mPJ9g8Ge1MZMG2JjA+J3Ww9zaRfUtWqfTiUPHzydMQ+ZIDdYux7AVGUuhOsNMAw0MLNXODfhHQ+NNNKKVTyrJtSpOYO+uNRFrXpT1LTR7WuB8/bwV0n39WFm4geERJPVPKJq1pu44cgkjs8V5eNgByJc3QBCy2EJKVGX2GzP/2h72fXPCEJD4KStwuc/dNcaQ+dsyTRVbwjDJQyN4lOpYms/UjSa68Q7GnFbea2w==
+ bh=rIwD7toF6JSPxztapptXZ6Giz8HmfEH/auVQRyn/6VI=;
+ b=BTYHFa5xSdxHL/a6yxzyEXM7/YCMRMAZVSb4AbMeFEqjwGZnfD8oea3wZgvMEwUjHnN/mSTB/GWjLmOEmGcOwElAxDKdeZ1AGvxcj4txlGbSM5UDZoNGSV6RXPDzP6x2ZLFr+UtL0+9PmseMpRa5TOcYirNhgL6PCwu0bwfj0THbD6Tpc9UTRu+HPWwJrtSK3oLzaNK+Y1qwb/w8LoQ6ijRD35YruucrXcNqvceM8Do8AxT65rVvVxaW66EaB44vlNWaU54MIYVHwRrh4kDYaUnxM6pK7xuwpDisJO1wCFR0uPwoFuKfykKDVgZFIRWZj/uS5kIISRS4eR2m7LUUWw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qntxBU1t9iTKCTq48gNKiO9bSKhQiq8gK+C4aNBsFUY=;
- b=JqBDZnNnfWtBnjRhG1HmghIE5DiahoXFXEOoVT4zvCM0qB6X0FWFweMIkyLyjTpGSY6kPgG0F8n6rDhmjV2P1bQ2/T1Jv8/JdBxIlRMCS6NMn/Uso+WcyRbJrVUTvAiQc1jus1bESt6YA2GbbPc8gths0NEKman3cth7dx9GkSOKteTxgTDgIIeRJ70l4/5l1vvRcDoKdupH3YWXoGcHz+rT0hkuh6eCxg2fpBqqYU/wxtYSKQZhoe/TWM3/H4Cz2REeS2mqPRoDLTJwT2Ei6UpLB1SEHoeujTwazis7H+tdGk3m+jFDRsHq3lOfUj4q6qslnkdkptMlLbIZcazNBw==
-Received: from MN2PR14CA0030.namprd14.prod.outlook.com (2603:10b6:208:23e::35)
- by DS0PR12MB6485.namprd12.prod.outlook.com (2603:10b6:8:c6::9) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.15; Wed, 5 Nov 2025 17:50:15 +0000
-Received: from BL02EPF0002992A.namprd02.prod.outlook.com
- (2603:10b6:208:23e:cafe::89) by MN2PR14CA0030.outlook.office365.com
- (2603:10b6:208:23e::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.8 via Frontend Transport; Wed, 5
- Nov 2025 17:50:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ bh=rIwD7toF6JSPxztapptXZ6Giz8HmfEH/auVQRyn/6VI=;
+ b=VnFy7M1H2f0LOQ/RArGz1ZVuTTwOLRnIbKTsEZpSf5Wn3nGBPz+93iURRFxmv/wgCX47QSNxNM6GSeU1N0DZYEg/lns3jHgIVT0lG8SxYOGHMIQb51piZzpg1NUzhN87a73jDsMJYuEvtonDFFIbmEQUuI+k7VWBO6VKQNo1pHl3kD7IQ5GrzvxBhyNpirV66bEO5tGgBHNZPb7lSH4OriLUkcWBUakFnU94qeE9oj+zHN8gMO9Thk3FDuAcewCVNmhPQ52XIECSsozOxhfDk/eTVGuXLG/9VHzigxEBdS1ehfpkAY+EGvBHX/B91IhUOHdF+V/hHB1jGIbkifcv9w==
+Received: from SA9PR13CA0063.namprd13.prod.outlook.com (2603:10b6:806:23::8)
+ by PH8PR12MB7423.namprd12.prod.outlook.com (2603:10b6:510:229::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Wed, 5 Nov
+ 2025 18:02:11 +0000
+Received: from SA2PEPF00003AE8.namprd02.prod.outlook.com
+ (2603:10b6:806:23:cafe::13) by SA9PR13CA0063.outlook.office365.com
+ (2603:10b6:806:23::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.10 via Frontend Transport; Wed,
+ 5 Nov 2025 18:02:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BL02EPF0002992A.mail.protection.outlook.com (10.167.249.55) with Microsoft
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SA2PEPF00003AE8.mail.protection.outlook.com (10.167.248.8) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Wed, 5 Nov 2025 17:50:15 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9298.6 via Frontend Transport; Wed, 5 Nov 2025 18:02:10 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 5 Nov
- 2025 09:49:59 -0800
-Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 10:01:44 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 5 Nov
- 2025 09:49:55 -0800
-From: Gregory Etelson <getelson@nvidia.com>
+ 2025 10:01:43 -0800
+Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 5 Nov 2025 10:01:41 -0800
+From: Shani Peretz <shperetz@nvidia.com>
 To: <dev@dpdk.org>
-CC: <getelson@nvidia.com>, <mkashani@nvidia.com>, <rasland@nvidia.com>,
- <thomas@monjalon.net>, Dariusz Sosnowski <dsosnowski@nvidia.com>, "Viacheslav
- Ovsiienko" <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>
-Subject: [PATCH v3 2/2] net/mlx5: support PF representor suppression in
- multi-port E-Switch
-Date: Wed, 5 Nov 2025 19:48:38 +0200
-Message-ID: <20251105174839.323085-2-getelson@nvidia.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251105174839.323085-1-getelson@nvidia.com>
-References: <20251028095831.53669-1-getelson@nvidia.com>
- <20251105174839.323085-1-getelson@nvidia.com>
+CC: Shani Peretz <shperetz@nvidia.com>, <stable@dpdk.org>, Chas Williams
+ <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>, Pawel Wodkowski
+ <pawelwod@gmail.com>, Declan Doherty <declan.doherty@intel.com>
+Subject: [PATCH] net/bonding: fix MAC address propagation in 802.3ad mode
+Date: Wed, 5 Nov 2025 20:01:35 +0200
+Message-ID: <20251105180135.1181619-1-shperetz@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
+X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0002992A:EE_|DS0PR12MB6485:EE_
-X-MS-Office365-Filtering-Correlation-Id: 462c58a1-519b-4453-e2fc-08de1c93c6d9
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE8:EE_|PH8PR12MB7423:EE_
+X-MS-Office365-Filtering-Correlation-Id: f831bc32-b649-4a45-b8b8-08de1c957133
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|1800799024|36860700013|376014; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?SdTD4X/LlaEH1/OfRTtYInhfqYSDqsG2Y931LFli18GLu4coBNi1SWbbJU+3?=
- =?us-ascii?Q?gKLRf5/iUzbgvLSuQo98+RA+2gBXBIR7AmjCZ3RBX8vB+3vSfr2h1vB7GUKU?=
- =?us-ascii?Q?wViIhYeE2zxQByWSPO3W2IeU8EEI02IZduEatQehI+4iiade6zUSPrZTGVMz?=
- =?us-ascii?Q?tailxpKORCZ+CWbmY1LzY/hGJguFN34M8WzwqSUF92wg2e6eJ7SVObPK6Rse?=
- =?us-ascii?Q?JnZQG4RdVcP62Mg+VI4OdhPhVkaVyzmhMEuc/xfQhBYYMDTcgBgxANI4ajGY?=
- =?us-ascii?Q?2jmgz4Ku57YZh+iWOsoSwbjotRpuSElsBmHJOir4ffl8ez2i/cX/1EJ4Q4kT?=
- =?us-ascii?Q?sY9rOyErvMsjXzwnzQHXP2+Jni628Z1hluPaXGFqR5V8vlSkkX6kM3kaNzvw?=
- =?us-ascii?Q?9qx7f2VFTod6vHZ19B7n+GT+6aYCrCUDgouTfNU5DZ8zP6K+saNh/uM0mm5Y?=
- =?us-ascii?Q?FvM46o6sB8C4G6CW/m5QzXC25EHb5KI+HtKjzypHPs7oL52lnUk2654ubcaJ?=
- =?us-ascii?Q?iCwefEwD6p3F4tAzH/Xw2idDtw7uh4ug68kMpX8Awne96uir3myk8QyzqW6u?=
- =?us-ascii?Q?M45z9lX5BaksHJgkRyelT5Zhf1xMjybAaoN3QVFeeCzVKhMW9+EgnGkOwk+4?=
- =?us-ascii?Q?tNAmS3e2Anah876qObMxZHvf8NBrIlWEgA5MImLWdR6g+g8aYVvw+aAJZcsg?=
- =?us-ascii?Q?yRNADbCWELTlTy0jQ1ZSxvNxSG/LsKkv1XNwOV9NIAeD0aIDJYIu/O35kVSv?=
- =?us-ascii?Q?8khL56Fx4cfd/dqLYIfkdrSTWZFlqXnp6kqguZtm6pJAqh+esp/WmXeXSt+4?=
- =?us-ascii?Q?PBHVM+dzFte1cRtrfZNCJJj5cvz7/4Xey6lrRXLfiq2IBHnGU5vK7NpGioMe?=
- =?us-ascii?Q?fUOJBahj6Je3VkojoWty20CjhLt/BcS5so8w2xpA18jx0HJLW6mTwKSwzQkj?=
- =?us-ascii?Q?RsLJ40EuHiBYg7CYB+0dp2snZQgzGRuHwFJE489JHYNuw7j/lG7Pt3wPHT1F?=
- =?us-ascii?Q?tAhUevjAtPLqSlWUSPHUoEaJnyUTicYjMkAlfcUbTUE8CxMD38KoCZCOVpBv?=
- =?us-ascii?Q?+U4PmFCvA4AanNtODPFVLeKmheo6/X85DCLrZif27r+OoTwSReJPw52+bQj0?=
- =?us-ascii?Q?AO+x/aA9LKixLFjDenzQOtXlFjnaxcsG5XwBZHXfXy2rLI2Q28V5V+T7TO+2?=
- =?us-ascii?Q?M3INrBkUWjpyxJg18/MfxAvDJ8F+ugwHewZy5V9NY37HkHmNv9uDBZvGy6Xi?=
- =?us-ascii?Q?7kCk2kwAKzct3MiicVHgJLLDbCxpf83Ch/obf1y7+9XbdBvwM14oty/Yl+IR?=
- =?us-ascii?Q?ztt/aAQUKP2NsoHXOalYjoL/esI1F/jQt2q/Pp632MnlvKJxSEXIxHqa9m2f?=
- =?us-ascii?Q?SHQ+rDv389WlTln0dkyh9YHcj4qocNNfd4Cf+ppzJpuof3B+h+yWRhOxNUXo?=
- =?us-ascii?Q?cjV65U3DKWIMYaKL9ophDm0DOhQSDsq8R/AKMramoPQ8s9Yi6l5WZGwfA/fQ?=
- =?us-ascii?Q?oA37wv/7e86qB0S7Q1bWDaZddoYvAZGpbhdKMhEWf+Pxs14dfWvZ2AYazOPy?=
- =?us-ascii?Q?UxqYUOgwrQGShaic9lk=3D?=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014); DIR:OUT;
+ ARA:13230040|376014|82310400026|1800799024|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?LNfk36I1ozY6zscpAbCROviu6dZBRJO3io9RAp7XXsui0waLNwUMELdT7vV5?=
+ =?us-ascii?Q?Coo4LRtVdB/AQ3ROAE0rCOAKjMYxeaRXzU+u2YpN5cEW0LGWx4JEirk767Mm?=
+ =?us-ascii?Q?nB6rCl+ES+5rjmKjBLYyVQ5KOjr/C7N678Rd4O9p23jOcz9lZbunSySMFJPH?=
+ =?us-ascii?Q?YWF4YalEsC+S04w59vKlwDWtXLrTFR453s8Y2crX6A41ydvbnjAHysi7kgKL?=
+ =?us-ascii?Q?TvN+EPo4Bj5YKwiXD+8ig3PmDsC2tfG8lq7YVd7kBjvvYEYOWkF/76I4TJn0?=
+ =?us-ascii?Q?hTbRyeeoovN7og5m59wIfHVy/8J+k+QTZsqgojNmn0qKAGXaZMt5D8ZAvFA3?=
+ =?us-ascii?Q?i3k+4Zuc7/UNeTVt0GFAXx688kYvnPwcvzs8Bqge5vWp3NYNirgz3ndLC+8k?=
+ =?us-ascii?Q?2YUESz1jgDev/hvfuCcBIfRv2504uK6JFZcdm20BzZTfE1LEHuOmxmNSM7ir?=
+ =?us-ascii?Q?4sTEZHZMAgmNqjdFnAWsVxTeMxjxz7Z8R8zzCNdngDmBMd5gteb/8rGcDosu?=
+ =?us-ascii?Q?zjkDhixiUS33HfN8eJtvVj2+giUP+4Ge7uup2HMsBEI9zUfUqdivlOVo9ZmG?=
+ =?us-ascii?Q?iDjKPBUjKSwCh9lvtlx2I/phlqFMOOY2qJ/MrKunbXwqAsEHq5Kc0axaKkxl?=
+ =?us-ascii?Q?jE3ZqZ/W0kYCBe0bwzy59/WDI7RYUntP0KE8sUFSobOE+AzdWsLPko/xpamE?=
+ =?us-ascii?Q?8HGRtycwCiTwezXKHmbtHaQr7cEJluppnpIEYDW4GctxG5vg8taslIKeBIe+?=
+ =?us-ascii?Q?m1Bdykdhv6WL1ua8LINrCSNr/LAABweppXlyFvIdA9QrA88WJznpP7sr6OPG?=
+ =?us-ascii?Q?UFH6+CHnvIxTXvw7OuoNQQSl/DIwH2ELAR41xU4+BKDEyzylmCqmciJ6P/Do?=
+ =?us-ascii?Q?Q63Q27F7SJ2cYFWv778GUA363HsJmVhLNCg5WVNZ2BgoL5cSg2zFnT0uY4my?=
+ =?us-ascii?Q?n6SyVkqhkV+yEjL6zXKyQIzPashNQk/vIieNqFvREz2+/Peemeh5xBQiUGTD?=
+ =?us-ascii?Q?mUJWW38SahXmIuCJ5dZA/zoeCgHZnoCyL+XSGe6uR62ezIvxkn+3gTx6Xd12?=
+ =?us-ascii?Q?ZdGuqPRxyMWutcHCBUrdYE4cGmqCiH5WJTibM6DuFyNbQwyflGEvV1+qDs8p?=
+ =?us-ascii?Q?L1KA4ucI/wTXZ29KiPsVXe5YWz8MYNnrhBZu/qpQysgMfozj7fqN9NMh9+ir?=
+ =?us-ascii?Q?F3GFilKegi62q1Yku7B5xpxxiH8rUjdcU7vzQ3EOyG8yLyecTiVrEN2ZBGHF?=
+ =?us-ascii?Q?UA5j1djWeAJcu18wm1UWNKxDNP8PiaQVS0A8JlDKaoegjyEgm6mgx8i8iwrr?=
+ =?us-ascii?Q?S7yDpsnx3xoMQQs80GLbfUrdS34cJ2+YeI4JsfPvTgSW3ujM3iFyJsKKLMaC?=
+ =?us-ascii?Q?ZyReLJXQa/GbghFPu+bs8jxbqw5XScc5VrF020xvUK25fzooZssE0zHNNWYY?=
+ =?us-ascii?Q?apAx0UqbzId7o/U/ZqIY0iEsk8zahta9ob00xPMrAyly4S3LYgjTbXwwfk4y?=
+ =?us-ascii?Q?VxOwMHeshz8YUXwfE2XC0TF8IRrR9qY/jcluX2EzbHbJduSu41obCf8UM3iP?=
+ =?us-ascii?Q?r8b7g6ylvepJAvYL/rM=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013); DIR:OUT;
  SFP:1101; 
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 17:50:15.3385 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 462c58a1-519b-4453-e2fc-08de1c93c6d9
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Nov 2025 18:02:10.6744 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f831bc32-b649-4a45-b8b8-08de1c957133
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF0002992A.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: SA2PEPF00003AE8.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6485
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7423
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -140,65 +135,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In multi-port E-Switch setup, the MLX5 PMD always added
-PF representor port.
-For example, `representor=pf1vf[0,1]` implicitly added PF1 representor
-port:
+When changing the MAC address of a bonding device in 802.3ad mode,
+the new MAC was not propagated to the physical member NIC.
+This caused the physical NIC to drop all data packets sent to the
+new MAC address, resulting in connectivity loss.
 
-```
-Port     Name
-0        p0
-1        p1
-2        representor_c0pf1vf0
-3        representor_c0pf1vf1
-```
+It happens because the MAC update function only updated the
+LACP layer (actor.system) but not the physical NIC hardware MAC
+addresses.
 
-The patch adds support for the new representor format that suppresses
-PF representor attachment:
+This fix adds a call to rte_eth_dev_default_mac_addr_set() to update
+the hardware MAC on each member port.
 
-Example: `representor=(pf1)vf[0,1]`
+Bugzilla ID: 1158
+Fixes: 46fb43683679 ("bond: add mode 4")
+Cc: stable@dpdk.org
 
-```
-Port     Name
-0        p0
-1        representor_c0pf1vf0
-2        representor_c0pf1vf1
-```
-
-Signed-off-by: Gregory Etelson <getelson@nvidia.com>
+Signed-off-by: Shani Peretz <shperetz@nvidia.com>
 ---
-v2: Use updated rte_eth_devargs::flags.
-v3: Fix typo in comment.
----
- drivers/net/mlx5/linux/mlx5_os.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/bonding/rte_eth_bond_8023ad.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
-index c742e0f282..fe80773d49 100644
---- a/drivers/net/mlx5/linux/mlx5_os.c
-+++ b/drivers/net/mlx5/linux/mlx5_os.c
-@@ -2284,6 +2284,12 @@ mlx5_device_mpesw_pci_match(struct ibv_device *ibv,
- 	return -1;
- }
+diff --git a/drivers/net/bonding/rte_eth_bond_8023ad.c b/drivers/net/bonding/rte_eth_bond_8023ad.c
+index 1677615435..a3579f7bc2 100644
+--- a/drivers/net/bonding/rte_eth_bond_8023ad.c
++++ b/drivers/net/bonding/rte_eth_bond_8023ad.c
+@@ -1186,6 +1186,15 @@ bond_mode_8023ad_mac_address_update(struct rte_eth_dev *bond_dev)
+ 			continue;
  
-+static inline bool
-+mlx5_ignore_pf_representor(const struct rte_eth_devargs *eth_da)
-+{
-+	return (eth_da->flags & RTE_ETH_DEVARG_IGNORE_PF_REPRESENTOR) != 0;
-+}
+ 		rte_ether_addr_copy(&internals->mode4.mac_addr, &member->actor.system);
 +
- /**
-  * Register a PCI device within bonding.
-  *
-@@ -2592,6 +2598,8 @@ mlx5_os_pci_probe_pf(struct mlx5_common_device *cdev,
- 					if (list[ns].info.port_name == mpesw) {
- 						list[ns].info.master = 1;
- 						list[ns].info.representor = 0;
-+					} else if (mlx5_ignore_pf_representor(&eth_da)) {
-+						continue;
- 					} else {
- 						list[ns].info.master = 0;
- 						list[ns].info.representor = 1;
++		/* Update physical NIC hardware MAC address to match bonding device. */
++		if (rte_eth_dev_default_mac_addr_set(member_id,
++				&internals->mode4.mac_addr) != 0) {
++			RTE_BOND_LOG(ERR,
++				"Failed to update MAC address on member port %u",
++				member_id);
++		}
++
+ 		/* Do nothing if this port is not an aggregator. In other case
+ 		 * Set NTT flag on every port that use this aggregator. */
+ 		if (member->aggregator_port_id != member_id)
 -- 
-2.51.0
+2.34.1
 
