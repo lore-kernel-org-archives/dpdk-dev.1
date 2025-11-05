@@ -2,47 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9837ECCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 09:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDABCCFA0D
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 10:06:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 733F4406BA;
-	Wed,  5 Nov 2025 10:48:01 +0100 (CET)
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com
- [113.46.200.221])
- by mails.dpdk.org (Postfix) with ESMTP id CFB2540685
- for <dev@dpdk.org>; Wed,  5 Nov 2025 10:47:56 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=YbLlupLPGfvL1UFWHldvfIOHGLZRlgREjJKlL/x23d4=;
- b=6Or/2GtxH//9bvyf+elwmyTtJuahExF7IpbBWFrYYy/KM90zEiESpADQydNjSPrPLRT9JzfzW
- +lhgcBWjXT092/GFFTSWmD/OC3va6349dLSch7/FVNn55Zr9CjdCQ9S93rwxLtiSl81IccuksDf
- D5pBkFoHl8yZ0XB4foms2Uo=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
- by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4d1gSY02NrzRhS8;
- Wed,  5 Nov 2025 17:46:21 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id B78CF1400CD;
- Wed,  5 Nov 2025 17:47:55 +0800 (CST)
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 5 Nov 2025 17:47:55 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>, <stephen@networkplumber.org>
-CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>, <liuyonglong@huawei.com>,
- <yangxingui@huawei.com>, <lihuisong@huawei.com>
-Subject: [PATCH v2 3/3] app/testpmd: support pause/resume specify lcore
-Date: Wed, 5 Nov 2025 17:47:48 +0800
-Message-ID: <20251105094748.3269-4-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20251105094748.3269-1-fengchengwen@huawei.com>
-References: <20251104040916.25864-1-fengchengwen@huawei.com>
- <20251105094748.3269-1-fengchengwen@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 73386402C4;
+	Wed,  5 Nov 2025 11:06:53 +0100 (CET)
+Received: from fhigh-a3-smtp.messagingengine.com
+ (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+ by mails.dpdk.org (Postfix) with ESMTP id 2554B400D7
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 11:06:52 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 8ED7B1400250;
+ Wed,  5 Nov 2025 05:06:51 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Wed, 05 Nov 2025 05:06:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762337211;
+ x=1762423611; bh=2/Jo7MvdMhg9SDO3zOn+BEhAjboNNV0UtM6pdtGrHok=; b=
+ Mw2CrHU4n0Tv4mXJaXYSJIYe0wmgvPSLYXYztdLRyQRNRabOPfWcjiICqc/x4Lj5
+ Kc28oZ6cjhEzvTKimt1Z4oVUj0lxrCeLGk+y3NBE6viacFufF+LFgb0WRJigleQY
+ aasVz5mxOR5zTAXKt3o0KAvOeTvReED97TN0BptSotrZzynqMqCohKSzHaH9cVyd
+ cgKS96/rvCBWqQfYSQnNyWPV3le0m4jEOrIaOC2MbB56Lpm0RseBp5dmglQczJSk
+ kjgnWv2DIGgRtAaFTnNoK/tnjWh0p+37ULF8lk2YWXzFfDtT7O13GHnzVYspqMZ+
+ LDlAUZbhAwoDcuC6APKz6A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762337211; x=
+ 1762423611; bh=2/Jo7MvdMhg9SDO3zOn+BEhAjboNNV0UtM6pdtGrHok=; b=n
+ ssdNFs0uEAhbzzfKnT/pcdWc5Zd4wI67lusRRKFz4dtsz9vYMogwF0NFn2Hlc7Bi
+ 7+yVHl1hqUMcujVbhjtECg2LbvpxQ4FkhIFDMslGIvAQeeRickab1OsxHSlhcsuC
+ KLRFyI7HGmJSTwrPbfiskCVb3+08cGtbGGaNh9uqNfe2+7niIaRHK9C+DiiouC/p
+ ytfj+66dsyFHI0DPm9TxTy1Kpdt/XG4NajSNgp/YFYpZ/8aduHDDPL9oNGwWTTcv
+ uPEw8vL7HrHZ5PXCqnhayOPYnJZfrhEQL/lzgby0C1Xq8ObLYmEpKSuZp0Q7iN92
+ a4z4NF9u5gcOL9vh5eZlQ==
+X-ME-Sender: <xms:uiELaUyvvhMC0iaQkMvLb7aczECOrPxHKRn-n-uBSHWqVPtbM7vcoQ>
+ <xme:uiELacnWVtn31JH0UQ6KysRS9OEeJWkQpzXA1EGu3STko4QDgjj6z64O45VIS4h6b
+ 7kBIT003n7OuTgge333y-dGJb9OAL56NfceEHYSpi9GLj4ou5dGrQ>
+X-ME-Received: <xmr:uiELaVe80rmkMJdVa7kl26I_674I8CEF7TDvP5ZjFpJZR-rUq0-HYtR0YuM13CWB1nPZlWibN-Nq8c9XQPAycg64Ow>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeefiedvucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertd
+ dttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
+ ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevff
+ fgtdegkeeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgep
+ tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
+ gvthdpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
+ vhgrthhtuhhnuhhruhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopeguvghvseguph
+ gukhdrohhrghdprhgtphhtthhopehfvghnghgthhgvnhhgfigvnheshhhurgifvghirdgt
+ ohhm
+X-ME-Proxy: <xmx:uiELaapS9jcibUQSmK6a7aolOY5zyGD79M0d6_l1DfA6vEo7UvKnXA>
+ <xmx:uiELab72W_fwRE9TbQNZYUYHGYiLaHZsgJCTPX2FYGIwhqr2qCgFuA>
+ <xmx:uiELaYpGyRXrLcDkKllxHTlCwbtZwTmZ9ETEt56Vn5ZTbVsLCB6gJA>
+ <xmx:uiELaViArDmHVpiibKfkV77e_o_eHLSIjWEaIRzK80vjeGEycF4vWw>
+ <xmx:uyELadTBsXlUfVjQP9WPfx_wzTPm228fqrsduo0nILlxH9BH5CDsH3WV>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Nov 2025 05:06:50 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Vamsi Krishna <vattunuru@marvell.com>
+Cc: dev@dpdk.org, fengchengwen <fengchengwen@huawei.com>
+Subject: Re: [PATCH v2 1/1] dmadev: add domain_id field to access group join
+ API
+Date: Wed, 05 Nov 2025 11:06:48 +0100
+Message-ID: <2511688.Bm8zEkEi59@thomas>
+In-Reply-To: <793529f0-959b-4d72-a4de-5b06497a7c5e@huawei.com>
+References: <20251103102946.2204883-1-vattunuru@marvell.com>
+ <20251104052146.2308361-1-vattunuru@marvell.com>
+ <793529f0-959b-4d72-a4de-5b06497a7c5e@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,238 +90,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This commit supports pause/resume specify lcore, the command:
+> > Add domain_id field to access group join API, which is required
+> > to retrieve handler information associated with the specified domain.
+> > This enhancement ensures that domain-specific context is available
+> > during group join operations, improving flexibility and traceability
+> > in multi-domain environments.
+> > 
+> > Patch aligns the parameters of access group create and join APIs
+> > for consistency and clarity, also updates the dmadev.rst file with
+> > detailed steps.
+> > 
+> > Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
 
-  pause  fwd_core (lcore_id)
-  resume fwd_core (lcore_id)
+Applied, thanks.
 
-The background of this command:
-1. Only some TCs are expected to generate traffic when the DCB function
-   is tested based on txonly forwarding.
-2. Because each lcore will process all the traffic of one TC, therefore,
-   we could pause the lcores which process unexpected TCs by this
-   command.
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- app/test-pmd/cmdline.c                      | 126 ++++++++++++++++++++
- app/test-pmd/testpmd.c                      |   5 +
- app/test-pmd/testpmd.h                      |   2 +-
- doc/guides/testpmd_app_ug/testpmd_funcs.rst |  14 +++
- 4 files changed, 146 insertions(+), 1 deletion(-)
-
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 22afbdbad3..dacc1921bd 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -150,6 +150,12 @@ static void cmd_help_long_parsed(void *parsed_result,
- 			"    Stop packet forwarding, and display accumulated"
- 			" statistics.\n\n"
- 
-+			"pause fwd_core (lcore_id)\n"
-+			"    Pause specify lcore's forwarding.\n\n"
-+
-+			"resume fwd_core (lcore_id)\n"
-+			"    Resume specify lcore's forwarding.\n\n"
-+
- 			"quit\n"
- 			"    Quit to prompt.\n\n"
- 		);
-@@ -3975,6 +3981,124 @@ static cmdline_parse_inst_t cmd_stop = {
- 	},
- };
- 
-+/* *** pause specify forward core *** */
-+struct cmd_pause_fwd_core_result {
-+	cmdline_fixed_string_t pause;
-+	cmdline_fixed_string_t fwd_core;
-+	uint32_t lcore_id;
-+};
-+
-+static void
-+cmd_pause_fwd_core_parsed(void *parsed_result,
-+			  __rte_unused struct cmdline *cl,
-+			  __rte_unused void *data)
-+{
-+	struct cmd_pause_fwd_core_result *res = parsed_result;
-+	struct fwd_lcore *fc = lcore_to_fwd_lcore(res->lcore_id);
-+
-+	if (test_done) {
-+		fprintf(stderr, "Packet forwarding not started\n");
-+		return;
-+	}
-+
-+	if (fc == NULL) {
-+		fprintf(stderr, "core: %u not in the forward corelist.\n", res->lcore_id);
-+		return;
-+	}
-+
-+	if (fc->stopped == 2) {
-+		fprintf(stderr, "core: %u already paused!\n", res->lcore_id);
-+		return;
-+	}
-+
-+	printf("Telling core: %u to pause...", res->lcore_id);
-+	fc->stopped = 2;
-+	printf("\nWaiting for core: %u to finish...\n", res->lcore_id);
-+	rte_delay_ms(10);
-+	printf("Done.\n");
-+}
-+
-+static cmdline_parse_token_string_t cmd_pause_fwd_core_pause =
-+	TOKEN_STRING_INITIALIZER(struct cmd_pause_fwd_core_result,
-+			pause, "pause");
-+static cmdline_parse_token_string_t cmd_pause_fwd_core_fwd_core =
-+	TOKEN_STRING_INITIALIZER(struct cmd_pause_fwd_core_result,
-+			fwd_core, "fwd_core");
-+static cmdline_parse_token_num_t cmd_pause_fwd_core_lcore_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_pause_fwd_core_result,
-+			lcore_id, RTE_UINT32);
-+
-+static cmdline_parse_inst_t cmd_pause_fwd_core = {
-+	.f = cmd_pause_fwd_core_parsed,
-+	.data = NULL,
-+	.help_str = "pause fwd_core <lcore_id>: pause specify lcore's forwarding.",
-+	.tokens = {
-+		(void *)&cmd_pause_fwd_core_pause,
-+		(void *)&cmd_pause_fwd_core_fwd_core,
-+		(void *)&cmd_pause_fwd_core_lcore_id,
-+		NULL,
-+	},
-+};
-+
-+/* *** resume specify forward core *** */
-+struct cmd_resume_fwd_core_result {
-+	cmdline_fixed_string_t resume;
-+	cmdline_fixed_string_t fwd_core;
-+	uint32_t lcore_id;
-+};
-+
-+static void
-+cmd_resume_fwd_core_parsed(void *parsed_result,
-+			   __rte_unused struct cmdline *cl,
-+			   __rte_unused void *data)
-+{
-+	struct cmd_resume_fwd_core_result *res = parsed_result;
-+	struct fwd_lcore *fc = lcore_to_fwd_lcore(res->lcore_id);
-+
-+	if (test_done) {
-+		fprintf(stderr, "Packet forwarding not started\n");
-+		return;
-+	}
-+
-+	if (fc == NULL) {
-+		fprintf(stderr, "core: %u not in the forward corelist.\n", res->lcore_id);
-+		return;
-+	}
-+
-+	if (fc->stopped != 2) {
-+		fprintf(stderr, "core: %u not in pause state!\n", res->lcore_id);
-+		return;
-+	}
-+
-+	printf("Telling core: %u to resume...", res->lcore_id);
-+	fc->stopped = 0;
-+	printf("\nWaiting for core: %u to resume...\n", res->lcore_id);
-+	rte_delay_ms(10);
-+	printf("Done.\n");
-+}
-+
-+static cmdline_parse_token_string_t cmd_resume_fwd_core_resume =
-+	TOKEN_STRING_INITIALIZER(struct cmd_resume_fwd_core_result,
-+			resume, "resume");
-+static cmdline_parse_token_string_t cmd_resume_fwd_core_fwd_core =
-+	TOKEN_STRING_INITIALIZER(struct cmd_resume_fwd_core_result,
-+			fwd_core, "fwd_core");
-+static cmdline_parse_token_num_t cmd_resume_fwd_core_lcore_id =
-+	TOKEN_NUM_INITIALIZER(struct cmd_resume_fwd_core_result,
-+			lcore_id, RTE_UINT32);
-+
-+static cmdline_parse_inst_t cmd_resume_fwd_core = {
-+	.f = cmd_resume_fwd_core_parsed,
-+	.data = NULL,
-+	.help_str = "resume fwd_core <lcore_id>: resume specify lcore's forwarding.",
-+	.tokens = {
-+		(void *)&cmd_resume_fwd_core_resume,
-+		(void *)&cmd_resume_fwd_core_fwd_core,
-+		(void *)&cmd_resume_fwd_core_lcore_id,
-+		NULL,
-+	},
-+};
-+
- static unsigned int
- get_ptype(char *value)
- {
-@@ -14051,6 +14175,8 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
- 	&cmd_config_dcb,
- 	&cmd_read_rxd_txd,
- 	&cmd_stop,
-+	&cmd_pause_fwd_core,
-+	&cmd_resume_fwd_core,
- 	&cmd_mac_addr,
- 	&cmd_set_fwd_eth_peer,
- 	&cmd_set_xstats_hide_zero,
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index 2360da3a48..05549be1c5 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -2247,6 +2247,7 @@ run_pkt_fwd_on_lcore(struct fwd_lcore *fc, packet_fwd_t pkt_fwd)
- #endif
- 	fsm = &fwd_streams[fc->stream_idx];
- 	nb_fs = fc->stream_nb;
-+_resume:
- 	prev_tsc = rte_rdtsc();
- 	do {
- 		for (sm_id = 0; sm_id < nb_fs; sm_id++) {
-@@ -2287,6 +2288,10 @@ run_pkt_fwd_on_lcore(struct fwd_lcore *fc, packet_fwd_t pkt_fwd)
- 			prev_tsc = tsc;
- 		}
- 	} while (! fc->stopped);
-+	while (fc->stopped == 2)
-+		rte_pause();
-+	if (fc->stopped == 0)
-+		goto _resume;
- }
- 
- static int
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index fa46865c67..c3c4373af7 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -399,7 +399,7 @@ struct fwd_lcore {
- 	streamid_t stream_idx;   /**< index of 1st stream in "fwd_streams" */
- 	streamid_t stream_nb;    /**< number of streams in "fwd_streams" */
- 	lcoreid_t  cpuid_idx;    /**< index of logical core in CPU id table */
--	volatile char stopped;   /**< stop forwarding when set */
-+	volatile char stopped;   /**< stop forwarding when set to 1, pause when set to 2 */
- 	uint64_t total_cycles;   /**< used with --record-core-cycles */
- };
- 
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index e423abd40e..be125ff35c 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -143,6 +143,20 @@ Stop packet forwarding, and display accumulated statistics::
- 
-    testpmd> stop
- 
-+pause fwd_core
-+~~~~~~~~~~~~~~
-+
-+Pause specify lcore's forwarding::
-+
-+   testpmd> pause fwd_core (lcore_id)
-+
-+resume fwd_core
-+~~~~~~~~~~~~~~~
-+
-+Resume specify lcore's forwarding::
-+
-+   testpmd> resume fwd_core (lcore_id)
-+
- quit
- ~~~~
- 
--- 
-2.17.1
 
