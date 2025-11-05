@@ -2,82 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F90CCCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 21:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE2DCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 22:18:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C892B40B9E;
-	Wed,  5 Nov 2025 22:59:17 +0100 (CET)
-Received: from fout-a8-smtp.messagingengine.com
- (fout-a8-smtp.messagingengine.com [103.168.172.151])
- by mails.dpdk.org (Postfix) with ESMTP id 06C5D402E6;
- Wed,  5 Nov 2025 22:59:15 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.phl.internal (Postfix) with ESMTP id 51A8DEC018D;
- Wed,  5 Nov 2025 16:59:15 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Wed, 05 Nov 2025 16:59:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762379955;
- x=1762466355; bh=wmetYS5DQ6gcKZbW085+cr4PCClU3mfAaO1I3cAhQ0M=; b=
- cV4+mpqNtSq4kCzgLmmcAmKX4OP6IimQGTdji2CDVgJB9e6PPCOlXK0HRx4ovuyp
- 8sabiu1/7G/DxhnfndkQ6D+iUXLqnMo5+ocnBMM5HRpK8hKeZDXIH2vs01cw8Vpm
- dDR3sbhkOyPFZhyfds+up5brbNFgQqplpoAbszgXpcBobZN8xdRT6+ES2RPs+dyW
- l5LrxEdlZ+DUAw7um4C27Yykzmwb1Tpj5TWwXlfQSNweW79astZ2sdCGe3CcffVh
- EC8CkkXh1jD33VFm0VbVdrnWKlzAB8oD6SdEReLR75buEfbpTh7RAYQMarstN5nH
- pESGXx7SqBwT4GkYDcUQIA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762379955; x=
- 1762466355; bh=wmetYS5DQ6gcKZbW085+cr4PCClU3mfAaO1I3cAhQ0M=; b=r
- fY9EsUUIBwHHua18JcJFfd7x9bEevMdHGEctGGNh21Omcx7ucsvDuSYGWVOF3bj5
- 63g7nUfnGSZZo/FRor4yD/YQSc5r4cTGathVbSNDI5+AXZkszLPsv1mF6ZA3w/91
- BSf/eGECKKvXTjnA0D+pqVzrdxvdyY7IqpL0qxSxoQ1cGQjMXDLGJW/7JjbBOdOd
- UO80E8JfPq84aAwo25FlR0t1AehdfZLap0V/zs4HVuUogvQLkWTGkANN8BwG80kd
- GpuRBlWhjzJASjeN0Yjd8frHqUwB3oAXN3NugK2FWCpYQQUqrCckowFqs7KFL5L5
- QC0Fiik10xCQhKEby98og==
-X-ME-Sender: <xms:ssgLadBbFX3PJ5rjxgBnYuNyGhJsSwbuYTRlKjgXy_bFkOCi80Pvzw>
- <xme:ssgLaT9SGL_HnRA2oQ-eTN9eIA9by_sgaCWDj1NDuktqkdK5Jh-RReSv1q7MJyPBi
- mg1r9dv7bbtoVWBDjyauMMXFp1D0cHT3zNwLXyqGxvB0N-kP31Fmw>
-X-ME-Received: <xmr:ssgLaZAOQY_LtdMKHL72V6ErSlX7Sglitow0wkBgDMHctdEb-vbqzsKLd5WDPH56bBSqBBWM0ie8AQ13TjFWRYjVwQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeehtdegucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehkthhrrgihnhhorhesrhgvughhrghtrd
- gtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepshhtrggs
- lhgvseguphgukhdrohhrghdprhgtphhtthhopegrnhgurhgvmhhuvgeslhhinhhugidrmh
- hitghrohhsohhfthdrtghomhdprhgtphhtthhopegrlhhirghlnhhusehnvhhiughirgdr
- tghomh
-X-ME-Proxy: <xmx:ssgLaYRi_iTL3ZI5Y0s4TUDmVM9EzcQ7oUTeDEW1xdadau6NsaRUyA>
- <xmx:ssgLaQupsiVEFKHg-dXaj774FFwHQnTtj7S8_hg54oFaEuap-kB7Lg>
- <xmx:ssgLaU1SHv8lpLNO_1s1gD_INtDFtmCBaYYvceWhDe5Oe3AmPPU3cw>
- <xmx:ssgLaRU9pIFr_seS7HM_jeavxnKiW2y_D48LpIHELrC-0Aavy2uUrw>
- <xmx:s8gLafKQ8WiJedWUDGyCXS_cosG_5rtDtw80dMWm45GfJe1REHNTB6rk>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Nov 2025 16:59:13 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Kevin Traynor <ktraynor@redhat.com>
-Cc: dev@dpdk.org, Kevin Traynor <ktraynor@redhat.com>, stable@dpdk.org,
- Andre Muezerie <andremue@linux.microsoft.com>,
- Ali Alnubani <alialnu@nvidia.com>
-Subject: Re: [PATCH] docs: fix Nvidia bifurcated driver presentation link
-Date: Wed, 05 Nov 2025 22:59:12 +0100
-Message-ID: <3041567.aKNjEaI27c@thomas>
-In-Reply-To: <20250929113110.50545-1-ktraynor@redhat.com>
-References: <20250929113110.50545-1-ktraynor@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C5543406BC;
+	Wed,  5 Nov 2025 23:18:03 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 2E666402E6
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 23:18:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1762381081;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=bJdXatMF4gqGPuuwrDjSauXYIlVv3OuRdSPEwWo3PaE=;
+ b=V2QuveHnRXyaGSrBj7KKyyPrfToHEPnHDKAFpfVY9ZFhVUMHyLy6/J9D+5Kjm9cnu/NkNf
+ y7vrOd5PCIGYfkMaIJqchKxWd2ZKjXfphDWMUb3goWeRVPcJWT63cCPrFbjqaqTBOF6lOv
+ sBMTBlu3zvU+oHMB8DI4U0Xp2fKCW+c=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-573-mcECGTRWPjeIiT73WkP0ZQ-1; Wed,
+ 05 Nov 2025 17:18:00 -0500
+X-MC-Unique: mcECGTRWPjeIiT73WkP0ZQ-1
+X-Mimecast-MFC-AGG-ID: mcECGTRWPjeIiT73WkP0ZQ_1762381079
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 6C0641956089; Wed,  5 Nov 2025 22:17:59 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.88.225])
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 0F0A6300018D; Wed,  5 Nov 2025 22:17:57 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org,  sivaprasad.tummala@amd.com,  Michael Santana
+ <maicolgabriel@hotmail.com>
+Subject: Re: [PATCH 1/2] ci: refactor build dependencies in GHA
+In-Reply-To: <20251105084309.3851898-1-david.marchand@redhat.com> (David
+ Marchand's message of "Wed, 5 Nov 2025 09:43:08 +0100")
+References: <20251105084309.3851898-1-david.marchand@redhat.com>
+Date: Wed, 05 Nov 2025 17:17:56 -0500
+Message-ID: <f7t7bw4m8dn.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: hA2utSvtWuBr2aOkcLCpbhgvGcY7PKe5T0TZSiJ2XfM_1762381079
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,16 +67,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-29/09/2025 13:31, Kevin Traynor:
-> Fix link for Nvidia bifurcated DPDK PMD presentation.
-> 
-> Bugzilla ID: 1793
-> Fixes: d052a9a7d5f9 ("doc: fix link about bifurcated model in Linux guide")
-> Cc: stable@dpdk.org
-> 
-> Reported-by: Andre Muezerie <andremue@linux.microsoft.com>
-> Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
+David Marchand <david.marchand@redhat.com> writes:
 
-Applied, thanks.
+> Move build dependencies in some multiline variable to make it easier to
+> update.
+> For the Fedora pipeline, use a single source of trust in the prepare
+> image job.
+>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
 
+Acked-by: Aaron Conole <aconole@redhat.com>
 
