@@ -2,72 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B11CCCFA0D
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 21:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F90CCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 21:59:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 93DF240677;
-	Wed,  5 Nov 2025 22:37:52 +0100 (CET)
-Received: from fhigh-a2-smtp.messagingengine.com
- (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
- by mails.dpdk.org (Postfix) with ESMTP id 515A2402E6
- for <dev@dpdk.org>; Wed,  5 Nov 2025 22:37:51 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.phl.internal (Postfix) with ESMTP id F02E9140015E;
- Wed,  5 Nov 2025 16:37:50 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Wed, 05 Nov 2025 16:37:50 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id C892B40B9E;
+	Wed,  5 Nov 2025 22:59:17 +0100 (CET)
+Received: from fout-a8-smtp.messagingengine.com
+ (fout-a8-smtp.messagingengine.com [103.168.172.151])
+ by mails.dpdk.org (Postfix) with ESMTP id 06C5D402E6;
+ Wed,  5 Nov 2025 22:59:15 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.phl.internal (Postfix) with ESMTP id 51A8DEC018D;
+ Wed,  5 Nov 2025 16:59:15 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Wed, 05 Nov 2025 16:59:15 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:content-transfer-encoding:content-type:content-type:date:date
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762378670;
- x=1762465070; bh=4hyMCKiZKB9rJY8FKZFn4er4NzFzO3p08MyzdoEqjTY=; b=
- hDUKiVq2JD2KtZRNVhoTOdRPo2dNhZa1FrF0qRYt380H5NehOM8jy2d5jo7JbnX+
- GdFRUtBdmZy5adqHFUFJnSQ1ukIY/QjVwmi6xliTrSSrWZKlbb5/aGsK5YMP3wVM
- d/m44VIMd7HHAdlsn7pPMlEhQ8sWOX969uErFYGD65I9oWxk09IUY32vbGsTbeEs
- 9wGOytbX5mCo1FF2jNd72KXS+5SUHbF0hWwDCP+BWAIjsc2otzrbJQFAJzm+xBcx
- gVQRfeA5TAYMZI4y6/kx16Dc+W40MQLo2axP9NaQEsRusFxypciqTBWBUr399hVP
- rh+aK0BjLX2eqcdVnDJNAg==
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762379955;
+ x=1762466355; bh=wmetYS5DQ6gcKZbW085+cr4PCClU3mfAaO1I3cAhQ0M=; b=
+ cV4+mpqNtSq4kCzgLmmcAmKX4OP6IimQGTdji2CDVgJB9e6PPCOlXK0HRx4ovuyp
+ 8sabiu1/7G/DxhnfndkQ6D+iUXLqnMo5+ocnBMM5HRpK8hKeZDXIH2vs01cw8Vpm
+ dDR3sbhkOyPFZhyfds+up5brbNFgQqplpoAbszgXpcBobZN8xdRT6+ES2RPs+dyW
+ l5LrxEdlZ+DUAw7um4C27Yykzmwb1Tpj5TWwXlfQSNweW79astZ2sdCGe3CcffVh
+ EC8CkkXh1jD33VFm0VbVdrnWKlzAB8oD6SdEReLR75buEfbpTh7RAYQMarstN5nH
+ pESGXx7SqBwT4GkYDcUQIA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:content-transfer-encoding:content-type
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm3; t=1762378670; x=1762465070; bh=4
- hyMCKiZKB9rJY8FKZFn4er4NzFzO3p08MyzdoEqjTY=; b=pp801HxiZOF0CMN5W
- gmaDXrUYCEvhGXtzqt/w84Pd/MpZ6lXazBrjJ4gl5uGH4VYhvinpiqBLOy86Uz46
- p5B7fcBdN7ucPWU5M2fBYFp/VQ0uAezjOfCKyHcXue089jRp5rx5ZWNPtQfgLhXb
- /lQgm2JYMpOJ0ego8DHIUEB0k/Rdy7ox/m9fvlHYU7u6bJAMWIgkY2J2NM2VEwNJ
- W/kblMpaZkpFA46lUVovz5gFRr+g9GF97EI81B/j3i4qaQsvF+iAUUOQurzsbLpX
- XGJGBQM7RYPbewa8U9Ues9ub58TxjCOvg+Yo2ADE/o4ImlTiF6nb+uLchYPJfAaC
- XCl/w==
-X-ME-Sender: <xms:rsMLaRNhh8fQg1M8GVuXXI9K9QkG29o6UfwUv914URyn9vPGsV7j7Q>
- <xme:rsMLaZ34_P8xlWmz9JnG47IDsUT3k-HZQ6o_iQ9uOja91GK2S2IZkX_sJECN-ubyz
- 0_PNi4FKfsxEusHZf7JRhcQIJGwYrN_yIwPo9AFz-_iO7W1pJ2Daw>
-X-ME-Received: <xmr:rsMLabW1f6XWoWi3EpqMhsdSDNDjOH0zCFLVUT_iznocXW4ysR6tgB1EFtjvzpL4px-fRRzywg5XfpYFTV8x5nqEbg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeehtddtucetufdoteggodetrf
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762379955; x=
+ 1762466355; bh=wmetYS5DQ6gcKZbW085+cr4PCClU3mfAaO1I3cAhQ0M=; b=r
+ fY9EsUUIBwHHua18JcJFfd7x9bEevMdHGEctGGNh21Omcx7ucsvDuSYGWVOF3bj5
+ 63g7nUfnGSZZo/FRor4yD/YQSc5r4cTGathVbSNDI5+AXZkszLPsv1mF6ZA3w/91
+ BSf/eGECKKvXTjnA0D+pqVzrdxvdyY7IqpL0qxSxoQ1cGQjMXDLGJW/7JjbBOdOd
+ UO80E8JfPq84aAwo25FlR0t1AehdfZLap0V/zs4HVuUogvQLkWTGkANN8BwG80kd
+ GpuRBlWhjzJASjeN0Yjd8frHqUwB3oAXN3NugK2FWCpYQQUqrCckowFqs7KFL5L5
+ QC0Fiik10xCQhKEby98og==
+X-ME-Sender: <xms:ssgLadBbFX3PJ5rjxgBnYuNyGhJsSwbuYTRlKjgXy_bFkOCi80Pvzw>
+ <xme:ssgLaT9SGL_HnRA2oQ-eTN9eIA9by_sgaCWDj1NDuktqkdK5Jh-RReSv1q7MJyPBi
+ mg1r9dv7bbtoVWBDjyauMMXFp1D0cHT3zNwLXyqGxvB0N-kP31Fmw>
+X-ME-Received: <xmr:ssgLaZAOQY_LtdMKHL72V6ErSlX7Sglitow0wkBgDMHctdEb-vbqzsKLd5WDPH56bBSqBBWM0ie8AQ13TjFWRYjVwQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeehtdegucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkjghfggfgtgesthfuredttd
- dtjeenucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhho
- nhhjrghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpeelvdehhfduuddufefhfffhte
- efgfejteehhfetfedukedvfefgledugeetvddtgeenucevlhhushhtvghrufhiiigvpedt
- necurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvg
- htpdhnsggprhgtphhtthhopedupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegu
- vghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:rsMLaagQHVS_095OIYHS3yMQeCj0w9_j0CGR3CCcQb-sZrdBKtKCAQ>
- <xmx:rsMLadByWXTjC8ijtM_6h6t4nI7cu5AY-JaCj8u8A7EOblkcukiG9A>
- <xmx:rsMLabdDcoeWPxT5W6mCNhNgfnzt-DUEOgVDRJkHjwFdjWVgslDBnA>
- <xmx:rsMLaVc0VhThMa4pVS9O5SQoQdJUc_IZxG8D9dR51CSyMQ4VW4iELw>
- <xmx:rsMLaTta_CZhztEnK95uBHdDJH_RQ8MtHAHKa_TF9Gia5pMIz-Cwy88v>
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehkthhrrgihnhhorhesrhgvughhrghtrd
+ gtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepshhtrggs
+ lhgvseguphgukhdrohhrghdprhgtphhtthhopegrnhgurhgvmhhuvgeslhhinhhugidrmh
+ hitghrohhsohhfthdrtghomhdprhgtphhtthhopegrlhhirghlnhhusehnvhhiughirgdr
+ tghomh
+X-ME-Proxy: <xmx:ssgLaYRi_iTL3ZI5Y0s4TUDmVM9EzcQ7oUTeDEW1xdadau6NsaRUyA>
+ <xmx:ssgLaQupsiVEFKHg-dXaj774FFwHQnTtj7S8_hg54oFaEuap-kB7Lg>
+ <xmx:ssgLaU1SHv8lpLNO_1s1gD_INtDFtmCBaYYvceWhDe5Oe3AmPPU3cw>
+ <xmx:ssgLaRU9pIFr_seS7HM_jeavxnKiW2y_D48LpIHELrC-0Aavy2uUrw>
+ <xmx:s8gLafKQ8WiJedWUDGyCXS_cosG_5rtDtw80dMWm45GfJe1REHNTB6rk>
 Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA for <dev@dpdk.org>; 
- Wed, 5 Nov 2025 16:37:50 -0500 (EST)
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Nov 2025 16:59:13 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Subject: Re: [PATCH 0/5] mlx5: remove useless constants
-Date: Wed, 05 Nov 2025 22:37:49 +0100
-Message-ID: <2405113.teYOa0iCNi@thomas>
-In-Reply-To: <20251102155617.4001783-1-thomas@monjalon.net>
-References: <20251102155617.4001783-1-thomas@monjalon.net>
+To: Kevin Traynor <ktraynor@redhat.com>
+Cc: dev@dpdk.org, Kevin Traynor <ktraynor@redhat.com>, stable@dpdk.org,
+ Andre Muezerie <andremue@linux.microsoft.com>,
+ Ali Alnubani <alialnu@nvidia.com>
+Subject: Re: [PATCH] docs: fix Nvidia bifurcated driver presentation link
+Date: Wed, 05 Nov 2025 22:59:12 +0100
+Message-ID: <3041567.aKNjEaI27c@thomas>
+In-Reply-To: <20250929113110.50545-1-ktraynor@redhat.com>
+References: <20250929113110.50545-1-ktraynor@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -84,20 +91,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-02/11/2025 16:52, Thomas Monjalon:
-> This is a cleanup of #define constants which are not used.
-> Some unused constants are kept if they are part of a bitmap,
-> or can serve as HW documentation.
+29/09/2025 13:31, Kevin Traynor:
+> Fix link for Nvidia bifurcated DPDK PMD presentation.
 > 
-> Thomas Monjalon (5):
->   vdpa/mlx5: remove unused constant
->   crypto/mlx5: remove unused constants
->   regex/mlx5: remove useless constants
->   common/mlx5: remove useless constants
->   net/mlx5: remove useless constants
+> Bugzilla ID: 1793
+> Fixes: d052a9a7d5f9 ("doc: fix link about bifurcated model in Linux guide")
+> Cc: stable@dpdk.org
+> 
+> Reported-by: Andre Muezerie <andremue@linux.microsoft.com>
+> Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
 
-This last patch is split for constants and macros with parameters.
-
-Applied
+Applied, thanks.
 
 
