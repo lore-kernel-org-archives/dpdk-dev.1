@@ -2,78 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDABCCFA0D
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 10:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A9DCCFA0D
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 10:13:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 73386402C4;
-	Wed,  5 Nov 2025 11:06:53 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4133B4065E;
+	Wed,  5 Nov 2025 11:13:54 +0100 (CET)
 Received: from fhigh-a3-smtp.messagingengine.com
  (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id 2554B400D7
- for <dev@dpdk.org>; Wed,  5 Nov 2025 11:06:52 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 8ED7B1400250;
- Wed,  5 Nov 2025 05:06:51 -0500 (EST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3DBD4400D7
+ for <dev@dpdk.org>; Wed,  5 Nov 2025 11:13:52 +0100 (CET)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id DACA61400200;
+ Wed,  5 Nov 2025 05:13:51 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Wed, 05 Nov 2025 05:06:51 -0500
+ by phl-compute-06.internal (MEProxy); Wed, 05 Nov 2025 05:13:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762337211;
- x=1762423611; bh=2/Jo7MvdMhg9SDO3zOn+BEhAjboNNV0UtM6pdtGrHok=; b=
- Mw2CrHU4n0Tv4mXJaXYSJIYe0wmgvPSLYXYztdLRyQRNRabOPfWcjiICqc/x4Lj5
- Kc28oZ6cjhEzvTKimt1Z4oVUj0lxrCeLGk+y3NBE6viacFufF+LFgb0WRJigleQY
- aasVz5mxOR5zTAXKt3o0KAvOeTvReED97TN0BptSotrZzynqMqCohKSzHaH9cVyd
- cgKS96/rvCBWqQfYSQnNyWPV3le0m4jEOrIaOC2MbB56Lpm0RseBp5dmglQczJSk
- kjgnWv2DIGgRtAaFTnNoK/tnjWh0p+37ULF8lk2YWXzFfDtT7O13GHnzVYspqMZ+
- LDlAUZbhAwoDcuC6APKz6A==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762337631;
+ x=1762424031; bh=tDutuyjcFOz57u2t0VzChS5uBJ7JelP/LiD1787Ytpw=; b=
+ tyyA0hvsgetfo3IhgAmoGXvApRPVKPANOZu+1agCfmvfx2GtjjIwyU+I6VBV1eWv
+ cfjzBxlQNaSaB/5zeHErdEnGCkb0P+ktEtoNzNkD7INCs71Y9uqLpAMSxD0XxUo2
+ Q+6SoW5IBBuAOH0ldeUVdjWR2G+lXy+FodzSBtihe08A5mT/N81REeiCkM+g6ZIY
+ meDxWg5cA2mTqx4gWsAbAmsSxHs1KQhv14NA2OZNUsiYqAGNeDho6UqsI/pxkcfS
+ q9oMVkXaQzU+OMgB94oiCbVgfKzES0kUQW4b8J1R7T/hoO+gsv4pWguhirFmSYT+
+ bTz9/Ba2B2l6y3rgN7OGfA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762337211; x=
- 1762423611; bh=2/Jo7MvdMhg9SDO3zOn+BEhAjboNNV0UtM6pdtGrHok=; b=n
- ssdNFs0uEAhbzzfKnT/pcdWc5Zd4wI67lusRRKFz4dtsz9vYMogwF0NFn2Hlc7Bi
- 7+yVHl1hqUMcujVbhjtECg2LbvpxQ4FkhIFDMslGIvAQeeRickab1OsxHSlhcsuC
- KLRFyI7HGmJSTwrPbfiskCVb3+08cGtbGGaNh9uqNfe2+7niIaRHK9C+DiiouC/p
- ytfj+66dsyFHI0DPm9TxTy1Kpdt/XG4NajSNgp/YFYpZ/8aduHDDPL9oNGwWTTcv
- uPEw8vL7HrHZ5PXCqnhayOPYnJZfrhEQL/lzgby0C1Xq8ObLYmEpKSuZp0Q7iN92
- a4z4NF9u5gcOL9vh5eZlQ==
-X-ME-Sender: <xms:uiELaUyvvhMC0iaQkMvLb7aczECOrPxHKRn-n-uBSHWqVPtbM7vcoQ>
- <xme:uiELacnWVtn31JH0UQ6KysRS9OEeJWkQpzXA1EGu3STko4QDgjj6z64O45VIS4h6b
- 7kBIT003n7OuTgge333y-dGJb9OAL56NfceEHYSpi9GLj4ou5dGrQ>
-X-ME-Received: <xmr:uiELaVe80rmkMJdVa7kl26I_674I8CEF7TDvP5ZjFpJZR-rUq0-HYtR0YuM13CWB1nPZlWibN-Nq8c9XQPAycg64Ow>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeefiedvucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762337631; x=
+ 1762424031; bh=tDutuyjcFOz57u2t0VzChS5uBJ7JelP/LiD1787Ytpw=; b=T
+ b4aZB0/zdydVcPLmnXskm/KjCPMN68fJQ6rm02buU8OEC3z31xnAWe910ZkQDyUX
+ T6TR4cxjAFwAibXKc+0DwnHWlhBkUbJRXLZADhQdNhJ2VD6a8HDqGe/ZNuRyj2bx
+ r0z9/OkbXmYl0gIc7H8cMg7eu80h/bgYxz2mYp6NbQayrkzCdWz6YIDCauyCONz1
+ ezru9nnsdPiXkjK3pBp8ygadeDLGmqAK2g+9ly/vEslbL3as6FQP2yFTNl5Vu7AU
+ o68Pf5gMKOxGDhj6oOVtHeLFMvNZ2zfDVGq99htfKXjTgQAAinWjeao6lAiw6v1p
+ eMcnjSicLml6OBbzkteHA==
+X-ME-Sender: <xms:XyMLaVkd30tOVfYAtuiXAh2uoEYlxmvy8LnGCtJoBuJ474IlBsg6yw>
+ <xme:XyMLaVJgAZyLwFcAyTiAo0VNnAKX9s2nsmAK18V3p9X-83C7cyncfkgKefUTBjm7l
+ U22_Q5rPQEMw6KiUGPANIWJ7LzinAnnMRBFtFbZh70xWuuHQNGyBA>
+X-ME-Received: <xmr:XyMLaaxhTGy_9bl_P2ox_ZjNkQCNC7-ZC8L6VmbgM6tePdWuX6divJtrXTx9-H2vOk-ufc73ToYZq2HywB_APo09bg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddukeefieefucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertd
- dttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
- ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevff
- fgtdegkeeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgep
- tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
- gvthdpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
- vhgrthhtuhhnuhhruhesmhgrrhhvvghllhdrtghomhdprhgtphhtthhopeguvghvseguph
- gukhdrohhrghdprhgtphhtthhopehfvghnghgthhgvnhhgfigvnheshhhurgifvghirdgt
- ohhm
-X-ME-Proxy: <xmx:uiELaapS9jcibUQSmK6a7aolOY5zyGD79M0d6_l1DfA6vEo7UvKnXA>
- <xmx:uiELab72W_fwRE9TbQNZYUYHGYiLaHZsgJCTPX2FYGIwhqr2qCgFuA>
- <xmx:uiELaYpGyRXrLcDkKllxHTlCwbtZwTmZ9ETEt56Vn5ZTbVsLCB6gJA>
- <xmx:uiELaViArDmHVpiibKfkV77e_o_eHLSIjWEaIRzK80vjeGEycF4vWw>
- <xmx:uyELadTBsXlUfVjQP9WPfx_wzTPm228fqrsduo0nILlxH9BH5CDsH3WV>
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegshhgrghihrggurgdrmhhouggrlhhise
+ grmhgurdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
+ rhgrghhhrghvvghnughrrgdrnhhinhhgohhjihesrghmugdrtghomh
+X-ME-Proxy: <xmx:XyMLadsVqKBPmwwZdlXKuvv9tBVSTvawaH-GnOcYVp1_cCyKovWbbA>
+ <xmx:XyMLaZsYlq_zdDLEhAUhWav-nPXDOTg82Bf9QYgeozcXsJDahiGKCA>
+ <xmx:XyMLaaM_sp4wCMvD_peKVT2IwTf3y0eh0t09OI_AIgY02aTZvx7vcA>
+ <xmx:XyMLaf0FtyXBa4HIN5YSFjgSMmYW9PBW-F0DYGbQFQl9QrWqDzJcsw>
+ <xmx:XyMLaR2k0vqKWH3ZT_dSII7WvooXRwALffmW4YNlgR1QfUYU2CDv0lkm>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Nov 2025 05:06:50 -0500 (EST)
+ 5 Nov 2025 05:13:50 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Vamsi Krishna <vattunuru@marvell.com>
-Cc: dev@dpdk.org, fengchengwen <fengchengwen@huawei.com>
-Subject: Re: [PATCH v2 1/1] dmadev: add domain_id field to access group join
- API
-Date: Wed, 05 Nov 2025 11:06:48 +0100
-Message-ID: <2511688.Bm8zEkEi59@thomas>
-In-Reply-To: <793529f0-959b-4d72-a4de-5b06497a7c5e@huawei.com>
-References: <20251103102946.2204883-1-vattunuru@marvell.com>
- <20251104052146.2308361-1-vattunuru@marvell.com>
- <793529f0-959b-4d72-a4de-5b06497a7c5e@huawei.com>
+To: Bhagyada Modali <bhagyada.modali@amd.com>
+Cc: dev@dpdk.org, raghavendra.ningoji@amd.com
+Subject: Re: [PATCH] ntb/ae4dma: added Amd userspace DMA and NTB drivers
+Date: Wed, 05 Nov 2025 11:13:49 +0100
+Message-ID: <3713570.9VTjjQsp5K@thomas>
+In-Reply-To: <20250705141001.34223-1-bhagyada.modali@amd.com>
+References: <20250705141001.34223-1-bhagyada.modali@amd.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -90,20 +87,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> > Add domain_id field to access group join API, which is required
-> > to retrieve handler information associated with the specified domain.
-> > This enhancement ensures that domain-specific context is available
-> > during group join operations, improving flexibility and traceability
-> > in multi-domain environments.
-> > 
-> > Patch aligns the parameters of access group create and join APIs
-> > for consistency and clarity, also updates the dmadev.rst file with
-> > detailed steps.
-> > 
-> > Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
-> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+05/07/2025 16:10, Bhagyada Modali:
+> Added a user-space driver with support for the
+> 	AMD EPYC 4th Generation DMA (AE4DMA) offload engine.
+> 	AMD Non Transparent Bridge driver.
+> 
+>       - Implementation of new user-space driver supporting
+>         NTB and DMA memory copy offload on AMD EYPC 9004 & 8004
+> 	systems (Genoa and Siena processors).
+>       - Updated the NTB_FWD application to support AMD NTB driver.
+> 
+> Signed-off-by: Bhagyada Modali <bhagyada.modali@amd.com>
 
-Applied, thanks.
+It looks to be a draft.
+There are so many problems in this patch that I was expecting a follow-up,
+but looks like no.
 
+Please check the contributors guide for the tools you should run
+before submitting.
+Then make sure your patch pass the CI in patchwork.
+
+Thank you
 
 
