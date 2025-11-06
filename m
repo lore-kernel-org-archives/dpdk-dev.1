@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFF9CCFA05
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 14:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2F5CCFA13
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 14:10:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 725F340674;
-	Thu,  6 Nov 2025 15:10:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9F9B940693;
+	Thu,  6 Nov 2025 15:10:10 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 51F2840431;
- Thu,  6 Nov 2025 15:10:07 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 4590E40431;
+ Thu,  6 Nov 2025 15:10:08 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762438208; x=1793974208;
+ t=1762438209; x=1793974209;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=Y1dL3iiKSpSB+vUlxN0fMaUKxW6+KK9GzedXA+IN190=;
- b=ZNrbGDQIvrH44GChNhWDhYKekY9Gad9ESO/siR0FQ6K6EbJL3ATBp+5p
- Fgt/BAHsZ3dDhCjdtVnlX95+FsSC3hQ0jImreA6FP1vbi0YdQxqQ78xju
- nKC8esEN4S8vCD8xcoQbFTdJCRVK0pHHRJ6vYEHCK+XbcUQ2gT9rfj3ny
- 7dxnUutEHkq3kW81EQ5fOloK7ljT1Q++4Uhd7onlmhgxadv0vJSgfNOAa
- 5Y/ihuRx9H52uyMWgV+bjaFp4jQsgi7egF91MRRRuUZ555uD4Qzlf//Lh
- a7xaYLMQa7nXzmMcE3apDOSyU7Nq1Xp5/716Se5/RgBcuwXddeGVKVqEw A==;
-X-CSE-ConnectionGUID: UOhutHN1TVGlc4jJ5QD+jQ==
-X-CSE-MsgGUID: fbAbWbyESmiQR2RW66eyNg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="67185297"
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; d="scan'208";a="67185297"
+ bh=InCKXH3n9inqMS8jHd9/CLGgsUJkRu1+RJItYn+ylwY=;
+ b=oFNRDe9coCuLOydeNf/NrUGfVRmIS75eyUHfZqkBi6Rqxw2zm1GWPpLZ
+ uFYYlivYfRIFmF4huJ6gGN0ugdH3FGg4CnemhoUcS3i9cJms3qYBm/5rD
+ b41DuM3+n/c2GzDn2LsRNCbpvbgldnzM8lKXvXeQ3PxRWNt8S2mLdbVZe
+ bVHeOUTOlXBb7FC3GQa0Lm1Gxy0NSxAabuDHw09Q0t9aFrTVEyBKc5u0w
+ TugxnU7aB00oj8ehG82sFfEy4DOVvXTh1xLT/1NW5cUKzIHuHp8cC9ff6
+ bBgR7nxIxwaSWvk4fgBAEWV+OYSf7eRdZVSooJzeg2Jtkqs0N2gWWfpaR w==;
+X-CSE-ConnectionGUID: uTEJNrHMTGGrnjblVhZaRQ==
+X-CSE-MsgGUID: +4cokmFXTmy6TEpXXGE04w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="67185299"
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; d="scan'208";a="67185299"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Nov 2025 06:10:07 -0800
-X-CSE-ConnectionGUID: jauMlKX8TxKU3PNXjP1sjw==
-X-CSE-MsgGUID: NjLvKKKCQi+oqqJzQ6tOiQ==
+ 06 Nov 2025 06:10:08 -0800
+X-CSE-ConnectionGUID: TeUXBZSVRSic5Jiiy8wFiw==
+X-CSE-MsgGUID: 6FaCs4h1SAO+hP63paCuHQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; d="scan'208";a="187054713"
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; d="scan'208";a="187054719"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa010.jf.intel.com with ESMTP; 06 Nov 2025 06:10:06 -0800
+ by orviesa010.jf.intel.com with ESMTP; 06 Nov 2025 06:10:07 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
 	stable@dpdk.org
-Subject: [RFC PATCH 04/19] net: remove shadowed variable
-Date: Thu,  6 Nov 2025 14:09:33 +0000
-Message-ID: <20251106140948.2894678-5-bruce.richardson@intel.com>
+Subject: [RFC PATCH 05/19] graph: fix variable shadowing errors
+Date: Thu,  6 Nov 2025 14:09:34 +0000
+Message-ID: <20251106140948.2894678-6-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251106140948.2894678-1-bruce.richardson@intel.com>
 References: <20251106140948.2894678-1-bruce.richardson@intel.com>
@@ -60,41 +60,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The "mask" local variable shadowed a global definition. The local var
-was only used on two lines as a temporary value to pass the return value
-of one function as a parameter to another. Therefore, we can remove the
-shadowing issue by removing the variable.
+The nested use of MIN/MAX macros causes shadowing due to the use of the
+hard-coded temporary variable names in the macros. We can fix this in
+graph library by using MIN_T/MAX_T macros instead, which actually makes
+more sense in some circumstances:
 
-Fixes: 17a937baed3e ("net: add CRC AVX512 implementation")
+* when defining SZ, use of RTE_MIN_T makes sense as the comments says it
+  is defined to be usable for compile-time evaluation.
+* for the size calculations, RTE_MAX_T is also useful as it explicitly
+  encodes the type, making it clear that we are evaluating the size
+  variables as "int" type, larger than the uin16_t size is defined as.
+
+Fixes: b6ef3794b866 ("graph: move node clone name func into private as common")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/net/net_crc_avx512.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ lib/graph/graph.c         | 4 ++--
+ lib/graph/graph_private.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/lib/net/net_crc_avx512.c b/lib/net/net_crc_avx512.c
-index d18eb96971..7cd681b1cd 100644
---- a/lib/net/net_crc_avx512.c
-+++ b/lib/net/net_crc_avx512.c
-@@ -180,7 +180,6 @@ crc32_eth_calc_vpclmulqdq(const uint8_t *data, uint32_t data_len, uint32_t crc,
- 	__m512i temp, k;
- 	__m512i qw0 = _mm512_set1_epi64(0), qw1, qw2, qw3;
- 	__m512i fold0, fold1, fold2, fold3;
--	__mmask16 mask;
- 	uint32_t n = 0;
- 	int reduction = 0;
+diff --git a/lib/graph/graph.c b/lib/graph/graph.c
+index 61159edc72..fa03556f14 100644
+--- a/lib/graph/graph.c
++++ b/lib/graph/graph.c
+@@ -729,7 +729,7 @@ __rte_node_stream_alloc(struct rte_graph *graph, struct rte_node *node)
  
-@@ -260,8 +259,7 @@ crc32_eth_calc_vpclmulqdq(const uint8_t *data, uint32_t data_len, uint32_t crc,
- 			res = _mm_xor_si128(res, d);
- 		} else {
- 			res = _mm_cvtsi32_si128(crc);
--			mask = byte_len_to_mask_table[data_len];
--			d = _mm_maskz_loadu_epi8(mask, data);
-+			d = _mm_maskz_loadu_epi8(byte_len_to_mask_table[data_len], data);
- 			res = _mm_xor_si128(res, d);
+ 	RTE_VERIFY(size != UINT16_MAX);
+ 	/* Allocate double amount of size to avoid immediate realloc */
+-	size = RTE_MIN(UINT16_MAX, RTE_MAX(RTE_GRAPH_BURST_SIZE, size * 2));
++	size = RTE_MIN(UINT16_MAX, RTE_MAX_T(RTE_GRAPH_BURST_SIZE, size * 2, int));
+ 	node->objs = rte_realloc_socket(node->objs, size * sizeof(void *),
+ 					RTE_CACHE_LINE_SIZE, graph->socket);
+ 	RTE_VERIFY(node->objs);
+@@ -746,7 +746,7 @@ __rte_node_stream_alloc_size(struct rte_graph *graph, struct rte_node *node,
  
- 			if (data_len > 3) {
+ 	RTE_VERIFY(size != UINT16_MAX);
+ 	/* Allocate double amount of size to avoid immediate realloc */
+-	size = RTE_MIN(UINT16_MAX, RTE_MAX(RTE_GRAPH_BURST_SIZE, req_size * 2));
++	size = RTE_MIN(UINT16_MAX, RTE_MAX_T(RTE_GRAPH_BURST_SIZE, req_size * 2, int));
+ 	node->objs = rte_realloc_socket(node->objs, size * sizeof(void *),
+ 					RTE_CACHE_LINE_SIZE, graph->socket);
+ 	RTE_VERIFY(node->objs);
+diff --git a/lib/graph/graph_private.h b/lib/graph/graph_private.h
+index 21912c0ae6..0e064b2d64 100644
+--- a/lib/graph/graph_private.h
++++ b/lib/graph/graph_private.h
+@@ -149,7 +149,7 @@ static inline int clone_name(char *new_name, char *base_name, const char *append
+ {
+ 	ssize_t sz, rc;
+ 
+-#define SZ RTE_MIN(RTE_NODE_NAMESIZE, RTE_GRAPH_NAMESIZE)
++#define SZ RTE_MIN_T(RTE_NODE_NAMESIZE, RTE_GRAPH_NAMESIZE, uint16_t)
+ 	rc = rte_strscpy(new_name, base_name, SZ);
+ 	if (rc < 0)
+ 		goto fail;
 -- 
 2.48.1
 
