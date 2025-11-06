@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4475BCCFA0D
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 18:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED09CCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Nov 2025 18:06:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1061D40DD5;
-	Wed,  5 Nov 2025 19:06:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EAC6640B9B;
+	Wed,  5 Nov 2025 19:06:14 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 0592C40B98
- for <dev@dpdk.org>; Wed,  5 Nov 2025 19:06:10 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 278DF40DDA;
+ Wed,  5 Nov 2025 19:06:12 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762365971; x=1793901971;
+ t=1762365974; x=1793901974;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=txGLHk4RFHHy4xrali/u1NPKTN283d4JguvbCu7HlAU=;
- b=j/DTOZoa30OnAnGeMWjeEDy0vLrhhVbsqztcCgQVUpvGgpBDwkYfgZ8e
- zmawdwXsLXM6J9RXwmGCtA6lxiqCHpG5qXJfsAq2eyj9oYbv+TGP636WG
- PEr0X3Ig5K6A/4/ZW03fGeVDw61KTmm9osRZTVOslDBxgVFu/02RCEbQV
- I4CIlzxunxu4ZIONNgy7Sfu2zhTeyUrDnFFT6+uXcjbB/gW4YqDZi55Ql
- iHHtmZxoeg4+UubSCsZN+Q2CqZLhD7Kf3cu7VVx8NgVNKgynOOVOJbUbF
- 41ePVCEUYXgyy2JccsZ0F11uVYPpUV+AT1V6psauvSxSmN7tdG88pjAGl A==;
-X-CSE-ConnectionGUID: Q8+c8BYbTOihl/YoQZsXcA==
-X-CSE-MsgGUID: wuhvxn5eSQa0L7IqWcPMKA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="75842008"
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; d="scan'208";a="75842008"
+ bh=dIi5zuJW2C83nEy2jh1khwtgDtVu58liIn12sL7f3Dw=;
+ b=StRA0c5DR2vvrj34qhcQca9die/jTXF+8yFJge5ECtJlq6r+xBIUFAE2
+ DCFOtww9pQdLdLXYlMZyyM0m2ipFz01StHaYspqsD+e2SAxQ753BpHLmv
+ Vrepuanlk7/zzA7T7eSFwq4YrNo0eSqpHWPFUK/UPuomkuUm2rxCxfg6o
+ a2HMF9YgCTz12ZKeamd7/ZlgJnA8u1RtbUDn8xiiMhMlPSl/bJu/quMsF
+ wG0696ftuoqCgIb+ynn5iCD1mSW1EC7lK9OENeZ/aYdUwf8/HX3rG6hyM
+ OZGeL9HgFqz66FV40l0yrC29U9Kjw4LP1p470fk502PyN56rb2T25WnuV A==;
+X-CSE-ConnectionGUID: iq9kaXUmT027nwfTtVUC5w==
+X-CSE-MsgGUID: 7Wk1l8nJTXGPO5gKZehoKw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="75842009"
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; d="scan'208";a="75842009"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Nov 2025 10:06:11 -0800
-X-CSE-ConnectionGUID: j128r2WLQiOvEmJz79uBIA==
-X-CSE-MsgGUID: lOgnMQD4QR26Bk/sp1aNrw==
+ 05 Nov 2025 10:06:13 -0800
+X-CSE-ConnectionGUID: DzKiRtNGQ/qHdYr0RZvcsg==
+X-CSE-MsgGUID: 52mx0jBrT0WFNtLtXmyPfQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; d="scan'208";a="187368644"
+X-IronPort-AV: E=Sophos;i="6.19,282,1754982000"; d="scan'208";a="187368653"
 Received: from fenlix-mobl.ccr.corp.intel.com (HELO localhost.intel.com)
  ([10.239.252.5])
- by fmviesa006.fm.intel.com with ESMTP; 05 Nov 2025 10:06:09 -0800
+ by fmviesa006.fm.intel.com with ESMTP; 05 Nov 2025 10:06:11 -0800
 From: Soumyadeep Hore <soumyadeep.hore@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com
 Cc: rajesh3.kumar@intel.com, aman.deep.singh@intel.com,
- manoj.kumar.subbarao@intel.com
-Subject: [PATCH v3 3/4] net/ice: enable PTP packet forward with TxPP
-Date: Thu,  6 Nov 2025 01:46:36 -0500
-Message-ID: <20251106064638.23020-4-soumyadeep.hore@intel.com>
+ manoj.kumar.subbarao@intel.com, stable@dpdk.org
+Subject: [PATCH v3 4/4] doc: update TxPP documentation
+Date: Thu,  6 Nov 2025 01:46:37 -0500
+Message-ID: <20251106064638.23020-5-soumyadeep.hore@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20251106064638.23020-1-soumyadeep.hore@intel.com>
 References: <20251030173304.260209-3-soumyadeep.hore@intel.com>
@@ -63,89 +63,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Previously TxPP cannot be run with ieee1588 fwd. This fwd
-if enabled after TxPP enablement, causes multiple calls to
-ice_timesync_enable() and ice_timesync_disable().
+TxPP feature works only when DPDK library is compiled with
+PTP feature enabled and application is run on PF.
 
-On introducing txpp_ena flag in adapter, the multiple calls
-is handled.
+Fixes: 0b6ff09a1f19 ("net/intel: support Tx packet pacing for E830")
+Cc: stable@dpdk.org
 
 Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
 ---
- drivers/net/intel/ice/ice_ethdev.c | 16 ++++++++++++++--
- drivers/net/intel/ice/ice_ethdev.h |  2 ++
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ doc/guides/nics/ice.rst | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index 3eef4303e9..2ac63bf97f 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -2873,6 +2873,8 @@ ice_dev_stop(struct rte_eth_dev *dev)
- {
- 	struct rte_eth_dev_data *data = dev->data;
- 	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
-+	struct ice_adapter *ad =
-+			ICE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	struct ice_vsi *main_vsi = pf->main_vsi;
- 	struct rte_pci_device *pci_dev = ICE_DEV_TO_PCI(dev);
- 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
-@@ -2893,8 +2895,10 @@ ice_dev_stop(struct rte_eth_dev *dev)
- 	/* disable all queue interrupts */
- 	ice_vsi_disable_queues_intr(main_vsi);
- 
--	if (dev->data->dev_conf.txmode.offloads & RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP)
-+	if (dev->data->dev_conf.txmode.offloads & RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP) {
-+		ad->txpp_ena = 0;
- 		ice_timesync_disable(dev);
-+	}
- 
- 	if (pf->adapter->devargs.link_state_on_close == ICE_LINK_UP ||
- 			(pf->adapter->devargs.link_state_on_close == ICE_LINK_INITIAL &&
-@@ -4436,8 +4440,10 @@ ice_dev_start(struct rte_eth_dev *dev)
- 		}
- 	}
- 
--	if (dev->data->dev_conf.txmode.offloads & RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP)
-+	if (dev->data->dev_conf.txmode.offloads & RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP) {
- 		ice_timesync_enable(dev);
-+		ad->txpp_ena = 1;
-+	}
- 
- 	return 0;
- 
-@@ -7029,6 +7035,9 @@ ice_timesync_enable(struct rte_eth_dev *dev)
- 			ICE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	int ret;
- 
-+	if (ad->txpp_ena)
-+		return 0;
+diff --git a/doc/guides/nics/ice.rst b/doc/guides/nics/ice.rst
+index 7e9ba23102..a15304fb34 100644
+--- a/doc/guides/nics/ice.rst
++++ b/doc/guides/nics/ice.rst
+@@ -457,6 +457,10 @@ This feature is currently supported only in E830 adapters.
+ The flag ``RTE_ETH_TX_OFFLOAD_SEND_ON_TIMESTAMP`` is used to enable the feature.
+ In order to deliver timestamps internally ``set txtimes`` is used,
+ where inter burst and intra burst time interval in nsecs is provided.
 +
- 	if (dev->data->dev_started && !(dev->data->dev_conf.rxmode.offloads &
- 	    RTE_ETH_RX_OFFLOAD_TIMESTAMP)) {
- 		PMD_DRV_LOG(ERR, "Rx timestamp offload not configured");
-@@ -7267,6 +7276,9 @@ ice_timesync_disable(struct rte_eth_dev *dev)
- 	uint64_t val;
- 	uint8_t lport;
- 
-+	if (ad->txpp_ena)
-+		return 0;
++Note that dpdk library should be compiled using PTP support enabled and testpmd
++application should run on PF.
 +
- 	lport = hw->port_info->lport;
+ For example:
  
- 	ice_clear_phy_tstamp(hw, lport, 0);
-diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index 6478d6dfbd..d9f857b81b 100644
---- a/drivers/net/intel/ice/ice_ethdev.h
-+++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -668,6 +668,8 @@ struct ice_adapter {
- 	uint8_t ptp_tx_index;
- 	bool ptp_ena;
- 	uint64_t time_hw;
-+	/* For TxPP */
-+	bool txpp_ena;
- 	struct ice_fdir_prof_info fdir_prof_info[ICE_MAX_PTGS];
- 	struct ice_rss_prof_info rss_prof_info[ICE_MAX_PTGS];
- 	/* True if DCF state of the associated PF is on */
+ .. code-block:: console
 -- 
 2.47.1
 
