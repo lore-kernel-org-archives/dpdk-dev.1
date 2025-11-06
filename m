@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D24CCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 08:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E71CCFA03
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 08:38:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E315840670;
-	Thu,  6 Nov 2025 09:38:45 +0100 (CET)
-Received: from BL0PR03CU003.outbound.protection.outlook.com
- (mail-eastusazon11012013.outbound.protection.outlook.com [52.101.53.13])
- by mails.dpdk.org (Postfix) with ESMTP id E61F54013F
- for <dev@dpdk.org>; Thu,  6 Nov 2025 09:38:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 086F640E1F;
+	Thu,  6 Nov 2025 09:38:57 +0100 (CET)
+Received: from PH7PR06CU001.outbound.protection.outlook.com
+ (mail-westus3azon11010031.outbound.protection.outlook.com [52.101.201.31])
+ by mails.dpdk.org (Postfix) with ESMTP id A5CED40E1F
+ for <dev@dpdk.org>; Thu,  6 Nov 2025 09:38:54 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I6o2B2uuCKq9525bc6yTeRQzhEQ1NMWDJJ+CSXH+t9BOHtZsJPxn3brcZI1mlpuBLb+uO5CIl1xnKUkWjYaHbfasr01A+KxbzIMBCVolnY6asSgXgUo5bh/uyDQEMo9IEcf+3VVmaQWdf/Vp+fEqtuMYarkCNTuzRyv8y1H0jmmO1kRWNFT0qvFafSyDFcJlN3R9OVNUktUNh3qQcpM95g4sEojla897A34qjiODVPcP7PoqT7vsNLeBOOBvx86I9Pso3er2X7rlpL3JiYVH5r6xhDQIPa0dVsUteaJHcv4mM8Zu5JCV8mp6PsNNDo2cZxmj52jTMeUQ3/j7o3VTmA==
+ b=FveaNYQdCeLxsJyKp5TTIrUBUTxYBejBAYvgxgP3vSAshEMLBnDJXfkyIajqdoyvhJkTxGR2FKJ3f6W5ByFUG8gnFF6mpX+6IrVMenDTXcsyXi9C4knD4PbjqZFLkpRDPCmTRFl50s3CBnH3nEbE0z29rHA53H15q7deierpvT25VtMBT/KW3KyBNHr1YyCmBKYjdU7SwFa7yYb+kHjifo36RxN1NjMm89+LB1WJwlDuXQTO6MwvHrBZ8OhGBH4qxDMHKxLRQwbLf/5gDE2cgjnVicTv/v6rklQtTZ6WJZZcMlk81IrETU0O46fBjYDVCbZJJqTntO3CfDnB46DxaQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KywefTNxSX2OIJFwILV7K9IFLtseNBgMO8CVUtkCQeM=;
- b=fSWTv4cbBeK2Y2eQia21iVyKRp7Vjf5s8iuZCZIYs78nWO136ZRCks9+wMx5rA3UalKcSmSdIKp0AEw81D9Vu6Ssb5qKu/hq/6CozOUlBT6w3Vtm8vr4AdDa7IF7eYaBvb+vI/DBTZml5bWnM3DtlpP76rgA8OPTPSyTfGK3emS5yLC1GA3mINdqjl9zILW1rH4sUuGqprt/dDpzVpgkvCJOMIylzoSy86BiKSEpsDhGGQdEhUUmhiTyiPNrJT5KeNolkHvl8vngqnLhWK56Nd+Te9S48qHzWc5KmndWdmA091aRebGEmHSsuahcwoHS/ED5A9M/3vYToQCrumzSmA==
+ bh=YBl+OXLJ3orM2NHrzIK66Kva/7wuizlrorLimrDbLbI=;
+ b=do2JWiMDcpct79yriSvEXyXRAIzXnYWA1t7M1QWKdW9c8GbGDcqV/oOcQgBFmhSda2wimbBMogHqQyGpo3PrHLHlhNaiZhZW2GY46E0CeBs9DKFl/7O5wPhvRVMEXsV3iywymyijXlYS57kayCepcOuaSw9DbtwelTgQGhKDTaWw7l7pXPoM0HQRP+xWAWhP3XKifQGGgH4LzDBfN3lvcbeA5/kyvHBU0ohQwCfQgwournkYDa140Y9SBcZ9FWWAB5o21ZZ24mG8lHAWwViZLCh7AAw9/JO2MSIKA7xkKkaBJbvX3/ZmwFv3VQROuKZnObjFsFNPLCHPbb69ZTurtw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KywefTNxSX2OIJFwILV7K9IFLtseNBgMO8CVUtkCQeM=;
- b=tKLQh9FZhj0x3YC3mBip1tS0mqA5QeRX3cGs5nYIqggdqmE+mIOoYv8QpxI277reRRiVDR4uZdWpaCFfJYKdRPJlLquDVCdS/wPfbmjmIRwiYyCK0I+u6Tx4Y+ngVYP5dmo95kJTEQxslIm1N/r8/CZNLMNOu0lHJETSWXqpOZlrVaCB66ls0xAJdVcJJJ1m+aYHeWeiPJvq9QU0fUHOPJ+SWun6O6Z1LN+s1zGJRIumL6LTej7YSFvKJpxhpibEw2WRCjT9658LshdmFjLbE/WD5PPEXin9D+VZDcvsakJI4FrqsihyeHtk+FBXZNr+FdEehLPM5Obn+l3YdTyQTw==
-Received: from DS7P220CA0067.NAMP220.PROD.OUTLOOK.COM (2603:10b6:8:224::27) by
- BY5PR12MB4114.namprd12.prod.outlook.com (2603:10b6:a03:20c::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.7; Thu, 6 Nov
- 2025 08:38:40 +0000
-Received: from CY4PEPF0000E9D6.namprd05.prod.outlook.com
- (2603:10b6:8:224:cafe::33) by DS7P220CA0067.outlook.office365.com
- (2603:10b6:8:224::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.9 via Frontend Transport; Thu, 6
- Nov 2025 08:38:38 +0000
+ bh=YBl+OXLJ3orM2NHrzIK66Kva/7wuizlrorLimrDbLbI=;
+ b=NGD9zBfrk4/ekRJdRvo89qwjyqU2DIgvFDRs7visqw3cxUUO0Oz0156vz1gdtBFJwbunICi81gKmlzSDpkxcURtTrodPJg0dhiVDYM59DG3+10bnb2tdgkQN19EtdB0sOHpRfiywR8iVuhN4AWDLV3e1y506RGIzCOtgMzzGtosVI8mmSKOybKoC7h9bRH/IwtW2O8GHac3X63nThGnuTl8kg0rS3kkJr80W+VrlVFmYkc4COiBSAfSaKJvqCY10wxkGMOjVYbWqb4B08GUkpiiCdJjFGCM5Vpejc2xgXqSvJ5Q76QOeh5EdtCBGKd5gf5gVGhaBKzFvZN6k9VFBmQ==
+Received: from PH1PEPF000132E8.NAMP220.PROD.OUTLOOK.COM (2603:10b6:518:1::28)
+ by BN5PR12MB9540.namprd12.prod.outlook.com (2603:10b6:408:2a8::22)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.8; Thu, 6 Nov
+ 2025 08:38:46 +0000
+Received: from CY4PEPF0000E9D9.namprd05.prod.outlook.com
+ (2a01:111:f403:f912::5) by PH1PEPF000132E8.outlook.office365.com
+ (2603:1036:903:47::3) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.12 via Frontend Transport; Thu,
+ 6 Nov 2025 08:38:46 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
@@ -45,84 +45,86 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.160 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.160) by
- CY4PEPF0000E9D6.mail.protection.outlook.com (10.167.241.69) with Microsoft
+ CY4PEPF0000E9D9.mail.protection.outlook.com (10.167.241.72) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Thu, 6 Nov 2025 08:38:39 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ 15.20.9298.6 via Frontend Transport; Thu, 6 Nov 2025 08:38:45 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Nov
- 2025 00:38:24 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 00:38:30 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 6 Nov
- 2025 00:38:24 -0800
+ 2025 00:38:29 -0800
 Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 6 Nov 2025 00:38:21 -0800
+ Transport; Thu, 6 Nov 2025 00:38:27 -0800
 From: Maayan Kashani <mkashani@nvidia.com>
 To: <dev@dpdk.org>
 CC: <mkashani@nvidia.com>, <rasland@nvidia.com>, Dariusz Sosnowski
  <dsosnowski@nvidia.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>, "Bing
  Zhao" <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
  <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH 1/2] common/mlx5: read SWS capability bits
-Date: Thu, 6 Nov 2025 10:38:16 +0200
-Message-ID: <20251106083817.166689-1-mkashani@nvidia.com>
+Subject: [PATCH 2/2] net/mlx5: update flow devarg handling for future HW
+Date: Thu, 6 Nov 2025 10:38:17 +0200
+Message-ID: <20251106083817.166689-2-mkashani@nvidia.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20251106083817.166689-1-mkashani@nvidia.com>
+References: <20251106083817.166689-1-mkashani@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D6:EE_|BY5PR12MB4114:EE_
-X-MS-Office365-Filtering-Correlation-Id: d8a051c7-e027-4f92-e4b8-08de1d0fe2c6
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D9:EE_|BN5PR12MB9540:EE_
+X-MS-Office365-Filtering-Correlation-Id: b06b2afe-bc47-4692-e22d-08de1d0fe66c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|36860700013|1800799024|82310400026; 
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?asc7KS1ZYZW8nizK2HMc4ATyNX46pKoEtl2OrecyaZaKaj9QDdQqJMKUs8Nr?=
- =?us-ascii?Q?eBFfWAZviVJ8V6YEVearuBQUP+YO1xuJowFi3svUDwck+rraPCICCyVloybL?=
- =?us-ascii?Q?D9OwkWIf9Qwv/LFEduK/SVOVzAe0bWozq/Y8UGgcSy9y3+PBiVbpGn/H3yuL?=
- =?us-ascii?Q?zf/xiBFJKfw5zBsQ2mmluYzm4+BTpchPJUIEqsnHXVHQpmCru0MngqHFwtEv?=
- =?us-ascii?Q?+xXyP8gEaEqw/LfWHIVGNJqAlgnmAC4qhZzXN2j/sfiWs6j4LUstniMu4Ymp?=
- =?us-ascii?Q?xS1A515x8kxv2B6GWbtqDtIBspg3qLf6eeggfYV9KbA3J1h/+JGQHq/wxOOO?=
- =?us-ascii?Q?eDgWNHXbHYhKd/m3QzPLv0RHzYgwfeQaZFQCvnGJFXk2meAuxBWh+HMZ/DXD?=
- =?us-ascii?Q?ICG5IuC3nEVYSc2mJ3SVjXBwStYsxJdtSMuhCYm+l8DmrlO0v8Pk/1R99ey4?=
- =?us-ascii?Q?UotW3VWlDmhf0Pm6iw3D8S5bSFxERIXa31ICDAhF1Cwhiivxk2HGvE/TLnML?=
- =?us-ascii?Q?WWiTf/ToZBpG19vu+PcD/gW61z/7zexdc1j1qzx2bopXECQRl4v9Jaq1so+c?=
- =?us-ascii?Q?yaT91+rypFl1fDkNBN846h0Z/+oxIo+1Esypyc7czSbjK7PVKPf0g9bdu/TB?=
- =?us-ascii?Q?5/rwI5Sqf6NdKNmaz79KgJjFBNIPCyj5w/OpjYLK94SQMejxSoZ/9BNpYOU5?=
- =?us-ascii?Q?ty1j5e1UmkguH8xVjVuGSfkUxkd/bT5p8frkDnRIoT+CnA5o8cmICaiqAxPq?=
- =?us-ascii?Q?gLcqZ0fchRPrZKdpEMWFpDuEiNHh0NAg89WmcwmwhSc+0Afk9PMzrRjjcH8z?=
- =?us-ascii?Q?8OTVABkSRCNg4VTKbchJEf8p4jFDdwC5q1vCigAgPQqJXn5U9Nw6v9lw6nx+?=
- =?us-ascii?Q?rr7WxKC3iYjqRJZYrXuMm77tBW8+owlbBZrd0iNLEdd0XnCPHtBS6uxlJ9Co?=
- =?us-ascii?Q?BzrGuvHbhXNkrDghretvDnigXsNAJm2fDMJYPKDVfH16m66lAiK9sVYQ8Xx2?=
- =?us-ascii?Q?HnE7n23jnMpext6aZ7ysCGp1OQm86D2qpa7E8WvnVW1ZihiwC9+5pjCD5nXS?=
- =?us-ascii?Q?4/dS1F+fchU7SrtGGeZrq+Uqz6VqgP0SrSyHvTn309O+wXJB1D/Lwnyh1O9z?=
- =?us-ascii?Q?I8VZEEJfDFvCWdOU/NC2Mny5SzzG+E4jE1VQLNwhlPk26jM4dIMJuaSTPYaj?=
- =?us-ascii?Q?bp0rNzJiGDYctLH0AquojpJZNZnbGd9GZHbV1eBAFsO6TtfBjcTrWGPupsu0?=
- =?us-ascii?Q?n4fcMNFXRtxhd2IJAEs8EYlU1XIg0pY9KV3Ioq+mIl5ADCjL6kakxvjrUyTW?=
- =?us-ascii?Q?P8Nz0jhfUGPaxPmM119p05JBN75p9K4QKTrdpgXxBI8faFF3DrCaWzxrSn5T?=
- =?us-ascii?Q?FI2UXgKyDfDyZBX+QQzymdaj/0fMRTd9AoZTQa3YKBsnjp8qk8aGf6okX/JH?=
- =?us-ascii?Q?JAo12s7OoiczkIKIto3LrYtdwnObdELIoA1W3b1oh4Oh9ptAb/Njm/7N2Fpf?=
- =?us-ascii?Q?ilmopX5TxQYkxdbE/Kc3nJDShHpHE1ugMdrhKNtdQ9iy6sU85OaOQsMPFh4b?=
- =?us-ascii?Q?Y18Q+uzblKoqGoVJ6Wg=3D?=
+ ARA:13230040|1800799024|82310400026|376014|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?BzQG71AUSsMF6mVURGv0HF9yan7XmmqI3Vim+osheelMvk4slj/yiF39IvbL?=
+ =?us-ascii?Q?iXDA6SFbe+cIn8/AKN4/xhWJsoc+BOwZWiS4M4hKHb/BYU13qxACH9A2kDb0?=
+ =?us-ascii?Q?j+JNomVG2FZiQ0xdj7g7mbrBzRVcGe5uhovveMVYUygfifQM37thPIqnwwSU?=
+ =?us-ascii?Q?/lwmvVm/ipsrsZcE+xEjEDJI3Ex5WTWHZUoFS/Fvgg2PNzTRDx/AG2dFH1Ue?=
+ =?us-ascii?Q?aj8z/NwzyRXsYFjd3zMpuRSZYwlzasz/rfYO3OfQXKeXxbjNW+XC49hieHcX?=
+ =?us-ascii?Q?oABAClijjtgujZK4lXO9m69TuAiTh5gex5khIKsFKdX+5xJx1XK9YpZ8j2kQ?=
+ =?us-ascii?Q?3fMYUFdP9dHPLw1zXlCxi+4OLGNNPP+KWS2fbMXkVoVDhpAGsSohqtCFiBVE?=
+ =?us-ascii?Q?XXQ2V0hDpAj/1lh3vBN3/xEG2CNB6QtLfgidNh5H1rtBdDGkZAUyTGxFdX+Z?=
+ =?us-ascii?Q?ZRjkLfy25p3vTzgBvFs9QL0VXE0CDrJQquwabciaUdaG9j461BoeLgo39weF?=
+ =?us-ascii?Q?hn0xOAayq1tX5+6loxBJh+Qyv5MrxLMdJzyRk0or70YU9E4SirBL0mmfKxRv?=
+ =?us-ascii?Q?On6IXwc20bU3rTHhvKDj53B8OrfpGvcV4lXVK5VndXY8XgILYfEMQHmMfup8?=
+ =?us-ascii?Q?zbwBgjsY+wLIIbjAquw8fD+sAH8UUdjFdylXLwx+sTEJxgCcQzVnKZsMwWEo?=
+ =?us-ascii?Q?dQ93LxUBGWcqce3kqmevZP1QX3M1wqdSOWvCffhdY6aMFWN47mpHnb/iLJNz?=
+ =?us-ascii?Q?FISB5U3yJn7zTQg6OltONIlqKXX8YJOsNDJ2fiCuBWzmZdmwDjxdbu8+62on?=
+ =?us-ascii?Q?P2h5JPxagoqVQea6LwNkHZz6u/fkoKiq1Z41QBnbOkfzXtu55fJ0JvDzBjrJ?=
+ =?us-ascii?Q?gIYSzGhAuX+9wRviBLfbhnrFiua/s71oKnT9Y7Fl9I9hMrurjWbiFvT8W6NU?=
+ =?us-ascii?Q?zR9z+f2iXMBMJf/CbMGR8aITktr6lMuXF0zNq+wFqz3irKa8ULECYmHKgs2d?=
+ =?us-ascii?Q?AWRy2ShdsH514vXlQvI1Etm9W4EfN2jwLhAFyYa7l3MnKCORzR+2NIawvbCE?=
+ =?us-ascii?Q?LNo5GQhhB3+Q+i71kuZDPn6qo0wL5UDHySGI2T65Nhequ1oXvwiAhERS0WLE?=
+ =?us-ascii?Q?q/Cl0nXmWEOyM8fxmOHWOk4ewYBp3/Y48NwL9LHDlyW97Hr+/LVrY57AUpeb?=
+ =?us-ascii?Q?QqaX5jtxALiVojhFEaIV7xLC0jlpNFqPud1TNOdtxzCbq9H+MJeYbYEfXWfN?=
+ =?us-ascii?Q?jncMtqJxK5SrQ2teFf2RWOJzq0rORomptjwsIXV39Te4L5tdlg7t9vrUjhVn?=
+ =?us-ascii?Q?kY3qlZvcz4dJP4OJy49Cm8uVljWNmAxgWsJLTmKILcGB5mxnhjGXqlAfYewv?=
+ =?us-ascii?Q?MkQCfMWUvFd7EucL8AOGjqWWsijtP7kadk6wUZm4MR1SknTWVUUXG+0HhTw4?=
+ =?us-ascii?Q?ev0aeAsfNGay3QwLyh7Yvu6zW6FMN7GvCp1NrykmXUCDO4ZHyLox8egNrbVQ?=
+ =?us-ascii?Q?NOt506E06c0yqM3uoGcENgyK9VJQzT9bCagNcbAm+NIsrizd2knjPrmifsl5?=
+ =?us-ascii?Q?FZ+VxVX7RwzoQcUIqhI=3D?=
 X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026); DIR:OUT;
+ SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013); DIR:OUT;
  SFP:1101; 
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 08:38:39.8357 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8a051c7-e027-4f92-e4b8-08de1d0fe2c6
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 08:38:45.9625 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b06b2afe-bc47-4692-e22d-08de1d0fe66c
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9D6.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CY4PEPF0000E9D9.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4114
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9540
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -136,104 +138,160 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-SWS will be disabled in future HW generation.
-Checking SWS capability bits and returning relevant error.
-if user configuration is not supported,
-will be added in the follow up commit.
+SWS (software steering) will be disabled on future hardware generations.
+Update the defaults for the dv_flow_en and allow_duplicate_pattern
+devargs accordingly.
+
+- Default dv_flow_en devarg value will be chosen based on whether
+  NIC supports SW steering and/or HW steering.
+- If DV flow is not supported and allow_duplicate_pattern is
+  set by the user, forcibly disable it and emit a clear log message.
+
+This change improves reliability by ensuring only valid
+configurations are applied, and provides clear feedback to
+the user when fallbacks are triggered.
 
 Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
 Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 ---
- drivers/common/mlx5/mlx5_devx_cmds.c | 18 ++++++++++++++++++
- drivers/common/mlx5/mlx5_devx_cmds.h |  6 ++++++
- drivers/common/mlx5/mlx5_prm.h       | 14 ++++++++++----
- 3 files changed, 34 insertions(+), 4 deletions(-)
+ doc/guides/nics/mlx5.rst | 11 +++++--
+ drivers/net/mlx5/mlx5.c  | 71 ++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 77 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/common/mlx5/mlx5_devx_cmds.c b/drivers/common/mlx5/mlx5_devx_cmds.c
-index 385759230a2..22f6b29089e 100644
---- a/drivers/common/mlx5/mlx5_devx_cmds.c
-+++ b/drivers/common/mlx5/mlx5_devx_cmds.c
-@@ -1300,6 +1300,18 @@ mlx5_devx_cmd_query_hca_attr(void *ctx,
- 		rx_reg |= ((0xff & reg_c_8_15) << 8);
- 		attr->set_reg_c &= (rx_reg & tx_reg);
+diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
+index 37495359d4f..91983089702 100644
+--- a/doc/guides/nics/mlx5.rst
++++ b/doc/guides/nics/mlx5.rst
+@@ -694,8 +694,11 @@ for an additional list of options shared with other mlx5 drivers.
+   Value 2 enables the WQE based hardware steering.
+   In this mode, only queue-based flow management is supported.
  
-+		attr->rx_sw_owner_v2 = MLX5_GET(flow_table_nic_cap, hcattr,
-+						flow_table_properties_nic_receive.sw_owner_v2);
-+		if (!attr->rx_sw_owner_v2)
-+			attr->rx_sw_owner = MLX5_GET(flow_table_nic_cap, hcattr,
-+						flow_table_properties_nic_receive.sw_owner);
-+
-+		attr->tx_sw_owner_v2 = MLX5_GET(flow_table_nic_cap, hcattr,
-+						flow_table_properties_nic_transmit.sw_owner_v2);
-+		if (!attr->tx_sw_owner_v2)
-+			attr->tx_sw_owner = MLX5_GET(flow_table_nic_cap, hcattr,
-+						flow_table_properties_nic_transmit.sw_owner);
-+
- #undef GET_RX_REG_X_BITS
- #undef GET_TX_REG_X_BITS
- 	}
-@@ -1452,6 +1464,12 @@ mlx5_devx_cmd_query_hca_attr(void *ctx,
- 		reg_c_8_15 = MLX5_GET(flow_table_esw_cap, hcattr,
- 				      ft_field_support_2_esw_fdb.metadata_reg_c_8_15);
- 		attr->set_reg_c &= ((0xff & reg_c_8_15) << 8) | esw_reg;
-+
-+		attr->esw_sw_owner_v2 = MLX5_GET(flow_table_esw_cap, hcattr,
-+						 flow_table_properties_nic_esw_fdb.sw_owner_v2);
-+		if (!attr->esw_sw_owner_v2)
-+			attr->esw_sw_owner = MLX5_GET(flow_table_esw_cap, hcattr,
-+						 flow_table_properties_nic_esw_fdb.sw_owner);
- 	}
+-  It is configured by default to 1 (DV flow steering) if supported.
+-  Otherwise, the value is 0 which indicates legacy Verbs flow offloading.
++  By default, the PMD will set this value according to capability.
++  If DV flow steering is supported, it will be set to 1.
++  If DV flow steering is not supported and HW steering is supported,
++  then it will be set to 2.
++  Otherwise, it will be set to 0.
+ 
+ - ``dv_esw_en`` parameter [int]
+ 
+@@ -838,8 +841,10 @@ for an additional list of options shared with other mlx5 drivers.
+   - 1. Allow insertion of rules with the same pattern items.
+     In this case, all rules are inserted but only the first rule takes effect,
+     the next rule takes effect only if the previous rules are deleted.
++    This option is not supported in :ref:`HWS mode <mlx5_hws>`.
++    If this option is set to 1 in HWS mode, it will be set to 0.
+ 
+-  By default, the PMD will set this value to 1.
++  By default, the PMD will set this value according to capability.
+ 
+ 
+ .. _mlx5_net_stats:
+diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
+index ea235cf36be..dd3460f8d4b 100644
+--- a/drivers/net/mlx5/mlx5.c
++++ b/drivers/net/mlx5/mlx5.c
+@@ -1443,6 +1443,45 @@ mlx5_dev_args_check_handler(const char *key, const char *val, void *opaque)
  	return 0;
- error:
-diff --git a/drivers/common/mlx5/mlx5_devx_cmds.h b/drivers/common/mlx5/mlx5_devx_cmds.h
-index efae6826dcf..4c7747cbeca 100644
---- a/drivers/common/mlx5/mlx5_devx_cmds.h
-+++ b/drivers/common/mlx5/mlx5_devx_cmds.h
-@@ -336,6 +336,12 @@ struct mlx5_hca_attr {
- 	uint8_t max_header_modify_pattern_length;
- 	uint64_t system_image_guid;
- 	uint32_t log_max_conn_track_offload:5;
-+	uint8_t rx_sw_owner:1;
-+	uint8_t rx_sw_owner_v2:1;
-+	uint8_t tx_sw_owner:1;
-+	uint8_t tx_sw_owner_v2:1;
-+	uint8_t esw_sw_owner:1;
-+	uint8_t esw_sw_owner_v2:1;
- };
+ }
  
- /* LAG Context. */
-diff --git a/drivers/common/mlx5/mlx5_prm.h b/drivers/common/mlx5/mlx5_prm.h
-index 5db8d67cfc1..6cde3f8f1a1 100644
---- a/drivers/common/mlx5/mlx5_prm.h
-+++ b/drivers/common/mlx5/mlx5_prm.h
-@@ -1593,9 +1593,13 @@ enum {
- #define MLX5_HCA_FLEX_GTPU_DW_0_ENABLED (1UL << 18)
- #define MLX5_HCA_FLEX_GTPU_TEID_ENABLED (1UL << 19)
++static bool
++mlx5_hws_is_supported(struct mlx5_dev_ctx_shared *sh)
++{
++	return (sh->cdev->config.devx &&
++	       sh->cdev->config.hca_attr.wqe_based_flow_table_sup);
++}
++
++static bool
++mlx5_sws_is_any_supported(struct mlx5_dev_ctx_shared *sh)
++{
++	struct mlx5_common_device *cdev = sh->cdev;
++	struct mlx5_hca_attr *hca_attr = &cdev->config.hca_attr;
++
++	if (hca_attr->rx_sw_owner_v2 || hca_attr->rx_sw_owner)
++		return true;
++
++	if (hca_attr->tx_sw_owner_v2 || hca_attr->tx_sw_owner)
++		return true;
++
++	if (hca_attr->eswitch_manager && (hca_attr->esw_sw_owner_v2 || hca_attr->esw_sw_owner))
++		return true;
++
++	return false;
++}
++
++static bool
++mlx5_kvargs_is_used(struct mlx5_kvargs_ctrl *mkvlist, const char *key)
++{
++	const struct rte_kvargs_pair *pair;
++	uint32_t i;
++
++	for (i = 0; i < mkvlist->kvlist->count; ++i) {
++		pair = &mkvlist->kvlist->pairs[i];
++		if (strcmp(pair->key, key) == 0 && mkvlist->is_used[i])
++			return true;
++	}
++	return false;
++}
++
+ /**
+  * Parse user device parameters and adjust them according to device
+  * capabilities.
+@@ -1484,6 +1523,8 @@ mlx5_shared_dev_ctx_args_config(struct mlx5_dev_ctx_shared *sh,
+ 	int ret = 0;
+ 	size_t alignment = rte_mem_page_size();
+ 	uint32_t max_queue_umem_size = MLX5_WQE_SIZE * mlx5_dev_get_max_wq_size(sh);
++	bool hws_is_supported = mlx5_hws_is_supported(sh);
++	bool sws_is_supported = mlx5_sws_is_any_supported(sh);
  
--/* The device steering logic format. */
--#define MLX5_STEERING_LOGIC_FORMAT_CONNECTX_5 0x0
--#define MLX5_STEERING_LOGIC_FORMAT_CONNECTX_6DX 0x1
-+/* The device steering logic format version. */
-+enum {
-+	MLX5_STEERING_LOGIC_FORMAT_CONNECTX_5 = 0,
-+	MLX5_STEERING_LOGIC_FORMAT_CONNECTX_6DX = 1,
-+	MLX5_STEERING_LOGIC_FORMAT_CONNECTX_7 = 2,
-+	MLX5_STEERING_LOGIC_FORMAT_CONNECTX_8 = 3,
-+};
- 
- struct mlx5_ifc_cmd_hca_cap_bits {
- 	u8 access_other_hca_roce[0x1];
-@@ -2342,7 +2346,9 @@ struct mlx5_ifc_flow_table_nic_cap_bits {
- };
- 
- struct mlx5_ifc_flow_table_esw_cap_bits {
--	u8 reserved_at_0[0x800];
-+	u8 reserved_at_0[0x200];
-+	struct mlx5_ifc_flow_table_prop_layout_bits flow_table_properties_nic_esw_fdb;
-+	u8 reserved_at_400[0x400];
- 	struct mlx5_ifc_ft_fields_support_bits ft_header_modify_esw_fdb;
- 	u8 reserved_at_C00[0x800];
- 	struct mlx5_ifc_ft_fields_support_2_bits
+ 	if (alignment == (size_t)-1) {
+ 		alignment = (1 << MLX5_LOG_PAGE_SIZE);
+@@ -1494,9 +1535,15 @@ mlx5_shared_dev_ctx_args_config(struct mlx5_dev_ctx_shared *sh,
+ 	memset(config, 0, sizeof(*config));
+ 	config->vf_nl_en = 1;
+ 	config->dv_esw_en = 1;
+-	config->dv_flow_en = 1;
++	if (!sws_is_supported && hws_is_supported)
++		config->dv_flow_en = 2;
++	else
++		config->dv_flow_en = 1;
+ 	config->decap_en = 1;
+-	config->allow_duplicate_pattern = 1;
++	if (config->dv_flow_en == 2)
++		config->allow_duplicate_pattern = 0;
++	else
++		config->allow_duplicate_pattern = 1;
+ 	config->fdb_def_rule = 1;
+ 	config->cnt_svc.cycle_time = MLX5_CNT_SVC_CYCLE_TIME_DEFAULT;
+ 	config->cnt_svc.service_core = rte_get_main_lcore();
+@@ -1517,6 +1564,26 @@ mlx5_shared_dev_ctx_args_config(struct mlx5_dev_ctx_shared *sh,
+ 		DRV_LOG(WARNING, "DV flow is not supported.");
+ 		config->dv_flow_en = 0;
+ 	}
++	/* Inform user if DV flow is not supported. */
++	if (config->dv_flow_en == 1 && !sws_is_supported && hws_is_supported) {
++		DRV_LOG(WARNING, "DV flow is not supported. Changing to HWS mode.");
++		config->dv_flow_en = 2;
++	}
++	/* Handle allow_duplicate_pattern based on final dv_flow_en mode.
++	 * HWS mode (dv_flow_en=2) doesn't support duplicate patterns.
++	 * Warn only if user explicitly requested an incompatible setting.
++	 */
++	bool allow_dup_pattern_set = mkvlist != NULL &&
++		mlx5_kvargs_is_used(mkvlist, MLX5_ALLOW_DUPLICATE_PATTERN);
++	if (config->dv_flow_en == 2) {
++		if (config->allow_duplicate_pattern == 1 && allow_dup_pattern_set)
++			DRV_LOG(WARNING, "Duplicate pattern is not supported with HWS. Disabling it.");
++		config->allow_duplicate_pattern = 0;
++	} else if (!allow_dup_pattern_set) {
++		/* Non-HWS mode: set default to 1 only if not explicitly set by user */
++		config->allow_duplicate_pattern = 1;
++	}
++
+ 	if (config->dv_esw_en && !sh->dev_cap.dv_esw_en) {
+ 		DRV_LOG(DEBUG, "E-Switch DV flow is not supported.");
+ 		config->dv_esw_en = 0;
 -- 
 2.21.0
 
