@@ -2,64 +2,162 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB4ECCCFA03
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 15:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17EE8CCFA03
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 15:08:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C9B77402BC;
-	Thu,  6 Nov 2025 16:05:40 +0100 (CET)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com
- [209.85.208.52]) by mails.dpdk.org (Postfix) with ESMTP id C44D24013F
- for <dev@dpdk.org>; Thu,  6 Nov 2025 16:05:39 +0100 (CET)
-Received: by mail-ed1-f52.google.com with SMTP id
- 4fb4d7f45d1cf-640ace5f283so1325159a12.2
- for <dev@dpdk.org>; Thu, 06 Nov 2025 07:05:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1762441539; x=1763046339; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=F04pLSFe3tVT6LkoKG7jRI0mhPzNyQJCEBLW3dFxQKo=;
- b=frV/cRSLx1pMpSZuHeNBz9VzInI/I1JyX6a9QU77wXWj/ivNR/+YTGIMG64dUxllla
- pnEhPxfKdusl3GcRXYWTIoJT0gME4F6e4FCJ0wYhra1nhTt+h0bCW4kg39ufrojt4rMM
- kymyLgRL5aQpXFkeyOpukrezpL2YAdUVPoasg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762441539; x=1763046339;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=F04pLSFe3tVT6LkoKG7jRI0mhPzNyQJCEBLW3dFxQKo=;
- b=KR2lmFUesTE58PXwZ1UoI8dcfIXYbGZs+fITGFkjSABlXBBFHwKWnEX0quIMFm8oN2
- BW2w8SErb7L0U9tIq3eju7tRyAQFSSDZNTUNJQVbTJI9VMoSHoA4Xy+hw6KrHeqG6mOr
- HonqljfIGflxmckW1U+grL2gFvs6P2JYvnh1jmel/Czjt1P2iQN7I3E7PMmPaUmaZZyw
- /AMfwwhUN/RCSMttcxqnJ2PRbpFOfdcUC6not23zoPWb4N4bRzW+KnimBb4hoS1ziDfY
- EdWhMDZwpZGYc0Mjau/hNNttzfJZYVvbNjg6QedOCGtpNRfYjhgwEtr9t+EigkcDBg6x
- ShmQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWGQqUbpvOBdZs+iDqqnPA7H+K9LbQaAbCmuiBoDCrHgGG8QW+V/0ZKekKi4UMu2RdpYkI=@dpdk.org
-X-Gm-Message-State: AOJu0YxTWiiX/SGNnWxLGaBj8wo2noYS1pMv17gOv7cg/LtgAK7qXBA/
- uzkhZZ3x17t4O2Z8xeXr3rSD89+qtQxfC+wevF7zTJc+GZk1UJmo/m2yvI3kZwIbT9B3wOCVu+Y
- cf5PLoFMLfQtPV0JpUtcRFVwBS6BEiEA8pa96nFgqeg==
-X-Gm-Gg: ASbGncvqa8aoR+jLTyV69aGOcbmj7UCIYVTXbShRv20BntNvE8Imx5WFvXKoWECB4Tc
- gsvLu+DVjgl8QtWaxnrxlUmyoSKXVcHvq+WE32MF0V5OEDyiZyINAkB4VLpP5MqbYQryxAmng4E
- omZMl0FUTJNqXg1KFaDSfj7AlVRVFAzEqXLGycNSu8v0ruKBicWl7GT8zqaj/49sU6wGRKRVPlt
- M1tP/abJHXXlFAiFltaUeeQS6VYLO+PNmCz/mA6NivHnYOHSnu/Q3SEMoWkcb+BNYG08Duhh1X1
- eb7n0UnOep2RFDJk7A==
-X-Google-Smtp-Source: AGHT+IEg2eLeS0/s23MH56zfKBLFqnnzu6vr6DllRzr3eFJU8iElv5ToDLI1B3k0w/RC/eZoBqtUmqYVz+S454aX9Bc=
-X-Received: by 2002:a05:6402:50c8:b0:640:b9c5:24a1 with SMTP id
- 4fb4d7f45d1cf-64105b96359mr6371623a12.38.1762441539084; Thu, 06 Nov 2025
- 07:05:39 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 19B76402E1;
+	Thu,  6 Nov 2025 16:08:03 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 489A4402BC;
+ Thu,  6 Nov 2025 16:08:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1762441681; x=1793977681;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=YkRlPUQQvmDWeykXTqUGN4P19Gh6nhy5azxKc0hGhFw=;
+ b=EO+L8ZcL/2FLQC+/q9+ixr0Q4Rh9Zs0nqDJnyE9B7T/iUTcGx/rdwDzE
+ BObLBwnUfrjOKm7tGGbNaVrqfpQYrScbzrfEzyHRY4U0y1J15pd39fmO0
+ c76TIXuUL1K1Cg3JlNEeOxeginOnY2ifcedKmrBvdIq+AzBOZB5fB0dyf
+ +xF1od8sVY+qxsb5QCL00zSYz3H1b5e/M9BZu93TQWKSTzRh7793v1jv3
+ OYMzUCV2K0YaBRjGXHSfnBhm0b7DUhtX30h747+K3T06CI6QCUstkHe4i
+ kbsFloR9dzWAyuDGisMWdgXnwiAmfx934O8PMl+tSdw155q3TmmFr+Iv4 A==;
+X-CSE-ConnectionGUID: Wv7h/SAjTziNIWoIATWg7A==
+X-CSE-MsgGUID: /pqD3+crQK+LmKxIhUOVZA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="64463293"
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; d="scan'208";a="64463293"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Nov 2025 07:08:00 -0800
+X-CSE-ConnectionGUID: QZya+CVPSW+DnbV3Vi2LMA==
+X-CSE-MsgGUID: H/WKITRZRxObqfmuzynyMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; d="scan'208";a="211237086"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Nov 2025 07:08:00 -0800
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 6 Nov 2025 07:07:59 -0800
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Thu, 6 Nov 2025 07:07:59 -0800
+Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.60) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 6 Nov 2025 07:07:53 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XAqExqeLBWoxDeruu0SwyHLVGGbo4223UFTz2UdcS+WQCuDEVT36sGOmk1Cm/cVompJFq/IAWqj3v1ufnFBo4R14zuFA4NEFhx191OcZVPi6HzB8tMmDYh8gMEl48clmkRNzbVqww5n3w9as0LlfUf51VpEkG58YQXj7vKNbvHxckmArdP3VKHOJHGb9U0N6bDtxAq7J9WEQ26ee/LY78g7qsqYAFkEQ/eQRJppLzCyvX3L2sDsg2v4doYC/B3IL/3/oX2yWIAxiToMi3slGml0HNyBlt+OmOHT7N+PtYaPW6wU3YOohseNlOjPbY44lRVGT+sI3hAENm83cSoa4lg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qj/1/l5tO4yLx+6iB6rMbi1jg+ALONO/NyN5MngiBmU=;
+ b=i6KiSmsA7nZ5/Y47IJ94GYYXVFZ7UgZV5pTArTFcZJUUelFLlEfGqpLfeISF0VKzu1wQiVsHxHoZu8u2ogzjmnxBcZ3GmuNHpEthtRym37XUsdV//JAWRvvmecx8g/EohE9mvM8FhdThBv4MRRwuBcGy/6C8s6Ib55g2ayNeBcT4cC1ZRSbpPAm0SN4t+LTc7Sb76UaxnFLQYN2bjCgbgyqHdim2T5YH3zj1TgzdXNsIbgYa3FQNkYt3WyWaAuHXlZJ7hpoOzxQEeFjOuS0t4Vqm7OB8qJigrvLpDJLP4lQWPSZ8NO7Z3DtOBfQLpnNjjVfPDc7EvQbpyHwNOQOSFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by DM3PR11MB8733.namprd11.prod.outlook.com (2603:10b6:0:40::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.7; Thu, 6 Nov 2025 15:07:51 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
+ 15:07:51 +0000
+Date: Thu, 6 Nov 2025 15:07:46 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Ciara Loftus <ciara.loftus@intel.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>
+Subject: Re: [PATCH v3 2/6] net/iavf: remove duplication in AVX-512 VLAN
+ insert logic
+Message-ID: <aQy5wo9cjynKaK2j@bricha3-mobl1.ger.corp.intel.com>
+References: <20251105152642.2981673-1-ciara.loftus@intel.com>
+ <20251106115016.3035639-1-ciara.loftus@intel.com>
+ <20251106115016.3035639-3-ciara.loftus@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251106115016.3035639-3-ciara.loftus@intel.com>
+X-ClientProxiedBy: DUZPR01CA0109.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4bb::28) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-References: <20250908014154.82938-1-probb@iol.unh.edu>
- <20251105194925.1507334-1-probb@iol.unh.edu>
-In-Reply-To: <20251105194925.1507334-1-probb@iol.unh.edu>
-From: Andrew Bailey <abailey@iol.unh.edu>
-Date: Thu, 6 Nov 2025 10:05:27 -0500
-X-Gm-Features: AWmQ_blS_wUww_Nu3WwsTEokptwlfdO-royFvc0dN0yPuN22ye1NaWHd4A9L0tU
-Message-ID: <CABJ3N2XcnGVT2q-BAjutbUYgHjHJH8KTn9nWNXQsdRc82CadhA@mail.gmail.com>
-Subject: Re: [PATCH v2] dts: testpmd link check on port start
-To: Patrick Robb <probb@iol.unh.edu>
-Cc: Luca.Vizzarro@arm.com, dev@dpdk.org, Paul.Szczepanek@arm.com, 
- dmarx@iol.unh.edu
-Content-Type: multipart/alternative; boundary="000000000000dffe050642ee65ac"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DM3PR11MB8733:EE_
+X-MS-Office365-Filtering-Correlation-Id: d5d6e50e-aa1c-48e7-2bfd-08de1d464132
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?8xu5ZiV7tLkbtdOQJyeREH/bl+m7bU22/rzWnWIklluXgE3YQlQ1aij/ova2?=
+ =?us-ascii?Q?ljmCzudbWJh63ezEm3Edf062VyFZ7W6VHkI3M+AW+3UJbjNK+NfDl6eo7Goi?=
+ =?us-ascii?Q?M7a7ZQDp9l9MsnxIGgur/AVAKcn6Y9PTZUgKs4NMnBE7jL/ygiGG2e6IUK8u?=
+ =?us-ascii?Q?sP6fbxsXiw73VD5KEGA8Of2NCPGGX3j+bfrGhGvQh3L1196IUXOo48kYmT11?=
+ =?us-ascii?Q?EiwSb/xVS7tumUpCebbX4JIBmk0b3sCma49OIcZlby1DdlWLLnyvbRkohyJd?=
+ =?us-ascii?Q?xO6q5UHpEytEJZNKVo5RKzb2R7y5VjaNeISRgq/KArGU39SmWbyvgq1Sr/Bd?=
+ =?us-ascii?Q?m7kr6DbRK+i/R98e127LgQrrW6lEBDvYhQtsZ4VqR3rcW1tIvb1GavlyI7T5?=
+ =?us-ascii?Q?MSBSVb8lExwLq9uOuntSwWIbO3jWHtnOBX+hTgPlgJ3TdKdIO91Xb0pV1Uxl?=
+ =?us-ascii?Q?47UJUFokL/ihQla1Mt787slbapryyZrc8DzJtZ9uyjMvoleE4MVAbKRJiTyV?=
+ =?us-ascii?Q?53XFkZcYqPFb6mtb9DoW3KptkZjUl0TfmrDUMbdLpdazywj3HOJ7YWNJrOUj?=
+ =?us-ascii?Q?HLZugeedG833NjN3fGFnL33D5kWqpdIy4afB5ckD7lOEpYBlLq0cMRCIAPD8?=
+ =?us-ascii?Q?JJ0TkwnOhQ13N5UPZLrEacn78HhQluwBtghL2DoxhL8xm9HMJXZnNx6Fo18B?=
+ =?us-ascii?Q?wa4l7vTWHqpjmc8RBMxFnUMI3fXH+X+kVqgL5DllGwXr9V1Ppg8y4UrpsA1X?=
+ =?us-ascii?Q?1g+yKwbJTHingQ5MXA1DAdJkTKEmJKjYWVzKJJVhd54KnIOKbf84WD3R/SDT?=
+ =?us-ascii?Q?ytX6lAvKKA0q794zu8bklPqI95+IzQHaE37wNZzJZ2+i6wspJQ4k4HHZYr05?=
+ =?us-ascii?Q?JD4zdCdzKTnYdQRuYRHgDe9sU6A8/GdoI53wdXMM1I2RII7jSCrG0xAW/4R0?=
+ =?us-ascii?Q?RULnAM/Pnfyy7oUpJPwql1UFyuvidQc7AMt25nLIRiNbawC6K73WmjGElCed?=
+ =?us-ascii?Q?3eWmpp31bZ3XSb7fIl5SfUpV6rx8N80W2HYo8dGt5at64yvwv8yscS8o7rif?=
+ =?us-ascii?Q?9TP/EliqODUIzvPp7yBA91ZFRCW2mApqfnfVdrHtefVvH4b+J8a40UTH1zlP?=
+ =?us-ascii?Q?L5CabB4lQDgHqInvWffC7hkj8khE8hlBWs0ncJpuIGS2884Jx8Dtq7vKtY+G?=
+ =?us-ascii?Q?uNaQdDLbUy9rRiwLEpjZUIwwf4pqTY3a9W4MgGIQIFEQpdbNScRw0/fHX9S4?=
+ =?us-ascii?Q?HVP0MAxfSi5nAMmsFKgiHj6EFWHf4tzycboy5SvFm/T99cYm5h1QZKXPdnSQ?=
+ =?us-ascii?Q?5bYfe6a0F4g4PpWi0Lj3Rb94wIkZxzgUUiAYF7pho4xyLidxU5HgX99GBu4l?=
+ =?us-ascii?Q?/jRQU3XyUGTe8wF5EhL/O2kS+iwaGHArQyO4yR9So+JFCLSNnqL1dROkmb7q?=
+ =?us-ascii?Q?ermVim5I0bWJizx3o2V9R5DVYuRNTQiV?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?iBITmKtsFYLnhiO6wio7uANzkp0Ac4HvjVbXEBQev3lqpaRtkw/hsG9A6XB6?=
+ =?us-ascii?Q?riLZBw+MMQMuGTsd3Ta0yO8t+Iv9nhIukRzlaPLEgVQB/mkzOHLlJGpCpkc6?=
+ =?us-ascii?Q?Mjq//SLzTbM/lDIsw6bjKwG6BNhXMYVS4tzgWGRkrJBEtPLQRHLbYW1iu+KE?=
+ =?us-ascii?Q?UNbbjRvvudGZ1pv7kM8PbX7YnPDx0pD+tv/ey09g0HPYJvnrVgFqlDZmyp5B?=
+ =?us-ascii?Q?AdVpoIzgiS7AnPijYWU5jyzwmN5RhJbayMAOjiZyNIeKKkYIHAPhyAXlbjh3?=
+ =?us-ascii?Q?rAvy7dd2oVD27PXTc0w75RSbM2GUMlWdGGnSv3r7Q3xXsuiQXh9sAvlwVjxJ?=
+ =?us-ascii?Q?qF7zAgK2W0/u0C6XR+t9bEIypRCJKBxe+4JriJbcPCGENPx7ks3BNmxuv1a7?=
+ =?us-ascii?Q?rki8sdDqD0CSlj230saq3aAFAn80vRLkdlSLS6HgPCF1FS3dC2l4M2nnca+W?=
+ =?us-ascii?Q?gJh9GwBbSaxc1Hy6VPpOIINFgGCk6oo0okb1HtFCrlFzm07owjNITcbxDUuR?=
+ =?us-ascii?Q?sYqdwXR8ZuxC3GsxDhAiLvdZ6RcDqhGgSODAuSC5cgB+vFILpoVsTc+R+a+T?=
+ =?us-ascii?Q?ckDs3EaEMk15wT9iLfRUGG4r8mC6FLXIfMMoXUlQoQHCFL4q6AVDVIiTjhU4?=
+ =?us-ascii?Q?dJgdWyV3zWTtAklmlY2fiTM4NjMN3ZWqHhVnWLmG5ZcZC8glQ8uQXYUTf49o?=
+ =?us-ascii?Q?SHHSW0uYEBjjnOZAHBODo7UCDvbxZU0eqeqGx1pLhoPuxL/PFFV2wwtzJANs?=
+ =?us-ascii?Q?stzP83AmwfdGbxZA4xUzs/6KeoEh6ET2/U9U8Uq79qYDqbLUj7tXXWqWCrB+?=
+ =?us-ascii?Q?UCSjIgHj2xysnBk2HoIC6RG47TNFoNgRAgMru1C5JrG1WgL4UcVKWOh/Gfzp?=
+ =?us-ascii?Q?RVGcc4CQz4As+YooFuUME9x3WUQP5Z8S24Fzc6UjYXdLgultVbnETQQwwkuw?=
+ =?us-ascii?Q?UQ8BVoRtMr39IF2V70KhIJ0NHwGR07jfj4M+Ev2w/ypZfit/iLno4mP7u7Kz?=
+ =?us-ascii?Q?U+ztM14nZos98cTxNY7gQ+GAGZ3oV6TqCkYFfpINVmHASBmnrnaQl9N9GNPV?=
+ =?us-ascii?Q?unmU11VAcTRQrfCNPzYlbmSBm7BlUF3F3Wycv7e06DEXvOMoVH/l4GUFUAKa?=
+ =?us-ascii?Q?NcNGiAGSAhZh2qMCcXf489yFOD8Ovqqv03fTAAJPyqIaANN1zx9JSBoORGbK?=
+ =?us-ascii?Q?+IVtF+pNjLZOZO8sCiW+dCeiaADxPiBRaIqIcL6Q1eLoW1Hjry2sCCDNPOMh?=
+ =?us-ascii?Q?dxeUDW7RboVSTZIzheEkoNhk1xa9MRE/TVopAQObBpDy4LjKGntsGyv+crhE?=
+ =?us-ascii?Q?IPd6kkeOQoVz9gWwfs9pIj1ZURIX8S4v6lzeBGuj/1TjQuVoe+hgEHFuHZrY?=
+ =?us-ascii?Q?+paqxs6Z9S5tSSz3DcRt5GDSQRwjY6L227ZktWWwRJyUvEwJla/Pdmb+yR66?=
+ =?us-ascii?Q?ejDWu3vDetg4IRvzYytRcArf+QOjhLyL1KdNixHtBjAR2prForo3QXpFzTih?=
+ =?us-ascii?Q?QQ6lZ7EckIopWrmHB9nfK0k5XG4oBR+81PQv2h5/WGN8Pf9CyoEvHqerULbZ?=
+ =?us-ascii?Q?goWspDOQRHrzsbDtI8qRJxqURmes+0VTZ7m2FDCDK2sQPx371VldrBsHnnff?=
+ =?us-ascii?Q?cA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5d6e50e-aa1c-48e7-2bfd-08de1d464132
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 15:07:51.4024 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GSBdLvSeoV7sHmJwWay0zKQ5fIe2Tb1IwNt6srH6XqZadgw+pWAuYef/DWY5xbchUSHhW4D/1Uxsp2AnjJEmVXoEOyPnTOHOrVTdf744b7Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR11MB8733
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,180 +171,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000dffe050642ee65ac
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
- Raises:
-+        InteractiveCommandExecutionError: If the ports has been started
-but a port link will not come up.
-nit: fails check-format because the line is too long.
-
-Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
-
-On Wed, Nov 5, 2025 at 2:50=E2=80=AFPM Patrick Robb <probb@iol.unh.edu> wro=
-te:
-
-> When running our existing DTS testsuites on a new
-> NIC we observed packets would not transmit from
-> the traffic generator to the system under test
-> even after DPDK testpmd and the NIC under test
-> had indicated readiness. After investigation, we
-> determined that the existing readiness check in DTS
-> for testpmd start (checking that port is started)
-> is insufficient, because on some systems the link
-> will remain down for some measurable time, creating
-> a race condition between the testpmd port's link
-> coming up and the DTS execution reaching the packet
-> transmission step. This change will ensure that
-> testpmd start will block until the port is reporting
-> that its link is up. In addition, the interval in
-> between checking the link state has been reduced in
-> order to speed up the execution.
->
-> Signed-off-by: Patrick Robb <probb@iol.unh.edu>
-> Tested-by: Patrick Robb <probb@iol.unh.edu>
+On Thu, Nov 06, 2025 at 11:50:12AM +0000, Ciara Loftus wrote:
+> The part of the transmit descriptor that holds the L2TAG1 VLAN tag was
+> potentially being written to twice on the AVX-512 context path. Fix this
+> by removing one of the writes.
+> 
+> Fixes: 4f8259df563a ("net/iavf: enable Tx outer checksum offload on AVX512")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 > ---
->  dts/api/testpmd/__init__.py | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
-> index aadb7f4e70..49a847494a 100644
-> --- a/dts/api/testpmd/__init__.py
-> +++ b/dts/api/testpmd/__init__.py
-> @@ -93,6 +93,9 @@ def _requires_started_ports(func: TestPmdMethod) ->
-> TestPmdMethod:
->
->      Args:
->          func: The :class:`TestPmd` method to decorate.
-> +
-> +    Raises:
-> +        InteractiveCommandExecutionError: If the ports has been started
-> but a port link will not come up.
->      """
->
->      @functools.wraps(func)
-> @@ -100,6 +103,10 @@ def _wrapper(self: "TestPmd", *args: P.args,
-> **kwargs: P.kwargs) -> Any:
->          if not self.ports_started:
->              self._logger.debug("Ports need to be started to continue.")
->              self.start_all_ports()
-> +        if get_ctx().topology.type is not LinkTopology.NO_LINK:
-> +            for port in self.ports:
-> +                if not self.wait_link_status_up(port.id):
-> +                    raise InteractiveCommandExecutionError(f"Port {
-> port.id} link failed to come up.")
->
->          return func(self, *args, **kwargs)
->
-> @@ -265,7 +272,7 @@ def wait_link_status_up(self, port_id: int,
-> timeout=3DSETTINGS.timeout) -> bool:
->              port_info =3D self.send_command(f"show port info {port_id}")
->              if "Link status: up" in port_info:
->                  break
-> -            time.sleep(0.5)
-> +            time.sleep(0.25)
->          else:
->              self._logger.error(f"The link for port {port_id} did not com=
-e
-> up in the given timeout.")
->          return "Link status: up" in port_info
-> --
-> 2.49.0
->
->
-
---000000000000dffe050642ee65ac
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr">=C2=A0Raises:<br>+=C2=A0 =C2=A0 =C2=A0 =C2=A0 InteractiveC=
-ommandExecutionError: If the ports has been started but a port link will no=
-t come up.<br>nit: fails check-format because the line is too long.<div><br=
->Reviewed-by: Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu">abai=
-ley@iol.unh.edu</a>&gt;</div></div><br><div class=3D"gmail_quote gmail_quot=
-e_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, Nov 5, 2025 at 2=
-:50=E2=80=AFPM Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu">probb@=
-iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=
-=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding=
--left:1ex">When running our existing DTS testsuites on a new<br>
-NIC we observed packets would not transmit from<br>
-the traffic generator to the system under test<br>
-even after DPDK testpmd and the NIC under test<br>
-had indicated readiness. After investigation, we<br>
-determined that the existing readiness check in DTS<br>
-for testpmd start (checking that port is started)<br>
-is insufficient, because on some systems the link<br>
-will remain down for some measurable time, creating<br>
-a race condition between the testpmd port&#39;s link<br>
-coming up and the DTS execution reaching the packet<br>
-transmission step. This change will ensure that<br>
-testpmd start will block until the port is reporting<br>
-that its link is up. In addition, the interval in<br>
-between checking the link state has been reduced in<br>
-order to speed up the execution.<br>
-<br>
-Signed-off-by: Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu" target=
-=3D"_blank">probb@iol.unh.edu</a>&gt;<br>
-Tested-by: Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu" target=3D"=
-_blank">probb@iol.unh.edu</a>&gt;<br>
----<br>
-=C2=A0dts/api/testpmd/__init__.py | 9 ++++++++-<br>
-=C2=A01 file changed, 8 insertions(+), 1 deletion(-)<br>
-<br>
-diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py<br>
-index aadb7f4e70..49a847494a 100644<br>
---- a/dts/api/testpmd/__init__.py<br>
-+++ b/dts/api/testpmd/__init__.py<br>
-@@ -93,6 +93,9 @@ def _requires_started_ports(func: TestPmdMethod) -&gt; Te=
-stPmdMethod:<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0Args:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0func: The :class:`TestPmd` method to deco=
-rate.<br>
-+<br>
-+=C2=A0 =C2=A0 Raises:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 InteractiveCommandExecutionError: If the ports=
- has been started but a port link will not come up.<br>
-=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0@functools.wraps(func)<br>
-@@ -100,6 +103,10 @@ def _wrapper(self: &quot;TestPmd&quot;, *args: P.args,=
- **kwargs: P.kwargs) -&gt; Any:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if not self.ports_started:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self._logger.debug(&quot;Po=
-rts need to be started to continue.&quot;)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self.start_all_ports()<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 if get_ctx().topology.type is not LinkTopology=
-.NO_LINK:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for port in self.ports:<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if not self.wait_l=
-ink_status_up(<a href=3D"http://port.id" rel=3D"noreferrer" target=3D"_blan=
-k">port.id</a>):<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rais=
-e InteractiveCommandExecutionError(f&quot;Port {<a href=3D"http://port.id" =
-rel=3D"noreferrer" target=3D"_blank">port.id</a>} link failed to come up.&q=
-uot;)<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return func(self, *args, **kwargs)<br>
-<br>
-@@ -265,7 +272,7 @@ def wait_link_status_up(self, port_id: int, timeout=3DS=
-ETTINGS.timeout) -&gt; bool:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0port_info =3D self.send_com=
-mand(f&quot;show port info {port_id}&quot;)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if &quot;Link status: up&qu=
-ot; in port_info:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0break<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 time.sleep(0.5)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 time.sleep(0.25)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0else:<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0self._logger.error(f&quot;T=
-he link for port {port_id} did not come up in the given timeout.&quot;)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return &quot;Link status: up&quot; in por=
-t_info<br>
--- <br>
-2.49.0<br>
-<br>
-</blockquote></div>
-
---000000000000dffe050642ee65ac--
+>  drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 66 ++++++-------------
+>  1 file changed, 20 insertions(+), 46 deletions(-)
+> 
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
