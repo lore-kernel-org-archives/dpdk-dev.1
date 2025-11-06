@@ -2,162 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC08CCFA03
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 12:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4187CCFA03
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 12:50:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6534F4029A;
-	Thu,  6 Nov 2025 13:14:26 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 661674021F
- for <dev@dpdk.org>; Thu,  6 Nov 2025 13:14:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762431265; x=1793967265;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=zo3MVoKvQ90V03K/IORVimEZB4cNhJRP1sEZXRZF3gc=;
- b=b26EVnflpWr8SZQcduw8ohweqtwhl3Ns3IZra6NWVa4GB5mg/bY+WTug
- gt9JFnZu13TQZmpgi3/Io3klq4aeXM1N485p1yC3kmUdIGycdvTyW/i5V
- teCB47VsdbB6hhahbk9Y35KPPiKEO01QCJvzKm2wt+rJQ3ACwnPZE5IPz
- RbbC70wYm11M7bS0csR0pGvCj4zZQyRZTOLnRpWkoF89SWstW4R5pUGAG
- gZZmZA0I69MFY2DsDxk7TLdm8wXVTGDABjKt4thZVgIT3ZaUzwOzE8Mn1
- w0QS62Das3wpBGXO9WaS2UsSjHa+WlpTB6tfPumcofJ+TOGDMT88eBYnB Q==;
-X-CSE-ConnectionGUID: EXBFD6ePTiCDV4BHM69Nag==
-X-CSE-MsgGUID: ySQvowpxRdmG7xob2CZtIw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="68403095"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="68403095"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Nov 2025 04:14:24 -0800
-X-CSE-ConnectionGUID: JPMYM3/JTDeglxYrOnYP2w==
-X-CSE-MsgGUID: ATp56OkwQAq0Nc5yMvq3/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; d="scan'208";a="192791568"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Nov 2025 04:14:24 -0800
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id D895A4021F;
+	Thu,  6 Nov 2025 13:50:14 +0100 (CET)
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
+ [113.46.200.222])
+ by mails.dpdk.org (Postfix) with ESMTP id B49BF4013F
+ for <dev@dpdk.org>; Thu,  6 Nov 2025 13:50:11 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=YsNYqypT0P+quLDnzx47OtDCW0tpLJoGXh3DzpwzEyk=;
+ b=NqVQyhuh2mKZhd6OInfdyIBLSWkIRDDZ9rouWufzgVv7pEnGiqI2d68BxXhQNtIxO8kg/abWS
+ undXYpaNOWd2yJnSY6TJdZpue3RfmKqJAG1fnIZE+sntJjby0vVOuKO2NwIJeMcQztZ0nj1SG6v
+ MKyR/ixyDtrC7lADg0TJ+xI=
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+ by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4d2MSG0LRmzLlTm;
+ Thu,  6 Nov 2025 20:48:30 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 98F2D1A016C;
+ Thu,  6 Nov 2025 20:50:05 +0800 (CST)
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 6 Nov 2025 04:14:23 -0800
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 6 Nov 2025 04:14:23 -0800
-Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.55) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 6 Nov 2025 04:14:23 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YwLGkrHQtyalbz7aoyhK3jGL9eMlA4iUQ+RWbYlit4naxMARWO/iAEdH0NN/Hn/SZh9e1jC0R3xr0MAHiGIVX41GaEGzLVyKLt2cWIJF3JmEQEDXQgUV637Fmq+/4fJLNKUGrMpXNwhLO4ZMf8l4IyUrd/Ef8S+rY9nykK0cr+FPwwfx18SmaiXZlEUCQU5M3ddAab4ppcPXop9vTB2/7bWXOpfGCLt5XUX2b7s7md+YWGIY5jmYVxVhVakjpKK3cV5Q6IHUjSE009zqZBZaNUvtllU2kg9a6OBa45mlcwE3hKLOXDg1k9nrdJR1p9o1hVu0KRLJm/Asru0EHR3zpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J6rXtBHurn6xqy7z/qKQk3YlCgsnyXO6s4hXCQ5peAU=;
- b=hNDZQVEEo30pYx9PqboLM1zqkirZvL3ZoFII8Ypv4gpIU49Yjgz0Kotyxlif+4E1I3UHCYxFDQFQ8iJxsDIU3zvOX4mcOzKDrBhgzhrj7PCvW46bDkS2+Ig6bsW2t/gxjjW/RrbUyfbl9KWOwn/5S2nVumgVw9ZUkbkm7ZKvolowpVNo/HvBYan3F/G5hcp0ZQOcl4JDfPk9xUq/mnK1bm8/eU5tWiGxVPqxtiWy2yFOp9OjxMTl9yrUxiJilkWHIlTQJamUw1wxbQb5kmHkLN43U4iI4Yb0gY0oFQwl5Ja95014cNbWG8VmJo9JwUymT7ml7u2F+QMe0xkwPjxbjA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by PH8PR11MB6804.namprd11.prod.outlook.com (2603:10b6:510:1bc::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.9; Thu, 6 Nov
- 2025 12:14:20 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
- 12:14:19 +0000
-Date: Thu, 6 Nov 2025 12:14:15 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Soumyadeep Hore <soumyadeep.hore@intel.com>
-CC: <dev@dpdk.org>, <rajesh3.kumar@intel.com>, <aman.deep.singh@intel.com>,
- <manoj.kumar.subbarao@intel.com>
-Subject: Re: [PATCH v3 0/4] Update TxPP feature
-Message-ID: <aQyRFwvvC1-k8qM3@bricha3-mobl1.ger.corp.intel.com>
-References: <20251030173304.260209-3-soumyadeep.hore@intel.com>
- <20251106064638.23020-1-soumyadeep.hore@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251106064638.23020-1-soumyadeep.hore@intel.com>
-X-ClientProxiedBy: DU7P250CA0010.EURP250.PROD.OUTLOOK.COM
- (2603:10a6:10:54f::28) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ 15.2.1544.11; Thu, 6 Nov 2025 20:50:05 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>, <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>, <liuyonglong@huawei.com>,
+ <yangxingui@huawei.com>, <lihuisong@huawei.com>
+Subject: [PATCH v3] app/testpmd: support specify TCs when DCB forward
+Date: Thu, 6 Nov 2025 20:49:59 +0800
+Message-ID: <20251106124959.2592-1-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20251104040916.25864-1-fengchengwen@huawei.com>
+References: <20251104040916.25864-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH8PR11MB6804:EE_
-X-MS-Office365-Filtering-Correlation-Id: f2f2b779-9bd2-4395-34b8-08de1d2e0361
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?MRHGYpQn9px83sC8Qe8lTYXEs8Abp5RL+X+2qK4LCBZhdCDuhj09e/Dyj7RZ?=
- =?us-ascii?Q?kq8PbDALwNMv9164sLInRhJYSMs0DginLC6/lCkitA1j+USnY3H5BRWjwamb?=
- =?us-ascii?Q?ogyaC31UuVXp0Qi5K1Rphl3PXYEWgWKu+PEe5DdhoneFdB6j2EGBmX30yoBl?=
- =?us-ascii?Q?hzq8nNWGmSkfz5PHCUl2kurPFqsAtTYGVZyQMdVXWmPFIBYbkbCVUO3E2hbS?=
- =?us-ascii?Q?QPKX86jLmLNZ547wv7mNAMI7ekW61+aus+EYIJZSaIjv+dZ/OFAnmFKM4qB7?=
- =?us-ascii?Q?gcf7BUKR1vIcLaki2UsHq1suiRqkTTcIBbYD1ASqu4X7SzpYtqUlaB90k4Fx?=
- =?us-ascii?Q?sXpAhNWVukhFtaDgwFHzvP/ZZmDFuzki3BYT4+aXYqogcl+NroHgJTm9Nk4V?=
- =?us-ascii?Q?TUenbL5anEF4SfXHHauqXuTBZ7IOSWuIRX3tovCjAZxoahbNWz4SMvTX7dDN?=
- =?us-ascii?Q?r+SOupDWGwFI3VSMkNDsa7NzPsz0F82IOMuKe18Y7ZTa9fn+uCskKchp8vDe?=
- =?us-ascii?Q?QBRWZo1KfcZJFrKbxo1wwBJC3i5xzHUS4HWw2HILDMhd01/mg2H/zgIdavFV?=
- =?us-ascii?Q?1FpBvPDkz/gSZilHSEluWpDjxBhsZapKM+wa4tdw7cFjYEp2DnyzouWawULb?=
- =?us-ascii?Q?g4TtuHiCgrmONM5lEFQu1BP2Fi+l8xAeuAsWrsKE5tD7Rn54vuZoDzDFqL3m?=
- =?us-ascii?Q?2h1hw9jW2QoWgR7qri73RZF89gbIWUozVm0c8wUvcXBYu89jC6t+x3K9Fr6s?=
- =?us-ascii?Q?zC8UXPGMlkfqj2HeXXx674FbpOT8YSUA3M30DFJdR/pQw6L9qzJCO+8mOtHZ?=
- =?us-ascii?Q?XLGrvho4imbOhAu5gWV2mkWzN9kItJhRCNJpp4blU9T9UOL/Tx4XIKWbyhd6?=
- =?us-ascii?Q?MIXP9HlLwNtCGWjM4cU78hqRzMO4caXAKqAk2Ffkzh9Eo0Z/uoF7JsjkTXZB?=
- =?us-ascii?Q?lIkOgdGGYLprU+o+pSx2Djz+XMSJQc2ZxhKAHbI6y+NjyuSdlSVbDt+YUKWr?=
- =?us-ascii?Q?Xf0Robhm4a7e72ll9fTPHVHQkeKtru1OTfyckCxdviCPkAvdJ48yEkNH2x+s?=
- =?us-ascii?Q?/2XveS0k5/ubGu78+7RhvEVwJWmz1GimlvYmAHOQ887U4Fc/kqClFH1Y3m+q?=
- =?us-ascii?Q?8FJ9Gt8V+bDTOKjKnTWw4O6OLJ59asIWFF5TTeRnx1ZaeRjOCOHvzCglpJhJ?=
- =?us-ascii?Q?Hl82HTcNV9Pa/a4BngitnYgf0h0shx59wHGxH4sjhFQUnvFzr5qew2V9ISee?=
- =?us-ascii?Q?5lildO6k1IYNb0paES3ZI9c+Rt+IFbMK/vSOtVgJjQUPkxU87aSIlocJ8Z2k?=
- =?us-ascii?Q?qMP0HvJGm0qUvQdQrd5AOugJSBMq/4l9hVAc7Zm9zb/MBKmI6G0KUiWl9iMq?=
- =?us-ascii?Q?GDRXUJj/I0EH/zMYv3gA5ayVZAsyelmcmc/e/4U/Wf4axkt+KV7Kbehy264k?=
- =?us-ascii?Q?JKAeVjCQStGVve6HAEqGZThL8oQB3t/T?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DrztFJ6R/VAH528CtqFmmdFJRkpC14SfzABHsdFXeH2+lOIfooUak9JTk4kM?=
- =?us-ascii?Q?k+bmx7pitYHplt2KwCHHD2kvOQDQ9HELWNUfYfoxSAVxtvUil3X+PVKo+myA?=
- =?us-ascii?Q?Bgi01UIDNDeqDnQZx2nquH4UCpOVehDe8jWmNvypD5kdI/AgHirs53POFe7L?=
- =?us-ascii?Q?fWv056wywXJ9qCN5asnFPW9RDOwajEzPQ6nkXaBkUljTHUNzBFrXm4cUgjBX?=
- =?us-ascii?Q?o6FvsYnxgSgNTVlY7XCZRymYbQxy86wvhy+KsZptcFLdlNqBrppnrRo1tYeP?=
- =?us-ascii?Q?Na6kQFNksPdxaHjRv3a+LT97wJZ1f062liQ6WDz3ptn3b4WkPvZncR560afv?=
- =?us-ascii?Q?TLvhxcDSW6koyZnPsL8JrmcChbz4TBROQYTAmrxZFTt1uMFJ9rIRWJ25C7yb?=
- =?us-ascii?Q?UEC1Vb81H1P2ctpDPFzNpEAAvavpg9Rp+lr2pPIo+84VS8SYh2wecPmi/L+2?=
- =?us-ascii?Q?w33H3tpGohK+3b/WqQ3lRZbWX1ZwcCEf/KAtw220JXJhW9FrkpMe1ZacyPwM?=
- =?us-ascii?Q?7TfD9v2++R+ht2DytbR0zsb6z96tSqHVbJL0ZrRIq2FB71/axc12yXuJsPcD?=
- =?us-ascii?Q?3U4jrCJmzzAzTznHx+lm9bZGYbu0RAo8LySsNHhfEkn9Tl+EomVQu1GiCHff?=
- =?us-ascii?Q?QB5Wglg+LN3hLFoc30xTo3L9OcSI/AkQVBWhuJ1Htyi14k2srOX09yTbOYyn?=
- =?us-ascii?Q?r0i4ydXCr1ijst+olv9zZXAD1FB7Z+ffv+ZUfQF63Ah/UHRA+l53sSuIRC9m?=
- =?us-ascii?Q?13SspNslSidD8xs7u2DOEcbJY73oG8/cfWz0qFaRZnOa6KSZ9Yvs5/coF3Ao?=
- =?us-ascii?Q?VCQ2yWNtxVMtLPjsm8s2SWOzfGzlCEBWKSnSA6grKPdYpDa9p8FJ/xHklOHE?=
- =?us-ascii?Q?fr8MaJ6idia8Fx2P8qSQcevMfVWzXuyfRWARFprcF0CeP3+LhdNeZp5Lsvdf?=
- =?us-ascii?Q?Phqf1bMlr7dTqa/mZ5Pk76x5TjtH2pxQ1yH+XCyNwiOxUKdUfTJwCIUFK3gr?=
- =?us-ascii?Q?s8YoMB4ZqmOjWkbb2gCKzbvOSOUgYw4C/JEMNzjJ6/05c8IBittbpfoIuEQT?=
- =?us-ascii?Q?ZMy7x304SaIqjL1P+GP4BuJ77KFBG2qUjzHxDIRRvszJGKx4TtixU4a52viH?=
- =?us-ascii?Q?O4QF/7bvIaChKiwSeFzJfW1V5RQywcjffNHUh9wOOt2wA4ek8l3Yb/FhDaRV?=
- =?us-ascii?Q?xvN3gXg5m1TzDKiiUj0fWwwfB5bc7BBJ8tp9Tm1Dl7xM+ZzM/wXBIJVcl4hd?=
- =?us-ascii?Q?+l3fvoxZ1YubbKZyoYjnEtgvJWMo50snE9i7HEbj+rjEq1y6xgGL28LTwoSc?=
- =?us-ascii?Q?inx/fNLIUT5S8uVbCKFBEJ1WIKS0iBgNadsF4bhrOGNZ+dC/9mpTEdLVCINv?=
- =?us-ascii?Q?ypC4UWXig2hA5ejcx/eBuvPrAUGEkzyxCCJbXpTrQCG/1rcrDCg+/jPYdmu5?=
- =?us-ascii?Q?ySm+okIm5O4HauUVeGNy4K/z4y2D/hH6SmO2swaJl1ijB6ifR1WtR4p33MiC?=
- =?us-ascii?Q?RGA7+98LfWbXZ2GsyCsc/QYjCGmDG/Hzp6ty/JOnosIYfedQgAyYPJL/ZUJI?=
- =?us-ascii?Q?u0QTPWbCDlh88bx8R44QTbOpxYQ3knJEYvuEMmCVdDPaP86cUOBQ06pROkvo?=
- =?us-ascii?Q?tQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2f2b779-9bd2-4395-34b8-08de1d2e0361
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 12:14:19.7926 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uveRGXTyMg4OISBGW+ypggP+jVSRSAtzFGErnMPpz9SLC54GX8zo6b2q7w9+OOORlqGDMR/hth6Z0xI3OwBmoOoXH2RP0rCF7H+4z0iRuN4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6804
-X-OriginatorOrg: intel.com
+Content-Type: text/plain
+X-Originating-IP: [10.50.163.32]
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -171,26 +55,253 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Nov 06, 2025 at 01:46:33AM -0500, Soumyadeep Hore wrote:
-> Fix bugs in TxPP implementation and update the documentation
-> for the same.
-> 
-> ---
-> v3:
-> - Addressed Bruce's comments
-> - Enabled ieee1588 fwd with TxPP
-> ---
-> v2:
-> - Addressed Ciara's comments
-> ---
-> Soumyadeep Hore (4):
->   net/ice: restrict ice PMD to scalar path for TxPP
->   net/ice: fix PTP clock corruption with TxPP
->   net/ice: enable PTP packet forward with TxPP
->   doc: update TxPP documentation
-> 
-Series-acked-by: Bruce Richardson <bruce.richardson@intel.com>
+This commit supports specify TCs when DCB forwarding, the command:
 
-Applied to dpdk-next-net-intel.
+  set dcb fwd_tc (tc_mask)
 
-/Bruce
+The background of this command: only some TCs are expected to generate
+traffic when the DCB function is tested based on txonly forwarding, we
+could use this command to specify TCs to be used.
+
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+---
+Depends-on: series-2682 ("two bugfix for testpmd DCB")
+---
+v3: use new way to impl and fix comment from Stephen.
+v2: introduce pause/resume lcore's forwarding.
+
+---
+ app/test-pmd/cmdline.c                      | 57 +++++++++++++++++++++
+ app/test-pmd/config.c                       | 50 +++++++++++++++++-
+ app/test-pmd/testpmd.c                      |  6 +++
+ app/test-pmd/testpmd.h                      |  3 ++
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst |  7 +++
+ 5 files changed, 121 insertions(+), 2 deletions(-)
+
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index 22afbdbad3..0400c8356e 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -511,6 +511,9 @@ static void cmd_help_long_parsed(void *parsed_result,
+ 			"set fwd (%s)\n"
+ 			"    Set packet forwarding mode.\n\n"
+ 
++			"set dcb fwd_tc (tc_mask)\n"
++			"    Set dcb forwarding on specify TCs, if bit-n in tc-mask is 1, then TC-n's forwarding is enabled\n\n"
++
+ 			"mac_addr add (port_id) (XX:XX:XX:XX:XX:XX)\n"
+ 			"    Add a MAC address on port_id.\n\n"
+ 
+@@ -6224,6 +6227,59 @@ static void cmd_set_fwd_retry_mode_init(void)
+ 	token_struct->string_data.str = token;
+ }
+ 
++/* *** set dcb forward TCs *** */
++struct cmd_set_dcb_fwd_tc_result {
++	cmdline_fixed_string_t set;
++	cmdline_fixed_string_t dcb;
++	cmdline_fixed_string_t fwd_tc;
++	uint8_t                tc_mask;
++};
++
++static void cmd_set_dcb_fwd_tc_parsed(void *parsed_result,
++				      __rte_unused struct cmdline *cl,
++				      __rte_unused void *data)
++{
++	struct cmd_set_dcb_fwd_tc_result *res = parsed_result;
++	int i;
++	if (res->tc_mask == 0) {
++		fprintf(stderr, "TC mask should not be zero!\n");
++		return;
++	}
++	printf("Enabled DCB forwarding TC list:");
++	dcb_fwd_tc_mask = res->tc_mask;
++	for (i = 0; i < RTE_ETH_8_TCS; i++) {
++		if (dcb_fwd_tc_mask & (1u << i))
++			printf(" %d", i);
++	}
++	printf("\n");
++}
++
++static cmdline_parse_token_string_t cmd_set_dcb_fwd_tc_set =
++	TOKEN_STRING_INITIALIZER(struct cmd_set_dcb_fwd_tc_result,
++			set, "set");
++static cmdline_parse_token_string_t cmd_set_dcb_fwd_tc_dcb =
++	TOKEN_STRING_INITIALIZER(struct cmd_set_dcb_fwd_tc_result,
++			dcb, "dcb");
++static cmdline_parse_token_string_t cmd_set_dcb_fwd_tc_fwdtc =
++	TOKEN_STRING_INITIALIZER(struct cmd_set_dcb_fwd_tc_result,
++			fwd_tc, "fwd_tc");
++static cmdline_parse_token_string_t cmd_set_dcb_fwd_tc_tcmask =
++	TOKEN_NUM_INITIALIZER(struct cmd_set_dcb_fwd_tc_result,
++			tc_mask, RTE_UINT8);
++
++static cmdline_parse_inst_t cmd_set_dcb_fwd_tc = {
++	.f = cmd_set_dcb_fwd_tc_parsed,
++	.data = NULL,
++	.help_str = "config DCB forwarding on specify TCs, if bit-n in tc-mask is 1, then TC-n's forwarding is enabled, and vice versa.",
++	.tokens = {
++		(void *)&cmd_set_dcb_fwd_tc_set,
++		(void *)&cmd_set_dcb_fwd_tc_dcb,
++		(void *)&cmd_set_dcb_fwd_tc_fwdtc,
++		(void *)&cmd_set_dcb_fwd_tc_tcmask,
++		NULL,
++	},
++};
++
+ /* *** SET BURST TX DELAY TIME RETRY NUMBER *** */
+ struct cmd_set_burst_tx_retry_result {
+ 	cmdline_fixed_string_t set;
+@@ -14003,6 +14059,7 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
+ 	&cmd_set_fwd_mask,
+ 	&cmd_set_fwd_mode,
+ 	&cmd_set_fwd_retry_mode,
++	&cmd_set_dcb_fwd_tc,
+ 	&cmd_set_burst_tx_retry,
+ 	&cmd_set_promisc_mode_one,
+ 	&cmd_set_promisc_mode_all,
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index 8557371488..ca40a03b40 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -5121,12 +5121,48 @@ get_fwd_port_total_tc_num(void)
+ 
+ 	for (i = 0; i < nb_fwd_ports; i++) {
+ 		(void)rte_eth_dev_get_dcb_info(fwd_ports_ids[i], &dcb_info);
+-		total_tc_num += dcb_info.nb_tcs;
++		total_tc_num += rte_popcount32(dcb_fwd_tc_mask & ((1u << dcb_info.nb_tcs) - 1));
+ 	}
+ 
+ 	return total_tc_num;
+ }
+ 
++static void
++dcb_forward_tc_update_dcb_info(struct rte_eth_dcb_info *org_dcb_info)
++{
++	struct rte_eth_dcb_info dcb_info = {0};
++	uint32_t i, vmdq_idx;
++	uint32_t tc = 0;
++
++	if (dcb_fwd_tc_mask == DEFAULT_DCB_FWD_TC_MASK)
++		return;
++
++	/*
++	 * Use compress scheme to update dcb-info.
++	 * E.g. If org_dcb_info->nb_tcs is 4 and dcb_fwd_tc_mask is 0x8, it
++	 *      means only enable TC3, then the new dcb-info's nb_tcs is set to
++	 *      1, and also move corresponding tc_rxq and tc_txq info to new
++	 *      index.
++	 */
++	for (i = 0; i < org_dcb_info->nb_tcs; i++) {
++		if (!(dcb_fwd_tc_mask & (1u << i)))
++			continue;
++		for (vmdq_idx = 0; vmdq_idx < RTE_ETH_MAX_VMDQ_POOL; vmdq_idx++) {
++			dcb_info.tc_queue.tc_rxq[vmdq_idx][tc].base =
++				org_dcb_info->tc_queue.tc_rxq[vmdq_idx][i].base;
++			dcb_info.tc_queue.tc_rxq[vmdq_idx][tc].nb_queue =
++				org_dcb_info->tc_queue.tc_rxq[vmdq_idx][i].nb_queue;
++			dcb_info.tc_queue.tc_txq[vmdq_idx][tc].base =
++				org_dcb_info->tc_queue.tc_txq[vmdq_idx][i].base;
++			dcb_info.tc_queue.tc_txq[vmdq_idx][tc].nb_queue =
++				org_dcb_info->tc_queue.tc_txq[vmdq_idx][i].nb_queue;
++		}
++		tc++;
++	}
++	dcb_info.nb_tcs = tc;
++	memcpy(org_dcb_info, &dcb_info, sizeof(struct rte_eth_dcb_info));
++}
++
+ /**
+  * For the DCB forwarding test, each core is assigned on each traffic class.
+  *
+@@ -5176,11 +5212,17 @@ dcb_fwd_config_setup(void)
+ 		}
+ 	}
+ 
++	total_tc_num = get_fwd_port_total_tc_num();
++	if (total_tc_num == 0) {
++		fprintf(stderr, "Error: total forwarding TC num is zero!\n");
++		cur_fwd_config.nb_fwd_lcores = 0;
++		return;
++	}
++
+ 	cur_fwd_config.nb_fwd_lcores = (lcoreid_t) nb_fwd_lcores;
+ 	cur_fwd_config.nb_fwd_ports = nb_fwd_ports;
+ 	cur_fwd_config.nb_fwd_streams =
+ 		(streamid_t) (nb_rxq * cur_fwd_config.nb_fwd_ports);
+-	total_tc_num = get_fwd_port_total_tc_num();
+ 	if (cur_fwd_config.nb_fwd_lcores > total_tc_num)
+ 		cur_fwd_config.nb_fwd_lcores = total_tc_num;
+ 
+@@ -5190,7 +5232,9 @@ dcb_fwd_config_setup(void)
+ 	txp = fwd_topology_tx_port_get(rxp);
+ 	/* get the dcb info on the first RX and TX ports */
+ 	(void)rte_eth_dev_get_dcb_info(fwd_ports_ids[rxp], &rxp_dcb_info);
++	dcb_forward_tc_update_dcb_info(&rxp_dcb_info);
+ 	(void)rte_eth_dev_get_dcb_info(fwd_ports_ids[txp], &txp_dcb_info);
++	dcb_forward_tc_update_dcb_info(&txp_dcb_info);
+ 
+ 	for (lc_id = 0; lc_id < cur_fwd_config.nb_fwd_lcores; lc_id++) {
+ 		fwd_lcores[lc_id]->stream_nb = 0;
+@@ -5238,7 +5282,9 @@ dcb_fwd_config_setup(void)
+ 		txp = fwd_topology_tx_port_get(rxp);
+ 		/* get the dcb information on next RX and TX ports */
+ 		rte_eth_dev_get_dcb_info(fwd_ports_ids[rxp], &rxp_dcb_info);
++		dcb_forward_tc_update_dcb_info(&rxp_dcb_info);
+ 		rte_eth_dev_get_dcb_info(fwd_ports_ids[txp], &txp_dcb_info);
++		dcb_forward_tc_update_dcb_info(&txp_dcb_info);
+ 	}
+ }
+ 
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index 2360da3a48..9d0ce5660c 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -211,6 +211,12 @@ struct fwd_engine * fwd_engines[] = {
+ 	NULL,
+ };
+ 
++/*
++ * Bitmask for control DCB forwarding for TCs.
++ * If bit-n in tc-mask is 1, then TC-n's forwarding is enabled, and vice versa.
++ */
++uint8_t dcb_fwd_tc_mask = DEFAULT_DCB_FWD_TC_MASK;
++
+ struct rte_mempool *mempools[RTE_MAX_NUMA_NODES * MAX_SEGS_BUFFER_SPLIT];
+ uint16_t mempool_flags;
+ 
+diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
+index fa46865c67..1ada0de450 100644
+--- a/app/test-pmd/testpmd.h
++++ b/app/test-pmd/testpmd.h
+@@ -484,6 +484,9 @@ extern cmdline_parse_inst_t cmd_show_set_raw_all;
+ extern cmdline_parse_inst_t cmd_set_flex_is_pattern;
+ extern cmdline_parse_inst_t cmd_set_flex_spec_pattern;
+ 
++#define DEFAULT_DCB_FWD_TC_MASK	0xFF
++extern uint8_t dcb_fwd_tc_mask;
++
+ extern uint16_t mempool_flags;
+ 
+ /**
+diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
+index e423abd40e..d263734a11 100644
+--- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
++++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
+@@ -1877,6 +1877,13 @@ Set a controllable LED associated with a certain port on or off::
+ 
+    testpmd> set port (port_id) led (on|off)
+ 
++set dcb fwd_tc
++~~~~~~~~~~~~~~
++
++Config DCB forwarding on specify TCs, if bit-n in tc-mask is 1, then TC-n's forwarding is enabled, and vice versa::
++
++   testpmd> set dcb fwd_tc (tc_mask)
++
+ Port Functions
+ --------------
+ 
+-- 
+2.17.1
+
