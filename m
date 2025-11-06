@@ -2,39 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E100CCFA03
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 07:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DE8CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 08:15:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6BCFC40E0A;
-	Thu,  6 Nov 2025 08:50:27 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id BDFDF4013F
- for <dev@dpdk.org>; Thu,  6 Nov 2025 08:50:25 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 95F232079A;
- Thu,  6 Nov 2025 08:50:25 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id B361340431;
+	Thu,  6 Nov 2025 09:15:55 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id B07D84013F
+ for <dev@dpdk.org>; Thu,  6 Nov 2025 09:15:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1762416953;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=TvFM7blE1N5EfPgNyAVT4dj+nGBvP9Lpx0NkXDwAeX8=;
+ b=XaTrhycCMGNy920XImNFiFhV89nHuKaqIExKjKYlxjMaZ0LOZ27LekfkNhJJlxJ4uSJk2c
+ IDE59WTb3Y0A/Z0R8VQL3du7mmnCoCdN2OIWHDFCoIJnijHCpfOOw14uNj+WWr4jwGgxyG
+ qE31VouMPKDcHql/02XUPmgW+P7aXMk=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-618-5iTfnIwoMBetTQTnm1VQdQ-1; Thu, 06 Nov 2025 03:15:51 -0500
+X-MC-Unique: 5iTfnIwoMBetTQTnm1VQdQ-1
+X-Mimecast-MFC-AGG-ID: 5iTfnIwoMBetTQTnm1VQdQ_1762416950
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-37773b477c6so5220901fa.2
+ for <dev@dpdk.org>; Thu, 06 Nov 2025 00:15:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762416950; x=1763021750;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=TvFM7blE1N5EfPgNyAVT4dj+nGBvP9Lpx0NkXDwAeX8=;
+ b=HyV1ZHnbVL1BWhYmQ23JHyRR0RxtdmNsHQawOMy1TOxdq6rQBM4Bes1K2skZaVL20h
+ LKyjrDamqSI22RtKIUmiVDCkCMYQ6d63cBGZtwzDACbycNReDN2VvzGRrigqhOoBUjID
+ Y/w5g8FMq4V3nF/Ja8KlBscYOPsMtwknJKooG7Pu+BtMtb/2dQWd3W3910oxcceqlRZZ
+ O3i2uZ61d9/AWa0OrSC7lNiDRhavdh+MV1bNVDK+qB3Z0WAI2SkP1sFu5VKwgNGA+caX
+ ib+ghbrFheWz/58L14QcEQNdY6f3Tw2981Moy9Whuvx8Q5G3bduIs2xzdm2DeQwu/kDX
+ mcng==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXiT/h4WC1VkWEtUfCS3eyNHUlJx7zfiPnCslTADlEGwGIsnhqqhOFzElyLWiSPbGsB73o=@dpdk.org
+X-Gm-Message-State: AOJu0Yw2JJSGjGtHWVadA6Q0jDsBzSGVIKqKVtCpKJ0rqM6UJyFQzfjc
+ R8TLXYmPG1mIw0DgPzaXxwWBlp32urGOHm/sW1xX/qbPWuGYq/PI/G05AIF577ipaMPfNSmyPKV
+ br0y57MyLBkDTKJX5oFI5OSFbxWHQgdMyII9q3hY9njvCrSMSqIalRMbMAptUEsNRgQAL+OIAWV
+ 6T4T0pbiqbrA2yHQSxoxg=
+X-Gm-Gg: ASbGncsuwXh5f1vjePQtLupBrxikuW4eFrXixj70fYlGHHkU6FCm7WXwIvl9+v/SVRu
+ TiIV2p43twgmUtTsVVZS+ofkrFXUhdFdnt47frMZFpHI01+QRHpjTyAawJbWScuiY4+RM+EJdDV
+ SZP0Ql7vRaslhW3IGJxx2TUNsvT92/aolQ1DecM54MIt4Ymr+uQyqX1DGNFg==
+X-Received: by 2002:a05:6512:340a:b0:594:49fa:793 with SMTP id
+ 2adb3069b0e04-59449fa0a9dmr689874e87.30.1762416950083; 
+ Thu, 06 Nov 2025 00:15:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF4I9ibJlcKkYECN3k+jF6lVd4oRgzF+FndQ5hHnPwW/BtSTMiB7mydjLt8J6evSNJk6nWNYVObrE2l+DU7nB4=
+X-Received: by 2002:a05:6512:340a:b0:594:49fa:793 with SMTP id
+ 2adb3069b0e04-59449fa0a9dmr689864e87.30.1762416949660; Thu, 06 Nov 2025
+ 00:15:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH] mbuf: improve mbuf comments
-Date: Thu, 6 Nov 2025 08:50:23 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65536@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <11692478.3WhfQktd6Z@thomas>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] mbuf: improve mbuf comments
-Thread-Index: AdxOmzR/qSrExWBwRh+WXrsEdrenwgAUTXkQ
-References: <20251105112810.20838-1-mb@smartsharesystems.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65530@smartserver.smartshare.dk>
- <11692478.3WhfQktd6Z@thomas>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Thomas Monjalon" <thomas@monjalon.net>
-Cc: <dev@dpdk.org>
+References: <20251002174137.3612042-1-wathsala.vithanage@arm.com>
+ <20251002174137.3612042-2-wathsala.vithanage@arm.com>
+ <cfc073b8137541f1be3e01650d6bcf14@huawei.com>
+ <566b4c6c-f081-4db8-bc8b-2a576a82e1c3@arm.com>
+In-Reply-To: <566b4c6c-f081-4db8-bc8b-2a576a82e1c3@arm.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 6 Nov 2025 09:15:37 +0100
+X-Gm-Features: AWmQ_blXcZ87VJW30gw4a8-yPQOkrgBbzYjh4_XSTZFkbCavVuh3CkY1yfRHqYk
+Message-ID: <CAJFAV8yumnbPjakBAtkoqrZvWCo90F51Ri9Eje44sAmm_S43gw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] ring: safe partial ordering for head/tail update
+To: Wathsala Vithanage <wathsala.vithanage@arm.com>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, 
+ Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
+ "dev@dpdk.org" <dev@dpdk.org>, 
+ Ola Liljedahl <ola.liljedahl@arm.com>, Dhruv Tripathi <dhruv.tripathi@arm.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: O1b27zsDIak2WErgNLcLc8HuMF4LQDavdZvS6h2pS-w_1762416950
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,41 +90,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiA+IFR5cG86IFRYIGRlc2NyaXB0b3IgLT4gUlggZGVzY3JpcHRvci4NCj4gDQo+IEFub3RoZXIg
-VHlwbzogUlggLT4gUnggOykNCj4gDQo+IFdlIGFncmVlZCB0byBwcmVmZXIgVHgvUnggY2FwaXRh
-bGl6YXRpb24gaW4gZGV2dG9vbHMvd29yZHMtY2FzZS50eHQuDQo+IEkgcGVyc29ubmFseSB0aGlu
-ayBpdCBpcyBtb3JlIGNvcnJlY3QsIGFzIGl0IGlzIG5vdCBhbiBhY3JvbnltLg0KDQpJdCBpcyBh
-biBhY3JvbnltLCBhbmQgSSB0aGluayBSWC9UWCBpcyBnZW5lcmFsbHkgbW9yZSBjb21tb24gdGhh
-biBSeC9UeC4NCkhvd2V2ZXIsIGFmdGVyIGNoZWNraW5nIHdpdGggQ2xhdWRlLCBJJ2xsIHJlc3Bl
-Y3QgdGhlIGRlY2lzaW9uIHRvIHVzZSBSeC9UeC4NClBsZWFzZSBmaXggdGhlIHNwZWxsaW5nIHdo
-aWxlIG1lcmdpbmcuDQoNCk15IGRlZ3JlZSBpcyBpbiBlbGVjdHJpY2FsIGVuZ2luZWVyaW5nLCBu
-b3QgY29tcHV0ZXIgc2NpZW5jZSwgYW5kIENsYXVkZSBjb25maXJtcyB0aGF0IFJYL1RYIGlzIG1v
-cmUgY29tbW9uIGZvciBlbGVjdHJvbmljcywgd2hpbGUgUngvVHggaXMgZ2VuZXJhbGx5IHByZWZl
-cnJlZCBmb3IgcmVhZGFiaWxpdHkuDQpTbyBJIGxlYXJuZWQgc29tZXRoaW5nIG5ldyBhYm91dCBz
-cGVsbGluZyB0b2RheS4gOy0pDQoNCkNsYXVkZToNClE6IFdoYXQgaXMgdGhlIG9yaWdpbiBvZiB0
-aGUgc2hvcnRoYW5kIGZvcm0gUnggYW5kIFR4LCBhbmQgd2hpY2ggc3BlbGxpbmcgaXMgbW9zdCBj
-b21tb25seSB1c2VkLCBSWC9UWCBvciBSeC9UeD8NCkE6DQoNClRoZSBzaG9ydGhhbmQgIlJ4IiBh
-bmQgIlR4IiBoYXZlIGRpZmZlcmVudCBvcmlnaW5zIGRlcGVuZGluZyBvbiB0aGUgY29udGV4dDoN
-Cg0KSW4gTWVkaWNpbmUvUGhhcm1hY3kNClJ4IGNvbWVzIGZyb20gTGF0aW4gYW5kIGhhcyBiZWVu
-IHVzZWQgc2luY2UgbWVkaWV2YWwgdGltZXMuIEl0J3MgZGVyaXZlZCBmcm9tIHRoZSBMYXRpbiB3
-b3JkICJyZWNpcGUiIChtZWFuaW5nICJ0YWtlIiBvciAicmVjZWl2ZSIpLCB3aGljaCB3YXMgd3Jp
-dHRlbiBhdCB0aGUgYmVnaW5uaW5nIG9mIHByZXNjcmlwdGlvbnMuIE92ZXIgdGltZSwgdGhlICJS
-IiB3aXRoIGEgY3Jvc3NlZCB0YWlsIGV2b2x2ZWQgaW50byB0aGUgc3ltYm9sIOKEniBhbmQgdGhl
-biB0aGUgc2hvcnRoYW5kICJSeC4iIFRoaXMgaXMgd2h5IHByZXNjcmlwdGlvbnMgYXJlIG9mdGVu
-IGNhbGxlZCAiUnguIg0KDQpUeCBpbiBtZWRpY2FsIGNvbnRleHRzIGlzIGEgbW9kZXJuIGFiYnJl
-dmlhdGlvbiBmb3IgInRyZWF0bWVudCIgb3IgInRoZXJhcHksIiBsaWtlbHkgY3JlYXRlZCBieSBh
-bmFsb2d5IHdpdGggUnguDQoNCkluIEVsZWN0cm9uaWNzL1RlbGVjb21tdW5pY2F0aW9ucw0KUngg
-c3RhbmRzIGZvciAicmVjZWl2ZSIgb3IgInJlY2VpdmVyIiBUeCBzdGFuZHMgZm9yICJ0cmFuc21p
-dCIgb3IgInRyYW5zbWl0dGVyIg0KDQpUaGVzZSBhYmJyZXZpYXRpb25zIGJlY2FtZSBzdGFuZGFy
-ZCBpbiByYWRpbywgdGVsZWNvbW11bmljYXRpb25zLCBhbmQgZGlnaXRhbCBjb21tdW5pY2F0aW9u
-cyB0byBsYWJlbCBzaWduYWwgcGlucywgY2lyY3VpdHMsIGFuZCBkYXRhIGxpbmVzLg0KDQpDYXBp
-dGFsaXphdGlvbiBDb252ZW50aW9uDQpCb3RoIFJYL1RYIGFuZCBSeC9UeCBhcmUgd2lkZWx5IHVz
-ZWQsIGJ1dCB0aGUgcHJlZmVyZW5jZSB2YXJpZXMgYnkgZmllbGQ6DQoNCkVsZWN0cm9uaWNzL0Vu
-Z2luZWVyaW5nOiBSWC9UWCAoYWxsIGNhcHMpIGlzIG1vcmUgY29tbW9uLCBlc3BlY2lhbGx5IG9u
-IHRlY2huaWNhbCBkaWFncmFtcywgY2lyY3VpdCBib2FyZHMsIGFuZCBkYXRhIHNoZWV0cw0KTWVk
-aWNpbmU6IFJ4IChjYXBpdGFsIFIsIGxvd2VyY2FzZSB4KSBpcyB0cmFkaXRpb25hbCBhbmQgc3Rh
-bmRhcmQNCkdlbmVyYWwgd3JpdGluZzogUngvVHggKG1peGVkIGNhc2UpIGlzIG9mdGVuIHVzZWQg
-Zm9yIHJlYWRhYmlsaXR5DQpJbiB0ZWNobmljYWwgZG9jdW1lbnRhdGlvbiBmb3IgZWxlY3Ryb25p
-Y3MsIHlvdSdsbCBzZWUgYm90aCBzdHlsZXMsIGJ1dCBSWC9UWCB0ZW5kcyB0byBiZSBzbGlnaHRs
-eSBtb3JlIHByZXZhbGVudCBpbiBwcm9mZXNzaW9uYWwgY29udGV4dHMuIEhvd2V2ZXIsIGJvdGgg
-YXJlIHBlcmZlY3RseSBhY2NlcHRhYmxlIGFuZCB3aWRlbHkgdW5kZXJzdG9vZC4NCg0K
+Hello Wathsala,
+
+On Mon, 13 Oct 2025 at 20:10, Wathsala Vithanage
+<wathsala.vithanage@arm.com> wrote:
+> > LGTM, though. I think that we also need to make similar changes in
+> > rte_ring_hts_elem_pvt.h and rte_ring_rts_elem_pvt.h:
+> > for CAS use 'acq_rel' order instead of simple 'acquire'.
+> > Let me know would you have a bandwidth to do that.
+>
+> My bad, I forgot those two cases. I will send a v3.
+
+Should we wait for this v3?
+We want to close rc2 this week.
+
+
+-- 
+David Marchand
+
