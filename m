@@ -2,75 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAA6CCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 01:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72942CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 05:02:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BF3DE40DD1;
-	Thu,  6 Nov 2025 02:25:00 +0100 (CET)
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com
- [209.85.210.174])
- by mails.dpdk.org (Postfix) with ESMTP id 383694013F
- for <dev@dpdk.org>; Thu,  6 Nov 2025 02:25:00 +0100 (CET)
-Received: by mail-pf1-f174.google.com with SMTP id
- d2e1a72fcca58-7ad1cd0db3bso406826b3a.1
- for <dev@dpdk.org>; Wed, 05 Nov 2025 17:25:00 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 32B8640674;
+	Thu,  6 Nov 2025 06:02:15 +0100 (CET)
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com
+ [209.85.210.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 47C124013F
+ for <dev@dpdk.org>; Thu,  6 Nov 2025 06:02:13 +0100 (CET)
+Received: by mail-pf1-f179.google.com with SMTP id
+ d2e1a72fcca58-793021f348fso506202b3a.1
+ for <dev@dpdk.org>; Wed, 05 Nov 2025 21:02:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762392299;
- x=1762997099; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=YehNMVWP9SK4BdY7d8Pw85ImscMUoxMikMgy+fQJsJY=;
- b=Ax+bT5HdBtXIh/jQMb2mNbKl2jlVRytp8cT5rT8TzAEYGhX0lI+8FLfSmnGCD1MOgO
- jrzFy1yxVwJzMzmkYQaZxmx6iGB7hzlSH5dAIYqzDxX+JaJwFKQioxmubGbzLtk2qCed
- NrJpScq9rhL7h77qRKSo1BoA4T/mjs2iadaiuPo3N+zObW0w1XANxlNGSLwkB0k7fthL
- 0fb3B1qTsaQISxRPNbv93L3O7Yys91q2yBpHcxHCY0C3KCh9+oocbO6Z3B1urLHCmnwq
- 2LzmfaaMGQJ0bTwB2N8Xpedjqj+hCvXFHTA9LqWLbhe0DbFQ5IoifIYywUJTPtEzFzDZ
- 7IeA==
+ d=iol.unh.edu; s=unh-iol; t=1762405332; x=1763010132; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=TiflBG1bcE6TZ81E84z2+XWhGFnzRz2yFqOisHXpNNA=;
+ b=CqX+TVm1/j39UPamhAgmqrvS3J8tJrOv843KTSSi3jC6iYT2fCOg95cMi/eaNsDD+f
+ NSJvgI+ByuAg/V2ifAzib7fKXWClCk4VzRPnz4R0yXQwacK1GwS9r3NIeALcdyxD7N2m
+ LTTx2QXBBo9v6exy1Bq2yGsizZZSJiG8eDHiw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762392299; x=1762997099;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=YehNMVWP9SK4BdY7d8Pw85ImscMUoxMikMgy+fQJsJY=;
- b=sQwvNgI8lOK5bK1F4FKTsoQSzHuWC+nlz8SjGK+AHZnmOJz3fQMNMNxJu9/vlRV/w1
- vtQDBBmgINuleqv9GnFhyMXuKmZCPEIrJQ/yn2+3T74ja5gtR56tGmnKudLVmN2IrpiU
- 0MMe9pOu7eZ1m8XSJ739fLNbvWb1QT6PoCRJEpL0vloExEibhSYH12kyvhzmkaJfrgT5
- 0uFJwlz24hhma1ZGSiNWoGB9nWm0zmLGRY68JI2D+h4kLK61oiDwuCS3tDIS0pwJVuDS
- EELKiUT5Z5LEsvjm0r9v8yCR+vmV81jm9RueaAWdrvOA4Grw/k/89PALxUtJOTiz68H1
- Iblg==
+ d=1e100.net; s=20230601; t=1762405332; x=1763010132;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=TiflBG1bcE6TZ81E84z2+XWhGFnzRz2yFqOisHXpNNA=;
+ b=RKTA0KtRJMRj7i8SdZNNE0JJHr/01n/k6P7XFjlTdM5dm0QrbJLTYFQq1n46WQfCF9
+ t2ftS8YnoOBrVQyhKRfnfOXLvRGpX/voImWGPyIR8DeWoMZatRntoYP35krtajEAUKqw
+ CkRp6reL09uIZOM7Lh0odPUHgN1KRnCUzLl/T6WsgpTFcVhZtqxuZvqcRC9O8OrDT/y9
+ QWKK/R/V9eu4Kbpd2VCdvLEZ/S1Nk4b9NSmv4F79DQyGhZj8ly7GUaoBFdQDn1oAHdGR
+ eEoCp2inHAK7mKgjcMvIWqNIwbDM1w/JjEutfOAKiYYfXhJWa1Fg6Z1rpHUnE53KCCdW
+ BrLg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCWa+1QTUFGS1UtPOGSFkRCgq5WK5Pb/tiMQ1Yc/0/UL70KMzo/alrItguX/spI8DQTSUAE=@dpdk.org
-X-Gm-Message-State: AOJu0YwJq7lRYpbJ0iBDoMId9YcAwGMoD9mnlixO6UE+etGGOSIoPfuI
- qc0q4O20AtKJWDHzc+U21X/zxQweBS1qFMW+8//SJVcgVO28X5VxHJuH8Y+wad2rY6M=
-X-Gm-Gg: ASbGncv92lUxI2AM0P5Mo0/YiIc24ZQLMwAWYch576HoRT1wmGTD5EEE11WvCfRGno0
- /HBLK3eleYzhuObyQvn/doLqiUiLHeE0u17gGSGAep/wQR4jM/Wp/Z+5CR457qKtKa4CEiVGupF
- JtA0TnSx5etnv1cTEDcMxTjqpR4vXgRkOG3coXcFMksUCoROxtdZuZ9mwRNMzEfC1dZzq3jrJ8S
- owcYrHumTshjP1jV4mNPo7mREz905x2he5DcmvTBhX1q3tzwRBS4x9lVkdFze5sfhyYM26p/o09
- Nlbt6nBAFuROJavklQOZiEDfAC4baS3+ZuyBkNkSJcqIbdQHLIknW3bD3H0MDlEm8LibEpRw32I
- erNJoYPsBv+XeQzRHmMdZM4ccl7p1WiP4v/NojEEovmg1k+Dbn9ywvUgnJmxsYj8o9IHz8zUCi4
- /ggc/c/244afg5pjCtWfbKmCvOZU/d9S96JA==
-X-Google-Smtp-Source: AGHT+IGiF19QvcG4F2xUDGoORo5Cf+h5b/cSZ/s/LY6H8dMRjurqlZv3FAOF5wdnUnZ6vGmgZTlqkw==
-X-Received: by 2002:a05:6a00:2d10:b0:7ab:3454:6f22 with SMTP id
- d2e1a72fcca58-7ae1e6c6956mr6542556b3a.16.1762392298973; 
- Wed, 05 Nov 2025 17:24:58 -0800 (PST)
-Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-7af82204ecbsm739874b3a.38.2025.11.05.17.24.57
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Nov 2025 17:24:58 -0800 (PST)
-Date: Wed, 5 Nov 2025 17:24:55 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Chengwen Feng <fengchengwen@huawei.com>
-Cc: <thomas@monjalon.net>, <dev@dpdk.org>, <aman.deep.singh@intel.com>,
- <liuyonglong@huawei.com>, <yangxingui@huawei.com>, <lihuisong@huawei.com>
-Subject: Re: [PATCH 0/2] two bugfix for testpmd DCB
-Message-ID: <20251105172455.5ecefde0@phoenix>
-In-Reply-To: <20251106002920.6162-1-fengchengwen@huawei.com>
-References: <20251106002920.6162-1-fengchengwen@huawei.com>
+ AJvYcCVTu55b4orOeBjeS7V1nQqbrxjNjYs0MWvTgoFetiHT1IiuTNmV1wcBsFqIl9IOfVBCHcw=@dpdk.org
+X-Gm-Message-State: AOJu0Ywnu4vJZXFGxtLDCRDvFI2dsRJJGrcv8h3Mrgtc6pJRsRMkBtUj
+ DuVSyiNhdmHVEBoPJ/K6sLCcCcPYCkkKCuseqYyAUiNOm2O4jscYvlcL0R9l8S9xVVnOFqTh4p3
+ 1+LyBBHpt4pDllrd67ce5wxNmis4T5WKNI7bSiAecHQ==
+X-Gm-Gg: ASbGncvV/aBvl0zKOJ/rYDSomwFVS58AWtAyDcilGG7MPx4LKB1djCYvbAE16NUuNxu
+ FBHxbOOpU/XpxtV8sHfbOpAb94vhPatDa1rsBmOmGUBFIcXqrVrVOLglXmln9PRlj754skLzJlM
+ 6TcWsOAo3wA9MzOjyMq0lnrR6PN1PtUapOTGkLSx0YRj3ngVBhtYm+EcLGIoCXTqh2u4ssLW8vX
+ 1KPcQY9eI8BE88Q45cEs1pwkaXmnewrdvNIf2HFxhsb23DJb4mbUVy9MlS9yR0OoB8G5FzBCRn8
+ f99QZO2F3SA=
+X-Google-Smtp-Source: AGHT+IH/wB6/tX88urdclKLV1KS7y8dyuY+Eaq1YEePzogy7zfrTQpLGX4x4Yz2JV1tDABD4VUfpgZpdTnhum5by5Vs=
+X-Received: by 2002:a05:6300:218c:b0:34e:63bd:81b6 with SMTP id
+ adf61e73a8af0-34f865ff9f0mr8086433637.57.1762405332375; Wed, 05 Nov 2025
+ 21:02:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20251030125231.114295-1-paul.szczepanek@arm.com>
+ <CABD7UXMZ-5Mt+TzGOYWaGebBzSFr8P9RjkWDJ2U=7XwQZfBPEQ@mail.gmail.com>
+In-Reply-To: <CABD7UXMZ-5Mt+TzGOYWaGebBzSFr8P9RjkWDJ2U=7XwQZfBPEQ@mail.gmail.com>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Thu, 6 Nov 2025 00:01:03 -0500
+X-Gm-Features: AWmQ_bmnw2Si0qHiAb-OVPDOh5T1XB2f7GSFFyNvtU1ymXYz9tm5NaDlFtUELwg
+Message-ID: <CAJvnSUBDw=ghm0yMDKFEF84_TcU7ES9dCd32xqHVd7xO9EpNzg@mail.gmail.com>
+Subject: Re: [PATCH v1] dts: move artifact class to API
+To: Dean Marx <dmarx@iol.unh.edu>
+Cc: Paul Szczepanek <paul.szczepanek@arm.com>, dev@dpdk.org, 
+ Luca Vizzarro <luca.vizzarro@arm.com>
+Content-Type: multipart/alternative; boundary="000000000000c96eba0642e5f774"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,17 +74,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 6 Nov 2025 08:29:18 +0800
-Chengwen Feng <fengchengwen@huawei.com> wrote:
+--000000000000c96eba0642e5f774
+Content-Type: text/plain; charset="UTF-8"
 
-> Two bugfix which found when enhance testpmd DCB function.
-> 
-> Chengwen Feng (2):
->   app/testpmd: fix invalid txp when setup DCB forward
->   app/testpmd: fix wrong Rx queues when setup DCB forward
-> 
->  app/test-pmd/config.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
+Reviewed-by: Patrick Robb <probb@iol.unh.edu>
 
-Queued to next-net
+--000000000000c96eba0642e5f774
+Content-Type: text/html; charset="UTF-8"
+
+<div dir="ltr">Reviewed-by: Patrick Robb &lt;<a href="mailto:probb@iol.unh.edu">probb@iol.unh.edu</a>&gt;</div>
+
+--000000000000c96eba0642e5f774--
