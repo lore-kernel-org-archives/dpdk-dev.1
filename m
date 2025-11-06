@@ -2,163 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE29CCFA05
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 15:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B66CCFA03
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 15:26:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1AF9740668;
-	Thu,  6 Nov 2025 16:11:06 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 19B8D4066B
- for <dev@dpdk.org>; Thu,  6 Nov 2025 16:11:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762441864; x=1793977864;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=JKe25bO3POlGQCs958rXpUII76yCMCCb4KGTVgzV/K0=;
- b=GsD/ngK9B6at6dUDCRSk3OmjNxTuOBczAwqwyoTarW59ZFfgcW5nEVoD
- I4w2zYuyVCd+ogbR4eAwBTrGnIYRG14HGXdWWpnUzMxljvZ8wMQSlZGpJ
- NnfpeYqhRwD26EQjsgJnHUzr7pYA4vtsM5H0BSgRNk1fbDx1gxRdoDvk/
- cpTP8oVaktVf2o/C2xrVZIOZgN6cJBEk2SIULuFv2W3QKI2kDKepo9t2Y
- nFfgnzBLfOOhqvybC+V8tTC7LHWEMucX2amiQ3WCizniAeg+9HXrz1fml
- P07LZbkM261G2J7GKAQKxrjZa7+SpGT4gC1ZgoBtoSZZloxzox+Zbfu59 A==;
-X-CSE-ConnectionGUID: DRHwpLbXRjOg2RkNOQPfvA==
-X-CSE-MsgGUID: DuLaq618QLmDcooPTkp6EA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64488578"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="64488578"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Nov 2025 07:11:03 -0800
-X-CSE-ConnectionGUID: AYnmSzX4ShOKUPYQe0a54Q==
-X-CSE-MsgGUID: FhXy3vtUSHS6BMowHjKLWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; d="scan'208";a="218533497"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Nov 2025 07:11:02 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 6 Nov 2025 07:11:02 -0800
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Thu, 6 Nov 2025 07:11:02 -0800
-Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.68) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Thu, 6 Nov 2025 07:11:02 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uajikrN+MpgN+A8uiWUAPZoFU2Sz7YqrS54bRucrPWLLZjx9d42LDDYSCDH6juXcb2ntGJir6rR/HyOlD7al8d5iD4t9ElDrmv4yKLYO40PBNcODlZ85lEWIo8L9622oxdOptcCe90IiXEzc1zWPQYldcKPhNKgQwTacjiA7WQvq2Y0QJuWi0DpPqd4IjUi3h6BLrqC2vIFquAsfmSjD8BXE4q/kbHvFzC3o3FSdvQiGd7avsZGYKUB5JntLbOGNu7vnoOJiiowvrMbpl+iM+f6OFW8qejgoZS6blAW6F9HmM/mPN5PBJCg6sPggZg4T1scbk4P/CNuVKmOc1CCh9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W0YaoZKifNf6OoLsDDcC1kPIQmSZEgM/pAoUAIZBRUE=;
- b=XGST3WvQU4cFUJG+1NVPZN/nek8tIQntWqTme9Ch9NzFJwtLWor6lFpmLH3m7dCIC6xed0NCVBOqDLEBEzwZ4oj3GyhFVwQonRnIDuGjiqWG+CzFDx97Gb3+r+bg/iAgF/ljAmWAaW5KWQQ3yNc1L10k3UwHWVMQtWmS1j5HlU9QH+a02HFLzLj10YfWW+XR08lxktcYqAF+7eJmT7UX4janPD0ciSiilU7vOAwtrCo1QKc44rM06/+NAxpvsYiY1tRuJ9Jt18Zu3II2Ta5kjB31QgR0hfYI1Wu/frlzGQPLP9CtSm7jdH29PvzausZ+NxnV2/t6fOtvlU+l/qLP3w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by PH0PR11MB4885.namprd11.prod.outlook.com (2603:10b6:510:35::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Thu, 6 Nov
- 2025 15:11:00 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9298.006; Thu, 6 Nov 2025
- 15:11:00 +0000
-Date: Thu, 6 Nov 2025 15:10:55 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Ciara Loftus <ciara.loftus@intel.com>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH v3 6/6] net/iavf: fix QinQ insertion with mbuf flags VLAN
- and QINQ
-Message-ID: <aQy6f3Hvkxk5NhM6@bricha3-mobl1.ger.corp.intel.com>
-References: <20251105152642.2981673-1-ciara.loftus@intel.com>
- <20251106115016.3035639-1-ciara.loftus@intel.com>
- <20251106115016.3035639-7-ciara.loftus@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251106115016.3035639-7-ciara.loftus@intel.com>
-X-ClientProxiedBy: DU7P189CA0003.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:10:552::9) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id B47DA4021F;
+	Thu,  6 Nov 2025 16:26:01 +0100 (CET)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com
+ [209.85.208.52]) by mails.dpdk.org (Postfix) with ESMTP id 3CD1F4013F
+ for <dev@dpdk.org>; Thu,  6 Nov 2025 16:26:01 +0100 (CET)
+Received: by mail-ed1-f52.google.com with SMTP id
+ 4fb4d7f45d1cf-64088c6b309so1661561a12.0
+ for <dev@dpdk.org>; Thu, 06 Nov 2025 07:26:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1762442761; x=1763047561; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=eZWVymXaoQhRYm6WkPBTgll31NPja7o6s7+a9+wlXig=;
+ b=bYrThwIX3XTPkm0pD2hI0ZRbVdzmh6rRTxZqXB3Q9gEGJjVLUlBrN17En1bbSn2qgB
+ ev5877x5IP/smyEnZumX7Bsn9e2+Oq2jwvCLIvBf1/t0AOiq0XJQOOpwvK48GYG0wpCE
+ x5zT2/sJSgAUq0o/UT8yrefE0m1bIx396UrsU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762442761; x=1763047561;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+ :reply-to;
+ bh=eZWVymXaoQhRYm6WkPBTgll31NPja7o6s7+a9+wlXig=;
+ b=SQZ9OyKsDk08yCfbwWfGBRIBMwEQAXg+/IbEjqHUN90DjZOsYB0WUPW/0OMnWXcjoW
+ O4uq3njlFejrXuav7PRVe9+eLq8uIkg+x9aibegqL6S45hcicMhnfEglsEJbNfbm0ChM
+ kW1LSXIUFkqxz92qu/3d5F/k1ZdKXigAyJqY9M28TWzBB2SK0cKtnifRPWUTz+SAzgpP
+ gc9srtd/s0YnW4KnMID2M8pUL3cpPaysKQLVsrZunzI58VNSExQHx6oZYGu6riszrvuf
+ jFNORe70p/6SpmxQvJCoQa7mbus30w94lO5fWGanGa1vdAl+qi1nAAAA39W2gshfZ3vl
+ rB/g==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUW5sfvkOBIb4txm1GLddPYi/y1K+BMRZjSAuIRTgwJSvf0wBGVlmvZKGeLN04i+s52SIM=@dpdk.org
+X-Gm-Message-State: AOJu0YyNvZTPpwI0M5ZvJjK/EF6p/TzOyZBq1Fp7/dIPJlLCMwje7r89
+ rke12hxP+mM61ICl333s9ntSslokhZcTbMXcSpZitw4xhyWjt/nf6/fakMZpRcxRySJAUZ8+wXv
+ 6x1c0KzqAj6RPaXcaORcl880R0zpYzQbKX738k3EIZA==
+X-Gm-Gg: ASbGncsWz/mKHAvvdgVt5OF9fnETVQ77uHuma8us8EoVBZxw4LzBsw11TBaBPQ+0Mso
+ qVcH5qlQvxbA7q4vTukm6GL/y2JmNNTPPXqq26tdzAmHdBkhXED927Vnu+banJZ/tSzuSEg21P1
+ NtHiWGF5a1DFJA/ZcszxVmlgLTT6T30BXFKgGf3v+BMvEbBbIKRJb/xKAAPKJFfgNj3nWA/41c8
+ 0JsBEArtlXnfphTE3OhswijekQlm6ElCI1bkCIWcfTbu3gtAJrKP+gywIaPaXKZmL4qH/wm9VT+
+ 1iF/zNN4Hzj1vhT8Yw==
+X-Google-Smtp-Source: AGHT+IHoJjGo/DdCkUPeXGzgqa82pPaCVVFELlu/Oz6kQWzE4XqsFO20Ej/tQ0D8UYI05X9JplYjGm2n+a7+LbtUlBM=
+X-Received: by 2002:a05:6402:5049:b0:640:80f4:3914 with SMTP id
+ 4fb4d7f45d1cf-64105a4f9b1mr6219557a12.19.1762442760788; Thu, 06 Nov 2025
+ 07:26:00 -0800 (PST)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH0PR11MB4885:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa30cc00-e15e-4df1-382a-08de1d46b199
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?06wLWMVyhFVMooWhnDna2zFXKs0xCpNZ3Ifa7jmYQGvlS2pFOm8L6r2Nxdwt?=
- =?us-ascii?Q?PK1sJdODFzByp5ID1yXxFM8qv59Uh+RSMkQbBe8LoY2C1QXeKhTRuNG5WL0/?=
- =?us-ascii?Q?LOQJ9ehy8TIwiUzQI5LSP/6Y1G4QhxOijt3onZ4SDIBg5H8ya7VMnud5nqNZ?=
- =?us-ascii?Q?i8wyvkv3IfJ14xgF0yx6jcQh2bSIV0hzKc6d8ieCA9qTRXvhTMMmBsnrvx3c?=
- =?us-ascii?Q?U4CCQGD0/l8rdstBaG+v7de0/IVzt5RLOEguDiPQHaXA8jlKrtcwIgn50qT7?=
- =?us-ascii?Q?8EDt6rv7Si6vreKT31BmbxKWv4nuzpJrYfIbRmWPEkSZeZZjQR6uxWPVFJry?=
- =?us-ascii?Q?tvHkTrs6h7NbqbN438niLj3fAku3I2hGBiHFktrjTBOKcMXrqEr24jAxuxqj?=
- =?us-ascii?Q?erF1jaC1Iclalcltt1km2DXiyDUxYC0FGgClWsfpFRR2am1Hxvkuuyh3Qz72?=
- =?us-ascii?Q?OPumgpq8CF6gotluNtYYxJsZnFCjLo2WGum0395f+0Cxyk4SlKGimZ2fMlKE?=
- =?us-ascii?Q?NSSf1gQODJWDrufJRAdlGsQOl7pzzdF+c2WlZ6KyINHf16QFWlkWfQ/hI7Ca?=
- =?us-ascii?Q?RgRdemIvzDG7vvURE7HyiIv25gCxlQLsncJd5jY4Z7Is4FQdy8/R3YYG4Tli?=
- =?us-ascii?Q?5h9vhV1xGkPNmupGgqVX7gIFxSwJXJA39IhI0Hu8Bl+jcfoHgDmXtkqriTvA?=
- =?us-ascii?Q?loaNtYKrj1XLyIRmD93bS53a7zx3zIsQtPALnnkCxjWZ56zBYey2jUkra5Hx?=
- =?us-ascii?Q?3LymQJP3lnC7TfEmZaMrFsvIhcdsy0DW565LCYA2NHiQkPTrglZDpSFAfj+M?=
- =?us-ascii?Q?mH9blpC9JWnMJpQUqi+84FTQkF/CzGXhm9drKHlVaJQG4oZ3iyLvj54BOFnN?=
- =?us-ascii?Q?6WLrz7kN9XRrAhmv2MscKXRwwSh3xHs5dW2+yo3+fiHwmnIY5fdH1Ehsxqv8?=
- =?us-ascii?Q?eqWtPAUpEiysiOGazIr0Liu/Y5kIDOyaM5ubDd93d0MFIrQgi6UUpOo59JSY?=
- =?us-ascii?Q?rpVAAVICyD/EKQ4usOBYUCMamXWdvTmlpwiY0wtYwBPMsUo0a+awKQg2DvpW?=
- =?us-ascii?Q?OLBOQ1kgPH+x7QaY2s5/TAQNtR/DM/v4+yvn6D9vIqjiSbBEq/gSnwyKixTS?=
- =?us-ascii?Q?nXF69WSh/SX7g12nypcxALm27hIBLKPFPMbDbwNt0zXYQm31lDBotbjfBaqs?=
- =?us-ascii?Q?IGcqPsdastDcfnicNfo4ditGZjPDO/tgkyKvk9eBwAbtFoZGRVvCFhWGu/tP?=
- =?us-ascii?Q?2+hHB5BlzV3IQlwMan5Aie3v91lL3VNztVwHKkyiHQZSG+M/HNwV5AUeBTlF?=
- =?us-ascii?Q?1fFnHCPgi46a1NP5q5fxsVpUCkeFM64iWIe6gl7ld67Zi43tA/7T04koJkap?=
- =?us-ascii?Q?tVzdybU6q9nFLpMSVuU0p6WrrJR0zlP6QsVdn2/CZR7GcJmyk2C6pBVkFKSu?=
- =?us-ascii?Q?SE8G4iCa2gBeoNVMo/p5JSle2yA3S2sK?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?QdvIlAR/bVDYnWnc1FKXX/oZEMdsdvgbNsBkE4aonxcQ50EJJ28g2V6hioP5?=
- =?us-ascii?Q?wUGFQC//zxipcKSzgaI7B9lrJy/MYXJhs1FIFYXHNV4ID2v0dw1PmTrnnmbS?=
- =?us-ascii?Q?MvwRiPgpAgoB2gXN2X/ersSzKN//35OURiqv3MH7Ku3R1tD/lcuH1X+uYKF4?=
- =?us-ascii?Q?jXpzetRKNqWQX9mb9NV8azxzv3WPrVxK2/CDpPuaaqDpqJJ4N9JUddZfCVtd?=
- =?us-ascii?Q?TO2G9klqOvZunnphScmyulgyZ/E1V03vhhymdarfRHm3tEgfZbE1SAFM4hT1?=
- =?us-ascii?Q?up1iZu7aeyk6ZJlTzWZ2pvG+TCrDqs4+0FlQhx1mG8bpDVDFPAFqtuMU7IIC?=
- =?us-ascii?Q?AVN6HLYh3s4M1e3oZnzUa8YODx3W77eeE4Hvp3W+W1M4sgP56X4Z2/qjFrvk?=
- =?us-ascii?Q?DBwMEC6vWUDCjA/flS61wbRnMUToy4WosJRpPNhdmpCLdW9hzwZlYez7yXrC?=
- =?us-ascii?Q?PIhKHHGqEnetQgwQYRvNVC+pogGXTXEPmvsieGDO8D4LSW/q74eWaCSO4QEZ?=
- =?us-ascii?Q?xNe9+kzCGhtamXp6xiF76L+S79R1kf7uzZmFBnh0V+wqRnmc97E5zF6ci6yP?=
- =?us-ascii?Q?fZAqeYJmeks7IVc/uXT65OC3iQsaMLjCt87Zoj7+Sbsr6a7SkQKAXIxCnuH5?=
- =?us-ascii?Q?ETDDSS2MLK0uPNM4Rmn6xK+xs0Z79BqIvvRKMGn+11CXnHH50QjOQwxAmBbY?=
- =?us-ascii?Q?XmF06Xg6C8R6O1WVmPoKEFqdO9b7aryB2w8OPXsMo9o292OZBNpFrfdIHqQh?=
- =?us-ascii?Q?KlU/KUlynyy9xapp4g05ViijoNbqckZfY4QSFFLiR+XCsHif1xgzEKBi3pw5?=
- =?us-ascii?Q?GTqRgY0SCVy0HcfYta2ZNDGF1XwyhsFpiszb76+SnuHwJ8r6saDdbL1NeiF/?=
- =?us-ascii?Q?MqK5sEErMVpPQ/+C7H1kKNXY+mZI37CV55q+WTaxJnyel7ivrC1/GQDw0CVF?=
- =?us-ascii?Q?zmtl4jW0CQkGxygFudzftWrxIwhl1f1KW+MBndZGtGqG6J4MU8guhEQkU/WZ?=
- =?us-ascii?Q?A3q6SzSbIdcXC+u4CfaNb+c6fYh0HMqXuXM1ap8RkwBg2vK7U8jpQilUxFGL?=
- =?us-ascii?Q?VaL5h5pmXU94j5YToNNLIxeAwRhlC2gJ7d5SBi68muWOVfHHb6mUDu1basGF?=
- =?us-ascii?Q?avycF/CRsh5hSXVyMKgQ7MyPGehhLI9AsPYy0QdROEP5gSn1qCWU4udnIS4T?=
- =?us-ascii?Q?4IvWU3YLnuBA6XV3SIvTbR8be4dxRQe+2W+nn/R9QpL0NtcHb2iI2fHiWOeI?=
- =?us-ascii?Q?Vf2IyO982t/+bIjLs30pVAZMnkASob6EkJmgG/zIQ1TTGxY/kL0dzFGNVGGU?=
- =?us-ascii?Q?PRPIr6TEG25qnejmX7l5f3O6goEyKVRxfEiBpBUiYs5Cn8bb74BAX/MxWkbK?=
- =?us-ascii?Q?1VTQgNJljXOo/LW6heo/lTHGSWaBG0mecGJhekqiC0ETUr9+WfI/ndbW/tr9?=
- =?us-ascii?Q?5c82gbewZk8h5Ig8BD50sAPKt5niyn81AuIatpJK3S7TzW486yrd6NQMBsLy?=
- =?us-ascii?Q?kwofwsOrZXGcM5dp8nba4rGPa8n3Mae81R5uuDpAKDYL4fcSvNiUYBK8i7jQ?=
- =?us-ascii?Q?V5uhQ977d7p8GuDBwu4AuEWRTUUUjS4uJLty5gUB/2PV1wesSRm9LBqRc4h5?=
- =?us-ascii?Q?gw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa30cc00-e15e-4df1-382a-08de1d46b199
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2025 15:10:59.9057 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FQZYijbREjmFKs9ColLqe8fNzrjaoAiTuPRQgk6MdciQS8Rgagf3m45H+r3LMLiCvOy23CRup46EYmF/NLsWd8WiN29jYQ0llCo3pwi9D1M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4885
-X-OriginatorOrg: intel.com
+References: <20251023013049.1368129-1-probb@iol.unh.edu>
+ <20251105223628.1659390-1-probb@iol.unh.edu>
+ <20251105223628.1659390-4-probb@iol.unh.edu>
+ <CABJ3N2WsSuKhij2XtU1vo6E+dsuGyf9p0sQvaDM1hEhRcxU6eQ@mail.gmail.com>
+In-Reply-To: <CABJ3N2WsSuKhij2XtU1vo6E+dsuGyf9p0sQvaDM1hEhRcxU6eQ@mail.gmail.com>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Thu, 6 Nov 2025 10:25:48 -0500
+X-Gm-Features: AWmQ_bmzo401ecNCM4_KaraQR6M-p_LLERIOsjWaPGY5EXAs7UUcY36IoRgvt8E
+Message-ID: <CABJ3N2XqjAjJxOqk_5ZTp8+sah+Si0mvRwPO+E0SL+YYP_HtJw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] dts: add performance test functions to test suite
+ API
+To: Patrick Robb <probb@iol.unh.edu>
+Cc: Luca.Vizzarro@arm.com, dev@dpdk.org, Paul.Szczepanek@arm.com, 
+ dmarx@iol.unh.edu, Nicholas Pratte <npratte@iol.unh.edu>
+Content-Type: multipart/alternative; boundary="000000000000b1adf90642eeae24"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -172,18 +76,959 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Nov 06, 2025 at 11:50:16AM +0000, Ciara Loftus wrote:
-> Fix an issue that would arise in the event an mbuf had both the VLAN and
-> QINQ insertion offload flags set. In this case the L2TAG2 field would be
-> written to twice and could cause the tag to be corrupted. Reorder the
-> logic of populating the L2TAG2 field and ensure that the field is only
-> written to once.
-> 
-> Fixes: 3aa4efa36438 ("net/iavf: support VLAN insertion in AVX512 Tx")
-> 
-> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
-> ---
->  drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 26 +++++++++----------
->  drivers/net/intel/iavf/iavf_rxtx_vec_common.h |  9 +++----
->  2 files changed, 15 insertions(+), 20 deletions(-)
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+--000000000000b1adf90642eeae24
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
++class Config(BaseConfig):
++    """Performance test metrics."""
++
++    test_parameters: list[dict[str, int | float]] =3D [
++        {"frame_size": 64, "num_descriptors": 1024, "expected_mpps": 1.00}=
+,
++        {"frame_size": 128, "num_descriptors": 1024, "expected_mpps":
+1.00},
++        {"frame_size": 256, "num_descriptors": 1024, "expected_mpps":
+1.00},
++        {"frame_size": 512, "num_descriptors": 1024, "expected_mpps":
+1.00},
++        {"frame_size": 1024, "num_descriptors": 1024, "expected_mpps":
+1.00},
++        {"frame_size": 1518, "num_descriptors": 1024, "expected_mpps":
+1.00},
++    ]
++    delta_tolerance: float =3D 0.05
+
+Disregard the last comment, I had assumed that the delta_tolerance was in
+mpps
+not percentage of expected_mpps.
+
+nit: It may be helpful to declare this distinction in a comment above the
+delta_tolerance
+variable or perhaps use percent_tolerance instead.
+
+Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
+
+On Thu, Nov 6, 2025 at 8:30=E2=80=AFAM Andrew Bailey <abailey@iol.unh.edu> =
+wrote:
+
+> +                params["measured_mpps"] =3D self._transmit(testpmd,
+> frame_size)
+> +                params["performance_delta"] =3D (
+> +                    float(params["measured_mpps"]) -
+> float(params["expected_mpps"])
+> +                ) / float(params["expected_mpps"])
+> +                params["pass"] =3D float(params["performance_delta"]) >=
+=3D
+> -self.delta_tolerance
+>
+> This code seems like it can produce false positives. If we are checking i=
+f
+> a measured mpps is within dela_tolerance of the expected, (pass =3D
+> measured_mpps >=3D expected_mpps - delta_tolerance) may be more effective=
+. As
+> an example of a false positive, use measured_mpps =3D 1.0, expected_mpps =
+=3D
+> 2.0, and delta_tolerance =3D 0.51. This should be a fail since 1.0 is not
+> within 0.51 of 2.0 but equates to (-.50) >=3D (-.51) =3D=3D true.
+>
+> On Wed, Nov 5, 2025 at 5:37=E2=80=AFPM Patrick Robb <probb@iol.unh.edu> w=
+rote:
+>
+>> From: Nicholas Pratte <npratte@iol.unh.edu>
+>>
+>> Provide packet transmission function to support performance tests using =
+a
+>> user-supplied performance traffic generator. The single core performance
+>> test is included. It allows the user to define a matrix of frame size,
+>> descriptor count, and expected mpps, and fails if any combination does
+>> not forward a mpps count within 5% of the given baseline.
+>>
+>> Bugzilla ID: 1697
+>> Signed-off-by: Nicholas Pratte <npratte@iol.unh.edu>
+>> Signed-off-by: Patrick Robb <probb@iol.unh.edu>
+>> Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
+>> Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
+>> ---
+>>  ...sts.TestSuite_single_core_forward_perf.rst |   8 +
+>>  dts/api/packet.py                             |  35 +++-
+>>  dts/api/test.py                               |  32 ++++
+>>  dts/configurations/tests_config.example.yaml  |  12 ++
+>>  .../TestSuite_single_core_forward_perf.py     | 149 ++++++++++++++++++
+>>  5 files changed, 235 insertions(+), 1 deletion(-)
+>>  create mode 100644
+>> doc/api/dts/tests.TestSuite_single_core_forward_perf.rst
+>>  create mode 100644 dts/tests/TestSuite_single_core_forward_perf.py
+>>
+>> diff --git a/doc/api/dts/tests.TestSuite_single_core_forward_perf.rst
+>> b/doc/api/dts/tests.TestSuite_single_core_forward_perf.rst
+>> new file mode 100644
+>> index 0000000000..3651b0b041
+>> --- /dev/null
+>> +++ b/doc/api/dts/tests.TestSuite_single_core_forward_perf.rst
+>> @@ -0,0 +1,8 @@
+>> +.. SPDX-License-Identifier: BSD-3-Clause
+>> +
+>> +single_core_forward_perf Test Suite
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +.. automodule:: tests.TestSuite_single_core_forward_perf
+>> +   :members:
+>> +   :show-inheritance:
+>> diff --git a/dts/api/packet.py b/dts/api/packet.py
+>> index ac7f64dd17..094a1b7a9d 100644
+>> --- a/dts/api/packet.py
+>> +++ b/dts/api/packet.py
+>> @@ -33,6 +33,9 @@
+>>  from
+>> framework.testbed_model.traffic_generator.capturing_traffic_generator
+>> import (
+>>      PacketFilteringConfig,
+>>  )
+>> +from
+>> framework.testbed_model.traffic_generator.performance_traffic_generator
+>> import (
+>> +    PerformanceTrafficStats,
+>> +)
+>>  from framework.utils import get_packet_summaries
+>>
+>>
+>> @@ -108,7 +111,9 @@ def send_packets(
+>>          packets: Packets to send.
+>>      """
+>>      packets =3D adjust_addresses(packets)
+>> -    get_ctx().func_tg.send_packets(packets,
+>> get_ctx().topology.tg_port_egress)
+>> +    tg =3D get_ctx().func_tg
+>> +    if tg:
+>> +        tg.send_packets(packets, get_ctx().topology.tg_port_egress)
+>>
+>>
+>>  def get_expected_packets(
+>> @@ -317,3 +322,31 @@ def _verify_l3_packet(received_packet: IP,
+>> expected_packet: IP) -> bool:
+>>      if received_packet.src !=3D expected_packet.src or received_packet.=
+dst
+>> !=3D expected_packet.dst:
+>>          return False
+>>      return True
+>> +
+>> +
+>> +def assess_performance_by_packet(
+>> +    packet: Packet, duration: float, send_mpps: int | None =3D None
+>> +) -> PerformanceTrafficStats:
+>> +    """Send a given packet for a given duration and assess basic
+>> performance statistics.
+>> +
+>> +    Send `packet` and assess NIC performance for a given duration,
+>> corresponding to the test
+>> +    suite's given topology.
+>> +
+>> +    Args:
+>> +        packet: The packet to send.
+>> +        duration: Performance test duration (in seconds).
+>> +        send_mpps: The millions packets per second send rate.
+>> +
+>> +    Returns:
+>> +        Performance statistics of the generated test.
+>> +    """
+>> +    from
+>> framework.testbed_model.traffic_generator.performance_traffic_generator
+>> import (
+>> +        PerformanceTrafficGenerator,
+>> +    )
+>> +
+>> +    assert isinstance(
+>> +        get_ctx().perf_tg, PerformanceTrafficGenerator
+>> +    ), "Cannot send performance traffic with non-performance traffic
+>> generator"
+>> +    tg: PerformanceTrafficGenerator =3D cast(PerformanceTrafficGenerato=
+r,
+>> get_ctx().perf_tg)
+>> +    # TODO: implement @requires for types of traffic generator
+>> +    return tg.calculate_traffic_and_stats(packet, duration, send_mpps)
+>> diff --git a/dts/api/test.py b/dts/api/test.py
+>> index f58c82715d..11265ee2c1 100644
+>> --- a/dts/api/test.py
+>> +++ b/dts/api/test.py
+>> @@ -6,9 +6,13 @@
+>>  This module provides utility functions for test cases, including
+>> logging, verification.
+>>  """
+>>
+>> +import json
+>> +from datetime import datetime
+>> +
+>>  from framework.context import get_ctx
+>>  from framework.exception import InternalError, SkippedTestException,
+>> TestCaseVerifyError
+>>  from framework.logger import DTSLogger
+>> +from framework.testbed_model.artifact import Artifact
+>>
+>>
+>>  def get_current_test_case_name() -> str:
+>> @@ -124,3 +128,31 @@ def get_logger() -> DTSLogger:
+>>      if current_test_suite is None:
+>>          raise InternalError("No current test suite")
+>>      return current_test_suite._logger
+>> +
+>> +
+>> +def write_performance_json(
+>> +    performance_data: dict, filename: str =3D "performance_metrics.json=
+"
+>> +) -> None:
+>> +    """Write performance test results to a JSON file in the test suite'=
+s
+>> output directory.
+>> +
+>> +    This method creates a JSON file containing performance metrics in
+>> the test suite's
+>> +    output directory. The data can be a dictionary of any structure. No
+>> specific format
+>> +    is required.
+>> +
+>> +    Args:
+>> +        performance_data: Dictionary containing performance metrics and
+>> results.
+>> +        filename: Name of the JSON file to create.
+>> +
+>> +    Raises:
+>> +        InternalError: If performance data is not provided.
+>> +    """
+>> +    if not performance_data:
+>> +        raise InternalError("No performance data to write")
+>> +
+>> +    perf_data =3D {"timestamp": datetime.now().isoformat(),
+>> **performance_data}
+>> +    perf_json_artifact =3D Artifact("local", filename)
+>> +
+>> +    with perf_json_artifact.open("w") as json_file:
+>> +        json.dump(perf_data, json_file, indent=3D2)
+>> +
+>> +    get_logger().info(f"Performance results written to:
+>> {perf_json_artifact.local_path}")
+>> diff --git a/dts/configurations/tests_config.example.yaml
+>> b/dts/configurations/tests_config.example.yaml
+>> index c011ac0588..167bc91a35 100644
+>> --- a/dts/configurations/tests_config.example.yaml
+>> +++ b/dts/configurations/tests_config.example.yaml
+>> @@ -3,3 +3,15 @@
+>>  # Define the custom test suite configurations
+>>  hello_world:
+>>    msg: A custom hello world to you!
+>> +single_core_forward_perf:
+>> +  test_parameters: # Add frame size / descriptor count combinations as
+>> needed
+>> +    - frame_size: 64
+>> +      num_descriptors: 512
+>> +      expected_mpps: 1.0 # Set millions of packets per second according
+>> to your devices expected throughput for this given frame size / descript=
+or
+>> count
+>> +    - frame_size: 64
+>> +      num_descriptors: 1024
+>> +      expected_mpps: 1.0
+>> +    - frame_size: 512
+>> +      num_descriptors: 1024
+>> +      expected_mpps: 1.0
+>> +  delta_tolerance: 0.05
+>> \ No newline at end of file
+>> diff --git a/dts/tests/TestSuite_single_core_forward_perf.py
+>> b/dts/tests/TestSuite_single_core_forward_perf.py
+>> new file mode 100644
+>> index 0000000000..8a92ba39b5
+>> --- /dev/null
+>> +++ b/dts/tests/TestSuite_single_core_forward_perf.py
+>> @@ -0,0 +1,149 @@
+>> +# SPDX-License-Identifier: BSD-3-Clause
+>> +# Copyright(c) 2025 University of New Hampshire
+>> +
+>> +"""Single core forwarding performance test suite.
+>> +
+>> +This suite measures the amount of packets which can be forwarded by DPD=
+K
+>> using a single core.
+>> +The testsuites takes in as parameters a set of parameters, each
+>> consisting of a frame size,
+>> +Tx/Rx descriptor count, and the expected MPPS to be forwarded by the
+>> DPDK application. The
+>> +test leverages a performance traffic generator to send traffic at two
+>> paired TestPMD interfaces
+>> +on the SUT system, which forward to one another and then back to the
+>> traffic generator's ports.
+>> +The aggregate packets forwarded by the two TestPMD ports are compared
+>> against the expected MPPS
+>> +baseline which is given in the test config, in order to determine the
+>> test result.
+>> +"""
+>> +
+>> +from scapy.layers.inet import IP
+>> +from scapy.layers.l2 import Ether
+>> +from scapy.packet import Raw
+>> +
+>> +from api.capabilities import (
+>> +    LinkTopology,
+>> +    requires_link_topology,
+>> +)
+>> +from api.packet import assess_performance_by_packet
+>> +from api.test import verify, write_performance_json
+>> +from api.testpmd import TestPmd
+>> +from api.testpmd.config import RXRingParams, TXRingParams
+>> +from framework.params.types import TestPmdParamsDict
+>> +from framework.test_suite import BaseConfig, TestSuite, perf_test
+>> +
+>> +
+>> +class Config(BaseConfig):
+>> +    """Performance test metrics."""
+>> +
+>> +    test_parameters: list[dict[str, int | float]] =3D [
+>> +        {"frame_size": 64, "num_descriptors": 1024, "expected_mpps":
+>> 1.00},
+>> +        {"frame_size": 128, "num_descriptors": 1024, "expected_mpps":
+>> 1.00},
+>> +        {"frame_size": 256, "num_descriptors": 1024, "expected_mpps":
+>> 1.00},
+>> +        {"frame_size": 512, "num_descriptors": 1024, "expected_mpps":
+>> 1.00},
+>> +        {"frame_size": 1024, "num_descriptors": 1024, "expected_mpps":
+>> 1.00},
+>> +        {"frame_size": 1518, "num_descriptors": 1024, "expected_mpps":
+>> 1.00},
+>> +    ]
+>> +    delta_tolerance: float =3D 0.05
+>> +
+>> +
+>> +@requires_link_topology(LinkTopology.TWO_LINKS)
+>> +class TestSingleCoreForwardPerf(TestSuite):
+>> +    """Single core forwarding performance test suite."""
+>> +
+>> +    config: Config
+>> +
+>> +    def set_up_suite(self):
+>> +        """Set up the test suite."""
+>> +        self.test_parameters =3D self.config.test_parameters
+>> +        self.delta_tolerance =3D self.config.delta_tolerance
+>> +
+>> +    def _transmit(self, testpmd: TestPmd, frame_size: int) -> float:
+>> +        """Create a testpmd session with every rule in the given list,
+>> verify jump behavior.
+>> +
+>> +        Args:
+>> +            testpmd: The testpmd shell to use for forwarding packets.
+>> +            frame_size: The size of the frame to transmit.
+>> +
+>> +        Returns:
+>> +            The MPPS (millions of packets per second) forwarded by the
+>> SUT.
+>> +        """
+>> +        # Build packet with dummy values, and account for the 14B and
+>> 20B Ether and IP headers
+>> +        packet =3D (
+>> +            Ether(src=3D"52:00:00:00:00:00")
+>> +            / IP(src=3D"1.2.3.4", dst=3D"192.18.1.0")
+>> +            / Raw(load=3D"x" * (frame_size - 14 - 20))
+>> +        )
+>> +
+>> +        testpmd.start()
+>> +
+>> +        # Transmit for 30 seconds.
+>> +        stats =3D assess_performance_by_packet(packet=3Dpacket, duratio=
+n=3D30)
+>> +
+>> +        rx_mpps =3D stats.rx_pps / 1_000_000
+>> +
+>> +        return rx_mpps
+>> +
+>> +    def _produce_stats_table(self, test_parameters: list[dict[str, int =
+|
+>> float]]) -> None:
+>> +        """Display performance results in table format and write to
+>> structured JSON file.
+>> +
+>> +        Args:
+>> +            test_parameters: The expected and real stats per set of tes=
+t
+>> parameters.
+>> +        """
+>> +        header =3D f"{'Frame Size':>12} | {'TXD/RXD':>12} | {'Real
+>> MPPS':>12} | {'Expected MPPS':>14}"
+>> +        print("-" * len(header))
+>> +        print(header)
+>> +        print("-" * len(header))
+>> +        for params in test_parameters:
+>> +            print(f"{params['frame_size']:>12} |
+>> {params['num_descriptors']:>12} | ", end=3D"")
+>> +            print(f"{params['measured_mpps']:>12.2f} |
+>> {params['expected_mpps']:>14.2f}")
+>> +            print("-" * len(header))
+>> +
+>> +        write_performance_json({"results": test_parameters})
+>> +
+>> +    @perf_test
+>> +    def single_core_forward_perf(self) -> None:
+>> +        """Validate expected single core forwarding performance.
+>> +
+>> +        Steps:
+>> +            * Create a packet according to the frame size specified in
+>> the test config.
+>> +            * Transmit from the traffic generator's ports 0 and 1 at
+>> above the expect.
+>> +            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
+>> +
+>> +        Verify:
+>> +            * The resulting MPPS forwarded is greater than
+>> expected_mpps*(1-delta_tolerance).
+>> +        """
+>> +        # Find SUT DPDK driver to determine driver specific performance
+>> optimization flags
+>> +        sut_dpdk_driver =3D
+>> self._ctx.sut_node.config.ports[0].os_driver_for_dpdk
+>> +
+>> +        for params in self.test_parameters:
+>> +            frame_size =3D params["frame_size"]
+>> +            num_descriptors =3D params["num_descriptors"]
+>> +
+>> +            driver_specific_testpmd_args: TestPmdParamsDict =3D {
+>> +                "tx_ring": TXRingParams(descriptors=3Dnum_descriptors),
+>> +                "rx_ring": RXRingParams(descriptors=3Dnum_descriptors),
+>> +                "nb_cores": 1,
+>> +            }
+>> +
+>> +            if sut_dpdk_driver =3D=3D "mlx5_core":
+>> +                driver_specific_testpmd_args["burst"] =3D 64
+>> +                driver_specific_testpmd_args["mbcache"] =3D 512
+>> +            elif sut_dpdk_driver =3D=3D "i40e":
+>> +                driver_specific_testpmd_args["rx_queues"] =3D 2
+>> +                driver_specific_testpmd_args["tx_queues"] =3D 2
+>> +
+>> +            with TestPmd(
+>> +                **driver_specific_testpmd_args,
+>> +            ) as testpmd:
+>> +                params["measured_mpps"] =3D self._transmit(testpmd,
+>> frame_size)
+>> +                params["performance_delta"] =3D (
+>> +                    float(params["measured_mpps"]) -
+>> float(params["expected_mpps"])
+>> +                ) / float(params["expected_mpps"])
+>> +                params["pass"] =3D float(params["performance_delta"]) >=
+=3D
+>> -self.delta_tolerance
+>> +
+>> +        self._produce_stats_table(self.test_parameters)
+>> +
+>> +        for params in self.test_parameters:
+>> +            verify(
+>> +                params["pass"] is True,
+>> +                f"""Packets forwarded is less than {(1
+>> -self.delta_tolerance)*100}%
+>> +                of the expected baseline.
+>> +                Measured MPPS =3D {params["measured_mpps"]}
+>> +                Expected MPPS =3D {params["expected_mpps"]}""",
+>> +            )
+>> --
+>> 2.49.0
+>>
+>>
+
+--000000000000b1adf90642eeae24
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">+class Config(BaseConfig):<br>+=C2=A0 =C2=A0 &quot;&quot;&=
+quot;Performance test metrics.&quot;&quot;&quot;<br>+<br>+=C2=A0 =C2=A0 tes=
+t_parameters: list[dict[str, int | float]] =3D [<br>+=C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 {&quot;frame_size&quot;: 64, &quot;num_descriptors&quot;: 1024, &quo=
+t;expected_mpps&quot;: 1.00},<br>+=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_=
+size&quot;: 128, &quot;num_descriptors&quot;: 1024, &quot;expected_mpps&quo=
+t;: 1.00},<br>+=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 256, &q=
+uot;num_descriptors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>+=C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 512, &quot;num_descriptor=
+s&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>+=C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 {&quot;frame_size&quot;: 1024, &quot;num_descriptors&quot;: 1024, &q=
+uot;expected_mpps&quot;: 1.00},<br>+=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;fram=
+e_size&quot;: 1518, &quot;num_descriptors&quot;: 1024, &quot;expected_mpps&=
+quot;: 1.00},<br>+=C2=A0 =C2=A0 ]<br>+=C2=A0 =C2=A0 delta_tolerance: float =
+=3D 0.05<br><br>Disregard the last comment, I had assumed that the delta_to=
+lerance was in mpps<br>not percentage of expected_mpps.<div>=C2=A0 <br>nit:=
+ It may be helpful to declare this distinction in a comment above the delta=
+_tolerance<div>variable or perhaps use percent_tolerance instead.=C2=A0<div=
+><br>Reviewed-by: Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu">=
+abailey@iol.unh.edu</a>&gt;</div></div></div></div><br><div class=3D"gmail_=
+quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, =
+Nov 6, 2025 at 8:30=E2=80=AFAM Andrew Bailey &lt;<a href=3D"mailto:abailey@=
+iol.unh.edu">abailey@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=
+=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rg=
+b(204,204,204);padding-left:1ex"><div dir=3D"ltr"><div><div style=3D"color:=
+inherit">+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 params[&q=
+uot;measured_mpps&quot;] =3D self._transmit(testpmd, frame_size)<br>+=C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 params[&quot;performance_=
+delta&quot;] =3D (<br>+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 float(params[&quot;measured_mpps&quot;]) - float(params[&=
+quot;expected_mpps&quot;])<br></div></div>+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 ) / float(params[&quot;expected_mpps&quot;])<br>+=
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 params[&quot;pass&q=
+uot;] =3D float(params[&quot;performance_delta&quot;]) &gt;=3D -self.delta_=
+tolerance<br><br>This code seems like it can produce false positives. If we=
+ are checking if a measured mpps is within dela_tolerance of the expected, =
+(pass =3D measured_mpps &gt;=3D expected_mpps - delta_tolerance) may be mor=
+e effective. As an example of a false positive, use measured_mpps =3D 1.0, =
+expected_mpps =3D 2.0, and delta_tolerance =3D 0.51. This should be a fail =
+since 1.0 is not within 0.51 of 2.0 but equates to (-.50) &gt;=3D (-.51) =
+=3D=3D true.=C2=A0 =C2=A0</div><br><div class=3D"gmail_quote"><div dir=3D"l=
+tr" class=3D"gmail_attr">On Wed, Nov 5, 2025 at 5:37=E2=80=AFPM Patrick Rob=
+b &lt;<a href=3D"mailto:probb@iol.unh.edu" target=3D"_blank">probb@iol.unh.=
+edu</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"marg=
+in:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1e=
+x">From: Nicholas Pratte &lt;<a href=3D"mailto:npratte@iol.unh.edu" target=
+=3D"_blank">npratte@iol.unh.edu</a>&gt;<br>
+<br>
+Provide packet transmission function to support performance tests using a<b=
+r>
+user-supplied performance traffic generator. The single core performance<br=
+>
+test is included. It allows the user to define a matrix of frame size,<br>
+descriptor count, and expected mpps, and fails if any combination does<br>
+not forward a mpps count within 5% of the given baseline.<br>
+<br>
+Bugzilla ID: 1697<br>
+Signed-off-by: Nicholas Pratte &lt;<a href=3D"mailto:npratte@iol.unh.edu" t=
+arget=3D"_blank">npratte@iol.unh.edu</a>&gt;<br>
+Signed-off-by: Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu" target=
+=3D"_blank">probb@iol.unh.edu</a>&gt;<br>
+Reviewed-by: Dean Marx &lt;<a href=3D"mailto:dmarx@iol.unh.edu" target=3D"_=
+blank">dmarx@iol.unh.edu</a>&gt;<br>
+Reviewed-by: Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu" targe=
+t=3D"_blank">abailey@iol.unh.edu</a>&gt;<br>
+---<br>
+=C2=A0...sts.TestSuite_single_core_forward_perf.rst |=C2=A0 =C2=A08 +<br>
+=C2=A0dts/api/packet.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0 35 +++-<br>
+=C2=A0dts/api/test.py=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0 32 ++++<=
+br>
+=C2=A0dts/configurations/tests_config.example.yaml=C2=A0 |=C2=A0 12 ++<br>
+=C2=A0.../TestSuite_single_core_forward_perf.py=C2=A0 =C2=A0 =C2=A0| 149 ++=
+++++++++++++++++<br>
+=C2=A05 files changed, 235 insertions(+), 1 deletion(-)<br>
+=C2=A0create mode 100644 doc/api/dts/tests.TestSuite_single_core_forward_pe=
+rf.rst<br>
+=C2=A0create mode 100644 dts/tests/TestSuite_single_core_forward_perf.py<br=
+>
+<br>
+diff --git a/doc/api/dts/tests.TestSuite_single_core_forward_perf.rst b/doc=
+/api/dts/tests.TestSuite_single_core_forward_perf.rst<br>
+new file mode 100644<br>
+index 0000000000..3651b0b041<br>
+--- /dev/null<br>
++++ b/doc/api/dts/tests.TestSuite_single_core_forward_perf.rst<br>
+@@ -0,0 +1,8 @@<br>
++.. SPDX-License-Identifier: BSD-3-Clause<br>
++<br>
++single_core_forward_perf Test Suite<br>
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>
++<br>
++.. automodule:: tests.TestSuite_single_core_forward_perf<br>
++=C2=A0 =C2=A0:members:<br>
++=C2=A0 =C2=A0:show-inheritance:<br>
+diff --git a/dts/api/packet.py b/dts/api/packet.py<br>
+index ac7f64dd17..094a1b7a9d 100644<br>
+--- a/dts/api/packet.py<br>
++++ b/dts/api/packet.py<br>
+@@ -33,6 +33,9 @@<br>
+=C2=A0from framework.testbed_model.traffic_generator.capturing_traffic_gene=
+rator import (<br>
+=C2=A0 =C2=A0 =C2=A0PacketFilteringConfig,<br>
+=C2=A0)<br>
++from framework.testbed_model.traffic_generator.performance_traffic_generat=
+or import (<br>
++=C2=A0 =C2=A0 PerformanceTrafficStats,<br>
++)<br>
+=C2=A0from framework.utils import get_packet_summaries<br>
+<br>
+<br>
+@@ -108,7 +111,9 @@ def send_packets(<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0packets: Packets to send.<br>
+=C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;<br>
+=C2=A0 =C2=A0 =C2=A0packets =3D adjust_addresses(packets)<br>
+-=C2=A0 =C2=A0 get_ctx().func_tg.send_packets(packets, get_ctx().topology.t=
+g_port_egress)<br>
++=C2=A0 =C2=A0 tg =3D get_ctx().func_tg<br>
++=C2=A0 =C2=A0 if tg:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 tg.send_packets(packets, get_ctx().topology.tg=
+_port_egress)<br>
+<br>
+<br>
+=C2=A0def get_expected_packets(<br>
+@@ -317,3 +322,31 @@ def _verify_l3_packet(received_packet: IP, expected_pa=
+cket: IP) -&gt; bool:<br>
+=C2=A0 =C2=A0 =C2=A0if received_packet.src !=3D expected_packet.src or rece=
+ived_packet.dst !=3D expected_packet.dst:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return False<br>
+=C2=A0 =C2=A0 =C2=A0return True<br>
++<br>
++<br>
++def assess_performance_by_packet(<br>
++=C2=A0 =C2=A0 packet: Packet, duration: float, send_mpps: int | None =3D N=
+one<br>
++) -&gt; PerformanceTrafficStats:<br>
++=C2=A0 =C2=A0 &quot;&quot;&quot;Send a given packet for a given duration a=
+nd assess basic performance statistics.<br>
++<br>
++=C2=A0 =C2=A0 Send `packet` and assess NIC performance for a given duratio=
+n, corresponding to the test<br>
++=C2=A0 =C2=A0 suite&#39;s given topology.<br>
++<br>
++=C2=A0 =C2=A0 Args:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 packet: The packet to send.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 duration: Performance test duration (in second=
+s).<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 send_mpps: The millions packets per second sen=
+d rate.<br>
++<br>
++=C2=A0 =C2=A0 Returns:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Performance statistics of the generated test.<=
+br>
++=C2=A0 =C2=A0 &quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 from framework.testbed_model.traffic_generator.performance_t=
+raffic_generator import (<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 PerformanceTrafficGenerator,<br>
++=C2=A0 =C2=A0 )<br>
++<br>
++=C2=A0 =C2=A0 assert isinstance(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 get_ctx().perf_tg, PerformanceTrafficGenerator=
+<br>
++=C2=A0 =C2=A0 ), &quot;Cannot send performance traffic with non-performanc=
+e traffic generator&quot;<br>
++=C2=A0 =C2=A0 tg: PerformanceTrafficGenerator =3D cast(PerformanceTrafficG=
+enerator, get_ctx().perf_tg)<br>
++=C2=A0 =C2=A0 # TODO: implement @requires for types of traffic generator<b=
+r>
++=C2=A0 =C2=A0 return tg.calculate_traffic_and_stats(packet, duration, send=
+_mpps)<br>
+diff --git a/dts/api/test.py b/dts/api/test.py<br>
+index f58c82715d..11265ee2c1 100644<br>
+--- a/dts/api/test.py<br>
++++ b/dts/api/test.py<br>
+@@ -6,9 +6,13 @@<br>
+=C2=A0This module provides utility functions for test cases, including logg=
+ing, verification.<br>
+=C2=A0&quot;&quot;&quot;<br>
+<br>
++import json<br>
++from datetime import datetime<br>
++<br>
+=C2=A0from framework.context import get_ctx<br>
+=C2=A0from framework.exception import InternalError, SkippedTestException, =
+TestCaseVerifyError<br>
+=C2=A0from framework.logger import DTSLogger<br>
++from framework.testbed_model.artifact import Artifact<br>
+<br>
+<br>
+=C2=A0def get_current_test_case_name() -&gt; str:<br>
+@@ -124,3 +128,31 @@ def get_logger() -&gt; DTSLogger:<br>
+=C2=A0 =C2=A0 =C2=A0if current_test_suite is None:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0raise InternalError(&quot;No current test=
+ suite&quot;)<br>
+=C2=A0 =C2=A0 =C2=A0return current_test_suite._logger<br>
++<br>
++<br>
++def write_performance_json(<br>
++=C2=A0 =C2=A0 performance_data: dict, filename: str =3D &quot;performance_=
+metrics.json&quot;<br>
++) -&gt; None:<br>
++=C2=A0 =C2=A0 &quot;&quot;&quot;Write performance test results to a JSON f=
+ile in the test suite&#39;s output directory.<br>
++<br>
++=C2=A0 =C2=A0 This method creates a JSON file containing performance metri=
+cs in the test suite&#39;s<br>
++=C2=A0 =C2=A0 output directory. The data can be a dictionary of any struct=
+ure. No specific format<br>
++=C2=A0 =C2=A0 is required.<br>
++<br>
++=C2=A0 =C2=A0 Args:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 performance_data: Dictionary containing perfor=
+mance metrics and results.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 filename: Name of the JSON file to create.<br>
++<br>
++=C2=A0 =C2=A0 Raises:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 InternalError: If performance data is not prov=
+ided.<br>
++=C2=A0 =C2=A0 &quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 if not performance_data:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 raise InternalError(&quot;No performance data =
+to write&quot;)<br>
++<br>
++=C2=A0 =C2=A0 perf_data =3D {&quot;timestamp&quot;: datetime.now().isoform=
+at(), **performance_data}<br>
++=C2=A0 =C2=A0 perf_json_artifact =3D Artifact(&quot;local&quot;, filename)=
+<br>
++<br>
++=C2=A0 =C2=A0 with perf_json_artifact.open(&quot;w&quot;) as json_file:<br=
+>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 json.dump(perf_data, json_file, indent=3D2)<br=
+>
++<br>
++=C2=A0 =C2=A0 get_logger().info(f&quot;Performance results written to: {pe=
+rf_json_artifact.local_path}&quot;)<br>
+diff --git a/dts/configurations/tests_config.example.yaml b/dts/configurati=
+ons/tests_config.example.yaml<br>
+index c011ac0588..167bc91a35 100644<br>
+--- a/dts/configurations/tests_config.example.yaml<br>
++++ b/dts/configurations/tests_config.example.yaml<br>
+@@ -3,3 +3,15 @@<br>
+=C2=A0# Define the custom test suite configurations<br>
+=C2=A0hello_world:<br>
+=C2=A0 =C2=A0msg: A custom hello world to you!<br>
++single_core_forward_perf:<br>
++=C2=A0 test_parameters: # Add frame size / descriptor count combinations a=
+s needed<br>
++=C2=A0 =C2=A0 - frame_size: 64<br>
++=C2=A0 =C2=A0 =C2=A0 num_descriptors: 512<br>
++=C2=A0 =C2=A0 =C2=A0 expected_mpps: 1.0 # Set millions of packets per seco=
+nd according to your devices expected throughput for this given frame size =
+/ descriptor count<br>
++=C2=A0 =C2=A0 - frame_size: 64<br>
++=C2=A0 =C2=A0 =C2=A0 num_descriptors: 1024<br>
++=C2=A0 =C2=A0 =C2=A0 expected_mpps: 1.0<br>
++=C2=A0 =C2=A0 - frame_size: 512<br>
++=C2=A0 =C2=A0 =C2=A0 num_descriptors: 1024<br>
++=C2=A0 =C2=A0 =C2=A0 expected_mpps: 1.0<br>
++=C2=A0 delta_tolerance: 0.05<br>
+\ No newline at end of file<br>
+diff --git a/dts/tests/TestSuite_single_core_forward_perf.py b/dts/tests/Te=
+stSuite_single_core_forward_perf.py<br>
+new file mode 100644<br>
+index 0000000000..8a92ba39b5<br>
+--- /dev/null<br>
++++ b/dts/tests/TestSuite_single_core_forward_perf.py<br>
+@@ -0,0 +1,149 @@<br>
++# SPDX-License-Identifier: BSD-3-Clause<br>
++# Copyright(c) 2025 University of New Hampshire<br>
++<br>
++&quot;&quot;&quot;Single core forwarding performance test suite.<br>
++<br>
++This suite measures the amount of packets which can be forwarded by DPDK u=
+sing a single core.<br>
++The testsuites takes in as parameters a set of parameters, each consisting=
+ of a frame size,<br>
++Tx/Rx descriptor count, and the expected MPPS to be forwarded by the DPDK =
+application. The<br>
++test leverages a performance traffic generator to send traffic at two pair=
+ed TestPMD interfaces<br>
++on the SUT system, which forward to one another and then back to the traff=
+ic generator&#39;s ports.<br>
++The aggregate packets forwarded by the two TestPMD ports are compared agai=
+nst the expected MPPS<br>
++baseline which is given in the test config, in order to determine the test=
+ result.<br>
++&quot;&quot;&quot;<br>
++<br>
++from scapy.layers.inet import IP<br>
++from scapy.layers.l2 import Ether<br>
++from scapy.packet import Raw<br>
++<br>
++from api.capabilities import (<br>
++=C2=A0 =C2=A0 LinkTopology,<br>
++=C2=A0 =C2=A0 requires_link_topology,<br>
++)<br>
++from api.packet import assess_performance_by_packet<br>
++from api.test import verify, write_performance_json<br>
++from api.testpmd import TestPmd<br>
++from api.testpmd.config import RXRingParams, TXRingParams<br>
++from framework.params.types import TestPmdParamsDict<br>
++from framework.test_suite import BaseConfig, TestSuite, perf_test<br>
++<br>
++<br>
++class Config(BaseConfig):<br>
++=C2=A0 =C2=A0 &quot;&quot;&quot;Performance test metrics.&quot;&quot;&quot=
+;<br>
++<br>
++=C2=A0 =C2=A0 test_parameters: list[dict[str, int | float]] =3D [<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 64, &quot;num_descrip=
+tors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 128, &quot;num_descri=
+ptors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 256, &quot;num_descri=
+ptors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 512, &quot;num_descri=
+ptors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 1024, &quot;num_descr=
+iptors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 {&quot;frame_size&quot;: 1518, &quot;num_descr=
+iptors&quot;: 1024, &quot;expected_mpps&quot;: 1.00},<br>
++=C2=A0 =C2=A0 ]<br>
++=C2=A0 =C2=A0 delta_tolerance: float =3D 0.05<br>
++<br>
++<br>
++@requires_link_topology(LinkTopology.TWO_LINKS)<br>
++class TestSingleCoreForwardPerf(TestSuite):<br>
++=C2=A0 =C2=A0 &quot;&quot;&quot;Single core forwarding performance test su=
+ite.&quot;&quot;&quot;<br>
++<br>
++=C2=A0 =C2=A0 config: Config<br>
++<br>
++=C2=A0 =C2=A0 def set_up_suite(self):<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Set up the test suite.&quot;=
+&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.test_parameters =3D self.config.test_para=
+meters<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 self.delta_tolerance =3D self.config.delta_tol=
+erance<br>
++<br>
++=C2=A0 =C2=A0 def _transmit(self, testpmd: TestPmd, frame_size: int) -&gt;=
+ float:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Create a testpmd session wit=
+h every rule in the given list, verify jump behavior.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Args:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd: The testpmd shell to us=
+e for forwarding packets.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 frame_size: The size of the fram=
+e to transmit.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Returns:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 The MPPS (millions of packets pe=
+r second) forwarded by the SUT.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 # Build packet with dummy values, and account =
+for the 14B and 20B Ether and IP headers<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 packet =3D (<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Ether(src=3D&quot;52:00:00:00:00=
+:00&quot;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 / IP(src=3D&quot;1.2.3.4&quot;, =
+dst=3D&quot;192.18.1.0&quot;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 / Raw(load=3D&quot;x&quot; * (fr=
+ame_size - 14 - 20))<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 testpmd.start()<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 # Transmit for 30 seconds.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 stats =3D assess_performance_by_packet(packet=
+=3Dpacket, duration=3D30)<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 rx_mpps =3D stats.rx_pps / 1_000_000<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 return rx_mpps<br>
++<br>
++=C2=A0 =C2=A0 def _produce_stats_table(self, test_parameters: list[dict[st=
+r, int | float]]) -&gt; None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Display performance results =
+in table format and write to structured JSON file.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Args:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 test_parameters: The expected an=
+d real stats per set of test parameters.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 header =3D f&quot;{&#39;Frame Size&#39;:&gt;12=
+} | {&#39;TXD/RXD&#39;:&gt;12} | {&#39;Real MPPS&#39;:&gt;12} | {&#39;Expec=
+ted MPPS&#39;:&gt;14}&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 print(&quot;-&quot; * len(header))<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 print(header)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 print(&quot;-&quot; * len(header))<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 for params in test_parameters:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 print(f&quot;{params[&#39;frame_=
+size&#39;]:&gt;12} | {params[&#39;num_descriptors&#39;]:&gt;12} | &quot;, e=
+nd=3D&quot;&quot;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 print(f&quot;{params[&#39;measur=
+ed_mpps&#39;]:&gt;12.2f} | {params[&#39;expected_mpps&#39;]:&gt;14.2f}&quot=
+;)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 print(&quot;-&quot; * len(header=
+))<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 write_performance_json({&quot;results&quot;: t=
+est_parameters})<br>
++<br>
++=C2=A0 =C2=A0 @perf_test<br>
++=C2=A0 =C2=A0 def single_core_forward_perf(self) -&gt; None:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;Validate expected single cor=
+e forwarding performance.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Steps:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Create a packet according to t=
+he frame size specified in the test config.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Transmit from the traffic gene=
+rator&#39;s ports 0 and 1 at above the expect.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * Forward on TestPMD&#39;s inter=
+faces 0 and 1 with 1 core.<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 Verify:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 * The resulting MPPS forwarded i=
+s greater than expected_mpps*(1-delta_tolerance).<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;&quot;&quot;<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 # Find SUT DPDK driver to determine driver spe=
+cific performance optimization flags<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 sut_dpdk_driver =3D self._ctx.sut_node.config.=
+ports[0].os_driver_for_dpdk<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 for params in self.test_parameters:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 frame_size =3D params[&quot;fram=
+e_size&quot;]<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 num_descriptors =3D params[&quot=
+;num_descriptors&quot;]<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 driver_specific_testpmd_args: Te=
+stPmdParamsDict =3D {<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;tx_ring&quot=
+;: TXRingParams(descriptors=3Dnum_descriptors),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;rx_ring&quot=
+;: RXRingParams(descriptors=3Dnum_descriptors),<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &quot;nb_cores&quo=
+t;: 1,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if sut_dpdk_driver =3D=3D &quot;=
+mlx5_core&quot;:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 driver_specific_te=
+stpmd_args[&quot;burst&quot;] =3D 64<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 driver_specific_te=
+stpmd_args[&quot;mbcache&quot;] =3D 512<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 elif sut_dpdk_driver =3D=3D &quo=
+t;i40e&quot;:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 driver_specific_te=
+stpmd_args[&quot;rx_queues&quot;] =3D 2<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 driver_specific_te=
+stpmd_args[&quot;tx_queues&quot;] =3D 2<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 with TestPmd(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 **driver_specific_=
+testpmd_args,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ) as testpmd:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 params[&quot;measu=
+red_mpps&quot;] =3D self._transmit(testpmd, frame_size)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 params[&quot;perfo=
+rmance_delta&quot;] =3D (<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 floa=
+t(params[&quot;measured_mpps&quot;]) - float(params[&quot;expected_mpps&quo=
+t;])<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ) / float(params[&=
+quot;expected_mpps&quot;])<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 params[&quot;pass&=
+quot;] =3D float(params[&quot;performance_delta&quot;]) &gt;=3D -self.delta=
+_tolerance<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 self._produce_stats_table(self.test_parameters=
+)<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 for params in self.test_parameters:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 verify(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 params[&quot;pass&=
+quot;] is True,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 f&quot;&quot;&quot=
+;Packets forwarded is less than {(1 -self.delta_tolerance)*100}%<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 of the expected ba=
+seline.<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Measured MPPS =3D =
+{params[&quot;measured_mpps&quot;]}<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Expected MPPS =3D =
+{params[&quot;expected_mpps&quot;]}&quot;&quot;&quot;,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
+-- <br>
+2.49.0<br>
+<br>
+</blockquote></div>
+</blockquote></div>
+
+--000000000000b1adf90642eeae24--
