@@ -2,66 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9530CCFA13
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 18:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FBE5CCFA13
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 18:11:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B7AB4021F;
-	Thu,  6 Nov 2025 19:01:42 +0100 (CET)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
- [209.85.210.177])
- by mails.dpdk.org (Postfix) with ESMTP id 830ED4013F
- for <dev@dpdk.org>; Thu,  6 Nov 2025 19:01:40 +0100 (CET)
-Received: by mail-pf1-f177.google.com with SMTP id
- d2e1a72fcca58-7a9c64dfa6eso1102096b3a.3
- for <dev@dpdk.org>; Thu, 06 Nov 2025 10:01:40 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id DB3034021F;
+	Thu,  6 Nov 2025 19:11:37 +0100 (CET)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com
+ [209.85.128.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 3FCEC4013F
+ for <dev@dpdk.org>; Thu,  6 Nov 2025 19:11:37 +0100 (CET)
+Received: by mail-yw1-f176.google.com with SMTP id
+ 00721157ae682-7866c61a9bbso12232827b3.1
+ for <dev@dpdk.org>; Thu, 06 Nov 2025 10:11:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1762452100; x=1763056900; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=Tds+UbPqqsx2rMkxSkf18PfWcxX2BUfVzgWLxtRXddw=;
- b=gzweklUU5n++vXI56nCDk44bRlZRIoY+phGEYx6V75T15IbTY7DsOd+TqfkHjiHH02
- iBTeOm3FBSPFBBm4TxGxaDPi3pw38AgFVTbqSw/tzGZ3cTvQjh9p+T41q2n8m0RvLiKh
- Pi48OjeGaWjato3Zmc8fqXCGeFH+tTr7C3w4I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762452100; x=1763056900;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1762452696; x=1763057496; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Tds+UbPqqsx2rMkxSkf18PfWcxX2BUfVzgWLxtRXddw=;
- b=tvObS9xBoGA5E6F1zPYbNeB7ZcDJQAmLO3jf8HLDQsVQ2/mjIgFFB13vB7hM1X3ATc
- uw5RFwnK7oB+62zi2DF4Pe+B0AolTjCCugUbsL8oREwsg8AQCq5H+7O6NgBj5lAU7yT7
- jpmnNcq6o7vm8Q4MOIU6GN6kQO0TDlzLMFSG0mZB8XP3I6Xb0rZZJArzQvTCAt1TLrpi
- raS555OP+DUTCPLXDb32IZtN2HINPnbOdWL0LLUnRhcYadJFZS7jHfM2l24j20SQ0Zg6
- k5Aa/FVGT17snDQexNvswi/VRhFUaxfRvQ1e+z/fpSy6SRaxjZo/9MH03feIWtTox6dG
- hTKg==
+ bh=7LRUODpYK/64gLgd9mEEjH37ZsXDehz+2Y3pUwzcKT0=;
+ b=fQjsBz5Kve0YR8xZklnSXHulMb7r4drL4r0/OPeTI0jS+Yr29M+nbsg+5MnYr6mYSW
+ 2ccMgTlHO/yA+ynS/057RgUEDH24hJjf4QRkCVOHNGW/MKyPJP3jGyjvyuWIKrjeP6U+
+ NnQmXVHfgC6RHg+A0VBOCqpvqQCmSHXgPezrE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762452696; x=1763057496;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=7LRUODpYK/64gLgd9mEEjH37ZsXDehz+2Y3pUwzcKT0=;
+ b=erDTVc9ZeQsAGS/IkCxOUfoFpUT829Zwsq6F9W2KsLGvZstoWp294JshXmvdUWrTsp
+ 6ZXJFl2pYJRaoL2DejL/OnFmaU1fKZTluLlHKxfn4DJLcQFulMzsDakxHJIN63kJus81
+ OMFV9sTvT8lA3UEALe0bM4n6I2l3dGuVWRtg7Vv5kX66oKtcSAY7TAnJpZz4Ol16vZw5
+ 2A3V4jpByKWtLHaqul8/Di8L8QkDFTnxUA+nyWun2DD8R7SgHcfqNVFBCmUT10xR0EBZ
+ QhIryGQ7LaBrl8BFRB3K5hl62zR8W/1V4jFbcMfBXHqdr9rd37dLEhXVXhXtACqSWv4d
+ ehBg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCX1DV1BOlSarFQCwtJqfhNak5s1DdwqRQ+Pz2oHXNveGtf2uTvORRtP7kpl0eAZXYk4jJE=@dpdk.org
-X-Gm-Message-State: AOJu0YzNNkIzjB0ON6R6bdNcN2G6HkSYVKtlO2dLjXwV0FzAjLl9rhZP
- DCU1juvOvxCh/tAYzts0zXY6gNmvzXL4a+5ZGmGpwoCqQTITgJ2BcEnYROPewOq4bKGnQXdmFLP
- /+ou93KmJQskoGALhieTrvGOwHJkL6HqrBWstu7tUBw==
-X-Gm-Gg: ASbGnctVfkgYJmRDMiG1O0Mm6pa159RG4Jn7XX3hdwXH3FKpf2PxD5gvBlkpZe+Enu9
- LoWDots9kfb97uevPASI/pChY4eBi+WbOvD8AzUiLSCbij3w3eTd9EvL/cRt6h3Xc+F6fTXa9Q2
- XIHCOUO05o3Iy9TErphciJbH1T9WbB750Ly5C2BwvXnOt7EVV/tT1K3/0CvDPVMmv07DCZg/UFs
- 1DvSMKuaKj29mVdYaR+1XHgZwSZ2gvXy1pmm0Wp3raFm5aX3YrxPJ6df6ScsyRiXHO8N7eBuUDp
- S4gGqvdIrJn9f/It2fJvC+V2U7o=
-X-Google-Smtp-Source: AGHT+IEAJpv1v/QzfSSsNt5jSkCVXtnhmlsSfZVuZ2ET8/KoAC3Umn7J8IBhCSZtNlgxXVEwCMWbEaHu+2oiBg5Ljwg=
-X-Received: by 2002:a05:6a20:3d86:b0:341:84ee:7597 with SMTP id
- adf61e73a8af0-3522a76d896mr556699637.47.1762452099336; Thu, 06 Nov 2025
- 10:01:39 -0800 (PST)
+ AJvYcCVuIN/afMIGRkToSrP9W80nnAmMd3O6+etID2WbchFUI/Zqnyx1uzj4Z2QR9qgfj1xpDP8=@dpdk.org
+X-Gm-Message-State: AOJu0YwOHXxR3ZvWycIOwmPdEfS2LWB9BWEKa/eGb/jTTWvYSDs9ag5+
+ jleUwUTnLqvHbeqrfOagce9w1aRbENTQerIxZyTgtDsLsF9H+ICOzHqpS1pB1c/b+uUgIBVPpBu
+ ZxpsJ/g2KhRJV9HP73PE/QBGoBihCbBeYoAN1uybUAg==
+X-Gm-Gg: ASbGnctZZ4M0ICu/1RA5Ct/gQTkZYZwFxbWoZXZetq+LudhteZJYzikPVaiY25D2VVg
+ MqFU4G000arMitrfEaLZ5QOy9E3eyKVXzKeKwczyJEzTnbDGq/YdH3D1lrLF07P78FHKPJ+oUFG
+ r8PGDPLUFIaJH8Yfm1EODAXm9ILTUo4K7TKLc+DeTSbVKVLsgrkt2z09JIWq2F/a/TLBWGc2jR2
+ gQ4Nmku2E/1mdLHCXw+cz3G1RxZlhbEXYc9DiV0GTK/YxuBC7lPmh667Fbdgk0GgDrD3iLnfvBp
+ FBY7Hadw3z/kqBWO9i0=
+X-Google-Smtp-Source: AGHT+IHNemHxcX3ovOsmDInBquMxhoqoI3K1thbNXo9/e4YFZCLKjKnNSQBB4AN5JtTVt5E6BqtlfpT89GDYRdNZr8g=
+X-Received: by 2002:a05:690e:250e:10b0:63f:a103:5d57 with SMTP id
+ 956f58d0204a3-640c41836bamr263847d50.5.1762452696552; Thu, 06 Nov 2025
+ 10:11:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20250908014154.82938-1-probb@iol.unh.edu>
- <20251105194925.1507334-1-probb@iol.unh.edu>
- <CABD7UXOSvFY65O7djZCH7K1C9jwxNNwAq6QJktS1FJDGS2yuaQ@mail.gmail.com>
-In-Reply-To: <CABD7UXOSvFY65O7djZCH7K1C9jwxNNwAq6QJktS1FJDGS2yuaQ@mail.gmail.com>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 6 Nov 2025 13:00:30 -0500
-X-Gm-Features: AWmQ_bkXLafUygRCtq_IAXKCtJVkYkRjkMFxwOgjuRyrqk0R590x_7S7m-mKaVE
-Message-ID: <CAJvnSUAXH8cv0JvqV2o6iiQ6x=930P2bnuCd4714QQetXSvJJA@mail.gmail.com>
-Subject: Re: [PATCH v2] dts: testpmd link check on port start
-To: Dean Marx <dmarx@iol.unh.edu>
-Cc: Luca.Vizzarro@arm.com, dev@dpdk.org, Paul.Szczepanek@arm.com, 
- abailey@iol.unh.edu
-Content-Type: multipart/alternative; boundary="000000000000509c6b0642f0db50"
+References: <20250820193815.61078-1-dmarx@iol.unh.edu>
+ <20250826200720.104443-1-dmarx@iol.unh.edu>
+ <6zyctvaihjdlgn3es3z2s3d3ae6ifc33vcqcobhylvz26m7ney@4nzef5s5lxnw>
+In-Reply-To: <6zyctvaihjdlgn3es3z2s3d3ae6ifc33vcqcobhylvz26m7ney@4nzef5s5lxnw>
+From: Dean Marx <dmarx@iol.unh.edu>
+Date: Thu, 6 Nov 2025 13:11:24 -0500
+X-Gm-Features: AWmQ_bla3EkLb1YWN6Sw-J8zfjhgijDl9ty8rJudGBl_oBByFU7Niw8UILkgHaA
+Message-ID: <CABD7UXNVrNEOtfs_4chWpy3-meVkF8cCE=PD-X+ST42nzW7UAg@mail.gmail.com>
+Subject: Re: [PATCH v2] dts: add test case docstring checks to format script
+To: Luca Vizzarro <luca.vizzarro@arm.com>
+Cc: probb@iol.unh.edu, yoan.picchi@foss.arm.com, Honnappa.Nagarahalli@arm.com, 
+ paul.szczepanek@arm.com, dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,86 +77,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000509c6b0642f0db50
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Nov 6, 2025 at 12:15=E2=80=AFPM Dean Marx <dmarx@iol.unh.edu> wrote=
-:
-
-> On Wed, Nov 5, 2025 at 2:50=E2=80=AFPM Patrick Robb <probb@iol.unh.edu> w=
-rote:
-> >
-> > In addition, the interval in
-> > between checking the link state has been reduced in
-> > order to speed up the execution.
-> >
-> > Signed-off-by: Patrick Robb <probb@iol.unh.edu>
-> > Tested-by: Patrick Robb <probb@iol.unh.edu>
+On Wed, Aug 27, 2025 at 11:46=E2=80=AFAM Luca Vizzarro <luca.vizzarro@arm.c=
+om> wrote:
 >
+> Hi Dean,
+>
+> thank you for your patch! Looks mostly good, a couple of comments
+> though.
+>
+> On Tue, Aug 26, 2025 at 04:07:20PM +0000, Dean Marx wrote:
+> > diff --git a/devtools/dts-check-docstrings.py b/devtools/dts-check-docs=
+trings.py
+> > new file mode 100755
+> > index 0000000000..0baee6e383
+> > --- /dev/null
+> > +++ b/devtools/dts-check-docstrings.py
+> > @@ -0,0 +1,52 @@
+>
+> Consider adding a shebang here, like it's already done with the other
+> scripts.
+
+Heard
+
+>
+> > +# SPDX-License-Identifier: BSD-3-Clause
+> > +# Copyright(c) 2025 University of New Hampshire
+> > +
+> > +import sys
+> > +from ast import FunctionDef, Name, walk, get_docstring, parse
+> > +from pathlib import Path
+> > +
+> > +BASE_DIR =3D Path(__file__).resolve().parent  # dpdk/
+>
+> The hint is actually wrong, this is dpdk/devtools. I think you meant to
+> make this:
+>
+>     BASE_DIR =3D Path(__file__).resolve().parent.parent
+>
+> > +TESTS_DIR =3D BASE_DIR.parent / "dts" / "tests"  # dts/tests/
+>
+> and this would just be:
+>
+>     TESTS_DIR =3D BASE_DIR / "dts" / "tests"
+
+Thanks for catching this, I hadn't realized
+
+>
+> > +
+> > +
+> > +def has_test_decorator(node: FunctionDef) -> bool:
+> > +    """Return True if function has @func_test or @perf_test decorator.=
+"""
+> > +    for decorator in node.decorator_list:
+> > +        if isinstance(decorator, Name) and decorator.id in {"func_test=
+", "perf_test"}:
+>
+> I wouldn't hard code the decorator names like this. Put this in a
+> constant at the top instead:
+>
+>     DECORATOR_NAMES =3D {"func_test", "perf_test"}
+
+I'll add this to the new version
+
+>
+> > +            return True
+> > +    return False
 > <snip>
-> >              if "Link status: up" in port_info:
-> >                  break
-> > -            time.sleep(0.5)
-> > +            time.sleep(0.25)
+> > diff --git a/devtools/dts-check-format.sh b/devtools/dts-check-format.s=
+h
+> > index 907eed1293..da6e6f34ee 100755
+> > --- a/devtools/dts-check-format.sh
+> > +++ b/devtools/dts-check-format.sh
+> > @@ -86,7 +86,14 @@ if $lint; then
+> >               ruff check --fix
+> >               errors=3D$((errors + $?))
+> >
+> > +             docstring_script_path=3D$(dirname "$0")
+> > +             docstring_script_path=3D$(cd "$docstring_script_path" && =
+pwd)
+> > +             docstring_script=3D"$docstring_script_path/dts-check-docs=
+trings.py"
+> > +             python "$docstring_script"
+> > +             errors=3D$((errors + $?))
+> > +
 >
-> What's the rationale for changing this, just wondering?
->
+> I wouldn't insert this with the ruff if scope. This can still stay under
+> the lint if block, but give it its own.
 
-See the commit blurb above - there will be many function calls to functions
-which are decorated with _requires_started_ports during the DTS execution.
-That means every time that happens it will enter the block you see above.
-If we add .5 seconds to each of these function calls, it will slow down the
-execution. It probably isn't a huge deal but the downside of decreasing the
-time interval is pretty much nothing.
-
-
->
-> Reviewed-by: Dean Marx <dmarx@iol.unh.edu>
->
-
---000000000000509c6b0642f0db50
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
-mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Nov 6, =
-2025 at 12:15=E2=80=AFPM Dean Marx &lt;<a href=3D"mailto:dmarx@iol.unh.edu"=
->dmarx@iol.unh.edu</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote=
-" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
-padding-left:1ex">On Wed, Nov 5, 2025 at 2:50=E2=80=AFPM Patrick Robb &lt;<=
-a href=3D"mailto:probb@iol.unh.edu" target=3D"_blank">probb@iol.unh.edu</a>=
-&gt; wrote:<br>
-&gt;<br>
-&gt; In addition, the interval in<br>
-&gt; between checking the link state has been reduced in<br>
-&gt; order to speed up the execution.<br>
-&gt;<br>
-&gt; Signed-off-by: Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu" t=
-arget=3D"_blank">probb@iol.unh.edu</a>&gt;<br>
-&gt; Tested-by: Patrick Robb &lt;<a href=3D"mailto:probb@iol.unh.edu" targe=
-t=3D"_blank">probb@iol.unh.edu</a>&gt;<br>
-<br>
-&lt;snip&gt;<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if &quot;Link status: =
-up&quot; in port_info:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break<br=
->
-&gt; -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 time.sleep(0.5)<br>
-&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 time.sleep(0.25)<br>
-<br>
-What&#39;s the rationale for changing this, just wondering?<br></blockquote=
-><div><br></div><div>See the commit blurb above - there will be many functi=
-on calls to functions which are decorated with _requires_started_ports duri=
-ng the DTS execution. That means every time that happens it will enter the =
-block you see above. If we add .5 seconds to each of these function calls, =
-it will slow down the execution. It probably isn&#39;t a huge deal but the =
-downside of decreasing the time interval is pretty much nothing.</div><div>=
-=C2=A0</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0=
-.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">
-<br>
-Reviewed-by: Dean Marx &lt;<a href=3D"mailto:dmarx@iol.unh.edu" target=3D"_=
-blank">dmarx@iol.unh.edu</a>&gt;<br>
-</blockquote></div></div>
-
---000000000000509c6b0642f0db50--
+Okay, I'll add a docstringcheck variable in the check-format script to
+give it its own if block
