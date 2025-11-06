@@ -2,81 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DE8CCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 08:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE461CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Nov 2025 08:26:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B361340431;
-	Thu,  6 Nov 2025 09:15:55 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id B07D84013F
- for <dev@dpdk.org>; Thu,  6 Nov 2025 09:15:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1762416953;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=TvFM7blE1N5EfPgNyAVT4dj+nGBvP9Lpx0NkXDwAeX8=;
- b=XaTrhycCMGNy920XImNFiFhV89nHuKaqIExKjKYlxjMaZ0LOZ27LekfkNhJJlxJ4uSJk2c
- IDE59WTb3Y0A/Z0R8VQL3du7mmnCoCdN2OIWHDFCoIJnijHCpfOOw14uNj+WWr4jwGgxyG
- qE31VouMPKDcHql/02XUPmgW+P7aXMk=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-618-5iTfnIwoMBetTQTnm1VQdQ-1; Thu, 06 Nov 2025 03:15:51 -0500
-X-MC-Unique: 5iTfnIwoMBetTQTnm1VQdQ-1
-X-Mimecast-MFC-AGG-ID: 5iTfnIwoMBetTQTnm1VQdQ_1762416950
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-37773b477c6so5220901fa.2
- for <dev@dpdk.org>; Thu, 06 Nov 2025 00:15:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762416950; x=1763021750;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=TvFM7blE1N5EfPgNyAVT4dj+nGBvP9Lpx0NkXDwAeX8=;
- b=HyV1ZHnbVL1BWhYmQ23JHyRR0RxtdmNsHQawOMy1TOxdq6rQBM4Bes1K2skZaVL20h
- LKyjrDamqSI22RtKIUmiVDCkCMYQ6d63cBGZtwzDACbycNReDN2VvzGRrigqhOoBUjID
- Y/w5g8FMq4V3nF/Ja8KlBscYOPsMtwknJKooG7Pu+BtMtb/2dQWd3W3910oxcceqlRZZ
- O3i2uZ61d9/AWa0OrSC7lNiDRhavdh+MV1bNVDK+qB3Z0WAI2SkP1sFu5VKwgNGA+caX
- ib+ghbrFheWz/58L14QcEQNdY6f3Tw2981Moy9Whuvx8Q5G3bduIs2xzdm2DeQwu/kDX
- mcng==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXiT/h4WC1VkWEtUfCS3eyNHUlJx7zfiPnCslTADlEGwGIsnhqqhOFzElyLWiSPbGsB73o=@dpdk.org
-X-Gm-Message-State: AOJu0Yw2JJSGjGtHWVadA6Q0jDsBzSGVIKqKVtCpKJ0rqM6UJyFQzfjc
- R8TLXYmPG1mIw0DgPzaXxwWBlp32urGOHm/sW1xX/qbPWuGYq/PI/G05AIF577ipaMPfNSmyPKV
- br0y57MyLBkDTKJX5oFI5OSFbxWHQgdMyII9q3hY9njvCrSMSqIalRMbMAptUEsNRgQAL+OIAWV
- 6T4T0pbiqbrA2yHQSxoxg=
-X-Gm-Gg: ASbGncsuwXh5f1vjePQtLupBrxikuW4eFrXixj70fYlGHHkU6FCm7WXwIvl9+v/SVRu
- TiIV2p43twgmUtTsVVZS+ofkrFXUhdFdnt47frMZFpHI01+QRHpjTyAawJbWScuiY4+RM+EJdDV
- SZP0Ql7vRaslhW3IGJxx2TUNsvT92/aolQ1DecM54MIt4Ymr+uQyqX1DGNFg==
-X-Received: by 2002:a05:6512:340a:b0:594:49fa:793 with SMTP id
- 2adb3069b0e04-59449fa0a9dmr689874e87.30.1762416950083; 
- Thu, 06 Nov 2025 00:15:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF4I9ibJlcKkYECN3k+jF6lVd4oRgzF+FndQ5hHnPwW/BtSTMiB7mydjLt8J6evSNJk6nWNYVObrE2l+DU7nB4=
-X-Received: by 2002:a05:6512:340a:b0:594:49fa:793 with SMTP id
- 2adb3069b0e04-59449fa0a9dmr689864e87.30.1762416949660; Thu, 06 Nov 2025
- 00:15:49 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 872DC40DD3;
+	Thu,  6 Nov 2025 09:26:06 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id C3DDC4013F
+ for <dev@dpdk.org>; Thu,  6 Nov 2025 09:26:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1762417565; x=1793953565;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=HPuWn1JNuZcx+uqUEuB6izqBYOH+Exdjts0/dtMXa6Q=;
+ b=aeomNGol5c06DqQ23fijN4cL1tyuyQJUGX5GaBaZhXqCZPpEfPHoEUiu
+ S1WpssCdbzmiX+ij36SqYB3jed6ZpboYYi0hsBaflmPQQprz4FrPPV+jp
+ zV9rOJ4/6v+83DrTm9e9BEYnT7zbMM10B+yhFTT5Fn+UQ2yTFj0EIH6Ab
+ rVgXkVQG8TgKprXqyNJ5icCU+nmqberaVROZOPyb0rnnKAqLbj+VEbHE/
+ 3m916nSFp2ErbthfKSj1NbjWtsbkAt/e9csdYAwyaqA+1JY3drcXBJSaU
+ mhhVY1iv1P3KFxNxLqQmI9EUwUNDMaMqtkpZHDJzFx7XFPCHN3feiIfFy Q==;
+X-CSE-ConnectionGUID: tTvmnZn3R6aHJ4Sxog2Xkw==
+X-CSE-MsgGUID: acWJTiDUSoaTSA8XH4jwbQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11604"; a="52115152"
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; d="scan'208";a="52115152"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Nov 2025 00:26:04 -0800
+X-CSE-ConnectionGUID: Lj2qOpsVRE+eEPFGrwwHEw==
+X-CSE-MsgGUID: vi8YPEUsR72FWdO3DS31BQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,284,1754982000"; d="scan'208";a="191977372"
+Received: from unknown (HELO sprmax19..) ([10.138.182.140])
+ by fmviesa005.fm.intel.com with ESMTP; 06 Nov 2025 00:26:02 -0800
+From: Venkatesh Vemula <venkatesh.vemula@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com
+Cc: aman.deep.singh@dpdk.org, shaiq.wani@intel.com
+Subject: [PATCH v1] net/intel: changes to avoid comma operator misuse warnings
+Date: Thu,  6 Nov 2025 13:53:54 +0530
+Message-Id: <20251106082354.1534181-1-venkatesh.vemula@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20251002174137.3612042-1-wathsala.vithanage@arm.com>
- <20251002174137.3612042-2-wathsala.vithanage@arm.com>
- <cfc073b8137541f1be3e01650d6bcf14@huawei.com>
- <566b4c6c-f081-4db8-bc8b-2a576a82e1c3@arm.com>
-In-Reply-To: <566b4c6c-f081-4db8-bc8b-2a576a82e1c3@arm.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 6 Nov 2025 09:15:37 +0100
-X-Gm-Features: AWmQ_blXcZ87VJW30gw4a8-yPQOkrgBbzYjh4_XSTZFkbCavVuh3CkY1yfRHqYk
-Message-ID: <CAJFAV8yumnbPjakBAtkoqrZvWCo90F51Ri9Eje44sAmm_S43gw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] ring: safe partial ordering for head/tail update
-To: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, 
- Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
- "dev@dpdk.org" <dev@dpdk.org>, 
- Ola Liljedahl <ola.liljedahl@arm.com>, Dhruv Tripathi <dhruv.tripathi@arm.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: O1b27zsDIak2WErgNLcLc8HuMF4LQDavdZvS6h2pS-w_1762416950
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,21 +58,257 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Wathsala,
+fixed comma operator misuse warnings with clang compiler
+for intel PMDs when -Wcomma enabled.
 
-On Mon, 13 Oct 2025 at 20:10, Wathsala Vithanage
-<wathsala.vithanage@arm.com> wrote:
-> > LGTM, though. I think that we also need to make similar changes in
-> > rte_ring_hts_elem_pvt.h and rte_ring_rts_elem_pvt.h:
-> > for CAS use 'acq_rel' order instead of simple 'acquire'.
-> > Let me know would you have a bandwidth to do that.
->
-> My bad, I forgot those two cases. I will send a v3.
+Bugzilla ID: 1809("net/intel: possible misuse of comma operator")
+Signed-off-by: Venkatesh Vemula <venkatesh.vemula@intel.com>
+---
+ drivers/net/intel/i40e/i40e_ethdev.c             | 8 ++++----
+ drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c      | 4 ++--
+ drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c    | 2 +-
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c      | 4 ++--
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c    | 6 +++---
+ drivers/net/intel/ice/ice_ethdev.c               | 8 ++++----
+ drivers/net/intel/ice/ice_rxtx_vec_avx2.c        | 4 ++--
+ drivers/net/intel/ice/ice_rxtx_vec_avx512.c      | 2 +-
+ drivers/net/intel/idpf/idpf_common_rxtx_avx2.c   | 4 ++--
+ drivers/net/intel/idpf/idpf_common_rxtx_avx512.c | 8 ++++----
+ 10 files changed, 25 insertions(+), 25 deletions(-)
 
-Should we wait for this v3?
-We want to close rc2 this week.
-
-
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+index b8ce79061b..799e65ac8d 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.c
++++ b/drivers/net/intel/i40e/i40e_ethdev.c
+@@ -5099,15 +5099,15 @@ i40e_res_pool_destroy(struct i40e_res_pool_info *pool)
+ 		return;
+ 
+ 	for (entry = LIST_FIRST(&pool->alloc_list);
+-			entry && (next_entry = LIST_NEXT(entry, next), 1);
+-			entry = next_entry) {
++		 entry; entry = next_entry) {
++		next_entry = LIST_NEXT(entry, next);
+ 		LIST_REMOVE(entry, next);
+ 		rte_free(entry);
+ 	}
+ 
+ 	for (entry = LIST_FIRST(&pool->free_list);
+-			entry && (next_entry = LIST_NEXT(entry, next), 1);
+-			entry = next_entry) {
++		 entry; entry = next_entry) {
++		next_entry = LIST_NEXT(entry, next);
+ 		LIST_REMOVE(entry, next);
+ 		rte_free(entry);
+ 	}
+diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c b/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
+index aeb2756e7a..07b68ff3db 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
++++ b/drivers/net/intel/i40e/i40e_rxtx_vec_avx2.c
+@@ -703,7 +703,7 @@ vtx(volatile struct i40e_tx_desc *txdp,
+ 	/* if unaligned on 32-bit boundary, do one to align */
+ 	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
+ 		vtx1(txdp, *pkt, flags);
+-		nb_pkts--, txdp++, pkt++;
++		nb_pkts--; txdp++; pkt++;
+ 	}
+ 
+ 	/* do two at a time while possible, in bursts */
+@@ -730,7 +730,7 @@ vtx(volatile struct i40e_tx_desc *txdp,
+ 	/* do any last ones */
+ 	while (nb_pkts) {
+ 		vtx1(txdp, *pkt, flags);
+-		txdp++, pkt++, nb_pkts--;
++		txdp++; pkt++; nb_pkts--;
+ 	}
+ }
+ 
+diff --git a/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c b/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
+index 571987d27a..8d1d3bd78e 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
++++ b/drivers/net/intel/i40e/i40e_rxtx_vec_avx512.c
+@@ -798,7 +798,7 @@ vtx(volatile struct i40e_tx_desc *txdp,
+ 	/* do any last ones */
+ 	while (nb_pkts) {
+ 		vtx1(txdp, *pkt, flags);
+-		txdp++, pkt++, nb_pkts--;
++		txdp++; pkt++; nb_pkts--;
+ 	}
+ }
+ 
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+index e417257086..ca4494d548 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+@@ -1655,7 +1655,7 @@ iavf_vtx(volatile struct iavf_tx_desc *txdp,
+ 	/* if unaligned on 32-bit boundary, do one to align */
+ 	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
+ 		iavf_vtx1(txdp, *pkt, flags, offload, vlan_flag);
+-		nb_pkts--, txdp++, pkt++;
++		nb_pkts--; txdp++; pkt++;
+ 	}
+ 
+ 	/* do two at a time while possible, in bursts */
+@@ -1704,7 +1704,7 @@ iavf_vtx(volatile struct iavf_tx_desc *txdp,
+ 	/* do any last ones */
+ 	while (nb_pkts) {
+ 		iavf_vtx1(txdp, *pkt, flags, offload, vlan_flag);
+-		txdp++, pkt++, nb_pkts--;
++		txdp++; pkt++; nb_pkts--;
+ 	}
+ }
+ 
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+index d40a858413..530144181f 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+@@ -1869,7 +1869,7 @@ iavf_vtx(volatile struct iavf_tx_desc *txdp,
+ 	/* if unaligned on 32-bit boundary, do one to align */
+ 	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
+ 		iavf_vtx1(txdp, *pkt, flags, offload, vlan_flag);
+-		nb_pkts--, txdp++, pkt++;
++		nb_pkts--; txdp++; pkt++;
+ 	}
+ 
+ 	/* do 4 at a time while possible, in bursts */
+@@ -1913,7 +1913,7 @@ iavf_vtx(volatile struct iavf_tx_desc *txdp,
+ 	/* do any last ones */
+ 	while (nb_pkts) {
+ 		iavf_vtx1(txdp, *pkt, flags, offload, vlan_flag);
+-		txdp++, pkt++, nb_pkts--;
++		txdp++; pkt++; nb_pkts--;
+ 	}
+ }
+ 
+@@ -2109,7 +2109,7 @@ ctx_vtx(volatile struct iavf_tx_desc *txdp,
+ 	/* if unaligned on 32-bit boundary, do one to align */
+ 	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
+ 		ctx_vtx1(txdp, *pkt, flags, offload, vlan_flag);
+-		nb_pkts--, txdp++, pkt++;
++		nb_pkts--; txdp++; pkt++;
+ 	}
+ 
+ 	for (; nb_pkts > 1; txdp += 4, pkt += 2, nb_pkts -= 2) {
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index 4669eba7c7..7ee0c98f3a 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -942,15 +942,15 @@ ice_res_pool_destroy(struct ice_res_pool_info *pool)
+ 		return;
+ 
+ 	for (entry = LIST_FIRST(&pool->alloc_list);
+-	     entry && (next_entry = LIST_NEXT(entry, next), 1);
+-	     entry = next_entry) {
++		 entry; entry = next_entry) {
++		next_entry = LIST_NEXT(entry, next);
+ 		LIST_REMOVE(entry, next);
+ 		rte_free(entry);
+ 	}
+ 
+ 	for (entry = LIST_FIRST(&pool->free_list);
+-	     entry && (next_entry = LIST_NEXT(entry, next), 1);
+-	     entry = next_entry) {
++		 entry; entry = next_entry) {
++		next_entry = LIST_NEXT(entry, next);
+ 		LIST_REMOVE(entry, next);
+ 		rte_free(entry);
+ 	}
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
+index b952b8dddc..b9a55d670f 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
+@@ -798,7 +798,7 @@ ice_vtx(volatile struct ice_tx_desc *txdp,
+ 	/* if unaligned on 32-bit boundary, do one to align */
+ 	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
+ 		ice_vtx1(txdp, *pkt, flags, offload);
+-		nb_pkts--, txdp++, pkt++;
++		nb_pkts--; txdp++; pkt++;
+ 	}
+ 
+ 	/* do two at a time while possible, in bursts */
+@@ -843,7 +843,7 @@ ice_vtx(volatile struct ice_tx_desc *txdp,
+ 	/* do any last ones */
+ 	while (nb_pkts) {
+ 		ice_vtx1(txdp, *pkt, flags, offload);
+-		txdp++, pkt++, nb_pkts--;
++		txdp++; pkt++; nb_pkts--;
+ 	}
+ }
+ 
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+index 7c6fe82072..585d56122f 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+@@ -907,7 +907,7 @@ ice_vtx(volatile struct ice_tx_desc *txdp, struct rte_mbuf **pkt,
+ 	/* do any last ones */
+ 	while (nb_pkts) {
+ 		ice_vtx1(txdp, *pkt, flags, do_offload);
+-		txdp++, pkt++, nb_pkts--;
++		txdp++; pkt++; nb_pkts--;
+ 	}
+ }
+ 
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
+index 21c8f79254..c86753fb43 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
+@@ -506,7 +506,7 @@ idpf_singleq_vtx(volatile struct idpf_base_tx_desc *txdp,
+ 	/* if unaligned on 32-bit boundary, do one to align */
+ 	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
+ 		idpf_singleq_vtx1(txdp, *pkt, flags);
+-		nb_pkts--, txdp++, pkt++;
++		nb_pkts--; txdp++; pkt++;
+ 	}
+ 
+ 	/* do two at a time while possible, in bursts */
+@@ -547,7 +547,7 @@ idpf_singleq_vtx(volatile struct idpf_base_tx_desc *txdp,
+ 	/* do any last ones */
+ 	while (nb_pkts) {
+ 		idpf_singleq_vtx1(txdp, *pkt, flags);
+-		txdp++, pkt++, nb_pkts--;
++		txdp++; pkt++; nb_pkts--;
+ 	}
+ }
+ 
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
+index bc2cadd738..1d0516c755 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
+@@ -1025,7 +1025,7 @@ idpf_singleq_vtx(volatile struct idpf_base_tx_desc *txdp,
+ 	/* if unaligned on 32-bit boundary, do one to align */
+ 	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
+ 		idpf_singleq_vtx1(txdp, *pkt, flags);
+-		nb_pkts--, txdp++, pkt++;
++		nb_pkts--; txdp++; pkt++;
+ 	}
+ 
+ 	/* do 4 at a time while possible, in bursts */
+@@ -1063,7 +1063,7 @@ idpf_singleq_vtx(volatile struct idpf_base_tx_desc *txdp,
+ 	/* do any last ones */
+ 	while (nb_pkts) {
+ 		idpf_singleq_vtx1(txdp, *pkt, flags);
+-		txdp++, pkt++, nb_pkts--;
++		txdp++; pkt++; nb_pkts--;
+ 	}
+ }
+ 
+@@ -1226,7 +1226,7 @@ idpf_splitq_vtx(volatile struct idpf_flex_tx_sched_desc *txdp,
+ 	/* if unaligned on 32-bit boundary, do one to align */
+ 	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
+ 		idpf_splitq_vtx1(txdp, *pkt, flags);
+-		nb_pkts--, txdp++, pkt++;
++		nb_pkts--; txdp++; pkt++;
+ 	}
+ 
+ 	/* do 4 at a time while possible, in bursts */
+@@ -1264,7 +1264,7 @@ idpf_splitq_vtx(volatile struct idpf_flex_tx_sched_desc *txdp,
+ 	/* do any last ones */
+ 	while (nb_pkts) {
+ 		idpf_splitq_vtx1(txdp, *pkt, flags);
+-		txdp++, pkt++, nb_pkts--;
++		txdp++; pkt++; nb_pkts--;
+ 	}
+ }
+ 
 -- 
-David Marchand
+2.34.1
 
