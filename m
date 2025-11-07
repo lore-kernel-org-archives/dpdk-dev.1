@@ -2,75 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F8BCCFA05
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 15:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8F6CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 16:02:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E8201402D6;
-	Fri,  7 Nov 2025 16:59:12 +0100 (CET)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id 21C184021F
- for <dev@dpdk.org>; Fri,  7 Nov 2025 16:59:11 +0100 (CET)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-2951a817541so10366795ad.2
- for <dev@dpdk.org>; Fri, 07 Nov 2025 07:59:11 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 597F6402E3;
+	Fri,  7 Nov 2025 17:02:56 +0100 (CET)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com
+ [209.85.210.182])
+ by mails.dpdk.org (Postfix) with ESMTP id E4095402D6
+ for <dev@dpdk.org>; Fri,  7 Nov 2025 17:02:54 +0100 (CET)
+Received: by mail-pf1-f182.google.com with SMTP id
+ d2e1a72fcca58-782e93932ffso782366b3a.3
+ for <dev@dpdk.org>; Fri, 07 Nov 2025 08:02:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762531150;
- x=1763135950; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762531374;
+ x=1763136174; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qaGbhIx3yO12tywcsXsAB+uFnrD99Ymif8vQXLvCWcE=;
- b=dnfxkcmwSjbpwE1INH4rJQdw3JdsXsg5IWQzCPHxLmEkgyX7eJUAljd9y9bjbTAXbT
- N6dBo6zJHI3IgqS9VA5Fz73OaDoR2vkBkKdKhyEdn3puZcXIKJVEQUaQpcPgcEDsthIo
- Wv6Y+oVDyqQI9muaO+vihQKFyX8RygNx+u5HXD69VCrNkfNC2HisHNFwcfi4k15cUcq/
- adbsj8HnjwVDN7y6R6n5z/YtREkbJz4b4eOQg31/yR9Ntj5pSl941oSxAULu4YulArHm
- oX8j+9AOKYnMF+HOsyocuxX7jhrLfJO3rmtT1aaq8pK5S8TjTp7j4ZGpeRj/bRZMINbN
- Oswg==
+ bh=i64pGNZRAy7XjAazdTb8KTPXro+hwvkH/nFXBAonYVI=;
+ b=I0A3tnf45n5aWKE2yuCNKim3he/6nI4NaduKWN/vDNtgbD9zm3Yui4wq21dobpcvLt
+ Duv9vlIDxHhPVu5XJON/hefUdm6JIAjoQEdPZ3ahLGpD2+UgUKyB+SG25i+fWA+efgQY
+ ogmCGfvgiOv99L9LkhwGG5Yjw1vRaGC7HfNi2diUcsgawD8kBVI99+xSU+NUatxxaauf
+ 3bH09sh8KO8OMvtVJA8GbPZ6on96xIhWyFrSBDYERoAzhF2E9BwZMR9SlnMVV/5ww0k7
+ 2k2HEr6z/85RGab8FJ5OR9SldrcCfMCs5ZJ/W2zZd243epVXuqnZQz5XGOSExBjVmefX
+ Zzxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762531150; x=1763135950;
+ d=1e100.net; s=20230601; t=1762531374; x=1763136174;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=qaGbhIx3yO12tywcsXsAB+uFnrD99Ymif8vQXLvCWcE=;
- b=CsLKA6muRZM70hdutu3Mm3gIyPVePs1MowHG4g5t2dg1Ew2J9GzrzvLGSrQO4UKRPQ
- S4/CRHnaW1nnZdxq1MCL1JwEbzu1KT8c55gLnkJVo6fWQoWY0cRuQ7qQMpauxdFYKf4k
- fj6ga6CGOfHtpgH8iApdTOSW64tzl+DFtQNYAykc1NlbyYCTE3m6tiqF6N5doHg1PB/O
- LzmQeCoOAP2+Kki/C+x+BjMSR7wEhoUWp1PutIRf2jT5UbVtJkJDap+DGJekga2GMKl6
- 8I0cKjt/GxEjFUrrDO8idqNPQAWVQk8/3uL1E3FWGZxJNbtmnxNvCOQbhDaUHuuXPv0Q
- A5Ug==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUxsp/V4LNiPLppu6RpzJ5O4xpSdg4p7ijtbRw6K6DmJHPtKbXTy40eM2koaE7yqrOfD7g=@dpdk.org
-X-Gm-Message-State: AOJu0YwgKLLETLXDvEviQfOIyA5a+iTsQ54XMehUKL/UURx4WUS0Rs3c
- nCZ35Fl86SL3LmqayOz875ipfEpyho64XmMLi1Cg3kytHuxQ7Lv+/3ws+q7kbjU3Nxw=
-X-Gm-Gg: ASbGnctNO/DgaWYOeaaPd7/iMerDrcdrbRuawaSqtoxgvQah0oXUGVbkc7YLeppSPnm
- vss95Xz1tDEc11T9FodxahLMCZWzc15pbU5/YigkJcKF8i4qOOXvAUarcY3kMHFzW4srC0tqdtN
- GksxQon5G0VxTDsH/NpJs6oRgw036mwqOu+2QZRzV9qDSth34+YdE6S0MAnCJKS0BhrKgHNzgNs
- b1TMWSMlw+F/CksJ2cz8lmZEA+Gm8TWmjjmTZgRaYphRPU5gDIAcmPJvOzaYOqDIWV0HJ6K5BEC
- oMhZBBzqUI2o2tP6umP+85AheK1druw3FaWAiXNsgXU3PmcoMjnQKW18eAlqTJFa2TyYOfqI074
- 0E2sHBEVE3qy0ZrnbkQFXYH75B4QfuT+oqva/WeOx+aPeLNz/GmV32Hm9ZPO7RMjpb0zEWGIzWc
- QNkKRzLRI0PynrXiovzLXfO6ZjlIWyitNXfw==
-X-Google-Smtp-Source: AGHT+IEe7IdP5keh5u08VCKExfRktUW6/MVZa0FRVoW3STxpsJexFpJBo6oDL1cGB5sJAgNqTcH77A==
-X-Received: by 2002:a17:903:234d:b0:295:2276:6704 with SMTP id
- d9443c01a7336-297c047bd88mr46393005ad.51.1762531150100; 
- Fri, 07 Nov 2025 07:59:10 -0800 (PST)
+ bh=i64pGNZRAy7XjAazdTb8KTPXro+hwvkH/nFXBAonYVI=;
+ b=bgPa7cW2jt7AR4YfgiAfrLt4sVKsvULZBCOmdOMzN+0RzN8OAEgAb3KnvIIuOTk34Z
+ +w16ij6gaqhMKFxVKxDCB96O1oJ4+fDTbJaDsz9dmoFV9U0pET1frxMvD6f237hoRQTF
+ mdWCqLh+hqAFm1HvWCrPakOPmSP0qrlW1mq+jwOY1JvRhTt1pjZeLKT3PyPcJTK8ZlTe
+ J99UooqxhIqpXouqOq2NP5+9+OCmBXfQBYN1VWdKLx6aH24AC6+H2nK1wOav0Kd/10si
+ Ni8Yy8MwXHNITyGRoqBmk2hGjfoACymffq6An3XTZ6vY1nGyPPzOiWgkWbD1p5QB0Keg
+ SrGg==
+X-Gm-Message-State: AOJu0Yws8RxXnc+9QH/0ghVv3DsCc1YNXNFJcYtDUUTgZ+Kt9of4l2bb
+ 0g+DN+/3FcQ6Iwbl+430QIb8TlsY4B16zDogbmMZDBJVt/bUFaK4zn27o1RI86weILM=
+X-Gm-Gg: ASbGncvmMhfFB0diX2Yhz7VgQtZB62DtxC+d3cuWWGmR6Udjhmk4/pl0NU1N+J8+CHX
+ ux24SpzklmUrlQEVlYXBiyi/sip0qZ89SkWuLYTKuWHndLuShBmR8x5PklQUusTBi3Eu0UDfVYe
+ B0Y+m6qZKM12HX9pTsQIP21Y0qjZqLzkjJ9fKIKZM40occdgI6o9t1pOs00JXQCDKNPKRznHRgD
+ ufiOLgFb13IwI5bYYLQ1girVmeDzyCvxhrUmsJeKb+F9M51+lIVux14zvTNlCo6HEEhQzYnJv1L
+ CBr8kAcMJ64WuzEtl3pZHNGZ5twKf07WPntnUHM8oEbqCGNYl2h0Xu5FuSN1nce/TMKaUsTQmW8
+ 3Lc3t3V+F4SNEh6u9leVnwIyxv/CewruAkBWAKAa7CDiWTnaIxwkuPXWySlfrG7cLaOjjZSHORS
+ 5oh4c1aKKj6QTrIKvpYnqdv356jX/Hbm0gx71vSMhfrK2T
+X-Google-Smtp-Source: AGHT+IEDUSm9U7IrU+nyAKGBIwdhv3om/P+jDTktt1LF9n3oVtotkpjN7ZnboPbIRmLUslMnpDHvUA==
+X-Received: by 2002:a05:6a00:4fc6:b0:7aa:a2a8:9808 with SMTP id
+ d2e1a72fcca58-7b0bd3b5586mr4779620b3a.20.1762531373764; 
+ Fri, 07 Nov 2025 08:02:53 -0800 (PST)
 Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-29651c93c8dsm65555485ad.80.2025.11.07.07.59.09
+ d2e1a72fcca58-7b0c9c0763csm3352482b3a.19.2025.11.07.08.02.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 07 Nov 2025 07:59:09 -0800 (PST)
-Date: Fri, 7 Nov 2025 07:59:07 -0800
+ Fri, 07 Nov 2025 08:02:53 -0800 (PST)
+Date: Fri, 7 Nov 2025 08:02:50 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: <skori@marvell.com>
-Cc: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
- <kirankumark@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman Kalra
- <hkalra@marvell.com>, <dev@dpdk.org>
-Subject: Re: [PATCH v8 6/6] net/cnxk: report link mode
-Message-ID: <20251107075907.7381e6ab@phoenix>
-In-Reply-To: <20251107070330.2155154-6-skori@marvell.com>
-References: <20251104080901.1610706-6-skori@marvell.com>
- <20251107070330.2155154-1-skori@marvell.com>
- <20251107070330.2155154-6-skori@marvell.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [RFC PATCH v2 00/33] build DPDK with -Wshadow
+Message-ID: <20251107080250.584cc614@phoenix>
+In-Reply-To: <20251107155034.436809-1-bruce.richardson@intel.com>
+References: <20251106140948.2894678-1-bruce.richardson@intel.com>
+ <20251107155034.436809-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -87,25 +82,191 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 7 Nov 2025 12:33:24 +0530
-<skori@marvell.com> wrote:
+On Fri,  7 Nov 2025 15:49:56 +0000
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-> diff --git a/doc/guides/rel_notes/release_25_11.rst b/doc/guides/rel_notes/release_25_11.rst
-> index c5ba335cfc..b7921f5b57 100644
-> --- a/doc/guides/rel_notes/release_25_11.rst
-> +++ b/doc/guides/rel_notes/release_25_11.rst
-> @@ -128,6 +128,14 @@ New Features
->  
->    Added ENETC4 PMD for multiple new generation SoCs.
->  
-> +* **Updated CNXK ethernet driver.**
-> +
-> +  Added support to set/get link configuration as mentioned below:
-> +
-> +  * Get speed capability from firmware instead of hard coded values.
-> +  * Report link type, mode and status.
-> +  * Configure link mode.
-> +
+> As flagged in bugs #1742, #1743 and others, much of DPDK fails to build
+> when -Wshadow flag is passed to the build. This patchset fixes many issues
+> of this nature, but not all, in the hopes we can move towards enabling that
+> warning flag for all components for DPDK in future. This patchset fixes the
+> following components in DPDK:
+> 
+> * all libraries
+> * Intel net drivers
+> * all apps in the "app" folder
+> 
+> For the rest of the drivers and example applications, any component which
+> does not build successfully with the shadow warning enabled has it
+> explicitly disabled via cflags. Then the last patch adds -Wshadow to the
+> global DPDK build, which should prevent any regressions in components which
+> are already working.
+> 
+> At that point, we should not have any regressions and we can, over time,
+> reduce the number of components needing the -Wno-shadow flag.
+> 
+> RFC v2:
+> * take patch from Stephen for RTE_MIN/MAX fixes
+> * add additional fixes to clear clang warnings - it's a lot stricter than
+>   gcc in this regard, and flags more issues.
+> * extend app cleanup to all apps, not just testpmd
+> * add per-component disabling, and add global enable flag at the end.
+> 
+> 
+> Bruce Richardson (32):
+>   eal: fix variable shadowing
+>   ethdev: fix variable shadowing issues
+>   eventdev: fix variable shadowing issues
+>   net: remove shadowed variable
+>   pipeline: fix variable shadowing
+>   table: fix issues with variable shadowing
+>   power: rename variable to eliminate shadowing
+>   pcapng: rename variable to fix shadowing
+>   telemetry: make socket handler typedef private
+>   bbdev: fix variable shadowing
+>   bus/pci: remove shadowed variables
+>   net/intel: rename function param to avoid shadow warnings
+>   net/e1000: fix build with shadow warnings enabled
+>   net/i40e: fix build with shadow warnings enabled
+>   net/ice: fix build with shadow warnings enabled
+>   net/cpfl: fix build with shadow warnings enabled
+>   net/ixgbe: fix build with shadow warnings enabled
+>   app/test-pmd: fix build with shadow warnings enabled
+>   app/graph: fix build with shadow warnings enabled
+>   app/pdump: fix warning about shadowed variable
+>   app/test-bbdev: use RTE_MAX3 to remove variable shadowing
+>   app/test-compress-perf: fix variable shadowing
+>   app/test-crypto-perf: fix shadowed variable
+>   app/test-dma-perf: renamed shadowed variable
+>   app/test-eventdev: fix build with shadow warnings enabled
+>   app/test-flow-perf: remove unneeded variable
+>   app/test-security-perf: fix build with shadow warnings
+>   app/test-pipeline: remove unnecessary variable
+>   drivers: disable variable shadowing warnings for drivers
+>   app/test: disable shadowing warnings for unit tests
+>   examples: ignore variable shadowing warnings
+>   build: enable shadowed variable warnings
+> 
+> Stephen Hemminger (1):
+>   eal: add more min/max helpers
+> 
+>  app/graph/conn.c                              | 134 +++++++++---------
+>  app/pdump/main.c                              |  12 +-
+>  app/test-bbdev/test_bbdev_perf.c              |   7 +-
+>  app/test-compress-perf/main.c                 | 122 ++++++++--------
+>  .../cperf_test_pmd_cyclecount.c               |   6 +-
+>  app/test-dma-perf/main.c                      |   8 +-
+>  app/test-eventdev/evt_main.c                  |   6 +-
+>  app/test-eventdev/test_atomic_queue.c         |   6 +-
+>  app/test-eventdev/test_perf_common.c          |   4 +-
+>  app/test-flow-perf/main.c                     |   1 -
+>  app/test-pipeline/main.c                      |   1 -
+>  app/test-pmd/cmdline_flow.c                   |  42 +++---
+>  app/test-pmd/config.c                         |  15 +-
+>  app/test-pmd/parameters.c                     |  38 +++--
+>  app/test-pmd/testpmd.c                        |   2 +-
+>  app/test-security-perf/test_security_perf.c   |  42 +++---
+>  app/test/meson.build                          |   1 +
+>  app/test/test_cryptodev_security_ipsec.c      |  13 +-
+>  config/meson.build                            |   6 +
+>  drivers/baseband/fpga_5gnr_fec/meson.build    |   2 +
+>  drivers/bus/fslmc/meson.build                 |   2 +
+>  drivers/bus/pci/linux/pci.c                   |   1 -
+>  drivers/bus/pci/linux/pci_vfio.c              |   2 +-
+>  drivers/bus/pci/windows/pci.c                 |   1 -
+>  drivers/common/cnxk/meson.build               |   1 +
+>  drivers/common/qat/meson.build                |   1 +
+>  drivers/compress/nitrox/meson.build           |   2 +
+>  drivers/crypto/cnxk/meson.build               |   1 +
+>  drivers/crypto/octeontx/meson.build           |   1 +
+>  drivers/crypto/openssl/meson.build            |   1 +
+>  drivers/crypto/scheduler/meson.build          |   1 +
+>  drivers/dma/dpaa2/meson.build                 |   2 +
+>  drivers/event/cnxk/meson.build                |   1 +
+>  drivers/event/dlb2/meson.build                |   2 +
+>  drivers/event/sw/meson.build                  |   1 +
+>  drivers/net/axgbe/meson.build                 |   2 +-
+>  drivers/net/bnxt/meson.build                  |   1 +
+>  drivers/net/bonding/meson.build               |   1 +
+>  drivers/net/cnxk/meson.build                  |   1 +
+>  drivers/net/cxgbe/meson.build                 |   1 +
+>  drivers/net/dpaa/meson.build                  |   1 +
+>  drivers/net/dpaa2/meson.build                 |   1 +
+>  drivers/net/ena/meson.build                   |   2 +
+>  drivers/net/enetfec/meson.build               |   2 +
+>  drivers/net/enic/meson.build                  |   2 +
+>  drivers/net/failsafe/meson.build              |   1 +
+>  drivers/net/intel/common/rx.h                 |   6 +-
+>  drivers/net/intel/cpfl/cpfl_flow_engine_fxp.c |   2 -
+>  drivers/net/intel/cpfl/cpfl_flow_parser.c     |   6 +-
+>  drivers/net/intel/cpfl/cpfl_fxp_rule.h        |   2 -
+>  drivers/net/intel/cpfl/cpfl_representor.h     |   2 +-
+>  drivers/net/intel/e1000/igc_ethdev.c          |   6 +-
+>  drivers/net/intel/i40e/i40e_ethdev.h          |  10 +-
+>  drivers/net/intel/ice/ice_ethdev.c            |   6 +-
+>  drivers/net/intel/ixgbe/ixgbe_fdir.c          |   7 +-
+>  drivers/net/mlx5/meson.build                  |   1 +
+>  drivers/net/ntnic/meson.build                 |   3 +
+>  drivers/net/pfe/meson.build                   |   3 +
+>  drivers/net/qede/meson.build                  |   3 +
+>  drivers/net/txgbe/meson.build                 |   1 +
+>  drivers/net/zxdh/meson.build                  |   3 +
+>  drivers/raw/ifpga/meson.build                 |   2 +
+>  drivers/vdpa/mlx5/meson.build                 |   1 +
+>  examples/bbdev_app/meson.build                |   1 +
+>  examples/bond/meson.build                     |   1 +
+>  examples/dma/meson.build                      |   1 +
+>  examples/ethtool/meson.build                  |   1 +
+>  examples/eventdev_pipeline/meson.build        |   1 +
+>  examples/flow_filtering/meson.build           |   1 +
+>  examples/ip_pipeline/meson.build              |   1 +
+>  examples/ipsec-secgw/meson.build              |   1 +
+>  examples/l2fwd-crypto/meson.build             |   1 +
+>  examples/l2fwd-event/meson.build              |   1 +
+>  examples/l2fwd-jobstats/meson.build           |   1 +
+>  examples/l2fwd-keepalive/meson.build          |   1 +
+>  examples/l3fwd-graph/meson.build              |   1 +
+>  examples/l3fwd-power/meson.build              |   1 +
+>  examples/l3fwd/meson.build                    |   1 +
+>  .../client_server_mp/mp_server/meson.build    |   1 +
+>  examples/packet_ordering/meson.build          |   1 +
+>  examples/ptpclient/meson.build                |   1 +
+>  examples/qos_sched/meson.build                |   1 +
+>  .../server_node_efd/efd_server/meson.build    |   1 +
+>  examples/vhost/meson.build                    |   1 +
+>  .../vm_power_manager/guest_cli/meson.build    |   1 +
+>  examples/vm_power_manager/meson.build         |   1 +
+>  examples/vmdq/meson.build                     |   1 +
+>  lib/bbdev/rte_bbdev.c                         |   2 +-
+>  lib/eal/common/eal_common_options.c           |  22 +--
+>  lib/eal/common/eal_common_trace.c             |  89 ++++++------
+>  lib/eal/common/malloc_heap.c                  |   2 +-
+>  lib/eal/include/rte_common.h                  |  31 +++-
+>  lib/ethdev/ethdev_driver.c                    |   6 +-
+>  lib/ethdev/rte_ethdev.c                       |   1 -
+>  lib/eventdev/rte_event_eth_rx_adapter.c       |   5 +-
+>  lib/eventdev/rte_event_eth_tx_adapter.c       |   8 +-
+>  lib/net/net_crc_avx512.c                      |   4 +-
+>  lib/pcapng/rte_pcapng.c                       |   7 +-
+>  lib/pipeline/rte_swx_ctl.c                    |  11 +-
+>  lib/pipeline/rte_swx_pipeline.c               |  21 ++-
+>  lib/pipeline/rte_swx_pipeline_internal.h      |  10 +-
+>  lib/power/rte_power_pmd_mgmt.c                |   6 +-
+>  lib/table/rte_lru.h                           |  38 ++---
+>  lib/table/rte_lru_arm64.h                     |  14 +-
+>  lib/table/rte_lru_x86.h                       |   4 +-
+>  lib/table/rte_swx_table_em.c                  |   2 -
+>  lib/table/rte_swx_table_learner.c             |   4 +-
+>  lib/table/rte_table_hash_key16.c              |   4 +-
+>  lib/table/rte_table_hash_key32.c              |   4 +-
+>  lib/table/rte_table_hash_key8.c               |   4 +-
+>  lib/telemetry/rte_telemetry.h                 |  11 --
+>  lib/telemetry/telemetry.c                     |   2 +-
+>  lib/telemetry/telemetry_internal.h            |  11 ++
+>  113 files changed, 489 insertions(+), 425 deletions(-)
+> 
+> --
+> 2.48.1
+> 
 
-Is there a policy on release notes?
-Looks Thomas tries to keep them in alphabetic order by vendor.
+Thanks we may want to wait this series until 26.03 release
+Series-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
