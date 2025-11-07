@@ -2,178 +2,161 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCC1CCFA05
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 16:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F16CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 16:13:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B05054067D;
-	Fri,  7 Nov 2025 17:11:02 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 61BF14021F;
- Fri,  7 Nov 2025 17:11:01 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 539D540659;
+	Fri,  7 Nov 2025 17:13:55 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id C1A9640659
+ for <dev@dpdk.org>; Fri,  7 Nov 2025 17:13:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762531862; x=1794067862;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=52moyNsg/5dbnFptK1hVyodJe+aLWW4lKj4DznpKZiU=;
- b=XrjhBIEUUpZGcQTJxbQ9AI9L3Ia3TX3oGoMWAiSJ4PN1R8W1DPSs3os+
- Yub1072988Q75bH17UX4SOjUwH0w1EEcgkg5bEeoOGlDKxQOcR3eDIHqn
- 30PUwulB3pTOkp5X0hIrFGiaYtLNOhDGzqTgl53/kG/RP6MH9owIgMaVv
- ULF6LwdLAbblNFTUe2udDl40xnUTsEIIUM7JvcjVp6jpZ8X+JkD05TNI/
- 4FZWKbfyiLE/AqaLntwwCq5rsWF/cGpfBUziabCV+itPiZsA2SaJIVbsC
- LB0IGCZCxUKjMCZUf/7rLW4iYQVOPRKmZtc60ZGTfSYZftXpR3kZSl74b w==;
-X-CSE-ConnectionGUID: QrkmizfNTse8IA5isl1zTg==
-X-CSE-MsgGUID: HbDUtQ8MTUWXyYowTlCeqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="64777886"
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="64777886"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Nov 2025 08:11:01 -0800
-X-CSE-ConnectionGUID: ko7UslBDSn+3lAw5xZ8+5Q==
-X-CSE-MsgGUID: hTz+n9bdQ4KbwwQDvwHZ7w==
+ t=1762532034; x=1794068034;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=hELglYgg1M5fAOYwhfZCHrkw9H8pFFMy9m/vYmR71vM=;
+ b=n1rmp9S5uBHHmfMMKlfJYXwgmBWvvekCuADVXTBc9jwZsilwKKDMMqLC
+ 0Z38aPP5jNaVAemJBakV6ys1iD2P8GzMu5u5dzDkKb+VcccZcUT2eTxZa
+ M4wu3j53TrcEEJWfBwrMZxGgBEmaZ1eMULIyeyoG6oUv0Wz5bVRRuTYpX
+ ciR/eW3pvbBTDxSG4tFG3sH/7DaEPOW0theaRnQv/cB/pcw4jIBSKATqv
+ xQsJGtEtCO8PzIlcFSW4LTArouL2Tmsau3rkeAVKEdaTAX/VMzmNajWFH
+ 8UWZtOai6wqDoYk2O746G65WXAM0Vxi1U6h3xb3J3hY2shn63yhoqpDtG g==;
+X-CSE-ConnectionGUID: pORn8o+KSmOgf6KZBsR8qQ==
+X-CSE-MsgGUID: EziwpeYlRquoPLyqhpGOKA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="64720744"
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="64720744"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Nov 2025 08:13:53 -0800
+X-CSE-ConnectionGUID: 7DqnDWz8TYGeYdcdMolCNw==
+X-CSE-MsgGUID: 79YJtzO6SOytB4Kfmb894Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="193246111"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Nov 2025 08:11:01 -0800
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="192331958"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Nov 2025 08:13:53 -0800
 Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 7 Nov 2025 08:10:59 -0800
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ 15.2.2562.27; Fri, 7 Nov 2025 08:13:52 -0800
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
  FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Fri, 7 Nov 2025 08:10:59 -0800
-Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.11) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ 15.2.2562.27 via Frontend Transport; Fri, 7 Nov 2025 08:13:52 -0800
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.54)
+ by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 7 Nov 2025 08:10:59 -0800
+ 15.2.2562.27; Fri, 7 Nov 2025 08:13:52 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kz1Cts4px8IxjBpc8z9Z4UVzZaiEuWtIgFWSduo4B+9PfONEhLn+oZBIw81X0Fcg96vcvOgn2So9vOEh0WI275w9xrgt6WODoR1Wz7cn0RiXUdiV2Qljz44gy5JUZEs57iicSHogg2C3SlQicjZyBdlHXHt1YHTVu0cF2a6NOEMP2CUXB1v4DmPmi8OVEgIwAt0PZpZo3Mbj91ysRx8wNravbkMTmb48UY1M/j/AiHZf6EUOyIY1osivFGGcefYB8of9+CassJbSy+YOT0IUbea1niLWDIgHrnY1Oam5cvTxdBkBeStWNhTzs3/jBrMdSulpHX//vzlYQ8gD7kvc8w==
+ b=TMP+bJW3YUAzGvfuX/dEyIpjHvOx+9vKyo6ZFHjnmg5vM2wBzMf179JGQJHvyiuqogbbGcq1JPxKZ2uvsGZsgbRnBH37+9KSbcUAWvdoO4a1Ksv9MGo21YWVWl8+ZDMVZPJGeNcWQo7EfoWp/FCZck1iU9oHbRmx7X4HC56EzM/UyDta2ZyxwRqDv/DpQNIotyTBBaNeXNjUTo8V4LUJPLgA8qyr3rCfGNForcs3BfQUdY5ZiM6bXS3NvRZ5evpjqdn7eqnvvsst7iSN0soGNd5fz4D0LqNkXXvB6B+iiGbTY8K+FK0eCwMsp2d2K9uSOl3gQ0gHW2XKUm+7cUmoDw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0W1lrDH47fq11IKcfrKCz0bQRKlE+kKGt/Wfb313dvE=;
- b=cOHJYFQ9mpUT+dOXw+w+GOSEVXkWj6T+nef1ZJX2JPYnShlK2ftTtdItTetwtXfYVn+cbdrvOPV4D/m80/h1zU90m19+Ccw879HPK1jcp3nxzHzcjlRRrM/SrNZ/9GcCX+mzNWUKUZ1r0CvYPefsZA3ubSKMY+NomDL9tHNPpmJpvta42L7jxckURkrACkSBt9Sc3eLGsON9FSuDbjehHdRawmgQ53YW9MwqMkTC06SDky8iSmTE+EdmRx3IJUKZmqukPYch7ovcpXXhaCVqior5MqhxtW9ScjSL8lk8LAgFquabJlbENK4DVBxN6E0FTmBabFfSQkM5LN9EBNaM5w==
+ bh=J/5X2FhV/DzpEt0FIemYNnBD9d21RarHVBpM8Sx6RE0=;
+ b=sPWIOmVORRpyLTN3Jk40h6Uferw6ANY1g1aAJpqjVF3YsSnlRyNVnWDE2CqyLHIodw0crBgtjSeQSPdyWsHDR2qFNCRLTyAWmcfOl4+ekC1hkWiQ/dVSVy3QFSDL8n4EzZTALhqfiPrQanBLjfVS/ElpkSQ/19HgWFGSCJRyd+s2a4SjlD7Xa8d5OCAMrG7BANIxMx81/jwgHW5i6pKIHkbPINzpNDoolLEWWKqnCo3Dics+vEGHA3zRC3mmh/Hz03OVu8ixJfP2/duNuoqOTtgB51CIAsSISH+sBTNs61aldgU2nubCCKli+1RHQIfoANEKuzFSce6LTXQ6CBa00w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
- SJ2PR11MB7456.namprd11.prod.outlook.com (2603:10b6:a03:4cd::17) with
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by SA0PR11MB4671.namprd11.prod.outlook.com (2603:10b6:806:9f::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.13; Fri, 7 Nov
- 2025 16:10:57 +0000
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::21e4:2d98:c498:2d7a]) by DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::21e4:2d98:c498:2d7a%2]) with mapi id 15.20.9298.007; Fri, 7 Nov 2025
- 16:10:57 +0000
-Message-ID: <72033313-c9f6-4b7a-8298-c32265ae8489@intel.com>
-Date: Fri, 7 Nov 2025 17:10:51 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] app/pdump: remove hard-coded memory channels EAL arg
-To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
-CC: <stable@dpdk.org>
-References: <20251017110638.1094371-1-bruce.richardson@intel.com>
-From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251017110638.1094371-1-bruce.richardson@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZPR01CA0144.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bd::26) To DM4PR11MB6502.namprd11.prod.outlook.com
- (2603:10b6:8:89::7)
+ 2025 16:13:51 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::f120:cc1f:d78d:ae9b%4]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
+ 16:13:50 +0000
+Date: Fri, 7 Nov 2025 16:13:46 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>
+Subject: Re: [RFC PATCH v2 00/33] build DPDK with -Wshadow
+Message-ID: <aQ4ausa8XHrmPsm5@bricha3-mobl1.ger.corp.intel.com>
+References: <20251106140948.2894678-1-bruce.richardson@intel.com>
+ <20251107155034.436809-1-bruce.richardson@intel.com>
+ <20251107080250.584cc614@phoenix>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251107080250.584cc614@phoenix>
+X-ClientProxiedBy: DUZP191CA0062.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:4fa::25) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|SJ2PR11MB7456:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1650aaae-693a-4e7f-d6c9-08de1e183c4d
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA0PR11MB4671:EE_
+X-MS-Office365-Filtering-Correlation-Id: be037e22-5065-47da-f930-08de1e18a395
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?V25HWFlhckY5aTU3MDZuZ3NOTDQ2Z2RtVWJJMWZBekIrOTZtVkwyTm13SnRy?=
- =?utf-8?B?Ulh2V2Y3M1ZBc0YxZW1IRTVsYVd3RUMvTDFHMyttVmpCOVRhZVdjbG5KWkpF?=
- =?utf-8?B?anl2c1dVcXNBeGFQR1ZaYXcxMGQrRG1mcE1tQWNFa0ZHMUROWGZ0b0NXOVgy?=
- =?utf-8?B?TTNyNGJ2eDRZWEkrLzhDbE43dnlyWTM3aHdhSmoxNXRRVUxBc2FWNG5LRTVu?=
- =?utf-8?B?OXRkVC9sbVdDVHhCYXN2NFJxWndobHpJRU9XNTVvVXhQMlJGc1pVcGNBcHIz?=
- =?utf-8?B?cDJjMmpkOFZEWndiY2RXMm91MmgvRXQ2dm5ydWVHa0ViOHY4N2VocVB0MFp6?=
- =?utf-8?B?Vzh5RjZEcnIzcUludlJIbnNPWDZSRjNzdVhmTWFOVzlaNDVzVktXdW1tcnlY?=
- =?utf-8?B?ZG53b2h3b0JyOG5DakR5TWlmenF3ZVhMZTd5V1NxOXlxcWd5ZGl2UnIzc3kv?=
- =?utf-8?B?cEpXWnBlQ3NNMlg0YzU1Z21lVm1CWXpjUUZOMmdWVzhGbzQzWWtYcjYxWThh?=
- =?utf-8?B?a1FhQU91NUlJdFdsZ3o5YWdpTWcyUWkxa3NjaWVPa1dFOG1GdFliTGR6TE9o?=
- =?utf-8?B?ZmNjb25VNmxHcTlOK08wd1ZOTW5ZczEremJ6cWpwRlR5Q3VvNklOd3ZIRGpC?=
- =?utf-8?B?cjhuUWhqemorVGxRWjBrbzQ4Yldsd2tzVGIyU3EwTWY3dHdwYVpCSTRCY0NC?=
- =?utf-8?B?YmdDVE96QmlQRi9YdGhqZGZ3V01GWEw0NStBUXd3ek16LzBYN2dDZ2JXOURU?=
- =?utf-8?B?aFNaT05BeXpwc20zeWdDci9TVisyYTlIMWhPcElnUm1FallTeDhadkJERG5k?=
- =?utf-8?B?ZGIvbk81TUlvWWQ1OFRuQXFxOWxyUklib3pOYUZtbXFlWkNseTQ2cDN2R3Np?=
- =?utf-8?B?c2hZWmgrRGN3OUlYTjhtd0tPczV3U0lINTdVeExaNk50Y0EyVU9DQ2dqVURR?=
- =?utf-8?B?RzZpQ2hYRDVRR3QxNXJjVmUyY21qUGlGTTR2Tnk1SzJmY2MzK3h4TVNoZUN3?=
- =?utf-8?B?cHJoY3lSUDAyK3lJTk9Vc3JpOTMxZVE2OGl1REJ2MTlGWkR2cDRDZExrczEy?=
- =?utf-8?B?VExRYTVodHpWcUZYUVkxYVRIS0hVa1huZWVvN3VRb1hiRE1rTFYyYURXRjFU?=
- =?utf-8?B?Wm1MYWF0NlJrYW9rd3FtMElxMjV5TEh1cmJCdEpIdGx3cWRaNmM1L1VqM2Na?=
- =?utf-8?B?bmdCbUVBRkRJdEtvRUh4OHlGL1NqaHlSMzl2d056Qk1NczlZODRFejBXRFR3?=
- =?utf-8?B?dXNCVTZjS1hqZzYvVnJxYms4YW1MQ2NPNHVxcjQ0bnA4Y2hFVEZSQUtNdTBO?=
- =?utf-8?B?L0pqRWp3MzBQbnFNaTlpb1VFazhIN2Ztc3M1QWNRbERXNEYwcGREdjc2T2w4?=
- =?utf-8?B?UklYUGc1UG83SU42TzVhVVpFQzE3bWw3akVCVmxKMjNiTGxqYUt2RnRUYkln?=
- =?utf-8?B?RStyUlFkSTF2T1U3WDBuUnpCdVJtMHlod1JEWFhGZVNQcUxmL0NPRURuU29U?=
- =?utf-8?B?YmJNanAyWHd1NjFnNlpJMDV2Nkk0V3lyT2lqd094REFpZEpuUGRvYU5sMW9t?=
- =?utf-8?B?NDQyYyt5RnE3VUVVckozMlEycmp2RHBEY2puUEpoYy9RNHdFRmtlY3hsVmpY?=
- =?utf-8?B?NnVsalhxSmZvTWR3ZXpOUmRlTUdhR1VUMkFkUkJFVHFWNWY3OVlQMzlYQmNs?=
- =?utf-8?B?V3h5UUtrUzZDSGFueEJLYm11dlV6SUpQTURtSThPVFMwbWEvVHdLWlVnbXRF?=
- =?utf-8?B?emVaUTJLelpNeWdNYnk2cjBEZnJ4SEJtN204YStScFZxSzJhMkVHd2o0cHhR?=
- =?utf-8?B?bFcwd0JkcG05MkRuenIraWNHOE9Bc1JLS21jMGhQUnFNd3hWZlR3VzFPaE4y?=
- =?utf-8?B?YzNqaFFVV0JxY2JYaGpGUktwemRVS2xkM2hBcHdoS2oraFBRc0RiMFdXY3g2?=
- =?utf-8?Q?aXEeRHGZFwWgz3QKzF97xlgFizh+LtpW?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?uikboCEpDCfk57EVD8nphg3HBGYGyK7Q8Y8O+l01J8nZK4Gu5QZitnxg2kzT?=
+ =?us-ascii?Q?sgm7BhlOzmpxJEjHliEmOE+zRaqSpO9nAWXGVO7tK3aDhLanz6Rq0/Idb5kV?=
+ =?us-ascii?Q?n/3MDOaLYebXAyM8NIMuVrrnqKi+kW9Eu//i3H9H5uPcIyv6KoB2706O2qPC?=
+ =?us-ascii?Q?apwO+svW51t0pAe1ILmc3fnHcXW1UVq5Bn9Ys9eBSQCX3ekHL/VB/FqMfim8?=
+ =?us-ascii?Q?FXGDaT/WAmXroNYVuSGFQpwwMMmAiP64tR/4nhdbBgshMmSeO6LnBUcaqhlm?=
+ =?us-ascii?Q?qaSO3XslbRKgmCuVCKXmz90ds+EcQG0tyKVQlbn/KGuJCPm1lb06jKPumKnU?=
+ =?us-ascii?Q?RlDPKHEapaZg3GvBVwJBjwReh9OlYfOEm2yaq0a6tCsT7wL5NxCd3vS7+Xwe?=
+ =?us-ascii?Q?ATO4nI6iG/VMkMiG3YAnIWhIH/RkBv1msI9klYt3n1rhmDS//ZAvyW5SRsmV?=
+ =?us-ascii?Q?wfvXPLHccEN/IqbULYYk1ImGX0quyxO+GnMI9KkKyxdkvR0WnZDx2SRJdLiW?=
+ =?us-ascii?Q?5yCDtizRDNwpmFA2btYICENcfRwY+qGhihy6xLv0q6NWveMDUaS66B/CaPXt?=
+ =?us-ascii?Q?nqSDTmFaw6rO2J6GGx2JU+dNXPR1IE79+TmCARNeFGhnFibD94TG6Yx4jaq8?=
+ =?us-ascii?Q?pvEGfQCM9wRmQQ2eqvQHZVMxLLxcW5kCQxsf3Om2wWT1LH1ajKakEEfNBhhr?=
+ =?us-ascii?Q?6vhfVbXV3MHC9ZFE6xlUHkF/u594sOdMyNdYYFKnw6FillnVIFsIwi2jGEzU?=
+ =?us-ascii?Q?AfM++aogpFU97ZhX5WewAqm58w23pO8GWfdQF0MNYEAKHzUdND6TMq7kbFsI?=
+ =?us-ascii?Q?3j3K+OWTT+W7Ofv6W6rwKTX93uWfIIR8/A+stseBIqu92g8/UVqmc6yXVBYv?=
+ =?us-ascii?Q?2fhqExZ3w1eYhsyfeRI9Rn/6toIlwhWRqcJzF4hSX8VnxC0oZDVdFAu9rOks?=
+ =?us-ascii?Q?pYsABKNNrSJhXGw5zv2fcr4lvhhVGABxjtaHcDNdNhiA81LoLvaLji9jZsmG?=
+ =?us-ascii?Q?Zh8f3T0TnNhkRvAS2/ew3yquvpUco3STcausVXX8J9RYDp+Pn25nNfyn67sg?=
+ =?us-ascii?Q?MsFXeqYd5RrtZF1OLPnvDZ8mTxTeJ0L7tbajdeBTxwJ+76ZJfniJu6R8FvgZ?=
+ =?us-ascii?Q?Luiddik3Cbgow9XDzlqN7NL71xBzJtzL9Z2zk+6Ue/zFMdcGnkNs8zB6ELIf?=
+ =?us-ascii?Q?jZy3O6TuAb1RjoFPaI5SOXGgzm769u4w2tMDaFblseEMc/CVsFNaiLexsjVk?=
+ =?us-ascii?Q?P6VFX6X5Tl1mb7YfhSBu3d/M1QQ1dOpAKOPuh9HzWsBuauCxCDK2hCx9pao4?=
+ =?us-ascii?Q?I5qzfJva9N/qO5TpcchJSQBN6y/QzsL2tvh6paslif3t7qARVCPRlABqGvmG?=
+ =?us-ascii?Q?4bx5f8xK0QrBfzafGRdk39AwrznmimGnSKeNnvch/n1daYeYEd5e0b6OxC5X?=
+ =?us-ascii?Q?5/Pes9f/ZiRNrdq/RfQVhX4R42RL7wd6?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T1dFZzh2UW1IZklQRmhwVW8wbVoyWmZVR3JNc2FWSFRBNTNMSzV4YWM5UjJh?=
- =?utf-8?B?b2J1ZW9GMytnSTcrejc0NEoyeFBsaUhnK1ZXNjg5ZUU5dldaU01Cc2F0Q0RZ?=
- =?utf-8?B?ZlFxV2srNWF3d2tjVCtTa3lpWTdnVFZtOG9pMnBMR1RIeFpzV0VpQ2Iyd0U3?=
- =?utf-8?B?S0tOUzd2TllLWVZKN1hIY24wcjRVY2tJYmhXdzA5bXlRNndadUJBN21wL1Yx?=
- =?utf-8?B?OGZvQklTMjd6MGhkV05yam41VWtaN2F3ZDFRU3R2blhBNlZCSCtVNjhYdFA2?=
- =?utf-8?B?d1cxSnlnZzZqWHRyOGlpNGlFRE1KYkV0d3kvaVdpYlVLaFJYRUREbmY1UnpO?=
- =?utf-8?B?REIyTDFyamUwQXM4OEY4aWhhMDNQT3p3b3NCSytsK1pLcjB4blU3S1A2c2ta?=
- =?utf-8?B?THFhODUrdmFXOTE4T1JGekpZUUhRMUpqWEV1ZVdOWTh0OVo5OHlsUHFwcHlt?=
- =?utf-8?B?S3AvdFozWnczQXc0RkQ1QmdBRVZmYVB4Y0VqL1pBQUlGTnRTQUttZzhWSDJV?=
- =?utf-8?B?NjlXaFVEOUZFK0QrbHFxcFkwdW56TisxQWVCNmpETXd3SFhaM3U2WjhIREFn?=
- =?utf-8?B?aE55ZmhSU3pUbW1jNHVDek1qNTgwem1UVU5aTHhFS1FIQzJycmtpdjFDeHRp?=
- =?utf-8?B?eGpTT1REdHV5MWNsUWZ2MStNeXZJbnh1b0UybGw1RjlUQXE4RlNlT1hrUm1H?=
- =?utf-8?B?c0c3TUR3NXpXY3JYeWtIaFhYNVJKNGJhUUZ5WmhYL1g3ckl6ek9SNTd1Rk1V?=
- =?utf-8?B?OTFSY3NqSDV2U1VpOVFBaFdDWmhnenlHZFE1aGtOK28zMjU3UTZpSlVvUVM4?=
- =?utf-8?B?dzR3STdITm55ZUY0MHFDdmlGK0hCRFhKYnRRQzI4YTNnZi9oczN4WDdNVVJO?=
- =?utf-8?B?YTd2OC9UaEpwLy9IMzVkczRDVHdUUWxid2prMzY1aGh5YnN4UjBWKzcxUHlD?=
- =?utf-8?B?WG9PdXYxY3k3U3lrU1FDNGtHQ3c2RzROeE5hM1QvQlBtcXo3VFQ3NjR0U1kv?=
- =?utf-8?B?NFJPQ2w5bW1rTDRCMzNVeDJ6VmFaZWNXbDFxQU5GN3NWOTNtdjZjMUczZ0FV?=
- =?utf-8?B?SVozdnVYdFhrb1VJZmhjcjYydzMwdC9QSjNYRG56U3VJRktrT3kxVDFyYjRH?=
- =?utf-8?B?YzdFOGtHamp1TFRIZVV2WTJiUUt2SEE5a2tGQXpBQnhQTFVDT2tCZ3plKzlo?=
- =?utf-8?B?STNCUGlEWG5BODc0NGZ3S1dmNWJaNXVuZ2g2T1FXcFEvNTEzWEhQeXF2d3M4?=
- =?utf-8?B?Z0hQQnlINkgyc1FCZkFBeUxBZTE2cjE0bHdKRHJiNTV1bjdabFlPTk5vSDE3?=
- =?utf-8?B?bnRGTVFjYzNBeWR6dCsvU2lkQzBsQXNSbDM5elRqcjRPWTM4bjVyZUtpVUVh?=
- =?utf-8?B?ZEtGL2JDTm9xSFhmRlhWS2tydk5HSUM0R08zM09OdGpBcEo1UTdGTnBncmJ6?=
- =?utf-8?B?c3lCdHJkVEY0SWVtcTQ4c2UrYUUxZjUydFpGajFocTdjQkd4dnVBdmcyZGdY?=
- =?utf-8?B?K2grdGt6S3I4QzZmWXVYdWwvUHdaUVE2bTlJMmRwTkgwdEhMRFVIdG02YXJ4?=
- =?utf-8?B?blhvRStzK2p6cmMrbTRITDQxV3BZTDVBOE91RDFDTThDSTFxU3hlRzNEVDdt?=
- =?utf-8?B?Y2RwMURhL3h4WDNWRjlaT2JKNHVWZDgzenNObWVGenpxZUlWcGY0T2JiQnpu?=
- =?utf-8?B?bE1aYTNlZ3RLV2tXRWtSRklCZEJPMG5qQTBib1R5UUYvMkZSb1hGdDBseVA3?=
- =?utf-8?B?YVRZZDl2Snh5OTcrdGl2c005d0RIekdpYVNHV2piR0FpeWxaV3VWN3liS2Jv?=
- =?utf-8?B?enFCd05RSzBEbUFDRzZxL2NYaGJvT0EvN2ZWMk1qWGV4VkI5YVZqVkxhb2Nm?=
- =?utf-8?B?YjU5aVlXOTF6VkhLTzVPWlZLZzVTNGdmYlIrQ2pPV3ZZSXNDNENieERHMjBu?=
- =?utf-8?B?YldHckRWMnk0UTE3b3Z1N3dwY2QrWlRPeEUwemUwaUplQkg0dTZXeVlETmg3?=
- =?utf-8?B?SFl5NVRHam1xOFM0eGU1WFBwdEhYZG9oN0NkWFZWbFlvOW1MTGN0UDBqWGRn?=
- =?utf-8?B?dlBOVFFEaEpmL3FKUTQvU0xOWU40cVdRd1UvRnhIRzluL2hZalc3RkZPdlQr?=
- =?utf-8?B?OUtlUlRMejZ4NU9kdm9GaDVJSWxHQ1VMaVN0bElzaDRmbXpsY2IyV05PaW9T?=
- =?utf-8?B?N1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1650aaae-693a-4e7f-d6c9-08de1e183c4d
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?JjszdNh/YgKv/AdHex+mzzU59UH3GtbWB8qhTYD7J8g+iEwGcev7OAw30Uiw?=
+ =?us-ascii?Q?vHI8uY1I1TQIMnClxY9UmCWqh7M0dTzBW4D+lsN3WYwHtj+ZOxn16Ydu2ghV?=
+ =?us-ascii?Q?LVRdhMO0eaFEYJKKg+23xH6IInLENDn5uLPNDyEHGDStVKM5r5DmNaBMo/eN?=
+ =?us-ascii?Q?gsOiQW5Y93NwVVUlvIJdpir3vTDXVli5iFQYHJ1IEyc6hApPXT1iwOIKWpS4?=
+ =?us-ascii?Q?L0Zx2bCJyxFOTo1nDpBhEi/uL6AiiyoAIKdNVgxav2ObklEgFLusuXZdiWjl?=
+ =?us-ascii?Q?vSa5UPeQz+KjWCYCbTT9nBUJ8xTDvD7GXv5R2gMfLG0yfgBmEDXDkf04QzPy?=
+ =?us-ascii?Q?JpQGroCDVZwbuesrPrelLiEttfE038wRGeJ1aLeNW4CYEVuzcH07a7EWRiKV?=
+ =?us-ascii?Q?RKYShTBBiVzuGiEeex/lXFgBpOSQcOplvGyuezzR/nBdpyhtsWPYgIPIJSLF?=
+ =?us-ascii?Q?QyyVRom2n2940jRhQ1Ig3W02swsZ6EJ3H7Y0eSHDqKmcVXfxvzx5rYmpLSNi?=
+ =?us-ascii?Q?mruwYsQNU7ugT/Qtiq+ppvN5FzlMNLbIsgnPMkBJNtzAGHkL8yTfbUr7hO3e?=
+ =?us-ascii?Q?CiZ87gy91tdEBdlgN1Yb5Vz2RR6fdHf4t3wKf7U59hXhu6PlEQKYASIc4Xgf?=
+ =?us-ascii?Q?BCvggsxfTX2bzs7JUTWJWNN8hB/sTGc5fwX6opjcv5YaOoyjrP9D5wXhuNnt?=
+ =?us-ascii?Q?U+5LN1kQVQbOwiDC42TyVZq5KIwRHZHucEhC940bSWkLoXFYlCFgHrHHd+da?=
+ =?us-ascii?Q?fpz+SkBJFWjk+T47YHmUbQRqJhgQue0TjdDHVGouKrRQAUxDi1x2kCDQhIT8?=
+ =?us-ascii?Q?MxXj4NM8n3V4Fd2TAVDFwkmTRkidEzQ6KdsHDUPyTQ1b/bhjGALzfnImNeJC?=
+ =?us-ascii?Q?SOpv0IcJcImYDPCNP4uWOC0hPYwdOdvnVp9HEnWl6YPdpUuCq95yrfoa+07O?=
+ =?us-ascii?Q?ZMC5CQVhL7iOh3rE2Rbl77UkypO9KFzHTWKBit6J/RffRxNwr4SoZ/cVIESS?=
+ =?us-ascii?Q?ZYFgTFYdZfKDsY/B1jt3oFb+57zefYw9YlCU6mSUzUl44Suj1jYsz1P/7fPL?=
+ =?us-ascii?Q?ZVBxxiTi+TZ3kdEaTFucHVQV3bLIKtFR3NcRaq1IU59fHv+rqHFJ9Vs0t4xs?=
+ =?us-ascii?Q?z5Fruc9n9E3l/mThtFrinkBDyPigp4frSK8dMObPgGlfZFk5QNI8KfIj3NkH?=
+ =?us-ascii?Q?6ScAl59kcv8U4GotZWPn2jWGkBif5qEuV5JuNV0G1RQoOmcw2zDm+Rh3uDGW?=
+ =?us-ascii?Q?0RTARQL0X0sLRoS6oRNq6Xd+GsALEDgu3KSlX0WnnOF42aR7bv/oDW17I1Zx?=
+ =?us-ascii?Q?B8JKTg1FxMR3ytbZIiVQvGvhS4qBYhwuJ+iPY0tkWjL2n/Qtd7sHAvGc50px?=
+ =?us-ascii?Q?eWEMymXcNaWYmD/jb9ukok9JTQdk48r11E4egy+kzElXdY8AonXyJP81MCex?=
+ =?us-ascii?Q?/LhlW2nijv/bcCiuCKbW+W2bJHGH5lMUTo9UbFT7PaBANT/OeRXfPyAgF4Tv?=
+ =?us-ascii?Q?0yp/jaQSXRbhu+7v4V578StAZOwjP7fQ3GsFi1FkjV3KJxJKiF2KDIsMGSFP?=
+ =?us-ascii?Q?CEXnvfydjuSqoqK+5IFcDKrPLYbM27UCQR5csS2DIsc+ofbuJ6YtCMezssYY?=
+ =?us-ascii?Q?Qg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: be037e22-5065-47da-f930-08de1e18a395
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 16:10:57.5050 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 16:13:50.8128 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QBslQeCtPPtOGCSdZKx1czyhYQBFpLFfMIFgwS0yr75ty6PRS5gmKwyAvm1RqhTUfgK79bgKBKn4XCutS4kBH+VkFei0rRugMMMjMntrHkE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7456
+X-MS-Exchange-CrossTenant-UserPrincipalName: xqDbu3hVcQ4AGw8OVXboReMTH2NOqJt3FpvplgchpsKWYGPWWWB2bjKi70kyK1rdMsnT0uen+YKH8s6TZC7dXuPLRFfiIVwFoahq5QP43GM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4671
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -188,20 +171,203 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 10/17/2025 1:06 PM, Bruce Richardson wrote:
-> The pdump main function modifies argc/argv before calling EAL init
-> function. It needs to do so in order to add the proc-type=secondary
-> flag, but also adds in "-n4" as parameter. This parameter is unnecessary
-> and also causes duplicate parameter errors if the user also passes in -n
-> flag on the commandline. Just remove this flag.
+On Fri, Nov 07, 2025 at 08:02:50AM -0800, Stephen Hemminger wrote:
+> On Fri,  7 Nov 2025 15:49:56 +0000
+> Bruce Richardson <bruce.richardson@intel.com> wrote:
 > 
-> Fixes: caa7028276b8 ("app/pdump: add tool for packet capturing")
-> Cc: stable@dpdk.org
+> > As flagged in bugs #1742, #1743 and others, much of DPDK fails to build
+> > when -Wshadow flag is passed to the build. This patchset fixes many issues
+> > of this nature, but not all, in the hopes we can move towards enabling that
+> > warning flag for all components for DPDK in future. This patchset fixes the
+> > following components in DPDK:
+> > 
+> > * all libraries
+> > * Intel net drivers
+> > * all apps in the "app" folder
+> > 
+> > For the rest of the drivers and example applications, any component which
+> > does not build successfully with the shadow warning enabled has it
+> > explicitly disabled via cflags. Then the last patch adds -Wshadow to the
+> > global DPDK build, which should prevent any regressions in components which
+> > are already working.
+> > 
+> > At that point, we should not have any regressions and we can, over time,
+> > reduce the number of components needing the -Wno-shadow flag.
+> > 
+> > RFC v2:
+> > * take patch from Stephen for RTE_MIN/MAX fixes
+> > * add additional fixes to clear clang warnings - it's a lot stricter than
+> >   gcc in this regard, and flags more issues.
+> > * extend app cleanup to all apps, not just testpmd
+> > * add per-component disabling, and add global enable flag at the end.
+> > 
+> > 
+> > Bruce Richardson (32):
+> >   eal: fix variable shadowing
+> >   ethdev: fix variable shadowing issues
+> >   eventdev: fix variable shadowing issues
+> >   net: remove shadowed variable
+> >   pipeline: fix variable shadowing
+> >   table: fix issues with variable shadowing
+> >   power: rename variable to eliminate shadowing
+> >   pcapng: rename variable to fix shadowing
+> >   telemetry: make socket handler typedef private
+> >   bbdev: fix variable shadowing
+> >   bus/pci: remove shadowed variables
+> >   net/intel: rename function param to avoid shadow warnings
+> >   net/e1000: fix build with shadow warnings enabled
+> >   net/i40e: fix build with shadow warnings enabled
+> >   net/ice: fix build with shadow warnings enabled
+> >   net/cpfl: fix build with shadow warnings enabled
+> >   net/ixgbe: fix build with shadow warnings enabled
+> >   app/test-pmd: fix build with shadow warnings enabled
+> >   app/graph: fix build with shadow warnings enabled
+> >   app/pdump: fix warning about shadowed variable
+> >   app/test-bbdev: use RTE_MAX3 to remove variable shadowing
+> >   app/test-compress-perf: fix variable shadowing
+> >   app/test-crypto-perf: fix shadowed variable
+> >   app/test-dma-perf: renamed shadowed variable
+> >   app/test-eventdev: fix build with shadow warnings enabled
+> >   app/test-flow-perf: remove unneeded variable
+> >   app/test-security-perf: fix build with shadow warnings
+> >   app/test-pipeline: remove unnecessary variable
+> >   drivers: disable variable shadowing warnings for drivers
+> >   app/test: disable shadowing warnings for unit tests
+> >   examples: ignore variable shadowing warnings
+> >   build: enable shadowed variable warnings
+> > 
+> > Stephen Hemminger (1):
+> >   eal: add more min/max helpers
+> > 
+> >  app/graph/conn.c                              | 134 +++++++++---------
+> >  app/pdump/main.c                              |  12 +-
+> >  app/test-bbdev/test_bbdev_perf.c              |   7 +-
+> >  app/test-compress-perf/main.c                 | 122 ++++++++--------
+> >  .../cperf_test_pmd_cyclecount.c               |   6 +-
+> >  app/test-dma-perf/main.c                      |   8 +-
+> >  app/test-eventdev/evt_main.c                  |   6 +-
+> >  app/test-eventdev/test_atomic_queue.c         |   6 +-
+> >  app/test-eventdev/test_perf_common.c          |   4 +-
+> >  app/test-flow-perf/main.c                     |   1 -
+> >  app/test-pipeline/main.c                      |   1 -
+> >  app/test-pmd/cmdline_flow.c                   |  42 +++---
+> >  app/test-pmd/config.c                         |  15 +-
+> >  app/test-pmd/parameters.c                     |  38 +++--
+> >  app/test-pmd/testpmd.c                        |   2 +-
+> >  app/test-security-perf/test_security_perf.c   |  42 +++---
+> >  app/test/meson.build                          |   1 +
+> >  app/test/test_cryptodev_security_ipsec.c      |  13 +-
+> >  config/meson.build                            |   6 +
+> >  drivers/baseband/fpga_5gnr_fec/meson.build    |   2 +
+> >  drivers/bus/fslmc/meson.build                 |   2 +
+> >  drivers/bus/pci/linux/pci.c                   |   1 -
+> >  drivers/bus/pci/linux/pci_vfio.c              |   2 +-
+> >  drivers/bus/pci/windows/pci.c                 |   1 -
+> >  drivers/common/cnxk/meson.build               |   1 +
+> >  drivers/common/qat/meson.build                |   1 +
+> >  drivers/compress/nitrox/meson.build           |   2 +
+> >  drivers/crypto/cnxk/meson.build               |   1 +
+> >  drivers/crypto/octeontx/meson.build           |   1 +
+> >  drivers/crypto/openssl/meson.build            |   1 +
+> >  drivers/crypto/scheduler/meson.build          |   1 +
+> >  drivers/dma/dpaa2/meson.build                 |   2 +
+> >  drivers/event/cnxk/meson.build                |   1 +
+> >  drivers/event/dlb2/meson.build                |   2 +
+> >  drivers/event/sw/meson.build                  |   1 +
+> >  drivers/net/axgbe/meson.build                 |   2 +-
+> >  drivers/net/bnxt/meson.build                  |   1 +
+> >  drivers/net/bonding/meson.build               |   1 +
+> >  drivers/net/cnxk/meson.build                  |   1 +
+> >  drivers/net/cxgbe/meson.build                 |   1 +
+> >  drivers/net/dpaa/meson.build                  |   1 +
+> >  drivers/net/dpaa2/meson.build                 |   1 +
+> >  drivers/net/ena/meson.build                   |   2 +
+> >  drivers/net/enetfec/meson.build               |   2 +
+> >  drivers/net/enic/meson.build                  |   2 +
+> >  drivers/net/failsafe/meson.build              |   1 +
+> >  drivers/net/intel/common/rx.h                 |   6 +-
+> >  drivers/net/intel/cpfl/cpfl_flow_engine_fxp.c |   2 -
+> >  drivers/net/intel/cpfl/cpfl_flow_parser.c     |   6 +-
+> >  drivers/net/intel/cpfl/cpfl_fxp_rule.h        |   2 -
+> >  drivers/net/intel/cpfl/cpfl_representor.h     |   2 +-
+> >  drivers/net/intel/e1000/igc_ethdev.c          |   6 +-
+> >  drivers/net/intel/i40e/i40e_ethdev.h          |  10 +-
+> >  drivers/net/intel/ice/ice_ethdev.c            |   6 +-
+> >  drivers/net/intel/ixgbe/ixgbe_fdir.c          |   7 +-
+> >  drivers/net/mlx5/meson.build                  |   1 +
+> >  drivers/net/ntnic/meson.build                 |   3 +
+> >  drivers/net/pfe/meson.build                   |   3 +
+> >  drivers/net/qede/meson.build                  |   3 +
+> >  drivers/net/txgbe/meson.build                 |   1 +
+> >  drivers/net/zxdh/meson.build                  |   3 +
+> >  drivers/raw/ifpga/meson.build                 |   2 +
+> >  drivers/vdpa/mlx5/meson.build                 |   1 +
+> >  examples/bbdev_app/meson.build                |   1 +
+> >  examples/bond/meson.build                     |   1 +
+> >  examples/dma/meson.build                      |   1 +
+> >  examples/ethtool/meson.build                  |   1 +
+> >  examples/eventdev_pipeline/meson.build        |   1 +
+> >  examples/flow_filtering/meson.build           |   1 +
+> >  examples/ip_pipeline/meson.build              |   1 +
+> >  examples/ipsec-secgw/meson.build              |   1 +
+> >  examples/l2fwd-crypto/meson.build             |   1 +
+> >  examples/l2fwd-event/meson.build              |   1 +
+> >  examples/l2fwd-jobstats/meson.build           |   1 +
+> >  examples/l2fwd-keepalive/meson.build          |   1 +
+> >  examples/l3fwd-graph/meson.build              |   1 +
+> >  examples/l3fwd-power/meson.build              |   1 +
+> >  examples/l3fwd/meson.build                    |   1 +
+> >  .../client_server_mp/mp_server/meson.build    |   1 +
+> >  examples/packet_ordering/meson.build          |   1 +
+> >  examples/ptpclient/meson.build                |   1 +
+> >  examples/qos_sched/meson.build                |   1 +
+> >  .../server_node_efd/efd_server/meson.build    |   1 +
+> >  examples/vhost/meson.build                    |   1 +
+> >  .../vm_power_manager/guest_cli/meson.build    |   1 +
+> >  examples/vm_power_manager/meson.build         |   1 +
+> >  examples/vmdq/meson.build                     |   1 +
+> >  lib/bbdev/rte_bbdev.c                         |   2 +-
+> >  lib/eal/common/eal_common_options.c           |  22 +--
+> >  lib/eal/common/eal_common_trace.c             |  89 ++++++------
+> >  lib/eal/common/malloc_heap.c                  |   2 +-
+> >  lib/eal/include/rte_common.h                  |  31 +++-
+> >  lib/ethdev/ethdev_driver.c                    |   6 +-
+> >  lib/ethdev/rte_ethdev.c                       |   1 -
+> >  lib/eventdev/rte_event_eth_rx_adapter.c       |   5 +-
+> >  lib/eventdev/rte_event_eth_tx_adapter.c       |   8 +-
+> >  lib/net/net_crc_avx512.c                      |   4 +-
+> >  lib/pcapng/rte_pcapng.c                       |   7 +-
+> >  lib/pipeline/rte_swx_ctl.c                    |  11 +-
+> >  lib/pipeline/rte_swx_pipeline.c               |  21 ++-
+> >  lib/pipeline/rte_swx_pipeline_internal.h      |  10 +-
+> >  lib/power/rte_power_pmd_mgmt.c                |   6 +-
+> >  lib/table/rte_lru.h                           |  38 ++---
+> >  lib/table/rte_lru_arm64.h                     |  14 +-
+> >  lib/table/rte_lru_x86.h                       |   4 +-
+> >  lib/table/rte_swx_table_em.c                  |   2 -
+> >  lib/table/rte_swx_table_learner.c             |   4 +-
+> >  lib/table/rte_table_hash_key16.c              |   4 +-
+> >  lib/table/rte_table_hash_key32.c              |   4 +-
+> >  lib/table/rte_table_hash_key8.c               |   4 +-
+> >  lib/telemetry/rte_telemetry.h                 |  11 --
+> >  lib/telemetry/telemetry.c                     |   2 +-
+> >  lib/telemetry/telemetry_internal.h            |  11 ++
+> >  113 files changed, 489 insertions(+), 425 deletions(-)
+> > 
+> > --
+> > 2.48.1
+> > 
 > 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
-Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> Thanks we may want to wait this series until 26.03 release
+> Series-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 
--- 
-Thanks,
-Anatoly
+Yes, absolutely, which is why it's still down as an RFC. I've also already
+marked it as deferred in patchwork.
+
+However, I also wanted to get it out early so that it can be considered for
+early merge in 26.03 to avoid later problems  with new shadowing issues being
+introduced in 26.03, and also to get build checks from the CI, since I
+can't test the build of every single driver on my system (thankfully there
+are only about a half a dozen which I can't build).
+
+/Bruce
