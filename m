@@ -2,49 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0FB2CCFA05
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 15:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7434FCCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 15:53:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D489A40E42;
-	Fri,  7 Nov 2025 16:51:31 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3AB5940E50;
+	Fri,  7 Nov 2025 16:51:33 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id 3E27E402EE;
- Fri,  7 Nov 2025 16:51:30 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id D9AB040E44;
+ Fri,  7 Nov 2025 16:51:31 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762530690; x=1794066690;
+ t=1762530692; x=1794066692;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=dU/EgJQ4kDv6Iwzk2dqt8hyQflZZAKxo/Zi4lQUdTvM=;
- b=azzjzjWaC3z5PDH8/z38bzPqg5a65i6Obco2L8MfAEmqurLc5VF+2iL8
- G9Z6cJyFQ7z7aCZw/R4DRNBd3LLC+VtKAON+eoNZ5oBsAhcxJrB34NxeD
- 2L2cnmwsNM82Ou9Y8rDWpK6vLxCpByWHThF1NoYtPc7t2EFRDndYqLwum
- HIkSML0VdLB6Xm3IYDeyaFco+eRWMZAGJH0Xi9zPQf1iPTVPFFBI9dKaT
- gpnSbdAtN6JtUrnqukNhsjVEMmT77BdgOImD+e70zXvyXsBrXp5az7mPm
- bEkLV2jUIwRKg7xJDQcnEYKeHEdUk4s3zM5hAZhoIvWEquAdIpnnEaBHJ A==;
-X-CSE-ConnectionGUID: K8Vb0S/KQPW1fTz0BtoK8Q==
-X-CSE-MsgGUID: tomQQHWVSNCeOzR01cySiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="90151864"
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="90151864"
+ bh=mVz08qZVsoehC13gjM7ztO1QJLuMvsw86QetxYlJVz0=;
+ b=jPPrvhVSLs45JGs58HtH85yJHqpg4vJFVhcqsS53VAZmARCKhlcnZ8ov
+ pFaCcOuF8olDkRNbkhSBMsEomfS+IpyFR0pnd84bWnY0VwBuTdb4wQT5v
+ kdj6AQmjKz5i89HIwkMZx/5tsf6/PTu2H+osxUak9XZH5kGQuTO/4aP22
+ gbIj4tflHi8STwKggCO/SJ3myuf/BtVO0EFf1bfy7ptLTZzOavLwON8cs
+ 3572zPvuLCiyOarmJsCUKeu87/udpqxklMREhQE2iMf06VWojOmDrHPf3
+ ZmRjEns33tlVN0MmzI5Ju2ZcE5Up4seR2gluilDSAxTWTyLSJXI+oXOMf A==;
+X-CSE-ConnectionGUID: XFcnFh21QnuBSFJonpH/Hg==
+X-CSE-MsgGUID: jtQs345OQveLXLaU2V1EMw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="90151865"
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="90151865"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Nov 2025 07:51:30 -0800
-X-CSE-ConnectionGUID: bt9y+53XTge0kJOGMaDmMQ==
-X-CSE-MsgGUID: OiIG0ar8QC+1TfIppHqz/Q==
+ 07 Nov 2025 07:51:31 -0800
+X-CSE-ConnectionGUID: sHGdi7OCTaaoIMFJscj6Og==
+X-CSE-MsgGUID: ka5XJwFYTQODW5qmY2YBiw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="187321740"
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="187321746"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 07 Nov 2025 07:51:29 -0800
+ by orviesa006.jf.intel.com with ESMTP; 07 Nov 2025 07:51:31 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Sunil Kumar Kori <skori@marvell.com>,
- Rakesh Kudurumalla <rkudurumalla@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Jerin Jacob <jerinj@marvell.com>
-Subject: [RFC PATCH v2 20/33] app/graph: fix build with shadow warnings enabled
-Date: Fri,  7 Nov 2025 15:50:16 +0000
-Message-ID: <20251107155034.436809-21-bruce.richardson@intel.com>
+ Reshma Pattan <reshma.pattan@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [RFC PATCH v2 21/33] app/pdump: fix warning about shadowed variable
+Date: Fri,  7 Nov 2025 15:50:17 +0000
+Message-ID: <20251107155034.436809-22-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251107155034.436809-1-bruce.richardson@intel.com>
 References: <20251106140948.2894678-1-bruce.richardson@intel.com>
@@ -64,302 +63,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The global variable "conn" conflicted with the local parameter to each
-function in the graph conn.c file. To prevent shadowing, use "c" as the
-name for the local connection variable throughout the file.
+The variable name "optarg" is a standard global variable in getopt, so
+use of that name for function parameters causes shadowing warnings.
+Rename the variable to avoid these issues.
 
-Fixes: 3f90eda5b7fb ("app/graph: add telnet connectivity")
+Fixes: caa7028276b8 ("app/pdump: add tool for packet capturing")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/graph/conn.c | 134 +++++++++++++++++++++++------------------------
- 1 file changed, 67 insertions(+), 67 deletions(-)
+ app/pdump/main.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/app/graph/conn.c b/app/graph/conn.c
-index 44934602c7..c5e1c1ae1b 100644
---- a/app/graph/conn.c
-+++ b/app/graph/conn.c
-@@ -20,12 +20,12 @@
- #define MSG_CMD_TOO_LONG "Command too long."
- 
- static int
--data_event_handle(struct conn *conn, int fd_client)
-+data_event_handle(struct conn *c, int fd_client)
- {
- 	ssize_t len, i, rc = 0;
- 
- 	/* Read input message */
--	len = read(fd_client, conn->buf, conn->buf_size);
-+	len = read(fd_client, c->buf, c->buf_size);
- 	if (len == -1) {
- 		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
- 			return 0;
-@@ -38,37 +38,37 @@ data_event_handle(struct conn *conn, int fd_client)
- 
- 	/* Handle input messages */
- 	for (i = 0; i < len; i++) {
--		if (conn->buf[i] == '\n') {
-+		if (c->buf[i] == '\n') {
- 			size_t n;
- 
--			conn->msg_in[conn->msg_in_len] = 0;
--			conn->msg_out[0] = 0;
-+			c->msg_in[c->msg_in_len] = 0;
-+			c->msg_out[0] = 0;
- 
--			conn->msg_handle(conn->msg_in, conn->msg_out, conn->msg_out_len_max,
--					 conn->msg_handle_arg);
-+			c->msg_handle(c->msg_in, c->msg_out, c->msg_out_len_max,
-+					 c->msg_handle_arg);
- 
--			n = strlen(conn->msg_out);
-+			n = strlen(c->msg_out);
- 			if (n) {
--				rc = write(fd_client, conn->msg_out, n);
-+				rc = write(fd_client, c->msg_out, n);
- 				if (rc == -1)
- 					goto exit;
- 			}
- 
--			conn->msg_in_len = 0;
--		} else if (conn->msg_in_len < conn->msg_in_len_max) {
--			conn->msg_in[conn->msg_in_len] = conn->buf[i];
--			conn->msg_in_len++;
-+			c->msg_in_len = 0;
-+		} else if (c->msg_in_len < c->msg_in_len_max) {
-+			c->msg_in[c->msg_in_len] = c->buf[i];
-+			c->msg_in_len++;
- 		} else {
- 			rc = write(fd_client, MSG_CMD_TOO_LONG, strlen(MSG_CMD_TOO_LONG));
- 			if (rc == -1)
- 				goto exit;
- 
--			conn->msg_in_len = 0;
-+			c->msg_in_len = 0;
- 		}
- 	}
- 
- 	/* Write prompt */
--	rc = write(fd_client, conn->prompt, strlen(conn->prompt));
-+	rc = write(fd_client, c->prompt, strlen(c->prompt));
- 	rc = (rc == -1) ? -1 : 0;
- 
- exit:
-@@ -76,11 +76,11 @@ data_event_handle(struct conn *conn, int fd_client)
+diff --git a/app/pdump/main.c b/app/pdump/main.c
+index fa85859703..5be382f8ca 100644
+--- a/app/pdump/main.c
++++ b/app/pdump/main.c
+@@ -247,7 +247,7 @@ parse_uint_value(const char *key, const char *value, void *extra_args)
  }
  
  static int
--control_event_handle(struct conn *conn, int fd_client)
-+control_event_handle(struct conn *c, int fd_client)
+-parse_pdump(const char *optarg)
++parse_pdump(const char *arg)
  {
- 	int rc;
+ 	struct rte_kvargs *kvlist;
+ 	int ret = 0, cnt1, cnt2;
+@@ -257,9 +257,9 @@ parse_pdump(const char *optarg)
+ 	pt = &pdump_t[num_tuples];
  
--	rc = epoll_ctl(conn->fd_client_group, EPOLL_CTL_DEL, fd_client, NULL);
-+	rc = epoll_ctl(c->fd_client_group, EPOLL_CTL_DEL, fd_client, NULL);
- 	if (rc == -1)
- 		goto exit;
- 
-@@ -99,7 +99,7 @@ conn_init(struct conn_params *p)
- {
- 	int fd_server, fd_client_group, rc;
- 	struct sockaddr_in server_address;
--	struct conn *conn = NULL;
-+	struct conn *c = NULL;
- 	int reuse = 1;
- 
- 	memset(&server_address, 0, sizeof(server_address));
-@@ -115,20 +115,20 @@ conn_init(struct conn_params *p)
- 		goto exit;
- 
- 	/* Memory allocation */
--	conn = calloc(1, sizeof(struct conn));
--	if (conn == NULL)
-+	c = calloc(1, sizeof(struct conn));
-+	if (c == NULL)
- 		goto exit;
- 
--	conn->welcome = calloc(1, CONN_WELCOME_LEN_MAX + 1);
--	conn->prompt = calloc(1, CONN_PROMPT_LEN_MAX + 1);
--	conn->buf = calloc(1, p->buf_size);
--	conn->msg_in = calloc(1, p->msg_in_len_max + 1);
--	conn->msg_out = calloc(1, p->msg_out_len_max + 1);
-+	c->welcome = calloc(1, CONN_WELCOME_LEN_MAX + 1);
-+	c->prompt = calloc(1, CONN_PROMPT_LEN_MAX + 1);
-+	c->buf = calloc(1, p->buf_size);
-+	c->msg_in = calloc(1, p->msg_in_len_max + 1);
-+	c->msg_out = calloc(1, p->msg_out_len_max + 1);
- 
--	if ((conn->welcome == NULL) || (conn->prompt == NULL) || (conn->buf == NULL) ||
--	    (conn->msg_in == NULL) || (conn->msg_out == NULL)) {
--		conn_free(conn);
--		conn = NULL;
-+	if ((c->welcome == NULL) || (c->prompt == NULL) || (c->buf == NULL) ||
-+	    (c->msg_in == NULL) || (c->msg_out == NULL)) {
-+		conn_free(c);
-+		c = NULL;
- 		goto exit;
- 	}
- 
-@@ -138,8 +138,8 @@ conn_init(struct conn_params *p)
- 
- 	fd_server = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
- 	if (fd_server == -1) {
--		conn_free(conn);
--		conn = NULL;
-+		conn_free(c);
-+		c = NULL;
- 		goto exit;
- 	}
- 
-@@ -161,47 +161,47 @@ conn_init(struct conn_params *p)
- 		goto free;
- 
- 	/* Fill in */
--	rte_strscpy(conn->welcome, p->welcome, CONN_WELCOME_LEN_MAX);
--	rte_strscpy(conn->prompt, p->prompt, CONN_PROMPT_LEN_MAX);
--	conn->buf_size = p->buf_size;
--	conn->msg_in_len_max = p->msg_in_len_max;
--	conn->msg_out_len_max = p->msg_out_len_max;
--	conn->msg_in_len = 0;
--	conn->fd_server = fd_server;
--	conn->fd_client_group = fd_client_group;
--	conn->msg_handle = p->msg_handle;
--	conn->msg_handle_arg = p->msg_handle_arg;
-+	rte_strscpy(c->welcome, p->welcome, CONN_WELCOME_LEN_MAX);
-+	rte_strscpy(c->prompt, p->prompt, CONN_PROMPT_LEN_MAX);
-+	c->buf_size = p->buf_size;
-+	c->msg_in_len_max = p->msg_in_len_max;
-+	c->msg_out_len_max = p->msg_out_len_max;
-+	c->msg_in_len = 0;
-+	c->fd_server = fd_server;
-+	c->fd_client_group = fd_client_group;
-+	c->msg_handle = p->msg_handle;
-+	c->msg_handle_arg = p->msg_handle_arg;
- 
- exit:
--	return conn;
-+	return c;
- free:
--	conn_free(conn);
-+	conn_free(c);
- 	close(fd_server);
--	conn = NULL;
--	return conn;
-+	c = NULL;
-+	return c;
- }
- 
- void
--conn_free(struct conn *conn)
-+conn_free(struct conn *c)
- {
--	if (conn == NULL)
-+	if (c == NULL)
- 		return;
- 
--	if (conn->fd_client_group)
--		close(conn->fd_client_group);
-+	if (c->fd_client_group)
-+		close(c->fd_client_group);
- 
--	if (conn->fd_server)
--		close(conn->fd_server);
-+	if (c->fd_server)
-+		close(c->fd_server);
- 
--	free(conn->msg_out);
--	free(conn->msg_in);
--	free(conn->prompt);
--	free(conn->welcome);
--	free(conn);
-+	free(c->msg_out);
-+	free(c->msg_in);
-+	free(c->prompt);
-+	free(c->welcome);
-+	free(c);
- }
- 
- int
--conn_req_poll(struct conn *conn)
-+conn_req_poll(struct conn *c)
- {
- 	struct sockaddr_in client_address;
- 	socklen_t client_address_length;
-@@ -209,12 +209,12 @@ conn_req_poll(struct conn *conn)
- 	int fd_client, rc;
- 
- 	/* Check input arguments */
--	if (conn == NULL)
-+	if (c == NULL)
+ 	/* initial check for invalid arguments */
+-	kvlist = rte_kvargs_parse(optarg, valid_pdump_arguments);
++	kvlist = rte_kvargs_parse(arg, valid_pdump_arguments);
+ 	if (kvlist == NULL) {
+-		printf("--pdump=\"%s\": invalid argument passed\n", optarg);
++		printf("--pdump=\"%s\": invalid argument passed\n", arg);
  		return -1;
- 
- 	/* Server socket */
- 	client_address_length = sizeof(client_address);
--	fd_client = accept4(conn->fd_server, (struct sockaddr *)&client_address,
-+	fd_client = accept4(c->fd_server, (struct sockaddr *)&client_address,
- 			    &client_address_length, SOCK_NONBLOCK);
- 	if (fd_client == -1) {
- 		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
-@@ -227,20 +227,20 @@ conn_req_poll(struct conn *conn)
- 	event.events = EPOLLIN | EPOLLRDHUP | EPOLLHUP;
- 	event.data.fd = fd_client;
- 
--	rc = epoll_ctl(conn->fd_client_group, EPOLL_CTL_ADD, fd_client, &event);
-+	rc = epoll_ctl(c->fd_client_group, EPOLL_CTL_ADD, fd_client, &event);
- 	if (rc == -1) {
- 		close(fd_client);
- 		goto exit;
  	}
  
- 	/* Client */
--	rc = write(fd_client, conn->welcome, strlen(conn->welcome));
-+	rc = write(fd_client, c->welcome, strlen(c->welcome));
- 	if (rc == -1) {
- 		close(fd_client);
- 		goto exit;
+@@ -268,7 +268,7 @@ parse_pdump(const char *optarg)
+ 	cnt2 = rte_kvargs_count(kvlist, PDUMP_PCI_ARG);
+ 	if (!((cnt1 == 1 && cnt2 == 0) || (cnt1 == 0 && cnt2 == 1))) {
+ 		printf("--pdump=\"%s\": must have either port or "
+-			"device_id argument\n", optarg);
++			"device_id argument\n", arg);
+ 		ret = -1;
+ 		goto free_kvlist;
+ 	} else if (cnt1 == 1) {
+@@ -290,7 +290,7 @@ parse_pdump(const char *optarg)
+ 	/* queue parsing and validation */
+ 	cnt1 = rte_kvargs_count(kvlist, PDUMP_QUEUE_ARG);
+ 	if (cnt1 != 1) {
+-		printf("--pdump=\"%s\": must have queue argument\n", optarg);
++		printf("--pdump=\"%s\": must have queue argument\n", arg);
+ 		ret = -1;
+ 		goto free_kvlist;
  	}
- 
--	rc = write(fd_client, conn->prompt, strlen(conn->prompt));
-+	rc = write(fd_client, c->prompt, strlen(c->prompt));
- 	if (rc == -1) {
- 		close(fd_client);
- 		goto exit;
-@@ -253,17 +253,17 @@ conn_req_poll(struct conn *conn)
- }
- 
- int
--conn_msg_poll(struct conn *conn)
-+conn_msg_poll(struct conn *c)
- {
- 	int fd_client, rc, rc_data = 0, rc_control = 0;
- 	struct epoll_event event;
- 
- 	/* Check input arguments */
--	if (conn == NULL)
-+	if (c == NULL)
- 		return -1;
- 
- 	/* Client group */
--	rc = epoll_wait(conn->fd_client_group, &event, 1, 0);
-+	rc = epoll_wait(c->fd_client_group, &event, 1, 0);
- 	if ((rc == -1) || rc == 0)
- 		return rc;
- 
-@@ -271,11 +271,11 @@ conn_msg_poll(struct conn *conn)
- 
- 	/* Data available */
- 	if (event.events & EPOLLIN)
--		rc_data = data_event_handle(conn, fd_client);
-+		rc_data = data_event_handle(c, fd_client);
- 
- 	/* Control events */
- 	if (event.events & (EPOLLRDHUP | EPOLLERR | EPOLLHUP))
--		rc_control = control_event_handle(conn, fd_client);
-+		rc_control = control_event_handle(c, fd_client);
- 
- 	if (rc_data || rc_control)
- 		return -1;
+@@ -303,7 +303,7 @@ parse_pdump(const char *optarg)
+ 	cnt2 = rte_kvargs_count(kvlist, PDUMP_TX_DEV_ARG);
+ 	if (cnt1 == 0 && cnt2 == 0) {
+ 		printf("--pdump=\"%s\": must have either rx-dev or "
+-			"tx-dev argument\n", optarg);
++			"tx-dev argument\n", arg);
+ 		ret = -1;
+ 		goto free_kvlist;
+ 	} else if (cnt1 == 1 && cnt2 == 1) {
 -- 
 2.48.1
 
