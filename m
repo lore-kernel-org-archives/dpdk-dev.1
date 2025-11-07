@@ -2,53 +2,133 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D3ECCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 16:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE5ACCFA05
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 16:48:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 934B7402D6;
-	Fri,  7 Nov 2025 17:43:39 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 4CE444021F
- for <dev@dpdk.org>; Fri,  7 Nov 2025 17:43:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762533818; x=1794069818;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=T+76SwYShREQXIl+6EJXLBHoXLpVu3eVXeBdQvknZio=;
- b=HMF7u5haRPEZu5XSRT1wcbgAmV9tS9YCYis3M6QTK/dffuyKsd+SwvpB
- xn8M/SCtbzmkk1KQE35r8bYpQVOnYhF1P0Dp0RkPLL3fJev8Tv2JqWGbH
- z1hhIWfIssz3iS5HjY/UmJJ8qQp0vYYMShYaN3dceczFyR7SBb9pMOk73
- yKDs6bK3tUF6jGJiZTIEmIlAKRdwzh9Vm+6g5O0EVu7C0qZwM1eY6pZGo
- jZaalovQUFTzvVvwtdud3pqbErpPYWP0wlqfseDn4YqhlfuYW6W+rrVe0
- q6scd6e7rLtBCqqmeLmu567sYo/gEwg4PEcP9ekAkj3OqRkX8VgBZgzD5 g==;
-X-CSE-ConnectionGUID: IO1YVJb6Q+ys1eFHrO1EsA==
-X-CSE-MsgGUID: kSb+WGRpSBCqb+lhJN3f2A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="76135105"
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="76135105"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Nov 2025 08:43:37 -0800
-X-CSE-ConnectionGUID: V81SA8QtT4iADvbo/9XeNA==
-X-CSE-MsgGUID: hqDePNoUQ6uUcPmmZxHvjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="188340546"
-Received: from silpixa00401454.ir.intel.com ([10.20.224.230])
- by fmviesa008.fm.intel.com with ESMTP; 07 Nov 2025 08:43:35 -0800
-From: Emma Finn <emma.finn@intel.com>
-To: Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
- Kai Ji <kai.ji@intel.com>, Fiona Trahe <fiona.trahe@intel.com>,
- Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
-Cc: dev@dpdk.org,
-	Emma Finn <emma.finn@intel.com>
-Subject: [PATCH] crypto/qat: fix CCM request descriptor hash_state_sz field
-Date: Fri,  7 Nov 2025 16:43:29 +0000
-Message-Id: <20251107164329.2154794-1-emma.finn@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251107162308.2150642-1-emma.finn@intel.com>
-References: <20251107162308.2150642-1-emma.finn@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2102540264;
+	Fri,  7 Nov 2025 17:48:42 +0100 (CET)
+Received: from CY7PR03CU001.outbound.protection.outlook.com
+ (mail-westcentralusazon11010012.outbound.protection.outlook.com
+ [40.93.198.12]) by mails.dpdk.org (Postfix) with ESMTP id A40304021F
+ for <dev@dpdk.org>; Fri,  7 Nov 2025 17:48:40 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F9T5fB8kfaslV7ap3gmdqxtFcmFSbPmEmQ5tK5gofniEUGPsdwz2UBUzR9GohyFv1qprqzNfH0BqaHt7c/kYM++nzqZ+GH9fvk1kwjk2dNkAswOL/CQ3uzrQGKWIi+2SRwSnna7LQy/EvENtDOXMEcntV4+U7slSpKSZ1Fts9PCoB+qKZpATiY3qyGzaFLKNpjk018QwfgRDaOmzzazZhyfZMKSQGboLcflrPx//HL36sCV9UDvrRt+5moN6bflRGweq2cysnFQiJ8qMgG06ZxfpLUI6QYOya1u549M/u9743EgjjzVdyOTgrsD/Wq9g+dHiK9nOyZ3QMBzr2YHF4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oKr7hV//fM4vR85yGy4TWmH6eYMMh9CxjuF39HuM26c=;
+ b=WgMP0YrSGYhTU9dgMTS2cKSvsn04dwEUMtbORORQCwavsruJyt9cK3auY+0THYb4JuKd3HfIKkRl8vNzTwhWxEenVlDuXhRUclDVoVjBRvesEd75/bag80P9YPGfdXmvL78zuNe1ZheHpp4StpRQJP8Tu7AkkhUg9mmM2OplN5SOTVGrRF7prl1m19wMapGM7EvGreGPYJSzhP7mGvSWvcJ7yW30lUGs9cPg1gIZNnCLY2qaZt0hYwJ5AUJozm4LzI4KHQOoEDaWdwL4AmRFywk3cifSDAZFhdoS9RVG0fMzgNWmh60iVfnOS2QnJP3oxmt4Dv9GXZUWNDTboEx29A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oKr7hV//fM4vR85yGy4TWmH6eYMMh9CxjuF39HuM26c=;
+ b=WylRj556UW8ewFZyzYSHW0QZt6CXndAfNIX8RLnDWBS0l+5a98YsAF6+mt1QDBE2MxZagSryg2FH/7nG2ecYYmUZm18K5nqKK0hmtOit74Tnhal2Jfxq4dfbhgn7uzQCIftxAslyfqsF34qr1EGJmNwDTiqdum4YydD7Fh56y5b9g6tX1UwT79b+/ix++TnoeOC7FKnZ7bc8LlNy4D8yrPMECovjtovr70GakiywZxwRYdWAL1S3JCrZWMwTjt8lGXj7g75UsFxdopn6XHqrYxNbjUd/dbXaUM5fQWLEqKjHoJ+1NdKSWbPF3dJzYeY0TRk2CgkFFn2hdUFFFVK6/A==
+Received: from CH2PR12MB9541.namprd12.prod.outlook.com (2603:10b6:610:27e::21)
+ by CH8PR12MB9765.namprd12.prod.outlook.com (2603:10b6:610:264::6)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
+ 2025 16:48:38 +0000
+Received: from CH2PR12MB9541.namprd12.prod.outlook.com
+ ([fe80::6174:9905:2d31:8901]) by CH2PR12MB9541.namprd12.prod.outlook.com
+ ([fe80::6174:9905:2d31:8901%7]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
+ 16:48:38 +0000
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Yang Ming <mosesyyoung@gmail.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH v3 2/2] net/mlx5: improve debug dump file path handling
+Thread-Topic: [PATCH v3 2/2] net/mlx5: improve debug dump file path handling
+Thread-Index: AQHcGPRAf8wYZzRvkk2WvJ3khsxLNbTn2p6A
+Date: Fri, 7 Nov 2025 16:48:37 +0000
+Message-ID: <CH2PR12MB95411F9B282130E9B0D4B29AA4C3A@CH2PR12MB9541.namprd12.prod.outlook.com>
+References: <20250321132750.4237-1-ming.1.yang@nokia-sbell.com>
+ <20250829144954.2576-1-mosesyyoung@gmail.com>
+ <20250829144954.2576-2-mosesyyoung@gmail.com>
+In-Reply-To: <20250829144954.2576-2-mosesyyoung@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH2PR12MB9541:EE_|CH8PR12MB9765:EE_
+x-ms-office365-filtering-correlation-id: 320ba0c6-93ad-4d3a-b9a9-08de1e1d7fca
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|1800799024|366016|376014|38070700021;
+x-microsoft-antispam-message-info: =?us-ascii?Q?88f5JOAPomuGBTVzrZoLOwWI199BYS+nziZqu1OlNykjulxHMLadnyg2mfdV?=
+ =?us-ascii?Q?O1q8qTQ01PHU9KWdKrsKHq8bjXLJMh/XqtCWdQNUM+d82EyPv7nwn4hbULow?=
+ =?us-ascii?Q?iu0hlsrznOyIw1ZuCSOv1DYOBtRmOiRL6tPabiJZRk/iH667F/Fu+C1F9e8L?=
+ =?us-ascii?Q?hXO1hdu5aJptskfThcrdtEStdt0syCNDctZUUIUd0T28hADT1tVnuiBIdY3p?=
+ =?us-ascii?Q?WLGsGkaDLT8InUhHUXpAvsUlZFZ+h3RavmGRbCmkSGoFIIr3XfLQCnmf7A4x?=
+ =?us-ascii?Q?6N88ulN4ErKHKhLDIHMptJB0uGrOXhwVaUWMRL8TIscbgVwivvUgetLbqmj/?=
+ =?us-ascii?Q?RiIh795PiT/CPFuUsLNpzD5EAalPytCQ0vSmuyssMBxP77phIIZoGMui2UTm?=
+ =?us-ascii?Q?gqVKfIqKzXtOFl7WKw5zgnsM4WaTTee8AbQO12NWGP/KfYeaVgbdTFyupEhv?=
+ =?us-ascii?Q?YYJdAFaQiGFpemlteuiIX8v84s9WcGBbdhsplI53dk+QBnEs5d1EZ9YHrWRt?=
+ =?us-ascii?Q?TmMO3hXRt8/ei5y91GXYVZYPcNbExjWgsyxvepwr9/EZLX0Hv/5wfWqYpJDW?=
+ =?us-ascii?Q?l+g6jFP0xgkTUcIxUAOd0dJOUg+dByw4STNRjdyABDVKTI4La2SBPXtJzE24?=
+ =?us-ascii?Q?cvY3hu0H5T/AF0/V1PAnM5CHfVMfBj5y+ZVGd8ixs3Ki0bSrBFQkA3ocEREo?=
+ =?us-ascii?Q?6a95qYcV6aQQXRdpySs1129jaSVJhSA0ZzQbMy/gyT60Kggjk5MfbAjfIblh?=
+ =?us-ascii?Q?zxDgZQPWnD93xYevpJDimyiQCpnz1sbQdWK9KF60GAVOuP1Ll7562CTAQ+7W?=
+ =?us-ascii?Q?/Ol21b6TzDRLtBjwP4p7eSEWrVDFwcwgOFrItnXsys/ew83jahQXZQdwjEiM?=
+ =?us-ascii?Q?yz+lf4fGToebgI7wSo8FGEZsV+S5a8L/BUBiKpp9Fhvc2WVff93DqKqdfGtJ?=
+ =?us-ascii?Q?NLZHjOKGcKyFTs4QiHVWXvQHCqtfsl1k+MTiq0TgTWW+rzvMCU18mPwCt+pK?=
+ =?us-ascii?Q?tivcL43Gy0DBP0B23AJhVogyppJyrPYq5Wfg/dFAsKTxyym7Ai/+wMODQVwF?=
+ =?us-ascii?Q?+OWDKqZ5Yo+F0R4tOjUdBUoYPbybCrf6ECXDIvZzE/jRCW+GhpG9yiyuAtch?=
+ =?us-ascii?Q?y7CC+2xXFNaN2sYyacvJwqKnfDgKC2iy6BWAx9t2xJKn0A09ct+cOgj1UIwO?=
+ =?us-ascii?Q?Nqg/j6GnkixoniZv4WcSrtTE2CKglI+5dlxLemNZqWvvTADVZkhaUO3uVqnR?=
+ =?us-ascii?Q?93E9dFrOxBsmBw4TzrJA9UBMIkdyHeYLS+YCX3/I0tNHf/RsW0eWxmp2xluG?=
+ =?us-ascii?Q?ejd7fIpFZmKRxLXjuGOfH/RYqs5PC9yrCnLQ36xoKebn4HY84LYiegpixmsU?=
+ =?us-ascii?Q?cr3uWTEIz5cVS5jCgfKCA4q+iCQfLZC8AjgG4be5F7tM/DvVAH1//bUTp0c4?=
+ =?us-ascii?Q?QaK9Fzz6RerhwC+Ke374B7VpPBwrFicAfXaTAcGPf9h+ekkaHh9Sxji/LFp2?=
+ =?us-ascii?Q?jhpAKydeImVM7vrIII7SJCmfFS2SrjRY/dkB?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CH2PR12MB9541.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(38070700021); DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?cfpUalHNffylMgjf8V5uk/IExcg4soTvjcMNuKQw8zWoTcZdV67HkxWYL0FI?=
+ =?us-ascii?Q?ZnXmaVagjy2Pww8TmmZXjcovZicrxexyzood0gBdSBQxbClr1p/po/RsQZOR?=
+ =?us-ascii?Q?8PauW8VcnZGx9VFmLbNCoi/uSbBUzhq5qVdSygWQnj0JfGuLXpsyKDye/QcM?=
+ =?us-ascii?Q?VpMhnb/IXZ4VvdHE+EU8mZWnYYySxQqxDBFbIN6EFQ/V5WbFGWiV6cnLqFR+?=
+ =?us-ascii?Q?t+F1sg5IeBV0pKpxKtHArJAYsGTB0EXECAUmJVWdgc3Cv3AAjh8AUlSZXuGu?=
+ =?us-ascii?Q?0D0Emmt/JjCKR7CDzvpMINHIBYhZAdTQ1OXBTazBHez5jOc6ijRw5IfFjh6V?=
+ =?us-ascii?Q?o5IL5+xW4Ka2p+brtpzarbL34wh2hcnisI0Y6hajI87LbGQDLU9frMi9vSeA?=
+ =?us-ascii?Q?xzbcxuevchVpu3L8Vg8mGG0kaqaFj2ljhJyyZf09FTFWkJQTeD52hhNEVwvK?=
+ =?us-ascii?Q?N8YnzpsxCg9ieMGlwja4GrzDc6IXOTgtFqSC4k6UyL5Tke0LzE2MCArzoT16?=
+ =?us-ascii?Q?934JoIcay5mvPixX45aseST3P4KMtoORkB3OaR7UMPEWwokoQp74kBfAfZ/r?=
+ =?us-ascii?Q?igKpEQntAGoXYAVfeUrFk9mUhyBAdk3I3edL53oBtz5m/ZlWOq5yoKQtCF3X?=
+ =?us-ascii?Q?uoW9m9sMsmxq0r+7c3wPuF3u2x6ht7Lrj6x0ACHj/6w92pJ9l0e4qblpi7FA?=
+ =?us-ascii?Q?cTby594GvmtD7fuASSskQIe37/bLZD+MAJcK1/8kecEhjGSEKqJkFYq/wZFM?=
+ =?us-ascii?Q?dyFZ9ex03Va8jiT/i6rMABhJ3j/cgGR3J3PLM6Rofq4euPnhJFt6NguprTCT?=
+ =?us-ascii?Q?SLKqJncAYfneGLwQRqYk1UqpTSBmmze8ItP8ecgvlH0IzjjHukis6OLLCoWk?=
+ =?us-ascii?Q?2RcPFDOa0uHp0n2xkTdEdAnE9HAJQUR8NeCULyjFULfEhp8i+DiDEdrlRZ8X?=
+ =?us-ascii?Q?FOpUbQ7U9rO+bVPPkwO7SxEwAJYcg9DxQ6yqKcrF7Ow0xRh3VF4YiwfBJlzj?=
+ =?us-ascii?Q?PZpGd7n+FDgZXJe0gHF/hTVa7cm97H1xQhDrbc2f2uxgtkmHE9uqN9nVrB3K?=
+ =?us-ascii?Q?0Tn4Ctc6zXzqHQogSnsgQ2TFZQG6oRc9oPhQm0MpF//hLIWpSTUroleOkEvQ?=
+ =?us-ascii?Q?gg/g0hXPVggui9XHHv6nq8t4k++fj2vQ1aA79T0VHLXZw13tpgCRLZOwgqiS?=
+ =?us-ascii?Q?CuQMVx0hT0rNAsNWPbedGwmfMrNb8qsBG+Gmlz49hbbYnwiisizvzk1seN1n?=
+ =?us-ascii?Q?UinJ62meYi13TNYP8hves299BhK7Tvje/OuFkNc9/okqL3YIsRsiNiciEnvz?=
+ =?us-ascii?Q?N+RhEUgr3C0CV/0F6JduTsR93k9Y4d7t8B4sVsDUFcZjFNQddXrRSBxNDDBR?=
+ =?us-ascii?Q?8cwr+hqDOsFpXrhYAGqsYTkh0ev+OUKROF5ZojHbuEIdXi8SLZWKc/UH09uM?=
+ =?us-ascii?Q?loH9awAz1HuKp2oSHs/2d6FTQM0qGcMBP3n3tpHJBBhzpSAZAkl0SGCPiI0Z?=
+ =?us-ascii?Q?+Y4Bw5wqczskfZHeh1hWRGMUA2z7ey7B1SREiNKXSoD/h2OT88h6VKPr6HWT?=
+ =?us-ascii?Q?hZHDcK+KceuklwYPzQgskj37MooqJ6DTxwHPAnzl?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB9541.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 320ba0c6-93ad-4d3a-b9a9-08de1e1d7fca
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2025 16:48:37.9349 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kbGDxrORyYPl8g4BRvnGWWsBAXSlN6Ty/Wg9Y9f6MMVZEYkJUkQ4XI4LBJMJf1kG/RJ/NYt1x+l0SAOiI1GK0Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR12MB9765
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,157 +142,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The hash_state_sz field in the QAT request descriptor for AES-CCM
-operations was incorrectly set to the digest length. According to
-the QAT firmware specification, this field should contain the
-length of AAD in quadwords for CCM operations.
+Hi,
 
-This incorrect field value caused QAT firmware to return
-INVALID_PARAMS errors for certain AAD buffer sizes. A new unit
-test is also added to cover this case.
+> -----Original Message-----
+> From: Yang Ming <mosesyyoung@gmail.com>
+> Sent: Friday, August 29, 2025 4:50 PM
+> To: dev@dpdk.org
+> Subject: [PATCH v3 2/2] net/mlx5: improve debug dump file path handling
+>=20
+> The current implementation always tries to open debug dump files under
+> /var/log, which may not be writable in containerized or restricted
+> environments (e.g. when the filesystem is mounted as read-only).
+>=20
+> This patch introduces an OS-specific helper function
+> mlx5_os_debug_dump_file_open() to unify the logic:
+>=20
+> * On Linux:
+>   1. Try /var/log if it is writable (kept for backward
+>      compatibility).
+>   2. Fallback to the DPDK runtime directory.
+>   3. Finally, use the current working directory.
+>=20
+> * On Windows:
+>   1. Use the DPDK runtime directory.
+>   2. Fallback to the current working directory.
+>=20
+> This preserves the previous directory preference while ensuring debug dum=
+ps
+> can still be written in restricted environments such as containers. The s=
+tructure
+> of the open logic is kept unchanged so that test cases and expected logs
+> remain valid.
+>=20
+> Signed-off-by: Yang Ming <mosesyyoung@gmail.com>
 
-Fixes: ab56c4d9ed9a ("crypto/qat: support AES-CCM")
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 
-Signed-off-by: Emma Finn <emma.finn@intel.com>
----
- app/test/test_cryptodev.c                   | 16 +++++++
- app/test/test_cryptodev_aead_test_vectors.h | 53 +++++++++++++++++++++
- drivers/crypto/qat/qat_sym_session.c        |  3 +-
- 3 files changed, 71 insertions(+), 1 deletion(-)
-
-diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c
-index 6e5f308e55..9bdd357727 100644
---- a/app/test/test_cryptodev.c
-+++ b/app/test/test_cryptodev.c
-@@ -14271,6 +14271,12 @@ test_AES_CCM_authenticated_encryption_test_case_128_3(void)
- 	return test_authenticated_encryption(&ccm_test_case_128_3);
- }
- 
-+static int
-+test_AES_CCM_authenticated_encryption_test_case_128_4(void)
-+{
-+	return test_authenticated_encryption(&ccm_test_case_128_4);
-+}
-+
- static int
- test_AES_CCM_authenticated_decryption_test_case_128_1(void)
- {
-@@ -14289,6 +14295,12 @@ test_AES_CCM_authenticated_decryption_test_case_128_3(void)
- 	return test_authenticated_decryption(&ccm_test_case_128_3);
- }
- 
-+static int
-+test_AES_CCM_authenticated_decryption_test_case_128_4(void)
-+{
-+	return test_authenticated_decryption(&ccm_test_case_128_4);
-+}
-+
- static int
- test_AES_CCM_authenticated_encryption_test_case_192_1(void)
- {
-@@ -18975,6 +18987,8 @@ static struct unit_test_suite cryptodev_aes_ccm_auth_testsuite  = {
- 			test_AES_CCM_authenticated_encryption_test_case_128_2),
- 		TEST_CASE_ST(ut_setup, ut_teardown,
- 			test_AES_CCM_authenticated_encryption_test_case_128_3),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_AES_CCM_authenticated_encryption_test_case_128_4),
- 
- 		/** AES CCM Authenticated Decryption 128 bits key*/
- 		TEST_CASE_ST(ut_setup, ut_teardown,
-@@ -18983,6 +18997,8 @@ static struct unit_test_suite cryptodev_aes_ccm_auth_testsuite  = {
- 			test_AES_CCM_authenticated_decryption_test_case_128_2),
- 		TEST_CASE_ST(ut_setup, ut_teardown,
- 			test_AES_CCM_authenticated_decryption_test_case_128_3),
-+		TEST_CASE_ST(ut_setup, ut_teardown,
-+			test_AES_CCM_authenticated_decryption_test_case_128_4),
- 
- 		/** AES CCM Authenticated Encryption 192 bits key */
- 		TEST_CASE_ST(ut_setup, ut_teardown,
-diff --git a/app/test/test_cryptodev_aead_test_vectors.h b/app/test/test_cryptodev_aead_test_vectors.h
-index 73bedaf557..6b9642e339 100644
---- a/app/test/test_cryptodev_aead_test_vectors.h
-+++ b/app/test/test_cryptodev_aead_test_vectors.h
-@@ -50,6 +50,13 @@ static uint8_t ccm_aad_test_2[22] = {
- 		0xA5, 0xB8, 0xFC, 0xBA, 0x00, 0x00
- };
- 
-+static uint8_t ccm_aad_test_4[32] = {
-+		0xD2, 0x3D, 0xBD, 0xF2, 0x13, 0xAA, 0xD5, 0x03,
-+		0xDB, 0xA5, 0x3E, 0x44, 0xBB, 0x1E, 0xD7, 0x19,
-+		0x65, 0x2F, 0x37, 0xA0, 0x97, 0xD6, 0x5F, 0x59,
-+		0x0B, 0xD1, 0xE6, 0xA4, 0xCC, 0x50, 0xEB, 0x62
-+};
-+
- static uint8_t sm4_gcm_aad_test_2[] = {
- 		0x3f, 0x89, 0x42, 0x20
- };
-@@ -3714,6 +3721,52 @@ static const struct aead_test_data ccm_test_case_128_3 = {
- 	}
- };
- 
-+static const struct aead_test_data ccm_test_case_128_4 = {
-+	.algo = RTE_CRYPTO_AEAD_AES_CCM,
-+	.key = {
-+		.data = {
-+			0x2F, 0x55, 0xF2, 0xF8, 0x4E, 0x66, 0x5E, 0x4B,
-+			0x1D, 0x56, 0x91, 0x62, 0x6C, 0xE7, 0xD4, 0xB8
-+		},
-+		.len = 16
-+	},
-+	.iv = {
-+		.data = {
-+			0x2C, 0x39, 0xBE, 0x24, 0xAF, 0xF4, 0xC1, 0x0E,
-+			0x20, 0x26, 0x11, 0x49, 0x49
-+		},
-+		.len = 13
-+	},
-+	.aad = {
-+		.data = ccm_aad_test_4,
-+		.len = 32
-+	},
-+	.plaintext = {
-+		.data = {
-+			0xF5, 0x2A, 0xEC, 0xEF, 0x88, 0x73, 0x10, 0x11,
-+			0xD0, 0x68, 0xCB, 0x8E, 0x82, 0xBE, 0xED, 0x68,
-+			0xC1, 0xC6, 0xF2, 0xA5, 0x9E, 0x99, 0xF6, 0x3D,
-+			0xDA, 0xEA, 0xA0, 0x49, 0xD0, 0xF4, 0x18, 0xC0
-+		},
-+		.len = 32
-+	},
-+	.ciphertext = {
-+		.data = {
-+			0x0F, 0x7B, 0x8A, 0x0D, 0x79, 0xB6, 0x1C, 0x93,
-+			0x00, 0x26, 0x57, 0x52, 0xC8, 0x68, 0x30, 0xF6,
-+			0x92, 0xA4, 0x9C, 0x86, 0x5E, 0x77, 0x51, 0x9C,
-+			0x79, 0x15, 0x7C, 0xF3, 0x87, 0x27, 0x2A, 0x77
-+		},
-+		.len = 32
-+	},
-+	.auth_tag = {
-+		.data = {
-+			0x64, 0x2F, 0x58, 0x61
-+		},
-+		.len = 4
-+	}
-+};
-+
- /** AES-CCM-192 Test Vectors */
- static const struct aead_test_data ccm_test_case_192_1 = {
- 	.algo = RTE_CRYPTO_AEAD_AES_CCM,
-diff --git a/drivers/crypto/qat/qat_sym_session.c b/drivers/crypto/qat/qat_sym_session.c
-index 98ab82ffb3..c58ecb7f54 100644
---- a/drivers/crypto/qat/qat_sym_session.c
-+++ b/drivers/crypto/qat/qat_sym_session.c
-@@ -2774,7 +2774,8 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
- 		hash->auth_counter.counter = 0;
- 
- 		hash_cd_ctrl->outer_prefix_sz = digestsize;
--		auth_param->hash_state_sz = digestsize;
-+		auth_param->hash_state_sz = (RTE_ALIGN_CEIL(auth_param->u2.aad_sz, 8)
-+										>> 3);
- 
- 		memcpy(cdesc->cd_cur_ptr + state1_size, authkey, authkeylen);
- 		break;
--- 
-2.34.1
-
+Best regards,
+Dariusz Sosnowski
