@@ -2,47 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8852CCFA05
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 15:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B54CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 15:52:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9A6B540DC9;
-	Fri,  7 Nov 2025 16:51:14 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C496D40DD7;
+	Fri,  7 Nov 2025 16:51:16 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id CCED540666;
- Fri,  7 Nov 2025 16:51:12 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A381440DCB;
+ Fri,  7 Nov 2025 16:51:14 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762530673; x=1794066673;
+ t=1762530675; x=1794066675;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=Rl0CC8MrCUSSflLK51DbqiML4nvv06unMhqn5s1jI/U=;
- b=KQAMXguSQhV1bcf6DBsRClV19tsZ0TBSrmxFX92LVDuBaxNJsexS4XL2
- QW26e3zyCdCIQx4rzjkT2q6iaYbS6WSHQKtmcFCIBqq1yNNlEMNTyh86x
- 4pQL5ckQOMRmk2UzsStBQPs72sHlqi7bUECyQ6l6+yr15s3OXnyOgg/Do
- vYVRxGiB1GAbJbRzLPTLmCFAQqeU/dND+J+w8/AC6d94hU8mD0Chq+GKV
- qaKpSUmO+JsZzMZpYbvt0pEU6nKfxDwzTGs6JX69bR5dOATiqyOwhnW9D
- 8sc1bRbFcqL01Ggq46xSeAzVuIDqrWB11N6D+foasPY5Rd8hZKMd8t+SW w==;
-X-CSE-ConnectionGUID: iMgLlFnLSwyWKEkJHU3+9A==
-X-CSE-MsgGUID: sLvEj4RmTVm9rPm7SG3TzA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="90151844"
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="90151844"
+ bh=aX6EewRmCdP8f1fl5qZq09o/2EppoUAbik0lSAYDyiE=;
+ b=S4/U0pjqbWyleqlaOHGxF8+z5P+1Z9kANp9C7R1Q6EqKLgLu4Af/+ztL
+ UeY5kJsxJpMnjblwxTD0cIoqIAYYbp5mt68iTr6PDgUBSL1T6DEUbMB6t
+ QBhMb0XSTgWpWE0KCWIS7a4Tubqf10NNpsN/1rnAwmr5Rg6230WXi3zgu
+ rkTkB0iSbAxk3yHWzZfVWL0wzflcoToXjIebsFi/MmRQAFUR6+0X+WYsL
+ DCHoehV6ZgMqweuZgj8HSQHE0LVcVSrlu/h08+lrs3sCcw8qZtIFY77+i
+ rsvByydlbDAetgTAD7soP5HY8TzxcYdGPW9GJCXBpQLCcuVL0iG/ATqil g==;
+X-CSE-ConnectionGUID: p2QmnoDaS4qQXyvPktfsqg==
+X-CSE-MsgGUID: GUCiDFINRgSgPjuk2zxOQA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="90151845"
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="90151845"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Nov 2025 07:51:12 -0800
-X-CSE-ConnectionGUID: S/9vCA0GQkuH66o8HLCRBw==
-X-CSE-MsgGUID: IPPI/iz0RmOR8yGJQrtPwA==
+ 07 Nov 2025 07:51:14 -0800
+X-CSE-ConnectionGUID: q2xVMt1rR3OQFP2xU2gI6w==
+X-CSE-MsgGUID: wCQc0X5/R5OP7TPbmR4n4w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="187321682"
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="187321685"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 07 Nov 2025 07:51:12 -0800
+ by orviesa006.jf.intel.com with ESMTP; 07 Nov 2025 07:51:13 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- Nicolas Chautru <nicolas.chautru@intel.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>, Amr Mokhtar <amr.mokhtar@intel.com>
-Subject: [RFC PATCH v2 11/33] bbdev: fix variable shadowing
-Date: Fri,  7 Nov 2025 15:50:07 +0000
-Message-ID: <20251107155034.436809-12-bruce.richardson@intel.com>
+ Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Tetsuya Mukawa <mtetsuyah@gmail.com>
+Subject: [RFC PATCH v2 12/33] bus/pci: remove shadowed variables
+Date: Fri,  7 Nov 2025 15:50:08 +0000
+Message-ID: <20251107155034.436809-13-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251107155034.436809-1-bruce.richardson@intel.com>
 References: <20251106140948.2894678-1-bruce.richardson@intel.com>
@@ -62,30 +63,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The "ret" variable is declared twice in rte_bbdev_setup_queues function.
-The second declaration is unneeded so remove it.
+Remove two instances where we had duplicate shadowed local variables
+called "ret". In each case, we could just remove the inner instance,
+since the outer value was not needing to be preserved.
 
-Fixes: 4935e1e9f76e ("bbdev: introduce wireless base band device lib")
+Fixes: 03ba15ca65c1 ("vfio: allow mapping MSI-X BARs if kernel allows it")
+Fixes: c0ce0577e84d ("pci: consolidate address comparisons")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/bbdev/rte_bbdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bus/pci/linux/pci.c      | 1 -
+ drivers/bus/pci/linux/pci_vfio.c | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/lib/bbdev/rte_bbdev.c b/lib/bbdev/rte_bbdev.c
-index 6c98296bdb..ea644c1f9b 100644
---- a/lib/bbdev/rte_bbdev.c
-+++ b/lib/bbdev/rte_bbdev.c
-@@ -357,7 +357,7 @@ rte_bbdev_setup_queues(uint16_t dev_id, uint16_t num_queues, int socket_id)
- 	if (dev->data->queues != NULL) {
- 		VALID_FUNC_OR_RET_ERR(dev->dev_ops->queue_release, dev_id);
- 		for (i = 0; i < dev->data->num_queues; i++) {
--			int ret = dev->dev_ops->queue_release(dev, i);
-+			ret = dev->dev_ops->queue_release(dev, i);
- 			if (ret < 0) {
- 				rte_bbdev_log(ERR,
- 						"Device %u queue %u release failed",
+diff --git a/drivers/bus/pci/linux/pci.c b/drivers/bus/pci/linux/pci.c
+index 66d7e09a6e..2ffac82e94 100644
+--- a/drivers/bus/pci/linux/pci.c
++++ b/drivers/bus/pci/linux/pci.c
+@@ -326,7 +326,6 @@ pci_scan_one(const char *dirname, const struct rte_pci_addr *addr)
+ 		rte_pci_add_device(dev);
+ 	} else {
+ 		struct rte_pci_device *dev2;
+-		int ret;
+ 
+ 		TAILQ_FOREACH(dev2, &rte_pci_bus.device_list, next) {
+ 			ret = rte_pci_addr_cmp(&dev->addr, &dev2->addr);
+diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
+index 8562fdcc6b..242f567ed7 100644
+--- a/drivers/bus/pci/linux/pci_vfio.c
++++ b/drivers/bus/pci/linux/pci_vfio.c
+@@ -797,7 +797,7 @@ pci_vfio_map_resource_primary(struct rte_pci_device *dev)
+ 	}
+ 	/* if we found our MSI-X BAR region, check if we can mmap it */
+ 	if (vfio_res->msix_table.bar_index != -1) {
+-		int ret = pci_vfio_msix_is_mappable(vfio_dev_fd,
++		ret = pci_vfio_msix_is_mappable(vfio_dev_fd,
+ 				vfio_res->msix_table.bar_index);
+ 		if (ret < 0) {
+ 			PCI_LOG(ERR, "Couldn't check if MSI-X BAR is mappable");
 -- 
 2.48.1
 
