@@ -2,40 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A488CCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 14:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED68CCFA05
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 14:33:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 83AFD40264;
-	Fri,  7 Nov 2025 15:16:30 +0100 (CET)
-Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id DD0284021F
- for <dev@dpdk.org>; Fri,  7 Nov 2025 15:16:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1762524989;
- bh=JIkHpsZ8gTsvDkGzjrq3241LNGiMyV2gTRV8B1dy+9A=;
- h=Date:To:From:Subject;
- b=frq7qISsZA6CmLkC+B1l46MTXYILUVolnRlfEBRoBWLKLQGaAzj0Geaizo/nAsJ6E
- OprTgXuVowO/8EoKCyaBM9Mif/QjAWzyrwSxa6WmG7ffn66PAkWt+woAusX4zklvTm
- 35JmXgE2weRMyAk6m3FyJedqed9vQI81nEbEjoAn8RJlst0G2VSbAls/riBI782t6Z
- DUN3lwOXAa7EuBkGenAu1R9iBg28isUKqzxrVOpiHbOC5USVTbe7yUJ3irD9J0kvUJ
- hT5XdeDnRRMbzT4TIJGJMSpqAiousUVFSWBCaEhrsqZYHI0ATu0PLqH9tGWJswXpEC
- bHm7JuIpz4TeQ==
-Received: from [192.168.23.183] (unknown [85.193.39.150])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 98D221180078
- for <dev@dpdk.org>; Fri,  7 Nov 2025 15:16:29 +0100 (CET)
-Message-ID: <be773672-77bb-4c2d-ba12-43b75ff29507@cesnet.cz>
-Date: Fri, 7 Nov 2025 15:16:28 +0100
+	by mails.dpdk.org (Postfix) with ESMTP id EB0A540264;
+	Fri,  7 Nov 2025 15:33:39 +0100 (CET)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com
+ [209.85.167.52]) by mails.dpdk.org (Postfix) with ESMTP id 15A9B4021F
+ for <dev@dpdk.org>; Fri,  7 Nov 2025 15:33:39 +0100 (CET)
+Received: by mail-lf1-f52.google.com with SMTP id
+ 2adb3069b0e04-594270ec7f9so841426e87.3
+ for <dev@dpdk.org>; Fri, 07 Nov 2025 06:33:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1762526018; x=1763130818; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=e/56gntotyDQuvWKlEg5h3GjzwZxyLzzYrSA8jVeyyw=;
+ b=JvfKo4DX3Ot2DhHN6UdbNODhi5krBI+Sb11uVtP4MkqfvQGRNLpmVNp4zyoFhWcGvo
+ 2ymEd8a14I3O4NlAODFX1sRGN/f+2VI+zlHb7S8CxMf6T6j6Vk+VR0wAbzoy6Y5zN3Yu
+ t7hTU6MZpyQN5Wd2onOuJkXrSdpYXXiaS/DtDcdxJ2/jaBQOZI47/m3BbeZx/MSMbMzl
+ 9FpLvGdL8ItEd49Xb56+J7IJUScOv7iwX5E368Q/Hohh7DVqaXOSCR+ffAzAgsdBFdrk
+ vgYTObFH0RH2AzbgCUhB3/XNCc/XrWgztGPV+uAPuCR/BlQAwzAYR/6jHrEX9ydQgLqA
+ AV/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762526018; x=1763130818;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=e/56gntotyDQuvWKlEg5h3GjzwZxyLzzYrSA8jVeyyw=;
+ b=ov6VutaezvL1d6Nfn/i1zCtgA3olkPVo2FiFksuU0AxptjukusMZn7EHC4vDMpthzj
+ caS6XmvRahyeeOfoTMAmIQ+CmomWhGFwF8uRg6hdQ3pNOAkMd/Oiiyso8RQIiDU7zgi9
+ gKYtBOUZ8tMtgLvWl0etc/nYYkf+MqluXyj2dRpA9GCYQkLy27/275/6tXbyuwC+ELks
+ fhJ9xHOxzLvSAYpgjkGLhBL8dIeGtip7rfHeM69lwwdnI5oCbsQ/AkvQ1yM/tM9r8oBo
+ pFzgPWmYw50bkCXwq9JyGV5eOHevBafbTlf5MgoC0WRKQmXQKehkkU5g0gG9ysbAn9y9
+ fHzw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCX3dOFBCYu/f8zYUXmKHZ0JDClmP9A5xq3J1Ul931Xuul35ZaJl88HlMrrRtXwwtWbtQkI=@dpdk.org
+X-Gm-Message-State: AOJu0YyGXz7JFxSKna706S2EY3DpkACpuT0T3QrVTyhX9H8K+dMje8w4
+ 1hLamOeCrspNc0zoKm0kR7INhV/bE7bgOOPcB9zxL1jes1xala5TwuLx
+X-Gm-Gg: ASbGncu95YWdhXZn3niEtWs4T64SyQWOp1Eokq5CQf6uKijpz/tNJbAYPLTlZb4sCM8
+ D2y5T1/oecyxY+0UCLT99nkQrvPkcfiOS/KFZAIu/ZhXfv23CvmKBC4ewWu17eF7QKg3ZvU4LZ9
+ l6kVeiZfNjBaQ+NbhWR+Ts8WxmJcLoJ4Zde40Mka8M6JnNHi86jY7NcoR1AXF+AaU7RRxRQNMmd
+ LmBST1qeWc52P33gunt8BOhgiahaPYLpvC36MKz6as5ILFtq13Nh/zk97MpWTf+wYFmeoCUCtOW
+ HE0BjAcChmJn5TIungOsOMSpRmXs5L6cKhTq9nNNwCwfLiBSAE7JVX8OfeC8Bg0cdMJiWZRDzUG
+ wMwwf9y9etohFZt+DRs6M2WlC7mrZ62yxwHegqog1AiYime/hQ3EXGbIdpZ4xDL7bhL+FMA==
+X-Google-Smtp-Source: AGHT+IHT6Q32b+RMrPjdDG7ssNwkKU01FlaPEiSMcnNtBJiL4DVdR29v4IEQrWNSvtE/rbOuA/rGeA==
+X-Received: by 2002:a05:6512:3b0d:b0:591:ec11:7f93 with SMTP id
+ 2adb3069b0e04-59456b845e8mr1181360e87.23.1762526018065; 
+ Fri, 07 Nov 2025 06:33:38 -0800 (PST)
+Received: from arch.lan ([91.230.99.135]) by smtp.gmail.com with ESMTPSA id
+ 2adb3069b0e04-5944a0b7692sm1468736e87.51.2025.11.07.06.33.36
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 07 Nov 2025 06:33:37 -0800 (PST)
+From: Tomasz Duszynski <tduszyns@gmail.com>
+To: david.marchand@redhat.com
+Cc: Ruifeng.Wang@arm.com, bruce.richardson@intel.com, dev@dpdk.org,
+ jerinj@marvell.com, konstantin.v.ananyev@yandex.ru,
+ mattias.ronnblom@ericsson.com, mb@smartsharesystems.com,
+ roretzla@linux.microsoft.com, stephen@networkplumber.org,
+ tduszynski@marvell.com, thomas@monjalon.net, wathsala.vithanage@arm.com,
+ zhoumin@loongson.cn
+Subject: Re: [PATCH v11 0/9] lib/pmu: cleanups and trace integration
+Date: Fri,  7 Nov 2025 15:33:35 +0100
+Message-ID: <20251107143335.36300-1-tduszyns@gmail.com>
+X-Mailer: git-send-email 2.51.2
+In-Reply-To: <CAJFAV8xDK1Ub_1NWHRErMXsM1Hp4_OFnguoTcdMNDVXoehDr8w@mail.gmail.com>
+References: <CAJFAV8xDK1Ub_1NWHRErMXsM1Hp4_OFnguoTcdMNDVXoehDr8w@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: dev@dpdk.org
-From: =?UTF-8?B?THVrw6HFoSDFoGnFoW1pxaE=?= <sismis@cesnet.cz>
-Subject: RFCv1: DPDK RTE Flow Rule Parser
-Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="------------ms050000050605010504050702"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,204 +84,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a cryptographically signed message in MIME format.
+On Wed, Nov 05, 2025 at 02:38:44PM +0100, David Marchand wrote:
+> Strange output in the cover letter.
 
---------------ms050000050605010504050702
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+I think I let vimdiff copy to much from previous cover letter.
 
-SGVsbG8gYWxsLA0KDQojIyBNb3RpdmF0aW9uDQoNClJlY2VudCBkaXNjdXNzaW9ucyBvbiBE
-UERLIFNsYWNrIHJhaXNlZCB0aGUgaWRlYSBvZiBleHRyYWN0aW5nIHRoZSANCnJ0ZV9mbG93
-IHJ1bGUgcGFyc2VyIGN1cnJlbnRseSBlbWJlZGRlZCBpbiBkcGRrLXRlc3RwbWQgaW50byBh
-IA0Kc3RhbmRhbG9uZSwgcmV1c2FibGUgbGlicmFyeSBbMV0uDQoNClRoZSBtYWluIG1vdGl2
-YXRpb24gaXMgdGhhdCB0aGUgZXh0ZXJuYWwgYXBwbGljYXRpb25zLCBzdWNoIGFzIFN1cmlj
-YXRhIA0KSURTIFsyXSwgb2Z0ZW4gbmVlZCB0byBleHByZXNzIGhhcmR3YXJlIGZpbHRlcmlu
-ZyBydWxlcyBpbiBhIGNvbnNpc3RlbnQgDQphbmQgaHVtYW4tcmVhZGFibGUgZm9ybWF0Lg0K
-DQpXaGVuIGludGVncmF0aW5nIHJ0ZV9mbG93IGludG8gU3VyaWNhdGEgWzNdLCB3ZSBlbmNv
-dW50ZXJlZCB0aGUgbGFjayBvZiANCmEgdW5pZmllZCB3YXkgdG8gZGVmaW5lIHN1Y2ggcnVs
-ZXMuIFRoZSBpbW1lZGlhdGUgbmVlZCB3YXMgdG8gbGV0IHVzZXJzIA0Kc3BlY2lmeSBpbnB1
-dCBmaWx0ZXJzIChkcm9wL2FsbG93KSBkZXRlcm1pbmluZyB3aGljaCB0cmFmZmljIHNob3Vs
-ZCBiZSANCmluc3BlY3RlZC4NCg0KU3VyaWNhdGHigJlzIGV4aXN0aW5nIGNhcHR1cmUgbW9k
-ZXMgKGUuZy4gQUYtUEFDS0VUKSByZWx5IG9uIEJQRiBmaWx0ZXJzIA0KWzRdLiBNYWludGFp
-bmluZyBjb25zaXN0ZW5jeSBhY3Jvc3MgU3VyaWNhdGEgY2FwdHVyZSBiYWNrZW5kcyB3b3Vs
-ZCBiZSANCmlkZWFsLCBidXQgQlBGIGFuZCBydGVfZmxvdyBkaWZmZXIgc2lnbmlmaWNhbnRs
-eSBpbiBleHByZXNzaXZlbmVzcy4NCg0KVGhlIG90aGVyIG9wdGlvbnMgaW5jbHVkZSBlaXRo
-ZXIgZHBkay10ZXN0cG1kIG9yIGN1c3RvbSBydWxlIHN5bnRheC4gVG8gDQpub3QgcmVpbnZl
-bnQgdGhlIHdoZWVsLCBJIGFtIGxlYW5pbmcgdG93YXJkcyB1c2Ugb2YgdGhlIHRlc3RwbWQg
-c3ludGF4IA0KZm9yIHRoZSByZWFkeS10by11c2UgZ2VuZXJpYyBleHByZXNzaWJpbGl0eSwg
-ZXNwZWNpYWlseSBvZiB0aGUgbmV0d29yayANCnRyYWZmaWMgcGF0dGVybnMuIEZvciB0aGUg
-cmVmZXJlbmNlLCBJIGFtIHNwZWFraW5nIG9mIHRoZSBydGVfZmxvdyBydWxlIA0Kc3ludGF4
-IHRoYXQgeW91IGNhbiBkZWZpbmUgdGhyb3VnaCB0ZXN0cG1kIENMSSwgZS5nLiwgImZsb3cg
-Y3JlYXRlIDAgDQppbmdyZXNzIHBhdHRlcm4gZXRoIC8gdmxhbiB2aWQgaXMgMHhhYmMgLyBp
-cHY0IHNyYyBpcyAxOTIuMTY4LjAuMSBzcmMgaXMgDQo1MyAvIHRjcCAvIGVuZCBhY3Rpb25z
-IGRyb3AgLyBlbmQiLg0KDQpJbiB0aGUgU2xhY2ssIFRob21hcyBNb25qYWxvbiBjb25jbHVk
-ZWQgdGhhdCBpdCBpcyBnZW5lcmFsbHkgd2VsY29tZSB0byANCnNlZSBhIG5ldyBwYXJzZXIg
-bGlicmFyeSBidXQgd2UgbmVlZCB0byBzdGF0ZSBpdCBpcyBqdXN0IG9uZSB3YXkgaG93IA0K
-Y3JlYXRlIHJ0ZV9mbG93IEMgc3RydWN0dXJlcy4gKEZpbmUgYnkgbWUpDQoNCiMjIExpYnJh
-cnkgcHJvcG9zYWwNCg0KVGhlIGV4aXN0aW5nIGZ1bmN0aW9uIGZsb3dfcGFyc2UoKSBpbiBk
-cGRrLXRlc3RwbWQgYWxyZWFkeSBwZXJmb3JtcyBtb3N0IA0Kb2YgdGhlIG5lZWRlZCB3b3Jr
-Og0KDQppbnQNCmZsb3dfcGFyc2UoY29uc3QgY2hhciAqc3JjLCB2b2lkICpyZXN1bHQsIHVu
-c2lnbmVkIGludCBzaXplLA0KIMKgIMKgIMKgIHN0cnVjdCBydGVfZmxvd19hdHRyICoqYXR0
-ciwNCiDCoCDCoCDCoCBzdHJ1Y3QgcnRlX2Zsb3dfaXRlbSAqKnBhdHRlcm4sIHN0cnVjdCBy
-dGVfZmxvd19hY3Rpb24gKiphY3Rpb25zKQ0KDQpJdCBwYXJzZXMgYSBydWxlIGV4cHJlc3Nl
-ZCBpbiB0ZXN0cG1kIHN5bnRheCBhbmQgaW5pdGlhbGl6ZXMgcnRlX2Zsb3cgDQphdHRyaWJ1
-dGVzLCBpdGVtcywgYW5kIGFjdGlvbnMuDQpFeHRlcm5hbCBhcHBsaWNhdGlvbnMgdGhhdCB1
-c2UgdGhlc2Ugc3RydWN0dXJlcyBkaXJlY3RseSBjYW4gc2tpcCANCnJlZHVuZGFudCBzZXR1
-cCBsb2dpYyBhbmQgcmVseSBvbiBzdGFuZGFyZCBEUERLIEFQSXMgKHZhbGlkYXRlLCBjcmVh
-dGUsIA0KZGVzdHJveSkuDQoNCkZvciBhIHB1YmxpYyBBUEksIHRoZSB2b2lkICpyZXN1bHQg
-YW5kIHVuc2lnbmVkIGludCBzaXplIHBhcmFtZXRlcnMgDQphcHBlYXIgdW5uZWNlc3Nhcnkg
-YW5kIGNvdWxkIGJlIHJlbW92ZWQuIFRoZSBzaW1wbGlmaWVkIGludGVyZmFjZSB3b3VsZCAN
-Cm9ubHkgZXhwb3NlIHRoZSBtZWFuaW5nZnVsIG91dHB1dHMgKGF0dHIsIHBhdHRlcm4sIGFj
-dGlvbnMpLg0KDQojIyBQcm9ibGVtIHN0YXRlbWVudA0KDQpUaGUgbWFpbiBxdWVzdGlvbiBp
-cyBob3cgdG8gcHJvdmlkZSB0aGlzIHBhcnNlciB3aXRob3V0IGZyYWdtZW50aW5nIA0KZXhp
-c3RpbmcgZnVuY3Rpb25hbGl0eS4NCg0KSSB3b3VsZCBsaWtlIHRvIGV4dHJhY3QgdGhlIGV4
-aXN0aW5nIGNvZGUgZnJvbSBkcGRrLXRlc3RwbWQgdG8gaGF2ZSBvbmUgDQpwYXJzZXIgdGhh
-dCBpcyBhdmFpbGFibGUgYW5kIHVzZWQgYnkgYm90aCB0ZXN0cG1kIGFuZCBleHRlcm5hbCBh
-cHBzIA0KKHVzaW5nIHRoZSBsaWJyYXJ5IGl0c2VsZikuDQpJIHF1aWNrbHkgcnVuIGludG8g
-dGhlIGNvbXBsZXhpdHkgb2YgdGhlIHRlc3RwbWQgY29kZSBhbmQgaG93IGVudGFuZ2xlZCAN
-CnRoZSBDIHN0cnVjdHVyZXMgYXJlIHRocm91Z2hvdXQgdGhlIHRlc3RwbWQncyBzb3VyY2Ug
-Y29kZS4NCldoaWxlIHRoZSBwYXJzZXIgZXh0cmFjdGlvbiBzaG91bGQgYmUgcG9zc2libGUs
-IEkgd2FudGVkIHRvIGNoZWNrIGhlcmUgDQp3aXRoIHRoZSBjb21tdW5pdHkgaWYgdGhhdCBp
-cyB0aGUgbW9zdCBwcmVmZXJyZWQgYXBwcm9hY2guDQpTaW5jZSB0aGUgZXh0cmFjdGlvbiBt
-b3ZlcyBhIGxvdCBvZiBjb2RlIGZyb20gcGxhY2UgdG8gYW5vdGhlciwgdGhlcmUgaXMgDQph
-IHZlcnkgZ29vZCBjaGFuY2UgdGhhdCBpdCB3b3VsZCBicmVhayBhbGwgZm9ya2VkIGN1c3Rv
-bSB0ZXN0cG1kcy4NCg0KVGhlIG90aGVyIGFsdGVybmF0aXZlIGlzIHRvICJzdGFydCBzaW1w
-bGUiIHdpdGggYW4gYWx0ZXJuYXRpdmUgDQppbXBsZW1lbnRhdGlvbiwgcGVyaGFwcyBvbmx5
-IGZvY3VzaW5nIG9uIHN1YnNldCBvZiB0ZXN0cG1kJ3MgcGFyc2VyIA0KY2FwYWJpbGl0aWVz
-LiBCdXQgdGhpcyB3b3VsZCB2ZXJ5IGxpa2VseSBsZWFkIHRvIHR3byBwbGFjZXMgYmVpbmcg
-DQptYWludGFpbmVkIGluZGVwZW5kZW50bHkuDQoNCkJlZm9yZSB0YWtpbmcgZWl0aGVyIHJv
-dXRlLCBJ4oCZZCBsaWtlIHRvIHVuZGVyc3RhbmQgdGhlIGNvbW11bml0eeKAmXMgDQpwcmVm
-ZXJlbmNlOg0KLSBEbyB5b3UgZXZlbiBzZWUgaXQgYXMgYSB2YWx1YWJsZSBjb250cmlidXRp
-b24gZm9yIGN1c3RvbWVyIGFwcGxpY2F0aW9ucz8NCi0gQ2FuIHlvdSBwb3NzaWJseSB0aGlu
-ayBvZiBhbiBhbHRlcm5hdGl2ZSB3YXkgdG8gc29sdmUgdGhlIHVuaWZpZWQgDQpodW1hbi1y
-ZWFkYWJsZSBmb3JtYXQgY29udmVyc2lvbj8gQm90aCBvbiB0aGUgY29kZSBsZXZlbCBhbmQg
-aW50ZXJmYWNlIA0KbGV2ZWwuDQotIElzIHRlc3RwbWQgY29kZSBleHRyYWN0aW9uIHRoZSBy
-aWdodCBsb25nLXRlcm0gc29sdXRpb24sIGV2ZW4gaWYgDQpkaXNydXB0aXZlPyBTaG91bGQg
-dGhlIHByaXZhdGUgRFBESyBmb3JrcyBiZSB0YWtlbiBpbnRvIGNvbnNpZGVyYXRpb24/IA0K
-T3Igc2hvdWxkIEkgc3RhcnQgd2l0aCBhIHNlcGFyYXRlIGxpZ2h0d2VpZ2h0IHBhcnNlciBh
-bmQgcmV2aXNpdCANCmludGVncmF0aW9uIGxhdGVyPw0KDQpBbnkgb3RoZXIgZmVlZGJhY2sg
-aXMgd2VsY29tZS4NCg0KDQpUaGFuayB5b3UuDQoNCkFsbCB0aGUgYmVzdCwNCkx1a2FzDQoN
-Cg0KWzFdIGh0dHBzOi8vZHBka3Byb2plY3Quc2xhY2suY29tL2FyY2hpdmVzL0NCMlVQQlU0
-OC9wMTc1OTc2NTg4ODg5MTMyOQ0KWzJdIGh0dHBzOi8vZ2l0aHViLmNvbS9PSVNGL3N1cmlj
-YXRhDQpbM10gaHR0cHM6Ly9naXRodWIuY29tL09JU0Yvc3VyaWNhdGEvcHVsbC8xMzk1MA0K
-WzRdIGh0dHBzOi8vZG9jcy5zdXJpY2F0YS5pby9lbi9sYXRlc3QvcGVyZm9ybWFuY2UvaWdu
-b3JpbmctdHJhZmZpYy5odG1sDQoNCg0K
+>
+> Shortlog shows 10 patches:
+> > Tomasz Duszynski (10):
+>
+> Followed by 8 lines:
+> >   trace: change scope of conditional block
+> >   lib/pmu: export only necessary arch headers
+> >   lib/pmu: reimplement per-arch ops as callbacks
+> >   lib/pmu: do not try enabling perf counter access on arm64
+> >   lib/pmu: use build system defined RTE_LIB_PMU macro
+> >   test/pmu: enable test
+> >   trace: add PMU
+> >   lib/pmu: fix out-of-bound access
+>
+> But the series has 9 patches.
+>
+> In any case,
+> - patch 2 "trace: change scope of conditional block" is unneeded, I
+> see nothing wrong with current code. I tried stopping at various
+> points of the series, no build issue,
 
---------------ms050000050605010504050702
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+I'll take another look because I cannot recall at this point all
+specifics of this change. Most likely thing was some CI build issue.
 
-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
-VQQDDBFMdWvDocWhIMWgacWhbWnFoTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-AIYjV/QwJbJj3C5WpRO3kOru0hGrrdFHQywBGTowDWLYzrLYDIdj9Mj4BruCM1rIw2mkjDs/
-Igeb2IAjZ65XhvRiLHEnFhNfWTSEDnhaEVY9f1vXq1W2T9ayjAMxiL79ZlZsNCPaOBV/YvP6
-uhHHqmzaXqryWYC3Kl+KOVwEuI/oVOdqW81zSdKFp/vyFfRI/SgmOilaKeor/wcdJLILMY5i
-VjXxY5kuw3LUP1TpzUFl9RtQprkWoLIo2fnSHnF2Pn++sEB0c009NDaE/RqkVRNmBRW1mpIr
-WJQcJB5Q4A7rkTohElnJFYWiO/4p8ZvkQfKgcxfX5cQcwIQuSYRgE6sCAwEAAaOCAcYwggHC
-MB8GA1UdIwQYMBaAFGkAocchWPjgxRsgsArdp1G/E9nkMB0GA1UdDgQWBBRy6YIe/EKtTKXE
-vjA6c+W4oURcuDAOBgNVHQ8BAf8EBAMCBaAwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAUBggr
-BgEFBQcDBAYIKwYBBQUHAwIwUAYDVR0gBEkwRzA6BgwrBgEEAbIxAQIBCgQwKjAoBggrBgEF
-BQcCARYcaHR0cHM6Ly9zZWN0aWdvLmNvbS9TTUlNRUNQUzAJBgdngQwBBQMCMEIGA1UdHwQ7
-MDkwN6A1oDOGMWh0dHA6Ly9HRUFOVC5jcmwuc2VjdGlnby5jb20vR0VBTlRQZXJzb25hbENB
-NC5jcmwweAYIKwYBBQUHAQEEbDBqMD0GCCsGAQUFBzAChjFodHRwOi8vR0VBTlQuY3J0LnNl
-Y3RpZ28uY29tL0dFQU5UUGVyc29uYWxDQTQuY3J0MCkGCCsGAQUFBzABhh1odHRwOi8vR0VB
-TlQub2NzcC5zZWN0aWdvLmNvbTAzBgNVHREELDAqgRZMdWthcy5TaXNtaXNAY2VzbmV0LmN6
-gRBzaXNtaXNAY2VzbmV0LmN6MA0GCSqGSIb3DQEBDAUAA4ICAQAUruvh/0xaYOuFuIb5DxaL
-wU9162yIq0yfVn4genAF8EPfW6tPmZBgS6n/ZDRd2AMMlMczUI4PDkkXqcubNv/59ry5xD3t
-344cVoxEYXch+kXzbN/mgguuzsghyN8cvN7etv4ZRRrvjBC6U++GYpAzHooAYsBc/JYCyEiN
-jsDZldJbOWEuFZ0H7DQwDXcN53TqM2Nq7+DwkwLby7ZjesdUKwg83HgqSOSNpHwRtKmMEzmb
-e/vFE/MvH/GWvWk1AwwN559+eGXu5k0c0i8G+bR+vt4fyekmq/PREvsHKvpCkEWrOengsmHV
-l8z22uoFfLRSCus5scmw5FRAG/iwNvgDsju19W5HoP3iU/OyIYr9yyn6FQPZl4fktVJJLyrT
-wE07Ze9Ybpy5kHmO0WvGeybloszs8+zos0uQNWi34ABWnZcStLsh+DnUghSqYNjNfmVaOo0i
-NubUM5egWEAVeQEHMntQaeyNnsOSbN1r5SBwRj3VYlwSbKa5FG23Lz4H5JhLuJR+HGCTH3+T
-JuDzOKddWXUAI5s9811r8sJo9StMBlEnoOkCJ3jyN8eKZLg1w3BmA1zvW+sAXn9qPU81J38n
-mpKr5OkPrDfQG7hL2/mPwQo9amFWTfZ8I5279GqdnIivNnK+OvEHeDRdBb5iFjT5x71doVON
-6apyxSX1oIohIzCCBuYwggTOoAMCAQICEDECcNQ1vpskmvhW0OHihUkwDQYJKoZIhvcNAQEM
-BQAwgYgxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpOZXcgSmVyc2V5MRQwEgYDVQQHEwtKZXJz
-ZXkgQ2l0eTEeMBwGA1UEChMVVGhlIFVTRVJUUlVTVCBOZXR3b3JrMS4wLAYDVQQDEyVVU0VS
-VHJ1c3QgUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4XDTIwMDIxODAwMDAwMFoXDTMz
-MDUwMTIzNTk1OVowRjELMAkGA1UEBhMCTkwxGTAXBgNVBAoTEEdFQU5UIFZlcmVuaWdpbmcx
-HDAaBgNVBAMTE0dFQU5UIFBlcnNvbmFsIENBIDQwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAw
-ggIKAoICAQCzSuIiXidb6QRbFAQ1MiAUrrTSMUDGzVDAHqFEyq+eSmF/LZDeYpszai2kQsqW
-ATz/cBA9gGjunvJ45G48ycC4D6gwZFvbBt5JotxlunBeB8K+crGar3v+RCQ4VfvToX07v+HT
-J6EeEONR3IzJPTMyzgAwENGsAWf9va9HePQFJiChCzXqhKpp0zen53S+8f9itEy06GS8aku7
-Mvyb4tMBBa9An3Y3ALIqIeymg/iYs8m9WkSkMyekNtFRB1+1KlnNUpM05G8+sY9EucnQQRUI
-dHzYsvqjP3XlaSuB4Jj0ia66UGfi5Wx31mm5sKAz8Re9UGVWIqq6wKFKxkSfuO4iwYiIPJoi
-GEux3dqabwFLduAroDF1IxE40PqGIdPXzYuZ/wL6BEfFAb0xy8bfm5S9G7y/ts9mIlFpPtkL
-Z/nQ/iVOWdsu9ale/nK/uGF47xsxeW2LIvB4sH5U2+D4ad8vpNbcCrXIXXKtkBnNHgxumNNZ
-0R1Isq/Pz7TALCxxDzWdsM7AO32/Jn7R4ldtGRZmKpJyfACDn8HU1QPhOtiWsjifrMWnanJh
-Q6K7M/5qz8BmfPrca+MUrr1Y4NHZb9MrgPtWKQQyGDXy+G5F/iHGdZk7LS+F8NH+Ddolt2wZ
-pz52JqGMTDPIH5Qok4LLO95wbxtn+79Tw+wQxmDTuIg+LwIDAQABo4IBizCCAYcwHwYDVR0j
-BBgwFoAUU3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFGkAocchWPjgxRsgsArdp1G/
-E9nkMA4GA1UdDwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsG
-AQUFBwMCBggrBgEFBQcDBDA4BgNVHSAEMTAvMC0GBFUdIAAwJTAjBggrBgEFBQcCARYXaHR0
-cHM6Ly9zZWN0aWdvLmNvbS9DUFMwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsG
-AQUFBwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJU
-cnVzdFJTQUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1
-c3QuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQAKBU57DY8fEzkA/W/sYsbD7e0XquMBzHjcP0eX
-XXRD4EAEAGCWSs+QRL9XIxmx+52zx9wMa8YTejlR+NKejiyKPTF0q63zMxrO/z/hUwo8IDcR
-RLS0NSgvTW6AN2rCXJe5iLN5fIfYgIBB9cy1L6trPuZ/vjUJm87nQ7ExQzGqWN5F9U8MlAk0
-c5iLanG7GCMoNjHiF1n0baj6guUeG7n5qcwOQTyDS19+NEqfwjUPUGasN1ZH8h1sE6PrzvRp
-ti+rKzWpiU+i2/k3l2b5fFDy+Wu9jv6R9BoBh47es/UMzwEZ2kSrIVVr4jSukk+FpmR5Zbtw
-iYNAV6sdb1srMGsILzXlrdasSE2nGHvZklk2zUdgn7b01MHq67g0mNozGmT6Dam41Kbhv25W
-MFs871XqwVIb4gGoT1yRf/VePMm1jwauqijhKJFvrNweGnebGPeipaLxIo2iEA4qdRztEg/q
-yzWGogXK/TFdmivg322fMPQWjQkMhRGMM8SCjlZN22L8x0ZOYoVA2rHJm5P25IjZe+HPyn7i
-kJiSJmqlqFmUeowXF3D1dFlCCs/5yC06RYRqI2REFu+28t2nswIvY6xCFAR0RtS8Mz2yXNld
-0js2MmiRUGrc7imWzdUPbPcv9sdUF7SsERGPIzYL8dIiHzit+YCoGCSXMg6peF37hHNp1TGC
-BCgwggQkAgEBMFswRjELMAkGA1UEBhMCTkwxGTAXBgNVBAoTEEdFQU5UIFZlcmVuaWdpbmcx
-HDAaBgNVBAMTE0dFQU5UIFBlcnNvbmFsIENBIDQCEQC/Y2YvY/AU1z9zfvc7WYidMA0GCWCG
-SAFlAwQCAQUAoIICnjAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
-Fw0yNTExMDcxNDE2MjlaMC8GCSqGSIb3DQEJBDEiBCBr9bBecqe8k9qFQy3L+D//Gb1XkATi
-LU3if/ktZWjNxjBqBgkrBgEEAYI3EAQxXTBbMEYxCzAJBgNVBAYTAk5MMRkwFwYDVQQKExBH
-RUFOVCBWZXJlbmlnaW5nMRwwGgYDVQQDExNHRUFOVCBQZXJzb25hbCBDQSA0AhEAv2NmL2Pw
-FNc/c373O1mInTBsBgsqhkiG9w0BCRACCzFdoFswRjELMAkGA1UEBhMCTkwxGTAXBgNVBAoT
-EEdFQU5UIFZlcmVuaWdpbmcxHDAaBgNVBAMTE0dFQU5UIFBlcnNvbmFsIENBIDQCEQC/Y2Yv
-Y/AU1z9zfvc7WYidMIIBVwYJKoZIhvcNAQkPMYIBSDCCAUQwCwYJYIZIAWUDBAEqMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzANBggqhkiG9w0DAgIBBTANBggqhkiG9w0DAgIBBTAHBgUr
-DgMCBzANBggqhkiG9w0DAgIBBTAHBgUrDgMCGjALBglghkgBZQMEAgEwCwYJYIZIAWUDBAIC
-MAsGCWCGSAFlAwQCAzALBglghkgBZQMEAgQwCwYJYIZIAWUDBAIHMAsGCWCGSAFlAwQCCDAL
-BglghkgBZQMEAgkwCwYJYIZIAWUDBAIKMAsGCSqGSIb3DQEBATALBgkrgQUQhkg/AAIwCAYG
-K4EEAQsAMAgGBiuBBAELATAIBgYrgQQBCwIwCAYGK4EEAQsDMAsGCSuBBRCGSD8AAzAIBgYr
-gQQBDgAwCAYGK4EEAQ4BMAgGBiuBBAEOAjAIBgYrgQQBDgMwDQYJKoZIhvcNAQEBBQAEggEA
-CgQDcyXBOo7Vm6tQwriFo+kkww2/NPfRcV8iflDy9snbDcDLud8a+gAS93fF0tA0bfh9K8DQ
-uo6U4lW4lKv9hGHE8+G4F+q5oZB+pQ72gSHBHEeNjnnM41myNPaz/y7qbmxvpJ9a/vw9GZrT
-Mx/zupxOZjh6RrwXjr2WhsaqyRuC8KEm7iJZO/MQEnVe1ln5NRsh0mILkgk6lqWY+OLke9yO
-5tOnzaEy/EWcj3IUl171MAk6OGWVfJp1VFgeQMmI6P5lOL2c8OzTJTIxFpsXWJoqGIaLZRuc
-wd280aQw4ko4disymIPlrxrjBgmEdETXwoQS5riVjJHrtBUyMIv0igAAAAAAAA==
---------------ms050000050605010504050702--
+> - patch 7 has a comment from Morten,
+> - patch 8 has comments from me,
+
+Ack.
+
+> - patch 9 is vague, what is this about? Fixing coverity or some static
+> analysis tool bug report?
+
+Most likely that was from some coverity report. I don't have access to
+corporate mbox so I'm not able to track this down at this point.
+
+Regardless of that, this fix is about making string NUL terminated.
+Otherwise strtol() may go haywire.
+
+>
+> I applied the rest of the series, as other patches look valid fixes / cleanups.
+>
+
+Thanks!
+
+>
+> --
+> David Marchand
+>
