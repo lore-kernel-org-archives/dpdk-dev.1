@@ -2,50 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6943CCFA05
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 16:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D3ECCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 16:43:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1648A402D6;
-	Fri,  7 Nov 2025 17:27:12 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 9EBF24021F
- for <dev@dpdk.org>; Fri,  7 Nov 2025 17:27:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 934B7402D6;
+	Fri,  7 Nov 2025 17:43:39 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 4CE444021F
+ for <dev@dpdk.org>; Fri,  7 Nov 2025 17:43:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762532831; x=1794068831;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=n/agAEseF8t+jtoInlYaVCxnF8GqldAM9MXIslDwD3Y=;
- b=dFq7NAIH5U3B1GNOASJ7EdonNBCvlZpac9NK7O9fnrdRW8c6n6vdX4yX
- UO/Yd4P9ziIOZm3ZvA2eulQO6HFtzS2LYBgw6ECoQm3rMXf/kyRO8tWXi
- cc2TC2ZeB6pCyEMSuIv+/CHw+Fe9QqLrsDe1T/5H5m8rTVWx2+73Vcdhj
- XKMGuQyEVzJF3rrp9zEtHorte6qId59+Xoh+mC7k/wPGSoVxwtLcUKOsh
- tWk4q/GuyVufRLcP1fJO8sTw462CjfSpbp61Op9W91n6m6syzGG6V8PKb
- 5Em9FLDI5aa0bzyBipar3EWqsJly01RCWnqVulIjtRPr1Uxn9H9AoPHlE A==;
-X-CSE-ConnectionGUID: wF78dLgVRoeNzQom11tj9A==
-X-CSE-MsgGUID: fXqJui2aQ9iUZaM0QkJjyw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="64383182"
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="64383182"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Nov 2025 08:27:09 -0800
-X-CSE-ConnectionGUID: 3Hme+Ui4R/iab36kemgIKQ==
-X-CSE-MsgGUID: zBdPO/dZRqaFSKAoZVLZvA==
+ t=1762533818; x=1794069818;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=T+76SwYShREQXIl+6EJXLBHoXLpVu3eVXeBdQvknZio=;
+ b=HMF7u5haRPEZu5XSRT1wcbgAmV9tS9YCYis3M6QTK/dffuyKsd+SwvpB
+ xn8M/SCtbzmkk1KQE35r8bYpQVOnYhF1P0Dp0RkPLL3fJev8Tv2JqWGbH
+ z1hhIWfIssz3iS5HjY/UmJJ8qQp0vYYMShYaN3dceczFyR7SBb9pMOk73
+ yKDs6bK3tUF6jGJiZTIEmIlAKRdwzh9Vm+6g5O0EVu7C0qZwM1eY6pZGo
+ jZaalovQUFTzvVvwtdud3pqbErpPYWP0wlqfseDn4YqhlfuYW6W+rrVe0
+ q6scd6e7rLtBCqqmeLmu567sYo/gEwg4PEcP9ekAkj3OqRkX8VgBZgzD5 g==;
+X-CSE-ConnectionGUID: IO1YVJb6Q+ys1eFHrO1EsA==
+X-CSE-MsgGUID: kSb+WGRpSBCqb+lhJN3f2A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="76135105"
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="76135105"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Nov 2025 08:43:37 -0800
+X-CSE-ConnectionGUID: V81SA8QtT4iADvbo/9XeNA==
+X-CSE-MsgGUID: hqDePNoUQ6uUcPmmZxHvjA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="188240463"
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="188340546"
 Received: from silpixa00401454.ir.intel.com ([10.20.224.230])
- by orviesa008.jf.intel.com with ESMTP; 07 Nov 2025 08:27:08 -0800
+ by fmviesa008.fm.intel.com with ESMTP; 07 Nov 2025 08:43:35 -0800
 From: Emma Finn <emma.finn@intel.com>
 To: Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
- Kai Ji <kai.ji@intel.com>,
- Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>,
- Fiona Trahe <fiona.trahe@intel.com>
+ Kai Ji <kai.ji@intel.com>, Fiona Trahe <fiona.trahe@intel.com>,
+ Arkadiusz Kusztal <arkadiuszx.kusztal@intel.com>
 Cc: dev@dpdk.org,
 	Emma Finn <emma.finn@intel.com>
 Subject: [PATCH] crypto/qat: fix CCM request descriptor hash_state_sz field
-Date: Fri,  7 Nov 2025 16:23:08 +0000
-Message-Id: <20251107162308.2150642-1-emma.finn@intel.com>
+Date: Fri,  7 Nov 2025 16:43:29 +0000
+Message-Id: <20251107164329.2154794-1-emma.finn@intel.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251107162308.2150642-1-emma.finn@intel.com>
+References: <20251107162308.2150642-1-emma.finn@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -70,14 +71,14 @@ This incorrect field value caused QAT firmware to return
 INVALID_PARAMS errors for certain AAD buffer sizes. A new unit
 test is also added to cover this case.
 
-Fixes: ab56c4d ("crypto/qat: add AES-CCM support")
+Fixes: ab56c4d9ed9a ("crypto/qat: support AES-CCM")
 
 Signed-off-by: Emma Finn <emma.finn@intel.com>
 ---
  app/test/test_cryptodev.c                   | 16 +++++++
  app/test/test_cryptodev_aead_test_vectors.h | 53 +++++++++++++++++++++
- drivers/crypto/qat/qat_sym_session.c        |  2 +-
- 3 files changed, 70 insertions(+), 1 deletion(-)
+ drivers/crypto/qat/qat_sym_session.c        |  3 +-
+ 3 files changed, 71 insertions(+), 1 deletion(-)
 
 diff --git a/app/test/test_cryptodev.c b/app/test/test_cryptodev.c
 index 6e5f308e55..9bdd357727 100644
@@ -199,15 +200,16 @@ index 73bedaf557..6b9642e339 100644
  static const struct aead_test_data ccm_test_case_192_1 = {
  	.algo = RTE_CRYPTO_AEAD_AES_CCM,
 diff --git a/drivers/crypto/qat/qat_sym_session.c b/drivers/crypto/qat/qat_sym_session.c
-index 98ab82ffb3..0a00c3927a 100644
+index 98ab82ffb3..c58ecb7f54 100644
 --- a/drivers/crypto/qat/qat_sym_session.c
 +++ b/drivers/crypto/qat/qat_sym_session.c
-@@ -2774,7 +2774,7 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+@@ -2774,7 +2774,8 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
  		hash->auth_counter.counter = 0;
  
  		hash_cd_ctrl->outer_prefix_sz = digestsize;
 -		auth_param->hash_state_sz = digestsize;
-+		auth_param->hash_state_sz = (RTE_ALIGN_CEIL(auth_param->u2.aad_sz, 8) >> 3);
++		auth_param->hash_state_sz = (RTE_ALIGN_CEIL(auth_param->u2.aad_sz, 8)
++										>> 3);
  
  		memcpy(cdesc->cd_cur_ptr + state1_size, authkey, authkeylen);
  		break;
