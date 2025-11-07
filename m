@@ -2,46 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD79CCFA05
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 15:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDB4CCFA05
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 15:54:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5B4AC40EDF;
-	Fri,  7 Nov 2025 16:51:44 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id B2E144066B
- for <dev@dpdk.org>; Fri,  7 Nov 2025 16:51:41 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 69F6A40B90;
+	Fri,  7 Nov 2025 16:51:54 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+ by mails.dpdk.org (Postfix) with ESMTP id F34EB406B7
+ for <dev@dpdk.org>; Fri,  7 Nov 2025 16:51:51 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762530702; x=1794066702;
+ t=1762530713; x=1794066713;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=0OWp4ueEp9diLgYv6U8tGejITrTBrAe/wtruU82fYfk=;
- b=SkctixKX2iwgO5PtU3sJC1dhqiVwO6kdRySYsDVpq7WU6JUyr09cffYR
- d5+fdHqkWpgqgE5Ov/8h7OWc18EoAag3M01LWVZjnR+5eEQLJIPmnASOI
- ddOTU+lnIIaSLCj9Yk3A5ObRnpVaU7sqRTdXAJIMUsip9F6TWhJZz0scf
- tZg4EIo+ekyzpkEsrliVx3M55Z5YfiH9lR1o50FsJzGzM+XeN5+ZHJk7O
- elCF/lkFQn5amyL125zWkf6nduBB9gpN3yASzyrzsXuzFEL9VzSLrJime
- i7nCHU3vUB7w0y0BNCEom08I93G9n/BFM/1J3GuAEiuGbqsgvz/iBsqLZ g==;
-X-CSE-ConnectionGUID: Wta8Xh4EQ/eaHAqyv65FcA==
-X-CSE-MsgGUID: zJq50QSRSW6VKiUyoLrbrA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="90151892"
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="90151892"
+ bh=kJ7OyaGr5rNzXfVLmub7N/EQ+gR7qwTvW2LqUGVy2YA=;
+ b=PdZFhSZ0aY6ThO2K1yyeferciUvtqVbSfChifD6WYnzkw6PUGSL4b4Y9
+ gORRFAYvXZi+z7+6kPwoYHnyfdsJxHWFnvSaljkm866MiaVc4VlBf1pZM
+ E3rcBJXzE37R15b1PxQR4VRDIyfK+HAD3DcdWqpTUkF22fw2yZO7ADr1V
+ 2ddPCdfSISNuMclPhRZ2qD2dUAt6U8JUwmBuoV13kqpW/70vWDKr0Aq+6
+ 37WJPyni0nc93QqPJrZh5J7KUV1IiHrdsWQa9YNTsokZzDppstbvXOkw9
+ anLTx/swzbfKx0JHqAAcJMUCUETW+BgxbDD/5MGLABh0VXGQUwo1zu3Rc Q==;
+X-CSE-ConnectionGUID: fCrIqUOkSU+mELuAQJC+lg==
+X-CSE-MsgGUID: nyP+Ut/hRTmrRcMz6d5YCw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64589360"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="64589360"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Nov 2025 07:51:41 -0800
-X-CSE-ConnectionGUID: ks7QfjH9QneXQMnO3u+SXA==
-X-CSE-MsgGUID: hEMOBrI1T9u9DHDwHU2vqA==
+ by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Nov 2025 07:51:52 -0800
+X-CSE-ConnectionGUID: YGZ3uxXsTvybK/Wxf6MXsQ==
+X-CSE-MsgGUID: Z92BwoFhQ76ds/kKyEWDqA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="187321790"
+X-IronPort-AV: E=Sophos;i="6.19,287,1754982000"; d="scan'208";a="187321809"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 07 Nov 2025 07:51:41 -0800
+ by orviesa006.jf.intel.com with ESMTP; 07 Nov 2025 07:51:42 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [RFC PATCH v2 29/33] app/test-pipeline: remove unnecessary variable
-Date: Fri,  7 Nov 2025 15:50:25 +0000
-Message-ID: <20251107155034.436809-30-bruce.richardson@intel.com>
+ Nicolas Chautru <nicolas.chautru@intel.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>, Kai Ji <kai.ji@intel.com>,
+ Nagadheeraj Rottela <rnagadheeraj@marvell.com>,
+ Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashishg@marvell.com>,
+ Ankur Dwivedi <adwivedi@marvell.com>, Anoob Joseph <anoobj@marvell.com>,
+ Tejasree Kondoj <ktejasree@marvell.com>, Gagandeep Singh <g.singh@nxp.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>,
+ Shijith Thotton <sthotton@marvell.com>,
+ Tirthendu Sarkar <tirthendu.sarkar@intel.com>,
+ Selwin Sebastian <selwin.sebastian@amd.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Somnath Kotur <somnath.kotur@broadcom.com>,
+ Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>,
+ Potnuri Bharat Teja <bharat@chelsio.com>,
+ Shai Brandes <shaibran@amazon.com>, Evgeny Schemeilin <evgenys@amazon.com>,
+ Ron Beider <rbeider@amazon.com>, Amit Bernstein <amitbern@amazon.com>,
+ Wajeeh Atrash <atrwajee@amazon.com>, Apeksha Gupta <apeksha.gupta@nxp.com>,
+ John Daley <johndale@cisco.com>, Hyong Youb Kim <hyonkim@cisco.com>,
+ Gaetan Rivet <grive@u256.net>, Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
+ Christian Koue Muf <ckm@napatech.com>,
+ Serhii Iliushyk <sil-plv@napatech.com>,
+ Devendra Singh Rawat <dsinghrawat@marvell.com>,
+ Alok Prasad <palok@marvell.com>, Jiawen Wu <jiawenwu@trustnetic.com>,
+ Jian Wang <jianwang@trustnetic.com>, Zaiyu Wang <zaiyuwang@trustnetic.com>,
+ Junlong Wang <wang.junlong1@zte.com.cn>,
+ Lijie Shan <shan.lijie@zte.com.cn>, Rosen Xu <rosen.xu@altera.com>
+Subject: [RFC PATCH v2 30/33] drivers: disable variable shadowing warnings for
+ drivers
+Date: Fri,  7 Nov 2025 15:50:26 +0000
+Message-ID: <20251107155034.436809-31-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251107155034.436809-1-bruce.richardson@intel.com>
 References: <20251106140948.2894678-1-bruce.richardson@intel.com>
@@ -61,27 +95,423 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The second definition of a variable called "ret" in the main function is
-unnecessary and causes variable shadowing warnings, so just eliminate
-it.
+Not all drivers build cleanly with shadow warnings enabled, so disable
+them on a driver-by-driver basis for now.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test-pipeline/main.c | 1 -
- 1 file changed, 1 deletion(-)
+ config/meson.build                         | 5 +++++
+ drivers/baseband/fpga_5gnr_fec/meson.build | 2 ++
+ drivers/bus/fslmc/meson.build              | 2 ++
+ drivers/common/cnxk/meson.build            | 1 +
+ drivers/common/qat/meson.build             | 1 +
+ drivers/compress/nitrox/meson.build        | 2 ++
+ drivers/crypto/cnxk/meson.build            | 1 +
+ drivers/crypto/octeontx/meson.build        | 1 +
+ drivers/crypto/openssl/meson.build         | 1 +
+ drivers/crypto/scheduler/meson.build       | 1 +
+ drivers/dma/dpaa2/meson.build              | 2 ++
+ drivers/event/cnxk/meson.build             | 1 +
+ drivers/event/dlb2/meson.build             | 2 ++
+ drivers/event/sw/meson.build               | 1 +
+ drivers/net/axgbe/meson.build              | 2 +-
+ drivers/net/bnxt/meson.build               | 1 +
+ drivers/net/bonding/meson.build            | 1 +
+ drivers/net/cnxk/meson.build               | 1 +
+ drivers/net/cxgbe/meson.build              | 1 +
+ drivers/net/dpaa/meson.build               | 1 +
+ drivers/net/dpaa2/meson.build              | 1 +
+ drivers/net/ena/meson.build                | 2 ++
+ drivers/net/enetfec/meson.build            | 2 ++
+ drivers/net/enic/meson.build               | 2 ++
+ drivers/net/failsafe/meson.build           | 1 +
+ drivers/net/mlx5/meson.build               | 1 +
+ drivers/net/ntnic/meson.build              | 3 +++
+ drivers/net/pfe/meson.build                | 3 +++
+ drivers/net/qede/meson.build               | 3 +++
+ drivers/net/txgbe/meson.build              | 1 +
+ drivers/net/zxdh/meson.build               | 3 +++
+ drivers/raw/ifpga/meson.build              | 2 ++
+ drivers/vdpa/mlx5/meson.build              | 1 +
+ 33 files changed, 54 insertions(+), 1 deletion(-)
 
-diff --git a/app/test-pipeline/main.c b/app/test-pipeline/main.c
-index 4cc098d7ac..e5efafdf28 100644
---- a/app/test-pipeline/main.c
-+++ b/app/test-pipeline/main.c
-@@ -89,7 +89,6 @@ main(int argc, char **argv)
- 	/* Close ports */
- 	for (i = 0; i < app.n_ports; i++) {
- 		uint16_t port;
--		int ret;
+diff --git a/config/meson.build b/config/meson.build
+index 0cb074ab95..927dc18d21 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -361,6 +361,11 @@ if cc.has_argument('-Wvla')
+     endif
+ endif
  
- 		port = app.ports[i];
- 		printf("Closing port %d...", port);
++no_shadow_cflag = []
++if cc.has_argument('-Wno-shadow')
++        no_shadow_cflag = '-Wno-shadow'
++endif
++
+ foreach arg: global_cflags
+     if cc.has_argument(arg)
+         add_project_arguments(arg, language: 'c')
+diff --git a/drivers/baseband/fpga_5gnr_fec/meson.build b/drivers/baseband/fpga_5gnr_fec/meson.build
+index c3678d23eb..d81070aecd 100644
+--- a/drivers/baseband/fpga_5gnr_fec/meson.build
++++ b/drivers/baseband/fpga_5gnr_fec/meson.build
+@@ -3,6 +3,8 @@
+ 
+ deps += ['bus_vdev', 'ring', 'pci', 'bus_pci']
+ 
++cflags += no_shadow_cflag
++
+ sources = files('rte_fpga_5gnr_fec.c')
+ 
+ headers = files('rte_pmd_fpga_5gnr_fec.h')
+diff --git a/drivers/bus/fslmc/meson.build b/drivers/bus/fslmc/meson.build
+index 70098ad778..ceae1c6c11 100644
+--- a/drivers/bus/fslmc/meson.build
++++ b/drivers/bus/fslmc/meson.build
+@@ -6,6 +6,8 @@ if not is_linux
+     reason = 'only supported on Linux'
+ endif
+ 
++cflags += no_shadow_cflag
++
+ deps += ['common_dpaax', 'eventdev', 'kvargs']
+ sources = files(
+         'fslmc_bus.c',
+diff --git a/drivers/common/cnxk/meson.build b/drivers/common/cnxk/meson.build
+index daffc15afd..2b33022eb7 100644
+--- a/drivers/common/cnxk/meson.build
++++ b/drivers/common/cnxk/meson.build
+@@ -95,6 +95,7 @@ sources += files('cnxk_telemetry_bphy.c',
+ )
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+ 
+ if meson.is_cross_build()
+     soc_type = meson.get_external_property('platform', '')
+diff --git a/drivers/common/qat/meson.build b/drivers/common/qat/meson.build
+index 68290ef152..31e06f4376 100644
+--- a/drivers/common/qat/meson.build
++++ b/drivers/common/qat/meson.build
+@@ -104,6 +104,7 @@ if qat_compress
+ endif
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+ 
+ if qat_crypto
+     foreach f: ['qat_sym.c', 'qat_sym_session.c',
+diff --git a/drivers/compress/nitrox/meson.build b/drivers/compress/nitrox/meson.build
+index 5cecc2ad66..d48b19feb0 100644
+--- a/drivers/compress/nitrox/meson.build
++++ b/drivers/compress/nitrox/meson.build
+@@ -8,6 +8,8 @@ endif
+ 
+ deps += ['common_nitrox', 'bus_pci', 'compressdev']
+ 
++cflags += no_shadow_cflag
++
+ sources += files(
+         'nitrox_comp.c',
+         'nitrox_comp_reqmgr.c',
+diff --git a/drivers/crypto/cnxk/meson.build b/drivers/crypto/cnxk/meson.build
+index 912c4a0851..922c425855 100644
+--- a/drivers/crypto/cnxk/meson.build
++++ b/drivers/crypto/cnxk/meson.build
+@@ -34,6 +34,7 @@ deps += ['bus_pci', 'common_cnxk', 'security', 'eventdev']
+ includes += include_directories('../../../lib/net', '../../event/cnxk')
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+ 
+ if get_option('buildtype').contains('debug')
+     cflags += [ '-DLA_IPSEC_DEBUG','-DCNXK_CRYPTODEV_DEBUG' ]
+diff --git a/drivers/crypto/octeontx/meson.build b/drivers/crypto/octeontx/meson.build
+index ec26aa65e7..5e5e4b7fa2 100644
+--- a/drivers/crypto/octeontx/meson.build
++++ b/drivers/crypto/octeontx/meson.build
+@@ -34,3 +34,4 @@ includes += include_directories('../../mempool/octeontx')
+ includes += include_directories('../../net/octeontx')
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+diff --git a/drivers/crypto/openssl/meson.build b/drivers/crypto/openssl/meson.build
+index c56e4678bb..af469a9827 100644
+--- a/drivers/crypto/openssl/meson.build
++++ b/drivers/crypto/openssl/meson.build
+@@ -17,3 +17,4 @@ sources = files('rte_openssl_pmd.c', 'rte_openssl_pmd_ops.c')
+ ext_deps += dep
+ require_iova_in_mbuf = false
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+diff --git a/drivers/crypto/scheduler/meson.build b/drivers/crypto/scheduler/meson.build
+index b7c47d18b5..68ca1fa08a 100644
+--- a/drivers/crypto/scheduler/meson.build
++++ b/drivers/crypto/scheduler/meson.build
+@@ -24,3 +24,4 @@ headers = files(
+ )
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+diff --git a/drivers/dma/dpaa2/meson.build b/drivers/dma/dpaa2/meson.build
+index a523f5edb4..6f9b427793 100644
+--- a/drivers/dma/dpaa2/meson.build
++++ b/drivers/dma/dpaa2/meson.build
+@@ -14,3 +14,5 @@ sources = files('dpaa2_qdma.c')
+ if cc.has_argument('-Wno-pointer-arith')
+     cflags += '-Wno-pointer-arith'
+ endif
++
++cflags += no_shadow_cflag
+diff --git a/drivers/event/cnxk/meson.build b/drivers/event/cnxk/meson.build
+index 677ebc9e28..24b48d045f 100644
+--- a/drivers/event/cnxk/meson.build
++++ b/drivers/event/cnxk/meson.build
+@@ -301,6 +301,7 @@ endif
+ endif
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+ 
+ extra_flags = ['-flax-vector-conversions', '-Wno-strict-aliasing']
+ if cc.get_id() == 'clang'
+diff --git a/drivers/event/dlb2/meson.build b/drivers/event/dlb2/meson.build
+index 19d88afb5d..894d011fea 100644
+--- a/drivers/event/dlb2/meson.build
++++ b/drivers/event/dlb2/meson.build
+@@ -29,6 +29,8 @@ headers = files('rte_pmd_dlb2.h')
+ 
+ deps += ['mbuf', 'mempool', 'ring', 'pci', 'bus_pci']
+ 
++cflags += no_shadow_cflag
++
+ dlb_pmd_defines = ['-DDLB2_BYPASS_FENCE_ON_PP', '-DDLB_HW_CREDITS_CHECKS', '-DDLB_SW_CREDITS_CHECKS', '-DDLB_TYPE_CHECK']
+ dlb_pmd_default = ['0','1','1','1']
+ 
+diff --git a/drivers/event/sw/meson.build b/drivers/event/sw/meson.build
+index c0c559ebc4..0cd324d97a 100644
+--- a/drivers/event/sw/meson.build
++++ b/drivers/event/sw/meson.build
+@@ -11,3 +11,4 @@ sources = files(
+ deps += ['hash', 'bus_vdev']
+ require_iova_in_mbuf = false
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+diff --git a/drivers/net/axgbe/meson.build b/drivers/net/axgbe/meson.build
+index b1cbe3d810..5a14549317 100644
+--- a/drivers/net/axgbe/meson.build
++++ b/drivers/net/axgbe/meson.build
+@@ -15,7 +15,7 @@ sources = files(
+         'axgbe_rxtx.c',
+ )
+ 
+-cflags += '-Wno-cast-qual'
++cflags += ['-Wno-cast-qual', no_shadow_cflag]
+ 
+ if arch_subdir == 'x86'
+     sources += files('axgbe_rxtx_vec_sse.c')
+diff --git a/drivers/net/bnxt/meson.build b/drivers/net/bnxt/meson.build
+index 79300eb6ac..dc122fb3df 100644
+--- a/drivers/net/bnxt/meson.build
++++ b/drivers/net/bnxt/meson.build
+@@ -13,6 +13,7 @@ if dpdk_conf.get('RTE_IOVA_IN_MBUF') == 0
+ endif
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+ 
+ headers = files('rte_pmd_bnxt.h')
+ cflags_options = [
+diff --git a/drivers/net/bonding/meson.build b/drivers/net/bonding/meson.build
+index d87e7a2522..14304b68a8 100644
+--- a/drivers/net/bonding/meson.build
++++ b/drivers/net/bonding/meson.build
+@@ -26,3 +26,4 @@ headers = files('rte_eth_bond.h', 'rte_eth_bond_8023ad.h')
+ require_iova_in_mbuf = false
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+diff --git a/drivers/net/cnxk/meson.build b/drivers/net/cnxk/meson.build
+index d20a8601eb..53caa6c171 100644
+--- a/drivers/net/cnxk/meson.build
++++ b/drivers/net/cnxk/meson.build
+@@ -328,6 +328,7 @@ deps += ['bus_pci', 'cryptodev', 'eventdev', 'security']
+ deps += ['common_cnxk', 'mempool_cnxk']
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+ 
+ # Allow implicit vector conversions and strict aliasing warning
+ extra_flags = ['-flax-vector-conversions', '-Wno-strict-aliasing']
+diff --git a/drivers/net/cxgbe/meson.build b/drivers/net/cxgbe/meson.build
+index 95cb58ab44..0d5d886ed5 100644
+--- a/drivers/net/cxgbe/meson.build
++++ b/drivers/net/cxgbe/meson.build
+@@ -25,3 +25,4 @@ sources = files(
+ includes += include_directories('base')
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+diff --git a/drivers/net/dpaa/meson.build b/drivers/net/dpaa/meson.build
+index b1e4bbafb5..8d4f69c596 100644
+--- a/drivers/net/dpaa/meson.build
++++ b/drivers/net/dpaa/meson.build
+@@ -18,6 +18,7 @@ sources = files(
+ )
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+ 
+ if cc.has_argument('-Wno-pointer-arith')
+     cflags += '-Wno-pointer-arith'
+diff --git a/drivers/net/dpaa2/meson.build b/drivers/net/dpaa2/meson.build
+index 89932b3037..4094ea02ba 100644
+--- a/drivers/net/dpaa2/meson.build
++++ b/drivers/net/dpaa2/meson.build
+@@ -29,3 +29,4 @@ includes += include_directories('base', 'mc')
+ headers = files('rte_pmd_dpaa2.h')
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+diff --git a/drivers/net/ena/meson.build b/drivers/net/ena/meson.build
+index d02ed3f64f..2b18d7add7 100644
+--- a/drivers/net/ena/meson.build
++++ b/drivers/net/ena/meson.build
+@@ -17,3 +17,5 @@ sources = files(
+ deps += ['timer']
+ 
+ includes += include_directories('base', 'base/ena_defs')
++
++cflags += no_shadow_cflag
+diff --git a/drivers/net/enetfec/meson.build b/drivers/net/enetfec/meson.build
+index 29a464424b..428133c2b6 100644
+--- a/drivers/net/enetfec/meson.build
++++ b/drivers/net/enetfec/meson.build
+@@ -11,3 +11,5 @@ sources = files(
+         'enet_uio.c',
+         'enet_rxtx.c',
+ )
++
++cflags += no_shadow_cflag
+diff --git a/drivers/net/enic/meson.build b/drivers/net/enic/meson.build
+index a48a497e46..cb853beeaa 100644
+--- a/drivers/net/enic/meson.build
++++ b/drivers/net/enic/meson.build
+@@ -29,6 +29,8 @@ sources = files(
+ deps += ['hash']
+ includes += include_directories('base')
+ 
++cflags += no_shadow_cflag
++
+ if dpdk_conf.has('RTE_ARCH_X86_64')
+     cflags += '-DENIC_RXTX_VEC'
+     sources_avx2 += files('enic_rxtx_vec_avx2.c')
+diff --git a/drivers/net/failsafe/meson.build b/drivers/net/failsafe/meson.build
+index 90c965b705..3c2c96b73a 100644
+--- a/drivers/net/failsafe/meson.build
++++ b/drivers/net/failsafe/meson.build
+@@ -8,6 +8,7 @@ if is_windows
+ endif
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+ cflags += '-D_DEFAULT_SOURCE'
+ cflags += '-D_XOPEN_SOURCE=700'
+ cflags += '-pedantic'
+diff --git a/drivers/net/mlx5/meson.build b/drivers/net/mlx5/meson.build
+index d67fb0969f..28275bed21 100644
+--- a/drivers/net/mlx5/meson.build
++++ b/drivers/net/mlx5/meson.build
+@@ -90,6 +90,7 @@ if get_option('buildtype').contains('debug')
+ else
+     cflags += [ '-UPEDANTIC' ]
+ endif
++cflags += no_shadow_cflag
+ 
+ require_iova_in_mbuf = false
+ 
+diff --git a/drivers/net/ntnic/meson.build b/drivers/net/ntnic/meson.build
+index 1daf7881f1..60688c8aaf 100644
+--- a/drivers/net/ntnic/meson.build
++++ b/drivers/net/ntnic/meson.build
+@@ -128,3 +128,6 @@ sources = files(
+         'ntnic_ethdev.c',
+         'rte_pmd_ntnic.c',
+ )
++
++# Suppress shadow warnings for this driver due to extensive variable shadowing
++cflags += no_shadow_cflag
+diff --git a/drivers/net/pfe/meson.build b/drivers/net/pfe/meson.build
+index 684b062090..2d7dcb154a 100644
+--- a/drivers/net/pfe/meson.build
++++ b/drivers/net/pfe/meson.build
+@@ -18,4 +18,7 @@ if cc.has_argument('-Wno-pointer-arith')
+     cflags += '-Wno-pointer-arith'
+ endif
+ 
++# Suppress shadow warnings for this driver
++cflags += no_shadow_cflag
++
+ includes += include_directories('base')
+diff --git a/drivers/net/qede/meson.build b/drivers/net/qede/meson.build
+index e1b21d6ff5..7957aae3fa 100644
+--- a/drivers/net/qede/meson.build
++++ b/drivers/net/qede/meson.build
+@@ -22,3 +22,6 @@ sources = files(
+ if cc.has_argument('-Wno-format-nonliteral')
+     cflags += '-Wno-format-nonliteral'
+ endif
++
++# Suppress shadow warnings for this driver
++cflags += no_shadow_cflag
+diff --git a/drivers/net/txgbe/meson.build b/drivers/net/txgbe/meson.build
+index 5cdec017ed..dea50bfe14 100644
+--- a/drivers/net/txgbe/meson.build
++++ b/drivers/net/txgbe/meson.build
+@@ -24,6 +24,7 @@ sources = files(
+ deps += ['hash', 'security']
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+ 
+ if arch_subdir == 'x86'
+     sources += files('txgbe_rxtx_vec_sse.c')
+diff --git a/drivers/net/zxdh/meson.build b/drivers/net/zxdh/meson.build
+index 0213ccb2fa..9893616b19 100644
+--- a/drivers/net/zxdh/meson.build
++++ b/drivers/net/zxdh/meson.build
+@@ -20,3 +20,6 @@ sources = files(
+         'zxdh_mtr.c',
+         'zxdh_flow.c',
+ )
++
++# Suppress shadow warnings for this driver
++cflags += no_shadow_cflag
+diff --git a/drivers/raw/ifpga/meson.build b/drivers/raw/ifpga/meson.build
+index 395894af2a..8d5f41fd5d 100644
+--- a/drivers/raw/ifpga/meson.build
++++ b/drivers/raw/ifpga/meson.build
+@@ -19,6 +19,8 @@ endif
+ 
+ ext_deps += rtdep
+ 
++cflags += no_shadow_cflag
++
+ subdir('base')
+ 
+ deps += ['ethdev', 'rawdev', 'pci', 'bus_pci', 'kvargs',
+diff --git a/drivers/vdpa/mlx5/meson.build b/drivers/vdpa/mlx5/meson.build
+index 7be11fda6d..f61adf23a4 100644
+--- a/drivers/vdpa/mlx5/meson.build
++++ b/drivers/vdpa/mlx5/meson.build
+@@ -24,6 +24,7 @@ sources = files(
+ )
+ 
+ cflags += no_wvla_cflag
++cflags += no_shadow_cflag
+ 
+ cflags_options = [
+         '-std=c11',
 -- 
 2.48.1
 
