@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 618BCCCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 07:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5C0CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 07:35:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C262F40668;
-	Fri,  7 Nov 2025 08:35:12 +0100 (CET)
-Received: from out28-194.mail.aliyun.com (out28-194.mail.aliyun.com
- [115.124.28.194])
- by mails.dpdk.org (Postfix) with ESMTP id 9256140264
- for <dev@dpdk.org>; Fri,  7 Nov 2025 08:35:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id ADAC34066C;
+	Fri,  7 Nov 2025 08:35:13 +0100 (CET)
+Received: from out28-125.mail.aliyun.com (out28-125.mail.aliyun.com
+ [115.124.28.125])
+ by mails.dpdk.org (Postfix) with ESMTP id 928C94042F
+ for <dev@dpdk.org>; Fri,  7 Nov 2025 08:35:10 +0100 (CET)
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.fH1I0MW_1762500905 cluster:ay29) by smtp.aliyun-inc.com;
- Fri, 07 Nov 2025 15:35:05 +0800
+ fp:SMTPD_---.fH1I0QJ_1762500907 cluster:ay29) by smtp.aliyun-inc.com;
+ Fri, 07 Nov 2025 15:35:07 +0800
 From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 To: dimon.zhao@nebula-matrix.com,
 	dev@dpdk.org
-Cc: Alvin Wang <alvin.wang@nebula-matrix.com>,
+Cc: Thomas Monjalon <thomas@monjalon.net>,
+ Alvin Wang <alvin.wang@nebula-matrix.com>,
  Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v1 1/4] net/nbl: change default Rx extension header size to 12
- bytes
-Date: Thu,  6 Nov 2025 23:34:56 -0800
-Message-Id: <20251107073459.3532524-2-dimon.zhao@nebula-matrix.com>
+Subject: [PATCH v1 4/4] net/nbl: update documentation and maintainers
+Date: Thu,  6 Nov 2025 23:34:59 -0800
+Message-Id: <20251107073459.3532524-5-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251107073459.3532524-1-dimon.zhao@nebula-matrix.com>
 References: <20251107073459.3532524-1-dimon.zhao@nebula-matrix.com>
@@ -41,107 +41,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The default Rx extension header size is reduced from 16 bytes to 12 bytes.
-This reduction saves PCIe bandwidth by decreasing packet overhead.
+Update MAINTAINERS.
+Refresh feature list and Coexistence Usage Instructions.
 
 Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 ---
- drivers/net/nbl/nbl_dev/nbl_dev.c         | 4 +++-
- drivers/net/nbl/nbl_dev/nbl_dev.h         | 1 +
- drivers/net/nbl/nbl_hw/nbl_resource.h     | 1 +
- drivers/net/nbl/nbl_hw/nbl_txrx.c         | 6 +++++-
- drivers/net/nbl/nbl_include/nbl_include.h | 3 ++-
- 5 files changed, 12 insertions(+), 3 deletions(-)
+ .mailmap                         | 2 +-
+ MAINTAINERS                      | 2 +-
+ doc/guides/nics/features/nbl.ini | 1 +
+ doc/guides/nics/nbl.rst          | 7 +++++++
+ 4 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index 0381bb74ec..1992568088 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.c
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -87,7 +87,7 @@ static int nbl_dev_txrx_start(struct rte_eth_dev *eth_dev)
- 		param.local_queue_id = i + ring_mgt->queue_offset;
- 		param.intr_en = 0;
- 		param.intr_mask = 0;
--		param.half_offload_en = 1;
-+		param.half_offload_en = ring_mgt->rx_hash_en;
- 		param.extend_header = 1;
- 		param.split = 0;
- 		param.rxcsum = 1;
-@@ -266,6 +266,7 @@ int nbl_rx_queue_setup(struct rte_eth_dev *eth_dev, u16 queue_idx,
- 	param.conf = conf;
- 	param.mempool = mempool;
- 	param.product = adapter->caps.product_type;
-+	param.rx_hash_en = ring_mgt->rx_hash_en;
- 	ret =  disp_ops->start_rx_ring(NBL_DEV_MGT_TO_DISP_PRIV(dev_mgt), &param, &rx_ring->dma);
- 	if (ret) {
- 		NBL_LOG(ERR, "start_rx_ring failed %d", ret);
-@@ -993,6 +994,7 @@ int nbl_dev_init(void *p, struct rte_eth_dev *eth_dev)
- 			       eth_dev->data->mac_addrs[0].addr_bytes);
+diff --git a/.mailmap b/.mailmap
+index e5f0cab364..0cd4b65d75 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -78,6 +78,7 @@ Allen Hubbe <allen.hubbe@amd.com>
+ Alok Makhariya <alok.makhariya@nxp.com>
+ Alok Prasad <palok@marvell.com>
+ Alvaro Karsz <alvaro.karsz@solid-run.com>
++Alvin Wang <alvin.wang@nebula-matrix.com>
+ Alvin Zhang <alvinx.zhang@intel.com>
+ Aman Singh <aman.deep.singh@intel.com>
+ Amaranath Somalapuram <asomalap@amd.com>
+@@ -869,7 +870,6 @@ Kumar Amber <kumar.amber@intel.com>
+ Kumar Sanghvi <kumaras@chelsio.com>
+ Kumara Parameshwaran <kumaraparamesh92@gmail.com> <kparameshwar@vmware.com>
+ Kyle Larose <klarose@sandvine.com>
+-Kyo Liu <kyo.liu@nebula-matrix.com>
+ Lance Richardson <lance.richardson@broadcom.com>
+ Laszlo Ersek <lersek@redhat.com>
+ Laura Stroe <laura.stroe@intel.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7fa01419cf..a0ed5b52d3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1023,8 +1023,8 @@ F: doc/guides/nics/rnp.rst
+ F: doc/guides/nics/features/rnp.ini
  
- 	adapter->state = NBL_ETHDEV_INITIALIZED;
-+	(*dev_mgt)->net_dev->ring_mgt.rx_hash_en = 0;
- 	eth_dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
- 	disp_ops->get_resource_pt_ops(NBL_DEV_MGT_TO_DISP_PRIV(*dev_mgt),
- 				      &(*dev_mgt)->pt_ops, 0);
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.h b/drivers/net/nbl/nbl_dev/nbl_dev.h
-index 99d8fd9483..46683d0aff 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.h
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.h
-@@ -35,6 +35,7 @@ struct nbl_dev_ring_mgt {
- 	u8 tx_ring_num;
- 	u8 rx_ring_num;
- 	u8 active_ring_num;
-+	bool rx_hash_en;
- };
+ Nebulamatrix nbl
++M: Alvin Wang <alvin.wang@nebula-matrix.com>
+ M: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+-M: Kyo Liu <kyo.liu@nebula-matrix.com>
+ M: Leon Yu <leon.yu@nebula-matrix.com>
+ M: Sam Chen <sam.chen@nebula-matrix.com>
+ F: drivers/net/nbl/
+diff --git a/doc/guides/nics/features/nbl.ini b/doc/guides/nics/features/nbl.ini
+index 784ea3eecb..336a11d3aa 100644
+--- a/doc/guides/nics/features/nbl.ini
++++ b/doc/guides/nics/features/nbl.ini
+@@ -12,6 +12,7 @@ Unicast MAC filter   = Y
+ Basic stats          = Y
+ Extended stats       = Y
+ Stats per queue      = Y
++VLAN offload         = P
+ Linux                = Y
+ ARMv8                = Y
+ x86-64               = Y
+diff --git a/doc/guides/nics/nbl.rst b/doc/guides/nics/nbl.rst
+index f41da20eea..9657ee2c87 100644
+--- a/doc/guides/nics/nbl.rst
++++ b/doc/guides/nics/nbl.rst
+@@ -70,6 +70,13 @@ Anolis community:
+ Alternatively, you can contact us to obtain the `nbl_core` code and installation package.
  
- struct nbl_dev_net_mgt {
-diff --git a/drivers/net/nbl/nbl_hw/nbl_resource.h b/drivers/net/nbl/nbl_hw/nbl_resource.h
-index e5d184a2a0..7212778647 100644
---- a/drivers/net/nbl/nbl_hw/nbl_resource.h
-+++ b/drivers/net/nbl/nbl_hw/nbl_resource.h
-@@ -197,6 +197,7 @@ struct nbl_res_rx_ring {
  
- 	u16 avail_used_flags;
- 	bool used_wrap_counter;
-+	bool rx_hash_en;
- 	u16 notify_qid;
- 	u16 exthdr_len;
++Coexistence Between DPDK And Kernel Driver
++-------------
++When the device is bind to the nbl_core driver, and IOMMU in passthrough mode,
++it is necessary to force IOVA to PA via EAL --iova-mode=pa option,
++DPDK works normally only under this configuration.
++
++
+ Prerequisites
+ -------------
  
-diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx.c b/drivers/net/nbl/nbl_hw/nbl_txrx.c
-index 77a982ccfb..3c93765a5f 100644
---- a/drivers/net/nbl/nbl_hw/nbl_txrx.c
-+++ b/drivers/net/nbl/nbl_hw/nbl_txrx.c
-@@ -284,10 +284,14 @@ static int nbl_res_txrx_start_rx_ring(void *priv,
- 	rx_ring->dma_limit_msb = common->dma_limit_msb;
- 	rx_ring->common = common;
- 	rx_ring->notify = hw_ops->get_tail_ptr(NBL_RES_MGT_TO_HW_PRIV(res_mgt));
-+	rx_ring->rx_hash_en = param->rx_hash_en;
- 
- 	switch (param->product) {
- 	case NBL_LEONIS_TYPE:
--		rx_ring->exthdr_len = sizeof(struct nbl_rx_ehdr_leonis);
-+		if (param->rx_hash_en)
-+			rx_ring->exthdr_len = sizeof(struct nbl_rx_ehdr_leonis);
-+		else
-+			rx_ring->exthdr_len = sizeof(struct nbl_rx_ehdr_leonis) - 4;
- 		break;
- 	default:
- 		rx_ring->exthdr_len = sizeof(union nbl_rx_extend_head);
-diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
-index e0f0497e3f..f565e321d4 100644
---- a/drivers/net/nbl/nbl_include/nbl_include.h
-+++ b/drivers/net/nbl/nbl_include/nbl_include.h
-@@ -82,9 +82,10 @@ struct nbl_start_rx_ring_param {
- 	u16 queue_idx;
- 	u16 nb_desc;
- 	u32 socket_id;
--	enum nbl_product_type product;
- 	const struct rte_eth_rxconf *conf;
- 	struct rte_mempool *mempool;
-+	enum nbl_product_type product;
-+	bool rx_hash_en;
- };
- 
- struct nbl_start_tx_ring_param {
 -- 
 2.34.1
 
