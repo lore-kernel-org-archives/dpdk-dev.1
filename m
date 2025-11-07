@@ -2,50 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7519CCFA05
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 07:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57994CCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 07:35:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1046C40280;
-	Fri,  7 Nov 2025 08:23:40 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id B4A3940264;
- Fri,  7 Nov 2025 08:23:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762500218; x=1794036218;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=l7gHsan+19zfxbGmo/YMh4N6hdDTOYMBEd8QFGFcaIQ=;
- b=HixxRcHFuITQtoVj8kX/b/oruGqGZzBwbrZB0GlohmoF+9EDzMKd9beQ
- 4/qLN1/qNRvEr/2k2LWsCRHjwo733PHhVCCvhl2Eb/uMOMXYuTgInH69r
- +M30IZO6cTuRyHNBXuQFe6lKdj6CFVhyP7uB2RjnI1JOyYtpAZxog3yj9
- xDu3dE6vaLYJh0J1j6PT9aIRNXlWSWxjaza1ubEpD0Ag5+wiRwfY0V+R0
- w74Xm8rlYg/KCHjdaJGTumiDY/Vqf2l5I6LaFDsPQ5FLrL6G8jdIGlzk2
- XAbP65f6mFlmW3hAlr4JXSZYdmAvcdxD0ms5NdogNZu/1OxpFIp/KIwQM Q==;
-X-CSE-ConnectionGUID: RXc3gMByRHyr53yESEGRzw==
-X-CSE-MsgGUID: uZdMWXczRp+2fT+kUpX40A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64574230"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; d="scan'208";a="64574230"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Nov 2025 23:23:37 -0800
-X-CSE-ConnectionGUID: MQawvkVfT0C2aXOf67uQ0g==
-X-CSE-MsgGUID: SLX81ijoSdyoMM3J9+MBiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,286,1754982000"; d="scan'208";a="192334131"
-Received: from unknown (HELO zhichao-dpdk..) ([10.239.252.103])
- by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Nov 2025 23:23:34 -0800
-From: Zhichao Zeng <zhichaox.zeng@intel.com>
-To: dev@dpdk.org
-Cc: stable@dpdk.org, Zhichao Zeng <zhichaox.zeng@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>, Wenzhuo Lu <wenzhuo.lu@intel.com>,
- Jeff Guo <jia.guo@intel.com>
-Subject: [PATCH] net/ice: fix statistics read error
-Date: Fri,  7 Nov 2025 15:43:38 +0800
-Message-Id: <20251107074338.957352-1-zhichaox.zeng@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 54B3940264;
+	Fri,  7 Nov 2025 08:35:10 +0100 (CET)
+Received: from out28-100.mail.aliyun.com (out28-100.mail.aliyun.com
+ [115.124.28.100])
+ by mails.dpdk.org (Postfix) with ESMTP id 4ED384021F
+ for <dev@dpdk.org>; Fri,  7 Nov 2025 08:35:07 +0100 (CET)
+Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
+ fp:SMTPD_---.fH1I0G3_1762500901 cluster:ay29) by smtp.aliyun-inc.com;
+ Fri, 07 Nov 2025 15:35:04 +0800
+From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+To: dimon.zhao@nebula-matrix.com,
+	dev@dpdk.org
+Subject: [PATCH v1 0/4] NBL add new features
+Date: Thu,  6 Nov 2025 23:34:55 -0800
+Message-Id: <20251107073459.3532524-1-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -62,49 +36,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The statistics contain 40 bits. The lower 32 bits are read first, followed
-by the upper 8 bits.
+Add support for Tx and Rx VLAN offload.
+Add support for imissed stats.
 
-In some cases, after reading the lower 32 bits, a carry occurs from the
-lower bits, which causes the final statistics to be incorrect.
+Dimon Zhao (4):
+  net/nbl: change default Rx extension header size to 12 bytes
+  net/nbl: add support for Tx and Rx VLAN offload
+  net/nbl: add support for imissed stats
+  net/nbl: update documentation and maintainers
 
-This commit fixes this issue.
+ .mailmap                                      |   2 +-
+ MAINTAINERS                                   |   2 +-
+ doc/guides/nics/features/nbl.ini              |   1 +
+ doc/guides/nics/nbl.rst                       |   7 +
+ drivers/net/nbl/nbl_dev/nbl_dev.c             | 222 +++++++++++++++++-
+ drivers/net/nbl/nbl_dev/nbl_dev.h             |  10 +
+ drivers/net/nbl/nbl_dispatch.c                |  65 +++++
+ drivers/net/nbl/nbl_hw/nbl_resource.h         |   1 +
+ drivers/net/nbl/nbl_hw/nbl_txrx.c             |  53 ++++-
+ drivers/net/nbl/nbl_include/nbl_def_channel.h |   5 +
+ .../net/nbl/nbl_include/nbl_def_dispatch.h    |   4 +
+ .../net/nbl/nbl_include/nbl_def_resource.h    |   4 +
+ drivers/net/nbl/nbl_include/nbl_include.h     |   9 +-
+ 13 files changed, 377 insertions(+), 8 deletions(-)
 
-Fixes: a37bde56314d ("net/ice: support statistics")
-Cc: stable@dpdk.org
-
-Signed-off-by: Zhichao Zeng <zhichaox.zeng@intel.com>
----
- drivers/net/intel/ice/ice_ethdev.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index 513777e372..be08be0826 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -6036,10 +6036,19 @@ ice_stat_update_40(struct ice_hw *hw,
- 		   uint64_t *stat)
- {
- 	uint64_t new_data;
-+	uint32_t lo, hi, lo2;
- 
--	new_data = (uint64_t)ICE_READ_REG(hw, loreg);
--	new_data |= (uint64_t)(ICE_READ_REG(hw, hireg) & ICE_8_BIT_MASK) <<
--		    ICE_32_BIT_WIDTH;
-+	lo = ICE_READ_REG(hw, loreg);
-+	hi = ICE_READ_REG(hw, hireg);
-+	lo2 = ICE_READ_REG(hw, loreg);
-+
-+	if (lo2 < lo) {
-+		lo = ICE_READ_REG(hw, loreg);
-+		hi = ICE_READ_REG(hw, hireg);
-+	}
-+
-+	new_data = (uint64_t)lo;
-+	new_data |= (uint64_t)(hi & ICE_8_BIT_MASK) << ICE_32_BIT_WIDTH;
- 
- 	if (!offset_loaded)
- 		*offset = new_data;
 -- 
 2.34.1
 
