@@ -2,51 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C70E9CCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Nov 2025 07:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28765CCFA18
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Nov 2025 12:59:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 56067402CD;
-	Sat,  8 Nov 2025 08:49:48 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id C6B22400D5;
- Sat,  8 Nov 2025 08:49:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1762588187; x=1794124187;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=Yh/7DfFEZrSbcnYCKDuRUFrVGD11wNw8lNIhCn18fLY=;
- b=V0e0+Br2tgU9k0u1z33taY+JuTR7HbkXbgloXQldndZbjgjD9z+cBNgK
- pkpSk0gdWzGzjJAhOQJJ52yKx+6KyCmAq4NHpuZP4Htl4TUaSwfyBHPOV
- Hij47sDP+p5E8H2M0tIsGLKva8UIZWoYkWSiLd+PZgRT8CgbZoCk1+fkj
- PaGtY1I1zpz1rP8fEGoq6yjXuRjI2Y/iG+4bDmeB8Nefl3v18JqCAiP3+
- Cx9Q77+H9+izs6EluEcgVKNBqODiRvkXRYCxLl2H8n3qEgUVpa/40Yt8Z
- MRbjGDNZ3WvYYPHxNALYNxFT25YZevPWh/44uNtNrYhwy/gqYx4S6Omz8 g==;
-X-CSE-ConnectionGUID: xUYNsovAQIS6nltuTov78A==
-X-CSE-MsgGUID: BMR+ox92Q+Ke1ofzWUaL9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11606"; a="64763039"
-X-IronPort-AV: E=Sophos;i="6.19,289,1754982000"; d="scan'208";a="64763039"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Nov 2025 23:49:46 -0800
-X-CSE-ConnectionGUID: QkKc5/LeTc2TjDsM5fq9Jw==
-X-CSE-MsgGUID: b8s2O48dRiCdVhwoyIpLzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,289,1754982000"; d="scan'208";a="192338473"
-Received: from peter-x299-ud4-pro.png.intel.com ([10.158.122.68])
- by orviesa003.jf.intel.com with ESMTP; 07 Nov 2025 23:49:45 -0800
-From: Song Yoong Siang <yoong.siang.song@intel.com>
-To: Bruce Richardson <bruce.richardson@intel.com>,
- David Zage <david.zage@intel.com>,
- Soumyadeep Hore <soumyadeep.hore@intel.com>, dev@dpdk.org
-Cc: stable@dpdk.org
-Subject: [PATCH v2 1/1] net/e1000: use device timestamp for igc read_clock()
- operation
-Date: Sat,  8 Nov 2025 16:06:13 +0800
-Message-ID: <20251108080613.123969-1-yoong.siang.song@intel.com>
-X-Mailer: git-send-email 2.48.1
+	by mails.dpdk.org (Postfix) with ESMTP id 0EDAE40261;
+	Sat,  8 Nov 2025 13:59:36 +0100 (CET)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
+ [209.85.222.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 44DA540264
+ for <dev@dpdk.org>; Fri,  7 Nov 2025 10:51:43 +0100 (CET)
+Received: by mail-qk1-f175.google.com with SMTP id
+ af79cd13be357-8906eb94264so62950485a.0
+ for <dev@dpdk.org>; Fri, 07 Nov 2025 01:51:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762509102; x=1763113902;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=mTIj8EliqdXUWa0KGp4Jy/hf1p1P+uPkiIWQFfZ64Xo=;
+ b=NkEG8F6s9UfMNIQcOWkMwG2L2ShK1jztF5ZhDUBGAwJd0sq6abiUPsgHyb4nTXzouH
+ pOvO/gRqfXpjwmNxq1bY5JetW+pQLPpfoPXAvgC2Zsp/TMkg6O0JYtq4JlzWGCgtgK0u
+ 4jnArB2yQ0AVFB7bA9ZRXuuzsMRN4eDHTI1N0HGP5B3WIf8xUwPtda2ZM4/F4HyNHgKu
+ QLVOapHyuuJcQYjJekQaxmr5UUjy/vBsx2uz2jWHVlkdPyrOTakKbHFalTa/yKoPoZYx
+ fSmnLA/QvHaprvpm8ecbsHJ1w1n2TaCLtFCdcxLq8a/duIIQvq8n6QjXCm/idGlDJ2+H
+ qmXw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWpEGomSnAM8yISqSZTKElZHKXkxM2ga32biG3I9pAeZ94nPPQhL9EI3Di7pY3Mdl+uYlk=@dpdk.org
+X-Gm-Message-State: AOJu0YylrfXX0b1zOxnUaO+6b7ZpdlzirL/zseQqtaCCoNZCgPC34o50
+ gJo5urNDjOAl2V2D3LKqx0gHyEPCz6QV/VOBcwaOjfPrDlNQPfHYu5chLbGb9UkRi9FaoUkLU1q
+ WbkKZnERwR6pXREwJ/rFmTon0B5Gyg4s=
+X-Gm-Gg: ASbGnctFNDHECM925PNK6lmx5SNZ0EW75/RCSDcvdlbT05wUEc9uDXyjq+jO9cgzez0
+ c7IEkMPEUN9nAzSSlehyU7c0Exh22CiFay140lVfUp4nOrHG8Y738fgM/h/zLxkYisUITttJbdK
+ ZxW6Lgf8eKPuo5xDKwzmP8+xm/f5MGLshZ/P3Cl43BlGFaG6P4+aUmRMehh8c5U+OgIPzS18q3w
+ BV2vIzZrFeR7mxf6FshTp3T4rX3nLVFSUxQWf1s6c0uT5AB4JXV+AddHq1rmqK+wYRGYDNMiBjR
+ qD57T2cMH1ggfdCFrQ==
+X-Google-Smtp-Source: AGHT+IFxC5VlQQYivM2sz9s3MICTdv9CSiW7yD7GN+I9RNS48FcrOh2Ce7aa9NsQAl6BiF7yiMS6Ff+7obkKJJra3W4=
+X-Received: by 2002:a05:620a:1aa2:b0:84a:d3ce:c749 with SMTP id
+ af79cd13be357-8b2453520b1mr301017185a.64.1762509102474; Fri, 07 Nov 2025
+ 01:51:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251106163807.201451-1-hemant.agrawal@nxp.com>
+ <20251106163807.201451-2-hemant.agrawal@nxp.com>
+ <20251106112911.0c50107b@phoenix>
+In-Reply-To: <20251106112911.0c50107b@phoenix>
+From: Maxime Leroy <maxime@leroys.fr>
+Date: Fri, 7 Nov 2025 10:51:31 +0100
+X-Gm-Features: AWmQ_bm__hLfi56Cez46NQYRDr2Bo_tUeEclA3hyVwHkxJt2bfdnNSSZzLtvSnc
+Message-ID: <CAHHRULVJe45=gNq1in6eHo5yEq-+QguxeDGfVHeC8D3KgMDdqQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] net/dpaa2: clear active VDQ state when freeing Rx
+ queues
+To: stephen@networkplumber.org
+Cc: Hemant Agrawal <hemant.agrawal@nxp.com>, dev@dpdk.org, jun.yang@nxp.com,
+ stable@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000f768eb0642fe2062"
+X-Mailman-Approved-At: Sat, 08 Nov 2025 13:59:34 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,59 +69,97 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Change eth_igc_read_clock() to read from hardware timestamp registers
-(E1000_SYSTIML/E1000_SYSTIMH) instead of using system clock_gettime().
+--000000000000f768eb0642fe2062
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This ensures that the clock reading is consistent with the hardware's
-internal time base used for Qbv cycle and launch time scheduling,
-providing better accuracy for Time-Sensitive Networking applications.
+Le jeu. 6 nov. 2025, 20:29, Stephen Hemminger <stephen@networkplumber.org>
+a =C3=A9crit :
 
-Fixes: 9630f7c71ecd ("net/igc: enable launch time offloading")
-Cc: stable@dpdk.org
+> On Thu,  6 Nov 2025 22:08:06 +0530
+> Hemant Agrawal <hemant.agrawal@nxp.com> wrote:
+>
+> > +static void
+> > +dpaa2_clear_queue_active_dps(struct dpaa2_queue *q, int num_lcores)
+> > +{
+> > +     int i;
+> > +
+> > +     for (i =3D 0; i < num_lcores; i++) {
+> > +             struct queue_storage_info_t *qs =3D q->q_storage[i];
+> > +
+> > +             if (!qs)
+> > +                     continue;
+> > +
+> > +             if (qs->active_dqs) {
+> > +                     clear_swp_active_dqs(qs->active_dpio_id);
+> > +                     qs->active_dqs =3D NULL;
+> > +             }
+> > +     }
+> > +}
+> > +
+>
+> Why not use RTE_LCORE_FOREACH() here?
+>
 
-Signed-off-by: David Zage <david.zage@intel.com>
-Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
----
-v1: https://patches.dpdk.org/project/dpdk/patch/20251107031507.3890366-1-yoong.siang.song@intel.com/
+For the loop, I did it the same way as in dpaa2_queue_storage_alloc(), to
+stay aligned with the rest of the driver instead of using
+RTE_LCORE_FOREACH().
 
-changelog:
-v1 -> v2
-- reuse the existing eth_igc_timesync_read_time() (Soumyadeep).
----
- drivers/net/intel/e1000/igc_ethdev.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+Thanks Hemant for upstreaming my patch. However, you added my email in
+.mailmap as a new entry =E2=80=94 it should instead be added as a second em=
+ail
+under the existing Maxime Leroy entry.
 
-diff --git a/drivers/net/intel/e1000/igc_ethdev.c b/drivers/net/intel/e1000/igc_ethdev.c
-index b9c91d2446..d4edc82668 100644
---- a/drivers/net/intel/e1000/igc_ethdev.c
-+++ b/drivers/net/intel/e1000/igc_ethdev.c
-@@ -2813,6 +2813,12 @@ eth_igc_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts)
- {
- 	struct e1000_hw *hw = IGC_DEV_PRIVATE_HW(dev);
- 
-+	/*
-+	 * Reading the SYSTIML register latches the upper 32 bits to the SYSTIMH
-+	 * shadow register for coherent access. As long as we read SYSTIML first
-+	 * followed by SYSTIMH, we avoid race conditions where the time rolls
-+	 * over between the two register reads.
-+	 */
- 	ts->tv_nsec = E1000_READ_REG(hw, E1000_SYSTIML);
- 	ts->tv_sec = E1000_READ_REG(hw, E1000_SYSTIMH);
- 
-@@ -2972,10 +2978,10 @@ eth_igc_timesync_disable(struct rte_eth_dev *dev)
- static int
- eth_igc_read_clock(__rte_unused struct rte_eth_dev *dev, uint64_t *clock)
- {
--	struct timespec system_time;
-+	struct timespec ts;
- 
--	clock_gettime(CLOCK_REALTIME, &system_time);
--	*clock = system_time.tv_sec * NSEC_PER_SEC + system_time.tv_nsec;
-+	eth_igc_timesync_read_time(dev, &ts);
-+	*clock = rte_timespec_to_ns(&ts);
- 
- 	return 0;
- }
--- 
-2.48.1
+>
 
+--000000000000f768eb0642fe2062
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto"><div><br><br><div class=3D"gmail_quote gmail_quote_contai=
+ner"><div dir=3D"ltr" class=3D"gmail_attr">Le jeu. 6 nov. 2025, 20:29, Step=
+hen Hemminger &lt;<a href=3D"mailto:stephen@networkplumber.org">stephen@net=
+workplumber.org</a>&gt; a =C3=A9crit=C2=A0:<br></div><blockquote class=3D"g=
+mail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-l=
+eft:1ex">On Thu,=C2=A0 6 Nov 2025 22:08:06 +0530<br>
+Hemant Agrawal &lt;<a href=3D"mailto:hemant.agrawal@nxp.com" target=3D"_bla=
+nk" rel=3D"noreferrer">hemant.agrawal@nxp.com</a>&gt; wrote:<br>
+<br>
+&gt; +static void<br>
+&gt; +dpaa2_clear_queue_active_dps(struct dpaa2_queue *q, int num_lcores)<b=
+r>
+&gt; +{<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0int i;<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0for (i =3D 0; i &lt; num_lcores; i++) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0struct queue_storage_=
+info_t *qs =3D q-&gt;q_storage[i];<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!qs)<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0continue;<br>
+&gt; +<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (qs-&gt;active_dqs=
+) {<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0clear_swp_active_dqs(qs-&gt;active_dpio_id);<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0qs-&gt;active_dqs =3D NULL;<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +=C2=A0 =C2=A0 =C2=A0}<br>
+&gt; +}<br>
+&gt; +<br>
+<br>
+Why not use RTE_LCORE_FOREACH() here?<br></blockquote></div></div><div dir=
+=3D"auto"><br></div><div dir=3D"auto">For the loop, I did it the same way a=
+s in dpaa2_queue_storage_alloc(), to stay aligned with the rest of the driv=
+er instead of using RTE_LCORE_FOREACH().</div><div dir=3D"auto"><br></div><=
+div dir=3D"auto">Thanks Hemant for upstreaming my patch. However, you added=
+ my email in .mailmap as a new entry =E2=80=94 it should instead be added a=
+s a second email under the existing Maxime Leroy entry.</div><div dir=3D"au=
+to"><div class=3D"gmail_quote gmail_quote_container"><blockquote class=3D"g=
+mail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-l=
+eft:1ex">
+</blockquote></div></div></div>
+
+--000000000000f768eb0642fe2062--
