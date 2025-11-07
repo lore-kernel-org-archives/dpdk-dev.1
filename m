@@ -2,37 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C07CCFA05
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 14:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 775D0CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 14:36:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A044340264;
-	Fri,  7 Nov 2025 15:36:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B3CED402A3;
+	Fri,  7 Nov 2025 15:36:33 +0100 (CET)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 538A34021F
- for <dev@dpdk.org>; Fri,  7 Nov 2025 15:36:08 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id CFC4A40264
+ for <dev@dpdk.org>; Fri,  7 Nov 2025 15:36:31 +0100 (CET)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 533AD20467;
- Fri,  7 Nov 2025 15:36:07 +0100 (CET)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B98B520467;
+ Fri,  7 Nov 2025 15:36:31 +0100 (CET)
 Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
  smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Fri, 7 Nov 2025 15:36:06 +0100
+ Fri, 7 Nov 2025 15:36:30 +0100
 From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
 To: dev@dpdk.org,
 	Thomas Monjalon <thomas@monjalon.net>
 Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH] mbuf: improve mbuf comments
-Date: Fri,  7 Nov 2025 14:35:55 +0000
-Message-ID: <20251107143555.612710-1-mb@smartsharesystems.com>
+Subject: [PATCH v2] mbuf: improve mbuf comments
+Date: Fri,  7 Nov 2025 14:36:29 +0000
+Message-ID: <20251107143629.612723-1-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251105112810.20838-1-mb@smartsharesystems.com>
 References: <20251105112810.20838-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 07 Nov 2025 14:36:06.0177 (UTC)
- FILETIME=[D9AAD110:01DC4FF3]
+X-OriginalArrivalTime: 07 Nov 2025 14:36:30.0599 (UTC)
+ FILETIME=[E8395170:01DC4FF3]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
