@@ -2,75 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 959D4CCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Nov 2025 01:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9C3CCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Nov 2025 01:16:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5F52B4026D;
-	Sat,  8 Nov 2025 02:08:10 +0100 (CET)
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com
- [209.85.215.175])
- by mails.dpdk.org (Postfix) with ESMTP id 1325F40261
- for <dev@dpdk.org>; Sat,  8 Nov 2025 02:08:08 +0100 (CET)
-Received: by mail-pg1-f175.google.com with SMTP id
- 41be03b00d2f7-b62e7221351so1089376a12.1
- for <dev@dpdk.org>; Fri, 07 Nov 2025 17:08:08 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3A40A402B6;
+	Sat,  8 Nov 2025 02:16:47 +0100 (CET)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
+ [209.85.214.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 5CBB740261
+ for <dev@dpdk.org>; Sat,  8 Nov 2025 02:16:46 +0100 (CET)
+Received: by mail-pl1-f175.google.com with SMTP id
+ d9443c01a7336-29516a36affso11817945ad.3
+ for <dev@dpdk.org>; Fri, 07 Nov 2025 17:16:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762564088;
- x=1763168888; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762564605;
+ x=1763169405; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=O9ut2kTRQ709p5Y+L/hyuHYY+d6P/5TAqrR1Nk0cZSg=;
- b=WK3yDTICor2z84Le9DP5qEKK86RxNFRHJD966K4FDm3MyD1WRL3y0u9bwMVcUbZUSS
- He6QxoWdUQ6ZkcnVojfycejelwxlAmNDjy5nXiPnF7lZIAtCcAxMacvFmuvSoulZt34M
- hq7L/bNAUUQFabhM7iGp09sMqZ6E1wY+5by98AOn8IbHw61Su7p2qLmPBzYTu6lYbKYc
- 8EjJds+qTWc1m5NRPTSsOlARcvjHucTd5MBIqUn2x86aRhGydomJxYAjKl6SxONItR8Z
- dElYy4FHSB5GTxDstzWyzFTRBatQzdXmWxwKn4wxef5rrZQvGuCbDkxaKFM2LeU2fW81
- 64Ow==
+ bh=Vh8d2LfgSlILJ3/g5YufOtJvMNZSbBzt7cb5wkuwE6w=;
+ b=XfrVaBqy1gFVeaYfMuS5hh+rTLW/nMTpla18JHdMf2b8useCYKlSYcOdVXNktD2coP
+ mqeGViXV1kXl6s+LW18s4vsXONgTIaKCmzD7AbqZXIADJRQIx4zqOrzZI386F3Frr7wF
+ peaTXg8Aqj3mr4MMtwWuzY7UiklyEg8bab8AafdBp/cdFUt04F6vfMBiw3s4cl7k78zi
+ yCQf8QClasZ4yUjr4OQ5IzDegAkbimKTZe7J/d5+sXnYBuXDwfEajYklWMe9XRDpNAll
+ 2BJOVin9Oh5lhVEVzvYI8X9Ya1+Z0PWM7PySlUcFvojbQo6pSHnKGhFMLzcdcH5ht/tL
+ mK5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762564088; x=1763168888;
+ d=1e100.net; s=20230601; t=1762564605; x=1763169405;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=O9ut2kTRQ709p5Y+L/hyuHYY+d6P/5TAqrR1Nk0cZSg=;
- b=v1tX2MePx7JdKiAL4BjrXVD1AVjUlkuBJvI4+ATJbJ6dwgns7Rmhm5xZFfKao8tKo8
- LOM15D06m1Prn0s29/BpvnM7RpUGSWYCC2eEHRjcatzAU6fhLBpq37DNlJcY+bTI839U
- eYzMxi8R+Vz/2mPDNm0ntJntAEvKB6RuLxiIumeK1C0sWn10y/z7b4gNU3gOgK4LKn+G
- FuEDC1L28Q0ipmH5qlQMjWPA2BAWbcZYt7mfIuC9zTrSqs3e+XBHxfifCVYKcf8HKaDm
- AZLoeYLigQ9NIpvfhFFiZwYOmbmD0+uCXzohpmxJb0nhnLF4KkiG+vMDZU9HMRIqAC9/
- o4cg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCU7MfeypVCIqPA/X5bj1C6XOVGoKwfiCoD4Rzq4/WdQM5IQWAdiGhBu4q/Y2ADxC58YrRw=@dpdk.org
-X-Gm-Message-State: AOJu0YyQKuHb20dxHSi0vq+OauZAGqzKAJMcIMrPouwG1D1yuFvq4FnR
- HGZt9kwb3FBwkROi7JUeLlfxtiqVlwi49TOQIKHZCW23Txq91LHB/jXTdtky+9K4/ek=
-X-Gm-Gg: ASbGncvLaruQssDfAsoCgXDHVq3ZAzNd5XdWBloNdIGAEQzHv5Jn//ulmRr50QQ0OEa
- yRGzahEz4vmPCd/PJCwC1pfNAB8ir+VovgZ7QuXRSCkVHrR0gMEeg3qx6cpssSU7uMWmL3kLjev
- Qurr+07udBIG8nR9TzXiO8R2HU2AmqSMM3MCCSS1l4jUed+SShX/CnyZD6bx/+RH0WAui6SH5jm
- itZuupGp4MnmsDBUPdCq93zFRRvvYou6WmVA1j4H6JAlAAA0Gj/9rPDu2fNiUnO+xI+1qyuUDGw
- lGGkJAJoQg2IpnH/PZCwP0f94kGunyG7Scylx7NfU+Bi7ImjUhQPmxGmgKsVUu5o0QDhYbjXW5L
- 5MhC6rDxz54W2D9gwrK+HDlC4IjSDCad97gZ9yr3+K6nDEUlKCT2zfufbFR5SdkowbgmxBY5wyJ
- r5hHTFlraUMMk66uxrSAEIjkyJ8DfY3vpTDg==
-X-Google-Smtp-Source: AGHT+IGTWpFQafwS6lDtm+7guOzJIsqfDcIgocxIvrtstleFS/mAupE4wShFYXQ/2WClW5dk7ZzrOg==
-X-Received: by 2002:a17:902:f70a:b0:295:8da5:c634 with SMTP id
- d9443c01a7336-297e5409d9cmr11515195ad.9.1762564087879; 
- Fri, 07 Nov 2025 17:08:07 -0800 (PST)
+ bh=Vh8d2LfgSlILJ3/g5YufOtJvMNZSbBzt7cb5wkuwE6w=;
+ b=hcRmzTKqxX/hOGELvPWXRG2u8+tem1FLuC9z1mRpT/IIPPXnqxh12fUbPjl2fU0XdZ
+ UWWs4RB448ATD/RzI62YMw9RytTWdmZmV/yQia675LGsBgZqBP8sT4Rk+pSz6J17GQPj
+ O6RFgL43lkKyyQM9eWVm6206BofhhrUVwoIKJxbTyA4hHR36SwB8k7bNSWPRT8wnD04g
+ xEIbthV3g+H2PoEw9ULNlNuXvH3IO2La9btdAM4KAhEZfIs1kum48wU1opObG9s+RRMp
+ jvUD/bKddKTWVXiFyuoiaJl9/W4Mqo5dUfY4aHatteiBAd/SWiSfVEdGz9SRVl+SFSIZ
+ gkaA==
+X-Gm-Message-State: AOJu0YxREUv03mQBtGOfXt6KGF56YW/TXZc2wMHB7uUv5GZfWJb0DHS7
+ FacUS1Gpd+8e9pDoB6caS2DxIYBbkAdzZGndEnP9Wy7Yni8vbPPN+/nA+chKYRvc+04=
+X-Gm-Gg: ASbGnctAc5n4syE4dZYEgqqAygIUzadaJnUsYC8UdLQwVgcsOLu688WVSBYnuz4WAh1
+ pmoQqkWmGhlJ0AIBRc8l1W6IjYoVjIAT1fDcCMWCDjyRf1V1/UQmu1YH0i//oJwKc9xKYWwWZd2
+ 62APDz/4SEccbY6BiUCjDwx6Nzjay0BWNgR6TVeA1wA8C6NE7EBAyt0ah9xx4/yBE+Ay+KLoT+e
+ wfns97O6Sm9wXI4eUyguKHSKlzX90f6mHHWgoxVnjxtW1Y0Qtm1nPeN3w1dLskaeTBvLvuMOj+S
+ VKsaTGViIyslM3/cXxcTmjeD0waJuJt02BOz5lflNe6vO5n8/DW+x7UiJKr6lcGOHaJ8upORMhn
+ jgY6d2NbQGYoNsS/7iNvKPBdBiv2IvNK3UhfdoFDPbIPEjDNDdUwg/LhIfEpPqIpvIM0ghOuLon
+ IJp5/jN9iohH9NwFEASBVkDMC0hnvgi1bU2sI99bAjOE/5
+X-Google-Smtp-Source: AGHT+IHwbGHp2j5dnTY4wh6pw9B2hSEnpNUzLKmyobN0bmSwDoqZTks6oBcnkc/jVHi+0Kh2jT1yVw==
+X-Received: by 2002:a17:902:e947:b0:294:fc77:f021 with SMTP id
+ d9443c01a7336-297e56e1291mr11104425ad.49.1762564605320; 
+ Fri, 07 Nov 2025 17:16:45 -0800 (PST)
 Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-29650c5caf1sm71850385ad.34.2025.11.07.17.08.07
+ d9443c01a7336-29651045bf0sm72782535ad.48.2025.11.07.17.16.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 07 Nov 2025 17:08:07 -0800 (PST)
-Date: Fri, 7 Nov 2025 17:08:05 -0800
+ Fri, 07 Nov 2025 17:16:45 -0800 (PST)
+Date: Fri, 7 Nov 2025 17:16:42 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-Subject: Re: [PATCH v4 3/5] bpf: add a test for BPF ELF load
-Message-ID: <20251107170805.12e51921@phoenix>
-In-Reply-To: <2951855794674cada3b9ab9574699917@huawei.com>
-References: <20251030173732.246435-1-stephen@networkplumber.org>
- <20251104160843.304044-1-stephen@networkplumber.org>
- <20251104160843.304044-4-stephen@networkplumber.org>
- <2951855794674cada3b9ab9574699917@huawei.com>
+To: Yang Ming <ming.1.yang@nokia-sbell.com>
+Cc: dev@dpdk.org, bingz@nvidia.com, dsosnowski@nvidia.com,
+ julien.meunier@nokia.com
+Subject: Re: [PATCH v2 1/2] net/mlx5: enhance socket file path
+Message-ID: <20251107171642.5b843c92@phoenix>
+In-Reply-To: <20250321132750.4237-1-ming.1.yang@nokia-sbell.com>
+References: <20241213092444.2987-1-ming.1.yang@nokia-sbell.com>
+ <20250321132750.4237-1-ming.1.yang@nokia-sbell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -87,26 +83,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 7 Nov 2025 17:33:08 +0000
-Marat Khalili <marat.khalili@huawei.com> wrote:
+On Fri, 21 Mar 2025 21:27:49 +0800
+Yang Ming <ming.1.yang@nokia-sbell.com> wrote:
 
-> > +/*
-> > + * Test BPF function that will be loaded from ELF
-> > + * This function:
-> > + * 1. Reads values from input structure
-> > + * 2. Performs some computations
-> > + * 3. Writes results to output structure
-> > + * 4. Returns sum of values
-> > + */
-> > +__attribute__((section("func"), used))  
+> The directory /var/tmp may not be writable in a container's
+> read-only mode. To address this issue, use the DPDK runtime
+> directory as an alternative when /var/tmp is not writable.
 > 
-> Do we need `used` here and in other section attributes? I do not thing `clang
-> -c` will eliminate non-static/inline functions from the object file, or maybe I
-> don't understand the purpose (perhaps needs a comment).
+> Cc: bingz@nvidia.com
+> Cc: dsosnowski@nvidia.com
+> Cc: stephen@networkplumber.org
+> Cc: julien.meunier@nokia.com
 > 
-> > +uint64_t
-> > +test_func(struct dummy_vect8 *arg)
+> Signed-off-by: Yang Ming <ming.1.yang@nokia-sbell.com>
+> ---
+>  drivers/net/mlx5/linux/mlx5_socket.c | 23 ++++++++++++++++++-----
+>  1 file changed, 18 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/mlx5/linux/mlx5_socket.c b/drivers/net/mlx5/linux/mlx5_socket.c
+> index 6ce0e59643..270a105f1d 100644
+> --- a/drivers/net/mlx5/linux/mlx5_socket.c
+> +++ b/drivers/net/mlx5/linux/mlx5_socket.c
+> @@ -20,7 +20,8 @@
+>  
+>  /* PMD socket service for tools. */
+>  
+> -#define MLX5_SOCKET_PATH "/var/tmp/dpdk_net_mlx5_%d"
+> +#define MLX5_SOCKET_DPATH "/var/tmp"
+> +#define MLX5_SOCKET_FNAME "dpdk_net_mlx5"
+>  #define MLX5_ALL_PORT_IDS 0xffff
 
-The BPF loader in DPDK uses section names as the way to find functions.
-The original version of this code was autogenerated off of examples used
-in kernel BPF.
+Using /tmp or /var/tmp is non-standard on modern Linux distros.
+Systemd based systems use /run for this.
+Would be better to use abstract sockets, but that might break some containers.
+
+Example:
+$ ss -x | awk '{ print $5}' | grep -v '^@' | grep -v '*' | sort -u
+/home/shemminger/.cache/ibus/dbus-d8xKr3Ya
+Local
+/run/dbus/system_bus_socket
+/run/gdm3/dbus/dbus-6Kd7KbFO
+/run/gdm3/dbus/dbus-RNBHo0m9
+/run/systemd/io.systemd.ManagedOOM
+/run/systemd/journal/dev-log
+/run/systemd/journal/socket
+/run/systemd/journal/stdout
+/run/systemd/notify
+/run/systemd/oom/io.systemd.ManagedOOM
+/run/user/1000/at-spi/bus
+/run/user/1000/bus
+/run/user/1000/.dbus-proxy/a11y-bus-proxy-HBPCF3
+/run/user/1000/.dbus-proxy/session-bus-proxy-1HPCF3
+/run/user/1000/.dbus-proxy/system-bus-proxy-HIPCF3
+/run/user/1000/emacs/server
+/run/user/1000/.flatpak-helper/pkcs11-flatpak-16622
+/run/user/1000/gvfsd/socket-r1TYSmLV
+/run/user/1000/gvfsd/socket-Rk6Pe47X
+/run/user/1000/pipewire-0
+/run/user/1000/pipewire-0-manager
+/run/user/1000/pulse/native
+/run/user/1000/speech-dispatcher/speechd.sock
+/run/user/1000/wayland-0
+/run/user/1000/wayland-proxy-4315
+
+
