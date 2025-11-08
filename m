@@ -2,68 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 533BDCCF9F8
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Nov 2025 21:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 959D4CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Sat,  8 Nov 2025 01:08:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84F37402E3;
-	Fri,  7 Nov 2025 22:53:43 +0100 (CET)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com
- [209.85.208.182])
- by mails.dpdk.org (Postfix) with ESMTP id BDA8E40261
- for <dev@dpdk.org>; Fri,  7 Nov 2025 22:53:42 +0100 (CET)
-Received: by mail-lj1-f182.google.com with SMTP id
- 38308e7fff4ca-37a415a22ecso11699871fa.0
- for <dev@dpdk.org>; Fri, 07 Nov 2025 13:53:42 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5F52B4026D;
+	Sat,  8 Nov 2025 02:08:10 +0100 (CET)
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com
+ [209.85.215.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 1325F40261
+ for <dev@dpdk.org>; Sat,  8 Nov 2025 02:08:08 +0100 (CET)
+Received: by mail-pg1-f175.google.com with SMTP id
+ 41be03b00d2f7-b62e7221351so1089376a12.1
+ for <dev@dpdk.org>; Fri, 07 Nov 2025 17:08:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1762552422; x=1763157222; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762564088;
+ x=1763168888; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=4EeT/+m6WP/Zxi5YDBFpvceQAszMXMiF+N+sBRUBVbU=;
- b=eN01bnL+d9qaL9NxJKpwXgPwf4aaBNpcWF5nrg/NNUg52EpNAwPuAG8gcnVE3BGV1f
- mBQrdp932Hp66lesiXSoSDrncJwvrFaa4KP5vSQE1FFy6IZPn1DLscq4uvZhHjRE1oIT
- cBO213766g+qXZMP9ObSRP2PPOv0RY1TwJQdU=
+ bh=O9ut2kTRQ709p5Y+L/hyuHYY+d6P/5TAqrR1Nk0cZSg=;
+ b=WK3yDTICor2z84Le9DP5qEKK86RxNFRHJD966K4FDm3MyD1WRL3y0u9bwMVcUbZUSS
+ He6QxoWdUQ6ZkcnVojfycejelwxlAmNDjy5nXiPnF7lZIAtCcAxMacvFmuvSoulZt34M
+ hq7L/bNAUUQFabhM7iGp09sMqZ6E1wY+5by98AOn8IbHw61Su7p2qLmPBzYTu6lYbKYc
+ 8EjJds+qTWc1m5NRPTSsOlARcvjHucTd5MBIqUn2x86aRhGydomJxYAjKl6SxONItR8Z
+ dElYy4FHSB5GTxDstzWyzFTRBatQzdXmWxwKn4wxef5rrZQvGuCbDkxaKFM2LeU2fW81
+ 64Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762552422; x=1763157222;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20230601; t=1762564088; x=1763168888;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=4EeT/+m6WP/Zxi5YDBFpvceQAszMXMiF+N+sBRUBVbU=;
- b=C8/XykjiCVT1soo+E8jEWaePDqR+dHHWGdU+YSvNRamXZmsnkPjokXaaQGOa41rewL
- WNgHrInqH9ver/NKiZr4HYLzZlKWjXe2oCYsWwcNgkK8KIYMVqO5NTPav3GLEU0Koirg
- 47WL1f/uHbefAPkWkAplcxfstuCIJW5cBxE2ceR85//EWe8mum3mh7nf+EMSexsSNP+g
- tciNH20k6LwQ9JwQiZcoip5yeZW7f6hAQoWZmNc9QpUmReK6nKydoY2jLZewIkY43r42
- UF4PgzEcj7b3pYTVvFLMiyheJSMiT0MKZBlvCaPCIoH66KJ99wceHPYeFWeNej6r0ixn
- bMxg==
+ bh=O9ut2kTRQ709p5Y+L/hyuHYY+d6P/5TAqrR1Nk0cZSg=;
+ b=v1tX2MePx7JdKiAL4BjrXVD1AVjUlkuBJvI4+ATJbJ6dwgns7Rmhm5xZFfKao8tKo8
+ LOM15D06m1Prn0s29/BpvnM7RpUGSWYCC2eEHRjcatzAU6fhLBpq37DNlJcY+bTI839U
+ eYzMxi8R+Vz/2mPDNm0ntJntAEvKB6RuLxiIumeK1C0sWn10y/z7b4gNU3gOgK4LKn+G
+ FuEDC1L28Q0ipmH5qlQMjWPA2BAWbcZYt7mfIuC9zTrSqs3e+XBHxfifCVYKcf8HKaDm
+ AZLoeYLigQ9NIpvfhFFiZwYOmbmD0+uCXzohpmxJb0nhnLF4KkiG+vMDZU9HMRIqAC9/
+ o4cg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCXGqZ5q2L330csrNJLTtQgdsyVAtHTDBVZhzy+YGIq8AayeoynyIBnZUBQHEdZUeAuFlk0=@dpdk.org
-X-Gm-Message-State: AOJu0YzE3AO0idoZkj7jv965/RMb0N5yhgZGu6R1KQxrL4hvDLa7LoeC
- phLaS6W2VMper4vtuZFIdk9bSCe5fqPV5aoDh3NnFh4N8QVDMUKj81Xw2I2z3+rHNs4GsB+B3kg
- MAufo14vKOZ80Ddd55sgPCoWtrVrpXK4F3UcSn5L0wg==
-X-Gm-Gg: ASbGnctJ8dyQ0NqsnFh58iKLUCRvYAQXFcRR8sh3sUVJuQgapMsdMdGj7gvY5sO2ShU
- /PlxFH20MiRuYtKvvVmIGXqXeGrQGoGnFuK+HRfjonmt7e935fYED7K65AY6j4SvMX7mbyjcA8F
- z3fdB0G7oSfYQayoCNUrhJCAtB3hsDSSJfzR+ZKGbbgbiQI21gugraPu4mDq6sJfutdMJ2biKul
- AEQ6S9U1Fpt+G3PY1aHnMwk4AGXEH6cBnKlpmJo80EGRYRgQotOSx6aoz89HZeF3rNI/jSIqoA=
-X-Google-Smtp-Source: AGHT+IEOgp1lWWQb5Hc78moMClzGZmbLmM1lrUApVW0F66odsr6H2rQTfCWO4sC3/l6RBtKJ6hib9hWfgKank8xAfhU=
-X-Received: by 2002:a05:651c:19ab:b0:37a:3823:5a9a with SMTP id
- 38308e7fff4ca-37a7657036amr9225541fa.16.1762552422058; Fri, 07 Nov 2025
- 13:53:42 -0800 (PST)
+ AJvYcCU7MfeypVCIqPA/X5bj1C6XOVGoKwfiCoD4Rzq4/WdQM5IQWAdiGhBu4q/Y2ADxC58YrRw=@dpdk.org
+X-Gm-Message-State: AOJu0YyQKuHb20dxHSi0vq+OauZAGqzKAJMcIMrPouwG1D1yuFvq4FnR
+ HGZt9kwb3FBwkROi7JUeLlfxtiqVlwi49TOQIKHZCW23Txq91LHB/jXTdtky+9K4/ek=
+X-Gm-Gg: ASbGncvLaruQssDfAsoCgXDHVq3ZAzNd5XdWBloNdIGAEQzHv5Jn//ulmRr50QQ0OEa
+ yRGzahEz4vmPCd/PJCwC1pfNAB8ir+VovgZ7QuXRSCkVHrR0gMEeg3qx6cpssSU7uMWmL3kLjev
+ Qurr+07udBIG8nR9TzXiO8R2HU2AmqSMM3MCCSS1l4jUed+SShX/CnyZD6bx/+RH0WAui6SH5jm
+ itZuupGp4MnmsDBUPdCq93zFRRvvYou6WmVA1j4H6JAlAAA0Gj/9rPDu2fNiUnO+xI+1qyuUDGw
+ lGGkJAJoQg2IpnH/PZCwP0f94kGunyG7Scylx7NfU+Bi7ImjUhQPmxGmgKsVUu5o0QDhYbjXW5L
+ 5MhC6rDxz54W2D9gwrK+HDlC4IjSDCad97gZ9yr3+K6nDEUlKCT2zfufbFR5SdkowbgmxBY5wyJ
+ r5hHTFlraUMMk66uxrSAEIjkyJ8DfY3vpTDg==
+X-Google-Smtp-Source: AGHT+IGTWpFQafwS6lDtm+7guOzJIsqfDcIgocxIvrtstleFS/mAupE4wShFYXQ/2WClW5dk7ZzrOg==
+X-Received: by 2002:a17:902:f70a:b0:295:8da5:c634 with SMTP id
+ d9443c01a7336-297e5409d9cmr11515195ad.9.1762564087879; 
+ Fri, 07 Nov 2025 17:08:07 -0800 (PST)
+Received: from phoenix (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-29650c5caf1sm71850385ad.34.2025.11.07.17.08.07
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 07 Nov 2025 17:08:07 -0800 (PST)
+Date: Fri, 7 Nov 2025 17:08:05 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+Subject: Re: [PATCH v4 3/5] bpf: add a test for BPF ELF load
+Message-ID: <20251107170805.12e51921@phoenix>
+In-Reply-To: <2951855794674cada3b9ab9574699917@huawei.com>
+References: <20251030173732.246435-1-stephen@networkplumber.org>
+ <20251104160843.304044-1-stephen@networkplumber.org>
+ <20251104160843.304044-4-stephen@networkplumber.org>
+ <2951855794674cada3b9ab9574699917@huawei.com>
 MIME-Version: 1.0
-References: <20251024174702.600147-1-dmarx@iol.unh.edu>
- <20251024185056.607160-1-dmarx@iol.unh.edu>
- <20251024185056.607160-3-dmarx@iol.unh.edu>
- <CAJvnSUAHYDFrZ2cEZPUxdunAe95MpQbvwpU7AUtGFK9q+XRmKA@mail.gmail.com>
-In-Reply-To: <CAJvnSUAHYDFrZ2cEZPUxdunAe95MpQbvwpU7AUtGFK9q+XRmKA@mail.gmail.com>
-From: Dean Marx <dmarx@iol.unh.edu>
-Date: Fri, 7 Nov 2025 16:53:30 -0500
-X-Gm-Features: AWmQ_bkxFlB0F_UjJLdCIc7hvVb8witMVoIsDve-R94LHpqHXjHvfccvZmygjcs
-Message-ID: <CABD7UXMC+XNBcuXNrbd85mD7jANuqLrx_zYmJQECz+2URCr2jQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] dts: add virtio forwarding test suite
-To: Patrick Robb <probb@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -77,36 +87,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Nov 7, 2025 at 3:49=E2=80=AFPM Patrick Robb <probb@iol.unh.edu> wro=
-te:
->
->
->
-> Is it the case that if I already have tap0 created on my SUT machine, thi=
-s testsuite will create a tap1 and then the testsuite will fail to run prop=
-erly on the line above (because tap1 won't be brought up)? If there is no w=
-ay of getting around this limitation, we should add a new capability for "t=
-ap interface names available" or something and skip if tap0 is found in "ip=
- a" or a similar solution.
+On Fri, 7 Nov 2025 17:33:08 +0000
+Marat Khalili <marat.khalili@huawei.com> wrote:
 
-Yes, I've added a workaround which sends a delete tap0 command prior
-to the testpmd session starting. If the tap0 interface doesn't exist
-it fails silently and continues with the rest of the test case.
+> > +/*
+> > + * Test BPF function that will be loaded from ELF
+> > + * This function:
+> > + * 1. Reads values from input structure
+> > + * 2. Performs some computations
+> > + * 3. Writes results to output structure
+> > + * 4. Returns sum of values
+> > + */
+> > +__attribute__((section("func"), used))  
+> 
+> Do we need `used` here and in other section attributes? I do not thing `clang
+> -c` will eliminate non-static/inline functions from the object file, or maybe I
+> don't understand the purpose (perhaps needs a comment).
+> 
+> > +uint64_t
+> > +test_func(struct dummy_vect8 *arg)
 
->>
->
->
-> Otherwise, change the pvp requirement to ONE_LINK, set portlist to 0, 2, =
-1 (2 is the vdev) when 2 link topology, and 0, 1 when 1 link, and set forwa=
-rding to chained mode so that the packet forwarding works as expected regar=
-dless of whether we have 1 or 2 physical interfaces the testpmd instance is=
- using.
-
-Done
-
->
-> Thanks.
->
-> Reviewed-by: Patrick Robb <probb@iol.unh.edu>
-
-Thanks for the review!
+The BPF loader in DPDK uses section names as the way to find functions.
+The original version of this code was autogenerated off of examples used
+in kernel BPF.
