@@ -2,152 +2,128 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15729CCFA13
-	for <dpdk-dev@archiver.kernel.org>; Sun,  9 Nov 2025 12:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA505CCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Sun,  9 Nov 2025 14:27:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 036DD4026D;
-	Sun,  9 Nov 2025 13:25:22 +0100 (CET)
-Received: from CY7PR03CU001.outbound.protection.outlook.com
- (mail-westcentralusazon11010041.outbound.protection.outlook.com
- [40.93.198.41]) by mails.dpdk.org (Postfix) with ESMTP id A6C5540268;
- Sun,  9 Nov 2025 13:25:15 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 75FC240268;
+	Sun,  9 Nov 2025 15:27:10 +0100 (CET)
+Received: from SA9PR02CU001.outbound.protection.outlook.com
+ (mail-southcentralusazon11013023.outbound.protection.outlook.com
+ [40.93.196.23]) by mails.dpdk.org (Postfix) with ESMTP id CE42C400D5;
+ Sun,  9 Nov 2025 15:27:08 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TIIz4M8ydTuGbYZPRtDDE3PV6IMOUR1lsNhoRBw7btwSIJjVmwTpH5bwbATaiYfyL8vNKBGOHpvZEZri8PUmPrbupFED0ybFKbG53LDyzBXTxhir0WvbdZQDmfi+9Ezl/NSLj4d8k0conbivvjwQwJwyMxS0BDrjSqixvxozgdUbdWHfKtby0NPFzBZ67Bq28aIsEUPtogdQWnanOVWXLsdhrqTQSQt64Y77MNM+6lrpfDwNRvuz0ksKyMvdBSvJnEIp0G3xoAbvcMCIOdffStfK+eTA5S2G3cXrCvfQ0mb1bMkRCsJziMkW3ibJXIwTDH9m3icCPQu4QAW6g4DZoA==
+ b=l7yXpS/NoYfkGpEIsKwqinCXh+92xbv6wu8jJfjDDPcEyu/2dNwuj5WXX1yixWDrPInjam5rJWU7VzFqzaac+PNcc6rSibfk+4x251wIj/7PdUdOQusY66fvIjnTnB3ddkN+HDNmCY5WbE5VM08rvYsyKeaJx8WMGxahURRMq34M14X4ugdeHTwKHkDQv7b9a7fuI8dBIFX4AWAN1zwlqv88l6qotQNA4su4WM3Sf8bECq616sc7JNw9dKXUzSmDfNSx+N3L9Q203l7m58wNXfsAJ8cMQ0+lLuHMfoHl90zAcr5Szwm9HagJejHO11KKXe+xRiZJzodkHL76/rHF4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iAxLDB6SiQ93HoGeLTkRkIVevyEd+3OqBFfSzP66bmw=;
- b=v4xGMuezPS+XhISu+uVVUanyfiqzZqVLZpMLoT5XG0PjwIf7cy0AT/1NKvMWQCjQDrf6B3fEPcxWNNAh9HrfzVXXTubiEuL7Pc4LLNbVQ26GVzkEby1c5b+2AvMHK5FOKUylPtEZVto6FCFtm1cMdeujBjMQcYXDyAQSKTFp76oj9ipRXGECU2QN1MMWS5UCAk/YZX3UKAqFn1ev8Iy14/tG3Tqvx8tP6V9GRa97ZyRRgC2Cmy/SdFx8cUSV9cS/iObYiQRZr+D0d9aT5hjGEZmWdntimkJk3a2jWh53Ydi9p6X3W+qCnteAts4XgeqxoukMejtgjBu33ejNmNsUKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=bHaRt6kA/FGmO6UMyAgLJDkbNY9kGi61ful53tNJXeE=;
+ b=uFU7pb/s8Oug3PTdFgnW1NXDHD0D9s/QEntqTUfERh6NrUp5KAaqXFzI7nbXTOkPM8/INHDcsmRz+Nfie8GTqgOvlEl0VIrLsIVhMGEYi44XCskPwT/lc86Jg35kHyOTYksm25ldECfnUWTJfa/Cqoi7OjnZ8FanImRLSI4fkL9FwwbhjQ8LUg2kogV3M9wxoD0pmwiCJePUFa2GwtdK/L/khBwMY05DfaygL1AKG7w9Y7xyFDsjeBBEc0Crv15WlUWvRFZgp5L/LsbQRMfdquhkXkrzfGFUiA4u/34KZ/Tf+BFTs9fKsKElMBJppd4hWLXvcImhVxIhNCeT6mJY7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iAxLDB6SiQ93HoGeLTkRkIVevyEd+3OqBFfSzP66bmw=;
- b=F5ccy20JuHZr75F+bgBq73vQcYC8SxTnzftwffZndgKRTPG/8L2GzXZPnLciXHGGBr3WeF81PuiejnBs8+gzApf+eYBCSvVZAB8sF9Nu/6/Itznwaj8L8Ghuky85Tyn+vU3qpAwjDdX6QUGkYyOBaU4h4quqlGUTTqzxgY6wF6bSuh5Gh48u5razoYI7oNMmJYW8DmqB7f30BT1isDk8YwDDo1sdbrV761z6Ys0LVaxVb4CHyOICp90fXQsee6rP3M4sP4dZt5wAU9XQJ8sH5PZoxuAG2O8jNJJ1A7dDP3BecuaoaM5ki67ElXZeDojgc3fzR88UtMT+K4gnVnUBzw==
-Received: from MW4PR12MB7484.namprd12.prod.outlook.com (2603:10b6:303:212::14)
- by PH8PR12MB7254.namprd12.prod.outlook.com (2603:10b6:510:225::18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Sun, 9 Nov
- 2025 12:25:12 +0000
-Received: from MW4PR12MB7484.namprd12.prod.outlook.com
- ([fe80::5a5:56d:2ea4:ee25]) by MW4PR12MB7484.namprd12.prod.outlook.com
- ([fe80::5a5:56d:2ea4:ee25%7]) with mapi id 15.20.9298.015; Sun, 9 Nov 2025
- 12:25:12 +0000
+ bh=bHaRt6kA/FGmO6UMyAgLJDkbNY9kGi61ful53tNJXeE=;
+ b=b2WFbgI1/9286oBMqL2/I5BVVJk67HmHD4X6YiHbG3Cf4PNNUL1y/Fg/9RvNdGRZEhRiywAZH7hXh0moMB0It10bt/5ctGkLD1spl7TV16pSzw05UYZUYZOjNRMMSg9SX+Qn9BHGQaISTbzt8CxiVAPyr/YhvQMqteauXRJuXoYsB7mTIAQC7j2erPlLNZ7z3U99LLkK+wIDzM+IxhwozZ9KvzIbCHGb8oftNJkvxBvlkAbi529nPArcHk5vzGijuGLVJDXowyGXEEJC0l8pHvYAzI5wzj8WVG80K/ZxEw851XRWWQkxeWfeYnBehzoOCW+RVHPxgsVoHYlYnKqqEw==
+Received: from MN2PR04CA0031.namprd04.prod.outlook.com (2603:10b6:208:d4::44)
+ by DS0PR12MB8525.namprd12.prod.outlook.com (2603:10b6:8:159::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.16; Sun, 9 Nov
+ 2025 14:27:03 +0000
+Received: from BL6PEPF00022571.namprd02.prod.outlook.com
+ (2603:10b6:208:d4:cafe::9b) by MN2PR04CA0031.outlook.office365.com
+ (2603:10b6:208:d4::44) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.16 via Frontend Transport; Sun,
+ 9 Nov 2025 14:26:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF00022571.mail.protection.outlook.com (10.167.249.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9320.13 via Frontend Transport; Sun, 9 Nov 2025 14:27:02 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 9 Nov
+ 2025 06:26:56 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 9 Nov
+ 2025 06:26:55 -0800
+Received: from nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Sun, 9 Nov 2025 06:26:53 -0800
 From: Shani Peretz <shperetz@nvidia.com>
-To: fengchengwen <fengchengwen@huawei.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "stable@dpdk.org" <stable@dpdk.org>, Maxime Coquelin
+To: <dev@dpdk.org>
+CC: Shani Peretz <shperetz@nvidia.com>, <stable@dpdk.org>, Maxime Coquelin
  <maxime.coquelin@redhat.com>, Chenbo Xia <chenbox@nvidia.com>, David Marchand
  <david.marchand@redhat.com>
-Subject: RE: [PATCH] vhost: fix use-after-free race during cleanup
-Thread-Topic: [PATCH] vhost: fix use-after-free race during cleanup
-Thread-Index: AQHcTWJq9dsEhk4p2UGzpjhWU32K/LTiQTiAgAgLp6A=
-Date: Sun, 9 Nov 2025 12:25:12 +0000
-Message-ID: <MW4PR12MB7484A3BD3FB9DBC93CE962EFBFC1A@MW4PR12MB7484.namprd12.prod.outlook.com>
+Subject: [PATCH v2] vhost: fix use-after-free race during cleanup
+Date: Sun, 9 Nov 2025 14:26:36 +0000
+Message-ID: <20251109142636.225031-1-shperetz@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251104080931.8102-1-shperetz@nvidia.com>
 References: <20251104080931.8102-1-shperetz@nvidia.com>
- <d1f2634a-7c8c-4d3f-9578-dfc80ce504aa@huawei.com>
-In-Reply-To: <d1f2634a-7c8c-4d3f-9578-dfc80ce504aa@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MW4PR12MB7484:EE_|PH8PR12MB7254:EE_
-x-ms-office365-filtering-correlation-id: 11bb2653-40cd-45b1-e736-08de1f8b07ae
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|376014|1800799024|366016|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?UTZFRXZUTzI2RkIrV1dNSXEwQXd5aWx3dXA0SFpYVnJlZjRHZ1BuK25GNy8v?=
- =?utf-8?B?SmRGdTdWemYyZDUrZGJKdDlTcWs4S1ZtUmVLOHBtWU0xa1YwYkxEdmtCSTlN?=
- =?utf-8?B?TVpFbkdoR0l3bFFxbHIwOVkrRGNnU0hLQ0lSUy9LUDdlU2paR2tuUkhYRE44?=
- =?utf-8?B?ekpaOTRGRDV6ZzQ1bXpyNUxiU1IwNHlzL3kyOGJxN2FUS1V1Q0tmaEhsV2wy?=
- =?utf-8?B?UW1xbnlSVTYxUDFuMWh6TmprTHVDR1NLVGpYYTc2NHYvSlZVRSs4Z2tEaFhC?=
- =?utf-8?B?Rjd5ZE56SmUrRjdpdFU4QlNyZUZyeWZMeFRObjJkSFFTRm8zbkxRbGhkbkww?=
- =?utf-8?B?TFBQd2lwRi9URVBUbXJkOUNsLy9ud1IxZ1FVNU1OWTlrZnZaNjg5MTVIV1I4?=
- =?utf-8?B?elJLZzhrb2JlWWN4dmJBQkFZT0MvQ2xwcmEzek5jNmhLRGlYQzJaWkhzdGp1?=
- =?utf-8?B?dStVWjczK05HM3JTWHBhdjR0aWNGSnZkRWY0cHpUYjFBRXZGam1WYlVyQjl0?=
- =?utf-8?B?S3ErVWZvNDcvQ0hEbjFiaUd3NW5mOWxTcXdQK2VNVmFhTDhxOVNnZ3hScE4x?=
- =?utf-8?B?UVpHM2ErZ1VpZGFwcFhzSkxiTE1ncmw3Vmk1Nit5ZmNQY0sveWpqVXJXQ1VZ?=
- =?utf-8?B?dVFLRDk5WDRIamxiRUFMblBVaDR6MnRhU3JycmZkN2VIeVdYNDJWYUd5ME5Y?=
- =?utf-8?B?NnA3bEZDOFk5U1g2Q0paYWI0ZlpTWlpNcWRmSUJXUjlReERLajdSQS8zaERh?=
- =?utf-8?B?blpyS2VhZnd5ZmN5MnNuVGNQRUhmR1Z6dTBwZklzL1l0RVgvUlBiWG92eXAv?=
- =?utf-8?B?Qng3d01lM1oxYmVCb3k2dmZSaVFVNS9obkVCYnQwbTdEQU1GWmI5Qjl3YW5D?=
- =?utf-8?B?Qk1JU2QvRUFmRC9kbVhUTFZDQzcvdWZvUVE1ZHA0SlBjQmlBeVRRVEYyYitY?=
- =?utf-8?B?Mk5DaU1qaDRQNVlrb3hiUHRKSzh4VnB2QVd5RVZhN01RVFNsZXd6OUlQNEQr?=
- =?utf-8?B?QlBsNDhSdlZ3L3c2NUwzd2djWXcvZTNNRjNxdTRhNkRpZ2R6VVVlc0FmNS9v?=
- =?utf-8?B?a3JuMHluYUlTUjJBZ1U0cXNnVGRKaGJQTGx1WXZLZ091QkZjRXR6d21RVlRK?=
- =?utf-8?B?N0J6eE1rOEtMYmNQVlN3RkRjaVJiRHZmblpJdW1NQm42Z2xEejJ1ZC9xU0RZ?=
- =?utf-8?B?a2srWktGeDBZQm1ySUNMUk5NTk5UWFJJQSsrdHZyZTBVQVVoTE5kc1h1UGFB?=
- =?utf-8?B?V1hnVHpiMnFPT2UwZkViMzRBK2VVYmpnMEV0VlpibS9adFdzd1FLekRJZmNK?=
- =?utf-8?B?Z1JqSnc2Rzc5R25WVk9lV0d0ck96SFZ1dGRLMUNTdjZ5Z3k4dXNCL3VUeVZa?=
- =?utf-8?B?Q0VueHlpNnNYTW5WMWRZaXhKVHMvS3ZsaFozQWViOTAxdGRLQ1pOWi91ZW1w?=
- =?utf-8?B?UldMWFJiVHNlTDFSMDdZRmJmQ2F0M0RrcEg0QXVUSnV3VWVLRlBiNXV3SkJ6?=
- =?utf-8?B?Ujkxd0phN2lRWW9BV0J4T3pDaHM2cGJiWWJzenU0VFpyR3k1d01KOUV5dVN4?=
- =?utf-8?B?a3lxSHA5MlZFSnNtcWNpWTUyM2lEMFJhbTdWbVIrYlp3cGFwYlJKNWFkUC85?=
- =?utf-8?B?Y3VnM0Q3Y3lNZzVrbkhNemxCc1FaRlR6SHFNeVhNaVg1U2ZYbjBnK2hlczlO?=
- =?utf-8?B?b2ZoZzFTcWxYMTVwZWF0ZjNTS2JnUzEyMis4eE1SRHpTeWNGRndEc1p6MmJx?=
- =?utf-8?B?U3FSTGNUVWl3ZHR5RnF3clNuY1hXVTdpUVlQd0xIaWo5WmEvQlN3VXBvNEQy?=
- =?utf-8?B?cDJSSE9CaEtUVTVIWXRXbjlXUFZ0SVZmU1E2VERGQ2FFTzVRbzdmaXhWb1Vh?=
- =?utf-8?B?OVlFRmpZQzBRTWdwUG5SRFRYS2VWN2EvNlVVOHY5NGZiRnpUb2lhWmsraDV5?=
- =?utf-8?B?VEFac3o2U2xqVzhLZUdyVUwyclZaUG13RHdqdVM3NWJIUXBRWWhrUnQxYWhw?=
- =?utf-8?B?Nm5xUTdpT2k4VnN1ZHVpTDZHdlVZdDFONHNnWk5PL1VLcytwYkUvci9hS1ln?=
- =?utf-8?Q?2bREOT?=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:MW4PR12MB7484.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(38070700021); DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YU8yNnRyLzRlcnNWc1FUdWw0M3ozTE1pNGVRMitoelQvRGtpOFhQdW4xZG1C?=
- =?utf-8?B?Uy81SFpGN2Y5VXNKUWJEeUZwNWNGNFhKWTBmNDBZeTUvaTZwSEczeVYyTHZi?=
- =?utf-8?B?YjVJNzY4Smp2MDFMU3o0TmhXbFJTR21LdlAxTEJxeit1MUVxNmVHWnZEK2xG?=
- =?utf-8?B?V1YzcEQvRTcvRXZoUFN6WXRsUTJVQjlIWmJIZWJuaUZiY1hNaDZYYkNVL3Zv?=
- =?utf-8?B?UEtqZGJpOEJFTmFxY29Hazl3Vk5KQUdsWlB2OFNNNFdkMkdaOE9MT3hUbXJt?=
- =?utf-8?B?QVc2VlhtV2lCSHlhbkM4SUQ3V05SUUFrSXRvSVpyUzhhT1EwVEl3ZkNCZWZj?=
- =?utf-8?B?OFBIVkEvdURvcWduWDR6VnNxdCt3NnhXZ3ZEcWxvRitQODVLVEhrc1dicjIv?=
- =?utf-8?B?TXI0ZHdSWWlrbVhhVmRtTFlWbm5vbGJTWDdGekpjcyt5N3k0UFh1YitINEJS?=
- =?utf-8?B?ZloybGtPeitOVVJheE8ycklwb1h1R2NSYWlFOCtKTkxsd2l6U3NTVC9kVXl4?=
- =?utf-8?B?NGlJZS9YSmFDMjZsZTMxS2ROTlJDNXpnMERiQ2NMeXZSOHVSNDh6WkxVemZ0?=
- =?utf-8?B?a3RtZVAxQU5JTVRGK0drSlZZajREcFVnSEJzdjdlSEw4RnBobEh4SGNPNlNs?=
- =?utf-8?B?UzZzcDNOUW1qTWE5N1A5Zk9QQUpkTHdaMENwNE5UbXpNbWE0SEc3QitqWnRS?=
- =?utf-8?B?dE56YWlCbFY1eU9DelhxNjVxQ1Nrc3ZPcXhxVC9IQzRPWGZZVnh4enlCMkk0?=
- =?utf-8?B?bVF0YnZqbWxLNGxDa2dqVlNrMU1VRmFhWHBUSXE4VDg0Mk1KTytzcDUyZHpS?=
- =?utf-8?B?K3RsUmFXK25aZHpmR3N3THI3RHdoWVRIUjFJSk11TWM2M1EzeGtYRWo5LzdB?=
- =?utf-8?B?Ynd4UHluN1pPVHloeERXb0N3eFFYY29NeGE5eG16SklKNUk5bG9XYWoxenhW?=
- =?utf-8?B?ZFBhdHUvOHljUjdNOWkwVlJaUW1wZ2pJVnhOMFdOcUVBNWl1U3lYZ3BSOTlC?=
- =?utf-8?B?cy9BVnpjQk45M0ZEZlVjSk52Q1piSXAvaHBTeE0yeFBpaXZhUU9QTUVtazNO?=
- =?utf-8?B?Ynd5b09zdVB4enNVQW5tNGlGVjlLZ0dYS3hEV0dtd2xnU0VpRmNiWWZhVFhr?=
- =?utf-8?B?QVJsVE45d3lBeFNJVUVqbWV2dVhIMDdLVUxxVDdxNE9wbTZYT2JoSW9MbERV?=
- =?utf-8?B?WGsxd0RWQnlENUFnWUtBNER5WnRaajdaemVjRzU2cm02dlNmc2ZqMEhHZVlr?=
- =?utf-8?B?ZkI4by9qcytSYmpmcXFHYk1uOERrR3dKVFNnY2N4R05QTjVOaFdQUkFselZ0?=
- =?utf-8?B?ZnZCVEh0VTY5ckttZ3h6dkFBeEQ2aVA5bUF6ODM1VjAwQnRqc0lmQkVQOUtT?=
- =?utf-8?B?TTA5OURWbFBDekZQNmlGcDk4YVVrMFp0OGhtck1HTlN0Z0kxWW9zSjYvclA5?=
- =?utf-8?B?VkJkZm1UOVZYWWFGa1A3WDFyY1NuUzJoODBkSkEyZnU3c2lBRDMwYkxDUjcz?=
- =?utf-8?B?Q3BSN2gvYlJuSlpBd1R0aXF1MW5jRWVja0hxckovRDZ1QXlCdEJJbEJHSVc1?=
- =?utf-8?B?SDRzanYraGg2UnZGWlppNGhGWExsWGMrbFhWQUNPNWpDbVZkdnRGNDQrRFk3?=
- =?utf-8?B?S3M3em8venczS0FEN3Q1YnY2dGJtRzhEUjE0QnlaNXdYVkdXaGxaaTNyOUdC?=
- =?utf-8?B?ZnF6VVV1aU5kR2k4N2tmOUtMcFloTmlzNTlzVTN5SlFnQTUrSVo0ZnEyYldl?=
- =?utf-8?B?MUhEVytzYnovRmtSbFdoWTd2b3VhS3RFaklxb3F0WUYweFRpUkVBbnhTQkZy?=
- =?utf-8?B?L3NOWlJJOWZIbkhCaXZ3MkZNL3JONGNBMkV4dzlLUFF5TDR3b0ZWNnVYRmJ0?=
- =?utf-8?B?c29pUmhXNDNvenNvV3RrZ1FHQTlHSElUcmZPV1E2VzRvNW5GWUxjNWxMTFFB?=
- =?utf-8?B?SEFYL0VyOVZBOThaL1E5TVJCMGU2ci9rdURhRkNRdnlhc3JiWUxuRWptT2Fr?=
- =?utf-8?B?Z0J1TDVxZXNSL2pTOFdEczd5RVAzS1hPNkh0QVhQc2tWWXlBYm1xWUNsZEdt?=
- =?utf-8?B?STNITlh0Y0l0STh6TFBvSEJya2l3ZzhXZHBJeTR4TFE0MjF2elRtM0VPalRO?=
- =?utf-8?Q?fyOlHHuK6CqrEdFW8gVp+u8IZ?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022571:EE_|DS0PR12MB8525:EE_
+X-MS-Office365-Filtering-Correlation-Id: 38329461-a4fc-41e7-2e26-08de1f9c0d06
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|1800799024|376014|36860700013; 
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?RN1FSGfnJkQXZXhTIwRI4lOgtbLRSwz2WezDfeuYzW9SlNgNEJtqrbQXd3l4?=
+ =?us-ascii?Q?CfhZvmGNlmqCVSjKhf6R4zg4ysPIizZQievioyazHzrVPfaH0sLfgoPTldsW?=
+ =?us-ascii?Q?IXXZuQacFkUsR8CYlIyBeWMNybNvwqibiyE4W6pWKLpZ4Mil/nAu+62RhaLj?=
+ =?us-ascii?Q?ggv62mOes5lpihvv9yVcIYZjW46FDEKGUuFvIlY6BxOHJ6MRA5dznytR8gmF?=
+ =?us-ascii?Q?HzCCZJIXC59FQIqpdM4ukO/mGYk/ZkohmnkSVHPoZdvTYJGGEPImW/xmpw8U?=
+ =?us-ascii?Q?omYfBD1fcVtX9HqmihH+LL4PFS6mkt7vv5owfn1ThQ2/SM5hxMX8udHjsISJ?=
+ =?us-ascii?Q?L17PZYkT+//Qm6nTQOQZROO4L308F7LZZoxW7hnpvZbCQg3uG4Z8Chp+7c1o?=
+ =?us-ascii?Q?xNF5ejJMQ6ID9CqIKJ1qtM3fG/OTt3A0yi7h/ZR905Sy/A389ieue8dEFFZp?=
+ =?us-ascii?Q?Ab4LvtRtBndkjjZlYJQd1j+4dri7XOo26yY/0gxV2MpD7AuYUp7wjJR5Juql?=
+ =?us-ascii?Q?MQjRBKiJDQJShUMtFqULsqDh5zCCFoy1XVaFFL4EHXCGwiCe09DdovtTvpxw?=
+ =?us-ascii?Q?+dvozgS+Hn1IUx0IikqOYmYWetN7NLmThhDcPbPii5WFgpx3thSRsBJi+Ul2?=
+ =?us-ascii?Q?SOy7cxEJD9vpqTMgJQjvQW4TMUXVnByR0soqNDoNVk3XBgF6yTGFnbYmcPvh?=
+ =?us-ascii?Q?m03fCixXFlc02KOWEqkT2Q7ZMYb5gLCoGk+X1/Di6/d2+bOHz+USw5LIjXKF?=
+ =?us-ascii?Q?4+VZQqAzKwLDPz+s98erJvW07/iCyVK9k7o/M/dSk3xKgIrZbSATy6ERIZh8?=
+ =?us-ascii?Q?8Eiq4b41ceFaZKiEj/A/zXflY08hk5s3wNODVYL9UR65BbQpohipFajpV7vz?=
+ =?us-ascii?Q?Qj3KxFu1ftTqHwelNabh+ypd+sBsg3BFZx0sI1x/ogSM+NIwI2L/d3gpfHYP?=
+ =?us-ascii?Q?fpdDkPK2H9N9XBgxAt6X6tdi4vueFFylr6ec+fkAO9tHbooGgC067SYClaUH?=
+ =?us-ascii?Q?zuXxAXacSHm2C1kZ76nhQs6vOOQ53fWNCDTE+HlsN0yGf0OHm5RjRTizHnCt?=
+ =?us-ascii?Q?56NaSs/iQ+7VmFkQ4E1t/9tHUksZRwhfYsEVGInHL6dvdsuPOAcn7dODKJ6v?=
+ =?us-ascii?Q?n2NPY2pCmectx1gEyHuxziPJFYqZWlnS3IUW5+jUJu/LP2O7fTXzF5pk46/u?=
+ =?us-ascii?Q?NGyikFWhRmv2hj5reIyTGa0oemQIwJBGZLyPpLnfo7cEtsisLK34lilrga0T?=
+ =?us-ascii?Q?NOUNQUdFGiPd9Tm+G4AU3/mhsVi0QmObGVfRRQmdrnBMCy3TpaBmcJohUKdO?=
+ =?us-ascii?Q?GLkBdWNDpL2/Ou40GBdmV2CnmLg8kYm2Q55EitsESJLd+mqmKdKpdcR+HFwm?=
+ =?us-ascii?Q?PZxibMBM3cYwjmywuh/RE7o/KVY3Fo4T02jvW+8Tr63kM7d135w6HahWQLtw?=
+ =?us-ascii?Q?Qv5fzUUnZ4n/Slz565Rd1lUnG9FBLlXu8m55mZrPlc1gJE6X3c7tdwsvi3o2?=
+ =?us-ascii?Q?LM9WlExn5gloZmb+zw6zlzto5jbuw+wLNBxcO2K5AOcq6C8EaymP8jQ3bzox?=
+ =?us-ascii?Q?boVPsViV7Ut2YZNS29w=3D?=
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013); DIR:OUT;
+ SFP:1101; 
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB7484.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11bb2653-40cd-45b1-e736-08de1f8b07ae
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Nov 2025 12:25:12.2388 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: raL+tdX/UjrQmTrTGhTcrzglUjHtuv/eGZGEEGbiFSKLZt8qPg4cPI+mn76mRjMhBgUlcmvIuxRYUr9V2/B6SA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7254
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2025 14:27:02.5246 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38329461-a4fc-41e7-2e26-08de1f9c0d06
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF00022571.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8525
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -161,45 +137,261 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogZmVuZ2NoZW5nd2VuIDxm
-ZW5nY2hlbmd3ZW5AaHVhd2VpLmNvbT4NCj4gU2VudDogVHVlc2RheSwgNCBOb3ZlbWJlciAyMDI1
-IDExOjMzDQo+IFRvOiBTaGFuaSBQZXJldHogPHNocGVyZXR6QG52aWRpYS5jb20+OyBkZXZAZHBk
-ay5vcmcNCj4gQ2M6IHN0YWJsZUBkcGRrLm9yZzsgTWF4aW1lIENvcXVlbGluIDxtYXhpbWUuY29x
-dWVsaW5AcmVkaGF0LmNvbT47DQo+IENoZW5ibyBYaWEgPGNoZW5ib3hAbnZpZGlhLmNvbT47IERh
-dmlkIE1hcmNoYW5kDQo+IDxkYXZpZC5tYXJjaGFuZEByZWRoYXQuY29tPg0KPiBTdWJqZWN0OiBS
-ZTogW1BBVENIXSB2aG9zdDogZml4IHVzZS1hZnRlci1mcmVlIHJhY2UgZHVyaW5nIGNsZWFudXAN
-Cj4gDQo+IEV4dGVybmFsIGVtYWlsOiBVc2UgY2F1dGlvbiBvcGVuaW5nIGxpbmtzIG9yIGF0dGFj
-aG1lbnRzDQo+IA0KPiANCj4gT24gMTEvNC8yMDI1IDQ6MDkgUE0sIFNoYW5pIFBlcmV0eiB3cm90
-ZToNCj4gPiBUaGlzIGNvbW1pdCBmaXhlcyBhIHVzZS1hZnRlci1mcmVlIHRoYXQgY2F1c2VzIHRo
-ZSBhcHBsaWNhdGlvbiB0bw0KPiA+IGNyYXNoIG9uIHNodXRkb3duIChkZXRlY3RlZCBieSBBU0FO
-KS4NCj4gPg0KPiA+IFRoZSB2aG9zdCBsaWJyYXJ5IHVzZXMgYSBiYWNrZ3JvdW5kIGV2ZW50IGRp
-c3BhdGNoIHRocmVhZCB0aGF0DQo+ID4gbW9uaXRvcnMgZmRzIHdpdGggZXBvbGwuIEl0IHJ1bnMg
-aW4gYW4gaW5maW5pdGUgbG9vcCwgd2FpdGluZyBmb3IgSS9PDQo+ID4gZXZlbnRzIGFuZCBjYWxs
-aW5nIGNhbGxiYWNrcyB3aGVuIHRoZXkgb2NjdXIuDQo+ID4NCj4gPiBEdXJpbmcgY2xlYW51cCwg
-YSByYWNlIGNvbmRpdGlvbiBleGlzdGVkOg0KPiA+DQo+ID4gICBNYWluIFRocmVhZDogICAgICAg
-ICAgICAgICAgICAgIEV2ZW50IERpc3BhdGNoIFRocmVhZDoNCj4gPiAgIDEuIFJlbW92ZSBmZHMg
-ZnJvbSBmZHNldCAgICAgICAgd2hpbGUgKDEpIHsNCj4gPiAgIDIuIENsb3NlIGZpbGUgZGVzY3Jp
-cHRvcnMgICAgICAgICAgIGVwb2xsX3dhaXQoKSBbZ2V0cyBpbnRlcnJ1cHRlZF0NCj4gPiAgIDMu
-IEZyZWUgZmRzZXQgbWVtb3J5ICAgICAgICAgICAgICAgIFtjb250aW51ZXMgbG9vcF0NCj4gPiAg
-IDQuIENvbnRpbnVlLi4uICAgICAgICAgICAgICAgICAgICAgIEFjY2Vzc2VzIGZkc2V0Li4uICAg
-Q1JBU0gNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiA+DQo+ID4g
-VGhlIG1haW4gdGhyZWFkIHdvdWxkIGZyZWUgdGhlIGZkc2V0IG1lbW9yeSB3aGlsZSB0aGUgYmFj
-a2dyb3VuZA0KPiA+IHRocmVhZCB3YXMgc3RpbGwgcnVubmluZyBhbmQgdXNpbmcgaXQuDQo+IA0K
-PiBXaG8gd2lsbCBmcmVlIGZkc2V0IG1lbW9yeSA/IEkgY2hlY2sgdGhlIGxpYi92aG9zdC9zb2Nr
-ZXQuYyBhbmQgZm91bmQgdGhlcmUNCj4gYXJlIG5vIGV4cGxpY2l0IGZyZWUuDQo+IA0KPiBJIHRo
-aW5rIGl0IG1heWJlIHRoZSBodWdlcGFnZSBmcmVlIGJlY2F1c2UgdGhlIGZkc2V0IHVzZSBydGVf
-em1hbGxvYygpLiBJZiBpdCdzLA0KPiBwbGVhc2UgZXhwbGljaXQgYWRkIGl0IGludG8gdGhlIGNv
-bW1pdCBsb2cuDQoNClllcyB5b3UncmUgcmlnaHQgSSBkb3VibGUgY2hlY2tlZCB3aXRoIGEgZGVi
-dWdnZXIgYW5kIGluZGVlZCB0aGUgZmRzZXQgbWVtb3J5IGlzIGZyZWVkIHdoZW4gaHVnZXBhZ2Ug
-ZnJlZSwgSSdsbCB1cGRhdGUgdGhlIGNvbW1pdCBsb2cuDQoNCj4gDQo+ID4NCj4gPiBUaGUgY29k
-ZSBoYWQgYSBgZGVzdHJveWAgZmxhZyB0aGF0IHRoZSBldmVudCBkaXNwYXRjaCB0aHJlYWQgY2hl
-Y2tlZCwNCj4gPiBidXQgaXQgd2FzIG5ldmVyIHNldCBkdXJpbmcgY2xlYW51cCwgYW5kIHRoZSBj
-b2RlIG5ldmVyIHdhaXRlZCBmb3IgdGhlDQo+ID4gdGhyZWFkIHRvIGFjdHVhbGx5IGV4aXQgYmVm
-b3JlIGZyZWVpbmcgbWVtb3J5Lg0KPiA+DQo+ID4gVGhpcyBjb21taXQgaW1wbGVtZW50cyBgZmRz
-ZXRfZGVzdHJveSgpYCB0aGF0IHdpbGwgc2V0IHRoZSBkZXN0cm95DQo+ID4gZmxhZywgd2FpdCBm
-b3IgdGhyZWFkIHRlcm1pbmF0aW9uLCBhbmQgY2xlYW4gdXAgYWxsIHJlc291cmNlcy4NCj4gPiBU
-aGUgc29ja2V0LmMgaXMgdXBkYXRlZCB0byBjYWxsIGZkc2V0X2Rlc3Ryb3koKSB3aGVuIHRoZSBs
-YXN0DQo+ID4gdmhvc3QtdXNlciBzb2NrZXQgaXMgdW5yZWdpc3RlcmVkLg0KPiA+DQo+ID4gRml4
-ZXM6IDBlMzhiNDJiZjYxYyAoInZob3N0OiBtYW5hZ2UgRkQgd2l0aCBlcG9sbCIpDQo+ID4gQ2M6
-IHN0YWJsZUBkcGRrLm9yZw0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogU2hhbmkgUGVyZXR6IDxz
-aHBlcmV0ekBudmlkaWEuY29tPg0KPiANCg0K
+This commit fixes a use-after-free that causes the application to crash
+on shutdown (detected by ASAN).
+
+The vhost library uses a background event dispatch thread that monitors
+fds with epoll. It runs in an infinite loop, waiting for I/O events
+and calling callbacks when they occur.
+
+During cleanup, a race condition existed:
+
+  Main Thread:                    Event Dispatch Thread:
+  1. Remove fds from fdset        while (1) {
+  2. Close file descriptors           epoll_wait() [gets interrupted]
+  3. Free fdset memory                [continues loop]
+  4. Continue...                      Accesses fdset...   CRASH
+                                  }
+
+There isn't explicit cleanup of the fdset structure.
+The fdset structue is allocated with rte_zmalloc() and the memory would
+only be reclaimed at application shutdown when rte_eal_cleanup() is called,
+which invokes rte_eal_memory_detach() to unmap all the hugepage memory.
+Meanwhile, the event dispatch thread could still be running and accessing
+the fdset.
+
+The code had a `destroy` flag that the event dispatch thread checked,
+but it was never set during cleanup, and the code never waited for
+the thread to actually exit before freeing memory.
+
+To fix this, the commit implements `fdset_destroy()` that will set the
+destroy flag, wait for thread termination, and clean up all resources.
+
+The socket.c and vduse.c are updated to call fdset_destroy() when
+the last socket/device is unregistered.
+
+For vduse, reference counting was added to track the number of devices
+using the fdset. The fdset is destroyed when the last device is removed.
+
+Fixes: 0e38b42bf61c ("vhost: manage FD with epoll")
+Cc: stable@dpdk.org
+
+Signed-off-by: Shani Peretz <shperetz@nvidia.com>
+
+
+
+----------
+v2:
+- Extended the fix to vduse.c, added reference counting and mutex to vduse
+  structure to track the number of devices using the fdset
+- Call fdset_destroy() when last device is removed in vduse_device_destroy()
+  and in error paths of vduse_device_create()
+- Added mutex protection when checking/setting the destroy flag to prevent
+  race conditions in both fdset_event_dispatch() and fdset_destroy()
+
+---
+ lib/vhost/fd_man.c | 45 ++++++++++++++++++++++++++++++++++++-
+ lib/vhost/fd_man.h |  1 +
+ lib/vhost/socket.c |  7 ++++++
+ lib/vhost/vduse.c  | 56 +++++++++++++++++++++++++++++++++++++---------
+ 4 files changed, 98 insertions(+), 11 deletions(-)
+
+diff --git a/lib/vhost/fd_man.c b/lib/vhost/fd_man.c
+index f9147edee7..b4597dec75 100644
+--- a/lib/vhost/fd_man.c
++++ b/lib/vhost/fd_man.c
+@@ -387,9 +387,52 @@ fdset_event_dispatch(void *arg)
+ 			}
+ 		}
+
+-		if (pfdset->destroy)
++		pthread_mutex_lock(&pfdset->fd_mutex);
++		bool should_destroy = pfdset->destroy;
++		pthread_mutex_unlock(&pfdset->fd_mutex);
++		if (should_destroy)
+ 			break;
+ 	}
+
+ 	return 0;
+ }
++
++/**
++ * Destroy the fdset and stop its event dispatch thread.
++ */
++void
++fdset_destroy(struct fdset *pfdset)
++{
++	uint32_t val;
++	int i;
++
++	if (pfdset == NULL)
++		return;
++
++	/* Signal the event dispatch thread to stop */
++	pthread_mutex_lock(&pfdset->fd_mutex);
++	pfdset->destroy = true;
++	pthread_mutex_unlock(&pfdset->fd_mutex);
++
++	/* Wait for the event dispatch thread to finish */
++	rte_thread_join(pfdset->tid, &val);
++
++	/* Close the epoll file descriptor */
++	close(pfdset->epfd);
++
++	/* Destroy the mutex */
++	pthread_mutex_destroy(&pfdset->fd_mutex);
++
++	/* Remove from global registry */
++	pthread_mutex_lock(&fdsets_mutex);
++	for (i = 0; i < MAX_FDSETS; i++) {
++		if (fdsets[i] == pfdset) {
++			fdsets[i] = NULL;
++			break;
++		}
++	}
++	pthread_mutex_unlock(&fdsets_mutex);
++
++	/* Free the fdset structure */
++	rte_free(pfdset);
++}
+diff --git a/lib/vhost/fd_man.h b/lib/vhost/fd_man.h
+index eadcc6fb42..ed2109f3c8 100644
+--- a/lib/vhost/fd_man.h
++++ b/lib/vhost/fd_man.h
+@@ -21,5 +21,6 @@ int fdset_add(struct fdset *pfdset, int fd,
+
+ void fdset_del(struct fdset *pfdset, int fd);
+ int fdset_try_del(struct fdset *pfdset, int fd);
++void fdset_destroy(struct fdset *pfdset);
+
+ #endif
+diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
+index 9b4f332f94..0240da8ff0 100644
+--- a/lib/vhost/socket.c
++++ b/lib/vhost/socket.c
+@@ -1141,6 +1141,13 @@ rte_vhost_driver_unregister(const char *path)
+ 		count = --vhost_user.vsocket_cnt;
+ 		vhost_user.vsockets[i] = vhost_user.vsockets[count];
+ 		vhost_user.vsockets[count] = NULL;
++
++		/* Check if we need to destroy the vhost fdset */
++		if (vhost_user.vsocket_cnt == 0 && vhost_user.fdset != NULL) {
++			fdset_destroy(vhost_user.fdset);
++			vhost_user.fdset = NULL;
++		}
++
+ 		pthread_mutex_unlock(&vhost_user.mutex);
+ 		return 0;
+ 	}
+diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
+index 68e56843fd..f255f717ab 100644
+--- a/lib/vhost/vduse.c
++++ b/lib/vhost/vduse.c
+@@ -30,9 +30,15 @@
+
+ struct vduse {
+ 	struct fdset *fdset;
++	int device_cnt;
++	pthread_mutex_t mutex;
+ };
+
+-static struct vduse vduse;
++static struct vduse vduse = {
++	.fdset = NULL,
++	.device_cnt = 0,
++	.mutex = PTHREAD_MUTEX_INITIALIZER,
++};
+
+ static const char * const vduse_reqs_str[] = {
+ 	"VDUSE_GET_VQ_STATE",
+@@ -683,19 +689,16 @@ vduse_device_create(const char *path, bool compliant_ol_flags)
+ 	const char *name = path + strlen("/dev/vduse/");
+ 	bool reconnect = false;
+
+-	if (vduse.fdset == NULL) {
+-		vduse.fdset = fdset_init("vduse-evt");
+-		if (vduse.fdset == NULL) {
+-			VHOST_CONFIG_LOG(path, ERR, "failed to init VDUSE fdset");
+-			return -1;
+-		}
+-	}
++	pthread_mutex_lock(&vduse.mutex);
++	vduse.device_cnt++;
++	pthread_mutex_unlock(&vduse.mutex);
+
+ 	control_fd = open(VDUSE_CTRL_PATH, O_RDWR);
+ 	if (control_fd < 0) {
+ 		VHOST_CONFIG_LOG(name, ERR, "Failed to open %s: %s",
+ 				VDUSE_CTRL_PATH, strerror(errno));
+-		return -1;
++		ret = -1;
++		goto out_dec_cnt;
+ 	}
+
+ 	if (ioctl(control_fd, VDUSE_SET_API_VERSION, &ver)) {
+@@ -845,6 +848,19 @@ vduse_device_create(const char *path, bool compliant_ol_flags)
+
+ 	dev->cvq = dev->virtqueue[max_queue_pairs * 2];
+
++	/* Only allocate when we know device creation will succeed */
++	pthread_mutex_lock(&vduse.mutex);
++	if (vduse.fdset == NULL) {
++		vduse.fdset = fdset_init("vduse-evt");
++		if (vduse.fdset == NULL) {
++			VHOST_CONFIG_LOG(path, ERR, "failed to init VDUSE fdset");
++			pthread_mutex_unlock(&vduse.mutex);
++			ret = -1;
++			goto out_log_unmap;
++		}
++	}
++	pthread_mutex_unlock(&vduse.mutex);
++
+ 	ret = fdset_add(vduse.fdset, dev->vduse_dev_fd, vduse_events_handler, NULL, dev);
+ 	if (ret) {
+ 		VHOST_CONFIG_LOG(name, ERR, "Failed to add fd %d to vduse fdset",
+@@ -861,6 +877,8 @@ vduse_device_create(const char *path, bool compliant_ol_flags)
+ 	return 0;
+
+ out_log_unmap:
++	if (vduse.fdset != NULL)
++		fdset_del(vduse.fdset, dev->vduse_dev_fd);
+ 	munmap(dev->reconnect_log, sizeof(*dev->reconnect_log));
+ out_dev_destroy:
+ 	vhost_destroy_device(vid);
+@@ -870,6 +888,14 @@ vduse_device_create(const char *path, bool compliant_ol_flags)
+ 	ioctl(control_fd, VDUSE_DESTROY_DEV, name);
+ out_ctrl_close:
+ 	close(control_fd);
++out_dec_cnt:
++	pthread_mutex_lock(&vduse.mutex);
++	vduse.device_cnt--;
++	if (vduse.device_cnt == 0 && vduse.fdset != NULL) {
++		fdset_destroy(vduse.fdset);
++		vduse.fdset = NULL;
++	}
++	pthread_mutex_unlock(&vduse.mutex);
+
+ 	return ret;
+ }
+@@ -899,7 +925,17 @@ vduse_device_destroy(const char *path)
+
+ 	vduse_device_stop(dev);
+
+-	fdset_del(vduse.fdset, dev->vduse_dev_fd);
++	if (vduse.fdset != NULL)
++		fdset_del(vduse.fdset, dev->vduse_dev_fd);
++
++	/* Check if we need to destroy the vduse fdset */
++	pthread_mutex_lock(&vduse.mutex);
++	vduse.device_cnt--;
++	if (vduse.device_cnt == 0 && vduse.fdset != NULL) {
++		fdset_destroy(vduse.fdset);
++		vduse.fdset = NULL;
++	}
++	pthread_mutex_unlock(&vduse.mutex);
+
+ 	if (dev->vduse_dev_fd >= 0) {
+ 		close(dev->vduse_dev_fd);
+--
+2.34.1
+
