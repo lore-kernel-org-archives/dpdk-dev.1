@@ -2,79 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 279B7CCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Sun,  9 Nov 2025 18:34:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881C2CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Sun,  9 Nov 2025 20:09:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 34BDF402C8;
-	Sun,  9 Nov 2025 19:34:25 +0100 (CET)
-Received: from fout-a8-smtp.messagingengine.com
- (fout-a8-smtp.messagingengine.com [103.168.172.151])
- by mails.dpdk.org (Postfix) with ESMTP id 50FB4400D5
- for <dev@dpdk.org>; Sun,  9 Nov 2025 19:34:24 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.phl.internal (Postfix) with ESMTP id CE225EC0180;
- Sun,  9 Nov 2025 13:34:23 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Sun, 09 Nov 2025 13:34:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762713263;
- x=1762799663; bh=7ty0V9KBjHoTRNDH2sXtcihPQriu6cdTi+r5NJNvUz8=; b=
- vT92143R6xkPFq+Iu3d07wiTO7cqbYMFI1A8MeJ1RyMMDh59R+nrGTf3u0515Rr+
- Y6Yz+ZthIUz+9lM6MxQk7z2qlXAng55wdiI1O8YxFWH+w0pML6sZxyvjnoUNCLGZ
- T0PDar68vqKV4Pr34RSwgkSeqa3frnSGbhYI7S11sEtf81JArBAP6+cR8r0cC+FB
- setgVJ1B5KEdJwh6j4v1Gc/STY5rThEefaTcutUFoUbAh69SCbbye+HNc06JR9z2
- HULQG5fKzDvm+DzUd7Jp/+qKp9SK4RIhIAFQ+nupLgSv5/nge9EoxUPWmyq7vg1y
- uzm7ejVO2pIN4TH5kMufIw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762713263; x=
- 1762799663; bh=7ty0V9KBjHoTRNDH2sXtcihPQriu6cdTi+r5NJNvUz8=; b=B
- ewq5L2zwooV7MXq8V0nUpl37PjIHw0Z0zdOa1m4cWacA+JFRzllFQ2TETG9kQjYm
- maW/bPjsoBCM/lPRL/Ky7aygcgyShSmFVhEOkzIq4ZN1g7HxxMMetvFcJeOBRLaf
- wg3Z5k3UWWD5W+2uLHctpfHADreLiypfAFtnOK/to2mLyJXSC/v/S+ut4Bjl4ubY
- R/Oe55gFLgj2ZAYjs7Wqic0hZezq8q/NwDCcb7Lcw/dlUCiACyHDaqoK5aSIb+CF
- zyMrC6TVhNL8NkTkOLGhszfTCx/KQBNfvbGaaDEjWLrgQomKBYnFm0EEFZrjNXaY
- 6S90TLVIcbJF4RFSzX8DA==
-X-ME-Sender: <xms:r94QaScesZVXvK1bafNe36fkOcjj8xEz8kVJGAKJxq0RRJIk44R2ag>
- <xme:r94QaV2TCVc8WcKSFgdC9V4FLeSWT1buPY131YPRO6EZTNG5X4uljvbIlK-45RIwE
- 0F0D3t9Xldh3B6OXCIQsGLtaQljOr8R1c-Z2ykpufURnNjMbbicRbc>
-X-ME-Received: <xmr:r94QaThEB9tQCNoDP8PBKClZ9xpqGqd0qUbyzxpMV6VPqbhZaRWwvklDl5YKf-3v0HxzZEOlqHNPzP1_ucGbdyTDRg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduleeiudeiucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
- leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehfvghnghgthhgvnhhgfigvnheshhhurg
- ifvghirdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
- mhgssehsmhgrrhhtshhhrghrvghshihsthgvmhhsrdgtohhm
-X-ME-Proxy: <xmx:r94QaTRkgHFSpJlqDAnwnCuLxyEtvykIIuZ4OJML152Ef2jQRvz9SA>
- <xmx:r94Qacjlaw5AVe8hRUGELGDydJ2WnGxNmZYyx1nOMRfa4-00lKh57g>
- <xmx:r94Qab4BJMM3ouvZxQon9fYs7wgjZjKFXv1pvluDnmxHASzuUM455Q>
- <xmx:r94QaRDzntmQ6ZPmyWVPEesiArP0F7jkA9ghej1I6GPN7OZa68UkWg>
- <xmx:r94QaT5p9ompVqwLOaNUngRlic-V2GoR5luxhAD-wcBp3nj17ToF12K_>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 9 Nov 2025 13:34:22 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Chengwen Feng <fengchengwen@huawei.com>
-Cc: dev@dpdk.org, Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Subject: Re: [PATCH] mempool: hide zero value items when dump cache
-Date: Sun, 09 Nov 2025 19:34:21 +0100
-Message-ID: <3000077.oX9e4DgFVH@thomas>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35E9FEBB@smartserver.smartshare.dk>
-References: <20250904120942.51729-1-fengchengwen@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35E9FEBB@smartserver.smartshare.dk>
+	by mails.dpdk.org (Postfix) with ESMTP id 3B8144026D;
+	Sun,  9 Nov 2025 21:09:00 +0100 (CET)
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
+ [209.85.216.47]) by mails.dpdk.org (Postfix) with ESMTP id C88C6400D5
+ for <dev@dpdk.org>; Sun,  9 Nov 2025 21:08:58 +0100 (CET)
+Received: by mail-pj1-f47.google.com with SMTP id
+ 98e67ed59e1d1-3436d6aa66dso936585a91.1
+ for <dev@dpdk.org>; Sun, 09 Nov 2025 12:08:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762718938;
+ x=1763323738; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=EvTtHoCnxIreSW841+RXRVSkOe9kMPS9XaZFdTFZGIo=;
+ b=Kgdadsfbjv9S/1MX3m2Zbp0tDrfzkoDDOshBFGPYwdb+TB3N9+i6WXuTNQgHDGnXW/
+ MY9s1xrs0VtEh9noO7WE1J5LT5B0GyvJHSyHlHfora5b/OwIZ8jHEfPNSBaR3MVED/H/
+ ot7NnSxPrSjUfjwfYe6pgqGFpOkY3DHn9N5OLREKRxuFTpqpIpQEZI/DYp1PH0zCNtvI
+ szfl76r4/TRgVDN11NPatQFX/hLptWprj9n3k1thJi/w/IFZVE0eCpdHtTJn1sJqgCMA
+ U2qYpjWdfl2YSlow72AqsLNvCwIGRnxECyGjXeHqQ2AbHzzBGXfEnBgj1I0CkwYj3odY
+ VFrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762718938; x=1763323738;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=EvTtHoCnxIreSW841+RXRVSkOe9kMPS9XaZFdTFZGIo=;
+ b=VREcVCrKslCwhWAFUy7TDwMxWpJ3S74sciP/vJpZA1qrwekxjtpSxX6i91+LLhmaCG
+ m58WfKgmyyOUn/UNLkvgJjXceVsa3kYk/SdqwX7C908rsxGNqExV+/v6BbFktwqKh9ZE
+ wq8infzI2ApYLL/l/FJINxeh0TfGWIaVgQQmOSA5z9PJXNmNEl5+kg+RNkYmabMsfGW1
+ 7snMRFrCgdCJiv+RW1EghH0Xwp4X8Tyj1kmsqskMDtRy9jKJ9+lJx0mHiGTpQwKhZEhg
+ KK3q3ydPHNBoKOi2ouTU/jDSKxRvwzupCk1wt9kN3nmtdR85/f/easLt0+gpMYnFJom+
+ WLiA==
+X-Gm-Message-State: AOJu0YzMWZdElZxh9KpO0MLLqQ4no5IoRGfa9qa+DK+jx33TCDFnd8Kh
+ vdWGq/3/8aLxvlc3A6PFHn1ZUROmvLmJ7E1fcbjFdVKE8PoQqavm48fHaEGx/R2RPEFjGqpiQTf
+ NBe2eBLo=
+X-Gm-Gg: ASbGncvyr5BEOi0y5k8s4Z0A+X77JOLZOVH1+vlVj/LAG9sGUK4jmdUrnRrgJ6M6Wpk
+ UCs5rKGxgz7m5agHjuh1UwG1rFJjQNl8ch4a11K+eUqZlb7k26e5nCyND5V3zo5OLK7sCdz8Okv
+ EeI5HBoQrQkeB1kwqRhD3LL8uxDL6lNqX2xfwDIL50m6KBas+ZXPp8rsn3K/2/frJDHIYzatt1u
+ HuFxdGSeUT4zFF7FTl1O5E0U7YGCCcdY7afxEaA2T5r9Y39XFjiAchpPZ4d8Oga5e6h5lT4qxYE
+ 1mPY8ZBMKWg4gPIHLWq98fxYdj3Vfewpt87SxAyIO3WldGBVm8baFWwBqlM10o1978MQBePrroX
+ DktSsZaLjcGNVlpD1sTFk0+qAWlBGJh+XOqgCUFpIBKbZpAeJ5WSgMF3DBhhDe41W7PiqID0F2T
+ +Uw5rvnM87Vw2nQrEda08m0jFDkIZJgCXa91QMpEqWSmAc2cxXQQ==
+X-Google-Smtp-Source: AGHT+IEA9TLtjMF6yGuDN0NIPzo8c7W4LVuKCAa3AhOmYlKxnr/g2vQJa6Kyzu0r7wpYRjizac4HcQ==
+X-Received: by 2002:a17:90b:2f50:b0:340:b501:7b83 with SMTP id
+ 98e67ed59e1d1-3436aca72a6mr6960189a91.10.1762718937589; 
+ Sun, 09 Nov 2025 12:08:57 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-341a699d6dfsm15396648a91.16.2025.11.09.12.08.56
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 09 Nov 2025 12:08:57 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v5 0/5] BPF cleanup and tests
+Date: Sun,  9 Nov 2025 12:07:33 -0800
+Message-ID: <20251109200854.45942-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251030173732.246435-1-stephen@networkplumber.org>
+References: <20251030173732.246435-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,21 +81,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-04/09/2025 14:15, Morten Br=C3=B8rup:
-> > From: Chengwen Feng [mailto:fengchengwen@huawei.com]
-> > Sent: Thursday, 4 September 2025 14.10
-> >=20
-> > Hide zero value items when dump mempool cache.
-> >=20
-> > Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-> > ---
->=20
-> Yes, they were annoying. Thank you.
->=20
-> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+This is a series of fixes and tests for BPF functionality.
+The new tests for Tx and Rx filtering require the infrastructure
+to build a bpf program (clang) and the tool to convert object
+file to header (xxd). If missing the test will get skipped.
 
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+It is disappointing that there were no examples or tests when
+the code was submitted.
 
-Applied, thanks.
+v5 - review feedback
+     make it clear that load test is mirroring previous test
+     and check the result. 
 
+v4 - review feedback - use alloca instead of burst to remove dependency on VLA
+
+v3 - do not depend on xxd -n flag which is not present on older versions
+
+Stephen Hemminger (5):
+  bpf: add allocation annotations to functions
+  bpf: use bulk free on filtered packets
+  bpf: add a test for BPF ELF load
+  bpf: add test for Rx and Tx filtering
+  bpf: replace use of VLA
+
+ app/test/bpf/filter.c    |  53 +++++
+ app/test/bpf/load.c      |  51 +++++
+ app/test/bpf/meson.build |  53 +++++
+ app/test/meson.build     |   2 +
+ app/test/test_bpf.c      | 463 +++++++++++++++++++++++++++++++++++++++
+ lib/bpf/bpf_pkt.c        |  15 +-
+ lib/bpf/rte_bpf.h        |  11 +-
+ 7 files changed, 637 insertions(+), 11 deletions(-)
+ create mode 100644 app/test/bpf/filter.c
+ create mode 100644 app/test/bpf/load.c
+ create mode 100644 app/test/bpf/meson.build
+
+-- 
+2.51.0
 
