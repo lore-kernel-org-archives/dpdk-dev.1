@@ -2,44 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 272AACCF9E3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 10:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45572CCFA13
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 12:07:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 611804026D;
-	Mon, 10 Nov 2025 11:25:45 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D50E24026D;
+	Mon, 10 Nov 2025 13:07:53 +0100 (CET)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id F218C400D6
- for <dev@dpdk.org>; Mon, 10 Nov 2025 11:25:44 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.186.31])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d4m5705D0zJ46s7;
- Mon, 10 Nov 2025 18:25:15 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (unknown [7.214.147.241])
- by mail.maildlp.com (Postfix) with ESMTPS id 1DC81140257;
- Mon, 10 Nov 2025 18:25:44 +0800 (CST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 4F72D400D6
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 13:07:51 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d4pMB2vyNzHnHLH;
+ Mon, 10 Nov 2025 20:07:34 +0800 (CST)
+Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
+ by mail.maildlp.com (Postfix) with ESMTPS id 7CE611402FF;
+ Mon, 10 Nov 2025 20:07:49 +0800 (CST)
 Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500001.china.huawei.com (7.214.147.241) with Microsoft SMTP Server
+ dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 10 Nov 2025 10:25:43 +0000
+ 15.2.1544.36; Mon, 10 Nov 2025 12:07:49 +0000
 Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
  dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Mon, 10 Nov 2025 10:25:43 +0000
+ Mon, 10 Nov 2025 12:07:49 +0000
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: David Marchand <david.marchand@redhat.com>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>
-CC: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>, "dev@dpdk.org"
- <dev@dpdk.org>, Ola Liljedahl <ola.liljedahl@arm.com>, Dhruv Tripathi
- <dhruv.tripathi@arm.com>
-Subject: RE: [PATCH v2 1/1] ring: safe partial ordering for head/tail update
-Thread-Topic: [PATCH v2 1/1] ring: safe partial ordering for head/tail update
-Thread-Index: AQHcM8PjEkYGhEvMM0eJIFohOEcAbbS36DDQgAh4pACAJSK0gIAGbN4Q
-Date: Mon, 10 Nov 2025 10:25:43 +0000
-Message-ID: <7b9710689ad44caba2c9868967ac97d7@huawei.com>
-References: <20251002174137.3612042-1-wathsala.vithanage@arm.com>
- <20251002174137.3612042-2-wathsala.vithanage@arm.com>
- <cfc073b8137541f1be3e01650d6bcf14@huawei.com>
- <566b4c6c-f081-4db8-bc8b-2a576a82e1c3@arm.com>
- <CAJFAV8yumnbPjakBAtkoqrZvWCo90F51Ri9Eje44sAmm_S43gw@mail.gmail.com>
-In-Reply-To: <CAJFAV8yumnbPjakBAtkoqrZvWCo90F51Ri9Eje44sAmm_S43gw@mail.gmail.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, Rami Neiman
+ <rami.neiman@solace.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Duane Pauls <Duane.Pauls@solace.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: =?utf-8?B?UkU6IFF1ZXN0aW9uOiBXaHkgZG9lc27igJl0IHJ0ZV9yaW5nIHVzZSBkb3Vi?=
+ =?utf-8?Q?le-mapped_VMA_to_eliminate_wraparound_logic=3F?=
+Thread-Topic: =?utf-8?B?UXVlc3Rpb246IFdoeSBkb2VzbuKAmXQgcnRlX3JpbmcgdXNlIGRvdWJsZS1t?=
+ =?utf-8?Q?apped_VMA_to_eliminate_wraparound_logic=3F?=
+Thread-Index: AQHcUAdEFyv3lBIccEmtmK06UZiWXLTpBiAAgAK295A=
+Date: Mon, 10 Nov 2025 12:07:48 +0000
+Message-ID: <30360617ea8e48589b6490eb5b6f7388@huawei.com>
+References: <SA1PR01MB82954E1727004B247E462C269BC3A@SA1PR01MB8295.prod.exchangelabs.com>
+ <20251108091408.584962e8@phoenix>
+In-Reply-To: <20251108091408.584962e8@phoenix>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -61,16 +59,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQpIaSBEYXZpZCwNCg0KPiANCj4gSGVsbG8gV2F0aHNhbGEsDQo+IA0KPiBPbiBNb24sIDEzIE9j
-dCAyMDI1IGF0IDIwOjEwLCBXYXRoc2FsYSBWaXRoYW5hZ2UNCj4gPHdhdGhzYWxhLnZpdGhhbmFn
-ZUBhcm0uY29tPiB3cm90ZToNCj4gPiA+IExHVE0sIHRob3VnaC4gSSB0aGluayB0aGF0IHdlIGFs
-c28gbmVlZCB0byBtYWtlIHNpbWlsYXIgY2hhbmdlcyBpbg0KPiA+ID4gcnRlX3JpbmdfaHRzX2Vs
-ZW1fcHZ0LmggYW5kIHJ0ZV9yaW5nX3J0c19lbGVtX3B2dC5oOg0KPiA+ID4gZm9yIENBUyB1c2Ug
-J2FjcV9yZWwnIG9yZGVyIGluc3RlYWQgb2Ygc2ltcGxlICdhY3F1aXJlJy4NCj4gPiA+IExldCBt
-ZSBrbm93IHdvdWxkIHlvdSBoYXZlIGEgYmFuZHdpZHRoIHRvIGRvIHRoYXQuDQo+ID4NCj4gPiBN
-eSBiYWQsIEkgZm9yZ290IHRob3NlIHR3byBjYXNlcy4gSSB3aWxsIHNlbmQgYSB2My4NCj4gDQo+
-IFNob3VsZCB3ZSB3YWl0IGZvciB0aGlzIHYzPw0KPiBXZSB3YW50IHRvIGNsb3NlIHJjMiB0aGlz
-IHdlZWsuDQo+IA0KDQpKdXN0IHN1Ym1pdHRlZCB2MyB3aXRoIGRpc2N1c3NlZCBleHRyYSBjaGFu
-Z2VzLg0KQWxzbyBhZGRlZCBmaXhlcywgY2MgdG8gc3RhYmxlLCBldGMuDQpIb3BlIGl0IHN0aWxs
-IGNhbiBtYWtlIDI1LjExDQpXYXRoc2FsYSwgcGxzIHNob3V0IG9yIHN1Ym1pdCB2NCBpZiB5b3Ug
-ZmVlbCBzb21ldGhpbmcgaXMgbWlzc2luZy4NClRoYW5rcw0KS29uc3RhbnRpbiANCg0K
+DQoNCj4gPiBIaSBhbGwsDQo+ID4gSSBoYXZlIGEgZGVzaWduIHF1ZXN0aW9uIHJlZ2FyZGluZyBy
+dGVfcmluZyB0aGF0IEkgZGlkbuKAmXQgZmluZCBhIGhpc3RvcmljYWwgcmF0aW9uYWxlDQo+IGZv
+ciBpbiB0aGUgYXJjaGl2ZXMuDQo+ID4gTW9zdCBtb2Rlcm4gaGlnaC1wZXJmIHJpbmcgYnVmZmVy
+cyAoZS5nLiBzb21lIE5JQyBkcml2ZXJzLCBzb21lIERCIHF1ZXVlDQo+IGltcGxlbWVudGF0aW9u
+cywgZXRjLikgZWxpbWluYXRlIHdyYXAtYXJvdW5kIGJyYW5jaGVzIGJ5IHRha2luZyB0aGUgcmlu
+Z+KAmXMgZWxlbWVudA0KPiBhcnJheSBhbmQgbWFwcGluZyB0d28gY29uc2VjdXRpdmUgVkEgcmFu
+Z2VzIHRvIHRoZSBzYW1lIHBoeXNpY2FsIGJhY2tpbmcgcGFnZXMuDQo+ID4gaS5lLiB5b3UgYWxs
+b2NhdGUgTiBlbGVtZW50cywgY29tbWl0IGVub3VnaCBwYWdlcyB0byBjb3ZlciBOLCB0aGVuIGNh
+bGwgbW1hcCAob3INCj4gZXF1aXZhbGVudCkgYWdhaW4gaW1tZWRpYXRlbHkgZm9sbG93aW5nIGl0
+LCBwb2ludGluZyB0byB0aGUgc2FtZSBwaHlzaWNhbCBwYWdlcy4gU28NCj4gZnJvbSB0aGUgQ1BV
+4oCZcyBQT1YgdGhlIGVsZW1lbnQgYXJyYXkgaXMgbG9naWNhbGx5IFswIC4uIE4qMikgYnV0IHBo
+eXNpY2FsbHkgaXTigJlzIHRoZQ0KPiBzYW1lIGJhY2tpbmcuIFRoZXJlZm9yZSBhIGJhdGNoIHJl
+YWQvd3JpdGUgY2FuIGFsd2F5cyBiZSBkb25lIGFzIGEgc2luZ2xlDQo+IGNvbnRpZ3VvdXMgbWVt
+Y3B5L0NMRC9TVE9TIHdpdGhvdXQgY29uZGl0aW9uYWxzLCBldmVuIGlmIChoZWFkK2J1bGspIGV4
+Y2VlZHMgTi4NCj4gPiBQc2V1ZG8gaWxsdXN0cmF0aW9uOg0KPiA+DQo+ID4gW3BoeXMgYnVmZmVy
+IG9mIE4gc2xvdHNdDQo+ID4gVkE6IFswIC4uIE4pIC0+IHBoeXMNCj4gPiBWQTogW04gLi4gMk4p
+IC0+IHNhbWUgcGh5cw0KPiA+DQo+ID4NCj4gPiBGb3IgbXVsdGktZWxlbWVudCBlbnF1ZXVlL2Rl
+cXVldWUgaXQgZWxpbWluYXRlcyB0aGUg4oCcaWYgd3JhcCDihpIgc3BsaXTigJ0gY2FzZQ0KPiBl
+bnRpcmVseSDigJQgeW91IGNhbiBhbHdheXMgbWVtY3B5IGluIG9uZSBjb250aWd1b3VzIG9wLg0K
+PiA+IFF1ZXN0aW9uOg0KPiA+IElzIHRoZXJlIGFuIGV4cGxpY2l0IHJlYXNvbiBEUERLIGRvZXNu
+4oCZdCB1c2UgdGhpcyB0ZWNobmlxdWUgZm9yIHJ0ZV9yaW5nPw0KPiA+IGUuZy4NCj4gDQo+IE1h
+bmlwdWxhdGluZyBwcm9jZXNzIG1hcHBpbmcgaW4gdXNlciBzcGFjZSBpcyBvZnRlbiBub24tcG9y
+dGFibGUsIGl0IGlzIHBvc3NpYmxlIG9uDQo+IExpbnV4IHRvIHVzZSBtbWFwDQo+IHRvIGRvIHRo
+aXMgYnV0IHdvdWxkIHJlcXVpcmUgZGVlcCBjaGFuZ2VzIHRvIHRoZSBBUEkuDQoNClRCSCwgSSBk
+aWRuJ3QgZXZlbiBjb25zaWRlciBzdWNoIG9wcG9ydHVuaXR5Li4uLg0KQnV0IHllcywgSSBTdGVw
+aGVuIGFscmVhZHkgcG9pbnRlZCwgb25lIHBvdGVudGlhbCBwcm9ibGVtOg0KRFBESyBtZW1vcnkg
+YWxsb2NhdGlvbiBmcmFtZXdvcmsgKHJ0ZV9tYWxsb2MpDQpkb2Vzbid0IHN1cHBvcnQgc3VjaCBk
+b3VibGUgbWFwcGluZ3MgZm9yIG5vdy4NCldvdWxkIGl0IGJlIGEgZ29vZCB0aGluZyB0byBhZGQg
+b3Igbm90IC0gSSBzdXBwb3NlIGl0IGRlcGVuZHMgb24gd2hhdA0KcGVyZm9ybWFuY2UgYm9vc3Qg
+d2Ugd2lsbCBnZXQgaW4gcmV0dXJuIGFuZCB3aGF0IHdvdWxkIGJlIGEgcmVxdWlyZWQgY29kZS1j
+aGFuZ2VzIGNvbXBsZXhpdHkuDQpLb25zdGFudGluDQoNCg0K
