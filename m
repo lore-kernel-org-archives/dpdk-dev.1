@@ -2,91 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F75CCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Sun,  9 Nov 2025 21:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFD4CCF9F8
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 00:59:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E5B3140264;
-	Sun,  9 Nov 2025 22:38:50 +0100 (CET)
-Received: from fhigh-a5-smtp.messagingengine.com
- (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
- by mails.dpdk.org (Postfix) with ESMTP id 4D28F400D6
- for <dev@dpdk.org>; Sun,  9 Nov 2025 22:38:49 +0100 (CET)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 917A9140015E;
- Sun,  9 Nov 2025 16:38:48 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Sun, 09 Nov 2025 16:38:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762724328;
- x=1762810728; bh=z7Q3uaVxLSnqpiTKMauBTmxagwS6qaQQ1Ctale8WBh4=; b=
- ZSIWb+jfaFc3/n/j2v6YFO4xgse+CziK2C/kjvIW757A5ZQ6qifbz/JHRdbroU/S
- UsYYq50JraLxPuy3Bxa8uuzXwXQYLjyYKfAzK4hhBisJM9XvbXnWTV+QiRBLA7n0
- Eiog3K8XdPmCLeMfdjz22ckTOabixuQj2bw2SLd81kf4MPQFmD86IjvHLuXGT+cK
- FjQjFhqJ38CdYT9ZKRCDPUgwq+YuspyrmmtcKkONCLnV0QmfGOUTPbTSOHkk/Fyz
- VnG2hYwOUMBhWObI+8U1oMbmNqLY27Yv8FrXPhU7hGZ4+cg/K6uyHjVUD/hmaHfx
- lWuoYTQvOSV79adUZAJ3iQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762724328; x=
- 1762810728; bh=z7Q3uaVxLSnqpiTKMauBTmxagwS6qaQQ1Ctale8WBh4=; b=K
- tc5ewSW5EMtwHYLQiNpb+FZno4oP8ZN7rq04jhqckt4BfUn3dn83+XxIMvN+Pq1N
- r7TeE0ViBJBeKdTJ1eHkErGATunzwxJvVwD0OWM8QOPw/ZBDZwyi2seTZV72DHqC
- 9FVnL9E8DWiDgY+3n/jUdtvISBuyhHYy6vz8hOV3fKW6v48DA5Q2rEPfHZkG5gRA
- Jkc31JnPo8GvSiFOrPy0zBJqsJQphJlMoButNJ9OILw2jcSJtKvS4rmfJqBF8dpR
- NeyAS6l7UGa6v71nIVqylrNxInP+6uqIrSjsspUHRbpYjmIwR5Q+ldkFt1fUyi1/
- ZVftIiiHXzH4may8SUIQA==
-X-ME-Sender: <xms:5gkRaQvhfknogYtgWQWK2nl006XywHuo2BF096e0PWm8Gfrzl6a6bw>
- <xme:5gkRaQi1znlVrqyEgaOVMwO0l1NLDPIdTqZqS1UM-u89qG69MmmRKKRWjbPVQvwnp
- MwLox64KnBmbQjZDm82s8cREC0dR3t_1ZlAzQO4x8T8MEB1ovW8PQ>
-X-ME-Received: <xmr:5gkRaWYcJsPC_2UO8sL6xWyXgW3sIGeNl06MRWgkEAo73DUKw0ru6-xyp8bxIWwog0imAWsg3WrGEEvwc259OoCFvw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduleeihedvucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedutddp
- mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhunhihuhgvtghhihesihhstggrsh
- drrggtrdgtnhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehs
- thgrnhhishhlrgifrdhkrghruggrtghhsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsg
- hruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtoheptghh
- vghnrdhqihhguhhoseiithgvrdgtohhmrdgtnhdprhgtphhtthhopegurghnihgvlhdrgh
- hrvghgohhrhiessgihthgvuggrnhgtvgdrtghomhdprhgtphhtthhopehlihgrnhhgmhgr
- sehlihgrnhhgsghithdrtghomhdprhgtphhtthhopehpuhhnihhtrdgrghhrrgifrghlse
- gshihtvggurghntggvrdgtohhmpdhrtghpthhtohepfigrnhhgphgvnhhgtghhvghnghdr
- phhpsegshihtvggurghntggvrdgtohhm
-X-ME-Proxy: <xmx:5gkRafYyyM9OZsEMy2IBssV8nTJ4xxadWvHd8CZsgzqeZIAOCPOeog>
- <xmx:5gkRabwfjzhRhYf88pgqXPVJNDQIZxMYoeAvyoFMpKqVS_Nllc2BeQ>
- <xmx:5gkRabd7NbfLIi5C_n45fWYpyRUDHaq-kgzef5WyGbDdIDRGVm-TWQ>
- <xmx:5gkRaQ7ZGlcY6CMG-44GOQE4aSB82JrOTZtfLCAVUibqioPBE4Caew>
- <xmx:6AkRaXj33tdlsq2rMlDr3iNv4N_tE1v6YHhc-6zt6N91TiEkQukTwrLS>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 9 Nov 2025 16:38:45 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Sun Yuechi <sunyuechi@iscas.ac.cn>
-Cc: dev@dpdk.org,
- =?UTF-8?B?U3RhbmlzxYJhdw==?= Kardach <stanislaw.kardach@gmail.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Qiguo Chen <chen.qiguo@zte.com.cn>,
- Daniel Gregory <daniel.gregory@bytedance.com>,
- Liang Ma <liangma@liangbit.com>, Punit Agrawal <punit.agrawal@bytedance.com>, 
- Pengcheng Wang <wangpengcheng.pp@bytedance.com>,
- Chunsong Feng <fengchunsong@bytedance.com>
-Subject: Re: [PATCH] config/riscv: add rv64gcv cross compilation target
-Date: Sun, 09 Nov 2025 22:38:43 +0100
-Message-ID: <2429522.4MS8fQxZnU@thomas>
-In-Reply-To: <20250923150734.2208125-1-sunyuechi@iscas.ac.cn>
-References: <20250923150734.2208125-1-sunyuechi@iscas.ac.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 773F1400D6;
+	Mon, 10 Nov 2025 01:59:36 +0100 (CET)
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com
+ [113.46.200.226])
+ by mails.dpdk.org (Postfix) with ESMTP id 77CA0400D5
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 01:59:34 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=6LzT08VXSpLNWdUCiwWUdyTfkVxDiYfJ1DKBkFVp61Y=;
+ b=I6tyKAmrsD/PWm6DpOkU0EKME7uxf0goaA7nJZ63GKUcQrsxzpUOyDGh431VV4/VNu1up+LRz
+ 0Pinsho+OqhpAiTzIcXu2kXoqkFcJXFT+yka4pNFuc7wCLDeMhA0AlHF5iX6fi3pmdzNVACwXfn
+ 8yqoZevVIacKWVB/uJweiGI=
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+ by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d4WVT2V5LzKm51;
+ Mon, 10 Nov 2025 08:57:53 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 08370140277;
+ Mon, 10 Nov 2025 08:59:32 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 10 Nov 2025 08:59:31 +0800
+Message-ID: <b03c5c49-c1a7-4003-a350-587e0e6b8341@huawei.com>
+Date: Mon, 10 Nov 2025 08:59:31 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 01/33] eal: add more min/max helpers
+To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
+CC: Stephen Hemminger <stephen@networkplumber.org>, Tyler Retzlaff
+ <roretzla@linux.microsoft.com>
+References: <20251106140948.2894678-1-bruce.richardson@intel.com>
+ <20251107155034.436809-1-bruce.richardson@intel.com>
+ <20251107155034.436809-2-bruce.richardson@intel.com>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20251107155034.436809-2-bruce.richardson@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -100,23 +59,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-23/09/2025 17:07, sunyuechi@iscas.ac.cn:
-> From: Sun Yuechi <sunyuechi@iscas.ac.cn>
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+
+On 11/7/2025 11:49 PM, Bruce Richardson wrote:
+> From: Stephen Hemminger <stephen@networkplumber.org>
 > 
-> Add a cross file for rv64gcv, enable it in devtools/test-meson-builds.sh,
-> and update the RISC-V cross-build guide to support the vector extension.
+> Add RTE_MIN3() to handle case of RTE_MIN(RTE_MIN(...)), and similarly
+> add RTE_MAX3(). Change name of local temporary variables in RTE_MAX()
+> to allow for combinations of RTE_MIN(RTE_MAX(...)) without causing
+> shadow declaration warnings.
 > 
-> Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
-
-In general for RISC-V patches, I wish to see more collaboration
-between contributors interested by this architecture.
-
-This patch has no review but looks harmless,
-except adding one more build in devtools/test-meson-builds.sh.
-I'm not sure we want to run this build in most CI runs.
-Maybe we want to replace the generic RISC-V build with the vector one.
-It could be discussed in another patch.
-
-Applied without adding in test-meson-builds.sh, thanks.
-
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
