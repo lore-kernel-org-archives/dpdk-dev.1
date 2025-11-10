@@ -2,68 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F81FCCFA13
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 08:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DCB7CCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 08:56:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 42B05402C8;
-	Mon, 10 Nov 2025 09:54:18 +0100 (CET)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com
- [209.85.219.49]) by mails.dpdk.org (Postfix) with ESMTP id 3B81C400D5
- for <dev@dpdk.org>; Mon, 10 Nov 2025 09:54:17 +0100 (CET)
-Received: by mail-qv1-f49.google.com with SMTP id
- 6a1803df08f44-88244d1559eso13914716d6.0
- for <dev@dpdk.org>; Mon, 10 Nov 2025 00:54:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=uetpeshawar-edu-pk.20230601.gappssmtp.com; s=20230601; t=1762764856;
- x=1763369656; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=egZ5UQSEgmNm+QYgeaiYzneq1dhiEEDvX60OlFvhN+M=;
- b=i6eKp3juk79OLumLYczHr+Uk03SyPRWL1tY5XA1fMSJ+wfShSloDdHAG2K1ndHIkNK
- 9v08H2orM37AMcVpn6niGEtKgLROix3MB3tjEqSKbYcab1fwlOcx9HR2AR98+Pu5Ind1
- tfWaKwpuMc816OCJnL/tTEIPH13jna9ZMcMLa+g6rnPBrm8Gi//GAoRiaU/neZpHnEWA
- R4RPOgIfNst5CHj12RVfGX5tUpMKRVtQ7Z5AKprw0J0CLHwoskqCUVZ86ce/nywppmjZ
- 2h7FcQeWBQKojCZKp9XF5YUruB/+GmU9DtfkWkrBQgmHmArxVVbZXN30jaZIdj/f7uw/
- gNsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762764856; x=1763369656;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=egZ5UQSEgmNm+QYgeaiYzneq1dhiEEDvX60OlFvhN+M=;
- b=OQFlo88kswTYQtHQEPDME1JGZ2S5JSs6BgOC6BtoxREIc8rUOfbOt3NjFateeoQ0Tf
- 57E1wWaaxaZlJu3B37d9brJFKDJBddoDt5kDO8NjN74UYC71J0BhPjxYBjQXgt9agwoA
- gPlrGItyHtVMnBwXX6e7ZAuf27R9LUQqCfQROi0kUE/8ltjp6Y/WSdjuYNI3n7v3zBNh
- fvbCpZtgHuoKoBwfVfYAceBdce14GLzOUAtz5er+2LPolSNdZNPEe25KnLvddcMz5u/e
- 8zA2/sb37+BrBB8P+d/2hofrf31g/b+1YUm7Ctqgcqe2+UDH/uJJPQxegQcTO/AhsXda
- WOiQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCW7msFlJDCQYZM+YmhKQlCKvt0kF0hPbow+3RbSF7M4wIzjcu9ISPGHBYyODy9PYyfbjfo=@dpdk.org
-X-Gm-Message-State: AOJu0Yw/ahxIaxyq5lORs5S6V67Eb3qNV8jDFkZsD1/HJcPsnc5CXexT
- +1Jl4EuzbfTWvZ7qWBgKFQ5Md1t+E7vGI5kHu81M6KaAeQ21tpliowNogxYW5m2AA5HG8I9tcXQ
- hKRrIo/FrhmXW+oI4tErf0Wc5xJae398GcCBKiZV/Q1PcpMAYQyTVmgJGSA==
-X-Gm-Gg: ASbGncuLJbfJdR3vYRukdl3tb8EIZRG91z3loyfDOulpwAMoliKkqRUH1F/qcQvqoWM
- 9fV1uz0JuJ7y7fSeFYTql8LYCOCglzmarKGbqNzQ06alcVBhbLn4Fj0AwmrTi9WwYXWHXlHxRQO
- MCMp7W+NxY25legmEBEcl70+oqIz1XOfjhKLc+nt7dKe8RpjykRNxwKJmkF2074d/FUCPx3hTnB
- pM7PbM5yh7TtKUFRtTG2MECkEBZClyLMtZVViYYOSOygwUe6cBXhrZbfY0ZF9hFAntbJ5kg1oYU
- Wm8fwszddysLFujXcXVpu3l9Lah8feBWxbtJFnMKnRMRUJ4YBfoq0x6WDQ==
-X-Google-Smtp-Source: AGHT+IHZwaeJKlFYcAHTCZSN0rVIk6qvedMbjb1dtbPQHolqPR0XrtGMn0Cbbgfiqv1le1rjfOKbdQXBU7XaNTdIg1g=
-X-Received: by 2002:a05:6214:2428:b0:880:5126:1e20 with SMTP id
- 6a1803df08f44-8822f345fd7mr134775006d6.0.1762764856445; Mon, 10 Nov 2025
- 00:54:16 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id AD1E6402C8;
+	Mon, 10 Nov 2025 09:56:47 +0100 (CET)
+Received: from out28-5.mail.aliyun.com (out28-5.mail.aliyun.com [115.124.28.5])
+ by mails.dpdk.org (Postfix) with ESMTP id 1EECB400D6
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 09:56:45 +0100 (CET)
+X-Alimail-AntiSpam: AC=CONTINUE; BC=0.07388716|-1; CH=green;
+ DM=|CONTINUE|false|;
+ DS=CONTINUE|ham_regular_dialog|0.100453-0.000615562-0.898931;
+ FP=16294683948905699271|0|0|0|0|-1|-1|-1;
+ HT=maildocker-contentspam033037006180; MF=dimon.zhao@nebula-matrix.com; NM=1;
+ PH=DW; RN=6; RT=6; SR=0; TI=W4_0.2.3_21205AA5_1762763059671_o7001c1561; 
+Received: from WS-web
+ (dimon.zhao@nebula-matrix.com[W4_0.2.3_21205AA5_1762763059671_o7001c1561]
+ cluster:ay29) at Mon, 10 Nov 2025 16:56:43 +0800
+Date: Mon, 10 Nov 2025 16:56:43 +0800
+From: "Dimon" <dimon.zhao@nebula-matrix.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: "dev" <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
+ "Alvin" <alvin.wang@nebula-matrix.com>, "Leon" <leon.yu@nebula-matrix.com>,
+ "Sam" <sam.chen@nebula-matrix.com>
+Message-ID: <c9608c05-41a5-4d4b-b462-a62ad22ab5e1.dimon.zhao@nebula-matrix.com>
+Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIHYxIDQvNF0gbmV0L25ibDogdXBkYXRlIGRvY3VtZW50YXRpb24g?=
+ =?UTF-8?B?YW5kIG1haW50YWluZXJz?=
+X-Mailer: [Alimail-Mailagent revision 8][W4_0.2.3][null][Chrome]
 MIME-Version: 1.0
-References: <be773672-77bb-4c2d-ba12-43b75ff29507@cesnet.cz>
- <20251107080727.13e201a1@phoenix>
- <d3e9d94a-c6e3-48cd-a7cf-a1ea77216f0a@cesnet.cz>
-In-Reply-To: <d3e9d94a-c6e3-48cd-a7cf-a1ea77216f0a@cesnet.cz>
-From: Khadem Ullah <14pwcse1224@uetpeshawar.edu.pk>
-Date: Mon, 10 Nov 2025 13:54:04 +0500
-X-Gm-Features: AWmQ_bmUa9CKunFlicmAMPkEpX-ytCvjR5r3rMZk53--1YE4d63OVeTqyMQaEmY
-Message-ID: <CA++2-x4nx_a-6OJVRxu3zuAUWrvda2dWJhOUXK0ETj+U3bMzqg@mail.gmail.com>
-Subject: Re: RFCv1: DPDK RTE Flow Rule Parser
-To: =?UTF-8?B?THVrw6HFoSDFoGnFoW1pxaE=?= <sismis@cesnet.cz>
-Cc: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
-Content-Type: multipart/alternative; boundary="00000000000017595a064339adbd"
+x-aliyun-im-through: {"version":"v1.0"}
+References: <20251107073459.3532524-1-dimon.zhao@nebula-matrix.com>	<20251107073459.3532524-5-dimon.zhao@nebula-matrix.com>,
+ <20251109121602.35144247@phoenix>
+x-aliyun-mail-creator: W4_0.2.3_null_EuMTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzMy4wLjY5NDMuMTQyIFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4xLjAtUmVsZWFzZS4yNTEwMjAwMDQpIE1vam8vMS4wLjAgTmF0aXZlIEFwcFR5cGUocmVsZWFzZSkgQ2hhbm5lbC8yMDEyMDAgQXJjaGl0ZWN0dXJlL3g4Nl82NCB3ZWJEdC9QQw==uL
+In-Reply-To: <20251109121602.35144247@phoenix>
+Content-Type: multipart/alternative;
+ boundary="----=ALIBOUNDARY_1946_7face0b1b700_6911a8cb_1eee6e"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -75,110 +48,153 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
+Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000017595a064339adbd
+------=ALIBOUNDARY_1946_7face0b1b700_6911a8cb_1eee6e
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 
-On Mon, Nov 10, 2025 at 1:11=E2=80=AFPM Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=
-=A1 <sismis@cesnet.cz> wrote:
-
-> On 11/7/25 17:07, Stephen Hemminger wrote:
-> > On Fri, 7 Nov 2025 15:16:28 +0100
-> > Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 <sismis@cesnet.cz> wrote:
-> >
-> >> Hello all,
-> >>
-> >> ## Motivation
-> >>
-> >>
-> >> Before taking either route, I=E2=80=99d like to understand the communi=
-ty=E2=80=99s
-> >> preference:
-> >> - Do you even see it as a valuable contribution for customer
-> applications?
-> >> - Can you possibly think of an alternative way to solve the unified
-> >> human-readable format conversion? Both on the code level and interface
-> >> level.
-> >> - Is testpmd code extraction the right long-term solution, even if
-> >> disruptive? Should the private DPDK forks be taken into consideration?
-> >> Or should I start with a separate lightweight parser and revisit
-> >> integration later?
-> >>
-> >> Any other feedback is welcome
-
-
-Hi Lukas,
-You could try testpmd Command File Functions
-<https://doc.dpdk.org/guides-25.07/testpmd_app_ug/testpmd_funcs.html#comman=
-d-file-functions>
-Rte_flows using this method can be created at boot and run time.
-
-   - If testpmd started with the --cmdline-file=3DFILENAME command line
-   argument testpmd will execute all CLI commands contained within the file
-   immediately before starting packet forwarding or entering interactive mo=
-de.
-   - At run-time additional commands can be loaded in bulk by invoking the
-   load FILENAME command.
-
-
- Best Regards,
-Khadem
-
---00000000000017595a064339adbd
+SGkgU3RlcGhlbiwKSSBhcHByZWNpYXRlIHlvdXIgY2FyZWZ1bCByZXZpZXcgYW5kIGRldGFpbGVk
+IHN1Z2dlc3Rpb25zLgpUaGFuayB5b3UuCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQrlj5Hku7bkurrvvJpTdGVwaGVuIEhl
+bW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+CuWPkemAgeaXtumXtO+8mjIwMjXl
+ubQxMeaciDEw5pelKOWRqOS4gCkgMDQ6MTYK5pS25Lu25Lq677yaRGltb248ZGltb24uemhhb0Bu
+ZWJ1bGEtbWF0cml4LmNvbT4K5oqE44CA6YCB77yaZGV2PGRldkBkcGRrLm9yZz47IFRob21hcyBN
+b25qYWxvbjx0aG9tYXNAbW9uamFsb24ubmV0PjsgQWx2aW48YWx2aW4ud2FuZ0BuZWJ1bGEtbWF0
+cml4LmNvbT47IExlb248bGVvbi55dUBuZWJ1bGEtbWF0cml4LmNvbT47IFNhbTxzYW0uY2hlbkBu
+ZWJ1bGEtbWF0cml4LmNvbT4K5Li744CA6aKY77yaUmU6IFtQQVRDSCB2MSA0LzRdIG5ldC9uYmw6
+IHVwZGF0ZSBkb2N1bWVudGF0aW9uIGFuZCBtYWludGFpbmVycwpPbiBUaHUsIDYgTm92IDIwMjUg
+MjM6MzQ6NTkgLTA4MDAKRGltb24gWmhhbyA8ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbT4g
+d3JvdGU6Cj4gZGlmZiAtLWdpdCBhL2RvYy9ndWlkZXMvbmljcy9uYmwucnN0IGIvZG9jL2d1aWRl
+cy9uaWNzL25ibC5yc3QKPiBpbmRleCBmNDFkYTIwZWVhLi45NjU3ZWUyYzg3IDEwMDY0NAo+IC0t
+LSBhL2RvYy9ndWlkZXMvbmljcy9uYmwucnN0Cj4gKysrIGIvZG9jL2d1aWRlcy9uaWNzL25ibC5y
+c3QKPiBAQCAtNzAsNiArNzAsMTMgQEAgQW5vbGlzIGNvbW11bml0eToKPiBBbHRlcm5hdGl2ZWx5
+LCB5b3UgY2FuIGNvbnRhY3QgdXMgdG8gb2J0YWluIHRoZSBgbmJsX2NvcmVgIGNvZGUgYW5kIGlu
+c3RhbGxhdGlvbiBwYWNrYWdlLgo+IAo+IAo+ICtDb2V4aXN0ZW5jZSBCZXR3ZWVuIERQREsgQW5k
+IEtlcm5lbCBEcml2ZXIKPiArLS0tLS0tLS0tLS0tLQo+ICtXaGVuIHRoZSBkZXZpY2UgaXMgYmlu
+ZCB0byB0aGUgbmJsX2NvcmUgZHJpdmVyLCBhbmQgSU9NTVUgaW4gcGFzc3Rocm91Z2ggbW9kZSwK
+PiAraXQgaXMgbmVjZXNzYXJ5IHRvIGZvcmNlIElPVkEgdG8gUEEgdmlhIEVBTCAtLWlvdmEtbW9k
+ZT1wYSBvcHRpb24sCj4gK0RQREsgd29ya3Mgbm9ybWFsbHkgb25seSB1bmRlciB0aGlzIGNvbmZp
+Z3VyYXRpb24uCj4gKwpUaGlzIHBhcmFncmFwaCBpcyBoYXMgYXdrd2FyZCB3b3JkaW5nIGJlY2F1
+c2Ugb2YgdmVyYiB0ZW5zZS4gCkFsc28gaW4gUlNUIGZpbGVzIHRoZSBoZWFkZXIgbmVlZHMgdG8g
+aGF2ZSBhcyBtYW55IGRhc2ggY2hhcmFjdGVycyBhcyB0aGUgaGVhZGVyIGFib3ZlCmFuZCB1c2Ug
+aGlnaGxpZ2h0aW5nIHdpdGggYGAgZm9yIG9wdGlvbnMuCkJldHRlciBhczoKIFdoZW4gdGhpcyBk
+ZXZpY2UgaXMgYm91bmQgdG8gdGhlIG5ibF9jb3JlIGRyaXZlciBhbmQgSU9NTVUgaXMgaW4gcGFz
+c3Rocm91Z2ggbW9kZSwKIGl0IGlzIG5lY2Vzc2FyeSB0byBmb3JjZSBJL08gdmlydHVhbCBhZGRy
+ZXNzIChJT1ZBKSB0byBiZSBtYXBwZWQgdG8gcGh5c2ljYWwgYWRkcmVzcyAoUEEpCiB3aXRoIHRo
+ZSBFQUwgY29tbWFuZCBsaW5lIG9wdGlvbiBgYC0taW92YS1tb2RlPXBhYGAuClByb2JhYmx5IHNo
+b3VsZCBhbHNvIGNoZWNrIGZvciB0aGlzIGluIHRoZSBkcml2ZXIsIGFuZCB3YXJuIHVzZXIgaWYg
+bm90IHNldC4K
+------=ALIBOUNDARY_1946_7face0b1b700_6911a8cb_1eee6e
 Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 
-<div dir=3D"ltr"><div dir=3D"ltr">On Mon, Nov 10, 2025 at 1:11=E2=80=AFPM L=
-uk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 &lt;<a href=3D"mailto:sismis@cesnet.cz=
-">sismis@cesnet.cz</a>&gt; wrote:<br></div><div class=3D"gmail_quote gmail_=
-quote_container"><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px =
-0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">On 11/7/=
-25 17:07, Stephen Hemminger wrote:<br>
-&gt; On Fri, 7 Nov 2025 15:16:28 +0100<br>
-&gt; Luk=C3=A1=C5=A1 =C5=A0i=C5=A1mi=C5=A1 &lt;<a href=3D"mailto:sismis@ces=
-net.cz" target=3D"_blank">sismis@cesnet.cz</a>&gt; wrote:<br>
-&gt;<br>
-&gt;&gt; Hello all,<br>
-&gt;&gt;<br>
-&gt;&gt; ## Motivation<br>
-&gt;&gt;<br>
-&gt;&gt;<br>
-&gt;&gt; Before taking either route, I=E2=80=99d like to understand the com=
-munity=E2=80=99s<br>
-&gt;&gt; preference:<br>
-&gt;&gt; - Do you even see it as a valuable contribution for customer appli=
-cations?<br>
-&gt;&gt; - Can you possibly think of an alternative way to solve the unifie=
-d<br>
-&gt;&gt; human-readable format conversion? Both on the code level and inter=
-face<br>
-&gt;&gt; level.<br>
-&gt;&gt; - Is testpmd code extraction the right long-term solution, even if=
-<br>
-&gt;&gt; disruptive? Should the private DPDK forks be taken into considerat=
-ion?<br>
-&gt;&gt; Or should I start with a separate lightweight parser and revisit<b=
-r>
-&gt;&gt; integration later?<br>
-&gt;&gt;<br>
-&gt;&gt; Any other feedback is welcome</blockquote><div>=C2=A0</div></div><=
-div>Hi=C2=A0Lukas,=C2=A0</div><div>You could try testpmd=C2=A0<a href=3D"ht=
-tps://doc.dpdk.org/guides-25.07/testpmd_app_ug/testpmd_funcs.html#command-f=
-ile-functions">Command File Functions</a></div><div>Rte_flows using this me=
-thod can be created at boot and run time.=C2=A0</div><div><ul><li>If testpm=
-d started with the <code class=3D"gmail-docutils gmail-literal gmail-notran=
-slate"><span class=3D"gmail-pre">--cmdline-file=3DFILENAME</span></code> co=
-mmand line argument testpmd
-will execute all CLI commands contained within the file immediately before
-starting packet forwarding or entering interactive mode.</li><li>At run-tim=
-e additional commands can be loaded in bulk by invoking the <code class=3D"=
-gmail-docutils gmail-literal gmail-notranslate"><span class=3D"gmail-pre">l=
-oad</span> <span class=3D"gmail-pre">FILENAME</span></code>
-command.</li></ul></div><div><br></div><div><span class=3D"gmail_signature_=
-prefix">=C2=A0Best Regards,=C2=A0</span></div><div><span class=3D"gmail_sig=
-nature_prefix">Khadem</span></div><div dir=3D"ltr" class=3D"gmail_signature=
-"><div dir=3D"ltr"><div><br></div></div></div></div>
+PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
+ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
+bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
+Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
+VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPkhpJm5ic3A7PHNwYW4gIHN0eWxlPSJjb2xvcjogcmdi
+KDAsIDAsIDApOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBm
+b250LXNpemU6IDE0cHg7IGZvbnQtc3R5bGU6IG5vcm1hbDsgZm9udC12YXJpYW50LWxpZ2F0dXJl
+czogbm9ybWFsOyBmb250LXZhcmlhbnQtY2Fwczogbm9ybWFsOyBmb250LXdlaWdodDogNDAwOyBs
+ZXR0ZXItc3BhY2luZzogbm9ybWFsOyB0ZXh0LWFsaWduOiBzdGFydDsgdGV4dC1pbmRlbnQ6IDBw
+eDsgdGV4dC10cmFuc2Zvcm06IG5vbmU7IHdvcmQtc3BhY2luZzogMHB4OyB3aGl0ZS1zcGFjZTog
+bm9ybWFsOyBiYWNrZ3JvdW5kLWNvbG9yOiByZ2IoMjU1LCAyNTUsIDI1NSk7IHRleHQtZGVjb3Jh
+dGlvbi10aGlja25lc3M6IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1zdHlsZTogaW5pdGlhbDsg
+dGV4dC1kZWNvcmF0aW9uLWNvbG9yOiBpbml0aWFsOyBmbG9hdDogbm9uZTsgZGlzcGxheTogaW5s
+aW5lICFpbXBvcnRhbnQ7Ij5TdGVwaGVuLDwvc3Bhbj48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9
+ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0
+LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhl
+aXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iY29sb3I6IHJnYigwLCAwLCAwKTsg
+Zm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAx
+NHB4OyBmb250LXN0eWxlOiBub3JtYWw7IGZvbnQtdmFyaWFudC1saWdhdHVyZXM6IG5vcm1hbDsg
+Zm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9udC13ZWlnaHQ6IDQwMDsgbGV0dGVyLXNwYWNp
+bmc6IG5vcm1hbDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5kZW50OiAwcHg7IHRleHQtdHJh
+bnNmb3JtOiBub25lOyB3b3JkLXNwYWNpbmc6IDBweDsgd2hpdGUtc3BhY2U6IG5vcm1hbDsgYmFj
+a2dyb3VuZC1jb2xvcjogcmdiKDI1NSwgMjU1LCAyNTUpOyB0ZXh0LWRlY29yYXRpb24tdGhpY2tu
+ZXNzOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tc3R5bGU6IGluaXRpYWw7IHRleHQtZGVjb3Jh
+dGlvbi1jb2xvcjogaW5pdGlhbDsgZmxvYXQ6IG5vbmU7IGRpc3BsYXk6IGlubGluZSAhaW1wb3J0
+YW50OyI+PGJyID48L3NwYW4+PC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsg
+Zm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PHNw
+YW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBT
+aW1TdW47Ij48c3BhbiA+SSBhcHByZWNpYXRlIHlvdXIgY2FyZWZ1bCByZXZpZXcgYW5kIGRldGFp
+bGVkIHN1Z2dlc3Rpb25zLjwvc3Bhbj48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBi
+b3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47
+Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGln
+aHQsIFNpbVN1bjsiPjxzcGFuID48YnIgPjwvc3Bhbj48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9
+ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0
+LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhl
+aXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuID5UaGFuayB5b3UuPC9zcGFuPjwvc3Bhbj48L2Rp
+dj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
+VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9t
+YSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PGJyID48L3NwYW4+PC9kaXY+PGJs
+b2NrcXVvdGUgIF9xdW90ZT0iMSIgc3R5bGU9Im1hcmdpbi1yaWdodDogMHB4OyBtYXJnaW4tdG9w
+OiAwcHg7IG1hcmdpbi1ib3R0b206IDBweDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNU
+SGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGRp
+diAgY2xhc3M9ImFsaW1haWwtcXVvdGUiPjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPi0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLTwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuWPkeS7tuS6uu+8mlN0ZXBoZW4g
+SGVtbWluZ2VyICZsdDtzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZyZndDs8L2Rpdj48ZGl2ICBz
+dHlsZT0iY2xlYXI6IGJvdGg7Ij7lj5HpgIHml7bpl7TvvJoyMDI15bm0MTHmnIgxMOaXpSjlkajk
+uIApIDA0OjE2PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+5pS25Lu25Lq677yaRGlt
+b24mbHQ7ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbSZndDs8L2Rpdj48ZGl2ICBzdHlsZT0i
+Y2xlYXI6IGJvdGg7Ij7mioTjgIDpgIHvvJpkZXYmbHQ7ZGV2QGRwZGsub3JnJmd0OzsgVGhvbWFz
+IE1vbmphbG9uJmx0O3Rob21hc0Btb25qYWxvbi5uZXQmZ3Q7OyBBbHZpbiZsdDthbHZpbi53YW5n
+QG5lYnVsYS1tYXRyaXguY29tJmd0OzsgTGVvbiZsdDtsZW9uLnl1QG5lYnVsYS1tYXRyaXguY29t
+Jmd0OzsgU2FtJmx0O3NhbS5jaGVuQG5lYnVsYS1tYXRyaXguY29tJmd0OzwvZGl2PjxkaXYgIHN0
+eWxlPSJjbGVhcjogYm90aDsiPuS4u+OAgOmimO+8mlJlOiBbUEFUQ0ggdjEgNC80XSBuZXQvbmJs
+OiB1cGRhdGUgZG9jdW1lbnRhdGlvbiBhbmQgbWFpbnRhaW5lcnM8L2Rpdj48ZGl2ICBzdHlsZT0i
+Y2xlYXI6IGJvdGg7Ij48YnIgPjwvZGl2Pk9uIFRodSwmbmJzcDsgNiBOb3YgMjAyNSAyMzozNDo1
+OSAtMDgwMDxiciA+RGltb24gWmhhbyAmbHQ7ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbSZn
+dDsgd3JvdGU6PGJyID48YnIgPiZndDsgZGlmZiAtLWdpdCBhL2RvYy9ndWlkZXMvbmljcy9uYmwu
+cnN0IGIvZG9jL2d1aWRlcy9uaWNzL25ibC5yc3Q8YnIgPiZndDsgaW5kZXggZjQxZGEyMGVlYS4u
+OTY1N2VlMmM4NyAxMDA2NDQ8YnIgPiZndDsgLS0tIGEvZG9jL2d1aWRlcy9uaWNzL25ibC5yc3Q8
+YnIgPiZndDsgKysrIGIvZG9jL2d1aWRlcy9uaWNzL25ibC5yc3Q8YnIgPiZndDsgQEAgLTcwLDYg
+KzcwLDEzIEBAIEFub2xpcyBjb21tdW5pdHk6PGJyID4mZ3Q7Jm5ic3A7IEFsdGVybmF0aXZlbHks
+IHlvdSBjYW4gY29udGFjdCB1cyB0byBvYnRhaW4gdGhlIGBuYmxfY29yZWAgY29kZSBhbmQgaW5z
+dGFsbGF0aW9uIHBhY2thZ2UuPGJyID4mZ3Q7Jm5ic3A7IDxiciA+Jmd0OyZuYnNwOyA8YnIgPiZn
+dDsgK0NvZXhpc3RlbmNlIEJldHdlZW4gRFBESyBBbmQgS2VybmVsIERyaXZlcjxiciA+Jmd0OyAr
+LS0tLS0tLS0tLS0tLTxiciA+Jmd0OyArV2hlbiB0aGUgZGV2aWNlIGlzIGJpbmQgdG8gdGhlIG5i
+bF9jb3JlIGRyaXZlciwgYW5kIElPTU1VIGluIHBhc3N0aHJvdWdoIG1vZGUsPGJyID4mZ3Q7ICtp
+dCBpcyBuZWNlc3NhcnkgdG8gZm9yY2UgSU9WQSB0byBQQSB2aWEgRUFMIC0taW92YS1tb2RlPXBh
+IG9wdGlvbiw8YnIgPiZndDsgK0RQREsgd29ya3Mgbm9ybWFsbHkgb25seSB1bmRlciB0aGlzIGNv
+bmZpZ3VyYXRpb24uPGJyID4mZ3Q7ICs8YnIgPjxiciA+PGJyID5UaGlzIHBhcmFncmFwaCBpcyBo
+YXMgYXdrd2FyZCB3b3JkaW5nIGJlY2F1c2Ugb2YgdmVyYiB0ZW5zZS4gPGJyID5BbHNvIGluIFJT
+VCBmaWxlcyB0aGUgaGVhZGVyIG5lZWRzIHRvIGhhdmUgYXMgbWFueSBkYXNoIGNoYXJhY3RlcnMg
+YXMgdGhlIGhlYWRlciBhYm92ZTxiciA+YW5kIHVzZSBoaWdobGlnaHRpbmcgd2l0aCBgYCBmb3Ig
+b3B0aW9ucy48YnIgPjxiciA+QmV0dGVyIGFzOjxiciA+PGJyID4gV2hlbiB0aGlzIGRldmljZSBp
+cyBib3VuZCB0byB0aGUgbmJsX2NvcmUgZHJpdmVyIGFuZCBJT01NVSBpcyBpbiBwYXNzdGhyb3Vn
+aCBtb2RlLDxiciA+IGl0IGlzIG5lY2Vzc2FyeSB0byBmb3JjZSBJL08gdmlydHVhbCBhZGRyZXNz
+IChJT1ZBKSB0byBiZSBtYXBwZWQgdG8gcGh5c2ljYWwgYWRkcmVzcyAoUEEpPGJyID4gd2l0aCB0
+aGUgRUFMIGNvbW1hbmQgbGluZSBvcHRpb24gYGAtLWlvdmEtbW9kZT1wYWBgLjxiciA+PGJyID5Q
+cm9iYWJseSBzaG91bGQgYWxzbyBjaGVjayBmb3IgdGhpcyBpbiB0aGUgZHJpdmVyLCBhbmQgd2Fy
+biB1c2VyIGlmIG5vdCBzZXQuPC9kaXY+PC9ibG9ja3F1b3RlPjxkaXYgIHN0eWxlPSJsaW5lLWhl
+aWdodDogMjBweDsgY2xlYXI6IGJvdGg7Ij48YnIgPjwvZGl2PjwvZGl2PjwvZGl2Pg0KPGRpdiBz
+dHlsZT0iY2xlYXI6IGJvdGg7Ij48c3BhbiBzdHlsZT0iZm9udC1zaXplOiAxMHB4OyBjb2xvcjog
+cmdiKDIxNiwgMjE2LCAyMTYpOyI+5pys6YKu5Lu25omA5ZCr5L+h5oGv5Y+K5YW25Lu75L2V6ZmE
+5Lu25Li65L+d5a+G5L+h5oGv5LiU5Y+v6IO95bGe5LqO5LiT5pyJ5L+h5oGv44CC5Lu75L2V6Z2e
+5oyH5a6a5o6l5pS25Lq65Z2H5peg5p2D6K6/6Zeu5pys6YKu5Lu244CC5aaC5p6c5oKo5LiN5piv
+6K+l6YKu5Lu255qE5oyH5a6a5o6l5pS25Lq677yM6YKj5LmI5Lu75L2V5a+55pys6YKu5Lu25YaF
+5a656L+b6KGM5oqr6Zyy77yM5aSN5Yi25oiW5L2/55So55qE6KGM5Li65Z2H5piv56aB5q2i55qE
+44CC5aaC5p6c5oKo5LiN5piv6K+l6YKu5Lu255qE5oyH5a6a5o6l5pS25Lq677yM6K+35oKo56uL
+5Y2z6YCa6L+H6YKu5Lu26YCa55+lJm5ic3A7Y29tcGxpYW5jZUBuZWJ1bGEtbWF0cml4LmNvbeW5
+tueri+WNs+WIoOmZpOaCqOmUmeivr+aOpeWPl+eahOmCruS7tuOAgjwvc3Bhbj48L2Rpdj48ZGl2
+IHN0eWxlPSJjbGVhcjogYm90aDsiPjxzcGFuIHN0eWxlPSJmb250LXNpemU6IDEwcHg7IGNvbG9y
+OiByZ2IoMjE2LCAyMTYsIDIxNik7Ij5UaGUmbmJzcDtpbmZvcm1hdGlvbiZuYnNwO2luJm5ic3A7
+dGhpcyZuYnNwO21lc3NhZ2UmbmJzcDthbmQmbmJzcDthbnkmbmJzcDthdHRhY2htZW50cyZuYnNw
+O2lzJm5ic3A7Y29uZmlkZW50aWFsJm5ic3A7YW5kJm5ic3A7bWF5Jm5ic3A7YmUmbmJzcDtwcml2
+aWxlZ2VkLiZuYnNwOyZuYnNwO0FjY2VzcyZuYnNwO3RvJm5ic3A7dGhpcyZuYnNwO2VtYWlsJm5i
+c3A7YnkmbmJzcDthbnlvbmUmbmJzcDtvdGhlciZuYnNwO3RoYW4mbmJzcDt0aGUmbmJzcDtpbnRl
+bmRlZCZuYnNwO3JlY2lwaWVudCZuYnNwO2lzJm5ic3A7bm90Jm5ic3A7YXV0aG9yaXplZC4mbmJz
+cDsmbmJzcDtJZiZuYnNwO3lvdSZuYnNwO2FyZSZuYnNwO25vdCZuYnNwO3RoZSZuYnNwO2ludGVu
+ZGVkJm5ic3A7cmVjaXBpZW50LCZuYnNwO2Rpc2Nsb3N1cmUsJm5ic3A7Y29weWluZyZuYnNwO29y
+Jm5ic3A7dXNlJm5ic3A7b2YmbmJzcDt0aGUmbmJzcDtjb250ZW50cyZuYnNwO29mJm5ic3A7dGhp
+cyZuYnNwO2VtYWlsJm5ic3A7aXMmbmJzcDtwcm9oaWJpdGVkLiZuYnNwOyZuYnNwO0lmJm5ic3A7
+eW91Jm5ic3A7YXJlJm5ic3A7bm90Jm5ic3A7dGhlJm5ic3A7aW50ZW5kZWQmbmJzcDtyZWNpcGll
+bnQsJm5ic3A7cGxlYXNlJm5ic3A7bm90aWZ5Jm5ic3A7Jm5ic3A7Y29tcGxpYW5jZUBuZWJ1bGEt
+bWF0cml4LmNvbSZuYnNwO2ltbWVkaWF0ZWx5Jm5ic3A7YnkmbmJzcDtlbWFpbCwmbmJzcDthbmQm
+bmJzcDtwbGVhc2UmbmJzcDtkZXN0cm95Jm5ic3A7dGhlJm5ic3A7ZW1haWwmbmJzcDt5b3UmbmJz
+cDtyZWNlaXZlZCZuYnNwO2luJm5ic3A7ZXJyb3IuPC9zcGFuPjwvZGl2Pg==
+------=ALIBOUNDARY_1946_7face0b1b700_6911a8cb_1eee6e--
 
---00000000000017595a064339adbd--
