@@ -2,46 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C11B5CCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 01:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B36CCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 01:17:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A313402EB;
-	Mon, 10 Nov 2025 02:15:58 +0100 (CET)
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com
- [113.46.200.226])
- by mails.dpdk.org (Postfix) with ESMTP id 65B62400D6;
- Mon, 10 Nov 2025 02:15:56 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3C15C400D6;
+	Mon, 10 Nov 2025 02:17:48 +0100 (CET)
+Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com
+ [113.46.200.218])
+ by mails.dpdk.org (Postfix) with ESMTP id 2C77A400D5
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 02:17:47 +0100 (CET)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=Sfw9m6o840pdmID0Fi8EaX3x2x8GNx4J9ji4EUOj4lI=;
- b=bYy9A6dK7lNYkeapkS6gwvYYZSJux1Hg2W7xSEzBdb849LW/VpnnR25CznWHr/05gboamLdKg
- Vt+NJv/aE+VxvrvNZ5PpcWDr3NS4P6r59+S47mXtHXCr2ZoR4xbMHuu6M/Igk6okuOiK7YPNS/+
- Tn/a9+EuMVaA5+6QHC+PXW4=
-Received: from mail.maildlp.com (unknown [172.19.162.112])
- by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d4WsN01WRzKm51;
- Mon, 10 Nov 2025 09:14:15 +0800 (CST)
+ bh=55Lj4w6eww2J//WQ0tQalscfFYXxWnuClIZQ+tnpabQ=;
+ b=gKQTnh5AxhbLMeI9RFNF65rOH9T2e0kLk6bPvibumwoF0LunV1mxk1CQYXZuRcEyB713osT7s
+ 5kgWhYABHk+STjlmAJbcHPsJX8Aca0LXLxqGP+uzEerv1SJ0poJv/yx4HU5oZJyX7JPY/5p3bLL
+ qNc9IjwysTN0279UXJg2juw=
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+ by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d4WvV43MZzpSv7
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 09:16:06 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id A5F2F1401F3;
- Mon, 10 Nov 2025 09:15:54 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 4C3F61401F2
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 09:17:45 +0800 (CST)
 Received: from [10.67.121.161] (10.67.121.161) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 10 Nov 2025 09:15:54 +0800
-Message-ID: <1056c1be-c23b-4c6d-8260-f855be5af02d@huawei.com>
-Date: Mon, 10 Nov 2025 09:15:53 +0800
+ 15.2.1544.11; Mon, 10 Nov 2025 09:17:44 +0800
+Message-ID: <90c12477-0fdb-4137-adb7-563c8b564d48@huawei.com>
+Date: Mon, 10 Nov 2025 09:17:44 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 12/33] bus/pci: remove shadowed variables
+Subject: Re: [RFC PATCH v2 33/33] build: enable shadowed variable warnings
 To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
-CC: <stable@dpdk.org>, Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta
- <nipun.gupta@amd.com>, Anatoly Burakov <anatoly.burakov@intel.com>, Tetsuya
- Mukawa <mtetsuyah@gmail.com>
 References: <20251106140948.2894678-1-bruce.richardson@intel.com>
  <20251107155034.436809-1-bruce.richardson@intel.com>
- <20251107155034.436809-13-bruce.richardson@intel.com>
+ <20251107155034.436809-34-bruce.richardson@intel.com>
 Content-Language: en-US
 From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20251107155034.436809-13-bruce.richardson@intel.com>
+In-Reply-To: <20251107155034.436809-34-bruce.richardson@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.67.121.161]
@@ -63,13 +60,7 @@ Errors-To: dev-bounces@dpdk.org
 Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
 On 11/7/2025 11:50 PM, Bruce Richardson wrote:
-> Remove two instances where we had duplicate shadowed local variables
-> called "ret". In each case, we could just remove the inner instance,
-> since the outer value was not needing to be preserved.
-> 
-> Fixes: 03ba15ca65c1 ("vfio: allow mapping MSI-X BARs if kernel allows it")
-> Fixes: c0ce0577e84d ("pci: consolidate address comparisons")
-> Cc: stable@dpdk.org
+> Enable -Wshadow globally for DPDK builds.
 > 
 > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
