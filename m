@@ -2,88 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB00CCFA13
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 20:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD18ACCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 21:34:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3C484026D;
-	Mon, 10 Nov 2025 21:25:27 +0100 (CET)
-Received: from fhigh-b7-smtp.messagingengine.com
- (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
- by mails.dpdk.org (Postfix) with ESMTP id 65BD340264
- for <dev@dpdk.org>; Mon, 10 Nov 2025 21:25:26 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 295047A01AC;
- Mon, 10 Nov 2025 15:25:25 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Mon, 10 Nov 2025 15:25:25 -0500
+	by mails.dpdk.org (Postfix) with ESMTP id B61A24026D;
+	Mon, 10 Nov 2025 22:34:23 +0100 (CET)
+Received: from fhigh-b8-smtp.messagingengine.com
+ (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+ by mails.dpdk.org (Postfix) with ESMTP id 80C3640264
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 22:34:21 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id B899E7A006E;
+ Mon, 10 Nov 2025 16:34:20 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Mon, 10 Nov 2025 16:34:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762806325;
- x=1762892725; bh=y6ESMuR1DEFSYqQT5hxoLe/ntEf4815O8Jn5fwf5mJs=; b=
- tMa3Zx7MGklGFaFHiq5rVGWyVZAo/GFHDGY44OCLbBgkMULPNWFwLRzVVpcqW8Zi
- DpdJuwVoQ5mUnSBn8Ac9vZotXDABv2u2Mnv8h2ykCFMVCfmCu1gz0C9mbZbd48q3
- L/3Me/qj7iipRlldxRGyGQldEixxRw2ocqTHDQ5QZdiSqa6hpbrACtMcjlCnrpdA
- OIMRCJ6kN+/KzLx9zaiLLNvbzltFKlhZ3bY8llOl4LG3ynSCkLU+tNamWbds55Rp
- WXff2sa6rUn/Mo5hp6lA55l5J850MaC5hu+aASRsO9tdqx25pIKxCBDTY0DS4t25
- Pk/NUaOHOXU1k+DSl4LzVg==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762810460;
+ x=1762896860; bh=CG014jOnStt+CJHc2wrsqS/RXiv49+q9gzfsJCBF8yE=; b=
+ gTbqvk/+nxwIYHoQcI/edqr9fpUm54DczOi1yPQQCqy5NlARPPUFyKX9eODp7HpI
+ H92TsHv9/oTn3BLT7eL+THxmlJ6qNVOHODdJndZ2JEbyclNp3T46Tft9bSZIhdh4
+ pU0sdjTiQdTxGMmZiS65MpRjdwpV3HZb5NOLtIrl+t2Q7zKTOzkxHOhV7HtahIRv
+ iqZCBV3Ri/NTtKcNDhVI9/H9DpEOCfQQCAnJXEZnWtitXl6hze3FEQS1MnzH/pe4
+ tRf8C1FguxFQB4OQ+ibevG20NqaJLdIKQT7MiixnUNSX82QEsfmFHZGw38r91rQe
+ gms8cfkH3MbYN1pISIFhGw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762806325; x=
- 1762892725; bh=y6ESMuR1DEFSYqQT5hxoLe/ntEf4815O8Jn5fwf5mJs=; b=b
- 03ftU56VoJpr7cspaiEWMDa/qvbOGeyO/mm/cvMJaLA1K864F6eo0wTcAecFvDln
- 32TOW10HXk+EyxjwPScpX/wJTpmXzEt0KrfNw1LnVRlaPK3Ctp2ePn1LDdX/OvOF
- YBo5y6VDDw2WNXKiqH/26HbY/MwoYXnTxlTVZidjbL3bkIJrxF5G9TBxODCk4e5I
- CeYuNSBI1U5kPv45dXCfJGWSd5mveOLcyQ6C3WSFYYIBr8JobnNGlI1kRk62Ys0o
- OyeyryVNUbJnnsKgRVQYQTIPVmNkM+OA398WmbSZ64as/o5FOJgeyFdfVOpJDQ7d
- hzEPQR5mMt+MA2OdHVrDg==
-X-ME-Sender: <xms:NEoSaYBFf9fLGJ-sS1MOTwVChqwB38QfTuUEeyMPO8Y1QxrnCZrazQ>
- <xme:NEoSaUn37n3njnFtBo3JyN8yQOBphv-3M26Hm9t5XcXp-FO_NBaPyBZ6lUjmYDmHW
- _vso5HQR7qSTqu2adwENwf8gma0WjxAsuJbEoxxv3Wnli1EVCY6>
-X-ME-Received: <xmr:NEoSabc7EQpUs_toJEZv-wl6s3IBTleVpUlKBMJ_korucgKCDOlAU0DNvQRLCY_mZttaIKvnbSG5y86B505BbN9cVA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduleelvdejucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762810460; x=
+ 1762896860; bh=CG014jOnStt+CJHc2wrsqS/RXiv49+q9gzfsJCBF8yE=; b=A
+ vezY3IHJfPblD7OUtpYITxpkQIB9DVCcr+Rm/MHFJdz5l1ZHVoXRPXzJXzbd1zev
+ A8NKciJctL0RtfJQJy3yIFJDCH+UbTe1AfyVGRty5LkPHxsU7ExNzcUez+RsOsBq
+ ylGZ1wHSvLKeJp4QmCAHH42S33W4x+6BIKlpGVPYPn9N0WUM0ZqvVVyio7BVFNKH
+ JzPWiWf3yqmqwlDCha/HWmU010Lb4aXCJnE462l3s2/fUrCfVSYxIr6CqCwZWvgp
+ ENAnBpQ9W4ZT1brWBDbt/6tAOMo8grtIMEIqPZOr4iS1y5MWL2eS8oZez9+6H3o/
+ nt3AvG622EHD4mm3rR4GQ==
+X-ME-Sender: <xms:W1oSaQZWfbc17sGGOBYY7cCCcKmp3ze1qs301_Wg3wpd2U9NUjfOaA>
+ <xme:W1oSaW1SxYsaxpb-JpsXPB6nt5nRQ-cXCAruj4MiLf_3TPwCac08ecRzO6FzrlSCg
+ oPl6q5TGdgfhLvoPCD9nAQPMbU0243gGXRA6C98yB7BTf2KtsFlDQ>
+X-ME-Received: <xmr:W1oSaecZedVm3yArkh7kpmRRqs0Mw9p7Ow3P0EimbScmLOe6KdIT2wvVhJ2ccCCQv9A4nuZ72x3ejuKrGA-JROG_wA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduleelgedtucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeekpdhm
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeehpdhm
  ohguvgepshhmthhpohhuthdprhgtphhtthhopegrjhhithdrkhhhrghprghruggvsegsrh
  horggutghomhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
- thhopehjrgihrdguihhnghessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepshhhuh
- grnhhglhhinhdrfigrnhhgsegsrhhorggutghomhdrtghomhdprhgtphhtthhopehpvght
- vghrrdhsphhrvggruggsohhrohhughhhsegsrhhorggutghomhdrtghomhdprhgtphhtth
- hopehmrghnihhshhdrkhhurhhuphessghrohgruggtohhmrdgtohhmpdhrtghpthhtohep
- shhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohepug
- grvhhiugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:NEoSaQTSGRJKS_CJfjRw3BjCoEsWT-J-_DC3Lg26o5dIjkMNtpRaig>
- <xmx:NEoSaavB6o5i5oAJKHVVogWeosnmNLKZS3_6utw_bk1jFz91O8ki0g>
- <xmx:NEoSaZc1gQxHlGXS8AaSggKqPHBrMN6g7Lqxspv8QEEP_nwtYtcriA>
- <xmx:NEoSacYJnOpRvUPOa_lrZyHL82-oKV40Kr351Acpu8sXgJtrgATq5g>
- <xmx:NUoSaWbiFSUZMyUNEgMYnNVzSAAGwa5q0CSs0cwGhsq5ebzHx0Itcrs2>
+ thhopehmrghnihhshhdrkhhurhhuphessghrohgruggtohhmrdgtohhmpdhrtghpthhtoh
+ epshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohep
+ uggrvhhiugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomh
+X-ME-Proxy: <xmx:W1oSafF39v8AYVoQVIkZG-au2kb-pbtFcaIS4zAZyWfyqtAL_XJR7w>
+ <xmx:W1oSaX0q8p7l9uCO1FAdOrQQBPJzkDn03r7agaS147Jl-OKdj8ayog>
+ <xmx:W1oSaXmPJVZjKn_6tH1C0ErP3NCGkahF-XK4lMKWO7C56VGF4dPYRw>
+ <xmx:W1oSaX-JhtN_cCs5r9kDOa5rc3qOudZiUBqvUWIBHfCm8D4FHAcUWA>
+ <xmx:XFoSaWCPe2P1G3QbwQ17YTKVmABFSLi-uBhfFYuU96ap7ly06xjevhox>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 10 Nov 2025 15:25:22 -0500 (EST)
+ 10 Nov 2025 16:34:19 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: ajit.khaparde@broadcom.com
-Cc: dev@dpdk.org, Jay Ding <jay.ding@broadcom.com>,
- Shuanglin Wang <shuanglin.wang@broadcom.com>,
- Peter Spreadborough <peter.spreadborough@broadcom.com>,
- Manish Kurup <manish.kurup@broadcom.com>,
+Cc: dev@dpdk.org, Manish Kurup <manish.kurup@broadcom.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
  David Marchand <david.marchand@redhat.com>
-Subject: Re: [PATCH v5 17/57] next/bnxt/tf_ulp: meter and mac_addr cache
- cleanup
-Date: Mon, 10 Nov 2025 21:25:19 +0100
-Message-ID: <2559753.Hs2Xf39FnO@thomas>
-In-Reply-To: <20251029160712.58519-18-manish.kurup@broadcom.com>
+Subject: Re: [PATCH v5 48/57] net/bnxt: add meson build options for TruFlow
+Date: Mon, 10 Nov 2025 22:34:17 +0100
+Message-ID: <3070960.fgWkQ1oJHW@thomas>
+In-Reply-To: <20251029160712.58519-49-manish.kurup@broadcom.com>
 References: <20251021175049.46092-1-manish.kurup@broadcom.com>
  <20251029160712.58519-1-manish.kurup@broadcom.com>
- <20251029160712.58519-18-manish.kurup@broadcom.com>
+ <20251029160712.58519-49-manish.kurup@broadcom.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -100,69 +93,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-I take this patch as a simple and short example of what is done
-at Broadcom for upstreaming the driver updates once a year.
-
-- One patch includes multiple unrelated changes.
-- A change described in the commit log (increase from 512)
-  does not appear in the code.
-
-We could say a lot more about this series.
-In general, bnxt management looks like a mess.
-Why not updating more regularly with more attention to quality?
-Is it because some files are generated?
-Can we improve by upstreaming the real sources of generated files?
-
-
-29/10/2025 17:06, Manish Kurup:
-> From: Jay Ding <jay.ding@broadcom.com>
+29/10/2025 17:07, Manish Kurup:
+> Add meson options for
+> 1. TF template
+> 2. TF feature bits
 > 
-> 1. Thor doesn't support meter stats. Add null pointer check on
->    ulp_mapper_mtr_stats_hndl_del.
-> 2. Increased the number of mac_addr_cache from 512 to 2048.
->    Changed the data type in an error message.
-> 
-> Signed-off-by: Jay Ding <jay.ding@broadcom.com>
-> Reviewed-by: Shuanglin Wang <shuanglin.wang@broadcom.com>
-> Reviewed-by: Peter Spreadborough <peter.spreadborough@broadcom.com>
+> Signed-off-by: Manish Kurup <manish.kurup@broadcom.com>
+> Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 > ---
->  drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c | 10 ++++++++++
->  drivers/net/bnxt/tf_ulp/ulp_gen_hash.c   |  2 +-
->  2 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
-> index bc48e35c00..7f6a84e699 100644
-> --- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
-> +++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
-> @@ -598,6 +598,16 @@ bnxt_flow_mtr_destroy(struct rte_eth_dev *dev,
->  	if (ret)
->  		goto parse_error;
->  
-> +	oper = ulp_mapper_data_oper_get(ulp_ctx);
-> +	if (!oper)
-> +		goto parse_error;
-> +
-> +	if (oper->ulp_mapper_mtr_stats_hndl_del) {
-> +		ret = oper->ulp_mapper_mtr_stats_hndl_del(mtr_id);
-> +		if (ret)
-> +			goto parse_error;
-> +	}
-> +
->  	BNXT_DRV_DBG(DEBUG, "Bnxt flow meter %d is deleted\n", mtr_id);
->  
->  	return 0;
-> diff --git a/drivers/net/bnxt/tf_ulp/ulp_gen_hash.c b/drivers/net/bnxt/tf_ulp/ulp_gen_hash.c
-> index e8cb1a3784..74cdd5c1da 100644
-> --- a/drivers/net/bnxt/tf_ulp/ulp_gen_hash.c
-> +++ b/drivers/net/bnxt/tf_ulp/ulp_gen_hash.c
-> @@ -33,7 +33,7 @@ int32_t ulp_bit_alloc_list_alloc(struct bit_alloc_list *blist,
->  		return 0;
->  	}
->  	jdx = (uint32_t)(bsize_64 * ULP_INDEX_BITMAP_SIZE);
-> -	BNXT_DRV_DBG(ERR, "bit allocator is full reached max:%x\n", jdx);
-> +	BNXT_DRV_DBG(ERR, "bit allocator is full reached max:%d\n", jdx);
->  	return -1;
->  }
+> +option('bnxt_tf_template', type: 'string', value: 'default', description:
+> +       'Truflow template selection')
+> +option('bnxt_tf_feat_bits', type: 'integer', value: 0, description:
+> +       'Truflow feature bits')
+
+Ouch, I missed that. This file was not part of my regular checks.
+It is clearly not the direction taken for DPDK compilation these last years.
+We tend to simplify the compilation matrix.
+
+Anyway bnxt_tf_feat_bits is not used in the driver compilation.
+
+I copy here an abstract of the use of the other option in another patch:
+"
+if get_option('bnxt_tf_template').contains('app19')
+includes += include_directories('app_19_templates')
+subdir('app_19_templates')
+cflags += '-DBNXT_TF_APP_ID=19'
+"
+
+It is not documented, and the subdirectory is missing.
+
+This whole thing looks very strange, so this patch is obiously rejected.
 
 
 
