@@ -2,41 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF42CCFA13
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 08:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BE9CCFA13
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 08:50:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3AFF7400D6;
-	Mon, 10 Nov 2025 09:34:58 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id CA22C400D5
- for <dev@dpdk.org>; Mon, 10 Nov 2025 09:34:56 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 96B3F206DC;
- Mon, 10 Nov 2025 09:34:56 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id CB031402E1;
+	Mon, 10 Nov 2025 09:50:31 +0100 (CET)
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com
+ [209.85.160.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 7D27B400D5
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 09:50:29 +0100 (CET)
+Received: by mail-qt1-f176.google.com with SMTP id
+ d75a77b69052e-4ed614777a3so24367661cf.2
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 00:50:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1762764629; x=1763369429; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=FF78OTQdIn0qdZoC+ejdTLTNSJ3u8UezBgk5LOUHEBc=;
+ b=ASPNPb09koAx9wuc4khSjl9Pmt3tQGJDEQ2GBeCIqG1T0I9w7Hd0pjwrY1FgI0NRUw
+ QM048b9Shkp5YJjEUTwLgC8F8OtCfF94alc24U5Z94+S0czjk+MtrFsk3QOXLJ1jP8xc
+ ETsYJD27FOG9wOfU8zqvKMS64C3rSo4BVlVpmd/WFkgY/WCxrQIx2dtMLVfUZLAnjllN
+ qjTbstT180jiY4iv5cuLk3FHS64qILgK1VtqbrbRGQeuAsh4/uFdMdzoh2yklmAH/kDN
+ 9Ll3aOpgP9wprM8+dnU6tsCRh0oZuoOZHWvifG4ARIIaz4dhbAVivjKxE00FRx3wMR3j
+ +IGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762764629; x=1763369429;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=FF78OTQdIn0qdZoC+ejdTLTNSJ3u8UezBgk5LOUHEBc=;
+ b=RK3MHq3Kiolb6sE9P8Ha5fZm0LR3MJdawO9vJzYUiUpxiZz4At4gSyhc8QFTOhs8uT
+ 6K9QThNUUs6/Uj8S4U+w9rtSSAQdnNvZwJe7mJQB2A0GT/LxeQTnkC3SHvyDoF47eod7
+ AEozXHImR2E5/qXfW7kDoPBg1xh72fTfqdUTZ+KqwPLfQt/OMMQy5uT5648VjlLXC3M5
+ /ubzkeZWM2E+c7mq6d6XZwbOjpjwR+s6W5b49tP6yEG/HEP78+77OyQtnz6cg3XDFcoG
+ 4pyD8r5zQOMl9VzKXlK8HRFL91XEIHFHeYRFpzqVzIeMuUcuv98ncQAa5GGw7g1ZnZps
+ Ceog==
+X-Gm-Message-State: AOJu0YxH/TlPYRocbJb3mzbuNxtP8gwlmZyuLSqaj47aZA6s4NppzWyI
+ USs2sQg/otUnjc+SYvIRFBf0+p+QeFNMIKtItspynYx2+gk+ZCq230CoPf0E8mxKUUNHjjQ41vH
+ wCPHMy788aftIgalewzDsEdk3RiG4dl4=
+X-Gm-Gg: ASbGncv/ffvRtyqOCYI5f/T5ZcsJQcfqSNR7YiKA1NVFNPRhUt6kfgX3+8zQ4FcmPAK
+ fHXiyFy1AcPb5uhqmJn7cyms+DOLzX+6XZbqqqUoJRkM8tNVbohcuik6rYTocSxuXuVvXb5WKQJ
+ BT/GzFvISPcbkKjNIJde01rK+v6E4nZuKVIVsV6y0WiISexaYyP5FExXbnU5/aqRemedmakk/PQ
+ V3EpkFyiVlAT1Pu7D4GrrClxpfAvkYMosW245K+u7Uo7Jh9Yf81JqZjVoWRK2EvgN6GhA==
+X-Google-Smtp-Source: AGHT+IGDjImT8bnd3McIazayy40h9vPo89U6tcSM6XsDYmRXGH7X5XlpIRq++oN0wYg0Qv9rZ44SXKTjO+mYzrf5hrI=
+X-Received: by 2002:a05:622a:206:b0:4ed:1cf:1335 with SMTP id
+ d75a77b69052e-4eda4f0672bmr95770141cf.36.1762764628593; Mon, 10 Nov 2025
+ 00:50:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [RFC] ethdev: fix UAF in rte_eth_tx_burst with filtering
-Date: Mon, 10 Nov 2025 09:34:53 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65544@smartserver.smartshare.dk>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-In-Reply-To: <11bf07b2-30fe-4935-a43c-fe64a37cc0b4@oktetlabs.ru>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC] ethdev: fix UAF in rte_eth_tx_burst with filtering
-Thread-Index: AdxRjLTiAC9a1TYrQqeyvC/dO+UYPwAieDEg
-References: <20251029235400.1486861-1-stephen@networkplumber.org>
- <11bf07b2-30fe-4935-a43c-fe64a37cc0b4@oktetlabs.ru>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
- "Stephen Hemminger" <stephen@networkplumber.org>, <dev@dpdk.org>,
- "Konstantin Ananyev" <konstantin.ananyev@huawei.com>
-Cc: <bruce.richardson@intel.com>, "Thomas Monjalon" <thomas@monjalon.net>,
- "John McNamara" <john.mcnamara@intel.com>
+References: <20251031221304.394997-2-rjarry@redhat.com>
+In-Reply-To: <20251031221304.394997-2-rjarry@redhat.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Mon, 10 Nov 2025 14:20:02 +0530
+X-Gm-Features: AWmQ_bmm44Y1DkcVtMIqqAFtsXVQ7SXwULxADS2ThaVz9qX9Lqw-3Z42xASI2YE
+Message-ID: <CALBAE1Mhz+R=g7WyyNdx5vHugjL7ZFdYMbtrzzYnNXGA7SkigQ@mail.gmail.com>
+Subject: Re: [PATCH dpdk] graph: fix use-after-free when updating edges with
+ active graphs
+To: Robin Jarry <rjarry@redhat.com>
+Cc: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Zhirun Yan <yanzhirun_163@163.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>,
+ stable@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,105 +79,127 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-K1RPOiBLb25zdGFudGluLCByZWdhcmRpbmcgU3RhZ2UgT3JkZXJlZCBSaW5nLg0KDQo+IEZyb206
-IEFuZHJldyBSeWJjaGVua28gW21haWx0bzphbmRyZXcucnliY2hlbmtvQG9rdGV0bGFicy5ydV0N
-Cj4gU2VudDogU3VuZGF5LCA5IE5vdmVtYmVyIDIwMjUgMTYuMjMNCj4gDQo+IElmIEkgcmVtZW1i
-ZXIgY29ycmVjdGx5IHdlIHNob3VsZCBhdm9pZCBmdW5jdGlvbiBuYW1lcyBpbiBzdW1tYXJ5Lg0K
-PiANCj4gKEknbSByZWFsbHkgc3VycHJpc2VkIHRoYXQgY2FsbGJhY2tzIGFuZCBydGVfZXRoX3R4
-X2J1cnN0KCkgYXJlDQo+IHN1cHBvc2VkIHRvIHJlb3JkZXIgbWJ1ZnMgaW4gdHhfcGt0cyBhcnJh
-eSwgYnV0IGl0IGxvb2tzIGxpa2UgaXQNCj4gdGhlIG9ubHkgc2Vuc2libGUgb3B0aW9uLikNCg0K
-UmVvcmRlcmluZyB0aGUgcGFja2V0cyBpcyBpbmNvbXBhdGlibGUgd2l0aCB0aGUgU3RhZ2UgT3Jk
-ZXJlZCBSaW5nLg0KV2hlbiB0aGUgdHJhbnNtaXQgZnVuY3Rpb24gcmV0dXJucyBlLmcuIDIgbm9u
-LWNvbnN1bWVkIHBhY2tldHMsIHRoZSBtZXRhZGF0YSB3aWxsIGJlIGFzc29jaWF0ZWQgd2l0aCB0
-aGUgMiBsYXN0IHBhY2tldHMgaW4gdGhlIG9yaWdpbmFsIGJ1cnN0IHBhc3NlZCB0byB0aGUgdHJh
-bnNtaXQgZnVuY3Rpb24sIG5vdCB0aGUgMiBwYWNrZXRzIG1vdmVkIHRvIHRoZSBsYXN0IHBvc2l0
-aW9uIGluIHRoZSBhcnJheS4NCg0KPiANCj4gT24gMTAvMzAvMjUgMDI6NTQsIFN0ZXBoZW4gSGVt
-bWluZ2VyIHdyb3RlOg0KPiA+IFdoZW4gcGFja2V0cyBhcmUgZmlsdGVyZWQgYnkgVHggY2FsbGJh
-Y2ssIHRoZXkgcmV0dXJuIHZhbHVlDQo+ID4gbmVlZHMgdG8gaW5jbHVkZSB0aG9zZSBwYWNrZXRz
-OyBvdGhlcndpc2UgdGhlIGFwcGxpY2F0aW9uIHdpbGwNCj4gPiBkbyBhIGR1cGxpY2F0ZSBmcmVl
-IG9mIHRob3NlIG1idWZzLg0KPiA+DQo+ID4gVGhlIGV4YW1wbGUgd291bGQgYmUgYXBwbGljYXRp
-b24gdGhhdCBzZW50IGEgYnVyc3Qgb2YgOCBwYWNrZXRzLA0KPiA+IGFuZCAyIHdlcmUgZmlsdGVy
-ZWQgYnV0IHRoZSBQTUQgd2FzIGJ1c3kgYW5kIGNvdWxkIG5vdCBzZW5kIGFueS4NCj4gPiBUaGUg
-cmVzdWx0IHNob3VsZCBiZSBhIHJldHVybiB2YWx1ZSBvZiAyIGFuZCBtYnVmcyAwLi4xIHNob3Vs
-ZA0KPiA+IGJlIGZyZWVkIGFuZCAyLi43IHNob3VsZCBiZSB1bnRvdWNoZWQgYW5kIHVwIHRvIGFw
-cGxpY2F0aW9uIHRvDQo+ID4gcmVzZW5kIG9yIGRyb3AuDQo+ID4NCj4gPiBPcmlnaW5hbCBidWdn
-eSBjb2RlIHdvdWxkIHJldHVybiAwIGFuZCAwLi4xIHdvdWxkIGJlIGZyZWVkDQo+ID4gMi4uNyB3
-b3VsZCBiZSB1bnVzZWQuIEFwcGxpY2F0aW9uIHdvdWxkIHRoZW4gdHJ5IGFuZCBkcm9wDQo+ID4g
-b3IgcmVzZW5kIGFuIGFscmVhZHkgZnJlZWQgbWJ1Zi4NCj4gPg0KPiA+IEJ1Z3ppbGxhIElEOiAx
-ODE2DQo+ID4gRml4ZXM6IDRkYzI5NDE1OGNhYyAoImV0aGRldjogc3VwcG9ydCBvcHRpb25hbCBS
-eCBhbmQgVHggY2FsbGJhY2tzIikNCj4gPiBDYzogYnJ1Y2UucmljaGFyZHNvbkBpbnRlbC5jb20N
-Cj4gPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhlbkBuZXR3b3JrcGx1
-bWJlci5vcmc+DQo+ID4gLS0tDQo+ID4gICBsaWIvZXRoZGV2L3J0ZV9ldGhkZXYuaCB8IDQ3ICsr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tDQo+IC0tLQ0KPiA+ICAgMSBmaWxl
-IGNoYW5nZWQsIDM1IGluc2VydGlvbnMoKyksIDEyIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlm
-ZiAtLWdpdCBhL2xpYi9ldGhkZXYvcnRlX2V0aGRldi5oIGIvbGliL2V0aGRldi9ydGVfZXRoZGV2
-LmgNCj4gPiBpbmRleCBhNjZjMmFiYmRiLi5kMmNmZTM5MGY5IDEwMDY0NA0KPiA+IC0tLSBhL2xp
-Yi9ldGhkZXYvcnRlX2V0aGRldi5oDQo+ID4gKysrIGIvbGliL2V0aGRldi9ydGVfZXRoZGV2LmgN
-Cj4gPiBAQCAtNjcxNCw2ICs2NzE0LDEwIEBAIHJ0ZV9ldGhfdHhfYnVyc3QodWludDE2X3QgcG9y
-dF9pZCwgdWludDE2X3QNCj4gcXVldWVfaWQsDQo+ID4gICAJfQ0KPiA+ICAgI2VuZGlmDQo+ID4N
-Cj4gPiArCXVpbnQxNl90IHJlcXVlc3RlZF9wa3RzID0gbmJfcGt0czsNCj4gPiArCXVpbnQxNl90
-IGZpbHRlcmVkX3BrdHMgPSAwOw0KPiA+ICsJcnRlX21idWZfaGlzdG9yeV9tYXJrX2J1bGsodHhf
-cGt0cywgbmJfcGt0cywNCj4gUlRFX01CVUZfSElTVE9SWV9PUF9UWCk7DQo+ID4gKw0KPiA+ICAg
-I2lmZGVmIFJURV9FVEhERVZfUlhUWF9DQUxMQkFDS1MNCj4gPiAgIAl7DQo+ID4gICAJCXZvaWQg
-KmNiOw0KPiA+IEBAIC02NzI3LDIyICs2NzMxLDQxIEBAIHJ0ZV9ldGhfdHhfYnVyc3QodWludDE2
-X3QgcG9ydF9pZCwgdWludDE2X3QNCj4gcXVldWVfaWQsDQo+ID4gICAJCWNiID0gcnRlX2F0b21p
-Y19sb2FkX2V4cGxpY2l0KCZwLT50eHEuY2xia1txdWV1ZV9pZF0sDQo+ID4gICAJCQkJcnRlX21l
-bW9yeV9vcmRlcl9yZWxheGVkKTsNCj4gPiAgIAkJaWYgKHVubGlrZWx5KGNiICE9IE5VTEwpKQ0K
-PiA+IC0JCQluYl9wa3RzID0gcnRlX2V0aF9jYWxsX3R4X2NhbGxiYWNrcyhwb3J0X2lkLA0KPiBx
-dWV1ZV9pZCwNCj4gPiAtCQkJCQl0eF9wa3RzLCBuYl9wa3RzLCBjYik7DQo+ID4gKwkJCWZpbHRl
-cmVkX3BrdHMgPSBuYl9wa3RzIC0NCj4gPiArCQkJCXJ0ZV9ldGhfY2FsbF90eF9jYWxsYmFja3Mo
-cG9ydF9pZCwgcXVldWVfaWQsDQo+IHR4X3BrdHMsIG5iX3BrdHMsIGNiKTsNCj4gPiAgIAl9DQo+
-ID4gICAjZW5kaWYNCj4gPg0KPiA+IC0JdWludDE2X3QgcmVxdWVzdGVkX3BrdHMgPSBuYl9wa3Rz
-Ow0KPiA+IC0JcnRlX21idWZfaGlzdG9yeV9tYXJrX2J1bGsodHhfcGt0cywgbmJfcGt0cywNCj4g
-UlRFX01CVUZfSElTVE9SWV9PUF9UWCk7DQo+ID4gLQ0KPiA+IC0JbmJfcGt0cyA9IHAtPnR4X3Br
-dF9idXJzdChxZCwgdHhfcGt0cywgbmJfcGt0cyk7DQo+ID4gLQ0KPiA+IC0JaWYgKHJlcXVlc3Rl
-ZF9wa3RzID4gbmJfcGt0cykNCj4gPiAtCQlydGVfbWJ1Zl9oaXN0b3J5X21hcmtfYnVsayh0eF9w
-a3RzICsgbmJfcGt0cywNCj4gPiAtCQkJCXJlcXVlc3RlZF9wa3RzIC0gbmJfcGt0cywNCj4gUlRF
-X01CVUZfSElTVE9SWV9PUF9UWF9CVVNZKTsNCj4gPiArCXVpbnQxNl90IHNlbnRfcGt0cyA9IHAt
-PnR4X3BrdF9idXJzdChxZCwgdHhfcGt0cywgbmJfcGt0cyAtDQo+IGZpbHRlcmVkX3BrdHMpOw0K
-PiA+ICsJdWludDE2X3QgcmVzdWx0X3BrdHMgPSBzZW50X3BrdHMgKyBmaWx0ZXJlZF9wa3RzOw0K
-PiA+ICsNCj4gPiArCWlmICh1bmxpa2VseShyZXN1bHRfcGt0cyA8IHJlcXVlc3RlZF9wa3RzKSkg
-ew0KPiANCj4gRmlyc3Qgb2YgYWxsIHVubGlrZWx5KCkgaXMgd3JvbmcgaGVyZS4gSXQgaXMgbm90
-IGFuIGVycm9yIHBhdGguIEl0IGlzDQo+IE9LDQo+IHdoZW4gbm90IGV2ZXJ5dGhpbmcgaXMgc2Vu
-dCBhbmQgaXQgc2hvdWxkIG5vdCBjb3N0IHRvbyBtdWNoIGFzIHVubGlrZWx5DQo+IGRvZXMuDQo+
-IFNlY29uZCwgSSdkIHJlbW92ZSB0aGUgY29uZGl0aW9uIGNvbXBsZXRlbHkuIEl0IGlzIG5vdCBh
-IGJpZyBkZWFsIHRvDQo+IGNhbGN1bGF0ZSB1bnNlbnRfcGt0cyBhbmQgY2FsbCB0cmFjZSAoaWYg
-ZW5hYmxlZCkgd2l0aCB6ZXJvDQo+IHVuc2VudF9wa3RzLg0KPiANCj4gPiArCQl1aW50MTZfdCB1
-bnNlbnRfcGt0cyA9IHJlcXVlc3RlZF9wa3RzIC0gcmVzdWx0X3BrdHM7DQo+ID4gKw0KPiA+ICsJ
-CWlmICh1bmxpa2VseShmaWx0ZXJlZF9wa3RzID4gMCkpIHsNCj4gDQo+IFNhbWUgaGVyZSBmb3Ig
-dW5saWtlbHkoKS4NCj4gQWxzbyBzaW5jZSBmaWx0ZXJlZF9wa3RzIGFwcGVhciBpbiBSVEVfRVRI
-REVWX1JYVFhfQ0FMTEJBQ0tTIGNhc2UsDQo+IEknZCBwdXQgaXQgdW5kZXIgY29ycmVzcG9uZGlu
-ZyBjb25kaXRpb25hbCBjb21waWxhdGlvbiB0byBiZQ0KPiBjb25zaXN0ZW50Lg0KPiBZZXMsIGNv
-ZGUgd2l0aCBjb25kaXRpb25hbCBjb21waWxhdGlvbiBpcyBoYXJkIHRvIHJlYWQsIGJ1dCBjb25z
-aXN0ZW5jeQ0KPiBpcyBtb3JlIGltcG9ydGFudCBoZXJlLg0KPiANCj4gPiArCQkJLyogTmVlZCB0
-byByZXNodWZmbGUgcGFja2V0IGxpc3Qgc28gdGhhdCB1bnNlbnQNCj4gcGFja2V0cyBhcmUNCj4g
-PiArCQkJICogYWZ0ZXIgdGhlIHJldHVybiB2YWx1ZQ0KPiA+ICsJCQkgKg0KPiA+ICsJCQkgKiBP
-cmlnaW5hbDogTU1NTU1NDQo+ID4gKwkJCSAqIEZpbHRlcjogICBNTU1NTUYgZmlsdGVyZWQgPSAx
-DQo+ID4gKwkJCSAqIFR4X2J1cnN0OiBTU1NVVUYgc2VudCA9IDMgdW5zZW50ID0gMg0KPiA+ICsJ
-CQkgKg0KPiA+ICsJCQkgKiBSZXR1cm46ICAgU1NTRlVVDQo+ID4gKwkJCSAqICAgcmV0dXJuIGZy
-b20gdHhfYnVyc3QgaXMgNA0KPiA+ICsJCQkgKi8NCj4gPiArCQkJbWVtbW92ZSh0eF9wa3RzICsg
-cmVzdWx0X3BrdHMsIHR4X3BrdHMgKyBzZW50X3BrdHMsDQo+ID4gKwkJCQl1bnNlbnRfcGt0cyAq
-IHNpemVvZihzdHJ1Y3QgcnRlX21idWYgKikpOw0KPiA+ICsNCj4gPiArCQkJLyogVHggZmlsdGVy
-IHByb2Nlc3MgZG9lcyBub3QgZHJvcCB0aGUgcGFja2V0cyB1bnRpbA0KPiBoZXJlICovDQo+ID4g
-KwkJCXJ0ZV9wa3RtYnVmX2ZyZWVfYnVsayh0eF9wa3RzICsgc2VudF9wa3RzLA0KPiBmaWx0ZXJl
-ZF9wa3RzKTsNCg0KTkFLLg0KSWYgdGhlIGNhbGxiYWNrIGNvbnN1bWVzIHRoZSBwYWNrZXQsIHRo
-ZSBjYWxsYmFjayBtdXN0IGZyZWUgaXQgdG9vLiBUaGUgY2FsbGJhY2sgY291bGQgY29uc3VtZSB0
-aGUgcGFja2V0IGZvciBvdGhlciBwdXJwb3NlcywgZS5nLiByZWRpcmVjdGlvbiwgc28gZnJlZWlu
-ZyBpdCBoZXJlIHdvdWxkIGludHJvZHVjZSB1c2UtYWZ0ZXItZnJlZSBidWdzLg0KDQo+ID4gKwkJ
-fQ0KPiA+ICsNCj4gPiArCQlydGVfbWJ1Zl9oaXN0b3J5X21hcmtfYnVsayh0eF9wa3RzICsgcmVz
-dWx0X3BrdHMsDQo+IHVuc2VudF9wa3RzLA0KPiA+ICsJCQkJCSAgIFJURV9NQlVGX0hJU1RPUllf
-T1BfVFhfQlVTWSk7DQo+ID4gKwl9DQo+ID4NCj4gPiAtCXJ0ZV9ldGhkZXZfdHJhY2VfdHhfYnVy
-c3QocG9ydF9pZCwgcXVldWVfaWQsICh2b2lkICoqKXR4X3BrdHMsDQo+IG5iX3BrdHMpOw0KPiA+
-IC0JcmV0dXJuIG5iX3BrdHM7DQo+ID4gKwlydGVfZXRoZGV2X3RyYWNlX3R4X2J1cnN0KHBvcnRf
-aWQsIHF1ZXVlX2lkLCAodm9pZCAqKil0eF9wa3RzLA0KPiByZXN1bHRfcGt0cyk7DQo+ID4gKwly
-ZXR1cm4gcmVzdWx0X3BrdHM7DQo+ID4gICB9DQo+ID4NCj4gPiAgIC8qKg0KDQpJTU8sIGxldHRp
-bmcgYSBUeCBjYWxsYmFjayBjaGFuZ2UgdGhlIG51bWJlciBvZiBwYWNrZXRzIHRvIGFjdHVhbGx5
-IHRyYW5zbWl0IGhhcyB0b28gbWFueSBzaWRlIGVmZmVjdHMuDQpFLmcuIHBvcnQgcGFja2V0IGNv
-dW50ZXJzIGFyZSBub3QgdXBkYXRlZCBhY2NvcmRpbmdseSBpZiBhIGNhbGxiYWNrIGNvbnN1bWVz
-IGEgcGFja2V0IGFuZCBzaWxlbnRseSBkcm9wcyBpdC4NCg0KVGhlIEV0aGRldiBUeCBBUEkgaXMg
-bm90IGRlc2lnbmVkIGZvciB0aGUgZXRoZGV2IGxheWVyIHRvIGhhbmRsZSBhbnkgb2YgcmV0cmFu
-c21pdC1vci1kcm9wICh3aGVuIGluc3VmZmljaWVudCBkZXNjcmlwdG9ycyksIHJlZGlyZWN0LCBt
-aXJyb3IsIGRyb3AgKHJlZGlyZWN0L21pcnJvci9kcm9wIG9mIGFsbCBwYWNrZXRzIG9yIHNlbGVj
-dGl2ZWx5IGJhc2VkIG9uIGUuZy4gVkxBTiBvciBCUEYgZmlsdGVyKS4NCg0KSU1PLCB3ZSBzaG91
-bGQgdXBkYXRlIHRoZSBjYWxsYmFjayBBUEkgdG8gcmVmbGVjdCB0aGlzLCBieSBjaGFuZ2luZyB0
-aGUgY2FsbGJhY2sgcmV0dXJuIHR5cGUgdG8gdm9pZC4NCg0K
+On Sat, Nov 1, 2025 at 3:43=E2=80=AFAM Robin Jarry <rjarry@redhat.com> wrot=
+e:
+>
+> After creating at least one graph and calling rte_node_edge_update to
+> add a new edge on a node which is in use in the graph, the node memory
+> is reallocated but the active graph still has a pointer to the freed
+> memory.
+>
+> When destroying the graph, it causes a use-after-free error detected by
+> libasan:
+>
+> ERROR: AddressSanitizer: heap-use-after-free
+> READ of size 8 at 0x7c4baa5e4da8 thread T0
+>     #0 0x0000005ad224 in graph_node_fini lib/graph/graph.c:256
+>     #1 0x0000005ae657 in rte_graph_destroy lib/graph/graph.c:504
+>     ...
+>
+> freed by thread T0 here:
+>     #0 0x7f1bac4e5e4b in realloc.part.0 (/lib64/libasan.so.8+0xe5e4b)
+>     #1 0x0000005ab6d7 in edge_update lib/graph/node.c:271
+>     #2 0x0000005abb1b in rte_node_edge_update lib/graph/node.c:339
+>     ...
+>
+> previously allocated by thread T0 here:
+>     #0 0x7f1bac4e5e4b in realloc.part.0 (/lib64/libasan.so.8+0xe5e4b)
+>     #1 0x0000005ab6d7 in edge_update lib/graph/node.c:271
+>     #2 0x0000005abb1b in rte_node_edge_update lib/graph/node.c:339
+>     ...
+>
+> Use malloc+memcpy and add an internal function to replace all references
+> to the old node memory before freeing it.
+>
+> Cc: stable@dpdk.org
+> Fixes: c59dac2ca14a ("graph: implement node operations")
+
+Acked-by: Jerin Jacob <jerinj@marvell.com>
+
+
+>
+> Signed-off-by: Robin Jarry <rjarry@redhat.com>
+> ---
+>  lib/graph/graph.c         | 14 ++++++++++++++
+>  lib/graph/graph_private.h | 12 ++++++++++++
+>  lib/graph/node.c          |  6 +++++-
+>  3 files changed, 31 insertions(+), 1 deletion(-)
+>
+> diff --git a/lib/graph/graph.c b/lib/graph/graph.c
+> index 61159edc7261..6911ea8abeed 100644
+> --- a/lib/graph/graph.c
+> +++ b/lib/graph/graph.c
+> @@ -277,6 +277,20 @@ graph_node_fini(struct graph *graph)
+>                                                        graph_node->node->=
+name));
+>  }
+>
+> +void
+> +graph_node_replace_all(struct node *old, struct node *new)
+> +{
+> +       struct graph_node *graph_node;
+> +       struct graph *graph;
+> +
+> +       STAILQ_FOREACH(graph, &graph_list, next) {
+> +               STAILQ_FOREACH(graph_node, &graph->node_list, next) {
+> +                       if (graph_node->node =3D=3D old)
+> +                               graph_node->node =3D new;
+> +               }
+> +       }
+> +}
+> +
+>  static struct rte_graph *
+>  graph_mem_fixup_node_ctx(struct rte_graph *graph)
+>  {
+> diff --git a/lib/graph/graph_private.h b/lib/graph/graph_private.h
+> index 21912c0ae63f..26cdc6637192 100644
+> --- a/lib/graph/graph_private.h
+> +++ b/lib/graph/graph_private.h
+> @@ -299,6 +299,18 @@ int graph_node_has_edge_to_src_node(struct graph *gr=
+aph);
+>   */
+>  int graph_node_has_loop_edge(struct graph *graph);
+>
+> +/**
+> + * @internal
+> + *
+> + * Replace all pointers of a given node with another one in all active g=
+raphs.
+> + *
+> + * @param old
+> + *   Node pointer to replace in all graphs.
+> + * @param new
+> + *   Updated pointer.
+> + */
+> +void graph_node_replace_all(struct node *old, struct node *new);
+> +
+>  /**
+>   * @internal
+>   *
+> diff --git a/lib/graph/node.c b/lib/graph/node.c
+> index cae1c809edc4..e3359fe490a5 100644
+> --- a/lib/graph/node.c
+> +++ b/lib/graph/node.c
+> @@ -325,11 +325,15 @@ edge_update(struct node *node, struct node *prev, r=
+te_edge_t from,
+>         need_realloc =3D max_edges > node->nb_edges;
+>         if (need_realloc) {
+>                 sz =3D sizeof(struct node) + (max_edges * RTE_NODE_NAMESI=
+ZE);
+> -               new_node =3D realloc(node, sz);
+> +               new_node =3D malloc(sz);
+>                 if (new_node =3D=3D NULL) {
+>                         rte_errno =3D ENOMEM;
+>                         goto restore;
+>                 } else {
+> +                       sz =3D sizeof(*node) + (node->nb_edges * RTE_NODE=
+_NAMESIZE);
+> +                       memcpy(new_node, node, sz);
+> +                       graph_node_replace_all(node, new_node);
+> +                       free(node);
+>                         node =3D new_node;
+>                 }
+>         }
+> --
+> 2.51.1
+>
