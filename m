@@ -2,39 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C43CCFA13
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 15:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB85CCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 15:34:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 73ACA4065C;
-	Mon, 10 Nov 2025 16:31:36 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id DEC944042C;
+	Mon, 10 Nov 2025 16:34:40 +0100 (CET)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 1077540650
- for <dev@dpdk.org>; Mon, 10 Nov 2025 16:31:35 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.186.216])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d4tt05jzyzJ468y;
- Mon, 10 Nov 2025 23:31:04 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 4462914033F;
- Mon, 10 Nov 2025 23:31:34 +0800 (CST)
-Received: from localhost.localdomain (10.220.239.45) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id EFB38402F1
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 16:34:39 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d4txY4sBGzJ46Dn;
+ Mon, 10 Nov 2025 23:34:09 +0800 (CST)
+Received: from frapema500001.china.huawei.com (unknown [7.182.19.243])
+ by mail.maildlp.com (Postfix) with ESMTPS id 281B4140446;
+ Mon, 10 Nov 2025 23:34:39 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema500001.china.huawei.com (7.182.19.243) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 10 Nov 2025 16:31:33 +0100
+ 15.2.1544.11; Mon, 10 Nov 2025 16:34:38 +0100
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Mon, 10 Nov 2025 16:34:38 +0100
 From: Marat Khalili <marat.khalili@huawei.com>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-CC: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>
-Subject: [PATCH 3/3] bpf: make add/subtract one program validate
-Date: Mon, 10 Nov 2025 15:30:46 +0000
-Message-ID: <20251110153046.63518-4-marat.khalili@huawei.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251110153046.63518-1-marat.khalili@huawei.com>
-References: <20251110153046.63518-1-marat.khalili@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+Subject: RE: [PATCH v4 3/5] bpf: add a test for BPF ELF load
+Thread-Topic: [PATCH v4 3/5] bpf: add a test for BPF ELF load
+Thread-Index: AQHcTaV02m9YfHF+c0yX0F26edwMqbTnTMSQgAA0DTCAAGuygIAEJphA
+Date: Mon, 10 Nov 2025 15:34:38 +0000
+Message-ID: <72416fa72cb04e09b9af85ec2bf9c2fb@huawei.com>
+References: <20251030173732.246435-1-stephen@networkplumber.org>
+ <20251104160843.304044-1-stephen@networkplumber.org>
+ <20251104160843.304044-4-stephen@networkplumber.org>
+ <2951855794674cada3b9ab9574699917@huawei.com>
+ <2fd10b3a010f495b82cbbcfef29dd9df@huawei.com>
+ <20251107170859.0f618ab2@phoenix>
+In-Reply-To: <20251107170859.0f618ab2@phoenix>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.70]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.220.239.45]
-X-ClientProxiedBy: frapema500002.china.huawei.com (7.182.19.148) To
- frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,118 +60,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add tests loading simple BPF programs adding or subtracting one to its
-argument and fix triggered signed integer overflow undefined behaviours:
+> > RTE>>bpf_elf_load_autotest
+> > BPF: resolve_xsym(40): EBPF_PSEUDO_CALL to external function: dummy_fun=
+c1
+> > ../../src/lib/bpf/bpf_validate.c:247:24: runtime error: signed integer =
+overflow: 9223372036854775807
+> + 2147483647 cannot be represented in type 'long int'
+> >     #0 0x2b1fdca in eval_add ../../src/lib/bpf/bpf_validate.c:247
+> >     #1 0x2b2b9dc in eval_alu ../../src/lib/bpf/bpf_validate.c:691
+> >     #2 0x2b3b187 in evaluate ../../src/lib/bpf/bpf_validate.c:2446
+> >     #3 0x2b3bf0f in __rte_bpf_validate ../../src/lib/bpf/bpf_validate.c=
+:2537
+> >     #4 0x2b19b33 in rte_bpf_load ../../src/lib/bpf/bpf_load.c:113
+> >     #5 0x2b47d6d in bpf_load_elf ../../src/lib/bpf/bpf_load_elf.c:288
+> >     #6 0x2b47fe8 in rte_bpf_elf_load ../../src/lib/bpf/bpf_load_elf.c:3=
+20
+> >     #7 0x66b4b8 in test_bpf_elf_load ../../src/app/test/test_bpf.c:3382
+>=20
+> Hmm. looks like a pre-existing BPF library bug since this code was never
+> tested before.
 
-    lib/bpf/bpf_validate.c:324:24: runtime error: signed integer
-    overflow: 1 + 9223372036854775807 cannot be represented in type
-    'long int'
-
-    lib/bpf/bpf_validate.c:352:24: runtime error: signed integer
-    overflow: -9223372036854775808 - 1 cannot be represented in type
-    'long int'
-
-As a minimal possible fix perform operation on unsigned integers where
-overflow is well-defined, which was probably the original intent.
-
-Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
----
- app/test/test_bpf_simple.c | 58 ++++++++++++++++++++++++++++++++++++++
- lib/bpf/bpf_validate.c     |  8 +++---
- 2 files changed, 62 insertions(+), 4 deletions(-)
-
-diff --git a/app/test/test_bpf_simple.c b/app/test/test_bpf_simple.c
-index 576a6ed029..d4c5bbdc6e 100644
---- a/app/test/test_bpf_simple.c
-+++ b/app/test/test_bpf_simple.c
-@@ -129,3 +129,61 @@ test_simple_minimal_working(void)
- 
- REGISTER_FAST_TEST(bpf_simple_minimal_working_autotest, true, true,
- 	test_simple_minimal_working);
-+
-+/*
-+ * Try and load valid BPF program adding one to the argument.
-+ */
-+static int
-+test_simple_add_one(void)
-+{
-+	static const struct ebpf_insn ins[] = {
-+		{
-+			/* Set return value to one. */
-+			.code = (EBPF_ALU64 | EBPF_MOV | BPF_K),
-+			.dst_reg = EBPF_REG_0,
-+			.imm = 1,
-+		},
-+		{
-+			/* Add program argument to the return value. */
-+			.code = (EBPF_ALU64 | BPF_ADD | BPF_X),
-+			.src_reg = EBPF_REG_1,
-+			.dst_reg = EBPF_REG_0,
-+		},
-+		{
-+			.code = (BPF_JMP | EBPF_EXIT),
-+		},
-+	};
-+	return simple_bpf_load_test(RTE_DIM(ins), ins, 0);
-+}
-+
-+REGISTER_FAST_TEST(bpf_simple_add_one_autotest, true, true,
-+	test_simple_add_one);
-+
-+/*
-+ * Try and load valid BPF program subtracting one from the argument.
-+ */
-+static int
-+test_simple_subtract_one(void)
-+{
-+	static const struct ebpf_insn ins[] = {
-+		{
-+			/* Subtract one from the program argument. */
-+			.code = (EBPF_ALU64 | BPF_SUB | BPF_K),
-+			.dst_reg = EBPF_REG_1,
-+			.imm = 1,
-+		},
-+		{
-+			/* Set return value to the result. */
-+			.code = (EBPF_ALU64 | EBPF_MOV | BPF_X),
-+			.src_reg = EBPF_REG_1,
-+			.dst_reg = EBPF_REG_0,
-+		},
-+		{
-+			.code = (BPF_JMP | EBPF_EXIT),
-+		},
-+	};
-+	return simple_bpf_load_test(RTE_DIM(ins), ins, 0);
-+}
-+
-+REGISTER_FAST_TEST(bpf_simple_subtract_one_autotest, true, true,
-+	test_simple_subtract_one);
-diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
-index 23444b3eaa..47ad6fef0f 100644
---- a/lib/bpf/bpf_validate.c
-+++ b/lib/bpf/bpf_validate.c
-@@ -243,8 +243,8 @@ eval_add(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, uint64_t msk)
- 
- 	rv.u.min = (rd->u.min + rs->u.min) & msk;
- 	rv.u.max = (rd->u.max + rs->u.max) & msk;
--	rv.s.min = (rd->s.min + rs->s.min) & msk;
--	rv.s.max = (rd->s.max + rs->s.max) & msk;
-+	rv.s.min = ((uint64_t)rd->s.min + (uint64_t)rs->s.min) & msk;
-+	rv.s.max = ((uint64_t)rd->s.max + (uint64_t)rs->s.max) & msk;
- 
- 	/*
- 	 * if at least one of the operands is not constant,
-@@ -272,8 +272,8 @@ eval_sub(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, uint64_t msk)
- 
- 	rv.u.min = (rd->u.min - rs->u.max) & msk;
- 	rv.u.max = (rd->u.max - rs->u.min) & msk;
--	rv.s.min = (rd->s.min - rs->s.max) & msk;
--	rv.s.max = (rd->s.max - rs->s.min) & msk;
-+	rv.s.min = ((uint64_t)rd->s.min - (uint64_t)rs->s.max) & msk;
-+	rv.s.max = ((uint64_t)rd->s.max - (uint64_t)rs->s.min) & msk;
- 
- 	/*
- 	 * if at least one of the operands is not constant,
--- 
-2.43.0
-
+Yes, that's correct. Sent some fixes for this and some other issues to the =
+mailing list just now, maybe we should treat these problems separately.
