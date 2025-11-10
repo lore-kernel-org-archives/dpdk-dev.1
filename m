@@ -2,48 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B36CCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 01:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F31AACCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 02:52:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3C15C400D6;
-	Mon, 10 Nov 2025 02:17:48 +0100 (CET)
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com
- [113.46.200.218])
- by mails.dpdk.org (Postfix) with ESMTP id 2C77A400D5
- for <dev@dpdk.org>; Mon, 10 Nov 2025 02:17:47 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=55Lj4w6eww2J//WQ0tQalscfFYXxWnuClIZQ+tnpabQ=;
- b=gKQTnh5AxhbLMeI9RFNF65rOH9T2e0kLk6bPvibumwoF0LunV1mxk1CQYXZuRcEyB713osT7s
- 5kgWhYABHk+STjlmAJbcHPsJX8Aca0LXLxqGP+uzEerv1SJ0poJv/yx4HU5oZJyX7JPY/5p3bLL
- qNc9IjwysTN0279UXJg2juw=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
- by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d4WvV43MZzpSv7
- for <dev@dpdk.org>; Mon, 10 Nov 2025 09:16:06 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 4C3F61401F2
- for <dev@dpdk.org>; Mon, 10 Nov 2025 09:17:45 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 10 Nov 2025 09:17:44 +0800
-Message-ID: <90c12477-0fdb-4137-adb7-563c8b564d48@huawei.com>
-Date: Mon, 10 Nov 2025 09:17:44 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id CA965400D6;
+	Mon, 10 Nov 2025 03:52:44 +0100 (CET)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+ by mails.dpdk.org (Postfix) with ESMTP id AAB88400D5
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 03:52:41 +0100 (CET)
+Received: from ar (unknown [42.57.186.148])
+ by APP-05 (Coremail) with SMTP id zQCowABXXG11UxFp16suAA--.8556S2;
+ Mon, 10 Nov 2025 10:52:38 +0800 (CST)
+From: Sun Yuechi <sunyuechi@iscas.ac.cn>
+To: dev@dpdk.org
+Cc: Sun Yuechi <sunyuechi@iscas.ac.cn>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH] devtools: add RISC-V vector in meson build test
+Date: Mon, 10 Nov 2025 10:52:20 +0800
+Message-ID: <20251110025220.3319989-1-sunyuechi@iscas.ac.cn>
+X-Mailer: git-send-email 2.51.2
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 33/33] build: enable shadowed variable warnings
-To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
-References: <20251106140948.2894678-1-bruce.richardson@intel.com>
- <20251107155034.436809-1-bruce.richardson@intel.com>
- <20251107155034.436809-34-bruce.richardson@intel.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20251107155034.436809-34-bruce.richardson@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: zQCowABXXG11UxFp16suAA--.8556S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrury5uFyrKFWkuFWUWr48Zwb_yoW3trX_K3
+ 97AF4xXw13J397tFn3Cr45CFykWw4rtr15trWxWwnxWa4DXw17Za4qkFWDKF1a9rs8CFZa
+ ywsYvryxGw47JjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+ 9fnUUIcSsGvfJTRUUUbz8FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+ 6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+ A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+ Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+ 1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+ 6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+ 0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxAIw28IcxkI7VAK
+ I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+ xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI42IY6xII
+ jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+ 0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+ 67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfU5WlkUUUUU
+X-Originating-IP: [42.57.186.148]
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAgCAmkRR1w1EAAAsC
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,10 +54,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
+---
+ devtools/test-meson-builds.sh | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On 11/7/2025 11:50 PM, Bruce Richardson wrote:
-> Enable -Wshadow globally for DPDK builds.
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+diff --git a/devtools/test-meson-builds.sh b/devtools/test-meson-builds.sh
+index 4fff1f7177..4f07f84eb0 100755
+--- a/devtools/test-meson-builds.sh
++++ b/devtools/test-meson-builds.sh
+@@ -290,6 +290,10 @@ build build-ppc64-power8-gcc $f ABI $use_shared
+ f=$srcdir/config/riscv/riscv64_linux_gcc
+ build build-riscv64-generic-gcc $f ABI $use_shared
+ 
++# RISC-V vector (rv64gcv)
++f=$srcdir/config/riscv/riscv64_rv64gcv_linux_gcc
++build build-riscv64_rv64gcv_gcc $f ABI $use_shared
++
+ # Test installation of the x86-generic target, to be used for checking
+ # the sample apps build using the pkg-config file for cflags and libs
+ load_env cc
+-- 
+2.51.2
 
