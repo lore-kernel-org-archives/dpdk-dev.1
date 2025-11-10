@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D846BCCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 01:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C11B5CCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 01:15:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DA210400D6;
-	Mon, 10 Nov 2025 02:15:34 +0100 (CET)
-Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com
- [113.46.200.220])
- by mails.dpdk.org (Postfix) with ESMTP id 0F0BB400D5;
- Mon, 10 Nov 2025 02:15:33 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1A313402EB;
+	Mon, 10 Nov 2025 02:15:58 +0100 (CET)
+Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com
+ [113.46.200.226])
+ by mails.dpdk.org (Postfix) with ESMTP id 65B62400D6;
+ Mon, 10 Nov 2025 02:15:56 +0100 (CET)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=78DX8hHOh0o7Xu79pNDctjgknzup2NsKDh7DxgDbpaw=;
- b=xJMPcAUlCMRbha3hgSr3E5w2BQrQBH9/stzw5wkvrwqZ3i+AS0ihRLW+JrL2XS1ETKQIPI3b7
- D0M7Aq7VzK9EfP+PbyWUysiK8QlKv9uXG0KvU47eiscHMrVtBxJVo605R1kqaqZzruiYVXevEeH
- svsVM/gL5tD6WLqguQDpWQQ=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
- by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4d4Ws26HsLz12LDJ;
- Mon, 10 Nov 2025 09:13:58 +0800 (CST)
+ bh=Sfw9m6o840pdmID0Fi8EaX3x2x8GNx4J9ji4EUOj4lI=;
+ b=bYy9A6dK7lNYkeapkS6gwvYYZSJux1Hg2W7xSEzBdb849LW/VpnnR25CznWHr/05gboamLdKg
+ Vt+NJv/aE+VxvrvNZ5PpcWDr3NS4P6r59+S47mXtHXCr2ZoR4xbMHuu6M/Igk6okuOiK7YPNS/+
+ Tn/a9+EuMVaA5+6QHC+PXW4=
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+ by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d4WsN01WRzKm51;
+ Mon, 10 Nov 2025 09:14:15 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id B994D1401F2;
- Mon, 10 Nov 2025 09:15:31 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id A5F2F1401F3;
+ Mon, 10 Nov 2025 09:15:54 +0800 (CST)
 Received: from [10.67.121.161] (10.67.121.161) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 10 Nov 2025 09:15:31 +0800
-Message-ID: <8ea32a32-a577-4160-84ed-1ca3667d0916@huawei.com>
-Date: Mon, 10 Nov 2025 09:15:30 +0800
+ 15.2.1544.11; Mon, 10 Nov 2025 09:15:54 +0800
+Message-ID: <1056c1be-c23b-4c6d-8260-f855be5af02d@huawei.com>
+Date: Mon, 10 Nov 2025 09:15:53 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 10/33] telemetry: make socket handler typedef
- private
+Subject: Re: [RFC PATCH v2 12/33] bus/pci: remove shadowed variables
 To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
-CC: <stable@dpdk.org>, Ciara Power <ciara.power@intel.com>, Keith Wiles
- <keith.wiles@intel.com>
+CC: <stable@dpdk.org>, Chenbo Xia <chenbox@nvidia.com>, Nipun Gupta
+ <nipun.gupta@amd.com>, Anatoly Burakov <anatoly.burakov@intel.com>, Tetsuya
+ Mukawa <mtetsuyah@gmail.com>
 References: <20251106140948.2894678-1-bruce.richardson@intel.com>
  <20251107155034.436809-1-bruce.richardson@intel.com>
- <20251107155034.436809-11-bruce.richardson@intel.com>
+ <20251107155034.436809-13-bruce.richardson@intel.com>
 Content-Language: en-US
 From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20251107155034.436809-11-bruce.richardson@intel.com>
+In-Reply-To: <20251107155034.436809-13-bruce.richardson@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.67.121.161]
@@ -63,14 +63,12 @@ Errors-To: dev-bounces@dpdk.org
 Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
 On 11/7/2025 11:50 PM, Bruce Richardson wrote:
-> The socket handler typedef, just called "handler" does not belong in the
-> public namespace, especially since it is unprefixed. Rename to
-> "telemetry_sock_handler" and move to internal header.
+> Remove two instances where we had duplicate shadowed local variables
+> called "ret". In each case, we could just remove the inner instance,
+> since the outer value was not needing to be preserved.
 > 
-> Doing so also clears shadowing warnings in dmadev library, when it is
-> built with -Wshadow.
-> 
-> Fixes: 6dd571fd07c3 ("telemetry: introduce new functionality")
+> Fixes: 03ba15ca65c1 ("vfio: allow mapping MSI-X BARs if kernel allows it")
+> Fixes: c0ce0577e84d ("pci: consolidate address comparisons")
 > Cc: stable@dpdk.org
 > 
 > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
