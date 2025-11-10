@@ -2,73 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB72CCFA13
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 23:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F398CCFA13
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Nov 2025 23:16:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 435214026D;
-	Tue, 11 Nov 2025 00:16:30 +0100 (CET)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com
- [209.85.222.45]) by mails.dpdk.org (Postfix) with ESMTP id 2FC004026A
- for <dev@dpdk.org>; Tue, 11 Nov 2025 00:16:29 +0100 (CET)
-Received: by mail-ua1-f45.google.com with SMTP id
- a1e0cc1a2514c-93514afb23dso2047016241.0
- for <dev@dpdk.org>; Mon, 10 Nov 2025 15:16:29 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B1AB54026D;
+	Tue, 11 Nov 2025 00:16:51 +0100 (CET)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com
+ [209.85.221.54]) by mails.dpdk.org (Postfix) with ESMTP id 027D04026A
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 00:16:49 +0100 (CET)
+Received: by mail-wr1-f54.google.com with SMTP id
+ ffacd0b85a97d-42b3669ca3dso895767f8f.0
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 15:16:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762816588;
- x=1763421388; darn=dpdk.org; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=Wy30RnLJx0hf7OrOFeKUfcfoOFFDOXSxE6dGSwOOeeA=;
- b=w6ekjKdJkz174qZGMRbQXdCXe3BPrcIaTH/jmydf9jJPpykhJWES55iUlXmtbs/IMQ
- zy2JI3A2IldepeKKYNCah72cOdDjnpdwDJyU/UrIv75zSeb0vJnAWu3p0+aqVCyL09HM
- JDIp2Ck+MLITW8pRfpFRbQcaBia7QC9W3O/TcqB29L5MlCN5Gt875jE1PA2dUrfoYlSy
- 4aauv85pgXynbDwruXWYJMhDIp35AiUtQGtoe2SeDJ0P9bCTqDbah1Qrv1JeI1H22oQS
- H62prvSNZhA8h8CfyrPLk63ncNzEw9Spwk849froPZ3ZSsRq7B4r7a80F0qQyPDnairX
- hfuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762816588; x=1763421388;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1762816609; x=1763421409; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Wy30RnLJx0hf7OrOFeKUfcfoOFFDOXSxE6dGSwOOeeA=;
- b=ZjtKC4CmV3ULVytMo9sUK327XLfRmCZehLpvPXb5eWyHQBXWx65Yg9fYJ5bi+v2lLL
- n8fOnRd6gxvqxbYNPos5JVgeJdbB88QprzrZGTXc+W/D0QfyheBMrmeSCdRL6TYQr9dA
- QAk4p08DrufOaQG7NkwfANB/fbRNRRBLdWznwjAE/Ef1BByUdZpXjpyo/qJiafqTvDao
- FqL/6TnaSerAjCjC4WxxMIpf8lf9WHI67si1GC4TMmPZKLNKd7yqXsNK9eycbqLeU4wR
- CsEhN25Pzs5NTGmQgRzN5r8qTeiSIlVfu3kF66PdKHWBFCfTLKxA0IbaLQ//LWT6K3Gt
- ntlA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVh3ZBmBX3PRliLpLjGMfc90fXxpMdn14lv101BPkgyjERXLalyBwoH2i6OfQTHVerK1eo=@dpdk.org
-X-Gm-Message-State: AOJu0Yzv+Z6yXgVSK6RlWUuPF3x6K9F1SSP1KK0vUg99DvQNrWEjH4HM
- uRboQ0du+utd+OAm3VpWbnmL1o2Vk2pl80OxqsCHEfZEQeSXitD8IlimhfgkwbszgEUb7iwPe9J
- mVwuoCzMliuNfOIEgel7xJg3AQ77FuhQQjVAmQ0eCIQ==
-X-Gm-Gg: ASbGncupGabXsSL5Kw7rHR/COx0Az6bEQwLW0hnfaMs5DFajuYyfjk4BxFQcDFOAZjw
- 5wXrblugY6jLrQoiGbWyYxAK+ed7LSDDwjy7I2dezMD2pQpye5Q5II/Vaa3dbswLH3wSHOgLBZV
- tv236j735W4Ag5PBgkBfb1efhgjkwY7S9zmMByYaQN8AsuV6+Idiig1gZBjg/ijWGAk0HE4xIYo
- RhjYDG+24cHUyFsHkiLK9YURKibTKi78e/apCYk1LFVVHZ2bLWfv2L5a73oRMVzK6RCFt1sSgaV
- yBT/iNfY6zSrkQvyx6EOX6xndHFhhVon19PTfOpv
-X-Google-Smtp-Source: AGHT+IEjNxvj6de5+Bvz6jsU3uTLfCUE5xfQxdJ5MMk15dNVG38m6CbFujc06GJ2NSvDTJbhO4t82rVsbMpxVGP/gQA=
-X-Received: by 2002:a05:6102:26d0:b0:5db:eeb6:812e with SMTP id
- ada2fe7eead31-5ddc46ae8c6mr3642084137.18.1762816588118; Mon, 10 Nov 2025
- 15:16:28 -0800 (PST)
+ bh=YM4lWklJOuDx2tPKe5x9c3tQrcHlu4Vg9KJbM3bIf6Q=;
+ b=DfZkIUPdB60UTF0DIjOs0zz/sNuAoSeKN73FDxgVJDUahqA+0deI6Zco6Kt3CiI4/G
+ frwNc6KgtoUHmqJS98Asithw6cKarba+M4B/keQN/fcNdolt2CDLWe0X6jwhL6bT2sYM
+ pbnFHuAUsVJfq3LYxuQwHElM31oARzINqdLdwKRhGszjtG2XTkEOJyPBjNrHfVqp+Py3
+ ozkkayfhbbtYItridZMrk9GSqpE+qKTv2vY1xPauyW+TzZrnrthAcrMDIVojO+AP1zet
+ 4zc/w0vtwKBIuEvlJwGbOX/Mje9x2uQ+XJzlpjJuL7DYRncmI5eqsaYxZEBPl0sNv+VX
+ Xsyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762816609; x=1763421409;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=YM4lWklJOuDx2tPKe5x9c3tQrcHlu4Vg9KJbM3bIf6Q=;
+ b=lznd1fv4rB3cVNcShvaMW00fmOVBLVVFNBgX8ZJjFPgDcs/B+uLIhxraO5cjPdmWmv
+ J/7crXzIioMYb+Ym7rwugnEXGmX8/a2U8kPF/WMwaH+kBPuY2fDdClqqZ1c0y458/wWE
+ yBXFlMZkgj1TtULhwEPwlUpnjhLs7KUJUnX/F2gWpGfUNXFi8WLUAHTHdPLRBAP8bodk
+ Arb389lQtF+E/P+lgJ96mIJfWi1+Pwy1FcGNfYMwgrE49e9WdD1ebc84ftovxQz/JquP
+ /QRekzA64VdcW4qFHwt4SD7nUMM/DnuH/sqy17UhOrByQT7COOyu4PfHgwE3hXJaI9+b
+ DSqQ==
+X-Gm-Message-State: AOJu0YxL1RrIUHHrriJBsDghvSSuyak4DqJnO8Dr4nFQwUWo624Cb/cm
+ F7FA0fd1bTYwhDQjKEtswint7l42MWGnIY4TW7fTI0Yg+OibhNCPIZt/0+xe6Q==
+X-Gm-Gg: ASbGncsBH4la8H7VvKxENXJ9hR1j7u7AjR+ppE+dL6vXHHFBDuGdhV0S3virU1YwHmV
+ Ttr5J3QnLgQ1/8CW6Lv9j/KAKmeZPiaOz+OvBsVE6gdoMDxYyQ9kE0WInOkaDUOytQwZWuDkv7+
+ C6A3jxtYlzHIW01NFqmo0BLEIlOiuu9s5qVOMXs8ZbdgxEGZApdsibnV4l/bjv20gCCpgcCIrkM
+ AVSOxkmfYNtUgPzxbwKNy/ITT5nBr0thWdDNlwIMUCw7gY8lurv8t6KGc3oLhQYYTCrhkmyCAGt
+ 8BkMdQvNQBf2dHgV0dhjoh+KK1TcIUvfeJaOP1h+yepGdDi5lvhoUiB4CJVhlRiWfzMUzu1qEtd
+ BSm3AinaNecZFxlAVKT5/qvhJNGLDLWTQaKzyfIbK4RpPf2BWaW66iL+fOGJXK+IU0Rvv0bBimH
+ g4MktikBj7/QpbDrd/GLJ1
+X-Google-Smtp-Source: AGHT+IG0/w7mWAnTJuYi83ruWyFhq+34H0JeichaapIfwE1kGFJ+EUXNs7cKroch9SRSaHnKjnN06g==
+X-Received: by 2002:a05:6000:2908:b0:42b:3a1b:f700 with SMTP id
+ ffacd0b85a97d-42b3a1bfbd1mr5142830f8f.20.1762816609304; 
+ Mon, 10 Nov 2025 15:16:49 -0800 (PST)
+Received: from localhost.localdomain ([46.210.196.60])
+ by smtp.googlemail.com with ESMTPSA id
+ ffacd0b85a97d-42b330f6899sm13108872f8f.21.2025.11.10.15.16.47
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 10 Nov 2025 15:16:48 -0800 (PST)
+From: Isaac Boukris <iboukris@gmail.com>
+To: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: dev@dpdk.org,
+	Isaac Boukris <iboukris@gmail.com>
+Subject: [PATCH v2] lib/ring: do not allow zero size ring
+Date: Tue, 11 Nov 2025 01:15:45 +0200
+Message-ID: <20251110231546.576516-1-iboukris@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20251110222827.575488-1-iboukris@gmail.com>
+References: <20251110222827.575488-1-iboukris@gmail.com>
 MIME-Version: 1.0
-References: <20251021175049.46092-1-manish.kurup@broadcom.com>
- <CAEKskBV8Ebeesg8qLZ7JcENWYRgfFeOAOhHRBC-WaaLRhn43Mg@mail.gmail.com>
- <20251110141017.4f2c034b@phoenix> <2780952.dkkaz22YKf@thomas>
-In-Reply-To: <2780952.dkkaz22YKf@thomas>
-From: Stephen Hemminger <stephen@networkplumber.org>
-Date: Mon, 10 Nov 2025 15:16:18 -0800
-X-Gm-Features: AWmQ_bl6pthCSR19PWtZCdBt4B7HD-YIyzZ0tiKpheeXtoGg34crs9u3rn1Yy20
-Message-ID: <CAOaVG15WggoCraL=E03w7hBG0eCxqWayt9_G4PqDO1ouk7-Ygg@mail.gmail.com>
-Subject: Re: [PATCH v5 19/57] net/bnxt/tf_ulp: hot upgrade support
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: Manish Kurup <manish.kurup@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>, 
- dev <dev@dpdk.org>, Kishore Padmanabha <kishore.padmanabha@broadcom.com>, 
- Michael Baucom <michael.baucom@broadcom.com>,
- Shuanglin Wang <shuanglin.wang@broadcom.com>, 
- David Marchand <david.marchand@redhat.com>
-Content-Type: multipart/alternative; boundary="0000000000008a0965064345b884"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,54 +81,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000008a0965064345b884
-Content-Type: text/plain; charset="UTF-8"
+this might happen when for instance the ring size is read from
+config, and would cause runtime crash.
 
-Also, it seems the driver is compiling different versions based on compile
-flags. This makes it hard to manage in a Linux distribution
+Signed-off-by: Isaac Boukris <iboukris@gmail.com>
+---
 
-On Mon, Nov 10, 2025, 14:30 Thomas Monjalon <thomas@monjalon.net> wrote:
+v2:
+* move the fix to the POWEROF2 macro itself.
+* fixed style in the test code.
 
-> 10/11/2025 23:10, Stephen Hemminger:
-> > This series should have never gone into the broadcom-next tree.
-> > One of the roles of maintainer is to make sure local builds with all
-> > flavors of compiler work before merging.
->
-> To name a few we could also talk about hiding fixes (and backports),
-> forgetting the documentation, wrong commit explanations.
-> And many more could be said.
-> As I said in another email, we should not accept such future series
-> until something is seriously changed in bnxt management.
-> For now I pull from the bnxt tree as it is what was planned.
->
->
->
+ app/test/test_ring.c | 7 +++++++
+ lib/ring/rte_ring.c  | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
---0000000000008a0965064345b884
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+diff --git a/app/test/test_ring.c b/app/test/test_ring.c
+index ba1fec1de3..3078348b2f 100644
+--- a/app/test/test_ring.c
++++ b/app/test/test_ring.c
+@@ -505,6 +505,13 @@ test_ring_negative_tests(void)
+ 	struct rte_ring *rt = NULL;
+ 	unsigned int i;
+ 
++	/* Test zero size ring */
++	rp = test_ring_create("test_zero_size_ring", -1, 0, SOCKET_ID_ANY, 0);
++	if (rp != NULL) {
++		printf("Test failed to detect zero size ring\n");
++		goto test_fail;
++	}
++
+ 	/* Test with esize not a multiple of 4 */
+ 	rp = test_ring_create("test_bad_element_size", 23,
+ 				RING_SIZE + 1, SOCKET_ID_ANY, 0);
+diff --git a/lib/ring/rte_ring.c b/lib/ring/rte_ring.c
+index edd63aa535..0a9fc31530 100644
+--- a/lib/ring/rte_ring.c
++++ b/lib/ring/rte_ring.c
+@@ -47,7 +47,7 @@ EAL_REGISTER_TAILQ(rte_ring_tailq)
+ 		     RING_F_MP_HTS_ENQ | RING_F_MC_HTS_DEQ)
+ 
+ /* true if x is a power of 2 */
+-#define POWEROF2(x) ((((x)-1) & (x)) == 0)
++#define POWEROF2(x) ((x != 0) && (((x)-1) & (x)) == 0)
+ 
+ /* by default set head/tail distance as 1/8 of ring capacity */
+ #define HTD_MAX_DEF	8
+-- 
+2.49.0
 
-<div dir=3D"auto">Also, it seems the driver is compiling different versions=
- based on compile flags. This makes it hard to manage in a Linux distributi=
-on=C2=A0</div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=
-=3D"ltr" class=3D"gmail_attr">On Mon, Nov 10, 2025, 14:30 Thomas Monjalon &=
-lt;<a href=3D"mailto:thomas@monjalon.net">thomas@monjalon.net</a>&gt; wrote=
-:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.=
-8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">10/11/2025 23:=
-10, Stephen Hemminger:<br>
-&gt; This series should have never gone into the broadcom-next tree.<br>
-&gt; One of the roles of maintainer is to make sure local builds with all<b=
-r>
-&gt; flavors of compiler work before merging.<br>
-<br>
-To name a few we could also talk about hiding fixes (and backports),<br>
-forgetting the documentation, wrong commit explanations.<br>
-And many more could be said.<br>
-As I said in another email, we should not accept such future series<br>
-until something is seriously changed in bnxt management.<br>
-For now I pull from the bnxt tree as it is what was planned.<br>
-<br>
-<br>
-</blockquote></div>
-
---0000000000008a0965064345b884--
