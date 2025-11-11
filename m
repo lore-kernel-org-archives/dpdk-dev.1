@@ -2,71 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F0CCCFA18
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 22:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA5CCCFA18
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 22:57:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F4834067B;
-	Tue, 11 Nov 2025 23:19:12 +0100 (CET)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
- [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id D3AC04066B
- for <dev@dpdk.org>; Tue, 11 Nov 2025 23:19:08 +0100 (CET)
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-340ba29d518so146826a91.3
- for <dev@dpdk.org>; Tue, 11 Nov 2025 14:19:08 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A226C40281;
+	Tue, 11 Nov 2025 23:57:24 +0100 (CET)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 53DEB4026A
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 23:57:23 +0100 (CET)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-298039e00c2so2285595ad.3
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 14:57:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762899548;
- x=1763504348; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762901842;
+ x=1763506642; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=WswHmz5BXygJKldYf/zQi60YARb8X8LhhXJcn5DVyuw=;
- b=z15SanrwmNX7Q8q4lB/n6Y/bjtemFrkbJhr25NiXdIhEtycgar3r7l3YVIDAjj65m7
- faW21+ytatMOeBkM1A/NDILarFgorPs1W/Blqtw1iNVD7pR2fdlFZ3BJtNWoecquojd0
- lEbrs68SI1eff6/MXIU9ao8n3Q4J1aM9iTswmTdO/shjMhuYjuU+LTDBRZXkkVWOKWJm
- jFtQ5OQiH8sg2YIeuf+6fMxJ+X/roQ02hoCeTyOleIehLTUqX/d4A36vd+MqBIqL1x9q
- 2qOKCpUfBcBCYHIsO0GjongKIrrHsP0A7JfxMO4z9BDE0MY6OYiE44qAfzjSzgvkx5Vj
- Fz7A==
+ bh=dJvEZhxm/dQcXCvUakT6XcTrD9RgWOJRION2gTHVSTA=;
+ b=CVmh2sx8o1dkdE8h+CSwWqvlFMhv7PPKlDo5IM1BHALKj5tOBkPhJ4Pkr2Av5YXm5M
+ 9VUnhxa7itMlh2ZSUNB2Hs79DHNZWh9hL/s1oZiGwsCgM2NU1tl04s1W49kdene5feTt
+ Ojr44lJWrooZcmMF+wj8uAStEXGwse/BdMvZG77NMNhVQzTPK/yHRLxs2q0+fBBvFNXW
+ iFLVdYU7PP1u9Hxblky1IqgHVluYchkpeedEb4i5dqTdsLho6Q/4Aw6aUMjrai+wwBKP
+ adlhp3G+S58XoXoP/9c7i8sh0v3MI5qH0W9q2pvqGUqKHcKqFW0cWL+Vp82jYdjp5WTA
+ 8owQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762899548; x=1763504348;
+ d=1e100.net; s=20230601; t=1762901842; x=1763506642;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=WswHmz5BXygJKldYf/zQi60YARb8X8LhhXJcn5DVyuw=;
- b=TX3jQqtND8xLH1Ih58aX7B8ee9BozHOUZgd2wsPC0l/d1NjHpsLRWS82mwU4QhmY6y
- zblkw0Cgyx9UBMi2zyouJ+1iRVT0D/B9iME1aIyqkB9r0LljWQUgC1BVb3jjIC47zb9q
- 3dfKh7DBwDJpHCRXg04KyG/QW/+aa96XQFWfyN8nBKEM0t1bLRHN5LTkWaNIO+NK545p
- k0Yoa/4va/QSLJPPk6TsR3678Xk8AL/MtD0KR1Ad2McSCMZygxSbZcr23L1cNSMNRcz4
- R8zoMTUTmpW9x0DofjPTlewb9RFrSowXmcr0o8Pko5eAMv8tfkxsr8Pi2/Wmrhf6DCNh
- Zi4A==
-X-Gm-Message-State: AOJu0YzShVBfB79uHejsOIomBuNrjMBbLd9ai13lEiDdCRDaAfKmx6cD
- 2jI6kdmgg6nANlxGTotydF+QffYOiLeHtyVlqbSaH5lZ6zbIeESuaS+PywsaGAI1J36ZGfKOZZV
- 6XWBu
-X-Gm-Gg: ASbGncsLLb86TpyloRcsdu5loJCv4EPrjpjSG6qot1hWtSGuNheD1+rTJ5CXY8vtR2K
- 66+m+1DNsiarbov0HQenSEfiBAJQ8E6is7hHgmQZYBZKPo5M9RVTAtHmmu8SuLdh+eBNKDnSup4
- 6TOjllm+XQsASZeYnQnhulFMKV40rUx3twb84b3CIJ6FwtQjIwBsioDswKD9o8wOYSa2yuy3G8e
- eZg7E2GUSi61fYUWDsPaHp94cZPW1lbrceuvebi7p2HSKvjoxGMdHXbAlkfztv50sspIT4VCMe/
- lHc/l5KZoq+gpU2z6VSYzqUxkS4tk+MH7ADHbIoH+/iCjoraiOslWiONPeiAFoXg3Q6vcBJnb/h
- MQmTxRMSkl73QSyKzYuOQpedAQ3ykzsL1BXTC0fRjh2X42JZlB2HlDnZu6mqsQhyj+YFJDbKreh
- Qcf3Y8AlR79S49VCl40hFPYqCsjpix86XainHcoUYmDn5FIi8rgD6e6buCgRcJ
-X-Google-Smtp-Source: AGHT+IH0+NCGXQTg1XEbDpYSJh9uqwnHFqHoAYhwD+V6kCqMEYjJGnfgvHWautD2G9y5p77tg74+4A==
-X-Received: by 2002:a17:90b:380d:b0:340:c60b:f362 with SMTP id
- 98e67ed59e1d1-343ddde90c8mr974308a91.6.1762899547995; 
- Tue, 11 Nov 2025 14:19:07 -0800 (PST)
+ bh=dJvEZhxm/dQcXCvUakT6XcTrD9RgWOJRION2gTHVSTA=;
+ b=IWyaV3u4apBxOHg9Uolo6McW3Aq9S/akfzIRVgUhCOrolOAPON56MWKcQuVVl3drzH
+ s2Llsk8Cs6jNXL+C+cB9hP2ARv132w4/nqbicVHhulK/ZZYqgP/Yobr1xiRxK5Aa3etJ
+ YNb7vP7lKgp4uhrII0UgFr7CMJ503209cY5dGQMcaDDIE2uCXziDOFliwDRlcIs3Mj+M
+ OiL7z7K8MvRJ1qXTtbIM4zxHemsKw96M5/6Ewyuo6ghinw5idX6FWlKg69uzD9Ok8lIj
+ RTkxlIKlGjEJZbua0qg4Tv+wOkBkb88+FO2k9nnPEFJ09aeH4VVqFqAfxzUr+ORFy/H8
+ /+vw==
+X-Gm-Message-State: AOJu0YzkM+y6kD8vNF4tJp33jJ9kWHd9rO099LMYVhQED7bhuWfQeXcT
+ svMO73TD3H4XuV/BP/XpQ/oBzVaHU/9FPZXTIu5b1J0he7ZhLfIrCEE7W7l4TRJ61aG3e/5LjHy
+ gMO0i
+X-Gm-Gg: ASbGncuYXQaIy9mIQhlbEmTgjcYZ38LKtUY9OjPWBvfIf1M8laeQM45ni62OaFRMM86
+ FG9dzYop6kVnZ0Qsv9QZeLR07HrdU9erw4fZgdNtBjlG6rDJsa49yqZlgHW1C9MhS71/Mq4ojZr
+ Uw87LJMK1VyhFPI5NG3IA71O7vgNsLOCVjubyH/50SQBYl3l9EOc8HwQSv6G4zbxJXdpghslpDe
+ lgHSePVDXlPSs71tObbkrY6rWAupODgLSRLQcK/La34J0AJlD0EkVzGHFX/bZTAjviUkJTqOCiR
+ c/e+1+AuVJytGgrrUJ5jGROVjSJEvEwwOeC9S2PXhETxhOVGZ9RBBEO0jQUHindh+nmIZnNBVZD
+ xtbleqpc1WLKYN4JKACBaqODgWWQwkkjby21miz1m3ot+LBv1tMs0mfThDwRPjR/BxXJmN79DJc
+ B6ht2z9vzWljhwUtaaraTwc2+TFmoyUmUYUhWjYJ3mSf00wSoNOCl/84yY8ezO
+X-Google-Smtp-Source: AGHT+IHK8nTHD6iMeZF0pZg2WMW+mTKQSEY4kxYdyryPg02JT+Xkl8iTSkFyPatD3iVbVfFLrpn8RQ==
+X-Received: by 2002:a17:903:230b:b0:298:1f9c:e0a2 with SMTP id
+ d9443c01a7336-2984ee23774mr10583925ad.54.1762901842322; 
+ Tue, 11 Nov 2025 14:57:22 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-343e072e5a5sm157001a91.11.2025.11.11.14.19.07
+ 98e67ed59e1d1-343c4f6f78bsm1920831a91.3.2025.11.11.14.57.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Nov 2025 14:19:07 -0800 (PST)
+ Tue, 11 Nov 2025 14:57:22 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 7/7] test: re-enable format-truncation warnings
-Date: Tue, 11 Nov 2025 14:17:24 -0800
-Message-ID: <20251111221857.443752-8-stephen@networkplumber.org>
+Subject: [PATCH v6 0/2] BPF tests
+Date: Tue, 11 Nov 2025 14:55:45 -0800
+Message-ID: <20251111225719.540140-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251111221857.443752-1-stephen@networkplumber.org>
-References: <20251110182209.104087-1-stephen@networkplumber.org>
- <20251111221857.443752-1-stephen@networkplumber.org>
+In-Reply-To: <20251109200854.45942-1-stephen@networkplumber.org>
+References: <20251109200854.45942-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,25 +82,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Tests should be built with warnings.
+Add missing tests for BPF file loading functions.
+This is subset of earlier patch.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/meson.build | 1 -
- 1 file changed, 1 deletion(-)
+v6 - rebase to main
+   - make sure that -ENOTSUP is handled
+   - remove duplicate includes
+   - combine all of the elf tests into one test instance
 
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 8df8d3edd1..66cbabe9fe 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -260,7 +260,6 @@ cflags += no_wvla_cflag
- extra_flags = [
-         # Strict-aliasing rules are violated by uint8_t[] to context size casts.
-         '-fno-strict-aliasing',
--        '-Wno-format-truncation',
- ]
- 
- foreach arg: extra_flags
+Stephen Hemminger (2):
+  bpf: add a test for BPF ELF load
+  bpf: add test for Rx and Tx filtering
+
+ app/test/bpf/filter.c    |  53 +++++
+ app/test/bpf/load.c      |  51 +++++
+ app/test/bpf/meson.build |  53 +++++
+ app/test/meson.build     |   2 +
+ app/test/test_bpf.c      | 476 +++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 635 insertions(+)
+ create mode 100644 app/test/bpf/filter.c
+ create mode 100644 app/test/bpf/load.c
+ create mode 100644 app/test/bpf/meson.build
+
 -- 
 2.51.0
 
