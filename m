@@ -2,79 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3E1CCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 13:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D97CCFA18
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 14:07:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EF6BA4026A;
-	Tue, 11 Nov 2025 14:55:57 +0100 (CET)
-Received: from fout-b2-smtp.messagingengine.com
- (fout-b2-smtp.messagingengine.com [202.12.124.145])
- by mails.dpdk.org (Postfix) with ESMTP id 58C4D40144
- for <dev@dpdk.org>; Tue, 11 Nov 2025 14:55:56 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfout.stl.internal (Postfix) with ESMTP id 9E3591D00153;
- Tue, 11 Nov 2025 08:55:55 -0500 (EST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3A9C84026A;
+	Tue, 11 Nov 2025 15:07:01 +0100 (CET)
+Received: from fhigh-b2-smtp.messagingengine.com
+ (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+ by mails.dpdk.org (Postfix) with ESMTP id 85E0A40144
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 15:06:59 +0100 (CET)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 4ABA67A0031;
+ Tue, 11 Nov 2025 09:06:58 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-01.internal (MEProxy); Tue, 11 Nov 2025 08:55:55 -0500
+ by phl-compute-04.internal (MEProxy); Tue, 11 Nov 2025 09:06:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762869355;
- x=1762955755; bh=ES5jXDe7pTBDJpJhzmFNmxdBF+D2nKQ0PK45UfOXEYA=; b=
- nbPUX7HW00dYEKnwE8x+DQPOTX9duvHqMVCiE5iy2yylHLDsmkK4OoPy9oDSlijG
- nuZAxOjwGDqB3DxnhOIbLnb6Fvep+gDHa0nySGCQ/tJA1rBL/8+qlJlhMLo2G97/
- BShvueYzQ2fpjMtRHg0IVVyt4wutemK7JN0KBhm06Few+HE44A41FZ12/uOoe5i1
- xfo6zpUVEgJl+WmLK7KvIi6CISeWfWgwMnGPzl+NAYSRqmiI7yjf0Ihbtixq1uNF
- NTeXgVHKjkwMXm9uzhMeahEC5NNhZ/EhJkg7/dPRkVq4TPMTpMcxUWT8Z/qk2Llf
- fESGFZWLTkwhGlG8dND44g==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762870018;
+ x=1762956418; bh=ryi2GDZJwwjWFHEN51spFc5Sk8IXCFBXFouhZLancJ0=; b=
+ YETzf8FjHx1PqbiY3DvTNg2KbML4TH9nyKHEUo8ltDbnmRPw4GVjCKR79Vpmwv5H
+ zWchkiEmlvRpXKMPk40Ee1KvS4L8FM+xukw8YW+3gjN1aT0cs8lb9qMEjpWZLQke
+ K4g3eV4Xsda48I2mKNVfNhfzSw5ibujCOlckNv8AU+zW/9WNaWZjlyXyVg3WFntK
+ m1xriT1PfdeONu1NDv13h/LgFmnv6DUo7eopHw9PSYYyscujEPJxKW2lTDhBu1eX
+ hbguLs3aa9lC38+jBpkRT9eCobzxjKKTJr1LqZXTKia0WpC1HuyKaEGk359x6Np2
+ L05nJKxiaEBRETFP8N6rAg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762869355; x=
- 1762955755; bh=ES5jXDe7pTBDJpJhzmFNmxdBF+D2nKQ0PK45UfOXEYA=; b=y
- 52dpfkW5G1rsD9aXfgYwAWzsxsFQf7ArNWRD4dNIcLHm05J9El93AVJFrMkJaLQy
- FTzzxMxHWXDrkCR6NF44/XfisdQQC3av/JDOSL3lsT4n+U1UlGzHlA1uoLl+vzMB
- T8th+YQI2Ols/TeKudeHQUQdWsIZjqkq6077itfkRo0yjk+TJ0PEcfVNhuUlHj+2
- AR4FuVpd3nETOJH8R8yn6iTLWBLMKksUHJsh4b0mwKIPAIFhThBwyVm/dfXSYZaz
- vYtyBfpeWzwgPNOBCqqB948w7XImAvvjIxVsdSWSFKfQZ+n91I4NmgYmkgL8vJNJ
- TkcyhdzFsL8MDgX1hp+dw==
-X-ME-Sender: <xms:a0ATacUGBB2xGtn3YlZQN5OBsXpt-WqUd8JGHaIcsCuDzxpJzqi5yA>
- <xme:a0ATaU7L_6mU7WSaZvX-EsStOnOvSRDFotKDAkqnTqv6mxoaa7YUrPATi_H1FFQr1
- 6UeZwvzRf4iQ7zKnsT84BFKRDq_5Y5QhiRTyyqtajD5hYIePs9nAw>
-X-ME-Received: <xmr:a0ATafhWDh5vZVBGJs4HuMSOkr2A56IL-SvfU06ZPQrAfkKhpWmPhCu3IyyP-NcQ4iqq4yeVBrxP7_QbW92Pds5mtw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddufeejucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762870018; x=
+ 1762956418; bh=ryi2GDZJwwjWFHEN51spFc5Sk8IXCFBXFouhZLancJ0=; b=L
+ RtzYatonot10Z8Opuw0xwN9rsr68Bm9RlWKjO9b7lUXD76P36rDT9mUB02mkTjY1
+ mNoYPukkmPcKpdXGgPB3VqnimqWFDsXLwj722g938tJT8Y+iE3jYojyewrl3Xl5s
+ zYWTgjaYokp3l0HKfGwrdcAjFxwacRbkDUsPSsPsMjL3+NZGmCMI2mZYyuQXDDYW
+ vIxiLHUwd4dUBHEPmySqvr9svJyn72ec8V9UudsHY6EOOPmWocJ5P5iX+OFJHXUD
+ Vw7mnIDQoTd5ZJd4lkoZhUabYDdOcYG2q8sXUqLCIR2Q3QEetGzyIcIBV3Z/pVmG
+ XqlejNqNmxgtTHGy/XjLQ==
+X-ME-Sender: <xms:AUMTaT9R-XxD58zvM9O70DJxf6dR4RTei7NH2PARxUmPnYVkhdzZ7g>
+ <xme:AUMTaTZzq7Sp4mgBoGjP19GuyR0BMJJU66AjxaQEEeTXP2HWvETyMvwdJ4HwvQHWK
+ RK7gtO8Kh5pvgPmCb8awPkGFaSxvo68J4XCoR0anQTlPkTlLGvLfg>
+X-ME-Received: <xmr:AUMTaa3sDUlTLnvnRpuzFRK5rIOoxweGW0SVZg2G--Hl8H2nem1m97G41X_NOPahoGqOfw2aM7dngf473oF2-t_x5w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddufeelucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehrjhgrrhhrhiesrhgvughhrghtrdgtoh
- hmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepvhhlrgguihhm
- ihhrrdhmvgguvhgvughkihhnsehinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:a0ATaTfPr5xO0U1tJ4K1JUQ4Wf4JoHWTOEtcU0hisEHyY6Df-tFDdg>
- <xmx:a0ATacesOJjIpkguMufIjmL7XxsCVmsKBdUPiN6o1_XG3a34ZNS0og>
- <xmx:a0ATaV_emn29tZQzYzU-2VwhiOQTzVZV0z-LMPQPdX9p7FW4OG79gg>
- <xmx:a0ATaQmEr2riHFLEYKV0GwMNMv8cq1dFdXZfsHmnMi1v624b8cA50A>
- <xmx:a0ATab1bcLTiN429ESfzr8l_tIlpHcPmMVDcrQkBPvsaFiVHUeKtdBW_>
+ frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
+ leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
+ hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
+ thhopehmsgesshhmrghrthhshhgrrhgvshihshhtvghmshdrtghomhdprhgtphhtthhope
+ gtrhhishhtihgrnhdrughumhhithhrvghstghusehinhhtvghlrdgtohhmpdhrtghpthht
+ oheprhhorhgvthiilhgrsehlihhnuhigrdhmihgtrhhoshhofhhtrdgtohhmpdhrtghpth
+ htohepkhhonhhsthgrnhhtihhnrdgrnhgrnhihvghvsehhuhgrfigvihdrtghomh
+X-ME-Proxy: <xmx:AUMTaWaj-rZ4bec2v8bvUWUuDvHGoGLap5L24pfBInyfpRBD3fLc6g>
+ <xmx:AUMTaaIFA5TXcMLj6jmgjrwcMr8BhaFv-KMQUk6bYz6_Ac05l4wvFw>
+ <xmx:AUMTadEQ4fjx6L5YwNQPeBysEdkhq3z_-EJ2UWeDRqgpgtiibAwfcw>
+ <xmx:AUMTaZtlpPl2nKfxzW6qw-m2bE4NyfGRHqcCJjaBc-xKo-lrJAFZwQ>
+ <xmx:AkMTaTL67MVy0Wb2JBYXamh2DpcsW6c4huMs2GGUtIDv1EXVru2lok7N>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Nov 2025 08:55:54 -0500 (EST)
+ 11 Nov 2025 09:06:56 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org, "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
-Subject: Re: [PATCH dpdk v3] fib6: implement RCU rule reclamation
-Date: Tue, 11 Nov 2025 14:55:52 +0100
-Message-ID: <3284089.CFs8Y8CuNP@thomas>
-In-Reply-To: <909f51dc-aa74-4cdf-8799-13c7e777117f@intel.com>
-References: <20250610145341.38271-2-rjarry@redhat.com>
- <20251028173703.548656-3-rjarry@redhat.com>
- <909f51dc-aa74-4cdf-8799-13c7e777117f@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: "dev@dpdk.org" <dev@dpdk.org>,
+ Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
+ Tyler Retzlaff <roretzla@linux.microsoft.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: Re: [PATCH v2] bitmap: change return value of rte_bitmap_free
+Date: Tue, 11 Nov 2025 15:06:55 +0100
+Message-ID: <41535164.1ZeJGzUXcx@thomas>
+In-Reply-To: <cc6a7dece31f4769b6ad0c1038d35434@huawei.com>
+References: <20251028204432.880074-1-stephen@networkplumber.org>
+ <20251029145055.990899-1-stephen@networkplumber.org>
+ <cc6a7dece31f4769b6ad0c1038d35434@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -89,16 +96,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> > Currently, for the TRIE algorithm, the tbl8 group is freed even though
-> > the readers might be using the tbl8 group entries. The freed tbl8 group
-> > can be reallocated quickly. As a result, lookup may be performed
-> > incorrectly.
-> >
-> > Integrate RCU QSBR support in rte_fib6 objects to support safe tbl8
-> > group reclamation.
-> >
-> > Signed-off-by: Robin Jarry <rjarry@redhat.com>
-> Acked-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+> > No existing code is checking the return value of rte_bitmap_free
+> > and other functions like rte_free do not return an int.
+> > Change it to just a stub void function.
+> >=20
+> > This was motivated by Coverity warnings about unchecked return
+> > value.
+> >=20
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> > Reviewed-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
 Applied, thanks.
 
