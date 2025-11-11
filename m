@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C78CCFA18
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 18:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD87CCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 18:25:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E55D9402C8;
-	Tue, 11 Nov 2025 19:20:50 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6054B40280;
+	Tue, 11 Nov 2025 19:25:10 +0100 (CET)
 Received: from fout-b5-smtp.messagingengine.com
  (fout-b5-smtp.messagingengine.com [202.12.124.148])
- by mails.dpdk.org (Postfix) with ESMTP id 2360140280
- for <dev@dpdk.org>; Tue, 11 Nov 2025 19:20:49 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.stl.internal (Postfix) with ESMTP id 3C8B21D000CD;
- Tue, 11 Nov 2025 13:20:48 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Tue, 11 Nov 2025 13:20:48 -0500
+ by mails.dpdk.org (Postfix) with ESMTP id 1116F4026D;
+ Tue, 11 Nov 2025 19:25:09 +0100 (CET)
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+ by mailfout.stl.internal (Postfix) with ESMTP id 47ED31D00170;
+ Tue, 11 Nov 2025 13:25:08 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-07.internal (MEProxy); Tue, 11 Nov 2025 13:25:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762885248;
- x=1762971648; bh=YxQWyVkJnYNMXAwd7Wv7I4LJ0PnsNvtSsSwWw2W4xs8=; b=
- E07OO0ESMW3lFLqTMVIFsvuFFoQJoGHybwLcKp9iwDkwfZGCoH0Wn1Fg9Tsoqi89
- YyU0xwKl9McrumxI8wvVjCesRwqDHwGQ99a8olN8K7jwKqZDa1PryfA1P9SIfFXZ
- wfI4YYopSEw2pDQL63pzQK4iWg6tD1n4I/Nct9oOrMqe3sjzjxquvn3fxsaUG9M5
- dk1IAdKF8WEzcRyCOrcM/EAKuJiD7rb1A6ATESFTQtCP3gJG/AQu0fn6xD1/XNuD
- 3qJBPjthGdHHptklJmnSHcsXhhFGkm6ISUAo3+jGTD/SK7js2faaR0pT16HMor1t
- mlU4xjJGqJLu1dYAQ7vF9Q==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762885508;
+ x=1762971908; bh=M49hjSQ3GKqX2vpcSIqthSotioT7mPEl0VgLxfpo+q8=; b=
+ klySV3CVg6l0COSJJWoapUdVGZpJ5g3o6kyc2W6dngRrgmbqoJ0TK+JiOLs7Ca86
+ 4rhQcu+P+dE3Xvji+2gHv7ar4/A/9uI4R1X+scBUMwnn+SQalelMRXnJrm30iWx9
+ s8HRRa/kkk09IE9hDmqjeZ42P9tYK8i/QEl2zBdQ49rH5aor7R7hD/yZVHNcrpny
+ KqY9KKgfIwCwsNKVxOTuSH1CQLFav6lRJPUpCegXjUvukVXED01RAtRDRkOw2fwu
+ 9CjFE6h06GezndBBvExTHAFO4vMxwe9R/BRQGkyLPqVQg/pQ9BmdAKyQ00YQQdi0
+ CbdmMR8Si/m9AXYLnJwWxg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762885248; x=
- 1762971648; bh=YxQWyVkJnYNMXAwd7Wv7I4LJ0PnsNvtSsSwWw2W4xs8=; b=l
- T5LXA9Hp5Vhz4IOJP2YHdNJR8k7Sc7kPBapPYE1KkJrHKskBzVuPuE2seHEnrfzo
- RPJEEiI8sEhxDeIRZ6Vl9iu19Tt1uMh1bffG36i9RO2LE11/2AcShw45V/4cZNef
- jpMUZ4csKVh8Df5cGGX5pKNT8Q7R0rsUuDMztq/4mqIFtDpZVyTbio3pSqTuRhYe
- xKbvdUu8+5/LPnGW5Ais2e3hmHbwrXF1H9YsHjjZKd+nN2DnrIxOw5xpI0p5AvAe
- HWhOeFxg3rUnyKQvqG4yACYFKZh5eh5NM/yplFAgLF6FWVFRJXHvMtwdr6VrfizP
- U12NNWyU1JFxhkp/QJ27Q==
-X-ME-Sender: <xms:f34TaSx3PuzacRpivHYeJ2HAQH0jszPZ1HQD9COrd-hssMJRg8p_HQ>
- <xme:f34TaUS9PJMHZ7SB-s6hc2SE5oDkK4LEqAALonaQq0TBOe1DkCArqJ_QjUN0DBlkv
- 4y1QeKr-o4gBzmyH2ly2T6-7hd07CUU0farM6v4mtnZBN4-au4d6VQ>
-X-ME-Received: <xmr:f34TafIWWEn_Tm1ddZiPBrtKT1Qr9aKW0kpnsME_cUV9tFema_s3rYLdX8RVPWpJr3eLg0GeswwDm9uNFKXhPykdIw>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762885508; x=
+ 1762971908; bh=M49hjSQ3GKqX2vpcSIqthSotioT7mPEl0VgLxfpo+q8=; b=1
+ ikuOe+AkX25O/Omdu4sqWLsOzljfIkZyWR5FWp1ZVsF69eNiziSvJ2DgWSFmay56
+ bNg6cl13C1JZurIQJuLg/bV9qrS4N6ZmwvKrQr2zMI8oeUZFK4FW2waoQfAA8+yL
+ oQToRcQj5PjpF/QO9RvCAVF4vgiVABNiFObcRBmbI6hMA01lStJtFARPDS9GfvVI
+ A97nnDjT1fxqvRY7YRv7aWAWv4NtSG2ZQ0vBumE7bp1T6uLt7pf9hlFtvBUI1ZsU
+ f+UaVRKoDIfdleLSFEtVSWTFkgFytFtF9eqYrwZiY+R7XQrSxmB65KmDDd2jzviz
+ dHAJaxwemUmMNkZOuniGQ==
+X-ME-Sender: <xms:g38TaSkFCYyKDBh8Y0MF7SW9x05ek_JG9Q6IE0NZ0djaLPuTmx_REQ>
+ <xme:g38TaR_aRDXs9K26Sro6WAIZiEu7iVGbKA8STkfhEAD_-JDoqvkls4elFcq62-Ztv
+ F-lwfGHPQzCC_SfSlSzvRQ5JY3FHJ9GaFqHN7m2o03KQ-86qpo5sQ>
+X-ME-Received: <xmr:g38TaQLHdUo3KRQ2QVAyyPu5MlHUHUVvjyJ24jmlm2ZrYsS8y08_MnWi8bhGz1m-e_8nWvh1rNqCppmKLBNk6YyrXA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduledtucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -51,37 +51,37 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtdduledtucetufdote
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeduuddp
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedufedp
  mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhivhgrphhrrghsrggurdhtuhhmmh
- grlhgrsegrmhgurdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghp
- thhtohepmhgssehsmhgrrhhtshhhrghrvghshihsthgvmhhsrdgtohhmpdhrtghpthhtoh
- epuggrvhhiugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehk
- thhrrgihnhhorhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepkhhonhhsthgrnhhtih
- hnrdgrnhgrnhihvghvsehhuhgrfigvihdrtghomhdprhgtphhtthhopehkohhnshhtrghn
- thhinhdrvhdrrghnrghnhigvvheshigrnhguvgigrdhruhdprhgtphhtthhopehmrgigih
- hmvgdrtghoqhhuvghlihhnsehrvgguhhgrthdrtghomhdprhgtphhtthhopegrtghonhho
- lhgvsehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:f34TabVBqSQe7nJ57DyZITIB2MEp-4p13av-2NCpX28KpInexBCKWQ>
- <xmx:f34TaTRacL8e2lQnLLM05z4SBOCHrF3R-vjP-n9SEEr4n2VrD6LvaA>
- <xmx:f34TaTCmSRZXAXaq-_wNlTz14l8poBdgQ-aTp7nvf-YaZTbf_P0Wqg>
- <xmx:f34TaSImOXQETCLvQKU_6ET4n6kXVPW_3W3qgoG8SpNj-U3m8fkl4A>
- <xmx:gH4TaQI4Rj46ttJYXi2VB6fKGiiG8YtMyE0gSG96Yb99S4ooVMpp7mRd>
+ grlhgrsegrmhgurdgtohhmpdhrtghpthhtohepshhtrggslhgvseguphgukhdrohhrghdp
+ rhgtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihshhtvghmshdrtghomhdprhgtph
+ htthhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthht
+ ohepkhhtrhgrhihnohhrsehrvgguhhgrthdrtghomhdprhgtphhtthhopehkohhnshhtrg
+ hnthhinhdrrghnrghnhigvvheshhhurgifvghirdgtohhmpdhrtghpthhtohepkhhonhhs
+ thgrnhhtihhnrdhvrdgrnhgrnhihvghvseihrghnuggvgidrrhhupdhrtghpthhtohepmh
+ grgihimhgvrdgtohhquhgvlhhinhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprggt
+ ohhnohhlvgesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:g38TaWgGNAnJJ7eeriAU7hPruYvh34reLQGPG891OAhfePDnNDg5tw>
+ <xmx:g38Tac9LuD1qp_xFU8ty4IsnTb9gA5G6KvAm8tvhEm6cb5_XzjA-dA>
+ <xmx:g38TabPg1aXz3k4OnUJJvuKmdIE0BuN5IQvATzZhZMfYDXniODsTRQ>
+ <xmx:g38TaQCJ37sX0LHNgRYYZzSYzQvYAL5vQQN1h3KdXbuSHRZ5w3BdPQ>
+ <xmx:hH8TaYiV9_KhYLa20vnzzVs9795stOtEMKz9DeydQZ08-NpStRYj9Muh>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Nov 2025 13:20:45 -0500 (EST)
+ 11 Nov 2025 13:25:05 -0500 (EST)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-Cc: dev@dpdk.org, mb@smartsharesystems.com, david.marchand@redhat.com,
+Cc: stable@dpdk.org, mb@smartsharesystems.com, david.marchand@redhat.com,
  ktraynor@redhat.com, konstantin.ananyev@huawei.com,
  konstantin.v.ananyev@yandex.ru, maxime.coquelin@redhat.com,
- aconole@redhat.com, ferruh.yigit@amd.com,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: Re: [PATCH] doc: document telemetry command name restrictions
-Date: Tue, 11 Nov 2025 19:20:44 +0100
-Message-ID: <4233963.o7rAqR3Ra6@thomas>
-In-Reply-To: <aQylhdIWMJRNNDHV@bricha3-mobl1.ger.corp.intel.com>
-References: <20251006094712.180432-1-sivaprasad.tummala@amd.com>
- <aQylhdIWMJRNNDHV@bricha3-mobl1.ger.corp.intel.com>
+ aconole@redhat.com, ferruh.yigit@amd.com, dev@dpdk.org,
+ ciara.power@intel.com, Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH] examples/l3fwd-power: fix telemetry command registration
+Date: Tue, 11 Nov 2025 19:25:04 +0100
+Message-ID: <5662854.jrt8l4j9yI@thomas>
+In-Reply-To: <aQylobE5s0YtsnDt@bricha3-mobl1.ger.corp.intel.com>
+References: <20251006101058.191495-1-sivaprasad.tummala@amd.com>
+ <aQylobE5s0YtsnDt@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -99,15 +99,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 06/11/2025 14:41, Bruce Richardson:
-> On Mon, Oct 06, 2025 at 09:47:12AM +0000, Sivaprasad Tummala wrote:
-> > Telemetry command names must contain only alphanumeric characters
-> > (`A-Z`, `a-z`, `0-9`), underscore (`_`), and forward slash (`/`).
-> > Other characters, including hyphens (`-`), are not allowed and
-> > cause registration to fail.
+> On Mon, Oct 06, 2025 at 10:10:58AM +0000, Sivaprasad Tummala wrote:
+> > Telemetry command registration fails if the command name contains
+> > characters other than alphanumeric, underscore (_), and forward
+> > slash (/).
 > > 
-> > This patch updates the documentation to explicitly state these
-> > restrictions and highlights the existing invalid example
-> > "/l3fwd-power/stats" (in l3fwd-power app).
+> > The l3fwd-power example previously used "/l3fwd-power/stats"
+> > as telemetry command, which includes a hyphen (-) and causes
+> > registration failure.
+> > 
+> > This patch fixes the issue by replacing the hyphen with an
+> > underscore, changing the command to "/l3fwd_power/stats"
+> > 
+> > Fixes: a35919a1139b ("examples/l3fwd-power: use new telemetry")
+> > Cc: ciara.power@intel.com
+> > Cc: stable@dpdk.org
 > > 
 > > Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
 > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
