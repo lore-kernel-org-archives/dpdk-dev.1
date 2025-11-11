@@ -2,47 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3476BCCFA18
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 09:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69008CCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 09:46:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A44D40657;
-	Tue, 11 Nov 2025 10:13:16 +0100 (CET)
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com
- [113.46.200.221])
- by mails.dpdk.org (Postfix) with ESMTP id D212D402EF
- for <dev@dpdk.org>; Tue, 11 Nov 2025 10:13:12 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=XxzwDsoq/X4sN+piUwVoQ62j+uXT98S49maMAAK1OkY=;
- b=aYb81KkGhGxZEo6XHGr/fpXLoW5tfyEySwycIfhAZC9Lik872y2u26l9Tlge4PPFN6gv5XRZq
- 3jxYGDNdQGjfRIOqKnHhS/M3K1BuAERipoyzOz5o1wo6VSR3OINqW8638iHcQ1UDMXNHMl1T6Tm
- m4YlWkUpiFu4RQBCnlL4cX0=
-Received: from mail.maildlp.com (unknown [172.19.163.48])
- by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4d5LPc0XXqzRhQj;
- Tue, 11 Nov 2025 17:11:32 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 734AE18007F;
- Tue, 11 Nov 2025 17:13:10 +0800 (CST)
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 668464026D;
+	Tue, 11 Nov 2025 10:46:21 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 109CE4026A
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 10:46:19 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d5M9P4cLNzHnH83;
+ Tue, 11 Nov 2025 17:46:01 +0800 (CST)
+Received: from frapema100001.china.huawei.com (unknown [7.182.19.23])
+ by mail.maildlp.com (Postfix) with ESMTPS id 82F5F1402F7;
+ Tue, 11 Nov 2025 17:46:18 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema100001.china.huawei.com (7.182.19.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 11 Nov 2025 17:13:09 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>, <stephen@networkplumber.org>
-CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>, <liuyonglong@huawei.com>,
- <yangxingui@huawei.com>, <lihuisong@huawei.com>
-Subject: [PATCH v7 2/2] app/testpmd: support multi-cores process one TC
-Date: Tue, 11 Nov 2025 17:13:03 +0800
-Message-ID: <20251111091303.39491-3-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20251111091303.39491-1-fengchengwen@huawei.com>
-References: <20251104040916.25864-1-fengchengwen@huawei.com>
- <20251111091303.39491-1-fengchengwen@huawei.com>
+ 15.2.1544.36; Tue, 11 Nov 2025 10:46:18 +0100
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Tue, 11 Nov 2025 10:46:18 +0100
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+Subject: RE: [PATCH v5 3/5] bpf: add a test for BPF ELF load
+Thread-Topic: [PATCH v5 3/5] bpf: add a test for BPF ELF load
+Thread-Index: AQHcUbTTQ0Sz/b9pTEyJ8a2Nx5TSDrTtO89w
+Date: Tue, 11 Nov 2025 09:46:18 +0000
+Message-ID: <a5ded176ad644e84a31eb1bfc69e00fd@huawei.com>
+References: <20251030173732.246435-1-stephen@networkplumber.org>
+ <20251109200854.45942-1-stephen@networkplumber.org>
+ <20251109200854.45942-4-stephen@networkplumber.org>
+In-Reply-To: <20251109200854.45942-4-stephen@networkplumber.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.70]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,286 +57,351 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, one TC can be processed by only one core, when there are a
-large number of small packets, this core becomes a bottleneck.
+> -----Original Message-----
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Sent: Sunday 9 November 2025 20:08
+> To: dev@dpdk.org
+> Cc: Stephen Hemminger <stephen@networkplumber.org>; Konstantin Ananyev <k=
+onstantin.ananyev@huawei.com>
+> Subject: [PATCH v5 3/5] bpf: add a test for BPF ELF load
+>=20
+> Create an ELF file to load using clang.
+> Repackage the object into an array using xdd.
+> Write a test to see load and run the BPF.
+>=20
+> Draft version made with Claude AI, but it didn't work.
+>=20
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-This commit supports multi-cores process one TC, the command:
+Don't know what's going on with the test without libelf,
+perhaps someone else needs to try.
 
-  set dcb fwd_tc_cores (tc_cores)
+Apart from this,
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- app/test-pmd/cmdline.c                      | 48 ++++++++++++
- app/test-pmd/config.c                       | 85 ++++++++++++++++-----
- app/test-pmd/testpmd.c                      |  9 +++
- app/test-pmd/testpmd.h                      |  1 +
- doc/guides/testpmd_app_ug/testpmd_funcs.rst |  8 ++
- 5 files changed, 134 insertions(+), 17 deletions(-)
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index cbd6020bc6..97dbc008af 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -6280,6 +6280,53 @@ static cmdline_parse_inst_t cmd_set_dcb_fwd_tc = {
- 	},
- };
- 
-+/* *** set dcb forward cores per TC *** */
-+struct cmd_set_dcb_fwd_tc_cores_result {
-+	cmdline_fixed_string_t set;
-+	cmdline_fixed_string_t dcb;
-+	cmdline_fixed_string_t fwd_tc_cores;
-+	uint8_t                tc_cores;
-+};
-+
-+static void cmd_set_dcb_fwd_tc_cores_parsed(void *parsed_result,
-+					    __rte_unused struct cmdline *cl,
-+					    __rte_unused void *data)
-+{
-+	struct cmd_set_dcb_fwd_tc_cores_result *res = parsed_result;
-+	if (res->tc_cores == 0) {
-+		fprintf(stderr, "Cores per-TC should not be zero!\n");
-+		return;
-+	}
-+	dcb_fwd_tc_cores = res->tc_cores;
-+	printf("Set cores-per-TC: %u\n", dcb_fwd_tc_cores);
-+}
-+
-+static cmdline_parse_token_string_t cmd_set_dcb_fwd_tc_cores_set =
-+	TOKEN_STRING_INITIALIZER(struct cmd_set_dcb_fwd_tc_cores_result,
-+			set, "set");
-+static cmdline_parse_token_string_t cmd_set_dcb_fwd_tc_cores_dcb =
-+	TOKEN_STRING_INITIALIZER(struct cmd_set_dcb_fwd_tc_cores_result,
-+			dcb, "dcb");
-+static cmdline_parse_token_string_t cmd_set_dcb_fwd_tc_cores_fwdtccores =
-+	TOKEN_STRING_INITIALIZER(struct cmd_set_dcb_fwd_tc_cores_result,
-+			fwd_tc_cores, "fwd_tc_cores");
-+static cmdline_parse_token_num_t cmd_set_dcb_fwd_tc_cores_tccores =
-+	TOKEN_NUM_INITIALIZER(struct cmd_set_dcb_fwd_tc_cores_result,
-+			tc_cores, RTE_UINT8);
-+
-+static cmdline_parse_inst_t cmd_set_dcb_fwd_tc_cores = {
-+	.f = cmd_set_dcb_fwd_tc_cores_parsed,
-+	.data = NULL,
-+	.help_str = "config DCB forwarding cores per-TC, 1-means one core process all queues of a TC.",
-+	.tokens = {
-+		(void *)&cmd_set_dcb_fwd_tc_cores_set,
-+		(void *)&cmd_set_dcb_fwd_tc_cores_dcb,
-+		(void *)&cmd_set_dcb_fwd_tc_cores_fwdtccores,
-+		(void *)&cmd_set_dcb_fwd_tc_cores_tccores,
-+		NULL,
-+	},
-+};
-+
- /* *** SET BURST TX DELAY TIME RETRY NUMBER *** */
- struct cmd_set_burst_tx_retry_result {
- 	cmdline_fixed_string_t set;
-@@ -14060,6 +14107,7 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
- 	&cmd_set_fwd_mode,
- 	&cmd_set_fwd_retry_mode,
- 	&cmd_set_dcb_fwd_tc,
-+	&cmd_set_dcb_fwd_tc_cores,
- 	&cmd_set_burst_tx_retry,
- 	&cmd_set_promisc_mode_one,
- 	&cmd_set_promisc_mode_all,
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index 88c1e99c5e..6ea506254b 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -5112,6 +5112,36 @@ rss_fwd_config_setup(void)
- 	}
- }
- 
-+static int
-+dcb_fwd_check_cores_per_tc(void)
-+{
-+	struct rte_eth_dcb_info dcb_info = {0};
-+	uint32_t port, tc, vmdq_idx;
-+
-+	if (dcb_fwd_tc_cores == 1)
-+		return 0;
-+
-+	for (port = 0; port < nb_fwd_ports; port++) {
-+		(void)rte_eth_dev_get_dcb_info(fwd_ports_ids[port], &dcb_info);
-+		for (tc = 0; tc < dcb_info.nb_tcs; tc++) {
-+			for (vmdq_idx = 0; vmdq_idx < RTE_ETH_MAX_VMDQ_POOL; vmdq_idx++) {
-+				if (dcb_info.tc_queue.tc_rxq[vmdq_idx][tc].nb_queue == 0)
-+					break;
-+				/* make sure nb_rx_queue can be divisible. */
-+				if (dcb_info.tc_queue.tc_rxq[vmdq_idx][tc].nb_queue %
-+					dcb_fwd_tc_cores)
-+					return -1;
-+				/* make sure nb_tx_queue can be divisible. */
-+				if (dcb_info.tc_queue.tc_txq[vmdq_idx][tc].nb_queue %
-+					dcb_fwd_tc_cores)
-+					return -1;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static uint16_t
- get_fwd_port_total_tc_num(void)
- {
-@@ -5164,14 +5194,17 @@ dcb_fwd_tc_update_dcb_info(struct rte_eth_dcb_info *org_dcb_info)
- }
- 
- /**
-- * For the DCB forwarding test, each core is assigned on each traffic class.
-+ * For the DCB forwarding test, each core is assigned on each traffic class
-+ * defaultly:
-+ *   Each core is assigned a multi-stream, each stream being composed of
-+ *   a RX queue to poll on a RX port for input messages, associated with
-+ *   a TX queue of a TX port where to send forwarded packets. All RX and
-+ *   TX queues are mapping to the same traffic class.
-+ *   If VMDQ and DCB co-exist, each traffic class on different POOLs share
-+ *   the same core.
-  *
-- * Each core is assigned a multi-stream, each stream being composed of
-- * a RX queue to poll on a RX port for input messages, associated with
-- * a TX queue of a TX port where to send forwarded packets. All RX and
-- * TX queues are mapping to the same traffic class.
-- * If VMDQ and DCB co-exist, each traffic class on different POOLs share
-- * the same core
-+ * If user set cores-per-TC to other value (e.g. 2), then there will multiple
-+ * cores to process one TC.
-  */
- static void
- dcb_fwd_config_setup(void)
-@@ -5179,9 +5212,10 @@ dcb_fwd_config_setup(void)
- 	struct rte_eth_dcb_info rxp_dcb_info, txp_dcb_info;
- 	portid_t txp, rxp = 0;
- 	queueid_t txq, rxq = 0;
--	lcoreid_t  lc_id;
-+	lcoreid_t  lc_id, target_lcores;
- 	uint16_t nb_rx_queue, nb_tx_queue;
- 	uint16_t i, j, k, sm_id = 0;
-+	uint16_t sub_core_idx = 0;
- 	uint16_t total_tc_num;
- 	struct rte_port *port;
- 	uint8_t tc = 0;
-@@ -5212,6 +5246,13 @@ dcb_fwd_config_setup(void)
- 		}
- 	}
- 
-+	ret = dcb_fwd_check_cores_per_tc();
-+	if (ret != 0) {
-+		fprintf(stderr, "Error: check forwarding cores-per-TC failed!\n");
-+		cur_fwd_config.nb_fwd_lcores = 0;
-+		return;
-+	}
-+
- 	total_tc_num = get_fwd_port_total_tc_num();
- 	if (total_tc_num == 0) {
- 		fprintf(stderr, "Error: total forwarding TC num is zero!\n");
-@@ -5219,12 +5260,17 @@ dcb_fwd_config_setup(void)
- 		return;
- 	}
- 
--	cur_fwd_config.nb_fwd_lcores = (lcoreid_t) nb_fwd_lcores;
-+	target_lcores = (lcoreid_t)total_tc_num * (lcoreid_t)dcb_fwd_tc_cores;
-+	if (nb_fwd_lcores < target_lcores) {
-+		fprintf(stderr, "Error: the number of forwarding cores is insufficient!\n");
-+		cur_fwd_config.nb_fwd_lcores = 0;
-+		return;
-+	}
-+
-+	cur_fwd_config.nb_fwd_lcores = target_lcores;
- 	cur_fwd_config.nb_fwd_ports = nb_fwd_ports;
- 	cur_fwd_config.nb_fwd_streams =
- 		(streamid_t) (nb_rxq * cur_fwd_config.nb_fwd_ports);
--	if (cur_fwd_config.nb_fwd_lcores > total_tc_num)
--		cur_fwd_config.nb_fwd_lcores = total_tc_num;
- 
- 	/* reinitialize forwarding streams */
- 	init_fwd_streams();
-@@ -5247,10 +5293,12 @@ dcb_fwd_config_setup(void)
- 				break;
- 			k = fwd_lcores[lc_id]->stream_nb +
- 				fwd_lcores[lc_id]->stream_idx;
--			rxq = rxp_dcb_info.tc_queue.tc_rxq[i][tc].base;
--			txq = txp_dcb_info.tc_queue.tc_txq[i][tc].base;
--			nb_rx_queue = rxp_dcb_info.tc_queue.tc_rxq[i][tc].nb_queue;
--			nb_tx_queue = txp_dcb_info.tc_queue.tc_txq[i][tc].nb_queue;
-+			nb_rx_queue = rxp_dcb_info.tc_queue.tc_rxq[i][tc].nb_queue /
-+						dcb_fwd_tc_cores;
-+			nb_tx_queue = txp_dcb_info.tc_queue.tc_txq[i][tc].nb_queue /
-+						dcb_fwd_tc_cores;
-+			rxq = rxp_dcb_info.tc_queue.tc_rxq[i][tc].base + nb_rx_queue * sub_core_idx;
-+			txq = txp_dcb_info.tc_queue.tc_txq[i][tc].base + nb_tx_queue * sub_core_idx;
- 			for (j = 0; j < nb_rx_queue; j++) {
- 				struct fwd_stream *fs;
- 
-@@ -5262,11 +5310,14 @@ dcb_fwd_config_setup(void)
- 				fs->peer_addr = fs->tx_port;
- 				fs->retry_enabled = retry_enabled;
- 			}
--			fwd_lcores[lc_id]->stream_nb +=
--				rxp_dcb_info.tc_queue.tc_rxq[i][tc].nb_queue;
-+			sub_core_idx++;
-+			fwd_lcores[lc_id]->stream_nb += nb_rx_queue;
- 		}
- 		sm_id = (streamid_t) (sm_id + fwd_lcores[lc_id]->stream_nb);
-+		if (sub_core_idx < dcb_fwd_tc_cores)
-+			continue;
- 
-+		sub_core_idx = 0;
- 		tc++;
- 		if (tc < rxp_dcb_info.nb_tcs)
- 			continue;
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index 04a4727b88..1fe41d852a 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -216,6 +216,15 @@ struct fwd_engine * fwd_engines[] = {
-  * If bit-n in tc-mask is 1, then TC-n's forwarding is enabled, and vice versa.
-  */
- uint8_t dcb_fwd_tc_mask = DEFAULT_DCB_FWD_TC_MASK;
-+/*
-+ * Poll cores per TC when DCB forwarding.
-+ * E.g. 1 indicates that one core process all queues of a TC.
-+ *      2 indicates that two cores process all queues of a TC. If there
-+ *        is a TC with 8 queues, then [0, 3] belong to first core, and
-+ *        [4, 7] belong to second core.
-+ *      ...
-+ */
-+uint8_t dcb_fwd_tc_cores = 1;
- 
- struct rte_mempool *mempools[RTE_MAX_NUMA_NODES * MAX_SEGS_BUFFER_SPLIT];
- uint16_t mempool_flags;
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index 1ada0de450..492b5757f1 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -486,6 +486,7 @@ extern cmdline_parse_inst_t cmd_set_flex_spec_pattern;
- 
- #define DEFAULT_DCB_FWD_TC_MASK	0xFF
- extern uint8_t dcb_fwd_tc_mask;
-+extern uint8_t dcb_fwd_tc_cores;
- 
- extern uint16_t mempool_flags;
- 
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index 628f17fed7..209e88d531 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -1885,6 +1885,14 @@ forwarding is enabled, and vice versa::
- 
-    testpmd> set dcb fwd_tc (tc_mask)
- 
-+set dcb fwd_tc_cores
-+~~~~~~~~~~~~~~~~~~~~
-+
-+Config DCB forwarding cores per-TC, 1-means one core process all queues of a TC,
-+2-means two cores process all queues of a TC, and so on::
-+
-+   testpmd> set dcb fwd_tc_cores (tc_cores)
-+
- Port Functions
- --------------
- 
--- 
-2.17.1
+> ---
+>  app/test/bpf/load.c      |  51 +++++++++++++
+>  app/test/bpf/meson.build |  52 +++++++++++++
+>  app/test/meson.build     |   2 +
+>  app/test/test_bpf.c      | 156 +++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 261 insertions(+)
+>  create mode 100644 app/test/bpf/load.c
+>  create mode 100644 app/test/bpf/meson.build
+>=20
+> diff --git a/app/test/bpf/load.c b/app/test/bpf/load.c
+> new file mode 100644
+> index 0000000000..a4d3d61d7a
+> --- /dev/null
+> +++ b/app/test/bpf/load.c
+> @@ -0,0 +1,51 @@
+> +/* SPDX-License-Identifier: BSD-3-Clause
+> + *
+> + * BPF program for testing rte_bpf_elf_load
+> + */
+> +
+> +typedef unsigned char uint8_t;
+> +typedef unsigned short uint16_t;
+> +typedef unsigned int uint32_t;
+> +typedef unsigned long uint64_t;
+> +
+> +/* Match the structures from test_bpf.c */
+> +struct dummy_offset {
+> +	uint64_t u64;
+> +	uint32_t u32;
+> +	uint16_t u16;
+> +	uint8_t  u8;
+> +} __attribute__((packed));
+> +
+> +struct dummy_vect8 {
+> +	struct dummy_offset in[8];
+> +	struct dummy_offset out[8];
+> +};
+> +
+> +/* External function declaration - provided by test via xsym */
+> +extern void dummy_func1(const void *p, uint32_t *v32, uint64_t *v64);
+> +
+> +/*
+> + * Test BPF function that will be loaded from ELF
+> + * This function is compiled version of code used in test_call1
+> + */
+> +__attribute__((section("call1"), used))
+> +uint64_t
+> +test_call1(struct dummy_vect8 *arg)
+> +{
+> +	uint32_t v32;
+> +	uint64_t v64;
+> +
+> +	/* Load input values */
+> +	v32 =3D arg->in[0].u32;
+> +	v64 =3D arg->in[0].u64;
+> +
+> +	/* Call external function */
+> +	dummy_func1(arg, &v32, &v64);
+> +
+> +	/* Store results */
+> +	arg->out[0].u32 =3D v32;
+> +	arg->out[0].u64 =3D v64;
+> +
+> +	v64 +=3D v32;
+> +	return v64;
+> +}
+> diff --git a/app/test/bpf/meson.build b/app/test/bpf/meson.build
+> new file mode 100644
+> index 0000000000..b4f54aa976
+> --- /dev/null
+> +++ b/app/test/bpf/meson.build
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: BSD-3-Clause
+> +# Copyright 2025 Stephen Hemminger <stephen@networkplumber.org>
+> +
+> +bpf_test_hdrs =3D [ ]
+> +
+> +# use clang to compile to bpf
+> +clang_supports_bpf =3D false
+> +clang =3D find_program('clang', required: false)
+> +if clang.found()
+> +    clang_supports_bpf =3D run_command(clang, '-target', 'bpf', '--print=
+-supported-cpus',
+> +                                     check: false).returncode() =3D=3D 0
+> +endif
+> +
+> +if not clang_supports_bpf
+> +    message('app/test_bpf: no BPF load tests missing clang BPF support')
+> +    subdir_done()
+> +
+> +endif
+> +
+> +xxd =3D find_program('xxd', required: false)
+> +if not xxd.found()
+> +    message('app/test_bpf: missing xxd required to convert object to arr=
+ay')
+> +    subdir_done()
+> +endif
+> +
+> +# BPF compiler flags
+> +bpf_cflags =3D [ '-O2', '-target', 'bpf', '-g', '-c']
+> +
+> +# Enable test in test_bpf.c
+> +cflags +=3D '-DTEST_BPF_ELF_LOAD'
+> +
+> +# BPF sources to compile
+> +bpf_progs =3D {
+> +    'load' : 'test_bpf_load',
+> +}
+> +
+> +foreach bpf_src, bpf_hdr : bpf_progs
+> +    # Compile BPF C source to object file
+> +    bpf_obj =3D custom_target(bpf_src + '_o',
+> +        input: bpf_src + '.c',
+> +        output: bpf_src + '.o',
+> +        command: [ clang, bpf_cflags, '@INPUT@', '-o', '@OUTPUT@'])
+> +
+> +    # Convert object file to C header using xxd
+> +    bpf_test_h =3D custom_target(bpf_src + '_h',
+> +        input: bpf_obj,
+> +        output: bpf_hdr + '.h',
+> +        command: [ xxd, '-i', '@INPUT@', '@OUTPUT@'])
+> +
+> +    resources +=3D bpf_test_h
+> +
+> +endforeach
+> diff --git a/app/test/meson.build b/app/test/meson.build
+> index 8df8d3edd1..efec42a6bf 100644
+> --- a/app/test/meson.build
+> +++ b/app/test/meson.build
+> @@ -281,6 +281,8 @@ if not is_windows
+>              install: false)
+>  endif
+>=20
+> +subdir('bpf')
+> +
+>  subdir('test_cfgfiles')
+>=20
+>  resources +=3D test_cfgfile_h
+> diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+> index 90e10d7d2c..a80f41a543 100644
+> --- a/app/test/test_bpf.c
+> +++ b/app/test/test_bpf.c
+> @@ -6,6 +6,7 @@
+>  #include <string.h>
+>  #include <stdint.h>
+>  #include <inttypes.h>
+> +#include <unistd.h>
+>=20
+>  #include <rte_memory.h>
+>  #include <rte_debug.h>
+> @@ -14,6 +15,8 @@
+>  #include <rte_random.h>
+>  #include <rte_byteorder.h>
+>  #include <rte_errno.h>
+> +#include <rte_bpf.h>
+> +
+>  #include "test.h"
+>=20
+>  #if !defined(RTE_LIB_BPF)
+> @@ -3278,6 +3281,159 @@ test_bpf(void)
+>=20
+>  REGISTER_FAST_TEST(bpf_autotest, true, true, test_bpf);
+>=20
+> +#ifdef TEST_BPF_ELF_LOAD
+> +
+> +/*
+> + * Helper function to write BPF object data to temporary file.
+> + * Returns temp file path on success, NULL on failure.
+> + * Caller must free the returned path and unlink the file.
+> + */
+> +static char *
+> +create_temp_bpf_file(const uint8_t *data, size_t size, const char *name)
+> +{
+> +	char *tmpfile =3D NULL;
+> +	int fd;
+> +	ssize_t written;
+> +
+> +	if (asprintf(&tmpfile, "/tmp/dpdk_bpf_%s_XXXXXX.o", name) < 0) {
+> +		printf("%s@%d: asprintf failed: %s\n",
+> +		       __func__, __LINE__, strerror(errno));
+> +		return NULL;
+> +	}
+> +
+> +	/* Create and open temp file */
+> +	fd =3D mkstemps(tmpfile, strlen(".o"));
+> +	if (fd < 0) {
+> +		printf("%s@%d: mkstemps(%s) failed: %s\n",
+> +		       __func__, __LINE__, tmpfile, strerror(errno));
+> +		free(tmpfile);
+> +		return NULL;
+> +	}
+> +
+> +	/* Write BPF object data */
+> +	written =3D write(fd, data, size);
+> +	close(fd);
+> +
+> +	if (written !=3D (ssize_t)size) {
+> +		printf("%s@%d: write failed: %s\n",
+> +		       __func__, __LINE__, strerror(errno));
+> +		unlink(tmpfile);
+> +		free(tmpfile);
+> +		return NULL;
+> +	}
+> +
+> +	return tmpfile;
+> +}
+> +
+> +#include "test_bpf_load.h"
+> +
+> +/*
+> + * Test loading BPF program from an object file.
+> + * This test uses same arguments as previous test_call1 example.
+> + */
+> +static int
+> +test_bpf_elf_load(void)
+> +{
+> +	static const char test_section[] =3D "call1";
+> +	uint8_t tbuf[sizeof(struct dummy_vect8)];
+> +	const struct rte_bpf_xsym xsym[] =3D {
+> +		{
+> +			.name =3D RTE_STR(dummy_func1),
+> +			.type =3D RTE_BPF_XTYPE_FUNC,
+> +			.func =3D {
+> +				.val =3D (void *)dummy_func1,
+> +				.nb_args =3D 3,
+> +				.args =3D {
+> +					[0] =3D {
+> +						.type =3D RTE_BPF_ARG_PTR,
+> +						.size =3D sizeof(struct dummy_offset),
+> +					},
+> +					[1] =3D {
+> +						.type =3D RTE_BPF_ARG_PTR,
+> +						.size =3D sizeof(uint32_t),
+> +					},
+> +					[2] =3D {
+> +						.type =3D RTE_BPF_ARG_PTR,
+> +						.size =3D sizeof(uint64_t),
+> +					},
+> +				},
+> +			},
+> +		},
+> +	};
+> +	int ret;
+> +
+> +	/* Create temp file from embedded BPF object */
+> +	char *tmpfile =3D create_temp_bpf_file(app_test_bpf_load_o,
+> +					     app_test_bpf_load_o_len,
+> +					     "load");
+> +	if (tmpfile =3D=3D NULL)
+> +		return -1;
+> +
+> +	/* Try to load BPF program from temp file */
+> +	const struct rte_bpf_prm prm =3D {
+> +		.xsym =3D xsym,
+> +		.nb_xsym =3D RTE_DIM(xsym),
+> +		.prog_arg =3D {
+> +			.type =3D RTE_BPF_ARG_PTR,
+> +			.size =3D sizeof(tbuf),
+> +		},
+> +	};
+> +
+> +	struct rte_bpf *bpf =3D rte_bpf_elf_load(&prm, tmpfile, test_section);
+> +	unlink(tmpfile);
+> +	free(tmpfile);
+> +
+> +	TEST_ASSERT(bpf !=3D NULL, "failed to load BPF %d:%s", rte_errno, strer=
+ror(rte_errno));
+> +
+> +	/* Prepare test data */
+> +	struct dummy_vect8 *dv =3D (struct dummy_vect8 *)tbuf;
+> +
+> +	memset(dv, 0, sizeof(*dv));
+> +	dv->in[0].u64 =3D (int32_t)TEST_FILL_1;
+> +	dv->in[0].u32 =3D dv->in[0].u64;
+> +	dv->in[0].u16 =3D dv->in[0].u64;
+> +	dv->in[0].u8 =3D dv->in[0].u64;
+> +
+> +	/* Execute loaded BPF program */
+> +	uint64_t rc =3D rte_bpf_exec(bpf, tbuf);
+> +	ret =3D test_call1_check(rc, tbuf);
+> +	TEST_ASSERT(ret =3D=3D 0, "test_call1_check failed: %d", ret);
+> +
+> +	/* Test JIT if available */
+> +	struct rte_bpf_jit jit;
+> +	ret =3D rte_bpf_get_jit(bpf, &jit);
+> +	TEST_ASSERT(ret =3D=3D 0, "rte_bpf_get_jit failed: %d", ret);
+> +
+> +	if (jit.func !=3D NULL) {
+> +		memset(dv, 0, sizeof(*dv));
+> +		dv->in[0].u64 =3D (int32_t)TEST_FILL_1;
+> +		dv->in[0].u32 =3D dv->in[0].u64;
+> +		dv->in[0].u16 =3D dv->in[0].u64;
+> +		dv->in[0].u8 =3D dv->in[0].u64;
+> +
+> +		rc =3D jit.func(tbuf);
+> +		ret =3D test_call1_check(rc, tbuf);
+> +		TEST_ASSERT(ret =3D=3D 0, "jit test_call1_check failed: %d", ret);
+> +	}
+> +
+> +	rte_bpf_destroy(bpf);
+> +
+> +	printf("%s: ELF load test passed\n", __func__);
+> +	return TEST_SUCCESS;
+> +}
+> +#else
+> +
+> +static int
+> +test_bpf_elf_load(void)
+> +{
+> +	printf("BPF compile not supported, skipping test\n");
+> +	return TEST_SKIPPED;
+> +}
+> +
+> +#endif /* !TEST_BPF_ELF_LOAD */
+> +
+> +REGISTER_FAST_TEST(bpf_elf_load_autotest, true, true, test_bpf_elf_load)=
+;
+> +
+>  #ifndef RTE_HAS_LIBPCAP
+>=20
+>  static int
+> --
+> 2.51.0
 
