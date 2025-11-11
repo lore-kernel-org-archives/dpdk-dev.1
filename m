@@ -2,48 +2,108 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA59CCF9E3
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 10:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11CFCCF9E3
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 11:13:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A60A4026D;
-	Tue, 11 Nov 2025 11:10:46 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id BBE3C4026A
- for <dev@dpdk.org>; Tue, 11 Nov 2025 11:10:45 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.186.31])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4d5MjK3d4bzJ46dq;
- Tue, 11 Nov 2025 18:10:13 +0800 (CST)
-Received: from frapema500002.china.huawei.com (unknown [7.182.19.148])
- by mail.maildlp.com (Postfix) with ESMTPS id 3CCD3140122;
- Tue, 11 Nov 2025 18:10:44 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500002.china.huawei.com (7.182.19.148) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 6BF534026A;
+	Tue, 11 Nov 2025 12:13:07 +0100 (CET)
+Received: from mx0a-00154904.pphosted.com (mx0a-00154904.pphosted.com
+ [148.163.133.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 29DDE40144
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 12:13:04 +0100 (CET)
+Received: from pps.filterd (m0170389.ppops.net [127.0.0.1])
+ by mx0a-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB824i7032672
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 06:13:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=cc
+ :content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=smtpout1; bh=4nYkprn2ju3q2MwhrnQllAP
+ N+uBrGRV9DVhpFqFbFf0=; b=vs/xVVpvjsbeh8KkeGIDpnhXasNoNze0ih8ID+K
+ QgkTmplWGwYwZSICTN0/bL8wxkPK5+tuyuT5ez5lkmvcHYqEVNdbEjf8MmVs6jwe
+ 7N/AgzrP8cz5FSMD+j6QieQYBPMFCpstOc3ZC2VmmoWfFwR4xqEIyq4isaAt8l7e
+ FXwmbXSaIW2BVLnRk6zKkPbs3Qgdf3zds486dcSqJDV2OvF3nEJUibEAVW3+uXC3
+ VXhex+iQGBiMlr2Gixj6kY7Na0ZD10PlKFmFVSL7BGPd2TlTMmSZ74TNPmTM5AcW
+ QoJHLtyA6I9Pvf+pJxx7qae5632RNftKgpT4Q6Rwa2Q8XIA==
+Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com
+ [67.231.157.37])
+ by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 4aa2rpkugs-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 06:13:04 -0500 (EST)
+Received: from pps.filterd (m0089483.ppops.net [127.0.0.1])
+ by mx0b-00154901.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5AB9axgX001429
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 06:13:03 -0500
+Received: from esapsmtplv06.us.dell.com (esapsmtplv06.us.dell.com
+ [143.166.203.146])
+ by mx0b-00154901.pphosted.com (PPS) with ESMTPS id 4ac2nw90nf-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 06:13:02 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=dell.com; i=@dell.com; q=dns/txt; s=smtpdev1;
+ t=1762859583; x=1794395583;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=4nYkprn2ju3q2MwhrnQllAPN+uBrGRV9DVhpFqFbFf0=;
+ b=HRrkXS64JUs80Hsz+6iyZr8aCB6Ras3xCs+DejfDDcE7Jaz1FrW/8/y6
+ sFE2mQGvhEPhmfcW1XiN3PLX+yBMwJDJg413G+1psg7pyh1SEE545e/ei
+ PHzBSSxWWHE2HynDZSI7RfrFfYomXzk7nXD/yO/zzeBiQRiwn1XT4ls+3
+ U9uaS/p3kuZdKBcHuLiXyVPaiRNjMXYtKD5iZM2wUOyoMsi+k58Z8t11S
+ dc+1iREei5lYcpOvHhCcVREqULJ/M7VBw8Y935YvrkURbKxZwZ5TpRi2B
+ wKpjA1o5p59SLuOqgwzIULBDfZDABiEHC8wOyJ5UYEoJx45VceBNbMf58 Q==;
+X-CSE-ConnectionGUID: Ge6PqzxFRxi7entoT6gT5Q==
+X-CSE-MsgGUID: ALKh/79ERWuoDWZpynzndw==
+X-LoopCount0: from 10.215.64.31
+X-MS-Exchange-CrossPremises-AuthAs: Internal
+Received: from mx2-adc.dell.com (HELO ieorr5-pvwed002.delllabs.net)
+ ([10.215.64.31])
+ by esapsmtplv06.us.dell.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Nov 2025 11:13:02 +0000
+Received: from ieorr5-ppwem002.delllabs.net (100.64.0.133) by
+ ieorr5-pvwed002.delllabs.net (10.215.64.31) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 11 Nov 2025 11:10:44 +0100
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Tue, 11 Nov 2025 11:10:44 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Jerin Jacob <jerinjacobk@gmail.com>
-CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Stephen Hemminger
- <stephen@networkplumber.org>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH 1/3] bpf: fix signed shift overflows in ARM JIT
-Thread-Topic: [PATCH 1/3] bpf: fix signed shift overflows in ARM JIT
-Thread-Index: AQHcUlcr87G/2RlxX0m9Gw4mx1QmwbTs8noAgABNFRA=
-Date: Tue, 11 Nov 2025 10:10:43 +0000
-Message-ID: <e99e848a439e46c4bf9092c2c83de2a8@huawei.com>
-References: <20251110153046.63518-1-marat.khalili@huawei.com>
- <20251110153046.63518-2-marat.khalili@huawei.com>
- <CALBAE1O2VtvLV06-4hPCb5qHsRzqDM1iWWOaRcPKu9L-NMu2qg@mail.gmail.com>
-In-Reply-To: <CALBAE1O2VtvLV06-4hPCb5qHsRzqDM1iWWOaRcPKu9L-NMu2qg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.70]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ 15.2.1544.36; Tue, 11 Nov 2025 05:13:54 -0600
+Received: from ieorr5-pvwer002.delllabs.net (100.64.0.135) by
+ ieorr5-ppwem002.delllabs.net (100.64.0.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Tue, 11 Nov 2025 05:13:00 -0600
+Received: from localhost (10.240.17.25) by smtprelay.delllabs.net
+ (100.64.0.135) with Microsoft SMTP Server id 15.2.1544.36 via Frontend
+ Transport; Tue, 11 Nov 2025 05:13:00 -0600
+From: Pravin M Bathija <pravin.bathija@dell.com>
+To: <dev@dpdk.org>
+CC: <pravin.bathija@dell.com>, <pravin.m.bathija.dev@gmail.com>
+Subject: [PATCH v4 0/5] Support add/remove memory region & get-max-slots
+Date: Tue, 11 Nov 2025 11:12:30 +0000
+Message-ID: <20251111111235.2902146-1-pravin.bathija@dell.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-11_02,2025-11-11_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 clxscore=1015 bulkscore=0 adultscore=0
+ suspectscore=0 priorityscore=1501 malwarescore=0 phishscore=0
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2511110076
+X-Proofpoint-ORIG-GUID: Nc5Hktu2FJhwydlGBclMOIkrzYLglh7G
+X-Proofpoint-GUID: Nc5Hktu2FJhwydlGBclMOIkrzYLglh7G
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA4MDA3MCBTYWx0ZWRfXxcMC3NHTgcJE
+ nyl3d4DydZM6jOjewP3n2Bfw9fmq4WXUAmFpEt2l0YmGITO4dr+uEZ8+BdaW5a0d2zlNnaqdqW0
+ OMNhjANMdpUAUpz39A5CT+G16hI+5m88WQd8uuQC6EYVG7AclSC12ioUGgz7ded5JL33EnRe7wU
+ DyzHUW07RqLb5gresLyJRXh3IzfORY4dNr5gWAk2jsvVOHACph8M3FkvfR0phLBzOiS+cUVmgdh
+ aroT88dxXwytF1zuHUuaecqoQ2xolmj7ZTKm5gfz9WkDzx+YClVCU8AHp1i5eK8jrTlH4ayWT0a
+ NXpOXWebMt/zWV2CDkLRi2NIXr7n8Y1PCyxBgC9gn7ZqO5+0WKot+3Xcf9KFt9LEEt9WPTq0LVA
+ nUyV6lZj/BNhuAsUWBFNiSHf/osNBQ==
+X-Authority-Analysis: v=2.4 cv=UqVu9uwB c=1 sm=1 tr=0 ts=69131a40 cx=c_pps
+ a=Z2e5DKjA+8LiMDv5v6mwwA==:117 a=in+AvElAwLqdjTPPAWhuvg==:17
+ a=6UeiqGixMTsA:10 a=ke5jqHz-1hQA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=YEBu6XFh4AR5ImKgwYwA:9 a=hlJyneSgMmFPbskH-t2w:22
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
+ priorityscore=1501 impostorscore=0 bulkscore=0 phishscore=0 suspectscore=0
+ adultscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511080070
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,50 +117,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBPbiBNb24sIE5vdiAxMCwgMjAyNSBhdCA5OjAx4oCvUE0gTWFyYXQgS2hhbGlsaSA8bWFyYXQu
-a2hhbGlsaUBodWF3ZWkuY29tPiB3cm90ZToNCj4gPg0KPiA+IExlZnQgc2hpZnRzIG9mIGludGVn
-ZXIgbGl0ZXJhbHMgYW5kIGJvb2wgdmFsdWVzIG92ZXJ3cml0aW5nIHRoZSBzaWduIGJpdA0KPiA+
-IHdlcmUgdXNlZCBtdWx0aXBsZSB0aW1lcyBpbiBicGZfaml0X2FybTY0LmMuIEUuZy46DQo+ID4N
-Cj4gPiAgICAgaW5zbiA9ICghIWlzNjQpIDw8IDMxOw0KPiA+DQo+ID4gd2hlcmUgaXM2NCBoYXMg
-dHlwZSBib29sIChkb3VibGUgYmFuZyBpcyBhIG5vLW9wIGhlcmUpLiBUaGUgb3BlcmFuZCBvZg0K
-PiA+IGxlZnQgc2hpZnQgd2FzIHByb21vdGVkIHRvIHR5cGUgaW50LCB3aGljaCB3aGVuIDMyLWJp
-dCB3aWRlIGNhbm5vdA0KPiA+IHJlcHJlc2VudCB0aGUgcmVzdWx0LiBTaW1pbGFybHkgbGl0ZXJh
-bCBpbnRlZ2VycyBoYXZlIGludCB0eXBlIGJ5DQo+ID4gZGVmYXVsdC4gIFNhbml0aXplciBwcm9k
-dWNlZCB0aGUgZm9sbG93aW5nIGRpYWdub3N0aWMgZHVyaW5nIHJ1bnRpbWUNCj4gPiAoZm9yIHZh
-cmlvdXMgbGluZXMpOg0KPiA+DQo+ID4gICAgIGxpYi9icGYvYnBmX2ppdF9hcm02NC5jOjI0MTox
-ODogcnVudGltZSBlcnJvcjogbGVmdCBzaGlmdCBvZiAxIGJ5IDMxDQo+ID4gICAgIHBsYWNlcyBj
-YW5ub3QgYmUgcmVwcmVzZW50ZWQgaW4gdHlwZSAnaW50Jw0KPiANCj4gV29uZGVyIHdoeSBub25l
-IG9mIHRoZSB0ZXN0cyBpbiBhcHAvdGVzdC90ZXN0X2JwZi5jIGFibGUgdG8gY2F0Y2gNCj4gdGhp
-cz8gVGhlIGdlbmVyYXRlZCBBUk0gb3Bjb2RlIGxvb2tzIE9LIChvdGhlcndpc2UgdGVzdHMgd29u
-dCBwYXNzKS4NCj4gQ291bGQgeW91IGNoZWNrIHdoYXQgaXMgbWlzc2luZyBpbiB0aGUgYXBwL3Rl
-c3QvdGVzdF9icGYuYz8NCg0KVGhhdCB0ZXN0cyBkbyB0cmlnZ2VyIGl0Lg0KDQpSVEU+PmJwZl9h
-dXRvdGVzdA0KLi4vLi4vc3JjL2xpYi9icGYvYnBmX2ppdF9hcm02NC5jOjMyMDoxODogcnVudGlt
-ZSBlcnJvcjogbGVmdCBzaGlmdCBvZiAxIGJ5IDMxIHBsYWNlcyBjYW5ub3QgYmUgcmVwcmVzZW50
-ZWQgaW4gdHlwZSAnaW50Jw0KICAgICMwIDB4MjJiZjU5YyBpbiBtb3ZfaW1tIC4uLy4uL3NyYy9s
-aWIvYnBmL2JwZl9qaXRfYXJtNjQuYzozMjANCiAgICAjMSAweDIyYmZhZTAgaW4gZW1pdF9tb3Zf
-aW1tIC4uLy4uL3NyYy9saWIvYnBmL2JwZl9qaXRfYXJtNjQuYzozNzgNCiAgICAjMiAweDIyYzNi
-ZmMgaW4gZW1pdCAuLi8uLi9zcmMvbGliL2JwZi9icGZfaml0X2FybTY0LmM6MTMyMQ0KICAgICMz
-IDB4MjJjNDMxNCBpbiBfX3J0ZV9icGZfaml0X2FybTY0IC4uLy4uL3NyYy9saWIvYnBmL2JwZl9q
-aXRfYXJtNjQuYzoxNDE0DQogICAgIzQgMHgyMjc3NWMwIGluIF9fcnRlX2JwZl9qaXQgLi4vLi4v
-c3JjL2xpYi9icGYvYnBmLmM6NDQNCiAgICAjNSAweDIyOGZiZGMgaW4gcnRlX2JwZl9sb2FkIC4u
-Ly4uL3NyYy9saWIvYnBmL2JwZl9sb2FkLmM6MTE1DQogICAgIzYgMHg2MzEyZjggaW4gcnVuX3Rl
-c3QgLi4vLi4vc3JjL2FwcC90ZXN0L3Rlc3RfYnBmLmM6MzIyNQ0KICAgICM3IDB4NjMxODQ4IGlu
-IHRlc3RfYnBmIC4uLy4uL3NyYy9hcHAvdGVzdC90ZXN0X2JwZi5jOjMyNjkNClsuLi5dDQoNClJU
-RT4+YnBmX2NvbnZlcnRfYXV0b3Rlc3QNCi4uLy4uL3NyYy9saWIvYnBmL2JwZl9qaXRfYXJtNjQu
-YzoyNDE6MTg6IHJ1bnRpbWUgZXJyb3I6IGxlZnQgc2hpZnQgb2YgMSBieSAzMSBwbGFjZXMgY2Fu
-bm90IGJlIHJlcHJlc2VudGVkIGluIHR5cGUgJ2ludCcNCiAgICAjMCAweDIyYmYwNGMgaW4gZW1p
-dF9hZGRfc3ViX2ltbSAuLi8uLi9zcmMvbGliL2JwZi9icGZfaml0X2FybTY0LmM6MjQxDQogICAg
-IzEgMHgyMmJmMjcwIGluIGVtaXRfbW92IC4uLy4uL3NyYy9saWIvYnBmL2JwZl9qaXRfYXJtNjQu
-YzoyNjcNCiAgICAjMiAweDIyYmYyYTQgaW4gZW1pdF9tb3ZfNjQgLi4vLi4vc3JjL2xpYi9icGYv
-YnBmX2ppdF9hcm02NC5jOjI3Mw0KICAgICMzIDB4MjJjMWE2OCBpbiBlbWl0X3Byb2xvZ3VlX25v
-X2NhbGwgLi4vLi4vc3JjL2xpYi9icGYvYnBmX2ppdF9hcm02NC5jOjg4NA0KICAgICM0IDB4MjJj
-MWM5YyBpbiBlbWl0X3Byb2xvZ3VlIC4uLy4uL3NyYy9saWIvYnBmL2JwZl9qaXRfYXJtNjQuYzo5
-MDQNCiAgICAjNSAweDIyYzMyN2MgaW4gZW1pdCAuLi8uLi9zcmMvbGliL2JwZi9icGZfaml0X2Fy
-bTY0LmM6MTEzNg0KICAgICM2IDB4MjJjNDMxNCBpbiBfX3J0ZV9icGZfaml0X2FybTY0IC4uLy4u
-L3NyYy9saWIvYnBmL2JwZl9qaXRfYXJtNjQuYzoxNDE0DQogICAgIzcgMHgyMjc3NWMwIGluIF9f
-cnRlX2JwZl9qaXQgLi4vLi4vc3JjL2xpYi9icGYvYnBmLmM6NDQNCiAgICAjOCAweDIyOGZiZGMg
-aW4gcnRlX2JwZl9sb2FkIC4uLy4uL3NyYy9saWIvYnBmL2JwZl9sb2FkLmM6MTE1DQogICAgIzkg
-MHg2MzFlN2MgaW4gdGVzdF9icGZfbWF0Y2ggLi4vLi4vc3JjL2FwcC90ZXN0L3Rlc3RfYnBmLmM6
-MzMyOA0KICAgICMxMCAweDYzMmNlOCBpbiB0ZXN0X2JwZl9maWx0ZXJfc2FuaXR5IC4uLy4uL3Ny
-Yy9hcHAvdGVzdC90ZXN0X2JwZi5jOjMzNzYNCiAgICAjMTEgMHg2MzMxYzQgaW4gdGVzdF9icGZf
-Y29udmVydCAuLi8uLi9zcmMvYXBwL3Rlc3QvdGVzdF9icGYuYzozNDg3DQpbLi4uXQ0K
+This patchset incorporates support for adding and removal of memory
+regions, getting max memory slots and other changes to vhost-user
+messages.  These messages are sent from vhost-user front-end (qemu
+or libblkio) to a vhost-user back-end (dpdk, spdk). Support functions
+for these message functions have been implemented in the interest of
+writing optimized code. Older functions, part of vhost-user back-end
+have also been optimized using these newly defined support functions.
+This implementation has been extensively tested by doing Read/Write
+I/O from multiple instances of fio + libblkio (front-end) talking to
+spdk/dpdk (back-end) based drives.  Also tested with qemu front-end
+talking to dpdk + testpmd (back-end) performing add/removal of memory
+regions. The last patch also includes increasing the number of memory
+regions from 8 to 128. This has been also extensively tested using the
+above test approaches.
+
+Pravin M Bathija (5):
+  vhost: add user to mailmap and define to vhost hdr
+  vhost_user: header defines for add/rem mem region
+  vhost_user: support function defines for back-end
+  vhost_user: Function defs for add/rem mem regions
+  vhost_user: Increase number of memory regions
+
+ .mailmap               |   1 +
+ lib/vhost/rte_vhost.h  |   4 +
+ lib/vhost/vhost_user.c | 399 ++++++++++++++++++++++++++++++++++++-----
+ lib/vhost/vhost_user.h |  12 +-
+ 4 files changed, 373 insertions(+), 43 deletions(-)
+
+-- 
+2.43.0
+
