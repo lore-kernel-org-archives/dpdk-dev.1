@@ -2,35 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4330ECCFA18
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 17:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6E7CCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 17:44:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44A4640280;
-	Tue, 11 Nov 2025 18:39:02 +0100 (CET)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 391614026D;
- Tue, 11 Nov 2025 18:39:00 +0100 (CET)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8413497;
- Tue, 11 Nov 2025 09:38:51 -0800 (PST)
-Received: from ampere-altra-2-1.usa.arm.com (ampere-altra-2-1.usa.arm.com
- [10.118.91.158])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 574273F5A1;
- Tue, 11 Nov 2025 09:38:59 -0800 (PST)
-From: Wathsala Vithanage <wathsala.vithanage@arm.com>
-To: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
- Tyler Retzlaff <roretzla@linux.microsoft.com>,
- Steve Capper <steve.capper@arm.com>, Gavin Hu <gahu@nvidia.com>,
- Phil Yang <phil.yang@arm.com>
-Cc: dev@dpdk.org, Wathsala Vithanage <wathsala.vithanage@arm.com>,
- stable@dpdk.org, Ola Liljedahl <ola.liljedahl@arm.com>
-Subject: [PATCH v2 1/1] eal: correct memory ordering in MCS lock
-Date: Tue, 11 Nov 2025 17:38:50 +0000
-Message-ID: <20251111173850.790254-1-wathsala.vithanage@arm.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id C689E40280;
+	Tue, 11 Nov 2025 18:44:14 +0100 (CET)
+Received: from fhigh-b4-smtp.messagingengine.com
+ (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+ by mails.dpdk.org (Postfix) with ESMTP id E9C964026D;
+ Tue, 11 Nov 2025 18:44:12 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 230667A0182;
+ Tue, 11 Nov 2025 12:44:12 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Tue, 11 Nov 2025 12:44:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1762883051;
+ x=1762969451; bh=FhkmhAPKwQ12w+L8KmsMZw3iwNp/Uf5njeons3k+/9o=; b=
+ MCcrajwVFBwPbvSYZG1eEUIbo0NbLSlLpINJhRUXAx2KrXjxAy2DfE7/2tL4QObj
+ v1pGZwa5EPsDBw7gMdKhuxkVFoQegaZOd2cmcjf63WvMCrNmf+OjCph5/ypNKG1Z
+ Ve6eS6bLDHuQtaj92ELiEH/xEBEsBORFpvUWHYPJyT/hYC+VsRMpjndNST+lHspV
+ lo1lX/m3xDAAzuAUHHqTQW5R5WyPkOx3Drd5V6qdbzqusXPtwUyBPOvNXymftp7Z
+ U/9GD9p2oCQnv8tFgtL7RC6/E/Sbr4Rne0hDvMzE1Sl9eyziLPdgtASbWdU4SGdY
+ yiPIOdfAL+jk36T25Rt4Fg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762883051; x=
+ 1762969451; bh=FhkmhAPKwQ12w+L8KmsMZw3iwNp/Uf5njeons3k+/9o=; b=o
+ Vxbz2hEZXUjeiqFtAX+TrrZWtx3bx/UXHf2Ugl+KZDSHzHPKA1UHdNW+RfL2BBM6
+ eOL4r/H7uqJMETrDBqjhkBh3VhIhlIO1cujnHAg1hUF6ULjcOpcTmoJVHSy56Fsx
+ bh7G85CAjV6VrUtoaJpwpTm12z/BBOdjb+04FL+Eqw46FfpHfW/UNn9egjT03wIs
+ TA5KxPF784RMx29K9n0PLP2jkKNnkBJMJE+uXGAPzn9xw6AMWtA0mwRNTnEvoW4I
+ D0v6hIWXNnoPjN46jkEVXKBOSMpT5F31AbvK4u2xMRjVYovZtS8M3kMDyds3vQr3
+ kxSxptXZ3svtB+r1NBEhQ==
+X-ME-Sender: <xms:63UTadDsn9E4xXq1M09fop_34fpLoOPXrzKztakaLhRssRg2MyjyNw>
+ <xme:63UTabo1LKo-PpFfXvTVziHOBiwAxpwXpEwrmB9oJwOj1YgjZBbI3fnjoFtrmT0Em
+ WkyQ5tB7yZkoWO3TB6Xfib_J4Rx9qYQG2nchoN6dct_QytAMXafGA>
+X-ME-Received: <xmr:63UTaQgGY26E1cpYOD4Dq1QzxkmEllKeZXl-7ZCPLmkdJYvZDtSKIhuQ6jZkBCZZTtvb5NTJDskj_Gx5PUC5rInNww>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddukedvucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehrjhgrrhhrhiesrhgvughhrghtrdgtoh
+ hmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepsghruhgtvgdr
+ rhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepshhtrggslhgvse
+ guphgukhdrohhrgh
+X-ME-Proxy: <xmx:63UTaQCCI9q59p42UKR4jJdts1BxZSTgvxdI_YoN82efeyjaFFeoJg>
+ <xmx:63UTadFn1A1xsoFh81OSiHQD6XK0PMDiCq7BaUhOn4q1xSogfLevGA>
+ <xmx:63UTaQIIgoTFRcO4EZUbutyYlFG4CHrUxap3_BcDPov3R4uEGVlLsw>
+ <xmx:63UTaZlqqAnw0kOH06JeKDjMi8dFv4oc3kBZxNenXs6MD5khsUv47w>
+ <xmx:63UTac_ooXyExYGEspItlYhCGsVZ6a421sf7-9B1MIJtXrOjHaMLZRz0>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Nov 2025 12:44:10 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Robin Jarry <rjarry@redhat.com>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ stable@dpdk.org
+Subject: Re: [PATCH dpdk] telemetry-exporter: listen on loopback by default
+Date: Tue, 11 Nov 2025 18:44:09 +0100
+Message-ID: <7140745.6TB3vktIsb@thomas>
+In-Reply-To: <20250127115143.585207-2-rjarry@redhat.com>
+References: <20250127115143.585207-2-rjarry@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,190 +89,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix incorrect memory ordering in the MCS lock implementation by
-adding proper synchronizing edges to establish clear happens-before
-relationships between threads invoking lock() and unlock(). These
-synchronizing edges prevent potential deadlocks caused by improper
-ordering and are documented in detail through in-code comments.
+27/01/2025 12:51, Robin Jarry:
+> Fix the following warning reported by Coverity:
+> 
+> Defect type: SIGMA.insecure_network_bind:
+> > dpdk-stable-24.11.1/usertools/dpdk-telemetry-exporter.py:278:
+> > Sigma main event: The HTTP server binds to all network interfaces by
+> > setting the IP address to "", `0.0.0.0`, `::`, or `::0`.
+> > This may expose the server to unintended traffic.
+> 
+> Avoid listening to all interfaces by default to avoid exposing private
+> information unwillingly.
+> 
+> Unrelated: The Python stdlib TCP server listens on IPv4 only by default.
+> Changing this requires creating a subclass that overrides address_family
+> to socket.AF_INET6.
+> 
+> Fixes: d94ebd627a86 ("usertools: add telemetry exporter")
+> Cc: stable@dpdk.org
+> Signed-off-by: Robin Jarry <rjarry@redhat.com>
 
-The previously relaxed load of the successor’s lock object pointer
-in unlock() has been upgraded to a load-acquire operation. This
-change ensures that the successor’s initialization does not
-overwrite the current lock holder’s update to the locked field,
-which could otherwise lead to deadlocks.
+Applied, thanks.
 
-Remove two unnecessary fences:
 
-The acquire fence in unlock() had no matching release fence, making
-it ineffective for enforcing memory order. The associated comment
-suggested it prevented speculative reordering, but such fences (data
-memory barriers) only establish memory ordering and do not control
-instruction speculation.
-
-The release-acquire fence pair in lock() was previously justified as
-preventing reordering between the load-acquire loop of me->locked
-and the store-release of prev->next. This is no longer needed, as the
-new synchronizing edges ensure a chain of happens-before
-relationships between memory operations of threads calling lock() and
-unlock().
-
-Fixes: 2173f3333b61d ("mcslock: add MCS queued lock implementation")
-Cc: stable@dpdk.org
-
-Signed-off-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Reviewed-by: Ola Liljedahl <ola.liljedahl@arm.com>
----
- lib/eal/include/rte_mcslock.h | 100 ++++++++++++++++++++++------------
- 1 file changed, 64 insertions(+), 36 deletions(-)
-
-diff --git a/lib/eal/include/rte_mcslock.h b/lib/eal/include/rte_mcslock.h
-index bb218d2e50..0af7a94a06 100644
---- a/lib/eal/include/rte_mcslock.h
-+++ b/lib/eal/include/rte_mcslock.h
-@@ -57,11 +57,21 @@ rte_mcslock_lock(RTE_ATOMIC(rte_mcslock_t *) *msl, rte_mcslock_t *me)
- 	rte_atomic_store_explicit(&me->locked, 1, rte_memory_order_relaxed);
- 	rte_atomic_store_explicit(&me->next, NULL, rte_memory_order_relaxed);
- 
--	/* If the queue is empty, the exchange operation is enough to acquire
--	 * the lock. Hence, the exchange operation requires acquire semantics.
--	 * The store to me->next above should complete before the node is
--	 * visible to other CPUs/threads. Hence, the exchange operation requires
--	 * release semantics as well.
-+	/*
-+	 * A0/R0: Queue might be empty, perform the exchange (RMW) with both acquire and
-+	 * release semantics:
-+	 * A0: Acquire — synchronizes with both R0 and R2.
-+	 *     Must synchronize with R0 to ensure that this thread observes predecessor's
-+	 *     initialization of its lock object or risk them overwriting this thread's
-+	 *     update to the next of the same object via store to prev->next.
-+	 *
-+	 *     Must synchronize with R2 the releasing CAS in unlock(), this will ensure
-+	 *     that all prior critical-section writes become visible to this thread.
-+	 *
-+	 * R0: Release — ensures the successor observes our initialization of me->next;
-+	 *     without it, me->next could be overwritten to NULL after the successor
-+	 *     sets its own address, causing deadlock. This release synchronizes with
-+	 *     A0 above.
- 	 */
- 	prev = rte_atomic_exchange_explicit(msl, me, rte_memory_order_acq_rel);
- 	if (likely(prev == NULL)) {
-@@ -70,24 +80,26 @@ rte_mcslock_lock(RTE_ATOMIC(rte_mcslock_t *) *msl, rte_mcslock_t *me)
- 		 */
- 		return;
- 	}
--	/* The store to me->next above should also complete before the node is
--	 * visible to predecessor thread releasing the lock. Hence, the store
--	 * prev->next also requires release semantics. Note that, for example,
--	 * on ARM, the release semantics in the exchange operation is not
--	 * strong as a release fence and is not sufficient to enforce the
--	 * desired order here.
-+
-+	/*
-+	 * R1: With the relaxed memory model of C/C++, it's essential that after
-+	 * we link ourselves by storing prev->next = me, the owner of prev must
-+	 * observe our prior initialization of me->locked. Otherwise it could
-+	 * clear me->locked before we set it to 1, which may deadlock.
-+	 * Perform a releasing store so the predecessor's acquire loads A2 and A3
-+	 * observes our initialization, establishing a happens-before from those
-+	 * writes.
- 	 */
- 	rte_atomic_store_explicit(&prev->next, me, rte_memory_order_release);
- 
--	/* The while-load of me->locked should not move above the previous
--	 * store to prev->next. Otherwise it will cause a deadlock. Need a
--	 * store-load barrier.
--	 */
--	rte_atomic_thread_fence(rte_memory_order_acq_rel);
--	/* If the lock has already been acquired, it first atomically
-+	/*
-+	 * A1: If the lock has already been acquired, it first atomically
- 	 * places the node at the end of the queue and then proceeds
- 	 * to spin on me->locked until the previous lock holder resets
--	 * the me->locked using mcslock_unlock().
-+	 * the me->locked in rte_mcslock_unlock().
-+	 * This load must synchronize with store-release R3 to ensure that
-+	 * all updates to critical section by previous lock holder is visible
-+	 * to this thread after acquiring the lock.
- 	 */
- 	rte_wait_until_equal_32((uint32_t *)(uintptr_t)&me->locked, 0, rte_memory_order_acquire);
- }
-@@ -103,30 +115,46 @@ rte_mcslock_lock(RTE_ATOMIC(rte_mcslock_t *) *msl, rte_mcslock_t *me)
- static inline void
- rte_mcslock_unlock(RTE_ATOMIC(rte_mcslock_t *) *msl, RTE_ATOMIC(rte_mcslock_t *) me)
- {
--	/* Check if there are more nodes in the queue. */
--	if (likely(rte_atomic_load_explicit(&me->next, rte_memory_order_relaxed) == NULL)) {
-+	/*
-+	 * A2: Check whether a successor is already queued.
-+	 * Load me->next with acquire semantics so it can synchronize with the
-+	 * successor’s release store R1. This guarantees that the successor’s
-+	 * initialization of its lock object (me) is completed before we observe
-+	 * it here, preventing a race between this thread’s store-release to
-+	 * me->next->locked and the successor’s store to me->locked.
-+	 */
-+	if (likely(rte_atomic_load_explicit(&me->next, rte_memory_order_acquire) == NULL)) {
- 		/* No, last member in the queue. */
--		rte_mcslock_t *save_me = rte_atomic_load_explicit(&me, rte_memory_order_relaxed);
-+		rte_mcslock_t *save_me = me;
- 
--		/* Release the lock by setting it to NULL */
-+		/*
-+		 * R2: Try to release the lock by swinging *msl from save_me to NULL.
-+		 * Use release semantics so all critical section writes become
-+		 * visible to the next lock acquirer.
-+		 */
- 		if (likely(rte_atomic_compare_exchange_strong_explicit(msl, &save_me, NULL,
- 				rte_memory_order_release, rte_memory_order_relaxed)))
- 			return;
- 
--		/* Speculative execution would be allowed to read in the
--		 * while-loop first. This has the potential to cause a
--		 * deadlock. Need a load barrier.
--		 */
--		rte_atomic_thread_fence(rte_memory_order_acquire);
--		/* More nodes added to the queue by other CPUs.
--		 * Wait until the next pointer is set.
-+		/*
-+		 * A3: Another thread was enqueued concurrently, so the CAS and the lock
-+		 * release failed. Wait until the successor sets our 'next' pointer.
-+		 * This load must synchronize with the successor’s release store (R1) to
-+		 * ensure that the successor’s initialization completes before we observe
-+		 * it here. This ordering prevents a race between this thread’s later
-+		 * store-release to me->next->locked and the successor’s store to me->locked.
- 		 */
- 		RTE_ATOMIC(uintptr_t) *next;
- 		next = (__rte_atomic uintptr_t *)&me->next;
--		RTE_WAIT_UNTIL_MASKED(next, UINTPTR_MAX, !=, 0, rte_memory_order_relaxed);
-+		RTE_WAIT_UNTIL_MASKED(next, UINTPTR_MAX, !=, 0, rte_memory_order_acquire);
- 	}
- 
--	/* Pass lock to next waiter. */
-+	/*
-+	 * R3: Pass the lock to the successor.
-+	 * Use a release store to synchronize with A1 when clearing me->next->locked
-+	 * so the successor observes our critical section writes after it sees locked
-+	 * become 0.
-+	 */
- 	rte_atomic_store_explicit(&me->next->locked, 0, rte_memory_order_release);
- }
- 
-@@ -149,11 +177,11 @@ rte_mcslock_trylock(RTE_ATOMIC(rte_mcslock_t *) *msl, rte_mcslock_t *me)
- 	/* Try to lock */
- 	rte_mcslock_t *expected = NULL;
- 
--	/* The lock can be taken only when the queue is empty. Hence,
--	 * the compare-exchange operation requires acquire semantics.
--	 * The store to me->next above should complete before the node
--	 * is visible to other CPUs/threads. Hence, the compare-exchange
--	 * operation requires release semantics as well.
-+	/*
-+	 * A4/R4: The lock can be acquired only when the queue is empty.
-+	 * The compare-and-exchange operation must use acquire and release
-+	 * semantics for the same reasons described in the rte_mcslock_lock()
-+	 * function’s empty-queue case (see A0/R0 for details).
- 	 */
- 	return rte_atomic_compare_exchange_strong_explicit(msl, &expected, me,
- 			rte_memory_order_acq_rel, rte_memory_order_relaxed);
--- 
-2.43.0
 
