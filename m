@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B93CCCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 22:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 146FCCCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 22:19:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A152402DC;
-	Tue, 11 Nov 2025 23:19:05 +0100 (CET)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
- [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id 8B3A9402D0
- for <dev@dpdk.org>; Tue, 11 Nov 2025 23:19:02 +0100 (CET)
-Received: by mail-pj1-f43.google.com with SMTP id
- 98e67ed59e1d1-343dd5aa6e7so233119a91.0
- for <dev@dpdk.org>; Tue, 11 Nov 2025 14:19:02 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9BF5C40652;
+	Tue, 11 Nov 2025 23:19:06 +0100 (CET)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
+ [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id D5A9040395
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 23:19:03 +0100 (CET)
+Received: by mail-pj1-f49.google.com with SMTP id
+ 98e67ed59e1d1-34372216275so255667a91.2
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 14:19:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762899542;
- x=1763504342; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762899543;
+ x=1763504343; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=aAWLX0Q20WkWDTKYitZlfjmbgJj4Qvp4ftVfvvb4FgQ=;
- b=lGSkStr6tsvAZrdbn95I/kGOvT3MSJARTvExbME2vpzJBViWHlf46H3icsB4CQ1PH0
- BYMentQFBSq/G7fB+9MFpi+3KmplOIOYGyWKTtTEtxDxZZYWfjVqGDOUsdHdsIQX37yw
- C5mqIciNJI0SfWITr4hVa72QYRJchGoyTlGuTu3TmN6DqjGkHxaVX4R4xvvOS7EvQLQe
- U4OUI92tPhD00+aHuEwmCom8pWo/OpIttrgajVMMZcudGnY1xiyGr4iv27sn226bOrVv
- Mnvv74iOqebE/mKw87qmXvsbwBqRFr2gWpb870H7FJs7btngZKYEqqtjO4ZPNRXDdxJC
- KWiQ==
+ bh=MonaQP1LjuvQRMKWbmuTBsl8mIS88e1arwah1zLJjck=;
+ b=CdufmIFo6TjyBZcoha8dtvw7qscZmUXiGOsFglLW0pbO1HBGuUGvSO9ktDokD2VyUP
+ A1DgmE+WGr/ompBXnW+rAvMEf39rTkOnLMLLBDJ8p5Mz52aaYTgDIwRLYFBsXVxCMxuM
+ u9xJy0gBwznQGJTxHFZo8Y46TeQdbMx3Qu5BLAZbkIC/QsUEh4rbXXsBsBv3QFMAr+AH
+ H3VHkXyQBPVMU9f2Yd03o9mYpLi0Gad/kd9+hGMN24WxS/Xy6oUej4gjwQ+T7Ur6h9yM
+ hfRGSI9KpOWorwASpjuRMzasXz8uBTnFuUyId0+w+7WjKOyQwraOJcSX9KYGAGDBjGAl
+ Jwbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762899542; x=1763504342;
+ d=1e100.net; s=20230601; t=1762899543; x=1763504343;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=aAWLX0Q20WkWDTKYitZlfjmbgJj4Qvp4ftVfvvb4FgQ=;
- b=P8gEPdULbYvpeVQ1onju45i+97hgjk/g5YHj5vLR/lY+QVnJztq324Clwbsr+sXByC
- HGTTPumVvZAGb5RZdw6nVdsdcMCZ4NALeiK2KFzzUkhBrMPPBLj5rJO2+TJ/poVSprDo
- zKjomdQbQSH3hshDltjF70dkEPd8IX1STh5lH/Uu+2Wdh9fVX+408QWALAVBIUCWQwA9
- JXSDGQHxjJSJACeQqaSZc0De6OsGinjE8W2/idZd8D/ThbMIYgABJR5PnsMf/oEM0R1V
- oFptH0khXP7AzFJYnN4LpFhbiOYG/O+miEPwdOblvleoIXoJCZa39ESNTqoQeZt8JMX1
- u7nw==
-X-Gm-Message-State: AOJu0YzVCCBcBEm/AZNxENqUBikkAqOaxZ+/JTtOvE1CyZlVkfFgi0Ew
- 2vKd3SNGiYma5SgLSYp2UFhitd7peQ6e/xA9FXtXj2d+UHuzMeWIDrLZ3PErGYjy4cZRzEGTX14
- 2qDeR
-X-Gm-Gg: ASbGncvXCxRt94Q3qmRZZcvEZMer/Dijvf3EdkQx/eb2aUDHhlSVLtTmOsa3qhTK+KI
- OS9Pfx6cuOdtBCdOo1eLkUGSOGLpo1WUDLdAScj3PVwQEOe3pB6e6r2h2jyj9zwgUuziGMHAqs4
- LlQxfhEMMTzwGrTlFw3D2t4ZlwJmgSuxeLt2cc07u0ylnRwYgZg8wBakifWdhiotG5/RrBv7K5J
- TIcGMz0n5UJI0ia/XbKFddeuTC8NtO7JSb1Fe8Fff9Cg9i4IMd93Zj24QOo37Pz8u92HSsXU5G9
- I8DjJ8D6l8bTNTyrpJpdbjDQyyh5igcAxE1QqpyVbRl+87ZjUQoty9NsCDLEdxKSdEVe+yYnvzz
- MA6hR3NomDbrIV/wTnbgjuufc2vW0c/7DlPd8Gsvi1FHnyXsDmLkefUeoxb98p/wk09IlN47DUK
- ngGLGo86knqupBebU7f7d4ptUZjRZoNRtiuqb5t2A6RKUgHfMKkQ==
-X-Google-Smtp-Source: AGHT+IG9k3f8FkzgkAsmW5nIw61tPOKmI76jhWVirWTaI/Ym4t6JYp3JwDbmEBONdJ1vWfEm7TfvUA==
-X-Received: by 2002:a17:90b:4a91:b0:341:761c:3330 with SMTP id
- 98e67ed59e1d1-343dde8addfmr1040753a91.23.1762899541618; 
- Tue, 11 Nov 2025 14:19:01 -0800 (PST)
+ bh=MonaQP1LjuvQRMKWbmuTBsl8mIS88e1arwah1zLJjck=;
+ b=dghw29mH2Ng+4t5q8a2nm5K6WWlSVHkZ5uE31ryRM0yiSBXxMnL53lgoAs5OPKH9Cr
+ 2Zrz4czwJh3NfjHqorH7v326FPNLAbjxWkEsYaGqtAlTskjacS7Zeqk5ybRjOUznV8zu
+ hhLeCn8ORQdvWvfYf3SYenrb3bUuqNtXqPMy28Jvx6oUPxd/u2MdcO1E4ZlMNHscF2j8
+ fWvqQ3lIqHSkWs0f9RjR2F45fuWsV8mYbNV+PxmB/6q3qXVVRTWzz9jXlCNak2KrmoYl
+ 3mSE6lbbIvHqpVNBRFdOGeyqa8lZlLCj/mMRns5/22oCdGOfrYeJFYBAPZ+nM7hMb8Ff
+ ixAw==
+X-Gm-Message-State: AOJu0YwaWvR+6wUnksMA9IwnqBrll9PqcKJsNtpsKA+eKJ0ES7ZTt8x7
+ 6QIgArC3HVIT4VtkF4/C6qdqIzYhwzzHlWDWGs4rnKKFNnjoxHbP/aygge4Oxxhfkeoqekx/rbk
+ CNNdc
+X-Gm-Gg: ASbGncsQQ5Hxj1olrbGnOTrCr0HjEirTFiflmkSChAAjW4FsFYckbGx7/loKoYuGZFg
+ Q27SWaskKnd0/pJQroeOHXW0VAahlSHFJka2VW9MkiMlQaAgWi6auuvV0R1zOMVzOj1q01rLucI
+ k7+IP2OsrfzYn64HqCcnAW2CVLWI6VSpQtJMex6s7RHw72Pts+CnxhsNEXuqs4KV1adP/J59jWU
+ VcLNOy6a9WFKX2E+7Cq7xef7sphNEaL7w8f2C2iJ46hbD0YiwM8ZopWl6NYAK+noXa+iTkWam4k
+ TMgkejrJyQ6LU8ek8P9SUFENEY2vPLDtcSJQnm+p/aUsfzxbgYZ1ucfV23oBInxh3KT0X4KfO8C
+ WSIf48pESRfPG1ZnwFc+vs0UWG4tKb8/2MN2PXC18ZtcLkdxQILpv41NpRESsa4WAvtwpDq0tGy
+ o0LnB+RxmFzq6VR/TGj1udUVqbTgtpL4O00CY1E7Q=
+X-Google-Smtp-Source: AGHT+IE5nRQGzklLgfqWIj+R6Y81sIz8lA7wwJom4x5Y9xkIJHvpHViK1kJJjq1HJ+v9xOr4oZ5q0Q==
+X-Received: by 2002:a17:90b:4f45:b0:334:cb89:bde6 with SMTP id
+ 98e67ed59e1d1-343dddbb353mr999835a91.4.1762899542922; 
+ Tue, 11 Nov 2025 14:19:02 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-343e072e5a5sm157001a91.11.2025.11.11.14.19.00
+ 98e67ed59e1d1-343e072e5a5sm157001a91.11.2025.11.11.14.19.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Nov 2025 14:19:01 -0800 (PST)
+ Tue, 11 Nov 2025 14:19:02 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Byron Marohn <byron.marohn@intel.com>,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Saikrishna Edupuganti <saikrishna.edupuganti@intel.com>,
- Pablo de Lara <pablo.de.lara.guarch@intel.com>,
- Christian Maciocco <christian.maciocco@intel.com>
-Subject: [PATCH v2 1/7] examples/server_node_efd: fix format overflow
-Date: Tue, 11 Nov 2025 14:17:18 -0800
-Message-ID: <20251111221857.443752-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, maxime.coquelin@redhat.com,
+ stable@dpdk.org, Chenbo Xia <chenbox@nvidia.com>,
+ Adrian Moreno <amorenoz@redhat.com>
+Subject: [PATCH v2 2/7] examples/vdpa: fix format overflow warning
+Date: Tue, 11 Nov 2025 14:17:19 -0800
+Message-ID: <20251111221857.443752-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251111221857.443752-1-stephen@networkplumber.org>
 References: <20251110182209.104087-1-stephen@networkplumber.org>
@@ -87,52 +84,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-If format-truncation is enabled, the compiler detects a string overflow
-since the snprintf() is putting ethernet address and new line
-in buffer only sized for the address.
+The ifname is limited to 128 characters, but it would allow up
+to 128 characters as prefix then could overflow creating ifname.
 
-Since get_rx_queue_name() is used to create a ring name.
-The buffer should be sized to be a valid ring name.
-This fixes some format-overflow warnings and also corrects
-for future errors.
+Change to limit path prefix to 124 (128 - sizeof("1024"))
+to avoid possible format overflow
 
-Fixes: 39aad0e88c58 ("examples/flow_distributor: new example to demonstrate EFD")
+Fixes: 38f8ab0bbc8d ("vhost: make vDPA framework bus agnostic")
+Cc: maxime.coquelin@redhat.com
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- examples/server_node_efd/efd_server/main.c | 2 +-
- examples/server_node_efd/shared/common.h   | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ examples/vdpa/main.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/examples/server_node_efd/efd_server/main.c b/examples/server_node_efd/efd_server/main.c
-index 75ff0ea532..62c3f4a16d 100644
---- a/examples/server_node_efd/efd_server/main.c
-+++ b/examples/server_node_efd/efd_server/main.c
-@@ -68,7 +68,7 @@ static const char *
- get_printable_mac_addr(uint16_t port)
- {
- 	static const char err_address[] = "00:00:00:00:00:00";
--	static char addresses[RTE_MAX_ETHPORTS][sizeof(err_address)];
-+	static char addresses[RTE_MAX_ETHPORTS][RTE_ETHER_ADDR_FMT_SIZE + 1];
- 	struct rte_ether_addr mac;
- 	int ret;
+diff --git a/examples/vdpa/main.c b/examples/vdpa/main.c
+index 289db26498..7fd0e55b20 100644
+--- a/examples/vdpa/main.c
++++ b/examples/vdpa/main.c
+@@ -22,6 +22,8 @@
  
-diff --git a/examples/server_node_efd/shared/common.h b/examples/server_node_efd/shared/common.h
-index e1ab7e62b7..6726e2031e 100644
---- a/examples/server_node_efd/shared/common.h
-+++ b/examples/server_node_efd/shared/common.h
-@@ -58,8 +58,9 @@ get_rx_queue_name(unsigned int id)
- 	/*
- 	 * Buffer for return value. Size calculated by %u being replaced
- 	 * by maximum 3 digits (plus an extra byte for safety)
-+	 * Used as ring name, so upper limit is ring name size.
- 	 */
--	static char buffer[sizeof(MP_NODE_RXQ_NAME) + 2];
-+	static char buffer[RTE_RING_NAMESIZE];
+ #define MAX_PATH_LEN 128
+ #define MAX_VDPA_SAMPLE_PORTS 1024
++#define stringify(x) (#x)
++#define MAX_VDPA_STR_LEN sizeof(stringify(MAX_VDPA_SAMPLE_PORTS))
+ #define RTE_LOGTYPE_VDPA RTE_LOGTYPE_USER1
  
- 	snprintf(buffer, sizeof(buffer), MP_NODE_RXQ_NAME, id);
- 	return buffer;
+ struct vdpa_port {
+@@ -36,7 +38,7 @@ struct vdpa_port {
+ 
+ static struct vdpa_port vports[MAX_VDPA_SAMPLE_PORTS];
+ 
+-static char iface[MAX_PATH_LEN];
++static char iface[MAX_PATH_LEN - MAX_VDPA_STR_LEN];
+ static int devcnt;
+ static int interactive;
+ static int client_mode;
+@@ -74,9 +76,8 @@ parse_args(int argc, char **argv)
+ 			break;
+ 		/* long options */
+ 		case 0:
+-			if (strncmp(long_option[idx].name, "iface",
+-						MAX_PATH_LEN) == 0) {
+-				rte_strscpy(iface, optarg, MAX_PATH_LEN);
++			if (!strcmp(long_option[idx].name, "iface")) {
++				rte_strscpy(iface, optarg, sizeof(iface));
+ 				printf("iface %s\n", iface);
+ 			}
+ 			if (!strcmp(long_option[idx].name, "interactive")) {
 -- 
 2.51.0
 
