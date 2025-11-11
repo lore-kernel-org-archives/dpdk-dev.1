@@ -2,74 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32386CCF9E3
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 06:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C289CCFA18
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 06:25:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A5D04026D;
-	Tue, 11 Nov 2025 07:23:56 +0100 (CET)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com
- [209.85.128.51]) by mails.dpdk.org (Postfix) with ESMTP id DA7674026A
- for <dev@dpdk.org>; Tue, 11 Nov 2025 07:23:54 +0100 (CET)
-Received: by mail-wm1-f51.google.com with SMTP id
- 5b1f17b1804b1-47755de027eso26073295e9.0
- for <dev@dpdk.org>; Mon, 10 Nov 2025 22:23:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A0ECB4026D;
+	Tue, 11 Nov 2025 07:25:53 +0100 (CET)
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
+ [209.85.160.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 07DA94026A
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 07:25:52 +0100 (CET)
+Received: by mail-qt1-f180.google.com with SMTP id
+ d75a77b69052e-4ed72cc09ddso20661491cf.2
+ for <dev@dpdk.org>; Mon, 10 Nov 2025 22:25:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1762842234; x=1763447034; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1762842351; x=1763447151; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DsKxvFFu7rhyDKUAgs1BGyYJLBYZRq3f2fFIrpvJEZU=;
- b=J9vqc+1Xb4nDwYhoaIFvXeZqV47HZrZNCU267//VJfvrzDM9bPl/tSQJw+hjK1OMcS
- On0dMBKcqbiZsdyeyHsF8Z4dxfSyR+dwA75rv0dP5hSNVtflEGe2/hCFR2Iru18YM5Y6
- ZiKYA0SqGW8lhHF+jGG3NOCZgGqn0KjDyZjaf0RNdWlGvxLvJ5EUlMwqMwLWlK/MlOnK
- ItAyLR+nmTCOW0dbxtw9csqjLawU2z3CVBf6HvvKSQzpYi+h2YOJ5mf6GvrzbNLcM7hN
- 68gTFuut4FffSuk/zN2HdvbrsK2P6iziwWrHCVxdKvlhK04RL2HZE+YhtWaQ1JrCrRrm
- 3G4A==
+ bh=vfPBTTrcA+BDzvcha9SEk2VDxmUU7Vwm7OVPv64fDnk=;
+ b=TBRHLNs/DM/siHbmgzHrPtnDcFNbgfuKh1sMtZ6z2NN2cJp+EbgZtwPb8ZFuCAehAs
+ Tlh2ptPvWPvLA64eb3g9IQaPQQsQla446y5mje6j+eGWyGzTt8M0kjLcw560VGL7iBJm
+ oKil6lGO39bIybIVHbNXYq+lezrx7Ou4fo17h4udcMJvoHrt3TKlJj+XuLMMVsV+3L1w
+ ZzmNc76FzK9Wkbu6CFW3J4qhTbANwthROxkLVhk77Ix0VOPUqgSQGcD8H3W0en765Fo7
+ CbLzgBchkgT1oAtXHkpF651kEM++TWcZ4CEHgGgp+lyTd9pZ0GYR6986A9cemF7e9gyQ
+ wiZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1762842234; x=1763447034;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20230601; t=1762842351; x=1763447151;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=DsKxvFFu7rhyDKUAgs1BGyYJLBYZRq3f2fFIrpvJEZU=;
- b=jy+jtn0iFw2atA04kocnpyUP84NYhdHEOG3DvuY6vQofHo++LiLrIyeYKu+hBToAYe
- wr+sr8sbtM5+OwA3qZ2CeCoygb393XsORp9blnSmibIJECFxOT0C3Rvc7zhFTkacRhV7
- 0aOt7hlwbgxZ9Xr00YOhDNU+az0qF5zu4+Xpv4JQr1vLlNB2HKhQvgyyxrsJIULQg1rO
- 8dBWaKHTLISy+ekuhTywkIoNIQleNjRYEwsra8tNNjWdo0LnC9mT1PgTdHL8NzQVSyak
- yRBigJ2PaAKO34eC0PNY7zJXIrnF/u23lQzJyOgyFDzJFl0S3HMvjBzdGssl7POxrQ3y
- OuPw==
-X-Gm-Message-State: AOJu0YzNOQMA3LO4r1Y0ltd4RWK+CV1hL3wUmJQUw6r1LbuSPs+L/bPg
- K1uoiboa3oWmLujoX7SMMNKW2K1uOrjZneoeyyloGCSRjueZ0YSwsqxG
-X-Gm-Gg: ASbGncvwe3vJCLD+eNGCPmr59nwp50NU+as+HZe7t/0VTCFCrVdLQ40/JAqnryVcbeP
- jz0wq0JJFsUWYmKRkF9n9GmArFqnPgGHCIlSovns5+hE84ovRyuRZfzkUkKFCotLkA0h+qedsM+
- wEWxbdI9oQbQjK2z1fjv2IE3abrWK8JcPTk1CWedDJAVq810nwJfb+bMjoery9QwLj1CdUJ+cJF
- lcF5eWX67ftP8CPBCpQ797OOavOVd0QLnMfQXWReDHBwiWBmTgHdXgCd1CXBQp1zMk7SRQnMv7T
- SMkzzRxJp1iupBFkM52qFx5Cx7OudzH0CYVEzM38G9Vxl4WSHdHelW+ETr4Uv8LIREXbLjGG29q
- DpH5gGFkHSinNwBwaIXajc6OgfZOIcaW52rPhVjxS/PblTHpLH/gJL98NBbCd4iPF8RLF5V8dMs
- oL0TlmGs8Emg==
-X-Google-Smtp-Source: AGHT+IFVZmaDyrT5sDCQcGnaG8PKbmZR7uP6qqN9r4dLjfCdSube7Xq/1CHA38Ii1P0oaaoiVtjh8A==
-X-Received: by 2002:a05:600c:3b8f:b0:476:651d:27e6 with SMTP id
- 5b1f17b1804b1-47773287419mr92715745e9.36.1762842234220; 
- Mon, 10 Nov 2025 22:23:54 -0800 (PST)
-Received: from localhost.localdomain ([46.210.196.60])
- by smtp.googlemail.com with ESMTPSA id
- 5b1f17b1804b1-4775ce20ff3sm350067825e9.10.2025.11.10.22.23.51
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Nov 2025 22:23:53 -0800 (PST)
-From: Isaac Boukris <iboukris@gmail.com>
-To: Honnappa Nagarahalli <honnappa.nagarahalli@arm.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: dev@dpdk.org, Isaac Boukris <iboukris@gmail.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v3] lib/ring: do not allow zero size ring
-Date: Tue, 11 Nov 2025 08:22:52 +0200
-Message-ID: <20251111062253.578121-1-iboukris@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20251110222827.575488-1-iboukris@gmail.com>
-References: <20251110222827.575488-1-iboukris@gmail.com>
+ bh=vfPBTTrcA+BDzvcha9SEk2VDxmUU7Vwm7OVPv64fDnk=;
+ b=LuOluAvyfbWgdr35G+3ENtRlunnE77oCdudp/rj2DtAHDnijVvdcVVS+Ih611nbBZB
+ EXJ34CLJ0j1GUfpXhioHKad+ij+Cjb+q5bCJdN2EW5MRky4W7gJdEySTp0jbYTou70/D
+ aA4DmFx8YZ13JZDgUbUQtogbVlWlIGlsZMI3h4tMNDxqpuqztFlGuozZNmEZz9Rm2Qei
+ uQGapzyD/OBXywYr6Zq1opmgeqtyZGrK8FzsYZS4AvCHIgBHP9LGs8F1HDbvuyb9qIBT
+ HOWSQ35XAgGU87OcEqqm/aBqap5QmXOmkZJEEMLKiaGKWvLvkJ+T42REjMPaGzTaodDb
+ X4dg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVbUvhIvSO+qoW6gdkqDrjiS47EDEDkoP1kc2ZXXyTPm15ntDpuCCZ4J9gTtNN1/EBJlxU=@dpdk.org
+X-Gm-Message-State: AOJu0YxjJMWHqKVfhZn1HvAka5bdIEBcAbKDDgD7wpXY5CX1PaSZ0AgK
+ HWYdBT0hllkgGgD3PPevWH/5AF2fNULdEVxY+UBq4/zv8HcvFl/RApFqAmZ96ccmuvPtKlS7b7d
+ QRGrL+WUGCtFIl0aBRRL59/r0hdiYnxM=
+X-Gm-Gg: ASbGncv98YPMAfK0HvCbM6XvVlj/IXrbxGqiQWWbsnNyWK1T8cDOhuisSk+AcRUvu9k
+ 8GSUoB9M6lMkTT816Mo+m2cJr9cFDrM8epMy8ZbXQeGCzUOkDVuaSE+h2NCVobuokDeO54XW4XE
+ RLKgwij5vscVkwaK5SArXzOBWBUg89n+gu4PdIqmA674athpRf9UkPSMyG/3IFgNra6Y7bpMQrr
+ 57dDJbX0s/WnGLEjFsQLJnNQ3BoPJROYpFR6cJ5QNOStmSn6g2Kh2Xme6FHeJYq4EL70/o=
+X-Google-Smtp-Source: AGHT+IFSLOt2T6yoqg2fhhSVTqeabvdLWqej7qOkj9ay78RmDsuA9MzGvKs3a3ZvP1uIsv7IPpXn985Vtuw9ilP9dfw=
+X-Received: by 2002:a05:622a:1995:b0:4ed:7f5a:c6d8 with SMTP id
+ d75a77b69052e-4eda4f7a99cmr151584951cf.41.1762842351052; Mon, 10 Nov 2025
+ 22:25:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251110153046.63518-1-marat.khalili@huawei.com>
+ <20251110153046.63518-2-marat.khalili@huawei.com>
+In-Reply-To: <20251110153046.63518-2-marat.khalili@huawei.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Tue, 11 Nov 2025 11:55:24 +0530
+X-Gm-Features: AWmQ_bnfK8Xm06m_fkxke2XBDig0airja_C0jnVrYBXB8hoALcffj3wKsmvTCkg
+Message-ID: <CALBAE1O2VtvLV06-4hPCb5qHsRzqDM1iWWOaRcPKu9L-NMu2qg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] bpf: fix signed shift overflows in ARM JIT
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,84 +78,436 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-this might happen when for instance the ring size is read from
-config, and would cause runtime crash. Do so by using the
-RTE_IS_POWER_OF_2 macro.
+On Mon, Nov 10, 2025 at 9:01=E2=80=AFPM Marat Khalili <marat.khalili@huawei=
+.com> wrote:
+>
+> Left shifts of integer literals and bool values overwriting the sign bit
+> were used multiple times in bpf_jit_arm64.c. E.g.:
+>
+>     insn =3D (!!is64) << 31;
+>
+> where is64 has type bool (double bang is a no-op here). The operand of
+> left shift was promoted to type int, which when 32-bit wide cannot
+> represent the result. Similarly literal integers have int type by
+> default.  Sanitizer produced the following diagnostic during runtime
+> (for various lines):
+>
+>     lib/bpf/bpf_jit_arm64.c:241:18: runtime error: left shift of 1 by 31
+>     places cannot be represented in type 'int'
 
-Signed-off-by: Isaac Boukris <iboukris@gmail.com>
-Acked-by: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
----
+Wonder why none of the tests in app/test/test_bpf.c able to catch
+this? The generated ARM opcode looks OK (otherwise tests wont pass).
+Could you check what is missing in the app/test/test_bpf.c?
 
-v3:
-* changed to use the RTE_IS_POWER_OF_2 macro.
+Also SHIFT_VAR32 needs goto common code.
 
-v2:
-* move the fix to the POWEROF2 macro itself.
-* fixed style in the test code.
 
- app/test/test_ring.c | 7 +++++++
- lib/ring/rte_ring.c  | 8 +++-----
- 2 files changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/app/test/test_ring.c b/app/test/test_ring.c
-index ba1fec1de3..3078348b2f 100644
---- a/app/test/test_ring.c
-+++ b/app/test/test_ring.c
-@@ -505,6 +505,13 @@ test_ring_negative_tests(void)
- 	struct rte_ring *rt = NULL;
- 	unsigned int i;
- 
-+	/* Test zero size ring */
-+	rp = test_ring_create("test_zero_size_ring", -1, 0, SOCKET_ID_ANY, 0);
-+	if (rp != NULL) {
-+		printf("Test failed to detect zero size ring\n");
-+		goto test_fail;
-+	}
-+
- 	/* Test with esize not a multiple of 4 */
- 	rp = test_ring_create("test_bad_element_size", 23,
- 				RING_SIZE + 1, SOCKET_ID_ANY, 0);
-diff --git a/lib/ring/rte_ring.c b/lib/ring/rte_ring.c
-index edd63aa535..f10050a1c4 100644
---- a/lib/ring/rte_ring.c
-+++ b/lib/ring/rte_ring.c
-@@ -25,6 +25,7 @@
- #include <rte_string_fns.h>
- #include <rte_tailq.h>
- #include <rte_telemetry.h>
-+#include <rte_bitops.h>
- 
- #include "rte_ring.h"
- #include "rte_ring_elem.h"
-@@ -46,9 +47,6 @@ EAL_REGISTER_TAILQ(rte_ring_tailq)
- 		     RING_F_MP_RTS_ENQ | RING_F_MC_RTS_DEQ |	       \
- 		     RING_F_MP_HTS_ENQ | RING_F_MC_HTS_DEQ)
- 
--/* true if x is a power of 2 */
--#define POWEROF2(x) ((((x)-1) & (x)) == 0)
--
- /* by default set head/tail distance as 1/8 of ring capacity */
- #define HTD_MAX_DEF	8
- 
-@@ -67,7 +65,7 @@ rte_ring_get_memsize_elem(unsigned int esize, unsigned int count)
- 	}
- 
- 	/* count must be a power of 2 */
--	if ((!POWEROF2(count)) || (count > RTE_RING_SZ_MASK )) {
-+	if ((!RTE_IS_POWER_OF_2(count)) || (count > RTE_RING_SZ_MASK)) {
- 		RING_LOG(ERR,
- 			"Requested number of elements is invalid, must be power of 2, and not exceed %u",
- 			RTE_RING_SZ_MASK);
-@@ -227,7 +225,7 @@ rte_ring_init(struct rte_ring *r, const char *name, unsigned int count,
- 		r->mask = r->size - 1;
- 		r->capacity = count;
- 	} else {
--		if ((!POWEROF2(count)) || (count > RTE_RING_SZ_MASK)) {
-+		if ((!RTE_IS_POWER_OF_2(count)) || (count > RTE_RING_SZ_MASK)) {
- 			RING_LOG(ERR,
- 				"Requested size is invalid, must be power of 2, and not exceed the size limit %u",
- 				RTE_RING_SZ_MASK);
--- 
-2.49.0
-
+>
+> To fix the issue use RTE_BIT32 and similar macros instead.
+>
+> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+> ---
+>  lib/bpf/bpf_jit_arm64.c | 188 +++++++++++++++++++++++-----------------
+>  1 file changed, 107 insertions(+), 81 deletions(-)
+>
+> diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
+> index 96b8cd2e03..5f43db0170 100644
+> --- a/lib/bpf/bpf_jit_arm64.c
+> +++ b/lib/bpf/bpf_jit_arm64.c
+> @@ -28,7 +28,33 @@
+>  #define A64_ZR                 31
+>
+>  #define check_imm(n, val) (((val) >=3D 0) ? !!((val) >> (n)) : !!((~val)=
+ >> (n)))
+> -#define mask_imm(n, val) ((val) & ((1 << (n)) - 1))
+> +#define mask_imm(n, val) ((val) & (RTE_BIT32(n) - 1))
+> +
+> +/**
+> + * Get the uint32_t shifted value.
+> + *
+> + * Works similarly to RTE_SHIFT_VAL32 but accepts non-literal arguments.
+> + * Performs identically to RTE_SHIFT_VAL32 with literal arguments.
+> + *
+> + * @param val
+> + *   The value to be shifted, can be non-literal.
+> + * @param nr
+> + *   The shift number in range of 0 to (32 - width of val).
+> + */
+> +#define SHIFT_VAR32(val, nr) ((uint32_t)(val) << (nr))
+> +
+> +/**
+> + * Get the uint64_t shifted value.
+> + *
+> + * Works similarly to RTE_SHIFT_VAL64 but accepts non-literal arguments.
+> + * Performs identically to RTE_SHIFT_VAL64 with literal arguments.
+> + *
+> + * @param val
+> + *   The value to be shifted, can be non-literal.
+> + * @param nr
+> + *   The shift number in range of 0 to (64 - width of val).
+> + */
+> +#define SHIFT_VAR64(val, nr) ((uint64_t)(val) << (nr))
+>
+>  struct ebpf_a64_map {
+>         uint32_t off; /* eBPF to arm64 insn offset mapping for jump */
+> @@ -238,12 +264,12 @@ emit_add_sub_imm(struct a64_jit_ctx *ctx, bool is64=
+, bool sub, uint8_t rd,
+>         uint32_t insn, imm;
+>
+>         imm =3D mask_imm(12, imm12);
+> -       insn =3D (!!is64) << 31;
+> -       insn |=3D (!!sub) << 30;
+> +       insn =3D SHIFT_VAR32(is64, 31);
+> +       insn |=3D SHIFT_VAR32(sub, 30);
+>         insn |=3D 0x11000000;
+>         insn |=3D rd;
+> -       insn |=3D rn << 5;
+> -       insn |=3D imm << 10;
+> +       insn |=3D SHIFT_VAR32(rn, 5);
+> +       insn |=3D SHIFT_VAR32(imm, 10);
+>
+>         emit_insn(ctx, insn,
+>                   check_reg(rd) || check_reg(rn) || check_imm(12, imm12))=
+;
+> @@ -279,16 +305,16 @@ emit_ls_pair_64(struct a64_jit_ctx *ctx, uint8_t rt=
+, uint8_t rt2, uint8_t rn,
+>  {
+>         uint32_t insn;
+>
+> -       insn =3D (!!load) << 22;
+> -       insn |=3D (!!pre_index) << 24;
+> +       insn =3D SHIFT_VAR32(load, 22);
+> +       insn |=3D SHIFT_VAR32(pre_index, 24);
+>         insn |=3D 0xa8800000;
+>         insn |=3D rt;
+> -       insn |=3D rn << 5;
+> -       insn |=3D rt2 << 10;
+> +       insn |=3D SHIFT_VAR32(rn, 5);
+> +       insn |=3D SHIFT_VAR32(rt2, 10);
+>         if (push)
+> -               insn |=3D 0x7e << 15; /* 0x7e means -2 with imm7 */
+> +               insn |=3D SHIFT_VAR32(0x7e, 15); /* 0x7e means -2 with im=
+m7 */
+>         else
+> -               insn |=3D 0x2 << 15;
+> +               insn |=3D SHIFT_VAR32(0x2, 15);
+>
+>         emit_insn(ctx, insn, check_reg(rn) || check_reg(rt) || check_reg(=
+rt2));
+>
+> @@ -317,11 +343,11 @@ mov_imm(struct a64_jit_ctx *ctx, bool is64, uint8_t=
+ rd, uint8_t type,
+>  {
+>         uint32_t insn;
+>
+> -       insn =3D (!!is64) << 31;
+> -       insn |=3D type << 29;
+> -       insn |=3D 0x25 << 23;
+> -       insn |=3D (shift/16) << 21;
+> -       insn |=3D imm16 << 5;
+> +       insn =3D SHIFT_VAR32(is64, 31);
+> +       insn |=3D SHIFT_VAR32(type, 29);
+> +       insn |=3D SHIFT_VAR32(0x25, 23);
+> +       insn |=3D SHIFT_VAR32(shift/16, 21);
+> +       insn |=3D SHIFT_VAR32(imm16, 5);
+>         insn |=3D rd;
+>
+>         emit_insn(ctx, insn, check_reg(rd) || check_mov_hw(is64, shift));
+> @@ -334,7 +360,7 @@ emit_mov_imm32(struct a64_jit_ctx *ctx, bool is64, ui=
+nt8_t rd, uint32_t val)
+>         uint16_t lower =3D val & 0xffff;
+>
+>         /* Positive number */
+> -       if ((val & 1UL << 31) =3D=3D 0) {
+> +       if ((val & RTE_BIT32(31)) =3D=3D 0) {
+>                 mov_imm(ctx, is64, rd, A64_MOVZ, lower, 0);
+>                 if (upper)
+>                         mov_imm(ctx, is64, rd, A64_MOVK, upper, 16);
+> @@ -393,21 +419,21 @@ emit_ls(struct a64_jit_ctx *ctx, uint8_t sz, uint8_=
+t rt, uint8_t rn, uint8_t rm,
+>  {
+>         uint32_t insn;
+>
+> -       insn =3D 0x1c1 << 21;
+> +       insn =3D SHIFT_VAR32(0x1c1, 21);
+>         if (load)
+> -               insn |=3D 1 << 22;
+> +               insn |=3D RTE_BIT32(22);
+>         if (sz =3D=3D BPF_B)
+> -               insn |=3D 0 << 30;
+> +               insn |=3D SHIFT_VAR32(0, 30);
+>         else if (sz =3D=3D BPF_H)
+> -               insn |=3D 1 << 30;
+> +               insn |=3D SHIFT_VAR32(1, 30);
+>         else if (sz =3D=3D BPF_W)
+> -               insn |=3D 2 << 30;
+> +               insn |=3D SHIFT_VAR32(2, 30);
+>         else if (sz =3D=3D EBPF_DW)
+> -               insn |=3D 3 << 30;
+> +               insn |=3D SHIFT_VAR32(3, 30);
+>
+> -       insn |=3D rm << 16;
+> -       insn |=3D 0x1a << 10; /* LSL and S =3D 0 */
+> -       insn |=3D rn << 5;
+> +       insn |=3D SHIFT_VAR32(rm, 16);
+> +       insn |=3D SHIFT_VAR32(0x1a, 10); /* LSL and S =3D 0 */
+> +       insn |=3D SHIFT_VAR32(rn, 5);
+>         insn |=3D rt;
+>
+>         emit_insn(ctx, insn, check_reg(rt) || check_reg(rn) || check_reg(=
+rm) ||
+> @@ -436,10 +462,10 @@ emit_add_sub(struct a64_jit_ctx *ctx, bool is64, ui=
+nt8_t rd, uint8_t rn,
+>  {
+>         uint32_t insn;
+>
+> -       insn =3D (!!is64) << 31;
+> -       insn |=3D op << 21; /* shift =3D=3D 0 */
+> -       insn |=3D rm << 16;
+> -       insn |=3D rn << 5;
+> +       insn =3D SHIFT_VAR32(is64, 31);
+> +       insn |=3D SHIFT_VAR32(op, 21); /* shift =3D=3D 0 */
+> +       insn |=3D SHIFT_VAR32(rm, 16);
+> +       insn |=3D SHIFT_VAR32(rn, 5);
+>         insn |=3D rd;
+>
+>         emit_insn(ctx, insn, check_reg(rd) || check_reg(rm));
+> @@ -468,11 +494,11 @@ emit_mul(struct a64_jit_ctx *ctx, bool is64, uint8_=
+t rd, uint8_t rm)
+>  {
+>         uint32_t insn;
+>
+> -       insn =3D (!!is64) << 31;
+> -       insn |=3D 0xd8 << 21;
+> -       insn |=3D rm << 16;
+> -       insn |=3D A64_ZR << 10;
+> -       insn |=3D rd << 5;
+> +       insn =3D SHIFT_VAR32(is64, 31);
+> +       insn |=3D SHIFT_VAR32(0xd8, 21);
+> +       insn |=3D SHIFT_VAR32(rm, 16);
+> +       insn |=3D SHIFT_VAR32(A64_ZR, 10);
+> +       insn |=3D SHIFT_VAR32(rd, 5);
+>         insn |=3D rd;
+>
+>         emit_insn(ctx, insn, check_reg(rd) || check_reg(rm));
+> @@ -489,11 +515,11 @@ emit_data_process_two_src(struct a64_jit_ctx *ctx, =
+bool is64, uint8_t rd,
+>  {
+>         uint32_t insn;
+>
+> -       insn =3D (!!is64) << 31;
+> -       insn |=3D 0xd6 << 21;
+> -       insn |=3D rm << 16;
+> -       insn |=3D op << 10;
+> -       insn |=3D rn << 5;
+> +       insn =3D SHIFT_VAR32(is64, 31);
+> +       insn |=3D SHIFT_VAR32(0xd6, 21);
+> +       insn |=3D SHIFT_VAR32(rm, 16);
+> +       insn |=3D SHIFT_VAR32(op, 10);
+> +       insn |=3D SHIFT_VAR32(rn, 5);
+>         insn |=3D rd;
+>
+>         emit_insn(ctx, insn, check_reg(rd) || check_reg(rm));
+> @@ -532,14 +558,14 @@ emit_bitfield(struct a64_jit_ctx *ctx, bool is64, u=
+int8_t rd, uint8_t rn,
+>  {
+>         uint32_t insn;
+>
+> -       insn =3D (!!is64) << 31;
+> +       insn =3D SHIFT_VAR32(is64, 31);
+>         if (insn)
+> -               insn |=3D 1 << 22; /* Set N bit when is64 is set */
+> -       insn |=3D op << 29;
+> -       insn |=3D 0x26 << 23;
+> -       insn |=3D immr << 16;
+> -       insn |=3D imms << 10;
+> -       insn |=3D rn << 5;
+> +               insn |=3D RTE_BIT32(22); /* Set N bit when is64 is set */
+> +       insn |=3D SHIFT_VAR32(op, 29);
+> +       insn |=3D SHIFT_VAR32(0x26, 23);
+> +       insn |=3D SHIFT_VAR32(immr, 16);
+> +       insn |=3D SHIFT_VAR32(imms, 10);
+> +       insn |=3D SHIFT_VAR32(rn, 5);
+>         insn |=3D rd;
+>
+>         emit_insn(ctx, insn, check_reg(rd) || check_reg(rn) ||
+> @@ -578,11 +604,11 @@ emit_logical(struct a64_jit_ctx *ctx, bool is64, ui=
+nt8_t rd,
+>  {
+>         uint32_t insn;
+>
+> -       insn =3D (!!is64) << 31;
+> -       insn |=3D op << 29;
+> -       insn |=3D 0x50 << 21;
+> -       insn |=3D rm << 16;
+> -       insn |=3D rd << 5;
+> +       insn =3D SHIFT_VAR32(is64, 31);
+> +       insn |=3D SHIFT_VAR32(op, 29);
+> +       insn |=3D SHIFT_VAR32(0x50, 21);
+> +       insn |=3D SHIFT_VAR32(rm, 16);
+> +       insn |=3D SHIFT_VAR32(rd, 5);
+>         insn |=3D rd;
+>
+>         emit_insn(ctx, insn, check_reg(rd) || check_reg(rm));
+> @@ -612,12 +638,12 @@ emit_msub(struct a64_jit_ctx *ctx, bool is64, uint8=
+_t rd, uint8_t rn,
+>  {
+>         uint32_t insn;
+>
+> -       insn =3D (!!is64) << 31;
+> -       insn |=3D 0xd8 << 21;
+> -       insn |=3D rm << 16;
+> -       insn |=3D 0x1 << 15;
+> -       insn |=3D ra << 10;
+> -       insn |=3D rn << 5;
+> +       insn =3D SHIFT_VAR32(is64, 31);
+> +       insn |=3D SHIFT_VAR32(0xd8, 21);
+> +       insn |=3D SHIFT_VAR32(rm, 16);
+> +       insn |=3D SHIFT_VAR32(0x1, 15);
+> +       insn |=3D SHIFT_VAR32(ra, 10);
+> +       insn |=3D SHIFT_VAR32(rn, 5);
+>         insn |=3D rd;
+>
+>         emit_insn(ctx, insn, check_reg(rd) || check_reg(rn) || check_reg(=
+rm) ||
+> @@ -638,7 +664,7 @@ emit_blr(struct a64_jit_ctx *ctx, uint8_t rn)
+>         uint32_t insn;
+>
+>         insn =3D 0xd63f0000;
+> -       insn |=3D rn << 5;
+> +       insn |=3D SHIFT_VAR32(rn, 5);
+>
+>         emit_insn(ctx, insn, check_reg(rn));
+>  }
+> @@ -669,22 +695,22 @@ emit_rev(struct a64_jit_ctx *ctx, uint8_t rd, int32=
+_t imm)
+>         uint32_t insn;
+>
+>         insn =3D 0xdac00000;
+> -       insn |=3D rd << 5;
+> +       insn |=3D SHIFT_VAR32(rd, 5);
+>         insn |=3D rd;
+>
+>         switch (imm) {
+>         case 16:
+> -               insn |=3D 1 << 10;
+> +               insn |=3D SHIFT_VAR32(1, 10);
+>                 emit_insn(ctx, insn, check_reg(rd));
+>                 emit_zero_extend(ctx, rd, 16);
+>                 break;
+>         case 32:
+> -               insn |=3D 2 << 10;
+> +               insn |=3D SHIFT_VAR32(2, 10);
+>                 emit_insn(ctx, insn, check_reg(rd));
+>                 /* Upper 32 bits already cleared */
+>                 break;
+>         case 64:
+> -               insn |=3D 3 << 10;
+> +               insn |=3D SHIFT_VAR32(3, 10);
+>                 emit_insn(ctx, insn, check_reg(rd));
+>                 break;
+>         default:
+> @@ -933,9 +959,9 @@ emit_cbnz(struct a64_jit_ctx *ctx, bool is64, uint8_t=
+ rt, int32_t imm19)
+>         uint32_t insn, imm;
+>
+>         imm =3D mask_imm(19, imm19);
+> -       insn =3D (!!is64) << 31;
+> -       insn |=3D 0x35 << 24;
+> -       insn |=3D imm << 5;
+> +       insn =3D SHIFT_VAR32(is64, 31);
+> +       insn |=3D SHIFT_VAR32(0x35, 24);
+> +       insn |=3D SHIFT_VAR32(imm, 5);
+>         insn |=3D rt;
+>
+>         emit_insn(ctx, insn, check_reg(rt) || check_imm(19, imm19));
+> @@ -947,7 +973,7 @@ emit_b(struct a64_jit_ctx *ctx, int32_t imm26)
+>         uint32_t insn, imm;
+>
+>         imm =3D mask_imm(26, imm26);
+> -       insn =3D 0x5 << 26;
+> +       insn =3D SHIFT_VAR32(0x5, 26);
+>         insn |=3D imm;
+>
+>         emit_insn(ctx, insn, check_imm(26, imm26));
+> @@ -971,9 +997,9 @@ emit_stadd(struct a64_jit_ctx *ctx, bool is64, uint8_=
+t rs, uint8_t rn)
+>         uint32_t insn;
+>
+>         insn =3D 0xb820001f;
+> -       insn |=3D (!!is64) << 30;
+> -       insn |=3D rs << 16;
+> -       insn |=3D rn << 5;
+> +       insn |=3D SHIFT_VAR32(is64, 30);
+> +       insn |=3D SHIFT_VAR32(rs, 16);
+> +       insn |=3D SHIFT_VAR32(rn, 5);
+>
+>         emit_insn(ctx, insn, check_reg(rs) || check_reg(rn));
+>  }
+> @@ -984,8 +1010,8 @@ emit_ldxr(struct a64_jit_ctx *ctx, bool is64, uint8_=
+t rt, uint8_t rn)
+>         uint32_t insn;
+>
+>         insn =3D 0x885f7c00;
+> -       insn |=3D (!!is64) << 30;
+> -       insn |=3D rn << 5;
+> +       insn |=3D SHIFT_VAR32(is64, 30);
+> +       insn |=3D SHIFT_VAR32(rn, 5);
+>         insn |=3D rt;
+>
+>         emit_insn(ctx, insn, check_reg(rt) || check_reg(rn));
+> @@ -998,9 +1024,9 @@ emit_stxr(struct a64_jit_ctx *ctx, bool is64, uint8_=
+t rs, uint8_t rt,
+>         uint32_t insn;
+>
+>         insn =3D 0x88007c00;
+> -       insn |=3D (!!is64) << 30;
+> -       insn |=3D rs << 16;
+> -       insn |=3D rn << 5;
+> +       insn |=3D SHIFT_VAR32(is64, 30);
+> +       insn |=3D SHIFT_VAR32(rs, 16);
+> +       insn |=3D SHIFT_VAR32(rn, 5);
+>         insn |=3D rt;
+>
+>         emit_insn(ctx, insn, check_reg(rs) || check_reg(rt) || check_reg(=
+rn));
+> @@ -1051,9 +1077,9 @@ emit_cmp_tst(struct a64_jit_ctx *ctx, bool is64, ui=
+nt8_t rn, uint8_t rm,
+>         uint32_t insn;
+>
+>         insn =3D opc;
+> -       insn |=3D (!!is64) << 31;
+> -       insn |=3D rm << 16;
+> -       insn |=3D rn << 5;
+> +       insn |=3D SHIFT_VAR32(is64, 31);
+> +       insn |=3D SHIFT_VAR32(rm, 16);
+> +       insn |=3D SHIFT_VAR32(rn, 5);
+>
+>         emit_insn(ctx, insn, check_reg(rn) || check_reg(rm));
+>  }
+> @@ -1076,8 +1102,8 @@ emit_b_cond(struct a64_jit_ctx *ctx, uint8_t cond, =
+int32_t imm19)
+>         uint32_t insn, imm;
+>
+>         imm =3D mask_imm(19, imm19);
+> -       insn =3D 0x15 << 26;
+> -       insn |=3D imm << 5;
+> +       insn =3D SHIFT_VAR32(0x15, 26);
+> +       insn |=3D SHIFT_VAR32(imm, 5);
+>         insn |=3D cond;
+>
+>         emit_insn(ctx, insn, check_cond(cond) || check_imm(19, imm19));
+> @@ -1301,7 +1327,7 @@ emit(struct a64_jit_ctx *ctx, struct rte_bpf *bpf)
+>                         break;
+>                 /* dst =3D imm64 */
+>                 case (BPF_LD | BPF_IMM | EBPF_DW):
+> -                       u64 =3D ((uint64_t)ins[1].imm << 32) | (uint32_t)=
+imm;
+> +                       u64 =3D SHIFT_VAR64(ins[1].imm, 32) | (uint32_t)i=
+mm;
+>                         emit_mov_imm(ctx, 1, dst, u64);
+>                         i++;
+>                         break;
+> --
+> 2.43.0
+>
