@@ -2,25 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0000DCCFA1A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 11:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41172CCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 11:32:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F24164068E;
-	Tue, 11 Nov 2025 12:32:05 +0100 (CET)
-Received: from out28-52.mail.aliyun.com (out28-52.mail.aliyun.com
- [115.124.28.52]) by mails.dpdk.org (Postfix) with ESMTP id 27BE64066E
- for <dev@dpdk.org>; Tue, 11 Nov 2025 12:32:03 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E7F3D40685;
+	Tue, 11 Nov 2025 12:32:08 +0100 (CET)
+Received: from out28-196.mail.aliyun.com (out28-196.mail.aliyun.com
+ [115.124.28.196])
+ by mails.dpdk.org (Postfix) with ESMTP id 39D9F40665
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 12:32:04 +0100 (CET)
 Received: from ubuntu.localdomain(mailfrom:dimon.zhao@nebula-matrix.com
- fp:SMTPD_---.fJvT88b_1762860718 cluster:ay29) by smtp.aliyun-inc.com;
- Tue, 11 Nov 2025 19:31:59 +0800
+ fp:SMTPD_---.fJvT8AB_1762860720 cluster:ay29) by smtp.aliyun-inc.com;
+ Tue, 11 Nov 2025 19:32:00 +0800
 From: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 To: dev@dpdk.org
 Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
  Alvin Wang <alvin.wang@nebula-matrix.com>,
  Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: [PATCH v2 2/4] net/nbl: add support for Tx and Rx VLAN offload
-Date: Tue, 11 Nov 2025 03:31:41 -0800
-Message-Id: <20251111113144.3567291-3-dimon.zhao@nebula-matrix.com>
+Subject: [PATCH v2 4/4] net/nbl: add IOVA mode check in Coexistence
+Date: Tue, 11 Nov 2025 03:31:43 -0800
+Message-Id: <20251111113144.3567291-5-dimon.zhao@nebula-matrix.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251111113144.3567291-1-dimon.zhao@nebula-matrix.com>
 References: <20251107073459.3532524-1-dimon.zhao@nebula-matrix.com>
@@ -40,137 +42,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-We simulate support for Tx and Rx VLAN offload,
-while in reality we handle Tx VLAN insertion
-and Rx VLAN stripping in software.
-This implementation is necessary because some of our customers
-assume our NICs natively support Tx and Rx VLAN offload capabilities.
-They use packet vlan offload during packet transmission and reception
-without checking the eth_dev capabilities.
+Add IOVA mode check in Coexistence.
+Update MAINTAINERS.
+Refresh feature list and Coexistence Usage Instructions.
 
 Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 ---
- drivers/net/nbl/nbl_dev/nbl_dev.c |  5 ++++
- drivers/net/nbl/nbl_hw/nbl_txrx.c | 46 +++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+)
+ .mailmap                                 |  2 +-
+ MAINTAINERS                              |  2 +-
+ doc/guides/nics/features/nbl.ini         |  1 +
+ doc/guides/nics/nbl.rst                  |  7 +++++++
+ drivers/net/nbl/nbl_common/nbl_userdev.c | 15 ++++++++++++---
+ 5 files changed, 22 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/nbl/nbl_dev/nbl_dev.c b/drivers/net/nbl/nbl_dev/nbl_dev.c
-index 9d79215309..52daf924cc 100644
---- a/drivers/net/nbl/nbl_dev/nbl_dev.c
-+++ b/drivers/net/nbl/nbl_dev/nbl_dev.c
-@@ -300,6 +300,7 @@ int nbl_dev_infos_get(struct rte_eth_dev *eth_dev, struct rte_eth_dev_info *dev_
- 	struct nbl_adapter *adapter = ETH_DEV_TO_NBL_DEV_PF_PRIV(eth_dev);
- 	struct nbl_dev_mgt *dev_mgt = NBL_ADAPTER_TO_DEV_MGT(adapter);
- 	struct nbl_dev_ring_mgt *ring_mgt = &dev_mgt->net_dev->ring_mgt;
-+	struct nbl_common_info *common = NBL_DEV_MGT_TO_COMMON(dev_mgt);
- 	struct nbl_board_port_info *board_info = &dev_mgt->common->board_info;
- 	u8 speed_mode = board_info->speed;
+diff --git a/.mailmap b/.mailmap
+index e5f0cab364..0cd4b65d75 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -78,6 +78,7 @@ Allen Hubbe <allen.hubbe@amd.com>
+ Alok Makhariya <alok.makhariya@nxp.com>
+ Alok Prasad <palok@marvell.com>
+ Alvaro Karsz <alvaro.karsz@solid-run.com>
++Alvin Wang <alvin.wang@nebula-matrix.com>
+ Alvin Zhang <alvinx.zhang@intel.com>
+ Aman Singh <aman.deep.singh@intel.com>
+ Amaranath Somalapuram <asomalap@amd.com>
+@@ -869,7 +870,6 @@ Kumar Amber <kumar.amber@intel.com>
+ Kumar Sanghvi <kumaras@chelsio.com>
+ Kumara Parameshwaran <kumaraparamesh92@gmail.com> <kparameshwar@vmware.com>
+ Kyle Larose <klarose@sandvine.com>
+-Kyo Liu <kyo.liu@nebula-matrix.com>
+ Lance Richardson <lance.richardson@broadcom.com>
+ Laszlo Ersek <lersek@redhat.com>
+ Laura Stroe <laura.stroe@intel.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7fa01419cf..a0ed5b52d3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1023,8 +1023,8 @@ F: doc/guides/nics/rnp.rst
+ F: doc/guides/nics/features/rnp.ini
  
-@@ -330,6 +331,10 @@ int nbl_dev_infos_get(struct rte_eth_dev *eth_dev, struct rte_eth_dev_info *dev_
- 	dev_info->default_txportconf.nb_queues = ring_mgt->tx_ring_num;
- 	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
- 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_SCATTER;
-+	if (!common->is_vf) {
-+		dev_info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
-+		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
+ Nebulamatrix nbl
++M: Alvin Wang <alvin.wang@nebula-matrix.com>
+ M: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+-M: Kyo Liu <kyo.liu@nebula-matrix.com>
+ M: Leon Yu <leon.yu@nebula-matrix.com>
+ M: Sam Chen <sam.chen@nebula-matrix.com>
+ F: drivers/net/nbl/
+diff --git a/doc/guides/nics/features/nbl.ini b/doc/guides/nics/features/nbl.ini
+index 784ea3eecb..336a11d3aa 100644
+--- a/doc/guides/nics/features/nbl.ini
++++ b/doc/guides/nics/features/nbl.ini
+@@ -12,6 +12,7 @@ Unicast MAC filter   = Y
+ Basic stats          = Y
+ Extended stats       = Y
+ Stats per queue      = Y
++VLAN offload         = P
+ Linux                = Y
+ ARMv8                = Y
+ x86-64               = Y
+diff --git a/doc/guides/nics/nbl.rst b/doc/guides/nics/nbl.rst
+index f41da20eea..0cccb11b49 100644
+--- a/doc/guides/nics/nbl.rst
++++ b/doc/guides/nics/nbl.rst
+@@ -70,6 +70,13 @@ Anolis community:
+ Alternatively, you can contact us to obtain the `nbl_core` code and installation package.
+ 
+ 
++Coexistence Between DPDK And Kernel Driver
++------------------------------------------
++When this device is bound to the nbl_core driver and IOMMU is in passthrough mode,
++it is necessary to force I/O virtual address (IOVA) to be mapped to physical address (PA)
++with the EAL command line option ``--iova-mode=pa``.
++
++
+ Prerequisites
+ -------------
+ 
+diff --git a/drivers/net/nbl/nbl_common/nbl_userdev.c b/drivers/net/nbl/nbl_common/nbl_userdev.c
+index bd0305affe..566f3a11ee 100644
+--- a/drivers/net/nbl/nbl_common/nbl_userdev.c
++++ b/drivers/net/nbl/nbl_common/nbl_userdev.c
+@@ -679,11 +679,20 @@ int nbl_pci_map_device(struct nbl_adapter *adapter)
+ 
+ 	NBL_USERDEV_INIT_COMMON(common);
+ 	iova_mode = rte_eal_iova_mode();
++
++	snprintf(pathname, sizeof(pathname), "/dev/nbl_userdev/" PCI_PRI_FMT, loc->domain,
++		 loc->bus, loc->devid, loc->function);
++
++	/* check iommu passthrough mode */
++	if (!access(pathname, F_OK) && iova_mode != RTE_IOVA_PA) {
++		NBL_LOG(ERR, "%s IOMMU is in passthrough mode, must select IOVA as PA"
++			" with --iova-mode=pa", pci_dev->device.name);
++		ret = -1;
++		return ret;
 +	}
- 	switch (speed_mode) {
- 	case NBL_FW_PORT_SPEED_100G:
- 		dev_info->speed_capa |= RTE_ETH_LINK_SPEED_100G;
-diff --git a/drivers/net/nbl/nbl_hw/nbl_txrx.c b/drivers/net/nbl/nbl_hw/nbl_txrx.c
-index 77a982ccfb..d7ce725872 100644
---- a/drivers/net/nbl/nbl_hw/nbl_txrx.c
-+++ b/drivers/net/nbl/nbl_hw/nbl_txrx.c
-@@ -237,8 +237,11 @@ static int nbl_res_txrx_start_rx_ring(void *priv,
- 	const struct nbl_hw_ops *hw_ops = NBL_RES_MGT_TO_HW_OPS(res_mgt);
- 	struct nbl_common_info *common = NBL_RES_MGT_TO_COMMON(res_mgt);
- 	const struct rte_memzone *memzone;
-+	uint64_t offloads;
- 	u32 size;
- 
-+	offloads = param->conf->offloads | eth_dev->data->dev_conf.rxmode.offloads;
 +
- 	if (eth_dev->data->rx_queues[param->queue_idx] != NULL) {
- 		NBL_LOG(WARNING, "re-setup an already allocated rx queue");
- 		nbl_res_txrx_stop_rx_ring(priv, param->queue_idx);
-@@ -284,6 +287,7 @@ static int nbl_res_txrx_start_rx_ring(void *priv,
- 	rx_ring->dma_limit_msb = common->dma_limit_msb;
- 	rx_ring->common = common;
- 	rx_ring->notify = hw_ops->get_tail_ptr(NBL_RES_MGT_TO_HW_PRIV(res_mgt));
-+	rx_ring->offloads = offloads;
- 
- 	switch (param->product) {
- 	case NBL_LEONIS_TYPE:
-@@ -437,6 +441,23 @@ static inline void nbl_fill_rx_ring(struct nbl_res_rx_ring *rxq,
- 	rxq->next_to_use = desc_index;
- }
- 
-+static inline void nbl_res_txrx_vlan_insert_out_mbuf(struct rte_mbuf *tx_pkt,
-+						     union nbl_tx_extend_head *u,
-+						     u16 vlan_proto, u16 vlan_tci)
-+{
-+	struct rte_vlan_hdr *vlan_hdr;
-+	struct rte_ether_hdr *ether_hdr;
-+
-+	ether_hdr = (struct rte_ether_hdr *)((u8 *)u + sizeof(struct nbl_tx_ehdr_leonis));
-+	memcpy(ether_hdr, rte_pktmbuf_mtod(tx_pkt, u8 *), sizeof(struct rte_ether_hdr));
-+
-+	vlan_hdr = (struct rte_vlan_hdr *)(ether_hdr + 1);
-+	vlan_hdr->vlan_tci = rte_cpu_to_be_16(vlan_tci);
-+	vlan_hdr->eth_proto = ether_hdr->ether_type;
-+
-+	ether_hdr->ether_type = rte_cpu_to_be_16(vlan_proto);
-+}
-+
- static u16
- nbl_res_txrx_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, u16 nb_pkts, u16 extend_set)
- {
-@@ -477,6 +498,12 @@ nbl_res_txrx_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, u16 nb_pkts, u
- 
- 		tx_pkt = *tx_pkts++;
- 
-+		if (tx_pkt->ol_flags & RTE_MBUF_F_TX_VLAN) {
-+			required_headroom += sizeof(struct rte_vlan_hdr);
-+			/* extend_hdr + ether_hdr + vlan_hdr */
-+			tx_extend_len = required_headroom + sizeof(struct rte_ether_hdr);
-+		}
-+
- 		if (rte_pktmbuf_headroom(tx_pkt) >= required_headroom) {
- 			can_push = 1;
- 			u = rte_pktmbuf_mtod_offset(tx_pkt, union nbl_tx_extend_head *,
-@@ -485,6 +512,21 @@ nbl_res_txrx_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, u16 nb_pkts, u
- 			can_push = 0;
- 			u = (union nbl_tx_extend_head *)(&tx_region[desc_index]);
- 		}
-+
-+		if (tx_pkt->ol_flags & RTE_MBUF_F_TX_VLAN) {
-+			if (likely(can_push)) {
-+				if (rte_vlan_insert(&tx_pkt)) {
-+					can_push = 0;
-+					u = (union nbl_tx_extend_head *)(&tx_region[desc_index]);
-+				}
-+			}
-+			if (unlikely(!can_push)) {
-+				addr_offset += sizeof(struct rte_ether_hdr);
-+				nbl_res_txrx_vlan_insert_out_mbuf(tx_pkt, u, RTE_ETHER_TYPE_VLAN,
-+								  tx_pkt->vlan_tci);
-+			}
-+		}
-+
- 		nb_descs = !can_push + tx_pkt->nb_segs;
- 
- 		if (nb_descs > txq->vq_free_cnt) {
-@@ -638,6 +680,10 @@ nbl_res_txrx_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, u16 nb_pkts)
- 
- 		if (--num_sg)
- 			continue;
-+
-+		if (rxq->eth_dev->data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)
-+			rte_vlan_strip(rx_mbuf);
-+
- 		if (drop) {
- 			rxq->rxq_stats.rx_drop_proto++;
- 			rte_pktmbuf_free(rx_mbuf);
+ 	if (iova_mode == RTE_IOVA_PA) {
+ 		/* check iommu disable */
+-		snprintf(pathname, sizeof(pathname),
+-			 "/dev/nbl_userdev/" PCI_PRI_FMT, loc->domain,
+-			 loc->bus, loc->devid, loc->function);
+ 		common->devfd = open(pathname, O_RDWR);
+ 		if (common->devfd >= 0)
+ 			goto mmap;
 -- 
 2.34.1
 
