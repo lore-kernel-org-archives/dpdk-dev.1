@@ -2,84 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A236CCFA18
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 21:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA6ECCFA1A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Nov 2025 22:19:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44B0340280;
-	Tue, 11 Nov 2025 22:20:00 +0100 (CET)
-Received: from fout-b7-smtp.messagingengine.com
- (fout-b7-smtp.messagingengine.com [202.12.124.150])
- by mails.dpdk.org (Postfix) with ESMTP id 66E374026D
- for <dev@dpdk.org>; Tue, 11 Nov 2025 22:19:58 +0100 (CET)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
- by mailfout.stl.internal (Postfix) with ESMTP id 832691D00153;
- Tue, 11 Nov 2025 16:19:57 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
- by phl-compute-09.internal (MEProxy); Tue, 11 Nov 2025 16:19:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1762895997;
- x=1762982397; bh=WSnq3EDraggRa6CdAM/KsXCvDBZP24NtvNUACCj/MIg=; b=
- fu9G2icEIXMQ6zPxt0rRU3XQjjFVdWmucntsPBNPZCBcKKVZzmeCQtUv+R21GpQ0
- hcBZFRRPAW2qYTKZhpgy2XoZV1eGdc++0ZJCApT7xX5AwOy3hEflGzQiPG8lASbd
- 8etx9S8+J6vWH2jHJA+RNjr7H5o8V5bizBhPksNuISqBzUqpxycqvQODVa/+3QhR
- mdkpuEiyB7QCXdNZc39XEaydovQk1N4jjHdNUs6fjyu8GlC0HU0lSmDPuvnsXb6X
- /vroP5SYTMuobEwkWG2M9cygN3P3m34vDnEsh7axxQKI3CAvBRRkrM6uNLo7rPt/
- Be5VsmQAmWhyFFkgDSEhgQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762895997; x=
- 1762982397; bh=WSnq3EDraggRa6CdAM/KsXCvDBZP24NtvNUACCj/MIg=; b=E
- uxOY8C3uXZt6qjVwLn26mfQ09+OeEunqfZY/mb68iavHvDtPLnSpy5hVbNd1WGPq
- WNIGJYs5itM2uvavDIPnKy1EYmVpnwAXzzS/osHrA94cKNHknfDSG4u6G3+ijVX+
- M766Zk8t8XRE4kR+1lBZD8QfyIowdIFWz171OtmARouRicXnud0/OLxBIkkOEvev
- xgZB+WgrKO2G7SZpxwu40iMYDlb9geY2LecSDDz82lDvqoJprn3bTB4ckgunPcJr
- ipbZzJwa+bFZi3epqUvxbt2XVVTxQxMqxKflHBXs9ZRwjArho4nfx4AzNlY7AVEa
- CoKD93ic5qUXXlO5u5D9w==
-X-ME-Sender: <xms:fKgTafDXYQw1sW6tXOPRG5ql-MbbXdR7gM9Qd-K6AHXV9nIXuO4l3w>
- <xme:fKgTaefq5mIVKKLClcukZDFl9sJG74COVr1S7KQ5scvgChJAoG0h15scrciYFoKXx
- r1YP2cXcSiPYJUXDQNNGwE7t7lPkGOzrA5SOgIV9_qgbWIUP1XgSw>
-X-ME-Received: <xmr:fKgTaWLWishJIJC_NBopfy7EtIsKTpcZQt8bFWcrpdBrNA69EPasQleL1ohdkcO4Owr9GGjtSgaqbHCL6BvcKaGTng>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvtddvvdehucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopeguihhmohhnrdiihhgrohesnhgvsghulh
- grqdhmrghtrhhigidrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgt
- phhtthhopegrlhhvihhnrdifrghnghesnhgvsghulhgrqdhmrghtrhhigidrtghomhdprh
- gtphhtthhopehlvghonhdrhihusehnvggsuhhlrgdqmhgrthhrihigrdgtohhmpdhrtghp
- thhtohepshgrmhdrtghhvghnsehnvggsuhhlrgdqmhgrthhrihigrdgtohhm
-X-ME-Proxy: <xmx:fKgTaR2VgrVaKE-CMOmj1wOufWkrPhNVGR4Cia3gphHX8O5gOVTTwg>
- <xmx:fKgTaQjmEIChVGzRfwA-Gv8Z-fFj2aSVI3J-DUkFw8NSge45dqgjhg>
- <xmx:fKgTaSWRKpnFvoLC-2lN1qwCHWRorcLM_Y3MUMYkaj8CF2qaSm1DOw>
- <xmx:fKgTafXZGMBhwrB_LLSSfy-_KUmemeKGmx6jsGsktv95JFzGxbGDFA>
- <xmx:fagTaSnepJyBWPtvc5oewFvJe7aHQEZXMx9enmeM1wSSKmRbgkrkqGJR>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Nov 2025 16:19:55 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Cc: dev@dpdk.org, Alvin Wang <alvin.wang@nebula-matrix.com>,
- Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>,
- Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Subject: Re: [PATCH v2 4/4] net/nbl: add IOVA mode check in Coexistence
-Date: Tue, 11 Nov 2025 22:19:53 +0100
-Message-ID: <3056609.DAjeCnDj1a@thomas>
-In-Reply-To: <20251111113144.3567291-5-dimon.zhao@nebula-matrix.com>
-References: <20251107073459.3532524-1-dimon.zhao@nebula-matrix.com>
- <20251111113144.3567291-1-dimon.zhao@nebula-matrix.com>
- <20251111113144.3567291-5-dimon.zhao@nebula-matrix.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5EB9D40281;
+	Tue, 11 Nov 2025 23:19:02 +0100 (CET)
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com
+ [209.85.210.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 20A4840280
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 23:19:01 +0100 (CET)
+Received: by mail-pf1-f169.google.com with SMTP id
+ d2e1a72fcca58-7ad1cd0db3bso163351b3a.1
+ for <dev@dpdk.org>; Tue, 11 Nov 2025 14:19:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1762899540;
+ x=1763504340; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=YMLGSCeL/4Vj/4SNS2ooDLsLggqe36Nzo64cXi8c6Ls=;
+ b=MvkarMgbqADDm8Ng39ctFGg02+rV0sB78VSqREXhxvxLiFdruGZ+blTgLTyagD5gkz
+ G8JExGl9K6VjLJ/LkngslLmpVK53bL0aK4g1z7HRSi/kZOoOIwZPOrG4O0KLgNpg265C
+ 7iMxfNBUJNXbxUzgBvHomqECc8yvg0VHsar5ljOUy+iSU5zIPl8mb7Unsd0Nq5lY3YVH
+ GfaQVjDH6VCD6IyCoO9F7bvR4Mf+ZOCdGJxH1xVziYH5saW1vLjB7Kw0P5YO21KeQ3cN
+ Fhf1AeVxQorasxConB5uXjuD+Bei6qVhuvKEZGXDfkNzJ30mcxIKJarwCDp1U01OV50/
+ 1n4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1762899540; x=1763504340;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=YMLGSCeL/4Vj/4SNS2ooDLsLggqe36Nzo64cXi8c6Ls=;
+ b=GcDKVLZ8sAAEX3zhmB9bXuygE0SJKHDuaZ0Dmx9YLuaoCFqN+aAM0Cwzy+tg0NJ2Qo
+ /eGPtpfzxsaoW2xUNFVi7lGsNPW4Ca0cVeTXy1ZScAgD3xJOVFaY7JkF9TZppgcNy//r
+ 9luzwS//LJ6jZ+ztk5/V4hEuFA3lVzC5bnCbrh6+DI5EzgK84ekSnCbHAj3SHE2PhVfE
+ 4L+G5v9saYslrc9oIYJUVdYudlgBMBMvFW020gAM10KA/DNO21EbTn36p2H1J+sWJ4Qz
+ MALAQ6m6QCUFvnCzCCX6S3EVRdak2RhmeiwD18SW+sssAKHld3oz0Q8Vd8EwRFsIal92
+ FQSQ==
+X-Gm-Message-State: AOJu0YyDjB0if7+M42W4dnbohQgl6wCOqe5SMajf1Z9ctiez3rMa28MO
+ u1Rs63kkII1ZGqISQrSGxI37aiIac0PcvzqC0S1HAZL1zC3gRBXxFIHszDZFADGD6LSkj3aCjiW
+ 5aNUx
+X-Gm-Gg: ASbGncsTkSx79XotBMj4/k966jVZy+O3ekUk3pXsfuihz6sKtHYHEKdxM0n3ClzZfMB
+ gpvVTFN7BpjrdwcP+YOapfzy+bD7Kk5xOVAS6TwKuiCbR+WjxHwiK94eVvzgiN/YttT7Pm5i6BI
+ C0L6dDjZEHYv/UXiWdle+SpIxs1rcdH5cUCkTMUSB7QCRbV1QUMJlpOCyVZ/cf5EL4KTDGLH+HG
+ V7Dufkhe3h8CPjNOl9386oPdpHL8C+qidH5OhZubp8Bz/Zes7K03W/PV24TBXo7OCyqT0eWmcOq
+ zmvCi8auIEZQhR5HkxO612pIlktxMWTgydI2bQePmUz4Kic+KKm1/yNexy5II5JUSIY8WAAjRks
+ 9PQY9rt06fJlGZthybxzEVKIqi8/emh3NmNjLZLKP3mi3OaDYqMuxOuwHpTwe4zg18z/gKCpxOB
+ ezdunu2Ux9jj9IACkJ3AKzr8S2Z3DUnxQcoVjU0ss=
+X-Google-Smtp-Source: AGHT+IGJ5ouyr2wHvZTcKm+Ak6aNQYTeeohHOArPc1UCk0tHdscA4EfVHTj4HGjYNqxtpTcxuGpaXQ==
+X-Received: by 2002:a17:90b:4c43:b0:343:d70e:bef0 with SMTP id
+ 98e67ed59e1d1-343dde8c6b2mr861341a91.21.1762899540163; 
+ Tue, 11 Nov 2025 14:19:00 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-343e072e5a5sm157001a91.11.2025.11.11.14.18.59
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 11 Nov 2025 14:18:59 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 0/7] fix format-truncation warnings
+Date: Tue, 11 Nov 2025 14:17:17 -0800
+Message-ID: <20251111221857.443752-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251110182209.104087-1-stephen@networkplumber.org>
+References: <20251110182209.104087-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,46 +82,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-11/11/2025 12:31, Dimon Zhao:
-> Add IOVA mode check in Coexistence.
-> Update MAINTAINERS.
+Enable and fix format-truncation warnings in examples and tests.
 
-This is completely unrelated.
+v2 - fix build warnings (more fixes needed)
+   - do test as well (could be separate series?)
 
-> Refresh feature list and Coexistence Usage Instructions.
-> 
-> Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+Stephen Hemminger (7):
+  examples/server_node_efd: fix format overflow
+  examples/vdpa: fix format overflow warning
+  examples/ip_reassembly: add check before formatting name
+  examples: re-enable format truncation warning
+  test: refactor file prefix arg handling
+  test: increase size of memzone name
+  test: re-enable format-truncation warnings
 
->  Nebulamatrix nbl
-> +M: Alvin Wang <alvin.wang@nebula-matrix.com>
+ app/test/meson.build                       |   1 -
+ app/test/test_eal_flags.c                  | 161 ++++++++-------------
+ app/test/test_memzone.c                    |   2 +-
+ examples/ip_reassembly/main.c              |   7 +
+ examples/meson.build                       |   5 +-
+ examples/server_node_efd/efd_server/main.c |   2 +-
+ examples/server_node_efd/shared/common.h   |   3 +-
+ examples/vdpa/main.c                       |   9 +-
+ 8 files changed, 77 insertions(+), 113 deletions(-)
 
-Maybe he is a new team member, but he cannot be a maintainer
-as he did not even send a single patch.
-Please keep only people who can act as maintainers in this list.
-
-> --- a/doc/guides/nics/features/nbl.ini
-> +++ b/doc/guides/nics/features/nbl.ini
-> @@ -12,6 +12,7 @@ Unicast MAC filter   = Y
->  Basic stats          = Y
->  Extended stats       = Y
->  Stats per queue      = Y
-> +VLAN offload         = P
-
-How is it related to IOVA?
-
-
-> --- a/doc/guides/nics/nbl.rst
-> +++ b/doc/guides/nics/nbl.rst
-> @@ -70,6 +70,13 @@ Anolis community:
->  Alternatively, you can contact us to obtain the `nbl_core` code and installation package.
->  
->  
-> +Coexistence Between DPDK And Kernel Driver
-> +------------------------------------------
-> +When this device is bound to the nbl_core driver and IOMMU is in passthrough mode,
-> +it is necessary to force I/O virtual address (IOVA) to be mapped to physical address (PA)
-> +with the EAL command line option ``--iova-mode=pa``.
-
-A blank line is missing after the heading.
-
+-- 
+2.51.0
 
